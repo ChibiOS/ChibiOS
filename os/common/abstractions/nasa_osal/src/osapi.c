@@ -190,6 +190,31 @@ static void timer_handler(void *p) {
   }
 }
 
+/**
+ * @brief   Finds a queue by name.
+ */
+uint32 queue_find(const char *queue_name) {
+  osal_queue_t *oqp;
+
+  /* Searching the queue in the table.*/
+  for (oqp = &osal.queues[0]; oqp < &osal.queues[OS_MAX_QUEUES]; oqp++) {
+    /* Entering a reentrant critical zone.*/
+    syssts_t sts = chSysGetStatusAndLockX();
+
+    if (!oqp->is_free &&
+        (strncmp(oqp->name, queue_name, OS_MAX_API_NAME - 1) == 0)) {
+      /* Leaving the critical zone.*/
+      chSysRestoreStatusX(sts);
+      return (uint32)oqp;
+    }
+
+    /* Leaving the critical zone.*/
+    chSysRestoreStatusX(sts);
+  }
+
+  return 0;
+}
+
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
@@ -225,40 +250,40 @@ int32 OS_API_Init(void) {
                    sizeof (osal_timer_t),
                    NULL);
   chPoolLoadArray(&osal.timers_pool,
-                  &osal.timers,
-                  sizeof (osal_timer_t));
+                  &osal.timers[0],
+                  OS_MAX_TIMERS);
 
   /* Queues pool initialization.*/
   chPoolObjectInit(&osal.queues_pool,
                    sizeof (osal_queue_t),
                    NULL);
   chPoolLoadArray(&osal.queues_pool,
-                  &osal.queues,
-                  sizeof (osal_queue_t));
+                  &osal.queues[0],
+                  OS_MAX_QUEUES);
 
   /* Binary Semaphores pool initialization.*/
   chPoolObjectInit(&osal.binary_semaphores_pool,
                    sizeof (binary_semaphore_t),
                    NULL);
   chPoolLoadArray(&osal.binary_semaphores_pool,
-                  &osal.binary_semaphores,
-                  sizeof (binary_semaphore_t));
+                  &osal.binary_semaphores[0],
+                  OS_MAX_BIN_SEMAPHORES);
 
   /* Counter Semaphores pool initialization.*/
   chPoolObjectInit(&osal.count_semaphores_pool,
                    sizeof (semaphore_t),
                    NULL);
   chPoolLoadArray(&osal.count_semaphores_pool,
-                  &osal.count_semaphores,
-                  sizeof (semaphore_t));
+                  &osal.count_semaphores[0],
+                  OS_MAX_COUNT_SEMAPHORES);
 
   /* Mutexes pool initialization.*/
   chPoolObjectInit(&osal.mutexes_pool,
                    sizeof (mutex_t),
                    NULL);
   chPoolLoadArray(&osal.mutexes_pool,
-                  &osal.mutexes,
-                  sizeof (mutex_t));
+                  &osal.mutexes[0],
+                  OS_MAX_MUTEXES);
 
   return OS_SUCCESS;
 }
@@ -635,18 +660,27 @@ int32 OS_QueueCreate(uint32 *queue_id, const char *queue_name,
 
   /* Checking queue name length.*/
   if (strlen(queue_name) >= OS_MAX_API_NAME) {
+    *queue_id = 0;
     return OS_ERR_NAME_TOO_LONG;
   }
 
+  /* Checking if the name is already taken.*/
+  if (queue_find(queue_name) > 0) {
+    *queue_id = 0;
+    return OS_ERR_NAME_TAKEN;
+  }
+
   /* Checks on queue limits. There is no dedicated error code.*/
-  if ((data_size < MIN_MESSAGE_SIZE) || (data_size < MAX_MESSAGE_SIZE) ||
-      (queue_depth < MIN_QUEUE_DEPTH) || (queue_depth < MAX_QUEUE_DEPTH)) {
+  if ((data_size < MIN_MESSAGE_SIZE) || (data_size > MAX_MESSAGE_SIZE) ||
+      (queue_depth < MIN_QUEUE_DEPTH) || (queue_depth > MAX_QUEUE_DEPTH)) {
+    *queue_id = 0;
     return OS_ERROR;
   }
 
   /* Getting object.*/
   oqp = chPoolAlloc(&osal.queues_pool);
   if (oqp == NULL) {
+    *queue_id = 0;
     return OS_ERR_NO_FREE_IDS;
   }
 
@@ -656,6 +690,7 @@ int32 OS_QueueCreate(uint32 *queue_id, const char *queue_name,
                                       msgsize * (size_t)queue_depth,
                                       PORT_NATURAL_ALIGN);
   if (oqp->mb_buffer == NULL) {
+    *queue_id = 0;
     return OS_ERROR;
   }
 
@@ -664,6 +699,7 @@ int32 OS_QueueCreate(uint32 *queue_id, const char *queue_name,
                                      sizeof (msg_t) * (size_t)queue_depth,
                                      PORT_NATURAL_ALIGN);
   if (oqp->q_buffer == NULL) {
+    *queue_id = 0;
     chHeapFree(oqp->mb_buffer);
     return OS_ERROR;
   }
@@ -677,6 +713,7 @@ int32 OS_QueueCreate(uint32 *queue_id, const char *queue_name,
   oqp->depth   = queue_depth;
   oqp->size    = data_size;
   oqp->is_free = 0;   /* Note, last.*/
+  *queue_id = (uint32)oqp;
 
   return OS_SUCCESS;
 }
@@ -867,7 +904,6 @@ int32 OS_QueuePut(uint32 queue_id, void *data, uint32 size, uint32 flags) {
  * @api
  */
 int32 OS_QueueGetIdByName(uint32 *queue_id, const char *queue_name) {
-  osal_queue_t *oqp;
 
   /* NULL pointer checks.*/
   if ((queue_id == NULL) || (queue_name == NULL)) {
@@ -879,22 +915,10 @@ int32 OS_QueueGetIdByName(uint32 *queue_id, const char *queue_name) {
     return OS_ERR_NAME_TOO_LONG;
   }
 
-  /* Searching the queue in the table.*/
-  for (oqp = &osal.queues[0]; oqp < &osal.queues[OS_MAX_QUEUES]; oqp++) {
-    /* Entering a reentrant critical zone.*/
-    syssts_t sts = chSysGetStatusAndLockX();
-
-    if (!oqp->is_free &&
-        (strncmp(oqp->name, queue_name, OS_MAX_API_NAME - 1) == 0)) {
-      *queue_id = (uint32)oqp;
-
-      /* Leaving the critical zone.*/
-      chSysRestoreStatusX(sts);
-      return OS_SUCCESS;
-    }
-
-    /* Leaving the critical zone.*/
-    chSysRestoreStatusX(sts);
+  /* Searching the queue.*/
+  *queue_id = queue_find(queue_name);
+  if (*queue_id > 0) {
+    return OS_SUCCESS;
   }
 
   return OS_ERR_NAME_NOT_FOUND;

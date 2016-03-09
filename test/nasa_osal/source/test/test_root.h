@@ -26,6 +26,7 @@
 #define _SPC5_TEST_ROOT_H_
 
 #include "test_sequence_001.h"
+#include "test_sequence_002.h"
 
 /*===========================================================================*/
 /* External declarations.                                                    */

@@ -22,6 +22,7 @@
  *
  * <h2>Test Sequences</h2>
  * - @subpage test_sequence_001
+ * - @subpage test_sequence_002
  * .
  */
 
@@ -46,6 +47,7 @@
  */
 const testcase_t * const *test_suite[] = {
   test_sequence_001,
+  test_sequence_002,
   NULL
 };
 
