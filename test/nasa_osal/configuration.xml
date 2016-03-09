@@ -610,13 +610,32 @@ test_assert_sequence("ABC", "events order violation");]]></value>
               <value>Internal Tests</value>
             </type>
             <brief>
-              <value>Queues Functionality.</value>
+              <value>Queues Functionality</value>
             </brief>
             <description>
               <value>This sequence tests the NASA OSAL over ChibiOS/RT functionalities related to queues</value>
             </description>
             <shared_code>
-              <value><![CDATA[#include "osapi.h"]]></value>
+              <value><![CDATA[#include <string.h>
+
+#include "osapi.h"
+
+uint32 qid;
+
+#define WRITER_NUM_MESSAGES 16
+#define MESSAGE_SIZE        20
+
+static void test_task_writer(void) {
+  unsigned i;
+  int32 err;
+
+  for (i = 0; i < WRITER_NUM_MESSAGES; i++) {
+    err = OS_QueuePut(qid, "Hello World", 12, 0);
+    if (err != OS_SUCCESS) {
+      test_emit_token('*');
+    }
+  }
+}]]></value>
             </shared_code>
             <cases>
               <case>
@@ -730,6 +749,99 @@ test_assert(err == OS_ERR_NAME_TAKEN, "name conflict not detected");
 
 err = OS_QueueDelete(qid1);
 test_assert(err == OS_SUCCESS, "queue deletion failed");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>OS_QueuePut() and OS_QueueGet() functionality</value>
+                </brief>
+                <description>
+                  <value>A task writes on a queue, the messages are retrieved on the other side in blocking mode.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[qid = 0;]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value><![CDATA[if (qid != 0) {
+  (void) OS_QueueDelete(qid);
+}]]></value>
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[uint32 tid;
+unsigned i;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Creataing a queue with depth 4 and message size 20</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[int32 err;
+
+err = OS_QueueCreate(&qid, "test queue", 4, MESSAGE_SIZE, 0);
+test_assert(err == OS_SUCCESS, "queue creation failed");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Creating the writer task.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[int32 err;
+
+err = OS_TaskCreate(&tid,
+                    "writer task",
+                    test_task_writer,
+                    (uint32 *)wa_test1,
+                    sizeof wa_test1,
+                    TASKS_BASE_PRIORITY,
+                    0);
+test_assert(err == OS_SUCCESS, "writer task creation failed");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Reading messages from the writer task.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[for (i = 0; i < WRITER_NUM_MESSAGES; i++) {
+  int32 err;
+  char data[MESSAGE_SIZE];
+  uint32 copied;
+
+  err = OS_QueueGet(qid, data, MESSAGE_SIZE, &copied, OS_Milli2Ticks(200));
+  test_assert(err == OS_SUCCESS, "timed out");
+  test_assert(strncmp(data, "Hello World", sizeof (data)) == 0,
+              "wrong message");
+}]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Waiting for task termination then checking for errors.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[OS_TaskDelay(10);
+test_assert_sequence("", "queue write errors occurred");]]></value>
                     </code>
                   </step>
                 </steps>
