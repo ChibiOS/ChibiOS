@@ -53,7 +53,7 @@ int main(void) {
   /* Activates the serial driver 1 using the driver default configuration.*/
   sdStart(&SD1, NULL);
 
-  /* GPIOI1 is programmed as output (board LED).*/
+  /* ARD_D13 is programmed as output (board LED).*/
   palClearLine(LINE_ARD_D13);
   palSetLineMode(LINE_ARD_D13, PAL_MODE_OUTPUT_PUSHPULL);
 
