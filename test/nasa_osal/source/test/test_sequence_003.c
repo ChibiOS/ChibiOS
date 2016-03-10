@@ -45,10 +45,13 @@
 #include "osapi.h"
 
 uint32 tmid;
+uint32 cnt;
 
 static void tmr_callback(uint32 timer_id) {
 
   (void)timer_id;
+
+  cnt++;
 }
 
 /****************************************************************************
@@ -137,7 +140,7 @@ static void test_003_001_execute(void) {
                          "failing timer",
                          &accuracy,
                          NULL);                     /* Error.*/
-    test_assert(err == OS_INVALID_POINTER, "NULL not detected");
+    test_assert(err == OS_TIMER_ERR_INVALID_ARGS, "NULL not detected");
   }
 
   /* OS_TimerCreate() is invoked with a very long timer name, an error
@@ -285,10 +288,18 @@ static const testcase_t test_003_003 = {
  * A timer is tested in one-shot mode.
  *
  * <h2>Test Steps</h2>
+ * - Retrieving the timer by name.
+ * - Setting up the timer for a 70mS one-shot tick.
+ * - Waiting one second then counting the occurred ticks.
+ * .
  */
 
 static void test_003_004_setup(void) {
+  uint32 accuracy;
+
+  cnt = 0;
   tmid = 0;
+  (void) OS_TimerCreate(&tmid, "test timer", &accuracy, tmr_callback);
 }
 
 static void test_003_004_teardown(void) {
@@ -298,6 +309,32 @@ static void test_003_004_teardown(void) {
 }
 
 static void test_003_004_execute(void) {
+  uint32 local_tmid;
+
+  /* Retrieving the timer by name.*/
+  test_set_step(1);
+  {
+    int32 err;
+
+    err = OS_TimerGetIdByName(&local_tmid, "test timer");
+    test_assert(err == OS_SUCCESS, "timer not found");
+  }
+
+  /* Setting up the timer for a 70mS one-shot tick.*/
+  test_set_step(2);
+  {
+    uint32 err;
+
+    err = OS_TimerSet(local_tmid, 70000, 0);
+    test_assert(err == OS_SUCCESS, "timer setup failed");
+  }
+
+  /* Waiting one second then counting the occurred ticks.*/
+  test_set_step(3);
+  {
+    (void) OS_TaskDelay(1000);
+    test_assert(cnt == 1, "wrong ticks");
+  }
 }
 
 static const testcase_t test_003_004 = {
@@ -314,19 +351,64 @@ static const testcase_t test_003_004 = {
  * A timer is tested in periodic mode.
  *
  * <h2>Test Steps</h2>
+ * - Retrieving the timer by name.
+ * - Setting up the timer for a 70mS periodic tick.
+ * - Waiting one second then counting the occurred ticks.
+ * - Stopping the timer.
+ * .
  */
 
 static void test_003_005_setup(void) {
+  uint32 accuracy;
+
+  cnt = 0;
   tmid = 0;
+  (void) OS_TimerCreate(&tmid, "test timer", &accuracy, tmr_callback);
 }
 
 static void test_003_005_teardown(void) {
   if (tmid != 0) {
+    (void) OS_TimerSet(tmid, 0, 0);
     (void) OS_TimerDelete(tmid);
   }
 }
 
 static void test_003_005_execute(void) {
+  uint32 local_tmid;
+
+  /* Retrieving the timer by name.*/
+  test_set_step(1);
+  {
+    int32 err;
+
+    err = OS_TimerGetIdByName(&local_tmid, "test timer");
+    test_assert(err == OS_SUCCESS, "timer not found");
+  }
+
+  /* Setting up the timer for a 70mS periodic tick.*/
+  test_set_step(2);
+  {
+    uint32 err;
+
+    err = OS_TimerSet(local_tmid, 70000, 70000);
+    test_assert(err == OS_SUCCESS, "timer setup failed");
+  }
+
+  /* Waiting one second then counting the occurred ticks.*/
+  test_set_step(3);
+  {
+    (void) OS_TaskDelay(1000);
+    test_assert(cnt == 14, "wrong ticks");
+  }
+
+  /* Stopping the timer.*/
+  test_set_step(4);
+  {
+    uint32 err;
+
+    err = OS_TimerSet(local_tmid, 0, 0);
+    test_assert(err == OS_SUCCESS, "timer stop failed");
+  }
 }
 
 static const testcase_t test_003_005 = {

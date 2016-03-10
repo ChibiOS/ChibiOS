@@ -215,6 +215,31 @@ uint32 queue_find(const char *queue_name) {
   return 0;
 }
 
+/**
+ * @brief   Finds a timer by name.
+ */
+uint32 timer_find(const char *timer_name) {
+  osal_timer_t *otp;
+
+  /* Searching the queue in the table.*/
+  for (otp = &osal.timers[0]; otp < &osal.timers[OS_MAX_TIMERS]; otp++) {
+    /* Entering a reentrant critical zone.*/
+    syssts_t sts = chSysGetStatusAndLockX();
+
+    if (!otp->is_free &&
+        (strncmp(otp->name, timer_name, OS_MAX_API_NAME - 1) == 0)) {
+      /* Leaving the critical zone.*/
+      chSysRestoreStatusX(sts);
+      return (uint32)otp;
+    }
+
+    /* Leaving the critical zone.*/
+    chSysRestoreStatusX(sts);
+  }
+
+  return 0;
+}
+
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
@@ -429,23 +454,32 @@ int32 OS_TimerCreate(uint32 *timer_id, const char *timer_name,
 
   /* NULL pointer checks.*/
   if ((timer_id == NULL) || (timer_name == NULL) ||
-      (clock_accuracy == NULL) || (callback_ptr == NULL)) {
+      (clock_accuracy == NULL)) {
     return OS_INVALID_POINTER;
   }
 
   /* NULL callback check.*/
   if (callback_ptr == NULL) {
+    *timer_id = 0;
     return OS_TIMER_ERR_INVALID_ARGS;
   }
 
   /* Checking timer name length.*/
   if (strlen(timer_name) >= OS_MAX_API_NAME) {
+    *timer_id = 0;
     return OS_ERR_NAME_TOO_LONG;
+  }
+
+  /* Checking if the name is already taken.*/
+  if (timer_find(timer_name) > 0) {
+    *timer_id = 0;
+    return OS_ERR_NAME_TAKEN;
   }
 
   /* Getting object.*/
   otp = chPoolAlloc(&osal.timers_pool);
   if (otp == NULL) {
+    *timer_id = 0;
     return OS_ERR_NO_FREE_IDS;
   }
 
@@ -552,7 +586,6 @@ int32 OS_TimerSet(uint32 timer_id, uint32 start_time, uint32 interval_time) {
  * @api
  */
 int32 OS_TimerGetIdByName(uint32 *timer_id, const char *timer_name) {
-  osal_timer_t *otp;
 
   /* NULL pointer checks.*/
   if ((timer_id == NULL) || (timer_name == NULL)) {
@@ -564,22 +597,10 @@ int32 OS_TimerGetIdByName(uint32 *timer_id, const char *timer_name) {
     return OS_ERR_NAME_TOO_LONG;
   }
 
-  /* Searching the timer in the table.*/
-  for (otp = &osal.timers[0]; otp < &osal.timers[OS_MAX_QUEUES]; otp++) {
-    /* Entering a reentrant critical zone.*/
-    syssts_t sts = chSysGetStatusAndLockX();
-
-    if (!otp->is_free &&
-        (strncmp(otp->name, timer_name, OS_MAX_API_NAME - 1) == 0)) {
-      *timer_id = (uint32)otp;
-
-      /* Leaving the critical zone.*/
-      chSysRestoreStatusX(sts);
-      return OS_SUCCESS;
-    }
-
-    /* Leaving the critical zone.*/
-    chSysRestoreStatusX(sts);
+  /* Searching the queue.*/
+  *timer_id = timer_find(timer_name);
+  if (*timer_id > 0) {
+    return OS_SUCCESS;
   }
 
   return OS_ERR_NAME_NOT_FOUND;

@@ -167,7 +167,63 @@ static const testcase_t test_002_001 = {
 };
 
 /**
- * @page test_002_002 OS_QueuePut() and OS_QueueGet() functionality
+ * @page test_002_002 OS_QueueGetIdByName() errors
+ *
+ * <h2>Description</h2>
+ * Parameters checking in OS_QueueGetIdByName() is tested.
+ *
+ * <h2>Test Steps</h2>
+ * - OS_QueueGetIdByName() is invoked with queue_id set to NULL, an
+ *   error is expected.
+ * - OS_QueueGetIdByName() is invoked with queue_name set to NULL, an
+ *   error is expected.
+ * - OS_QueueGetIdByName() is invoked with a very long task name, an
+ *   error is expected.
+ * .
+ */
+
+static void test_002_002_execute(void) {
+
+  /* OS_QueueGetIdByName() is invoked with queue_id set to NULL, an
+     error is expected.*/
+  test_set_step(1);
+  {
+    int32 err;
+
+    err = OS_QueueGetIdByName(NULL, "queue");
+    test_assert(err == OS_INVALID_POINTER, "NULL not detected");
+  }
+
+  /* OS_QueueGetIdByName() is invoked with queue_name set to NULL, an
+     error is expected.*/
+  test_set_step(2);
+  {
+    int32 err;
+
+    err = OS_QueueGetIdByName(&qid, NULL);
+    test_assert(err == OS_INVALID_POINTER, "NULL not detected");
+  }
+
+  /* OS_QueueGetIdByName() is invoked with a very long task name, an
+     error is expected.*/
+  test_set_step(3);
+  {
+    int32 err;
+
+    err = OS_QueueGetIdByName(&qid, "very very long queue name");
+    test_assert(err == OS_ERR_NAME_TOO_LONG, "name limit not detected");
+  }
+}
+
+static const testcase_t test_002_002 = {
+  "OS_QueueGetIdByName() errors",
+  NULL,
+  NULL,
+  test_002_002_execute
+};
+
+/**
+ * @page test_002_003 OS_QueuePut() and OS_QueueGet() functionality
  *
  * <h2>Description</h2>
  * A task writes on a queue, the messages are retrieved on the other
@@ -181,12 +237,12 @@ static const testcase_t test_002_001 = {
  * .
  */
 
-static void test_002_002_setup(void) {
+static void test_002_003_setup(void) {
   qid = 0;
   tid = 0;
 }
 
-static void test_002_002_teardown(void) {
+static void test_002_003_teardown(void) {
   if (qid != 0) {
     (void) OS_QueueDelete(qid);
   }
@@ -196,7 +252,7 @@ static void test_002_002_teardown(void) {
   }
 }
 
-static void test_002_002_execute(void) {
+static void test_002_003_execute(void) {
   uint32 tid;
   unsigned i;
 
@@ -248,77 +304,21 @@ static void test_002_002_execute(void) {
   }
 }
 
-static const testcase_t test_002_002 = {
-  "OS_QueuePut() and OS_QueueGet() functionality",
-  test_002_002_setup,
-  test_002_002_teardown,
-  test_002_002_execute
-};
-
-/**
- * @page test_002_003 OS_QueueGetIdByName() errors
- *
- * <h2>Description</h2>
- * Parameters checking in OS_QueueGetIdByName() is tested.
- *
- * <h2>Test Steps</h2>
- * - OS_QueueGetIdByName() is invoked with queue_id set to NULL, an
- *   error is expected.
- * - OS_QueueGetIdByName() is invoked with queue_name set to NULL, an
- *   error is expected.
- * - OS_QueueGetIdByName() is invoked with a very long task name, an
- *   error is expected.
- * .
- */
-
-static void test_002_003_execute(void) {
-
-  /* OS_QueueGetIdByName() is invoked with queue_id set to NULL, an
-     error is expected.*/
-  test_set_step(1);
-  {
-    int32 err;
-
-    err = OS_QueueGetIdByName(NULL, "queue");
-    test_assert(err == OS_INVALID_POINTER, "NULL not detected");
-  }
-
-  /* OS_QueueGetIdByName() is invoked with queue_name set to NULL, an
-     error is expected.*/
-  test_set_step(2);
-  {
-    int32 err;
-
-    err = OS_QueueGetIdByName(&qid, NULL);
-    test_assert(err == OS_INVALID_POINTER, "NULL not detected");
-  }
-
-  /* OS_QueueGetIdByName() is invoked with a very long task name, an
-     error is expected.*/
-  test_set_step(3);
-  {
-    int32 err;
-
-    err = OS_QueueGetIdByName(&qid, "very very long queue name");
-    test_assert(err == OS_ERR_NAME_TOO_LONG, "name limit not detected");
-  }
-}
-
 static const testcase_t test_002_003 = {
-  "OS_QueueGetIdByName() errors",
-  NULL,
-  NULL,
+  "OS_QueuePut() and OS_QueueGet() functionality",
+  test_002_003_setup,
+  test_002_003_teardown,
   test_002_003_execute
 };
 
 /**
- * @page test_002_004 OS_QueueGet() with timeout
+ * @page test_002_004 OS_QueueGet() with timeout functionality
  *
  * <h2>Description</h2>
  * OS_QueueGetIdByName is tested.
  *
  * <h2>Test Steps</h2>
- * - Retrieving the queue name.
+ * - Retrieving the queue by name.
  * - Get operation with a one second timeout, an error is expected.
  * - Get operation in non-blocking mode, an error is expected.
  * .
@@ -340,7 +340,7 @@ static void test_002_004_execute(void) {
   uint32 copied;
   char data[MESSAGE_SIZE];
 
-  /* Retrieving the queue name.*/
+  /* Retrieving the queue by name.*/
   test_set_step(1);
   {
     int32 err;
@@ -369,7 +369,7 @@ static void test_002_004_execute(void) {
 }
 
 static const testcase_t test_002_004 = {
-  "OS_QueueGet() with timeout",
+  "OS_QueueGet() with timeout functionality",
   test_002_004_setup,
   test_002_004_teardown,
   test_002_004_execute
