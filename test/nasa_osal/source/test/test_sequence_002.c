@@ -81,7 +81,7 @@ static void test_task_writer(void) {
  * - OS_QueueDelete() is invoked with queue_id set to -1, an error is
  *   expected.
  * - OS_QueueCreate() is invoked twice with duplicated name, an error
- *   is expected, then the queue is deleted using OS_DeleteQueue().
+ *   is expected, then the queue is deleted using OS_QueueDelete().
  * .
  */
 
@@ -142,7 +142,7 @@ static void test_002_001_execute(void) {
   }
 
   /* OS_QueueCreate() is invoked twice with duplicated name, an error
-     is expected, then the queue is deleted using OS_DeleteQueue().*/
+     is expected, then the queue is deleted using OS_QueueDelete().*/
   test_set_step(5);
   {
     int32 err;

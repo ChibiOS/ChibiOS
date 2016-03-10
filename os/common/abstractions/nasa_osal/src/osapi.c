@@ -428,7 +428,8 @@ int32 OS_TimerCreate(uint32 *timer_id, const char *timer_name,
   osal_timer_t *otp;
 
   /* NULL pointer checks.*/
-  if ((timer_id == NULL) || (timer_name == NULL) || (clock_accuracy == NULL)) {
+  if ((timer_id == NULL) || (timer_name == NULL) ||
+      (clock_accuracy == NULL) || (callback_ptr == NULL)) {
     return OS_INVALID_POINTER;
   }
 
