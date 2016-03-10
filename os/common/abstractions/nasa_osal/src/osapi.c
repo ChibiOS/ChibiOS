@@ -483,18 +483,15 @@ int32 OS_TimerCreate(uint32 *timer_id, const char *timer_name,
     return OS_ERR_NO_FREE_IDS;
   }
 
-  chSysLock();
-
-  strncpy(otp->name, timer_name, OS_MAX_API_NAME);
+  strncpy(otp->name, timer_name, OS_MAX_API_NAME - 1);
   chVTObjectInit(&otp->vt);
   otp->start_time    = 0;
   otp->interval_time = 0;
   otp->callback_ptr  = callback_ptr;
   otp->is_free       = 0;   /* Note, last.*/
 
+  *timer_id = (uint32)otp;
   *clock_accuracy = (uint32)(1000000 / CH_CFG_ST_FREQUENCY);
-
-  chSysUnlock();
 
   return OS_SUCCESS;
 }
@@ -727,7 +724,7 @@ int32 OS_QueueCreate(uint32 *queue_id, const char *queue_name,
   }
 
   /* Initializing object static parts.*/
-  strncpy(oqp->name, queue_name, OS_MAX_API_NAME);
+  strncpy(oqp->name, queue_name, OS_MAX_API_NAME - 1);
   chMBObjectInit(&oqp->mb, oqp->q_buffer, (size_t)queue_depth);
   chSemObjectInit(&oqp->free_msgs, (cnt_t)queue_depth);
   chPoolObjectInit(&oqp->messages, msgsize, NULL);
@@ -983,7 +980,7 @@ int32 OS_QueueGetInfo (uint32 queue_id, OS_queue_prop_t *queue_prop) {
   }
 
   strncpy(queue_prop->name, oqp->name, OS_MAX_API_NAME - 1);
-  queue_prop->creator       = (uint32)0;
+  queue_prop->creator = (uint32)0;
 
   /* Leaving the critical zone.*/
   chSysRestoreStatusX(sts);

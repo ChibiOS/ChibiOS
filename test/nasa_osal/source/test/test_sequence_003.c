@@ -173,16 +173,17 @@ static void test_003_001_execute(void) {
   test_set_step(7);
   {
     int32 err;
-    uint32 qid1, qid2;
+    uint32 tmid1, tmid2;
+    uint32 accuracy;
 
-    err = OS_QueueCreate(&qid1, "my queue", 4, 128, 0);
-    test_assert(err == OS_SUCCESS, "queue creation failed");
+    err = OS_TimerCreate(&tmid1, "my timer", &accuracy, tmr_callback);
+    test_assert(err == OS_SUCCESS, "timer creation failed");
 
-    err = OS_QueueCreate(&qid2, "my queue", 4, 128, 0);
+    err = OS_TimerCreate(&tmid2, "my timer", &accuracy, tmr_callback);
     test_assert(err == OS_ERR_NAME_TAKEN, "name conflict not detected");
 
-    err = OS_QueueDelete(qid1);
-    test_assert(err == OS_SUCCESS, "queue deletion failed");
+    err = OS_TimerDelete(tmid1);
+    test_assert(err == OS_SUCCESS, "timer deletion failed");
   }
 }
 
