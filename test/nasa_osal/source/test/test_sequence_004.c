@@ -51,7 +51,7 @@ uint32 bsid;
  ****************************************************************************/
 
 /**
- * @page test_004_001 OS_TimerCreate() and OS_TimerDelete() errors
+ * @page test_004_001 OS_BinSemCreate() and OS_BinSemDelete() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_BinSemCreate() and OS_BinSemDelete() is
@@ -68,8 +68,8 @@ uint32 bsid;
  *   is expected.
  * - OS_BinSemDelete() is invoked with timer_id set to -1, an error is
  *   expected.
- * - OS_TimerCreate() is invoked twice with duplicated name, an error
- *   is expected, then the queue is deleted using OS_TimerDelete().
+ * - OS_BinSemCreate() is invoked twice with duplicated name, an error
+ *   is expected, then the queue is deleted using OS_BinSemDelete().
  * .
  */
 
@@ -139,8 +139,8 @@ static void test_004_001_execute(void) {
     test_assert(err == OS_ERR_INVALID_ID, "wrong semaphore id not detected");
   }
 
-  /* OS_TimerCreate() is invoked twice with duplicated name, an error
-     is expected, then the queue is deleted using OS_TimerDelete().*/
+  /* OS_BinSemCreate() is invoked twice with duplicated name, an error
+     is expected, then the queue is deleted using OS_BinSemDelete().*/
   test_set_step(6);
   {
     int32 err;
@@ -160,7 +160,7 @@ static void test_004_001_execute(void) {
 }
 
 static const testcase_t test_004_001 = {
-  "OS_TimerCreate() and OS_TimerDelete() errors",
+  "OS_BinSemCreate() and OS_BinSemDelete() errors",
   NULL,
   NULL,
   test_004_001_execute
