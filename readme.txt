@@ -2,7 +2,7 @@
 *** Files Organization                                                    ***
 *****************************************************************************
 
---{root}                  - ChibiOS/RT directory.
+--{root}                  - ChibiOS directory.
   +--readme.txt           - This file.
   +--documentation.html   - Shortcut to the web documentation page.
   +--license.txt          - GPL license text.
@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** Next ***
+- RT:  Added a NASA-OSAL API emulator over the RT kernel.
 - RT:  Added RT-STM32L476-DISCOVERY demo.
 - HAL: Added more STM32L4xx testhal demos.
 - HAL: Updated all STM32F476 mcuconf.h files.

@@ -175,7 +175,7 @@ void adcStartConversionI(ADCDriver *adcp,
 
   osalDbgCheckClassI();
   osalDbgCheck((adcp != NULL) && (grpp != NULL) && (samples != NULL) &&
-               ((depth == 1U) || ((depth & 1U) == 0U)));
+               (depth > 0U) && ((depth == 1U) || ((depth & 1U) == 0U)));
   osalDbgAssert((adcp->state == ADC_READY) ||
                 (adcp->state == ADC_COMPLETE) ||
                 (adcp->state == ADC_ERROR),
