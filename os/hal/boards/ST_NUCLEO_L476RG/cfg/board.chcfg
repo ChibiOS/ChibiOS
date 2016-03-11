@@ -74,7 +74,7 @@
       <pin5
         ID="ARD_D13 LED_GREEN"
         Type="PushPull"
-        Level="High"
+        Level="Low"
         Speed="Maximum"
         Resistor="Floating"
         Mode="Output"
