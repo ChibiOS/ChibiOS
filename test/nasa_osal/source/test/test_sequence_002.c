@@ -315,7 +315,7 @@ static const testcase_t test_002_003 = {
  * @page test_002_004 OS_QueueGet() with timeout functionality
  *
  * <h2>Description</h2>
- * OS_QueueGetIdByName is tested.
+ * OS_QueueGet() timeout functionality is tested.
  *
  * <h2>Test Steps</h2>
  * - Retrieving the queue by name.

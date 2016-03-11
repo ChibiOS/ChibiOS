@@ -1031,7 +1031,7 @@ int32 OS_BinSemCreate(uint32 *sem_id, const char *sem_name,
   }
 
   /* Semaphore is initialized.*/
-  chBSemObjectInit(bsp, sem_initial_value == 0 ? false : true);
+  chBSemObjectInit(bsp, sem_initial_value == 0 ? true : false);
 
   *sem_id = (uint32)bsp;
 
@@ -1102,7 +1102,10 @@ int32 OS_BinSemFlush(uint32 sem_id) {
     return OS_SEM_FAILURE;
   }
 
-  chBSemResetI(bsp, true);
+  /* If the semaphore state is "not taken" then it is not touched.*/
+  if (bsp->sem.cnt < 0) {
+    chBSemResetI(bsp, true);
+  }
 
   /* Leaving the critical zone.*/
   chSysRestoreStatusX(sts);

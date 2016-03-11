@@ -28,6 +28,7 @@
 #include "test_sequence_001.h"
 #include "test_sequence_002.h"
 #include "test_sequence_003.h"
+#include "test_sequence_004.h"
 
 /*===========================================================================*/
 /* External declarations.                                                    */
