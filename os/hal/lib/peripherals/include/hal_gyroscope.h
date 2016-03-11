@@ -78,7 +78,7 @@ struct BaseGyroscopeVMT {
  */
 typedef struct {
   /** @brief Virtual Methods Table.*/
-  const struct BaseGyroscopeVMT *vmt;
+  const struct BaseGyroscopeVMT *vmtgy;
   _base_gyroscope_data
 } BaseGyroscope;
 
@@ -98,7 +98,7 @@ typedef struct {
  *
  * @api
  */
-#define gyroscopeGetAxesNumber(ip) sensorGetAxesNumber(ip)
+#define gyroscopeGetAxesNumber(ip) ((ip)->vmtgy->get_axes_number(ip))
 
 /**
  * @brief   Gyroscope read raw data.
@@ -112,7 +112,7 @@ typedef struct {
  *
  * @api
  */
-#define gyroscopeReadRaw(ip, dp) sensorReadRaw(ip, dp)
+#define gyroscopeReadRaw(ip, dp) ((ip)->vmtgy->read_raw(ip, dp))
 
 /**
  * @brief   Gyroscope read cooked data.
@@ -126,7 +126,7 @@ typedef struct {
  *
  * @api
  */
-#define gyroscopeReadCooked(ip, dp) sensorReadCooked(ip, dp)
+#define gyroscopeReadCooked(ip, dp) ((ip)->vmtgy->read_cooked(ip, dp))
 
 /**
  * @brief   Delete calibration data.
@@ -139,7 +139,7 @@ typedef struct {
  *
  * @api
  */
-#define gyroscopeResetCalibration(ip) ((ip)->vmt->reset_calibration(ip))
+#define gyroscopeResetCalibration(ip) ((ip)->vmtgy->reset_calibration(ip))
 
 /**
  * @brief   Gyroscope calibration procedure.
@@ -152,7 +152,7 @@ typedef struct {
  *
  * @api
  */
-#define gyroscopeCalibrate(ip) ((ip)->vmt->calibrate(ip))
+#define gyroscopeCalibrate(ip) ((ip)->vmtgy->calibrate(ip))
 /** @} */
 
 /*===========================================================================*/

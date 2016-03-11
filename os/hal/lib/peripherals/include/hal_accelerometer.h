@@ -74,7 +74,7 @@ struct BaseAccelerometerVMT {
  */
 typedef struct {
   /** @brief Virtual Methods Table.*/
-  const struct BaseAccelerometerVMT *vmt;
+  const struct BaseAccelerometerVMT *vmtac;
   _base_sensor_data
 } BaseAccelerometer;
 
@@ -94,7 +94,7 @@ typedef struct {
  *
  * @api
  */
-#define accelerometerGetAxesNumber(ip) sensorGetAxesNumber(ip)
+#define accelerometerGetAxesNumber(ip) ((ip)->vmtac->get_axes_number(ip))
 
 /**
  * @brief   Accelerometer read raw data.
@@ -108,7 +108,7 @@ typedef struct {
  *
  * @api
  */
-#define accelerometerReadRaw(ip, dp) sensorReadRaw(ip, dp)
+#define accelerometerReadRaw(ip, dp) ((ip)->vmtac->read_raw(ip, dp))
 
 /**
  * @brief   Accelerometer read cooked data.
@@ -122,7 +122,7 @@ typedef struct {
  *
  * @api
  */
-#define accelerometerReadCooked(ip, dp) sensorReadCooked(ip, dp)
+#define accelerometerReadCooked(ip, dp) ((ip)->vmtac->read_cooked(ip, dp))
 /** @} */
 
 /*===========================================================================*/

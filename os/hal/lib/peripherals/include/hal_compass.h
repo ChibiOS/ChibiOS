@@ -74,7 +74,7 @@ struct BaseCompassVMT {
  */
 typedef struct {
   /** @brief Virtual Methods Table.*/
-  const struct BaseCompassVMT *vmt;
+  const struct BaseCompassVMT *vmtco;
   _base_compass_data
 } BaseCompass;
 
@@ -93,7 +93,7 @@ typedef struct {
  *
  * @api
  */
-#define compassGetAxesNumber(ip) sensorGetAxesNumber(ip)
+#define compassGetAxesNumber(ip) ((ip)->vmtco->get_axes_number(ip))
 
 /**
  * @brief   Compass read raw data.
@@ -107,7 +107,7 @@ typedef struct {
  *
  * @api
  */
-#define compassReadRaw(ip, dp) sensorReadRaw(ip, dp)
+#define compassReadRaw(ip, dp) ((ip)->vmtco->read_raw(ip, dp))
 
 /**
  * @brief   Compass read cooked data.
@@ -121,33 +121,7 @@ typedef struct {
  *
  * @api
  */
-#define compassReadCooked(ip, dp) sensorReadCooked(ip, dp)
-
-/**
- * @brief   Delete calibration data.
- *
- * @param[in] ip        pointer to a @p BaseCompass class.
- * 
- * @return              The operation status.
- * @retval MSG_OK       if the function succeeded.
- * @retval MSG_RESET    if one or more errors occurred.
- *
- * @api
- */
-#define compassResetCalibration(ip) ((ip)->vmt->reset_calibration(ip))
-
-/**
- * @brief   Compass calibration procedure.
- *
- * @param[in] ip        pointer to a @p BaseCompass class.
- * 
- * @return              The operation status.
- * @retval MSG_OK       if the function succeeded.
- * @retval MSG_RESET    if one or more errors occurred.
- *
- * @api
- */
-#define compassCalibrate(ip) ((ip)->vmt->calibrate(ip))
+#define compassReadCooked(ip, dp) ((ip)->vmtco->read_cooked(ip, dp))
 /** @} */
 
 /*===========================================================================*/
