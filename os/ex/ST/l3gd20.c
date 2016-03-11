@@ -287,10 +287,15 @@ static msg_t calibrate(void *ip) {
   return MSG_OK;
 }
 
-static const struct L3GD20VMT vmt = {
+static const struct BaseSensorVMT vmtse = {
+  get_axes_number, read_raw, read_cooked
+};
+
+static const struct BaseGyroscopeVMT vmtgy = {
   get_axes_number, read_raw, read_cooked,
   reset_calibration, calibrate
 };
+
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -306,7 +311,9 @@ static const struct L3GD20VMT vmt = {
 void l3gd20ObjectInit(L3GD20Driver *devp) {
   uint32_t i;
 
-  devp->vmt = &vmt;
+  devp->vmtse = &vmtse;
+  devp->vmtgy = &vmtgy;
+  devp->vmt = (struct L3GD20VMT*) &vmtgy;
   devp->state  = L3GD20_STOP;
   devp->config = NULL;
   for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++)
