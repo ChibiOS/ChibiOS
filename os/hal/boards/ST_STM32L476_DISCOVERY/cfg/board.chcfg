@@ -206,7 +206,7 @@
       <pin2
         ID="LED_RED"
         Type="PushPull"
-        Level="High"
+        Level="Low"
         Speed="Maximum"
         Resistor="Floating"
         Mode="Output"
@@ -752,7 +752,7 @@
       <pin8
         ID="LED_GREEN"
         Type="PushPull"
-        Level="High"
+        Level="Low"
         Speed="Maximum"
         Resistor="Floating"
         Mode="Output"
