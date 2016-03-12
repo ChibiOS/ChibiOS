@@ -206,20 +206,20 @@ static const testcase_t test_005_002 = {
  * Parameters checking in OS_CountSemTake() is tested.
  *
  * <h2>Test Steps</h2>
- * - OS_BinSemTake() is invoked with sem_id set to -1, an error is
+ * - OS_CountSemTake() is invoked with sem_id set to -1, an error is
  *   expected.
  * .
  */
 
 static void test_005_003_execute(void) {
 
-  /* OS_BinSemTake() is invoked with sem_id set to -1, an error is
+  /* OS_CountSemTake() is invoked with sem_id set to -1, an error is
      expected.*/
   test_set_step(1);
   {
     int32 err;
 
-    err = OS_BinSemTake((uint32)-1);
+    err = OS_CountSemTake((uint32)-1);
     test_assert(err == OS_ERR_INVALID_ID, "invalid sem_id not detected");
   }
 }
@@ -290,7 +290,7 @@ static const testcase_t test_005_004 = {
  * @page test_005_005 OS_CountSemGetIdByName() errors
  *
  * <h2>Description</h2>
- * Parameters checking in OS_BinSemGetIdByName() is tested.
+ * Parameters checking in OS_CountSemGetIdByName() is tested.
  *
  * <h2>Test Steps</h2>
  * - OS_CountSemGetIdByName() is invoked with sem_id set to NULL, an

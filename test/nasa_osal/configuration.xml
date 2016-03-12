@@ -2067,7 +2067,7 @@ test_assert(err == OS_ERR_INVALID_ID, "invalid sem_id not detected");]]></value>
                 <steps>
                   <step>
                     <description>
-                      <value>OS_BinSemTake() is invoked with sem_id set to -1, an error is expected.</value>
+                      <value>OS_CountSemTake() is invoked with sem_id set to -1, an error is expected.</value>
                     </description>
                     <tags>
                       <value />
@@ -2075,7 +2075,7 @@ test_assert(err == OS_ERR_INVALID_ID, "invalid sem_id not detected");]]></value>
                     <code>
                       <value><![CDATA[int32 err;
 
-err = OS_BinSemTake((uint32)-1);
+err = OS_CountSemTake((uint32)-1);
 test_assert(err == OS_ERR_INVALID_ID, "invalid sem_id not detected");]]></value>
                     </code>
                   </step>
@@ -2141,7 +2141,7 @@ test_assert(err == OS_INVALID_INT_NUM, "invalid msec not detected");]]></value>
                   <value>OS_CountSemGetIdByName() errors</value>
                 </brief>
                 <description>
-                  <value>Parameters checking in OS_BinSemGetIdByName() is tested.</value>
+                  <value>Parameters checking in OS_CountSemGetIdByName() is tested.</value>
                 </description>
                 <condition>
                   <value />
@@ -2239,6 +2239,277 @@ test_assert(err == OS_ERR_NAME_TOO_LONG, "name limit not detected");]]></value>
 
 err = OS_CountSemTimedWait(csid, 1000);
 test_assert(err == OS_SEM_TIMEOUT, "unexpected error code");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+            </cases>
+          </sequence>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
+              <value>Mutex Semaphores Functionality</value>
+            </brief>
+            <description>
+              <value>This sequence tests the NASA OSAL over ChibiOS/RT functionalities related to mutex semaphores.</value>
+            </description>
+            <shared_code>
+              <value><![CDATA[#include "osapi.h"
+
+uint32 msid;]]></value>
+            </shared_code>
+            <cases>
+              <case>
+                <brief>
+                  <value>OS_MutSemCreate() and OS_MutSemDelete() errors</value>
+                </brief>
+                <description>
+                  <value>Parameters checking in OS_MutSemCreate() and OS_MutSemDelete() is tested.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>OS_MutSemCreate() is invoked with sem_id set to NULL, an error is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[int32 err;
+
+err = OS_MutSemCreate(NULL,                     /* Error.*/
+                     "failing semaphore",
+                     0);
+test_assert(err == OS_INVALID_POINTER, "NULL not detected");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>OS_MutSemCreate() is invoked with sem_name set to NULL, an error is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[int32 err;
+
+err = OS_MutSemCreate(&msid,
+                     NULL,                      /* Error.*/
+                     0);
+test_assert(err == OS_INVALID_POINTER, "NULL not detected");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>OS_MutSemCreate() is invoked with a very long timer name, an error is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[#if 0 /* Semaphore name currently not implemented.*/
+int32 err;
+
+err = OS_MutSemCreate(&msid,
+                     "very very long semaphore name",   /* Error.*/
+                     0);
+test_assert(err == OS_ERR_NAME_TOO_LONG, "name limit not detected");
+#endif]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>OS_MutSemDelete() is invoked with timer_id set to -1, an error is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[int32 err;
+
+err = OS_MutSemDelete((uint32)-1);
+test_assert(err == OS_ERR_INVALID_ID, "wrong semaphore id not detected");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>OS_MutSemCreate() is invoked twice with duplicated name, an error is expected, then the queue is deleted using OS_MutSemDelete().</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[int32 err;
+uint32 msid1; /*, msid2;*/
+
+err = OS_MutSemCreate(&msid1, "my semaphore", 0);
+test_assert(err == OS_SUCCESS, "semaphore creation failed");
+
+#if 0 /* Semaphore name currently not implemented.*/
+err = OS_MutSemCreate(&msid2, "my semaphore", 0);
+test_assert(err == OS_ERR_NAME_TAKEN, "name conflict not detected");
+#endif
+
+err = OS_MutSemDelete(msid1);
+test_assert(err == OS_SUCCESS, "semaphore deletion failed");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>OS_MutSemGive() errors</value>
+                </brief>
+                <description>
+                  <value>Parameters checking in OS_MutSemGive() is tested.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>OS_MutSemGive() is invoked with sem_id set to -1, an error is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[int32 err;
+
+err = OS_MutSemGive((uint32)-1);
+test_assert(err == OS_ERR_INVALID_ID, "invalid sem_id not detected");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>OS_MutSemTake() errors</value>
+                </brief>
+                <description>
+                  <value>Parameters checking in OS_MutSemTake() is tested.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>OS_MutSemTake() is invoked with sem_id set to -1, an error is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[int32 err;
+
+err = OS_MutSemTake((uint32)-1);
+test_assert(err == OS_ERR_INVALID_ID, "invalid sem_id not detected");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>OS_MutSemGetIdByName() errors</value>
+                </brief>
+                <description>
+                  <value>Parameters checking in OS_MutSemGetIdByName() is tested.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>OS_MutSemGetIdByName() is invoked with sem_id set to NULL, an error is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[int32 err;
+
+err = OS_MutSemGetIdByName(NULL, "semaphore");
+test_assert(err == OS_INVALID_POINTER, "NULL not detected");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>OS_MutSemGetIdByName() is invoked with semaphore name set to NULL, an error is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[int32 err;
+
+err = OS_MutSemGetIdByName(&msid, NULL);
+test_assert(err == OS_INVALID_POINTER, "NULL not detected");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>OS_MutSemGetIdByName() is invoked with a very long task name, an error is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[int32 err;
+
+err = OS_MutSemGetIdByName(&msid, "very very long semaphore name");
+test_assert(err == OS_ERR_NAME_TOO_LONG, "name limit not detected");]]></value>
                     </code>
                   </step>
                 </steps>

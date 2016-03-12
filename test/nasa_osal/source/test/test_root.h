@@ -30,6 +30,7 @@
 #include "test_sequence_003.h"
 #include "test_sequence_004.h"
 #include "test_sequence_005.h"
+#include "test_sequence_006.h"
 
 /*===========================================================================*/
 /* External declarations.                                                    */
