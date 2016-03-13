@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.5 ***
+- HAL: Fixed prescaler not initialized in STM32 ADCv1 (bug #725).
 - HAL: Fixed missing DAC section in STM32F072 mcuconf.h files (bug #724).
 
 *** 16.1.4 ***

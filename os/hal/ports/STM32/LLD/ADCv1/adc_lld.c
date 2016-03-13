@@ -150,6 +150,14 @@ void adc_lld_init(void) {
 
   /* Calibration procedure.*/
   rccEnableADC1(FALSE);
+
+  /* CCR setup.*/
+#if STM32_ADC_SUPPORTS_PRESCALER
+  ADC->CCR = STM32_ADC_PRESC << 18;
+#else
+  ADC->CCR = 0;
+#endif
+
   osalDbgAssert(ADC1->CR == 0, "invalid register state");
   ADC1->CR |= ADC_CR_ADCAL;
   osalDbgAssert(ADC1->CR != 0, "invalid register state");
@@ -206,6 +214,13 @@ void adc_lld_stop(ADCDriver *adcp) {
   if (adcp->state == ADC_READY) {
 
     dmaStreamRelease(adcp->dmastp);
+
+    /* Restoring CCR default.*/
+#if STM32_ADC_SUPPORTS_PRESCALER
+    ADC->CCR = STM32_ADC_PRESC << 18;
+#else
+    ADC->CCR = 0;
+#endif
 
     /* Disabling ADC.*/
     if (adcp->adc->CR & ADC_CR_ADEN) {
