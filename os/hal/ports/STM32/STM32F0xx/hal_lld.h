@@ -212,9 +212,6 @@
 #define STM32_PPRE_DIV8         (6 << 8)    /**< HCLK divided by 8.         */
 #define STM32_PPRE_DIV16        (7 << 8)    /**< HCLK divided by 16.        */
 
-#define STM32_ADCPRE_DIV2       (0 << 14)   /**< PCLK divided by 2.         */
-#define STM32_ADCPRE_DIV4       (1 << 14)   /**< PCLK divided by 4.         */
-
 #define STM32_PLLSRC_HSI_DIV2   (0 << 15)   /**< PLL clock source is HSI/2. */
 #define STM32_PLLSRC_HSI        (1 << 15)   /**< PLL clock source is HSI    */
 #define STM32_PLLSRC_HSE        (2 << 15)   /**< PLL clock source is HSE.   */
@@ -275,9 +272,6 @@
 #define STM32_USBSW_MASK        (1 << 7)    /**< USB clock source mask.     */
 #define STM32_USBSW_HSI48       (0 << 7)    /**< USB clock is HSI48.        */
 #define STM32_USBSW_PCLK        (1 << 7)    /**< USB clock is PCLK.         */
-#define STM32_ADCSW_MASK        (1 << 8)    /**< ADC clock source mask.     */
-#define STM32_ADCSW_HSI14       (0 << 8)    /**< ADC clock is HSI14.        */
-#define STM32_ADCSW_PCLK        (1 << 8)    /**< ADC clock is PCLK/2|4.     */
 /** @} */
 
 /*===========================================================================*/
@@ -523,10 +517,6 @@
 
 #if STM32_MCOSEL == STM32_MCOSEL_HSI14
 #error "HSI14 not enabled, required by STM32_MCOSEL"
-#endif
-
-#if STM32_ADCSW == STM32_ADCSW_HSI14
-#error "HSI14 not enabled, required by STM32_ADCSW"
 #endif
 
 #endif /* !STM32_HSI14_ENABLED */

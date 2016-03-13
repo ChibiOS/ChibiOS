@@ -96,6 +96,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Fixed missing DAC section in STM32F072 mcuconf.h files (bug #724)
+       (backported to 16.1.5).
 - VAR: Fixed palSetMode glitching outputs (bug #723)(backported to 3.0.6
        and 16.1.4).
 - VAR: Fixed error in STM32 PWM driver regarding channels 4 and 5 (bug #722)
