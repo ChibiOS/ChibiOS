@@ -72,6 +72,9 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+*** 16.1.5 ***
+- HAL: Fixed missing DAC section in STM32F072 mcuconf.h files (bug #724).
+
 *** 16.1.4 ***
 - ALL: Startup files relicensed under Apache 2.0.
 - RT:  Added RT-STM32L476-DISCOVERY demo.

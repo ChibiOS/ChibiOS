@@ -51,13 +51,9 @@
 #define STM32_PLLMUL_VALUE                  12
 #define STM32_HPRE                          STM32_HPRE_DIV1
 #define STM32_PPRE                          STM32_PPRE_DIV1
-#define STM32_ADCSW                         STM32_ADCSW_HSI14
-#define STM32_ADCPRE                        STM32_ADCPRE_DIV4
 #define STM32_MCOSEL                        STM32_MCOSEL_NOCLOCK
 #define STM32_MCOPRE                        STM32_MCOPRE_DIV1
 #define STM32_PLLNODIV                      STM32_PLLNODIV_DIV2
-#define STM32_ADCPRE                        STM32_ADCPRE_DIV4
-#define STM32_ADCSW                         STM32_ADCSW_HSI14
 #define STM32_USBSW                         STM32_USBSW_HSI48
 #define STM32_CECSW                         STM32_CECSW_HSI
 #define STM32_I2C1SW                        STM32_I2C1SW_HSI
@@ -68,9 +64,29 @@
  * ADC driver system settings.
  */
 #define STM32_ADC_USE_ADC1                  FALSE
+#define STM32_ADC_ADC1_CKMODE               STM32_ADC_CKMODE_ADCCLK
 #define STM32_ADC_ADC1_DMA_PRIORITY         2
-#define STM32_ADC_IRQ_PRIORITY              2
 #define STM32_ADC_ADC1_DMA_IRQ_PRIORITY     2
+#define STM32_ADC_ADC1_DMA_STREAM           STM32_DMA_STREAM_ID(1, 1)
+
+/*
+ * CAN driver system settings.
+ */
+#define STM32_CAN_USE_CAN1                  FALSE
+#define STM32_CAN_CAN1_IRQ_PRIORITY         3
+
+/*
+ * DAC driver system settings.
+ */
+#define STM32_DAC_DUAL_MODE                 FALSE
+#define STM32_DAC_USE_DAC1_CH1              TRUE
+#define STM32_DAC_USE_DAC1_CH2              TRUE
+#define STM32_DAC_DAC1_CH1_IRQ_PRIORITY     10
+#define STM32_DAC_DAC1_CH2_IRQ_PRIORITY     10
+#define STM32_DAC_DAC1_CH1_DMA_PRIORITY     2
+#define STM32_DAC_DAC1_CH2_DMA_PRIORITY     2
+#define STM32_DAC_DAC1_CH1_DMA_STREAM       STM32_DMA_STREAM_ID(1, 3)
+#define STM32_DAC_DAC1_CH2_DMA_STREAM       STM32_DMA_STREAM_ID(1, 4)
 
 /*
  * EXT driver system settings.
@@ -79,7 +95,8 @@
 #define STM32_EXT_EXTI2_3_IRQ_PRIORITY      3
 #define STM32_EXT_EXTI4_15_IRQ_PRIORITY     3
 #define STM32_EXT_EXTI16_IRQ_PRIORITY       3
-#define STM32_EXT_EXTI17_IRQ_PRIORITY       3
+#define STM32_EXT_EXTI17_20_IRQ_PRIORITY    3
+#define STM32_EXT_EXTI21_22_IRQ_PRIORITY    3
 
 /*
  * GPT driver system settings.
@@ -104,7 +121,30 @@
 #define STM32_I2C_USE_DMA                   TRUE
 #define STM32_I2C_I2C1_DMA_PRIORITY         1
 #define STM32_I2C_I2C2_DMA_PRIORITY         1
+#define STM32_I2C_I2C1_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 3)
+#define STM32_I2C_I2C1_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 2)
+#define STM32_I2C_I2C2_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 5)
+#define STM32_I2C_I2C2_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 4)
 #define STM32_I2C_DMA_ERROR_HOOK(i2cp)      osalSysHalt("DMA failure")
+
+/*
+ * I2S driver system settings.
+ */
+#define STM32_I2S_USE_SPI1                  FALSE
+#define STM32_I2S_USE_SPI2                  FALSE
+#define STM32_I2S_SPI1_MODE                 (STM32_I2S_MODE_MASTER |        \
+                                             STM32_I2S_MODE_RX)
+#define STM32_I2S_SPI2_MODE                 (STM32_I2S_MODE_MASTER |        \
+                                             STM32_I2S_MODE_RX)
+#define STM32_I2S_SPI1_IRQ_PRIORITY         2
+#define STM32_I2S_SPI2_IRQ_PRIORITY         2
+#define STM32_I2S_SPI1_DMA_PRIORITY         1
+#define STM32_I2S_SPI2_DMA_PRIORITY         1
+#define STM32_I2S_SPI1_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 2)
+#define STM32_I2S_SPI1_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 3)
+#define STM32_I2S_SPI2_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 4)
+#define STM32_I2S_SPI2_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 5)
+#define STM32_I2S_DMA_ERROR_HOOK(i2sp)      osalSysHalt("DMA failure")
 
 /*
  * I2S driver system settings.
@@ -163,6 +203,10 @@
 #define STM32_SPI_SPI2_DMA_PRIORITY         1
 #define STM32_SPI_SPI1_IRQ_PRIORITY         2
 #define STM32_SPI_SPI2_IRQ_PRIORITY         2
+#define STM32_SPI_SPI1_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 2)
+#define STM32_SPI_SPI1_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 3)
+#define STM32_SPI_SPI2_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 4)
+#define STM32_SPI_SPI2_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 5)
 #define STM32_SPI_DMA_ERROR_HOOK(spip)      osalSysHalt("DMA failure")
 
 /*
@@ -180,6 +224,10 @@
 #define STM32_UART_USART2_IRQ_PRIORITY      3
 #define STM32_UART_USART1_DMA_PRIORITY      0
 #define STM32_UART_USART2_DMA_PRIORITY      0
+#define STM32_UART_USART1_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 3)
+#define STM32_UART_USART1_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 2)
+#define STM32_UART_USART2_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 5)
+#define STM32_UART_USART2_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 4)
 #define STM32_UART_DMA_ERROR_HOOK(uartp)    osalSysHalt("DMA failure")
 
 /*
