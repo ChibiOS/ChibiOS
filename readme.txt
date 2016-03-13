@@ -96,6 +96,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Fixed prescaler not initialized in STM32 ADCv1 (bug #725)
+       (backported to 16.1.5).
 - HAL: Fixed missing DAC section in STM32F072 mcuconf.h files (bug #724)
        (backported to 16.1.5).
 - VAR: Fixed palSetMode glitching outputs (bug #723)(backported to 3.0.6
