@@ -101,10 +101,6 @@
 /*===========================================================================*/
 
 /**
- * @name    LSM6DS0 data structures and types
- * @{
- */
-/**
  * @name    LSM6DS0 accelerometer subsystem data structures and types
  * @{
  */
@@ -117,7 +113,7 @@ typedef enum {
   LSM6DS0_ACC_FS_4G = 0x10,         /**< Full scale ±4g.                    */
   LSM6DS0_ACC_FS_8G = 0x18,         /**< Full scale ±8g.                    */
   LSM6DS0_ACC_FS_16G = 0x08         /**< Full scale ±16g.                   */
-}lsm6ds0_acc_fs_t;
+} lsm6ds0_acc_fs_t;
 
 /**
  * @brief   LSM6DS0 accelerometer subsystem output data rate
@@ -130,7 +126,7 @@ typedef enum {
   LSM6DS0_ACC_ODR_238Hz = 0x80,     /**< ODR 238 Hz                         */
   LSM6DS0_ACC_ODR_476Hz = 0xA0,     /**< ODR 476 Hz                         */
   LSM6DS0_ACC_ODR_952Hz = 0xC0      /**< ODR 952 Hz                         */
-}lsm6ds0_acc_odr_t;
+} lsm6ds0_acc_odr_t;
 
 /**
  * @brief   LSM6DS0 accelerometer subsystem axes enabling
@@ -166,18 +162,18 @@ typedef enum {
  * @brief   LSM6DS0 accelerometer subsystem filtered data selection
  */
 typedef enum {
-  LSM6DS0_ACC_FDS_ENABLED = 0x00,   /**< Internal filter bypassed.           */
-  LSM6DS0_ACC_FDS_DISABLED = 0x04   /**< Internal filter not bypassed.       */
+  LSM6DS0_ACC_FDS_ENABLED = 0x00,   /**< Internal filter bypassed.          */
+  LSM6DS0_ACC_FDS_DISABLED = 0x04   /**< Internal filter not bypassed.      */
 } lsm6ds0_acc_fds_t;
 
 /**
  * @brief   LSM6DS0 accelerometer subsystem digital filter
  */
 typedef enum {
-  LSM6DS0_ACC_DCF_400 = 0x00,       /**< Low pass cutoff freq. ODR/400 Hz.    */
-  LSM6DS0_ACC_DCF_100 = 0x20,       /**< Low pass cutoff freq. ODR/100 Hz.    */
-  LSM6DS0_ACC_DCF_50 = 0x60,        /**< Low pass cutoff freq. ODR/50 Hz.     */
-  LSM6DS0_ACC_DCF_9 = 0x40          /**< Low pass cutoff freq. ODR/9 Hz.      */
+  LSM6DS0_ACC_DCF_400 = 0x00,       /**< Low pass cutoff freq. ODR/400 Hz.  */
+  LSM6DS0_ACC_DCF_100 = 0x20,       /**< Low pass cutoff freq. ODR/100 Hz.  */
+  LSM6DS0_ACC_DCF_50 = 0x60,        /**< Low pass cutoff freq. ODR/50 Hz.   */
+  LSM6DS0_ACC_DCF_9 = 0x40          /**< Low pass cutoff freq. ODR/9 Hz.    */
 } lsm6ds0_acc_dcf_t;
 
 /**
@@ -209,6 +205,7 @@ typedef enum {
   LSM6DS0_ACC_UNIT_MG = 0x01,       /**< Cooked data in mg.                 */
   LSM6DS0_ACC_UNIT_SI = 0x02,       /**< Cooked data in m/s^2.              */
 } lsm6ds0_acc_unit_t;
+
 /**
  * @brief   LSM6DS0 accelerometer subsystem configuration structure.
  */
@@ -260,7 +257,6 @@ typedef struct {
  * @name    LSM6DS0 gyroscope subsystem data structures and types
  * @{
  */
- 
 /**
  * @brief   LSM6DS0 gyroscope subsystem full scale
  */
@@ -268,7 +264,7 @@ typedef enum {
   LSM6DS0_GYRO_FS_245DSP  = 0x00,   /**< Full scale Â±245 degree per second  */
   LSM6DS0_GYRO_FS_500DSP  = 0x08,   /**< Full scale Â±500 degree per second  */
   LSM6DS0_GYRO_FS_2000DSP = 0x18    /**< Full scale Â±2000 degree per second */
-}lsm6ds0_gyro_fs_t;
+} lsm6ds0_gyro_fs_t;
 
 /**
  * @brief   LSM6DS0 gyroscope subsystem output data rate
@@ -292,7 +288,7 @@ typedef enum {
   LSM6DS0_GYRO_ODR_952HZ_FC_40 = 0XC1,
   LSM6DS0_GYRO_ODR_952HZ_FC_58 = 0XC2,
   LSM6DS0_GYRO_ODR_952HZ_FC_100 = 0XC3
-}lsm6ds0_gyro_odr_t;
+} lsm6ds0_gyro_odr_t;
 
 /**
  * @brief   LSM6DS0 gyroscope subsystem axes enabling
@@ -385,12 +381,16 @@ typedef struct {
 /** @} */
 
 /**
+ * @name    LSM6DS0 main system data structures and types
+ * @{
+ */
+/**
  * @brief  Accelerometer and Gyroscope Slave Address
  */
 typedef enum {
   LSM6DS0_SAD_GND = 0x6A,           /**< SAD pin connected to GND.          */
   LSM6DS0_SAD_VCC = 0x6B            /**< SAD pin connected to VCC.          */
-}lsm6ds0_sad_t;
+} lsm6ds0_sad_t;
 
 /**
  * @brief   LSM6DS0 block data update
@@ -398,7 +398,7 @@ typedef enum {
 typedef enum {
   LSM6DS0_BDU_CONTINOUS = 0x00,     /**< Block data continuously updated.   */
   LSM6DS0_BDU_BLOCKED = 0x40        /**< Block data updated after reading.  */
-}lsm6ds0_bdu_t;
+} lsm6ds0_bdu_t;
 
 /**
  * @brief   LSM6DS0 endianness
@@ -525,9 +525,9 @@ struct LSM6DS0GYROVMT {
  */
 struct LSM6DS0Driver {
   /** @brief Accelerometer Virtual Methods Table.*/
-  const struct LSM6DS0ACCVMT  *vmtac;
+  const struct LSM6DS0ACCVMT  *vmt_baseaccelerometer;
   /** @brief Gyroscope Virtual Methods Table.*/
-  const struct LSM6DS0GYROVMT *vmtgy;
+  const struct LSM6DS0GYROVMT *vmt_basegyroscope;
   _lsm6ds0_data
 };
 /** @} */

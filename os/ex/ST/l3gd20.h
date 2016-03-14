@@ -279,9 +279,9 @@ struct L3GD20VMT {
  */
 struct L3GD20Driver {
   /** @brief Virtual Methods Table.*/
-  const struct BaseSensorVMT *vmtse;
+  const struct BaseSensorVMT *vmt_basesensor;
   /** @brief Virtual Methods Table.*/
-  const struct BaseGyroscopeVMT *vmtgy;
+  const struct BaseGyroscopeVMT *vmt_basegyroscope;
   /** @brief Virtual Methods Table.*/
   const struct L3GD20VMT *vmt;
   _l3gd20_data

@@ -338,7 +338,7 @@ static msg_t acc_read_cooked(void *ip, float axes[]) {
   return msg;
 }
 
-static const struct LSM6DS0ACCVMT accvmt = {
+static const struct LSM6DS0ACCVMT vmt_baseaccelerometer = {
   acc_get_axes_number, acc_read_raw, acc_read_cooked
 };
 
@@ -355,7 +355,7 @@ static const struct LSM6DS0ACCVMT accvmt = {
  */
 void lsm6ds0ObjectInit(LSM6DS0Driver *devp) {
 
-  devp->vmtac = &accvmt;
+  devp->vmt_baseaccelerometer = &vmt_baseaccelerometer;
   devp->state = LSM6DS0_STOP;
   devp->config = NULL;
 }
