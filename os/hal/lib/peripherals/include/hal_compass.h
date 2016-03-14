@@ -74,7 +74,7 @@ struct BaseCompassVMT {
  */
 typedef struct {
   /** @brief Virtual Methods Table.*/
-  const struct BaseCompassVMT *vmtco;
+  const struct BaseCompassVMT *vmt_basecompass;
   _base_compass_data
 } BaseCompass;
 
@@ -93,7 +93,8 @@ typedef struct {
  *
  * @api
  */
-#define compassGetAxesNumber(ip) ((ip)->vmtco->get_axes_number(ip))
+#define compassGetAxesNumber(ip)                                            \
+        (ip)->vmt_basecompass->get_axes_number(ip)
 
 /**
  * @brief   Compass read raw data.
@@ -107,7 +108,8 @@ typedef struct {
  *
  * @api
  */
-#define compassReadRaw(ip, dp) ((ip)->vmtco->read_raw(ip, dp))
+#define compassReadRaw(ip, dp)                                              \
+        (ip)->vmt_basecompass->read_raw(ip, dp)
 
 /**
  * @brief   Compass read cooked data.
@@ -121,7 +123,8 @@ typedef struct {
  *
  * @api
  */
-#define compassReadCooked(ip, dp) ((ip)->vmtco->read_cooked(ip, dp))
+#define compassReadCooked(ip, dp)                                           \
+        (ip)->vmt_basecompass->read_cooked(ip, dp)
 /** @} */
 
 /*===========================================================================*/

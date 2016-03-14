@@ -79,7 +79,7 @@ struct BaseSensorVMT {
  */
 typedef struct {
   /** @brief Virtual Methods Table.*/
-  const struct BaseSensorVMT *vmtse;
+  const struct BaseSensorVMT *vmt_basesensor;
   _base_sensor_data
 } BaseSensor;
 
@@ -99,7 +99,7 @@ typedef struct {
  *
  * @api
  */
-#define sensorGetAxesNumber(ip) ((ip)->vmtse->get_axes_number(ip))
+#define sensorGetAxesNumber(ip) (ip)->vmt_basesensor->get_axes_number(ip)
 
 /**
  * @brief   Sensors read raw data.
@@ -113,7 +113,7 @@ typedef struct {
  *
  * @api
  */
-#define sensorReadRaw(ip, dp) ((ip)->vmtse->read_raw(ip, dp))
+#define sensorReadRaw(ip, dp) (ip)->vmt_basesensor->read_raw(ip, dp)
 
 /**
  * @brief   Sensors read cooked data.
@@ -127,7 +127,7 @@ typedef struct {
  *
  * @api
  */
-#define sensorReadCooked(ip, dp) ((ip)->vmtse->read_cooked(ip, dp))
+#define sensorReadCooked(ip, dp) (ip)->vmt_basesensor->read_cooked(ip, dp)
 /** @} */
 
 /*===========================================================================*/
