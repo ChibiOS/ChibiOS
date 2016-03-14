@@ -147,7 +147,7 @@ int main(void) {
 
   /*
    * Starts an ADC continuous conversion triggered with a period of
-   * 1/10000 second.
+   * 1/1000000 second.
    */
   adcStartConversion(&ADCD1, &adcgrpcfg1, samples1, ADC_GRP1_BUF_DEPTH);
   gptStartContinuous(&GPTD4, 100);
