@@ -74,6 +74,23 @@
 #if !defined(LSM6DS0_SHARED_I2C) || defined(__DOXYGEN__)
 #define LSM6DS0_SHARED_I2C                  FALSE
 #endif
+
+/**
+ * @brief   Number of acquisitions for gyroscope bias removal
+ * @details This is the number of acquisitions performed to compute the
+ *          bias. A repetition is required in order to remove noise.
+ */
+#if !defined(LSM6DS0_GYRO_BIAS_ACQ_TIMES) || defined(__DOXYGEN__)
+#define LSM6DS0_GYRO_BIAS_ACQ_TIMES         50
+#endif
+
+/**
+ * @brief   Settling time for gyroscope bias removal
+ * @details This is the time between each bias acquisition.
+ */
+#if !defined(LSM6DS0_GYRO_BIAS_SETTLING_uS) || defined(__DOXYGEN__)
+#define LSM6DS0_GYRO_BIAS_SETTLING_uS             5000
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -518,7 +535,9 @@ struct LSM6DS0GYROVMT {
   /* Current accelerometer sensitivity.*/                                   \
   float                     accsens;                                        \
   /* Current gyroscope sensitivity.*/                                       \
-  float                     gyrosens;
+  float                     gyrosens;                                       \
+  /* Bias data.*/                                                           \
+  int32_t                   gyrobias[LSM6DS0_GYRO_NUMBER_OF_AXES];
   
 /**
  * @brief   LSM6DS0 6-axis accelerometer/gyroscope class.
