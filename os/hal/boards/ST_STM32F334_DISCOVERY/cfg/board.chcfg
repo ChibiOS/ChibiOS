@@ -12,12 +12,8 @@
   <board_id>ST_STM32F334_DISCOVERY</board_id>
   <board_functions></board_functions>
   <subtype>STM32F334x8</subtype>
-  <clocks 
-    HSEFrequency="0" 
-    HSEBypass="false" 
-    LSEFrequency="0"
-  	LSEBypass="false" 
-	LSEDrive="3 High Drive (default)" />
+  <clocks HSEFrequency="0" HSEBypass="true" LSEFrequency="0"
+  	LSEBypass="false" LSEDrive="3 High Drive (default)" />
   <ports>
     <GPIOA>
       <pin0
@@ -29,7 +25,7 @@
         Mode="Input"
         Alternate="0" />
       <pin1
-        ID="Vin_Sense"
+        ID="VIN_SENSE"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -45,7 +41,7 @@
         Mode="Input"
         Alternate="0" />
       <pin3
-        ID="Vout_Sense"
+        ID="VOUT_SENSE"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -85,7 +81,7 @@
         Mode="Input"
         Alternate="0" />
       <pin8
-        ID="P1_Drive"
+        ID="P1_DRIVE"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -93,7 +89,7 @@
         Mode="Alternate"
         Alternate="6" />
       <pin9
-        ID="N1_Drive"
+        ID="N1_DRIVE"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -101,7 +97,7 @@
         Mode="Alternate"
         Alternate="6" />
       <pin10
-        ID="N2_Drive"
+        ID="N2_DRIVE"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -109,7 +105,7 @@
         Mode="Alternate"
         Alternate="6" ></pin10>
       <pin11
-        ID="P2_Drive"
+        ID="P2_DRIVE"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -151,7 +147,7 @@
     </GPIOA>
     <GPIOB>
       <pin0
-        ID="BK_Sense"
+        ID="BK_SENSE"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -247,7 +243,7 @@
         Mode="Input"
         Alternate="0" />
       <pin12
-        ID="BK_Drive"
+        ID="BK_DRIVE"
         Type="PushPull"
         Level="High"
         Speed="Maximum"

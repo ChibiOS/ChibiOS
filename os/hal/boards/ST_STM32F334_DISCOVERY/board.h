@@ -51,23 +51,23 @@
  * IO pins assignments.
  */
 #define GPIOA_BUTTON                0U
-#define GPIOA_Vin_Sense             1U
+#define GPIOA_VIN_SENSE             1U
 #define GPIOA_PIN2                  2U
-#define GPIOA_Vout_Sense            3U
+#define GPIOA_VOUT_SENSE            3U
 #define GPIOA_PIN4                  4U
 #define GPIOA_PIN5                  5U
 #define GPIOA_PIN6                  6U
 #define GPIOA_PIN7                  7U
-#define GPIOA_P1_Drive              8U
-#define GPIOA_N1_Drive              9U
-#define GPIOA_N2_Drive              10U
-#define GPIOA_P2_Drive              11U
+#define GPIOA_P1_DRIVE              8U
+#define GPIOA_N1_DRIVE              9U
+#define GPIOA_N2_DRIVE              10U
+#define GPIOA_P2_DRIVE              11U
 #define GPIOA_PIN12                 12U
 #define GPIOA_SWDIO                 13U
 #define GPIOA_SWCLK                 14U
 #define GPIOA_PIN15                 15U
 
-#define GPIOB_BK_Sense              0U
+#define GPIOB_BK_SENSE              0U
 #define GPIOB_PIN1                  1U
 #define GPIOB_PIN2                  2U
 #define GPIOB_USART_TX              3U
@@ -79,7 +79,7 @@
 #define GPIOB_LED_GREEN             9U
 #define GPIOB_PIN10                 10U
 #define GPIOB_PIN11                 11U
-#define GPIOB_BK_Drive              12U
+#define GPIOB_BK_DRIVE              12U
 #define GPIOB_PIN13                 13U
 #define GPIOB_RC                    14U
 #define GPIOB_PIN15                 15U
@@ -190,23 +190,23 @@
  * IO lines assignments.
  */
 #define LINE_BUTTON                 PAL_LINE(GPIOA, 0U)
-#define LINE_Vin_Sense              PAL_LINE(GPIOA, 1U)
-#define LINE_Vout_Sense             PAL_LINE(GPIOA, 3U)
-#define LINE_P1_Drive               PAL_LINE(GPIOA, 8U)
-#define LINE_N1_Drive               PAL_LINE(GPIOA, 9U)
-#define LINE_N2_Drive               PAL_LINE(GPIOA, 10U)
-#define LINE_P2_Drive               PAL_LINE(GPIOA, 11U)
+#define LINE_VIN_SENSE              PAL_LINE(GPIOA, 1U)
+#define LINE_VOUT_SENSE             PAL_LINE(GPIOA, 3U)
+#define LINE_P1_DRIVE               PAL_LINE(GPIOA, 8U)
+#define LINE_N1_DRIVE               PAL_LINE(GPIOA, 9U)
+#define LINE_N2_DRIVE               PAL_LINE(GPIOA, 10U)
+#define LINE_P2_DRIVE               PAL_LINE(GPIOA, 11U)
 #define LINE_SWDIO                  PAL_LINE(GPIOA, 13U)
 #define LINE_SWCLK                  PAL_LINE(GPIOA, 14U)
 
-#define LINE_BK_Sense               PAL_LINE(GPIOB, 0U)
+#define LINE_BK_SENSE               PAL_LINE(GPIOB, 0U)
 #define LINE_USART_TX               PAL_LINE(GPIOB, 3U)
 #define LINE_USART_RX               PAL_LINE(GPIOB, 4U)
 #define LINE_LED_RED                PAL_LINE(GPIOB, 6U)
 #define LINE_LED_BLUE               PAL_LINE(GPIOB, 7U)
 #define LINE_LED_ORANGE             PAL_LINE(GPIOB, 8U)
 #define LINE_LED_GREEN              PAL_LINE(GPIOB, 9U)
-#define LINE_BK_Drive               PAL_LINE(GPIOB, 12U)
+#define LINE_BK_DRIVE               PAL_LINE(GPIOB, 12U)
 #define LINE_RC                     PAL_LINE(GPIOB, 14U)
 
 
@@ -243,114 +243,114 @@
  * GPIOA setup:
  *
  * PA0  - BUTTON                    (input floating).
- * PA1  - Vin_Sense                 (input pullup).
+ * PA1  - VIN_SENSE                 (analog).
  * PA2  - PIN2                      (input pullup).
- * PA3  - Vout_Sense                (input pullup).
+ * PA3  - VOUT_SENSE                (analog).
  * PA4  - PIN4                      (input pullup).
  * PA5  - PIN5                      (input pullup).
  * PA6  - PIN6                      (input pullup).
  * PA7  - PIN7                      (input pullup).
- * PA8  - P1_Drive                  (input pullup).
- * PA9  - N1_Drive                  (input pullup).
- * PA10 - N2_Drive                  (input pullup).
- * PA11 - P2_Drive                  (input pullup).
+ * PA8  - P1_DRIVE                  (alternate 6).
+ * PA9  - N1_DRIVE                  (alternate 6).
+ * PA10 - N2_DRIVE                  (alternate 6).
+ * PA11 - P2_DRIVE                  (alternate 11).
  * PA12 - PIN12                     (input pullup).
  * PA13 - SWDIO                     (alternate 0).
  * PA14 - SWCLK                     (alternate 0).
  * PA15 - PIN15                     (input pullup).
  */
 #define VAL_GPIOA_MODER             (PIN_MODE_INPUT(GPIOA_BUTTON) |         \
-                                     PIN_MODE_INPUT(GPIOA_Vin_Sense) |      \
+                                     PIN_MODE_ANALOG(GPIOA_VIN_SENSE) |     \
                                      PIN_MODE_INPUT(GPIOA_PIN2) |           \
-                                     PIN_MODE_INPUT(GPIOA_Vout_Sense) |     \
+                                     PIN_MODE_ANALOG(GPIOA_VOUT_SENSE) |    \
                                      PIN_MODE_INPUT(GPIOA_PIN4) |           \
                                      PIN_MODE_INPUT(GPIOA_PIN5) |           \
                                      PIN_MODE_INPUT(GPIOA_PIN6) |           \
                                      PIN_MODE_INPUT(GPIOA_PIN7) |           \
-                                     PIN_MODE_INPUT(GPIOA_P1_Drive) |       \
-                                     PIN_MODE_INPUT(GPIOA_N1_Drive) |       \
-                                     PIN_MODE_INPUT(GPIOA_N2_Drive) |       \
-                                     PIN_MODE_INPUT(GPIOA_P2_Drive) |       \
+                                     PIN_MODE_ALTERNATE(GPIOA_P1_DRIVE) |   \
+                                     PIN_MODE_ALTERNATE(GPIOA_N1_DRIVE) |   \
+                                     PIN_MODE_ALTERNATE(GPIOA_N2_DRIVE) |   \
+                                     PIN_MODE_ALTERNATE(GPIOA_P2_DRIVE) |   \
                                      PIN_MODE_INPUT(GPIOA_PIN12) |          \
                                      PIN_MODE_ALTERNATE(GPIOA_SWDIO) |      \
                                      PIN_MODE_ALTERNATE(GPIOA_SWCLK) |      \
                                      PIN_MODE_INPUT(GPIOA_PIN15))
 #define VAL_GPIOA_OTYPER            (PIN_OTYPE_PUSHPULL(GPIOA_BUTTON) |     \
-                                     PIN_OTYPE_PUSHPULL(GPIOA_Vin_Sense) |  \
+                                     PIN_OTYPE_PUSHPULL(GPIOA_VIN_SENSE) |  \
                                      PIN_OTYPE_PUSHPULL(GPIOA_PIN2) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOA_Vout_Sense) | \
+                                     PIN_OTYPE_PUSHPULL(GPIOA_VOUT_SENSE) | \
                                      PIN_OTYPE_PUSHPULL(GPIOA_PIN4) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOA_PIN5) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOA_PIN6) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOA_PIN7) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOA_P1_Drive) |   \
-                                     PIN_OTYPE_PUSHPULL(GPIOA_N1_Drive) |   \
-                                     PIN_OTYPE_PUSHPULL(GPIOA_N2_Drive) |   \
-                                     PIN_OTYPE_PUSHPULL(GPIOA_P2_Drive) |   \
+                                     PIN_OTYPE_PUSHPULL(GPIOA_P1_DRIVE) |   \
+                                     PIN_OTYPE_PUSHPULL(GPIOA_N1_DRIVE) |   \
+                                     PIN_OTYPE_PUSHPULL(GPIOA_N2_DRIVE) |   \
+                                     PIN_OTYPE_PUSHPULL(GPIOA_P2_DRIVE) |   \
                                      PIN_OTYPE_PUSHPULL(GPIOA_PIN12) |      \
                                      PIN_OTYPE_PUSHPULL(GPIOA_SWDIO) |      \
                                      PIN_OTYPE_PUSHPULL(GPIOA_SWCLK) |      \
                                      PIN_OTYPE_PUSHPULL(GPIOA_PIN15))
 #define VAL_GPIOA_OSPEEDR           (PIN_OSPEED_HIGH(GPIOA_BUTTON) |        \
-                                     PIN_OSPEED_HIGH(GPIOA_Vin_Sense) |     \
+                                     PIN_OSPEED_HIGH(GPIOA_VIN_SENSE) |     \
                                      PIN_OSPEED_HIGH(GPIOA_PIN2) |          \
-                                     PIN_OSPEED_HIGH(GPIOA_Vout_Sense) |    \
+                                     PIN_OSPEED_HIGH(GPIOA_VOUT_SENSE) |    \
                                      PIN_OSPEED_HIGH(GPIOA_PIN4) |          \
                                      PIN_OSPEED_HIGH(GPIOA_PIN5) |          \
                                      PIN_OSPEED_HIGH(GPIOA_PIN6) |          \
                                      PIN_OSPEED_HIGH(GPIOA_PIN7) |          \
-                                     PIN_OSPEED_HIGH(GPIOA_P1_Drive) |      \
-                                     PIN_OSPEED_HIGH(GPIOA_N1_Drive) |      \
-                                     PIN_OSPEED_HIGH(GPIOA_N2_Drive) |      \
-                                     PIN_OSPEED_HIGH(GPIOA_P2_Drive) |      \
+                                     PIN_OSPEED_HIGH(GPIOA_P1_DRIVE) |      \
+                                     PIN_OSPEED_HIGH(GPIOA_N1_DRIVE) |      \
+                                     PIN_OSPEED_HIGH(GPIOA_N2_DRIVE) |      \
+                                     PIN_OSPEED_HIGH(GPIOA_P2_DRIVE) |      \
                                      PIN_OSPEED_HIGH(GPIOA_PIN12) |         \
                                      PIN_OSPEED_HIGH(GPIOA_SWDIO) |         \
                                      PIN_OSPEED_HIGH(GPIOA_SWCLK) |         \
                                      PIN_OSPEED_HIGH(GPIOA_PIN15))
 #define VAL_GPIOA_PUPDR             (PIN_PUPDR_FLOATING(GPIOA_BUTTON) |     \
-                                     PIN_PUPDR_PULLUP(GPIOA_Vin_Sense) |    \
+                                     PIN_PUPDR_FLOATING(GPIOA_VIN_SENSE) |  \
                                      PIN_PUPDR_PULLUP(GPIOA_PIN2) |         \
-                                     PIN_PUPDR_PULLUP(GPIOA_Vout_Sense) |   \
+                                     PIN_PUPDR_FLOATING(GPIOA_VOUT_SENSE) | \
                                      PIN_PUPDR_PULLUP(GPIOA_PIN4) |         \
                                      PIN_PUPDR_PULLUP(GPIOA_PIN5) |         \
                                      PIN_PUPDR_PULLUP(GPIOA_PIN6) |         \
                                      PIN_PUPDR_PULLUP(GPIOA_PIN7) |         \
-                                     PIN_PUPDR_PULLUP(GPIOA_P1_Drive) |     \
-                                     PIN_PUPDR_PULLUP(GPIOA_N1_Drive) |     \
-                                     PIN_PUPDR_PULLUP(GPIOA_N2_Drive) |     \
-                                     PIN_PUPDR_PULLUP(GPIOA_P2_Drive) |     \
+                                     PIN_PUPDR_FLOATING(GPIOA_P1_DRIVE) |   \
+                                     PIN_PUPDR_FLOATING(GPIOA_N1_DRIVE) |   \
+                                     PIN_PUPDR_FLOATING(GPIOA_N2_DRIVE) |   \
+                                     PIN_PUPDR_FLOATING(GPIOA_P2_DRIVE) |   \
                                      PIN_PUPDR_PULLUP(GPIOA_PIN12) |        \
                                      PIN_PUPDR_PULLUP(GPIOA_SWDIO) |        \
                                      PIN_PUPDR_PULLDOWN(GPIOA_SWCLK) |      \
                                      PIN_PUPDR_PULLUP(GPIOA_PIN15))
 #define VAL_GPIOA_ODR               (PIN_ODR_HIGH(GPIOA_BUTTON) |           \
-                                     PIN_ODR_HIGH(GPIOA_Vin_Sense) |        \
+                                     PIN_ODR_HIGH(GPIOA_VIN_SENSE) |        \
                                      PIN_ODR_HIGH(GPIOA_PIN2) |             \
-                                     PIN_ODR_HIGH(GPIOA_Vout_Sense) |       \
+                                     PIN_ODR_HIGH(GPIOA_VOUT_SENSE) |       \
                                      PIN_ODR_HIGH(GPIOA_PIN4) |             \
                                      PIN_ODR_HIGH(GPIOA_PIN5) |             \
                                      PIN_ODR_HIGH(GPIOA_PIN6) |             \
                                      PIN_ODR_HIGH(GPIOA_PIN7) |             \
-                                     PIN_ODR_HIGH(GPIOA_P1_Drive) |         \
-                                     PIN_ODR_HIGH(GPIOA_N1_Drive) |         \
-                                     PIN_ODR_HIGH(GPIOA_N2_Drive) |         \
-                                     PIN_ODR_HIGH(GPIOA_P2_Drive) |         \
+                                     PIN_ODR_HIGH(GPIOA_P1_DRIVE) |         \
+                                     PIN_ODR_HIGH(GPIOA_N1_DRIVE) |         \
+                                     PIN_ODR_HIGH(GPIOA_N2_DRIVE) |         \
+                                     PIN_ODR_HIGH(GPIOA_P2_DRIVE) |         \
                                      PIN_ODR_HIGH(GPIOA_PIN12) |            \
                                      PIN_ODR_HIGH(GPIOA_SWDIO) |            \
                                      PIN_ODR_HIGH(GPIOA_SWCLK) |            \
                                      PIN_ODR_HIGH(GPIOA_PIN15))
 #define VAL_GPIOA_AFRL              (PIN_AFIO_AF(GPIOA_BUTTON, 0) |         \
-                                     PIN_AFIO_AF(GPIOA_Vin_Sense, 0) |      \
+                                     PIN_AFIO_AF(GPIOA_VIN_SENSE, 0) |      \
                                      PIN_AFIO_AF(GPIOA_PIN2, 0) |           \
-                                     PIN_AFIO_AF(GPIOA_Vout_Sense, 0) |     \
+                                     PIN_AFIO_AF(GPIOA_VOUT_SENSE, 0) |     \
                                      PIN_AFIO_AF(GPIOA_PIN4, 0) |           \
                                      PIN_AFIO_AF(GPIOA_PIN5, 0) |           \
                                      PIN_AFIO_AF(GPIOA_PIN6, 0) |           \
                                      PIN_AFIO_AF(GPIOA_PIN7, 0))
-#define VAL_GPIOA_AFRH              (PIN_AFIO_AF(GPIOA_P1_Drive, 0) |       \
-                                     PIN_AFIO_AF(GPIOA_N1_Drive, 0) |       \
-                                     PIN_AFIO_AF(GPIOA_N2_Drive, 0) |       \
-                                     PIN_AFIO_AF(GPIOA_P2_Drive, 0) |       \
+#define VAL_GPIOA_AFRH              (PIN_AFIO_AF(GPIOA_P1_DRIVE, 6) |       \
+                                     PIN_AFIO_AF(GPIOA_N1_DRIVE, 6) |       \
+                                     PIN_AFIO_AF(GPIOA_N2_DRIVE, 6) |       \
+                                     PIN_AFIO_AF(GPIOA_P2_DRIVE, 11) |      \
                                      PIN_AFIO_AF(GPIOA_PIN12, 0) |          \
                                      PIN_AFIO_AF(GPIOA_SWDIO, 0) |          \
                                      PIN_AFIO_AF(GPIOA_SWCLK, 0) |          \
@@ -359,7 +359,7 @@
 /*
  * GPIOB setup:
  *
- * PB0  - BK_Sense                  (input pullup).
+ * PB0  - BK_SENSE                  (analog).
  * PB1  - PIN1                      (input pullup).
  * PB2  - PIN2                      (input pullup).
  * PB3  - USART_TX                  (alternate 7).
@@ -371,12 +371,12 @@
  * PB9  - LED_GREEN                 (output pushpull maximum).
  * PB10 - PIN10                     (input pullup).
  * PB11 - PIN11                     (input pullup).
- * PB12 - BK_Drive                  (input pullup).
+ * PB12 - BK_DRIVE                  (alternate 13).
  * PB13 - PIN13                     (input pullup).
  * PB14 - RC                        (input pullup).
  * PB15 - PIN15                     (input pullup).
  */
-#define VAL_GPIOB_MODER             (PIN_MODE_INPUT(GPIOB_BK_Sense) |       \
+#define VAL_GPIOB_MODER             (PIN_MODE_ANALOG(GPIOB_BK_SENSE) |      \
                                      PIN_MODE_INPUT(GPIOB_PIN1) |           \
                                      PIN_MODE_INPUT(GPIOB_PIN2) |           \
                                      PIN_MODE_ALTERNATE(GPIOB_USART_TX) |   \
@@ -388,11 +388,11 @@
                                      PIN_MODE_OUTPUT(GPIOB_LED_GREEN) |     \
                                      PIN_MODE_INPUT(GPIOB_PIN10) |          \
                                      PIN_MODE_INPUT(GPIOB_PIN11) |          \
-                                     PIN_MODE_INPUT(GPIOB_BK_Drive) |       \
+                                     PIN_MODE_ALTERNATE(GPIOB_BK_DRIVE) |   \
                                      PIN_MODE_INPUT(GPIOB_PIN13) |          \
                                      PIN_MODE_INPUT(GPIOB_RC) |             \
                                      PIN_MODE_INPUT(GPIOB_PIN15))
-#define VAL_GPIOB_OTYPER            (PIN_OTYPE_PUSHPULL(GPIOB_BK_Sense) |   \
+#define VAL_GPIOB_OTYPER            (PIN_OTYPE_PUSHPULL(GPIOB_BK_SENSE) |   \
                                      PIN_OTYPE_PUSHPULL(GPIOB_PIN1) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOB_PIN2) |       \
                                      PIN_OTYPE_OPENDRAIN(GPIOB_USART_TX) |  \
@@ -404,11 +404,11 @@
                                      PIN_OTYPE_PUSHPULL(GPIOB_LED_GREEN) |  \
                                      PIN_OTYPE_PUSHPULL(GPIOB_PIN10) |      \
                                      PIN_OTYPE_PUSHPULL(GPIOB_PIN11) |      \
-                                     PIN_OTYPE_PUSHPULL(GPIOB_BK_Drive) |   \
+                                     PIN_OTYPE_PUSHPULL(GPIOB_BK_DRIVE) |   \
                                      PIN_OTYPE_PUSHPULL(GPIOB_PIN13) |      \
                                      PIN_OTYPE_PUSHPULL(GPIOB_RC) |         \
                                      PIN_OTYPE_PUSHPULL(GPIOB_PIN15))
-#define VAL_GPIOB_OSPEEDR           (PIN_OSPEED_HIGH(GPIOB_BK_Sense) |      \
+#define VAL_GPIOB_OSPEEDR           (PIN_OSPEED_HIGH(GPIOB_BK_SENSE) |      \
                                      PIN_OSPEED_HIGH(GPIOB_PIN1) |          \
                                      PIN_OSPEED_HIGH(GPIOB_PIN2) |          \
                                      PIN_OSPEED_HIGH(GPIOB_USART_TX) |      \
@@ -420,11 +420,11 @@
                                      PIN_OSPEED_HIGH(GPIOB_LED_GREEN) |     \
                                      PIN_OSPEED_HIGH(GPIOB_PIN10) |         \
                                      PIN_OSPEED_HIGH(GPIOB_PIN11) |         \
-                                     PIN_OSPEED_HIGH(GPIOB_BK_Drive) |      \
+                                     PIN_OSPEED_HIGH(GPIOB_BK_DRIVE) |      \
                                      PIN_OSPEED_HIGH(GPIOB_PIN13) |         \
                                      PIN_OSPEED_HIGH(GPIOB_RC) |            \
                                      PIN_OSPEED_HIGH(GPIOB_PIN15))
-#define VAL_GPIOB_PUPDR             (PIN_PUPDR_PULLUP(GPIOB_BK_Sense) |     \
+#define VAL_GPIOB_PUPDR             (PIN_PUPDR_FLOATING(GPIOB_BK_SENSE) |   \
                                      PIN_PUPDR_PULLUP(GPIOB_PIN1) |         \
                                      PIN_PUPDR_PULLUP(GPIOB_PIN2) |         \
                                      PIN_PUPDR_PULLUP(GPIOB_USART_TX) |     \
@@ -436,11 +436,11 @@
                                      PIN_PUPDR_PULLUP(GPIOB_LED_GREEN) |    \
                                      PIN_PUPDR_PULLUP(GPIOB_PIN10) |        \
                                      PIN_PUPDR_PULLUP(GPIOB_PIN11) |        \
-                                     PIN_PUPDR_PULLUP(GPIOB_BK_Drive) |     \
+                                     PIN_PUPDR_FLOATING(GPIOB_BK_DRIVE) |   \
                                      PIN_PUPDR_PULLUP(GPIOB_PIN13) |        \
                                      PIN_PUPDR_PULLUP(GPIOB_RC) |           \
                                      PIN_PUPDR_PULLUP(GPIOB_PIN15))
-#define VAL_GPIOB_ODR               (PIN_ODR_HIGH(GPIOB_BK_Sense) |         \
+#define VAL_GPIOB_ODR               (PIN_ODR_HIGH(GPIOB_BK_SENSE) |         \
                                      PIN_ODR_HIGH(GPIOB_PIN1) |             \
                                      PIN_ODR_HIGH(GPIOB_PIN2) |             \
                                      PIN_ODR_HIGH(GPIOB_USART_TX) |         \
@@ -452,11 +452,11 @@
                                      PIN_ODR_LOW(GPIOB_LED_GREEN) |         \
                                      PIN_ODR_HIGH(GPIOB_PIN10) |            \
                                      PIN_ODR_HIGH(GPIOB_PIN11) |            \
-                                     PIN_ODR_HIGH(GPIOB_BK_Drive) |         \
+                                     PIN_ODR_HIGH(GPIOB_BK_DRIVE) |         \
                                      PIN_ODR_HIGH(GPIOB_PIN13) |            \
                                      PIN_ODR_HIGH(GPIOB_RC) |               \
                                      PIN_ODR_HIGH(GPIOB_PIN15))
-#define VAL_GPIOB_AFRL              (PIN_AFIO_AF(GPIOB_BK_Sense, 0) |       \
+#define VAL_GPIOB_AFRL              (PIN_AFIO_AF(GPIOB_BK_SENSE, 0) |       \
                                      PIN_AFIO_AF(GPIOB_PIN1, 0) |           \
                                      PIN_AFIO_AF(GPIOB_PIN2, 0) |           \
                                      PIN_AFIO_AF(GPIOB_USART_TX, 7) |       \
@@ -468,7 +468,7 @@
                                      PIN_AFIO_AF(GPIOB_LED_GREEN, 0) |      \
                                      PIN_AFIO_AF(GPIOB_PIN10, 0) |          \
                                      PIN_AFIO_AF(GPIOB_PIN11, 0) |          \
-                                     PIN_AFIO_AF(GPIOB_BK_Drive, 0) |       \
+                                     PIN_AFIO_AF(GPIOB_BK_DRIVE, 13) |      \
                                      PIN_AFIO_AF(GPIOB_PIN13, 0) |          \
                                      PIN_AFIO_AF(GPIOB_RC, 0) |             \
                                      PIN_AFIO_AF(GPIOB_PIN15, 0))
