@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2015 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -15,10 +15,23 @@
 */
 
 /**
+ * @mainpage Test Suite Specification
+ * Test suite for ChibiOS/NIL. The purpose of this suite is to perform
+ * unit tests on the NIL modules and to converge to 100% code coverage
+ * through successive improvements.
+ *
+ * <h2>Test Sequences</h2>
+ * - @subpage test_sequence_001
+ * - @subpage test_sequence_002
+ * - @subpage test_sequence_003
+ * .
+ */
+
+/**
  * @file    test_root.c
  * @brief   Test Suite root structures code.
  *
- * @addtogroup CH_TEST_ROOT
+ * @addtogroup SPC5_TEST_ROOT
  * @{
  */
 
@@ -36,6 +49,7 @@
 const testcase_t * const *test_suite[] = {
   test_sequence_001,
   test_sequence_002,
+  test_sequence_003,
   NULL
 };
 
@@ -61,7 +75,6 @@ THD_FUNCTION(test_support, arg) {
   chSemObjectInit(&gsem1, 0);
   chSemObjectInit(&gsem2, 0);
 
-  /* Waiting for button push and activation of the test suite.*/
   while (true) {
     chSysLock();
     if (chSemGetCounterI(&gsem1) < 0)

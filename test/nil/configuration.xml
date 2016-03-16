@@ -1,0 +1,560 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SPC5-Config version="1.0.0">
+  <application name="Test Suite" version="1.0.0" standalone="true" locked="false">
+    <description>Test specification for the NASA OSAL ChibiOS extension.</description>
+    <component id="org.chibios.spc5.components.platform.generic">
+      <component id="org.chibios.spc5.components.chibios_unitary_tests_engine" />
+    </component>
+    <instances>
+      <instance locked="false" id="org.chibios.spc5.components.platform.generic" />
+      <instance locked="false" id="org.chibios.spc5.components.chibios_unitary_tests_engine">
+        <description>
+          <introduction>
+            <value>Test suite for ChibiOS/NIL. The purpose of this suite is to perform unit tests on the NIL modules and to converge to 100% code coverage through successive improvements.</value>
+          </introduction>
+        </description>
+        <global_data_and_code>
+          <global_definitions>
+            <value><![CDATA[#define TEST_SUITE_NAME                     "ChibiOS/NIL Test Suite"
+
+extern semaphore_t gsem1, gsem2;
+extern thread_reference_t gtr1;
+extern THD_WORKING_AREA(wa_test_support, 128);
+
+THD_FUNCTION(test_support, arg);]]></value>
+          </global_definitions>
+          <global_code>
+            <value><![CDATA[semaphore_t gsem1, gsem2;
+thread_reference_t gtr1;
+
+/*
+ * Support thread.
+ */
+THD_WORKING_AREA(wa_test_support, 128);
+THD_FUNCTION(test_support, arg) {
+#if CH_CFG_USE_EVENTS == TRUE
+  thread_t *tp = (thread_t *)arg;
+#else
+  (void)arg;
+#endif
+
+  /* Initializing global resources.*/
+  chSemObjectInit(&gsem1, 0);
+  chSemObjectInit(&gsem2, 0);
+
+  while (true) {
+    chSysLock();
+    if (chSemGetCounterI(&gsem1) < 0)
+      chSemSignalI(&gsem1);
+    chSemResetI(&gsem2, 0);
+    chThdResumeI(&gtr1, MSG_OK);
+#if CH_CFG_USE_EVENTS == TRUE
+    chEvtSignalI(tp, 0x55);
+#endif
+    chSchRescheduleS();
+    chSysUnlock();
+
+    chThdSleepMilliseconds(250);
+  }
+}]]></value>
+          </global_code>
+        </global_data_and_code>
+        <sequences>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
+              <value>Threads Functionality</value>
+            </brief>
+            <description>
+              <value>This sequence tests the ChibiOS/NIL functionalities related to threading.</value>
+            </description>
+            <shared_code>
+              <value><![CDATA[#include "ch.h"]]></value>
+            </shared_code>
+            <cases>
+              <case>
+                <brief>
+                  <value>System Tick Counter functionality.</value>
+                </brief>
+                <description>
+                  <value>The functionality of the API @p chVTGetSystemTimeX() is tested.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>A System Tick Counter increment is expected, the test simply hangs if it does not happen.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[systime_t time = chVTGetSystemTimeX();
+while (time == chVTGetSystemTimeX()) {
+}]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Thread Sleep functionality.</value>
+                </brief>
+                <description>
+                  <value>The functionality of @p chThdSleep() and derivatives is tested.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[systime_t time;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>The current system time is read then a sleep is performed for 100 system ticks and on exit the system time is verified again.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[time = chVTGetSystemTimeX();
+chThdSleep(100);
+test_assert_time_window(time + 100,
+                        time + 100 + 1,
+                        "out of time window");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The current system time is read then a sleep is performed for 100000 microseconds and on exit the system time is verified again.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[time = chVTGetSystemTimeX();
+chThdSleepMicroseconds(100000);
+test_assert_time_window(time + US2ST(100000),
+                        time + US2ST(100000) + 1,
+                        "out of time window");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The current system time is read then a sleep is performed for 100 milliseconds and on exit the system time is verified again.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[time = chVTGetSystemTimeX();
+chThdSleepMilliseconds(100);
+test_assert_time_window(time + MS2ST(100),
+                        time + MS2ST(100) + 1,
+                        "out of time window");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The current system time is read then a sleep is performed for 1 second and on exit the system time is verified again.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[time = chVTGetSystemTimeX();
+chThdSleepSeconds(1);
+test_assert_time_window(time + S2ST(1),
+                        time + S2ST(1) + 1,
+                        "out of time window");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Function chThdSleepUntil() is tested with a timeline of "now" + 100 ticks.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[time = chVTGetSystemTimeX();
+chThdSleepUntil(time + 100);
+test_assert_time_window(time + 100,
+                        time + 100 + 1,
+                        "out of time window");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+            </cases>
+          </sequence>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
+              <value>Semaphores</value>
+            </brief>
+            <description>
+              <value>This sequence tests the ChibiOS/NIL functionalities related to counter semaphores.</value>
+            </description>
+            <shared_code>
+              <value><![CDATA[#include "ch.h"
+
+static semaphore_t sem1;]]></value>
+            </shared_code>
+            <cases>
+              <case>
+                <brief>
+                  <value>Semaphore primitives, no state change.</value>
+                </brief>
+                <description>
+                  <value>Wait, Signal and Reset primitives are tested. The testing thread does not trigger a state change.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chSemObjectInit(&sem1, 1);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value><![CDATA[chSemReset(&sem1, 0);]]></value>
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>The function chSemWait() is invoked, after return the counter and the returned message are tested.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[msg_t msg;
+
+msg = chSemWait(&sem1);
+test_assert_lock(chSemGetCounterI(&sem1) == 0, "wrong counter value");
+test_assert(MSG_OK == msg, "wrong returned message");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The function chSemSignal() is invoked, after return the counter is tested.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chSemSignal(&sem1);
+test_assert_lock(chSemGetCounterI(&sem1) == 1, "wrong counter value");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The function chSemReset() is invoked, after return the counter is tested.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chSemReset(&sem1, 2);
+test_assert_lock(chSemGetCounterI(&sem1) == 2, "wrong counter value");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Semaphore primitives, with state change.</value>
+                </brief>
+                <description>
+                  <value>Wait, Signal and Reset primitives are tested. The testing thread triggers a state change.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chSemObjectInit(&gsem1, 0);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value><![CDATA[chSemReset(&gsem1, 0);]]></value>
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>The function chSemWait() is invoked, after return the counter and the returned message are tested. The semaphore is signaled by another thread.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[msg_t msg;
+
+msg = chSemWait(&gsem1);
+test_assert_lock(chSemGetCounterI(&gsem1) == 0, "wrong counter value");
+test_assert(MSG_OK == msg, "wrong returned message");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The function chSemWait() is invoked, after return the counter and the returned message are tested. The semaphore is reset by another thread.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[msg_t msg;
+
+msg = chSemWait(&gsem2);
+test_assert_lock(chSemGetCounterI(&gsem2) == 0,"wrong counter value");
+test_assert(MSG_RESET == msg, "wrong returned message");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Semaphores timeout.</value>
+                </brief>
+                <description>
+                  <value>Timeout on semaphores is tested.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chSemObjectInit(&sem1, 0);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value><![CDATA[chSemReset(&sem1, 0);]]></value>
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[systime_t time;
+msg_t msg;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>The function chSemWaitTimeout() is invoked a first time, after return the system time, the counter and the returned message are tested.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[time = chVTGetSystemTimeX();
+msg = chSemWaitTimeout(&sem1, MS2ST(1000));
+test_assert_time_window(time + MS2ST(1000),
+                        time + MS2ST(1000) + 1,
+                        "out of time window");
+test_assert_lock(chSemGetCounterI(&sem1) == 0, "wrong counter value");
+test_assert(MSG_TIMEOUT == msg, "wrong timeout message");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The function chSemWaitTimeout() is invoked again, after return the system time, the counter and the returned message are tested.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[time = chVTGetSystemTimeX();
+msg = chSemWaitTimeout(&sem1, MS2ST(1000));
+test_assert_time_window(time + MS2ST(1000),
+                        time + MS2ST(1000) + 1,
+                        "out of time window");
+test_assert_lock(chSemGetCounterI(&sem1) == 0, "wrong counter value");
+test_assert(MSG_TIMEOUT == msg, "wrong timeout message");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+            </cases>
+          </sequence>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
+              <value>Suspend/Resume and Event Flags.</value>
+            </brief>
+            <description>
+              <value>This sequence tests the ChibiOS/NIL functionalities related to threads suspend/resume and event flags.</value>
+            </description>
+            <shared_code>
+              <value><![CDATA[static thread_reference_t tr1;]]></value>
+            </shared_code>
+            <cases>
+              <case>
+                <brief>
+                  <value>Suspend and Resume functionality.</value>
+                </brief>
+                <description>
+                  <value>The functionality of chThdSuspendTimeoutS() and chThdResumeI() is tested.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[tr1 = NULL;]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[systime_t time;
+msg_t msg;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>The function chThdSuspendTimeoutS() is invoked, the thread is remotely resumed with message @p MSG_OK. On return the message and the state of the reference are tested.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chSysLock();
+msg = chThdSuspendTimeoutS(&gtr1, TIME_INFINITE);
+chSysUnlock();
+test_assert(NULL == gtr1, "not NULL");
+test_assert(MSG_OK == msg,"wrong returned message");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The function chThdSuspendTimeoutS() is invoked, the thread is not resumed so a timeout must occur. On return the message and the state of the reference are tested.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chSysLock();
+time = chVTGetSystemTimeX();
+msg = chThdSuspendTimeoutS(&tr1, MS2ST(1000));
+chSysUnlock();
+test_assert_time_window(time + MS2ST(1000),
+                        time + MS2ST(1000) + 1,
+                        "out of time window");
+test_assert(NULL == tr1, "not NULL");
+test_assert(MSG_TIMEOUT == msg, "wrong returned message");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Events Flags functionality.</value>
+                </brief>
+                <description>
+                  <value>Event flags functionality is tested.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[systime_t time;
+eventmask_t events;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>A set of event flags are set on the current thread then the function chEvtWaitAnyTimeout() is invoked, the function is supposed to return immediately because the event flags are already pending, after return the events mask is tested.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[time = chVTGetSystemTimeX();
+chEvtSignal(chThdGetSelfX(), 0x55);
+events = chEvtWaitAnyTimeout(ALL_EVENTS, MS2ST(1000));
+test_assert((eventmask_t)0 != events, "timed out");
+test_assert((eventmask_t)0x55 == events, "wrong events mask");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The pending event flags mask is cleared then the function chEvtWaitAnyTimeout() is invoked, after return the events mask is tested. The thread is signaled by another thread.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[time = chVTGetSystemTimeX();
+chThdGetSelfX()->epmask = 0;
+events = chEvtWaitAnyTimeout(ALL_EVENTS, MS2ST(1000));
+test_assert((eventmask_t)0 != events, "timed out");
+test_assert((eventmask_t)0x55 == events, "wrong events mask");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The function chEvtWaitAnyTimeout() is invoked, no event can wakeup the thread, the function must return because timeout.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[time = chVTGetSystemTimeX();
+events = chEvtWaitAnyTimeout(0, MS2ST(1000));
+test_assert_time_window(time + MS2ST(1000),
+                        time + MS2ST(1000) + 1,
+                        "out of time window");
+test_assert((eventmask_t)0 == events, "wrong events mask");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+            </cases>
+          </sequence>
+        </sequences>
+      </instance>
+    </instances>
+    <exportedFeatures />
+  </application>
+</SPC5-Config>

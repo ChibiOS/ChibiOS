@@ -24,7 +24,8 @@
  * File: @ref test_sequence_001.c
  *
  * <h2>Description</h2>
- * This sequence tests the ChibiOS/NIL functionalities related to threading.
+ * This sequence tests the ChibiOS/NIL functionalities related to
+ * threading.
  *
  * <h2>Test Cases</h2>
  * - @subpage test_001_001
@@ -36,35 +37,31 @@
  * Shared code.
  ****************************************************************************/
 
+#include "ch.h"
 
 /****************************************************************************
  * Test cases.
  ****************************************************************************/
 
-#if TRUE || defined(__DOXYGEN__)
 /**
  * @page test_001_001 System Tick Counter functionality
  *
  * <h2>Description</h2>
  * The functionality of the API @p chVTGetSystemTimeX() is tested.
  *
- * <h2>Conditions</h2>
- * None.
- *
  * <h2>Test Steps</h2>
- * - A System Tick Counter increment is expected, the test simply hangs if
- *   it does not happen.
+ * - A System Tick Counter increment is expected, the test simply hangs
+ *   if it does not happen.
  * .
  */
 
 static void test_001_001_execute(void) {
-  systime_t time;
 
-  /* A System Tick Counter increment is expected, the test simply hangs if
-     it does not happen.*/
+  /* A System Tick Counter increment is expected, the test simply hangs
+     if it does not happen.*/
   test_set_step(1);
   {
-    time = chVTGetSystemTimeX();
+    systime_t time = chVTGetSystemTimeX();
     while (time == chVTGetSystemTimeX()) {
     }
   }
@@ -76,35 +73,32 @@ static const testcase_t test_001_001 = {
   NULL,
   test_001_001_execute
 };
-#endif /* TRUE */
 
-#if TRUE || defined(__DOXYGEN__)
 /**
  * @page test_001_002 Thread Sleep functionality
  *
  * <h2>Description</h2>
- * The functionality of the API @p chThdSleep() and derivatives is tested.
- *
- * <h2>Conditions</h2>
- * None.
+ * The functionality of @p chThdSleep() and derivatives is tested.
  *
  * <h2>Test Steps</h2>
- * - The current system time is read then a sleep is performed for 100 system
- *   ticks and on exit the system time is verified again.
- * - The current system time is read then a sleep is performed for 100000
- *   microseconds and on exit the system time is verified again.
+ * - The current system time is read then a sleep is performed for 100
+ *   system ticks and on exit the system time is verified again.
+ * - The current system time is read then a sleep is performed for
+ *   100000 microseconds and on exit the system time is verified again.
  * - The current system time is read then a sleep is performed for 100
  *   milliseconds and on exit the system time is verified again.
  * - The current system time is read then a sleep is performed for 1
  *   second and on exit the system time is verified again.
+ * - Function chThdSleepUntil() is tested with a timeline of "now" +
+ *   100 ticks.
  * .
  */
 
 static void test_001_002_execute(void) {
   systime_t time;
 
-  /* The current system time is read then a sleep is performed for 100 system
-     ticks and on exit the system time is verified again.*/
+  /* The current system time is read then a sleep is performed for 100
+     system ticks and on exit the system time is verified again.*/
   test_set_step(1);
   {
     time = chVTGetSystemTimeX();
@@ -114,14 +108,15 @@ static void test_001_002_execute(void) {
                             "out of time window");
   }
 
-  /* The current system time is read then a sleep is performed for 100000
-     microseconds and on exit the system time is verified again.*/
+  /* The current system time is read then a sleep is performed for
+     100000 microseconds and on exit the system time is verified
+     again.*/
   test_set_step(2);
   {
     time = chVTGetSystemTimeX();
-    chThdSleepMicroseconds(100);
-    test_assert_time_window(time + US2ST(100),
-                            time + US2ST(100) + 1,
+    chThdSleepMicroseconds(100000);
+    test_assert_time_window(time + US2ST(100000),
+                            time + US2ST(100000) + 1,
                             "out of time window");
   }
 
@@ -147,6 +142,8 @@ static void test_001_002_execute(void) {
                             "out of time window");
   }
 
+  /* Function chThdSleepUntil() is tested with a timeline of "now" +
+     100 ticks.*/
   test_set_step(5);
   {
     time = chVTGetSystemTimeX();
@@ -163,21 +160,16 @@ static const testcase_t test_001_002 = {
   NULL,
   test_001_002_execute
 };
-#endif /* TRUE */
 
- /****************************************************************************
+/****************************************************************************
  * Exported data.
  ****************************************************************************/
 
 /**
- * @brief   Sequence brief description.
+ * @brief   Threads Functionality.
  */
 const testcase_t * const test_sequence_001[] = {
-#if TRUE || defined(__DOXYGEN__)
   &test_001_001,
-#endif
-#if TRUE || defined(__DOXYGEN__)
   &test_001_002,
-#endif
   NULL
 };

@@ -14,9 +14,4 @@
     limitations under the License.
 */
 
-#ifndef _TEST_SEQUENCE_002_H_
-#define _TEST_SEQUENCE_002_H_
-
-extern const testcase_t * const test_sequence_002[];
-
-#endif /* _TEST_SEQUENCE_002_H_ */
+extern const testcase_t * const test_sequence_001[];

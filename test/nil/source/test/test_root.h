@@ -18,25 +18,16 @@
  * @file    test_root.h
  * @brief   Test Suite root structures header.
  *
- * @addtogroup CH_TEST_ROOT
+ * @addtogroup SPC5_TEST_ROOT
  * @{
  */
 
-#ifndef _TEST_ROOT_H_
-#define _TEST_ROOT_H_
-
-#include "ch.h"
+#ifndef _SPC5_TEST_ROOT_H_
+#define _SPC5_TEST_ROOT_H_
 
 #include "test_sequence_001.h"
 #include "test_sequence_002.h"
-
-/*===========================================================================*/
-/* Default definitions.                                                      */
-/*===========================================================================*/
-
-/* Global test suite name, it is printed on top of the test
-   report header.*/
-#define TEST_SUITE_NAME                     "ChibiOS/NIL Test Suite"
+#include "test_sequence_003.h"
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -47,10 +38,6 @@ extern const testcase_t * const *test_suite[];
 #ifdef __cplusplus
 extern "C" {
 #endif
-  extern semaphore_t gsem1, gsem2;
-  extern thread_reference_t gtr1;
-  extern THD_WORKING_AREA(wa_test_support, 128);
-  THD_FUNCTION(test_support, arg);
 #ifdef __cplusplus
 }
 #endif
@@ -59,6 +46,14 @@ extern "C" {
 /* Shared definitions.                                                       */
 /*===========================================================================*/
 
-#endif /* _TEST_ROOT_H_ */
+#define TEST_SUITE_NAME                     "ChibiOS/NIL Test Suite"
+
+extern semaphore_t gsem1, gsem2;
+extern thread_reference_t gtr1;
+extern THD_WORKING_AREA(wa_test_support, 128);
+
+THD_FUNCTION(test_support, arg);
+
+#endif /* _SPC5_TEST_ROOT_H_ */
 
 /** @} */

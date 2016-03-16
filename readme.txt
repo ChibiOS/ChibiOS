@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** Next ***
+- NIL: Updated the NIL test suite by generating the code using the new system.
 - RT:  Removed I/O Queues and Streams interface, now those exists (much
        improved) inside the HAL.
 - HAL: Improvements to the I/O queues now timeouts are absolute for
