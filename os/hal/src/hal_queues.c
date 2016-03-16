@@ -37,9 +37,6 @@
 
 #include "hal.h"
 
-#if !defined(_CHIBIOS_RT_) || (CH_CFG_USE_QUEUES == FALSE) ||               \
-    defined(__DOXYGEN__)
-
 /**
  * @brief   Initializes an input queue.
  * @details A Semaphore is internally initialized and works as a counter of
@@ -489,7 +486,5 @@ size_t oqWriteTimeout(output_queue_t *oqp, const uint8_t *bp,
     osalSysLock();
   }
 }
-
-#endif /* !defined(_CHIBIOS_RT_) || (CH_USE_QUEUES == FALSE) */
 
 /** @} */

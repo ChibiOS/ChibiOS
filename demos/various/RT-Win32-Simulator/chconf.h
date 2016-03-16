@@ -263,14 +263,6 @@
 #define CH_CFG_USE_MAILBOXES                TRUE
 
 /**
- * @brief   I/O Queues APIs.
- * @details If enabled then the I/O queues APIs are included in the kernel.
- *
- * @note    The default is @p TRUE.
- */
-#define CH_CFG_USE_QUEUES                   TRUE
-
-/**
  * @brief   Core Memory Manager APIs.
  * @details If enabled then the core memory manager APIs are included
  *          in the kernel.

@@ -36,7 +36,6 @@
 #include "testheap.h"
 #include "testpools.h"
 #include "testdyn.h"
-#include "testqueues.h"
 #include "testbmk.h"
 
 /*
@@ -53,7 +52,6 @@ static ROMCONST struct testcase * ROMCONST *patterns[] = {
   patternheap,
   patternpools,
   patterndyn,
-  patternqueues,
   patternbmk,
   NULL
 };
@@ -95,13 +93,13 @@ void test_printn(uint32_t n) {
   char buf[16], *p;
 
   if (!n)
-    chSequentialStreamPut(chp, '0');
+    streamPut(chp, '0');
   else {
     p = buf;
     while (n)
       *p++ = (n % 10) + '0', n /= 10;
     while (p > buf)
-      chSequentialStreamPut(chp, *--p);
+      streamPut(chp, *--p);
   }
 }
 
@@ -113,7 +111,7 @@ void test_printn(uint32_t n) {
 void test_print(const char *msgp) {
 
   while (*msgp)
-    chSequentialStreamPut(chp, *msgp++);
+    streamPut(chp, *msgp++);
 }
 
 /**
@@ -124,7 +122,7 @@ void test_print(const char *msgp) {
 void test_println(const char *msgp) {
 
   test_print(msgp);
-  chSequentialStreamWrite(chp, (const uint8_t *)"\r\n", 2);
+  streamWrite(chp, (const uint8_t *)"\r\n", 2);
 }
 
 /*
@@ -139,7 +137,7 @@ static void print_tokens(void) {
   char *cp = tokens_buffer;
 
   while (cp < tokp)
-    chSequentialStreamPut(chp, *cp++);
+    streamPut(chp, *cp++);
 }
 
 /**
@@ -304,8 +302,8 @@ static void print_line(void) {
   unsigned i;
 
   for (i = 0; i < 76; i++)
-    chSequentialStreamPut(chp, '-');
-  chSequentialStreamWrite(chp, (const uint8_t *)"\r\n", 2);
+    streamPut(chp, '-');
+  streamWrite(chp, (const uint8_t *)"\r\n", 2);
 }
 
 /**

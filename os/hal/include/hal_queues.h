@@ -25,11 +25,6 @@
 #ifndef _HAL_QUEUES_H_
 #define _HAL_QUEUES_H_
 
-/* The ChibiOS/RT kernel provides the following definitions by itself, this
-   check is performed in order to avoid conflicts. */
-#if !defined(_CHIBIOS_RT_) || (CH_CFG_USE_QUEUES == FALSE) ||               \
-    defined(__DOXYGEN__)
-
 /**
  * @name    Queue functions returned status value
  * @{
@@ -297,38 +292,6 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-
-#else /* defined(_CHIBIOS_RT_) && CH_CFG_USE_QUEUES */
-
-/* If ChibiOS is being used and its own queues subsystem is activated then
-   this module will use the ChibiOS queues code.*/
-#define qSizeX(qp)                          chQSizeX(qp)
-#define qSpaceI(qp)                         chQSpaceI(qp)
-#define qGetLink(qp)                        chQGetLinkX(qp)
-#define iqGetFullI(iqp)                     chIQGetFullI(iqp)
-#define iqGetEmptyI(iqp)                    chIQGetEmptyI(iqp)
-#define iqIsEmptyI(iqp)                     chIQIsEmptyI(iqp)
-#define iqIsFullI(iqp)                      chIQIsFullI(iqp)
-#define iqGet(iqp)                          chIQGet(iqp)
-#define oqGetFullI(oqp)                     chOQGetFullI(oqp)
-#define oqGetEmptyI(oqp)                    chOQGetEmptyI(oqp)
-#define oqIsEmptyI(oqp)                     chOQIsEmptyI(oqp)
-#define oqIsFullI(oqp)                      chOQIsFullI(oqp)
-#define oqPut(oqp, b)                       chOQPut(oqp, b)
-#define iqObjectInit(iqp, bp, size, infy, link)                             \
-  chIQObjectInit(iqp, bp, size, infy, link)
-#define iqResetI(iqp)                       chIQResetI(iqp)
-#define iqPutI(iqp, b)                      chIQPutI(iqp, b)
-#define iqGetTimeout(iqp, time)             chIQGetTimeout(iqp, time)
-#define iqReadTimeout(iqp, bp, n, time)     chIQReadTimeout(iqp, bp, n, time)
-#define oqObjectInit(oqp, bp, size, onfy, link)                             \
-  chOQObjectInit(oqp, bp, size, onfy, link)
-#define oqResetI(oqp)                       chOQResetI(oqp)
-#define oqPutTimeout(oqp, b, time)          chOQPutTimeout(oqp, b, time)
-#define oqGetI(oqp)                         chOQGetI(oqp)
-#define oqWriteTimeout(oqp, bp, n, time)    chOQWriteTimeout(oqp, bp, n, time)
-
-#endif /* defined(_CHIBIOS_RT_) || (CH_CFG_USE_QUEUES == FALSE) */
 
 #endif /* _HAL_QUEUES_H_ */
 

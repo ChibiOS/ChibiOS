@@ -32,9 +32,6 @@ endif
 ifneq ($(findstring CH_CFG_USE_MESSAGES TRUE,$(CHCONF)),)
 KERNSRC += $(CHIBIOS)/os/rt/src/chmsg.c
 endif
-ifneq ($(findstring CH_CFG_USE_QUEUES TRUE,$(CHCONF)),)
-KERNSRC += $(CHIBIOS)/os/rt/src/chqueues.c
-endif
 ifneq ($(findstring CH_CFG_USE_DYNAMIC TRUE,$(CHCONF)),)
 KERNSRC += $(CHIBIOS)/os/rt/src/chdynamic.c
 endif
@@ -64,7 +61,6 @@ KERNSRC := $(CHIBIOS)/os/rt/src/chsys.c \
            $(CHIBIOS)/os/rt/src/chcond.c \
            $(CHIBIOS)/os/rt/src/chevents.c \
            $(CHIBIOS)/os/rt/src/chmsg.c \
-           $(CHIBIOS)/os/rt/src/chqueues.c \
            $(CHIBIOS)/os/rt/src/chdynamic.c \
            $(CHIBIOS)/os/common/oslib/src/chmboxes.c \
            $(CHIBIOS)/os/common/oslib/src/chmemcore.c \
