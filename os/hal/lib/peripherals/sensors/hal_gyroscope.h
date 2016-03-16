@@ -47,10 +47,10 @@
  * @brief   BaseGyroscope specific methods.
  */
 #define _base_gyroscope_methods_alone                                       \
-  /* Remove the calibration data.*/                                         \
-  msg_t (*reset_calibration)(void *instance);                               \
-  /* Invokes the calibration procedure.*/                                   \
-  msg_t (*calibrate)(void *instance);
+  /* Invoke the sample bias procedure.*/                                    \
+  msg_t (*sample_bias)(void *instance);                                     \
+  /* Remove bias stored data.*/                                             \
+  msg_t (*reset_bias)(void *instance);
 
 /**
  * @brief   BaseGyroscope specific methods with inherited ones.
@@ -132,7 +132,24 @@ typedef struct {
         (ip)->vmt_basegyroscope->read_cooked(ip, dp)
 
 /**
- * @brief   Delete calibration data.
+ * @brief   Gyroscope bias sampling procedure.
+ * @note    During this procedure gyroscope must be kept hold in the rest
+ *          position. Sampled bias will be automatically removed after calling
+ *          this procedure.
+ *
+ * @param[in] ip        pointer to a @p BaseGyroscope class.
+ * 
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more errors occurred.
+ *
+ * @api
+ */
+#define gyroscopeSampleBias(ip)                                              \
+        (ip)->vmt_basegyroscope->sample_bias(ip)
+
+/**
+ * @brief   Reset bias data restoring it to zero.
  *
  * @param[in] ip        pointer to a @p BaseGyroscope class.
  * 
@@ -143,21 +160,7 @@ typedef struct {
  * @api
  */
 #define gyroscopeResetCalibration(ip)                                       \
-        (ip)->vmt_basegyroscope->reset_calibration(ip)
-
-/**
- * @brief   Gyroscope calibration procedure.
- *
- * @param[in] ip        pointer to a @p BaseGyroscope class.
- * 
- * @return              The operation status.
- * @retval MSG_OK       if the function succeeded.
- * @retval MSG_RESET    if one or more errors occurred.
- *
- * @api
- */
-#define gyroscopeCalibrate(ip)                                              \
-        (ip)->vmt_basegyroscope->calibrate(ip)
+        (ip)->vmt_basegyroscope->reset_bias(ip)
 /** @} */
 
 /*===========================================================================*/

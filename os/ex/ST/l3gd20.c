@@ -244,26 +244,12 @@ static msg_t read_cooked(void *ip, float axes[]) {
 
   msg = read_raw(ip, raw);
   for(i = 0; i < L3GD20_NUMBER_OF_AXES ; i++){
-    axes[i] = raw[i] * ((L3GD20Driver *)ip)->sensitivity;
+    axes[i] = raw[i] * ((L3GD20Driver *)ip)->sensitivity[i];
   }
   return msg;
 }
 
-static msg_t reset_calibration(void *ip) {
-  uint32_t i;
-
-  osalDbgCheck(ip != NULL);
-
-  osalDbgAssert((((L3GD20Driver *)ip)->state == L3GD20_READY) ||
-                (((L3GD20Driver *)ip)->state == L3GD20_STOP),
-              "reset_calibration(), invalid state");
-
-  for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++)
-    ((L3GD20Driver *)ip)->bias[i] = 0;
-  return MSG_OK;
-}
-
-static msg_t calibrate(void *ip) {
+static msg_t sample_bias(void *ip) {
   uint32_t i, j;
   int32_t raw[L3GD20_NUMBER_OF_AXES];
   int32_t buff[L3GD20_NUMBER_OF_AXES] = {0, 0, 0};
@@ -287,13 +273,27 @@ static msg_t calibrate(void *ip) {
   return MSG_OK;
 }
 
+static msg_t reset_bias(void *ip) {
+  uint32_t i;
+
+  osalDbgCheck(ip != NULL);
+
+  osalDbgAssert((((L3GD20Driver *)ip)->state == L3GD20_READY) ||
+                (((L3GD20Driver *)ip)->state == L3GD20_STOP),
+              "reset_calibration(), invalid state");
+
+  for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++)
+    ((L3GD20Driver *)ip)->bias[i] = 0;
+  return MSG_OK;
+}
+
 static const struct BaseSensorVMT vmt_basesensor = {
   get_axes_number, read_raw, read_cooked
 };
 
 static const struct BaseGyroscopeVMT vmt_basegyroscope = {
   get_axes_number, read_raw, read_cooked,
-  reset_calibration, calibrate
+  sample_bias, reset_bias
 };
 
 
@@ -329,7 +329,7 @@ void l3gd20ObjectInit(L3GD20Driver *devp) {
  * @api
  */
 void l3gd20Start(L3GD20Driver *devp, const L3GD20Config *config) {
-
+  uint8_t i;
   osalDbgCheck((devp != NULL) && (config != NULL));
 
   osalDbgAssert((devp->state == L3GD20_STOP) || (devp->state == L3GD20_READY),
@@ -358,11 +358,14 @@ void l3gd20Start(L3GD20Driver *devp, const L3GD20Config *config) {
   
   /* Storing sensitivity information according to full scale value */
   if(devp->config->fullscale == L3GD20_FS_250DPS)
-    devp->sensitivity = L3GD20_SENS_250DPS;
+    for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++)
+      devp->sensitivity[i] = L3GD20_SENS_250DPS;
   else if(devp->config->fullscale == L3GD20_FS_500DPS)
-    devp->sensitivity = L3GD20_SENS_500DPS;
+	for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++)
+      devp->sensitivity[i] = L3GD20_SENS_500DPS;
   else if(devp->config->fullscale == L3GD20_FS_2000DPS)
-    devp->sensitivity = L3GD20_SENS_2000DPS;
+	for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++)
+      devp->sensitivity[i] = L3GD20_SENS_2000DPS;
   else
     osalDbgAssert(FALSE, "l3gd20Start(), full scale issue");
   /* This is the Gyroscope transient recovery time */

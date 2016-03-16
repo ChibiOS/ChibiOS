@@ -119,14 +119,14 @@ int main(void) {
   }
 
   palClearLine(LINE_LED_RED);
-  chprintf(chp, "Calibrating Gyroscope...\r\n");
+  chprintf(chp, "Calibrating Gyroscope sampling bias...\r\n");
   chprintf(chp, "Keep it in the rest position while red LED is on\r\n");
   chThdSleepMilliseconds(3000);
 
   palSetLine(LINE_LED_RED);
   chThdSleepMilliseconds(1000);
 
-  gyroscopeCalibrate(&L3GD20D1);
+  gyroscopeSampleBias(&L3GD20D1);
   palClearLine(LINE_LED_RED);
 #if CHPRINTF_USE_ANSI_CODE
   chprintf(chp, "\033[2J\033[1;1H");

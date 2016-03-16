@@ -266,7 +266,7 @@ struct L3GD20VMT {
   /* Current configuration data.*/                                          \
   const L3GD20Config        *config;                                        \
   /* Current sensitivity.*/                                                 \
-  float                     sensitivity;                                    \
+  float                     sensitivity[L3GD20_NUMBER_OF_AXES];             \
   /* Bias data.*/                                                           \
   int32_t                   bias[L3GD20_NUMBER_OF_AXES];
 
