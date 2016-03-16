@@ -252,7 +252,7 @@ void sduStart(SerialUSBDriver *sdup, const SerialUSBConfig *config) {
 /**
  * @brief   Stops the driver.
  * @details Any thread waiting on the driver's queues will be awakened with
- *          the message @p Q_RESET.
+ *          the message @p MSG_RESET.
  *
  * @param[in] sdup      pointer to a @p SerialUSBDriver object
  *

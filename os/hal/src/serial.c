@@ -159,7 +159,7 @@ void sdStart(SerialDriver *sdp, const SerialConfig *config) {
 /**
  * @brief   Stops the driver.
  * @details Any thread waiting on the driver's queues will be awakened with
- *          the message @p Q_RESET.
+ *          the message @p MSG_RESET.
  *
  * @param[in] sdp       pointer to a @p SerialDriver object
  *
@@ -203,7 +203,7 @@ void sdIncomingDataI(SerialDriver *sdp, uint8_t b) {
 
   if (iqIsEmptyI(&sdp->iqueue))
     chnAddFlagsI(sdp, CHN_INPUT_AVAILABLE);
-  if (iqPutI(&sdp->iqueue, b) < Q_OK)
+  if (iqPutI(&sdp->iqueue, b) < MSG_OK)
     chnAddFlagsI(sdp, SD_OVERRUN_ERROR);
 }
 
@@ -217,7 +217,7 @@ void sdIncomingDataI(SerialDriver *sdp, uint8_t b) {
  *
  * @param[in] sdp       pointer to a @p SerialDriver structure
  * @return              The byte value read from the driver's output queue.
- * @retval Q_EMPTY      if the queue is empty (the lower driver usually
+ * @retval MSG_TIMEOUT  if the queue is empty (the lower driver usually
  *                      disables the interrupt source when this happens).
  *
  * @iclass
@@ -229,7 +229,7 @@ msg_t sdRequestDataI(SerialDriver *sdp) {
   osalDbgCheck(sdp != NULL);
 
   b = oqGetI(&sdp->oqueue);
-  if (b < Q_OK)
+  if (b < MSG_OK)
     chnAddFlagsI(sdp, CHN_OUTPUT_EMPTY);
   return b;
 }

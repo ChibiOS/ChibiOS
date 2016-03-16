@@ -71,7 +71,7 @@ void iqObjectInit(input_queue_t *iqp, uint8_t *bp, size_t size,
 /**
  * @brief   Resets an input queue.
  * @details All the data in the input queue is erased and lost, any waiting
- *          thread is resumed with status @p Q_RESET.
+ *          thread is resumed with status @p MSG_RESET.
  * @note    A reset operation can be used by a low level driver in order to
  *          obtain immediate attention from the high level layers.
  *
@@ -86,7 +86,7 @@ void iqResetI(input_queue_t *iqp) {
   iqp->q_rdptr = iqp->q_buffer;
   iqp->q_wrptr = iqp->q_buffer;
   iqp->q_counter = 0;
-  osalThreadDequeueAllI(&iqp->q_waiting, Q_RESET);
+  osalThreadDequeueAllI(&iqp->q_waiting, MSG_RESET);
 }
 
 /**
@@ -96,8 +96,8 @@ void iqResetI(input_queue_t *iqp) {
  * @param[in] iqp       pointer to an @p input_queue_t structure
  * @param[in] b         the byte value to be written in the queue
  * @return              The operation status.
- * @retval Q_OK         if the operation has been completed with success.
- * @retval Q_FULL       if the queue is full and the operation cannot be
+ * @retval MSG_OK       if the operation has been completed with success.
+ * @retval MSG_TIMEOUT  if the queue is full and the operation cannot be
  *                      completed.
  *
  * @iclass
@@ -107,7 +107,7 @@ msg_t iqPutI(input_queue_t *iqp, uint8_t b) {
   osalDbgCheckClassI();
 
   if (iqIsFullI(iqp)) {
-    return Q_FULL;
+    return MSG_TIMEOUT;
   }
 
   iqp->q_counter++;
@@ -116,9 +116,9 @@ msg_t iqPutI(input_queue_t *iqp, uint8_t b) {
     iqp->q_wrptr = iqp->q_buffer;
   }
 
-  osalThreadDequeueNextI(&iqp->q_waiting, Q_OK);
+  osalThreadDequeueNextI(&iqp->q_waiting, MSG_OK);
 
-  return Q_OK;
+  return MSG_OK;
 }
 
 /**
@@ -126,8 +126,8 @@ msg_t iqPutI(input_queue_t *iqp, uint8_t b) {
  * @details This function reads a byte value from an input queue. If the queue
  *          is empty then the calling thread is suspended until a byte arrives
  *          in the queue or a timeout occurs.
- * @note    The callback is invoked before reading the character from the
- *          buffer or before entering the state @p THD_STATE_WTQUEUE.
+ * @note    The callback is invoked after removing a character from the
+ *          queue.
  *
  * @param[in] iqp       pointer to an @p input_queue_t structure
  * @param[in] timeout   the number of ticks before the operation timeouts,
@@ -136,8 +136,8 @@ msg_t iqPutI(input_queue_t *iqp, uint8_t b) {
  *                      - @a TIME_INFINITE no timeout.
  *                      .
  * @return              A byte value from the queue.
- * @retval Q_TIMEOUT    if the specified time expired.
- * @retval Q_RESET      if the queue has been reset.
+ * @retval MSG_TIMEOUT  if the specified time expired.
+ * @retval MSG_RESET    if the queue has been reset.
  *
  * @api
  */
@@ -145,23 +145,28 @@ msg_t iqGetTimeout(input_queue_t *iqp, systime_t timeout) {
   uint8_t b;
 
   osalSysLock();
-  if (iqp->q_notify != NULL) {
-    iqp->q_notify(iqp);
-  }
 
+  /* Waiting until there is a character available or a timeout occurs.*/
   while (iqIsEmptyI(iqp)) {
     msg_t msg = osalThreadEnqueueTimeoutS(&iqp->q_waiting, timeout);
-    if (msg < Q_OK) {
+    if (msg < MSG_OK) {
       osalSysUnlock();
       return msg;
     }
   }
 
+  /* Getting the character from the queue.*/
   iqp->q_counter--;
   b = *iqp->q_rdptr++;
   if (iqp->q_rdptr >= iqp->q_top) {
     iqp->q_rdptr = iqp->q_buffer;
   }
+
+  /* Inform the low side that the queue has at least one slot available.*/
+  if (iqp->q_notify != NULL) {
+    iqp->q_notify(iqp);
+  }
+
   osalSysUnlock();
 
   return (msg_t)b;
@@ -175,8 +180,8 @@ msg_t iqGetTimeout(input_queue_t *iqp, systime_t timeout) {
  *          been reset.
  * @note    The function is not atomic, if you need atomicity it is suggested
  *          to use a semaphore or a mutex for mutual exclusion.
- * @note    The callback is invoked before reading each character from the
- *          buffer or before entering the state @p THD_STATE_WTQUEUE.
+ * @note    The callback is invoked after removing each character from the
+ *          queue.
  *
  * @param[in] iqp       pointer to an @p input_queue_t structure
  * @param[out] bp       pointer to the data buffer
@@ -193,30 +198,64 @@ msg_t iqGetTimeout(input_queue_t *iqp, systime_t timeout) {
  */
 size_t iqReadTimeout(input_queue_t *iqp, uint8_t *bp,
                      size_t n, systime_t timeout) {
+  systime_t deadline;
   qnotify_t nfy = iqp->q_notify;
   size_t r = 0;
 
   osalDbgCheck(n > 0U);
 
   osalSysLock();
-  while (true) {
-    if (nfy != NULL) {
-      nfy(iqp);
-    }
 
+  /* Time deadline for the whole operation, note the result is invalid
+     when timeout is TIME_INFINITE or TIME_IMMEDIATE but in that case
+     the deadline is not used.*/
+  deadline = osalOsGetSystemTimeX() + timeout;
+
+  while (true) {
+    /* Waiting until there is a character available or a timeout occurs.*/
     while (iqIsEmptyI(iqp)) {
-      if (osalThreadEnqueueTimeoutS(&iqp->q_waiting, timeout) != Q_OK) {
+      msg_t msg;
+
+      /* TIME_INFINITE and TIME_IMMEDIATE are handled differently, no
+         deadline.*/
+      if ((timeout == TIME_INFINITE) || (timeout == TIME_IMMEDIATE)) {
+        msg = osalThreadEnqueueTimeoutS(&iqp->q_waiting, timeout);
+      }
+      else {
+        systime_t next_timeout = deadline - osalOsGetSystemTimeX();
+
+        /* Handling the case where the system time went past the deadline,
+           in this case next becomes a very high number because the system
+           time is an unsigned type.*/
+        if (next_timeout > timeout) {
+          osalSysUnlock();
+          return r;
+        }
+
+        msg = osalThreadEnqueueTimeoutS(&iqp->q_waiting, next_timeout);
+      }
+
+      /* Anything except MSG_OK causes the operation to stop.*/
+      if (msg != MSG_OK) {
         osalSysUnlock();
         return r;
       }
     }
 
+    /* Getting the character from the queue.*/
     iqp->q_counter--;
     *bp++ = *iqp->q_rdptr++;
     if (iqp->q_rdptr >= iqp->q_top) {
       iqp->q_rdptr = iqp->q_buffer;
     }
-    osalSysUnlock(); /* Gives a preemption chance in a controlled point.*/
+
+    /* Inform the low side that the queue has at least one slot available.*/
+    if (nfy != NULL) {
+      nfy(iqp);
+    }
+
+    /* Giving a preemption chance in a controlled point.*/
+    osalSysUnlock();
 
     r++;
     if (--n == 0U) {
@@ -258,7 +297,7 @@ void oqObjectInit(output_queue_t *oqp, uint8_t *bp, size_t size,
 /**
  * @brief   Resets an output queue.
  * @details All the data in the output queue is erased and lost, any waiting
- *          thread is resumed with status @p Q_RESET.
+ *          thread is resumed with status @p MSG_RESET.
  * @note    A reset operation can be used by a low level driver in order to
  *          obtain immediate attention from the high level layers.
  *
@@ -273,7 +312,7 @@ void oqResetI(output_queue_t *oqp) {
   oqp->q_rdptr = oqp->q_buffer;
   oqp->q_wrptr = oqp->q_buffer;
   oqp->q_counter = qSizeX(oqp);
-  osalThreadDequeueAllI(&oqp->q_waiting, Q_RESET);
+  osalThreadDequeueAllI(&oqp->q_waiting, MSG_RESET);
 }
 
 /**
@@ -281,8 +320,8 @@ void oqResetI(output_queue_t *oqp) {
  * @details This function writes a byte value to an output queue. If the queue
  *          is full then the calling thread is suspended until there is space
  *          in the queue or a timeout occurs.
- * @note    The callback is invoked after writing the character into the
- *          buffer.
+ * @note    The callback is invoked after putting the character into the
+ *          queue.
  *
  * @param[in] oqp       pointer to an @p output_queue_t structure
  * @param[in] b         the byte value to be written in the queue
@@ -292,35 +331,40 @@ void oqResetI(output_queue_t *oqp) {
  *                      - @a TIME_INFINITE no timeout.
  *                      .
  * @return              The operation status.
- * @retval Q_OK         if the operation succeeded.
- * @retval Q_TIMEOUT    if the specified time expired.
- * @retval Q_RESET      if the queue has been reset.
+ * @retval MSG_OK       if the operation succeeded.
+ * @retval MSG_TIMEOUT  if the specified time expired.
+ * @retval MSG_RESET    if the queue has been reset.
  *
  * @api
  */
 msg_t oqPutTimeout(output_queue_t *oqp, uint8_t b, systime_t timeout) {
 
   osalSysLock();
+
+  /* Waiting until there is a slot available or a timeout occurs.*/
   while (oqIsFullI(oqp)) {
     msg_t msg = osalThreadEnqueueTimeoutS(&oqp->q_waiting, timeout);
-    if (msg < Q_OK) {
+    if (msg < MSG_OK) {
       osalSysUnlock();
       return msg;
     }
   }
 
+  /* Putting the character into the queue.*/
   oqp->q_counter--;
   *oqp->q_wrptr++ = b;
   if (oqp->q_wrptr >= oqp->q_top) {
     oqp->q_wrptr = oqp->q_buffer;
   }
 
+  /* Inform the low side that the queue has at least one character available.*/
   if (oqp->q_notify != NULL) {
     oqp->q_notify(oqp);
   }
+
   osalSysUnlock();
 
-  return Q_OK;
+  return MSG_OK;
 }
 
 /**
@@ -329,7 +373,7 @@ msg_t oqPutTimeout(output_queue_t *oqp, uint8_t b, systime_t timeout) {
  *
  * @param[in] oqp       pointer to an @p output_queue_t structure
  * @return              The byte value from the queue.
- * @retval Q_EMPTY      if the queue is empty.
+ * @retval MSG_TIMEOUT  if the queue is empty.
  *
  * @iclass
  */
@@ -339,7 +383,7 @@ msg_t oqGetI(output_queue_t *oqp) {
   osalDbgCheckClassI();
 
   if (oqIsEmptyI(oqp)) {
-    return Q_EMPTY;
+    return MSG_TIMEOUT;
   }
 
   oqp->q_counter++;
@@ -348,7 +392,7 @@ msg_t oqGetI(output_queue_t *oqp) {
     oqp->q_rdptr = oqp->q_buffer;
   }
 
-  osalThreadDequeueNextI(&oqp->q_waiting, Q_OK);
+  osalThreadDequeueNextI(&oqp->q_waiting, MSG_OK);
 
   return (msg_t)b;
 }
@@ -361,8 +405,8 @@ msg_t oqGetI(output_queue_t *oqp) {
  *          been reset.
  * @note    The function is not atomic, if you need atomicity it is suggested
  *          to use a semaphore or a mutex for mutual exclusion.
- * @note    The callback is invoked after writing each character into the
- *          buffer.
+ * @note    The callback is invoked after putting each character into the
+ *          queue.
  *
  * @param[in] oqp       pointer to an @p output_queue_t structure
  * @param[in] bp        pointer to the data buffer
@@ -379,29 +423,63 @@ msg_t oqGetI(output_queue_t *oqp) {
  */
 size_t oqWriteTimeout(output_queue_t *oqp, const uint8_t *bp,
                       size_t n, systime_t timeout) {
+  systime_t deadline;
   qnotify_t nfy = oqp->q_notify;
   size_t w = 0;
 
   osalDbgCheck(n > 0U);
 
   osalSysLock();
+
+  /* Time deadline for the whole operation, note the result is invalid
+     when timeout is TIME_INFINITE or TIME_IMMEDIATE but in that case
+     the deadline is not used.*/
+  deadline = osalOsGetSystemTimeX() + timeout;
+
   while (true) {
+    msg_t msg;
+
     while (oqIsFullI(oqp)) {
-      if (osalThreadEnqueueTimeoutS(&oqp->q_waiting, timeout) != Q_OK) {
+      /* TIME_INFINITE and TIME_IMMEDIATE are handled differently, no
+         deadline.*/
+      if ((timeout == TIME_INFINITE) || (timeout == TIME_IMMEDIATE)) {
+        msg = osalThreadEnqueueTimeoutS(&oqp->q_waiting, timeout);
+      }
+      else {
+        systime_t next_timeout = deadline - osalOsGetSystemTimeX();
+
+        /* Handling the case where the system time went past the deadline,
+           in this case next becomes a very high number because the system
+           time is an unsigned type.*/
+        if (next_timeout > timeout) {
+          osalSysUnlock();
+          return w;
+        }
+
+        msg = osalThreadEnqueueTimeoutS(&oqp->q_waiting, next_timeout);
+      }
+
+      /* Anything except MSG_OK causes the operation to stop.*/
+      if (msg != MSG_OK) {
         osalSysUnlock();
         return w;
       }
     }
+
+    /* Putting the character into the queue.*/
     oqp->q_counter--;
     *oqp->q_wrptr++ = *bp++;
     if (oqp->q_wrptr >= oqp->q_top) {
       oqp->q_wrptr = oqp->q_buffer;
     }
 
+    /* Inform the low side that the queue has at least one character available.*/
     if (nfy != NULL) {
       nfy(oqp);
     }
-    osalSysUnlock(); /* Gives a preemption chance in a controlled point.*/
+
+    /* Giving a preemption chance in a controlled point.*/
+    osalSysUnlock();
 
     w++;
     if (--n == 0U) {

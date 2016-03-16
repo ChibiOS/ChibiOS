@@ -252,7 +252,7 @@ OSAL_IRQ_HANDLER(AVR_SD1_TX_VECT) {
   osalSysLockFromISR();
   b = sdRequestDataI(&SD1);
   osalSysUnlockFromISR();
-  if (b < Q_OK)
+  if (b < MSG_OK)
     UCSR0B &= ~(1 << UDRIE0);
   else
     UDR0 = b;
@@ -295,7 +295,7 @@ OSAL_IRQ_HANDLER(AVR_SD2_TX_VECT) {
   osalSysLockFromISR();
   b = sdRequestDataI(&SD2);
   osalSysUnlockFromISR();
-  if (b < Q_OK)
+  if (b < MSG_OK)
     UCSR1B &= ~(1 << UDRIE1);
   else
     UDR1 = b;

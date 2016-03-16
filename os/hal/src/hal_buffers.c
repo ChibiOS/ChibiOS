@@ -353,6 +353,8 @@ size_t ibqReadTimeout(input_buffers_queue_t *ibqp, uint8_t *bp,
   size_t r = 0;
   systime_t deadline;
 
+  osalDbgCheck(n > 0U);
+
   osalSysLock();
 
   /* Time window for the whole operation.*/
@@ -725,6 +727,8 @@ size_t obqWriteTimeout(output_buffers_queue_t *obqp, const uint8_t *bp,
                        size_t n, systime_t timeout) {
   size_t w = 0;
   systime_t deadline;
+
+  osalDbgCheck(n > 0U);
 
   osalSysLock();
 

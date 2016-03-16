@@ -141,7 +141,7 @@ static void serve_interrupt(SerialDriver *sdp) {
       osalSysUnlockFromISR();
       while (u->UART_LSR & LSR_RBR_FULL) {
         osalSysLockFromISR();
-        if (chIQPutI(&sdp->iqueue, u->UART_RBR) < Q_OK)
+        if (chIQPutI(&sdp->iqueue, u->UART_RBR) < MSG_OK)
           chnAddFlagsI(sdp, SD_OVERRUN_ERROR);
         osalSysUnlockFromISR();
       }
@@ -155,7 +155,7 @@ static void serve_interrupt(SerialDriver *sdp) {
           osalSysLockFromISR();
           b = chOQGetI(&sdp->oqueue);
           osalSysUnlockFromISR();
-          if (b < Q_OK) {
+          if (b < MSG_OK) {
             u->UART_IER &= ~IER_THRE;
             osalSysLockFromISR();
             chnAddFlagsI(sdp, CHN_OUTPUT_EMPTY);
@@ -183,7 +183,7 @@ static void preload(SerialDriver *sdp) {
     int i = LPC214x_UART_FIFO_PRELOAD;
     do {
       msg_t b = chOQGetI(&sdp->oqueue);
-      if (b < Q_OK) {
+      if (b < MSG_OK) {
         chnAddFlagsI(sdp, CHN_OUTPUT_EMPTY);
         return;
       }

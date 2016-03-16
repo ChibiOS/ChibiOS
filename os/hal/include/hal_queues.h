@@ -37,8 +37,8 @@
 #define Q_OK            MSG_OK      /**< @brief Operation successful.       */
 #define Q_TIMEOUT       MSG_TIMEOUT /**< @brief Timeout condition.          */
 #define Q_RESET         MSG_RESET   /**< @brief Queue has been reset.       */
-#define Q_EMPTY         (msg_t)-3   /**< @brief Queue empty.                */
-#define Q_FULL          (msg_t)-4   /**< @brief Queue full,                 */
+#define Q_EMPTY         MSG_TIMEOUT /**< @brief Queue empty.                */
+#define Q_FULL          MSG_TIMEOUT /**< @brief Queue full,                 */
 /** @} */
 
 /**
@@ -187,7 +187,7 @@ typedef io_queue_t input_queue_t;
  *
  * @param[in] iqp       pointer to an @p input_queue_t structure
  * @return              A byte value from the queue.
- * @retval Q_RESET      if the queue has been reset.
+ * @retval MSG_RESET    if the queue has been reset.
  *
  * @api
  */
@@ -268,8 +268,8 @@ typedef io_queue_t output_queue_t;
  * @param[in] oqp       pointer to an @p output_queue_t structure
  * @param[in] b         the byte value to be written in the queue
  * @return              The operation status.
- * @retval Q_OK         if the operation succeeded.
- * @retval Q_RESET      if the queue has been reset.
+ * @retval MSG_OK       if the operation succeeded.
+ * @retval MSG_RESET    if the queue has been reset.
  *
  * @api
  */

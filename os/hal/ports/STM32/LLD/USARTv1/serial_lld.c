@@ -194,7 +194,7 @@ static void serve_interrupt(SerialDriver *sdp) {
     msg_t b;
     osalSysLockFromISR();
     b = oqGetI(&sdp->oqueue);
-    if (b < Q_OK) {
+    if (b < MSG_OK) {
       chnAddFlagsI(sdp, CHN_OUTPUT_EMPTY);
       u->CR1 = (cr1 & ~USART_CR1_TXEIE) | USART_CR1_TCIE;
     }

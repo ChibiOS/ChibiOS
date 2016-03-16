@@ -83,7 +83,7 @@ static void serve_interrupt(SerialDriver *sdp) {
     osalSysLockFromISR();
     if (iqIsEmptyI(&sdp->iqueue))
       chnAddFlagsI(sdp, CHN_INPUT_AVAILABLE);
-    if (iqPutI(&sdp->iqueue, u->D) < Q_OK)
+    if (iqPutI(&sdp->iqueue, u->D) < MSG_OK)
       chnAddFlagsI(sdp, SD_OVERRUN_ERROR);
     osalSysUnlockFromISR();
   }
@@ -95,7 +95,7 @@ static void serve_interrupt(SerialDriver *sdp) {
     b = oqGetI(&sdp->oqueue);
     osalSysUnlockFromISR();
 
-    if (b < Q_OK) {
+    if (b < MSG_OK) {
       osalSysLockFromISR();
       chnAddFlagsI(sdp, CHN_OUTPUT_EMPTY);
       osalSysUnlockFromISR();
@@ -123,7 +123,7 @@ static void preload(SerialDriver *sdp) {
 
   if (u->S1 & UARTx_S1_TDRE) {
     msg_t b = oqGetI(&sdp->oqueue);
-    if (b < Q_OK) {
+    if (b < MSG_OK) {
       chnAddFlagsI(sdp, CHN_OUTPUT_EMPTY);
       return;
     }
