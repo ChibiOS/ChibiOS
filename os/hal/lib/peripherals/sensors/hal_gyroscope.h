@@ -49,9 +49,20 @@
 #define _base_gyroscope_methods_alone                                       \
   /* Invoke the sample bias procedure.*/                                    \
   msg_t (*sample_bias)(void *instance);                                     \
+  /* Invoke the set bias procedure.*/                                       \
+  msg_t (*set_bias)(void *instance, int32_t biases[]);                      \
   /* Remove bias stored data.*/                                             \
-  msg_t (*reset_bias)(void *instance);
-
+  msg_t (*reset_bias)(void *instance);                                      \
+  /* Invoke the set sensitivity procedure.*/                                \
+  msg_t (*set_sensitivity)(void *instance, float sensitivities[]);          \
+  /* Restore sensitivity stored data to default.*/                          \
+  msg_t (*reset_sensitivity)(void *instance);                               \
+  /* Enable temperature drift effect compensation.*/                        \
+  msg_t (*enable_temperature_compensation)(void *instance);                 \
+  /* Disable temperature drift effect compensation.*/                       \
+  msg_t (*disable_temperature_compensation)(void *instance);                                 
+  
+  
 /**
  * @brief   BaseGyroscope specific methods with inherited ones.
  */
@@ -134,8 +145,8 @@ typedef struct {
 /**
  * @brief   Gyroscope bias sampling procedure.
  * @note    During this procedure gyroscope must be kept hold in the rest
- *          position. Sampled bias will be automatically removed after calling
- *          this procedure.
+ *          position. Sampled bias will be automatically removed after 
+ *          calling this procedure.
  *
  * @param[in] ip        pointer to a @p BaseGyroscope class.
  * 
@@ -145,11 +156,28 @@ typedef struct {
  *
  * @api
  */
-#define gyroscopeSampleBias(ip)                                              \
+#define gyroscopeSampleBias(ip)                                             \
         (ip)->vmt_basegyroscope->sample_bias(ip)
 
 /**
- * @brief   Reset bias data restoring it to zero.
+ * @brief   Updates gyroscope bias data from received buffer.
+ * @note    The bias buffer must have the same length of the
+ *          the gyroscope axes number.
+ *
+ * @param[in] ip        pointer to a @p BaseGyroscope class.
+ * @param[in] bp        pointer to a buffer of bias values.
+ * 
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more errors occurred.
+ *
+ * @api
+ */
+#define gyroscopeSetBias(ip, bp)                                            \
+        (ip)->vmt_basegyroscope->set_bias(ip, bp)
+		
+/**
+ * @brief   Reset gyroscope bias data restoring it to zero.
  *
  * @param[in] ip        pointer to a @p BaseGyroscope class.
  * 
@@ -159,8 +187,68 @@ typedef struct {
  *
  * @api
  */
-#define gyroscopeResetCalibration(ip)                                       \
+#define gyroscopeResetBias(ip)                                               \
         (ip)->vmt_basegyroscope->reset_bias(ip)
+		
+/**
+ * @brief   Updates gyroscope sensitivity data from received buffer.
+ * @note    The sensitivity buffer must have the same length of the
+ *          the gyroscope axes number.
+ *
+ * @param[in] ip        pointer to a @p BaseGyroscope class.
+ * @param[in] sp        pointer to a buffer of sensitivity values.
+ * 
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more errors occurred.
+ *
+ * @api
+ */
+#define gyroscopeSetSensitivity(ip, sp)                                     \
+        (ip)->vmt_basegyroscope->set_sensitivity(ip, sp)
+		
+/**
+ * @brief   Reset gyroscope sensitivity data restoring it to its typical 
+ *          value.
+ *
+ * @param[in] ip        pointer to a @p BaseGyroscope class.
+ * 
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more errors occurred.
+ *
+ * @api
+ */
+#define gyroscopeResetSensitivity(ip)                                       \
+        (ip)->vmt_basegyroscope->reset_sensitivity(ip)
+
+/**
+ * @brief   Enables data compensation removing temperature drift.
+ *
+ * @param[in] ip        pointer to a @p BaseGyroscope class.
+ * 
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more errors occurred.
+ *
+ * @api
+ */
+#define gyroscopeEnableTempCompensation(ip)                                 \
+        (ip)->vmt_basegyroscope->enable_temperature_compensation(ip)		
+
+/**
+ * @brief   Disable data compensation.
+ *
+ * @param[in] ip        pointer to a @p BaseGyroscope class.
+ * 
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more errors occurred.
+ *
+ * @api
+ */
+#define gyroscopeDisableTempCompensation(ip)                                 \
+        (ip)->vmt_basegyroscope->disable_temperature_compensation(ip)			
 /** @} */
 
 /*===========================================================================*/

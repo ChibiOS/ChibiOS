@@ -257,7 +257,7 @@ static msg_t sample_bias(void *ip) {
   osalDbgCheck(ip != NULL);
 
   osalDbgAssert((((L3GD20Driver *)ip)->state == L3GD20_READY),
-              "calibrate(), invalid state");
+                "sample_bias(), invalid state");
 
   for(i = 0; i < L3GD20_BIAS_ACQ_TIMES; i++){
     read_raw(ip, raw);
@@ -269,6 +269,21 @@ static msg_t sample_bias(void *ip) {
 
   for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++){
     ((L3GD20Driver *)ip)->bias[i] = buff[i] / L3GD20_BIAS_ACQ_TIMES;
+  }
+  return MSG_OK;
+}
+
+static msg_t set_bias(void *ip, int32_t *bp) {
+  uint32_t i;
+  
+  osalDbgCheck((ip != NULL) && (bp !=NULL));
+
+  osalDbgAssert((((L3GD20Driver *)ip)->state == L3GD20_READY) ||
+                (((L3GD20Driver *)ip)->state == L3GD20_STOP),
+                "set_bias(), invalid state");
+  
+  for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++) {
+    ((L3GD20Driver *)ip)->bias[i] = bp[i];
   }
   return MSG_OK;
 }
@@ -287,15 +302,63 @@ static msg_t reset_bias(void *ip) {
   return MSG_OK;
 }
 
+static msg_t set_sensivity(void *ip, float *sp) {
+  uint32_t i;
+  
+  osalDbgCheck((ip != NULL) && (sp !=NULL));
+
+  osalDbgAssert((((L3GD20Driver *)ip)->state == L3GD20_READY),
+                "set_sensivity(), invalid state");
+  
+  for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++) {
+    ((L3GD20Driver *)ip)->sensitivity[i] = sp[i];
+  }
+  return MSG_OK;
+}
+
+static msg_t reset_sensivity(void *ip) {
+  uint32_t i;
+
+  osalDbgCheck(ip != NULL);
+
+  osalDbgAssert((((L3GD20Driver *)ip)->state == L3GD20_READY),
+                "reset_sensivity(), invalid state");
+
+  if(((L3GD20Driver *)ip)->config->fullscale == L3GD20_FS_250DPS)
+    for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++)
+      ((L3GD20Driver *)ip)->sensitivity[i] = L3GD20_SENS_250DPS;
+  else if(((L3GD20Driver *)ip)->config->fullscale == L3GD20_FS_500DPS)
+	for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++)
+      ((L3GD20Driver *)ip)->sensitivity[i] = L3GD20_SENS_500DPS;
+  else if(((L3GD20Driver *)ip)->config->fullscale == L3GD20_FS_2000DPS)
+	for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++)
+      ((L3GD20Driver *)ip)->sensitivity[i] = L3GD20_SENS_2000DPS;
+  return MSG_OK;
+}
+
+static msg_t enable_temperature_compensation(void *ip) {
+  (void) ip;
+  /* TODO complete this function */
+  return 0;
+}
+
+static msg_t disable_temperature_compensation(void *ip) {
+  (void) ip;
+  /* TODO complete this function */
+  return 0;
+}
+
 static const struct BaseSensorVMT vmt_basesensor = {
   get_axes_number, read_raw, read_cooked
 };
 
 static const struct BaseGyroscopeVMT vmt_basegyroscope = {
   get_axes_number, read_raw, read_cooked,
-  sample_bias, reset_bias
+  sample_bias, set_bias, reset_bias,
+  set_sensivity, reset_sensivity,
+  enable_temperature_compensation,
+  disable_temperature_compensation
 };
-
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
