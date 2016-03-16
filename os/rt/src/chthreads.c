@@ -216,6 +216,11 @@ thread_t *chThdCreateSuspendedI(const thread_descriptor_t *tdp) {
 thread_t *chThdCreateSuspended(const thread_descriptor_t *tdp) {
   thread_t *tp;
 
+#if CH_CFG_USE_REGISTRY == TRUE
+  chDbgAssert(chRegFindThreadByWorkingArea(tdp->wbase) == NULL,
+              "working area in use");
+#endif
+
 #if CH_DBG_FILL_THREADS == TRUE
   _thread_memfill((uint8_t *)tdp->wbase,
                   (uint8_t *)tdp->wend,
@@ -275,6 +280,11 @@ thread_t *chThdCreateI(const thread_descriptor_t *tdp) {
 thread_t *chThdCreate(const thread_descriptor_t *tdp) {
   thread_t *tp;
 
+#if CH_CFG_USE_REGISTRY == TRUE
+  chDbgAssert(chRegFindThreadByWorkingArea(tdp->wbase) == NULL,
+              "working area in use");
+#endif
+
 #if CH_DBG_FILL_THREADS == TRUE
   _thread_memfill((uint8_t *)tdp->wbase,
                   (uint8_t *)tdp->wend,
@@ -318,6 +328,11 @@ thread_t *chThdCreateStatic(void *wsp, size_t size,
              (size >= THD_WORKING_AREA_SIZE(0)) &&
              MEM_IS_ALIGNED(size, PORT_STACK_ALIGN) &&
              (prio <= HIGHPRIO) && (pf != NULL));
+
+#if CH_CFG_USE_REGISTRY == TRUE
+  chDbgAssert(chRegFindThreadByWorkingArea(wsp) == NULL,
+              "working area in use");
+#endif
 
 #if CH_DBG_FILL_THREADS == TRUE
   _thread_memfill((uint8_t *)wsp,

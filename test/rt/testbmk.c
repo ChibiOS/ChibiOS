@@ -312,7 +312,11 @@ static void bmk6_execute(void) {
   test_wait_tick();
   test_start_timer(1000);
   do {
+#if CH_CFG_USE_REGISTRY
+    chThdRelease(chThdCreateStatic(wap, WA_SIZE, prio, thread1, NULL));
+#else
     chThdCreateStatic(wap, WA_SIZE, prio, thread1, NULL);
+#endif
     n++;
 #if defined(SIMULATOR)
     _sim_check_for_interrupts();
