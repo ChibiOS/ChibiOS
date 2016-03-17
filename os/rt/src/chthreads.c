@@ -448,8 +448,8 @@ void chThdRelease(thread_t *tp) {
       /* Nothing else to do for static threads.*/
       break;
     }
-    return;
 #endif /* CH_CFG_USE_DYNAMIC == TRUE */
+    return;
   }
   chSysUnlock();
 }
