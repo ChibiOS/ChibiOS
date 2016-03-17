@@ -855,6 +855,33 @@ struct nil_system {
 /** @} */
 
 /**
+ * @name    Semaphores macros
+ * @{
+ */
+/**
+ * @brief   Data part of a static semaphore initializer.
+ * @details This macro should be used when statically initializing a semaphore
+ *          that is part of a bigger structure.
+ *
+ * @param[in] name      the name of the semaphore variable
+ * @param[in] n         the counter initial value, this value must be
+ *                      non-negative
+ */
+#define _SEMAPHORE_DATA(name, n) {n}
+
+/**
+ * @brief   Static semaphore initializer.
+ * @details Statically initialized semaphores require no explicit
+ *          initialization using @p chSemInit().
+ *
+ * @param[in] name      the name of the semaphore variable
+ * @param[in] n         the counter initial value, this value must be
+ *                      non-negative
+ */
+#define SEMAPHORE_DECL(name, n) semaphore_t name = _SEMAPHORE_DATA(name, n)
+/** @} */
+
+/**
  * @name    Macro Functions
  * @{
  */

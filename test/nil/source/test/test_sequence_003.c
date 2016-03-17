@@ -104,11 +104,18 @@ static const testcase_t test_003_001 = {
   test_003_001_execute
 };
 
+#if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
 /**
  * @page test_003_002 Events Flags functionality
  *
  * <h2>Description</h2>
  * Event flags functionality is tested.
+ *
+ * <h2>Conditions</h2>
+ * This test is only executed if the following preprocessor condition
+ * evaluates to true:
+ * - CH_CFG_USE_EVENTS
+ * .
  *
  * <h2>Test Steps</h2>
  * - A set of event flags are set on the current thread then the
@@ -171,6 +178,7 @@ static const testcase_t test_003_002 = {
   NULL,
   test_003_002_execute
 };
+#endif /* CH_CFG_USE_EVENTS */
 
 /****************************************************************************
  * Exported data.
@@ -181,6 +189,8 @@ static const testcase_t test_003_002 = {
  */
 const testcase_t * const test_sequence_003[] = {
   &test_003_001,
+#if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
   &test_003_002,
+#endif
   NULL
 };

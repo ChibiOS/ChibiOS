@@ -65,7 +65,7 @@ THD_FUNCTION(test_support, arg) {
               <value>Internal Tests</value>
             </type>
             <brief>
-              <value>Threads Functionality</value>
+              <value>Threads Functionality.</value>
             </brief>
             <description>
               <value>This sequence tests the ChibiOS/NIL functionalities related to threading.</value>
@@ -217,7 +217,7 @@ test_assert_time_window(time + 100,
               <value>Internal Tests</value>
             </type>
             <brief>
-              <value>Semaphores</value>
+              <value>Semaphores.</value>
             </brief>
             <description>
               <value>This sequence tests the ChibiOS/NIL functionalities related to counter semaphores.</value>
@@ -236,7 +236,7 @@ static semaphore_t sem1;]]></value>
                   <value>Wait, Signal and Reset primitives are tested. The testing thread does not trigger a state change.</value>
                 </description>
                 <condition>
-                  <value />
+                  <value>CH_CFG_USE_SEMAPHORES</value>
                 </condition>
                 <various_code>
                   <setup_code>
@@ -299,7 +299,7 @@ test_assert_lock(chSemGetCounterI(&sem1) == 2, "wrong counter value");]]></value
                   <value>Wait, Signal and Reset primitives are tested. The testing thread triggers a state change.</value>
                 </description>
                 <condition>
-                  <value />
+                  <value>CH_CFG_USE_SEMAPHORES</value>
                 </condition>
                 <various_code>
                   <setup_code>
@@ -353,7 +353,7 @@ test_assert(MSG_RESET == msg, "wrong returned message");]]></value>
                   <value>Timeout on semaphores is tested.</value>
                 </description>
                 <condition>
-                  <value />
+                  <value>CH_CFG_USE_SEMAPHORES</value>
                 </condition>
                 <various_code>
                   <setup_code>
@@ -487,7 +487,7 @@ test_assert(MSG_TIMEOUT == msg, "wrong returned message");]]></value>
                   <value>Event flags functionality is tested.</value>
                 </description>
                 <condition>
-                  <value />
+                  <value>CH_CFG_USE_EVENTS</value>
                 </condition>
                 <various_code>
                   <setup_code>
@@ -546,6 +546,79 @@ test_assert_time_window(time + MS2ST(1000),
                         time + MS2ST(1000) + 1,
                         "out of time window");
 test_assert((eventmask_t)0 == events, "wrong events mask");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+            </cases>
+          </sequence>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
+              <value>Mailboxes.</value>
+            </brief>
+            <description>
+              <value>This sequence tests the ChibiOS/NIL functionalities related to mailboxes.</value>
+            </description>
+            <shared_code>
+              <value><![CDATA[#define ALLOWED_DELAY MS2ST(5)
+#define MB_SIZE 4
+
+static msg_t mb_buffer[MB_SIZE];
+static MAILBOX_DECL(mb1, mb_buffer, MB_SIZE);]]></value>
+            </shared_code>
+            <cases>
+              <case>
+                <brief>
+                  <value>Mailbox non-blocking tests.</value>
+                </brief>
+                <description>
+                  <value>The mailbox API is tested without triggering blocking conditions.</value>
+                </description>
+                <condition>
+                  <value>CH_CFG_USE_MAILBOXES</value>
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chMBObjectInit(&mb1, mb_buffer, MB_SIZE);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value><![CDATA[chMBReset(&mb1);]]></value>
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[msg_t msg1;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Testing the mailbox size.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "wrong size");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing forward and backward queuing, checking for no errors.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[unsigned i;
+
+for (i = 0; i < MB_SIZE - 1; i++) {
+  msg1 = chMBPost(&mb1, 'B' + i, TIME_INFINITE);
+  test_assert(msg1 == MSG_OK, "wrong wake-up message");
+}
+msg1 = chMBPostAhead(&mb1, 'A', TIME_INFINITE);
+test_assert(msg1 == MSG_OK, "wrong wake-up message");]]></value>
                     </code>
                   </step>
                 </steps>

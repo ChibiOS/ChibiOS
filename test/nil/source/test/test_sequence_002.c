@@ -46,12 +46,19 @@ static semaphore_t sem1;
  * Test cases.
  ****************************************************************************/
 
+#if CH_CFG_USE_SEMAPHORES || defined(__DOXYGEN__)
 /**
  * @page test_002_001 Semaphore primitives, no state change
  *
  * <h2>Description</h2>
  * Wait, Signal and Reset primitives are tested. The testing thread
  * does not trigger a state change.
+ *
+ * <h2>Conditions</h2>
+ * This test is only executed if the following preprocessor condition
+ * evaluates to true:
+ * - CH_CFG_USE_SEMAPHORES
+ * .
  *
  * <h2>Test Steps</h2>
  * - The function chSemWait() is invoked, after return the counter and
@@ -107,13 +114,21 @@ static const testcase_t test_002_001 = {
   test_002_001_teardown,
   test_002_001_execute
 };
+#endif /* CH_CFG_USE_SEMAPHORES */
 
+#if CH_CFG_USE_SEMAPHORES || defined(__DOXYGEN__)
 /**
  * @page test_002_002 Semaphore primitives, with state change
  *
  * <h2>Description</h2>
  * Wait, Signal and Reset primitives are tested. The testing thread
  * triggers a state change.
+ *
+ * <h2>Conditions</h2>
+ * This test is only executed if the following preprocessor condition
+ * evaluates to true:
+ * - CH_CFG_USE_SEMAPHORES
+ * .
  *
  * <h2>Test Steps</h2>
  * - The function chSemWait() is invoked, after return the counter and
@@ -166,12 +181,20 @@ static const testcase_t test_002_002 = {
   test_002_002_teardown,
   test_002_002_execute
 };
+#endif /* CH_CFG_USE_SEMAPHORES */
 
+#if CH_CFG_USE_SEMAPHORES || defined(__DOXYGEN__)
 /**
  * @page test_002_003 Semaphores timeout
  *
  * <h2>Description</h2>
  * Timeout on semaphores is tested.
+ *
+ * <h2>Conditions</h2>
+ * This test is only executed if the following preprocessor condition
+ * evaluates to true:
+ * - CH_CFG_USE_SEMAPHORES
+ * .
  *
  * <h2>Test Steps</h2>
  * - The function chSemWaitTimeout() is invoked a first time, after
@@ -228,6 +251,7 @@ static const testcase_t test_002_003 = {
   test_002_003_teardown,
   test_002_003_execute
 };
+#endif /* CH_CFG_USE_SEMAPHORES */
 
 /****************************************************************************
  * Exported data.
@@ -237,8 +261,14 @@ static const testcase_t test_002_003 = {
  * @brief   Semaphores.
  */
 const testcase_t * const test_sequence_002[] = {
+#if CH_CFG_USE_SEMAPHORES || defined(__DOXYGEN__)
   &test_002_001,
+#endif
+#if CH_CFG_USE_SEMAPHORES || defined(__DOXYGEN__)
   &test_002_002,
+#endif
+#if CH_CFG_USE_SEMAPHORES || defined(__DOXYGEN__)
   &test_002_003,
+#endif
   NULL
 };
