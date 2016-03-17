@@ -572,10 +572,10 @@ static MAILBOX_DECL(mb1, mb_buffer, MB_SIZE);]]></value>
             <cases>
               <case>
                 <brief>
-                  <value>Mailbox non-blocking tests.</value>
+                  <value>Mailbox normal API, non-blocking tests.</value>
                 </brief>
                 <description>
-                  <value>The mailbox API is tested without triggering blocking conditions.</value>
+                  <value>The mailbox normal API is tested without triggering blocking conditions.</value>
                 </description>
                 <condition>
                   <value>CH_CFG_USE_MAILBOXES</value>
@@ -588,7 +588,8 @@ static MAILBOX_DECL(mb1, mb_buffer, MB_SIZE);]]></value>
                     <value><![CDATA[chMBReset(&mb1);]]></value>
                   </teardown_code>
                   <local_variables>
-                    <value><![CDATA[msg_t msg1;]]></value>
+                    <value><![CDATA[msg_t msg1, msg2;
+unsigned i;]]></value>
                   </local_variables>
                 </various_code>
                 <steps>
@@ -605,20 +606,310 @@ static MAILBOX_DECL(mb1, mb_buffer, MB_SIZE);]]></value>
                   </step>
                   <step>
                     <description>
-                      <value>Testing forward and backward queuing, checking for no errors.</value>
+                      <value>Resetting the mailbox, conditions are checked, no errors expected.</value>
                     </description>
                     <tags>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[unsigned i;
-
-for (i = 0; i < MB_SIZE - 1; i++) {
+                      <value><![CDATA[chMBReset(&mb1);
+test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "not empty");
+test_assert_lock(chMBGetUsedCountI(&mb1) == 0, "still full");
+test_assert_lock(mb1.buffer == mb1.wrptr, "write pointer not aligned to base");
+test_assert_lock(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Filling the mailbox using chMBPost() and chMBPostAhead() once, no errors expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[for (i = 0; i < MB_SIZE - 1; i++) {
   msg1 = chMBPost(&mb1, 'B' + i, TIME_INFINITE);
   test_assert(msg1 == MSG_OK, "wrong wake-up message");
 }
 msg1 = chMBPostAhead(&mb1, 'A', TIME_INFINITE);
 test_assert(msg1 == MSG_OK, "wrong wake-up message");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing intermediate conditions. Data pointers must be aligned, semaphore counters are checked.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_assert_lock(chMBGetFreeCountI(&mb1) == 0, "still empty");
+test_assert_lock(chMBGetUsedCountI(&mb1) == MB_SIZE, "not full");
+test_assert_lock(mb1.rdptr == mb1.wrptr, "pointers not aligned");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Emptying the mailbox using chMBFetch(), no errors expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[for (i = 0; i < MB_SIZE; i++) {
+  msg1 = chMBFetch(&mb1, &msg2, TIME_INFINITE);
+  test_assert(msg1 == MSG_OK, "wrong wake-up message");
+  test_emit_token(msg2);
+}
+test_assert_sequence("ABCDE", "wrong get sequence");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Posting and then fetching one more message, no errors expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[msg1 = chMBPost(&mb1, 'B' + i, TIME_INFINITE);
+test_assert(msg1 == MSG_OK, "wrong wake-up message");
+msg1 = chMBFetch(&mb1, &msg2, TIME_INFINITE);
+test_assert(msg1 == MSG_OK, "wrong wake-up message");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing final conditions. Data pointers must be aligned to buffer start, semaphore counters are checked.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_assert_lock(chMBGetFreeCountI(&mb1) == 0, "still empty");
+test_assert_lock(chMBGetUsedCountI(&mb1) == MB_SIZE, "not full");
+test_assert(mb1.buffer == mb1.wrptr, "write pointer not aligned to base");
+test_assert(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Mailbox I-Class API, non-blocking tests.</value>
+                </brief>
+                <description>
+                  <value>The mailbox I-Class API is tested without triggering blocking conditions.</value>
+                </description>
+                <condition>
+                  <value>CH_CFG_USE_MAILBOXES</value>
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chMBObjectInit(&mb1, mb_buffer, MB_SIZE);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value><![CDATA[chMBReset(&mb1);]]></value>
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[msg_t msg1, msg2;
+unsigned i;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Testing the mailbox size.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "wrong size");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Resetting the mailbox, conditions are checked, no errors expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chSysLock();
+chMBResetI(&mb1);
+chSysUnlock();
+test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "not empty");
+test_assert_lock(chMBGetUsedCountI(&mb1) == 0, "still full");
+test_assert_lock(mb1.buffer == mb1.wrptr, "write pointer not aligned to base");
+test_assert_lock(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Filling the mailbox using chMBPostI() and chMBPostAheadI() once, no errors expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[for (i = 0; i < MB_SIZE - 1; i++) {
+  chSysLock();
+  msg1 = chMBPostI(&mb1, 'B' + i);
+  chSysUnlock();
+  test_assert(msg1 == MSG_OK, "wrong wake-up message");
+}
+chSysLock();
+msg1 = chMBPostAheadI(&mb1, 'A');
+chSysUnlock();
+test_assert(msg1 == MSG_OK, "wrong wake-up message");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing intermediate conditions. Data pointers must be aligned, semaphore counters are checked.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_assert_lock(chMBGetFreeCountI(&mb1) == 0, "still empty");
+test_assert_lock(chMBGetUsedCountI(&mb1) == MB_SIZE, "not full");
+test_assert_lock(mb1.rdptr == mb1.wrptr, "pointers not aligned");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Emptying the mailbox using chMBFetchI(), no errors expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[for (i = 0; i < MB_SIZE; i++) {
+  chSysLock();
+  msg1 = chMBFetchI(&mb1, &msg2);
+  chSysUnlock();
+  test_assert(msg1 == MSG_OK, "wrong wake-up message");
+  test_emit_token(msg2);
+}
+test_assert_sequence("ABCDE", "wrong get sequence");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Posting and then fetching one more message, no errors expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[msg1 = chMBPost(&mb1, 'B' + i, TIME_INFINITE);
+test_assert(msg1 == MSG_OK, "wrong wake-up message");
+msg1 = chMBFetch(&mb1, &msg2, TIME_INFINITE);
+test_assert(msg1 == MSG_OK, "wrong wake-up message");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing final conditions. Data pointers must be aligned to buffer start, semaphore counters are checked.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_assert_lock(chMBGetFreeCountI(&mb1) == 0, "still empty");
+test_assert_lock(chMBGetUsedCountI(&mb1) == MB_SIZE, "not full");
+test_assert(mb1.buffer == mb1.wrptr, "write pointer not aligned to base");
+test_assert(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Mailbox timeouts.</value>
+                </brief>
+                <description>
+                  <value>The mailbox API is tested for timeouts.</value>
+                </description>
+                <condition>
+                  <value>CH_CFG_USE_MAILBOXES</value>
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chMBObjectInit(&mb1, mb_buffer, MB_SIZE);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value><![CDATA[chMBReset(&mb1);]]></value>
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[msg_t msg1, msg2;
+unsigned i;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Filling the mailbox.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[for (i = 0; i < MB_SIZE; i++) {
+  msg1 = chMBPost(&mb1, 'B' + i, TIME_INFINITE);
+  test_assert(msg1 == MSG_OK, "wrong wake-up message");
+}]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing chMBPost(), chMBPostI(), chMBPostAhead() and chMBPostAheadI() timeout.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[msg1 = chMBPost(&mb1, 'X', 1);
+test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
+chSysLock();
+msg1 = chMBPostI(&mb1, 'X');
+chSysUnlock();
+test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
+msg1 = chMBPostAhead(&mb1, 'X', 1);
+test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
+chSysLock();
+msg1 = chMBPostAheadI(&mb1, 'X');
+chSysUnlock();
+test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Resetting the mailbox.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chMBReset(&mb1);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing chMBFetch() and chMBFetchI() timeout.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[msg1 = chMBFetch(&mb1, &msg2, 1);
+test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
+chSysLock();
+msg1 = chMBFetchI(&mb1, &msg2);
+chSysUnlock();
+test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");]]></value>
                     </code>
                   </step>
                 </steps>
