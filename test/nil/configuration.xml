@@ -661,7 +661,7 @@ test_assert_lock(mb1.rdptr == mb1.wrptr, "pointers not aligned");]]></value>
   test_assert(msg1 == MSG_OK, "wrong wake-up message");
   test_emit_token(msg2);
 }
-test_assert_sequence("ABCDE", "wrong get sequence");]]></value>
+test_assert_sequence("ABCD", "wrong get sequence");]]></value>
                     </code>
                   </step>
                   <step>
@@ -686,8 +686,8 @@ test_assert(msg1 == MSG_OK, "wrong wake-up message");]]></value>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[test_assert_lock(chMBGetFreeCountI(&mb1) == 0, "still empty");
-test_assert_lock(chMBGetUsedCountI(&mb1) == MB_SIZE, "not full");
+                      <value><![CDATA[test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "not empty");
+test_assert_lock(chMBGetUsedCountI(&mb1) == 0, "still full");
 test_assert(mb1.buffer == mb1.wrptr, "write pointer not aligned to base");
 test_assert(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");]]></value>
                     </code>
@@ -793,7 +793,7 @@ test_assert_lock(mb1.rdptr == mb1.wrptr, "pointers not aligned");]]></value>
   test_assert(msg1 == MSG_OK, "wrong wake-up message");
   test_emit_token(msg2);
 }
-test_assert_sequence("ABCDE", "wrong get sequence");]]></value>
+test_assert_sequence("ABCD", "wrong get sequence");]]></value>
                     </code>
                   </step>
                   <step>
@@ -818,8 +818,8 @@ test_assert(msg1 == MSG_OK, "wrong wake-up message");]]></value>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[test_assert_lock(chMBGetFreeCountI(&mb1) == 0, "still empty");
-test_assert_lock(chMBGetUsedCountI(&mb1) == MB_SIZE, "not full");
+                      <value><![CDATA[test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "not empty");
+test_assert_lock(chMBGetUsedCountI(&mb1) == 0, "still full");
 test_assert(mb1.buffer == mb1.wrptr, "write pointer not aligned to base");
 test_assert(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");]]></value>
                     </code>

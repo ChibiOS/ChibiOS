@@ -134,7 +134,7 @@ static void test_004_001_execute(void) {
       test_assert(msg1 == MSG_OK, "wrong wake-up message");
       test_emit_token(msg2);
     }
-    test_assert_sequence("ABCDE", "wrong get sequence");
+    test_assert_sequence("ABCD", "wrong get sequence");
   }
 
   /* Posting and then fetching one more message, no errors expected.*/
@@ -150,8 +150,8 @@ static void test_004_001_execute(void) {
      start, semaphore counters are checked.*/
   test_set_step(7);
   {
-    test_assert_lock(chMBGetFreeCountI(&mb1) == 0, "still empty");
-    test_assert_lock(chMBGetUsedCountI(&mb1) == MB_SIZE, "not full");
+    test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "not empty");
+    test_assert_lock(chMBGetUsedCountI(&mb1) == 0, "still full");
     test_assert(mb1.buffer == mb1.wrptr, "write pointer not aligned to base");
     test_assert(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");
   }
@@ -259,7 +259,7 @@ static void test_004_002_execute(void) {
       test_assert(msg1 == MSG_OK, "wrong wake-up message");
       test_emit_token(msg2);
     }
-    test_assert_sequence("ABCDE", "wrong get sequence");
+    test_assert_sequence("ABCD", "wrong get sequence");
   }
 
   /* Posting and then fetching one more message, no errors expected.*/
@@ -275,8 +275,8 @@ static void test_004_002_execute(void) {
      start, semaphore counters are checked.*/
   test_set_step(7);
   {
-    test_assert_lock(chMBGetFreeCountI(&mb1) == 0, "still empty");
-    test_assert_lock(chMBGetUsedCountI(&mb1) == MB_SIZE, "not full");
+    test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "not empty");
+    test_assert_lock(chMBGetUsedCountI(&mb1) == 0, "still full");
     test_assert(mb1.buffer == mb1.wrptr, "write pointer not aligned to base");
     test_assert(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");
   }
