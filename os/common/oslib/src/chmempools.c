@@ -198,7 +198,7 @@ void chPoolFree(memory_pool_t *mp, void *objp) {
   chSysUnlock();
 }
 
-#if CH_CFG_USE_SEMAPHORES == TRUE
+#if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Initializes an empty guarded memory pool.
  *
