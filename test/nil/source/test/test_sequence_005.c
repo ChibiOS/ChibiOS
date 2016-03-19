@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2015 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -29,6 +29,8 @@
  *
  * <h2>Test Cases</h2>
  * - @subpage test_005_001
+ * - @subpage test_005_002
+ * - @subpage test_005_003
  * .
  */
 
@@ -40,6 +42,7 @@
 
 static uint32_t objects[MEMORY_POOL_SIZE];
 static MEMORYPOOL_DECL(mp1, sizeof (uint32_t), NULL);
+static GUARDEDMEMORYPOOL_DECL(gmp1, sizeof (uint32_t));
 
 static void *null_provider(size_t size, unsigned align) {
 
@@ -54,7 +57,7 @@ static void *null_provider(size_t size, unsigned align) {
  ****************************************************************************/
 
 /**
- * @page test_005_001 Loading and empting the memory pool
+ * @page test_005_001 Loading and empting a memory pool
  *
  * <h2>Description</h2>
  * The memory pool functionality is tested by loading and empting it,
@@ -128,10 +131,114 @@ static void test_005_001_execute(void) {
 }
 
 static const testcase_t test_005_001 = {
-  "Loading and empting the memory pool",
+  "Loading and empting a memory pool",
   test_005_001_setup,
   NULL,
   test_005_001_execute
+};
+
+/**
+ * @page test_005_002 Loading and empting a guarded memory pool without waiting
+ *
+ * <h2>Description</h2>
+ * The memory pool functionality is tested by loading and empting it,
+ * all conditions are tested.
+ *
+ * <h2>Test Steps</h2>
+ * - Adding the objects to the pool using chGuardedPoolLoadArray().
+ * - Emptying the pool using chGuardedPoolAllocTimeout().
+ * - Now must be empty.
+ * - Adding the objects to the pool using chGuardedPoolFree().
+ * - Emptying the pool using chGuardedPoolAllocTimeout() again.
+ * - Now must be empty again.
+ * .
+ */
+
+static void test_005_002_setup(void) {
+  chGuardedPoolObjectInit(&gmp1, sizeof (uint32_t));
+}
+
+static void test_005_002_execute(void) {
+  unsigned i;
+
+  /* Adding the objects to the pool using chGuardedPoolLoadArray().*/
+  test_set_step(1);
+  {
+    chGuardedPoolLoadArray(&gmp1, objects, MEMORY_POOL_SIZE);
+  }
+
+  /* Emptying the pool using chGuardedPoolAllocTimeout().*/
+  test_set_step(2);
+  {
+    for (i = 0; i < MEMORY_POOL_SIZE; i++)
+      test_assert(chGuardedPoolAllocTimeout(&gmp1, TIME_IMMEDIATE) != NULL, "list empty");
+  }
+
+  /* Now must be empty.*/
+  test_set_step(3);
+  {
+    test_assert(chGuardedPoolAllocTimeout(&gmp1, TIME_IMMEDIATE) == NULL, "list not empty");
+  }
+
+  /* Adding the objects to the pool using chGuardedPoolFree().*/
+  test_set_step(4);
+  {
+    for (i = 0; i < MEMORY_POOL_SIZE; i++)
+      chGuardedPoolFree(&gmp1, &objects[i]);
+  }
+
+  /* Emptying the pool using chGuardedPoolAllocTimeout() again.*/
+  test_set_step(5);
+  {
+    for (i = 0; i < MEMORY_POOL_SIZE; i++)
+      test_assert(chGuardedPoolAllocTimeout(&gmp1, TIME_IMMEDIATE) != NULL, "list empty");
+  }
+
+  /* Now must be empty again.*/
+  test_set_step(6);
+  {
+    test_assert(chGuardedPoolAllocTimeout(&gmp1, TIME_IMMEDIATE) == NULL, "list not empty");
+  }
+}
+
+static const testcase_t test_005_002 = {
+  "Loading and empting a guarded memory pool without waiting",
+  test_005_002_setup,
+  NULL,
+  test_005_002_execute
+};
+
+/**
+ * @page test_005_003 Guarded Memory Pools timeout
+ *
+ * <h2>Description</h2>
+ * The timeout features for the Guarded Memory Pools is tested.
+ *
+ * <h2>Test Steps</h2>
+ * - Trying to allocate with 100mS timeout, must fail because the pool
+ *   is empty.
+ * .
+ */
+
+static void test_005_003_setup(void) {
+  chGuardedPoolObjectInit(&gmp1, sizeof (uint32_t));
+}
+
+static void test_005_003_execute(void) {
+
+  /* Trying to allocate with 100mS timeout, must fail because the pool
+     is empty.*/
+  test_set_step(1);
+  {
+    test_assert(chGuardedPoolAllocTimeout(&gmp1, MS2ST(100)) == NULL, "list not empty");
+  }
+}
+
+static const testcase_t test_005_003 = {
+  "Guarded Memory Pools timeout",
+  test_005_003_setup,
+  NULL,
+  test_005_003_execute
 };
 
 /****************************************************************************
@@ -143,5 +250,7 @@ static const testcase_t test_005_001 = {
  */
 const testcase_t * const test_sequence_005[] = {
   &test_005_001,
+  &test_005_002,
+  &test_005_003,
   NULL
 };

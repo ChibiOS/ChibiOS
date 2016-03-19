@@ -120,21 +120,19 @@ typedef struct {
  */
 #define _GUARDEDMEMORYPOOL_DATA(name, size) {                               \
   _SEMAPHORE_DATA(name.sem, (cnt_t)0),                                      \
-  NULL,                                                                     \
-  size,                                                                     \
-  NULL                                                                      \
+  _MEMORYPOOL_DATA(NULL, size, NULL)                                        \
 }
 
 /**
  * @brief   Static guarded memory pool initializer.
- * @details Statically initialized guardedmemory pools require no explicit
+ * @details Statically initialized guarded memory pools require no explicit
  *          initialization using @p chGuardedPoolInit().
  *
  * @param[in] name      the name of the guarded memory pool variable
  * @param[in] size      size of the memory pool contained objects
  */
 #define GUARDEDMEMORYPOOL_DECL(name, size)                                  \
-  memory_pool_t name = _MEMORYPOOL_DATA(name, size)
+  guarded_memory_pool_t name = _GUARDEDMEMORYPOOL_DATA(name, size)
 #endif /* CH_CFG_USE_SEMAPHORES == TRUE */
 
 /*===========================================================================*/

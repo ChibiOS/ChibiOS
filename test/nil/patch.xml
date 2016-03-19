@@ -1,5 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <SPC5-Patch version="1.0.0">
   <!--It is your patch repository, do not break your XML File.-->
-  <files />
+  <files>
+    <file componentId="org.chibios.spc5.components.chibios_unitary_tests_engine" version="1.0.0.qualifier" path="component/lib/include/ch_test.h" user="false">
+      <diff><![CDATA[--- components/chibios_unit_tests_engine_component/lib/include/ch_test.h
++++ components/chibios_unit_tests_engine_component/lib/include/ch_test.h
+@@ -1,5 +1,5 @@
+ /*
+-    ChibiOS - Copyright (C) 2006..2015 Giovanni Di Sirio
++    ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio
+ 
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.]]></diff>
+    </file>
+    <file componentId="org.chibios.spc5.components.chibios_unitary_tests_engine" version="1.0.0.qualifier" path="component/lib/src/ch_test.c" user="false">
+      <diff><![CDATA[--- components/chibios_unit_tests_engine_component/lib/src/ch_test.c
++++ components/chibios_unit_tests_engine_component/lib/src/ch_test.c
+@@ -1,5 +1,5 @@
+ /*
+-    ChibiOS - Copyright (C) 2006..2015 Giovanni Di Sirio
++    ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio
+ 
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.]]></diff>
+    </file>
+  </files>
 </SPC5-Patch>

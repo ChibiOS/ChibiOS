@@ -931,6 +931,7 @@ test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");]]></value>
 
 static uint32_t objects[MEMORY_POOL_SIZE];
 static MEMORYPOOL_DECL(mp1, sizeof (uint32_t), NULL);
+static GUARDEDMEMORYPOOL_DECL(gmp1, sizeof (uint32_t));
 
 static void *null_provider(size_t size, unsigned align) {
 
@@ -943,7 +944,7 @@ static void *null_provider(size_t size, unsigned align) {
             <cases>
               <case>
                 <brief>
-                  <value>Loading and empting the memory pool.</value>
+                  <value>Loading and empting a memory pool.</value>
                 </brief>
                 <description>
                   <value>The memory pool functionality is tested by loading and empting it, all conditions are tested.</value>
@@ -1042,6 +1043,134 @@ static void *null_provider(size_t size, unsigned align) {
                     <code>
                       <value><![CDATA[chPoolObjectInit(&mp1, sizeof (uint32_t), null_provider);
 test_assert(chPoolAlloc(&mp1) == NULL, "provider returned memory");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Loading and empting a guarded memory pool without waiting.</value>
+                </brief>
+                <description>
+                  <value>The memory pool functionality is tested by loading and empting it, all conditions are tested.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chGuardedPoolObjectInit(&gmp1, sizeof (uint32_t));]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[unsigned i;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Adding the objects to the pool using chGuardedPoolLoadArray().</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chGuardedPoolLoadArray(&gmp1, objects, MEMORY_POOL_SIZE);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Emptying the pool using chGuardedPoolAllocTimeout().</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[for (i = 0; i < MEMORY_POOL_SIZE; i++)
+  test_assert(chGuardedPoolAllocTimeout(&gmp1, TIME_IMMEDIATE) != NULL, "list empty");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Now must be empty.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_assert(chGuardedPoolAllocTimeout(&gmp1, TIME_IMMEDIATE) == NULL, "list not empty");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Adding the objects to the pool using chGuardedPoolFree().</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[for (i = 0; i < MEMORY_POOL_SIZE; i++)
+  chGuardedPoolFree(&gmp1, &objects[i]);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Emptying the pool using chGuardedPoolAllocTimeout() again.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[for (i = 0; i < MEMORY_POOL_SIZE; i++)
+  test_assert(chGuardedPoolAllocTimeout(&gmp1, TIME_IMMEDIATE) != NULL, "list empty");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Now must be empty again.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_assert(chGuardedPoolAllocTimeout(&gmp1, TIME_IMMEDIATE) == NULL, "list not empty");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Guarded Memory Pools timeout.</value>
+                </brief>
+                <description>
+                  <value>The timeout features for the Guarded Memory Pools is tested.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chGuardedPoolObjectInit(&gmp1, sizeof (uint32_t));]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Trying to allocate with 100mS timeout, must fail because the pool is empty.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_assert(chGuardedPoolAllocTimeout(&gmp1, MS2ST(100)) == NULL, "list not empty");]]></value>
                     </code>
                   </step>
                 </steps>

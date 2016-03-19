@@ -265,7 +265,7 @@ typedef struct {
 #endif
   /* End of the mandatory fields.*/
   /**
-   * @brief   Total transmit transfer size.
+   * @brief   Total receive transfer size.
    */
   size_t                        totsize;
 } USBOutEndpointState;
