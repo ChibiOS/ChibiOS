@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2015 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -56,12 +56,19 @@ static void *null_provider(size_t size, unsigned align) {
  * Test cases.
  ****************************************************************************/
 
+#if CH_CFG_USE_MEMPOOLS || defined(__DOXYGEN__)
 /**
  * @page test_005_001 Loading and empting a memory pool
  *
  * <h2>Description</h2>
  * The memory pool functionality is tested by loading and empting it,
  * all conditions are tested.
+ *
+ * <h2>Conditions</h2>
+ * This test is only executed if the following preprocessor condition
+ * evaluates to true:
+ * - CH_CFG_USE_MEMPOOLS
+ * .
  *
  * <h2>Test Steps</h2>
  * - Adding the objects to the pool using chPoolLoadArray().
@@ -136,13 +143,21 @@ static const testcase_t test_005_001 = {
   NULL,
   test_005_001_execute
 };
+#endif /* CH_CFG_USE_MEMPOOLS */
 
+#if (CH_CFG_USE_MEMPOOLS && CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
 /**
  * @page test_005_002 Loading and empting a guarded memory pool without waiting
  *
  * <h2>Description</h2>
  * The memory pool functionality is tested by loading and empting it,
  * all conditions are tested.
+ *
+ * <h2>Conditions</h2>
+ * This test is only executed if the following preprocessor condition
+ * evaluates to true:
+ * - (CH_CFG_USE_MEMPOOLS && CH_CFG_USE_SEMAPHORES)
+ * .
  *
  * <h2>Test Steps</h2>
  * - Adding the objects to the pool using chGuardedPoolLoadArray().
@@ -207,12 +222,20 @@ static const testcase_t test_005_002 = {
   NULL,
   test_005_002_execute
 };
+#endif /* (CH_CFG_USE_MEMPOOLS && CH_CFG_USE_SEMAPHORES) */
 
+#if (CH_CFG_USE_MEMPOOLS && CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
 /**
  * @page test_005_003 Guarded Memory Pools timeout
  *
  * <h2>Description</h2>
  * The timeout features for the Guarded Memory Pools is tested.
+ *
+ * <h2>Conditions</h2>
+ * This test is only executed if the following preprocessor condition
+ * evaluates to true:
+ * - (CH_CFG_USE_MEMPOOLS && CH_CFG_USE_SEMAPHORES)
+ * .
  *
  * <h2>Test Steps</h2>
  * - Trying to allocate with 100mS timeout, must fail because the pool
@@ -240,6 +263,7 @@ static const testcase_t test_005_003 = {
   NULL,
   test_005_003_execute
 };
+#endif /* (CH_CFG_USE_MEMPOOLS && CH_CFG_USE_SEMAPHORES) */
 
 /****************************************************************************
  * Exported data.
@@ -249,8 +273,14 @@ static const testcase_t test_005_003 = {
  * @brief   Memory Pools.
  */
 const testcase_t * const test_sequence_005[] = {
+#if CH_CFG_USE_MEMPOOLS || defined(__DOXYGEN__)
   &test_005_001,
+#endif
+#if (CH_CFG_USE_MEMPOOLS && CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
   &test_005_002,
+#endif
+#if (CH_CFG_USE_MEMPOOLS && CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
   &test_005_003,
+#endif
   NULL
 };

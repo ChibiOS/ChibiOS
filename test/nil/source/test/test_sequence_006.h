@@ -14,4 +14,4 @@
     limitations under the License.
 */
 
-extern const testcase_t * const test_sequence_003[];
+extern const testcase_t * const test_sequence_006[];
