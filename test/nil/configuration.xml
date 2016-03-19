@@ -1205,7 +1205,11 @@ test_assert(chPoolAlloc(&mp1) == NULL, "provider returned memory");]]></value>
               <value>This sequence tests the ChibiOS/NIL functionalities related to memory heaps.</value>
             </description>
             <shared_code>
-              <value />
+              <value><![CDATA[#define ALLOC_SIZE 16
+#define HEAP_SIZE (ALLOC_SIZE * 8)
+
+static memory_heap_t test_heap;
+static CH_HEAP_AREA(myheap, HEAP_SIZE);]]></value>
             </shared_code>
             <cases>
               <case>
@@ -1220,16 +1224,222 @@ test_assert(chPoolAlloc(&mp1) == NULL, "provider returned memory");]]></value>
                 </condition>
                 <various_code>
                   <setup_code>
-                    <value><![CDATA[chHeapObjectInit(&test_heap, test.buffer, sizeof(union test_buffers));]]></value>
+                    <value><![CDATA[chHeapObjectInit(&test_heap, myheap, sizeof(myheap));]]></value>
                   </setup_code>
                   <teardown_code>
                     <value />
                   </teardown_code>
                   <local_variables>
-                    <value />
+                    <value><![CDATA[void *p1, *p2, *p3;
+size_t n, sz;]]></value>
                   </local_variables>
                 </various_code>
-                <steps />
+                <steps>
+                  <step>
+                    <description>
+                      <value>Testing initial conditions, the heap must not be fragmented and one free block present.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_assert(chHeapStatus(&test_heap, &sz, NULL) == 1, "heap fragmented");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Trying to allocate an block bigger than available space, an error is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[p1 = chHeapAlloc(&test_heap, HEAP_SIZE * 2);
+test_assert(p1 == NULL, "allocation not failed");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Single block allocation using chHeapAlloc() then the block is freed using chHeapFree(), must not fail.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[p1 = chHeapAlloc(&test_heap, ALLOC_SIZE);
+test_assert(p1 != NULL, "allocation failed");
+chHeapFree(p1);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Using chHeapStatus() to assess the heap state. There must be at least one free block of sufficient size.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[size_t total_size, largest_size;
+
+n = chHeapStatus(&test_heap, &total_size, &largest_size);
+test_assert(n == 1, "missing free block");
+test_assert(total_size >= ALLOC_SIZE, "unexpected heap state");
+test_assert(total_size == largest_size, "unexpected heap state");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Allocating then freeing in the same order.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[p1 = chHeapAlloc(&test_heap, ALLOC_SIZE);
+p2 = chHeapAlloc(&test_heap, ALLOC_SIZE);
+p3 = chHeapAlloc(&test_heap, ALLOC_SIZE);
+chHeapFree(p1);                                 /* Does not merge.*/
+chHeapFree(p2);                                 /* Merges backward.*/
+chHeapFree(p3);                                 /* Merges both sides.*/
+test_assert(chHeapStatus(&test_heap, &n, NULL) == 1, "heap fragmented");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Allocating then freeing in reverse order.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[p1 = chHeapAlloc(&test_heap, ALLOC_SIZE);
+p2 = chHeapAlloc(&test_heap, ALLOC_SIZE);
+p3 = chHeapAlloc(&test_heap, ALLOC_SIZE);
+chHeapFree(p3);                                 /* Merges forward.*/
+chHeapFree(p2);                                 /* Merges forward.*/
+chHeapFree(p1);                                 /* Merges forward.*/
+test_assert(chHeapStatus(&test_heap, &n, NULL) == 1, "heap fragmented");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Small fragments handling. Checking the behavior when allocating blocks with size not multiple of alignment unit.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[p1 = chHeapAlloc(&test_heap, ALLOC_SIZE + 1);
+p2 = chHeapAlloc(&test_heap, ALLOC_SIZE);
+chHeapFree(p1);
+test_assert(chHeapStatus(&test_heap, &n, NULL) == 2, "invalid state");
+p1 = chHeapAlloc(&test_heap, ALLOC_SIZE);
+/* Note, the first situation happens when the alignment size is smaller
+   than the header size, the second in the other cases.*/
+test_assert((chHeapStatus(&test_heap, &n, NULL) == 1) ||
+            (chHeapStatus(&test_heap, &n, NULL) == 2), "heap fragmented");
+chHeapFree(p2);
+chHeapFree(p1);
+test_assert(chHeapStatus(&test_heap, &n, NULL) == 1, "heap fragmented");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Skipping a fragment, the first fragment in the list is too small so the allocator must pick the second one.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[p1 = chHeapAlloc(&test_heap, ALLOC_SIZE);
+p2 = chHeapAlloc(&test_heap, ALLOC_SIZE);
+chHeapFree(p1);
+test_assert( chHeapStatus(&test_heap, &n, NULL) == 2, "invalid state");
+p1 = chHeapAlloc(&test_heap, ALLOC_SIZE * 2); /* Skips first fragment.*/
+chHeapFree(p1);
+chHeapFree(p2);
+test_assert(chHeapStatus(&test_heap, &n, NULL) == 1, "heap fragmented");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Allocating the whole available space.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[(void)chHeapStatus(&test_heap, &n, NULL);
+p1 = chHeapAlloc(&test_heap, n);
+test_assert(p1 != NULL, "allocation failed");
+test_assert(chHeapStatus(&test_heap, NULL, NULL) == 0, "not empty");
+chHeapFree(p1);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing final conditions. The heap geometry must be the same than the one registered at beginning.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_assert(chHeapStatus(&test_heap, &n, NULL) == 1, "heap fragmented");
+test_assert(n == sz, "size changed");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Default Heap.</value>
+                </brief>
+                <description>
+                  <value>The default heap is pre-allocated in the system. We test base functionality.</value>
+                </description>
+                <condition>
+                  <value>CH_CFG_USE_HEAP</value>
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[void *p1;
+size_t total_size, largest_size;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Single block allocation using chHeapAlloc() then the block is freed using chHeapFree(), must not fail.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[(void)chHeapStatus(NULL, &total_size, &largest_size);
+p1 = chHeapAlloc(&test_heap, ALLOC_SIZE);
+test_assert(p1 != NULL, "allocation failed");
+chHeapFree(p1);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing allocation failure.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[p1 = chHeapAlloc(NULL, (size_t)-256);
+test_assert(p1 == NULL, "allocation not failed");]]></value>
+                    </code>
+                  </step>
+                </steps>
               </case>
             </cases>
           </sequence>

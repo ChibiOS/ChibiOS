@@ -102,6 +102,13 @@ struct memory_heap {
 /* Module macros.                                                            */
 /*===========================================================================*/
 
+/**
+ * @brief   Allocation of an aligned static heap buffer.
+ */
+#define CH_HEAP_AREA(name, size)                                            \
+  ALIGNED_VAR(CH_HEAP_ALIGNMENT)                                            \
+  uint8_t name[MEM_ALIGN_NEXT((size), CH_HEAP_ALIGNMENT)]
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
