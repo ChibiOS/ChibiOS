@@ -231,7 +231,7 @@ bool shellGetLine(BaseSequentialStream *chp, char *line, unsigned size) {
   while (true) {
     char c;
 
-    if (chSequentialStreamRead(chp, (uint8_t *)&c, 1) == 0)
+    if (streamRead(chp, (uint8_t *)&c, 1) == 0)
       return true;
     if (c == 4) {
       chprintf(chp, "^D");
@@ -239,9 +239,9 @@ bool shellGetLine(BaseSequentialStream *chp, char *line, unsigned size) {
     }
     if ((c == 8) || (c == 127)) {
       if (p != line) {
-        chSequentialStreamPut(chp, c);
-        chSequentialStreamPut(chp, 0x20);
-        chSequentialStreamPut(chp, c);
+        streamPut(chp, c);
+        streamPut(chp, 0x20);
+        streamPut(chp, c);
         p--;
       }
       continue;
@@ -254,7 +254,7 @@ bool shellGetLine(BaseSequentialStream *chp, char *line, unsigned size) {
     if (c < 0x20)
       continue;
     if (p < line + size - 1) {
-      chSequentialStreamPut(chp, c);
+      streamPut(chp, c);
       *p++ = (char)c;
     }
   }
