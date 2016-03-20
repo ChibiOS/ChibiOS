@@ -32,10 +32,89 @@
         </description>
         <global_data_and_code>
           <global_definitions>
-            <value><![CDATA[#define TEST_SUITE_NAME                     "ChibiOS/RT Test Suite"]]></value>
+            <value><![CDATA[#define TEST_SUITE_NAME                     "ChibiOS/RT Test Suite"
+
+/*
+ * Maximum number of test threads.
+ */
+#define MAX_THREADS             5
+
+/*
+ * Stack size of test threads.
+ */
+#if defined(CH_ARCHITECTURE_AVR) || defined(CH_ARCHITECTURE_MSP430)
+#define THREADS_STACK_SIZE      48
+#elif defined(CH_ARCHITECTURE_STM8)
+#define THREADS_STACK_SIZE      64
+#elif defined(CH_ARCHITECTURE_SIMIA32)
+#define THREADS_STACK_SIZE      512
+#else
+#define THREADS_STACK_SIZE      128
+#endif
+
+/*
+ * Working Area size of test threads.
+ */
+#define WA_SIZE THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE)
+
+/*
+ * Union of all Working Areas, usable as a single large buffer if required.
+ */
+union test_buffers {
+  struct {
+    THD_WORKING_AREA(T0, THREADS_STACK_SIZE);
+    THD_WORKING_AREA(T1, THREADS_STACK_SIZE);
+    THD_WORKING_AREA(T2, THREADS_STACK_SIZE);
+    THD_WORKING_AREA(T3, THREADS_STACK_SIZE);
+    THD_WORKING_AREA(T4, THREADS_STACK_SIZE);
+  } wa;
+  uint8_t buffer[WA_SIZE * 5];
+};
+
+void test_terminate_threads(void);
+void test_wait_threads(void);]]></value>
           </global_definitions>
           <global_code>
-            <value />
+            <value><![CDATA[/*
+ * Static working areas, the following areas can be used for threads or
+ * used as temporary buffers.
+ */
+union test_buffers test;
+
+/*
+ * Pointers to the spawned threads.
+ */
+thread_t *threads[MAX_THREADS];
+
+/*
+ * Pointers to the working areas.
+ */
+void * ROMCONST wa[5] = {test.wa.T0, test.wa.T1, test.wa.T2,
+                         test.wa.T3, test.wa.T4};
+
+/*
+ * Sets a termination request in all the test-spawned threads.
+ */
+void test_terminate_threads(void) {
+  int i;
+
+  for (i = 0; i < MAX_THREADS; i++)
+    if (threads[i])
+      chThdTerminate(threads[i]);
+}
+
+/*
+ * Waits for the completion of all the test-spawned threads.
+ */
+void test_wait_threads(void) {
+  int i;
+
+  for (i = 0; i < MAX_THREADS; i++)
+    if (threads[i] != NULL) {
+      chThdWait(threads[i]);
+      threads[i] = NULL;
+    }
+}]]></value>
           </global_code>
         </global_data_and_code>
         <sequences>
@@ -280,22 +359,6 @@ chSysEnable();]]></value>
                   </step>
                 </steps>
               </case>
-            </cases>
-          </sequence>
-          <sequence>
-            <type index="0">
-              <value>Internal Tests</value>
-            </type>
-            <brief>
-              <value>Threads Functionality.</value>
-            </brief>
-            <description>
-              <value>This sequence tests the ChibiOS/NIL functionalities related to threading.</value>
-            </description>
-            <shared_code>
-              <value><![CDATA[#include "ch.h"]]></value>
-            </shared_code>
-            <cases>
               <case>
                 <brief>
                   <value>System Tick Counter functionality.</value>
@@ -333,6 +396,27 @@ while (time == chVTGetSystemTimeX()) {
                   </step>
                 </steps>
               </case>
+            </cases>
+          </sequence>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
+              <value>Threads Functionality.</value>
+            </brief>
+            <description>
+              <value>This sequence tests the ChibiOS/NIL functionalities related to threading.</value>
+            </description>
+            <shared_code>
+              <value><![CDATA[#include "ch.h"
+
+static THD_FUNCTION(thread, p) {
+
+  test_emit_token(*(char *)p);
+}]]></value>
+            </shared_code>
+            <cases>
               <case>
                 <brief>
                   <value>Thread Sleep functionality.</value>
@@ -366,7 +450,7 @@ while (time == chVTGetSystemTimeX()) {
                       <value><![CDATA[time = chVTGetSystemTimeX();
 chThdSleep(100);
 test_assert_time_window(time + 100,
-                        time + 100 + 1,
+                        time + 100 + CH_CFG_ST_TIMEDELTA + 1,
                         "out of time window");]]></value>
                     </code>
                   </step>
@@ -381,7 +465,7 @@ test_assert_time_window(time + 100,
                       <value><![CDATA[time = chVTGetSystemTimeX();
 chThdSleepMicroseconds(100000);
 test_assert_time_window(time + US2ST(100000),
-                        time + US2ST(100000) + 1,
+                        time + US2ST(100000) + CH_CFG_ST_TIMEDELTA + 1,
                         "out of time window");]]></value>
                     </code>
                   </step>
@@ -396,7 +480,7 @@ test_assert_time_window(time + US2ST(100000),
                       <value><![CDATA[time = chVTGetSystemTimeX();
 chThdSleepMilliseconds(100);
 test_assert_time_window(time + MS2ST(100),
-                        time + MS2ST(100) + 1,
+                        time + MS2ST(100) + CH_CFG_ST_TIMEDELTA + 1,
                         "out of time window");]]></value>
                     </code>
                   </step>
@@ -411,7 +495,7 @@ test_assert_time_window(time + MS2ST(100),
                       <value><![CDATA[time = chVTGetSystemTimeX();
 chThdSleepSeconds(1);
 test_assert_time_window(time + S2ST(1),
-                        time + S2ST(1) + 1,
+                        time + S2ST(1) + CH_CFG_ST_TIMEDELTA + 1,
                         "out of time window");]]></value>
                     </code>
                   </step>
@@ -426,8 +510,83 @@ test_assert_time_window(time + S2ST(1),
                       <value><![CDATA[time = chVTGetSystemTimeX();
 chThdSleepUntil(time + 100);
 test_assert_time_window(time + 100,
-                        time + 100 + 1,
+                        time + 100 + CH_CFG_ST_TIMEDELTA + 1,
                         "out of time window");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Ready List functionality, threads priority order.</value>
+                </brief>
+                <description>
+                  <value>Five threads, are enqueued in the ready list and atomically executed. The test expects the threads to perform their operations in correct priority order regardless of the initial order.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Creating 5 threads with increasing priority, execution sequence is tested.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()-5, thread, "E");
+threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriorityX()-4, thread, "D");
+threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriorityX()-3, thread, "C");
+threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()-2, thread, "B");
+threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()-1, thread, "A");
+test_wait_threads();
+test_assert_sequence("ABCDE");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Creating 5 threads with decreasing priority, execution sequence is tested.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()-1, thread, "A");
+threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()-2, thread, "B");
+threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriorityX()-3, thread, "C");
+threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriorityX()-4, thread, "D");
+threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()-5, thread, "E");
+test_wait_threads();
+test_assert_sequence("ABCDE");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Creating 5 threads with pseudo-random priority, execution sequence is tested.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriorityX()-4, thread, "D");
+threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()-5, thread, "E");
+threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()-1, thread, "A");
+threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()-2, thread, "B");
+threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriorityX()-3, thread, "C");
+test_wait_threads();
+test_assert_sequence("ABCDE");]]></value>
                     </code>
                   </step>
                 </steps>
