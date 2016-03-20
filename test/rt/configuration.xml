@@ -27,53 +27,15 @@
 */]]></value>
           </copyright>
           <introduction>
-            <value>Test suite for ChibiOS/RT. The purpose of this suite is to perform unit tests on the NIL modules and to converge to 100% code coverage through successive improvements.</value>
+            <value>Test suite for ChibiOS/RT. The purpose of this suite is to perform unit tests on the RT modules and to converge to 100% code coverage through successive improvements.</value>
           </introduction>
         </description>
         <global_data_and_code>
           <global_definitions>
-            <value><![CDATA[#define TEST_SUITE_NAME                     "ChibiOS/NIL Test Suite"
-
-extern semaphore_t gsem1, gsem2;
-extern thread_reference_t gtr1;
-extern THD_WORKING_AREA(wa_test_support, 128);
-
-THD_FUNCTION(test_support, arg);]]></value>
+            <value><![CDATA[#define TEST_SUITE_NAME                     "ChibiOS/RT Test Suite"]]></value>
           </global_definitions>
           <global_code>
-            <value><![CDATA[semaphore_t gsem1, gsem2;
-thread_reference_t gtr1;
-
-/*
- * Support thread.
- */
-THD_WORKING_AREA(wa_test_support, 128);
-THD_FUNCTION(test_support, arg) {
-#if CH_CFG_USE_EVENTS == TRUE
-  thread_t *tp = (thread_t *)arg;
-#else
-  (void)arg;
-#endif
-
-  /* Initializing global resources.*/
-  chSemObjectInit(&gsem1, 0);
-  chSemObjectInit(&gsem2, 0);
-
-  while (true) {
-    chSysLock();
-    if (chSemGetCounterI(&gsem1) < 0)
-      chSemSignalI(&gsem1);
-    chSemResetI(&gsem2, 0);
-    chThdResumeI(&gtr1, MSG_OK);
-#if CH_CFG_USE_EVENTS == TRUE
-    chEvtSignalI(tp, 0x55);
-#endif
-    chSchRescheduleS();
-    chSysUnlock();
-
-    chThdSleepMilliseconds(250);
-  }
-}]]></value>
+            <value />
           </global_code>
         </global_data_and_code>
         <sequences>
@@ -85,7 +47,7 @@ THD_FUNCTION(test_support, arg) {
               <value>System layer and port interface.</value>
             </brief>
             <description>
-              <value>The functionality of the system layer and port interface is tested.</value>
+              <value>The functionality of the system layer and port interface is tested. Basic RT functionality is taken for granted or this test suite could not even be executed. Errors in implementation are detected by executing this sequence with the state checker enabled (CH_DBG_STATE_CHECKER=TRUE).</value>
             </description>
             <shared_code>
               <value><![CDATA[#include "ch.h"
@@ -110,10 +72,90 @@ static void vtcb(void *p) {
             <cases>
               <case>
                 <brief>
+                  <value>System integrity functionality.</value>
+                </brief>
+                <description>
+                  <value>The system self-test functionality is invoked in order to make an initial system state assessment and for coverage.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[bool result;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Testing Ready List integrity.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chSysLock();
+result = chSysIntegrityCheckI(CH_INTEGRITY_RLIST);
+chSysUnlock();
+test_assert(result == false, "ready list check failed");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing Virtual Timers List integrity.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chSysLock();
+result = chSysIntegrityCheckI(CH_INTEGRITY_VTLIST);
+chSysUnlock();
+test_assert(result == false, "virtual timers list check failed");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing Registry List integrity.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chSysLock();
+result = chSysIntegrityCheckI(CH_INTEGRITY_REGISTRY);
+chSysUnlock();
+test_assert(result == false, "registry list check failed");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing Port-defined integrity.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chSysLock();
+result = chSysIntegrityCheckI(CH_INTEGRITY_PORT);
+chSysUnlock();
+test_assert(result == false, "port layer check failed");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
                   <value>Critical zones functionality.</value>
                 </brief>
                 <description>
-                  <value>The critical zones API is invoked for coverage. Functionality is take for granted by the correct implementation of the port layer. This test suite relies on such correct implementation.</value>
+                  <value>The critical zones API is invoked for coverage.</value>
                 </description>
                 <condition>
                   <value />
@@ -133,7 +175,7 @@ virtual_timer_t vt;]]></value>
                 <steps>
                   <step>
                     <description>
-                      <value>Testing chSysGetStatusAndLockX() and chSysRestoreStatusX() for coverage, non reentrant case.</value>
+                      <value>Testing chSysGetStatusAndLockX() and chSysRestoreStatusX(), non reentrant case.</value>
                     </description>
                     <tags>
                       <value />
@@ -145,7 +187,7 @@ chSysRestoreStatusX(sts);]]></value>
                   </step>
                   <step>
                     <description>
-                      <value>Testing chSysGetStatusAndLockX() and chSysRestoreStatusX() for coverage, reentrant case.</value>
+                      <value>Testing chSysGetStatusAndLockX() and chSysRestoreStatusX(), reentrant case.</value>
                     </description>
                     <tags>
                       <value />
@@ -196,6 +238,44 @@ chVTSet(&vt, 1, vtcb, NULL);
 chThdSleep(10);
 
 test_assert(chVTIsArmed(&vt) == false, "timer still armed");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Interrupts handling functionality.</value>
+                </brief>
+                <description>
+                  <value>The interrupts handling API is invoked for coverage.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Testing chSysSuspend(), chSysDisable() and chSysEnable().</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chSysSuspend();
+chSysDisable();
+chSysSuspend();
+chSysEnable();]]></value>
                     </code>
                   </step>
                 </steps>
