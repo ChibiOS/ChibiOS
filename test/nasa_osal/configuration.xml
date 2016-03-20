@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <SPC5-Config version="1.0.0">
-  <application name="Test Suite" version="1.0.0" standalone="true" locked="false">
+  <application name="NASA OSAL Test Suite" version="1.0.0" standalone="true" locked="false">
     <description>Test specification for the NASA OSAL ChibiOS extension.</description>
     <component id="org.chibios.spc5.components.platform.generic">
       <component id="org.chibios.spc5.components.chibios_unitary_tests_engine" />
@@ -9,6 +9,9 @@
       <instance locked="false" id="org.chibios.spc5.components.platform.generic" />
       <instance locked="false" id="org.chibios.spc5.components.chibios_unitary_tests_engine">
         <description>
+          <copyright>
+            <value><![CDATA[/* Copyright statement.*/]]></value>
+          </copyright>
           <introduction>
             <value>Test suite for NASA OSAL implementation over ChibiOS/RT. The purpose of this suite is to perform unit tests on the OSAL module and to converge to 100% code coverage through successive improvements.</value>
           </introduction>

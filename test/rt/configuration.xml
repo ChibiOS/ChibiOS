@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <SPC5-Config version="1.0.0">
-  <application name="ChibiOS/NIL Test Suite" version="1.0.0" standalone="true" locked="false">
-    <description>Test Specification for ChibiOS/NIL.</description>
+  <application name="ChibiOS/RT Test Suite" version="1.0.0" standalone="true" locked="false">
+    <description>Test Specification for ChibiOS/RT.</description>
     <component id="org.chibios.spc5.components.platform.generic">
       <component id="org.chibios.spc5.components.chibios_unitary_tests_engine" />
     </component>
@@ -27,7 +27,7 @@
 */]]></value>
           </copyright>
           <introduction>
-            <value>Test suite for ChibiOS/NIL. The purpose of this suite is to perform unit tests on the NIL modules and to converge to 100% code coverage through successive improvements.</value>
+            <value>Test suite for ChibiOS/RT. The purpose of this suite is to perform unit tests on the NIL modules and to converge to 100% code coverage through successive improvements.</value>
           </introduction>
         </description>
         <global_data_and_code>
@@ -77,6 +77,131 @@ THD_FUNCTION(test_support, arg) {
           </global_code>
         </global_data_and_code>
         <sequences>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
+              <value>System layer and port interface.</value>
+            </brief>
+            <description>
+              <value>The functionality of the system layer and port interface is tested.</value>
+            </description>
+            <shared_code>
+              <value><![CDATA[#include "ch.h"
+
+/* Timer callback for testing system functions in ISR context.*/
+static void vtcb(void *p) {
+  syssts_t sts;
+
+  (void)p;
+
+  /* Testing normal case.*/
+  chSysLockFromISR();
+  chSysUnlockFromISR();
+
+  /* Reentrant case.*/
+  chSysLockFromISR();
+  sts = chSysGetStatusAndLockX();
+  chSysRestoreStatusX(sts);
+  chSysUnlockFromISR();
+}]]></value>
+            </shared_code>
+            <cases>
+              <case>
+                <brief>
+                  <value>Critical zones functionality.</value>
+                </brief>
+                <description>
+                  <value>The critical zones API is invoked for coverage. Functionality is take for granted by the correct implementation of the port layer. This test suite relies on such correct implementation.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[syssts_t sts;
+virtual_timer_t vt;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Testing chSysGetStatusAndLockX() and chSysRestoreStatusX() for coverage, non reentrant case.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[sts = chSysGetStatusAndLockX();
+chSysRestoreStatusX(sts);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing chSysGetStatusAndLockX() and chSysRestoreStatusX() for coverage, reentrant case.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chSysLock();
+sts = chSysGetStatusAndLockX();
+chSysRestoreStatusX(sts);
+chSysUnlock();]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing chSysUnconditionalLock().</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chSysUnconditionalLock();
+chSysUnconditionalLock();
+chSysUnlock();]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing chSysUnconditionalUnlock().</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chSysLock();
+chSysUnconditionalUnlock();
+chSysUnconditionalUnlock();]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing from ISR context using a virtual timer.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chVTObjectInit(&vt);
+chVTSet(&vt, 1, vtcb, NULL);
+chThdSleep(10);
+
+test_assert(chVTIsArmed(&vt) == false, "timer still armed");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+            </cases>
+          </sequence>
           <sequence>
             <type index="0">
               <value>Internal Tests</value>
