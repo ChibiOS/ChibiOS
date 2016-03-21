@@ -460,6 +460,7 @@ extern "C" {
   void usb_lld_stop(USBDriver *usbp);
   void usb_lld_reset(USBDriver *usbp);
   void usb_lld_set_address(USBDriver *usbp);
+  void usb_lld_enable_address(USBDriver *usbp);
   void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep);
   void usb_lld_disable_endpoints(USBDriver *usbp);
   usbepstatus_t usb_lld_get_status_in(USBDriver *usbp, usbep_t ep);

@@ -757,8 +757,8 @@ void pwm_lld_enable_periodic_notification(PWMDriver *pwmp) {
   /* If the IRQ is not already enabled care must be taken to clear it,
      it is probably already pending because the timer is running.*/
   if ((dier & STM32_TIM_DIER_UIE) == 0) {
+    pwmp->tim->SR &= ~STM32_TIM_SR_UIF;
     pwmp->tim->DIER = dier | STM32_TIM_DIER_UIE;
-    pwmp->tim->SR &= STM32_TIM_SR_UIF;
   }
 }
 
