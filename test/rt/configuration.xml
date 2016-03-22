@@ -128,6 +128,9 @@ void test_wait_threads(void) {
             <description>
               <value>The functionality of the system layer and port interface is tested. Basic RT functionality is taken for granted or this test suite could not even be executed. Errors in implementation are detected by executing this sequence with the state checker enabled (CH_DBG_STATE_CHECKER=TRUE).</value>
             </description>
+            <condition>
+              <value />
+            </condition>
             <shared_code>
               <value><![CDATA[#include "ch.h"
 
@@ -408,6 +411,9 @@ while (time == chVTGetSystemTimeX()) {
             <description>
               <value>This sequence tests the ChibiOS/NIL functionalities related to threading.</value>
             </description>
+            <condition>
+              <value />
+            </condition>
             <shared_code>
               <value><![CDATA[#include "ch.h"
 
@@ -603,6 +609,9 @@ test_assert_sequence("ABCDE");]]></value>
             <description>
               <value>This sequence tests the ChibiOS/NIL functionalities related to counter semaphores.</value>
             </description>
+            <condition>
+              <value>CH_CFG_USE_SEMAPHORES</value>
+            </condition>
             <shared_code>
               <value><![CDATA[#include "ch.h"
 
@@ -617,7 +626,7 @@ static semaphore_t sem1;]]></value>
                   <value>Wait, Signal and Reset primitives are tested. The testing thread does not trigger a state change.</value>
                 </description>
                 <condition>
-                  <value>CH_CFG_USE_SEMAPHORES</value>
+                  <value />
                 </condition>
                 <various_code>
                   <setup_code>
@@ -680,7 +689,7 @@ test_assert_lock(chSemGetCounterI(&sem1) == 2, "wrong counter value");]]></value
                   <value>Wait, Signal and Reset primitives are tested. The testing thread triggers a state change.</value>
                 </description>
                 <condition>
-                  <value>CH_CFG_USE_SEMAPHORES</value>
+                  <value />
                 </condition>
                 <various_code>
                   <setup_code>
@@ -734,7 +743,7 @@ test_assert(MSG_RESET == msg, "wrong returned message");]]></value>
                   <value>Timeout on semaphores is tested.</value>
                 </description>
                 <condition>
-                  <value>CH_CFG_USE_SEMAPHORES</value>
+                  <value />
                 </condition>
                 <various_code>
                   <setup_code>
@@ -797,6 +806,9 @@ test_assert(MSG_TIMEOUT == msg, "wrong timeout message");]]></value>
             <description>
               <value>This sequence tests the ChibiOS/NIL functionalities related to threads suspend/resume and event flags.</value>
             </description>
+            <condition>
+              <value />
+            </condition>
             <shared_code>
               <value><![CDATA[static thread_reference_t tr1;]]></value>
             </shared_code>
@@ -943,6 +955,9 @@ test_assert((eventmask_t)0 == events, "wrong events mask");]]></value>
             <description>
               <value>This sequence tests the ChibiOS/NIL functionalities related to mailboxes.</value>
             </description>
+            <condition>
+              <value>CH_CFG_USE_MAILBOXES</value>
+            </condition>
             <shared_code>
               <value><![CDATA[#define ALLOWED_DELAY MS2ST(5)
 #define MB_SIZE 4
@@ -959,7 +974,7 @@ static MAILBOX_DECL(mb1, mb_buffer, MB_SIZE);]]></value>
                   <value>The mailbox normal API is tested without triggering blocking conditions.</value>
                 </description>
                 <condition>
-                  <value>CH_CFG_USE_MAILBOXES</value>
+                  <value />
                 </condition>
                 <various_code>
                   <setup_code>
@@ -1083,7 +1098,7 @@ test_assert(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");]]></va
                   <value>The mailbox I-Class API is tested without triggering blocking conditions.</value>
                 </description>
                 <condition>
-                  <value>CH_CFG_USE_MAILBOXES</value>
+                  <value />
                 </condition>
                 <various_code>
                   <setup_code>
@@ -1215,7 +1230,7 @@ test_assert(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");]]></va
                   <value>The mailbox API is tested for timeouts.</value>
                 </description>
                 <condition>
-                  <value>CH_CFG_USE_MAILBOXES</value>
+                  <value />
                 </condition>
                 <various_code>
                   <setup_code>
@@ -1307,6 +1322,9 @@ test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");]]></value>
             <description>
               <value>This sequence tests the ChibiOS/NIL functionalities related to memory pools.</value>
             </description>
+            <condition>
+              <value>CH_CFG_USE_MEMPOOLS</value>
+            </condition>
             <shared_code>
               <value><![CDATA[#define MEMORY_POOL_SIZE 4
 
@@ -1331,7 +1349,7 @@ static void *null_provider(size_t size, unsigned align) {
                   <value>The memory pool functionality is tested by loading and empting it, all conditions are tested.</value>
                 </description>
                 <condition>
-                  <value>CH_CFG_USE_MEMPOOLS</value>
+                  <value />
                 </condition>
                 <various_code>
                   <setup_code>
@@ -1436,7 +1454,7 @@ test_assert(chPoolAlloc(&mp1) == NULL, "provider returned memory");]]></value>
                   <value>The memory pool functionality is tested by loading and empting it, all conditions are tested.</value>
                 </description>
                 <condition>
-                  <value>(CH_CFG_USE_MEMPOOLS &amp;&amp; CH_CFG_USE_SEMAPHORES)</value>
+                  <value>CH_CFG_USE_SEMAPHORES</value>
                 </condition>
                 <various_code>
                   <setup_code>
@@ -1529,7 +1547,7 @@ test_assert(chPoolAlloc(&mp1) == NULL, "provider returned memory");]]></value>
                   <value>The timeout features for the Guarded Memory Pools is tested.</value>
                 </description>
                 <condition>
-                  <value>(CH_CFG_USE_MEMPOOLS &amp;&amp; CH_CFG_USE_SEMAPHORES)</value>
+                  <value>CH_CFG_USE_SEMAPHORES</value>
                 </condition>
                 <various_code>
                   <setup_code>
@@ -1568,6 +1586,9 @@ test_assert(chPoolAlloc(&mp1) == NULL, "provider returned memory");]]></value>
             <description>
               <value>This sequence tests the ChibiOS/NIL functionalities related to memory heaps.</value>
             </description>
+            <condition>
+              <value>CH_CFG_USE_HEAP</value>
+            </condition>
             <shared_code>
               <value><![CDATA[#define ALLOC_SIZE 16
 #define HEAP_SIZE (ALLOC_SIZE * 8)
@@ -1584,7 +1605,7 @@ static CH_HEAP_AREA(myheap, HEAP_SIZE);]]></value>
                   <value>Series of allocations/deallocations are performed in carefully designed sequences in order to stimulate all the possible code paths inside the allocator. The test expects to find the heap back to the initial status after each sequence.</value>
                 </description>
                 <condition>
-                  <value>CH_CFG_USE_HEAP</value>
+                  <value />
                 </condition>
                 <various_code>
                   <setup_code>
@@ -1762,7 +1783,7 @@ test_assert(n == sz, "size changed");]]></value>
                   <value>The default heap is pre-allocated in the system. We test base functionality.</value>
                 </description>
                 <condition>
-                  <value>CH_CFG_USE_HEAP</value>
+                  <value />
                 </condition>
                 <various_code>
                   <setup_code>
