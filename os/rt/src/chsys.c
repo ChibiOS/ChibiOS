@@ -128,7 +128,7 @@ void chSysInit(void) {
   currp = _thread_init(&ch.mainthread, "main", NORMALPRIO);
 #else
   /* Now this instructions flow becomes the idle thread.*/
-  currp = _thread_init(&ch.mainthread, "idle", IDLEPRIO));
+  currp = _thread_init(&ch.mainthread, "idle", IDLEPRIO);
 #endif
 
   /* Setting up the base address of the static main thread stack.*/
