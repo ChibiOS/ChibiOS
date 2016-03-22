@@ -1,25 +1,11 @@
-/*
-    ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-*/
+/* Copyright statement.*/
 
 #include "hal.h"
 #include "ch_test.h"
 #include "test_root.h"
 
 /**
- * @page test_sequence_002 Queues Functionality
+ * @page test_sequence_002 [2] Queues Functionality
  *
  * File: @ref test_sequence_002.c
  *
@@ -65,30 +51,31 @@ static void test_task_writer(void) {
  ****************************************************************************/
 
 /**
- * @page test_002_001 OS_QueueCreate() and OS_QueueDelete() errors
+ * @page test_002_001 [2.1] OS_QueueCreate() and OS_QueueDelete() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_QueueCreate() and OS_QueueDelete() is
  * tested.
  *
  * <h2>Test Steps</h2>
- * - OS_QueueCreate() is invoked with queue_id set to NULL, an error is
- *   expected.
- * - OS_QueueCreate() is invoked with task_name set to NULL, an error
- *   is expected.
- * - OS_QueueCreate() is invoked with a very long task name, an error
- *   is expected.
- * - OS_QueueDelete() is invoked with queue_id set to -1, an error is
- *   expected.
- * - OS_QueueCreate() is invoked twice with duplicated name, an error
- *   is expected, then the queue is deleted using OS_QueueDelete().
+ * - [2.1.1] OS_QueueCreate() is invoked with queue_id set to NULL, an
+ *   error is expected.
+ * - [2.1.2] OS_QueueCreate() is invoked with task_name set to NULL, an
+ *   error is expected.
+ * - [2.1.3] OS_QueueCreate() is invoked with a very long task name, an
+ *   error is expected.
+ * - [2.1.4] OS_QueueDelete() is invoked with queue_id set to -1, an
+ *   error is expected.
+ * - [2.1.5] OS_QueueCreate() is invoked twice with duplicated name, an
+ *   error is expected, then the queue is deleted using
+ *   OS_QueueDelete().
  * .
  */
 
 static void test_002_001_execute(void) {
 
-  /* OS_QueueCreate() is invoked with queue_id set to NULL, an error is
-     expected.*/
+  /* [2.1.1] OS_QueueCreate() is invoked with queue_id set to NULL, an
+     error is expected.*/
   test_set_step(1);
   {
     int32 err;
@@ -101,8 +88,8 @@ static void test_002_001_execute(void) {
     test_assert(err == OS_INVALID_POINTER, "NULL not detected");
   }
 
-  /* OS_QueueCreate() is invoked with task_name set to NULL, an error
-     is expected.*/
+  /* [2.1.2] OS_QueueCreate() is invoked with task_name set to NULL, an
+     error is expected.*/
   test_set_step(2);
   {
     int32 err;
@@ -116,8 +103,8 @@ static void test_002_001_execute(void) {
     test_assert(err == OS_INVALID_POINTER, "NULL not detected");
   }
 
-  /* OS_QueueCreate() is invoked with a very long task name, an error
-     is expected.*/
+  /* [2.1.3] OS_QueueCreate() is invoked with a very long task name, an
+     error is expected.*/
   test_set_step(3);
   {
     int32 err;
@@ -131,8 +118,8 @@ static void test_002_001_execute(void) {
     test_assert(err == OS_ERR_NAME_TOO_LONG, "name limit not detected");
   }
 
-  /* OS_QueueDelete() is invoked with queue_id set to -1, an error is
-     expected.*/
+  /* [2.1.4] OS_QueueDelete() is invoked with queue_id set to -1, an
+     error is expected.*/
   test_set_step(4);
   {
     int32 err;
@@ -141,8 +128,9 @@ static void test_002_001_execute(void) {
     test_assert(err == OS_ERR_INVALID_ID, "wrong queue id not detected");
   }
 
-  /* OS_QueueCreate() is invoked twice with duplicated name, an error
-     is expected, then the queue is deleted using OS_QueueDelete().*/
+  /* [2.1.5] OS_QueueCreate() is invoked twice with duplicated name, an
+     error is expected, then the queue is deleted using
+     OS_QueueDelete().*/
   test_set_step(5);
   {
     int32 err;
@@ -167,25 +155,25 @@ static const testcase_t test_002_001 = {
 };
 
 /**
- * @page test_002_002 OS_QueueGetIdByName() errors
+ * @page test_002_002 [2.2] OS_QueueGetIdByName() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_QueueGetIdByName() is tested.
  *
  * <h2>Test Steps</h2>
- * - OS_QueueGetIdByName() is invoked with queue_id set to NULL, an
- *   error is expected.
- * - OS_QueueGetIdByName() is invoked with queue_name set to NULL, an
- *   error is expected.
- * - OS_QueueGetIdByName() is invoked with a very long task name, an
- *   error is expected.
+ * - [2.2.1] OS_QueueGetIdByName() is invoked with queue_id set to
+ *   NULL, an error is expected.
+ * - [2.2.2] OS_QueueGetIdByName() is invoked with queue_name set to
+ *   NULL, an error is expected.
+ * - [2.2.3] OS_QueueGetIdByName() is invoked with a very long task
+ *   name, an error is expected.
  * .
  */
 
 static void test_002_002_execute(void) {
 
-  /* OS_QueueGetIdByName() is invoked with queue_id set to NULL, an
-     error is expected.*/
+  /* [2.2.1] OS_QueueGetIdByName() is invoked with queue_id set to
+     NULL, an error is expected.*/
   test_set_step(1);
   {
     int32 err;
@@ -194,8 +182,8 @@ static void test_002_002_execute(void) {
     test_assert(err == OS_INVALID_POINTER, "NULL not detected");
   }
 
-  /* OS_QueueGetIdByName() is invoked with queue_name set to NULL, an
-     error is expected.*/
+  /* [2.2.2] OS_QueueGetIdByName() is invoked with queue_name set to
+     NULL, an error is expected.*/
   test_set_step(2);
   {
     int32 err;
@@ -204,8 +192,8 @@ static void test_002_002_execute(void) {
     test_assert(err == OS_INVALID_POINTER, "NULL not detected");
   }
 
-  /* OS_QueueGetIdByName() is invoked with a very long task name, an
-     error is expected.*/
+  /* [2.2.3] OS_QueueGetIdByName() is invoked with a very long task
+     name, an error is expected.*/
   test_set_step(3);
   {
     int32 err;
@@ -223,17 +211,17 @@ static const testcase_t test_002_002 = {
 };
 
 /**
- * @page test_002_003 OS_QueuePut() and OS_QueueGet() functionality
+ * @page test_002_003 [2.3] OS_QueuePut() and OS_QueueGet() functionality
  *
  * <h2>Description</h2>
  * A task writes on a queue, the messages are retrieved on the other
  * side in blocking mode.
  *
  * <h2>Test Steps</h2>
- * - Creataing a queue with depth 4 and message size 20.
- * - Creating the writer task.
- * - Reading messages from the writer task.
- * - Waiting for task termination then checking for errors.
+ * - [2.3.1] Creataing a queue with depth 4 and message size 20.
+ * - [2.3.2] Creating the writer task.
+ * - [2.3.3] Reading messages from the writer task.
+ * - [2.3.4] Waiting for task termination then checking for errors.
  * .
  */
 
@@ -256,7 +244,7 @@ static void test_002_003_execute(void) {
   uint32 tid;
   unsigned i;
 
-  /* Creataing a queue with depth 4 and message size 20.*/
+  /* [2.3.1] Creataing a queue with depth 4 and message size 20.*/
   test_set_step(1);
   {
     int32 err;
@@ -265,7 +253,7 @@ static void test_002_003_execute(void) {
     test_assert(err == OS_SUCCESS, "queue creation failed");
   }
 
-  /* Creating the writer task.*/
+  /* [2.3.2] Creating the writer task.*/
   test_set_step(2);
   {
     int32 err;
@@ -280,7 +268,7 @@ static void test_002_003_execute(void) {
     test_assert(err == OS_SUCCESS, "writer task creation failed");
   }
 
-  /* Reading messages from the writer task.*/
+  /* [2.3.3] Reading messages from the writer task.*/
   test_set_step(3);
   {
     for (i = 0; i < WRITER_NUM_MESSAGES; i++) {
@@ -295,7 +283,7 @@ static void test_002_003_execute(void) {
     }
   }
 
-  /* Waiting for task termination then checking for errors.*/
+  /* [2.3.4] Waiting for task termination then checking for errors.*/
   test_set_step(4);
   {
     (void) OS_TaskWait(tid);
@@ -312,15 +300,16 @@ static const testcase_t test_002_003 = {
 };
 
 /**
- * @page test_002_004 OS_QueueGet() with timeout functionality
+ * @page test_002_004 [2.4] OS_QueueGet() with timeout functionality
  *
  * <h2>Description</h2>
  * OS_QueueGet() timeout functionality is tested.
  *
  * <h2>Test Steps</h2>
- * - Retrieving the queue by name.
- * - Get operation with a one second timeout, an error is expected.
- * - Get operation in non-blocking mode, an error is expected.
+ * - [2.4.1] Retrieving the queue by name.
+ * - [2.4.2] Get operation with a one second timeout, an error is
+ *   expected.
+ * - [2.4.3] Get operation in non-blocking mode, an error is expected.
  * .
  */
 
@@ -340,7 +329,7 @@ static void test_002_004_execute(void) {
   uint32 copied;
   char data[MESSAGE_SIZE];
 
-  /* Retrieving the queue by name.*/
+  /* [2.4.1] Retrieving the queue by name.*/
   test_set_step(1);
   {
     int32 err;
@@ -349,7 +338,8 @@ static void test_002_004_execute(void) {
     test_assert(err == OS_SUCCESS, "queue not found");
   }
 
-  /* Get operation with a one second timeout, an error is expected.*/
+  /* [2.4.2] Get operation with a one second timeout, an error is
+     expected.*/
   test_set_step(2);
   {
     int32 err;
@@ -358,7 +348,8 @@ static void test_002_004_execute(void) {
     test_assert(err == OS_QUEUE_TIMEOUT, "unexpected error code");
   }
 
-  /* Get operation in non-blocking mode, an error is expected.*/
+  /* [2.4.3] Get operation in non-blocking mode, an error is
+     expected.*/
   test_set_step(3);
   {
     int32 err;

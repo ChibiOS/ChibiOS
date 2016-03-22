@@ -46,6 +46,9 @@ THD_WORKING_AREA(wa_test4, TASKS_STACK_SIZE);]]></value>
             <description>
               <value>This sequence tests the NASA OSAL over ChibiOS/RT functionalities related to threading.</value>
             </description>
+            <condition>
+              <value />
+            </condition>
             <shared_code>
               <value><![CDATA[#include "osapi.h"
 
@@ -620,6 +623,9 @@ test_assert_sequence("ABC", "events order violation");]]></value>
             <description>
               <value>This sequence tests the NASA OSAL over ChibiOS/RT functionalities related to queues</value>
             </description>
+            <condition>
+              <value />
+            </condition>
             <shared_code>
               <value><![CDATA[#include <string.h>
 
@@ -1006,6 +1012,9 @@ test_assert(err == OS_QUEUE_EMPTY, "unexpected error code");]]></value>
             <description>
               <value>This sequence tests the NASA OSAL over ChibiOS/RT functionalities related to timers</value>
             </description>
+            <condition>
+              <value />
+            </condition>
             <shared_code>
               <value><![CDATA[#include <string.h>
 
@@ -1446,6 +1455,9 @@ test_assert(err == OS_SUCCESS, "timer stop failed");]]></value>
             <description>
               <value>This sequence tests the NASA OSAL over ChibiOS/RT functionalities related to binary semaphores.</value>
             </description>
+            <condition>
+              <value />
+            </condition>
             <shared_code>
               <value><![CDATA[#include "osapi.h"
 
@@ -1871,6 +1883,9 @@ test_assert(err == OS_SEM_TIMEOUT, "unexpected error code");]]></value>
             <description>
               <value>This sequence tests the NASA OSAL over ChibiOS/RT functionalities related to counter semaphores.</value>
             </description>
+            <condition>
+              <value />
+            </condition>
             <shared_code>
               <value><![CDATA[#include "osapi.h"
 
@@ -2258,6 +2273,9 @@ test_assert(err == OS_SEM_TIMEOUT, "unexpected error code");]]></value>
             <description>
               <value>This sequence tests the NASA OSAL over ChibiOS/RT functionalities related to mutex semaphores.</value>
             </description>
+            <condition>
+              <value />
+            </condition>
             <shared_code>
               <value><![CDATA[#include "osapi.h"
 

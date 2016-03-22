@@ -19,7 +19,7 @@
 #include "test_root.h"
 
 /**
- * @page test_sequence_003 Suspend/Resume and Event Flags
+ * @page test_sequence_003 [3] Suspend/Resume and Event Flags
  *
  * File: @ref test_sequence_003.c
  *
@@ -44,19 +44,19 @@ static thread_reference_t tr1;
  ****************************************************************************/
 
 /**
- * @page test_003_001 Suspend and Resume functionality
+ * @page test_003_001 [3.1] Suspend and Resume functionality
  *
  * <h2>Description</h2>
  * The functionality of chThdSuspendTimeoutS() and chThdResumeI() is
  * tested.
  *
  * <h2>Test Steps</h2>
- * - The function chThdSuspendTimeoutS() is invoked, the thread is
- *   remotely resumed with message @p MSG_OK. On return the message and
+ * - [3.1.1] The function chThdSuspendTimeoutS() is invoked, the thread
+ *   is remotely resumed with message @p MSG_OK. On return the message
+ *   and the state of the reference are tested.
+ * - [3.1.2] The function chThdSuspendTimeoutS() is invoked, the thread
+ *   is not resumed so a timeout must occur. On return the message and
  *   the state of the reference are tested.
- * - The function chThdSuspendTimeoutS() is invoked, the thread is not
- *   resumed so a timeout must occur. On return the message and the
- *   state of the reference are tested.
  * .
  */
 
@@ -68,9 +68,9 @@ static void test_003_001_execute(void) {
   systime_t time;
   msg_t msg;
 
-  /* The function chThdSuspendTimeoutS() is invoked, the thread is
-     remotely resumed with message @p MSG_OK. On return the message and
-     the state of the reference are tested.*/
+  /* [3.1.1] The function chThdSuspendTimeoutS() is invoked, the thread
+     is remotely resumed with message @p MSG_OK. On return the message
+     and the state of the reference are tested.*/
   test_set_step(1);
   {
     chSysLock();
@@ -80,9 +80,9 @@ static void test_003_001_execute(void) {
     test_assert(MSG_OK == msg,"wrong returned message");
   }
 
-  /* The function chThdSuspendTimeoutS() is invoked, the thread is not
-     resumed so a timeout must occur. On return the message and the
-     state of the reference are tested.*/
+  /* [3.1.2] The function chThdSuspendTimeoutS() is invoked, the thread
+     is not resumed so a timeout must occur. On return the message and
+     the state of the reference are tested.*/
   test_set_step(2);
   {
     chSysLock();
@@ -104,9 +104,9 @@ static const testcase_t test_003_001 = {
   test_003_001_execute
 };
 
-#if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
+#if (CH_CFG_USE_EVENTS) || defined(__DOXYGEN__)
 /**
- * @page test_003_002 Events Flags functionality
+ * @page test_003_002 [3.2] Events Flags functionality
  *
  * <h2>Description</h2>
  * Event flags functionality is tested.
@@ -118,15 +118,15 @@ static const testcase_t test_003_001 = {
  * .
  *
  * <h2>Test Steps</h2>
- * - A set of event flags are set on the current thread then the
- *   function chEvtWaitAnyTimeout() is invoked, the function is
+ * - [3.2.1] A set of event flags are set on the current thread then
+ *   the function chEvtWaitAnyTimeout() is invoked, the function is
  *   supposed to return immediately because the event flags are already
  *   pending, after return the events mask is tested.
- * - The pending event flags mask is cleared then the function
+ * - [3.2.2] The pending event flags mask is cleared then the function
  *   chEvtWaitAnyTimeout() is invoked, after return the events mask is
  *   tested. The thread is signaled by another thread.
- * - The function chEvtWaitAnyTimeout() is invoked, no event can wakeup
- *   the thread, the function must return because timeout.
+ * - [3.2.3] The function chEvtWaitAnyTimeout() is invoked, no event
+ *   can wakeup the thread, the function must return because timeout.
  * .
  */
 
@@ -134,8 +134,8 @@ static void test_003_002_execute(void) {
   systime_t time;
   eventmask_t events;
 
-  /* A set of event flags are set on the current thread then the
-     function chEvtWaitAnyTimeout() is invoked, the function is
+  /* [3.2.1] A set of event flags are set on the current thread then
+     the function chEvtWaitAnyTimeout() is invoked, the function is
      supposed to return immediately because the event flags are already
      pending, after return the events mask is tested.*/
   test_set_step(1);
@@ -147,7 +147,7 @@ static void test_003_002_execute(void) {
     test_assert((eventmask_t)0x55 == events, "wrong events mask");
   }
 
-  /* The pending event flags mask is cleared then the function
+  /* [3.2.2] The pending event flags mask is cleared then the function
      chEvtWaitAnyTimeout() is invoked, after return the events mask is
      tested. The thread is signaled by another thread.*/
   test_set_step(2);
@@ -159,8 +159,8 @@ static void test_003_002_execute(void) {
     test_assert((eventmask_t)0x55 == events, "wrong events mask");
   }
 
-  /* The function chEvtWaitAnyTimeout() is invoked, no event can wakeup
-     the thread, the function must return because timeout.*/
+  /* [3.2.3] The function chEvtWaitAnyTimeout() is invoked, no event
+     can wakeup the thread, the function must return because timeout.*/
   test_set_step(3);
   {
     time = chVTGetSystemTimeX();
@@ -189,7 +189,7 @@ static const testcase_t test_003_002 = {
  */
 const testcase_t * const test_sequence_003[] = {
   &test_003_001,
-#if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
+#if (CH_CFG_USE_EVENTS) || defined(__DOXYGEN__)
   &test_003_002,
 #endif
   NULL

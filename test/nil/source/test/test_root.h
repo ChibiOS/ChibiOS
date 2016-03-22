@@ -17,9 +17,6 @@
 /**
  * @file    test_root.h
  * @brief   Test Suite root structures header.
- *
- * @addtogroup SPC5_TEST_ROOT
- * @{
  */
 
 #ifndef _SPC5_TEST_ROOT_H_
@@ -31,6 +28,8 @@
 #include "test_sequence_004.h"
 #include "test_sequence_005.h"
 #include "test_sequence_006.h"
+
+#if !defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -57,6 +56,6 @@ extern THD_WORKING_AREA(wa_test_support, 128);
 
 THD_FUNCTION(test_support, arg);
 
-#endif /* _SPC5_TEST_ROOT_H_ */
+#endif /* !defined(__DOXYGEN__) */
 
-/** @} */
+#endif /* _SPC5_TEST_ROOT_H_ */

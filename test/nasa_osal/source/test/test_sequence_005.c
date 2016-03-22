@@ -1,25 +1,11 @@
-/*
-    ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-*/
+/* Copyright statement.*/
 
 #include "hal.h"
 #include "ch_test.h"
 #include "test_root.h"
 
 /**
- * @page test_sequence_005 Counter Semaphores Functionality
+ * @page test_sequence_005 [5] Counter Semaphores Functionality
  *
  * File: @ref test_sequence_005.c
  *
@@ -50,33 +36,33 @@ uint32 csid;
  ****************************************************************************/
 
 /**
- * @page test_005_001 OS_CountSemCreate() and OS_CountSemDelete() errors
+ * @page test_005_001 [5.1] OS_CountSemCreate() and OS_CountSemDelete() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_CountSemCreate() and OS_CountSemDelete()
  * is tested.
  *
  * <h2>Test Steps</h2>
- * - OS_CountSemCreate() is invoked with sem_id set to NULL, an error
- *   is expected.
- * - OS_CountSemCreate() is invoked with sem_name set to NULL, an error
- *   is expected.
- * - OS_CountSemCreate() is invoked with an invalid sem_initial_value,
- *   an error is expected.
- * - OS_CountSemCreate() is invoked with a very long timer name, an
+ * - [5.1.1] OS_CountSemCreate() is invoked with sem_id set to NULL, an
  *   error is expected.
- * - OS_CountSemDelete() is invoked with timer_id set to -1, an error
- *   is expected.
- * - OS_CountSemCreate() is invoked twice with duplicated name, an
- *   error is expected, then the queue is deleted using
+ * - [5.1.2] OS_CountSemCreate() is invoked with sem_name set to NULL,
+ *   an error is expected.
+ * - [5.1.3] OS_CountSemCreate() is invoked with an invalid
+ *   sem_initial_value, an error is expected.
+ * - [5.1.4] OS_CountSemCreate() is invoked with a very long timer
+ *   name, an error is expected.
+ * - [5.1.5] OS_CountSemDelete() is invoked with timer_id set to -1, an
+ *   error is expected.
+ * - [5.1.6] OS_CountSemCreate() is invoked twice with duplicated name,
+ *   an error is expected, then the queue is deleted using
  *   OS_CountSemDelete().
  * .
  */
 
 static void test_005_001_execute(void) {
 
-  /* OS_CountSemCreate() is invoked with sem_id set to NULL, an error
-     is expected.*/
+  /* [5.1.1] OS_CountSemCreate() is invoked with sem_id set to NULL, an
+     error is expected.*/
   test_set_step(1);
   {
     int32 err;
@@ -88,8 +74,8 @@ static void test_005_001_execute(void) {
     test_assert(err == OS_INVALID_POINTER, "NULL not detected");
   }
 
-  /* OS_CountSemCreate() is invoked with sem_name set to NULL, an error
-     is expected.*/
+  /* [5.1.2] OS_CountSemCreate() is invoked with sem_name set to NULL,
+     an error is expected.*/
   test_set_step(2);
   {
     int32 err;
@@ -101,8 +87,8 @@ static void test_005_001_execute(void) {
     test_assert(err == OS_INVALID_POINTER, "NULL not detected");
   }
 
-  /* OS_CountSemCreate() is invoked with an invalid sem_initial_value,
-     an error is expected.*/
+  /* [5.1.3] OS_CountSemCreate() is invoked with an invalid
+     sem_initial_value, an error is expected.*/
   test_set_step(3);
   {
     int32 err;
@@ -114,8 +100,8 @@ static void test_005_001_execute(void) {
     test_assert(err == OS_INVALID_INT_NUM, "counter error not detected");
   }
 
-  /* OS_CountSemCreate() is invoked with a very long timer name, an
-     error is expected.*/
+  /* [5.1.4] OS_CountSemCreate() is invoked with a very long timer
+     name, an error is expected.*/
   test_set_step(4);
   {
     #if 0 /* Semaphore name currently not implemented.*/
@@ -129,8 +115,8 @@ static void test_005_001_execute(void) {
     #endif
   }
 
-  /* OS_CountSemDelete() is invoked with timer_id set to -1, an error
-     is expected.*/
+  /* [5.1.5] OS_CountSemDelete() is invoked with timer_id set to -1, an
+     error is expected.*/
   test_set_step(5);
   {
     int32 err;
@@ -139,8 +125,8 @@ static void test_005_001_execute(void) {
     test_assert(err == OS_ERR_INVALID_ID, "wrong semaphore id not detected");
   }
 
-  /* OS_CountSemCreate() is invoked twice with duplicated name, an
-     error is expected, then the queue is deleted using
+  /* [5.1.6] OS_CountSemCreate() is invoked twice with duplicated name,
+     an error is expected, then the queue is deleted using
      OS_CountSemDelete().*/
   test_set_step(6);
   {
@@ -168,21 +154,21 @@ static const testcase_t test_005_001 = {
 };
 
 /**
- * @page test_005_002 OS_CountSemGive() errors
+ * @page test_005_002 [5.2] OS_CountSemGive() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_CountSemGive() is tested.
  *
  * <h2>Test Steps</h2>
- * - OS_CountSemGive() is invoked with sem_id set to -1, an error is
- *   expected.
+ * - [5.2.1] OS_CountSemGive() is invoked with sem_id set to -1, an
+ *   error is expected.
  * .
  */
 
 static void test_005_002_execute(void) {
 
-  /* OS_CountSemGive() is invoked with sem_id set to -1, an error is
-     expected.*/
+  /* [5.2.1] OS_CountSemGive() is invoked with sem_id set to -1, an
+     error is expected.*/
   test_set_step(1);
   {
     int32 err;
@@ -200,21 +186,21 @@ static const testcase_t test_005_002 = {
 };
 
 /**
- * @page test_005_003 OS_CountSemTake() errors
+ * @page test_005_003 [5.3] OS_CountSemTake() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_CountSemTake() is tested.
  *
  * <h2>Test Steps</h2>
- * - OS_CountSemTake() is invoked with sem_id set to -1, an error is
- *   expected.
+ * - [5.3.1] OS_CountSemTake() is invoked with sem_id set to -1, an
+ *   error is expected.
  * .
  */
 
 static void test_005_003_execute(void) {
 
-  /* OS_CountSemTake() is invoked with sem_id set to -1, an error is
-     expected.*/
+  /* [5.3.1] OS_CountSemTake() is invoked with sem_id set to -1, an
+     error is expected.*/
   test_set_step(1);
   {
     int32 err;
@@ -232,16 +218,16 @@ static const testcase_t test_005_003 = {
 };
 
 /**
- * @page test_005_004 OS_CountSemTimedWait() errors
+ * @page test_005_004 [5.4] OS_CountSemTimedWait() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_CountSemTimedWait() is tested.
  *
  * <h2>Test Steps</h2>
- * - OS_CountSemTimedWait() is invoked with sem_id set to -1, an error
- *   is expected.
- * - OS_CountSemTimedWait() is invoked with msecs set to 0, an error is
- *   expected.
+ * - [5.4.1] OS_CountSemTimedWait() is invoked with sem_id set to -1,
+ *   an error is expected.
+ * - [5.4.2] OS_CountSemTimedWait() is invoked with msecs set to 0, an
+ *   error is expected.
  * .
  */
 
@@ -258,8 +244,8 @@ static void test_005_004_teardown(void) {
 
 static void test_005_004_execute(void) {
 
-  /* OS_CountSemTimedWait() is invoked with sem_id set to -1, an error
-     is expected.*/
+  /* [5.4.1] OS_CountSemTimedWait() is invoked with sem_id set to -1,
+     an error is expected.*/
   test_set_step(1);
   {
     int32 err;
@@ -268,8 +254,8 @@ static void test_005_004_execute(void) {
     test_assert(err == OS_ERR_INVALID_ID, "invalid sem_id not detected");
   }
 
-  /* OS_CountSemTimedWait() is invoked with msecs set to 0, an error is
-     expected.*/
+  /* [5.4.2] OS_CountSemTimedWait() is invoked with msecs set to 0, an
+     error is expected.*/
   test_set_step(2);
   {
     int32 err;
@@ -287,25 +273,25 @@ static const testcase_t test_005_004 = {
 };
 
 /**
- * @page test_005_005 OS_CountSemGetIdByName() errors
+ * @page test_005_005 [5.5] OS_CountSemGetIdByName() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_CountSemGetIdByName() is tested.
  *
  * <h2>Test Steps</h2>
- * - OS_CountSemGetIdByName() is invoked with sem_id set to NULL, an
- *   error is expected.
- * - OS_CountSemGetIdByName() is invoked with semaphore name set to
+ * - [5.5.1] OS_CountSemGetIdByName() is invoked with sem_id set to
  *   NULL, an error is expected.
- * - OS_CountSemGetIdByName() is invoked with a very long task name, an
- *   error is expected.
+ * - [5.5.2] OS_CountSemGetIdByName() is invoked with semaphore name
+ *   set to NULL, an error is expected.
+ * - [5.5.3] OS_CountSemGetIdByName() is invoked with a very long task
+ *   name, an error is expected.
  * .
  */
 
 static void test_005_005_execute(void) {
 
-  /* OS_CountSemGetIdByName() is invoked with sem_id set to NULL, an
-     error is expected.*/
+  /* [5.5.1] OS_CountSemGetIdByName() is invoked with sem_id set to
+     NULL, an error is expected.*/
   test_set_step(1);
   {
     int32 err;
@@ -314,8 +300,8 @@ static void test_005_005_execute(void) {
     test_assert(err == OS_INVALID_POINTER, "NULL not detected");
   }
 
-  /* OS_CountSemGetIdByName() is invoked with semaphore name set to
-     NULL, an error is expected.*/
+  /* [5.5.2] OS_CountSemGetIdByName() is invoked with semaphore name
+     set to NULL, an error is expected.*/
   test_set_step(2);
   {
     int32 err;
@@ -324,8 +310,8 @@ static void test_005_005_execute(void) {
     test_assert(err == OS_INVALID_POINTER, "NULL not detected");
   }
 
-  /* OS_CountSemGetIdByName() is invoked with a very long task name, an
-     error is expected.*/
+  /* [5.5.3] OS_CountSemGetIdByName() is invoked with a very long task
+     name, an error is expected.*/
   test_set_step(3);
   {
     int32 err;
@@ -343,14 +329,14 @@ static const testcase_t test_005_005 = {
 };
 
 /**
- * @page test_005_006 OS_CountSemTimedWait() timeout functionality
+ * @page test_005_006 [5.6] OS_CountSemTimedWait() timeout functionality
  *
  * <h2>Description</h2>
  * OS_CountSemCreate() timeout functionality is tested.
  *
  * <h2>Test Steps</h2>
- * - OS_CountSemTimedWait() is invoked with timeout set to one second,
- *   an error is expected.
+ * - [5.6.1] OS_CountSemTimedWait() is invoked with timeout set to one
+ *   second, an error is expected.
  * .
  */
 
@@ -367,8 +353,8 @@ static void test_005_006_teardown(void) {
 
 static void test_005_006_execute(void) {
 
-  /* OS_CountSemTimedWait() is invoked with timeout set to one second,
-     an error is expected.*/
+  /* [5.6.1] OS_CountSemTimedWait() is invoked with timeout set to one
+     second, an error is expected.*/
   test_set_step(1);
   {
     int32 err;

@@ -1,25 +1,11 @@
-/*
-    ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-*/
+/* Copyright statement.*/
 
 #include "hal.h"
 #include "ch_test.h"
 #include "test_root.h"
 
 /**
- * @page test_sequence_003 Timers Functionality
+ * @page test_sequence_003 [3] Timers Functionality
  *
  * File: @ref test_sequence_003.c
  *
@@ -59,34 +45,35 @@ static void tmr_callback(uint32 timer_id) {
  ****************************************************************************/
 
 /**
- * @page test_003_001 OS_TimerCreate() and OS_TimerDelete() errors
+ * @page test_003_001 [3.1] OS_TimerCreate() and OS_TimerDelete() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_TimerCreate() and OS_TimerDelete() is
  * tested.
  *
  * <h2>Test Steps</h2>
- * - OS_TimerCreate() is invoked with timer_id set to NULL, an error is
- *   expected.
- * - OS_TimerCreate() is invoked with timer_name set to NULL, an error
- *   is expected.
- * - OS_TimerCreate() is invoked with accuracy set to NULL, an error is
- *   expected.
- * - OS_TimerCreate() is invoked with callback_ptr set to NULL, an
+ * - [3.1.1] OS_TimerCreate() is invoked with timer_id set to NULL, an
  *   error is expected.
- * - OS_TimerCreate() is invoked with a very long timer name, an error
- *   is expected.
- * - OS_TimerDelete() is invoked with timer_id set to -1, an error is
- *   expected.
- * - OS_TimerCreate() is invoked twice with duplicated name, an error
- *   is expected, then the queue is deleted using OS_TimerDelete().
+ * - [3.1.2] OS_TimerCreate() is invoked with timer_name set to NULL,
+ *   an error is expected.
+ * - [3.1.3] OS_TimerCreate() is invoked with accuracy set to NULL, an
+ *   error is expected.
+ * - [3.1.4] OS_TimerCreate() is invoked with callback_ptr set to NULL,
+ *   an error is expected.
+ * - [3.1.5] OS_TimerCreate() is invoked with a very long timer name,
+ *   an error is expected.
+ * - [3.1.6] OS_TimerDelete() is invoked with timer_id set to -1, an
+ *   error is expected.
+ * - [3.1.7] OS_TimerCreate() is invoked twice with duplicated name, an
+ *   error is expected, then the queue is deleted using
+ *   OS_TimerDelete().
  * .
  */
 
 static void test_003_001_execute(void) {
 
-  /* OS_TimerCreate() is invoked with timer_id set to NULL, an error is
-     expected.*/
+  /* [3.1.1] OS_TimerCreate() is invoked with timer_id set to NULL, an
+     error is expected.*/
   test_set_step(1);
   {
     int32 err;
@@ -99,8 +86,8 @@ static void test_003_001_execute(void) {
     test_assert(err == OS_INVALID_POINTER, "NULL not detected");
   }
 
-  /* OS_TimerCreate() is invoked with timer_name set to NULL, an error
-     is expected.*/
+  /* [3.1.2] OS_TimerCreate() is invoked with timer_name set to NULL,
+     an error is expected.*/
   test_set_step(2);
   {
     int32 err;
@@ -114,8 +101,8 @@ static void test_003_001_execute(void) {
     test_assert(err == OS_INVALID_POINTER, "NULL not detected");
   }
 
-  /* OS_TimerCreate() is invoked with accuracy set to NULL, an error is
-     expected.*/
+  /* [3.1.3] OS_TimerCreate() is invoked with accuracy set to NULL, an
+     error is expected.*/
   test_set_step(3);
   {
     int32 err;
@@ -128,8 +115,8 @@ static void test_003_001_execute(void) {
     test_assert(err == OS_INVALID_POINTER, "NULL not detected");
   }
 
-  /* OS_TimerCreate() is invoked with callback_ptr set to NULL, an
-     error is expected.*/
+  /* [3.1.4] OS_TimerCreate() is invoked with callback_ptr set to NULL,
+     an error is expected.*/
   test_set_step(4);
   {
     int32 err;
@@ -143,8 +130,8 @@ static void test_003_001_execute(void) {
     test_assert(err == OS_TIMER_ERR_INVALID_ARGS, "NULL not detected");
   }
 
-  /* OS_TimerCreate() is invoked with a very long timer name, an error
-     is expected.*/
+  /* [3.1.5] OS_TimerCreate() is invoked with a very long timer name,
+     an error is expected.*/
   test_set_step(5);
   {
     int32 err;
@@ -158,8 +145,8 @@ static void test_003_001_execute(void) {
     test_assert(err == OS_ERR_NAME_TOO_LONG, "name limit not detected");
   }
 
-  /* OS_TimerDelete() is invoked with timer_id set to -1, an error is
-     expected.*/
+  /* [3.1.6] OS_TimerDelete() is invoked with timer_id set to -1, an
+     error is expected.*/
   test_set_step(6);
   {
     int32 err;
@@ -168,8 +155,9 @@ static void test_003_001_execute(void) {
     test_assert(err == OS_ERR_INVALID_ID, "wrong timer id not detected");
   }
 
-  /* OS_TimerCreate() is invoked twice with duplicated name, an error
-     is expected, then the queue is deleted using OS_TimerDelete().*/
+  /* [3.1.7] OS_TimerCreate() is invoked twice with duplicated name, an
+     error is expected, then the queue is deleted using
+     OS_TimerDelete().*/
   test_set_step(7);
   {
     int32 err;
@@ -195,21 +183,21 @@ static const testcase_t test_003_001 = {
 };
 
 /**
- * @page test_003_002 OS_TimerSet() errors
+ * @page test_003_002 [3.2] OS_TimerSet() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_TimerSet() is tested.
  *
  * <h2>Test Steps</h2>
- * - OS_TimerSet() is invoked with timer_id set to -1, an error is
- *   expected.
+ * - [3.2.1] OS_TimerSet() is invoked with timer_id set to -1, an error
+ *   is expected.
  * .
  */
 
 static void test_003_002_execute(void) {
 
-  /* OS_TimerSet() is invoked with timer_id set to -1, an error is
-     expected.*/
+  /* [3.2.1] OS_TimerSet() is invoked with timer_id set to -1, an error
+     is expected.*/
   test_set_step(1);
   {
     int32 err;
@@ -227,25 +215,25 @@ static const testcase_t test_003_002 = {
 };
 
 /**
- * @page test_003_003 OS_TimerGetIdByName() errors
+ * @page test_003_003 [3.3] OS_TimerGetIdByName() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_TimerGetIdByName() is tested.
  *
  * <h2>Test Steps</h2>
- * - OS_TimerGetIdByName() is invoked with timer_id set to NULL, an
- *   error is expected.
- * - OS_TimerGetIdByName() is invoked with timer name set to NULL, an
- *   error is expected.
- * - OS_TimerGetIdByName() is invoked with a very long task name, an
- *   error is expected.
+ * - [3.3.1] OS_TimerGetIdByName() is invoked with timer_id set to
+ *   NULL, an error is expected.
+ * - [3.3.2] OS_TimerGetIdByName() is invoked with timer name set to
+ *   NULL, an error is expected.
+ * - [3.3.3] OS_TimerGetIdByName() is invoked with a very long task
+ *   name, an error is expected.
  * .
  */
 
 static void test_003_003_execute(void) {
 
-  /* OS_TimerGetIdByName() is invoked with timer_id set to NULL, an
-     error is expected.*/
+  /* [3.3.1] OS_TimerGetIdByName() is invoked with timer_id set to
+     NULL, an error is expected.*/
   test_set_step(1);
   {
     int32 err;
@@ -254,8 +242,8 @@ static void test_003_003_execute(void) {
     test_assert(err == OS_INVALID_POINTER, "NULL not detected");
   }
 
-  /* OS_TimerGetIdByName() is invoked with timer name set to NULL, an
-     error is expected.*/
+  /* [3.3.2] OS_TimerGetIdByName() is invoked with timer name set to
+     NULL, an error is expected.*/
   test_set_step(2);
   {
     int32 err;
@@ -264,8 +252,8 @@ static void test_003_003_execute(void) {
     test_assert(err == OS_INVALID_POINTER, "NULL not detected");
   }
 
-  /* OS_TimerGetIdByName() is invoked with a very long task name, an
-     error is expected.*/
+  /* [3.3.3] OS_TimerGetIdByName() is invoked with a very long task
+     name, an error is expected.*/
   test_set_step(3);
   {
     int32 err;
@@ -283,15 +271,15 @@ static const testcase_t test_003_003 = {
 };
 
 /**
- * @page test_003_004 OS_TimerSet() one-shot functionality
+ * @page test_003_004 [3.4] OS_TimerSet() one-shot functionality
  *
  * <h2>Description</h2>
  * A timer is tested in one-shot mode.
  *
  * <h2>Test Steps</h2>
- * - Retrieving the timer by name.
- * - Setting up the timer for a 70mS one-shot tick.
- * - Waiting one second then counting the occurred ticks.
+ * - [3.4.1] Retrieving the timer by name.
+ * - [3.4.2] Setting up the timer for a 70mS one-shot tick.
+ * - [3.4.3] Waiting one second then counting the occurred ticks.
  * .
  */
 
@@ -312,7 +300,7 @@ static void test_003_004_teardown(void) {
 static void test_003_004_execute(void) {
   uint32 local_tmid;
 
-  /* Retrieving the timer by name.*/
+  /* [3.4.1] Retrieving the timer by name.*/
   test_set_step(1);
   {
     int32 err;
@@ -321,7 +309,7 @@ static void test_003_004_execute(void) {
     test_assert(err == OS_SUCCESS, "timer not found");
   }
 
-  /* Setting up the timer for a 70mS one-shot tick.*/
+  /* [3.4.2] Setting up the timer for a 70mS one-shot tick.*/
   test_set_step(2);
   {
     uint32 err;
@@ -330,7 +318,7 @@ static void test_003_004_execute(void) {
     test_assert(err == OS_SUCCESS, "timer setup failed");
   }
 
-  /* Waiting one second then counting the occurred ticks.*/
+  /* [3.4.3] Waiting one second then counting the occurred ticks.*/
   test_set_step(3);
   {
     (void) OS_TaskDelay(1000);
@@ -346,16 +334,16 @@ static const testcase_t test_003_004 = {
 };
 
 /**
- * @page test_003_005 OS_TimerSet() periodic functionality
+ * @page test_003_005 [3.5] OS_TimerSet() periodic functionality
  *
  * <h2>Description</h2>
  * A timer is tested in periodic mode.
  *
  * <h2>Test Steps</h2>
- * - Retrieving the timer by name.
- * - Setting up the timer for a 70mS periodic tick.
- * - Waiting one second then counting the occurred ticks.
- * - Stopping the timer.
+ * - [3.5.1] Retrieving the timer by name.
+ * - [3.5.2] Setting up the timer for a 70mS periodic tick.
+ * - [3.5.3] Waiting one second then counting the occurred ticks.
+ * - [3.5.4] Stopping the timer.
  * .
  */
 
@@ -377,7 +365,7 @@ static void test_003_005_teardown(void) {
 static void test_003_005_execute(void) {
   uint32 local_tmid;
 
-  /* Retrieving the timer by name.*/
+  /* [3.5.1] Retrieving the timer by name.*/
   test_set_step(1);
   {
     int32 err;
@@ -386,7 +374,7 @@ static void test_003_005_execute(void) {
     test_assert(err == OS_SUCCESS, "timer not found");
   }
 
-  /* Setting up the timer for a 70mS periodic tick.*/
+  /* [3.5.2] Setting up the timer for a 70mS periodic tick.*/
   test_set_step(2);
   {
     uint32 err;
@@ -395,14 +383,14 @@ static void test_003_005_execute(void) {
     test_assert(err == OS_SUCCESS, "timer setup failed");
   }
 
-  /* Waiting one second then counting the occurred ticks.*/
+  /* [3.5.3] Waiting one second then counting the occurred ticks.*/
   test_set_step(3);
   {
     (void) OS_TaskDelay(1000);
     test_assert(cnt == 14, "wrong ticks");
   }
 
-  /* Stopping the timer.*/
+  /* [3.5.4] Stopping the timer.*/
   test_set_step(4);
   {
     uint32 err;

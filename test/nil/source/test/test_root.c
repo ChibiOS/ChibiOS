@@ -33,14 +33,13 @@
 /**
  * @file    test_root.c
  * @brief   Test Suite root structures code.
- *
- * @addtogroup SPC5_TEST_ROOT
- * @{
  */
 
 #include "hal.h"
 #include "ch_test.h"
 #include "test_root.h"
+
+#if !defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module exported variables.                                                */
@@ -97,4 +96,4 @@ THD_FUNCTION(test_support, arg) {
   }
 }
 
-/** @} */
+#endif /* !defined(__DOXYGEN__) */

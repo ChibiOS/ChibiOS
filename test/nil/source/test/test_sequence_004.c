@@ -19,7 +19,7 @@
 #include "test_root.h"
 
 /**
- * @page test_sequence_004 Mailboxes
+ * @page test_sequence_004 [4] Mailboxes
  *
  * File: @ref test_sequence_004.c
  *
@@ -27,12 +27,20 @@
  * This sequence tests the ChibiOS/NIL functionalities related to
  * mailboxes.
  *
+ * <h2>Conditions</h2>
+ * This sequence is only executed if the following preprocessor condition
+ * evaluates to true:
+ * - CH_CFG_USE_MAILBOXES
+ * .
+ *
  * <h2>Test Cases</h2>
  * - @subpage test_004_001
  * - @subpage test_004_002
  * - @subpage test_004_003
  * .
  */
+
+#if (CH_CFG_USE_MAILBOXES) || defined(__DOXYGEN__)
 
 /****************************************************************************
  * Shared code.
@@ -48,31 +56,27 @@ static MAILBOX_DECL(mb1, mb_buffer, MB_SIZE);
  * Test cases.
  ****************************************************************************/
 
-#if CH_CFG_USE_MAILBOXES || defined(__DOXYGEN__)
 /**
- * @page test_004_001 Mailbox normal API, non-blocking tests
+ * @page test_004_001 [4.1] Mailbox normal API, non-blocking tests
  *
  * <h2>Description</h2>
  * The mailbox normal API is tested without triggering blocking
  * conditions.
  *
- * <h2>Conditions</h2>
- * This test is only executed if the following preprocessor condition
- * evaluates to true:
- * - CH_CFG_USE_MAILBOXES
- * .
- *
  * <h2>Test Steps</h2>
- * - Testing the mailbox size.
- * - Resetting the mailbox, conditions are checked, no errors expected.
- * - Filling the mailbox using chMBPost() and chMBPostAhead() once, no
- *   errors expected.
- * - Testing intermediate conditions. Data pointers must be aligned,
- *   semaphore counters are checked.
- * - Emptying the mailbox using chMBFetch(), no errors expected.
- * - Posting and then fetching one more message, no errors expected.
- * - Testing final conditions. Data pointers must be aligned to buffer
- *   start, semaphore counters are checked.
+ * - [4.1.1] Testing the mailbox size.
+ * - [4.1.2] Resetting the mailbox, conditions are checked, no errors
+ *   expected.
+ * - [4.1.3] Filling the mailbox using chMBPost() and chMBPostAhead()
+ *   once, no errors expected.
+ * - [4.1.4] Testing intermediate conditions. Data pointers must be
+ *   aligned, semaphore counters are checked.
+ * - [4.1.5] Emptying the mailbox using chMBFetch(), no errors
+ *   expected.
+ * - [4.1.6] Posting and then fetching one more message, no errors
+ *   expected.
+ * - [4.1.7] Testing final conditions. Data pointers must be aligned to
+ *   buffer start, semaphore counters are checked.
  * .
  */
 
@@ -88,13 +92,13 @@ static void test_004_001_execute(void) {
   msg_t msg1, msg2;
   unsigned i;
 
-  /* Testing the mailbox size.*/
+  /* [4.1.1] Testing the mailbox size.*/
   test_set_step(1);
   {
     test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "wrong size");
   }
 
-  /* Resetting the mailbox, conditions are checked, no errors
+  /* [4.1.2] Resetting the mailbox, conditions are checked, no errors
      expected.*/
   test_set_step(2);
   {
@@ -105,8 +109,8 @@ static void test_004_001_execute(void) {
     test_assert_lock(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");
   }
 
-  /* Filling the mailbox using chMBPost() and chMBPostAhead() once, no
-     errors expected.*/
+  /* [4.1.3] Filling the mailbox using chMBPost() and chMBPostAhead()
+     once, no errors expected.*/
   test_set_step(3);
   {
     for (i = 0; i < MB_SIZE - 1; i++) {
@@ -117,8 +121,8 @@ static void test_004_001_execute(void) {
     test_assert(msg1 == MSG_OK, "wrong wake-up message");
   }
 
-  /* Testing intermediate conditions. Data pointers must be aligned,
-     semaphore counters are checked.*/
+  /* [4.1.4] Testing intermediate conditions. Data pointers must be
+     aligned, semaphore counters are checked.*/
   test_set_step(4);
   {
     test_assert_lock(chMBGetFreeCountI(&mb1) == 0, "still empty");
@@ -126,7 +130,8 @@ static void test_004_001_execute(void) {
     test_assert_lock(mb1.rdptr == mb1.wrptr, "pointers not aligned");
   }
 
-  /* Emptying the mailbox using chMBFetch(), no errors expected.*/
+  /* [4.1.5] Emptying the mailbox using chMBFetch(), no errors
+     expected.*/
   test_set_step(5);
   {
     for (i = 0; i < MB_SIZE; i++) {
@@ -137,7 +142,8 @@ static void test_004_001_execute(void) {
     test_assert_sequence("ABCD", "wrong get sequence");
   }
 
-  /* Posting and then fetching one more message, no errors expected.*/
+  /* [4.1.6] Posting and then fetching one more message, no errors
+     expected.*/
   test_set_step(6);
   {
     msg1 = chMBPost(&mb1, 'B' + i, TIME_INFINITE);
@@ -146,8 +152,8 @@ static void test_004_001_execute(void) {
     test_assert(msg1 == MSG_OK, "wrong wake-up message");
   }
 
-  /* Testing final conditions. Data pointers must be aligned to buffer
-     start, semaphore counters are checked.*/
+  /* [4.1.7] Testing final conditions. Data pointers must be aligned to
+     buffer start, semaphore counters are checked.*/
   test_set_step(7);
   {
     test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "not empty");
@@ -163,33 +169,28 @@ static const testcase_t test_004_001 = {
   test_004_001_teardown,
   test_004_001_execute
 };
-#endif /* CH_CFG_USE_MAILBOXES */
 
-#if CH_CFG_USE_MAILBOXES || defined(__DOXYGEN__)
 /**
- * @page test_004_002 Mailbox I-Class API, non-blocking tests
+ * @page test_004_002 [4.2] Mailbox I-Class API, non-blocking tests
  *
  * <h2>Description</h2>
  * The mailbox I-Class API is tested without triggering blocking
  * conditions.
  *
- * <h2>Conditions</h2>
- * This test is only executed if the following preprocessor condition
- * evaluates to true:
- * - CH_CFG_USE_MAILBOXES
- * .
- *
  * <h2>Test Steps</h2>
- * - Testing the mailbox size.
- * - Resetting the mailbox, conditions are checked, no errors expected.
- * - Filling the mailbox using chMBPostI() and chMBPostAheadI() once,
- *   no errors expected.
- * - Testing intermediate conditions. Data pointers must be aligned,
- *   semaphore counters are checked.
- * - Emptying the mailbox using chMBFetchI(), no errors expected.
- * - Posting and then fetching one more message, no errors expected.
- * - Testing final conditions. Data pointers must be aligned to buffer
- *   start, semaphore counters are checked.
+ * - [4.2.1] Testing the mailbox size.
+ * - [4.2.2] Resetting the mailbox, conditions are checked, no errors
+ *   expected.
+ * - [4.2.3] Filling the mailbox using chMBPostI() and chMBPostAheadI()
+ *   once, no errors expected.
+ * - [4.2.4] Testing intermediate conditions. Data pointers must be
+ *   aligned, semaphore counters are checked.
+ * - [4.2.5] Emptying the mailbox using chMBFetchI(), no errors
+ *   expected.
+ * - [4.2.6] Posting and then fetching one more message, no errors
+ *   expected.
+ * - [4.2.7] Testing final conditions. Data pointers must be aligned to
+ *   buffer start, semaphore counters are checked.
  * .
  */
 
@@ -205,13 +206,13 @@ static void test_004_002_execute(void) {
   msg_t msg1, msg2;
   unsigned i;
 
-  /* Testing the mailbox size.*/
+  /* [4.2.1] Testing the mailbox size.*/
   test_set_step(1);
   {
     test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "wrong size");
   }
 
-  /* Resetting the mailbox, conditions are checked, no errors
+  /* [4.2.2] Resetting the mailbox, conditions are checked, no errors
      expected.*/
   test_set_step(2);
   {
@@ -224,8 +225,8 @@ static void test_004_002_execute(void) {
     test_assert_lock(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");
   }
 
-  /* Filling the mailbox using chMBPostI() and chMBPostAheadI() once,
-     no errors expected.*/
+  /* [4.2.3] Filling the mailbox using chMBPostI() and chMBPostAheadI()
+     once, no errors expected.*/
   test_set_step(3);
   {
     for (i = 0; i < MB_SIZE - 1; i++) {
@@ -240,8 +241,8 @@ static void test_004_002_execute(void) {
     test_assert(msg1 == MSG_OK, "wrong wake-up message");
   }
 
-  /* Testing intermediate conditions. Data pointers must be aligned,
-     semaphore counters are checked.*/
+  /* [4.2.4] Testing intermediate conditions. Data pointers must be
+     aligned, semaphore counters are checked.*/
   test_set_step(4);
   {
     test_assert_lock(chMBGetFreeCountI(&mb1) == 0, "still empty");
@@ -249,7 +250,8 @@ static void test_004_002_execute(void) {
     test_assert_lock(mb1.rdptr == mb1.wrptr, "pointers not aligned");
   }
 
-  /* Emptying the mailbox using chMBFetchI(), no errors expected.*/
+  /* [4.2.5] Emptying the mailbox using chMBFetchI(), no errors
+     expected.*/
   test_set_step(5);
   {
     for (i = 0; i < MB_SIZE; i++) {
@@ -262,7 +264,8 @@ static void test_004_002_execute(void) {
     test_assert_sequence("ABCD", "wrong get sequence");
   }
 
-  /* Posting and then fetching one more message, no errors expected.*/
+  /* [4.2.6] Posting and then fetching one more message, no errors
+     expected.*/
   test_set_step(6);
   {
     msg1 = chMBPost(&mb1, 'B' + i, TIME_INFINITE);
@@ -271,8 +274,8 @@ static void test_004_002_execute(void) {
     test_assert(msg1 == MSG_OK, "wrong wake-up message");
   }
 
-  /* Testing final conditions. Data pointers must be aligned to buffer
-     start, semaphore counters are checked.*/
+  /* [4.2.7] Testing final conditions. Data pointers must be aligned to
+     buffer start, semaphore counters are checked.*/
   test_set_step(7);
   {
     test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "not empty");
@@ -288,27 +291,19 @@ static const testcase_t test_004_002 = {
   test_004_002_teardown,
   test_004_002_execute
 };
-#endif /* CH_CFG_USE_MAILBOXES */
 
-#if CH_CFG_USE_MAILBOXES || defined(__DOXYGEN__)
 /**
- * @page test_004_003 Mailbox timeouts
+ * @page test_004_003 [4.3] Mailbox timeouts
  *
  * <h2>Description</h2>
  * The mailbox API is tested for timeouts.
  *
- * <h2>Conditions</h2>
- * This test is only executed if the following preprocessor condition
- * evaluates to true:
- * - CH_CFG_USE_MAILBOXES
- * .
- *
  * <h2>Test Steps</h2>
- * - Filling the mailbox.
- * - Testing chMBPost(), chMBPostI(), chMBPostAhead() and
+ * - [4.3.1] Filling the mailbox.
+ * - [4.3.2] Testing chMBPost(), chMBPostI(), chMBPostAhead() and
  *   chMBPostAheadI() timeout.
- * - Resetting the mailbox.
- * - Testing chMBFetch() and chMBFetchI() timeout.
+ * - [4.3.3] Resetting the mailbox.
+ * - [4.3.4] Testing chMBFetch() and chMBFetchI() timeout.
  * .
  */
 
@@ -324,7 +319,7 @@ static void test_004_003_execute(void) {
   msg_t msg1, msg2;
   unsigned i;
 
-  /* Filling the mailbox.*/
+  /* [4.3.1] Filling the mailbox.*/
   test_set_step(1);
   {
     for (i = 0; i < MB_SIZE; i++) {
@@ -333,7 +328,7 @@ static void test_004_003_execute(void) {
     }
   }
 
-  /* Testing chMBPost(), chMBPostI(), chMBPostAhead() and
+  /* [4.3.2] Testing chMBPost(), chMBPostI(), chMBPostAhead() and
      chMBPostAheadI() timeout.*/
   test_set_step(2);
   {
@@ -351,13 +346,13 @@ static void test_004_003_execute(void) {
     test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
   }
 
-  /* Resetting the mailbox.*/
+  /* [4.3.3] Resetting the mailbox.*/
   test_set_step(3);
   {
     chMBReset(&mb1);
   }
 
-  /* Testing chMBFetch() and chMBFetchI() timeout.*/
+  /* [4.3.4] Testing chMBFetch() and chMBFetchI() timeout.*/
   test_set_step(4);
   {
     msg1 = chMBFetch(&mb1, &msg2, 1);
@@ -375,7 +370,6 @@ static const testcase_t test_004_003 = {
   test_004_003_teardown,
   test_004_003_execute
 };
-#endif /* CH_CFG_USE_MAILBOXES */
 
 /****************************************************************************
  * Exported data.
@@ -385,14 +379,10 @@ static const testcase_t test_004_003 = {
  * @brief   Mailboxes.
  */
 const testcase_t * const test_sequence_004[] = {
-#if CH_CFG_USE_MAILBOXES || defined(__DOXYGEN__)
   &test_004_001,
-#endif
-#if CH_CFG_USE_MAILBOXES || defined(__DOXYGEN__)
   &test_004_002,
-#endif
-#if CH_CFG_USE_MAILBOXES || defined(__DOXYGEN__)
   &test_004_003,
-#endif
   NULL
 };
+
+#endif /* CH_CFG_USE_MAILBOXES */

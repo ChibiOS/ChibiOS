@@ -1,25 +1,11 @@
-/*
-    ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-*/
+/* Copyright statement.*/
 
 #include "hal.h"
 #include "ch_test.h"
 #include "test_root.h"
 
 /**
- * @page test_sequence_006 Mutex Semaphores Functionality
+ * @page test_sequence_006 [6] Mutex Semaphores Functionality
  *
  * File: @ref test_sequence_006.c
  *
@@ -48,30 +34,31 @@ uint32 msid;
  ****************************************************************************/
 
 /**
- * @page test_006_001 OS_MutSemCreate() and OS_MutSemDelete() errors
+ * @page test_006_001 [6.1] OS_MutSemCreate() and OS_MutSemDelete() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_MutSemCreate() and OS_MutSemDelete() is
  * tested.
  *
  * <h2>Test Steps</h2>
- * - OS_MutSemCreate() is invoked with sem_id set to NULL, an error is
- *   expected.
- * - OS_MutSemCreate() is invoked with sem_name set to NULL, an error
- *   is expected.
- * - OS_MutSemCreate() is invoked with a very long timer name, an error
- *   is expected.
- * - OS_MutSemDelete() is invoked with timer_id set to -1, an error is
- *   expected.
- * - OS_MutSemCreate() is invoked twice with duplicated name, an error
- *   is expected, then the queue is deleted using OS_MutSemDelete().
+ * - [6.1.1] OS_MutSemCreate() is invoked with sem_id set to NULL, an
+ *   error is expected.
+ * - [6.1.2] OS_MutSemCreate() is invoked with sem_name set to NULL, an
+ *   error is expected.
+ * - [6.1.3] OS_MutSemCreate() is invoked with a very long timer name,
+ *   an error is expected.
+ * - [6.1.4] OS_MutSemDelete() is invoked with timer_id set to -1, an
+ *   error is expected.
+ * - [6.1.5] OS_MutSemCreate() is invoked twice with duplicated name,
+ *   an error is expected, then the queue is deleted using
+ *   OS_MutSemDelete().
  * .
  */
 
 static void test_006_001_execute(void) {
 
-  /* OS_MutSemCreate() is invoked with sem_id set to NULL, an error is
-     expected.*/
+  /* [6.1.1] OS_MutSemCreate() is invoked with sem_id set to NULL, an
+     error is expected.*/
   test_set_step(1);
   {
     int32 err;
@@ -82,8 +69,8 @@ static void test_006_001_execute(void) {
     test_assert(err == OS_INVALID_POINTER, "NULL not detected");
   }
 
-  /* OS_MutSemCreate() is invoked with sem_name set to NULL, an error
-     is expected.*/
+  /* [6.1.2] OS_MutSemCreate() is invoked with sem_name set to NULL, an
+     error is expected.*/
   test_set_step(2);
   {
     int32 err;
@@ -94,8 +81,8 @@ static void test_006_001_execute(void) {
     test_assert(err == OS_INVALID_POINTER, "NULL not detected");
   }
 
-  /* OS_MutSemCreate() is invoked with a very long timer name, an error
-     is expected.*/
+  /* [6.1.3] OS_MutSemCreate() is invoked with a very long timer name,
+     an error is expected.*/
   test_set_step(3);
   {
     #if 0 /* Semaphore name currently not implemented.*/
@@ -108,8 +95,8 @@ static void test_006_001_execute(void) {
     #endif
   }
 
-  /* OS_MutSemDelete() is invoked with timer_id set to -1, an error is
-     expected.*/
+  /* [6.1.4] OS_MutSemDelete() is invoked with timer_id set to -1, an
+     error is expected.*/
   test_set_step(4);
   {
     int32 err;
@@ -118,8 +105,9 @@ static void test_006_001_execute(void) {
     test_assert(err == OS_ERR_INVALID_ID, "wrong semaphore id not detected");
   }
 
-  /* OS_MutSemCreate() is invoked twice with duplicated name, an error
-     is expected, then the queue is deleted using OS_MutSemDelete().*/
+  /* [6.1.5] OS_MutSemCreate() is invoked twice with duplicated name,
+     an error is expected, then the queue is deleted using
+     OS_MutSemDelete().*/
   test_set_step(5);
   {
     int32 err;
@@ -146,21 +134,21 @@ static const testcase_t test_006_001 = {
 };
 
 /**
- * @page test_006_002 OS_MutSemGive() errors
+ * @page test_006_002 [6.2] OS_MutSemGive() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_MutSemGive() is tested.
  *
  * <h2>Test Steps</h2>
- * - OS_MutSemGive() is invoked with sem_id set to -1, an error is
- *   expected.
+ * - [6.2.1] OS_MutSemGive() is invoked with sem_id set to -1, an error
+ *   is expected.
  * .
  */
 
 static void test_006_002_execute(void) {
 
-  /* OS_MutSemGive() is invoked with sem_id set to -1, an error is
-     expected.*/
+  /* [6.2.1] OS_MutSemGive() is invoked with sem_id set to -1, an error
+     is expected.*/
   test_set_step(1);
   {
     int32 err;
@@ -178,21 +166,21 @@ static const testcase_t test_006_002 = {
 };
 
 /**
- * @page test_006_003 OS_MutSemTake() errors
+ * @page test_006_003 [6.3] OS_MutSemTake() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_MutSemTake() is tested.
  *
  * <h2>Test Steps</h2>
- * - OS_MutSemTake() is invoked with sem_id set to -1, an error is
- *   expected.
+ * - [6.3.1] OS_MutSemTake() is invoked with sem_id set to -1, an error
+ *   is expected.
  * .
  */
 
 static void test_006_003_execute(void) {
 
-  /* OS_MutSemTake() is invoked with sem_id set to -1, an error is
-     expected.*/
+  /* [6.3.1] OS_MutSemTake() is invoked with sem_id set to -1, an error
+     is expected.*/
   test_set_step(1);
   {
     int32 err;
@@ -210,25 +198,25 @@ static const testcase_t test_006_003 = {
 };
 
 /**
- * @page test_006_004 OS_MutSemGetIdByName() errors
+ * @page test_006_004 [6.4] OS_MutSemGetIdByName() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_MutSemGetIdByName() is tested.
  *
  * <h2>Test Steps</h2>
- * - OS_MutSemGetIdByName() is invoked with sem_id set to NULL, an
- *   error is expected.
- * - OS_MutSemGetIdByName() is invoked with semaphore name set to NULL,
+ * - [6.4.1] OS_MutSemGetIdByName() is invoked with sem_id set to NULL,
  *   an error is expected.
- * - OS_MutSemGetIdByName() is invoked with a very long task name, an
- *   error is expected.
+ * - [6.4.2] OS_MutSemGetIdByName() is invoked with semaphore name set
+ *   to NULL, an error is expected.
+ * - [6.4.3] OS_MutSemGetIdByName() is invoked with a very long task
+ *   name, an error is expected.
  * .
  */
 
 static void test_006_004_execute(void) {
 
-  /* OS_MutSemGetIdByName() is invoked with sem_id set to NULL, an
-     error is expected.*/
+  /* [6.4.1] OS_MutSemGetIdByName() is invoked with sem_id set to NULL,
+     an error is expected.*/
   test_set_step(1);
   {
     int32 err;
@@ -237,8 +225,8 @@ static void test_006_004_execute(void) {
     test_assert(err == OS_INVALID_POINTER, "NULL not detected");
   }
 
-  /* OS_MutSemGetIdByName() is invoked with semaphore name set to NULL,
-     an error is expected.*/
+  /* [6.4.2] OS_MutSemGetIdByName() is invoked with semaphore name set
+     to NULL, an error is expected.*/
   test_set_step(2);
   {
     int32 err;
@@ -247,8 +235,8 @@ static void test_006_004_execute(void) {
     test_assert(err == OS_INVALID_POINTER, "NULL not detected");
   }
 
-  /* OS_MutSemGetIdByName() is invoked with a very long task name, an
-     error is expected.*/
+  /* [6.4.3] OS_MutSemGetIdByName() is invoked with a very long task
+     name, an error is expected.*/
   test_set_step(3);
   {
     int32 err;

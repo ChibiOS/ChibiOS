@@ -19,7 +19,7 @@
 #include "test_root.h"
 
 /**
- * @page test_sequence_001 Threads Functionality
+ * @page test_sequence_001 [1] Threads Functionality
  *
  * File: @ref test_sequence_001.c
  *
@@ -44,21 +44,21 @@
  ****************************************************************************/
 
 /**
- * @page test_001_001 System Tick Counter functionality
+ * @page test_001_001 [1.1] System Tick Counter functionality
  *
  * <h2>Description</h2>
  * The functionality of the API @p chVTGetSystemTimeX() is tested.
  *
  * <h2>Test Steps</h2>
- * - A System Tick Counter increment is expected, the test simply hangs
- *   if it does not happen.
+ * - [1.1.1] A System Tick Counter increment is expected, the test
+ *   simply hangs if it does not happen.
  * .
  */
 
 static void test_001_001_execute(void) {
 
-  /* A System Tick Counter increment is expected, the test simply hangs
-     if it does not happen.*/
+  /* [1.1.1] A System Tick Counter increment is expected, the test
+     simply hangs if it does not happen.*/
   test_set_step(1);
   {
     systime_t time = chVTGetSystemTimeX();
@@ -75,30 +75,34 @@ static const testcase_t test_001_001 = {
 };
 
 /**
- * @page test_001_002 Thread Sleep functionality
+ * @page test_001_002 [1.2] Thread Sleep functionality
  *
  * <h2>Description</h2>
  * The functionality of @p chThdSleep() and derivatives is tested.
  *
  * <h2>Test Steps</h2>
- * - The current system time is read then a sleep is performed for 100
- *   system ticks and on exit the system time is verified again.
- * - The current system time is read then a sleep is performed for
- *   100000 microseconds and on exit the system time is verified again.
- * - The current system time is read then a sleep is performed for 100
- *   milliseconds and on exit the system time is verified again.
- * - The current system time is read then a sleep is performed for 1
- *   second and on exit the system time is verified again.
- * - Function chThdSleepUntil() is tested with a timeline of "now" +
- *   100 ticks.
+ * - [1.2.1] The current system time is read then a sleep is performed
+ *   for 100 system ticks and on exit the system time is verified
+ *   again.
+ * - [1.2.2] The current system time is read then a sleep is performed
+ *   for 100000 microseconds and on exit the system time is verified
+ *   again.
+ * - [1.2.3] The current system time is read then a sleep is performed
+ *   for 100 milliseconds and on exit the system time is verified
+ *   again.
+ * - [1.2.4] The current system time is read then a sleep is performed
+ *   for 1 second and on exit the system time is verified again.
+ * - [1.2.5] Function chThdSleepUntil() is tested with a timeline of
+ *   "now" + 100 ticks.
  * .
  */
 
 static void test_001_002_execute(void) {
   systime_t time;
 
-  /* The current system time is read then a sleep is performed for 100
-     system ticks and on exit the system time is verified again.*/
+  /* [1.2.1] The current system time is read then a sleep is performed
+     for 100 system ticks and on exit the system time is verified
+     again.*/
   test_set_step(1);
   {
     time = chVTGetSystemTimeX();
@@ -108,8 +112,8 @@ static void test_001_002_execute(void) {
                             "out of time window");
   }
 
-  /* The current system time is read then a sleep is performed for
-     100000 microseconds and on exit the system time is verified
+  /* [1.2.2] The current system time is read then a sleep is performed
+     for 100000 microseconds and on exit the system time is verified
      again.*/
   test_set_step(2);
   {
@@ -120,8 +124,9 @@ static void test_001_002_execute(void) {
                             "out of time window");
   }
 
-  /* The current system time is read then a sleep is performed for 100
-     milliseconds and on exit the system time is verified again.*/
+  /* [1.2.3] The current system time is read then a sleep is performed
+     for 100 milliseconds and on exit the system time is verified
+     again.*/
   test_set_step(3);
   {
     time = chVTGetSystemTimeX();
@@ -131,8 +136,8 @@ static void test_001_002_execute(void) {
                             "out of time window");
   }
 
-  /* The current system time is read then a sleep is performed for 1
-     second and on exit the system time is verified again.*/
+  /* [1.2.4] The current system time is read then a sleep is performed
+     for 1 second and on exit the system time is verified again.*/
   test_set_step(4);
   {
     time = chVTGetSystemTimeX();
@@ -142,8 +147,8 @@ static void test_001_002_execute(void) {
                             "out of time window");
   }
 
-  /* Function chThdSleepUntil() is tested with a timeline of "now" +
-     100 ticks.*/
+  /* [1.2.5] Function chThdSleepUntil() is tested with a timeline of
+     "now" + 100 ticks.*/
   test_set_step(5);
   {
     time = chVTGetSystemTimeX();

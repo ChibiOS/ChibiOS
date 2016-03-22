@@ -1343,10 +1343,10 @@ static void *null_provider(size_t size, unsigned align) {
             <cases>
               <case>
                 <brief>
-                  <value>Loading and empting a memory pool.</value>
+                  <value>Loading and emptying a memory pool.</value>
                 </brief>
                 <description>
-                  <value>The memory pool functionality is tested by loading and empting it, all conditions are tested.</value>
+                  <value>The memory pool functionality is tested by loading and emptying it, all conditions are tested.</value>
                 </description>
                 <condition>
                   <value />
@@ -1448,10 +1448,10 @@ test_assert(chPoolAlloc(&mp1) == NULL, "provider returned memory");]]></value>
               </case>
               <case>
                 <brief>
-                  <value>Loading and empting a guarded memory pool without waiting.</value>
+                  <value>Loading and emptying a guarded memory pool without waiting.</value>
                 </brief>
                 <description>
-                  <value>The memory pool functionality is tested by loading and empting it, all conditions are tested.</value>
+                  <value>The memory pool functionality is tested by loading and emptying it, all conditions are tested.</value>
                 </description>
                 <condition>
                   <value>CH_CFG_USE_SEMAPHORES</value>

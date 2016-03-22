@@ -19,7 +19,7 @@
 #include "test_root.h"
 
 /**
- * @page test_sequence_005 Memory Pools
+ * @page test_sequence_005 [5] Memory Pools
  *
  * File: @ref test_sequence_005.c
  *
@@ -27,12 +27,20 @@
  * This sequence tests the ChibiOS/NIL functionalities related to
  * memory pools.
  *
+ * <h2>Conditions</h2>
+ * This sequence is only executed if the following preprocessor condition
+ * evaluates to true:
+ * - CH_CFG_USE_MEMPOOLS
+ * .
+ *
  * <h2>Test Cases</h2>
  * - @subpage test_005_001
  * - @subpage test_005_002
  * - @subpage test_005_003
  * .
  */
+
+#if (CH_CFG_USE_MEMPOOLS) || defined(__DOXYGEN__)
 
 /****************************************************************************
  * Shared code.
@@ -56,29 +64,22 @@ static void *null_provider(size_t size, unsigned align) {
  * Test cases.
  ****************************************************************************/
 
-#if CH_CFG_USE_MEMPOOLS || defined(__DOXYGEN__)
 /**
- * @page test_005_001 Loading and empting a memory pool
+ * @page test_005_001 [5.1] Loading and emptying a memory pool
  *
  * <h2>Description</h2>
- * The memory pool functionality is tested by loading and empting it,
+ * The memory pool functionality is tested by loading and emptying it,
  * all conditions are tested.
  *
- * <h2>Conditions</h2>
- * This test is only executed if the following preprocessor condition
- * evaluates to true:
- * - CH_CFG_USE_MEMPOOLS
- * .
- *
  * <h2>Test Steps</h2>
- * - Adding the objects to the pool using chPoolLoadArray().
- * - Emptying the pool using chPoolAlloc().
- * - Now must be empty.
- * - Adding the objects to the pool using chPoolFree().
- * - Emptying the pool using chPoolAlloc() again.
- * - Now must be empty again.
- * - Covering the case where a provider is unable to return more
- *   memory.
+ * - [5.1.1] Adding the objects to the pool using chPoolLoadArray().
+ * - [5.1.2] Emptying the pool using chPoolAlloc().
+ * - [5.1.3] Now must be empty.
+ * - [5.1.4] Adding the objects to the pool using chPoolFree().
+ * - [5.1.5] Emptying the pool using chPoolAlloc() again.
+ * - [5.1.6] Now must be empty again.
+ * - [5.1.7] Covering the case where a provider is unable to return
+ *   more memory.
  * .
  */
 
@@ -89,47 +90,47 @@ static void test_005_001_setup(void) {
 static void test_005_001_execute(void) {
   unsigned i;
 
-  /* Adding the objects to the pool using chPoolLoadArray().*/
+  /* [5.1.1] Adding the objects to the pool using chPoolLoadArray().*/
   test_set_step(1);
   {
     chPoolLoadArray(&mp1, objects, MEMORY_POOL_SIZE);
   }
 
-  /* Emptying the pool using chPoolAlloc().*/
+  /* [5.1.2] Emptying the pool using chPoolAlloc().*/
   test_set_step(2);
   {
     for (i = 0; i < MEMORY_POOL_SIZE; i++)
       test_assert(chPoolAlloc(&mp1) != NULL, "list empty");
   }
 
-  /* Now must be empty.*/
+  /* [5.1.3] Now must be empty.*/
   test_set_step(3);
   {
     test_assert(chPoolAlloc(&mp1) == NULL, "list not empty");
   }
 
-  /* Adding the objects to the pool using chPoolFree().*/
+  /* [5.1.4] Adding the objects to the pool using chPoolFree().*/
   test_set_step(4);
   {
     for (i = 0; i < MEMORY_POOL_SIZE; i++)
       chPoolFree(&mp1, &objects[i]);
   }
 
-  /* Emptying the pool using chPoolAlloc() again.*/
+  /* [5.1.5] Emptying the pool using chPoolAlloc() again.*/
   test_set_step(5);
   {
     for (i = 0; i < MEMORY_POOL_SIZE; i++)
       test_assert(chPoolAlloc(&mp1) != NULL, "list empty");
   }
 
-  /* Now must be empty again.*/
+  /* [5.1.6] Now must be empty again.*/
   test_set_step(6);
   {
     test_assert(chPoolAlloc(&mp1) == NULL, "list not empty");
   }
 
-  /* Covering the case where a provider is unable to return more
-     memory.*/
+  /* [5.1.7] Covering the case where a provider is unable to return
+     more memory.*/
   test_set_step(7);
   {
     chPoolObjectInit(&mp1, sizeof (uint32_t), null_provider);
@@ -138,34 +139,34 @@ static void test_005_001_execute(void) {
 }
 
 static const testcase_t test_005_001 = {
-  "Loading and empting a memory pool",
+  "Loading and emptying a memory pool",
   test_005_001_setup,
   NULL,
   test_005_001_execute
 };
-#endif /* CH_CFG_USE_MEMPOOLS */
 
-#if (CH_CFG_USE_MEMPOOLS && CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
 /**
- * @page test_005_002 Loading and empting a guarded memory pool without waiting
+ * @page test_005_002 [5.2] Loading and emptying a guarded memory pool without waiting
  *
  * <h2>Description</h2>
- * The memory pool functionality is tested by loading and empting it,
+ * The memory pool functionality is tested by loading and emptying it,
  * all conditions are tested.
  *
  * <h2>Conditions</h2>
  * This test is only executed if the following preprocessor condition
  * evaluates to true:
- * - (CH_CFG_USE_MEMPOOLS && CH_CFG_USE_SEMAPHORES)
+ * - CH_CFG_USE_SEMAPHORES
  * .
  *
  * <h2>Test Steps</h2>
- * - Adding the objects to the pool using chGuardedPoolLoadArray().
- * - Emptying the pool using chGuardedPoolAllocTimeout().
- * - Now must be empty.
- * - Adding the objects to the pool using chGuardedPoolFree().
- * - Emptying the pool using chGuardedPoolAllocTimeout() again.
- * - Now must be empty again.
+ * - [5.2.1] Adding the objects to the pool using
+ *   chGuardedPoolLoadArray().
+ * - [5.2.2] Emptying the pool using chGuardedPoolAllocTimeout().
+ * - [5.2.3] Now must be empty.
+ * - [5.2.4] Adding the objects to the pool using chGuardedPoolFree().
+ * - [5.2.5] Emptying the pool using chGuardedPoolAllocTimeout() again.
+ * - [5.2.6] Now must be empty again.
  * .
  */
 
@@ -176,40 +177,43 @@ static void test_005_002_setup(void) {
 static void test_005_002_execute(void) {
   unsigned i;
 
-  /* Adding the objects to the pool using chGuardedPoolLoadArray().*/
+  /* [5.2.1] Adding the objects to the pool using
+     chGuardedPoolLoadArray().*/
   test_set_step(1);
   {
     chGuardedPoolLoadArray(&gmp1, objects, MEMORY_POOL_SIZE);
   }
 
-  /* Emptying the pool using chGuardedPoolAllocTimeout().*/
+  /* [5.2.2] Emptying the pool using chGuardedPoolAllocTimeout().*/
   test_set_step(2);
   {
     for (i = 0; i < MEMORY_POOL_SIZE; i++)
       test_assert(chGuardedPoolAllocTimeout(&gmp1, TIME_IMMEDIATE) != NULL, "list empty");
   }
 
-  /* Now must be empty.*/
+  /* [5.2.3] Now must be empty.*/
   test_set_step(3);
   {
     test_assert(chGuardedPoolAllocTimeout(&gmp1, TIME_IMMEDIATE) == NULL, "list not empty");
   }
 
-  /* Adding the objects to the pool using chGuardedPoolFree().*/
+  /* [5.2.4] Adding the objects to the pool using
+     chGuardedPoolFree().*/
   test_set_step(4);
   {
     for (i = 0; i < MEMORY_POOL_SIZE; i++)
       chGuardedPoolFree(&gmp1, &objects[i]);
   }
 
-  /* Emptying the pool using chGuardedPoolAllocTimeout() again.*/
+  /* [5.2.5] Emptying the pool using chGuardedPoolAllocTimeout()
+     again.*/
   test_set_step(5);
   {
     for (i = 0; i < MEMORY_POOL_SIZE; i++)
       test_assert(chGuardedPoolAllocTimeout(&gmp1, TIME_IMMEDIATE) != NULL, "list empty");
   }
 
-  /* Now must be empty again.*/
+  /* [5.2.6] Now must be empty again.*/
   test_set_step(6);
   {
     test_assert(chGuardedPoolAllocTimeout(&gmp1, TIME_IMMEDIATE) == NULL, "list not empty");
@@ -217,16 +221,16 @@ static void test_005_002_execute(void) {
 }
 
 static const testcase_t test_005_002 = {
-  "Loading and empting a guarded memory pool without waiting",
+  "Loading and emptying a guarded memory pool without waiting",
   test_005_002_setup,
   NULL,
   test_005_002_execute
 };
-#endif /* (CH_CFG_USE_MEMPOOLS && CH_CFG_USE_SEMAPHORES) */
+#endif /* CH_CFG_USE_SEMAPHORES */
 
-#if (CH_CFG_USE_MEMPOOLS && CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
 /**
- * @page test_005_003 Guarded Memory Pools timeout
+ * @page test_005_003 [5.3] Guarded Memory Pools timeout
  *
  * <h2>Description</h2>
  * The timeout features for the Guarded Memory Pools is tested.
@@ -234,12 +238,12 @@ static const testcase_t test_005_002 = {
  * <h2>Conditions</h2>
  * This test is only executed if the following preprocessor condition
  * evaluates to true:
- * - (CH_CFG_USE_MEMPOOLS && CH_CFG_USE_SEMAPHORES)
+ * - CH_CFG_USE_SEMAPHORES
  * .
  *
  * <h2>Test Steps</h2>
- * - Trying to allocate with 100mS timeout, must fail because the pool
- *   is empty.
+ * - [5.3.1] Trying to allocate with 100mS timeout, must fail because
+ *   the pool is empty.
  * .
  */
 
@@ -249,8 +253,8 @@ static void test_005_003_setup(void) {
 
 static void test_005_003_execute(void) {
 
-  /* Trying to allocate with 100mS timeout, must fail because the pool
-     is empty.*/
+  /* [5.3.1] Trying to allocate with 100mS timeout, must fail because
+     the pool is empty.*/
   test_set_step(1);
   {
     test_assert(chGuardedPoolAllocTimeout(&gmp1, MS2ST(100)) == NULL, "list not empty");
@@ -263,7 +267,7 @@ static const testcase_t test_005_003 = {
   NULL,
   test_005_003_execute
 };
-#endif /* (CH_CFG_USE_MEMPOOLS && CH_CFG_USE_SEMAPHORES) */
+#endif /* CH_CFG_USE_SEMAPHORES */
 
 /****************************************************************************
  * Exported data.
@@ -273,14 +277,14 @@ static const testcase_t test_005_003 = {
  * @brief   Memory Pools.
  */
 const testcase_t * const test_sequence_005[] = {
-#if CH_CFG_USE_MEMPOOLS || defined(__DOXYGEN__)
   &test_005_001,
-#endif
-#if (CH_CFG_USE_MEMPOOLS && CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
   &test_005_002,
 #endif
-#if (CH_CFG_USE_MEMPOOLS && CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
   &test_005_003,
 #endif
   NULL
 };
+
+#endif /* CH_CFG_USE_MEMPOOLS */
