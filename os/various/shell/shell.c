@@ -134,8 +134,14 @@ THD_FUNCTION(shellThread, p) {
   while (true) {
     chprintf(chp, "ch> ");
     if (shellGetLine(chp, line, sizeof(line))) {
+#if (SHELL_CMD_EXIT_ENABLED == TRUE) && !defined(_CHIBIOS_NIL_)
       chprintf(chp, "\r\nlogout");
       break;
+#else
+      /* Putting a delay in order to avoid an endless loop trying to read
+         an unavailable stream.*/
+      osalThreadSleepMilliseconds(100);
+#endif
     }
     lp = parse_arguments(line, &tokp);
     cmd = lp;
@@ -188,6 +194,7 @@ void shellInit(void) {
   chEvtObjectInit(&shell_terminated);
 }
 
+#if !defined(_CHIBIOS_NIL_) || defined(__DOXYGEN__)
 /**
  * @brief   Terminates the shell.
  * @note    Must be invoked from the command handlers.
@@ -205,6 +212,7 @@ void shellExit(msg_t msg) {
   chEvtBroadcastI(&shell_terminated);
   chThdExitS(msg);
 }
+#endif
 
 /**
  * @brief   Reads a whole line from the input channel.
@@ -231,17 +239,19 @@ bool shellGetLine(BaseSequentialStream *chp, char *line, unsigned size) {
   while (true) {
     char c;
 
-    if (chSequentialStreamRead(chp, (uint8_t *)&c, 1) == 0)
+    if (streamRead(chp, (uint8_t *)&c, 1) == 0)
       return true;
+#if (SHELL_CMD_EXIT_ENABLED == TRUE) && !defined(_CHIBIOS_NIL_)
     if (c == 4) {
       chprintf(chp, "^D");
       return true;
     }
+#endif
     if ((c == 8) || (c == 127)) {
       if (p != line) {
-        chSequentialStreamPut(chp, c);
-        chSequentialStreamPut(chp, 0x20);
-        chSequentialStreamPut(chp, c);
+        streamPut(chp, c);
+        streamPut(chp, 0x20);
+        streamPut(chp, c);
         p--;
       }
       continue;
@@ -254,7 +264,7 @@ bool shellGetLine(BaseSequentialStream *chp, char *line, unsigned size) {
     if (c < 0x20)
       continue;
     if (p < line + size - 1) {
-      chSequentialStreamPut(chp, c);
+      streamPut(chp, c);
       *p++ = (char)c;
     }
   }

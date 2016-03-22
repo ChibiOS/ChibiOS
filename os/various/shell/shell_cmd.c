@@ -59,6 +59,20 @@ static void usage(BaseSequentialStream *chp, char *p) {
   chprintf(chp, "Usage: %s\r\n", p);
 }
 
+#if ((SHELL_CMD_EXIT_ENABLED == TRUE) && !defined(_CHIBIOS_NIL_)) ||        \
+    defined(__DOXYGEN__)
+static void cmd_exit(BaseSequentialStream *chp, int argc, char *argv[]) {
+
+  (void)argv;
+  if (argc > 0) {
+    usage(chp, "exit");
+    return;
+  }
+
+  shellExit(MSG_OK);
+}
+#endif
+
 #if (SHELL_CMD_INFO_ENABLED == TRUE) || defined(__DOXYGEN__)
 static void cmd_info(BaseSequentialStream *chp, int argc, char *argv[]) {
 
@@ -184,6 +198,9 @@ static void cmd_test(BaseSequentialStream *chp, int argc, char *argv[]) {
  * @brief   Array of the default commands.
  */
 ShellCommand shell_local_commands[] = {
+#if (SHELL_CMD_EXIT_ENABLED == TRUE) && !defined(_CHIBIOS_NIL_)
+  {"exit", cmd_exit},
+#endif
 #if SHELL_CMD_INFO_ENABLED == TRUE
   {"info", cmd_info},
 #endif

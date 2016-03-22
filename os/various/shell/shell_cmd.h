@@ -33,6 +33,10 @@
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
 
+#if !defined(SHELL_CMD_EXIT_ENABLED) || defined(__DOXYGEN__)
+#define SHELL_CMD_EXIT_ENABLED              TRUE
+#endif
+
 #if !defined(SHELL_CMD_INFO_ENABLED) || defined(__DOXYGEN__)
 #define SHELL_CMD_INFO_ENABLED              TRUE
 #endif
