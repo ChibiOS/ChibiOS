@@ -25,8 +25,8 @@
  * @{
  */
 
-#ifndef _CHCORE_V7M_H_
-#define _CHCORE_V7M_H_
+#ifndef CHCORE_V7M_H
+#define CHCORE_V7M_H
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -693,6 +693,6 @@ static inline rtcnt_t port_rt_get_counter_value(void) {
 
 #endif /* !defined(_FROM_ASM_) */
 
-#endif /* _CHCORE_V7M_H_ */
+#endif /* CHCORE_V7M_H */
 
 /** @} */

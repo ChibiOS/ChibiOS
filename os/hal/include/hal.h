@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _HAL_H_
-#define _HAL_H_
+#ifndef HAL_H
+#define HAL_H
 
 #include "osal.h"
 #include "board.h"
@@ -156,6 +156,6 @@ extern "C" {
 }
 #endif
 
-#endif /* _HAL_H_ */
+#endif /* HAL_H */
 
 /** @} */

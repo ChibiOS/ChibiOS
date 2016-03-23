@@ -14,8 +14,8 @@
     limitations under the License.
 */
 
-#ifndef _MCUCONF_H_
-#define _MCUCONF_H_
+#ifndef MCUCONF_H
+#define MCUCONF_H
 
 /*
  * SPC56ELxx drivers configuration.
@@ -291,4 +291,4 @@
 #define SPC5_SPI_DSPI2_STOP_PCTL            (SPC5_ME_PCTL_RUN(0) |          \
                                              SPC5_ME_PCTL_LP(0))
 
-#endif /* _MCUCONF_H_ */
+#endif /* MCUCONF_H */

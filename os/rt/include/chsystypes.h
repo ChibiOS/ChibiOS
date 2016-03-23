@@ -25,8 +25,8 @@
  * @{
  */
 
-#ifndef _CHSYSTYPES_H_
-#define _CHSYSTYPES_H_
+#ifndef CHSYSTYPES_H
+#define CHSYSTYPES_H
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -131,6 +131,6 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* _CHSYSTYPES_H_ */
+#endif /* CHSYSTYPES_H */
 
 /** @} */

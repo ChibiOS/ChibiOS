@@ -25,8 +25,8 @@
  * @{
  */
 
-#ifndef _CHVT_H_
-#define _CHVT_H_
+#ifndef CHVT_H
+#define CHVT_H
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -586,6 +586,6 @@ static inline void chVTDoTickI(void) {
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 }
 
-#endif /* _CHVT_H_ */
+#endif /* CHVT_H */
 
 /** @} */

@@ -25,8 +25,8 @@
  * @{
  */
 
-#ifndef _CHMBOXES_H_
-#define _CHMBOXES_H_
+#ifndef CHMBOXES_H
+#define CHMBOXES_H
 
 #if (CH_CFG_USE_MAILBOXES == TRUE) || defined(__DOXYGEN__)
 
@@ -202,6 +202,6 @@ static inline msg_t chMBPeekI(mailbox_t *mbp) {
 
 #endif /* CH_CFG_USE_MAILBOXES == TRUE */
 
-#endif /* _CHMBOXES_H_ */
+#endif /* CHMBOXES_H */
 
 /** @} */

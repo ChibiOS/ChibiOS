@@ -14,8 +14,8 @@
     limitations under the License.
 */
 
-#ifndef _MCUCONF_H_
-#define _MCUCONF_H_
+#ifndef MCUCONF_H
+#define MCUCONF_H
 
 /*
  * AVR drivers configuration.
@@ -81,4 +81,4 @@
 #define AVR_SPI_USE_SPI1                   FALSE
 #define AVR_SPI_USE_16BIT_POLLED_EXCHANGE  FALSE
 
-#endif /* _MCUCONF_H_ */
+#endif /* MCUCONF_H */

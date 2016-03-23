@@ -25,8 +25,8 @@
  * @{
  */
 
-#ifndef _CHMEMCORE_H_
-#define _CHMEMCORE_H_
+#ifndef CHMEMCORE_H
+#define CHMEMCORE_H
 
 #if (CH_CFG_USE_MEMCORE == TRUE) || defined(__DOXYGEN__)
 
@@ -125,6 +125,6 @@ static inline void *chCoreAlloc(size_t size) {
 
 #endif /* CH_CFG_USE_MEMCORE == TRUE */
 
-#endif /* _CHMEMCORE_H_ */
+#endif /* CHMEMCORE_H */
 
 /** @} */

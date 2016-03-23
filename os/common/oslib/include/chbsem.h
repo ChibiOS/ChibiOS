@@ -46,8 +46,8 @@
  * @{
  */
 
-#ifndef _CHBSEM_H_
-#define _CHBSEM_H_
+#ifndef CHBSEM_H
+#define CHBSEM_H
 
 #if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
 
@@ -306,6 +306,6 @@ static inline bool chBSemGetStateI(binary_semaphore_t *bsp) {
 
 #endif /* CH_CFG_USE_SEMAPHORES == TRUE */
 
-#endif /* _CHBSEM_H_ */
+#endif /* CHBSEM_H */
 
 /** @} */

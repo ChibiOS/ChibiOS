@@ -25,8 +25,8 @@
  * @{
  */
 
-#ifndef _CHCONF_H_
-#define _CHCONF_H_
+#ifndef CHCONF_H
+#define CHCONF_H
 
 #define _CHIBIOS_NIL_CONF_
 
@@ -269,6 +269,6 @@
 /* Port-specific settings (override port settings defaulted in nilcore.h).   */
 /*===========================================================================*/
 
-#endif  /* _CHCONF_H_ */
+#endif  /* CHCONF_H */
 
 /** @} */

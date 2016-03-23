@@ -25,8 +25,8 @@
  * @{
  */
 
-#ifndef _CHCUSTOMER_H_
-#define _CHCUSTOMER_H_
+#ifndef CHCUSTOMER_H
+#define CHCUSTOMER_H
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -66,6 +66,6 @@
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* _CHCUSTOMER_H_ */
+#endif /* CHCUSTOMER_H */
 
 /** @} */

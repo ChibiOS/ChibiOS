@@ -14,8 +14,8 @@
     limitations under the License.
 */
 
-#ifndef _MCUCONF_H_
-#define _MCUCONF_H_
+#ifndef MCUCONF_H
+#define MCUCONF_H
 
 /*
  * STM32L1xx drivers configuration.
@@ -327,4 +327,4 @@
  */
 #define STM32_WDG_USE_IWDG                  FALSE
 
-#endif /* _MCUCONF_H_ */
+#endif /* MCUCONF_H */

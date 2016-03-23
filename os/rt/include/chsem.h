@@ -25,8 +25,8 @@
  * @{
  */
 
-#ifndef _CHSEM_H_
-#define _CHSEM_H_
+#ifndef CHSEM_H
+#define CHSEM_H
 
 #if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
 
@@ -155,6 +155,6 @@ static inline cnt_t chSemGetCounterI(semaphore_t *sp) {
 
 #endif /* CH_CFG_USE_SEMAPHORES == TRUE */
 
-#endif /* _CHSEM_H_ */
+#endif /* CHSEM_H */
 
 /** @} */

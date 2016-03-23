@@ -25,8 +25,8 @@
  * @{
  */
 
-#ifndef _CHSCHD_H_
-#define _CHSCHD_H_
+#ifndef CHSCHD_H
+#define CHSCHD_H
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -774,6 +774,6 @@ static inline void chSchPreemption(void) {
 #endif /* CH_CFG_TIME_QUANTUM == 0 */
 }
 
-#endif /* _CHSCHD_H_ */
+#endif /* CHSCHD_H */
 
 /** @} */

@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _MPU_H_
-#define _MPU_H_
+#ifndef MPU_H
+#define MPU_H
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -203,6 +203,6 @@ extern "C" {
 }
 #endif
 
-#endif /* _MPU_H_ */
+#endif /* MPU_H */
 
 /** @} */

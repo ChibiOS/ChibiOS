@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _USB_CDC_H_
-#define _USB_CDC_H_
+#ifndef USB_CDC_H
+#define USB_CDC_H
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -131,6 +131,6 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#endif /* _USB_CDC_H_ */
+#endif /* USB_CDC_H */
 
 /** @} */

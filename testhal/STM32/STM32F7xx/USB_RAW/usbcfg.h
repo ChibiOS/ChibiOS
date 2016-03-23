@@ -14,8 +14,8 @@
     limitations under the License.
 */
 
-#ifndef _USBCFG_H_
-#define _USBCFG_H_
+#ifndef USBCFG_H
+#define USBCFG_H
 
 #define USBD2_DATA_REQUEST_EP           1
 #define USBD2_DATA_AVAILABLE_EP         1
@@ -23,6 +23,6 @@
 
 extern const USBConfig usbcfg;
 
-#endif  /* _USBCFG_H_ */
+#endif  /* USBCFG_H */
 
 /** @} */

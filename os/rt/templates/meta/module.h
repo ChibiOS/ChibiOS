@@ -25,8 +25,8 @@
  * @{
  */
 
-#ifndef _CHXXX_H_
-#define _CHXXX_H_
+#ifndef CHXXX_H
+#define CHXXX_H
 
 #include "ch.h"
 
@@ -71,6 +71,6 @@ extern "C" {
 
 #endif /* CH_CFG_USE_XXX */
 
-#endif /* _CHXXX_H_ */
+#endif /* CHXXX_H */
 
 /** @} */

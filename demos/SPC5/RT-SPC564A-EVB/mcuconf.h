@@ -14,8 +14,8 @@
     limitations under the License.
 */
 
-#ifndef _MCUCONF_H_
-#define _MCUCONF_H_
+#ifndef MCUCONF_H
+#define MCUCONF_H
 
 /*
  * SPC564Axx drivers configuration.
@@ -185,4 +185,4 @@
 #define SPC5_CAN_FLEXCAN2_USE_EXT_CLK       FALSE
 #define SPC5_CAN_FLEXCAN2_IRQ_PRIORITY      11
 
-#endif /* _MCUCONF_H_ */
+#endif /* MCUCONF_H */

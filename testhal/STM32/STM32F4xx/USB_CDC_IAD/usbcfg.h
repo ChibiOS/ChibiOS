@@ -14,8 +14,8 @@
     limitations under the License.
 */
 
-#ifndef _USBCFG_H_
-#define _USBCFG_H_
+#ifndef USBCFG_H
+#define USBCFG_H
 
 extern const USBConfig usbcfg;
 extern SerialUSBConfig serusbcfg1;
@@ -23,6 +23,6 @@ extern SerialUSBConfig serusbcfg2;
 extern SerialUSBDriver SDU1;
 extern SerialUSBDriver SDU2;
 
-#endif  /* _USBCFG_H_ */
+#endif  /* USBCFG_H */
 
 /** @} */

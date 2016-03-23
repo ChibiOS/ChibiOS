@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _I2S_H_
-#define _I2S_H_
+#ifndef HAL_I2S_H
+#define HAL_I2S_H
 
 #if (HAL_USE_I2S == TRUE) || defined(__DOXYGEN__)
 
@@ -162,6 +162,6 @@ extern "C" {
 
 #endif /* HAL_USE_I2S == TRUE */
 
-#endif /* _I2S_H_ */
+#endif /* HAL_I2S_H */
 
 /** @} */

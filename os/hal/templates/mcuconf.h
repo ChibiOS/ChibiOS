@@ -14,8 +14,8 @@
     limitations under the License.
 */
 
-#ifndef _MCUCONF_H_
-#define _MCUCONF_H_
+#ifndef MCUCONF_H
+#define MCUCONF_H
 
 /*
  * Platform drivers configuration.
@@ -27,4 +27,4 @@
 
 #define PLATFORM_MCUCONF
 
-#endif /* _MCUCONF_H_ */
+#endif /* MCUCONF_H */

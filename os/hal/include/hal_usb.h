@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _USB_H_
-#define _USB_H_
+#ifndef HAL_USB_H
+#define HAL_USB_H
 
 #if (HAL_USE_USB == TRUE) || defined(__DOXYGEN__)
 
@@ -628,6 +628,6 @@ extern "C" {
 
 #endif /* HAL_USE_USB == TRUE */
 
-#endif /* _USB_H_ */
+#endif /* HAL_USB_H */
 
 /** @} */

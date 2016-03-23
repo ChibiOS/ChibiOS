@@ -33,8 +33,8 @@
  * @{
  */
 
-#ifndef _HAL_CHANNELS_H_
-#define _HAL_CHANNELS_H_
+#ifndef HAL_CHANNELS_H
+#define HAL_CHANNELS_H
 
 /**
  * @brief   @p BaseChannel specific methods.
@@ -282,6 +282,6 @@ typedef struct {
 }
 /** @} */
 
-#endif /* _HAL_CHANNELS_H_ */
+#endif /* HAL_CHANNELS_H */
 
 /** @} */

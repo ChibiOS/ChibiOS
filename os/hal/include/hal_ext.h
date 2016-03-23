@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _EXT_H_
-#define _EXT_H_
+#ifndef HAL_EXT_H
+#define HAL_EXT_H
 
 #if (HAL_USE_EXT == TRUE) || defined(__DOXYGEN__)
 
@@ -145,6 +145,6 @@ extern "C" {
 
 #endif /* HAL_USE_EXT == TRUE */
 
-#endif /* _EXT_H_ */
+#endif /* HAL_EXT_H */
 
 /** @} */

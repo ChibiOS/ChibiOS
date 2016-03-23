@@ -25,8 +25,8 @@
  * @{
  */
 
-#ifndef _CHHEAP_H_
-#define _CHHEAP_H_
+#ifndef CHHEAP_H
+#define CHHEAP_H
 
 #if (CH_CFG_USE_HEAP == TRUE) || defined(__DOXYGEN__)
 
@@ -166,6 +166,6 @@ static inline size_t chHeapGetSize(const void *p) {
 
 #endif /* CH_CFG_USE_HEAP == TRUE */
 
-#endif /* _CHHEAP_H_ */
+#endif /* CHHEAP_H */
 
 /** @} */

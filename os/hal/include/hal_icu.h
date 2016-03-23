@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _ICU_H_
-#define _ICU_H_
+#ifndef HAL_ICU_H
+#define HAL_ICU_H
 
 #if (HAL_USE_ICU == TRUE) || defined(__DOXYGEN__)
 
@@ -233,6 +233,6 @@ extern "C" {
 
 #endif /* HAL_USE_ICU == TRUE */
 
-#endif /* _ICU_H_ */
+#endif /* HAL_ICU_H */
 
 /** @} */

@@ -25,8 +25,8 @@
  * @{
  */
 
-#ifndef _CHCORE_H_
-#define _CHCORE_H_
+#ifndef CHCORE_H
+#define CHCORE_H
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -210,6 +210,6 @@ struct port_context {
 
 #endif /* !defined(_FROM_ASM_) */
 
-#endif /* _CHCORE_H_ */
+#endif /* CHCORE_H */
 
 /** @} */

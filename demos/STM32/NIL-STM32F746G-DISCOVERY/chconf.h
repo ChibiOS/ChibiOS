@@ -25,8 +25,8 @@
  * @{
  */
 
-#ifndef _CHCONF_H_
-#define _CHCONF_H_
+#ifndef CHCONF_H
+#define CHCONF_H
 
 #define _CHIBIOS_NIL_CONF_
 
@@ -271,6 +271,6 @@
 
 #define CORTEX_VTOR_INIT                    0x00200000U
 
-#endif  /* _CHCONF_H_ */
+#endif  /* CHCONF_H */
 
 /** @} */

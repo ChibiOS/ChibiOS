@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _MMC_SPI_H_
-#define _MMC_SPI_H_
+#ifndef HAL_MMC_SPI_H
+#define HAL_MMC_SPI_H
 
 #if (HAL_USE_MMC_SPI == TRUE) || defined(__DOXYGEN__)
 
@@ -190,6 +190,6 @@ extern "C" {
 
 #endif /* HAL_USE_MMC_SPI == TRUE */
 
-#endif /* _MMC_SPI_H_ */
+#endif /* HAL_MMC_SPI_H */
 
 /** @} */

@@ -25,8 +25,8 @@
  * @{
  */
 
-#ifndef _CHMTX_H_
-#define _CHMTX_H_
+#ifndef CHMTX_H
+#define CHMTX_H
 
 #if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
 
@@ -149,6 +149,6 @@ static inline mutex_t *chMtxGetNextMutexS(void) {
 
 #endif /* CH_CFG_USE_MUTEXES == TRUE */
 
-#endif /* _CHMTX_H_ */
+#endif /* CHMTX_H */
 
 /** @} */

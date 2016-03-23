@@ -25,8 +25,8 @@
  * @{
  */
 
-#ifndef _CHCORE_H_
-#define _CHCORE_H_
+#ifndef CHCORE_H
+#define CHCORE_H
 
 #include "intc.h"
 
@@ -626,6 +626,6 @@ static inline rtcnt_t port_rt_get_counter_value(void) {
 
 #endif /* !defined(_FROM_ASM_) */
 
-#endif /* _CHCORE_H_ */
+#endif /* CHCORE_H */
 
 /** @} */

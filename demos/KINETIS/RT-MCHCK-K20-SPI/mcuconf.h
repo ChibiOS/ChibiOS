@@ -14,8 +14,8 @@
     limitations under the License.
 */
 
-#ifndef _MCUCONF_H_
-#define _MCUCONF_H_
+#ifndef MCUCONF_H
+#define MCUCONF_H
 
 #define K20x_MCUCONF
 
@@ -67,4 +67,4 @@
 #define KINETIS_SPI_USE_SPI0                TRUE
 #define KINETIS_SPI_SPI0_IRQ_PRIORITY       8
 
-#endif /* _MCUCONF_H_ */
+#endif /* MCUCONF_H */

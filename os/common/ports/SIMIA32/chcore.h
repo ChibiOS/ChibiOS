@@ -25,8 +25,8 @@
  * @{
  */
 
-#ifndef _CHCORE_H_
-#define _CHCORE_H_
+#ifndef CHCORE_H
+#define CHCORE_H
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -377,6 +377,6 @@ static inline void port_wait_for_interrupt(void) {
   _sim_check_for_interrupts();
 }
 
-#endif /* _CHCORE_H_ */
+#endif /* CHCORE_H */
 
 /** @} */

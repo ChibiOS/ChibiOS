@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _DAC_H_
-#define _DAC_H_
+#ifndef HAL_DAC_H
+#define HAL_DAC_H
 
 #if (HAL_USE_DAC == TRUE) || defined(__DOXYGEN__)
 
@@ -262,6 +262,6 @@ extern "C" {
 
 #endif /* HAL_USE_DAC == TRUE */
 
-#endif /* _DAC_H_ */
+#endif /* HAL_DAC_H */
 
 /** @} */

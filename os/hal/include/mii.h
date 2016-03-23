@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _MII_H_
-#define _MII_H_
+#ifndef MII_H
+#define MII_H
 
 /**
  * @name    Generic MII registers
@@ -170,6 +170,6 @@
 #define MII_LAN8742A_ID         0x0007C130
 /** @} */
 
-#endif /* _MII_H_ */
+#endif /* MII_H */
 
 /** @} */

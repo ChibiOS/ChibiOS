@@ -25,8 +25,8 @@
  * @{
  */
 
-#ifndef _CHMEMPOOLS_H_
-#define _CHMEMPOOLS_H_
+#ifndef CHMEMPOOLS_H
+#define CHMEMPOOLS_H
 
 #if (CH_CFG_USE_MEMPOOLS == TRUE) || defined(__DOXYGEN__)
 
@@ -252,6 +252,6 @@ static inline void chGuardedPoolAddI(guarded_memory_pool_t *gmp, void *objp) {
 
 #endif /* CH_CFG_USE_MEMPOOLS == TRUE */
 
-#endif /* _CHMEMPOOLS_H_ */
+#endif /* CHMEMPOOLS_H */
 
 /** @} */

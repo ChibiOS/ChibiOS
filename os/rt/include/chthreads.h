@@ -25,8 +25,8 @@
  * @{
  */
 
-#ifndef _CHTHREADS_H_
-#define _CHTHREADS_H_
+#ifndef CHTHREADS_H
+#define CHTHREADS_H
 
 /*lint -sem(chThdExit, r_no) -sem(chThdExitS, r_no)*/
 
@@ -383,6 +383,6 @@ static inline void chThdDoDequeueNextI(threads_queue_t *tqp, msg_t msg) {
   (void) chSchReadyI(tp);
 }
 
-#endif /* _CHTHREADS_H_ */
+#endif /* CHTHREADS_H */
 
 /** @} */

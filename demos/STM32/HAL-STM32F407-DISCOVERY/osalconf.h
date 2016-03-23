@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _OSALCONF_H_
-#define _OSALCONF_H_
+#ifndef OSALCONF_H
+#define OSALCONF_H
 
 /**
  * @brief   Frequency in Hertz of the system tick.
@@ -62,6 +62,6 @@
 }
 #endif
 
-#endif /* _OSALCONF_H_ */
+#endif /* OSALCONF_H */
 
 /** @} */

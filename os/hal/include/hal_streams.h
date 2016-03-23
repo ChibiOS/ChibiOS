@@ -32,8 +32,8 @@
  * @{
  */
 
-#ifndef _HAL_STREAMS_H_
-#define _HAL_STREAMS_H_
+#ifndef HAL_STREAMS_H
+#define HAL_STREAMS_H
 
 /**
  * @name    Streams return codes
@@ -147,6 +147,6 @@ typedef struct {
 #define streamGet(ip) ((ip)->vmt->get(ip))
 /** @} */
 
-#endif /* _HAL_STREAMS_H_ */
+#endif /* HAL_STREAMS_H */
 
 /** @} */

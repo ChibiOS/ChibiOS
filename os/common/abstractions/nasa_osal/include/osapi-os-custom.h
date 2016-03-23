@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _OSAPI_CUSTOM_H_
-#define _OSAPI_CUSTOM_H_
+#ifndef OSAPI_CUSTOM_H
+#define OSAPI_CUSTOM_H
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -63,6 +63,6 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* _OSAPI_CUSTOM_H_ */
+#endif /* OSAPI_CUSTOM_H */
 
 /** @} */

@@ -28,8 +28,8 @@
  * @{
  */
 
-#ifndef _CHCOND_H_
-#define _CHCOND_H_
+#ifndef CHCOND_H
+#define CHCOND_H
 
 #if (CH_CFG_USE_CONDVARS == TRUE) || defined(__DOXYGEN__)
 
@@ -111,6 +111,6 @@ extern "C" {
 
 #endif /* CH_CFG_USE_CONDVARS == TRUE */
 
-#endif /* _CHCOND_H_ */
+#endif /* CHCOND_H */
 
 /** @} */

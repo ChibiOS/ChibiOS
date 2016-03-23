@@ -25,8 +25,8 @@
  * @{
  */
 
-#ifndef _CHALIGN_H_
-#define _CHALIGN_H_
+#ifndef CHALIGN_H
+#define CHALIGN_H
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -109,6 +109,6 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* _CHALIGN_H_ */
+#endif /* CHALIGN_H */
 
 /** @} */

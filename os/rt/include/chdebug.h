@@ -25,8 +25,8 @@
  * @{
  */
 
-#ifndef _CHDEBUG_H_
-#define _CHDEBUG_H_
+#ifndef CHDEBUG_H
+#define CHDEBUG_H
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -361,6 +361,6 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* _CHDEBUG_H_ */
+#endif /* CHDEBUG_H */
 
 /** @} */

@@ -28,8 +28,8 @@
  * @{
  */
 
-#ifndef _CH_H_
-#define _CH_H_
+#ifndef CH_H
+#define CH_H
 
 /**
  * @brief   ChibiOS/RT identification macro.
@@ -104,6 +104,6 @@
 #error "missing or wrong configuration file"
 #endif
 
-#endif /* _CH_H_ */
+#endif /* CH_H */
 
 /** @} */

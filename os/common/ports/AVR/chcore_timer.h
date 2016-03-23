@@ -25,8 +25,8 @@
  * @{
  */
 
-#ifndef _CHCORE_TIMER_H_
-#define _CHCORE_TIMER_H_
+#ifndef CHCORE_TIMER_H
+#define CHCORE_TIMER_H
 
 /* This is the only header in the HAL designed to be include-able alone.*/
 #include "hal_st.h"
@@ -119,6 +119,6 @@ static inline systime_t port_timer_get_alarm(void) {
   return stGetAlarm();
 }
 
-#endif /* _CHCORE_TIMER_H_ */
+#endif /* CHCORE_TIMER_H */
 
 /** @} */

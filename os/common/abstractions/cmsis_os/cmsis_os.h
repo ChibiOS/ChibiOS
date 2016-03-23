@@ -28,8 +28,8 @@
  * @{
  */
 
-#ifndef _CMSIS_OS_H_
-#define _CMSIS_OS_H_
+#ifndef CMSIS_OS_H
+#define CMSIS_OS_H
 
 #include "ch.h"
 
@@ -517,6 +517,6 @@ static inline osStatus osDelay(uint32_t millisec) {
   return osOK;
 }
 
-#endif /* _CMSIS_OS_H_ */
+#endif /* CMSIS_OS_H */
 
 /** @} */

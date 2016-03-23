@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _HAL_BUFFERS_H_
-#define _HAL_BUFFERS_H_
+#ifndef HAL_BUFFERS_H
+#define HAL_BUFFERS_H
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -270,6 +270,6 @@ extern "C" {
 }
 #endif
 
-#endif /* _HAL_BUFFERS_H_ */
+#endif /* HAL_BUFFERS_H */
 
 /** @} */

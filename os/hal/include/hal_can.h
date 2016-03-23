@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _CAN_H_
-#define _CAN_H_
+#ifndef HAL_CAN_H
+#define HAL_CAN_H
 
 #if (HAL_USE_CAN == TRUE) || defined(__DOXYGEN__)
 
@@ -151,6 +151,6 @@ extern "C" {
 
 #endif /* HAL_USE_CAN == TRUE */
 
-#endif /* _CAN_H_ */
+#endif /* HAL_CAN_H */
 
 /** @} */

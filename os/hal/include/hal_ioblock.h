@@ -31,8 +31,8 @@
  * @{
  */
 
-#ifndef _HAL_IOBLOCK_H_
-#define _HAL_IOBLOCK_H_
+#ifndef HAL_IOBLOCK_H
+#define HAL_IOBLOCK_H
 
 /**
  * @brief   Driver state machine possible states.
@@ -260,6 +260,6 @@ typedef struct {
 
 /** @} */
 
-#endif /* _HAL_IOBLOCK_H_ */
+#endif /* HAL_IOBLOCK_H */
 
 /** @} */

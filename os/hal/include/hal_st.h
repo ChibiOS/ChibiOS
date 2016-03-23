@@ -24,8 +24,8 @@
  * @{
  */
 
-#ifndef _ST_H_
-#define _ST_H_
+#ifndef HAL_ST_H
+#define HAL_ST_H
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -92,6 +92,6 @@ extern "C" {
 }
 #endif
 
-#endif /* _ST_H_ */
+#endif /* HAL_ST_H */
 
 /** @} */

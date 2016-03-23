@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _SERIAL_USB_H_
-#define _SERIAL_USB_H_
+#ifndef HAL_SERIAL_USB_H
+#define HAL_SERIAL_USB_H
 
 #if (HAL_USE_SERIAL_USB == TRUE) || defined(__DOXYGEN__)
 
@@ -190,6 +190,6 @@ extern "C" {
 
 #endif /* HAL_USE_SERIAL_USB == TRUE */
 
-#endif /* _SERIAL_USB_H_ */
+#endif /* HAL_SERIAL_USB_H */
 
 /** @} */

@@ -25,8 +25,8 @@
  * @{
  */
 
-#ifndef _CHLICENSE_H_
-#define _CHLICENSE_H_
+#ifndef CHLICENSE_H
+#define CHLICENSE_H
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -237,6 +237,6 @@
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* _CHLICENSE_H_ */
+#endif /* CHLICENSE_H */
 
 /** @} */

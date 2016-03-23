@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _HAL_QUEUES_H_
-#define _HAL_QUEUES_H_
+#ifndef HAL_QUEUES_H
+#define HAL_QUEUES_H
 
 /**
  * @name    Queue functions returned status value
@@ -293,6 +293,6 @@ extern "C" {
 }
 #endif
 
-#endif /* _HAL_QUEUES_H_ */
+#endif /* HAL_QUEUES_H */
 
 /** @} */

@@ -25,8 +25,8 @@
  * @{
  */
 
-#ifndef _CHTYPES_H_
-#define _CHTYPES_H_
+#ifndef CHTYPES_H
+#define CHTYPES_H
 
 #include <stddef.h>
 #include <stdint.h>
@@ -88,6 +88,6 @@ typedef uint32_t            ucnt_t;         /**< Generic unsigned counter.  */
  */
 #define PORT_THD_FUNCTION(tname, arg) void tname(void *arg)
 
-#endif /* _CHTYPES_H_ */
+#endif /* CHTYPES_H */
 
 /** @} */

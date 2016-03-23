@@ -26,8 +26,8 @@
  * @{
  */
 
-#ifndef _I2C_H_
-#define _I2C_H_
+#ifndef HAL_I2C_H
+#define HAL_I2C_H
 
 #if (HAL_USE_I2C == TRUE) || defined(__DOXYGEN__)
 
@@ -161,6 +161,6 @@ extern "C" {
 
 #endif /* HAL_USE_I2C == TRUE */
 
-#endif /* _I2C_H_ */
+#endif /* HAL_I2C_H */
 
 /** @} */

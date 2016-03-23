@@ -25,8 +25,8 @@
  * @{
  */
 
-#ifndef _CHCORE_V6M_H_
-#define _CHCORE_V6M_H_
+#ifndef CHCORE_V6M_H
+#define CHCORE_V6M_H
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -435,6 +435,6 @@ static inline void port_wait_for_interrupt(void) {
 
 #endif /* _FROM_ASM_ */
 
-#endif /* _CHCORE_V6M_H_ */
+#endif /* CHCORE_V6M_H */
 
 /** @} */

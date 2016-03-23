@@ -25,8 +25,8 @@
  * @{
  */
 
-#ifndef _CHREGISTRY_H_
-#define _CHREGISTRY_H_
+#ifndef CHREGISTRY_H
+#define CHREGISTRY_H
 
 #if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
 
@@ -180,6 +180,6 @@ static inline void chRegSetThreadNameX(thread_t *tp, const char *name) {
 #endif
 }
 
-#endif /* _CHREGISTRY_H_ */
+#endif /* CHREGISTRY_H */
 
 /** @} */

@@ -27,8 +27,8 @@
  * @{
  */
 
-#ifndef _CH_H_
-#define _CH_H_
+#ifndef CH_H
+#define CH_H
 
 #include "chconf.h"
 #include "chtypes.h"
@@ -1325,6 +1325,6 @@ extern "C" {
 #include "chmempools.h"
 #include "chheap.h"
 
-#endif /* _CH_H_ */
+#endif /* CH_H */
 
 /** @} */
