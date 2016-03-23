@@ -43,37 +43,36 @@
 #include "hal_queues.h"
 
 /* Normal drivers.*/
-#include "pal.h"
-#include "adc.h"
-#include "can.h"
-#include "dac.h"
-#include "ext.h"
-#include "gpt.h"
-#include "i2c.h"
-#include "i2s.h"
-#include "icu.h"
-#include "mac.h"
-#include "mii.h"
-#include "pwm.h"
-#include "rtc.h"
-#include "serial.h"
-#include "sdc.h"
-#include "spi.h"
-#include "uart.h"
-#include "usb.h"
-#include "wdg.h"
+#include "hal_pal.h"
+#include "hal_adc.h"
+#include "hal_can.h"
+#include "hal_dac.h"
+#include "hal_ext.h"
+#include "hal_gpt.h"
+#include "hal_i2c.h"
+#include "hal_i2s.h"
+#include "hal_icu.h"
+#include "hal_mac.h"
+#include "hal_pwm.h"
+#include "hal_rtc.h"
+#include "hal_serial.h"
+#include "hal_sdc.h"
+#include "hal_spi.h"
+#include "hal_uart.h"
+#include "hal_usb.h"
+#include "hal_wdg.h"
 
 /*
  *  The ST driver is a special case, it is only included if the OSAL is
  *  configured to require it.
  */
 #if OSAL_ST_MODE != OSAL_ST_MODE_NONE
-#include "st.h"
+#include "hal_st.h"
 #endif
 
 /* Complex drivers.*/
-#include "mmc_spi.h"
-#include "serial_usb.h"
+#include "hal_mmc_spi.h"
+#include "hal_serial_usb.h"
 
 /* Community drivers.*/
 #if defined(HAL_USE_COMMUNITY) || defined(__DOXYGEN__)
@@ -103,17 +102,17 @@
 /**
  * @brief   HAL version string.
  */
-#define HAL_VERSION             "4.1.0"
+#define HAL_VERSION             "5.0.0"
 
 /**
  * @brief   HAL version major number.
  */
-#define CH_HAL_MAJOR            4
+#define CH_HAL_MAJOR            5
 
 /**
  * @brief   HAL version minor number.
  */
-#define CH_HAL_MINOR            1
+#define CH_HAL_MINOR            0
 
 /**
  * @brief   HAL version patch number.

@@ -79,6 +79,9 @@
 *****************************************************************************
 
 *** Next ***
+- HAL: All high level file names have been renamed and prefixed with "hal_"
+       in order to minimize the risk of name conflicts when integrating
+       external libraries. 
 - LIB: Added Guarded Memory Pools to RT and NIL.
 - NIL: Updated the NIL test suite by generating the code using the new system.
 - RT:  Removed I/O Queues and Streams interface, now those exists (much

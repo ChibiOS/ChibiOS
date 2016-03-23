@@ -29,7 +29,7 @@
 #define _CHCORE_TIMER_H_
 
 /* This is the only header in the HAL designed to be include-able alone.*/
-#include "st.h"
+#include "hal_st.h"
 
 /*===========================================================================*/
 /* Module constants.                                                         */
