@@ -73,6 +73,7 @@
 
 *** 2.6.10 ***
 - NEW: Cortex-M7 support in the kernel, generic demo application added.
+- FIX: Fixed bug in chSchPreemption() function (bug #728).
 - FIX: Fixed deadly typo in #706 fix for GCC users of 2.6.x (bug #720).
 - FIX: Fixed state check in lwIP when SYS_LIGHTWEIGHT_PROT is disabled
        (bug #713).

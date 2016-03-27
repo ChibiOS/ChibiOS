@@ -233,7 +233,7 @@ extern "C" {
 }
 #else /* CH_TIME_QUANTUM == 0 */
 #define chSchPreemption() {                                                 \
-  if (p1 >= p2)                                                             \
+  if (p1 > p2)                                                              \
     chSchDoRescheduleAhead();                                               \
 }
 #endif /* CH_TIME_QUANTUM == 0 */
