@@ -287,24 +287,27 @@ thread_t *chSchReadyAheadI(thread_t *tp) {
  * @sclass
  */
 void chSchGoSleepS(tstate_t newstate) {
-  thread_t *otp;
+  thread_t *otp = currp;
 
   chDbgCheckClassS();
 
-  otp = currp;
+  /* New state.*/
   otp->state = newstate;
+
 #if CH_CFG_TIME_QUANTUM > 0
   /* The thread is renouncing its remaining time slices so it will have a new
      time quantum when it will wakeup.*/
   otp->preempt = (tslices_t)CH_CFG_TIME_QUANTUM;
 #endif
+
+  /* Next thread in ready list becomes current.*/
   currp = queue_fifo_remove(&ch.rlist.queue);
+  currp->state = CH_STATE_CURRENT;
+
+  /* Handling idle-enter hook.*/
   if (currp->prio == IDLEPRIO) {
     CH_CFG_IDLE_ENTER_HOOK();
   }
-
-  /* The extracted thread is marked as current.*/
-  currp->state = CH_STATE_CURRENT;
 
   /* Swap operation as tail call.*/
   chSysSwitch(currp, otp);
@@ -426,13 +429,15 @@ void chSchWakeupS(thread_t *ntp, msg_t msg) {
     (void) chSchReadyI(ntp);
   }
   else {
-    currp = ntp;
     otp = chSchReadyI(otp);
+
+    /* Handling idle-leave hook.*/
     if (otp->prio == IDLEPRIO) {
       CH_CFG_IDLE_LEAVE_HOOK();
     }
 
     /* The extracted thread is marked as current.*/
+    currp = ntp;
     ntp->state = CH_STATE_CURRENT;
 
     /* Swap operation as tail call.*/
@@ -501,14 +506,15 @@ void chSchDoRescheduleBehind(void) {
 
   /* Picks the first thread from the ready queue and makes it current.*/
   currp = queue_fifo_remove(&ch.rlist.queue);
+  currp->state = CH_STATE_CURRENT;
+
+  /* Handling idle-leave hook.*/
   if (otp->prio == IDLEPRIO) {
     CH_CFG_IDLE_LEAVE_HOOK();
   }
 
-  /* The extracted thread is marked as current.*/
-  currp->state = CH_STATE_CURRENT;
-
 #if CH_CFG_TIME_QUANTUM > 0
+  /* It went behind peers so it gets a new time quantum.*/
   otp->preempt = (tslices_t)CH_CFG_TIME_QUANTUM;
 #endif
 
@@ -533,12 +539,12 @@ void chSchDoRescheduleAhead(void) {
 
   /* Picks the first thread from the ready queue and makes it current.*/
   currp = queue_fifo_remove(&ch.rlist.queue);
+  currp->state = CH_STATE_CURRENT;
+
+  /* Handling idle-leave hook.*/
   if (otp->prio == IDLEPRIO) {
     CH_CFG_IDLE_LEAVE_HOOK();
   }
-
-  /* The extracted thread is marked as current.*/
-  currp->state = CH_STATE_CURRENT;
 
   /* Placing in ready list ahead of peers.*/
   otp = chSchReadyAheadI(otp);
@@ -562,12 +568,12 @@ void chSchDoReschedule(void) {
 
   /* Picks the first thread from the ready queue and makes it current.*/
   currp = queue_fifo_remove(&ch.rlist.queue);
+  currp->state = CH_STATE_CURRENT;
+
+  /* Handling idle-leave hook.*/
   if (otp->prio == IDLEPRIO) {
     CH_CFG_IDLE_LEAVE_HOOK();
   }
-
-  /* The extracted thread is marked as current.*/
-  currp->state = CH_STATE_CURRENT;
 
 #if CH_CFG_TIME_QUANTUM > 0
   /* If CH_CFG_TIME_QUANTUM is enabled then there are two different scenarios
