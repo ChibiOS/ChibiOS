@@ -2,7 +2,7 @@
 *** ChibiOS/RT test suite
 ***
 *** Kernel:       4.0.0
-*** Compiled:     Feb 16 2016 - 11:13:58
+*** Compiled:     Mar 27 2016 - 12:48:29
 *** Compiler:     GCC 4.9.3 20150529 (release) [ARM/embedded-4_9-branch revision 227977]
 *** Architecture: ARMv7E-M
 *** Core Variant: Cortex-M7
@@ -83,70 +83,68 @@
 --- Test Case 9.1 (Memory Pools, queue/dequeue)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
---- Test Case 10.1 (Queues, input queues)
+--- Test Case 10.1 (Dynamic APIs, threads creation from heap)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
---- Test Case 10.2 (Queues, output queues)
+--- Test Case 10.2 (Dynamic APIs, threads creation from memory pool)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
+--- Test Case 10.3 (Dynamic APIs, registry and references)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 1079993 msgs/S, 2159986 ctxswc/S
+--- Score : 1018858 msgs/S, 2037716 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
---- Score : 959994 msgs/S, 1919988 ctxswc/S
+--- Score : 860551 msgs/S, 1721102 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.3 (Benchmark, messages #3)
---- Score : 959993 msgs/S, 1919986 ctxswc/S
+--- Score : 860550 msgs/S, 1721100 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.4 (Benchmark, context switch)
---- Score : 4965488 ctxswc/S
+--- Score : 4951264 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.5 (Benchmark, threads, full cycle)
---- Score : 830762 threads/S
+--- Score : 703577 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
---- Score : 1148929 threads/S
+--- Score : 892556 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.7 (Benchmark, mass reschedule, 5 threads)
---- Score : 360455 reschedules/S, 2162730 ctxswc/S
+--- Score : 354097 reschedules/S, 2124582 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)
---- Score : 2579080 ctxswc/S
+--- Score : 2303980 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
---- Test Case 11.9 (Benchmark, I/O Queues throughput)
---- Score : 2522620 bytes/S
---- Result: SUCCESS
-----------------------------------------------------------------------------
---- Test Case 11.10 (Benchmark, virtual timers set/reset)
+--- Test Case 11.9 (Benchmark, virtual timers set/reset)
 --- Score : 2000026 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
---- Test Case 11.11 (Benchmark, semaphores wait/signal)
---- Score : 3052996 wait+signal/S
+--- Test Case 11.10 (Benchmark, semaphores wait/signal)
+--- Score : 3031568 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
---- Test Case 11.12 (Benchmark, mutexes lock/unlock)
---- Score : 2482752 lock+unlock/S
+--- Test Case 11.11 (Benchmark, mutexes lock/unlock)
+--- Score : 2472136 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
---- Test Case 11.13 (Benchmark, RAM footprint)
---- System: 336 bytes
---- Thread: 64 bytes
+--- Test Case 11.12 (Benchmark, RAM footprint)
+--- System: 120 bytes
+--- Thread: 68 bytes
 --- Timer : 20 bytes
 --- Semaph: 12 bytes
 --- EventS: 4 bytes
 --- EventL: 20 bytes
 --- Mutex : 16 bytes
 --- CondV.: 8 bytes
---- Queue : 36 bytes
 --- MailB.: 40 bytes
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
