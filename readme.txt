@@ -79,6 +79,8 @@
 *****************************************************************************
 
 *** Next ***
+- RT:  Fixed bug in chSchPreemption() function (bug #728)(backported to 2.6.10,
+       3.0.6 and 16.1.5).
 - HAL: All high level file names have been renamed and prefixed with "hal_"
        in order to minimize the risk of name conflicts when integrating
        external libraries. 

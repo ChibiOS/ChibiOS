@@ -768,7 +768,7 @@ static inline void chSchPreemption(void) {
     }
   }
 #else /* CH_CFG_TIME_QUANTUM == 0 */
-  if (p1 >= p2) {
+  if (p1 > p2) {
     chSchDoRescheduleAhead();
   }
 #endif /* CH_CFG_TIME_QUANTUM == 0 */
