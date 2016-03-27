@@ -125,7 +125,11 @@ void chSysInit(void) {
 
 #if CH_CFG_NO_IDLE_THREAD == FALSE
   /* Now this instructions flow becomes the main thread.*/
+#if CH_CFG_USE_REGISTRY == TRUE
+  currp = _thread_init(&ch.mainthread, (const char *)&ch_debug, NORMALPRIO);
+#else
   currp = _thread_init(&ch.mainthread, "main", NORMALPRIO);
+#endif
 #else
   /* Now this instructions flow becomes the idle thread.*/
   currp = _thread_init(&ch.mainthread, "idle", IDLEPRIO);
@@ -148,12 +152,6 @@ void chSysInit(void) {
 
   /* It is alive now.*/
   chSysEnable();
-
-#if CH_CFG_USE_REGISTRY == TRUE
-  /* Note, &ch_debug points to the string "main" if the registry is
-     active.*/
-  chRegSetThreadName((const char *)&ch_debug);
-#endif
 
 #if CH_CFG_NO_IDLE_THREAD == FALSE
   {
