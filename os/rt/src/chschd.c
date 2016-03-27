@@ -406,6 +406,7 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
  * @sclass
  */
 void chSchWakeupS(thread_t *ntp, msg_t msg) {
+  thread_t *otp = currp;
 
   chDbgCheckClassS();
 
@@ -421,12 +422,12 @@ void chSchWakeupS(thread_t *ntp, msg_t msg) {
      one then it is just inserted in the ready list else it made
      running immediately and the invoking thread goes in the ready
      list instead.*/
-  if (ntp->prio <= currp->prio) {
+  if (ntp->prio <= otp->prio) {
     (void) chSchReadyI(ntp);
   }
   else {
-    thread_t *otp = chSchReadyI(currp);
     currp = ntp;
+    otp = chSchReadyI(otp);
     if (otp->prio == IDLEPRIO) {
       CH_CFG_IDLE_LEAVE_HOOK();
     }
