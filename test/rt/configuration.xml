@@ -597,6 +597,135 @@ test_assert_sequence("ABCDE");]]></value>
                   </step>
                 </steps>
               </case>
+              <case>
+                <brief>
+                  <value>Priority change test.</value>
+                </brief>
+                <description>
+                  <value>A series of priority changes are performed on the current thread in order to verify that the priority change happens as expected.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[tprio_t prio, p1;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Thread priority is increased by one then a check is performed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[prio = chThdGetPriorityX();
+p1 = chThdSetPriority(prio + 1);
+test_assert(p1 == prio, "unexpected returned priority level");
+test_assert(chThdGetPriorityX() == prio + 1, "unexpected priority level");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Thread priority is returned to the previous value then a check is performed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[p1 = chThdSetPriority(p1);
+test_assert(p1 == prio + 1, "unexpected returned priority level");
+test_assert(chThdGetPriorityX() == prio, "unexpected priority level");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Priority change test with Priority Inheritance.</value>
+                </brief>
+                <description>
+                  <value>A series of priority changes are performed on the current thread in order to verify that the priority change happens as expected.</value>
+                </description>
+                <condition>
+                  <value>CH_CFG_USE_MUTEXES</value>
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[tprio_t prio, p1;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Simulating a priority boost situation (prio &gt; realprio).</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chThdGetSelfX()->prio += 2;
+test_assert(chThdGetPriorityX() == prio + 2, "unexpected priority level");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Raising thread priority above original priority but below the boosted level.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[p1 = chThdSetPriority(prio + 1);
+test_assert(p1 == prio, "unexpected returned priority level");
+test_assert(chThdGetSelfX()->prio == prio + 2, "unexpected priority level");
+test_assert(chThdGetSelfX()->realprio == prio + 1, "unexpected returned real priority level");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Raising thread priority above the boosted level.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[p1 = chThdSetPriority(prio + 3);
+test_assert(p1 == prio + 1, "unexpected returned priority level");
+test_assert(chThdGetSelfX()->prio == prio + 3, "unexpected priority level");
+test_assert(chThdGetSelfX()->realprio == prio + 3, "unexpected real priority level");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Restoring original conditions.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chSysLock();
+chThdGetSelfX()->prio = prio;
+chThdGetSelfX()->realprio = prio;
+chSysUnlock();]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
             </cases>
           </sequence>
           <sequence>
@@ -677,119 +806,6 @@ test_assert_lock(chSemGetCounterI(&sem1) == 1, "wrong counter value");]]></value
                     <code>
                       <value><![CDATA[chSemReset(&sem1, 2);
 test_assert_lock(chSemGetCounterI(&sem1) == 2, "wrong counter value");]]></value>
-                    </code>
-                  </step>
-                </steps>
-              </case>
-              <case>
-                <brief>
-                  <value>Semaphore primitives, with state change.</value>
-                </brief>
-                <description>
-                  <value>Wait, Signal and Reset primitives are tested. The testing thread triggers a state change.</value>
-                </description>
-                <condition>
-                  <value />
-                </condition>
-                <various_code>
-                  <setup_code>
-                    <value><![CDATA[chSemObjectInit(&gsem1, 0);]]></value>
-                  </setup_code>
-                  <teardown_code>
-                    <value><![CDATA[chSemReset(&gsem1, 0);]]></value>
-                  </teardown_code>
-                  <local_variables>
-                    <value />
-                  </local_variables>
-                </various_code>
-                <steps>
-                  <step>
-                    <description>
-                      <value>The function chSemWait() is invoked, after return the counter and the returned message are tested. The semaphore is signaled by another thread.</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[msg_t msg;
-
-msg = chSemWait(&gsem1);
-test_assert_lock(chSemGetCounterI(&gsem1) == 0, "wrong counter value");
-test_assert(MSG_OK == msg, "wrong returned message");]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>The function chSemWait() is invoked, after return the counter and the returned message are tested. The semaphore is reset by another thread.</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[msg_t msg;
-
-msg = chSemWait(&gsem2);
-test_assert_lock(chSemGetCounterI(&gsem2) == 0,"wrong counter value");
-test_assert(MSG_RESET == msg, "wrong returned message");]]></value>
-                    </code>
-                  </step>
-                </steps>
-              </case>
-              <case>
-                <brief>
-                  <value>Semaphores timeout.</value>
-                </brief>
-                <description>
-                  <value>Timeout on semaphores is tested.</value>
-                </description>
-                <condition>
-                  <value />
-                </condition>
-                <various_code>
-                  <setup_code>
-                    <value><![CDATA[chSemObjectInit(&sem1, 0);]]></value>
-                  </setup_code>
-                  <teardown_code>
-                    <value><![CDATA[chSemReset(&sem1, 0);]]></value>
-                  </teardown_code>
-                  <local_variables>
-                    <value><![CDATA[systime_t time;
-msg_t msg;]]></value>
-                  </local_variables>
-                </various_code>
-                <steps>
-                  <step>
-                    <description>
-                      <value>The function chSemWaitTimeout() is invoked a first time, after return the system time, the counter and the returned message are tested.</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[time = chVTGetSystemTimeX();
-msg = chSemWaitTimeout(&sem1, MS2ST(1000));
-test_assert_time_window(time + MS2ST(1000),
-                        time + MS2ST(1000) + 1,
-                        "out of time window");
-test_assert_lock(chSemGetCounterI(&sem1) == 0, "wrong counter value");
-test_assert(MSG_TIMEOUT == msg, "wrong timeout message");]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>The function chSemWaitTimeout() is invoked again, after return the system time, the counter and the returned message are tested.</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[time = chVTGetSystemTimeX();
-msg = chSemWaitTimeout(&sem1, MS2ST(1000));
-test_assert_time_window(time + MS2ST(1000),
-                        time + MS2ST(1000) + 1,
-                        "out of time window");
-test_assert_lock(chSemGetCounterI(&sem1) == 0, "wrong counter value");
-test_assert(MSG_TIMEOUT == msg, "wrong timeout message");]]></value>
                     </code>
                   </step>
                 </steps>
