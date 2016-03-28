@@ -69,7 +69,7 @@ ifneq ($(findstring HAL_USE_WDG TRUE,$(HALCONF)),)
 HALSRC += $(CHIBIOS)/os/hal/src/hal_wdg.c
 endif
 else
-HALSRC = $(CHIBIOS)/os/hal/src/hal.c \
+HALSRC = $(CHIBIOS)/os/hal/src/hal_hal.c \
          $(CHIBIOS)/os/hal/src/hal_buffers.c \
          $(CHIBIOS)/os/hal/src/hal_queues.c \
          $(CHIBIOS)/os/hal/src/hal_mmcsd.c \
