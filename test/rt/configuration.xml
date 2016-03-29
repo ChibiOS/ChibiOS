@@ -35,6 +35,11 @@
             <value><![CDATA[#define TEST_SUITE_NAME                     "ChibiOS/RT Test Suite"
 
 /*
+ * Allowed delay in timeout checks.
+ */
+#define ALLOWED_DELAY MS2ST(2)
+
+/*
  * Maximum number of test threads.
  */
 #define MAX_THREADS             5
@@ -75,7 +80,8 @@ extern thread_t *threads[MAX_THREADS];
 extern void * ROMCONST wa[5];
 
 void test_terminate_threads(void);
-void test_wait_threads(void);]]></value>
+void test_wait_threads(void);
+systime_t test_wait_tick(void);]]></value>
           </global_definitions>
           <global_code>
             <value><![CDATA[/*
@@ -117,6 +123,12 @@ void test_wait_threads(void) {
       chThdWait(threads[i]);
       threads[i] = NULL;
     }
+}
+
+systime_t test_wait_tick(void) {
+
+  chThdSleep(1);
+  return chVTGetSystemTime();
 }]]></value>
           </global_code>
         </global_data_and_code>
@@ -410,7 +422,7 @@ while (time == chVTGetSystemTimeX()) {
               <value>Threads Functionality.</value>
             </brief>
             <description>
-              <value>This sequence tests the ChibiOS/NIL functionalities related to threading.</value>
+              <value>This sequence tests the ChibiOS/RT functionalities related to threading.</value>
             </description>
             <condition>
               <value />
@@ -819,10 +831,10 @@ test_assert(MSG_TIMEOUT == msg, "wrong returned message");]]></value>
               <value>Internal Tests</value>
             </type>
             <brief>
-              <value>Semaphores.</value>
+              <value>Counter and Binary Semaphores.</value>
             </brief>
             <description>
-              <value>This sequence tests the ChibiOS/NIL functionalities related to counter semaphores.</value>
+              <value>This sequence tests the ChibiOS/RT functionalities related to counter semaphores.</value>
             </description>
             <condition>
               <value>CH_CFG_USE_SEMAPHORES</value>
@@ -836,6 +848,28 @@ static THD_FUNCTION(thread1, p) {
 
   chSemWait(&sem1);
   test_emit_token(*(char *)p);
+}
+
+static THD_FUNCTION(thread2, p) {
+
+  (void)p;
+  chThdSleepMilliseconds(50);
+  chSysLock();
+  chSemSignalI(&sem1); /* For coverage reasons */
+  chSchRescheduleS();
+  chSysUnlock();
+}
+
+static THD_FUNCTION(thread3, p) {
+
+  (void)p;
+  chSemWait(&sem1);
+  chSemSignal(&sem1);
+}
+
+static THD_FUNCTION(thread4, p) {
+
+  chBSemSignal((binary_semaphore_t *)p);
 }]]></value>
             </shared_code>
             <cases>
@@ -962,7 +996,320 @@ test_wait_threads();
                   </step>
                 </steps>
               </case>
+              <case>
+                <brief>
+                  <value>Semaphore timeout test.</value>
+                </brief>
+                <description>
+                  <value>The three possible semaphore waiting modes (do not wait, wait with timeout, wait without timeout) are explored. The test expects that the semaphore wait function returns the correct value in each of the above scenario and that the semaphore structure status is correct after each operation.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chSemObjectInit(&sem1, 0);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[unsigned i;
+systime_t target_time;
+msg_t msg;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Testing special case TIME_IMMEDIATE.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[msg = chSemWaitTimeout(&sem1, TIME_IMMEDIATE);
+test_assert(msg == MSG_TIMEOUT, "wrong wake-up message");
+test_assert(queue_isempty(&sem1.queue), "queue not empty");
+test_assert(sem1.cnt == 0, "counter not zero");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing non-timeout condition.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() - 1,
+                               thread2, 0);
+msg = chSemWaitTimeout(&sem1, MS2ST(500));
+test_wait_threads();
+test_assert(msg == MSG_OK, "wrong wake-up message");
+test_assert(queue_isempty(&sem1.queue), "queue not empty");
+test_assert(sem1.cnt == 0, "counter not zero");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing timeout condition.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[target_time = test_wait_tick() + MS2ST(5 * 50);
+for (i = 0; i < 5; i++) {
+  test_emit_token('A' + i);
+  msg = chSemWaitTimeout(&sem1, MS2ST(50));
+  test_assert(msg == MSG_TIMEOUT, "wrong wake-up message");
+  test_assert(queue_isempty(&sem1.queue), "queue not empty");
+  test_assert(sem1.cnt == 0, "counter not zero");
+}
+test_assert_sequence("ABCDE", "invalid sequence");
+test_assert_time_window(target_time, target_time + ALLOWED_DELAY,
+                        "out of time window");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Testing chSemAddCounterI() functionality.</value>
+                </brief>
+                <description>
+                  <value>The functon is tested by waking up a thread then the semaphore counter value is tested.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chSemObjectInit(&sem1, 0);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>A thread is created, it goes to wait on the semaphore.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()+1, thread1, "A");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The semaphore counter is increased by two, it is then tested to be one, the thread must have completed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chSysLock();
+chSemAddCounterI(&sem1, 2);
+chSchRescheduleS();
+chSysUnlock();
+test_wait_threads();
+test_assert_lock(chSemGetCounterI(&sem1) == 1, "invalid counter");
+test_assert_sequence("A", "invalid sequence");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Testing chSemWaitSignal() functionality.</value>
+                </brief>
+                <description>
+                  <value>This test case explicitly addresses the @p chSemWaitSignal() function. A thread is created that performs a wait and a signal operations. The tester thread is awakened from an atomic wait/signal operation. The test expects that the semaphore wait function returns the correct value in each of the above scenario and that the semaphore structure status is correct after each operation.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chSemObjectInit(&sem1, 0);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>An higher priority thread is created that performs non-atomical wait and signal operations on a semaphore.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()+1, thread3, 0);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The function chSemSignalWait() is invoked by specifying the same semaphore for the wait and signal phases. The counter value must be one on exit.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chSemSignalWait(&sem1, &sem1);
+test_assert(queue_isempty(&sem1.queue), "queue not empty");
+test_assert(sem1.cnt == 0, "counter not zero");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The function chSemSignalWait() is invoked again by specifying the same semaphore for the wait and signal phases. The counter value must be one on exit.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chSemSignalWait(&sem1, &sem1);
+test_assert(queue_isempty(&sem1.queue), "queue not empty");
+test_assert(sem1.cnt == 0, "counter not zero");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Testing Binary Semaphores special case.</value>
+                </brief>
+                <description>
+                  <value>This test case tests the binary semaphores functionality. The test both checks the binary semaphore status and the expected status of the underlying counting semaphore.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[binary_semaphore_t bsem;
+msg_t msg;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Creating a binary semaphore in "taken" state, the state is checked.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chBSemObjectInit(&bsem, true);
+test_assert_lock(chBSemGetStateI(&bsem) == true, "not taken");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Resetting the binary semaphore in "taken" state, the state must not change.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chBSemReset(&bsem, true);
+test_assert_lock(chBSemGetStateI(&bsem) == true, "not taken");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Starting a signaler thread at a lower priority.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[threads[0] = chThdCreateStatic(wa[0], WA_SIZE,
+                               chThdGetPriorityX()-1, thread4, &bsem);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Waiting for the binary semaphore to be signaled, the semaphore is expected to be taken.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[msg = chBSemWait(&bsem);
+test_assert_lock(chBSemGetStateI(&bsem) == true, "not taken");
+test_assert(msg == MSG_OK, "unexpected message");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Signaling the binary semaphore, checking the binary semaphore state to be "not taken" and the underlying counter semaphore counter to be one.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chBSemSignal(&bsem);
+test_assert_lock(chBSemGetStateI(&bsem) ==false, "still taken");
+test_assert_lock(chSemGetCounterI(&bsem.sem) == 1, "unexpected counter");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Signaling the binary semaphore again, the internal state must not change from "not taken".</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chBSemSignal(&bsem);
+test_assert_lock(chBSemGetStateI(&bsem) == false, "taken");
+test_assert_lock(chSemGetCounterI(&bsem.sem) == 1, "unexpected counter");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
             </cases>
+          </sequence>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
+              <value>Mutexes, Condition Variables and Priority Inheritance.</value>
+            </brief>
+            <description>
+              <value>This sequence tests the ChibiOS/RT functionalities related to mutexes, condition variables and priority inheritance algorithm.</value>
+            </description>
+            <condition>
+              <value>CH_CFG_USE_MUTEXES</value>
+            </condition>
+            <shared_code>
+              <value><![CDATA[static MUTEX_DECL(m1);
+static MUTEX_DECL(m2);
+#if CH_CFG_USE_CONDVARS || defined(__DOXYGEN__)
+static CONDVAR_DECL(c1);
+#endif]]></value>
+            </shared_code>
+            <cases />
           </sequence>
           <sequence>
             <type index="0">
@@ -972,14 +1319,13 @@ test_wait_threads();
               <value>Mailboxes.</value>
             </brief>
             <description>
-              <value>This sequence tests the ChibiOS/NIL functionalities related to mailboxes.</value>
+              <value>This sequence tests the ChibiOS/RT functionalities related to mailboxes.</value>
             </description>
             <condition>
               <value>CH_CFG_USE_MAILBOXES</value>
             </condition>
             <shared_code>
-              <value><![CDATA[#define ALLOWED_DELAY MS2ST(5)
-#define MB_SIZE 4
+              <value><![CDATA[#define MB_SIZE 4
 
 static msg_t mb_buffer[MB_SIZE];
 static MAILBOX_DECL(mb1, mb_buffer, MB_SIZE);]]></value>
@@ -1339,7 +1685,7 @@ test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");]]></value>
               <value>Memory Pools.</value>
             </brief>
             <description>
-              <value>This sequence tests the ChibiOS/NIL functionalities related to memory pools.</value>
+              <value>This sequence tests the ChibiOS/RT functionalities related to memory pools.</value>
             </description>
             <condition>
               <value>CH_CFG_USE_MEMPOOLS</value>
@@ -1603,7 +1949,7 @@ test_assert(chPoolAlloc(&mp1) == NULL, "provider returned memory");]]></value>
               <value>Memory Heaps.</value>
             </brief>
             <description>
-              <value>This sequence tests the ChibiOS/NIL functionalities related to memory heaps.</value>
+              <value>This sequence tests the ChibiOS/RT functionalities related to memory heaps.</value>
             </description>
             <condition>
               <value>CH_CFG_USE_HEAP</value>
