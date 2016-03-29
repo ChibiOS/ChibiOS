@@ -1,16 +1,15 @@
 # List of all the ChibiOS/RT test files.
-TESTSRC = ${CHIBIOS}/test/rt/test.c \
-          ${CHIBIOS}/test/rt/testthd.c \
-          ${CHIBIOS}/test/rt/testsem.c \
-          ${CHIBIOS}/test/rt/testmtx.c \
-          ${CHIBIOS}/test/rt/testmsg.c \
-          ${CHIBIOS}/test/rt/testmbox.c \
-          ${CHIBIOS}/test/rt/testevt.c \
-          ${CHIBIOS}/test/rt/testheap.c \
-          ${CHIBIOS}/test/rt/testpools.c \
-          ${CHIBIOS}/test/rt/testdyn.c \
-          ${CHIBIOS}/test/rt/testsys.c \
-          ${CHIBIOS}/test/rt/testbmk.c
+TESTSRC = ${CHIBIOS}/test/lib/ch_test.c \
+          ${CHIBIOS}/test/rt/source/test/test_root.c \
+          ${CHIBIOS}/test/rt/source/test/test_sequence_001.c \
+          ${CHIBIOS}/test/rt/source/test/test_sequence_002.c \
+          ${CHIBIOS}/test/rt/source/test/test_sequence_003.c \
+          ${CHIBIOS}/test/rt/source/test/test_sequence_004.c \
+          ${CHIBIOS}/test/rt/source/test/test_sequence_005.c \
+          ${CHIBIOS}/test/rt/source/test/test_sequence_006.c \
+          ${CHIBIOS}/test/rt/source/test/test_sequence_007.c \
+          ${CHIBIOS}/test/rt/source/test/test_sequence_008.c
 
 # Required include directories
-TESTINC = ${CHIBIOS}/test/rt
+TESTINC = ${CHIBIOS}/test/lib \
+          ${CHIBIOS}/test/rt/source/test

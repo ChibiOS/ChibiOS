@@ -16,7 +16,7 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "test.h"
+#include "ch_test.h"
 
 /*
  * This is a periodic thread that does absolutely nothing except flashing
@@ -72,7 +72,7 @@ int main(void) {
    */
   while (true) {
     if (palReadLine(LINE_BUTTON_USER))
-      TestThread(&SD1);
+      test_execute((BaseSequentialStream *)&SD1);
     chThdSleepMilliseconds(500);
   }
 }
