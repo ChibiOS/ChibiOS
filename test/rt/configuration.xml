@@ -1307,9 +1307,494 @@ test_assert_lock(chSemGetCounterI(&bsem.sem) == 1, "unexpected counter");]]></va
 static MUTEX_DECL(m2);
 #if CH_CFG_USE_CONDVARS || defined(__DOXYGEN__)
 static CONDVAR_DECL(c1);
-#endif]]></value>
+#endif
+
+#if CH_DBG_THREADS_PROFILING || defined(__DOXYGEN__)
+/**
+ * @brief   CPU pulse.
+ * @note    The current implementation is not totally reliable.
+ *
+ * @param[in] duration      CPU pulse duration in milliseconds
+ */
+void test_cpu_pulse(unsigned duration) {
+  systime_t start, end, now;
+
+  start = chThdGetTicksX(chThdGetSelfX());
+  end = start + MS2ST(duration);
+  do {
+    now = chThdGetTicksX(chThdGetSelfX());
+#if defined(SIMULATOR)
+    _sim_check_for_interrupts();
+#endif
+  }
+  while (chVTIsTimeWithinX(now, start, end));
+}
+#endif /* CH_DBG_THREADS_PROFILING */
+
+static THD_FUNCTION(thread1, p) {
+
+  chMtxLock(&m1);
+  test_emit_token(*(char *)p);
+  chMtxUnlock(&m1);
+}
+
+/* Low priority thread */
+static THD_FUNCTION(thread2L, p) {
+
+  (void)p;
+  chMtxLock(&m1);
+  test_cpu_pulse(40);
+  chMtxUnlock(&m1);
+  test_cpu_pulse(10);
+  test_emit_token('C');
+}
+
+/* Medium priority thread */
+static THD_FUNCTION(thread2M, p) {
+
+  (void)p;
+  chThdSleepMilliseconds(20);
+  test_cpu_pulse(40);
+  test_emit_token('B');
+}
+
+/* High priority thread */
+static THD_FUNCTION(thread2H, p) {
+
+  (void)p;
+  chThdSleepMilliseconds(40);
+  chMtxLock(&m1);
+  test_cpu_pulse(10);
+  chMtxUnlock(&m1);
+  test_emit_token('A');
+}
+
+/* Lowest priority thread */
+static THD_FUNCTION(thread3LL, p) {
+
+  (void)p;
+  chMtxLock(&m1);
+  test_cpu_pulse(30);
+  chMtxUnlock(&m1);
+  test_emit_token('E');
+}
+
+/* Low priority thread */
+static THD_FUNCTION(thread3L, p) {
+
+  (void)p;
+  chThdSleepMilliseconds(10);
+  chMtxLock(&m2);
+  test_cpu_pulse(20);
+  chMtxLock(&m1);
+  test_cpu_pulse(10);
+  chMtxUnlock(&m1);
+  test_cpu_pulse(10);
+  chMtxUnlock(&m2);
+  test_emit_token('D');
+}
+
+/* Medium priority thread */
+static THD_FUNCTION(thread3M, p) {
+
+  (void)p;
+  chThdSleepMilliseconds(20);
+  chMtxLock(&m2);
+  test_cpu_pulse(10);
+  chMtxUnlock(&m2);
+  test_emit_token('C');
+}
+
+/* High priority thread */
+static THD_FUNCTION(thread3H, p) {
+
+  (void)p;
+  chThdSleepMilliseconds(40);
+  test_cpu_pulse(20);
+  test_emit_token('B');
+}
+
+/* Highest priority thread */
+static THD_FUNCTION(thread3HH, p) {
+
+  (void)p;
+  chThdSleepMilliseconds(50);
+  chMtxLock(&m2);
+  test_cpu_pulse(10);
+  chMtxUnlock(&m2);
+  test_emit_token('A');
+}
+
+static THD_FUNCTION(thread4A, p) {
+
+  (void)p;
+  chThdSleepMilliseconds(50);
+  chMtxLock(&m1);
+  chMtxUnlock(&m1);
+}
+
+static THD_FUNCTION(thread4B, p) {
+
+  (void)p;
+  chThdSleepMilliseconds(150);
+  chSysLock();
+  chMtxLockS(&m2);   /* For coverage of the chMtxLockS() function variant.*/
+  chMtxUnlockS(&m2); /* For coverage of the chMtxUnlockS() function variant.*/
+  chSchRescheduleS();
+  chSysUnlock();
+}
+
+#if CH_CFG_USE_CONDVARS || defined(__DOXYGEN__)
+static THD_FUNCTION(thread6, p) {
+
+  chMtxLock(&m1);
+  chCondWait(&c1);
+  test_emit_token(*(char *)p);
+  chMtxUnlock(&m1);
+}
+
+static THD_FUNCTION(thread8, p) {
+
+  chMtxLock(&m2);
+  chMtxLock(&m1);
+#if CH_CFG_USE_CONDVARS_TIMEOUT || defined(__DOXYGEN__)
+  chCondWaitTimeout(&c1, TIME_INFINITE);
+#else
+  chCondWait(&c1);
+#endif
+  test_emit_token(*(char *)p);
+  chMtxUnlock(&m1);
+  chMtxUnlock(&m2);
+}
+#endif /* CH_CFG_USE_CONDVARS */]]></value>
             </shared_code>
-            <cases />
+            <cases>
+              <case>
+                <brief>
+                  <value>Priority enqueuing test.</value>
+                </brief>
+                <description>
+                  <value>Five threads, with increasing priority, are enqueued on a locked mutex then the mutex is unlocked. The test expects the threads to perform their operations in increasing priority order regardless of the initial order.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chMtxObjectInit(&m1);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[tprio_t prio;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Getting the initial priority.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[prio = chThdGetPriorityX();]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Locking the mutex.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chMtxLock(&m1);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Five threads are created that try to lock and unlock the mutex then terminate. The threads are created in ascending priority order.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[threads[0] = chThdCreateStatic(wa[0], WA_SIZE, prio+1, thread1, "E");
+threads[1] = chThdCreateStatic(wa[1], WA_SIZE, prio+2, thread1, "D");
+threads[2] = chThdCreateStatic(wa[2], WA_SIZE, prio+3, thread1, "C");
+threads[3] = chThdCreateStatic(wa[3], WA_SIZE, prio+4, thread1, "B");
+threads[4] = chThdCreateStatic(wa[4], WA_SIZE, prio+5, thread1, "A");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Unlocking the mutex, the threads will wakeup in priority order because the mutext queue is an ordered one.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chMtxUnlock(&m1);
+test_wait_threads();
+test_assert(prio == chThdGetPriorityX(), "wrong priority level");
+test_assert_sequence("ABCDE", "invalid sequence");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Priority inheritance, simple case.</value>
+                </brief>
+                <description>
+                  <value>Three threads are involved in the classic priority inversion scenario, a medium priority thread tries to starve an high priority thread by blocking a low priority thread into a mutex lock zone. The test expects the threads to reach their goal in increasing priority order by rearranging their priorities in order to avoid the priority inversion trap.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chMtxObjectInit(&m1);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[systime_t time;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Getting the system time for test duration measurement.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[time = test_wait_tick();]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The three contenders threads are created and let run atomically, the goals sequence is tested, the threads must complete in priority order.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()-1, thread2H, 0);
+threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriorityX()-2, thread2M, 0);
+threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriorityX()-3, thread2L, 0);
+test_wait_threads();
+test_assert_sequence("ABC", "invalid sequence");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing that all threads completed within the specified time windows (100mS...100mS+ALLOWED_DELAY).</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_assert_time_window(time + MS2ST(100), time + MS2ST(100) + ALLOWED_DELAY,
+                        "out of time window");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Priority inheritance, complex case.</value>
+                </brief>
+                <description>
+                  <value>Five threads are involved in the complex priority inversion scenario, the priority inheritance algorithm is tested for depths greater than one. The test expects the threads to perform their operations in increasing priority order by rearranging their priorities in order to avoid the priority inversion trap.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chMtxObjectInit(&m1); /* Mutex B.*/
+chMtxObjectInit(&m2); /* Mutex A.*/]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[systime_t time;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Getting the system time for test duration measurement.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[time = test_wait_tick();]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The five contenders threads are created and let run atomically, the goals sequence is tested, the threads must complete in priority order.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()-5, thread3LL, 0);
+threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriorityX()-4, thread3L, 0);
+threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriorityX()-3, thread3M, 0);
+threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()-2, thread3H, 0);
+threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()-1, thread3HH, 0);
+test_wait_threads();
+test_assert_sequence("ABCDE", "invalid sequence");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing that all threads completed within the specified time windows (110mS...110mS+ALLOWED_DELAY).</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_assert_time_window(time + MS2ST(110), time + MS2ST(110) + ALLOWED_DELAY,
+                        "out of time window");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Priority return verification.</value>
+                </brief>
+                <description>
+                  <value>Two threads are spawned that try to lock the mutexes already locked by the tester thread with precise timing. The test expects that the priority changes caused by the priority inheritance algorithm happen at the right moment and with the right values.&lt;br&gt;&#xD;
+Thread A performs wait(50), lock(m1), unlock(m1), exit. Thread B performs wait(150), lock(m2), unlock(m2), exit.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chMtxObjectInit(&m1);
+chMtxObjectInit(&m2);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[tprio_t p, pa, pb;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Getting current thread priority P(0) and assigning to the threads A and B priorities +1 and +2.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[p = chThdGetPriorityX();
+pa = p + 1;
+pb = p + 2;]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Spawning threads A and B at priorities P(A) and P(B).</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[threads[0] = chThdCreateStatic(wa[0], WA_SIZE, pa, thread4A, "A");
+threads[1] = chThdCreateStatic(wa[1], WA_SIZE, pb, thread4B, "B");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Locking the mutex M1 before thread A has a chance to lock it. The priority must not change because A has not yet reached chMtxLock(M1). the mutex is not locked.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chMtxLock(&m1);
+test_assert(chThdGetPriorityX() == p, "wrong priority level");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Waiting 100mS, this makes thread A reach chMtxLock(M1) and get the mutex.  This must boost the priority of the current thread at the same level of thread A.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chThdSleepMilliseconds(100);
+test_assert(chThdGetPriorityX() == pa, "wrong priority level");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Locking the mutex M2 before thread B has a chance to lock it. The priority must not change because B has not yet reached chMtxLock(M2). the mutex is not locked.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chMtxLock(&m2);
+test_assert(chThdGetPriorityX() == pa, "wrong priority level");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Waiting 100mS, this makes thread B reach chMtxLock(M2) and get the mutex. This must boost the priority of the current thread at the same level of thread B.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chThdSleepMilliseconds(100);
+test_assert(chThdGetPriorityX() == pb, "wrong priority level");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Unlocking M2, the priority should fall back to P(A).</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chMtxUnlock(&m2);
+test_assert(chThdGetPriorityX() == pa, "wrong priority level");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Unlocking M1, the priority should fall back to P(0).</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chMtxUnlock(&m1);
+test_assert(chThdGetPriorityX() == p, "wrong priority level");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+            </cases>
           </sequence>
           <sequence>
             <type index="0">
