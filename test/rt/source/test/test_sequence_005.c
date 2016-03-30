@@ -40,6 +40,8 @@
  * - @subpage test_005_004
  * - @subpage test_005_005
  * - @subpage test_005_006
+ * - @subpage test_005_007
+ * - @subpage test_005_008
  * .
  */
 
@@ -765,6 +767,138 @@ static const testcase_t test_005_006 = {
 };
 #endif /* CH_CFG_USE_MUTEXES_RECURSIVE */
 
+#if (CH_CFG_USE_CONDVARS) || defined(__DOXYGEN__)
+/**
+ * @page test_005_007 [5.7] Condition Variable signal test
+ *
+ * <h2>Description</h2>
+ * Five threads take a mutex and then enter a conditional variable
+ * queue, the tester thread then proceeds to signal the conditional
+ * variable five times atomically.<br> The test expects the threads to
+ * reach their goal in increasing priority order regardless of the
+ * initial order.
+ *
+ * <h2>Conditions</h2>
+ * This test is only executed if the following preprocessor condition
+ * evaluates to true:
+ * - CH_CFG_USE_CONDVARS
+ * .
+ *
+ * <h2>Test Steps</h2>
+ * - [5.7.1] Starting the five threads with increasing priority, the
+ *   threads will queue on the condition variable.
+ * - [5.7.2] Atomically signaling the condition variable five times
+ *   then waiting for the threads to terminate in priority order, the
+ *   order is tested.
+ * .
+ */
+
+static void test_005_007_setup(void) {
+  chCondObjectInit(&c1);
+  chMtxObjectInit(&m1);
+}
+
+static void test_005_007_execute(void) {
+
+  /* [5.7.1] Starting the five threads with increasing priority, the
+     threads will queue on the condition variable.*/
+  test_set_step(1);
+  {
+    tprio_t prio = chThdGetPriorityX();
+    threads[0] = chThdCreateStatic(wa[0], WA_SIZE, prio+1, thread6, "E");
+    threads[1] = chThdCreateStatic(wa[1], WA_SIZE, prio+2, thread6, "D");
+    threads[2] = chThdCreateStatic(wa[2], WA_SIZE, prio+3, thread6, "C");
+    threads[3] = chThdCreateStatic(wa[3], WA_SIZE, prio+4, thread6, "B");
+    threads[4] = chThdCreateStatic(wa[4], WA_SIZE, prio+5, thread6, "A");
+  }
+
+  /* [5.7.2] Atomically signaling the condition variable five times
+     then waiting for the threads to terminate in priority order, the
+     order is tested.*/
+  test_set_step(2);
+  {
+    chSysLock();
+    chCondSignalI(&c1);
+    chCondSignalI(&c1);
+    chCondSignalI(&c1);
+    chCondSignalI(&c1);
+    chCondSignalI(&c1);
+    chSchRescheduleS();
+    chSysUnlock();
+    test_wait_threads();
+    test_assert_sequence("ABCDE", "invalid sequence");
+  }
+}
+
+static const testcase_t test_005_007 = {
+  "Condition Variable signal test",
+  test_005_007_setup,
+  NULL,
+  test_005_007_execute
+};
+#endif /* CH_CFG_USE_CONDVARS */
+
+#if (CH_CFG_USE_CONDVARS) || defined(__DOXYGEN__)
+/**
+ * @page test_005_008 [5.8] Condition Variable broadcast test
+ *
+ * <h2>Description</h2>
+ * Five threads take a mutex and then enter a conditional variable
+ * queue, the tester thread then proceeds to broadcast the conditional
+ * variable.<br> The test expects the threads to reach their goal in
+ * increasing priority order regardless of the initial order.
+ *
+ * <h2>Conditions</h2>
+ * This test is only executed if the following preprocessor condition
+ * evaluates to true:
+ * - CH_CFG_USE_CONDVARS
+ * .
+ *
+ * <h2>Test Steps</h2>
+ * - [5.8.1] Starting the five threads with increasing priority, the
+ *   threads will queue on the condition variable.
+ * - [5.8.2] Broarcasting on the condition variable then waiting for
+ *   the threads to terminate in priority order, the order is tested.
+ * .
+ */
+
+static void test_005_008_setup(void) {
+  chCondObjectInit(&c1);
+  chMtxObjectInit(&m1);
+}
+
+static void test_005_008_execute(void) {
+
+  /* [5.8.1] Starting the five threads with increasing priority, the
+     threads will queue on the condition variable.*/
+  test_set_step(1);
+  {
+    tprio_t prio = chThdGetPriorityX();
+    threads[0] = chThdCreateStatic(wa[0], WA_SIZE, prio+1, thread8, "E");
+    threads[1] = chThdCreateStatic(wa[1], WA_SIZE, prio+2, thread8, "D");
+    threads[2] = chThdCreateStatic(wa[2], WA_SIZE, prio+3, thread8, "C");
+    threads[3] = chThdCreateStatic(wa[3], WA_SIZE, prio+4, thread8, "B");
+    threads[4] = chThdCreateStatic(wa[4], WA_SIZE, prio+5, thread8, "A");
+  }
+
+  /* [5.8.2] Broarcasting on the condition variable then waiting for
+     the threads to terminate in priority order, the order is tested.*/
+  test_set_step(2);
+  {
+    chCondBroadcast(&c1);
+    test_wait_threads();
+    test_assert_sequence("ABCDE", "invalid sequence");
+  }
+}
+
+static const testcase_t test_005_008 = {
+  "Condition Variable broadcast test",
+  test_005_008_setup,
+  NULL,
+  test_005_008_execute
+};
+#endif /* CH_CFG_USE_CONDVARS */
+
 /****************************************************************************
  * Exported data.
  ****************************************************************************/
@@ -782,6 +916,12 @@ const testcase_t * const test_sequence_005[] = {
 #endif
 #if (CH_CFG_USE_MUTEXES_RECURSIVE) || defined(__DOXYGEN__)
   &test_005_006,
+#endif
+#if (CH_CFG_USE_CONDVARS) || defined(__DOXYGEN__)
+  &test_005_007,
+#endif
+#if (CH_CFG_USE_CONDVARS) || defined(__DOXYGEN__)
+  &test_005_008,
 #endif
   NULL
 };

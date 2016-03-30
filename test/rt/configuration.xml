@@ -2058,6 +2058,123 @@ test_assert(m1.cnt == 0, "invalid recursion counter");]]></value>
                   </step>
                 </steps>
               </case>
+              <case>
+                <brief>
+                  <value>Condition Variable signal test.</value>
+                </brief>
+                <description>
+                  <value>Five threads take a mutex and then enter a conditional variable queue, the tester thread then proceeds to signal the conditional variable five times atomically.&lt;br&gt;&#xD;
+The test expects the threads to reach their goal in increasing priority order regardless of the initial order.</value>
+                </description>
+                <condition>
+                  <value>CH_CFG_USE_CONDVARS</value>
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chCondObjectInit(&c1);
+chMtxObjectInit(&m1);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Starting the five threads with increasing priority, the threads will queue on the condition variable.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[tprio_t prio = chThdGetPriorityX();
+threads[0] = chThdCreateStatic(wa[0], WA_SIZE, prio+1, thread6, "E");
+threads[1] = chThdCreateStatic(wa[1], WA_SIZE, prio+2, thread6, "D");
+threads[2] = chThdCreateStatic(wa[2], WA_SIZE, prio+3, thread6, "C");
+threads[3] = chThdCreateStatic(wa[3], WA_SIZE, prio+4, thread6, "B");
+threads[4] = chThdCreateStatic(wa[4], WA_SIZE, prio+5, thread6, "A");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Atomically signaling the condition variable five times then waiting for the threads to terminate in priority order, the order is tested.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chSysLock();
+chCondSignalI(&c1);
+chCondSignalI(&c1);
+chCondSignalI(&c1);
+chCondSignalI(&c1);
+chCondSignalI(&c1);
+chSchRescheduleS();
+chSysUnlock();
+test_wait_threads();
+test_assert_sequence("ABCDE", "invalid sequence");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Condition Variable broadcast test.</value>
+                </brief>
+                <description>
+                  <value>Five threads take a mutex and then enter a conditional variable queue, the tester thread then proceeds to broadcast the conditional variable.&lt;br&gt;&#xD;
+The test expects the threads to reach their goal in increasing priority order regardless of the initial order.</value>
+                </description>
+                <condition>
+                  <value>CH_CFG_USE_CONDVARS</value>
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chCondObjectInit(&c1);
+chMtxObjectInit(&m1);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Starting the five threads with increasing priority, the threads will queue on the condition variable.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[tprio_t prio = chThdGetPriorityX();
+threads[0] = chThdCreateStatic(wa[0], WA_SIZE, prio+1, thread8, "E");
+threads[1] = chThdCreateStatic(wa[1], WA_SIZE, prio+2, thread8, "D");
+threads[2] = chThdCreateStatic(wa[2], WA_SIZE, prio+3, thread8, "C");
+threads[3] = chThdCreateStatic(wa[3], WA_SIZE, prio+4, thread8, "B");
+threads[4] = chThdCreateStatic(wa[4], WA_SIZE, prio+5, thread8, "A");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Broarcasting on the condition variable then waiting for the threads to terminate in priority order, the order is tested.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chCondBroadcast(&c1);
+test_wait_threads();
+test_assert_sequence("ABCDE", "invalid sequence");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
             </cases>
           </sequence>
           <sequence>
