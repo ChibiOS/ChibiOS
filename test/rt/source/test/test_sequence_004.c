@@ -353,6 +353,10 @@ static void test_004_005_setup(void) {
   chSemObjectInit(&sem1, 0);
 }
 
+static void test_004_005_teardown(void) {
+  test_wait_threads();
+}
+
 static void test_004_005_execute(void) {
 
   /* [4.5.1] An higher priority thread is created that performs
@@ -386,7 +390,7 @@ static void test_004_005_execute(void) {
 static const testcase_t test_004_005 = {
   "Testing chSemWaitSignal() functionality",
   test_004_005_setup,
-  NULL,
+  test_004_005_teardown,
   test_004_005_execute
 };
 

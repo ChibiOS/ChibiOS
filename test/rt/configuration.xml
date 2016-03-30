@@ -1141,7 +1141,7 @@ test_assert_sequence("A", "invalid sequence");]]></value>
                     <value><![CDATA[chSemObjectInit(&sem1, 0);]]></value>
                   </setup_code>
                   <teardown_code>
-                    <value />
+                    <value><![CDATA[test_wait_threads();]]></value>
                   </teardown_code>
                   <local_variables>
                     <value />
@@ -1688,7 +1688,7 @@ Thread A performs wait(50), lock(m1), unlock(m1), exit. Thread B performs wait(1
 chMtxObjectInit(&m2);]]></value>
                   </setup_code>
                   <teardown_code>
-                    <value />
+                    <value><![CDATA[test_wait_threads();]]></value>
                   </teardown_code>
                   <local_variables>
                     <value><![CDATA[tprio_t p, pa, pb;]]></value>
@@ -2134,7 +2134,8 @@ The test expects the threads to reach their goal in increasing priority order re
                 <various_code>
                   <setup_code>
                     <value><![CDATA[chCondObjectInit(&c1);
-chMtxObjectInit(&m1);]]></value>
+chMtxObjectInit(&m1);
+chMtxObjectInit(&m2);]]></value>
                   </setup_code>
                   <teardown_code>
                     <value />
@@ -2171,6 +2172,89 @@ threads[4] = chThdCreateStatic(wa[4], WA_SIZE, prio+5, thread8, "A");]]></value>
                       <value><![CDATA[chCondBroadcast(&c1);
 test_wait_threads();
 test_assert_sequence("ABCDE", "invalid sequence");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+            </cases>
+          </sequence>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
+              <value>Synchronous Messages.</value>
+            </brief>
+            <description>
+              <value>This module implements the test sequence for the Synchronous Messages subsystem.</value>
+            </description>
+            <condition>
+              <value>CH_CFG_USE_MESSAGES</value>
+            </condition>
+            <shared_code>
+              <value><![CDATA[static THD_FUNCTION(msg_thread1, p) {
+
+  chMsgSend(p, 'A');
+  chMsgSend(p, 'B');
+  chMsgSend(p, 'C');
+  chMsgSend(p, 'D');
+}]]></value>
+            </shared_code>
+            <cases>
+              <case>
+                <brief>
+                  <value>Messages Server loop.</value>
+                </brief>
+                <description>
+                  <value>A messenger thread is spawned that sends four messages back to the tester thread.&lt;br&gt;&#xD;
+The test expect to receive the messages in the correct sequence and to not find a fifth message waiting.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[thread_t *tp;
+msg_t msg;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Starting the messenger thread.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() + 1,
+                               msg_thread1, chThdGetSelfX());]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Waiting for four messages then testing the receive order.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[unsigned i;
+
+for (i = 0; i < 4; i++) {
+  tp = chMsgWait();
+  msg = chMsgGet(tp);
+  chMsgRelease(tp, msg);
+  test_emit_token(msg);
+}
+test_wait_threads();
+test_assert_sequence("ABCD", "invalid sequence");]]></value>
                     </code>
                   </step>
                 </steps>

@@ -452,6 +452,10 @@ static void test_005_004_setup(void) {
   chMtxObjectInit(&m2);
 }
 
+static void test_005_004_teardown(void) {
+  test_wait_threads();
+}
+
 static void test_005_004_execute(void) {
   tprio_t p, pa, pb;
 
@@ -525,7 +529,7 @@ static void test_005_004_execute(void) {
 static const testcase_t test_005_004 = {
   "Priority return verification",
   test_005_004_setup,
-  NULL,
+  test_005_004_teardown,
   test_005_004_execute
 };
 
@@ -865,6 +869,7 @@ static const testcase_t test_005_007 = {
 static void test_005_008_setup(void) {
   chCondObjectInit(&c1);
   chMtxObjectInit(&m1);
+  chMtxObjectInit(&m2);
 }
 
 static void test_005_008_execute(void) {
