@@ -1794,6 +1794,270 @@ test_assert(chThdGetPriorityX() == p, "wrong priority level");]]></value>
                   </step>
                 </steps>
               </case>
+              <case>
+                <brief>
+                  <value>Repeated locks, non recursive scenario.</value>
+                </brief>
+                <description>
+                  <value>The behavior of multiple mutex locks from the same thread is tested when recursion is disabled</value>
+                </description>
+                <condition>
+                  <value>!CH_CFG_USE_MUTEXES_RECURSIVE</value>
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chMtxObjectInit(&m1);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[bool b;
+tprio_t prio;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Getting current thread priority for later checks.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[prio = chThdGetPriorityX();]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Locking the mutex first time, it must be possible because it is not owned.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[b = chMtxTryLock(&m1);
+test_assert(b, "already locked");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Locking the mutex second time, it must fail because it is already owned.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[b = chMtxTryLock(&m1);
+test_assert(!b, "not locked");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Unlocking the mutex then it must not be owned anymore and the queue must be empty.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chMtxUnlock(&m1);
+test_assert(m1.owner == NULL, "still owned");
+test_assert(queue_isempty(&m1.queue), "queue not empty");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing that priority has not changed after operations.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_assert(chThdGetPriorityX() == prio, "wrong priority level");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing chMtxUnlockAll() behavior.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[b = chMtxTryLock(&m1);
+test_assert(b, "already locked");
+b = chMtxTryLock(&m1);
+test_assert(!b, "not locked");
+
+chMtxUnlockAll();
+test_assert(m1.owner == NULL, "still owned");
+test_assert(queue_isempty(&m1.queue), "queue not empty");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing that priority has not changed after operations.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_assert(chThdGetPriorityX() == prio, "wrong priority level");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Repeated locks using, recursive scenario.</value>
+                </brief>
+                <description>
+                  <value>The behavior of multiple mutex locks from the same thread is tested when recursion is enabled</value>
+                </description>
+                <condition>
+                  <value>CH_CFG_USE_MUTEXES_RECURSIVE</value>
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chMtxObjectInit(&m1);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[bool b;
+tprio_t prio;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Getting current thread priority for later checks.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[prio = chThdGetPriorityX();]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Locking the mutex first time, it must be possible because it is not owned.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[b = chMtxTryLock(&m1);
+test_assert(b, "already locked");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Locking the mutex second time, it must be possible because it is recursive.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[b = chMtxTryLock(&m1);
+test_assert(b, "already locked");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Unlocking the mutex then it must be still owned because recursivity.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chMtxUnlock(&m1);
+test_assert(m1.owner != NULL, "not owned");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Unlocking the mutex then it must not be owned anymore and the queue must be empty.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chMtxUnlock(&m1);
+test_assert(m1.owner == NULL, "still owned");
+test_assert(queue_isempty(&m1.queue), "queue not empty");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing that priority has not changed after operations.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_assert(chThdGetPriorityX() == prio, "wrong priority level");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing consecutive chMtxTryLock()/chMtxTryLockS() calls and a final chMtxUnlockAllS().</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[b = chMtxTryLock(&m1);
+test_assert(b, "already locked");
+chSysLock();
+b = chMtxTryLockS(&m1);
+chSysUnlock();
+test_assert(b, "already locked");
+test_assert(m1.cnt == 2, "invalid recursion counter");
+chSysLock();
+chMtxUnlockAllS();
+chSysUnlock();
+test_assert(m1.owner == NULL, "still owned");
+test_assert(queue_isempty(&m1.queue), "queue not empty");
+test_assert(m1.cnt == 0, "invalid recursion counter");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing consecutive chMtxLock()/chMtxLockS() calls and a final chMtxUnlockAll().</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chMtxLock(&m1);
+test_assert(m1.owner != NULL, "not owned");
+chSysLock();
+chMtxLockS(&m1);
+chSysUnlock();
+test_assert(m1.owner != NULL, "not owned");
+test_assert(m1.cnt == 2, "invalid recursion counter");
+chMtxUnlockAll();
+test_assert(m1.owner == NULL, "still owned");
+test_assert(queue_isempty(&m1.queue), "queue not empty");
+test_assert(m1.cnt == 0, "invalid recursion counter");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing that priority has not changed after operations.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_assert(chThdGetPriorityX() == prio, "wrong priority level");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
             </cases>
           </sequence>
           <sequence>

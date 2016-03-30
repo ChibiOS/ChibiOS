@@ -38,6 +38,8 @@
  * - @subpage test_005_002
  * - @subpage test_005_003
  * - @subpage test_005_004
+ * - @subpage test_005_005
+ * - @subpage test_005_006
  * .
  */
 
@@ -525,6 +527,244 @@ static const testcase_t test_005_004 = {
   test_005_004_execute
 };
 
+#if (!CH_CFG_USE_MUTEXES_RECURSIVE) || defined(__DOXYGEN__)
+/**
+ * @page test_005_005 [5.5] Repeated locks, non recursive scenario
+ *
+ * <h2>Description</h2>
+ * The behavior of multiple mutex locks from the same thread is tested
+ * when recursion is disabled.
+ *
+ * <h2>Conditions</h2>
+ * This test is only executed if the following preprocessor condition
+ * evaluates to true:
+ * - !CH_CFG_USE_MUTEXES_RECURSIVE
+ * .
+ *
+ * <h2>Test Steps</h2>
+ * - [5.5.1] Getting current thread priority for later checks.
+ * - [5.5.2] Locking the mutex first time, it must be possible because
+ *   it is not owned.
+ * - [5.5.3] Locking the mutex second time, it must fail because it is
+ *   already owned.
+ * - [5.5.4] Unlocking the mutex then it must not be owned anymore and
+ *   the queue must be empty.
+ * - [5.5.5] Testing that priority has not changed after operations.
+ * - [5.5.6] Testing chMtxUnlockAll() behavior.
+ * - [5.5.7] Testing that priority has not changed after operations.
+ * .
+ */
+
+static void test_005_005_setup(void) {
+  chMtxObjectInit(&m1);
+}
+
+static void test_005_005_execute(void) {
+  bool b;
+  tprio_t prio;
+
+  /* [5.5.1] Getting current thread priority for later checks.*/
+  test_set_step(1);
+  {
+    prio = chThdGetPriorityX();
+  }
+
+  /* [5.5.2] Locking the mutex first time, it must be possible because
+     it is not owned.*/
+  test_set_step(2);
+  {
+    b = chMtxTryLock(&m1);
+    test_assert(b, "already locked");
+  }
+
+  /* [5.5.3] Locking the mutex second time, it must fail because it is
+     already owned.*/
+  test_set_step(3);
+  {
+    b = chMtxTryLock(&m1);
+    test_assert(!b, "not locked");
+  }
+
+  /* [5.5.4] Unlocking the mutex then it must not be owned anymore and
+     the queue must be empty.*/
+  test_set_step(4);
+  {
+    chMtxUnlock(&m1);
+    test_assert(m1.owner == NULL, "still owned");
+    test_assert(queue_isempty(&m1.queue), "queue not empty");
+  }
+
+  /* [5.5.5] Testing that priority has not changed after operations.*/
+  test_set_step(5);
+  {
+    test_assert(chThdGetPriorityX() == prio, "wrong priority level");
+  }
+
+  /* [5.5.6] Testing chMtxUnlockAll() behavior.*/
+  test_set_step(6);
+  {
+    b = chMtxTryLock(&m1);
+    test_assert(b, "already locked");
+    b = chMtxTryLock(&m1);
+    test_assert(!b, "not locked");
+
+    chMtxUnlockAll();
+    test_assert(m1.owner == NULL, "still owned");
+    test_assert(queue_isempty(&m1.queue), "queue not empty");
+  }
+
+  /* [5.5.7] Testing that priority has not changed after operations.*/
+  test_set_step(7);
+  {
+    test_assert(chThdGetPriorityX() == prio, "wrong priority level");
+  }
+}
+
+static const testcase_t test_005_005 = {
+  "Repeated locks, non recursive scenario",
+  test_005_005_setup,
+  NULL,
+  test_005_005_execute
+};
+#endif /* !CH_CFG_USE_MUTEXES_RECURSIVE */
+
+#if (CH_CFG_USE_MUTEXES_RECURSIVE) || defined(__DOXYGEN__)
+/**
+ * @page test_005_006 [5.6] Repeated locks using, recursive scenario
+ *
+ * <h2>Description</h2>
+ * The behavior of multiple mutex locks from the same thread is tested
+ * when recursion is enabled.
+ *
+ * <h2>Conditions</h2>
+ * This test is only executed if the following preprocessor condition
+ * evaluates to true:
+ * - CH_CFG_USE_MUTEXES_RECURSIVE
+ * .
+ *
+ * <h2>Test Steps</h2>
+ * - [5.6.1] Getting current thread priority for later checks.
+ * - [5.6.2] Locking the mutex first time, it must be possible because
+ *   it is not owned.
+ * - [5.6.3] Locking the mutex second time, it must be possible because
+ *   it is recursive.
+ * - [5.6.4] Unlocking the mutex then it must be still owned because
+ *   recursivity.
+ * - [5.6.5] Unlocking the mutex then it must not be owned anymore and
+ *   the queue must be empty.
+ * - [5.6.6] Testing that priority has not changed after operations.
+ * - [5.6.7] Testing consecutive chMtxTryLock()/chMtxTryLockS() calls
+ *   and a final chMtxUnlockAllS().
+ * - [5.6.8] Testing consecutive chMtxLock()/chMtxLockS() calls and a
+ *   final chMtxUnlockAll().
+ * - [5.6.9] Testing that priority has not changed after operations.
+ * .
+ */
+
+static void test_005_006_setup(void) {
+  chMtxObjectInit(&m1);
+}
+
+static void test_005_006_execute(void) {
+  bool b;
+  tprio_t prio;
+
+  /* [5.6.1] Getting current thread priority for later checks.*/
+  test_set_step(1);
+  {
+    prio = chThdGetPriorityX();
+  }
+
+  /* [5.6.2] Locking the mutex first time, it must be possible because
+     it is not owned.*/
+  test_set_step(2);
+  {
+    b = chMtxTryLock(&m1);
+    test_assert(b, "already locked");
+  }
+
+  /* [5.6.3] Locking the mutex second time, it must be possible because
+     it is recursive.*/
+  test_set_step(3);
+  {
+    b = chMtxTryLock(&m1);
+    test_assert(b, "already locked");
+  }
+
+  /* [5.6.4] Unlocking the mutex then it must be still owned because
+     recursivity.*/
+  test_set_step(4);
+  {
+    chMtxUnlock(&m1);
+    test_assert(m1.owner != NULL, "not owned");
+  }
+
+  /* [5.6.5] Unlocking the mutex then it must not be owned anymore and
+     the queue must be empty.*/
+  test_set_step(5);
+  {
+    chMtxUnlock(&m1);
+    test_assert(m1.owner == NULL, "still owned");
+    test_assert(queue_isempty(&m1.queue), "queue not empty");
+  }
+
+  /* [5.6.6] Testing that priority has not changed after operations.*/
+  test_set_step(6);
+  {
+    test_assert(chThdGetPriorityX() == prio, "wrong priority level");
+  }
+
+  /* [5.6.7] Testing consecutive chMtxTryLock()/chMtxTryLockS() calls
+     and a final chMtxUnlockAllS().*/
+  test_set_step(7);
+  {
+    b = chMtxTryLock(&m1);
+    test_assert(b, "already locked");
+    chSysLock();
+    b = chMtxTryLockS(&m1);
+    chSysUnlock();
+    test_assert(b, "already locked");
+    test_assert(m1.cnt == 2, "invalid recursion counter");
+    chSysLock();
+    chMtxUnlockAllS();
+    chSysUnlock();
+    test_assert(m1.owner == NULL, "still owned");
+    test_assert(queue_isempty(&m1.queue), "queue not empty");
+    test_assert(m1.cnt == 0, "invalid recursion counter");
+  }
+
+  /* [5.6.8] Testing consecutive chMtxLock()/chMtxLockS() calls and a
+     final chMtxUnlockAll().*/
+  test_set_step(8);
+  {
+    chMtxLock(&m1);
+    test_assert(m1.owner != NULL, "not owned");
+    chSysLock();
+    chMtxLockS(&m1);
+    chSysUnlock();
+    test_assert(m1.owner != NULL, "not owned");
+    test_assert(m1.cnt == 2, "invalid recursion counter");
+    chMtxUnlockAll();
+    test_assert(m1.owner == NULL, "still owned");
+    test_assert(queue_isempty(&m1.queue), "queue not empty");
+    test_assert(m1.cnt == 0, "invalid recursion counter");
+  }
+
+  /* [5.6.9] Testing that priority has not changed after operations.*/
+  test_set_step(9);
+  {
+    test_assert(chThdGetPriorityX() == prio, "wrong priority level");
+  }
+}
+
+static const testcase_t test_005_006 = {
+  "Repeated locks using, recursive scenario",
+  test_005_006_setup,
+  NULL,
+  test_005_006_execute
+};
+#endif /* CH_CFG_USE_MUTEXES_RECURSIVE */
+
 /****************************************************************************
  * Exported data.
  ****************************************************************************/
@@ -537,6 +777,12 @@ const testcase_t * const test_sequence_005[] = {
   &test_005_002,
   &test_005_003,
   &test_005_004,
+#if (!CH_CFG_USE_MUTEXES_RECURSIVE) || defined(__DOXYGEN__)
+  &test_005_005,
+#endif
+#if (CH_CFG_USE_MUTEXES_RECURSIVE) || defined(__DOXYGEN__)
+  &test_005_006,
+#endif
   NULL
 };
 
