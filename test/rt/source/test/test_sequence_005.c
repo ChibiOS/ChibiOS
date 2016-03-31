@@ -42,6 +42,7 @@
  * - @subpage test_005_006
  * - @subpage test_005_007
  * - @subpage test_005_008
+ * - @subpage test_005_009
  * .
  */
 
@@ -212,6 +213,13 @@ static THD_FUNCTION(thread8, p) {
 #endif
   test_emit_token(*(char *)p);
   chMtxUnlock(&m1);
+  chMtxUnlock(&m2);
+}
+
+static THD_FUNCTION(thread9, p) {
+
+  chMtxLock(&m2);
+  test_emit_token(*(char *)p);
   chMtxUnlock(&m2);
 }
 #endif /* CH_CFG_USE_CONDVARS */
@@ -869,7 +877,6 @@ static const testcase_t test_005_007 = {
 static void test_005_008_setup(void) {
   chCondObjectInit(&c1);
   chMtxObjectInit(&m1);
-  chMtxObjectInit(&m2);
 }
 
 static void test_005_008_execute(void) {
@@ -879,11 +886,11 @@ static void test_005_008_execute(void) {
   test_set_step(1);
   {
     tprio_t prio = chThdGetPriorityX();
-    threads[0] = chThdCreateStatic(wa[0], WA_SIZE, prio+1, thread8, "E");
-    threads[1] = chThdCreateStatic(wa[1], WA_SIZE, prio+2, thread8, "D");
-    threads[2] = chThdCreateStatic(wa[2], WA_SIZE, prio+3, thread8, "C");
-    threads[3] = chThdCreateStatic(wa[3], WA_SIZE, prio+4, thread8, "B");
-    threads[4] = chThdCreateStatic(wa[4], WA_SIZE, prio+5, thread8, "A");
+    threads[0] = chThdCreateStatic(wa[0], WA_SIZE, prio+1, thread6, "E");
+    threads[1] = chThdCreateStatic(wa[1], WA_SIZE, prio+2, thread6, "D");
+    threads[2] = chThdCreateStatic(wa[2], WA_SIZE, prio+3, thread6, "C");
+    threads[3] = chThdCreateStatic(wa[3], WA_SIZE, prio+4, thread6, "B");
+    threads[4] = chThdCreateStatic(wa[4], WA_SIZE, prio+5, thread6, "A");
   }
 
   /* [5.8.2] Broarcasting on the condition variable then waiting for
@@ -903,6 +910,98 @@ static const testcase_t test_005_008 = {
   test_005_008_execute
 };
 #endif /* CH_CFG_USE_CONDVARS */
+
+/**
+ * @page test_005_009 [5.9] Condition Variable priority boost test
+ *
+ * <h2>Description</h2>
+ * This test case verifies the priority boost of a thread waiting on a
+ * conditional variable queue. It tests this very specific situation in
+ * order to improve code coverage. The created threads perform the
+ * following operations: TA{lock(M2), lock(M1), wait(C1), unlock(M1),
+ * unlock(M2)}, TB{lock(M2), wait(C1), unlock(M2)}. TC{lock(M1),
+ * unlock(M1)}.
+ *
+ * <h2>Test Steps</h2>
+ * - [5.9.1] Reading current base priority.
+ * - [5.9.2] Thread A is created at priority P(+1), it locks M2, locks
+ *   M1 and goes to wait on C1.
+ * - [5.9.3] Thread C is created at priority P(+2), it enqueues on M1
+ *   and boosts TA priority at P(+2).
+ * - [5.9.4] Thread B is created at priority P(+3), it enqueues on M2
+ *   and boosts TA priority at P(+3).
+ * - [5.9.5] Signaling C1: TA wakes up, unlocks M1 and priority goes to
+ *   P(+2). TB locks M1, unlocks M1 and completes. TA unlocks M2 and
+ *   priority goes to P(+1). TC waits on C1. TA completes.
+ * - [5.9.6] Signaling C1: TC wakes up, unlocks M1 and completes.
+ * - [5.9.7] Checking the order of operations.
+ * .
+ */
+
+static void test_005_009_setup(void) {
+  chCondObjectInit(&c1);
+  chMtxObjectInit(&m1);
+  chMtxObjectInit(&m2);
+}
+
+static void test_005_009_execute(void) {
+  tprio_t prio;
+
+  /* [5.9.1] Reading current base priority.*/
+  test_set_step(1);
+  {
+    prio = chThdGetPriorityX();
+  }
+
+  /* [5.9.2] Thread A is created at priority P(+1), it locks M2, locks
+     M1 and goes to wait on C1.*/
+  test_set_step(2);
+  {
+    threads[0] = chThdCreateStatic(wa[0], WA_SIZE, prio+1, thread8, "A");
+  }
+
+  /* [5.9.3] Thread C is created at priority P(+2), it enqueues on M1
+     and boosts TA priority at P(+2).*/
+  test_set_step(3);
+  {
+    threads[1] = chThdCreateStatic(wa[1], WA_SIZE, prio+2, thread6, "C");
+  }
+
+  /* [5.9.4] Thread B is created at priority P(+3), it enqueues on M2
+     and boosts TA priority at P(+3).*/
+  test_set_step(4);
+  {
+    threads[2] = chThdCreateStatic(wa[2], WA_SIZE, prio+3, thread9, "B");
+  }
+
+  /* [5.9.5] Signaling C1: TA wakes up, unlocks M1 and priority goes to
+     P(+2). TB locks M1, unlocks M1 and completes. TA unlocks M2 and
+     priority goes to P(+1). TC waits on C1. TA completes.*/
+  test_set_step(5);
+  {
+    chCondSignal(&c1);
+  }
+
+  /* [5.9.6] Signaling C1: TC wakes up, unlocks M1 and completes.*/
+  test_set_step(6);
+  {
+    chCondSignal(&c1);
+  }
+
+  /* [5.9.7] Checking the order of operations.*/
+  test_set_step(7);
+  {
+    test_wait_threads();
+    test_assert_sequence("ABC", "invalid sequence");
+  }
+}
+
+static const testcase_t test_005_009 = {
+  "Condition Variable priority boost test",
+  test_005_009_setup,
+  NULL,
+  test_005_009_execute
+};
 
 /****************************************************************************
  * Exported data.
@@ -928,6 +1027,7 @@ const testcase_t * const test_sequence_005[] = {
 #if (CH_CFG_USE_CONDVARS) || defined(__DOXYGEN__)
   &test_005_008,
 #endif
+  &test_005_009,
   NULL
 };
 

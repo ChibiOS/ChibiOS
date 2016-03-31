@@ -40,7 +40,10 @@ static thread_reference_t tr1;
 
 static THD_FUNCTION(thread1, p) {
 
+  chSysLock();
   chThdResumeI(&tr1, MSG_OK);
+  chSchRescheduleS();
+  chSysUnlock();
   test_emit_token(*(char *)p);
 }
 

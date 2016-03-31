@@ -418,6 +418,10 @@ static const testcase_t test_004_005 = {
  * .
  */
 
+static void test_004_006_teardown(void) {
+  test_wait_threads();
+}
+
 static void test_004_006_execute(void) {
   binary_semaphore_t bsem;
   msg_t msg;
@@ -477,7 +481,7 @@ static void test_004_006_execute(void) {
 static const testcase_t test_004_006 = {
   "Testing Binary Semaphores special case",
   NULL,
-  NULL,
+  test_004_006_teardown,
   test_004_006_execute
 };
 

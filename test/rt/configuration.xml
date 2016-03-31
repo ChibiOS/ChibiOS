@@ -758,7 +758,10 @@ chSysUnlock();]]></value>
 
 static THD_FUNCTION(thread1, p) {
 
+  chSysLock();
   chThdResumeI(&tr1, MSG_OK);
+  chSchRescheduleS();
+  chSysUnlock();
   test_emit_token(*(char *)p);
 }]]></value>
             </shared_code>
@@ -1202,7 +1205,7 @@ test_assert(sem1.cnt == 0, "counter not zero");]]></value>
                     <value />
                   </setup_code>
                   <teardown_code>
-                    <value />
+                    <value><![CDATA[test_wait_threads();]]></value>
                   </teardown_code>
                   <local_variables>
                     <value><![CDATA[binary_semaphore_t bsem;
@@ -1464,6 +1467,13 @@ static THD_FUNCTION(thread8, p) {
 #endif
   test_emit_token(*(char *)p);
   chMtxUnlock(&m1);
+  chMtxUnlock(&m2);
+}
+
+static THD_FUNCTION(thread9, p) {
+
+  chMtxLock(&m2);
+  test_emit_token(*(char *)p);
   chMtxUnlock(&m2);
 }
 #endif /* CH_CFG_USE_CONDVARS */]]></value>
@@ -2134,8 +2144,7 @@ The test expects the threads to reach their goal in increasing priority order re
                 <various_code>
                   <setup_code>
                     <value><![CDATA[chCondObjectInit(&c1);
-chMtxObjectInit(&m1);
-chMtxObjectInit(&m2);]]></value>
+chMtxObjectInit(&m1);]]></value>
                   </setup_code>
                   <teardown_code>
                     <value />
@@ -2154,11 +2163,11 @@ chMtxObjectInit(&m2);]]></value>
                     </tags>
                     <code>
                       <value><![CDATA[tprio_t prio = chThdGetPriorityX();
-threads[0] = chThdCreateStatic(wa[0], WA_SIZE, prio+1, thread8, "E");
-threads[1] = chThdCreateStatic(wa[1], WA_SIZE, prio+2, thread8, "D");
-threads[2] = chThdCreateStatic(wa[2], WA_SIZE, prio+3, thread8, "C");
-threads[3] = chThdCreateStatic(wa[3], WA_SIZE, prio+4, thread8, "B");
-threads[4] = chThdCreateStatic(wa[4], WA_SIZE, prio+5, thread8, "A");]]></value>
+threads[0] = chThdCreateStatic(wa[0], WA_SIZE, prio+1, thread6, "E");
+threads[1] = chThdCreateStatic(wa[1], WA_SIZE, prio+2, thread6, "D");
+threads[2] = chThdCreateStatic(wa[2], WA_SIZE, prio+3, thread6, "C");
+threads[3] = chThdCreateStatic(wa[3], WA_SIZE, prio+4, thread6, "B");
+threads[4] = chThdCreateStatic(wa[4], WA_SIZE, prio+5, thread6, "A");]]></value>
                     </code>
                   </step>
                   <step>
@@ -2172,6 +2181,110 @@ threads[4] = chThdCreateStatic(wa[4], WA_SIZE, prio+5, thread8, "A");]]></value>
                       <value><![CDATA[chCondBroadcast(&c1);
 test_wait_threads();
 test_assert_sequence("ABCDE", "invalid sequence");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Condition Variable priority boost test.</value>
+                </brief>
+                <description>
+                  <value>This test case verifies the priority boost of a thread waiting on a conditional variable queue. It tests this very specific situation in order to improve code coverage. The created threads perform the following operations: TA{lock(M2), lock(M1), wait(C1), unlock(M1), unlock(M2)}, TB{lock(M2), wait(C1), unlock(M2)}. TC{lock(M1), unlock(M1)}.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chCondObjectInit(&c1);
+chMtxObjectInit(&m1);
+chMtxObjectInit(&m2);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[tprio_t prio;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Reading current base priority.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[prio = chThdGetPriorityX();]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Thread A is created at priority P(+1), it locks M2, locks M1 and goes to wait on C1.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[threads[0] = chThdCreateStatic(wa[0], WA_SIZE, prio+1, thread8, "A");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Thread C is created at priority P(+2), it enqueues on M1 and boosts TA priority at P(+2).</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[threads[1] = chThdCreateStatic(wa[1], WA_SIZE, prio+2, thread6, "C");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Thread B is created at priority P(+3), it enqueues on M2 and boosts TA priority at P(+3).</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[threads[2] = chThdCreateStatic(wa[2], WA_SIZE, prio+3, thread9, "B");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Signaling C1: TA wakes up, unlocks M1 and priority goes to P(+2). TB locks M1, unlocks M1 and completes. TA unlocks M2 and priority goes to P(+1). TC waits on C1. TA completes.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chCondSignal(&c1);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Signaling C1: TC wakes up, unlocks M1 and completes.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chCondSignal(&c1);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Checking the order of operations.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_wait_threads();
+test_assert_sequence("ABC", "invalid sequence");]]></value>
                     </code>
                   </step>
                 </steps>
