@@ -2379,6 +2379,409 @@ test_assert_sequence("ABCD", "invalid sequence");]]></value>
               <value>Internal Tests</value>
             </type>
             <brief>
+              <value>Event Sources and Event Flags.</value>
+            </brief>
+            <description>
+              <value>This module implements the test sequence for the Events subsystem.</value>
+            </description>
+            <condition>
+              <value>CH_CFG_USE_EVENTS</value>
+            </condition>
+            <shared_code>
+              <value><![CDATA[static EVENTSOURCE_DECL(es1);
+static EVENTSOURCE_DECL(es2);
+
+static void h1(eventid_t id) {(void)id;test_emit_token('A');}
+static void h2(eventid_t id) {(void)id;test_emit_token('B');}
+static void h3(eventid_t id) {(void)id;test_emit_token('C');}
+static ROMCONST evhandler_t evhndl[] = {h1, h2, h3};
+
+static THD_FUNCTION(evt_thread3, p) {
+
+  chThdSleepMilliseconds(50);
+  chEvtSignal((thread_t *)p, 1);
+}
+
+static THD_FUNCTION(evt_thread4, p) {
+
+  (void)p;
+  chEvtBroadcast(&es1);
+  chThdSleepMilliseconds(50);
+  chEvtBroadcast(&es2);
+}]]></value>
+            </shared_code>
+            <cases>
+              <case>
+                <brief>
+                  <value>Events registration.</value>
+                </brief>
+                <description>
+                  <value>Two event listeners are registered on an event source and then unregistered in the same order.&lt;br&gt;&#xD;
+The test expects that the even source has listeners after the registrations and after the first unregistration, then, after the second unegistration, the test expects no more listeners.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[event_listener_t el1, el2;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>An Event Source is initialized.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chEvtObjectInit(&es1);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Two Event Listeners are registered on the Event Source, the Event Source  is tested to have listeners.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chEvtRegisterMask(&es1, &el1, 1);
+chEvtRegisterMask(&es1, &el2, 2);
+test_assert_lock(chEvtIsListeningI(&es1), "no listener");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>An Event Listener is unregistered, the Event Source must still have listeners.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chEvtUnregister(&es1, &el1);
+test_assert_lock(chEvtIsListeningI(&es1), "no listener");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>An Event Listener is unregistered, the Event Source must not have listeners.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chEvtUnregister(&es1, &el2);
+test_assert_lock(!chEvtIsListeningI(&es1), "stuck listener");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Event Flags dispatching.</value>
+                </brief>
+                <description>
+                  <value>The test dispatches three event flags and verifies that the associated event handlers are invoked in LSb-first order.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chEvtGetAndClearEvents(ALL_EVENTS);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Three evenf flag bits are raised then chEvtDispatch() is invoked, the sequence of handlers calls is tested.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chEvtDispatch(evhndl, 7);
+test_assert_sequence("ABC", "invalid sequence");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Events Flags wait using chEvtWaitOne().</value>
+                </brief>
+                <description>
+                  <value>Functionality of chEvtWaitOne() is tested under various scenarios.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chEvtGetAndClearEvents(ALL_EVENTS);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[eventmask_t m;
+systime_t target_time;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Setting three event flags.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chEvtAddEvents(7);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Calling chEvtWaitOne() three times, each time a single flag must be returned in order of priority.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[m = chEvtWaitOne(ALL_EVENTS);
+test_assert(m == 1, "single event error");
+m = chEvtWaitOne(ALL_EVENTS);
+test_assert(m == 2, "single event error");
+m = chEvtWaitOne(ALL_EVENTS);
+test_assert(m == 4, "single event error");
+m = chEvtGetAndClearEvents(ALL_EVENTS);
+test_assert(m == 0, "stuck event");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Getting current time and starting a signaler thread, the thread will set an event flag after 50mS.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[target_time = test_wait_tick() + MS2ST(50);
+threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() - 1,
+                               evt_thread3, chThdGetSelfX());]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Calling chEvtWaitOne() then verifying that the event has been received after 50mS and that the event flags mask has been emptied.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[m = chEvtWaitOne(ALL_EVENTS);
+test_assert_time_window(target_time, target_time + ALLOWED_DELAY,
+                        "out of time window");
+test_assert(m == 1, "event flag error");
+m = chEvtGetAndClearEvents(ALL_EVENTS);
+test_assert(m == 0, "stuck event");
+test_wait_threads();]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Events Flags wait using chEvtWaitAny().</value>
+                </brief>
+                <description>
+                  <value>Functionality of chEvtWaitAny() is tested under various scenarios.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chEvtGetAndClearEvents(ALL_EVENTS);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[eventmask_t m;
+systime_t target_time;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Setting two, non contiguous, event flags.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chEvtAddEvents(5);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Calling chEvtWaitAny() one time, the two flags must be returned.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[m = chEvtWaitAny(ALL_EVENTS);
+test_assert(m == 5, "unexpected pending bit");
+m = chEvtGetAndClearEvents(ALL_EVENTS);
+test_assert(m == 0, "stuck event");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Getting current time and starting a signaler thread, the thread will set an event flag after 50mS.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[target_time = test_wait_tick() + MS2ST(50);
+threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() - 1,
+                               evt_thread3, chThdGetSelfX());]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Calling chEvtWaitAny() then verifying that the event has been received after 50mS and that the event flags mask has been emptied.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[m = chEvtWaitAny(ALL_EVENTS);
+test_assert_time_window(target_time, target_time + ALLOWED_DELAY,
+                        "out of time window");
+test_assert(m == 1, "event flag error");
+m = chEvtGetAndClearEvents(ALL_EVENTS);
+test_assert(m == 0, "stuck event");
+test_wait_threads();]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Events Flags wait using chEvtWaitAll().</value>
+                </brief>
+                <description>
+                  <value>Functionality of chEvtWaitAll() is tested under various scenarios.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chEvtGetAndClearEvents(ALL_EVENTS);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[eventmask_t m;
+systime_t target_time;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Setting two, non contiguous, event flags.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chEvtAddEvents(5);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Calling chEvtWaitAll() one time, the two flags must be returned.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[m = chEvtWaitAll(5);
+test_assert(m == 5, "unexpected pending bit");
+m = chEvtGetAndClearEvents(ALL_EVENTS);
+test_assert(m == 0, "stuck event");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Setting one event flag.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chEvtAddEvents(4);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Getting current time and starting a signaler thread, the thread will set another event flag after 50mS.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[target_time = test_wait_tick() + MS2ST(50);
+threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() - 1,
+                               evt_thread3, chThdGetSelfX());]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Calling chEvtWaitAll() then verifying that both event flags have been received after 50mS and that the event flags mask has been emptied.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[m = chEvtWaitAll(5);
+test_assert_time_window(target_time, target_time + ALLOWED_DELAY,
+                        "out of time window");
+test_assert(m == 5, "event flags error");
+m = chEvtGetAndClearEvents(ALL_EVENTS);
+test_assert(m == 0, "stuck event");
+test_wait_threads();]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+            </cases>
+          </sequence>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
               <value>Mailboxes.</value>
             </brief>
             <description>

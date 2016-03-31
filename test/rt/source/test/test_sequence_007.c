@@ -19,355 +19,386 @@
 #include "test_root.h"
 
 /**
- * @page test_sequence_007 [7] Mailboxes
+ * @page test_sequence_007 [7] Event Sources and Event Flags
  *
  * File: @ref test_sequence_007.c
  *
  * <h2>Description</h2>
- * This sequence tests the ChibiOS/RT functionalities related to
- * mailboxes.
+ * This module implements the test sequence for the Events subsystem.
  *
  * <h2>Conditions</h2>
  * This sequence is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_USE_MAILBOXES
+ * - CH_CFG_USE_EVENTS
  * .
  *
  * <h2>Test Cases</h2>
  * - @subpage test_007_001
  * - @subpage test_007_002
  * - @subpage test_007_003
+ * - @subpage test_007_004
+ * - @subpage test_007_005
  * .
  */
 
-#if (CH_CFG_USE_MAILBOXES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_EVENTS) || defined(__DOXYGEN__)
 
 /****************************************************************************
  * Shared code.
  ****************************************************************************/
 
-#define MB_SIZE 4
+static EVENTSOURCE_DECL(es1);
+static EVENTSOURCE_DECL(es2);
 
-static msg_t mb_buffer[MB_SIZE];
-static MAILBOX_DECL(mb1, mb_buffer, MB_SIZE);
+static void h1(eventid_t id) {(void)id;test_emit_token('A');}
+static void h2(eventid_t id) {(void)id;test_emit_token('B');}
+static void h3(eventid_t id) {(void)id;test_emit_token('C');}
+static ROMCONST evhandler_t evhndl[] = {h1, h2, h3};
+
+static THD_FUNCTION(evt_thread3, p) {
+
+  chThdSleepMilliseconds(50);
+  chEvtSignal((thread_t *)p, 1);
+}
+
+static THD_FUNCTION(evt_thread4, p) {
+
+  (void)p;
+  chEvtBroadcast(&es1);
+  chThdSleepMilliseconds(50);
+  chEvtBroadcast(&es2);
+}
 
 /****************************************************************************
  * Test cases.
  ****************************************************************************/
 
 /**
- * @page test_007_001 [7.1] Mailbox normal API, non-blocking tests
+ * @page test_007_001 [7.1] Events registration
  *
  * <h2>Description</h2>
- * The mailbox normal API is tested without triggering blocking
- * conditions.
+ * Two event listeners are registered on an event source and then
+ * unregistered in the same order.<br> The test expects that the even
+ * source has listeners after the registrations and after the first
+ * unregistration, then, after the second unegistration, the test
+ * expects no more listeners.
  *
  * <h2>Test Steps</h2>
- * - [7.1.1] Testing the mailbox size.
- * - [7.1.2] Resetting the mailbox, conditions are checked, no errors
- *   expected.
- * - [7.1.3] Filling the mailbox using chMBPost() and chMBPostAhead()
- *   once, no errors expected.
- * - [7.1.4] Testing intermediate conditions. Data pointers must be
- *   aligned, semaphore counters are checked.
- * - [7.1.5] Emptying the mailbox using chMBFetch(), no errors
- *   expected.
- * - [7.1.6] Posting and then fetching one more message, no errors
- *   expected.
- * - [7.1.7] Testing final conditions. Data pointers must be aligned to
- *   buffer start, semaphore counters are checked.
+ * - [7.1.1] An Event Source is initialized.
+ * - [7.1.2] Two Event Listeners are registered on the Event Source,
+ *   the Event Source is tested to have listeners.
+ * - [7.1.3] An Event Listener is unregistered, the Event Source must
+ *   still have listeners.
+ * - [7.1.4] An Event Listener is unregistered, the Event Source must
+ *   not have listeners.
  * .
  */
 
-static void test_007_001_setup(void) {
-  chMBObjectInit(&mb1, mb_buffer, MB_SIZE);
-}
-
-static void test_007_001_teardown(void) {
-  chMBReset(&mb1);
-}
-
 static void test_007_001_execute(void) {
-  msg_t msg1, msg2;
-  unsigned i;
+  event_listener_t el1, el2;
 
-  /* [7.1.1] Testing the mailbox size.*/
+  /* [7.1.1] An Event Source is initialized.*/
   test_set_step(1);
   {
-    test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "wrong size");
+    chEvtObjectInit(&es1);
   }
 
-  /* [7.1.2] Resetting the mailbox, conditions are checked, no errors
-     expected.*/
+  /* [7.1.2] Two Event Listeners are registered on the Event Source,
+     the Event Source is tested to have listeners.*/
   test_set_step(2);
   {
-    chMBReset(&mb1);
-    test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "not empty");
-    test_assert_lock(chMBGetUsedCountI(&mb1) == 0, "still full");
-    test_assert_lock(mb1.buffer == mb1.wrptr, "write pointer not aligned to base");
-    test_assert_lock(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");
+    chEvtRegisterMask(&es1, &el1, 1);
+    chEvtRegisterMask(&es1, &el2, 2);
+    test_assert_lock(chEvtIsListeningI(&es1), "no listener");
   }
 
-  /* [7.1.3] Filling the mailbox using chMBPost() and chMBPostAhead()
-     once, no errors expected.*/
+  /* [7.1.3] An Event Listener is unregistered, the Event Source must
+     still have listeners.*/
   test_set_step(3);
   {
-    for (i = 0; i < MB_SIZE - 1; i++) {
-      msg1 = chMBPost(&mb1, 'B' + i, TIME_INFINITE);
-      test_assert(msg1 == MSG_OK, "wrong wake-up message");
-    }
-    msg1 = chMBPostAhead(&mb1, 'A', TIME_INFINITE);
-    test_assert(msg1 == MSG_OK, "wrong wake-up message");
+    chEvtUnregister(&es1, &el1);
+    test_assert_lock(chEvtIsListeningI(&es1), "no listener");
   }
 
-  /* [7.1.4] Testing intermediate conditions. Data pointers must be
-     aligned, semaphore counters are checked.*/
+  /* [7.1.4] An Event Listener is unregistered, the Event Source must
+     not have listeners.*/
   test_set_step(4);
   {
-    test_assert_lock(chMBGetFreeCountI(&mb1) == 0, "still empty");
-    test_assert_lock(chMBGetUsedCountI(&mb1) == MB_SIZE, "not full");
-    test_assert_lock(mb1.rdptr == mb1.wrptr, "pointers not aligned");
-  }
-
-  /* [7.1.5] Emptying the mailbox using chMBFetch(), no errors
-     expected.*/
-  test_set_step(5);
-  {
-    for (i = 0; i < MB_SIZE; i++) {
-      msg1 = chMBFetch(&mb1, &msg2, TIME_INFINITE);
-      test_assert(msg1 == MSG_OK, "wrong wake-up message");
-      test_emit_token(msg2);
-    }
-    test_assert_sequence("ABCD", "wrong get sequence");
-  }
-
-  /* [7.1.6] Posting and then fetching one more message, no errors
-     expected.*/
-  test_set_step(6);
-  {
-    msg1 = chMBPost(&mb1, 'B' + i, TIME_INFINITE);
-    test_assert(msg1 == MSG_OK, "wrong wake-up message");
-    msg1 = chMBFetch(&mb1, &msg2, TIME_INFINITE);
-    test_assert(msg1 == MSG_OK, "wrong wake-up message");
-  }
-
-  /* [7.1.7] Testing final conditions. Data pointers must be aligned to
-     buffer start, semaphore counters are checked.*/
-  test_set_step(7);
-  {
-    test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "not empty");
-    test_assert_lock(chMBGetUsedCountI(&mb1) == 0, "still full");
-    test_assert(mb1.buffer == mb1.wrptr, "write pointer not aligned to base");
-    test_assert(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");
+    chEvtUnregister(&es1, &el2);
+    test_assert_lock(!chEvtIsListeningI(&es1), "stuck listener");
   }
 }
 
 static const testcase_t test_007_001 = {
-  "Mailbox normal API, non-blocking tests",
-  test_007_001_setup,
-  test_007_001_teardown,
+  "Events registration",
+  NULL,
+  NULL,
   test_007_001_execute
 };
 
 /**
- * @page test_007_002 [7.2] Mailbox I-Class API, non-blocking tests
+ * @page test_007_002 [7.2] Event Flags dispatching
  *
  * <h2>Description</h2>
- * The mailbox I-Class API is tested without triggering blocking
- * conditions.
+ * The test dispatches three event flags and verifies that the
+ * associated event handlers are invoked in LSb-first order.
  *
  * <h2>Test Steps</h2>
- * - [7.2.1] Testing the mailbox size.
- * - [7.2.2] Resetting the mailbox, conditions are checked, no errors
- *   expected.
- * - [7.2.3] Filling the mailbox using chMBPostI() and chMBPostAheadI()
- *   once, no errors expected.
- * - [7.2.4] Testing intermediate conditions. Data pointers must be
- *   aligned, semaphore counters are checked.
- * - [7.2.5] Emptying the mailbox using chMBFetchI(), no errors
- *   expected.
- * - [7.2.6] Posting and then fetching one more message, no errors
- *   expected.
- * - [7.2.7] Testing final conditions. Data pointers must be aligned to
- *   buffer start, semaphore counters are checked.
+ * - [7.2.1] Three evenf flag bits are raised then chEvtDispatch() is
+ *   invoked, the sequence of handlers calls is tested.
  * .
  */
 
 static void test_007_002_setup(void) {
-  chMBObjectInit(&mb1, mb_buffer, MB_SIZE);
-}
-
-static void test_007_002_teardown(void) {
-  chMBReset(&mb1);
+  chEvtGetAndClearEvents(ALL_EVENTS);
 }
 
 static void test_007_002_execute(void) {
-  msg_t msg1, msg2;
-  unsigned i;
 
-  /* [7.2.1] Testing the mailbox size.*/
+  /* [7.2.1] Three evenf flag bits are raised then chEvtDispatch() is
+     invoked, the sequence of handlers calls is tested.*/
   test_set_step(1);
   {
-    test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "wrong size");
-  }
-
-  /* [7.2.2] Resetting the mailbox, conditions are checked, no errors
-     expected.*/
-  test_set_step(2);
-  {
-    chSysLock();
-    chMBResetI(&mb1);
-    chSysUnlock();
-    test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "not empty");
-    test_assert_lock(chMBGetUsedCountI(&mb1) == 0, "still full");
-    test_assert_lock(mb1.buffer == mb1.wrptr, "write pointer not aligned to base");
-    test_assert_lock(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");
-  }
-
-  /* [7.2.3] Filling the mailbox using chMBPostI() and chMBPostAheadI()
-     once, no errors expected.*/
-  test_set_step(3);
-  {
-    for (i = 0; i < MB_SIZE - 1; i++) {
-      chSysLock();
-      msg1 = chMBPostI(&mb1, 'B' + i);
-      chSysUnlock();
-      test_assert(msg1 == MSG_OK, "wrong wake-up message");
-    }
-    chSysLock();
-    msg1 = chMBPostAheadI(&mb1, 'A');
-    chSysUnlock();
-    test_assert(msg1 == MSG_OK, "wrong wake-up message");
-  }
-
-  /* [7.2.4] Testing intermediate conditions. Data pointers must be
-     aligned, semaphore counters are checked.*/
-  test_set_step(4);
-  {
-    test_assert_lock(chMBGetFreeCountI(&mb1) == 0, "still empty");
-    test_assert_lock(chMBGetUsedCountI(&mb1) == MB_SIZE, "not full");
-    test_assert_lock(mb1.rdptr == mb1.wrptr, "pointers not aligned");
-  }
-
-  /* [7.2.5] Emptying the mailbox using chMBFetchI(), no errors
-     expected.*/
-  test_set_step(5);
-  {
-    for (i = 0; i < MB_SIZE; i++) {
-      chSysLock();
-      msg1 = chMBFetchI(&mb1, &msg2);
-      chSysUnlock();
-      test_assert(msg1 == MSG_OK, "wrong wake-up message");
-      test_emit_token(msg2);
-    }
-    test_assert_sequence("ABCD", "wrong get sequence");
-  }
-
-  /* [7.2.6] Posting and then fetching one more message, no errors
-     expected.*/
-  test_set_step(6);
-  {
-    msg1 = chMBPost(&mb1, 'B' + i, TIME_INFINITE);
-    test_assert(msg1 == MSG_OK, "wrong wake-up message");
-    msg1 = chMBFetch(&mb1, &msg2, TIME_INFINITE);
-    test_assert(msg1 == MSG_OK, "wrong wake-up message");
-  }
-
-  /* [7.2.7] Testing final conditions. Data pointers must be aligned to
-     buffer start, semaphore counters are checked.*/
-  test_set_step(7);
-  {
-    test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "not empty");
-    test_assert_lock(chMBGetUsedCountI(&mb1) == 0, "still full");
-    test_assert(mb1.buffer == mb1.wrptr, "write pointer not aligned to base");
-    test_assert(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");
+    chEvtDispatch(evhndl, 7);
+    test_assert_sequence("ABC", "invalid sequence");
   }
 }
 
 static const testcase_t test_007_002 = {
-  "Mailbox I-Class API, non-blocking tests",
+  "Event Flags dispatching",
   test_007_002_setup,
-  test_007_002_teardown,
+  NULL,
   test_007_002_execute
 };
 
 /**
- * @page test_007_003 [7.3] Mailbox timeouts
+ * @page test_007_003 [7.3] Events Flags wait using chEvtWaitOne()
  *
  * <h2>Description</h2>
- * The mailbox API is tested for timeouts.
+ * Functionality of chEvtWaitOne() is tested under various scenarios.
  *
  * <h2>Test Steps</h2>
- * - [7.3.1] Filling the mailbox.
- * - [7.3.2] Testing chMBPost(), chMBPostI(), chMBPostAhead() and
- *   chMBPostAheadI() timeout.
- * - [7.3.3] Resetting the mailbox.
- * - [7.3.4] Testing chMBFetch() and chMBFetchI() timeout.
+ * - [7.3.1] Setting three event flags.
+ * - [7.3.2] Calling chEvtWaitOne() three times, each time a single
+ *   flag must be returned in order of priority.
+ * - [7.3.3] Getting current time and starting a signaler thread, the
+ *   thread will set an event flag after 50mS.
+ * - [7.3.4] Calling chEvtWaitOne() then verifying that the event has
+ *   been received after 50mS and that the event flags mask has been
+ *   emptied.
  * .
  */
 
 static void test_007_003_setup(void) {
-  chMBObjectInit(&mb1, mb_buffer, MB_SIZE);
-}
-
-static void test_007_003_teardown(void) {
-  chMBReset(&mb1);
+  chEvtGetAndClearEvents(ALL_EVENTS);
 }
 
 static void test_007_003_execute(void) {
-  msg_t msg1, msg2;
-  unsigned i;
+  eventmask_t m;
+  systime_t target_time;
 
-  /* [7.3.1] Filling the mailbox.*/
+  /* [7.3.1] Setting three event flags.*/
   test_set_step(1);
   {
-    for (i = 0; i < MB_SIZE; i++) {
-      msg1 = chMBPost(&mb1, 'B' + i, TIME_INFINITE);
-      test_assert(msg1 == MSG_OK, "wrong wake-up message");
-    }
+    chEvtAddEvents(7);
   }
 
-  /* [7.3.2] Testing chMBPost(), chMBPostI(), chMBPostAhead() and
-     chMBPostAheadI() timeout.*/
+  /* [7.3.2] Calling chEvtWaitOne() three times, each time a single
+     flag must be returned in order of priority.*/
   test_set_step(2);
   {
-    msg1 = chMBPost(&mb1, 'X', 1);
-    test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
-    chSysLock();
-    msg1 = chMBPostI(&mb1, 'X');
-    chSysUnlock();
-    test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
-    msg1 = chMBPostAhead(&mb1, 'X', 1);
-    test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
-    chSysLock();
-    msg1 = chMBPostAheadI(&mb1, 'X');
-    chSysUnlock();
-    test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
+    m = chEvtWaitOne(ALL_EVENTS);
+    test_assert(m == 1, "single event error");
+    m = chEvtWaitOne(ALL_EVENTS);
+    test_assert(m == 2, "single event error");
+    m = chEvtWaitOne(ALL_EVENTS);
+    test_assert(m == 4, "single event error");
+    m = chEvtGetAndClearEvents(ALL_EVENTS);
+    test_assert(m == 0, "stuck event");
   }
 
-  /* [7.3.3] Resetting the mailbox.*/
+  /* [7.3.3] Getting current time and starting a signaler thread, the
+     thread will set an event flag after 50mS.*/
   test_set_step(3);
   {
-    chMBReset(&mb1);
+    target_time = test_wait_tick() + MS2ST(50);
+    threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() - 1,
+                                   evt_thread3, chThdGetSelfX());
   }
 
-  /* [7.3.4] Testing chMBFetch() and chMBFetchI() timeout.*/
+  /* [7.3.4] Calling chEvtWaitOne() then verifying that the event has
+     been received after 50mS and that the event flags mask has been
+     emptied.*/
   test_set_step(4);
   {
-    msg1 = chMBFetch(&mb1, &msg2, 1);
-    test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
-    chSysLock();
-    msg1 = chMBFetchI(&mb1, &msg2);
-    chSysUnlock();
-    test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
+    m = chEvtWaitOne(ALL_EVENTS);
+    test_assert_time_window(target_time, target_time + ALLOWED_DELAY,
+                            "out of time window");
+    test_assert(m == 1, "event flag error");
+    m = chEvtGetAndClearEvents(ALL_EVENTS);
+    test_assert(m == 0, "stuck event");
+    test_wait_threads();
   }
 }
 
 static const testcase_t test_007_003 = {
-  "Mailbox timeouts",
+  "Events Flags wait using chEvtWaitOne()",
   test_007_003_setup,
-  test_007_003_teardown,
+  NULL,
   test_007_003_execute
+};
+
+/**
+ * @page test_007_004 [7.4] Events Flags wait using chEvtWaitAny()
+ *
+ * <h2>Description</h2>
+ * Functionality of chEvtWaitAny() is tested under various scenarios.
+ *
+ * <h2>Test Steps</h2>
+ * - [7.4.1] Setting two, non contiguous, event flags.
+ * - [7.4.2] Calling chEvtWaitAny() one time, the two flags must be
+ *   returned.
+ * - [7.4.3] Getting current time and starting a signaler thread, the
+ *   thread will set an event flag after 50mS.
+ * - [7.4.4] Calling chEvtWaitAny() then verifying that the event has
+ *   been received after 50mS and that the event flags mask has been
+ *   emptied.
+ * .
+ */
+
+static void test_007_004_setup(void) {
+  chEvtGetAndClearEvents(ALL_EVENTS);
+}
+
+static void test_007_004_execute(void) {
+  eventmask_t m;
+  systime_t target_time;
+
+  /* [7.4.1] Setting two, non contiguous, event flags.*/
+  test_set_step(1);
+  {
+    chEvtAddEvents(5);
+  }
+
+  /* [7.4.2] Calling chEvtWaitAny() one time, the two flags must be
+     returned.*/
+  test_set_step(2);
+  {
+    m = chEvtWaitAny(ALL_EVENTS);
+    test_assert(m == 5, "unexpected pending bit");
+    m = chEvtGetAndClearEvents(ALL_EVENTS);
+    test_assert(m == 0, "stuck event");
+  }
+
+  /* [7.4.3] Getting current time and starting a signaler thread, the
+     thread will set an event flag after 50mS.*/
+  test_set_step(3);
+  {
+    target_time = test_wait_tick() + MS2ST(50);
+    threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() - 1,
+                                   evt_thread3, chThdGetSelfX());
+  }
+
+  /* [7.4.4] Calling chEvtWaitAny() then verifying that the event has
+     been received after 50mS and that the event flags mask has been
+     emptied.*/
+  test_set_step(4);
+  {
+    m = chEvtWaitAny(ALL_EVENTS);
+    test_assert_time_window(target_time, target_time + ALLOWED_DELAY,
+                            "out of time window");
+    test_assert(m == 1, "event flag error");
+    m = chEvtGetAndClearEvents(ALL_EVENTS);
+    test_assert(m == 0, "stuck event");
+    test_wait_threads();
+  }
+}
+
+static const testcase_t test_007_004 = {
+  "Events Flags wait using chEvtWaitAny()",
+  test_007_004_setup,
+  NULL,
+  test_007_004_execute
+};
+
+/**
+ * @page test_007_005 [7.5] Events Flags wait using chEvtWaitAll()
+ *
+ * <h2>Description</h2>
+ * Functionality of chEvtWaitAll() is tested under various scenarios.
+ *
+ * <h2>Test Steps</h2>
+ * - [7.5.1] Setting two, non contiguous, event flags.
+ * - [7.5.2] Calling chEvtWaitAll() one time, the two flags must be
+ *   returned.
+ * - [7.5.3] Setting one event flag.
+ * - [7.5.4] Getting current time and starting a signaler thread, the
+ *   thread will set another event flag after 50mS.
+ * - [7.5.5] Calling chEvtWaitAll() then verifying that both event
+ *   flags have been received after 50mS and that the event flags mask
+ *   has been emptied.
+ * .
+ */
+
+static void test_007_005_setup(void) {
+  chEvtGetAndClearEvents(ALL_EVENTS);
+}
+
+static void test_007_005_execute(void) {
+  eventmask_t m;
+  systime_t target_time;
+
+  /* [7.5.1] Setting two, non contiguous, event flags.*/
+  test_set_step(1);
+  {
+    chEvtAddEvents(5);
+  }
+
+  /* [7.5.2] Calling chEvtWaitAll() one time, the two flags must be
+     returned.*/
+  test_set_step(2);
+  {
+    m = chEvtWaitAll(5);
+    test_assert(m == 5, "unexpected pending bit");
+    m = chEvtGetAndClearEvents(ALL_EVENTS);
+    test_assert(m == 0, "stuck event");
+  }
+
+  /* [7.5.3] Setting one event flag.*/
+  test_set_step(3);
+  {
+    chEvtAddEvents(4);
+  }
+
+  /* [7.5.4] Getting current time and starting a signaler thread, the
+     thread will set another event flag after 50mS.*/
+  test_set_step(4);
+  {
+    target_time = test_wait_tick() + MS2ST(50);
+    threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() - 1,
+                                   evt_thread3, chThdGetSelfX());
+  }
+
+  /* [7.5.5] Calling chEvtWaitAll() then verifying that both event
+     flags have been received after 50mS and that the event flags mask
+     has been emptied.*/
+  test_set_step(5);
+  {
+    m = chEvtWaitAll(5);
+    test_assert_time_window(target_time, target_time + ALLOWED_DELAY,
+                            "out of time window");
+    test_assert(m == 5, "event flags error");
+    m = chEvtGetAndClearEvents(ALL_EVENTS);
+    test_assert(m == 0, "stuck event");
+    test_wait_threads();
+  }
+}
+
+static const testcase_t test_007_005 = {
+  "Events Flags wait using chEvtWaitAll()",
+  test_007_005_setup,
+  NULL,
+  test_007_005_execute
 };
 
 /****************************************************************************
@@ -375,13 +406,15 @@ static const testcase_t test_007_003 = {
  ****************************************************************************/
 
 /**
- * @brief   Mailboxes.
+ * @brief   Event Sources and Event Flags.
  */
 const testcase_t * const test_sequence_007[] = {
   &test_007_001,
   &test_007_002,
   &test_007_003,
+  &test_007_004,
+  &test_007_005,
   NULL
 };
 
-#endif /* CH_CFG_USE_MAILBOXES */
+#endif /* CH_CFG_USE_EVENTS */

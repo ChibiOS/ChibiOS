@@ -31,6 +31,7 @@
 #include "test_sequence_007.h"
 #include "test_sequence_008.h"
 #include "test_sequence_009.h"
+#include "test_sequence_010.h"
 
 #if !defined(__DOXYGEN__)
 
