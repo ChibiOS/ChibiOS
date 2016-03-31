@@ -87,6 +87,7 @@ static THD_FUNCTION(thread1, p) {
   chMtxUnlock(&m1);
 }
 
+#if CH_DBG_THREADS_PROFILING || defined(__DOXYGEN__)
 /* Low priority thread */
 static THD_FUNCTION(thread2L, p) {
 
@@ -173,6 +174,7 @@ static THD_FUNCTION(thread3HH, p) {
   chMtxUnlock(&m2);
   test_emit_token('A');
 }
+#endif /* CH_DBG_THREADS_PROFILING */
 
 static THD_FUNCTION(thread4A, p) {
 
@@ -297,6 +299,7 @@ static const testcase_t test_005_001 = {
   test_005_001_execute
 };
 
+#if (CH_DBG_THREADS_PROFILING) || defined(__DOXYGEN__)
 /**
  * @page test_005_002 [5.2] Priority inheritance, simple case
  *
@@ -307,6 +310,12 @@ static const testcase_t test_005_001 = {
  * test expects the threads to reach their goal in increasing priority
  * order by rearranging their priorities in order to avoid the priority
  * inversion trap.
+ *
+ * <h2>Conditions</h2>
+ * This test is only executed if the following preprocessor condition
+ * evaluates to true:
+ * - CH_DBG_THREADS_PROFILING
+ * .
  *
  * <h2>Test Steps</h2>
  * - [5.2.1] Getting the system time for test duration measurement.
@@ -358,7 +367,9 @@ static const testcase_t test_005_002 = {
   NULL,
   test_005_002_execute
 };
+#endif /* CH_DBG_THREADS_PROFILING */
 
+#if (CH_DBG_THREADS_PROFILING) || defined(__DOXYGEN__)
 /**
  * @page test_005_003 [5.3] Priority inheritance, complex case
  *
@@ -368,6 +379,12 @@ static const testcase_t test_005_002 = {
  * greater than one. The test expects the threads to perform their
  * operations in increasing priority order by rearranging their
  * priorities in order to avoid the priority inversion trap.
+ *
+ * <h2>Conditions</h2>
+ * This test is only executed if the following preprocessor condition
+ * evaluates to true:
+ * - CH_DBG_THREADS_PROFILING
+ * .
  *
  * <h2>Test Steps</h2>
  * - [5.3.1] Getting the system time for test duration measurement.
@@ -422,6 +439,7 @@ static const testcase_t test_005_003 = {
   NULL,
   test_005_003_execute
 };
+#endif /* CH_DBG_THREADS_PROFILING */
 
 /**
  * @page test_005_004 [5.4] Priority return verification
@@ -1012,8 +1030,12 @@ static const testcase_t test_005_009 = {
  */
 const testcase_t * const test_sequence_005[] = {
   &test_005_001,
+#if (CH_DBG_THREADS_PROFILING) || defined(__DOXYGEN__)
   &test_005_002,
+#endif
+#if (CH_DBG_THREADS_PROFILING) || defined(__DOXYGEN__)
   &test_005_003,
+#endif
   &test_005_004,
 #if (!CH_CFG_USE_MUTEXES_RECURSIVE) || defined(__DOXYGEN__)
   &test_005_005,

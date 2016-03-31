@@ -1341,6 +1341,7 @@ static THD_FUNCTION(thread1, p) {
   chMtxUnlock(&m1);
 }
 
+#if CH_DBG_THREADS_PROFILING || defined(__DOXYGEN__)
 /* Low priority thread */
 static THD_FUNCTION(thread2L, p) {
 
@@ -1427,6 +1428,7 @@ static THD_FUNCTION(thread3HH, p) {
   chMtxUnlock(&m2);
   test_emit_token('A');
 }
+#endif /* CH_DBG_THREADS_PROFILING */
 
 static THD_FUNCTION(thread4A, p) {
 
@@ -1562,7 +1564,7 @@ test_assert_sequence("ABCDE", "invalid sequence");]]></value>
                   <value>Three threads are involved in the classic priority inversion scenario, a medium priority thread tries to starve an high priority thread by blocking a low priority thread into a mutex lock zone. The test expects the threads to reach their goal in increasing priority order by rearranging their priorities in order to avoid the priority inversion trap.</value>
                 </description>
                 <condition>
-                  <value />
+                  <value>CH_DBG_THREADS_PROFILING</value>
                 </condition>
                 <various_code>
                   <setup_code>
@@ -1624,7 +1626,7 @@ test_assert_sequence("ABC", "invalid sequence");]]></value>
                   <value>Five threads are involved in the complex priority inversion scenario, the priority inheritance algorithm is tested for depths greater than one. The test expects the threads to perform their operations in increasing priority order by rearranging their priorities in order to avoid the priority inversion trap.</value>
                 </description>
                 <condition>
-                  <value />
+                  <value>CH_DBG_THREADS_PROFILING</value>
                 </condition>
                 <various_code>
                   <setup_code>
