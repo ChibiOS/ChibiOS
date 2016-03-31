@@ -38,6 +38,8 @@
  * - @subpage test_007_003
  * - @subpage test_007_004
  * - @subpage test_007_005
+ * - @subpage test_007_006
+ * - @subpage test_007_007
  * .
  */
 
@@ -61,7 +63,7 @@ static THD_FUNCTION(evt_thread3, p) {
   chEvtSignal((thread_t *)p, 1);
 }
 
-static THD_FUNCTION(evt_thread4, p) {
+static THD_FUNCTION(evt_thread7, p) {
 
   (void)p;
   chEvtBroadcast(&es1);
@@ -401,6 +403,138 @@ static const testcase_t test_007_005 = {
   test_007_005_execute
 };
 
+/**
+ * @page test_007_006 [7.6] Events Flags wait timeouts
+ *
+ * <h2>Description</h2>
+ * Timeout functionality is tested for chEvtWaitOneTimeout(),
+ * chEvtWaitAnyTimeout() and chEvtWaitAllTimeout().
+ *
+ * <h2>Test Steps</h2>
+ * - [7.6.1] The functions are invoked first with TIME_IMMEDIATE
+ *   timeout, the timeout condition is tested.
+ * - [7.6.2] The functions are invoked first with a 50mS timeout, the
+ *   timeout condition is tested.
+ * .
+ */
+
+static void test_007_006_setup(void) {
+  chEvtGetAndClearEvents(ALL_EVENTS);
+}
+
+static void test_007_006_execute(void) {
+  eventmask_t m;
+
+  /* [7.6.1] The functions are invoked first with TIME_IMMEDIATE
+     timeout, the timeout condition is tested.*/
+  test_set_step(1);
+  {
+    m = chEvtWaitOneTimeout(ALL_EVENTS, TIME_IMMEDIATE);
+    test_assert(m == 0, "spurious event");
+    m = chEvtWaitAnyTimeout(ALL_EVENTS, TIME_IMMEDIATE);
+    test_assert(m == 0, "spurious event");
+    m = chEvtWaitAllTimeout(ALL_EVENTS, TIME_IMMEDIATE);
+    test_assert(m == 0, "spurious event");
+  }
+
+  /* [7.6.2] The functions are invoked first with a 50mS timeout, the
+     timeout condition is tested.*/
+  test_set_step(2);
+  {
+    m = chEvtWaitOneTimeout(ALL_EVENTS, MS2ST(50));
+    test_assert(m == 0, "spurious event");
+    m = chEvtWaitAnyTimeout(ALL_EVENTS, MS2ST(50));
+    test_assert(m == 0, "spurious event");
+    m = chEvtWaitAllTimeout(ALL_EVENTS, MS2ST(50));
+    test_assert(m == 0, "spurious event");
+  }
+}
+
+static const testcase_t test_007_006 = {
+  "Events Flags wait timeouts",
+  test_007_006_setup,
+  NULL,
+  test_007_006_execute
+};
+
+/**
+ * @page test_007_007 [7.7] Broadcasting using chEvtBroadcast()
+ *
+ * <h2>Description</h2>
+ * Functionality of chEvtBroadcast() is tested.
+ *
+ * <h2>Test Steps</h2>
+ * - [7.7.1] Registering on two event sources associating them with
+ *   flags 1 and 4.
+ * - [7.7.2] Getting current time and starting a broadcaster thread,
+ *   the thread broadcast the first Event Source immediately and the
+ *   other after 50mS.
+ * - [7.7.3] Calling chEvtWaitAll() then verifying that both event
+ *   flags have been received after 50mS and that the event flags mask
+ *   has been emptied.
+ * - [7.7.4] Unregistering from the Event Sources.
+ * .
+ */
+
+static void test_007_007_setup(void) {
+  chEvtGetAndClearEvents(ALL_EVENTS);
+  chEvtObjectInit(&es1);
+  chEvtObjectInit(&es2);
+}
+
+static void test_007_007_execute(void) {
+  eventmask_t m;
+  event_listener_t el1, el2;
+  systime_t target_time;
+
+  /* [7.7.1] Registering on two event sources associating them with
+     flags 1 and 4.*/
+  test_set_step(1);
+  {
+    chEvtRegisterMask(&es1, &el1, 1);
+    chEvtRegisterMask(&es2, &el2, 4);
+  }
+
+  /* [7.7.2] Getting current time and starting a broadcaster thread,
+     the thread broadcast the first Event Source immediately and the
+     other after 50mS.*/
+  test_set_step(2);
+  {
+    target_time = test_wait_tick() + MS2ST(50);
+    threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() - 1,
+                                   evt_thread7, "A");
+  }
+
+  /* [7.7.3] Calling chEvtWaitAll() then verifying that both event
+     flags have been received after 50mS and that the event flags mask
+     has been emptied.*/
+  test_set_step(3);
+  {
+    m = chEvtWaitAll(5);
+    test_assert_time_window(target_time, target_time + ALLOWED_DELAY,
+                            "out of time window");
+    m = chEvtGetAndClearEvents(ALL_EVENTS);
+    test_assert(m == 0, "stuck event");
+    test_wait_threads();
+  }
+
+  /* [7.7.4] Unregistering from the Event Sources.*/
+  test_set_step(4);
+  {
+    chEvtUnregister(&es1, &el1);
+    chEvtUnregister(&es2, &el2);
+    test_assert(!chEvtIsListeningI(&es1), "stuck listener");
+    test_assert(!chEvtIsListeningI(&es2), "stuck listener");
+  }
+}
+
+static const testcase_t test_007_007 = {
+  "Broadcasting using chEvtBroadcast()",
+  test_007_007_setup,
+  NULL,
+  test_007_007_execute
+};
+
 /****************************************************************************
  * Exported data.
  ****************************************************************************/
@@ -414,6 +548,8 @@ const testcase_t * const test_sequence_007[] = {
   &test_007_003,
   &test_007_004,
   &test_007_005,
+  &test_007_006,
+  &test_007_007,
   NULL
 };
 
