@@ -32,6 +32,7 @@
 #include "test_sequence_008.h"
 #include "test_sequence_009.h"
 #include "test_sequence_010.h"
+#include "test_sequence_011.h"
 
 #if !defined(__DOXYGEN__)
 
@@ -96,6 +97,7 @@ union test_buffers {
   uint8_t buffer[WA_SIZE * 5];
 };
 
+extern union test_buffers test;
 extern thread_t *threads[MAX_THREADS];
 extern void * ROMCONST wa[5];
 

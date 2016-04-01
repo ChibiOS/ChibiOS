@@ -76,6 +76,7 @@ union test_buffers {
   uint8_t buffer[WA_SIZE * 5];
 };
 
+extern union test_buffers test;
 extern thread_t *threads[MAX_THREADS];
 extern void * ROMCONST wa[5];
 
@@ -3794,6 +3795,262 @@ chHeapFree(p1);]]></value>
                     <code>
                       <value><![CDATA[p1 = chHeapAlloc(NULL, (size_t)-256);
 test_assert(p1 == NULL, "allocation not failed");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+            </cases>
+          </sequence>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
+              <value>Dynamic threads.</value>
+            </brief>
+            <description>
+              <value>This module implements the test sequence for the dynamic thread creation APIs.</value>
+            </description>
+            <condition>
+              <value>CH_CFG_USE_DYNAMIC</value>
+            </condition>
+            <shared_code>
+              <value><![CDATA[#if CH_CFG_USE_HEAP
+static memory_heap_t heap1;
+#endif
+#if CH_CFG_USE_MEMPOOLS
+static memory_pool_t mp1;
+#endif
+
+static THD_FUNCTION(dyn_thread1, p) {
+
+  test_emit_token(*(char *)p);
+}]]></value>
+            </shared_code>
+            <cases>
+              <case>
+                <brief>
+                  <value>Threads creation from Memory Heap.</value>
+                </brief>
+                <description>
+                  <value>Two threads are started by allocating the memory from the Memory Heap then the remaining heap space is arbitrarily allocated and a third tread startup is attempted.&lt;br&gt;&#xD;
+The test expects the first two threads to successfully start and the last one to fail.</value>
+                </description>
+                <condition>
+                  <value>CH_CFG_USE_HEAP</value>
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chHeapObjectInit(&heap1, test.buffer, sizeof(union test_buffers));]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[size_t n1, total1, largest1;
+size_t n2, total2, largest2;
+tprio_t prio;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Getting base priority for threads.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[prio = chThdGetPriorityX();]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Getting heap info before the test.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[n1 = chHeapStatus(&heap1, &total1, &largest1);
+test_assert(n1 == 1, "heap fragmented");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Creating 1, it is expected to succeed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[threads[0] = chThdCreateFromHeap(&heap1,
+                                 THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE),
+                                 "dyn1",
+                                 prio-1, dyn_thread1, "A");
+test_assert(threads[0] != NULL, "thread creation failed");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Creating thread 2, it is expected to succeed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[threads[1] = chThdCreateFromHeap(&heap1,
+                                 THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE),
+                                 "dyn2",
+                                 prio-2, dyn_thread1, "B");
+test_assert(threads[1] != NULL, "thread creation failed");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Creating thread 3, it is expected to fail</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[threads[2] = chThdCreateFromHeap(&heap1,
+                                 THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE * 16),
+                                 "dyn3",
+                                 prio-3, dyn_thread1, "C");
+test_assert(threads[2] == NULL, "thread creation not failed");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Letting threads execute then checking the start order and freeing memory.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_wait_threads();
+test_assert_sequence("AB", "invalid sequence");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Getting heap info again for verification.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[n2 = chHeapStatus(&heap1, &total2, &largest2);
+test_assert(n1 == n2, "fragmentation changed");
+test_assert(total1 == total2, "total free space changed");
+test_assert(largest1 == largest2, "largest fragment size changed");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Threads creation from Memory Pool.</value>
+                </brief>
+                <description>
+                  <value>Five thread creation are attempted from a pool containing only four elements.&lt;br&gt;&#xD;
+The test expects the first four threads to successfully start and the last one to fail.</value>
+                </description>
+                <condition>
+                  <value>CH_CFG_USE_MEMPOOLS</value>
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chPoolObjectInit(&mp1, THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE), NULL);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[unsigned i;
+tprio_t prio;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Adding four working areas to the pool.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[for (i = 0; i < 4; i++)
+  chPoolFree(&mp1, wa[i]);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Getting base priority for threads.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[prio = chThdGetPriorityX();]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Creating the five threads.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[threads[0] = chThdCreateFromMemoryPool(&mp1, "dyn1", prio-1, dyn_thread1, "A");
+threads[1] = chThdCreateFromMemoryPool(&mp1, "dyn2", prio-2, dyn_thread1, "B");
+threads[2] = chThdCreateFromMemoryPool(&mp1, "dyn3", prio-3, dyn_thread1, "C");
+threads[3] = chThdCreateFromMemoryPool(&mp1, "dyn4", prio-4, dyn_thread1, "D");
+threads[4] = chThdCreateFromMemoryPool(&mp1, "dyn5", prio-5, dyn_thread1, "E");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing that only the fifth thread creation failed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_assert((threads[0] != NULL) &&
+            (threads[1] != NULL) &&
+            (threads[2] != NULL) &&
+            (threads[3] != NULL),
+            "thread creation failed");
+test_assert(threads[4] == NULL,
+            "thread creation not failed");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Letting them run, free the memory then checking the execution sequence.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_wait_threads();
+test_assert_sequence("ABCD", "invalid sequence");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing that the pool contains four elements again.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[for (i = 0; i < 4; i++)
+  test_assert(chPoolAlloc(&mp1) != NULL, "pool list empty");
+test_assert(chPoolAlloc(&mp1) == NULL, "pool list not empty");]]></value>
                     </code>
                   </step>
                 </steps>
