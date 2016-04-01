@@ -106,7 +106,7 @@ void * ROMCONST wa[5] = {test.wa.T0, test.wa.T1, test.wa.T2,
  * Sets a termination request in all the test-spawned threads.
  */
 void test_terminate_threads(void) {
-  int i;
+  unsigned i;
 
   for (i = 0; i < MAX_THREADS; i++)
     if (threads[i])
@@ -117,7 +117,7 @@ void test_terminate_threads(void) {
  * Waits for the completion of all the test-spawned threads.
  */
 void test_wait_threads(void) {
-  int i;
+  unsigned i;
 
   for (i = 0; i < MAX_THREADS; i++)
     if (threads[i] != NULL) {
@@ -126,6 +126,9 @@ void test_wait_threads(void) {
     }
 }
 
+/*
+ * Delays execution until next system time tick.
+ */
 systime_t test_wait_tick(void) {
 
   chThdSleep(1);
@@ -4058,8 +4061,8 @@ test_assert(chPoolAlloc(&mp1) == NULL, "pool list not empty");]]></value>
             </cases>
           </sequence>
           <sequence>
-            <type index="0">
-              <value>Internal Tests</value>
+            <type index="2">
+              <value>Benchmarks</value>
             </type>
             <brief>
               <value>Benchmarks.</value>
@@ -4078,6 +4081,8 @@ static semaphore_t sem1;
 #if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
 static mutex_t mtx1;
 #endif
+
+static void tmo(void *param) {(void)param;}
 
 #if CH_CFG_USE_MESSAGES
 static THD_FUNCTION(bmk_thread1, p) {
@@ -4126,6 +4131,27 @@ static THD_FUNCTION(bmk_thread4, p) {
     msg = self->u.rdymsg;
   } while (msg == MSG_OK);
   chSysUnlock();
+}
+
+static THD_FUNCTION(bmk_thread7, p) {
+
+  (void)p;
+  while (!chThdShouldTerminateX())
+    chSemWait(&sem1);
+}
+
+static THD_FUNCTION(bmk_thread8, p) {
+
+  do {
+    chThdYield();
+    chThdYield();
+    chThdYield();
+    chThdYield();
+    (*(uint32_t *)p) += 4;
+#if defined(SIMULATOR)
+    _sim_check_for_interrupts();
+#endif
+  } while(!chThdShouldTerminateX());
 }]]></value>
             </shared_code>
             <cases>
@@ -4536,6 +4562,517 @@ do {
                       <value><![CDATA[test_print("--- Score : ");
 test_printn(n);
 test_println(" threads/S");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Mass reschedule performance.</value>
+                </brief>
+                <description>
+                  <value>Five threads are created and atomically rescheduled by resetting the semaphore where they are waiting on. The operation is performed into a continuous loop.&lt;br&gt;&#xD;
+The performance is calculated by measuring the number of iterations after a second of continuous operations.</value>
+                </description>
+                <condition>
+                  <value>CH_CFG_USE_SEMAPHORES</value>
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chSemObjectInit(&sem1, 0);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[uint32_t n;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Five threads are created at higher priority that immediately enqueue on a semaphore.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()+5, bmk_thread7, NULL);
+threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriorityX()+4, bmk_thread7, NULL);
+threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriorityX()+3, bmk_thread7, NULL);
+threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()+2, bmk_thread7, NULL);
+threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()+1, bmk_thread7, NULL);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The semaphore is reset waking up the five threads. The operation is repeated continuously in a one-second time window.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[systime_t start, end;
+  
+n = 0;
+start = test_wait_tick();
+end = start + MS2ST(1000);
+do {
+  chSemReset(&sem1, 0);
+  n++;
+#if defined(SIMULATOR)
+  _sim_check_for_interrupts();
+#endif
+} while (chVTIsSystemTimeWithinX(start, end));]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The five threads are terminated.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_terminate_threads();
+chSemReset(&sem1, 0);
+test_wait_threads();]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The score is printed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_print("--- Score : ");
+test_printn(n);
+test_print(" reschedules/S, ");
+test_printn(n * 6);
+test_println(" ctxswc/S");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Round-Robin voluntary reschedule.</value>
+                </brief>
+                <description>
+                  <value>Five threads are created at equal priority, each thread just increases a variable and yields.&lt;br&gt;&#xD;
+The performance is calculated by measuring the number of iterations after a second of continuous operations.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[uint32_t n;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>The five threads are created at lower priority. The threds have equal priority and start calling @p chThdYield() continuously.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[n = 0;
+test_wait_tick();threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()-1, bmk_thread8, (void *)&n);
+
+threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriorityX()-1, bmk_thread8, (void *)&n);
+threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriorityX()-1, bmk_thread8, (void *)&n);
+threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()-1, bmk_thread8, (void *)&n);
+threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()-1, bmk_thread8, (void *)&n);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Waiting one second then terminating the 5 threads.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chThdSleepSeconds(1);
+test_terminate_threads();
+test_wait_threads();]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The score is printed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_print("--- Score : ");
+test_printn(n);
+test_println(" ctxswc/S");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Virtual Timers set/reset performance.</value>
+                </brief>
+                <description>
+                  <value>A virtual timer is set and immediately reset into a continuous loop.&lt;br&gt;&#xD;
+The performance is calculated by measuring the number of iterations after a second of continuous operations.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[static virtual_timer_t vt1, vt2;
+uint32_t n;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Two timers are set then reset without waiting for their counter to elapse. The operation is repeated continuously in a one-second time window.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[systime_t start, end;
+  
+n = 0;
+start = test_wait_tick();
+end = start + MS2ST(1000);
+do {
+  chSysLock();
+  chVTDoSetI(&vt1, 1, tmo, NULL);
+  chVTDoSetI(&vt2, 10000, tmo, NULL);
+  chVTDoResetI(&vt1);
+  chVTDoResetI(&vt2);
+  chSysUnlock();
+  n++;
+#if defined(SIMULATOR)
+  _sim_check_for_interrupts();
+#endif
+} while (chVTIsSystemTimeWithinX(start, end));]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The score is printed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_print("--- Score : ");
+test_printn(n * 2);
+test_println(" timers/S");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Semaphores wait/signal performance</value>
+                </brief>
+                <description>
+                  <value>A counting semaphore is taken/released into a continuous loop, no Context Switch happens because the counter is always non negative.&lt;br&gt;&#xD;
+The performance is calculated by measuring the number of iterations after a second of continuous operations.</value>
+                </description>
+                <condition>
+                  <value>CH_CFG_USE_SEMAPHORES</value>
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chSemObjectInit(&sem1, 1);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[uint32_t n;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>A semaphore is teken and released. The operation is repeated continuously in a one-second time window.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[systime_t start, end;
+  
+n = 0;
+start = test_wait_tick();
+end = start + MS2ST(1000);
+do {
+  chSemWait(&sem1);
+  chSemSignal(&sem1);
+  chSemWait(&sem1);
+  chSemSignal(&sem1);
+  chSemWait(&sem1);
+  chSemSignal(&sem1);
+  chSemWait(&sem1);
+  chSemSignal(&sem1);
+  n++;
+#if defined(SIMULATOR)
+  _sim_check_for_interrupts();
+#endif
+} while (chVTIsSystemTimeWithinX(start, end));]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The score is printed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_print("--- Score : ");
+test_printn(n * 4);
+test_println(" wait+signal/S");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Mutexes lock/unlock performance</value>
+                </brief>
+                <description>
+                  <value>A mutex is locked/unlocked into a continuous loop, no Context Switch happens because there are no other threads asking for the mutex.&lt;br&gt;&#xD;
+The performance is calculated by measuring the number of iterations after a second of continuous operations.</value>
+                </description>
+                <condition>
+                  <value>CH_CFG_USE_MUTEXES</value>
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chMtxObjectInit(&mtx1);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[uint32_t n;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>A mutex is locked and unlocked. The operation is repeated continuously in a one-second time window.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[systime_t start, end;
+  
+n = 0;
+start = test_wait_tick();
+end = start + MS2ST(1000);
+do {
+  chMtxLock(&mtx1);
+  chMtxUnlock(&mtx1);
+  chMtxLock(&mtx1);
+  chMtxUnlock(&mtx1);
+  chMtxLock(&mtx1);
+  chMtxUnlock(&mtx1);
+  chMtxLock(&mtx1);
+  chMtxUnlock(&mtx1);
+  n++;
+#if defined(SIMULATOR)
+  _sim_check_for_interrupts();
+#endif
+} while (chVTIsSystemTimeWithinX(start, end));]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The score is printed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_print("--- Score : ");
+test_printn(n * 4);
+test_println(" lock+unlock/S");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>RAM Footprint.</value>
+                </brief>
+                <description>
+                  <value>The memory size of the various kernel objects is printed.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>The size of the system area is printed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_print("--- System: ");
+test_printn(sizeof(ch_system_t));
+test_println(" bytes");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The size of a thread structure is printed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_print("--- Thread: ");
+test_printn(sizeof(thread_t));
+test_println(" bytes");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The size of a virtual timer structure is printed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_print("--- Timer : ");
+test_printn(sizeof(virtual_timer_t));
+test_println(" bytes");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The size of a semaphore structure is printed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[#if CH_CFG_USE_SEMAPHORES || defined(__DOXYGEN__)
+test_print("--- Semaph: ");
+test_printn(sizeof(semaphore_t));
+test_println(" bytes");
+#endif]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The size of a mutex is printed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[#if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
+test_print("--- Mutex : ");
+test_printn(sizeof(mutex_t));
+test_println(" bytes");
+#endif]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The size of a condition variable is printed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[#if CH_CFG_USE_CONDVARS || defined(__DOXYGEN__)
+test_print("--- CondV.: ");
+test_printn(sizeof(condition_variable_t));
+test_println(" bytes");
+#endif]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The size of an event source is printed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[#if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
+test_print("--- EventS: ");
+test_printn(sizeof(event_source_t));
+test_println(" bytes");
+#endif]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The size of an event listener is printed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[#if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
+test_print("--- EventL: ");
+test_printn(sizeof(event_listener_t));
+test_println(" bytes");
+#endif]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The size of a mailbox is printed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[#if CH_CFG_USE_MAILBOXES || defined(__DOXYGEN__)
+test_print("--- MailB.: ");
+test_printn(sizeof(mailbox_t));
+test_println(" bytes");
+#endif]]></value>
                     </code>
                   </step>
                 </steps>

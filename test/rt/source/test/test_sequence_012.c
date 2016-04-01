@@ -38,6 +38,12 @@
  * - @subpage test_012_004
  * - @subpage test_012_005
  * - @subpage test_012_006
+ * - @subpage test_012_007
+ * - @subpage test_012_008
+ * - @subpage test_012_009
+ * - @subpage test_012_010
+ * - @subpage test_012_011
+ * - @subpage test_012_012
  * .
  */
 
@@ -51,6 +57,8 @@ static semaphore_t sem1;
 #if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
 static mutex_t mtx1;
 #endif
+
+static void tmo(void *param) {(void)param;}
 
 #if CH_CFG_USE_MESSAGES
 static THD_FUNCTION(bmk_thread1, p) {
@@ -99,6 +107,27 @@ static THD_FUNCTION(bmk_thread4, p) {
     msg = self->u.rdymsg;
   } while (msg == MSG_OK);
   chSysUnlock();
+}
+
+static THD_FUNCTION(bmk_thread7, p) {
+
+  (void)p;
+  while (!chThdShouldTerminateX())
+    chSemWait(&sem1);
+}
+
+static THD_FUNCTION(bmk_thread8, p) {
+
+  do {
+    chThdYield();
+    chThdYield();
+    chThdYield();
+    chThdYield();
+    (*(uint32_t *)p) += 4;
+#if defined(SIMULATOR)
+    _sim_check_for_interrupts();
+#endif
+  } while(!chThdShouldTerminateX());
 }
 
 /****************************************************************************
@@ -492,6 +521,471 @@ static const testcase_t test_012_006 = {
   test_012_006_execute
 };
 
+#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
+/**
+ * @page test_012_007 [12.7] Mass reschedule performance
+ *
+ * <h2>Description</h2>
+ * Five threads are created and atomically rescheduled by resetting the
+ * semaphore where they are waiting on. The operation is performed into
+ * a continuous loop.<br> The performance is calculated by measuring
+ * the number of iterations after a second of continuous operations.
+ *
+ * <h2>Conditions</h2>
+ * This test is only executed if the following preprocessor condition
+ * evaluates to true:
+ * - CH_CFG_USE_SEMAPHORES
+ * .
+ *
+ * <h2>Test Steps</h2>
+ * - [12.7.1] Five threads are created at higher priority that
+ *   immediately enqueue on a semaphore.
+ * - [12.7.2] The semaphore is reset waking up the five threads. The
+ *   operation is repeated continuously in a one-second time window.
+ * - [12.7.3] The five threads are terminated.
+ * - [12.7.4] The score is printed.
+ * .
+ */
+
+static void test_012_007_setup(void) {
+  chSemObjectInit(&sem1, 0);
+}
+
+static void test_012_007_execute(void) {
+  uint32_t n;
+
+  /* [12.7.1] Five threads are created at higher priority that
+     immediately enqueue on a semaphore.*/
+  test_set_step(1);
+  {
+    threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()+5, bmk_thread7, NULL);
+    threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriorityX()+4, bmk_thread7, NULL);
+    threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriorityX()+3, bmk_thread7, NULL);
+    threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()+2, bmk_thread7, NULL);
+    threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()+1, bmk_thread7, NULL);
+  }
+
+  /* [12.7.2] The semaphore is reset waking up the five threads. The
+     operation is repeated continuously in a one-second time window.*/
+  test_set_step(2);
+  {
+    systime_t start, end;
+
+    n = 0;
+    start = test_wait_tick();
+    end = start + MS2ST(1000);
+    do {
+      chSemReset(&sem1, 0);
+      n++;
+    #if defined(SIMULATOR)
+      _sim_check_for_interrupts();
+    #endif
+    } while (chVTIsSystemTimeWithinX(start, end));
+  }
+
+  /* [12.7.3] The five threads are terminated.*/
+  test_set_step(3);
+  {
+    test_terminate_threads();
+    chSemReset(&sem1, 0);
+    test_wait_threads();
+  }
+
+  /* [12.7.4] The score is printed.*/
+  test_set_step(4);
+  {
+    test_print("--- Score : ");
+    test_printn(n);
+    test_print(" reschedules/S, ");
+    test_printn(n * 6);
+    test_println(" ctxswc/S");
+  }
+}
+
+static const testcase_t test_012_007 = {
+  "Mass reschedule performance",
+  test_012_007_setup,
+  NULL,
+  test_012_007_execute
+};
+#endif /* CH_CFG_USE_SEMAPHORES */
+
+/**
+ * @page test_012_008 [12.8] Round-Robin voluntary reschedule
+ *
+ * <h2>Description</h2>
+ * Five threads are created at equal priority, each thread just
+ * increases a variable and yields.<br> The performance is calculated
+ * by measuring the number of iterations after a second of continuous
+ * operations.
+ *
+ * <h2>Test Steps</h2>
+ * - [12.8.1] The five threads are created at lower priority. The
+ *   threds have equal priority and start calling @p chThdYield()
+ *   continuously.
+ * - [12.8.2] Waiting one second then terminating the 5 threads.
+ * - [12.8.3] The score is printed.
+ * .
+ */
+
+static void test_012_008_execute(void) {
+  uint32_t n;
+
+  /* [12.8.1] The five threads are created at lower priority. The
+     threds have equal priority and start calling @p chThdYield()
+     continuously.*/
+  test_set_step(1);
+  {
+    n = 0;
+    test_wait_tick();threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()-1, bmk_thread8, (void *)&n);
+
+    threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriorityX()-1, bmk_thread8, (void *)&n);
+    threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriorityX()-1, bmk_thread8, (void *)&n);
+    threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()-1, bmk_thread8, (void *)&n);
+    threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()-1, bmk_thread8, (void *)&n);
+  }
+
+  /* [12.8.2] Waiting one second then terminating the 5 threads.*/
+  test_set_step(2);
+  {
+    chThdSleepSeconds(1);
+    test_terminate_threads();
+    test_wait_threads();
+  }
+
+  /* [12.8.3] The score is printed.*/
+  test_set_step(3);
+  {
+    test_print("--- Score : ");
+    test_printn(n);
+    test_println(" ctxswc/S");
+  }
+}
+
+static const testcase_t test_012_008 = {
+  "Round-Robin voluntary reschedule",
+  NULL,
+  NULL,
+  test_012_008_execute
+};
+
+/**
+ * @page test_012_009 [12.9] Virtual Timers set/reset performance
+ *
+ * <h2>Description</h2>
+ * A virtual timer is set and immediately reset into a continuous
+ * loop.<br> The performance is calculated by measuring the number of
+ * iterations after a second of continuous operations.
+ *
+ * <h2>Test Steps</h2>
+ * - [12.9.1] Two timers are set then reset without waiting for their
+ *   counter to elapse. The operation is repeated continuously in a
+ *   one-second time window.
+ * - [12.9.2] The score is printed.
+ * .
+ */
+
+static void test_012_009_execute(void) {
+  static virtual_timer_t vt1, vt2;
+  uint32_t n;
+
+  /* [12.9.1] Two timers are set then reset without waiting for their
+     counter to elapse. The operation is repeated continuously in a
+     one-second time window.*/
+  test_set_step(1);
+  {
+    systime_t start, end;
+
+    n = 0;
+    start = test_wait_tick();
+    end = start + MS2ST(1000);
+    do {
+      chSysLock();
+      chVTDoSetI(&vt1, 1, tmo, NULL);
+      chVTDoSetI(&vt2, 10000, tmo, NULL);
+      chVTDoResetI(&vt1);
+      chVTDoResetI(&vt2);
+      chSysUnlock();
+      n++;
+    #if defined(SIMULATOR)
+      _sim_check_for_interrupts();
+    #endif
+    } while (chVTIsSystemTimeWithinX(start, end));
+  }
+
+  /* [12.9.2] The score is printed.*/
+  test_set_step(2);
+  {
+    test_print("--- Score : ");
+    test_printn(n * 2);
+    test_println(" timers/S");
+  }
+}
+
+static const testcase_t test_012_009 = {
+  "Virtual Timers set/reset performance",
+  NULL,
+  NULL,
+  test_012_009_execute
+};
+
+#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
+/**
+ * @page test_012_010 [12.10] Semaphores wait/signal performance
+ *
+ * <h2>Description</h2>
+ * A counting semaphore is taken/released into a continuous loop, no
+ * Context Switch happens because the counter is always non
+ * negative.<br> The performance is calculated by measuring the number
+ * of iterations after a second of continuous operations.
+ *
+ * <h2>Conditions</h2>
+ * This test is only executed if the following preprocessor condition
+ * evaluates to true:
+ * - CH_CFG_USE_SEMAPHORES
+ * .
+ *
+ * <h2>Test Steps</h2>
+ * - [12.10.1] A semaphore is teken and released. The operation is
+ *   repeated continuously in a one-second time window.
+ * - [12.10.2] The score is printed.
+ * .
+ */
+
+static void test_012_010_setup(void) {
+  chSemObjectInit(&sem1, 1);
+}
+
+static void test_012_010_execute(void) {
+  uint32_t n;
+
+  /* [12.10.1] A semaphore is teken and released. The operation is
+     repeated continuously in a one-second time window.*/
+  test_set_step(1);
+  {
+    systime_t start, end;
+
+    n = 0;
+    start = test_wait_tick();
+    end = start + MS2ST(1000);
+    do {
+      chSemWait(&sem1);
+      chSemSignal(&sem1);
+      chSemWait(&sem1);
+      chSemSignal(&sem1);
+      chSemWait(&sem1);
+      chSemSignal(&sem1);
+      chSemWait(&sem1);
+      chSemSignal(&sem1);
+      n++;
+    #if defined(SIMULATOR)
+      _sim_check_for_interrupts();
+    #endif
+    } while (chVTIsSystemTimeWithinX(start, end));
+  }
+
+  /* [12.10.2] The score is printed.*/
+  test_set_step(2);
+  {
+    test_print("--- Score : ");
+    test_printn(n * 4);
+    test_println(" wait+signal/S");
+  }
+}
+
+static const testcase_t test_012_010 = {
+  "Semaphores wait/signal performance",
+  test_012_010_setup,
+  NULL,
+  test_012_010_execute
+};
+#endif /* CH_CFG_USE_SEMAPHORES */
+
+#if (CH_CFG_USE_MUTEXES) || defined(__DOXYGEN__)
+/**
+ * @page test_012_011 [12.11] Mutexes lock/unlock performance
+ *
+ * <h2>Description</h2>
+ * A mutex is locked/unlocked into a continuous loop, no Context Switch
+ * happens because there are no other threads asking for the mutex.<br>
+ * The performance is calculated by measuring the number of iterations
+ * after a second of continuous operations.
+ *
+ * <h2>Conditions</h2>
+ * This test is only executed if the following preprocessor condition
+ * evaluates to true:
+ * - CH_CFG_USE_MUTEXES
+ * .
+ *
+ * <h2>Test Steps</h2>
+ * - [12.11.1] A mutex is locked and unlocked. The operation is
+ *   repeated continuously in a one-second time window.
+ * - [12.11.2] The score is printed.
+ * .
+ */
+
+static void test_012_011_setup(void) {
+  chMtxObjectInit(&mtx1);
+}
+
+static void test_012_011_execute(void) {
+  uint32_t n;
+
+  /* [12.11.1] A mutex is locked and unlocked. The operation is
+     repeated continuously in a one-second time window.*/
+  test_set_step(1);
+  {
+    systime_t start, end;
+
+    n = 0;
+    start = test_wait_tick();
+    end = start + MS2ST(1000);
+    do {
+      chMtxLock(&mtx1);
+      chMtxUnlock(&mtx1);
+      chMtxLock(&mtx1);
+      chMtxUnlock(&mtx1);
+      chMtxLock(&mtx1);
+      chMtxUnlock(&mtx1);
+      chMtxLock(&mtx1);
+      chMtxUnlock(&mtx1);
+      n++;
+    #if defined(SIMULATOR)
+      _sim_check_for_interrupts();
+    #endif
+    } while (chVTIsSystemTimeWithinX(start, end));
+  }
+
+  /* [12.11.2] The score is printed.*/
+  test_set_step(2);
+  {
+    test_print("--- Score : ");
+    test_printn(n * 4);
+    test_println(" lock+unlock/S");
+  }
+}
+
+static const testcase_t test_012_011 = {
+  "Mutexes lock/unlock performance",
+  test_012_011_setup,
+  NULL,
+  test_012_011_execute
+};
+#endif /* CH_CFG_USE_MUTEXES */
+
+/**
+ * @page test_012_012 [12.12] RAM Footprint
+ *
+ * <h2>Description</h2>
+ * The memory size of the various kernel objects is printed.
+ *
+ * <h2>Test Steps</h2>
+ * - [12.12.1] The size of the system area is printed.
+ * - [12.12.2] The size of a thread structure is printed.
+ * - [12.12.3] The size of a virtual timer structure is printed.
+ * - [12.12.4] The size of a semaphore structure is printed.
+ * - [12.12.5] The size of a mutex is printed.
+ * - [12.12.6] The size of a condition variable is printed.
+ * - [12.12.7] The size of an event source is printed.
+ * - [12.12.8] The size of an event listener is printed.
+ * - [12.12.9] The size of a mailbox is printed.
+ * .
+ */
+
+static void test_012_012_execute(void) {
+
+  /* [12.12.1] The size of the system area is printed.*/
+  test_set_step(1);
+  {
+    test_print("--- System: ");
+    test_printn(sizeof(ch_system_t));
+    test_println(" bytes");
+  }
+
+  /* [12.12.2] The size of a thread structure is printed.*/
+  test_set_step(2);
+  {
+    test_print("--- Thread: ");
+    test_printn(sizeof(thread_t));
+    test_println(" bytes");
+  }
+
+  /* [12.12.3] The size of a virtual timer structure is printed.*/
+  test_set_step(3);
+  {
+    test_print("--- Timer : ");
+    test_printn(sizeof(virtual_timer_t));
+    test_println(" bytes");
+  }
+
+  /* [12.12.4] The size of a semaphore structure is printed.*/
+  test_set_step(4);
+  {
+    #if CH_CFG_USE_SEMAPHORES || defined(__DOXYGEN__)
+    test_print("--- Semaph: ");
+    test_printn(sizeof(semaphore_t));
+    test_println(" bytes");
+    #endif
+  }
+
+  /* [12.12.5] The size of a mutex is printed.*/
+  test_set_step(5);
+  {
+    #if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
+    test_print("--- Mutex : ");
+    test_printn(sizeof(mutex_t));
+    test_println(" bytes");
+    #endif
+  }
+
+  /* [12.12.6] The size of a condition variable is printed.*/
+  test_set_step(6);
+  {
+    #if CH_CFG_USE_CONDVARS || defined(__DOXYGEN__)
+    test_print("--- CondV.: ");
+    test_printn(sizeof(condition_variable_t));
+    test_println(" bytes");
+    #endif
+  }
+
+  /* [12.12.7] The size of an event source is printed.*/
+  test_set_step(7);
+  {
+    #if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
+    test_print("--- EventS: ");
+    test_printn(sizeof(event_source_t));
+    test_println(" bytes");
+    #endif
+  }
+
+  /* [12.12.8] The size of an event listener is printed.*/
+  test_set_step(8);
+  {
+    #if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
+    test_print("--- EventL: ");
+    test_printn(sizeof(event_listener_t));
+    test_println(" bytes");
+    #endif
+  }
+
+  /* [12.12.9] The size of a mailbox is printed.*/
+  test_set_step(9);
+  {
+    #if CH_CFG_USE_MAILBOXES || defined(__DOXYGEN__)
+    test_print("--- MailB.: ");
+    test_printn(sizeof(mailbox_t));
+    test_println(" bytes");
+    #endif
+  }
+}
+
+static const testcase_t test_012_012 = {
+  "RAM Footprint",
+  NULL,
+  NULL,
+  test_012_012_execute
+};
+
 /****************************************************************************
  * Exported data.
  ****************************************************************************/
@@ -512,5 +1006,17 @@ const testcase_t * const test_sequence_012[] = {
   &test_012_004,
   &test_012_005,
   &test_012_006,
+#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
+  &test_012_007,
+#endif
+  &test_012_008,
+  &test_012_009,
+#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
+  &test_012_010,
+#endif
+#if (CH_CFG_USE_MUTEXES) || defined(__DOXYGEN__)
+  &test_012_011,
+#endif
+  &test_012_012,
   NULL
 };

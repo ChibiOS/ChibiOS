@@ -95,7 +95,7 @@ void * ROMCONST wa[5] = {test.wa.T0, test.wa.T1, test.wa.T2,
  * Sets a termination request in all the test-spawned threads.
  */
 void test_terminate_threads(void) {
-  int i;
+  unsigned i;
 
   for (i = 0; i < MAX_THREADS; i++)
     if (threads[i])
@@ -106,7 +106,7 @@ void test_terminate_threads(void) {
  * Waits for the completion of all the test-spawned threads.
  */
 void test_wait_threads(void) {
-  int i;
+  unsigned i;
 
   for (i = 0; i < MAX_THREADS; i++)
     if (threads[i] != NULL) {
@@ -115,6 +115,9 @@ void test_wait_threads(void) {
     }
 }
 
+/*
+ * Delays execution until next system time tick.
+ */
 systime_t test_wait_tick(void) {
 
   chThdSleep(1);
