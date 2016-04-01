@@ -32,6 +32,7 @@
  * - @subpage test_sequence_009
  * - @subpage test_sequence_010
  * - @subpage test_sequence_011
+ * - @subpage test_sequence_012
  * .
  */
 
@@ -65,6 +66,7 @@ const testcase_t * const *test_suite[] = {
   test_sequence_009,
   test_sequence_010,
   test_sequence_011,
+  test_sequence_012,
   NULL
 };
 

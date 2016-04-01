@@ -67,9 +67,9 @@ static THD_FUNCTION(dyn_thread1, p) {
  *
  * <h2>Description</h2>
  * Two threads are started by allocating the memory from the Memory
- * Heap then the remaining heap space is arbitrarily allocated and a
- * third tread startup is attempted.<br> The test expects the first two
- * threads to successfully start and the last one to fail.
+ * Heap then a third thread is started with a huge stack
+ * requirement.<br> The test expects the first two threads to
+ * successfully start and the third one to fail.
  *
  * <h2>Conditions</h2>
  * This test is only executed if the following preprocessor condition
@@ -80,7 +80,7 @@ static THD_FUNCTION(dyn_thread1, p) {
  * <h2>Test Steps</h2>
  * - [11.1.1] Getting base priority for threads.
  * - [11.1.2] Getting heap info before the test.
- * - [11.1.3] Creating 1, it is expected to succeed.
+ * - [11.1.3] Creating thread 1, it is expected to succeed.
  * - [11.1.4] Creating thread 2, it is expected to succeed.
  * - [11.1.5] Creating thread 3, it is expected to fail.
  * - [11.1.6] Letting threads execute then checking the start order and
@@ -111,7 +111,7 @@ static void test_011_001_execute(void) {
     test_assert(n1 == 1, "heap fragmented");
   }
 
-  /* [11.1.3] Creating 1, it is expected to succeed.*/
+  /* [11.1.3] Creating thread 1, it is expected to succeed.*/
   test_set_step(3);
   {
     threads[0] = chThdCreateFromHeap(&heap1,

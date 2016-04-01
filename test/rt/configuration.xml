@@ -3833,8 +3833,8 @@ static THD_FUNCTION(dyn_thread1, p) {
                   <value>Threads creation from Memory Heap.</value>
                 </brief>
                 <description>
-                  <value>Two threads are started by allocating the memory from the Memory Heap then the remaining heap space is arbitrarily allocated and a third tread startup is attempted.&lt;br&gt;&#xD;
-The test expects the first two threads to successfully start and the last one to fail.</value>
+                  <value>Two threads are started by allocating the memory from the Memory Heap then a third thread is started with a huge stack requirement.&lt;br&gt;&#xD;
+The test expects the first two threads to successfully start and the third one to fail.</value>
                 </description>
                 <condition>
                   <value>CH_CFG_USE_HEAP</value>
@@ -3878,7 +3878,7 @@ test_assert(n1 == 1, "heap fragmented");]]></value>
                   </step>
                   <step>
                     <description>
-                      <value>Creating 1, it is expected to succeed.</value>
+                      <value>Creating thread 1, it is expected to succeed.</value>
                     </description>
                     <tags>
                       <value />
@@ -4051,6 +4051,491 @@ test_assert_sequence("ABCD", "invalid sequence");]]></value>
                       <value><![CDATA[for (i = 0; i < 4; i++)
   test_assert(chPoolAlloc(&mp1) != NULL, "pool list empty");
 test_assert(chPoolAlloc(&mp1) == NULL, "pool list not empty");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+            </cases>
+          </sequence>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
+              <value>Benchmarks.</value>
+            </brief>
+            <description>
+              <value>This module implements a series of system benchmarks. The benchmarks are useful as a stress test and as a reference when comparing ChibiOS/RT with similar systems.&lt;br&gt;&#xD;
+Objective of the test sequence is to provide a performance index for the most critical system subsystems. The performance numbers allow to discover performance regressions between successive ChibiOS/RT releases.</value>
+            </description>
+            <condition>
+              <value />
+            </condition>
+            <shared_code>
+              <value><![CDATA[#if CH_CFG_USE_SEMAPHORES || defined(__DOXYGEN__)
+static semaphore_t sem1;
+#endif
+#if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
+static mutex_t mtx1;
+#endif
+
+#if CH_CFG_USE_MESSAGES
+static THD_FUNCTION(bmk_thread1, p) {
+  thread_t *tp;
+  msg_t msg;
+
+  (void)p;
+  do {
+    tp = chMsgWait();
+    msg = chMsgGet(tp);
+    chMsgRelease(tp, msg);
+  } while (msg);
+}
+
+NOINLINE static unsigned int msg_loop_test(thread_t *tp) {
+  systime_t start, end;
+  
+  uint32_t n = 0;
+  start = test_wait_tick();
+  end = start + MS2ST(1000);
+  do {
+    (void)chMsgSend(tp, 1);
+    n++;
+#if defined(SIMULATOR)
+    _sim_check_for_interrupts();
+#endif
+  } while (chVTIsSystemTimeWithinX(start, end));
+  (void)chMsgSend(tp, 0);
+  return n;
+}
+#endif
+
+static THD_FUNCTION(bmk_thread3, p) {
+
+  chThdExit((msg_t)p);
+}
+
+static THD_FUNCTION(bmk_thread4, p) {
+  msg_t msg;
+  thread_t *self = chThdGetSelfX();
+
+  (void)p;
+  chSysLock();
+  do {
+    chSchGoSleepS(CH_STATE_SUSPENDED);
+    msg = self->u.rdymsg;
+  } while (msg == MSG_OK);
+  chSysUnlock();
+}]]></value>
+            </shared_code>
+            <cases>
+              <case>
+                <brief>
+                  <value>Messages performance #1.</value>
+                </brief>
+                <description>
+                  <value>A message server thread is created with a lower priority than the client thread, the messages throughput per second is measured and the result printed on the output log.</value>
+                </description>
+                <condition>
+                  <value>CH_CFG_USE_MESSAGES</value>
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[uint32_t n;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>The messenger thread is started at a lower priority than the current thread.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()-1, bmk_thread1, NULL);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The number of messages exchanged is counted in a one second time window.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[n = msg_loop_test(threads[0]);
+test_wait_threads();]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Score is printed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_print("--- Score : ");
+test_printn(n);
+test_print(" msgs/S, ");
+test_printn(n << 1);
+test_println(" ctxswc/S");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Messages performance #2.</value>
+                </brief>
+                <description>
+                  <value>A message server thread is created with an higher priority than the client thread, the messages throughput per second is measured and the result printed on the output log.</value>
+                </description>
+                <condition>
+                  <value>CH_CFG_USE_MESSAGES</value>
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[uint32_t n;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>The messenger thread is started at an higher priority than the current thread.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()+1, bmk_thread1, NULL);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The number of messages exchanged is counted in a one second time window.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[n = msg_loop_test(threads[0]);
+test_wait_threads();]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Score is printed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_print("--- Score : ");
+test_printn(n);
+test_print(" msgs/S, ");
+test_printn(n << 1);
+test_println(" ctxswc/S");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Messages performance #3.</value>
+                </brief>
+                <description>
+                  <value>A message server thread is created with an higher priority than the client thread, four lower priority threads crowd the ready list, the messages throughput per second is measured while the ready list and the result printed on the output log.</value>
+                </description>
+                <condition>
+                  <value>CH_CFG_USE_MESSAGES</value>
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[uint32_t n;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>The messenger thread is started at an higher priority than the current thread.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()+1, bmk_thread1, NULL);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Four threads are started at a lower priority than the current thread.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriorityX()-2, bmk_thread3, NULL);
+threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriorityX()-3, bmk_thread3, NULL);
+threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()-4, bmk_thread3, NULL);
+threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()-5, bmk_thread3, NULL);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The number of messages exchanged is counted in a one second time window.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[n = msg_loop_test(threads[0]);
+test_wait_threads();]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Score is printed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_print("--- Score : ");
+test_printn(n);
+test_print(" msgs/S, ");
+test_printn(n << 1);
+test_println(" ctxswc/S");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Context Switch performance.</value>
+                </brief>
+                <description>
+                  <value>A thread is created that just performs a @p chSchGoSleepS() into a loop, the thread is awakened as fast is possible by the tester thread.&lt;br&gt;&#xD;
+The Context Switch performance is calculated by measuring the number of iterations after a second of continuous operations.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[thread_t *tp;
+uint32_t n;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Starting the target thread at an higher priority level.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[tp = threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()+1,
+                                    bmk_thread4, NULL);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Waking up the thread as fast as possible in a one second time window.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[systime_t start, end;
+
+n = 0;
+start = test_wait_tick();
+end = start + MS2ST(1000);
+do {
+  chSysLock();
+  chSchWakeupS(tp, MSG_OK);
+  chSchWakeupS(tp, MSG_OK);
+  chSchWakeupS(tp, MSG_OK);
+  chSchWakeupS(tp, MSG_OK);
+  chSysUnlock();
+  n += 4;
+#if defined(SIMULATOR)
+  _sim_check_for_interrupts();
+#endif
+} while (chVTIsSystemTimeWithinX(start, end));]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Stopping the target thread.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chSysLock();
+chSchWakeupS(tp, MSG_TIMEOUT);
+chSysUnlock();
+test_wait_threads();]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Score is printed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_print("--- Score : ");
+test_printn(n * 2);
+test_println(" ctxswc/S");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Threads performance, full cycle.</value>
+                </brief>
+                <description>
+                  <value>Threads are continuously created and terminated into a loop. A full chThdCreateStatic() / @p chThdExit() / @p chThdWait() cycle is performed in each iteration.&lt;br&gt;&#xD;
+The performance is calculated by measuring the number of iterations after a second of continuous operations.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[uint32_t n;
+tprio_t prio = chThdGetPriorityX() - 1;
+systime_t start, end;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>A thread is created at a lower priority level and its termination detected using @p chThdWait(). The operation is repeated continuously in a one-second time window.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[n = 0;
+start = test_wait_tick();
+end = start + MS2ST(1000);
+do {
+  chThdWait(chThdCreateStatic(wa[0], WA_SIZE, prio, bmk_thread3, NULL));
+  n++;
+#if defined(SIMULATOR)
+  _sim_check_for_interrupts();
+#endif
+} while (chVTIsSystemTimeWithinX(start, end));]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Score is printed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_print("--- Score : ");
+test_printn(n);
+test_println(" threads/S");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Threads performance, create/exit only.</value>
+                </brief>
+                <description>
+                  <value>Threads are continuously created and terminated into a loop. A partial @p chThdCreateStatic() / @p chThdExit() cycle is performed in each iteration, the @p chThdWait() is not necessary because the thread is created at an higher priority so there is no need to wait for it to terminate.&lt;br&gt; The performance is calculated by measuring the number of iterations after a second of continuous operations.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[uint32_t n;
+tprio_t prio = chThdGetPriorityX() + 1;
+systime_t start, end;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>A thread is created at an higher priority level and let terminate immediately. The operation is repeated continuously in a one-second time window.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[n = 0;
+start = test_wait_tick();
+end = start + MS2ST(1000);
+do {
+  chThdRelease(chThdCreateStatic(wa[0], WA_SIZE, prio, bmk_thread3, NULL));
+  n++;
+#if defined(SIMULATOR)
+  _sim_check_for_interrupts();
+#endif
+} while (chVTIsSystemTimeWithinX(start, end));]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Score is printed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_print("--- Score : ");
+test_printn(n);
+test_println(" threads/S");]]></value>
                     </code>
                   </step>
                 </steps>
