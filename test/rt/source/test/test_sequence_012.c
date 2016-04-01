@@ -377,9 +377,9 @@ static void test_012_004_execute(void) {
       chSchWakeupS(tp, MSG_OK);
       chSysUnlock();
       n += 4;
-    #if defined(SIMULATOR)
+#if defined(SIMULATOR)
       _sim_check_for_interrupts();
-    #endif
+#endif
     } while (chVTIsSystemTimeWithinX(start, end));
   }
 
@@ -442,9 +442,9 @@ static void test_012_005_execute(void) {
     do {
       chThdWait(chThdCreateStatic(wa[0], WA_SIZE, prio, bmk_thread3, NULL));
       n++;
-    #if defined(SIMULATOR)
+#if defined(SIMULATOR)
       _sim_check_for_interrupts();
-    #endif
+#endif
     } while (chVTIsSystemTimeWithinX(start, end));
   }
 
@@ -499,9 +499,9 @@ static void test_012_006_execute(void) {
     do {
       chThdRelease(chThdCreateStatic(wa[0], WA_SIZE, prio, bmk_thread3, NULL));
       n++;
-    #if defined(SIMULATOR)
+#if defined(SIMULATOR)
       _sim_check_for_interrupts();
-    #endif
+#endif
     } while (chVTIsSystemTimeWithinX(start, end));
   }
 
@@ -577,9 +577,9 @@ static void test_012_007_execute(void) {
     do {
       chSemReset(&sem1, 0);
       n++;
-    #if defined(SIMULATOR)
+#if defined(SIMULATOR)
       _sim_check_for_interrupts();
-    #endif
+#endif
     } while (chVTIsSystemTimeWithinX(start, end));
   }
 
@@ -707,9 +707,9 @@ static void test_012_009_execute(void) {
       chVTDoResetI(&vt2);
       chSysUnlock();
       n++;
-    #if defined(SIMULATOR)
+#if defined(SIMULATOR)
       _sim_check_for_interrupts();
-    #endif
+#endif
     } while (chVTIsSystemTimeWithinX(start, end));
   }
 
@@ -778,9 +778,9 @@ static void test_012_010_execute(void) {
       chSemWait(&sem1);
       chSemSignal(&sem1);
       n++;
-    #if defined(SIMULATOR)
+#if defined(SIMULATOR)
       _sim_check_for_interrupts();
-    #endif
+#endif
     } while (chVTIsSystemTimeWithinX(start, end));
   }
 
@@ -850,9 +850,9 @@ static void test_012_011_execute(void) {
       chMtxLock(&mtx1);
       chMtxUnlock(&mtx1);
       n++;
-    #if defined(SIMULATOR)
+#if defined(SIMULATOR)
       _sim_check_for_interrupts();
-    #endif
+#endif
     } while (chVTIsSystemTimeWithinX(start, end));
   }
 
@@ -921,61 +921,61 @@ static void test_012_012_execute(void) {
   /* [12.12.4] The size of a semaphore structure is printed.*/
   test_set_step(4);
   {
-    #if CH_CFG_USE_SEMAPHORES || defined(__DOXYGEN__)
+#if CH_CFG_USE_SEMAPHORES || defined(__DOXYGEN__)
     test_print("--- Semaph: ");
     test_printn(sizeof(semaphore_t));
     test_println(" bytes");
-    #endif
+#endif
   }
 
   /* [12.12.5] The size of a mutex is printed.*/
   test_set_step(5);
   {
-    #if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
+#if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
     test_print("--- Mutex : ");
     test_printn(sizeof(mutex_t));
     test_println(" bytes");
-    #endif
+#endif
   }
 
   /* [12.12.6] The size of a condition variable is printed.*/
   test_set_step(6);
   {
-    #if CH_CFG_USE_CONDVARS || defined(__DOXYGEN__)
+#if CH_CFG_USE_CONDVARS || defined(__DOXYGEN__)
     test_print("--- CondV.: ");
     test_printn(sizeof(condition_variable_t));
     test_println(" bytes");
-    #endif
+#endif
   }
 
   /* [12.12.7] The size of an event source is printed.*/
   test_set_step(7);
   {
-    #if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
+#if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
     test_print("--- EventS: ");
     test_printn(sizeof(event_source_t));
     test_println(" bytes");
-    #endif
+#endif
   }
 
   /* [12.12.8] The size of an event listener is printed.*/
   test_set_step(8);
   {
-    #if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
+#if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
     test_print("--- EventL: ");
     test_printn(sizeof(event_listener_t));
     test_println(" bytes");
-    #endif
+#endif
   }
 
   /* [12.12.9] The size of a mailbox is printed.*/
   test_set_step(9);
   {
-    #if CH_CFG_USE_MAILBOXES || defined(__DOXYGEN__)
+#if CH_CFG_USE_MAILBOXES || defined(__DOXYGEN__)
     test_print("--- MailB.: ");
     test_printn(sizeof(mailbox_t));
     test_println(" bytes");
-    #endif
+#endif
   }
 }
 

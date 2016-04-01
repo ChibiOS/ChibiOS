@@ -995,9 +995,9 @@ chSemSignal(&sem1);
 chSemSignal(&sem1);
 test_wait_threads();
 #if CH_CFG_USE_SEMAPHORES_PRIORITY
-  test_assert_sequence("ADCEB", "invalid sequence");
+test_assert_sequence("ADCEB", "invalid sequence");
 #else
-  test_assert_sequence("ABCDE", "invalid sequence");
+test_assert_sequence("ABCDE", "invalid sequence");
 #endif]]></value>
                     </code>
                   </step>
