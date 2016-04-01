@@ -79,12 +79,11 @@
 *****************************************************************************
 
 *** Next ***
-- RT:  Fixed bug in chSchPreemption() function (bug #728)(backported to 2.6.10,
-       3.0.6 and 16.1.5).
 - HAL: All high level file names have been renamed and prefixed with "hal_"
        in order to minimize the risk of name conflicts when integrating
        external libraries. 
 - LIB: Added Guarded Memory Pools to RT and NIL.
+- RT:  Updated the RT test suite by generating the code using the new system.
 - NIL: Updated the NIL test suite by generating the code using the new system.
 - RT:  Removed I/O Queues and Streams interface, now those exists (much
        improved) inside the HAL.
@@ -107,6 +106,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- RT:  Fixed bug in chSchPreemption() function (bug #728)(backported to 2.6.10,
+       3.0.6 and 16.1.5).
 - HAL: Fixed prescaler not initialized in STM32 ADCv1 (bug #725)
        (backported to 16.1.5).
 - HAL: Fixed missing DAC section in STM32F072 mcuconf.h files (bug #724)
