@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    wdg_lld.c
+ * @file    xWDGv1/hal_wdg_lld.c
  * @brief   WDG Driver subsystem low level driver source.
  *
  * @addtogroup WDG

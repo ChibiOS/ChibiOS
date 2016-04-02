@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    STM32/can_lld.h
+ * @file    CANv1/hal_can_lld.h
  * @brief   STM32 CAN subsystem low level driver header.
  *
  * @addtogroup CAN

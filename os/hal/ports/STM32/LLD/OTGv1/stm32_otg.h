@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    stm32_otg.h
+ * @file    OTGv1/stm32_otg.h
  * @brief   STM32 OTG registers layout header.
  *
  * @addtogroup USB

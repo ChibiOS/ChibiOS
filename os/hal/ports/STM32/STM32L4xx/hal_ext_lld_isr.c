@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    STM32L4xx/ext_lld_isr.c
+ * @file    STM32L4xx/hal_ext_lld_isr.c
  * @brief   STM32L4xx EXT subsystem low level driver ISR code.
  *
  * @addtogroup EXT

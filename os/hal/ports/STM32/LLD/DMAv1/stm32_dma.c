@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    STM32F3xx/stm32_dma.c
+ * @file    DMAv1/stm32_dma.c
  * @brief   DMA helper driver code.
  *
  * @addtogroup STM32F3xx_DMA

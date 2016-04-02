@@ -19,7 +19,7 @@
  */
 
 /**
- * @file    STM32/I2Cv1/i2c_lld.c
+ * @file    I2Cv1/hal_i2c_lld.c
  * @brief   STM32 I2C subsystem low level driver source.
  *
  * @addtogroup I2C

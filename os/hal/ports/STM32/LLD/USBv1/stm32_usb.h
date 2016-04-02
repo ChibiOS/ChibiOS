@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    stm32_usb.h
+ * @file    USBv1/stm32_usb.h
  * @brief   STM32 USB registers layout header.
  * @note    This file requires definitions from the ST STM32 header files
  *          stm32f10x.h or stm32l1xx.h.

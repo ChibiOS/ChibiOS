@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    STM32/EXTIv1/ext_lld.h
+ * @file    EXTIv1/hal_ext_lld.h
  * @brief   STM32 EXT subsystem low level driver header.
  *
  * @addtogroup EXT

@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    STM32/USBv1/usb_lld.h
+ * @file    USBv1/hal_usb_lld.h
  * @brief   STM32 USB subsystem low level driver header.
  *
  * @addtogroup USB

@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    STM32/mac_lld.h
+ * @file    MACv1/hal_mac_lld.h
  * @brief   STM32 low level MAC driver header.
  *
  * @addtogroup MAC

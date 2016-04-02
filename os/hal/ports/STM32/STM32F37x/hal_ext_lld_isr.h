@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    STM32F37x/ext_lld_isr.h
+ * @file    STM32F37x/hal_ext_lld_isr.h
  * @brief   STM32F37x EXT subsystem low level driver ISR header.
  *
  * @addtogroup EXT

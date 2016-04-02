@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    STM32/pwm_lld.h
+ * @file    TIMv1/hal_pwm_lld.h
  * @brief   STM32 PWM subsystem low level driver header.
  *
  * @addtogroup PWM

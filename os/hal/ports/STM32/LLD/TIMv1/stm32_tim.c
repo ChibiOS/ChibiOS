@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    stm32_tim.h
+ * @file    TIMv1/stm32_tim.h
  * @brief   STM32 TIM units common code.
  * @note    This file requires definitions from the ST STM32 header file.
  *

@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    STM32F3xx/adc_lld.c
+ * @file    ADCv3/hal_adc_lld.c
  * @brief   STM32F3xx ADC subsystem low level driver source.
  *
  * @addtogroup ADC

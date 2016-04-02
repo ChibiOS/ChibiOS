@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    i2s_lld.h
+ * @file    SPIv2/hal_i2s_lld.h
  * @brief   STM32 I2S subsystem low level driver header.
  *
  * @addtogroup I2S

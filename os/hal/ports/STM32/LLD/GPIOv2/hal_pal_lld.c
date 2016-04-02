@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    STM32/GPIOv2/pal_lld.c
+ * @file    GPIOv2/hal_pal_lld.c
  * @brief   STM32 PAL low level driver code.
  *
  * @addtogroup PAL

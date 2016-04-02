@@ -19,8 +19,8 @@
  */
 
 /**
- * @file    STM32/RTCv2/rtc_lld.h
- * @brief   STM32L1xx/STM32F2xx/STM32F4xx RTC low level driver header.
+ * @file    RTCv2/hal_rtc_lld.h
+ * @brief   STM32 RTC low level driver header.
  *
  * @addtogroup RTC
  * @{

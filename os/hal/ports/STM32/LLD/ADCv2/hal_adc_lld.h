@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    STM32/LLD/ADCv2/adc_lld.h
+ * @file    ADCv2/hal_adc_lld.h
  * @brief   STM32 ADC subsystem low level driver header.
  *
  * @addtogroup ADC
