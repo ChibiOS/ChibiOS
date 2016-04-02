@@ -252,6 +252,9 @@ static void test_001_004_execute(void) {
   {
     systime_t time = chVTGetSystemTimeX();
     while (time == chVTGetSystemTimeX()) {
+#if defined(SIMULATOR)
+      _sim_check_for_interrupts();
+#endif
     }
   }
 }
