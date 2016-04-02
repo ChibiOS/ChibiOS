@@ -82,15 +82,14 @@ void _core_init(void) {
   extern uint8_t __heap_end__[];
 
   /*lint -save -e9033 [10.8] Required cast operations.*/
-  nextmem = (uint8_t *)MEM_ALIGN_NEXT(__heap_base__, PORT_NATURAL_ALIGN);
-  endmem = (uint8_t *)MEM_ALIGN_PREV(__heap_end__, PORT_NATURAL_ALIGN);
+  nextmem = __heap_base__;
+  endmem  = __heap_end__;
   /*lint restore*/
 #else
-  static uint8_t default_heap[MEM_ALIGN_NEXT(CH_CFG_MEMCORE_SIZE,
-                                             PORT_NATURAL_ALIGN)];
+  static uint8_t static_heap[CH_CFG_MEMCORE_SIZE];
 
-  nextmem = (uint8_t *)MEM_ALIGN_NEXT(default_heap, PORT_NATURAL_ALIGN);
-  endmem = (uint8_t *)MEM_ALIGN_PREV(default_heap, PORT_NATURAL_ALIGN);
+  nextmem = &static_heap[0];
+  endmem  = &static_heap[CH_CFG_MEMCORE_SIZE];
 #endif
 }
 
