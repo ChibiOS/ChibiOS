@@ -98,7 +98,6 @@ static void _idle_thread(void *p) {
  * @special
  */
 void chSysInit(void) {
-  extern stkalign_t __main_thread_stack_base__;
 
   _scheduler_init();
   _vt_init();
@@ -135,8 +134,16 @@ void chSysInit(void) {
   currp = _thread_init(&ch.mainthread, "idle", IDLEPRIO);
 #endif
 
-  /* Setting up the base address of the static main thread stack.*/
-  currp->stklimit = &__main_thread_stack_base__;
+#if CH_DBG_ENABLE_STACK_CHECK == TRUE
+  {
+    /* Setting up the base address of the static main thread stack, the
+       symbol must be provided externally.*/
+    extern stkalign_t __main_thread_stack_base__;
+    currp->wabase = &__main_thread_stack_base__;
+  }
+#elif CH_CFG_USE_DYNAMIC == TRUE
+  currp->wabase = NULL;
+#endif
 
   /* Setting up the caller as current thread.*/
   currp->state = CH_STATE_CURRENT;

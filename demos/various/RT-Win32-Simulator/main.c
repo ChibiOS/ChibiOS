@@ -104,7 +104,9 @@ static void sd1_handler(eventid_t id) {
   flags = chEvtGetAndClearFlags(&sd1fel);
   if ((flags & CHN_CONNECTED) && (shelltp1 == NULL)) {
     cputs("Init: connection on SD1");
-    shelltp1 = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO + 1);
+    shelltp1 = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
+                                   "shell1", NORMALPRIO + 10,
+                                   shellThread, (void *)&shell_cfg1);
   }
   if (flags & CHN_DISCONNECTED) {
     cputs("Init: disconnection on SD1");
@@ -127,7 +129,9 @@ static void sd2_handler(eventid_t id) {
   flags = chEvtGetAndClearFlags(&sd2fel);
   if ((flags & CHN_CONNECTED) && (shelltp2 == NULL)) {
     cputs("Init: connection on SD2");
-    shelltp2 = shellCreate(&shell_cfg2, SHELL_WA_SIZE, NORMALPRIO + 10);
+    shelltp2 = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
+                                   "shell2", NORMALPRIO + 10,
+                                   shellThread, (void *)&shell_cfg2);
   }
   if (flags & CHN_DISCONNECTED) {
     cputs("Init: disconnection on SD2");

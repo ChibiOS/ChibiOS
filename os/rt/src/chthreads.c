@@ -182,8 +182,10 @@ thread_t *chThdCreateSuspendedI(const thread_descriptor_t *tdp) {
   tp = (thread_t *)((uint8_t *)tdp->wend -
                     MEM_ALIGN_NEXT(sizeof (thread_t), PORT_STACK_ALIGN));
 
+#if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || (CH_CFG_USE_DYNAMIC == TRUE)
   /* Stack boundary.*/
-  tp->stklimit = tdp->wbase;
+  tp->wabase = tdp->wbase;
+#endif
 
   /* Setting up the port-dependent part of the working area.*/
   PORT_SETUP_CONTEXT(tp, tdp->wbase, tp, tdp->funcp, tdp->arg);
@@ -348,8 +350,10 @@ thread_t *chThdCreateStatic(void *wsp, size_t size,
   tp = (thread_t *)((uint8_t *)wsp + size -
                     MEM_ALIGN_NEXT(sizeof (thread_t), PORT_STACK_ALIGN));
 
+#if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || (CH_CFG_USE_DYNAMIC == TRUE)
   /* Stack boundary.*/
-  tp->stklimit = (stkalign_t *)wsp;
+  tp->wabase = (stkalign_t *)wsp;
+#endif
 
   /* Setting up the port-dependent part of the working area.*/
   PORT_SETUP_CONTEXT(tp, wsp, tp, pf, arg);
@@ -436,12 +440,12 @@ void chThdRelease(thread_t *tp) {
     switch (tp->flags & CH_FLAG_MODE_MASK) {
 #if CH_CFG_USE_HEAP == TRUE
     case CH_FLAG_MODE_HEAP:
-      chHeapFree(chthdGetStackLimitX(tp));
+      chHeapFree(chThdGetWorkingAreaX(tp));
       break;
 #endif
 #if CH_CFG_USE_MEMPOOLS == TRUE
     case CH_FLAG_MODE_MPOOL:
-      chPoolFree(tp->mpool, chthdGetStackLimitX(tp));
+      chPoolFree(tp->mpool, chThdGetWorkingAreaX(tp));
       break;
 #endif
     default:

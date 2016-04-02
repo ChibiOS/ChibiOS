@@ -492,7 +492,7 @@ struct nil_thread {
   eventmask_t           epmask;     /**< @brief Pending events mask.        */
 #endif
 #if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || defined(__DOXYGEN__)
-  stkalign_t            *stklimit;  /**< @brief Thread stack boundary.      */
+  stkalign_t            *wabase;    /**< @brief Thread stack boundary.      */
 #endif
   /* Optional extra fields.*/
   CH_CFG_THREAD_EXT_FIELDS

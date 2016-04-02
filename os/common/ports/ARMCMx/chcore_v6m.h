@@ -285,7 +285,7 @@ struct port_intctx {
 #else
 #define port_switch(ntp, otp) {                                             \
   struct port_intctx *r13 = (struct port_intctx *)__get_PSP();              \
-  if ((stkalign_t *)(r13 - 1) < (otp)->stklimit) {                          \
+  if ((stkalign_t *)(r13 - 1) < (otp)->wabase) {                            \
     chSysHalt("stack overflow");                                            \
   }                                                                         \
   _port_switch(ntp, otp);                                                   \

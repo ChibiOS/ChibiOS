@@ -234,7 +234,7 @@ void chSysInit(void) {
   tcp = nil_thd_configs;
   while (tp < &nil.threads[CH_CFG_NUM_THREADS]) {
 #if CH_DBG_ENABLE_STACK_CHECK
-    tp->stklimit  = (stkalign_t *)tcp->wbase;
+    tp->wabase  = (stkalign_t *)tcp->wbase;
 #endif
 
     /* Port dependent thread initialization.*/
@@ -250,7 +250,7 @@ void chSysInit(void) {
 #if CH_DBG_ENABLE_STACK_CHECK
   /* The idle thread is a special case because its stack is set up by the
      runtime environment.*/
-  tp->stklimit  = THD_IDLE_BASE;
+  tp->wabase  = THD_IDLE_BASE;
 #endif
 
   /* Interrupts partially enabled. It is equivalent to entering the

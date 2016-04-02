@@ -440,7 +440,7 @@ struct port_intctx {
 #if PORT_ENABLE_GUARD_PAGES == FALSE
 #define port_switch(ntp, otp) {                                             \
   struct port_intctx *r13 = (struct port_intctx *)__get_PSP();              \
-  if ((stkalign_t *)(r13 - 1) < (otp)->stklimit) {                          \
+  if ((stkalign_t *)(r13 - 1) < (otp)->wabase) {                            \
     chSysHalt("stack overflow");                                            \
   }                                                                         \
   _port_switch(ntp, otp);                                                   \
@@ -451,7 +451,7 @@ struct port_intctx {
                                                                             \
   /* Setting up the guard page for the switched-in thread.*/                \
   mpuConfigureRegion(MPU_REGION_0,                                          \
-                     chThdGetSelfX()->stklimit,                             \
+                     chThdGetSelfX()->wabase,                               \
                      MPU_RASR_ATTR_AP_NA_NA |                               \
                      MPU_RASR_ATTR_NON_CACHEABLE |                          \
                      MPU_RASR_SIZE_32 |                                     \

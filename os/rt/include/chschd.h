@@ -169,11 +169,15 @@ struct ch_thread {
    */
   const char            *name;
 #endif
+#if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || (CH_CFG_USE_DYNAMIC == TRUE) ||  \
+    defined(__DOXYGEN__)
   /**
-   * @brief   Thread stack boundary.
-   * @note    This pointer matches with the working area base address.
+   * @brief   Working area base address.
+   * @note    This pointer is used for stack overflow checks and for
+   *          dynamic threading.
    */
-  stkalign_t            *stklimit;
+  stkalign_t            *wabase;
+#endif
   /**
    * @brief   Current thread state.
    */

@@ -95,8 +95,8 @@ ROMCONST chdebug_t ch_debug = {
   (uint8_t)_offsetof(thread_t, newer),
   (uint8_t)_offsetof(thread_t, older),
   (uint8_t)_offsetof(thread_t, name),
-#if CH_DBG_ENABLE_STACK_CHECK == TRUE
-  (uint8_t)_offsetof(thread_t, stklimit),
+#if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || (CH_CFG_USE_DYNAMIC == TRUE)
+  (uint8_t)_offsetof(thread_t, wabase),
 #else
   (uint8_t)0,
 #endif
@@ -233,6 +233,8 @@ thread_t *chRegFindThreadByPointer(thread_t *tp) {
   return NULL;
 }
 
+#if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || (CH_CFG_USE_DYNAMIC == TRUE) ||  \
+    defined(__DOXYGEN__)
 /**
  * @brief   Confirms that a working area is being used by some active thread.
  * @note    The reference counter of the found thread is increased by one so
@@ -251,7 +253,7 @@ thread_t *chRegFindThreadByWorkingArea(stkalign_t *wa) {
   /* Scanning registry.*/
   ctp = chRegFirstThread();
   do {
-    if (ctp->stklimit == wa) {
+    if (chThdGetWorkingAreaX(ctp) == wa) {
       return ctp;
     }
     ctp = chRegNextThread(ctp);
@@ -259,6 +261,7 @@ thread_t *chRegFindThreadByWorkingArea(stkalign_t *wa) {
 
   return NULL;
 }
+#endif
 
 #endif /* CH_CFG_USE_REGISTRY == TRUE */
 

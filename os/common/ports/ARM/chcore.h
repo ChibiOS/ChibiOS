@@ -337,7 +337,7 @@ struct port_context {
 #if CH_DBG_ENABLE_STACK_CHECK == TRUE
 #define port_switch(ntp, otp) {                                             \
   register struct port_intctx *r13 asm ("r13");                             \
-  if ((stkalign_t *)(r13 - 1) < otp->p_stklimit)                            \
+  if ((stkalign_t *)(r13 - 1) < otp->wabase)                                \
     chSysHalt("stack overflow");                                            \
   _port_switch_thumb(ntp, otp);                                             \
 }
@@ -350,7 +350,7 @@ struct port_context {
 #if CH_DBG_ENABLE_STACK_CHECK == TRUE
 #define port_switch(ntp, otp) {                                             \
   register struct port_intctx *r13 asm ("r13");                             \
-  if ((stkalign_t *)(r13 - 1) < otp->stklimit)                              \
+  if ((stkalign_t *)(r13 - 1) < otp->wabase)                                \
   chSysHalt("stack overflow");                                              \
   _port_switch_arm(ntp, otp);                                               \
 }

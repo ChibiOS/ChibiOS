@@ -161,8 +161,13 @@ static void cmd_threads(BaseSequentialStream *chp, int argc, char *argv[]) {
   chprintf(chp, "stklimit    stack     addr refs prio     state         name\r\n");
   tp = chRegFirstThread();
   do {
+#if CH_DBG_ENABLE_STACK_CHECK == TRUE
+    uint32_t stklimit = (uint32_t)tp->stklimit;
+#else
+    uint32_t stklimit = 0U;
+#endif
     chprintf(chp, "%08lx %08lx %08lx %4lu %4lu %9s %12s\r\n",
-             (uint32_t)tp->stklimit, (uint32_t)tp->ctx.sp, (uint32_t)tp,
+             stklimit, (uint32_t)tp->ctx.sp, (uint32_t)tp,
              (uint32_t)tp->refs - 1, (uint32_t)tp->prio, states[tp->state],
              tp->name == NULL ? "" : tp->name);
     tp = chRegNextThread(tp);
