@@ -15,28 +15,30 @@
 */
 
 /**
- * @file    st_lld.c
- * @brief   PLATFORM ST subsystem low level driver source.
+ * @file    hal_pal_lld.c
+ * @brief   Win32 simulator low level PAL driver code.
  *
- * @addtogroup ST
+ * @addtogroup WIN32_PAL
  * @{
  */
 
 #include "hal.h"
 
-#if (OSAL_ST_MODE != OSAL_ST_MODE_NONE) || defined(__DOXYGEN__)
-
-/*===========================================================================*/
-/* Driver local definitions.                                                 */
-/*===========================================================================*/
+#if HAL_USE_PAL || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
-/*===========================================================================*/
-/* Driver local types.                                                       */
-/*===========================================================================*/
+/**
+ * @brief   VIO1 simulated port.
+ */
+sim_vio_port_t vio_port_1;
+
+/**
+ * @brief   VIO2 simulated port.
+ */
+sim_vio_port_t vio_port_2;
 
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
@@ -55,13 +57,38 @@
 /*===========================================================================*/
 
 /**
- * @brief   Low level ST driver initialization.
+ * @brief Pads mode setup.
+ * @details This function programs a pads group belonging to the same port
+ *          with the specified mode.
  *
- * @notapi
+ * @param[in] port the port identifier
+ * @param[in] mask the group mask
+ * @param[in] mode the mode
+ *
+ * @note This function is not meant to be invoked directly by the application
+ *       code.
+ * @note @p PAL_MODE_UNCONNECTED is implemented as push pull output with high
+ *       state.
+ * @note This function does not alter the @p PINSELx registers. Alternate
+ *       functions setup must be handled by device-specific code.
  */
-void st_lld_init(void) {
+void _pal_lld_setgroupmode(ioportid_t port,
+                           ioportmask_t mask,
+                           iomode_t mode) {
+
+  switch (mode) {
+  case PAL_MODE_RESET:
+  case PAL_MODE_INPUT:
+    port->dir &= ~mask;
+    break;
+  case PAL_MODE_UNCONNECTED:
+    port->latch |= mask;
+  case PAL_MODE_OUTPUT_PUSHPULL:
+    port->dir |= mask;
+    break;
+  }
 }
 
-#endif /* OSAL_ST_MODE != OSAL_ST_MODE_NONE */
+#endif /* HAL_USE_PAL */
 
 /** @} */

@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    serial_lld.c
+ * @file    hal_serial_lld.c
  * @brief   Win32 simulator low level serial driver code.
  *
  * @addtogroup WIN32_SERIAL

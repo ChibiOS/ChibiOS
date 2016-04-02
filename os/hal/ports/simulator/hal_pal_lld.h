@@ -15,15 +15,15 @@
 */
 
 /**
- * @file    pal_lld.h
+ * @file    hal_pal_lld.h
  * @brief   Win32 simulator low level PAL driver header.
  *
  * @addtogroup WIN32_PAL
  * @{
  */
 
-#ifndef PAL_LLD_H
-#define PAL_LLD_H
+#ifndef HAL_PAL_LLD_H
+#define HAL_PAL_LLD_H
 
 #if HAL_USE_PAL || defined(__DOXYGEN__)
 
@@ -201,6 +201,6 @@ extern "C" {
 
 #endif /* HAL_USE_PAL */
 
-#endif /* PAL_LLD_H */
+#endif /* HAL_PAL_LLD_H */
 
 /** @} */

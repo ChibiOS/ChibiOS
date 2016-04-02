@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    st_lld.h
+ * @file    hal_st_lld.h
  * @brief   PLATFORM ST subsystem low level driver header.
  * @details This header is designed to be include-able without having to
  *          include other files from the HAL.
@@ -24,8 +24,8 @@
  * @{
  */
 
-#ifndef ST_LLD_H
-#define ST_LLD_H
+#ifndef HAL_ST_LLD_H
+#define HAL_ST_LLD_H
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -136,6 +136,6 @@ static inline bool st_lld_is_alarm_active(void) {
   return false;
 }
 
-#endif /* ST_LLD_H */
+#endif /* HAL_ST_LLD_H */
 
 /** @} */
