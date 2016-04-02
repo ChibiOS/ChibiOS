@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _STM32_REGISTRY_H_
-#define _STM32_REGISTRY_H_
+#ifndef STM32_REGISTRY_H
+#define STM32_REGISTRY_H
 
 #if defined(STM32L100xB) || defined(STM32L151xB) || defined(STM32L152xB)
 #define STM32L1XX_PROD_CAT      1
@@ -342,6 +342,6 @@
 
 /** @} */
 
-#endif /* _STM32_REGISTRY_H_ */
+#endif /* STM32_REGISTRY_H */
 
 /** @} */

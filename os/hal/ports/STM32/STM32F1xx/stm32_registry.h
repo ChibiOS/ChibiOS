@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _STM32_REGISTRY_H_
-#define _STM32_REGISTRY_H_
+#ifndef STM32_REGISTRY_H
+#define STM32_REGISTRY_H
 
 #if defined(STM32F100xB)
 #define STM32F10X_MD_VL
@@ -1331,6 +1331,6 @@
 /** @} */
 #endif /* defined(STM32F10X_CL) */
 
-#endif /* _STM32_REGISTRY_H_ */
+#endif /* STM32_REGISTRY_H */
 
 /** @} */

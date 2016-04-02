@@ -23,8 +23,8 @@
  * @{
  */
 
-#ifndef _STM32_TIM_H_
-#define _STM32_TIM_H_
+#ifndef STM32_TIM_H
+#define STM32_TIM_H
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -445,6 +445,6 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#endif /* _STM32_TIM_H_ */
+#endif /* STM32_TIM_H */
 
 /** @} */

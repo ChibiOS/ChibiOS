@@ -24,8 +24,8 @@
  * @{
  */
 
-#ifndef _STM32_DMA_H_
-#define _STM32_DMA_H_
+#ifndef STM32_DMA_H
+#define STM32_DMA_H
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -475,6 +475,6 @@ extern "C" {
 }
 #endif
 
-#endif /* _STM32_DMA_H_ */
+#endif /* STM32_DMA_H */
 
 /** @} */

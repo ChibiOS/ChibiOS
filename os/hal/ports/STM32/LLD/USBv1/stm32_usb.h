@@ -24,8 +24,8 @@
  * @{
  */
 
-#ifndef _STM32_USB_H_
-#define _STM32_USB_H_
+#ifndef STM32_USB_H
+#define STM32_USB_H
 
 /**
  * @brief   Number of the available endpoints.
@@ -261,6 +261,6 @@ typedef struct {
                        (sizeof(stm32_usb_pma_t) / 2) +                      \
                        STM32_USBRAM_BASE))
 
-#endif /* _STM32_USB_H_ */
+#endif /* STM32_USB_H */
 
 /** @} */
