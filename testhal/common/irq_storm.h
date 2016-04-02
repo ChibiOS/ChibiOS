@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _IRQ_STORM_H_
-#define _IRQ_STORM_H_
+#ifndef IRQ_STORM_H
+#define IRQ_STORM_H
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -161,6 +161,6 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* _IRQ_STORM_H_ */
+#endif /* IRQ_STORM_H */
 
 /** @} */

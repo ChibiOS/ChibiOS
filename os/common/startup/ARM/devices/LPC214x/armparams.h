@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    armparams.h
+ * @file    LPC214x/armparams.h
  * @brief   ARM parameters for the LPC214x.
  *
  * @defgroup ARM_LPC214x LPC214x Specific Parameters
@@ -25,8 +25,8 @@
  * @{
  */
 
-#ifndef _ARMPARAMS_H_
-#define _ARMPARAMS_H_
+#ifndef ARMPARAMS_H
+#define ARMPARAMS_H
 
 /**
  * @brief   ARM core model.
@@ -57,6 +57,6 @@
 #define ARM_IRQ_VECTOR_REG      0xFFFFF030
 #endif
 
-#endif /* _ARMPARAMS_H_ */
+#endif /* ARMPARAMS_H */
 
 /** @} */

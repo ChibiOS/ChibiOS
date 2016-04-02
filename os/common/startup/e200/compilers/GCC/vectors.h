@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _VECTORS_H_
-#define _VECTORS_H_
+#ifndef VECTORS_H
+#define VECTORS_H
 
 #include "ppcparams.h"
 
@@ -73,6 +73,6 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* _VECTORS_H_ */
+#endif /* VECTORS_H */
 
 /** @} */

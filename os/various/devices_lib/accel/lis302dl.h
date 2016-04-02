@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _LIS302DL_H_
-#define _LIS302DL_H_
+#ifndef LIS302DL_H
+#define LIS302DL_H
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -88,6 +88,6 @@ extern "C" {
 }
 #endif
 
-#endif /* _LIS302DL_H_ */
+#endif /* LIS302DL_H */
 
 /** @} */

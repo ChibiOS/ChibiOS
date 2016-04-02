@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _CH_TEST_H_
-#define _CH_TEST_H_
+#ifndef CH_TEST_H
+#define CH_TEST_H
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -188,6 +188,6 @@ extern "C" {
 
 #include "test_root.h"
 
-#endif /* _CH_TEST_H_ */
+#endif /* CH_TEST_H */
 
 /** @} */

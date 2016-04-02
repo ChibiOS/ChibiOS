@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _LCD3310_H_
-#define _LCD3310_H_
+#ifndef LCD3310_H
+#define LCD3310_H
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -89,6 +89,6 @@ extern "C" {
 }
 #endif
 
-#endif /* _LCD3310_H_ */
+#endif /* LCD3310_H */
 
 /** @} */

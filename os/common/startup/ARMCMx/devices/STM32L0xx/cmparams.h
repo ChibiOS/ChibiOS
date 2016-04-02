@@ -25,8 +25,8 @@
  * @{
  */
 
-#ifndef _CMPARAMS_H_
-#define _CMPARAMS_H_
+#ifndef CMPARAMS_H
+#define CMPARAMS_H
 
 /**
  * @brief   Cortex core model.
@@ -78,6 +78,6 @@
 
 #endif /* !defined(_FROM_ASM_) */
 
-#endif /* _CMPARAMS_H_ */
+#endif /* CMPARAMS_H */
 
 /** @} */

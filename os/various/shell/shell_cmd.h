@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _SHELLCMD_H_
-#define _SHELLCMD_H_
+#ifndef SHELLCMD_H
+#define SHELLCMD_H
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -109,6 +109,6 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* _SHELLCMD_H_ */
+#endif /* SHELLCMD_H */
 
 /** @} */

@@ -25,8 +25,8 @@
  * @{
  */
 
-#ifndef _PPCPARAMS_H_
-#define _PPCPARAMS_H_
+#ifndef PPCPARAMS_H
+#define PPCPARAMS_H
 
 /**
  * @brief   Family identification macro.
@@ -78,6 +78,6 @@
  */
 #define PPC_NUM_VECTORS             279
 
-#endif /* _PPCPARAMS_H_ */
+#endif /* PPCPARAMS_H */
 
 /** @} */

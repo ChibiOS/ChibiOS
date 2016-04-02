@@ -21,8 +21,8 @@
  * @{
  */
 
-#ifndef _LWIPTHREAD_H_
-#define _LWIPTHREAD_H_
+#ifndef LWIPTHREAD_H
+#define LWIPTHREAD_H
 
 #include <lwip/opt.h>
 
@@ -156,6 +156,6 @@ extern "C" {
 }
 #endif
 
-#endif /* _LWIPTHREAD_H_ */
+#endif /* LWIPTHREAD_H */
 
 /** @} */

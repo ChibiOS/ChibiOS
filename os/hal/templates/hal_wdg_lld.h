@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    hal_templates/wdg_lld.h
+ * @file    wdg_lld.h
  * @brief   WDG Driver subsystem low level driver header template.
  *
  * @addtogroup WDG
