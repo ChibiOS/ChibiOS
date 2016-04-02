@@ -49,7 +49,9 @@
  *          provide the @p __heap_base__ and @p __heap_end__ symbols.
  * @note    Requires @p CH_CFG_USE_MEMCORE.
  */
+#if !defined(CH_CFG_MEMCORE_SIZE) || defined(__DOXYGEN__)
 #define CH_CFG_MEMCORE_SIZE                 0
+#endif
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */

@@ -86,12 +86,11 @@ void _core_init(void) {
   endmem = (uint8_t *)MEM_ALIGN_PREV(__heap_end__, PORT_NATURAL_ALIGN);
   /*lint restore*/
 #else
-  static stkalign_t buffer[MEM_ALIGN_NEXT(CH_CFG_MEMCORE_SIZE) /
-                           PORT_NATURAL_ALIGN];
+  static uint8_t default_heap[MEM_ALIGN_NEXT(CH_CFG_MEMCORE_SIZE,
+                                             PORT_NATURAL_ALIGN)];
 
-  nextmem = (uint8_t *)&buffer[0];
-  endmem = (uint8_t *)&buffer[MEM_ALIGN_NEXT(CH_CFG_MEMCORE_SIZE) /
-                              PORT_NATURAL_ALIGN];
+  nextmem = (uint8_t *)MEM_ALIGN_NEXT(default_heap, PORT_NATURAL_ALIGN);
+  endmem = (uint8_t *)MEM_ALIGN_PREV(default_heap, PORT_NATURAL_ALIGN);
 #endif
 }
 

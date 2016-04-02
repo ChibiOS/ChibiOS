@@ -64,6 +64,8 @@ include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 include $(CHIBIOS)/os/common/ports/SIMIA32/compilers/GCC/port.mk
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/test/rt/test.mk
+include $(CHIBIOS)/os/hal/lib/streams/streams.mk
+include $(CHIBIOS)/os/various/shell/shell.mk
 
 # List C source files here
 SRC =  $(PORTSRC) \
@@ -73,9 +75,8 @@ SRC =  $(PORTSRC) \
        $(OSALSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
-       $(CHIBIOS)/os/various/shell.c \
-       $(CHIBIOS)/os/hal/lib/streams/memstreams.c \
-       $(CHIBIOS)/os/hal/lib/streams/chprintf.c \
+       $(STREAMSSRC) \
+       $(SHELLSRC) \
        main.c
 
 # List ASM source files here
@@ -84,7 +85,7 @@ ASRC =
 # List all user directories here
 UINCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
           $(HALINC) $(OSALINC) $(PLATFORMINC) $(BOARDINC) \
-          $(CHIBIOS)/os/hal/lib/streams $(CHIBIOS)/os/various
+          $(STREAMSINC) $(SHELLINC) $(CHIBIOS)/os/various
 
 # List the user directory to look for the libraries here
 ULIBDIR =

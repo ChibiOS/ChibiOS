@@ -33,6 +33,38 @@
 /*===========================================================================*/
 
 /**
+ * @name    Port Capabilities and Constants
+ * @{
+ */
+/**
+ * @brief   This port supports a realtime counter.
+ */
+#define PORT_SUPPORTS_RT                TRUE
+
+/**
+ * @brief   Natural alignment constant.
+ * @note    It is the minimum alignment for pointer-size variables.
+ */
+#define PORT_NATURAL_ALIGN              sizeof (void *)
+
+/**
+ * @brief   Stack alignment constant.
+ * @note    It is the alignement required for the stack pointer.
+ */
+#define PORT_STACK_ALIGN                sizeof (stkalign_t)
+
+/**
+ * @brief   Working Areas alignment constant.
+ * @note    It is the alignment to be enforced for thread working areas.
+ */
+#define PORT_WORKING_AREA_ALIGN         sizeof (stkalign_t)
+/** @} */
+
+/**
+ * @name    Architecture and Compiler
+ * @{
+ */
+/**
  * Macro defining the a simulated architecture into x86.
  */
 #define PORT_ARCHITECTURE_SIMIA32
@@ -56,11 +88,7 @@
  * @brief   Port-specific information string.
  */
 #define PORT_INFO                       "No preemption"
-
-/**
- * @brief   This port supports a realtime counter.
- */
-#define PORT_SUPPORTS_RT                TRUE
+/** @} */
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -72,7 +100,7 @@
  *          the idle thread should take no more space than those reserved
  *          by @p PORT_INT_REQUIRED_STACK.
  */
-#ifndef PORT_IDLE_THREAD_STACK_SIZE
+#if !defined(PORT_IDLE_THREAD_STACK_SIZE) || defined(__DOXYGEN__)
 #define PORT_IDLE_THREAD_STACK_SIZE     256
 #endif
 
@@ -81,7 +109,7 @@
  * @details This constant is used in the calculation of the correct working
  *          area size.
  */
-#ifndef PORT_INT_REQUIRED_STACK
+#if !defined(PORT_INT_REQUIRED_STACK) || defined(__DOXYGEN__)
 #define PORT_INT_REQUIRED_STACK         16384
 #endif
 
@@ -91,7 +119,7 @@
  *          @p chcore_timer.h, if this option is enabled then the file
  *          @p chcore_timer_alt.h is included instead.
  */
-#if !defined(PORT_USE_ALT_TIMER)
+#if !defined(PORT_USE_ALT_TIMER) || defined(__DOXYGEN__)
 #define PORT_USE_ALT_TIMER              FALSE
 #endif
 
@@ -106,6 +134,10 @@
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
+
+/* The following code is not processed when the file is included from an
+   asm module.*/
+#if !defined(_FROM_ASM_)
 
 /**
  * @brief   16 bytes stack and memory alignment enforcement.
@@ -142,13 +174,14 @@ struct port_intctx {
 
 /**
  * @brief   Platform dependent part of the @p thread_t structure.
- * @details In this port the structure just holds a pointer to the
- *          @p port_intctx structure representing the stack pointer
- *          at context switch time.
+ * @details This structure usually contains just the saved stack pointer
+ *          defined as a pointer to a @p port_intctx structure.
  */
-struct context {
-  struct port_intctx *esp;
+struct port_context {
+  struct port_intctx *sp;
 };
+
+#endif /* !defined(_FROM_ASM_) */
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -171,9 +204,9 @@ struct context {
  * @details This code usually setup the context switching frame represented
  *          by an @p port_intctx structure.
  */
-#define PORT_SETUP_CONTEXT(tp, workspace, wsize, pf, arg) {                 \
+#define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) {                      \
   /*lint -save -e611 -e9033 -e9074 -e9087 [10.8, 11.1, 11.3] Valid casts.*/ \
-  uint8_t *esp = (uint8_t *)workspace + wsize;                              \
+  uint8_t *esp = (uint8_t *)wtop;                                           \
   APUSH(esp, 0);                                                            \
   uint8_t *savebp = esp;                                                    \
   AALIGN(esp, 15, 8);                                                       \
@@ -186,7 +219,7 @@ struct context {
   ((struct port_intctx *)esp)->edi = NULL;                                  \
   ((struct port_intctx *)esp)->esi = NULL;                                  \
   ((struct port_intctx *)esp)->ebp = (void *)savebp;                        \
-  (tp)->p_ctx.esp = (struct port_intctx *)esp;                              \
+  (tp)->ctx.sp = (struct port_intctx *)esp;                                 \
   /*lint -restore*/                                                         \
 }
 
@@ -194,10 +227,21 @@ struct context {
  * @brief   Computes the thread working area global size.
  * @note    There is no need to perform alignments in this macro.
   */
-#define PORT_WA_SIZE(n) ((sizeof(void *) * 4U) +                            \
-                         sizeof(struct port_intctx) +                       \
+#define PORT_WA_SIZE(n) ((sizeof (void *) * 4U) +                           \
+                         sizeof (struct port_intctx) +                      \
                          ((size_t)(n)) +                                    \
                          ((size_t)(PORT_INT_REQUIRED_STACK)))
+
+/**
+ * @brief   Static working area allocation.
+ * @details This macro is used to allocate a static thread working area
+ *          aligned as both position and size.
+ *
+ * @param[in] s         the name to be assigned to the stack array
+ * @param[in] n         the stack size to be assigned to the thread
+ */
+#define PORT_WORKING_AREA(s, n)                                             \
+  stkalign_t s[THD_WORKING_AREA_SIZE(n) / sizeof (stkalign_t)]
 
 /**
  * @brief   IRQ prologue code.
@@ -217,7 +261,6 @@ struct context {
   port_isr_context_flag = false;                                            \
 }
 
-
 /**
  * @brief   IRQ handler function declaration.
  * @note    @p id can be a function name or a vector number depending on the
@@ -236,6 +279,10 @@ struct context {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
+/* The following code is not processed when the file is included from an
+   asm module.*/
+#if !defined(_FROM_ASM_)
+
 extern bool port_isr_context_flag;
 extern syssts_t port_irq_sts;
 
@@ -253,9 +300,15 @@ extern "C" {
 }
 #endif
 
+#endif /* !defined(_FROM_ASM_) */
+
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
+
+/* The following code is not processed when the file is included from an
+   asm module.*/
+#if !defined(_FROM_ASM_)
 
 /**
  * @brief   Port-related initialization code.
@@ -376,6 +429,24 @@ static inline void port_wait_for_interrupt(void) {
 
   _sim_check_for_interrupts();
 }
+
+#endif /* !defined(_FROM_ASM_) */
+
+/*===========================================================================*/
+/* Module late inclusions.                                                   */
+/*===========================================================================*/
+
+#if !defined(_FROM_ASM_)
+
+#if CH_CFG_ST_TIMEDELTA > 0
+#if !PORT_USE_ALT_TIMER
+#include "chcore_timer.h"
+#else /* PORT_USE_ALT_TIMER */
+#include "chcore_timer_alt.h"
+#endif /* PORT_USE_ALT_TIMER */
+#endif /* CH_CFG_ST_TIMEDELTA > 0 */
+
+#endif /* !defined(_FROM_ASM_) */
 
 #endif /* CHCORE_H */
 
