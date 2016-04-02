@@ -24,8 +24,8 @@
  * @{
  */
 
-#ifndef _ST_LLD_H_
-#define _ST_LLD_H_
+#ifndef ST_LLD_H
+#define ST_LLD_H
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -136,6 +136,6 @@ static inline bool st_lld_is_alarm_active(void) {
   return false;
 }
 
-#endif /* _ST_LLD_H_ */
+#endif /* ST_LLD_H */
 
 /** @} */

@@ -20,8 +20,8 @@
  * @{
  */
 
-#ifndef _CONSOLE_H_
-#define _CONSOLE_H_
+#ifndef CONSOLE_H
+#define CONSOLE_H
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -57,6 +57,6 @@ extern "C" {
 }
 #endif
 
-#endif /* _CONSOLE_H_ */
+#endif /* CONSOLE_H */
 
 /** @} */

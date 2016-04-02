@@ -34,8 +34,8 @@
  * @{
  */
 
-#ifndef HAL_HAL_LLD_H
-#define HAL_HAL_LLD_H
+#ifndef HAL_LLD_H
+#define HAL_LLD_H
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -997,6 +997,6 @@ extern "C" {
 }
 #endif
 
-#endif /* HAL_HAL_LLD_H */
+#endif /* HAL_LLD_H */
 
 /** @} */
