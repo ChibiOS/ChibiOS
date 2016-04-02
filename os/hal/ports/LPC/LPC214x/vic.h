@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _VIC_H_
-#define _VIC_H_
+#ifndef VIC_H
+#define VIC_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,6 +34,6 @@ extern "C" {
 }
 #endif
 
-#endif /* _VIC_H_ */
+#endif /* VIC_H */
 
 /** @} */

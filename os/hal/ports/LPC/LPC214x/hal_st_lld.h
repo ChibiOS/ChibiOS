@@ -24,8 +24,8 @@
  * @{
  */
 
-#ifndef _ST_LLD_H_
-#define _ST_LLD_H_
+#ifndef HAL_ST_LLD_H
+#define HAL_ST_LLD_H
 
 #include "mcuconf.h"
 
@@ -144,6 +144,6 @@ static inline bool st_lld_is_alarm_active(void) {
   return false;
 }
 
-#endif /* _ST_LLD_H_ */
+#endif /* HAL_ST_LLD_H */
 
 /** @} */
