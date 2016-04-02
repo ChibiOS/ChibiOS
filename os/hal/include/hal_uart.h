@@ -103,7 +103,7 @@ typedef enum {
   UART_RX_COMPLETE = 2              /**< Buffer complete.                   */
 } uartrxstate_t;
 
-#include "uart_lld.h"
+#include "hal_uart_lld.h"
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

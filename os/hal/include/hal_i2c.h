@@ -82,7 +82,7 @@ typedef enum {
   I2C_LOCKED = 5                            /**> Bus or driver locked.      */
 } i2cstate_t;
 
-#include "i2c_lld.h"
+#include "hal_i2c_lld.h"
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

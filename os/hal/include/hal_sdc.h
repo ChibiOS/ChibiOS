@@ -119,7 +119,7 @@ typedef enum {
   SDC_CLK_50MHz
 } sdcbusclk_t;
 
-#include "sdc_lld.h"
+#include "hal_sdc_lld.h"
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

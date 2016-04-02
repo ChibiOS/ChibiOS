@@ -366,7 +366,7 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
                                                     uint8_t dindex,
                                                     uint16_t lang);
 
-#include "usb_lld.h"
+#include "hal_usb_lld.h"
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

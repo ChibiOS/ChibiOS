@@ -71,7 +71,7 @@ typedef enum {
  */
 typedef struct EXTDriver EXTDriver;
 
-#include "ext_lld.h"
+#include "hal_ext_lld.h"
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

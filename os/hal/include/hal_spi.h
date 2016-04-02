@@ -75,7 +75,7 @@ typedef enum {
   SPI_COMPLETE = 4                  /**< Asynchronous operation complete.   */
 } spistate_t;
 
-#include "spi_lld.h"
+#include "hal_spi_lld.h"
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

@@ -26,8 +26,6 @@
 
 #if (HAL_USE_MAC == TRUE) || defined(__DOXYGEN__)
 
-#include "mii.h"
-
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -77,7 +75,7 @@ typedef enum {
  */
 typedef struct MACDriver MACDriver;
 
-#include "mac_lld.h"
+#include "hal_mac_lld.h"
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

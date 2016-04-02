@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    mii.h
+ * @file    hal_mii.h
  * @brief   MII macros and structures.
  *
  * @addtogroup MII

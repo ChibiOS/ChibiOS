@@ -76,7 +76,7 @@ typedef enum {
   DAC_ERROR = 5 			        /**< Error.                             */
 } dacstate_t;
 
-#include "dac_lld.h"
+#include "hal_dac_lld.h"
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

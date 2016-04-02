@@ -76,7 +76,7 @@ typedef enum {
   ADC_ERROR = 5                             /**< Conversion complete.       */
 } adcstate_t;
 
-#include "adc_lld.h"
+#include "hal_adc_lld.h"
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

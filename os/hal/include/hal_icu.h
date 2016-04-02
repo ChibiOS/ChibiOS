@@ -66,7 +66,7 @@ typedef struct ICUDriver ICUDriver;
  */
 typedef void (*icucallback_t)(ICUDriver *icup);
 
-#include "icu_lld.h"
+#include "hal_icu_lld.h"
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

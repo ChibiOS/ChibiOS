@@ -89,7 +89,7 @@ typedef struct PWMDriver PWMDriver;
  */
 typedef void (*pwmcallback_t)(PWMDriver *pwmp);
 
-#include "pwm_lld.h"
+#include "hal_pwm_lld.h"
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

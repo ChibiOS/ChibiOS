@@ -62,7 +62,7 @@ typedef enum {
   I2S_COMPLETE = 4                  /**< Transmission complete.             */
 } i2sstate_t;
 
-#include "i2s_lld.h"
+#include "hal_i2s_lld.h"
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

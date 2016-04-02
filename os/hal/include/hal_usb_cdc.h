@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    usb_cdc.h
+ * @file    hal_usb_cdc.h
  * @brief   USB CDC macros and structures.
  *
  * @addtogroup USB_CDC

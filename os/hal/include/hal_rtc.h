@@ -101,7 +101,7 @@ typedef struct {
   /*lint -restore*/
 } RTCDateTime;
 
-#include "rtc_lld.h"
+#include "hal_rtc_lld.h"
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

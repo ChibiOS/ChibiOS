@@ -110,7 +110,7 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
-#include "pal_lld.h"
+#include "hal_pal_lld.h"
 
 /**
  * @brief   I/O bus descriptor.

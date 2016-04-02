@@ -27,7 +27,7 @@
 
 #if (HAL_USE_SERIAL_USB == TRUE) || defined(__DOXYGEN__)
 
-#include "usb_cdc.h"
+#include "hal_usb_cdc.h"
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
