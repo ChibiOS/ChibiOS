@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    LPC214x/pal_lld.c
+ * @file    LPC214x/hal_pal_lld.c
  * @brief   LPC214x FIO low level driver code.
  *
  * @addtogroup PAL

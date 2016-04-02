@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    LPC214x/st_lld.c
+ * @file    LPC214x/hal_st_lld.c
  * @brief   ST Driver subsystem low level driver code.
  *
  * @addtogroup ST
