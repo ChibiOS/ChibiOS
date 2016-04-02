@@ -16,7 +16,7 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "test.h"
+#include "ch_test.h"
 
 /*
  * This is a periodic thread that does absolutely nothing except flashing LEDs.
@@ -76,7 +76,7 @@ int main(void) {
    */
   while (true) {
     if (palReadPad(GPIOA, GPIOA_WKUP_BUTTON))
-      TestThread(&SD2);
+      test_execute((BaseSequentialStream *)&SD2);
     chThdSleepMilliseconds(500);
   }
 }

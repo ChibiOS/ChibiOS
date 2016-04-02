@@ -31,7 +31,7 @@
 #include "chprintf.h"
 
 #if (SHELL_CMD_TEST_ENABLED == TRUE) || defined(__DOXYGEN__)
-#include "test.h"
+#include "ch_test.h"
 #endif
 
 /*===========================================================================*/
@@ -181,7 +181,7 @@ static void cmd_test(BaseSequentialStream *chp, int argc, char *argv[]) {
   }
   tp = chThdCreateFromHeap(NULL, SHELL_CMD_TEST_WA_SIZE,
                            "test", chThdGetPriorityX(),
-                           TestThread, chp);
+                           (tfunc_t)test_execute, chp);
   if (tp == NULL) {
     chprintf(chp, "out of memory\r\n");
     return;

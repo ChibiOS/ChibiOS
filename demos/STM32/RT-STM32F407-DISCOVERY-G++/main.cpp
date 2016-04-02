@@ -16,7 +16,7 @@
 
 #include "ch.hpp"
 #include "hal.h"
-#include "test.h"
+#include "ch_test.h"
 
 using namespace chibios_rt;
 
@@ -129,7 +129,7 @@ protected:
 
     setName("tester");
 
-    TestThread(&SD2);
+    test_execute((BaseSequentialStream *)&SD2);
     exit(test_global_fail);
   }
 

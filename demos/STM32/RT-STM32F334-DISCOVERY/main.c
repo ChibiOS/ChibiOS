@@ -16,7 +16,7 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "test.h"
+#include "ch_test.h"
 
 /*
  * LEDs blinker thread, times are in milliseconds.
@@ -84,7 +84,7 @@ int main(void) {
    */
   while (true) {
     if (palReadPad(GPIOA, GPIOA_BUTTON))
-      TestThread(&SD2);
+      test_execute((BaseSequentialStream *)&SD2);
     chThdSleepMilliseconds(500);
   }
 }

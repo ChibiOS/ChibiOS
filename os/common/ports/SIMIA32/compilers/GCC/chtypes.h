@@ -105,6 +105,11 @@ typedef uint32_t            ucnt_t;         /**< Generic unsigned counter.  */
  */
 #define PACKED_VAR __attribute__((packed))
 
+/**
+ * @brief   Memory alignment enforcement for variables.
+ */
+#define ALIGNED_VAR(n) __attribute__((aligned(n)))
+
 #endif /* CHTYPES_H */
 
 /** @} */

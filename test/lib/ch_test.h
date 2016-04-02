@@ -156,6 +156,7 @@ typedef struct {
 
 #if !defined(__DOXYGEN__)
 extern unsigned test_step;
+extern bool test_global_fail;
 #endif
 
 #ifdef __cplusplus

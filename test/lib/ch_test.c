@@ -39,6 +39,11 @@
  */
 unsigned test_step;
 
+/**
+ * @brief   Test result flag.
+ */
+bool test_global_fail;
+
 /*===========================================================================*/
 /* Module local types.                                                       */
 /*===========================================================================*/
@@ -48,7 +53,6 @@ unsigned test_step;
 /*===========================================================================*/
 
 static bool test_local_fail;
-static bool test_global_fail;
 static const char *test_failure_message;
 static char test_tokens_buffer[TEST_MAX_TOKENS];
 static char *test_tokp;
@@ -74,7 +78,7 @@ static void execute_test(const testcase_t *tcp) {
 
   /* Initialization */
   clear_tokens();
-  test_local_fail = FALSE;
+  test_local_fail = false;
 
   if (tcp->setup != NULL)
     tcp->setup();
@@ -97,17 +101,17 @@ static void print_line(void) {
 
 bool _test_fail(const char *msg) {
 
-  test_local_fail = TRUE;
-  test_global_fail = TRUE;
+  test_local_fail      = true;
+  test_global_fail     = true;
   test_failure_message = msg;
-  return TRUE;
+  return true;
 }
 
 bool _test_assert(bool condition, const char *msg) {
 
   if (!condition)
     return _test_fail(msg);
-  return FALSE;
+  return false;
 }
 
 bool _test_assert_sequence(char *expected, const char *msg) {
@@ -123,7 +127,7 @@ bool _test_assert_sequence(char *expected, const char *msg) {
 
   clear_tokens();
 
-  return FALSE;
+  return false;
 }
 
 bool _test_assert_time_window(systime_t start,
@@ -215,8 +219,8 @@ void test_emit_token_i(char token) {
  * @param[in] stream    pointer to a @p BaseSequentialStream object for test
  *                      output
  * @return              A failure boolean value casted to @p msg_t.
- * @retval FALSE        if no errors occurred.
- * @retval TRUE         if one or more tests failed.
+ * @retval false        if no errors occurred.
+ * @retval true         if one or more tests failed.
  *
  * @api
  */
@@ -246,7 +250,7 @@ msg_t test_execute(BaseSequentialStream *stream) {
 #endif
   test_println("");
 
-  test_global_fail = FALSE;
+  test_global_fail = false;
   i = 0;
   while (test_suite[i]) {
     j = 0;

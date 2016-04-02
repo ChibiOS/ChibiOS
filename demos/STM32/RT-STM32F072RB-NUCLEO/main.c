@@ -17,7 +17,7 @@
 #include "ch.h"
 #include "hal.h"
 #include "chprintf.h"
-#include "test.h"
+#include "ch_test.h"
 
 /*
  * Green LED blinker thread, times are in milliseconds.
@@ -67,7 +67,7 @@ int main(void) {
    */
   while (true) {
     if (!palReadPad(GPIOC, GPIOC_BUTTON))
-      TestThread(&SD2);
+      test_execute((BaseSequentialStream *)&SD2);
     chThdSleepMilliseconds(500);
   }
 }
