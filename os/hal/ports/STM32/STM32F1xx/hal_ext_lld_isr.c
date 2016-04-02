@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    STM32L4xx/ext_lld_isr.c
- * @brief   STM32L4xx EXT subsystem low level driver ISR code.
+ * @file    STM32F1xx/ext_lld_isr.c
+ * @brief   STM32F1xx EXT subsystem low level driver ISR code.
  *
  * @addtogroup EXT
  * @{
@@ -26,7 +26,7 @@
 
 #if HAL_USE_EXT || defined(__DOXYGEN__)
 
-#include "ext_lld_isr.h"
+#include "hal_ext_lld_isr.h"
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -58,9 +58,9 @@ OSAL_IRQ_HANDLER(Vector58) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR1;
-  pr &= EXTI->IMR1 & (1U << 0);
-  EXTI->PR1 = pr;
+  pr = EXTI->PR;
+  pr &= EXTI->IMR & (1U << 0);
+  EXTI->PR = pr;
   if (pr & (1U << 0))
     EXTD1.config->channels[0].cb(&EXTD1, 0);
 
@@ -77,9 +77,9 @@ OSAL_IRQ_HANDLER(Vector5C) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR1;
-  pr &= EXTI->IMR1 & (1U << 1);
-  EXTI->PR1 = pr;
+  pr = EXTI->PR;
+  pr &= EXTI->IMR & (1U << 1);
+  EXTI->PR = pr;
   if (pr & (1U << 1))
     EXTD1.config->channels[1].cb(&EXTD1, 1);
 
@@ -96,9 +96,9 @@ OSAL_IRQ_HANDLER(Vector60) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR1;
-  pr &= EXTI->IMR1 & (1U << 2);
-  EXTI->PR1 = pr;
+  pr = EXTI->PR;
+  pr &= EXTI->IMR & (1U << 2);
+  EXTI->PR = pr;
   if (pr & (1U << 2))
     EXTD1.config->channels[2].cb(&EXTD1, 2);
 
@@ -115,9 +115,9 @@ OSAL_IRQ_HANDLER(Vector64) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR1;
-  pr &= EXTI->IMR1 & (1U << 3);
-  EXTI->PR1 = pr;
+  pr = EXTI->PR;
+  pr &= EXTI->IMR & (1U << 3);
+  EXTI->PR = pr;
   if (pr & (1U << 3))
     EXTD1.config->channels[3].cb(&EXTD1, 3);
 
@@ -134,9 +134,9 @@ OSAL_IRQ_HANDLER(Vector68) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR1;
-  pr &= EXTI->IMR1 & (1U << 4);
-  EXTI->PR1 = pr;
+  pr = EXTI->PR;
+  pr &= EXTI->IMR & (1U << 4);
+  EXTI->PR = pr;
   if (pr & (1U << 4))
     EXTD1.config->channels[4].cb(&EXTD1, 4);
 
@@ -153,10 +153,9 @@ OSAL_IRQ_HANDLER(Vector9C) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR1;
-  pr &= EXTI->IMR1 & ((1U << 5) | (1U << 6) | (1U << 7) | (1U << 8) |
-                      (1U << 9));
-  EXTI->PR1 = pr;
+  pr = EXTI->PR;
+  pr &= ((1U << 5) | (1U << 6) | (1U << 7) | (1U << 8) | (1U << 9));
+  EXTI->PR = pr;
   if (pr & (1U << 5))
     EXTD1.config->channels[5].cb(&EXTD1, 5);
   if (pr & (1U << 6))
@@ -181,10 +180,10 @@ OSAL_IRQ_HANDLER(VectorE0) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR1;
-  pr &= EXTI->IMR1 & ((1U << 10) | (1U << 11) | (1U << 12) | (1U << 13) |
-                      (1U << 14) | (1U << 15));
-  EXTI->PR1 = pr;
+  pr = EXTI->PR;
+  pr &= ((1U << 10) | (1U << 11) | (1U << 12) | (1U << 13) | (1U << 14) |
+         (1U << 15));
+  EXTI->PR = pr;
   if (pr & (1U << 10))
     EXTD1.config->channels[10].cb(&EXTD1, 10);
   if (pr & (1U << 11))
@@ -202,38 +201,26 @@ OSAL_IRQ_HANDLER(VectorE0) {
 }
 
 /**
- * @brief   EXTI[16/35/36/37/38] interrupt handler (PVD/PVM1/PVM2/PVM3/PVM4)
+ * @brief   EXTI[16] interrupt handler (PVD).
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(Vector44) {
+OSAL_IRQ_HANDLER(Veector44) {
   uint32_t pr;
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR1;
-  pr &= EXTI->IMR1 & (1U << 16);
-  EXTI->PR1 = pr;
+  pr = EXTI->PR;
+  pr &= EXTI->IMR & (1U << 16);
+  EXTI->PR = pr;
   if (pr & (1U << 16))
     EXTD1.config->channels[16].cb(&EXTD1, 16);
-
-  pr = EXTI->PR2 & EXTI->IMR2 & ( (1U << (35-32)) | (1U << (36-32)) |
-                                  (1U << (37-32)) | (1U << (38-32)) );
-  EXTI->PR2 = pr;
-  if (pr & (1U << (35-32)))
-    EXTD1.config->channels[35].cb(&EXTD1, 35);
-  if (pr & (1U << (36-32)))
-    EXTD1.config->channels[36].cb(&EXTD1, 36);
-  if (pr & (1U << (37-32)))
-    EXTD1.config->channels[37].cb(&EXTD1, 37);
-  if (pr & (1U << (38-32)))
-    EXTD1.config->channels[38].cb(&EXTD1, 38);
 
   OSAL_IRQ_EPILOGUE();
 }
 
 /**
- * @brief   EXTI[18] interrupt handler (RTC_ALARM).
+ * @brief   EXTI[17] interrupt handler (RTC).
  *
  * @isr
  */
@@ -242,9 +229,29 @@ OSAL_IRQ_HANDLER(VectorE4) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR1;
-  pr &= EXTI->IMR1 & (1U << 18);
-  EXTI->PR1 = pr;
+  pr = EXTI->PR;
+  pr &= EXTI->IMR & (1U << 17);
+  EXTI->PR = pr;
+  if (pr & (1U << 17))
+    EXTD1.config->channels[17].cb(&EXTD1, 17);
+
+  OSAL_IRQ_EPILOGUE();
+}
+
+#if defined(STM32F10X_CL)
+/**
+ * @brief   EXTI[18] interrupt handler (OTG_FS_WKUP).
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(VectorE8) {
+  uint32_t pr;
+
+  OSAL_IRQ_PROLOGUE();
+
+  pr = EXTI->PR;
+  pr &= EXTI->IMR & (1U << 18);
+  EXTI->PR = pr;
   if (pr & (1U << 18))
     EXTD1.config->channels[18].cb(&EXTD1, 18);
 
@@ -252,63 +259,45 @@ OSAL_IRQ_HANDLER(VectorE4) {
 }
 
 /**
- * @brief   EXTI[19] interrupt handler (RTC_TAMP_STAMP).
+ * @brief   EXTI[19] interrupt handler (ETH_WKUP).
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(Vector48) {
+OSAL_IRQ_HANDLER(Vector138) {
   uint32_t pr;
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR1;
-  pr &= EXTI->IMR1 & (1U << 19);
-  EXTI->PR1 = pr;
+  pr = EXTI->PR;
+  pr &= EXTI->IMR & (1U << 19);
+  EXTI->PR = pr;
   if (pr & (1U << 19))
     EXTD1.config->channels[19].cb(&EXTD1, 19);
 
   OSAL_IRQ_EPILOGUE();
 }
+#elif defined(STM32F10X_MD_VL) || defined(STM32F10X_HD_VL)
 
+#else /* Other STM32F1xx devices.*/
 /**
- * @brief   EXTI[20] interrupt handler (RTC_WKUP).
+ * @brief   EXTI[18] interrupt handler (USB_FS_WKUP).
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(Vector4C) {
+OSAL_IRQ_HANDLER(VectorE8) {
   uint32_t pr;
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR1;
-  pr &= EXTI->IMR1 & (1U << 20);
-  EXTI->PR1 = pr;
-  if (pr & (1U << 20))
-    EXTD1.config->channels[20].cb(&EXTD1, 20);
+  pr = EXTI->PR;
+  pr &= EXTI->IMR & (1U << 18);
+  EXTI->PR = pr;
+  if (pr & (1U << 18))
+    EXTD1.config->channels[18].cb(&EXTD1, 18);
 
   OSAL_IRQ_EPILOGUE();
 }
-
-/**
- * @brief   EXTI[21/22] interrupt handler (COMP1,COMP2).
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(Vector140) {
-  uint32_t pr;
-
-  OSAL_IRQ_PROLOGUE();
-
-  pr = EXTI->PR1;
-  pr &= EXTI->IMR1 & ( (1U << 21) | ( 1U << 22 ) );
-  EXTI->PR1 = pr;
-  if (pr & (1U << 21))
-    EXTD1.config->channels[21].cb(&EXTD1, 21);
-  if (pr & (1U << 22))
-    EXTD1.config->channels[22].cb(&EXTD1, 22);
-
-  OSAL_IRQ_EPILOGUE();
-}
+#endif
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -328,11 +317,18 @@ void ext_lld_exti_irq_enable(void) {
   nvicEnableVector(EXTI4_IRQn, STM32_EXT_EXTI4_IRQ_PRIORITY);
   nvicEnableVector(EXTI9_5_IRQn, STM32_EXT_EXTI5_9_IRQ_PRIORITY);
   nvicEnableVector(EXTI15_10_IRQn, STM32_EXT_EXTI10_15_IRQ_PRIORITY);
-  nvicEnableVector(PVD_PVM_IRQn, STM32_EXT_EXTI1635_38_IRQ_PRIORITY);
-  nvicEnableVector(RTC_Alarm_IRQn, STM32_EXT_EXTI18_IRQ_PRIORITY);
-  nvicEnableVector(TAMP_STAMP_IRQn, STM32_EXT_EXTI19_IRQ_PRIORITY);
-  nvicEnableVector(RTC_WKUP_IRQn, STM32_EXT_EXTI20_IRQ_PRIORITY);
-  nvicEnableVector(COMP_IRQn, STM32_EXT_EXTI21_22_IRQ_PRIORITY);
+  nvicEnableVector(PVD_IRQn, STM32_EXT_EXTI16_IRQ_PRIORITY);
+  nvicEnableVector(RTC_Alarm_IRQn, STM32_EXT_EXTI17_IRQ_PRIORITY);
+#if defined(STM32F10X_CL)
+  /* EXTI vectors specific to STM32F1xx Connectivity Line.*/
+  nvicEnableVector(OTG_FS_WKUP_IRQn, STM32_EXT_EXTI18_IRQ_PRIORITY);
+  nvicEnableVector(ETH_WKUP_IRQn, STM32_EXT_EXTI19_IRQ_PRIORITY);
+#elif  defined(STM32F10X_MD_VL) || defined(STM32F10X_HD_VL)
+  /* EXTI vectors specific to STM32F1xx Value Line.*/
+#else
+  /* EXTI vectors specific to STM32F1xx except Connectivity Line.*/
+  nvicEnableVector(USBWakeUp_IRQn, STM32_EXT_EXTI18_IRQ_PRIORITY);
+#endif
 }
 
 /**
@@ -349,11 +345,18 @@ void ext_lld_exti_irq_disable(void) {
   nvicDisableVector(EXTI4_IRQn);
   nvicDisableVector(EXTI9_5_IRQn);
   nvicDisableVector(EXTI15_10_IRQn);
-  nvicDisableVector(PVD_PVM_IRQn);
+  nvicDisableVector(PVD_IRQn);
   nvicDisableVector(RTC_Alarm_IRQn);
-  nvicDisableVector(TAMP_STAMP_IRQn);
-  nvicDisableVector(RTC_WKUP_IRQn);
-  nvicDisableVector(COMP_IRQn);
+#if defined(STM32F10X_CL)
+  /* EXTI vectors specific to STM32F1xx Connectivity Line.*/
+  nvicDisableVector(OTG_FS_WKUP_IRQn);
+  nvicDisableVector(ETH_WKUP_IRQn);
+#elif defined(STM32F10X_MD_VL) || defined(STM32F10X_HD_VL)
+  /* EXTI vectors specific to STM32F1xx Value Line.*/
+#else
+  /* EXTI vectors specific to STM32F1xx except Connectivity Line.*/
+  nvicDisableVector(USBWakeUp_IRQn);
+#endif
 }
 
 #endif /* HAL_USE_EXT */
