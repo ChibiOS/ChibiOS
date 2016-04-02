@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _NVIC_H_
-#define _NVIC_H_
+#ifndef NVIC_H
+#define NVIC_H
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -83,6 +83,6 @@ extern "C" {
 }
 #endif
 
-#endif /* _NVIC_H_ */
+#endif /* NVIC_H */
 
 /** @} */
