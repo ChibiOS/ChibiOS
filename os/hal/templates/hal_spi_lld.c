@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    spi_lld.c
+ * @file    hal_spi_lld.c
  * @brief   PLATFORM SPI subsystem low level driver source.
  *
  * @addtogroup SPI

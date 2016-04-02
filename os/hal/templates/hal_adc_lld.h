@@ -15,15 +15,15 @@
 */
 
 /**
- * @file    adc_lld.h
+ * @file    hal_adc_lld.h
  * @brief   PLATFORM ADC subsystem low level driver header.
  *
  * @addtogroup ADC
  * @{
  */
 
-#ifndef _ADC_LLD_H_
-#define _ADC_LLD_H_
+#ifndef HAL_ADC_LLD_H
+#define HAL_ADC_LLD_H
 
 #if (HAL_USE_ADC == TRUE) || defined(__DOXYGEN__)
 
@@ -206,6 +206,6 @@ extern "C" {
 
 #endif /* HAL_USE_ADC == TRUE */
 
-#endif /* _ADC_LLD_H_ */
+#endif /* HAL_ADC_LLD_H */
 
 /** @} */

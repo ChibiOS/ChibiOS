@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    uart_lld.c
+ * @file    hal_uart_lld.c
  * @brief   PLATFORM UART subsystem low level driver source.
  *
  * @addtogroup UART

@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    pwm_lld.c
+ * @file    hal_pwm_lld.c
  * @brief   PLATFORM PWM subsystem low level driver source.
  *
  * @addtogroup PWM

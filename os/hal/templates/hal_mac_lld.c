@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    mac_lld.c
+ * @file    hal_mac_lld.c
  * @brief   PLATFORM MAC subsystem low level driver source.
  *
  * @addtogroup MAC

@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    can_lld.c
+ * @file    hal_can_lld.c
  * @brief   PLATFORM CAN subsystem low level driver source.
  *
  * @addtogroup CAN

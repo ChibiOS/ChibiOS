@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    adc_lld.c
+ * @file    hal_adc_lld.c
  * @brief   PLATFORM ADC subsystem low level driver source.
  *
  * @addtogroup ADC

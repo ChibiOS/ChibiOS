@@ -15,15 +15,15 @@
 */
 
 /**
- * @file    uart_lld.h
+ * @file    hal_uart_lld.h
  * @brief   PLATFORM UART subsystem low level driver header.
  *
  * @addtogroup UART
  * @{
  */
 
-#ifndef _UART_LLD_H_
-#define _UART_LLD_H_
+#ifndef HAL_UART_LLD_H
+#define HAL_UART_LLD_H
 
 #if (HAL_USE_UART == TRUE) || defined(__DOXYGEN__)
 
@@ -197,6 +197,6 @@ extern "C" {
 
 #endif /* HAL_USE_UART == TRUE */
 
-#endif /* _UART_LLD_H_ */
+#endif /* HAL_UART_LLD_H */
 
 /** @} */

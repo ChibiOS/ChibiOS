@@ -15,15 +15,15 @@
 */
 
 /**
- * @file    i2s_lld.h
+ * @file    hal_i2s_lld.h
  * @brief   PLATFORM I2S subsystem low level driver header.
  *
  * @addtogroup I2S
  * @{
  */
 
-#ifndef _I2S_LLD_H_
-#define _I2S_LLD_H_
+#ifndef HAL_I2S_LLD_H
+#define HAL_I2S_LLD_H
 
 #if (HAL_USE_I2S == TRUE) || defined(__DOXYGEN__)
 
@@ -138,6 +138,6 @@ extern "C" {
 
 #endif /* HAL_USE_I2S == TRUE */
 
-#endif /* _I2S_LLD_H_ */
+#endif /* HAL_I2S_LLD_H */
 
 /** @} */

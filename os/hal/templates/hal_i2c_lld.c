@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    i2c_lld.c
+ * @file    hal_i2c_lld.c
  * @brief   PLATFORM I2C subsystem low level driver source.
  *
  * @addtogroup I2C

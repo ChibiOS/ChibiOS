@@ -15,15 +15,15 @@
 */
 
 /**
- * @file    mac_lld.h
+ * @file    hal_mac_lld.h
  * @brief   PLATFORM MAC subsystem low level driver header.
  *
  * @addtogroup MAC
  * @{
  */
 
-#ifndef _MAC_LLD_H_
-#define _MAC_LLD_H_
+#ifndef HAL_MAC_LLD_H
+#define HAL_MAC_LLD_H
 
 #if (HAL_USE_MAC == TRUE) || defined(__DOXYGEN__)
 
@@ -176,6 +176,6 @@ extern "C" {
 
 #endif /* HAL_USE_MAC == TRUE */
 
-#endif /* _MAC_LLD_H_ */
+#endif /* HAL_MAC_LLD_H */
 
 /** @} */

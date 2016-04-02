@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    ext_lld.c
+ * @file    hal_ext_lld.c
  * @brief   PLATFORM EXT subsystem low level driver source.
  *
  * @addtogroup EXT

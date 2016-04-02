@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    serial_lld.c
+ * @file    hal_serial_lld.c
  * @brief   PLATFORM serial subsystem low level driver source.
  *
  * @addtogroup SERIAL

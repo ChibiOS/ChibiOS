@@ -15,15 +15,15 @@
 */
 
 /**
- * @file    serial_lld.h
+ * @file    hal_serial_lld.h
  * @brief   PLATFORM serial subsystem low level driver header.
  *
  * @addtogroup SERIAL
  * @{
  */
 
-#ifndef _SERIAL_LLD_H_
-#define _SERIAL_LLD_H_
+#ifndef HAL_SERIAL_LLD_H
+#define HAL_SERIAL_LLD_H
 
 #if (HAL_USE_SERIAL == TRUE) || defined(__DOXYGEN__)
 
@@ -114,6 +114,6 @@ extern "C" {
 
 #endif /* HAL_USE_SERIAL == TRUE */
 
-#endif /* _SERIAL_LLD_H_ */
+#endif /* HAL_SERIAL_LLD_H */
 
 /** @} */

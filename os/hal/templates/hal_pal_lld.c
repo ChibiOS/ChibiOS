@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    pal_lld.c
+ * @file    hal_pal_lld.c
  * @brief   PLATFORM PAL subsystem low level driver source.
  *
  * @addtogroup PAL

@@ -15,15 +15,15 @@
 */
 
 /**
- * @file    can_lld.h
+ * @file    hal_can_lld.h
  * @brief   PLATFORM CAN subsystem low level driver header.
  *
  * @addtogroup CAN
  * @{
  */
 
-#ifndef _CAN_LLD_H_
-#define _CAN_LLD_H_
+#ifndef HAL_CAN_LLD_H
+#define HAL_CAN_LLD_H
 
 #if (HAL_USE_CAN == TRUE) || defined(__DOXYGEN__)
 
@@ -223,6 +223,6 @@ extern "C" {
 
 #endif /* HAL_USE_CAN == TRUE */
 
-#endif /* _CAN_LLD_H_ */
+#endif /* HAL_CAN_LLD_H */
 
 /** @} */

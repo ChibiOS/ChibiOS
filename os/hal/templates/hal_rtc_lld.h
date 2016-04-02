@@ -19,15 +19,15 @@
  */
 
 /**
- * @file    rtc_lld.h
+ * @file    hal_rtc_lld.h
  * @brief   PLATFORM RTC subsystem low level driver header.
  *
  * @addtogroup RTC
  * @{
  */
 
-#ifndef _RTC_LLD_H_
-#define _RTC_LLD_H_
+#ifndef HAL_RTC_LLD_H
+#define HAL_RTC_LLD_H
 
 #if (HAL_USE_RTC == TRUE) || defined(__DOXYGEN__)
 
@@ -177,6 +177,6 @@ extern "C" {
 
 #endif /* HAL_USE_RTC == TRUE */
 
-#endif /* _RTC_LLD_H_ */
+#endif /* HAL_RTC_LLD_H */
 
 /** @} */

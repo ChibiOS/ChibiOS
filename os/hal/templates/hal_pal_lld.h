@@ -15,15 +15,15 @@
 */
 
 /**
- * @file    pal_lld.h
+ * @file    hal_pal_lld.h
  * @brief   PLATFORM PAL subsystem low level driver header.
  *
  * @addtogroup PAL
  * @{
  */
 
-#ifndef _PAL_LLD_H_
-#define _PAL_LLD_H_
+#ifndef HAL_PAL_LLD_H
+#define HAL_PAL_LLD_H
 
 #if (HAL_USE_PAL == TRUE) || defined(__DOXYGEN__)
 
@@ -417,6 +417,6 @@ extern "C" {
 
 #endif /* HAL_USE_PAL == TRUE */
 
-#endif /* _PAL_LLD_H_ */
+#endif /* HAL_PAL_LLD_H */
 
 /** @} */

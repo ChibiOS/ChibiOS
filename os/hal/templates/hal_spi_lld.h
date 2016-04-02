@@ -15,15 +15,15 @@
 */
 
 /**
- * @file    spi_lld.h
+ * @file    hal_spi_lld.h
  * @brief   PLATFORM SPI subsystem low level driver header.
  *
  * @addtogroup SPI
  * @{
  */
 
-#ifndef _SPI_LLD_H_
-#define _SPI_LLD_H_
+#ifndef HAL_SPI_LLD_H
+#define HAL_SPI_LLD_H
 
 #if (HAL_USE_SPI == TRUE) || defined(__DOXYGEN__)
 
@@ -147,6 +147,6 @@ extern "C" {
 
 #endif /* HAL_USE_SPI == TRUE */
 
-#endif /* _SPI_LLD_H_ */
+#endif /* HAL_SPI_LLD_H */
 
 /** @} */

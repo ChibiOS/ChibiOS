@@ -15,15 +15,15 @@
 */
 
 /**
- * @file    pwm_lld.h
+ * @file    hal_pwm_lld.h
  * @brief   PLATFORM PWM subsystem low level driver header.
  *
  * @addtogroup PWM
  * @{
  */
 
-#ifndef _PWM_LLD_H_
-#define _PWM_LLD_H_
+#ifndef HAL_PWM_LLD_H
+#define HAL_PWM_LLD_H
 
 #if (HAL_USE_PWM == TRUE) || defined(__DOXYGEN__)
 
@@ -210,6 +210,6 @@ extern "C" {
 
 #endif /* HAL_USE_PWM == TRUE */
 
-#endif /* _PWM_LLD_H_ */
+#endif /* HAL_PWM_LLD_H */
 
 /** @} */

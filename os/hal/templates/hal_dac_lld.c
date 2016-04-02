@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    dac_lld.c
+ * @file    hal_dac_lld.c
  * @brief   PLATFORM DAC subsystem low level driver source.
  *
  * @addtogroup DAC

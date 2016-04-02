@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    gpt_lld.c
+ * @file    hal_gpt_lld.c
  * @brief   PLATFORM GPT subsystem low level driver source.
  *
  * @addtogroup GPT

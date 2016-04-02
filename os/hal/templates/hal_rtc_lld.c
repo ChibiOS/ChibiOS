@@ -19,7 +19,7 @@
  */
 
 /**
- * @file    rtc_lld.c
+ * @file    hal_rtc_lld.c
  * @brief   PLATFORM RTC subsystem low level driver source.
  *
  * @addtogroup RTC

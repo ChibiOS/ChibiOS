@@ -15,15 +15,15 @@
 */
 
 /**
- * @file    sdc_lld.h
+ * @file    hal_sdc_lld.h
  * @brief   PLATFORM SDC subsystem low level driver header.
  *
  * @addtogroup SDC
  * @{
  */
 
-#ifndef _SDC_LLD_H_
-#define _SDC_LLD_H_
+#ifndef HAL_SDC_LLD_H
+#define HAL_SDC_LLD_H
 
 #if (HAL_USE_SDC == TRUE) || defined(__DOXYGEN__)
 
@@ -179,6 +179,6 @@ extern "C" {
 
 #endif /* HAL_USE_SDC == TRUE */
 
-#endif /* _SDC_LLD_H_ */
+#endif /* HAL_SDC_LLD_H */
 
 /** @} */

@@ -15,15 +15,15 @@
 */
 
 /**
- * @file    gpt_lld.h
+ * @file    hal_gpt_lld.h
  * @brief   PLATFORM GPT subsystem low level driver header.
  *
  * @addtogroup GPT
  * @{
  */
 
-#ifndef _GPT_LLD_H_
-#define _GPT_LLD_H_
+#ifndef HAL_GPT_LLD_H
+#define HAL_GPT_LLD_H
 
 #if (HAL_USE_GPT == TRUE) || defined(__DOXYGEN__)
 
@@ -149,6 +149,6 @@ extern "C" {
 
 #endif /* HAL_USE_GPT == TRUE */
 
-#endif /* _GPT_LLD_H_ */
+#endif /* HAL_GPT_LLD_H */
 
 /** @} */

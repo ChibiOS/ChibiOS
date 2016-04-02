@@ -15,15 +15,15 @@
 */
 
 /**
- * @file    ext_lld.h
+ * @file    hal_ext_lld.h
  * @brief   PLATFORM EXT subsystem low level driver header.
  *
  * @addtogroup EXT
  * @{
  */
 
-#ifndef _EXT_LLD_H_
-#define _EXT_LLD_H_
+#ifndef HAL_EXT_LLD_H
+#define HAL_EXT_LLD_H
 
 #if (HAL_USE_EXT == TRUE) || defined(__DOXYGEN__)
 
@@ -145,6 +145,6 @@ extern "C" {
 
 #endif /* HAL_USE_EXT == TRUE */
 
-#endif /* _EXT_LLD_H_ */
+#endif /* HAL_EXT_LLD_H */
 
 /** @} */
