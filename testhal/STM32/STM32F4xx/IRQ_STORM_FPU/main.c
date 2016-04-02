@@ -171,29 +171,29 @@ CH_FAST_IRQ_HANDLER(Vector184) {
 static void print(char *p) {
 
   while (*p) {
-    chSequentialStreamPut(&SD2, *p++);
+    streamPut(&SD2, *p++);
   }
 }
 
 static void println(char *p) {
 
   while (*p) {
-    chSequentialStreamPut(&SD2, *p++);
+    streamPut(&SD2, *p++);
   }
-  chSequentialStreamWrite(&SD2, (uint8_t *)"\r\n", 2);
+  streamWrite(&SD2, (uint8_t *)"\r\n", 2);
 }
 
 static void printn(uint32_t n) {
   char buf[16], *p;
 
   if (!n)
-    chSequentialStreamPut(&SD2, '0');
+    streamPut(&SD2, '0');
   else {
     p = buf;
     while (n)
       *p++ = (n % 10) + '0', n /= 10;
     while (p > buf)
-      chSequentialStreamPut(&SD2, *--p);
+      streamPut(&SD2, *--p);
   }
 }
 
