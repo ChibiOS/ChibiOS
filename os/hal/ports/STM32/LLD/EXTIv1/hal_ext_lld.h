@@ -27,7 +27,7 @@
 
 #if HAL_USE_EXT || defined(__DOXYGEN__)
 
-#include "ext_lld_isr.h"
+#include "hal_ext_lld_isr.h"
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
