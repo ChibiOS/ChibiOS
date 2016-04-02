@@ -19,6 +19,9 @@
 #include "test_root.h"
 
 /**
+ * @file    test_sequence_012.c
+ * @brief   Test Sequence 012 code.
+ *
  * @page test_sequence_012 [12] Benchmarks
  *
  * File: @ref test_sequence_012.c

@@ -19,6 +19,9 @@
 #include "test_root.h"
 
 /**
+ * @file    test_sequence_006.c
+ * @brief   Test Sequence 006 code.
+ *
  * @page test_sequence_006 [6] Synchronous Messages
  *
  * File: @ref test_sequence_006.c

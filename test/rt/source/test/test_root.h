@@ -19,8 +19,8 @@
  * @brief   Test Suite root structures header.
  */
 
-#ifndef _SPC5_TEST_ROOT_H_
-#define _SPC5_TEST_ROOT_H_
+#ifndef TEST_ROOT_H
+#define TEST_ROOT_H
 
 #include "test_sequence_001.h"
 #include "test_sequence_002.h"
@@ -108,4 +108,4 @@ systime_t test_wait_tick(void);
 
 #endif /* !defined(__DOXYGEN__) */
 
-#endif /* _SPC5_TEST_ROOT_H_ */
+#endif /* TEST_ROOT_H */

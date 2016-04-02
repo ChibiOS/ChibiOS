@@ -5,6 +5,9 @@
 #include "test_root.h"
 
 /**
+ * @file    test_sequence_006.c
+ * @brief   Test Sequence 006 code.
+ *
  * @page test_sequence_006 [6] Mutex Semaphores Functionality
  *
  * File: @ref test_sequence_006.c
@@ -85,14 +88,14 @@ static void test_006_001_execute(void) {
      an error is expected.*/
   test_set_step(3);
   {
-    #if 0 /* Semaphore name currently not implemented.*/
+#if 0 /* Semaphore name currently not implemented.*/
     int32 err;
 
     err = OS_MutSemCreate(&msid,
                          "very very long semaphore name",   /* Error.*/
                          0);
     test_assert(err == OS_ERR_NAME_TOO_LONG, "name limit not detected");
-    #endif
+#endif
   }
 
   /* [6.1.4] OS_MutSemDelete() is invoked with timer_id set to -1, an
@@ -116,10 +119,10 @@ static void test_006_001_execute(void) {
     err = OS_MutSemCreate(&msid1, "my semaphore", 0);
     test_assert(err == OS_SUCCESS, "semaphore creation failed");
 
-    #if 0 /* Semaphore name currently not implemented.*/
+#if 0 /* Semaphore name currently not implemented.*/
     err = OS_MutSemCreate(&msid2, "my semaphore", 0);
     test_assert(err == OS_ERR_NAME_TAKEN, "name conflict not detected");
-    #endif
+#endif
 
     err = OS_MutSemDelete(msid1);
     test_assert(err == OS_SUCCESS, "semaphore deletion failed");

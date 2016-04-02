@@ -19,6 +19,9 @@
 #include "test_root.h"
 
 /**
+ * @file    test_sequence_011.c
+ * @brief   Test Sequence 011 code.
+ *
  * @page test_sequence_011 [11] Dynamic threads
  *
  * File: @ref test_sequence_011.c

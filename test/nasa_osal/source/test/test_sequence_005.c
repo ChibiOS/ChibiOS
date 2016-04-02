@@ -5,6 +5,9 @@
 #include "test_root.h"
 
 /**
+ * @file    test_sequence_005.c
+ * @brief   Test Sequence 005 code.
+ *
  * @page test_sequence_005 [5] Counter Semaphores Functionality
  *
  * File: @ref test_sequence_005.c
@@ -104,7 +107,7 @@ static void test_005_001_execute(void) {
      name, an error is expected.*/
   test_set_step(4);
   {
-    #if 0 /* Semaphore name currently not implemented.*/
+#if 0 /* Semaphore name currently not implemented.*/
     int32 err;
 
     err = OS_CountSemCreate(&csid,
@@ -112,7 +115,7 @@ static void test_005_001_execute(void) {
                             0,
                             0);
     test_assert(err == OS_ERR_NAME_TOO_LONG, "name limit not detected");
-    #endif
+#endif
   }
 
   /* [5.1.5] OS_CountSemDelete() is invoked with timer_id set to -1, an
@@ -136,10 +139,10 @@ static void test_005_001_execute(void) {
     err = OS_CountSemCreate(&csid1, "my semaphore", 0, 0);
     test_assert(err == OS_SUCCESS, "semaphore creation failed");
 
-    #if 0 /* Semaphore name currently not implemented.*/
+#if 0 /* Semaphore name currently not implemented.*/
     err = OS_CountSemCreate(&csid2, "my semaphore", 0, 0);
     test_assert(err == OS_ERR_NAME_TAKEN, "name conflict not detected");
-    #endif
+#endif
 
     err = OS_CountSemDelete(csid1);
     test_assert(err == OS_SUCCESS, "semaphore deletion failed");

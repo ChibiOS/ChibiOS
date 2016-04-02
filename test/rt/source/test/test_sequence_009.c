@@ -19,6 +19,9 @@
 #include "test_root.h"
 
 /**
+ * @file    test_sequence_009.c
+ * @brief   Test Sequence 009 code.
+ *
  * @page test_sequence_009 [9] Memory Pools
  *
  * File: @ref test_sequence_009.c

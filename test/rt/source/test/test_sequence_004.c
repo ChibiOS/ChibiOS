@@ -19,6 +19,9 @@
 #include "test_root.h"
 
 /**
+ * @file    test_sequence_004.c
+ * @brief   Test Sequence 004 code.
+ *
  * @page test_sequence_004 [4] Counter and Binary Semaphores
  *
  * File: @ref test_sequence_004.c

@@ -5,6 +5,9 @@
 #include "test_root.h"
 
 /**
+ * @file    test_sequence_003.c
+ * @brief   Test Sequence 003 code.
+ *
  * @page test_sequence_003 [3] Timers Functionality
  *
  * File: @ref test_sequence_003.c

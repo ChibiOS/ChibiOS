@@ -19,6 +19,9 @@
 #include "test_root.h"
 
 /**
+ * @file    test_sequence_001.c
+ * @brief   Test Sequence 001 code.
+ *
  * @page test_sequence_001 [1] Threads Functionality
  *
  * File: @ref test_sequence_001.c

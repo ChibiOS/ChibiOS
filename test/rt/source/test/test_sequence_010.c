@@ -19,6 +19,9 @@
 #include "test_root.h"
 
 /**
+ * @file    test_sequence_010.c
+ * @brief   Test Sequence 010 code.
+ *
  * @page test_sequence_010 [10] Memory Heaps
  *
  * File: @ref test_sequence_010.c

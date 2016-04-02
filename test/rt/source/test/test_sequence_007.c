@@ -19,6 +19,9 @@
 #include "test_root.h"
 
 /**
+ * @file    test_sequence_007.c
+ * @brief   Test Sequence 007 code.
+ *
  * @page test_sequence_007 [7] Event Sources and Event Flags
  *
  * File: @ref test_sequence_007.c

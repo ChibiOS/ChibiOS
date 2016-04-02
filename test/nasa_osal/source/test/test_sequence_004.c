@@ -5,6 +5,9 @@
 #include "test_root.h"
 
 /**
+ * @file    test_sequence_004.c
+ * @brief   Test Sequence 004 code.
+ *
  * @page test_sequence_004 [4] Binary Semaphores Functionality
  *
  * File: @ref test_sequence_004.c
@@ -105,7 +108,7 @@ static void test_004_001_execute(void) {
      an error is expected.*/
   test_set_step(4);
   {
-    #if 0 /* Semaphore name currently not implemented.*/
+#if 0 /* Semaphore name currently not implemented.*/
     int32 err;
 
     err = OS_BinSemCreate(&bsid,
@@ -113,7 +116,7 @@ static void test_004_001_execute(void) {
                          0,
                          0);
     test_assert(err == OS_ERR_NAME_TOO_LONG, "name limit not detected");
-    #endif
+#endif
   }
 
   /* [4.1.5] OS_BinSemDelete() is invoked with timer_id set to -1, an
@@ -137,10 +140,10 @@ static void test_004_001_execute(void) {
     err = OS_BinSemCreate(&bsid1, "my semaphore", 0, 0);
     test_assert(err == OS_SUCCESS, "semaphore creation failed");
 
-    #if 0 /* Semaphore name currently not implemented.*/
+#if 0 /* Semaphore name currently not implemented.*/
     err = OS_BinSemCreate(&bsid2, "my semaphore", 0, 0);
     test_assert(err == OS_ERR_NAME_TAKEN, "name conflict not detected");
-    #endif
+#endif
 
     err = OS_BinSemDelete(bsid1);
     test_assert(err == OS_SUCCESS, "semaphore deletion failed");

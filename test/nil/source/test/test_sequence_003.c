@@ -19,6 +19,9 @@
 #include "test_root.h"
 
 /**
+ * @file    test_sequence_003.c
+ * @brief   Test Sequence 003 code.
+ *
  * @page test_sequence_003 [3] Suspend/Resume and Event Flags
  *
  * File: @ref test_sequence_003.c

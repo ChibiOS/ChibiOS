@@ -5,8 +5,8 @@
  * @brief   Test Suite root structures header.
  */
 
-#ifndef _SPC5_TEST_ROOT_H_
-#define _SPC5_TEST_ROOT_H_
+#ifndef TEST_ROOT_H
+#define TEST_ROOT_H
 
 #include "test_sequence_001.h"
 #include "test_sequence_002.h"
@@ -46,4 +46,4 @@ extern THD_WORKING_AREA(wa_test4, TASKS_STACK_SIZE);
 
 #endif /* !defined(__DOXYGEN__) */
 
-#endif /* _SPC5_TEST_ROOT_H_ */
+#endif /* TEST_ROOT_H */

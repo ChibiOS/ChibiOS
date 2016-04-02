@@ -19,6 +19,9 @@
 #include "test_root.h"
 
 /**
+ * @file    test_sequence_008.c
+ * @brief   Test Sequence 008 code.
+ *
  * @page test_sequence_008 [8] Mailboxes
  *
  * File: @ref test_sequence_008.c

@@ -14,4 +14,14 @@
     limitations under the License.
 */
 
+/**
+ * @file    test_sequence_010.h
+ * @brief   Test Sequence 010 header.
+ */
+
+#ifndef TEST_SEQUENCE_010_H
+#define TEST_SEQUENCE_010_H
+
 extern const testcase_t * const test_sequence_010[];
+
+#endif /* TEST_SEQUENCE_010_H */
