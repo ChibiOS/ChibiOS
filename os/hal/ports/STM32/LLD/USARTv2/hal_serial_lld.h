@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _SERIAL_LLD_H_
-#define _SERIAL_LLD_H_
+#ifndef HAL_SERIAL_LLD_H
+#define HAL_SERIAL_LLD_H
 
 #if HAL_USE_SERIAL || defined(__DOXYGEN__)
 
@@ -394,6 +394,6 @@ extern "C" {
 
 #endif /* HAL_USE_SERIAL */
 
-#endif /* _SERIAL_LLD_H_ */
+#endif /* HAL_SERIAL_LLD_H */
 
 /** @} */

@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _WDG_LLD_H_
-#define _WDG_LLD_H_
+#ifndef HAL_WDG_LLD_H
+#define HAL_WDG_LLD_H
 
 #if (HAL_USE_WDG == TRUE) || defined(__DOXYGEN__)
 
@@ -178,6 +178,6 @@ extern "C" {
 
 #endif /* HAL_USE_WDG == TRUE */
 
-#endif /* _WDG_LLD_H_ */
+#endif /* HAL_WDG_LLD_H */
 
 /** @} */

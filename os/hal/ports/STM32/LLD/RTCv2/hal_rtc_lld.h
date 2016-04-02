@@ -26,8 +26,8 @@
  * @{
  */
 
-#ifndef _RTC_LLD_H_
-#define _RTC_LLD_H_
+#ifndef HAL_RTC_LLD_H
+#define HAL_RTC_LLD_H
 
 #if HAL_USE_RTC || defined(__DOXYGEN__)
 
@@ -232,6 +232,6 @@ extern "C" {
 
 #endif /* HAL_USE_RTC */
 
-#endif /* _RTC_LLD_H_ */
+#endif /* HAL_RTC_LLD_H */
 
 /** @} */

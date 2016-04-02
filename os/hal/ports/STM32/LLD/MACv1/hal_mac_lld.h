@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _MAC_LLD_H_
-#define _MAC_LLD_H_
+#ifndef HAL_MAC_LLD_H
+#define HAL_MAC_LLD_H
 
 #if HAL_USE_MAC || defined(__DOXYGEN__)
 
@@ -358,6 +358,6 @@ extern "C" {
 
 #endif /* HAL_USE_MAC */
 
-#endif /* _MAC_LLD_H_ */
+#endif /* HAL_MAC_LLD_H */
 
 /** @} */

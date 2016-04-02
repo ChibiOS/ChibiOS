@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _EXT_LLD_ISR_H_
-#define _EXT_LLD_ISR_H_
+#ifndef HAL_EXT_LLD_ISR_H
+#define HAL_EXT_LLD_ISR_H
 
 #if HAL_USE_EXT || defined(__DOXYGEN__)
 
@@ -172,6 +172,6 @@ extern "C" {
 
 #endif /* HAL_USE_EXT */
 
-#endif /* _EXT_LLD_ISR_H_ */
+#endif /* HAL_EXT_LLD_ISR_H */
 
 /** @} */

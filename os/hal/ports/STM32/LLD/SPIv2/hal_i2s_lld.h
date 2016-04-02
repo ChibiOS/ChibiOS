@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _I2S_LLD_H_
-#define _I2S_LLD_H_
+#ifndef HAL_I2S_LLD_H
+#define HAL_I2S_LLD_H
 
 #if HAL_USE_I2S || defined(__DOXYGEN__)
 
@@ -427,6 +427,6 @@ extern "C" {
 
 #endif /* HAL_USE_I2S */
 
-#endif /* _I2S_LLD_H_ */
+#endif /* HAL_I2S_LLD_H */
 
 /** @} */

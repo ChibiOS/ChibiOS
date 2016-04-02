@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _USB_LLD_H_
-#define _USB_LLD_H_
+#ifndef HAL_USB_LLD_H
+#define HAL_USB_LLD_H
 
 #if HAL_USE_USB || defined(__DOXYGEN__)
 
@@ -477,6 +477,6 @@ extern "C" {
 
 #endif /* HAL_USE_USB */
 
-#endif /* _USB_LLD_H_ */
+#endif /* HAL_USB_LLD_H */
 
 /** @} */

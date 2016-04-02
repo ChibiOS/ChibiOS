@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _DAC_LLD_H_
-#define _DAC_LLD_H_
+#ifndef HAL_DAC_LLD_H
+#define HAL_DAC_LLD_H
 
 #if HAL_USE_DAC || defined(__DOXYGEN__)
 
@@ -460,6 +460,6 @@ extern "C" {
 
 #endif /* HAL_USE_DAC */
 
-#endif /* _DAC_LLD_H_ */
+#endif /* HAL_DAC_LLD_H */
 
 /** @} */

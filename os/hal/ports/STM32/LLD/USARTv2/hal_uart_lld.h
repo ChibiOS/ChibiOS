@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _UART_LLD_H_
-#define _UART_LLD_H_
+#ifndef HAL_UART_LLD_H
+#define HAL_UART_LLD_H
 
 #if HAL_USE_UART || defined(__DOXYGEN__)
 
@@ -729,6 +729,6 @@ extern "C" {
 
 #endif /* HAL_USE_UART */
 
-#endif /* _UART_LLD_H_ */
+#endif /* HAL_UART_LLD_H */
 
 /** @} */

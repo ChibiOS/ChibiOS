@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _PWM_LLD_H_
-#define _PWM_LLD_H_
+#ifndef HAL_PWM_LLD_H
+#define HAL_PWM_LLD_H
 
 #if HAL_USE_PWM || defined(__DOXYGEN__)
 
@@ -545,6 +545,6 @@ extern "C" {
 
 #endif /* HAL_USE_PWM */
 
-#endif /* _PWM_LLD_H_ */
+#endif /* HAL_PWM_LLD_H */
 
 /** @} */

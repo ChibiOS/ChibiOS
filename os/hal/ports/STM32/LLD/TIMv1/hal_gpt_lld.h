@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _GPT_LLD_H_
-#define _GPT_LLD_H_
+#ifndef HAL_GPT_LLD_H
+#define HAL_GPT_LLD_H
 
 #include "stm32_tim.h"
 
@@ -636,6 +636,6 @@ extern "C" {
 
 #endif /* HAL_USE_GPT */
 
-#endif /* _GPT_LLD_H_ */
+#endif /* HAL_GPT_LLD_H */
 
 /** @} */

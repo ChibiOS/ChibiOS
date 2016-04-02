@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _SDC_LLD_H_
-#define _SDC_LLD_H_
+#ifndef HAL_SDC_LLD_H
+#define HAL_SDC_LLD_H
 
 #if HAL_USE_SDC || defined(__DOXYGEN__)
 
@@ -325,6 +325,6 @@ extern "C" {
 
 #endif /* HAL_USE_SDC */
 
-#endif /* _SDC_LLD_H_ */
+#endif /* HAL_SDC_LLD_H */
 
 /** @} */

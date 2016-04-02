@@ -34,8 +34,8 @@
  * @{
  */
 
-#ifndef _HAL_LLD_H_
-#define _HAL_LLD_H_
+#ifndef HAL_HAL_LLD_H
+#define HAL_HAL_LLD_H
 
 #include "stm32_registry.h"
 
@@ -2049,6 +2049,6 @@ extern "C" {
 }
 #endif
 
-#endif /* _HAL_LLD_H_ */
+#endif /* HAL_HAL_LLD_H */
 
 /** @} */
