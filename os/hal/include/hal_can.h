@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    can.h
+ * @file    hal_can.h
  * @brief   CAN Driver macros and structures.
  *
  * @addtogroup CAN

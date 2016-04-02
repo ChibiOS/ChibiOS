@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    serial.c
+ * @file    hal_serial.c
  * @brief   Serial Driver code.
  *
  * @addtogroup SERIAL

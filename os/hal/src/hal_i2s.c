@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    i2s.c
+ * @file    hal_i2s.c
  * @brief   I2S Driver code.
  *
  * @addtogroup I2S

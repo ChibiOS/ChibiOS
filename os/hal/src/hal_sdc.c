@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    sdc.c
+ * @file    hal_sdc.c
  * @brief   SDC Driver code.
  *
  * @addtogroup SDC

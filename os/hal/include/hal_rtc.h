@@ -19,7 +19,7 @@
  */
 
 /**
- * @file    rtc.h
+ * @file    hal_rtc.h
  * @brief   RTC Driver macros and structures.
  *
  * @addtogroup RTC

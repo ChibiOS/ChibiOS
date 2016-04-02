@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    serial.h
+ * @file    hal_serial.h
  * @brief   Serial Driver macros and structures.
  *
  * @addtogroup SERIAL

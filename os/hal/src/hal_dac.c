@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    dac.c
+ * @file    hal_dac.c
  * @brief   DAC Driver code.
  *
  * @addtogroup DAC

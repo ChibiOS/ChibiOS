@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    usb.h
+ * @file    hal_usb.h
  * @brief   USB Driver macros and structures.
  *
  * @addtogroup USB

@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    ext.c
+ * @file    hal_ext.c
  * @brief   EXT Driver code.
  *
  * @addtogroup EXT

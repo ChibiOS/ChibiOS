@@ -18,7 +18,7 @@
  */
 
 /**
- * @file    mmc_spi.c
+ * @file    hal_mmc_spi.c
  * @brief   MMC over SPI driver code.
  *
  * @addtogroup MMC_SPI

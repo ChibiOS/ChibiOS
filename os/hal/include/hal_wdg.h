@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    wdg.h
+ * @file    hal_wdg.h
  * @brief   WDG Driver macros and structures.
  *
  * @addtogroup WDG

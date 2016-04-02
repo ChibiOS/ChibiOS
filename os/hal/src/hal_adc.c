@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    adc.c
+ * @file    hal_adc.c
  * @brief   ADC Driver code.
  *
  * @addtogroup ADC

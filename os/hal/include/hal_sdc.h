@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    sdc.h
+ * @file    hal_sdc.h
  * @brief   SDC Driver macros and structures.
  *
  * @addtogroup SDC

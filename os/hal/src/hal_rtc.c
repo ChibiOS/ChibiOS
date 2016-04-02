@@ -19,7 +19,7 @@
  */
 
 /**
- * @file    rtc.c
+ * @file    hal_rtc.c
  * @brief   RTC Driver code.
  *
  * @addtogroup RTC

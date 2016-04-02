@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    spi.h
+ * @file    hal_spi.h
  * @brief   SPI Driver macros and structures.
  *
  * @addtogroup SPI

@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    gpt.h
+ * @file    hal_gpt.h
  * @brief   GPT Driver macros and structures.
  *
  * @addtogroup GPT

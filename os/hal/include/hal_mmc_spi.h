@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    mmc_spi.h
+ * @file    hal_mmc_spi.h
  * @brief   MMC over SPI driver header.
  *
  * @addtogroup MMC_SPI

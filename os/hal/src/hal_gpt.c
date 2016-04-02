@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    gpt.c
+ * @file    hal_gpt.c
  * @brief   GPT Driver code.
  *
  * @addtogroup GPT

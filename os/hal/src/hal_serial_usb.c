@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    serial_usb.c
+ * @file    hal_serial_usb.c
  * @brief   Serial over USB Driver code.
  *
  * @addtogroup SERIAL_USB

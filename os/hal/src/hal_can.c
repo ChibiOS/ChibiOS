@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    can.c
+ * @file    hal_can.c
  * @brief   CAN Driver code.
  *
  * @addtogroup CAN

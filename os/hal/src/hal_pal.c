@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    pal.c
+ * @file    hal_pal.c
  * @brief   I/O Ports Abstraction Layer code.
  *
  * @addtogroup PAL

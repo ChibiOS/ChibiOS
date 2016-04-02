@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    st.c
+ * @file    hal_st.c
  * @brief   ST Driver code.
  *
  * @addtogroup ST

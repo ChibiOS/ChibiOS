@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    serial_usb.h
+ * @file    hal_serial_usb.h
  * @brief   Serial over USB Driver macros and structures.
  *
  * @addtogroup SERIAL_USB

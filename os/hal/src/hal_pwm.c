@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    pwm.c
+ * @file    hal_pwm.c
  * @brief   PWM Driver code.
  *
  * @addtogroup PWM

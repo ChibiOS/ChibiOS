@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    mac.c
+ * @file    hal_mac.c
  * @brief   MAC Driver code.
  *
  * @addtogroup MAC

@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    icu.h
+ * @file    hal_icu.h
  * @brief   ICU Driver macros and structures.
  *
  * @addtogroup ICU

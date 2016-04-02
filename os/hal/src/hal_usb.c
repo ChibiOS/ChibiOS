@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    usb.c
+ * @file    hal_usb.c
  * @brief   USB Driver code.
  *
  * @addtogroup USB

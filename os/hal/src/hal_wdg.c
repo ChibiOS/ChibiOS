@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    wdg.c
+ * @file    hal_wdg.c
  * @brief   WDG Driver code.
  *
  * @addtogroup WDG

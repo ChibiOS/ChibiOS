@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    icu.c
+ * @file    hal_icu.c
  * @brief   ICU Driver code.
  *
  * @addtogroup ICU

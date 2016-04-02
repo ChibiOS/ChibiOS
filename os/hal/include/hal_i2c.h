@@ -19,7 +19,7 @@
  */
 
 /**
- * @file    i2c.h
+ * @file    hal_i2c.h
  * @brief   I2C Driver macros and structures.
  *
  * @addtogroup I2C

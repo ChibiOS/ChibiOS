@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    uart.c
+ * @file    hal_uart.c
  * @brief   UART Driver code.
  *
  * @addtogroup UART
