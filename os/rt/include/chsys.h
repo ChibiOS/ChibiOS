@@ -295,6 +295,10 @@
 /* External declarations.                                                    */
 /*===========================================================================*/
 
+#if !defined(__DOXYGEN__)
+extern stkalign_t ch_idle_thread_wa[];
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif

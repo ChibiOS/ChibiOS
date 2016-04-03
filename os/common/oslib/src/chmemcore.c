@@ -114,9 +114,7 @@ void *chCoreAllocAlignedI(size_t size, unsigned align) {
   size = MEM_ALIGN_NEXT(size, align);
   p = (uint8_t *)MEM_ALIGN_NEXT(nextmem, align);
 
-  /* ---????? lint -save -e9033 [10.8] The cast is safe.*/
-  if ((size_t)(endmem - p) < size) {
-  /* ---????? lint -restore*/
+  if (((size_t)endmem - (size_t)p) < size) {
     return NULL;
   }
   nextmem = p + size;

@@ -244,17 +244,17 @@ typedef struct {
 
 /* When a trace feature is disabled the associated functions are replaced by
    an empty macro.*/
-#if (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_SWITCH) == 0
+#if (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_SWITCH) == 0U
 #define _dbg_trace_switch(otp)
 #endif
-#if (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_ISR) == 0
+#if (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_ISR) == 0U
 #define _dbg_trace_isr_enter(isr)
 #define _dbg_trace_isr_leave(isr)
 #endif
-#if (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_HALT) == 0
+#if (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_HALT) == 0U
 #define _dbg_trace_halt(reason)
 #endif
-#if (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_USER) == 0
+#if (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_USER) == 0U
 #define chDbgWriteTraceI(up1, up2)
 #define chDbgWriteTrace(up1, up2)
 #endif
@@ -334,17 +334,17 @@ extern "C" {
 #endif
 #if (CH_DBG_TRACE_MASK != CH_DBG_TRACE_MASK_NONE) || defined(__DOXYGEN__)
   void _dbg_trace_init(void);
-#if (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_SWITCH) != 0
+#if (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_SWITCH) != 0U
   void _dbg_trace_switch(thread_t *otp);
 #endif
-#if (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_ISR) != 0
+#if (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_ISR) != 0U
   void _dbg_trace_isr_enter(const char *isr);
   void _dbg_trace_isr_leave(const char *isr);
 #endif
-#if (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_HALT) != 0
+#if (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_HALT) != 0U
   void _dbg_trace_halt(const char *reason);
 #endif
-#if (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_USER) != 0
+#if (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_USER) != 0U
   void chDbgWriteTraceI(void *up1, void *up2);
   void chDbgWriteTrace(void *up1, void *up2);
   void chDbgSuspendTraceI(uint16_t mask);

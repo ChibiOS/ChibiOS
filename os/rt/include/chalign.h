@@ -64,7 +64,10 @@
  * @param[in] p         variable to be aligned
  * @param[in] a         alignment, must be a power of two
  */
-#define MEM_ALIGN_PREV(p, a)    ((size_t)(p) & ~MEM_ALIGN_MASK(a))
+#define MEM_ALIGN_PREV(p, a)                                                \
+  /*lint -save -e9033 [10.8] The cast is safe.*/                            \
+  ((size_t)(p) & ~MEM_ALIGN_MASK(a))                                        \
+  /*lint -restore*/
 
 /**
  * @brief   Aligns to the new aligned memory address.
@@ -72,8 +75,10 @@
  * @param[in] p         variable to be aligned
  * @param[in] a         alignment, must be a power of two
  */
-#define MEM_ALIGN_NEXT(p, a)    MEM_ALIGN_PREV((size_t)(p) +                \
-                                               MEM_ALIGN_MASK(a), (a))
+#define MEM_ALIGN_NEXT(p, a)                                                \
+  /*lint -save -e9033 [10.8] The cast is safe.*/                            \
+  MEM_ALIGN_PREV((size_t)(p) + MEM_ALIGN_MASK(a), (a))                      \
+  /*lint -restore*/
 
 /**
  * @brief   Returns whatever a pointer or memory size is aligned.

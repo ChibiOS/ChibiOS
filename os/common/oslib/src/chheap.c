@@ -66,6 +66,14 @@
 
 #define H_SIZE(hp)      ((hp)->used.size)
 
+/*
+ * Number of pages between two pointers in a MISRA-compatible way.
+ */
+#define NPAGES(p1, p2)                                                      \
+  /*lint -save -e9033 [10.8] The cast is safe.*/                            \
+  ((size_t)((p1) - (p2)))                                                   \
+  /*lint -restore*/
+
 /*===========================================================================*/
 /* Module exported variables.                                                */
 /*===========================================================================*/
@@ -188,7 +196,7 @@ void *chHeapAllocAligned(memory_heap_t *heapp, size_t size, unsigned align) {
     /* Pointer aligned to the requested alignment.*/
     ahp = (heap_header_t *)MEM_ALIGN_NEXT(H_BLOCK(hp), align) - 1U;
 
-    if ((ahp < H_LIMIT(hp)) && (pages <= (size_t)(H_LIMIT(hp) - 1U - ahp))) {
+    if ((ahp < H_LIMIT(hp)) && (pages <= NPAGES(H_LIMIT(hp), ahp - 1U))) {
       /* The block is large enough to contain a correctly aligned area
          of sufficient size.*/
 
@@ -196,15 +204,15 @@ void *chHeapAllocAligned(memory_heap_t *heapp, size_t size, unsigned align) {
         /* The block is not properly aligned, must split it.*/
         size_t bpages;
 
-        bpages = H_LIMIT(hp) - H_BLOCK(ahp);
-        H_PAGES(hp) = ahp - H_BLOCK(hp);
+        bpages = NPAGES(H_LIMIT(hp), H_BLOCK(ahp));
+        H_PAGES(hp) = NPAGES(ahp, H_BLOCK(hp));
         if (bpages > pages) {
           /* The block is bigger than required, must split the excess.*/
           heap_header_t *fp;
 
           /* Creating the excess block.*/
           fp = H_BLOCK(ahp) + pages;
-          H_PAGES(fp) = bpages - pages - 1U;
+          H_PAGES(fp) = NPAGES(bpages, pages - 1U);
 
           /* Linking the excess block.*/
           H_NEXT(fp) = H_NEXT(hp);
@@ -226,7 +234,7 @@ void *chHeapAllocAligned(memory_heap_t *heapp, size_t size, unsigned align) {
 
           fp = H_BLOCK(hp) + pages;
           H_NEXT(fp) = H_NEXT(hp);
-          H_PAGES(fp) = H_LIMIT(hp) - H_BLOCK(fp);
+          H_PAGES(fp) = NPAGES(H_LIMIT(hp), H_BLOCK(fp));
           H_NEXT(qp) = fp;
         }
       }

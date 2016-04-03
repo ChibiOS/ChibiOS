@@ -172,8 +172,7 @@ thread_t *chThdCreateSuspendedI(const thread_descriptor_t *tdp) {
   chDbgCheck(MEM_IS_ALIGNED(tdp->wbase, PORT_WORKING_AREA_ALIGN) &&
              MEM_IS_ALIGNED(tdp->wend, PORT_STACK_ALIGN) &&
              (tdp->wend > tdp->wbase) &&
-             ((size_t)((tdp->wend - tdp->wbase) *
-                       sizeof (stkalign_t)) >= THD_WORKING_AREA_SIZE(0)));
+             (((size_t)tdp->wend - (size_t)tdp->wbase) >= THD_WORKING_AREA_SIZE(0)));
   chDbgCheck((tdp->prio <= HIGHPRIO) && (tdp->funcp != NULL));
 
   /* The thread structure is laid out in the upper part of the thread
@@ -518,7 +517,7 @@ void chThdExitS(msg_t msg) {
      registry because there is no memory to recover.*/
 #if CH_CFG_USE_DYNAMIC == TRUE
   if ((tp->refs == (trefs_t)0) &&
-      (tp->flags & CH_FLAG_MODE_MASK) == CH_FLAG_MODE_STATIC) {
+      ((tp->flags & CH_FLAG_MODE_MASK) == CH_FLAG_MODE_STATIC)) {
     REG_REMOVE(tp);
   }
 #else
