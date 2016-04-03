@@ -932,6 +932,7 @@ static const testcase_t test_005_008 = {
 };
 #endif /* CH_CFG_USE_CONDVARS */
 
+#if (CH_CFG_USE_CONDVARS) || defined(__DOXYGEN__)
 /**
  * @page test_005_009 [5.9] Condition Variable priority boost test
  *
@@ -942,6 +943,12 @@ static const testcase_t test_005_008 = {
  * following operations: TA{lock(M2), lock(M1), wait(C1), unlock(M1),
  * unlock(M2)}, TB{lock(M2), wait(C1), unlock(M2)}. TC{lock(M1),
  * unlock(M1)}.
+ *
+ * <h2>Conditions</h2>
+ * This test is only executed if the following preprocessor condition
+ * evaluates to true:
+ * - CH_CFG_USE_CONDVARS
+ * .
  *
  * <h2>Test Steps</h2>
  * - [5.9.1] Reading current base priority.
@@ -1023,6 +1030,7 @@ static const testcase_t test_005_009 = {
   NULL,
   test_005_009_execute
 };
+#endif /* CH_CFG_USE_CONDVARS */
 
 /****************************************************************************
  * Exported data.
@@ -1052,7 +1060,9 @@ const testcase_t * const test_sequence_005[] = {
 #if (CH_CFG_USE_CONDVARS) || defined(__DOXYGEN__)
   &test_005_008,
 #endif
+#if (CH_CFG_USE_CONDVARS) || defined(__DOXYGEN__)
   &test_005_009,
+#endif
   NULL
 };
 

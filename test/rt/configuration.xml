@@ -2202,7 +2202,7 @@ test_assert_sequence("ABCDE", "invalid sequence");]]></value>
                   <value>This test case verifies the priority boost of a thread waiting on a conditional variable queue. It tests this very specific situation in order to improve code coverage. The created threads perform the following operations: TA{lock(M2), lock(M1), wait(C1), unlock(M1), unlock(M2)}, TB{lock(M2), wait(C1), unlock(M2)}. TC{lock(M1), unlock(M1)}.</value>
                 </description>
                 <condition>
-                  <value />
+                  <value>CH_CFG_USE_CONDVARS</value>
                 </condition>
                 <various_code>
                   <setup_code>
@@ -2792,7 +2792,7 @@ test_wait_threads();]]></value>
                   <value>Timeout functionality is tested for chEvtWaitOneTimeout(), chEvtWaitAnyTimeout() and chEvtWaitAllTimeout().</value>
                 </description>
                 <condition>
-                  <value />
+                  <value>CH_CFG_USE_EVENTS_TIMEOUT</value>
                 </condition>
                 <various_code>
                   <setup_code>
@@ -4139,12 +4139,14 @@ static THD_FUNCTION(bmk_thread4, p) {
   chSysUnlock();
 }
 
+#if CH_CFG_USE_SEMAPHORES
 static THD_FUNCTION(bmk_thread7, p) {
 
   (void)p;
   while (!chThdShouldTerminateX())
     chSemWait(&sem1);
 }
+#endif
 
 static THD_FUNCTION(bmk_thread8, p) {
 

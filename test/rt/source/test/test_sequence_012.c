@@ -112,12 +112,14 @@ static THD_FUNCTION(bmk_thread4, p) {
   chSysUnlock();
 }
 
+#if CH_CFG_USE_SEMAPHORES
 static THD_FUNCTION(bmk_thread7, p) {
 
   (void)p;
   while (!chThdShouldTerminateX())
     chSemWait(&sem1);
 }
+#endif
 
 static THD_FUNCTION(bmk_thread8, p) {
 
