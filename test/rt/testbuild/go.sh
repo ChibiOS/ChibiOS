@@ -1,7 +1,7 @@
 #!/bin/bash
 export XOPT XDEFS
 
-XOPT="-ggdb -O0 -fomit-frame-pointer -DDELAY_BETWEEN_TESTS=0 -fprofile-arcs -ftest-coverage"
+XOPT="-ggdb -O0 -fomit-frame-pointer -DTEST_DELAY_BETWEEN_TESTS=0 -fprofile-arcs -ftest-coverage"
 XDEFS=""
 
 function clean() {
@@ -12,7 +12,7 @@ function clean() {
 
 function compile() {
   echo -n "  * Building..."
-  if ! make > buildlog.txt
+  if ! make -j4 > buildlog.txt
   then
     echo "failed"
     clean
@@ -24,7 +24,7 @@ function compile() {
 
 function execute_test() {
   echo -n "  * Testing..."
-  if ! ./ch > testlog.txt
+  if ! ./build/ch > testlog.txt
   then
     echo "failed"
     clean
@@ -38,7 +38,7 @@ function coverage() {
   echo -n "  * Coverage..."
   mkdir reports/${1}_gcov 2> /dev/null
   echo "Configuration $2" > gcovlog.txt
-  echo "----------------------------------------------------------------" >> reports/gcovlog.txt
+  echo "----------------------------------------------------------------" >> gcovlog.txt
   if ! make gcov >> gcovlog.txt 2> /dev/null
   then
     echo "failed"

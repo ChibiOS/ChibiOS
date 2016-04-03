@@ -1,146 +1,170 @@
-# This makefile expects the following variables to be externally
-# defined:
-# XOPT     - Compiler extra options
-# XDEFS    - Extra definitions
-
-##############################################################################################
-# Start of default section
+##############################################################################
+# Build global options
+# NOTE: Can be overridden externally.
 #
 
-TRGT = mingw32-
-CC   = $(TRGT)gcc
-AS   = $(TRGT)gcc -x assembler-with-cpp
-AR   = $(TRGT)ar
-COV  = gcov
+# Compiler options here.
+ifeq ($(USE_OPT),)
+  USE_OPT = $(XOPT)
+endif
 
-# List all default C defines here, like -D_DEBUG=1
-DDEFS = -DSIMULATOR
+# C specific options here (added to USE_OPT).
+ifeq ($(USE_COPT),)
+  USE_COPT = 
+endif
 
-# List all default ASM defines here, like -D_DEBUG=1
-DADEFS =
+# C++ specific options here (added to USE_OPT).
+ifeq ($(USE_CPPOPT),)
+  USE_CPPOPT = -fno-rtti
+endif
 
-# List all default directories to look for include files here
-DINCDIR =
+# Enable this if you want the linker to remove unused code and data.
+ifeq ($(USE_LINK_GC),)
+  USE_LINK_GC = yes
+endif
 
-# List the default directory to look for the libraries here
-DLIBDIR =
+# Linker extra options here.
+ifeq ($(USE_LDOPT),)
+  USE_LDOPT = 
+endif
 
-# List all default libraries here
-DLIBS = -lws2_32
+# Enable this if you want link time optimizations (LTO)
+ifeq ($(USE_LTO),)
+  USE_LTO = no
+endif
+
+# Enable this if you want to see the full log while compiling.
+ifeq ($(USE_VERBOSE_COMPILE),)
+  USE_VERBOSE_COMPILE = no
+endif
+
+# If enabled, this option makes the build process faster by not compiling
+# modules not used in the current configuration.
+ifeq ($(USE_SMART_BUILD),)
+  USE_SMART_BUILD = yes
+endif
 
 #
-# End of default section
-##############################################################################################
+# Build global options
+##############################################################################
 
-##############################################################################################
-# Start of user section
+##############################################################################
+# Architecture or project specific options
+#
+
+#
+# Architecture or project specific options
+##############################################################################
+
+##############################################################################
+# Project, sources and paths
 #
 
 # Define project name here
 PROJECT = ch
 
-# Define linker script file here
-LDSCRIPT=
+# Imported source files and paths
+CHIBIOS = ../../..
+# Startup files.
+# HAL-OSAL files (optional).
+include $(CHIBIOS)/os/hal/hal.mk
+include $(CHIBIOS)/os/hal/boards/simulator/board.mk
+include $(CHIBIOS)/os/hal/ports/simulator/win32/platform.mk
+include $(CHIBIOS)/os/hal/osal/rt/osal.mk
+# RTOS files (optional).
+include $(CHIBIOS)/os/rt/rt.mk
+include $(CHIBIOS)/os/common/ports/SIMIA32/compilers/GCC/port.mk
+# Other files (optional).
+include $(CHIBIOS)/test/rt/test.mk
+include $(CHIBIOS)/os/hal/lib/streams/streams.mk
+include $(CHIBIOS)/os/various/shell/shell.mk
+
+# C sources here.
+CSRC = $(STARTUPSRC) \
+       $(KERNSRC) \
+       $(PORTSRC) \
+       $(OSALSRC) \
+       $(HALSRC) \
+       $(PLATFORMSRC) \
+       $(BOARDSRC) \
+       $(TESTSRC) \
+       $(STREAMSSRC) \
+       $(SHELLSRC) \
+       main.c
+
+# C++ sources here.
+CPPSRC =
+
+# List ASM source files here
+ASMSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
+
+INCDIR = $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
+         $(HALINC) $(PLATFORMINC) $(BOARDINC) $(TESTINC) \
+         $(STREAMSINC) $(SHELLINC)
+
+# GCOV files.
+GCOVSRC = $(KERNSRC)
+
+#
+# Project, sources and paths
+##############################################################################
+
+##############################################################################
+# Compiler settings
+#
+
+#TRGT = powerpc-eabi-
+TRGT = mingw32-
+CC   = $(TRGT)gcc
+CPPC = $(TRGT)g++
+# Enable loading with g++ only if you need C++ runtime support.
+# NOTE: You can use C++ even without C++ support if you are careful. C++
+#       runtime support makes code size explode.
+LD   = $(TRGT)gcc
+#LD   = $(TRGT)g++
+CP   = $(TRGT)objcopy
+AS   = $(TRGT)gcc -x assembler-with-cpp
+AR   = $(TRGT)ar
+OD   = $(TRGT)objdump
+SZ   = $(TRGT)size
+BIN  = $(CP) -O binary
+COV  = gcov
+
+# Define C warning options here
+CWARN = -Wall -Wextra -Wundef -Wstrict-prototypes
+
+# Define C++ warning options here
+CPPWARN = -Wall -Wextra -Wundef
+
+#
+# Compiler settings
+##############################################################################
+
+##############################################################################
+# Start of user section
+#
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS =
+UDEFS = -DSIMULATOR $(XDEFS)
 
 # Define ASM defines here
 UADEFS =
 
-# Imported source files
-CHIBIOS = ../../..
-include $(CHIBIOS)/os/hal/boards/simulator/board.mk
-include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/ports/simulator/win32/platform.mk
-include $(CHIBIOS)/os/hal/osal/rt/osal.mk
-include $(CHIBIOS)/os/common/ports/SIMIA32/compilers/GCC/port.mk
-include $(CHIBIOS)/os/rt/rt.mk
-include $(CHIBIOS)/test/rt/test.mk
-
-# List C source files here
-SRC =  $(PORTSRC) \
-       $(KERNSRC) \
-       $(TESTSRC) \
-       $(HALSRC) \
-       $(OSALSRC) \
-       $(PLATFORMSRC) \
-       $(BOARDSRC) \
-       main.c
-
-# List ASM source files here
-ASRC = 
-
 # List all user directories here
-UINCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
-          $(HALINC) $(OSALINC) $(PLATFORMINC) $(BOARDINC) \
-          $(CHIBIOS)/os/various
+UINCDIR =
 
 # List the user directory to look for the libraries here
 ULIBDIR =
 
 # List all user libraries here
-ULIBS =
-
-# Define optimisation level here
-OPT = $(XOPT)
+ULIBS = -lws2_32 -lgcov
 
 #
 # End of user defines
-##############################################################################################
+##############################################################################
 
-
-INCDIR  = $(patsubst %,-I%,$(DINCDIR) $(UINCDIR))
-LIBDIR  = $(patsubst %,-L%,$(DLIBDIR) $(ULIBDIR))
-DEFS    = $(DDEFS) $(UDEFS) $(XDEFS)
-ADEFS   = $(DADEFS) $(UADEFS)
-OBJS    = $(ASRC:.s=.o) $(SRC:.c=.o)
-LIBS    = $(DLIBS) $(ULIBS)
-
-LDFLAGS = -Wl,-Map=$(PROJECT).map,--cref,--no-warn-mismatch -lgcov $(LIBDIR)
-ASFLAGS = -Wa,-amhls=$(<:.s=.lst) $(ADEFS)
-CPFLAGS = $(OPT) -Wall -Wextra -Wundef -Wstrict-prototypes -fverbose-asm -Wa,-ahlms=$(<:.c=.lst) $(DEFS)
-
-# Generate dependency information
-CPFLAGS += -MD -MP -MF .dep/$(@F).d
-
-#
-# makefile rules
-#
-
-all: $(OBJS) $(PROJECT).exe
-
-%.o : %.c
-	$(CC) -c $(CPFLAGS) -I . $(INCDIR) $< -o $@
-
-%.o : %.s
-	$(AS) -c $(ASFLAGS) $< -o $@
-
-%.exe: $(OBJS)
-	$(CC) $(OBJS) $(LDFLAGS) $(LIBS) -o $@
-
-.PHONY: gcov
-gcov:
-	$(COV) -u -f -b -o $(CHIBIOS)/os/rt/src $(KERNSRC)
-
-clean:
-	-rm -f $(OBJS)
-	-rm -f $(PROJECT).exe
-	-rm -f $(PROJECT).map
-	-rm -f $(SRC:.c=.c.bak)
-	-rm -f $(SRC:.c=.lst)
-	-rm -f $(SRC:.c=.gcno)
-	-rm -f $(SRC:.c=.gcda)
-	-rm -f $(ASRC:.s=.s.bak)
-	-rm -f $(ASRC:.s=.lst)
-	-rm -fR .dep
+RULESPATH = $(CHIBIOS)/os/common/startup/SIMIA32/compilers/GCC
+include $(RULESPATH)/rules.mk
 
 misra:
-	@lint-nt -v -w3 $(DEFS) pclint/co-gcc.lnt pclint/au-misra3.lnt pclint/waivers.lnt $(INCDIR) $(KERNSRC)
-
-#
-# Include the dependency files, should be the last of the makefile
-#
--include $(shell mkdir .dep 2>/dev/null) $(wildcard .dep/*)
-
-# *** EOF ***
+	@lint-nt -v -w3 $(DEFS) pclint/co-gcc.lnt pclint/au-misra3.lnt pclint/waivers.lnt $(IINCDIR) $(KERNSRC)

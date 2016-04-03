@@ -19,7 +19,7 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "test.h"
+#include "ch_test.h"
 #include "console.h"
 
 /*
@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
   conInit();
   chSysInit();
 
-  TestThread(&CD1);
+  test_execute((BaseSequentialStream *)&CD1);
   if (test_global_fail)
     exit(1);
   else

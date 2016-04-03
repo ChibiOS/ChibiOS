@@ -164,6 +164,10 @@ clean:
 	@echo
 	@echo Done
 
+.PHONY: gcov
+gcov:
+	$(COV) -u -b -o $(BUILDDIR)/obj $(GCOVSRC)
+
 #
 # Include the dependency files, should be the last of the makefile
 #

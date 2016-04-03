@@ -125,6 +125,7 @@ AR   = $(TRGT)ar
 OD   = $(TRGT)objdump
 SZ   = $(TRGT)size
 BIN  = $(CP) -O binary
+COV  = gcov
 
 # Define C warning options here
 CWARN = -Wall -Wextra -Wundef -Wstrict-prototypes
