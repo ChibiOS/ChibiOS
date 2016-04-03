@@ -49,11 +49,11 @@
  * @{
  */
 #define CH_TRACE_SUSPEND_NONE               0U
-#define CH_TRACE_SUSPEND_SWITCH             (1U << CH_TRACE_TYPE_SWITCH)
-#define CH_TRACE_SUSPEND_ISR_ENTER          (1U << CH_TRACE_TYPE_ISR_ENTER)
-#define CH_TRACE_SUSPEND_ISR_LEAVE          (1U << CH_TRACE_TYPE_ISR_LEAVE)
-#define CH_TRACE_SUSPEND_HALT               (1U << CH_TRACE_TYPE_HALT)
-#define CH_TRACE_SUSPEND_USER               (1U << CH_TRACE_TYPE_USER)
+#define CH_TRACE_SUSPEND_SWITCH             1U
+#define CH_TRACE_SUSPEND_ISR_ENTER          2U
+#define CH_TRACE_SUSPEND_ISR_LEAVE          4U
+#define CH_TRACE_SUSPEND_HALT               8U
+#define CH_TRACE_SUSPEND_USER               16U
 #define CH_TRACE_SUSPEND_ALL                (CH_TRACE_SUSPEND_SWITCH |      \
                                              CH_TRACE_SUSPEND_ISR_ENTER |   \
                                              CH_TRACE_SUSPEND_ISR_LEAVE |   \
@@ -69,8 +69,8 @@
 #define CH_DBG_TRACE_MASK_NONE              0U
 #define CH_DBG_TRACE_MASK_SWITCH            1U
 #define CH_DBG_TRACE_MASK_ISR               2U
-#define CH_DBG_TRACE_MASK_HALT              4U
-#define CH_DBG_TRACE_MASK_USER              8U
+#define CH_DBG_TRACE_MASK_HALT              8U
+#define CH_DBG_TRACE_MASK_USER              16U
 #define CH_DBG_TRACE_MASK_ALL               (CH_DBG_TRACE_MASK_SWITCH |     \
                                              CH_DBG_TRACE_MASK_ISR |        \
                                              CH_DBG_TRACE_MASK_HALT |       \
@@ -122,6 +122,7 @@
 /*===========================================================================*/
 
 #if (CH_DBG_TRACE_MASK != CH_DBG_TRACE_MASK_NONE) || defined(__DOXYGEN__)
+/*lint -save -e46 [6.1] An uint32_t is required.*/
 /**
  * @brief   Trace buffer record.
  */
@@ -191,6 +192,7 @@ typedef struct {
     } user;
   } u;
 } ch_trace_event_t;
+/*lint -restore*/
 
 /**
  * @brief   Trace buffer header.

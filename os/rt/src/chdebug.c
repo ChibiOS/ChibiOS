@@ -107,7 +107,7 @@
  *
  * @notapi
  */
-NOINLINE static void trace_next(void) {
+static NOINLINE void trace_next(void) {
 
   ch.dbg.trace_buffer.ptr->time    = chVTGetSystemTimeX();
 #if PORT_SUPPORTS_RT == TRUE
@@ -292,12 +292,12 @@ void _dbg_trace_init(void) {
   ch.dbg.trace_buffer.suspended = 0U;
   ch.dbg.trace_buffer.size      = CH_DBG_TRACE_BUFFER_SIZE;
   ch.dbg.trace_buffer.ptr       = &ch.dbg.trace_buffer.buffer[0];
-  for (i = 0U; i < CH_DBG_TRACE_BUFFER_SIZE; i++) {
+  for (i = 0U; i < (unsigned)CH_DBG_TRACE_BUFFER_SIZE; i++) {
     ch.dbg.trace_buffer.buffer[i].type = CH_TRACE_TYPE_UNUSED;
   }
 }
 
-#if ((CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_SWITCH) != 0) ||                \
+#if ((CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_SWITCH) != 0U) ||               \
     defined(__DOXYGEN__)
 /**
  * @brief   Inserts in the circular debug trace buffer a context switch record.
@@ -316,9 +316,9 @@ void _dbg_trace_switch(thread_t *otp) {
     trace_next();
   }
 }
-#endif /* (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_SWITCH) != 0 */
+#endif /* (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_SWITCH) != 0U */
 
-#if ((CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_ISR) != 0) ||                   \
+#if ((CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_ISR) != 0U) ||                  \
     defined(__DOXYGEN__)
 /**
  * @brief   Inserts in the circular debug trace buffer an ISR-enter record.
@@ -357,9 +357,9 @@ void _dbg_trace_isr_leave(const char *isr) {
     port_unlock_from_isr();
   }
 }
-#endif /* (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_ISR) != 0 */
+#endif /* (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_ISR) != 0U */
 
-#if ((CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_HALT) != 0) ||                  \
+#if ((CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_HALT) != 0U) ||                 \
     defined(__DOXYGEN__)
 /**
  * @brief   Inserts in the circular debug trace buffer an halt record.
@@ -377,9 +377,9 @@ void _dbg_trace_halt(const char *reason) {
     trace_next();
   }
 }
-#endif /* (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_HALT) != 0 */
+#endif /* (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_HALT) != 0U */
 
-#if ((CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_USER) != 0) ||                  \
+#if ((CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_USER) != 0U) ||                 \
     defined(__DOXYGEN__)
 /**
  * @brief   Adds an user trace record to the trace buffer.
@@ -416,7 +416,7 @@ void chDbgWriteTrace(void *up1, void *up2) {
   chDbgWriteTraceI(up1, up2);
   chSysUnlock();
 }
-#endif /* (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_USER) != 0 */
+#endif /* (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_USER) != 0U */
 
 /**
  * @brief   Suspends one or more trace events.
