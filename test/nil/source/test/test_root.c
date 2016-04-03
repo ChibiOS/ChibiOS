@@ -50,11 +50,19 @@
  */
 const testcase_t * const *test_suite[] = {
   test_sequence_001,
+#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
   test_sequence_002,
+#endif
   test_sequence_003,
+#if (CH_CFG_USE_MAILBOXES) || defined(__DOXYGEN__)
   test_sequence_004,
+#endif
+#if (CH_CFG_USE_MEMPOOLS) || defined(__DOXYGEN__)
   test_sequence_005,
+#endif
+#if (CH_CFG_USE_HEAP) || defined(__DOXYGEN__)
   test_sequence_006,
+#endif
   NULL
 };
 

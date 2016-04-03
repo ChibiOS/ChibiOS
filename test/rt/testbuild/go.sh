@@ -12,7 +12,7 @@ function clean() {
 
 function compile() {
   echo -n "  * Building..."
-  if ! make -j4 > buildlog.txt
+  if ! make > buildlog.txt
   then
     echo "failed"
     clean
@@ -90,7 +90,7 @@ mkdir reports 2> /dev/null
 test cfg1 ""
 test cfg2 "-DCH_CFG_OPTIMIZE_SPEED=FALSE"
 test cfg3 "-DCH_CFG_TIME_QUANTUM=0"
-test cfg4 "-DCH_CFG_USE_REGISTRY=FALSE"
+test cfg4 "-DCH_CFG_USE_REGISTRY=FALSE -DCH_CFG_USE_DYNAMIC=FALSE"
 test cfg5 "-DCH_CFG_USE_TM=FALSE"
 test cfg6 "-DCH_CFG_USE_SEMAPHORES=FALSE -DCH_CFG_USE_MAILBOXES=FALSE"
 test cfg7 "-DCH_CFG_USE_SEMAPHORES_PRIORITY=TRUE"

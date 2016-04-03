@@ -500,7 +500,11 @@ static void test_012_006_execute(void) {
     start = test_wait_tick();
     end = start + MS2ST(1000);
     do {
+#if CH_CFG_USE_REGISTRY
       chThdRelease(chThdCreateStatic(wa[0], WA_SIZE, prio, bmk_thread3, NULL));
+#else
+      chThdCreateStatic(wa[0], WA_SIZE, prio, bmk_thread3, NULL);
+#endif
       n++;
 #if defined(SIMULATOR)
       _sim_check_for_interrupts();

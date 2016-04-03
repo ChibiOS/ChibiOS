@@ -3309,7 +3309,10 @@ test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");]]></value>
 
 static uint32_t objects[MEMORY_POOL_SIZE];
 static MEMORYPOOL_DECL(mp1, sizeof (uint32_t), NULL);
+
+#if CH_CFG_USE_SEMAPHORES
 static GUARDEDMEMORYPOOL_DECL(gmp1, sizeof (uint32_t));
+#endif
 
 static void *null_provider(size_t size, unsigned align) {
 
@@ -4546,7 +4549,11 @@ systime_t start, end;]]></value>
 start = test_wait_tick();
 end = start + MS2ST(1000);
 do {
+#if CH_CFG_USE_REGISTRY
   chThdRelease(chThdCreateStatic(wa[0], WA_SIZE, prio, bmk_thread3, NULL));
+#else
+  chThdCreateStatic(wa[0], WA_SIZE, prio, bmk_thread3, NULL);
+#endif
   n++;
 #if defined(SIMULATOR)
   _sim_check_for_interrupts();

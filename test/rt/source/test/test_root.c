@@ -58,14 +58,30 @@ const testcase_t * const *test_suite[] = {
   test_sequence_001,
   test_sequence_002,
   test_sequence_003,
+#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
   test_sequence_004,
+#endif
+#if (CH_CFG_USE_MUTEXES) || defined(__DOXYGEN__)
   test_sequence_005,
+#endif
+#if (CH_CFG_USE_MESSAGES) || defined(__DOXYGEN__)
   test_sequence_006,
+#endif
+#if (CH_CFG_USE_EVENTS) || defined(__DOXYGEN__)
   test_sequence_007,
+#endif
+#if (CH_CFG_USE_MAILBOXES) || defined(__DOXYGEN__)
   test_sequence_008,
+#endif
+#if (CH_CFG_USE_MEMPOOLS) || defined(__DOXYGEN__)
   test_sequence_009,
+#endif
+#if (CH_CFG_USE_HEAP) || defined(__DOXYGEN__)
   test_sequence_010,
+#endif
+#if (CH_CFG_USE_DYNAMIC) || defined(__DOXYGEN__)
   test_sequence_011,
+#endif
   test_sequence_012,
   NULL
 };
