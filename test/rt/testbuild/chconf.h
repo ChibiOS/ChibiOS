@@ -463,7 +463,7 @@
  *          tickless mode.
  */
 #if !defined(CH_DBG_THREADS_PROFILING) || defined(__DOXIGEN__)
-#define CH_DBG_THREADS_PROFILING            FALSE
+#define CH_DBG_THREADS_PROFILING            TRUE
 #endif
 
 /** @} */

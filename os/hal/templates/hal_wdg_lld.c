@@ -34,7 +34,7 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
-#if STM32_WDG_USE_WDG1 || defined(__DOXYGEN__)
+#if PLATFORM_WDG_USE_WDG1 || defined(__DOXYGEN__)
 WDGDriver WDGD1;
 #endif
 
@@ -72,6 +72,7 @@ void wdg_lld_init(void) {
  */
 void wdg_lld_start(WDGDriver *wdgp) {
 
+  (void)wdgp;
 }
 
 /**
@@ -83,6 +84,7 @@ void wdg_lld_start(WDGDriver *wdgp) {
  */
 void wdg_lld_stop(WDGDriver *wdgp) {
 
+  (void)wdgp;
 }
 
 /**
@@ -94,6 +96,7 @@ void wdg_lld_stop(WDGDriver *wdgp) {
  */
 void wdg_lld_reset(WDGDriver * wdgp) {
 
+  (void)wdgp;
 }
 
 #endif /* HAL_USE_WDG */

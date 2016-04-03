@@ -84,6 +84,7 @@ void i2s_lld_start(I2SDriver *i2sp) {
 
     }
 #endif
+  }
 }
 
 /**

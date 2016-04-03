@@ -1,6 +1,6 @@
 # List of all the STM32L0xx platform files.
 ifeq ($(USE_SMART_BUILD),yes)
-HALCONF := $(strip $(shell cat halconf.h | egrep -e "define"))
+HALCONF := $(strip $(shell cat halconf.h | egrep -e "\#define"))
 
 PLATFORMSRC := $(CHIBIOS)/os/hal/ports/common/ARMCMx/nvic.c \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/DMAv1/stm32_dma.c \

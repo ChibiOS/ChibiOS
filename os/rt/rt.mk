@@ -1,7 +1,7 @@
 # List of all the ChibiOS/RT kernel files, there is no need to remove the files
 # from this list, you can disable parts of the kernel by editing chconf.h.
 ifeq ($(USE_SMART_BUILD),yes)
-CHCONF := $(strip $(shell cat chconf.h | egrep -e "define"))
+CHCONF := $(strip $(shell cat chconf.h | egrep -e "\#define"))
 
 KERNSRC := $(CHIBIOS)/os/rt/src/chsys.c \
            $(CHIBIOS)/os/rt/src/chdebug.c \
