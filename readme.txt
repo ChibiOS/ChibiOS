@@ -106,6 +106,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Fixed PAL lines support not working for STM32 GPIOv1 (bug #730)
+       (backported to 16.1.4).
 - RT:  Fixed bug in chSchPreemption() function (bug #728)(backported to 2.6.10,
        3.0.6 and 16.1.5).
 - HAL: Fixed prescaler not initialized in STM32 ADCv1 (bug #725)

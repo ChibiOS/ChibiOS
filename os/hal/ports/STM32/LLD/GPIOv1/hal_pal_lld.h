@@ -84,7 +84,7 @@
  * @brief   Decodes a port identifier from a line identifier.
  */
 #define PAL_PORT(line)                                                      \
-  ((stm32_gpio_t *)(((uint32_t)(line)) & 0xFFFFFFF0U))
+  ((GPIO_TypeDef *)(((uint32_t)(line)) & 0xFFFFFFF0U))
 
 /**
  * @brief   Decodes a pad identifier from a line identifier.
