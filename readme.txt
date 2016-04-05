@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.5 ***
+- HAL: Fixed PAL lines support not working for STM32 GPIOv1 (bug #730).
 - RT:  Fixed bug in chSchPreemption() function (bug #728).
 - HAL: Fixed prescaler not initialized in STM32 ADCv1 (bug #725).
 - HAL: Fixed missing DAC section in STM32F072 mcuconf.h files (bug #724).
