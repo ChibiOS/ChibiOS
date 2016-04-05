@@ -78,7 +78,7 @@
 /**
  * @brief   Trace buffer entries.
  * @note    The trace buffer is only allocated if @p CH_DBG_TRACE_MASK is
- *          different from @p CH_DBG_TRACE_MASK_NONE.
+ *          different from @p CH_DBG_TRACE_MASK_DISABLED.
  */
 #if !defined(CH_DBG_TRACE_BUFFER_SIZE) || defined(__DOXYGEN__)
 #define CH_DBG_TRACE_BUFFER_SIZE            128
@@ -97,7 +97,7 @@
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
-#if (CH_DBG_TRACE_MASK != CH_DBG_TRACE_MASK_NONE) || defined(__DOXYGEN__)
+#if (CH_DBG_TRACE_MASK != CH_DBG_TRACE_MASK_DISABLED) || defined(__DOXYGEN__)
 /*lint -save -e46 [6.1] An uint32_t is required.*/
 /**
  * @brief   Trace buffer record.
@@ -191,7 +191,7 @@ typedef struct {
    */
   ch_trace_event_t      buffer[CH_DBG_TRACE_BUFFER_SIZE];
 } ch_trace_buffer_t;
-#endif /* CH_DBG_TRACE_MASK != CH_DBG_TRACE_MASK_NONE */
+#endif /* CH_DBG_TRACE_MASK != CH_DBG_TRACE_MASK_DISABLED */
 
 /*===========================================================================*/
 /* Module macros.                                                            */

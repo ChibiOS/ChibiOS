@@ -118,7 +118,7 @@ void chSysInit(void) {
 #if CH_DBG_STATISTICS == TRUE
   _stats_init();
 #endif
-#if CH_DBG_TRACE_MASK != CH_DBG_TRACE_MASK_NONE
+#if CH_DBG_TRACE_MASK != CH_DBG_TRACE_MASK_DISABLED
   _dbg_trace_init();
 #endif
 
@@ -247,14 +247,14 @@ bool chSysIntegrityCheckI(unsigned testmask) {
     tp = ch.rlist.queue.next;
     while (tp != (thread_t *)&ch.rlist.queue) {
       n++;
-      tp = tp->next;
+      tp = tp->queue.next;
     }
 
     /* Scanning the ready list backward.*/
     tp = ch.rlist.queue.prev;
     while (tp != (thread_t *)&ch.rlist.queue) {
       n--;
-      tp = tp->prev;
+      tp = tp->queue.prev;
     }
 
     /* The number of elements must match.*/
