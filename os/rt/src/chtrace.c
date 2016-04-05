@@ -82,10 +82,10 @@ static NOINLINE void trace_next(void) {
  * @brief   Trace circular buffer subsystem initialization.
  * @note    Internal use only.
  */
-void _dbg_trace_init(void) {
+void _trace_init(void) {
   unsigned i;
 
-  ch.dbg.trace_buffer.suspended = CH_DBG_TRACE_MASK;
+  ch.dbg.trace_buffer.suspended = (uint16_t)CH_DBG_TRACE_MASK;
   ch.dbg.trace_buffer.size      = CH_DBG_TRACE_BUFFER_SIZE;
   ch.dbg.trace_buffer.ptr       = &ch.dbg.trace_buffer.buffer[0];
   for (i = 0U; i < (unsigned)CH_DBG_TRACE_BUFFER_SIZE; i++) {
@@ -96,11 +96,14 @@ void _dbg_trace_init(void) {
 /**
  * @brief   Inserts in the circular debug trace buffer a context switch record.
  *
+ * @param[in] ntp       the thread being switched in
  * @param[in] otp       the thread being switched out
  *
  * @notapi
  */
-void _dbg_trace_switch(thread_t *otp) {
+void _trace_switch(thread_t *ntp, thread_t *otp) {
+
+  (void)ntp;
 
   if ((ch.dbg.trace_buffer.suspended & CH_DBG_TRACE_MASK_SWITCH) == 0U) {
     ch.dbg.trace_buffer.ptr->type        = CH_TRACE_TYPE_SWITCH;
@@ -118,7 +121,7 @@ void _dbg_trace_switch(thread_t *otp) {
  *
  * @notapi
  */
-void _dbg_trace_isr_enter(const char *isr) {
+void _trace_isr_enter(const char *isr) {
 
   if ((ch.dbg.trace_buffer.suspended & CH_DBG_TRACE_MASK_ISR) == 0U) {
     port_lock_from_isr();
@@ -137,7 +140,7 @@ void _dbg_trace_isr_enter(const char *isr) {
  *
  * @notapi
  */
-void _dbg_trace_isr_leave(const char *isr) {
+void _trace_isr_leave(const char *isr) {
 
   if ((ch.dbg.trace_buffer.suspended & CH_DBG_TRACE_MASK_ISR) == 0U) {
     port_lock_from_isr();
@@ -156,7 +159,7 @@ void _dbg_trace_isr_leave(const char *isr) {
  *
  * @notapi
  */
-void _dbg_trace_halt(const char *reason) {
+void _trace_halt(const char *reason) {
 
   if ((ch.dbg.trace_buffer.suspended & CH_DBG_TRACE_MASK_HALT) == 0U) {
     ch.dbg.trace_buffer.ptr->type          = CH_TRACE_TYPE_HALT;

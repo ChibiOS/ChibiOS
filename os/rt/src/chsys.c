@@ -101,6 +101,7 @@ void chSysInit(void) {
 
   _scheduler_init();
   _vt_init();
+  _trace_init();
 
 #if CH_DBG_SYSTEM_STATE_CHECK == TRUE
   ch.dbg.isr_cnt  = (cnt_t)0;
@@ -117,9 +118,6 @@ void chSysInit(void) {
 #endif
 #if CH_DBG_STATISTICS == TRUE
   _stats_init();
-#endif
-#if CH_DBG_TRACE_MASK != CH_DBG_TRACE_MASK_DISABLED
-  _dbg_trace_init();
 #endif
 
 #if CH_CFG_NO_IDLE_THREAD == FALSE
@@ -199,7 +197,7 @@ void chSysHalt(const char *reason) {
   CH_CFG_SYSTEM_HALT_HOOK(reason);
 
   /* Logging the event.*/
-  _dbg_trace_halt(reason);
+  _trace_halt(reason);
 
   /* Pointing to the passed message.*/
   ch.dbg.panic_msg = reason;

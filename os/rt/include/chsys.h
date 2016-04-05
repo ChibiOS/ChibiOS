@@ -130,7 +130,7 @@
   PORT_IRQ_PROLOGUE();                                                      \
   CH_CFG_IRQ_PROLOGUE_HOOK();                                               \
   _stats_increase_irq();                                                    \
-  _dbg_trace_isr_enter(__func__);                                           \
+  _trace_isr_enter(__func__);                                               \
   _dbg_check_enter_isr()
 
 /**
@@ -143,7 +143,7 @@
  */
 #define CH_IRQ_EPILOGUE()                                                   \
   _dbg_check_leave_isr();                                                   \
-  _dbg_trace_isr_leave(__func__);                                           \
+  _trace_isr_leave(__func__);                                               \
   CH_CFG_IRQ_EPILOGUE_HOOK();                                               \
   PORT_IRQ_EPILOGUE()
 
@@ -285,7 +285,7 @@
  */
 #define chSysSwitch(ntp, otp) {                                             \
                                                                             \
-  _dbg_trace_switch(otp);                                                   \
+  _trace_switch(ntp, otp);                                                  \
   _stats_ctxswc(ntp, otp);                                                  \
   CH_CFG_CONTEXT_SWITCH_HOOK(ntp, otp);                                     \
   port_switch(ntp, otp);                                                    \

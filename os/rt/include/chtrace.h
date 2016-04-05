@@ -48,7 +48,7 @@
  * @name    Events to trace
  * @{
  */
-#define CH_DBG_TRACE_MASK_DISABLED          -1
+#define CH_DBG_TRACE_MASK_DISABLED          255U
 #define CH_DBG_TRACE_MASK_NONE              0U
 #define CH_DBG_TRACE_MASK_SWITCH            1U
 #define CH_DBG_TRACE_MASK_ISR               2U
@@ -201,20 +201,20 @@ typedef struct {
    an empty macro. Note that the macros can be externally redefined in
    order to interface 3rd parties tracing tools.*/
 #if CH_DBG_TRACE_MASK == CH_DBG_TRACE_MASK_DISABLED
-#if !defined(_dbg_trace_init)
-#define _dbg_trace_init()
+#if !defined(_trace_init)
+#define _trace_init()
 #endif
-#if !defined(_dbg_trace_switch)
-#define _dbg_trace_switch(otp)
+#if !defined(_trace_switch)
+#define _trace_switch(ntp, otp)
 #endif
-#if !defined(_dbg_trace_isr_enter)
-#define _dbg_trace_isr_enter(isr)
+#if !defined(_trace_isr_enter)
+#define _trace_isr_enter(isr)
 #endif
-#if !defined(_dbg_trace_isr_leave)
-#define _dbg_trace_isr_leave(isr)
+#if !defined(_trace_isr_leave)
+#define _trace_isr_leave(isr)
 #endif
-#if !defined(_dbg_trace_halt)
-#define _dbg_trace_halt(reason)
+#if !defined(_trace_halt)
+#define _trace_halt(reason)
 #endif
 #if !defined(chDbgWriteTraceI)
 #define chDbgWriteTraceI(up1, up2)
@@ -232,11 +232,11 @@ typedef struct {
 extern "C" {
 #endif
 #if (CH_DBG_TRACE_MASK != CH_DBG_TRACE_MASK_DISABLED) || defined(__DOXYGEN__)
-  void _dbg_trace_init(void);
-  void _dbg_trace_switch(thread_t *otp);
-  void _dbg_trace_isr_enter(const char *isr);
-  void _dbg_trace_isr_leave(const char *isr);
-  void _dbg_trace_halt(const char *reason);
+  void _trace_init(void);
+  void _trace_switch(thread_t *ntp, thread_t *otp);
+  void _trace_isr_enter(const char *isr);
+  void _trace_isr_leave(const char *isr);
+  void _trace_halt(const char *reason);
   void chDbgWriteTraceI(void *up1, void *up2);
   void chDbgWriteTrace(void *up1, void *up2);
   void chDbgSuspendTraceI(uint16_t mask);
