@@ -79,6 +79,7 @@
 #include "chalign.h"
 #include "chcore.h"
 #include "chdebug.h"
+#include "chtrace.h"
 #include "chtm.h"
 #include "chstats.h"
 #include "chschd.h"

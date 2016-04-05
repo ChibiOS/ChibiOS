@@ -349,8 +349,7 @@
 
 /**
  * @brief   Debug option, trace buffer.
- * @details If enabled then the context switch circular trace buffer is
- *          activated.
+ * @details If enabled then the trace buffer is activated.
  *
  * @note    The default is @p FALSE.
  */
