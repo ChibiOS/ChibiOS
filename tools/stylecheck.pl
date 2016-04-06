@@ -3,6 +3,9 @@ use strict;
 use warnings;
 use File::Basename;
 
+# Desired indentation.
+my $indentation = 2;
+
 if ($#ARGV != 0) {
   print "\nUsage: stylecheck.pl source\n";
   exit;
@@ -18,12 +21,14 @@ my $filename = $source;
 $filename =~ y/\\/\//;
 $filename = basename($filename);
 
+my $i_level   = 0;
 my $c_comment = "";
 my $state     = "start";
 my $cr        = "\r";
 my $lf        = "\n";
+my $tab       = "\t";
 my $f_lineno  = 0;
-my $f_name    = "";
+my $f_params  = "";
 my $t_lineno  = 0;
 my $t_type    = "";
 my $e_lineno  = 0;
@@ -34,36 +39,84 @@ my $d_name2    = "";
 my $d_name_app = "";
 my $scope     = "";
 
+sub style {
+  my $desc = shift;
+
+  print("style: $desc at line $lineno in \"$filename\"\n");
+}
+
+sub error {
+  my $desc = shift;
+
+  print("error: $desc at line $lineno in \"$filename\"\n");
+}
+
 foreach my $line (@c_source) {
 
   $lineno += 1;
+
+  #****************************************************************************
+  # Check on EOL.
+  if (not ($line =~ /$cr$lf$/)) {
+    error "detected malformed EOL";
+  }
   $line =~ s/$cr//;
   $line =~ s/$lf//;
+
+  #****************************************************************************
+  # Check on trailing spaces.
+  if ($line =~ /\s$/) {
+    style "detected trailing spaces";
+  }
+
+  #****************************************************************************
+  # Check on TABs.
+  if ($line =~ /$tab/) {
+    style "detected TAB";
+    $line =~ s/$tab/    /;
+  }
+  
+  #****************************************************************************
+  # Stripping strings content for ease of parsing, all strings become _string_.
+  $line =~ s/\\\"//;
+  if ($line =~ s/(\"[^"]*\")/_string_/) {
+#    print "string: $1 replaced by _string_\n";
+  }
 
   #******************************************************************************
   # State machine handling.
   if ($state eq "start") {
     # Searching for a global code element or a comment start.
 
+    #****************************************************************************
+    # Indentation check.
+    $line =~ /^(\s*)/;
+    if (length($1) != $i_level) {
+      style "indentation violation";
+    }
+
     #******************************************************************************
     # Functions matching, triggered by the "(".
     if ($line =~ /^(static|)\s*(struct|union|)\s*([a-zA-Z_][a-zA-Z0-9_]*\s*[*]*)\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/) {
       # $1=scope $2$3=return type $4=name
       $line =~ s/^(static|)\s*(struct|union|)\s*([a-zA-Z_][a-zA-Z0-9_]*\s*[*]*)\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*\(//;
-      print "function: " . $1 . " " . $2 . " " . $3 . " " . $4 . "(";
+#      print "function: " . $1 . " " . $2 . " " . $3 . " " . $4 . "(";
 
       # Function line number.
       $f_lineno = $lineno;
       
       # Checking if all parameters are on the same line.
-      if ($line =~ /.*\)\s*{/) {
-        print $line . "\n";
+      if ($line =~ /.*\)\s*{\s*$/) {
+        $line =~ s/\)\s*{\s*$//;
+#        print $line . "\n";
+        $f_params = $line;
         $state = "infunc";
       }
       else {
-        print $line;
+#        print $line;
         $state = "inparams";
-        }
+        $f_params = $line;
+      }
     }
     #******************************************************************************
     # Structures matching.
@@ -163,12 +216,16 @@ foreach my $line (@c_source) {
   #******************************************************************************
   # Scanning for params end and function body begin.
   elsif ($state eq "inparams") {
-    if ($line =~ /.*\)\s*{/) {
-        print $line . "\n";
-        $state = "infunc";
+    if ($line =~ /.*\)\s*{\s*$/) {
+#      print $line . "\n";
+      $line =~ s/\)\s*{\s*$//;
+      $f_params = $f_params . $line;
+      $state = "infunc";
+      print "$f_params\n";
     }
     else {
-      print $line;
+      $f_params = $f_params . $line;
+#      print $line;
     }
   }
   #******************************************************************************
