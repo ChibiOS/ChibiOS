@@ -27,7 +27,6 @@
  * @{
  */
 
-#include "hal.h"
 #include "chprintf.h"
 #include "memstreams.h"
 
