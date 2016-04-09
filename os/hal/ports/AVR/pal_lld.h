@@ -299,9 +299,7 @@ typedef volatile avr_gpio_registers_t * ioportid_t;
  * @notapi
  */
 #define pal_lld_setpad(port, pad)                                         \
-__asm__ __volatile__(                                                     \
-  "sbi %0,%1\n\t" :: "I" (_SFR_IO_ADDR(port->out)), "I" (pad)             \
-)
+  port->out |= _BV(pad)
 
 /**
  * @brief   Clears a pad logical state to @p PAL_LOW.
@@ -312,9 +310,7 @@ __asm__ __volatile__(                                                     \
  * @notapi
  */
 #define pal_lld_clearpad(port, pad)                                         \
-__asm__ __volatile__(                                                       \
-  "cbi %0,%1\n\t" :: "I" (_SFR_IO_ADDR(port->out)), "I" (pad)               \
-)
+  port->out &= ~_BV(pad)
 
 extern ROMCONST PALConfig pal_default_config;
 
