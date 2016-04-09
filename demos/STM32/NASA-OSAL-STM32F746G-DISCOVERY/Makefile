@@ -114,8 +114,8 @@ CSRC = $(STARTUPSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
        $(TESTSRC) \
-       $(NASAOSALSRC) \
-       $(CHIBIOS)/os/common/abstractions/nasa_osal/lib/cfe_psp_support.c \
+       $(CFEOSALSRC) \
+       $(CFEPSPSRC) \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -147,7 +147,7 @@ ASMSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
 
 INCDIR = $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) $(TESTINC) \
-         $(NASAOSALINC) $(CHIBIOS)/os/common/abstractions/nasa_osal/lib
+         $(CFEOSALINC) $(CFEPSPINC)
 
 #
 # Project, sources and paths
