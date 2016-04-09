@@ -318,7 +318,6 @@ int32 OS_API_Init(void) {
 /**
  * @brief   OS printf-like function.
  * @note    It is initially disabled.
- * @note    It is not currently implemented.
  *
  * @param[in] string            formatter string
  *
@@ -380,7 +379,6 @@ int32 OS_Tick2Micros(void) {
 
 /**
  * @brief   Returns the local time.
- * @note    It is not currently implemented.
  *
  * @param[out] time_struct      the system time
  * @return                      An error code.
@@ -402,7 +400,6 @@ int32 OS_GetLocalTime(OS_time_t *time_struct) {
 
 /**
  * @brief   Changes the local time.
- * @note    It is not currently implemented.
  *
  * @param[in] time_struct       the system time
  * @return                      An error code.
@@ -574,7 +571,6 @@ int32 OS_TimerSet(uint32 timer_id, uint32 start_time, uint32 interval_time) {
 
 /**
  * @brief   Retrieves a timer id by name.
- * @note    It is not currently implemented.
  *
  * @param[out] timer_id         pointer to a timer id variable
  * @param[in] sem_name          the timer name
@@ -2113,7 +2109,6 @@ int32 OS_TaskGetIdByName(uint32 *task_id, const char *task_name) {
 /**
  * @brief   Returns task information.
  * @note    This function can be safely called from timer callbacks or ISRs.
- * @note    It is not currently implemented.
  * @note    Priority 255 is not available and it is transformed internally in
  *          254.
  *
