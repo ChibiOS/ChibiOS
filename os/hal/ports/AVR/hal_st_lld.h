@@ -27,6 +27,8 @@
 #ifndef _ST_LLD_H_
 #define _ST_LLD_H_
 
+#include <avr/io.h>
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -68,6 +70,14 @@ extern "C" {
 }
 #endif
 
+#ifdef __AVR_ATmega128__
+#define TIFR_REG TIFR
+#define TIMSK_REG TIMSK
+#else
+#define TIFR_REG TIFR1
+#define TIMSK_REG TIMSK1
+#endif
+
 /*===========================================================================*/
 /* Driver inline functions.                                                  */
 /*===========================================================================*/
@@ -98,10 +108,10 @@ static inline void st_lld_start_alarm(systime_t time) {
   OCR1A = (uint16_t) time;
 
   /* Reset pending. */
-  TIFR1 = _BV(OCF1A);
+  TIFR_REG = _BV(OCF1A);
 
   /* enable interrupt */
-  TIMSK1 = _BV(OCIE1A);
+  TIMSK_REG = _BV(OCIE1A);
 }
 
 /**
@@ -111,7 +121,7 @@ static inline void st_lld_start_alarm(systime_t time) {
  */
 static inline void st_lld_stop_alarm(void) {
 
-  TIMSK1 = 0;
+  TIMSK_REG = 0;
 }
 
 /**
@@ -149,7 +159,7 @@ static inline systime_t st_lld_get_alarm(void) {
  */
 static inline bool st_lld_is_alarm_active(void) {
 
-  return (bool) ((TIMSK1 & _BV(OCIE1A)) != 0);
+  return (bool) ((TIMSK_REG & _BV(OCIE1A)) != 0);
 }
 
 #endif /* _ST_LLD_H_ */
