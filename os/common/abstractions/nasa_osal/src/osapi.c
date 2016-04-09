@@ -2120,7 +2120,7 @@ int32 OS_TaskGetIdByName(uint32 *task_id, const char *task_name) {
  */
 int32 OS_TaskGetInfo(uint32 task_id, OS_task_prop_t *task_prop) {
   thread_t *tp = (thread_t *)task_id;
-  size_t wasize = (size_t)tp - (size_t)tp->stklimit + sizeof (thread_t);
+  size_t wasize = (size_t)tp - (size_t)tp->wabase + sizeof (thread_t);
 
   /* NULL pointer checks.*/
   if (task_prop == NULL) {
