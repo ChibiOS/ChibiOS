@@ -62,20 +62,45 @@
 
 /* Find the most suitable prescaler setting for the desired OSAL_ST_FREQUENCY */
 #if ((F_CPU / OSAL_ST_FREQUENCY) <= AVR_TIMER_COUNTER_MAX)
+
   #define AVR_TIMER_PRESCALER 1
-  #define AVR_TIMER_PRESCALER_BITS (0<<CS02)|(0<<CS01)|(1<<CS00); /* CLK      */
+  #define AVR_TIMER_PRESCALER_BITS ((0<<CS02)|(0<<CS01)|(1<<CS00)) /* CLK      */
+
 #elif ((F_CPU / OSAL_ST_FREQUENCY / 8) <= AVR_TIMER_COUNTER_MAX)
+
   #define AVR_TIMER_PRESCALER 8
-  #define AVR_TIMER_PRESCALER_BITS (0<<CS02)|(1<<CS01)|(0<<CS00); /* CLK/8    */
+  #define AVR_TIMER_PRESCALER_BITS ((0<<CS02)|(1<<CS01)|(0<<CS00)) /* CLK/8    */
+
 #elif ((F_CPU / OSAL_ST_FREQUENCY / 64) <= AVR_TIMER_COUNTER_MAX)
+
   #define AVR_TIMER_PRESCALER 64
-  #define AVR_TIMER_PRESCALER_BITS (0<<CS02)|(1<<CS01)|(1<<CS00); /* CLK/64   */
+
+  #ifdef __AVR_ATmega128__
+    #define AVR_TIMER_PRESCALER_BITS ((1<<CS02)|(0<<CS01)|(0<<CS00)) /* CLK/64   */
+  #else
+    #define AVR_TIMER_PRESCALER_BITS ((0<<CS02)|(1<<CS01)|(1<<CS00)) /* CLK/64   */
+  #endif
+
 #elif ((F_CPU / OSAL_ST_FREQUENCY / 256) <= AVR_TIMER_COUNTER_MAX)
+
   #define AVR_TIMER_PRESCALER 256
-  #define AVR_TIMER_PRESCALER_BITS (1<<CS02)|(0<<CS01)|(0<<CS00); /* CLK/256  */
+
+  #ifdef __AVR_ATmega128__
+    #define AVR_TIMER_PRESCALER_BITS ((1<<CS02)|(1<<CS01)|(0<<CS00)) /* CLK/256  */
+  #else
+    #define AVR_TIMER_PRESCALER_BITS ((1<<CS02)|(0<<CS01)|(0<<CS00)) /* CLK/256  */
+  #endif
+
 #elif ((F_CPU / OSAL_ST_FREQUENCY / 1024) <= AVR_TIMER_COUNTER_MAX)
+
   #define AVR_TIMER_PRESCALER 1024
-  #define AVR_TIMER_PRESCALER_BITS (1<<CS02)|(0<<CS01)|(1<<CS00); /* CLK/1024 */
+
+  #ifdef __AVR_ATmega128__
+    #define AVR_TIMER_PRESCALER_BITS (1<<CS02)|(1<<CS01)|(1<<CS00); /* CLK/1024 */
+  #else
+    #define AVR_TIMER_PRESCALER_BITS (1<<CS02)|(0<<CS01)|(1<<CS00); /* CLK/1024 */
+  #endif
+
 #else
   #error "Frequency too low for timer, please set OSAL_ST_FREQUENCY to a higher value"
 #endif
@@ -165,16 +190,16 @@ void st_lld_init(void) {
    */
 
   /* CTC mode, no clock source */
-  TCCR1A  = 0;
-  TCCR1B  = _BV(WGM12);
+  TCCR1A     = 0;
+  TCCR1B     = _BV(WGM12);
 
   /* start disabled */
-  TCCR1C  = 0;
-  OCR1A   = 0;
-  TCNT1   = 0;
-  TIFR1   = _BV(OCF1A);                                  /* Reset pending.   */
-  TIMSK1  = 0;
-  TCCR1B  = PRESCALER;
+  TCCR1C     = 0;
+  OCR1A      = 0;
+  TCNT1      = 0;
+  TIFR_REG   = _BV(OCF1A);                                  /* Reset pending.   */
+  TIMSK_REG  = 0;
+  TCCR1B     = PRESCALER;
 
 #endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
 
