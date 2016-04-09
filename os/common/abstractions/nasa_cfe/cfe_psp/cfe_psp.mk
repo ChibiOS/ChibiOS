@@ -1,4 +1,4 @@
 # NASA CFE PSP files.
-CFEOSALSRC = $(CHIBIOS)/os/common/abstractions/nasa_cfe/cfe_psp/src/cfe_psp_support.c
+CFEPSPSRC = $(CHIBIOS)/os/common/abstractions/nasa_cfe/cfe_psp/src/cfe_psp_support.c
 
-CFEOSALINC = $(CHIBIOS)/os/common/abstractions/nasa_cfe/cfe_psp/include
+CFEPSPINC = $(CHIBIOS)/os/common/abstractions/nasa_cfe/cfe_psp/include

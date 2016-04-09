@@ -99,7 +99,8 @@ include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
 # Other files (optional).
 include $(CHIBIOS)/test/nasa_osal/test.mk
-include $(CHIBIOS)/os/common/abstractions/nasa_osal/nasa_osal.mk
+include $(CHIBIOS)/os/common/abstractions/nasa_cfe/cfe_osal/cfe_osal.mk
+include $(CHIBIOS)/os/common/abstractions/nasa_cfe/cfe_psp/cfe_psp.mk
 
 # Define linker script file here
 LDSCRIPT= $(STARTUPLD)/STM32F746xG.ld
