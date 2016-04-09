@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    cfe_psp_chibios.c
- * @brief   CFE PSP module code.
+ * @file    cfe_psp_support.c
+ * @brief   CFE PSP support module code.
  *
- * @addtogroup nasa_cfe_psp
+ * @addtogroup nasa_cfe_psp_support
  * @{
  */
 

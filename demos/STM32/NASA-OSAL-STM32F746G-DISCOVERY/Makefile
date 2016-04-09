@@ -115,7 +115,7 @@ CSRC = $(STARTUPSRC) \
        $(BOARDSRC) \
        $(TESTSRC) \
        $(NASAOSALSRC) \
-       $(CHIBIOS)/os/common/abstractions/nasa_osal/lib/cfe_psp_chibios.c \
+       $(CHIBIOS)/os/common/abstractions/nasa_osal/lib/cfe_psp_support.c \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
