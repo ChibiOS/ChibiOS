@@ -44,8 +44,8 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !CH_USE_SEMAPHORES
-#error "the ADC driver requires CH_USE_SEMAPHORES"
+#if !CH_CFG_USE_SEMAPHORES
+#error "the ADC driver requires CH_CFG_USE_SEMAPHORES"
 #endif
 
 /*===========================================================================*/
@@ -148,12 +148,12 @@ struct ADCDriver {
   Thread                    *thread;
 #endif /* ADC_USE_WAIT */
 #if ADC_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
-#if CH_USE_MUTEXES || defined(__DOXYGEN__)
+#if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
   /**
    * @brief Mutex protecting the peripheral.
    */
   Mutex                     mutex;
-#elif CH_USE_SEMAPHORES
+#elif CH_CFG_USE_SEMAPHORES
   Semaphore                 semaphore;
 #endif
 #endif /* ADC_USE_MUTUAL_EXCLUSION */
