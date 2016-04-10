@@ -54,18 +54,13 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-static void usage(BaseSequentialStream *chp, char *p) {
-
-  chprintf(chp, "Usage: %s\r\n", p);
-}
-
 #if ((SHELL_CMD_EXIT_ENABLED == TRUE) && !defined(_CHIBIOS_NIL_)) ||        \
     defined(__DOXYGEN__)
 static void cmd_exit(BaseSequentialStream *chp, int argc, char *argv[]) {
 
   (void)argv;
   if (argc > 0) {
-    usage(chp, "exit");
+    shellUsage(chp, "exit");
     return;
   }
 
@@ -78,30 +73,30 @@ static void cmd_info(BaseSequentialStream *chp, int argc, char *argv[]) {
 
   (void)argv;
   if (argc > 0) {
-    usage(chp, "info");
+    shellUsage(chp, "info");
     return;
   }
 
-  chprintf(chp, "Kernel:       %s\r\n", CH_KERNEL_VERSION);
+  chprintf(chp, "Kernel:       %s"SHELL_NEWLINE_STR, CH_KERNEL_VERSION);
 #ifdef PORT_COMPILER_NAME
-  chprintf(chp, "Compiler:     %s\r\n", PORT_COMPILER_NAME);
+  chprintf(chp, "Compiler:     %s"SHELL_NEWLINE_STR, PORT_COMPILER_NAME);
 #endif
-  chprintf(chp, "Architecture: %s\r\n", PORT_ARCHITECTURE_NAME);
+  chprintf(chp, "Architecture: %s"SHELL_NEWLINE_STR, PORT_ARCHITECTURE_NAME);
 #ifdef PORT_CORE_VARIANT_NAME
-  chprintf(chp, "Core Variant: %s\r\n", PORT_CORE_VARIANT_NAME);
+  chprintf(chp, "Core Variant: %s"SHELL_NEWLINE_STR, PORT_CORE_VARIANT_NAME);
 #endif
 #ifdef PORT_INFO
-  chprintf(chp, "Port Info:    %s\r\n", PORT_INFO);
+  chprintf(chp, "Port Info:    %s"SHELL_NEWLINE_STR, PORT_INFO);
 #endif
 #ifdef PLATFORM_NAME
-  chprintf(chp, "Platform:     %s\r\n", PLATFORM_NAME);
+  chprintf(chp, "Platform:     %s"SHELL_NEWLINE_STR, PLATFORM_NAME);
 #endif
 #ifdef BOARD_NAME
-  chprintf(chp, "Board:        %s\r\n", BOARD_NAME);
+  chprintf(chp, "Board:        %s"SHELL_NEWLINE_STR, BOARD_NAME);
 #endif
 #ifdef __DATE__
 #ifdef __TIME__
-  chprintf(chp, "Build time:   %s%s%s\r\n", __DATE__, " - ", __TIME__);
+  chprintf(chp, "Build time:   %s%s%s"SHELL_NEWLINE_STR, __DATE__, " - ", __TIME__);
 #endif
 #endif
 }
@@ -112,10 +107,10 @@ static void cmd_echo(BaseSequentialStream *chp, int argc, char *argv[]) {
 
   (void)argv;
   if (argc != 1) {
-    usage(chp, "echo \"message\"");
+    shellUsage(chp, "echo \"message\"");
     return;
   }
-  chprintf(chp, "%s\r\n", argv[0]);
+  chprintf(chp, "%s"SHELL_NEWLINE_STR, argv[0]);
 }
 #endif
 
@@ -124,10 +119,10 @@ static void cmd_systime(BaseSequentialStream *chp, int argc, char *argv[]) {
 
   (void)argv;
   if (argc > 0) {
-    usage(chp, "systime");
+    shellUsage(chp, "systime");
     return;
   }
-  chprintf(chp, "%lu\r\n", (unsigned long)chVTGetSystemTime());
+  chprintf(chp, "%lu"SHELL_NEWLINE_STR, (unsigned long)chVTGetSystemTime());
 }
 #endif
 
@@ -137,14 +132,14 @@ static void cmd_mem(BaseSequentialStream *chp, int argc, char *argv[]) {
 
   (void)argv;
   if (argc > 0) {
-    chprintf(chp, "Usage: mem\r\n");
+    shellUsage(chp, "mem");
     return;
   }
   n = chHeapStatus(NULL, &total, &largest);
-  chprintf(chp, "core free memory : %u bytes\r\n", chCoreGetStatusX());
-  chprintf(chp, "heap fragments   : %u\r\n", n);
-  chprintf(chp, "heap free total  : %u bytes\r\n", total);
-  chprintf(chp, "heap free largest: %u bytes\r\n", largest);
+  chprintf(chp, "core free memory : %u bytes"SHELL_NEWLINE_STR, chCoreGetStatusX());
+  chprintf(chp, "heap fragments   : %u"SHELL_NEWLINE_STR, n);
+  chprintf(chp, "heap free total  : %u bytes"SHELL_NEWLINE_STR, total);
+  chprintf(chp, "heap free largest: %u bytes"SHELL_NEWLINE_STR, largest);
 }
 #endif
 
@@ -155,10 +150,10 @@ static void cmd_threads(BaseSequentialStream *chp, int argc, char *argv[]) {
 
   (void)argv;
   if (argc > 0) {
-    chprintf(chp, "Usage: threads\r\n");
+    shellUsage(chp, "threads");
     return;
   }
-  chprintf(chp, "stklimit    stack     addr refs prio     state         name\r\n");
+  chprintf(chp, "stklimit    stack     addr refs prio     state         name\r\n"SHELL_NEWLINE_STR);
   tp = chRegFirstThread();
   do {
 #if CH_DBG_ENABLE_STACK_CHECK == TRUE
@@ -166,7 +161,7 @@ static void cmd_threads(BaseSequentialStream *chp, int argc, char *argv[]) {
 #else
     uint32_t stklimit = 0U;
 #endif
-    chprintf(chp, "%08lx %08lx %08lx %4lu %4lu %9s %12s\r\n",
+    chprintf(chp, "%08lx %08lx %08lx %4lu %4lu %9s %12s"SHELL_NEWLINE_STR,
              stklimit, (uint32_t)tp->ctx.sp, (uint32_t)tp,
              (uint32_t)tp->refs - 1, (uint32_t)tp->prio, states[tp->state],
              tp->name == NULL ? "" : tp->name);
@@ -181,14 +176,14 @@ static void cmd_test(BaseSequentialStream *chp, int argc, char *argv[]) {
 
   (void)argv;
   if (argc > 0) {
-    chprintf(chp, "Usage: test\r\n");
+    shellUsage(chp, "test");
     return;
   }
   tp = chThdCreateFromHeap(NULL, SHELL_CMD_TEST_WA_SIZE,
                            "test", chThdGetPriorityX(),
                            (tfunc_t)test_execute, chp);
   if (tp == NULL) {
-    chprintf(chp, "out of memory\r\n");
+    chprintf(chp, "out of memory"SHELL_NEWLINE_STR);
     return;
   }
   chThdWait(tp);

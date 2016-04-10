@@ -29,6 +29,22 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Prompt string
+ */
+#define SHELL_PROMPT_STR            "ch> "
+
+/**
+ * @brief   Newline string
+ */
+#define SHELL_NEWLINE_STR            "\r\n"
+
+/**
+ * @brief   Shell History Constants
+ */
+#define SHELL_HIST_DIR_BK           0
+#define SHELL_HIST_DIR_FW           1
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -45,6 +61,41 @@
  */
 #if !defined(SHELL_MAX_ARGUMENTS) || defined(__DOXYGEN__)
 #define SHELL_MAX_ARGUMENTS         4
+#endif
+
+/**
+ * @brief   Shell maximum command history.
+ */
+#if !defined(SHELL_MAX_HIST_BUFF) || defined(__DOXYGEN__)
+#define SHELL_MAX_HIST_BUFF         8 * SHELL_MAX_LINE_LENGTH
+#endif
+
+/**
+ * @brief   Enable shell command history
+ */
+#if !defined(SHELL_USE_HISTORY) || defined(__DOXYGEN__)
+#define SHELL_USE_HISTORY           TRUE
+#endif
+
+/**
+ * @brief   Enable shell command completion
+ */
+#if !defined(SHELL_USE_COMPLETION) || defined(__DOXYGEN__)
+#define SHELL_USE_COMPLETION        TRUE
+#endif
+
+/**
+ * @brief   Shell Maximum Completions (Set to max commands with common prefix)
+ */
+#if !defined(SHELL_MAX_COMPLETIONS) || defined(__DOXYGEN__)
+#define SHELL_MAX_COMPLETIONS       8
+#endif
+
+/**
+ * @brief   Enable shell escape sequence processing
+ */
+#if !defined(SHELL_USE_ESC_SEQ) || defined(__DOXYGEN__)
+#define SHELL_USE_ESC_SEQ           TRUE
 #endif
 
 /*===========================================================================*/
@@ -69,6 +120,22 @@ typedef struct {
 } ShellCommand;
 
 /**
+ * @brief   Shell history type.
+ */
+typedef struct {
+  char                   *sh_buffer;        /**< @brief Buffer to store command
+                                                 history.                   */
+  const int              sh_size;           /**< @brief Shell history buffer
+                                                 size.                      */
+  int                    sh_beg;            /**< @brief Beginning command index
+                                                 in buffer.                 */
+  int                    sh_end;            /**< @brief Ending command index
+                                                 in buffer.                 */
+  int                    sh_cur;            /**< @brief Currently selected
+                                                 command in buffer.         */
+} ShellHistory;
+
+/**
  * @brief   Shell descriptor type.
  */
 typedef struct {
@@ -76,11 +143,51 @@ typedef struct {
                                                  to the shell.              */
   const ShellCommand    *sc_commands;       /**< @brief Shell extra commands
                                                  table.                     */
+#if (SHELL_USE_HISTORY == TRUE) || defined(__DOXYGEN__)
+  ShellHistory          *sc_history;        /**< @brief Shell command history
+                                                 buffer.                    */
+#endif
+#if (SHELL_USE_COMPLETION == TRUE) || defined(__DOXYGEN__)
+  char                  **sc_completion;    /**< @brief Shell command completion
+                                                 buffer.                    */
+#endif
 } ShellConfig;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Send escape codes to move cursor to the beginning of the line
+ *
+ * @param[in] stream    pointer to a @p BaseSequentialStream object
+ *
+ * @notapi
+ */
+#define _shell_reset_cur(stream)  chprintf(stream, "\033[%dD\033[%dC",        \
+                                           SHELL_MAX_LINE_LENGTH +            \
+                                           strlen(SHELL_PROMPT_STR) + 2,      \
+                                           strlen(SHELL_PROMPT_STR))
+
+/**
+ * @brief   Send escape codes to clear the rest of the line
+ *
+ * @param[in] stream    pointer to a @p BaseSequentialStream object
+ *
+ * @notapi
+ */
+#define _shell_clr_line(stream)   chprintf(stream, "\033[K")
+
+/**
+ * @brief   Prints out usage message
+ *
+ * @param[in] stream    pointer to a @p BaseSequentialStream object
+ * @param[in] message   pointer to message string
+ *
+ * @api
+ */
+#define shellUsage(stream, message)                                           \
+  chprintf(stream, "Usage: %s"SHELL_NEWLINE_STR, message)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -96,7 +203,7 @@ extern "C" {
   void shellInit(void);
   THD_FUNCTION(shellThread, p);
   void shellExit(msg_t msg);
-  bool shellGetLine(BaseSequentialStream *chp, char *line, unsigned size);
+  bool shellGetLine(ShellConfig *scfg, char *line, unsigned size);
 #ifdef __cplusplus
 }
 #endif

@@ -88,11 +88,6 @@ static char *parse_arguments(char *str, char **saveptr) {
   return *p != '\0' ? p : NULL;
 }
 
-static void usage(BaseSequentialStream *chp, char *p) {
-
-  chprintf(chp, "Usage: %s\r\n", p);
-}
-
 static void list_commands(BaseSequentialStream *chp, const ShellCommand *scp) {
 
   while (scp->sc_name != NULL) {
@@ -114,6 +109,212 @@ static bool cmdexec(const ShellCommand *scp, BaseSequentialStream *chp,
   return true;
 }
 
+#if (SHELL_USE_HISTORY == TRUE) || defined(__DOXYGEN__)
+static void del_histbuff_entry(ShellHistory *shp) {
+  int pos = shp->sh_beg + *(shp->sh_buffer + shp->sh_beg) + 1;
+
+  if (pos >= shp->sh_size)
+    pos -= shp->sh_size;
+
+  shp->sh_beg = pos;
+}
+
+static bool is_histbuff_space(ShellHistory *shp, int length) {
+
+  if (shp->sh_end >= shp->sh_beg) {
+    if (length < (shp->sh_size - (shp->sh_end - shp->sh_beg + 1)))
+      return true;
+  }
+  else {
+    if (length < (shp->sh_beg - shp->sh_end - 1))
+      return true;
+  }
+
+  return false;
+}
+
+static void save_history(ShellHistory *shp, char *line, int length) {
+
+  if (length > shp->sh_size - 2)
+    return;
+
+  while ((*(line + length -1) == ' ') && (length > 0))
+    length--;
+
+  if (length <= 0)
+    return;
+
+  while (!is_histbuff_space(shp, length))
+    del_histbuff_entry(shp);
+
+  if (length < shp->sh_size - shp->sh_end - 1)
+    memcpy(shp->sh_buffer + shp->sh_end + 1, line, length);
+  else {
+    /*
+     * Since there isn't enough room left at the end of the buffer,
+     * split the line to save up to the end of the buffer and then
+     * wrap back to the beginning of the buffer.
+     */
+    int part_len = shp->sh_size - shp->sh_end - 1;
+    memcpy(shp->sh_buffer + shp->sh_end + 1, line, part_len);
+    memcpy(shp->sh_buffer, line + part_len, length - part_len);
+  }
+
+  /* Save the length of the current line and move the buffer end pointer */
+  *(shp->sh_buffer + shp->sh_end) = (char)length;
+  shp->sh_end += length + 1;
+  if (shp->sh_end >= shp->sh_size)
+    shp->sh_end -= shp->sh_size;
+  *(shp->sh_buffer + shp->sh_end) = 0;
+  shp->sh_cur = 0;
+}
+
+static int get_history(ShellHistory *shp, char *line, int dir) {
+  int count=0;
+
+  /* Count the number of lines saved in the buffer */
+  int idx = shp->sh_beg;
+  while (idx != shp->sh_end) {
+    idx += *(shp->sh_buffer + idx) + 1;
+    if (idx >= shp->sh_size)
+      idx -= shp->sh_size;
+    count++;
+  }
+
+  if (dir == SHELL_HIST_DIR_FW) {
+    if (shp->sh_cur > 0)
+      shp->sh_cur -= 2;
+    else
+      return 0;
+  }
+
+  if (count >= shp->sh_cur) {
+    idx = shp->sh_beg;
+    int i = 0;
+    while (idx != shp->sh_end && shp->sh_cur != (count - i - 1)) {
+      idx += *(shp->sh_buffer + idx) + 1;
+      if (idx >= shp->sh_size)
+        idx -= shp->sh_size;
+      i++;
+    }
+
+    int length = *(shp->sh_buffer + idx);
+
+    if (length > 0) {
+      shp->sh_cur++;
+
+      memset(line, 0, SHELL_MAX_LINE_LENGTH);
+      if ((idx + length) < shp->sh_size) {
+        memcpy(line, (shp->sh_buffer + idx + 1), length);
+      }
+      else {
+        /*
+         * Since the saved line was split at the end of the buffer,
+         * get the line in two parts.
+         */
+        int part_len = shp->sh_size - idx - 1;
+        memcpy(line, shp->sh_buffer + idx + 1, part_len);
+        memcpy(line + part_len, shp->sh_buffer, length - part_len);
+      }
+      return length;
+    }
+    else if (dir == SHELL_HIST_DIR_FW) {
+      shp->sh_cur++;
+      return 0;
+    }
+  }
+  return -1;
+}
+#endif
+
+#if (SHELL_USE_COMPLETION == TRUE)
+static void get_completions(ShellConfig *scfg, char *line) {
+  ShellCommand *lcp = shell_local_commands;
+  const ShellCommand *scp = scfg->sc_commands;
+  char **scmp = scfg->sc_completion;
+  char help_cmp[] = "help";
+
+  if (strstr(help_cmp, line) == help_cmp) {
+    *scmp++ = help_cmp;
+  }
+  while (lcp->sc_name != NULL) {
+    if (strstr(lcp->sc_name, line) == lcp->sc_name) {
+      *scmp++ = (char *)lcp->sc_name;
+    }
+    lcp++;
+  }
+  if (scp != NULL) {
+    while (scp->sc_name != NULL) {
+      if (strstr(scp->sc_name, line) == scp->sc_name) {
+        *scmp++ = (char *)scp->sc_name;
+      }
+      scp++;
+    }
+  }
+
+  *scmp = NULL;
+}
+
+static int process_completions(ShellConfig *scfg, char *line, int length, unsigned size) {
+  char **scmp = scfg->sc_completion;
+  char **cmp = scmp + 1;
+  char *c = line + length;
+  int clen = 0;
+
+  if (*scmp != NULL) {
+    if (*cmp == NULL) {
+      clen = strlen(*scmp);
+      int i = length;
+      while ((c < line + clen) && (c < line + size - 1))
+        *c++ = *(*scmp + i++);
+      if (c < line + size -1) {
+        *c = ' ';
+        clen++;
+      }
+    }
+    else {
+      while (*(*scmp + clen) != 0) {
+        while ((*(*scmp + clen) == *(*cmp + clen)) &&
+               (*(*cmp + clen) != 0) && (*cmp != NULL)) {
+          cmp++;
+        }
+        if (*cmp == NULL) {
+          if ((c < line + size - 1) && (clen >= length))
+            *c++ = *(*scmp + clen);
+          cmp = scmp + 1;
+          clen++;
+        }
+        else {
+          break;
+        }
+      }
+    }
+
+    *(line + clen) = 0;
+  }
+
+  return clen;
+}
+
+static void write_completions(ShellConfig *scfg, char *line, int pos) {
+  BaseSequentialStream *chp = scfg->sc_channel;
+  char **scmp = scfg->sc_completion;
+
+  if (*(scmp + 1) != NULL) {
+    chprintf(chp, SHELL_NEWLINE_STR);
+    while (*scmp != NULL)
+      chprintf(chp, " %s", *scmp++);
+    chprintf(chp, SHELL_NEWLINE_STR);
+
+    chprintf(chp, SHELL_PROMPT_STR);
+    chprintf(chp, "%s", line);
+  }
+  else {
+    chprintf(chp, "%s", line + pos);
+  }
+}
+#endif
+
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
@@ -125,17 +326,20 @@ static bool cmdexec(const ShellCommand *scp, BaseSequentialStream *chp,
  */
 THD_FUNCTION(shellThread, p) {
   int n;
+  ShellConfig *scfg = p;
   BaseSequentialStream *chp = ((ShellConfig *)p)->sc_channel;
   const ShellCommand *scp = ((ShellConfig *)p)->sc_commands;
   char *lp, *cmd, *tokp, line[SHELL_MAX_LINE_LENGTH];
   char *args[SHELL_MAX_ARGUMENTS + 1];
 
-  chprintf(chp, "\r\nChibiOS/RT Shell\r\n");
+  chprintf(chp, SHELL_NEWLINE_STR);
+  chprintf(chp, "ChibiOS/RT Shell"SHELL_NEWLINE_STR);
   while (true) {
-    chprintf(chp, "ch> ");
-    if (shellGetLine(chp, line, sizeof(line))) {
+    chprintf(chp, SHELL_PROMPT_STR);
+    if (shellGetLine(scfg, line, sizeof(line))) {
 #if (SHELL_CMD_EXIT_ENABLED == TRUE) && !defined(_CHIBIOS_NIL_)
-      chprintf(chp, "\r\nlogout");
+      chprintf(chp, SHELL_NEWLINE_STR);
+      chprintf(chp, "logout");
       break;
 #else
       /* Putting a delay in order to avoid an endless loop trying to read
@@ -148,7 +352,7 @@ THD_FUNCTION(shellThread, p) {
     n = 0;
     while ((lp = parse_arguments(NULL, &tokp)) != NULL) {
       if (n >= SHELL_MAX_ARGUMENTS) {
-        chprintf(chp, "too many arguments\r\n");
+        chprintf(chp, "too many arguments"SHELL_NEWLINE_STR);
         cmd = NULL;
         break;
       }
@@ -158,19 +362,19 @@ THD_FUNCTION(shellThread, p) {
     if (cmd != NULL) {
       if (strcmp(cmd, "help") == 0) {
         if (n > 0) {
-          usage(chp, "help");
+          shellUsage(chp, "help");
           continue;
         }
         chprintf(chp, "Commands: help ");
         list_commands(chp, shell_local_commands);
         if (scp != NULL)
           list_commands(chp, scp);
-        chprintf(chp, "\r\n");
+        chprintf(chp, SHELL_NEWLINE_STR);
       }
       else if (cmdexec(shell_local_commands, chp, cmd, n, args) &&
           ((scp == NULL) || cmdexec(scp, chp, cmd, n, args))) {
         chprintf(chp, "%s", cmd);
-        chprintf(chp, " ?\r\n");
+        chprintf(chp, " ?"SHELL_NEWLINE_STR);
       }
     }
   }
@@ -217,7 +421,7 @@ void shellExit(msg_t msg) {
  *          - Other values below 0x20 are not echoed.
  *          .
  *
- * @param[in] chp       pointer to a @p BaseSequentialStream object
+ * @param[in] scfg      pointer to a @p ShellConfig object
  * @param[in] line      pointer to the line buffer
  * @param[in] size      buffer maximum length
  * @return              The operation status.
@@ -226,14 +430,66 @@ void shellExit(msg_t msg) {
  *
  * @api
  */
-bool shellGetLine(BaseSequentialStream *chp, char *line, unsigned size) {
+bool shellGetLine(ShellConfig *scfg, char *line, unsigned size) {
   char *p = line;
+  BaseSequentialStream *chp = scfg->sc_channel;
+  bool escape = false;
+  bool bracket = false;
+
+#if (SHELL_USE_HISTORY == TRUE)
+  ShellHistory *shp = scfg->sc_history;
+#endif
 
   while (true) {
     char c;
 
     if (streamRead(chp, (uint8_t *)&c, 1) == 0)
       return true;
+#if (SHELL_USE_ESC_SEQ == TRUE)
+    if (c == 27) {
+      escape = true;
+      continue;
+    }
+    if (escape) {
+      escape = false;
+      if (c == '[') {
+        escape = true;
+        bracket = true;
+        continue;
+      }
+      if (bracket) {
+        bracket = false;
+#if (SHELL_USE_HISTORY == TRUE)
+        if (c == 'A') {
+          int len = get_history(shp, line, SHELL_HIST_DIR_BK);
+
+          if (len > 0) {
+            _shell_reset_cur(chp);
+            _shell_clr_line(chp);
+            chprintf(chp, "%s", line);
+            p = line + len;
+          }
+          continue;
+        }
+        if (c == 'B') {
+          int len = get_history(shp, line, SHELL_HIST_DIR_FW);
+
+          if (len == 0)
+            *line = 0;
+
+          if (len >= 0) {
+            _shell_reset_cur(chp);
+            _shell_clr_line(chp);
+            chprintf(chp, "%s", line);
+            p = line + len;
+          }
+          continue;
+        }
+#endif
+      }
+      continue;
+    }
+#endif
 #if (SHELL_CMD_EXIT_ENABLED == TRUE) && !defined(_CHIBIOS_NIL_)
     if (c == 4) {
       chprintf(chp, "^D");
@@ -250,10 +506,57 @@ bool shellGetLine(BaseSequentialStream *chp, char *line, unsigned size) {
       continue;
     }
     if (c == '\r') {
-      chprintf(chp, "\r\n");
+      chprintf(chp, SHELL_NEWLINE_STR);
+#if (SHELL_USE_HISTORY == TRUE)
+      if (shp != NULL) {
+        save_history(shp, line, p - line);
+      }
+#endif
       *p = 0;
       return false;
     }
+#if (SHELL_USE_COMPLETION == TRUE)
+    if (c == '\t') {
+      if (p < line + size - 1) {
+        *p = 0;
+
+        get_completions(scfg, line);
+        int len = process_completions(scfg, line, p - line, size);
+        if (len > 0) {
+          write_completions(scfg, line, p - line);
+          p = line + len;
+        }
+      }
+      continue;
+    }
+#endif
+#if (SHELL_USE_HISTORY == TRUE)
+    if (c == 14) {
+      int len = get_history(shp, line, SHELL_HIST_DIR_FW);
+
+      if (len == 0)
+        *line = 0;
+
+      if (len >= 0) {
+        _shell_reset_cur(chp);
+        _shell_clr_line(chp);
+        chprintf(chp, "%s", line);
+        p = line + len;
+      }
+      continue;
+    }
+    if (c == 16) {
+      int len = get_history(shp, line, SHELL_HIST_DIR_BK);
+
+      if (len > 0) {
+        _shell_reset_cur(chp);
+        _shell_clr_line(chp);
+        chprintf(chp, "%s", line);
+        p = line + len;
+      }
+      continue;
+    }
+#endif
     if (c < 0x20)
       continue;
     if (p < line + size - 1) {
