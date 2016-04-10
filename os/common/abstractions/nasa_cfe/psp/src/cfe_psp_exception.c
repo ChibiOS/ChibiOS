@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    cfe_psp_timer.c
- * @brief   CFE PSP timer module code.
+ * @file    cfe_psp_exception.c
+ * @brief   CFE PSP exception module code.
  *
- * @addtogroup nasa_cfe_psp_timer
+ * @addtogroup nasa_cfe_psp_exception
  * @{
  */
 
@@ -52,30 +52,9 @@
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
-void CFE_PSP_GetTime(OS_time_t *LocalTime) {
+void CFE_PSP_SetDefaultExceptionEnvironment(void) {
 
-  (void)LocalTime;
-}
-
-uint32 CFE_PSP_GetTimerTicksPerSecond(void) {
-
-  return 0;
-}
-
-uint32 CFE_PSP_GetTimerLow32Rollover(void) {
-
-  return 0;
-}
-
-void CFE_PSP_Get_Timebase(uint32 *Tbu, uint32* Tbl) {
-
-  (void)Tbu;
-  (void)Tbl;
-}
-
-uint32 CFE_PSP_Get_Dec(void) {
-
-  return 0;
+  /* Does nothing in ChibiOS, exceptions are initialized by the OS.*/
 }
 
 /** @} */

@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    cfe_psp_timer.c
- * @brief   CFE PSP timer module code.
+ * @file    cfe_psp_memory.c
+ * @brief   CFE PSP memory module code.
  *
- * @addtogroup nasa_cfe_psp_timer
+ * @addtogroup nasa_cfe_psp_memory
  * @{
  */
 
@@ -52,28 +52,83 @@
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
-void CFE_PSP_GetTime(OS_time_t *LocalTime) {
+int32 CFE_PSP_GetCDSSize(uint32 *SizeOfCDS) {
 
-  (void)LocalTime;
-}
-
-uint32 CFE_PSP_GetTimerTicksPerSecond(void) {
+  (void)SizeOfCDS;
 
   return 0;
 }
 
-uint32 CFE_PSP_GetTimerLow32Rollover(void) {
+int32 CFE_PSP_WriteToCDS(void *PtrToDataToWrite,
+                         uint32 CDSOffset,
+                         uint32 NumBytes) {
+
+  (void)PtrToDataToWrite;
+  (void)CDSOffset;
+  (void)NumBytes;
 
   return 0;
 }
 
-void CFE_PSP_Get_Timebase(uint32 *Tbu, uint32* Tbl) {
+int32 CFE_PSP_ReadFromCDS(void *PtrToDataToRead,
+                          uint32 CDSOffset,
+                          uint32 NumBytes) {
 
-  (void)Tbu;
-  (void)Tbl;
+  (void)PtrToDataToRead;
+  (void)CDSOffset;
+  (void)NumBytes;
+
+  return 0;
 }
 
-uint32 CFE_PSP_Get_Dec(void) {
+int32 CFE_PSP_GetResetArea(void *PtrToResetArea,
+                           uint32 *SizeOfResetArea) {
+
+  (void)PtrToResetArea;
+  (void)SizeOfResetArea;
+
+  return 0;
+}
+
+int32 CFE_PSP_GetUserReservedArea(void *PtrToUserArea,
+                                  uint32 *SizeOfUserArea) {
+
+  (void)PtrToUserArea;
+  (void)SizeOfUserArea;
+
+  return 0;
+}
+
+int32 CFE_PSP_GetVolatileDiskMem(void *PtrToVolDisk,
+                                 uint32 *SizeOfVolDisk) {
+
+  (void)PtrToVolDisk;
+  (void)SizeOfVolDisk;
+
+  return 0;
+}
+
+int32 CFE_PSP_InitProcessorReservedMemory(uint32 RestartType) {
+
+  (void)RestartType;
+
+  return 0;
+}
+
+int32 CFE_PSP_GetKernelTextSegmentInfo(void *PtrToKernelSegment,
+                                       uint32 *SizeOfKernelSegment) {
+
+  (void)PtrToKernelSegment;
+  (void)SizeOfKernelSegment;
+
+  return 0;
+}
+
+int32 CFE_PSP_GetCFETextSegmentInfo(void *PtrToCFESegment,
+                                    uint32 *SizeOfCFESegment) {
+
+  (void)PtrToCFESegment;
+  (void)SizeOfCFESegment;
 
   return 0;
 }
