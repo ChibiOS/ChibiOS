@@ -25,6 +25,10 @@
 #ifndef SHELL_H
 #define SHELL_H
 
+#if defined(SHELL_CONFIG_FILE)
+#include "shellconf.h"
+#endif
+
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
@@ -74,14 +78,14 @@
  * @brief   Enable shell command history
  */
 #if !defined(SHELL_USE_HISTORY) || defined(__DOXYGEN__)
-#define SHELL_USE_HISTORY           TRUE
+#define SHELL_USE_HISTORY           FALSE
 #endif
 
 /**
  * @brief   Enable shell command completion
  */
 #if !defined(SHELL_USE_COMPLETION) || defined(__DOXYGEN__)
-#define SHELL_USE_COMPLETION        TRUE
+#define SHELL_USE_COMPLETION        FALSE
 #endif
 
 /**
@@ -95,7 +99,7 @@
  * @brief   Enable shell escape sequence processing
  */
 #if !defined(SHELL_USE_ESC_SEQ) || defined(__DOXYGEN__)
-#define SHELL_USE_ESC_SEQ           TRUE
+#define SHELL_USE_ESC_SEQ           FALSE
 #endif
 
 /*===========================================================================*/

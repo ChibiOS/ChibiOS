@@ -156,8 +156,8 @@ static void cmd_threads(BaseSequentialStream *chp, int argc, char *argv[]) {
   chprintf(chp, "stklimit    stack     addr refs prio     state         name\r\n"SHELL_NEWLINE_STR);
   tp = chRegFirstThread();
   do {
-#if CH_DBG_ENABLE_STACK_CHECK == TRUE
-    uint32_t stklimit = (uint32_t)tp->stklimit;
+#if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || (CH_CFG_USE_DYNAMIC == TRUE)
+    uint32_t stklimit = (uint32_t)tp->wabase;
 #else
     uint32_t stklimit = 0U;
 #endif

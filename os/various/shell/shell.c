@@ -227,7 +227,7 @@ static int get_history(ShellHistory *shp, char *line, int dir) {
 }
 #endif
 
-#if (SHELL_USE_COMPLETION == TRUE)
+#if (SHELL_USE_COMPLETION == TRUE) || defined(__DOXYGEN__)
 static void get_completions(ShellConfig *scfg, char *line) {
   ShellCommand *lcp = shell_local_commands;
   const ShellCommand *scp = scfg->sc_commands;
@@ -327,8 +327,8 @@ static void write_completions(ShellConfig *scfg, char *line, int pos) {
 THD_FUNCTION(shellThread, p) {
   int n;
   ShellConfig *scfg = p;
-  BaseSequentialStream *chp = ((ShellConfig *)p)->sc_channel;
-  const ShellCommand *scp = ((ShellConfig *)p)->sc_commands;
+  BaseSequentialStream *chp = scfg->sc_channel;
+  const ShellCommand *scp = scfg->sc_commands;
   char *lp, *cmd, *tokp, line[SHELL_MAX_LINE_LENGTH];
   char *args[SHELL_MAX_ARGUMENTS + 1];
 
@@ -433,8 +433,10 @@ void shellExit(msg_t msg) {
 bool shellGetLine(ShellConfig *scfg, char *line, unsigned size) {
   char *p = line;
   BaseSequentialStream *chp = scfg->sc_channel;
+#if (SHELL_USE_ESC_SEQ == TRUE)
   bool escape = false;
   bool bracket = false;
+#endif
 
 #if (SHELL_USE_HISTORY == TRUE)
   ShellHistory *shp = scfg->sc_history;
@@ -445,7 +447,7 @@ bool shellGetLine(ShellConfig *scfg, char *line, unsigned size) {
 
     if (streamRead(chp, (uint8_t *)&c, 1) == 0)
       return true;
-#if (SHELL_USE_ESC_SEQ == TRUE)
+#if SHELL_USE_ESC_SEQ == TRUE
     if (c == 27) {
       escape = true;
       continue;
@@ -459,7 +461,7 @@ bool shellGetLine(ShellConfig *scfg, char *line, unsigned size) {
       }
       if (bracket) {
         bracket = false;
-#if (SHELL_USE_HISTORY == TRUE)
+#if SHELL_USE_HISTORY == TRUE
         if (c == 'A') {
           int len = get_history(shp, line, SHELL_HIST_DIR_BK);
 
@@ -507,7 +509,7 @@ bool shellGetLine(ShellConfig *scfg, char *line, unsigned size) {
     }
     if (c == '\r') {
       chprintf(chp, SHELL_NEWLINE_STR);
-#if (SHELL_USE_HISTORY == TRUE)
+#if SHELL_USE_HISTORY == TRUE
       if (shp != NULL) {
         save_history(shp, line, p - line);
       }
@@ -515,7 +517,7 @@ bool shellGetLine(ShellConfig *scfg, char *line, unsigned size) {
       *p = 0;
       return false;
     }
-#if (SHELL_USE_COMPLETION == TRUE)
+#if SHELL_USE_COMPLETION == TRUE
     if (c == '\t') {
       if (p < line + size - 1) {
         *p = 0;
@@ -530,7 +532,7 @@ bool shellGetLine(ShellConfig *scfg, char *line, unsigned size) {
       continue;
     }
 #endif
-#if (SHELL_USE_HISTORY == TRUE)
+#if SHELL_USE_HISTORY == TRUE
     if (c == 14) {
       int len = get_history(shp, line, SHELL_HIST_DIR_FW);
 
