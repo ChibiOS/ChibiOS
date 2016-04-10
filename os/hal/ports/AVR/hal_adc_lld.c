@@ -114,8 +114,6 @@ void adc_lld_init(void) {
   //prescaler 128, only value possible at 20Mhz, interrupt
   ADCSRA = (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0) | (1 << ADIE);
 
-  ADCSRB = 0; //single shot
-
   //uso aref, only valid for arduino. arduino ha aref collegato
   ADMUX = (0 << REFS1) | (0 << REFS0);
 
