@@ -156,19 +156,12 @@ THD_FUNCTION(shellThread, p) {
     }
     args[n] = NULL;
     if (cmd != NULL) {
-      if (strcmp(cmd, "exit") == 0) {
-        if (n > 0) {
-          usage(chp, "exit");
-          continue;
-        }
-        break;
-      }
-      else if (strcmp(cmd, "help") == 0) {
+      if (strcmp(cmd, "help") == 0) {
         if (n > 0) {
           usage(chp, "help");
           continue;
         }
-        chprintf(chp, "Commands: help exit ");
+        chprintf(chp, "Commands: help ");
         list_commands(chp, shell_local_commands);
         if (scp != NULL)
           list_commands(chp, scp);
