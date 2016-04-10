@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    cfe_psp_support.c
- * @brief   CFE PSP support module code.
+ * @file    cfe_psp_timer.c
+ * @brief   CFE PSP timer module code.
  *
- * @addtogroup nasa_cfe_psp_support
+ * @addtogroup nasa_cfe_psp_timer
  * @{
  */
 
@@ -51,22 +51,5 @@
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
-
-/**
- * @brief   Provides a common interface to the processor reset.
- * @note    Not currently implemented.
- */
-void CFE_PSP_Restart(uint32 reset_type) {
-
-  (void)reset_type;
-}
-
-/**
- * @brief   Generic panic handler.
- */
-void CFE_PSP_Panic(int32 ErrorCode) {
-
-  chSysHalt((char *)ErrorCode);
-}
 
 /** @} */

@@ -1,4 +1,4 @@
 # NASA CFE OSAL files.
-CFEOSALSRC = $(CHIBIOS)/os/common/abstractions/nasa_cfe/cfe_osal/src/osapi.c
+CFEOSALSRC = $(CHIBIOS)/os/common/abstractions/nasa_cfe/osal/src/osapi.c
 
-CFEOSALINC = $(CHIBIOS)/os/common/abstractions/nasa_cfe/cfe_osal/include
+CFEOSALINC = $(CHIBIOS)/os/common/abstractions/nasa_cfe/osal/include
