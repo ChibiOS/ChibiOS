@@ -686,7 +686,7 @@ void chThdSleepUntil(systime_t time) {
  *
  * @param[in] prev      absolute system time of the previous deadline
  * @param[in] next      absolute system time of the next deadline
- * @return				the @p next parameter
+ * @return              the @p next parameter
  *
  * @api
  */
@@ -696,7 +696,7 @@ systime_t chThdSleepUntilWindowed(systime_t prev, systime_t next) {
   chSysLock();
   time = chVTGetSystemTimeX();
   if (chVTIsTimeWithinX(time, prev, next)) {
-	chThdSleepS(next - time);
+    chThdSleepS(next - time);
   }
   chSysUnlock();
 
