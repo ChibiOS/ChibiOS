@@ -30,6 +30,11 @@
 #ifndef CHCORE_H
 #define CHCORE_H
 
+#include <avr/io.h>
+#include <avr/interrupt.h>
+
+extern bool __avr_in_isr;
+
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
@@ -131,12 +136,6 @@
 #endif
 
 /**
- * @brief   Activate for devices with extended code addressing.
- */
-#if !defined(PORT_AVR_3BYTES_PC) || defined(__DOXYGEN__)
-#define PORT_AVR_3BYTES_PC              FALSE
-#endif
-/**
  * @brief   Enables a "wait for interrupt" instruction in the idle loop.
  */
 #if !defined(PORT_AVR_WFI_SLEEP_IDLE) || defined(__DOXYGEN__)
@@ -185,7 +184,7 @@ struct port_extctx {
   uint8_t       sr;
   uint8_t       r1;
   uint8_t       r0;
-#if PORT_AVR_3BYTES_PC
+#if defined(__AVR_3_BYTE_PC__)
   uint8_t       pcx;
 #endif
   uint16_t      pc;
@@ -220,7 +219,7 @@ struct port_intctx {
   uint8_t       r4;
   uint8_t       r3;
   uint8_t       r2;
-#if PORT_AVR_3BYTES_PC
+#if defined(__AVR_3_BYTE_PC__)
   uint8_t       pcx;
 #endif
   uint8_t       pcl;
@@ -247,31 +246,30 @@ struct port_context {
  * @details This code usually setup the context switching frame represented
  *          by an @p port_intctx structure.
  */
-#if PORT_AVR_3BYTES_PC || defined(__DOXYGEN__)
+#if defined(__AVR_3_BYTE_PC__) || defined(__DOXYGEN__)
 #define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) {                      \
   tp->ctx.sp = (struct port_intctx *)((uint8_t *)(wtop) -                   \
                                       sizeof(struct port_intctx));          \
   tp->ctx.sp->r2  = (uint8_t)(pf);                                          \
-  tp->ctx.sp->r3  = (uint8_t)((pf) >> 8);                                   \
+  tp->ctx.sp->r3  = (uint8_t)((uint16_t)(pf) >> 8);                         \
   tp->ctx.sp->r4  = (uint8_t)(arg);                                         \
-  tp->ctx.sp->r5  = (uint8_t)((arg) >> 8);                                  \
+  tp->ctx.sp->r5  = (uint8_t)((uint16_t)(arg) >> 8);                        \
   tp->ctx.sp->pcx = (uint8_t)0;                                             \
-  tp->ctx.sp->pcl = (uint8_t)_port_thread_start >> 8;                       \
+  tp->ctx.sp->pcl = (uint16_t)_port_thread_start >> 8;                      \
   tp->ctx.sp->pch = (uint8_t)_port_thread_start;                            \
 }
-#else /* !PORT_AVR_3BYTES_PC */
+#else /* !__AVR_3_BYTE_PC__ */
 #define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) {                      \
   tp->ctx.sp = (struct port_intctx *)((uint8_t *)(wtop) -                   \
                                       sizeof(struct port_intctx));          \
   tp->ctx.sp->r2  = (uint8_t)(pf);                                          \
-  tp->ctx.sp->r3  = (uint8_t)((pf) >> 8);                                   \
+  tp->ctx.sp->r3  = (uint8_t)((uint16_t)(pf) >> 8);                         \
   tp->ctx.sp->r4  = (uint8_t)(arg);                                         \
-  tp->ctx.sp->r5  = (uint8_t)((arg) >> 8);                                  \
-  tp->ctx.sp->pcl = (uint8_t)_port_thread_start >> 8;                       \
+  tp->ctx.sp->r5  = (uint8_t)((uint16_t)(arg) >> 8);                        \
+  tp->ctx.sp->pcl = (uint16_t)_port_thread_start >> 8;                      \
   tp->ctx.sp->pch = (uint8_t)_port_thread_start;                            \
 }
-}
-#endif /* !PORT_AVR_3BYTES_PC */
+#endif /* !__AVR_3_BYTE_PC__ */
 
 /**
  * @brief   Computes the thread working area global size.
@@ -321,7 +319,7 @@ struct port_context {
  *          enabled to invoke system APIs.
  */
 #define PORT_IRQ_EPILOGUE() {                                               \
-  __avr_in_isr == false;                                                    \
+  __avr_in_isr = false;                                                     \
   _dbg_check_lock();                                                        \
   if (chSchIsPreemptionRequired())                                          \
     chSchDoReschedule();                                                    \
