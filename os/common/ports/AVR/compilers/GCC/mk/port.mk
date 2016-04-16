@@ -1,7 +1,7 @@
 # List of the ChibiOS/RT AVR port files.
-PORTSRC = ${CHIBIOS}/os/rt/ports/AVR/chcore.c
+PORTSRC = ${CHIBIOS}/os/common/ports/AVR/chcore.c
 
 PORTASM = 
 
-PORTINC = ${CHIBIOS}/os/rt/ports/AVR \
-          ${CHIBIOS}/os/rt/ports/AVR/compilers/GCC
+PORTINC = ${CHIBIOS}/os/common/ports/AVR \
+          ${CHIBIOS}/os/common/ports/AVR/compilers/GCC
