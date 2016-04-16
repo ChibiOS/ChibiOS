@@ -74,14 +74,14 @@ typedef uint32_t            ucnt_t;         /**< Generic unsigned counter.  */
  * @brief   ROM constant modifier.
  * @note    It is set to use the "const" keyword in this port.
  */
-#define ROMCONST const
+#define ROMCONST            const
 
 /**
  * @brief   Makes functions not inlineable.
- * @note    If the compiler does not support such attribute then the
- *          realtime counter precision could be degraded.
+ * @note    If the compiler does not support such attribute then some
+ *          time-dependent services could be degraded.
  */
-#define NOINLINE __attribute__((noinline))
+#define NOINLINE           __attribute__((noinline))
 
 /**
  * @brief   Optimized thread function declaration macro.
@@ -91,12 +91,24 @@ typedef uint32_t            ucnt_t;         /**< Generic unsigned counter.  */
 /**
  * @brief   Packed variable specifier.
  */
-#define PACKED_VAR __attribute__((packed))
+#define PACKED_VAR         __attribute__((packed))
 
 /**
  * @brief   Memory alignment enforcement for variables.
  */
-#define ALIGNED_VAR(n) __attribute__((aligned(n)))
+#define ALIGNED_VAR(n)      __attribute__((aligned(n)))
+
+/**
+ * @brief   Size of a pointer.
+ * @note    To be used where the sizeof operator cannot be used, preprocessor
+ *          expressions for example.
+ */
+#define SIZEOF_PTR          4
+
+/**
+ * @brief   True if alignment is low-high in current architecture.
+ */
+#define REVERSE_ORDER       1
 
 #endif /* CHTYPES_H */
 
