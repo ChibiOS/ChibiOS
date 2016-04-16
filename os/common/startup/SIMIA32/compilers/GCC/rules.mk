@@ -9,6 +9,9 @@ OPT = $(USE_OPT)
 COPT = $(USE_COPT)
 CPPOPT = $(USE_CPPOPT)
 
+# Enforced search paths
+INCDIR := $(CHIBIOS)/os/license $(INCDIR)
+
 # Garbage collection
 ifeq ($(USE_LINK_GC),yes)
   OPT += -ffunction-sections -fdata-sections -fno-common

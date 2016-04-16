@@ -75,6 +75,7 @@
 #endif
 
 #include "chlicense.h"
+#include "chchecks.h"
 #include "chsystypes.h"
 #include "chalign.h"
 #include "chcore.h"
