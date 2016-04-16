@@ -618,6 +618,11 @@ struct nil_system {
 #endif
 
 /**
+ * @brief   Utility to make the parameter a quoted string.
+ */
+#define __CH_STRINGIFY(a) #a
+
+/**
  * @name    Threads tables definition macros
  * @{
  */

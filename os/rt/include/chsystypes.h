@@ -115,6 +115,11 @@ typedef struct ch_system ch_system_t;
 /* Module macros.                                                            */
 /*===========================================================================*/
 
+/**
+ * @brief   Utility to make the parameter a quoted string.
+ */
+#define __CH_STRINGIFY(a) #a
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
