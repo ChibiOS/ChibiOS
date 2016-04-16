@@ -65,8 +65,8 @@ int main(void) {
    * Turning off buck switch. Note that this means to completely turn of the
    * High Brightness LED which is driven by the buck converter.
    */
-  palSetLineMode(LINE_BK_Drive, PAL_MODE_OUTPUT_PUSHPULL);
-  palClearLine(LINE_BK_Drive);
+  palSetLineMode(LINE_BK_DRIVE, PAL_MODE_OUTPUT_PUSHPULL);
+  palClearLine(LINE_BK_DRIVE);
 
   /*
    * Activates the serial driver 2 using the driver default configuration.
