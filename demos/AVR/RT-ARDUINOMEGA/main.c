@@ -18,7 +18,7 @@
 #include "hal.h"
 #include "ch_test.h"
 
-static WORKING_AREA(waThread1, 32);
+static THD_WORKING_AREA(waThread1, 32);
 static THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
