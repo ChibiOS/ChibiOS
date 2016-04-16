@@ -80,7 +80,7 @@
  * @note    Disabling the round robin preemption makes the kernel more compact
  *          and generally faster.
  */
-#define CH_CFG_TIME_QUANTUM                 20
+#define CH_CFG_TIME_QUANTUM                 0
 
 /**
  * @brief   Managed RAM size.
