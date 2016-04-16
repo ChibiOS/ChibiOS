@@ -178,13 +178,53 @@
  * @brief   Name of the architecture variant.
  */
 #if (PPC_VARIANT == PPC_VARIANT_e200z0) || defined(__DOXYGEN__)
+
+#if !defined(CH_CUSTOMER_LICENSED_PORT_E200Z0)
+#error "CH_CUSTOMER_LICENSED_PORT_E200Z0 not defined"
+#endif
+
+#if CH_CUSTOMER_LICENSED_PORT_E200Z0 == FALSE
+#error "ChibiOS Power e200z0 port not licensed"
+#endif
+
 #define PORT_CORE_VARIANT_NAME          "e200z0"
+
 #elif PPC_VARIANT == PPC_VARIANT_e200z2
+
+#if !defined(CH_CUSTOMER_LICENSED_PORT_E200Z2)
+#error "CH_CUSTOMER_LICENSED_PORT_E200Z2 not defined"
+#endif
+
+#if CH_CUSTOMER_LICENSED_PORT_E200Z2 == FALSE
+#error "ChibiOS Power e200z2 port not licensed"
+#endif
+
 #define PORT_CORE_VARIANT_NAME          "e200z2"
+
 #elif PPC_VARIANT == PPC_VARIANT_e200z3
+
+#if !defined(CH_CUSTOMER_LICENSED_PORT_E200Z3)
+#error "CH_CUSTOMER_LICENSED_PORT_E200Z3 not defined"
+#endif
+
+#if CH_CUSTOMER_LICENSED_PORT_E200Z3 == FALSE
+#error "ChibiOS Power e200z3 port not licensed"
+#endif
+
 #define PORT_CORE_VARIANT_NAME          "e200z3"
+
 #elif PPC_VARIANT == PPC_VARIANT_e200z4
+
+#if !defined(CH_CUSTOMER_LICENSED_PORT_E200Z4)
+#error "CH_CUSTOMER_LICENSED_PORT_E200Z4 not defined"
+#endif
+
+#if CH_CUSTOMER_LICENSED_PORT_E200Z4 == FALSE
+#error "ChibiOS Power e200z4 port not licensed"
+#endif
+
 #define PORT_CORE_VARIANT_NAME          "e200z4"
+
 #else
 #error "unknown or unsupported PowerPC variant specified"
 #endif

@@ -192,6 +192,15 @@
  * @{
  */
 #if (CORTEX_MODEL == 3) || defined(__DOXYGEN__)
+
+  #if !defined(CH_CUSTOMER_LICENSED_PORT_CM3)
+    #error "CH_CUSTOMER_LICENSED_PORT_CM3 not defined"
+  #endif
+
+  #if CH_CUSTOMER_LICENSED_PORT_CM3 == FALSE
+    #error "ChibiOS Cortex-M3 port not licensed"
+  #endif
+
 /**
  * @brief   Macro defining the specific ARM architecture.
  */
@@ -212,6 +221,15 @@
 #endif
 
 #elif (CORTEX_MODEL == 4)
+
+  #if !defined(CH_CUSTOMER_LICENSED_PORT_CM4)
+    #error "CH_CUSTOMER_LICENSED_PORT_CM4 not defined"
+  #endif
+
+  #if CH_CUSTOMER_LICENSED_PORT_CM4 == FALSE
+  #error "ChibiOS Cortex-M4 port not licensed"
+  #endif
+
   #define PORT_ARCHITECTURE_ARM_v7ME
   #define PORT_ARCHITECTURE_NAME        "ARMv7E-M"
   #if CORTEX_USE_FPU
@@ -229,7 +247,16 @@
   #endif
 
 #elif (CORTEX_MODEL == 7)
-  #define PORT_ARCHITECTURE_ARM_v7ME
+
+  #if !defined(CH_CUSTOMER_LICENSED_PORT_CM7)
+    #error "CH_CUSTOMER_LICENSED_PORT_CM7 not defined"
+  #endif
+
+  #if CH_CUSTOMER_LICENSED_PORT_CM7 == FALSE
+    #error "ChibiOS Cortex-M7 port not licensed"
+  #endif
+
+#define PORT_ARCHITECTURE_ARM_v7ME
   #define PORT_ARCHITECTURE_NAME        "ARMv7E-M"
   #if CORTEX_USE_FPU
     #if PORT_ENABLE_GUARD_PAGES == FALSE

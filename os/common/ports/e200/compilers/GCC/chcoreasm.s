@@ -42,6 +42,7 @@
 /*===========================================================================*/
 
 #define _FROM_ASM_
+#include "chlicense.h"
 #include "chconf.h"
 #include "chcore.h"
 
