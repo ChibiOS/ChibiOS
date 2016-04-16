@@ -18,14 +18,14 @@
 #define _BOARD_H_
 
 /*
- * Setup for STMicroelectronics NUCLEO144-F746ZE board.
+ * Setup for STMicroelectronics NUCLEO144-F746ZG board.
  */
 
 /*
  * Board identifier.
  */
-#define BOARD_ST_NUCLEO144_F746ZE
-#define BOARD_NAME                  "STMicroelectronics NUCLEO144-F746ZE"
+#define BOARD_ST_NUCLEO144_F746ZG
+#define BOARD_NAME                  "STMicroelectronics NUCLEO144-F746ZG"
 
 /*
  * Ethernet PHY type.
