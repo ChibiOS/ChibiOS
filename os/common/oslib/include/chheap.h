@@ -36,8 +36,15 @@
 
 /**
  * @brief   Minimum alignment used for heap.
+ * @note    Cannot use the sizeof operator in this macro.
  */
-#define CH_HEAP_ALIGNMENT   sizeof (heap_header_t)
+#if (SIZEOF_PTR == 4) || defined(__DOXYGEN__)
+#define CH_HEAP_ALIGNMENT   8
+#elif (SIZEOF_PTR == 2)
+#define CH_HEAP_ALIGNMENT   4
+#else
+#error "unsupported pointer size"
+#endif
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
