@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>RT-STM32F746ZE-NUCLEO144</name>
+	<name>RT-STM32F746ZG-NUCLEO144</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -27,7 +27,7 @@
 		<link>
 			<name>board</name>
 			<type>2</type>
-			<location>C:/ChibiStudio/chibios_trunk/os/hal/boards/ST_NUCLEO144_F746ZE</location>
+			<location>C:/ChibiStudio/chibios_trunk/os/hal/boards/ST_NUCLEO144_F746ZG</location>
 		</link>
 		<link>
 			<name>os</name>
