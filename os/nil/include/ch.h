@@ -30,8 +30,9 @@
 #ifndef CH_H
 #define CH_H
 
-#include "chconf.h"
 #include "chtypes.h"
+#include "chconf.h"
+#include "chlicense.h"
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -352,6 +353,52 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+#if CH_CUSTOMER_LICENSED_NIL == FALSE
+#error "ChibiOS/NIL not licensed"
+#endif
+
+#if (CH_LICENSE_FEATURES != CH_FEATURES_FULL) &&                            \
+    (CH_LICENSE_FEATURES != CH_FEATURES_INTERMEDIATE) &&                    \
+    (CH_LICENSE_FEATURES == CH_FEATURES_BASIC)
+#error "invalid CH_LICENSE_FEATURES setting"
+#endif
+
+/* Restrictions in basic and intermediate modes.*/
+#if (CH_LICENSE_FEATURES == CH_FEATURES_INTERMEDIATE) ||                    \
+    (CH_LICENSE_FEATURES == CH_FEATURES_BASIC)
+
+/* System tick limited to 1000hz.*/
+#if CH_CFG_ST_FREQUENCY > 1000
+#undef CH_CFG_ST_FREQUENCY
+#define CH_CFG_ST_FREQUENCY                 1000
+#endif
+
+/* Restricted subsystems.*/
+#undef CH_CFG_USE_MAILBOXES
+
+#define CH_CFG_USE_MAILBOXES                FALSE
+
+#endif /* (CH_LICENSE_FEATURES == CH_FEATURES_INTERMEDIATE) ||
+          (CH_LICENSE_FEATURES == CH_FEATURES_BASIC) */
+
+/* Restrictions in basic mode.*/
+#if CH_LICENSE_FEATURES == CH_FEATURES_BASIC
+
+/* Tick-Less mode restricted.*/
+#undef CH_CFG_ST_TIMEDELTA
+#define CH_CFG_ST_TIMEDELTA                 0
+
+/* Restricted subsystems.*/
+#undef CH_CFG_USE_MEMCORE
+#undef CH_CFG_USE_MEMPOOLS
+#undef CH_CFG_USE_HEAP
+
+#define CH_CFG_USE_MEMCORE                  FALSE
+#define CH_CFG_USE_MEMPOOLS                 FALSE
+#define CH_CFG_USE_HEAP                     FALSE
+
+#endif /* CH_LICENSE_FEATURES == CH_FEATURES_BASIC */
 
 #if !defined(_CHIBIOS_NIL_CONF_)
 #error "missing or wrong configuration file"

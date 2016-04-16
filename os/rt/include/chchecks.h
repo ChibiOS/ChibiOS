@@ -40,6 +40,10 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if CH_CUSTOMER_LICENSED_RT == FALSE
+#error "ChibiOS/RT not licensed"
+#endif
+
 #if (CH_LICENSE_FEATURES != CH_FEATURES_FULL) &&                            \
     (CH_LICENSE_FEATURES != CH_FEATURES_INTERMEDIATE) &&                    \
     (CH_LICENSE_FEATURES == CH_FEATURES_BASIC)
@@ -56,7 +60,7 @@
 #define CH_CFG_ST_FREQUENCY                 1000
 #endif
 
-/* Statistics and trace buffer restricted.*/
+/* Restricted subsystems.*/
 #undef CH_DBG_STATISTICS
 #undef CH_DBG_TRACE_MASK
 
@@ -73,7 +77,7 @@
 #undef CH_CFG_ST_TIMEDELTA
 #define CH_CFG_ST_TIMEDELTA                 0
 
-/* Several subsystems restricted.*/
+/* Restricted subsystems.*/
 #undef CH_CFG_USE_TM
 #undef CH_CFG_USE_MUTEXES
 #undef CH_CFG_USE_CONDVARS
