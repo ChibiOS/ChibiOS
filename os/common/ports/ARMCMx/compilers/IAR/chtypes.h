@@ -96,7 +96,7 @@ typedef uint32_t            ucnt_t;         /**< Generic unsigned counter.  */
 /**
  * @brief   Memory alignment enforcement for variables.
  */
-#define ALIGNED_VAR(n)      _Pragma(__CH_STRINGIFY(data_alignment=##n))
+#define ALIGNED_VAR(n)      _Pragma(__CH_STRINGIFY(data_alignment=n))
 
 /**
  * @brief   Size of a pointer.
