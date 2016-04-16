@@ -148,8 +148,10 @@ typedef struct {
   const ShellCommand    *sc_commands;       /**< @brief Shell extra commands
                                                  table.                     */
 #if (SHELL_USE_HISTORY == TRUE) || defined(__DOXYGEN__)
-  ShellHistory          *sc_history;        /**< @brief Shell command history
+  char                  *sc_histbuf;        /**< @brief Shell command history
                                                  buffer.                    */
+  const int             sc_histsize;        /**< @brief Shell history buffer
+                                                 size.                      */
 #endif
 #if (SHELL_USE_COMPLETION == TRUE) || defined(__DOXYGEN__)
   char                  **sc_completion;    /**< @brief Shell command completion
@@ -207,7 +209,7 @@ extern "C" {
   void shellInit(void);
   THD_FUNCTION(shellThread, p);
   void shellExit(msg_t msg);
-  bool shellGetLine(ShellConfig *scfg, char *line, unsigned size);
+  bool shellGetLine(ShellConfig *scfg, char *line, unsigned size, ShellHistory *shp);
 #ifdef __cplusplus
 }
 #endif

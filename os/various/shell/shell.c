@@ -135,6 +135,9 @@ static bool is_histbuff_space(ShellHistory *shp, int length) {
 
 static void save_history(ShellHistory *shp, char *line, int length) {
 
+  if (shp == NULL)
+    return;
+
   if (length > shp->sh_size - 2)
     return;
 
@@ -171,6 +174,9 @@ static void save_history(ShellHistory *shp, char *line, int length) {
 
 static int get_history(ShellHistory *shp, char *line, int dir) {
   int count=0;
+
+  if (shp == NULL)
+    return -1;
 
   /* Count the number of lines saved in the buffer */
   int idx = shp->sh_beg;
@@ -332,11 +338,25 @@ THD_FUNCTION(shellThread, p) {
   char *lp, *cmd, *tokp, line[SHELL_MAX_LINE_LENGTH];
   char *args[SHELL_MAX_ARGUMENTS + 1];
 
+#if SHELL_USE_HISTORY == TRUE
+  *(scfg->sc_histbuf) = 0;
+  ShellHistory hist = {
+                       scfg->sc_histbuf,
+                       scfg->sc_histsize,
+                       0,
+                       0,
+                       0
+  };
+  ShellHistory *shp = &hist;
+#else
+  ShellHistory *shp = NULL;
+#endif
+
   chprintf(chp, SHELL_NEWLINE_STR);
   chprintf(chp, "ChibiOS/RT Shell"SHELL_NEWLINE_STR);
   while (true) {
     chprintf(chp, SHELL_PROMPT_STR);
-    if (shellGetLine(scfg, line, sizeof(line))) {
+    if (shellGetLine(scfg, line, sizeof(line), shp)) {
 #if (SHELL_CMD_EXIT_ENABLED == TRUE) && !defined(_CHIBIOS_NIL_)
       chprintf(chp, SHELL_NEWLINE_STR);
       chprintf(chp, "logout");
@@ -424,22 +444,23 @@ void shellExit(msg_t msg) {
  * @param[in] scfg      pointer to a @p ShellConfig object
  * @param[in] line      pointer to the line buffer
  * @param[in] size      buffer maximum length
+ * @param[in] shp       pointer to a @p ShellHistory object or NULL
  * @return              The operation status.
  * @retval true         the channel was reset or CTRL-D pressed.
  * @retval false        operation successful.
  *
  * @api
  */
-bool shellGetLine(ShellConfig *scfg, char *line, unsigned size) {
+bool shellGetLine(ShellConfig *scfg, char *line, unsigned size, ShellHistory *shp) {
   char *p = line;
   BaseSequentialStream *chp = scfg->sc_channel;
-#if (SHELL_USE_ESC_SEQ == TRUE)
+#if SHELL_USE_ESC_SEQ == TRUE
   bool escape = false;
   bool bracket = false;
 #endif
 
-#if (SHELL_USE_HISTORY == TRUE)
-  ShellHistory *shp = scfg->sc_history;
+#if SHELL_USE_HISTORY != TRUE
+  (void) shp;
 #endif
 
   while (true) {
@@ -510,9 +531,7 @@ bool shellGetLine(ShellConfig *scfg, char *line, unsigned size) {
     if (c == '\r') {
       chprintf(chp, SHELL_NEWLINE_STR);
 #if SHELL_USE_HISTORY == TRUE
-      if (shp != NULL) {
-        save_history(shp, line, p - line);
-      }
+      save_history(shp, line, p - line);
 #endif
       *p = 0;
       return false;
