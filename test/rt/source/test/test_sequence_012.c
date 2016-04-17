@@ -78,7 +78,7 @@ static THD_FUNCTION(bmk_thread1, p) {
 
 NOINLINE static unsigned int msg_loop_test(thread_t *tp) {
   systime_t start, end;
-  
+
   uint32_t n = 0;
   start = test_wait_tick();
   end = start + MS2ST(1000);
