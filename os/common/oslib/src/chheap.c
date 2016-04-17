@@ -196,7 +196,7 @@ void *chHeapAllocAligned(memory_heap_t *heapp, size_t size, unsigned align) {
     /* Pointer aligned to the requested alignment.*/
     ahp = (heap_header_t *)MEM_ALIGN_NEXT(H_BLOCK(hp), align) - 1U;
 
-    if ((ahp < H_LIMIT(hp)) && (pages <= NPAGES(H_LIMIT(hp), ahp - 1U))) {
+    if ((ahp < H_LIMIT(hp)) && (pages <= NPAGES(H_LIMIT(hp), ahp + 1U))) {
       /* The block is large enough to contain a correctly aligned area
          of sufficient size.*/
 
@@ -212,7 +212,7 @@ void *chHeapAllocAligned(memory_heap_t *heapp, size_t size, unsigned align) {
 
           /* Creating the excess block.*/
           fp = H_BLOCK(ahp) + pages;
-          H_PAGES(fp) = NPAGES(bpages, pages - 1U);
+          H_PAGES(fp) = (bpages - pages) - 1U;
 
           /* Linking the excess block.*/
           H_NEXT(fp) = H_NEXT(hp);
