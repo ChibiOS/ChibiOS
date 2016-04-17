@@ -30,6 +30,7 @@
 #define STM32F4XX
 
 #elif defined(STM32F446xx)
+#define STM32F446xx
 #define STM32F4XX
 
 #elif defined(STM32F439xx) || defined(STM32F429xx)
@@ -526,9 +527,9 @@
 #define STM32_HAS_GPIOC                     TRUE
 #define STM32_HAS_GPIOD                     TRUE
 #define STM32_HAS_GPIOE                     TRUE
-#define STM32_HAS_GPIOH                     TRUE
 #define STM32_HAS_GPIOF                     TRUE
 #define STM32_HAS_GPIOG                     TRUE
+#define STM32_HAS_GPIOH                     TRUE
 #define STM32_HAS_GPIOI                     FALSE
 #define STM32_HAS_GPIOJ                     FALSE
 #define STM32_HAS_GPIOK                     FALSE
@@ -607,7 +608,15 @@
                                              STM32_DMA_STREAM_ID_MSK(1, 7))
 #define STM32_SPI3_TX_DMA_CHN               0x00000000
 
-#define STM32_HAS_SPI4                      FALSE
+#define STM32_HAS_SPI4                      TRUE
+#define STM32_SPI4_SUPPORTS_I2S             FALSE
+#define STM32_SPI4_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(2, 0) |\
+                                             STM32_DMA_STREAM_ID_MSK(2, 3))
+#define STM32_SPI4_RX_DMA_CHN               0x00005004
+#define STM32_SPI4_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(2, 1) |\
+                                             STM32_DMA_STREAM_ID_MSK(2, 4))
+#define STM32_SPI4_TX_DMA_CHN               0x00050040
+
 #define STM32_HAS_SPI5                      FALSE
 #define STM32_HAS_SPI6                      FALSE
 
