@@ -27,7 +27,7 @@
 		<link>
 			<name>board</name>
 			<type>2</type>
-			<location>C:/ChibiStudio/chibios_trunk/os/hal/boards/ST_NUCLEO144_F746ZG</location>
+			<location>CHIBIOS/os/hal/boards/ST_NUCLEO144_F746ZG</location>
 		</link>
 		<link>
 			<name>os</name>

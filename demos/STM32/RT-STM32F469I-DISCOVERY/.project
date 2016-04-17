@@ -79,7 +79,7 @@
 		<link>
 			<name>board</name>
 			<type>2</type>
-			<location>C:/ChibiStudio/chibios_trunk/os/hal/boards/ST_STM32F469I_DISCOVERY</location>
+			<location>CHIBIOS/os/hal/boards/ST_STM32F469I_DISCOVERY</location>
 		</link>
 		<link>
 			<name>os</name>
