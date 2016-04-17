@@ -60,23 +60,10 @@
 /*
  * Working Area size of test threads.
  */
-#define WA_SIZE THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE)
+#define WA_SIZE MEM_ALIGN_NEXT(THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE),	\
+                               PORT_WORKING_AREA_ALIGN)
 
-/*
- * Union of all Working Areas, usable as a single large buffer if required.
- */
-union test_buffers {
-  struct {
-    THD_WORKING_AREA(T0, THREADS_STACK_SIZE);
-    THD_WORKING_AREA(T1, THREADS_STACK_SIZE);
-    THD_WORKING_AREA(T2, THREADS_STACK_SIZE);
-    THD_WORKING_AREA(T3, THREADS_STACK_SIZE);
-    THD_WORKING_AREA(T4, THREADS_STACK_SIZE);
-  } wa;
-  uint8_t buffer[WA_SIZE * 5];
-};
-
-extern union test_buffers test;
+extern uint8_t test_buffer[WA_SIZE * 5];
 extern thread_t *threads[MAX_THREADS];
 extern void * ROMCONST wa[5];
 
@@ -86,10 +73,9 @@ systime_t test_wait_tick(void);]]></value>
           </global_definitions>
           <global_code>
             <value><![CDATA[/*
- * Static working areas, the following areas can be used for threads or
- * used as temporary buffers.
+ * Global test buffer holding 5 working areas.
  */
-union test_buffers test;
+ALIGNED_VAR(PORT_WORKING_AREA_ALIGN) uint8_t test_buffer[WA_SIZE * 5];
 
 /*
  * Pointers to the spawned threads.
@@ -99,8 +85,11 @@ thread_t *threads[MAX_THREADS];
 /*
  * Pointers to the working areas.
  */
-void * ROMCONST wa[5] = {test.wa.T0, test.wa.T1, test.wa.T2,
-                         test.wa.T3, test.wa.T4};
+void * ROMCONST wa[5] = {test_buffer + (WA_SIZE * 0),
+                         test_buffer + (WA_SIZE * 1),
+                         test_buffer + (WA_SIZE * 2),
+                         test_buffer + (WA_SIZE * 3),
+                         test_buffer + (WA_SIZE * 4)};
 
 /*
  * Sets a termination request in all the test-spawned threads.
@@ -3575,8 +3564,7 @@ test_assert(chPoolAlloc(&mp1) == NULL, "provider returned memory");]]></value>
               <value><![CDATA[#define ALLOC_SIZE 16
 #define HEAP_SIZE (ALLOC_SIZE * 8)
 
-static memory_heap_t test_heap;
-static CH_HEAP_AREA(myheap, HEAP_SIZE);]]></value>
+memory_heap_t test_heap;]]></value>
             </shared_code>
             <cases>
               <case>
@@ -3591,7 +3579,7 @@ static CH_HEAP_AREA(myheap, HEAP_SIZE);]]></value>
                 </condition>
                 <various_code>
                   <setup_code>
-                    <value><![CDATA[chHeapObjectInit(&test_heap, myheap, sizeof(myheap));]]></value>
+                    <value><![CDATA[chHeapObjectInit(&test_heap, test_buffer, sizeof(test_buffer));]]></value>
                   </setup_code>
                   <teardown_code>
                     <value />
@@ -3621,7 +3609,7 @@ size_t n, sz;]]></value>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[p1 = chHeapAlloc(&test_heap, HEAP_SIZE * 2);
+                      <value><![CDATA[p1 = chHeapAlloc(&test_heap, sizeof test_buffer * 2);
 test_assert(p1 == NULL, "allocation not failed");]]></value>
                     </code>
                   </step>
@@ -3850,7 +3838,7 @@ The test expects the first two threads to successfully start and the third one t
                 </condition>
                 <various_code>
                   <setup_code>
-                    <value><![CDATA[chHeapObjectInit(&heap1, test.buffer, sizeof(union test_buffers));]]></value>
+                    <value><![CDATA[chHeapObjectInit(&heap1, test_buffer, sizeof test_buffer);]]></value>
                   </setup_code>
                   <teardown_code>
                     <value />

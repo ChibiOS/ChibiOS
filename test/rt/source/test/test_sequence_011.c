@@ -93,7 +93,7 @@ static THD_FUNCTION(dyn_thread1, p) {
  */
 
 static void test_011_001_setup(void) {
-  chHeapObjectInit(&heap1, test.buffer, sizeof(union test_buffers));
+  chHeapObjectInit(&heap1, test_buffer, sizeof test_buffer);
 }
 
 static void test_011_001_execute(void) {

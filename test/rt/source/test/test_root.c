@@ -91,10 +91,9 @@ const testcase_t * const *test_suite[] = {
 /*===========================================================================*/
 
 /*
- * Static working areas, the following areas can be used for threads or
- * used as temporary buffers.
+ * Global test buffer holding 5 working areas.
  */
-union test_buffers test;
+ALIGNED_VAR(PORT_WORKING_AREA_ALIGN) uint8_t test_buffer[WA_SIZE * 5];
 
 /*
  * Pointers to the spawned threads.
@@ -104,8 +103,11 @@ thread_t *threads[MAX_THREADS];
 /*
  * Pointers to the working areas.
  */
-void * ROMCONST wa[5] = {test.wa.T0, test.wa.T1, test.wa.T2,
-                         test.wa.T3, test.wa.T4};
+void * ROMCONST wa[5] = {test_buffer + (WA_SIZE * 0),
+                         test_buffer + (WA_SIZE * 1),
+                         test_buffer + (WA_SIZE * 2),
+                         test_buffer + (WA_SIZE * 3),
+                         test_buffer + (WA_SIZE * 4)};
 
 /*
  * Sets a termination request in all the test-spawned threads.

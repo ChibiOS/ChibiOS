@@ -82,23 +82,10 @@ extern "C" {
 /*
  * Working Area size of test threads.
  */
-#define WA_SIZE THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE)
+#define WA_SIZE MEM_ALIGN_NEXT(THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE),	\
+                               PORT_WORKING_AREA_ALIGN)
 
-/*
- * Union of all Working Areas, usable as a single large buffer if required.
- */
-union test_buffers {
-  struct {
-    THD_WORKING_AREA(T0, THREADS_STACK_SIZE);
-    THD_WORKING_AREA(T1, THREADS_STACK_SIZE);
-    THD_WORKING_AREA(T2, THREADS_STACK_SIZE);
-    THD_WORKING_AREA(T3, THREADS_STACK_SIZE);
-    THD_WORKING_AREA(T4, THREADS_STACK_SIZE);
-  } wa;
-  uint8_t buffer[WA_SIZE * 5];
-};
-
-extern union test_buffers test;
+extern uint8_t test_buffer[WA_SIZE * 5];
 extern thread_t *threads[MAX_THREADS];
 extern void * ROMCONST wa[5];
 

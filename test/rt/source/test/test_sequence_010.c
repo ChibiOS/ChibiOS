@@ -51,8 +51,7 @@
 #define ALLOC_SIZE 16
 #define HEAP_SIZE (ALLOC_SIZE * 8)
 
-static memory_heap_t test_heap;
-static CH_HEAP_AREA(myheap, HEAP_SIZE);
+memory_heap_t test_heap;
 
 /****************************************************************************
  * Test cases.
@@ -89,7 +88,7 @@ static CH_HEAP_AREA(myheap, HEAP_SIZE);
  */
 
 static void test_010_001_setup(void) {
-  chHeapObjectInit(&test_heap, myheap, sizeof(myheap));
+  chHeapObjectInit(&test_heap, test_buffer, sizeof(test_buffer));
 }
 
 static void test_010_001_execute(void) {
@@ -107,7 +106,7 @@ static void test_010_001_execute(void) {
      an error is expected.*/
   test_set_step(2);
   {
-    p1 = chHeapAlloc(&test_heap, HEAP_SIZE * 2);
+    p1 = chHeapAlloc(&test_heap, sizeof test_buffer * 2);
     test_assert(p1 == NULL, "allocation not failed");
   }
 

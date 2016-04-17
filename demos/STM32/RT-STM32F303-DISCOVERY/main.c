@@ -21,8 +21,8 @@
 /*
  * Blinker thread #1.
  */
-static THD_WORKING_AREA(waThread1, 128);
-static THD_FUNCTION(Thread1, arg) {
+THD_WORKING_AREA(waThread1, 128);
+THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
 
@@ -50,8 +50,8 @@ static THD_FUNCTION(Thread1, arg) {
 /*
  * Blinker thread #2.
  */
-static THD_WORKING_AREA(waThread2, 128);
-static THD_FUNCTION(Thread2, arg) {
+THD_WORKING_AREA(waThread2, 128);
+THD_FUNCTION(Thread2, arg) {
 
   (void)arg;
 
