@@ -121,7 +121,6 @@ int main(void) {
                                             "shell", NORMALPRIO + 1,
                                             shellThread, (void *)&shell_cfg1);
     chThdWait(shelltp);               /* Waiting termination.             */
-    chThdFreeToHeap(shelltp);         /* Returning memory to heap.        */
     chThdSleepMilliseconds(1000);
   }
   return 0;
