@@ -34,6 +34,7 @@
  *          - STM32F401xC, STM32F401xE for High-performance STM32 F-4 devices.
  *          - STM32F411xE for High-performance STM32 F-4 devices.
  *          - STM32F446xx for High-performance STM32 F-4 devices.
+ *          * STM32F469xx, STM32F479xx for High-performance STM32 F-4 devices.
  *          .
  *
  * @addtogroup HAL
