@@ -2,12 +2,12 @@
 <SPC5-Config version="1.0.0">
   <application name="ChibiOS/NIL Test Suite" version="1.0.0" standalone="true" locked="false">
     <description>Test Specification for ChibiOS/NIL.</description>
-    <component id="org.chibios.spc5.components.platform.generic">
-      <component id="org.chibios.spc5.components.chibios_unitary_tests_engine" />
+    <component id="org.chibios.spc5.components.portable.generic_startup">
+      <component id="org.chibios.spc5.components.portable.chibios_unitary_tests_engine" />
     </component>
     <instances>
-      <instance locked="false" id="org.chibios.spc5.components.platform.generic" />
-      <instance locked="false" id="org.chibios.spc5.components.chibios_unitary_tests_engine">
+      <instance locked="false" id="org.chibios.spc5.components.portable.generic_startup" />
+      <instance locked="false" id="org.chibios.spc5.components.portable.chibios_unitary_tests_engine">
         <description>
           <copyright>
             <value><![CDATA[/*
