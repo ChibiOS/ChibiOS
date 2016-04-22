@@ -56,11 +56,7 @@
   /* Invoke the set sensitivity procedure.*/                                \
   msg_t (*set_sensitivity)(void *instance, float sensitivities[]);          \
   /* Restore sensitivity stored data to default.*/                          \
-  msg_t (*reset_sensitivity)(void *instance);                               \
-  /* Enable temperature drift effect compensation.*/                        \
-  msg_t (*enable_temperature_compensation)(void *instance);                 \
-  /* Disable temperature drift effect compensation.*/                       \
-  msg_t (*disable_temperature_compensation)(void *instance);                                 
+  msg_t (*reset_sensitivity)(void *instance);
   
   
 /**
@@ -221,34 +217,6 @@ typedef struct {
  */
 #define gyroscopeResetSensitivity(ip)                                       \
         (ip)->vmt_basegyroscope->reset_sensitivity(ip)
-
-/**
- * @brief   Enables data compensation removing temperature drift.
- *
- * @param[in] ip        pointer to a @p BaseGyroscope class.
- * 
- * @return              The operation status.
- * @retval MSG_OK       if the function succeeded.
- * @retval MSG_RESET    if one or more errors occurred.
- *
- * @api
- */
-#define gyroscopeEnableTempCompensation(ip)                                 \
-        (ip)->vmt_basegyroscope->enable_temperature_compensation(ip)		
-
-/**
- * @brief   Disable data compensation.
- *
- * @param[in] ip        pointer to a @p BaseGyroscope class.
- * 
- * @return              The operation status.
- * @retval MSG_OK       if the function succeeded.
- * @retval MSG_RESET    if one or more errors occurred.
- *
- * @api
- */
-#define gyroscopeDisableTempCompensation(ip)                                 \
-        (ip)->vmt_basegyroscope->disable_temperature_compensation(ip)			
 /** @} */
 
 /*===========================================================================*/

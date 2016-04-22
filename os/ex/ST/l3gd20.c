@@ -336,16 +336,12 @@ static msg_t reset_sensivity(void *ip) {
   return MSG_OK;
 }
 
-static msg_t enable_temperature_compensation(void *ip) {
-  (void) ip;
-  /* TODO complete this function */
-  return 0;
-}
+static msg_t get_temperature(void *ip, float* tempp) {
 
-static msg_t disable_temperature_compensation(void *ip) {
-  (void) ip;
-  /* TODO complete this function */
-  return 0;
+  *tempp = (int8_t)l3gd20SPIReadRegister(((L3GD20Driver *)ip)->config->spip,
+                                       L3GD20_AD_OUT_TEMP);
+
+  return MSG_OK;
 }
 
 static const struct BaseSensorVMT vmt_basesensor = {
@@ -355,9 +351,13 @@ static const struct BaseSensorVMT vmt_basesensor = {
 static const struct BaseGyroscopeVMT vmt_basegyroscope = {
   get_axes_number, read_raw, read_cooked,
   sample_bias, set_bias, reset_bias,
-  set_sensivity, reset_sensivity,
-  enable_temperature_compensation,
-  disable_temperature_compensation
+  set_sensivity, reset_sensivity
+};
+
+static const struct L3GD20VMT vmt_l3gd20 = {
+  get_axes_number, read_raw, read_cooked,
+  sample_bias, set_bias, reset_bias,
+  set_sensivity, reset_sensivity, get_temperature
 };
 
 /*===========================================================================*/
@@ -376,7 +376,7 @@ void l3gd20ObjectInit(L3GD20Driver *devp) {
 
   devp->vmt_basesensor = &vmt_basesensor;
   devp->vmt_basegyroscope = &vmt_basegyroscope;
-  devp->vmt = (struct L3GD20VMT*) &vmt_basegyroscope;
+  devp->vmt_l3gd20 = &vmt_l3gd20;
   devp->state  = L3GD20_STOP;
   devp->config = NULL;
   for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++)

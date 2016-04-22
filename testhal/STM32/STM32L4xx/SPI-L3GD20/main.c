@@ -30,6 +30,7 @@ static L3GD20Driver L3GD20D1;
 
 static int32_t rawdata[L3GD20_NUMBER_OF_AXES];
 static float cookeddata[L3GD20_NUMBER_OF_AXES];
+static float temperature;
 
 static char axesID[L3GD20_NUMBER_OF_AXES] = {'X', 'Y', 'Z'};
 static uint32_t i;
@@ -109,7 +110,10 @@ int main(void) {
 
     gyroscopeReadCooked(&L3GD20D1, cookeddata);
     for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++)
-      chprintf(chp, "COOKED-%c:%f\r\n", axesID[i], cookeddata[i]);
+      chprintf(chp, "COOKED-%c:%.3f\r\n", axesID[i], cookeddata[i]);
+
+    gyroscopeGetTemp(&L3GD20D1, &temperature);
+    chprintf(chp, "TEMP:%.1f C°\r\n", temperature);
 
     chprintf(chp, "Press JOY to continue...\r\n");
     chThdSleepMilliseconds(150);
@@ -140,7 +144,10 @@ int main(void) {
 
     gyroscopeReadCooked(&L3GD20D1, cookeddata);
     for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++)
-      chprintf(chp, "COOKED-%c:%f\r\n", axesID[i], cookeddata[i]);
+      chprintf(chp, "COOKED-%c:%.3f\r\n", axesID[i], cookeddata[i]);
+
+    gyroscopeGetTemp(&L3GD20D1, &temperature);
+    chprintf(chp, "TEMP:%.1f C°\r\n", temperature);
 
     chThdSleepMilliseconds(150);
 #if CHPRINTF_USE_ANSI_CODE

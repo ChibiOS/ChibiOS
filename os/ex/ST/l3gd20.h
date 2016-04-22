@@ -245,7 +245,10 @@ typedef struct L3GD20Driver L3GD20Driver;
  * @brief   @p L3GD20 specific methods.
  */
 #define _l3gd20_methods                                                     \
-  _base_gyroscope_methods
+  _base_gyroscope_methods                                                   \
+  /* Retrieve the temperature of L3GD20 chip.*/                             \
+  msg_t (*get_temperature)(void *instance, float* temperature);
+
 
 /**
  * @extends BaseGyroscopeVMT
@@ -278,12 +281,14 @@ struct L3GD20VMT {
  *          driver implementation.
  */
 struct L3GD20Driver {
-  /** @brief Virtual Methods Table.*/
+  /** @brief Base Sensor Virtual Methods Table.*/
   const struct BaseSensorVMT *vmt_basesensor;
-  /** @brief Virtual Methods Table.*/
+  /** @brief Base Gyroscope Virtual Methods Table.
+    * @note  Extend BaseSensor VMT.*/
   const struct BaseGyroscopeVMT *vmt_basegyroscope;
-  /** @brief Virtual Methods Table.*/
-  const struct L3GD20VMT *vmt;
+  /** @brief L3GD20 Virtual Methods Table.
+   * @note  Extend BaseGyroscope VMT.*/
+  const struct L3GD20VMT *vmt_l3gd20;
   _l3gd20_data
 };
 /** @} */
@@ -291,6 +296,21 @@ struct L3GD20Driver {
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Get current MEMS temperature.
+ * @detail  This information is very useful especially for high accuracy IMU
+ *
+ * @param[in] ip        pointer to a @p BaseGyroscope class.
+ * @param[out] temp     the MEMS temperature as single precision floating.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more errors occurred.
+ * @api
+ */
+#define gyroscopeGetTemp(ip, tpp)                                           \
+        (ip)->vmt_l3gd20->get_temperature(ip, tpp)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
