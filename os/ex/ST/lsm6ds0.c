@@ -44,6 +44,8 @@
 #define  LSM6DS0_GYRO_SENS_500DPS           ((float)0.01750f)
 #define  LSM6DS0_GYRO_SENS_2000DPS          ((float)0.07000f)
 
+#define  LSM6DS0_TEMP_SENS                  ((float)0.0625f)
+
 #define  LSM6DS0_DI                         ((uint8_t)0xFF)
 #define  LSM6DS0_DI_0                       ((uint8_t)0x01)
 #define  LSM6DS0_DI_1                       ((uint8_t)0x02)
@@ -265,12 +267,28 @@ msg_t lsm6ds0I2CWriteRegister(I2CDriver *i2cp, lsm6ds0_sad_t sad, uint8_t reg,
  */
 static size_t acc_get_axes_number(void *ip) {
 
-  osalDbgCheck((ip != NULL) &&
-              (((LSM6DS0Driver *)ip)->config->acccfg != NULL));
+  osalDbgCheck(ip != NULL);
   return LSM6DS0_ACC_NUMBER_OF_AXES;
 }
 
-static msg_t acc_read_raw(void *ip, int32_t axes[LSM6DS0_ACC_NUMBER_OF_AXES]) {
+static size_t gyro_get_axes_number(void *ip) {
+
+  osalDbgCheck(ip != NULL);
+  return LSM6DS0_GYRO_NUMBER_OF_AXES;
+}
+
+static size_t sens_get_axes_number(void *ip) {
+  size_t size = 0;
+  
+  osalDbgCheck(ip != NULL);
+  if (((LSM6DS0Driver *)ip)->config->acccfg != NULL)
+	size += acc_get_axes_number(ip);
+  if (((LSM6DS0Driver *)ip)->config->gyrocfg != NULL)
+    size += gyro_get_axes_number(ip);  
+  return size;
+}
+
+static msg_t acc_read_raw(void *ip, int32_t axes[]) {
 
   osalDbgCheck(((ip != NULL) && (axes != NULL)) &&
               (((LSM6DS0Driver *)ip)->config->acccfg != NULL));
@@ -292,6 +310,7 @@ static msg_t acc_read_raw(void *ip, int32_t axes[LSM6DS0_ACC_NUMBER_OF_AXES]) {
     axes[0] += (int16_t)(lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
                                                 ((LSM6DS0Driver *)ip)->config->slaveaddress,
                                                 LSM6DS0_AD_OUT_X_H_XL, NULL) << 8);
+	axes[0] -= ((LSM6DS0Driver *)ip)->accbias[0];
   }
   if(((LSM6DS0Driver *)ip)->config->acccfg->axesenabling & LSM6DS0_ACC_AE_Y){
     axes[1] = (int16_t)(lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
@@ -300,6 +319,7 @@ static msg_t acc_read_raw(void *ip, int32_t axes[LSM6DS0_ACC_NUMBER_OF_AXES]) {
     axes[1] += (int16_t)(lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
                                                 ((LSM6DS0Driver *)ip)->config->slaveaddress,
                                                 LSM6DS0_AD_OUT_Y_H_XL, NULL) << 8);
+	axes[1] -= ((LSM6DS0Driver *)ip)->accbias[1];
   }
   if(((LSM6DS0Driver *)ip)->config->acccfg->axesenabling & LSM6DS0_ACC_AE_Z){
     axes[2] = (int16_t)(lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
@@ -308,46 +328,16 @@ static msg_t acc_read_raw(void *ip, int32_t axes[LSM6DS0_ACC_NUMBER_OF_AXES]) {
     axes[2] += (int16_t)(lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
                                                 ((LSM6DS0Driver *)ip)->config->slaveaddress,
                                                 LSM6DS0_AD_OUT_Z_H_XL, NULL) << 8);
+	axes[2] -= ((LSM6DS0Driver *)ip)->accbias[2];
   }
 #if LSM6DS0_SHARED_I2C
   i2cReleaseBus(((LSM6DS0Driver *)ip)->config->i2cp);
 #endif /* LSM6DS0_SHARED_I2C */
-#endif
+#endif /* LSM6DS0_USE_I2C */
   return MSG_OK;
 }
 
-static msg_t acc_read_cooked(void *ip, float axes[]) {
-  uint32_t i;
-  int32_t raw[LSM6DS0_ACC_NUMBER_OF_AXES];
-  msg_t msg;
-
-  osalDbgCheck(((ip != NULL) && (axes != NULL)) &&
-              (((LSM6DS0Driver *)ip)->config->acccfg != NULL));
-
-  osalDbgAssert((((LSM6DS0Driver *)ip)->state == LSM6DS0_READY),
-              "acc_read_cooked(), invalid state");
-
-  msg = acc_read_raw(ip, raw);
-  for(i = 0; i < LSM6DS0_ACC_NUMBER_OF_AXES ; i++){
-    axes[i] = raw[i] * ((LSM6DS0Driver *)ip)->accsens;
-    if(((LSM6DS0Driver *)ip)->config->acccfg->unit == LSM6DS0_ACC_UNIT_G){
-      axes[i] *= TO_G;
-    }
-    else if(((LSM6DS0Driver *)ip)->config->acccfg->unit == LSM6DS0_ACC_UNIT_SI){
-      axes[i] *= TO_SI;
-    }
-  }
-  return msg;
-}
-
-static size_t gyro_get_axes_number(void *ip) {
-
-  osalDbgCheck((ip != NULL) &&
-              (((LSM6DS0Driver *)ip)->config->gyrocfg != NULL));
-  return LSM6DS0_GYRO_NUMBER_OF_AXES;
-}
-
-static msg_t gyro_read_raw(void *ip, int32_t axes[LSM6DS0_GYRO_NUMBER_OF_AXES]) {
+static msg_t gyro_read_raw(void *ip, int32_t axes[]) {
 
   osalDbgCheck(((ip != NULL) && (axes != NULL)) &&
               (((LSM6DS0Driver *)ip)->config->gyrocfg != NULL));
@@ -369,28 +359,70 @@ static msg_t gyro_read_raw(void *ip, int32_t axes[LSM6DS0_GYRO_NUMBER_OF_AXES]) 
     axes[0] += (int16_t)(lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
                                                 ((LSM6DS0Driver *)ip)->config->slaveaddress,
                                                 LSM6DS0_AD_OUT_X_H_G, NULL) << 8);
+	axes[0] -= ((LSM6DS0Driver *)ip)->gyrobias[0];
   }
-  if(((LSM6DS0Driver *)ip)->config->gyrocfg->axesenabling & LSM6DS0_GYRO_AE_Y){
+  if(((LSM6DS0Driver *)ip)->config->acccfg->axesenabling & LSM6DS0_GYRO_AE_Y){
     axes[1] = (int16_t)(lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
                                                ((LSM6DS0Driver *)ip)->config->slaveaddress,
                                                LSM6DS0_AD_OUT_Y_L_G, NULL));
     axes[1] += (int16_t)(lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
                                                 ((LSM6DS0Driver *)ip)->config->slaveaddress,
                                                 LSM6DS0_AD_OUT_Y_H_G, NULL) << 8);
+	axes[1] -= ((LSM6DS0Driver *)ip)->gyrobias[1];
   }
-  if(((LSM6DS0Driver *)ip)->config->gyrocfg->axesenabling & LSM6DS0_GYRO_AE_Z){
+  if(((LSM6DS0Driver *)ip)->config->acccfg->axesenabling & LSM6DS0_GYRO_AE_Z){
     axes[2] = (int16_t)(lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
                                                ((LSM6DS0Driver *)ip)->config->slaveaddress,
                                                LSM6DS0_AD_OUT_Z_L_G, NULL));
     axes[2] += (int16_t)(lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
                                                 ((LSM6DS0Driver *)ip)->config->slaveaddress,
                                                 LSM6DS0_AD_OUT_Z_H_G, NULL) << 8);
+	axes[2] -= ((LSM6DS0Driver *)ip)->gyrobias[2];
   }
 #if LSM6DS0_SHARED_I2C
   i2cReleaseBus(((LSM6DS0Driver *)ip)->config->i2cp);
 #endif /* LSM6DS0_SHARED_I2C */
-#endif
+#endif /* LSM6DS0_USE_I2C */ 
   return MSG_OK;
+}
+
+static msg_t sens_read_raw(void *ip, int32_t axes[]) {
+  int32_t* bp = axes;
+  msg_t msg;
+  if (((LSM6DS0Driver *)ip)->config->acccfg != NULL) {
+	msg = acc_read_raw(ip, bp);
+	if(msg != MSG_OK)
+	  return msg;
+	bp += LSM6DS0_ACC_NUMBER_OF_AXES;
+  }
+  if (((LSM6DS0Driver *)ip)->config->gyrocfg != NULL) {
+    msg = gyro_read_raw(ip, bp);
+  }
+  return msg;
+}
+	
+static msg_t acc_read_cooked(void *ip, float axes[]) {
+  uint32_t i;
+  int32_t raw[LSM6DS0_ACC_NUMBER_OF_AXES];
+  msg_t msg;
+
+  osalDbgCheck(((ip != NULL) && (axes != NULL)) &&
+              (((LSM6DS0Driver *)ip)->config->acccfg != NULL));
+
+  osalDbgAssert((((LSM6DS0Driver *)ip)->state == LSM6DS0_READY),
+              "acc_read_cooked(), invalid state");
+
+  msg = acc_read_raw(ip, raw);
+  for(i = 0; i < LSM6DS0_ACC_NUMBER_OF_AXES ; i++){
+    axes[i] = raw[i] * ((LSM6DS0Driver *)ip)->accsensitivity[i];
+    if(((LSM6DS0Driver *)ip)->config->acccfg->unit == LSM6DS0_ACC_UNIT_G){
+      axes[i] *= TO_G;
+    }
+    else if(((LSM6DS0Driver *)ip)->config->acccfg->unit == LSM6DS0_ACC_UNIT_SI){
+      axes[i] *= TO_SI;
+    }
+  }
+  return msg;
 }
 
 static msg_t gyro_read_cooked(void *ip, float axes[]) {
@@ -404,39 +436,43 @@ static msg_t gyro_read_cooked(void *ip, float axes[]) {
   osalDbgAssert((((LSM6DS0Driver *)ip)->state == LSM6DS0_READY),
               "gyro_read_cooked(), invalid state");
 
-  msg = acc_read_raw(ip, raw);
+  msg = gyro_read_raw(ip, raw);
   for(i = 0; i < LSM6DS0_GYRO_NUMBER_OF_AXES ; i++){
-    axes[i] = raw[i] * ((LSM6DS0Driver *)ip)->gyrosens;
+    axes[i] = raw[i] * ((LSM6DS0Driver *)ip)->gyrosensitivity[i];
   }
   return msg;
 }
 
-static msg_t gyro_reset_calibration(void *ip) {
-  uint32_t i;
-
-  osalDbgCheck(ip != NULL);
-
-  osalDbgAssert((((LSM6DS0Driver *)ip)->state == LSM6DS0_READY) ||
-                (((LSM6DS0Driver *)ip)->state == LSM6DS0_STOP),
-              "reset_calibration(), invalid state");
-
-  for(i = 0; i < LSM6DS0_GYRO_NUMBER_OF_AXES; i++)
-    ((LSM6DS0Driver *)ip)->gyrobias[i] = 0;
-  return MSG_OK;
+static msg_t sens_read_cooked(void *ip, float axes[]) {
+  float* bp = axes;
+  msg_t msg;
+  if (((LSM6DS0Driver *)ip)->config->acccfg != NULL) {
+	msg = acc_read_cooked(ip, bp);
+	if(msg != MSG_OK)
+	  return msg;
+	bp += LSM6DS0_ACC_NUMBER_OF_AXES;
+  }
+  if (((LSM6DS0Driver *)ip)->config->gyrocfg != NULL) {
+    msg = gyro_read_cooked(ip, bp);
+  }
+  return msg;
 }
 
-static msg_t gyro_calibrate(void *ip) {
+static msg_t gyro_sample_bias(void *ip) {
   uint32_t i, j;
   int32_t raw[LSM6DS0_GYRO_NUMBER_OF_AXES];
   int32_t buff[LSM6DS0_GYRO_NUMBER_OF_AXES] = {0, 0, 0};
+  msg_t msg;
 
   osalDbgCheck(ip != NULL);
 
   osalDbgAssert((((LSM6DS0Driver *)ip)->state == LSM6DS0_READY),
-              "gyro_calibrate(), invalid state");
+                "sample_bias(), invalid state");
 
   for(i = 0; i < LSM6DS0_GYRO_BIAS_ACQ_TIMES; i++){
-    gyro_read_raw(ip, raw);
+    msg = gyro_read_raw(ip, raw);
+	if(msg != MSG_OK)
+	  return msg;
     for(j = 0; j < LSM6DS0_GYRO_NUMBER_OF_AXES; j++){
       buff[j] += raw[j];
     }
@@ -446,17 +482,188 @@ static msg_t gyro_calibrate(void *ip) {
   for(i = 0; i < LSM6DS0_GYRO_NUMBER_OF_AXES; i++){
     ((LSM6DS0Driver *)ip)->gyrobias[i] = buff[i] / LSM6DS0_GYRO_BIAS_ACQ_TIMES;
   }
+  return msg;
+}
+
+static msg_t acc_set_bias(void *ip, int32_t *bp) {
+  uint32_t i;
+  
+  osalDbgCheck((ip != NULL) && (bp !=NULL));
+
+  osalDbgAssert((((LSM6DS0Driver *)ip)->state == LSM6DS0_READY) ||
+                (((LSM6DS0Driver *)ip)->state == LSM6DS0_STOP),
+                "acc_set_bias(), invalid state");
+  
+  for(i = 0; i < LSM6DS0_ACC_NUMBER_OF_AXES; i++) {
+    ((LSM6DS0Driver *)ip)->accbias[i] = bp[i];
+  }
   return MSG_OK;
 }
 
-static const struct LSM6DS0ACCVMT vmt_baseaccelerometer = {
-  acc_get_axes_number, acc_read_raw, acc_read_cooked
+static msg_t gyro_set_bias(void *ip, int32_t *bp) {
+  uint32_t i;
+  
+  osalDbgCheck((ip != NULL) && (bp !=NULL));
+
+  osalDbgAssert((((LSM6DS0Driver *)ip)->state == LSM6DS0_READY) ||
+                (((LSM6DS0Driver *)ip)->state == LSM6DS0_STOP),
+                "gyro_set_bias(), invalid state");
+  
+  for(i = 0; i < LSM6DS0_GYRO_NUMBER_OF_AXES; i++) {
+    ((LSM6DS0Driver *)ip)->gyrobias[i] = bp[i];
+  }
+  return MSG_OK;
+}
+
+static msg_t acc_reset_bias(void *ip) {
+  uint32_t i;
+
+  osalDbgCheck(ip != NULL);
+
+  osalDbgAssert((((LSM6DS0Driver *)ip)->state == LSM6DS0_READY) ||
+                (((LSM6DS0Driver *)ip)->state == LSM6DS0_STOP),
+              "acc_reset_bias(), invalid state");
+
+  for(i = 0; i < LSM6DS0_ACC_NUMBER_OF_AXES; i++)
+    ((LSM6DS0Driver *)ip)->accbias[i] = 0;
+  return MSG_OK;
+}
+
+static msg_t gyro_reset_bias(void *ip) {
+  uint32_t i;
+
+  osalDbgCheck(ip != NULL);
+
+  osalDbgAssert((((LSM6DS0Driver *)ip)->state == LSM6DS0_READY) ||
+                (((LSM6DS0Driver *)ip)->state == LSM6DS0_STOP),
+              "gyro_reset_bias(), invalid state");
+
+  for(i = 0; i < LSM6DS0_GYRO_NUMBER_OF_AXES; i++)
+    ((LSM6DS0Driver *)ip)->gyrobias[i] = 0;
+  return MSG_OK;
+}
+
+static msg_t acc_set_sensivity(void *ip, float *sp) {
+  uint32_t i;
+  
+  osalDbgCheck((ip != NULL) && (sp !=NULL));
+
+  osalDbgAssert((((LSM6DS0Driver *)ip)->state == LSM6DS0_READY),
+                "acc_set_sensivity(), invalid state");
+  
+  for(i = 0; i < LSM6DS0_ACC_NUMBER_OF_AXES; i++) {
+    ((LSM6DS0Driver *)ip)->accsensitivity[i] = sp[i];
+  }
+  return MSG_OK;
+}
+
+static msg_t gyro_set_sensivity(void *ip, float *sp) {
+  uint32_t i;
+  
+  osalDbgCheck((ip != NULL) && (sp !=NULL));
+
+  osalDbgAssert((((LSM6DS0Driver *)ip)->state == LSM6DS0_READY),
+                "gyro_set_sensivity(), invalid state");
+  
+  for(i = 0; i < LSM6DS0_GYRO_NUMBER_OF_AXES; i++) {
+    ((LSM6DS0Driver *)ip)->gyrosensitivity[i] = sp[i];
+  }
+  return MSG_OK;
+}
+
+static msg_t acc_reset_sensivity(void *ip) {
+  uint32_t i;
+
+  osalDbgCheck(ip != NULL);
+
+  osalDbgAssert((((LSM6DS0Driver *)ip)->state == LSM6DS0_READY),
+                "acc_reset_sensivity(), invalid state");
+
+  if(((LSM6DS0Driver *)ip)->config->acccfg->fullscale == LSM6DS0_ACC_FS_2G)
+    for(i = 0; i < LSM6DS0_ACC_NUMBER_OF_AXES; i++)
+      ((LSM6DS0Driver *)ip)->accsensitivity[i] = LSM6DS0_ACC_SENS_2G;
+  else if(((LSM6DS0Driver *)ip)->config->acccfg->fullscale == LSM6DS0_ACC_FS_4G)
+	for(i = 0; i < LSM6DS0_ACC_NUMBER_OF_AXES; i++)
+      ((LSM6DS0Driver *)ip)->accsensitivity[i] = LSM6DS0_ACC_SENS_4G;
+  else if(((LSM6DS0Driver *)ip)->config->acccfg->fullscale == LSM6DS0_ACC_FS_8G)
+	for(i = 0; i < LSM6DS0_ACC_NUMBER_OF_AXES; i++)
+      ((LSM6DS0Driver *)ip)->accsensitivity[i] = LSM6DS0_ACC_SENS_8G;
+  else if(((LSM6DS0Driver *)ip)->config->acccfg->fullscale == LSM6DS0_ACC_FS_16G)
+	for(i = 0; i < LSM6DS0_ACC_NUMBER_OF_AXES; i++)
+      ((LSM6DS0Driver *)ip)->accsensitivity[i] = LSM6DS0_ACC_SENS_16G;
+  return MSG_OK;
+}
+
+static msg_t gyro_reset_sensivity(void *ip) {
+  uint32_t i;
+
+  osalDbgCheck(ip != NULL);
+
+  osalDbgAssert((((LSM6DS0Driver *)ip)->state == LSM6DS0_READY),
+                "gyro_reset_sensivity(), invalid state");
+
+  if(((LSM6DS0Driver *)ip)->config->gyrocfg->fullscale == LSM6DS0_GYRO_FS_245DSP)
+    for(i = 0; i < LSM6DS0_ACC_NUMBER_OF_AXES; i++)
+      ((LSM6DS0Driver *)ip)->gyrosensitivity[i] = LSM6DS0_GYRO_SENS_245DPS;
+  else if(((LSM6DS0Driver *)ip)->config->gyrocfg->fullscale == LSM6DS0_GYRO_FS_500DSP)
+	for(i = 0; i < LSM6DS0_ACC_NUMBER_OF_AXES; i++)
+      ((LSM6DS0Driver *)ip)->gyrosensitivity[i] = LSM6DS0_GYRO_SENS_500DPS;
+  else if(((LSM6DS0Driver *)ip)->config->gyrocfg->fullscale == LSM6DS0_GYRO_FS_2000DSP)
+	for(i = 0; i < LSM6DS0_ACC_NUMBER_OF_AXES; i++)
+      ((LSM6DS0Driver *)ip)->gyrosensitivity[i] = LSM6DS0_GYRO_SENS_2000DPS;
+  return MSG_OK;
+}
+
+static msg_t sens_get_temperature(void *ip, float* tempp) {
+  int16_t temp;
+#if LSM6DS0_USE_I2C
+  osalDbgAssert((((LSM6DS0Driver *)ip)->config->i2cp->state == I2C_READY),
+                "gyro_read_raw(), channel not ready");
+#if LSM6DS0_SHARED_I2C
+  i2cAcquireBus(((LSM6DS0Driver *)ip)->config->i2cp);
+  i2cStart(((LSM6DS0Driver *)ip)->config->i2cp,
+           ((LSM6DS0Driver *)ip)->config->i2ccfg);
+#endif /* LSM6DS0_SHARED_I2C */
+  temp = (int16_t)(lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
+                                          ((LSM6DS0Driver *)ip)->config->slaveaddress,
+                                            LSM6DS0_AD_OUT_TEMP_L, NULL));
+  temp += (int16_t)(lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
+                                           ((LSM6DS0Driver *)ip)->config->slaveaddress,
+                                             LSM6DS0_AD_OUT_TEMP_H, NULL) << 8);
+#if LSM6DS0_SHARED_I2C
+  i2cReleaseBus(((LSM6DS0Driver *)ip)->config->i2cp);
+#endif /* LSM6DS0_SHARED_I2C */
+#endif /* LSM6DS0_USE_I2C */
+  *tempp = (float)temp * LSM6DS0_TEMP_SENS;
+  return MSG_OK;
+}
+
+static const struct BaseSensorVMT vmt_basesensor = {
+  sens_get_axes_number, sens_read_raw, sens_read_cooked
 };
 
-static const struct LSM6DS0GYROVMT vmt_basegyroscope = {
+static const struct BaseGyroscopeVMT vmt_basegyroscope = {
   gyro_get_axes_number, gyro_read_raw, gyro_read_cooked,
-  gyro_reset_calibration, gyro_calibrate
+  gyro_sample_bias, gyro_set_bias, gyro_reset_bias,
+  gyro_set_sensivity, gyro_reset_sensivity
 };
+
+static const struct BaseAccelerometerVMT vmt_baseaccelerometer = {
+  acc_get_axes_number, acc_read_raw, acc_read_cooked,
+  acc_set_bias, acc_reset_bias, acc_set_sensivity, acc_reset_sensivity
+};
+
+static const struct LSM6DS0ACCVMT vmt_lsm6ds0acc = {
+  acc_get_axes_number, acc_read_raw, acc_read_cooked,
+  acc_set_bias, acc_reset_bias, acc_set_sensivity, acc_reset_sensivity
+};
+
+static const struct LSM6DS0GYROVMT vmt_lsm6ds0gyro = {
+  gyro_get_axes_number, gyro_read_raw, gyro_read_cooked,
+  gyro_sample_bias, gyro_set_bias, gyro_reset_bias,
+  gyro_set_sensivity, gyro_reset_sensivity, sens_get_temperature
+};
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -469,11 +676,18 @@ static const struct LSM6DS0GYROVMT vmt_basegyroscope = {
  * @init
  */
 void lsm6ds0ObjectInit(LSM6DS0Driver *devp) {
-
+  uint32_t i;
+  devp->vmt_basesensor = &vmt_basesensor;
   devp->vmt_baseaccelerometer = &vmt_baseaccelerometer;
   devp->vmt_basegyroscope = &vmt_basegyroscope;
-  devp->state = LSM6DS0_STOP;
+  devp->vmt_lsm6ds0acc = &vmt_lsm6ds0acc;
+  devp->vmt_lsm6ds0gyro = &vmt_lsm6ds0gyro;
   devp->config = NULL;
+  for(i = 0; i < LSM6DS0_ACC_NUMBER_OF_AXES; i++)
+    devp->accbias[i] = 0;
+  for(i = 0; i < LSM6DS0_GYRO_NUMBER_OF_AXES; i++)
+    devp->gyrobias[i] = 0;
+  devp->state  = LSM6DS0_STOP;
 }
 
 /**
@@ -485,6 +699,7 @@ void lsm6ds0ObjectInit(LSM6DS0Driver *devp) {
  * @api
  */
 void lsm6ds0Start(LSM6DS0Driver *devp, const LSM6DS0Config *config) {
+  uint32_t i;
   osalDbgCheck((devp != NULL) && (config != NULL));
 
   osalDbgAssert((devp->state == LSM6DS0_STOP) || (devp->state == LSM6DS0_READY),
@@ -547,23 +762,30 @@ void lsm6ds0Start(LSM6DS0Driver *devp, const LSM6DS0Config *config) {
   /* Storing sensitivity information according to full scale value */
   if((devp)->config->acccfg != NULL) {
     if(devp->config->acccfg->fullscale == LSM6DS0_ACC_FS_2G)
-      devp->accsens = LSM6DS0_ACC_SENS_2G;
+      for(i = 0; i < LSM6DS0_ACC_NUMBER_OF_AXES; i++)
+        devp->accsensitivity[i] = LSM6DS0_ACC_SENS_2G;
     else if(devp->config->acccfg->fullscale == LSM6DS0_ACC_FS_4G)
-      devp->accsens = LSM6DS0_ACC_SENS_4G;
+      for(i = 0; i < LSM6DS0_ACC_NUMBER_OF_AXES; i++)
+        devp->accsensitivity[i] = LSM6DS0_ACC_SENS_4G;
     else if(devp->config->acccfg->fullscale == LSM6DS0_ACC_FS_8G)
-      devp->accsens = LSM6DS0_ACC_SENS_8G;
+      for(i = 0; i < LSM6DS0_ACC_NUMBER_OF_AXES; i++)
+        devp->accsensitivity[i] = LSM6DS0_ACC_SENS_8G;
     else if(devp->config->acccfg->fullscale == LSM6DS0_ACC_FS_16G)
-      devp->accsens = LSM6DS0_ACC_SENS_16G;
+      for(i = 0; i < LSM6DS0_ACC_NUMBER_OF_AXES; i++)
+        devp->accsensitivity[i] = LSM6DS0_ACC_SENS_16G;
     else
       osalDbgAssert(FALSE, "lsm6ds0Start(), accelerometer full scale issue");
   }
   if((devp)->config->gyrocfg != NULL) {
     if(devp->config->gyrocfg->fullscale == LSM6DS0_GYRO_FS_245DSP)
-      devp->gyrosens = LSM6DS0_GYRO_SENS_245DPS;
+      for(i = 0; i < LSM6DS0_GYRO_NUMBER_OF_AXES; i++)
+        devp->gyrosensitivity[i] = LSM6DS0_GYRO_SENS_245DPS;
     else if(devp->config->gyrocfg->fullscale == LSM6DS0_GYRO_FS_500DSP)
-      devp->gyrosens = LSM6DS0_GYRO_SENS_500DPS;
+      for(i = 0; i < LSM6DS0_GYRO_NUMBER_OF_AXES; i++)
+        devp->gyrosensitivity[i] = LSM6DS0_GYRO_SENS_500DPS;
     else if(devp->config->gyrocfg->fullscale == LSM6DS0_GYRO_FS_2000DSP)
-      devp->gyrosens = LSM6DS0_GYRO_SENS_2000DPS;
+      for(i = 0; i < LSM6DS0_GYRO_NUMBER_OF_AXES; i++)
+        devp->gyrosensitivity[i] = LSM6DS0_GYRO_SENS_2000DPS;
     else
       osalDbgAssert(FALSE, "lsm6ds0Start(), gyroscope full scale issue");
   }

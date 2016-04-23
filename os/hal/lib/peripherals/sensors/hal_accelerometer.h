@@ -46,7 +46,15 @@
 /**
  * @brief   BaseAccelerometer specific methods.
  */
-#define _base_accelerometer_methods_alone
+#define _base_accelerometer_methods_alone                                   \
+  /* Invoke the set bias procedure.*/                                       \
+  msg_t (*set_bias)(void *instance, int32_t biases[]);                      \
+  /* Remove bias stored data.*/                                             \
+  msg_t (*reset_bias)(void *instance);                                      \
+  /* Invoke the set sensitivity procedure.*/                                \
+  msg_t (*set_sensitivity)(void *instance, float sensitivities[]);          \
+  /* Restore sensitivity stored data to default.*/                          \
+  msg_t (*reset_sensitivity)(void *instance);
 
 /**
  * @brief   BaseAccelerometer specific methods with inherited ones.
@@ -126,6 +134,71 @@ typedef struct {
  */
 #define accelerometerReadCooked(ip, dp)                                     \
         (ip)->vmt_baseaccelerometer->read_cooked(ip, dp)
+
+/**
+ * @brief   Updates accelerometer bias data from received buffer.
+ * @note    The bias buffer must have the same length of the
+ *          the accelerometer axes number. Bias must be computed on
+ *          raw data and is a signed integer.
+ *
+ *
+ * @param[in] ip        pointer to a @p BaseAccelerometer class.
+ * @param[in] bp        pointer to a buffer of bias values.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more errors occurred.
+ *
+ * @api
+ */
+#define accelerometerSetBias(ip, bp)                                        \
+        (ip)->vmt_baseaccelerometer->set_bias(ip, bp)
+
+/**
+ * @brief   Reset accelerometer bias data restoring it to zero.
+ *
+ * @param[in] ip        pointer to a @p BaseAccelerometer class.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more errors occurred.
+ *
+ * @api
+ */
+#define accelerometerResetBias(ip)                                          \
+        (ip)->vmt_baseaccelerometer->reset_bias(ip)
+
+/**
+ * @brief   Updates accelerometer sensitivity data from received buffer.
+ * @note    The sensitivity buffer must have the same length of the
+ *          the accelerometer axes number.
+ *
+ * @param[in] ip        pointer to a @p BaseAccelerometer class.
+ * @param[in] sp        pointer to a buffer of sensitivity values.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more errors occurred.
+ *
+ * @api
+ */
+#define accelerometerSetSensitivity(ip, sp)                                 \
+        (ip)->vmt_baseaccelerometer->set_sensitivity(ip, sp)
+
+/**
+ * @brief   Reset accelerometer sensitivity data restoring it to its typical
+ *          value.
+ *
+ * @param[in] ip        pointer to a @p BaseAccelerometer class.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more errors occurred.
+ *
+ * @api
+ */
+#define accelerometerResetSensitivity(ip)                                   \
+        (ip)->vmt_baseaccelerometer->reset_sensitivity(ip)
 /** @} */
 
 /*===========================================================================*/

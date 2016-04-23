@@ -89,7 +89,7 @@
  * @details This is the time between each bias acquisition.
  */
 #if !defined(LSM6DS0_GYRO_BIAS_SETTLING_uS) || defined(__DOXYGEN__)
-#define LSM6DS0_GYRO_BIAS_SETTLING_uS             5000
+#define LSM6DS0_GYRO_BIAS_SETTLING_uS       5000
 #endif
 /** @} */
 
@@ -502,7 +502,9 @@ typedef struct LSM6DS0Driver LSM6DS0Driver;
  * @brief   @p LSM6DS0 gyroscope subsystem specific methods.
  */
 #define _lsm6ds0_gyro_methods                                               \
-  _base_gyroscope_methods
+  _base_gyroscope_methods                                                   \
+  /* Retrieve the temperature of LSM6DS0 chip.*/                            \
+  msg_t (*get_temperature)(void *instance, float* temperature);
   
 /**
  * @extends BaseAccelerometerVMT
@@ -533,9 +535,11 @@ struct LSM6DS0GYROVMT {
   /* Current configuration data.*/                                          \
   const LSM6DS0Config       *config;                                        \
   /* Current accelerometer sensitivity.*/                                   \
-  float                     accsens;                                        \
+  float                     accsensitivity[LSM6DS0_ACC_NUMBER_OF_AXES];     \
+  /* Accelerometer bias data.*/                                             \
+  int32_t                   accbias[LSM6DS0_ACC_NUMBER_OF_AXES];            \
   /* Current gyroscope sensitivity.*/                                       \
-  float                     gyrosens;                                       \
+  float                     gyrosensitivity[LSM6DS0_GYRO_NUMBER_OF_AXES];   \
   /* Bias data.*/                                                           \
   int32_t                   gyrobias[LSM6DS0_GYRO_NUMBER_OF_AXES];
   
@@ -543,10 +547,16 @@ struct LSM6DS0GYROVMT {
  * @brief   LSM6DS0 6-axis accelerometer/gyroscope class.
  */
 struct LSM6DS0Driver {
-  /** @brief Accelerometer Virtual Methods Table.*/
-  const struct LSM6DS0ACCVMT  *vmt_baseaccelerometer;
-  /** @brief Gyroscope Virtual Methods Table.*/
-  const struct LSM6DS0GYROVMT *vmt_basegyroscope;
+  /** @brief BaseSensor Virtual Methods Table. */
+  const struct BaseSensorVMT *vmt_basesensor;
+  /** @brief BaseAccelerometer Virtual Methods Table. */
+  const struct BaseAccelerometerVMT *vmt_baseaccelerometer;
+  /** @brief BaseGyroscope Virtual Methods Table. */
+  const struct BaseGyroscopeVMT *vmt_basegyroscope;
+  /** @brief LSM6DS0 Accelerometer Virtual Methods Table. */
+  const struct LSM6DS0ACCVMT *vmt_lsm6ds0acc;
+  /** @brief LSM6DS0 Gyroscope Virtual Methods Table. */
+  const struct LSM6DS0GYROVMT *vmt_lsm6ds0gyro;
   _lsm6ds0_data
 };
 /** @} */
@@ -555,6 +565,21 @@ struct LSM6DS0Driver {
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
+/**
+ * @brief   Get current MEMS temperature.
+ * @detail  This information is very useful especially for high accuracy IMU
+ *
+ * @param[in] ip        pointer to a @p BaseGyroscope class.
+ * @param[out] temp     the MEMS temperature as single precision floating.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more errors occurred.
+ * @api
+ */
+#define gyroscopeGetTemp(ip, tpp)                                           \
+        (ip)->vmt_lsm6ds0gyro->get_temperature(ip, tpp)
+	
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
