@@ -144,7 +144,8 @@ TCPPSRC =
 # List ASM source files here
 ASMSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
 
-INCDIR = $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
+INCDIR = $(CHIBIOS)/os/license \
+         $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) $(L3GD20INC) \
          $(STREAMSINC) $(CHIBIOS)/os/various
 
