@@ -228,7 +228,7 @@ static msg_t read_raw(void *ip, int32_t axes[L3GD20_NUMBER_OF_AXES]) {
 #if	L3GD20_SHARED_SPI
   spiReleaseBus(((L3GD20Driver *)ip)->config->spip);
 #endif /* L3GD20_SHARED_SPI */   
-#endif
+#endif /* L3GD20_USE_SPI */ 
   return MSG_OK;
 }
 
@@ -295,7 +295,7 @@ static msg_t reset_bias(void *ip) {
 
   osalDbgAssert((((L3GD20Driver *)ip)->state == L3GD20_READY) ||
                 (((L3GD20Driver *)ip)->state == L3GD20_STOP),
-              "reset_calibration(), invalid state");
+              "reset_bias(), invalid state");
 
   for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++)
     ((L3GD20Driver *)ip)->bias[i] = 0;
@@ -337,10 +337,21 @@ static msg_t reset_sensivity(void *ip) {
 }
 
 static msg_t get_temperature(void *ip, float* tempp) {
-
+	
+#if L3GD20_USE_SPI
+  osalDbgAssert((((L3GD20Driver *)ip)->config->spip->state == SPI_READY),
+                "read_raw(), channel not ready");
+#if	L3GD20_SHARED_SPI
+  spiAcquireBus(((L3GD20Driver *)ip)->config->spip);
+  spiStart(((L3GD20Driver *)ip)->config->spip,
+           ((L3GD20Driver *)ip)->config->spicfg);
+#endif /* L3GD20_SHARED_SPI */   
   *tempp = (int8_t)l3gd20SPIReadRegister(((L3GD20Driver *)ip)->config->spip,
                                        L3GD20_AD_OUT_TEMP);
-
+#if	L3GD20_SHARED_SPI
+  spiReleaseBus(((L3GD20Driver *)ip)->config->spip);
+#endif /* L3GD20_SHARED_SPI */   
+#endif /* L3GD20_USE_SPI */ 
   return MSG_OK;
 }
 
@@ -373,14 +384,13 @@ static const struct L3GD20VMT vmt_l3gd20 = {
  */
 void l3gd20ObjectInit(L3GD20Driver *devp) {
   uint32_t i;
-
   devp->vmt_basesensor = &vmt_basesensor;
   devp->vmt_basegyroscope = &vmt_basegyroscope;
   devp->vmt_l3gd20 = &vmt_l3gd20;
-  devp->state  = L3GD20_STOP;
   devp->config = NULL;
   for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++)
     devp->bias[i] = 0;
+  devp->state  = L3GD20_STOP;
 }
 
 /**
@@ -392,7 +402,7 @@ void l3gd20ObjectInit(L3GD20Driver *devp) {
  * @api
  */
 void l3gd20Start(L3GD20Driver *devp, const L3GD20Config *config) {
-  uint8_t i;
+  uint32_t i;
   osalDbgCheck((devp != NULL) && (config != NULL));
 
   osalDbgAssert((devp->state == L3GD20_STOP) || (devp->state == L3GD20_READY),
