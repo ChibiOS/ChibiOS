@@ -2,7 +2,7 @@
 PORTSRC = $(CHIBIOS)/os/common/ports/ARMCMx/chcore.c \
           $(CHIBIOS)/os/common/ports/ARMCMx/chcore_v6m.c
           
-PORTASM = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/chcoreasm_v6m.s
+PORTASM = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/chcoreasm_v6m.S
 
 PORTINC = $(CHIBIOS)/os/common/ports/ARMCMx \
           $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC
