@@ -145,7 +145,7 @@ TCPPSRC =
 ASMSRC =
 ASMXSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
 
-INCDIR = $(CHIBIOS)/os/various
+INCDIR = $(CHIBIOS)/os/various \
          $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) $(LSM6DS0INC) \
          $(STREAMSINC) $(CHIBIOS)/os/various
