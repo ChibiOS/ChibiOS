@@ -43,6 +43,7 @@
 #define FPCCR_ASPEN                         (1 << 31)
 #define FPCCR_LSPEN                         (1 << 30)
 
+#define SCB_VTOR                            0xE000ED08
 #define SCB_CPACR                           0xE000ED88
 #define SCB_FPCCR                           0xE000EF34
 #define SCB_FPDSCR                          0xE000EF3C
@@ -50,6 +51,14 @@
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   VTOR special register initialization.
+ * @details VTOR is initialized to point to the vectors table.
+ */
+#if !defined(CRT0_VTOR_INIT) || defined(__DOXYGEN__)
+#define CRT0_VTOR_INIT                      TRUE
+#endif
 
 /**
  * @brief   FPU initialization switch.
@@ -174,6 +183,13 @@ Reset_Handler:
                 /* PSP stack pointers initialization.*/
                 ldr     r0, =__process_stack_end__
                 msr     PSP, r0
+
+#if CRT0_VTOR_INIT == TRUE
+                ldr     r0, =_vectors
+                movw    r1, #SCB_VTOR & 0xFFFF
+                movt    r1, #SCB_VTOR >> 16
+                str     r0, [r1]
+#endif
 
 #if CRT0_INIT_FPU == TRUE
                 /* FPU FPCCR initialization.*/

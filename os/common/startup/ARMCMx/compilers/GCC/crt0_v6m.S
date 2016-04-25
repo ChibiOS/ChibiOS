@@ -39,9 +39,20 @@
 #define CONTROL_USE_MSP                     0
 #define CONTROL_USE_PSP                     2
 
+#define SCB_VTOR                            0xE000ED08
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   VTOR special register initialization.
+ * @details VTOR is initialized to point to the vectors table.
+ * @note    This option can only be enabled on Cortex-M0+ cores.
+ */
+#if !defined(CRT0_VTOR_INIT) || defined(__DOXYGEN__)
+#define CRT0_VTOR_INIT                      FALSE
+#endif
 
 /**
  * @brief   Control special register initialization value.
@@ -139,6 +150,12 @@ Reset_Handler:
                 movs    r0, #CRT0_CONTROL_INIT
                 msr     CONTROL, r0
                 isb
+
+#if CRT0_VTOR_INIT == TRUE
+                ldr     r0, =_vectors
+                ldr     r1, =SCB_VTOR
+                str     r0, [r1]
+#endif
 
 #if CRT0_INIT_CORE == TRUE
                 /* Core initialization.*/

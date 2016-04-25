@@ -151,13 +151,6 @@
 #endif
 
 /**
- * @brief   NVIC VTOR initialization expression.
- */
-#if !defined(CORTEX_VTOR_INIT) || defined(__DOXYGEN__)
-#define CORTEX_VTOR_INIT                0x00000000U
-#endif
-
-/**
  * @brief   NVIC PRIGROUP initialization expression.
  * @details The default assigns all available priority bits as preemption
  *          priority with no sub-priority.
@@ -511,9 +504,6 @@ extern "C" {
  * @brief   Port-related initialization code.
  */
 static inline void port_init(void) {
-
-  /* Initialization of the vector table and priority related settings.*/
-  SCB->VTOR = CORTEX_VTOR_INIT;
 
   /* Initializing priority grouping.*/
   NVIC_SetPriorityGrouping(CORTEX_PRIGROUP_INIT);
