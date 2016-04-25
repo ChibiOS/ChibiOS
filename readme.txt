@@ -75,6 +75,7 @@
 *** 16.1.5 ***
 - HAL: Fixed missing SDC initialization in RT-STM32F103-OLIMEX_STM32_P103 demo
        (bug #735).
+- HAL: Fixed STM32 dac bug when using only channel 2 in direct mode (bug #734).
 - HAL: Fixed PAL lines support not working for STM32 GPIOv1 (bug #730).
 - RT:  Fixed bug in chSchPreemption() function (bug #728).
 - HAL: Fixed prescaler not initialized in STM32 ADCv1 (bug #725).

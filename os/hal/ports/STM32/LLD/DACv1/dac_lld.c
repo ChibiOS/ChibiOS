@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    STM32/DACv1/dac_lld.c
+ * @file    DACv1/dac_lld.c
  * @brief   STM32 DAC subsystem low level driver source.
  *
  * @addtogroup DAC
@@ -335,7 +335,11 @@ void dac_lld_put_channel(DACDriver *dacp,
   case DAC_DHRM_12BIT_RIGHT_DUAL:
 #endif
     if (channel == 0U) {
+#if STM32_DAC_DUAL_MODE
       dacp->params->dac->DHR12R1 = (uint32_t)sample;
+#else
+      *(&dacp->params->dac->DHR12R1 + dacp->params->dataoffset) = (uint32_t)sample;
+#endif
     }
     else {
       dacp->params->dac->DHR12R2 = (uint32_t)sample;
@@ -346,7 +350,11 @@ void dac_lld_put_channel(DACDriver *dacp,
   case DAC_DHRM_12BIT_LEFT_DUAL:
 #endif
     if (channel == 0U) {
+#if STM32_DAC_DUAL_MODE
       dacp->params->dac->DHR12L1 = (uint32_t)sample;
+#else
+      *(&dacp->params->dac->DHR12L1 + dacp->params->dataoffset) = (uint32_t)sample;
+#endif
     }
     else {
       dacp->params->dac->DHR12L2 = (uint32_t)sample;
@@ -357,10 +365,14 @@ void dac_lld_put_channel(DACDriver *dacp,
   case DAC_DHRM_8BIT_RIGHT_DUAL:
 #endif
     if (channel == 0U) {
-      dacp->params->dac->DHR8R1  = (uint32_t)sample;
+#if STM32_DAC_DUAL_MODE
+      dacp->params->dac->DHR8R1 = (uint32_t)sample;
+#else
+      *(&dacp->params->dac->DHR8R1 + dacp->params->dataoffset) = (uint32_t)sample;
+#endif
     }
     else {
-      dacp->params->dac->DHR8R2  = (uint32_t)sample;
+      dacp->params->dac->DHR8R2 = (uint32_t)sample;
     }
     break;
   default:
