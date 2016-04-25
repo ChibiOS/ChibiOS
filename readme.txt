@@ -109,6 +109,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Fixed missing SDC initialization in RT-STM32F103-OLIMEX_STM32_P103 demo
+       (bug #735)(backported to 16.1.4).
 - HAL: Fixed PAL lines support not working for STM32 GPIOv1 (bug #730)
        (backported to 16.1.4).
 - RT:  Fixed bug in chSchPreemption() function (bug #728)(backported to 2.6.10,

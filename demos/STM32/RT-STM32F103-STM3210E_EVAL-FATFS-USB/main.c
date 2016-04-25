@@ -298,6 +298,11 @@ int main(void) {
   shellInit();
 
   /*
+   * Activates SDC driver 1 using default configuration.
+   */
+  sdcStart(&SDCD1, NULL);
+
+  /*
    * Activates the card insertion monitor.
    */
   tmr_init(&SDCD1);
