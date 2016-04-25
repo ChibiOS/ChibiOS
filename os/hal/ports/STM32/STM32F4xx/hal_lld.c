@@ -249,7 +249,7 @@ void stm32_clock_init(void) {
               STM32_HPRE;
 
   /* Flash setup.*/
-#if defined(STM32_USE_REVISION_A_FIX)
+#if !defined(STM32_REMOVE_REVISION_A_FIX)
   /* Some old revisions of F4x MCUs randomly crashes with compiler
      optimizations enabled AND flash caches enabled. */
   if ((DBGMCU->IDCODE == 0x20006411) && (SCB->CPUID == 0x410FC241))
