@@ -1,16 +1,21 @@
 /*
     ChibiOS - Copyright (C) 2016 Rocco Marco Guglielmi
+
     This file is part of ChibiOS.
+
     ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 3 of the License, or
     (at your option) any later version.
+
     ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
+
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	
 */
 
 /**
@@ -413,7 +418,7 @@ typedef enum {
  * @brief   LSM6DS0 block data update
  */
 typedef enum {
-  LSM6DS0_BDU_CONTINOUS = 0x00,     /**< Block data continuously updated.   */
+  LSM6DS0_BDU_CONTINUOUS = 0x00,    /**< Block data continuously updated.   */
   LSM6DS0_BDU_BLOCKED = 0x40        /**< Block data updated after reading.  */
 } lsm6ds0_bdu_t;
 

@@ -168,7 +168,7 @@ typedef enum {
  * @brief   L3GD20 block data update
  */
 typedef enum {
-  L3GD20_BDU_CONTINOUS = 0x00,      /**< Block data continuously updated.   */         
+  L3GD20_BDU_CONTINUOUS = 0x00,     /**< Block data continuously updated.   */         
   L3GD20_BDU_BLOCKED = 0x80         /**< Block data updated after reading.  */     
 }l3gd20_bdu_t;
 
