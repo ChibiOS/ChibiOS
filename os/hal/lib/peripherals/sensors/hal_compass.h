@@ -46,7 +46,16 @@
 /**
  * @brief   BaseCompass specific methods.
  */
-#define _base_compass_methods_alone
+#define _base_compass_methods_alone                                         \
+  /* Invoke the set bias procedure.*/                                       \
+  msg_t (*set_bias)(void *instance, int32_t biases[]);                      \
+  /* Remove bias stored data.*/                                             \
+  msg_t (*reset_bias)(void *instance);                                      \
+  /* Invoke the set sensitivity procedure.*/                                \
+  msg_t (*set_sensitivity)(void *instance, float sensitivities[]);          \
+  /* Restore sensitivity stored data to default.*/                          \
+  msg_t (*reset_sensitivity)(void *instance);
+
 
 /**
  * @brief   BaseCompass specific methods with inherited ones.
@@ -125,6 +134,70 @@ typedef struct {
  */
 #define compassReadCooked(ip, dp)                                           \
         (ip)->vmt_basecompass->read_cooked(ip, dp)
+
+/**
+ * @brief   Updates compass bias data from received buffer.
+ * @note    The bias buffer must have the same length of the
+ *          the compass axes number. Bias must be computed on
+ *          raw data and is a signed integer.
+ *
+ * @param[in] ip        pointer to a @p BaseCompass class.
+ * @param[in] bp        pointer to a buffer of bias values.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more errors occurred.
+ *
+ * @api
+ */
+#define compassSetBias(ip, bp)                                            \
+        (ip)->vmt_basecompass->set_bias(ip, bp)
+
+/**
+ * @brief   Reset compass bias data restoring it to zero.
+ *
+ * @param[in] ip        pointer to a @p BaseCompass class.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more errors occurred.
+ *
+ * @api
+ */
+#define compassResetBias(ip)                                               \
+        (ip)->vmt_basecompass->reset_bias(ip)
+
+/**
+ * @brief   Updates compass sensitivity data from received buffer.
+ * @note    The sensitivity buffer must have the same length of the
+ *          the compass axes number.
+ *
+ * @param[in] ip        pointer to a @p BaseCompass class.
+ * @param[in] sp        pointer to a buffer of sensitivity values.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more errors occurred.
+ *
+ * @api
+ */
+#define compassSetSensitivity(ip, sp)                                     \
+        (ip)->vmt_basecompass->set_sensitivity(ip, sp)
+
+/**
+ * @brief   Reset compass sensitivity data restoring it to its typical
+ *          value.
+ *
+ * @param[in] ip        pointer to a @p BaseCompass class.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more errors occurred.
+ *
+ * @api
+ */
+#define compassResetSensitivity(ip)                                       \
+        (ip)->vmt_basecompass->reset_sensitivity(ip)
 /** @} */
 
 /*===========================================================================*/

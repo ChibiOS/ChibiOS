@@ -92,8 +92,8 @@
 #error "LIS3MDL_USE_I2C requires HAL_USE_I2C"
 #endif
 
-#if LIS3MDL_SHARED_SPI && !SPI_USE_MUTUAL_EXCLUSION
-#error "LIS3MDL_SHARED_SPI requires SPI_USE_MUTUAL_EXCLUSION"
+#if LIS3MDL_SHARED_I2C && !I2C_USE_MUTUAL_EXCLUSION
+#error "LIS3MDL_SHARED_I2C requires I2C_USE_MUTUAL_EXCLUSION"
 #endif
 
 /*===========================================================================*/
@@ -174,6 +174,14 @@ typedef enum {
 }lis3mdl_omz_t;
 
 /**
+ * @brief   LIS3MDL temperature sensor enabling
+ */
+typedef enum {
+  LIS3MDL_TEMP_DISABLED = 0x00,     /**< Temperature sensor disabled.       */
+  LIS3MDL_TEMP_ENABLED = 0x80       /**< Temperature sensor enabled.        */
+}lis3mdl_temp_t;
+
+/**
  * @brief  LIS3MDL block data update
  */
 typedef enum {
@@ -252,6 +260,10 @@ typedef struct {
    */
   lis3mdl_omz_t              operationmodez;
   /**
+   * @brief   LIS3MDL temperature sensor enabling
+   */
+  lis3mdl_temp_t             temperature;
+  /**
    * @brief  LIS3MDL block data update
    */
   lis3mdl_bdu_t              blockdataupdate;
@@ -322,7 +334,8 @@ struct LIS3MDLDriver {
 
 /**
  * @brief   Get current MEMS temperature.
- * @detail  This information is very useful especially for high accuracy IMU
+ * @detail  This information is very useful especially for high accuracy IMU.
+ * @note    Temperature sensor must be enabled using a proper configuration.
  *
  * @param[in] ip        pointer to a @p BaseCompass class.
  * @param[out] temp     the MEMS temperature as single precision floating.
