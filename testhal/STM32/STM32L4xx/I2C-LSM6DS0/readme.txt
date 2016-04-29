@@ -1,10 +1,11 @@
 *****************************************************************************
-** ChibiOS/HAL - EXT driver demo for STM32L4xx.                            **
+** ChibiOS/HAL + ChibiOS/EX - I2C + LSM6DS0 demo for STM32L4xx.            **
 *****************************************************************************
 
 ** TARGET **
 
-The demo runs on an STMicroelectronics STM32L4-Nucleo board.
+The demo runs on an STMicroelectronics STM32L4-Nucleo board. It has been 
+tested with the X-NUCLEO-IKS01A1 shield.
 
 ** The Demo **
 
