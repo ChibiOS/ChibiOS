@@ -100,7 +100,7 @@ int main(void) {
   sdStart(&SD2, NULL);
 
   /*
-   * L3GD20 Object Initialization
+   * LSM6DS0 Object Initialization
    */
   lsm6ds0ObjectInit(&LSM6DS0D1);
 
