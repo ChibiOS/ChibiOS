@@ -4,12 +4,13 @@
 
 ** TARGET **
 
-The demo runs on an STMicroelectronics STM32L4-Nucleo board. It has been 
-tested with the X-NUCLEO-IKS01A1 shield.
+The demo runs on a STM32 Nucleo64-L476RG board. It has been tested with the 
+X-NUCLEO-IKS01A1 shield.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32L4xx EXT driver.
+The application demonstrates the use of the STM32L4xx I2C driver in order
+to acquire data from LIS3MDL using ChibiOS/EX.
 
 ** Board Setup **
 

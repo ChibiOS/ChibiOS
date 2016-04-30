@@ -4,7 +4,7 @@
 
 ** TARGET **
 
-The demo runs on an STMicroelectronics STM32L4-Nucleo board.
+The demo runs on an STM32 Nucleo64-L476RG board.
 
 ** The Demo **
 
