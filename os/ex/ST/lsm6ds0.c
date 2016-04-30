@@ -44,7 +44,8 @@
 #define  LSM6DS0_GYRO_SENS_500DPS           ((float)0.01750f)
 #define  LSM6DS0_GYRO_SENS_2000DPS          ((float)0.07000f)
 
-#define  LSM6DS0_TEMP_SENS                  ((float)0.0625f)
+#define  LSM6DS0_TEMP_SENS                  ((float)16.0f)
+#define  LSM6DS0_TEMP_SENS_OFF              ((float)25.0f)
 
 #define  LSM6DS0_DI                         ((uint8_t)0xFF)
 #define  LSM6DS0_DI_0                       ((uint8_t)0x01)
@@ -289,7 +290,7 @@ static size_t sens_get_axes_number(void *ip) {
 }
 
 static msg_t acc_read_raw(void *ip, int32_t axes[]) {
-
+  int16_t tmp;
   osalDbgCheck(((ip != NULL) && (axes != NULL)) &&
               (((LSM6DS0Driver *)ip)->config->acccfg != NULL));
   osalDbgAssert((((LSM6DS0Driver *)ip)->state == LSM6DS0_READY),
@@ -304,31 +305,31 @@ static msg_t acc_read_raw(void *ip, int32_t axes[]) {
            ((LSM6DS0Driver *)ip)->config->i2ccfg);
 #endif /* LSM6DS0_SHARED_I2C */
   if(((LSM6DS0Driver *)ip)->config->acccfg->axesenabling & LSM6DS0_ACC_AE_X){
-    axes[0] = (int16_t)(lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
-                                               ((LSM6DS0Driver *)ip)->config->slaveaddress,
-                                               LSM6DS0_AD_OUT_X_L_XL, NULL));
-    axes[0] += (int16_t)(lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
-                                                ((LSM6DS0Driver *)ip)->config->slaveaddress,
-                                                LSM6DS0_AD_OUT_X_H_XL, NULL) << 8);
-	axes[0] -= ((LSM6DS0Driver *)ip)->accbias[0];
+    tmp = lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
+                                 ((LSM6DS0Driver *)ip)->config->slaveaddress,
+                                 LSM6DS0_AD_OUT_X_L_XL, NULL);
+    tmp += lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
+                                  ((LSM6DS0Driver *)ip)->config->slaveaddress,
+                                  LSM6DS0_AD_OUT_X_H_XL, NULL) << 8;
+    axes[0] = (int32_t)tmp - ((LSM6DS0Driver *)ip)->accbias[0];
   }
   if(((LSM6DS0Driver *)ip)->config->acccfg->axesenabling & LSM6DS0_ACC_AE_Y){
-    axes[1] = (int16_t)(lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
-                                               ((LSM6DS0Driver *)ip)->config->slaveaddress,
-                                               LSM6DS0_AD_OUT_Y_L_XL, NULL));
-    axes[1] += (int16_t)(lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
-                                                ((LSM6DS0Driver *)ip)->config->slaveaddress,
-                                                LSM6DS0_AD_OUT_Y_H_XL, NULL) << 8);
-	axes[1] -= ((LSM6DS0Driver *)ip)->accbias[1];
+    tmp = lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
+                                 ((LSM6DS0Driver *)ip)->config->slaveaddress,
+                                 LSM6DS0_AD_OUT_Y_L_XL, NULL);
+    tmp += lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
+                                  ((LSM6DS0Driver *)ip)->config->slaveaddress,
+                                  LSM6DS0_AD_OUT_Y_H_XL, NULL) << 8;
+    axes[1] = (int32_t)tmp - ((LSM6DS0Driver *)ip)->accbias[1];
   }
   if(((LSM6DS0Driver *)ip)->config->acccfg->axesenabling & LSM6DS0_ACC_AE_Z){
-    axes[2] = (int16_t)(lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
-                                               ((LSM6DS0Driver *)ip)->config->slaveaddress,
-                                               LSM6DS0_AD_OUT_Z_L_XL, NULL));
-    axes[2] += (int16_t)(lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
-                                                ((LSM6DS0Driver *)ip)->config->slaveaddress,
-                                                LSM6DS0_AD_OUT_Z_H_XL, NULL) << 8);
-	axes[2] -= ((LSM6DS0Driver *)ip)->accbias[2];
+    tmp = lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
+                                 ((LSM6DS0Driver *)ip)->config->slaveaddress,
+                                 LSM6DS0_AD_OUT_Z_L_XL, NULL);
+    tmp += lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
+                                  ((LSM6DS0Driver *)ip)->config->slaveaddress,
+                                  LSM6DS0_AD_OUT_Z_H_XL, NULL) << 8;
+    axes[2] = (int32_t)tmp - ((LSM6DS0Driver *)ip)->accbias[2];
   }
 #if LSM6DS0_SHARED_I2C
   i2cReleaseBus(((LSM6DS0Driver *)ip)->config->i2cp);
@@ -338,7 +339,7 @@ static msg_t acc_read_raw(void *ip, int32_t axes[]) {
 }
 
 static msg_t gyro_read_raw(void *ip, int32_t axes[]) {
-
+  int16_t tmp;
   osalDbgCheck(((ip != NULL) && (axes != NULL)) &&
               (((LSM6DS0Driver *)ip)->config->gyrocfg != NULL));
   osalDbgAssert((((LSM6DS0Driver *)ip)->state == LSM6DS0_READY),
@@ -353,31 +354,31 @@ static msg_t gyro_read_raw(void *ip, int32_t axes[]) {
            ((LSM6DS0Driver *)ip)->config->i2ccfg);
 #endif /* LSM6DS0_SHARED_I2C */
   if(((LSM6DS0Driver *)ip)->config->gyrocfg->axesenabling & LSM6DS0_GYRO_AE_X){
-    axes[0] = (int16_t)(lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
-                                               ((LSM6DS0Driver *)ip)->config->slaveaddress,
-                                               LSM6DS0_AD_OUT_X_L_G, NULL));
-    axes[0] += (int16_t)(lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
-                                                ((LSM6DS0Driver *)ip)->config->slaveaddress,
-                                                LSM6DS0_AD_OUT_X_H_G, NULL) << 8);
-	axes[0] -= ((LSM6DS0Driver *)ip)->gyrobias[0];
+    tmp = lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
+                                 ((LSM6DS0Driver *)ip)->config->slaveaddress,
+                                   LSM6DS0_AD_OUT_X_L_G, NULL);
+    tmp += lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
+                                  ((LSM6DS0Driver *)ip)->config->slaveaddress,
+                                    LSM6DS0_AD_OUT_X_H_G, NULL) << 8;
+	axes[0] = (int32_t)tmp - ((LSM6DS0Driver *)ip)->gyrobias[0];
   }
   if(((LSM6DS0Driver *)ip)->config->acccfg->axesenabling & LSM6DS0_GYRO_AE_Y){
-    axes[1] = (int16_t)(lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
-                                               ((LSM6DS0Driver *)ip)->config->slaveaddress,
-                                               LSM6DS0_AD_OUT_Y_L_G, NULL));
-    axes[1] += (int16_t)(lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
-                                                ((LSM6DS0Driver *)ip)->config->slaveaddress,
-                                                LSM6DS0_AD_OUT_Y_H_G, NULL) << 8);
-	axes[1] -= ((LSM6DS0Driver *)ip)->gyrobias[1];
+    tmp = lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
+                                 ((LSM6DS0Driver *)ip)->config->slaveaddress,
+                                   LSM6DS0_AD_OUT_Y_L_G, NULL);
+    tmp += lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
+                                  ((LSM6DS0Driver *)ip)->config->slaveaddress,
+                                    LSM6DS0_AD_OUT_Y_H_G, NULL) << 8;
+    axes[1] = (int32_t)tmp - ((LSM6DS0Driver *)ip)->gyrobias[1];
   }
   if(((LSM6DS0Driver *)ip)->config->acccfg->axesenabling & LSM6DS0_GYRO_AE_Z){
-    axes[2] = (int16_t)(lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
-                                               ((LSM6DS0Driver *)ip)->config->slaveaddress,
-                                               LSM6DS0_AD_OUT_Z_L_G, NULL));
-    axes[2] += (int16_t)(lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
-                                                ((LSM6DS0Driver *)ip)->config->slaveaddress,
-                                                LSM6DS0_AD_OUT_Z_H_G, NULL) << 8);
-	axes[2] -= ((LSM6DS0Driver *)ip)->gyrobias[2];
+    tmp = lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
+                                 ((LSM6DS0Driver *)ip)->config->slaveaddress,
+                                   LSM6DS0_AD_OUT_Z_L_G, NULL);
+    tmp += lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
+                                  ((LSM6DS0Driver *)ip)->config->slaveaddress,
+                                    LSM6DS0_AD_OUT_Z_H_G, NULL) << 8;
+    axes[2] = (int32_t)tmp - ((LSM6DS0Driver *)ip)->gyrobias[2];
   }
 #if LSM6DS0_SHARED_I2C
   i2cReleaseBus(((LSM6DS0Driver *)ip)->config->i2cp);
@@ -624,17 +625,17 @@ static msg_t sens_get_temperature(void *ip, float* tempp) {
   i2cStart(((LSM6DS0Driver *)ip)->config->i2cp,
            ((LSM6DS0Driver *)ip)->config->i2ccfg);
 #endif /* LSM6DS0_SHARED_I2C */
-  temp = (int16_t)(lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
-                                          ((LSM6DS0Driver *)ip)->config->slaveaddress,
-                                            LSM6DS0_AD_OUT_TEMP_L, NULL));
-  temp += (int16_t)(lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
-                                           ((LSM6DS0Driver *)ip)->config->slaveaddress,
-                                             LSM6DS0_AD_OUT_TEMP_H, NULL) << 8);
+  temp = lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
+                                ((LSM6DS0Driver *)ip)->config->slaveaddress,
+                                  LSM6DS0_AD_OUT_TEMP_L, NULL);
+  temp += lsm6ds0I2CReadRegister(((LSM6DS0Driver *)ip)->config->i2cp,
+                                 ((LSM6DS0Driver *)ip)->config->slaveaddress,
+                                   LSM6DS0_AD_OUT_TEMP_H, NULL) << 8;
 #if LSM6DS0_SHARED_I2C
   i2cReleaseBus(((LSM6DS0Driver *)ip)->config->i2cp);
 #endif /* LSM6DS0_SHARED_I2C */
 #endif /* LSM6DS0_USE_I2C */
-  *tempp = (float)temp * LSM6DS0_TEMP_SENS;
+  *tempp = ((float)temp / LSM6DS0_TEMP_SENS) + LSM6DS0_TEMP_SENS_OFF;
   return MSG_OK;
 }
 

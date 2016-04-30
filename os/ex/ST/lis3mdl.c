@@ -189,7 +189,7 @@ static size_t get_axes_number(void *ip) {
 }
 
 static msg_t read_raw(void *ip, int32_t axes[LIS3MDL_NUMBER_OF_AXES]) {
-
+  uint16_t tmp;
   osalDbgCheck((ip != NULL) && (axes != NULL));
   osalDbgAssert((((LIS3MDLDriver *)ip)->state == LIS3MDL_READY),
               "read_raw(), invalid state");
@@ -203,29 +203,29 @@ static msg_t read_raw(void *ip, int32_t axes[LIS3MDL_NUMBER_OF_AXES]) {
            ((LIS3MDLDriver *)ip)->config->i2ccfg);
 #endif /* LIS3MDL_SHARED_I2C */
 
-  axes[0] = (int16_t)(lis3mdlI2CReadRegister(((LIS3MDLDriver *)ip)->config->i2cp,
-                                             ((LIS3MDLDriver *)ip)->config->slaveaddress,
-                                               LIS3MDL_AD_OUT_X_L, NULL));
-  axes[0] += (int16_t)(lis3mdlI2CReadRegister(((LIS3MDLDriver *)ip)->config->i2cp,
-                                              ((LIS3MDLDriver *)ip)->config->slaveaddress,
-                                                LIS3MDL_AD_OUT_X_H, NULL) << 8);
-  axes[0] -= ((LIS3MDLDriver *)ip)->bias[0];
+  tmp = lis3mdlI2CReadRegister(((LIS3MDLDriver *)ip)->config->i2cp,
+                               ((LIS3MDLDriver *)ip)->config->slaveaddress,
+                                 LIS3MDL_AD_OUT_X_L, NULL);
+  tmp += lis3mdlI2CReadRegister(((LIS3MDLDriver *)ip)->config->i2cp,
+                                ((LIS3MDLDriver *)ip)->config->slaveaddress,
+                                  LIS3MDL_AD_OUT_X_H, NULL) << 8;
+  axes[0] = (int32_t)tmp - ((LIS3MDLDriver *)ip)->bias[0];
 
-  axes[1] = (int16_t)(lis3mdlI2CReadRegister(((LIS3MDLDriver *)ip)->config->i2cp,
-                                             ((LIS3MDLDriver *)ip)->config->slaveaddress,
-                                             LIS3MDL_AD_OUT_Y_L, NULL));
-  axes[1] += (int16_t)(lis3mdlI2CReadRegister(((LIS3MDLDriver *)ip)->config->i2cp,
-                                              ((LIS3MDLDriver *)ip)->config->slaveaddress,
-                                              LIS3MDL_AD_OUT_Y_H, NULL) << 8);
-  axes[1] -= ((LIS3MDLDriver *)ip)->bias[1];
+  tmp = lis3mdlI2CReadRegister(((LIS3MDLDriver *)ip)->config->i2cp,
+                               ((LIS3MDLDriver *)ip)->config->slaveaddress,
+                                 LIS3MDL_AD_OUT_Y_L, NULL);
+  tmp += lis3mdlI2CReadRegister(((LIS3MDLDriver *)ip)->config->i2cp,
+                                ((LIS3MDLDriver *)ip)->config->slaveaddress,
+                                  LIS3MDL_AD_OUT_Y_H, NULL) << 8;
+  axes[1] = (int32_t)tmp - ((LIS3MDLDriver *)ip)->bias[1];
 
-  axes[2] = (int16_t)(lis3mdlI2CReadRegister(((LIS3MDLDriver *)ip)->config->i2cp,
-                                             ((LIS3MDLDriver *)ip)->config->slaveaddress,
-                                               LIS3MDL_AD_OUT_Z_L, NULL));
-  axes[2] += (int16_t)(lis3mdlI2CReadRegister(((LIS3MDLDriver *)ip)->config->i2cp,
-                                              ((LIS3MDLDriver *)ip)->config->slaveaddress,
-                                                LIS3MDL_AD_OUT_Z_H, NULL) << 8);
-  axes[2] -= ((LIS3MDLDriver *)ip)->bias[2];
+  tmp = lis3mdlI2CReadRegister(((LIS3MDLDriver *)ip)->config->i2cp,
+                               ((LIS3MDLDriver *)ip)->config->slaveaddress,
+                                 LIS3MDL_AD_OUT_Z_L, NULL);
+  tmp += lis3mdlI2CReadRegister(((LIS3MDLDriver *)ip)->config->i2cp,
+                                ((LIS3MDLDriver *)ip)->config->slaveaddress,
+                                  LIS3MDL_AD_OUT_Z_H, NULL) << 8;
+  axes[2] = (int32_t)tmp - ((LIS3MDLDriver *)ip)->bias[2];
 
 #if LIS3MDL_SHARED_I2C
   i2cReleaseBus(((LIS3MDLDriver *)ip)->config->i2cp);

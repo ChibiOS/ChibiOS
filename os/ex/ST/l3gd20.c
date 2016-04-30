@@ -190,7 +190,7 @@ static size_t get_axes_number(void *ip) {
 }
 
 static msg_t read_raw(void *ip, int32_t axes[L3GD20_NUMBER_OF_AXES]) {
-
+  int16_t tmp;
   osalDbgCheck((ip != NULL) && (axes != NULL));
 
   osalDbgAssert((((L3GD20Driver *)ip)->state == L3GD20_READY),
@@ -205,25 +205,25 @@ static msg_t read_raw(void *ip, int32_t axes[L3GD20_NUMBER_OF_AXES]) {
            ((L3GD20Driver *)ip)->config->spicfg);
 #endif /* L3GD20_SHARED_SPI */   
   if(((L3GD20Driver *)ip)->config->axesenabling & L3GD20_AE_X){
-    axes[0] = (int16_t)(l3gd20SPIReadRegister(((L3GD20Driver *)ip)->config->spip,
-                                       L3GD20_AD_OUT_X_L));
-    axes[0] += (int16_t)(l3gd20SPIReadRegister(((L3GD20Driver *)ip)->config->spip,
-                                        L3GD20_AD_OUT_X_H) << 8);
-    axes[0] -= ((L3GD20Driver *)ip)->bias[0];
+    tmp = l3gd20SPIReadRegister(((L3GD20Driver *)ip)->config->spip,
+                                  L3GD20_AD_OUT_X_L);
+    tmp += l3gd20SPIReadRegister(((L3GD20Driver *)ip)->config->spip,
+                                   L3GD20_AD_OUT_X_H) << 8;
+    axes[0] = (int32_t)tmp + ((L3GD20Driver *)ip)->bias[0];
   }
   if(((L3GD20Driver *)ip)->config->axesenabling & L3GD20_AE_Y){
-    axes[1] = (int16_t)(l3gd20SPIReadRegister(((L3GD20Driver *)ip)->config->spip,
-                                       L3GD20_AD_OUT_Y_L));
-    axes[1] += (int16_t)(l3gd20SPIReadRegister(((L3GD20Driver *)ip)->config->spip,
-                                        L3GD20_AD_OUT_Y_H) << 8);
-    axes[1] -= ((L3GD20Driver *)ip)->bias[1];
+    tmp = l3gd20SPIReadRegister(((L3GD20Driver *)ip)->config->spip,
+                                  L3GD20_AD_OUT_Y_L);
+    tmp += l3gd20SPIReadRegister(((L3GD20Driver *)ip)->config->spip,
+                                   L3GD20_AD_OUT_Y_H) << 8;
+    axes[1] = (int32_t)tmp + ((L3GD20Driver *)ip)->bias[1];
   }
   if(((L3GD20Driver *)ip)->config->axesenabling & L3GD20_AE_Z){
-    axes[2] = (int16_t)(l3gd20SPIReadRegister(((L3GD20Driver *)ip)->config->spip,
-                                       L3GD20_AD_OUT_Z_L));
-    axes[2] += (int16_t)(l3gd20SPIReadRegister(((L3GD20Driver *)ip)->config->spip,
-                                        L3GD20_AD_OUT_Z_H) << 8);
-    axes[2] -= ((L3GD20Driver *)ip)->bias[2];
+    tmp = l3gd20SPIReadRegister(((L3GD20Driver *)ip)->config->spip,
+                                  L3GD20_AD_OUT_Z_L);
+    tmp += l3gd20SPIReadRegister(((L3GD20Driver *)ip)->config->spip,
+                                   L3GD20_AD_OUT_Z_H) << 8;
+    axes[2] = (int32_t)tmp + ((L3GD20Driver *)ip)->bias[2];
   }
 #if	L3GD20_SHARED_SPI
   spiReleaseBus(((L3GD20Driver *)ip)->config->spip);
