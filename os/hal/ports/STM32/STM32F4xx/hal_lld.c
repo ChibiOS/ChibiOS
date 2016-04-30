@@ -114,9 +114,12 @@ static void hal_lld_backup_domain_init(void) {
 void hal_lld_init(void) {
 
   /* Reset of all peripherals. AHB3 is not reseted because it could have
-     been initialized in the board initialization file (board.c).*/
+     been initialized in the board initialization file (board.c) and AHB2 is not
+     present in STM32F410. */
   rccResetAHB1(~0);
+#if !defined(STM32F410xx)
   rccResetAHB2(~0);
+#endif
   rccResetAPB1(~RCC_APB1RSTR_PWRRST);
   rccResetAPB2(~0);
 

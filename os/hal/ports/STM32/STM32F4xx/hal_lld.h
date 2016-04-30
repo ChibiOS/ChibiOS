@@ -98,6 +98,12 @@
 #elif defined(STM32F401xE)
 #define PLATFORM_NAME           "STM32F401xE High Performance with DSP and FPU"
 
+#elif defined(STM32F410Cx)
+#define PLATFORM_NAME           "STM32F410Cx High Performance with DSP and FPU"
+
+#elif defined(STM32F410Rx)
+#define PLATFORM_NAME           "STM32F410Rx High Performance with DSP and FPU"
+
 #elif defined(STM32F411xE)
 #define PLATFORM_NAME           "STM32F411xE High Performance with DSP and FPU"
 
@@ -250,6 +256,26 @@
 #define STM32_PCLK1_MAX         42000000
 #define STM32_PCLK2_MAX         84000000
 #define STM32_SPII2S_MAX        42000000
+#endif
+
+#if defined(STM32F410xx)
+#define STM32_SYSCLK_MAX        100000000
+#define STM32_HSECLK_MAX        26000000
+#define STM32_HSECLK_BYP_MAX    50000000
+#define STM32_HSECLK_MIN        4000000
+#define STM32_HSECLK_BYP_MIN    1000000
+#define STM32_LSECLK_MAX        32768
+#define STM32_LSECLK_BYP_MAX    1000000
+#define STM32_LSECLK_MIN        32768
+#define STM32_PLLIN_MAX         2100000
+#define STM32_PLLIN_MIN         950000
+#define STM32_PLLVCO_MAX        432000000
+#define STM32_PLLVCO_MIN        100000000
+#define STM32_PLLOUT_MAX        100000000
+#define STM32_PLLOUT_MIN        24000000
+#define STM32_PCLK1_MAX         50000000
+#define STM32_PCLK2_MAX         100000000
+#define STM32_SPII2S_MAX        50000000
 #endif
 
 #if defined(STM32F411xx)
@@ -850,7 +876,7 @@
 #error "invalid VDD voltage specified"
 #endif
 
-#elif defined(STM32F411xx)
+#elif defined(STM32F410xx) || defined(STM32F411xx)
 #if (STM32_VDD >= 270) && (STM32_VDD <= 360)
 #define STM32_0WS_THRESHOLD         30000000
 #define STM32_1WS_THRESHOLD         64000000
@@ -1202,7 +1228,7 @@
 #endif
 #define STM32_OVERDRIVE_REQUIRED    FALSE
 
-#elif defined(STM32F411xx)
+#elif defined(STM32F410xx) || defined(STM32F411xx)
 #if STM32_SYSCLK <= 64000000
 #define STM32_VOS                   STM32_VOS_SCALE3
 #elif STM32_SYSCLK <= 84000000
