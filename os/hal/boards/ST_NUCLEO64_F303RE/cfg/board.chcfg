@@ -8,7 +8,7 @@
     <output_path>..</output_path>
     <hal_version>3.0.x</hal_version>
   </configuration_settings>
-  <board_name>STMicroelectronics NUCLEO64-F303RE</board_name>
+  <board_name>STMicroelectronics STM32 Nucleo64-F303RE</board_name>
   <board_id>ST_NUCLEO64_F303RE</board_id>
   <board_functions></board_functions>
   <subtype>STM32F303xE</subtype>

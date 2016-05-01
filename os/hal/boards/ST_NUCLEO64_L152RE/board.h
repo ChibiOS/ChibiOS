@@ -25,7 +25,7 @@
  * Board identifier.
  */
 #define BOARD_ST_NUCLEO64_L152RE
-#define BOARD_NAME                  "STMicroelectronics NUCLEO64-L152RE"
+#define BOARD_NAME                  "STMicroelectronics STM32 Nucleo64-L152RE"
 
 /*
  * Board oscillators-related settings.

@@ -25,7 +25,7 @@
  * Board identifier.
  */
 #define BOARD_ST_NUCLEO144_F446ZE
-#define BOARD_NAME                  "STMicroelectronics NUCLEO144-F446ZE"
+#define BOARD_NAME                  "STMicroelectronics STM32 Nucleo144-F446ZE"
 
 /*
  * Board oscillators-related settings.

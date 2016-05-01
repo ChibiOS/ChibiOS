@@ -25,7 +25,7 @@
  * Board identifier.
  */
 #define BOARD_ST_NUCLEO32_F031K6
-#define BOARD_NAME                  "STMicroelectronics NUCLEO32-F031K6"
+#define BOARD_NAME                  "STMicroelectronics STM32 Nucleo32-F031K6"
 
 /*
  * Board oscillators-related settings.

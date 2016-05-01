@@ -25,7 +25,7 @@
  * Board identifier.
  */
 #define BOARD_ST_NUCLEO64_F072RB
-#define BOARD_NAME                  "STMicroelectronics NUCLEO64-F072RB"
+#define BOARD_NAME                  "STMicroelectronics STM32 Nucleo64-F072RB"
 
 /*
  * Board oscillators-related settings.

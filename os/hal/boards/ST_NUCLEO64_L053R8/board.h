@@ -25,7 +25,7 @@
  * Board identifier.
  */
 #define BOARD_ST_NUCLEO64_L053R8
-#define BOARD_NAME                  "STMicroelectronics NUCLEO64-L053R8"
+#define BOARD_NAME                  "STMicroelectronics STM32 Nucleo64-L053R8"
 
 /*
  * Board oscillators-related settings.

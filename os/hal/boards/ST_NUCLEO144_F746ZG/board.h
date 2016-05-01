@@ -25,7 +25,7 @@
  * Board identifier.
  */
 #define BOARD_ST_NUCLEO144_F746ZG
-#define BOARD_NAME                  "STMicroelectronics NUCLEO144-F746ZG"
+#define BOARD_NAME                  "STMicroelectronics STM32 Nucleo144-F746ZG"
 
 /*
  * Ethernet PHY type.

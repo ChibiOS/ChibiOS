@@ -25,7 +25,7 @@
  * Board identifier.
  */
 #define BOARD_ST_NUCLEO64_L476RG
-#define BOARD_NAME                  "STMicroelectronics NUCLEO64-L476RG"
+#define BOARD_NAME                  "STMicroelectronics STM32 Nucleo64-L476RG"
 
 /*
  * Board oscillators-related settings.

@@ -25,7 +25,7 @@
  * Board identifier.
  */
 #define BOARD_ST_NUCLEO64_F091RC
-#define BOARD_NAME                  "STMicroelectronics NUCLEO64-F091RC"
+#define BOARD_NAME                  "STMicroelectronics STM32 Nucleo64-F091RC"
 
 /*
  * Board oscillators-related settings.

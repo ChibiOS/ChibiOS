@@ -25,7 +25,7 @@
  * Board identifier.
  */
 #define BOARD_ST_NUCLEO144_F429ZI
-#define BOARD_NAME                  "STMicroelectronics NUCLEO144-F429ZI"
+#define BOARD_NAME                  "STMicroelectronics STM32 Nucleo144-F429ZI"
 
 /*
  * Board oscillators-related settings.
