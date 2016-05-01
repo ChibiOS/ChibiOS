@@ -12,7 +12,7 @@
   <board_id>ST_NUCLEO64_L053R8</board_id>
   <board_functions></board_functions>
   <subtype>STM32L053xx</subtype>
-  <clocks HSEFrequency="0" HSEBypass="true" LSEFrequency="32768"
+  <clocks HSEFrequency="8000000" HSEBypass="true" LSEFrequency="32768"
   	LSEBypass="false" LSEDrive="3 High Drive (default)" />
   <ports>
     <GPIOA>

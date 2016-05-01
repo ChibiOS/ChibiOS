@@ -29,7 +29,6 @@
 
 /*
  * Board oscillators-related settings.
- * NOTE: HSE not fitted.
  */
 #if !defined(STM32_LSECLK)
 #define STM32_LSECLK                32768U
@@ -38,7 +37,7 @@
 #define STM32_LSEDRV                (3U << 11U)
 
 #if !defined(STM32_HSECLK)
-#define STM32_HSECLK                0U
+#define STM32_HSECLK                8000000U
 #endif
 
 #define STM32_HSE_BYPASS

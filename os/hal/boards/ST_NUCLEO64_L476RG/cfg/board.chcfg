@@ -13,8 +13,8 @@
   <board_functions></board_functions>
   <subtype>STM32L476xx</subtype>
   <clocks
-    HSEFrequency="0"
-    HSEBypass="false"
+    HSEFrequency="8000000"
+    HSEBypass="true"
     LSEFrequency="32768"
     LSEBypass="false"
     LSEDrive="3 High Drive (default)"

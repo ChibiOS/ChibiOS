@@ -12,7 +12,7 @@
   <board_id>ST_NUCLEO64_F091RC</board_id>
   <board_functions></board_functions>
   <subtype>STM32F091xC</subtype>
-  <clocks HSEFrequency="0" HSEBypass="true" LSEFrequency="0"
+  <clocks HSEFrequency="8000000" HSEBypass="true" LSEFrequency="0"
   	LSEBypass="false" LSEDrive="3 High Drive (default)" />
   <ports>
     <GPIOA>

@@ -18,14 +18,14 @@
 #define _BOARD_H_
 
 /*
- * Setup for STMicroelectronics NUCLEO64-F334R8 board.
+ * Setup for STMicroelectronics NUCLEO64-F303RE board.
  */
 
 /*
  * Board identifier.
  */
-#define BOARD_ST_NUCLEO64_F334R8
-#define BOARD_NAME                  "STMicroelectronics NUCLEO64-F334R8"
+#define BOARD_ST_NUCLEO64_F303RE
+#define BOARD_NAME                  "STMicroelectronics NUCLEO64-F303RE"
 
 /*
  * Board oscillators-related settings.
@@ -46,7 +46,7 @@
 /*
  * MCU type as defined in the ST header.
  */
-#define STM32F334x8
+#define STM32F303xE
 
 /*
  * IO pins assignments.

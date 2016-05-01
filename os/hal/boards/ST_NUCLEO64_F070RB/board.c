@@ -59,14 +59,6 @@ const PALConfig pal_default_config = {
   {VAL_GPIOI_MODER, VAL_GPIOI_OTYPER, VAL_GPIOI_OSPEEDR, VAL_GPIOI_PUPDR,
    VAL_GPIOI_ODR,   VAL_GPIOI_AFRL,   VAL_GPIOI_AFRH}
 #endif
-#if STM32_HAS_GPIOJ
-  {VAL_GPIOJ_MODER, VAL_GPIOJ_OTYPER, VAL_GPIOJ_OSPEEDR, VAL_GPIOJ_PUPDR,
-   VAL_GPIOJ_ODR,   VAL_GPIOJ_AFRL,   VAL_GPIOJ_AFRH},
-#endif
-#if STM32_HAS_GPIOK
-  {VAL_GPIOK_MODER, VAL_GPIOK_OTYPER, VAL_GPIOK_OSPEEDR, VAL_GPIOK_PUPDR,
-   VAL_GPIOK_ODR,   VAL_GPIOK_AFRL,   VAL_GPIOK_AFRH}
-#endif
 };
 #endif
 
@@ -79,28 +71,6 @@ void __early_init(void) {
 
   stm32_clock_init();
 }
-
-#if HAL_USE_SDC || defined(__DOXYGEN__)
-/**
- * @brief   SDC card detection.
- */
-bool sdc_lld_is_card_inserted(SDCDriver *sdcp) {
-
-  (void)sdcp;
-  /* TODO: Fill the implementation.*/
-  return true;
-}
-
-/**
- * @brief   SDC card write protection detection.
- */
-bool sdc_lld_is_write_protected(SDCDriver *sdcp) {
-
-  (void)sdcp;
-  /* TODO: Fill the implementation.*/
-  return false;
-}
-#endif /* HAL_USE_SDC */
 
 #if HAL_USE_MMC_SPI || defined(__DOXYGEN__)
 /**

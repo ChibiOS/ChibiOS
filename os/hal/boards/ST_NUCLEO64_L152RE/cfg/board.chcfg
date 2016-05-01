@@ -13,7 +13,7 @@
   <board_functions></board_functions>
   <subtype>STM32L152xE</subtype>
   <clocks
-     HSEFrequency="0"
+     HSEFrequency="8000000"
      HSEBypass="true"
      LSEFrequency="32768"
      LSEBypass="false"
