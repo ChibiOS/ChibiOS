@@ -4,7 +4,7 @@
 
 ** TARGET **
 
-The demo runs on an ST_NUCLEO_F401RE board.
+The demo runs on an STM32 Nucleo64-F401RE board board.
 
 ** The Demo **
 

@@ -4,7 +4,7 @@
 
 ** TARGET **
 
-The demo runs on a STM32 Nucleo64-L476RG board. It has been tested with the 
+The demo runs on an STM32 Nucleo64-L476RG board. It has been tested with the 
 X-NUCLEO-IKS01A1 shield.
 
 ** The Demo **

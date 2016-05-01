@@ -1,10 +1,10 @@
 *****************************************************************************
-** ChibiOS/RT port for ARM-Cortex-M4 STM32F334.                            **
+** ChibiOS/RT port for ARM-Cortex-M4 STM32F334.                              **
 *****************************************************************************
 
 ** TARGET **
 
-The demo runs on an ST_NUCLEO_F334R8 board.
+The demo runs on an STM32 Nucleo64-F334R8 board.
 
 ** The Demo **
 

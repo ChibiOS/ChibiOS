@@ -1,10 +1,10 @@
 *****************************************************************************
-** ChibiOS/RT port for ARM-Cortex-M4 STM32F429ZI.                          **
+** ChibiOS/RT port for ARM-Cortex-M4 STM32F429.                            **
 *****************************************************************************
 
 ** TARGET **
 
-The demo runs on an STM32 Nucleo144 F429ZI board.
+The demo runs on an STM32 Nucleo144-F429ZI board.
 
 ** The Demo **
 
