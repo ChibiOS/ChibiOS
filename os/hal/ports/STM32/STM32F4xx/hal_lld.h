@@ -34,6 +34,7 @@
  *            for High-performance STM32F4 devices of Access line.
  *          - STM32F427xx, STM32F437xx, STM32F429xx, STM32F439xx, STM32F469xx, 
  *            STM32F479xx for High-performance STM32F4 devices of Advanced line.
+ *          .
  *
  * @addtogroup HAL
  * @{
