@@ -26,8 +26,10 @@
  *          - STM32_HSE_BYPASS (optionally).
  *          .
  *          One of the following macros must also be defined:
- *          - STM32L051xx, STM32L052xx, STM32L053xx,
- *            STM32L061xx, STM32L062xx, STM32L063xx for ultra-low-power MCUs.
+ *          - STM32L011xx, STM32L031xx, 
+ *            STM32L051xx, STM32L052xx, STM32L053xx,
+ *            STM32L061xx, STM32L062xx, STM32L063xx,
+ *            STM32L073xx for ultra-low-power MCUs.
  *          .
  *
  * @addtogroup HAL
@@ -50,7 +52,13 @@
  * @name    Platform identification macros
  * @{
  */
-#if defined(STM32L051xx) || defined(__DOXYGEN__)
+#if defined(STM32L011xx) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32L011xx ultra-low-power MCU"
+
+#elif defined(STM32L031xx)
+#define PLATFORM_NAME           "STM32L031xx ultra-low-power MCU"
+
+#elif defined(STM32L051xx)
 #define PLATFORM_NAME           "STM32L051xx ultra-low-power MCU"
 
 #elif defined(STM32L052xx)
@@ -67,6 +75,9 @@
 
 #elif defined(STM32L063xx)
 #define PLATFORM_NAME           "STM32L063xx ultra-low-power MCU"
+
+#elif defined(STM32L073xx)
+#define PLATFORM_NAME           "STM32L073xx ultra-low-power MCU"
 
 #else
 #error "STM32L0xx device not specified"
@@ -250,6 +261,11 @@
 #define STM32_I2C1SEL_APB       (0 << 12)   /**< I2C1 clock is APB.         */
 #define STM32_I2C1SEL_SYSCLK    (1 << 12)   /**< I2C1 clock is SYSCLK.      */
 #define STM32_I2C1SEL_HSI16     (2 << 12)   /**< I2C1 clock is HSI16.       */
+
+#define STM32_I2C3SEL_MASK      (3 << 16)   /**< I2C3 clock source mask.    */
+#define STM32_I2C3SEL_APB       (0 << 16)   /**< I2C3 clock is APB.         */
+#define STM32_I2C3SEL_SYSCLK    (1 << 16)   /**< I2C3 clock is SYSCLK.      */
+#define STM32_I2C3SEL_HSI16     (2 << 16)   /**< I2C3 clock is HSI16.       */
 
 #define STM32_LPTIM1SEL_MASK    (3 << 18)   /**< LPTIM1 clock source mask.  */
 #define STM32_LPTIM1SEL_APB     (0 << 18)   /**< LPTIM1 clock is APB.       */
