@@ -26,16 +26,14 @@
  *          - STM32_VDD (as hundredths of Volt).
  *          .
  *          One of the following macros must also be defined:
- *          - STM32F2XX for High-performance STM32 F-2 devices.
- *          - STM32F405xx, STM32F415xx, STM32F407xx, STM32F417xx for
- *            High-performance STM32 F-4 devices.
- *          - STM32F427xx, STM32F437xx, STM32F429xx, STM32F439xx for
- *            High-performance STM32 F-4 devices.
- *          - STM32F401xC, STM32F401xE for High-performance STM32 F-4 devices.
- *          - STM32F411xE for High-performance STM32 F-4 devices.
- *          - STM32F446xx for High-performance STM32 F-4 devices.
- *          * STM32F469xx, STM32F479xx for High-performance STM32 F-4 devices.
- *          .
+ *          - STM32F2XX for High-performance STM32F2 devices.
+ *          - STM32F405xx, STM32F415xx, STM32F407xx, STM32F417xx,
+ *            STM32F446xx for High-performance STM32F4 devices of
+ *            Foundation line.
+ *          - STM32F401xC, STM32F401xE, STM32F410Cx, STM32F410Rx, STM32F411xE
+ *            for High-performance STM32F4 devices of Access line.
+ *          - STM32F427xx, STM32F437xx, STM32F429xx, STM32F439xx, STM32F469xx, 
+ *            STM32F479xx for High-performance STM32F4 devices of Advanced line.
  *
  * @addtogroup HAL
  * @{
@@ -59,26 +57,23 @@
  * @name    Platform identification macros
  * @{
  */
-#if defined(STM32F479xx) || defined(__DOXYGEN__)
-#define PLATFORM_NAME           "STM32F479 High Performance with DSP and FPU"
+#if defined(STM32F205xx) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32F205 High Performance"
 
-#elif defined(STM32F469xx)
-#define PLATFORM_NAME           "STM32F469 High Performance with DSP and FPU"
+#elif defined(STM32F215xx)
+#define PLATFORM_NAME           "STM32F215 High Performance"
 
-#elif defined(STM32F446xx)
-#define PLATFORM_NAME           "STM32F446 High Performance with DSP and FPU"
+#elif defined(STM32F207xx)
+#define PLATFORM_NAME           "STM32F207 High Performance"
 
-#elif defined(STM32F439xx)
-#define PLATFORM_NAME           "STM32F439 High Performance with DSP and FPU"
+#elif defined(STM32F217xx)
+#define PLATFORM_NAME           "STM32F217 High Performance"
 
-#elif defined(STM32F429xx)
-#define PLATFORM_NAME           "STM32F429 High Performance with DSP and FPU"
+#elif defined(STM32F401xC)
+#define PLATFORM_NAME           "STM32F401xC High Performance with DSP and FPU"
 
-#elif defined(STM32F437xx)
-#define PLATFORM_NAME           "STM32F437 High Performance with DSP and FPU"
-
-#elif defined(STM32F427xx)
-#define PLATFORM_NAME           "STM32F427 High Performance with DSP and FPU"
+#elif defined(STM32F401xE)
+#define PLATFORM_NAME           "STM32F401xE High Performance with DSP and FPU"
 
 #elif defined(STM32F405xx)
 #define PLATFORM_NAME           "STM32F405 High Performance with DSP and FPU"
@@ -92,12 +87,6 @@
 #elif defined(STM32F417xx)
 #define PLATFORM_NAME           "STM32F417 High Performance with DSP and FPU"
 
-#elif defined(STM32F401xC)
-#define PLATFORM_NAME           "STM32F401xC High Performance with DSP and FPU"
-
-#elif defined(STM32F401xE)
-#define PLATFORM_NAME           "STM32F401xE High Performance with DSP and FPU"
-
 #elif defined(STM32F410Cx)
 #define PLATFORM_NAME           "STM32F410Cx High Performance with DSP and FPU"
 
@@ -107,17 +96,26 @@
 #elif defined(STM32F411xE)
 #define PLATFORM_NAME           "STM32F411xE High Performance with DSP and FPU"
 
-#elif defined(STM32F205xx)
-#define PLATFORM_NAME           "STM32F405 High Performance"
+#elif defined(STM32F427xx)
+#define PLATFORM_NAME           "STM32F427 High Performance with DSP and FPU"
 
-#elif defined(STM32F215xx)
-#define PLATFORM_NAME           "STM32F415 High Performance"
+#elif defined(STM32F429xx)
+#define PLATFORM_NAME           "STM32F429 High Performance with DSP and FPU"
 
-#elif defined(STM32F207xx)
-#define PLATFORM_NAME           "STM32F407 High Performance"
+#elif defined(STM32F437xx)
+#define PLATFORM_NAME           "STM32F437 High Performance with DSP and FPU"
 
-#elif defined(STM32F217xx)
-#define PLATFORM_NAME           "STM32F417 High Performance"
+#elif defined(STM32F439xx)
+#define PLATFORM_NAME           "STM32F439 High Performance with DSP and FPU"
+
+#elif defined(STM32F446xx)
+#define PLATFORM_NAME           "STM32F446 High Performance with DSP and FPU"
+
+#elif defined(STM32F469xx)
+#define PLATFORM_NAME           "STM32F469 High Performance with DSP and FPU"
+
+#elif defined(STM32F479xx)
+#define PLATFORM_NAME           "STM32F479 High Performance with DSP and FPU"
 
 #else
 #error "STM32F2xx/F4xx device not specified"
