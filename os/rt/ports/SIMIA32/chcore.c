@@ -25,7 +25,9 @@
  * @{
  */
 
+#ifdef WIN32
 #include <windows.h>
+#endif
 
 #include "ch.h"
 
@@ -110,11 +112,15 @@ void _port_thread_start(msg_t (*pf)(void *), void *p) {
  * @return              The realtime counter value.
  */
 rtcnt_t port_rt_get_counter_value(void) {
-  LARGE_INTEGER n;
+#ifdef WIN32
+    LARGE_INTEGER n;
 
   QueryPerformanceCounter(&n);
 
   return (rtcnt_t)(n.QuadPart / 1000LL);
+#else
+    return 0;
+#endif
 }
 
 /** @} */
