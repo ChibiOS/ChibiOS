@@ -17,7 +17,7 @@
   <ports>
     <GPIOA>
       <pin0
-        ID="ARD_A0"
+        ID="ARD_A0 ADC1_IN1"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -25,7 +25,7 @@
         Mode="Analog"
         Alternate="0" />
       <pin1
-        ID="ARD_A1"
+        ID="ARD_A1 ADC1_IN2"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -33,7 +33,7 @@
         Mode="Analog"
         Alternate="0" />
       <pin2
-        ID="ARD_D1 USART_TX"
+        ID="ARD_D1 USART2_TX"
         Type="PushPull"
         Level="High"
         Speed="High"
@@ -41,7 +41,7 @@
         Mode="Alternate"
         Alternate="7" />
       <pin3
-        ID="ARD_D0 USART_RX"
+        ID="ARD_D0 USART2_RX"
         Type="PushPull"
         Level="High"
         Speed="High"
@@ -49,7 +49,7 @@
         Mode="Alternate"
         Alternate="7" />
       <pin4
-        ID="ARD_A2"
+        ID="ARD_A2 ADC1_IN5"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -147,7 +147,7 @@
     </GPIOA>
     <GPIOB>
       <pin0
-        ID="ARD_A3"
+        ID="ARD_A3 ADC1_IN11"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -211,21 +211,21 @@
         Mode="Input"
         Alternate="0" />
       <pin8
-        ID="ARD_D15 ARD_A5_ALT"
+        ID="ARD_D15 I2C1_SCL"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
-        Resistor="PullUp"
-        Mode="Input"
-        Alternate="0" />
+        Resistor="Floating"
+        Mode="Alternate"
+        Alternate="4" />
       <pin9
-        ID="ARD_D14 ARD_A4_ALT"
+        ID="ARD_D14 I2C1_SDA"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
-        Resistor="PullUp"
-        Mode="Input"
-        Alternate="0" />
+        Resistor="Floating"
+        Mode="Alternate"
+        Alternate="4" />
       <pin10
         ID="ARD_D6"
         Type="PushPull"
@@ -277,7 +277,7 @@
     </GPIOB>
     <GPIOC>
       <pin0
-        ID="ARD_A5"
+        ID="ARD_A5 ADC1_IN6"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -285,7 +285,7 @@
         Mode="Analog"
         Alternate="0" />
       <pin1
-        ID="ARD_A4"
+        ID="ARD_A4 ADC1_IN7"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -389,19 +389,19 @@
         Mode="Input"
         Alternate="0" />
       <pin14
-        ID=""
+        ID="OSC32_IN"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
-        Resistor="PullUp"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin15
-        ID=""
+        ID="OSC32_OUT"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
-        Resistor="PullUp"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
     </GPIOC>
@@ -667,19 +667,19 @@
     </GPIOE>
     <GPIOF>
       <pin0
-        ID=""
+        ID="OSC_IN"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
-        Resistor="PullUp"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin1
-        ID=""
+        ID="OSC_OUT"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
-        Resistor="PullUp"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin2

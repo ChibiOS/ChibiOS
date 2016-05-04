@@ -22,7 +22,7 @@
   <ports>
     <GPIOA>
       <pin0
-        ID="ARD_A0"
+        ID="ARD_A0 ACD12_IN5"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -32,7 +32,7 @@
         AnalogSwitch="Enabled"
         PinLock="Disabled" />
       <pin1
-        ID="ARD_A1"
+        ID="ARD_A1 ACD12_IN6"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -42,7 +42,7 @@
         AnalogSwitch="Enabled"
         PinLock="Disabled" />
       <pin2
-        ID="ARD_D1 USART_TX"
+        ID="ARD_D1 USART2_TX"
         Type="PushPull"
         Level="High"
         Speed="High"
@@ -52,7 +52,7 @@
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin3
-        ID="ARD_D0 USART_RX"
+        ID="ARD_D0 USART2_RX"
         Type="PushPull"
         Level="High"
         Speed="High"
@@ -62,7 +62,7 @@
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin4
-        ID=""
+        ID="ARD_A2 ACD12_IN9"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -184,7 +184,7 @@
     </GPIOA>
     <GPIOB>
       <pin0
-        ID="ARD_A3"
+        ID="ARD_A3 ACD12_IN15"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -264,23 +264,23 @@
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin8
-        ID="ARD_D15 ARD_A5_ALT"
+        ID="ARD_D15 I2C1_SCL"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
         Resistor="Floating"
-        Mode="Analog"
-        Alternate="0"
+        Mode="Alternate"
+        Alternate="4"
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin9
-        ID="ARD_D14 ARD_A4_ALT"
+        ID="ARD_D14 I2C1_SDA"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
         Resistor="Floating"
-        Mode="Analog"
-        Alternate="0"
+        Mode="Alternate"
+        Alternate="4"
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin10
@@ -346,7 +346,7 @@
     </GPIOB>
     <GPIOC>
       <pin0
-        ID="ARD_A5"
+        ID="ARD_A5 ACD123_IN1"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -356,7 +356,7 @@
         AnalogSwitch="Enabled"
         PinLock="Disabled" />
       <pin1
-        ID="ARD_A4"
+        ID="ARD_A4 ACD123_IN2"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -486,22 +486,22 @@
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin14
-        ID=""
+        ID="OSC32_IN"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
         Resistor="Floating"
-        Mode="Analog"
+        Mode="Input"
         Alternate="0"
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin15
-        ID=""
+        ID="OSC32_OUT"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
         Resistor="Floating"
-        Mode="Analog"
+        Mode="Input"
         Alternate="0"
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
