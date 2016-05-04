@@ -21,16 +21,16 @@
         Type="PushPull"
         Level="High"
         Speed="Maximum"
-        Resistor="Floating"
-        Mode="Analog"
+        Resistor="PullUp"
+        Mode="Input"
         Alternate="0" />
       <pin1
         ID="ARD_A1 ADC1_IN2"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
-        Resistor="Floating"
-        Mode="Analog"
+        Resistor="PullUp"
+        Mode="Input"
         Alternate="0" />
       <pin2
         ID="ARD_D1 USART2_TX"
@@ -53,8 +53,8 @@
         Type="PushPull"
         Level="High"
         Speed="Maximum"
-        Resistor="Floating"
-        Mode="Analog"
+        Resistor="PullUp"
+        Mode="Input"
         Alternate="0" />
       <pin5
         ID="LED_GREEN ARD_D13"
@@ -151,8 +151,8 @@
         Type="PushPull"
         Level="High"
         Speed="Maximum"
-        Resistor="Floating"
-        Mode="Analog"
+        Resistor="PullUp"
+        Mode="Input"
         Alternate="0" />
       <pin1
         ID=""
@@ -211,21 +211,21 @@
         Mode="Input"
         Alternate="0" />
       <pin8
-        ID="ARD_D15 I2C1_SCL"
+        ID="ARD_D15"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
-        Resistor="Floating"
-        Mode="Alternate"
-        Alternate="4" />
+        Resistor="PullUp"
+        Mode="Input"
+        Alternate="0" />
       <pin9
-        ID="ARD_D14 I2C1_SDA"
+        ID="ARD_D14"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
-        Resistor="Floating"
-        Mode="Alternate"
-        Alternate="4" />
+        Resistor="PullUp"
+        Mode="Input"
+        Alternate="0" />
       <pin10
         ID="ARD_D6"
         Type="PushPull"
@@ -281,16 +281,16 @@
         Type="PushPull"
         Level="High"
         Speed="Maximum"
-        Resistor="Floating"
-        Mode="Analog"
+        Resistor="PullUp"
+        Mode="Input"
         Alternate="0" />
       <pin1
         ID="ARD_A4 ADC12_IN7"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
-        Resistor="Floating"
-        Mode="Analog"
+        Resistor="PullUp"
+        Mode="Input"
         Alternate="0" />
       <pin2
         ID=""

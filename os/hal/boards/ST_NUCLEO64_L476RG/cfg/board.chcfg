@@ -29,7 +29,7 @@
         Resistor="Floating"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Enabled"
+        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin1
         ID="ARD_A1 ACD12_IN6"
@@ -39,7 +39,7 @@
         Resistor="Floating"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Enabled"
+        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin2
         ID="ARD_D1 USART2_TX"
@@ -69,7 +69,7 @@
         Resistor="Floating"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Enabled"
+        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin5
         ID="ARD_D13 LED_GREEN"
@@ -191,7 +191,7 @@
         Resistor="Floating"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Enabled"
+        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin1
         ID=""
@@ -264,23 +264,23 @@
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin8
-        ID="ARD_D15 I2C1_SCL"
+        ID="ARD_D15"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
         Resistor="Floating"
-        Mode="Alternate"
-        Alternate="4"
+        Mode="Analog"
+        Alternate="0"
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin9
-        ID="ARD_D14 I2C1_SDA"
+        ID="ARD_D14"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
         Resistor="Floating"
-        Mode="Alternate"
-        Alternate="4"
+        Mode="Analog"
+        Alternate="0"
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin10
@@ -353,7 +353,7 @@
         Resistor="Floating"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Enabled"
+        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin1
         ID="ARD_A4 ACD123_IN2"
@@ -363,7 +363,7 @@
         Resistor="Floating"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Enabled"
+        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin2
         ID=""

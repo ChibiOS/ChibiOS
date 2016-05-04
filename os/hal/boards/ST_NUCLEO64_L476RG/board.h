@@ -90,9 +90,7 @@
 #define GPIOB_ARD_D10               6U
 #define GPIOB_PIN7                  7U
 #define GPIOB_ARD_D15               8U
-#define GPIOB_I2C1_SCL              8U
 #define GPIOB_ARD_D14               9U
-#define GPIOB_I2C1_SDA              9U
 #define GPIOB_ARD_D6                10U
 #define GPIOB_PIN11                 11U
 #define GPIOB_PIN12                 12U
@@ -234,9 +232,7 @@
 #define LINE_ARD_D4                 PAL_LINE(GPIOB, 5U)
 #define LINE_ARD_D10                PAL_LINE(GPIOB, 6U)
 #define LINE_ARD_D15                PAL_LINE(GPIOB, 8U)
-#define LINE_I2C1_SCL               PAL_LINE(GPIOB, 8U)
 #define LINE_ARD_D14                PAL_LINE(GPIOB, 9U)
-#define LINE_I2C1_SDA               PAL_LINE(GPIOB, 9U)
 #define LINE_ARD_D6                 PAL_LINE(GPIOB, 10U)
 #define LINE_ARD_A5                 PAL_LINE(GPIOC, 0U)
 #define LINE_ACD123_IN1             PAL_LINE(GPIOC, 0U)
@@ -391,11 +387,11 @@
                                      PIN_AFIO_AF(GPIOA_SWDIO, 0) |          \
                                      PIN_AFIO_AF(GPIOA_SWCLK, 0) |          \
                                      PIN_AFIO_AF(GPIOA_PIN15, 0))
-#define VAL_GPIOA_ASCR              (PIN_ASCR_ENABLED(GPIOA_ARD_A0) |       \
-                                     PIN_ASCR_ENABLED(GPIOA_ARD_A1) |       \
+#define VAL_GPIOA_ASCR              (PIN_ASCR_DISABLED(GPIOA_ARD_A0) |      \
+                                     PIN_ASCR_DISABLED(GPIOA_ARD_A1) |      \
                                      PIN_ASCR_DISABLED(GPIOA_ARD_D1) |      \
                                      PIN_ASCR_DISABLED(GPIOA_ARD_D0) |      \
-                                     PIN_ASCR_ENABLED(GPIOA_ARD_A2) |       \
+                                     PIN_ASCR_DISABLED(GPIOA_ARD_A2) |      \
                                      PIN_ASCR_DISABLED(GPIOA_ARD_D13) |     \
                                      PIN_ASCR_DISABLED(GPIOA_ARD_D12) |     \
                                      PIN_ASCR_DISABLED(GPIOA_ARD_D11) |     \
@@ -435,8 +431,8 @@
  * PB5  - ARD_D4                    (analog).
  * PB6  - ARD_D10                   (analog).
  * PB7  - PIN7                      (analog).
- * PB8  - ARD_D15 I2C1_SCL          (alternate 4).
- * PB9  - ARD_D14 I2C1_SDA          (alternate 4).
+ * PB8  - ARD_D15                   (analog).
+ * PB9  - ARD_D14                   (analog).
  * PB10 - ARD_D6                    (analog).
  * PB11 - PIN11                     (analog).
  * PB12 - PIN12                     (analog).
@@ -452,8 +448,8 @@
                                      PIN_MODE_ANALOG(GPIOB_ARD_D4) |        \
                                      PIN_MODE_ANALOG(GPIOB_ARD_D10) |       \
                                      PIN_MODE_ANALOG(GPIOB_PIN7) |          \
-                                     PIN_MODE_ALTERNATE(GPIOB_ARD_D15) |    \
-                                     PIN_MODE_ALTERNATE(GPIOB_ARD_D14) |    \
+                                     PIN_MODE_ANALOG(GPIOB_ARD_D15) |       \
+                                     PIN_MODE_ANALOG(GPIOB_ARD_D14) |       \
                                      PIN_MODE_ANALOG(GPIOB_ARD_D6) |        \
                                      PIN_MODE_ANALOG(GPIOB_PIN11) |         \
                                      PIN_MODE_ANALOG(GPIOB_PIN12) |         \
@@ -532,15 +528,15 @@
                                      PIN_AFIO_AF(GPIOB_ARD_D4, 0) |         \
                                      PIN_AFIO_AF(GPIOB_ARD_D10, 0) |        \
                                      PIN_AFIO_AF(GPIOB_PIN7, 0))
-#define VAL_GPIOB_AFRH              (PIN_AFIO_AF(GPIOB_ARD_D15, 4) |        \
-                                     PIN_AFIO_AF(GPIOB_ARD_D14, 4) |        \
+#define VAL_GPIOB_AFRH              (PIN_AFIO_AF(GPIOB_ARD_D15, 0) |        \
+                                     PIN_AFIO_AF(GPIOB_ARD_D14, 0) |        \
                                      PIN_AFIO_AF(GPIOB_ARD_D6, 0) |         \
                                      PIN_AFIO_AF(GPIOB_PIN11, 0) |          \
                                      PIN_AFIO_AF(GPIOB_PIN12, 0) |          \
                                      PIN_AFIO_AF(GPIOB_PIN13, 0) |          \
                                      PIN_AFIO_AF(GPIOB_PIN14, 0) |          \
                                      PIN_AFIO_AF(GPIOB_PIN15, 0))
-#define VAL_GPIOB_ASCR              (PIN_ASCR_ENABLED(GPIOB_ARD_A3) |       \
+#define VAL_GPIOB_ASCR              (PIN_ASCR_DISABLED(GPIOB_ARD_A3) |      \
                                      PIN_ASCR_DISABLED(GPIOB_PIN1) |        \
                                      PIN_ASCR_DISABLED(GPIOB_PIN2) |        \
                                      PIN_ASCR_DISABLED(GPIOB_ARD_D3) |      \
@@ -689,8 +685,8 @@
                                      PIN_AFIO_AF(GPIOC_BUTTON, 0) |         \
                                      PIN_AFIO_AF(GPIOC_OSC32_IN, 0) |       \
                                      PIN_AFIO_AF(GPIOC_OSC32_OUT, 0))
-#define VAL_GPIOC_ASCR              (PIN_ASCR_ENABLED(GPIOC_ARD_A5) |       \
-                                     PIN_ASCR_ENABLED(GPIOC_ARD_A4) |       \
+#define VAL_GPIOC_ASCR              (PIN_ASCR_DISABLED(GPIOC_ARD_A5) |      \
+                                     PIN_ASCR_DISABLED(GPIOC_ARD_A4) |      \
                                      PIN_ASCR_DISABLED(GPIOC_PIN2) |        \
                                      PIN_ASCR_DISABLED(GPIOC_PIN3) |        \
                                      PIN_ASCR_DISABLED(GPIOC_PIN4) |        \

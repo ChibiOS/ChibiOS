@@ -85,9 +85,7 @@
 #define GPIOB_ARD_D10               6U
 #define GPIOB_PIN7                  7U
 #define GPIOB_ARD_D15               8U
-#define GPIOB_I2C1_SCL              8U
 #define GPIOB_ARD_D14               9U
-#define GPIOB_I2C1_SDA              9U
 #define GPIOB_ARD_D6                10U
 #define GPIOB_PIN11                 11U
 #define GPIOB_PIN12                 12U
@@ -196,9 +194,7 @@
 #define LINE_ARD_D4                 PAL_LINE(GPIOB, 5U)
 #define LINE_ARD_D10                PAL_LINE(GPIOB, 6U)
 #define LINE_ARD_D15                PAL_LINE(GPIOB, 8U)
-#define LINE_I2C1_SCL               PAL_LINE(GPIOB, 8U)
 #define LINE_ARD_D14                PAL_LINE(GPIOB, 9U)
-#define LINE_I2C1_SDA               PAL_LINE(GPIOB, 9U)
 #define LINE_ARD_D6                 PAL_LINE(GPIOB, 10U)
 
 #define LINE_ARD_A5                 PAL_LINE(GPIOC, 0U)
@@ -240,11 +236,11 @@
 /*
  * GPIOA setup:
  *
- * PA0  - ARD_A0 ADC1_IN0           (analog).
- * PA1  - ARD_A1 ADC1_IN1           (analog).
+ * PA0  - ARD_A0 ADC1_IN0           (input pullup).
+ * PA1  - ARD_A1 ADC1_IN1           (input pullup).
  * PA2  - ARD_D1 USART2_TX          (alternate 1).
  * PA3  - ARD_D0 USART2_RX          (alternate 1).
- * PA4  - ARD_A2 ADC1_IN4           (analog).
+ * PA4  - ARD_A2 ADC1_IN4           (input pullup).
  * PA5  - LED_GREEN ARD_D13         (output pushpull high).
  * PA6  - ARD_D12                   (input pullup).
  * PA7  - ARD_D11                   (input pullup).
@@ -257,11 +253,11 @@
  * PA14 - SWCLK                     (alternate 0).
  * PA15 - PIN15                     (input pullup).
  */
-#define VAL_GPIOA_MODER             (PIN_MODE_ANALOG(GPIOA_ARD_A0) |        \
-                                     PIN_MODE_ANALOG(GPIOA_ARD_A1) |        \
+#define VAL_GPIOA_MODER             (PIN_MODE_INPUT(GPIOA_ARD_A0) |         \
+                                     PIN_MODE_INPUT(GPIOA_ARD_A1) |         \
                                      PIN_MODE_ALTERNATE(GPIOA_ARD_D1) |     \
                                      PIN_MODE_ALTERNATE(GPIOA_ARD_D0) |     \
-                                     PIN_MODE_ANALOG(GPIOA_ARD_A2) |        \
+                                     PIN_MODE_INPUT(GPIOA_ARD_A2) |         \
                                      PIN_MODE_OUTPUT(GPIOA_LED_GREEN) |     \
                                      PIN_MODE_INPUT(GPIOA_ARD_D12) |        \
                                      PIN_MODE_INPUT(GPIOA_ARD_D11) |        \
@@ -305,11 +301,11 @@
                                      PIN_OSPEED_HIGH(GPIOA_SWDIO) |         \
                                      PIN_OSPEED_HIGH(GPIOA_SWCLK) |         \
                                      PIN_OSPEED_HIGH(GPIOA_PIN15))
-#define VAL_GPIOA_PUPDR             (PIN_PUPDR_FLOATING(GPIOA_ARD_A0) |     \
-                                     PIN_PUPDR_FLOATING(GPIOA_ARD_A1) |     \
+#define VAL_GPIOA_PUPDR             (PIN_PUPDR_PULLUP(GPIOA_ARD_A0) |       \
+                                     PIN_PUPDR_PULLUP(GPIOA_ARD_A1) |       \
                                      PIN_PUPDR_FLOATING(GPIOA_ARD_D1) |     \
                                      PIN_PUPDR_FLOATING(GPIOA_ARD_D0) |     \
-                                     PIN_PUPDR_FLOATING(GPIOA_ARD_A2) |     \
+                                     PIN_PUPDR_PULLUP(GPIOA_ARD_A2) |       \
                                      PIN_PUPDR_FLOATING(GPIOA_LED_GREEN) |  \
                                      PIN_PUPDR_PULLUP(GPIOA_ARD_D12) |      \
                                      PIN_PUPDR_PULLUP(GPIOA_ARD_D11) |      \
@@ -357,7 +353,7 @@
 /*
  * GPIOB setup:
  *
- * PB0  - ARD_A3 ADC1_IN8           (analog).
+ * PB0  - ARD_A3 ADC1_IN8           (input pullup).
  * PB1  - PIN1                      (input pullup).
  * PB2  - PIN2                      (input pullup).
  * PB3  - SWO ARD_D3                (alternate 0).
@@ -365,8 +361,8 @@
  * PB5  - ARD_D4                    (input pullup).
  * PB6  - ARD_D10                   (input pullup).
  * PB7  - PIN7                      (input pullup).
- * PB8  - ARD_D15 I2C1_SCL          (alternate 1).
- * PB9  - ARD_D14 I2C1_SDA          (alternate 1).
+ * PB8  - ARD_D15                   (input pullup).
+ * PB9  - ARD_D14                   (input pullup).
  * PB10 - ARD_D6                    (input pullup).
  * PB11 - PIN11                     (input pullup).
  * PB12 - PIN12                     (input pullup).
@@ -374,7 +370,7 @@
  * PB14 - PIN14                     (input pullup).
  * PB15 - PIN15                     (input pullup).
  */
-#define VAL_GPIOB_MODER             (PIN_MODE_ANALOG(GPIOB_ARD_A3) |        \
+#define VAL_GPIOB_MODER             (PIN_MODE_INPUT(GPIOB_ARD_A3) |         \
                                      PIN_MODE_INPUT(GPIOB_PIN1) |           \
                                      PIN_MODE_INPUT(GPIOB_PIN2) |           \
                                      PIN_MODE_ALTERNATE(GPIOB_SWO) |        \
@@ -382,8 +378,8 @@
                                      PIN_MODE_INPUT(GPIOB_ARD_D4) |         \
                                      PIN_MODE_INPUT(GPIOB_ARD_D10) |        \
                                      PIN_MODE_INPUT(GPIOB_PIN7) |           \
-                                     PIN_MODE_ALTERNATE(GPIOB_ARD_D15) |    \
-                                     PIN_MODE_ALTERNATE(GPIOB_ARD_D14) |    \
+                                     PIN_MODE_INPUT(GPIOB_ARD_D15) |        \
+                                     PIN_MODE_INPUT(GPIOB_ARD_D14) |        \
                                      PIN_MODE_INPUT(GPIOB_ARD_D6) |         \
                                      PIN_MODE_INPUT(GPIOB_PIN11) |          \
                                      PIN_MODE_INPUT(GPIOB_PIN12) |          \
@@ -422,7 +418,7 @@
                                      PIN_OSPEED_HIGH(GPIOB_PIN13) |         \
                                      PIN_OSPEED_HIGH(GPIOB_PIN14) |         \
                                      PIN_OSPEED_HIGH(GPIOB_PIN15))
-#define VAL_GPIOB_PUPDR             (PIN_PUPDR_FLOATING(GPIOB_ARD_A3) |     \
+#define VAL_GPIOB_PUPDR             (PIN_PUPDR_PULLUP(GPIOB_ARD_A3) |       \
                                      PIN_PUPDR_PULLUP(GPIOB_PIN1) |         \
                                      PIN_PUPDR_PULLUP(GPIOB_PIN2) |         \
                                      PIN_PUPDR_PULLUP(GPIOB_SWO) |          \
@@ -430,8 +426,8 @@
                                      PIN_PUPDR_PULLUP(GPIOB_ARD_D4) |       \
                                      PIN_PUPDR_PULLUP(GPIOB_ARD_D10) |      \
                                      PIN_PUPDR_PULLUP(GPIOB_PIN7) |         \
-                                     PIN_PUPDR_FLOATING(GPIOB_ARD_D15) |    \
-                                     PIN_PUPDR_FLOATING(GPIOB_ARD_D14) |    \
+                                     PIN_PUPDR_PULLUP(GPIOB_ARD_D15) |      \
+                                     PIN_PUPDR_PULLUP(GPIOB_ARD_D14) |      \
                                      PIN_PUPDR_PULLUP(GPIOB_ARD_D6) |       \
                                      PIN_PUPDR_PULLUP(GPIOB_PIN11) |        \
                                      PIN_PUPDR_PULLUP(GPIOB_PIN12) |        \
@@ -462,8 +458,8 @@
                                      PIN_AFIO_AF(GPIOB_ARD_D4, 0) |         \
                                      PIN_AFIO_AF(GPIOB_ARD_D10, 0) |        \
                                      PIN_AFIO_AF(GPIOB_PIN7, 0))
-#define VAL_GPIOB_AFRH              (PIN_AFIO_AF(GPIOB_ARD_D15, 1) |        \
-                                     PIN_AFIO_AF(GPIOB_ARD_D14, 1) |        \
+#define VAL_GPIOB_AFRH              (PIN_AFIO_AF(GPIOB_ARD_D15, 0) |        \
+                                     PIN_AFIO_AF(GPIOB_ARD_D14, 0) |        \
                                      PIN_AFIO_AF(GPIOB_ARD_D6, 0) |         \
                                      PIN_AFIO_AF(GPIOB_PIN11, 0) |          \
                                      PIN_AFIO_AF(GPIOB_PIN12, 0) |          \
@@ -474,8 +470,8 @@
 /*
  * GPIOC setup:
  *
- * PC0  - ARD_A5 ADC1_IN11          (analog).
- * PC1  - ARD_A4 ADC1_IN10          (analog).
+ * PC0  - ARD_A5 ADC1_IN11          (input pullup).
+ * PC1  - ARD_A4 ADC1_IN10          (input pullup).
  * PC2  - PIN2                      (input pullup).
  * PC3  - PIN3                      (input pullup).
  * PC4  - PIN4                      (input pullup).
@@ -491,8 +487,8 @@
  * PC14 - OSC32_IN                  (input floating).
  * PC15 - OSC32_OUT                 (input floating).
  */
-#define VAL_GPIOC_MODER             (PIN_MODE_ANALOG(GPIOC_ARD_A5) |        \
-                                     PIN_MODE_ANALOG(GPIOC_ARD_A4) |        \
+#define VAL_GPIOC_MODER             (PIN_MODE_INPUT(GPIOC_ARD_A5) |         \
+                                     PIN_MODE_INPUT(GPIOC_ARD_A4) |         \
                                      PIN_MODE_INPUT(GPIOC_PIN2) |           \
                                      PIN_MODE_INPUT(GPIOC_PIN3) |           \
                                      PIN_MODE_INPUT(GPIOC_PIN4) |           \
@@ -539,8 +535,8 @@
                                      PIN_OSPEED_HIGH(GPIOC_BUTTON) |        \
                                      PIN_OSPEED_HIGH(GPIOC_OSC32_IN) |      \
                                      PIN_OSPEED_HIGH(GPIOC_OSC32_OUT))
-#define VAL_GPIOC_PUPDR             (PIN_PUPDR_FLOATING(GPIOC_ARD_A5) |     \
-                                     PIN_PUPDR_FLOATING(GPIOC_ARD_A4) |     \
+#define VAL_GPIOC_PUPDR             (PIN_PUPDR_PULLUP(GPIOC_ARD_A5) |       \
+                                     PIN_PUPDR_PULLUP(GPIOC_ARD_A4) |       \
                                      PIN_PUPDR_PULLUP(GPIOC_PIN2) |         \
                                      PIN_PUPDR_PULLUP(GPIOC_PIN3) |         \
                                      PIN_PUPDR_PULLUP(GPIOC_PIN4) |         \

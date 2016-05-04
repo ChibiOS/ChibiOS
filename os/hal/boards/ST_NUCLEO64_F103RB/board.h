@@ -85,9 +85,7 @@
 #define GPIOB_ARD_D10               6U
 #define GPIOB_PIN7                  7U
 #define GPIOB_ARD_D15               8U
-#define GPIOB_I2C1_SCL              8U
 #define GPIOB_ARD_D14               9U
-#define GPIOB_I2C1_SDA              9U
 #define GPIOB_ARD_D6                10U
 #define GPIOB_PIN11                 11U
 #define GPIOB_PIN12                 12U
@@ -193,39 +191,31 @@
 /*
  * Port A setup.
  * Everything input with pull-up except:
- * PA0  - Analog input              (GPIOA_ARD_A0, GPIOA_ADC1_IN0).
- * PA1  - Analog input              (GPIOA_ARD_A1, GPIOA_ADC1_IN1).
  * PA2  - Alternate output          (GPIOA_ARD_D1, GPIOA_USART2_TX).
  * PA3  - Normal input              (GPIOA_ARD_D0, GPIOA_USART2_RX).
- * PA4  - Analog input              (GPIOA_ARD_A2, GPIOA_ADC1_IN4).
  * PA5  - Push Pull output          (GPIOA_LED_GREEN).
  * PA13 - Pull-up input             (GPIOA_SWDIO).
  * PA14 - Pull-down input           (GPIOA_SWCLK).
  */
-#define VAL_GPIOACRL            0x88304B00      /*  PA7...PA0 */
+#define VAL_GPIOACRL            0x88384B88      /*  PA7...PA0 */
 #define VAL_GPIOACRH            0x88888888      /* PA15...PA8 */
 #define VAL_GPIOAODR            0xFFFFBFDF
 
 /*
  * Port B setup.
  * Everything input with pull-up except:
- * PB0  - Analog input              (GPIOA_ARD_A3, GPIOB_ADC1_IN8).
  * PB3  - Pull-up input             (GPIOA_SWO).
- * PB8  - Alternate output          (GPIOB_ARD_D15, GPIOB_I2C1_SCL).
- * PB9  - Alternate output          (GPIOB_ARD_D14, GPIOB_I2C1_SDA). 
  */
-#define VAL_GPIOBCRL            0x88888880      /*  PB7...PB0 */
-#define VAL_GPIOBCRH            0x888888BB      /* PB15...PB8 */
+#define VAL_GPIOBCRL            0x88888888      /*  PB7...PB0 */
+#define VAL_GPIOBCRH            0x88888888      /* PB15...PB8 */
 #define VAL_GPIOBODR            0xFFFFFFFF
 
 /*
  * Port C setup.
  * Everything input with pull-up except:
- * PC0  - Analog input              (GPIOA_ARD_A5, GPIOC_ADC1_IN11).
- * PC1  - Analog input              (GPIOA_ARD_A4, GPIOC_ADC1_IN10).
  * PC13 - Normal input              (GPIOC_BUTTON).
  */
-#define VAL_GPIOCCRL            0x88888800      /*  PC7...PC0 */
+#define VAL_GPIOCCRL            0x88888888      /*  PC7...PC0 */
 #define VAL_GPIOCCRH            0x88488888      /* PC15...PC8 */
 #define VAL_GPIOCODR            0xFFFFFFFF
 
