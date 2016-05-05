@@ -173,10 +173,10 @@
       <pin3
         ID="ARD_D13 LED_GREEN"
         Type="PushPull"
-        Level="High"
+        Level="Low"
         Speed="Maximum"
-        Resistor="PullUp"
-        Mode="Input"
+        Resistor="Floating"
+        Mode="Output"
         Alternate="0" />
       <pin4
         ID="ARD_D12"
