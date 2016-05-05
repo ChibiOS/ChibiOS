@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.5 ***
+- HAL: Fixed bug in interrupt handlers in STM32F4xx EXT driver (bug #738).
 - HAL: Fixed clock enabling in STM32 ADCv3 (bug #737).
 - HAL: Fixed missing SDC initialization in RT-STM32F103-OLIMEX_STM32_P103 demo
        (bug #735).
