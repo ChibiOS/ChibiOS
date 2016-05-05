@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** Next ***
+- HAL: Fixed clock enabling in STM32 ADCv3 (bug #737).
 - VAR: Cortex-M VTOR initialization is now performed in startup files and
        no more in port initialization.
 - VAR: Changed GCC asm files extension from .s to .S because conventions.
