@@ -212,7 +212,7 @@ OSAL_IRQ_HANDLER(Vector44) {
   OSAL_IRQ_PROLOGUE();
 
   pr = EXTI->PR;
-  pr = EXTI->IMR & (1U << 16);
+  pr &= EXTI->IMR & (1U << 16);
   EXTI->PR = pr;
   if (pr & (1U << 16))
     EXTD1.config->channels[16].cb(&EXTD1, 16);
@@ -231,7 +231,7 @@ OSAL_IRQ_HANDLER(VectorE4) {
   OSAL_IRQ_PROLOGUE();
 
   pr = EXTI->PR;
-  pr = EXTI->IMR & (1U << 17);
+  pr &= EXTI->IMR & (1U << 17);
   EXTI->PR = pr;
   if (pr & (1U << 17))
     EXTD1.config->channels[17].cb(&EXTD1, 17);
