@@ -33,7 +33,7 @@
  * @name    Flash attributes
  * @{
  */
-#define FLASH_ATTR_ERASED_ONE           0x00000001
+#define FLASH_ATTR_ERASED_IS_ONE        0x00000001
 #define FLASH_ATTR_MEMORY_MAPPED        0x00000002
 #define FLASH_ATTR_REWRITABLE           0x00000004
 /** @} */
@@ -95,6 +95,16 @@ typedef struct {
   const struct BaseFlashVMT *vmt_baseflash;
   _base_flash_data
 } BaseFlash;
+
+/**
+ * @brief   Type of a flash error code.
+ */
+typedef enum {
+  FLASH_NO_ERROR = 0,
+  FLASH_PARAMETER_ERROR = 1,
+  FLASH_VERIFY_FAILURE = 2,
+  FLASH_HW_FAILURE = 3
+} flash_error_t;
 
 /**
  * @brief   Flash sector descriptor.
