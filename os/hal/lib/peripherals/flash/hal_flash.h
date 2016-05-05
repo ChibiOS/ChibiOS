@@ -60,11 +60,19 @@
   /* Erase whole flash device.*/                                            \
   flash_error_t erase_all(void *instance);                                  \
   /* Erase single sector.*/                                                 \
-  flash_error_t erase_sector(void *instance, unsigned sector);              \
+  flash_error_t erase_sectors(void *instance,                               \
+                              flash_sector_t sector,                        \
+                              flash_sector_t n);                            \
+  /* Erase single sector.*/                                                 \
+  flash_error_t are_sectors_erased(void *instance,                          \
+                                   flash_sector_t sector,                   \
+                                   flash_sector_t n);                       \
   /* Write operation.*/                                                     \
-  flash_error_t write(void *instance, const uint8_t *wp, size_t n);         \
+  flash_error_t write(void *instance, flash_address_t addr,                 \
+                      const uint8_t *wp, size_t n);                         \
   /* Read operation.*/                                                      \
-  flash_error_t read(void *instance, uint8_t *rp, size_t n);
+  flash_error_t read(void *instance, flash_address_t addr,                  \
+                     uint8_t *rp, size_t n);
 
 
 /**
@@ -100,11 +108,22 @@ typedef struct {
  * @brief   Type of a flash error code.
  */
 typedef enum {
-  FLASH_NO_ERROR = 0,
-  FLASH_PARAMETER_ERROR = 1,
-  FLASH_VERIFY_FAILURE = 2,
-  FLASH_HW_FAILURE = 3
+  FLASH_NO_ERROR = 0,           /* No error.                                */
+  FLASH_PARAMETER_ERROR = 1,    /* Error in a function parameter.           */
+  FLASH_ADDRESS_ERROR = 2,      /* Operation overlaps invalid addresses.    */
+  FLASH_VERIFY_FAILURE = 3,     /* Write or erase operation failed.         */
+  FLASH_HW_FAILURE = 4          /* Controller or communication error.       */
 } flash_error_t;
+
+/**
+ * @brief   Type of a flash address.
+ */
+typedef uint32_t flash_address_t;
+
+/**
+ * @brief   Type of a flash sector number.
+ */
+typedef uint32_t flash_sector_t;
 
 /**
  * @brief   Flash sector descriptor.
@@ -113,12 +132,12 @@ typedef struct {
   /**
    * @brief         Sector address.
    */
-  uint8_t               *address;
+  flash_address_t       address;
   /**
    * @brief         Sector size.
    */
   size_t                size;
-} flash_sector_t;
+} flash_sector_descriptor_t;
 
 /**
  * @brief   Type of a flash device descriptor.
@@ -135,24 +154,24 @@ typedef struct {
   /**
    * @brief     Number of sectors in the device.
    */
-  unsigned              sectors_count;
+  flash_sector_t        sectors_count;
   /**
-   * @brief     List of flash sectors for devices with non-uniform sector sizes.
+   * @brief     List of sectors for devices with non-uniform sector sizes.
    * @note      If @p NULL then the device has uniform sectors size equal
    *            to @p sector_size.
    */
-  const flash_sector_t  *sectors;
+  const flash_sector_descriptor_t *sectors;
   /**
-   * @brief     Size of flash sectors for devices with uniform sector size.
-   * @note      If zero then the device has non uniform sectos described by
-   *            the @p sectors array.
+   * @brief     Size of sectors for devices with uniform sector size.
+   * @note      If zero then the device has non uniform sectos described
+   *            by the @p sectors array.
    */
   size_t                sectors_size;
   /**
    * @brief     Flash address if memory mapped or zero.
    * @note      Conventionally, non memory mapped devices have address zero.
    */
-  uint8_t               *address;
+  flash_address_t       address;
 } flash_descriptor_t;
 
 /*===========================================================================*/
@@ -186,20 +205,36 @@ typedef struct {
   (ip)->vmt_baseflash->erase_all(ip)
 
 /**
- * @brief   Single sector erase operation.
+ * @brief   Erase operation on a series of contiguous sectors.
  *
  * @param[in] ip        pointer to a @p BaseFlash or derived class
+ * @param[in] secotr    first sector to be erased
+ * @param[in] n         number of sectors to be erased
  * @return              An error code.
  *
  * @api
  */
-#define flashEraseSector(ip)                                                \
-  (ip)->vmt_baseflash->erase_sector(ip, sector)
+#define flashEraseSectors(ip, sector, n)                                    \
+  (ip)->vmt_baseflash->erase_sectors(ip, sector, n)
+
+/**
+ * @brief   Returns the erase state of a series of contiguous sectors.
+ *
+ * @param[in] ip        pointer to a @p BaseFlash or derived class
+ * @param[in] secotr    first sector to be erased
+ * @param[in] n         number of sectors to be erased
+ * @return              An error code.
+ *
+ * @api
+ */
+#define flashAreSectorsErased(ip, sector, n)                                \
+  (ip)->vmt_baseflash->are_sectors_erased(ip, sector, n)
 
 /**
  * @brief   Write operation.
  *
  * @param[in] ip        pointer to a @p BaseFlash or derived class
+ * @param[in] addr      flash address
  * @param[in] wp        pointer to the data buffer
  * @param[in] n         number of bytes to be written
  * @return              An error code.
@@ -207,12 +242,13 @@ typedef struct {
  * @api
  */
 #define flashWrite(ip)                                                      \
-  (ip)->vmt_baseflash->write(ip, wp, n)
+  (ip)->vmt_baseflash->write(ip, addr, wp, n)
 
 /**
  * @brief   Read operation.
  *
  * @param[in] ip        pointer to a @p BaseFlash or derived class
+ * @param[in] addr      flash address
  * @param[out] rp       pointer to the data buffer
  * @param[in] n         number of bytes to be read
  * @return              An error code.
@@ -220,7 +256,7 @@ typedef struct {
  * @api
  */
 #define flashRead(ip)                                                       \
-  (ip)->vmt_baseflash->read(ip, rp, n)
+  (ip)->vmt_baseflash->read(ip, addr, rp, n)
 
 /** @} */
 
