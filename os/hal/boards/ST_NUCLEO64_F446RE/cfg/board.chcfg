@@ -29,7 +29,7 @@
         Mode="Input"
         Alternate="0" />
       <pin1
-        ID="ARD_A1 ADC123_IN0"
+        ID="ARD_A1 ADC123_IN1"
         Type="PushPull"
         Level="High"
         Speed="Maximum"

@@ -58,7 +58,7 @@
 #define GPIOA_ARD_A0                0U
 #define GPIOA_ADC123_IN0            0U
 #define GPIOA_ARD_A1                1U
-#define GPIOA_ADC123_IN0            1U
+#define GPIOA_ADC123_IN1            1U
 #define GPIOA_ARD_D1                2U
 #define GPIOA_USART2_TX             2U
 #define GPIOA_ARD_D0                3U
@@ -224,7 +224,7 @@
 #define LINE_ARD_A0                 PAL_LINE(GPIOA, 0U)
 #define LINE_ADC123_IN0             PAL_LINE(GPIOA, 0U)
 #define LINE_ARD_A1                 PAL_LINE(GPIOA, 1U)
-#define LINE_ADC123_IN0             PAL_LINE(GPIOA, 1U)
+#define LINE_ADC123_IN1             PAL_LINE(GPIOA, 1U)
 #define LINE_ARD_D1                 PAL_LINE(GPIOA, 2U)
 #define LINE_USART2_TX              PAL_LINE(GPIOA, 2U)
 #define LINE_ARD_D0                 PAL_LINE(GPIOA, 3U)
@@ -297,7 +297,7 @@
  * GPIOA setup:
  *
  * PA0  - ARD_A0 ADC123_IN0         (input pullup).
- * PA1  - ARD_A1 ADC123_IN0         (input pullup).
+ * PA1  - ARD_A1 ADC123_IN1         (input pullup).
  * PA2  - ARD_D1 USART2_TX          (alternate 7).
  * PA3  - ARD_D0 USART2_RX          (alternate 7).
  * PA4  - ARD_A2 ADC12_IN4          (input pullup).
