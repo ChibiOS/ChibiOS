@@ -113,11 +113,11 @@ typedef struct {
   /**
    * @brief         Sector address.
    */
-  uint8_t           *address;
+  uint8_t               *address;
   /**
-   * @brief         Secotr size.
+   * @brief         Sector size.
    */
-  size_t            size;
+  size_t                size;
 } flash_sector_t;
 
 /**
@@ -127,32 +127,32 @@ typedef struct {
   /**
    * @brief     Device_attributes.
    */
-  uint32_t          attributes;
+  uint32_t              attributes;
   /**
    * @brief     Size of write page.
    */
-  size_t            page_size;
+  size_t                page_size;
   /**
    * @brief     Number of sectors in the device.
    */
-  unsigned          sectors_count;
+  unsigned              sectors_count;
   /**
    * @brief     List of flash sectors for devices with non-uniform sector sizes.
    * @note      If @p NULL then the device has uniform sectors size equal
    *            to @p sector_size.
    */
-  flash_sector_t    *sectors;
+  const flash_sector_t  *sectors;
   /**
    * @brief     Size of flash sectors for devices with uniform sector size.
    * @note      If zero then the device has non uniform sectos described by
    *            the @p sectors array.
    */
-  size_t            sectors_size;
+  size_t                sectors_size;
   /**
    * @brief     Flash address if memory mapped or zero.
    * @note      Conventionally, non memory mapped devices have address zero.
    */
-  uint8_t           *address;
+  uint8_t               *address;
 } flash_descriptor_t;
 
 /*===========================================================================*/
