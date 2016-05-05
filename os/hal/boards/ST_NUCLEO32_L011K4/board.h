@@ -219,7 +219,7 @@
  *
  * PA0  - ARD_A0                    (input pullup).
  * PA1  - ARD_A1                    (input pullup).
- * PA2  - VCP_TX                    (alternate 1).
+ * PA2  - VCP_TX                    (alternate 4).
  * PA3  - ARD_A2                    (input pullup).
  * PA4  - ARD_A3                    (input pullup).
  * PA5  - ARD_A4                    (input pullup).
@@ -232,7 +232,7 @@
  * PA12 - ARD_D2                    (input pullup).
  * PA13 - SWDIO                     (alternate 0).
  * PA14 - SWCLK                     (alternate 0).
- * PA15 - VCP_RX                    (alternate 1).
+ * PA15 - VCP_RX                    (alternate 4).
  */
 #define VAL_GPIOA_MODER             (PIN_MODE_INPUT(GPIOA_ARD_A0) |         \
                                      PIN_MODE_INPUT(GPIOA_ARD_A1) |         \
@@ -316,7 +316,7 @@
                                      PIN_ODR_HIGH(GPIOA_VCP_RX))
 #define VAL_GPIOA_AFRL              (PIN_AFIO_AF(GPIOA_ARD_A0, 0) |         \
                                      PIN_AFIO_AF(GPIOA_ARD_A1, 0) |         \
-                                     PIN_AFIO_AF(GPIOA_VCP_TX, 1) |         \
+                                     PIN_AFIO_AF(GPIOA_VCP_TX, 4) |         \
                                      PIN_AFIO_AF(GPIOA_ARD_A2, 0) |         \
                                      PIN_AFIO_AF(GPIOA_ARD_A3, 0) |         \
                                      PIN_AFIO_AF(GPIOA_ARD_A4, 0) |         \
@@ -329,7 +329,7 @@
                                      PIN_AFIO_AF(GPIOA_ARD_D2, 0) |         \
                                      PIN_AFIO_AF(GPIOA_SWDIO, 0) |          \
                                      PIN_AFIO_AF(GPIOA_SWCLK, 0) |          \
-                                     PIN_AFIO_AF(GPIOA_VCP_RX, 1))
+                                     PIN_AFIO_AF(GPIOA_VCP_RX, 4))
 
 /*
  * GPIOB setup:

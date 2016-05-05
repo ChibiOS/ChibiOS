@@ -39,7 +39,7 @@
         Speed="High"
         Resistor="Floating"
         Mode="Alternate"
-        Alternate="1" />
+        Alternate="4" />
       <pin3
         ID="ARD_A2"
         Type="PushPull"
@@ -143,7 +143,7 @@
         Speed="Maximum"
         Resistor="Floating"
         Mode="Alternate"
-        Alternate="1" />
+        Alternate="4" />
     </GPIOA>
     <GPIOB>
       <pin0
