@@ -79,7 +79,7 @@
 		<link>
 			<name>board</name>
 			<type>2</type>
-			<location>C:/ChibiStudio/chibios_trunk/os/hal/boards/ST_NUCLEO32_L011K4</location>
+			<locationURI>CHIBIOS/os/hal/boards/ST_NUCLEO32_L011K4</locationURI>
 		</link>
 		<link>
 			<name>os</name>
