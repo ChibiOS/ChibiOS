@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** Next ***
+- HAL: Fixed bug in interrupt handlers in STM32F4xx EXT driver (bug #738).
 - HAL: Fixed clock enabling in STM32 ADCv3 (bug #737).
 - VAR: Cortex-M VTOR initialization is now performed in startup files and
        no more in port initialization.
