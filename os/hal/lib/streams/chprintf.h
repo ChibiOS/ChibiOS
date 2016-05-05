@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _CHPRINTF_H_
-#define _CHPRINTF_H_
+#ifndef CHPRINTF_H
+#define CHPRINTF_H
 
 #include <stdarg.h>
 
@@ -44,6 +44,6 @@ extern "C" {
 }
 #endif
 
-#endif /* _CHPRINTF_H_ */
+#endif /* CHPRINTF_H */
 
 /** @} */

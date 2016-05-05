@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _HAL_SENSORS_H_
-#define _HAL_SENSORS_H_
+#ifndef HAL_SENSORS_H
+#define HAL_SENSORS_H
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -142,6 +142,6 @@ extern "C" {
 }
 #endif
 
-#endif /* _HAL_SENSORS_H_ */
+#endif /* HAL_SENSORS_H */
 
 /** @} */

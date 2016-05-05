@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _HAL_GYROSCOPE_H_
-#define _HAL_GYROSCOPE_H_
+#ifndef HAL_GYROSCOPE_H
+#define HAL_GYROSCOPE_H
 
 #include "hal_sensors.h"
 
@@ -232,6 +232,6 @@ extern "C" {
 }
 #endif
 
-#endif /* _HAL_GYROSCOPE_H_ */
+#endif /* HAL_GYROSCOPE_H */
 
 /** @} */

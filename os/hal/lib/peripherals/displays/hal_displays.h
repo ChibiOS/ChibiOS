@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _HAL_DISPLAYS_H_
-#define _HAL_DISPLAYS_H_
+#ifndef HAL_DISPLAYS_H
+#define HAL_DISPLAYS_H
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -107,6 +107,6 @@ extern "C" {
 }
 #endif
 
-#endif /* _HAL_DISPLAYS_H_ */
+#endif /* HAL_DISPLAYS_H */
 
 /** @} */

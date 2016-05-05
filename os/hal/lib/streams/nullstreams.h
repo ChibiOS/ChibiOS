@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _NULLSTREAMS_H_
-#define _NULLSTREAMS_H_
+#ifndef NULLSTREAMS_H
+#define NULLSTREAMS_H
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -81,6 +81,6 @@ extern "C" {
 }
 #endif
 
-#endif /* _NULLSTREAMS_H_ */
+#endif /* NULLSTREAMS_H */
 
 /** @} */

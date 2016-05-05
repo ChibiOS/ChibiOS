@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _MEMSTREAMS_H_
-#define _MEMSTREAMS_H_
+#ifndef MEMSTREAMS_H
+#define MEMSTREAMS_H
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -90,6 +90,6 @@ extern "C" {
 }
 #endif
 
-#endif /* _MEMSTREAMS_H_ */
+#endif /* MEMSTREAMS_H */
 
 /** @} */

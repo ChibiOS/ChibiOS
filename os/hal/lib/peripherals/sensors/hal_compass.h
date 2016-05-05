@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _HAL_COMPASS_H_
-#define _HAL_COMPASS_H_
+#ifndef HAL_COMPASS_H
+#define HAL_COMPASS_H
 
 #include "hal_sensors.h"
 
@@ -212,6 +212,6 @@ extern "C" {
 }
 #endif
 
-#endif /* _HAL_COMPASS_H_ */
+#endif /* HAL_COMPASS_H */
 
 /** @} */

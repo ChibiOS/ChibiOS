@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _HAL_ACCELEROMETER_H_
-#define _HAL_ACCELEROMETER_H_
+#ifndef HAL_ACCELEROMETER_H
+#define HAL_ACCELEROMETER_H
 
 #include "hal_sensors.h"
 
@@ -213,6 +213,6 @@ extern "C" {
 }
 #endif
 
-#endif /* _HAL_ACCELEROMETER_H_ */
+#endif /* HAL_ACCELEROMETER_H */
 
 /** @} */
