@@ -33,6 +33,40 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @name    Command codes
+ * @{
+ */
+#define N25Q128_CMD_RESET_ENABLE                    0x66
+#define N25Q128_CMD_RESET_MEMORY                    0x99
+#define N25Q128_CMD_READ_ID                         0x9E
+#define N25Q128_CMD_READ_DISCOVERY_PARAMETER        0x5A
+#define N25Q128_CMD_READ                            0x03
+#define N25Q128_CMD_FAST_READ                       0x08
+#define N25Q128_CMD_WRITE_ENABLE                    0x06
+#define N25Q128_CMD_WRITE_DISABLE                   0x04
+#define N25Q128_CMD_READ_STATUS_REGISTER            0x05
+#define N25Q128_CMD_WRITE_STATUS_REGISTER           0x01
+#define N25Q128_CMD_READ_LOCK_REGISTER              0xE8
+#define N25Q128_CMD_WRITE_LOCK_REGISTER             0xE5
+#define N25Q128_CMD_READ_FLAG_STATUS_REGISTER       0x70
+#define N25Q128_CMD_CLEAR_FLAG_STATUS_REGISTER      0x50
+#define N25Q128_CMD_READ_NV_CONFIGURATION_REGISTER  0xB5
+#define N25Q128_CMD_WRITE_NV_CONFIGURATION_REGISTER 0xB1
+#define N25Q128_CMD_READ_V_CONF_REGISTER            0x85
+#define N25Q128_CMD_WRITE_V_CONF_REGISTER           0x81
+#define N25Q128_CMD_READ_ENHANCED_V_CONF_REGISTER   0x65
+#define N25Q128_CMD_WRITE_ENHANCED_V_CONF_REGISTER  0x61
+#define N25Q128_CMD_PAGE_PROGRAM                    0x02
+#define N25Q128_CMD_SUBSECTOR_ERASE                 0x20
+#define N25Q128_CMD_SECTOR_ERASE                    0xD8
+#define N25Q128_CMD_BULK_ERASE                      0xC7
+#define N25Q128_CMD_PROGRAM_ERASE_RESUME            0x7A
+#define N25Q128_CMD_PROGRAM_ERASE_SUSPEND           0x75
+#define N25Q128_CMD_READ_OTP_ARRAY                  0x4B
+#define N25Q128_CMD_PROGRAM_OTP_ARRAY               0x42
+/** @} */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -96,12 +130,6 @@ typedef struct {
 struct N25Q128DriverVMT {
   _n25q128_methods
 };
-
-/**
- * @brief   @p N25Q128Driver specific data.
- */
-#define _n25q128_data                                                        \
-  _base_flash_data
   
 /**
  * @extends BaseFlash
@@ -109,9 +137,15 @@ struct N25Q128DriverVMT {
  * @brief   Type of N25Q128 flash class.
  */
 typedef struct {
-  /** @brief BaseSensor Virtual Methods Table. */
+  /**
+   * @brief   BaseFlash Virtual Methods Table.
+   */
   const struct N25Q128DriverVMT *vmt_baseflash;
-  _n25q128_data
+  _base_flash_data
+  /**
+   * @brief   Current configuration data.
+   */
+  const N25Q128Config       *config;
 } N25Q128Driver;
 
 /*===========================================================================*/

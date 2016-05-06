@@ -33,6 +33,27 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
+static const flash_descriptor_t *get_attributes(void *instance);
+static flash_error_t erase_all(void *instance);
+static flash_error_t erase_sectors(void *instance,
+                                   flash_sector_t sector,
+                                   flash_sector_t n);
+static flash_error_t are_sectors_erased(void *instance,
+                                        flash_sector_t sector,
+                                        flash_sector_t n);
+static flash_error_t program(void *instance, flash_address_t addr,
+                             const uint8_t *pp, size_t n);
+static flash_error_t read(void *instance, flash_address_t addr,
+                          uint8_t *rp, size_t n);
+
+/**
+ * @brief   Virtual methods table.
+ */
+static const struct N25Q128DriverVMT n25q128_vmt = {
+  get_attributes, erase_all, erase_sectors, are_sectors_erased,
+  program, read
+};
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -44,6 +65,64 @@
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
+
+static const flash_descriptor_t *get_attributes(void *instance) {
+
+  (void)instance;
+
+  return FLASH_NO_ERROR;
+}
+
+static flash_error_t erase_all(void *instance) {
+
+  (void)instance;
+
+  return FLASH_NO_ERROR;
+}
+
+static flash_error_t erase_sectors(void *instance,
+                                   flash_sector_t sector,
+                                   flash_sector_t n) {
+
+  (void)instance;
+  (void)sector;
+  (void)n;
+
+  return FLASH_NO_ERROR;
+}
+
+static flash_error_t are_sectors_erased(void *instance,
+                                        flash_sector_t sector,
+                                        flash_sector_t n) {
+
+  (void)instance;
+  (void)sector;
+  (void)n;
+
+  return FLASH_NO_ERROR;
+}
+
+static flash_error_t program(void *instance, flash_address_t addr,
+                             const uint8_t *pp, size_t n) {
+
+  (void)instance;
+  (void)addr;
+  (void)pp;
+  (void)n;
+
+  return FLASH_NO_ERROR;
+}
+
+static flash_error_t read(void *instance, flash_address_t addr,
+                          uint8_t *rp, size_t n) {
+
+  (void)instance;
+  (void)addr;
+  (void)rp;
+  (void)n;
+
+  return FLASH_NO_ERROR;
+}
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -58,6 +137,8 @@
  */
 void n15q128ObjectInit(N25Q128Driver *devp) {
 
+  devp->vmt_baseflash = &n25q128_vmt;
+  devp->config = NULL;
 }
 
 /**
@@ -70,6 +151,8 @@ void n15q128ObjectInit(N25Q128Driver *devp) {
  */
 void n15q128Start(N25Q128Driver *devp, const N25Q128Config *config) {
 
+  (void)devp;
+  (void)config;
 } 
 
 /**
@@ -81,6 +164,7 @@ void n15q128Start(N25Q128Driver *devp, const N25Q128Config *config) {
  */
 void n15q128Stop(N25Q128Driver *devp) {
 
+  (void)devp;
 }
 
 /** @} */

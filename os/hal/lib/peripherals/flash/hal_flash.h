@@ -51,60 +51,6 @@
 /*===========================================================================*/
 
 /**
- * @brief   @p BaseFlash specific methods.
- * @note    No methods so far, just a common ancestor interface.
- */
-#define _base_flash_methods_alone                                           \
-  /* Get flash device attributes.*/                                         \
-  const flash_descriptor_t * (*get_attributes)(void *instance);             \
-  /* Erase whole flash device.*/                                            \
-  flash_error_t erase_all(void *instance);                                  \
-  /* Erase single sector.*/                                                 \
-  flash_error_t erase_sectors(void *instance,                               \
-                              flash_sector_t sector,                        \
-                              flash_sector_t n);                            \
-  /* Erase single sector.*/                                                 \
-  flash_error_t are_sectors_erased(void *instance,                          \
-                                   flash_sector_t sector,                   \
-                                   flash_sector_t n);                       \
-  /* Write operation.*/                                                     \
-  flash_error_t write(void *instance, flash_address_t addr,                 \
-                      const uint8_t *wp, size_t n);                         \
-  /* Read operation.*/                                                      \
-  flash_error_t read(void *instance, flash_address_t addr,                  \
-                     uint8_t *rp, size_t n);
-
-
-/**
- * @brief   @p BaseFlash specific methods with inherited ones.
- */
-#define _base_flash_methods                                                 \
-  _base_flash_methods_alone
-
-/**
- * @brief   @p BaseFlash virtual methods table.
- */
-struct BaseFlashVMT {
-  _base_flash_methods
-};
-
-/**
- * @brief   @p BaseFlash specific data.
- * @note    It is empty because @p BaseFlash is only an interface
- *          without implementation.
- */
-#define _base_flash_data
-
-/**
- * @brief   Base flash class.
- */
-typedef struct {
-  /** @brief Virtual Methods Table.*/
-  const struct BaseFlashVMT *vmt_baseflash;
-  _base_flash_data
-} BaseFlash;
-
-/**
  * @brief   Type of a flash error code.
  */
 typedef enum {
@@ -174,6 +120,59 @@ typedef struct {
   flash_address_t       address;
 } flash_descriptor_t;
 
+/**
+ * @brief   @p BaseFlash specific methods.
+ * @note    No methods so far, just a common ancestor interface.
+ */
+#define _base_flash_methods_alone                                           \
+  /* Get flash device attributes.*/                                         \
+  const flash_descriptor_t * (*get_attributes)(void *instance);             \
+  /* Erase whole flash device.*/                                            \
+  flash_error_t (*erase_all)(void *instance);                               \
+  /* Erase single sector.*/                                                 \
+  flash_error_t (*erase_sectors)(void *instance,                            \
+                                flash_sector_t sector,                      \
+                                flash_sector_t n);                          \
+  /* Erase single sector.*/                                                 \
+  flash_error_t (*are_sectors_erased)(void *instance,                       \
+                                     flash_sector_t sector,                 \
+                                     flash_sector_t n);                     \
+  /* Write operation.*/                                                     \
+  flash_error_t (*program)(void *instance, flash_address_t addr,            \
+                           const uint8_t *pp, size_t n);                    \
+  /* Read operation.*/                                                      \
+  flash_error_t (*read)(void *instance, flash_address_t addr,               \
+                        uint8_t *rp, size_t n);
+
+/**
+ * @brief   @p BaseFlash specific methods with inherited ones.
+ */
+#define _base_flash_methods                                                 \
+  _base_flash_methods_alone
+
+/**
+ * @brief   @p BaseFlash virtual methods table.
+ */
+struct BaseFlashVMT {
+  _base_flash_methods
+};
+
+/**
+ * @brief   @p BaseFlash specific data.
+ * @note    It is empty because @p BaseFlash is only an interface
+ *          without implementation.
+ */
+#define _base_flash_data
+
+/**
+ * @brief   Base flash class.
+ */
+typedef struct {
+  /** @brief Virtual Methods Table.*/
+  const struct BaseFlashVMT *vmt_baseflash;
+  _base_flash_data
+} BaseFlash;
+
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
@@ -236,13 +235,13 @@ typedef struct {
  * @param[in] ip        pointer to a @p BaseFlash or derived class
  * @param[in] addr      flash address
  * @param[in] wp        pointer to the data buffer
- * @param[in] n         number of bytes to be written
+ * @param[in] n         number of bytes to be programmed
  * @return              An error code.
  *
  * @api
  */
-#define flashWrite(ip)                                                      \
-  (ip)->vmt_baseflash->write(ip, addr, wp, n)
+#define flashProgram(ip)                                                    \
+  (ip)->vmt_baseflash->program(ip, addr, pp, n)
 
 /**
  * @brief   Read operation.
