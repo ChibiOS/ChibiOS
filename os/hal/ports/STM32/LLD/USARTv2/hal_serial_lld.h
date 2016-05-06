@@ -349,6 +349,7 @@ typedef struct {
 #define USART_CR2_STOP0P5_BITS  (1 << 12)   /**< @brief CR2 0.5 stop bit value.*/
 #define USART_CR2_STOP2_BITS    (2 << 12)   /**< @brief CR2 2 stop bit value.*/
 #define USART_CR2_STOP1P5_BITS  (3 << 12)   /**< @brief CR2 1.5 stop bit value.*/
+#define USART_CR2_LINEN         (1 << 14)   /**< @brief CR2 line enable.*/
 
 /*===========================================================================*/
 /* External declarations.                                                    */
