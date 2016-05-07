@@ -869,7 +869,7 @@ void adc_lld_stop_conversion(ADCDriver *adcp) {
  */
 void adcSTM32EnableVREF(ADCDriver *adcp) {
 
-  adcp->adcc->CCR |= ADC_CCR_VBATEN;
+  adcp->adcc->CCR |= ADC_CCR_VREFEN;
 }
 
 /**
@@ -884,7 +884,7 @@ void adcSTM32EnableVREF(ADCDriver *adcp) {
  */
 void adcSTM32DisableVREF(ADCDriver *adcp) {
 
-  adcp->adcc->CCR &= ~ADC_CCR_VBATEN;
+  adcp->adcc->CCR &= ~ADC_CCR_VREFEN;
 }
 
 /**
