@@ -36,6 +36,7 @@
 #define FLASH_ATTR_ERASED_IS_ONE        0x00000001
 #define FLASH_ATTR_MEMORY_MAPPED        0x00000002
 #define FLASH_ATTR_REWRITABLE           0x00000004
+#define FLASH_ATTR_READ_ECC_CAPABLE     0x00000008
 /** @} */
 
 /*===========================================================================*/
@@ -57,8 +58,9 @@ typedef enum {
   FLASH_NO_ERROR = 0,           /* No error.                                */
   FLASH_PARAMETER_ERROR = 1,    /* Error in a function parameter.           */
   FLASH_ADDRESS_ERROR = 2,      /* Operation overlaps invalid addresses.    */
-  FLASH_VERIFY_FAILURE = 3,     /* Write or erase operation failed.         */
-  FLASH_HW_FAILURE = 4          /* Controller or communication error.       */
+  FLASH_ECC_ERROR = 3,          /* ECC error during read operation.         */
+  FLASH_VERIFY_FAILURE = 4,     /* Write or erase operation failed.         */
+  FLASH_HW_FAILURE = 5          /* Controller or communication error.       */
 } flash_error_t;
 
 /**

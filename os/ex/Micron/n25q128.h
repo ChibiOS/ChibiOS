@@ -82,7 +82,7 @@
  * @note    The default is @p FALSE. Requires SPI_USE_MUTUAL_EXCLUSION
  */
 #if !defined(N25Q128_SHARED_SPI) || defined(__DOXYGEN__)
-#define N25Q128_SHARED_SPI                  FALSE
+#define N25Q128_SHARED_SPI                  TRUE
 #endif
 /** @} */
 

@@ -62,15 +62,63 @@ static const struct N25Q128DriverVMT n25q128_vmt = {
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
+static flash_descriptor_t descriptor = {
+  .attributes       = FLASH_ATTR_ERASED_IS_ONE | FLASH_ATTR_REWRITABLE,
+  .page_size        = 256,
+  .sectors_count    = 4096,
+  .sectors          = NULL,
+  .sectors_size     = 4096,
+  .address          = 0
+};
+
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
+
+static void spi_send_cmd_read(N25Q128Driver *devp, uint8_t cmd,
+                              uint8_t *rp, size_t n) {
+
+#if N25Q128_SHARED_SPI == TRUE
+  spiStart(devp->config->spip, devp->config->spicfg);
+  spiAcquireBus(devp->config->spip);
+#endif
+  spiSelect(devp->config->spip);
+  spiSend(devp->config->spip, 1, &cmd);
+  spiReceive(devp->config->spip, n, rp);
+  spiUnselect(devp->config->spip);
+#if N25Q128_SHARED_SPI == TRUE
+  spiReleaseBus(devp->config->spip);
+#endif
+}
+
+static void spi_send_cmd_addr_read(N25Q128Driver *devp,
+                                   uint8_t cmd,
+                                   flash_address_t addr,
+                                   uint8_t *rp, size_t n) {
+  uint8_t buf[4];
+
+#if N25Q128_SHARED_SPI == TRUE
+  spiStart(devp->config->spip, devp->config->spicfg);
+  spiAcquireBus(devp->config->spip);
+#endif
+  buf[0] = cmd;
+  buf[1] = (uint8_t)(addr >> 16);
+  buf[2] = (uint8_t)(addr >> 8);
+  buf[3] = (uint8_t)(addr >> 0);
+  spiSelect(devp->config->spip);
+  spiSend(devp->config->spip, 4, buf);
+  spiReceive(devp->config->spip, n, rp);
+  spiUnselect(devp->config->spip);
+#if N25Q128_SHARED_SPI == TRUE
+  spiReleaseBus(devp->config->spip);
+#endif
+}
 
 static const flash_descriptor_t *get_attributes(void *instance) {
 
   (void)instance;
 
-  return FLASH_NO_ERROR;
+  return &descriptor;
 }
 
 static flash_error_t erase_all(void *instance) {
@@ -116,10 +164,8 @@ static flash_error_t program(void *instance, flash_address_t addr,
 static flash_error_t read(void *instance, flash_address_t addr,
                           uint8_t *rp, size_t n) {
 
-  (void)instance;
-  (void)addr;
-  (void)rp;
-  (void)n;
+  spi_send_cmd_addr_read((N25Q128Driver *)instance, N25Q128_CMD_READ,
+                         addr, rp, n);
 
   return FLASH_NO_ERROR;
 }
