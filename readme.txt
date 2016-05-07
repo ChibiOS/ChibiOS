@@ -79,8 +79,6 @@
 *****************************************************************************
 
 *** Next ***
-- HAL: Fixed bug in interrupt handlers in STM32F4xx EXT driver (bug #738).
-- HAL: Fixed clock enabling in STM32 ADCv3 (bug #737).
 - VAR: Cortex-M VTOR initialization is now performed in startup files and
        no more in port initialization.
 - VAR: Changed GCC asm files extension from .s to .S because conventions.
@@ -113,6 +111,11 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Fixed DAC driver not enabled for STM32F4x7 and STM32F4x9 devices
+       (bug #739)(backported to 3.0.6 and 16.1.5).
+- HAL: Fixed bug in interrupt handlers in STM32F4xx EXT driver (bug #738)
+       (backported to 16.1.5).
+- HAL: Fixed clock enabling in STM32 ADCv3 (bug #737).
 - HAL: Fixed missing SDC initialization in RT-STM32F103-OLIMEX_STM32_P103 demo
        (bug #735)(backported to 16.1.5).
 - HAL: Fixed STM32 dac bug when using only channel 2 in direct mode (bug #734)
