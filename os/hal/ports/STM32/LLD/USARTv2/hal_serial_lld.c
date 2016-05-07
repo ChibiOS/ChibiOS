@@ -112,7 +112,7 @@ static const SerialConfig default_config =
 {
   SERIAL_DEFAULT_BITRATE,
   0,
-  USART_CR2_STOP1_BITS | USART_CR2_LINEN,
+  USART_CR2_STOP1_BITS,
   0
 };
 
