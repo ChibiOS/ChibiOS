@@ -73,6 +73,8 @@
 *****************************************************************************
 
 *** 16.1.5 ***
+- HAL: Fixed bug in VREF enable/disable functions in ADCv3 driver 
+       (bug #740).
 - HAL: Fixed DAC driver not enabled for STM32F4x7 and STM32F4x9 devices
        (bug #739).
 - HAL: Fixed bug in interrupt handlers in STM32F4xx EXT driver (bug #738).
