@@ -1050,6 +1050,29 @@
 #define rccResetUSB() rccResetAPB1(RCC_APB1RSTR_USBRST)
 /** @} */
 
+/**
+ * @name    FSMC peripherals specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the FSMC peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableFSMC(lp) rccEnableAHB(RCC_AHBENR_FSMCEN, lp)
+
+/**
+ * @brief   Disables the FSMC peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableFSMC(lp) rccDisableAHB(RCC_AHBENR_FSMCEN, lp)
+/** @} */
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
