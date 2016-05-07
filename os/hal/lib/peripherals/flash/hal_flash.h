@@ -52,6 +52,16 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Driver state machine possible states.
+ */
+typedef enum {
+  FLASH_UNINIT = 0,
+  FLASH_STOP = 1,
+  FLASH_READY = 2,
+  FLASH_ACTIVE = 3
+} flash_state_t;
+
+/**
  * @brief   Type of a flash error code.
  */
 typedef enum {
@@ -164,7 +174,10 @@ struct BaseFlashVMT {
  * @note    It is empty because @p BaseFlash is only an interface
  *          without implementation.
  */
-#define _base_flash_data
+#define _base_flash_data                                                    \
+  /* Driver state.*/                                                        \
+  flash_state_t         state;
+
 
 /**
  * @brief   Base flash class.
