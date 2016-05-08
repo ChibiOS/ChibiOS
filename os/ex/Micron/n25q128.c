@@ -50,9 +50,9 @@ static flash_error_t erase_all(void *instance);
 static flash_error_t erase_sectors(void *instance,
                                    flash_sector_t sector,
                                    flash_sector_t n);
-static flash_error_t are_sectors_erased(void *instance,
-                                        flash_sector_t sector,
-                                        flash_sector_t n);
+static flash_error_t verify_erase(void *instance,
+                                  flash_sector_t sector,
+                                  flash_sector_t n);
 static flash_error_t program(void *instance, flash_address_t addr,
                              const uint8_t *pp, size_t n);
 static flash_error_t read(void *instance, flash_address_t addr,
@@ -62,8 +62,7 @@ static flash_error_t read(void *instance, flash_address_t addr,
  * @brief   Virtual methods table.
  */
 static const struct N25Q128DriverVMT n25q128_vmt = {
-  get_descriptor, erase_all, erase_sectors, are_sectors_erased,
-  program, read
+  get_descriptor, erase_all, erase_sectors, verify_erase, program, read
 };
 
 /**
@@ -182,7 +181,7 @@ static flash_error_t erase_sectors(void *instance,
   SPIDriver *spip = devp->config->spip;
   flash_address_t addr = (flash_address_t)(sector * SECTOR_SIZE);
 
-  osalDbgCheck(instance != NULL);
+  osalDbgCheck((instance != NULL) && (n > 0U));
   osalDbgCheck(sector + n <= descriptor.sectors_count);
   osalDbgAssert(devp->state == FLASH_READY, "invalid state");
 
@@ -227,19 +226,42 @@ static flash_error_t erase_sectors(void *instance,
   return err;
 }
 
-static flash_error_t are_sectors_erased(void *instance,
-                                        flash_sector_t sector,
-                                        flash_sector_t n) {
+static flash_error_t verify_erase(void *instance,
+                                  flash_sector_t sector,
+                                  flash_sector_t n) {
   N25Q128Driver *devp = (N25Q128Driver *)instance;
   SPIDriver *spip = devp->config->spip;
+  flash_error_t err;
 
-  osalDbgCheck(instance != NULL);
+  osalDbgCheck((instance != NULL) && (n > 0U));
   osalDbgCheck(sector + n <= descriptor.sectors_count);
   osalDbgAssert(devp->state == FLASH_READY, "invalid state");
 
-  (void)spip;
+#if N25Q128_SHARED_SPI == TRUE
+  spiAcquireBus(spip);
+  spiStart(spip, devp->config->spicfg);
+#endif
+  devp->state = FLASH_ACTIVE;
 
-  return FLASH_NO_ERROR;
+  /* Read command.*/
+  spiSelect(spip);
+  flash_send_cmd_addr(devp, N25Q128_CMD_READ, (size_t)(sector * SECTOR_SIZE));
+  n *= SECTOR_SIZE;
+  while (--n) {
+    if (spiPolledExchange(spip, 0xFF) != 0xFF) {
+      err = FLASH_VERIFY_FAILURE;
+      goto skip;
+    }
+  }
+  spiUnselect(spip);
+
+  err = FLASH_NO_ERROR;
+skip:
+  devp->state = FLASH_READY;
+#if N25Q128_SHARED_SPI == TRUE
+  spiReleaseBus(spip);
+#endif
+  return err;
 }
 
 static flash_error_t program(void *instance, flash_address_t addr,
@@ -248,7 +270,7 @@ static flash_error_t program(void *instance, flash_address_t addr,
   SPIDriver *spip = devp->config->spip;
   flash_error_t err;
 
-  osalDbgCheck((instance != NULL) && (pp != NULL));
+  osalDbgCheck((instance != NULL) && (pp != NULL) && (n > 0U));
   osalDbgCheck((size_t)addr + n <= (size_t)descriptor.sectors_count *
                                    (size_t)descriptor.sectors_size);
   osalDbgAssert(devp->state == FLASH_READY, "invalid state");
@@ -294,7 +316,6 @@ static flash_error_t program(void *instance, flash_address_t addr,
   }
 
   devp->state = FLASH_READY;
-
 #if N25Q128_SHARED_SPI == TRUE
   spiReleaseBus(spip);
 #endif
@@ -306,7 +327,7 @@ static flash_error_t read(void *instance, flash_address_t addr,
   N25Q128Driver *devp = (N25Q128Driver *)instance;
   SPIDriver *spip = devp->config->spip;
 
-  osalDbgCheck((instance != NULL) && (rp != NULL));
+  osalDbgCheck((instance != NULL) && (rp != NULL) && (n > 0U));
   osalDbgCheck((size_t)addr + n <= (size_t)descriptor.sectors_count *
                                    (size_t)descriptor.sectors_size);
   osalDbgAssert(devp->state == FLASH_READY, "invalid state");

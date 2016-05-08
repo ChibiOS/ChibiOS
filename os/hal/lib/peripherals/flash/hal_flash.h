@@ -146,9 +146,9 @@ typedef struct {
                                 flash_sector_t sector,                      \
                                 flash_sector_t n);                          \
   /* Erase single sector.*/                                                 \
-  flash_error_t (*are_sectors_erased)(void *instance,                       \
-                                     flash_sector_t sector,                 \
-                                     flash_sector_t n);                     \
+  flash_error_t (*verify_erase)(void *instance,                             \
+                                flash_sector_t sector,                      \
+                                flash_sector_t n);                          \
   /* Write operation.*/                                                     \
   flash_error_t (*program)(void *instance, flash_address_t addr,            \
                            const uint8_t *pp, size_t n);                    \
@@ -241,8 +241,8 @@ typedef struct {
  *
  * @api
  */
-#define flashAreSectorsErased(ip, sector, n)                                \
-  (ip)->vmt_baseflash->are_sectors_erased(ip, sector, n)
+#define flashVerifyErase(ip, sector, n)                                \
+  (ip)->vmt_baseflash->verify_erase(ip, sector, n)
 
 /**
  * @brief   Write operation.
