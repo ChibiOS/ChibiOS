@@ -66,13 +66,11 @@ typedef enum {
  */
 typedef enum {
   FLASH_NO_ERROR = 0,           /* No error.                                */
-  FLASH_PARAMETER_ERROR = 1,    /* Error in a function parameter.           */
-  FLASH_ADDRESS_ERROR = 2,      /* Operation overlaps invalid addresses.    */
-  FLASH_ECC_ERROR = 3,          /* ECC error during read operation.         */
-  FLASH_PROGRAM_FAILURE = 4,    /* Program operation failed.                */
-  FLASH_ERASE_FAILURE = 5,      /* Erase operation failed.                  */
-  FLASH_VERIFY_FAILURE = 6,     /* Verify operation failed.                 */
-  FLASH_HW_FAILURE = 7          /* Controller or communication error.       */
+  FLASH_ECC_ERROR = 1,          /* ECC error during read operation.         */
+  FLASH_PROGRAM_FAILURE = 2,    /* Program operation failed.                */
+  FLASH_ERASE_FAILURE = 3,      /* Erase operation failed.                  */
+  FLASH_VERIFY_FAILURE = 4,     /* Verify operation failed.                 */
+  FLASH_HW_FAILURE = 5          /* Controller or communication error.       */
 } flash_error_t;
 
 /**
@@ -140,7 +138,7 @@ typedef struct {
  */
 #define _base_flash_methods_alone                                           \
   /* Get flash device attributes.*/                                         \
-  const flash_descriptor_t * (*get_attributes)(void *instance);             \
+  const flash_descriptor_t * (*get_descriptor)(void *instance);             \
   /* Erase whole flash device.*/                                            \
   flash_error_t (*erase_all)(void *instance);                               \
   /* Erase single sector.*/                                                 \
@@ -206,8 +204,8 @@ typedef struct {
  *
  * @api
  */
-#define flashGetType(ip)                                                    \
-  (ip)->vmt_baseflash->get_attributes(ip)
+#define flashGetDescriptor(ip)                                              \
+  (ip)->vmt_baseflash->get_descriptor(ip)
 
 /**
  * @brief   Whole device erase operation.
