@@ -81,7 +81,7 @@ static flash_descriptor_t descriptor = {
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static void spi_send_cmd_addr(N25Q128Driver *devp,
+static void flash_send_cmd_addr(N25Q128Driver *devp,
                               uint8_t cmd,
                               flash_address_t addr) {
   uint8_t buf[4];
@@ -93,20 +93,46 @@ static void spi_send_cmd_addr(N25Q128Driver *devp,
   spiSend(devp->config->spip, 4, buf);
 }
 
-static void spi_send_cmd(N25Q128Driver *devp, uint8_t cmd) {
+static void flash_send_cmd(N25Q128Driver *devp, uint8_t cmd) {
   uint8_t buf[1];
 
   buf[0] = cmd;
   spiSend(devp->config->spip, 1, buf);
 }
 
+static flash_error_t flash_poll_status(N25Q128Driver *devp) {
+  SPIDriver *spip = devp->config->spip;
+  uint8_t sts;
+
+  do {
+#if N25Q128_NICE_WAITING == TRUE
+    osalThreadSleepMilliseconds(1);
+#endif
+    /* Read status command.*/
+    spiSelect(spip);
+    flash_send_cmd(devp, N25Q128_CMD_READ_STATUS_REGISTER);
+    spiReceive(spip, 1, &sts);
+    spiUnselect(spip);
+  } while ((sts & N25Q128_STS_BUSY) != 0U);
+
+  /* Checking for errors.*/
+  if ((sts & N25Q128_STS_ALL_ERRORS) != 0U) {
+    /* Clearing status register.*/
+    spiSelect(spip);
+    flash_send_cmd(devp, N25Q128_CMD_CLEAR_FLAG_STATUS_REGISTER);
+    spiUnselect(spip);
+
+    /* Program operation failed.*/
+    return FLASH_PROGRAM_FAILURE;
+  }
+
+  return FLASH_NO_ERROR;
+}
+
 static const flash_descriptor_t *get_attributes(void *instance) {
   N25Q128Driver *devp = (N25Q128Driver *)instance;
-  SPIDriver *spip = devp->config->spip;
 
   osalDbgAssert(devp->state == FLASH_READY, "invalid state");
-
-  (void)instance;
 
   return &descriptor;
 }
@@ -166,8 +192,8 @@ static flash_error_t program(void *instance, flash_address_t addr,
 #endif
   devp->state = FLASH_ACTIVE;
 
+  /* Data is programmed page by page.*/
   while (n > 0U) {
-    uint8_t sts;
 
     /* Data size that can be written in a single program page operation.*/
     size_t chunk = (size_t)(((addr | PAGE_MASK) + 1U) - addr);
@@ -177,40 +203,21 @@ static flash_error_t program(void *instance, flash_address_t addr,
 
     /* Enabling write operation.*/
     spiSelect(spip);
-    spi_send_cmd(devp, N25Q128_CMD_WRITE_ENABLE);
+    flash_send_cmd(devp, N25Q128_CMD_WRITE_ENABLE);
     spiUnselect(spip);
     (void) spiPolledExchange(spip, 0xFF);   /* One frame delay.*/
 
     /* Page program command.*/
     spiSelect(spip);
-    spi_send_cmd_addr(devp, N25Q128_CMD_PAGE_PROGRAM, addr);
+    flash_send_cmd_addr(devp, N25Q128_CMD_PAGE_PROGRAM, addr);
     spiSend(spip, chunk, pp);
     spiUnselect(spip);
     (void) spiPolledExchange(spip, 0xFF);   /* One frame delay.*/
 
-    /* Operation end waiting.*/
-    do {
-#if N25Q128_NICE_WAITING == TRUE
-      osalThreadSleepMilliseconds(1);
-#endif
-      /* Read status command.*/
-      spiSelect(spip);
-      spi_send_cmd(devp, N25Q128_CMD_READ_STATUS_REGISTER);
-      spiReceive(spip, 1, &sts);
-      spiUnselect(spip);
-    } while ((sts & N25Q128_STS_BUSY) != 0U);
-
-    /* Checking for errors.*/
-    if ((sts & N25Q128_STS_ALL_ERRORS) != 0U) {
-      /* Clearing status register.*/
-      (void) spiPolledExchange(spip, 0xFF);   /* One frame delay.*/
-      spiSelect(spip);
-      spi_send_cmd(devp, N25Q128_CMD_CLEAR_FLAG_STATUS_REGISTER);
-      spiUnselect(spip);
-
-      /* Program operation failed.*/
-      err = FLASH_PROGRAM_FAILURE;
-      goto exit_error;
+    /* Wait for status and check errors.*/
+    err = flash_poll_status(devp);
+    if (err != FLASH_NO_ERROR) {
+      break;
     }
 
     /* Next page.*/
@@ -219,12 +226,8 @@ static flash_error_t program(void *instance, flash_address_t addr,
     n    -= chunk;
   }
 
-  /* Program operation succeeded.*/
-  err = FLASH_NO_ERROR;
-
-  /* Common exit path for this function.*/
-exit_error:
   devp->state = FLASH_READY;
+
 #if N25Q128_SHARED_SPI == TRUE
   spiReleaseBus(spip);
 #endif
@@ -246,7 +249,7 @@ static flash_error_t read(void *instance, flash_address_t addr,
 
   /* Read command.*/
   spiSelect(spip);
-  spi_send_cmd_addr(devp, N25Q128_CMD_READ, addr);
+  flash_send_cmd_addr(devp, N25Q128_CMD_READ, addr);
   spiReceive(spip, n, rp);
   spiUnselect(spip);
 
