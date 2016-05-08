@@ -67,6 +67,24 @@
 #define N25Q128_CMD_PROGRAM_OTP_ARRAY               0x42
 /** @} */
 
+/**
+ * @name    Status register bits
+ * @{
+ */
+#define N25Q128_STS_BUSY                            0x80U
+#define N25Q128_STS_ERASE_SUSPEND                   0x40U
+#define N25Q128_STS_ERASE_ERROR                     0x20U
+#define N25Q128_STS_PROGRAM_ERROR                   0x10U
+#define N25Q128_STS_VPP_ERROR                       0x08U
+#define N25Q128_STS_PROGRAM_SUSPEND                 0x04U
+#define N25Q128_STS_PROTECTION_ERROR                0x02U
+#define N25Q128_STS_RESERVED                        0x01U
+#define N25Q128_STS_ALL_ERRORS              (N25Q128_STS_ERASE_ERROR |      \
+                                             N25Q128_STS_PROGRAM_ERROR |    \
+                                             N25Q128_STS_VPP_ERROR |        \
+                                             N25Q128_STS_PROTECTION_ERROR)
+/** @} */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -83,6 +101,18 @@
  */
 #if !defined(N25Q128_SHARED_SPI) || defined(__DOXYGEN__)
 #define N25Q128_SHARED_SPI                  TRUE
+#endif
+
+/**
+ * @brief   Delays insertions.
+ * @details If enabled this options inserts delays into the flash waiting
+ *          routines releasing some extra CPU time for the threads with
+ *          lower priority, this may slow down the driver a bit however.
+ *          This option is recommended also when the SPI driver does not
+ *          use a DMA channel and heavily loads the CPU.
+ */
+#if !defined(N25Q128_NICE_WAITING) || defined(__DOXYGEN__)
+#define N25Q128_NICE_WAITING                TRUE
 #endif
 /** @} */
 

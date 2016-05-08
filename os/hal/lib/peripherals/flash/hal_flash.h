@@ -69,8 +69,10 @@ typedef enum {
   FLASH_PARAMETER_ERROR = 1,    /* Error in a function parameter.           */
   FLASH_ADDRESS_ERROR = 2,      /* Operation overlaps invalid addresses.    */
   FLASH_ECC_ERROR = 3,          /* ECC error during read operation.         */
-  FLASH_VERIFY_FAILURE = 4,     /* Write or erase operation failed.         */
-  FLASH_HW_FAILURE = 5          /* Controller or communication error.       */
+  FLASH_PROGRAM_FAILURE = 4,    /* Program operation failed.                */
+  FLASH_ERASE_FAILURE = 5,      /* Erase operation failed.                  */
+  FLASH_VERIFY_FAILURE = 6,     /* Verify operation failed.                 */
+  FLASH_HW_FAILURE = 7          /* Controller or communication error.       */
 } flash_error_t;
 
 /**
