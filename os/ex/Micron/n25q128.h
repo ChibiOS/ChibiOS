@@ -137,11 +137,11 @@
  */
 typedef struct {
   /**
-   * @brief SPI driver associated to this L3GD20.
+   * @brief   SPI driver associated to this L3GD20.
    */
   SPIDriver                 *spip;
   /**
-   * @brief SPI configuration associated to this L3GD20.
+   * @brief   SPI configuration associated to this L3GD20.
    */
   const SPIConfig           *spicfg;
 } N25Q128Config;
