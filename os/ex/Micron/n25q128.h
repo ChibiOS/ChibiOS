@@ -189,9 +189,10 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void n15q128ObjectInit(N25Q128Driver *devp);
-  void n15q128Start(N25Q128Driver *devp, const N25Q128Config *config);
-  void n15q128Stop(N25Q128Driver *devp);
+  void n25q128ObjectInit(N25Q128Driver *devp);
+  void n25q128Start(N25Q128Driver *devp, const N25Q128Config *config);
+  void n25q128Stop(N25Q128Driver *devp);
+  void n25q128ReadId(N25Q128Driver *devp, uint8_t *rp, size_t n);
 #ifdef __cplusplus
 }
 #endif

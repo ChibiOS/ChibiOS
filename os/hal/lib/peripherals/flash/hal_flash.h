@@ -255,7 +255,7 @@ typedef struct {
  *
  * @api
  */
-#define flashProgram(ip)                                                    \
+#define flashProgram(ip, addr, pp, n)                                       \
   (ip)->vmt_baseflash->program(ip, addr, pp, n)
 
 /**
@@ -269,7 +269,7 @@ typedef struct {
  *
  * @api
  */
-#define flashRead(ip)                                                       \
+#define flashRead(ip, addr, rp, n)                                          \
   (ip)->vmt_baseflash->read(ip, addr, rp, n)
 
 /** @} */
