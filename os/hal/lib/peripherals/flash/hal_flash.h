@@ -33,10 +33,11 @@
  * @name    Flash attributes
  * @{
  */
-#define FLASH_ATTR_ERASED_IS_ONE        0x00000001
-#define FLASH_ATTR_MEMORY_MAPPED        0x00000002
-#define FLASH_ATTR_REWRITABLE           0x00000004
-#define FLASH_ATTR_READ_ECC_CAPABLE     0x00000008
+#define FLASH_ATTR_ERASED_IS_ONE            0x00000001
+#define FLASH_ATTR_MEMORY_MAPPED            0x00000002
+#define FLASH_ATTR_REWRITABLE               0x00000004
+#define FLASH_ATTR_READ_ECC_CAPABLE         0x00000008
+#define FLASH_ATTR_SUSPEND_ERASE_CAPABLE    0x00000010
 /** @} */
 
 /*===========================================================================*/
@@ -58,7 +59,10 @@ typedef enum {
   FLASH_UNINIT = 0,
   FLASH_STOP = 1,
   FLASH_READY = 2,
-  FLASH_ACTIVE = 3
+  FLASH_READING = 3,
+  FLASH_WRITING = 4,
+  FLASH_ERASING = 5,
+  FLASH_SUSPENDED = 6
 } flash_state_t;
 
 /**
@@ -70,7 +74,8 @@ typedef enum {
   FLASH_PROGRAM_FAILURE = 2,    /* Program operation failed.                */
   FLASH_ERASE_FAILURE = 3,      /* Erase operation failed.                  */
   FLASH_VERIFY_FAILURE = 4,     /* Verify operation failed.                 */
-  FLASH_HW_FAILURE = 5          /* Controller or communication error.       */
+  FLASH_BUSY = 5,               /* Attempt to access a sector being erased. */
+  FLASH_HW_FAILURE = 6          /* Controller or communication error.       */
 } flash_error_t;
 
 /**
@@ -142,13 +147,11 @@ typedef struct {
   /* Erase whole flash device.*/                                            \
   flash_error_t (*erase_all)(void *instance);                               \
   /* Erase single sector.*/                                                 \
-  flash_error_t (*erase_sectors)(void *instance,                            \
-                                flash_sector_t sector,                      \
-                                flash_sector_t n);                          \
+  flash_error_t (*erase_sector)(void *instance,                             \
+                               flash_sector_t sector);                      \
   /* Erase single sector.*/                                                 \
   flash_error_t (*verify_erase)(void *instance,                             \
-                                flash_sector_t sector,                      \
-                                flash_sector_t n);                          \
+                                flash_sector_t sector);                     \
   /* Write operation.*/                                                     \
   flash_error_t (*program)(void *instance, flash_address_t addr,            \
                            const uint8_t *pp, size_t n);                    \
@@ -219,30 +222,28 @@ typedef struct {
   (ip)->vmt_baseflash->erase_all(ip)
 
 /**
- * @brief   Erase operation on a series of contiguous sectors.
+ * @brief   Erase operation on a sector.
  *
  * @param[in] ip        pointer to a @p BaseFlash or derived class
- * @param[in] secotr    first sector to be erased
- * @param[in] n         number of sectors to be erased
+ * @param[in] sector    sector to be erased
  * @return              An error code.
  *
  * @api
  */
-#define flashEraseSectors(ip, sector, n)                                    \
-  (ip)->vmt_baseflash->erase_sectors(ip, sector, n)
+#define flashEraseSector(ip, sector)                                        \
+  (ip)->vmt_baseflash->erase_sector(ip, sector)
 
 /**
- * @brief   Returns the erase state of a series of contiguous sectors.
+ * @brief   Returns the erase state of a sector.
  *
  * @param[in] ip        pointer to a @p BaseFlash or derived class
- * @param[in] secotr    first sector to be erased
- * @param[in] n         number of sectors to be erased
+ * @param[in] sector    sector to be verified
  * @return              An error code.
  *
  * @api
  */
-#define flashVerifyErase(ip, sector, n)                                \
-  (ip)->vmt_baseflash->verify_erase(ip, sector, n)
+#define flashVerifyErase(ip, sector)                                        \
+  (ip)->vmt_baseflash->verify_erase(ip, sector)
 
 /**
  * @brief   Write operation.

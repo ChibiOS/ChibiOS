@@ -114,6 +114,13 @@
 #if !defined(N25Q128_NICE_WAITING) || defined(__DOXYGEN__)
 #define N25Q128_NICE_WAITING                TRUE
 #endif
+
+/**
+ * @brief   Uses 4kB sub-sectors rather than 64kB sectors.
+ */
+#if !defined(N25Q128_USE_SUB_SECTORS) || defined(__DOXYGEN__)
+#define N25Q128_USE_SUB_SECTORS             FALSE
+#endif
 /** @} */
 
 /*===========================================================================*/
