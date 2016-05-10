@@ -114,24 +114,11 @@ int main(void) {
   l3gd20Start(&L3GD20D1, &l3gd20cfg);
 
   while(!palReadLine(LINE_BUTTON)){
-    palToggleLine(LINE_LED3);
-    gyroscopeReadRaw(&L3GD20D1, rawdata);
-    for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++)
-      chprintf(chp, "RAW-%c:%d\r\n", axesID[i], rawdata[i]);
-
-    gyroscopeReadCooked(&L3GD20D1, cookeddata);
-    for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++)
-      chprintf(chp, "COOKED-%c:%.3f\r\n", axesID[i], cookeddata[i]);
-
-    gyroscopeGetTemp(&L3GD20D1, &temperature);
-    chprintf(chp, "TEMP:%.1f C°\r\n", temperature);
-
-    chprintf(chp, "Press BUTTON to continue...\r\n");
+    chprintf(chp, "Press BTN to calibrate gyroscope...\r\n");
     chThdSleepMilliseconds(150);
 #if CHPRINTF_USE_ANSI_CODE
     chprintf(chp, "\033[2J\033[1;1H");
 #endif
-  }
 
   palClearLine(LINE_LED3);
   chprintf(chp, "Calibrating Gyroscope sampling bias...\r\n");
