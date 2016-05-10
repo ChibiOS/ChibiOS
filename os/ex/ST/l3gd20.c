@@ -332,6 +332,10 @@ static msg_t reset_sensivity(void *ip) {
   else if(((L3GD20Driver *)ip)->config->fullscale == L3GD20_FS_2000DPS)
 	for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++)
       ((L3GD20Driver *)ip)->sensitivity[i] = L3GD20_SENS_2000DPS;
+  else {
+    osalDbgAssert(FALSE, "reset_sensivity(), full scale issue");
+    return MSG_RESET;
+  }
   return MSG_OK;
 }
 

@@ -591,6 +591,10 @@ static msg_t acc_reset_sensivity(void *ip) {
   else if(((LSM6DS0Driver *)ip)->config->acccfg->fullscale == LSM6DS0_ACC_FS_16G)
 	for(i = 0; i < LSM6DS0_ACC_NUMBER_OF_AXES; i++)
       ((LSM6DS0Driver *)ip)->accsensitivity[i] = LSM6DS0_ACC_SENS_16G;
+  else {
+    osalDbgAssert(FALSE, "reset_sensivity(), accelerometer full scale issue");
+    return MSG_RESET;
+  }
   return MSG_OK;
 }
 
@@ -611,6 +615,10 @@ static msg_t gyro_reset_sensivity(void *ip) {
   else if(((LSM6DS0Driver *)ip)->config->gyrocfg->fullscale == LSM6DS0_GYRO_FS_2000DSP)
 	for(i = 0; i < LSM6DS0_ACC_NUMBER_OF_AXES; i++)
       ((LSM6DS0Driver *)ip)->gyrosensitivity[i] = LSM6DS0_GYRO_SENS_2000DPS;
+  else {
+    osalDbgAssert(FALSE, "reset_sensivity(), gyroscope full scale issue");
+    return MSG_RESET;
+  }
   return MSG_OK;
 }
 

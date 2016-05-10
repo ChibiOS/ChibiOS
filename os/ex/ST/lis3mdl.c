@@ -313,8 +313,10 @@ static msg_t reset_sensivity(void *ip) {
   else if(((LIS3MDLDriver *)ip)->config->fullscale == LIS3MDL_FS_16GA)
     for(i = 0; i < LIS3MDL_NUMBER_OF_AXES; i++)
       ((LIS3MDLDriver *)ip)->sensitivity[i] = LIS3MDL_SENS_16GA;
-  else
+  else {
     osalDbgAssert(FALSE, "reset_sensivity(), compass full scale issue");
+    return MSG_RESET;
+  }
   return MSG_OK;
 }
 
