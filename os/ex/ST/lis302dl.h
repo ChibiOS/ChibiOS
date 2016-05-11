@@ -69,7 +69,7 @@
  * @brief   LIS302DL shared SPI switch.
  * @details If set to @p TRUE the device acquires SPI bus ownership
  *          on each transaction.
- * @note    The default is @p FALSE. Requires SPI_USE_MUTUAL_EXCLUSION
+ * @note    The default is @p FALSE. Requires SPI_USE_MUTUAL_EXCLUSION.
  */
 #if !defined(LIS302DL_SHARED_SPI) || defined(__DOXYGEN__)
 #define LIS302DL_SHARED_SPI                 FALSE
@@ -105,48 +105,48 @@
  * @{
  */
 /**
- * @brief   LIS302DL full scale
+ * @brief   LIS302DL full scale.
  */
 typedef enum {
-  LIS302DL_FS_2G = 0x00,            /**< Full scale ±2g.                    */      
-  LIS302DL_FS_8G = 0x20             /**< Full scale ±8g.                    */       
+  LIS302DL_FS_2G = 0x00,            /**< Full scale ±2g.                    */
+  LIS302DL_FS_8G = 0x20             /**< Full scale ±8g.                    */
 }lis302dl_fs_t;
 
 /**
- * @brief   LIS302DL output data rate and bandwidth
+ * @brief   LIS302DL output data rate and bandwidth.
  */
 typedef enum {
-  LIS302DL_ODR_100HZ = 0x00,        /**< ODR 100 Hz.                        */       
-  LIS302DL_ODR_400HZ = 0x80         /**< ODR 400 Hz.                        */       
+  LIS302DL_ODR_100HZ = 0x00,        /**< ODR 100 Hz.                        */
+  LIS302DL_ODR_400HZ = 0x80         /**< ODR 400 Hz.                        */
 }lis302dl_odr_t;
 
 /**
- * @brief   LIS302DL high pass filtering
+ * @brief   LIS302DL high pass filtering.
  */
 typedef enum {
-  LIS302DL_HP_DISABLED = 0x00,      /**< HP bypassed.                       */        
-  LIS302DL_HP_0 = 0x10,             /**< HP cutoff 2Hz (ODR 100Hz) or 8Hz   */ 
-  LIS302DL_HP_1 = 0x11,             /**< HP cutoff 1Hz or 4Hz               */ 
-  LIS302DL_HP_2 = 0x12,             /**< HP cutoff 0.5Hz or 2Hz             */ 
+  LIS302DL_HP_DISABLED = 0x00,      /**< HP bypassed.                       */
+  LIS302DL_HP_0 = 0x10,             /**< HP cutoff 2Hz (ODR 100Hz) or 8Hz   */
+  LIS302DL_HP_1 = 0x11,             /**< HP cutoff 1Hz or 4Hz               */
+  LIS302DL_HP_2 = 0x12,             /**< HP cutoff 0.5Hz or 2Hz             */
   LIS302DL_HP_3 = 0x13              /**< HP cutoff 0.25Hz or 1Hz            */
 }lis302dl_hp_t;
 
 /**
- * @brief   LIS302DL axes enabling
+ * @brief   LIS302DL axes enabling.
  */
 typedef enum {
-  LIS302DL_AE_DISABLED = 0x00,      /**< All axes disabled.                 */        
-  LIS302DL_AE_X = 0x01,             /**< Only X-axis enabled.               */ 
-  LIS302DL_AE_Y = 0x02,             /**< Only Y-axis enabled.               */ 
-  LIS302DL_AE_XY = 0x03,            /**< X and Y axes enabled.              */  
-  LIS302DL_AE_Z = 0x04,             /**< Only Z-axis enabled.               */  
-  LIS302DL_AE_XZ = 0x05,            /**< X and Z axes enabled.              */  
-  LIS302DL_AE_YZ = 0x06,            /**< Y and Z axes enabled.              */       
-  LIS302DL_AE_XYZ = 0x07            /**< All axes enabled.                  */            
+  LIS302DL_AE_DISABLED = 0x00,      /**< All axes disabled.                 */
+  LIS302DL_AE_X = 0x01,             /**< Only X-axis enabled.               */
+  LIS302DL_AE_Y = 0x02,             /**< Only Y-axis enabled.               */
+  LIS302DL_AE_XY = 0x03,            /**< X and Y axes enabled.              */
+  LIS302DL_AE_Z = 0x04,             /**< Only Z-axis enabled.               */
+  LIS302DL_AE_XZ = 0x05,            /**< X and Z axes enabled.              */
+  LIS302DL_AE_YZ = 0x06,            /**< Y and Z axes enabled.              */
+  LIS302DL_AE_XYZ = 0x07            /**< All axes enabled.                  */
 }lis302dl_ae_t;
 
 /**
- * @brief   LIS302DL accelerometer subsystem unit
+ * @brief   LIS302DL accelerometer subsystem unit.
  */
 typedef enum {
   LIS302DL_ACC_UNIT_G = 0x00,       /**< Cooked data in g.                  */
@@ -223,7 +223,7 @@ typedef struct LIS302DLDriver LIS302DLDriver;
 
 
 /**
- * @extends BaseAccelerometerVMT
+ * @extends BaseAccelerometerVMT.
  *
  * @brief   @p LIS302DL virtual methods table.
  */
@@ -246,7 +246,7 @@ struct LIS302DLVMT {
   int32_t                   bias[LIS302DL_NUMBER_OF_AXES];
 
 /**
- * @extends BaseAccelerometer
+ * @extends BaseAccelerometer.
  *
  * @brief   LIS302DL 3-axis accelerometer class.
  * @details This class extends @p BaseAccelerometer by adding physical
@@ -269,7 +269,7 @@ struct LIS302DLDriver {
 
 /**
  * @brief   Get current MEMS temperature.
- * @detail  This information is very useful especially for high accuracy IMU
+ * @detail  This information is very useful especially for high accuracy IMU.
  *
  * @param[in] ip        pointer to a @p BaseAccelerometer class.
  * @param[out] temp     the MEMS temperature as single precision floating.

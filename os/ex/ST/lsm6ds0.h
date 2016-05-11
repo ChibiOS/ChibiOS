@@ -74,14 +74,14 @@
  * @brief   LSM6DS0 shared I2C switch.
  * @details If set to @p TRUE the device acquires I2C bus ownership
  *          on each transaction.
- * @note    The default is @p FALSE. Requires I2C_USE_MUTUAL_EXCLUSION
+ * @note    The default is @p FALSE. Requires I2C_USE_MUTUAL_EXCLUSION.
  */
 #if !defined(LSM6DS0_SHARED_I2C) || defined(__DOXYGEN__)
 #define LSM6DS0_SHARED_I2C                  FALSE
 #endif
 
 /**
- * @brief   Number of acquisitions for gyroscope bias removal
+ * @brief   Number of acquisitions for gyroscope bias removal.
  * @details This is the number of acquisitions performed to compute the
  *          bias. A repetition is required in order to remove noise.
  */
@@ -90,7 +90,7 @@
 #endif
 
 /**
- * @brief   Settling time for gyroscope bias removal
+ * @brief   Settling time for gyroscope bias removal.
  * @details This is the time between each bias acquisition.
  */
 #if !defined(LSM6DS0_GYRO_BIAS_SETTLING_uS) || defined(__DOXYGEN__)
@@ -123,12 +123,12 @@
 /*===========================================================================*/
 
 /**
- * @name    LSM6DS0 accelerometer subsystem data structures and types
+ * @name    LSM6DS0 accelerometer subsystem data structures and types.
  * @{
  */
  
 /**
- * @brief   LSM6DS0 accelerometer subsystem full scale
+ * @brief   LSM6DS0 accelerometer subsystem full scale.
  */
 typedef enum {
   LSM6DS0_ACC_FS_2G = 0x00,         /**< Full scale ±2g.                    */
@@ -138,7 +138,7 @@ typedef enum {
 } lsm6ds0_acc_fs_t;
 
 /**
- * @brief   LSM6DS0 accelerometer subsystem output data rate
+ * @brief   LSM6DS0 accelerometer subsystem output data rate.
  */
 typedef enum {
   LSM6DS0_ACC_ODR_PD = 0x00,        /**< Power down                         */
@@ -151,7 +151,7 @@ typedef enum {
 } lsm6ds0_acc_odr_t;
 
 /**
- * @brief   LSM6DS0 accelerometer subsystem axes enabling
+ * @brief   LSM6DS0 accelerometer subsystem axes enabling.
  */
 typedef enum {
   LSM6DS0_ACC_AE_DISABLED = 0x00,   /**< All axes disabled.                 */
@@ -165,7 +165,7 @@ typedef enum {
 } lsm6ds0_acc_ae_t;
 
 /**
- * @brief   LSM6DS0 accelerometer subsystem anti aliasing filter bandwidth
+ * @brief   LSM6DS0 accelerometer subsystem anti aliasing filter bandwidth.
  */
 typedef enum {
   LSM6DS0_ACC_OBW_ODR = 0x00,      /**< Depending on ODR.                   */
@@ -173,7 +173,7 @@ typedef enum {
 } lsm6ds0_acc_obw_t;
 
 /**
- * @brief   LSM6DS0 accelerometer subsystem high resolution mode
+ * @brief   LSM6DS0 accelerometer subsystem high resolution mode.
  */
 typedef enum {
   LSM6DS0_ACC_HR_DISABLED = 0x00,   /**< High resolution mode disabled.     */
@@ -181,7 +181,7 @@ typedef enum {
 } lsm6ds0_acc_hr_t;
 
 /**
- * @brief   LSM6DS0 accelerometer subsystem filtered data selection
+ * @brief   LSM6DS0 accelerometer subsystem filtered data selection.
  */
 typedef enum {
   LSM6DS0_ACC_FDS_ENABLED = 0x00,   /**< Internal filter bypassed.          */
@@ -189,7 +189,7 @@ typedef enum {
 } lsm6ds0_acc_fds_t;
 
 /**
- * @brief   LSM6DS0 accelerometer subsystem digital filter
+ * @brief   LSM6DS0 accelerometer subsystem digital filter.
  */
 typedef enum {
   LSM6DS0_ACC_DCF_400 = 0x00,       /**< Low pass cutoff freq. ODR/400 Hz.  */
@@ -199,7 +199,7 @@ typedef enum {
 } lsm6ds0_acc_dcf_t;
 
 /**
- * @brief   LSM6DS0 accelerometer subsystem anti aliasing filter bandwidth
+ * @brief   LSM6DS0 accelerometer subsystem anti aliasing filter bandwidth.
  */
 typedef enum {
   LSM6DS0_ACC_AABW_408Hz = 0x00,    /**< Anti Aliasing filter BW 408Hz.     */
@@ -210,7 +210,7 @@ typedef enum {
 } lsm6ds0_acc_aabw_t;
 
 /**
- * @brief   LSM6DS0 accelerometer subsystem decimation mode
+ * @brief   LSM6DS0 accelerometer subsystem decimation mode.
  */
 typedef enum {
   LSM6DS0_ACC_DEC_DISABLED = 0x00,  /**< Decimation disabled.               */
@@ -220,7 +220,7 @@ typedef enum {
 } lsm6ds0_acc_dec_t;
 
 /**
- * @brief   LSM6DS0 accelerometer subsystem unit
+ * @brief   LSM6DS0 accelerometer subsystem unit.
  */
 typedef enum {
   LSM6DS0_ACC_UNIT_G = 0x00,        /**< Cooked data in g.                  */
@@ -233,54 +233,54 @@ typedef enum {
  */
 typedef struct {
   /**
-   * @brief   LSM6DS0 accelerometer subsystem full scale
+   * @brief   LSM6DS0 accelerometer subsystem full scale.
    */
   lsm6ds0_acc_fs_t          fullscale;
   /**
-   * @brief   LSM6DS0 accelerometer subsystem output data rate
+   * @brief   LSM6DS0 accelerometer subsystem output data rate.
    */
   lsm6ds0_acc_odr_t         outdatarate;
   /**
-   * @brief   LSM6DS0 accelerometer subsystem axes enabling
+   * @brief   LSM6DS0 accelerometer subsystem axes enabling.
    */
   lsm6ds0_acc_ae_t          axesenabling;
   /**
-   * @brief   LSM6DS0 accelerometer subsystem output bandwidth
+   * @brief   LSM6DS0 accelerometer subsystem output bandwidth.
    */
   lsm6ds0_acc_obw_t         outbandwidth;
   /**
-   * @brief   LSM6DS0 accelerometer subsystem high resolution mode
+   * @brief   LSM6DS0 accelerometer subsystem high resolution mode.
    */
   lsm6ds0_acc_hr_t          highresmode;
   /**
-   * @brief   LSM6DS0 accelerometer subsystem filtered data selection
+   * @brief   LSM6DS0 accelerometer subsystem filtered data selection.
    */
   lsm6ds0_acc_fds_t         filtdatasel;
   /**
-   * @brief   LSM6DS0 accelerometer subsystem digital filter
+   * @brief   LSM6DS0 accelerometer subsystem digital filter.
    */
   lsm6ds0_acc_dcf_t         digifilter;
   /**
-   * @brief   LSM6DS0 accelerometer subsystem anti aliasing filter bandwidth
+   * @brief   LSM6DS0 accelerometer subsystem anti aliasing filter bandwidth.
    */
   lsm6ds0_acc_aabw_t        aabandwidth;
   /**
-   * @brief   LSM6DS0 accelerometer subsystem decimation mode
+   * @brief   LSM6DS0 accelerometer subsystem decimation mode.
    */
   lsm6ds0_acc_dec_t         decmode;
   /**
-   * @brief   LSM6DS0 accelerometer subsystem unit
+   * @brief   LSM6DS0 accelerometer subsystem unit.
    */
   lsm6ds0_acc_unit_t        unit;
 } LSM6DS0AccConfig;
 /** @} */
 
 /**
- * @name    LSM6DS0 gyroscope subsystem data structures and types
+ * @name    LSM6DS0 gyroscope subsystem data structures and types.
  * @{
  */
 /**
- * @brief   LSM6DS0 gyroscope subsystem full scale
+ * @brief   LSM6DS0 gyroscope subsystem full scale.
  */
 typedef enum {
   LSM6DS0_GYRO_FS_245DSP  = 0x00,   /**< Full scale Â±245 degree per second  */
@@ -289,7 +289,7 @@ typedef enum {
 } lsm6ds0_gyro_fs_t;
 
 /**
- * @brief   LSM6DS0 gyroscope subsystem output data rate
+ * @brief   LSM6DS0 gyroscope subsystem output data rate.
  */
 typedef enum {
   LSM6DS0_GYRO_ODR_PD = 0x00,
@@ -313,7 +313,7 @@ typedef enum {
 } lsm6ds0_gyro_odr_t;
 
 /**
- * @brief   LSM6DS0 gyroscope subsystem axes enabling
+ * @brief   LSM6DS0 gyroscope subsystem axes enabling.
  */
 typedef enum {
   LSM6DS0_GYRO_AE_DISABLED = 0x00,  /**< All axes disabled.                 */
@@ -327,7 +327,7 @@ typedef enum {
 } lsm6ds0_gyro_ae_t;
 
 /**
- * @brief   LSM6DS0 gyroscope subsystem low mode configuration
+ * @brief   LSM6DS0 gyroscope subsystem low mode configuration.
  */
 typedef enum {
   LSM6DS0_GYRO_LP_DISABLED = 0x00,  /**< Low power mode disabled.           */
@@ -335,7 +335,7 @@ typedef enum {
 } lsm6ds0_gyro_lp_t;
 
 /**
- * @brief  LSM6DS0 gyroscope subsystem output selection
+ * @brief  LSM6DS0 gyroscope subsystem output selection.
  */
 typedef enum {
   LSM6DS0_GYRO_OUT_SEL_0 = 0x00,    /**< Low pass filter 1.                 */
@@ -344,7 +344,7 @@ typedef enum {
 } lsm6ds0_gyro_out_sel_t;
 
 /**
- * @brief  LSM6DS0 gyroscope subsystem high pass filter
+ * @brief  LSM6DS0 gyroscope subsystem high pass filter.
  */
 typedef enum {
   LSM6DS0_GYRO_HP_DISABLED = 0x00,  /**< High pass filter disabled.         */
@@ -352,7 +352,7 @@ typedef enum {
 } lsm6ds0_gyro_hp_t;
 
 /**
- * @brief  LSM6DS0 gyroscope subsystem high pass filter configuration
+ * @brief  LSM6DS0 gyroscope subsystem high pass filter configuration.
  */
 typedef enum {
   LSM6DS0_GYRO_HPCF_0 = 0x00,       /**< Refer to table 48 of RM            */
@@ -372,42 +372,42 @@ typedef enum {
  */
 typedef struct {
   /**
-   * @brief   LSM6DS0 gyroscope subsystem full scale
+   * @brief   LSM6DS0 gyroscope subsystem full scale.
    */
   lsm6ds0_gyro_fs_t         fullscale;
   /**
-   * @brief   LSM6DS0 gyroscope subsystem output data rate
+   * @brief   LSM6DS0 gyroscope subsystem output data rate.
    */
   lsm6ds0_gyro_odr_t        outdatarate;
   /**
-   * @brief   LSM6DS0 gyroscope subsystem axes enabling
+   * @brief   LSM6DS0 gyroscope subsystem axes enabling.
    */
   lsm6ds0_gyro_ae_t         axesenabling;
   /**
-   * @brief   LSM6DS0 gyroscope subsystem low mode configuration
+   * @brief   LSM6DS0 gyroscope subsystem low mode configuration.
    */
   lsm6ds0_gyro_lp_t         lowmodecfg;
   /**
-   * @brief   LSM6DS0 gyroscope subsystem output selection
+   * @brief   LSM6DS0 gyroscope subsystem output selection.
    */
   lsm6ds0_gyro_out_sel_t    outsel;
   /**
-   * @brief   LSM6DS0 gyroscope subsystem high pass filter
+   * @brief   LSM6DS0 gyroscope subsystem high pass filter.
    */
   lsm6ds0_gyro_hp_t         hpfenable;
   /**
-   * @brief   LSM6DS0 gyroscope subsystem high pass filter configuration
+   * @brief   LSM6DS0 gyroscope subsystem high pass filter configuration.
    */
   lsm6ds0_gyro_hpcf_t       hpcfg;
 } LSM6DS0GyroConfig;
 /** @} */
 
 /**
- * @name    LSM6DS0 main system data structures and types
+ * @name    LSM6DS0 main system data structures and types.
  * @{
  */
 /**
- * @brief  Accelerometer and Gyroscope Slave Address
+ * @brief  Accelerometer and Gyroscope Slave Address.
  */
 typedef enum {
   LSM6DS0_SAD_GND = 0x6A,           /**< SAD pin connected to GND.          */
@@ -415,7 +415,7 @@ typedef enum {
 } lsm6ds0_sad_t;
 
 /**
- * @brief   LSM6DS0 block data update
+ * @brief   LSM6DS0 block data update.
  */
 typedef enum {
   LSM6DS0_BDU_CONTINUOUS = 0x00,    /**< Block data continuously updated.   */
@@ -423,7 +423,7 @@ typedef enum {
 } lsm6ds0_bdu_t;
 
 /**
- * @brief   LSM6DS0 endianness
+ * @brief   LSM6DS0 endianness.
  */
 typedef enum {
   LSM6DS0_END_LITTLE = 0x00,        /**< Little endian.                     */
