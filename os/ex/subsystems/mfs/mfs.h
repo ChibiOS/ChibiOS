@@ -62,6 +62,56 @@ typedef enum {
 } mfs_state_t;
 
 /**
+ * @brief   Bank header.
+ * @note    The header resides in the first 16 bytes of a bank extending
+ *          to the next page boundary.
+ */
+typedef struct {
+  /**
+   * @brief   Bank magic 1.
+   */
+  uint32_t                  magic1;
+  /**
+   * @brief   Bank magic 2.
+   */
+  uint32_t                  magic2;
+  /**
+   * @brief   Usage counter of the bank.
+   */
+  uint32_t                  counter;
+  /**
+   * @brief   First data element.
+   */
+  flash_address_t           next;
+} mfs_bank_header_t;
+
+/**
+ * @brief   Data block header.
+ */
+typedef union {
+  struct {
+    /**
+     * @brief   Data header magic.
+     */
+    uint32_t                magic;
+    /**
+     * @brief   Data identifier.
+     */
+    uint32_t                id;
+    /**
+     * @brief   Data size.
+     */
+    uint32_t                size;
+    /**
+     * @brief   Data CRC.
+     */
+    uint32_t                crc;
+  } fields;
+  uint8_t                   h8[16];
+  uint32_t                  h32[4];
+} mfs_data_header_t;
+
+/**
  * @brief   Type of a MFS configuration structure.
  */
 typedef struct {

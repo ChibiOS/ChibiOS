@@ -71,7 +71,7 @@
  * @name    Status register bits
  * @{
  */
-#define N25Q128_STS_BUSY                            0x80U
+#define N25Q128_STS_PROGRAM_ERASE                   0x80U
 #define N25Q128_STS_ERASE_SUSPEND                   0x40U
 #define N25Q128_STS_ERASE_ERROR                     0x20U
 #define N25Q128_STS_PROGRAM_ERROR                   0x10U

@@ -53,19 +53,21 @@
 /*===========================================================================*/
 
 static const flash_descriptor_t *get_descriptor(void *instance);
-static flash_error_t erase_all(void *instance);
-static flash_error_t erase_sector(void *instance, flash_sector_t sector);
-static flash_error_t verify_erase(void *instance, flash_sector_t sector);
-static flash_error_t program(void *instance, flash_address_t addr,
-                             const uint8_t *pp, size_t n);
 static flash_error_t read(void *instance, flash_address_t addr,
                           uint8_t *rp, size_t n);
+static flash_error_t program(void *instance, flash_address_t addr,
+                             const uint8_t *pp, size_t n);
+static flash_error_t start_erase_all(void *instance);
+static flash_error_t start_erase_sector(void *instance, flash_sector_t sector);
+static flash_error_t query_erase(void *instance, uint32_t *msec);
+static flash_error_t verify_erase(void *instance, flash_sector_t sector);
 
 /**
  * @brief   Virtual methods table.
  */
 static const struct N25Q128DriverVMT n25q128_vmt = {
-  get_descriptor, erase_all, erase_sector, verify_erase, program, read
+  get_descriptor, read, program,
+  start_erase_all, start_erase_sector, query_erase, verify_erase
 };
 
 /**
@@ -105,6 +107,22 @@ void flash_bus_release(N25Q128Driver *devp) {
 #define flash_bus_release(devp)
 #endif
 
+static void flash_short_cmd(N25Q128Driver *devp, uint8_t cmd) {
+  uint8_t buf[1];
+
+  spiSelect(devp->config->spip);
+  buf[0] = cmd;
+  spiSend(devp->config->spip, 1, buf);
+  spiUnselect(devp->config->spip);
+}
+
+static void flash_send_cmd(N25Q128Driver *devp, uint8_t cmd) {
+  uint8_t buf[1];
+
+  buf[0] = cmd;
+  spiSend(devp->config->spip, 1, buf);
+}
+
 static void flash_send_cmd_addr(N25Q128Driver *devp,
                               uint8_t cmd,
                               flash_address_t addr) {
@@ -115,13 +133,6 @@ static void flash_send_cmd_addr(N25Q128Driver *devp,
   buf[2] = (uint8_t)(addr >> 8);
   buf[3] = (uint8_t)(addr >> 0);
   spiSend(devp->config->spip, 4, buf);
-}
-
-static void flash_send_cmd(N25Q128Driver *devp, uint8_t cmd) {
-  uint8_t buf[1];
-
-  buf[0] = cmd;
-  spiSend(devp->config->spip, 1, buf);
 }
 
 static flash_error_t flash_poll_status(N25Q128Driver *devp) {
@@ -137,17 +148,15 @@ static flash_error_t flash_poll_status(N25Q128Driver *devp) {
     flash_send_cmd(devp, N25Q128_CMD_READ_FLAG_STATUS_REGISTER);
     spiReceive(spip, 1, &sts);
     spiUnselect(spip);
-  } while ((sts & N25Q128_STS_BUSY) == 0U);
+  } while ((sts & N25Q128_STS_PROGRAM_ERASE) == 0U);
 
   /* Checking for errors.*/
   if ((sts & N25Q128_STS_ALL_ERRORS) != 0U) {
     /* Clearing status register.*/
-    spiSelect(spip);
     flash_send_cmd(devp, N25Q128_CMD_CLEAR_FLAG_STATUS_REGISTER);
-    spiUnselect(spip);
 
     /* Program operation failed.*/
-    return FLASH_PROGRAM_FAILURE;
+    return FLASH_ERROR_PROGRAM;
   }
 
   return FLASH_NO_ERROR;
@@ -157,96 +166,34 @@ static const flash_descriptor_t *get_descriptor(void *instance) {
   N25Q128Driver *devp = (N25Q128Driver *)instance;
 
   osalDbgCheck(instance != NULL);
-  osalDbgAssert(devp->state == FLASH_READY, "invalid state");
+  osalDbgAssert((devp->state != FLASH_UNINIT) && (devp->state != FLASH_STOP),
+                "invalid state");
 
   return &descriptor;
 }
 
-static flash_error_t erase_all(void *instance) {
+static flash_error_t read(void *instance, flash_address_t addr,
+                          uint8_t *rp, size_t n) {
   N25Q128Driver *devp = (N25Q128Driver *)instance;
   SPIDriver *spip = devp->config->spip;
-  flash_error_t err;
 
-  osalDbgCheck(instance != NULL);
-  osalDbgAssert(devp->state == FLASH_READY, "invalid state");
+  osalDbgCheck((instance != NULL) && (rp != NULL) && (n > 0U));
+  osalDbgCheck((size_t)addr + n <= (size_t)descriptor.sectors_count *
+                                   (size_t)descriptor.sectors_size);
+  osalDbgAssert((devp->state == FLASH_READY) || (devp->state == FLASH_ERASE),
+                "invalid state");
 
-  flash_bus_acquire(devp);
-  devp->state = FLASH_ERASING;
-
-  /* Enabling write operation.*/
-  spiSelect(spip);
-  flash_send_cmd(devp, N25Q128_CMD_WRITE_ENABLE);
-  spiUnselect(spip);
-  (void) spiPolledExchange(spip, 0xFF);   /* One frame delay.*/
-
-  /* Bulk erase command.*/
-  spiSelect(spip);
-  flash_send_cmd(devp, N25Q128_CMD_BULK_ERASE);
-  spiUnselect(spip);
-
-  /* Wait for status and check errors.*/
-  (void) spiPolledExchange(spip, 0xFF);   /* One frame delay.*/
-  err = flash_poll_status(devp);
-
-  devp->state = FLASH_READY;
-  flash_bus_release(devp);
-  return err;
-}
-
-static flash_error_t erase_sector(void *instance, flash_sector_t sector) {
-  N25Q128Driver *devp = (N25Q128Driver *)instance;
-  SPIDriver *spip = devp->config->spip;
-  flash_address_t addr = (flash_address_t)(sector * SECTOR_SIZE);
-  flash_error_t err;
-
-  osalDbgCheck(instance != NULL);
-  osalDbgCheck(sector < descriptor.sectors_count);
-  osalDbgAssert(devp->state == FLASH_READY, "invalid state");
+  if (devp->state == FLASH_ERASE) {
+    return FLASH_BUSY_ERASING;
+  }
 
   flash_bus_acquire(devp);
-  devp->state = FLASH_ERASING;
-
-  /* Enabling write operation.*/
-  spiSelect(spip);
-  flash_send_cmd(devp, N25Q128_CMD_WRITE_ENABLE);
-  spiUnselect(spip);
-  (void) spiPolledExchange(spip, 0xFF);   /* One frame delay.*/
-
-  /* Sector erase command.*/
-  spiSelect(spip);
-  flash_send_cmd_addr(devp, CMD_SECTOR_ERASE, addr);
-  spiUnselect(spip);
-
-  /* Wait for status and check errors.*/
-  (void) spiPolledExchange(spip, 0xFF);   /* One frame delay.*/
-  err = flash_poll_status(devp);
-
-  devp->state = FLASH_READY;
-  flash_bus_release(devp);
-  return err;
-}
-
-static flash_error_t verify_erase(void *instance, flash_sector_t sector) {
-  N25Q128Driver *devp = (N25Q128Driver *)instance;
-  SPIDriver *spip = devp->config->spip;
-  unsigned i;
-
-  osalDbgCheck(instance != NULL);
-  osalDbgCheck(sector < descriptor.sectors_count);
-  osalDbgAssert(devp->state == FLASH_READY, "invalid state");
-
-  flash_bus_acquire(devp);
-  devp->state = FLASH_READING;
+  devp->state = FLASH_READ;
 
   /* Read command.*/
   spiSelect(spip);
-  flash_send_cmd_addr(devp, N25Q128_CMD_READ, (size_t)(sector * SECTOR_SIZE));
-  for (i = SECTOR_SIZE; i > 0U; i--) {
-    if (spiPolledExchange(spip, 0xFF) != 0xFF) {
-      flash_bus_release(devp);
-      return FLASH_VERIFY_FAILURE;
-    }
-  }
+  flash_send_cmd_addr(devp, N25Q128_CMD_READ, addr);
+  spiReceive(spip, n, rp);
   spiUnselect(spip);
 
   devp->state = FLASH_READY;
@@ -262,10 +209,15 @@ static flash_error_t program(void *instance, flash_address_t addr,
   osalDbgCheck((instance != NULL) && (pp != NULL) && (n > 0U));
   osalDbgCheck((size_t)addr + n <= (size_t)descriptor.sectors_count *
                                    (size_t)descriptor.sectors_size);
-  osalDbgAssert(devp->state == FLASH_READY, "invalid state");
+  osalDbgAssert((devp->state == FLASH_READY) || (devp->state == FLASH_ERASE),
+                "invalid state");
+
+  if (devp->state == FLASH_ERASE) {
+    return FLASH_BUSY_ERASING;
+  }
 
   flash_bus_acquire(devp);
-  devp->state = FLASH_WRITING;
+  devp->state = FLASH_PGM;
 
   /* Data is programmed page by page.*/
   while (n > 0U) {
@@ -278,9 +230,7 @@ static flash_error_t program(void *instance, flash_address_t addr,
     }
 
     /* Enabling write operation.*/
-    spiSelect(spip);
-    flash_send_cmd(devp, N25Q128_CMD_WRITE_ENABLE);
-    spiUnselect(spip);
+    flash_short_cmd(devp, N25Q128_CMD_WRITE_ENABLE);
     (void) spiPolledExchange(spip, 0xFF);   /* One frame delay.*/
 
     /* Page program command.*/
@@ -308,27 +258,147 @@ static flash_error_t program(void *instance, flash_address_t addr,
   return FLASH_NO_ERROR;
 }
 
-static flash_error_t read(void *instance, flash_address_t addr,
-                          uint8_t *rp, size_t n) {
+static flash_error_t start_erase_all(void *instance) {
   N25Q128Driver *devp = (N25Q128Driver *)instance;
   SPIDriver *spip = devp->config->spip;
 
-  osalDbgCheck((instance != NULL) && (rp != NULL) && (n > 0U));
-  osalDbgCheck((size_t)addr + n <= (size_t)descriptor.sectors_count *
-                                   (size_t)descriptor.sectors_size);
-  osalDbgAssert(devp->state == FLASH_READY, "invalid state");
+  osalDbgCheck(instance != NULL);
+  osalDbgAssert((devp->state == FLASH_READY) || (devp->state == FLASH_ERASE),
+                "invalid state");
+
+  if (devp->state == FLASH_ERASE) {
+    return FLASH_BUSY_ERASING;
+  }
 
   flash_bus_acquire(devp);
-  devp->state = FLASH_READING;
+  devp->state = FLASH_ERASE;
 
-  /* Read command.*/
+  /* Enabling write operation.*/
+  flash_short_cmd(devp, N25Q128_CMD_WRITE_ENABLE);
+  (void) spiPolledExchange(spip, 0xFF);   /* One frame delay.*/
+
+  /* Bulk erase command.*/
+  flash_short_cmd(devp, N25Q128_CMD_BULK_ERASE);
+
+  devp->state = FLASH_READY;
+  flash_bus_release(devp);
+  return FLASH_NO_ERROR;
+}
+
+static flash_error_t start_erase_sector(void *instance, flash_sector_t sector) {
+  N25Q128Driver *devp = (N25Q128Driver *)instance;
+  SPIDriver *spip = devp->config->spip;
+  flash_address_t addr = (flash_address_t)(sector * SECTOR_SIZE);
+
+  osalDbgCheck(instance != NULL);
+  osalDbgCheck(sector < descriptor.sectors_count);
+  osalDbgAssert((devp->state == FLASH_READY) || (devp->state == FLASH_ERASE),
+                "invalid state");
+
+  if (devp->state == FLASH_ERASE) {
+    return FLASH_BUSY_ERASING;
+  }
+
+  flash_bus_acquire(devp);
+  devp->state = FLASH_ERASE;
+
+  /* Enabling write operation.*/
+  flash_short_cmd(devp, N25Q128_CMD_WRITE_ENABLE);
+  (void) spiPolledExchange(spip, 0xFF);   /* One frame delay.*/
+
+  /* Sector erase command.*/
   spiSelect(spip);
-  flash_send_cmd_addr(devp, N25Q128_CMD_READ, addr);
-  spiReceive(spip, n, rp);
+  flash_send_cmd_addr(devp, CMD_SECTOR_ERASE, addr);
   spiUnselect(spip);
 
   devp->state = FLASH_READY;
   flash_bus_release(devp);
+  return FLASH_NO_ERROR;
+}
+
+static flash_error_t verify_erase(void *instance, flash_sector_t sector) {
+  N25Q128Driver *devp = (N25Q128Driver *)instance;
+  SPIDriver *spip = devp->config->spip;
+  unsigned i;
+
+  osalDbgCheck(instance != NULL);
+  osalDbgCheck(sector < descriptor.sectors_count);
+  osalDbgAssert((devp->state == FLASH_READY) || (devp->state == FLASH_ERASE),
+                "invalid state");
+
+  if (devp->state == FLASH_ERASE) {
+    return FLASH_BUSY_ERASING;
+  }
+
+  flash_bus_acquire(devp);
+  devp->state = FLASH_READ;
+
+  /* Read command.*/
+  spiSelect(spip);
+  flash_send_cmd_addr(devp, N25Q128_CMD_READ, (size_t)(sector * SECTOR_SIZE));
+  for (i = SECTOR_SIZE; i > 0U; i--) {
+    if (spiPolledExchange(spip, 0xFF) != 0xFF) {
+      flash_bus_release(devp);
+      return FLASH_ERROR_VERIFY;
+    }
+  }
+  spiUnselect(spip);
+
+  devp->state = FLASH_READY;
+  flash_bus_release(devp);
+  return FLASH_NO_ERROR;
+}
+
+static flash_error_t query_erase(void *instance, uint32_t *msec) {
+  N25Q128Driver *devp = (N25Q128Driver *)instance;
+  SPIDriver *spip = devp->config->spip;
+  uint8_t sts;
+
+  osalDbgCheck(instance != NULL);
+  osalDbgAssert((devp->state == FLASH_READY) || (devp->state == FLASH_ERASE),
+                "invalid state");
+
+  /* If there is an erase in progress then the device must be checked.*/
+  if (devp->state == FLASH_ERASE) {
+
+    flash_bus_acquire(devp);
+
+    /* Read status command.*/
+    spiSelect(spip);
+    flash_send_cmd(devp, N25Q128_CMD_READ_FLAG_STATUS_REGISTER);
+    spiReceive(spip, 1, &sts);
+    spiUnselect(spip);
+
+    /* If the P/E bit is zero (busy) or the flash in a suspended state then
+       report that the operation is still in progress.*/
+    if (((sts & N25Q128_STS_PROGRAM_ERASE) == 0U) ||
+        ((sts & N25Q128_STS_ERASE_SUSPEND) != 0U)) {
+      flash_bus_release(devp);
+
+      /* Recommended time before polling again, this is a simplified
+         implementation.*/
+      if (msec != NULL) {
+        *msec = 1U;
+      }
+
+      return FLASH_BUSY_ERASING;
+    }
+
+    /* The device is ready to accept commands.*/
+    devp->state = FLASH_READY;
+
+    /* Checking for errors.*/
+    if ((sts & N25Q128_STS_ALL_ERRORS) != 0U) {
+      /* Clearing status register.*/
+      flash_short_cmd(devp, N25Q128_CMD_CLEAR_FLAG_STATUS_REGISTER);
+
+      /* Program operation failed.*/
+      return FLASH_ERROR_ERASE;
+    }
+
+    flash_bus_release(devp);
+  }
+
   return FLASH_NO_ERROR;
 }
 
@@ -372,16 +442,12 @@ void n25q128Start(N25Q128Driver *devp, const N25Q128Config *config) {
     flash_bus_acquire(devp);
 
     /* Reset Enable command.*/
-    spiSelect(spip);
-    flash_send_cmd(devp, N25Q128_CMD_RESET_ENABLE);
-    spiUnselect(spip);
+    flash_short_cmd(devp, N25Q128_CMD_RESET_ENABLE);
 
     (void) spiPolledExchange(spip, 0xFF);   /* One frame delay.*/
 
     /* Reset Memory command.*/
-    spiSelect(spip);
-    flash_send_cmd(devp, N25Q128_CMD_RESET_MEMORY);
-    spiUnselect(spip);
+    flash_short_cmd(devp, N25Q128_CMD_RESET_MEMORY);
 
     devp->state = FLASH_READY;
     flash_bus_release(devp);
@@ -428,7 +494,7 @@ void n25q128ReadId(N25Q128Driver *devp, uint8_t *rp, size_t n) {
   osalDbgAssert(devp->state == FLASH_READY, "invalid state");
 
   flash_bus_acquire(devp);
-  devp->state = FLASH_READING;
+  devp->state = FLASH_READ;
 
   /* Read Id command.*/
   spiSelect(spip);

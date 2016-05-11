@@ -129,7 +129,7 @@ int main(void) {
   err = flashRead(&flash, 0, buffer, 128);
   if (err != FLASH_NO_ERROR)
     chSysHalt("read error");
-  err = flashEraseSector(&flash, 0);
+  err = flashStartEraseSector(&flash, 0);
   if (err != FLASH_NO_ERROR)
     chSysHalt("erase error");
   err = flashVerifyErase(&flash, 0);
