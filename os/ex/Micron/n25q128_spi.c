@@ -18,16 +18,16 @@
 */
 
 /**
- * @file    n25q128.c
- * @brief   N25Q128 flash interface module code.
+ * @file    n25q128_spi.c
+ * @brief   N25Q128 over SPI driver code.
  *
- * @addtogroup n25q128
+ * @addtogroup n25q128_spi
  * @{
  */
 
 #include "hal.h"
 
-#include "n25q128.h"
+#include "n25q128_spi.h"
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */

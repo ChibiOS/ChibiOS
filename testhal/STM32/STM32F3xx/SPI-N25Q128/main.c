@@ -17,7 +17,7 @@
 #include "ch.h"
 #include "hal.h"
 
-#include "n25q128.h"
+#include "n25q128_spi.h"
 
 /*
  * Maximum speed SPI configuration (18MHz, CPHA=0, CPOL=0, MSb first).

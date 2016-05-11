@@ -18,9 +18,10 @@
 */
 
 /**
- * @file    n25q128.h
- * @brief   N25Q128 flash interface module header.
+ * @file    n25q128_spi.h
+ * @brief   N25Q128 over SPI driver header.
  *
+ * @addtogroup n25q128_spi
  * @{
  */
 
