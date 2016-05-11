@@ -119,22 +119,28 @@ int main(void) {
    */
   n25q128ReadId(&flash, buffer, 17);
 
-  /*
-   * Writing then reading a pattern on a single page with final erase and
-   * verify.
-   */
+  /* Programming a pattern.*/
   err = flashProgram(&flash, 0, pattern, 128);
   if (err != FLASH_NO_ERROR)
     chSysHalt("program error");
+
+  /* Reading it back.*/
   err = flashRead(&flash, 0, buffer, 128);
   if (err != FLASH_NO_ERROR)
     chSysHalt("read error");
-  err = flashStartEraseSector(&flash, 0);
+
+  /* Erasing the containing sector and waiting for completion.*/
+  (void) flashStartEraseSector(&flash, 0);
+  err = flashWaitErase((BaseFlash *)&flash);
   if (err != FLASH_NO_ERROR)
     chSysHalt("erase error");
+
+  /* Verifying the erase operation.*/
   err = flashVerifyErase(&flash, 0);
   if (err != FLASH_NO_ERROR)
     chSysHalt("verify erase error");
+
+  /* Reading back for confirmation.*/
   err = flashRead(&flash, 0, buffer, 128);
   if (err != FLASH_NO_ERROR)
     chSysHalt("read error");
