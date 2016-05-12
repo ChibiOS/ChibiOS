@@ -370,7 +370,6 @@ void lis302dlStart(LIS302DLDriver *devp, const LIS302DLConfig *config) {
   spiStart((devp)->config->spip,
            (devp)->config->spicfg);
   lis302dlSPIWriteRegister(devp->config->spip, LIS302DL_AD_CTRL_REG1,
-                         devp->config->axesenabling |
                          LIS302DL_PM_SLEEP_NORMAL |
                          devp->config->axesenabling |
 						 devp->config->fullscale |
