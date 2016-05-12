@@ -241,7 +241,9 @@ typedef struct LIS3DSHDriver LIS3DSHDriver;
  * @brief   @p LIS3DSH specific methods.
  */
 #define _lis3dsh_methods                                                    \
-  _base_accelerometer_methods
+  _base_accelerometer_methods                                               \
+  /* Retrieve the temperature of L3GD20 chip.*/                             \
+  msg_t (*get_temperature)(void *instance, int8_t* temperature);
 
 /**
  * @extends BaseAccelerometerVMT
@@ -291,16 +293,17 @@ struct LIS3DSHDriver {
 /**
  * @brief   Get current MEMS temperature.
  * @detail  This information is very useful especially for high accuracy IMU
+ * @note    Value is raw since there is a lack of information in datasheet.
  *
  * @param[in] ip        pointer to a @p BaseAccelerometer class.
- * @param[out] temp     the MEMS temperature as single precision floating.
+ * @param[out] temp     the MEMS temperature as raw data.
  *
  * @return              The operation status.
  * @retval MSG_OK       if the function succeeded.
  * @retval MSG_RESET    if one or more errors occurred.
  * @api
  */
-#define accelerometerGetTemp(ip, tpp)                                           \
+#define accelerometerGetTemp(ip, tpp)                                       \
         (ip)->vmt_lis3dsh->get_temperature(ip, tpp)
 
 /*===========================================================================*/

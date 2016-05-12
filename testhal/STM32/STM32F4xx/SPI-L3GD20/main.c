@@ -113,12 +113,13 @@ int main(void) {
    */
   l3gd20Start(&L3GD20D1, &l3gd20cfg);
 
-  while(!palReadLine(LINE_BUTTON)){
+  while(!palReadLine(LINE_BUTTON)) {
     chprintf(chp, "Press BTN to calibrate gyroscope...\r\n");
     chThdSleepMilliseconds(150);
 #if CHPRINTF_USE_ANSI_CODE
     chprintf(chp, "\033[2J\033[1;1H");
 #endif
+  }
 
   palClearLine(LINE_LED3);
   chprintf(chp, "Calibrating Gyroscope sampling bias...\r\n");

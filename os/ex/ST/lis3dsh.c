@@ -466,6 +466,24 @@ static msg_t reset_sensivity(void *ip) {
   return MSG_OK;
 }
 
+static msg_t get_temperature(void *ip, int8_t* tempp) {
+#if LIS3DSH_USE_SPI
+  osalDbgAssert((((LIS3DSHDriver *)ip)->config->spip->state == SPI_READY),
+                "read_raw(), channel not ready");
+#if	LIS3DSH_SHARED_SPI
+  spiAcquireBus(((LIS3DSHDriver *)ip)->config->spip);
+  spiStart(((LIS3DSHDriver *)ip)->config->spip,
+           ((LIS3DSHDriver *)ip)->config->spicfg);
+#endif /* LIS3DSH_SHARED_SPI */   
+  *tempp = lis3dshSPIReadRegister(((LIS3DSHDriver *)ip)->config->spip,
+                                    LIS3DSH_AD_OUT_T);
+#if	LIS3DSH_SHARED_SPI
+  spiReleaseBus(((LIS3DSHDriver *)ip)->config->spip);
+#endif /* LIS3DSH_SHARED_SPI */   
+#endif /* LIS3DSH_USE_SPI */ 
+  return MSG_OK;
+}
+
 static const struct BaseSensorVMT vmt_basesensor = {
   get_axes_number, read_raw, read_cooked
 };
@@ -477,7 +495,8 @@ static const struct BaseAccelerometerVMT vmt_baseaccelerometer = {
 
 static const struct LIS3DSHVMT vmt_lis3dsh = {
   get_axes_number, read_raw, read_cooked,
-  set_bias, reset_bias, set_sensivity, reset_sensivity
+  set_bias, reset_bias, set_sensivity, reset_sensivity,
+  get_temperature
 };
 
 /*===========================================================================*/

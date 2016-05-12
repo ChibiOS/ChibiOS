@@ -120,7 +120,7 @@ int main(void) {
 
     accelerometerReadCooked(&LIS302DLD1, cookeddata);
     for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++)
-      chprintf(chp, "COOKED-%c:%.3f\r\n", axesID[i], cookeddata[i]);
+      chprintf(chp, "COOKED-%c:%.3f g\r\n", axesID[i], cookeddata[i]);
 
     chThdSleepMilliseconds(150);
 #if CHPRINTF_USE_ANSI_CODE

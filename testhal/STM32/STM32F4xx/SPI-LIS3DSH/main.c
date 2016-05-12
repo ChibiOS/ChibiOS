@@ -32,6 +32,7 @@ static LIS3DSHDriver LIS3DSHD1;
 
 static int32_t rawdata[LIS3DSH_NUMBER_OF_AXES];
 static float cookeddata[LIS3DSH_NUMBER_OF_AXES];
+static int8_t temperature;
 
 static char axesID[LIS3DSH_NUMBER_OF_AXES] = {'X', 'Y', 'Z'};
 static uint32_t i;
@@ -121,7 +122,10 @@ int main(void) {
 
     accelerometerReadCooked(&LIS3DSHD1, cookeddata);
     for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++)
-      chprintf(chp, "COOKED-%c:%.3f\r\n", axesID[i], cookeddata[i]);
+      chprintf(chp, "COOKED-%c:%.3f g\r\n", axesID[i], cookeddata[i]);
+
+    accelerometerGetTemp(&LIS3DSHD1, &temperature);
+    chprintf(chp, "TEMP:%d \r\n", temperature);
 
     chThdSleepMilliseconds(150);
 #if CHPRINTF_USE_ANSI_CODE
