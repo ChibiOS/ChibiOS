@@ -226,7 +226,8 @@
 #error "UART4 not present in the selected device"
 #endif
 
-#if !defined(STM32F2XX) && !defined(STM32F4XX)
+#if !defined(STM32F2XX) && !defined(STM32F4XX) && !defined(STM32L151xE)  && \
+    !defined(STM32L152xE) && !defined(STM32L162xE)
 #error "UART4 DMA access not supported in this platform"
 #endif
 #endif /* STM32_UART_USE_UART4 */
@@ -236,7 +237,8 @@
 #error "UART5 not present in the selected device"
 #endif
 
-#if !defined(STM32F2XX) && !defined(STM32F4XX)
+#if !defined(STM32F2XX) && !defined(STM32F4XX) && !defined(STM32L151xE)  && \
+    !defined(STM32L152xE) && !defined(STM32L162xE)
 #error "UART5 DMA access not supported in this platform"
 #endif
 #endif /* STM32_UART_USE_UART5 */

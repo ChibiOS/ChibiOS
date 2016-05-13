@@ -75,11 +75,14 @@
 #define STM32_USART1_HANDLER        VectorD4
 #define STM32_USART2_HANDLER        VectorD8
 #define STM32_USART3_HANDLER        VectorDC
+#define STM32_UART4_HANDLER         Vector100
+#define STM32_UART5_HANDLER         Vector105
 
 #define STM32_USART1_NUMBER         37
 #define STM32_USART2_NUMBER         38
 #define STM32_USART3_NUMBER         39
-
+#define STM32_UART4_NUMBER          48
+#define STM32_UART5_NUMBER          49
 /*
  * USB units.
  */
