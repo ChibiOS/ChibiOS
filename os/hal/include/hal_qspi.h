@@ -31,6 +31,10 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @name    Transfer options
+ * @{
+ */
 #define QSPI_CFG_CMD_MASK                   (0xFFU << 0U)
 #define QSPI_CFG_CMD(n)                     ((n) << 0U)
 #define QSPI_CFG_CMD_MODE_MASK              (3U << 8U)
@@ -48,16 +52,16 @@
 #define QSPI_CFG_ADDR_SIZE_16               (1U << 12U)
 #define QSPI_CFG_ADDR_SIZE_24               (2U << 12U)
 #define QSPI_CFG_ADDR_SIZE_32               (3U << 12U)
-#define QSPI_CFG_AB_MODE_MASK               (3U << 14U)
-#define QSPI_CFG_AB_MODE_NONE               (0U << 14U)
-#define QSPI_CFG_AB_MODE_ONE_LINE           (1U << 14U)
-#define QSPI_CFG_AB_MODE_TWO_LINES          (2U << 14U)
-#define QSPI_CFG_AB_MODE_FOUR_LINES         (3U << 14U)
-#define QSPI_CFG_AB_SIZE_MASK               (3U << 16U)
-#define QSPI_CFG_AB_SIZE_8                  (0U << 16U)
-#define QSPI_CFG_AB_SIZE_16                 (1U << 16U)
-#define QSPI_CFG_AB_SIZE_24                 (2U << 16U)
-#define QSPI_CFG_AB_SIZE_32                 (3U << 16U)
+#define QSPI_CFG_ALT_MODE_MASK              (3U << 14U)
+#define QSPI_CFG_ALT_MODE_NONE              (0U << 14U)
+#define QSPI_CFG_ALT_MODE_ONE_LINE          (1U << 14U)
+#define QSPI_CFG_ALT_MODE_TWO_LINES         (2U << 14U)
+#define QSPI_CFG_ALT_MODE_FOUR_LINES        (3U << 14U)
+#define QSPI_CFG_ALT_SIZE_MASK              (3U << 16U)
+#define QSPI_CFG_ALT_SIZE_8                 (0U << 16U)
+#define QSPI_CFG_ALT_SIZE_16                (1U << 16U)
+#define QSPI_CFG_ALT_SIZE_24                (2U << 16U)
+#define QSPI_CFG_ALT_SIZE_32                (3U << 16U)
 #define QSPI_CFG_DUMMY_CYCLES_MASK          (0x1FU << 18U)
 #define QSPI_CFG_DUMMY_CYCLES(n)            ((n) << 18U)
 #define QSPI_CFG_DATA_MODE_MASK             (3U << 24U)
@@ -72,6 +76,7 @@
 #define QSPI_CFG_F_MODE_FOUR_LINES          (3U << 26U)
 #define QSPI_CFG_SIOO                       (1U << 28U)
 #define QSPI_CFG_DDRM                       (1U << 31U)
+/** @} */
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -118,15 +123,15 @@ typedef enum {
 } qspistate_t;
 
 /**
- * @brief   Type of a QSPI transaction descriptor.
+ * @brief   Type of a QSPI command descriptor.
  */
 typedef struct {
   uint32_t              cfg;
-  uint32_t              address;
-  uint32_t              alternate;
-} qspitransaction_t;
+  uint32_t              addr;
+  uint32_t              alt;
+} qspi_command_t;
 
-#include "hal_spi_lld.h"
+#include "hal_qspi_lld.h"
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -142,14 +147,15 @@ typedef struct {
  * @post    At the end of the operation the configured callback is invoked.
  *
  * @param[in] qspip     pointer to the @p QSPIDriver object
- * @param[in] n         number of bytes to send
+ * @param[in] cmd       pointer to the command descriptor
+ * @param[in] n         number of bytes to send or zero if no data phase
  * @param[in] txbuf     the pointer to the transmit buffer
  *
  * @iclass
  */
-#define qspiStartSendI(qspip, n, txbuf) {                                   \
+#define qspiStartSendI(qspip, cmd, n, txbuf) {                              \
   (qspip)->state = QSPI_ACTIVE;                                             \
-  qspi_lld_send(qspip, n, txbuf);                                           \
+  qspi_lld_send(qspip, cmd, n, txbuf);                                      \
 }
 
 /**
@@ -158,14 +164,15 @@ typedef struct {
  * @post    At the end of the operation the configured callback is invoked.
  *
  * @param[in] qspip     pointer to the @p QSPIDriver object
- * @param[in] n         number of bytes to receive
+ * @param[in] cmd       pointer to the command descriptor
+ * @param[in] n         number of bytes to receive or zero if no data phase
  * @param[out] rxbuf    the pointer to the receive buffer
  *
  * @iclass
  */
-#define qspiStartReceiveI(qspip, n, rxbuf) {                                \
+#define qspiStartReceiveI(qspip, cmd, n, rxbuf) {                           \
   (qspip)->state = QSPI_ACTIVE;                                             \
-  qspi_lld_receive(qspip, n, rxbuf);                                        \
+  qspi_lld_receive(qspip, cmd, n, rxbuf);                                   \
 }
 /** @} */
 
@@ -228,11 +235,15 @@ extern "C" {
   void qspiObjectInit(QSPIDriver *qspip);
   void qspiStart(QSPIDriver *qspip, const QSPIConfig *config);
   void qspiStop(QSPIDriver *qspip);
-  void qspiStartSend(QSPIDriver *qspip, size_t n, const void *txbuf);
-  void qspiStartReceive(QSPIDriver *qspip, size_t n, void *rxbuf);
+  void qspiStartSend(QSPIDriver *qspip, const qspi_command_t *cmdp,
+                     size_t n, const uint8_t *txbuf);
+  void qspiStartReceive(QSPIDriver *qspip, const qspi_command_t *cmdp,
+                        size_t n, uint8_t *rxbuf);
 #if QSPI_USE_WAIT == TRUE
-  void qspiSend(QSPIDriver *qspip, size_t n, const void *txbuf);
-  void qspiReceive(QSPIDriver *qspip, size_t n, void *rxbuf);
+  void qspiSend(QSPIDriver *qspip, const qspi_command_t *cmdp,
+                size_t n, const uint8_t *txbuf);
+  void qspiReceive(QSPIDriver *qspip, const qspi_command_t *cmdp,
+                   size_t n, uint8_t *rxbuf);
 #endif
 #if QSPI_USE_MUTUAL_EXCLUSION == TRUE
   void qspiAcquireBus(QSPIDriver *qspip);

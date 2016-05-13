@@ -128,18 +128,21 @@ void qspiStop(QSPIDriver *qspip) {
  * @post    At the end of the operation the configured callback is invoked.
  *
  * @param[in] qspip     pointer to the @p QSPIDriver object
- * @param[in] n         number of words to send
+ * @param[in] cmd       pointer to the command descriptor
+ * @param[in] n         number of words to send or zero if no data phase
  * @param[in] txbuf     the pointer to the transmit buffer
  *
  * @api
  */
-void qspiStartSend(QSPIDriver *qspip, size_t n, const void *txbuf) {
+void qspiStartSend(QSPIDriver *qspip, const qspi_command_t *cmdp,
+                   size_t n, const uint8_t *txbuf) {
 
-  osalDbgCheck((qspip != NULL) && (n > 0U) && (txbuf != NULL));
+  osalDbgCheck((qspip != NULL) && (cmdp != NULL));
+  osalDbgCheck((n == 0U) || ((n > 0U) && (txbuf != NULL)));
 
   osalSysLock();
   osalDbgAssert(qspip->state == QSPI_READY, "not ready");
-  qspiStartSendI(qspip, n, txbuf);
+  qspiStartSendI(qspip, cmd, n, txbuf);
   osalSysUnlock();
 }
 
@@ -149,18 +152,21 @@ void qspiStartSend(QSPIDriver *qspip, size_t n, const void *txbuf) {
  * @post    At the end of the operation the configured callback is invoked.
  *
  * @param[in] qspip     pointer to the @p QSPIDriver object
- * @param[in] n         number of words to receive
+ * @param[in] cmd       pointer to the command descriptor
+ * @param[in] n         number of words to receive or zero if no data phase
  * @param[out] rxbuf    the pointer to the receive buffer
  *
  * @api
  */
-void qspiStartReceive(QSPIDriver *qspip, size_t n, void *rxbuf) {
+void qspiStartReceive(QSPIDriver *qspip, const qspi_command_t *cmdp,
+                      size_t n, uint8_t *rxbuf) {
 
-  osalDbgCheck((qspip != NULL) && (n > 0U) && (rxbuf != NULL));
+  osalDbgCheck((qspip != NULL) && (cmdp != NULL));
+  osalDbgCheck((n == 0U) || ((n > 0U) && (rxbuf != NULL)));
 
   osalSysLock();
   osalDbgAssert(qspip->state == QSPI_READY, "not ready");
-  qspiStartReceiveI(qspip, n, rxbuf);
+  qspiStartReceiveI(qspip, cmd, n, rxbuf);
   osalSysUnlock();
 }
 
@@ -172,23 +178,24 @@ void qspiStartReceive(QSPIDriver *qspip, size_t n, void *rxbuf) {
  *          enabled.
  * @pre     In order to use this function the driver must have been configured
  *          without callbacks (@p end_cb = @p NULL).
- * @note    The buffers are organized as uint8_t arrays for data sizes below
- *          or equal to 8 bits else it is organized as uint16_t arrays.
  *
  * @param[in] qspip     pointer to the @p QSPIDriver object
- * @param[in] n         number of words to send
+ * @param[in] cmd       pointer to the command descriptor
+ * @param[in] n         number of words to send or zero if no data phase
  * @param[in] txbuf     the pointer to the transmit buffer
  *
  * @api
  */
-void qspiSend(QSPIDriver *qspip, size_t n, const void *txbuf) {
+void qspiSend(QSPIDriver *qspip, const qspi_command_t *cmdp,
+              size_t n, const uint8_t *txbuf) {
 
-  osalDbgCheck((qspip != NULL) && (n > 0U) && (txbuf != NULL));
+  osalDbgCheck((qspip != NULL) && (cmdp != NULL));
+  osalDbgCheck((n == 0U) || ((n > 0U) && (txbuf != NULL)));
 
   osalSysLock();
   osalDbgAssert(qspip->state == QSPI_READY, "not ready");
   osalDbgAssert(qspip->config->end_cb == NULL, "has callback");
-  qspiStartSendI(qspip, n, txbuf);
+  qspiStartSendI(qspip, cmd, n, txbuf);
   (void) osalThreadSuspendS(&qspip->thread);
   osalSysUnlock();
 }
@@ -200,23 +207,24 @@ void qspiSend(QSPIDriver *qspip, size_t n, const void *txbuf) {
  *          enabled.
  * @pre     In order to use this function the driver must have been configured
  *          without callbacks (@p end_cb = @p NULL).
- * @note    The buffers are organized as uint8_t arrays for data sizes below
- *          or equal to 8 bits else it is organized as uint16_t arrays.
  *
  * @param[in] qspip     pointer to the @p QSPIDriver object
- * @param[in] n         number of words to receive
+ * @param[in] cmd       pointer to the command descriptor
+ * @param[in] n         number of words to receive or zero if no data phase
  * @param[out] rxbuf    the pointer to the receive buffer
  *
  * @api
  */
-void qspiReceive(QSPIDriver *qspip, size_t n, void *rxbuf) {
+void qspiReceive(QSPIDriver *qspip, const qspi_command_t *cmdp,
+                 size_t n, uint8_t *rxbuf) {
 
-  osalDbgCheck((qspip != NULL) && (n > 0U) && (rxbuf != NULL));
+  osalDbgCheck((qspip != NULL) && (cmdp != NULL));
+  osalDbgCheck((n == 0U) || ((n > 0U) && (rxbuf != NULL)));
 
   osalSysLock();
   osalDbgAssert(qspip->state == QSPI_READY, "not ready");
   osalDbgAssert(qspip->config->end_cb == NULL, "has callback");
-  qspiStartReceiveI(qspip, n, rxbuf);
+  qspiStartReceiveI(qspip, cmd, n, rxbuf);
   (void) osalThreadSuspendS(&qspip->thread);
   osalSysUnlock();
 }

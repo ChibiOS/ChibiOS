@@ -29,6 +29,83 @@
 #include "board.h"
 #include "halconf.h"
 
+/* Error checks on the configuration header file.*/
+#if !defined(HAL_USE_PAL)
+#define HAL_USE_PAL                         FALSE
+#endif
+
+#if !defined(HAL_USE_ADC)
+#define HAL_USE_ADC                         FALSE
+#endif
+
+#if !defined(HAL_USE_CAN)
+#define HAL_USE_CAN                         FALSE
+#endif
+
+#if !defined(HAL_USE_DAC)
+#define HAL_USE_DAC                         FALSE
+#endif
+
+#if !defined(HAL_USE_EXT)
+#define HAL_USE_ETX                         FALSE
+#endif
+
+#if !defined(HAL_USE_GPT)
+#define HAL_USE_GPT                         FALSE
+#endif
+
+#if !defined(HAL_USE_I2C)
+#define HAL_USE_I2C                         FALSE
+#endif
+
+#if !defined(HAL_USE_I2S)
+#define HAL_USE_I2S                         FALSE
+#endif
+
+#if !defined(HAL_USE_ICU)
+#define HAL_USE_ICU                         FALSE
+#endif
+
+#if !defined(HAL_USE_MAC)
+#define HAL_USE_MAC                         FALSE
+#endif
+
+#if !defined(HAL_USE_PWM)
+#define HAL_USE_PWM                         FALSE
+#endif
+
+#if !defined(HAL_USE_QSPI)
+#define HAL_USE_QSPI                        FALSE
+#endif
+
+#if !defined(HAL_USE_RTC)
+#define HAL_USE_RTC                         FALSE
+#endif
+
+#if !defined(HAL_USE_SERIAL)
+#define HAL_USE_SERIAL                      FALSE
+#endif
+
+#if !defined(HAL_USE_SDC)
+#define HAL_USE_SDC                         FALSE
+#endif
+
+#if !defined(HAL_USE_SPI)
+#define HAL_USE_SPI                         FALSE
+#endif
+
+#if !defined(HAL_USE_UART)
+#define HAL_USE_UART                        FALSE
+#endif
+
+#if !defined(HAL_USE_USB)
+#define HAL_USE_USB                         FALSE
+#endif
+
+#if !defined(HAL_USE_WDG)
+#define HAL_USE_WDG                         FALSE
+#endif
+
 #include "hal_lld.h"
 
 /* Abstract interfaces.*/
@@ -54,6 +131,7 @@
 #include "hal_icu.h"
 #include "hal_mac.h"
 #include "hal_pwm.h"
+#include "hal_qspi.h"
 #include "hal_rtc.h"
 #include "hal_serial.h"
 #include "hal_sdc.h"
