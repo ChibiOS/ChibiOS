@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef HAL_SPI_LLD_H
-#define HAL_SPI_LLD_H
+#ifndef HAL_QSPI_LLD_H
+#define HAL_QSPI_LLD_H
 
 #if HAL_USE_QSPI || defined(__DOXYGEN__)
 
@@ -40,166 +40,33 @@
  * @{
  */
 /**
- * @brief   SPI1 driver enable switch.
- * @details If set to @p TRUE the support for SPI1 is included.
+ * @brief   QUADSPI1 driver enable switch.
+ * @details If set to @p TRUE the support for QUADSPI1 is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(STM32_SPI_USE_SPI1) || defined(__DOXYGEN__)
-#define STM32_SPI_USE_SPI1                  FALSE
+#if !defined(STM32_QSPI_USE_QUADSPI1) || defined(__DOXYGEN__)
+#define STM32_QSPI_USE_QUADSPI1             FALSE
 #endif
 
 /**
- * @brief   SPI2 driver enable switch.
- * @details If set to @p TRUE the support for SPI2 is included.
- * @note    The default is @p FALSE.
+ * @brief   QUADSPI1 interrupt priority level setting.
  */
-#if !defined(STM32_SPI_USE_SPI2) || defined(__DOXYGEN__)
-#define STM32_SPI_USE_SPI2                  FALSE
+#if !defined(STM32_QSPI_QUADSPI1_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_QSPI_QUADSPI1_IRQ_PRIORITY    10
 #endif
 
 /**
- * @brief   SPI3 driver enable switch.
- * @details If set to @p TRUE the support for SPI3 is included.
- * @note    The default is @p FALSE.
+ * @brief   QUADSPI1 DMA priority (0..3|lowest..highest).
  */
-#if !defined(STM32_SPI_USE_SPI3) || defined(__DOXYGEN__)
-#define STM32_SPI_USE_SPI3                  FALSE
+#if !defined(STM32_QSPI_QUADSPI1_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_QSPI_QUADSPI1_DMA_PRIORITY    1
 #endif
 
 /**
- * @brief   SPI4 driver enable switch.
- * @details If set to @p TRUE the support for SPI4 is included.
- * @note    The default is @p FALSE.
+ * @brief   QUADSPI DMA error hook.
  */
-#if !defined(STM32_SPI_USE_SPI4) || defined(__DOXYGEN__)
-#define STM32_SPI_USE_SPI4                  FALSE
-#endif
-
-/**
- * @brief   SPI5 driver enable switch.
- * @details If set to @p TRUE the support for SPI5 is included.
- * @note    The default is @p FALSE.
- */
-#if !defined(STM32_SPI_USE_SPI5) || defined(__DOXYGEN__)
-#define STM32_SPI_USE_SPI5                  FALSE
-#endif
-
-/**
- * @brief   SPI6 driver enable switch.
- * @details If set to @p TRUE the support for SPI6 is included.
- * @note    The default is @p FALSE.
- */
-#if !defined(STM32_SPI_USE_SPI6) || defined(__DOXYGEN__)
-#define STM32_SPI_USE_SPI6                  FALSE
-#endif
-
-/**
- * @brief   SPI1 interrupt priority level setting.
- */
-#if !defined(STM32_SPI_SPI1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI1_IRQ_PRIORITY         10
-#endif
-
-/**
- * @brief   SPI2 interrupt priority level setting.
- */
-#if !defined(STM32_SPI_SPI2_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI2_IRQ_PRIORITY         10
-#endif
-
-/**
- * @brief   SPI3 interrupt priority level setting.
- */
-#if !defined(STM32_SPI_SPI3_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI3_IRQ_PRIORITY         10
-#endif
-
-/**
- * @brief   SPI4 interrupt priority level setting.
- */
-#if !defined(STM32_SPI_SPI4_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI4_IRQ_PRIORITY         10
-#endif
-
-/**
- * @brief   SPI5 interrupt priority level setting.
- */
-#if !defined(STM32_SPI_SPI5_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI5_IRQ_PRIORITY         10
-#endif
-
-/**
- * @brief   SPI6 interrupt priority level setting.
- */
-#if !defined(STM32_SPI_SPI6_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI6_IRQ_PRIORITY         10
-#endif
-
-/**
- * @brief   SPI1 DMA priority (0..3|lowest..highest).
- * @note    The priority level is used for both the TX and RX DMA streams but
- *          because of the streams ordering the RX stream has always priority
- *          over the TX stream.
- */
-#if !defined(STM32_SPI_SPI1_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI1_DMA_PRIORITY         1
-#endif
-
-/**
- * @brief   SPI2 DMA priority (0..3|lowest..highest).
- * @note    The priority level is used for both the TX and RX DMA streams but
- *          because of the streams ordering the RX stream has always priority
- *          over the TX stream.
- */
-#if !defined(STM32_SPI_SPI2_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI2_DMA_PRIORITY         1
-#endif
-
-/**
- * @brief   SPI3 DMA priority (0..3|lowest..highest).
- * @note    The priority level is used for both the TX and RX DMA streams but
- *          because of the streams ordering the RX stream has always priority
- *          over the TX stream.
- */
-#if !defined(STM32_SPI_SPI3_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI3_DMA_PRIORITY         1
-#endif
-
-/**
- * @brief   SPI4 DMA priority (0..3|lowest..highest).
- * @note    The priority level is used for both the TX and RX DMA streams but
- *          because of the streams ordering the RX stream has always priority
- *          over the TX stream.
- */
-#if !defined(STM32_SPI_SPI4_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI4_DMA_PRIORITY         1
-#endif
-
-/**
- * @brief   SPI5 DMA priority (0..3|lowest..highest).
- * @note    The priority level is used for both the TX and RX DMA streams but
- *          because of the streams ordering the RX stream has always priority
- *          over the TX stream.
- */
-#if !defined(STM32_SPI_SPI5_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI5_DMA_PRIORITY         1
-#endif
-
-/**
- * @brief   SPI6 DMA priority (0..3|lowest..highest).
- * @note    The priority level is used for both the TX and RX DMA streams but
- *          because of the streams ordering the RX stream has always priority
- *          over the TX stream.
- */
-#if !defined(STM32_SPI_SPI6_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI6_DMA_PRIORITY         1
-#endif
-
-/**
- * @brief   SPI DMA error hook.
- */
-#if !defined(STM32_SPI_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
-#define STM32_SPI_DMA_ERROR_HOOK(spip)      osalSysHalt("DMA failure")
+#if !defined(STM32_QSPI_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
+#define STM32_QSPI_DMA_ERROR_HOOK(qspip)    osalSysHalt("DMA failure")
 #endif
 /** @} */
 
@@ -207,188 +74,36 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if STM32_SPI_USE_SPI1 && !STM32_HAS_SPI1
-#error "SPI1 not present in the selected device"
+#if STM32_QSPI_USE_QUADSPI1 && !STM32_HAS_QUADSPI1
+#error "QUADSPI1 not present in the selected device"
 #endif
 
-#if STM32_SPI_USE_SPI2 && !STM32_HAS_SPI2
-#error "SPI2 not present in the selected device"
+#if !STM32_QSPI_USE_QUADSPI1
+#error "QSPI driver activated but no QUADSPI peripheral assigned"
 #endif
 
-#if STM32_SPI_USE_SPI3 && !STM32_HAS_SPI3
-#error "SPI3 not present in the selected device"
+#if STM32_QSPI_USE_QUADSPI1 &&                                              \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_QSPI_QUADSPI1_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to QUADSPI1"
 #endif
 
-#if STM32_SPI_USE_SPI4 && !STM32_HAS_SPI4
-#error "SPI4 not present in the selected device"
-#endif
-
-#if STM32_SPI_USE_SPI5 && !STM32_HAS_SPI5
-#error "SPI5 not present in the selected device"
-#endif
-
-#if STM32_SPI_USE_SPI6 && !STM32_HAS_SPI6
-#error "SPI6 not present in the selected device"
-#endif
-
-#if !STM32_SPI_USE_SPI1 && !STM32_SPI_USE_SPI2 && !STM32_SPI_USE_SPI3 &&    \
-    !STM32_SPI_USE_SPI4 && !STM32_SPI_USE_SPI5 && !STM32_SPI_USE_SPI6
-#error "SPI driver activated but no SPI peripheral assigned"
-#endif
-
-#if STM32_SPI_USE_SPI1 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SPI_SPI1_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to SPI1"
-#endif
-
-#if STM32_SPI_USE_SPI2 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SPI_SPI2_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to SPI2"
-#endif
-
-#if STM32_SPI_USE_SPI3 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SPI_SPI3_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to SPI3"
-#endif
-
-#if STM32_SPI_USE_SPI4 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SPI_SPI4_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to SPI4"
-#endif
-
-#if STM32_SPI_USE_SPI5 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SPI_SPI5_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to SPI5"
-#endif
-
-#if STM32_SPI_USE_SPI6 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SPI_SPI6_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to SPI6"
-#endif
-
-#if STM32_SPI_USE_SPI1 &&                                                   \
-    !STM32_DMA_IS_VALID_PRIORITY(STM32_SPI_SPI1_DMA_PRIORITY)
-#error "Invalid DMA priority assigned to SPI1"
-#endif
-
-#if STM32_SPI_USE_SPI2 &&                                                   \
-    !STM32_DMA_IS_VALID_PRIORITY(STM32_SPI_SPI2_DMA_PRIORITY)
-#error "Invalid DMA priority assigned to SPI2"
-#endif
-
-#if STM32_SPI_USE_SPI3 &&                                                   \
-    !STM32_DMA_IS_VALID_PRIORITY(STM32_SPI_SPI3_DMA_PRIORITY)
-#error "Invalid DMA priority assigned to SPI3"
-#endif
-
-#if STM32_SPI_USE_SPI4 &&                                                   \
-    !STM32_DMA_IS_VALID_PRIORITY(STM32_SPI_SPI4_DMA_PRIORITY)
-#error "Invalid DMA priority assigned to SPI4"
-#endif
-
-#if STM32_SPI_USE_SPI5 &&                                                   \
-    !STM32_DMA_IS_VALID_PRIORITY(STM32_SPI_SPI5_DMA_PRIORITY)
-#error "Invalid DMA priority assigned to SPI5"
-#endif
-
-#if STM32_SPI_USE_SPI6 &&                                                   \
-    !STM32_DMA_IS_VALID_PRIORITY(STM32_SPI_SPI6_DMA_PRIORITY)
-#error "Invalid DMA priority assigned to SPI6"
+#if STM32_QSPI_USE_QUADSPI1 &&                                              \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_QSPI_QUADSPI1_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to QUADSPI1"
 #endif
 
 /* The following checks are only required when there is a DMA able to
    reassign streams to different channels.*/
 #if STM32_ADVANCED_DMA
 /* Check on the presence of the DMA streams settings in mcuconf.h.*/
-#if STM32_SPI_USE_SPI1 && (!defined(STM32_SPI_SPI1_RX_DMA_STREAM) ||        \
-                           !defined(STM32_SPI_SPI1_TX_DMA_STREAM))
-#error "SPI1 DMA streams not defined"
-#endif
-
-#if STM32_SPI_USE_SPI2 && (!defined(STM32_SPI_SPI2_RX_DMA_STREAM) ||        \
-                           !defined(STM32_SPI_SPI2_TX_DMA_STREAM))
-#error "SPI2 DMA streams not defined"
-#endif
-
-#if STM32_SPI_USE_SPI3 && (!defined(STM32_SPI_SPI3_RX_DMA_STREAM) ||        \
-                           !defined(STM32_SPI_SPI3_TX_DMA_STREAM))
-#error "SPI3 DMA streams not defined"
-#endif
-
-#if STM32_SPI_USE_SPI4 && (!defined(STM32_SPI_SPI4_RX_DMA_STREAM) ||        \
-                           !defined(STM32_SPI_SPI4_TX_DMA_STREAM))
-#error "SPI4 DMA streams not defined"
-#endif
-
-#if STM32_SPI_USE_SPI5 && (!defined(STM32_SPI_SPI5_RX_DMA_STREAM) ||        \
-                           !defined(STM32_SPI_SPI5_TX_DMA_STREAM))
-#error "SPI5 DMA streams not defined"
-#endif
-
-#if STM32_SPI_USE_SPI6 && (!defined(STM32_SPI_SPI6_RX_DMA_STREAM) ||        \
-                           !defined(STM32_SPI_SPI6_TX_DMA_STREAM))
-#error "SPI6 DMA streams not defined"
+#if STM32_QSPI_USE_QUADSPI1 && !defined(STM32_QSPI_QUADSPI1_DMA_STREAM)
+#error "QUADSPI1 DMA stream not defined"
 #endif
 
 /* Check on the validity of the assigned DMA channels.*/
-#if STM32_SPI_USE_SPI1 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI1_RX_DMA_STREAM, STM32_SPI1_RX_DMA_MSK)
-#error "invalid DMA stream associated to SPI1 RX"
-#endif
-
-#if STM32_SPI_USE_SPI1 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI1_TX_DMA_STREAM, STM32_SPI1_TX_DMA_MSK)
-#error "invalid DMA stream associated to SPI1 TX"
-#endif
-
-#if STM32_SPI_USE_SPI2 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI2_RX_DMA_STREAM, STM32_SPI2_RX_DMA_MSK)
-#error "invalid DMA stream associated to SPI2 RX"
-#endif
-
-#if STM32_SPI_USE_SPI2 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI2_TX_DMA_STREAM, STM32_SPI2_TX_DMA_MSK)
-#error "invalid DMA stream associated to SPI2 TX"
-#endif
-
-#if STM32_SPI_USE_SPI3 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI3_RX_DMA_STREAM, STM32_SPI3_RX_DMA_MSK)
-#error "invalid DMA stream associated to SPI3 RX"
-#endif
-
-#if STM32_SPI_USE_SPI3 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI3_TX_DMA_STREAM, STM32_SPI3_TX_DMA_MSK)
-#error "invalid DMA stream associated to SPI3 TX"
-#endif
-
-#if STM32_SPI_USE_SPI4 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI4_RX_DMA_STREAM, STM32_SPI4_RX_DMA_MSK)
-#error "invalid DMA stream associated to SPI4 RX"
-#endif
-
-#if STM32_SPI_USE_SPI4 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI4_TX_DMA_STREAM, STM32_SPI4_TX_DMA_MSK)
-#error "invalid DMA stream associated to SPI4 TX"
-#endif
-
-#if STM32_SPI_USE_SPI5 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI5_RX_DMA_STREAM, STM32_SPI5_RX_DMA_MSK)
-#error "invalid DMA stream associated to SPI5 RX"
-#endif
-
-#if STM32_SPI_USE_SPI5 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI5_TX_DMA_STREAM, STM32_SPI5_TX_DMA_MSK)
-#error "invalid DMA stream associated to SPI5 TX"
-#endif
-
-#if STM32_SPI_USE_SPI6 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI6_RX_DMA_STREAM, STM32_SPI6_RX_DMA_MSK)
-#error "invalid DMA stream associated to SPI6 RX"
-#endif
-
-#if STM32_SPI_USE_SPI6 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI6_TX_DMA_STREAM, STM32_SPI6_TX_DMA_MSK)
-#error "invalid DMA stream associated to SPI6 TX"
+#if STM32_QSPI_USE_QUADSPI1 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_QSPI_QUADSPI1_DMA_STREAM, STM32_QUADSPI1_DMA_MSK)
+#error "invalid DMA stream associated to QUADSPI1"
 #endif
 #endif /* STM32_ADVANCED_DMA */
 
@@ -401,93 +116,69 @@
 /*===========================================================================*/
 
 /**
- * @brief   Type of a structure representing an SPI driver.
+ * @brief   Type of a structure representing an QSPI driver.
  */
-typedef struct SPIDriver SPIDriver;
+typedef struct QSPIDriver QSPIDriver;
 
 /**
- * @brief   SPI notification callback type.
+ * @brief   Type of a QSPI notification callback.
  *
- * @param[in] spip      pointer to the @p SPIDriver object triggering the
+ * @param[in] qspip     pointer to the @p QSPIDriver object triggering the
  *                      callback
  */
-typedef void (*spicallback_t)(SPIDriver *spip);
+typedef void (*qspicallback_t)(QSPIDriver *qspip);
 
 /**
  * @brief   Driver configuration structure.
  */
 typedef struct {
   /**
-   * @brief Operation complete callback or @p NULL.
+   * @brief   Operation complete callback or @p NULL.
    */
-  spicallback_t             end_cb;
+  qspicallback_t             end_cb;
   /* End of the mandatory fields.*/
-  /**
-   * @brief The chip select line port.
-   */
-  ioportid_t                ssport;
-  /**
-   * @brief The chip select line pad number.
-   */
-  uint16_t                  sspad;
-  /**
-   * @brief SPI CR1 register initialization data.
-   */
-  uint16_t                  cr1;
-  /**
-   * @brief SPI CR2 register initialization data.
-   */
-  uint16_t                  cr2;
-} SPIConfig;
+} QSPIConfig;
 
 /**
- * @brief   Structure representing an SPI driver.
+ * @brief   Structure representing an QSPI driver.
  */
-struct SPIDriver {
+struct QSPIDriver {
   /**
-   * @brief Driver state.
+   * @brief   Driver state.
    */
-  spistate_t                state;
+  qspistate_t               state;
   /**
-   * @brief Current configuration data.
+   * @brief   Current configuration data.
    */
-  const SPIConfig           *config;
-#if SPI_USE_WAIT || defined(__DOXYGEN__)
+  const QSPIConfig           *config;
+#if QSPI_USE_WAIT || defined(__DOXYGEN__)
   /**
    * @brief   Waiting thread.
    */
   thread_reference_t        thread;
-#endif /* SPI_USE_WAIT */
-#if SPI_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
+#endif /* QSPI_USE_WAIT */
+#if QSPI_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
   /**
    * @brief   Mutex protecting the peripheral.
    */
   mutex_t                   mutex;
-#endif /* SPI_USE_MUTUAL_EXCLUSION */
-#if defined(SPI_DRIVER_EXT_FIELDS)
-  SPI_DRIVER_EXT_FIELDS
+#endif /* QSPI_USE_MUTUAL_EXCLUSION */
+#if defined(QSPI_DRIVER_EXT_FIELDS)
+  QSPI_DRIVER_EXT_FIELDS
 #endif
   /* End of the mandatory fields.*/
   /**
-   * @brief Pointer to the SPIx registers block.
+   * @brief   Pointer to the QUADSPIx registers block.
    */
-  SPI_TypeDef               *spi;
+  QUADSPI_TypeDef           *qspi;
   /**
-   * @brief   Receive DMA stream.
+   * @brief   QUADSPI DMA stream.
    */
-  const stm32_dma_stream_t  *dmarx;
+  const stm32_dma_stream_t  *dma;
   /**
-   * @brief   Transmit DMA stream.
+   * @brief   QUADSPI DMA mode bit mask.
    */
-  const stm32_dma_stream_t  *dmatx;
-  /**
-   * @brief   RX DMA mode bit mask.
-   */
-  uint32_t                  rxdmamode;
-  /**
-   * @brief   TX DMA mode bit mask.
-   */
-  uint32_t                  txdmamode;
+  uint32_t                  dmamode;
 };
 
 /*===========================================================================*/
@@ -498,44 +189,26 @@ struct SPIDriver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if STM32_SPI_USE_SPI1 && !defined(__DOXYGEN__)
-extern SPIDriver SPID1;
-#endif
-
-#if STM32_SPI_USE_SPI2 && !defined(__DOXYGEN__)
-extern SPIDriver SPID2;
-#endif
-
-#if STM32_SPI_USE_SPI3 && !defined(__DOXYGEN__)
-extern SPIDriver SPID3;
-#endif
-
-#if STM32_SPI_USE_SPI4 && !defined(__DOXYGEN__)
-extern SPIDriver SPID4;
-#endif
-
-#if STM32_SPI_USE_SPI5 && !defined(__DOXYGEN__)
-extern SPIDriver SPID5;
-#endif
-
-#if STM32_SPI_USE_SPI6 && !defined(__DOXYGEN__)
-extern SPIDriver SPID6;
+#if STM32_QSPI_USE_QUADSPI1 && !defined(__DOXYGEN__)
+extern QSPIDriver QSPID1;
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
   void qspi_lld_init(void);
-  void qspi_lld_start(SPIDriver *spip);
-  void qspi_lld_stop(SPIDriver *spip);
-  void qspi_lld_send(SPIDriver *spip, size_t n, const uint8_t *txbuf);
-  void qspi_lld_receive(SPIDriver *spip, size_t n, uint8_t *rxbuf);
+  void qspi_lld_start(QSPIDriver *qspip);
+  void qspi_lld_stop(QSPIDriver *qspip);
+  void qspi_lld_send(QSPIDriver *qspip, const qspi_command_t *cmdp,
+                     size_t n, const uint8_t *txbuf);
+  void qspi_lld_receive(QSPIDriver *qspip, const qspi_command_t *cmdp,
+                        size_t n, uint8_t *rxbuf);
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* HAL_USE_QSPI */
 
-#endif /* HAL_SPI_LLD_H */
+#endif /* HAL_QSPI_LLD_H */
 
 /** @} */

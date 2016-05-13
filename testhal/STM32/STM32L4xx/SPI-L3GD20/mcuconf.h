@@ -229,6 +229,12 @@
 #define STM32_PWM_TIM8_IRQ_PRIORITY         7
 
 /*
+ * QSPI driver system settings.
+ */
+#define STM32_QSPI_USE_QUADSPI1             TRUE
+#define STM32_QSPI_QUADSPI1_DMA_STREAM      STM32_DMA_STREAM_ID(2, 7)
+
+/*
  * SDC driver system settings.
  */
 #define STM32_SDC_USE_SDMMC1                FALSE

@@ -115,6 +115,13 @@
 #endif
 
 /**
+ * @brief   Enables the QSPI subsystem.
+ */
+#if !defined(HAL_USE_QSPI) || defined(__DOXYGEN__)
+#define HAL_USE_QSPI                TRUE
+#endif
+
+/**
  * @brief   Enables the RTC subsystem.
  */
 #if !defined(HAL_USE_RTC) || defined(__DOXYGEN__)

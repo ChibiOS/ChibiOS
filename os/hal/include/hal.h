@@ -106,6 +106,7 @@
 #define HAL_USE_WDG                         FALSE
 #endif
 
+/* Low Level HAL support.*/
 #include "hal_lld.h"
 
 /* Abstract interfaces.*/

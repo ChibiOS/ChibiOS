@@ -30,17 +30,17 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-#define SPI1_RX_DMA_CHANNEL                                                 \
+#define QUADSPI1_DMA_CHANNEL                                                \
   STM32_DMA_GETCHANNEL(STM32_QSPI_QUADSPI1_DMA_STREAM,                      \
-                       STM32_QUADSPI1_RX_DMA_CHN)
+                       STM32_QUADSPI1_DMA_CHN)
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
-/** @brief SPI1 driver identifier.*/
+/** @brief QUADSPI1 driver identifier.*/
 #if STM32_QSPI_USE_QUADSPI1 || defined(__DOXYGEN__)
-SPIDriver QSPID1;
+QSPIDriver QSPID1;
 #endif
 
 /*===========================================================================*/
@@ -59,13 +59,14 @@ SPIDriver QSPID1;
  */
 static void qspi_lld_serve_dma_interrupt(QSPIDriver *qspip, uint32_t flags) {
 
+  (void)qspip;
+  (void)flags;
+
   /* DMA errors handling.*/
 #if defined(STM32_QSPI_DMA_ERROR_HOOK)
   if ((flags & (STM32_DMA_ISR_TEIF | STM32_DMA_ISR_DMEIF)) != 0) {
     STM32_QSPI_DMA_ERROR_HOOK(qspip);
   }
-#else
-  (void)flags;
 #endif
 }
 
@@ -93,7 +94,7 @@ static void qspi_lld_serve_interrupt(QSPIDriver *qspip) {
 /*===========================================================================*/
 
 /**
- * @brief   Low level SPI driver initialization.
+ * @brief   Low level QSPI driver initialization.
  *
  * @notapi
  */
@@ -101,9 +102,9 @@ void qspi_lld_init(void) {
 
 #if STM32_QSPI_USE_QUADSPI1
   qspiObjectInit(&QSPID1);
-  QSPID1.spi        = SPI1;
+  QSPID1.qspi       = QUADSPI;
   QSPID1.dma        = STM32_DMA_STREAM(STM32_QSPI_QUADSPI1_DMA_STREAM);
-  QSPID1.dmamode    = STM32_DMA_CR_CHSEL(SPI1_RX_DMA_CHANNEL) |
+  QSPID1.dmamode    = STM32_DMA_CR_CHSEL(QUADSPI1_DMA_CHANNEL) |
                       STM32_DMA_CR_PL(STM32_QSPI_QUADSPI1_DMA_PRIORITY) |
                       STM32_DMA_CR_PSIZE_BYTE |
                       STM32_DMA_CR_MSIZE_BYTE |
@@ -121,15 +122,15 @@ void qspi_lld_init(void) {
  * @notapi
  */
 void qspi_lld_start(QSPIDriver *qspip) {
-  uint32_t ds;
 
-  /* If in stopped state then enables the SPI and DMA clocks.*/
+  /* If in stopped state then enables the QUADSPI and DMA clocks.*/
   if (qspip->state == QSPI_STOP) {
-#if STM32_SPI_USE_SPI1
-    if (&SPID1 == qspip) {
+#if STM32_QSPI_USE_QUADSPI1
+    if (&QSPID1 == qspip) {
       rccEnableQUADSPI1(FALSE);
     }
 #endif
+  }
 
   /* QSPI setup and enable.*/
 //  spip->spi->CR1  = 0;
@@ -148,7 +149,7 @@ void qspi_lld_start(QSPIDriver *qspip) {
  */
 void qspi_lld_stop(QSPIDriver *qspip) {
 
-  /* If in ready state then disables the SPI clock.*/
+  /* If in ready state then disables the QUADSPI clock.*/
   if (qspip->state == QSPI_READY) {
 
     /* QSPI disable.*/
@@ -157,8 +158,9 @@ void qspi_lld_stop(QSPIDriver *qspip) {
     dmaStreamRelease(qspip->dma);
 
 #if STM32_QSPI_USE_QUADSPI1
-    if (&QSPID1 == qspip)
+    if (&QSPID1 == qspip) {
       rccDisableQUADSPI1(FALSE);
+    }
 #endif
   }
 }
@@ -204,7 +206,7 @@ void qspi_lld_receive(QSPIDriver *qspip, const qspi_command_t *cmdp,
   dmaStreamSetTransactionSize(qspip->dma, n);
   dmaStreamSetMode(qspip->dma, qspip->dmamode | STM32_DMA_CR_DIR_P2M);
 
-  dmaStreamEnable(qspip->dmarx);
+  dmaStreamEnable(qspip->dma);
 }
 
 #endif /* HAL_USE_QSPI */
