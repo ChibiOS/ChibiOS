@@ -103,6 +103,9 @@ OSAL_IRQ_HANDLER(STM32_QUADSPI1_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
+  QUADSPI->FCR = QUADSPI_FCR_CTEF | QUADSPI_FCR_CTCF |
+                 QUADSPI_FCR_CSMF | QUADSPI_FCR_CTOF;
+
   qspi_lld_serve_interrupt(&QSPID1);
 
   OSAL_IRQ_EPILOGUE();
@@ -165,8 +168,7 @@ void qspi_lld_start(QSPIDriver *qspip) {
   /* QSPI setup and enable.*/
   qspip->qspi->DCR = qspip->config->dcr;
   qspip->qspi->CR  = ((STM32_QSPI_QUADSPI1_PRESCALER_VALUE - 1U) << 24U) |
-                      QUADSPI_CR_TCIE | QUADSPI_CR_TEIE | QUADSPI_CR_DMAEN |
-                      QUADSPI_CR_EN;
+                      QUADSPI_CR_TCIE | QUADSPI_CR_DMAEN | QUADSPI_CR_EN;
   qspip->qspi->FCR = QUADSPI_FCR_CTEF | QUADSPI_FCR_CTCF |
                      QUADSPI_FCR_CSMF | QUADSPI_FCR_CTOF;
 }
@@ -209,6 +211,7 @@ void qspi_lld_stop(QSPIDriver *qspip) {
  */
 void qspi_lld_command(QSPIDriver *qspip, const qspi_command_t *cmdp) {
 
+  qspip->qspi->DLR = 0U;
   qspip->qspi->ABR = cmdp->alt;
   qspip->qspi->CCR = cmdp->cfg;
   if ((cmdp->cfg & QSPI_CFG_ADDR_MODE_MASK) != QSPI_CFG_ADDR_MODE_NONE) {
