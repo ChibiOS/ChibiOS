@@ -164,6 +164,10 @@ typedef struct {
    */
   qspicallback_t             end_cb;
   /* End of the mandatory fields.*/
+  /**
+   * @brief   DCR register initialization data.
+   */
+  uint32_t                  dcr;
 } QSPIConfig;
 
 /**

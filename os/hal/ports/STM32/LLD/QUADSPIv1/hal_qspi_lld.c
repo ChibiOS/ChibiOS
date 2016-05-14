@@ -163,6 +163,7 @@ void qspi_lld_start(QSPIDriver *qspip) {
   }
 
   /* QSPI setup and enable.*/
+  qspip->qspi->DCR = qspip->config->dcr;
   qspip->qspi->CR  = ((STM32_QSPI_QUADSPI1_PRESCALER_VALUE - 1U) << 24U) |
                       QUADSPI_CR_TCIE | QUADSPI_CR_TEIE | QUADSPI_CR_DMAEN |
                       QUADSPI_CR_EN;
