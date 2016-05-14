@@ -49,6 +49,16 @@
 #endif
 
 /**
+ * @brief   QUADSPI1 prescaler setting.
+ * @note    This is the prescaler divider value 1..256. The maximum frequency
+ *          varies depending on the STM32 model and operating conditions,
+ *          find the details in the data sheet.
+ */
+#if !defined(STM32_QSPI_QUADSPI1_PRESCALER_VALUE) || defined(__DOXYGEN__)
+#define STM32_QSPI_QUADSPI1_PRESCALER_VALUE 4
+#endif
+
+/**
  * @brief   QUADSPI1 interrupt priority level setting.
  */
 #if !defined(STM32_QSPI_QUADSPI1_IRQ_PRIORITY) || defined(__DOXYGEN__)
@@ -199,6 +209,7 @@ extern "C" {
   void qspi_lld_init(void);
   void qspi_lld_start(QSPIDriver *qspip);
   void qspi_lld_stop(QSPIDriver *qspip);
+  void qspi_lld_command(QSPIDriver *qspip, const qspi_command_t *cmdp);
   void qspi_lld_send(QSPIDriver *qspip, const qspi_command_t *cmdp,
                      size_t n, const uint8_t *txbuf);
   void qspi_lld_receive(QSPIDriver *qspip, const qspi_command_t *cmdp,

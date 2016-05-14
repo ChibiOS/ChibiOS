@@ -123,21 +123,29 @@ void qspi_lld_init(void) {
  */
 void qspi_lld_start(QSPIDriver *qspip) {
 
-  /* If in stopped state then enables the QUADSPI and DMA clocks.*/
+  /* If in stopped state then full initialization.*/
   if (qspip->state == QSPI_STOP) {
 #if STM32_QSPI_USE_QUADSPI1
     if (&QSPID1 == qspip) {
-      rccEnableQUADSPI1(FALSE);
+      bool b = dmaStreamAllocate(qspip->dma,
+                                 STM32_QSPI_QUADSPI1_IRQ_PRIORITY,
+                                 (stm32_dmaisr_t)qspi_lld_serve_dma_interrupt,
+                                 (void *)qspip);
+      osalDbgAssert(!b, "stream already allocated");
+      rccEnableQUADSPI1(false);
     }
 #endif
+
+    /* Common initializations.*/
+    dmaStreamSetPeripheral(qspip->dma, &qspip->qspi->DR);
   }
 
   /* QSPI setup and enable.*/
-//  spip->spi->CR1  = 0;
-//  spip->spi->CR1  = spip->config->cr1 | SPI_CR1_MSTR;
-//  spip->spi->CR2  = spip->config->cr2 | SPI_CR2_FRXTH | SPI_CR2_SSOE |
-//                    SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
-//  spip->spi->CR1 |= SPI_CR1_SPE;
+  qspip->qspi->CR  = ((STM32_QSPI_QUADSPI1_PRESCALER_VALUE - 1U) << 24U) |
+                      QUADSPI_CR_TCIE | QUADSPI_CR_TEIE | QUADSPI_CR_DMAEN |
+                      QUADSPI_CR_EN;
+  qspip->qspi->FCR = QUADSPI_FCR_CTEF | QUADSPI_FCR_CTCF |
+                     QUADSPI_FCR_CSMF | QUADSPI_FCR_CTOF;
 }
 
 /**
@@ -153,10 +161,12 @@ void qspi_lld_stop(QSPIDriver *qspip) {
   if (qspip->state == QSPI_READY) {
 
     /* QSPI disable.*/
-//    spip->spi->CR1 = 0;
-//    spip->spi->CR2 = 0;
+    qspip->qspi->CR = 0U;
+
+    /* Releasing the DMA.*/
     dmaStreamRelease(qspip->dma);
 
+    /* Stopping involved clocks.*/
 #if STM32_QSPI_USE_QUADSPI1
     if (&QSPID1 == qspip) {
       rccDisableQUADSPI1(FALSE);
@@ -166,13 +176,32 @@ void qspi_lld_stop(QSPIDriver *qspip) {
 }
 
 /**
- * @brief   Sends data over the QSPI bus.
- * @details This asynchronous function starts a transmit operation.
+ * @brief   Sends a command without data phase.
  * @post    At the end of the operation the configured callback is invoked.
  *
  * @param[in] qspip     pointer to the @p QSPIDriver object
  * @param[in] cmd       pointer to the command descriptor
- * @param[in] n         number of words to send
+ *
+ * @notapi
+ */
+void qspi_lld_command(QSPIDriver *qspip, const qspi_command_t *cmdp) {
+
+  qspip->qspi->CCR = cmdp->cfg;
+  if ((cmdp->cfg & QSPI_CFG_ALT_MODE_MASK) != QSPI_CFG_ALT_MODE_NONE) {
+    qspip->qspi->ABR = cmdp->alt;
+  }
+  if ((cmdp->cfg & QSPI_CFG_ADDR_MODE_MASK) != QSPI_CFG_ADDR_MODE_NONE) {
+    qspip->qspi->AR  = cmdp->addr;
+  }
+}
+
+/**
+ * @brief   Sends a command with data over the QSPI bus.
+ * @post    At the end of the operation the configured callback is invoked.
+ *
+ * @param[in] qspip     pointer to the @p QSPIDriver object
+ * @param[in] cmd       pointer to the command descriptor
+ * @param[in] n         number of bytes to send
  * @param[in] txbuf     the pointer to the transmit buffer
  *
  * @notapi
@@ -184,17 +213,21 @@ void qspi_lld_send(QSPIDriver *qspip, const qspi_command_t *cmdp,
   dmaStreamSetTransactionSize(qspip->dma, n);
   dmaStreamSetMode(qspip->dma, qspip->dmamode | STM32_DMA_CR_DIR_M2P);
 
+  qspip->qspi->DLR = n - 1;
+  qspip->qspi->ABR = cmdp->alt;
+  qspip->qspi->CCR = cmdp->cfg;
+  qspip->qspi->AR  = cmdp->addr;
+
   dmaStreamEnable(qspip->dma);
 }
 
 /**
- * @brief   Receives data from the QSPI bus.
- * @details This asynchronous function starts a receive operation.
+ * @brief   Sends a command then receives data over the QSPI bus.
  * @post    At the end of the operation the configured callback is invoked.
  *
  * @param[in] qspip     pointer to the @p QSPIDriver object
  * @param[in] cmd       pointer to the command descriptor
- * @param[in] n         number of words to receive
+ * @param[in] n         number of bytes to send
  * @param[out] rxbuf    the pointer to the receive buffer
  *
  * @notapi
@@ -205,6 +238,11 @@ void qspi_lld_receive(QSPIDriver *qspip, const qspi_command_t *cmdp,
   dmaStreamSetMemory0(qspip->dma, rxbuf);
   dmaStreamSetTransactionSize(qspip->dma, n);
   dmaStreamSetMode(qspip->dma, qspip->dmamode | STM32_DMA_CR_DIR_P2M);
+
+  qspip->qspi->DLR = n - 1;
+  qspip->qspi->ABR = cmdp->alt;
+  qspip->qspi->CCR = cmdp->cfg | QUADSPI_CCR_FMODE_0;
+  qspip->qspi->AR  = cmdp->addr;
 
   dmaStreamEnable(qspip->dma);
 }

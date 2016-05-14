@@ -123,13 +123,31 @@ void qspiStop(QSPIDriver *qspip) {
 }
 
 /**
- * @brief   Sends data over the QSPI bus.
- * @details This asynchronous function starts a transmit operation.
+ * @brief   Sends a command without data phase.
  * @post    At the end of the operation the configured callback is invoked.
  *
  * @param[in] qspip     pointer to the @p QSPIDriver object
  * @param[in] cmd       pointer to the command descriptor
- * @param[in] n         number of words to send or zero if no data phase
+ *
+ * @api
+ */
+void qspiStartCommand(QSPIDriver *qspip, const qspi_command_t *cmdp) {
+
+  osalDbgCheck((qspip != NULL) && (cmdp != NULL));
+
+  osalSysLock();
+  osalDbgAssert(qspip->state == QSPI_READY, "not ready");
+  qspiStartCommandI(qspip, cmd);
+  osalSysUnlock();
+}
+
+/**
+ * @brief   Sends a command with data over the QSPI bus.
+ * @post    At the end of the operation the configured callback is invoked.
+ *
+ * @param[in] qspip     pointer to the @p QSPIDriver object
+ * @param[in] cmd       pointer to the command descriptor
+ * @param[in] n         number of bytes to send
  * @param[in] txbuf     the pointer to the transmit buffer
  *
  * @api
@@ -138,7 +156,7 @@ void qspiStartSend(QSPIDriver *qspip, const qspi_command_t *cmdp,
                    size_t n, const uint8_t *txbuf) {
 
   osalDbgCheck((qspip != NULL) && (cmdp != NULL));
-  osalDbgCheck((n == 0U) || ((n > 0U) && (txbuf != NULL)));
+  osalDbgCheck((n > 0U) && (txbuf != NULL));
 
   osalSysLock();
   osalDbgAssert(qspip->state == QSPI_READY, "not ready");
@@ -147,13 +165,12 @@ void qspiStartSend(QSPIDriver *qspip, const qspi_command_t *cmdp,
 }
 
 /**
- * @brief   Receives data from the QSPI bus.
- * @details This asynchronous function starts a receive operation.
+ * @brief   Sends a command then receives data over the QSPI bus.
  * @post    At the end of the operation the configured callback is invoked.
  *
  * @param[in] qspip     pointer to the @p QSPIDriver object
  * @param[in] cmd       pointer to the command descriptor
- * @param[in] n         number of words to receive or zero if no data phase
+ * @param[in] n         number of bytes to send
  * @param[out] rxbuf    the pointer to the receive buffer
  *
  * @api
@@ -162,7 +179,7 @@ void qspiStartReceive(QSPIDriver *qspip, const qspi_command_t *cmdp,
                       size_t n, uint8_t *rxbuf) {
 
   osalDbgCheck((qspip != NULL) && (cmdp != NULL));
-  osalDbgCheck((n == 0U) || ((n > 0U) && (rxbuf != NULL)));
+  osalDbgCheck((n > 0U) && (rxbuf != NULL));
 
   osalSysLock();
   osalDbgAssert(qspip->state == QSPI_READY, "not ready");
@@ -172,8 +189,7 @@ void qspiStartReceive(QSPIDriver *qspip, const qspi_command_t *cmdp,
 
 #if (QSPI_USE_WAIT == TRUE) || defined(__DOXYGEN__)
 /**
- * @brief   Sends data over the QSPI bus.
- * @details This synchronous function performs a transmit operation.
+ * @brief   Sends a command without data phase.
  * @pre     In order to use this function the option @p QSPI_USE_WAIT must be
  *          enabled.
  * @pre     In order to use this function the driver must have been configured
@@ -181,7 +197,31 @@ void qspiStartReceive(QSPIDriver *qspip, const qspi_command_t *cmdp,
  *
  * @param[in] qspip     pointer to the @p QSPIDriver object
  * @param[in] cmd       pointer to the command descriptor
- * @param[in] n         number of words to send or zero if no data phase
+ *
+ * @api
+ */
+void qspiCommand(QSPIDriver *qspip, const qspi_command_t *cmdp) {
+
+  osalDbgCheck((qspip != NULL) && (cmdp != NULL));
+
+  osalSysLock();
+  osalDbgAssert(qspip->state == QSPI_READY, "not ready");
+  osalDbgAssert(qspip->config->end_cb == NULL, "has callback");
+  qspiStartCommandI(qspip, cmd, n, txbuf);
+  (void) osalThreadSuspendS(&qspip->thread);
+  osalSysUnlock();
+}
+
+/**
+ * @brief   Sends a command with data over the QSPI bus.
+ * @pre     In order to use this function the option @p QSPI_USE_WAIT must be
+ *          enabled.
+ * @pre     In order to use this function the driver must have been configured
+ *          without callbacks (@p end_cb = @p NULL).
+ *
+ * @param[in] qspip     pointer to the @p QSPIDriver object
+ * @param[in] cmd       pointer to the command descriptor
+ * @param[in] n         number of bytes to send
  * @param[in] txbuf     the pointer to the transmit buffer
  *
  * @api
@@ -190,7 +230,7 @@ void qspiSend(QSPIDriver *qspip, const qspi_command_t *cmdp,
               size_t n, const uint8_t *txbuf) {
 
   osalDbgCheck((qspip != NULL) && (cmdp != NULL));
-  osalDbgCheck((n == 0U) || ((n > 0U) && (txbuf != NULL)));
+  osalDbgCheck((n > 0U) && (txbuf != NULL));
 
   osalSysLock();
   osalDbgAssert(qspip->state == QSPI_READY, "not ready");
@@ -201,8 +241,7 @@ void qspiSend(QSPIDriver *qspip, const qspi_command_t *cmdp,
 }
 
 /**
- * @brief   Receives data from the QSPI bus.
- * @details This synchronous function performs a receive operation.
+ * @brief   Sends a command then receives data over the QSPI bus.
  * @pre     In order to use this function the option @p QSPI_USE_WAIT must be
  *          enabled.
  * @pre     In order to use this function the driver must have been configured
@@ -210,7 +249,7 @@ void qspiSend(QSPIDriver *qspip, const qspi_command_t *cmdp,
  *
  * @param[in] qspip     pointer to the @p QSPIDriver object
  * @param[in] cmd       pointer to the command descriptor
- * @param[in] n         number of words to receive or zero if no data phase
+ * @param[in] n         number of bytes to send
  * @param[out] rxbuf    the pointer to the receive buffer
  *
  * @api
@@ -219,7 +258,7 @@ void qspiReceive(QSPIDriver *qspip, const qspi_command_t *cmdp,
                  size_t n, uint8_t *rxbuf) {
 
   osalDbgCheck((qspip != NULL) && (cmdp != NULL));
-  osalDbgCheck((n == 0U) || ((n > 0U) && (rxbuf != NULL)));
+  osalDbgCheck((n > 0U) && (rxbuf != NULL));
 
   osalSysLock();
   osalDbgAssert(qspip->state == QSPI_READY, "not ready");
