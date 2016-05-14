@@ -89,6 +89,27 @@ static void qspi_lld_serve_interrupt(QSPIDriver *qspip) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
+#if STM32_QSPI_USE_QUADSPI1 || defined(__DOXYGEN__)
+#if !defined(STM32_QUADSPI1_SUPPRESS_ISR)
+#if !defined(STM32_QUADSPI1_HANDLER)
+#error "STM32_QUADSPI1_HANDLER not defined"
+#endif
+/**
+ * @brief   STM32_QUADSPI1_HANDLER interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_QUADSPI1_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  qspi_lld_serve_interrupt(&QSPID1);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif /* !defined(STM32_QUADSPI1_SUPPRESS_ISR) */
+#endif /* STM32_QSPI_USE_QUADSPI1 */
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -111,6 +132,7 @@ void qspi_lld_init(void) {
                       STM32_DMA_CR_MINC |
                       STM32_DMA_CR_DMEIE |
                       STM32_DMA_CR_TEIE;
+  nvicEnableVector(STM32_QUADSPI1_NUMBER, STM32_QSPI_QUADSPI1_IRQ_PRIORITY);
 #endif
 }
 
@@ -128,7 +150,7 @@ void qspi_lld_start(QSPIDriver *qspip) {
 #if STM32_QSPI_USE_QUADSPI1
     if (&QSPID1 == qspip) {
       bool b = dmaStreamAllocate(qspip->dma,
-                                 STM32_QSPI_QUADSPI1_IRQ_PRIORITY,
+                                 STM32_QSPI_QUADSPI1_DMA_IRQ_PRIORITY,
                                  (stm32_dmaisr_t)qspi_lld_serve_dma_interrupt,
                                  (void *)qspip);
       osalDbgAssert(!b, "stream already allocated");
@@ -186,10 +208,8 @@ void qspi_lld_stop(QSPIDriver *qspip) {
  */
 void qspi_lld_command(QSPIDriver *qspip, const qspi_command_t *cmdp) {
 
+  qspip->qspi->ABR = cmdp->alt;
   qspip->qspi->CCR = cmdp->cfg;
-  if ((cmdp->cfg & QSPI_CFG_ALT_MODE_MASK) != QSPI_CFG_ALT_MODE_NONE) {
-    qspip->qspi->ABR = cmdp->alt;
-  }
   if ((cmdp->cfg & QSPI_CFG_ADDR_MODE_MASK) != QSPI_CFG_ADDR_MODE_NONE) {
     qspip->qspi->AR  = cmdp->addr;
   }

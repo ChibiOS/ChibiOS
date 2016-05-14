@@ -73,6 +73,13 @@
 #endif
 
 /**
+ * @brief   QUADSPI1 DMA interrupt priority level setting.
+ */
+#if !defined(STM32_QSPI_QUADSPI1_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_QSPI_QUADSPI1_DMA_IRQ_PRIORITY 10
+#endif
+
+/**
  * @brief   QUADSPI DMA error hook.
  */
 #if !defined(STM32_QSPI_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
@@ -98,8 +105,18 @@
 #endif
 
 #if STM32_QSPI_USE_QUADSPI1 &&                                              \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_QSPI_QUADSPI1_DMA_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to QUADSPI1 DMA"
+#endif
+
+#if STM32_QSPI_USE_QUADSPI1 &&                                              \
     !STM32_DMA_IS_VALID_PRIORITY(STM32_QSPI_QUADSPI1_DMA_PRIORITY)
 #error "Invalid DMA priority assigned to QUADSPI1"
+#endif
+
+#if (STM32_QSPI_QUADSPI1_PRESCALER_VALUE < 1) ||                            \
+    (STM32_QSPI_QUADSPI1_PRESCALER_VALUE > 256)
+#error "STM32_QSPI_QUADSPI1_PRESCALER_VALUE not within 1..256"
 #endif
 
 /* The following checks are only required when there is a DMA able to
