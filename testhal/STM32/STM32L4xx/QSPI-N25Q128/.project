@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>STM32L4xx-DSPI-N25Q128</name>
+	<name>STM32L4xx-QSPI-N25Q128</name>
 	<comment></comment>
 	<projects>
 	</projects>

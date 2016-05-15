@@ -37,7 +37,7 @@
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="STM32L4xx-DSPI-N25Q128.null.1829068891" name="STM32L4xx-DSPI-N25Q128"/>
+		<project id="STM32L4xx-QSPI-N25Q128.null.1829068891" name="STM32L4xx-QSPI-N25Q128"/>
 	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
