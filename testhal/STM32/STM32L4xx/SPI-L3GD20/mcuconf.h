@@ -231,7 +231,7 @@
 /*
  * QSPI driver system settings.
  */
-#define STM32_QSPI_USE_QUADSPI1             TRUE
+#define STM32_QSPI_USE_QUADSPI1             FALSE
 #define STM32_QSPI_QUADSPI1_DMA_STREAM      STM32_DMA_STREAM_ID(2, 7)
 
 /*

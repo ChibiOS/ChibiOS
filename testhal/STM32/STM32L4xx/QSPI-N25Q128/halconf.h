@@ -118,7 +118,7 @@
  * @brief   Enables the QSPI subsystem.
  */
 #if !defined(HAL_USE_QSPI) || defined(__DOXYGEN__)
-#define HAL_USE_QSPI                TRUE
+#define HAL_USE_QSPI                FALSE
 #endif
 
 /**
