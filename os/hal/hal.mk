@@ -44,7 +44,7 @@ endif
 ifneq ($(findstring HAL_USE_PWM TRUE,$(HALCONF)),)
 HALSRC += $(CHIBIOS)/os/hal/src/hal_pwm.c
 endif
-ifneq ($(findstring HAL_USE_PWM TRUE,$(HALCONF)),)
+ifneq ($(findstring HAL_USE_QSPI TRUE,$(HALCONF)),)
 HALSRC += $(CHIBIOS)/os/hal/src/hal_qspi.c
 endif
 ifneq ($(findstring HAL_USE_RTC TRUE,$(HALCONF)),)

@@ -17,6 +17,23 @@
 #include "ch.h"
 #include "hal.h"
 
+QSPIConfig qspicfg1 = {
+  NULL,
+  0
+};
+
+qspi_command_t cmd_read_id = {
+  QSPI_CFG_CMD(0x9E) | QSPI_CFG_CMD_MODE_ONE_LINE |
+  QSPI_CFG_ADDR_MODE_NONE |
+  QSPI_CFG_ALT_MODE_NONE |
+  QSPI_CFG_DUMMY_CYCLES(0) |
+  QSPI_CFG_DATA_MODE_ONE_LINE,
+  0,
+  0
+};
+
+uint8_t buffer[512];
+
 /*
  * LED blinker thread, times are in milliseconds.
  */
@@ -57,6 +74,12 @@ int main(void) {
    * Creates the blinker thread.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO + 1, Thread1, NULL);
+
+  /*
+   * Starting QSPI driver 1.
+   */
+  qspiStart(&QSPID1, &qspicfg1);
+  qspiReceive(&QSPID1, &cmd_read_id, 17, buffer);
 
   /*
    * Normal main() thread activity, in this demo it does nothing.

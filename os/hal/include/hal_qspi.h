@@ -141,16 +141,16 @@ typedef struct {
  * @post    At the end of the operation the configured callback is invoked.
  *
  * @param[in] qspip     pointer to the @p QSPIDriver object
- * @param[in] cmd       pointer to the command descriptor
+ * @param[in] cmdp      pointer to the command descriptor
  *
  * @iclass
  */
-#define qspiCommandI(qspip, cmd) {                                          \
-  osalDbgAssert(((cmd)->cfg & QSPI_CFG_DATA_MODE_MASK) ==                   \
+#define qspiStartCommandI(qspip, cmdp) {                                    \
+  osalDbgAssert(((cmdp)->cfg & QSPI_CFG_DATA_MODE_MASK) ==                  \
                 QSPI_CFG_DATA_MODE_NONE,                                    \
                 "data mode specified");                                     \
   (qspip)->state = QSPI_ACTIVE;                                             \
-  qspi_lld_command(qspip, cmd, n, txbuf);                                   \
+  qspi_lld_command(qspip, cmdp);                                            \
 }
 
 /**
@@ -159,18 +159,18 @@ typedef struct {
  * @post    At the end of the operation the configured callback is invoked.
  *
  * @param[in] qspip     pointer to the @p QSPIDriver object
- * @param[in] cmd       pointer to the command descriptor
+ * @param[in] cmdp      pointer to the command descriptor
  * @param[in] n         number of bytes to send or zero if no data phase
  * @param[in] txbuf     the pointer to the transmit buffer
  *
  * @iclass
  */
-#define qspiStartSendI(qspip, cmd, n, txbuf) {                              \
-  osalDbgAssert(((cmd)->cfg & QSPI_CFG_DATA_MODE_MASK) !=                   \
+#define qspiStartSendI(qspip, cmdp, n, txbuf) {                             \
+  osalDbgAssert(((cmdp)->cfg & QSPI_CFG_DATA_MODE_MASK) !=                  \
                 QSPI_CFG_DATA_MODE_NONE,                                    \
                 "data mode required");                                      \
   (qspip)->state = QSPI_ACTIVE;                                             \
-  qspi_lld_send(qspip, cmd, n, txbuf);                                      \
+  qspi_lld_send(qspip, cmdp, n, txbuf);                                     \
 }
 
 /**
@@ -179,18 +179,18 @@ typedef struct {
  * @post    At the end of the operation the configured callback is invoked.
  *
  * @param[in] qspip     pointer to the @p QSPIDriver object
- * @param[in] cmd       pointer to the command descriptor
+ * @param[in] cmdp      pointer to the command descriptor
  * @param[in] n         number of bytes to receive or zero if no data phase
  * @param[out] rxbuf    the pointer to the receive buffer
  *
  * @iclass
  */
-#define qspiStartReceiveI(qspip, cmd, n, rxbuf) {                           \
-  osalDbgAssert(((cmd)->cfg & QSPI_CFG_DATA_MODE_MASK) !=                   \
+#define qspiStartReceiveI(qspip, cmdp, n, rxbuf) {                          \
+  osalDbgAssert(((cmdp)->cfg & QSPI_CFG_DATA_MODE_MASK) !=                  \
                 QSPI_CFG_DATA_MODE_NONE,                                    \
                 "data mode required");                                      \
   (qspip)->state = QSPI_ACTIVE;                                             \
-  qspi_lld_receive(qspip, cmd, n, rxbuf);                                   \
+  qspi_lld_receive(qspip, cmdp, n, rxbuf);                                  \
 }
 /** @} */
 

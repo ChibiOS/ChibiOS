@@ -137,7 +137,7 @@ void qspiStartCommand(QSPIDriver *qspip, const qspi_command_t *cmdp) {
 
   osalSysLock();
   osalDbgAssert(qspip->state == QSPI_READY, "not ready");
-  qspiStartCommandI(qspip, cmd);
+  qspiStartCommandI(qspip, cmdp);
   osalSysUnlock();
 }
 
@@ -160,7 +160,7 @@ void qspiStartSend(QSPIDriver *qspip, const qspi_command_t *cmdp,
 
   osalSysLock();
   osalDbgAssert(qspip->state == QSPI_READY, "not ready");
-  qspiStartSendI(qspip, cmd, n, txbuf);
+  qspiStartSendI(qspip, cmdp, n, txbuf);
   osalSysUnlock();
 }
 
@@ -183,7 +183,7 @@ void qspiStartReceive(QSPIDriver *qspip, const qspi_command_t *cmdp,
 
   osalSysLock();
   osalDbgAssert(qspip->state == QSPI_READY, "not ready");
-  qspiStartReceiveI(qspip, cmd, n, rxbuf);
+  qspiStartReceiveI(qspip, cmdp, n, rxbuf);
   osalSysUnlock();
 }
 
@@ -196,7 +196,7 @@ void qspiStartReceive(QSPIDriver *qspip, const qspi_command_t *cmdp,
  *          without callbacks (@p end_cb = @p NULL).
  *
  * @param[in] qspip     pointer to the @p QSPIDriver object
- * @param[in] cmd       pointer to the command descriptor
+ * @param[in] cmdp      pointer to the command descriptor
  *
  * @api
  */
@@ -207,7 +207,7 @@ void qspiCommand(QSPIDriver *qspip, const qspi_command_t *cmdp) {
   osalSysLock();
   osalDbgAssert(qspip->state == QSPI_READY, "not ready");
   osalDbgAssert(qspip->config->end_cb == NULL, "has callback");
-  qspiStartCommandI(qspip, cmd, n, txbuf);
+  qspiStartCommandI(qspip, cmdp);
   (void) osalThreadSuspendS(&qspip->thread);
   osalSysUnlock();
 }
@@ -220,7 +220,7 @@ void qspiCommand(QSPIDriver *qspip, const qspi_command_t *cmdp) {
  *          without callbacks (@p end_cb = @p NULL).
  *
  * @param[in] qspip     pointer to the @p QSPIDriver object
- * @param[in] cmd       pointer to the command descriptor
+ * @param[in] cmdp      pointer to the command descriptor
  * @param[in] n         number of bytes to send
  * @param[in] txbuf     the pointer to the transmit buffer
  *
@@ -235,7 +235,7 @@ void qspiSend(QSPIDriver *qspip, const qspi_command_t *cmdp,
   osalSysLock();
   osalDbgAssert(qspip->state == QSPI_READY, "not ready");
   osalDbgAssert(qspip->config->end_cb == NULL, "has callback");
-  qspiStartSendI(qspip, cmd, n, txbuf);
+  qspiStartSendI(qspip, cmdp, n, txbuf);
   (void) osalThreadSuspendS(&qspip->thread);
   osalSysUnlock();
 }
@@ -248,7 +248,7 @@ void qspiSend(QSPIDriver *qspip, const qspi_command_t *cmdp,
  *          without callbacks (@p end_cb = @p NULL).
  *
  * @param[in] qspip     pointer to the @p QSPIDriver object
- * @param[in] cmd       pointer to the command descriptor
+ * @param[in] cmdp      pointer to the command descriptor
  * @param[in] n         number of bytes to send
  * @param[out] rxbuf    the pointer to the receive buffer
  *
@@ -263,7 +263,7 @@ void qspiReceive(QSPIDriver *qspip, const qspi_command_t *cmdp,
   osalSysLock();
   osalDbgAssert(qspip->state == QSPI_READY, "not ready");
   osalDbgAssert(qspip->config->end_cb == NULL, "has callback");
-  qspiStartReceiveI(qspip, cmd, n, rxbuf);
+  qspiStartReceiveI(qspip, cmdp, n, rxbuf);
   (void) osalThreadSuspendS(&qspip->thread);
   osalSysUnlock();
 }
