@@ -25,6 +25,8 @@
 #ifndef HAL_JESD216_FLASH_H
 #define HAL_JESD216_FLASH_H
 
+#include "hal_flash.h"
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -66,12 +68,13 @@
  */
 #define _jesd216_flash_methods_alone                                        \
   /* Read SFDP.*/                                                           \
-  void (*read_id)(void *instance, uint8_t *rp, size_t max);
+  flash_error_t (*read_id)(void *instance, uint8_t *rp, size_t max);
 
 /**
  * @brief   @p JESD215Flash specific methods with inherited ones.
  */
 #define _jesd216_flash_methods                                              \
+  _base_flash_methods                                                       \
   _jesd216_flash_methods_alone
 
 /**
@@ -84,14 +87,15 @@ struct JESD215FlashVMT {
 /**
  * @brief   @p JESD215Flash specific data.
  */
-#define _jesd216_flash_data
+#define _jesd216_flash_data                                                 \
+  _base_flash_data
 
 /**
  * @brief   Base flash class.
  */
 typedef struct {
   /** @brief Virtual Methods Table.*/
-  const struct JESD215FlashVMT *vmt_jesd216flash;
+  const struct JESD215FlashVMT *vmt;
   _jesd216_flash_data
 } JESD215Flash;
 

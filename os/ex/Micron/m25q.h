@@ -18,17 +18,17 @@
 */
 
 /**
- * @file    n25q128_spi.h
- * @brief   N25Q128 over SPI driver header.
+ * @file    m25q.h
+ * @brief   Micron serial flash driver header.
  *
- * @addtogroup n25q128_spi
+ * @addtogroup m25q
  * @{
  */
 
-#ifndef N25Q128_H
-#define N25Q128_H
+#ifndef M25Q_H
+#define M25Q_H
 
-#include "hal_flash.h"
+#include "hal_jesd216_flash.h"
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -38,34 +38,34 @@
  * @name    Command codes
  * @{
  */
-#define N25Q128_CMD_RESET_ENABLE                    0x66
-#define N25Q128_CMD_RESET_MEMORY                    0x99
-#define N25Q128_CMD_READ_ID                         0x9E
-#define N25Q128_CMD_READ_DISCOVERY_PARAMETER        0x5A
-#define N25Q128_CMD_READ                            0x03
-#define N25Q128_CMD_FAST_READ                       0x08
-#define N25Q128_CMD_WRITE_ENABLE                    0x06
-#define N25Q128_CMD_WRITE_DISABLE                   0x04
-#define N25Q128_CMD_READ_STATUS_REGISTER            0x05
-#define N25Q128_CMD_WRITE_STATUS_REGISTER           0x01
-#define N25Q128_CMD_READ_LOCK_REGISTER              0xE8
-#define N25Q128_CMD_WRITE_LOCK_REGISTER             0xE5
-#define N25Q128_CMD_READ_FLAG_STATUS_REGISTER       0x70
-#define N25Q128_CMD_CLEAR_FLAG_STATUS_REGISTER      0x50
-#define N25Q128_CMD_READ_NV_CONFIGURATION_REGISTER  0xB5
-#define N25Q128_CMD_WRITE_NV_CONFIGURATION_REGISTER 0xB1
-#define N25Q128_CMD_READ_V_CONF_REGISTER            0x85
-#define N25Q128_CMD_WRITE_V_CONF_REGISTER           0x81
-#define N25Q128_CMD_READ_ENHANCED_V_CONF_REGISTER   0x65
-#define N25Q128_CMD_WRITE_ENHANCED_V_CONF_REGISTER  0x61
-#define N25Q128_CMD_PAGE_PROGRAM                    0x02
-#define N25Q128_CMD_SUBSECTOR_ERASE                 0x20
-#define N25Q128_CMD_SECTOR_ERASE                    0xD8
-#define N25Q128_CMD_BULK_ERASE                      0xC7
-#define N25Q128_CMD_PROGRAM_ERASE_RESUME            0x7A
-#define N25Q128_CMD_PROGRAM_ERASE_SUSPEND           0x75
-#define N25Q128_CMD_READ_OTP_ARRAY                  0x4B
-#define N25Q128_CMD_PROGRAM_OTP_ARRAY               0x42
+#define M25Q_CMD_RESET_ENABLE                       0x66
+#define M25Q_CMD_RESET_MEMORY                       0x99
+#define M25Q_CMD_READ_ID                            0x9F
+#define M25Q_CMD_READ_DISCOVERY_PARAMETER           0x5A
+#define M25Q_CMD_READ                               0x03
+#define M25Q_CMD_FAST_READ                          0x08
+#define M25Q_CMD_WRITE_ENABLE                       0x06
+#define M25Q_CMD_WRITE_DISABLE                      0x04
+#define M25Q_CMD_READ_STATUS_REGISTER               0x05
+#define M25Q_CMD_WRITE_STATUS_REGISTER              0x01
+#define M25Q_CMD_READ_LOCK_REGISTER                 0xE8
+#define M25Q_CMD_WRITE_LOCK_REGISTER                0xE5
+#define M25Q_CMD_READ_FLAG_STATUS_REGISTER          0x70
+#define M25Q_CMD_CLEAR_FLAG_STATUS_REGISTER         0x50
+#define M25Q_CMD_READ_NV_CONFIGURATION_REGISTER     0xB5
+#define M25Q_CMD_WRITE_NV_CONFIGURATION_REGISTER    0xB1
+#define M25Q_CMD_READ_V_CONF_REGISTER               0x85
+#define M25Q_CMD_WRITE_V_CONF_REGISTER              0x81
+#define M25Q_CMD_READ_ENHANCED_V_CONF_REGISTER      0x65
+#define M25Q_CMD_WRITE_ENHANCED_V_CONF_REGISTER     0x61
+#define M25Q_CMD_PAGE_PROGRAM                       0x02
+#define M25Q_CMD_SUBSECTOR_ERASE                    0x20
+#define M25Q_CMD_SECTOR_ERASE                       0xD8
+#define M25Q_CMD_BULK_ERASE                         0xC7
+#define M25Q_CMD_PROGRAM_ERASE_RESUME               0x7A
+#define M25Q_CMD_PROGRAM_ERASE_SUSPEND              0x75
+#define M25Q_CMD_READ_OTP_ARRAY                     0x4B
+#define M25Q_CMD_PROGRAM_OTP_ARRAY                  0x42
 /** @} */
 
 /**
@@ -95,13 +95,21 @@
  * @{
  */
 /**
+ * @brief   SPI fallback switch.
+ * @details If enabled makes the driver use SPI rather than QSPI.
+ */
+#if !defined(M25Q_USE_SPI) || defined(__DOXYGEN__)
+#define M25Q_USE_SPI                        FALSE
+#endif
+
+/**
  * @brief   N25Q128 shared SPI switch.
  * @details If set to @p TRUE the device acquires SPI bus ownership
  *          on each transaction.
  * @note    The default is @p FALSE. Requires SPI_USE_MUTUAL_EXCLUSION
  */
-#if !defined(N25Q128_SHARED_SPI) || defined(__DOXYGEN__)
-#define N25Q128_SHARED_SPI                  TRUE
+#if !defined(M25Q_SHARED_SPI) || defined(__DOXYGEN__)
+#define M25Q_SHARED_SPI                     TRUE
 #endif
 
 /**
@@ -128,12 +136,16 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !HAL_USE_SPI
-#error "this module requires HAL_USE_SPI"
+#if M25Q_USE_SPI && !HAL_USE_SPI
+#error "M25Q_USE_SPI=TRUE requires HAL_USE_SPI"
 #endif
 
-#if N25Q128_SHARED_SPI && !SPI_USE_MUTUAL_EXCLUSION
-#error "N25Q128_SHARED_SPI requires SPI_USE_MUTUAL_EXCLUSION"
+#if !M25Q_USE_SPI && !HAL_USE_QSPI
+#error "M25Q_USE_SPI=FALSE requires HAL_USE_QSPI"
+#endif
+
+#if M25Q_USE_SPI && M25Q_SHARED_SPI && !SPI_USE_MUTUAL_EXCLUSION
+#error "M25Q_SHARED_SPI requires SPI_USE_MUTUAL_EXCLUSION"
 #endif
 
 /*===========================================================================*/
@@ -141,50 +153,61 @@
 /*===========================================================================*/
 
 /**
- * @brief   Type of a N25Q128 configuration structure.
+ * @brief   Type of a M25Q configuration structure.
  */
 typedef struct {
+#if !M25Q_USE_SPI || defined(__DOXYGEN__)
   /**
-   * @brief   SPI driver associated to this N25Q128.
+   * @brief   QSPI driver associated to this instance.
+   */
+  QSPIDriver                *qspip;
+  /**
+   * @brief   QSPI configuration associated to this instance.
+   */
+  const QSPIConfig          *qspicfg;
+#else
+  /**
+   * @brief   SPI driver associated to this instance.
    */
   SPIDriver                 *spip;
   /**
-   * @brief   SPI configuration associated to this N25Q128.
+   * @brief   SPI configuration associated to this instance.
    */
   const SPIConfig           *spicfg;
-} N25Q128Config;
+#endif
+} M25QConfig;
 
 /**
- * @brief   @p N25Q128 specific methods.
+ * @brief   @p M25Q specific methods.
  */
-#define _n25q128_methods                                                    \
-  _base_flash_methods
+#define _m25q_methods                                                       \
+  _jesd216_flash_methods
 
 /**
- * @extends BaseGyroscopeVMT
+ * @extends JESD216FlashVMT
  *
- * @brief   @p N25Q128 virtual methods table.
+ * @brief   @p M25Q virtual methods table.
  */
-struct N25Q128DriverVMT {
-  _n25q128_methods
+struct M25QDriverVMT {
+  _m25q_methods
 };
   
 /**
- * @extends BaseFlash
+ * @extends JESD216Flash
  *
- * @brief   Type of N25Q128 flash class.
+ * @brief   Type of M25Q flash class.
  */
 typedef struct {
   /**
-   * @brief   BaseFlash Virtual Methods Table.
+   * @brief   M25QDriver Virtual Methods Table.
    */
-  const struct N25Q128DriverVMT *vmt;
-  _base_flash_data
+  const struct JESD216FlashVMT  *vmt_baseflash;
+  _jesd216_flash_data
   /**
    * @brief   Current configuration data.
    */
-  const N25Q128Config       *config;
-} N25Q128Driver;
+  const M25QConfig              *config;
+} M25QDriver;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -197,15 +220,14 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void n25q128ObjectInit(N25Q128Driver *devp);
-  void n25q128Start(N25Q128Driver *devp, const N25Q128Config *config);
-  void n25q128Stop(N25Q128Driver *devp);
-  void n25q128ReadId(N25Q128Driver *devp, uint8_t *rp, size_t n);
+  void m25qObjectInit(M25QDriver *devp);
+  void m25qStart(M25QDriver *devp, const M25QConfig *config);
+  void m25qStop(M25QDriver *devp);
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* N25Q128_H */
+#endif /* M25Q_H */
 
 /** @} */
 

@@ -184,7 +184,7 @@ struct BaseFlashVMT {
  */
 typedef struct {
   /** @brief Virtual Methods Table.*/
-  const struct BaseFlashVMT *vmt_baseflash;
+  const struct BaseFlashVMT *vmt;
   _base_flash_data
 } BaseFlash;
 
@@ -205,7 +205,7 @@ typedef struct {
  * @api
  */
 #define flashGetDescriptor(ip)                                              \
-  (ip)->vmt_baseflash->get_descriptor(ip)
+  (ip)->vmt->get_descriptor(ip)
 
 /**
  * @brief   Read operation.
@@ -222,7 +222,7 @@ typedef struct {
  * @api
  */
 #define flashRead(ip, addr, rp, n)                                          \
-  (ip)->vmt_baseflash->read(ip, addr, rp, n)
+  (ip)->vmt->read(ip, addr, rp, n)
 
 /**
  * @brief   Program operation.
@@ -239,7 +239,7 @@ typedef struct {
  * @api
  */
 #define flashProgram(ip, addr, pp, n)                                       \
-  (ip)->vmt_baseflash->program(ip, addr, pp, n)
+  (ip)->vmt->program(ip, addr, pp, n)
 
 /**
  * @brief   Starts a whole-device erase operation.
@@ -252,7 +252,7 @@ typedef struct {
  * @api
  */
 #define flashStartEraseAll(ip)                                              \
-  (ip)->vmt_baseflash->start_erase_all(ip)
+  (ip)->vmt->start_erase_all(ip)
 
 /**
  * @brief   Starts an sector erase operation.
@@ -266,7 +266,7 @@ typedef struct {
  * @api
  */
 #define flashStartEraseSector(ip, sector)                                   \
-  (ip)->vmt_baseflash->start_erase_sector(ip, sector)
+  (ip)->vmt->start_erase_sector(ip, sector)
 
 /**
  * @brief   Queries the driver for erase operation progress.
@@ -282,7 +282,7 @@ typedef struct {
  * @api
  */
 #define flashQueryErase(ip, msec)                                           \
-  (ip)->vmt_baseflash->query_erase(ip, msec)
+  (ip)->vmt->query_erase(ip, msec)
 
 /**
  * @brief   Returns the erase state of a sector.
@@ -297,7 +297,7 @@ typedef struct {
  * @api
  */
 #define flashVerifyErase(ip, sector)                                        \
-  (ip)->vmt_baseflash->verify_erase(ip, sector)
+  (ip)->vmt->verify_erase(ip, sector)
 /** @} */
 
 /*===========================================================================*/
