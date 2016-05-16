@@ -145,11 +145,11 @@
  */
 typedef struct {
   /**
-   * @brief   SPI driver associated to this L3GD20.
+   * @brief   SPI driver associated to this N25Q128.
    */
   SPIDriver                 *spip;
   /**
-   * @brief   SPI configuration associated to this L3GD20.
+   * @brief   SPI configuration associated to this N25Q128.
    */
   const SPIConfig           *spicfg;
 } N25Q128Config;
@@ -163,7 +163,7 @@ typedef struct {
 /**
  * @extends BaseGyroscopeVMT
  *
- * @brief   @p L3GD20 virtual methods table.
+ * @brief   @p N25Q128 virtual methods table.
  */
 struct N25Q128DriverVMT {
   _n25q128_methods

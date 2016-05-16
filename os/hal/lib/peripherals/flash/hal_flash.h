@@ -173,8 +173,6 @@ struct BaseFlashVMT {
 
 /**
  * @brief   @p BaseFlash specific data.
- * @note    It is empty because @p BaseFlash is only an interface
- *          without implementation.
  */
 #define _base_flash_data                                                    \
   /* Driver state.*/                                                        \
