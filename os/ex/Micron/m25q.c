@@ -1,5 +1,5 @@
 /*
-    N25Q128 Flash Driver - Copyright (C) 2016 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2016 Giovanni Di Sirio
 
     This file is part of ChibiOS.
 

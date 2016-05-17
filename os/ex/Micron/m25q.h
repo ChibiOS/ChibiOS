@@ -1,5 +1,5 @@
 /*
-    N25Q128 Flash Driver - Copyright (C) 2016 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2016 Giovanni Di Sirio
 
     This file is part of ChibiOS.
 
@@ -108,14 +108,27 @@
  * @brief   Physical transport interface.
  */
 #if !defined(M25Q_USE_SPI) || defined(__DOXYGEN__)
-#define M25Q_BUS_MODE                      M25Q_BUS_MODE_QSPI4L
+#define M25Q_BUS_MODE                       M25Q_BUS_MODE_QSPI4L
 #endif
 
 /**
- * @brief   N25Q128 shared SPI switch.
+ * @brief   Switch QSPI bus width on initialization.
+ * @details A bus width initialization is performed by writing the
+ *          Enhanced Volatile Configuration Register. If the flash
+ *          device is configured using the Non Volatile Configuration
+ *          Register then this option is not required.
+ * @note    This option is only valid in QSPI bus modes.
+ */
+#if !defined(M25Q_SWITCH_WIDTH) || defined(__DOXYGEN__)
+#define M25Q_SWITCH_WIDTH                   TRUE
+#endif
+
+/**
+ * @brief   Shared SPI switch.
  * @details If set to @p TRUE the device acquires SPI bus ownership
  *          on each transaction.
- * @note    The default is @p FALSE. Requires SPI_USE_MUTUAL_EXCLUSION
+ * @note    This option is only valid in QSPI bus modes.
+ * @note    Requires @p SPI_USE_MUTUAL_EXCLUSION.
  */
 #if !defined(M25Q_SHARED_SPI) || defined(__DOXYGEN__)
 #define M25Q_SHARED_SPI                     TRUE
