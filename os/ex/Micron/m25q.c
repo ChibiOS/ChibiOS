@@ -36,7 +36,7 @@
 #define PAGE_SIZE                           256U
 #define PAGE_MASK                           (PAGE_SIZE - 1U)
 
-#if N25Q128_USE_SUB_SECTORS == TRUE
+#if M25Q_USE_SUB_SECTORS == TRUE
 #define SECTOR_SIZE                         0x00001000U
 #define CMD_SECTOR_ERASE                    M25Q_CMD_SUBSECTOR_ERASE
 #else
@@ -79,7 +79,7 @@ static flash_descriptor_t descriptor = {
   .attributes       = FLASH_ATTR_ERASED_IS_ONE | FLASH_ATTR_REWRITABLE |
                       FLASH_ATTR_SUSPEND_ERASE_CAPABLE,
   .page_size        = 256U,
-#if N25Q128_USE_SUB_SECTORS == TRUE
+#if M25Q_USE_SUB_SECTORS == TRUE
   .sectors_count    = 4096U,
 #else
   .sectors_count    = 256U,
@@ -93,7 +93,7 @@ static flash_descriptor_t descriptor = {
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-#if (M25Q_USE_SPI == TRUE) && (M25Q_SHARED_SPI == TRUE)
+#if (M25Q_BUS_MODE == M25Q_BUS_MODE_SPI) && (M25Q_SHARED_SPI == TRUE)
 void flash_bus_acquire(M25QDriver *devp) {
 
   spiAcquireBus(devp->config->spip);
@@ -107,7 +107,7 @@ void flash_bus_release(M25QDriver *devp) {
 #else
 #define flash_bus_acquire(devp)
 #define flash_bus_release(devp)
-#endif /* (M25Q_USE_SPI == TRUE) && (M25Q_SHARED_SPI == TRUE) */
+#endif /* (M25Q_BUS_MODE == M25Q_BUS_MODE_SPI) && (M25Q_SHARED_SPI == TRUE) */
 
 static void flash_short_cmd(M25QDriver *devp, uint8_t cmd) {
   uint8_t buf[1];

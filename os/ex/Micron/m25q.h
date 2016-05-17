@@ -69,21 +69,31 @@
 /** @} */
 
 /**
- * @name    Status register bits
+ * @name    Flags status register bits
  * @{
  */
-#define N25Q128_STS_PROGRAM_ERASE                   0x80U
-#define N25Q128_STS_ERASE_SUSPEND                   0x40U
-#define N25Q128_STS_ERASE_ERROR                     0x20U
-#define N25Q128_STS_PROGRAM_ERROR                   0x10U
-#define N25Q128_STS_VPP_ERROR                       0x08U
-#define N25Q128_STS_PROGRAM_SUSPEND                 0x04U
-#define N25Q128_STS_PROTECTION_ERROR                0x02U
-#define N25Q128_STS_RESERVED                        0x01U
-#define N25Q128_STS_ALL_ERRORS              (N25Q128_STS_ERASE_ERROR |      \
-                                             N25Q128_STS_PROGRAM_ERROR |    \
-                                             N25Q128_STS_VPP_ERROR |        \
-                                             N25Q128_STS_PROTECTION_ERROR)
+#define M25Q_FLAGS_PROGRAM_ERASE                    0x80U
+#define M25Q_FLAGS_ERASE_SUSPEND                    0x40U
+#define M25Q_FLAGS_ERASE_ERROR                      0x20U
+#define M25Q_FLAGS_PROGRAM_ERROR                    0x10U
+#define M25Q_FLAGS_VPP_ERROR                        0x08U
+#define M25Q_FLAGS_PROGRAM_SUSPEND                  0x04U
+#define M25Q_FLAGS_PROTECTION_ERROR                 0x02U
+#define M25Q_FLAGS_RESERVED                         0x01U
+#define M25Q_FLAGS_ALL_ERRORS                   (M25Q_FLAGS_ERASE_ERROR |   \
+                                                 M25Q_FLAGS_PROGRAM_ERROR | \
+                                                 M25Q_FLAGS_VPP_ERROR |     \
+                                                 M25Q_FLAGS_PROTECTION_ERROR)
+/** @} */
+
+/**
+ * @name    Bus interface.
+ * @{
+ */
+#define M25Q_BUS_MODE_SPI                   0
+#define M25Q_BUS_MODE_QSPI1L                1
+#define M25Q_BUS_MODE_QSPI2L                2
+#define M25Q_BUS_MODE_QSPI4L                4
 /** @} */
 
 /*===========================================================================*/
@@ -95,11 +105,10 @@
  * @{
  */
 /**
- * @brief   SPI fallback switch.
- * @details If enabled makes the driver use SPI rather than QSPI.
+ * @brief   Physical transport interface.
  */
 #if !defined(M25Q_USE_SPI) || defined(__DOXYGEN__)
-#define M25Q_USE_SPI                        FALSE
+#define M25Q_BUS_MODE                      M25Q_BUS_MODE_QSPI4L
 #endif
 
 /**
@@ -115,20 +124,18 @@
 /**
  * @brief   Delays insertions.
  * @details If enabled this options inserts delays into the flash waiting
- *          routines releasing some extra CPU time for the threads with
- *          lower priority, this may slow down the driver a bit however.
- *          This option is recommended also when the SPI driver does not
- *          use a DMA channel and heavily loads the CPU.
+ *          routines releasing some extra CPU time for threads with lower
+ *          priority, this may slow down the driver a bit however.
  */
-#if !defined(N25Q128_NICE_WAITING) || defined(__DOXYGEN__)
-#define N25Q128_NICE_WAITING                TRUE
+#if !defined(M25Q_NICE_WAITING) || defined(__DOXYGEN__)
+#define M25Q_NICE_WAITING                   TRUE
 #endif
 
 /**
  * @brief   Uses 4kB sub-sectors rather than 64kB sectors.
  */
-#if !defined(N25Q128_USE_SUB_SECTORS) || defined(__DOXYGEN__)
-#define N25Q128_USE_SUB_SECTORS             FALSE
+#if !defined(M25Q_USE_SUB_SECTORS) || defined(__DOXYGEN__)
+#define M25Q_USE_SUB_SECTORS                FALSE
 #endif
 /** @} */
 
@@ -136,15 +143,17 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if M25Q_USE_SPI && !HAL_USE_SPI
-#error "M25Q_USE_SPI=TRUE requires HAL_USE_SPI"
+#if (M25Q_BUS_MODE == M25Q_BUS_MODE_SPI) && (HAL_USE_SPI == FALSE)
+#error "M25Q_BUS_MODE_SPI requires HAL_USE_SPI"
 #endif
 
-#if !M25Q_USE_SPI && !HAL_USE_QSPI
-#error "M25Q_USE_SPI=FALSE requires HAL_USE_QSPI"
+#if (M25Q_BUS_MODE != M25Q_BUS_MODE_SPI) && (HAL_USE_QSPI == FALSE)
+#error "M25Q_BUS_MODE_QSPIxL requires HAL_USE_QSPI"
 #endif
 
-#if M25Q_USE_SPI && M25Q_SHARED_SPI && !SPI_USE_MUTUAL_EXCLUSION
+#if (M25Q_BUS_MODE == M25Q_BUS_MODE_SPI) &&                                 \
+    (M25Q_SHARED_SPI == TRUE) &&                                            \
+    (SPI_USE_MUTUAL_EXCLUSION == FALSE)
 #error "M25Q_SHARED_SPI requires SPI_USE_MUTUAL_EXCLUSION"
 #endif
 
@@ -156,7 +165,7 @@
  * @brief   Type of a M25Q configuration structure.
  */
 typedef struct {
-#if !M25Q_USE_SPI || defined(__DOXYGEN__)
+#if (M25Q_BUS_MODE != M25Q_BUS_MODE_SPI) || defined(__DOXYGEN__)
   /**
    * @brief   QSPI driver associated to this instance.
    */
