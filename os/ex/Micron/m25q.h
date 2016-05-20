@@ -124,14 +124,14 @@
 #endif
 
 /**
- * @brief   Shared SPI switch.
- * @details If set to @p TRUE the device acquires SPI bus ownership
+ * @brief   Shared bus switch.
+ * @details If set to @p TRUE the device acquires bus ownership
  *          on each transaction.
- * @note    This option is only valid in QSPI bus modes.
- * @note    Requires @p SPI_USE_MUTUAL_EXCLUSION.
+ * @note    Requires @p SPI_USE_MUTUAL_EXCLUSION or
+ *          @p SPI_USE_MUTUAL_EXCLUSION.
  */
-#if !defined(M25Q_SHARED_SPI) || defined(__DOXYGEN__)
-#define M25Q_SHARED_SPI                     TRUE
+#if !defined(M25Q_SHARED_BUS) || defined(__DOXYGEN__)
+#define M25Q_SHARED_BUS                     TRUE
 #endif
 
 /**
@@ -223,12 +223,18 @@ typedef struct {
   /**
    * @brief   M25QDriver Virtual Methods Table.
    */
-  const struct JESD216FlashVMT  *vmt_baseflash;
+  const struct M25QDriverVMT    *vmt;
   _jesd216_flash_data
   /**
    * @brief   Current configuration data.
    */
   const M25QConfig              *config;
+#if (M25Q_BUS_MODE != M25Q_BUS_MODE_SPI) || defined(__DOXYGEN__)
+  /**
+   * @brief   Command width flags to be used for commands sent over QSPI.
+   */
+  uint32_t                      qspi_mode;
+#endif
 } M25QDriver;
 
 /*===========================================================================*/

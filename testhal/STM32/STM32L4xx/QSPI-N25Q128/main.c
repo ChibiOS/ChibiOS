@@ -17,7 +17,9 @@
 #include "ch.h"
 #include "hal.h"
 
-QSPIConfig qspicfg1 = {
+#include "m25q.h"
+
+const QSPIConfig qspicfg1 = {
   NULL,
   0
 };
@@ -33,6 +35,13 @@ qspi_command_t cmd_read_id = {
 };
 
 uint8_t buffer[512];
+
+M25QDriver m25q;
+
+const M25QConfig m25qcfg1 = {
+  &QSPID1,
+  &qspicfg1
+};
 
 /*
  * LED blinker thread, times are in milliseconds.
@@ -76,10 +85,12 @@ int main(void) {
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO + 1, Thread1, NULL);
 
   /*
-   * Starting QSPI driver 1.
+   * Initializing and starting M25Q driver.
    */
-  qspiStart(&QSPID1, &qspicfg1);
-  qspiReceive(&QSPID1, &cmd_read_id, 17, buffer);
+  m25qObjectInit(&m25q);
+  m25qStart(&m25q, &m25qcfg1);
+//  qspiStart(&QSPID1, &qspicfg1);
+//  qspiReceive(&QSPID1, &cmd_read_id, 17, buffer);
 
   /*
    * Normal main() thread activity, in this demo it does nothing.
