@@ -1,19 +1,21 @@
 *****************************************************************************
-** ChibiOS/RT port for ARM-Cortex-M4 STM32F303.                            **
+** ChibiOS/HAL + ChibiOS/EX - SPI + L3GD20 demo for STM32F3xx.             **
 *****************************************************************************
 
 ** TARGET **
 
-The demo runs on an ST STM32F3-Discovery board.
+The demo runs on an STM32F3 Discovery board.
 
 ** The Demo **
 
+The demo flashes the board LED using a thread, read data from L3GD20 printing
+it on a BaseSequentialStream (SDU1, mapped on USB virtual COM port).
 
 ** Build Procedure **
 
 The demo has been tested by using the free Codesourcery GCC-based toolchain
-and YAGARTO. just modify the TRGT line in the makefile in order to use
-different GCC toolchains.
+and YAGARTO.
+Just modify the TRGT line in the makefile in order to use different GCC ports.
 
 ** Notes **
 
