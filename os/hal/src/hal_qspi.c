@@ -203,6 +203,7 @@ void qspiStartReceive(QSPIDriver *qspip, const qspi_command_t *cmdp,
 void qspiCommand(QSPIDriver *qspip, const qspi_command_t *cmdp) {
 
   osalDbgCheck((qspip != NULL) && (cmdp != NULL));
+  osalDbgCheck((cmdp->cfg & QSPI_CFG_DATA_MODE_MASK) == QSPI_CFG_DATA_MODE_NONE);
 
   osalSysLock();
   osalDbgAssert(qspip->state == QSPI_READY, "not ready");
@@ -231,6 +232,7 @@ void qspiSend(QSPIDriver *qspip, const qspi_command_t *cmdp,
 
   osalDbgCheck((qspip != NULL) && (cmdp != NULL));
   osalDbgCheck((n > 0U) && (txbuf != NULL));
+  osalDbgCheck((cmdp->cfg & QSPI_CFG_DATA_MODE_MASK) != QSPI_CFG_DATA_MODE_NONE);
 
   osalSysLock();
   osalDbgAssert(qspip->state == QSPI_READY, "not ready");
@@ -259,6 +261,7 @@ void qspiReceive(QSPIDriver *qspip, const qspi_command_t *cmdp,
 
   osalDbgCheck((qspip != NULL) && (cmdp != NULL));
   osalDbgCheck((n > 0U) && (rxbuf != NULL));
+  osalDbgCheck((cmdp->cfg & QSPI_CFG_DATA_MODE_MASK) != QSPI_CFG_DATA_MODE_NONE);
 
   osalSysLock();
   osalDbgAssert(qspip->state == QSPI_READY, "not ready");

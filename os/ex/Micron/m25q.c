@@ -52,6 +52,9 @@
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
+static const uint8_t manufacturer_ids[] = M25Q_SUPPORTED_MANUFACTURE_IDS;
+static const uint8_t memory_type_ids[] = M25Q_SUPPORTED_MEMORY_TYPE_IDS;
+
 static const flash_descriptor_t *get_descriptor(void *instance);
 static flash_error_t read(void *instance, flash_address_t addr,
                           uint8_t *rp, size_t n);
@@ -90,6 +93,7 @@ static flash_descriptor_t descriptor = {
 };
 
 #if M25Q_BUS_MODE != M25Q_BUS_MODE_SPI
+/* Initial M25Q_CMD_READ_ID command.*/
 static const qspi_command_t cmd_read_id = {
   .cfg              = QSPI_CFG_CMD(M25Q_CMD_READ_ID) |
 #if M25Q_SWITCH_WIDTH == TRUE
@@ -110,11 +114,121 @@ static const qspi_command_t cmd_read_id = {
   .addr             = 0,
   .alt              = 0
 };
+
+/* Initial M25Q_CMD_WRITE_ENHANCED_V_CONF_REGISTER command.*/
+static const qspi_command_t cmd_write_evconf = {
+  .cfg              = QSPI_CFG_CMD(M25Q_CMD_WRITE_ENHANCED_V_CONF_REGISTER) |
+#if M25Q_SWITCH_WIDTH == TRUE
+                      QSPI_CFG_CMD_MODE_ONE_LINE     |
+                      QSPI_CFG_DATA_MODE_ONE_LINE,
+#else
+#if M25Q_BUS_MODE == M25Q_BUS_MODE_QSPI1L
+                      QSPI_CFG_CMD_MODE_ONE_LINE   |
+                      QSPI_CFG_DATA_MODE_ONE_LINE,
+#elif M25Q_BUS_MODE == M25Q_BUS_MODE_QSPI2L
+                      QSPI_CFG_CMD_MODE_TWO_LINES   |
+                      QSPI_CFG_DATA_MODE_TWO_LINES,
+#else
+                      QSPI_CFG_CMD_MODE_FOUR_LINES   |
+                      QSPI_CFG_DATA_MODE_FOUR_LINES,
+#endif
+#endif
+  .addr             = 0,
+  .alt              = 0
+};
+
+/* Initial M25Q_CMD_WRITE_ENABLE command.*/
+static const qspi_command_t cmd_write_enable = {
+  .cfg              = QSPI_CFG_CMD(M25Q_CMD_WRITE_ENABLE) |
+#if M25Q_SWITCH_WIDTH == TRUE
+                      QSPI_CFG_CMD_MODE_ONE_LINE,
+#else
+#if M25Q_BUS_MODE == M25Q_BUS_MODE_QSPI1L
+                      QSPI_CFG_CMD_MODE_ONE_LINE,
+#elif M25Q_BUS_MODE == M25Q_BUS_MODE_QSPI2L
+                      QSPI_CFG_CMD_MODE_TWO_LINES   |
+                      QSPI_CFG_DATA_MODE_TWO_LINES,
+#else
+                      QSPI_CFG_CMD_MODE_FOUR_LINES,
+#endif
+#endif
+  .addr             = 0,
+  .alt              = 0
+};
+
+/* 1x M25Q_CMD_RESET_ENABLE command.*/
+static const qspi_command_t cmd_reset_enable_1 = {
+  .cfg              = QSPI_CFG_CMD(M25Q_CMD_RESET_ENABLE) |
+                      QSPI_CFG_CMD_MODE_ONE_LINE,
+  .addr             = 0,
+  .alt              = 0
+};
+
+/* 2x M25Q_CMD_RESET_ENABLE command.*/
+static const qspi_command_t cmd_reset_enable_2 = {
+  .cfg              = QSPI_CFG_CMD(M25Q_CMD_RESET_ENABLE) |
+                      QSPI_CFG_CMD_MODE_TWO_LINES,
+  .addr             = 0,
+  .alt              = 0
+};
+
+/* 4x M25Q_CMD_RESET_ENABLE command.*/
+static const qspi_command_t cmd_reset_enable_4 = {
+  .cfg              = QSPI_CFG_CMD(M25Q_CMD_RESET_ENABLE) |
+                      QSPI_CFG_CMD_MODE_FOUR_LINES,
+  .addr             = 0,
+  .alt              = 0
+};
+
+/* 1x M25Q_CMD_RESET_MEMORY command.*/
+static const qspi_command_t cmd_reset_memory_1 = {
+  .cfg              = QSPI_CFG_CMD(M25Q_CMD_RESET_MEMORY) |
+                      QSPI_CFG_CMD_MODE_ONE_LINE,
+  .addr             = 0,
+  .alt              = 0
+};
+
+/* 2x M25Q_CMD_RESET_MEMORY command.*/
+static const qspi_command_t cmd_reset_memory_2 = {
+  .cfg              = QSPI_CFG_CMD(M25Q_CMD_RESET_MEMORY) |
+                      QSPI_CFG_CMD_MODE_TWO_LINES,
+  .addr             = 0,
+  .alt              = 0
+};
+
+/* 4x M25Q_CMD_RESET_MEMORY command.*/
+static const qspi_command_t cmd_reset_memory_4 = {
+  .cfg              = QSPI_CFG_CMD(M25Q_CMD_RESET_MEMORY) |
+                      QSPI_CFG_CMD_MODE_FOUR_LINES,
+  .addr             = 0,
+  .alt              = 0
+};
+
+/* Bus width initialization.*/
+#if M25Q_BUS_MODE == M25Q_BUS_MODE_QSPI1L
+static const uint8_t evconf_value[1] = {0xCF};
+#elif M25Q_BUS_MODE == M25Q_BUS_MODE_QSPI2L
+static const uint8_t evconf_value[1] = {0x8F};
+#else
+static const uint8_t evconf_value[1] = {0x4F};
+#endif
+
 #endif
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
+
+static bool find_id(const uint8_t *set, size_t size, uint8_t element) {
+  size_t i;
+
+  for (i = 0; i < size; i++) {
+    if (set[i] == element) {
+      return true;
+    }
+  }
+  return false;
+}
 
 #if ((M25Q_BUS_MODE != M25Q_BUS_MODE_SPI) && (M25Q_SHARED_BUS == TRUE)) ||  \
     defined(__DOXYGEN__)
@@ -143,12 +257,21 @@ static void flash_bus_release(M25QDriver *devp) {
 #define flash_bus_release(devp)
 #endif
 
-static void flash_short_cmd(M25QDriver *devp, uint8_t cmd) {
-
+static void flash_cmd(M25QDriver *devp, uint8_t cmd) {
 #if M25Q_BUS_MODE != M25Q_BUS_MODE_SPI
   qspi_command_t mode;
 
-  mode.cfg = devp->qspi_mode | QSPI_CFG_CMD(cmd);
+  mode.cfg = QSPI_CFG_CMD(cmd) |
+#if M25Q_BUS_MODE == M25Q_BUS_MODE_QSPI1L
+             QSPI_CFG_CMD_MODE_ONE_LINE;
+#elif M25Q_BUS_MODE == M25Q_BUS_MODE_QSPI2L
+             QSPI_CFG_CMD_MODE_TWO_LINES;
+#else
+             QSPI_CFG_CMD_MODE_FOUR_LINES;
+#endif
+  mode.addr = 0U;
+  mode.alt  = 0U;
+  qspiCommand(devp->config->qspip, &mode);
 #else
   uint8_t buf[1];
 
@@ -159,23 +282,160 @@ static void flash_short_cmd(M25QDriver *devp, uint8_t cmd) {
 #endif
 }
 
-static void flash_send_cmd(M25QDriver *devp, uint8_t cmd) {
+static void flash_cmd_receive(M25QDriver *devp,
+                              uint8_t cmd,
+                              size_t n,
+                              uint8_t *p) {
+#if M25Q_BUS_MODE != M25Q_BUS_MODE_SPI
+  qspi_command_t mode;
+
+  mode.cfg = QSPI_CFG_CMD(cmd) |
+#if M25Q_BUS_MODE == M25Q_BUS_MODE_QSPI1L
+             QSPI_CFG_CMD_MODE_ONE_LINE |
+             QSPI_CFG_DATA_MODE_ONE_LINE;
+#elif M25Q_BUS_MODE == M25Q_BUS_MODE_QSPI2L
+             QSPI_CFG_CMD_MODE_TWO_LINES |
+             QSPI_CFG_DATA_MODE_TWO_LINES;
+#else
+             QSPI_CFG_CMD_MODE_FOUR_LINES |
+             QSPI_CFG_DATA_MODE_FOUR_LINES;
+
+#endif
+  mode.addr = 0U;
+  mode.alt  = 0U;
+  qspiReceive(devp->config->qspip, &mode, n, p);
+#else
   uint8_t buf[1];
 
+  spiSelect(devp->config->spip);
   buf[0] = cmd;
-//  spiSend(devp->config->spip, 1, buf);
+  spiSend(devp->config->spip, 1, buf);
+  spiReceive(devp->config->spip, n, p);
+  spiUnselect(devp->config->spip);
+#endif
 }
 
-static void flash_send_cmd_addr(M25QDriver *devp,
-                                uint8_t cmd,
-                                flash_address_t addr) {
+static void flash_cmd_addr(M25QDriver *devp,
+                           uint8_t cmd,
+                           flash_address_t addr) {
+#if M25Q_BUS_MODE != M25Q_BUS_MODE_SPI
+  qspi_command_t mode;
+
+  mode.cfg = QSPI_CFG_CMD(cmd) |
+#if M25Q_BUS_MODE == M25Q_BUS_MODE_QSPI1L
+             QSPI_CFG_CMD_MODE_ONE_LINE |
+             QSPI_CFG_ADDR_MODE_ONE_LINE |
+             QSPI_CFG_ADDR_SIZE_24;
+#elif M25Q_BUS_MODE == M25Q_BUS_MODE_QSPI2L
+             QSPI_CFG_CMD_MODE_TWO_LINES |
+             QSPI_CFG_ADDR_MODE_TWO_LINES |
+             QSPI_CFG_ADDR_SIZE_24;
+#else
+             QSPI_CFG_CMD_MODE_FOUR_LINES |
+             QSPI_CFG_ADDR_MODE_FOUR_LINES |
+             QSPI_CFG_ADDR_SIZE_24;
+
+#endif
+  mode.addr = addr;
+  mode.alt  = 0U;
+  qspiCommand(devp->config->qspip, &mode);
+#else
   uint8_t buf[4];
 
+  spiSelect(devp->config->spip);
   buf[0] = cmd;
   buf[1] = (uint8_t)(addr >> 16);
   buf[2] = (uint8_t)(addr >> 8);
   buf[3] = (uint8_t)(addr >> 0);
-//  spiSend(devp->config->spip, 4, buf);
+  spiSend(devp->config->spip, 4, buf);
+  spiUnselect(devp->config->spip);
+#endif
+}
+
+static void flash_cmd_addr_send(M25QDriver *devp,
+                                uint8_t cmd,
+                                flash_address_t addr,
+                                size_t n,
+                                const uint8_t *p) {
+#if M25Q_BUS_MODE != M25Q_BUS_MODE_SPI
+  qspi_command_t mode;
+
+  mode.cfg = QSPI_CFG_CMD(cmd) |
+#if M25Q_BUS_MODE == M25Q_BUS_MODE_QSPI1L
+             QSPI_CFG_CMD_MODE_ONE_LINE |
+             QSPI_CFG_ADDR_MODE_ONE_LINE |
+             QSPI_CFG_ADDR_SIZE_24 |
+             QSPI_CFG_DATA_MODE_ONE_LINE;
+#elif M25Q_BUS_MODE == M25Q_BUS_MODE_QSPI2L
+             QSPI_CFG_CMD_MODE_TWO_LINES |
+             QSPI_CFG_ADDR_MODE_TWO_LINES |
+             QSPI_CFG_ADDR_SIZE_24 |
+             QSPI_CFG_DATA_MODE_TWO_LINES;
+#else
+             QSPI_CFG_CMD_MODE_FOUR_LINES |
+             QSPI_CFG_ADDR_MODE_FOUR_LINES |
+             QSPI_CFG_ADDR_SIZE_24 |
+             QSPI_CFG_DATA_MODE_FOUR_LINES;
+
+#endif
+  mode.addr = addr;
+  mode.alt  = 0U;
+  qspiSend(devp->config->qspip, &mode, n, p);
+#else
+  uint8_t buf[4];
+
+  spiSelect(devp->config->spip);
+  buf[0] = cmd;
+  buf[1] = (uint8_t)(addr >> 16);
+  buf[2] = (uint8_t)(addr >> 8);
+  buf[3] = (uint8_t)(addr >> 0);
+  spiSend(devp->config->spip, 4, buf);
+  spiSend(devp->config->spip, n, p);
+  spiUnselect(devp->config->spip);
+#endif
+}
+
+static void flash_cmd_addr_receive(M25QDriver *devp,
+                                   uint8_t cmd,
+                                   flash_address_t addr,
+                                   size_t n,
+                                   uint8_t *p) {
+#if M25Q_BUS_MODE != M25Q_BUS_MODE_SPI
+  qspi_command_t mode;
+
+  mode.cfg = QSPI_CFG_CMD(cmd) |
+#if M25Q_BUS_MODE == M25Q_BUS_MODE_QSPI1L
+             QSPI_CFG_CMD_MODE_ONE_LINE |
+             QSPI_CFG_ADDR_MODE_ONE_LINE |
+             QSPI_CFG_ADDR_SIZE_24 |
+             QSPI_CFG_DATA_MODE_ONE_LINE;
+#elif M25Q_BUS_MODE == M25Q_BUS_MODE_QSPI2L
+             QSPI_CFG_CMD_MODE_TWO_LINES |
+             QSPI_CFG_ADDR_MODE_TWO_LINES |
+             QSPI_CFG_ADDR_SIZE_24 |
+             QSPI_CFG_DATA_MODE_TWO_LINES;
+#else
+             QSPI_CFG_CMD_MODE_FOUR_LINES |
+             QSPI_CFG_ADDR_MODE_FOUR_LINES |
+             QSPI_CFG_ADDR_SIZE_24 |
+             QSPI_CFG_DATA_MODE_FOUR_LINES;
+
+#endif
+  mode.addr = addr;
+  mode.alt  = 0U;
+  qspiReceive(devp->config->qspip, &mode, n, p);
+#else
+  uint8_t buf[4];
+
+  spiSelect(devp->config->spip);
+  buf[0] = cmd;
+  buf[1] = (uint8_t)(addr >> 16);
+  buf[2] = (uint8_t)(addr >> 8);
+  buf[3] = (uint8_t)(addr >> 0);
+  spiSend(devp->config->spip, 4, buf);
+  spiReceive(devp->config->spip, n, p);
+  spiUnselect(devp->config->spip);
+#endif
 }
 
 static flash_error_t flash_poll_status(M25QDriver *devp) {
@@ -279,15 +539,47 @@ void m25qStart(M25QDriver *devp, const M25QConfig *config) {
     flash_bus_acquire(devp);
 
 #if M25Q_BUS_MODE == M25Q_BUS_MODE_SPI
+    /* SPI initialization.*/
     spiStart(devp->config->spip, devp->config->spicfg);
-#else
+
+    /* Reading device ID.*/
+#else /* M25Q_BUS_MODE != M25Q_BUS_MODE_SPI */
+    /* QSPI initialization.*/
     qspiStart(devp->config->qspip, devp->config->qspicfg);
+
+#if M25Q_SWITCH_WIDTH == TRUE
+    /* Attempting a device reset with decreasing bus widths, commands
+       shorter than 8 bits are ignored.*/
+    qspiCommand(devp->config->qspip, &cmd_reset_enable_4);
+    qspiCommand(devp->config->qspip, &cmd_reset_memory_4);
+    qspiCommand(devp->config->qspip, &cmd_reset_enable_2);
+    qspiCommand(devp->config->qspip, &cmd_reset_memory_2);
+    qspiCommand(devp->config->qspip, &cmd_reset_enable_1);
+    qspiCommand(devp->config->qspip, &cmd_reset_memory_1);
 #endif
 
-#if M25Q_BUS_MODE == M25Q_BUS_MODE_SPI
-#else
-    qspiSend(devp->config->qspip, &cmd_read_id, 3, id);
+    /* Reading device ID.*/
+    qspiReceive(devp->config->qspip, &cmd_read_id, 3, id);
+#endif /* M25Q_BUS_MODE != M25Q_BUS_MODE_SPI */
+
+    /* Checking if the device is white listed.*/
+    osalDbgAssert(find_id(manufacturer_ids, sizeof manufacturer_ids, id[0]),
+                  "invalid manufacturer id");
+    osalDbgAssert(find_id(memory_type_ids, sizeof memory_type_ids, id[1]),
+                  "invalid memory type id");
+
+#if (M25Q_BUS_MODE != M25Q_BUS_MODE_SPI) && (M25Q_SWITCH_WIDTH == TRUE)
+    /* Setting up final bus width.*/
+//    qspiCommand(devp->config->qspip, &cmd_write_enable);
+//    qspiSend(devp->config->qspip, &cmd_write_evconf, 1, evconf_value);
 #endif
+
+    flash_cmd_receive(devp, M25Q_CMD_READ_ID, 3, id);
+
+    flash_cmd_receive(devp, M25Q_CMD_READ_ID, 3, id);
+
+    /* Reading device ID.*/
+    qspiReceive(devp->config->qspip, &cmd_read_id, 3, id);
 
     /* Reset Enable command.*/
 //    flash_short_cmd(devp, M25Q_CMD_RESET_ENABLE);

@@ -150,6 +150,21 @@
 #if !defined(M25Q_USE_SUB_SECTORS) || defined(__DOXYGEN__)
 #define M25Q_USE_SUB_SECTORS                FALSE
 #endif
+
+/**
+ * @brief   Supported JEDEC manufacturer identifiers.
+ */
+#if !defined(M25Q_SUPPORTED_MANUFACTURE_IDS) || defined(__DOXYGEN__)
+#define M25Q_SUPPORTED_MANUFACTURE_IDS      {0x20}
+#endif
+
+/**
+ * @brief   Supported memory type identifiers.
+ */
+#if !defined(M25Q_SUPPORTED_MEMORY_TYPE_IDS) || defined(__DOXYGEN__)
+#define M25Q_SUPPORTED_MEMORY_TYPE_IDS      {0xBA, 0xBB}
+#endif
+
 /** @} */
 
 /*===========================================================================*/
