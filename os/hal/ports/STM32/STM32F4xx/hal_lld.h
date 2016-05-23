@@ -398,12 +398,6 @@
 #define STM32_MCO2SEL_HSE       (2U << 30)  /**< HSE clock on MCO2 pin.     */
 #define STM32_MCO2SEL_PLL       (3U << 30)  /**< PLL clock on MCO2 pin.     */
 
-#define STM32_RTC_NOCLOCK       (0 << 8)    /**< No clock.                  */
-#define STM32_RTC_LSE           (1 << 8)    /**< LSE used as RTC clock.     */
-#define STM32_RTC_LSI           (2 << 8)    /**< LSI used as RTC clock.     */
-#define STM32_RTC_HSE           (3 << 8)    /**< HSE divided by programmable
-                                                 prescaler used as RTC clock*/
-
 /**
  * @name    RCC_PLLI2SCFGR register bits definitions
  * @{

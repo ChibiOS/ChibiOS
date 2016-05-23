@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.5 ***
+- HAL: Removed unused macros in STM32F7xx and STM32F4xx hal_lld.h (bug #742).
 - HAL: Fixed Doxygen related macros in STM32F7xx, STM32L0xx and STM32L4xx
        lld files (bug #741).
 - HAL: Fixed bug in VREF enable/disable functions in ADCv3 driver 
