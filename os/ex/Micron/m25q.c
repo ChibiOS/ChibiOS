@@ -146,8 +146,7 @@ static const qspi_command_t cmd_write_enable = {
 #if M25Q_BUS_MODE == M25Q_BUS_MODE_QSPI1L
                       QSPI_CFG_CMD_MODE_ONE_LINE,
 #elif M25Q_BUS_MODE == M25Q_BUS_MODE_QSPI2L
-                      QSPI_CFG_CMD_MODE_TWO_LINES   |
-                      QSPI_CFG_DATA_MODE_TWO_LINES,
+                      QSPI_CFG_CMD_MODE_TWO_LINES,
 #else
                       QSPI_CFG_CMD_MODE_FOUR_LINES,
 #endif
@@ -210,10 +209,10 @@ static const uint8_t evconf_value[1] = {0xCF};
 #elif M25Q_BUS_MODE == M25Q_BUS_MODE_QSPI2L
 static const uint8_t evconf_value[1] = {0x8F};
 #else
-static const uint8_t evconf_value[1] = {0x4F};
+static const uint8_t evconf_value[1] = {0xCF};//{0x4F};
 #endif
 
-#endif
+#endif /* M25Q_BUS_MODE != M25Q_BUS_MODE_SPI */
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
@@ -570,8 +569,8 @@ void m25qStart(M25QDriver *devp, const M25QConfig *config) {
 
 #if (M25Q_BUS_MODE != M25Q_BUS_MODE_SPI) && (M25Q_SWITCH_WIDTH == TRUE)
     /* Setting up final bus width.*/
-//    qspiCommand(devp->config->qspip, &cmd_write_enable);
-//    qspiSend(devp->config->qspip, &cmd_write_evconf, 1, evconf_value);
+    qspiCommand(devp->config->qspip, &cmd_write_enable);
+    qspiSend(devp->config->qspip, &cmd_write_evconf, 1, evconf_value);
 #endif
 
     flash_cmd_receive(devp, M25Q_CMD_READ_ID, 3, id);

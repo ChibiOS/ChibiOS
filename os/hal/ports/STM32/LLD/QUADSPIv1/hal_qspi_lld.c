@@ -240,7 +240,9 @@ void qspi_lld_send(QSPIDriver *qspip, const qspi_command_t *cmdp,
   qspip->qspi->DLR = n - 1;
   qspip->qspi->ABR = cmdp->alt;
   qspip->qspi->CCR = cmdp->cfg;
-  qspip->qspi->AR  = cmdp->addr;
+  if ((cmdp->cfg & QSPI_CFG_ADDR_MODE_MASK) != QSPI_CFG_ADDR_MODE_NONE) {
+    qspip->qspi->AR  = cmdp->addr;
+  }
 
   dmaStreamEnable(qspip->dma);
 }
@@ -266,7 +268,9 @@ void qspi_lld_receive(QSPIDriver *qspip, const qspi_command_t *cmdp,
   qspip->qspi->DLR = n - 1;
   qspip->qspi->ABR = cmdp->alt;
   qspip->qspi->CCR = cmdp->cfg | QUADSPI_CCR_FMODE_0;
-  qspip->qspi->AR  = cmdp->addr;
+  if ((cmdp->cfg & QSPI_CFG_ADDR_MODE_MASK) != QSPI_CFG_ADDR_MODE_NONE) {
+    qspip->qspi->AR  = cmdp->addr;
+  }
 
   dmaStreamEnable(qspip->dma);
 }
