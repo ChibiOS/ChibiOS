@@ -73,6 +73,8 @@
 *****************************************************************************
 
 *** 16.1.5 ***
+- HAL: Fixed Doxygen related macros in STM32F7xx, STM32L0xx and STM32L4xx
+       lld files (bug #741).
 - HAL: Fixed bug in VREF enable/disable functions in ADCv3 driver 
        (bug #740).
 - HAL: Fixed DAC driver not enabled for STM32F4x7 and STM32F4x9 devices

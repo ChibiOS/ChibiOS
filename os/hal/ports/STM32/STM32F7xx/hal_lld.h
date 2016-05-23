@@ -1613,7 +1613,7 @@
 /**
  * @brief   USART1 frequency.
  */
-#if (STM32_USART1SEL == STM32_USART1SEL_PCLK2) || defined(__DOXYGEN)
+#if (STM32_USART1SEL == STM32_USART1SEL_PCLK2) || defined(__DOXYGEN__)
 #define STM32_USART1CLK             STM32_PCLK2
 #elif STM32_USART1SEL == STM32_USART1SEL_SYSCLK
 #define STM32_USART1CLK             STM32_SYSCLK
@@ -1628,7 +1628,7 @@
 /**
  * @brief   USART2 frequency.
  */
-#if (STM32_USART2SEL == STM32_USART2SEL_PCLK1) || defined(__DOXYGEN)
+#if (STM32_USART2SEL == STM32_USART2SEL_PCLK1) || defined(__DOXYGEN__)
 #define STM32_USART2CLK             STM32_PCLK1
 #elif STM32_USART2SEL == STM32_USART2SEL_SYSCLK
 #define STM32_USART2CLK             STM32_SYSCLK
@@ -1643,7 +1643,7 @@
 /**
  * @brief   USART3 frequency.
  */
-#if (STM32_USART3SEL == STM32_USART3SEL_PCLK1) || defined(__DOXYGEN)
+#if (STM32_USART3SEL == STM32_USART3SEL_PCLK1) || defined(__DOXYGEN__)
 #define STM32_USART3CLK             STM32_PCLK1
 #elif STM32_USART3SEL == STM32_USART3SEL_SYSCLK
 #define STM32_USART3CLK             STM32_SYSCLK
@@ -1658,7 +1658,7 @@
 /**
  * @brief   UART4 frequency.
  */
-#if (STM32_UART4SEL == STM32_UART4SEL_PCLK1) || defined(__DOXYGEN)
+#if (STM32_UART4SEL == STM32_UART4SEL_PCLK1) || defined(__DOXYGEN__)
 #define STM32_UART4CLK              STM32_PCLK1
 #elif STM32_UART4SEL == STM32_UART4SEL_SYSCLK
 #define STM32_UART4CLK              STM32_SYSCLK
@@ -1673,7 +1673,7 @@
 /**
  * @brief   UART5 frequency.
  */
-#if (STM32_UART5SEL == STM32_UART5SEL_PCLK1) || defined(__DOXYGEN)
+#if (STM32_UART5SEL == STM32_UART5SEL_PCLK1) || defined(__DOXYGEN__)
 #define STM32_UART5CLK              STM32_PCLK1
 #elif STM32_UART5SEL == STM32_UART5SEL_SYSCLK
 #define STM32_UART5CLK              STM32_SYSCLK
@@ -1688,7 +1688,7 @@
 /**
  * @brief   USART6 frequency.
  */
-#if (STM32_USART6SEL == STM32_USART6SEL_PCLK2) || defined(__DOXYGEN)
+#if (STM32_USART6SEL == STM32_USART6SEL_PCLK2) || defined(__DOXYGEN__)
 #define STM32_USART6CLK             STM32_PCLK2
 #elif STM32_USART6SEL == STM32_USART6SEL_SYSCLK
 #define STM32_USART6CLK             STM32_SYSCLK
@@ -1703,7 +1703,7 @@
 /**
  * @brief   UART7 frequency.
  */
-#if (STM32_UART7SEL == STM32_UART7SEL_PCLK1) || defined(__DOXYGEN)
+#if (STM32_UART7SEL == STM32_UART7SEL_PCLK1) || defined(__DOXYGEN__)
 #define STM32_UART7CLK              STM32_PCLK1
 #elif STM32_UART7SEL == STM32_UART7SEL_SYSCLK
 #define STM32_UART7CLK              STM32_SYSCLK
@@ -1718,7 +1718,7 @@
 /**
  * @brief   UART8 frequency.
  */
-#if (STM32_UART8SEL == STM32_UART8SEL_PCLK1) || defined(__DOXYGEN)
+#if (STM32_UART8SEL == STM32_UART8SEL_PCLK1) || defined(__DOXYGEN__)
 #define STM32_UART8CLK              STM32_PCLK1
 #elif STM32_UART8SEL == STM32_UART8SEL_SYSCLK
 #define STM32_UART8CLK              STM32_SYSCLK
@@ -1733,7 +1733,7 @@
 /**
  * @brief   I2C1 frequency.
  */
-#if (STM32_I2C1SEL == STM32_I2C1SEL_PCLK1) || defined(__DOXYGEN)
+#if (STM32_I2C1SEL == STM32_I2C1SEL_PCLK1) || defined(__DOXYGEN__)
 #define STM32_I2C1CLK               STM32_PCLK1
 #elif STM32_I2C1SEL == STM32_I2C1SEL_SYSCLK
 #define STM32_I2C1CLK               STM32_SYSCLK
@@ -1746,7 +1746,7 @@
 /**
  * @brief   I2C2 frequency.
  */
-#if (STM32_I2C2SEL == STM32_I2C2SEL_PCLK1) || defined(__DOXYGEN)
+#if (STM32_I2C2SEL == STM32_I2C2SEL_PCLK1) || defined(__DOXYGEN__)
 #define STM32_I2C2CLK               STM32_PCLK1
 #elif STM32_I2C2SEL == STM32_I2C2SEL_SYSCLK
 #define STM32_I2C2CLK               STM32_SYSCLK
@@ -1759,7 +1759,7 @@
 /**
  * @brief   I2C3 frequency.
  */
-#if (STM32_I2C3SEL == STM32_I2C3SEL_PCLK1) || defined(__DOXYGEN)
+#if (STM32_I2C3SEL == STM32_I2C3SEL_PCLK1) || defined(__DOXYGEN__)
 #define STM32_I2C3CLK               STM32_PCLK1
 #elif STM32_I2C3SEL == STM32_I2C3SEL_SYSCLK
 #define STM32_I2C3CLK               STM32_SYSCLK
@@ -1772,7 +1772,7 @@
 /**
  * @brief   I2C4 frequency.
  */
-#if (STM32_I2C4SEL == STM32_I2C4SEL_PCLK1) || defined(__DOXYGEN)
+#if (STM32_I2C4SEL == STM32_I2C4SEL_PCLK1) || defined(__DOXYGEN__)
 #define STM32_I2C4CLK               STM32_PCLK1
 #elif STM32_I2C4SEL == STM32_I2C4SEL_SYSCLK
 #define STM32_I2C4CLK               STM32_SYSCLK
@@ -1785,7 +1785,7 @@
 /**
  * @brief   LPTIM1 frequency.
  */
-#if (STM32_LPTIM1SEL == STM32_LPTIM1SEL_PCLK1) || defined(__DOXYGEN)
+#if (STM32_LPTIM1SEL == STM32_LPTIM1SEL_PCLK1) || defined(__DOXYGEN__)
 #define STM32_LPTIM1CLK             STM32_PCLK1
 #elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_LSI
 #define STM32_LPTIM1CLK             STM32_LSICLK
