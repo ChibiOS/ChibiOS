@@ -72,6 +72,7 @@
 *****************************************************************************
 
 *** 2.6.10 ***
+- FIX: Removed unused macros in STM32F4xx hal_lld.h (bug #742).
 - NEW: Cortex-M7 support in the kernel, generic demo application added.
 - FIX: Fixed bug in chSchPreemption() function (bug #728).
 - FIX: Fixed deadly typo in #706 fix for GCC users of 2.6.x (bug #720).
