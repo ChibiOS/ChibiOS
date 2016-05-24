@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.5 ***
+- HAL: Fixed wrong mask placement in STM32F4xx hal_lld.h (bug #744).
 - HAL: Fixed wrong indent in STM32F4xx hal_lld.h (bug #743).
 - HAL: Removed unused macros in STM32F7xx and STM32F4xx hal_lld.h (bug #742).
 - HAL: Fixed Doxygen related macros in STM32F7xx, STM32L0xx and STM32L4xx

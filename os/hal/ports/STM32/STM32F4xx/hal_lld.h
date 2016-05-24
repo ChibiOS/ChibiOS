@@ -371,13 +371,6 @@
 #define STM32_I2SSRC_PLLI2S     (0 << 23)   /**< I2SSRC is PLLI2S.          */
 #define STM32_I2SSRC_CKIN       (1 << 23)   /**< I2S_CKIN is PLLI2S.        */
 
-#define STM32_SAISRC_NOCLOCK    (0 << 23)   /**< No clock.                  */
-#define STM32_SAISRC_PLL        (1 << 23)   /**< SAI_CKIN is PLL.           */
-#define STM32_SAIR_DIV2         (0 << 16)   /**< R divided by 2.            */
-#define STM32_SAIR_DIV4         (1 << 16)   /**< R divided by 4.            */
-#define STM32_SAIR_DIV8         (2 << 16)   /**< R divided by 8.            */
-#define STM32_SAIR_DIV16        (3 << 16)   /**< R divided by 16.           */
-
 #define STM32_MCO1PRE_MASK      (7 << 24)   /**< MCO1PRE mask.              */
 #define STM32_MCO1PRE_DIV1      (0 << 24)   /**< MCO1 divided by 1.         */
 #define STM32_MCO1PRE_DIV2      (4 << 24)   /**< MCO1 divided by 2.         */
@@ -404,6 +397,19 @@
  */
 #define STM32_PLLI2SN_MASK      (511 << 6)  /**< PLLI2SN mask.              */
 #define STM32_PLLI2SR_MASK      (7 << 28)   /**< PLLI2SR mask.              */
+/** @} */
+
+/**
+ * @name    RCC_PLLSAICFGR register bits definitions
+ * @{
+ */
+#define STM32_SAIR_DIV2         (0 << 16)   /**< R divided by 2.            */
+#define STM32_SAIR_DIV4         (1 << 16)   /**< R divided by 4.            */
+#define STM32_SAIR_DIV8         (2 << 16)   /**< R divided by 8.            */
+#define STM32_SAIR_DIV16        (3 << 16)   /**< R divided by 16.           */
+
+#define STM32_SAISRC_NOCLOCK    (0 << 23)   /**< No clock.                  */
+#define STM32_SAISRC_PLL        (1 << 23)   /**< SAI_CKIN is PLL.           */
 /** @} */
 
 /**
