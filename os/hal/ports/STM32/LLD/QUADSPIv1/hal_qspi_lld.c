@@ -211,6 +211,22 @@ void qspi_lld_stop(QSPIDriver *qspip) {
  */
 void qspi_lld_command(QSPIDriver *qspip, const qspi_command_t *cmdp) {
 
+#if STM32_USE_STM32_D1_WORKAROUND == TRUE
+  /* If it is a command without address and alternate phases then the command
+     is sent as an alternate byte, the command phase is suppressed.*/
+  if ((cmdp->cfg & (QSPI_CFG_ADDR_MODE_MASK | QSPI_CFG_ALT_MODE_MASK)) == 0U) {
+    uint32_t cfg;
+
+    /* The command mode field is copied in the alternate mode field. All
+       other fields are not used in this scenario.*/
+    cfg = (cmdp->cfg  & QSPI_CFG_CMD_MODE_MASK) << 6U;
+
+    qspip->qspi->DLR = 0U;
+    qspip->qspi->ABR = cmdp->cfg & QSPI_CFG_CMD_MASK;
+    qspip->qspi->CCR = cfg;
+    return;
+  }
+#endif
   qspip->qspi->DLR = 0U;
   qspip->qspi->ABR = cmdp->alt;
   qspip->qspi->CCR = cmdp->cfg;

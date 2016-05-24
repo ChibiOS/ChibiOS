@@ -21,7 +21,7 @@
 
 const QSPIConfig qspicfg1 = {
   NULL,
-  0
+  STM32_DCR_FSIZE(24) | STM32_DCR_CSHT(1)
 };
 
 qspi_command_t cmd_read_id = {
@@ -63,6 +63,7 @@ static THD_FUNCTION(Thread1, arg) {
  * Application entry point.
  */
 int main(void) {
+  flash_error_t err;
 
   /*
    * System initializations.
@@ -89,8 +90,11 @@ int main(void) {
    */
   m25qObjectInit(&m25q);
   m25qStart(&m25q, &m25qcfg1);
-//  qspiStart(&QSPID1, &qspicfg1);
-//  qspiReceive(&QSPID1, &cmd_read_id, 17, buffer);
+
+  /* Reading it back.*/
+  err = flashRead(&m25q, 0, buffer, 128);
+  if (err != FLASH_NO_ERROR)
+    chSysHalt("read error");
 
   /*
    * Normal main() thread activity, in this demo it does nothing.

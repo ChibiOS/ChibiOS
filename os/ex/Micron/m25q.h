@@ -41,9 +41,10 @@
 #define M25Q_CMD_RESET_ENABLE                       0x66
 #define M25Q_CMD_RESET_MEMORY                       0x99
 #define M25Q_CMD_READ_ID                            0x9F
+#define M25Q_CMD_MULTIPLE_IO_READ_ID                0xAF
 #define M25Q_CMD_READ_DISCOVERY_PARAMETER           0x5A
 #define M25Q_CMD_READ                               0x03
-#define M25Q_CMD_FAST_READ                          0x08
+#define M25Q_CMD_FAST_READ                          0x0B
 #define M25Q_CMD_WRITE_ENABLE                       0x06
 #define M25Q_CMD_WRITE_DISABLE                      0x04
 #define M25Q_CMD_READ_STATUS_REGISTER               0x05
@@ -109,6 +110,15 @@
  */
 #if !defined(M25Q_USE_SPI) || defined(__DOXYGEN__)
 #define M25Q_BUS_MODE                       M25Q_BUS_MODE_QSPI4L
+#endif
+
+/**
+ * @brief   Number of dummy cycles for fast read (1..15).
+ * @details This is the number of dummy cycles to be used for fast read
+ *          operations.
+ */
+#if !defined(M25Q_READ_DUMMY_CYCLES) || defined(__DOXYGEN__)
+#define M25Q_READ_DUMMY_CYCLES              8
 #endif
 
 /**
@@ -185,6 +195,17 @@
 #error "M25Q_SHARED_SPI requires SPI_USE_MUTUAL_EXCLUSION"
 #endif
 
+#if (M25Q_BUS_MODE != M25Q_BUS_MODE_SPI) &&                                 \
+    (M25Q_BUS_MODE != M25Q_BUS_MODE_QSPI1L) &&                              \
+    (M25Q_BUS_MODE != M25Q_BUS_MODE_QSPI2L) &&                              \
+    (M25Q_BUS_MODE != M25Q_BUS_MODE_QSPI4L)
+#error "invalid M25Q_BUS_MODE selected"
+#endif
+
+#if (M25Q_READ_DUMMY_CYCLES < 1) || (M25Q_READ_DUMMY_CYCLES > 15)
+#error "invalid M25Q_READ_DUMMY_CYCLES value (1..15)"
+#endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
@@ -250,6 +271,10 @@ typedef struct {
    */
   uint32_t                      qspi_mode;
 #endif
+  /**
+   * @brief   Device ID and unique ID.
+   */
+  uint8_t                       device_id[20];
 } M25QDriver;
 
 /*===========================================================================*/
