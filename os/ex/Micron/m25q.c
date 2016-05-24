@@ -565,21 +565,151 @@ static flash_error_t program(void *instance, flash_address_t addr,
 }
 
 static flash_error_t start_erase_all(void *instance) {
+  M25QDriver *devp = (M25QDriver *)instance;
+
+  osalDbgCheck(instance != NULL);
+  osalDbgAssert((devp->state == FLASH_READY) || (devp->state == FLASH_ERASE),
+                "invalid state");
+
+  if (devp->state == FLASH_ERASE) {
+    return FLASH_BUSY_ERASING;
+  }
+
+  /* Bus acquired.*/
+  flash_bus_acquire(devp);
+
+  /* FLASH_ERASE state while the operation is performed.*/
+  devp->state = FLASH_ERASE;
+
+  /* Enabling write operation.*/
+  flash_cmd(devp, M25Q_CMD_WRITE_ENABLE);
+
+  /* Bulk erase command.*/
+  flash_cmd(devp, M25Q_CMD_BULK_ERASE);
+
+  /* Ready state again.*/
+  devp->state = FLASH_READY;
+
+  /* Bus released.*/
+  flash_bus_release(devp);
 
   return FLASH_NO_ERROR;
 }
 
 static flash_error_t start_erase_sector(void *instance, flash_sector_t sector) {
+  M25QDriver *devp = (M25QDriver *)instance;
+  flash_address_t addr = (flash_address_t)(sector * SECTOR_SIZE);
+
+  osalDbgCheck(instance != NULL);
+  osalDbgCheck(sector < descriptor.sectors_count);
+  osalDbgAssert((devp->state == FLASH_READY) || (devp->state == FLASH_ERASE),
+                "invalid state");
+
+  if (devp->state == FLASH_ERASE) {
+    return FLASH_BUSY_ERASING;
+  }
+
+  /* Bus acquired.*/
+  flash_bus_acquire(devp);
+
+  /* FLASH_ERASE state while the operation is performed.*/
+  devp->state = FLASH_ERASE;
+
+  /* Enabling write operation.*/
+  flash_cmd(devp, M25Q_CMD_WRITE_ENABLE);
+
+  /* Sector erase command.*/
+  flash_cmd_addr(devp, M25Q_CMD_SECTOR_ERASE, addr);
+
+  /* Ready state again.*/
+  devp->state = FLASH_READY;
+
+  /* Bus released.*/
+  flash_bus_release(devp);
 
   return FLASH_NO_ERROR;
 }
 
 static flash_error_t verify_erase(void *instance, flash_sector_t sector) {
+  M25QDriver *devp = (M25QDriver *)instance;
+  unsigned i;
+
+  osalDbgCheck(instance != NULL);
+  osalDbgCheck(sector < descriptor.sectors_count);
+  osalDbgAssert((devp->state == FLASH_READY) || (devp->state == FLASH_ERASE),
+                "invalid state");
+
+  if (devp->state == FLASH_ERASE) {
+    return FLASH_BUSY_ERASING;
+  }
+
+  /* Bus acquired.*/
+  flash_bus_acquire(devp);
+
+  /* FLASH_READY state while the operation is performed.*/
+  devp->state = FLASH_READ;
+
+  /* Read command.*/
+
+  /* Ready state again.*/
+  devp->state = FLASH_READY;
+
+  /* Bus released.*/
+  flash_bus_release(devp);
 
   return FLASH_NO_ERROR;
 }
 
 static flash_error_t query_erase(void *instance, uint32_t *msec) {
+  M25QDriver *devp = (M25QDriver *)instance;
+  uint8_t sts;
+
+  osalDbgCheck(instance != NULL);
+  osalDbgAssert((devp->state == FLASH_READY) || (devp->state == FLASH_ERASE),
+                "invalid state");
+
+  /* If there is an erase in progress then the device must be checked.*/
+  if (devp->state == FLASH_ERASE) {
+
+    /* Bus acquired.*/
+    flash_bus_acquire(devp);
+
+    /* Read status command.*/
+    flash_cmd_receive(devp, M25Q_CMD_READ_FLAG_STATUS_REGISTER, 1, &sts);
+
+    /* If the P/E bit is zero (busy) or the flash in a suspended state then
+       report that the operation is still in progress.*/
+    if (((sts & M25Q_FLAGS_PROGRAM_ERASE) == 0U) ||
+        ((sts & M25Q_FLAGS_ERASE_SUSPEND) != 0U)) {
+
+      /* Bus released.*/
+      flash_bus_release(devp);
+
+      /* Recommended time before polling again, this is a simplified
+         implementation.*/
+      if (msec != NULL) {
+        *msec = 1U;
+      }
+
+      return FLASH_BUSY_ERASING;
+    }
+
+    /* The device is ready to accept commands.*/
+    devp->state = FLASH_READY;
+
+    /* Checking for errors.*/
+    if ((sts & M25Q_FLAGS_ALL_ERRORS) != 0U) {
+
+      /* Clearing status register.*/
+      flash_cmd(devp, M25Q_CMD_CLEAR_FLAG_STATUS_REGISTER);
+
+      /* Erase operation failed.*/
+      return FLASH_ERROR_ERASE;
+    }
+
+    /* Bus released.*/
+    flash_bus_release(devp);
+  }
 
   return FLASH_NO_ERROR;
 }
