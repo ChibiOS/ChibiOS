@@ -113,6 +113,7 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Fixed wrong indent in STM32F4xx hal_lld.h (bug #743).
 - HAL: Removed unused macros in STM32F7xx and STM32F4xx hal_lld.h (bug #742).
 - HAL: Fixed Doxygen related macros in STM32F7xx, STM32L0xx and STM32L4xx
        lld files (bug #741).
