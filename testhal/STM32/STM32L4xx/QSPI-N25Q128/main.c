@@ -19,6 +19,7 @@
 
 #include "m25q.h"
 
+/* 16MB device, 2 cycles delay after NCS.*/
 const QSPIConfig qspicfg1 = {
   NULL,
   STM32_DCR_FSIZE(24) | STM32_DCR_CSHT(1)
