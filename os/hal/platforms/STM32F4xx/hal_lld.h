@@ -262,11 +262,11 @@
  * @name    RCC_PLLCFGR register bits definitions
  * @{
  */
-#define STM32_PLLP_MASK			(3 << 16)	/**< PLLP mask.                 */
-#define STM32_PLLP_DIV2			(0 << 16)	/**< PLL clock divided by 2.    */
-#define STM32_PLLP_DIV4			(1 << 16)	/**< PLL clock divided by 4.    */
-#define STM32_PLLP_DIV6			(2 << 16)   /**< PLL clock divided by 6.    */
-#define STM32_PLLP_DIV8			(3 << 16)   /**< PLL clock divided by 8.    */
+#define STM32_PLLP_MASK         (3 << 16)   /**< PLLP mask.                 */
+#define STM32_PLLP_DIV2         (0 << 16)   /**< PLL clock divided by 2.    */
+#define STM32_PLLP_DIV4         (1 << 16)   /**< PLL clock divided by 4.    */
+#define STM32_PLLP_DIV6         (2 << 16)   /**< PLL clock divided by 6.    */
+#define STM32_PLLP_DIV8         (3 << 16)   /**< PLL clock divided by 8.    */
 
 #define STM32_PLLSRC_HSI        (0 << 22)   /**< PLL clock source is HSI.   */
 #define STM32_PLLSRC_HSE        (1 << 22)   /**< PLL clock source is HSE.   */
@@ -292,14 +292,14 @@
 #define STM32_HPRE_DIV256       (14 << 4)   /**< SYSCLK divided by 256.     */
 #define STM32_HPRE_DIV512       (15 << 4)   /**< SYSCLK divided by 512.     */
 
-#define STM32_PPRE1_MASK        (7 << 10)	/**< PPRE1 mask.                */
+#define STM32_PPRE1_MASK        (7 << 10)   /**< PPRE1 mask.                */
 #define STM32_PPRE1_DIV1        (0 << 10)   /**< HCLK divided by 1.         */
 #define STM32_PPRE1_DIV2        (4 << 10)   /**< HCLK divided by 2.         */
 #define STM32_PPRE1_DIV4        (5 << 10)   /**< HCLK divided by 4.         */
 #define STM32_PPRE1_DIV8        (6 << 10)   /**< HCLK divided by 8.         */
 #define STM32_PPRE1_DIV16       (7 << 10)   /**< HCLK divided by 16.        */
 
-#define STM32_PPRE2_MASK        (7 << 13)	/**< PPRE2 mask.                */
+#define STM32_PPRE2_MASK        (7 << 13)   /**< PPRE2 mask.                */
 #define STM32_PPRE2_DIV1        (0 << 13)   /**< HCLK divided by 1.         */
 #define STM32_PPRE2_DIV2        (4 << 13)   /**< HCLK divided by 2.         */
 #define STM32_PPRE2_DIV4        (5 << 13)   /**< HCLK divided by 4.         */
@@ -332,11 +332,11 @@
 #define STM32_MCO2PRE_DIV4      (6 << 27)   /**< MCO2 divided by 4.         */
 #define STM32_MCO2PRE_DIV5      (7 << 27)   /**< MCO2 divided by 5.         */
 
-#define STM32_MCO2SEL_MASK      (3U << 30)  /**< MCO2 mask.                 */
-#define STM32_MCO2SEL_SYSCLK    (0U << 30)  /**< SYSCLK clock on MCO2 pin.  */
-#define STM32_MCO2SEL_PLLI2S    (1U << 30)  /**< PLLI2S clock on MCO2 pin.  */
-#define STM32_MCO2SEL_HSE       (2U << 30)  /**< HSE clock on MCO2 pin.     */
-#define STM32_MCO2SEL_PLL       (3U << 30)  /**< PLL clock on MCO2 pin.     */
+#define STM32_MCO2SEL_MASK      (3 << 30)   /**< MCO2 mask.                 */
+#define STM32_MCO2SEL_SYSCLK    (0 << 30)   /**< SYSCLK clock on MCO2 pin.  */
+#define STM32_MCO2SEL_PLLI2S    (1 << 30)   /**< PLLI2S clock on MCO2 pin.  */
+#define STM32_MCO2SEL_HSE       (2 << 30)   /**< HSE clock on MCO2 pin.     */
+#define STM32_MCO2SEL_PLL       (3 << 30)   /**< PLL clock on MCO2 pin.     */
 
 /**
  * @name    RCC_PLLI2SCFGR register bits definitions
