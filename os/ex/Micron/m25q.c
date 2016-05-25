@@ -506,6 +506,24 @@ static void flash_cmd_addr_dummy_receive(M25QDriver *devp,
 #endif /* M25Q_BUS_MODE != M25Q_BUS_MODE_SPI */
 
 static flash_error_t flash_poll_status(M25QDriver *devp) {
+  uint8_t sts;
+
+  do {
+#if M25Q_NICE_WAITING == TRUE
+    osalThreadSleepMilliseconds(1);
+#endif
+    /* Read status command.*/
+    flash_cmd_receive(devp, M25Q_CMD_READ_FLAG_STATUS_REGISTER, 1, &sts);
+  } while ((sts & M25Q_FLAGS_PROGRAM_ERASE) == 0U);
+
+  /* Checking for errors.*/
+  if ((sts & M25Q_FLAGS_ALL_ERRORS) != 0U) {
+    /* Clearing status register.*/
+    flash_cmd(devp, M25Q_CMD_CLEAR_FLAG_STATUS_REGISTER);
+
+    /* Program operation failed.*/
+    return FLASH_ERROR_PROGRAM;
+  }
 
   return FLASH_NO_ERROR;
 }
@@ -560,6 +578,61 @@ static flash_error_t read(void *instance, flash_address_t addr,
 
 static flash_error_t program(void *instance, flash_address_t addr,
                              const uint8_t *pp, size_t n) {
+  M25QDriver *devp = (M25QDriver *)instance;
+
+  osalDbgCheck((instance != NULL) && (pp != NULL) && (n > 0U));
+  osalDbgCheck((size_t)addr + n <= (size_t)descriptor.sectors_count *
+                                   (size_t)descriptor.sectors_size);
+  osalDbgAssert((devp->state == FLASH_READY) || (devp->state == FLASH_ERASE),
+                "invalid state");
+
+  if (devp->state == FLASH_ERASE) {
+    return FLASH_BUSY_ERASING;
+  }
+
+  /* Bus acquired.*/
+  flash_bus_acquire(devp);
+
+  /* FLASH_PGM state while the operation is performed.*/
+  devp->state = FLASH_PGM;
+
+  /* Data is programmed page by page.*/
+  while (n > 0U) {
+    flash_error_t err;
+
+    /* Data size that can be written in a single program page operation.*/
+    size_t chunk = (size_t)(((addr | PAGE_MASK) + 1U) - addr);
+    if (chunk > n) {
+      chunk = n;
+    }
+
+    /* Enabling write operation.*/
+    flash_cmd(devp, M25Q_CMD_WRITE_ENABLE);
+
+    /* Page program command.*/
+    flash_cmd_addr_send(devp, M25Q_CMD_PAGE_PROGRAM, addr, chunk, pp);
+
+    /* Wait for status and check errors.*/
+    err = flash_poll_status(devp);
+    if (err != FLASH_NO_ERROR) {
+
+      /* Bus released.*/
+      flash_bus_release(devp);
+
+      return err;
+    }
+
+    /* Next page.*/
+    addr += chunk;
+    pp   += chunk;
+    n    -= chunk;
+  }
+
+  /* Ready state again.*/
+  devp->state = FLASH_READY;
+
+  /* Bus released.*/
+  flash_bus_release(devp);
 
   return FLASH_NO_ERROR;
 }
