@@ -279,12 +279,6 @@ typedef struct {
    * @brief   Current configuration data.
    */
   const M25QConfig              *config;
-#if (M25Q_BUS_MODE != M25Q_BUS_MODE_SPI) || defined(__DOXYGEN__)
-  /**
-   * @brief   Command width flags to be used for commands sent over QSPI.
-   */
-  uint32_t                      qspi_mode;
-#endif
   /**
    * @brief   Device ID and unique ID.
    */
@@ -305,6 +299,12 @@ extern "C" {
   void m25qObjectInit(M25QDriver *devp);
   void m25qStart(M25QDriver *devp, const M25QConfig *config);
   void m25qStop(M25QDriver *devp);
+#if (M25Q_BUS_MODE != M25Q_BUS_MODE_SPI) || defined(__DOXYGEN__)
+#if (QSPI_SUPPORTS_MEMMAP == TRUE) || defined(__DOXYGEN__)
+  void m25qMemoryMap(M25QDriver *devp, uint8_t ** addrp);
+  void m25qMemoryUnmap(M25QDriver *devp);
+#endif /* QSPI_SUPPORTS_MEMMAP == TRUE */
+#endif /* M25Q_BUS_MODE != M25Q_BUS_MODE_SPI */
 #ifdef __cplusplus
 }
 #endif

@@ -839,9 +839,6 @@ void m25qObjectInit(M25QDriver *devp) {
   devp->vmt         = &m25q_vmt;
   devp->state       = FLASH_STOP;
   devp->config      = NULL;
-#if (M25Q_BUS_MODE != M25Q_BUS_MODE_SPI) || defined(__DOXYGEN__)
-  devp->qspi_mode   = 0U;
-#endif
 }
 
 static const qspi_command_t cmd_test_reset_enable_4 = {
@@ -951,7 +948,7 @@ void m25qStart(M25QDriver *devp, const M25QConfig *config) {
 /**
  * @brief   Deactivates the N25Q128 driver.
  *
- * @param[in] devp       pointer to the @p M25QDriver object
+ * @param[in] devp      pointer to the @p M25QDriver object
  *
  * @api
  */
@@ -980,5 +977,60 @@ void m25qStop(M25QDriver *devp) {
     flash_bus_release(devp);
   }
 }
+
+#if (M25Q_BUS_MODE != M25Q_BUS_MODE_SPI) || defined(__DOXYGEN__)
+#if (QSPI_SUPPORTS_MEMMAP == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Enters the memory Mapping mode.
+ * @details The memory mapping mode is only available when the QSPI mode
+ *          is selected and the underlying QSPI controller supports the
+ *          feature.
+ *
+ * @param[in] devp      pointer to the @p M25QDriver object
+ * @param[out] addrp    pointer to the memory start address of the mapped
+ *                      flash or @p NULL
+ *
+ * @api
+ */
+void m25qMemoryMap(M25QDriver *devp, uint8_t ** addrp) {
+  qspi_command_t cmd;
+
+  cmd.cfg = QSPI_CFG_CMD(M25Q_CMD_FAST_READ) |
+            QSPI_CFG_ADDR_SIZE_24 |
+#if M25Q_BUS_MODE == M25Q_BUS_MODE_QSPI1L
+            QSPI_CFG_CMD_MODE_ONE_LINE |
+            QSPI_CFG_ADDR_MODE_ONE_LINE |
+            QSPI_CFG_ALT_MODE_ONE_LINE |
+            QSPI_CFG_DATA_MODE_ONE_LINE |
+#elif M25Q_BUS_MODE == M25Q_BUS_MODE_QSPI2L
+            QSPI_CFG_CMD_MODE_TWO_LINES |
+            QSPI_CFG_ADDR_MODE_TWO_LINES |
+            QSPI_CFG_ALT_MODE_TWO_LINES |
+            QSPI_CFG_DATA_MODE_TWO_LINES |
+#else
+            QSPI_CFG_CMD_MODE_FOUR_LINES |
+            QSPI_CFG_ADDR_MODE_FOUR_LINES |
+            QSPI_CFG_ALT_MODE_FOUR_LINES |
+            QSPI_CFG_DATA_MODE_FOUR_LINES |
+#endif
+            QSPI_CFG_SIOO |
+            QSPI_CFG_DUMMY_CYCLES(M25Q_READ_DUMMY_CYCLES);
+
+  qspiMapFlash(devp->config->qspip, &cmd, addrp);
+}
+
+/**
+ * @brief   Leaves the memory Mapping mode.
+ *
+ * @param[in] devp      pointer to the @p M25QDriver object
+ *
+ * @api
+ */
+void m25qMemoryUnmap(M25QDriver *devp) {
+
+  qspiUnmapFlash(devp->config->qspip);
+}
+#endif /* QSPI_SUPPORTS_MEMMAP == TRUE */
+#endif /* M25Q_BUS_MODE != M25Q_BUS_MODE_SPI */
 
 /** @} */
