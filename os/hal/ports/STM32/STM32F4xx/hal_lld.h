@@ -433,19 +433,6 @@
 /** @} */
 
 /**
- * @name    RCC_PLLSAICFGR register bits definitions
- * @{
- */
-#define STM32_SAIR_DIV2         (0 << 16)   /**< R divided by 2.            */
-#define STM32_SAIR_DIV4         (1 << 16)   /**< R divided by 4.            */
-#define STM32_SAIR_DIV8         (2 << 16)   /**< R divided by 8.            */
-#define STM32_SAIR_DIV16        (3 << 16)   /**< R divided by 16.           */
-
-#define STM32_SAISRC_NOCLOCK    (0 << 23)   /**< No clock.                  */
-#define STM32_SAISRC_PLL        (1 << 23)   /**< SAI_CKIN is PLL.           */
-/** @} */
-
-/**
  * @name    RCC_BDCR register bits definitions
  * @{
  */
@@ -1353,21 +1340,10 @@
 #error "invalid STM32_PLLI2SR_VALUE value specified"
 #endif
 
-/*
- * PLLSAI enable check.
- */
-#if !defined(STM32_SAISRC)
-#define STM32_SAISRC                STM32_SAISRC_NOCLOCK
-#endif
-
 /**
  * @brief   PLLSAI activation flag.
  */
-#if (STM32_SAISRC == STM32_SAISRC_PLL) || defined(__DOXYGEN__)
-#define STM32_ACTIVATE_PLLSAI       TRUE
-#else
 #define STM32_ACTIVATE_PLLSAI       FALSE
-#endif
 
 /**
  * @brief   STM32_PLLSAIN field.
