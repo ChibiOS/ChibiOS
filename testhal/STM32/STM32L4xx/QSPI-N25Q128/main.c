@@ -112,15 +112,31 @@ int main(void) {
   if (err != FLASH_NO_ERROR)
     chSysHalt("erase error");
 
+  /* Verifying the erase operation.*/
+  err = flashVerifyErase(&m25q, 0);
+  if (err != FLASH_NO_ERROR)
+    chSysHalt("verify erase error");
+
   /* Programming a pattern.*/
   err = flashProgram(&m25q, 0, pattern, 128);
   if (err != FLASH_NO_ERROR)
     chSysHalt("program error");
 
+  /* Verifying the erase operation.*/
+  err = flashVerifyErase(&m25q, 0);
+  if (err != FLASH_ERROR_VERIFY)
+    chSysHalt("verify non-erase error");
+
   /* Reading it back.*/
   err = flashRead(&m25q, 0, buffer, 128);
   if (err != FLASH_NO_ERROR)
     chSysHalt("read error");
+
+  /* Erasing again.*/
+  (void) flashStartEraseSector(&m25q, 0);
+  err = flashWaitErase((BaseFlash *)&m25q);
+  if (err != FLASH_NO_ERROR)
+    chSysHalt("erase error");
 
   /*
    * Normal main() thread activity, in this demo it does nothing.

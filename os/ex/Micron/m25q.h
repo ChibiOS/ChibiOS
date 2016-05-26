@@ -175,6 +175,16 @@
 #define M25Q_SUPPORTED_MEMORY_TYPE_IDS      {0xBA, 0xBB}
 #endif
 
+/**
+ * @brief   Size of the compare buffer.
+ * @details This buffer is allocated in the stack frame of the function
+ *          @p flashVerifyErase() and its size must be a power of two.
+ *          Larger buffers lead to better verify performance but increase
+ *          stack usage for that function.
+ */
+#if !defined(M25Q_COMPARE_BUFFER_SIZE) || defined(__DOXYGEN__)
+#define M25Q_COMPARE_BUFFER_SIZE            32
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -204,6 +214,10 @@
 
 #if (M25Q_READ_DUMMY_CYCLES < 1) || (M25Q_READ_DUMMY_CYCLES > 15)
 #error "invalid M25Q_READ_DUMMY_CYCLES value (1..15)"
+#endif
+
+#if (M25Q_COMPARE_BUFFER_SIZE & (M25Q_COMPARE_BUFFER_SIZE - 1)) != 0
+#error "invalid M25Q_COMPARE_BUFFER_SIZE value"
 #endif
 
 /*===========================================================================*/

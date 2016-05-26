@@ -699,7 +699,9 @@ static flash_error_t start_erase_sector(void *instance, flash_sector_t sector) {
 
 static flash_error_t verify_erase(void *instance, flash_sector_t sector) {
   M25QDriver *devp = (M25QDriver *)instance;
-  unsigned i;
+  uint8_t cmpbuf[M25Q_COMPARE_BUFFER_SIZE];
+  flash_address_t addr;
+  size_t n;
 
   osalDbgCheck(instance != NULL);
   osalDbgCheck(sector < descriptor.sectors_count);
@@ -717,6 +719,35 @@ static flash_error_t verify_erase(void *instance, flash_sector_t sector) {
   devp->state = FLASH_READ;
 
   /* Read command.*/
+  addr = (flash_address_t)(sector * SECTOR_SIZE);
+  n = SECTOR_SIZE;
+  while (n > 0U) {
+    uint8_t *p;
+
+#if M25Q_BUS_MODE != M25Q_BUS_MODE_SPI
+    flash_cmd_addr_dummy_receive(devp, M25Q_CMD_FAST_READ,
+                                 addr, M25Q_READ_DUMMY_CYCLES,
+                                 sizeof cmpbuf, cmpbuf);
+#else
+    /* Normal read command in SPI mode.*/
+#endif
+
+    /* Checking for erased state of current buffer.*/
+    for (p = cmpbuf; p < &cmpbuf[M25Q_COMPARE_BUFFER_SIZE]; p++) {
+      if (*p != 0xFFU) {
+        /* Ready state again.*/
+        devp->state = FLASH_READY;
+
+        /* Bus released.*/
+        flash_bus_release(devp);
+
+        return FLASH_ERROR_VERIFY;
+      }
+    }
+
+    addr += sizeof cmpbuf;
+    n -= sizeof cmpbuf;
+  }
 
   /* Ready state again.*/
   devp->state = FLASH_READY;
