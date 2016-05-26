@@ -291,7 +291,6 @@ void qspi_lld_receive(QSPIDriver *qspip, const qspi_command_t *cmdp,
   dmaStreamEnable(qspip->dma);
 }
 
-
 #if (QSPI_SUPPORTS_MEMMAP == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Maps in memory space a QSPI flash device.
@@ -309,6 +308,19 @@ void qspi_lld_map_flash(QSPIDriver *qspip,
                         const qspi_command_t *cmdp,
                         uint8_t **addrp) {
 
+  /* Disabling the DMA request while in memory mapped mode.*/
+  qspip->qspi->CR &= ~QUADSPI_CR_DMAEN;
+
+  /* Starting memory mapped mode using the passed parameters.*/
+  qspip->qspi->DLR = 0;
+  qspip->qspi->ABR = 0;
+  qspip->qspi->AR  = 0;
+  qspip->qspi->CCR = cmdp->cfg | QUADSPI_CCR_FMODE_1 | QUADSPI_CCR_FMODE_0;
+
+  /* Mapped flash absolute base address.*/
+  if (addrp != NULL) {
+    *addrp = (uint8_t *)0x90000000;
+  }
 }
 
 /**
@@ -322,6 +334,13 @@ void qspi_lld_map_flash(QSPIDriver *qspip,
  */
 void qspi_lld_unmap_flash(QSPIDriver *qspip) {
 
+  /* Aborting memory mapped mode.*/
+  qspip->qspi->CR |= QUADSPI_CR_ABORT;
+  while ((qspip->qspi->CR & QUADSPI_CR_ABORT) != 0U) {
+  }
+
+  /* Re-enabling DMA request, we are going back to indirect mode.*/
+  qspip->qspi->CR |= QUADSPI_CR_DMAEN;
 }
 #endif /* QSPI_SUPPORTS_MEMMAP == TRUE */
 

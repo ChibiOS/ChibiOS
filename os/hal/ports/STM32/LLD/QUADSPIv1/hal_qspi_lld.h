@@ -35,7 +35,7 @@
  * @name    QSPI capabilities
  * @{
  */
-#define QSPI_SUPPORTS_MEMMAP                FALSE
+#define QSPI_SUPPORTS_MEMMAP                TRUE
 /** @} */
 
 /**
