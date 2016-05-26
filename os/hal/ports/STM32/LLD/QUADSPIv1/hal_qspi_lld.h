@@ -32,6 +32,13 @@
 /*===========================================================================*/
 
 /**
+ * @name    QSPI capabilities
+ * @{
+ */
+#define QSPI_SUPPORTS_MEMMAP                FALSE
+/** @} */
+
+/**
  * @name    DCR register options
  * @{
  */
@@ -257,6 +264,12 @@ extern "C" {
                      size_t n, const uint8_t *txbuf);
   void qspi_lld_receive(QSPIDriver *qspip, const qspi_command_t *cmdp,
                         size_t n, uint8_t *rxbuf);
+#if QSPI_SUPPORTS_MEMMAP == TRUE
+  void qspi_lld_map_flash(QSPIDriver *qspip,
+                          const qspi_command_t *cmdp,
+                          uint8_t **addrp);
+  void qspi_lld_unmap_flash(QSPIDriver *qspip);
+#endif
 #ifdef __cplusplus
 }
 #endif

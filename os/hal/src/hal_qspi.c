@@ -92,12 +92,16 @@ void qspiStart(QSPIDriver *qspip, const QSPIConfig *config) {
 
   osalDbgCheck((qspip != NULL) && (config != NULL));
 
+
   osalSysLock();
+
   osalDbgAssert((qspip->state == QSPI_STOP) || (qspip->state == QSPI_READY),
                 "invalid state");
+
   qspip->config = config;
   qspi_lld_start(qspip);
   qspip->state = QSPI_READY;
+
   osalSysUnlock();
 }
 
@@ -115,10 +119,13 @@ void qspiStop(QSPIDriver *qspip) {
   osalDbgCheck(qspip != NULL);
 
   osalSysLock();
+
   osalDbgAssert((qspip->state == QSPI_STOP) || (qspip->state == QSPI_READY),
                 "invalid state");
+
   qspi_lld_stop(qspip);
   qspip->state = QSPI_STOP;
+
   osalSysUnlock();
 }
 
@@ -136,8 +143,11 @@ void qspiStartCommand(QSPIDriver *qspip, const qspi_command_t *cmdp) {
   osalDbgCheck((qspip != NULL) && (cmdp != NULL));
 
   osalSysLock();
+
   osalDbgAssert(qspip->state == QSPI_READY, "not ready");
+
   qspiStartCommandI(qspip, cmdp);
+
   osalSysUnlock();
 }
 
@@ -159,8 +169,11 @@ void qspiStartSend(QSPIDriver *qspip, const qspi_command_t *cmdp,
   osalDbgCheck((n > 0U) && (txbuf != NULL));
 
   osalSysLock();
+
   osalDbgAssert(qspip->state == QSPI_READY, "not ready");
+
   qspiStartSendI(qspip, cmdp, n, txbuf);
+
   osalSysUnlock();
 }
 
@@ -182,8 +195,11 @@ void qspiStartReceive(QSPIDriver *qspip, const qspi_command_t *cmdp,
   osalDbgCheck((n > 0U) && (rxbuf != NULL));
 
   osalSysLock();
+
   osalDbgAssert(qspip->state == QSPI_READY, "not ready");
+
   qspiStartReceiveI(qspip, cmdp, n, rxbuf);
+
   osalSysUnlock();
 }
 
@@ -206,10 +222,13 @@ void qspiCommand(QSPIDriver *qspip, const qspi_command_t *cmdp) {
   osalDbgCheck((cmdp->cfg & QSPI_CFG_DATA_MODE_MASK) == QSPI_CFG_DATA_MODE_NONE);
 
   osalSysLock();
+
   osalDbgAssert(qspip->state == QSPI_READY, "not ready");
   osalDbgAssert(qspip->config->end_cb == NULL, "has callback");
+
   qspiStartCommandI(qspip, cmdp);
   (void) osalThreadSuspendS(&qspip->thread);
+
   osalSysUnlock();
 }
 
@@ -235,10 +254,13 @@ void qspiSend(QSPIDriver *qspip, const qspi_command_t *cmdp,
   osalDbgCheck((cmdp->cfg & QSPI_CFG_DATA_MODE_MASK) != QSPI_CFG_DATA_MODE_NONE);
 
   osalSysLock();
+
   osalDbgAssert(qspip->state == QSPI_READY, "not ready");
   osalDbgAssert(qspip->config->end_cb == NULL, "has callback");
+
   qspiStartSendI(qspip, cmdp, n, txbuf);
   (void) osalThreadSuspendS(&qspip->thread);
+
   osalSysUnlock();
 }
 
@@ -264,13 +286,70 @@ void qspiReceive(QSPIDriver *qspip, const qspi_command_t *cmdp,
   osalDbgCheck((cmdp->cfg & QSPI_CFG_DATA_MODE_MASK) != QSPI_CFG_DATA_MODE_NONE);
 
   osalSysLock();
+
   osalDbgAssert(qspip->state == QSPI_READY, "not ready");
   osalDbgAssert(qspip->config->end_cb == NULL, "has callback");
+
   qspiStartReceiveI(qspip, cmdp, n, rxbuf);
   (void) osalThreadSuspendS(&qspip->thread);
+
   osalSysUnlock();
 }
 #endif /* QSPI_USE_WAIT == TRUE */
+
+#if (QSPI_SUPPORTS_MEMMAP == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Maps in memory space a QSPI flash device.
+ * @pre     The memory flash device must be initialized appropriately
+ *          before mapping it in memory space.
+ *
+ * @param[in] qspip     pointer to the @p QSPIDriver object
+ * @param[in] cmdp      pointer to the command descriptor
+ * @param[out] addrp    pointer to the memory start address of the mapped
+ *                      flash or @p NULL
+ *
+ * @api
+ */
+void qspiMapFlash(QSPIDriver *qspip,
+                  const qspi_command_t *cmdp,
+                  uint8_t **addrp) {
+
+  osalDbgCheck((qspip != NULL) && (cmdp != NULL));
+  osalDbgCheck((cmdp->cfg & QSPI_CFG_DATA_MODE_MASK) != QSPI_CFG_DATA_MODE_NONE);
+
+  osalSysLock();
+
+  osalDbgAssert(qspip->state == QSPI_READY, "not ready");
+
+  qspiMapFlashI(qspip, cmdp, addrp);
+  qspip->state = QSPI_MEMMAP;
+
+  osalSysUnlock();
+}
+
+/**
+ * @brief   Maps in memory space a QSPI flash device.
+ * @post    The memory flash device must be re-initialized for normal
+ *          commands exchange.
+ *
+ * @param[in] qspip     pointer to the @p QSPIDriver object
+ *
+ * @api
+ */
+void qspiUnmapFlash(QSPIDriver *qspip) {
+
+  osalDbgCheck(qspip != NULL);
+
+  osalSysLock();
+
+  osalDbgAssert(qspip->state == QSPI_MEMMAP, "not ready");
+
+  qspiUnmapFlashI(qspip);
+  qspip->state = QSPI_READY;
+
+  osalSysUnlock();
+}
+#endif /* QSPI_SUPPORTS_MEMMAP == TRUE */
 
 #if (QSPI_USE_MUTUAL_EXCLUSION == TRUE) || defined(__DOXYGEN__)
 /**

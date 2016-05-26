@@ -114,7 +114,8 @@ typedef enum {
   QSPI_STOP = 1,                    /**< Stopped.                           */
   QSPI_READY = 2,                   /**< Ready.                             */
   QSPI_ACTIVE = 3,                  /**< Exchanging data.                   */
-  QSPI_COMPLETE = 4                 /**< Asynchronous operation complete.   */
+  QSPI_COMPLETE = 4,                /**< Asynchronous operation complete.   */
+  QSPI_MEMMAP = 5                   /**< In memory mapped mode.             */
 } qspistate_t;
 
 /**
@@ -127,6 +128,10 @@ typedef struct {
 } qspi_command_t;
 
 #include "hal_qspi_lld.h"
+
+#if !defined(QSPI_SUPPORTS_MEMMAP)
+#error "low level does not define QSPI_SUPPORTS_MEMMAP"
+#endif
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -192,6 +197,35 @@ typedef struct {
   (qspip)->state = QSPI_ACTIVE;                                             \
   qspi_lld_receive(qspip, cmdp, n, rxbuf);                                  \
 }
+
+#if (QSPI_SUPPORTS_MEMMAP == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Maps in memory space a QSPI flash device.
+ * @pre     The memory flash device must be initialized appropriately
+ *          before mapping it in memory space.
+ *
+ * @param[in] qspip     pointer to the @p QSPIDriver object
+ * @param[in] cmdp      pointer to the command descriptor
+ * @param[out] addrp    pointer to the memory start address of the mapped
+ *                      flash or @p NULL
+ *
+ * @iclass
+ */
+#define qspiMapFlashI(qspip, cmdp, addrp)                                   \
+  qspi_lld_map_flash(qspip, cmdp, addrp)
+
+/**
+ * @brief   Maps in memory space a QSPI flash device.
+ * @post    The memory flash device must be re-initialized for normal
+ *          commands exchange.
+ *
+ * @param[in] qspip     pointer to the @p QSPIDriver object
+ *
+ * @iclass
+ */
+#define qspiUnmapFlashI(qspip)                                              \
+  qspi_lld_unmap_flash(qspip)
+#endif /* QSPI_SUPPORTS_MEMMAP == TRUE */
 /** @} */
 
 /**
@@ -264,6 +298,12 @@ extern "C" {
                 size_t n, const uint8_t *txbuf);
   void qspiReceive(QSPIDriver *qspip, const qspi_command_t *cmdp,
                    size_t n, uint8_t *rxbuf);
+#endif
+#if QSPI_SUPPORTS_MEMMAP == TRUE
+void qspiMapFlash(QSPIDriver *qspip,
+                  const qspi_command_t *cmdp,
+                  uint8_t **addrp);
+void qspiUnmapFlash(QSPIDriver *qspip);
 #endif
 #if QSPI_USE_MUTUAL_EXCLUSION == TRUE
   void qspiAcquireBus(QSPIDriver *qspip);

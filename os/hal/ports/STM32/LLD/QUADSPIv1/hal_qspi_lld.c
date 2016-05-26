@@ -291,6 +291,40 @@ void qspi_lld_receive(QSPIDriver *qspip, const qspi_command_t *cmdp,
   dmaStreamEnable(qspip->dma);
 }
 
+
+#if (QSPI_SUPPORTS_MEMMAP == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Maps in memory space a QSPI flash device.
+ * @pre     The memory flash device must be initialized appropriately
+ *          before mapping it in memory space.
+ *
+ * @param[in] qspip     pointer to the @p QSPIDriver object
+ * @param[in] cmdp      pointer to the command descriptor
+ * @param[out] addrp    pointer to the memory start address of the mapped
+ *                      flash or @p NULL
+ *
+ * @notapi
+ */
+void qspi_lld_map_flash(QSPIDriver *qspip,
+                        const qspi_command_t *cmdp,
+                        uint8_t **addrp) {
+
+}
+
+/**
+ * @brief   Maps in memory space a QSPI flash device.
+ * @post    The memory flash device must be re-initialized for normal
+ *          commands exchange.
+ *
+ * @param[in] qspip     pointer to the @p QSPIDriver object
+ *
+ * @notapi
+ */
+void qspi_lld_unmap_flash(QSPIDriver *qspip) {
+
+}
+#endif /* QSPI_SUPPORTS_MEMMAP == TRUE */
+
 #endif /* HAL_USE_QSPI */
 
 /** @} */
