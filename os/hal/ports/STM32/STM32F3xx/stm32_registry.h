@@ -164,6 +164,9 @@
 #define STM32_HAS_I2C3                      FALSE
 #define STM32_HAS_I2C4                      FALSE
 
+/* QUADSPI attributes.*/
+#define STM32_HAS_QUADSPI1                  FALSE
+
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
 #define STM32_RTC_HAS_SUBSECONDS            TRUE
@@ -428,6 +431,9 @@
 
 #define STM32_HAS_I2C4                      FALSE
 
+/* QUADSPI attributes.*/
+#define STM32_HAS_QUADSPI1                  FALSE
+
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
 #define STM32_RTC_HAS_SUBSECONDS            TRUE
@@ -672,6 +678,9 @@
 #define STM32_HAS_I2C3                      FALSE
 #define STM32_HAS_I2C4                      FALSE
 
+/* QUADSPI attributes.*/
+#define STM32_HAS_QUADSPI1                  FALSE
+
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
 #define STM32_RTC_HAS_SUBSECONDS            TRUE
@@ -885,6 +894,9 @@
 
 #define STM32_HAS_I2C4                      FALSE
 
+/* QUADSPI attributes.*/
+#define STM32_HAS_QUADSPI1                  FALSE
+
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
 #define STM32_RTC_HAS_SUBSECONDS            TRUE
@@ -1094,6 +1106,9 @@
 #define STM32_I2C_I2C3_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 1)
 
 #define STM32_HAS_I2C4                      FALSE
+
+/* QUADSPI attributes.*/
+#define STM32_HAS_QUADSPI1                  FALSE
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
@@ -1321,6 +1336,9 @@
 
 #define STM32_HAS_I2C3                      FALSE
 #define STM32_HAS_I2C4                      FALSE
+
+/* QUADSPI attributes.*/
+#define STM32_HAS_QUADSPI1                  FALSE
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
@@ -1568,6 +1586,9 @@
 
 #define STM32_HAS_I2C4                      FALSE
 
+/* QUADSPI attributes.*/
+#define STM32_HAS_QUADSPI1                  FALSE
+
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
 #define STM32_RTC_HAS_SUBSECONDS            TRUE
@@ -1798,6 +1819,9 @@
 
 #define STM32_HAS_I2C4                      FALSE
 
+/* QUADSPI attributes.*/
+#define STM32_HAS_QUADSPI1                  FALSE
+
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
 #define STM32_RTC_HAS_SUBSECONDS            TRUE
@@ -2011,6 +2035,9 @@
 #define STM32_HAS_I2C2                      FALSE
 #define STM32_HAS_I2C3                      FALSE
 #define STM32_HAS_I2C4                      FALSE
+
+/* QUADSPI attributes.*/
+#define STM32_HAS_QUADSPI1                  FALSE
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
@@ -2237,6 +2264,9 @@
 
 #define STM32_HAS_I2C3                      FALSE
 #define STM32_HAS_I2C4                      FALSE
+
+/* QUADSPI attributes.*/
+#define STM32_HAS_QUADSPI1                  FALSE
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
@@ -2468,6 +2498,9 @@
 #define STM32_HAS_I2C2                      FALSE
 #define STM32_HAS_I2C3                      FALSE
 #define STM32_HAS_I2C4                      FALSE
+
+/* QUADSPI attributes.*/
+#define STM32_HAS_QUADSPI1                  FALSE
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
@@ -2709,6 +2742,9 @@
 #define STM32_I2C_I2C3_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 1)
 
 #define STM32_HAS_I2C4                      FALSE
+
+/* QUADSPI attributes.*/
+#define STM32_HAS_QUADSPI1                  FALSE
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
