@@ -934,32 +934,32 @@
 #endif
 
 /**
- * @brief   MC01 clock source value.
- * @note    The default value outputs HSI clock on MC01 pin.
+ * @brief   MCO1 clock source value.
+ * @note    The default value outputs HSI clock on MCO1 pin.
  */
 #if !defined(STM32_MCO1SEL) || defined(__DOXYGEN__)
 #define STM32_MCO1SEL               STM32_MCO1SEL_HSI
 #endif
 
 /**
- * @brief   MC01 prescaler value.
- * @note    The default value outputs HSI clock on MC01 pin.
+ * @brief   MCO1 prescaler value.
+ * @note    The default value outputs HSI clock on MCO1 pin.
  */
 #if !defined(STM32_MCO1PRE) || defined(__DOXYGEN__)
 #define STM32_MCO1PRE               STM32_MCO1PRE_DIV1
 #endif
 
 /**
- * @brief   MC02 clock source value.
- * @note    The default value outputs SYSCLK / 5 on MC02 pin.
+ * @brief   MCO2 clock source value.
+ * @note    The default value outputs SYSCLK / 5 on MCO2 pin.
  */
 #if !defined(STM32_MCO2SEL) || defined(__DOXYGEN__)
 #define STM32_MCO2SEL               STM32_MCO2SEL_SYSCLK
 #endif
 
 /**
- * @brief   MC02 prescaler value.
- * @note    The default value outputs SYSCLK / 5 on MC02 pin.
+ * @brief   MCO2 prescaler value.
+ * @note    The default value outputs SYSCLK / 5 on MCO2 pin.
  */
 #if !defined(STM32_MCO2PRE) || defined(__DOXYGEN__)
 #define STM32_MCO2PRE               STM32_MCO2PRE_DIV5

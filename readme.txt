@@ -72,6 +72,7 @@
 *****************************************************************************
 
 *** 2.6.10 ***
+- FIX: Fixed wrong comments and indent in STM32F4xx hal_lld.h (bug #746).
 - FIX: Fixed wrong indent in STM32F4xx hal_lld.h (bug #743).
 - FIX: Removed unused macros in STM32F4xx hal_lld.h (bug #742).
 - NEW: Cortex-M7 support in the kernel, generic demo application added.
