@@ -428,8 +428,22 @@
  * @name    RCC_PLLI2SCFGR register bits definitions
  * @{
  */
+#define STM32_PLLI2SM_MASK      (31 << 0)   /**< PLLI2SM mask.              */
 #define STM32_PLLI2SN_MASK      (511 << 6)  /**< PLLI2SN mask.              */
+#define STM32_PLLI2SP_MASK      (3 << 16)   /**< PLLI2SP mask.              */
+#define STM32_PLLI2SQ_MASK      (15 << 24)  /**< PLLI2SQ mask.              */
 #define STM32_PLLI2SR_MASK      (7 << 28)   /**< PLLI2SR mask.              */
+/** @} */
+
+/**
+ * @name    RCC_PLLSAICFGR register bits definitions
+ * @{
+ */
+#define STM32_PLLSAIM_MASK      (31 << 0)   /**< PLLSAIM mask.              */
+#define STM32_PLLSAIN_MASK      (511 << 6)  /**< PLLSAIN mask.              */
+#define STM32_PLLSAIP_MASK      (3 << 16)   /**< PLLSAIP mask.              */
+#define STM32_PLLSAIQ_MASK      (15 << 24)  /**< PLLSAIQ mask.              */
+#define STM32_PLLSAIR_MASK      (7 << 28)   /**< PLLSAIR mask.              */
 /** @} */
 
 /**
@@ -441,6 +455,80 @@
 #define STM32_RTCSEL_LSE        (1 << 8)    /**< RTC source is LSE.         */
 #define STM32_RTCSEL_LSI        (2 << 8)    /**< RTC source is LSI.         */
 #define STM32_RTCSEL_HSEDIV     (3 << 8)    /**< RTC source is HSE divided. */
+/** @} */
+
+/**
+ * @name    RCC_DCKCFGR register bits definitions
+ * @{
+ */
+#define STM32_PLLI2SDIVQ_MASK   (31 << 0)   /**< PLLSAIDIVQ mask.           */
+
+#define STM32_PLLSAIDIVQ_MASK   (31 << 8)   /**< PLLSAIDIVQ mask.           */
+
+#define STM32_PLLSAIDIVR_MASK   (3 << 16)   /**< PLLSAIDIVR mask.           */
+#define STM32_PLLSAIDIVR_DIV2   (0 << 16)   /**< LCD_CLK is R divided by 2. */
+#define STM32_PLLSAIDIVR_DIV4   (1 << 16)   /**< LCD_CLK is R divided by 4. */
+#define STM32_PLLSAIDIVR_DIV8   (2 << 16)   /**< LCD_CLK is R divided by 8. */
+#define STM32_PLLSAIDIVR_DIV16  (3 << 16)   /**< LCD_CLK is R divided by 16.*/
+#define STM32_PLLSAIDIVR_OFF    0xFFFFFFFFU /**< LCD CLK is not required.   */
+
+#define STM32_SAI1SEL_MASK      (3 << 20)   /**< SAI1SEL mask.              */
+#define STM32_SAI1SEL_SAIPLL    (0 << 20)   /**< SAI1 source is SAIPLL.     */
+#define STM32_SAI1SEL_I2SPLL    (1 << 20)   /**< SAI1 source is I2SPLL.     */
+#define STM32_SAI1SEL_PLLR      (2 << 20)   /**< SAI1 source is PLLR.       */
+#define STM32_SAI1SEL_OFF       0xFFFFFFFFU /**< SAI1 clock is not required.*/
+
+#define STM32_SAI2SEL_MASK      (3 << 22)   /**< SAI2SEL mask.              */
+#define STM32_SAI2SEL_SAIPLL    (0 << 22)   /**< SAI2 source is SAIPLL.     */
+#define STM32_SAI2SEL_I2SPLL    (1 << 22)   /**< SAI2 source is I2SPLL.     */
+#define STM32_SAI2SEL_PLLR      (2 << 22)   /**< SAI2 source is PLLR.       */
+#define STM32_SAI2SEL_OFF       0xFFFFFFFFU /**< SAI2 clock is not required.*/
+
+#define STM32_TIMPRE_MASK       (1 << 24)   /**< TIMPRE mask.               */
+#define STM32_TIMPRE_PCLK       (0 << 24)   /**< TIM clocks from PCLKx.     */
+#define STM32_TIMPRE_HCLK       (1 << 24)   /**< TIM clocks from HCLK.      */
+
+#define STM32_I2S1SEL_MASK      (3 << 25)   /**< I2S1SEL mask.              */
+#define STM32_I2S1SEL_PLLR      (0 << 25)   /**< I2S1 source is PLLR.       */
+#define STM32_I2S1SEL_AFIN      (1 << 25)   /**< I2S1 source is AF Input.   */
+#define STM32_I2S1SEL_MCO1      (2 << 25)   /**< I2S1 source is MCO1.       */
+#define STM32_I2S1SEL_OFF       0xFFFFFFFFU /**< I2S1 clock is not required.*/
+
+#define STM32_I2S2SEL_MASK      (3 << 27)   /**< I2S2SEL mask.              */
+#define STM32_I2S2SEL_PLLR      (0 << 27)   /**< I2S2 source is PLLR.       */
+#define STM32_I2S2SEL_AFIN      (1 << 27)   /**< I2S2 source is AF Input.   */
+#define STM32_I2S2SEL_MCO1      (2 << 27)   /**< I2S2 source is MCO1.       */
+#define STM32_I2S2SEL_OFF       0xFFFFFFFFU /**< I2S2 clock is not required.*/
+
+#define STM32_DSISEL_MASK       (1 << 28)   /**< DSISEL mask.               */
+#define STM32_DSISEL_PHY        (0 << 28)   /**< DSI source is DSI-PSY.     */
+#define STM32_DSISEL_PLLR       (1 << 28)   /**< DSI source is PLLR.        */
+/** @} */
+
+/**
+ * @name    RCC_DCKCFGR2 register bits definitions
+ * @{
+ */
+#define STM32_I2C1SEL_MASK      (3 << 22)   /**< I2C1SEL mask.              */
+#define STM32_I2C1SEL_PCLK1     (0 << 22)   /**< I2C1 source is PCLK1.      */
+#define STM32_I2C1SEL_SYSCLK    (1 << 22)   /**< I2C1 source is SYSCLK.     */
+#define STM32_I2C1SEL_HSI       (2 << 22)   /**< I2C1 source is HSI.        */
+
+#define STM32_CECSEL_MASK       (1 << 26)   /**< CECSEL mask.               */
+#define STM32_CECSEL_LSE        (0 << 26)   /**< CEC source is LSE.         */
+#define STM32_CECSEL_HSIDIV488  (1 << 26)   /**< CEC source is HSI/488.     */
+
+#define STM32_CK48MSEL_MASK     (1 << 27)   /**< CK48MSEL mask.             */
+#define STM32_CK48MSEL_PLL      (0 << 27)   /**< PLL48CLK source is PLL.    */
+#define STM32_CK48MSEL_PLLSAI   (1 << 27)   /**< PLL48CLK source is PLLSAI. */
+
+#define STM32_SDMMCSEL_MASK     (1 << 28)   /**< SDMMCSEL mask.             */
+#define STM32_SDMMCSEL_PLL48CLK (0 << 28)   /**< SDMMC source is PLL48CLK.  */
+#define STM32_SDMMCSEL_SYSCLK   (1 << 28)   /**< SDMMC source is SYSCLK.    */
+
+#define STM32_SPDIFSEL_MASK     (1 << 29)   /**< SPDIFSEL mask.             */
+#define STM32_SPDIFSEL_PLLI2S   (0 << 29)   /**< SPDIF source is PLLI2S.    */
+#define STM32_SPDIFSEL_PLL      (1 << 29)   /**< SPDIF source is PLL.       */
 /** @} */
 
 /*===========================================================================*/
