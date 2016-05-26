@@ -35,7 +35,21 @@ qspi_command_t cmd_read_id = {
   0
 };
 
-uint8_t buffer[512];
+/*
+ * Generic buffer.
+ */
+uint8_t buffer[2048];
+
+const uint8_t pattern[128] = {
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+  16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+  16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+  16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+  16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31
+};
 
 M25QDriver m25q;
 
@@ -91,6 +105,17 @@ int main(void) {
    */
   m25qObjectInit(&m25q);
   m25qStart(&m25q, &m25qcfg1);
+
+  /* Erasing the first sector and waiting for completion.*/
+  (void) flashStartEraseSector(&m25q, 0);
+  err = flashWaitErase((BaseFlash *)&m25q);
+  if (err != FLASH_NO_ERROR)
+    chSysHalt("erase error");
+
+  /* Programming a pattern.*/
+  err = flashProgram(&m25q, 0, pattern, 128);
+  if (err != FLASH_NO_ERROR)
+    chSysHalt("program error");
 
   /* Reading it back.*/
   err = flashRead(&m25q, 0, buffer, 128);

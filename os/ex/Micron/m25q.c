@@ -660,9 +660,6 @@ static flash_error_t start_erase_all(void *instance) {
   /* Bulk erase command.*/
   flash_cmd(devp, M25Q_CMD_BULK_ERASE);
 
-  /* Ready state again.*/
-  devp->state = FLASH_READY;
-
   /* Bus released.*/
   flash_bus_release(devp);
 
@@ -693,9 +690,6 @@ static flash_error_t start_erase_sector(void *instance, flash_sector_t sector) {
 
   /* Sector erase command.*/
   flash_cmd_addr(devp, M25Q_CMD_SECTOR_ERASE, addr);
-
-  /* Ready state again.*/
-  devp->state = FLASH_READY;
 
   /* Bus released.*/
   flash_bus_release(devp);
