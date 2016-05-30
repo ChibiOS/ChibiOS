@@ -29,10 +29,10 @@
  * GPT4 configuration. This timer is used as trigger for the ADC.
  */
 static const GPTConfig gpt4cfg1 = {
-  frequency:    1000000U,
-  callback:     NULL,
-  cr2:          TIM_CR2_MMS_1,  /* MMS = 010 = TRGO on Update Event.        */
-  dier:         0U
+  .frequency =  1000000U,
+  .callback  =  NULL,
+  .cr2       =  TIM_CR2_MMS_1,  /* MMS = 010 = TRGO on Update Event.        */
+  .dier      =  0U
 };
 
 /*===========================================================================*/
@@ -79,7 +79,7 @@ static void adccallback(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
 }
 
 /*
- * ADC errors callbaack, should never happen.
+ * ADC errors callback, should never happen.
  */
 static void adcerrorcallback(ADCDriver *adcp, adcerror_t err) {
 
@@ -98,13 +98,15 @@ static const ADCConversionGroup adcgrpcfg1 = {
   ADC_GRP1_NUM_CHANNELS,
   adccallback,
   adcerrorcallback,
-  0,                                                    /* CR1 */
-  ADC_CR2_EXTEN_RISING | ADC_CR2_EXTSEL_SRC(12),        /* CR2 */
-  ADC_SMPR1_SMP_SENSOR(ADC_SAMPLE_144) | ADC_SMPR1_SMP_VREF(ADC_SAMPLE_144),
+  0,                                                    /* CR1   */
+  ADC_CR2_EXTEN_RISING | ADC_CR2_EXTSEL_SRC(12),        /* CR2   */
+  ADC_SMPR1_SMP_SENSOR(ADC_SAMPLE_144) | 
+  ADC_SMPR1_SMP_VREF(ADC_SAMPLE_144),                   /* SMPR1 */
   0,                                                    /* SMPR2 */
-  ADC_SQR1_NUM_CH(ADC_GRP1_NUM_CHANNELS),               /* SQR1 */
-  0,                                                    /* SQR1 */
-  ADC_SQR3_SQ2_N(ADC_CHANNEL_SENSOR) | ADC_SQR3_SQ1_N(ADC_CHANNEL_VREFINT)
+  ADC_SQR1_NUM_CH(ADC_GRP1_NUM_CHANNELS),               /* SQR1  */
+  0,                                                    /* SQR2  */
+  ADC_SQR3_SQ2_N(ADC_CHANNEL_SENSOR) | 
+  ADC_SQR3_SQ1_N(ADC_CHANNEL_VREFINT)                   /* SQR3  */
 };
 
 /*===========================================================================*/
