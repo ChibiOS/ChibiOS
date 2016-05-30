@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.5 ***
+- HAL: Fixed wrong comments in STM32F4xx GPT demo (bug #748).
 - HAL: Fixed wrong comments and indents in STM32F7xx-GPT-ADC and 
        STM32L4-GPT-ADC demos (bug #747).
 - HAL: Fixed wrong comments and indent in STM32F4xx and STM32F7xx 
