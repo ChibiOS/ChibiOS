@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** Next ***
+- HAL: Extended PLLI2S for STM32F4xx subfamily.
 - HAL: Added QSPI driver implementation for STM32.
 - HAL: Added QSPI driver model.
 - VAR: Cortex-M VTOR initialization is now performed in startup files and
