@@ -227,7 +227,8 @@ void stm32_clock_init(void) {
 
 #if STM32_ACTIVATE_PLLI2S
   /* PLLI2S activation.*/
-  RCC->PLLI2SCFGR = STM32_PLLI2SR | STM32_PLLI2SN;
+  RCC->PLLI2SCFGR = STM32_PLLI2SR | STM32_PLLI2SN | STM32_PLLI2SP |
+                    STM32_PLLI2SQ | STM32_PLLI2SM;
   RCC->CR |= RCC_CR_PLLI2SON;
 
   /* Waiting for PLL lock.*/
