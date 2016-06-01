@@ -114,15 +114,21 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
-- HAL: Fixed wrong comments in STM32F4xx GPT demo (bug #748).
+- HAL: Fixed LTO settings and added board folder in STM32F4xx-USB_CDC demo
+       (bug #749)(backported to 3.0.6 and 16.1.5).
+- HAL: Fixed wrong comments in STM32F4xx GPT demo (bug #748)
+       (backported to 2.6.10, 3.0.6 and 16.1.5).
 - HAL: Fixed wrong comments and indents in STM32F7xx-GPT-ADC and 
-       STM32L4-GPT-ADC demos (bug #747).
+       STM32L4-GPT-ADC demos (bug #747) (backported to 16.1.5).
 - HAL: Fixed wrong comments and indent in STM32F4xx and STM32F7xx 
-       hal_lld.h (bug #746).
-- HAL: Removed wrong SAI masks in STM32F4xx hal_lld.h (bug #745).
+       hal_lld.h (bug #746)(backported to 2.6.10, 3.0.6 and 16.1.5).
+- HAL: Removed wrong SAI masks in STM32F4xx hal_lld.h (bug #745)
+       (backported to 3.0.6 and 16.1.5).
 - HAL: Fixed wrong mask placement in STM32F4xx hal_lld.h (bug #744).
-- HAL: Fixed wrong indent in STM32F4xx hal_lld.h (bug #743).
-- HAL: Removed unused macros in STM32F7xx and STM32F4xx hal_lld.h (bug #742).
+- HAL: Fixed wrong indent in STM32F4xx hal_lld.h (bug #743)
+       (backported to 2.6.10, 3.0.6 and 16.1.5).
+- HAL: Removed unused macros in STM32F7xx and STM32F4xx hal_lld.h (bug #742)
+       (backported to 2.6.10, 3.0.6 and 16.1.5).
 - HAL: Fixed Doxygen related macros in STM32F7xx, STM32L0xx and STM32L4xx
        lld files (bug #741).
 - HAL: Fixed bug in VREF enable/disable functions in ADCv3 driver 
