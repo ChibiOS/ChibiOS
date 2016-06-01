@@ -79,6 +79,7 @@ static THD_FUNCTION(Thread1, arg) {
  */
 int main(void) {
   flash_error_t err;
+  uint8_t *addr;
 
   /*
    * System initializations.
@@ -126,6 +127,12 @@ int main(void) {
   err = flashVerifyErase(&m25q, 0);
   if (err != FLASH_ERROR_VERIFY)
     chSysHalt("verify non-erase error");
+
+  /* Memory mapping the device.*/
+  m25qMemoryMap(&m25q, &addr);
+
+  /* Unmapping the device.*/
+  m25qMemoryUnmap(&m25q);
 
   /* Reading it back.*/
   err = flashRead(&m25q, 0, buffer, 128);
