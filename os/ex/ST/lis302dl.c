@@ -27,7 +27,6 @@
  */
 
 #include "hal.h"
-
 #include "lis302dl.h"
 
 /*===========================================================================*/
@@ -82,7 +81,6 @@
 #define  LIS302DL_AD_CLICK_TIME_LIMIT       ((uint8_t)0x3D)
 #define  LIS302DL_AD_CLICK_LATENCY          ((uint8_t)0x3E)
 #define  LIS302DL_AD_CLICK_WINDOW           ((uint8_t)0x3F)
-
 
 #define  LIS302DL_CTRL_REG1_FS_MASK         ((uint8_t)0x20)
 #define  TO_G                               ((float)0.001f)
@@ -189,7 +187,7 @@ static size_t get_axes_number(void *ip) {
 static msg_t read_raw(void *ip, int32_t axes[LIS302DL_NUMBER_OF_AXES]) {
   int8_t tmp;
   osalDbgCheck((ip != NULL) && (axes != NULL));
-
+  
   osalDbgAssert((((LIS302DLDriver *)ip)->state == LIS302DL_READY),
               "read_raw(), invalid state");
 

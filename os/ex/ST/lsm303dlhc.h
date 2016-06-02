@@ -98,7 +98,7 @@
 #endif
 
 #if LSM303DLHC_SHARED_I2C && !I2C_USE_MUTUAL_EXCLUSION
-#error "LSM303DLHC_SHARED_SPI requires I2C_USE_MUTUAL_EXCLUSION"
+#error "LSM303DLHC_SHARED_I2C requires I2C_USE_MUTUAL_EXCLUSION"
 #endif
 
 /*===========================================================================*/

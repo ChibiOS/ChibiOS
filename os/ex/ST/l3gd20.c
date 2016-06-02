@@ -27,7 +27,6 @@
  */
 
 #include "hal.h"
-
 #include "l3gd20.h"
 
 /*===========================================================================*/
@@ -55,7 +54,6 @@
 #define  L3GD20_AD_3                        ((uint8_t)0x08)
 #define  L3GD20_AD_4                        ((uint8_t)0x10)
 #define  L3GD20_AD_5                        ((uint8_t)0x20)
-
 #define  L3GD20_MS                          ((uint8_t)0x40)
 #define  L3GD20_RW                          ((uint8_t)0x80)
 

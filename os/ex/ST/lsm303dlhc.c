@@ -27,7 +27,6 @@
  */
 
 #include "hal.h"
-
 #include "lsm303dlhc.h"
 
 /*===========================================================================*/
@@ -72,7 +71,6 @@
 #define  LSM303DLHC_AD_4                    ((uint8_t)0x10)
 #define  LSM303DLHC_AD_5                    ((uint8_t)0x20)
 #define  LSM303DLHC_AD_6                    ((uint8_t)0x40)
-
 #define  LSM303DLHC_RW                      ((uint8_t)0x80)
 
 #define  LSM303DLHC_AD_ACC_CTRL_REG1        ((uint8_t)0x20)
@@ -126,6 +124,7 @@
 
 #define  TO_G                              ((float)0.001f)
 #define  TO_SI                             ((float)0.00981f)
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/

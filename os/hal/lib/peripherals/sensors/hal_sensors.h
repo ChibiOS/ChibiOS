@@ -45,8 +45,8 @@
  * @brief   BaseSensor specific methods.
  */
 #define _base_sensor_methods_alone                                          \
-  /* Get number of axes.*/                                                  \
-  size_t (*get_axes_number)(void *instance);                                \
+  /* Get number of channels.*/                                              \
+  size_t (*get_channels_number)(void *instance);                            \
   /* Reads the sensor raw data.*/                                           \
   msg_t (*read_raw)(void *instance, int32_t axes[]);                        \
   /* Reads the sensor returning normalized data.*/                          \
@@ -92,14 +92,14 @@ typedef struct {
  * @{
  */
 /**
- * @brief   Sensors get axes number.
+ * @brief   Sensors get channels number.
  *
  * @param[in] ip        pointer to a @p BaseSensor or derived class.
- * @return              The number of axes of the BaseSensor
+ * @return              The number of channels of the BaseSensor
  *
  * @api
  */
-#define sensorGetAxesNumber(ip) (ip)->vmt_basesensor->get_axes_number(ip)
+#define sensorGetChannelNumber(ip) (ip)->vmt_basesensor->get_channels_number(ip)
 
 /**
  * @brief   Sensors read raw data.
