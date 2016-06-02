@@ -73,7 +73,8 @@
 *****************************************************************************
 
 *** 16.1.5 ***
-- HAL: Fixed LTO settings and added board folder in STM32F4xx-USB_CDC demo
+- HAL: Fixed bug in STM32/ADCv3 (bug #750).
+- HAL: Fixed OPT settings and added board folder in STM32F4xx-USB_CDC demo
        (bug #749).
 - HAL: Fixed wrong comments in STM32F4xx GPT demo (bug #748).
 - HAL: Fixed wrong comments and indents in STM32F7xx-GPT-ADC and 
