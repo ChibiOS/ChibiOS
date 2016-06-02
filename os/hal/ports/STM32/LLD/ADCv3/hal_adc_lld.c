@@ -16,7 +16,7 @@
 
 /**
  * @file    ADCv3/hal_adc_lld.c
- * @brief   STM32F3xx ADC subsystem low level driver source.
+ * @brief   STM32 ADC subsystem low level driver source.
  *
  * @addtogroup ADC
  * @{
@@ -534,12 +534,12 @@ void adc_lld_init(void) {
   ADC1_COMMON->CCR = STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_MDMA;
   rccDisableADC12(FALSE);
 #endif
+#endif
 #if STM32_ADC_USE_ADC3 || STM32_ADC_USE_ADC4
   rccEnableADC34(FALSE);
   rccResetADC34();
   ADC3_4_COMMON->CCR = STM32_ADC_ADC34_CLOCK_MODE | ADC_DMA_MDMA;
   rccDisableADC34(FALSE);
-#endif
 #endif
 #endif
 
@@ -705,7 +705,7 @@ void adc_lld_stop(ADCDriver *adcp) {
 #endif
 
 #if STM32_ADC_USE_ADC2
-    if (&ADCD1 == adcp) {
+    if (&ADCD2 == adcp) {
 #if defined(STM32F3XX)
       /* Resetting CCR options except default ones.*/
       adcp->adcc->CCR = STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_MDMA;
@@ -715,7 +715,7 @@ void adc_lld_stop(ADCDriver *adcp) {
 #endif
 
 #if STM32_ADC_USE_ADC3
-    if (&ADCD1 == adcp) {
+    if (&ADCD3 == adcp) {
 #if defined(STM32F3XX)
       /* Resetting CCR options except default ones.*/
       adcp->adcc->CCR = STM32_ADC_ADC34_CLOCK_MODE | ADC_DMA_MDMA;
@@ -725,7 +725,7 @@ void adc_lld_stop(ADCDriver *adcp) {
 #endif
 
 #if STM32_ADC_USE_ADC4
-    if (&ADCD1 == adcp) {
+    if (&ADCD4 == adcp) {
 #if defined(STM32F3XX)
       /* Resetting CCR options except default ones.*/
       adcp->adcc->CCR = STM32_ADC_ADC34_CLOCK_MODE | ADC_DMA_MDMA;
