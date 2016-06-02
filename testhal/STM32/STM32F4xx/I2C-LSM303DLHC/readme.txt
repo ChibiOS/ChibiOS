@@ -1,5 +1,5 @@
 *****************************************************************************
-** ChibiOS/HAL + ChibiOS/EX - SPI + LSM303DLHC demo for STM32F4xx.         **
+** ChibiOS/HAL + ChibiOS/EX - I2C + LSM303DLHC demo for STM32F4xx.         **
 *****************************************************************************
 
 ** TARGET **
