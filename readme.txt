@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.5 ***
+- HAL: Fixed wrong conditional branches in _adc_isr_error_code (bug #751).
 - HAL: Fixed bug in STM32/ADCv3 (bug #750).
 - HAL: Fixed OPT settings and added board folder in STM32F4xx-USB_CDC demo
        (bug #749).
