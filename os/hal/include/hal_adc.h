@@ -230,8 +230,12 @@ typedef enum {
     (adcp)->grpp->error_cb(adcp, err);                                      \
     if ((adcp)->state == ADC_ERROR)                                         \
       (adcp)->state = ADC_READY;                                            \
+      (adcp)->grpp = NULL;                                                  \
   }                                                                         \
-  (adcp)->grpp = NULL;                                                      \
+  else {                                                                    \
+    (adcp)->state = ADC_READY;                                              \
+    (adcp)->grpp = NULL;                                                    \
+  }                                                                         \
   _adc_timeout_isr(adcp);                                                   \
 }
 /** @} */

@@ -114,6 +114,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Fixed wrong conditional branches in _adc_isr_error_code (bug #751)
+       (backported to 2.6.10, 3.0.6 and 16.1.5).
 - HAL: Fixed bug in STM32/ADCv3 (bug #750).
 - HAL: Fixed OPT settings and added board folder in STM32F4xx-USB_CDC demo
        (bug #749)(backported to 3.0.6 and 16.1.5).
