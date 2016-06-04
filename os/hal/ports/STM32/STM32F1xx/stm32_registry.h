@@ -1332,9 +1332,11 @@
 #define STM32_HAS_LPUART1                   FALSE
 
 /* USB attributes.*/
-#define STM32_HAS_USB                       FALSE
+#define STM32_OTG_STEPPING                  1
 #define STM32_HAS_OTG1                      TRUE
+
 #define STM32_HAS_OTG2                      FALSE
+#define STM32_HAS_USB                       FALSE
 
 /* IWDG attributes.*/
 #define STM32_HAS_IWDG                      TRUE
