@@ -453,30 +453,38 @@ static void flash_cmd_addr_dummy_receive(M25QDriver *devp,
 }
 
 void flash_reset_xip(M25QDriver *devp) {
+  static const uint8_t flash_conf[1] = {
+    (M25Q_READ_DUMMY_CYCLES << 4U) | 0x0FU
+  };
   qspi_command_t cmd;
   uint8_t buf[1];
 
   /* Resetting XIP mode by reading one byte without XIP confirmation bit.*/
-  cmd.cfg = QSPI_CFG_CMD(M25Q_CMD_FAST_READ) |
-            QSPI_CFG_ADDR_SIZE_24 |
-#if M25Q_BUS_MODE == M25Q_BUS_MODE_QSPI1L
-            QSPI_CFG_CMD_MODE_ONE_LINE |
-            QSPI_CFG_ADDR_MODE_ONE_LINE |
-            QSPI_CFG_DATA_MODE_ONE_LINE |
-#elif M25Q_BUS_MODE == M25Q_BUS_MODE_QSPI2L
-            QSPI_CFG_CMD_MODE_TWO_LINES |
-            QSPI_CFG_ADDR_MODE_TWO_LINES |
-            QSPI_CFG_DATA_MODE_TWO_LINES |
-#else
-            QSPI_CFG_CMD_MODE_FOUR_LINES |
-            QSPI_CFG_ADDR_MODE_FOUR_LINES |
-            QSPI_CFG_DATA_MODE_FOUR_LINES |
-#endif
-            QSPI_CFG_ALT_MODE_FOUR_LINES |  /* Always 4 lines, note.*/
-            QSPI_CFG_DUMMY_CYCLES(M25Q_READ_DUMMY_CYCLES - 2);
-  cmd.alt = 0xFF;
+  cmd.alt  = 0xFF;
   cmd.addr = 0;
+  cmd.cfg  = QSPI_CFG_CMD_MODE_NONE |
+             QSPI_CFG_ADDR_SIZE_24 |
+#if M25Q_BUS_MODE == M25Q_BUS_MODE_QSPI1L
+             QSPI_CFG_ADDR_MODE_ONE_LINE |
+             QSPI_CFG_DATA_MODE_ONE_LINE |
+#elif M25Q_BUS_MODE == M25Q_BUS_MODE_QSPI2L
+             QSPI_CFG_ADDR_MODE_TWO_LINES |
+             QSPI_CFG_DATA_MODE_TWO_LINES |
+#else
+             QSPI_CFG_ADDR_MODE_FOUR_LINES |
+             QSPI_CFG_DATA_MODE_FOUR_LINES |
+#endif
+             QSPI_CFG_ALT_MODE_FOUR_LINES |  /* Always 4 lines, note.*/
+             QSPI_CFG_ALT_SIZE_8 |
+             QSPI_CFG_DUMMY_CYCLES(M25Q_READ_DUMMY_CYCLES - 2);
   qspiReceive(devp->config->qspip, &cmd, 1, buf);
+
+  /* Enabling write operation.*/
+  flash_cmd(devp, M25Q_CMD_WRITE_ENABLE);
+
+  /* Rewriting volatile configuration register.*/
+  flash_cmd_send(devp, M25Q_CMD_WRITE_V_CONF_REGISTER, 1, flash_conf);
+
 }
 
 void flash_reset_memory(M25QDriver *devp) {
@@ -970,14 +978,14 @@ void m25qStart(M25QDriver *devp, const M25QConfig *config) {
 
 #if (M25Q_BUS_MODE != M25Q_BUS_MODE_SPI)
     {
-      static const uint8_t flash_status[1] = {
+      static const uint8_t flash_conf[1] = {
         (M25Q_READ_DUMMY_CYCLES << 4U) | 0x0FU
       };
 
       /* Setting up the dummy cycles to be used for fast read operations.*/
       flash_cmd(devp, M25Q_CMD_WRITE_ENABLE);
       flash_cmd_send(devp, M25Q_CMD_WRITE_V_CONF_REGISTER,
-                     1, flash_status);
+                     1, flash_conf);
     }
 #endif
 
@@ -1067,6 +1075,7 @@ void m25qMemoryMap(M25QDriver *devp, uint8_t **addrp) {
             QSPI_CFG_DATA_MODE_FOUR_LINES |
 #endif
             QSPI_CFG_ALT_MODE_FOUR_LINES |  /* Always 4 lines, note.*/
+            QSPI_CFG_ALT_SIZE_8 |
             QSPI_CFG_SIOO |
             QSPI_CFG_DUMMY_CYCLES(M25Q_READ_DUMMY_CYCLES - 2);
 

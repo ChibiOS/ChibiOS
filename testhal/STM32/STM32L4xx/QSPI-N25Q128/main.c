@@ -14,6 +14,8 @@
     limitations under the License.
 */
 
+#include <string.h>
+
 #include "ch.h"
 #include "hal.h"
 
@@ -107,6 +109,11 @@ int main(void) {
   m25qObjectInit(&m25q);
   m25qStart(&m25q, &m25qcfg1);
 
+  /* Reading.*/
+  err = flashRead(&m25q, 0, buffer, 128);
+  if (err != FLASH_NO_ERROR)
+    chSysHalt("read error");
+
   /* Erasing the first sector and waiting for completion.*/
   (void) flashStartEraseSector(&m25q, 0);
   err = flashWaitErase((BaseFlash *)&m25q);
@@ -135,6 +142,13 @@ int main(void) {
   m25qMemoryUnmap(&m25q);
 
   /* Reading it back.*/
+  memset(buffer, 0, 128);
+  err = flashRead(&m25q, 16, buffer, 128);
+  if (err != FLASH_NO_ERROR)
+    chSysHalt("read error");
+
+  /* Reading it back.*/
+  memset(buffer, 0, 128);
   err = flashRead(&m25q, 0, buffer, 128);
   if (err != FLASH_NO_ERROR)
     chSysHalt("read error");
