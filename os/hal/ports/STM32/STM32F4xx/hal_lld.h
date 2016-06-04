@@ -1916,14 +1916,8 @@
 #if STM32_CLOCK48_REQUIRED || defined(__DOXYGEN__)
 #if (STM32_CK48MSEL == STM32_CK48MSEL_PLL) || defined(__DOXYGEN__)
 #define STM32_PLL48CLK              (STM32_PLLVCO / STM32_PLLQ_VALUE)
-#if (STM32_PLL48CLK != 48000000)
-#error "STM32_PLL48CLK wrong value"
-#endif
 #elif STM32_CK48MSEL == STM32_CK48MSEL_PLLSAI
 #define STM32_PLL48CLK              (STM32_PLLSAIVCO / STM32_PLLSAIQ_VALUE)
-#if (STM32_PLL48CLK != 48000000)
-#error "STM32_PLL48CLK wrong value"
-#endif
 #else
 #error "invalid source selected for PLL48CLK clock"
 #endif
