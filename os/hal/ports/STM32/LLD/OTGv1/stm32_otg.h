@@ -429,12 +429,16 @@ typedef struct {
  * @name GCCFG register bit definitions
  * @{
  */
+/* Definitions for stepping 1.*/
 #define GCCFG_NOVBUSSENS        (1U<<21)    /**< VBUS sensing disable.      */
 #define GCCFG_SOFOUTEN          (1U<<20)    /**< SOF output enable.         */
 #define GCCFG_VBUSBSEN          (1U<<19)    /**< Enable the VBUS sensing "B"
                                                  device.                    */
 #define GCCFG_VBUSASEN          (1U<<18)    /**< Enable the VBUS sensing "A"
                                                  device.                    */
+
+/* Definitions for stepping 2.*/
+#define GCCFG_VBDEN             (1U<<21)    /**< VBUS sensing enable.       */
 #define GCCFG_PWRDWN            (1U<<16)    /**< Power down.                */
 /** @} */
 
