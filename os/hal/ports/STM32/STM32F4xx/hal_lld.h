@@ -839,6 +839,16 @@
 #endif
 
 /**
+ * @brief   PLLSAIM value.
+ * @note    The allowed values are 2..63.
+ * @note    The default value is calculated for a 96MHz SAI clock
+ *          output from an external 8MHz HSE clock.
+ */
+#if !defined(STM32_PLLSAIM_VALUE) || defined(__DOXYGEN__)
+#define STM32_PLLSAIM_VALUE         4
+#endif
+
+/**
  * @brief   PLLSAIR value.
  * @note    The allowed values are 2..7.
  */
@@ -851,7 +861,7 @@
  * @note    The allowed values are 2, 4, 6 and 8.
  */
 #if !defined(STM32_PLLSAIP_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLSAIP_VALUE         4
+#define STM32_PLLSAIP_VALUE         8
 #endif
 
 /**
@@ -1691,6 +1701,16 @@
 #endif
 
 /**
+ * @brief   STM32_PLLSAIM field.
+ */
+#if ((STM32_PLLSAIM_VALUE >= 2) && (STM32_PLLSAIM_VALUE <= 63)) ||        \
+    defined(__DOXYGEN__)
+#define STM32_PLLSAIM               (STM32_PLLSAIM_VALUE << 0)
+#else
+#error "invalid STM32_PLLSAIM_VALUE value specified"
+#endif
+
+/**
  * @brief   STM32_PLLSAIN field.
  */
 #if ((STM32_PLLSAIN_VALUE >= 49) && (STM32_PLLSAIN_VALUE <= 432)) ||        \
@@ -1917,7 +1937,7 @@
 #if (STM32_CK48MSEL == STM32_CK48MSEL_PLL) || defined(__DOXYGEN__)
 #define STM32_PLL48CLK              (STM32_PLLVCO / STM32_PLLQ_VALUE)
 #elif STM32_CK48MSEL == STM32_CK48MSEL_PLLSAI
-#define STM32_PLL48CLK              (STM32_PLLSAIVCO / STM32_PLLSAIQ_VALUE)
+#define STM32_PLL48CLK              (STM32_PLLSAIVCO / STM32_PLLSAIP_VALUE)
 #else
 #error "invalid source selected for PLL48CLK clock"
 #endif
