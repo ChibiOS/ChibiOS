@@ -61,6 +61,13 @@
 #define STM32_PLLI2SN_VALUE                 192
 #define STM32_PLLI2SR_VALUE                 4
 #define STM32_PLLI2SQ_VALUE                 4
+#define STM32_PLLSAIN_VALUE                 192
+#define STM32_PLLSAIR_VALUE                 4
+#define STM32_PLLSAIP_VALUE                 4
+#define STM32_PLLSAIQ_VALUE                 4
+#define STM32_SAI1SEL                       STM32_SAI2SEL_PLLR
+#define STM32_SAI2SEL                       STM32_SAI2SEL_PLLR
+#define STM32_CK48MSEL                      STM32_CK48MSEL_PLL
 #define STM32_PVD_ENABLE                    FALSE
 #define STM32_PLS                           STM32_PLS_LEV0
 #define STM32_BKPRAM_ENABLE                 FALSE
