@@ -54,8 +54,6 @@
 #define GCCFG_INIT_VALUE        (GCCFG_VBDEN | GCCFG_PWRDWN)
 #endif
 
-#else
-#error "unsupported STM32_OTG_STEPPING"
 #endif
 
 /*===========================================================================*/
@@ -635,9 +633,6 @@ static void usb_lld_serve_interrupt(USBDriver *usbp) {
 /*===========================================================================*/
 
 #if STM32_USB_USE_OTG1 || defined(__DOXYGEN__)
-#if !defined(STM32_OTG1_HANDLER)
-#error "STM32_OTG1_HANDLER not defined"
-#endif
 /**
  * @brief   OTG1 interrupt handler.
  *
@@ -654,9 +649,6 @@ OSAL_IRQ_HANDLER(STM32_OTG1_HANDLER) {
 #endif
 
 #if STM32_USB_USE_OTG2 || defined(__DOXYGEN__)
-#if !defined(STM32_OTG2_HANDLER)
-#error "STM32_OTG2_HANDLER not defined"
-#endif
 /**
  * @brief   OTG2 interrupt handler.
  *
