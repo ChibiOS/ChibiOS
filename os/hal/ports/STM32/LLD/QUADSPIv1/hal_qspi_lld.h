@@ -73,7 +73,7 @@
  *          find the details in the data sheet.
  */
 #if !defined(STM32_QSPI_QUADSPI1_PRESCALER_VALUE) || defined(__DOXYGEN__)
-#define STM32_QSPI_QUADSPI1_PRESCALER_VALUE 16
+#define STM32_QSPI_QUADSPI1_PRESCALER_VALUE 1
 #endif
 
 /**

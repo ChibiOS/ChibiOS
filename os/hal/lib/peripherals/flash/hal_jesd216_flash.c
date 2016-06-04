@@ -46,4 +46,281 @@
 /* Driver exported functions.                                                */
 /*===========================================================================*/
 
+void jesd216_cmd(BUSDriver *busp, uint8_t cmd) {
+#if JESD216_BUS_MODE != JESD216_BUS_MODE_SPI
+  qspi_command_t mode;
+
+  mode.cfg = QSPI_CFG_CMD(cmd) |
+#if JESD216_BUS_MODE == JESD216_BUS_MODE_QSPI1L
+             QSPI_CFG_CMD_MODE_ONE_LINE;
+#elif JESD216_BUS_MODE == JESD216_BUS_MODE_QSPI2L
+             QSPI_CFG_CMD_MODE_TWO_LINES;
+#else
+             QSPI_CFG_CMD_MODE_FOUR_LINES;
+#endif
+  mode.addr = 0U;
+  mode.alt  = 0U;
+  qspiCommand(busp, &mode);
+#else
+  uint8_t buf[1];
+
+  spiSelect(busp);
+  buf[0] = cmd;
+  spiSend(busp, 1, buf);
+  spiUnselect(busp);
+#endif
+}
+
+void jesd216_cmd_receive(BUSDriver *busp,
+                         uint8_t cmd,
+                         size_t n,
+                         uint8_t *p) {
+#if JESD216_BUS_MODE != JESD216_BUS_MODE_SPI
+  qspi_command_t mode;
+
+  mode.cfg = QSPI_CFG_CMD(cmd) |
+#if JESD216_BUS_MODE == JESD216_BUS_MODE_QSPI1L
+             QSPI_CFG_CMD_MODE_ONE_LINE |
+             QSPI_CFG_DATA_MODE_ONE_LINE;
+#elif JESD216_BUS_MODE == JESD216_BUS_MODE_QSPI2L
+             QSPI_CFG_CMD_MODE_TWO_LINES |
+             QSPI_CFG_DATA_MODE_TWO_LINES;
+#else
+             QSPI_CFG_CMD_MODE_FOUR_LINES |
+             QSPI_CFG_DATA_MODE_FOUR_LINES;
+
+#endif
+  mode.addr = 0U;
+  mode.alt  = 0U;
+  qspiReceive(busp, &mode, n, p);
+#else
+  uint8_t buf[1];
+
+  spiSelect(busp);
+  buf[0] = cmd;
+  spiSend(busp, 1, buf);
+  spiReceive(busp, n, p);
+  spiUnselect(busp);
+#endif
+}
+
+void jesd216_cmd_send(BUSDriver *busp,
+                      uint8_t cmd,
+                      size_t n,
+                      const uint8_t *p) {
+#if JESD216_BUS_MODE != JESD216_BUS_MODE_SPI
+  qspi_command_t mode;
+
+  mode.cfg = QSPI_CFG_CMD(cmd) |
+#if JESD216_BUS_MODE == JESD216_BUS_MODE_QSPI1L
+             QSPI_CFG_CMD_MODE_ONE_LINE |
+             QSPI_CFG_DATA_MODE_ONE_LINE;
+#elif JESD216_BUS_MODE == JESD216_BUS_MODE_QSPI2L
+             QSPI_CFG_CMD_MODE_TWO_LINES |
+             QSPI_CFG_DATA_MODE_TWO_LINES;
+#else
+             QSPI_CFG_CMD_MODE_FOUR_LINES |
+             QSPI_CFG_DATA_MODE_FOUR_LINES;
+
+#endif
+  mode.addr = 0U;
+  mode.alt  = 0U;
+  qspiSend(busp, &mode, n, p);
+#else
+  uint8_t buf[1];
+
+  spiSelect(busp);
+  buf[0] = cmd;
+  spiSend(busp, 1, buf);
+  spiSend(busp, n, p);
+  spiUnselect(busp);
+#endif
+}
+
+void jesd216_cmd_addr(BUSDriver *busp,
+                      uint8_t cmd,
+                      flash_address_t addr) {
+#if JESD216_BUS_MODE != JESD216_BUS_MODE_SPI
+  qspi_command_t mode;
+
+  mode.cfg = QSPI_CFG_CMD(cmd) |
+#if JESD216_BUS_MODE == JESD216_BUS_MODE_QSPI1L
+             QSPI_CFG_CMD_MODE_ONE_LINE |
+             QSPI_CFG_ADDR_MODE_ONE_LINE |
+             QSPI_CFG_ADDR_SIZE_24;
+#elif JESD216_BUS_MODE == JESD216_BUS_MODE_QSPI2L
+             QSPI_CFG_CMD_MODE_TWO_LINES |
+             QSPI_CFG_ADDR_MODE_TWO_LINES |
+             QSPI_CFG_ADDR_SIZE_24;
+#else
+             QSPI_CFG_CMD_MODE_FOUR_LINES |
+             QSPI_CFG_ADDR_MODE_FOUR_LINES |
+             QSPI_CFG_ADDR_SIZE_24;
+
+#endif
+  mode.addr = addr;
+  mode.alt  = 0U;
+  qspiCommand(busp, &mode);
+#else
+  uint8_t buf[4];
+
+  spiSelect(busp);
+  buf[0] = cmd;
+  buf[1] = (uint8_t)(addr >> 16);
+  buf[2] = (uint8_t)(addr >> 8);
+  buf[3] = (uint8_t)(addr >> 0);
+  spiSend(busp, 4, buf);
+  spiUnselect(busp);
+#endif
+}
+
+void jesd216_cmd_addr_send(BUSDriver *busp,
+                           uint8_t cmd,
+                           flash_address_t addr,
+                           size_t n,
+                           const uint8_t *p) {
+#if JESD216_BUS_MODE != JESD216_BUS_MODE_SPI
+  qspi_command_t mode;
+
+  mode.cfg = QSPI_CFG_CMD(cmd) |
+#if JESD216_BUS_MODE == JESD216_BUS_MODE_QSPI1L
+             QSPI_CFG_CMD_MODE_ONE_LINE |
+             QSPI_CFG_ADDR_MODE_ONE_LINE |
+             QSPI_CFG_ADDR_SIZE_24 |
+             QSPI_CFG_DATA_MODE_ONE_LINE;
+#elif JESD216_BUS_MODE == JESD216_BUS_MODE_QSPI2L
+             QSPI_CFG_CMD_MODE_TWO_LINES |
+             QSPI_CFG_ADDR_MODE_TWO_LINES |
+             QSPI_CFG_ADDR_SIZE_24 |
+             QSPI_CFG_DATA_MODE_TWO_LINES;
+#else
+             QSPI_CFG_CMD_MODE_FOUR_LINES |
+             QSPI_CFG_ADDR_MODE_FOUR_LINES |
+             QSPI_CFG_ADDR_SIZE_24 |
+             QSPI_CFG_DATA_MODE_FOUR_LINES;
+
+#endif
+  mode.addr = addr;
+  mode.alt  = 0U;
+  qspiSend(busp, &mode, n, p);
+#else
+  uint8_t buf[4];
+
+  spiSelect(busp);
+  buf[0] = cmd;
+  buf[1] = (uint8_t)(addr >> 16);
+  buf[2] = (uint8_t)(addr >> 8);
+  buf[3] = (uint8_t)(addr >> 0);
+  spiSend(busp, 4, buf);
+  spiSend(busp, n, p);
+  spiUnselect(busp);
+#endif
+}
+
+void jesd216_cmd_addr_receive(BUSDriver *busp,
+                              uint8_t cmd,
+                              flash_address_t addr,
+                              size_t n,
+                              uint8_t *p) {
+#if JESD216_BUS_MODE != JESD216_BUS_MODE_SPI
+  qspi_command_t mode;
+
+  mode.cfg = QSPI_CFG_CMD(cmd) |
+#if JESD216_BUS_MODE == JESD216_BUS_MODE_QSPI1L
+             QSPI_CFG_CMD_MODE_ONE_LINE |
+             QSPI_CFG_ADDR_MODE_ONE_LINE |
+             QSPI_CFG_ADDR_SIZE_24 |
+             QSPI_CFG_DATA_MODE_ONE_LINE;
+#elif JESD216_BUS_MODE == JESD216_BUS_MODE_QSPI2L
+             QSPI_CFG_CMD_MODE_TWO_LINES |
+             QSPI_CFG_ADDR_MODE_TWO_LINES |
+             QSPI_CFG_ADDR_SIZE_24 |
+             QSPI_CFG_DATA_MODE_TWO_LINES;
+#else
+             QSPI_CFG_CMD_MODE_FOUR_LINES |
+             QSPI_CFG_ADDR_MODE_FOUR_LINES |
+             QSPI_CFG_ADDR_SIZE_24 |
+             QSPI_CFG_DATA_MODE_FOUR_LINES;
+
+#endif
+  mode.addr = addr;
+  mode.alt  = 0U;
+  qspiReceive(busp, &mode, n, p);
+#else
+  uint8_t buf[4];
+
+  spiSelect(busp);
+  buf[0] = cmd;
+  buf[1] = (uint8_t)(addr >> 16);
+  buf[2] = (uint8_t)(addr >> 8);
+  buf[3] = (uint8_t)(addr >> 0);
+  spiSend(busp, 4, buf);
+  spiReceive(busp, n, p);
+  spiUnselect(busp);
+#endif
+}
+
+#if (JESD216_BUS_MODE != JESD216_BUS_MODE_SPI) || defined(__DOXYGEN__)
+void jesd216_cmd_addr_dummy_receive(BUSDriver *busp,
+                                    uint8_t cmd,
+                                    flash_address_t addr,
+                                    uint8_t dummy,
+                                    size_t n,
+                                    uint8_t *p) {
+  qspi_command_t mode;
+
+  mode.cfg = QSPI_CFG_CMD(cmd) |
+#if JESD216_BUS_MODE == JESD216_BUS_MODE_QSPI1L
+             QSPI_CFG_CMD_MODE_ONE_LINE |
+             QSPI_CFG_ADDR_MODE_ONE_LINE |
+             QSPI_CFG_ADDR_SIZE_24 |
+             QSPI_CFG_DUMMY_CYCLES(dummy) |
+             QSPI_CFG_DATA_MODE_ONE_LINE;
+#elif JESD216_BUS_MODE == JESD216_BUS_MODE_QSPI2L
+             QSPI_CFG_CMD_MODE_TWO_LINES |
+             QSPI_CFG_ADDR_MODE_TWO_LINES |
+             QSPI_CFG_ADDR_SIZE_24 |
+             QSPI_CFG_DUMMY_CYCLES(dummy) |
+             QSPI_CFG_DATA_MODE_TWO_LINES;
+#else
+             QSPI_CFG_CMD_MODE_FOUR_LINES |
+             QSPI_CFG_ADDR_MODE_FOUR_LINES |
+             QSPI_CFG_ADDR_SIZE_24 |
+             QSPI_CFG_DUMMY_CYCLES(dummy) |
+             QSPI_CFG_DATA_MODE_FOUR_LINES;
+#endif
+  mode.addr = addr;
+  mode.alt  = 0U;
+  qspiReceive(busp, &mode, n, p);
+}
+#endif /* JESD216_BUS_MODE != JESD216_BUS_MODE_SPI */
+
+#if ((JESD216_BUS_MODE != JESD216_BUS_MODE_SPI) &&                          \
+     (JESD216_SHARED_BUS == TRUE)) || defined(__DOXYGEN__)
+void jesd216_bus_acquire(BUSDriver *busp) {
+
+  qspiAcquireBus(busp);
+}
+
+void jesd216_bus_release(BUSDriver *busp) {
+
+  qspiReleaseBus(busp);
+}
+#elif (JESD216_BUS_MODE == JESD216_BUS_MODE_SPI) &&                         \
+      (JESD216_SHARED_BUS == TRUE)
+static void jesd216_bus_acquire(BUSDriver *busp) {
+
+  spiAcquireBus(busp);
+  spiStart(busp, busp->config->spicfg);
+}
+
+static void jesd216_bus_release(BUSDriver *busp) {
+
+  spiReleaseBus(busp);
+}
+#else
+#define jesd216_bus_acquire(busp)
+#define jesd216_bus_release(busp)
+#endif
+
 /** @} */

@@ -87,16 +87,6 @@
                                                  M25Q_FLAGS_PROTECTION_ERROR)
 /** @} */
 
-/**
- * @name    Bus interface.
- * @{
- */
-#define M25Q_BUS_MODE_SPI                   0
-#define M25Q_BUS_MODE_QSPI1L                1
-#define M25Q_BUS_MODE_QSPI2L                2
-#define M25Q_BUS_MODE_QSPI4L                4
-/** @} */
-
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -105,13 +95,6 @@
  * @name    Configuration options
  * @{
  */
-/**
- * @brief   Physical transport interface.
- */
-#if !defined(M25Q_USE_SPI) || defined(__DOXYGEN__)
-#define M25Q_BUS_MODE                       M25Q_BUS_MODE_QSPI4L
-#endif
-
 /**
  * @brief   Number of dummy cycles for fast read (1..15).
  * @details This is the number of dummy cycles to be used for fast read
@@ -131,17 +114,6 @@
  */
 #if !defined(M25Q_SWITCH_WIDTH) || defined(__DOXYGEN__)
 #define M25Q_SWITCH_WIDTH                   TRUE
-#endif
-
-/**
- * @brief   Shared bus switch.
- * @details If set to @p TRUE the device acquires bus ownership
- *          on each transaction.
- * @note    Requires @p SPI_USE_MUTUAL_EXCLUSION or
- *          @p SPI_USE_MUTUAL_EXCLUSION.
- */
-#if !defined(M25Q_SHARED_BUS) || defined(__DOXYGEN__)
-#define M25Q_SHARED_BUS                     TRUE
 #endif
 
 /**
@@ -191,27 +163,6 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if (M25Q_BUS_MODE == M25Q_BUS_MODE_SPI) && (HAL_USE_SPI == FALSE)
-#error "M25Q_BUS_MODE_SPI requires HAL_USE_SPI"
-#endif
-
-#if (M25Q_BUS_MODE != M25Q_BUS_MODE_SPI) && (HAL_USE_QSPI == FALSE)
-#error "M25Q_BUS_MODE_QSPIxL requires HAL_USE_QSPI"
-#endif
-
-#if (M25Q_BUS_MODE == M25Q_BUS_MODE_SPI) &&                                 \
-    (M25Q_SHARED_SPI == TRUE) &&                                            \
-    (SPI_USE_MUTUAL_EXCLUSION == FALSE)
-#error "M25Q_SHARED_SPI requires SPI_USE_MUTUAL_EXCLUSION"
-#endif
-
-#if (M25Q_BUS_MODE != M25Q_BUS_MODE_SPI) &&                                 \
-    (M25Q_BUS_MODE != M25Q_BUS_MODE_QSPI1L) &&                              \
-    (M25Q_BUS_MODE != M25Q_BUS_MODE_QSPI2L) &&                              \
-    (M25Q_BUS_MODE != M25Q_BUS_MODE_QSPI4L)
-#error "invalid M25Q_BUS_MODE selected"
-#endif
-
 #if (M25Q_READ_DUMMY_CYCLES < 1) || (M25Q_READ_DUMMY_CYCLES > 15)
 #error "invalid M25Q_READ_DUMMY_CYCLES value (1..15)"
 #endif
@@ -228,25 +179,7 @@
  * @brief   Type of a M25Q configuration structure.
  */
 typedef struct {
-#if (M25Q_BUS_MODE != M25Q_BUS_MODE_SPI) || defined(__DOXYGEN__)
-  /**
-   * @brief   QSPI driver associated to this instance.
-   */
-  QSPIDriver                *qspip;
-  /**
-   * @brief   QSPI configuration associated to this instance.
-   */
-  const QSPIConfig          *qspicfg;
-#else
-  /**
-   * @brief   SPI driver associated to this instance.
-   */
-  SPIDriver                 *spip;
-  /**
-   * @brief   SPI configuration associated to this instance.
-   */
-  const SPIConfig           *spicfg;
-#endif
+  _jesd216_config
 } M25QConfig;
 
 /**
@@ -299,12 +232,12 @@ extern "C" {
   void m25qObjectInit(M25QDriver *devp);
   void m25qStart(M25QDriver *devp, const M25QConfig *config);
   void m25qStop(M25QDriver *devp);
-#if (M25Q_BUS_MODE != M25Q_BUS_MODE_SPI) || defined(__DOXYGEN__)
+#if (JESD216_BUS_MODE != JESD216_BUS_MODE_SPI) || defined(__DOXYGEN__)
 #if (QSPI_SUPPORTS_MEMMAP == TRUE) || defined(__DOXYGEN__)
   void m25qMemoryMap(M25QDriver *devp, uint8_t ** addrp);
   void m25qMemoryUnmap(M25QDriver *devp);
 #endif /* QSPI_SUPPORTS_MEMMAP == TRUE */
-#endif /* M25Q_BUS_MODE != M25Q_BUS_MODE_SPI */
+#endif /* JESD216_BUS_MODE != JESD216_BUS_MODE_SPI */
 #ifdef __cplusplus
 }
 #endif

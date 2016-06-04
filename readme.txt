@@ -79,6 +79,8 @@
 *****************************************************************************
 
 *** Next ***
+- EX:  Added flash implementation for Micron M25Qxxx devices.
+- HAL: Added base flash class and JESD216 flash class.
 - HAL: Extended PLLI2S for STM32F4xx subfamily.
 - HAL: Added QSPI driver implementation for STM32.
 - HAL: Added QSPI driver model.
@@ -111,6 +113,7 @@
        Shell files are now located under ./os/various/shell and have a
        dedicated shell.mk file.
 - ALL: Reorganized source tree, now ports are shared between RT and NIL.
+- EX:  New EX subsystem.
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
