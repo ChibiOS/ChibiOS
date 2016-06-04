@@ -504,7 +504,7 @@ static inline osStatus osThreadYield(void) {
  */
 static inline osPriority osThreadGetPriority(osThreadId thread_id) {
 
-  return thread_id->prio;
+  return (osPriority)(NORMALPRIO - thread_id->prio);
 }
 
 /**
