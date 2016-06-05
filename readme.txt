@@ -73,6 +73,8 @@
 *****************************************************************************
 
 *** 16.1.5 ***
+- HAL: Fixed misconfiguration in STM32L4 Discovery board files 
+       (bug #754).
 - HAL: Fixed errors in documentation related to OTG peripheral switches 
        (bug #753).
 - HAL: Fixed CMSIS function osThreadGetPriority() does not return correct
