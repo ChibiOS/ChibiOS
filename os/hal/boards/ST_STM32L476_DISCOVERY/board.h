@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2015 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -101,9 +101,8 @@
 #define GPIOC_LCD_SEG14             6U
 #define GPIOC_LCD_SEG9              7U
 #define GPIOC_LCD_SEG13             8U
-#define GPIOC_OTG_FS_PowerSwitchOn  9U
-#define GPIOC_OTG_FS_NOE            9U
-#define GPIOC_OTG_FS_OverCurrent    10U
+#define GPIOC_OTG_FS_PSON           9U
+#define GPIOC_OTG_FS_OVCURR         10U
 #define GPIOC_OTG_FS_VBUS           11U
 #define GPIOC_OTG_FS_ID             12U
 #define GPIOC_MFX_IRQ_OUT           13U
@@ -241,9 +240,8 @@
 #define LINE_LCD_SEG14              PAL_LINE(GPIOC, 6U)
 #define LINE_LCD_SEG9               PAL_LINE(GPIOC, 7U)
 #define LINE_LCD_SEG13              PAL_LINE(GPIOC, 8U)
-#define LINE_OTG_FS_PowerSwitchOn   PAL_LINE(GPIOC, 9U)
-#define LINE_OTG_FS_NOE             PAL_LINE(GPIOC, 9U)
-#define LINE_OTG_FS_OverCurrent     PAL_LINE(GPIOC, 10U)
+#define LINE_OTG_FS_PSON            PAL_LINE(GPIOC, 9U)
+#define LINE_OTG_FS_OVCURR          PAL_LINE(GPIOC, 10U)
 #define LINE_OTG_FS_VBUS            PAL_LINE(GPIOC, 11U)
 #define LINE_OTG_FS_ID              PAL_LINE(GPIOC, 12U)
 #define LINE_MFX_IRQ_OUT            PAL_LINE(GPIOC, 13U)
@@ -620,10 +618,10 @@
  * PC6  - LCD_SEG14                 (alternate 11).
  * PC7  - LCD_SEG9                  (alternate 11).
  * PC8  - LCD_SEG13                 (alternate 11).
- * PC9  - OTG_FS_PowerSwitchOn OTG_FS_NOE(alternate 10).
- * PC10 - OTG_FS_OverCurrent        (input floating).
- * PC11 - OTG_FS_VBUS               (analog).
- * PC12 - OTG_FS_ID                 (analog).
+ * PC9  - OTG_FS_PSON               (output pushpull maximum).
+ * PC10 - OTG_FS_OVCURR             (input floating).
+ * PC11 - OTG_FS_VBUS               (input floating).
+ * PC12 - OTG_FS_ID                 (alternate 10).
  * PC13 - MFX_IRQ_OUT               (input pulldown).
  * PC14 - OSC32_IN                  (input floating).
  * PC15 - OSC32_OUT                 (input floating).
@@ -637,10 +635,10 @@
                                      PIN_MODE_ALTERNATE(GPIOC_LCD_SEG14) |  \
                                      PIN_MODE_ALTERNATE(GPIOC_LCD_SEG9) |   \
                                      PIN_MODE_ALTERNATE(GPIOC_LCD_SEG13) |  \
-                                     PIN_MODE_ALTERNATE(GPIOC_OTG_FS_PowerSwitchOn) |\
-                                     PIN_MODE_INPUT(GPIOC_OTG_FS_OverCurrent) |\
-                                     PIN_MODE_ANALOG(GPIOC_OTG_FS_VBUS) |   \
-                                     PIN_MODE_ANALOG(GPIOC_OTG_FS_ID) |     \
+                                     PIN_MODE_OUTPUT(GPIOC_OTG_FS_PSON) |   \
+                                     PIN_MODE_INPUT(GPIOC_OTG_FS_OVCURR) |  \
+                                     PIN_MODE_INPUT(GPIOC_OTG_FS_VBUS) |    \
+                                     PIN_MODE_ALTERNATE(GPIOC_OTG_FS_ID) |  \
                                      PIN_MODE_INPUT(GPIOC_MFX_IRQ_OUT) |    \
                                      PIN_MODE_INPUT(GPIOC_OSC32_IN) |       \
                                      PIN_MODE_INPUT(GPIOC_OSC32_OUT))
@@ -653,8 +651,8 @@
                                      PIN_OTYPE_PUSHPULL(GPIOC_LCD_SEG14) |  \
                                      PIN_OTYPE_PUSHPULL(GPIOC_LCD_SEG9) |   \
                                      PIN_OTYPE_PUSHPULL(GPIOC_LCD_SEG13) |  \
-                                     PIN_OTYPE_PUSHPULL(GPIOC_OTG_FS_PowerSwitchOn) |\
-                                     PIN_OTYPE_PUSHPULL(GPIOC_OTG_FS_OverCurrent) |\
+                                     PIN_OTYPE_PUSHPULL(GPIOC_OTG_FS_PSON) |\
+                                     PIN_OTYPE_PUSHPULL(GPIOC_OTG_FS_OVCURR) |\
                                      PIN_OTYPE_PUSHPULL(GPIOC_OTG_FS_VBUS) |\
                                      PIN_OTYPE_PUSHPULL(GPIOC_OTG_FS_ID) |  \
                                      PIN_OTYPE_PUSHPULL(GPIOC_MFX_IRQ_OUT) |\
@@ -669,8 +667,8 @@
                                      PIN_OSPEED_HIGH(GPIOC_LCD_SEG14) |     \
                                      PIN_OSPEED_HIGH(GPIOC_LCD_SEG9) |      \
                                      PIN_OSPEED_HIGH(GPIOC_LCD_SEG13) |     \
-                                     PIN_OSPEED_HIGH(GPIOC_OTG_FS_PowerSwitchOn) |\
-                                     PIN_OSPEED_HIGH(GPIOC_OTG_FS_OverCurrent) |\
+                                     PIN_OSPEED_HIGH(GPIOC_OTG_FS_PSON) |   \
+                                     PIN_OSPEED_HIGH(GPIOC_OTG_FS_OVCURR) | \
                                      PIN_OSPEED_HIGH(GPIOC_OTG_FS_VBUS) |   \
                                      PIN_OSPEED_HIGH(GPIOC_OTG_FS_ID) |     \
                                      PIN_OSPEED_HIGH(GPIOC_MFX_IRQ_OUT) |   \
@@ -685,8 +683,8 @@
                                      PIN_PUPDR_FLOATING(GPIOC_LCD_SEG14) |  \
                                      PIN_PUPDR_FLOATING(GPIOC_LCD_SEG9) |   \
                                      PIN_PUPDR_FLOATING(GPIOC_LCD_SEG13) |  \
-                                     PIN_PUPDR_FLOATING(GPIOC_OTG_FS_PowerSwitchOn) |\
-                                     PIN_PUPDR_FLOATING(GPIOC_OTG_FS_OverCurrent) |\
+                                     PIN_PUPDR_FLOATING(GPIOC_OTG_FS_PSON) |\
+                                     PIN_PUPDR_FLOATING(GPIOC_OTG_FS_OVCURR) |\
                                      PIN_PUPDR_FLOATING(GPIOC_OTG_FS_VBUS) |\
                                      PIN_PUPDR_FLOATING(GPIOC_OTG_FS_ID) |  \
                                      PIN_PUPDR_PULLDOWN(GPIOC_MFX_IRQ_OUT) |\
@@ -701,8 +699,8 @@
                                      PIN_ODR_HIGH(GPIOC_LCD_SEG14) |        \
                                      PIN_ODR_HIGH(GPIOC_LCD_SEG9) |         \
                                      PIN_ODR_HIGH(GPIOC_LCD_SEG13) |        \
-                                     PIN_ODR_HIGH(GPIOC_OTG_FS_PowerSwitchOn) |\
-                                     PIN_ODR_HIGH(GPIOC_OTG_FS_OverCurrent) |\
+                                     PIN_ODR_LOW(GPIOC_OTG_FS_PSON) |       \
+                                     PIN_ODR_HIGH(GPIOC_OTG_FS_OVCURR) |    \
                                      PIN_ODR_HIGH(GPIOC_OTG_FS_VBUS) |      \
                                      PIN_ODR_HIGH(GPIOC_OTG_FS_ID) |        \
                                      PIN_ODR_HIGH(GPIOC_MFX_IRQ_OUT) |      \
@@ -717,9 +715,9 @@
                                      PIN_AFIO_AF(GPIOC_LCD_SEG14, 11) |     \
                                      PIN_AFIO_AF(GPIOC_LCD_SEG9, 11))
 #define VAL_GPIOC_AFRH              (PIN_AFIO_AF(GPIOC_LCD_SEG13, 11) |     \
-                                     PIN_AFIO_AF(GPIOC_OTG_FS_PowerSwitchOn, 10) |\
-                                     PIN_AFIO_AF(GPIOC_OTG_FS_OverCurrent, 0) |\
-                                     PIN_AFIO_AF(GPIOC_OTG_FS_VBUS, 10) |   \
+                                     PIN_AFIO_AF(GPIOC_OTG_FS_PSON, 0) |    \
+                                     PIN_AFIO_AF(GPIOC_OTG_FS_OVCURR, 0) |  \
+                                     PIN_AFIO_AF(GPIOC_OTG_FS_VBUS, 0) |    \
                                      PIN_AFIO_AF(GPIOC_OTG_FS_ID, 10) |     \
                                      PIN_AFIO_AF(GPIOC_MFX_IRQ_OUT, 0) |    \
                                      PIN_AFIO_AF(GPIOC_OSC32_IN, 0) |       \
@@ -733,10 +731,10 @@
                                      PIN_ASCR_DISABLED(GPIOC_LCD_SEG14) |   \
                                      PIN_ASCR_DISABLED(GPIOC_LCD_SEG9) |    \
                                      PIN_ASCR_DISABLED(GPIOC_LCD_SEG13) |   \
-                                     PIN_ASCR_DISABLED(GPIOC_OTG_FS_PowerSwitchOn) |\
-                                     PIN_ASCR_DISABLED(GPIOC_OTG_FS_OverCurrent) |\
-                                     PIN_ASCR_ENABLED(GPIOC_OTG_FS_VBUS) |  \
-                                     PIN_ASCR_ENABLED(GPIOC_OTG_FS_ID) |    \
+                                     PIN_ASCR_DISABLED(GPIOC_OTG_FS_PSON) | \
+                                     PIN_ASCR_DISABLED(GPIOC_OTG_FS_OVCURR) |\
+                                     PIN_ASCR_DISABLED(GPIOC_OTG_FS_VBUS) | \
+                                     PIN_ASCR_DISABLED(GPIOC_OTG_FS_ID) |   \
                                      PIN_ASCR_DISABLED(GPIOC_MFX_IRQ_OUT) | \
                                      PIN_ASCR_DISABLED(GPIOC_OSC32_IN) |    \
                                      PIN_ASCR_DISABLED(GPIOC_OSC32_OUT))
@@ -749,8 +747,8 @@
                                      PIN_LOCKR_DISABLED(GPIOC_LCD_SEG14) |  \
                                      PIN_LOCKR_DISABLED(GPIOC_LCD_SEG9) |   \
                                      PIN_LOCKR_DISABLED(GPIOC_LCD_SEG13) |  \
-                                     PIN_LOCKR_DISABLED(GPIOC_OTG_FS_PowerSwitchOn) |\
-                                     PIN_LOCKR_DISABLED(GPIOC_OTG_FS_OverCurrent) |\
+                                     PIN_LOCKR_DISABLED(GPIOC_OTG_FS_PSON) |\
+                                     PIN_LOCKR_DISABLED(GPIOC_OTG_FS_OVCURR) |\
                                      PIN_LOCKR_DISABLED(GPIOC_OTG_FS_VBUS) |\
                                      PIN_LOCKR_DISABLED(GPIOC_OTG_FS_ID) |  \
                                      PIN_LOCKR_DISABLED(GPIOC_MFX_IRQ_OUT) |\
