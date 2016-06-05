@@ -72,6 +72,8 @@
 *****************************************************************************
 
 *** 2.6.10 ***
+- FIX: Fixed errors in documentation related to OTG peripheral switches 
+       (bug #753).
 - FIX: Fixed wrong conditional branches in _adc_isr_error_code (bug #751).
 - FIX: Fixed wrong comments and indent in STM32F4xx hal_lld.h (bug #746).
 - FIX: Fixed wrong indent in STM32F4xx hal_lld.h (bug #743).
