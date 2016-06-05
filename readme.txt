@@ -73,6 +73,8 @@
 *****************************************************************************
 
 *** 16.1.5 ***
+- HAL: Fixed errors in documentation related to OTG peripheral switches 
+       (bug #753).
 - HAL: Fixed CMSIS function osThreadGetPriority() does not return correct
        priority (bug #752).
 - HAL: Fixed wrong conditional branches in _adc_isr_error_code (bug #751).

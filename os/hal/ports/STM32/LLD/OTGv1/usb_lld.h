@@ -55,7 +55,7 @@
 /**
  * @brief   OTG1 driver enable switch.
  * @details If set to @p TRUE the support for OTG_FS is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_USB_USE_OTG1) || defined(__DOXYGEN__)
 #define STM32_USB_USE_OTG1                  FALSE
@@ -64,7 +64,7 @@
 /**
  * @brief   OTG2 driver enable switch.
  * @details If set to @p TRUE the support for OTG_HS is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_USB_USE_OTG2) || defined(__DOXYGEN__)
 #define STM32_USB_USE_OTG2                  FALSE
