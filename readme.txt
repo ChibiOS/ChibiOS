@@ -119,6 +119,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Fixed errors in documentation related to OTG peripheral switches 
+       (bug #753)(backported to 2.6.10, 3.0.6 and 16.1.5).
 - HAL: Fixed CMSIS function osThreadGetPriority() does not return correct
        priority (bug #752)(backported to 2.6.10, 3.0.6 and 16.1.5).
 - HAL: Fixed wrong conditional branches in _adc_isr_error_code (bug #751)
