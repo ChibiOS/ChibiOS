@@ -436,17 +436,17 @@
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin9
-        ID="OTG_FS_PowerSwitchOn OTG_FS_NOE"
+        ID="OTG_FS_PSON"
         Type="PushPull"
-        Level="High"
+        Level="Low"
         Speed="Maximum"
         Resistor="Floating"
-        Mode="Alternate"
-        Alternate="10"
+        Mode="Output"
+        Alternate="0"
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin10
-        ID="OTG_FS_OverCurrent"
+        ID="OTG_FS_OVCURR"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -461,9 +461,9 @@
         Level="High"
         Speed="Maximum"
         Resistor="Floating"
-        Mode="Analog"
-        Alternate="10"
-        AnalogSwitch="Enabled"
+        Mode="Input"
+        Alternate="0"
+        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin12
         ID="OTG_FS_ID"
@@ -471,9 +471,9 @@
         Level="High"
         Speed="Maximum"
         Resistor="Floating"
-        Mode="Analog"
+        Mode="Alternate"
         Alternate="10"
-        AnalogSwitch="Enabled"
+        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin13
         ID="MFX_IRQ_OUT"
