@@ -1,11 +1,10 @@
 *****************************************************************************
-** ChibiOS/HAL - USB-CDC driver demo for STM32.                            **
+** ChibiOS/HAL - USB-CDC driver demo for STM32F2xx.                        **
 *****************************************************************************
 
 ** TARGET **
 
-The demo runs on both Olimex STM32-E407 or STM32F4-Discovery boards, just
-change the board reference in the Makefile.
+The demo runs on STM32 Nucleo144-F207ZG boards.
 
 ** The Demo **
 
