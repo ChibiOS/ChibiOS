@@ -35,29 +35,36 @@
  * @name    Common command codes
  * @{
  */
-#define JESD216_CMD_READ_ID                 0x9F
-#define JESD216_CMD_READ                    0x03
-#define JESD216_CMD_WRITE_ENABLE            0x06
-#define JESD216_CMD_WRITE_DISABLE           0x04
-#define JESD216_CMD_READ_STATUS_REGISTER    0x05
-#define JESD216_CMD_WRITE_STATUS_REGISTER   0x01
-#define JESD216_CMD_PAGE_PROGRAM            0x02
-#define JESD216_CMD_ERASE_4K                0x20
-#define JESD216_CMD_ERASE_BULK              0xC7
-#define JESD216_CMD_PROGRAM_ERASE_RESUME    0x7A
-#define JESD216_CMD_PROGRAM_ERASE_SUSPEND   0x75
-#define JESD216_CMD_READ_OTP_ARRAY          0x4B
-#define JESD216_CMD_PROGRAM_OTP_ARRAY       0x42
+#define JESD216_CMD_READ_ID                 0x9FU
+#define JESD216_CMD_READ                    0x03U
+#define JESD216_CMD_WRITE_ENABLE            0x06U
+#define JESD216_CMD_WRITE_DISABLE           0x04U
+#define JESD216_CMD_READ_STATUS_REGISTER    0x05U
+#define JESD216_CMD_WRITE_STATUS_REGISTER   0x01U
+#define JESD216_CMD_PAGE_PROGRAM            0x02U
+#define JESD216_CMD_ERASE_4K                0x20U
+#define JESD216_CMD_ERASE_BULK              0xC7U
+#define JESD216_CMD_PROGRAM_ERASE_RESUME    0x7AU
+#define JESD216_CMD_PROGRAM_ERASE_SUSPEND   0x75U
+#define JESD216_CMD_READ_OTP_ARRAY          0x4BU
+#define JESD216_CMD_PROGRAM_OTP_ARRAY       0x42U
+/** @} */
+
+/**
+ * @name    Command options
+ * @{
+ */
+#define JESD216_CMD_EXTENDED_ADDRESSING     0x80000000U
 /** @} */
 
 /**
  * @name    Bus interface.
  * @{
  */
-#define JESD216_BUS_MODE_SPI                0
-#define JESD216_BUS_MODE_QSPI1L             1
-#define JESD216_BUS_MODE_QSPI2L             2
-#define JESD216_BUS_MODE_QSPI4L             4
+#define JESD216_BUS_MODE_SPI                0U
+#define JESD216_BUS_MODE_QSPI1L             1U
+#define JESD216_BUS_MODE_QSPI2L             2U
+#define JESD216_BUS_MODE_QSPI4L             4U
 /** @} */
 
 /*===========================================================================*/
@@ -184,17 +191,22 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void jesd216_cmd(BUSDriver *busp, uint8_t cmd);
-  void jesd216_cmd_receive(BUSDriver *busp, uint8_t cmd, size_t n, uint8_t *p);
-  void jesd216_cmd_send(BUSDriver *busp, uint8_t cmd, size_t n, const uint8_t *p);
-  void jesd216_cmd_addr(BUSDriver *busp, uint8_t cmd, flash_address_t addr);
-  void jesd216_cmd_addr_send(BUSDriver *busp, uint8_t cmd, flash_address_t addr,
-                             size_t n, const uint8_t *p);
-  void jesd216_cmd_addr_receive(BUSDriver *busp, uint8_t cmd, flash_address_t addr,
-                                size_t n, uint8_t *p);
+  void jesd216_start(BUSDriver *busp, const BUSConfig *config);
+  void jesd216_stop(BUSDriver *busp);
+  void jesd216_cmd(BUSDriver *busp, uint32_t cmd);
+  void jesd216_cmd_receive(BUSDriver *busp, uint32_t cmd,
+                           size_t n, uint8_t *p);
+  void jesd216_cmd_send(BUSDriver *busp, uint32_t cmd,
+                        size_t n, const uint8_t *p);
+  void jesd216_cmd_addr(BUSDriver *busp, uint32_t cmd, flash_address_t addr);
+  void jesd216_cmd_addr_send(BUSDriver *busp, uint32_t cmd,
+                             flash_address_t addr, size_t n, const uint8_t *p);
+  void jesd216_cmd_addr_receive(BUSDriver *busp, uint32_t cmd,
+                                flash_address_t addr, size_t n, uint8_t *p);
 #if JESD216_BUS_MODE != JESD216_BUS_MODE_SPI
-  void jesd216_cmd_addr_dummy_receive(BUSDriver *busp, uint8_t cmd, flash_address_t addr,
-                                      uint8_t dummy, size_t n, uint8_t *p);
+  void jesd216_cmd_addr_dummy_receive(BUSDriver *busp, uint32_t cmd,
+                                      flash_address_t addr, uint8_t dummy,
+                                      size_t n, uint8_t *p);
 #endif /* JESD216_BUS_MODE != JESD216_BUS_MODE_SPI */
 #if JESD216_SHARED_BUS == TRUE
   void jesd216_bus_acquire(BUSDriver *busp);

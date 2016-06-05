@@ -648,15 +648,13 @@ void m25qStart(M25QDriver *devp, const M25QConfig *config) {
     /* Bus acquisition.*/
     jesd216_bus_acquire(devp->config->busp);
 
+    /* Starting bus device.*/
+    jesd216_start(devp->config->busp, devp->config->buscfg);
+
 #if JESD216_BUS_MODE == JESD216_BUS_MODE_SPI
-    /* SPI initialization.*/
-    spiStart(devp->config->busp, devp->config->buscfg);
-
     /* Reading device ID.*/
-#else /* JESD216_BUS_MODE != JESD216_BUS_MODE_SPI */
-    /* QSPI initialization.*/
-    qspiStart(devp->config->busp, devp->config->buscfg);
 
+#else /* JESD216_BUS_MODE != JESD216_BUS_MODE_SPI */
     /* Attempting a reset of the XIP mode, it could be in an unexpected state
        because a CPU reset does not reset the memory too.*/
     m25q_reset_xip(devp);
@@ -740,12 +738,10 @@ void m25qStop(M25QDriver *devp) {
     /* Bus acquisition.*/
     jesd216_bus_acquire(devp->config->busp);
 
-#if JESD216_BUS_MODE == JESD216_BUS_MODE_SPI
-    spiStop(devp->config->busp);
-#else
-    qspiStop(devp->config->busp);
-#endif
+    /* Stopping bus device.*/
+    jesd216_stop(devp->config->busp);
 
+    /* Deleting current configuration.*/
     devp->config = NULL;
 
     /* Driver stopped.*/
