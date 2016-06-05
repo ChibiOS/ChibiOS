@@ -60,14 +60,6 @@
 /** @} */
 
 /**
- * @name    Return codes
- * @{
- */
-#define HAL_SUCCESS             false
-#define HAL_FAILED              true
-/** @} */
-
-/**
  * @name    Command codes
  * @{
  */
