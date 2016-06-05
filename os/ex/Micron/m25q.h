@@ -35,6 +35,39 @@
 /*===========================================================================*/
 
 /**
+ * @name    Version identification
+ * @{
+ */
+/**
+ * @brief   M25Q driver version string.
+ */
+#define EX_M25Q_VERSION         "1.0.0"
+
+/**
+ * @brief   M25Q driver version major number.
+ */
+#define EX_M25Q_MAJOR           1
+
+/**
+ * @brief   M25Q driver version minor number.
+ */
+#define EX_M25Q__MINOR          0
+
+/**
+ * @brief   M25Q driver version patch number.
+ */
+#define EX_M25Q_PATCH           0
+/** @} */
+
+/**
+ * @name    Return codes
+ * @{
+ */
+#define HAL_SUCCESS             false
+#define HAL_FAILED              true
+/** @} */
+
+/**
  * @name    Command codes
  * @{
  */
