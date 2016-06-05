@@ -79,6 +79,8 @@
 *****************************************************************************
 
 *** Next ***
+- HAL: Added events handling to the PAL driver. The EXT driver is now
+       deprecated but still supported.
 - EX:  Added flash implementation for Micron M25Qxxx devices.
 - HAL: Added base flash class and JESD216 flash class.
 - HAL: Extended PLLI2S for STM32F4xx subfamily.
