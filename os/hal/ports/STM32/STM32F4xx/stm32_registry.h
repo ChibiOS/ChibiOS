@@ -419,7 +419,7 @@
 
 #define STM32_HAS_USB                       FALSE
 
-/* IWDG attributes.*/2
+/* IWDG attributes.*/
 #define STM32_HAS_IWDG                      TRUE
 #define STM32_IWDG_IS_WINDOWED              FALSE
 
