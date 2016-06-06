@@ -98,12 +98,12 @@ typedef struct {
  * @brief   Accelerometer get axes number.
  *
  * @param[in] ip        pointer to a @p BaseAccelerometer class.
- * @return              The number of axes of the BaseSensor
+ * @return              The number of axes of the BaseAccelerometer
  *
  * @api
  */
 #define accelerometerGetAxesNumber(ip)                                      \
-        (ip)->vmt_baseaccelerometer->get_axes_number(ip)
+        (ip)->vmt_baseaccelerometer->get_channels_number(ip)
 
 /**
  * @brief   Accelerometer read raw data.

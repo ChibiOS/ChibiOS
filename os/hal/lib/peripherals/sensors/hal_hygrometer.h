@@ -15,15 +15,15 @@
 */
 
 /**
- * @file    hal_gyroscope.h
- * @brief   Generic gyroscope interface header.
+ * @file    hal_hygrometer.h
+ * @brief   Generic hygrometer interface header.
  *
- * @addtogroup HAL_GYROSCOPE
+ * @addtogroup HAL_HYGROMETER
  * @{
  */
 
-#ifndef HAL_GYROSCOPE_H
-#define HAL_GYROSCOPE_H
+#ifndef HAL_HYGROMETER_H
+#define HAL_HYGROMETER_H
 
 #include "hal_sensors.h"
 
@@ -44,11 +44,9 @@
 /*===========================================================================*/
 
 /**
- * @brief   BaseGyroscope specific methods.
+ * @brief   BaseHygrometer specific methods.
  */
-#define _base_gyroscope_methods_alone                                       \
-  /* Invoke the sample bias procedure.*/                                    \
-  msg_t (*sample_bias)(void *instance);                                     \
+#define _base_hygrometer_methods_alone                                      \
   /* Invoke the set bias procedure.*/                                       \
   msg_t (*set_bias)(void *instance, int32_t biases[]);                      \
   /* Remove bias stored data.*/                                             \
@@ -57,61 +55,60 @@
   msg_t (*set_sensitivity)(void *instance, float sensitivities[]);          \
   /* Restore sensitivity stored data to default.*/                          \
   msg_t (*reset_sensitivity)(void *instance);
-  
-  
-/**
- * @brief   BaseGyroscope specific methods with inherited ones.
- */
-#define _base_gyroscope_methods                                             \
-  _base_sensor_methods                                                      \
-  _base_gyroscope_methods_alone
+
 
 /**
- * @brief   @p BaseGyroscope virtual methods table.
+ * @brief   BaseHygrometer specific methods with inherited ones.
  */
-struct BaseGyroscopeVMT {
-  _base_gyroscope_methods
+#define _base_hygrometer_methods                                            \
+  _base_sensor_methods                                                      \
+  _base_hygrometer_methods_alone
+
+/**
+ * @brief   @p BaseHygrometer virtual methods table.
+ */
+struct BaseHygrometerVMT {
+  _base_hygrometer_methods
 };
 
 /**
- * @brief   @p BaseGyroscope specific data.
+ * @brief   @p BaseHygrometer specific data.
  */
-#define _base_gyroscope_data                                                \
+#define _base_hygrometer_data                                               \
   _base_sensor_data
-
+	
 /**
- * @brief   Base gyroscope class.
- * @details This class represents a generic gyroscope.
+ * @brief   Base hygrometer class.
+ * @details This class represents a generic hygrometer.
  */
 typedef struct {
   /** @brief Virtual Methods Table.*/
-  const struct BaseGyroscopeVMT *vmt_basegyroscope;
-  _base_gyroscope_data
-} BaseGyroscope;
+  const struct BaseHygrometerVMT *vmt_basehygrometer;
+  _base_hygrometer_data
+} BaseHygrometer;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
-
 /**
- * @name    Macro Functions (BaseGyroscope)
+ * @name    Macro Functions (BaseHygrometer)
  * @{
  */
 /**
- * @brief   Gyroscope get axes number.
+ * @brief   Hygrometer get channels number.
  *
- * @param[in] ip        pointer to a @p BaseGyroscope class.
- * @return              The number of axes of the BaseGyroscope
+ * @param[in] ip        pointer to a @p BaseHygrometer class.
+ * @return              The number of channels of the BaseHygrometer
  *
  * @api
  */
-#define gyroscopeGetAxesNumber(ip)                                          \
-        (ip)->vmt_basegyroscope->get_channels_number(ip)
+#define hygrometerGetChannelsNumber(ip)                                     \
+        (ip)->vmt_basehygrometer->get_channels_number(ip)
 
 /**
- * @brief   Gyroscope read raw data.
+ * @brief   Hygrometer read raw data.
  *
- * @param[in] ip        pointer to a @p BaseGyroscope class.
+ * @param[in] ip        pointer to a @p BaseHygrometer class.
  * @param[in] dp        pointer to a data array.
  * 
  * @return              The operation status.
@@ -120,13 +117,13 @@ typedef struct {
  *
  * @api
  */
-#define gyroscopeReadRaw(ip, dp)                                            \
-        (ip)->vmt_basegyroscope->read_raw(ip, dp)
+#define hygrometerReadRaw(ip, dp)                                           \
+        (ip)->vmt_basehygrometer->read_raw(ip, dp)
 
 /**
- * @brief   Gyroscope read cooked data.
+ * @brief   Hygrometer read cooked data.
  *
- * @param[in] ip        pointer to a @p BaseGyroscope class.
+ * @param[in] ip        pointer to a @p BaseHygrometer class.
  * @param[in] dp        pointer to a data array.
  * 
  * @return              The operation status.
@@ -135,89 +132,72 @@ typedef struct {
  *
  * @api
  */
-#define gyroscopeReadCooked(ip, dp)                                         \
-        (ip)->vmt_basegyroscope->read_cooked(ip, dp)
+#define hygrometerReadCooked(ip, dp)                                        \
+        (ip)->vmt_basehygrometer->read_cooked(ip, dp)
 
 /**
- * @brief   Gyroscope bias sampling procedure.
- * @note    During this procedure gyroscope must be kept hold in the rest
- *          position. Sampled bias will be automatically removed after 
- *          calling this procedure.
- *
- * @param[in] ip        pointer to a @p BaseGyroscope class.
- * 
- * @return              The operation status.
- * @retval MSG_OK       if the function succeeded.
- * @retval MSG_RESET    if one or more errors occurred.
- *
- * @api
- */
-#define gyroscopeSampleBias(ip)                                             \
-        (ip)->vmt_basegyroscope->sample_bias(ip)
-
-/**
- * @brief   Updates gyroscope bias data from received buffer.
+ * @brief   Updates hygrometer bias data from received buffer.
  * @note    The bias buffer must have the same length of the
- *          the gyroscope axes number. Bias must be computed on
+ *          the hygrometer channels number. Bias must be computed on
  *          raw data and is a signed integer.
  *
- * @param[in] ip        pointer to a @p BaseGyroscope class.
+ * @param[in] ip        pointer to a @p BaseHygrometer class.
  * @param[in] bp        pointer to a buffer of bias values.
- * 
+ *
  * @return              The operation status.
  * @retval MSG_OK       if the function succeeded.
  * @retval MSG_RESET    if one or more errors occurred.
  *
  * @api
  */
-#define gyroscopeSetBias(ip, bp)                                            \
-        (ip)->vmt_basegyroscope->set_bias(ip, bp)
-		
+#define hygrometerSetBias(ip, bp)                                           \
+        (ip)->vmt_basehygrometer->set_bias(ip, bp)
+
 /**
- * @brief   Reset gyroscope bias data restoring it to zero.
+ * @brief   Reset hygrometer bias data restoring it to zero.
  *
- * @param[in] ip        pointer to a @p BaseGyroscope class.
- * 
+ * @param[in] ip        pointer to a @p BaseHygrometer class.
+ *
  * @return              The operation status.
  * @retval MSG_OK       if the function succeeded.
  * @retval MSG_RESET    if one or more errors occurred.
  *
  * @api
  */
-#define gyroscopeResetBias(ip)                                               \
-        (ip)->vmt_basegyroscope->reset_bias(ip)
-		
+#define hygrometerResetBias(ip)                                             \
+        (ip)->vmt_basehygrometer->reset_bias(ip)
+
 /**
- * @brief   Updates gyroscope sensitivity data from received buffer.
+ * @brief   Updates hygrometer sensitivity data from received buffer.
  * @note    The sensitivity buffer must have the same length of the
- *          the gyroscope axes number.
+ *          the hygrometer channels number.
  *
- * @param[in] ip        pointer to a @p BaseGyroscope class.
+ * @param[in] ip        pointer to a @p BaseHygrometer class.
  * @param[in] sp        pointer to a buffer of sensitivity values.
- * 
+ *
  * @return              The operation status.
  * @retval MSG_OK       if the function succeeded.
  * @retval MSG_RESET    if one or more errors occurred.
  *
  * @api
  */
-#define gyroscopeSetSensitivity(ip, sp)                                     \
-        (ip)->vmt_basegyroscope->set_sensitivity(ip, sp)
-		
+#define hygrometerSetSensitivity(ip, sp)                                    \
+        (ip)->vmt_basehygrometer->set_sensitivity(ip, sp)
+
 /**
- * @brief   Reset gyroscope sensitivity data restoring it to its typical 
+ * @brief   Reset hygrometer sensitivity data restoring it to its typical
  *          value.
  *
- * @param[in] ip        pointer to a @p BaseGyroscope class.
- * 
+ * @param[in] ip        pointer to a @p BaseHygrometer class.
+ *
  * @return              The operation status.
  * @retval MSG_OK       if the function succeeded.
  * @retval MSG_RESET    if one or more errors occurred.
  *
  * @api
  */
-#define gyroscopeResetSensitivity(ip)                                       \
-        (ip)->vmt_basegyroscope->reset_sensitivity(ip)
+#define hygrometerResetSensitivity(ip)                                      \
+        (ip)->vmt_basehygrometer->reset_sensitivity(ip)
 /** @} */
 
 /*===========================================================================*/
@@ -232,6 +212,6 @@ extern "C" {
 }
 #endif
 
-#endif /* HAL_GYROSCOPE_H */
+#endif /* HAL_HYGROMETER_H */
 
 /** @} */

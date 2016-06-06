@@ -15,15 +15,15 @@
 */
 
 /**
- * @file    hal_gyroscope.h
- * @brief   Generic gyroscope interface header.
+ * @file    hal_barometer.h
+ * @brief   Generic barometer interface header.
  *
- * @addtogroup HAL_GYROSCOPE
+ * @addtogroup HAL_BAROMETER
  * @{
  */
 
-#ifndef HAL_GYROSCOPE_H
-#define HAL_GYROSCOPE_H
+#ifndef HAL_BAROMETER_H
+#define HAL_BAROMETER_H
 
 #include "hal_sensors.h"
 
@@ -44,11 +44,9 @@
 /*===========================================================================*/
 
 /**
- * @brief   BaseGyroscope specific methods.
+ * @brief   BaseBarometer specific methods.
  */
-#define _base_gyroscope_methods_alone                                       \
-  /* Invoke the sample bias procedure.*/                                    \
-  msg_t (*sample_bias)(void *instance);                                     \
+#define _base_barometer_methods_alone                                       \
   /* Invoke the set bias procedure.*/                                       \
   msg_t (*set_bias)(void *instance, int32_t biases[]);                      \
   /* Remove bias stored data.*/                                             \
@@ -57,61 +55,60 @@
   msg_t (*set_sensitivity)(void *instance, float sensitivities[]);          \
   /* Restore sensitivity stored data to default.*/                          \
   msg_t (*reset_sensitivity)(void *instance);
-  
-  
-/**
- * @brief   BaseGyroscope specific methods with inherited ones.
- */
-#define _base_gyroscope_methods                                             \
-  _base_sensor_methods                                                      \
-  _base_gyroscope_methods_alone
+
 
 /**
- * @brief   @p BaseGyroscope virtual methods table.
+ * @brief   BaseBarometer specific methods with inherited ones.
  */
-struct BaseGyroscopeVMT {
-  _base_gyroscope_methods
+#define _base_barometer_methods                                             \
+  _base_sensor_methods                                                      \
+  _base_barometer_methods_alone
+
+/**
+ * @brief   @p BaseBarometer virtual methods table.
+ */
+struct BaseBarometerVMT {
+  _base_barometer_methods
 };
 
 /**
- * @brief   @p BaseGyroscope specific data.
+ * @brief   @p BaseBarometer specific data.
  */
-#define _base_gyroscope_data                                                \
+#define _base_barometer_data                                                \
   _base_sensor_data
-
+	
 /**
- * @brief   Base gyroscope class.
- * @details This class represents a generic gyroscope.
+ * @brief   Base barometer class.
+ * @details This class represents a generic barometer.
  */
 typedef struct {
   /** @brief Virtual Methods Table.*/
-  const struct BaseGyroscopeVMT *vmt_basegyroscope;
-  _base_gyroscope_data
-} BaseGyroscope;
+  const struct BaseBarometerVMT *vmt_basebarometer;
+  _base_barometer_data
+} BaseBarometer;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
-
 /**
- * @name    Macro Functions (BaseGyroscope)
+ * @name    Macro Functions (BaseBarometer)
  * @{
  */
 /**
- * @brief   Gyroscope get axes number.
+ * @brief   Barometer get channels number.
  *
- * @param[in] ip        pointer to a @p BaseGyroscope class.
- * @return              The number of axes of the BaseGyroscope
+ * @param[in] ip        pointer to a @p BaseBarometer class.
+ * @return              The number of channels of the BaseBarometer
  *
  * @api
  */
-#define gyroscopeGetAxesNumber(ip)                                          \
-        (ip)->vmt_basegyroscope->get_channels_number(ip)
+#define barometerGetChannelsNumber(ip)                                      \
+        (ip)->vmt_basebarometer->get_channels_number(ip)
 
 /**
- * @brief   Gyroscope read raw data.
+ * @brief   Barometer read raw data.
  *
- * @param[in] ip        pointer to a @p BaseGyroscope class.
+ * @param[in] ip        pointer to a @p BaseBarometer class.
  * @param[in] dp        pointer to a data array.
  * 
  * @return              The operation status.
@@ -120,13 +117,13 @@ typedef struct {
  *
  * @api
  */
-#define gyroscopeReadRaw(ip, dp)                                            \
-        (ip)->vmt_basegyroscope->read_raw(ip, dp)
+#define barometerReadRaw(ip, dp)                                              \
+        (ip)->vmt_basebarometer->read_raw(ip, dp)
 
 /**
- * @brief   Gyroscope read cooked data.
+ * @brief   Barometer read cooked data.
  *
- * @param[in] ip        pointer to a @p BaseGyroscope class.
+ * @param[in] ip        pointer to a @p BaseBarometer class.
  * @param[in] dp        pointer to a data array.
  * 
  * @return              The operation status.
@@ -135,89 +132,72 @@ typedef struct {
  *
  * @api
  */
-#define gyroscopeReadCooked(ip, dp)                                         \
-        (ip)->vmt_basegyroscope->read_cooked(ip, dp)
+#define barometerReadCooked(ip, dp)                                           \
+        (ip)->vmt_basebarometer->read_cooked(ip, dp)
 
 /**
- * @brief   Gyroscope bias sampling procedure.
- * @note    During this procedure gyroscope must be kept hold in the rest
- *          position. Sampled bias will be automatically removed after 
- *          calling this procedure.
- *
- * @param[in] ip        pointer to a @p BaseGyroscope class.
- * 
- * @return              The operation status.
- * @retval MSG_OK       if the function succeeded.
- * @retval MSG_RESET    if one or more errors occurred.
- *
- * @api
- */
-#define gyroscopeSampleBias(ip)                                             \
-        (ip)->vmt_basegyroscope->sample_bias(ip)
-
-/**
- * @brief   Updates gyroscope bias data from received buffer.
+ * @brief   Updates barometer bias data from received buffer.
  * @note    The bias buffer must have the same length of the
- *          the gyroscope axes number. Bias must be computed on
+ *          the barometer channels number. Bias must be computed on
  *          raw data and is a signed integer.
  *
- * @param[in] ip        pointer to a @p BaseGyroscope class.
+ * @param[in] ip        pointer to a @p BaseBarometer class.
  * @param[in] bp        pointer to a buffer of bias values.
- * 
+ *
  * @return              The operation status.
  * @retval MSG_OK       if the function succeeded.
  * @retval MSG_RESET    if one or more errors occurred.
  *
  * @api
  */
-#define gyroscopeSetBias(ip, bp)                                            \
-        (ip)->vmt_basegyroscope->set_bias(ip, bp)
-		
+#define barometerSetBias(ip, bp)                                            \
+        (ip)->vmt_basebarometer->set_bias(ip, bp)
+
 /**
- * @brief   Reset gyroscope bias data restoring it to zero.
+ * @brief   Reset barometer bias data restoring it to zero.
  *
- * @param[in] ip        pointer to a @p BaseGyroscope class.
- * 
+ * @param[in] ip        pointer to a @p BaseBarometer class.
+ *
  * @return              The operation status.
  * @retval MSG_OK       if the function succeeded.
  * @retval MSG_RESET    if one or more errors occurred.
  *
  * @api
  */
-#define gyroscopeResetBias(ip)                                               \
-        (ip)->vmt_basegyroscope->reset_bias(ip)
-		
+#define barometerResetBias(ip)                                               \
+        (ip)->vmt_basebarometer->reset_bias(ip)
+
 /**
- * @brief   Updates gyroscope sensitivity data from received buffer.
+ * @brief   Updates barometer sensitivity data from received buffer.
  * @note    The sensitivity buffer must have the same length of the
- *          the gyroscope axes number.
+ *          the barometer channels number.
  *
- * @param[in] ip        pointer to a @p BaseGyroscope class.
+ * @param[in] ip        pointer to a @p BaseBarometer class.
  * @param[in] sp        pointer to a buffer of sensitivity values.
- * 
+ *
  * @return              The operation status.
  * @retval MSG_OK       if the function succeeded.
  * @retval MSG_RESET    if one or more errors occurred.
  *
  * @api
  */
-#define gyroscopeSetSensitivity(ip, sp)                                     \
-        (ip)->vmt_basegyroscope->set_sensitivity(ip, sp)
-		
+#define barometerSetSensitivity(ip, sp)                                     \
+        (ip)->vmt_basebarometer->set_sensitivity(ip, sp)
+
 /**
- * @brief   Reset gyroscope sensitivity data restoring it to its typical 
+ * @brief   Reset barometer sensitivity data restoring it to its typical
  *          value.
  *
- * @param[in] ip        pointer to a @p BaseGyroscope class.
- * 
+ * @param[in] ip        pointer to a @p BaseBarometer class.
+ *
  * @return              The operation status.
  * @retval MSG_OK       if the function succeeded.
  * @retval MSG_RESET    if one or more errors occurred.
  *
  * @api
  */
-#define gyroscopeResetSensitivity(ip)                                       \
-        (ip)->vmt_basegyroscope->reset_sensitivity(ip)
+#define barometerResetSensitivity(ip)                                       \
+        (ip)->vmt_basebarometer->reset_sensitivity(ip)
 /** @} */
 
 /*===========================================================================*/
@@ -232,6 +212,6 @@ extern "C" {
 }
 #endif
 
-#endif /* HAL_GYROSCOPE_H */
+#endif /* HAL_BAROMETER_H */
 
 /** @} */

@@ -98,12 +98,12 @@ typedef struct {
  * @brief   Compass get axes number.
  *
  * @param[in] ip        pointer to a @p BaseCompass class.
- * @return              The number of axes of the BaseSensor
+ * @return              The number of axes of the BaseCompass
  *
  * @api
  */
 #define compassGetAxesNumber(ip)                                            \
-        (ip)->vmt_basecompass->get_axes_number(ip)
+        (ip)->vmt_basecompass->get_channels_number(ip)
 
 /**
  * @brief   Compass read raw data.
