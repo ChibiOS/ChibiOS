@@ -334,7 +334,7 @@ static flash_error_t m25q_read(void *instance, flash_address_t addr,
   }
 
   /* Bus acquired.*/
-  jesd216_bus_acquire(devp->config->busp);
+  jesd216_bus_acquire(devp->config->busp, devp->config->buscfg);
 
   /* FLASH_READY state while the operation is performed.*/
   devp->state = FLASH_READ;
@@ -371,7 +371,7 @@ static flash_error_t m25q_program(void *instance, flash_address_t addr,
   }
 
   /* Bus acquired.*/
-  jesd216_bus_acquire(devp->config->busp);
+  jesd216_bus_acquire(devp->config->busp, devp->config->buscfg);
 
   /* FLASH_PGM state while the operation is performed.*/
   devp->state = FLASH_PGM;
@@ -430,7 +430,7 @@ static flash_error_t m25q_start_erase_all(void *instance) {
   }
 
   /* Bus acquired.*/
-  jesd216_bus_acquire(devp->config->busp);
+  jesd216_bus_acquire(devp->config->busp, devp->config->buscfg);
 
   /* FLASH_ERASE state while the operation is performed.*/
   devp->state = FLASH_ERASE;
@@ -462,7 +462,7 @@ static flash_error_t m25q_start_erase_sector(void *instance,
   }
 
   /* Bus acquired.*/
-  jesd216_bus_acquire(devp->config->busp);
+  jesd216_bus_acquire(devp->config->busp, devp->config->buscfg);
 
   /* FLASH_ERASE state while the operation is performed.*/
   devp->state = FLASH_ERASE;
@@ -496,7 +496,7 @@ static flash_error_t m25q_verify_erase(void *instance,
   }
 
   /* Bus acquired.*/
-  jesd216_bus_acquire(devp->config->busp);
+  jesd216_bus_acquire(devp->config->busp, devp->config->buscfg);
 
   /* FLASH_READY state while the operation is performed.*/
   devp->state = FLASH_READ;
@@ -553,7 +553,7 @@ static flash_error_t m25q_query_erase(void *instance, uint32_t *msec) {
   if (devp->state == FLASH_ERASE) {
 
     /* Bus acquired.*/
-    jesd216_bus_acquire(devp->config->busp);
+    jesd216_bus_acquire(devp->config->busp, devp->config->buscfg);
 
     /* Read status command.*/
     jesd216_cmd_receive(devp->config->busp, M25Q_CMD_READ_FLAG_STATUS_REGISTER,
@@ -646,7 +646,7 @@ void m25qStart(M25QDriver *devp, const M25QConfig *config) {
   if (devp->state == FLASH_STOP) {
 
     /* Bus acquisition.*/
-    jesd216_bus_acquire(devp->config->busp);
+    jesd216_bus_acquire(devp->config->busp, devp->config->buscfg);
 
     /* Starting bus device.*/
     jesd216_start(devp->config->busp, devp->config->buscfg);
@@ -736,7 +736,7 @@ void m25qStop(M25QDriver *devp) {
   if (devp->state != FLASH_STOP) {
 
     /* Bus acquisition.*/
-    jesd216_bus_acquire(devp->config->busp);
+    jesd216_bus_acquire(devp->config->busp, devp->config->buscfg);
 
     /* Stopping bus device.*/
     jesd216_stop(devp->config->busp);
@@ -773,7 +773,7 @@ void m25qMemoryMap(M25QDriver *devp, uint8_t **addrp) {
   qspi_command_t cmd;
 
   /* Bus acquisition.*/
-  jesd216_bus_acquire(devp->config->busp);
+  jesd216_bus_acquire(devp->config->busp, devp->config->buscfg);
 
   /* Activating XIP mode in the device.*/
   jesd216_cmd(devp->config->busp, M25Q_CMD_WRITE_ENABLE);
@@ -817,7 +817,7 @@ void m25qMemoryMap(M25QDriver *devp, uint8_t **addrp) {
 void m25qMemoryUnmap(M25QDriver *devp) {
 
   /* Bus acquisition.*/
-  jesd216_bus_acquire(devp->config->busp);
+  jesd216_bus_acquire(devp->config->busp, devp->config->buscfg);
 
   qspiUnmapFlash(devp->config->busp);
 

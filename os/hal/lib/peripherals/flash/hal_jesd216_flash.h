@@ -78,7 +78,7 @@
 /**
  * @brief   Physical transport interface.
  */
-#if !defined(JESD216_USE_SPI) || defined(__DOXYGEN__)
+#if !defined(JESD216_BUS_MODE) || defined(__DOXYGEN__)
 #define JESD216_BUS_MODE                    JESD216_BUS_MODE_QSPI4L
 #endif
 
@@ -107,7 +107,7 @@
 #endif
 
 #if (JESD216_BUS_MODE == JESD216_BUS_MODE_SPI) &&                           \
-    (JESD216_SHARED_SPI == TRUE) &&                                         \
+    (JESD216_SHARED_BUS == TRUE) &&                                         \
     (SPI_USE_MUTUAL_EXCLUSION == FALSE)
 #error "JESD216_SHARED_SPI requires SPI_USE_MUTUAL_EXCLUSION"
 #endif
@@ -209,7 +209,7 @@ extern "C" {
                                       size_t n, uint8_t *p);
 #endif /* JESD216_BUS_MODE != JESD216_BUS_MODE_SPI */
 #if JESD216_SHARED_BUS == TRUE
-  void jesd216_bus_acquire(BUSDriver *busp);
+  void jesd216_bus_acquire(BUSDriver *busp, const BUSConfig *config);
   void jesd216_bus_release(BUSDriver *busp);
 #endif
 #ifdef __cplusplus

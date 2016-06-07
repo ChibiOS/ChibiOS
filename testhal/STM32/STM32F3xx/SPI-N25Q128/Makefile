@@ -98,7 +98,7 @@ include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
 # Other files (optional).
-include $(CHIBIOS)/os/ex/Micron/n25q128_spi.mk
+include $(CHIBIOS)/os/ex/Micron/m25q.mk
 include $(CHIBIOS)/os/ex/subsystems/mfs/mfs.mk
 
 # Define linker script file here
@@ -113,8 +113,8 @@ CSRC = $(STARTUPSRC) \
        $(HALSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
-       $(N25Q128SRC) \
-       $(MFSSRC) \
+       $(STREAMSSRC) \
+       $(M25QSRC) \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -147,8 +147,8 @@ ASMXSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
 
 INCDIR = $(CHIBIOS)/os/license \
          $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
-         $(HALINC) $(PLATFORMINC) $(BOARDINC) \
-         $(N25Q128INC) $(MFSINC)
+         $(HALINC) $(PLATFORMINC) $(BOARDINC) $(M25QINC) \
+         $(STREAMSINC) $(CHIBIOS)/os/various
 
 #
 # Project, sources and paths
@@ -198,7 +198,7 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = -DCHPRINTF_USE_FLOAT=1
+UDEFS = -DCHPRINTF_USE_FLOAT=1 -DJESD216_BUS_MODE=JESD216_BUS_MODE_SPI
 
 # Define ASM defines here
 UADEFS =

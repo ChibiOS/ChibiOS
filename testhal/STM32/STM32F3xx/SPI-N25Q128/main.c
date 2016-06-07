@@ -17,7 +17,7 @@
 #include "ch.h"
 #include "hal.h"
 
-#include "n25q128_spi.h"
+#include "m25q.h"
 
 /*
  * Maximum speed SPI configuration (18MHz, CPHA=0, CPOL=0, MSb first).
@@ -33,7 +33,7 @@ static const SPIConfig hs_spicfg = {
 /*
  * Flash driver configuration.
  */
-static const N25Q128Config flashcfg = {
+static const M25QConfig flashcfg = {
   &SPID2,
   &hs_spicfg
 };
@@ -41,7 +41,7 @@ static const N25Q128Config flashcfg = {
 /*
  * Flash driver object.
  */
-static N25Q128Driver flash;
+static M25QDriver flash;
 
 /*
  * Generic buffer.
@@ -111,13 +111,8 @@ int main(void) {
   /*
    * Initializing and starting flash driver.
    */
-  n25q128ObjectInit(&flash);
-  n25q128Start(&flash, &flashcfg);
-
-  /*
-   * Reading flash identifier.
-   */
-  n25q128ReadId(&flash, buffer, 17);
+  m25qObjectInit(&flash);
+  m25qStart(&flash, &flashcfg);
 
   /* Programming a pattern.*/
   err = flashProgram(&flash, 0, pattern, 128);
