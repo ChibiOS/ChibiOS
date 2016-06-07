@@ -345,6 +345,8 @@ static flash_error_t m25q_read(void *instance, flash_address_t addr,
                                addr, M25Q_READ_DUMMY_CYCLES, n, rp);
 #else
   /* Normal read command in SPI mode.*/
+  jesd216_cmd_addr_receive(devp->config->busp, M25Q_CMD_READ,
+                           addr, n, rp);
 #endif
 
   /* Ready state again.*/
@@ -512,7 +514,9 @@ static flash_error_t m25q_verify_erase(void *instance,
                                   addr, M25Q_READ_DUMMY_CYCLES,
                                   sizeof cmpbuf, cmpbuf);
 #else
-    /* Normal read command in SPI mode.*/
+   /* Normal read command in SPI mode.*/
+   jesd216_cmd_addr_receive(devp->config->busp, M25Q_CMD_READ,
+                            addr, sizeof cmpbuf, cmpbuf);
 #endif
 
     /* Checking for erased state of current buffer.*/
@@ -648,11 +652,10 @@ void m25qStart(M25QDriver *devp, const M25QConfig *config) {
     /* Bus acquisition.*/
     jesd216_bus_acquire(devp->config->busp, devp->config->buscfg);
 
-    /* Starting bus device.*/
-    jesd216_start(devp->config->busp, devp->config->buscfg);
-
 #if JESD216_BUS_MODE == JESD216_BUS_MODE_SPI
     /* Reading device ID.*/
+    jesd216_cmd_receive(devp->config->busp, M25Q_CMD_READ_ID,
+                        sizeof devp->device_id, devp->device_id);
 
 #else /* JESD216_BUS_MODE != JESD216_BUS_MODE_SPI */
     /* Attempting a reset of the XIP mode, it could be in an unexpected state

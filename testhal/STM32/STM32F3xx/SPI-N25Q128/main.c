@@ -94,7 +94,6 @@ int main(void) {
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO + 1, Thread1, NULL);
 
-
   /*
    * SPI2 I/O pins setup.
    */

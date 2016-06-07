@@ -337,6 +337,9 @@ void jesd216_bus_acquire(BUSDriver *busp, BUSConfig *config) {
   (void)config;
 
   qspiAcquireBus(busp);
+  if (busp->config != config) {
+    qspiStart(busp, config);
+  }
 }
 
 void jesd216_bus_release(BUSDriver *busp) {
@@ -348,7 +351,9 @@ void jesd216_bus_release(BUSDriver *busp) {
 void jesd216_bus_acquire(BUSDriver *busp, const BUSConfig *config) {
 
   spiAcquireBus(busp);
-  spiStart(busp, config);
+  if (busp->config != config) {
+    spiStart(busp, config);
+  }
 }
 
 void jesd216_bus_release(BUSDriver *busp) {
