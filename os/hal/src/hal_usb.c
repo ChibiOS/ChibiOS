@@ -314,12 +314,15 @@ void usbStop(USBDriver *usbp) {
   osalDbgCheck(usbp != NULL);
 
   osalSysLock();
+
   osalDbgAssert((usbp->state == USB_STOP) || (usbp->state == USB_READY) ||
                 (usbp->state == USB_SELECTED) || (usbp->state == USB_ACTIVE) ||
                 (usbp->state == USB_SUSPENDED),
+
                 "invalid state");
   usb_lld_stop(usbp);
-  usbp->state = USB_STOP;
+  spip->config = NULL;
+  spip->state  = USB_STOP;
 
   /* Resetting all ongoing synchronous operations.*/
   for (i = 0; i <= (unsigned)USB_MAX_ENDPOINTS; i++) {
@@ -336,6 +339,7 @@ void usbStop(USBDriver *usbp) {
     usbp->epc[i] = NULL;
   }
   osalOsRescheduleS();
+
   osalSysUnlock();
 }
 

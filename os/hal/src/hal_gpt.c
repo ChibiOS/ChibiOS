@@ -104,10 +104,14 @@ void gptStop(GPTDriver *gptp) {
   osalDbgCheck(gptp != NULL);
 
   osalSysLock();
+
   osalDbgAssert((gptp->state == GPT_STOP) || (gptp->state == GPT_READY),
                 "invalid state");
+
   gpt_lld_stop(gptp);
-  gptp->state = GPT_STOP;
+  gptp->config = NULL;
+  gptp->state  = GPT_STOP;
+
   osalSysUnlock();
 }
 

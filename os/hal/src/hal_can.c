@@ -129,6 +129,7 @@ void canStop(CANDriver *canp) {
 
   /* The low level driver is stopped.*/
   can_lld_stop(canp);
+  canp->config = NULL;
   canp->state  = CAN_STOP;
 
   /* Threads waiting on CAN APIs are notified that the driver has been

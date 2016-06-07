@@ -264,6 +264,7 @@ void sduStop(SerialUSBDriver *sdup) {
   osalDbgCheck(sdup != NULL);
 
   osalSysLock();
+
   osalDbgAssert((sdup->state == SDU_STOP) || (sdup->state == SDU_READY),
                 "invalid state");
 
@@ -273,11 +274,13 @@ void sduStop(SerialUSBDriver *sdup) {
   if (sdup->config->int_in > 0U) {
     usbp->in_params[sdup->config->int_in - 1U]  = NULL;
   }
-  sdup->state = SDU_STOP;
+  sdup->config = NULL;
+  sdup->state  = SDU_STOP;
 
   /* Enforces a disconnection.*/
   sduDisconnectI(sdup);
   osalOsRescheduleS();
+
   osalSysUnlock();
 }
 

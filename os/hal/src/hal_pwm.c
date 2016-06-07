@@ -113,11 +113,15 @@ void pwmStop(PWMDriver *pwmp) {
   osalDbgCheck(pwmp != NULL);
 
   osalSysLock();
+
   osalDbgAssert((pwmp->state == PWM_STOP) || (pwmp->state == PWM_READY),
                 "invalid state");
+
   pwm_lld_stop(pwmp);
   pwmp->enabled = 0;
+  pwmp->config  = NULL;
   pwmp->state   = PWM_STOP;
+
   osalSysUnlock();
 }
 

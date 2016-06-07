@@ -124,7 +124,8 @@ void qspiStop(QSPIDriver *qspip) {
                 "invalid state");
 
   qspi_lld_stop(qspip);
-  qspip->state = QSPI_STOP;
+  qspip->config = NULL;
+  qspip->state  = QSPI_STOP;
 
   osalSysUnlock();
 }

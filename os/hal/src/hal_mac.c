@@ -117,10 +117,14 @@ void macStop(MACDriver *macp) {
   osalDbgCheck(macp != NULL);
 
   osalSysLock();
+
   osalDbgAssert((macp->state == MAC_STOP) || (macp->state == MAC_ACTIVE),
                 "invalid state");
+
   mac_lld_stop(macp);
-  macp->state = MAC_STOP;
+  macp->config = NULL;
+  macp->state  = MAC_STOP;
+
   osalSysUnlock();
 }
 

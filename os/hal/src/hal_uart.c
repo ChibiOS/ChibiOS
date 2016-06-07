@@ -120,13 +120,16 @@ void uartStop(UARTDriver *uartp) {
   osalDbgCheck(uartp != NULL);
 
   osalSysLock();
+
   osalDbgAssert((uartp->state == UART_STOP) || (uartp->state == UART_READY),
                 "invalid state");
 
   uart_lld_stop(uartp);
-  uartp->state = UART_STOP;
+  uartp->config  = NULL;
+  uartp->state   = UART_STOP;
   uartp->txstate = UART_TX_IDLE;
   uartp->rxstate = UART_RX_IDLE;
+
   osalSysUnlock();
 }
 

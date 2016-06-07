@@ -115,10 +115,14 @@ void spiStop(SPIDriver *spip) {
   osalDbgCheck(spip != NULL);
 
   osalSysLock();
+
   osalDbgAssert((spip->state == SPI_STOP) || (spip->state == SPI_READY),
                 "invalid state");
+
   spi_lld_stop(spip);
-  spip->state = SPI_STOP;
+  spip->config = NULL;
+  spip->state  = SPI_STOP;
+
   osalSysUnlock();
 }
 

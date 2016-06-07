@@ -113,12 +113,16 @@ void i2cStart(I2CDriver *i2cp, const I2CConfig *config) {
 void i2cStop(I2CDriver *i2cp) {
 
   osalDbgCheck(i2cp != NULL);
+
+  osalSysLock();
+
   osalDbgAssert((i2cp->state == I2C_STOP) || (i2cp->state == I2C_READY) ||
                 (i2cp->state == I2C_LOCKED), "invalid state");
 
-  osalSysLock();
   i2c_lld_stop(i2cp);
-  i2cp->state = I2C_STOP;
+  i2cp->config = NULL;
+  i2cp->state  = I2C_STOP;
+
   osalSysUnlock();
 }
 

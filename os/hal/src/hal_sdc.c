@@ -594,10 +594,14 @@ void sdcStop(SDCDriver *sdcp) {
   osalDbgCheck(sdcp != NULL);
 
   osalSysLock();
+
   osalDbgAssert((sdcp->state == BLK_STOP) || (sdcp->state == BLK_ACTIVE),
                 "invalid state");
+
   sdc_lld_stop(sdcp);
-  sdcp->state = BLK_STOP;
+  sdcp->config = NULL;
+  sdcp->state  = BLK_STOP;
+
   osalSysUnlock();
 }
 

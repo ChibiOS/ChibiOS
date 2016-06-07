@@ -125,7 +125,8 @@ void dacStop(DACDriver *dacp) {
                 "invalid state");
 
   dac_lld_stop(dacp);
-  dacp->state = DAC_STOP;
+  dacp->config = NULL;
+  dacp->state  = DAC_STOP;
 
   osalSysUnlock();
 }

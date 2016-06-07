@@ -170,13 +170,17 @@ void sdStop(SerialDriver *sdp) {
   osalDbgCheck(sdp != NULL);
 
   osalSysLock();
+
   osalDbgAssert((sdp->state == SD_STOP) || (sdp->state == SD_READY),
                 "invalid state");
+
   sd_lld_stop(sdp);
-  sdp->state = SD_STOP;
+  sdp->config = NULL;
+  sdp->state  = SD_STOP;
   oqResetI(&sdp->oqueue);
   iqResetI(&sdp->iqueue);
   osalOsRescheduleS();
+
   osalSysUnlock();
 }
 

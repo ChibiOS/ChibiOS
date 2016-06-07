@@ -106,10 +106,14 @@ void extStop(EXTDriver *extp) {
   osalDbgCheck(extp != NULL);
 
   osalSysLock();
+
   osalDbgAssert((extp->state == EXT_STOP) || (extp->state == EXT_ACTIVE),
                 "invalid state");
+
   ext_lld_stop(extp);
-  extp->state = EXT_STOP;
+  extp->config = NULL;
+  extp->state  = EXT_STOP;
+
   osalSysUnlock();
 }
 

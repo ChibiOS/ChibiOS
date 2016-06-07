@@ -117,10 +117,14 @@ void adcStop(ADCDriver *adcp) {
   osalDbgCheck(adcp != NULL);
 
   osalSysLock();
+
   osalDbgAssert((adcp->state == ADC_STOP) || (adcp->state == ADC_READY),
                 "invalid state");
+
   adc_lld_stop(adcp);
-  adcp->state = ADC_STOP;
+  adcp->config = NULL;
+  adcp->state  = ADC_STOP;
+
   osalSysUnlock();
 }
 
