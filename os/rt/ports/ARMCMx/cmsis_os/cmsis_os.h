@@ -76,7 +76,7 @@
 /**
  * @brief   System tick frequency.
  */
-#define osKernelSysTickFrequency    CH_CFG_FREQUENCY
+#define osKernelSysTickFrequency    CH_CFG_ST_FREQUENCY
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
