@@ -175,8 +175,7 @@ void sdStop(SerialDriver *sdp) {
                 "invalid state");
 
   sd_lld_stop(sdp);
-  sdp->config = NULL;
-  sdp->state  = SD_STOP;
+  sdp->state = SD_STOP;
   oqResetI(&sdp->oqueue);
   iqResetI(&sdp->iqueue);
   osalOsRescheduleS();

@@ -332,7 +332,7 @@ void jesd216_cmd_addr_dummy_receive(BUSDriver *busp,
 
 #if ((JESD216_BUS_MODE != JESD216_BUS_MODE_SPI) &&                          \
      (JESD216_SHARED_BUS == TRUE)) || defined(__DOXYGEN__)
-void jesd216_bus_acquire(BUSDriver *busp, BUSConfig *config) {
+void jesd216_bus_acquire(BUSDriver *busp, const BUSConfig *config) {
 
   (void)config;
 
