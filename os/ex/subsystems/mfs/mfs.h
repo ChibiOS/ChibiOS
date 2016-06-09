@@ -41,15 +41,35 @@
  * @name    Configuration options
  * @{
  */
+/**
+ * @brief   Record identifiers cache size.
+ * @details Cache trades RAM for a faster access to stored records. If zero
+ *          then the cache is disabled.
+ */
+#if !defined(MFS_CFG_ID_CACHE_SIZE) || defined(__DOXIGEN__)
+#define MFS_CFG_ID_CACHE_SIZE               16
+#endif
 /** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if MFS_CFG_ID_CACHE_SIZE < 0
+#error "invalid MFS_CFG_ID_CACHE_SIZE value"
+#endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   Type of a flash bank.
+ */
+typedef enum {
+  MFS_BANK_0 = 0,
+  MFS_BANK_1 = 1
+} mfs_bank_t;
 
 /**
  * @brief   Type of driver state machine states.
@@ -75,6 +95,16 @@ typedef enum {
   MFS_CRC_ERROR = -2,
   MFS_FLASH_FAILURE = -3
 } mfs_error_t;
+
+/**
+ * @brief   Type of a bank state assessment.
+ */
+typedef enum {
+  MFS_BANK_OK = 0,
+  MFS_BANK_ERASED = 1,
+  MFS_BANK_PROBLEMS = 2,
+  MFS_BANK_GARBAGE = 3
+} mfs_bank_state_t;
 
 /**
  * @brief   Type of a bank header.
@@ -108,7 +138,11 @@ typedef union {
     /**
      * @brief   Data header magic.
      */
-    uint32_t                magic;
+    uint16_t                magic;
+    /**
+     * @brief   Data CRC.
+     */
+    uint16_t                crc;
     /**
      * @brief   Data identifier.
      */
@@ -117,14 +151,52 @@ typedef union {
      * @brief   Data size.
      */
     uint32_t                size;
-    /**
-     * @brief   Data CRC.
-     */
-    uint32_t                crc;
   } fields;
   uint8_t                   h8[16];
   uint32_t                  h32[4];
 } mfs_data_header_t;
+
+#if (MFS_CFG_ID_CACHE_SIZE > 0) || defined(__DOXYGEN__)
+/**
+ * @brief   Type of an element of the record identifiers cache.
+ */
+typedef struct mfs_cached_id {
+  /**
+   * @brief   Pointer to the next element in the list.
+   */
+  struct mfs_cached_id      *lru_next;
+  /**
+   * @brief   Pointer to the previous element in the list.
+   */
+  struct mfs_cached_id      *lru_prev;
+  /**
+   * @brief   Identifier of the cached element.
+   */
+  uint32_t                  id;
+  /**
+   * @brief   Data address of the cached element.
+   */
+  flash_address_t           addr;
+  /**
+   * @brief   Data size of the cached element.
+   */
+  uint32_t                  size;
+} mfs_cached_id_t;
+
+/**
+ * @brief   Type of an element of the record identifiers cache.
+ */
+typedef struct mfs_cache_header {
+  /**
+   * @brief   Pointer to the first element in the list.
+   */
+  struct mfs_cached_id      *lru_next;
+  /**
+   * @brief   Pointer to the last element in the list.
+   */
+  struct mfs_cached_id      *lru_prev;
+} mfs_cache_header_t;
+#endif /* MFS_CFG_ID_CACHE_SIZE > 0 */
 
 /**
  * @brief   Type of a MFS configuration structure.
@@ -151,7 +223,7 @@ typedef struct {
    */
   flash_sector_t            bank1_sectors;
 } MFSConfig;
-  
+
 /**
  * @extends BaseFlash
  *
@@ -166,6 +238,32 @@ typedef struct {
    * @brief   Current configuration data.
    */
   const MFSConfig           *config;
+  /**
+   * @brief   Bank currently in use.
+   */
+  mfs_bank_t                current_bank;
+  /**
+   * @brief   Size in bytes of banks.
+   */
+  uint32_t                  banks_size;
+  /**
+   * @brief   Pointer to the next free position in the current bank.
+   */
+  flash_address_t           next_position;
+  /**
+   * @brief   Used space in the current bank without considering erased records.
+   */
+  uint32_t                  used_space;
+#if (MFS_CFG_ID_CACHE_SIZE > 0) || defined(__DOXYGEN__)
+  /**
+   * @brief   Header of the cache LRU list.
+   */
+  mfs_cache_header_t        cache_header;
+  /**
+   * @brief   Array of the cached identifiers.
+   */
+  mfs_cached_id_t           cache_buffer[MFS_CFG_ID_CACHE_SIZE];
+#endif /* MFS_CFG_ID_CACHE_SIZE > 0 */
 } MFSDriver;
 
 /*===========================================================================*/
