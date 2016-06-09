@@ -52,17 +52,32 @@
 /*===========================================================================*/
 
 /**
- * @brief   Driver state machine possible states.
+ * @brief   Type of driver state machine states.
  */
 typedef enum {
   MFS_UNINIT = 0,
   MFS_STOP = 1,
   MFS_READY = 2,
-  MFS_ACTIVE = 3
+  MFS_MOUNTED = 3,
+  MFS_ACTIVE = 4
 } mfs_state_t;
 
 /**
- * @brief   Bank header.
+ * @brief   Type of an MFS error code.
+ * @note    Errors are negative integers, informative warnings are positive
+ *          integers.
+ */
+typedef enum {
+  MFS_NOERROR = 0,
+  MFS_REPAIR_WARNING = 1,
+  MFS_GC_WARNING = 2,
+  MFS_ID_NOT_FOUND = -1,
+  MFS_CRC_ERROR = -2,
+  MFS_FLASH_FAILURE = -3
+} mfs_error_t;
+
+/**
+ * @brief   Type of a bank header.
  * @note    The header resides in the first 16 bytes of a bank extending
  *          to the next page boundary.
  */
@@ -86,7 +101,7 @@ typedef struct {
 } mfs_bank_header_t;
 
 /**
- * @brief   Data block header.
+ * @brief   Type of a data block header.
  */
 typedef union {
   struct {
@@ -119,6 +134,22 @@ typedef struct {
    * @brief   Flash driver associated to this MFS instance.
    */
   BaseFlash                 *flashp;
+  /**
+   * @brief   Base sector index for bank 0.
+   */
+  flash_sector_t            bank0_start;
+  /**
+   * #brief   Number of sectors for bank 0.
+   */
+  flash_sector_t            bank0_sectors;
+  /**
+   * @brief   Base sector index for bank 1.
+   */
+  flash_sector_t            bank1_start;
+  /**
+   * #brief   Number of sectors for bank 1.
+   */
+  flash_sector_t            bank1_sectors;
 } MFSConfig;
   
 /**
@@ -151,6 +182,13 @@ extern "C" {
   void mfsObjectInit(MFSDriver *devp);
   void mfsStart(MFSDriver *devp, const MFSConfig *config);
   void mfsStop(MFSDriver *devp);
+  mfs_error_t mfsMount(MFSDriver *devp);
+  mfs_error_t mfsUnmount(MFSDriver *devp);
+  mfs_error_t mfsReadRecord(MFSDriver *devp, uint32_t id,
+                            uint32_t *np, uint8_t *buffer);
+  mfs_error_t mfsUpdateRecord(MFSDriver *devp, uint32_t id,
+                              uint32_t n, const uint8_t *buffer);
+  mfs_error_t mfsEraseRecord(MFSDriver *devp, uint32_t id);
 #ifdef __cplusplus
 }
 #endif

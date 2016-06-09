@@ -90,7 +90,7 @@ void mfsStart(MFSDriver *devp, const MFSConfig *config) {
 /**
  * @brief   Deactivates a MFS driver.
  *
- * @param[in] devp       pointer to the @p MFSDriver object
+ * @param[in] devp      pointer to the @p MFSDriver object
  *
  * @api
  */
@@ -103,6 +103,91 @@ void mfsStop(MFSDriver *devp) {
 
     devp->state = MFS_STOP;
   }
+}
+
+/**
+ * @brief   Mounts a managed flash storage.
+ * @details This functions checks the storage internal state and eventually
+ *          performs the required initialization or repair operations.
+ *
+ * @param[in] devp      pointer to the @p MFSDriver object
+ *
+ * @api
+ */
+mfs_error_t mfsMount(MFSDriver *devp) {
+
+  (void)devp;
+
+  return MFS_NOERROR;
+}
+
+/**
+ * @brief   Unmounts a manage flash storage.
+ */
+mfs_error_t mfsUnmount(MFSDriver *devp) {
+
+  (void)devp;
+
+  return MFS_NOERROR;
+}
+
+/**
+ * @brief   Retrieves and reads a data record.
+ *
+ * @param[in] devp      pointer to the @p MFSDriver object
+ * @param[in] id        record numeric identifier
+ * @param[in,out] np    on input is the maximum buffer size, on return it is
+ *                      the size of the data copied into the buffer
+ * @param[in] buffer    pointer to a buffer for record data
+ *
+ * @api
+ */
+mfs_error_t mfsReadRecord(MFSDriver *devp, uint32_t id,
+                          uint32_t *np, uint8_t *buffer) {
+
+  (void)devp;
+  (void)id;
+  (void)np;
+  (void)buffer;
+
+  return MFS_NOERROR;
+}
+
+/**
+ * @brief   Creates or updates a data record.
+ *
+ * @param[in] devp      pointer to the @p MFSDriver object
+ * @param[in] id        record numeric identifier
+ * @param[in] n         size of data to be written, it cannot be zero
+ * @param[in] buffer    pointer to a buffer for record data
+ *
+ * @api
+ */
+mfs_error_t mfsUpdateRecord(MFSDriver *devp, uint32_t id,
+                            uint32_t n, const uint8_t *buffer) {
+
+  (void)devp;
+  (void)id;
+  (void)n;
+  (void)buffer;
+
+  return MFS_NOERROR;
+}
+
+/**
+ * @brief   Erases a data record.
+ *
+ * @param[in] devp      pointer to the @p MFSDriver object
+ * @param[in] id        record numeric identifier
+ *
+ * @api
+ */
+mfs_error_t mfsEraseRecord(MFSDriver *devp, uint32_t id) {
+
+  (void)devp;
+  (void)id;
+
+  return MFS_NOERROR;
 }
 
 /** @} */

@@ -99,6 +99,7 @@ include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
 # Other files (optional).
 include $(CHIBIOS)/os/ex/Micron/m25q.mk
+include $(CHIBIOS)/os/ex/subsystems/mfs/mfs.mk
 include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 
 # Define linker script file here
@@ -115,6 +116,7 @@ CSRC = $(STARTUPSRC) \
        $(BOARDSRC) \
        $(STREAMSSRC) \
        $(M25QSRC) \
+       $(MFSSRC) \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -148,7 +150,7 @@ ASMXSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
 INCDIR = $(CHIBIOS)/os/license \
          $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) $(M25QINC) \
-         $(STREAMSINC) $(CHIBIOS)/os/various
+         $(MFSINC) $(STREAMSINC) $(CHIBIOS)/os/various
 
 #
 # Project, sources and paths
