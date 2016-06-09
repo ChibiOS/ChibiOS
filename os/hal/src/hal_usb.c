@@ -321,8 +321,8 @@ void usbStop(USBDriver *usbp) {
 
                 "invalid state");
   usb_lld_stop(usbp);
-  spip->config = NULL;
-  spip->state  = USB_STOP;
+  usbp->config = NULL;
+  usbp->state  = USB_STOP;
 
   /* Resetting all ongoing synchronous operations.*/
   for (i = 0; i <= (unsigned)USB_MAX_ENDPOINTS; i++) {
