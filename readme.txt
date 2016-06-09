@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.5 ***
+- HAL: Fixed wrong info in readme of LWIP related demos (bug #755).
 - HAL: Fixed misconfiguration in STM32L4 Discovery board files 
        (bug #754).
 - HAL: Fixed errors in documentation related to OTG peripheral switches 
