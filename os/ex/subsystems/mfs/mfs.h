@@ -33,6 +33,10 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+#define MFS_BANK_MAGIC_0                    0xEC705ADEU
+#define MFS_BANK_MAGIC_1                    0xF0339CC5U
+#define MFS_RECORD_MAGIC                    0x5FAEU
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -122,6 +126,8 @@ typedef struct {
   uint32_t                  magic2;
   /**
    * @brief   Usage counter of the bank.
+   * @details This value is increased each time a bank swap is performed. It
+   *          indicates how much wearing the flash has already endured.
    */
   uint32_t                  counter;
   /**

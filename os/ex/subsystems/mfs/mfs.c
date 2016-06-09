@@ -49,6 +49,33 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+#if (MFS_CFG_ID_CACHE_SIZE > 0) || defined(__DOXYGEN__)
+void mfs_cache_init(MFSDriver *devp) {
+
+  (void)devp;
+}
+
+mfs_cached_id_t *mfs_cache_find_id(MFSDriver *devp, uint32_t id) {
+
+  (void)devp;
+  (void)id;
+
+  return NULL;
+}
+
+void mfs_cache_update_id(MFSDriver *devp, uint32_t id) {
+
+  (void)devp;
+  (void)id;
+}
+
+void mfs_cache_erase_id(MFSDriver *devp, uint32_t id) {
+
+  (void)devp;
+  (void)id;
+}
+#endif /* MFS_CFG_ID_CACHE_SIZE > 0 */
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
