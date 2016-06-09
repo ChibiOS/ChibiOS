@@ -120,6 +120,7 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Fixed wrong info in readme of LWIP related demos (bug #755).
 - HAL: Fixed misconfiguration in STM32L4 Discovery board files 
        (bug #754)(backported to 16.1.5).
 - HAL: Fixed errors in documentation related to OTG peripheral switches 
