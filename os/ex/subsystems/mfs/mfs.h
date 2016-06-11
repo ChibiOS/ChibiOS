@@ -35,7 +35,8 @@
 
 #define MFS_BANK_MAGIC_0                    0xEC705ADEU
 #define MFS_BANK_MAGIC_1                    0xF0339CC5U
-#define MFS_RECORD_MAGIC                    0x5FAEU
+#define MFS_HEADER_MAGIC                    0x5FAEU
+#define MFS_FOOTER_MAGIC                    0xEAF5U
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -53,6 +54,13 @@
 #if !defined(MFS_CFG_ID_CACHE_SIZE) || defined(__DOXIGEN__)
 #define MFS_CFG_ID_CACHE_SIZE               16
 #endif
+
+/**
+ * @brief   Maximum number of repair attempts on partition mount.
+ */
+#if !defined(MFS_MAX_REPAIR_ATTEMPTS) || defined(__DOXIGEN__)
+#define MFS_MAX_REPAIR_ATTEMPTS             3
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -61,6 +69,10 @@
 
 #if MFS_CFG_ID_CACHE_SIZE < 0
 #error "invalid MFS_CFG_ID_CACHE_SIZE value"
+#endif
+
+#if (MFS_MAX_REPAIR_ATTEMPTS < 1) || (MFS_MAX_REPAIR_ATTEMPTS > 10)
+#error "invalid MFS_MAX_REPAIR_ATTEMPTS value"
 #endif
 
 /*===========================================================================*/
@@ -92,21 +104,22 @@ typedef enum {
  *          integers.
  */
 typedef enum {
-  MFS_NOERROR = 0,
+  MFS_NO_ERROR = 0,
   MFS_REPAIR_WARNING = 1,
   MFS_GC_WARNING = 2,
   MFS_ID_NOT_FOUND = -1,
   MFS_CRC_ERROR = -2,
-  MFS_FLASH_FAILURE = -3
+  MFS_FLASH_FAILURE = -3,
+  MFS_INTERNAL_ERROR = -4
 } mfs_error_t;
 
 /**
  * @brief   Type of a bank state assessment.
  */
 typedef enum {
-  MFS_BANK_OK = 0,
-  MFS_BANK_ERASED = 1,
-  MFS_BANK_PROBLEMS = 2,
+  MFS_BANK_ERASED = 0,
+  MFS_BANK_OK = 1,
+  MFS_BANK_PARTIAL = 2,
   MFS_BANK_GARBAGE = 3
 } mfs_bank_state_t;
 
@@ -138,29 +151,41 @@ typedef struct {
 
 /**
  * @brief   Type of a data block header.
+ * @details This structure is placed before each written data block.
  */
-typedef union {
-  struct {
-    /**
-     * @brief   Data header magic.
-     */
-    uint16_t                magic;
-    /**
-     * @brief   Data CRC.
-     */
-    uint16_t                crc;
-    /**
-     * @brief   Data identifier.
-     */
-    uint32_t                id;
-    /**
-     * @brief   Data size.
-     */
-    uint32_t                size;
-  } fields;
-  uint8_t                   h8[16];
-  uint32_t                  h32[4];
+typedef struct {
+  /**
+   * @brief   Data header magic.
+   */
+  uint16_t                magic;
+  /**
+   * @brief   Data identifier.
+   */
+  uint32_t                id;
+  /**
+   * @brief   Data size for forward scan.
+   */
+  uint32_t                size;
 } mfs_data_header_t;
+
+/**
+ * @brief   Type of a data block footer.
+ * @details This structure is placed after each written data block.
+ */
+typedef struct {
+  /**
+   * @brief   Data size for backward scan.
+   */
+  uint32_t                size;
+  /**
+   * @brief   Data CRC.
+   */
+  uint16_t                crc;
+  /**
+   * @brief   Data footer magic.
+   */
+  uint16_t                magic;
+} mfs_data_footer_t;
 
 #if (MFS_CFG_ID_CACHE_SIZE > 0) || defined(__DOXYGEN__)
 /**
@@ -275,6 +300,14 @@ typedef struct {
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @name   Error codes handling macros
+ * @{
+ */
+#define MFS_IS_ERROR(err) ((err) < MFS_NO_ERROR)
+#define MFS_IS_WARNING(err) ((err) > MFS_NO_ERROR)
+/** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */
