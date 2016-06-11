@@ -176,6 +176,7 @@ typedef struct {
     uint8_t                 data8[8];       /**< @brief Frame data.         */
     uint16_t                data16[4];      /**< @brief Frame data.         */
     uint32_t                data32[2];      /**< @brief Frame data.         */
+    uint64_t                data64[1];      /**< @brief Frame data.         */
   };
 } CANTxFrame;
 
@@ -206,6 +207,7 @@ typedef struct {
     uint8_t                 data8[8];       /**< @brief Frame data.         */
     uint16_t                data16[4];      /**< @brief Frame data.         */
     uint32_t                data32[2];      /**< @brief Frame data.         */
+    uint64_t                data64[1];      /**< @brief Frame data.         */
   };
 } CANRxFrame;
 
