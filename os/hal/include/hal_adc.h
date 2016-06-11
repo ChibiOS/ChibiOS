@@ -73,7 +73,7 @@ typedef enum {
   ADC_READY = 2,                            /**< Ready.                     */
   ADC_ACTIVE = 3,                           /**< Converting.                */
   ADC_COMPLETE = 4,                         /**< Conversion complete.       */
-  ADC_ERROR = 5                             /**< Conversion complete.       */
+  ADC_ERROR = 5                             /**< Conversion error.          */
 } adcstate_t;
 
 #include "hal_adc_lld.h"
