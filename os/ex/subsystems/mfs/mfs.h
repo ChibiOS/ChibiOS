@@ -36,7 +36,6 @@
 #define MFS_BANK_MAGIC_0                    0xEC705ADEU
 #define MFS_BANK_MAGIC_1                    0xF0339CC5U
 #define MFS_HEADER_MAGIC                    0x5FAEU
-#define MFS_FOOTER_MAGIC                    0xEAF5U
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -157,35 +156,24 @@ typedef struct {
   /**
    * @brief   Data header magic.
    */
-  uint16_t                magic;
-  /**
-   * @brief   Data identifier.
-   */
-  uint32_t                id;
-  /**
-   * @brief   Data size for forward scan.
-   */
-  uint32_t                size;
-} mfs_data_header_t;
-
-/**
- * @brief   Type of a data block footer.
- * @details This structure is placed after each written data block.
- */
-typedef struct {
-  /**
-   * @brief   Data size for backward scan.
-   */
-  uint32_t                size;
+  uint16_t                  magic;
   /**
    * @brief   Data CRC.
    */
-  uint16_t                crc;
+  uint16_t                  crc;
   /**
-   * @brief   Data footer magic.
+   * @brief   Data identifier.
    */
-  uint16_t                magic;
-} mfs_data_footer_t;
+  uint32_t                  id;
+  /**
+   * @brief   Data size for forward scan.
+   */
+  uint32_t                  size;
+  /**
+   * @brief   Address of the previous header or zero if none.
+   */
+  flash_address_t           prev_header;
+} mfs_data_header_t;
 
 #if (MFS_CFG_ID_CACHE_SIZE > 0) || defined(__DOXYGEN__)
 /**
@@ -281,6 +269,10 @@ typedef struct {
    * @brief   Pointer to the next free position in the current bank.
    */
   flash_address_t           next_position;
+  /**
+   * @brief   Pointer to the last header in the list or zero.
+   */
+  flash_address_t           last_header;
   /**
    * @brief   Used space in the current bank without considering erased records.
    */
