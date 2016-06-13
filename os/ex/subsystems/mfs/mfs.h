@@ -33,8 +33,8 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
-#define MFS_BANK_MAGIC_0                    0xEC705ADEU
-#define MFS_BANK_MAGIC_1                    0xF0339CC5U
+#define MFS_BANK_MAGIC_1                    0xEC705ADEU
+#define MFS_BANK_MAGIC_2                    0xF0339CC5U
 #define MFS_HEADER_MAGIC                    0x5FAEU
 
 /*===========================================================================*/
@@ -146,6 +146,10 @@ typedef struct {
    * @brief   First data element.
    */
   flash_address_t           next;
+  /**
+   * @brief   Header CRC.
+   */
+  uint16_t                  crc;
 } mfs_bank_header_t;
 
 /**
