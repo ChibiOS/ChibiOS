@@ -72,4 +72,44 @@ flash_error_t flashWaitErase(BaseFlash *devp) {
   }
 }
 
+/**
+ * @brief   Returns the offset of a sector.
+ */
+flash_offset_t flashGetSectorOffset(BaseFlash *devp,
+                                    flash_sector_t sector) {
+  flash_offset_t offset;
+  const flash_descriptor_t *descriptor = flashGetDescriptor(devp);
+
+  osalDbgAssert(sector < descriptor->sectors_count, "invalid sector");
+
+  if (descriptor->sectors != NULL) {
+    offset = descriptor->sectors[sector].offset;
+  }
+  else {
+    offset = (flash_offset_t)sector * (flash_offset_t)descriptor->sectors_size;
+  }
+
+  return offset;
+}
+
+/**
+ * @brief   Returns the size of a sector.
+ */
+uint32_t flashGetSectorSize(BaseFlash *devp,
+                            flash_sector_t sector) {
+  uint32_t size;
+  const flash_descriptor_t *descriptor = flashGetDescriptor(devp);
+
+  osalDbgAssert(sector < descriptor->sectors_count, "invalid sector");
+
+  if (descriptor->sectors != NULL) {
+    size = descriptor->sectors[sector].size;
+  }
+  else {
+    size = descriptor->sectors_size;
+  }
+
+  return size;
+}
+
 /** @} */

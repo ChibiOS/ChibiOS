@@ -157,7 +157,7 @@ void jesd216_cmd_send(BUSDriver *busp,
 
 void jesd216_cmd_addr(BUSDriver *busp,
                       uint32_t cmd,
-                      flash_address_t addr) {
+                      flash_offset_t offset) {
 #if JESD216_BUS_MODE != JESD216_BUS_MODE_SPI
   qspi_command_t mode;
 
@@ -176,7 +176,7 @@ void jesd216_cmd_addr(BUSDriver *busp,
              QSPI_CFG_ADDR_SIZE_24;
 
 #endif
-  mode.addr = addr;
+  mode.addr = offset;
   mode.alt  = 0U;
   qspiCommand(busp, &mode);
 #else
@@ -194,7 +194,7 @@ void jesd216_cmd_addr(BUSDriver *busp,
 
 void jesd216_cmd_addr_send(BUSDriver *busp,
                            uint32_t cmd,
-                           flash_address_t addr,
+                           flash_offset_t offset,
                            size_t n,
                            const uint8_t *p) {
 #if JESD216_BUS_MODE != JESD216_BUS_MODE_SPI
@@ -223,7 +223,7 @@ void jesd216_cmd_addr_send(BUSDriver *busp,
     mode .cfg |= QSPI_CFG_ADDR_SIZE_32;
   }
 
-  mode.addr = addr;
+  mode.addr = offset;
   mode.alt  = 0U;
   qspiSend(busp, &mode, n, p);
 #else
@@ -242,7 +242,7 @@ void jesd216_cmd_addr_send(BUSDriver *busp,
 
 void jesd216_cmd_addr_receive(BUSDriver *busp,
                               uint32_t cmd,
-                              flash_address_t addr,
+                              flash_offset_t offset,
                               size_t n,
                               uint8_t *p) {
 #if JESD216_BUS_MODE != JESD216_BUS_MODE_SPI
@@ -272,7 +272,7 @@ void jesd216_cmd_addr_receive(BUSDriver *busp,
     mode .cfg |= QSPI_CFG_ADDR_SIZE_32;
   }
 
-  mode.addr = addr;
+  mode.addr = offset;
   mode.alt  = 0U;
   qspiReceive(busp, &mode, n, p);
 #else
@@ -292,7 +292,7 @@ void jesd216_cmd_addr_receive(BUSDriver *busp,
 #if (JESD216_BUS_MODE != JESD216_BUS_MODE_SPI) || defined(__DOXYGEN__)
 void jesd216_cmd_addr_dummy_receive(BUSDriver *busp,
                                     uint32_t cmd,
-                                    flash_address_t addr,
+                                    flash_offset_t offset,
                                     uint8_t dummy,
                                     size_t n,
                                     uint8_t *p) {
@@ -324,7 +324,7 @@ void jesd216_cmd_addr_dummy_receive(BUSDriver *busp,
     mode .cfg |= QSPI_CFG_ADDR_SIZE_32;
   }
 
-  mode.addr = addr;
+  mode.addr = offset;
   mode.alt  = 0U;
   qspiReceive(busp, &mode, n, p);
 }

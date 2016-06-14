@@ -110,7 +110,7 @@ int main(void) {
   m25qStart(&m25q, &m25qcfg1);
 
   /* Reading.*/
-  err = flashRead(&m25q, 0, buffer, 128);
+  err = flashRead(&m25q, 0, 128, buffer);
   if (err != FLASH_NO_ERROR)
     chSysHalt("read error");
 
@@ -126,7 +126,7 @@ int main(void) {
     chSysHalt("verify erase error");
 
   /* Programming a pattern.*/
-  err = flashProgram(&m25q, 0, pattern, 128);
+  err = flashProgram(&m25q, 0, 128, pattern);
   if (err != FLASH_NO_ERROR)
     chSysHalt("program error");
 
@@ -143,13 +143,13 @@ int main(void) {
 
   /* Reading it back.*/
   memset(buffer, 0, 128);
-  err = flashRead(&m25q, 16, buffer, 128);
+  err = flashRead(&m25q, 16, 128, buffer);
   if (err != FLASH_NO_ERROR)
     chSysHalt("read error");
 
   /* Reading it back.*/
   memset(buffer, 0, 128);
-  err = flashRead(&m25q, 0, buffer, 128);
+  err = flashRead(&m25q, 0, 128, buffer);
   if (err != FLASH_NO_ERROR)
     chSysHalt("read error");
 

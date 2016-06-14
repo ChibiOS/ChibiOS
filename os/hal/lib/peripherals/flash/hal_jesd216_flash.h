@@ -141,9 +141,10 @@
  */
 #define _jesd216_flash_methods_alone                                        \
   /* Read SFDP.*/                                                           \
-  flash_error_t (*read_sfdp)(void *instance, uint8_t *rp,                   \
-                 flash_address_t addr,                                      \
-                 size_t n);
+  flash_error_t (*read_sfdp)(void *instance,                                \
+                 flash_offset_t offset,                                     \
+                 size_t n,                                                  \
+                 uint8_t *rp);
 
 /**
  * @brief   @p JESD215Flash specific methods with inherited ones.
@@ -198,14 +199,14 @@ extern "C" {
                            size_t n, uint8_t *p);
   void jesd216_cmd_send(BUSDriver *busp, uint32_t cmd,
                         size_t n, const uint8_t *p);
-  void jesd216_cmd_addr(BUSDriver *busp, uint32_t cmd, flash_address_t addr);
+  void jesd216_cmd_addr(BUSDriver *busp, uint32_t cmd, flash_offset_t offset);
   void jesd216_cmd_addr_send(BUSDriver *busp, uint32_t cmd,
-                             flash_address_t addr, size_t n, const uint8_t *p);
+                             flash_offset_t offset, size_t n, const uint8_t *p);
   void jesd216_cmd_addr_receive(BUSDriver *busp, uint32_t cmd,
-                                flash_address_t addr, size_t n, uint8_t *p);
+                                flash_offset_t offset, size_t n, uint8_t *p);
 #if JESD216_BUS_MODE != JESD216_BUS_MODE_SPI
   void jesd216_cmd_addr_dummy_receive(BUSDriver *busp, uint32_t cmd,
-                                      flash_address_t addr, uint8_t dummy,
+                                      flash_offset_t offset, uint8_t dummy,
                                       size_t n, uint8_t *p);
 #endif /* JESD216_BUS_MODE != JESD216_BUS_MODE_SPI */
 #if JESD216_SHARED_BUS == TRUE

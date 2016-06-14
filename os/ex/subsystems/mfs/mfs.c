@@ -140,6 +140,36 @@ void mfs_cache_erase_id(MFSDriver *devp, uint32_t id) {
 #endif /* MFS_CFG_ID_CACHE_SIZE > 0 */
 
 /**
+ * @brief   Flash write.
+ * @note    If the option @p MFS_CFG_WRITE_VERIFY is enabled then the flash
+ *          is also read back for verification.
+ *
+ * @param[in] devp      pointer to the @p MFSDriver object
+ * @param[in] offset    flash offset
+ * @param[in] n         number of bytes to be read
+ * @param[out] rp       pointer to the data buffer
+ * @return              The operation status.
+ * @retval MFS_NO_ERROR if the operation has been successfully completed.
+ * @retval MFS_FLASH_FAILURE if the flash memory is unusable because HW
+ *                      failures.
+ *
+ * @notapi
+ */
+static mfs_error_t mfs_flash_write(MFSDriver *devp,
+                                   flash_offset_t offset,
+                                   size_t n, const
+                                   uint8_t *p) {
+  flash_error_t ferr;
+
+  ferr = flashProgram(devp->config->flashp, offset, n, p);
+  if (ferr != FLASH_NO_ERROR) {
+    return MFS_FLASH_FAILURE;
+  }
+
+  return MFS_NO_ERROR;
+}
+
+/**
  * @brief   Erases and verifies all sectors belonging to a bank.
  *
  * @param[in] devp      pointer to the @p MFSDriver object
@@ -201,7 +231,15 @@ static mfs_error_t mfs_bank_erase(MFSDriver *devp, mfs_bank_t bank) {
 static mfs_error_t mfs_bank_set_header(MFSDriver *devp,
                                        mfs_bank_t bank,
                                        uint32_t cnt) {
+  flash_sector_t sector;
   mfs_bank_header_t header;
+
+  if (bank == MFS_BANK_0) {
+    sector = devp->config->bank0_start;
+  }
+  else {
+    sector = devp->config->bank1_start;
+  }
 
   header.magic1  = MFS_BANK_MAGIC_1;
   header.magic1  = MFS_BANK_MAGIC_1;
@@ -209,11 +247,10 @@ static mfs_error_t mfs_bank_set_header(MFSDriver *devp,
   header.next    = sizeof (mfs_bank_header_t);
   header.crc     = crc16(0U, (const uint8_t *)&header, sizeof (uint32_t) * 4);
 
-  (void)devp;
-  (void)bank;
-  (void)cnt;
-
-  return MFS_NO_ERROR;
+  return mfs_flash_write(devp,
+                         flashGetSectorOffset(devp->config->flashp, sector),
+                         sizeof (mfs_bank_header_t),
+                         (const uint8_t *)&header);
 }
 
 /**
@@ -549,7 +586,7 @@ mfs_error_t mfsMount(MFSDriver *devp) {
   unsigned i;
 
   /* Attempting to mount the managed partition.*/
-  for (i = 0; i < MFS_MAX_REPAIR_ATTEMPTS; i++) {
+  for (i = 0; i < MFS_CFG_MAX_REPAIR_ATTEMPTS; i++) {
     mfs_error_t err;
 
     err = mfs_try_mount(devp);

@@ -57,8 +57,15 @@
 /**
  * @brief   Maximum number of repair attempts on partition mount.
  */
-#if !defined(MFS_MAX_REPAIR_ATTEMPTS) || defined(__DOXIGEN__)
-#define MFS_MAX_REPAIR_ATTEMPTS             3
+#if !defined(MFS_CFG_MAX_REPAIR_ATTEMPTS) || defined(__DOXIGEN__)
+#define MFS_CFG_MAX_REPAIR_ATTEMPTS         3
+#endif
+
+/**
+ * @brief   Verify written data.
+ */
+#if !defined(MFS_CFG_WRITE_VERIFY) || defined(__DOXIGEN__)
+#define MFS_CFG_WRITE_VERIFY                TRUE
 #endif
 /** @} */
 
@@ -70,7 +77,7 @@
 #error "invalid MFS_CFG_ID_CACHE_SIZE value"
 #endif
 
-#if (MFS_MAX_REPAIR_ATTEMPTS < 1) || (MFS_MAX_REPAIR_ATTEMPTS > 10)
+#if (MFS_CFG_MAX_REPAIR_ATTEMPTS < 1) || (MFS_CFG_MAX_REPAIR_ATTEMPTS > 10)
 #error "invalid MFS_MAX_REPAIR_ATTEMPTS value"
 #endif
 
@@ -145,7 +152,7 @@ typedef struct {
   /**
    * @brief   First data element.
    */
-  flash_address_t           next;
+  flash_offset_t            next;
   /**
    * @brief   Header CRC.
    */
@@ -176,7 +183,7 @@ typedef struct {
   /**
    * @brief   Address of the previous header or zero if none.
    */
-  flash_address_t           prev_header;
+  flash_offset_t            prev_header;
 } mfs_data_header_t;
 
 #if (MFS_CFG_ID_CACHE_SIZE > 0) || defined(__DOXYGEN__)
@@ -199,7 +206,7 @@ typedef struct mfs_cached_id {
   /**
    * @brief   Data address of the cached element.
    */
-  flash_address_t           addr;
+  flash_offset_t            offset;
   /**
    * @brief   Data size of the cached element.
    */
@@ -272,11 +279,11 @@ typedef struct {
   /**
    * @brief   Pointer to the next free position in the current bank.
    */
-  flash_address_t           next_position;
+  flash_offset_t            next_offset;
   /**
    * @brief   Pointer to the last header in the list or zero.
    */
-  flash_address_t           last_header;
+  flash_offset_t            last_offset;
   /**
    * @brief   Used space in the current bank without considering erased records.
    */

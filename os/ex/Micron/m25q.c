@@ -54,17 +54,17 @@
 /*===========================================================================*/
 
 static const flash_descriptor_t *m25q_get_descriptor(void *instance);
-static flash_error_t m25q_read(void *instance, flash_address_t addr,
-                               uint8_t *rp, size_t n);
-static flash_error_t m25q_program(void *instance, flash_address_t addr,
-                                  const uint8_t *pp, size_t n);
+static flash_error_t m25q_read(void *instance, flash_offset_t offset,
+                               size_t n, uint8_t *rp);
+static flash_error_t m25q_program(void *instance, flash_offset_t offset,
+                                  size_t n, const uint8_t *pp);
 static flash_error_t m25q_start_erase_all(void *instance);
 static flash_error_t m25q_start_erase_sector(void *instance,
                                              flash_sector_t sector);
 static flash_error_t m25q_query_erase(void *instance, uint32_t *msec);
 static flash_error_t m25q_verify_erase(void *instance, flash_sector_t sector);
-static flash_error_t m25q_read_sfdp(void *instance, uint8_t *rp,
-                                    flash_address_t addr, size_t n);
+static flash_error_t m25q_read_sfdp(void *instance, flash_offset_t offset,
+                                    size_t n, uint8_t *rp);
 
 /**
  * @brief   Virtual methods table.
@@ -319,13 +319,13 @@ static const flash_descriptor_t *m25q_get_descriptor(void *instance) {
   return &m25q_descriptor;
 }
 
-static flash_error_t m25q_read(void *instance, flash_address_t addr,
-                               uint8_t *rp, size_t n) {
+static flash_error_t m25q_read(void *instance, flash_offset_t offset,
+                               size_t n, uint8_t *rp) {
   M25QDriver *devp = (M25QDriver *)instance;
 
   osalDbgCheck((instance != NULL) && (rp != NULL) && (n > 0U));
-  osalDbgCheck((size_t)addr + n <= (size_t)m25q_descriptor.sectors_count *
-                                   (size_t)m25q_descriptor.sectors_size);
+  osalDbgCheck((size_t)offset + n <= (size_t)m25q_descriptor.sectors_count *
+                                     (size_t)m25q_descriptor.sectors_size);
   osalDbgAssert((devp->state == FLASH_READY) || (devp->state == FLASH_ERASE),
                 "invalid state");
 
@@ -342,11 +342,11 @@ static flash_error_t m25q_read(void *instance, flash_address_t addr,
 #if JESD216_BUS_MODE != JESD216_BUS_MODE_SPI
   /* Fast read command in QSPI mode.*/
   jesd216_cmd_addr_dummy_receive(devp->config->busp, M25Q_CMD_FAST_READ,
-                               addr, M25Q_READ_DUMMY_CYCLES, n, rp);
+                                 offset, M25Q_READ_DUMMY_CYCLES, n, rp);
 #else
   /* Normal read command in SPI mode.*/
   jesd216_cmd_addr_receive(devp->config->busp, M25Q_CMD_READ,
-                           addr, n, rp);
+                           offset, n, rp);
 #endif
 
   /* Ready state again.*/
@@ -358,13 +358,13 @@ static flash_error_t m25q_read(void *instance, flash_address_t addr,
   return FLASH_NO_ERROR;
 }
 
-static flash_error_t m25q_program(void *instance, flash_address_t addr,
-                                  const uint8_t *pp, size_t n) {
+static flash_error_t m25q_program(void *instance, flash_offset_t offset,
+                                  size_t n, const uint8_t *pp) {
   M25QDriver *devp = (M25QDriver *)instance;
 
   osalDbgCheck((instance != NULL) && (pp != NULL) && (n > 0U));
-  osalDbgCheck((size_t)addr + n <= (size_t)m25q_descriptor.sectors_count *
-                                   (size_t)m25q_descriptor.sectors_size);
+  osalDbgCheck((size_t)offset + n <= (size_t)m25q_descriptor.sectors_count *
+                                     (size_t)m25q_descriptor.sectors_size);
   osalDbgAssert((devp->state == FLASH_READY) || (devp->state == FLASH_ERASE),
                 "invalid state");
 
@@ -383,7 +383,7 @@ static flash_error_t m25q_program(void *instance, flash_address_t addr,
     flash_error_t err;
 
     /* Data size that can be written in a single program page operation.*/
-    size_t chunk = (size_t)(((addr | PAGE_MASK) + 1U) - addr);
+    size_t chunk = (size_t)(((offset | PAGE_MASK) + 1U) - offset);
     if (chunk > n) {
       chunk = n;
     }
@@ -392,7 +392,7 @@ static flash_error_t m25q_program(void *instance, flash_address_t addr,
     jesd216_cmd(devp->config->busp, M25Q_CMD_WRITE_ENABLE);
 
     /* Page program command.*/
-    jesd216_cmd_addr_send(devp->config->busp, M25Q_CMD_PAGE_PROGRAM, addr,
+    jesd216_cmd_addr_send(devp->config->busp, M25Q_CMD_PAGE_PROGRAM, offset,
                           chunk, pp);
 
     /* Wait for status and check errors.*/
@@ -406,9 +406,9 @@ static flash_error_t m25q_program(void *instance, flash_address_t addr,
     }
 
     /* Next page.*/
-    addr += chunk;
-    pp   += chunk;
-    n    -= chunk;
+    offset += chunk;
+    pp     += chunk;
+    n      -= chunk;
   }
 
   /* Ready state again.*/
@@ -452,7 +452,7 @@ static flash_error_t m25q_start_erase_all(void *instance) {
 static flash_error_t m25q_start_erase_sector(void *instance,
                                              flash_sector_t sector) {
   M25QDriver *devp = (M25QDriver *)instance;
-  flash_address_t addr = (flash_address_t)(sector * SECTOR_SIZE);
+  flash_offset_t offset = (flash_offset_t)(sector * SECTOR_SIZE);
 
   osalDbgCheck(instance != NULL);
   osalDbgCheck(sector < m25q_descriptor.sectors_count);
@@ -473,7 +473,7 @@ static flash_error_t m25q_start_erase_sector(void *instance,
   jesd216_cmd(devp->config->busp, M25Q_CMD_WRITE_ENABLE);
 
   /* Sector erase command.*/
-  jesd216_cmd_addr(devp->config->busp, M25Q_CMD_SECTOR_ERASE, addr);
+  jesd216_cmd_addr(devp->config->busp, M25Q_CMD_SECTOR_ERASE, offset);
 
   /* Bus released.*/
   jesd216_bus_release(devp->config->busp);
@@ -485,7 +485,7 @@ static flash_error_t m25q_verify_erase(void *instance,
                                        flash_sector_t sector) {
   M25QDriver *devp = (M25QDriver *)instance;
   uint8_t cmpbuf[M25Q_COMPARE_BUFFER_SIZE];
-  flash_address_t addr;
+  flash_offset_t offset;
   size_t n;
 
   osalDbgCheck(instance != NULL);
@@ -504,19 +504,19 @@ static flash_error_t m25q_verify_erase(void *instance,
   devp->state = FLASH_READ;
 
   /* Read command.*/
-  addr = (flash_address_t)(sector * SECTOR_SIZE);
+  offset = (flash_offset_t)(sector * SECTOR_SIZE);
   n = SECTOR_SIZE;
   while (n > 0U) {
     uint8_t *p;
 
 #if JESD216_BUS_MODE != JESD216_BUS_MODE_SPI
    jesd216_cmd_addr_dummy_receive(devp->config->busp, M25Q_CMD_FAST_READ,
-                                  addr, M25Q_READ_DUMMY_CYCLES,
+                                  offset, M25Q_READ_DUMMY_CYCLES,
                                   sizeof cmpbuf, cmpbuf);
 #else
    /* Normal read command in SPI mode.*/
    jesd216_cmd_addr_receive(devp->config->busp, M25Q_CMD_READ,
-                            addr, sizeof cmpbuf, cmpbuf);
+                            offset, sizeof cmpbuf, cmpbuf);
 #endif
 
     /* Checking for erased state of current buffer.*/
@@ -532,7 +532,7 @@ static flash_error_t m25q_verify_erase(void *instance,
       }
     }
 
-    addr += sizeof cmpbuf;
+    offset += sizeof cmpbuf;
     n -= sizeof cmpbuf;
   }
 
@@ -600,13 +600,12 @@ static flash_error_t m25q_query_erase(void *instance, uint32_t *msec) {
   return FLASH_NO_ERROR;
 }
 
-static flash_error_t m25q_read_sfdp(void *instance, uint8_t *rp,
-                                    flash_address_t addr,
-                                    size_t n) {
+static flash_error_t m25q_read_sfdp(void *instance, flash_offset_t offset,
+                                    size_t n, uint8_t *rp) {
 
   (void)instance;
   (void)rp;
-  (void)addr;
+  (void)offset;
   (void)n;
 
   return FLASH_NO_ERROR;
