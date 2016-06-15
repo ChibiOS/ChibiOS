@@ -245,7 +245,9 @@ static mfs_error_t mfs_bank_set_header(MFSDriver *devp,
   header.magic1  = MFS_BANK_MAGIC_1;
   header.counter = cnt;
   header.next    = sizeof (mfs_bank_header_t);
-  header.crc     = crc16(0U, (const uint8_t *)&header, sizeof (uint32_t) * 4);
+  header.crc     = crc16(0xFFFFU,
+                         (const uint8_t *)&header,
+                         sizeof (flash_sector_t) - sizeof (uint16_t));
 
   return mfs_flash_write(devp,
                          flashGetSectorOffset(devp->config->flashp, sector),
@@ -267,8 +269,8 @@ static mfs_error_t mfs_bank_set_header(MFSDriver *devp,
  * @notapi
  */
 static mfs_error_t mfs_copy_bank(MFSDriver *devp,
-                                mfs_bank_t sbank,
-                                mfs_bank_t dbank) {
+                                 mfs_bank_t sbank,
+                                 mfs_bank_t dbank) {
 
   (void)devp;
   (void)sbank;
