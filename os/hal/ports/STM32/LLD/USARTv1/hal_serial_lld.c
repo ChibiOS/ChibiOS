@@ -120,6 +120,15 @@ static void usart_init(SerialDriver *sdp, const SerialConfig *config) {
   u->SR = 0;
   (void)u->SR;  /* SR reset step 1.*/
   (void)u->DR;  /* SR reset step 2.*/
+
+  /* Deciding mask to be applied on the data register on receive, this is
+     required in order to mask out the parity bit.*/
+  if ((config->cr1 & (USART_CR1_M | USART_CR1_PCE)) == USART_CR1_PCE) {
+    sdp->rxmask = 0x7F;
+  }
+  else {
+    sdp->rxmask = 0xFF;
+  }
 }
 
 /**
@@ -182,7 +191,7 @@ static void serve_interrupt(SerialDriver *sdp) {
     /* Error condition detection.*/
     if (sr & (USART_SR_ORE | USART_SR_NE | USART_SR_FE  | USART_SR_PE))
       set_error(sdp, sr);
-    b = u->DR;
+    b = (uint8_t)u->DR & sdp->rxmask;
     if (sr & USART_SR_RXNE)
       sdIncomingDataI(sdp, b);
     sr = u->SR;

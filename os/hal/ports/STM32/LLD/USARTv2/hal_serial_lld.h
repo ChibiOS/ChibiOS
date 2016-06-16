@@ -336,7 +336,9 @@ typedef struct {
   /* Pointer to the USART registers block.*/                                \
   USART_TypeDef             *usart;                                         \
   /* Clock frequency for the associated USART/UART.*/                       \
-  uint32_t                  clock;
+  uint32_t                  clock;                                          \
+  /* Mask to be applied on received frames.*/                               \
+  uint8_t                   rxmask;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
