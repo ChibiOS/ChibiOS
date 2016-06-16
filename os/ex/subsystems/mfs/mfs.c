@@ -268,7 +268,7 @@ static mfs_error_t mfs_bank_set_header(MFSDriver *devp,
  *
  * @notapi
  */
-static mfs_error_t mfs_copy_bank(MFSDriver *devp,
+static mfs_error_t mfs_bank_copy(MFSDriver *devp,
                                  mfs_bank_t sbank,
                                  mfs_bank_t dbank) {
 
@@ -289,7 +289,7 @@ static mfs_error_t mfs_copy_bank(MFSDriver *devp,
  *
  * @notapi
  */
-static mfs_error_t mfs_mount(MFSDriver *devp, mfs_bank_t bank) {
+static mfs_error_t mfs_bank_mount(MFSDriver *devp, mfs_bank_t bank) {
 
   (void)devp;
   (void)bank;
@@ -352,32 +352,32 @@ static mfs_error_t mfs_try_mount(MFSDriver *devp) {
   case PAIR(MFS_BANK_ERASED, MFS_BANK_ERASED):
     /* Both banks erased, first initialization.*/
     RET_ON_ERROR(mfs_bank_set_header(devp, MFS_BANK_0, 1));
-    RET_ON_ERROR(mfs_mount(devp, MFS_BANK_0));
+    RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_0));
     return MFS_NO_ERROR;
 
   case PAIR(MFS_BANK_ERASED, MFS_BANK_OK):
     /* Normal situation, bank one is used.*/
-    RET_ON_ERROR(mfs_mount(devp, MFS_BANK_1));
+    RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_1));
     return MFS_NO_ERROR;
 
   case PAIR(MFS_BANK_ERASED, MFS_BANK_PARTIAL):
     /* Bank zero is erased, bank one has problems.*/
-    RET_ON_ERROR(mfs_copy_bank(devp, MFS_BANK_1, MFS_BANK_0));
+    RET_ON_ERROR(mfs_bank_copy(devp, MFS_BANK_1, MFS_BANK_0));
     RET_ON_ERROR(mfs_bank_set_header(devp, MFS_BANK_0, cnt1 + 1));
     RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_1));
-    RET_ON_ERROR(mfs_mount(devp, MFS_BANK_0));
+    RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_0));
     return MFS_REPAIR_WARNING;
 
   case PAIR(MFS_BANK_ERASED, MFS_BANK_GARBAGE):
     /* Bank zero is erased, bank one is not readable.*/
     RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_1));
     RET_ON_ERROR(mfs_bank_set_header(devp, MFS_BANK_0, 1));
-    RET_ON_ERROR(mfs_mount(devp, MFS_BANK_0));
+    RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_0));
     return MFS_REPAIR_WARNING;
 
   case PAIR(MFS_BANK_OK, MFS_BANK_ERASED):
     /* Normal situation, bank zero is used.*/
-    RET_ON_ERROR(mfs_mount(devp, MFS_BANK_0));
+    RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_0));
     return MFS_NO_ERROR;
 
   case PAIR(MFS_BANK_OK, MFS_BANK_OK):
@@ -386,12 +386,12 @@ static mfs_error_t mfs_try_mount(MFSDriver *devp) {
     if (cnt0 > cnt1) {
       /* Bank 0 is newer.*/
       RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_1));
-      RET_ON_ERROR(mfs_mount(devp, MFS_BANK_0));
+      RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_0));
     }
     else {
       /* Bank 1 is newer.*/
       RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_0));
-      RET_ON_ERROR(mfs_mount(devp, MFS_BANK_1));
+      RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_1));
     }
     return MFS_REPAIR_WARNING;
 
@@ -401,30 +401,30 @@ static mfs_error_t mfs_try_mount(MFSDriver *devp) {
       /* Normal bank zero is more recent than the partial bank one, the
          partial bank needs to be erased.*/
       RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_1));
-      RET_ON_ERROR(mfs_mount(devp, MFS_BANK_0));
+      RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_0));
     }
     else {
       /* Partial bank one is more recent than the normal bank zero.*/
       RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_0));
-      RET_ON_ERROR(mfs_copy_bank(devp, MFS_BANK_1, MFS_BANK_0));
+      RET_ON_ERROR(mfs_bank_copy(devp, MFS_BANK_1, MFS_BANK_0));
       RET_ON_ERROR(mfs_bank_set_header(devp, MFS_BANK_0, cnt1 + 1));
       RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_1));
-      RET_ON_ERROR(mfs_mount(devp, MFS_BANK_0));
+      RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_0));
     }
     return MFS_REPAIR_WARNING;
 
   case PAIR(MFS_BANK_OK, MFS_BANK_GARBAGE):
     /* Bank zero is normal, bank one is unreadable.*/
     RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_1));
-    RET_ON_ERROR(mfs_mount(devp, MFS_BANK_0));
+    RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_0));
     return MFS_REPAIR_WARNING;
 
   case PAIR(MFS_BANK_PARTIAL, MFS_BANK_ERASED):
     /* Bank zero has problems, bank one is erased.*/
-    RET_ON_ERROR(mfs_copy_bank(devp, MFS_BANK_0, MFS_BANK_1));
+    RET_ON_ERROR(mfs_bank_copy(devp, MFS_BANK_0, MFS_BANK_1));
     RET_ON_ERROR(mfs_bank_set_header(devp, MFS_BANK_1, cnt0 + 1));
     RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_0));
-    RET_ON_ERROR(mfs_mount(devp, MFS_BANK_1));
+    RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_1));
     return MFS_REPAIR_WARNING;
 
   case PAIR(MFS_BANK_PARTIAL, MFS_BANK_OK):
@@ -433,15 +433,15 @@ static mfs_error_t mfs_try_mount(MFSDriver *devp) {
       /* Normal bank one is more recent than the partial bank zero, the
          partial bank has to be erased.*/
       RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_0));
-      RET_ON_ERROR(mfs_mount(devp, MFS_BANK_1));
+      RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_1));
     }
     else {
       /* Partial bank zero is more recent than the normal bank one.*/
       RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_1));
-      RET_ON_ERROR(mfs_copy_bank(devp, MFS_BANK_0, MFS_BANK_1));
+      RET_ON_ERROR(mfs_bank_copy(devp, MFS_BANK_0, MFS_BANK_1));
       RET_ON_ERROR(mfs_bank_set_header(devp, MFS_BANK_1, cnt0 + 1));
       RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_0));
-      RET_ON_ERROR(mfs_mount(devp, MFS_BANK_1));
+      RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_1));
     }
     return MFS_REPAIR_WARNING;
 
@@ -450,50 +450,50 @@ static mfs_error_t mfs_try_mount(MFSDriver *devp) {
     if (cnt0 > cnt1) {
       /* Bank zero is newer, copying in bank one and using it.*/
       RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_1));
-      RET_ON_ERROR(mfs_copy_bank(devp, MFS_BANK_0, MFS_BANK_1));
+      RET_ON_ERROR(mfs_bank_copy(devp, MFS_BANK_0, MFS_BANK_1));
       RET_ON_ERROR(mfs_bank_set_header(devp, MFS_BANK_1, cnt0 + 1));
       RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_0));
-      RET_ON_ERROR(mfs_mount(devp, MFS_BANK_1));
+      RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_1));
     }
     else {
       /* Bank one is newer, copying in bank zero and using it.*/
       RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_0));
-      RET_ON_ERROR(mfs_copy_bank(devp, MFS_BANK_1, MFS_BANK_0));
+      RET_ON_ERROR(mfs_bank_copy(devp, MFS_BANK_1, MFS_BANK_0));
       RET_ON_ERROR(mfs_bank_set_header(devp, MFS_BANK_0, cnt1 + 1));
       RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_1));
-      RET_ON_ERROR(mfs_mount(devp, MFS_BANK_0));
+      RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_0));
     }
     return MFS_REPAIR_WARNING;
 
   case PAIR(MFS_BANK_PARTIAL, MFS_BANK_GARBAGE):
     /* Bank zero has problems, bank one is unreadable.*/
     RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_1));
-    RET_ON_ERROR(mfs_copy_bank(devp, MFS_BANK_0, MFS_BANK_1));
+    RET_ON_ERROR(mfs_bank_copy(devp, MFS_BANK_0, MFS_BANK_1));
     RET_ON_ERROR(mfs_bank_set_header(devp, MFS_BANK_1, cnt0 + 1));
     RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_0));
-    RET_ON_ERROR(mfs_mount(devp, MFS_BANK_1));
+    RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_1));
     return MFS_REPAIR_WARNING;
 
   case PAIR(MFS_BANK_GARBAGE, MFS_BANK_ERASED):
     /* Bank zero is unreadable, bank one is erased.*/
     RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_1));
     RET_ON_ERROR(mfs_bank_set_header(devp, MFS_BANK_0, 1));
-    RET_ON_ERROR(mfs_mount(devp, MFS_BANK_0));
+    RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_0));
     return MFS_REPAIR_WARNING;
 
   case PAIR(MFS_BANK_GARBAGE, MFS_BANK_OK):
     /* Bank zero is unreadable, bank one is normal.*/
     RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_0));
-    RET_ON_ERROR(mfs_mount(devp, MFS_BANK_1));
+    RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_1));
     return MFS_REPAIR_WARNING;
 
   case PAIR(MFS_BANK_GARBAGE, MFS_BANK_PARTIAL):
     /* Bank zero is unreadable, bank one has problems.*/
     RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_0));
-    RET_ON_ERROR(mfs_copy_bank(devp, MFS_BANK_1, MFS_BANK_0));
+    RET_ON_ERROR(mfs_bank_copy(devp, MFS_BANK_1, MFS_BANK_0));
     RET_ON_ERROR(mfs_bank_set_header(devp, MFS_BANK_0, cnt0 + 1));
     RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_1));
-    RET_ON_ERROR(mfs_mount(devp, MFS_BANK_0));
+    RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_0));
     return MFS_REPAIR_WARNING;
 
   case PAIR(MFS_BANK_GARBAGE, MFS_BANK_GARBAGE):
@@ -501,7 +501,7 @@ static mfs_error_t mfs_try_mount(MFSDriver *devp) {
     RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_0));
     RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_1));
     RET_ON_ERROR(mfs_bank_set_header(devp, MFS_BANK_0, 1));
-    RET_ON_ERROR(mfs_mount(devp, MFS_BANK_0));
+    RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_0));
     return MFS_REPAIR_WARNING;
 
   default:
