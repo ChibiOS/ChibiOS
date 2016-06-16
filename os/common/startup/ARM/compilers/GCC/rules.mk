@@ -89,8 +89,8 @@ else
   ACSRC += $(CSRC)
   ACPPSRC += $(CPPSRC)
 endif
-ASRC	  = $(ACSRC)$(ACPPSRC)
-TSRC	  = $(TCSRC)$(TCPPSRC)
+ASRC      = $(ACSRC) $(ACPPSRC)
+TSRC      = $(TCSRC) $(TCPPSRC)
 SRCPATHS  = $(sort $(dir $(ASMXSRC)) $(dir $(ASMSRC)) $(dir $(ASRC)) $(dir $(TSRC)))
 
 # Various directories
@@ -127,11 +127,11 @@ CPPFLAGS  = $(MCFLAGS) $(OPT) $(CPPOPT) $(CPPWARN) -Wa,-alms=$(LSTDIR)/$(notdir 
 LDFLAGS   = $(MCFLAGS) $(OPT) -nostartfiles $(LLIBDIR) -Wl,-Map=$(BUILDDIR)/$(PROJECT).map,--cref,--no-warn-mismatch,--library-path=$(RULESPATH)/ld,--script=$(LDSCRIPT)$(LDOPT)
 
 # Thumb interwork enabled only if needed because it kills performance.
-ifneq ($(TSRC),)
+ifneq ($(strip $(TSRC)),)
   CFLAGS   += -DTHUMB_PRESENT
   CPPFLAGS += -DTHUMB_PRESENT
   ASFLAGS  += -DTHUMB_PRESENT
-  ifneq ($(ASRC),)
+  ifneq ($(strip $(ASRC)),)
     # Mixed ARM and THUMB mode.
     CFLAGS   += -mthumb-interwork
     CPPFLAGS += -mthumb-interwork
