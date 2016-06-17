@@ -158,8 +158,7 @@ typedef struct {
 /**
  * @brief   Updates gyroscope bias data from received buffer.
  * @note    The bias buffer must have the same length of the
- *          the gyroscope axes number. Bias must be computed on
- *          raw data and is a signed integer.
+ *          the gyroscope axes number.
  *
  * @param[in] ip        pointer to a @p BaseGyroscope class.
  * @param[in] bp        pointer to a buffer of bias values.

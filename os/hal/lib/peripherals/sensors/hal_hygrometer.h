@@ -138,8 +138,7 @@ typedef struct {
 /**
  * @brief   Updates hygrometer bias data from received buffer.
  * @note    The bias buffer must have the same length of the
- *          the hygrometer channels number. Bias must be computed on
- *          raw data and is a signed integer.
+ *          the hygrometer channels number.
  *
  * @param[in] ip        pointer to a @p BaseHygrometer class.
  * @param[in] bp        pointer to a buffer of bias values.

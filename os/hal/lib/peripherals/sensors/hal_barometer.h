@@ -138,8 +138,7 @@ typedef struct {
 /**
  * @brief   Updates barometer bias data from received buffer.
  * @note    The bias buffer must have the same length of the
- *          the barometer channels number. Bias must be computed on
- *          raw data and is a signed integer.
+ *          the barometer channels number.
  *
  * @param[in] ip        pointer to a @p BaseBarometer class.
  * @param[in] bp        pointer to a buffer of bias values.

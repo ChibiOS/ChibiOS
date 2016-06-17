@@ -138,8 +138,7 @@ typedef struct {
 /**
  * @brief   Updates thermometer bias data from received buffer.
  * @note    The bias buffer must have the same length of the
- *          the thermometer channels number. Bias must be computed on
- *          raw data and is a signed integer.
+ *          the thermometer channels number.
  *
  * @param[in] ip        pointer to a @p BaseThermometer class.
  * @param[in] bp        pointer to a buffer of bias values.

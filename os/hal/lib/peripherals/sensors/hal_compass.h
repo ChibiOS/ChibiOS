@@ -138,8 +138,7 @@ typedef struct {
 /**
  * @brief   Updates compass bias data from received buffer.
  * @note    The bias buffer must have the same length of the
- *          the compass axes number. Bias must be computed on
- *          raw data and is a signed integer.
+ *          the compass axes number.
  *
  * @param[in] ip        pointer to a @p BaseCompass class.
  * @param[in] bp        pointer to a buffer of bias values.
