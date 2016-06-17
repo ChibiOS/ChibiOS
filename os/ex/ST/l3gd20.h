@@ -35,9 +35,132 @@
 /*===========================================================================*/
 
 /**
- * @brief   L3GD20 number of axes.
+ * @brief   L3GD20 characteristics
  */
-#define  L3GD20_NUMBER_OF_AXES              ((size_t)   3U)
+#define L3GD20_NUMBER_OF_AXES       3U
+
+#define L3GD20_250DPS               250.0f
+#define L3GD20_500DPS               500.0f
+#define L3GD20_2000DPS              2000.0f
+
+#define L3GD20_SENS_250DPS          0.00875f
+#define L3GD20_SENS_500DPS          0.01750f
+#define L3GD20_SENS_2000DPS         0.07000f
+/** @} */
+
+/**
+ * @name    L3GD20 communication interfaces related bit masks
+ * @{
+ */
+#define L3GD20_DI_MASK              0xFF        /**< Data In mask           */
+#define L3GD20_DI(n)                (1 << n)    /**< Data In bit n          */
+#define L3GD20_AD_MASK              0x3F        /**< Address Data mask      */
+#define L3GD20_AD(n)                (1 << n)    /**< Address Data bit n     */
+#define L3GD20_MS                   (1 << 6)    /**< Multiple read write    */
+#define L3GD20_RW                   (1 << 7)    /**< Read Write selector    */
+/** @} */
+
+/**
+ * @name    L3GD20 register addresses
+ * @{
+ */
+#define L3GD20_AD_WHO_AM_I          0x0F
+#define L3GD20_AD_CTRL_REG1         0x20
+#define L3GD20_AD_CTRL_REG2         0x21
+#define L3GD20_AD_CTRL_REG3         0x22
+#define L3GD20_AD_CTRL_REG4         0x23
+#define L3GD20_AD_CTRL_REG5         0x24
+#define L3GD20_AD_REFERENCE         0x25
+#define L3GD20_AD_OUT_TEMP          0x26
+#define L3GD20_AD_STATUS_REG        0x27
+#define L3GD20_AD_OUT_X_L           0x28
+#define L3GD20_AD_OUT_X_H           0x29
+#define L3GD20_AD_OUT_Y_L           0x2A
+#define L3GD20_AD_OUT_Y_H           0x2B
+#define L3GD20_AD_OUT_Z_L           0x2C
+#define L3GD20_AD_OUT_Z_H           0x2D
+#define L3GD20_AD_FIFO_CTRL_REG     0x2E
+#define L3GD20_AD_FIFO_SRC_REG      0x2F
+#define L3GD20_AD_INT1_CFG          0x30
+#define L3GD20_AD_INT1_SRC          0x31
+#define L3GD20_AD_INT1_TSH_XH       0x32
+#define L3GD20_AD_INT1_TSH_XL       0x33
+#define L3GD20_AD_INT1_TSH_YH       0x34
+#define L3GD20_AD_INT1_TSH_YL       0x35
+#define L3GD20_AD_INT1_TSH_ZH       0x36
+#define L3GD20_AD_INT1_TSH_ZL       0x37
+#define L3GD20_AD_INT1_DURATION     0x38
+/** @} */
+
+/**
+ * @name    L3GD20_CTRL_REG1 register bits definitions
+ * @{
+ */
+#define L3GD20_CTRL_REG1_MASK       0xFF        /**< L3GD20_CTRL_REG1 mask  */
+#define L3GD20_CTRL_REG1_XEN        (1 << 0)    /**< X axis enable          */
+#define L3GD20_CTRL_REG1_YEN        (1 << 1)    /**< Y axis enable          */
+#define L3GD20_CTRL_REG1_ZEN        (1 << 2)    /**< Z axis enable          */
+#define L3GD20_CTRL_REG1_PD         (1 << 3)    /**< Power-down mode enable */
+#define L3GD20_CTRL_REG1_BW0        (1 << 4)    /**< Bandwidth bit 0        */
+#define L3GD20_CTRL_REG1_BW1        (1 << 5)    /**< Bandwidth bit 1        */
+#define L3GD20_CTRL_REG1_DR0        (1 << 6)    /**< Output data rate bit 0 */
+#define L3GD20_CTRL_REG1_DR1        (1 << 7)    /**< Output data rate bit 1 */
+/** @} */
+
+/**
+ * @name    L3GD20_CTRL_REG2 register bits definitions
+ * @{
+ */                                              
+#define L3GD20_CTRL_REG2_MASK       0x3F        /**< L3GD20_CTRL_REG2 mask  */
+#define L3GD20_CTRL_REG2_HPCF0      (1 << 0)    /**< HP filter cutoff bit 0 */
+#define L3GD20_CTRL_REG2_HPCF1      (1 << 1)    /**< HP filter cutoff bit 1 */
+#define L3GD20_CTRL_REG2_HPCF2      (1 << 2)    /**< HP filter cutoff bit 2 */
+#define L3GD20_CTRL_REG2_HPCF3      (1 << 3)    /**< HP filter cutoff bit 3 */
+#define L3GD20_CTRL_REG2_HPM0       (1 << 4)    /**< HP filter mode bit 0   */
+#define L3GD20_CTRL_REG2_HPM1       (1 << 5)    /**< HP filter mode bit 1   */
+/** @} */
+
+/**
+ * @name    L3GD20_CTRL_REG3 register bits definitions
+ * @{
+ */                                               
+#define L3GD20_CTRL_REG3_MASK       0xFF        /**< L3GD20_CTRL_REG3 mask  */
+#define L3GD20_CTRL_REG3_I2_EMPTY   (1 << 0)    /**< FIFO empty IRQ         */
+#define L3GD20_CTRL_REG3_I2_ORUN    (1 << 1)    /**< FIFO overrun IRQ       */
+#define L3GD20_CTRL_REG3_I2_WTM     (1 << 2)    /**< FIFO watermark IRQ     */
+#define L3GD20_CTRL_REG3_I2_DRDY    (1 << 3)    /**< Data ready             */
+#define L3GD20_CTRL_REG3_PP_OD      (1 << 4)    /**< Push-pull / Open Drain */
+#define L3GD20_CTRL_REG3_H_LACTIVE  (1 << 5)    /**< IRQ active             */
+#define L3GD20_CTRL_REG3_I1_BOOT    (1 << 6)    /**< Boot status available  */
+#define L3GD20_CTRL_REG3_I1_INT1    (1 << 7)    /**< IRQ enable             */
+/** @} */
+
+/**
+ * @name    L3GD20_CTRL_REG4 register bits definitions
+ * @{
+ */
+#define L3GD20_CTRL_REG4_MASK       0xF1        /**< L3GD20_CTRL_REG4 mask  */
+#define L3GD20_CTRL_REG4_SIM        (1 << 0)    /**< SPI mode               */
+#define L3GD20_CTRL_REG4_FS_MASK    (3 << 4)    /**< Full scale mask        */
+#define L3GD20_CTRL_REG4_FS0        (1 << 4)    /**< Full scale bit 0       */
+#define L3GD20_CTRL_REG4_FS1        (1 << 5)    /**< Full scale bit 1       */
+#define L3GD20_CTRL_REG4_BLE        (1 << 6)    /**< Big/little endian data */
+#define L3GD20_CTRL_REG4_BDU        (1 << 7)    /**< Block data update      */
+/** @} */
+
+/**
+ * @name    L3GD20_CTRL_REG5 register bits definitions
+ * @{
+ */                                               
+#define L3GD20_CTRL_REG5_MASK       0xDF        /**< L3GD20_CTRL_REG5 mask  */
+#define L3GD20_CTRL_REG5_OUT_SEL0   (1 << 0)    /**< Out selection  bit 0   */
+#define L3GD20_CTRL_REG5_OUT_SEL1   (1 << 1)    /**< Out selection  bit 1   */
+#define L3GD20_CTRL_REG5_INT1_SEL0  (1 << 2)    /**< INT1 selection  bit 0  */
+#define L3GD20_CTRL_REG5_INT1_SEL1  (1 << 3)    /**< INT1 selection  bit 1  */
+#define L3GD20_CTRL_REG5_HPEN       (1 << 4)    /**< HP filter enable       */
+#define L3GD20_CTRL_REG5_FIFO_EN    (1 << 6)    /**< FIFO enable            */
+#define L3GD20_CTRL_REG5_BOOT       (1 << 7)    /**< Reboot memory content  */
+/** @} */
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -63,6 +186,15 @@
  */
 #if !defined(L3GD20_USE_I2C) || defined(__DOXYGEN__)
 #define L3GD20_USE_I2C                      FALSE
+#endif
+
+/**
+ * @brief   L3GD20 advanced configurations switch.
+ * @details If set to @p TRUE more configurations are available.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(L3GD20_USE_ADVANCED) || defined(__DOXYGEN__)
+#define L3GD20_USE_ADVANCED                 FALSE
 #endif
 
 /**
@@ -118,11 +250,11 @@
 /*===========================================================================*/
 
 /**
- * @name    L3GD20 data structures and types
+ * @name    L3GD20 data structures and types.
  * @{
  */
 /**
- * @brief   L3GD20 full scale
+ * @brief   L3GD20 full scale.
  */
 typedef enum {
   L3GD20_FS_250DPS = 0x00,          /**< Full scale 250 degree per second.  */
@@ -131,41 +263,26 @@ typedef enum {
 }l3gd20_fs_t;
 
 /**
- * @brief   L3GD20 output data rate and bandwidth
+ * @brief   L3GD20 output data rate and bandwidth.
  */
 typedef enum {
-  L3GD20_ODR_95HZ_FC_12_5 = 0x00,   /**< ODR 95 Hz, BW 12.5 Hz.             */
-  L3GD20_ODR_95HZ_FC_25 = 0x10,     /**< ODR 95 Hz, BW 25Hz.                */
-  L3GD20_ODR_190HZ_FC_12_5 = 0x40,  /**< ODR 190 Hz, BW 12.5 Hz.            */
-  L3GD20_ODR_190HZ_FC_25 = 0x50,    /**< ODR 190 Hz, BW 25 Hz.              */
-  L3GD20_ODR_190HZ_FC_50 = 0x60,    /**< ODR 190 Hz, BW 50 Hz.              */
-  L3GD20_ODR_190HZ_FC_70 = 0x70,    /**< ODR 190 Hz, BW 70 Hz.              */
-  L3GD20_ODR_380HZ_FC_20 = 0x80,    /**< ODR 380 Hz, BW 20 Hz.              */
-  L3GD20_ODR_380HZ_FC_25 = 0x90,    /**< ODR 380 Hz, BW 25 Hz.              */
-  L3GD20_ODR_380HZ_FC_50 = 0xA0,    /**< ODR 380 Hz, BW 50 Hz.              */
-  L3GD20_ODR_380HZ_FC_100 = 0xB0,   /**< ODR 380 Hz, BW 100 Hz.             */
-  L3GD20_ODR_760HZ_FC_30 = 0xC0,    /**< ODR 760 Hz, BW 30 Hz.              */
-  L3GD20_ODR_760HZ_FC_35 = 0xD0,    /**< ODR 760 Hz, BW 35 Hz.              */
-  L3GD20_ODR_760HZ_FC_50 = 0xE0,    /**< ODR 760 Hz, BW 50 Hz.              */
-  L3GD20_ODR_760HZ_FC_100 = 0xF0    /**< ODR 760 Hz, BW 100 Hz.             */
+  L3GD20_ODR_95HZ = 0x00,           /**< Output data rate 95 Hz.            */
+  L3GD20_ODR_190HZ = 0x40,          /**< Output data rate 190 Hz.           */
+  L3GD20_ODR_380HZ = 0x80,          /**< Output data rate 380 Hz.           */
+  L3GD20_ODR_760HZ = 0xC0           /**< Output data rate 760 Hz.           */
 }l3gd20_odr_t;
 
 /**
- * @brief   L3GD20 axes enabling
+ * @brief   L3GD20 low pass filter 1 bandwidth.
  */
 typedef enum {
-  L3GD20_AE_DISABLED = 0x00,        /**< All axes disabled.                 */
-  L3GD20_AE_X = 0x01,               /**< Only X-axis enabled.               */
-  L3GD20_AE_Y = 0x02,               /**< Only Y-axis enabled.               */
-  L3GD20_AE_XY = 0x03,              /**< X and Y axes enabled.              */
-  L3GD20_AE_Z = 0x04,               /**< Only Z-axis enabled.               */
-  L3GD20_AE_XZ = 0x05,              /**< X and Z axes enabled.              */
-  L3GD20_AE_YZ = 0x06,              /**< Y and Z axes enabled.              */
-  L3GD20_AE_XYZ = 0x07              /**< All axes enabled.                  */
-}l3gd20_ae_t;
-
+  L3GD20_BW0 = 0x00,                /**< LPF1 bandwidth. Depends on ODR.    */
+  L3GD20_BW1 = 0x40,                /**< LPF1 bandwidth. Depends on ODR.    */
+  L3GD20_BW2 = 0x80,                /**< LPF1 bandwidth. Depends on ODR.    */
+  L3GD20_BW3 = 0xC0                 /**< LPF1 bandwidth. Depends on ODR.    */
+}l3gd20_bw_t;
 /**
- * @brief   L3GD20 block data update
+ * @brief   L3GD20 block data update.
  */
 typedef enum {
   L3GD20_BDU_CONTINUOUS = 0x00,     /**< Block data continuously updated.   */
@@ -173,12 +290,55 @@ typedef enum {
 }l3gd20_bdu_t;
 
 /**
- * @brief   L3GD20 endianness
+ * @brief   L3GD20 HP filter mode.
+ */
+typedef enum {
+  L3GD20_HPM_NORMAL = 0x00,         /**< Normal mode.                       */
+  L3GD20_HPM_REFERENCE = 0x10,      /**< Reference signal for filtering.    */
+  L3GD20_HPM_AUTORESET = 0x30,      /**< Autoreset on interrupt event.      */  
+  L3GD20_HPM_BYPASSED = 0xFF        /**< HP filter bypassed                 */
+}l3gd20_hpm_t;
+
+/**
+ * @brief   L3GD20 HP configuration.
+ */
+typedef enum {
+  L3GD20_HPCF_0 = 0x00,             /**< Depends on ODR (Table 26 for more).*/
+  L3GD20_HPCF_1 = 0x01,             /**< Depends on ODR (Table 26 for more).*/
+  L3GD20_HPCF_2 = 0x02,             /**< Depends on ODR (Table 26 for more).*/
+  L3GD20_HPCF_3 = 0x03,             /**< Depends on ODR (Table 26 for more).*/
+  L3GD20_HPCF_4 = 0x04,             /**< Depends on ODR (Table 26 for more).*/
+  L3GD20_HPCF_5 = 0x05,             /**< Depends on ODR (Table 26 for more).*/
+  L3GD20_HPCF_6 = 0x06,             /**< Depends on ODR (Table 26 for more).*/
+  L3GD20_HPCF_7 = 0x07,             /**< Depends on ODR (Table 26 for more).*/
+  L3GD20_HPCF_8 = 0x08,             /**< Depends on ODR (Table 26 for more).*/
+  L3GD20_HPCF_9 = 0x09              /**< Depends on ODR (Table 26 for more).*/
+}l3gd20_hpcf_t;
+
+/**
+ * @brief   L3GD20 LP2 filter mode.
+ * @detail  To activate LP2 HP should be active
+ */
+typedef enum {
+  L3GD20_LP2M_ON = 0x00,            /**< LP2 filter activated.              */
+  L3GD20_LP2M_BYPASSED = 0xFF,      /**< LP2 filter bypassed.               */ 
+}l3gd20_lp2m_t;
+
+/**
+ * @brief   L3GD20 endianness.
  */
 typedef enum {
   L3GD20_END_LITTLE = 0x00,         /**< Little endian.                     */
   L3GD20_END_BIG = 0x40             /**< Big endian.                        */
 }l3gd20_end_t;
+
+/**
+ * @brief   L3GD20 measurement unit.
+ */
+typedef enum {
+  L3GD20_UNIT_DPS = 0x00,           /**< Cooked data in degrees per seconds.*/
+  L3GD20_UNIT_RPS = 0x01,           /**< Cooked data in radians per seconds.*/
+} l3gd20_unit_t;
 
 /**
  * @brief   Driver state machine possible states.
@@ -194,7 +354,7 @@ typedef enum {
  */
 typedef struct {
 
-#if (L3GD20_USE_SPI) || defined(__DOXYGEN__)
+#if L3GD20_USE_SPI || defined(__DOXYGEN__)
   /**
    * @brief SPI driver associated to this L3GD20.
    */
@@ -204,7 +364,7 @@ typedef struct {
    */
   const SPIConfig           *spicfg;
 #endif /* L3GD20_USE_SPI */
-#if (L3GD20_USE_I2C) || defined(__DOXYGEN__)
+#if L3GD20_USE_I2C || defined(__DOXYGEN__)
   /**
    * @brief I2C driver associated to this L3GD20.
    */
@@ -215,17 +375,22 @@ typedef struct {
   const I2CConfig           *i2ccfg;
 #endif /* L3GD20_USE_I2C */
   /**
-   * @brief L3GD20 full scale value.
+   * @brief L3GD20 initial sensitivity.
+   */
+  float                     sensitivity[L3GD20_NUMBER_OF_AXES];
+  /**
+   * @brief L3GD20 initial bias.
+   */
+  float                     bias[L3GD20_NUMBER_OF_AXES];
+  /**
+   * @brief L3GD20 initial full scale value.
    */
   l3gd20_fs_t               fullscale;
   /**
    * @brief L3GD20 output data rate selection.
    */
   l3gd20_odr_t              outputdatarate;
-  /**
-   * @brief L3GD20 axes enabling.
-   */
-  l3gd20_ae_t               axesenabling;
+#if L3GD20_USE_ADVANCED || defined(__DOXYGEN__)
   /**
    * @brief L3GD20 block data update.
    */
@@ -234,6 +399,28 @@ typedef struct {
    * @brief L3GD20 endianness.
    */
   l3gd20_end_t              endianness;
+  /**
+   * @brief   L3GD20 LP1 filter bandwidth.
+   */
+  l3gd20_bw_t               bandwidth;
+  /**
+   * @brief   L3GD20 HP filter mode.
+   */
+  l3gd20_hpm_t              hpmode;
+  /**
+   * @brief   L3GD20 HP configuration.
+   */
+  l3gd20_hpcf_t             hpconfiguration;
+  /**
+   * @brief   L3GD20 LP2 filter mode.
+   * @detail  To activate LP2 HP should be active
+   */
+  l3gd20_lp2m_t             lp2mode;
+#endif
+  /**
+   * @brief   L3GD20 initial measurement unit.
+   */
+  l3gd20_unit_t             unit;
 } L3GD20Config;
 
 /**
@@ -246,9 +433,14 @@ typedef struct L3GD20Driver L3GD20Driver;
  */
 #define _l3gd20_methods                                                     \
   _base_gyroscope_methods                                                   \
-  /* Retrieve the temperature of L3GD20 chip.*/                             \
-  msg_t (*get_temperature)(void *instance, float* temperature);
-
+  /* Change full scale value of L3GD20 .*/                                  \
+  msg_t (*set_full_scale)(void *instance, l3gd20_fs_t fs);                  \
+  /* Get full scale value of L3GD20 .*/                                     \
+  l3gd20_fs_t (*get_full_scale)(void *instance);                            \
+  /* Change measurement unit of L3GD20 .*/                                  \
+  msg_t (*set_meas_unit)(void *instance, l3gd20_unit_t unit);               \
+  /* Get measurement unit of L3GD20 .*/                                     \
+  l3gd20_unit_t (*get_meas_unit)(void *instance);
 
 /**
  * @extends BaseGyroscopeVMT
@@ -268,10 +460,14 @@ struct L3GD20VMT {
   l3gd20_state_t            state;                                          \
   /* Current configuration data.*/                                          \
   const L3GD20Config        *config;                                        \
-  /* Current sensitivity.*/                                                 \
+  /* Current sensitivity data.*/                                            \
   float                     sensitivity[L3GD20_NUMBER_OF_AXES];             \
-  /* Bias data.*/                                                           \
-  int32_t                   bias[L3GD20_NUMBER_OF_AXES];
+  /* Current Bias data.*/                                                   \
+  float                     bias[L3GD20_NUMBER_OF_AXES];                    \
+  /* Current full scale value.*/                                            \
+  float                     fullscale;                                      \
+  /* Measurement unit.*/                                                    \
+  l3gd20_unit_t             meas_unit;  
 
 /**
  * @extends BaseGyroscope
@@ -296,20 +492,33 @@ struct L3GD20Driver {
 /*===========================================================================*/
 
 /**
- * @brief   Get current MEMS temperature.
- * @detail  This information is very useful especially for high accuracy IMU
+ * @brief   Change initial fullscale value.
  *
  * @param[in] ip        pointer to a @p BaseGyroscope class.
- * @param[out] temp     the MEMS temperature as single precision floating.
+ * @param[in] fs        the new full scale value.
  *
  * @return              The operation status.
  * @retval MSG_OK       if the function succeeded.
  * @retval MSG_RESET    if one or more errors occurred.
  * @api
  */
-#define gyroscopeGetTemp(ip, tpp)                                           \
-        (ip)->vmt_l3gd20->get_temperature(ip, tpp)
+#define gyroscopeSetFullScale(ip, fs)                                       \
+        (ip)->vmt_l3gd20->set_full_scale(ip, fs)
 
+/**
+ * @brief   Set gyroscope cooked data measurement unit.
+ *
+ * @param[in] ip        pointer to a @p BaseGyroscope class.
+ * @param[in] unit      the MEMS measurement unit.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more errors occurred.
+ * @api
+ */
+#define gyroscopeSetMeasurementUnit(ip, unit)                               \
+        (ip)->vmt_l3gd20->set_meas_unit(ip, unit)
+        
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
