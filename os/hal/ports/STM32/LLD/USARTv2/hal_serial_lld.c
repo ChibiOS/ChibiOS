@@ -44,6 +44,15 @@
 #define USART_ISR_LBDF                      USART_ISR_LBD
 #endif
 
+/* Handling differences in frame size bits.*/
+#if !defined(USART_CR1_M_0)
+#define USART_CR1_M_0                       (1 << 12)
+#endif
+
+#if !defined(USART_CR1_M_1)
+#define USART_CR1_M_1                       (1 << 28)
+#endif
+
 /* Handling the case where UART4 and UART5 are actually USARTs, this happens
    in the STM32F0xx.*/
 #if defined(USART4)
