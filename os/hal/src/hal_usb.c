@@ -141,19 +141,23 @@ static bool default_handler(USBDriver *usbp) {
     usbSetupTransfer(usbp, &usbp->configuration, 1, NULL);
     return true;
   case (uint32_t)USB_RTYPE_RECIPIENT_DEVICE | ((uint32_t)USB_REQ_SET_CONFIGURATION << 8):
-    /* Handling configuration selection from the host.*/
-    usbp->configuration = usbp->setup[2];
-    if (usbp->configuration == 0U) {
+    /* Handling configuration selection from the host only if it is different
+       from the current configuration.*/
+    if (usbp->configuration != usbp->setup[2]) {
+      /* If the USB device is already active then we have to perform the clear
+         procedure on the current configuration.*/
       if (usbp->state == USB_ACTIVE) {
+        /* Current configuration cleared.*/
         chSysLockFromISR ();
         usbDisableEndpointsI(usbp);
         chSysUnlockFromISR ();
+        usbp->configuration = 0U;
         usbp->state = USB_SELECTED;
         _usb_isr_invoke_event_cb(usbp, USB_EVENT_UNCONFIGURED);
       }
-    }
-    else {
-      if (usbp->state != USB_ACTIVE) {
+      if (usbp->setup[2] != 0U) {
+        /* New configuration.*/
+        usbp->configuration = usbp->setup[2];
         usbp->state = USB_ACTIVE;
         _usb_isr_invoke_event_cb(usbp, USB_EVENT_CONFIGURED);
       }
