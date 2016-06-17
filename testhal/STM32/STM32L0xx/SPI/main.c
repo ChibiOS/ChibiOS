@@ -24,6 +24,7 @@ static const SPIConfig hs_spicfg = {
   NULL,
   GPIOB,
   12,
+  0,
   0
 };
 
@@ -34,7 +35,8 @@ static const SPIConfig ls_spicfg = {
   NULL,
   GPIOB,
   12,
-  SPI_CR1_BR_2 | SPI_CR1_BR_1
+  SPI_CR1_BR_2 | SPI_CR1_BR_1,
+  0
 };
 
 /*
