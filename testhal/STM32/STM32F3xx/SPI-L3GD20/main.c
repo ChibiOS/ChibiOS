@@ -166,9 +166,45 @@ static void cmd_set(BaseSequentialStream *chp, int argc, char *argv[]) {
   }
 }
 
+static void cmd_bias(BaseSequentialStream *chp, int argc, char *argv[]) {
+  (void)argv;
+  if (argc != 1) {
+    chprintf(chp, "Usage: bias [sample|reset]\r\n");
+    return;
+  }
+  if(!strcmp (argv[0], "sample")) {
+#if CHPRINTF_USE_ANSI_CODE
+    chprintf(chp, "\033[2J\033[1;1H");
+#endif
+    chprintf(chp, "Please don't move the device while Green LEDs are on!\r\n");
+    chprintf(chp, "Press a key to start...\r\n");
+    while (chnGetTimeout((BaseChannel *)chp, TIME_IMMEDIATE) == Q_TIMEOUT)
+      ;
+    palSetLine(LINE_LED6_GREEN);
+    palSetLine(LINE_LED7_GREEN);
+    chThdSleepMilliseconds(1000);
+    gyroscopeSampleBias(&L3GD20D1);
+    palClearLine(LINE_LED6_GREEN);
+    palClearLine(LINE_LED7_GREEN);
+    chprintf(chp, "Procedure completed!\r\n");
+  }
+  else if(!strcmp (argv[0], "reset")) {
+#if CHPRINTF_USE_ANSI_CODE
+    chprintf(chp, "\033[2J\033[1;1H");
+#endif
+    gyroscopeResetBias(&L3GD20D1);
+    chprintf(chp, "Bias correction removed!\r\n");
+  }
+  else {
+    chprintf(chp, "Usage: bias [sample|reset]\r\n");
+    return;
+  }
+}
+
 static const ShellCommand commands[] = {
   {"get", cmd_get},
   {"set", cmd_set},
+  {"bias", cmd_bias},
   {NULL, NULL}
 };
 
