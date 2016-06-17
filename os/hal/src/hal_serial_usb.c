@@ -50,7 +50,6 @@ static cdc_linecoding_t linecoding = {
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-
 static bool sdu_start_receive(SerialUSBDriver *sdup) {
   uint8_t *buf;
 
@@ -480,6 +479,7 @@ void sduDataReceived(USBDriver *usbp, usbep_t ep) {
      so a packet is in the buffer for sure. Trying to get a free buffer
      for the next transaction.*/
   sdu_start_receive(sdup);
+
   osalSysUnlockFromISR();
 }
 
