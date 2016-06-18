@@ -141,15 +141,27 @@ static bool default_handler(USBDriver *usbp) {
     usbSetupTransfer(usbp, &usbp->configuration, 1, NULL);
     return true;
   case (uint32_t)USB_RTYPE_RECIPIENT_DEVICE | ((uint32_t)USB_REQ_SET_CONFIGURATION << 8):
-    /* Handling configuration selection from the host.*/
-    usbp->configuration = usbp->setup[2];
-    if (usbp->configuration == 0U) {
-      usbp->state = USB_SELECTED;
+    /* Handling configuration selection from the host only if it is different
+       from the current configuration.*/
+    if (usbp->configuration != usbp->setup[2]) {
+      /* If the USB device is already active then we have to perform the clear
+         procedure on the current configuration.*/
+      if (usbp->state == USB_ACTIVE) {
+        /* Current configuration cleared.*/
+        chSysLockFromISR ();
+        usbDisableEndpointsI(usbp);
+        chSysUnlockFromISR ();
+        usbp->configuration = 0U;
+        usbp->state = USB_SELECTED;
+        _usb_isr_invoke_event_cb(usbp, USB_EVENT_UNCONFIGURED);
+      }
+      if (usbp->setup[2] != 0U) {
+        /* New configuration.*/
+        usbp->configuration = usbp->setup[2];
+        usbp->state = USB_ACTIVE;
+        _usb_isr_invoke_event_cb(usbp, USB_EVENT_CONFIGURED);
+      }
     }
-    else {
-      usbp->state = USB_ACTIVE;
-    }
-    _usb_isr_invoke_event_cb(usbp, USB_EVENT_CONFIGURED);
     usbSetupTransfer(usbp, NULL, 0, NULL);
     return true;
   case (uint32_t)USB_RTYPE_RECIPIENT_INTERFACE | ((uint32_t)USB_REQ_GET_STATUS << 8):
@@ -314,10 +326,12 @@ void usbStop(USBDriver *usbp) {
   osalDbgCheck(usbp != NULL);
 
   osalSysLock();
+
   osalDbgAssert((usbp->state == USB_STOP) || (usbp->state == USB_READY) ||
                 (usbp->state == USB_SELECTED) || (usbp->state == USB_ACTIVE) ||
                 (usbp->state == USB_SUSPENDED),
                 "invalid state");
+
   usb_lld_stop(usbp);
   usbp->state = USB_STOP;
 
@@ -336,6 +350,7 @@ void usbStop(USBDriver *usbp) {
     usbp->epc[i] = NULL;
   }
   osalOsRescheduleS();
+
   osalSysUnlock();
 }
 
@@ -392,10 +407,11 @@ void usbDisableEndpointsI(USBDriver *usbp) {
 
   osalDbgCheckClassI();
   osalDbgCheck(usbp != NULL);
-  osalDbgAssert(usbp->state == USB_SELECTED, "invalid state");
+  osalDbgAssert(usbp->state == USB_ACTIVE, "invalid state");
 
-  usbp->transmitting &= ~1U;
-  usbp->receiving    &= ~1U;
+  usbp->transmitting &= 1U;
+  usbp->receiving    &= 1U;
+
   for (i = 1; i <= (unsigned)USB_MAX_ENDPOINTS; i++) {
 #if USB_USE_WAIT == TRUE
     /* Signaling the event to threads waiting on endpoints.*/
@@ -675,9 +691,11 @@ void _usb_reset(USBDriver *usbp) {
  * @notapi
  */
 void _usb_suspend(USBDriver *usbp) {
+  /* No state change, suspend always returns to previous state. */
 
   /* State transition.*/
-  usbp->state = USB_SUSPENDED;
+  usbp->saved_state = usbp->state;
+  usbp->state       = USB_SUSPENDED;
 
   /* Notification of suspend event.*/
   _usb_isr_invoke_event_cb(usbp, USB_EVENT_SUSPEND);
@@ -714,8 +732,8 @@ void _usb_suspend(USBDriver *usbp) {
  */
 void _usb_wakeup(USBDriver *usbp) {
 
-  /* State transition.*/
-  usbp->state = USB_ACTIVE;
+  /* State transition, returning to the previous state.*/
+  usbp->state = usbp->saved_state;
 
   /* Notification of suspend event.*/
   _usb_isr_invoke_event_cb(usbp, USB_EVENT_WAKEUP);

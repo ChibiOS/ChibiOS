@@ -301,9 +301,10 @@ typedef enum {
   USB_EVENT_RESET = 0,                  /**< Driver has been reset by host. */
   USB_EVENT_ADDRESS = 1,                /**< Address assigned.              */
   USB_EVENT_CONFIGURED = 2,             /**< Configuration selected.        */
-  USB_EVENT_SUSPEND = 3,                /**< Entering suspend mode.         */
-  USB_EVENT_WAKEUP = 4,                 /**< Leaving suspend mode.          */
-  USB_EVENT_STALLED = 5                 /**< Endpoint 0 error, stalled.     */
+  USB_EVENT_UNCONFIGURED = 3,           /**< Configuration removed.         */
+  USB_EVENT_SUSPEND = 4,                /**< Entering suspend mode.         */
+  USB_EVENT_WAKEUP = 5,                 /**< Leaving suspend mode.          */
+  USB_EVENT_STALLED = 6                 /**< Endpoint 0 error, stalled.     */
 } usbevent_t;
 
 /**
