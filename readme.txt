@@ -73,6 +73,8 @@
 *****************************************************************************
 
 *** 16.1.5 ***
+- HAL: Fixed problem in USB driver when changing configuration (bug #757).
+- HAL: Fixed bug in function usbDisableEndpointsI() (bug #756).
 - HAL: Fixed wrong info in readme of LWIP related demos (bug #755).
 - HAL: Fixed misconfiguration in STM32L4 Discovery board files 
        (bug #754).
