@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    ARMCMx/IAR/vectors.c
+ * @file    ARMCMx/compilers/IAR/vectors.c
  * @brief   Interrupt vectors for Cortex-Mx devices.
  *
  * @defgroup ARMCMx_IAR_VECTORS Cortex-Mx Interrupt Vectors
@@ -50,7 +50,7 @@
 
 __vector_table:
         DCD     SFE(IRQSTACK)
-        DCD     __iar_program_start
+        DCD     __iar_program_start 
         DCD     NMI_Handler
         DCD     HardFault_Handler
         DCD     MemManage_Handler
