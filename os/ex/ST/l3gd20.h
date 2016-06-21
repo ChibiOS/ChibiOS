@@ -162,6 +162,35 @@
 #define L3GD20_CTRL_REG5_BOOT       (1 << 7)    /**< Reboot memory content  */
 /** @} */
 
+/**
+ * @name    L3GD20_INT1_CFG register bits definitions
+ * @{
+ */
+#define L3GD20_INT1_CFG_MASK       0xFF        /**< L3GD20_INT1_CFG mask   */
+#define L3GD20_INT1_CFG_XLIE       (1 << 0)    /**< Enable INT1 on X low   */
+#define L3GD20_INT1_CFG_XHIE       (1 << 1)    /**< Enable INT1 on X high  */
+#define L3GD20_INT1_CFG_YLIE       (1 << 2)    /**< Enable INT1 on Y low   */
+#define L3GD20_INT1_CFG_YHIE       (1 << 3)    /**< Enable INT1 on Y high  */
+#define L3GD20_INT1_CFG_ZLIE       (1 << 4)    /**< Enable INT1 on Z low   */
+#define L3GD20_INT1_CFG_ZHIE       (1 << 5)    /**< Enable INT1 on Z high  */
+#define L3GD20_INT1_CFG_LIR        (1 << 6)    /**< Latch INT1             */
+#define L3GD20_INT1_CFG_AND_OR     (1 << 7)    /**< AND OR combination     */
+/** @} */
+
+/**
+ * @name    L3GD20_INT1_SRC register bits definitions
+ * @{
+ */
+#define L3GD20_INT1_SRC_MASK       0x7F        /**< L3GD20_INT1_SRC mask   */
+#define L3GD20_INT1_SRC_XL         (1 << 0)    /**< X low event            */
+#define L3GD20_INT1_SRC_XH         (1 << 1)    /**< X high event           */
+#define L3GD20_INT1_SRC_YL         (1 << 2)    /**< Y low event            */
+#define L3GD20_INT1_SRC_YH         (1 << 3)    /**< Y high event           */
+#define L3GD20_INT1_SRC_ZL         (1 << 4)    /**< Z low event            */
+#define L3GD20_INT1_SRC_ZH         (1 << 5)    /**< Z high event           */
+#define L3GD20_INT1_SRC_IA         (1 << 6)    /**< Interrupt active       */
+/** @} */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -383,6 +412,10 @@ typedef struct {
    */
   float                     bias[L3GD20_NUMBER_OF_AXES];
   /**
+   * @brief   L3GD20 initial measurement unit.
+   */
+  l3gd20_unit_t             unit;
+  /**
    * @brief L3GD20 initial full scale value.
    */
   l3gd20_fs_t               fullscale;
@@ -417,10 +450,6 @@ typedef struct {
    */
   l3gd20_lp2m_t             lp2mode;
 #endif
-  /**
-   * @brief   L3GD20 initial measurement unit.
-   */
-  l3gd20_unit_t             unit;
 } L3GD20Config;
 
 /**

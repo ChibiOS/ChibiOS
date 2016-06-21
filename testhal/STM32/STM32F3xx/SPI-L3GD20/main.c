@@ -51,9 +51,17 @@ static L3GD20Config l3gd20cfg = {
   &spicfg,                                   /* Pointer to SPI Configuration */
   {0, 0, 0},                                 /* Use default sensitivity */
   {0, 0, 0},                                 /* Use default bias */
+  L3GD20_UNIT_DPS,                           /* Measurement unit DPS */
   L3GD20_FS_250DPS,                          /* Full scale value */
   L3GD20_ODR_760HZ,                          /* Output data rate */
-  L3GD20_UNIT_DPS,
+#if L3GD20_USE_ADVANCED || defined(__DOXYGEN__)
+  L3GD20_BDU_CONTINUOUS,
+  L3GD20_END_LITTLE,
+  L3GD20_BW3,
+  L3GD20_HPM_REFERENCE,
+  L3GD20_HPCF_8,
+  L3GD20_LP2M_ON,
+#endif
 };
 
 /*===========================================================================*/
