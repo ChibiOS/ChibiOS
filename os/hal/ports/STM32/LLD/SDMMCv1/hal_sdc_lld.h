@@ -60,14 +60,14 @@
  * @brief   Write timeout in milliseconds.
  */
 #if !defined(STM32_SDC_SDMMC_WRITE_TIMEOUT) || defined(__DOXYGEN__)
-#define STM32_SDC_SDMMC_WRITE_TIMEOUT       250
+#define STM32_SDC_SDMMC_WRITE_TIMEOUT       1000
 #endif
 
 /**
  * @brief   Read timeout in milliseconds.
  */
 #if !defined(STM32_SDC_SDMMC_READ_TIMEOUT) || defined(__DOXYGEN__)
-#define STM32_SDC_SDMMC_READ_TIMEOUT        25
+#define STM32_SDC_SDMMC_READ_TIMEOUT        1000
 #endif
 
 /**
@@ -102,6 +102,18 @@
 
 #if !STM32_SDC_USE_SDMMC1
 #error "SDC driver activated but no SDMMC peripheral assigned"
+#endif
+
+#if !defined(STM32_SDMMCCLK)
+#error "STM32_SDMMCCLK not defined"
+#endif
+
+#if !defined(STM32_HCLK)
+#error "STM32_HCLK not defined"
+#endif
+
+#if STM32_SDC_USE_SDMMC1 * 10 > STM32_HCLK * 7
+#error "STM32_SDC_USE_SDMMC1 must not exceed STM32_HCLK * 0.7"
 #endif
 
 #if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SDC_SDMMC1_IRQ_PRIORITY)
