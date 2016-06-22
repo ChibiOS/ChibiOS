@@ -18,41 +18,205 @@
 #include "hal.h"
 
 #include "usbcfg.h"
-
+#include "string.h"
+#include "shell.h"
 #include "chprintf.h"
+
 #include "l3gd20.h"
 
-/* Enable use of special ANSI escape sequences */
-#define CHPRINTF_USE_ANSI_CODE         TRUE
-
-static BaseSequentialStream * chp = (BaseSequentialStream*) &SDU1;
+/*===========================================================================*/
+/* L3GD20 related.                                                           */
+/*===========================================================================*/
 
 /* L3GD20 Driver: This object represent an L3GD20 instance */
 static L3GD20Driver L3GD20D1;
 
 static int32_t rawdata[L3GD20_NUMBER_OF_AXES];
 static float cookeddata[L3GD20_NUMBER_OF_AXES];
-static float temperature;
 
-static char axesID[L3GD20_NUMBER_OF_AXES] = {'X', 'Y', 'Z'};
+static char axisID[L3GD20_NUMBER_OF_AXES] = {'X', 'Y', 'Z'};
+static char unit[4] = "dps";
 static uint32_t i;
 
 static const SPIConfig spicfg = {
   NULL,
   GPIOE,                                     /* port of L3GD20 CS */
   GPIOE_L3GD20_CS,                           /* pin of L3GD20 CS */
-  SPI_CR1_BR_0 | SPI_CR1_CPOL | SPI_CR1_CPHA,/*   CR1 register*/                                        /* CR2 register */
+  SPI_CR1_BR_0 | SPI_CR1_CPOL | SPI_CR1_CPHA,/*   CR1 register*/
+  0                                          /* CR2 register */
 };
 
 static L3GD20Config l3gd20cfg = {
   &SPID1,                                    /* Pointer to SPI Driver */
   &spicfg,                                   /* Pointer to SPI Configuration */
+  {0, 0, 0},                                 /* Use default sensitivity */
+  {0, 0, 0},                                 /* Use default bias */
+  L3GD20_UNIT_DPS,                           /* Measurement unit DPS */
   L3GD20_FS_250DPS,                          /* Full scale value */
-  L3GD20_ODR_760HZ_FC_30,                    /* Output data rate */
-  L3GD20_AE_XYZ,                             /* Enabled axes */
-  L3GD20_BDU_BLOCKED,                        /* Block data update */
-  L3GD20_END_LITTLE                          /* Endianness */
+  L3GD20_ODR_760HZ,                          /* Output data rate */
+#if L3GD20_USE_ADVANCED || defined(__DOXYGEN__)
+  L3GD20_BDU_CONTINUOUS,
+  L3GD20_END_LITTLE,
+  L3GD20_BW3,
+  L3GD20_HPM_REFERENCE,
+  L3GD20_HPCF_8,
+  L3GD20_LP2M_ON,
+#endif
 };
+
+/*===========================================================================*/
+/* Command line related.                                                     */
+/*===========================================================================*/
+
+/* Enable use of special ANSI escape sequences */
+#define CHPRINTF_USE_ANSI_CODE         TRUE
+#define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
+
+static void cmd_get(BaseSequentialStream *chp, int argc, char *argv[]) {
+  (void)argv;
+  if (argc != 1) {
+    chprintf(chp, "Usage: get [raw|cooked]\r\n");
+    return;
+  }
+
+  while (chnGetTimeout((BaseChannel *)chp, 150) == Q_TIMEOUT) {
+    if (!strcmp (argv[0], "raw")) {
+#if CHPRINTF_USE_ANSI_CODE
+      chprintf(chp, "\033[2J\033[1;1H");
+#endif
+      gyroscopeReadRaw(&L3GD20D1, rawdata);
+      chprintf(chp, "L3GD20 Gyroscope raw data...\r\n");
+      for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++) {
+        chprintf(chp, "%c-axis: %d\r\n", axisID[i], rawdata[i]);
+      }
+    }
+    else if (!strcmp (argv[0], "cooked")) {
+#if CHPRINTF_USE_ANSI_CODE
+      chprintf(chp, "\033[2J\033[1;1H");
+#endif
+      gyroscopeReadCooked(&L3GD20D1, cookeddata);
+      chprintf(chp, "L3GD20 Gyroscope cooked data...\r\n");
+      for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++) {
+        chprintf(chp, "%c-axis: %.4f %s\r\n", axisID[i], cookeddata[i], unit);
+      }
+    }
+    else {
+      chprintf(chp, "Usage: get [raw|cooked]\r\n");
+      return;
+    }
+  }
+  chprintf(chp, "Stopped\r\n");
+}
+
+static void cmd_set(BaseSequentialStream *chp, int argc, char *argv[]) {
+  (void)argv;
+  if (argc < 1) {
+    chprintf(chp, "Usage: set [fs|unit] [value]\r\n");
+    return;
+  }
+  if (!strcmp (argv[0], "fs")) {
+#if CHPRINTF_USE_ANSI_CODE
+    chprintf(chp, "\033[2J\033[1;1H");
+#endif
+    if (argc != 2) {
+      chprintf(chp, "Usage: set fs [250|500|2000]\r\n");
+      return;
+    }
+    if(!strcmp (argv[1], "250")) {
+      gyroscopeSetFullScale(&L3GD20D1, L3GD20_FS_250DPS);
+      chprintf(chp, "L3GD20 Gyroscope full scale set to 250 dps...\r\n");
+    }
+    else if(!strcmp (argv[1], "500")) {
+      gyroscopeSetFullScale(&L3GD20D1, L3GD20_FS_500DPS);
+      chprintf(chp, "L3GD20 Gyroscope full scale set to 500 dps...\r\n");
+    }
+    else if(!strcmp (argv[1], "2000")) {
+      gyroscopeSetFullScale(&L3GD20D1, L3GD20_FS_2000DPS);
+      chprintf(chp, "L3GD20 Gyroscope full scale set to 2000 dps...\r\n");
+    }
+    else {
+      chprintf(chp, "Usage: set fs [250|500|2000]\r\n");
+      return;
+    }
+  }
+  else if (!strcmp (argv[0], "unit")) {
+#if CHPRINTF_USE_ANSI_CODE
+    chprintf(chp, "\033[2J\033[1;1H");
+#endif
+    if (argc != 2) {
+      chprintf(chp, "Usage: set unit [dps|rps]\r\n");
+      return;
+    }
+    if(!strcmp (argv[1], "dps")) {
+      gyroscopeSetMeasurementUnit(&L3GD20D1, L3GD20_UNIT_DPS);
+      strcpy(unit, "dps");
+      chprintf(chp, "L3GD20 Gyroscope unit set to degrees per second...\r\n");
+    }
+    else if(!strcmp (argv[1], "rps")) {
+      gyroscopeSetMeasurementUnit(&L3GD20D1, L3GD20_UNIT_RPS);
+      strcpy(unit, "rps");
+      chprintf(chp, "L3GD20 Gyroscope unit set to radians per second...\r\n");
+    }
+    else {
+      chprintf(chp, "Usage: set unit [dps|rps]\r\n");
+      return;
+    }
+  }
+  else {
+    chprintf(chp, "Usage: set [fs|unit] [value]\r\n");
+  }
+}
+
+static void cmd_bias(BaseSequentialStream *chp, int argc, char *argv[]) {
+  (void)argv;
+  if (argc != 1) {
+    chprintf(chp, "Usage: bias [sample|reset]\r\n");
+    return;
+  }
+  if(!strcmp (argv[0], "sample")) {
+#if CHPRINTF_USE_ANSI_CODE
+    chprintf(chp, "\033[2J\033[1;1H");
+#endif
+    chprintf(chp, "Please don't move the device while Green LED is on!\r\n");
+    chprintf(chp, "Press a key to start...\r\n");
+    while (chnGetTimeout((BaseChannel *)chp, 500) == Q_TIMEOUT) {
+      ;
+    }
+    palSetLine(LINE_LED4);
+    chThdSleepMilliseconds(1000);
+    gyroscopeSampleBias(&L3GD20D1);
+    palClearLine(LINE_LED4);
+
+    chprintf(chp, "Procedure completed!\r\n");
+  }
+  else if(!strcmp (argv[0], "reset")) {
+#if CHPRINTF_USE_ANSI_CODE
+    chprintf(chp, "\033[2J\033[1;1H");
+#endif
+    gyroscopeResetBias(&L3GD20D1);
+    chprintf(chp, "Bias correction removed!\r\n");
+  }
+  else {
+    chprintf(chp, "Usage: bias [sample|reset]\r\n");
+    return;
+  }
+}
+
+static const ShellCommand commands[] = {
+  {"get", cmd_get},
+  {"set", cmd_set},
+  {"bias", cmd_bias},
+  {NULL, NULL}
+};
+
+static const ShellConfig shell_cfg1 = {
+  (BaseSequentialStream *)&SDU1,
+  commands
+};
+
+/*===========================================================================*/
+/* Main code.                                                                */
+/*===========================================================================*/
 
 /*
  * LED blinker thread, times are in milliseconds.
@@ -63,8 +227,13 @@ static THD_FUNCTION(Thread1, arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (true) {
-    palToggleLine(LINE_LED6);
-    chThdSleepMilliseconds(250);
+    systime_t time;
+
+    time = serusbcfg.usbp->state == USB_ACTIVE ? 250 : 500;
+    palClearLine(LINE_LED5);
+    chThdSleepMilliseconds(time);
+    palSetLine(LINE_LED5);
+    chThdSleepMilliseconds(time);
   }
 }
 
@@ -98,6 +267,7 @@ int main(void) {
   chThdSleepMilliseconds(1500);
   usbStart(serusbcfg.usbp, &usbcfg);
   usbConnectBus(serusbcfg.usbp);
+
   /*
    * Creates the blinker thread.
    */
@@ -113,45 +283,20 @@ int main(void) {
    */
   l3gd20Start(&L3GD20D1, &l3gd20cfg);
 
-  while(!palReadLine(LINE_BUTTON)) {
-    chprintf(chp, "Press BTN to calibrate gyroscope...\r\n");
-    chThdSleepMilliseconds(150);
-#if CHPRINTF_USE_ANSI_CODE
-    chprintf(chp, "\033[2J\033[1;1H");
-#endif
-  }
+  /*
+   * Shell manager initialization.
+   */
+  shellInit();
 
-  palClearLine(LINE_LED3);
-  chprintf(chp, "Calibrating Gyroscope sampling bias...\r\n");
-  chprintf(chp, "Keep it in the rest position while red LED is on\r\n");
-  chThdSleepMilliseconds(3000);
-
-  palSetLine(LINE_LED5);
-  chThdSleepMilliseconds(1000);
-
-  gyroscopeSampleBias(&L3GD20D1);
-  palClearLine(LINE_LED5);
-#if CHPRINTF_USE_ANSI_CODE
-  chprintf(chp, "\033[2J\033[1;1H");
-#endif
-
-  while (TRUE) {
-    palToggleLine(LINE_LED3);
-    gyroscopeReadRaw(&L3GD20D1, rawdata);
-    for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++)
-      chprintf(chp, "RAW-%c:%d\r\n", axesID[i], rawdata[i]);
-
-    gyroscopeReadCooked(&L3GD20D1, cookeddata);
-    for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++)
-      chprintf(chp, "COOKED-%c:%.3f\r\n", axesID[i], cookeddata[i]);
-
-    gyroscopeGetTemp(&L3GD20D1, &temperature);
-    chprintf(chp, "TEMP:%.1f C°\r\n", temperature);
-
-    chThdSleepMilliseconds(150);
-#if CHPRINTF_USE_ANSI_CODE
-    chprintf(chp, "\033[2J\033[1;1H");
-#endif
+  while(TRUE) {
+    if (SDU1.config->usbp->state == USB_ACTIVE) {
+      thread_t *shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
+                                              "shell", NORMALPRIO + 1,
+                                              shellThread, (void *)&shell_cfg1);
+      chThdWait(shelltp);               /* Waiting termination.             */
+    }
+    chThdSleepMilliseconds(1000);
   }
   l3gd20Stop(&L3GD20D1);
+  return 0;
 }

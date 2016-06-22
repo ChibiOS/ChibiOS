@@ -186,7 +186,7 @@ static void cmd_bias(BaseSequentialStream *chp, int argc, char *argv[]) {
 #endif
     chprintf(chp, "Please don't move the device while Green LEDs are on!\r\n");
     chprintf(chp, "Press a key to start...\r\n");
-    while (chnGetTimeout((BaseChannel *)chp, TIME_IMMEDIATE) == Q_TIMEOUT)
+    while (chnGetTimeout((BaseChannel *)chp, 500) == Q_TIMEOUT)
       ;
     palSetLine(LINE_LED6_GREEN);
     palSetLine(LINE_LED7_GREEN);

@@ -8,8 +8,8 @@ The demo runs on an STM32F3 Discovery board.
 
 ** The Demo **
 
-The demo flashes the board LED using a thread, read data from L3GD20 printing
-it on a BaseSequentialStream (SDU1, mapped on USB virtual COM port).
+The demo uses the ChibiOS Shell in order to test L3GD20 APIs.
+Shell is used on the SDU1 BaseSequentialStream.
 
 ** Build Procedure **
 
