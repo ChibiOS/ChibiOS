@@ -34,10 +34,10 @@
  * @{
  */
 /*===========================================================================*/
-/* STM32F745xx, STM32F746xx, STM32F756xx.                                    */
+/* STM32F745xx, STM32F746xx, STM32F756xx, STM32F767xx.                       */
 /*===========================================================================*/
 #if defined(STM32F745xx) || defined(STM32F746xx) || defined(STM32F756xx) || \
-    defined(__DOXYGEN__)
+    defined(STM32F767xx) || defined(__DOXYGEN__)
 /* ADC attributes.*/
 #define STM32_ADC_HANDLER                   Vector88
 #define STM32_ADC_NUMBER                    18
