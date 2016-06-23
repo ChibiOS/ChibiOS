@@ -88,7 +88,7 @@ PROJECT = ch
 # Imported source files and paths
 CHIBIOS = ../../..
 # Startup files.
-include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_xmc1xxx.mk
+include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_xmc1100.mk
 # HAL-OSAL files (optional).
 #include $(CHIBIOS)/os/hal/hal.mk
 #include $(CHIBIOS)/os/hal/ports/STM32/STM32F0xx/platform.mk

@@ -39,7 +39,7 @@
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="RT-ARMCM0-GENERIC.null.1703860681" name="RT-ARMCM0-GENERIC"/>
+		<project id="RT-XMC1100-XMC_2GO.null.1703860681" name="RT-XMC1100-XMC_2GO"/>
 	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>

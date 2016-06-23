@@ -1,4 +1,4 @@
-# List of the ChibiOS generic XMC1xxx startup and CMSIS files.
+# List of the ChibiOS generic XMC1100 startup and CMSIS files.
 STARTUPSRC = $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/crt1.c \
              $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/vectors.c
           

@@ -19,7 +19,6 @@
  */
 MEMORY
 {
-    rom0    : org = 0x00000000, len = 8k
     flash0  : org = 0x10001000, len = 64k
     flash1  : org = 0x00000000, len = 0
     flash2  : org = 0x00000000, len = 0
@@ -28,9 +27,9 @@ MEMORY
     flash5  : org = 0x00000000, len = 0
     flash6  : org = 0x00000000, len = 0
     flash7  : org = 0x00000000, len = 0
-    ram0    : org = 0x20000000, len = 16k
-    ram1    : org = 0x00000000, len = 0
-    ram2    : org = 0x00000000, len = 0
+    ram0    : org = 0x20000000, len = 0xC0
+    ram1    : org = 0x200000C0, len = 0x140
+    ram2    : org = 0x20000200, len = 16k - 0x140 - 0xC0
     ram3    : org = 0x00000000, len = 0
     ram4    : org = 0x00000000, len = 0
     ram5    : org = 0x00000000, len = 0
@@ -42,8 +41,8 @@ MEMORY
    and a load region (_LMA suffix).*/
 
 /* Flash region to be used for exception vectors.*/
-REGION_ALIAS("VECTORS_FLASH", rom0);
-REGION_ALIAS("VECTORS_FLASH_LMA", rom0);
+REGION_ALIAS("VECTORS_FLASH", flash0);
+REGION_ALIAS("VECTORS_FLASH_LMA", flash0);
 
 /* Flash region to be used for constructors and destructors.*/
 REGION_ALIAS("XTORS_FLASH", flash0);
@@ -66,21 +65,21 @@ REGION_ALIAS("RAM_INIT_FLASH_LMA", flash0);
 
 /* RAM region to be used for Main stack. This stack accommodates the processing
    of all exceptions and interrupts.*/
-REGION_ALIAS("MAIN_STACK_RAM", ram0);
+REGION_ALIAS("MAIN_STACK_RAM", ram2);
 
 /* RAM region to be used for the process stack. This is the stack used by
    the main() function.*/
-REGION_ALIAS("PROCESS_STACK_RAM", ram0);
+REGION_ALIAS("PROCESS_STACK_RAM", ram2);
 
 /* RAM region to be used for data segment.*/
-REGION_ALIAS("DATA_RAM", ram0);
+REGION_ALIAS("DATA_RAM", ram2);
 REGION_ALIAS("DATA_RAM_LMA", flash0);
 
 /* RAM region to be used for BSS segment.*/
-REGION_ALIAS("BSS_RAM", ram0);
+REGION_ALIAS("BSS_RAM", ram2);
 
 /* RAM region to be used for the default heap.*/
-REGION_ALIAS("HEAP_RAM", ram0);
+REGION_ALIAS("HEAP_RAM", ram2);
 
 /* Generic rules inclusion.*/
 INCLUDE rules.ld
