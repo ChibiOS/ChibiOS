@@ -75,8 +75,8 @@ SECTIONS
         . = ALIGN(4);
         __ram0_init_text__ = LOADADDR(.ram0_init);
         __ram0_init__ = .;
-        *(.ram0_init)
-        *(.ram0_init.*)
+        KEEP(*(.ram0_init))
+        KEEP(*(.ram0_init.*))
         . = ALIGN(4);
     } > ram0 AT > RAM_INIT_FLASH_LMA
 
@@ -99,8 +99,8 @@ SECTIONS
         . = ALIGN(4);
         __ram1_init_text__ = LOADADDR(.ram1_init);
         __ram1_init__ = .;
-        *(.ram1_init)
-        *(.ram1_init.*)
+        KEEP(*(.ram1_init))
+        KEEP(*(.ram1_init.*))
         . = ALIGN(4);
     } > ram1 AT > RAM_INIT_FLASH_LMA
 
@@ -123,8 +123,8 @@ SECTIONS
         . = ALIGN(4);
         __ram2_init_text__ = LOADADDR(.ram2_init);
         __ram2_init__ = .;
-        *(.ram2_init)
-        *(.ram2_init.*)
+        KEEP(*(.ram2_init))
+        KEEP(*(.ram2_init.*))
         . = ALIGN(4);
     } > ram2 AT > RAM_INIT_FLASH_LMA
 
@@ -147,8 +147,8 @@ SECTIONS
         . = ALIGN(4);
         __ram3_init_text__ = LOADADDR(.ram3_init);
         __ram3_init__ = .;
-        *(.ram3_init)
-        *(.ram3_init.*)
+        KEEP(*(.ram3_init))
+        KEEP(*(.ram3_init.*))
         . = ALIGN(4);
     } > ram3 AT > RAM_INIT_FLASH_LMA
 
@@ -171,8 +171,8 @@ SECTIONS
         . = ALIGN(4);
         __ram4_init_text__ = LOADADDR(.ram4_init);
         __ram4_init__ = .;
-        *(.ram4_init)
-        *(.ram4_init.*)
+        KEEP(*(.ram4_init))
+        KEEP(*(.ram4_init.*))
         . = ALIGN(4);
     } > ram4 AT > RAM_INIT_FLASH_LMA
 
@@ -195,8 +195,8 @@ SECTIONS
         . = ALIGN(4);
         __ram5_init_text__ = LOADADDR(.ram5_init);
         __ram5_init__ = .;
-        *(.ram5_init)
-        *(.ram5_init.*)
+        KEEP(*(.ram5_init))
+        KEEP(*(.ram5_init.*))
         . = ALIGN(4);
     } > ram5 AT > RAM_INIT_FLASH_LMA
 
@@ -219,8 +219,8 @@ SECTIONS
         . = ALIGN(4);
         __ram6_init_text__ = LOADADDR(.ram6_init);
         __ram6_init__ = .;
-        *(.ram6_init)
-        *(.ram6_init.*)
+        KEEP(*(.ram6_init))
+        KEEP(*(.ram6_init.*))
         . = ALIGN(4);
     } > ram6 AT > RAM_INIT_FLASH_LMA
 
@@ -243,8 +243,8 @@ SECTIONS
         . = ALIGN(4);
         __ram7_init_text__ = LOADADDR(.ram7_init);
         __ram7_init__ = .;
-        *(.ram7_init)
-        *(.ram7_init.*)
+        KEEP(*(.ram7_init))
+        KEEP(*(.ram7_init.*))
         . = ALIGN(4);
     } > ram7 AT > RAM_INIT_FLASH_LMA
 

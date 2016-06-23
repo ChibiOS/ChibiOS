@@ -36,14 +36,15 @@
 
 #if !defined(__DOXYGEN__)
 
-                .syntax unified
-                .cpu    cortex-m0
+                .syntax     unified
+                .cpu        cortex-m0
 
                 .thumb
-                .section ram0_init
+                .section    .ram0_init, "ax"
 
-                .align  2
-                .global __veneers
+                .align      2
+                .thumb_func
+                .global     __veneers
 __veneers:
                 .long       0
                 .long       0

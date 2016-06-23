@@ -27,9 +27,9 @@ MEMORY
     flash5  : org = 0x00000000, len = 0
     flash6  : org = 0x00000000, len = 0
     flash7  : org = 0x00000000, len = 0
-    ram0    : org = 0x20000000, len = 0xC0
-    ram1    : org = 0x200000C0, len = 0x140
-    ram2    : org = 0x20000200, len = 16k - 0x140 - 0xC0
+    ram0    : org = 0x20000000, len = 0x200
+    ram1    : org = 0x20000200, len = 16k - 0x200
+    ram2    : org = 0x00000000, len = 0
     ram3    : org = 0x00000000, len = 0
     ram4    : org = 0x00000000, len = 0
     ram5    : org = 0x00000000, len = 0
@@ -65,21 +65,21 @@ REGION_ALIAS("RAM_INIT_FLASH_LMA", flash0);
 
 /* RAM region to be used for Main stack. This stack accommodates the processing
    of all exceptions and interrupts.*/
-REGION_ALIAS("MAIN_STACK_RAM", ram2);
+REGION_ALIAS("MAIN_STACK_RAM", ram1);
 
 /* RAM region to be used for the process stack. This is the stack used by
    the main() function.*/
-REGION_ALIAS("PROCESS_STACK_RAM", ram2);
+REGION_ALIAS("PROCESS_STACK_RAM", ram1);
 
 /* RAM region to be used for data segment.*/
-REGION_ALIAS("DATA_RAM", ram2);
+REGION_ALIAS("DATA_RAM", ram1);
 REGION_ALIAS("DATA_RAM_LMA", flash0);
 
 /* RAM region to be used for BSS segment.*/
-REGION_ALIAS("BSS_RAM", ram2);
+REGION_ALIAS("BSS_RAM", ram1);
 
 /* RAM region to be used for the default heap.*/
-REGION_ALIAS("HEAP_RAM", ram2);
+REGION_ALIAS("HEAP_RAM", ram1);
 
 /* Generic rules inclusion.*/
 INCLUDE rules.ld
