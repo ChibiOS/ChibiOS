@@ -24,8 +24,10 @@ ifeq ($(USE_LINK_GC),)
 endif
 
 # Linker extra options here.
+# NOTE: On XMC1100 the following symbols are mapped on the words CLK_VAL1 and
+#       CLK_VAL2.
 ifeq ($(USE_LDOPT),)
-  USE_LDOPT = 
+  USE_LDOPT = --defsym=MemManage_Handler=0xFFFFFFFF,--defsym=BusFault_Handler=0xFFFFFFFF
 endif
 
 # Enable this if you want link time optimizations (LTO)

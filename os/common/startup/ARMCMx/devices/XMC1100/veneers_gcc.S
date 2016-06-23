@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    veneers_gcc.s
+ * @file    veneers_gcc.S
  * @brief   XMC1100 veneers for GCC.
  *
  * @addtogroup ARMCMx_XMC1100_VENEERS_GCC
@@ -52,10 +52,8 @@ __veneers:
                 mov         pc, r0
                 ldr         r0, =HardFault_Handler
                 mov         pc, r0
-                ldr         r0, =MemManage_Handler
-                mov         pc, r0
-                ldr         r0, =BusFault_Handler
-                mov         pc, r0
+                .long       0
+                .long       0
                 ldr         r0, =UsageFault_Handler
                 mov         pc, r0
                 .long       0
