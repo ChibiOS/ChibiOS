@@ -40,7 +40,7 @@
                 .cpu        cortex-m0
 
                 .thumb
-                .section    .ram0_init, "ax"
+                .section    .ram0_init, "ax", %progbits
 
                 .align      2
                 .thumb_func
