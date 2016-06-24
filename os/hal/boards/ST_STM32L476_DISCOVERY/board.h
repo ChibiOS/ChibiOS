@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2015 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -699,7 +699,7 @@
                                      PIN_ODR_HIGH(GPIOC_LCD_SEG14) |        \
                                      PIN_ODR_HIGH(GPIOC_LCD_SEG9) |         \
                                      PIN_ODR_HIGH(GPIOC_LCD_SEG13) |        \
-                                     PIN_ODR_LOW(GPIOC_OTG_FS_PSON) |       \
+                                     PIN_ODR_HIGH(GPIOC_OTG_FS_PSON) |      \
                                      PIN_ODR_HIGH(GPIOC_OTG_FS_OVCURR) |    \
                                      PIN_ODR_HIGH(GPIOC_OTG_FS_VBUS) |      \
                                      PIN_ODR_HIGH(GPIOC_OTG_FS_ID) |        \
