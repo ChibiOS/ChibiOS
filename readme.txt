@@ -73,6 +73,9 @@
 *****************************************************************************
 
 *** 16.1.5 ***
+- HAL: Fixed wrong comment in STM32L4xx\hal_lld (bug #760).
+- HAL: Fixed wrong MSIRANGE management for STM32L4xx in function 
+       stm32_clock_init() (bug #759).
 - HAL: Fixed problem in USB driver when changing configuration (bug #757).
 - HAL: Fixed bug in function usbDisableEndpointsI() (bug #756).
 - HAL: Fixed wrong info in readme of LWIP related demos (bug #755).
