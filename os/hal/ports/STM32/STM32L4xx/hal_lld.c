@@ -111,6 +111,13 @@ void hal_lld_init(void) {
 #if STM32_PVD_ENABLE
   PWR->CR1 |= PWR_CR1_PVDE | (STM32_PLS & STM32_PLS_MASK);
 #endif /* STM32_PVD_ENABLE */
+
+  /* Validating USB VDD.*/
+#if HAL_USE_USB
+  PWR->CR2 = PWR_CR2_USV;
+#else
+  PWR->CR2 = 0;
+#endif /* STM32_PVD_ENABLE */
 }
 
 /**

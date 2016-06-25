@@ -40,7 +40,7 @@
 #define STM32_VOS                           STM32_VOS_RANGE1
 #define STM32_PVD_ENABLE                    FALSE
 #define STM32_PLS                           STM32_PLS_LEV0
-#define STM32_HSI16_ENABLED                 FALSE
+#define STM32_HSI16_ENABLED                 TRUE
 #define STM32_LSI_ENABLED                   TRUE
 #define STM32_HSE_ENABLED                   FALSE
 #define STM32_LSE_ENABLED                   TRUE
@@ -49,12 +49,12 @@
 #define STM32_USB_CLOCK_ENABLED             TRUE
 #define STM32_SAI1_CLOCK_ENABLED            TRUE
 #define STM32_SAI2_CLOCK_ENABLED            TRUE
-#define STM32_MSIRANGE                      STM32_MSIRANGE_4M
+#define STM32_MSIRANGE                      STM32_MSIRANGE_48M
 #define STM32_MSISRANGE                     STM32_MSISRANGE_4M
 #define STM32_SW                            STM32_SW_PLL
-#define STM32_PLLSRC                        STM32_PLLSRC_MSI
-#define STM32_PLLM_VALUE                    1
-#define STM32_PLLN_VALUE                    72
+#define STM32_PLLSRC                        STM32_PLLSRC_HSI16
+#define STM32_PLLM_VALUE                    4
+#define STM32_PLLN_VALUE                    80
 #define STM32_PLLP_VALUE                    7
 #define STM32_PLLQ_VALUE                    6
 #define STM32_PLLR_VALUE                    4
@@ -85,7 +85,7 @@
 #define STM32_LPTIM2SEL                     STM32_LPTIM2SEL_PCLK1
 #define STM32_SAI1SEL                       STM32_SAI1SEL_OFF
 #define STM32_SAI2SEL                       STM32_SAI2SEL_OFF
-#define STM32_CLK48SEL                      STM32_CLK48SEL_PLL
+#define STM32_CLK48SEL                      STM32_CLK48SEL_MSI
 #define STM32_ADCSEL                        STM32_ADCSEL_SYSCLK
 #define STM32_SWPMI1SEL                     STM32_SWPMI1SEL_PCLK1
 #define STM32_DFSDMSEL                      STM32_DFSDMSEL_PCLK1
@@ -96,9 +96,9 @@
  */
 #define STM32_ADC_DUAL_MODE                 FALSE
 #define STM32_ADC_COMPACT_SAMPLES           FALSE
-#define STM32_ADC_USE_ADC1                  TRUE
-#define STM32_ADC_USE_ADC2                  TRUE
-#define STM32_ADC_USE_ADC3                  TRUE
+#define STM32_ADC_USE_ADC1                  FALSE
+#define STM32_ADC_USE_ADC2                  FALSE
+#define STM32_ADC_USE_ADC3                  FALSE
 #define STM32_ADC_ADC1_DMA_STREAM           STM32_DMA_STREAM_ID(1, 1)
 #define STM32_ADC_ADC2_DMA_STREAM           STM32_DMA_STREAM_ID(1, 2)
 #define STM32_ADC_ADC3_DMA_STREAM           STM32_DMA_STREAM_ID(1, 3)
@@ -239,8 +239,8 @@
  */
 #define STM32_SDC_USE_SDMMC1                FALSE
 #define STM32_SDC_SDMMC_UNALIGNED_SUPPORT   TRUE
-#define STM32_SDC_SDMMC_WRITE_TIMEOUT       250
-#define STM32_SDC_SDMMC_READ_TIMEOUT        25
+#define STM32_SDC_SDMMC_WRITE_TIMEOUT       1000
+#define STM32_SDC_SDMMC_READ_TIMEOUT        1000
 #define STM32_SDC_SDMMC_CLOCK_DELAY         10
 #define STM32_SDC_SDMMC1_DMA_PRIORITY       3
 #define STM32_SDC_SDMMC1_IRQ_PRIORITY       9
@@ -279,7 +279,7 @@
 #define STM32_SPI_DMA_ERROR_HOOK(spip)      osalSysHalt("DMA failure")
 
 /*
- * ST driver system settings.
+ * ST driver system settings.+++
  */
 #define STM32_ST_IRQ_PRIORITY               8
 #define STM32_ST_USE_TIMER                  2
@@ -288,7 +288,7 @@
  * UART driver system settings.
  */
 #define STM32_UART_USE_USART1               FALSE
-#define STM32_UART_USE_USART2               TRUE
+#define STM32_UART_USE_USART2               FALSE
 #define STM32_UART_USE_USART3               FALSE
 #define STM32_UART_USE_UART4                FALSE
 #define STM32_UART_USE_UART5                FALSE
@@ -329,7 +329,7 @@
 #define STM32_USB_OTGFIFO_FILL_BASEPRI      0
 
 /*
- * WDG driver system settings.
+ * WDG driver system settings.+++
  */
 #define STM32_WDG_USE_IWDG                  FALSE
 
