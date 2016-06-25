@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.5 ***
+- HAL: Fixed wrong PWR configurations in STM32L4xx\hal_lld (bug #761).
 - HAL: Fixed wrong comment in STM32L4xx\hal_lld (bug #760).
 - HAL: Fixed wrong MSIRANGE management for STM32L4xx in function 
        stm32_clock_init() (bug #759).

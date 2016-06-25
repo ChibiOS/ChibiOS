@@ -88,8 +88,7 @@ static void hal_lld_backup_domain_init(void) {
  */
 void hal_lld_init(void) {
 
-  /* Reset of all peripherals. AHB3 is not reseted because it could have
-     been initialized in the board initialization file (board.c).*/
+  /* Reset of all peripherals.*/
   rccResetAHB1(~0);
   rccResetAHB2(~0);
   rccResetAHB3(~0);
@@ -109,8 +108,20 @@ void hal_lld_init(void) {
 
   /* Programmable voltage detector enable.*/
 #if STM32_PVD_ENABLE
-  PWR->CR1 |= PWR_CR1_PVDE | (STM32_PLS & STM32_PLS_MASK);
+  PWR->CR2 = PWR_CR2_PVDE | (STM32_PLS & STM32_PLS_MASK);
+#else
+  PWR->CR2 = 0;
 #endif /* STM32_PVD_ENABLE */
+
+  /* Enabling independent VDDUSB.*/
+#if HAL_USE_USB
+  PWR->CR2 |= PWR_CR2_USV;
+#endif /* HAL_USE_USB */
+
+  /* Enabling independent VDDIO2 required by GPIOG.*/
+#if STM32_HAS_GPIOG
+  PWR->CR2 |= PWR_CR2_IOSV;
+#endif /* STM32_HAS_GPIOG */
 }
 
 /**
