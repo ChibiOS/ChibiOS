@@ -1108,6 +1108,13 @@
 
 #endif /* !STM32_LSE_ENABLED */
 
+/*
+ * MSI related checks.
+ */
+#if (STM32_MSIRANGE == STM32_MSIRANGE_48M) && !STM32_MSIPLL_ENABLED
+#warning "STM32_MSIRANGE_48M should be used with STM32_MSIPLL_ENABLED"
+#endif
+
 /**
  * @brief   STM32_PLLM field.
  */
