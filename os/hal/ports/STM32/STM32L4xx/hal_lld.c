@@ -88,8 +88,7 @@ static void hal_lld_backup_domain_init(void) {
  */
 void hal_lld_init(void) {
 
-  /* Reset of all peripherals. AHB3 is not reseted because it could have
-     been initialized in the board initialization file (board.c).*/
+  /* Reset of all peripherals.*/
   rccResetAHB1(~0);
   rccResetAHB2(~0);
   rccResetAHB3(~0);
@@ -109,15 +108,20 @@ void hal_lld_init(void) {
 
   /* Programmable voltage detector enable.*/
 #if STM32_PVD_ENABLE
-  PWR->CR1 |= PWR_CR1_PVDE | (STM32_PLS & STM32_PLS_MASK);
-#endif /* STM32_PVD_ENABLE */
-
-  /* Validating USB VDD.*/
-#if HAL_USE_USB
-  PWR->CR2 = PWR_CR2_USV;
+  PWR->CR2 = PWR_CR2_PVDE | (STM32_PLS & STM32_PLS_MASK);
 #else
   PWR->CR2 = 0;
 #endif /* STM32_PVD_ENABLE */
+
+  /* Enabling independent VDDUSB.*/
+#if HAL_USE_USB
+  PWR->CR2 |= PWR_CR2_USV;
+#endif /* HAL_USE_USB */
+
+  /* Enabling independent VDDIO2 required by GPIOG.*/
+#if STM32_HAS_GPIOG
+  PWR->CR2 |= PWR_CR2_IOSV;
+#endif /* STM32_HAS_GPIOG */
 }
 
 /**
@@ -198,7 +202,7 @@ void stm32_clock_init(void) {
   RCC->CR |= RCC_CR_MSIPLLEN;
 #endif
 
-  /* Note that  MSI range is the MSISRANGE by default which is 4M.*/
+  /* Changing MSIRANGE value. Meanwhile range is set by MSISRANGE which is 4MHz.*/
   RCC->CR |= STM32_MSIRANGE;
 
   /* Switching from MSISRANGE to MSIRANGE.*/
