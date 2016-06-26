@@ -46,6 +46,15 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Enforces initialization of MSP.
+ * @note    This is required if the boot process is not reliable for whatever
+ *          reason (bad ROMs, bad bootloaders, bad debuggers=.
+ */
+#if !defined(CRT0_VTOR_INIT) || defined(__DOXYGEN__)
+#define CRT0_FORCE_MSP_INIT                 TRUE
+#endif
+
+/**
  * @brief   VTOR special register initialization.
  * @details VTOR is initialized to point to the vectors table.
  * @note    This option can only be enabled on Cortex-M0+ cores.
@@ -141,6 +150,12 @@
 Reset_Handler:
                 /* Interrupts are globally masked initially.*/
                 cpsid   i
+
+#if CRT0_FORCE_MSP_INIT == TRUE
+                /* MSP stack pointers initialization.*/
+                ldr     r0, =__main_stack_end__
+                msr     MSP, r0
+#endif
 
                 /* PSP stack pointers initialization.*/
                 ldr     r0, =__process_stack_end__
