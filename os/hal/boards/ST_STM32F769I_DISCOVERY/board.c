@@ -88,7 +88,7 @@ bool sdc_lld_is_card_inserted(SDCDriver *sdcp) {
 
   (void)sdcp;
 
-  return !palReadPad(GPIOC, GPIOC_SD_DETECT);
+  return !palReadLine(LINE_SD_DETECT);
 }
 
 /**

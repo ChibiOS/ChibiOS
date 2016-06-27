@@ -14,7 +14,7 @@
   	<sdc_lld_is_card_inserted><![CDATA[
   (void)sdcp;
 
-  return !palReadPad(GPIOC, GPIOC_SD_DETECT);]]></sdc_lld_is_card_inserted>
+  return !palReadLine(LINE_SD_DETECT);]]></sdc_lld_is_card_inserted>
  </board_functions>
   <headers></headers>
   <ethernet_phy>
