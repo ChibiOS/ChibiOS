@@ -27,12 +27,17 @@ ifeq ($(USE_LTO),yes)
   OPT += -flto
 endif
 
+# FPU options default (Cortex-M4 and Cortex-M7 single precision).
+ifeq ($(USE_FPU_OPT),)
+  USE_FPU_OPT = -mfloat-abi=$(USE_FPU) -mfpu=fpv4-sp-d16 -fsingle-precision-constant
+endif
+
 # FPU-related options
 ifeq ($(USE_FPU),)
   USE_FPU = no
 endif
 ifneq ($(USE_FPU),no)
-  OPT    += -mfloat-abi=$(USE_FPU) -mfpu=fpv4-sp-d16 -fsingle-precision-constant
+  OPT    += $(USE_FPU_OPT)
   DDEFS  += -DCORTEX_USE_FPU=TRUE
   DADEFS += -DCORTEX_USE_FPU=TRUE
 else
