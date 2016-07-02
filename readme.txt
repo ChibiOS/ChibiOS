@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.5 ***
+- NEW: Added support for more Nucleo and Discovery boards.
 - HAL: Board files regenerated using the latest version of the generator
        plugin.
 - HAL: Fixed wrong PWR configurations in STM32L4xx\hal_lld (bug #761).
