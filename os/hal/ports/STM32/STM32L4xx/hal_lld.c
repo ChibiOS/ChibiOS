@@ -59,6 +59,27 @@ static void hal_lld_backup_domain_init(void) {
     RCC->BDCR = RCC_BDCR_BDRST;
     RCC->BDCR = 0;
   }
+  
+#if STM32_LSE_ENABLED
+  /* LSE activation.*/
+#if defined(STM32_LSE_BYPASS)
+  /* LSE Bypass.*/
+  RCC->BDCR |= STM32_LSEDRV | RCC_BDCR_LSEON | RCC_BDCR_LSEBYP;
+#else
+  /* No LSE Bypass.*/
+  RCC->BDCR |= STM32_LSEDRV | RCC_BDCR_LSEON;
+#endif
+  while ((RCC->BDCR & RCC_BDCR_LSERDY) == 0)
+    ;                                       /* Wait until LSE is stable.    */
+#endif
+
+#if STM32_MSIPLL_ENABLED
+  /* MSI PLL activation depends on LSE. Reactivating and checking for
+     MSI stability.*/
+  RCC->CR |= RCC_CR_MSIPLLEN;
+  while ((RCC->CR & RCC_CR_MSIRDY) == 0)
+    ;                                       /* Wait until MSI is stable.    */
+#endif
 
 #if HAL_USE_RTC
   /* If the backup domain hasn't been initialized yet then proceed with
