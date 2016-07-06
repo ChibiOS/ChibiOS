@@ -120,6 +120,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Fixed wrong backup domain reset in STM32L4xx\hal_lld (bug #763)
+       (backported to 16.1.6).
 - HAL: Fixed wrong PWR configurations in STM32L4xx\hal_lld (bug #761)
        (backported to 16.1.5).
 - HAL: Fixed wrong comment in STM32L4xx\hal_lld (bug #760)
