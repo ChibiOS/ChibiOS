@@ -148,9 +148,9 @@ static bool default_handler(USBDriver *usbp) {
          procedure on the current configuration.*/
       if (usbp->state == USB_ACTIVE) {
         /* Current configuration cleared.*/
-        chSysLockFromISR ();
+        osalSysLockFromISR ();
         usbDisableEndpointsI(usbp);
-        chSysUnlockFromISR ();
+        osalSysUnlockFromISR ();
         usbp->configuration = 0U;
         usbp->state = USB_SELECTED;
         _usb_isr_invoke_event_cb(usbp, USB_EVENT_UNCONFIGURED);

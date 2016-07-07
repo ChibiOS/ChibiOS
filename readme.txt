@@ -71,8 +71,11 @@
 *****************************************************************************
 *** Releases and Change Log                                               ***
 *****************************************************************************
+
 *** 16.1.6 ***
+- HAL: Fixed dependency on RT in hal_usb.c (bug #764).
 - HAL: Fixed wrong backup domain reset in STM32L4xx\hal_lld (bug #763).
+
 *** 16.1.5 ***
 - NEW: Added support for more Nucleo and Discovery boards.
 - HAL: Board files regenerated using the latest version of the generator
