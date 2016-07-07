@@ -37,6 +37,9 @@ endif
 ifneq ($(findstring HAL_USE_PWM TRUE,$(HALCONF)),)
 PLATFORMSRC += ${CHIBIOS}/os/hal/templates/hal_pwm_lld.c
 endif
+ifneq ($(findstring HAL_USE_QSPI TRUE,$(HALCONF)),)
+PLATFORMSRC += ${CHIBIOS}/os/hal/templates/hal_qspi_lld.c
+endif
 ifneq ($(findstring HAL_USE_RTC TRUE,$(HALCONF)),)
 PLATFORMSRC += ${CHIBIOS}/os/hal/templates/hal_rtc_lld.c
 endif
@@ -71,6 +74,7 @@ PLATFORMSRC = ${CHIBIOS}/os/hal/templates/hal_lld.c \
               ${CHIBIOS}/os/hal/templates/hal_mac_lld.c \
               ${CHIBIOS}/os/hal/templates/hal_pal_lld.c \
               ${CHIBIOS}/os/hal/templates/hal_pwm_lld.c \
+              ${CHIBIOS}/os/hal/templates/hal_qspi_lld.c \
               ${CHIBIOS}/os/hal/templates/hal_rtc_lld.c \
               ${CHIBIOS}/os/hal/templates/hal_sdc_lld.c \
               ${CHIBIOS}/os/hal/templates/hal_serial_lld.c \
