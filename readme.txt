@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** Next ***
+- EX:  Added gyroscope implementation for ST L3GD20 devices.
 - HAL: Added events handling to the PAL driver. The EXT driver is now
        deprecated but still supported.
 - EX:  Added flash implementation for Micron M25Qxxx devices.
