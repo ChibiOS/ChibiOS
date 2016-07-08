@@ -51,7 +51,7 @@
 /**
  * @brief   M25Q driver version minor number.
  */
-#define EX_M25Q_MINOR          0
+#define EX_M25Q_MINOR           0
 
 /**
  * @brief   M25Q driver version patch number.
