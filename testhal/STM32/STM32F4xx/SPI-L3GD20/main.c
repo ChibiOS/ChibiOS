@@ -28,7 +28,7 @@
 /* L3GD20 related.                                                           */
 /*===========================================================================*/
 
-/* L3GD20 Driver: This object represent an L3GD20 instance */
+/* L3GD20 Driver: This object represent an L3GD20 instance.*/
 static L3GD20Driver L3GD20D1;
 
 static int32_t rawdata[L3GD20_NUMBER_OF_AXES];
@@ -40,20 +40,20 @@ static uint32_t i;
 
 static const SPIConfig spicfg = {
   NULL,
-  GPIOE,                                     /* port of L3GD20 CS */
-  GPIOE_L3GD20_CS,                           /* pin of L3GD20 CS */
-  SPI_CR1_BR_0 | SPI_CR1_CPOL | SPI_CR1_CPHA,/*   CR1 register*/
-  0                                          /* CR2 register */
+  GPIOE,                                     /* port of L3GD20 CS.*/
+  GPIOE_L3GD20_CS,                           /* pin of L3GD20 CS.*/
+  SPI_CR1_BR_0 | SPI_CR1_CPOL | SPI_CR1_CPHA,/*   CR1 register.*/
+  0                                          /* CR2 register.*/
 };
 
 static L3GD20Config l3gd20cfg = {
-  &SPID1,                                    /* Pointer to SPI Driver */
-  &spicfg,                                   /* Pointer to SPI Configuration */
-  {0, 0, 0},                                 /* Use default sensitivity */
-  {0, 0, 0},                                 /* Use default bias */
-  L3GD20_UNIT_DPS,                           /* Measurement unit DPS */
-  L3GD20_FS_250DPS,                          /* Full scale value */
-  L3GD20_ODR_760HZ,                          /* Output data rate */
+  &SPID1,                                    /* Pointer to SPI Driver.*/
+  &spicfg,                                   /* Pointer to SPI Configuration.*/
+  {0, 0, 0},                                 /* Use default sensitivity.*/
+  {0, 0, 0},                                 /* Use default bias.*/
+  L3GD20_UNIT_DPS,                           /* Measurement unit DPS.*/
+  L3GD20_FS_250DPS,                          /* Full scale value.*/
+  L3GD20_ODR_760HZ,                          /* Output data rate.*/
 #if L3GD20_USE_ADVANCED || defined(__DOXYGEN__)
   L3GD20_BDU_CONTINUOUS,
   L3GD20_END_LITTLE,
@@ -68,9 +68,16 @@ static L3GD20Config l3gd20cfg = {
 /* Command line related.                                                     */
 /*===========================================================================*/
 
-/* Enable use of special ANSI escape sequences */
-#define CHPRINTF_USE_ANSI_CODE         TRUE
-#define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
+
+
+
+
+
+
+
+/* Enable use of special ANSI escape sequences.*/
+#define CHPRINTF_USE_ANSI_CODE      TRUE
+#define SHELL_WA_SIZE               THD_WORKING_AREA_SIZE(2048)
 
 static void cmd_get(BaseSequentialStream *chp, int argc, char *argv[]) {
   (void)argv;
@@ -179,13 +186,14 @@ static void cmd_bias(BaseSequentialStream *chp, int argc, char *argv[]) {
 #endif
     chprintf(chp, "Please don't move the device while Green LED is on!\r\n");
     chprintf(chp, "Press a key to start...\r\n");
-    while (chnGetTimeout((BaseChannel *)chp, 500) == Q_TIMEOUT) {
+    while (chnGetTimeout((BaseChannel *)chp, 500) == Q_TIMEOUT)
       ;
-    }
     palSetLine(LINE_LED4);
+
     chThdSleepMilliseconds(1000);
     gyroscopeSampleBias(&L3GD20D1);
     palClearLine(LINE_LED4);
+
 
     chprintf(chp, "Procedure completed!\r\n");
   }
@@ -252,9 +260,7 @@ int main(void) {
   halInit();
   chSysInit();
 
-  /*
-   * Initializes a serial-over-USB CDC driver.
-   */
+  /* Initializes a serial-over-USB CDC driver.*/
   sduObjectInit(&SDU1);
   sduStart(&SDU1, &serusbcfg);
 
@@ -268,24 +274,16 @@ int main(void) {
   usbStart(serusbcfg.usbp, &usbcfg);
   usbConnectBus(serusbcfg.usbp);
 
-  /*
-   * Creates the blinker thread.
-   */
+  /* Creates the blinker thread.*/
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO + 1, Thread1, NULL);
 
-  /*
-   * L3GD20 Object Initialization
-   */
+  /* L3GD20 Object Initialization.*/
   l3gd20ObjectInit(&L3GD20D1);
 
-  /*
-   * Activates the L3GD20 driver.
-   */
+  /* Activates the L3GD20 driver.*/
   l3gd20Start(&L3GD20D1, &l3gd20cfg);
 
-  /*
-   * Shell manager initialization.
-   */
+  /* Shell manager initialization.*/
   shellInit();
 
   while(TRUE) {

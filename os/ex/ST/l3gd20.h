@@ -40,22 +40,22 @@
 /**
  * @brief   L3GD20 driver version string.
  */
-#define EX_L3GD20_VERSION         "1.0.0"
+#define EX_L3GD20_VERSION           "1.0.0"
 
 /**
  * @brief   L3GD20 driver version major number.
  */
-#define EX_L3GD20_MAJOR           1
+#define EX_L3GD20_MAJOR             1
 
 /**
  * @brief   L3GD20 driver version minor number.
  */
-#define EX_L3GD20_MINOR          0
+#define EX_L3GD20_MINOR             0
 
 /**
  * @brief   L3GD20 driver version patch number.
  */
-#define EX_L3GD20_PATCH           0
+#define EX_L3GD20_PATCH             0
 /** @} */
 
 /**
@@ -490,12 +490,8 @@ typedef struct L3GD20Driver L3GD20Driver;
   _base_gyroscope_methods                                                   \
   /* Change full scale value of L3GD20 .*/                                  \
   msg_t (*set_full_scale)(void *instance, l3gd20_fs_t fs);                  \
-  /* Get full scale value of L3GD20 .*/                                     \
-  l3gd20_fs_t (*get_full_scale)(void *instance);                            \
   /* Change measurement unit of L3GD20 .*/                                  \
   msg_t (*set_meas_unit)(void *instance, l3gd20_unit_t unit);               \
-  /* Get measurement unit of L3GD20 .*/                                     \
-  l3gd20_unit_t (*get_meas_unit)(void *instance);
 
 /**
  * @extends BaseGyroscopeVMT
@@ -547,7 +543,7 @@ struct L3GD20Driver {
 /*===========================================================================*/
 
 /**
- * @brief   Change initial fullscale value.
+ * @brief   Change gyroscope fullscale value.
  *
  * @param[in] ip        pointer to a @p BaseGyroscope class.
  * @param[in] fs        the new full scale value.
