@@ -24,7 +24,6 @@
  *
  * @{
  */
-
 #ifndef _L3GD20_H_
 #define _L3GD20_H_
 
@@ -36,6 +35,8 @@
 
 /**
  * @brief   L3GD20 characteristics
+ *
+ * @{
  */
 #define L3GD20_NUMBER_OF_AXES       3U
 
