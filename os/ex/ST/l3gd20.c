@@ -346,7 +346,7 @@ void l3gd20Start(L3GD20Driver *devp, const L3GD20Config *config) {
   spiStart((devp)->config->spip,
            (devp)->config->spicfg);
            
-  /* Control register 1 configuration block */
+  /* Control register 1 configuration block.*/
   {
     cr[0] = L3GD20_CTRL_REG1_XEN | L3GD20_CTRL_REG1_YEN | 
           L3GD20_CTRL_REG1_ZEN | L3GD20_CTRL_REG1_PD |
@@ -356,7 +356,7 @@ void l3gd20Start(L3GD20Driver *devp, const L3GD20Config *config) {
 #endif
   }
   
-  /* Control register 2 configuration block */
+  /* Control register 2 configuration block.*/
   {
 #if L3GD20_USE_ADVANCED || defined(__DOXYGEN__)
   if(devp->config->hpmode != L3GD20_HPM_BYPASSED)
@@ -364,11 +364,7 @@ void l3gd20Start(L3GD20Driver *devp, const L3GD20Config *config) {
 #endif
   }
   
-  /* Control register 3 configuration block */
-  {
-  }
-  
-  /* Control register 4 configuration block */
+  /* Control register 4 configuration block.*/
   {
     cr[3] = devp->config->fullscale;
 #if L3GD20_USE_ADVANCED || defined(__DOXYGEN__)
@@ -377,7 +373,7 @@ void l3gd20Start(L3GD20Driver *devp, const L3GD20Config *config) {
 #endif
   }
   
-  /* Control register 5 configuration block */
+  /* Control register 5 configuration block.*/
   {
     
 #if L3GD20_USE_ADVANCED || defined(__DOXYGEN__)
@@ -401,7 +397,7 @@ void l3gd20Start(L3GD20Driver *devp, const L3GD20Config *config) {
 #endif /* L3GD20_SHARED_SPI */
 #endif /* L3GD20_USE_SPI */
   
-  /* Storing sensitivity information according to full scale and unit value */
+  /* Storing sensitivity information according to full scale and unit value.*/
   if(devp->config->fullscale == L3GD20_FS_250DPS) {
     devp->fullscale = L3GD20_250DPS;
     for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++) {
@@ -446,7 +442,7 @@ void l3gd20Start(L3GD20Driver *devp, const L3GD20Config *config) {
   }
   else
     osalDbgAssert(FALSE, "l3gd20Start(), full scale issue");
-  /* This is the Gyroscope transient recovery time */
+  /* This is the Gyroscope transient recovery time.*/
   osalThreadSleepMilliseconds(10);
 
   devp->state = L3GD20_READY;
@@ -473,7 +469,7 @@ void l3gd20Stop(L3GD20Driver *devp) {
     spiStart((devp)->config->spip,
              (devp)->config->spicfg);
 #endif /* L3GD20_SHARED_SPI */
-    /* Disabling all axes and enabling power down mode */
+    /* Disabling all axes and enabling power down mode.*/
     cr1 = 0;
     l3gd20SPIWriteRegister(devp->config->spip, L3GD20_AD_CTRL_REG1, 
                            1, &cr1);
