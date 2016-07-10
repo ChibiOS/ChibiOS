@@ -78,10 +78,10 @@ static L3GD20Config l3gd20cfg = {
 #define CHPRINTF_USE_ANSI_CODE      TRUE
 #define SHELL_WA_SIZE               THD_WORKING_AREA_SIZE(2048)
 
-static void cmd_get(BaseSequentialStream *chp, int argc, char *argv[]) {
+static void cmd_read(BaseSequentialStream *chp, int argc, char *argv[]) {
   (void)argv;
   if (argc != 1) {
-    chprintf(chp, "Usage: get [raw|cooked]\r\n");
+    chprintf(chp, "Usage: read [raw|cooked]\r\n");
     return;
   }
 
@@ -107,7 +107,7 @@ static void cmd_get(BaseSequentialStream *chp, int argc, char *argv[]) {
       }
     }
     else {
-      chprintf(chp, "Usage: get [raw|cooked]\r\n");
+      chprintf(chp, "Usage: read [raw|cooked]\r\n");
       return;
     }
   }
@@ -207,7 +207,7 @@ static void cmd_bias(BaseSequentialStream *chp, int argc, char *argv[]) {
 }
 
 static const ShellCommand commands[] = {
-  {"get", cmd_get},
+  {"read", cmd_read},
   {"set", cmd_set},
   {"bias", cmd_bias},
   {NULL, NULL}

@@ -292,6 +292,11 @@
 #error "L3GD20_USE_SPI requires HAL_USE_SPI"
 #endif
 
+//TODO: add I2C support.
+#if L3GD20_USE_I2C
+#error "L3GD20 over I2C still not supported"
+#endif
+
 #if L3GD20_USE_I2C && !HAL_USE_I2C
 #error "L3GD20_USE_I2C requires HAL_USE_I2C"
 #endif
