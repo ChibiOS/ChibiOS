@@ -264,24 +264,6 @@ static msg_t set_full_scale(void *ip, l3gd20_fs_t fs) {
   return MSG_OK;
 }
 
-static msg_t set_meas_unit(void *ip, l3gd20_unit_t unit) {
-  unsigned i;
-  if(unit != ((L3GD20Driver *)ip)->meas_unit) {
-    ((L3GD20Driver *)ip)->meas_unit = unit;
-    /* From RPS to DPS */
-    if(unit == L3GD20_UNIT_DPS)
-      for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++)
-        ((L3GD20Driver *)ip)->sensitivity[i] *= (2 * PI);
-    /* From DPS to RPS */
-    else if(unit == L3GD20_UNIT_RPS)
-      for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++)
-        ((L3GD20Driver *)ip)->sensitivity[i] /= (2 * PI);
-    else
-      return MSG_RESET;
-  }
-  return MSG_OK;
-}
-
 static const struct BaseSensorVMT vmt_basesensor = {
   get_axes_number, read_raw, read_cooked
 };
@@ -296,7 +278,7 @@ static const struct L3GD20VMT vmt_l3gd20 = {
   get_axes_number, read_raw, read_cooked,
   sample_bias, set_bias, reset_bias,
   set_sensivity, reset_sensivity,
-  set_full_scale, set_meas_unit
+  set_full_scale
 };
 
 /*===========================================================================*/
@@ -397,48 +379,21 @@ void l3gd20Start(L3GD20Driver *devp, const L3GD20Config *config) {
 #endif /* L3GD20_SHARED_SPI */
 #endif /* L3GD20_USE_SPI */
   
-  /* Storing sensitivity information according to full scale and unit value.*/
+  /* Storing sensitivity information according to full scale.*/
   if(devp->config->fullscale == L3GD20_FS_250DPS) {
     devp->fullscale = L3GD20_250DPS;
-    for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++) {
-      if(devp->meas_unit == L3GD20_UNIT_DPS) {
-        devp->sensitivity[i] = L3GD20_SENS_250DPS;
-      }
-      else if (devp->meas_unit == L3GD20_UNIT_RPS) {
-        devp->sensitivity[i] = L3GD20_SENS_250DPS / (2 * PI);
-      }
-      else {
-        devp->sensitivity[i] = 1.0;
-      }
-    }
+    for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++)
+      devp->sensitivity[i] = L3GD20_SENS_250DPS;
   }
   else if(devp->config->fullscale == L3GD20_FS_500DPS) {
     devp->fullscale = L3GD20_500DPS;
-    for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++) {
-      if(devp->meas_unit == L3GD20_UNIT_DPS) {
-        devp->sensitivity[i] = L3GD20_SENS_500DPS;
-      }
-      else if (devp->meas_unit == L3GD20_UNIT_RPS) {
-        devp->sensitivity[i] = L3GD20_SENS_500DPS / (2 * PI);
-      }
-      else {
-        devp->sensitivity[i] = 1.0;
-      }
-    }
+    for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++)
+      devp->sensitivity[i] = L3GD20_SENS_500DPS;
   }
   else if(devp->config->fullscale == L3GD20_FS_2000DPS) {
     devp->fullscale = L3GD20_2000DPS;
-    for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++) {
-      if(devp->meas_unit == L3GD20_UNIT_DPS) {
-        devp->sensitivity[i] = L3GD20_SENS_500DPS;
-      }
-      else if (devp->meas_unit == L3GD20_UNIT_RPS) {
-        devp->sensitivity[i] = L3GD20_SENS_500DPS / (2 * PI);
-      }
-      else {
-        devp->sensitivity[i] = 1.0;
-      }
-    }
+    for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++)
+      devp->sensitivity[i] = L3GD20_SENS_2000DPS;
   }
   else
     osalDbgAssert(FALSE, "l3gd20Start(), full scale issue");

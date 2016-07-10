@@ -35,7 +35,6 @@ static int32_t rawdata[L3GD20_NUMBER_OF_AXES];
 static float cookeddata[L3GD20_NUMBER_OF_AXES];
 
 static char axisID[L3GD20_NUMBER_OF_AXES] = {'X', 'Y', 'Z'};
-static char unit[4] = "dps";
 static uint32_t i;
 
 static const SPIConfig spicfg = {
@@ -51,7 +50,6 @@ static L3GD20Config l3gd20cfg = {
   &spicfg,                                   /* Pointer to SPI Configuration.*/
   {0, 0, 0},                                 /* Use default sensitivity.*/
   {0, 0, 0},                                 /* Use default bias.*/
-  L3GD20_UNIT_DPS,                           /* Measurement unit DPS.*/
   L3GD20_FS_250DPS,                          /* Full scale value.*/
   L3GD20_ODR_760HZ,                          /* Output data rate.*/
 #if L3GD20_USE_ADVANCED || defined(__DOXYGEN__)
@@ -67,13 +65,6 @@ static L3GD20Config l3gd20cfg = {
 /*===========================================================================*/
 /* Command line related.                                                     */
 /*===========================================================================*/
-
-
-
-
-
-
-
 
 /* Enable use of special ANSI escape sequences.*/
 #define CHPRINTF_USE_ANSI_CODE      TRUE
@@ -104,7 +95,7 @@ static void cmd_read(BaseSequentialStream *chp, int argc, char *argv[]) {
       gyroscopeReadCooked(&L3GD20D1, cookeddata);
       chprintf(chp, "L3GD20 Gyroscope cooked data...\r\n");
       for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++) {
-        chprintf(chp, "%c-axis: %.4f %s\r\n", axisID[i], cookeddata[i], unit);
+        chprintf(chp, "%c-axis: %.4f DPS\r\n", axisID[i], cookeddata[i]);
       }
     }
     else {
@@ -115,62 +106,30 @@ static void cmd_read(BaseSequentialStream *chp, int argc, char *argv[]) {
   chprintf(chp, "Stopped\r\n");
 }
 
-static void cmd_set(BaseSequentialStream *chp, int argc, char *argv[]) {
+static void cmd_fullscale(BaseSequentialStream *chp, int argc, char *argv[]) {
   (void)argv;
-  if (argc < 1) {
-    chprintf(chp, "Usage: set [fs|unit] [value]\r\n");
+  if (argc != 1) {
+    chprintf(chp, "Usage: fullscale [250|500|2000]\r\n");
     return;
   }
-  if (!strcmp (argv[0], "fs")) {
 #if CHPRINTF_USE_ANSI_CODE
     chprintf(chp, "\033[2J\033[1;1H");
 #endif
-    if (argc != 2) {
-      chprintf(chp, "Usage: set fs [250|500|2000]\r\n");
-      return;
-    }
-    if(!strcmp (argv[1], "250")) {
-      gyroscopeSetFullScale(&L3GD20D1, L3GD20_FS_250DPS);
-      chprintf(chp, "L3GD20 Gyroscope full scale set to 250 dps...\r\n");
-    }
-    else if(!strcmp (argv[1], "500")) {
-      gyroscopeSetFullScale(&L3GD20D1, L3GD20_FS_500DPS);
-      chprintf(chp, "L3GD20 Gyroscope full scale set to 500 dps...\r\n");
-    }
-    else if(!strcmp (argv[1], "2000")) {
-      gyroscopeSetFullScale(&L3GD20D1, L3GD20_FS_2000DPS);
-      chprintf(chp, "L3GD20 Gyroscope full scale set to 2000 dps...\r\n");
-    }
-    else {
-      chprintf(chp, "Usage: set fs [250|500|2000]\r\n");
-      return;
-    }
+  if(!strcmp (argv[0], "250")) {
+    gyroscopeSetFullScale(&L3GD20D1, L3GD20_FS_250DPS);
+    chprintf(chp, "L3GD20 Gyroscope full scale set to 250 dps...\r\n");
   }
-  else if (!strcmp (argv[0], "unit")) {
-#if CHPRINTF_USE_ANSI_CODE
-    chprintf(chp, "\033[2J\033[1;1H");
-#endif
-    if (argc != 2) {
-      chprintf(chp, "Usage: set unit [dps|rps]\r\n");
-      return;
-    }
-    if(!strcmp (argv[1], "dps")) {
-      gyroscopeSetMeasurementUnit(&L3GD20D1, L3GD20_UNIT_DPS);
-      strcpy(unit, "dps");
-      chprintf(chp, "L3GD20 Gyroscope unit set to degrees per second...\r\n");
-    }
-    else if(!strcmp (argv[1], "rps")) {
-      gyroscopeSetMeasurementUnit(&L3GD20D1, L3GD20_UNIT_RPS);
-      strcpy(unit, "rps");
-      chprintf(chp, "L3GD20 Gyroscope unit set to radians per second...\r\n");
-    }
-    else {
-      chprintf(chp, "Usage: set unit [dps|rps]\r\n");
-      return;
-    }
+  else if(!strcmp (argv[0], "500")) {
+    gyroscopeSetFullScale(&L3GD20D1, L3GD20_FS_500DPS);
+    chprintf(chp, "L3GD20 Gyroscope full scale set to 500 dps...\r\n");
+  }
+  else if(!strcmp (argv[0], "2000")) {
+    gyroscopeSetFullScale(&L3GD20D1, L3GD20_FS_2000DPS);
+    chprintf(chp, "L3GD20 Gyroscope full scale set to 2000 dps...\r\n");
   }
   else {
-    chprintf(chp, "Usage: set [fs|unit] [value]\r\n");
+    chprintf(chp, "Usage: fullscale [250|500|2000]\r\n");
+    return;
   }
 }
 
@@ -212,7 +171,7 @@ static void cmd_bias(BaseSequentialStream *chp, int argc, char *argv[]) {
 
 static const ShellCommand commands[] = {
   {"read", cmd_read},
-  {"set", cmd_set},
+  {"fullscale", cmd_fullscale},
   {"bias", cmd_bias},
   {NULL, NULL}
 };

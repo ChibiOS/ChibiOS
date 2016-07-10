@@ -393,14 +393,6 @@ typedef enum {
 }l3gd20_end_t;
 
 /**
- * @brief   L3GD20 measurement unit.
- */
-typedef enum {
-  L3GD20_UNIT_DPS = 0x00,           /**< Cooked data in degrees per seconds.*/
-  L3GD20_UNIT_RPS = 0x01,           /**< Cooked data in radians per seconds.*/
-} l3gd20_unit_t;
-
-/**
  * @brief   Driver state machine possible states.
  */
 typedef enum {
@@ -442,10 +434,6 @@ typedef struct {
    * @brief L3GD20 initial bias.
    */
   float                     bias[L3GD20_NUMBER_OF_AXES];
-  /**
-   * @brief   L3GD20 initial measurement unit.
-   */
-  l3gd20_unit_t             unit;
   /**
    * @brief L3GD20 initial full scale value.
    */
@@ -494,9 +482,7 @@ typedef struct L3GD20Driver L3GD20Driver;
 #define _l3gd20_methods                                                     \
   _base_gyroscope_methods                                                   \
   /* Change full scale value of L3GD20 .*/                                  \
-  msg_t (*set_full_scale)(void *instance, l3gd20_fs_t fs);                  \
-  /* Change measurement unit of L3GD20 .*/                                  \
-  msg_t (*set_meas_unit)(void *instance, l3gd20_unit_t unit);               \
+  msg_t (*set_full_scale)(void *instance, l3gd20_fs_t fs);
 
 /**
  * @extends BaseGyroscopeVMT
@@ -521,9 +507,7 @@ struct L3GD20VMT {
   /* Current Bias data.*/                                                   \
   float                     bias[L3GD20_NUMBER_OF_AXES];                    \
   /* Current full scale value.*/                                            \
-  float                     fullscale;                                      \
-  /* Measurement unit.*/                                                    \
-  l3gd20_unit_t             meas_unit;  
+  float                     fullscale;
 
 /**
  * @extends BaseGyroscope
@@ -560,20 +544,6 @@ struct L3GD20Driver {
  */
 #define gyroscopeSetFullScale(ip, fs)                                       \
         (ip)->vmt_l3gd20->set_full_scale(ip, fs)
-
-/**
- * @brief   Set gyroscope cooked data measurement unit.
- *
- * @param[in] ip        pointer to a @p BaseGyroscope class.
- * @param[in] unit      the MEMS measurement unit.
- *
- * @return              The operation status.
- * @retval MSG_OK       if the function succeeded.
- * @retval MSG_RESET    if one or more errors occurred.
- * @api
- */
-#define gyroscopeSetMeasurementUnit(ip, unit)                               \
-        (ip)->vmt_l3gd20->set_meas_unit(ip, unit)
         
 /*===========================================================================*/
 /* External declarations.                                                    */
