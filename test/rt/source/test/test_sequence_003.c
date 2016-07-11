@@ -103,7 +103,7 @@ static void test_003_001_execute(void) {
     msg = chThdSuspendTimeoutS(&tr1, MS2ST(1000));
     chSysUnlock();
     test_assert_time_window(time + MS2ST(1000),
-                            time + MS2ST(1000) + CH_CFG_ST_TIMEDELTA,
+                            time + MS2ST(1000) + CH_CFG_ST_TIMEDELTA + 1,
                             "out of time window");
     test_assert(NULL == tr1, "not NULL");
     test_assert(MSG_TIMEOUT == msg, "wrong returned message");
