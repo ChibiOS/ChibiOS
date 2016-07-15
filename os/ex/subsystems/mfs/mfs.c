@@ -112,33 +112,6 @@ uint16_t crc16(uint16_t crc, const uint8_t *data, size_t n) {
   return crc;
 }
 
-#if (MFS_CFG_ID_CACHE_SIZE > 0) || defined(__DOXYGEN__)
-void mfs_cache_init(MFSDriver *devp) {
-
-  (void)devp;
-}
-
-mfs_cached_id_t *mfs_cache_find_id(MFSDriver *devp, uint32_t id) {
-
-  (void)devp;
-  (void)id;
-
-  return NULL;
-}
-
-void mfs_cache_update_id(MFSDriver *devp, uint32_t id) {
-
-  (void)devp;
-  (void)id;
-}
-
-void mfs_cache_erase_id(MFSDriver *devp, uint32_t id) {
-
-  (void)devp;
-  (void)id;
-}
-#endif /* MFS_CFG_ID_CACHE_SIZE > 0 */
-
 /**
  * @brief   Flash write.
  * @note    If the option @p MFS_CFG_WRITE_VERIFY is enabled then the flash
@@ -150,7 +123,7 @@ void mfs_cache_erase_id(MFSDriver *devp, uint32_t id) {
  * @param[out] rp       pointer to the data buffer
  * @return              The operation status.
  * @retval MFS_NO_ERROR if the operation has been successfully completed.
- * @retval MFS_FLASH_FAILURE if the flash memory is unusable because HW
+ * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
  *                      failures.
  *
  * @notapi
@@ -163,7 +136,7 @@ static mfs_error_t mfs_flash_write(MFSDriver *devp,
 
   ferr = flashProgram(devp->config->flashp, offset, n, p);
   if (ferr != FLASH_NO_ERROR) {
-    return MFS_FLASH_FAILURE;
+    return MFS_ERR_FLASH_FAILURE;
   }
 
   return MFS_NO_ERROR;
@@ -176,7 +149,7 @@ static mfs_error_t mfs_flash_write(MFSDriver *devp,
  * @param[in] bank      bank to be erased
  * @return              The operation status.
  * @retval MFS_NO_ERROR if the operation has been successfully completed.
- * @retval MFS_FLASH_FAILURE if the flash memory is unusable because HW
+ * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
  *                      failures.
  *
  * @notapi
@@ -198,15 +171,15 @@ static mfs_error_t mfs_bank_erase(MFSDriver *devp, mfs_bank_t bank) {
 
     ferr = flashStartEraseSector(devp->config->flashp, sector);
     if (ferr != FLASH_NO_ERROR) {
-      return MFS_FLASH_FAILURE;
+      return MFS_ERR_FLASH_FAILURE;
     }
     ferr = flashWaitErase(devp->config->flashp);
     if (ferr != FLASH_NO_ERROR) {
-      return MFS_FLASH_FAILURE;
+      return MFS_ERR_FLASH_FAILURE;
     }
     ferr = flashVerifyErase(devp->config->flashp, sector);
     if (ferr != FLASH_NO_ERROR) {
-      return MFS_FLASH_FAILURE;
+      return MFS_ERR_FLASH_FAILURE;
     }
 
     sector++;
@@ -223,7 +196,7 @@ static mfs_error_t mfs_bank_erase(MFSDriver *devp, mfs_bank_t bank) {
  * @param[in] cnt       value for the flash usage counter
  * @return              The operation status.
  * @retval MFS_NO_ERROR if the operation has been successfully completed.
- * @retval MFS_FLASH_FAILURE if the flash memory is unusable because HW
+ * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
  *                      failures.
  *
  * @notapi
@@ -263,7 +236,7 @@ static mfs_error_t mfs_bank_set_header(MFSDriver *devp,
  * @param[in] dbank     destination bank
  * @return              The operation status.
  * @retval MFS_NO_ERROR if the operation has been successfully completed.
- * @retval MFS_FLASH_FAILURE if the flash memory is unusable because HW
+ * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
  *                      failures.
  *
  * @notapi
@@ -330,9 +303,9 @@ static mfs_bank_state_t mfs_get_bank_state(MFSDriver *devp,
  * @param[in] devp      pointer to the @p MFSDriver object
  * @return              The operation status.
  * @retval MFS_NO_ERROR if the operation has been successfully completed.
- * @retval MFS_REPAIR_WARNING if the operation has been completed but a
+ * @retval MFS_WARN_REPAIR if the operation has been completed but a
  *                      repair has been performed.
- * @retval MFS_FLASH_FAILURE if the flash memory is unusable because HW
+ * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
  *                      failures.
  *
  * @api
@@ -366,14 +339,14 @@ static mfs_error_t mfs_try_mount(MFSDriver *devp) {
     RET_ON_ERROR(mfs_bank_set_header(devp, MFS_BANK_0, cnt1 + 1));
     RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_1));
     RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_0));
-    return MFS_REPAIR_WARNING;
+    return MFS_WARN_REPAIR;
 
   case PAIR(MFS_BANK_ERASED, MFS_BANK_GARBAGE):
     /* Bank zero is erased, bank one is not readable.*/
     RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_1));
     RET_ON_ERROR(mfs_bank_set_header(devp, MFS_BANK_0, 1));
     RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_0));
-    return MFS_REPAIR_WARNING;
+    return MFS_WARN_REPAIR;
 
   case PAIR(MFS_BANK_OK, MFS_BANK_ERASED):
     /* Normal situation, bank zero is used.*/
@@ -393,7 +366,7 @@ static mfs_error_t mfs_try_mount(MFSDriver *devp) {
       RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_0));
       RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_1));
     }
-    return MFS_REPAIR_WARNING;
+    return MFS_WARN_REPAIR;
 
   case PAIR(MFS_BANK_OK, MFS_BANK_PARTIAL):
     /* Bank zero is normal, bank one has problems.*/
@@ -411,13 +384,13 @@ static mfs_error_t mfs_try_mount(MFSDriver *devp) {
       RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_1));
       RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_0));
     }
-    return MFS_REPAIR_WARNING;
+    return MFS_WARN_REPAIR;
 
   case PAIR(MFS_BANK_OK, MFS_BANK_GARBAGE):
     /* Bank zero is normal, bank one is unreadable.*/
     RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_1));
     RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_0));
-    return MFS_REPAIR_WARNING;
+    return MFS_WARN_REPAIR;
 
   case PAIR(MFS_BANK_PARTIAL, MFS_BANK_ERASED):
     /* Bank zero has problems, bank one is erased.*/
@@ -425,7 +398,7 @@ static mfs_error_t mfs_try_mount(MFSDriver *devp) {
     RET_ON_ERROR(mfs_bank_set_header(devp, MFS_BANK_1, cnt0 + 1));
     RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_0));
     RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_1));
-    return MFS_REPAIR_WARNING;
+    return MFS_WARN_REPAIR;
 
   case PAIR(MFS_BANK_PARTIAL, MFS_BANK_OK):
     /* Bank zero has problems, bank one is normal.*/
@@ -443,7 +416,7 @@ static mfs_error_t mfs_try_mount(MFSDriver *devp) {
       RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_0));
       RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_1));
     }
-    return MFS_REPAIR_WARNING;
+    return MFS_WARN_REPAIR;
 
   case PAIR(MFS_BANK_PARTIAL, MFS_BANK_PARTIAL):
     /* Both banks have problems.*/
@@ -463,7 +436,7 @@ static mfs_error_t mfs_try_mount(MFSDriver *devp) {
       RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_1));
       RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_0));
     }
-    return MFS_REPAIR_WARNING;
+    return MFS_WARN_REPAIR;
 
   case PAIR(MFS_BANK_PARTIAL, MFS_BANK_GARBAGE):
     /* Bank zero has problems, bank one is unreadable.*/
@@ -472,20 +445,20 @@ static mfs_error_t mfs_try_mount(MFSDriver *devp) {
     RET_ON_ERROR(mfs_bank_set_header(devp, MFS_BANK_1, cnt0 + 1));
     RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_0));
     RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_1));
-    return MFS_REPAIR_WARNING;
+    return MFS_WARN_REPAIR;
 
   case PAIR(MFS_BANK_GARBAGE, MFS_BANK_ERASED):
     /* Bank zero is unreadable, bank one is erased.*/
     RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_1));
     RET_ON_ERROR(mfs_bank_set_header(devp, MFS_BANK_0, 1));
     RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_0));
-    return MFS_REPAIR_WARNING;
+    return MFS_WARN_REPAIR;
 
   case PAIR(MFS_BANK_GARBAGE, MFS_BANK_OK):
     /* Bank zero is unreadable, bank one is normal.*/
     RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_0));
     RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_1));
-    return MFS_REPAIR_WARNING;
+    return MFS_WARN_REPAIR;
 
   case PAIR(MFS_BANK_GARBAGE, MFS_BANK_PARTIAL):
     /* Bank zero is unreadable, bank one has problems.*/
@@ -494,7 +467,7 @@ static mfs_error_t mfs_try_mount(MFSDriver *devp) {
     RET_ON_ERROR(mfs_bank_set_header(devp, MFS_BANK_0, cnt0 + 1));
     RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_1));
     RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_0));
-    return MFS_REPAIR_WARNING;
+    return MFS_WARN_REPAIR;
 
   case PAIR(MFS_BANK_GARBAGE, MFS_BANK_GARBAGE):
     /* Both banks are unreadable, reinitializing.*/
@@ -502,14 +475,14 @@ static mfs_error_t mfs_try_mount(MFSDriver *devp) {
     RET_ON_ERROR(mfs_bank_erase(devp, MFS_BANK_1));
     RET_ON_ERROR(mfs_bank_set_header(devp, MFS_BANK_0, 1));
     RET_ON_ERROR(mfs_bank_mount(devp, MFS_BANK_0));
-    return MFS_REPAIR_WARNING;
+    return MFS_WARN_REPAIR;
 
   default:
     osalSysHalt("internal error");
   }
 
   /* Never reached.*/
-  return MFS_INTERNAL_ERROR;
+  return MFS_ERR_INTERNAL;
 }
 
 /*===========================================================================*/
@@ -577,9 +550,9 @@ void mfsStop(MFSDriver *devp) {
  * @param[in] devp      pointer to the @p MFSDriver object
  * @return              The operation status.
  * @retval MFS_NO_ERROR if the operation has been successfully completed.
- * @retval MFS_REPAIR_WARNING if the operation has been completed but a
+ * @retval MFS_WARN_REPAIR if the operation has been completed but a
  *                      repair has been performed.
- * @retval MFS_FLASH_FAILURE if the flash memory is unusable because HW
+ * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
  *                      failures.
  *
  * @api
@@ -596,7 +569,7 @@ mfs_error_t mfsMount(MFSDriver *devp) {
       return err;
   }
 
-  return MFS_FLASH_FAILURE;
+  return MFS_ERR_FLASH_FAILURE;
 }
 
 /**
@@ -619,8 +592,8 @@ mfs_error_t mfsUnmount(MFSDriver *devp) {
  * @param[in] buffer    pointer to a buffer for record data
  * @return              The operation status.
  * @retval MFS_NO_ERROR if the operation has been successfully completed.
- * @retval MFS_ID_NOT_FOUND if the specified id does not exists.
- * @retval MFS_CRC_ERROR if retrieved data has a CRC error.
+ * @retval MFS_ERR_NOT_FOUND if the specified id does not exists.
+ * @retval MFS_ERR_CRC  if retrieved data has a CRC error.
  *
  * @api
  */
@@ -644,13 +617,13 @@ mfs_error_t mfsReadRecord(MFSDriver *devp, uint32_t id,
  * @param[in] buffer    pointer to a buffer for record data
  * @return              The operation status.
  * @retval MFS_NO_ERROR if the operation has been successfully completed.
- * @retval MFS_FLASH_FAILURE if the flash memory is unusable because HW
+ * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
  *                      failures.
  *
  * @api
  */
-mfs_error_t mfsUpdateRecord(MFSDriver *devp, uint32_t id,
-                            uint32_t n, const uint8_t *buffer) {
+mfs_error_t mfsWriteRecord(MFSDriver *devp, uint32_t id,
+                           uint32_t n, const uint8_t *buffer) {
 
   (void)devp;
   (void)id;
@@ -667,7 +640,7 @@ mfs_error_t mfsUpdateRecord(MFSDriver *devp, uint32_t id,
  * @param[in] id        record numeric identifier
  * @return              The operation status.
  * @retval MFS_NO_ERROR if the operation has been successfully completed.
- * @retval MFS_FLASH_FAILURE if the flash memory is unusable because HW
+ * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
  *                      failures.
  *
  * @api

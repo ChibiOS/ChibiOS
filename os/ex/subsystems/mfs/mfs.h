@@ -46,12 +46,11 @@
  * @{
  */
 /**
- * @brief   Record identifiers cache size.
- * @details Cache trades RAM for a faster access to stored records. If zero
- *          then the cache is disabled.
+ * @brief   Maximum number of indexed records in the managed storage.
+ * @note    Record indexes go from 0 to @p MFS_CFG_MAX_RECORDS - 1.
  */
-#if !defined(MFS_CFG_ID_CACHE_SIZE) || defined(__DOXIGEN__)
-#define MFS_CFG_ID_CACHE_SIZE               16
+#if !defined(MFS_CFG_MAX_RECORDS) || defined(__DOXIGEN__)
+#define MFS_CFG_MAX_RECORDS                 32
 #endif
 
 /**
@@ -73,8 +72,8 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if MFS_CFG_ID_CACHE_SIZE < 0
-#error "invalid MFS_CFG_ID_CACHE_SIZE value"
+#if MFS_CFG_MAX_RECORDS < 0
+#error "invalid MFS_CFG_MAX_RECORDS value"
 #endif
 
 #if (MFS_CFG_MAX_REPAIR_ATTEMPTS < 1) || (MFS_CFG_MAX_REPAIR_ATTEMPTS > 10)
@@ -111,12 +110,12 @@ typedef enum {
  */
 typedef enum {
   MFS_NO_ERROR = 0,
-  MFS_REPAIR_WARNING = 1,
-  MFS_GC_WARNING = 2,
-  MFS_ID_NOT_FOUND = -1,
-  MFS_CRC_ERROR = -2,
-  MFS_FLASH_FAILURE = -3,
-  MFS_INTERNAL_ERROR = -4
+  MFS_WARN_REPAIR = 1,
+  MFS_WARN_GC = 2,
+  MFS_ERR_NOT_FOUND = -1,
+  MFS_ERR_CRC = -2,
+  MFS_ERR_FLASH_FAILURE = -3,
+  MFS_ERR_INTERNAL = -4
 } mfs_error_t;
 
 /**
@@ -175,58 +174,16 @@ typedef struct {
   /**
    * @brief   Data identifier.
    */
-  uint32_t                  id;
+  uint16_t                  id;
   /**
-   * @brief   Data size for forward scan.
+   * @brief   Data attributes.
+   */
+  uint16_t                  flags;
+  /**
+   * @brief   Data size.
    */
   uint32_t                  size;
-  /**
-   * @brief   Address of the previous header or zero if none.
-   */
-  flash_offset_t            prev_header;
 } mfs_data_header_t;
-
-#if (MFS_CFG_ID_CACHE_SIZE > 0) || defined(__DOXYGEN__)
-/**
- * @brief   Type of an element of the record identifiers cache.
- */
-typedef struct mfs_cached_id {
-  /**
-   * @brief   Pointer to the next element in the list.
-   */
-  struct mfs_cached_id      *lru_next;
-  /**
-   * @brief   Pointer to the previous element in the list.
-   */
-  struct mfs_cached_id      *lru_prev;
-  /**
-   * @brief   Identifier of the cached element.
-   */
-  uint32_t                  id;
-  /**
-   * @brief   Data address of the cached element.
-   */
-  flash_offset_t            offset;
-  /**
-   * @brief   Data size of the cached element.
-   */
-  uint32_t                  size;
-} mfs_cached_id_t;
-
-/**
- * @brief   Type of an element of the record identifiers cache.
- */
-typedef struct mfs_cache_header {
-  /**
-   * @brief   Pointer to the first element in the list.
-   */
-  struct mfs_cached_id      *lru_next;
-  /**
-   * @brief   Pointer to the last element in the list.
-   */
-  struct mfs_cached_id      *lru_prev;
-} mfs_cache_header_t;
-#endif /* MFS_CFG_ID_CACHE_SIZE > 0 */
 
 /**
  * @brief   Type of a MFS configuration structure.
@@ -281,23 +238,14 @@ typedef struct {
    */
   flash_offset_t            next_offset;
   /**
-   * @brief   Pointer to the last header in the list or zero.
-   */
-  flash_offset_t            last_offset;
-  /**
    * @brief   Used space in the current bank without considering erased records.
    */
   uint32_t                  used_space;
-#if (MFS_CFG_ID_CACHE_SIZE > 0) || defined(__DOXYGEN__)
   /**
-   * @brief   Header of the cache LRU list.
+   * @brief   Offsets of the most recent instance of the records.
+   * @note    Zero means that ther is not a record with that id.
    */
-  mfs_cache_header_t        cache_header;
-  /**
-   * @brief   Array of the cached identifiers.
-   */
-  mfs_cached_id_t           cache_buffer[MFS_CFG_ID_CACHE_SIZE];
-#endif /* MFS_CFG_ID_CACHE_SIZE > 0 */
+  flash_offset_t            instances[MFS_CFG_MAX_RECORDS];
 } MFSDriver;
 
 /*===========================================================================*/
@@ -326,8 +274,8 @@ extern "C" {
   mfs_error_t mfsUnmount(MFSDriver *devp);
   mfs_error_t mfsReadRecord(MFSDriver *devp, uint32_t id,
                             uint32_t *np, uint8_t *buffer);
-  mfs_error_t mfsUpdateRecord(MFSDriver *devp, uint32_t id,
-                              uint32_t n, const uint8_t *buffer);
+  mfs_error_t mfsWriteRecord(MFSDriver *devp, uint32_t id,
+                             uint32_t n, const uint8_t *buffer);
   mfs_error_t mfsEraseRecord(MFSDriver *devp, uint32_t id);
 #ifdef __cplusplus
 }
