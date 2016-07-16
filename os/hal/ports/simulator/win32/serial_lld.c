@@ -215,7 +215,7 @@ void sd_lld_init(void) {
   SD1.com_name = "SD1";
 #endif
 
-#if USE_WIN32_SERIAL1
+#if USE_WIN32_SERIAL2
   sdObjectInit(&SD2, NULL, NULL);
   SD2.com_listen = INVALID_SOCKET;
   SD2.com_data = INVALID_SOCKET;
@@ -241,7 +241,7 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
     init(&SD1, SD1_PORT);
 #endif
 
-#if USE_WIN32_SERIAL1
+#if USE_WIN32_SERIAL2
   if (sdp == &SD2)
     init(&SD2, SD2_PORT);
 #endif
