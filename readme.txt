@@ -72,6 +72,7 @@
 *****************************************************************************
 
 *** 2.6.10 ***
+- FIX: Fixed wrong check in win32 simulator serial driver (bug #765).
 - FIX: Fixed errors in documentation related to OTG peripheral switches 
        (bug #753).
 - FIX: Fixed wrong conditional branches in _adc_isr_error_code (bug #751).
