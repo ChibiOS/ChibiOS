@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.6 ***
+- HAL: Fixed wrong check in win32 simulator serial driver (bug #765).
 - HAL: Fixed dependency on RT in hal_usb.c (bug #764).
 - HAL: Fixed wrong backup domain reset in STM32L4xx\hal_lld (bug #763).
 
