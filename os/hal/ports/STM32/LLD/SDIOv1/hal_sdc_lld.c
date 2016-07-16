@@ -813,7 +813,9 @@ bool sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
     }
     return HAL_SUCCESS;
   }
-#endif /* STM32_SDC_SDIO_UNALIGNED_SUPPORT */
+#else /* !STM32_SDC_SDIO_UNALIGNED_SUPPORT */
+  osalDbgAssert((((unsigned)buf & 3) == 0), "unaligned buffer");
+#endif /* !STM32_SDC_SDIO_UNALIGNED_SUPPORT */
   return sdc_lld_read_aligned(sdcp, startblk, buf, blocks);
 }
 
@@ -846,7 +848,9 @@ bool sdc_lld_write(SDCDriver *sdcp, uint32_t startblk,
     }
     return HAL_SUCCESS;
   }
-#endif /* STM32_SDC_SDIO_UNALIGNED_SUPPORT */
+#else /* !STM32_SDC_SDIO_UNALIGNED_SUPPORT */
+  osalDbgAssert((((unsigned)buf & 3) == 0), "unaligned buffer");
+#endif /* !STM32_SDC_SDIO_UNALIGNED_SUPPORT */
   return sdc_lld_write_aligned(sdcp, startblk, buf, blocks);
 }
 
