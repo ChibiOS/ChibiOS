@@ -260,13 +260,17 @@ void sd_lld_stop(SerialDriver *sdp) {
 }
 
 bool sd_lld_interrupt_pending(void) {
-  bool b;
+  bool b = false;
 
   CH_IRQ_PROLOGUE();
 
-  b =  connint(&SD1) || connint(&SD2) ||
-       inint(&SD1)   || inint(&SD2)   ||
-       outint(&SD1)  || outint(&SD2);
+#if USE_WIN32_SERIAL1
+  b |= connint(&SD1) || inint(&SD1) || outint(&SD1);
+#endif
+
+#if USE_WIN32_SERIAL2
+  b |= connint(&SD2) || inint(&SD2) || outint(&SD2);
+#endif
 
   CH_IRQ_EPILOGUE();
 
