@@ -586,6 +586,16 @@ typedef struct {
   uartecb_t                 rxerr_cb;
   /* End of the mandatory fields.*/
   /**
+   * @brief   Receiver timeout callback.
+   */
+  uartcb_t                  timeout_cb;
+  /**
+   * @brief   Receiver timeout value in terms of number of bit duration.
+   * @details Set it to 0 when you want to handle IDLE interrupt instead of
+   *          hardware timeout.
+   */
+  uint32_t                  timeout;
+  /**
    * @brief   Bit rate.
    */
   uint32_t                  speed;

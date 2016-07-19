@@ -220,6 +220,7 @@ static void usart_stop(UARTDriver *uartp) {
  */
 static void usart_start(UARTDriver *uartp) {
   uint32_t cr1;
+  const uint32_t tmo = uartp->config->timeout;
   USART_TypeDef *u = uartp->usart;
 
   /* Defensive programming, starting from a clean state.*/
@@ -241,6 +242,13 @@ static void usart_start(UARTDriver *uartp) {
      interrupt.*/
   cr1 = USART_CR1_UE | USART_CR1_PEIE | USART_CR1_TE | USART_CR1_RE;
   u->CR1 = uartp->config->cr1 | cr1;
+
+  /* Set receive timeout and check it appliance */
+  if (tmo > 0) {
+    osalDbgAssert(tmo <= USART_RTOR_RTO, "Timeout overflow");
+    u->RTOR = tmo;
+    osalDbgAssert(tmo == u->RTOR, "Timeout feature unsupported in this UART");
+  }
 
   /* Starting the receiver idle loop.*/
   uart_enter_rx_idle_loop(uartp);
@@ -324,6 +332,10 @@ static void serve_usart_irq(UARTDriver *uartp) {
 
     /* End of transmission, a callback is generated.*/
     _uart_tx2_isr_code(uartp);
+  }
+
+  if ((isr & USART_ISR_IDLE) || (isr & USART_ISR_RTOF)) {
+    _uart_timeout_isr_code(uartp);
   }
 }
 

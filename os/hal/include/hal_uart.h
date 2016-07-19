@@ -279,7 +279,6 @@ typedef enum {
   _uart_wakeup_rx_error_isr(uartp);                                         \
 }
 
-
 /**
  * @brief   Common ISR code for RX on idle.
  * @details This code handles the portable part of the ISR code:
@@ -298,6 +297,27 @@ typedef enum {
   if ((uartp)->config->rxchar_cb != NULL)                                   \
     (uartp)->config->rxchar_cb(uartp, (uartp)->rxbuf);                      \
 }
+
+
+/**
+ * @brief   Timeout ISR code for receiver.
+ * @details This code handles the portable part of the ISR code:
+ *          - Callback invocation.
+ *          - Waiting thread wakeup, if any.
+ *          - Driver state transitions.
+ *          .
+ * @note    This macro is meant to be used in the low level drivers
+ *          implementation only.
+ *
+ * @param[in] uartp     pointer to the @p UARTDriver object
+ *
+ * @notapi
+ */
+#define _uart_timeout_isr_code(uartp) {                                     \
+  if ((uartp)->config->timeout_cb != NULL)                                  \
+    (uartp)->config->timeout_cb(uartp);                                     \
+}
+
 /** @} */
 
 /*===========================================================================*/
