@@ -587,11 +587,13 @@ typedef struct {
   /* End of the mandatory fields.*/
   /**
    * @brief   Receiver timeout callback.
+   * @details Handles both idle and timeout interrupts depending on configured
+   *          flags in CR registers and supported hardware features.
    */
   uartcb_t                  timeout_cb;
   /**
    * @brief   Receiver timeout value in terms of number of bit duration.
-   * @details Set it to 0 when you want to handle IDLE interrupt instead of
+   * @details Set it to 0 when you want to handle idle interrupt instead of
    *          hardware timeout.
    */
   uint32_t                  timeout;
