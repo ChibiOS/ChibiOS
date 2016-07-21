@@ -243,7 +243,7 @@ static void usart_start(UARTDriver *uartp) {
   cr1 = USART_CR1_UE | USART_CR1_PEIE | USART_CR1_TE | USART_CR1_RE;
   u->CR1 = uartp->config->cr1 | cr1;
 
-  /* Set receive timeout and check it appliance */
+  /* Set receive timeout and checks if it is really applied.*/
   if (tmo > 0) {
     osalDbgAssert(tmo <= USART_RTOR_RTO, "Timeout overflow");
     u->RTOR = tmo;
@@ -334,7 +334,9 @@ static void serve_usart_irq(UARTDriver *uartp) {
     _uart_tx2_isr_code(uartp);
   }
 
-  if ((isr & USART_ISR_IDLE) || (isr & USART_ISR_RTOF)) {
+  /* Timeout interrupt sources are only checked if enabled in CR1.*/
+  if (((cr1 & USART_CR1_IDLEIE) && (isr & USART_ISR_IDLE)) ||
+      ((cr1 & USART_CR1_RTOIE) && (isr & USART_ISR_RTOF))) {
     _uart_timeout_isr_code(uartp);
   }
 }

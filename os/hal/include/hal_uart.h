@@ -315,7 +315,6 @@ typedef enum {
     (uartp)->config->rxchar_cb(uartp, (uartp)->rxbuf);                      \
 }
 
-
 /**
  * @brief   Timeout ISR code for receiver.
  * @details This code handles the portable part of the ISR code:
