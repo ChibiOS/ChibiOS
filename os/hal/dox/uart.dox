@@ -101,21 +101,13 @@
     rx_idle [label="RX_IDLE", style="bold"];
     rx_active [label="RX_ACTIVE"];
     rx_complete [label="RX_COMPLETE"];
-    rx_error [label="RX_ERROR"];
-    rx_timeout [label="RX_TIMEOUT"];
 
+    rx_idle -> rx_idle [label="\nuartStopReceive()\n>rxchar_cb<\n>rxerr_cb<"];
     rx_idle -> rx_active [label="\nuartStartReceive()"];
-
-    rx_active -> rx_error [label="\nreceive error\n>rxerr_cb<"];
-    rx_error -> rx_idle [label="\ncallback return"];
-    rx_error -> rx_active [label="\nuartStartReceiveI()"];
-
-    rx_active -> rx_timeout [label="\ntimeout\n>timeout_cb<"];
-    rx_timeout -> rx_idle [label="\ncallback return"];
-    rx_timeout -> rx_active [label="\nuartStartReceiveI()"];
 
     rx_active -> rx_complete [label="\nbuffer filled\n>rxend_cb<"];
     rx_active -> rx_idle [label="\nuartStopReceive()"];
+    rx_active -> rx_active [label="\nreceive error\n>rxerr_cb<"];
     rx_complete -> rx_active [label="\nuartStartReceiveI()"];
     rx_complete -> rx_idle [label="\ncallback return"];
   }
