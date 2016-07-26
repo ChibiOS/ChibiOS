@@ -123,6 +123,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Fixed SDIO driver not compiling on STM32F446 devices (bug #767)
+       (backported to 16.1.6).
 - HAL: Fixed error in STM32L4xx ST headers (bug #766)(backported to 16.1.6).
 - HAL: Fixed wrong check in win32 simulator serial driver (bug #765)
        (backported to 16.1.6, 3.0.6, 2.6.10).
