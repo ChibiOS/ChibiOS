@@ -13198,8 +13198,12 @@ typedef struct
 #define SDMMC_DCTRL_DBLOCKSIZE               SDMMC_DCTRL_DBLOCKSIZE_Msk        /*!<DBLOCKSIZE[3:0] bits (Data block size) */
 #define SDMMC_DCTRL_DBLOCKSIZE_0             (0x1U << SDMMC_DCTRL_DBLOCKSIZE_Pos) /*!< 0x00000010 */
 #define SDMMC_DCTRL_DBLOCKSIZE_1             (0x2U << SDMMC_DCTRL_DBLOCKSIZE_Pos) /*!< 0x00000020 */
-#define SDMMC_DCTRL_DBLOCKSIZE_2             (0x3U << SDMMC_DCTRL_DBLOCKSIZE_Pos) /*!< 0x00000040 */
-#define SDMMC_DCTRL_DBLOCKSIZE_3             (0x4U << SDMMC_DCTRL_DBLOCKSIZE_Pos) /*!< 0x00000080 */
+/* CHIBIOS FIX START */
+//#define SDMMC_DCTRL_DBLOCKSIZE_2             (0x3U << SDMMC_DCTRL_DBLOCKSIZE_Pos) /*!< 0x00000040 */
+//#define SDMMC_DCTRL_DBLOCKSIZE_3             (0x4U << SDMMC_DCTRL_DBLOCKSIZE_Pos) /*!< 0x00000080 */
+#define SDMMC_DCTRL_DBLOCKSIZE_2             (0x4U << SDMMC_DCTRL_DBLOCKSIZE_Pos) /*!< 0x00000040 */
+#define SDMMC_DCTRL_DBLOCKSIZE_3             (0x8U << SDMMC_DCTRL_DBLOCKSIZE_Pos) /*!< 0x00000080 */
+/* CHIBIOS FIX END */
 #define SDMMC_DCTRL_RWSTART_Pos              (8U)                              
 #define SDMMC_DCTRL_RWSTART_Msk              (0x1U << SDMMC_DCTRL_RWSTART_Pos) /*!< 0x00000100 */
 #define SDMMC_DCTRL_RWSTART                  SDMMC_DCTRL_RWSTART_Msk           /*!<Read wait start         */
