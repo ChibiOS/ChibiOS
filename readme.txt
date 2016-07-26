@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.6 ***
+- HAL: Fixed SDIO driver not compiling on STM32F446 devices (bug #767).
 - HAL: Fixed error in STM32L4xx ST headers (bug #766).
 - HAL: Fixed wrong check in win32 simulator serial driver (bug #765).
 - HAL: Fixed dependency on RT in hal_usb.c (bug #764).
