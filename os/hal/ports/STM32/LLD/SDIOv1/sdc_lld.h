@@ -31,6 +31,26 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/*
+ * The following definitions are missing from some implementations, fixing
+ * as zeroed masks.
+ */
+#if !defined(SDIO_STA_STBITERR)
+#define SDIO_STA_STBITERR       0
+#endif
+
+#if !defined(SDIO_ICR_STBITERRC)
+#define SDIO_ICR_STBITERRC      0
+#endif
+
+#if !defined(SDIO_ICR_CEATAENDC)
+#define SDIO_ICR_CEATAENDC      0
+#endif
+
+#if !defined(SDIO_MASK_STBITERRIE)
+#define SDIO_MASK_STBITERRIE    0
+#endif
+
 /**
  * @brief Value to clear all interrupts flag at once.
  */
