@@ -18,14 +18,15 @@
 #include "hal.h"
 
 #include "usbcfg.h"
-
+#include "string.h"
+#include "shell.h"
 #include "chprintf.h"
+
 #include "lis302dl.h"
 
-/* Enable use of special ANSI escape sequences */
-#define CHPRINTF_USE_ANSI_CODE         TRUE
-
-static BaseSequentialStream * chp = (BaseSequentialStream*) &SDU1;
+/*===========================================================================*/
+/* LIS302DL related.                                                         */
+/*===========================================================================*/
 
 /* LIS302DL Driver: This object represent an LIS302DL instance */
 static LIS302DLDriver LIS302DLD1;
@@ -33,25 +34,110 @@ static LIS302DLDriver LIS302DLD1;
 static int32_t rawdata[LIS302DL_NUMBER_OF_AXES];
 static float cookeddata[LIS302DL_NUMBER_OF_AXES];
 
-static char axesID[LIS302DL_NUMBER_OF_AXES] = {'X', 'Y', 'Z'};
+static char axisID[LIS302DL_NUMBER_OF_AXES] = {'X', 'Y', 'Z'};
 static uint32_t i;
 
 static const SPIConfig spicfg = {
   NULL,
-  GPIOE,                                     /* port of LIS302DL CS */
-  GPIOE_CS_SPI,                              /* pin of LIS302DL CS */
-  SPI_CR1_BR_0 | SPI_CR1_CPOL | SPI_CR1_CPHA,/*   CR1 register*/                                        /* CR2 register */
+  GPIOE,                                     /* port of LIS302DL CS.*/
+  GPIOE_CS_SPI,                              /* pin of LIS302DL CS.*/
+  SPI_CR1_BR_0 | SPI_CR1_CPOL | SPI_CR1_CPHA,/*   CR1 register.*/
+  0                                          /* CR2 register.*/
 };
 
-static LIS302DLConfig lis302dlcfg = {
-  &SPID1,                                    /* Pointer to SPI Driver */
-  &spicfg,                                   /* Pointer to SPI Configuration */
+static LIS302DLConfig l3gd20cfg = {
+  &SPID1,                                    /* Pointer to SPI Driver.*/
+  &spicfg,                                   /* Pointer to SPI Configuration.*/
+  {0, 0, 0},                                 /* Use default sensitivity.*/
+  {0, 0, 0},                                 /* Use default bias.*/
   LIS302DL_FS_2G,                            /* Full scale value */
   LIS302DL_ODR_100HZ,                        /* Output data rate */
+#if LIS302DL_USE_ADVANCED || defined(__DOXYGEN__)
   LIS302DL_HP_DISABLED,                      /* HP filter disabled */
-  LIS302DL_AE_XYZ,                           /* Enabled axes */
-  LIS302DL_ACC_UNIT_G                        /* Measurement unit for cooked */
+#endif
 };
+
+/*===========================================================================*/
+/* Command line related.                                                     */
+/*===========================================================================*/
+
+/* Enable use of special ANSI escape sequences.*/
+#define CHPRINTF_USE_ANSI_CODE      TRUE
+#define SHELL_WA_SIZE               THD_WORKING_AREA_SIZE(2048)
+
+static void cmd_read(BaseSequentialStream *chp, int argc, char *argv[]) {
+  (void)argv;
+  if (argc != 1) {
+    chprintf(chp, "Usage: read [raw|cooked]\r\n");
+    return;
+  }
+
+  while (chnGetTimeout((BaseChannel *)chp, 150) == Q_TIMEOUT) {
+    if (!strcmp (argv[0], "raw")) {
+#if CHPRINTF_USE_ANSI_CODE
+      chprintf(chp, "\033[2J\033[1;1H");
+#endif
+      accelerometerReadRaw(&LIS302DLD1, rawdata);
+      chprintf(chp, "LIS302DL Accelerometer raw data...\r\n");
+      for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++) {
+        chprintf(chp, "%c-axis: %d\r\n", axisID[i], rawdata[i]);
+      }
+    }
+    else if (!strcmp (argv[0], "cooked")) {
+#if CHPRINTF_USE_ANSI_CODE
+      chprintf(chp, "\033[2J\033[1;1H");
+#endif
+      accelerometerReadCooked(&LIS302DLD1, cookeddata);
+      chprintf(chp, "LIS302DL Accelerometer cooked data...\r\n");
+      for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++) {
+        chprintf(chp, "%c-axis: %.4f mg\r\n", axisID[i], cookeddata[i]);
+      }
+    }
+    else {
+      chprintf(chp, "Usage: read [raw|cooked]\r\n");
+      return;
+    }
+  }
+  chprintf(chp, "Stopped\r\n");
+}
+
+static void cmd_fullscale(BaseSequentialStream *chp, int argc, char *argv[]) {
+  (void)argv;
+  if (argc != 1) {
+    chprintf(chp, "Usage: fullscale [2G|8G]\r\n");
+    return;
+  }
+#if CHPRINTF_USE_ANSI_CODE
+    chprintf(chp, "\033[2J\033[1;1H");
+#endif
+  if(!strcmp (argv[0], "2G")) {
+    accelerometerSetFullScale(&LIS302DLD1, LIS302DL_FS_2G);
+    chprintf(chp, "LIS302DL Accelerometer full scale set to 2 g...\r\n");
+  }
+  else if(!strcmp (argv[0], "8G")) {
+    accelerometerSetFullScale(&LIS302DLD1, LIS302DL_FS_8G);
+    chprintf(chp, "LIS302DL Accelerometer full scale set to 8 g...\r\n");
+  }
+  else {
+    chprintf(chp, "Usage: fullscale [2G|8G]\r\n");
+    return;
+  }
+}
+
+static const ShellCommand commands[] = {
+  {"read", cmd_read},
+  {"fullscale", cmd_fullscale},
+  {NULL, NULL}
+};
+
+static const ShellConfig shell_cfg1 = {
+  (BaseSequentialStream *)&SDU1,
+  commands
+};
+
+/*===========================================================================*/
+/* Main code.                                                                */
+/*===========================================================================*/
 
 /*
  * LED blinker thread, times are in milliseconds.
@@ -62,8 +148,13 @@ static THD_FUNCTION(Thread1, arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (true) {
-    palToggleLine(LINE_LED6);
-    chThdSleepMilliseconds(250);
+    systime_t time;
+
+    time = serusbcfg.usbp->state == USB_ACTIVE ? 250 : 500;
+    palClearLine(LINE_LED6);
+    chThdSleepMilliseconds(time);
+    palSetLine(LINE_LED6);
+    chThdSleepMilliseconds(time);
   }
 }
 
@@ -82,9 +173,7 @@ int main(void) {
   halInit();
   chSysInit();
 
-  /*
-   * Initializes a serial-over-USB CDC driver.
-   */
+  /* Initializes a serial-over-USB CDC driver.*/
   sduObjectInit(&SDU1);
   sduStart(&SDU1, &serusbcfg);
 
@@ -97,35 +186,29 @@ int main(void) {
   chThdSleepMilliseconds(1500);
   usbStart(serusbcfg.usbp, &usbcfg);
   usbConnectBus(serusbcfg.usbp);
-  /*
-   * Creates the blinker thread.
-   */
+
+  /* Creates the blinker thread.*/
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO + 1, Thread1, NULL);
 
-  /*
-   * LIS302DL Object Initialization
-   */
+  /* LIS302DL Object Initialization.*/
   lis302dlObjectInit(&LIS302DLD1);
 
-  /*
-   * Activates the LIS302DL driver.
-   */
-  lis302dlStart(&LIS302DLD1, &lis302dlcfg);
+  /* Activates the LIS302DL driver.*/
+  lis302dlStart(&LIS302DLD1, &l3gd20cfg);
 
-  while (TRUE) {
-    palToggleLine(LINE_LED3);
-    accelerometerReadRaw(&LIS302DLD1, rawdata);
-    for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++)
-      chprintf(chp, "RAW-%c:%d\r\n", axesID[i], rawdata[i]);
+  /* Shell manager initialization.*/
+  shellInit();
 
-    accelerometerReadCooked(&LIS302DLD1, cookeddata);
-    for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++)
-      chprintf(chp, "COOKED-%c:%.3f g\r\n", axesID[i], cookeddata[i]);
-
-    chThdSleepMilliseconds(150);
-#if CHPRINTF_USE_ANSI_CODE
-    chprintf(chp, "\033[2J\033[1;1H");
-#endif
+  while(TRUE) {
+    if (SDU1.config->usbp->state == USB_ACTIVE) {
+      thread_t *shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
+                                              "shell", NORMALPRIO + 1,
+                                              shellThread, (void *)&shell_cfg1);
+      chThdWait(shelltp);               /* Waiting termination.             */
+    }
+    chThdSleepMilliseconds(1000);
   }
   lis302dlStop(&LIS302DLD1);
+  return 0;
 }
+

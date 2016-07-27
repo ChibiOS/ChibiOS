@@ -100,6 +100,7 @@ include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
 # Other files (optional).
 include $(CHIBIOS)/os/ex/ST/lis302dl.mk
 include $(CHIBIOS)/os/hal/lib/streams/streams.mk
+include $(CHIBIOS)/os/various/shell/shell.mk
 
 # Define linker script file here
 LDSCRIPT= $(STARTUPLD)/STM32F407xG.ld
@@ -115,6 +116,7 @@ CSRC = $(STARTUPSRC) \
        $(BOARDSRC) \
 	   $(LIS302DLSRC) \
        $(STREAMSSRC) \
+       $(SHELLSRC) \
        usbcfg.c main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -148,7 +150,7 @@ ASMXSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
 INCDIR = $(CHIBIOS)/os/license \
          $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) $(LIS302DLINC) \
-         $(STREAMSINC) $(CHIBIOS)/os/various
+         $(STREAMSINC) $(SHELLINC)
 
 #
 # Project, sources and paths
@@ -198,7 +200,8 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = -DCHPRINTF_USE_FLOAT=1
+UDEFS = -DCHPRINTF_USE_FLOAT=1 -DSHELL_CMD_TEST_ENABLED=0 \
+        -DLIS302DL_USE_ADVANCED=0
 
 # Define ASM defines here
 UADEFS =

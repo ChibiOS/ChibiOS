@@ -8,7 +8,7 @@ The demo runs on an STM32F407 Discovery board rev MB997B.
 
 ** The Demo **
 
-The demo flashes the board LED using a thread, read data from LIS302L printing
+The demo flashes the board LED using a thread, read data from LIS302DL printing
 it on a BaseSequentialStream (SDU1, mapped on USB virtual COM port).
 
 ** Build Procedure **

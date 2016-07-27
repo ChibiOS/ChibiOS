@@ -33,58 +33,6 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-#define  LIS302DL_SENS_2G                   ((float)18.0f)
-#define  LIS302DL_SENS_8G                   ((float)72.0f)
-
-#define  LIS302DL_DI                        ((uint8_t)0xFF)
-#define  LIS302DL_DI_0                      ((uint8_t)0x01)
-#define  LIS302DL_DI_1                      ((uint8_t)0x02)
-#define  LIS302DL_DI_2                      ((uint8_t)0x04)
-#define  LIS302DL_DI_3                      ((uint8_t)0x08)
-#define  LIS302DL_DI_4                      ((uint8_t)0x10)
-#define  LIS302DL_DI_5                      ((uint8_t)0x20)
-#define  LIS302DL_DI_6                      ((uint8_t)0x40)
-#define  LIS302DL_DI_7                      ((uint8_t)0x80)
-
-#define  LIS302DL_AD                        ((uint8_t)0x3F)
-#define  LIS302DL_AD_0                      ((uint8_t)0x01)
-#define  LIS302DL_AD_1                      ((uint8_t)0x02)
-#define  LIS302DL_AD_2                      ((uint8_t)0x04)
-#define  LIS302DL_AD_3                      ((uint8_t)0x08)
-#define  LIS302DL_AD_4                      ((uint8_t)0x10)
-#define  LIS302DL_AD_5                      ((uint8_t)0x20)
-
-#define  LIS302DL_MS                        ((uint8_t)0x40)
-#define  LIS302DL_RW                        ((uint8_t)0x80)
-
-#define  LIS302DL_AD_WHO_AM_I               ((uint8_t)0x0F)
-#define  LIS302DL_AD_CTRL_REG1              ((uint8_t)0x20)
-#define  LIS302DL_AD_CTRL_REG2              ((uint8_t)0x21)
-#define  LIS302DL_AD_CTRL_REG3              ((uint8_t)0x22)
-#define  LIS302DL_AD_HP_FILER_RESET         ((uint8_t)0x23)
-#define  LIS302DL_AD_STATUS_REG             ((uint8_t)0x27)
-#define  LIS302DL_AD_OUT_X                  ((uint8_t)0x29)
-#define  LIS302DL_AD_OUT_Y                  ((uint8_t)0x2B)
-#define  LIS302DL_AD_OUT_Z                  ((uint8_t)0x2D)
-#define  LIS302DL_AD_FF_WU_CFG_1            ((uint8_t)0x30)
-#define  LIS302DL_AD_FF_WU_SRC_1            ((uint8_t)0x31)
-#define  LIS302DL_AD_FF_WU_THS_1            ((uint8_t)0x32)
-#define  LIS302DL_AD_FF_WU_DURATION_1       ((uint8_t)0x33)
-#define  LIS302DL_AD_FF_WU_CFG_2            ((uint8_t)0x34)
-#define  LIS302DL_AD_FF_WU_SRC_2            ((uint8_t)0x35)
-#define  LIS302DL_AD_FF_WU_THS_2            ((uint8_t)0x36)
-#define  LIS302DL_AD_FF_WU_DURATION_2       ((uint8_t)0x37)
-#define  LIS302DL_AD_CLICK_CFG              ((uint8_t)0x38)
-#define  LIS302DL_AD_CLICK_SRC              ((uint8_t)0x39)
-#define  LIS302DL_AD_CLICK_THSY_X           ((uint8_t)0x3B)
-#define  LIS302DL_AD_CLICK_THSZ             ((uint8_t)0x3C)
-#define  LIS302DL_AD_CLICK_TIME_LIMIT       ((uint8_t)0x3D)
-#define  LIS302DL_AD_CLICK_LATENCY          ((uint8_t)0x3E)
-#define  LIS302DL_AD_CLICK_WINDOW           ((uint8_t)0x3F)
-
-#define  LIS302DL_CTRL_REG1_FS_MASK         ((uint8_t)0x20)
-#define  TO_G                               ((float)0.001f)
-#define  TO_SI                              ((float)0.00981f)
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -92,14 +40,6 @@
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
-
-/**
- * @brief  LIS302DL Power Mode
- */
-typedef enum {
-  LIS302DL_PM_POWER_DOWN   = 0x00,  /**< Power down enabled.                */          
-  LIS302DL_PM_SLEEP_NORMAL = 0x40   /**< Normal operation mode.             */          
-}lis302dl_pm_t;
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
@@ -111,16 +51,18 @@ typedef enum {
  * @pre     The SPI interface must be initialized and the driver started.
  *
  * @param[in] spip      pointer to the SPI interface
- * @param[in] reg       register number
- * @return              register value.
+ * @param[in] reg       starting register address
+ * @param[in] n         number of adjacent registers to write
+ * @param[in] b         pointer to a buffer.
  */
-static uint8_t lis302dlSPIReadRegister(SPIDriver *spip, uint8_t reg) {
-  uint8_t txbuf[2] = {LIS302DL_RW | reg, 0xFF};
-  uint8_t rxbuf[2] = {0x00, 0x00};
+static void lis302dlSPIReadRegister(SPIDriver *spip, uint8_t reg,  size_t n,
+                                    uint8_t* b) {
+  uint8_t cmd;
+  (n == 1) ? (cmd = reg | LIS302DL_RW) : (cmd = reg | LIS302DL_RW | LIS302DL_MS);
   spiSelect(spip);
-  spiExchange(spip, 2, txbuf, rxbuf);
+  spiSend(spip, 1, &cmd);
+  spiReceive(spip, n, b);
   spiUnselect(spip);
-  return rxbuf[1];
 }
 
 /**
@@ -128,50 +70,18 @@ static uint8_t lis302dlSPIReadRegister(SPIDriver *spip, uint8_t reg) {
  * @pre     The SPI interface must be initialized and the driver started.
  *
  * @param[in] spip      pointer to the SPI interface
- * @param[in] reg       register number
- * @param[in] value     register value.
+ * @param[in] reg       starting register address
+ * @param[in] n         number of adjacent registers to write
+ * @param[in] value     pointer to a buffer of values.
  */
-static void lis302dlSPIWriteRegister(SPIDriver *spip, uint8_t reg,
-                                   uint8_t value) {
-
-  switch (reg) {
-    default:
-      /* Reserved register must not be written, according to the datasheet
-       * this could permanently damage the device.
-       */
-      osalDbgAssert(FALSE, "lis302dlSPIWriteRegister(), reserved register");
-    case LIS302DL_AD_WHO_AM_I:
-
-    case LIS302DL_AD_HP_FILER_RESET:
-    case LIS302DL_AD_STATUS_REG:
-    case LIS302DL_AD_OUT_X:
-    case LIS302DL_AD_OUT_Y:
-    case LIS302DL_AD_OUT_Z:
-    case LIS302DL_AD_FF_WU_SRC_1:
-    case LIS302DL_AD_FF_WU_SRC_2:
-    case LIS302DL_AD_CLICK_SRC:
-    /* Read only registers cannot be written, the command is ignored.*/
-      return;
-    case LIS302DL_AD_CTRL_REG1:
-    case LIS302DL_AD_CTRL_REG2:
-    case LIS302DL_AD_CTRL_REG3:
-    case LIS302DL_AD_FF_WU_CFG_1:
-    case LIS302DL_AD_FF_WU_THS_1:
-    case LIS302DL_AD_FF_WU_DURATION_1:
-    case LIS302DL_AD_FF_WU_CFG_2:
-    case LIS302DL_AD_FF_WU_THS_2:
-    case LIS302DL_AD_FF_WU_DURATION_2:
-    case LIS302DL_AD_CLICK_CFG:
-    case LIS302DL_AD_CLICK_THSY_X:
-    case LIS302DL_AD_CLICK_THSZ:
-    case LIS302DL_AD_CLICK_TIME_LIMIT:
-    case LIS302DL_AD_CLICK_LATENCY:
-    case LIS302DL_AD_CLICK_WINDOW:
-      spiSelect(spip);
-      uint8_t txbuf[2] = {reg, value};
-      spiSend(spip, 2, txbuf);
-      spiUnselect(spip);
-  }
+static void lis302dlSPIWriteRegister(SPIDriver *spip, uint8_t reg, size_t n,
+                                     uint8_t* b) {
+  uint8_t cmd;
+  (n == 1) ? (cmd = reg) : (cmd = reg | LIS302DL_MS);
+  spiSelect(spip);
+  spiSend(spip, 1, &cmd);
+  spiSend(spip, n, b);
+  spiUnselect(spip);
 }
 #endif /* LIS302DL_USE_SPI */
 
@@ -185,9 +95,10 @@ static size_t get_axes_number(void *ip) {
 }
 
 static msg_t read_raw(void *ip, int32_t axes[LIS302DL_NUMBER_OF_AXES]) {
-  int8_t tmp;
+  uint8_t i, tmp;
+
   osalDbgCheck((ip != NULL) && (axes != NULL));
-  
+
   osalDbgAssert((((LIS302DLDriver *)ip)->state == LIS302DL_READY),
               "read_raw(), invalid state");
 
@@ -199,21 +110,11 @@ static msg_t read_raw(void *ip, int32_t axes[LIS302DL_NUMBER_OF_AXES]) {
   spiStart(((LIS302DLDriver *)ip)->config->spip,
            ((LIS302DLDriver *)ip)->config->spicfg);
 #endif /* LIS302DL_SHARED_SPI */   
-  if(((LIS302DLDriver *)ip)->config->axesenabling & LIS302DL_AE_X){
-    tmp = lis302dlSPIReadRegister(((LIS302DLDriver *)ip)->config->spip,
-										LIS302DL_AD_OUT_X);
-    axes[0] = tmp + ((LIS302DLDriver *)ip)->bias[0];
-  }
-  if(((LIS302DLDriver *)ip)->config->axesenabling & LIS302DL_AE_Y){
-    tmp = lis302dlSPIReadRegister(((LIS302DLDriver *)ip)->config->spip,
-										LIS302DL_AD_OUT_Y);
-    axes[1] = tmp  + ((LIS302DLDriver *)ip)->bias[1];
-  }
-  if(((LIS302DLDriver *)ip)->config->axesenabling & LIS302DL_AE_Z){
-    tmp = lis302dlSPIReadRegister(((LIS302DLDriver *)ip)->config->spip,
-										LIS302DL_AD_OUT_Z);
-    axes[2] = tmp + ((LIS302DLDriver *)ip)->bias[2];
-  }
+    for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++) {
+      lis302dlSPIReadRegister(((LIS302DLDriver *)ip)->config->spip,
+                              LIS302DL_AD_OUT_X + (i * 2), 1, &tmp);
+      axes[i] = (int32_t)((int8_t)tmp);
+    }
 #if	LIS302DL_SHARED_SPI
   spiReleaseBus(((LIS302DLDriver *)ip)->config->spip);
 #endif /* LIS302DL_SHARED_SPI */   
@@ -229,17 +130,12 @@ static msg_t read_cooked(void *ip, float axes[]) {
   osalDbgCheck((ip != NULL) && (axes != NULL));
 
   osalDbgAssert((((LIS302DLDriver *)ip)->state == LIS302DL_READY),
-              "read_cooked(), invalid state");
+                "read_cooked(), invalid state");
 
   msg = read_raw(ip, raw);
   for(i = 0; i < LIS302DL_NUMBER_OF_AXES ; i++){
-    axes[i] = raw[i] * ((LIS302DLDriver *)ip)->sensitivity[i];
-    if(((LIS302DLDriver *)ip)->config->unit == LIS302DL_ACC_UNIT_G){
-      axes[i] *= TO_G;
-    }
-    else if(((LIS302DLDriver *)ip)->config->unit == LIS302DL_ACC_UNIT_SI){
-      axes[i] *= TO_SI;
-    }
+    axes[i] = (raw[i] * ((LIS302DLDriver *)ip)->sensitivity[i]);
+    axes[i] -= ((LIS302DLDriver *)ip)->bias[i];
   }
   return msg;
 }
@@ -302,8 +198,43 @@ static msg_t reset_sensivity(void *ip) {
 	for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++)
       ((LIS302DLDriver *)ip)->sensitivity[i] = LIS302DL_SENS_8G;
   else {
-    osalDbgAssert(FALSE, "reset_sensivity(), accelerometer full scale issue");
+    osalDbgAssert(FALSE, "reset_sensivity(), full scale issue");
     return MSG_RESET;
+  }
+  return MSG_OK;
+}
+
+static msg_t set_full_scale(void *ip, lis302dl_fs_t fs) {
+  float newfs, scale;
+  uint8_t i, cr;
+
+  if(fs == LIS302DL_FS_2G) {
+    newfs = LIS302DL_2G;
+  }
+  else if(fs == LIS302DL_FS_8G) {
+    newfs = LIS302DL_8G;
+  }
+  else {
+    return MSG_RESET;
+  }
+
+  if(newfs != ((LIS302DLDriver *)ip)->fullscale) {
+    scale = newfs / ((LIS302DLDriver *)ip)->fullscale;
+    ((LIS302DLDriver *)ip)->fullscale = newfs;
+
+    /* Updating register.*/
+    lis302dlSPIReadRegister(((LIS302DLDriver *)ip)->config->spip,
+                            LIS302DL_AD_CTRL_REG1, 1, &cr);
+    cr &= ~(LIS302DL_CTRL_REG1_FS_MASK);
+    cr |= fs;
+    lis302dlSPIWriteRegister(((LIS302DLDriver *)ip)->config->spip,
+                             LIS302DL_AD_CTRL_REG1, 1, &cr);
+
+    /* Scaling sensitivity and bias. Re-calibration is suggested anyway. */
+    for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++) {
+      ((LIS302DLDriver *)ip)->sensitivity[i] *= scale;
+      ((LIS302DLDriver *)ip)->bias[i] *= scale;
+    }
   }
   return MSG_OK;
 }
@@ -319,7 +250,8 @@ static const struct BaseAccelerometerVMT vmt_baseaccelerometer = {
 
 static const struct LIS302DLVMT vmt_lis302dl = {
   get_axes_number, read_raw, read_cooked,
-  set_bias, reset_bias, set_sensivity, reset_sensivity 
+  set_bias, reset_bias, set_sensivity, reset_sensivity,
+  set_full_scale
 };
 
 /*===========================================================================*/
@@ -354,6 +286,7 @@ void lis302dlObjectInit(LIS302DLDriver *devp) {
  */
 void lis302dlStart(LIS302DLDriver *devp, const LIS302DLConfig *config) {
   uint32_t i;
+  uint8_t cr[2] = {0, 0};
   osalDbgCheck((devp != NULL) && (config != NULL));
 
   osalDbgAssert((devp->state == LIS302DL_STOP) || (devp->state == LIS302DL_READY),
@@ -367,25 +300,42 @@ void lis302dlStart(LIS302DLDriver *devp, const LIS302DLConfig *config) {
 #endif /* LIS302DL_SHARED_SPI */
   spiStart((devp)->config->spip,
            (devp)->config->spicfg);
-  lis302dlSPIWriteRegister(devp->config->spip, LIS302DL_AD_CTRL_REG1,
-                         LIS302DL_PM_SLEEP_NORMAL |
-                         devp->config->axesenabling |
-						 devp->config->fullscale |
-						 devp->config->outputdatarate);
-  lis302dlSPIWriteRegister(devp->config->spip, LIS302DL_AD_CTRL_REG2,
-                         devp->config->highpass);
+           
+  /* Control register 1 configuration block.*/
+  {
+    cr[0] = LIS302DL_CTRL_REG1_XEN | LIS302DL_CTRL_REG1_YEN | 
+            LIS302DL_CTRL_REG1_ZEN | LIS302DL_CTRL_REG1_PD |
+            devp->config->outputdatarate |
+            devp->config->fullscale;
+  }
+  
+  /* Control register 2 configuration block.*/
+  {
+#if LIS302DL_USE_ADVANCED || defined(__DOXYGEN__)
+  if(devp->config->hpmode != LIS302DL_HPM_BYPASSED)
+    cr[1] = devp->config->highpass;
+#endif
+  }
+  
+  lis302dlSPIWriteRegister(devp->config->spip, LIS302DL_AD_CTRL_REG1, 
+                           2, cr);
+                           
 #if	LIS302DL_SHARED_SPI
   spiReleaseBus((devp)->config->spip);
 #endif /* LIS302DL_SHARED_SPI */  
 #endif /* LIS302DL_USE_SPI */
   
   /* Storing sensitivity information according to full scale value */
-  if(devp->config->fullscale == LIS302DL_FS_2G)
+  if(devp->config->fullscale == LIS302DL_FS_2G) {
+    devp->fullscale = LIS302DL_2G;
     for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++)
       devp->sensitivity[i] = LIS302DL_SENS_2G;
-  else if(devp->config->fullscale == LIS302DL_FS_8G)
-	for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++)
-      devp->sensitivity[i] = LIS302DL_SENS_8G;
+  }
+  else if(devp->config->fullscale == LIS302DL_FS_8G) {
+    devp->fullscale = LIS302DL_8G;
+    for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++)
+        devp->sensitivity[i] = LIS302DL_SENS_8G;
+  }
   else {
     osalDbgAssert(FALSE, "lis302dlStart(), accelerometer full scale issue");
   }
@@ -403,7 +353,7 @@ void lis302dlStart(LIS302DLDriver *devp, const LIS302DLConfig *config) {
  * @api
  */
 void lis302dlStop(LIS302DLDriver *devp) {
-
+  uint8_t cr1;
   osalDbgCheck(devp != NULL);
 
   osalDbgAssert((devp->state == LIS302DL_STOP) || (devp->state == LIS302DL_READY),
@@ -416,8 +366,8 @@ void lis302dlStop(LIS302DLDriver *devp) {
     spiStart((devp)->config->spip,
              (devp)->config->spicfg);
 #endif /* LIS302DL_SHARED_SPI */
-    lis302dlSPIWriteRegister(devp->config->spip, LIS302DL_AD_CTRL_REG1,
-                           LIS302DL_PM_POWER_DOWN | LIS302DL_AE_DISABLED);
+    cr1 = 0;
+    lis302dlSPIWriteRegister(devp->config->spip, LIS302DL_AD_CTRL_REG1, 1, &cr1);
     spiStop((devp)->config->spip);
 #if	LIS302DL_SHARED_SPI
     spiReleaseBus((devp)->config->spip);
