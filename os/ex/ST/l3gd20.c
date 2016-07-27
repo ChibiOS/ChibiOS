@@ -33,8 +33,6 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-#define PI                          3.14159f
-
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -237,7 +235,7 @@ static msg_t reset_sensivity(void *ip) {
 
 static msg_t set_full_scale(void *ip, l3gd20_fs_t fs) {
   float newfs, scale;
-  unsigned i;
+  uint8_t i, cr;
 
   if(fs == L3GD20_FS_250DPS) {
     newfs = L3GD20_250DPS;
@@ -255,6 +253,15 @@ static msg_t set_full_scale(void *ip, l3gd20_fs_t fs) {
   if(newfs != ((L3GD20Driver *)ip)->fullscale) {
     scale = newfs / ((L3GD20Driver *)ip)->fullscale;
     ((L3GD20Driver *)ip)->fullscale = newfs;
+
+    /* Updating register.*/
+    l3gd20SPIReadRegister(((L3GD20Driver *)ip)->config->spip,
+                          L3GD20_AD_CTRL_REG4, 1, &cr);
+    cr &= ~(L3GD20_CTRL_REG4_FS_MASK);
+    cr |= fs;
+    l3gd20SPIWriteRegister(((L3GD20Driver *)ip)->config->spip,
+                           L3GD20_AD_CTRL_REG4, 1, &cr);
+
     /* Scaling sensitivity and bias. Re-calibration is suggested anyway. */
     for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++) {
       ((L3GD20Driver *)ip)->sensitivity[i] *= scale;
