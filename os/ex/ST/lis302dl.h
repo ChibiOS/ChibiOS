@@ -120,12 +120,12 @@
  * @{
  */
 #define LIS302DL_CTRL_REG1_MASK     0xFF        /**< LIS302DL_CTRL_REG1 mask  */
-#define LIS302DL_CTRL_REG1_FS_MASK  0x20        /**< Full scale field mask    */
 #define LIS302DL_CTRL_REG1_XEN      (1 << 0)    /**< X axis enable            */
 #define LIS302DL_CTRL_REG1_YEN      (1 << 1)    /**< Y axis enable            */
 #define LIS302DL_CTRL_REG1_ZEN      (1 << 2)    /**< Z axis enable            */
 #define LIS302DL_CTRL_REG1_STM      (1 << 3)    /**< Self test P-M            */
 #define LIS302DL_CTRL_REG1_STP      (1 << 4)    /**< Self test P-M            */
+#define LIS302DL_CTRL_REG1_FS_MASK  0x20        /**< Full scale field mask    */
 #define LIS302DL_CTRL_REG1_FS       (1 << 5)    /**< Full scale               */
 #define LIS302DL_CTRL_REG1_PD       (1 << 6)    /**< Power-down mode enable   */
 #define LIS302DL_CTRL_REG1_DR       (1 << 7)    /**< Output data rate         */
