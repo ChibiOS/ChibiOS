@@ -33,135 +33,6 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-#define  LIS3DSH_SENS_2G                    ((float)0.06f)
-#define  LIS3DSH_SENS_4G                    ((float)0.12f)
-#define  LIS3DSH_SENS_6G                    ((float)0.18f)
-#define  LIS3DSH_SENS_8G                    ((float)0.24f)
-#define  LIS3DSH_SENS_16G                   ((float)0.73f)
-
-#define  LIS3DSH_DI                         ((uint8_t)0xFF)
-#define  LIS3DSH_DI_0                       ((uint8_t)0x01)
-#define  LIS3DSH_DI_1                       ((uint8_t)0x02)
-#define  LIS3DSH_DI_2                       ((uint8_t)0x04)
-#define  LIS3DSH_DI_3                       ((uint8_t)0x08)
-#define  LIS3DSH_DI_4                       ((uint8_t)0x10)
-#define  LIS3DSH_DI_5                       ((uint8_t)0x20)
-#define  LIS3DSH_DI_6                       ((uint8_t)0x40)
-#define  LIS3DSH_DI_7                       ((uint8_t)0x80)
-
-#define  LIS3DSH_AD                         ((uint8_t)0x3F)
-#define  LIS3DSH_AD_0                       ((uint8_t)0x01)
-#define  LIS3DSH_AD_1                       ((uint8_t)0x02)
-#define  LIS3DSH_AD_2                       ((uint8_t)0x04)
-#define  LIS3DSH_AD_3                       ((uint8_t)0x08)
-#define  LIS3DSH_AD_4                       ((uint8_t)0x10)
-#define  LIS3DSH_AD_5                       ((uint8_t)0x20)
-
-#define  LIS3DSH_MS                         ((uint8_t)0x40)
-#define  LIS3DSH_RW                         ((uint8_t)0x80)
-
-#define  LIS3DSH_AD_INFO1                   ((uint8_t)0x0D)
-#define  LIS3DSH_AD_INFO2                   ((uint8_t)0x0E)
-#define  LIS3DSH_AD_WHO_AM_I                ((uint8_t)0x0F)
-#define  LIS3DSH_AD_CTRL_REG3               ((uint8_t)0x23)
-#define  LIS3DSH_AD_CTRL_REG4               ((uint8_t)0x20)
-#define  LIS3DSH_AD_CTRL_REG5               ((uint8_t)0x24)
-#define  LIS3DSH_AD_CTRL_REG6               ((uint8_t)0x25)
-#define  LIS3DSH_AD_STATUS                  ((uint8_t)0x27)
-#define  LIS3DSH_AD_OUT_T                   ((uint8_t)0x0C)
-#define  LIS3DSH_AD_OFF_X                   ((uint8_t)0x10)
-#define  LIS3DSH_AD_OFF_Y                   ((uint8_t)0x11)
-#define  LIS3DSH_AD_OFF_Z                   ((uint8_t)0x12)
-#define  LIS3DSH_AD_CS_X                    ((uint8_t)0x13)
-#define  LIS3DSH_AD_CS_Y                    ((uint8_t)0x14)
-#define  LIS3DSH_AD_CS_Z                    ((uint8_t)0x15)
-#define  LIS3DSH_AD_LC_L                    ((uint8_t)0x16)
-#define  LIS3DSH_AD_LC_H                    ((uint8_t)0x17)
-#define  LIS3DSH_AD_STAT                    ((uint8_t)0x18)
-#define  LIS3DSH_AD_VFC_1                   ((uint8_t)0x1B)
-#define  LIS3DSH_AD_VFC_2                   ((uint8_t)0x1C)
-#define  LIS3DSH_AD_VFC_3                   ((uint8_t)0x1D)
-#define  LIS3DSH_AD_VFC_4                   ((uint8_t)0x1E)
-#define  LIS3DSH_AD_THRS3                   ((uint8_t)0x1F)
-#define  LIS3DSH_AD_OUT_X_L                 ((uint8_t)0x28)
-#define  LIS3DSH_AD_OUT_X_H                 ((uint8_t)0x29)
-#define  LIS3DSH_AD_OUT_Y_L                 ((uint8_t)0x2A)
-#define  LIS3DSH_AD_OUT_Y_H                 ((uint8_t)0x2B)
-#define  LIS3DSH_AD_OUT_Z_L                 ((uint8_t)0x2C)
-#define  LIS3DSH_AD_OUT_Z_H                 ((uint8_t)0x2D)
-#define  LIS3DSH_AD_FIFO_CTRL               ((uint8_t)0x2E)
-#define  LIS3DSH_AD_FIFO_SRC                ((uint8_t)0x2F)
-#define  LIS3DSH_AD_CTRL_REG1               ((uint8_t)0x21)
-#define  LIS3DSH_AD_ST1_0                   ((uint8_t)0x40)
-#define  LIS3DSH_AD_ST1_1                   ((uint8_t)0x41)
-#define  LIS3DSH_AD_ST1_2                   ((uint8_t)0x42)
-#define  LIS3DSH_AD_ST1_3                   ((uint8_t)0x43)
-#define  LIS3DSH_AD_ST1_4                   ((uint8_t)0x44)
-#define  LIS3DSH_AD_ST1_5                   ((uint8_t)0x45)
-#define  LIS3DSH_AD_ST1_6                   ((uint8_t)0x46)
-#define  LIS3DSH_AD_ST1_7                   ((uint8_t)0x47)
-#define  LIS3DSH_AD_ST1_8                   ((uint8_t)0x48)
-#define  LIS3DSH_AD_ST1_9                   ((uint8_t)0x49)
-#define  LIS3DSH_AD_ST1_A                   ((uint8_t)0x4A)
-#define  LIS3DSH_AD_ST1_B                   ((uint8_t)0x4B)
-#define  LIS3DSH_AD_ST1_C                   ((uint8_t)0x4C)
-#define  LIS3DSH_AD_ST1_D                   ((uint8_t)0x4D)
-#define  LIS3DSH_AD_ST1_E                   ((uint8_t)0x4E)
-#define  LIS3DSH_AD_ST1_F                   ((uint8_t)0x4F)
-#define  LIS3DSH_AD_TIM4_1                  ((uint8_t)0x50)
-#define  LIS3DSH_AD_TIM3_1                  ((uint8_t)0x51)
-#define  LIS3DSH_AD_TIM2_1_L                ((uint8_t)0x52)
-#define  LIS3DSH_AD_TIM2_1_H                ((uint8_t)0x53)
-#define  LIS3DSH_AD_TIM1_1_L                ((uint8_t)0x54)
-#define  LIS3DSH_AD_TIM1_1_H                ((uint8_t)0x55)
-#define  LIS3DSH_AD_THRS2_1                 ((uint8_t)0x56)
-#define  LIS3DSH_AD_THRS1_1                 ((uint8_t)0x57)
-#define  LIS3DSH_AD_MASK1_B                 ((uint8_t)0x59)
-#define  LIS3DSH_AD_MASK1_A                 ((uint8_t)0x5A)
-#define  LIS3DSH_AD_SETT1                   ((uint8_t)0x5B)
-#define  LIS3DSH_AD_PR1                     ((uint8_t)0x5C)
-#define  LIS3DSH_AD_TC1_L                   ((uint8_t)0x5D)
-#define  LIS3DSH_AD_TC1_H                   ((uint8_t)0x5E)
-#define  LIS3DSH_AD_OUTS1                   ((uint8_t)0x5F)
-#define  LIS3DSH_AD_PEAK1                   ((uint8_t)0x19)
-#define  LIS3DSH_AD_CTRL_REG2               ((uint8_t)0x22)
-#define  LIS3DSH_AD_ST2_0                   ((uint8_t)0x60)
-#define  LIS3DSH_AD_ST2_1                   ((uint8_t)0x61)
-#define  LIS3DSH_AD_ST2_2                   ((uint8_t)0x62)
-#define  LIS3DSH_AD_ST2_3                   ((uint8_t)0x63)
-#define  LIS3DSH_AD_ST2_4                   ((uint8_t)0x64)
-#define  LIS3DSH_AD_ST2_5                   ((uint8_t)0x65)
-#define  LIS3DSH_AD_ST2_6                   ((uint8_t)0x66)
-#define  LIS3DSH_AD_ST2_7                   ((uint8_t)0x67)
-#define  LIS3DSH_AD_ST2_8                   ((uint8_t)0x68)
-#define  LIS3DSH_AD_ST2_9                   ((uint8_t)0x69)
-#define  LIS3DSH_AD_ST2_A                   ((uint8_t)0x6A)
-#define  LIS3DSH_AD_ST2_B                   ((uint8_t)0x6B)
-#define  LIS3DSH_AD_ST2_C                   ((uint8_t)0x6C)
-#define  LIS3DSH_AD_ST2_D                   ((uint8_t)0x6D)
-#define  LIS3DSH_AD_ST2_E                   ((uint8_t)0x6E)
-#define  LIS3DSH_AD_ST2_F                   ((uint8_t)0x6F)
-#define  LIS3DSH_AD_TIM4_2                  ((uint8_t)0x70)
-#define  LIS3DSH_AD_TIM3_2                  ((uint8_t)0x71)
-#define  LIS3DSH_AD_TIM2_2_L                ((uint8_t)0x72)
-#define  LIS3DSH_AD_TIM2_2_H                ((uint8_t)0x73)
-#define  LIS3DSH_AD_TIM1_2_L                ((uint8_t)0x74)
-#define  LIS3DSH_AD_TIM1_2_H                ((uint8_t)0x75)
-#define  LIS3DSH_AD_THRS2_2                 ((uint8_t)0x76)
-#define  LIS3DSH_AD_THRS1_2                 ((uint8_t)0x77)
-#define  LIS3DSH_AD_MASK2_B                 ((uint8_t)0x79)
-#define  LIS3DSH_AD_MASK2_A                 ((uint8_t)0x7A)
-#define  LIS3DSH_AD_SETT2                   ((uint8_t)0x7B)
-#define  LIS3DSH_AD_PR2                     ((uint8_t)0x7C)
-#define  LIS3DSH_AD_TC2_L                   ((uint8_t)0x7D)
-#define  LIS3DSH_AD_TC2_H                   ((uint8_t)0x7E)
-#define  LIS3DSH_AD_OUTS2                   ((uint8_t)0x7F)
-#define  LIS3DSH_AD_PEAK2                   ((uint8_t)0x1A)
-#define  LIS3DSH_AD_DES2                    ((uint8_t)0x78)
-
-#define  LIS3DSH_CTRL_REG5_FS_MASK          ((uint8_t)0x38)
-#define  TO_G                               ((float)0.001f)
-#define  TO_SI                              ((float)0.00981f)
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -178,142 +49,41 @@
 /**
  * @brief   Reads a generic register value using SPI.
  * @pre     The SPI interface must be initialized and the driver started.
+ * @note    Multiple write/read requires proper settings in CTRL_REG6.
  *
  * @param[in] spip      pointer to the SPI interface
- * @param[in] reg       register number
- * @return              register value.
+ * @param[in] reg       starting register address
+ * @param[in] n         number of adjacent registers to write
+ * @param[in] b         pointer to a buffer.
  */
-static uint8_t lis3dshSPIReadRegister(SPIDriver *spip, uint8_t reg) {
-  uint8_t txbuf[2] = {LIS3DSH_RW | reg, 0xFF};
-  uint8_t rxbuf[2] = {0x00, 0x00};
+static void lis3dshSPIReadRegister(SPIDriver *spip, uint8_t reg,  size_t n,
+                                   uint8_t* b) {
+  uint8_t cmd;
+  cmd = reg | LIS3DSH_RW;
   spiSelect(spip);
-  spiExchange(spip, 2, txbuf, rxbuf);
+  spiSend(spip, 1, &cmd);
+  spiReceive(spip, n, b);
   spiUnselect(spip);
-  return rxbuf[1];
 }
 
 /**
  * @brief   Writes a value into a generic register using SPI.
  * @pre     The SPI interface must be initialized and the driver started.
+ * @note    Multiple write/read requires proper settings in CTRL_REG6.
  *
  * @param[in] spip      pointer to the SPI interface
- * @param[in] reg       register number
- * @param[in] value     register value.
+ * @param[in] reg       starting register address
+ * @param[in] n         number of adjacent registers to write
+ * @param[in] value     pointer to a buffer of values.
  */
-static void lis3dshSPIWriteRegister(SPIDriver *spip, uint8_t reg,
-                                   uint8_t value) {
-
-  switch (reg) {
-    default:
-      /* Reserved register must not be written, according to the datasheet
-       * this could permanently damage the device.
-       */
-      osalDbgAssert(FALSE, "lis3dshSPIWriteRegister(), reserved register");
-    case LIS3DSH_AD_INFO1:
-    case LIS3DSH_AD_INFO2:
-    case LIS3DSH_AD_WHO_AM_I:
-    case LIS3DSH_AD_STATUS:
-    case LIS3DSH_AD_OUT_T:
-    case LIS3DSH_AD_STAT:
-    case LIS3DSH_AD_OUT_X_L:
-    case LIS3DSH_AD_OUT_X_H:
-    case LIS3DSH_AD_OUT_Y_L:
-    case LIS3DSH_AD_OUT_Y_H:
-    case LIS3DSH_AD_OUT_Z_L:
-    case LIS3DSH_AD_OUT_Z_H:
-    case LIS3DSH_AD_FIFO_SRC:
-	case LIS3DSH_AD_FIFO_CTRL:
-    case LIS3DSH_AD_PR1:
-    case LIS3DSH_AD_TC1_L:
-    case LIS3DSH_AD_TC1_H:
-    case LIS3DSH_AD_OUTS1:
-    case LIS3DSH_AD_PEAK1:
-    case LIS3DSH_AD_PR2:
-    case LIS3DSH_AD_TC2_L:
-    case LIS3DSH_AD_TC2_H:
-    case LIS3DSH_AD_OUTS2:
-    case LIS3DSH_AD_PEAK2:
-    /* Read only registers cannot be written, the command is ignored.*/
-      return;
-    case LIS3DSH_AD_CTRL_REG3:
-    case LIS3DSH_AD_CTRL_REG4:
-    case LIS3DSH_AD_CTRL_REG5:
-    case LIS3DSH_AD_CTRL_REG6:
-    case LIS3DSH_AD_OFF_X:
-    case LIS3DSH_AD_OFF_Y:
-    case LIS3DSH_AD_OFF_Z:
-    case LIS3DSH_AD_CS_X:
-    case LIS3DSH_AD_CS_Y:
-    case LIS3DSH_AD_CS_Z:
-    case LIS3DSH_AD_LC_L:
-    case LIS3DSH_AD_LC_H:
-    case LIS3DSH_AD_VFC_1:
-    case LIS3DSH_AD_VFC_2:
-    case LIS3DSH_AD_VFC_3:
-    case LIS3DSH_AD_VFC_4:
-    case LIS3DSH_AD_THRS3:
-    case LIS3DSH_AD_CTRL_REG1:
-	case LIS3DSH_AD_ST1_0:
-    case LIS3DSH_AD_ST1_1:
-    case LIS3DSH_AD_ST1_2:
-    case LIS3DSH_AD_ST1_3:
-    case LIS3DSH_AD_ST1_4:
-    case LIS3DSH_AD_ST1_5:
-    case LIS3DSH_AD_ST1_6:
-    case LIS3DSH_AD_ST1_7:
-    case LIS3DSH_AD_ST1_8:
-    case LIS3DSH_AD_ST1_9:
-    case LIS3DSH_AD_ST1_A:
-    case LIS3DSH_AD_ST1_B:
-    case LIS3DSH_AD_ST1_C:
-    case LIS3DSH_AD_ST1_D:
-    case LIS3DSH_AD_ST1_E:
-    case LIS3DSH_AD_ST1_F:
-    case LIS3DSH_AD_TIM4_1:
-    case LIS3DSH_AD_TIM3_1:
-    case LIS3DSH_AD_TIM2_1_L:
-    case LIS3DSH_AD_TIM2_1_H:
-    case LIS3DSH_AD_TIM1_1_L:
-    case LIS3DSH_AD_TIM1_1_H:
-    case LIS3DSH_AD_THRS2_1:
-    case LIS3DSH_AD_THRS1_1:
-    case LIS3DSH_AD_MASK1_B:
-    case LIS3DSH_AD_MASK1_A:
-    case LIS3DSH_AD_SETT1:
-	case LIS3DSH_AD_CTRL_REG2:
-	case LIS3DSH_AD_ST2_0:
-    case LIS3DSH_AD_ST2_1:
-    case LIS3DSH_AD_ST2_2:
-    case LIS3DSH_AD_ST2_3:
-    case LIS3DSH_AD_ST2_4:
-    case LIS3DSH_AD_ST2_5:
-    case LIS3DSH_AD_ST2_6:
-    case LIS3DSH_AD_ST2_7:
-    case LIS3DSH_AD_ST2_8:
-    case LIS3DSH_AD_ST2_9:
-    case LIS3DSH_AD_ST2_A:
-    case LIS3DSH_AD_ST2_B:
-    case LIS3DSH_AD_ST2_C:
-    case LIS3DSH_AD_ST2_D:
-    case LIS3DSH_AD_ST2_E:
-    case LIS3DSH_AD_ST2_F:
-    case LIS3DSH_AD_TIM4_2:
-    case LIS3DSH_AD_TIM3_2:
-    case LIS3DSH_AD_TIM2_2_L:
-    case LIS3DSH_AD_TIM2_2_H:
-    case LIS3DSH_AD_TIM1_2_L:
-    case LIS3DSH_AD_TIM1_2_H:
-    case LIS3DSH_AD_THRS2_2:
-    case LIS3DSH_AD_THRS1_2:
-    case LIS3DSH_AD_MASK2_B:
-    case LIS3DSH_AD_MASK2_A:
-    case LIS3DSH_AD_SETT2:
-	case LIS3DSH_AD_DES2:
-      spiSelect(spip);
-      uint8_t txbuf[2] = {reg, value};
-      spiSend(spip, 2, txbuf);
-      spiUnselect(spip);
-  }
+static void lis3dshSPIWriteRegister(SPIDriver *spip, uint8_t reg, size_t n,
+                                    uint8_t* b) {
+  uint8_t cmd;
+  cmd = reg;
+  spiSelect(spip);
+  spiSend(spip, 1, &cmd);
+  spiSend(spip, n, b);
+  spiUnselect(spip);
 }
 #endif /* LIS3DSH_USE_SPI */
 
@@ -327,6 +97,7 @@ static size_t get_axes_number(void *ip) {
 }
 
 static msg_t read_raw(void *ip, int32_t axes[LIS3DSH_NUMBER_OF_AXES]) {
+  uint8_t buff [LIS3DSH_NUMBER_OF_AXES * 2], i;
   int16_t tmp;
   osalDbgCheck((ip != NULL) && (axes != NULL));
 
@@ -341,33 +112,19 @@ static msg_t read_raw(void *ip, int32_t axes[LIS3DSH_NUMBER_OF_AXES]) {
   spiStart(((LIS3DSHDriver *)ip)->config->spip,
            ((LIS3DSHDriver *)ip)->config->spicfg);
 #endif /* LIS3DSH_SHARED_SPI */   
-  if(((LIS3DSHDriver *)ip)->config->axesenabling & LIS3DSH_AE_X){
-    tmp = lis3dshSPIReadRegister(((LIS3DSHDriver *)ip)->config->spip,
-                                  LIS3DSH_AD_OUT_X_L);
-    tmp += lis3dshSPIReadRegister(((LIS3DSHDriver *)ip)->config->spip,
-                                   LIS3DSH_AD_OUT_X_H) << 8;
-    axes[0] = (int32_t)tmp + ((LIS3DSHDriver *)ip)->bias[0];
-  }
-  if(((LIS3DSHDriver *)ip)->config->axesenabling & LIS3DSH_AE_Y){
-    tmp = lis3dshSPIReadRegister(((LIS3DSHDriver *)ip)->config->spip,
-                                  LIS3DSH_AD_OUT_Y_L);
-    tmp += lis3dshSPIReadRegister(((LIS3DSHDriver *)ip)->config->spip,
-                                   LIS3DSH_AD_OUT_Y_H) << 8;
-    axes[1] = (int32_t)tmp + ((LIS3DSHDriver *)ip)->bias[1];
-  }
-  if(((LIS3DSHDriver *)ip)->config->axesenabling & LIS3DSH_AE_Z){
-    tmp = lis3dshSPIReadRegister(((LIS3DSHDriver *)ip)->config->spip,
-                                  LIS3DSH_AD_OUT_Z_L);
-    tmp += lis3dshSPIReadRegister(((LIS3DSHDriver *)ip)->config->spip,
-                                   LIS3DSH_AD_OUT_Z_H) << 8;
-    axes[2] = (int32_t)tmp + ((LIS3DSHDriver *)ip)->bias[2];
-  }
+    lis3dshSPIReadRegister(((LIS3DSHDriver *)ip)->config->spip, LIS3DSH_AD_OUT_X_L,
+                          LIS3DSH_NUMBER_OF_AXES * 2, buff);
+    for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++) {
+      tmp = buff[2*i] + (buff[2*i+1] << 8);
+      axes[i] = (int32_t)tmp;
+    }
 #if	LIS3DSH_SHARED_SPI
   spiReleaseBus(((LIS3DSHDriver *)ip)->config->spip);
 #endif /* LIS3DSH_SHARED_SPI */   
 #endif /* LIS3DSH_USE_SPI */ 
   return MSG_OK;
 }
+
 
 static msg_t read_cooked(void *ip, float axes[]) {
   uint32_t i;
@@ -377,17 +134,12 @@ static msg_t read_cooked(void *ip, float axes[]) {
   osalDbgCheck((ip != NULL) && (axes != NULL));
 
   osalDbgAssert((((LIS3DSHDriver *)ip)->state == LIS3DSH_READY),
-              "read_cooked(), invalid state");
+                "read_cooked(), invalid state");
 
   msg = read_raw(ip, raw);
   for(i = 0; i < LIS3DSH_NUMBER_OF_AXES ; i++){
-    axes[i] = raw[i] * ((LIS3DSHDriver *)ip)->sensitivity[i];
-    if(((LIS3DSHDriver *)ip)->config->unit == LIS3DSH_ACC_UNIT_G){
-      axes[i] *= TO_G;
-    }
-    else if(((LIS3DSHDriver *)ip)->config->unit == LIS3DSH_ACC_UNIT_SI){
-      axes[i] *= TO_SI;
-    }
+    axes[i] = (raw[i] * ((LIS3DSHDriver *)ip)->sensitivity[i]);
+    axes[i] -= ((LIS3DSHDriver *)ip)->bias[i];
   }
   return msg;
 }
@@ -465,21 +217,47 @@ static msg_t reset_sensivity(void *ip) {
   return MSG_OK;
 }
 
-static msg_t get_temperature(void *ip, int8_t* tempp) {
-#if LIS3DSH_USE_SPI
-  osalDbgAssert((((LIS3DSHDriver *)ip)->config->spip->state == SPI_READY),
-                "read_raw(), channel not ready");
-#if	LIS3DSH_SHARED_SPI
-  spiAcquireBus(((LIS3DSHDriver *)ip)->config->spip);
-  spiStart(((LIS3DSHDriver *)ip)->config->spip,
-           ((LIS3DSHDriver *)ip)->config->spicfg);
-#endif /* LIS3DSH_SHARED_SPI */   
-  *tempp = lis3dshSPIReadRegister(((LIS3DSHDriver *)ip)->config->spip,
-                                    LIS3DSH_AD_OUT_T);
-#if	LIS3DSH_SHARED_SPI
-  spiReleaseBus(((LIS3DSHDriver *)ip)->config->spip);
-#endif /* LIS3DSH_SHARED_SPI */   
-#endif /* LIS3DSH_USE_SPI */ 
+static msg_t set_full_scale(void *ip, lis3dsh_fs_t fs) {
+  float newfs, scale;
+  uint8_t i, cr;
+
+  if(fs == LIS3DSH_FS_2G) {
+    newfs = LIS3DSH_2G;
+  }
+  else if(fs == LIS3DSH_FS_4G) {
+    newfs = LIS3DSH_4G;
+  }
+  else if(fs == LIS3DSH_FS_6G) {
+    newfs = LIS3DSH_6G;
+  }
+  else if(fs == LIS3DSH_FS_8G) {
+    newfs = LIS3DSH_8G;
+  }
+  else if(fs == LIS3DSH_FS_16G) {
+    newfs = LIS3DSH_16G;
+  }
+  else {
+    return MSG_RESET;
+  }
+
+  if(newfs != ((LIS3DSHDriver *)ip)->fullscale) {
+    scale = newfs / ((LIS3DSHDriver *)ip)->fullscale;
+    ((LIS3DSHDriver *)ip)->fullscale = newfs;
+
+    /* Updating register.*/
+    lis3dshSPIReadRegister(((LIS3DSHDriver *)ip)->config->spip,
+                          LIS3DSH_AD_CTRL_REG5, 1, &cr);
+    cr &= ~(LIS3DSH_CTRL_REG5_FS_MASK);
+    cr |= fs;
+    lis3dshSPIWriteRegister(((LIS3DSHDriver *)ip)->config->spip,
+                           LIS3DSH_AD_CTRL_REG5, 1, &cr);
+
+    /* Scaling sensitivity and bias. Re-calibration is suggested anyway. */
+    for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++) {
+      ((LIS3DSHDriver *)ip)->sensitivity[i] *= scale;
+      ((LIS3DSHDriver *)ip)->bias[i] *= scale;
+    }
+  }
   return MSG_OK;
 }
 
@@ -495,7 +273,7 @@ static const struct BaseAccelerometerVMT vmt_baseaccelerometer = {
 static const struct LIS3DSHVMT vmt_lis3dsh = {
   get_axes_number, read_raw, read_cooked,
   set_bias, reset_bias, set_sensivity, reset_sensivity,
-  get_temperature
+  set_full_scale
 };
 
 /*===========================================================================*/
@@ -531,7 +309,7 @@ void lis3dshObjectInit(LIS3DSHDriver *devp) {
 void lis3dshStart(LIS3DSHDriver *devp, const LIS3DSHConfig *config) {
   uint32_t i;
   osalDbgCheck((devp != NULL) && (config != NULL));
-
+  uint8_t cr;
   osalDbgAssert((devp->state == LIS3DSH_STOP) || (devp->state == LIS3DSH_READY),
               "lis3dshStart(), invalid state");			  
 
@@ -543,34 +321,68 @@ void lis3dshStart(LIS3DSHDriver *devp, const LIS3DSHConfig *config) {
 #endif /* LIS3DSH_SHARED_SPI */
   spiStart((devp)->config->spip,
            (devp)->config->spicfg);
+
+  /* Control register 4 configuration block.*/
+  {
+    cr = LIS3DSH_CTRL_REG4_XEN | LIS3DSH_CTRL_REG4_YEN | LIS3DSH_CTRL_REG4_ZEN |
+         devp->config->outputdatarate;
+#if LIS3DSH_USE_ADVANCED || defined(__DOXYGEN__)
+    cr |= devp->config->blockdataupdate;
+#endif
+  }
   lis3dshSPIWriteRegister(devp->config->spip, LIS3DSH_AD_CTRL_REG4,
-                         devp->config->axesenabling |
-                         devp->config->blockdataupdate |
-						 devp->config->outputdatarate);
+                          1, &cr);
+  
+  /* Control register 5 configuration block.*/
+  {
+    cr = devp->config->fullscale;
+#if LIS3DSH_USE_ADVANCED || defined(__DOXYGEN__)
+    cr |= devp->config->antialiasing;
+#endif
+  }
   lis3dshSPIWriteRegister(devp->config->spip, LIS3DSH_AD_CTRL_REG5,
-                         devp->config->fullscale |
-                         devp->config->antialiasing );
+                          1, &cr);
+
+  /* Control register 6 configuration block.*/
+  {
+    cr = LIS3DSH_CTRL_REG6_ADD_INC;
+#if LIS3DSH_USE_ADVANCED || defined(__DOXYGEN__)
+    cr |= devp->config->blockdataupdate;
+#endif
+  }
+  lis3dshSPIWriteRegister(devp->config->spip, LIS3DSH_AD_CTRL_REG6,
+                          1, &cr);
 #if	LIS3DSH_SHARED_SPI
   spiReleaseBus((devp)->config->spip);
 #endif /* LIS3DSH_SHARED_SPI */  
 #endif /* LIS3DSH_USE_SPI */
   
   /* Storing sensitivity information according to full scale value */
-  if(devp->config->fullscale == LIS3DSH_FS_2G)
+  if(devp->config->fullscale == LIS3DSH_FS_2G) {
+    devp->fullscale = LIS3DSH_2G;
     for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++)
       devp->sensitivity[i] = LIS3DSH_SENS_2G;
-  else if(devp->config->fullscale == LIS3DSH_FS_4G)
+  }
+  else if(devp->config->fullscale == LIS3DSH_FS_4G) {
+    devp->fullscale = LIS3DSH_4G;
 	for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++)
       devp->sensitivity[i] = LIS3DSH_SENS_4G;
-  else if(devp->config->fullscale == LIS3DSH_FS_6G)
+  }
+  else if(devp->config->fullscale == LIS3DSH_FS_6G) {
+    devp->fullscale = LIS3DSH_6G;
     for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++)
       devp->sensitivity[i] = LIS3DSH_SENS_6G;
-  else if(devp->config->fullscale == LIS3DSH_FS_8G)
+  }
+  else if(devp->config->fullscale == LIS3DSH_FS_8G) {
+    devp->fullscale = LIS3DSH_8G;
     for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++)
       devp->sensitivity[i] = LIS3DSH_SENS_8G;
-  else if(devp->config->fullscale == LIS3DSH_FS_16G)
+  }
+  else if(devp->config->fullscale == LIS3DSH_FS_16G) {
+    devp->fullscale = LIS3DSH_16G;
     for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++)
       devp->sensitivity[i] = LIS3DSH_SENS_16G;
+  }
   else {
     osalDbgAssert(FALSE, "lis3dshStart(), accelerometer full scale issue");
   }
@@ -588,7 +400,7 @@ void lis3dshStart(LIS3DSHDriver *devp, const LIS3DSHConfig *config) {
  * @api
  */
 void lis3dshStop(LIS3DSHDriver *devp) {
-
+  uint8_t cr4;
   osalDbgCheck(devp != NULL);
 
   osalDbgAssert((devp->state == LIS3DSH_STOP) || (devp->state == LIS3DSH_READY),
@@ -601,8 +413,10 @@ void lis3dshStop(LIS3DSHDriver *devp) {
     spiStart((devp)->config->spip,
              (devp)->config->spicfg);
 #endif /* LIS3DSH_SHARED_SPI */
-    lis3dshSPIWriteRegister(devp->config->spip, LIS3DSH_AD_CTRL_REG4,
-                           LIS3DSH_ODR_PD | LIS3DSH_AE_DISABLED);
+    /* Disabling all axes and enabling power down mode.*/
+    cr4 = 0;
+    lis3dshSPIWriteRegister(devp->config->spip, LIS3DSH_AD_CTRL_REG4, 
+                           1, &cr4);
     spiStop((devp)->config->spip);
 #if	LIS3DSH_SHARED_SPI
     spiReleaseBus((devp)->config->spip);
