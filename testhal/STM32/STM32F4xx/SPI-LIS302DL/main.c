@@ -41,7 +41,7 @@ static const SPIConfig spicfg = {
   NULL,
   GPIOE,                                     /* port of LIS302DL CS.*/
   GPIOE_CS_SPI,                              /* pin of LIS302DL CS.*/
-  SPI_CR1_BR_0 | SPI_CR1_CPOL | SPI_CR1_CPHA,/*   CR1 register.*/
+  SPI_CR1_BR_0 | SPI_CR1_CPOL | SPI_CR1_CPHA,/* CR1 register.*/
   0                                          /* CR2 register.*/
 };
 
@@ -50,10 +50,10 @@ static LIS302DLConfig l3gd20cfg = {
   &spicfg,                                   /* Pointer to SPI Configuration.*/
   {0, 0, 0},                                 /* Use default sensitivity.*/
   {0, 0, 0},                                 /* Use default bias.*/
-  LIS302DL_FS_2G,                            /* Full scale value */
-  LIS302DL_ODR_100HZ,                        /* Output data rate */
+  LIS302DL_FS_2G,                            /* Full scale value.*/
+  LIS302DL_ODR_100HZ,                        /* Output data rate.*/
 #if LIS302DL_USE_ADVANCED || defined(__DOXYGEN__)
-  LIS302DL_HP_DISABLED,                      /* HP filter disabled */
+  LIS302DL_HP_DISABLED,                      /* HP filter disabled.*/
 #endif
 };
 
@@ -112,11 +112,11 @@ static void cmd_fullscale(BaseSequentialStream *chp, int argc, char *argv[]) {
 #endif
   if(!strcmp (argv[0], "2G")) {
     accelerometerSetFullScale(&LIS302DLD1, LIS302DL_FS_2G);
-    chprintf(chp, "LIS302DL Accelerometer full scale set to 2 g...\r\n");
+    chprintf(chp, "LIS302DL Accelerometer full scale set to 2G...\r\n");
   }
   else if(!strcmp (argv[0], "8G")) {
     accelerometerSetFullScale(&LIS302DLD1, LIS302DL_FS_8G);
-    chprintf(chp, "LIS302DL Accelerometer full scale set to 8 g...\r\n");
+    chprintf(chp, "LIS302DL Accelerometer full scale set to 8G...\r\n");
   }
   else {
     chprintf(chp, "Usage: fullscale [2G|8G]\r\n");

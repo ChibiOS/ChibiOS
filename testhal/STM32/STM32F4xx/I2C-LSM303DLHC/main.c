@@ -209,7 +209,7 @@ static void cmd_fullscale(BaseSequentialStream *chp, int argc, char *argv[]) {
     }
     else if(!strcmp (argv[1], "16G")) {
       accelerometerSetFullScale(&LSM303DLHCD1, LSM303DLHC_ACC_FS_16G);
-      chprintf(chp, "LSM303DLHC Accelerometer full scale set to 4G...\r\n");
+      chprintf(chp, "LSM303DLHC Accelerometer full scale set to 16G...\r\n");
     }
     else {
       chprintf(chp, "Usage: fullscale acc [2G|4G|8G|16G]\r\n");
