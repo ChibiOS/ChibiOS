@@ -449,7 +449,8 @@ static msg_t comp_reset_sensivity(void *ip) {
 
 static msg_t acc_set_full_scale(void *ip, lsm303dlhc_acc_fs_t fs) {
   float newfs, scale;
-  unsigned i;
+  uint8_t i, buff[2];
+  msg_t msg;
 
   if(fs == LSM303DLHC_ACC_FS_2G) {
     newfs = LSM303DLHC_ACC_2G;
@@ -470,18 +471,35 @@ static msg_t acc_set_full_scale(void *ip, lsm303dlhc_acc_fs_t fs) {
   if(newfs != ((LSM303DLHCDriver *)ip)->accfullscale) {
     scale = newfs / ((LSM303DLHCDriver *)ip)->accfullscale;
     ((LSM303DLHCDriver *)ip)->accfullscale = newfs;
+
+    /* Updating register.*/
+    msg = lsm303dlhcI2CReadRegister(((LSM303DLHCDriver *)ip)->config->i2cp,
+                                   LSM303DLHC_SAD_ACC,
+                                   LSM303DLHC_AD_ACC_CTRL_REG4,
+                                   &buff[1], 1);
+    if(msg != MSG_OK)
+      return msg;
+    buff[1] &= ~(LSM303DLHC_CTRL_REG4_A_FS_MASK);
+    buff[1] |= fs;
+    buff[0] = LSM303DLHC_AD_ACC_CTRL_REG4;
+    msg = lsm303dlhcI2CWriteRegister(((LSM303DLHCDriver *)ip)->config->i2cp,
+                                    LSM303DLHC_SAD_ACC, buff, 1);
+    if(msg != MSG_OK)
+      return msg;
+
     /* Scaling sensitivity and bias. Re-calibration is suggested anyway. */
     for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++) {
       ((LSM303DLHCDriver *)ip)->accsensitivity[i] *= scale;
       ((LSM303DLHCDriver *)ip)->accbias[i] *= scale;
     }
   }
-  return MSG_OK;
+  return msg;
 }
 
 static msg_t comp_set_full_scale(void *ip, lsm303dlhc_comp_fs_t fs) {
   float newfs, scale;
-  unsigned i;
+  uint8_t i, buff[2];
+  msg_t msg;
 
   if(fs == LSM303DLHC_COMP_FS_1P3GA) {
     newfs = LSM303DLHC_COMP_1P3GA;
@@ -511,6 +529,22 @@ static msg_t comp_set_full_scale(void *ip, lsm303dlhc_comp_fs_t fs) {
   if(newfs != ((LSM303DLHCDriver *)ip)->compfullscale) {
     scale = newfs / ((LSM303DLHCDriver *)ip)->compfullscale;
     ((LSM303DLHCDriver *)ip)->compfullscale = newfs;
+
+    /* Updating register.*/
+    msg = lsm303dlhcI2CReadRegister(((LSM303DLHCDriver *)ip)->config->i2cp,
+                                   LSM303DLHC_SAD_COMP,
+                                   LSM303DLHC_AD_COMP_CRB_REG,
+                                   &buff[1], 1);
+    if(msg != MSG_OK)
+      return msg;
+    buff[1] &= ~(LSM303DLHC_CRB_REG_M_GN_MASK);
+    buff[1] |= fs;
+    buff[0] = LSM303DLHC_AD_COMP_CRB_REG;
+    msg = lsm303dlhcI2CWriteRegister(((LSM303DLHCDriver *)ip)->config->i2cp,
+                                     LSM303DLHC_SAD_COMP, buff, 1);
+    if(msg != MSG_OK)
+      return msg;
+
     /* Scaling sensitivity and bias. Re-calibration is suggested anyway. */
     for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
       ((LSM303DLHCDriver *)ip)->compsensitivity[i] *= scale;

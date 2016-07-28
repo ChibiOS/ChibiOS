@@ -222,6 +222,7 @@
 #define LSM303DLHC_CTRL_REG4_A_MASK         0xF9
 #define LSM303DLHC_CTRL_REG4_A_SIM          (1 << 0)
 #define LSM303DLHC_CTRL_REG4_A_HR           (1 << 3)
+#define LSM303DLHC_CTRL_REG4_A_FS_MASK      0x30
 #define LSM303DLHC_CTRL_REG4_A_FS0          (1 << 4)
 #define LSM303DLHC_CTRL_REG4_A_FS1          (1 << 5)
 #define LSM303DLHC_CTRL_REG4_A_BLE          (1 << 6)
@@ -270,6 +271,7 @@
  * @{
  */
 #define LSM303DLHC_CRB_REG_M_MASK           0xE0
+#define LSM303DLHC_CRB_REG_M_GN_MASK        0xE0
 #define LSM303DLHC_CRB_REG_M_GN0            (1 << 5)
 #define LSM303DLHC_CRB_REG_M_GN1            (1 << 6)
 #define LSM303DLHC_CRB_REG_M_GN2            (1 << 7)
