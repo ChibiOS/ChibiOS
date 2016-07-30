@@ -87,7 +87,7 @@ msg_t lsm303dlhcI2CReadRegister(I2CDriver *i2cp, lsm303dlhc_sad_t sad,
  *
  * @param[in] i2cp       pointer to the I2C interface
  * @param[in] sad        slave address without R bit
- * @param[in] txbuf      buffer comtaining sub-address value in first position
+ * @param[in] txbuf      buffer containing sub-address value in first position
  *                       and values to write
  * @param[in] n          size of txbuf less one (not considering the first
  *                       element)
@@ -616,7 +616,7 @@ void lsm303dlhcObjectInit(LSM303DLHCDriver *devp) {
  */
 void lsm303dlhcStart(LSM303DLHCDriver *devp, const LSM303DLHCConfig *config) {
   uint32_t i;
-  uint8_t buff[5] = {0, 0, 0, 0, 0};
+  uint8_t buff[6] = {0, 0, 0, 0, 0, 0};
   osalDbgCheck((devp != NULL) && (config != NULL));
 
   osalDbgAssert((devp->state == LSM303DLHC_STOP) || (devp->state == LSM303DLHC_READY),
@@ -816,7 +816,6 @@ void lsm303dlhcStart(LSM303DLHCDriver *devp, const LSM303DLHCConfig *config) {
  */
 void lsm303dlhcStop(LSM303DLHCDriver *devp) {
   uint8_t buff[2];
-
   osalDbgCheck(devp != NULL);
 
   osalDbgAssert((devp->state == LSM303DLHC_STOP) || (devp->state == LSM303DLHC_READY),
