@@ -481,7 +481,7 @@ typedef struct L3GD20Driver L3GD20Driver;
  */
 #define _l3gd20_methods                                                     \
   _base_gyroscope_methods                                                   \
-  /* Change full scale value of L3GD20 .*/                                  \
+  /* Change full scale value of L3GD20.*/                                   \
   msg_t (*set_full_scale)(void *instance, l3gd20_fs_t fs);
 
 /**
@@ -532,7 +532,7 @@ struct L3GD20Driver {
 /*===========================================================================*/
 
 /**
- * @brief   Change gyroscope fullscale value.
+ * @brief   Change gyroscope full scale value.
  *
  * @param[in] ip        pointer to a @p BaseGyroscope class.
  * @param[in] fs        the new full scale value.
