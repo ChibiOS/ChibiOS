@@ -34,8 +34,8 @@
  * @{
  */
 
-#ifndef _HAL_LLD_H_
-#define _HAL_LLD_H_
+#ifndef HAL_LLD_H
+#define HAL_LLD_H
 
 #include "stm32_registry.h"
 
@@ -1137,6 +1137,9 @@
 #elif STM32_PLLSRC == STM32_PLLSRC_HSI16
 #define STM32_PLLCLKIN              (STM32_HSI16CLK / STM32_PLLM_VALUE)
 
+#elif STM32_PLLSRC == STM32_PLLSRC_NOCLOCK
+#define STM32_PLLCLKIN              0
+      
 #else
 #error "invalid STM32_PLLSRC value specified"
 #endif
@@ -1144,7 +1147,8 @@
 /*
  * PLLs input frequency range check.
  */
-#if (STM32_PLLCLKIN < STM32_PLLIN_MIN) || (STM32_PLLCLKIN > STM32_PLLIN_MAX)
+#if (STM32_PLLCLKIN != 0) &&                                                \
+    ((STM32_PLLCLKIN < STM32_PLLIN_MIN) || (STM32_PLLCLKIN > STM32_PLLIN_MAX))
 #error "STM32_PLLCLKIN outside acceptable range (STM32_PLLIN_MIN...STM32_PLLIN_MAX)"
 #endif
 
@@ -1157,6 +1161,11 @@
     (STM32_SAI1SEL == STM32_SAI1SEL_PLL) ||                                 \
     (STM32_SAI2SEL == STM32_SAI2SEL_PLL) ||                                 \
     defined(__DOXYGEN__)
+
+#if STM32_PLLCLKIN == 0
+#error "PLL activation required but no PLL clock selected"
+#endif
+
 /**
  * @brief   PLL activation flag.
  */
@@ -1265,7 +1274,8 @@
 /*
  * PLL VCO frequency range check.
  */
-#if (STM32_PLLVCO < STM32_PLLVCO_MIN) || (STM32_PLLVCO > STM32_PLLVCO_MAX)
+#if STM32_ACTIVATE_PLL &&                                                   \
+    ((STM32_PLLVCO < STM32_PLLVCO_MIN) || (STM32_PLLVCO > STM32_PLLVCO_MAX))
 #error "STM32_PLLVCO outside acceptable range (STM32_PLLVCO_MIN...STM32_PLLVCO_MAX)"
 #endif
 
@@ -1287,21 +1297,24 @@
 /*
  * PLL-P output frequency range check.
  */
-#if (STM32_PLL_P_CLKOUT < STM32_PLLP_MIN) || (STM32_PLL_P_CLKOUT > STM32_PLLP_MAX)
+#if STM32_ACTIVATE_PLL &&                                                   \
+    ((STM32_PLL_P_CLKOUT < STM32_PLLP_MIN) || (STM32_PLL_P_CLKOUT > STM32_PLLP_MAX))
 #error "STM32_PLL_P_CLKOUT outside acceptable range (STM32_PLLP_MIN...STM32_PLLP_MAX)"
 #endif
 
 /*
  * PLL-Q output frequency range check.
  */
-#if (STM32_PLL_Q_CLKOUT < STM32_PLLQ_MIN) || (STM32_PLL_Q_CLKOUT > STM32_PLLQ_MAX)
+#if STM32_ACTIVATE_PLL &&                                                   \
+    ((STM32_PLL_Q_CLKOUT < STM32_PLLQ_MIN) || (STM32_PLL_Q_CLKOUT > STM32_PLLQ_MAX))
 #error "STM32_PLL_Q_CLKOUT outside acceptable range (STM32_PLLQ_MIN...STM32_PLLQ_MAX)"
 #endif
 
 /*
  * PLL-R output frequency range check.
  */
-#if (STM32_PLL_R_CLKOUT < STM32_PLLR_MIN) || (STM32_PLL_R_CLKOUT > STM32_PLLR_MAX)
+#if STM32_ACTIVATE_PLL &&                                                   \
+    ((STM32_PLL_R_CLKOUT < STM32_PLLR_MIN) || (STM32_PLL_R_CLKOUT > STM32_PLLR_MAX))
 #error "STM32_PLL_R_CLKOUT outside acceptable range (STM32_PLLR_MIN...STM32_PLLR_MAX)"
 #endif
 
@@ -1439,6 +1452,11 @@
     (STM32_CLK48SEL == STM32_CLK48SEL_PLLSAI1) ||                           \
     (STM32_ADCSEL == STM32_ADCSEL_PLLSAI1) ||                               \
     defined(__DOXYGEN__)
+
+#if STM32_PLLCLKIN == 0
+#error "PLLSAI1 activation required but no PLL clock selected"
+#endif
+
 /**
  * @brief   PLLSAI1 activation flag.
  */
@@ -1543,11 +1561,11 @@
 #define STM32_PLLSAI1VCO             (STM32_PLLCLKIN * STM32_PLLSAI1N_VALUE)
 
 /*
- * PLLSAI2 VCO frequency range check.
+ * PLLSAI1 VCO frequency range check.
  */
-#if (STM32_PLLSAI1VCO < STM32_PLLVCO_MIN) ||                                \
-    (STM32_PLLSAI1VCO > STM32_PLLVCO_MAX)
-#error "STM32_PLLSAIVCO outside acceptable range (STM32_PLLVCO_MIN...STM32_PLLVCO_MAX)"
+#if STM32_ACTIVATE_PLLSAI1 &&                                               \
+    ((STM32_PLLSAI1VCO < STM32_PLLVCO_MIN) || (STM32_PLLSAI1VCO > STM32_PLLVCO_MAX))
+#error "STM32_PLLSAI1VCO outside acceptable range (STM32_PLLVCO_MIN...STM32_PLLVCO_MAX)"
 #endif
 
 /**
@@ -1568,24 +1586,24 @@
 /*
  * PLLSAI1-P output frequency range check.
  */
-#if (STM32_PLLSAI1_P_CLKOUT < STM32_PLLP_MIN) ||                            \
-    (STM32_PLLSAI1_P_CLKOUT > STM32_PLLP_MAX)
+#if STM32_ACTIVATE_PLLSAI1 &&                                               \
+    ((STM32_PLLSAI1_P_CLKOUT < STM32_PLLP_MIN) || (STM32_PLLSAI1_P_CLKOUT > STM32_PLLP_MAX))
 #error "STM32_PLLSAI1_P_CLKOUT outside acceptable range (STM32_PLLP_MIN...STM32_PLLP_MAX)"
 #endif
 
 /*
  * PLLSAI1-Q output frequency range check.
  */
-#if (STM32_PLLSAI1_Q_CLKOUT < STM32_PLLQ_MIN) ||                            \
-    (STM32_PLLSAI1_Q_CLKOUT > STM32_PLLQ_MAX)
+#if STM32_ACTIVATE_PLLSAI1 &&                                               \
+    ((STM32_PLLSAI1_Q_CLKOUT < STM32_PLLQ_MIN) || (STM32_PLLSAI1_Q_CLKOUT > STM32_PLLQ_MAX))
 #error "STM32_PLLSAI1_Q_CLKOUT outside acceptable range (STM32_PLLQ_MIN...STM32_PLLQ_MAX)"
 #endif
 
 /*
  * PLLSAI1-R output frequency range check.
  */
-#if (STM32_PLLSAI1_R_CLKOUT < STM32_PLLR_MIN) ||                            \
-    (STM32_PLLSAI1_R_CLKOUT > STM32_PLLR_MAX)
+#if STM32_ACTIVATE_PLLSAI1 &&                                               \
+    ((STM32_PLLSAI1_R_CLKOUT < STM32_PLLR_MIN) || (STM32_PLLSAI1_R_CLKOUT > STM32_PLLR_MAX))
 #error "STM32_PLLSAI1_R_CLKOUT outside acceptable range (STM32_PLLR_MIN...STM32_PLLR_MAX)"
 #endif
 
@@ -1596,6 +1614,11 @@
     (STM32_SAI2SEL == STM32_SAI2SEL_PLLSAI2) ||                             \
     (STM32_ADCSEL == STM32_ADCSEL_PLLSAI2) ||                               \
     defined(__DOXYGEN__)
+
+#if STM32_PLLCLKIN == 0
+#error "PLLSAI2 activation required but no PLL clock selected"
+#endif
+
 /**
  * @brief   PLLSAI2 activation flag.
  */
@@ -1674,9 +1697,9 @@
 /*
  * PLLSAI2 VCO frequency range check.
  */
-#if (STM32_PLLSAI2VCO < STM32_PLLVCO_MIN) ||                                \
-    (STM32_PLLSAI2VCO > STM32_PLLVCO_MAX)
-#error "STM32_PLLSAIVCO outside acceptable range (STM32_PLLVCO_MIN...STM32_PLLVCO_MAX)"
+#if STM32_ACTIVATE_PLLSAI2 &&                                               \
+    ((STM32_PLLSAI2VCO < STM32_PLLVCO_MIN) || (STM32_PLLSAI2VCO > STM32_PLLVCO_MAX))
+#error "STM32_PLLSAI2VCO outside acceptable range (STM32_PLLVCO_MIN...STM32_PLLVCO_MAX)"
 #endif
 
 /**
@@ -1692,16 +1715,16 @@
 /*
  * PLLSAI2-P output frequency range check.
  */
-#if (STM32_PLLSAI2_P_CLKOUT < STM32_PLLP_MIN) ||                            \
-    (STM32_PLLSAI2_P_CLKOUT > STM32_PLLP_MAX)
+#if STM32_ACTIVATE_PLLSAI2 &&                                               \
+    ((STM32_PLLSAI2_P_CLKOUT < STM32_PLLP_MIN) || (STM32_PLLSAI2_P_CLKOUT > STM32_PLLP_MAX))
 #error "STM32_PLLSAI2_P_CLKOUT outside acceptable range (STM32_PLLP_MIN...STM32_PLLP_MAX)"
 #endif
 
 /*
  * PLLSAI2-R output frequency range check.
  */
-#if (STM32_PLLSAI2_R_CLKOUT < STM32_PLLR_MIN) ||                            \
-    (STM32_PLLSAI2_R_CLKOUT > STM32_PLLR_MAX)
+#if STM32_ACTIVATE_PLLSAI2 &&                                               \
+    ((STM32_PLLSAI2_R_CLKOUT < STM32_PLLR_MIN) || (STM32_PLLSAI2_R_CLKOUT > STM32_PLLR_MAX))
 #error "STM32_PLLSAI2_R_CLKOUT outside acceptable range (STM32_PLLR_MIN...STM32_PLLR_MAX)"
 #endif
 
@@ -2030,6 +2053,26 @@
 #define STM32_FLASHBITS             FLASH_ACR_LATENCY_4WS
 #endif
 
+/**
+ * @brief   Flash settings for MSI.
+ */
+#if (STM32_MSICLK <= STM32_0WS_THRESHOLD) || defined(__DOXYGEN__)
+#define STM32_MSI_FLASHBITS         FLASH_ACR_LATENCY_0WS
+
+#elif STM32_MSICLK <= STM32_1WS_THRESHOLD
+#define STM32_MSI_FLASHBITS         FLASH_ACR_LATENCY_1WS
+
+#elif STM32_MSICLK <= STM32_2WS_THRESHOLD
+#define STM32_MSI_FLASHBITS         FLASH_ACR_LATENCY_2WS
+
+#elif STM32_MSICLK <= STM32_3WS_THRESHOLD
+#define STM32_MSI_FLASHBITS         FLASH_ACR_LATENCY_3WS
+
+#else
+#define STM32_MSI_FLASHBITS         FLASH_ACR_LATENCY_4WS
+#endif
+
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
@@ -2056,6 +2099,6 @@ extern "C" {
 }
 #endif
 
-#endif /* _HAL_LLD_H_ */
+#endif /* HAL_LLD_H */
 
 /** @} */
