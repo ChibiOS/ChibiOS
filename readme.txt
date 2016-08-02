@@ -123,6 +123,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Fixed potential wait states problem in STM32L4 initialization code
+       (bug #768)(backported to 16.1.6).
 - HAL: Fixed SDIO driver not compiling on STM32F446 devices (bug #767)
        (backported to 16.1.6).
 - HAL: Fixed error in STM32L4xx ST headers (bug #766)(backported to 16.1.6).

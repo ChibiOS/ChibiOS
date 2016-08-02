@@ -80,7 +80,7 @@ static void hal_lld_backup_domain_init(void) {
   while ((RCC->CR & RCC_CR_MSIRDY) == 0)
     ;                                       /* Wait until MSI is stable.    */
 #endif
-  
+
 #if HAL_USE_RTC
   /* If the backup domain hasn't been initialized yet then proceed with
      initialization.*/
