@@ -66,7 +66,7 @@ typedef int16_t             msg_t;          /**< Inter-thread message.      */
 typedef int32_t             eventid_t;      /**< Numeric event identifier.  */
 typedef uint8_t             eventmask_t;    /**< Mask of event identifiers. */
 typedef uint8_t             eventflags_t;   /**< Mask of event flags.       */
-typedef uint8_t             cnt_t;          /**< Generic signed counter.    */
+typedef int8_t              cnt_t;          /**< Generic signed counter.    */
 typedef uint8_t             ucnt_t;         /**< Generic unsigned counter.  */
 /** @} */
 
