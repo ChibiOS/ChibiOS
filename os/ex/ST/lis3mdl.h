@@ -24,7 +24,6 @@
  *
  * @{
  */
-
 #ifndef _LIS3MDL_H_
 #define _LIS3MDL_H_
 
@@ -35,9 +34,141 @@
 /*===========================================================================*/
 
 /**
- * @brief   LIS3MDL number of axes.
+ * @name    Version identification
+ * @{
  */
-#define  LIS3MDL_NUMBER_OF_AXES             ((size_t)   3U)
+/**
+ * @brief   LIS3MDL driver version string.
+ */
+#define EX_LIS3MDL_VERSION          "1.0.0"
+
+/**
+ * @brief   LIS3MDL driver version major number.
+ */
+#define EX_LIS3MDL_MAJOR            1
+
+/**
+ * @brief   LIS3MDL driver version minor number.
+ */
+#define EX_LIS3MDL_MINOR            0
+
+/**
+ * @brief   LIS3MDL driver version patch number.
+ */
+#define EX_LIS3MDL_PATCH            0
+/** @} */
+
+/**
+ * @brief   LIS3MDL characteristics.
+ *
+ * @{
+ */
+#define LIS3MDL_NUMBER_OF_AXES      3U
+
+#define LIS3MDL_4GA                 4.0f
+#define LIS3MDL_8GA                 8.0f
+#define LIS3MDL_12GA                12.0f
+#define LIS3MDL_16GA                16.0f
+
+#define LIS3MDL_SENS_4GA            6842.0f
+#define LIS3MDL_SENS_8GA            3421.0f
+#define LIS3MDL_SENS_12GA           2281.0f
+#define LIS3MDL_SENS_16GA           1711.0f
+/** @} */
+
+/**
+ * @name    LIS3MDL communication interfaces related bit masks
+ * @{
+ */
+#define LIS3MDL_DI_MASK             0xFF        /**< Data In mask           */
+#define LIS3MDL_DI(n)               (1 << n)    /**< Data In bit n          */
+#define LIS3MDL_AD_MASK             0x3F        /**< Address Data mask      */
+#define LIS3MDL_AD(n)               (1 << n)    /**< Address Data bit n     */
+#define LIS3MDL_MS                  (1 << 6)    /**< Multiple selection     */
+#define LIS3MDL_RW                  (1 << 7)    /**< Read Write selector    */
+/** @} */
+
+/**
+ * @name    LIS3MDL register addresses
+ * @{
+ */
+#define  LIS3MDL_AD_WHO_AM_I        0x0F
+#define  LIS3MDL_AD_CTRL_REG1       0x20
+#define  LIS3MDL_AD_CTRL_REG2       0x21
+#define  LIS3MDL_AD_CTRL_REG3       0x22
+#define  LIS3MDL_AD_CTRL_REG4       0x23
+#define  LIS3MDL_AD_CTRL_REG5       0x24
+#define  LIS3MDL_AD_STATUS_REG      0x27
+#define  LIS3MDL_AD_OUT_X_L         0x28
+#define  LIS3MDL_AD_OUT_X_H         0x29
+#define  LIS3MDL_AD_OUT_Y_L         0x2A
+#define  LIS3MDL_AD_OUT_Y_H         0x2B
+#define  LIS3MDL_AD_OUT_Z_L         0x2C
+#define  LIS3MDL_AD_OUT_Z_H         0x2D
+#define  LIS3MDL_AD_TEMP_OUT_L      0x2E
+#define  LIS3MDL_AD_TEMP_OUT_H      0x2F
+#define  LIS3MDL_AD_INT_CFG         0x30
+#define  LIS3MDL_AD_INT_SOURCE      0x31
+#define  LIS3MDL_AD_INT_THS_L       0x32
+#define  LIS3MDL_AD_INT_THS_H       0x33
+/** @} */
+
+/**
+ * @name    LIS3MDL_CTRL_REG1 register bits definitions
+ * @{
+ */
+#define LIS3MDL_CTRL_REG1_MASK      0xFF        /**< LIS3MDL_CTRL_REG1 mask  */
+#define LIS3MDL_CTRL_REG1_ST        (1 << 0)    /**< Self test enable        */
+#define LIS3MDL_CTRL_REG1_FAST_ODR  (1 << 1)    /**< Fast data rate          */
+#define LIS3MDL_CTRL_REG1_DO0       (1 << 2)    /**< Output data rate bit 0  */
+#define LIS3MDL_CTRL_REG1_DO1       (1 << 3)    /**< Output data rate bit 1  */
+#define LIS3MDL_CTRL_REG1_DO2       (1 << 4)    /**< Output data rate bit 2  */
+#define LIS3MDL_CTRL_REG1_OM0       (1 << 5)    /**< X-Y mode bit 0          */
+#define LIS3MDL_CTRL_REG1_OM1       (1 << 6)    /**< X-Y mode bit 1          */
+#define LIS3MDL_CTRL_REG1_TEMP_EN   (1 << 7)    /**< Temperature sensor      */
+/** @} */
+
+/**
+ * @name    LIS3MDL_CTRL_REG2 register bits definitions
+ * @{
+ */
+#define LIS3MDL_CTRL_REG2_MASK      0x6C        /**< LIS3MDL_CTRL_REG2 mask  */
+#define LIS3MDL_CTRL_REG2_SOFT_RST  (1 << 2)    /**< Soft reset              */
+#define LIS3MDL_CTRL_REG2_REBOOT    (1 << 3)    /**< Reboot memory           */
+#define LIS3MDL_CTRL_REG2_FS_MASK   0x60        /**< Full scale mask         */
+#define LIS3MDL_CTRL_REG2_FS0       (1 << 5)    /**< Full scale bit 0        */
+#define LIS3MDL_CTRL_REG2_FS1       (1 << 6)    /**< Full scale bit 1        */
+/** @} */
+
+/**
+ * @name    LIS3MDL_CTRL_REG3 register bits definitions
+ * @{
+ */
+#define LIS3MDL_CTRL_REG3_MASK      0x27        /**< LIS3MDL_CTRL_REG3 mask  */
+#define LIS3MDL_CTRL_REG3_MD0       (1 << 0)    /**< Operating mode bit 0    */
+#define LIS3MDL_CTRL_REG3_MD1       (1 << 1)    /**< Operating mode bit 1    */
+#define LIS3MDL_CTRL_REG3_SIM       (1 << 2)    /**< SPI interface mode      */
+#define LIS3MDL_CTRL_REG3_LP        (1 << 5)    /**< Low power               */
+/** @} */
+
+/**
+ * @name    LIS3MDL_CTRL_REG4 register bits definitions
+ * @{
+ */
+#define LIS3MDL_CTRL_REG4_MASK      0x0E        /**< LIS3MDL_CTRL_REG4 mask  */
+#define LIS3MDL_CTRL_REG4_BLE       (1 << 1)    /**< Endianess               */
+#define LIS3MDL_CTRL_REG4_OMZ0      (1 << 2)    /**< Z mode bit 0            */
+#define LIS3MDL_CTRL_REG4_OMZ1      (1 << 3)    /**< Z mode bit 1            */
+/** @} */
+
+/**
+ * @name    LIS3MDL_CTRL_REG5 register bits definitions
+ * @{
+ */
+#define LIS3MDL_CTRL_REG5_MASK      0xC0        /**< LIS3MDL_CTRL_REG5 mask  */
+#define LIS3MDL_CTRL_REG5_BDU       (1 << 6)    /**< Block data update       */
+#define LIS3MDL_CTRL_REG5_FAST_READ (1 << 7)    /**< Fast read mode          */
+/** @} */
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -63,6 +194,15 @@
  */
 #if !defined(LIS3MDL_USE_I2C) || defined(__DOXYGEN__)
 #define LIS3MDL_USE_I2C                     TRUE
+#endif
+
+/**
+ * @brief   LIS3MDL advanced configurations switch.
+ * @details If set to @p TRUE more configurations are available.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(LIS3MDL_USE_ADVANCED) || defined(__DOXYGEN__)
+#define LIS3MDL_USE_ADVANCED                FALSE
 #endif
 
 /**
@@ -104,6 +244,7 @@
  * @name    LIS3MDL data structures and types
  * @{
  */
+
 /**
  * @brief  LIS3MDL slave address
  */
@@ -116,10 +257,10 @@ typedef enum {
  * @brief   LIS3MDL full scale
  */
 typedef enum {
-  LIS3MDL_FS_4GA = 0x00,            /**< Â±4 Gauss                           */
-  LIS3MDL_FS_8GA = 0x02,            /**< Â±8 Gauss                           */
-  LIS3MDL_FS_12GA = 0x04,           /**< Â±12 Gauss                          */
-  LIS3MDL_FS_16GA = 0x0C            /**< Â±16 Gauss                          */
+  LIS3MDL_FS_4GA = 0x00,            /**< ±4 Gauss                           */
+  LIS3MDL_FS_8GA = 0x20,            /**< ±8 Gauss                           */
+  LIS3MDL_FS_12GA = 0x40,           /**< ±12 Gauss                          */
+  LIS3MDL_FS_16GA = 0x60            /**< ±16 Gauss                          */
 }lis3mdl_fs_t;
 
 /**
@@ -210,7 +351,6 @@ typedef enum {
  * @brief   LIS3MDL configuration structure.
  */
 typedef struct {
-
 #if (LIS3MDL_USE_SPI) || defined(__DOXYGEN__)
   /**
    * @brief SPI driver associated to this LIS3MDL.
@@ -232,6 +372,14 @@ typedef struct {
   const I2CConfig           *i2ccfg;
 #endif /* LIS3MDL_USE_I2C */
   /**
+   * @brief LIS3MDL initial sensitivity.
+   */
+  float                     sensitivity[LIS3MDL_NUMBER_OF_AXES];
+  /**
+   * @brief LIS3MDL initial bias.
+   */
+  float                     bias[LIS3MDL_NUMBER_OF_AXES];
+  /**
    * @brief  LIS3MDL slave address
    */
   lis3mdl_sad_t              slaveaddress;
@@ -243,6 +391,7 @@ typedef struct {
    * @brief   LIS3MDL output data rate
    */
   lis3mdl_odr_t              outputdatarate;
+#if LIS3MDL_USE_ADVANCED || defined(__DOXYGEN__)
   /**
    * @brief  LIS3MDL low power mode configuration
    */
@@ -260,10 +409,6 @@ typedef struct {
    */
   lis3mdl_omz_t              operationmodez;
   /**
-   * @brief   LIS3MDL temperature sensor enabling
-   */
-  lis3mdl_temp_t             temperature;
-  /**
    * @brief  LIS3MDL block data update
    */
   lis3mdl_bdu_t              blockdataupdate;
@@ -271,6 +416,7 @@ typedef struct {
    * @brief   LIS3MDL endianness
    */
   lis3mdl_end_t              endianness;
+#endif
 } LIS3MDLConfig;
 
 /**
@@ -283,9 +429,8 @@ typedef struct LIS3MDLDriver LIS3MDLDriver;
  */
 #define _lis3mdl_methods                                                    \
   _base_compass_methods                                                     \
-  /* Retrieve the temperature of LIS3MDL chip.*/                            \
-  msg_t (*get_temperature)(void *instance, float* temperature);
-
+  /* Change full scale value of LIS3MDL.*/                                  \
+  msg_t (*set_full_scale)(void *instance, lis3mdl_fs_t fs);
 
 /**
  * @extends BaseCompassVMT
@@ -308,7 +453,9 @@ struct LIS3MDLVMT {
   /* Current sensitivity.*/                                                 \
   float                     sensitivity[LIS3MDL_NUMBER_OF_AXES];            \
   /* Bias data.*/                                                           \
-  int32_t                   bias[LIS3MDL_NUMBER_OF_AXES];
+  int32_t                   bias[LIS3MDL_NUMBER_OF_AXES];                   \
+  /* Current full scale value.*/                                            \
+  float                     fullscale;
 
 /**
  * @extends BaseCompass
@@ -333,20 +480,18 @@ struct LIS3MDLDriver {
 /*===========================================================================*/
 
 /**
- * @brief   Get current MEMS temperature.
- * @detail  This information is very useful especially for high accuracy IMU.
- * @note    Temperature sensor must be enabled using a proper configuration.
+ * @brief   Change compass full scale value.
  *
  * @param[in] ip        pointer to a @p BaseCompass class.
- * @param[out] temp     the MEMS temperature as single precision floating.
+ * @param[in] fs        the new full scale value.
  *
  * @return              The operation status.
  * @retval MSG_OK       if the function succeeded.
  * @retval MSG_RESET    if one or more errors occurred.
  * @api
  */
-#define compassGetTemp(ip, tpp)                                             \
-        (ip)->vmt_lis3mdl->get_temperature(ip, tpp)
+#define compassSetFullScale(ip, fs)                                       \
+        (ip)->vmt_lis3mdl->set_full_scale(ip, fs)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
