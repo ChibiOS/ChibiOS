@@ -273,9 +273,9 @@
 #define STM32_LPTIM1SEL_HSI16   (2 << 18)   /**< LPTIM1 clock is HSI16.     */
 #define STM32_LPTIM1SEL_LSE     (3 << 18)   /**< LPTIM1 clock is LSE.       */
 
-#define STM32_HSI48SEL_MASK     (1 << 27)   /**< HSI48SEL clock source mask.*/
-#define STM32_HSI48SEL_USBPLL   (0 << 27)   /**< USB48 clock is PLL/2.      */
-#define STM32_HSI48SEL_HSI48    (1 << 27)   /**< USB48 clock is HSI48.      */
+#define STM32_HSI48SEL_MASK     (1 << 26)   /**< HSI48SEL clock source mask.*/
+#define STM32_HSI48SEL_USBPLL   (0 << 26)   /**< USB48 clock is PLL/2.      */
+#define STM32_HSI48SEL_HSI48    (1 << 26)   /**< USB48 clock is HSI48.      */
 /** @} */
 
 /*===========================================================================*/
