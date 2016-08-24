@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.6 ***
+- HAL: Fixed wrong bit mask in STM32L0xx port (bug #769).
 - HAL: Fixed potential wait states problem in STM32L4 initialization code
        (bug #768).
 - HAL: Fixed SDIO driver not compiling on STM32F446 devices (bug #767).
