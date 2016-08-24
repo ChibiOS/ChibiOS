@@ -14,13 +14,8 @@
     limitations under the License.
 */
 
-/*
- * This file has been automatically generated using ChibiStudio board
- * generator plugin. Do not edit manually.
- */
-
-#ifndef BOARD_H
-#define BOARD_H
+#ifndef _BOARD_H_
+#define _BOARD_H_
 
 /*
  * Setup for STMicroelectronics STM32 Nucleo144-F767ZI board.
@@ -85,6 +80,7 @@
 #define GPIOA_ARD_D11               7U
 #define GPIOA_SPI1_MOSI             7U
 #define GPIOA_ZIO_D71               7U
+#define GPIOA_RMII_RX_DV            7U
 #define GPIOA_USB_SOF               8U
 #define GPIOA_USB_VBUS              9U
 #define GPIOA_USB_ID                10U
@@ -123,6 +119,7 @@
 #define GPIOB_I2S2_WS               12U
 #define GPIOB_ZIO_D18               13U
 #define GPIOB_I2S2_CK               13U
+#define GPIOB_RMII_TXD1             13U
 #define GPIOB_LED3                  14U
 #define GPIOB_ZIO_D17               15U
 #define GPIOB_I2S2_SD               15U
@@ -350,6 +347,7 @@
 #define LINE_ARD_D11                PAL_LINE(GPIOA, 7U)
 #define LINE_SPI1_MOSI              PAL_LINE(GPIOA, 7U)
 #define LINE_ZIO_D71                PAL_LINE(GPIOA, 7U)
+#define LINE_RMII_RX_DV             PAL_LINE(GPIOA, 7U)
 #define LINE_USB_SOF                PAL_LINE(GPIOA, 8U)
 #define LINE_USB_VBUS               PAL_LINE(GPIOA, 9U)
 #define LINE_USB_ID                 PAL_LINE(GPIOA, 10U)
@@ -388,6 +386,7 @@
 #define LINE_I2S2_WS                PAL_LINE(GPIOB, 12U)
 #define LINE_ZIO_D18                PAL_LINE(GPIOB, 13U)
 #define LINE_I2S2_CK                PAL_LINE(GPIOB, 13U)
+#define LINE_RMII_TXD1              PAL_LINE(GPIOB, 13U)
 #define LINE_LED3                   PAL_LINE(GPIOB, 14U)
 #define LINE_ZIO_D17                PAL_LINE(GPIOB, 15U)
 #define LINE_I2S2_SD                PAL_LINE(GPIOB, 15U)
@@ -557,7 +556,7 @@
  * PA4  - ZIO_D24 SPI3_NSS          (input pullup).
  * PA5  - ARD_D13 SPI1_SCK          (input pullup).
  * PA6  - ARD_D12 SPI1_MISO         (input pullup).
- * PA7  - ARD_D11 SPI1_MOSI ZIO_D71 (input pullup).
+ * PA7  - ARD_D11 SPI1_MOSI ZIO_D71 RMII_RX_DV(alternate 11).
  * PA8  - USB_SOF                   (alternate 10).
  * PA9  - USB_VBUS                  (analog).
  * PA10 - USB_ID                    (alternate 10).
@@ -574,7 +573,7 @@
                                      PIN_MODE_INPUT(GPIOA_ZIO_D24) |        \
                                      PIN_MODE_INPUT(GPIOA_ARD_D13) |        \
                                      PIN_MODE_INPUT(GPIOA_ARD_D12) |        \
-                                     PIN_MODE_INPUT(GPIOA_ARD_D11) |        \
+                                     PIN_MODE_ALTERNATE(GPIOA_ARD_D11) |    \
                                      PIN_MODE_ALTERNATE(GPIOA_USB_SOF) |    \
                                      PIN_MODE_ANALOG(GPIOA_USB_VBUS) |      \
                                      PIN_MODE_ALTERNATE(GPIOA_USB_ID) |     \
@@ -647,22 +646,22 @@
                                      PIN_ODR_HIGH(GPIOA_SWDIO) |            \
                                      PIN_ODR_HIGH(GPIOA_SWCLK) |            \
                                      PIN_ODR_HIGH(GPIOA_ZIO_D20))
-#define VAL_GPIOA_AFRL              (PIN_AFIO_AF(GPIOA_ZIO_D32, 0U) |       \
-                                     PIN_AFIO_AF(GPIOA_RMII_REF_CLK, 11U) | \
-                                     PIN_AFIO_AF(GPIOA_RMII_MDIO, 11U) |    \
-                                     PIN_AFIO_AF(GPIOA_ARD_A0, 0U) |        \
-                                     PIN_AFIO_AF(GPIOA_ZIO_D24, 0U) |       \
-                                     PIN_AFIO_AF(GPIOA_ARD_D13, 0U) |       \
-                                     PIN_AFIO_AF(GPIOA_ARD_D12, 0U) |       \
-                                     PIN_AFIO_AF(GPIOA_ARD_D11, 0U))
-#define VAL_GPIOA_AFRH              (PIN_AFIO_AF(GPIOA_USB_SOF, 10U) |      \
-                                     PIN_AFIO_AF(GPIOA_USB_VBUS, 0U) |      \
-                                     PIN_AFIO_AF(GPIOA_USB_ID, 10U) |       \
-                                     PIN_AFIO_AF(GPIOA_USB_DM, 10U) |       \
-                                     PIN_AFIO_AF(GPIOA_USB_DP, 10U) |       \
-                                     PIN_AFIO_AF(GPIOA_SWDIO, 0U) |         \
-                                     PIN_AFIO_AF(GPIOA_SWCLK, 0U) |         \
-                                     PIN_AFIO_AF(GPIOA_ZIO_D20, 0U))
+#define VAL_GPIOA_AFRL              (PIN_AFIO_AF(GPIOA_ZIO_D32, 0) |        \
+                                     PIN_AFIO_AF(GPIOA_RMII_REF_CLK, 11) |  \
+                                     PIN_AFIO_AF(GPIOA_RMII_MDIO, 11) |     \
+                                     PIN_AFIO_AF(GPIOA_ARD_A0, 0) |         \
+                                     PIN_AFIO_AF(GPIOA_ZIO_D24, 0) |        \
+                                     PIN_AFIO_AF(GPIOA_ARD_D13, 0) |        \
+                                     PIN_AFIO_AF(GPIOA_ARD_D12, 0) |        \
+                                     PIN_AFIO_AF(GPIOA_ARD_D11, 11))
+#define VAL_GPIOA_AFRH              (PIN_AFIO_AF(GPIOA_USB_SOF, 10) |       \
+                                     PIN_AFIO_AF(GPIOA_USB_VBUS, 0) |       \
+                                     PIN_AFIO_AF(GPIOA_USB_ID, 10) |        \
+                                     PIN_AFIO_AF(GPIOA_USB_DM, 10) |        \
+                                     PIN_AFIO_AF(GPIOA_USB_DP, 10) |        \
+                                     PIN_AFIO_AF(GPIOA_SWDIO, 0) |          \
+                                     PIN_AFIO_AF(GPIOA_SWCLK, 0) |          \
+                                     PIN_AFIO_AF(GPIOA_ZIO_D20, 0))
 
 /*
  * GPIOB setup:
@@ -680,7 +679,7 @@
  * PB10 - ZIO_D36 TIM2_CH3          (input pullup).
  * PB11 - ZIO_D35 TIM2_CH4          (input pullup).
  * PB12 - ZIO_D19 I2S2_WS           (input pullup).
- * PB13 - ZIO_D18 I2S2_CK           (input pullup).
+ * PB13 - ZIO_D18 I2S2_CK RMII_TXD1 (alternate 11).
  * PB14 - LED3                      (output pushpull maximum).
  * PB15 - ZIO_D17 I2S2_SD           (input pullup).
  */
@@ -697,7 +696,7 @@
                                      PIN_MODE_INPUT(GPIOB_ZIO_D36) |        \
                                      PIN_MODE_INPUT(GPIOB_ZIO_D35) |        \
                                      PIN_MODE_INPUT(GPIOB_ZIO_D19) |        \
-                                     PIN_MODE_INPUT(GPIOB_ZIO_D18) |        \
+                                     PIN_MODE_ALTERNATE(GPIOB_ZIO_D18) |    \
                                      PIN_MODE_OUTPUT(GPIOB_LED3) |          \
                                      PIN_MODE_INPUT(GPIOB_ZIO_D17))
 #define VAL_GPIOB_OTYPER            (PIN_OTYPE_PUSHPULL(GPIOB_ZIO_D33) |    \
@@ -764,22 +763,22 @@
                                      PIN_ODR_HIGH(GPIOB_ZIO_D18) |          \
                                      PIN_ODR_LOW(GPIOB_LED3) |              \
                                      PIN_ODR_HIGH(GPIOB_ZIO_D17))
-#define VAL_GPIOB_AFRL              (PIN_AFIO_AF(GPIOB_ZIO_D33, 0U) |       \
-                                     PIN_AFIO_AF(GPIOB_ZIO_A6, 0U) |        \
-                                     PIN_AFIO_AF(GPIOB_ZIO_D27, 0U) |       \
-                                     PIN_AFIO_AF(GPIOB_ZIO_D23, 0U) |       \
-                                     PIN_AFIO_AF(GPIOB_ZIO_D25, 0U) |       \
-                                     PIN_AFIO_AF(GPIOB_ZIO_D22, 0U) |       \
-                                     PIN_AFIO_AF(GPIOB_ZIO_D26, 0U) |       \
-                                     PIN_AFIO_AF(GPIOB_LED2, 0U))
-#define VAL_GPIOB_AFRH              (PIN_AFIO_AF(GPIOB_ARD_D15, 0U) |       \
-                                     PIN_AFIO_AF(GPIOB_ARD_D14, 0U) |       \
-                                     PIN_AFIO_AF(GPIOB_ZIO_D36, 0U) |       \
-                                     PIN_AFIO_AF(GPIOB_ZIO_D35, 0U) |       \
-                                     PIN_AFIO_AF(GPIOB_ZIO_D19, 0U) |       \
-                                     PIN_AFIO_AF(GPIOB_ZIO_D18, 0U) |       \
-                                     PIN_AFIO_AF(GPIOB_LED3, 0U) |          \
-                                     PIN_AFIO_AF(GPIOB_ZIO_D17, 0U))
+#define VAL_GPIOB_AFRL              (PIN_AFIO_AF(GPIOB_ZIO_D33, 0) |        \
+                                     PIN_AFIO_AF(GPIOB_ZIO_A6, 0) |         \
+                                     PIN_AFIO_AF(GPIOB_ZIO_D27, 0) |        \
+                                     PIN_AFIO_AF(GPIOB_ZIO_D23, 0) |        \
+                                     PIN_AFIO_AF(GPIOB_ZIO_D25, 0) |        \
+                                     PIN_AFIO_AF(GPIOB_ZIO_D22, 0) |        \
+                                     PIN_AFIO_AF(GPIOB_ZIO_D26, 0) |        \
+                                     PIN_AFIO_AF(GPIOB_LED2, 0))
+#define VAL_GPIOB_AFRH              (PIN_AFIO_AF(GPIOB_ARD_D15, 0) |        \
+                                     PIN_AFIO_AF(GPIOB_ARD_D14, 0) |        \
+                                     PIN_AFIO_AF(GPIOB_ZIO_D36, 0) |        \
+                                     PIN_AFIO_AF(GPIOB_ZIO_D35, 0) |        \
+                                     PIN_AFIO_AF(GPIOB_ZIO_D19, 0) |        \
+                                     PIN_AFIO_AF(GPIOB_ZIO_D18, 11) |       \
+                                     PIN_AFIO_AF(GPIOB_LED3, 0) |           \
+                                     PIN_AFIO_AF(GPIOB_ZIO_D17, 0))
 
 /*
  * GPIOC setup:
@@ -881,22 +880,22 @@
                                      PIN_ODR_HIGH(GPIOC_BUTTON) |           \
                                      PIN_ODR_HIGH(GPIOC_OSC32_IN) |         \
                                      PIN_ODR_HIGH(GPIOC_OSC32_OUT))
-#define VAL_GPIOC_AFRL              (PIN_AFIO_AF(GPIOC_ARD_A1, 0U) |        \
-                                     PIN_AFIO_AF(GPIOC_RMII_MDC, 11U) |     \
-                                     PIN_AFIO_AF(GPIOC_ZIO_A7, 0U) |        \
-                                     PIN_AFIO_AF(GPIOC_ARD_A2, 0U) |        \
-                                     PIN_AFIO_AF(GPIOC_RMII_RXD0, 11U) |    \
-                                     PIN_AFIO_AF(GPIOC_RMII_RXD1, 11U) |    \
-                                     PIN_AFIO_AF(GPIOC_ZIO_D16, 0U) |       \
-                                     PIN_AFIO_AF(GPIOC_ZIO_D21, 0U))
-#define VAL_GPIOC_AFRH              (PIN_AFIO_AF(GPIOC_ZIO_D43, 0U) |       \
-                                     PIN_AFIO_AF(GPIOC_ZIO_D44, 0U) |       \
-                                     PIN_AFIO_AF(GPIOC_ZIO_D45, 0U) |       \
-                                     PIN_AFIO_AF(GPIOC_ZIO_D46, 0U) |       \
-                                     PIN_AFIO_AF(GPIOC_ZIO_D47, 0U) |       \
-                                     PIN_AFIO_AF(GPIOC_BUTTON, 0U) |        \
-                                     PIN_AFIO_AF(GPIOC_OSC32_IN, 0U) |      \
-                                     PIN_AFIO_AF(GPIOC_OSC32_OUT, 0U))
+#define VAL_GPIOC_AFRL              (PIN_AFIO_AF(GPIOC_ARD_A1, 0) |         \
+                                     PIN_AFIO_AF(GPIOC_RMII_MDC, 11) |      \
+                                     PIN_AFIO_AF(GPIOC_ZIO_A7, 0) |         \
+                                     PIN_AFIO_AF(GPIOC_ARD_A2, 0) |         \
+                                     PIN_AFIO_AF(GPIOC_RMII_RXD0, 11) |     \
+                                     PIN_AFIO_AF(GPIOC_RMII_RXD1, 11) |     \
+                                     PIN_AFIO_AF(GPIOC_ZIO_D16, 0) |        \
+                                     PIN_AFIO_AF(GPIOC_ZIO_D21, 0))
+#define VAL_GPIOC_AFRH              (PIN_AFIO_AF(GPIOC_ZIO_D43, 0) |        \
+                                     PIN_AFIO_AF(GPIOC_ZIO_D44, 0) |        \
+                                     PIN_AFIO_AF(GPIOC_ZIO_D45, 0) |        \
+                                     PIN_AFIO_AF(GPIOC_ZIO_D46, 0) |        \
+                                     PIN_AFIO_AF(GPIOC_ZIO_D47, 0) |        \
+                                     PIN_AFIO_AF(GPIOC_BUTTON, 0) |         \
+                                     PIN_AFIO_AF(GPIOC_OSC32_IN, 0) |       \
+                                     PIN_AFIO_AF(GPIOC_OSC32_OUT, 0))
 
 /*
  * GPIOD setup:
@@ -998,22 +997,22 @@
                                      PIN_ODR_HIGH(GPIOD_ZIO_D28) |          \
                                      PIN_ODR_HIGH(GPIOD_ARD_D10) |          \
                                      PIN_ODR_HIGH(GPIOD_ARD_D9))
-#define VAL_GPIOD_AFRL              (PIN_AFIO_AF(GPIOD_ZIO_D67, 0U) |       \
-                                     PIN_AFIO_AF(GPIOD_ZIO_D66, 0U) |       \
-                                     PIN_AFIO_AF(GPIOD_ZIO_D48, 0U) |       \
-                                     PIN_AFIO_AF(GPIOD_ZIO_D55, 0U) |       \
-                                     PIN_AFIO_AF(GPIOD_ZIO_D54, 0U) |       \
-                                     PIN_AFIO_AF(GPIOD_ZIO_D53, 0U) |       \
-                                     PIN_AFIO_AF(GPIOD_ZIO_D52, 0U) |       \
-                                     PIN_AFIO_AF(GPIOD_ZIO_D51, 0U))
-#define VAL_GPIOD_AFRH              (PIN_AFIO_AF(GPIOD_USART3_RX, 7U) |     \
-                                     PIN_AFIO_AF(GPIOD_USART3_TX, 7U) |     \
-                                     PIN_AFIO_AF(GPIOD_PIN10, 0U) |         \
-                                     PIN_AFIO_AF(GPIOD_ZIO_D30, 0U) |       \
-                                     PIN_AFIO_AF(GPIOD_ZIO_D29, 0U) |       \
-                                     PIN_AFIO_AF(GPIOD_ZIO_D28, 0U) |       \
-                                     PIN_AFIO_AF(GPIOD_ARD_D10, 0U) |       \
-                                     PIN_AFIO_AF(GPIOD_ARD_D9, 0U))
+#define VAL_GPIOD_AFRL              (PIN_AFIO_AF(GPIOD_ZIO_D67, 0) |        \
+                                     PIN_AFIO_AF(GPIOD_ZIO_D66, 0) |        \
+                                     PIN_AFIO_AF(GPIOD_ZIO_D48, 0) |        \
+                                     PIN_AFIO_AF(GPIOD_ZIO_D55, 0) |        \
+                                     PIN_AFIO_AF(GPIOD_ZIO_D54, 0) |        \
+                                     PIN_AFIO_AF(GPIOD_ZIO_D53, 0) |        \
+                                     PIN_AFIO_AF(GPIOD_ZIO_D52, 0) |        \
+                                     PIN_AFIO_AF(GPIOD_ZIO_D51, 0))
+#define VAL_GPIOD_AFRH              (PIN_AFIO_AF(GPIOD_USART3_RX, 7) |      \
+                                     PIN_AFIO_AF(GPIOD_USART3_TX, 7) |      \
+                                     PIN_AFIO_AF(GPIOD_PIN10, 0) |          \
+                                     PIN_AFIO_AF(GPIOD_ZIO_D30, 0) |        \
+                                     PIN_AFIO_AF(GPIOD_ZIO_D29, 0) |        \
+                                     PIN_AFIO_AF(GPIOD_ZIO_D28, 0) |        \
+                                     PIN_AFIO_AF(GPIOD_ARD_D10, 0) |        \
+                                     PIN_AFIO_AF(GPIOD_ARD_D9, 0))
 
 /*
  * GPIOE setup:
@@ -1115,22 +1114,22 @@
                                      PIN_ODR_HIGH(GPIOE_ARD_D3) |           \
                                      PIN_ODR_HIGH(GPIOE_ZIO_D38) |          \
                                      PIN_ODR_HIGH(GPIOE_ZIO_D37))
-#define VAL_GPIOE_AFRL              (PIN_AFIO_AF(GPIOE_ZIO_D34, 0U) |       \
-                                     PIN_AFIO_AF(GPIOE_PIN1, 0U) |          \
-                                     PIN_AFIO_AF(GPIOE_ZIO_D31, 0U) |       \
-                                     PIN_AFIO_AF(GPIOE_ZIO_D60, 0U) |       \
-                                     PIN_AFIO_AF(GPIOE_ZIO_D57, 0U) |       \
-                                     PIN_AFIO_AF(GPIOE_ZIO_D58, 0U) |       \
-                                     PIN_AFIO_AF(GPIOE_ZIO_D59, 0U) |       \
-                                     PIN_AFIO_AF(GPIOE_ZIO_D41, 0U))
-#define VAL_GPIOE_AFRH              (PIN_AFIO_AF(GPIOE_ZIO_D42, 0U) |       \
-                                     PIN_AFIO_AF(GPIOE_ARD_D6, 0U) |        \
-                                     PIN_AFIO_AF(GPIOE_ZIO_D40, 0U) |       \
-                                     PIN_AFIO_AF(GPIOE_ARD_D5, 0U) |        \
-                                     PIN_AFIO_AF(GPIOE_ZIO_D39, 0U) |       \
-                                     PIN_AFIO_AF(GPIOE_ARD_D3, 0U) |        \
-                                     PIN_AFIO_AF(GPIOE_ZIO_D38, 0U) |       \
-                                     PIN_AFIO_AF(GPIOE_ZIO_D37, 0U))
+#define VAL_GPIOE_AFRL              (PIN_AFIO_AF(GPIOE_ZIO_D34, 0) |        \
+                                     PIN_AFIO_AF(GPIOE_PIN1, 0) |           \
+                                     PIN_AFIO_AF(GPIOE_ZIO_D31, 0) |        \
+                                     PIN_AFIO_AF(GPIOE_ZIO_D60, 0) |        \
+                                     PIN_AFIO_AF(GPIOE_ZIO_D57, 0) |        \
+                                     PIN_AFIO_AF(GPIOE_ZIO_D58, 0) |        \
+                                     PIN_AFIO_AF(GPIOE_ZIO_D59, 0) |        \
+                                     PIN_AFIO_AF(GPIOE_ZIO_D41, 0))
+#define VAL_GPIOE_AFRH              (PIN_AFIO_AF(GPIOE_ZIO_D42, 0) |        \
+                                     PIN_AFIO_AF(GPIOE_ARD_D6, 0) |         \
+                                     PIN_AFIO_AF(GPIOE_ZIO_D40, 0) |        \
+                                     PIN_AFIO_AF(GPIOE_ARD_D5, 0) |         \
+                                     PIN_AFIO_AF(GPIOE_ZIO_D39, 0) |        \
+                                     PIN_AFIO_AF(GPIOE_ARD_D3, 0) |         \
+                                     PIN_AFIO_AF(GPIOE_ZIO_D38, 0) |        \
+                                     PIN_AFIO_AF(GPIOE_ZIO_D37, 0))
 
 /*
  * GPIOF setup:
@@ -1232,22 +1231,22 @@
                                      PIN_ODR_HIGH(GPIOF_ARD_D7) |           \
                                      PIN_ODR_HIGH(GPIOF_ARD_D4) |           \
                                      PIN_ODR_HIGH(GPIOF_ARD_D2))
-#define VAL_GPIOF_AFRL              (PIN_AFIO_AF(GPIOF_ZIO_D68, 0U) |       \
-                                     PIN_AFIO_AF(GPIOF_ZIO_D69, 0U) |       \
-                                     PIN_AFIO_AF(GPIOF_ZIO_D70, 0U) |       \
-                                     PIN_AFIO_AF(GPIOF_ARD_A3, 0U) |        \
-                                     PIN_AFIO_AF(GPIOF_ZIO_A8, 0U) |        \
-                                     PIN_AFIO_AF(GPIOF_ARD_A4, 0U) |        \
-                                     PIN_AFIO_AF(GPIOF_PIN6, 0U) |          \
-                                     PIN_AFIO_AF(GPIOF_ZIO_D62, 0U))
-#define VAL_GPIOF_AFRH              (PIN_AFIO_AF(GPIOF_ZIO_D61, 0U) |       \
-                                     PIN_AFIO_AF(GPIOF_ZIO_D63, 0U) |       \
-                                     PIN_AFIO_AF(GPIOF_ARD_A5, 0U) |        \
-                                     PIN_AFIO_AF(GPIOF_PIN11, 0U) |         \
-                                     PIN_AFIO_AF(GPIOF_ARD_D8, 0U) |        \
-                                     PIN_AFIO_AF(GPIOF_ARD_D7, 0U) |        \
-                                     PIN_AFIO_AF(GPIOF_ARD_D4, 0U) |        \
-                                     PIN_AFIO_AF(GPIOF_ARD_D2, 0U))
+#define VAL_GPIOF_AFRL              (PIN_AFIO_AF(GPIOF_ZIO_D68, 0) |        \
+                                     PIN_AFIO_AF(GPIOF_ZIO_D69, 0) |        \
+                                     PIN_AFIO_AF(GPIOF_ZIO_D70, 0) |        \
+                                     PIN_AFIO_AF(GPIOF_ARD_A3, 0) |         \
+                                     PIN_AFIO_AF(GPIOF_ZIO_A8, 0) |         \
+                                     PIN_AFIO_AF(GPIOF_ARD_A4, 0) |         \
+                                     PIN_AFIO_AF(GPIOF_PIN6, 0) |           \
+                                     PIN_AFIO_AF(GPIOF_ZIO_D62, 0))
+#define VAL_GPIOF_AFRH              (PIN_AFIO_AF(GPIOF_ZIO_D61, 0) |        \
+                                     PIN_AFIO_AF(GPIOF_ZIO_D63, 0) |        \
+                                     PIN_AFIO_AF(GPIOF_ARD_A5, 0) |         \
+                                     PIN_AFIO_AF(GPIOF_PIN11, 0) |          \
+                                     PIN_AFIO_AF(GPIOF_ARD_D8, 0) |         \
+                                     PIN_AFIO_AF(GPIOF_ARD_D7, 0) |         \
+                                     PIN_AFIO_AF(GPIOF_ARD_D4, 0) |         \
+                                     PIN_AFIO_AF(GPIOF_ARD_D2, 0))
 
 /*
  * GPIOG setup:
@@ -1349,22 +1348,22 @@
                                      PIN_ODR_HIGH(GPIOG_RMII_TXD0) |        \
                                      PIN_ODR_HIGH(GPIOG_ARD_D1) |           \
                                      PIN_ODR_HIGH(GPIOG_PIN15))
-#define VAL_GPIOG_AFRL              (PIN_AFIO_AF(GPIOG_ZIO_D65, 0U) |       \
-                                     PIN_AFIO_AF(GPIOG_ZIO_D64, 0U) |       \
-                                     PIN_AFIO_AF(GPIOG_ZIO_D49, 0U) |       \
-                                     PIN_AFIO_AF(GPIOG_ZIO_D50, 0U) |       \
-                                     PIN_AFIO_AF(GPIOG_PIN4, 0U) |          \
-                                     PIN_AFIO_AF(GPIOG_PIN5, 0U) |          \
-                                     PIN_AFIO_AF(GPIOG_USB_GPIO_OUT, 0U) |  \
-                                     PIN_AFIO_AF(GPIOG_USB_GPIO_IN, 0U))
-#define VAL_GPIOG_AFRH              (PIN_AFIO_AF(GPIOG_PIN8, 0U) |          \
-                                     PIN_AFIO_AF(GPIOG_ARD_D0, 0U) |        \
-                                     PIN_AFIO_AF(GPIOG_PIN10, 0U) |         \
-                                     PIN_AFIO_AF(GPIOG_RMII_TX_EN, 11U) |   \
-                                     PIN_AFIO_AF(GPIOG_PIN12, 0U) |         \
-                                     PIN_AFIO_AF(GPIOG_RMII_TXD0, 11U) |    \
-                                     PIN_AFIO_AF(GPIOG_ARD_D1, 0U) |        \
-                                     PIN_AFIO_AF(GPIOG_PIN15, 0U))
+#define VAL_GPIOG_AFRL              (PIN_AFIO_AF(GPIOG_ZIO_D65, 0) |        \
+                                     PIN_AFIO_AF(GPIOG_ZIO_D64, 0) |        \
+                                     PIN_AFIO_AF(GPIOG_ZIO_D49, 0) |        \
+                                     PIN_AFIO_AF(GPIOG_ZIO_D50, 0) |        \
+                                     PIN_AFIO_AF(GPIOG_PIN4, 0) |           \
+                                     PIN_AFIO_AF(GPIOG_PIN5, 0) |           \
+                                     PIN_AFIO_AF(GPIOG_USB_GPIO_OUT, 0) |   \
+                                     PIN_AFIO_AF(GPIOG_USB_GPIO_IN, 0))
+#define VAL_GPIOG_AFRH              (PIN_AFIO_AF(GPIOG_PIN8, 0) |           \
+                                     PIN_AFIO_AF(GPIOG_ARD_D0, 0) |         \
+                                     PIN_AFIO_AF(GPIOG_PIN10, 0) |          \
+                                     PIN_AFIO_AF(GPIOG_RMII_TX_EN, 11) |    \
+                                     PIN_AFIO_AF(GPIOG_PIN12, 0) |          \
+                                     PIN_AFIO_AF(GPIOG_RMII_TXD0, 11) |     \
+                                     PIN_AFIO_AF(GPIOG_ARD_D1, 0) |         \
+                                     PIN_AFIO_AF(GPIOG_PIN15, 0))
 
 /*
  * GPIOH setup:
@@ -1466,22 +1465,22 @@
                                      PIN_ODR_HIGH(GPIOH_PIN13) |            \
                                      PIN_ODR_HIGH(GPIOH_PIN14) |            \
                                      PIN_ODR_HIGH(GPIOH_PIN15))
-#define VAL_GPIOH_AFRL              (PIN_AFIO_AF(GPIOH_OSC_IN, 0U) |        \
-                                     PIN_AFIO_AF(GPIOH_OSC_OUT, 0U) |       \
-                                     PIN_AFIO_AF(GPIOH_PIN2, 0U) |          \
-                                     PIN_AFIO_AF(GPIOH_PIN3, 0U) |          \
-                                     PIN_AFIO_AF(GPIOH_PIN4, 0U) |          \
-                                     PIN_AFIO_AF(GPIOH_PIN5, 0U) |          \
-                                     PIN_AFIO_AF(GPIOH_PIN6, 0U) |          \
-                                     PIN_AFIO_AF(GPIOH_PIN7, 0U))
-#define VAL_GPIOH_AFRH              (PIN_AFIO_AF(GPIOH_PIN8, 0U) |          \
-                                     PIN_AFIO_AF(GPIOH_PIN9, 0U) |          \
-                                     PIN_AFIO_AF(GPIOH_PIN10, 0U) |         \
-                                     PIN_AFIO_AF(GPIOH_PIN11, 0U) |         \
-                                     PIN_AFIO_AF(GPIOH_PIN12, 0U) |         \
-                                     PIN_AFIO_AF(GPIOH_PIN13, 0U) |         \
-                                     PIN_AFIO_AF(GPIOH_PIN14, 0U) |         \
-                                     PIN_AFIO_AF(GPIOH_PIN15, 0U))
+#define VAL_GPIOH_AFRL              (PIN_AFIO_AF(GPIOH_OSC_IN, 0) |         \
+                                     PIN_AFIO_AF(GPIOH_OSC_OUT, 0) |        \
+                                     PIN_AFIO_AF(GPIOH_PIN2, 0) |           \
+                                     PIN_AFIO_AF(GPIOH_PIN3, 0) |           \
+                                     PIN_AFIO_AF(GPIOH_PIN4, 0) |           \
+                                     PIN_AFIO_AF(GPIOH_PIN5, 0) |           \
+                                     PIN_AFIO_AF(GPIOH_PIN6, 0) |           \
+                                     PIN_AFIO_AF(GPIOH_PIN7, 0))
+#define VAL_GPIOH_AFRH              (PIN_AFIO_AF(GPIOH_PIN8, 0) |           \
+                                     PIN_AFIO_AF(GPIOH_PIN9, 0) |           \
+                                     PIN_AFIO_AF(GPIOH_PIN10, 0) |          \
+                                     PIN_AFIO_AF(GPIOH_PIN11, 0) |          \
+                                     PIN_AFIO_AF(GPIOH_PIN12, 0) |          \
+                                     PIN_AFIO_AF(GPIOH_PIN13, 0) |          \
+                                     PIN_AFIO_AF(GPIOH_PIN14, 0) |          \
+                                     PIN_AFIO_AF(GPIOH_PIN15, 0))
 
 /*
  * GPIOI setup:
@@ -1583,22 +1582,22 @@
                                      PIN_ODR_HIGH(GPIOI_PIN13) |            \
                                      PIN_ODR_HIGH(GPIOI_PIN14) |            \
                                      PIN_ODR_HIGH(GPIOI_PIN15))
-#define VAL_GPIOI_AFRL              (PIN_AFIO_AF(GPIOI_PIN0, 0U) |          \
-                                     PIN_AFIO_AF(GPIOI_PIN1, 0U) |          \
-                                     PIN_AFIO_AF(GPIOI_PIN2, 0U) |          \
-                                     PIN_AFIO_AF(GPIOI_PIN3, 0U) |          \
-                                     PIN_AFIO_AF(GPIOI_PIN4, 0U) |          \
-                                     PIN_AFIO_AF(GPIOI_PIN5, 0U) |          \
-                                     PIN_AFIO_AF(GPIOI_PIN6, 0U) |          \
-                                     PIN_AFIO_AF(GPIOI_PIN7, 0U))
-#define VAL_GPIOI_AFRH              (PIN_AFIO_AF(GPIOI_PIN8, 0U) |          \
-                                     PIN_AFIO_AF(GPIOI_PIN9, 0U) |          \
-                                     PIN_AFIO_AF(GPIOI_PIN10, 0U) |         \
-                                     PIN_AFIO_AF(GPIOI_PIN11, 0U) |         \
-                                     PIN_AFIO_AF(GPIOI_PIN12, 0U) |         \
-                                     PIN_AFIO_AF(GPIOI_PIN13, 0U) |         \
-                                     PIN_AFIO_AF(GPIOI_PIN14, 0U) |         \
-                                     PIN_AFIO_AF(GPIOI_PIN15, 0U))
+#define VAL_GPIOI_AFRL              (PIN_AFIO_AF(GPIOI_PIN0, 0) |           \
+                                     PIN_AFIO_AF(GPIOI_PIN1, 0) |           \
+                                     PIN_AFIO_AF(GPIOI_PIN2, 0) |           \
+                                     PIN_AFIO_AF(GPIOI_PIN3, 0) |           \
+                                     PIN_AFIO_AF(GPIOI_PIN4, 0) |           \
+                                     PIN_AFIO_AF(GPIOI_PIN5, 0) |           \
+                                     PIN_AFIO_AF(GPIOI_PIN6, 0) |           \
+                                     PIN_AFIO_AF(GPIOI_PIN7, 0))
+#define VAL_GPIOI_AFRH              (PIN_AFIO_AF(GPIOI_PIN8, 0) |           \
+                                     PIN_AFIO_AF(GPIOI_PIN9, 0) |           \
+                                     PIN_AFIO_AF(GPIOI_PIN10, 0) |          \
+                                     PIN_AFIO_AF(GPIOI_PIN11, 0) |          \
+                                     PIN_AFIO_AF(GPIOI_PIN12, 0) |          \
+                                     PIN_AFIO_AF(GPIOI_PIN13, 0) |          \
+                                     PIN_AFIO_AF(GPIOI_PIN14, 0) |          \
+                                     PIN_AFIO_AF(GPIOI_PIN15, 0))
 
 /*
  * GPIOJ setup:
@@ -1700,22 +1699,22 @@
                                      PIN_ODR_HIGH(GPIOJ_PIN13) |            \
                                      PIN_ODR_HIGH(GPIOJ_PIN14) |            \
                                      PIN_ODR_HIGH(GPIOJ_PIN15))
-#define VAL_GPIOJ_AFRL              (PIN_AFIO_AF(GPIOJ_PIN0, 0U) |          \
-                                     PIN_AFIO_AF(GPIOJ_PIN1, 0U) |          \
-                                     PIN_AFIO_AF(GPIOJ_PIN2, 0U) |          \
-                                     PIN_AFIO_AF(GPIOJ_PIN3, 0U) |          \
-                                     PIN_AFIO_AF(GPIOJ_PIN4, 0U) |          \
-                                     PIN_AFIO_AF(GPIOJ_PIN5, 0U) |          \
-                                     PIN_AFIO_AF(GPIOJ_PIN6, 0U) |          \
-                                     PIN_AFIO_AF(GPIOJ_PIN7, 0U))
-#define VAL_GPIOJ_AFRH              (PIN_AFIO_AF(GPIOJ_PIN8, 0U) |          \
-                                     PIN_AFIO_AF(GPIOJ_PIN9, 0U) |          \
-                                     PIN_AFIO_AF(GPIOJ_PIN10, 0U) |         \
-                                     PIN_AFIO_AF(GPIOJ_PIN11, 0U) |         \
-                                     PIN_AFIO_AF(GPIOJ_PIN12, 0U) |         \
-                                     PIN_AFIO_AF(GPIOJ_PIN13, 0U) |         \
-                                     PIN_AFIO_AF(GPIOJ_PIN14, 0U) |         \
-                                     PIN_AFIO_AF(GPIOJ_PIN15, 0U))
+#define VAL_GPIOJ_AFRL              (PIN_AFIO_AF(GPIOJ_PIN0, 0) |           \
+                                     PIN_AFIO_AF(GPIOJ_PIN1, 0) |           \
+                                     PIN_AFIO_AF(GPIOJ_PIN2, 0) |           \
+                                     PIN_AFIO_AF(GPIOJ_PIN3, 0) |           \
+                                     PIN_AFIO_AF(GPIOJ_PIN4, 0) |           \
+                                     PIN_AFIO_AF(GPIOJ_PIN5, 0) |           \
+                                     PIN_AFIO_AF(GPIOJ_PIN6, 0) |           \
+                                     PIN_AFIO_AF(GPIOJ_PIN7, 0))
+#define VAL_GPIOJ_AFRH              (PIN_AFIO_AF(GPIOJ_PIN8, 0) |           \
+                                     PIN_AFIO_AF(GPIOJ_PIN9, 0) |           \
+                                     PIN_AFIO_AF(GPIOJ_PIN10, 0) |          \
+                                     PIN_AFIO_AF(GPIOJ_PIN11, 0) |          \
+                                     PIN_AFIO_AF(GPIOJ_PIN12, 0) |          \
+                                     PIN_AFIO_AF(GPIOJ_PIN13, 0) |          \
+                                     PIN_AFIO_AF(GPIOJ_PIN14, 0) |          \
+                                     PIN_AFIO_AF(GPIOJ_PIN15, 0))
 
 /*
  * GPIOK setup:
@@ -1817,22 +1816,22 @@
                                      PIN_ODR_HIGH(GPIOK_PIN13) |            \
                                      PIN_ODR_HIGH(GPIOK_PIN14) |            \
                                      PIN_ODR_HIGH(GPIOK_PIN15))
-#define VAL_GPIOK_AFRL              (PIN_AFIO_AF(GPIOK_PIN0, 0U) |          \
-                                     PIN_AFIO_AF(GPIOK_PIN1, 0U) |          \
-                                     PIN_AFIO_AF(GPIOK_PIN2, 0U) |          \
-                                     PIN_AFIO_AF(GPIOK_PIN3, 0U) |          \
-                                     PIN_AFIO_AF(GPIOK_PIN4, 0U) |          \
-                                     PIN_AFIO_AF(GPIOK_PIN5, 0U) |          \
-                                     PIN_AFIO_AF(GPIOK_PIN6, 0U) |          \
-                                     PIN_AFIO_AF(GPIOK_PIN7, 0U))
-#define VAL_GPIOK_AFRH              (PIN_AFIO_AF(GPIOK_PIN8, 0U) |          \
-                                     PIN_AFIO_AF(GPIOK_PIN9, 0U) |          \
-                                     PIN_AFIO_AF(GPIOK_PIN10, 0U) |         \
-                                     PIN_AFIO_AF(GPIOK_PIN11, 0U) |         \
-                                     PIN_AFIO_AF(GPIOK_PIN12, 0U) |         \
-                                     PIN_AFIO_AF(GPIOK_PIN13, 0U) |         \
-                                     PIN_AFIO_AF(GPIOK_PIN14, 0U) |         \
-                                     PIN_AFIO_AF(GPIOK_PIN15, 0U))
+#define VAL_GPIOK_AFRL              (PIN_AFIO_AF(GPIOK_PIN0, 0) |           \
+                                     PIN_AFIO_AF(GPIOK_PIN1, 0) |           \
+                                     PIN_AFIO_AF(GPIOK_PIN2, 0) |           \
+                                     PIN_AFIO_AF(GPIOK_PIN3, 0) |           \
+                                     PIN_AFIO_AF(GPIOK_PIN4, 0) |           \
+                                     PIN_AFIO_AF(GPIOK_PIN5, 0) |           \
+                                     PIN_AFIO_AF(GPIOK_PIN6, 0) |           \
+                                     PIN_AFIO_AF(GPIOK_PIN7, 0))
+#define VAL_GPIOK_AFRH              (PIN_AFIO_AF(GPIOK_PIN8, 0) |           \
+                                     PIN_AFIO_AF(GPIOK_PIN9, 0) |           \
+                                     PIN_AFIO_AF(GPIOK_PIN10, 0) |          \
+                                     PIN_AFIO_AF(GPIOK_PIN11, 0) |          \
+                                     PIN_AFIO_AF(GPIOK_PIN12, 0) |          \
+                                     PIN_AFIO_AF(GPIOK_PIN13, 0) |          \
+                                     PIN_AFIO_AF(GPIOK_PIN14, 0) |          \
+                                     PIN_AFIO_AF(GPIOK_PIN15, 0))
 
 
 #if !defined(_FROM_ASM_)
@@ -1845,4 +1844,4 @@ extern "C" {
 #endif
 #endif /* _FROM_ASM_ */
 
-#endif /* BOARD_H */
+#endif /* _BOARD_H_ */
