@@ -221,6 +221,8 @@ void dac_lld_start(DACDriver *dacp) {
   /* If the driver is in DAC_STOP state then a full initialization is
      required.*/
   if (dacp->state == DAC_STOP) {
+    dacchannel_t channel = 0;
+
     /* Enabling the clock source.*/
 #if STM32_DAC_USE_DAC1_CH1
     if (&DACD1 == dacp) {
@@ -231,6 +233,7 @@ void dac_lld_start(DACDriver *dacp) {
 #if STM32_DAC_USE_DAC1_CH2
     if (&DACD2 == dacp) {
       rccEnableDAC1(false);
+      channel = 1;
     }
 #endif
 
@@ -243,6 +246,7 @@ void dac_lld_start(DACDriver *dacp) {
 #if STM32_DAC_USE_DAC2_CH2
     if (&DACD3 == dacp) {
       rccEnableDAC2(false);
+      channel = 1;
     }
 #endif
 
@@ -251,7 +255,7 @@ void dac_lld_start(DACDriver *dacp) {
 #if STM32_DAC_DUAL_MODE == FALSE
     dacp->params->dac->CR &= dacp->params->regmask;
     dacp->params->dac->CR |= DAC_CR_EN1 << dacp->params->regshift;
-    dac_lld_put_channel(dacp, 0U, dacp->config->init);
+    dac_lld_put_channel(dacp, channel, dacp->config->init);
 #else
     if ((dacp->config->datamode == DAC_DHRM_12BIT_RIGHT_DUAL) ||
         (dacp->config->datamode == DAC_DHRM_12BIT_LEFT_DUAL) ||
@@ -262,7 +266,7 @@ void dac_lld_start(DACDriver *dacp) {
     else {
       dacp->params->dac->CR = DAC_CR_EN1;
     }
-    dac_lld_put_channel(dacp, 0U, dacp->config->init);
+    dac_lld_put_channel(dacp, channel, dacp->config->init);
 #endif
   }
 }
