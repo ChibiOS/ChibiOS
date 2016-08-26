@@ -80,7 +80,8 @@ static void can_lld_set_filters(uint32_t can2sb,
   rccEnableCAN1(FALSE);
 
   /* Filters initialization.*/
-  CAN1->FMR = (CAN1->FMR & 0xFFFF0000) | (can2sb << 8) | CAN_FMR_FINIT;
+  CAN1->FMR = (CAN1->FMR & 0xFFFF0000) | CAN_FMR_FINIT;
+  CAN1->FMR |=  (can2sb << 8);
   if (num > 0) {
     uint32_t i, fmask;
 

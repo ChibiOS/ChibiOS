@@ -123,8 +123,9 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
-- HAL: Fixed wrong bit mask in STM32L0xx port (bug #769) (backported to 16.1.6)
-       (bug #768)(backported to 16.1.6).
+- HAL: Fixed STM32 CAN filters initialization problem (bug #770)(backported
+       to 16.1.6, 3.0.6, 2.6.10).
+- HAL: Fixed wrong bit mask in STM32L0xx port (bug #769)(backported to 16.1.6).
 - HAL: Fixed potential wait states problem in STM32L4 initialization code
        (bug #768)(backported to 16.1.6).
 - HAL: Fixed SDIO driver not compiling on STM32F446 devices (bug #767)
