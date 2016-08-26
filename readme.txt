@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.6 ***
+- HAL: Fixed CAN inclusion path missing for STM32F107 (bug #772).
 - HAL: Fixed extra brackets in STM32F0 registry (bug #771).
 - HAL: Fixed STM32 CAN filters initialization problem (bug #770).
 - HAL: Fixed wrong bit mask in STM32L0xx port (bug #769).
