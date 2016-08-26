@@ -313,6 +313,9 @@ static void adc_lld_serve_interrupt(ADCDriver *adcp, uint32_t isr) {
       /* Analog watchdog error.*/
       _adc_isr_error_code(adcp, ADC_ERR_AWD3);
     }
+#if defined(STM32_ADC_IRQ_HOOK)
+  STM32_ADC_IRQ_HOOK
+#endif
   }
 }
 

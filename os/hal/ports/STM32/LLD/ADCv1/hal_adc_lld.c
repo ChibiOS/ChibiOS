@@ -114,6 +114,10 @@ OSAL_IRQ_HANDLER(STM32_ADC1_HANDLER) {
 
   adc_lld_serve_interrupt(&ADCD1);
 
+#if defined(STM32_ADC_ADC1_IRQ_HOOK)
+  STM32_ADC_ADC1_IRQ_HOOK
+#endif
+
   OSAL_IRQ_EPILOGUE();
 }
 #endif

@@ -125,6 +125,9 @@ OSAL_IRQ_HANDLER(STM32_ADC_HANDLER) {
       _adc_isr_error_code(&ADCD1, ADC_ERR_OVERFLOW);
   }
   /* TODO: Add here analog watchdog handling.*/
+#if defined(STM32_ADC_ADC1_IRQ_HOOK)
+  STM32_ADC_ADC1_IRQ_HOOK
+#endif
 #endif /* STM32_ADC_USE_ADC1 */
 
 #if STM32_ADC_USE_ADC2
@@ -139,6 +142,9 @@ OSAL_IRQ_HANDLER(STM32_ADC_HANDLER) {
       _adc_isr_error_code(&ADCD2, ADC_ERR_OVERFLOW);
   }
   /* TODO: Add here analog watchdog handling.*/
+#if defined(STM32_ADC_ADC2_IRQ_HOOK)
+  STM32_ADC_ADC2_IRQ_HOOK
+#endif
 #endif /* STM32_ADC_USE_ADC2 */
 
 #if STM32_ADC_USE_ADC3
@@ -153,6 +159,9 @@ OSAL_IRQ_HANDLER(STM32_ADC_HANDLER) {
       _adc_isr_error_code(&ADCD3, ADC_ERR_OVERFLOW);
   }
   /* TODO: Add here analog watchdog handling.*/
+#if defined(STM32_ADC_ADC3_IRQ_HOOK)
+  STM32_ADC_ADC3_IRQ_HOOK
+#endif
 #endif /* STM32_ADC_USE_ADC3 */
 
   OSAL_IRQ_EPILOGUE();
@@ -341,7 +350,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   adcp->adc->SR    = 0;
   adcp->adc->SMPR1 = grpp->smpr1;
   adcp->adc->SMPR2 = grpp->smpr2;
-  adcp->adc->SQR1  = grpp->sqr1;
+  adcp->adc->SQR1  = grpp->sqr1 | ADC_SQR1_NUM_CH(grpp->num_channels);
   adcp->adc->SQR2  = grpp->sqr2;
   adcp->adc->SQR3  = grpp->sqr3;
 

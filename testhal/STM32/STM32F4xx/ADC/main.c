@@ -61,7 +61,7 @@ static const ADCConversionGroup adcgrpcfg1 = {
   ADC_CR2_SWSTART,          /* CR2 */
   ADC_SMPR1_SMP_AN11(ADC_SAMPLE_3),
   0,                        /* SMPR2 */
-  ADC_SQR1_NUM_CH(ADC_GRP1_NUM_CHANNELS),
+  0,                        /* SQR1 */
   0,                        /* SQR2 */
   ADC_SQR3_SQ1_N(ADC_CHANNEL_IN11)
 };
@@ -81,7 +81,7 @@ static const ADCConversionGroup adcgrpcfg2 = {
   ADC_SMPR1_SMP_AN12(ADC_SAMPLE_56) | ADC_SMPR1_SMP_AN11(ADC_SAMPLE_56) |
   ADC_SMPR1_SMP_SENSOR(ADC_SAMPLE_144) | ADC_SMPR1_SMP_VREF(ADC_SAMPLE_144),
   0,                        /* SMPR2 */
-  ADC_SQR1_NUM_CH(ADC_GRP2_NUM_CHANNELS),
+  0,                        /* SQR1 */
   ADC_SQR2_SQ8_N(ADC_CHANNEL_SENSOR) | ADC_SQR2_SQ7_N(ADC_CHANNEL_VREFINT),
   ADC_SQR3_SQ6_N(ADC_CHANNEL_IN12)   | ADC_SQR3_SQ5_N(ADC_CHANNEL_IN11) |
   ADC_SQR3_SQ4_N(ADC_CHANNEL_IN12)   | ADC_SQR3_SQ3_N(ADC_CHANNEL_IN11) |

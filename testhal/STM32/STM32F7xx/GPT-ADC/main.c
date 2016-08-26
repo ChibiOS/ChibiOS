@@ -103,7 +103,7 @@ static const ADCConversionGroup adcgrpcfg1 = {
   ADC_SMPR1_SMP_SENSOR(ADC_SAMPLE_144) | 
   ADC_SMPR1_SMP_VREF(ADC_SAMPLE_144),                   /* SMPR1 */
   0,                                                    /* SMPR2 */
-  ADC_SQR1_NUM_CH(ADC_GRP1_NUM_CHANNELS),               /* SQR1  */
+  0,                                                    /* SQR1  */
   0,                                                    /* SQR2  */
   ADC_SQR3_SQ2_N(ADC_CHANNEL_SENSOR) | 
   ADC_SQR3_SQ1_N(ADC_CHANNEL_VREFINT)                   /* SQR3  */
