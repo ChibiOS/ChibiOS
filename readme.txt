@@ -123,6 +123,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Fixed invalid output initialization for STM32 DACx channels 2
+       (bug #772)(backported to 16.1.6).
 - HAL: Fixed CAN inclusion path missing for STM32F107 (bug #772)(backported
        to 16.1.6).
 - HAL: Fixed extra brackets in STM32F0 registry (bug #771)(backported
