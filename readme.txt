@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.6 ***
+- HAL: Fixed extra brackets in STM32F0 registry (bug #771).
 - HAL: Fixed STM32 CAN filters initialization problem (bug #770).
 - HAL: Fixed wrong bit mask in STM32L0xx port (bug #769).
 - HAL: Fixed potential wait states problem in STM32L4 initialization code
