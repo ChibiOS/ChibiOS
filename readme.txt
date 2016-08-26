@@ -73,6 +73,8 @@
 *****************************************************************************
 
 *** 16.1.6 ***
+- HAL: Fixed invalid output initialization for STM32 DACx channels 2
+       (bug #773).
 - HAL: Fixed CAN inclusion path missing for STM32F107 (bug #772).
 - HAL: Fixed extra brackets in STM32F0 registry (bug #771).
 - HAL: Fixed STM32 CAN filters initialization problem (bug #770).
