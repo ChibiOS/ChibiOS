@@ -1897,7 +1897,7 @@
                                              STM32_DMA_STREAM_ID_MSK(1, 5) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 6) |\
                                              STM32_DMA_STREAM_ID_MSK(2, 2) |\
-                                             STM32_DMA_STREAM_ID_MSK(2, 3)))
+                                             STM32_DMA_STREAM_ID_MSK(2, 3))
 #define STM32_USART1_RX_DMA_CHN             0x00880888
 #define STM32_USART1_TX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 2) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 4) |\
@@ -1913,7 +1913,7 @@
                                              STM32_DMA_STREAM_ID_MSK(1, 5) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 6) |\
                                              STM32_DMA_STREAM_ID_MSK(2, 2) |\
-                                             STM32_DMA_STREAM_ID_MSK(2, 3)))
+                                             STM32_DMA_STREAM_ID_MSK(2, 3))
 #define STM32_USART2_RX_DMA_CHN             0x00990999
 #define STM32_USART2_TX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 2) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 4) |\
@@ -1929,7 +1929,7 @@
                                              STM32_DMA_STREAM_ID_MSK(1, 5) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 6) |\
                                              STM32_DMA_STREAM_ID_MSK(2, 2) |\
-                                             STM32_DMA_STREAM_ID_MSK(2, 3)))
+                                             STM32_DMA_STREAM_ID_MSK(2, 3))
 #define STM32_USART3_RX_DMA_CHN             0x00AA0AAA
 #define STM32_USART3_TX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 2) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 4) |\
@@ -1945,7 +1945,7 @@
                                              STM32_DMA_STREAM_ID_MSK(1, 5) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 6) |\
                                              STM32_DMA_STREAM_ID_MSK(2, 2) |\
-                                             STM32_DMA_STREAM_ID_MSK(2, 3)))
+                                             STM32_DMA_STREAM_ID_MSK(2, 3))
 #define STM32_UART4_RX_DMA_CHN              0x00BB0BBB
 #define STM32_UART4_TX_DMA_MSK              (STM32_DMA_STREAM_ID_MSK(1, 2) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 4) |\
@@ -1961,7 +1961,7 @@
                                              STM32_DMA_STREAM_ID_MSK(1, 5) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 6) |\
                                              STM32_DMA_STREAM_ID_MSK(2, 2) |\
-                                             STM32_DMA_STREAM_ID_MSK(2, 3)))
+                                             STM32_DMA_STREAM_ID_MSK(2, 3))
 #define STM32_UART5_RX_DMA_CHN              0x00CC0CCC
 #define STM32_UART5_TX_DMA_MSK              (STM32_DMA_STREAM_ID_MSK(1, 2) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 4) |\
@@ -1977,7 +1977,7 @@
                                              STM32_DMA_STREAM_ID_MSK(1, 5) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 6) |\
                                              STM32_DMA_STREAM_ID_MSK(2, 2) |\
-                                             STM32_DMA_STREAM_ID_MSK(2, 3)))
+                                             STM32_DMA_STREAM_ID_MSK(2, 3))
 #define STM32_USART6_RX_DMA_CHN             0x00DD0DDD
 #define STM32_USART6_TX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 2) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 4) |\
@@ -1993,7 +1993,7 @@
                                              STM32_DMA_STREAM_ID_MSK(1, 5) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 6) |\
                                              STM32_DMA_STREAM_ID_MSK(2, 2) |\
-                                             STM32_DMA_STREAM_ID_MSK(2, 3)))
+                                             STM32_DMA_STREAM_ID_MSK(2, 3))
 #define STM32_UART7_RX_DMA_CHN              0x00EE0EEE
 #define STM32_UART7_TX_DMA_MSK              (STM32_DMA_STREAM_ID_MSK(1, 2) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 4) |\
@@ -2009,7 +2009,7 @@
                                              STM32_DMA_STREAM_ID_MSK(1, 5) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 6) |\
                                              STM32_DMA_STREAM_ID_MSK(2, 2) |\
-                                             STM32_DMA_STREAM_ID_MSK(2, 3)))
+                                             STM32_DMA_STREAM_ID_MSK(2, 3))
 #define STM32_UART8_RX_DMA_CHN              0x00FF0FFF
 #define STM32_UART8_TX_DMA_MSK              (STM32_DMA_STREAM_ID_MSK(1, 2) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 4) |\
