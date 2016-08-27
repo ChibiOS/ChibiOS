@@ -125,6 +125,78 @@ static const SerialConfig default_config =
   0
 };
 
+#if STM32_SERIAL_USE_USART1 || defined(__DOXYGEN__)
+/** @brief Input buffer for SD1.*/
+static uint8_t sd_in_buf1[STM32_SERIAL_USART1_IN_BUF_SIZE];
+
+/** @brief Output buffer for SD1.*/
+static uint8_t sd_out_buf1[STM32_SERIAL_USART1_OUT_BUF_SIZE];
+#endif
+
+#if STM32_SERIAL_USE_USART2 || defined(__DOXYGEN__)
+/** @brief Input buffer for SD2.*/
+static uint8_t sd_in_buf2[STM32_SERIAL_USART2_IN_BUF_SIZE];
+
+/** @brief Output buffer for SD2.*/
+static uint8_t sd_out_buf2[STM32_SERIAL_USART2_OUT_BUF_SIZE];
+#endif
+
+#if STM32_SERIAL_USE_USART3 || defined(__DOXYGEN__)
+/** @brief Input buffer for SD3.*/
+static uint8_t sd_in_buf3[STM32_SERIAL_USART3_IN_BUF_SIZE];
+
+/** @brief Output buffer for SD3.*/
+static uint8_t sd_out_buf3[STM32_SERIAL_USART3_OUT_BUF_SIZE];
+#endif
+
+#if STM32_SERIAL_USE_UART4 || defined(__DOXYGEN__)
+/** @brief Input buffer for SD4.*/
+static uint8_t sd_in_buf4[STM32_SERIAL_UART4_IN_BUF_SIZE];
+
+/** @brief Output buffer for SD4.*/
+static uint8_t sd_out_buf4[STM32_SERIAL_UART4_IN_BUF_SIZE];
+#endif
+
+#if STM32_SERIAL_USE_UART5 || defined(__DOXYGEN__)
+/** @brief Input buffer for SD5.*/
+static uint8_t sd_in_buf5[STM32_SERIAL_UART5_IN_BUF_SIZE];
+
+/** @brief Output buffer for SD5.*/
+static uint8_t sd_out_buf5[STM32_SERIAL_UART5_IN_BUF_SIZE];
+#endif
+
+#if STM32_SERIAL_USE_USART6 || defined(__DOXYGEN__)
+/** @brief Input buffer for SD6.*/
+static uint8_t sd_in_buf6[STM32_SERIAL_USART6_IN_BUF_SIZE];
+
+/** @brief Output buffer for SD6.*/
+static uint8_t sd_out_buf6[STM32_SERIAL_USART6_OUT_BUF_SIZE];
+#endif
+
+#if STM32_SERIAL_USE_UART7 || defined(__DOXYGEN__)
+/** @brief Input buffer for SD7.*/
+static uint8_t sd_in_buf7[STM32_SERIAL_UART7_IN_BUF_SIZE];
+
+/** @brief Output buffer for SD7.*/
+static uint8_t sd_out_buf7[STM32_SERIAL_UART7_OUT_BUF_SIZE];
+#endif
+
+#if STM32_SERIAL_USE_UART8 || defined(__DOXYGEN__)
+/** @brief Input buffer for SD8.*/
+static uint8_t sd_in_buf8[STM32_SERIAL_UART8_IN_BUF_SIZE];
+
+/** @brief Output buffer for SD8.*/
+static uint8_t sd_out_buf8[STM32_SERIAL_UART8_OUT_BUF_SIZE];
+#endif
+
+#if STM32_SERIAL_USE_LPUART1 || defined(__DOXYGEN__)
+/** @brief Input buffer for LPSD1.*/
+static uint8_t sd_in_buflp1[STM32_SERIAL_LPUART1_IN_BUF_SIZE];
+
+/** @brief Output buffer for LPSD1.*/
+static uint8_t sd_out_buflp1[STM32_SERIAL_LPUART1_OUT_BUF_SIZE];
+#endif
+
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
@@ -560,7 +632,9 @@ OSAL_IRQ_HANDLER(STM32_LPUART1_HANDLER) {
 void sd_lld_init(void) {
 
 #if STM32_SERIAL_USE_USART1
-  sdObjectInit(&SD1, NULL, notify1);
+  sdObjectInit(&SD1);
+  iqObjectInit(&SD1.iqueue, sd_in_buf1, sizeof sd_in_buf1, NULL, &SD1);
+  oqObjectInit(&SD1.oqueue, sd_out_buf1, sizeof sd_out_buf1, notify1, &SD1);
   SD1.usart = USART1;
   SD1.clock = STM32_USART1CLK;
 #if defined(STM32_USART1_NUMBER)
@@ -569,7 +643,9 @@ void sd_lld_init(void) {
 #endif
 
 #if STM32_SERIAL_USE_USART2
-  sdObjectInit(&SD2, NULL, notify2);
+  sdObjectInit(&SD2);
+  iqObjectInit(&SD2.iqueue, sd_in_buf2, sizeof sd_in_buf2, NULL, &SD2);
+  oqObjectInit(&SD2.oqueue, sd_out_buf2, sizeof sd_out_buf2, notify2, &SD2);
   SD2.usart = USART2;
   SD2.clock = STM32_USART2CLK;
 #if defined(STM32_USART2_NUMBER)
@@ -578,7 +654,9 @@ void sd_lld_init(void) {
 #endif
 
 #if STM32_SERIAL_USE_USART3
-  sdObjectInit(&SD3, NULL, notify3);
+  sdObjectInit(&SD3);
+  iqObjectInit(&SD3.iqueue, sd_in_buf3, sizeof sd_in_buf3, NULL, &SD3);
+  oqObjectInit(&SD3.oqueue, sd_out_buf3, sizeof sd_out_buf3, notify3, &SD3);
   SD3.usart = USART3;
   SD3.clock = STM32_USART3CLK;
 #if defined(STM32_USART3_NUMBER)
@@ -587,7 +665,9 @@ void sd_lld_init(void) {
 #endif
 
 #if STM32_SERIAL_USE_UART4
-  sdObjectInit(&SD4, NULL, notify4);
+  sdObjectInit(&SD4);
+  iqObjectInit(&SD4.iqueue, sd_in_buf4, sizeof sd_in_buf4, NULL, &SD4);
+  oqObjectInit(&SD4.oqueue, sd_out_buf4, sizeof sd_out_buf4, notify4, &SD4);
   SD4.usart = UART4;
   SD4.clock = STM32_UART4CLK;
 #if defined(STM32_UART4_NUMBER)
@@ -596,7 +676,9 @@ void sd_lld_init(void) {
 #endif
 
 #if STM32_SERIAL_USE_UART5
-  sdObjectInit(&SD5, NULL, notify5);
+  sdObjectInit(&SD5);
+  iqObjectInit(&SD5.iqueue, sd_in_buf5, sizeof sd_in_buf5, NULL, &SD5);
+  oqObjectInit(&SD5.oqueue, sd_out_buf5, sizeof sd_out_buf5, notify5, &SD5);
   SD5.usart = UART5;
   SD5.clock = STM32_UART5CLK;
 #if defined(STM32_UART5_NUMBER)
@@ -605,7 +687,9 @@ void sd_lld_init(void) {
 #endif
 
 #if STM32_SERIAL_USE_USART6
-  sdObjectInit(&SD6, NULL, notify6);
+  sdObjectInit(&SD6);
+  iqObjectInit(&SD6.iqueue, sd_in_buf6, sizeof sd_in_buf6, NULL, &SD6);
+  oqObjectInit(&SD6.oqueue, sd_out_buf6, sizeof sd_out_buf6, notify6, &SD6);
   SD6.usart = USART6;
   SD6.clock = STM32_USART6CLK;
 #if defined(STM32_USART6_NUMBER)
@@ -614,7 +698,9 @@ void sd_lld_init(void) {
 #endif
 
 #if STM32_SERIAL_USE_UART7
-  sdObjectInit(&SD7, NULL, notify7);
+  sdObjectInit(&SD7);
+  iqObjectInit(&SD7.iqueue, sd_in_buf7, sizeof sd_in_buf7, NULL, &SD7);
+  oqObjectInit(&SD7.oqueue, sd_out_buf7, sizeof sd_out_buf7, notify7, &SD7);
   SD7.usart = UART7;
   SD7.clock = STM32_UART7CLK;
 #if defined(STM32_UART7_NUMBER)
@@ -623,7 +709,9 @@ void sd_lld_init(void) {
 #endif
 
 #if STM32_SERIAL_USE_UART8
-  sdObjectInit(&SD8, NULL, notify8);
+  sdObjectInit(&SD8);
+  iqObjectInit(&SD8.iqueue, sd_in_buf8, sizeof sd_in_buf8, NULL, &SD8);
+  oqObjectInit(&SD8.oqueue, sd_out_buf8, sizeof sd_out_buf8, notify8, &SD8);
   SD8.usart = UART8;
   SD8.clock = STM32_UART8CLK;
 #if defined(STM32_UART8_NUMBER)
@@ -633,6 +721,8 @@ void sd_lld_init(void) {
 
 #if STM32_SERIAL_USE_LPUART1
   sdObjectInit(&LPSD1, NULL, notifylp1);
+  iqObjectInit(&LPSD1.iqueue, sd_in_buflp1, sizeof sd_in_buflp1, NULL, &LPSD1);
+  oqObjectInit(&LPSD1.oqueue, sd_out_buflp1, sizeof sd_out_buflp1, notifylp1, &LPSD1);
   LPSD1.usart = LPUART1;
   LPSD1.clock = STM32_LPUART1CLK;
 #if defined(STM32_LPUART1_NUMBER)

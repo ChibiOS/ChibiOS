@@ -125,6 +125,9 @@ void sdInit(void) {
  *
  * @init
  */
+#if !defined(SERIAL_ADVANCED_BUFFERING_SUPPORT) ||                          \
+    (SERIAL_ADVANCED_BUFFERING_SUPPORT == FALSE) ||                         \
+    defined(__DOXYGEN__)
 void sdObjectInit(SerialDriver *sdp, qnotify_t inotify, qnotify_t onotify) {
 
   sdp->vmt = &vmt;
@@ -133,6 +136,14 @@ void sdObjectInit(SerialDriver *sdp, qnotify_t inotify, qnotify_t onotify) {
   iqObjectInit(&sdp->iqueue, sdp->ib, SERIAL_BUFFERS_SIZE, inotify, sdp);
   oqObjectInit(&sdp->oqueue, sdp->ob, SERIAL_BUFFERS_SIZE, onotify, sdp);
 }
+#else
+void sdObjectInit(SerialDriver *sdp) {
+
+  sdp->vmt = &vmt;
+  osalEventObjectInit(&sdp->event);
+  sdp->state = SD_STOP;
+}
+#endif
 
 /**
  * @brief   Configures and starts the driver.

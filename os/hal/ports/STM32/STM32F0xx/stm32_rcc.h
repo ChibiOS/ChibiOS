@@ -839,7 +839,7 @@
  *
  * @api
  */
-#define rccEnableUART5(lp) rccEnableAPB1(RCC_APB1ENR_USARTS5EN, lp)
+#define rccEnableUART5(lp) rccEnableAPB1(RCC_APB1ENR_USART5EN, lp)
 
 /**
  * @brief   Disables the USART5 peripheral clock.

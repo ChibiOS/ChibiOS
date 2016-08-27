@@ -79,6 +79,9 @@
 *****************************************************************************
 
 *** Next ***
+- HAL: Added an advanced buffering mode to the serial driver, now, if the
+       LLD supports it, it is possible to set the size of each queue
+       independently.
 - EX:  Added compass implementation for ST LSM303DLHC device.
 - EX:  Added accelerometer implementation for ST LSM303DLHC device.
 - EX:  Added gyroscope implementation for ST L3GD20 device.
