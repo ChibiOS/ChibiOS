@@ -478,6 +478,12 @@ OSAL_IRQ_HANDLER(STM32_USART3_8_HANDLER) {
 #if STM32_SERIAL_USE_USART6
   serve_interrupt(&SD6);
 #endif
+#if STM32_SERIAL_USE_UART7
+  serve_interrupt(&SD7);
+#endif
+#if STM32_SERIAL_USE_UART8
+  serve_interrupt(&SD8);
+#endif
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -561,8 +567,6 @@ OSAL_IRQ_HANDLER(STM32_USART6_HANDLER) {
 }
 #endif
 
-#endif /* !defined(STM32_USART3_8_HANDLER) */
-
 #if STM32_SERIAL_USE_UART7 || defined(__DOXYGEN__)
 #if !defined(STM32_UART7_HANDLER)
 #error "STM32_UART7_HANDLER not defined"
@@ -600,6 +604,8 @@ OSAL_IRQ_HANDLER(STM32_UART8_HANDLER) {
   OSAL_IRQ_EPILOGUE();
 }
 #endif
+
+#endif /* !defined(STM32_USART3_8_HANDLER) */
 
 #if STM32_SERIAL_USE_LPUART1 || defined(__DOXYGEN__)
 #if !defined(STM32_LPUART1_HANDLER)
@@ -732,7 +738,7 @@ void sd_lld_init(void) {
 
 #if STM32_SERIAL_USE_USART3 || STM32_SERIAL_USE_UART4  ||                   \
     STM32_SERIAL_USE_UART5  || STM32_SERIAL_USE_USART6 ||                   \
-    STM32_SERIAL_USE_UART7  ||  STM32_SERIAL_USE_UART8 || defined(__DOXYGEN__)
+    STM32_SERIAL_USE_UART7  || STM32_SERIAL_USE_UART8
 #if defined(STM32_USART3_8_HANDLER)
   nvicEnableVector(STM32_USART3_8_NUMBER, STM32_SERIAL_USART3_8_PRIORITY);
 #endif

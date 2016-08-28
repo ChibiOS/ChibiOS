@@ -385,6 +385,17 @@
 #error "Invalid IRQ priority assigned to USART2"
 #endif
 
+#if defined(STM32_USART3_8_HANDLER)
+
+#if (STM32_SERIAL_USE_USART3 || STM32_SERIAL_USE_UART4  ||                  \
+     STM32_SERIAL_USE_UART5  || STM32_SERIAL_USE_USART6 ||                  \
+     STM32_SERIAL_USE_UART7  || STM32_SERIAL_USE_UART8) &&                  \
+     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SERIAL_USART3_8_PRIORITY)
+#error "Invalid IRQ priority assigned to USART3..8"
+#endif
+
+#else /* !defined(STM32_USART3_8_HANDLER) */
+
 #if STM32_SERIAL_USE_USART3 &&                                              \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SERIAL_USART3_PRIORITY)
 #error "Invalid IRQ priority assigned to USART3"
@@ -414,6 +425,8 @@
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SERIAL_UART8_PRIORITY)
 #error "Invalid IRQ priority assigned to UART8"
 #endif
+
+#endif /* !defined(STM32_USART3_8_HANDLER) */
 
 #if STM32_SERIAL_USE_LPUART1 &&                                               \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SERIAL_LPUART1_PRIORITY)
