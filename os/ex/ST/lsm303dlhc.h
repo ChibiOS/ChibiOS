@@ -41,7 +41,7 @@
 /**
  * @brief   LSM303DLHC driver version string.
  */
-#define EX_LSM303DLHC_VERSION       "1.0.0"
+#define EX_LSM303DLHC_VERSION       "1.0.1"
 
 /**
  * @brief   LSM303DLHC driver version major number.
@@ -56,7 +56,7 @@
 /**
  * @brief   LSM303DLHC driver version patch number.
  */
-#define EX_LSM303DLHC_PATCH         0
+#define EX_LSM303DLHC_PATCH         1
 /** @} */
 
 /**
@@ -176,14 +176,14 @@
  * @{
  */
 #define LSM303DLHC_CTRL_REG1_A_MASK         0xFF
-#define LSM303DLHC_CTRL_REG1_A_XEN         (1 << 0)
-#define LSM303DLHC_CTRL_REG1_A_YEN         (1 << 1)
-#define LSM303DLHC_CTRL_REG1_A_ZEN         (1 << 2)
-#define LSM303DLHC_CTRL_REG1_A_LPEN        (1 << 3)
-#define LSM303DLHC_CTRL_REG1_A_ODR0        (1 << 4)
-#define LSM303DLHC_CTRL_REG1_A_ODR1        (1 << 5)
-#define LSM303DLHC_CTRL_REG1_A_ODR2        (1 << 6)
-#define LSM303DLHC_CTRL_REG1_A_ODR3        (1 << 7)
+#define LSM303DLHC_CTRL_REG1_A_XEN          (1 << 0)
+#define LSM303DLHC_CTRL_REG1_A_YEN          (1 << 1)
+#define LSM303DLHC_CTRL_REG1_A_ZEN          (1 << 2)
+#define LSM303DLHC_CTRL_REG1_A_LPEN         (1 << 3)
+#define LSM303DLHC_CTRL_REG1_A_ODR0         (1 << 4)
+#define LSM303DLHC_CTRL_REG1_A_ODR1         (1 << 5)
+#define LSM303DLHC_CTRL_REG1_A_ODR2         (1 << 6)
+#define LSM303DLHC_CTRL_REG1_A_ODR3         (1 << 7)
 /** @} */
 
 /**

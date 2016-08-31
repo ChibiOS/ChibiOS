@@ -472,6 +472,12 @@ static msg_t acc_set_full_scale(void *ip, lsm303dlhc_acc_fs_t fs) {
     scale = newfs / ((LSM303DLHCDriver *)ip)->accfullscale;
     ((LSM303DLHCDriver *)ip)->accfullscale = newfs;
 
+#if LSM303DLHC_SHARED_I2C
+		i2cAcquireBus(((LSM303DLHCDriver *)ip)->config->i2cp);
+		i2cStart(((LSM303DLHCDriver *)ip)->config->i2cp,
+						 ((LSM303DLHCDriver *)ip)->config->i2ccfg);
+#endif /* LSM303DLHC_SHARED_I2C */
+
     /* Updating register.*/
     msg = lsm303dlhcI2CReadRegister(((LSM303DLHCDriver *)ip)->config->i2cp,
                                    LSM303DLHC_SAD_ACC,
@@ -486,6 +492,9 @@ static msg_t acc_set_full_scale(void *ip, lsm303dlhc_acc_fs_t fs) {
                                     LSM303DLHC_SAD_ACC, buff, 1);
     if(msg != MSG_OK)
       return msg;
+#if LSM303DLHC_SHARED_I2C
+		i2cReleaseBus(((LSM303DLHCDriver *)ip)->config->i2cp);
+#endif /* LSM303DLHC_SHARED_I2C */
 
     /* Scaling sensitivity and bias. Re-calibration is suggested anyway. */
     for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++) {
