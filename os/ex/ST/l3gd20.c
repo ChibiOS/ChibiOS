@@ -145,14 +145,17 @@ static msg_t sample_bias(void *ip) {
   uint32_t i, j;
   int32_t raw[L3GD20_NUMBER_OF_AXES];
   int32_t buff[L3GD20_NUMBER_OF_AXES] = {0, 0, 0};
-
+  msg_t msg;
+	
   osalDbgCheck(ip != NULL);
 
   osalDbgAssert((((L3GD20Driver *)ip)->state == L3GD20_READY),
                 "sample_bias(), invalid state");
 
   for(i = 0; i < L3GD20_BIAS_ACQ_TIMES; i++){
-    read_raw(ip, raw);
+    msg = read_raw(ip, raw);
+		if(msg != MSG_OK)
+			return msg;
     for(j = 0; j < L3GD20_NUMBER_OF_AXES; j++){
       buff[j] += raw[j];
     }
@@ -163,7 +166,7 @@ static msg_t sample_bias(void *ip) {
     ((L3GD20Driver *)ip)->bias[i] = (buff[i] / L3GD20_BIAS_ACQ_TIMES);
     ((L3GD20Driver *)ip)->bias[i] *= ((L3GD20Driver *)ip)->sensitivity[i];
   }
-  return MSG_OK;
+  return msg;
 }
 
 static msg_t set_bias(void *ip, int32_t *bp) {
@@ -254,6 +257,12 @@ static msg_t set_full_scale(void *ip, l3gd20_fs_t fs) {
     scale = newfs / ((L3GD20Driver *)ip)->fullscale;
     ((L3GD20Driver *)ip)->fullscale = newfs;
 
+#if	L3GD20_SHARED_SPI
+		spiAcquireBus(((L3GD20Driver *)ip)->config->spip);
+		spiStart(((L3GD20Driver *)ip)->config->spip,
+						 ((L3GD20Driver *)ip)->config->spicfg);
+#endif /* L3GD20_SHARED_SPI */ 
+
     /* Updating register.*/
     l3gd20SPIReadRegister(((L3GD20Driver *)ip)->config->spip,
                           L3GD20_AD_CTRL_REG4, 1, &cr);
@@ -261,6 +270,9 @@ static msg_t set_full_scale(void *ip, l3gd20_fs_t fs) {
     cr |= fs;
     l3gd20SPIWriteRegister(((L3GD20Driver *)ip)->config->spip,
                            L3GD20_AD_CTRL_REG4, 1, &cr);
+#if	L3GD20_SHARED_SPI
+		spiReleaseBus(((L3GD20Driver *)ip)->config->spip);
+#endif /* L3GD20_SHARED_SPI */ 
 
     /* Scaling sensitivity and bias. Re-calibration is suggested anyway. */
     for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++) {
