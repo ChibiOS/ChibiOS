@@ -107,7 +107,8 @@ static size_t get_axes_number(void *ip) {
 }
 
 static msg_t read_raw(void *ip, int32_t axes[LIS3MDL_NUMBER_OF_AXES]) {
-  uint16_t tmp;
+  int16_t tmp;
+  msg_t msg = MSG_OK;
   osalDbgCheck((ip != NULL) && (axes != NULL));
   osalDbgAssert((((LIS3MDLDriver *)ip)->state == LIS3MDL_READY),
                 "read_raw(), invalid state");
@@ -272,6 +273,11 @@ static msg_t set_full_scale(void *ip, lis3mdl_fs_t fs) {
   if(newfs != ((LIS3MDLDriver *)ip)->fullscale) {
     scale = newfs / ((LIS3MDLDriver *)ip)->fullscale;
     ((LIS3MDLDriver *)ip)->fullscale = newfs;
+#if LIS3MDL_SHARED_I2C
+  i2cAcquireBus(((LIS3MDLDriver *)ip)->config->i2cp);
+  i2cStart(((LIS3MDLDriver *)ip)->config->i2cp,
+           ((LIS3MDLDriver *)ip)->config->i2ccfg);
+#endif /* LIS3MDL_SHARED_I2C */
 
     /* Updating register.*/
     cr = lis3mdlI2CReadRegister(((LIS3MDLDriver *)ip)->config->i2cp,
@@ -287,6 +293,9 @@ static msg_t set_full_scale(void *ip, lis3mdl_fs_t fs) {
                                     LIS3MDL_AD_CTRL_REG2, cr);
     if(msg != MSG_OK)
       return msg;
+#if LIS3MDL_SHARED_I2C
+  i2cReleaseBus(((LIS3MDLDriver *)ip)->config->i2cp);
+#endif /* LIS3MDL_SHARED_I2C */
 
     /* Scaling sensitivity and bias. Re-calibration is suggested anyway. */
     for(i = 0; i < LIS3MDL_NUMBER_OF_AXES; i++) {
