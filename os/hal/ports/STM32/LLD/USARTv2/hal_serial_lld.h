@@ -477,10 +477,6 @@ typedef struct {
   /* Output queue.*/                                                        \
   output_queue_t            oqueue;                                         \
   /* End of the mandatory fields.*/                                         \
-  /* Input circular buffer.*/                                               \
-  uint8_t                   ib[SERIAL_BUFFERS_SIZE];                        \
-  /* Output circular buffer.*/                                              \
-  uint8_t                   ob[SERIAL_BUFFERS_SIZE];                        \
   /* Pointer to the USART registers block.*/                                \
   USART_TypeDef             *usart;                                         \
   /* Clock frequency for the associated USART/UART.*/                       \
