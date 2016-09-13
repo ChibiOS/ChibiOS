@@ -61,7 +61,7 @@ typedef struct nil_thread thread_t;
 /**
  * @brief   Kernel version string.
  */
-#define CH_KERNEL_VERSION       "1.1.2"
+#define CH_KERNEL_VERSION       "1.1.3"
 
 /**
  * @brief   Kernel version major number.
@@ -76,7 +76,7 @@ typedef struct nil_thread thread_t;
 /**
  * @brief   Kernel version patch number.
  */
-#define CH_KERNEL_PATCH         2
+#define CH_KERNEL_PATCH         3
 /** @} */
 
 /**
