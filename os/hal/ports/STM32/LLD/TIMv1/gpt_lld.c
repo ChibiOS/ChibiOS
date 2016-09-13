@@ -863,6 +863,7 @@ void gpt_lld_polled_delay(GPTDriver *gptp, gptcnt_t interval) {
 
   gptp->tim->ARR  = (uint32_t)(interval - 1);   /* Time constant.           */
   gptp->tim->EGR  = STM32_TIM_EGR_UG;           /* Update event.            */
+  gptp->tim->SR   = 0;                          /* Clear pending IRQs.      */
   gptp->tim->CR1  = STM32_TIM_CR1_OPM | STM32_TIM_CR1_URS | STM32_TIM_CR1_CEN;
   while (!(gptp->tim->SR & STM32_TIM_SR_UIF))
     ;
