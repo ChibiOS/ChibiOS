@@ -616,10 +616,6 @@ msg_t chSemWaitTimeoutS(semaphore_t *sp, systime_t timeout) {
 
 /**
  * @brief   Performs a signal operation on a semaphore.
- * @post    This function does not reschedule so a call to a rescheduling
- *          function must be performed before unlocking the kernel. Note that
- *          interrupt handlers always reschedule on exit so an explicit
- *          reschedule must not be performed in ISRs.
  *
  * @param[in] sp    pointer to a @p semaphore_t structure
  *
@@ -670,10 +666,6 @@ void chSemSignalI(semaphore_t *sp) {
  * @post    After invoking this function all the threads waiting on the
  *          semaphore, if any, are released and the semaphore counter is set
  *          to the specified, non negative, value.
- * @post    This function does not reschedule so a call to a rescheduling
- *          function must be performed before unlocking the kernel. Note that
- *          interrupt handlers always reschedule on exit so an explicit
- *          reschedule must not be performed in ISRs.
  *
  * @param[in] sp        pointer to a @p semaphore_t structure
  * @param[in] n         the new value of the semaphore counter. The value must
