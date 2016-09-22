@@ -40,7 +40,7 @@
 /**
  * @brief   L3GD20 driver version string.
  */
-#define EX_L3GD20_VERSION           "1.0.1"
+#define EX_L3GD20_VERSION           "1.0.2"
 
 /**
  * @brief   L3GD20 driver version major number.
@@ -55,7 +55,7 @@
 /**
  * @brief   L3GD20 driver version patch number.
  */
-#define EX_L3GD20_PATCH             1
+#define EX_L3GD20_PATCH             2
 /** @} */
 
 /**
@@ -109,12 +109,12 @@
 #define L3GD20_AD_FIFO_SRC_REG      0x2F
 #define L3GD20_AD_INT1_CFG          0x30
 #define L3GD20_AD_INT1_SRC          0x31
-#define L3GD20_AD_INT1_TSH_XH       0x32
-#define L3GD20_AD_INT1_TSH_XL       0x33
-#define L3GD20_AD_INT1_TSH_YH       0x34
-#define L3GD20_AD_INT1_TSH_YL       0x35
-#define L3GD20_AD_INT1_TSH_ZH       0x36
-#define L3GD20_AD_INT1_TSH_ZL       0x37
+#define L3GD20_AD_INT1_THS_XH       0x32
+#define L3GD20_AD_INT1_THS_XL       0x33
+#define L3GD20_AD_INT1_THS_YH       0x34
+#define L3GD20_AD_INT1_THS_YL       0x35
+#define L3GD20_AD_INT1_THS_ZH       0x36
+#define L3GD20_AD_INT1_THS_ZL       0x37
 #define L3GD20_AD_INT1_DURATION     0x38
 /** @} */
 
