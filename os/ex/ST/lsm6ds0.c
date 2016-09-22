@@ -75,6 +75,7 @@ typedef enum {
 uint8_t lsm6ds0I2CReadRegister(I2CDriver *i2cp, lsm6ds0_sad_t sad, uint8_t reg,
                                msg_t* msgp) {
   msg_t msg;
+	uint8_t txbuf = reg;
 #if defined(STM32F103_MCUCONF)
   uint8_t rxbuf[2];
   msg = i2cMasterTransmitTimeout(i2cp, sad, &txbuf, 1, rxbuf, 2,
@@ -84,8 +85,7 @@ uint8_t lsm6ds0I2CReadRegister(I2CDriver *i2cp, lsm6ds0_sad_t sad, uint8_t reg,
   }
   return rxbuf[0];
 #else
-  uint8_t txbuf, rxbuf;
-  txbuf = reg;
+  uint8_t rxbuf;
   msg = i2cMasterTransmitTimeout(i2cp, sad, &txbuf, 1, &rxbuf, 1,
                                         TIME_INFINITE);
   if(msgp != NULL){

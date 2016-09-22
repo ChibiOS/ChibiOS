@@ -38,11 +38,9 @@ static char axisID[LSM6DS0_ACC_NUMBER_OF_AXES] = {'X', 'Y', 'Z'};
 static uint32_t i;
 
 static const I2CConfig i2ccfg = {
-	STM32_TIMINGR_PRESC(15U) |
-	STM32_TIMINGR_SCLDEL(4U) | STM32_TIMINGR_SDADEL(2U) |
-	STM32_TIMINGR_SCLH(15U)  | STM32_TIMINGR_SCLL(21U),
-	0,
-	0
+  OPMODE_I2C,
+  400000,
+  FAST_DUTY_CYCLE_2,
 };
 
 static const LSM6DS0AccConfig lsm6ds0acccfg = {
@@ -301,8 +299,8 @@ int main(void) {
   halInit();
   chSysInit();
 
-  palSetLineMode(LINE_ARD_D14, PAL_MODE_ALTERNATE(4) | PAL_STM32_OSPEED_HIGH);
-  palSetLineMode(LINE_ARD_D15, PAL_MODE_ALTERNATE(4) | PAL_STM32_OSPEED_HIGH);
+  palSetLineMode(LINE_ARD_D14, PAL_MODE_ALTERNATE(4));
+  palSetLineMode(LINE_ARD_D15, PAL_MODE_ALTERNATE(4));
 
   /*
    * Activates the serial driver 2 using the driver default configuration.

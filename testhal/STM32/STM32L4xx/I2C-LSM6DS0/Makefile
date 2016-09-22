@@ -5,7 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -O0 -ggdb -fomit-frame-pointer -falign-functions=16
+  USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16
 endif
 
 # C specific options here (added to USE_OPT).
@@ -203,7 +203,7 @@ CPPWARN = -Wall -Wextra -Wundef
 UDEFS = -DCHPRINTF_USE_FLOAT=1 -DSHELL_CMD_TEST_ENABLED=0 \
         -DLSM6DS0_USE_ADVANCED=0 -DLSM6DS0_GYRO_USE_ADVANCED=0 \
         -DLSM6DS0_ACC_USE_ADVANCED=0
-        
+
 # Define ASM defines here
 UADEFS =
 

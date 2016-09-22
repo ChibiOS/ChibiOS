@@ -39,7 +39,7 @@
 <stringAttribute key="org.eclipse.cdt.launch.PROGRAM_NAME" value="./build/ch.elf"/>
 <stringAttribute key="org.eclipse.cdt.launch.PROJECT_ATTR" value="RT-STM32F401RE-NUCLEO64"/>
 <booleanAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_AUTO_ATTR" value="true"/>
-<stringAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_ID_ATTR" value="0.114656749"/>
+<stringAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_ID_ATTR" value="0.603687198"/>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
 <listEntry value="/RT-STM32F401RE-NUCLEO64"/>
 </listAttribute>
