@@ -169,7 +169,7 @@ namespace chibios_rt {
     (void)prio;
 
     return *this;
-  };
+  }
 
   void _thd_start(void *arg) {
 
