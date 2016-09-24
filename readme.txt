@@ -126,6 +126,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Added DAC configs in RT-STM32F051-DISCOVERY\mcuconf.h (bug #777)
+       (backported to 16.1.6, 3.0.6).
 - HAL: Fixed DAC driver not compiling on STM32F051 and some bitmasks related 
         to DAC disabling (bug #776)(backported to 16.1.6, 3.0.6).
 - HAL: Fixed addition semicolon in cpp wrapper (bug #774)
