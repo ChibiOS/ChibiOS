@@ -126,7 +126,10 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
-- HAL: Fixed addition semicolon in cpp wrapper (bug #774)(backported to 16.1.6, 3.0.6).
+- HAL: Fixed DAC driver not compiling on STM32F051 and some bitmasks related 
+        to DAC disabling (bug #776)(backported to 16.1.6, 3.0.6).
+- HAL: Fixed addition semicolon in cpp wrapper (bug #774)
+       (backported to 16.1.6, 3.0.6).
 - HAL: Fixed function gpt_lld_polled_delay() is broken on STM32 (bug #775)
        (backported to 16.1.6, 3.0.6).
 - HAL: Fixed invalid output initialization for STM32 DACx channels 2
