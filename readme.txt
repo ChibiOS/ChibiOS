@@ -73,6 +73,8 @@
 *****************************************************************************
 
 *** 16.1.6 ***
+- HAL: Fixed wrong SRAM2_BASE in STM32F7xx port (bug #778)
+       (backported to 16.1.6).
 - HAL: Added DAC configs in RT-STM32F051-DISCOVERY\mcuconf.h (bug #777).
 - HAL: Fixed DAC driver not compiling on STM32F051 and some bitmasks related 
         to DAC disabling (bug #776).
