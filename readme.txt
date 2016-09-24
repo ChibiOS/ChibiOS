@@ -126,6 +126,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Fixed wrong HSE checks and PLL2 enable switch in STM32F105 and
+       STM32F107 port (bug #779)(backported to 16.1.6, 3.0.6, 2.6.10).
 - HAL: Fixed wrong SRAM2_BASE in STM32F7xx port (bug #778)
        (backported to 16.1.6).
 - HAL: Added DAC configs in RT-STM32F051-DISCOVERY\mcuconf.h (bug #777)
