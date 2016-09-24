@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.6 ***
+- HAL: Fixed addition semicolon in cpp wrapper (bug #774).
 - HAL: Fixed function gpt_lld_polled_delay() is broken on STM32 (bug #775).
 - HAL: Fixed invalid output initialization for STM32 DACx channels 2
        (bug #773).
