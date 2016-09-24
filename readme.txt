@@ -73,7 +73,8 @@
 *****************************************************************************
 
 *** 16.1.6 ***
-- HAL: Fixed DAC drier not compiling on STM32F051 and some bitmasks related 
+- HAL: Added DAC configs in RT-STM32F051-DISCOVERY\mcuconf.h (bug #777).
+- HAL: Fixed DAC driver not compiling on STM32F051 and some bitmasks related 
         to DAC disabling (bug #776).
 - HAL: Fixed addition semicolon in cpp wrapper (bug #774).
 - HAL: Fixed function gpt_lld_polled_delay() is broken on STM32 (bug #775).
