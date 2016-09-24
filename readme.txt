@@ -126,6 +126,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Fixed wrong SRAM2_BASE in STM32F7xx port (bug #778)
+       (backported to 16.1.6).
 - HAL: Added DAC configs in RT-STM32F051-DISCOVERY\mcuconf.h (bug #777)
        (backported to 16.1.6, 3.0.6).
 - HAL: Fixed DAC driver not compiling on STM32F051 and some bitmasks related 
