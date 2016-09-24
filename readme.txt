@@ -72,6 +72,8 @@
 *****************************************************************************
 
 *** 2.6.10 ***
+- FIX: Fixed wrong HSE checks and PLL2 enable switch in STM32F105 and
+       STM32F107 port (bug #779).
 - FIX: Fixed wrong check in win32 simulator serial driver (bug #765).
 - FIX: Fixed errors in documentation related to OTG peripheral switches 
        (bug #753).

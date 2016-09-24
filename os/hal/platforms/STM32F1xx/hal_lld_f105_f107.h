@@ -639,10 +639,11 @@
 #endif
 
 #if (STM32_MCOSEL == STM32_MCOSEL_HSE) ||                                   \
-    ((STM32_MCOSEL == STM32_MCOSEL_PLLDIV2) &&                              \
-     (STM32_PLLSRC == STM32_PLLSRC_HSE)) ||                                 \
-    (STM32_MCOSEL == STM32_MCOSEL_PLL2DIV2) ||                              \
-    (STM32_MCOSEL == STM32_MCOSEL_PLL3DIV2) ||                              \
+    (((STM32_MCOSEL == STM32_MCOSEL_PLLDIV2) ||                             \
+		  (STM32_MCOSEL == STM32_MCOSEL_PLL2) ||                                \
+			(STM32_MCOSEL == STM32_MCOSEL_PLL3) ||                                \
+			(STM32_MCOSEL == STM32_MCOSEL_PLL3DIV2)) &&                           \
+		 (STM32_PLLSRC == STM32_PLLSRC_HSE)) ||                                 \
     (STM32_MCOSEL == STM32_MCOSEL_XT1)
 #error "HSE not enabled, required by STM32_MCOSEL"
 #endif
@@ -701,8 +702,7 @@
 
 /* PLL2 activation conditions.*/
 #if ((STM32_PREDIV1SRC == STM32_PREDIV1SRC_PLL2) && STM32_ACTIVATE_PLL1) || \
-    (STM32_MCOSEL == STM32_MCOSEL_PLL2DIV2) ||                              \
-    defined(__DOXYGEN__)
+    (STM32_MCOSEL == STM32_MCOSEL_PLL2) || defined(__DOXYGEN__)
 /**
  * @brief   PLL2 activation flag.
  */
