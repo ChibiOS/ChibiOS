@@ -130,7 +130,7 @@
 - HAL: Fixed function gpt_lld_polled_delay() is broken on STM32 (bug #775)
        (backported to 16.1.6, 3.0.6).
 - HAL: Fixed invalid output initialization for STM32 DACx channels 2
-       (bug #773)(backported to 16.1.6).
+       (bug #773)(backported to 16.1.6, 3.0.6).
 - HAL: Fixed CAN inclusion path missing for STM32F107 (bug #772)(backported
        to 16.1.6).
 - HAL: Fixed extra brackets in STM32F0 registry (bug #771)(backported
