@@ -288,7 +288,7 @@ void dac_lld_stop(DACDriver *dacp) {
 
 #if STM32_DAC_USE_DAC1_CH1
     if (&DACD1 == dacp) {
-      if ((dacp->params->dac->CR & DAC_CR_EN2) == 0U) {
+      if ((dacp->params->dac->CR & DAC_CR_EN1) == 0U) {
         rccDisableDAC1(false);
       }
     }
@@ -296,7 +296,7 @@ void dac_lld_stop(DACDriver *dacp) {
 
 #if STM32_DAC_USE_DAC1_CH2
     if (&DACD2 == dacp) {
-      if ((dacp->params->dac->CR & DAC_CR_EN1) == 0U) {
+      if ((dacp->params->dac->CR & DAC_CR_EN2) == 0U) {
         rccDisableDAC1(false);
       }
     }
@@ -304,7 +304,7 @@ void dac_lld_stop(DACDriver *dacp) {
 
 #if STM32_DAC_USE_DAC2_CH1
     if (&DACD3 == dacp) {
-      if ((dacp->params->dac->CR & DAC_CR_EN2) == 0U) {
+      if ((dacp->params->dac->CR & DAC_CR_EN1) == 0U) {
         rccDisableDAC2(false);
       }
     }
@@ -312,7 +312,7 @@ void dac_lld_stop(DACDriver *dacp) {
 
 #if STM32_DAC_USE_DAC2_CH2
     if (&DACD4 == dacp) {
-      if ((dacp->params->dac->CR & DAC_CR_EN1) == 0U) {
+      if ((dacp->params->dac->CR & DAC_CR_EN2) == 0U) {
         rccDisableDAC2(false);
       }
     }
@@ -345,9 +345,11 @@ void dac_lld_put_channel(DACDriver *dacp,
       *(&dacp->params->dac->DHR12R1 + dacp->params->dataoffset) = (uint32_t)sample;
 #endif
     }
+#if (STM32_HAS_DAC1_CH2 || STM32_HAS_DAC2_CH2)
     else {
       dacp->params->dac->DHR12R2 = (uint32_t)sample;
     }
+#endif
     break;
   case DAC_DHRM_12BIT_LEFT:
 #if STM32_DAC_DUAL_MODE
@@ -360,9 +362,11 @@ void dac_lld_put_channel(DACDriver *dacp,
       *(&dacp->params->dac->DHR12L1 + dacp->params->dataoffset) = (uint32_t)sample;
 #endif
     }
+#if (STM32_HAS_DAC1_CH2 || STM32_HAS_DAC2_CH2)
     else {
       dacp->params->dac->DHR12L2 = (uint32_t)sample;
     }
+#endif
     break;
   case DAC_DHRM_8BIT_RIGHT:
 #if STM32_DAC_DUAL_MODE
@@ -375,9 +379,11 @@ void dac_lld_put_channel(DACDriver *dacp,
       *(&dacp->params->dac->DHR8R1 + dacp->params->dataoffset) = (uint32_t)sample;
 #endif
     }
+#if (STM32_HAS_DAC1_CH2 || STM32_HAS_DAC2_CH2)
     else {
       dacp->params->dac->DHR8R2 = (uint32_t)sample;
     }
+#endif
     break;
   default:
     osalDbgAssert(false, "unexpected DAC mode");
