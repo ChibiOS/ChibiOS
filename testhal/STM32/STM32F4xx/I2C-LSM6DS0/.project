@@ -27,7 +27,7 @@
 		<link>
 			<name>board</name>
 			<type>2</type>
-			<locationURI>CHIBIOS/os/hal/boards/ST_STM32F401C_DISCOVERY</locationURI>
+			<locationURI>CHIBIOS/os/hal/boards/ST_NUCLEO64_F401RE</locationURI>
 		</link>
 		<link>
 			<name>os</name>

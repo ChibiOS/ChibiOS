@@ -180,8 +180,10 @@ int main(void) {
   halInit();
   chSysInit();
 
-  palSetLineMode(LINE_ARD_D14, PAL_MODE_ALTERNATE(4));
-  palSetLineMode(LINE_ARD_D15, PAL_MODE_ALTERNATE(4));
+  palSetLineMode(LINE_ARD_D15, PAL_MODE_ALTERNATE(4) |
+                 PAL_STM32_OSPEED_HIGHEST);
+  palSetLineMode(LINE_ARD_D14, PAL_MODE_ALTERNATE(4) |
+                 PAL_STM32_OSPEED_HIGHEST);
 
   /*
    * Activates the serial driver 2 using the driver default configuration.
