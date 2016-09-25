@@ -378,7 +378,8 @@ thread_t *chThdCreateStatic(void *wsp, size_t size,
 thread_t *chThdStart(thread_t *tp) {
 
   chSysLock();
-  tp = chThdStartI(tp);
+  chDbgAssert(tp->state == CH_STATE_WTSTART, "wrong state");
+  chSchWakeupS(tp, MSG_OK);
   chSysUnlock();
 
   return tp;
