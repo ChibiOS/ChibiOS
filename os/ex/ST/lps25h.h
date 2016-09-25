@@ -98,9 +98,6 @@
 #define LPS25H_AD_INT_CFG           0x24
 #define LPS25H_AD_INT_SRC           0x25
 #define LPS25H_AD_STATUS_REG        0x27
-#define LPS25H_AD_CTRL_REG5         0x24
-#define LPS25H_AD_REFERENCE         0x25
-#define LPS25H_AD_OUT_TEMP          0x26
 #define LPS25H_AD_PRESS_OUT_XL      0x28
 #define LPS25H_AD_PRESS_OUT_L       0x29
 #define LPS25H_AD_PRESS_OUT_H       0x2A
