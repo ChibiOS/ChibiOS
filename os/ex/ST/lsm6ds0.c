@@ -140,7 +140,7 @@ static size_t sens_get_axes_number(void *ip) {
   return size;
 }
 
-static msg_t acc_read_raw(void *ip, int32_t axes[]) {
+static msg_t acc_read_raw(void *ip, int32_t* axes) {
   int16_t tmp;
 	msg_t msg = MSG_OK;
   osalDbgCheck(((ip != NULL) && (axes != NULL)) &&
@@ -198,7 +198,7 @@ static msg_t acc_read_raw(void *ip, int32_t axes[]) {
   return MSG_OK;
 }
 
-static msg_t gyro_read_raw(void *ip, int32_t axes[]) {
+static msg_t gyro_read_raw(void *ip, int32_t* axes) {
   int16_t tmp;
 	msg_t msg = MSG_OK;
   osalDbgCheck(((ip != NULL) && (axes != NULL)) &&
@@ -352,7 +352,7 @@ static msg_t gyro_sample_bias(void *ip) {
   return msg;
 }
 
-static msg_t acc_set_bias(void *ip, int32_t *bp) {
+static msg_t acc_set_bias(void *ip, float *bp) {
   uint32_t i;
   
   osalDbgCheck((ip != NULL) && (bp !=NULL));
@@ -367,7 +367,7 @@ static msg_t acc_set_bias(void *ip, int32_t *bp) {
   return MSG_OK;
 }
 
-static msg_t gyro_set_bias(void *ip, int32_t *bp) {
+static msg_t gyro_set_bias(void *ip, float *bp) {
   uint32_t i;
   
   osalDbgCheck((ip != NULL) && (bp !=NULL));

@@ -256,7 +256,7 @@ static msg_t sens_read_cooked(void *ip, float axes[]) {
   return msg;
 }
 
-static msg_t acc_set_bias(void *ip, int32_t *bp) {
+static msg_t acc_set_bias(void *ip, float *bp) {
   uint32_t i;
   
   osalDbgCheck((ip != NULL) && (bp !=NULL));
@@ -271,7 +271,7 @@ static msg_t acc_set_bias(void *ip, int32_t *bp) {
   return MSG_OK;
 }
 
-static msg_t comp_set_bias(void *ip, int32_t *bp) {
+static msg_t comp_set_bias(void *ip, float *bp) {
   uint32_t i;
   
   osalDbgCheck((ip != NULL) && (bp !=NULL));

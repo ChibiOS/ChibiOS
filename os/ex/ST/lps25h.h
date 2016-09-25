@@ -40,7 +40,7 @@
 /**
  * @brief   LPS25H driver version string.
  */
-#define EX_LPS25H_VERSION           "1.0.0"
+#define EX_LPS25H_VERSION           "1.0.1"
 
 /**
  * @brief   LPS25H driver version major number.
@@ -55,7 +55,7 @@
 /**
  * @brief   LPS25H driver version patch number.
  */
-#define EX_LPS25H_PATCH             0
+#define EX_LPS25H_PATCH             1
 /** @} */
 
 /**
@@ -202,7 +202,7 @@
 /**
  * @brief   LPS25H I2C interface switch.
  * @details If set to @p TRUE the support for I2C is included.
- * @note    The default is @p FALSE.
+ * @note    The default is @p TRUE.
  */
 #if !defined(LPS25H_USE_I2C) || defined(__DOXYGEN__)
 #define LPS25H_USE_I2C                      TRUE
@@ -288,9 +288,9 @@ typedef enum {
  */
 typedef enum {
   LPS25H_AVGP_8 = 0x00,             /**< Number of internal average is 8.   */
-  LPS25H_AVGP_32 = 0x01,            /**< Number of internal average is 8.   */
-  LPS25H_AVGP_128 = 0x02,           /**< Number of internal average is 8.   */
-  LPS25H_AVGP_512 = 0x03,           /**< Number of internal average is 8.   */
+  LPS25H_AVGP_32 = 0x01,            /**< Number of internal average is 32.  */
+  LPS25H_AVGP_128 = 0x02,           /**< Number of internal average is 128. */
+  LPS25H_AVGP_512 = 0x03,           /**< Number of internal average is 512. */
 }lps25h_avgp_t;
 
 /**
@@ -298,9 +298,9 @@ typedef enum {
  */
 typedef enum {
   LPS25H_AVGT_8 = 0x00,             /**< Number of internal average is 8.   */
-  LPS25H_AVGT_32 = 0x04,            /**< Number of internal average is 8.   */
-  LPS25H_AVGT_128 = 0x08,           /**< Number of internal average is 8.   */
-  LPS25H_AVGT_512 = 0x0C,           /**< Number of internal average is 8.   */
+  LPS25H_AVGT_32 = 0x04,            /**< Number of internal average is 32.  */
+  LPS25H_AVGT_128 = 0x08,           /**< Number of internal average is 128. */
+  LPS25H_AVGT_512 = 0x0C,           /**< Number of internal average is 512. */
 }lps25h_avgt_t;
 
 /**

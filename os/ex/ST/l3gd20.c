@@ -169,7 +169,7 @@ static msg_t sample_bias(void *ip) {
   return msg;
 }
 
-static msg_t set_bias(void *ip, int32_t *bp) {
+static msg_t set_bias(void *ip, float *bp) {
   uint32_t i;
   
   osalDbgCheck((ip != NULL) && (bp !=NULL));

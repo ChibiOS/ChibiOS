@@ -152,7 +152,7 @@ static msg_t read_cooked(void *ip, float* axis) {
 }
 
 
-static msg_t set_bias(void *ip, int32_t *bp) {
+static msg_t set_bias(void *ip, float *bp) {
   osalDbgCheck((ip != NULL) && (bp != NULL));
 
   osalDbgAssert((((LPS25HDriver *)ip)->state == LPS25H_READY) ||
