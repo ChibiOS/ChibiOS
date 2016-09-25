@@ -298,6 +298,7 @@ void chSysHalt(const char *reason) {
   (void)reason;
 #endif
 
+  /* Halt hook code, usually empty.*/
   CH_CFG_SYSTEM_HALT_HOOK(reason);
 
   /* Harmless infinite loop.*/
