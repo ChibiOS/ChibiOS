@@ -50,7 +50,7 @@
   /* Invoke the sample bias procedure.*/                                    \
   msg_t (*sample_bias)(void *instance);                                     \
   /* Invoke the set bias procedure.*/                                       \
-  msg_t (*set_bias)(void *instance, int32_t biases[]);                      \
+  msg_t (*set_bias)(void *instance, float biases[]);                        \
   /* Remove bias stored data.*/                                             \
   msg_t (*reset_bias)(void *instance);                                      \
   /* Invoke the set sensitivity procedure.*/                                \
