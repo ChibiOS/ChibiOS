@@ -1,5 +1,5 @@
 *****************************************************************************
-** ChibiOS/HAL + ChibiOS/EX - SPI + L3GD20 demo for STM32F4xx.             **
+** ChibiOS/HAL + ChibiOS/EX - I2C + LSM6DS0 demo for STM32L4xx.            **
 *****************************************************************************
 
 ** TARGET **
@@ -18,7 +18,7 @@ None required.
 
 ** Build Procedure **
 
-The demo has been tested by using the free Codesourcery GCC-based toolchain
+The demo has been tested using the free Codesourcery GCC-based toolchain
 and YAGARTO.
 Just modify the TRGT line in the makefile in order to use different GCC ports.
 
