@@ -15,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-	
+  
 */
 
 /**
@@ -40,7 +40,7 @@
 /**
  * @brief   LPS25H driver version string.
  */
-#define EX_LPS25H_VERSION           "1.0.1"
+#define EX_LPS25H_VERSION           "1.0.2"
 
 /**
  * @brief   LPS25H driver version major number.
@@ -55,7 +55,7 @@
 /**
  * @brief   LPS25H driver version patch number.
  */
-#define EX_LPS25H_PATCH             1
+#define EX_LPS25H_PATCH             2
 /** @} */
 
 /**
@@ -115,13 +115,13 @@
  * @name    LPS25H_CTRL_REG1 register bits definitions
  * @{
  */
-#define LPS25H_CTRL_REG1_MASK               0xFF       
+#define LPS25H_CTRL_REG1_MASK               0xFF
 #define LPS25H_CTRL_REG1_SIM                (1 << 0)
-#define LPS25H_CTRL_REG1_RESET_AZ           (1 << 1) 
+#define LPS25H_CTRL_REG1_RESET_AZ           (1 << 1)
 #define LPS25H_CTRL_REG1_BDU                (1 << 2)
-#define LPS25H_CTRL_REG1_DIFF_EN            (1 << 3) 
+#define LPS25H_CTRL_REG1_DIFF_EN            (1 << 3)
 #define LPS25H_CTRL_REG1_ODR0               (1 << 4)
-#define LPS25H_CTRL_REG1_ODR1               (1 << 5) 
+#define LPS25H_CTRL_REG1_ODR1               (1 << 5)
 #define LPS25H_CTRL_REG1_ODR2               (1 << 6)
 #define LPS25H_CTRL_REG1_PD                 (1 << 7)
 /** @} */
@@ -130,12 +130,12 @@
  * @name    LPS25H_CTRL_REG2 register bits definitions
  * @{
  */
-#define LPS25H_CTRL_REG2_MASK               0xF3       
+#define LPS25H_CTRL_REG2_MASK               0xF3
 #define LPS25H_CTRL_REG2_ONE_SHOT           (1 << 0)
-#define LPS25H_CTRL_REG2_AUTO_ZERO          (1 << 1) 
-#define LPS25H_CTRL_REG2_SWRESET            (1 << 2) 
+#define LPS25H_CTRL_REG2_AUTO_ZERO          (1 << 1)
+#define LPS25H_CTRL_REG2_SWRESET            (1 << 2)
 #define LPS25H_CTRL_REG2_FIFO_MEAN_DEC      (1 << 4)
-#define LPS25H_CTRL_REG2_WTM_EN             (1 << 5) 
+#define LPS25H_CTRL_REG2_WTM_EN             (1 << 5)
 #define LPS25H_CTRL_REG2_FIFO_EN            (1 << 6)
 #define LPS25H_CTRL_REG2_BOOT               (1 << 7)
 /** @} */
@@ -144,9 +144,9 @@
  * @name    LPS25H_CTRL_REG3 register bits definitions
  * @{
  */
-#define LPS25H_CTRL_REG3_MASK               0xC3       
+#define LPS25H_CTRL_REG3_MASK               0xC3
 #define LPS25H_CTRL_REG3_INT_S1             (1 << 0)
-#define LPS25H_CTRL_REG3_INT_S2             (1 << 1) 
+#define LPS25H_CTRL_REG3_INT_S2             (1 << 1)
 #define LPS25H_CTRL_REG3_PP_OD              (1 << 6)
 #define LPS25H_CTRL_REG3_INT_H_L            (1 << 7)
 /** @} */
@@ -155,18 +155,18 @@
  * @name    LPS25H_CTRL_REG4 register bits definitions
  * @{
  */
-#define LPS25H_CTRL_REG4_MASK               0x0F       
+#define LPS25H_CTRL_REG4_MASK               0x0F
 #define LPS25H_CTRL_REG4_P1_DRDY            (1 << 0)
-#define LPS25H_CTRL_REG4_P1_OVERRUN         (1 << 1) 
+#define LPS25H_CTRL_REG4_P1_OVERRUN         (1 << 1)
 #define LPS25H_CTRL_REG4_P1_WTM             (1 << 2)
-#define LPS25H_CTRL_REG4_P1_EMPTY           (1 << 3) 
+#define LPS25H_CTRL_REG4_P1_EMPTY           (1 << 3)
 /** @} */
 
 /**
  * @name    LPS25H_INT1_CFG register bits definitions
  * @{
  */
-#define LPS25H_INT1_CFG_MASK                0x07      
+#define LPS25H_INT1_CFG_MASK                0x07
 #define LPS25H_INT1_CFG_PH_E                (1 << 0)
 #define LPS25H_INT1_CFG_PL_E                (1 << 1)
 #define LPS25H_INT1_CFG_LIR                 (1 << 2)
@@ -223,7 +223,7 @@
  *          on each transaction.
  * @note    The default is @p FALSE. Requires I2C_USE_MUTUAL_EXCLUSION
  */
-#if !defined(LPS25H_SHARED_SPI) || defined(__DOXYGEN__)
+#if !defined(LPS25H_SHARED_I2C) || defined(__DOXYGEN__)
 #define LPS25H_SHARED_I2C                   FALSE
 #endif
 /** @} */
@@ -348,12 +348,12 @@ typedef struct {
   /**
    * @brief LPS25H initial sensitivity.
    */
-  float                     sensitivity;
+  float*                    sensitivity;
   /**
    * @brief LPS25H initial bias.
    */
-  float                     bias;
-	  /**
+  float*                    bias;
+  /**
    * @brief LPS25H slave address
    */
   lps25h_sad_t              slaveaddress;
@@ -381,21 +381,6 @@ typedef struct {
  * @brief   Structure representing a LPS25H driver.
  */
 typedef struct LPS25HDriver LPS25HDriver;
-
-/**
- * @brief   @p LPS25H specific methods.
- */
-#define _lps25h_methods                                                     \
-  _base_barometer_methods
-
-/**
- * @extends BaseGyroscopeVMT
- *
- * @brief   @p LPS25H virtual methods table.
- */
-struct LPS25HVMT {
-  _lps25h_methods
-};
 
 /**
  * @brief   @p LPS25HDriver specific data.

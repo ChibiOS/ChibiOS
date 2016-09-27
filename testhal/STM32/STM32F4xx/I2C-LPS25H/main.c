@@ -42,8 +42,8 @@ static const I2CConfig i2ccfg = {
 static const LPS25HConfig lps25hcfg = {
   &I2CD1,
   &i2ccfg,
-  0,                           /* Use default sensitivity.*/
-  0,                           /* Use default bias.*/
+  NULL,                        /* Use default sensitivity.*/
+  NULL,                        /* Use default bias.*/
   LPS25H_SAD_VCC,              /* SA0 connected to VCC */
   LPS25H_ODR_7HZ,              /* Output data rate 7 Hz.*/
 #if LPS25H_USE_ADVANCED || defined(__DOXYGEN__)
