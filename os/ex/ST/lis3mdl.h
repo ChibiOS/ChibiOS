@@ -86,6 +86,8 @@
 #define LIS3MDL_AD(n)               (1 << n)    /**< Address Data bit n     */
 #define LIS3MDL_MS                  (1 << 6)    /**< Multiple selection     */
 #define LIS3MDL_RW                  (1 << 7)    /**< Read Write selector    */
+
+#define LIS3MDL_SUB_MS              (1 << 7)    /**< Multiple RW in I2C mode*/
 /** @} */
 
 /**
@@ -374,48 +376,48 @@ typedef struct {
   /**
    * @brief LIS3MDL initial sensitivity.
    */
-  float                     sensitivity[LIS3MDL_NUMBER_OF_AXES];
+  float*                    sensitivity;
   /**
    * @brief LIS3MDL initial bias.
    */
-  float                     bias[LIS3MDL_NUMBER_OF_AXES];
+  float*                    bias;
   /**
    * @brief  LIS3MDL slave address
    */
-  lis3mdl_sad_t              slaveaddress;
+  lis3mdl_sad_t             slaveaddress;
   /**
    * @brief   LIS3MDL full scale
    */
-  lis3mdl_fs_t               fullscale;
+  lis3mdl_fs_t              fullscale;
   /**
    * @brief   LIS3MDL output data rate
    */
-  lis3mdl_odr_t              outputdatarate;
+  lis3mdl_odr_t             outputdatarate;
 #if LIS3MDL_USE_ADVANCED || defined(__DOXYGEN__)
   /**
    * @brief  LIS3MDL low power mode configuration
    */
-  lis3mdl_lp_t               lowpowermode;
+  lis3mdl_lp_t              lowpowermode;
   /**
    * @brief  LIS3MDL conversion mode
    */
-  lis3mdl_md_t               conversionmode;
+  lis3mdl_md_t              conversionmode;
   /**
    * @brief  LIS3MDL operation mode for X and Y axes
    */
-  lis3mdl_omxy_t             operationmodexy;
+  lis3mdl_omxy_t            operationmodexy;
   /**
    * @brief  LIS3MDL operation mode for Z axis
    */
-  lis3mdl_omz_t              operationmodez;
+  lis3mdl_omz_t             operationmodez;
   /**
    * @brief  LIS3MDL block data update
    */
-  lis3mdl_bdu_t              blockdataupdate;
+  lis3mdl_bdu_t             blockdataupdate;
   /**
    * @brief   LIS3MDL endianness
    */
-  lis3mdl_end_t              endianness;
+  lis3mdl_end_t             endianness;
 #endif
 } LIS3MDLConfig;
 
@@ -453,7 +455,7 @@ struct LIS3MDLVMT {
   /* Current sensitivity.*/                                                 \
   float                     sensitivity[LIS3MDL_NUMBER_OF_AXES];            \
   /* Bias data.*/                                                           \
-  int32_t                   bias[LIS3MDL_NUMBER_OF_AXES];                   \
+  float                     bias[LIS3MDL_NUMBER_OF_AXES];                   \
   /* Current full scale value.*/                                            \
   float                     fullscale;
 

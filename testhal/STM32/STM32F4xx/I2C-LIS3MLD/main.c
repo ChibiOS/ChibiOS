@@ -44,18 +44,18 @@ static const I2CConfig i2ccfg = {
 static LIS3MDLConfig LIS3MDLcfg = {
   &I2CD1,                                    /* Pointer to I2C Driver.*/
   &i2ccfg,                                   /* Pointer to I2C Configuration.*/
-  {0, 0, 0},                                 /* Use default sensitivity.*/
-  {0, 0, 0},                                 /* Use default bias.*/
+  NULL,                                      /* Use default sensitivity.*/
+  NULL,                                      /* Use default bias.*/
   LIS3MDL_SAD_VCC,                           /* Slave address.*/
   LIS3MDL_FS_4GA,                            /* Full scale value.*/
   LIS3MDL_ODR_40HZ,                          /* Output data rate.*/
 #if LIS3MDL_USE_ADVANCED || defined(__DOXYGEN__)
-  LIS3MDL_LP_T,
-  LIS3MDL_MD_T,
-  LIS3MDL_OMXY_T,
-  LIS3MDL_OMZ_T,
-  LIS3MDL_BDU_T,
-  LIS3MDL_END_T
+  LIS3MDL_LP_ENABLED,
+  LIS3MDL_MD_CONTINUOUS,
+  LIS3MDL_OMXY_LOW_POWER,
+  LIS3MDL_OMZ_LOW_POWER,
+  LIS3MDL_BDU_CONTINUOUS,
+  LIS3MDL_END_LITTLE
 #endif
 };
 
