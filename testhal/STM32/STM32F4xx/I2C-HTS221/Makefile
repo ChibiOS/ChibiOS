@@ -201,7 +201,7 @@ CPPWARN = -Wall -Wextra -Wundef
 
 # List all user C define here, like -D_DEBUG=1
 UDEFS = -DCHPRINTF_USE_FLOAT=1 -DSHELL_CMD_TEST_ENABLED=0 \
-        -DHTS221_USE_ADVANCED=0
+        -DHTS221_USE_ADVANCED=0 -DLPS25H_SHARED_I2C=0
 
 # Define ASM defines here
 UADEFS =

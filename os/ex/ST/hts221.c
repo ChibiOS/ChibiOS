@@ -15,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-	
+  
 */
 
 /**
@@ -60,8 +60,8 @@
  * @param[in]  i2cp      pointer to the I2C interface
  * @param[in]  reg       first sub-register address
  * @param[out] rxbuf     pointer to an output buffer
- * @return               the operation status.
  * @param[in]  n         number of consecutive register to read
+ * @return               the operation status.
  * @notapi
  */
 msg_t hts221I2CReadRegister(I2CDriver *i2cp, uint8_t reg, uint8_t* rxbuf,
@@ -108,7 +108,7 @@ msg_t hts221Calibrate(HTS221Driver *devp, uint8_t flag) {
   msg_t msg;
   uint8_t calib[16], H0_rH_x2, H1_rH_x2, msb;
   int16_t H0_T0_OUT, H1_T0_OUT, T0_degC_x8, T1_degC_x8, T0_OUT, T1_OUT;
-	float sens;
+  float sens;
 
 #if HTS221_SHARED_I2C
   i2cAcquireBus(devp->config->i2cp);
@@ -116,20 +116,20 @@ msg_t hts221Calibrate(HTS221Driver *devp, uint8_t flag) {
 #endif /* HTS221_SHARED_I2C */
 
   /* Retrieving rH values from Calibration registers */
-	msg = hts221I2CReadRegister(devp->config->i2cp,
+  msg = hts221I2CReadRegister(devp->config->i2cp,
                                HTS221_AD_CALIB_0, calib, 16);
-															 
+                               
 #if HTS221_SHARED_I2C
     i2cReleaseBus(devp->config->i2cp);
 #endif /* HTS221_SHARED_I2C */
-															
+                              
   H0_rH_x2 = calib[0];
   H1_rH_x2 = calib[1];
   H0_T0_OUT = calib[6];
   H0_T0_OUT += calib[7] << 8;
   H1_T0_OUT = calib[10];
   H1_T0_OUT += calib[11] << 8;
-	
+  
   T0_degC_x8 = calib[2];
   /* Completing T0_degC_x8 value */
   msb = (calib[5] & HTS221_SEL(0x03, 0));
@@ -138,7 +138,7 @@ msg_t hts221Calibrate(HTS221Driver *devp, uint8_t flag) {
   }
   T0_degC_x8 += msb << 8;
 
-	T1_degC_x8 = calib[3];
+  T1_degC_x8 = calib[3];
   /* Completing T1_degC_x8 value */
   msb = ((calib[5] & HTS221_SEL(0x03, 2)) >> 2);
   if(msb & HTS221_SEL(0x01, 1)) {
@@ -150,10 +150,10 @@ msg_t hts221Calibrate(HTS221Driver *devp, uint8_t flag) {
   T0_OUT += calib[13] << 8;
   T1_OUT = calib[14];
   T1_OUT += calib[15] << 8;
-	
+  
   sens = ((float)H1_rH_x2 - (float)H0_rH_x2) /
          (2.0f * ((float)H1_T0_OUT - (float)H0_T0_OUT));
-									 
+                   
   if(flag & HTS221_FLAG_HYGRO_SENS)
       devp->sensitivity[0] = sens;
 
@@ -163,14 +163,14 @@ msg_t hts221Calibrate(HTS221Driver *devp, uint8_t flag) {
 
   sens = ((float)T1_degC_x8 - (float)T0_degC_x8) /
          (8.0f * ((float)T1_OUT - (float)T0_OUT));
-				 
+         
   if(flag & HTS221_FLAG_THERMO_SENS)
   devp->sensitivity[1] = sens;
 
   if(flag & HTS221_FLAG_THERMO_BIAS)
   devp->bias[1] = (sens * (float)T0_OUT) -
                   ((float)T0_degC_x8 / 8.0f);
-										
+                    
   return msg;
 }
 
@@ -195,20 +195,20 @@ static size_t sens_get_axes_number(void *ip) {
   return (thermo_get_axes_number(ip) + hygro_get_axes_number(ip));
 }
 
-static msg_t hygro_read_raw(void *ip, int32_t axis[]) {
+static msg_t hygro_read_raw(void *ip, int32_t* axis) {
   int16_t tmp;
   uint8_t buff[2];
   msg_t msg = MSG_OK;
-	
-	*axis = 0.0f;
-	
+  
+  *axis = 0;
+  
   osalDbgCheck((ip != NULL) && (axis != NULL));
   osalDbgAssert((((HTS221Driver *)ip)->state == HTS221_READY),
-              "hygro_read_raw(), invalid state");							
+              "hygro_read_raw(), invalid state");              
 #if HTS221_USE_I2C
   osalDbgAssert((((HTS221Driver *)ip)->config->i2cp->state == I2C_READY),
                 "hygro_read_raw(), channel not ready");
-								
+                
 #if HTS221_SHARED_I2C
   i2cAcquireBus(((HTS221Driver *)ip)->config->i2cp);
   i2cStart(((HTS221Driver *)ip)->config->i2cp,
@@ -217,7 +217,7 @@ static msg_t hygro_read_raw(void *ip, int32_t axis[]) {
 
   msg = hts221I2CReadRegister(((HTS221Driver *)ip)->config->i2cp,
                               HTS221_AD_HUMIDITY_OUT_L, buff, 2);
-															
+                              
 #if HTS221_SHARED_I2C
   i2cReleaseBus(((HTS221Driver *)ip)->config->i2cp);
 #endif /* HTS221_SHARED_I2C */
@@ -232,19 +232,19 @@ static msg_t hygro_read_raw(void *ip, int32_t axis[]) {
 
 static msg_t thermo_read_raw(void *ip, int32_t axis[]) {
   int16_t tmp;
-	uint8_t buff[2];
+  uint8_t buff[2];
   msg_t msg = MSG_OK;
 
-	*axis = 0.0f;
-	
+  *axis = 0.0f;
+  
   osalDbgCheck((ip != NULL) && (axis != NULL));
   osalDbgAssert((((HTS221Driver *)ip)->state == HTS221_READY),
-              "thermo_read_raw(), invalid state");	
-	
+              "thermo_read_raw(), invalid state");  
+  
 #if HTS221_USE_I2C
   osalDbgAssert((((HTS221Driver *)ip)->config->i2cp->state == I2C_READY),
                 "thermo_read_raw(), channel not ready");
-								
+                
 #if HTS221_SHARED_I2C
   i2cAcquireBus(((HTS221Driver *)ip)->config->i2cp);
   i2cStart(((HTS221Driver *)ip)->config->i2cp,
@@ -252,9 +252,8 @@ static msg_t thermo_read_raw(void *ip, int32_t axis[]) {
 #endif /* HTS221_SHARED_I2C */
 
   msg = hts221I2CReadRegister(((HTS221Driver *)ip)->config->i2cp,
-                                HTS221_AD_TEMP_OUT_L,
-                                buff, 2);	
-																	
+                                HTS221_AD_TEMP_OUT_L, buff, 2);
+                                  
 #if HTS221_SHARED_I2C
   i2cReleaseBus(((HTS221Driver *)ip)->config->i2cp);
 #endif /* HTS221_SHARED_I2C */
@@ -463,44 +462,52 @@ void hts221Start(HTS221Driver *devp, const HTS221Config *config) {
   osalDbgCheck((devp != NULL) && (config != NULL));
 
   osalDbgAssert((devp->state == HTS221_STOP) || (devp->state == HTS221_READY),
-              "hts221Start(), invalid state");			  
+              "hts221Start(), invalid state");        
   devp->config = config;
-
+  
 #if HTS221_USE_I2C
-#if	HTS221_SHARED_I2C
+
+  /* Control register 1 configuration block.*/
+  {
+    cr[0] = HTS221_AD_CTRL_REG1;
+    cr[1] = devp->config->outputdatarate | HTS221_CTRL_REG1_PD;
+#if HTS221_USE_ADVANCED || defined(__DOXYGEN__)
+    cr[1] |= devp->config->blockdataupdate;
+#endif
+
+#if  HTS221_SHARED_I2C
   i2cAcquireBus((devp)->config->i2cp);
 #endif /* HTS221_SHARED_I2C */
   i2cStart((devp)->config->i2cp,
            (devp)->config->i2ccfg);
-
-  /* Control register 1 configuration block.*/
-  {
-		cr[0] = HTS221_AD_CTRL_REG1;
-    cr[1] = devp->config->outputdatarate | HTS221_CTRL_REG1_PD;
-#if HTS221_USE_ADVANCED || defined(__DOXYGEN__)
-    cr[1] |= devp->config->blockdataupdate;
-
-#endif
-    hts221I2CWriteRegister(devp->config->i2cp, cr, 1);
+           
+  hts221I2CWriteRegister(devp->config->i2cp, cr, 1);
+  
+#if  HTS221_SHARED_I2C
+  i2cReleaseBus((devp)->config->i2cp);
+#endif /* HTS221_SHARED_I2C */
   }
 
   /* Average register configuration block.*/
   {
-		cr[0] = HTS221_AD_AV_CONF;
+    cr[0] = HTS221_AD_AV_CONF;
     cr[1] = 0x05;
 #if HTS221_USE_ADVANCED || defined(__DOXYGEN__)
     cr[1] = devp->config->reshumidity | devp->config->restemperature;
-
 #endif
-		hts221I2CWriteRegister(devp->config->i2cp, cr, 1);
-  }
-
-#if	HTS221_SHARED_I2C
-  i2cReleaseBus((devp)->config->i2cp);
-#endif /* HTS221_SHARED_I2C */  
+#if  HTS221_SHARED_I2C
+    i2cAcquireBus((devp)->config->i2cp);
+    i2cStart((devp)->config->i2cp,
+           (devp)->config->i2ccfg);
+#endif /* HTS221_SHARED_I2C */
+           
+    hts221I2CWriteRegister(devp->config->i2cp, cr, 1);
+  
+#if  HTS221_SHARED_I2C
+    i2cReleaseBus((devp)->config->i2cp);
+#endif /* HTS221_SHARED_I2C */
+  }  
 #endif /* HTS221_USE_I2C */
-
-
 
   if(devp->config->sensitivity == NULL) {
     hts221Calibrate(devp, HTS221_FLAG_HYGRO_SENS | HTS221_FLAG_THERMO_SENS);
@@ -540,28 +547,24 @@ void hts221Stop(HTS221Driver *devp) {
 
   osalDbgAssert((devp->state == HTS221_STOP) || (devp->state == HTS221_READY),
                 "hts221Stop(), invalid state");
-
+                
+  if (devp->state == HTS221_READY) {
 #if (HTS221_USE_I2C)
-  if (devp->state == HTS221_STOP) {
-#if	HTS221_SHARED_I2C
-    i2cAcquireBus((devp)->config->i2cp);
-    i2cStart((devp)->config->i2cp,
-             (devp)->config->i2ccfg);
+#if  HTS221_SHARED_I2C
+  i2cAcquireBus((devp)->config->i2cp);
+  i2cStart((devp)->config->i2cp, (devp)->config->i2ccfg);
 #endif /* HTS221_SHARED_I2C */
 
-  /* Control register 1 configuration block.*/
-  {
-    cr[0] = HTS221_AD_CTRL_REG1;
-    cr[1] = 0;
-    hts221I2CWriteRegister(devp->config->i2cp, cr, 1);
-  }
-	
-    i2cStop((devp)->config->i2cp);
-#if	HTS221_SHARED_I2C
-    i2cReleaseBus((devp)->config->i2cp);
-#endif /* HTS221_SHARED_I2C */    
-  }			  
+  cr[0] = HTS221_AD_CTRL_REG1;
+  cr[1] = 0;
+  hts221I2CWriteRegister(devp->config->i2cp, cr, 1);
+  
+  i2cStop((devp)->config->i2cp);
+#if  HTS221_SHARED_I2C
+  i2cReleaseBus((devp)->config->i2cp);
+#endif /* HTS221_SHARED_I2C */           
 #endif /* HTS221_USE_I2C */
+  } 
   devp->state = HTS221_STOP;
 }
 /** @} */

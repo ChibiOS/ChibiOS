@@ -15,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-	
+  
 */
 
 /**
@@ -378,7 +378,7 @@ struct HTS221Driver {
   const struct BaseSensorVMT *vmt_basesensor;
   /** @brief BaseHygrometer Virtual Methods Table. */
   const struct BaseHygrometerVMT *vmt_basehygrometer;
-	  /** @brief BaseThermometer Virtual Methods Table. */
+    /** @brief BaseThermometer Virtual Methods Table. */
   const struct BaseThermometerVMT *vmt_basethermometer;
   _hts221_data
 };
