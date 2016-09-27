@@ -35,6 +35,11 @@
 
 #define HTS221_SEL(mask, offset)    (int16_t)(mask << offset)
 
+#define HTS221_FLAG_HYGRO_BIAS      0x01
+#define HTS221_FLAG_HYGRO_SENS      0x02         
+#define HTS221_FLAG_THERMO_BIAS     0x04
+#define HTS221_FLAG_THERMO_SENS     0x08
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -42,9 +47,6 @@
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
-
-static float hts221_bias[2] = {0.0f, 0.0f};
-static float hts221_sens[2] = {0.0f, 0.0f};
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
@@ -99,13 +101,14 @@ msg_t hts221I2CWriteRegister(I2CDriver *i2cp, uint8_t* txbuf, size_t n) {
  * @notapi
  *
  * @param[in] dev        pointer to the HTS221 interface
+ * @param[in] flag       flag to select parameters
  * @return               the operation status.
  */
-msg_t hts221Calibrate(HTS221Driver *devp) {
+msg_t hts221Calibrate(HTS221Driver *devp, uint8_t flag) {
   msg_t msg;
   uint8_t calib[16], H0_rH_x2, H1_rH_x2, msb;
   int16_t H0_T0_OUT, H1_T0_OUT, T0_degC_x8, T1_degC_x8, T0_OUT, T1_OUT;
-
+	float sens;
 
 #if HTS221_SHARED_I2C
   i2cAcquireBus(devp->config->i2cp);
@@ -115,6 +118,7 @@ msg_t hts221Calibrate(HTS221Driver *devp) {
   /* Retrieving rH values from Calibration registers */
 	msg = hts221I2CReadRegister(devp->config->i2cp,
                                HTS221_AD_CALIB_0, calib, 16);
+															 
 #if HTS221_SHARED_I2C
     i2cReleaseBus(devp->config->i2cp);
 #endif /* HTS221_SHARED_I2C */
@@ -127,16 +131,15 @@ msg_t hts221Calibrate(HTS221Driver *devp) {
   H1_T0_OUT += calib[11] << 8;
 	
   T0_degC_x8 = calib[2];
-  T1_degC_x8 = calib[3];
-
-  /* completing T0_degC_x8 value */
+  /* Completing T0_degC_x8 value */
   msb = (calib[5] & HTS221_SEL(0x03, 0));
   if(msb & HTS221_SEL(0x01, 1)) {
     msb |= HTS221_SEL(0x3F, 2);
   }
   T0_degC_x8 += msb << 8;
 
-  /* completing T1_degC_x8 value */
+	T1_degC_x8 = calib[3];
+  /* Completing T1_degC_x8 value */
   msb = ((calib[5] & HTS221_SEL(0x03, 2)) >> 2);
   if(msb & HTS221_SEL(0x01, 1)) {
     msb |= HTS221_SEL(0x3F, 2);
@@ -148,24 +151,26 @@ msg_t hts221Calibrate(HTS221Driver *devp) {
   T1_OUT = calib[14];
   T1_OUT += calib[15] << 8;
 	
+  sens = ((float)H1_rH_x2 - (float)H0_rH_x2) /
+         (2.0f * ((float)H1_T0_OUT - (float)H0_T0_OUT));
+									 
+  if(flag & HTS221_FLAG_HYGRO_SENS)
+      devp->sensitivity[0] = sens;
 
-  /* Storing data both in sensor data and in a reference variable used also
-     when user reset bias and sensitivity */
-  hts221_sens[0] = ((float)H1_rH_x2 - (float)H0_rH_x2) /
-                   (2.0f * ((float)H1_T0_OUT - (float)H0_T0_OUT));
-  devp->sensitivity[0] = hts221_sens[0];
+  if(flag & HTS221_FLAG_HYGRO_BIAS)
+      devp->bias[0] = (sens * (float)H0_T0_OUT) -
+                  ((float)H0_rH_x2 / 2.0f);
 
-  hts221_bias[0] = (devp->sensitivity[0] * (float)H0_T0_OUT) -
-                   ((float)H0_rH_x2 / 2.0f);
-  devp->bias[0] = hts221_bias[0];
+  sens = ((float)T1_degC_x8 - (float)T0_degC_x8) /
+         (8.0f * ((float)T1_OUT - (float)T0_OUT));
+				 
+  if(flag & HTS221_FLAG_THERMO_SENS)
+  devp->sensitivity[1] = sens;
 
-  hts221_sens[1] = ((float)T1_degC_x8 - (float)T0_degC_x8) /
-                   (8.0f * ((float)T1_OUT - (float)T0_OUT));
-  devp->sensitivity[1] = hts221_sens[1];
-
-  hts221_bias[1] = (devp->sensitivity[1] * (float)T0_OUT) -
-                   ((float)T0_degC_x8 / 8.0f);
-  devp->bias[1] = hts221_bias[1];
+  if(flag & HTS221_FLAG_THERMO_BIAS)
+  devp->bias[1] = (sens * (float)T0_OUT) -
+                  ((float)T0_degC_x8 / 8.0f);
+										
   return msg;
 }
 
@@ -195,23 +200,24 @@ static msg_t hygro_read_raw(void *ip, int32_t axis[]) {
   uint8_t buff[2];
   msg_t msg = MSG_OK;
 	
+	*axis = 0.0f;
+	
   osalDbgCheck((ip != NULL) && (axis != NULL));
   osalDbgAssert((((HTS221Driver *)ip)->state == HTS221_READY),
-              "hygro_read_raw(), invalid state");
-
-	*axis = 0.0f;
+              "hygro_read_raw(), invalid state");							
 #if HTS221_USE_I2C
   osalDbgAssert((((HTS221Driver *)ip)->config->i2cp->state == I2C_READY),
                 "hygro_read_raw(), channel not ready");
+								
 #if HTS221_SHARED_I2C
   i2cAcquireBus(((HTS221Driver *)ip)->config->i2cp);
   i2cStart(((HTS221Driver *)ip)->config->i2cp,
            ((HTS221Driver *)ip)->config->i2ccfg);
 #endif /* HTS221_SHARED_I2C */
 
-
   msg = hts221I2CReadRegister(((HTS221Driver *)ip)->config->i2cp,
-                              HTS221_AD_HUMIDITY_OUT_L, buff, 2);	
+                              HTS221_AD_HUMIDITY_OUT_L, buff, 2);
+															
 #if HTS221_SHARED_I2C
   i2cReleaseBus(((HTS221Driver *)ip)->config->i2cp);
 #endif /* HTS221_SHARED_I2C */
@@ -228,11 +234,12 @@ static msg_t thermo_read_raw(void *ip, int32_t axis[]) {
   int16_t tmp;
 	uint8_t buff[2];
   msg_t msg = MSG_OK;
+
+	*axis = 0.0f;
 	
   osalDbgCheck((ip != NULL) && (axis != NULL));
   osalDbgAssert((((HTS221Driver *)ip)->state == HTS221_READY),
               "thermo_read_raw(), invalid state");	
-	*axis = 0.0f;
 	
 #if HTS221_USE_I2C
   osalDbgAssert((((HTS221Driver *)ip)->config->i2cp->state == I2C_READY),
@@ -245,8 +252,8 @@ static msg_t thermo_read_raw(void *ip, int32_t axis[]) {
 #endif /* HTS221_SHARED_I2C */
 
   msg = hts221I2CReadRegister(((HTS221Driver *)ip)->config->i2cp,
-                                  HTS221_AD_TEMP_OUT_L,
-                                  buff, 2);	
+                                HTS221_AD_TEMP_OUT_L,
+                                buff, 2);	
 																	
 #if HTS221_SHARED_I2C
   i2cReleaseBus(((HTS221Driver *)ip)->config->i2cp);
@@ -276,7 +283,6 @@ static msg_t hygro_read_cooked(void *ip, float* axis) {
   msg_t msg;
 
   osalDbgCheck((ip != NULL) && (axis != NULL));
-
   osalDbgAssert((((HTS221Driver *)ip)->state == HTS221_READY),
               "hygro_read_cooked(), invalid state");
 
@@ -348,8 +354,7 @@ static msg_t hygro_reset_bias(void *ip) {
                 (((HTS221Driver *)ip)->state == HTS221_STOP),
                 "hygro_reset_bias(), invalid state");
 
-  ((HTS221Driver *)ip)->bias[0] = 0;
-  return MSG_OK;
+  return hts221Calibrate(ip, HTS221_FLAG_HYGRO_BIAS);
 }
 
 static msg_t thermo_reset_bias(void *ip) {
@@ -359,8 +364,7 @@ static msg_t thermo_reset_bias(void *ip) {
                 (((HTS221Driver *)ip)->state == HTS221_STOP),
                 "thermo_reset_bias(), invalid state");
 
-  ((HTS221Driver *)ip)->bias[1] = 0;
-  return MSG_OK;
+  return hts221Calibrate(ip, HTS221_FLAG_THERMO_BIAS);
 }
 
 static msg_t hygro_set_sensitivity(void *ip, float *sp) {
@@ -381,8 +385,7 @@ static msg_t thermo_set_sensitivity(void *ip, float *sp) {
                 (((HTS221Driver *)ip)->state == HTS221_STOP),
                 "thermo_set_sensitivity(), invalid state");
 
-  ((HTS221Driver *)ip)->sensitivity[1] = *sp;
-  return MSG_OK;
+  return hts221Calibrate(ip, HTS221_FLAG_THERMO_SENS);
 }
 
 static msg_t hygro_reset_sensitivity(void *ip) {
@@ -392,8 +395,7 @@ static msg_t hygro_reset_sensitivity(void *ip) {
                 (((HTS221Driver *)ip)->state == HTS221_STOP),
                 "hygro_reset_sensitivity(), invalid state");
 
-  ((HTS221Driver *)ip)->sensitivity[0] = HTS221_HYGRO_SENS;
-  return MSG_OK;
+  return hts221Calibrate(ip, HTS221_FLAG_HYGRO_SENS);
 }
 
 static msg_t thermo_reset_sensitivity(void *ip) {
@@ -462,7 +464,6 @@ void hts221Start(HTS221Driver *devp, const HTS221Config *config) {
 
   osalDbgAssert((devp->state == HTS221_STOP) || (devp->state == HTS221_READY),
               "hts221Start(), invalid state");			  
-
   devp->config = config;
 
 #if HTS221_USE_I2C
@@ -499,15 +500,21 @@ void hts221Start(HTS221Driver *devp, const HTS221Config *config) {
 #endif /* HTS221_SHARED_I2C */  
 #endif /* HTS221_USE_I2C */
 
-  hts221Calibrate(devp);
 
-  if(devp->config->sensitivity != NULL) {
+
+  if(devp->config->sensitivity == NULL) {
+    hts221Calibrate(devp, HTS221_FLAG_HYGRO_SENS | HTS221_FLAG_THERMO_SENS);
+  }
+  else{
     /* Taking Sensitivity from user configurations */
     devp->sensitivity[0] = devp->config->sensitivity[0];
     devp->sensitivity[1] = devp->config->sensitivity[1];
   }
 
-  if(devp->config->bias != NULL) {
+  if(devp->config->bias == NULL) {
+    hts221Calibrate(devp, HTS221_FLAG_HYGRO_BIAS | HTS221_FLAG_THERMO_BIAS);
+  }
+  else {
     /* Taking Bias from user configurations */
     devp->bias[0] = devp->config->bias[0];
     devp->bias[1] = devp->config->bias[1];
