@@ -42,11 +42,18 @@
   |  |  +--oslib/         - RTOS modules usable by both RT and NIL.
   |  |  +--ports/         - RTOS ports usable by both RT and NIL.
   |  |  +--startup/       - Startup support for all compilers and platforms.
+  |  +--ex/               - EX component.
+  |  |  +--Micron/        - EX complex drivers for Micron devices.
+  |  |  +--ST/            - EX complex drivers for STMicroelectronics devices.
+  |  |  +--subsystems/    - EX subsystems.
+  |  |  |  +--mfs/        - EX Managed Flash Storage module.
   |  +--hal/              - HAL component.
   |  |  +--boards/        - HAL board support files.
   |  |  +--dox/           - HAL documentation resources.
   |  |  +--include/       - HAL high level headers.
   |  |  +--lib/           - HAL libraries.
+  |  |  |  +--peripherals/- HAL peripherals interfaces.
+  |  |  |  +--streams/    - HAL streams.
   |  |  +--osal/          - HAL OSAL implementations.
   |  |  +--src/           - HAL high level source.
   |  |  +--ports/         - HAL ports.
@@ -79,6 +86,15 @@
 *****************************************************************************
 
 *** Next ***
+- EX:  Added thermometer implementation for ST HTS221 device.
+- EX:  Added hygrometer implementation for ST HTS221 device.
+- EX:  Added barometer implementation for ST LPS25H device.
+- HAL: Added base barometer, base hygrometer, base thermometer classes.
+- EX:  Added compass implementation for ST LIS3MDL device.
+- EX:  Added gyroscope implementation for ST LSM6DS0 device.
+- EX:  Added accelerometer implementation for ST LSM6DS0 device.
+- EX:  Added accelerometer implementation for ST LIS3DSH device.
+- EX:  Added accelerometer implementation for ST LIS302DL device.
 - HAL: Added an advanced buffering mode to the serial driver, now, if the
        LLD supports it, it is possible to set the size of each queue
        independently.
@@ -93,6 +109,8 @@
 - HAL: Extended PLLI2S for STM32F4xx subfamily.
 - HAL: Added QSPI driver implementation for STM32.
 - HAL: Added QSPI driver model.
+- HAL: Added base sensor, base gyroscope, base accelerometer and base compass
+       classes.
 - VAR: Cortex-M VTOR initialization is now performed in startup files and
        no more in port initialization.
 - VAR: Changed GCC asm files extension from .s to .S because conventions.
