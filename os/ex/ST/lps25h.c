@@ -144,7 +144,7 @@ static msg_t read_cooked(void *ip, float* axis) {
 
   msg = read_raw(ip, &raw);
 
-  *axis = raw / ((LPS25HDriver *)ip)->sensitivity;
+  *axis = raw * ((LPS25HDriver *)ip)->sensitivity;
   *axis -= ((LPS25HDriver *)ip)->bias;
   return msg;
 }

@@ -40,7 +40,7 @@
 /**
  * @brief   LPS25H driver version string.
  */
-#define EX_LPS25H_VERSION           "1.0.2"
+#define EX_LPS25H_VERSION           "1.0.3"
 
 /**
  * @brief   LPS25H driver version major number.
@@ -55,7 +55,7 @@
 /**
  * @brief   LPS25H driver version patch number.
  */
-#define EX_LPS25H_PATCH             2
+#define EX_LPS25H_PATCH             3
 /** @} */
 
 /**
@@ -65,7 +65,7 @@
  */
 #define LPS25H_NUMBER_OF_AXES       1U
 
-#define LPS25H_SENS                 4096.0f      /**< LSB/hPa                 */
+#define LPS25H_SENS                 0.00024414f /**< hPa/LSB                */
 /** @} */
 
 /**
