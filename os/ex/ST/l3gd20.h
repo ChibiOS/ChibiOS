@@ -40,7 +40,7 @@
 /**
  * @brief   L3GD20 driver version string.
  */
-#define EX_L3GD20_VERSION           "1.0.3"
+#define EX_L3GD20_VERSION           "1.0.4"
 
 /**
  * @brief   L3GD20 driver version major number.
@@ -55,7 +55,7 @@
 /**
  * @brief   L3GD20 driver version patch number.
  */
-#define EX_L3GD20_PATCH             3
+#define EX_L3GD20_PATCH             4
 /** @} */
 
 /**
@@ -429,12 +429,12 @@ typedef struct {
   /**
    * @brief L3GD20 initial sensitivity.
    */
-  float                     sensitivity[L3GD20_NUMBER_OF_AXES];
+  float                     *sensitivity;
   /**
    * @brief L3GD20 initial bias.
    */
-  float                     bias[L3GD20_NUMBER_OF_AXES];
-  /**
+  float                     *bias;
+  /** 
    * @brief L3GD20 initial full scale value.
    */
   l3gd20_fs_t               fullscale;

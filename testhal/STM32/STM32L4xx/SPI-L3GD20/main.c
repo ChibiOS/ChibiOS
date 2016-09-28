@@ -47,8 +47,8 @@ static const SPIConfig spicfg = {
 static L3GD20Config l3gd20cfg = {
   &SPID2,                                    /* Pointer to SPI Driver.*/
   &spicfg,                                   /* Pointer to SPI Configuration.*/
-  {0, 0, 0},                                 /* Use default sensitivity.*/
-  {0, 0, 0},                                 /* Use default bias.*/
+  NULL,                                      /* Use default sensitivity.*/
+  NULL,                                      /* Use default bias.*/
   L3GD20_FS_250DPS,                          /* Full scale value.*/
   L3GD20_ODR_760HZ,                          /* Output data rate.*/
 #if L3GD20_USE_ADVANCED || defined(__DOXYGEN__)
