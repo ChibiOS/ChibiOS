@@ -151,7 +151,7 @@ static msg_t read_cooked(void *ip, float axes[]) {
 
   msg = read_raw(ip, raw);
   for(i = 0; i < LIS3MDL_NUMBER_OF_AXES ; i++){
-    axes[i] = raw[i] / ((LIS3MDLDriver *)ip)->sensitivity[i];
+    axes[i] = raw[i] * ((LIS3MDLDriver *)ip)->sensitivity[i];
     axes[i] -= ((LIS3MDLDriver *)ip)->bias[i];
   }
   return msg;

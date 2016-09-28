@@ -70,10 +70,10 @@
 #define LIS3MDL_12GA                12.0f
 #define LIS3MDL_16GA                16.0f
 
-#define LIS3MDL_SENS_4GA            6842.0f
-#define LIS3MDL_SENS_8GA            3421.0f
-#define LIS3MDL_SENS_12GA           2281.0f
-#define LIS3MDL_SENS_16GA           1711.0f
+#define LIS3MDL_SENS_4GA            0.00014615f
+#define LIS3MDL_SENS_8GA            0.00029231f
+#define LIS3MDL_SENS_12GA           0.0004384f
+#define LIS3MDL_SENS_16GA           0.00058445f
 /** @} */
 
 /**
