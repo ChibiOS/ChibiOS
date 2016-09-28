@@ -58,7 +58,8 @@
  * @return               the operation status.
  * @notapi
  */
-msg_t lis3mdlI2CReadRegister(I2CDriver *i2cp, lis3mdl_sad_t sad, uint8_t reg,                             uint8_t* rxbuf, size_t n) {
+msg_t lis3mdlI2CReadRegister(I2CDriver *i2cp, lis3mdl_sad_t sad, uint8_t reg,
+                             uint8_t* rxbuf, size_t n) {
   uint8_t txbuf = reg;
   if(n > 1)
     txbuf |= LIS3MDL_SUB_MS;
@@ -101,7 +102,7 @@ static size_t get_axes_number(void *ip) {
 
 static msg_t read_raw(void *ip, int32_t axes[LIS3MDL_NUMBER_OF_AXES]) {
   int16_t tmp;
-  uint8_t i, buff[2 *LIS3MDL_NUMBER_OF_AXES];
+  uint8_t i, buff[2 * LIS3MDL_NUMBER_OF_AXES];
   msg_t msg = MSG_OK;
   
   osalDbgCheck((ip != NULL) && (axes != NULL));
@@ -262,7 +263,7 @@ static msg_t set_full_scale(void *ip, lis3mdl_fs_t fs) {
                                 ((LIS3MDLDriver *)ip)->config->slaveaddress,
                                 LIS3MDL_AD_CTRL_REG2, &cr[1], 1);
 #if LIS3MDL_SHARED_I2C
-  i2cReleaseBus(((LIS3MDLDriver *)ip)->config->i2cp);
+    i2cReleaseBus(((LIS3MDLDriver *)ip)->config->i2cp);
 #endif /* LIS3MDL_SHARED_I2C */                              
     if(msg != MSG_OK)
       return msg;
@@ -292,7 +293,7 @@ static msg_t set_full_scale(void *ip, lis3mdl_fs_t fs) {
       ((LIS3MDLDriver *)ip)->bias[i] *= scale;
     }
   }
-  return MSG_OK;
+  return msg;
 }
 
 static const struct BaseSensorVMT vmt_basesensor = {
@@ -328,7 +329,7 @@ void lis3mdlObjectInit(LIS3MDLDriver *devp) {
   devp->vmt_lis3mdl = &vmt_lis3mdl;
   devp->config = NULL;
   for(i = 0; i < LIS3MDL_NUMBER_OF_AXES; i++)
-    devp->bias[i] = 0;
+    devp->bias[i] = 0.0f;
   devp->state  = LIS3MDL_STOP;
 }
 
