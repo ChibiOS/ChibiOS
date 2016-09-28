@@ -73,6 +73,8 @@
 *****************************************************************************
 
 *** 16.1.6 ***
+- HAL: Fixed wrong registry for STM32F205xx and STM32F215xx port 
+       (bug #780).
 - HAL: Fixed wrong HSE checks and PLL2 enable switch in STM32F105 and
        STM32F107 port (bug #779).
 - HAL: Fixed wrong SRAM2_BASE in STM32F7xx port (bug #778)
