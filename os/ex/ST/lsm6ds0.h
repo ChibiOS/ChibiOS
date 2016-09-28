@@ -15,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-	
+  
 */
 
 /**
@@ -41,7 +41,7 @@
 /**
  * @brief   LSM6DS0 driver version string.
  */
-#define EX_LSM6DS0_VERSION          "1.0.2"
+#define EX_LSM6DS0_VERSION          "1.0.3"
 
 /**
  * @brief   LSM6DS0 driver version major number.
@@ -56,7 +56,7 @@
 /**
  * @brief   LSM6DS0 driver version patch number.
  */
-#define EX_LSM6DS0_PATCH            2
+#define EX_LSM6DS0_PATCH            3
 /** @} */
 
 /**
@@ -441,11 +441,11 @@ typedef struct {
   /**
    * @brief LSM6DS0 accelerometer initial sensitivity.
    */
-  float                        sensitivity[LSM6DS0_ACC_NUMBER_OF_AXES];
+  float*                       sensitivity;
   /**
    * @brief LSM6DS0 accelerometer initial bias.
    */
-  float                        bias[LSM6DS0_ACC_NUMBER_OF_AXES];
+  float*                       bias;
   /**
    * @brief LSM6DS0 accelerometer subsystem full scale.
    */
@@ -548,11 +548,11 @@ typedef struct {
   /**
    * @brief LSM6DS0 gyroscope initial sensitivity.
    */
-  float                        sensitivity[LSM6DS0_ACC_NUMBER_OF_AXES];
+  float*                       sensitivity;
   /**
    * @brief LSM6DS0 gyroscope initial bias.
    */
-  float                        bias[LSM6DS0_ACC_NUMBER_OF_AXES];
+  float*                       bias;
   /**
    * @brief LSM6DS0 gyroscope subsystem full scale.
    */
@@ -578,7 +578,7 @@ typedef struct {
    * @brief LSM6DS0 gyroscope subsystem high pass filter configuration.
    */
   lsm6ds0_gyro_hpcf_t          hpcfg;
-	#endif /* LSM6DS0_GYRO_USE_ADVANCED */
+  #endif /* LSM6DS0_GYRO_USE_ADVANCED */
 } LSM6DS0GyroConfig;
 /** @} */
 
@@ -785,7 +785,7 @@ struct LSM6DS0Driver {
  */
 #define gyroscopeSetFullScale(ip, fs)                                         \
         (ip)->vmt_lsm6ds0gyro->set_full_scale(ip, fs)
-	
+  
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
