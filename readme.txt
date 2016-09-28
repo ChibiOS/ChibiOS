@@ -144,6 +144,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Fixed wrong registry for STM32F205xx and STM32F215xx port 
+       (bug #780)(backported to 16.1.6, 3.0.6).
 - HAL: Fixed wrong HSE checks and PLL2 enable switch in STM32F105 and
        STM32F107 port (bug #779)(backported to 16.1.6, 3.0.6, 2.6.10).
 - HAL: Fixed wrong SRAM2_BASE in STM32F7xx port (bug #778)
