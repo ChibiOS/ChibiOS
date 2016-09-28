@@ -836,7 +836,8 @@
 #define STM32_DMA2_CH7_NUMBER               70
 
 /* ETH attributes.*/
-#if defined(STM32F405xx) || defined(STM32F415xx)
+#if defined(STM32F405xx) || defined(STM32F415xx) || defined(STM32F205xx) || \
+    defined(STM32F215xx)
 #define STM32_HAS_ETH                       FALSE
 #else
 #define STM32_HAS_ETH                       TRUE
