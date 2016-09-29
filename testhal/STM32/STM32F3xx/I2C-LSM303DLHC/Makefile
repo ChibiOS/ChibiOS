@@ -71,7 +71,7 @@ endif
 
 # Enables the use of FPU (no, softfp, hard).
 ifeq ($(USE_FPU),)
-  USE_FPU = hard
+  USE_FPU = no
 endif
 
 #
@@ -201,7 +201,8 @@ CPPWARN = -Wall -Wextra -Wundef
 
 # List all user C define here, like -D_DEBUG=1
 UDEFS = -DCHPRINTF_USE_FLOAT=1 -DSHELL_CMD_TEST_ENABLED=0 \
-        -DLSM303DLHC_ACC_USE_ADVANCED=0 -DLSM303DLHC_COMP_USE_ADVANCED=0
+        -DLSM303DLHC_ACC_USE_ADVANCED=0 -DLSM303DLHC_COMP_USE_ADVANCED=0 \
+        -DLSM303DLHC_SHARED_I2C=0
 
 # Define ASM defines here
 UADEFS =

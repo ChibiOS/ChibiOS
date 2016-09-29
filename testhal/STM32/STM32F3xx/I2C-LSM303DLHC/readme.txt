@@ -1,19 +1,18 @@
 *****************************************************************************
-** ChibiOS/HAL + ChibiOS/EX - SPI + LSM303DLHC demo for STM32F3xx.         **
+** ChibiOS/HAL - USB-CDC driver demo for STM32F3xx.                        **
 *****************************************************************************
 
 ** TARGET **
 
-The demo runs on an STM32F3 Discovery board.
+The demo runs on an ST STM32F3-Discovery board.
 
 ** The Demo **
 
-The demo flashes the board LED using a thread, read data from LSM303DLHC 
-printing it on a BaseSequentialStream (SDU1, mapped on USB virtual COM port).
+The application demonstrates the use of the STM32F3xx USB driver.
 
 ** Build Procedure **
 
-The demo has been tested by using the free Codesourcery GCC-based toolchain
+The demo has been tested using the free Codesourcery GCC-based toolchain
 and YAGARTO.
 Just modify the TRGT line in the makefile in order to use different GCC ports.
 

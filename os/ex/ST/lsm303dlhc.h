@@ -41,7 +41,7 @@
 /**
  * @brief   LSM303DLHC driver version string.
  */
-#define EX_LSM303DLHC_VERSION       "1.0.2"
+#define EX_LSM303DLHC_VERSION       "1.0.3"
 
 /**
  * @brief   LSM303DLHC driver version major number.
@@ -56,7 +56,7 @@
 /**
  * @brief   LSM303DLHC driver version patch number.
  */
-#define EX_LSM303DLHC_PATCH         2
+#define EX_LSM303DLHC_PATCH         3
 /** @} */
 
 /**
@@ -428,11 +428,11 @@ typedef struct {
   /**
    * @brief LSM303DLHC initial sensitivity.
    */
-  float                        sensitivity[LSM303DLHC_ACC_NUMBER_OF_AXES];
+  float                        *sensitivity;
   /**
    * @brief LSM303DLHC initial bias.
    */
-  float                        bias[LSM303DLHC_ACC_NUMBER_OF_AXES];
+  float                        *bias;
   /**
    * @brief LSM303DLHC accelerometer subsystem initial full scale.
    */
@@ -506,6 +506,14 @@ typedef enum {
  * @brief LSM303DLHC compass subsystem configuration structure.
  */
 typedef struct {
+  /**
+   * @brief LSM303DLHC compass initial sensitivity.
+   */
+  float                        *sensitivity;
+  /**
+   * @brief LSM303DLHC compass initial bias.
+   */
+  float                        *bias;
   /**
    * @brief LSM303DLHC compass subsystem initial full scale.
    */

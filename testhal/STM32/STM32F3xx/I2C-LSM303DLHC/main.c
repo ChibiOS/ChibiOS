@@ -24,8 +24,9 @@
 
 #include "lsm303dlhc.h"
 
+
 /*===========================================================================*/
-/* LSM303DLHC related.                                                           */
+/* LSM303DLHC related.                                                       */
 /*===========================================================================*/
 
 /* LSM303DLHC Driver: This object represent an LSM303DLHC instance */
@@ -48,8 +49,8 @@ static const I2CConfig i2ccfg = {
 };
 
 static const LSM303DLHCAccConfig lsm303dlhcacccfg = {
-  {0, 0, 0},                        /* Use default sensitivity.*/
-  {0, 0, 0},                        /* Use default bias.*/
+  NULL,                             /* Use default sensitivity.*/
+  NULL,                             /* Use default bias.*/
   LSM303DLHC_ACC_FS_4G,             /* Full scale value 2g.*/
   LSM303DLHC_ACC_ODR_100Hz,         /* Output data rate 100 Hz.*/
 #if LSM303DLHC_ACC_USE_ADVANCED || defined(__DOXYGEN__)
@@ -61,6 +62,8 @@ static const LSM303DLHCAccConfig lsm303dlhcacccfg = {
 };
 
 static const LSM303DLHCCompConfig lsm303dlhccompcfg = {
+  NULL,                             /* Use default sensitivity.*/
+  NULL,                             /* Use default bias.*/
   LSM303DLHC_COMP_FS_1P3GA,         /* Full scale value 1.3 Gauss.*/
   LSM303DLHC_COMP_ODR_30HZ,         /* Output data rate 30 Hz.*/
 #if LSM303DLHC_COMP_USE_ADVANCED || defined(__DOXYGEN__)
@@ -88,7 +91,7 @@ static const LSM303DLHCConfig lsm303dlhccfg = {
 
 /* Enable use of special ANSI escape sequences */
 #define CHPRINTF_USE_ANSI_CODE      TRUE
-#define SHELL_WA_SIZE               THD_WORKING_AREA_SIZE(2048)
+#define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
 
 static void cmd_read(BaseSequentialStream *chp, int argc, char *argv[]) {
   (void)argv;
@@ -280,11 +283,11 @@ static const ShellConfig shell_cfg1 = {
 };
 
 /*===========================================================================*/
-/* Main code.                                                                */
+/* Generic code.                                                             */
 /*===========================================================================*/
 
 /*
- * LED blinker thread, times are in milliseconds.
+ * Red LED blinker thread, times are in milliseconds.
  */
 static THD_WORKING_AREA(waThread1, 128);
 static THD_FUNCTION(Thread1, arg) {
@@ -334,10 +337,15 @@ int main(void) {
   usbConnectBus(serusbcfg.usbp);
 
   /*
+   * Shell manager initialization.
+   */
+  shellInit();
+
+  /*
    * Creates the blinker thread.
    */
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO + 1, Thread1, NULL);
-
+  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+  
   /*
    * LSM303DLHC Object Initialization
    */
@@ -347,13 +355,11 @@ int main(void) {
    * Activates the LSM303DLHC driver.
    */
   lsm303dlhcStart(&LSM303DLHCD1, &lsm303dlhccfg);
-
+  
   /*
-   * Shell manager initialization.
-   */
-  shellInit();
-
-  while(TRUE) {
+   * Normal main() thread activity, spawning shells.
+   */   
+  while (true) {
     if (SDU1.config->usbp->state == USB_ACTIVE) {
       thread_t *shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
                                               "shell", NORMALPRIO + 1,
@@ -363,5 +369,4 @@ int main(void) {
     chThdSleepMilliseconds(1000);
   }
   lsm303dlhcStop(&LSM303DLHCD1);
-  return 0;
 }

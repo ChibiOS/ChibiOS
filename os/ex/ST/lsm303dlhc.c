@@ -42,14 +42,6 @@
 /*===========================================================================*/
 
 /**
- * @brief  Accelerometer Power Mode
- */
-typedef enum {
-  LSM303DLHC_ACC_PM_NORMAL = 0x00,  /**< Normal mode enabled                */
-  LSM303DLHC_ACC_PM_LP = 0x08       /**< Low Power mode enabled             */
-} lsm303dlhc_acc_pm_t;
-
-/**
  * @brief  Accelerometer and Compass Slave Address.
  */
 typedef enum {
@@ -137,6 +129,7 @@ static msg_t acc_read_raw(void *ip, int32_t axes[]) {
 
   osalDbgAssert((((LSM303DLHCDriver *)ip)->config->i2cp->state == I2C_READY),
                 "acc_read_raw(), channel not ready");
+
 #if LSM303DLHC_SHARED_I2C
   i2cAcquireBus(((LSM303DLHCDriver *)ip)->config->i2cp);
   i2cStart(((LSM303DLHCDriver *)ip)->config->i2cp,
@@ -146,15 +139,16 @@ static msg_t acc_read_raw(void *ip, int32_t axes[]) {
   msg = lsm303dlhcI2CReadRegister(((LSM303DLHCDriver *)ip)->config->i2cp,
                                   LSM303DLHC_SAD_ACC, LSM303DLHC_AD_ACC_OUT_X_L,
                                   buff, LSM303DLHC_ACC_NUMBER_OF_AXES * 2);
+
+#if LSM303DLHC_SHARED_I2C
+  i2cReleaseBus(((LSM303DLHCDriver *)ip)->config->i2cp);
+#endif /* LSM303DLHC_SHARED_I2C */
+
   if(msg == MSG_OK)
     for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++) {
       tmp = buff[2*i] + (buff[2*i+1] << 8);
       axes[i] = (int32_t)tmp;
     }
-
-#if LSM303DLHC_SHARED_I2C
-  i2cReleaseBus(((LSM303DLHCDriver *)ip)->config->i2cp);
-#endif /* LSM303DLHC_SHARED_I2C */
   return msg;
 }
 
@@ -169,6 +163,7 @@ static msg_t comp_read_raw(void *ip, int32_t axes[]) {
 
   osalDbgAssert((((LSM303DLHCDriver *)ip)->config->i2cp->state == I2C_READY),
                 "comp_read_raw(), channel not ready");
+
 #if LSM303DLHC_SHARED_I2C
   i2cAcquireBus(((LSM303DLHCDriver *)ip)->config->i2cp);
   i2cStart(((LSM303DLHCDriver *)ip)->config->i2cp,
@@ -177,15 +172,17 @@ static msg_t comp_read_raw(void *ip, int32_t axes[]) {
   msg = lsm303dlhcI2CReadRegister(((LSM303DLHCDriver *)ip)->config->i2cp,
                                   LSM303DLHC_SAD_COMP, LSM303DLHC_AD_COMP_OUT_X_L,
                                   buff, LSM303DLHC_COMP_NUMBER_OF_AXES * 2);
+
+#if LSM303DLHC_SHARED_I2C
+  i2cReleaseBus(((LSM303DLHCDriver *)ip)->config->i2cp);
+#endif /* LSM303DLHC_SHARED_I2C */
+
   if(msg == MSG_OK)
     for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
       tmp = buff[2*i] + (buff[2*i+1] << 8);
       axes[i] = (int32_t)tmp;
     }
-#if LSM303DLHC_SHARED_I2C
-  i2cReleaseBus(((LSM303DLHCDriver *)ip)->config->i2cp);
-#endif /* LSM303DLHC_SHARED_I2C */
-  return MSG_OK;
+  return msg;
 }
 
 static msg_t sens_read_raw(void *ip, int32_t axes[]) {
@@ -215,7 +212,7 @@ static msg_t acc_read_cooked(void *ip, float axes[]) {
               "acc_read_cooked(), invalid state");
 
   msg = acc_read_raw(ip, raw);
-  for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES ; i++){
+  for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES ; i++) {
     axes[i] = raw[i] * ((LSM303DLHCDriver *)ip)->accsensitivity[i];
     axes[i] -= ((LSM303DLHCDriver *)ip)->accbias[i];
   }
@@ -234,7 +231,7 @@ static msg_t comp_read_cooked(void *ip, float axes[]) {
               "comp_read_cooked(), invalid state");
 
   msg = comp_read_raw(ip, raw);
-  for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES ; i++){
+  for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES ; i++) {
     axes[i] = raw[i] * ((LSM303DLHCDriver *)ip)->compsensitivity[i];
     axes[i] -= ((LSM303DLHCDriver *)ip)->compbias[i];
   }
@@ -344,6 +341,7 @@ static msg_t comp_set_sensivity(void *ip, float *sp) {
 
 static msg_t acc_reset_sensivity(void *ip) {
   uint32_t i;
+  msg_t msg = MSG_OK;
 
   osalDbgCheck(ip != NULL);
 
@@ -364,13 +362,14 @@ static msg_t acc_reset_sensivity(void *ip) {
       ((LSM303DLHCDriver *)ip)->accsensitivity[i] = LSM303DLHC_ACC_SENS_16G;
   else {
     osalDbgAssert(FALSE, "reset_sensivity(), accelerometer full scale issue");
-    return MSG_RESET;
+    msg = MSG_RESET;
   }
-  return MSG_OK;
+  return msg;
 }
 
 static msg_t comp_reset_sensivity(void *ip) {
   uint32_t i;
+  msg_t msg = MSG_OK;
 
   osalDbgCheck(ip != NULL);
 
@@ -442,9 +441,9 @@ static msg_t comp_reset_sensivity(void *ip) {
     }
   else {
     osalDbgAssert(FALSE, "reset_sensivity(), compass full scale issue");
-    return MSG_RESET;
+    msg = MSG_RESET;
   }
-  return MSG_OK;
+  return msg;
 }
 
 static msg_t acc_set_full_scale(void *ip, lsm303dlhc_acc_fs_t fs) {
@@ -465,7 +464,8 @@ static msg_t acc_set_full_scale(void *ip, lsm303dlhc_acc_fs_t fs) {
     newfs = LSM303DLHC_ACC_16G;
   }
   else {
-    return MSG_RESET;
+    msg = MSG_RESET;
+    return msg;
   }
 
   if(newfs != ((LSM303DLHCDriver *)ip)->accfullscale) {
@@ -483,18 +483,33 @@ static msg_t acc_set_full_scale(void *ip, lsm303dlhc_acc_fs_t fs) {
                                    LSM303DLHC_SAD_ACC,
                                    LSM303DLHC_AD_ACC_CTRL_REG4,
                                    &buff[1], 1);
+
+#if LSM303DLHC_SHARED_I2C
+        i2cReleaseBus(((LSM303DLHCDriver *)ip)->config->i2cp);
+#endif /* LSM303DLHC_SHARED_I2C */
+
     if(msg != MSG_OK)
       return msg;
+
     buff[1] &= ~(LSM303DLHC_CTRL_REG4_A_FS_MASK);
     buff[1] |= fs;
     buff[0] = LSM303DLHC_AD_ACC_CTRL_REG4;
+
+#if LSM303DLHC_SHARED_I2C
+    i2cAcquireBus(((LSM303DLHCDriver *)ip)->config->i2cp);
+    i2cStart(((LSM303DLHCDriver *)ip)->config->i2cp,
+                     ((LSM303DLHCDriver *)ip)->config->i2ccfg);
+#endif /* LSM303DLHC_SHARED_I2C */
+
     msg = lsm303dlhcI2CWriteRegister(((LSM303DLHCDriver *)ip)->config->i2cp,
                                     LSM303DLHC_SAD_ACC, buff, 1);
-    if(msg != MSG_OK)
-      return msg;
+
 #if LSM303DLHC_SHARED_I2C
 		i2cReleaseBus(((LSM303DLHCDriver *)ip)->config->i2cp);
 #endif /* LSM303DLHC_SHARED_I2C */
+
+    if(msg != MSG_OK)
+      return msg;
 
     /* Scaling sensitivity and bias. Re-calibration is suggested anyway. */
     for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++) {
@@ -532,25 +547,50 @@ static msg_t comp_set_full_scale(void *ip, lsm303dlhc_comp_fs_t fs) {
     newfs = LSM303DLHC_COMP_8P1GA;
   }
   else {
-    return MSG_RESET;
+    msg = MSG_RESET;
+    return msg;
   }
 
   if(newfs != ((LSM303DLHCDriver *)ip)->compfullscale) {
     scale = newfs / ((LSM303DLHCDriver *)ip)->compfullscale;
     ((LSM303DLHCDriver *)ip)->compfullscale = newfs;
 
+#if LSM303DLHC_SHARED_I2C
+    i2cAcquireBus(((LSM303DLHCDriver *)ip)->config->i2cp);
+    i2cStart(((LSM303DLHCDriver *)ip)->config->i2cp,
+                     ((LSM303DLHCDriver *)ip)->config->i2ccfg);
+#endif /* LSM303DLHC_SHARED_I2C */
+
     /* Updating register.*/
     msg = lsm303dlhcI2CReadRegister(((LSM303DLHCDriver *)ip)->config->i2cp,
                                    LSM303DLHC_SAD_COMP,
                                    LSM303DLHC_AD_COMP_CRB_REG,
                                    &buff[1], 1);
+
+#if LSM303DLHC_SHARED_I2C
+        i2cReleaseBus(((LSM303DLHCDriver *)ip)->config->i2cp);
+#endif /* LSM303DLHC_SHARED_I2C */
+
     if(msg != MSG_OK)
       return msg;
     buff[1] &= ~(LSM303DLHC_CRB_REG_M_GN_MASK);
     buff[1] |= fs;
     buff[0] = LSM303DLHC_AD_COMP_CRB_REG;
+
+
+#if LSM303DLHC_SHARED_I2C
+    i2cAcquireBus(((LSM303DLHCDriver *)ip)->config->i2cp);
+    i2cStart(((LSM303DLHCDriver *)ip)->config->i2cp,
+                     ((LSM303DLHCDriver *)ip)->config->i2ccfg);
+#endif /* LSM303DLHC_SHARED_I2C */
+
     msg = lsm303dlhcI2CWriteRegister(((LSM303DLHCDriver *)ip)->config->i2cp,
                                      LSM303DLHC_SAD_COMP, buff, 1);
+
+#if LSM303DLHC_SHARED_I2C
+        i2cReleaseBus(((LSM303DLHCDriver *)ip)->config->i2cp);
+#endif /* LSM303DLHC_SHARED_I2C */
+
     if(msg != MSG_OK)
       return msg;
 
@@ -560,7 +600,7 @@ static msg_t comp_set_full_scale(void *ip, lsm303dlhc_comp_fs_t fs) {
       ((LSM303DLHCDriver *)ip)->compbias[i] *= scale;
     }
   }
-  return MSG_OK;
+  return msg;
 }
 
 static const struct BaseSensorVMT vmt_basesensor = {
@@ -609,9 +649,9 @@ void lsm303dlhcObjectInit(LSM303DLHCDriver *devp) {
   devp->vmt_lsm303dlhccomp = &vmt_lsm303dlhccomp;
   devp->config = NULL;
   for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++)
-    devp->accbias[i] = 0;
+    devp->accbias[i] = 0.0f;
   for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++)
-    devp->compbias[i] = 0;
+    devp->compbias[i] = 0.0f;
   devp->state  = LSM303DLHC_STOP;
 }
 
@@ -625,195 +665,257 @@ void lsm303dlhcObjectInit(LSM303DLHCDriver *devp) {
  */
 void lsm303dlhcStart(LSM303DLHCDriver *devp, const LSM303DLHCConfig *config) {
   uint32_t i;
-  uint8_t buff[6] = {0, 0, 0, 0, 0, 0};
+  uint8_t cr[6];
   osalDbgCheck((devp != NULL) && (config != NULL));
 
+
   osalDbgAssert((devp->state == LSM303DLHC_STOP) || (devp->state == LSM303DLHC_READY),
-              "lsm303dlhcStart(), invalid state");			  
+              "lsm303dlhcStart(), invalid state");
 
   devp->config = config;
 
-#if	LSM303DLHC_SHARED_I2C
+#if LSM303DLHC_SHARED_I2C
   i2cAcquireBus((devp)->config->i2cp);
 #endif /* LSM303DLHC_SHARED_I2C */
-  i2cStart((devp)->config->i2cp,
-           (devp)->config->i2ccfg);
-  if((devp)->config->acccfg != NULL) {
+  i2cStart((devp)->config->i2cp, (devp)->config->i2ccfg);
 
+  /* Configuring Accelerometer subsystem */
+  if((devp)->config->acccfg != NULL) {
     /* Multiple write starting address.*/
-    buff[0] = LSM303DLHC_AD_ACC_CTRL_REG1;
+    cr[0] = LSM303DLHC_AD_ACC_CTRL_REG1;
 
     /* Control register 1 configuration block.*/
     {
-      buff[1] = LSM303DLHC_CTRL_REG1_A_XEN | LSM303DLHC_CTRL_REG1_A_YEN |
+      cr[1] = LSM303DLHC_CTRL_REG1_A_XEN | LSM303DLHC_CTRL_REG1_A_YEN |
               LSM303DLHC_CTRL_REG1_A_ZEN | devp->config->acccfg->outdatarate;
 #if LSM303DLHC_ACC_USE_ADVANCED || defined(__DOXYGEN__)
-      buff[1] |= devp->config->acccfg->lowpower;
+      cr[1] |= devp->config->acccfg->lowpower;
 #endif
     }
 
     /* Control register 2 configuration block.*/
     {
-      buff[2] = 0;
+      cr[2] = 0;
     }
 
     /* Control register 3 configuration block.*/
     {
-      buff[3] = 0;
+      cr[3] = 0;
     }
 
     /* Control register 4 configuration block.*/
     {
-      buff[4] = devp->config->acccfg->fullscale;
+      cr[4] = devp->config->acccfg->fullscale;
 #if LSM303DLHC_ACC_USE_ADVANCED || defined(__DOXYGEN__)
-      buff[4] |= devp->config->acccfg->endianess |
+      cr[4] |= devp->config->acccfg->endianess |
                devp->config->acccfg->blockdataupdate |
                devp->config->acccfg->highresmode;
 #endif
     }
-    lsm303dlhcI2CWriteRegister(devp->config->i2cp, LSM303DLHC_SAD_ACC,
-                               buff, 4);
+    lsm303dlhcI2CWriteRegister(devp->config->i2cp, LSM303DLHC_SAD_ACC, cr, 4);
+
+    /* Storing sensitivity according to user settings */
+    if(devp->config->acccfg->fullscale == LSM303DLHC_ACC_FS_2G) {
+      devp->accfullscale = LSM303DLHC_ACC_2G;
+      for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++) {
+        if(devp->config->acccfg->sensitivity == NULL)
+          devp->accsensitivity[i] = LSM303DLHC_ACC_SENS_2G;
+        else
+          devp->accsensitivity[i] = devp->config->acccfg->sensitivity[i];
+      }
+    }
+    else if(devp->config->acccfg->fullscale == LSM303DLHC_ACC_FS_4G) {
+      devp->accfullscale = LSM303DLHC_ACC_4G;
+      for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++) {
+        if(devp->config->acccfg->sensitivity == NULL)
+          devp->accsensitivity[i] = LSM303DLHC_ACC_SENS_4G;
+        else
+          devp->accsensitivity[i] = devp->config->acccfg->sensitivity[i];
+      }
+    }
+    else if(devp->config->acccfg->fullscale == LSM303DLHC_ACC_FS_8G) {
+      devp->accfullscale = LSM303DLHC_ACC_8G;
+      for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++) {
+        if(devp->config->acccfg->sensitivity == NULL)
+          devp->accsensitivity[i] = LSM303DLHC_ACC_SENS_8G;
+        else
+          devp->accsensitivity[i] = devp->config->acccfg->sensitivity[i];
+      }
+    }
+    else if(devp->config->acccfg->fullscale == LSM303DLHC_ACC_FS_16G) {
+      devp->accfullscale = LSM303DLHC_ACC_16G;
+      for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++) {
+        if(devp->config->acccfg->sensitivity == NULL)
+          devp->accsensitivity[i] = LSM303DLHC_ACC_SENS_16G;
+        else
+          devp->accsensitivity[i] = devp->config->acccfg->sensitivity[i];
+      }
+    }
+    else
+      osalDbgAssert(FALSE, "lsm303dlhcStart(), accelerometer full scale issue");
+
+    /* Storing bias information */
+    if(devp->config->acccfg->bias != NULL)
+      for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++)
+        devp->accbias[i] = devp->config->acccfg->bias[i];
+
   }
+
+  /* Configuring Compass subsystem */
   if((devp)->config->compcfg != NULL) {
 
     /* Multiple write starting address.*/
-    buff[0] = LSM303DLHC_AD_COMP_CRA_REG;
+    cr[0] = LSM303DLHC_AD_COMP_CRA_REG;
 
     /* Control register A configuration block.*/
     {
-      buff[1] = devp->config->compcfg->outputdatarate;
+      cr[1] = devp->config->compcfg->outputdatarate;
     }
 
     /* Control register B configuration block.*/
     {
-      buff[2] = devp->config->compcfg->fullscale;
+      cr[2] = devp->config->compcfg->fullscale;
     }
 
     /* Mode register configuration block.*/
     {
-      buff[3] = 0;
+      cr[3] = 0;
 #if LSM303DLHC_COMP_USE_ADVANCED || defined(__DOXYGEN__)
-      buff[3] |= devp->config->compcfg->mode;
+      cr[3] |= devp->config->compcfg->mode;
 #endif
     }
 
     lsm303dlhcI2CWriteRegister(devp->config->i2cp, LSM303DLHC_SAD_COMP,
-                               buff, 3);
-  }
-#if	LSM303DLHC_SHARED_I2C
-  i2cReleaseBus((devp)->config->i2cp);
-#endif /* LSM303DLHC_SHARED_I2C */  
+                               cr, 3);
 
-  /* Storing sensitivity information according to full scale value */
-  if((devp)->config->acccfg != NULL) {
-    if(devp->config->acccfg->fullscale == LSM303DLHC_ACC_FS_2G) {
-      devp->accfullscale = LSM303DLHC_ACC_2G;
-      for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++)
-        devp->accsensitivity[i] = LSM303DLHC_ACC_SENS_2G;
-    }
-    else if(devp->config->acccfg->fullscale == LSM303DLHC_ACC_FS_4G) {
-      devp->accfullscale = LSM303DLHC_ACC_4G;
-      for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++)
-        devp->accsensitivity[i] = LSM303DLHC_ACC_SENS_4G;
-    }
-    else if(devp->config->acccfg->fullscale == LSM303DLHC_ACC_FS_8G) {
-      devp->accfullscale = LSM303DLHC_ACC_8G;
-      for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++)
-        devp->accsensitivity[i] = LSM303DLHC_ACC_SENS_8G;
-    }
-    else if(devp->config->acccfg->fullscale == LSM303DLHC_ACC_FS_16G) {
-      devp->accfullscale = LSM303DLHC_ACC_16G;
-      for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++)
-        devp->accsensitivity[i] = LSM303DLHC_ACC_SENS_16G;
-    }
-    else
-      osalDbgAssert(FALSE, "lsm303dlhcStart(), accelerometer full scale issue");
-  }
-  if((devp)->config->compcfg != NULL) {
     if(devp->config->compcfg->fullscale == LSM303DLHC_COMP_FS_1P3GA) {
       devp->compfullscale = LSM303DLHC_COMP_1P3GA;
       for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
-        if(i != 2) {
-          devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_1P3GA;
+        if(devp->config->compcfg->sensitivity == NULL) {
+          if(i != 2) {
+            devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_1P3GA;
+          }
+          else {
+            devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_1P3GA;
+          }
         }
         else {
-          devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_1P3GA;
+          devp->compsensitivity[i] = devp->config->compcfg->sensitivity[i];
         }
       }
     }
     else if(devp->config->compcfg->fullscale == LSM303DLHC_COMP_FS_1P9GA) {
       devp->compfullscale = LSM303DLHC_COMP_1P9GA;
       for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
-        if(i != 2) {
-          devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_1P9GA;
+        if(devp->config->compcfg->sensitivity == NULL) {
+          if(i != 2) {
+            devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_1P9GA;
+          }
+          else {
+            devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_1P9GA;
+          }
         }
         else {
-          devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_1P9GA;
+          devp->compsensitivity[i] = devp->config->compcfg->sensitivity[i];
         }
       }
     }
     else if(devp->config->compcfg->fullscale == LSM303DLHC_COMP_FS_2P5GA) {
       devp->compfullscale = LSM303DLHC_COMP_2P5GA;
       for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
-        if(i != 2) {
-          devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_2P5GA;
+        if(devp->config->compcfg->sensitivity == NULL) {
+          if(i != 2) {
+            devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_2P5GA;
+          }
+          else {
+            devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_2P5GA;
+          }
         }
         else {
-          devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_2P5GA;
+          devp->compsensitivity[i] = devp->config->compcfg->sensitivity[i];
         }
       }
     }
     else if(devp->config->compcfg->fullscale == LSM303DLHC_COMP_FS_4P0GA) {
       devp->compfullscale = LSM303DLHC_COMP_4P0GA;
       for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
-        if(i != 2) {
-          devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_4P0GA;
+        if(devp->config->compcfg->sensitivity == NULL) {
+          if(i != 2) {
+            devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_4P0GA;
+          }
+          else {
+            devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_4P0GA;
+          }
         }
         else {
-          devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_4P0GA;
+          devp->compsensitivity[i] = devp->config->compcfg->sensitivity[i];
         }
       }
     }
     else if(devp->config->compcfg->fullscale == LSM303DLHC_COMP_FS_4P7GA) {
       devp->compfullscale = LSM303DLHC_COMP_4P7GA;
       for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
-        if(i != 2) {
-          devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_4P7GA;
+        if(devp->config->compcfg->sensitivity == NULL) {
+          if(i != 2) {
+            devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_4P7GA;
+          }
+          else {
+            devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_4P7GA;
+          }
         }
         else {
-          devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_4P7GA;
+          devp->compsensitivity[i] = devp->config->compcfg->sensitivity[i];
         }
       }
     }
     else if(devp->config->compcfg->fullscale == LSM303DLHC_COMP_FS_5P6GA) {
       devp->compfullscale = LSM303DLHC_COMP_5P6GA;
       for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
-        if(i != 2) {
-          devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_5P6GA;
+        if(devp->config->compcfg->sensitivity == NULL) {
+          if(i != 2) {
+            devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_5P6GA;
+          }
+          else {
+            devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_5P6GA;
+          }
         }
         else {
-          devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_5P6GA;
+          devp->compsensitivity[i] = devp->config->compcfg->sensitivity[i];
         }
       }
     }
     else if(devp->config->compcfg->fullscale == LSM303DLHC_COMP_FS_8P1GA) {
       devp->compfullscale = LSM303DLHC_COMP_8P1GA;
       for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
-        if(i != 2) {
-          devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_8P1GA;
+        if(devp->config->compcfg->sensitivity == NULL) {
+          if(i != 2) {
+            devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_8P1GA;
+          }
+          else {
+            devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_8P1GA;
+          }
         }
         else {
-          devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_8P1GA;
+          devp->compsensitivity[i] = devp->config->compcfg->sensitivity[i];
         }
       }
     }
     else
       osalDbgAssert(FALSE, "lsm303dlhcStart(), compass full scale issue");
+
+    /* Storing bias information */
+    if(devp->config->compcfg->bias != NULL)
+      for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++)
+        devp->compbias[i] = devp->config->compcfg->bias[i];
   }
-  /* This is the Compass transient recovery time */
+
+  /* This is the MEMS transient recovery time */
   osalThreadSleepMilliseconds(5);
 
   devp->state = LSM303DLHC_READY;
+#if LSM303DLHC_SHARED_I2C
+  i2cReleaseBus((devp)->config->i2cp);
+#endif /* LSM303DLHC_SHARED_I2C */
 } 
 
 /**
@@ -824,31 +926,30 @@ void lsm303dlhcStart(LSM303DLHCDriver *devp, const LSM303DLHCConfig *config) {
  * @api
  */
 void lsm303dlhcStop(LSM303DLHCDriver *devp) {
-  uint8_t buff[2];
+  uint8_t cr[2];
   osalDbgCheck(devp != NULL);
 
   osalDbgAssert((devp->state == LSM303DLHC_STOP) || (devp->state == LSM303DLHC_READY),
                 "lsm303dlhcStop(), invalid state");
 
-  if (devp->state == LSM303DLHC_STOP) {
+  if (devp->state == LSM303DLHC_READY) {
 #if	LSM303DLHC_SHARED_I2C
     i2cAcquireBus((devp)->config->i2cp);
-    i2cStart((devp)->config->i2cp,
-             (devp)->config->i2ccfg);
+    i2cStart((devp)->config->i2cp, (devp)->config->i2ccfg);
 #endif /* LSM303DLHC_SHARED_I2C */
     if((devp)->config->acccfg != NULL) {
-      buff[0] = LSM303DLHC_AD_ACC_CTRL_REG1;
-      buff[1] = LSM303DLHC_ACC_AE_DISABLED | LSM303DLHC_ACC_ODR_PD;
+      cr[0] = LSM303DLHC_AD_ACC_CTRL_REG1;
+      cr[1] = LSM303DLHC_ACC_AE_DISABLED | LSM303DLHC_ACC_ODR_PD;
       lsm303dlhcI2CWriteRegister(devp->config->i2cp, LSM303DLHC_SAD_ACC,
-                                 buff, 1);
+                                 cr, 1);
     }
     if((devp)->config->compcfg != NULL) {
-      buff[0] = LSM303DLHC_AD_COMP_MR_REG;
-      buff[1] = LSM303DLHC_COMP_MD_SLEEP;
+      cr[0] = LSM303DLHC_AD_COMP_MR_REG;
+      cr[1] = LSM303DLHC_COMP_MD_SLEEP;
       lsm303dlhcI2CWriteRegister(devp->config->i2cp, LSM303DLHC_SAD_ACC,
-                                 buff, 1);
+                                 cr, 1);
       lsm303dlhcI2CWriteRegister(devp->config->i2cp, LSM303DLHC_SAD_COMP,
-                                 buff, 1);
+                                 cr, 1);
     }
     i2cStop((devp)->config->i2cp);
 #if	LSM303DLHC_SHARED_I2C
