@@ -40,18 +40,103 @@
                 .cpu        cortex-m0
 
                 .thumb
-                .section    .ram0_init, "ax", %progbits
 
+                .section    .vecttirs, "ax", %progbits
+                .align      4
+                .globl      _vectors
+_vectors:
+                .long       __main_stack_end__, __reset, __clk_val1, __clk_val2
+                .long       MemManage_Handler, BusFault_Handler, UsageFault_Handler, Vector1C
+                .long       Vector20, Vector24, Vector28, SVC_Handler
+                .long       DebugMon_Handler, Vector34, PendSV_Handler, SysTick_Handler
+                .long       Vector40, Vector44, Vector48, Vector4C
+                .long       Vector50, Vector54, Vector58, Vector5C
+                .long       Vector60, Vector64, Vector68, Vector6C
+                .long       Vector70, Vector74, Vector78, Vector7C
+                .long       Vector80, Vector84, Vector88, Vector8C
+                .long       Vector90, Vector94, Vector98, Vector9C
+                .long       VectorA0, VectorA4, VectorA8, VectorAC
+                .long       VectorB0, VectorB4, VectorB8, VectorBC
+
+                .weak       MemManage_Handler, BusFault_Handler, UsageFault_Handler, Vector1C
+                .weak       Vector20, Vector24, Vector28, SVC_Handler
+                .weak       DebugMon_Handler, Vector34, PendSV_Handler, SysTick_Handler
+                .weak       Vector40, Vector44, Vector48, Vector4C
+                .weak       Vector50, Vector54, Vector58, Vector5C
+                .weak       Vector60, Vector64, Vector68, Vector6C
+                .weak       Vector70, Vector74, Vector78, Vector7C
+                .weak       Vector80, Vector84, Vector88, Vector8C
+                .weak       Vector90, Vector94, Vector98, Vector9C
+                .weak       VectorA0, VectorA4, VectorA8, VectorAC
+                .weak       VectorB0, VectorB4, VectorB8, VectorBC
+MemManage_Handler:
+BusFault_Handler:
+UsageFault_Handler:
+Vector1C:
+Vector20:
+Vector24:
+Vector28:
+SVC_Handler:
+DebugMon_Handler:
+Vector34:
+PendSV_Handler:
+SysTick_Handler:
+Vector40:
+Vector44:
+Vector48:
+Vector4C:
+Vector50:
+Vector54:
+Vector58:
+Vector5C:
+Vector60:
+Vector64:
+Vector68:
+Vector6C:
+Vector70:
+Vector74:
+Vector78:
+Vector7C:
+Vector80:
+Vector84:
+Vector88:
+Vector8C:
+Vector90:
+Vector94:
+Vector98:
+Vector9C:
+VectorA0:
+VectorA4:
+VectorA8:
+VectorAC:
+VectorB0:
+VectorB4:
+VectorB8:
+VectorBC:
+
+                b           _unhandled_exception
+
+                .align  2
+                .thumb_func
+                .weak       _unhandled_exception
+_unhandled_exception:
+                b           _unhandled_exception
+
+                .text
+                .align  2
+                .thumb_func
+                .global __reset
+__reset:        b           Reset_Handler
+
+                .section    .ram0_init, "ax", %progbits
                 .align      2
                 .thumb_func
                 .global     __veneers
 __veneers:
                 .long       0
                 .long       0
-                ldr         r0, =NMI_Handler
-                mov         pc, r0
-                ldr         r0, =HardFault_Handler
-                mov         pc, r0
+                .long       0
+                .long       0
                 .long       0
                 .long       0
                 ldr         r0, =UsageFault_Handler

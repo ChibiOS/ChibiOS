@@ -27,7 +27,7 @@ endif
 # NOTE: On XMC1100 the following symbols are mapped on the words CLK_VAL1 and
 #       CLK_VAL2.
 ifeq ($(USE_LDOPT),)
-  USE_LDOPT = --defsym=MemManage_Handler=0xFFFFFFFF,--defsym=BusFault_Handler=0xFFFFFFFF
+  USE_LDOPT = --defsym=__clk_val1=0xFFFFFFFF,--defsym=__clk_val2=0xFFFFFFFF
 endif
 
 # Enable this if you want link time optimizations (LTO)
