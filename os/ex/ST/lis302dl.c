@@ -105,19 +105,23 @@ static msg_t read_raw(void *ip, int32_t axes[LIS302DL_NUMBER_OF_AXES]) {
 #if LIS302DL_USE_SPI
   osalDbgAssert((((LIS302DLDriver *)ip)->config->spip->state == SPI_READY),
                 "read_raw(), channel not ready");
+
 #if	LIS302DL_SHARED_SPI
   spiAcquireBus(((LIS302DLDriver *)ip)->config->spip);
   spiStart(((LIS302DLDriver *)ip)->config->spip,
-           ((LIS302DLDriver *)ip)->config->spicfg);
-#endif /* LIS302DL_SHARED_SPI */   
+          ((LIS302DLDriver *)ip)->config->spicfg);
+#endif /* LIS302DL_SHARED_SPI */
+
     for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++) {
       lis302dlSPIReadRegister(((LIS302DLDriver *)ip)->config->spip,
                               LIS302DL_AD_OUT_X + (i * 2), 1, &tmp);
       axes[i] = (int32_t)((int8_t)tmp);
     }
+
 #if	LIS302DL_SHARED_SPI
   spiReleaseBus(((LIS302DLDriver *)ip)->config->spip);
-#endif /* LIS302DL_SHARED_SPI */   
+#endif /* LIS302DL_SHARED_SPI */
+
 #endif /* LIS302DL_USE_SPI */ 
   return MSG_OK;
 }
@@ -222,13 +226,34 @@ static msg_t set_full_scale(void *ip, lis302dl_fs_t fs) {
     scale = newfs / ((LIS302DLDriver *)ip)->fullscale;
     ((LIS302DLDriver *)ip)->fullscale = newfs;
 
-    /* Updating register.*/
+#if LIS302DL_USE_SPI
+#if LIS302DL_SHARED_SPI
+  spiAcquireBus(((LIS302DLDriver *)ip)->config->spip);
+  spiStart(((LIS302DLDriver *)ip)->config->spip,
+          ((LIS302DLDriver *)ip)->config->spicfg);
+#endif /* LIS302DL_SHARED_SPI */
     lis302dlSPIReadRegister(((LIS302DLDriver *)ip)->config->spip,
                             LIS302DL_AD_CTRL_REG1, 1, &cr);
+#if LIS302DL_SHARED_SPI
+  spiReleaseBus(((LIS302DLDriver *)ip)->config->spip);
+#endif /* LIS302DL_SHARED_SPI */
+#endif /* LIS302DL_USE_SPI */
+
     cr &= ~(LIS302DL_CTRL_REG1_FS_MASK);
     cr |= fs;
+
+#if LIS302DL_USE_SPI
+#if LIS302DL_SHARED_SPI
+  spiAcquireBus(((LIS302DLDriver *)ip)->config->spip);
+  spiStart(((LIS302DLDriver *)ip)->config->spip,
+          ((LIS302DLDriver *)ip)->config->spicfg);
+#endif /* LIS302DL_SHARED_SPI */
     lis302dlSPIWriteRegister(((LIS302DLDriver *)ip)->config->spip,
                              LIS302DL_AD_CTRL_REG1, 1, &cr);
+#if LIS302DL_SHARED_SPI
+  spiReleaseBus(((LIS302DLDriver *)ip)->config->spip);
+#endif /* LIS302DL_SHARED_SPI */
+#endif /* LIS302DL_USE_SPI */
 
     /* Scaling sensitivity and bias. Re-calibration is suggested anyway. */
     for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++) {
@@ -272,7 +297,7 @@ void lis302dlObjectInit(LIS302DLDriver *devp) {
   devp->vmt_lis302dl = &vmt_lis302dl;
   devp->config = NULL;
   for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++)
-    devp->bias[i] = 0;
+    devp->bias[i] = 0.0f;
   devp->state  = LIS302DL_STOP;
 }
 
@@ -293,14 +318,7 @@ void lis302dlStart(LIS302DLDriver *devp, const LIS302DLConfig *config) {
               "lis302dlStart(), invalid state");			  
 
   devp->config = config;
-  
-#if LIS302DL_USE_SPI
-#if	LIS302DL_SHARED_SPI
-  spiAcquireBus((devp)->config->spip);
-#endif /* LIS302DL_SHARED_SPI */
-  spiStart((devp)->config->spip,
-           (devp)->config->spicfg);
-           
+
   /* Control register 1 configuration block.*/
   {
     cr[0] = LIS302DL_CTRL_REG1_XEN | LIS302DL_CTRL_REG1_YEN | 
@@ -316,6 +334,12 @@ void lis302dlStart(LIS302DLDriver *devp, const LIS302DLConfig *config) {
     cr[1] = devp->config->highpass;
 #endif
   }
+
+#if LIS302DL_USE_SPI
+#if LIS302DL_SHARED_SPI
+  spiAcquireBus((devp)->config->spip);
+#endif /* LIS302DL_SHARED_SPI */
+  spiStart((devp)->config->spip, (devp)->config->spicfg);
   
   lis302dlSPIWriteRegister(devp->config->spip, LIS302DL_AD_CTRL_REG1, 
                            2, cr);
@@ -328,17 +352,30 @@ void lis302dlStart(LIS302DLDriver *devp, const LIS302DLConfig *config) {
   /* Storing sensitivity information according to full scale value */
   if(devp->config->fullscale == LIS302DL_FS_2G) {
     devp->fullscale = LIS302DL_2G;
-    for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++)
-      devp->sensitivity[i] = LIS302DL_SENS_2G;
+    if(devp->config->sensitivity == NULL)
+      for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++)
+        devp->sensitivity[i] = LIS302DL_SENS_2G;
+    else
+      for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++)
+        devp->sensitivity[i] = devp->config->sensitivity[i];
   }
   else if(devp->config->fullscale == LIS302DL_FS_8G) {
     devp->fullscale = LIS302DL_8G;
-    for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++)
+    if(devp->config->sensitivity == NULL)
+      for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++)
         devp->sensitivity[i] = LIS302DL_SENS_8G;
+    else
+      for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++)
+        devp->sensitivity[i] = devp->config->sensitivity[i];
   }
   else {
     osalDbgAssert(FALSE, "lis302dlStart(), accelerometer full scale issue");
   }
+
+  if(devp->config->bias != NULL)
+    for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++)
+      devp->bias[i] = devp->config->bias[i];
+
   /* This is the Accelerometer transient recovery time */
   osalThreadSleepMilliseconds(10);
 
@@ -359,8 +396,8 @@ void lis302dlStop(LIS302DLDriver *devp) {
   osalDbgAssert((devp->state == LIS302DL_STOP) || (devp->state == LIS302DL_READY),
                 "lis302dlStop(), invalid state");
 
-#if (LIS302DL_USE_SPI)
-  if (devp->state == LIS302DL_STOP) {
+  if (devp->state == LIS302DL_READY) {
+#if LIS302DL_USE_SPI
 #if	LIS302DL_SHARED_SPI
     spiAcquireBus((devp)->config->spip);
     spiStart((devp)->config->spip,
@@ -371,9 +408,9 @@ void lis302dlStop(LIS302DLDriver *devp) {
     spiStop((devp)->config->spip);
 #if	LIS302DL_SHARED_SPI
     spiReleaseBus((devp)->config->spip);
-#endif /* LIS302DL_SHARED_SPI */    
-  }			  
-#endif /* LIS302DL_USE_SPI */
+#endif /* LIS302DL_SHARED_SPI */   
+#endif /* LIS302DL_USE_SPI */ 
+  }
   devp->state = LIS302DL_STOP;
 }
 /** @} */

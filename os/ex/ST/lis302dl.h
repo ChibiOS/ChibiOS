@@ -41,7 +41,7 @@
 /**
  * @brief   LIS302DL driver version string.
  */
-#define EX_LIS302DL_VERSION         "1.0.2"
+#define EX_LIS302DL_VERSION         "1.0.3"
 
 /**
  * @brief   LIS302DL driver version major number.
@@ -56,7 +56,7 @@
 /**
  * @brief   LIS302DL driver version patch number.
  */
-#define EX_LIS302DL_PATCH           2
+#define EX_LIS302DL_PATCH           3
 /** @} */
 
 /**
@@ -297,24 +297,24 @@ typedef struct {
   /**
    * @brief LIS302DL initial sensitivity.
    */
-  float                     sensitivity[LIS302DL_NUMBER_OF_AXES];
+  float                     *sensitivity;
   /**
    * @brief LIS302DL initial bias.
    */
-  float                     bias[LIS302DL_NUMBER_OF_AXES];
+  float                     *bias;
   /**
    * @brief LIS302DL full scale value.
    */
-  lis302dl_fs_t               fullscale;
+  lis302dl_fs_t             fullscale;
   /**
    * @brief LIS302DL output data rate selection.
    */
-  lis302dl_odr_t              outputdatarate;
+  lis302dl_odr_t            outputdatarate;
 #if LIS302DL_USE_ADVANCED || defined(__DOXYGEN__)
   /**
-   * @brief   LIS302DL high pass filtering
+   * @brief LIS302DL high pass filtering.
    */
-  lis302dl_hp_t               highpass;
+  lis302dl_hp_t             highpass;
 #endif
 } LIS302DLConfig;
 
@@ -347,9 +347,9 @@ struct LIS302DLVMT {
 #define _lis302dl_data                                                      \
   _base_accelerometer_data                                                  \
   /* Driver state.*/                                                        \
-  lis302dl_state_t            state;                                        \
+  lis302dl_state_t          state;                                          \
   /* Current configuration data.*/                                          \
-  const LIS302DLConfig        *config;                                      \
+  const LIS302DLConfig      *config;                                        \
   /* Current sensitivity.*/                                                 \
   float                     sensitivity[LIS302DL_NUMBER_OF_AXES];           \
   /* Bias data.*/                                                           \
