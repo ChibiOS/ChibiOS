@@ -71,7 +71,7 @@ endif
 
 # Enables the use of FPU (no, softfp, hard).
 ifeq ($(USE_FPU),)
-  USE_FPU = hard
+  USE_FPU = no
 endif
 
 #
@@ -114,7 +114,7 @@ CSRC = $(STARTUPSRC) \
        $(HALSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
-	   $(LIS3DSHSRC) \
+       $(LIS3DSHSRC) \
        $(STREAMSSRC) \
        $(SHELLSRC) \
        usbcfg.c main.c

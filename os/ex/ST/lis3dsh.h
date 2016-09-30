@@ -41,7 +41,7 @@
 /**
  * @brief   LIS3DSH driver version string.
  */
-#define EX_LIS3DSH_VERSION          "1.0.1"
+#define EX_LIS3DSH_VERSION          "1.0.2"
 
 /**
  * @brief   LIS3DSH driver version major number.
@@ -56,7 +56,7 @@
 /**
  * @brief   LIS3DSH driver version patch number.
  */
-#define EX_LIS3DSH_PATCH            1
+#define EX_LIS3DSH_PATCH            2
 /** @} */
 
 /**
@@ -435,28 +435,28 @@ typedef struct {
   /**
    * @brief LIS3DSH initial sensitivity.
    */
-  float                     sensitivity[LIS3DSH_NUMBER_OF_AXES];
+  float                     *sensitivity;
   /**
    * @brief LIS3DSH initial bias.
    */
-  float                     bias[LIS3DSH_NUMBER_OF_AXES];
+  float                     *bias;
   /**
    * @brief LIS3DSH full scale value.
    */
-  lis3dsh_fs_t               fullscale;
+  lis3dsh_fs_t              fullscale;
   /**
    * @brief LIS3DSH output data rate selection.
    */
-  lis3dsh_odr_t              outputdatarate;
+  lis3dsh_odr_t             outputdatarate;
 #if LIS3DSH_USE_ADVANCED || defined(__DOXYGEN__)
   /**
    * @brief   LIS3DSH anti-aliasing bandwidth.
    */
-  lis3dsh_bw_t               antialiasing;
+  lis3dsh_bw_t              antialiasing;
   /**
    * @brief   LIS3DSH block data update.
    */  
-  lis3dsh_bdu_t              blockdataupdate;
+  lis3dsh_bdu_t             blockdataupdate;
 #endif
 } LIS3DSHConfig;
 
@@ -488,9 +488,9 @@ struct LIS3DSHVMT {
 #define _lis3dsh_data                                                       \
   _base_accelerometer_data                                                  \
   /* Driver state.*/                                                        \
-  lis3dsh_state_t            state;                                         \
+  lis3dsh_state_t           state;                                          \
   /* Current configuration data.*/                                          \
-  const LIS3DSHConfig        *config;                                       \
+  const LIS3DSHConfig       *config;                                        \
   /* Current sensitivity.*/                                                 \
   float                     sensitivity[LIS3DSH_NUMBER_OF_AXES];            \
   /* Bias data.*/                                                           \

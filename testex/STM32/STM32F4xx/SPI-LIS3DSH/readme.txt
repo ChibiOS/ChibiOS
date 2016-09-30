@@ -1,19 +1,19 @@
 *****************************************************************************
-** ChibiOS/HAL + ChibiOS/EX - SPI + LIS3DSH demo for STM32F4xx.            **
+** ChibiOS/HAL - USB-CDC driver demo for STM32.                            **
 *****************************************************************************
 
 ** TARGET **
 
-The demo runs on an STM32F407 Discovery board rev MB997C and MB997D.
+The demo runs on both Olimex STM32-E407 or STM32F4-Discovery boards, just
+change the board reference in the Makefile.
 
 ** The Demo **
 
-The demo flashes the board LED using a thread, read data from LIS3DSH printing
-it on a BaseSequentialStream (SDU1, mapped on USB virtual COM port).
+The application demonstrates the use of the STM32 USB (OTG) driver.
 
 ** Build Procedure **
 
-The demo has been tested by using the free Codesourcery GCC-based toolchain
+The demo has been tested using the free Codesourcery GCC-based toolchain
 and YAGARTO.
 Just modify the TRGT line in the makefile in order to use different GCC ports.
 
