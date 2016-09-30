@@ -40,7 +40,7 @@
 /**
  * @brief   LIS3MDL driver version string.
  */
-#define EX_LIS3MDL_VERSION          "1.0.3"
+#define EX_LIS3MDL_VERSION          "1.0.4"
 
 /**
  * @brief   LIS3MDL driver version major number.
@@ -55,7 +55,7 @@
 /**
  * @brief   LIS3MDL driver version patch number.
  */
-#define EX_LIS3MDL_PATCH            3
+#define EX_LIS3MDL_PATCH            4
 /** @} */
 
 /**
@@ -376,11 +376,11 @@ typedef struct {
   /**
    * @brief LIS3MDL initial sensitivity.
    */
-  float*                    sensitivity;
+  float                     *sensitivity;
   /**
    * @brief LIS3MDL initial bias.
    */
-  float*                    bias;
+  float                     *bias;
   /**
    * @brief  LIS3MDL slave address
    */
