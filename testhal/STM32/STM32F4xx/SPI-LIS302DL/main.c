@@ -48,8 +48,8 @@ static const SPIConfig spicfg = {
 static LIS302DLConfig l3gd20cfg = {
   &SPID1,                                    /* Pointer to SPI Driver.*/
   &spicfg,                                   /* Pointer to SPI Configuration.*/
-  {0, 0, 0},                                 /* Use default sensitivity.*/
-  {0, 0, 0},                                 /* Use default bias.*/
+  NULL,                                      /* Use default sensitivity.*/
+  NULL,                                      /* Use default bias.*/
   LIS302DL_FS_2G,                            /* Full scale value.*/
   LIS302DL_ODR_100HZ,                        /* Output data rate.*/
 #if LIS302DL_USE_ADVANCED || defined(__DOXYGEN__)

@@ -48,8 +48,8 @@ static const SPIConfig spicfg = {
 static LIS3DSHConfig lis3dshcfg = {
   &SPID1,                                    /* Pointer to SPI Driver.*/
   &spicfg,                                   /* Pointer to SPI Configuration.*/
-  {0, 0, 0},                                 /* Use default sensitivity.*/
-  {0, 0, 0},                                 /* Use default bias.*/
+  NULL,                                      /* Use default sensitivity.*/
+  NULL,                                      /* Use default bias.*/
   LIS3DSH_FS_2G,                             /* Full scale value.*/
   LIS3DSH_ODR_100HZ,                         /* Output data rate.*/
 #if LIS3DSH_USE_ADVANCED || defined(__DOXYGEN__)
