@@ -126,7 +126,19 @@ _unhandled_exception:
                 .align  2
                 .thumb_func
                 .global __reset
-__reset:        b           Reset_Handler
+__reset:        sub     sp, #32
+                movs    r0, #0
+                str     r0, [sp, #4]
+                str     r0, [sp, #8]
+                str     r0, [sp, #12]
+                str     r0, [sp, #16]
+                str     r0, [sp, #20]
+                ldr     r0, =Reset_Handler
+                str     r0, [sp, #24]
+                ldr     r0, =0x01000000
+                str     r0, [sp, #28]
+                ldr     r0, =0xFFFFFFF9
+                bx      r0
 
                 .section    .ram0_init, "ax", %progbits
                 .align      2
