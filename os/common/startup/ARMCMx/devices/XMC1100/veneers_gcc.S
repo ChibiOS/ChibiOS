@@ -45,8 +45,8 @@
                 .align      4
                 .globl      _vectors
 _vectors:
-                .long       __main_stack_end__, __reset, __clk_val1, __clk_val2
-                .long       MemManage_Handler, BusFault_Handler, UsageFault_Handler, Vector1C
+                .long       __main_stack_end__, __reset, NMI_Handler, HardFault_Handler
+                .long       __clk_val1, __clk_val2, UsageFault_Handler, Vector1C
                 .long       Vector20, Vector24, Vector28, SVC_Handler
                 .long       DebugMon_Handler, Vector34, PendSV_Handler, SysTick_Handler
                 .long       Vector40, Vector44, Vector48, Vector4C
@@ -58,7 +58,7 @@ _vectors:
                 .long       VectorA0, VectorA4, VectorA8, VectorAC
                 .long       VectorB0, VectorB4, VectorB8, VectorBC
 
-                .weak       MemManage_Handler, BusFault_Handler, UsageFault_Handler, Vector1C
+                .weak       NMI_Handler, HardFault_Handler, UsageFault_Handler, Vector1C
                 .weak       Vector20, Vector24, Vector28, SVC_Handler
                 .weak       DebugMon_Handler, Vector34, PendSV_Handler, SysTick_Handler
                 .weak       Vector40, Vector44, Vector48, Vector4C
@@ -69,8 +69,8 @@ _vectors:
                 .weak       Vector90, Vector94, Vector98, Vector9C
                 .weak       VectorA0, VectorA4, VectorA8, VectorAC
                 .weak       VectorB0, VectorB4, VectorB8, VectorBC
-MemManage_Handler:
-BusFault_Handler:
+NMI_Handler:
+HardFault_Handler:
 UsageFault_Handler:
 Vector1C:
 Vector20:
