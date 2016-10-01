@@ -41,7 +41,7 @@
 
                 .thumb
 
-                .section    .vecttirs, "ax", %progbits
+                .section    .vectors, "ax", %progbits
                 .align      4
                 .globl      _vectors
 _vectors:
