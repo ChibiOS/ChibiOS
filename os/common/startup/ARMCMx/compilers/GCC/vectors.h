@@ -27,6 +27,16 @@
 
 #include "cmparams.h"
 
+/* This inclusion can be used to remap vectors using different names.
+ * Example:
+ * #define Vector7C UartRX_Handler
+ * This can be useful when using 3rd part libraries that assume specific
+ * vector names.
+ */
+#if defined(VECTORS_USE_CONF)
+#include "vectorsconf.h"
+#endif
+
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
