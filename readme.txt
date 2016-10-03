@@ -86,6 +86,7 @@
 *****************************************************************************
 
 *** Next ***
+- VAR: Updated CMSIS file for STM32F1xx to 4.1.0.
 - EX:  Added thermometer implementation for ST HTS221 device.
 - EX:  Added hygrometer implementation for ST HTS221 device.
 - EX:  Added barometer implementation for ST LPS25H device.
