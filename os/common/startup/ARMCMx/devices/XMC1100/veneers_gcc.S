@@ -168,7 +168,7 @@ __veneers:
                 mov         pc, r0
                 ldr         r0, =DebugMon_Handler
                 mov         pc, r0
-                movs        r0, #13
+                movs        r0, #14
                 b           .
                 ldr         r0, =PendSV_Handler
                 mov         pc, r0
