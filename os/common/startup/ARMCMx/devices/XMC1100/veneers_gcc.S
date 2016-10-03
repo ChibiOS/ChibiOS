@@ -58,7 +58,9 @@ _vectors:
                 .long       VectorA0, VectorA4, VectorA8, VectorAC
                 .long       VectorB0, VectorB4, VectorB8, VectorBC
 
-                .weak       NMI_Handler, HardFault_Handler, UsageFault_Handler, Vector1C
+                .align  2
+                .thumb_func
+                .weak       HardFault_Handler, UsageFault_Handler, Vector1C
                 .weak       Vector20, Vector24, Vector28, SVC_Handler
                 .weak       DebugMon_Handler, Vector34, PendSV_Handler, SysTick_Handler
                 .weak       Vector40, Vector44, Vector48, Vector4C
@@ -69,7 +71,6 @@ _vectors:
                 .weak       Vector90, Vector94, Vector98, Vector9C
                 .weak       VectorA0, VectorA4, VectorA8, VectorAC
                 .weak       VectorB0, VectorB4, VectorB8, VectorBC
-NMI_Handler:
 HardFault_Handler:
 UsageFault_Handler:
 Vector1C:
@@ -145,20 +146,30 @@ __reset:        sub     sp, #32
                 .thumb_func
                 .global     __veneers
 __veneers:
-                .long       0
-                .long       0
-                .long       0
+                ldr         r0, =HardFault_Handler
+                mov         pc, r0
+                movs        r0, #4
+                b           .
+                movs        r0, #5
+                b           .
+                movs        r0, #6
+                b           .
                 ldr         r0, =UsageFault_Handler
                 mov         pc, r0
-                .long       0
-                .long       0
-                .long       0
-                .long       0
+                movs        r0, #8
+                b           .
+                movs        r0, #9
+                b           .
+                movs        r0, #10
+                b           .
+                movs        r0, #11
+                b           .
                 ldr         r0, =SVC_Handler
                 mov         pc, r0
                 ldr         r0, =DebugMon_Handler
                 mov         pc, r0
-                .long       0
+                movs        r0, #13
+                b           .
                 ldr         r0, =PendSV_Handler
                 mov         pc, r0
                 ldr         r0, =SysTick_Handler
