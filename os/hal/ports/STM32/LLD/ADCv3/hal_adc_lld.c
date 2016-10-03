@@ -313,9 +313,6 @@ static void adc_lld_serve_interrupt(ADCDriver *adcp, uint32_t isr) {
       /* Analog watchdog error.*/
       _adc_isr_error_code(adcp, ADC_ERR_AWD3);
     }
-#if defined(STM32_ADC_IRQ_HOOK)
-  STM32_ADC_IRQ_HOOK
-#endif
   }
 }
 
@@ -335,25 +332,36 @@ OSAL_IRQ_HANDLER(STM32_ADC1_HANDLER) {
   OSAL_IRQ_PROLOGUE();
 
 #if STM32_ADC_DUAL_MODE
+
   isr  = ADC1->ISR;
   isr |= ADC2->ISR;
   ADC1->ISR = isr;
   ADC2->ISR = isr;
-
+#if defined(STM32_ADC_ADC12_IRQ_HOOK)
+  STM32_ADC_ADC12_IRQ_HOOK
+#endif
   adc_lld_serve_interrupt(&ADCD1, isr);
+
 #else /* !STM32_ADC_DUAL_MODE */
+
 #if STM32_ADC_USE_ADC1
   isr  = ADC1->ISR;
   ADC1->ISR = isr;
-
+#if defined(STM32_ADC_ADC1_IRQ_HOOK)
+  STM32_ADC_ADC1_IRQ_HOOK
+#endif
   adc_lld_serve_interrupt(&ADCD1, isr);
 #endif
+
 #if STM32_ADC_USE_ADC2
   isr  = ADC2->ISR;
   ADC2->ISR = isr;
-
+#if defined(STM32_ADC_ADC2_IRQ_HOOK)
+  STM32_ADC_ADC2_IRQ_HOOK
+#endif
   adc_lld_serve_interrupt(&ADCD2, isr);
 #endif
+
 #endif /* !STM32_ADC_DUAL_MODE */
 
   OSAL_IRQ_EPILOGUE();
@@ -373,7 +381,9 @@ OSAL_IRQ_HANDLER(STM32_ADC3_HANDLER) {
 
   isr  = ADC3->ISR;
   ADC3->ISR = isr;
-
+#if defined(STM32_ADC_ADC3_IRQ_HOOK)
+  STM32_ADC_ADC3_IRQ_HOOK
+#endif
   adc_lld_serve_interrupt(&ADCD3, isr);
 
   OSAL_IRQ_EPILOGUE();
