@@ -72,6 +72,7 @@
 *****************************************************************************
 
 *** 2.6.10 ***
+- FIX: Fixed STM32F105 port not compiling. (bug #782).
 - FIX: Fixed wrong HSE checks and PLL2 enable switch in STM32F105 and
        STM32F107 port (bug #779).
 - FIX: Fixed wrong check in win32 simulator serial driver (bug #765).
