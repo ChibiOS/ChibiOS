@@ -322,7 +322,10 @@ void ext_lld_exti_irq_enable(void) {
 #if defined(STM32F10X_CL)
   /* EXTI vectors specific to STM32F1xx Connectivity Line.*/
   nvicEnableVector(OTG_FS_WKUP_IRQn, STM32_EXT_EXTI18_IRQ_PRIORITY);
+#if defined(STM32F107xC)
+  /* EXTI vectors specific to STM32F107 Connectivity Line.*/
   nvicEnableVector(ETH_WKUP_IRQn, STM32_EXT_EXTI19_IRQ_PRIORITY);
+#endif
 #elif  defined(STM32F10X_MD_VL) || defined(STM32F10X_HD_VL)
   /* EXTI vectors specific to STM32F1xx Value Line.*/
 #else
