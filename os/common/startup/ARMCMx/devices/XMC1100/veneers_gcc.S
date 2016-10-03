@@ -148,9 +148,6 @@ __veneers:
                 .long       0
                 .long       0
                 .long       0
-                .long       0
-                .long       0
-                .long       0
                 ldr         r0, =UsageFault_Handler
                 mov         pc, r0
                 .long       0
