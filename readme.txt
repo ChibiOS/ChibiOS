@@ -73,7 +73,8 @@
 *****************************************************************************
 
 *** 16.1.6 ***
-- HAL: Fixed STM32F105 port not compiling. (bug #782).
+- HAL: Fixed STM32L0xx CCIPR initialization (bug #783).
+- HAL: Fixed STM32F105 port not compiling (bug #782).
 - HAL: Fixed wrong registry for STM32F205xx and STM32F215xx port 
        (bug #780).
 - HAL: Fixed wrong HSE checks and PLL2 enable switch in STM32F105 and
