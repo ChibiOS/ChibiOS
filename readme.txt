@@ -145,6 +145,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- RT:  Fixed tick-less mode can fail in RT for very large delays (bug #784)
+       (backported to 16.1.6, 3.0.6).
 - HAL: Fixed STM32L0xx CCIPR initialization (bug #783) 
        (backported to 16.1.6).
 - HAL: Fixed STM32F105 port not compiling (bug #782)
