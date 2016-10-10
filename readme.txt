@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.6 ***
+- RT:  Fixed tick-less mode can fail in RT for very large delays (bug #784).
 - HAL: Fixed STM32L0xx CCIPR initialization (bug #783).
 - HAL: Fixed STM32F105 port not compiling (bug #782).
 - HAL: Fixed wrong registry for STM32F205xx and STM32F215xx port 

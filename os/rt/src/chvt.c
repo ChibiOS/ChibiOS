@@ -131,23 +131,36 @@ void chVTDoSetI(virtual_timer_t *vtp, systime_t delay,
       return;
     }
 
-    /* Special case where the timer will be placed as first element in a
-       non-empty list, the alarm needs to be recalculated.*/
-    delta = now + delay - ch.vtlist.vt_lasttime;
-    if (delta < ch.vtlist.vt_next->vt_delta) {
+    /* Pointer to the first element in the delta list, which is non-empty.*/
+    p = ch.vtlist.vt_next;
 
-      /* New alarm deadline.*/
+    /* Delay as delta from 'lasttime'. Note, it can overflow and the value
+       becomes lower than 'now'.*/
+    delta = now - ch.vtlist.vt_lasttime + delay;
+
+    if (delta < now - ch.vtlist.vt_lasttime) {
+      /* Scenario where a very large delay excedeed the numeric range, it
+         requires a special handling. We need to skip the first element and
+         adjust the delta to wrap back in the previous numeric range.*/
+      delta -= p->vt_delta;
+      p = p->vt_next;
+    }
+    else if (delta < p->vt_delta) {
+     /* A small delay that will become the first element in the delta list
+        and next deadline.*/
       port_timer_set_alarm(ch.vtlist.vt_lasttime + delta);
     }
   }
 #else /* CH_CFG_ST_TIMEDELTA == 0 */
   /* Delta is initially equal to the specified delay.*/
   delta = delay;
+
+  /* Pointer to the first element in the delta list.*/
+  p = ch.vtlist.vt_next;
 #endif /* CH_CFG_ST_TIMEDELTA == 0 */
 
   /* The delta list is scanned in order to find the correct position for
      this timer. */
-  p = ch.vtlist.vt_next;
   while (p->vt_delta < delta) {
     delta -= p->vt_delta;
     p = p->vt_next;
