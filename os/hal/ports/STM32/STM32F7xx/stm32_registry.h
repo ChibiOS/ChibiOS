@@ -462,10 +462,12 @@
 /* USB attributes.*/
 #define STM32_OTG_STEPPING                  2
 #define STM32_HAS_OTG1                      TRUE
+#define STM32_OTG1_ENDPOINTS                5
 #define STM32_OTG1_HANDLER                  Vector14C
 #define STM32_OTG1_NUMBER                   67
 
 #define STM32_HAS_OTG2                      TRUE
+#define STM32_OTG2_ENDPOINTS                8
 #define STM32_OTG2_HANDLER                  Vector174
 #define STM32_OTG2_EP1OUT_HANDLER           Vector168
 #define STM32_OTG2_EP1IN_HANDLER            Vector16C

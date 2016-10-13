@@ -159,6 +159,14 @@
 #error "STM32_HAS_OTGx not defined in registry"
 #endif
 
+#if STM32_HAS_OTG1 && !defined(STM32_OTG1_ENDPOINTS)
+#error "STM32_OTG1_ENDPOINTS not defined in registry"
+#endif
+
+#if STM32_HAS_OTG2 && !defined(STM32_OTG2_ENDPOINTS)
+#error "STM32_OTG2_ENDPOINTS not defined in registry"
+#endif
+
 #if (STM32_USB_USE_OTG1 && !defined(STM32_OTG1_HANDLER)) ||                 \
     (STM32_USB_USE_OTG2 && !defined(STM32_OTG2_HANDLER))
 #error "STM32_OTGx_HANDLER not defined in registry"
@@ -172,10 +180,14 @@
 /**
  * @brief   Maximum endpoint address.
  */
-#if !STM32_USB_USE_OTG2 || defined(__DOXYGEN__)
-#define USB_MAX_ENDPOINTS                   3
+#if (STM32_HAS_OTG2 && STM32_USB_USE_OTG2) || defined(__DOXYGEN__)
+#if (STM32_OTG1_ENDPOINTS < STM32_OTG2_ENDPOINTS) || defined(__DOXYGEN__)
+#define USB_MAX_ENDPOINTS                   STM32_OTG2_ENDPOINTS
 #else
-#define USB_MAX_ENDPOINTS                   5
+#define USB_MAX_ENDPOINTS                   STM32_OTG1_ENDPOINTS
+#endif
+#else
+#define USB_MAX_ENDPOINTS                   STM32_OTG1_ENDPOINTS
 #endif
 
 #if STM32_USB_USE_OTG1 && !STM32_HAS_OTG1

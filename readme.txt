@@ -86,6 +86,8 @@
 *****************************************************************************
 
 *** Next ***
+- HAL: Implemented better handling for number of endpoints on STM32 OTGv1
+       driver, now it is a registry key.
 - VAR: Updated CMSIS file for STM32F1xx to 4.1.0.
 - EX:  Added thermometer implementation for ST HTS221 device.
 - EX:  Added hygrometer implementation for ST HTS221 device.
