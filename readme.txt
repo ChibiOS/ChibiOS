@@ -73,6 +73,8 @@
 *****************************************************************************
 
 *** 16.1.6 ***
+- HAL: Fixed wrong bit offset in STM32F37x ADC_CR2_EXTSEL_SRC() macro
+       (bug #785).
 - RT:  Fixed tick-less mode can fail in RT for very large delays (bug #784).
 - HAL: Fixed STM32L0xx CCIPR initialization (bug #783).
 - HAL: Fixed STM32F105 port not compiling (bug #782).
