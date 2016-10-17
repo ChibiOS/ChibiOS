@@ -69,23 +69,24 @@ OSAL_IRQ_HANDLER(SPI_STC_vect) {
     spip->rxbuf[spip->rxidx++] = SPDR;  // receive
   }
 
-  /* spi_lld_exchange, spi_lld_send or spi_lld_ignore */
-  if (spip->txidx < spip->txbytes) {
-    if (spip->txbuf) {
-      SPDR = spip->txbuf[spip->txidx++]; // send
-    } else {
-      SPDR = 0; spip->txidx++; // dummy send
-    }
-  }
-
-  /* spi_lld_send */
-  else if (spip->rxidx < spip->rxbytes) { /* rx not done */
-    SPDR = 0; // dummy send to keep the clock going
-  }
-
   /* rx done and tx done */
   if (spip->rxidx >= spip->rxbytes && spip->txidx >= spip->txbytes) { 
     _spi_isr_code(spip);
+  }
+  else {
+    /* spi_lld_exchange, spi_lld_send or spi_lld_ignore */
+    if (spip->txidx < spip->txbytes) {
+      if (spip->txbuf) {
+        SPDR = spip->txbuf[spip->txidx++]; // send
+      } else {
+        SPDR = 0; spip->txidx++; // dummy send
+      }
+    }
+
+    /* spi_lld_receive */
+    else if (spip->rxidx < spip->rxbytes) { /* rx not done */
+      SPDR = 0; // dummy send to keep the clock going
+    }
   }
 
   OSAL_IRQ_EPILOGUE();
