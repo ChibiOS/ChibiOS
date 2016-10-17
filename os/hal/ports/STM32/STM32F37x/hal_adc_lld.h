@@ -35,7 +35,7 @@
  * @name    Triggers selection
  * @{
  */
-#define ADC_CR2_EXTSEL_SRC(n)   ((n) << 24) /**< @brief Trigger source.     */
+#define ADC_CR2_EXTSEL_SRC(n)   ((n) << 17) /**< @brief Trigger source.     */
 /** @} */
 
 /**
