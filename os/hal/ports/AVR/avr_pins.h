@@ -21,7 +21,7 @@
 
 #if AVR_SPI_USE_SPI1
 
-#if defined(__AVR_ATmega644__) || defined(__AVR_ATmega644P__)
+#if defined(__AVR_ATmega644__) || defined(__AVR_ATmega644P__) || defined(__AVR_ATmega162__)
   #define PIN_SPI1            PINB
   #define PORT_SPI1           PORTB
   #define DDR_SPI1            DDRB

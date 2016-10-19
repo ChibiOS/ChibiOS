@@ -70,7 +70,7 @@ extern "C" {
 }
 #endif
 
-#ifdef __AVR_ATmega128__
+#if defined(__AVR_ATmega128__) || defined(__AVR_ATmega162__)
 #define TIFR_REG TIFR
 #define TIMSK_REG TIMSK
 #else

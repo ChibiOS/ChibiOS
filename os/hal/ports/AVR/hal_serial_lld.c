@@ -45,6 +45,9 @@ SerialDriver SD1;
   #elif defined(USART_RX_vect)
     #define AVR_SD1_RX_VECT USART_RX_vect
     #define AVR_SD1_TX_VECT USART_UDRE_vect
+  #elif defined(USART0_RXC_vect)
+    #define AVR_SD1_RX_VECT USART0_RXC_vect
+    #define AVR_SD1_TX_VECT USART0_UDRE_vect
   #else
     #error "Cannot find USART to use for SD1"
   #endif 
@@ -61,6 +64,9 @@ SerialDriver SD2;
   /* Check if USART1 exists for this MCU */
   #ifdef USART1_RX_vect
     #define AVR_SD2_RX_VECT USART1_RX_vect
+    #define AVR_SD2_TX_VECT USART1_UDRE_vect
+  #elif defined (USART1_RXC_vect)
+    #define AVR_SD2_RX_VECT USART1_RXC_vect
     #define AVR_SD2_TX_VECT USART1_UDRE_vect
   #else
     #error "Cannot find USART to use for SD2"
@@ -130,28 +136,40 @@ static void notify1(io_queue_t *qp) {
  */
 static void usart0_init(const SerialConfig *config) {
 
+  uint8_t ucsr0c;
+
   UBRR0L = config->sc_brr;
+#if defined(__AVR_ATmega162__)
+  UBRR0H = (config->sc_brr >> 8) & 0x0f;
+#else
   UBRR0H = config->sc_brr >> 8;
+#endif
   UCSR0A = 0;
   UCSR0B = (1 << RXEN0) | (1 << TXEN0) | (1 << RXCIE0);
   switch (config->sc_bits_per_char) {
   case USART_CHAR_SIZE_5:
-    UCSR0C = 0;
+    ucsr0c = 0;
     break;
   case USART_CHAR_SIZE_6:
-    UCSR0C = (1 << UCSZ00);
+    ucsr0c = (1 << UCSZ00);
     break;
   case USART_CHAR_SIZE_7:
-    UCSR0C = (1 << UCSZ01);
+    ucsr0c = (1 << UCSZ01);
     break;
   case USART_CHAR_SIZE_9:
     UCSR0B |= (1 << UCSZ02);
-    UCSR0C = (1 << UCSZ00) | (1 << UCSZ01);
+    ucsr0c = (1 << UCSZ00) | (1 << UCSZ01);
     break;
   case USART_CHAR_SIZE_8:
   default:
-    UCSR0C = (1 << UCSZ00) | (1 << UCSZ01);
+    ucsr0c = (1 << UCSZ00) | (1 << UCSZ01);
   }
+  
+#if defined(__AVR_ATmega162__)
+  UCSR0C = (1 << URSEL0) | ucsr0c;
+#else
+  UCSR0C = ucsr0c;
+#endif
 }
 
 /**
@@ -161,7 +179,11 @@ static void usart0_deinit(void) {
 
   UCSR0A = 0;
   UCSR0B = 0;
+#if defined(__AVR_ATmega162__)
+  UCSR0C = (1 << URSEL0) | 0;
+#else
   UCSR0C = 0;
+#endif
 }
 #endif
 
@@ -179,28 +201,40 @@ static void notify2(io_queue_t *qp) {
  */
 static void usart1_init(const SerialConfig *config) {
 
+  uint8_t ucsr1c;
+
   UBRR1L = config->sc_brr;
+#if defined(__AVR_ATmega162__)
+  UBRR1H = (config->sc_brr >> 8) & 0x0f;
+#else
   UBRR1H = config->sc_brr >> 8;
+#endif
   UCSR1A = 0;
   UCSR1B = (1 << RXEN1) | (1 << TXEN1) | (1 << RXCIE1);
   switch (config->sc_bits_per_char) {
   case USART_CHAR_SIZE_5:
-    UCSR1C = 0;
+    ucsr1c = 0;
     break;
   case USART_CHAR_SIZE_6:
-    UCSR1C = (1 << UCSZ10);
+    ucsr1c = (1 << UCSZ10);
     break;
   case USART_CHAR_SIZE_7:
-    UCSR1C = (1 << UCSZ11);
+    ucsr1c = (1 << UCSZ11);
     break;
   case USART_CHAR_SIZE_9:
     UCSR1B |= (1 << UCSZ12);
-    UCSR1C = (1 << UCSZ10) | (1 << UCSZ11);
+    ucsr1c = (1 << UCSZ10) | (1 << UCSZ11);
     break;
   case USART_CHAR_SIZE_8:
   default:
-    UCSR1C = (1 << UCSZ10) | (1 << UCSZ11);
+    ucsr1c = (1 << UCSZ10) | (1 << UCSZ11);
   }
+  
+#if defined(__AVR_ATmega162__)
+  UCSR1C = (1 << URSEL1) | ucsr1c;
+#else
+  UCSR1C = ucsr1c;
+#endif
 }
 
 /**
@@ -210,7 +244,11 @@ static void usart1_deinit(void) {
 
   UCSR1A = 0;
   UCSR1B = 0;
+#if defined(__AVR_ATmega162__)
+  UCSR1C = (1 << URSEL1) | 0;
+#else
   UCSR1C = 0;
+#endif
 }
 #endif
 
