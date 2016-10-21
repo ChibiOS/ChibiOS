@@ -569,6 +569,7 @@ static inline void osalSysDisable(void) {
 static inline void osalSysEnable(void) {
 
   asm volatile ("sei" : : : "memory");
+  asm volatile ("nop");
 }
 
 /**
@@ -591,6 +592,7 @@ static inline void osalSysLock(void) {
 static inline void osalSysUnlock(void) {
 
   asm volatile ("sei" : : : "memory");
+  asm volatile ("nop");
 }
 
 /**
@@ -650,6 +652,7 @@ static inline void osalSysRestoreStatusX(syssts_t sts) {
 
   if ((sts & 0x80) != 0) {
     asm volatile ("sei" : : : "memory");
+    asm volatile ("nop");
   }
 }
 
