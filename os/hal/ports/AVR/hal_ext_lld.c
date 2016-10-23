@@ -65,7 +65,7 @@ void ext_lld_set_intx_edges(expchannel_t channel, uint8_t edge) {
     } else if (edge == EXT_CH_MODE_BOTH_EDGES) {
       EICRA |= (1 << 0);
       EICRA &= ~(1 << 1);
-    } else {
+    } else if (edge == EXT_CH_MODE_LOW_LEVEL) {
       EICRA &= ~(1 << 0);
       EICRA &= ~(1 << 1);
     }
@@ -82,7 +82,7 @@ void ext_lld_set_intx_edges(expchannel_t channel, uint8_t edge) {
     } else if (edge == EXT_CH_MODE_BOTH_EDGES) {
       EICRA |= (1 << 2);
       EICRA &= ~(1 << 3);
-    } else {
+    } else if (edge == EXT_CH_MODE_LOW_LEVEL) {
       EICRA &= ~(1 << 2);
       EICRA &= ~(1 << 3);
     }
@@ -99,7 +99,7 @@ void ext_lld_set_intx_edges(expchannel_t channel, uint8_t edge) {
     } else if (edge == EXT_CH_MODE_BOTH_EDGES) {
       EICRA |= (1 << 4);
       EICRA &= ~(1 << 5);
-    } else {
+    } else if (edge == EXT_CH_MODE_LOW_LEVEL) {
       EICRA &= ~(1 << 4);
       EICRA &= ~(1 << 5);
     }
@@ -116,7 +116,7 @@ void ext_lld_set_intx_edges(expchannel_t channel, uint8_t edge) {
     } else if (edge == EXT_CH_MODE_BOTH_EDGES) {
       EICRA |= (1 << 6);
       EICRA &= ~(1 << 7);
-    } else {
+    } else if (edge == EXT_CH_MODE_LOW_LEVEL) {
       EICRA &= ~(1 << 6);
       EICRA &= ~(1 << 7);
     }
@@ -133,7 +133,7 @@ void ext_lld_set_intx_edges(expchannel_t channel, uint8_t edge) {
     } else if (edge == EXT_CH_MODE_BOTH_EDGES) {
       EICRB |= (1 << 0);
       EICRB &= ~(1 << 1);
-    } else {
+    } else if (edge == EXT_CH_MODE_LOW_LEVEL) {
       EICRB &= ~(1 << 0);
       EICRB &= ~(1 << 1);
     }
@@ -150,7 +150,7 @@ void ext_lld_set_intx_edges(expchannel_t channel, uint8_t edge) {
     } else if (edge == EXT_CH_MODE_BOTH_EDGES) {
       EICRB |= (1 << 2);
       EICRB &= ~(1 << 3);
-    } else {
+    } else if (edge == EXT_CH_MODE_LOW_LEVEL) {
       EICRB &= ~(1 << 2);
       EICRB &= ~(1 << 3);
     }
