@@ -3,6 +3,7 @@ PLATFORMSRC = ${CHIBIOS}/os/hal/ports/AVR/hal_lld.c \
               ${CHIBIOS}/os/hal/ports/AVR/hal_pal_lld.c \
               ${CHIBIOS}/os/hal/ports/AVR/hal_serial_lld.c \
               ${CHIBIOS}/os/hal/ports/AVR/hal_adc_lld.c \
+              ${CHIBIOS}/os/hal/ports/AVR/hal_ext_lld.c \
               ${CHIBIOS}/os/hal/ports/AVR/hal_i2c_lld.c \
               ${CHIBIOS}/os/hal/ports/AVR/hal_spi_lld.c \
               ${CHIBIOS}/os/hal/ports/AVR/hal_gpt_lld.c \
