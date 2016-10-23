@@ -34,16 +34,6 @@
 /*===========================================================================*/
 
 /**
- * @brief   Prompt string
- */
-#define SHELL_PROMPT_STR            "ch> "
-
-/**
- * @brief   Newline string
- */
-#define SHELL_NEWLINE_STR            "\r\n"
-
-/**
  * @brief   Shell History Constants
  */
 #define SHELL_HIST_DIR_BK           0
@@ -100,6 +90,20 @@
  */
 #if !defined(SHELL_USE_ESC_SEQ) || defined(__DOXYGEN__)
 #define SHELL_USE_ESC_SEQ           FALSE
+#endif
+
+/**
+ * @brief   Prompt string
+ */
+#if !defined(SHELL_PROMPT_STR) || defined(__DOXYGEN__)
+#define SHELL_PROMPT_STR            "ch> "
+#endif
+
+/**
+ * @brief   Newline string
+ */
+#if !defined(SHELL_NEWLINE_STR) || defined(__DOXYGEN__)
+#define SHELL_NEWLINE_STR            "\r\n"
 #endif
 
 /*===========================================================================*/
