@@ -41,7 +41,7 @@
  * @brief   System time counter resolution.
  * @note    Allowed values are 16 or 32 bits.
  */
-#if !defined(CH_CFG_ST_RESOLUTION) || defined(__DOXIGEN__)
+#if !defined(CH_CFG_ST_RESOLUTION) || defined(__DOXYGEN__)
 #define CH_CFG_ST_RESOLUTION                32
 #endif
 
@@ -50,7 +50,7 @@
  * @details Frequency of the system timer that drives the system ticks. This
  *          setting also defines the system tick time unit.
  */
-#if !defined(CH_CFG_ST_FREQUENCY) || defined(__DOXIGEN__)
+#if !defined(CH_CFG_ST_FREQUENCY) || defined(__DOXYGEN__)
 #define CH_CFG_ST_FREQUENCY                 1000
 #endif
 
@@ -62,7 +62,7 @@
  *          The value one is not valid, timeouts are rounded up to
  *          this value.
  */
-#if !defined(CH_CFG_ST_TIMEDELTA) || defined(__DOXIGEN__)
+#if !defined(CH_CFG_ST_TIMEDELTA) || defined(__DOXYGEN__)
 #define CH_CFG_ST_TIMEDELTA                 0
 #endif
 
@@ -87,7 +87,7 @@
  * @note    The round robin preemption is not supported in tickless mode and
  *          must be set to zero in that case.
  */
-#if !defined(CH_CFG_TIME_QUANTUM) || defined(__DOXIGEN__)
+#if !defined(CH_CFG_TIME_QUANTUM) || defined(__DOXYGEN__)
 #define CH_CFG_TIME_QUANTUM                 20
 #endif
 
@@ -102,7 +102,7 @@
  *          provide the @p __heap_base__ and @p __heap_end__ symbols.
  * @note    Requires @p CH_CFG_USE_MEMCORE.
  */
-#if !defined(CH_CFG_MEMCORE_SIZE) || defined(__DOXIGEN__)
+#if !defined(CH_CFG_MEMCORE_SIZE) || defined(__DOXYGEN__)
 #define CH_CFG_MEMCORE_SIZE                 0x20000
 #endif
 
@@ -113,7 +113,7 @@
  *          function becomes the idle thread and must implement an
  *          infinite loop.
  */
-#if !defined(CH_CFG_NO_IDLE_THREAD) || defined(__DOXIGEN__)
+#if !defined(CH_CFG_NO_IDLE_THREAD) || defined(__DOXYGEN__)
 #define CH_CFG_NO_IDLE_THREAD               FALSE
 #endif
 
@@ -134,7 +134,7 @@
  * @note    This is not related to the compiler optimization options.
  * @note    The default is @p TRUE.
  */
-#if !defined(CH_CFG_OPTIMIZE_SPEED) || defined(__DOXIGEN__)
+#if !defined(CH_CFG_OPTIMIZE_SPEED) || defined(__DOXYGEN__)
 #define CH_CFG_OPTIMIZE_SPEED               TRUE
 #endif
 
@@ -154,7 +154,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#if !defined(CH_CFG_USE_TM) || defined(__DOXIGEN__)
+#if !defined(CH_CFG_USE_TM) || defined(__DOXYGEN__)
 #define CH_CFG_USE_TM                       TRUE
 #endif
 
@@ -164,7 +164,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#if !defined(CH_CFG_USE_REGISTRY) || defined(__DOXIGEN__)
+#if !defined(CH_CFG_USE_REGISTRY) || defined(__DOXYGEN__)
 #define CH_CFG_USE_REGISTRY                 TRUE
 #endif
 
@@ -175,7 +175,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#if !defined(CH_CFG_USE_WAITEXIT) || defined(__DOXIGEN__)
+#if !defined(CH_CFG_USE_WAITEXIT) || defined(__DOXYGEN__)
 #define CH_CFG_USE_WAITEXIT                 TRUE
 #endif
 
@@ -185,7 +185,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#if !defined(CH_CFG_USE_SEMAPHORES) || defined(__DOXIGEN__)
+#if !defined(CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
 #define CH_CFG_USE_SEMAPHORES               TRUE
 #endif
 
@@ -198,7 +198,7 @@
  *          requirements.
  * @note    Requires @p CH_CFG_USE_SEMAPHORES.
  */
-#if !defined(CH_CFG_USE_SEMAPHORES_PRIORITY) || defined(__DOXIGEN__)
+#if !defined(CH_CFG_USE_SEMAPHORES_PRIORITY) || defined(__DOXYGEN__)
 #define CH_CFG_USE_SEMAPHORES_PRIORITY      FALSE
 #endif
 
@@ -208,7 +208,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#if !defined(CH_CFG_USE_MUTEXES) || defined(__DOXIGEN__)
+#if !defined(CH_CFG_USE_MUTEXES) || defined(__DOXYGEN__)
 #define CH_CFG_USE_MUTEXES                  TRUE
 #endif
 
@@ -220,7 +220,7 @@
  * @note    The default is @p FALSE.
  * @note    Requires @p CH_CFG_USE_MUTEXES.
  */
-#if !defined(CH_CFG_USE_MUTEXES_RECURSIVE) || defined(__DOXIGEN__)
+#if !defined(CH_CFG_USE_MUTEXES_RECURSIVE) || defined(__DOXYGEN__)
 #define CH_CFG_USE_MUTEXES_RECURSIVE        FALSE
 #endif
 
@@ -232,7 +232,7 @@
  * @note    The default is @p TRUE.
  * @note    Requires @p CH_CFG_USE_MUTEXES.
  */
-#if !defined(CH_CFG_USE_CONDVARS) || defined(__DOXIGEN__)
+#if !defined(CH_CFG_USE_CONDVARS) || defined(__DOXYGEN__)
 #define CH_CFG_USE_CONDVARS                 TRUE
 #endif
 
@@ -244,7 +244,7 @@
  * @note    The default is @p TRUE.
  * @note    Requires @p CH_CFG_USE_CONDVARS.
  */
-#if !defined(CH_CFG_USE_CONDVARS_TIMEOUT) || defined(__DOXIGEN__)
+#if !defined(CH_CFG_USE_CONDVARS_TIMEOUT) || defined(__DOXYGEN__)
 #define CH_CFG_USE_CONDVARS_TIMEOUT         TRUE
 #endif
 
@@ -254,7 +254,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#if !defined(CH_CFG_USE_EVENTS) || defined(__DOXIGEN__)
+#if !defined(CH_CFG_USE_EVENTS) || defined(__DOXYGEN__)
 #define CH_CFG_USE_EVENTS                   TRUE
 #endif
 
@@ -266,7 +266,7 @@
  * @note    The default is @p TRUE.
  * @note    Requires @p CH_CFG_USE_EVENTS.
  */
-#if !defined(CH_CFG_USE_EVENTS_TIMEOUT) || defined(__DOXIGEN__)
+#if !defined(CH_CFG_USE_EVENTS_TIMEOUT) || defined(__DOXYGEN__)
 #define CH_CFG_USE_EVENTS_TIMEOUT           TRUE
 #endif
 
@@ -277,7 +277,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#if !defined(CH_CFG_USE_MESSAGES) || defined(__DOXIGEN__)
+#if !defined(CH_CFG_USE_MESSAGES) || defined(__DOXYGEN__)
 #define CH_CFG_USE_MESSAGES                 TRUE
 #endif
 
@@ -290,7 +290,7 @@
  *          requirements.
  * @note    Requires @p CH_CFG_USE_MESSAGES.
  */
-#if !defined(CH_CFG_USE_MESSAGES_PRIORITY) || defined(__DOXIGEN__)
+#if !defined(CH_CFG_USE_MESSAGES_PRIORITY) || defined(__DOXYGEN__)
 #define CH_CFG_USE_MESSAGES_PRIORITY        FALSE
 #endif
 
@@ -302,7 +302,7 @@
  * @note    The default is @p TRUE.
  * @note    Requires @p CH_CFG_USE_SEMAPHORES.
  */
-#if !defined(CH_CFG_USE_MAILBOXES) || defined(__DOXIGEN__)
+#if !defined(CH_CFG_USE_MAILBOXES) || defined(__DOXYGEN__)
 #define CH_CFG_USE_MAILBOXES                TRUE
 #endif
 
@@ -313,7 +313,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#if !defined(CH_CFG_USE_MEMCORE) || defined(__DOXIGEN__)
+#if !defined(CH_CFG_USE_MEMCORE) || defined(__DOXYGEN__)
 #define CH_CFG_USE_MEMCORE                  TRUE
 #endif
 
@@ -327,7 +327,7 @@
  *          @p CH_CFG_USE_SEMAPHORES.
  * @note    Mutexes are recommended.
  */
-#if !defined(CH_CFG_USE_HEAP) || defined(__DOXIGEN__)
+#if !defined(CH_CFG_USE_HEAP) || defined(__DOXYGEN__)
 #define CH_CFG_USE_HEAP                     TRUE
 #endif
 
@@ -338,7 +338,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#if !defined(CH_CFG_USE_MEMPOOLS) || defined(__DOXIGEN__)
+#if !defined(CH_CFG_USE_MEMPOOLS) || defined(__DOXYGEN__)
 #define CH_CFG_USE_MEMPOOLS                 TRUE
 #endif
 
@@ -351,7 +351,7 @@
  * @note    Requires @p CH_CFG_USE_WAITEXIT.
  * @note    Requires @p CH_CFG_USE_HEAP and/or @p CH_CFG_USE_MEMPOOLS.
  */
-#if !defined(CH_CFG_USE_DYNAMIC) || defined(__DOXIGEN__)
+#if !defined(CH_CFG_USE_DYNAMIC) || defined(__DOXYGEN__)
 #define CH_CFG_USE_DYNAMIC                  TRUE
 #endif
 
@@ -369,7 +369,7 @@
  *
  * @note    The default is @p FALSE.
  */
-#if !defined(CH_DBG_STATISTICS) || defined(__DOXIGEN__)
+#if !defined(CH_DBG_STATISTICS) || defined(__DOXYGEN__)
 #define CH_DBG_STATISTICS                   FALSE
 #endif
 
@@ -380,7 +380,7 @@
  *
  * @note    The default is @p FALSE.
  */
-#if !defined(CH_DBG_SYSTEM_STATE_CHECK) || defined(__DOXIGEN__)
+#if !defined(CH_DBG_SYSTEM_STATE_CHECK) || defined(__DOXYGEN__)
 #define CH_DBG_SYSTEM_STATE_CHECK           FALSE
 #endif
 
@@ -391,7 +391,7 @@
  *
  * @note    The default is @p FALSE.
  */
-#if !defined(CH_DBG_ENABLE_CHECKS) || defined(__DOXIGEN__)
+#if !defined(CH_DBG_ENABLE_CHECKS) || defined(__DOXYGEN__)
 #define CH_DBG_ENABLE_CHECKS                FALSE
 #endif
 
@@ -403,7 +403,7 @@
  *
  * @note    The default is @p FALSE.
  */
-#if !defined(CH_DBG_ENABLE_ASSERTS) || defined(__DOXIGEN__)
+#if !defined(CH_DBG_ENABLE_ASSERTS) || defined(__DOXYGEN__)
 #define CH_DBG_ENABLE_ASSERTS               FALSE
 #endif
 
@@ -413,7 +413,7 @@
  *
  * @note    The default is @p CH_DBG_TRACE_MASK_DISABLED.
  */
-#if !defined(CH_DBG_TRACE_MASK) || defined(__DOXIGEN__)
+#if !defined(CH_DBG_TRACE_MASK) || defined(__DOXYGEN__)
 #define CH_DBG_TRACE_MASK                   CH_DBG_TRACE_MASK_DISABLED
 #endif
 
@@ -422,7 +422,7 @@
  * @note    The trace buffer is only allocated if @p CH_DBG_TRACE_MASK is
  *          different from @p CH_DBG_TRACE_MASK_DISABLED.
  */
-#if !defined(CH_DBG_TRACE_BUFFER_SIZE) || defined(__DOXIGEN__)
+#if !defined(CH_DBG_TRACE_BUFFER_SIZE) || defined(__DOXYGEN__)
 #define CH_DBG_TRACE_BUFFER_SIZE            128
 #endif
 
@@ -436,7 +436,7 @@
  * @note    The default failure mode is to halt the system with the global
  *          @p panic_msg variable set to @p NULL.
  */
-#if !defined(CH_DBG_ENABLE_STACK_CHECK) || defined(__DOXIGEN__)
+#if !defined(CH_DBG_ENABLE_STACK_CHECK) || defined(__DOXYGEN__)
 #define CH_DBG_ENABLE_STACK_CHECK           FALSE
 #endif
 
@@ -448,7 +448,7 @@
  *
  * @note    The default is @p FALSE.
  */
-#if !defined(CH_DBG_FILL_THREADS) || defined(__DOXIGEN__)
+#if !defined(CH_DBG_FILL_THREADS) || defined(__DOXYGEN__)
 #define CH_DBG_FILL_THREADS                 FALSE
 #endif
 
@@ -461,7 +461,7 @@
  * @note    This debug option is not currently compatible with the
  *          tickless mode.
  */
-#if !defined(CH_DBG_THREADS_PROFILING) || defined(__DOXIGEN__)
+#if !defined(CH_DBG_THREADS_PROFILING) || defined(__DOXYGEN__)
 #define CH_DBG_THREADS_PROFILING            TRUE
 #endif
 

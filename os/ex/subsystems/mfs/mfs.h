@@ -49,21 +49,21 @@
  * @brief   Maximum number of indexed records in the managed storage.
  * @note    Record indexes go from 0 to @p MFS_CFG_MAX_RECORDS - 1.
  */
-#if !defined(MFS_CFG_MAX_RECORDS) || defined(__DOXIGEN__)
+#if !defined(MFS_CFG_MAX_RECORDS) || defined(__DOXYGEN__)
 #define MFS_CFG_MAX_RECORDS                 32
 #endif
 
 /**
  * @brief   Maximum number of repair attempts on partition mount.
  */
-#if !defined(MFS_CFG_MAX_REPAIR_ATTEMPTS) || defined(__DOXIGEN__)
+#if !defined(MFS_CFG_MAX_REPAIR_ATTEMPTS) || defined(__DOXYGEN__)
 #define MFS_CFG_MAX_REPAIR_ATTEMPTS         3
 #endif
 
 /**
  * @brief   Verify written data.
  */
-#if !defined(MFS_CFG_WRITE_VERIFY) || defined(__DOXIGEN__)
+#if !defined(MFS_CFG_WRITE_VERIFY) || defined(__DOXYGEN__)
 #define MFS_CFG_WRITE_VERIFY                TRUE
 #endif
 /** @} */
