@@ -169,7 +169,6 @@ thread_t *chThdCreateFromMemoryPool(memory_pool_t *mp, const char *name,
                   CH_DBG_STACK_FILL_VALUE);
 #endif
 
-
   chSysLock();
   tp = chThdCreateSuspendedI(&td);
   tp->flags = CH_FLAG_MODE_MPOOL;
