@@ -38,9 +38,7 @@
 #define EP0_MAX_INSIZE          64
 #define EP0_MAX_OUTSIZE         64
 
-#if defined(STM32F7XX)
-#define GCCFG_INIT_VALUE        GCCFG_PWRDWN
-#else
+#if STM32_OTG_STEPPING == 1
 #if defined(BOARD_OTG_NOVBUSSENS)
 #define GCCFG_INIT_VALUE        (GCCFG_NOVBUSSENS | GCCFG_VBUSASEN |        \
                                  GCCFG_VBUSBSEN | GCCFG_PWRDWN)
@@ -48,6 +46,14 @@
 #define GCCFG_INIT_VALUE        (GCCFG_VBUSASEN | GCCFG_VBUSBSEN |          \
                                  GCCFG_PWRDWN)
 #endif
+
+#elif STM32_OTG_STEPPING == 2
+#if defined(BOARD_OTG_NOVBUSSENS)
+#define GCCFG_INIT_VALUE        GCCFG_PWRDWN
+#else
+#define GCCFG_INIT_VALUE        (GCCFG_VBDEN | GCCFG_PWRDWN)
+#endif
+
 #endif
 
 /*===========================================================================*/
@@ -408,11 +414,17 @@ static void otg_epout_handler(USBDriver *usbp, usbep_t ep) {
     /* Setup packets handling, setup packets are handled using a
        specific callback.*/
     _usb_isr_invoke_setup_cb(usbp, ep);
-
   }
   if ((epint & DOEPINT_XFRC) && (otgp->DOEPMSK & DOEPMSK_XFRCM)) {
-    /* Receive transfer complete.*/
-    USBOutEndpointState *osp = usbp->epc[ep]->out_state;
+    USBOutEndpointState *osp;
+
+    /* Receive transfer complete, checking if it is a SETUP transfer on EP0,
+       that it must be ignored, the STUPM handler will take care of it.*/
+    if ((ep == 0) && (usbp->ep0state == USB_EP0_WAITING_SETUP))
+      return;
+
+    /* OUT state structure pointer for this endpoint.*/
+    osp = usbp->epc[ep]->out_state;
 
     /* A short packet always terminates a transaction.*/
     if (((osp->rxcnt % usbp->epc[ep]->out_maxsize) == 0) &&
