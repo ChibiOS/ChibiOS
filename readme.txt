@@ -147,6 +147,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Fixed OTGv1 driver not functional on STM32L4 (bug #786)(backported
+       to 16.1.6).
 - HAL: Fixed wrong bit offset in STM32F37x ADC_CR2_EXTSEL_SRC() macro
        (bug #785)(backported to 16.1.6, 3.0.6).
 - RT:  Fixed tick-less mode can fail in RT for very large delays (bug #784)

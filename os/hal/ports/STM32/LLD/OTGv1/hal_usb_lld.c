@@ -414,11 +414,17 @@ static void otg_epout_handler(USBDriver *usbp, usbep_t ep) {
     /* Setup packets handling, setup packets are handled using a
        specific callback.*/
     _usb_isr_invoke_setup_cb(usbp, ep);
-
   }
   if ((epint & DOEPINT_XFRC) && (otgp->DOEPMSK & DOEPMSK_XFRCM)) {
-    /* Receive transfer complete.*/
-    USBOutEndpointState *osp = usbp->epc[ep]->out_state;
+    USBOutEndpointState *osp;
+
+    /* Receive transfer complete, checking if it is a SETUP transfer on EP0,
+       that it must be ignored, the STUPM handler will take care of it.*/
+    if ((ep == 0) && (usbp->ep0state == USB_EP0_WAITING_SETUP))
+      return;
+
+    /* OUT state structure pointer for this endpoint.*/
+    osp = usbp->epc[ep]->out_state;
 
     /* A short packet always terminates a transaction.*/
     if (((osp->rxcnt % usbp->epc[ep]->out_maxsize) == 0) &&
