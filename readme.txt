@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.6 ***
+- HAL: Fixed Makefile dependencies not generated for .S files (bug #787).
 - HAL: Fixed OTGv1 driver not functional on STM32L4 (bug #786).
 - HAL: Fixed wrong bit offset in STM32F37x ADC_CR2_EXTSEL_SRC() macro
        (bug #785).
