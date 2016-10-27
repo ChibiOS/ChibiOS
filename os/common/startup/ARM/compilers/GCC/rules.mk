@@ -131,17 +131,20 @@ ifneq ($(strip $(TSRC)),)
   CFLAGS   += -DTHUMB_PRESENT
   CPPFLAGS += -DTHUMB_PRESENT
   ASFLAGS  += -DTHUMB_PRESENT
+  ASXFLAGS += -DTHUMB_PRESENT
   ifneq ($(strip $(ASRC)),)
     # Mixed ARM and THUMB mode.
     CFLAGS   += -mthumb-interwork
     CPPFLAGS += -mthumb-interwork
     ASFLAGS  += -mthumb-interwork
+    ASXFLAGS += -mthumb-interwork
     LDFLAGS  += -mthumb-interwork
   else
     # Pure THUMB mode, THUMB C code cannot be called by ARM asm code directly.
     CFLAGS   += -mno-thumb-interwork -DTHUMB_NO_INTERWORKING
     CPPFLAGS += -mno-thumb-interwork -DTHUMB_NO_INTERWORKING
     ASFLAGS  += -mno-thumb-interwork -DTHUMB_NO_INTERWORKING -mthumb
+    ASXFLAGS += -mno-thumb-interwork -DTHUMB_NO_INTERWORKING -mthumb
     LDFLAGS  += -mno-thumb-interwork -mthumb
   endif
 else
@@ -149,11 +152,13 @@ else
   CFLAGS   += -mno-thumb-interwork
   CPPFLAGS += -mno-thumb-interwork
   ASFLAGS  += -mno-thumb-interwork
+  ASXFLAGS += -mno-thumb-interwork
   LDFLAGS  += -mno-thumb-interwork
 endif
 
 # Generate dependency information
 ASFLAGS  += -MD -MP -MF .dep/$(@F).d
+ASXFLAGS += -MD -MP -MF .dep/$(@F).d
 CFLAGS   += -MD -MP -MF .dep/$(@F).d
 CPPFLAGS += -MD -MP -MF .dep/$(@F).d
 
