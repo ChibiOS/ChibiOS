@@ -250,13 +250,13 @@ struct port_context {
 #define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) {                      \
   tp->ctx.sp = (struct port_intctx *)((uint8_t *)(wtop) -                   \
                                       sizeof(struct port_intctx));          \
-  tp->ctx.sp->r2  = (uint8_t)(pf);                                          \
+  tp->ctx.sp->r2  = (uint8_t)(0xff & (uint16_t)pf);                         \
   tp->ctx.sp->r3  = (uint8_t)((uint16_t)(pf) >> 8);                         \
-  tp->ctx.sp->r4  = (uint8_t)(arg);                                         \
+  tp->ctx.sp->r4  = (uint8_t)(0xff & (uint16_t)arg);                        \
   tp->ctx.sp->r5  = (uint8_t)((uint16_t)(arg) >> 8);                        \
   tp->ctx.sp->pcx = (uint8_t)0;                                             \
   tp->ctx.sp->pcl = (uint16_t)_port_thread_start >> 8;                      \
-  tp->ctx.sp->pch = (uint8_t)_port_thread_start;                            \
+  tp->ctx.sp->pch = (uint8_t)(0xff & (uint16_t)_port_thread_start);         \
 }
 #else /* !__AVR_3_BYTE_PC__ */
 #define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) {                      \
