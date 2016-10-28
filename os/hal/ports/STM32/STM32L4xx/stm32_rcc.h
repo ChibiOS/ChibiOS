@@ -413,7 +413,6 @@
 #define rccResetPWRInterface() rccResetAPB1R1(RCC_APB1RSTR1_PWRRST)
 /** @} */
 
-
 /**
  * @name    CAN peripherals specific RCC operations
  * @{
