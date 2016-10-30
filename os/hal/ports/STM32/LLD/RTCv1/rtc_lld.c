@@ -245,7 +245,7 @@ void rtc_lld_init(void) {
  * @note    The function can be called from any context.
  *
  * @param[in] rtcp      pointer to RTC driver structure
- * @param[in] timespec  pointer to a @p RTCTime structure
+ * @param[in] timespec  pointer to a @p RTCDateTime structure
  *
  * @notapi
  */
@@ -260,7 +260,7 @@ void rtc_lld_set_time(RTCDriver *rtcp, const RTCDateTime *timespec) {
  * @note    The function can be called from any context.
  *
  * @param[in] rtcp      pointer to RTC driver structure
- * @param[in] timespec  pointer to a @p RTCTime structure
+ * @param[in] timespec  pointer to a @p RTCDateTime structure
  *
  * @notapi
  */
