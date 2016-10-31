@@ -15,7 +15,7 @@
 */
 
 /*
- * STM32F767Zx generic setup.
+ * STM32F76xxG generic setup.
  * 
  * RAM0 - Data, Heap.
  * RAM3 - Main Stack, Process Stack, BSS, NOCACHE, ETH.
@@ -25,8 +25,8 @@
  */
 MEMORY
 {
-    flash0  : org = 0x08000000, len = 2M        /* Flash as AXIM (writable) */
-    flash1  : org = 0x00200000, len = 2M        /* Flash as ITCM */
+    flash0  : org = 0x08000000, len = 1M        /* Flash as AXIM (writable) */
+    flash1  : org = 0x00200000, len = 1M        /* Flash as ITCM */
     flash2  : org = 0x00000000, len = 0
     flash3  : org = 0x00000000, len = 0
     flash4  : org = 0x00000000, len = 0

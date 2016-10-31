@@ -106,7 +106,7 @@ include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
 include $(CHIBIOS)/test/rt/test.mk
 
 # Define linker script file here
-LDSCRIPT= $(STARTUPLD)/STM32F767Zx.ld
+LDSCRIPT= $(STARTUPLD)/STM32F76xxI.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.

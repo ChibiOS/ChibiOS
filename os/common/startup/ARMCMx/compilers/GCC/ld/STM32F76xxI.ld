@@ -15,7 +15,7 @@
 */
 
 /*
- * STM32F769Ix generic setup.
+ * STM32F76xxI generic setup.
  * 
  * RAM0 - Data, Heap.
  * RAM3 - Main Stack, Process Stack, BSS, NOCACHE, ETH.
