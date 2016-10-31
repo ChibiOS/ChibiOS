@@ -16,9 +16,6 @@
     <identifier>MII_LAN8742A_ID</identifier>
     <bus_type>RMII</bus_type>
   </ethernet_phy>
-  <usb_phy>
-    <bus_type>ULPI</bus_type>
-  </usb_phy>
   <subtype>STM32F746xx</subtype>
   <clocks
     HSEFrequency="8000000"
