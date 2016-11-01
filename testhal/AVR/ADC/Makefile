@@ -73,13 +73,9 @@ SRC = $(KERNSRC) \
       $(HALSRC) \
       $(PLATFORMSRC) \
       $(BOARDSRC) \
-	  $(STREAMSSRC) \
-	  $(CHIBIOS)/os/various/evtimer.c \
-	  main.c
-	  
-#ip_motor.c \
-#ip_ext.c \
-#ip_adc.c \ # Add the support of A8-A15 on arduino Mega board.
+      $(STREAMSSRC) \
+      $(CHIBIOS)/os/various/evtimer.c \
+      main.c
 
 # List C++ source files here. (C dependencies are automatically generated.)
 CPPSRC =

@@ -1,5 +1,5 @@
 *****************************************************************************
-** ChibiOS/RT I2C test on Atmel AVR ATmega1280.                            **
+** ChibiOS/RT ADC test on Atmel AVR ATmega2560.                            **
 *****************************************************************************
 
 ** TARGET **
@@ -8,10 +8,10 @@ The test demo runs on an Arduino Mega board.
 
 ** The Demo **
 
-This test blinks the onboard LED and also writes/reads to a 24C64 connected
-to the I2C pins (PD0/PD1 on the ATmega1280). There's no feedback provided but
-the I2C can easily be analyzed with any logic analyzer or sniffing with a
-buspirate or similar device.
+This test blinks the onboard LED and also prints the result of the ADC
+conversion to the Serial0. A voltmeter can be use to compare the printed
+value to the value on pin A0 of the arduino board. To make this test, a
+potentiometer is connected to the pin A0 of the board.
 
 ** Build Procedure **
 

@@ -152,7 +152,7 @@ struct ADCDriver {
   /**
    * @brief Mutex protecting the peripheral.
    */
-  mutex_t                     mutex;
+  mutex_t                   mutex;
 #elif CH_CFG_USE_SEMAPHORES
   Semaphore                 semaphore;
 #endif
