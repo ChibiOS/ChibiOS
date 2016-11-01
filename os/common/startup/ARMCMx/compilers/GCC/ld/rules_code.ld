@@ -18,12 +18,12 @@ ENTRY(Reset_Handler)
 
 SECTIONS
 {
-    vectors : ALIGN(16) SUBALIGN(16)
+    .vectors : ALIGN(16)
     {
         KEEP(*(.vectors))
     } > VECTORS_FLASH AT > VECTORS_FLASH_LMA
 
-    xtors : ALIGN(4) SUBALIGN(4)
+    .xtors : ALIGN(4)
     {
         __init_array_start = .;
         KEEP(*(SORT(.init_array.*)))
@@ -35,7 +35,7 @@ SECTIONS
         __fini_array_end = .;
     } > XTORS_FLASH AT > XTORS_FLASH_LMA
 
-    .text : ALIGN(16) SUBALIGN(16)
+    .text ALIGN(16) : ALIGN(16)
     {
         *(.text)
         *(.text.*)
