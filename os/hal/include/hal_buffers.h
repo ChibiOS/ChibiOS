@@ -62,6 +62,10 @@ struct io_buffers_queue {
    */
   threads_queue_t       waiting;
   /**
+   * @brief   Queue suspended state flag.
+   */
+  bool                  suspended;
+  /**
    * @brief   Active buffers counter.
    */
   volatile size_t       bcounter;
@@ -171,6 +175,48 @@ typedef io_buffers_queue_t output_buffers_queue_t;
 #define bqGetLinkX(bqp) ((bqp)->link)
 
 /**
+ * @brief   Return the suspended state of the queue.
+ *
+ * @param[in] bqp       pointer to an @p io_buffers_queue_t structure
+ * @return              The suspended state.
+ * @retval false        if blocking access to the queue is enabled.
+ * @retval true         if blocking access to the queue is suspended.
+ *
+ * @xclass
+ */
+#define bqIsSuspendedX(bqp) ((bqp)->suspended)
+
+/**
+ * @brief   Puts the queue in suspended state.
+ * @details When the queue is put in suspended state all waiting threads are
+ *          woken with message @p MSG_RESET and subsequent attempt at waiting
+ *          on the queue will result in an immediate return with @p MSG_RESET
+ *          message.
+ * @note    The content of the queue is not altered, queues can be accessed
+ *          is suspended state until a blocking operation is met then a
+ *          @p MSG_RESET occurs.
+ *
+ * @param[in] bqp       pointer to an @p io_buffers_queue_t structure
+ *
+ * @iclass
+ */
+#define bqSuspendI(bqp) {                                                   \
+  (bqp)->suspended = true;                                                  \
+  osalThreadDequeueAllI(&(bqp)->waiting, MSG_RESET);                        \
+}
+
+/**
+ * @brief   Resumes normal queue operations.
+ *
+ * @param[in] bqp       pointer to an @p io_buffers_queue_t structure
+ *
+ * @xclass
+ */
+#define bqResumeX(bqp) {                                                    \
+  (bqp)->suspended = false;                                                 \
+}
+
+/**
  * @brief   Evaluates to @p TRUE if the specified input buffers queue is empty.
  *
  * @param[in] ibqp      pointer to an @p input_buffers_queue_t structure
@@ -232,9 +278,8 @@ typedef io_buffers_queue_t output_buffers_queue_t;
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void ibqObjectInit(input_buffers_queue_t *ibqp, uint8_t *bp,
-                     size_t size, size_t n,
-                     bqnotify_t infy, void *link);
+  void ibqObjectInit(input_buffers_queue_t *ibqp, bool suspended, uint8_t *bp,
+                     size_t size, size_t n, bqnotify_t infy, void *link);
   void ibqResetI(input_buffers_queue_t *ibqp);
   uint8_t *ibqGetEmptyBufferI(input_buffers_queue_t *ibqp);
   void ibqPostFullBufferI(input_buffers_queue_t *ibqp, size_t size);
@@ -247,9 +292,8 @@ extern "C" {
   msg_t ibqGetTimeout(input_buffers_queue_t *ibqp, systime_t timeout);
   size_t ibqReadTimeout(input_buffers_queue_t *ibqp, uint8_t *bp,
                         size_t n, systime_t timeout);
-  void obqObjectInit(output_buffers_queue_t *obqp, uint8_t *bp,
-                     size_t size, size_t n,
-                     bqnotify_t onfy, void *link);
+  void obqObjectInit(output_buffers_queue_t *obqp, bool suspended, uint8_t *bp,
+                     size_t size, size_t n, bqnotify_t onfy, void *link);
   void obqResetI(output_buffers_queue_t *obqp);
   uint8_t *obqGetFullBufferI(output_buffers_queue_t *obqp,
                              size_t *sizep);

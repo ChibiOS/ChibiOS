@@ -64,6 +64,7 @@
  * @brief   Initializes an input buffers queue object.
  *
  * @param[out] ibqp     pointer to the @p input_buffers_queue_t object
+ * @param[in] suspended initial state of the queue
  * @param[in] bp        pointer to a memory area allocated for buffers
  * @param[in] size      buffers size
  * @param[in] n         number of buffers
@@ -72,24 +73,24 @@
  *
  * @init
  */
-void ibqObjectInit(input_buffers_queue_t *ibqp, uint8_t *bp,
-                   size_t size, size_t n,
-                   bqnotify_t infy, void *link) {
+void ibqObjectInit(input_buffers_queue_t *ibqp, bool suspended, uint8_t *bp,
+                   size_t size, size_t n, bqnotify_t infy, void *link) {
 
   osalDbgCheck((ibqp != NULL) && (bp != NULL) && (size >= 2U));
 
   osalThreadQueueObjectInit(&ibqp->waiting);
-  ibqp->bcounter = 0;
-  ibqp->brdptr   = bp;
-  ibqp->bwrptr   = bp;
-  ibqp->btop     = bp + ((size + sizeof (size_t)) * n);
-  ibqp->bsize    = size + sizeof (size_t);
-  ibqp->bn       = n;
-  ibqp->buffers  = bp;
-  ibqp->ptr      = NULL;
-  ibqp->top      = NULL;
-  ibqp->notify   = infy;
-  ibqp->link     = link;
+  ibqp->suspended = suspended;
+  ibqp->bcounter  = 0;
+  ibqp->brdptr    = bp;
+  ibqp->bwrptr    = bp;
+  ibqp->btop      = bp + ((size + sizeof (size_t)) * n);
+  ibqp->bsize     = size + sizeof (size_t);
+  ibqp->bn        = n;
+  ibqp->buffers   = bp;
+  ibqp->ptr       = NULL;
+  ibqp->top       = NULL;
+  ibqp->notify    = infy;
+  ibqp->link      = link;
 }
 
 /**
@@ -107,11 +108,11 @@ void ibqResetI(input_buffers_queue_t *ibqp) {
 
   osalDbgCheckClassI();
 
-  ibqp->bcounter = 0;
-  ibqp->brdptr   = ibqp->buffers;
-  ibqp->bwrptr   = ibqp->buffers;
-  ibqp->ptr      = NULL;
-  ibqp->top      = NULL;
+  ibqp->bcounter  = 0;
+  ibqp->brdptr    = ibqp->buffers;
+  ibqp->bwrptr    = ibqp->buffers;
+  ibqp->ptr       = NULL;
+  ibqp->top       = NULL;
   osalThreadDequeueAllI(&ibqp->waiting, MSG_RESET);
 }
 
@@ -181,7 +182,8 @@ void ibqPostFullBufferI(input_buffers_queue_t *ibqp, size_t size) {
  * @return              The operation status.
  * @retval MSG_OK       if a buffer has been acquired.
  * @retval MSG_TIMEOUT  if the specified time expired.
- * @retval MSG_RESET    if the queue has been reset.
+ * @retval MSG_RESET    if the queue has been reset or has been put in
+ *                      suspended state.
  *
  * @api
  */
@@ -212,7 +214,8 @@ msg_t ibqGetFullBufferTimeout(input_buffers_queue_t *ibqp,
    * @return              The operation status.
    * @retval MSG_OK       if a buffer has been acquired.
    * @retval MSG_TIMEOUT  if the specified time expired.
-   * @retval MSG_RESET    if the queue has been reset.
+   * @retval MSG_RESET    if the queue has been reset or has been put in
+   *                      suspended state.
    *
    * @sclass
    */
@@ -222,6 +225,9 @@ msg_t ibqGetFullBufferTimeout(input_buffers_queue_t *ibqp,
   osalDbgCheckClassS();
 
   while (ibqIsEmptyI(ibqp)) {
+    if (ibqp->suspended) {
+      return MSG_RESET;
+    }
     msg_t msg = osalThreadEnqueueTimeoutS(&ibqp->waiting, timeout);
     if (msg < MSG_OK) {
        return msg;
@@ -295,7 +301,8 @@ void ibqReleaseEmptyBuffer(input_buffers_queue_t *ibqp) {
  *                      .
  * @return              A byte value from the queue.
  * @retval MSG_TIMEOUT  if the specified time expired.
- * @retval MSG_RESET    if the queue has been reset.
+ * @retval MSG_RESET    if the queue has been reset or has been put in
+ *                      suspended state.
  *
  * @api
  */
@@ -432,6 +439,7 @@ size_t ibqReadTimeout(input_buffers_queue_t *ibqp, uint8_t *bp,
  * @brief   Initializes an output buffers queue object.
  *
  * @param[out] obqp     pointer to the @p output_buffers_queue_t object
+ * @param[in] suspended initial state of the queue
  * @param[in] bp        pointer to a memory area allocated for buffers
  * @param[in] size      buffers size
  * @param[in] n         number of buffers
@@ -440,24 +448,24 @@ size_t ibqReadTimeout(input_buffers_queue_t *ibqp, uint8_t *bp,
  *
  * @init
  */
-void obqObjectInit(output_buffers_queue_t *obqp, uint8_t *bp,
-                   size_t size, size_t n,
-                   bqnotify_t onfy, void *link) {
+void obqObjectInit(output_buffers_queue_t *obqp, bool suspended, uint8_t *bp,
+                   size_t size, size_t n, bqnotify_t onfy, void *link) {
 
   osalDbgCheck((obqp != NULL) && (bp != NULL) && (size >= 2U));
 
   osalThreadQueueObjectInit(&obqp->waiting);
-  obqp->bcounter = n;
-  obqp->brdptr   = bp;
-  obqp->bwrptr   = bp;
-  obqp->btop     = bp + ((size + sizeof (size_t)) * n);
-  obqp->bsize    = size + sizeof (size_t);
-  obqp->bn       = n;
-  obqp->buffers  = bp;
-  obqp->ptr      = NULL;
-  obqp->top      = NULL;
-  obqp->notify   = onfy;
-  obqp->link     = link;
+  obqp->suspended = suspended;
+  obqp->bcounter  = n;
+  obqp->brdptr    = bp;
+  obqp->bwrptr    = bp;
+  obqp->btop      = bp + ((size + sizeof (size_t)) * n);
+  obqp->bsize     = size + sizeof (size_t);
+  obqp->bn        = n;
+  obqp->buffers   = bp;
+  obqp->ptr       = NULL;
+  obqp->top       = NULL;
+  obqp->notify    = onfy;
+  obqp->link      = link;
 }
 
 /**
@@ -475,11 +483,11 @@ void obqResetI(output_buffers_queue_t *obqp) {
 
   osalDbgCheckClassI();
 
-  obqp->bcounter = bqSizeX(obqp);
-  obqp->brdptr   = obqp->buffers;
-  obqp->bwrptr   = obqp->buffers;
-  obqp->ptr      = NULL;
-  obqp->top      = NULL;
+  obqp->bcounter  = bqSizeX(obqp);
+  obqp->brdptr    = obqp->buffers;
+  obqp->bwrptr    = obqp->buffers;
+  obqp->ptr       = NULL;
+  obqp->top       = NULL;
   osalThreadDequeueAllI(&obqp->waiting, MSG_RESET);
 }
 
@@ -548,7 +556,8 @@ void obqReleaseEmptyBufferI(output_buffers_queue_t *obqp) {
  * @return              The operation status.
  * @retval MSG_OK       if a buffer has been acquired.
  * @retval MSG_TIMEOUT  if the specified time expired.
- * @retval MSG_RESET    if the queue has been reset.
+ * @retval MSG_RESET    if the queue has been reset or has been put in
+ *                      suspended state.
  *
  * @api
  */
@@ -563,32 +572,36 @@ msg_t obqGetEmptyBufferTimeout(output_buffers_queue_t *obqp,
   return msg;
 }
 
-  /**
-   * @brief   Gets the next empty buffer from the queue.
-   * @note    The function always acquires the same buffer if called repeatedly.
-   * @post    After calling the function the fields @p ptr and @p top are set
-   *          at beginning and end of the buffer data or @p NULL if the queue
-   *          is empty.
-   *
-   * @param[in] obqp      pointer to the @p output_buffers_queue_t object
-   * @param[in] timeout   the number of ticks before the operation timeouts,
-   *                      the following special values are allowed:
-   *                      - @a TIME_IMMEDIATE immediate timeout.
-   *                      - @a TIME_INFINITE no timeout.
-   *                      .
-   * @return              The operation status.
-   * @retval MSG_OK       if a buffer has been acquired.
-   * @retval MSG_TIMEOUT  if the specified time expired.
-   * @retval MSG_RESET    if the queue has been reset.
-   *
-   * @sclass
-   */
-  msg_t obqGetEmptyBufferTimeoutS(output_buffers_queue_t *obqp,
-                                  systime_t timeout) {
+/**
+ * @brief   Gets the next empty buffer from the queue.
+ * @note    The function always acquires the same buffer if called repeatedly.
+ * @post    After calling the function the fields @p ptr and @p top are set
+ *          at beginning and end of the buffer data or @p NULL if the queue
+ *          is empty.
+ *
+ * @param[in] obqp      pointer to the @p output_buffers_queue_t object
+ * @param[in] timeout   the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              The operation status.
+ * @retval MSG_OK       if a buffer has been acquired.
+ * @retval MSG_TIMEOUT  if the specified time expired.
+ * @retval MSG_RESET    if the queue has been reset or has been put in
+ *                      suspended state.
+ *
+ * @sclass
+ */
+msg_t obqGetEmptyBufferTimeoutS(output_buffers_queue_t *obqp,
+                                systime_t timeout) {
 
   osalDbgCheckClassS();
 
   while (obqIsFullI(obqp)) {
+    if (obqp->suspended) {
+      return MSG_RESET;
+    }
     msg_t msg = osalThreadEnqueueTimeoutS(&obqp->waiting, timeout);
     if (msg < MSG_OK) {
       return msg;
@@ -669,7 +682,8 @@ void obqPostFullBufferS(output_buffers_queue_t *obqp, size_t size) {
  *                      .
  * @return              A byte value from the queue.
  * @retval MSG_TIMEOUT  if the specified time expired.
- * @retval MSG_RESET    if the queue has been reset.
+ * @retval MSG_RESET    if the queue has been reset or has been put in
+ *                      suspended state.
  *
  * @api
  */
