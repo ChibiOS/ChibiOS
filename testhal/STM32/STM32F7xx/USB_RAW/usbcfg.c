@@ -15,7 +15,7 @@
 */
 
 #include "hal.h"
-#include "usb_cdc.h"
+#include "hal_usb_cdc.h"
 #include "usbcfg.h"
 
 /*
