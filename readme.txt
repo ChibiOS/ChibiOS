@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.6 ***
+- HAL: Fixed wrong DMA definition for STM32F303x8 ADC (bug #790).
 - VAR: Fixed GCC garbage collector discards code in syscalls.c (bug #789).
 - HAL: Fixed Makefile dependencies not generated for .S files (bug #787).
 - HAL: Fixed OTGv1 driver not functional on STM32L4 (bug #786).

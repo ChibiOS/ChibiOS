@@ -587,8 +587,7 @@
 #define STM32_HAS_ADC2                      TRUE
 #define STM32_ADC2_HANDLER                  Vector88
 #define STM32_ADC2_NUMBER                   18
-#define STM32_ADC2_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(2, 1) |\
-                                             STM32_DMA_STREAM_ID_MSK(2, 3))
+#define STM32_ADC2_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(1, 2))
 #define STM32_ADC2_DMA_CHN                  0x00000000
 
 #define STM32_HAS_ADC3                      FALSE
