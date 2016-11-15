@@ -147,6 +147,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- VAR: Fixed GCC garbage collector discards code in syscalls.c (bug #789)
+       (backported to 16.1.6, 3.0.6).
 - HAL: Fixed Makefile dependencies not generated for .S files (bug #787)
        (backported to 16.1.6, 3.0.6).
 - HAL: Fixed OTGv1 driver not functional on STM32L4 (bug #786)(backported
