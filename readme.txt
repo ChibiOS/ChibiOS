@@ -73,6 +73,8 @@
 *****************************************************************************
 
 *** 16.1.6 ***
+- HAL: Fixed missing ARPE bit in CR1 initialization on STM32 GPT driver
+       (bug #791).
 - HAL: Fixed wrong DMA definition for STM32F303x8 ADC (bug #790).
 - VAR: Fixed GCC garbage collector discards code in syscalls.c (bug #789).
 - HAL: Fixed Makefile dependencies not generated for .S files (bug #787).
