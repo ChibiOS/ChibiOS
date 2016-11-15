@@ -191,10 +191,12 @@ typedef struct event_source event_source_t;
  */
 typedef void (*eventcallback_t)(event_source_t *p);
 
+#if 0
 /**
  * @brief   Type of an event flags mask.
  */
 typedef uint32_t eventflags_t;
+#endif
 
 /**
  * @brief   Events source object.
