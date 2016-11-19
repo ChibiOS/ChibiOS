@@ -414,7 +414,6 @@ static inline bool chThdQueueIsEmptyI(threads_queue_t *tqp) {
   return queue_isempty(tqp);
 }
 
-
 /**
  * @brief   Dequeues and wakes up one thread from the threads queue object.
  * @details Dequeues one thread from the queue without checking if the queue

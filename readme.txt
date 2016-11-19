@@ -148,6 +148,7 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- RT:  Fixed double empty lines (bug #793)(backported to 16.1.6, 3.0.6).
 - HAL: Fixed wrong entries in STM32L4 registry (bug #792)(backported to 
        16.1.6).
 - HAL: Fixed missing ARPE bit in CR1 initialization on STM32 GPT driver

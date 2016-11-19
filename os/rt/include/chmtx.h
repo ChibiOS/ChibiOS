@@ -96,7 +96,6 @@ struct ch_mutex {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif

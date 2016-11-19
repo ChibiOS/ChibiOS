@@ -193,7 +193,6 @@ thread_t *chThdCreateSuspendedI(const thread_descriptor_t *tdp) {
   return _thread_init(tp, tdp->name, tdp->prio);
 }
 
-
 /**
  * @brief   Creates a new thread into a static memory area.
  * @details The new thread is initialized but not inserted in the ready list,
