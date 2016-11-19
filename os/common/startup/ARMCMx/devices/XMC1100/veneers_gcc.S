@@ -145,24 +145,27 @@ __reset:        sub     sp, #32
                 .align      2
                 .thumb_func
                 .global     __veneers
-__veneers:
+__veneers:      movs        r0, #0
+                b           .
+                movs        r0, #1
+                b           .
+                movs        r0, #2
+                b           .
                 ldr         r0, =HardFault_Handler
                 mov         pc, r0
                 movs        r0, #4
                 b           .
                 movs        r0, #5
                 b           .
-                movs        r0, #6
-                b           .
                 ldr         r0, =UsageFault_Handler
                 mov         pc, r0
+                movs        r0, #7
+                b           .
                 movs        r0, #8
                 b           .
                 movs        r0, #9
                 b           .
                 movs        r0, #10
-                b           .
-                movs        r0, #11
                 b           .
                 ldr         r0, =SVC_Handler
                 mov         pc, r0
