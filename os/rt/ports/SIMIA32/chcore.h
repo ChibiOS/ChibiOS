@@ -217,7 +217,6 @@ struct context {
   port_isr_context_flag = false;                                            \
 }
 
-
 /**
  * @brief   IRQ handler function declaration.
  * @note    @p id can be a function name or a vector number depending on the
