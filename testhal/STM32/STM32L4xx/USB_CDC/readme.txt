@@ -1,18 +1,14 @@
 *****************************************************************************
-** ChibiOS/HAL - ADC driver demo for STM32L4xx.                            **
+** ChibiOS/HAL - USB driver demo for STM32L4xx.                            **
 *****************************************************************************
 
 ** TARGET **
 
-The demo runs on an STM32 Nucleo64-L476RG board.
+The demo runs on an STM32L476_DISCOVERY board.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32L4xx ADC driver.
-
-** Board Setup **
-
-- Connect PC1 to 3.3V and PC2 to GND for analog measurements.
+The application demonstrates the use of the STM32L4xx USB driver.
 
 ** Build Procedure **
 
