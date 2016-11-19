@@ -86,6 +86,8 @@
 *****************************************************************************
 
 *** Next ***
+- ALL: Now supports all existing STM32 Nucleo and Discoveries.
+- HAL: Extended STM32L4xx port by adding STM32L432 support.
 - HAL: Implemented better handling for number of endpoints on STM32 OTGv1
        driver, now it is a registry key.
 - VAR: Updated CMSIS file for STM32F1xx to 4.1.0.
@@ -114,6 +116,7 @@
 - HAL: Added QSPI driver model.
 - HAL: Added base sensor, base gyroscope, base accelerometer and base compass
        classes.
+- HAL: Updated all STM32 Nucleo board files.
 - VAR: Cortex-M VTOR initialization is now performed in startup files and
        no more in port initialization.
 - VAR: Changed GCC asm files extension from .s to .S because conventions.
@@ -130,8 +133,6 @@
 - HAL: Improvements to the I/O queues now timeouts are absolute for
        iqReadTimeout() and oqWriteTimeout() functions.
 - RT:  Added a NASA-OSAL API emulator over the RT kernel.
-- RT:  Added RT-STM32L476-DISCOVERY demo.
-- HAL: Added more STM32L4xx testhal demos.
 - HAL: Updated all STM32L476 mcuconf.h files.
 - ALL: Startup files relicensed under Apache 2.0.
 - ALL: Enhanced GCC .ld files with multiple flash regions and capability to
