@@ -227,7 +227,6 @@ typedef volatile avr_gpio_registers_t * ioportid_t;
 #define IOPORTSPI1  ((volatile avr_gpio_registers_t *)&PIN_SPI1)
 #endif
 
-
 /*===========================================================================*/
 /* Implementation, some of the following macros could be implemented as      */
 /* functions, if so please put them in pal_lld.c.                            */
