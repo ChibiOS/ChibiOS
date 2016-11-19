@@ -57,7 +57,6 @@ static union {
 } u;
 #endif /* STM32_SDC_SDIO_UNALIGNED_SUPPORT */
 
-
 /**
  * @brief   SDIO default configuration.
  */

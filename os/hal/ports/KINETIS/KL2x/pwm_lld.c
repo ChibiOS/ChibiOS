@@ -280,7 +280,6 @@ void pwm_lld_stop(PWMDriver *pwmp) {
   }
 }
 
-
 /**
  * @brief   Enables a PWM channel.
  * @pre     The PWM unit must have been activated using @p pwmStart().

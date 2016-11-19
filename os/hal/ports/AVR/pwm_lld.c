@@ -560,7 +560,6 @@ void pwm_lld_disable_channel_notification(PWMDriver *pwmp,
   *regs_table[i].timsk &= ~(1 << (channel + 1));
 }
 
-
 #endif /* HAL_USE_PWM */
 
 /** @} */

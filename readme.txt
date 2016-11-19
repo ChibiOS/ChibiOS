@@ -73,7 +73,8 @@
 *****************************************************************************
 
 *** 16.1.6 ***
-- RT:  Fixed double empty lines (bug #793).
+- HAL: Fixed double empty lines in HAL (bug #794).
+- RT:  Fixed double empty lines in RT (bug #793).
 - HAL: Fixed wrong entries in STM32L4 registry (bug #792).
 - HAL: Fixed missing ARPE bit in CR1 initialization on STM32 GPT driver
        (bug #791).
