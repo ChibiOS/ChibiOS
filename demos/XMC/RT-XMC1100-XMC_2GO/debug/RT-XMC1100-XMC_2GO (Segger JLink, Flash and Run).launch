@@ -17,7 +17,7 @@
 <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.setPcRegister" value="false"/>
 <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.setResume" value="true"/>
 <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.setStopAt" value="true"/>
-<stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.stopAt" value="main"/>
+<stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.stopAt" value="SysTick_Handler"/>
 <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.symbolsFileName" value=""/>
 <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.symbolsOffset" value=""/>
 <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.useFileForImage" value="false"/>
@@ -33,7 +33,7 @@
 <intAttribute key="org.eclipse.cdt.launch.ATTR_BUILD_BEFORE_LAUNCH_ATTR" value="2"/>
 <stringAttribute key="org.eclipse.cdt.launch.COREFILE_PATH" value=""/>
 <stringAttribute key="org.eclipse.cdt.launch.DEBUGGER_REGISTER_GROUPS" value=""/>
-<stringAttribute key="org.eclipse.cdt.launch.FORMAT" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&lt;contentList&gt;&lt;content id=&quot;null-_thread_memfill-(format)&quot; val=&quot;4&quot;/&gt;&lt;content id=&quot;null-Reset_Handler-(format)&quot; val=&quot;4&quot;/&gt;&lt;content id=&quot;MSP-(format)&quot; val=&quot;4&quot;/&gt;&lt;content id=&quot;PSP-(format)&quot; val=&quot;4&quot;/&gt;&lt;content id=&quot;r0-(format)&quot; val=&quot;4&quot;/&gt;&lt;content id=&quot;xpsr-(format)&quot; val=&quot;2&quot;/&gt;&lt;content id=&quot;msp-(format)&quot; val=&quot;4&quot;/&gt;&lt;content id=&quot;psp-(format)&quot; val=&quot;4&quot;/&gt;&lt;/contentList&gt;"/>
+<stringAttribute key="org.eclipse.cdt.launch.FORMAT" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&lt;contentList&gt;&lt;content id=&quot;PSP-(format)&quot; val=&quot;4&quot;/&gt;&lt;content id=&quot;MSP-(format)&quot; val=&quot;4&quot;/&gt;&lt;content id=&quot;null-Reset_Handler-(format)&quot; val=&quot;4&quot;/&gt;&lt;content id=&quot;null-_thread_memfill-(format)&quot; val=&quot;4&quot;/&gt;&lt;content id=&quot;r0-(format)&quot; val=&quot;4&quot;/&gt;&lt;content id=&quot;xpsr-(format)&quot; val=&quot;2&quot;/&gt;&lt;content id=&quot;msp-(format)&quot; val=&quot;4&quot;/&gt;&lt;content id=&quot;psp-(format)&quot; val=&quot;4&quot;/&gt;&lt;/contentList&gt;"/>
 <stringAttribute key="org.eclipse.cdt.launch.GLOBAL_VARIABLES" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#13;&#10;&lt;globalVariableList/&gt;&#13;&#10;"/>
 <stringAttribute key="org.eclipse.cdt.launch.MEMORY_BLOCKS" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#13;&#10;&lt;memoryBlockExpressionList&gt;&#13;&#10;&lt;memoryBlockExpressionItem&gt;&#13;&#10;&lt;expression text=&quot;0x20000000&quot;/&gt;&#13;&#10;&lt;/memoryBlockExpressionItem&gt;&#13;&#10;&lt;/memoryBlockExpressionList&gt;&#13;&#10;"/>
 <stringAttribute key="org.eclipse.cdt.launch.PROGRAM_NAME" value="./build/ch.elf"/>
