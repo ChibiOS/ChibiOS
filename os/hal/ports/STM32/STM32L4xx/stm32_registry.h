@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    STM32L0xx/stm32_registry.h
- * @brief   STM32L0xx capabilities registry.
+ * @file    STM32L4xx/stm32_registry.h
+ * @brief   STM32L4xx capabilities registry.
  *
  * @addtogroup HAL
  * @{
@@ -59,7 +59,6 @@
 
 /* CAN attributes.*/
 #define STM32_HAS_CAN1                      TRUE
-#define STM32_HAS_CAN2                      FALSE
 #define STM32_CAN_MAX_FILTERS               14
 #define STM32_CAN1_TX_HANDLER               Vector8C
 #define STM32_CAN1_RX0_HANDLER              Vector90
@@ -70,16 +69,18 @@
 #define STM32_CAN1_RX1_NUMBER               21
 #define STM32_CAN1_SCE_NUMBER               22
 
+#define STM32_HAS_CAN2                      FALSE
+
 /* DAC attributes.*/
 #define STM32_HAS_DAC1_CH1                  TRUE
 #define STM32_DAC1_CH1_DMA_MSK              (STM32_DMA_STREAM_ID_MSK(1, 3)|\
                                              STM32_DMA_STREAM_ID_MSK(2, 4))
-#define STM32_DAC1_CH1_DMA_CHN              0x00005600
+#define STM32_DAC1_CH1_DMA_CHN              0x00003600
 
 #define STM32_HAS_DAC1_CH2                  TRUE
 #define STM32_DAC1_CH2_DMA_MSK              (STM32_DMA_STREAM_ID_MSK(1, 4)|\
                                              STM32_DMA_STREAM_ID_MSK(2, 5))
-#define STM32_DAC1_CH2_DMA_CHN              0x00033000
+#define STM32_DAC1_CH2_DMA_CHN              0x00035000
 
 #define STM32_HAS_DAC2_CH1                  FALSE
 #define STM32_HAS_DAC2_CH2                  FALSE

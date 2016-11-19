@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.6 ***
+- HAL: Fixed wrong entries in STM32L4 registry (bug #792).
 - HAL: Fixed missing ARPE bit in CR1 initialization on STM32 GPT driver
        (bug #791).
 - HAL: Fixed wrong DMA definition for STM32F303x8 ADC (bug #790).
