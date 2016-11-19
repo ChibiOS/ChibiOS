@@ -28,12 +28,13 @@
 #if defined(STM32L432xx)
 #define STM32L432xx
 
-#elif defined(STM32F476xx)
+#elif defined(STM32L476xx)
 #define STM32L476xx
 
 #else
 #error "STM32L4xx device not specified"
 #endif
+
 /*===========================================================================*/
 /* Platform capabilities.                                                    */
 /*===========================================================================*/
@@ -42,11 +43,12 @@
  * @name    STM32L4xx capabilities
  * @{
  */
+
 /*===========================================================================*/
 /* STM32L432xx.                                                              */
 /*===========================================================================*/
 
-#if defined(STM32L432xx)
+#if defined(STM32L432xx) || defined(__DOXYGEN__)
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
