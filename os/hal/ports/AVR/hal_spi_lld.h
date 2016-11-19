@@ -214,7 +214,6 @@ extern "C" {
   uint8_t spi_lld_polled_exchange(SPIDriver *spip, uint8_t frame);
 #endif
 
-
 #ifdef __cplusplus
 }
 #endif

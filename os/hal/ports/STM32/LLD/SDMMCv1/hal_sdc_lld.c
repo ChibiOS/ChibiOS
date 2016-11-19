@@ -99,7 +99,6 @@ static union {
 } u;
 #endif /* STM32_SDC_SDMMC_UNALIGNED_SUPPORT */
 
-
 /**
  * @brief   SDIO default configuration.
  */

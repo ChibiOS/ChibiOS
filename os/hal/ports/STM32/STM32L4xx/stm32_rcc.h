@@ -267,7 +267,6 @@
 }
 /** @} */
 
-
 /**
  * @name    ADC peripherals specific RCC operations
  * @{

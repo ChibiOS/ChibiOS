@@ -92,7 +92,6 @@ void qspiStart(QSPIDriver *qspip, const QSPIConfig *config) {
 
   osalDbgCheck((qspip != NULL) && (config != NULL));
 
-
   osalSysLock();
 
   osalDbgAssert((qspip->state == QSPI_STOP) || (qspip->state == QSPI_READY),

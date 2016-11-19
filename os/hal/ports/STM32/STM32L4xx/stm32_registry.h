@@ -312,7 +312,6 @@
 #define STM32_LPUART1_HANDLER               Vector158
 #define STM32_LPUART1_NUMBER                70
 
-
 #define STM32_HAS_USART3                    FALSE
 #define STM32_HAS_UART4                     FALSE
 #define STM32_HAS_UART5                     FALSE

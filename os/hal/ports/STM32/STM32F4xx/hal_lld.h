@@ -1945,7 +1945,6 @@
 #define STM32_PLL48CLK              0
 #endif /* !STM32_CLOCK48_REQUIRED */
 
-
 /**
  * @brief   Clock of timers connected to APB1
  *          (Timers 2, 3, 4, 5, 6, 7, 12, 13, 14).

@@ -62,7 +62,6 @@ void stInit(void) {
   st_lld_init();
 }
 
-
 /**
  * @brief   Starts the alarm.
  * @note    Makes sure that no spurious alarms are triggered after
