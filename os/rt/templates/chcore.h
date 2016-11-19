@@ -115,7 +115,6 @@
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
-
 /* The following code is not processed when the file is included from an
    asm module.*/
 #if !defined(_FROM_ASM_)

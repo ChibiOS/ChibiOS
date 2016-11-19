@@ -103,7 +103,6 @@ void _port_thread_start(msg_t (*pf)(void *), void *p) {
   while(1);
 }
 
-
 /**
  * @brief   Returns the current value of the realtime counter.
  *
