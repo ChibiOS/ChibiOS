@@ -99,7 +99,6 @@ typedef LPC_GPIO_PORT_TypeDef *ioportid_t;
 #define IOPORT1         LPC_GPIO_PORT
 #define GPIO0           LPC_GPIO_PORT
 
-
 /*===========================================================================*/
 /* Implementation, some of the following macros could be implemented as      */
 /* functions, if so please put them in pal_lld.c.                            */
@@ -172,7 +171,6 @@ typedef LPC_GPIO_PORT_TypeDef *ioportid_t;
  */
 #define pal_lld_clearport(port, bits) ((port)->CLR0 = (bits))
 
-
 /**
  * @brief   Toggles a bits mask on a I/O port.
  * @note    The @ref PAL provides a default software implementation of this
@@ -186,7 +184,6 @@ typedef LPC_GPIO_PORT_TypeDef *ioportid_t;
  * @api
  */
 #define pal_lld_toggleport(port, bits) ((port)->NOT0 = (bits))
-
 
 /**
  * @brief   Writes a group of bits.

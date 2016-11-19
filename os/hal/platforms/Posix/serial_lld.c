@@ -67,7 +67,6 @@ static void init(SerialDriver *sdp, uint16_t port) {
   int sockval = 1;
   socklen_t socklen = sizeof(sockval);
 
-
   if ((prtp = getprotobyname("tcp")) == NULL) {
     printf("%s: Error mapping protocol name to protocol number\n", sdp->com_name);
     goto abort;
@@ -78,7 +77,6 @@ static void init(SerialDriver *sdp, uint16_t port) {
     printf("%s: Error creating simulator socket\n", sdp->com_name);
     goto abort;
   }
-
 
   setsockopt(sdp->com_listen, SOL_SOCKET, SO_REUSEADDR, &sockval, socklen);
 

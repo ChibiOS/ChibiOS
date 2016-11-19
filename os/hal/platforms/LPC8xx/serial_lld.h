@@ -69,7 +69,6 @@
 #define STAT_PARITYERR        0x4000
 #define STAT_RXNOISE          0x8000
 
-
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -121,7 +120,6 @@
 #if !defined(LPC8xx_SERIAL_UART2_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define LPC8xx_SERIAL_UART2_IRQ_PRIORITY   3
 #endif
-
 
 /**
  * @brief   Uart Baud Clock (U_PCLK).

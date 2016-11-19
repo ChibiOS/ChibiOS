@@ -14,7 +14,6 @@
     limitations under the License.
 */
 
-
 /**
  * @file    LPC122x/pal_lld.h
  * @brief   LPC122x GPIO low level driver header.

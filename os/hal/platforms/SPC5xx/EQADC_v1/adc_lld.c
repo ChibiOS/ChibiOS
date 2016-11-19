@@ -334,7 +334,6 @@ static void cfifo0_wait_rfifo(uint32_t n) {
   cfifo0_push_command(EQADC_RW_WRITE | (adc) | EQADC_RW_REG_ADDR(reg) |     \
                       EQADC_RW_VALUE(value))
 
-
 /**
  * @brief   Enables both ADCs.
  *

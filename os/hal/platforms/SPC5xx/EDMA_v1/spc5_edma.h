@@ -66,7 +66,6 @@
 #define SPC5_EDMA_ERROR_HANDLER()           chSysHalt()
 #endif
 
-
 /**
  * @brief   EDMA error handler IRQ priority.
  */
