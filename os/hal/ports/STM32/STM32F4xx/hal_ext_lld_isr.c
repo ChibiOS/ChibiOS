@@ -391,7 +391,9 @@ void ext_lld_exti_irq_disable(void) {
   nvicDisableVector(EXTI15_10_IRQn);
   nvicDisableVector(PVD_IRQn);
   nvicDisableVector(RTC_Alarm_IRQn);
+#if STM32_HAS_OTG1
   nvicDisableVector(OTG_FS_WKUP_IRQn);
+#endif
 #if STM32_HAS_ETH
   nvicDisableVector(ETH_WKUP_IRQn);
 #endif
