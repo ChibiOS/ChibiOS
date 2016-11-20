@@ -46,8 +46,8 @@ static const I2CConfig i2ccfg = {
 };
 
 static const LSM6DS0AccConfig lsm6ds0acccfg = {
-  {0, 0, 0},                    /* Use default sensitivity.*/
-  {0, 0, 0},                    /* Use default bias.*/
+  NULL,                         /* Use default sensitivity.*/
+  NULL,                         /* Use default bias.*/
   LSM6DS0_ACC_FS_2G,            /* Full scale value 2g.*/
   LSM6DS0_ACC_ODR_50Hz,         /* Output data rate 100 Hz.*/
 #if LSM6DS0_ACC_USE_ADVANCED || defined(__DOXYGEN__)
