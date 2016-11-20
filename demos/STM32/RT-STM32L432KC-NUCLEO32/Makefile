@@ -91,7 +91,7 @@ CHIBIOS = ../../..
 include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32l4xx.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/ports/STM32/STM32L4xx/platform.mk
+include $(CHIBIOS)/os/hal/ports/STM32/STM32L4xx/platform_l432.mk
 include $(CHIBIOS)/os/hal/boards/ST_NUCLEO32_L432KC/board.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 # RTOS files (optional).

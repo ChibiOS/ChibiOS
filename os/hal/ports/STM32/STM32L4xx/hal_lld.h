@@ -1974,6 +1974,7 @@
 #else
 #error "invalid source selected for 48CLK clock"
 #endif
+#define STM32_USBCLK                STM32_48CLK
 
 /**
  * @brief   ADC clock frequency.
