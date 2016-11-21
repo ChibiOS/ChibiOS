@@ -521,9 +521,9 @@ bool shellGetLine(ShellConfig *scfg, char *line, unsigned size, ShellHistory *sh
 #endif
     if ((c == 8) || (c == 127)) {
       if (p != line) {
-        streamPut(chp, c);
+        streamPut(chp, 0x08);
         streamPut(chp, 0x20);
-        streamPut(chp, c);
+        streamPut(chp, 0x08);
         p--;
       }
       continue;
