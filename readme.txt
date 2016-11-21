@@ -86,7 +86,8 @@
 *****************************************************************************
 
 *** Next ***
-- ALL: Now supports all existing STM32 Nucleo and Discovery boards.
+- HAL: Added CAN3 support to the STM32 CANv1 driver.
+- HAL: Added support for all existing STM32 Nucleo and Discovery boards.
 - HAL: Extended STM32F4xx port by adding STM32F412 support.
 - HAL: Extended STM32L4xx port by adding STM32L432 support.
 - HAL: Implemented better handling for number of endpoints on STM32 OTGv1

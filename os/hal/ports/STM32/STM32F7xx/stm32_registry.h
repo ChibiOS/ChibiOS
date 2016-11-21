@@ -86,6 +86,18 @@
 #define STM32_CAN2_RX1_NUMBER               65
 #define STM32_CAN2_SCE_NUMBER               66
 
+#define STM32_CAN3_MAX_FILTERS              14
+
+#define STM32_HAS_CAN3                      TRUE
+#define STM32_CAN3_TX_HANDLER               Vector1E0
+#define STM32_CAN3_RX0_HANDLER              Vector1E4
+#define STM32_CAN3_RX1_HANDLER              Vector1E8
+#define STM32_CAN3_SCE_HANDLER              Vector1EC
+#define STM32_CAN3_TX_NUMBER                104
+#define STM32_CAN3_RX0_NUMBER               105
+#define STM32_CAN3_RX1_NUMBER               106
+#define STM32_CAN3_SCE_NUMBER               107
+
 /* DAC attributes.*/
 #define STM32_HAS_DAC1_CH1                  TRUE
 #define STM32_DAC1_CH1_DMA_MSK              STM32_DMA_STREAM_ID_MSK(1, 5)

@@ -53,6 +53,11 @@ CANDriver CAND1;
 CANDriver CAND2;
 #endif
 
+/** @brief CAN3 driver identifier.*/
+#if STM32_CAN_USE_CAN3 || defined(__DOXYGEN__)
+CANDriver CAND3;
+#endif
+
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
@@ -60,9 +65,8 @@ CANDriver CAND2;
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
-
 /**
- * @brief   Programs the filters.
+ * @brief   Programs the filters of CAN 1 and CAN 2.
  *
  * @param[in] can2sb    number of the first filter assigned to CAN2
  * @param[in] num       number of entries in the filters array, if zero then
@@ -72,67 +76,111 @@ CANDriver CAND2;
  *
  * @notapi
  */
-static void can_lld_set_filters(uint32_t can2sb,
+static void can_lld_set_filters(CANDriver* canp,
+                                uint32_t can2sb,
                                 uint32_t num,
                                 const CANFilter *cfp) {
+#if STM32_CAN_USE_CAN2
+  if(canp == &CAND2) {
+    /* Set handle to CAN1, because CAN1 manages the filters of CAN2.*/
+    canp = &CAND1;
+  }
+#endif
 
-  /* Temporarily enabling CAN1 clock.*/
-  rccEnableCAN1(FALSE);
+  /* Temporarily enabling CAN clock.*/
+#if STM32_CAN_USE_CAN1
+  if(canp == &CAND1) {
+    rccEnableCAN1(FALSE);
+    /* Filters initialization.*/
+    canp->can->FMR = (canp->can->FMR & 0xFFFF0000) | CAN_FMR_FINIT;
+    canp->can->FMR = (canp->can->FMR & 0xFFFF0000) | (can2sb << 8) | CAN_FMR_FINIT;
+  }
+#endif
+#if STM32_CAN_USE_CAN3
+  if(canp == &CAND3) {
+    rccEnableCAN3(FALSE);
+    /* Filters initialization.*/
+    canp->can->FMR = (canp->can->FMR & 0xFFFF0000) | CAN_FMR_FINIT;
+  }
+#endif
 
-  /* Filters initialization.*/
-  CAN1->FMR = (CAN1->FMR & 0xFFFF0000) | CAN_FMR_FINIT;
-  CAN1->FMR |=  (can2sb << 8);
   if (num > 0) {
     uint32_t i, fmask;
 
     /* All filters cleared.*/
-    CAN1->FA1R = 0;
-    CAN1->FM1R = 0;
-    CAN1->FS1R = 0;
-    CAN1->FFA1R = 0;
-    for (i = 0; i < STM32_CAN_MAX_FILTERS; i++) {
-      CAN1->sFilterRegister[i].FR1 = 0;
-      CAN1->sFilterRegister[i].FR2 = 0;
-    }
+    canp->can->FA1R = 0;
+    canp->can->FM1R = 0;
+    canp->can->FS1R = 0;
+    canp->can->FFA1R = 0;
 
+#if STM32_CAN_USE_CAN1
+    if(canp == &CAND1) {
+      for (i = 0; i < STM32_CAN_MAX_FILTERS; i++) {
+        canp->can->sFilterRegister[i].FR1 = 0;
+        canp->can->sFilterRegister[i].FR2 = 0;
+      }
+    }
+#endif
+#if STM32_CAN_USE_CAN3
+    if(canp == &CAND3) {
+      for (i = 0; i < STM32_CAN3_MAX_FILTERS; i++) {
+        canp->can->sFilterRegister[i].FR1 = 0;
+        canp->can->sFilterRegister[i].FR2 = 0;
+      }
+    }
+#endif
     /* Scanning the filters array.*/
     for (i = 0; i < num; i++) {
       fmask = 1 << cfp->filter;
       if (cfp->mode)
-        CAN1->FM1R |= fmask;
+        canp->can->FM1R |= fmask;
       if (cfp->scale)
-        CAN1->FS1R |= fmask;
+        canp->can->FS1R |= fmask;
       if (cfp->assignment)
-        CAN1->FFA1R |= fmask;
-      CAN1->sFilterRegister[cfp->filter].FR1 = cfp->register1;
-      CAN1->sFilterRegister[cfp->filter].FR2 = cfp->register2;
-      CAN1->FA1R |= fmask;
+        canp->can->FFA1R |= fmask;
+      canp->can->sFilterRegister[cfp->filter].FR1 = cfp->register1;
+      canp->can->sFilterRegister[cfp->filter].FR2 = cfp->register2;
+      canp->can->FA1R |= fmask;
       cfp++;
     }
   }
   else {
     /* Setting up a single default filter that enables everything for both
        CANs.*/
-    CAN1->sFilterRegister[0].FR1 = 0;
-    CAN1->sFilterRegister[0].FR2 = 0;
-#if STM32_HAS_CAN2
-    CAN1->sFilterRegister[can2sb].FR1 = 0;
-    CAN1->sFilterRegister[can2sb].FR2 = 0;
+    canp->can->sFilterRegister[0].FR1 = 0;
+    canp->can->sFilterRegister[0].FR2 = 0;
+#if STM32_CAN_USE_CAN2
+    if(canp == &CAND1) {
+      canp->can->sFilterRegister[can2sb].FR1 = 0;
+      canp->can->sFilterRegister[can2sb].FR2 = 0;
+    }
 #endif
-    CAN1->FM1R = 0;
-    CAN1->FFA1R = 0;
-#if STM32_HAS_CAN2
-    CAN1->FS1R = 1 | (1 << can2sb);
-    CAN1->FA1R = 1 | (1 << can2sb);
+    canp->can->FM1R = 0;
+    canp->can->FFA1R = 0;
+#if STM32_CAN_USE_CAN2
+    if(canp == &CAND1) {
+      canp->can->FS1R = 1 | (1 << can2sb);
+      canp->can->FA1R = 1 | (1 << can2sb);
+    }
 #else
-    CAN1->FS1R = 1;
-    CAN1->FA1R = 1;
+    canp->can->FS1R = 1;
+    canp->can->FA1R = 1;
 #endif
   }
-  CAN1->FMR &= ~CAN_FMR_FINIT;
+  canp->can->FMR &= ~CAN_FMR_FINIT;
 
   /* Clock disabled, it will be enabled again in can_lld_start().*/
-  rccDisableCAN1(FALSE);
+  /* Temporarily enabling CAN clock.*/
+#if STM32_CAN_USE_CAN1
+  if(canp == &CAND1) {
+    rccDisableCAN1(FALSE);
+  }
+#endif
+#if STM32_CAN_USE_CAN3
+  if(canp == &CAND3) {
+    rccDisableCAN3(FALSE);
+  }
+#endif
 }
 
 /**
@@ -343,7 +391,7 @@ OSAL_IRQ_HANDLER(STM32_CAN1_TX_HANDLER) {
   OSAL_IRQ_EPILOGUE();
 }
 
-/*
+/**
  * @brief   CAN1 RX0 interrupt handler.
  *
  * @isr
@@ -434,7 +482,7 @@ OSAL_IRQ_HANDLER(STM32_CAN2_TX_HANDLER) {
   OSAL_IRQ_EPILOGUE();
 }
 
-/*
+/**
  * @brief   CAN2 RX0 interrupt handler.
  *
  * @isr
@@ -478,6 +526,97 @@ OSAL_IRQ_HANDLER(STM32_CAN2_SCE_HANDLER) {
 #endif /* !defined(STM32_CAN2_UNIFIED_HANDLER) */
 #endif /* STM32_CAN_USE_CAN2 */
 
+#if STM32_CAN_USE_CAN3 || defined(__DOXYGEN__)
+#if defined(STM32_CAN3_UNIFIED_HANDLER)
+/**
+ * @brief   CAN1 unified interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_CAN3_UNIFIED_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND3);
+  can_lld_rx0_handler(&CAND3);
+  can_lld_rx1_handler(&CAND3);
+  can_lld_sce_handler(&CAND3);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#else /* !defined(STM32_CAN3_UNIFIED_HANDLER) */
+
+#if !defined(STM32_CAN3_TX_HANDLER)
+#error "STM32_CAN3_TX_HANDLER not defined"
+#endif
+#if !defined(STM32_CAN3_RX0_HANDLER)
+#error "STM32_CAN3_RX0_HANDLER not defined"
+#endif
+#if !defined(STM32_CAN3_RX1_HANDLER)
+#error "STM32_CAN3_RX1_HANDLER not defined"
+#endif
+#if !defined(STM32_CAN3_SCE_HANDLER)
+#error "STM32_CAN3_SCE_HANDLER not defined"
+#endif
+
+/**
+ * @brief   CAN3 TX interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_CAN3_TX_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND3);
+
+  OSAL_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN3 RX0 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_CAN3_RX0_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  can_lld_rx0_handler(&CAND3);
+
+  OSAL_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN1 RX3 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_CAN3_RX1_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  can_lld_rx1_handler(&CAND3);
+
+  OSAL_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN1 SCE interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_CAN3_SCE_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  can_lld_sce_handler(&CAND3);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif /* !defined(STM32_CAN1_UNIFIED_HANDLER) */
+#endif /* STM32_CAN_USE_CAN1 */
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -499,12 +638,23 @@ void can_lld_init(void) {
   canObjectInit(&CAND2);
   CAND2.can = CAN2;
 #endif
+#if STM32_CAN_USE_CAN3
+  /* Driver initialization.*/
+  canObjectInit(&CAND3);
+  CAND3.can = CAN3;
+#endif
 
   /* Filters initialization.*/
 #if STM32_HAS_CAN2
-  can_lld_set_filters(STM32_CAN_MAX_FILTERS / 2, 0, NULL);
+  can_lld_set_filters(&CAND1, STM32_CAN_MAX_FILTERS / 2, 0, NULL);
 #else
-  can_lld_set_filters(STM32_CAN_MAX_FILTERS, 0, NULL);
+  can_lld_set_filters(&CAND1, STM32_CAN_MAX_FILTERS, 0, NULL);
+#endif
+
+#if STM32_HAS_CAN3
+#if STM32_CAN_USE_CAN3
+  can_lld_set_filters(&CAND3, STM32_CAN3_MAX_FILTERS, 0, NULL);
+#endif
 #endif
 }
 
@@ -531,6 +681,7 @@ void can_lld_start(CANDriver *canp) {
     rccEnableCAN1(FALSE);
   }
 #endif
+
 #if STM32_CAN_USE_CAN2
   if (&CAND2 == canp) {
 
@@ -545,6 +696,20 @@ void can_lld_start(CANDriver *canp) {
     nvicEnableVector(STM32_CAN2_SCE_NUMBER, STM32_CAN_CAN2_IRQ_PRIORITY);
 #endif
     rccEnableCAN2(FALSE);
+  }
+#endif
+
+#if STM32_CAN_USE_CAN3
+  if (&CAND3 == canp) {
+#if defined(STM32_CAN3_UNIFIED_NUMBER)
+    nvicEnableVector(STM32_CAN3_UNIFIED_NUMBER, STM32_CAN_CAN3_IRQ_PRIORITY);
+#else
+    nvicEnableVector(STM32_CAN3_TX_NUMBER, STM32_CAN_CAN3_IRQ_PRIORITY);
+    nvicEnableVector(STM32_CAN3_RX0_NUMBER, STM32_CAN_CAN3_IRQ_PRIORITY);
+    nvicEnableVector(STM32_CAN3_RX1_NUMBER, STM32_CAN_CAN3_IRQ_PRIORITY);
+    nvicEnableVector(STM32_CAN3_SCE_NUMBER, STM32_CAN_CAN3_IRQ_PRIORITY);
+#endif
+    rccEnableCAN3(FALSE);
   }
 #endif
 
@@ -600,6 +765,7 @@ void can_lld_stop(CANDriver *canp) {
       rccDisableCAN1(FALSE);
     }
 #endif
+
 #if STM32_CAN_USE_CAN2
     if (&CAND2 == canp) {
       CAN2->MCR = 0x00010002;                   /* Register reset value.    */
@@ -613,6 +779,22 @@ void can_lld_stop(CANDriver *canp) {
       nvicDisableVector(STM32_CAN2_SCE_NUMBER);
 #endif
       rccDisableCAN2(FALSE);
+    }
+#endif
+
+#if STM32_CAN_USE_CAN3
+    if (&CAND3 == canp) {
+      CAN3->MCR = 0x00010002;                   /* Register reset value.    */
+      CAN3->IER = 0x00000000;                   /* All sources disabled.    */
+#if defined(STM32_CAN3_UNIFIED_NUMBER)
+      nvicDisableVector(STM32_CAN3_UNIFIED_NUMBER);
+#else
+      nvicDisableVector(STM32_CAN3_TX_NUMBER);
+      nvicDisableVector(STM32_CAN3_RX0_NUMBER);
+      nvicDisableVector(STM32_CAN3_RX1_NUMBER);
+      nvicDisableVector(STM32_CAN3_SCE_NUMBER);
+#endif
+      rccDisableCAN3(FALSE);
     }
 #endif
   }
@@ -828,10 +1010,12 @@ void can_lld_wakeup(CANDriver *canp) {
  *
  * @api
  */
-void canSTM32SetFilters(uint32_t can2sb, uint32_t num, const CANFilter *cfp) {
+void canSTM32SetFilters(CANDriver *canp, uint32_t can2sb, uint32_t num, const CANFilter *cfp) {
 
-  osalDbgCheck((can2sb >= 1) && (can2sb < STM32_CAN_MAX_FILTERS) &&
+#if STM32_CAN_USE_CAN2
+  osalDbgCheck((can2sb >= 0) && (can2sb <= STM32_CAN_MAX_FILTERS) &&
                (num <= STM32_CAN_MAX_FILTERS));
+#endif
 
 #if STM32_CAN_USE_CAN1
   osalDbgAssert(CAND1.state == CAN_STOP, "invalid state");
@@ -839,8 +1023,20 @@ void canSTM32SetFilters(uint32_t can2sb, uint32_t num, const CANFilter *cfp) {
 #if STM32_CAN_USE_CAN2
   osalDbgAssert(CAND2.state == CAN_STOP, "invalid state");
 #endif
+#if STM32_CAN_USE_CAN3
+  osalDbgAssert(CAND3.state == CAN_STOP, "invalid state");
+#endif
 
-  can_lld_set_filters(can2sb, num, cfp);
+#if STM32_CAN_USE_CAN1
+  if(canp == &CAND1) {
+    can_lld_set_filters(canp, can2sb, num, cfp);
+  }
+#endif
+#if STM32_CAN_USE_CAN3
+  if(canp == &CAND3) {
+    can_lld_set_filters(canp, can2sb, num, cfp);
+  }
+#endif
 }
 
 #endif /* HAL_USE_CAN */

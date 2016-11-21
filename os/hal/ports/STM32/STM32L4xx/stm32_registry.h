@@ -65,6 +65,7 @@
 /* CAN attributes.*/
 #define STM32_HAS_CAN1                      FALSE
 #define STM32_HAS_CAN2                      FALSE
+#define STM32_HAS_CAN3                      FALSE
 
 /* DAC attributes.*/
 #define STM32_HAS_DAC1_CH1                  TRUE
@@ -394,6 +395,7 @@
 #define STM32_CAN1_SCE_NUMBER               22
 
 #define STM32_HAS_CAN2                      FALSE
+#define STM32_HAS_CAN3                      FALSE
 
 /* DAC attributes.*/
 #define STM32_HAS_DAC1_CH1                  TRUE

@@ -522,6 +522,31 @@
  * @api
  */
 #define rccResetCAN2() rccResetAPB1(RCC_APB1RSTR_CAN2RST)
+
+/**
+ * @brief   Resets the CAN3 peripheral.
+ *
+ * @api
+ */
+#define rccResetCAN3() rccResetAPB1(RCC_APB1RSTR_CAN3RST)
+
+/**
+ * @brief   Enables the CAN3 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableCAN3(lp) rccEnableAPB1(RCC_APB1ENR_CAN3EN, lp)
+
+/**
+ * @brief   Disables the CAN3 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableCAN3(lp) rccDisableAPB1(RCC_APB1ENR_CAN3EN, lp)
 /** @} */
 
 /**

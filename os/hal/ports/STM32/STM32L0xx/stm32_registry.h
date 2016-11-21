@@ -56,6 +56,7 @@
 /* CAN attributes.*/
 #define STM32_HAS_CAN1                      FALSE
 #define STM32_HAS_CAN2                      FALSE
+#define STM32_HAS_CAN3                      FALSE
 
 /* DAC attributes.*/
 #define STM32_HAS_DAC1_CH1                  FALSE
@@ -270,6 +271,7 @@
 /* CAN attributes.*/
 #define STM32_HAS_CAN1                      FALSE
 #define STM32_HAS_CAN2                      FALSE
+#define STM32_HAS_CAN3                      FALSE
 
 /* DAC attributes.*/
 #define STM32_HAS_DAC1_CH1                  FALSE
@@ -488,6 +490,7 @@
 /* CAN attributes.*/
 #define STM32_HAS_CAN1                      FALSE
 #define STM32_HAS_CAN2                      FALSE
+#define STM32_HAS_CAN3                      FALSE
 
 /* DAC attributes.*/
 #define STM32_HAS_DAC1_CH1                  FALSE
@@ -737,6 +740,7 @@
 /* CAN attributes.*/
 #define STM32_HAS_CAN1                      FALSE
 #define STM32_HAS_CAN2                      FALSE
+#define STM32_HAS_CAN3                      FALSE
 
 /* DAC attributes.*/
 #define STM32_HAS_DAC1_CH1                  TRUE
@@ -995,6 +999,7 @@
 /* CAN attributes.*/
 #define STM32_HAS_CAN1                      FALSE
 #define STM32_HAS_CAN2                      FALSE
+#define STM32_HAS_CAN3                      FALSE
 
 /* DAC attributes.*/
 #define STM32_HAS_DAC1_CH1                  FALSE
@@ -1252,6 +1257,7 @@
 /* CAN attributes.*/
 #define STM32_HAS_CAN1                      FALSE
 #define STM32_HAS_CAN2                      FALSE
+#define STM32_HAS_CAN3                      FALSE
 
 /* DAC attributes.*/
 #define STM32_HAS_DAC1_CH1                  TRUE
