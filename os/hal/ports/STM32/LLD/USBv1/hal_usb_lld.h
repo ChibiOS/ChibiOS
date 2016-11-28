@@ -448,16 +448,6 @@ struct USBDriver {
 #endif
 #endif /* STM32L1XX */
 
-#if defined(STM32L432xx)
-#if !defined(usb_lld_connect_bus)
-#define usb_lld_connect_bus(usbp) (USB->BCDR |= USB_BCDR_DPPU)
-#endif
-
-#if !defined(usb_lld_disconnect_bus)
-#define usb_lld_disconnect_bus(usbp) (USB->BCDR &= ~USB_BCDR_DPPU)
-#endif
-#endif /* STM32L432xx */
-
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
