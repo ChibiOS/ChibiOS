@@ -31,6 +31,16 @@
 #define AVR_ADC_USE_ADC1                   TRUE
 
 /*
+ * EXT drivers system settings.
+ */
+#define AVR_EXT_USE_INT0                   FALSE
+#define AVR_EXT_USE_INT1                   FALSE
+#define AVR_EXT_USE_INT2                   FALSE
+#define AVR_EXT_USE_INT3                   FALSE
+#define AVR_EXT_USE_INT4                   FALSE
+#define AVR_EXT_USE_INT5                   FALSE
+
+/*
  * CAN driver system settings.
  */
 
