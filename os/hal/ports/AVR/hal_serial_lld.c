@@ -81,7 +81,7 @@ SerialDriver SD2;
  * @brief   Driver default configuration.
  */
 static const SerialConfig default_config = {
-  UBRR(SERIAL_DEFAULT_BITRATE),
+  UBRR2x_F(SERIAL_DEFAULT_BITRATE),
   USART_CHAR_SIZE_8
 };
 
@@ -140,7 +140,7 @@ static void usart0_init(const SerialConfig *config) {
 
   UBRR0L = config->sc_brr;
   UBRR0H = (config->sc_brr >> 8) & 0x0f;
-  UCSR0A = 0;
+  UCSR0A = (1 << U2X0);
   UCSR0B = (1 << RXEN0) | (1 << TXEN0) | (1 << RXCIE0);
   switch (config->sc_bits_per_char) {
   case USART_CHAR_SIZE_5:
@@ -201,7 +201,7 @@ static void usart1_init(const SerialConfig *config) {
 
   UBRR1L = config->sc_brr;
   UBRR1H = (config->sc_brr >> 8) & 0x0f;
-  UCSR1A = 0;
+  UCSR1A = (1 << U2X0);
   UCSR1B = (1 << RXEN1) | (1 << TXEN1) | (1 << RXCIE1);
   switch (config->sc_bits_per_char) {
   case USART_CHAR_SIZE_5:
