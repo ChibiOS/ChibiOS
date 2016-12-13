@@ -152,6 +152,8 @@
 - NIL: Added STM32F7 demo.
 - VAR: Fixed missing const qualifier in local shell commands array (bug #797)
        (backported to 16.1.6, 3.0.6, 2.6.10).
+- VAR: Fixed compilation error in cmsis_os.h (bug #796)(backported to 16.1.6,
+       3.0.6).
 - HAL: Fixed double empty lines in HAL (bug #794)(backported to 16.1.6, 
        3.0.6, 2.6.10).
 - RT:  Fixed double empty lines in RT (bug #793)(backported to 16.1.6, 3.0.6).
