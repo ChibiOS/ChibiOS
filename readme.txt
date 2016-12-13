@@ -150,7 +150,9 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
-- HAL: Fixed double empty lines in HAL (bug #794)backported to 16.1.6, 
+- VAR: Fixed missing const qualifier in local shell commands array (bug #797)
+       (backported to 16.1.6, 3.0.6, 2.6.10).
+- HAL: Fixed double empty lines in HAL (bug #794)(backported to 16.1.6, 
        3.0.6, 2.6.10).
 - RT:  Fixed double empty lines in RT (bug #793)(backported to 16.1.6, 3.0.6).
 - HAL: Fixed wrong entries in STM32L4 registry (bug #792)(backported to 

@@ -197,7 +197,7 @@ static void cmd_test(BaseSequentialStream *chp, int argc, char *argv[]) {
 /**
  * @brief   Array of the default commands.
  */
-ShellCommand shell_local_commands[] = {
+const ShellCommand shell_local_commands[] = {
 #if (SHELL_CMD_EXIT_ENABLED == TRUE) && !defined(_CHIBIOS_NIL_)
   {"exit", cmd_exit},
 #endif

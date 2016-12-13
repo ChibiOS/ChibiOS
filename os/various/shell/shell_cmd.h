@@ -94,7 +94,7 @@
 /*===========================================================================*/
 
 #if !defined(__DOXYGEN__)
-extern ShellCommand shell_local_commands[];
+extern const ShellCommand shell_local_commands[];
 #endif
 
 #ifdef __cplusplus
