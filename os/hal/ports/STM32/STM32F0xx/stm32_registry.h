@@ -160,7 +160,11 @@
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
 #define STM32_RTC_HAS_SUBSECONDS            TRUE
+#if defined (STM32F030xC)
+#define STM32_RTC_HAS_PERIODIC_WAKEUPS      TRUE
+#else
 #define STM32_RTC_HAS_PERIODIC_WAKEUPS      FALSE
+#endif
 #define STM32_RTC_NUM_ALARMS                1
 #define STM32_RTC_HAS_INTERRUPTS            FALSE
 
@@ -1316,7 +1320,11 @@
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
 #define STM32_RTC_HAS_SUBSECONDS            TRUE
+#if defined (STM32F070xB)
+#define STM32_RTC_HAS_PERIODIC_WAKEUPS      TRUE
+#else
 #define STM32_RTC_HAS_PERIODIC_WAKEUPS      FALSE
+#endif
 #define STM32_RTC_NUM_ALARMS                1
 #define STM32_RTC_HAS_INTERRUPTS            FALSE
 
