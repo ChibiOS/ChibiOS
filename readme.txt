@@ -72,6 +72,7 @@
 *****************************************************************************
 
 *** 2.6.10 ***
+- FIX: Fixed missing const qualifier in local shell commands array (bug #797).
 - FIX: Fixed double empty lines in HAL (bug #794).
 - FIX: Fixed STM32F105 port not compiling. (bug #782).
 - FIX: Fixed wrong HSE checks and PLL2 enable switch in STM32F105 and
