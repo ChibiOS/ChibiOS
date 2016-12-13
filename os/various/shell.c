@@ -109,7 +109,7 @@ static void cmd_systime(BaseSequentialStream *chp, int argc, char *argv[]) {
 /**
  * @brief   Array of the default commands.
  */
-static ShellCommand local_commands[] = {
+static const ShellCommand local_commands[] = {
   {"info", cmd_info},
   {"systime", cmd_systime},
   {NULL, NULL}
