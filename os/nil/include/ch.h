@@ -534,7 +534,7 @@ struct nil_thread {
 #endif
   } u1;
   volatile systime_t    timeout;    /**< @brief Timeout counter, zero
-                                            if disabled.                    */
+                                                if disabled.                */
 #if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
   eventmask_t           epmask;     /**< @brief Pending events mask.        */
 #endif
