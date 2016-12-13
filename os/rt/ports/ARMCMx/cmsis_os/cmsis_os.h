@@ -400,7 +400,7 @@ static const msg_t os_messageQ_buf_##name[queue_sz];                        \
 static mailbox_t os_messageQ_obj_##name;                                    \
 const osMessageQDef_t os_messageQ_def_##name = {                            \
   (queue_sz),                                                               \
-  sizeof (type)                                                             \
+  sizeof (type),                                                            \
   (void *)&os_messageQ_obj_##name,                                          \
   (void *)&os_messageQ_buf_##name[0]                                        \
 }
