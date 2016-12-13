@@ -326,7 +326,7 @@ void chSysTimerHandlerI(void) {
 
       chDbgAssert(!NIL_THD_IS_READY(tp), "is ready");
 
-     /* Did the timer reach zero?*/
+      /* Did the timer reach zero?*/
       if (--tp->timeout == (systime_t)0) {
         /* Timeout on semaphores requires a special handling because the
            semaphore counter must be incremented.*/
@@ -354,14 +354,19 @@ void chSysTimerHandlerI(void) {
   chDbgAssert(nil.nexttime == port_timer_get_alarm(), "time mismatch");
 
   do {
+    systime_t timeout = tp->timeout;
+
     /* Is the thread in a wait state with timeout?.*/
-    if (tp->timeout > (systime_t)0) {
+    if (timeout > (systime_t)0) {
 
       chDbgAssert(!NIL_THD_IS_READY(tp), "is ready");
-      chDbgAssert(tp->timeout >= (nil.nexttime - nil.lasttime), "skipped one");
+      chDbgAssert(timeout >= (nil.nexttime - nil.lasttime), "skipped one");
 
-      tp->timeout -= nil.nexttime - nil.lasttime;
-      if (tp->timeout == (systime_t)0) {
+      /* The volatile field is updated once, here.*/
+      timeout -= nil.nexttime - nil.lasttime;
+      tp->timeout = timeout;
+
+      if (timeout == (systime_t)0) {
 #if CH_CFG_USE_SEMAPHORES == TRUE
         /* Timeout on semaphores requires a special handling because the
            semaphore counter must be incremented.*/
@@ -379,17 +384,19 @@ void chSysTimerHandlerI(void) {
         (void) chSchReadyI(tp, MSG_TIMEOUT);
       }
       else {
-        if (tp->timeout <= (systime_t)(next - (systime_t)1)) {
-          next = tp->timeout;
+        if (timeout <= (systime_t)(next - (systime_t)1)) {
+          next = timeout;
         }
       }
     }
+
     /* Lock released in order to give a preemption chance on those
        architectures supporting IRQ preemption.*/
     chSysUnlockFromISR();
     tp++;
     chSysLockFromISR();
   } while (tp < &nil.threads[CH_CFG_NUM_THREADS]);
+
   nil.lasttime = nil.nexttime;
   if (next > (systime_t)0) {
     nil.nexttime += next;
