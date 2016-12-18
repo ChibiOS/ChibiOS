@@ -80,7 +80,7 @@
 		<link>
 			<name>board</name>
 			<type>2</type>
-			<locationURI>CHIBIOS/os/hal/boards/OLIMEX_STM32_E407</locationURI>
+			<locationURI>CHIBIOS/os/hal/boards/OLIMEX_STM32_P107</locationURI>
 		</link>
 		<link>
 			<name>fatfs</name>
