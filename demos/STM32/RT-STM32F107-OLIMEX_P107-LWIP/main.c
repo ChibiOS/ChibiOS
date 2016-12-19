@@ -25,8 +25,8 @@
 /*
  * Green LED blinker thread, times are in milliseconds.
  */
-static WORKING_AREA(waThread1, 128);
-static msg_t Thread1(void *arg) {
+static THD_WORKING_AREA(waThread1, 128);
+static THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
   chRegSetThreadName("blinker");
@@ -76,7 +76,7 @@ int main(void) {
    */
   while (true) {
     if (palReadPad(GPIOC, GPIOC_SWITCH_TAMPER) == 0)
-      TestThread(&SD3);
+      test_execute((BaseSequentialStream *)&SD3);
     chThdSleepMilliseconds(500);
   }
 }
