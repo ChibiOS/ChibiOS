@@ -190,10 +190,6 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if (STM32_MAC_PHY_TIMEOUT > 0) && !HAL_IMPLEMENTS_COUNTERS
-#error "STM32_MAC_PHY_TIMEOUT requires the realtime counter service"
-#endif
-
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
