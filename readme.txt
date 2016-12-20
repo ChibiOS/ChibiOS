@@ -150,6 +150,7 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Fixed MAC driver broken on STM32F107 (bug #798)(backported to 16.1.6).
 - VAR: Fixed missing const qualifier in local shell commands array (bug #797)
        (backported to 16.1.6, 3.0.6, 2.6.10).
 - VAR: Fixed compilation error in cmsis_os.h (bug #796)(backported to 16.1.6,
