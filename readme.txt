@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.6 ***
+- HAL: Fixed MAC driver broken on STM32F107 (bug #798).
 - VAR: Fixed missing const qualifier in local shell commands array (bug #797).
 - VAR: Fixed compilation error in cmsis_os.h (bug #796).
 - HAL: Fixed double empty lines in HAL (bug #794).
