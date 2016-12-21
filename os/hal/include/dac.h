@@ -73,7 +73,7 @@ typedef enum {
   DAC_READY = 2,                    /**< Ready.                             */
   DAC_ACTIVE = 3,                   /**< Exchanging data.                   */
   DAC_COMPLETE = 4,                 /**< Asynchronous operation complete.   */
-  DAC_ERROR = 5 			        /**< Error.                             */
+  DAC_ERROR = 5                     /**< Error.                             */
 } dacstate_t;
 
 #include "dac_lld.h"
