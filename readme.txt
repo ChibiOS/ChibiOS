@@ -150,6 +150,12 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Fixed wrong initialization for DACD4 in STM32 port (bug #802)
+       (backported to 16.1.6).
+- HAL: Fixed tab instead of space in dac driver (bug #801)
+       (backported to 16.1.6).
+- HAL: Fixed missing GPT and DAC in STM32F07/​9x mcuconf (bug #800)
+       (backported to 16.1.6).
 - HAL: Fixed STM32 RTCv2 driver does not handle the DST bit (bug #799)
        (backported to 16.1.6).
 - HAL: Fixed MAC driver broken on STM32F107 (bug #798)(backported to 16.1.6).
