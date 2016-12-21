@@ -244,7 +244,7 @@ void dac_lld_start(DACDriver *dacp) {
 #endif
 
 #if STM32_DAC_USE_DAC2_CH2
-    if (&DACD3 == dacp) {
+    if (&DACD4 == dacp) {
       rccEnableDAC2(false);
       channel = 1;
     }
