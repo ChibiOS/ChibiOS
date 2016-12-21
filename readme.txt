@@ -73,6 +73,9 @@
 *****************************************************************************
 
 *** 16.1.6 ***
+- HAL: Fixed wrong initialization for DACD4 in STM32 port (bug #802).
+- HAL: Fixed tab instead of space in dac driver (bug #801).
+- HAL: Fixed missing GPT and DAC in STM32F07/?9x mcuconf (bug #800).
 - HAL: Fixed STM32 RTCv2 driver does not handle the DST bit (bug #799).
 - HAL: Fixed MAC driver broken on STM32F107 (bug #798).
 - VAR: Fixed missing const qualifier in local shell commands array (bug #797).
