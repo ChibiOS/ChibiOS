@@ -178,7 +178,7 @@
         Speed="Maximum"
         Resistor="Floating"
         Mode="Alternate"
-        Alternate="7"
+        Alternate="3"
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
     </GPIOA>

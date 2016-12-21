@@ -270,7 +270,7 @@
  * PA12 - ARD_D2                    (analog).
  * PA13 - SWDIO                     (alternate 0).
  * PA14 - SWCLK                     (alternate 0).
- * PA15 - VCP_RX                    (alternate 7).
+ * PA15 - VCP_RX                    (alternate 3).
  */
 #define VAL_GPIOA_MODER             (PIN_MODE_ANALOG(GPIOA_ARD_A0) |        \
                                      PIN_MODE_ANALOG(GPIOA_ARD_A1) |        \
@@ -367,7 +367,7 @@
                                      PIN_AFIO_AF(GPIOA_ARD_D2, 0) |         \
                                      PIN_AFIO_AF(GPIOA_SWDIO, 0) |          \
                                      PIN_AFIO_AF(GPIOA_SWCLK, 0) |          \
-                                     PIN_AFIO_AF(GPIOA_VCP_RX, 7))
+                                     PIN_AFIO_AF(GPIOA_VCP_RX, 3))
 #define VAL_GPIOA_ASCR              (PIN_ASCR_DISABLED(GPIOA_ARD_A0) |      \
                                      PIN_ASCR_DISABLED(GPIOA_ARD_A1) |      \
                                      PIN_ASCR_DISABLED(GPIOA_VCP_TX) |      \
