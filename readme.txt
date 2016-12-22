@@ -86,6 +86,9 @@
 *****************************************************************************
 
 *** Next ***
+- HAL: Implemented separated virtual timers module under /os/hal/osal/lib,
+       it can be used by OSAL implementations where the underlying RTOS is
+       lacking a timeout feature or missing.
 - HAL: Added CAN3 support to the STM32 CANv1 driver.
 - HAL: Added support for all existing STM32 Nucleo and Discovery boards.
 - HAL: Extended STM32F4xx port by adding STM32F412 support.
