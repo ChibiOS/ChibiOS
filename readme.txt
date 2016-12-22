@@ -186,7 +186,6 @@
        (backported to 16.1.6).
 - HAL: Fixed STM32F105 port not compiling (bug #782)
        (backported to 16.1.6, 3.0.6, 2.6.10).
-       (bug #780)(backported to 16.1.6, 3.0.6).
 - HAL: Fixed wrong registry for STM32F205xx and STM32F215xx port 
        (bug #780)(backported to 16.1.6, 3.0.6).
 - HAL: Fixed wrong HSE checks and PLL2 enable switch in STM32F105 and
