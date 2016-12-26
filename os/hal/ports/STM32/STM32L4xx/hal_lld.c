@@ -309,7 +309,7 @@ void stm32_clock_init(void) {
 
   /* Set flash WS's for SYSCLK source */
   if (STM32_FLASHBITS > STM32_MSI_FLASHBITS)
-    FLASH->ACR = STM32_FLASHBITS;
+    FLASH->ACR = (FLASH->ACR & ~FLASH_ACR_LATENCY_Msk) | STM32_FLASHBITS;
 
   /* Switching to the configured SYSCLK source if it is different from MSI.*/
 #if (STM32_SW != STM32_SW_MSI)
@@ -321,7 +321,7 @@ void stm32_clock_init(void) {
 
   /* Reduce the flash WS's for SYSCLK source if they are less than MSI WSs */
   if (STM32_FLASHBITS < STM32_MSI_FLASHBITS)
-    FLASH->ACR = STM32_FLASHBITS;
+    FLASH->ACR = (FLASH->ACR & ~FLASH_ACR_LATENCY_Msk) | STM32_FLASHBITS;
 
 #endif /* STM32_NO_INIT */
 

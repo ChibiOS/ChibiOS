@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.6 ***
+- HAL: Fixed flash waiting state misconfiguration in STM32L4 port (bug #804).
 - HAL: Added CR field to DAC configuration in STM32 port (bug #803).
 - HAL: Fixed wrong initialization for DACD4 in STM32 port (bug #802).
 - HAL: Fixed tab instead of space in dac driver (bug #801).
