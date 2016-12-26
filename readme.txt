@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.6 ***
+- HAL: Added CR field to DAC configuration in STM32 port (bug #803).
 - HAL: Fixed wrong initialization for DACD4 in STM32 port (bug #802).
 - HAL: Fixed tab instead of space in dac driver (bug #801).
 - HAL: Fixed missing GPT and DAC in STM32F07/?9x mcuconf (bug #800).

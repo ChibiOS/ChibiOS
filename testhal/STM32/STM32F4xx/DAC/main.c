@@ -89,7 +89,8 @@ static void error_cb1(DACDriver *dacp, dacerror_t err) {
 
 static const DACConfig dac1cfg1 = {
   .init         = 2047U,
-  .datamode     = DAC_DHRM_12BIT_RIGHT
+  .datamode     = DAC_DHRM_12BIT_RIGHT,
+  .cr           = 0
 };
 
 static const DACConversionGroup dacgrpcfg1 = {

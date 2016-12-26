@@ -249,7 +249,9 @@ void dac_lld_start(DACDriver *dacp) {
       channel = 1;
     }
 #endif
-
+    /* Copying user configuration into cr */
+    dacp->params->dac->CR = dacp->config->cr;
+    
     /* Enabling DAC in SW triggering mode initially, initializing data to
        zero.*/
 #if STM32_DAC_DUAL_MODE == FALSE
