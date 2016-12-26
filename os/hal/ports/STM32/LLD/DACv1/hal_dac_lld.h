@@ -371,6 +371,10 @@ typedef struct {
    * @brief   DAC data holding register mode.
    */
   dacdhrmode_t              datamode;
+  /**
+   * @brief   DAC control register.
+   */
+  uint32_t                  cr;
 } DACConfig;
 
 /**

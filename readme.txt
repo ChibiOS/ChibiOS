@@ -153,6 +153,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Added CR field to DAC configuration in STM32 port (bug #803)
+       (backported to 16.1.6).
 - HAL: Fixed wrong initialization for DACD4 in STM32 port (bug #802)
        (backported to 16.1.6).
 - HAL: Fixed tab instead of space in dac driver (bug #801)
