@@ -610,6 +610,8 @@
 #error "STM32_LSEDRV outside acceptable range ((0<<3)...(3<<3))"
 #endif
 
+#else /* !STM32_LSE_ENABLED */
+
 #if STM32_CECSW == STM32_CECSW_LSE
 #error "LSE not enabled, required by STM32_CECSW"
 #endif
@@ -617,8 +619,6 @@
 #if STM32_USART1SW == STM32_USART1SW_LSE
 #error "LSE not enabled, required by STM32_USART1SW"
 #endif
-
-#else /* !STM32_LSE_ENABLED */
 
 #if STM32_RTCSEL == STM32_RTCSEL_LSE
 #error "LSE not enabled, required by STM32_RTCSEL"
