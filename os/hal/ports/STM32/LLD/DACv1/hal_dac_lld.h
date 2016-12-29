@@ -374,7 +374,7 @@ typedef struct {
   /**
    * @brief   DAC control register.
    */
-  uint32_t                  cr;
+  uint16_t                  cr;
 } DACConfig;
 
 /**

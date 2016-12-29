@@ -249,24 +249,21 @@ void dac_lld_start(DACDriver *dacp) {
       channel = 1;
     }
 #endif
-    /* Copying user configuration into cr */
-    dacp->params->dac->CR = dacp->config->cr;
-
     /* Enabling DAC in SW triggering mode initially, initializing data to
        zero.*/
 #if STM32_DAC_DUAL_MODE == FALSE
     dacp->params->dac->CR &= dacp->params->regmask;
-    dacp->params->dac->CR |= DAC_CR_EN1 << dacp->params->regshift;
+    dacp->params->dac->CR |= (DAC_CR_EN1 | dacp->config->cr) << dacp->params->regshift;
     dac_lld_put_channel(dacp, channel, dacp->config->init);
 #else
     if ((dacp->config->datamode == DAC_DHRM_12BIT_RIGHT_DUAL) ||
         (dacp->config->datamode == DAC_DHRM_12BIT_LEFT_DUAL) ||
         (dacp->config->datamode == DAC_DHRM_8BIT_RIGHT_DUAL)) {
-      dacp->params->dac->CR = DAC_CR_EN2 | DAC_CR_EN1;
+      dacp->params->dac->CR = DAC_CR_EN2 | (dacp->config->cr << 16) | DAC_CR_EN1 | dacp->config->cr;
       dac_lld_put_channel(dacp, 1U, dacp->config->init);
     }
     else {
-      dacp->params->dac->CR = DAC_CR_EN1;
+      dacp->params->dac->CR = DAC_CR_EN1 | dacp->config->cr;
     }
     dac_lld_put_channel(dacp, channel, dacp->config->init);
 #endif
@@ -492,13 +489,13 @@ void dac_lld_start_conversion(DACDriver *dacp) {
 
   /* DAC configuration.*/
 #if STM32_DAC_DUAL_MODE == FALSE
-  cr = DAC_CR_DMAEN1 | (dacp->grpp->trigger << 3) | DAC_CR_TEN1 | DAC_CR_EN1;
+  cr = DAC_CR_DMAEN1 | (dacp->grpp->trigger << 3) | DAC_CR_TEN1 | DAC_CR_EN1 | dacp->config->cr;
   dacp->params->dac->CR &= dacp->params->regmask;
   dacp->params->dac->CR |= cr << dacp->params->regshift;
 #else
   dacp->params->dac->CR = 0;
-  cr = DAC_CR_DMAEN1 | (dacp->grpp->trigger << 3)  | DAC_CR_TEN1 | DAC_CR_EN1
-                     | (dacp->grpp->trigger << 19) | DAC_CR_TEN2 | DAC_CR_EN2;
+  cr = DAC_CR_DMAEN1 | (dacp->grpp->trigger << 3)  | DAC_CR_TEN1 | DAC_CR_EN1 | dacp->config->cr
+                     | (dacp->grpp->trigger << 19) | DAC_CR_TEN2 | DAC_CR_EN2 | (dacp->config->cr << 16);
   dacp->params->dac->CR = cr;
 #endif
 }
@@ -521,15 +518,15 @@ void dac_lld_stop_conversion(DACDriver *dacp) {
 
 #if STM32_DAC_DUAL_MODE == FALSE
   dacp->params->dac->CR &= dacp->params->regmask;
-  dacp->params->dac->CR |= DAC_CR_EN1 << dacp->params->regshift;
+  dacp->params->dac->CR |= (DAC_CR_EN1 | dacp->config->cr) << dacp->params->regshift;
 #else
   if ((dacp->config->datamode == DAC_DHRM_12BIT_RIGHT_DUAL) ||
       (dacp->config->datamode == DAC_DHRM_12BIT_LEFT_DUAL) ||
       (dacp->config->datamode == DAC_DHRM_8BIT_RIGHT_DUAL)) {
-    dacp->params->dac->CR = DAC_CR_EN2 | DAC_CR_EN1;
+    dacp->params->dac->CR = DAC_CR_EN2 | (dacp->config->cr << 16) | DAC_CR_EN1 | dacp->config->cr;
   }
   else {
-    dacp->params->dac->CR = DAC_CR_EN1;
+    dacp->params->dac->CR = DAC_CR_EN1 | dacp->config->cr;
   }
 #endif
 }
