@@ -73,6 +73,8 @@
 *****************************************************************************
 
 *** 16.1.6 ***
+- HAL: Fixed wrong clock init in STM32F0 port ad added more error checks
+       (bug #806).
 - HAL: Fixed misplaced else in STM32F0 port (bug #805).
 - HAL: Fixed flash waiting state misconfiguration in STM32L4 port (bug #804).
 - HAL: Added CR field to DAC configuration in STM32 port (bug #803).
