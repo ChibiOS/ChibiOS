@@ -499,6 +499,10 @@
  * HSI related checks.
  */
 #if STM32_HSI_ENABLED
+#if (STM32_SW == STM32_SW_PLL) &&                                           \
+    (STM32_PLLSRC == STM32_PLLSRC_HSI) && !STM32_HAS_HSI_PREDIV
+#error "STM32_PLLSRC_HSI not available on this platform. Select STM32_PLLSRC_HSI_DIV2 instead."
+#endif
 #else /* !STM32_HSI_ENABLED */
 
 #if STM32_SW == STM32_SW_HSI
@@ -548,6 +552,9 @@
  * HSI48 related checks.
  */
 #if STM32_HSI48_ENABLED
+#if !STM32_HAS_HSI48
+#error "HSI48 not available on this platform"
+#endif
 #else /* !STM32_HSI48_ENABLED */
 
 #if STM32_SW == STM32_SW_HSI48
@@ -662,7 +669,7 @@
 #define STM32_ACTIVATE_PLL          FALSE
 #endif
 
-/* HSE prescaler setting check.*/
+/* HSE, HSI prescaler setting check.*/
 #if ((STM32_PREDIV_VALUE >= 1) || (STM32_PREDIV_VALUE <= 16))
 #define STM32_PREDIV                ((STM32_PREDIV_VALUE - 1) << 0)
 #else
@@ -821,14 +828,16 @@
  */
 #if (STM32_MCOPRE == STM32_MCOPRE_DIV1) || defined(__DOXYGEN__)
 #define STM32_MCOCLK                STM32_MCODIVCLK
-#elif STM32_MCOPRE == STM32_MCOPRE_DIV2
+#elif (STM32_MCOPRE == STM32_MCOPRE_DIV2) && STM32_HAS_MCO_PREDIV
 #define STM32_MCOCLK                (STM32_MCODIVCLK / 2)
-#elif STM32_MCOPRE == STM32_MCOPRE_DIV4
+#elif (STM32_MCOPRE == STM32_MCOPRE_DIV4) && STM32_HAS_MCO_PREDIV
 #define STM32_MCOCLK                (STM32_MCODIVCLK / 4)
-#elif STM32_MCOPRE == STM32_MCOPRE_DIV8
+#elif (STM32_MCOPRE == STM32_MCOPRE_DIV8) && STM32_HAS_MCO_PREDIV
 #define STM32_MCOCLK                (STM32_MCODIVCLK / 8)
-#elif STM32_MCOPRE == STM32_MCOPRE_DIV16
+#elif (STM32_MCOPRE == STM32_MCOPRE_DIV16) && STM32_HAS_MCO_PREDIV
 #define STM32_MCOCLK                (STM32_MCODIVCLK / 16)
+#elif !STM32_HAS_MCO_PREDIV
+#error "MCO_PREDIV not available on this platform. Select STM32_MCODIVCLK."
 #else
 #error "invalid STM32_MCOPRE value specified"
 #endif

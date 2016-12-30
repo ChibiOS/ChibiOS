@@ -46,6 +46,15 @@
 /* Common identifier of all STM32F030 devices.*/
 #define STM32F030
 
+/* RCC attributes. */
+#define STM32_HAS_HSI48                     FALSE
+#if defined(STM32F030xC)
+#define STM32_HAS_HSI_PREDIV                TRUE
+#else
+#define STM32_HAS_HSI_PREDIV                FALSE
+#endif
+#define STM32_HAS_MCO_PREDIV                TRUE
+
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
 #define STM32_ADC_SUPPORTS_PRESCALER        FALSE
@@ -241,6 +250,7 @@
 #define STM32_HAS_TIM2                      FALSE
 #define STM32_HAS_TIM4                      FALSE
 #define STM32_HAS_TIM5                      FALSE
+#define STM32_HAS_TIM7                      FALSE
 #define STM32_HAS_TIM8                      FALSE
 #define STM32_HAS_TIM9                      FALSE
 #define STM32_HAS_TIM10                     FALSE
@@ -348,6 +358,11 @@
 /* STM32F031x6, STM32F038xx.                                                 */
 /*===========================================================================*/
 #elif defined(STM32F031x6) || defined(STM32F038xx)
+
+/* RCC attributes. */
+#define STM32_HAS_HSI48                     FALSE
+#define STM32_HAS_HSI_PREDIV                FALSE
+#define STM32_HAS_MCO_PREDIV                TRUE
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
@@ -552,6 +567,11 @@
 /* STM32F042x6.                                                              */
 /*===========================================================================*/
 #elif defined(STM32F042x6)
+
+/* RCC attributes. */
+#define STM32_HAS_HSI48                     TRUE
+#define STM32_HAS_HSI_PREDIV                TRUE
+#define STM32_HAS_MCO_PREDIV                TRUE
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
@@ -766,6 +786,11 @@
 /* STM32F048xx.                                                              */
 /*===========================================================================*/
 #elif defined(STM32F048xx)
+
+/* RCC attributes. */
+#define STM32_HAS_HSI48                     TRUE
+#define STM32_HAS_HSI_PREDIV                TRUE
+#define STM32_HAS_MCO_PREDIV                TRUE
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
@@ -984,6 +1009,11 @@
 /* STM32F051x8, STM32F058xx.                                                 */
 /*===========================================================================*/
 #elif defined(STM32F051x8) || defined(STM32F058xx)
+
+/* RCC attributes. */
+#define STM32_HAS_HSI48                     FALSE
+#define STM32_HAS_HSI_PREDIV                FALSE
+#define STM32_HAS_MCO_PREDIV                FALSE
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
@@ -1218,6 +1248,11 @@
 
 /* Common identifier of all STM32F070 devices.*/
 #define STM32F070
+
+/* RCC attributes. */
+#define STM32_HAS_HSI48                     FALSE
+#define STM32_HAS_HSI_PREDIV                TRUE
+#define STM32_HAS_MCO_PREDIV                TRUE
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
@@ -1469,6 +1504,11 @@
 /*===========================================================================*/
 #elif defined(STM32F071xB) || defined(STM32F072xB) ||                       \
       defined(STM32F078xx)
+      
+/* RCC attributes. */
+#define STM32_HAS_HSI48                     TRUE
+#define STM32_HAS_HSI_PREDIV                TRUE
+#define STM32_HAS_MCO_PREDIV                TRUE
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
@@ -1732,6 +1772,11 @@
 /* STM32F091xC, STM32F098xx.                                                 */
 /*===========================================================================*/
 #elif defined(STM32F091xC) || defined(STM32F098xx)
+
+/* RCC attributes. */
+#define STM32_HAS_HSI48                     TRUE
+#define STM32_HAS_HSI_PREDIV                TRUE
+#define STM32_HAS_MCO_PREDIV                TRUE
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE

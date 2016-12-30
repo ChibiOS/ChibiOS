@@ -153,6 +153,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Fixed wrong clock init in STM32F0 port ad added more error checks 
+       (bug #806)(backported to 16.1.6).
 - HAL: Fixed misplaced else in STM32F0 port (bug #805)
        (backported to 16.1.6).
 - HAL: Fixed flash waiting state misconfiguration in STM32L4 port (bug #804)
