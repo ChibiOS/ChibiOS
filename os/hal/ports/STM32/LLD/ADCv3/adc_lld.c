@@ -546,7 +546,14 @@ void adc_lld_init(void) {
 #if defined(STM32L4XX)
   rccEnableADC123(FALSE);
   rccResetADC123();
+
+#if defined(ADC1_2_COMMON)
+  ADC1_2_COMMON->CCR = STM32_ADC_ADC123_CLOCK_MODE | ADC_DMA_MDMA;
+#elif defined(ADC123_COMMON)
   ADC123_COMMON->CCR = STM32_ADC_ADC123_CLOCK_MODE | ADC_DMA_MDMA;
+#else
+  ADC1_COMMON->CCR = STM32_ADC_ADC123_CLOCK_MODE | ADC_DMA_MDMA;
+#endif
   rccDisableADC123(FALSE);
 #endif
 }
