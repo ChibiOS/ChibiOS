@@ -139,7 +139,7 @@ struct SPIDriver {
   /**
    * @brief Current configuration data.
    */
-  SPIConfig                 *config;
+  const SPIConfig           *config;
 #if SPI_USE_WAIT || defined(__DOXYGEN__)
   /**
    * @brief Waiting thread.
@@ -159,32 +159,67 @@ struct SPIDriver {
   /**
    * @brief   Pointer to the buffer with data to send.
    */
-  uint8_t                   *txbuf;
+  const uint8_t             *txbuf;
   /**
-   * @brief   Number of bytes of data to send.
-   */
-  size_t                    txbytes;
-  /**
-   * @brief   Current index in buffer when sending data.
-   */
-  size_t                    txidx;
-  /**
-   * @brief   Pointer to the buffer to put received data.
+   * @brief   Pointer to the buffer to store received data.
    */
   uint8_t                   *rxbuf;
   /**
-   * @brief   Number of bytes of data to receive.
+   * @brief   Number of bytes of data to exchange.
    */
-  size_t                    rxbytes;
+  size_t                    exbytes;
   /**
-   * @brief   Current index in buffer when receiving data.
+   * @brief   Current index in buffer when exchanging data.
    */
-  size_t                    rxidx;
+  size_t                    exidx;
 };
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Ignores data on the SPI bus.
+ * @details This asynchronous function starts the transmission of a series of
+ *          idle words on the SPI bus and ignores the received data.
+ * @post    At the end of the operation the configured callback is invoked.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] n         number of words to be ignored
+ *
+ * @notapi
+ */
+#define spi_lld_ignore(spip, n)     spi_lld_exchange(spip, n, NULL, NULL)
+
+/**
+ * @brief   Sends data over the SPI bus.
+ * @details This asynchronous function starts a transmit operation.
+ * @post    At the end of the operation the configured callback is invoked.
+ * @note    The buffers are organized as uint8_t arrays for data sizes below or
+ *          equal to 8 bits else it is organized as uint16_t arrays.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] n         number of words to send
+ * @param[in] txbuf     the pointer to the transmit buffer
+ *
+ * @notapi
+ */
+#define spi_lld_send(spip, n, txbuf)     spi_lld_exchange(spip, n, txbuf, NULL)
+
+/**
+ * @brief   Receives data from the SPI bus.
+ * @details This asynchronous function starts a receive operation.
+ * @post    At the end of the operation the configured callback is invoked.
+ * @note    The buffers are organized as uint8_t arrays for data sizes below or
+ *          equal to 8 bits else it is organized as uint16_t arrays.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] n         number of words to receive
+ * @param[out] rxbuf    the pointer to the receive buffer
+ *
+ * @notapi
+ */
+#define spi_lld_receive(spip, n, rxbuf)     spi_lld_exchange(spip, n, NULL, rxbuf)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -202,11 +237,8 @@ extern "C" {
   void spi_lld_stop(SPIDriver *spip);
   void spi_lld_select(SPIDriver *spip);
   void spi_lld_unselect(SPIDriver *spip);
-  void spi_lld_ignore(SPIDriver *spip, size_t n);
   void spi_lld_exchange(SPIDriver *spip, size_t n,
                         const void *txbuf, void *rxbuf);
-  void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf);
-  void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf);
 
 #if AVR_SPI_USE_16BIT_POLLED_EXCHANGE
   uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame);

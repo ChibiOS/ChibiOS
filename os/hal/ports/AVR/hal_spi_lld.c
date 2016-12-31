@@ -30,6 +30,8 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
+#define DUMMY_SPI_SEND_VALUE    0xFF
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -64,31 +66,19 @@ OSAL_IRQ_HANDLER(SPI_STC_vect) {
 
   SPIDriver *spip = &SPID1;
 
-  /* spi_lld_exchange or spi_lld_receive */
-  if (spip->rxbuf && spip->rxidx < spip->rxbytes) {
-    spip->rxbuf[spip->rxidx++] = SPDR;  // receive
-  }
+  /* a new value has arrived, store it if we are interested in it */
+  if (spip->rxbuf) spip->rxbuf[spip->exidx] = SPDR;
 
-  /* rx done and tx done */
-  if (spip->rxidx >= spip->rxbytes && spip->txidx >= spip->txbytes) { 
+  /* check if we are done */
+  if (++(spip->exidx) >= spip->exbytes) {
     _spi_isr_code(spip);
-  }
-  else {
-    /* spi_lld_exchange, spi_lld_send or spi_lld_ignore */
-    if (spip->txidx < spip->txbytes) {
-      if (spip->txbuf) {
-        SPDR = spip->txbuf[spip->txidx++]; // send
-      } else {
-        SPDR = 0; spip->txidx++; // dummy send
-      }
-    }
-
-    /* spi_lld_receive */
-    else if (spip->rxidx < spip->rxbytes) { /* rx not done */
-      SPDR = 0; // dummy send to keep the clock going
+  } else { /* if not done send the next byte */
+     if (spip->txbuf) { /* if there is a buffer with values to be send then use it*/
+       SPDR = spip->txbuf[spip->exidx];
+    } else {            /* if there isn't a buffer with values to be send then send a the dummy value*/
+      SPDR = DUMMY_SPI_SEND_VALUE;
     }
   }
-
   OSAL_IRQ_EPILOGUE();
 }
 #endif /* AVR_SPI_USE_SPI1 */
@@ -265,25 +255,6 @@ void spi_lld_unselect(SPIDriver *spip) {
 
 }
 
-/**
- * @brief   Ignores data on the SPI bus.
- * @details This asynchronous function starts the transmission of a series of
- *          idle words on the SPI bus and ignores the received data.
- * @post    At the end of the operation the configured callback is invoked.
- *
- * @param[in] spip      pointer to the @p SPIDriver object
- * @param[in] n         number of words to be ignored
- *
- * @notapi
- */
-void spi_lld_ignore(SPIDriver *spip, size_t n) {
-
-  spip->rxbuf = spip->txbuf = NULL;
-  spip->txbytes = n;
-  spip->txidx = 0;
-
-  SPDR = 0;
-}
 
 /**
  * @brief   Exchanges data on the SPI bus.
@@ -300,63 +271,15 @@ void spi_lld_ignore(SPIDriver *spip, size_t n) {
  *
  * @notapi
  */
-void spi_lld_exchange(SPIDriver *spip, size_t n,
-                      const void *txbuf, void *rxbuf) {
+void spi_lld_exchange(SPIDriver *spip, size_t n, const void *txbuf, void *rxbuf) {
 
-  spip->rxbuf = rxbuf;
   spip->txbuf = txbuf;
-  spip->txbytes = spip->rxbytes = n;
-  spip->txidx = spip->rxidx = 0;
-
-  SPDR = spip->txbuf[spip->txidx++];
-}
-
-/**
- * @brief   Sends data over the SPI bus.
- * @details This asynchronous function starts a transmit operation.
- * @post    At the end of the operation the configured callback is invoked.
- * @note    The buffers are organized as uint8_t arrays for data sizes below or
- *          equal to 8 bits else it is organized as uint16_t arrays.
- *
- * @param[in] spip      pointer to the @p SPIDriver object
- * @param[in] n         number of words to send
- * @param[in] txbuf     the pointer to the transmit buffer
- *
- * @notapi
- */
-void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
-
-  spip->rxbuf = NULL;
-  spip->txbuf = txbuf;
-  spip->txbytes = n;
-  spip->txidx = 0;
-
-  SPDR = spip->txbuf[spip->txidx++];
-}
-
-/**
- * @brief   Receives data from the SPI bus.
- * @details This asynchronous function starts a receive operation.
- * @post    At the end of the operation the configured callback is invoked.
- * @note    The buffers are organized as uint8_t arrays for data sizes below or
- *          equal to 8 bits else it is organized as uint16_t arrays.
- *
- * @param[in] spip      pointer to the @p SPIDriver object
- * @param[in] n         number of words to receive
- * @param[out] rxbuf    the pointer to the receive buffer
- *
- * @notapi
- */
-void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
-
-  spip->txbuf = NULL;
   spip->rxbuf = rxbuf;
-  spip->rxbytes = n;
-  spip->rxidx = 0;
-
-  /* Write dummy byte to start communication */
-  SPDR = 0;
+  spip->exidx = 0;
+  spip->exbytes = n;
+  SPDR = (spip->txbuf ? spip->txbuf[0] : DUMMY_SPI_SEND_VALUE);
 }
+
 
 /**
  * @brief   Exchanges one frame using a polled wait.
