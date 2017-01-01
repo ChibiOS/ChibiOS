@@ -80,7 +80,7 @@
 - HAL: Fixed flash waiting state misconfiguration in STM32L4 port (bug #804).
 - HAL: Added CR field to DAC configuration in STM32 port (bug #803).
 - HAL: Fixed wrong initialization for DACD4 in STM32 port (bug #802).
-- HAL: Fixed tab instead of space in dac driver (bug #801).
+- HAL: Fixed tab instead of space in DAC driver (bug #801).
 - HAL: Fixed missing GPT and DAC in STM32F07/?9x mcuconf (bug #800).
 - HAL: Fixed STM32 RTCv2 driver does not handle the DST bit (bug #799).
 - HAL: Fixed MAC driver broken on STM32F107 (bug #798).
