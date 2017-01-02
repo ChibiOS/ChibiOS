@@ -4,8 +4,8 @@
 
 ** TARGET **
 
-The demo runs on an STM32 Nucleo64-F401RE board. It has been tested with the 
-X-NUCLEO-IKS01A1 shield.
+The demo runs on an STM32 Nucleo64-F401RE board. It has been tested with both 
+X-NUCLEO-IKS01A1 and X-NUCLEO-IKS01A2 shield.
 
 ** The Demo **
 
