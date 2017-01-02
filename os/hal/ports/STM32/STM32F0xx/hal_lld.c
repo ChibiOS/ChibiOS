@@ -28,6 +28,9 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
+#define STM32_PLLXTPRE_OFFSET   17          /**< PLLXTPRE offset             */
+#define STM32_PLLXTPRE_MASK     0x01        /**< PLLXTPRE mask               */
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -310,7 +313,8 @@ void stm32_clock_init(void) {
   /* CFGR2 must be configured first since CFGR value could change CFGR2 */
   RCC->CFGR2 = STM32_PREDIV;
   RCC->CFGR  = STM32_PLLNODIV | STM32_MCOPRE | STM32_MCOSEL | STM32_PLLMUL |
-               STM32_PLLSRC   | STM32_PPRE   | STM32_HPRE;
+               STM32_PLLSRC   | STM32_PPRE   | STM32_HPRE |
+               ((STM32_PREDIV & STM32_PLLXTPRE_MASK) << STM32_PLLXTPRE_OFFSET);
 #if STM32_CECSW == STM32_CECSW_OFF
   RCC->CFGR3 = STM32_USBSW  | STM32_I2C1SW | STM32_USART1SW;
 #else
