@@ -43,45 +43,45 @@
 /*===========================================================================*/
 
 /**
- * @brief   GPT1 driver enable switch.
- * @details If set to @p TRUE the support for GPT1 is included.
- * @note    The default is @p FALSE.
+ * @brief     GPT1 driver enable switch.
+ * @details   If set to @p TRUE the support for GPT1 is included.
+ * @note      The default is @p FALSE.
  */
 #if !defined(AVR_GPT_USE_TIM1)
 #define AVR_GPT_USE_TIM1              FALSE
 #endif
 
 /**
- * @brief   GPT2 driver enable switch.
- * @details If set to @p TRUE the support for GPT2 is included.
- * @note    The default is @p FALSE.
+ * @brief     GPT2 driver enable switch.
+ * @details   If set to @p TRUE the support for GPT2 is included.
+ * @note      The default is @p FALSE.
  */
 #if !defined(AVR_GPT_USE_TIM2)
 #define AVR_GPT_USE_TIM2              FALSE
 #endif
 
 /**
- * @brief   GPT3 driver enable switch.
- * @details If set to @p TRUE the support for GPT3 is included.
- * @note    The default is @p FALSE.
+ * @brief     GPT3 driver enable switch.
+ * @details   If set to @p TRUE the support for GPT3 is included.
+ * @note      The default is @p FALSE.
  */
 #if !defined(AVR_GPT_USE_TIM3)
 #define AVR_GPT_USE_TIM3              FALSE
 #endif
 
 /**
- * @brief   GPT4 driver enable switch.
- * @details If set to @p TRUE the support for GPT4 is included.
- * @note    The default is @p FALSE.
+ * @brief     GPT4 driver enable switch.
+ * @details   If set to @p TRUE the support for GPT4 is included.
+ * @note      The default is @p FALSE.
  */
 #if !defined(AVR_GPT_USE_TIM4)
 #define AVR_GPT_USE_TIM4              FALSE
 #endif
 
 /**
- * @brief   GPT5 driver enable switch.
- * @details If set to @p TRUE the support for GPT5 is included.
- * @note    The default is @p FALSE.
+ * @brief     GPT5 driver enable switch.
+ * @details   If set to @p TRUE the support for GPT5 is included.
+ * @note      The default is @p FALSE.
  */
 #if !defined(AVR_GPT_USE_TIM5)
 #define AVR_GPT_USE_TIM5              FALSE
@@ -165,13 +165,13 @@ struct GPTDriver {
 /*===========================================================================*/
 
 /**
- * @brief   Changes the interval of GPT peripheral.
- * @details This function changes the interval of a running GPT unit.
- * @pre     The GPT unit must have been activated using @p gptStart().
- * @pre     The GPT unit must have been running in continuous mode using
- *          @p gptStartContinuous().
- * @post    The GPT unit interval is changed to the new value.
- * @note    The function has effect at the next cycle start.
+ * @brief     Changes the interval of GPT peripheral.
+ * @details   This function changes the interval of a running GPT unit.
+ * @pre       The GPT unit must have been activated using @p gptStart().
+ * @pre       The GPT unit must have been running in continuous mode using
+ *            @p gptStartContinuous().
+ * @post      The GPT unit interval is changed to the new value.
+ * @note      The function has effect at the next cycle start.
  *
  * @param[in] gptp      pointer to a @p GPTDriver object
  * @param[in] interval  new cycle time in timer ticks

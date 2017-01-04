@@ -20,7 +20,7 @@
 */
 
 /**
- * @file    AVR/gpt_lld.c
+ * @file    hal_gpt_lld.c
  * @brief   AVR GPT driver subsystem low level driver.
  *
  * @addtogroup GPT
@@ -159,6 +159,11 @@ static uint8_t getTimerIndex(GPTDriver *gptp) {
 /*===========================================================================*/
 
 #if AVR_GPT_USE_TIM1 || defined(__DOXYGEN__)
+/**
+ * @brief   TIM1 interrupt handler.
+ *
+ * @isr
+ */
 OSAL_IRQ_HANDLER(TIMER1_COMPA_vect) {
 
   OSAL_IRQ_PROLOGUE();
@@ -168,6 +173,11 @@ OSAL_IRQ_HANDLER(TIMER1_COMPA_vect) {
 #endif
 
 #if AVR_GPT_USE_TIM2 || defined(__DOXYGEN__)
+/**
+ * @brief   TIM2 interrupt handler.
+ *
+ * @isr
+ */
 OSAL_IRQ_HANDLER(TIMER2_COMPA_vect) {
 
   OSAL_IRQ_PROLOGUE();
@@ -177,6 +187,11 @@ OSAL_IRQ_HANDLER(TIMER2_COMPA_vect) {
 #endif
 
 #if AVR_GPT_USE_TIM3 || defined(__DOXYGEN__)
+/**
+ * @brief   TIM3 interrupt handler.
+ *
+ * @isr
+ */
 OSAL_IRQ_HANDLER(TIMER3_COMPA_vect) {
 
   OSAL_IRQ_PROLOGUE();
@@ -186,6 +201,11 @@ OSAL_IRQ_HANDLER(TIMER3_COMPA_vect) {
 #endif
 
 #if AVR_GPT_USE_TIM4 || defined(__DOXYGEN__)
+/**
+ * @brief   TIM4 interrupt handler.
+ *
+ * @isr
+ */
 OSAL_IRQ_HANDLER(TIMER4_COMPA_vect) {
 
   OSAL_IRQ_PROLOGUE();
@@ -195,6 +215,11 @@ OSAL_IRQ_HANDLER(TIMER4_COMPA_vect) {
 #endif
 
 #if AVR_GPT_USE_TIM5 || defined(__DOXYGEN__)
+/**
+ * @brief   TIM2 interrupt handler.
+ *
+ * @isr
+ */
 OSAL_IRQ_HANDLER(TIMER5_COMPA_vect) {
 
   OSAL_IRQ_PROLOGUE();
@@ -234,7 +259,7 @@ void gpt_lld_init(void) {
 /**
  * @brief   Configures and activates the GPT peripheral.
  *
- * @param[in] gptp      pointer to the @p GPTDriver object
+ * @param[in] gptp    pointer to the @p GPTDriver object
  *
  * @notapi
  */
@@ -275,7 +300,7 @@ void gpt_lld_start(GPTDriver *gptp) {
 /**
  * @brief   Deactivates the GPT peripheral.
  *
- * @param[in] gptp      pointer to the @p GPTDriver object
+ * @param[in] gptp    pointer to the @p GPTDriver object
  *
  * @notapi
  */
@@ -313,7 +338,7 @@ void gpt_lld_start_timer(GPTDriver *gptp, gptcnt_t period) {
 /**
  * @brief   Stops the timer.
  *
- * @param[in] gptp      pointer to the @p GPTDriver object
+ * @param[in] gptp    pointer to the @p GPTDriver object
  *
  * @notapi
  */
