@@ -91,7 +91,8 @@ OSAL_IRQ_HANDLER(ADC_vect) {
 
   if (ADCD1.currentBufferPosition == bufferSize) {
     _adc_isr_full_code(&ADCD1);
-  } else {
+  }
+  else {
     setAdcChannel(getAdcChannelNumberFromMask(ADCD1.grpp->channelsMask,currentChannel));
     ADCSRA |= 1 << ADSC;
   }
