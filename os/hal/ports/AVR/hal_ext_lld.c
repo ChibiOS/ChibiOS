@@ -15,8 +15,8 @@
 */
 
 /**
- * @file  AVR/hal_ext_lld.c
- * @brief AVR EXT subsystem low level driver source.
+ * @file    hal_ext_lld.c
+ * @brief   AVR EXT subsystem low level driver source.
  *
  * @addtogroup EXT
  * @{
@@ -35,7 +35,7 @@
 /*===========================================================================*/
 
 /**
- * @brief EXTD1 driver identifier.
+ * @brief   EXTD1 driver identifier.
  */
 EXTDriver EXTD1;
 
@@ -59,13 +59,16 @@ void ext_lld_set_intx_edges(expchannel_t channel, uint8_t edge) {
     if (edge == EXT_CH_MODE_RISING_EDGE) {
       EICRA |= (1 << 0);
       EICRA |= (1 << 1);
-    } else if (edge == EXT_CH_MODE_FALLING_EDGE) {
+    }
+    else if (edge == EXT_CH_MODE_FALLING_EDGE) {
       EICRA &= ~(1 << 0);
       EICRA |= (1 << 1);
-    } else if (edge == EXT_CH_MODE_BOTH_EDGES) {
+    }
+    else if (edge == EXT_CH_MODE_BOTH_EDGES) {
       EICRA |= (1 << 0);
       EICRA &= ~(1 << 1);
-    } else if (edge == EXT_CH_MODE_LOW_LEVEL) {
+    }
+    else if (edge == EXT_CH_MODE_LOW_LEVEL) {
       EICRA &= ~(1 << 0);
       EICRA &= ~(1 << 1);
     }
@@ -76,13 +79,16 @@ void ext_lld_set_intx_edges(expchannel_t channel, uint8_t edge) {
     if (edge == EXT_CH_MODE_RISING_EDGE) {
       EICRA |= (1 << 2);
       EICRA |= (1 << 3);
-    } else if (edge == EXT_CH_MODE_FALLING_EDGE) {
+    }
+    else if (edge == EXT_CH_MODE_FALLING_EDGE) {
       EICRA &= ~(1 << 2);
       EICRA |= (1 << 3);
-    } else if (edge == EXT_CH_MODE_BOTH_EDGES) {
+    }
+    else if (edge == EXT_CH_MODE_BOTH_EDGES) {
       EICRA |= (1 << 2);
       EICRA &= ~(1 << 3);
-    } else if (edge == EXT_CH_MODE_LOW_LEVEL) {
+    }
+    else if (edge == EXT_CH_MODE_LOW_LEVEL) {
       EICRA &= ~(1 << 2);
       EICRA &= ~(1 << 3);
     }
@@ -93,13 +99,16 @@ void ext_lld_set_intx_edges(expchannel_t channel, uint8_t edge) {
     if (edge == EXT_CH_MODE_RISING_EDGE) {
       EICRA |= (1 << 4);
       EICRA |= (1 << 5);
-    } else if (edge == EXT_CH_MODE_FALLING_EDGE) {
+    }
+    else if (edge == EXT_CH_MODE_FALLING_EDGE) {
       EICRA &= ~(1 << 4);
       EICRA |= (1 << 5);
-    } else if (edge == EXT_CH_MODE_BOTH_EDGES) {
+    }
+    else if (edge == EXT_CH_MODE_BOTH_EDGES) {
       EICRA |= (1 << 4);
       EICRA &= ~(1 << 5);
-    } else if (edge == EXT_CH_MODE_LOW_LEVEL) {
+    }
+    else if (edge == EXT_CH_MODE_LOW_LEVEL) {
       EICRA &= ~(1 << 4);
       EICRA &= ~(1 << 5);
     }
@@ -110,13 +119,16 @@ void ext_lld_set_intx_edges(expchannel_t channel, uint8_t edge) {
     if (edge == EXT_CH_MODE_RISING_EDGE) {
       EICRA |= (1 << 6);
       EICRA |= (1 << 7);
-    } else if (edge == EXT_CH_MODE_FALLING_EDGE) {
+    }
+    else if (edge == EXT_CH_MODE_FALLING_EDGE) {
       EICRA &= ~(1 << 6);
       EICRA |= (1 << 7);
-    } else if (edge == EXT_CH_MODE_BOTH_EDGES) {
+    }
+    else if (edge == EXT_CH_MODE_BOTH_EDGES) {
       EICRA |= (1 << 6);
       EICRA &= ~(1 << 7);
-    } else if (edge == EXT_CH_MODE_LOW_LEVEL) {
+    }
+    else if (edge == EXT_CH_MODE_LOW_LEVEL) {
       EICRA &= ~(1 << 6);
       EICRA &= ~(1 << 7);
     }
@@ -127,13 +139,16 @@ void ext_lld_set_intx_edges(expchannel_t channel, uint8_t edge) {
     if (edge == EXT_CH_MODE_RISING_EDGE) {
       EICRB |= (1 << 0);
       EICRB |= (1 << 1);
-    } else if (edge == EXT_CH_MODE_FALLING_EDGE) {
+    }
+    else if (edge == EXT_CH_MODE_FALLING_EDGE) {
       EICRB &= ~(1 << 0);
       EICRB |= (1 << 1);
-    } else if (edge == EXT_CH_MODE_BOTH_EDGES) {
+    }
+    else if (edge == EXT_CH_MODE_BOTH_EDGES) {
       EICRB |= (1 << 0);
       EICRB &= ~(1 << 1);
-    } else if (edge == EXT_CH_MODE_LOW_LEVEL) {
+    }
+    else if (edge == EXT_CH_MODE_LOW_LEVEL) {
       EICRB &= ~(1 << 0);
       EICRB &= ~(1 << 1);
     }
@@ -144,13 +159,16 @@ void ext_lld_set_intx_edges(expchannel_t channel, uint8_t edge) {
     if (edge == EXT_CH_MODE_RISING_EDGE) {
       EICRB |= (1 << 2);
       EICRB |= (1 << 3);
-    } else if (edge == EXT_CH_MODE_FALLING_EDGE) {
+    }
+    else if (edge == EXT_CH_MODE_FALLING_EDGE) {
       EICRB &= ~(1 << 2);
       EICRB |= (1 << 3);
-    } else if (edge == EXT_CH_MODE_BOTH_EDGES) {
+    }
+    else if (edge == EXT_CH_MODE_BOTH_EDGES) {
       EICRB |= (1 << 2);
       EICRB &= ~(1 << 3);
-    } else if (edge == EXT_CH_MODE_LOW_LEVEL) {
+    }
+    else if (edge == EXT_CH_MODE_LOW_LEVEL) {
       EICRB &= ~(1 << 2);
       EICRB &= ~(1 << 3);
     }
@@ -164,7 +182,7 @@ void ext_lld_set_intx_edges(expchannel_t channel, uint8_t edge) {
 
 #if AVR_EXT_USE_INT0 || defined(__DOXYGEN__)
 /**
- * @brief EXTI[INT0] interrupt handler.
+ * @brief   EXTI[INT0] interrupt handler.
  *
  * @isr
  */
@@ -177,7 +195,7 @@ OSAL_IRQ_HANDLER(INT0_vect) {
 
 #if AVR_EXT_USE_INT1 || defined(__DOXYGEN__)
 /**
- * @brief EXTI[INT1] interrupt handler.
+ * @brief   EXTI[INT1] interrupt handler.
  *
  * @isr
  */
@@ -190,7 +208,7 @@ OSAL_IRQ_HANDLER(INT1_vect) {
 
 #if AVR_EXT_USE_INT2 || defined(__DOXYGEN__)
 /**
- * @brief EXTI[INT2] interrupt handler.
+ * @brief   EXTI[INT2] interrupt handler.
  *
  * @isr
  */
@@ -203,7 +221,7 @@ OSAL_IRQ_HANDLER(INT2_vect) {
 
 #if AVR_EXT_USE_INT3 || defined(__DOXYGEN__)
 /**
- * @brief EXTI[INT3] interrupt handler.
+ * @brief   EXTI[INT3] interrupt handler.
  *
  * @isr
  */
@@ -216,7 +234,7 @@ OSAL_IRQ_HANDLER(INT3_vect) {
 
 #if AVR_EXT_USE_INT4 || defined(__DOXYGEN__)
 /**
- * @brief EXTI[INT4] interrupt handler.
+ * @brief   EXTI[INT4] interrupt handler.
  *
  * @isr
  */
@@ -228,7 +246,7 @@ OSAL_IRQ_HANDLER(INT4_vect) {
 #endif
 #if AVR_EXT_USE_INT5 || defined(__DOXYGEN__)
 /**
- * @brief EXTI[INT5] interrupt handler.
+ * @brief   EXTI[INT5] interrupt handler.
  *
  * @isr
  */

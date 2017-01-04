@@ -15,8 +15,8 @@
 */
 
 /**
- * @file  AVR/hal_ext_lld.h
- * @brief EXT Driver subsystem low level driver source.
+ * @file    hal_ext_lld.h
+ * @brief   EXT Driver subsystem low level driver source.
  *
  * @addtogroup EXT
  * @{
@@ -32,12 +32,12 @@
 /*===========================================================================*/
 
 /**
- * @brief Maximum number of EXT channels.
+ * @brief   Maximum number of EXT channels.
  */
 #define AVR_INT_NUM_LINES 6 /**< INT0 to INT5 */
 
 /**
- * @brief Available number of EXT channels.
+ * @brief   Available number of EXT channels.
  */
 #define EXT_MAX_CHANNELS  AVR_INT_NUM_LINES
 
@@ -54,12 +54,12 @@
 /*===========================================================================*/
 
 /**
- * @brief EXT channel identifier.
+ * @brief   EXT channel identifier.
  */
 typedef uint16_t expchannel_t;
 
 /**
- * @brief Type of an EXT generic notification callback.
+ * @brief   Type of an EXT generic notification callback.
  *
  * @param[in] extp  pointer to the @p EXPDriver object triggering the
  *                  callback
@@ -67,7 +67,7 @@ typedef uint16_t expchannel_t;
 typedef void (*extcallback_t)(EXTDriver *extp, expchannel_t channel);
 
 /**
- * @brief Channel configuration structure.
+ * @brief   Channel configuration structure.
  */
 typedef struct {
   /**
@@ -81,8 +81,8 @@ typedef struct {
 } EXTChannelConfig;
 
 /**
- * @brief Driver configuration structure.
- * @note  It could be empty on some architectures.
+ * @brief   Driver configuration structure.
+ * @note    It could be empty on some architectures.
  */
 typedef struct {
   /**
@@ -93,7 +93,7 @@ typedef struct {
 } EXTConfig;
 
 /**
- * @brief Structure representing an EXT driver.
+ * @brief   Structure representing an EXT driver.
  */
 struct EXTDriver {
   /**

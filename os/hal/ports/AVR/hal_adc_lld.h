@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    AVR/adc_lld.h
+ * @file    hal_adc_lld.h
  * @brief   ADC Driver subsystem low level driver source.
  *
  * @addtogroup ADC
