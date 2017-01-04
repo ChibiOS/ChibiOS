@@ -57,6 +57,7 @@ static size_t getAdcChannelNumberFromMask(uint8_t mask, uint8_t currentChannel) 
   }
 
   /* error, should never reach this line */
+  return -1; // To check
 }
 
 static void setAdcChannel(uint8_t channelNum) {
