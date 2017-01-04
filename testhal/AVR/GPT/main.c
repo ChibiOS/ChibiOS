@@ -18,15 +18,15 @@
 #include "hal.h"
 #include "chprintf.h"
 
-static void gpt2cb(GPTDriver *gptp)
-{
+BaseSequentialStream * chp = (BaseSequentialStream *) &SD1;
+
+static void gpt3cb(GPTDriver *gptp) {
   palTogglePad(IOPORT2, 7);
 }
 
-static GPTConfig gpt2cfg =
-{
+static GPTConfig gpt3cfg = {
   1000,         /* Timer clock.    */
-  gpt2cb        /* Timer callback. */
+  gpt3cb        /* Timer callback. */
 };
 
 /*
@@ -48,16 +48,17 @@ int main(void) {
   palSetPadMode(IOPORT2, 7, PAL_MODE_OUTPUT_PUSHPULL);
 
   sdStart(&SD1, NULL);
-  gptStart(&GPTD1, &gpt2cfg);
+  gptStart(&GPTD3, &gpt3cfg);
 
-  gptStartContinuous(&GPTD1, 500);
+  gptStartContinuous(&GPTD3, 500);
+
   while (1) {
-    chprintf(&SD1, "OCR1A: %d, TCCR1B: %x, period: %d, counter: %d , TCNT1: %d\r\n",
-                   OCR1A,
-                   TCCR1B,
-                   GPTD1.period,
-                   GPTD1.counter,
-                   TCNT1);
+    chprintf(chp, "OCR3A: %d, TCCR3B: %x, period: %d, counter: %d , TCNT3: %d\r\n",
+                   OCR3A,
+                   TCCR3B,
+                   GPTD3.period,
+                   GPTD3.counter,
+                   TCNT3);
     chThdSleepMilliseconds(100);
   }
 }

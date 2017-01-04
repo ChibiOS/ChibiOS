@@ -28,6 +28,8 @@
 #ifndef CHCONF_H
 #define CHCONF_H
 
+#define _CHIBIOS_RT_CONF_
+
 /*===========================================================================*/
 /**
  * @name System timers settings
@@ -46,7 +48,7 @@
  * @details Frequency of the system timer that drives the system ticks. This
  *          setting also defines the system tick time unit.
  */
-#define CH_CFG_ST_FREQUENCY                 1000
+#define CH_CFG_ST_FREQUENCY                 15624
 
 /**
  * @brief   Time delta constant for the tick-less mode.
@@ -56,7 +58,7 @@
  *          The value one is not valid, timeouts are rounded up to
  *          this value.
  */
-#define CH_CFG_ST_TIMEDELTA                 0
+#define CH_CFG_ST_TIMEDELTA                 2
 
 /** @} */
 
@@ -78,7 +80,7 @@
  * @note    Disabling the round robin preemption makes the kernel more compact
  *          and generally faster.
  */
-#define CH_CFG_TIME_QUANTUM                 20
+#define CH_CFG_TIME_QUANTUM                 0
 
 /**
  * @brief   Managed RAM size.
@@ -179,16 +181,6 @@
  * @note    Requires @p CH_CFG_USE_SEMAPHORES.
  */
 #define CH_CFG_USE_SEMAPHORES_PRIORITY      FALSE
-
-/**
- * @brief   Atomic semaphore API.
- * @details If enabled then the semaphores the @p chSemSignalWait() API
- *          is included in the kernel.
- *
- * @note    The default is @p TRUE.
- * @note    Requires @p CH_CFG_USE_SEMAPHORES.
- */
-#define CH_USE_SEMSW                        TRUE
 
 /**
  * @brief   Mutexes APIs.
@@ -297,18 +289,6 @@
 #define CH_CFG_USE_HEAP                     FALSE
 
 /**
- * @brief   C-runtime allocator.
- * @details If enabled the the heap allocator APIs just wrap the C-runtime
- *          @p malloc() and @p free() functions.
- *
- * @note    The default is @p FALSE.
- * @note    Requires @p CH_CFG_USE_HEAP.
- * @note    The C-runtime may or may not require @p CH_CFG_USE_MEMCORE, see the
- *          appropriate documentation.
- */
-#define CH_CFG_USE_MALLOC_HEAP              FALSE
-
-/**
  * @brief   Memory Pools Allocator APIs.
  * @details If enabled then the memory pools allocator APIs are included
  *          in the kernel.
@@ -378,7 +358,14 @@
  *
  * @note    The default is @p FALSE.
  */
-#define CH_DBG_ENABLE_TRACE                 FALSE
+#define CH_DBG_ENABLE_TRACE                 CH_DBG_TRACE_MASK_DISABLED
+
+/**
+ * @brief   Trace buffer entries.
+ * @note    The trace buffer is only allocated if @p CH_DBG_TRACE_MASK is
+ *          different from @p CH_DBG_TRACE_MASK_DISABLED.
+ */
+#define CH_DBG_TRACE_BUFFER_SIZE            128
 
 /**
  * @brief   Debug option, stack checks.
@@ -424,9 +411,9 @@
 
 /**
  * @brief   Threads descriptor structure extension.
- * @details User fields added to the end of the @p Thread structure.
+ * @details User fields added to the end of the @p thread_t structure.
  */
-#define THREAD_EXT_FIELDS                                                   \
+#define CH_CFG_THREAD_EXTRA_FIELDS                                          \
   /* Add threads custom fields here.*/
 
 /**
@@ -436,19 +423,15 @@
  * @note    It is invoked from within @p chThdInit() and implicitly from all
  *          the threads creation APIs.
  */
-#define THREAD_EXT_INIT_HOOK(tp) {                                          \
+#define CH_CFG_THREAD_INIT_HOOK(tp) {                                       \
   /* Add threads initialization code here.*/                                \
 }
 
 /**
  * @brief   Threads finalization hook.
  * @details User finalization code added to the @p chThdExit() API.
- *
- * @note    It is inserted into lock zone.
- * @note    It is also invoked when the threads simply return in order to
- *          terminate.
  */
-#define THREAD_EXT_EXIT_HOOK(tp) {                                          \
+#define CH_CFG_THREAD_EXIT_HOOK(tp) {                                       \
   /* Add threads finalization code here.*/                                  \
 }
 
@@ -458,6 +441,40 @@
  */
 #define CH_CFG_CONTEXT_SWITCH_HOOK(ntp, otp) {                              \
   /* Context switch code here.*/                                            \
+}
+
+/**
+ * @brief   ISR enter hook.
+ */
+#define CH_CFG_IRQ_PROLOGUE_HOOK() {                                        \
+  /* IRQ prologue code here.*/                                              \
+}
+
+/**
+ * @brief   ISR exit hook.
+ */
+#define CH_CFG_IRQ_EPILOGUE_HOOK() {                                        \
+  /* IRQ epilogue code here.*/                                              \
+}
+
+/**
+ * @brief   Idle thread enter hook.
+ * @note    This hook is invoked within a critical zone, no OS functions
+ *          should be invoked from here.
+ * @note    This macro can be used to activate a power saving mode.
+ */
+#define CH_CFG_IDLE_ENTER_HOOK() {                                          \
+  /* Idle-enter code here.*/                                                \
+}
+
+/**
+ * @brief   Idle thread leave hook.
+ * @note    This hook is invoked within a critical zone, no OS functions
+ *          should be invoked from here.
+ * @note    This macro can be used to deactivate a power saving mode.
+ */
+#define CH_CFG_IDLE_LEAVE_HOOK() {                                          \
+  /* Idle-leave code here.*/                                                \
 }
 
 /**
@@ -473,7 +490,7 @@
  * @details This hook is invoked in the system tick handler immediately
  *          after processing the virtual timers queue.
  */
-#define SYSTEM_TICK_EVENT_HOOK() {                                          \
+#define CH_CFG_SYSTEM_TICK_HOOK() {                                         \
   /* System tick event code here.*/                                         \
 }
 
@@ -482,8 +499,17 @@
  * @details This hook is invoked in case to a system halting error before
  *          the system is halted.
  */
-#define SYSTEM_HALT_HOOK() {                                                \
+#define CH_CFG_SYSTEM_HALT_HOOK(reason) {                                   \
   /* System halt code here.*/                                               \
+}
+
+/**
+ * @brief   Trace hook.
+ * @details This hook is invoked each time a new record is written in the
+ *          trace buffer.
+ */
+#define CH_CFG_TRACE_HOOK(tep) {                                            \
+  /* Trace code here.*/                                                     \
 }
 
 /** @} */

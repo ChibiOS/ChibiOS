@@ -40,7 +40,7 @@
 #----------------------------------------------------------------------------
 
 # MCU name
-MCU = atmega1280
+MCU = atmega2560
 
 # Processor frequency.
 F_CPU = 16000000
@@ -64,19 +64,17 @@ include $(CHIBIOS)/os/hal/ports/AVR/platform.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/AVR/compilers/GCC/mk/port.mk
-include $(CHIBIOS)/test/rt/test.mk
+include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = $(PORTSRC) \
-      $(KERNSRC) \
-      $(TESTSRC) \
-      $(HALSRC) \
+SRC = $(KERNSRC) \
+      $(PORTSRC) \
       $(OSALSRC) \
+      $(HALSRC) \
       $(PLATFORMSRC) \
       $(BOARDSRC) \
+      $(STREAMSSRC) \
       $(CHIBIOS)/os/various/evtimer.c \
-      $(CHIBIOS)/os/hal/lib/streams/memstreams.c \
-      $(CHIBIOS)/os/hal/lib/streams/chprintf.c \
       main.c
 
 # List C++ source files here. (C dependencies are automatically generated.)
@@ -108,7 +106,7 @@ DEBUG = dwarf-2
 #     For a directory that has spaces, enclose it in quotes.
 EXTRAINCDIRS = $(CHIBIOS)/os/license $(PORTINC) $(KERNINC) $(TESTINC) \
                $(HALINC) $(OSALINC) $(PLATFORMINC) \
-               $(BOARDINC) $(CHIBIOS)/os/various
+							 $(STREAMSINC) $(BOARDINC) $(CHIBIOS)/os/various
 
 # Compiler flag to set the C Standard level.
 #     c89   = "ANSI" C
@@ -153,6 +151,9 @@ CFLAGS += -Wstrict-prototypes
 CFLAGS += -Wa,-adhlns=$(<:%.c=$(OBJDIR)/%.lst)
 CFLAGS += $(patsubst %,-I%,$(EXTRAINCDIRS))
 CFLAGS += $(CSTANDARD)
+CFLAGS += -mrelax
+CFLAGS += -fdata-sections
+CFLAGS += -ffunction-sections
 
 #---------------- Compiler Options C++ ----------------
 #  -g*:          generate debugging information
@@ -179,6 +180,8 @@ CFLAGS += -Wundef
 CPPFLAGS += -Wa,-adhlns=$(<:%.cpp=$(OBJDIR)/%.lst)
 CPPFLAGS += $(patsubst %,-I%,$(EXTRAINCDIRS))
 #CPPFLAGS += $(CSTANDARD)
+CPPFLAGS += -fdata-sections
+CPPFLAGS += -ffunction-sections
 
 #---------------- Assembler Options ----------------
 #  -Wa,...:   tell GCC to pass this to the assembler.
@@ -238,7 +241,7 @@ EXTMEMOPTS =
 #  -Wl,...:     tell GCC to pass this to linker.
 #    -Map:      create map file
 #    --cref:    add cross reference to  map file
-LDFLAGS = -Wl,-Map=$(TARGET).map,--cref
+LDFLAGS = -Wl,-Map=$(TARGET).map,--cref,--gc-sections
 LDFLAGS += $(EXTMEMOPTS)
 LDFLAGS += $(patsubst %,-L%,$(EXTRALIBDIRS))
 LDFLAGS += $(PRINTF_LIB) $(SCANF_LIB) $(MATH_LIB)
@@ -252,18 +255,17 @@ LDFLAGS += $(PRINTF_LIB) $(SCANF_LIB) $(MATH_LIB)
 # Type: avrdude -c ?
 # to get a full listing.
 #
-AVRDUDE_PROGRAMMER = stk500v2
+AVRDUDE_PROGRAMMER = wiring
 
 # com1 = serial port. Use lpt1 to connect to parallel port.
-AVRDUDE_PORT = /dev/tty.usbmodemfd121  # programmer connected to serial device
+AVRDUDE_PORT = /dev/ttyUSB0
 
-AVRDUDE_WRITE_FLASH = -U flash:w:$(TARGET).hex
-#AVRDUDE_WRITE_EEPROM = -U eeprom:w:$(TARGET).eep
+AVRDUDE_WRITE_FLASH = -D -U flash:w:$(TARGET).hex
 
 # Uncomment the following if you want avrdude's erase cycle counter.
 # Note that this counter needs to be initialized first using -Yn,
 # see avrdude manual.
-#AVRDUDE_ERASE_COUNTER = -y
+AVRDUDE_ERASE_COUNTER = -y
 
 # Uncomment the following if you do /not/ wish a verification to be
 # performed after programming the device.
@@ -272,11 +274,14 @@ AVRDUDE_WRITE_FLASH = -U flash:w:$(TARGET).hex
 # Increase verbosity level.  Please use this when submitting bug
 # reports about avrdude. See <http://savannah.nongnu.org/projects/avrdude>
 # to submit bug reports.
-#AVRDUDE_VERBOSE = -v -v
+AVRDUDE_VERBOSE = -v -v
 
-AVRDUDE_FLAGS = -p $(MCU) -P $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER)
+AVRDUDE_FLAGS = -p $(MCU)
+AVRDUDE_FLAGS += -P $(AVRDUDE_PORT)
+AVRDUDE_FLAGS += -b 115200
+AVRDUDE_FLAGS += -c $(AVRDUDE_PROGRAMMER)
 AVRDUDE_FLAGS += $(AVRDUDE_NO_VERIFY)
-AVRDUDE_FLAGS += $(AVRDUDE_VERBOSE)
+AVRDUDE_FLAGS += -v $(AVRDUDE_VERBOSE)
 AVRDUDE_FLAGS += $(AVRDUDE_ERASE_COUNTER)
 
 #---------------- Debugging Options ----------------
