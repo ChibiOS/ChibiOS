@@ -384,9 +384,9 @@ OSAL_IRQ_HANDLER(STM32_USART2_HANDLER) {
 #endif /* STM32_UART_USE_USART2 */
 
 #if defined(STM32_USART3_8_HANDLER)
-#if STM32_SERIAL_USE_USART3 || STM32_SERIAL_USE_UART4  ||                   \
-    STM32_SERIAL_USE_UART5  || STM32_SERIAL_USE_USART6 ||                   \
-    STM32_SERIAL_USE_UART7  || STM32_SERIAL_USE_UART8  || defined(__DOXYGEN__)
+#if STM32_UART_USE_USART3 || STM32_UART_USE_UART4  ||                   \
+    STM32_UART_USE_UART5  || STM32_UART_USE_USART6 ||                   \
+    STM32_UART_USE_UART7  || STM32_UART_USE_UART8  || defined(__DOXYGEN__)
 /**
  * @brief   USART3-8 shared interrupt handler.
  *
