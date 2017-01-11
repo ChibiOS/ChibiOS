@@ -48,7 +48,7 @@
 /**
  * @brief   Mask of the ISR bits passed to the DMA callback functions.
  */
-#define STM32_DMA_ISR_MASK          0x0F
+#define STM32_DMA_ISR_MASK          0x0E
 
 /**
  * @brief   From stream number to shift factor in @p ISR and @p IFCR registers.
@@ -444,7 +444,7 @@ typedef struct {
   uint32_t idx = (dmastp)->selfindex;                                       \
                                                                             \
   flags = ((dmastp)->dma->ISR >> (dmastp)->shift) & STM32_DMA_ISR_MASK;     \
-  if (flags & STM32_DMA_ISR_MASK) {                                         \
+  if (flags & (dmastp)->channel->CCR) {                                     \
     (dmastp)->dma->IFCR = flags << (dmastp)->shift;                         \
     if (_stm32_dma_isr_redir[idx].dma_func) {                               \
       _stm32_dma_isr_redir[idx].dma_func(_stm32_dma_isr_redir[idx].dma_param, flags); \

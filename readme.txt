@@ -153,6 +153,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Fixed incorrect handling of shared ISRs in STM32 DMAv1 driver
+       (bug #812)(backported to 16.1.7).
 - HAL: Fixed protocol violation in usbDisableEndpointsI() API (bug #811) 
        (backported to 16.1.7).
 - HAL: Fixed incorrect constants STM32_DAC1_CHx_DMA_CHN for STM32F7 (bug #810)
