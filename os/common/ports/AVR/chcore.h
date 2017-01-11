@@ -341,6 +341,22 @@ struct port_context {
 #define PORT_FAST_IRQ_HANDLER(id) ISR(id)
 
 /**
+ * @brief   Performs a context switch between two threads.
+ * @details This is the most critical code in any port, this function
+ *          is responsible for the context switch between 2 threads.
+ * @note    The implementation of this code affects <b>directly</b> the context
+ *          switch performance so optimize here as much as you can.
+ *
+ * @param[in] ntp       the thread to be switched in
+ * @param[in] otp       the thread to be switched out
+ */
+#define port_switch(ntp, otp) {                                             \
+  _port_switch(ntp, otp);                                                   \
+  asm volatile ("" : : : "memory");                                         \
+}
+
+
+/**
  * @brief   Port-related initialization code.
  * @note    This function is empty in this port.
  */
@@ -359,7 +375,7 @@ struct port_context {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void port_switch(thread_t *ntp, thread_t *otp);
+  void _port_switch(thread_t *ntp, thread_t *otp);
   void _port_thread_start(void);
 #ifdef __cplusplus
 }

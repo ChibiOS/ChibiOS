@@ -69,7 +69,7 @@ bool __avr_in_isr;
 #if !defined(__DOXYGEN__)
 __attribute__((naked, weak))
 #endif
-void port_switch(thread_t *ntp, thread_t *otp) {
+void _port_switch(thread_t *ntp, thread_t *otp) {
 
   asm volatile ("push    r2");
   asm volatile ("push    r3");
