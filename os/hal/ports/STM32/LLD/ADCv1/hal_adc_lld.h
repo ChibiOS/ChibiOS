@@ -430,6 +430,14 @@ extern "C" {
   void adc_lld_start_conversion(ADCDriver *adcp);
   void adc_lld_stop_conversion(ADCDriver *adcp);
   void adc_lld_serve_interrupt(ADCDriver *adcp);
+  void adcSTM32EnableVREF(void);
+  void adcSTM32DisableVREF(void);
+  void adcSTM32EnableTS(void);
+  void adcSTM32DisableTS(void);
+#ifdef STM32F0XX
+  void adcSTM32EnableVBAT(void);
+  void adcSTM32DisableVBAT(void);
+#endif /* STM32F0XX */
 #ifdef __cplusplus
 }
 #endif
