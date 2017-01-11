@@ -163,7 +163,7 @@ void _pal_lld_setgroupmode(ioportid_t port,
       port->ASCR    = (port->ASCR & ~m1) | ascr;
       port->OSPEEDR = (port->OSPEEDR & ~m2) | ospeedr;
       port->PUPDR   = (port->PUPDR & ~m2) | pupdr;
-       if (moder == PAL_STM32_MODE_ALTERNATE) {
+       if ((mode & PAL_STM32_MODE_MASK) == PAL_STM32_MODE_ALTERNATE) {
         /* If going in alternate mode then the alternate number is set
            before switching mode in order to avoid glitches.*/
         if (bit < 8)
