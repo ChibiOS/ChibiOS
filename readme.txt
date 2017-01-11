@@ -153,6 +153,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Fixed protocol violation in usbDisableEndpointsI() API (bug #811) 
+       (backported to 16.1.7).
 - HAL: Fixed redefined TIM in STM32F030 registry (bug #809) 
        (backported to 16.1.7).
 - HAL: Fixed clock init in STM32F0x port which doesn't take in account
