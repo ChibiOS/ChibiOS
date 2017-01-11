@@ -301,11 +301,11 @@
 #define STM32_SPI6_TX_DMA_CHN               0x00100000
 
 /* TIM attributes.*/
-#define STM32_TIM_MAX_CHANNELS              4
+#define STM32_TIM_MAX_CHANNELS              6
 
 #define STM32_HAS_TIM1                      TRUE
 #define STM32_TIM1_IS_32BITS                FALSE
-#define STM32_TIM1_CHANNELS                 4
+#define STM32_TIM1_CHANNELS                 6
 #define STM32_TIM1_UP_HANDLER               VectorA4
 #define STM32_TIM1_CC_HANDLER               VectorAC
 #define STM32_TIM1_UP_NUMBER                25
@@ -363,13 +363,13 @@
 
 #define STM32_HAS_TIM10                     TRUE
 #define STM32_TIM10_IS_32BITS               FALSE
-#define STM32_TIM10_CHANNELS                2
+#define STM32_TIM10_CHANNELS                1
 #define STM32_TIM10_HANDLER                 VectorA4 /* Note: same as STM32_TIM1_UP */
 #define STM32_TIM10_NUMBER                  25 /* Note: same as STM32_TIM1_UP */
 
 #define STM32_HAS_TIM11                     TRUE
 #define STM32_TIM11_IS_32BITS               FALSE
-#define STM32_TIM11_CHANNELS                2
+#define STM32_TIM11_CHANNELS                1
 #define STM32_TIM11_HANDLER                 VectorA8
 #define STM32_TIM11_NUMBER                  26
 
@@ -381,13 +381,13 @@
 
 #define STM32_HAS_TIM13                     TRUE
 #define STM32_TIM13_IS_32BITS               FALSE
-#define STM32_TIM13_CHANNELS                2
+#define STM32_TIM13_CHANNELS                1
 #define STM32_TIM13_HANDLER                 VectorF0 /* Note: same as STM32_TIM8_UP */
 #define STM32_TIM13_NUMBER                  44 /* Note: same as STM32_TIM8_UP */
 
 #define STM32_HAS_TIM14                     TRUE
 #define STM32_TIM14_IS_32BITS               FALSE
-#define STM32_TIM14_CHANNELS                2
+#define STM32_TIM14_CHANNELS                1
 #define STM32_TIM14_HANDLER                 VectorF4
 #define STM32_TIM14_NUMBER                  45
 

@@ -517,7 +517,7 @@
 
 #define STM32_HAS_TIM20                     TRUE
 #define STM32_TIM20_IS_32BITS               FALSE
-#define STM32_TIM20_CHANNELS                4
+#define STM32_TIM20_CHANNELS                6
 
 #define STM32_HAS_TIM5                      FALSE
 #define STM32_HAS_TIM9                      FALSE
@@ -2838,7 +2838,7 @@
 
 #define STM32_HAS_TIM20                     TRUE
 #define STM32_TIM20_IS_32BITS               FALSE
-#define STM32_TIM20_CHANNELS                4
+#define STM32_TIM20_CHANNELS                6
 
 #define STM32_HAS_TIM5                      FALSE
 #define STM32_HAS_TIM9                      FALSE
