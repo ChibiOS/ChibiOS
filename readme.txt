@@ -71,7 +71,9 @@
 *****************************************************************************
 *** Releases and Change Log                                               ***
 *****************************************************************************
+
 *** 16.1.7 ***
+- HAL: Fixed protocol violation in usbDisableEndpointsI() API (bug #811).
 - HAL: Fixed redefined TIM in STM32F030 registry (bug #809).
 - HAL: Fixed clock init in STM32F0x port which doesn't take in account
        PLL_XTPRE and PREDIV_0 are hard-wired (bug #808).
