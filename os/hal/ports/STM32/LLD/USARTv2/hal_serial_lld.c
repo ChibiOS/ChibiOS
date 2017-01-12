@@ -458,7 +458,7 @@ OSAL_IRQ_HANDLER(STM32_USART2_HANDLER) {
     STM32_SERIAL_USE_UART5  || STM32_SERIAL_USE_USART6 ||                   \
     STM32_SERIAL_USE_UART7  || STM32_SERIAL_USE_UART8  || defined(__DOXYGEN__)
 /**
- * @brief   USART2 interrupt handler.
+ * @brief   USART3..8 interrupt handler.
  *
  * @isr
  */
