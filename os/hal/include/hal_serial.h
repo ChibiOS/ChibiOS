@@ -40,6 +40,7 @@
 #define SD_OVERRUN_ERROR        (eventflags_t)128   /**< @brief Overflow.   */
 #define SD_NOISE_ERROR          (eventflags_t)256   /**< @brief Line noise. */
 #define SD_BREAK_DETECTED       (eventflags_t)512   /**< @brief LIN Break.  */
+#define SD_QUEUE_FULL_ERROR     (eventflags_t)1024  /**< @brief Queue full. */
 /** @} */
 
 /*===========================================================================*/

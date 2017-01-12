@@ -218,7 +218,7 @@ void sdIncomingDataI(SerialDriver *sdp, uint8_t b) {
   if (iqIsEmptyI(&sdp->iqueue))
     chnAddFlagsI(sdp, CHN_INPUT_AVAILABLE);
   if (iqPutI(&sdp->iqueue, b) < MSG_OK)
-    chnAddFlagsI(sdp, SD_OVERRUN_ERROR);
+    chnAddFlagsI(sdp, SD_QUEUE_FULL_ERROR);
 }
 
 /**
