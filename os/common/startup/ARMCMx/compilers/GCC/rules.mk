@@ -304,11 +304,13 @@ $(BUILDDIR)/lib$(PROJECT).a: $(OBJS)
 	@echo
 	@echo Done
 
-clean:
+clean: CLEAN_RULE_HOOK
 	@echo Cleaning
 	-rm -fR .dep $(BUILDDIR)
 	@echo
 	@echo Done
+
+CLEAN_RULE_HOOK:
 
 #
 # Include the dependency files, should be the last of the makefile
