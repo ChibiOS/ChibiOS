@@ -116,33 +116,26 @@ static bool fs_ready = FALSE;
 static uint8_t fbuff[1024];
 
 static FRESULT scan_files(BaseSequentialStream *chp, char *path) {
+  static FILINFO fno;
   FRESULT res;
-  FILINFO fno;
   DIR dir;
-  int i;
+  size_t i;
   char *fn;
 
-#if _USE_LFN
-  fno.lfname = 0;
-  fno.lfsize = 0;
-#endif
   res = f_opendir(&dir, path);
   if (res == FR_OK) {
     i = strlen(path);
-    for (;;) {
-      res = f_readdir(&dir, &fno);
-      if (res != FR_OK || fno.fname[0] == 0)
-        break;
-      if (fno.fname[0] == '.')
+    while (((res = f_readdir(&dir, &fno)) == FR_OK) && fno.fname[0]) {
+      if (_FS_RPATH && fno.fname[0] == '.')
         continue;
       fn = fno.fname;
       if (fno.fattrib & AM_DIR) {
-        path[i++] = '/';
-        strcpy(&path[i], fn);
+        *(path + i) = '/';
+        strcpy(path + i + 1, fn);
         res = scan_files(chp, path);
+        *(path + i) = '\0';
         if (res != FR_OK)
           break;
-        path[--i] = 0;
       }
       else {
         chprintf(chp, "%s/%s\r\n", path, fn);
@@ -160,7 +153,7 @@ static FRESULT scan_files(BaseSequentialStream *chp, char *path) {
 
 static void cmd_tree(BaseSequentialStream *chp, int argc, char *argv[]) {
   FRESULT err;
-  uint32_t clusters;
+  uint32_t fre_clust, fre_sect, tot_sect;
   FATFS *fsp;
 
   (void)argv;
@@ -172,15 +165,19 @@ static void cmd_tree(BaseSequentialStream *chp, int argc, char *argv[]) {
     chprintf(chp, "File System not mounted\r\n");
     return;
   }
-  err = f_getfree("/", &clusters, &fsp);
+  err = f_getfree("/", &fre_clust, &fsp);
   if (err != FR_OK) {
     chprintf(chp, "FS: f_getfree() failed\r\n");
     return;
   }
   chprintf(chp,
-           "FS: %lu free clusters, %lu sectors per cluster, %lu bytes free\r\n",
-           clusters, (uint32_t)SDC_FS.csize,
-           clusters * (uint32_t)SDC_FS.csize * (uint32_t)MMCSD_BLOCK_SIZE);
+           "FS: %lu free clusters with %lu sectors (%lu bytes) per cluster\r\n",
+           fre_clust, (uint32_t)fsp->csize, (uint32_t)fsp->csize * 512);
+  chprintf(chp,
+           "    %lu bytes (%lu MB) free of %lu MB\r\n",
+           fre_sect * 512,
+           fre_sect / 2 / 1024,
+           tot_sect / 2 / 1024);
   fbuff[0] = 0;
   scan_files(chp, (char *)fbuff);
 }
