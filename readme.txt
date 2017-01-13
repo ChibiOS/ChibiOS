@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.7 ***
+- VAR: Fixed BYTE_ORDER redefined in lwip_bindings/arch/cc.h (bug #814).
 - HAL: Fixed setting alternate mode in STM32 GPIOv3 and GPIOv3 drivers can fail
        (bug #813).
 - HAL: Fixed incorrect handling of shared ISRs in STM32 DMAv1 driver
