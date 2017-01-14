@@ -45,7 +45,7 @@ int main(void) {
    * more can be done in this thread so we first initialize PWM subsystem.
    */
 
-  static PWMConfig pwm1cfg = {
+  static PWMConfig pwm3cfg = {
     1023,   /* Not real clock */
     1023,   /* Maximum PWM count */
     NULL,
@@ -56,19 +56,20 @@ int main(void) {
     },
   };
 
-  /* PB5-7 are timer 1 pwm channel outputs */
-  palSetPadMode(IOPORT2, 7, PAL_MODE_OUTPUT_PUSHPULL);
-  palSetPadMode(IOPORT2, 6, PAL_MODE_OUTPUT_PUSHPULL);
-  palSetPadMode(IOPORT2, 5, PAL_MODE_OUTPUT_PUSHPULL);
+  /* PE3-5 are timer 3 pwm channel outputs */
+  palSetPadMode(IOPORT5, 3, PAL_MODE_OUTPUT_PUSHPULL);
+  palSetPadMode(IOPORT5, 4, PAL_MODE_OUTPUT_PUSHPULL);
+  palSetPadMode(IOPORT5, 5, PAL_MODE_OUTPUT_PUSHPULL);
 
-  pwmStart(&PWMD1, &pwm1cfg);
+  pwmStart(&PWMD3, &pwm3cfg);
 
   /* channel 0 with 50% duty cycle, 1 with 25% and 2 with 75% */
-  pwmEnableChannel(&PWMD1, 0, 511);
-  pwmEnableChannel(&PWMD1, 1, 255);
-  pwmEnableChannel(&PWMD1, 2, 767);
+  pwmEnableChannel(&PWMD3, 0, 511);
+  pwmEnableChannel(&PWMD3, 1, 255);
+  pwmEnableChannel(&PWMD3, 2, 767);
 
   chSysInit();
 
   while (1) {}
 }
+
