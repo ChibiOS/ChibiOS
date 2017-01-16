@@ -103,7 +103,7 @@
 /**
  * @brief   HAL version string.
  */
-#define HAL_VERSION             "4.0.6"
+#define HAL_VERSION             "4.0.7"
 
 /**
  * @brief   HAL version major number.
@@ -118,7 +118,7 @@
 /**
  * @brief   HAL version patch number.
  */
-#define CH_HAL_PATCH            6
+#define CH_HAL_PATCH            7
 /** @} */
 
 /**
