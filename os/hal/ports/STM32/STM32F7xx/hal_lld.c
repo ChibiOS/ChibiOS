@@ -160,10 +160,7 @@ void stm32_clock_init(void) {
 
 #if !STM32_NO_INIT
   /* PWR clock enabled.*/
-#if defined(HAL_USE_RTC) &&                                                 \
-    (defined(STM32F765xx) || defined(STM32F767xx) ||                        \
-     defined(STM32F769xx) || defined(STM32F777xx) ||                        \
-     defined (STM32F779xx))
+#if defined(HAL_USE_RTC) && defined(RCC_APB1ENR_RTCEN)
   RCC->APB1ENR = RCC_APB1ENR_PWREN | RCC_APB1ENR_RTCEN;
 #else
   RCC->APB1ENR = RCC_APB1ENR_PWREN;
