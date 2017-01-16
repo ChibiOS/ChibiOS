@@ -52,9 +52,11 @@
   |  |  +--dox/           - HAL documentation resources.
   |  |  +--include/       - HAL high level headers.
   |  |  +--lib/           - HAL libraries.
+  |  |  |  +--fallback/   - HAL fall back software drivers.
   |  |  |  +--peripherals/- HAL peripherals interfaces.
   |  |  |  +--streams/    - HAL streams.
   |  |  +--osal/          - HAL OSAL implementations.
+  |  |  |  +--lib/        - HAL OSAL common modules.
   |  |  +--src/           - HAL high level source.
   |  |  +--ports/         - HAL ports.
   |  |  +--templates/     - HAL driver template files.
