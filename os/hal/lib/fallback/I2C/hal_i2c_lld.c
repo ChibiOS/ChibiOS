@@ -30,6 +30,11 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
+#define CHECK_ERROR(msg)                                                    \
+  if ((msg) < (msg_t)0) {                                                   \
+    return MSG_TIMEOUT;                                                     \
+  }
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -65,6 +70,100 @@ I2CDriver I2CD4;
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
+
+static msg_t i2c_delay(I2CDriver *i2cp) {
+
+  if (!osalOsIsTimeWithinX(osalOsGetSystemTimeX(), i2cp->start, i2cp->end)) {
+    return MSG_TIMEOUT;
+  }
+
+#if SW_I2C_USE_OSAL_DELAY || defined(__DOXYGEN__)
+  osalThreadSleep(i2cp->config->ticks);
+#else
+  i2cp->config->delay();
+#endif
+  return MSG_OK;
+}
+
+static msg_t i2c_write_start(I2CDriver *i2cp) {
+
+}
+
+static msg_t i2c_write_restart(I2CDriver *i2cp) {
+
+}
+
+static msg_t i2c_write_stop(I2CDriver *i2cp) {
+
+}
+
+static msg_t i2c_writebit(I2CDriver *i2cp, unsigned bit) {
+
+  palWriteLine(i2cp->config->sda, bit);
+  CHECK_ERROR(i2c_delay(i2cp));
+  palSetLine(i2cp->config->scl);
+  CHECK_ERROR(i2c_delay(i2cp));
+
+  /* Clock stretching.*/
+  while (palReadLine(i2cp->config->scl) == PAL_LOW) {
+    CHECK_ERROR(i2c_delay(i2cp));
+  }
+
+  /* Arbitration check.*/
+  if ((bit == PAL_HIGH) && (palReadLine(i2cp->config->sda) == PAL_LOW)) {
+    i2cp->errors |= I2C_ARBITRATION_LOST;
+    return MSG_RESET;
+  }
+
+  palClearLine(i2cp->config->scl);
+
+  return MSG_OK;
+}
+
+static msg_t i2c_readbit(I2CDriver *i2cp) {
+  msg_t bit;
+
+  palSetLine(i2cp->config->sda);
+  CHECK_ERROR(i2c_delay(i2cp));
+  palSetLine(i2cp->config->scl);
+
+  /* Clock stretching.*/
+  while (palReadLine(i2cp->config->scl) == PAL_LOW) {
+    CHECK_ERROR(i2c_delay(i2cp));
+  }
+
+  CHECK_ERROR(i2c_delay(i2cp));
+  bit = palReadLine(i2cp->config->sda);
+  palClearLine(i2cp->config->scl);
+
+  return bit;
+}
+
+static msg_t i2c_writebyte(I2CDriver *i2cp, uint8_t byte) {
+  uint8_t mask;
+
+  for (mask = 0x80U; mask > 0U; mask >>= 1U) {
+    CHECK_ERROR(i2c_writebit(i2cp, (byte & mask) != 0));
+  }
+
+  return i2c_readbit(i2cp);
+}
+
+static msg_t i2c_readbyte(I2CDriver *i2cp, unsigned nack) {
+  msg_t byte;
+  unsigned i;
+
+  byte = 0U;
+  for (i = 0; i < 8; i++) {
+    msg_t msg = i2c_readbit(i2cp);
+    CHECK_ERROR(msg);
+    byte = (byte << 1U) | msg;
+  }
+
+  CHECK_ERROR(i2c_writebit(i2cp, PAL_LOW));
+
+  return byte;
+}
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */

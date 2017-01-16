@@ -40,6 +40,16 @@
  * @{
  */
 /**
+ * @brief   Use OSAL delays.
+ * @details If set to @p TRUE then delays are implemented using the
+ *          thread-friendy delay function else a delay function must
+ *          be provided extenally.
+ */
+#if !defined(SW_I2C_USE_OSAL_DELAY) || defined(__DOXYGEN__)
+#define SW_I2C_USE_OSAL_DELAY               TRUE
+#endif
+
+/**
  * @brief   I2C1 driver enable switch.
  * @details If set to @p TRUE the support for I2C1 is included.
  * @note    The default is @p FALSE.
@@ -95,9 +105,33 @@ typedef uint16_t i2caddr_t;
 typedef uint8_t i2cflags_t;
 
 /**
+ * @brief   Type of a delay function.
+ */
+typedef void (*i2c_delay_t)(void);
+
+/**
  * @brief   Type of I2C driver configuration structure.
  */
 typedef struct {
+  /**
+   * @brief   I2C clock line.
+   */
+  ioline_t                  scl;
+  /**
+   * @brief   I2C data line.
+   */
+  ioline_t                  sda;
+#if SW_I2C_USE_OSAL_DELAY || defined(__DOXYGEN__)
+  /**
+   * @brief   Delay of an half bit time in system ticks.
+   */
+  systime_t                 ticks;
+#else
+  /**
+   * @brief   Pointer to an externally defined delay function.
+   */
+  i2c_delay_t               delay;
+#endif
 } I2CConfig;
 
 /**
@@ -129,13 +163,13 @@ struct I2CDriver {
 #endif
   /* End of the mandatory fields.*/
   /**
-   * @brief   I2C clock line.
+   * @brief   Time of operation begin.
    */
-  ioline_t                  clk;
+  systime_t                 start;
   /**
-   * @brief   I2C data line.
+   * @brief   Time of operation timeout.
    */
-  ioline_t                  data;
+  systime_t                 end;
 };
 
 /*===========================================================================*/
