@@ -114,6 +114,10 @@ typedef void (*i2c_delay_t)(void);
  */
 typedef struct {
   /**
+   * @brief   10 bits addressing switch.
+   */
+  bool                      addr10;
+  /**
    * @brief   I2C clock line.
    */
   ioline_t                  scl;
