@@ -1,9 +1,9 @@
 ifeq ($(USE_SMART_BUILD),yes)
 ifneq ($(findstring HAL_USE_USB TRUE,$(HALCONF)),)
-PLATFORMSRC += $(CHIBIOS)/os/hal/ports/STM32/LLD/WDGv1/hal_wdg_lld.c
+PLATFORMSRC += $(CHIBIOS)/os/hal/ports/STM32/LLD/xWDGv1/hal_wdg_lld.c
 endif
 else
-PLATFORMSRC += $(CHIBIOS)/os/hal/ports/STM32/LLD/WDGv1/hal_wdg_lld.c
+PLATFORMSRC += $(CHIBIOS)/os/hal/ports/STM32/LLD/xWDGv1/hal_wdg_lld.c
 endif
 
-PLATFORMINC += $(CHIBIOS)/os/hal/ports/STM32/LLD/WDGv1
+PLATFORMINC += $(CHIBIOS)/os/hal/ports/STM32/LLD/xWDGv1
