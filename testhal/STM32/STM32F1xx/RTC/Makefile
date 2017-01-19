@@ -113,6 +113,7 @@ CSRC = $(STARTUPSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
        $(TESTSRC) \
+       $(CHIBIOS)/os/various/syscalls.c \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global

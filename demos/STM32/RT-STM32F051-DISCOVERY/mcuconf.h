@@ -41,7 +41,6 @@
 #define STM32_PLS                           STM32_PLS_LEV0
 #define STM32_HSI_ENABLED                   TRUE
 #define STM32_HSI14_ENABLED                 TRUE
-#define STM32_HSI48_ENABLED                 FALSE
 #define STM32_LSI_ENABLED                   TRUE
 #define STM32_HSE_ENABLED                   FALSE
 #define STM32_LSE_ENABLED                   FALSE

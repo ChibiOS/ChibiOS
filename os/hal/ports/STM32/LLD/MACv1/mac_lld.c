@@ -36,6 +36,23 @@
 
 #define BUFFER_SIZE ((((STM32_MAC_BUFFERS_SIZE - 1) | 3) + 1) / 4)
 
+/* Fixing inconsistencies in ST headers.*/
+#if !defined(ETH_MACMIIAR_CR_Div102) && defined(ETH_MACMIIAR_CR_DIV102)
+#define ETH_MACMIIAR_CR_Div102 ETH_MACMIIAR_CR_DIV102
+#endif
+#if !defined(ETH_MACMIIAR_CR_Div62) && defined(ETH_MACMIIAR_CR_DIV62)
+#define ETH_MACMIIAR_CR_Div62 ETH_MACMIIAR_CR_DIV62
+#endif
+#if !defined(ETH_MACMIIAR_CR_Div42) && defined(ETH_MACMIIAR_CR_DIV42)
+#define ETH_MACMIIAR_CR_Div42 ETH_MACMIIAR_CR_DIV42
+#endif
+#if !defined(ETH_MACMIIAR_CR_Div26) && defined(ETH_MACMIIAR_CR_DIV26)
+#define ETH_MACMIIAR_CR_Div26 ETH_MACMIIAR_CR_DIV26
+#endif
+#if !defined(ETH_MACMIIAR_CR_Div16) && defined(ETH_MACMIIAR_CR_DIV16)
+#define ETH_MACMIIAR_CR_Div16 ETH_MACMIIAR_CR_DIV16
+#endif
+
 /* MII divider optimal value.*/
 #if (STM32_HCLK >= 150000000)
 #define MACMIIDR_CR ETH_MACMIIAR_CR_Div102
