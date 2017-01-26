@@ -88,6 +88,7 @@
 *****************************************************************************
 
 *** Next ***
+- HAL: Added support for STM32F3 Discovery REV-C or higher.
 - EXT: Integrated latest FatFS 0.12b.
 - HAL: Implemented separated virtual timers module under /os/hal/osal/lib,
        it can be used by OSAL implementations where the underlying RTOS is
