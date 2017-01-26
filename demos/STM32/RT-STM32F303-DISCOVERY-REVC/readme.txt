@@ -4,7 +4,7 @@
 
 ** TARGET **
 
-The demo runs on an ST STM32F3-Discovery board REV-A or REV-B.
+The demo runs on an ST STM32F3-Discovery board REV C or higher.
 
 ** The Demo **
 
