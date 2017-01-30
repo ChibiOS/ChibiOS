@@ -72,6 +72,10 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+*** 16.1.8 ***
+- HAL: Fixed STM32 OTGv1 driver not serving interrupts for endpoints > 5
+       (bug #816).
+
 *** 16.1.7 ***
 - VAR: Fixed BYTE_ORDER redefined in lwip_bindings/arch/cc.h (bug #814).
 - HAL: Fixed setting alternate mode in STM32 GPIOv3 and GPIOv3 drivers can fail
