@@ -472,6 +472,9 @@ void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp) {
                          STM32_TDES0_IC | STM32_TDES0_LS | STM32_TDES0_FS |
                          STM32_TDES0_TCH | STM32_TDES0_OWN;
 
+  /* Wait for the write to tdes0 to go through before resuming the DMA.*/
+  __DSB();
+
   /* If the DMA engine is stalled then a restart request is issued.*/
   if ((ETH->DMASR & ETH_DMASR_TPS) == ETH_DMASR_TPS_Suspended) {
     ETH->DMASR   = ETH_DMASR_TBUS;
@@ -549,6 +552,9 @@ void mac_lld_release_receive_descriptor(MACReceiveDescriptor *rdp) {
 
   /* Give buffer back to the Ethernet DMA.*/
   rdp->physdesc->rdes0 = STM32_RDES0_OWN;
+
+  /* Wait for the write to rdes0 to go through before resuming the DMA.*/
+  __DSB();
 
   /* If the DMA engine is stalled then a restart request is issued.*/
   if ((ETH->DMASR & ETH_DMASR_RPS) == ETH_DMASR_RPS_Suspended) {
