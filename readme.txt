@@ -159,6 +159,8 @@
 - NIL: Added STM32F7 demo.
 - HAL: Fixed STM32 OTGv1 driver not serving interrupts for endpoints > 5
        (bug #816)(backported to 16.1.8).
+- HAL: Fixed STM32 MAC driver needs __DSB() for STM32F7 when operating in
+       SRAM1/2 (bug #815)(backported to 16.1.8).
 - VAR: Fixed BYTE_ORDER redefined in lwip_bindings/arch/cc.h (bug #814)
        (backported to 16.1.7).
 - HAL: Fixed setting alternate mode in STM32 GPIOv3 and GPIOv3 drivers can fail
