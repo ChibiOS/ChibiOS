@@ -167,6 +167,14 @@
 #error "STM32_OTG2_ENDPOINTS not defined in registry"
 #endif
 
+#if STM32_HAS_OTG1 && !defined(STM32_OTG1_FIFO_MEM_SIZE)
+#error "STM32_OTG1_FIFO_MEM_SIZE not defined in registry"
+#endif
+
+#if STM32_HAS_OTG2 && !defined(STM32_OTG2_FIFO_MEM_SIZE)
+#error "STM32_OTG2_FIFO_MEM_SIZE not defined in registry"
+#endif
+
 #if (STM32_USB_USE_OTG1 && !defined(STM32_OTG1_HANDLER)) ||                 \
     (STM32_USB_USE_OTG2 && !defined(STM32_OTG2_HANDLER))
 #error "STM32_OTGx_HANDLER not defined in registry"

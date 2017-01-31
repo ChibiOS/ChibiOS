@@ -115,7 +115,7 @@ static const USBEndpointConfig ep0config = {
 static const stm32_otg_params_t fsparams = {
   STM32_USB_OTG1_RX_FIFO_SIZE / 4,
   STM32_OTG1_FIFO_MEM_SIZE,
-  STM32_OTG1_ENDOPOINTS_NUMBER
+  STM32_OTG1_ENDPOINTS
 };
 #endif
 
@@ -123,7 +123,7 @@ static const stm32_otg_params_t fsparams = {
 static const stm32_otg_params_t hsparams = {
   STM32_USB_OTG2_RX_FIFO_SIZE / 4,
   STM32_OTG2_FIFO_MEM_SIZE,
-  STM32_OTG2_ENDOPOINTS_NUMBER
+  STM32_OTG2_ENDPOINTS
 };
 #endif
 

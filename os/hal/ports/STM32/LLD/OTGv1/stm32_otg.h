@@ -26,18 +26,6 @@
 #define _STM32_OTG_H_
 
 /**
- * @brief   Number of the implemented endpoints in OTG_FS.
- * @details This value does not include the endpoint 0 that is always present.
- */
-#define STM32_OTG1_ENDOPOINTS_NUMBER    3
-
-/**
- * @brief   Number of the implemented endpoints in OTG_HS.
- * @details This value does not include the endpoint 0 that is always present.
- */
-#define STM32_OTG2_ENDOPOINTS_NUMBER    5
-
-/**
  * @brief   OTG_FS FIFO memory size in words.
  */
 #define STM32_OTG1_FIFO_MEM_SIZE        320
