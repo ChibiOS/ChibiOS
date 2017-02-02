@@ -22,6 +22,10 @@
  * @{
  */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/time.h>
+
 #include "hal.h"
 
 /*===========================================================================*/
@@ -32,8 +36,8 @@
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
-static LARGE_INTEGER nextcnt;
-static LARGE_INTEGER slice;
+static struct timeval nextcnt;
+static struct timeval tick = {0UL, 1000000UL / OSAL_ST_FREQUENCY};
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
@@ -51,31 +55,21 @@ static LARGE_INTEGER slice;
  * @brief Low level HAL driver initialization.
  */
 void hal_lld_init(void) {
-  WSADATA wsaData;
 
-  /* Initialization.*/
-  if (WSAStartup(2, &wsaData) != 0) {
-    printf("Unable to locate a winsock DLL\n");
-    exit(1);
-  }
-
-  printf("ChibiOS/RT simulator (Win32)\n");
-  if (!QueryPerformanceFrequency(&slice)) {
-    printf("QueryPerformanceFrequency() error");
-    exit(1);
-  }
-  slice.QuadPart /= CH_CFG_ST_FREQUENCY;
-  QueryPerformanceCounter(&nextcnt);
-  nextcnt.QuadPart += slice.QuadPart;
-
-  fflush(stdout);
+#if defined(__APPLE__)
+  puts("ChibiOS/RT simulator (OS X)\n");
+#else
+  puts("ChibiOS/RT simulator (Linux)\n");
+#endif
+  gettimeofday(&nextcnt, NULL);
+  timeradd(&nextcnt, &tick, &nextcnt);
 }
 
 /**
  * @brief   Interrupt simulation.
  */
 void _sim_check_for_interrupts(void) {
-  LARGE_INTEGER n;
+  struct timeval tv;
 
 #if HAL_USE_SERIAL
   if (sd_lld_interrupt_pending()) {
@@ -87,10 +81,9 @@ void _sim_check_for_interrupts(void) {
   }
 #endif
 
-  /* Interrupt Timer simulation (10ms interval).*/
-  QueryPerformanceCounter(&n);
-  if (n.QuadPart > nextcnt.QuadPart) {
-    nextcnt.QuadPart += slice.QuadPart;
+  gettimeofday(&tv, NULL);
+  if (timercmp(&tv, &nextcnt, >=)) {
+    timeradd(&nextcnt, &tick, &nextcnt);
 
     CH_IRQ_PROLOGUE();
 

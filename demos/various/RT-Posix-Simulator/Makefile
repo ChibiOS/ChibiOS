@@ -156,8 +156,7 @@ UINCDIR =
 ULIBDIR =
 
 # List all user libraries here
-ULIBS = -lws2_32
-
+ULIBS =
 #
 # End of user defines
 ##############################################################################

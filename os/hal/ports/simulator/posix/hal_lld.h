@@ -25,7 +25,15 @@
 #ifndef HAL_LLD_H
 #define HAL_LLD_H
 
+#if defined(WIN32)
 #include <windows.h>
+#else
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <unistd.h>
+#include <fcntl.h>
+#endif
 #include <stdio.h>
 
 /*===========================================================================*/
@@ -35,7 +43,11 @@
 /**
  * @brief   Platform name.
  */
+#if defined(WIN32)
 #define PLATFORM_NAME   "Win32 Simulator"
+#else
+#define PLATFORM_NAME   "Posix Simulator"
+#endif
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */

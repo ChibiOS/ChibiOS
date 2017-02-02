@@ -45,8 +45,8 @@
  * @details If set to @p TRUE the support for SD1 is included.
  * @note    The default is @p TRUE.
  */
-#if !defined(USE_WIN32_SERIAL1) || defined(__DOXYGEN__)
-#define USE_WIN32_SERIAL1                   TRUE
+#if !defined(USE_SIM_SERIAL1) || defined(__DOXYGEN__)
+#define USE_SIM_SERIAL1                     TRUE
 #endif
 
 /**
@@ -54,22 +54,22 @@
  * @details If set to @p TRUE the support for SD2 is included.
  * @note    The default is @p TRUE.
  */
-#if !defined(USE_WIN32_SERIAL2) || defined(__DOXYGEN__)
-#define USE_WIN32_SERIAL2                   TRUE
+#if !defined(USE_SIM_SERIAL2) || defined(__DOXYGEN__)
+#define USE_SIM_SERIAL2                     TRUE
 #endif
 
 /**
  * @brief   Listen port for SD1.
  */
 #if !defined(SD1_PORT) || defined(__DOXYGEN__)
-#define SD1_PORT                            29001
+#define SIM_SD1_PORT                        29001
 #endif
 
 /**
  * @brief   Listen port for SD2.
  */
 #if !defined(SD2_PORT) || defined(__DOXYGEN__)
-#define SD2_PORT                            29002
+#define SIM_SD2_PORT                        29002
 #endif
 
 /*===========================================================================*/
@@ -108,9 +108,9 @@ typedef struct {
   uint8_t                   ob[SERIAL_BUFFERS_SIZE];                        \
   /* End of the mandatory fields.*/                                         \
   /* Listen socket for simulated serial port.*/                             \
-  SOCKET                    com_listen;                                     \
+  int                       com_listen;                                     \
   /* Data socket for simulated serial port.*/                               \
-  SOCKET                    com_data;                                       \
+  int                       com_data;                                       \
   /* Port readable name.*/                                                  \
   const char                *com_name;
 
@@ -118,10 +118,10 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if USE_WIN32_SERIAL1 && !defined(__DOXYGEN__)
+#if USE_SIM_SERIAL1 && !defined(__DOXYGEN__)
 extern SerialDriver SD1;
 #endif
-#if USE_WIN32_SERIAL2 && !defined(__DOXYGEN__)
+#if USE_SIM_SERIAL2 && !defined(__DOXYGEN__)
 extern SerialDriver SD2;
 #endif
 
