@@ -59,6 +59,7 @@ a series of important improvements, new features have been added.
 - New kernel hooks for a more flexible code instrumentation.
 - Removed I/O queues, now the HAL has an improved equivalent.
 - Experimental NASA OSAL implementation.
+- Posix simulator added.
 
 *** What's new in NIL 2.0.0 ***
 

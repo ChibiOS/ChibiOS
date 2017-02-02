@@ -34,7 +34,7 @@ endif
 ifeq ($(BUILDDIR),.)
   BUILDDIR = build
 endif
-OUTFILES = $(BUILDDIR)/$(PROJECT).exe
+OUTFILES = $(BUILDDIR)/$(PROJECT)
            
 
 # Source files groups and paths
@@ -143,7 +143,7 @@ else
 	@$(CC) -c $(ASXFLAGS) -I. $(IINCDIR) $< -o $@
 endif
 
-%.exe: $(OBJS)
+$(BUILDDIR)/$(PROJECT): $(OBJS)
 ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
 	$(LD) $(OBJS) $(LDFLAGS) $(LIBS) -o $@
