@@ -47,51 +47,51 @@
  * queue-level function or macro.
  */
 
-static size_t write(void *ip, const uint8_t *bp, size_t n) {
+static size_t _write(void *ip, const uint8_t *bp, size_t n) {
 
   return oqWriteTimeout(&((SerialDriver *)ip)->oqueue, bp,
                         n, TIME_INFINITE);
 }
 
-static size_t read(void *ip, uint8_t *bp, size_t n) {
+static size_t _read(void *ip, uint8_t *bp, size_t n) {
 
   return iqReadTimeout(&((SerialDriver *)ip)->iqueue, bp,
                        n, TIME_INFINITE);
 }
 
-static msg_t put(void *ip, uint8_t b) {
+static msg_t _put(void *ip, uint8_t b) {
 
   return oqPutTimeout(&((SerialDriver *)ip)->oqueue, b, TIME_INFINITE);
 }
 
-static msg_t get(void *ip) {
+static msg_t _get(void *ip) {
 
   return iqGetTimeout(&((SerialDriver *)ip)->iqueue, TIME_INFINITE);
 }
 
-static msg_t putt(void *ip, uint8_t b, systime_t timeout) {
+static msg_t _putt(void *ip, uint8_t b, systime_t timeout) {
 
   return oqPutTimeout(&((SerialDriver *)ip)->oqueue, b, timeout);
 }
 
-static msg_t gett(void *ip, systime_t timeout) {
+static msg_t _gett(void *ip, systime_t timeout) {
 
   return iqGetTimeout(&((SerialDriver *)ip)->iqueue, timeout);
 }
 
-static size_t writet(void *ip, const uint8_t *bp, size_t n, systime_t timeout) {
+static size_t _writet(void *ip, const uint8_t *bp, size_t n, systime_t timeout) {
 
   return oqWriteTimeout(&((SerialDriver *)ip)->oqueue, bp, n, timeout);
 }
 
-static size_t readt(void *ip, uint8_t *bp, size_t n, systime_t timeout) {
+static size_t _readt(void *ip, uint8_t *bp, size_t n, systime_t timeout) {
 
   return iqReadTimeout(&((SerialDriver *)ip)->iqueue, bp, n, timeout);
 }
 
 static const struct SerialDriverVMT vmt = {
-  write, read, put, get,
-  putt, gett, writet, readt
+  _write, _read, _put, _get,
+  _putt, _gett, _writet, _readt
 };
 
 /*===========================================================================*/

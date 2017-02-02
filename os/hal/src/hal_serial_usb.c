@@ -82,51 +82,51 @@ static bool sdu_start_receive(SerialUSBDriver *sdup) {
  * Interface implementation.
  */
 
-static size_t write(void *ip, const uint8_t *bp, size_t n) {
+static size_t _write(void *ip, const uint8_t *bp, size_t n) {
 
   return obqWriteTimeout(&((SerialUSBDriver *)ip)->obqueue, bp,
                          n, TIME_INFINITE);
 }
 
-static size_t read(void *ip, uint8_t *bp, size_t n) {
+static size_t _read(void *ip, uint8_t *bp, size_t n) {
 
   return ibqReadTimeout(&((SerialUSBDriver *)ip)->ibqueue, bp,
                         n, TIME_INFINITE);
 }
 
-static msg_t put(void *ip, uint8_t b) {
+static msg_t _put(void *ip, uint8_t b) {
 
   return obqPutTimeout(&((SerialUSBDriver *)ip)->obqueue, b, TIME_INFINITE);
 }
 
-static msg_t get(void *ip) {
+static msg_t _get(void *ip) {
 
   return ibqGetTimeout(&((SerialUSBDriver *)ip)->ibqueue, TIME_INFINITE);
 }
 
-static msg_t putt(void *ip, uint8_t b, systime_t timeout) {
+static msg_t _putt(void *ip, uint8_t b, systime_t timeout) {
 
   return obqPutTimeout(&((SerialUSBDriver *)ip)->obqueue, b, timeout);
 }
 
-static msg_t gett(void *ip, systime_t timeout) {
+static msg_t _gett(void *ip, systime_t timeout) {
 
   return ibqGetTimeout(&((SerialUSBDriver *)ip)->ibqueue, timeout);
 }
 
-static size_t writet(void *ip, const uint8_t *bp, size_t n, systime_t timeout) {
+static size_t _writet(void *ip, const uint8_t *bp, size_t n, systime_t timeout) {
 
   return obqWriteTimeout(&((SerialUSBDriver *)ip)->obqueue, bp, n, timeout);
 }
 
-static size_t readt(void *ip, uint8_t *bp, size_t n, systime_t timeout) {
+static size_t _readt(void *ip, uint8_t *bp, size_t n, systime_t timeout) {
 
   return ibqReadTimeout(&((SerialUSBDriver *)ip)->ibqueue, bp, n, timeout);
 }
 
 static const struct SerialUSBDriverVMT vmt = {
-  write, read, put, get,
-  putt, gett, writet, readt
+  _write, _read, _put, _get,
+  _putt, _gett, _writet, _readt
 };
 
 /**
