@@ -116,7 +116,7 @@ static bool connint(SerialDriver *sdp) {
     socklen_t addrlen = sizeof(addr);
 
     if ((sdp->com_data = accept(sdp->com_listen, &addr, &addrlen)) == -1)
-      return FALSE;
+      return false;
 
 #if 0
     if (ioctl(sdp->com_data, FIONBIO, &nb) != 0) {
@@ -133,9 +133,9 @@ static bool connint(SerialDriver *sdp) {
     osalSysLockFromISR();
     chnAddFlagsI(sdp, CHN_CONNECTED);
     osalSysUnlockFromISR();
-    return TRUE;
+    return true;
   }
-  return FALSE;
+  return false;
 abort:
   if (sdp->com_listen != -1)
     close(sdp->com_listen);
@@ -161,22 +161,22 @@ static bool inint(SerialDriver *sdp) {
       osalSysLockFromISR();
       chnAddFlagsI(sdp, CHN_DISCONNECTED);
       osalSysUnlockFromISR();
-      return FALSE;
+      return false;
     case -1:
       if (errno == EWOULDBLOCK)
-        return FALSE;
+        return false;
       close(sdp->com_data);
       sdp->com_data = -1;
-      return FALSE;
+      return false;
     }
     for (i = 0; i < n; i++) {
       osalSysLockFromISR();
       sdIncomingDataI(sdp, data[i]);
       osalSysUnlockFromISR();
     }
-    return TRUE;
+    return true;
   }
-  return FALSE;
+  return false;
 }
 
 static bool outint(SerialDriver *sdp) {
@@ -192,7 +192,7 @@ static bool outint(SerialDriver *sdp) {
     n = sdRequestDataI(sdp);
     osalSysUnlockFromISR();
     if (n < 0)
-      return FALSE;
+      return false;
     data[0] = (uint8_t)n;
     n = send(sdp->com_data, data, sizeof(data), 0);
     switch (n) {
@@ -202,17 +202,17 @@ static bool outint(SerialDriver *sdp) {
       osalSysLockFromISR();
       chnAddFlagsI(sdp, CHN_DISCONNECTED);
       osalSysUnlockFromISR();
-      return FALSE;
+      return false;
     case -1:
       if (errno == EWOULDBLOCK)
-        return FALSE;
+        return false;
       close(sdp->com_data);
       sdp->com_data = -1;
-      return FALSE;
+      return false;
     }
-    return TRUE;
+    return true;
   }
-  return FALSE;
+  return false;
 }
 
 /*===========================================================================*/

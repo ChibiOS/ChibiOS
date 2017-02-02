@@ -103,7 +103,7 @@ static bool connint(SerialDriver *sdp) {
     int addrlen = sizeof(addr);
 
     if ((sdp->com_data = accept(sdp->com_listen, &addr, &addrlen)) == INVALID_SOCKET)
-      return FALSE;
+      return false;
 
     if (ioctlsocket(sdp->com_data, FIONBIO, &nb) != 0) {
       printf("%s: Unable to setup non blocking mode on data socket\n", sdp->com_name);
@@ -112,9 +112,9 @@ static bool connint(SerialDriver *sdp) {
     chSysLockFromISR();
     chnAddFlagsI(sdp, CHN_CONNECTED);
     chSysUnlockFromISR();
-    return TRUE;
+    return true;
   }
-  return FALSE;
+  return false;
 abort:
   if (sdp->com_listen != INVALID_SOCKET)
     closesocket(sdp->com_listen);
@@ -141,22 +141,22 @@ static bool inint(SerialDriver *sdp) {
       chSysLockFromISR();
       chnAddFlagsI(sdp, CHN_DISCONNECTED);
       chSysUnlockFromISR();
-      return FALSE;
+      return false;
     case SOCKET_ERROR:
       if (WSAGetLastError() == WSAEWOULDBLOCK)
-        return FALSE;
+        return false;
       closesocket(sdp->com_data);
       sdp->com_data = INVALID_SOCKET;
-      return FALSE;
+      return false;
     }
     for (i = 0; i < n; i++) {
       chSysLockFromISR();
       sdIncomingDataI(sdp, data[i]);
       chSysUnlockFromISR();
     }
-    return TRUE;
+    return true;
   }
-  return FALSE;
+  return false;
 }
 
 static bool outint(SerialDriver *sdp) {
@@ -172,7 +172,7 @@ static bool outint(SerialDriver *sdp) {
     n = sdRequestDataI(sdp);
     chSysUnlockFromISR();
     if (n < 0)
-      return FALSE;
+      return false;
     data[0] = (uint8_t)n;
     n = send(sdp->com_data, (char *)data, sizeof(data), 0);
     switch (n) {
@@ -182,17 +182,17 @@ static bool outint(SerialDriver *sdp) {
       chSysLockFromISR();
       chnAddFlagsI(sdp, CHN_DISCONNECTED);
       chSysUnlockFromISR();
-      return FALSE;
+      return false;
     case SOCKET_ERROR:
       if (WSAGetLastError() == WSAEWOULDBLOCK)
-        return FALSE;
+        return false;
       closesocket(sdp->com_data);
       sdp->com_data = INVALID_SOCKET;
-      return FALSE;
+      return false;
     }
-    return TRUE;
+    return true;
   }
-  return FALSE;
+  return false;
 }
 
 /*===========================================================================*/
