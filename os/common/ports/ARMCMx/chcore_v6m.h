@@ -118,11 +118,11 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !defined(CH_CUSTOMER_LICENSED_PORT_CM0)
-#error "CH_CUSTOMER_LICENSED_PORT_CM0 not defined"
+#if !defined(CH_CUSTOMER_LIC_PORT_CM0)
+#error "CH_CUSTOMER_LIC_PORT_CM0 not defined"
 #endif
 
-#if CH_CUSTOMER_LICENSED_PORT_CM0 == FALSE
+#if CH_CUSTOMER_LIC_PORT_CM0 == FALSE
 #error "ChibiOS Cortex-M0 port not licensed"
 #endif
 

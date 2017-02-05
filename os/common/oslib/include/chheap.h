@@ -39,9 +39,9 @@
  * @note    Cannot use the sizeof operator in this macro.
  */
 #if (SIZEOF_PTR == 4) || defined(__DOXYGEN__)
-#define CH_HEAP_ALIGNMENT   8
+#define CH_HEAP_ALIGNMENT   8U
 #elif (SIZEOF_PTR == 2)
-#define CH_HEAP_ALIGNMENT   4
+#define CH_HEAP_ALIGNMENT   4U
 #else
 #error "unsupported pointer size"
 #endif
