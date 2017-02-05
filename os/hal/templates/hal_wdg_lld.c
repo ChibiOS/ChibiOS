@@ -24,7 +24,7 @@
 
 #include "hal.h"
 
-#if HAL_USE_WDG || defined(__DOXYGEN__)
+#if (HAL_USE_WDG == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -34,7 +34,7 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
-#if PLATFORM_WDG_USE_WDG1 || defined(__DOXYGEN__)
+#if (PLATFORM_WDG_USE_WDG1 == TRUE) || defined(__DOXYGEN__)
 WDGDriver WDGD1;
 #endif
 

@@ -24,7 +24,7 @@
 
 #include "hal.h"
 
-#if HAL_USE_I2S || defined(__DOXYGEN__)
+#if (HAL_USE_I2S == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -35,7 +35,7 @@
 /*===========================================================================*/
 
 /** @brief I2S2 driver identifier.*/
-#if PLATFORM_I2S_USE_I2S1 || defined(__DOXYGEN__)
+#if (PLATFORM_I2S_USE_I2S1 == TRUE) || defined(__DOXYGEN__)
 I2SDriver I2SD1;
 #endif
 

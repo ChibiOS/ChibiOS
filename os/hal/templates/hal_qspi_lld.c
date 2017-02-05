@@ -24,7 +24,7 @@
 
 #include "hal.h"
 
-#if HAL_USE_QSPI || defined(__DOXYGEN__)
+#if (HAL_USE_QSPI == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -35,7 +35,7 @@
 /*===========================================================================*/
 
 /** @brief QSPID1 driver identifier.*/
-#if PLATFORM_QSPI_USE_QSPI1 || defined(__DOXYGEN__)
+#if (PLATFORM_QSPI_USE_QSPI1 == TRUE) || defined(__DOXYGEN__)
 QSPIDriver QSPID1;
 #endif
 

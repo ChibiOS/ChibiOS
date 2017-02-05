@@ -471,7 +471,7 @@ void sduDataReceived(USBDriver *usbp, usbep_t ep) {
   /* The endpoint cannot be busy, we are in the context of the callback,
      so a packet is in the buffer for sure. Trying to get a free buffer
      for the next transaction.*/
-  sdu_start_receive(sdup);
+  (void) sdu_start_receive(sdup);
 
   osalSysUnlockFromISR();
 }

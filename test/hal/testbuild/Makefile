@@ -218,4 +218,4 @@ RULESPATH = $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC
 include $(RULESPATH)/rules.mk
 
 misra:
-	lint-nt -w3 $(DEFS) pclint/co-gcc.lnt pclint/au-misra3.lnt pclint/waivers.lnt $(IINCDIR) $(HALSRC) $(OSALSRC) $(PLATFORMSRC) > misra.txt
+	@wine lint-nt -w3 $(DEFS) pclint/co-gcc.lnt pclint/au-misra3.lnt pclint/waivers.lnt $(IINCDIR) $(HALSRC) $(OSALSRC) $(PLATFORMSRC) > misra.txt

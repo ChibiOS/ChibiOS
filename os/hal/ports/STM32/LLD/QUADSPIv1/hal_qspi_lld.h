@@ -25,7 +25,7 @@
 #ifndef HAL_QSPI_LLD_H
 #define HAL_QSPI_LLD_H
 
-#if HAL_USE_QSPI || defined(__DOXYGEN__)
+#if (HAL_USE_QSPI == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -211,13 +211,13 @@ struct QSPIDriver {
    * @brief   Current configuration data.
    */
   const QSPIConfig           *config;
-#if QSPI_USE_WAIT || defined(__DOXYGEN__)
+#if (QSPI_USE_WAIT == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Waiting thread.
    */
   thread_reference_t        thread;
 #endif /* QSPI_USE_WAIT */
-#if QSPI_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
+#if (QSPI_USE_MUTUAL_EXCLUSION == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Mutex protecting the peripheral.
    */
@@ -249,7 +249,7 @@ struct QSPIDriver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if STM32_QSPI_USE_QUADSPI1 && !defined(__DOXYGEN__)
+#if (STM32_QSPI_USE_QUADSPI1 == TRUE) && !defined(__DOXYGEN__)
 extern QSPIDriver QSPID1;
 #endif
 

@@ -28,7 +28,7 @@
 
 #include "hal.h"
 
-#if HAL_USE_RTC || defined(__DOXYGEN__)
+#if (HAL_USE_RTC == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -41,7 +41,9 @@
 /**
  * @brief RTC driver identifier.
  */
+#if (PLATFORM_RTC_USE_RTC1 == TRUE) && !defined(__DOXYGEN__)
 RTCDriver RTCD1;
+#endif
 
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
@@ -67,7 +69,9 @@ RTCDriver RTCD1;
 void rtc_lld_init(void) {
 
   /* RTC object initialization.*/
+#if PLATFORM_RTC_USE_RTC1 == TRUE
   rtcObjectInit(&RTCD1);
+#endif
 }
 
 /**
