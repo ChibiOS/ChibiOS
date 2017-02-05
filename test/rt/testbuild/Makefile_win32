@@ -5,7 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = $(XOPT)
+  USE_OPT = $(XOPT) -m32
 endif
 
 # C specific options here (added to USE_OPT).
@@ -61,7 +61,7 @@ endif
 #
 
 # Define project name here
-PROJECT = ch
+PROJECT = ch.exe
 
 # Imported source files and paths
 CHIBIOS = ../../..
@@ -169,4 +169,4 @@ RULESPATH = $(CHIBIOS)/os/common/startup/SIMIA32/compilers/GCC
 include $(RULESPATH)/rules.mk
 
 misra:
-	@lint-nt -v -w3 $(DEFS) pclint/co-gcc.lnt pclint/au-misra3.lnt pclint/waivers.lnt $(IINCDIR) $(KERNSRC)
+	@lint-nt -v -w3 $(DEFS) pclint/co-gcc-win32.lnt pclint/au-misra3.lnt pclint/waivers.lnt $(IINCDIR) $(KERNSRC)

@@ -354,7 +354,7 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if CH_CUSTOMER_LICENSED_NIL == FALSE
+#if CH_CUSTOMER_LIC_NIL == FALSE
 #error "ChibiOS/NIL not licensed"
 #endif
 

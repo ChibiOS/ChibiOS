@@ -55,18 +55,18 @@
  * @name    Licensed Products
  * @{
  */
-#define CH_CUSTOMER_LICENSED_RT             TRUE
-#define CH_CUSTOMER_LICENSED_NIL            TRUE
-#define CH_CUSTOMER_LICENSED_EX             TRUE
-#define CH_CUSTOMER_LICENSED_PORT_CM0       TRUE
-#define CH_CUSTOMER_LICENSED_PORT_CM3       TRUE
-#define CH_CUSTOMER_LICENSED_PORT_CM4       TRUE
-#define CH_CUSTOMER_LICENSED_PORT_CM7       TRUE
-#define CH_CUSTOMER_LICENSED_PORT_ARM79     TRUE
-#define CH_CUSTOMER_LICENSED_PORT_E200Z0    TRUE
-#define CH_CUSTOMER_LICENSED_PORT_E200Z2    TRUE
-#define CH_CUSTOMER_LICENSED_PORT_E200Z3    TRUE
-#define CH_CUSTOMER_LICENSED_PORT_E200Z4    TRUE
+#define CH_CUSTOMER_LIC_RT                  TRUE
+#define CH_CUSTOMER_LIC_NIL                 TRUE
+#define CH_CUSTOMER_LIC_EX                  TRUE
+#define CH_CUSTOMER_LIC_PORT_CM0            TRUE
+#define CH_CUSTOMER_LIC_PORT_CM3            TRUE
+#define CH_CUSTOMER_LIC_PORT_CM4            TRUE
+#define CH_CUSTOMER_LIC_PORT_CM7            TRUE
+#define CH_CUSTOMER_LIC_PORT_ARM79          TRUE
+#define CH_CUSTOMER_LIC_PORT_E200Z0         TRUE
+#define CH_CUSTOMER_LIC_PORT_E200Z2         TRUE
+#define CH_CUSTOMER_LIC_PORT_E200Z3         TRUE
+#define CH_CUSTOMER_LIC_PORT_E200Z4         TRUE
 /** @} */
 
 /*===========================================================================*/

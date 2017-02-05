@@ -40,7 +40,7 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if CH_CUSTOMER_LICENSED_RT == FALSE
+#if CH_CUSTOMER_LIC_RT == FALSE
 #error "ChibiOS/RT not licensed"
 #endif
 
