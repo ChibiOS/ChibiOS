@@ -135,7 +135,7 @@ __attribute__((weak))
 /*lint -save -e9075 [8.4] All symbols are invoked from asm context.*/
 void __core_init(void) {
 
-#if __CORTEX_M == 7
+#if CORTEX_MODEL == 7
   SCB_EnableICache();
   SCB_EnableDCache();
 #endif
