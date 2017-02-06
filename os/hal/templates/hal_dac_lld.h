@@ -95,9 +95,7 @@ typedef enum {
  * @param[in] n         number of buffer rows available starting from @p buffer
  *                      callback
  */
-typedef void (*daccallback_t)(DACDriver *dacp,
-                              const dacsample_t *buffer,
-                              size_t n);
+typedef void (*daccallback_t)(DACDriver *dacp, dacsample_t *buffer, size_t n);
 
 /**
  * @brief   ADC error callback type.
@@ -150,7 +148,7 @@ struct DACDriver {
   /**
    * @brief   Samples buffer pointer.
    */
-  const dacsample_t         *samples;
+  dacsample_t               *samples;
   /**
    * @brief   Samples buffer size.
    */

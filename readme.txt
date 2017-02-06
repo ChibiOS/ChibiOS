@@ -157,6 +157,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Fixed DAC driver problem with API signature (bug #817)(backported
+       to 16.1.8).
 - HAL: Fixed STM32 OTGv1 driver not serving interrupts for endpoints > 5
        (bug #816)(backported to 16.1.8).
 - HAL: Fixed STM32 MAC driver needs __DSB() for STM32F7 when operating in

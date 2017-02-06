@@ -59,7 +59,7 @@ static const dacsample_t dac_buffer[DAC_BUFFER_SIZE] = {
  * DAC streaming callback.
  */
 size_t nx = 0, ny = 0, nz = 0;
-static void end_cb1(DACDriver *dacp, const dacsample_t *buffer, size_t n) {
+static void end_cb1(DACDriver *dacp, dacsample_t *buffer, size_t n) {
 
   (void)dacp;
 
@@ -143,7 +143,8 @@ int main(void) {
    * Note, the buffer size is divided by two because two elements are fetched
    * for each transfer.
    */
-  dacStartConversion(&DACD1, &dacgrpcfg1, dac_buffer, DAC_BUFFER_SIZE / 2U);
+  dacStartConversion(&DACD1, &dacgrpcfg1,
+                     (dacsample_t *)dac_buffer, DAC_BUFFER_SIZE / 2U);
   gptStartContinuous(&GPTD6, 2U);
 
   /*
