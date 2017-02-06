@@ -243,14 +243,14 @@ extern "C" {
                       dacchannel_t channel,
                       dacsample_t sample);
   void dacStartConversion(DACDriver *dacp, const DACConversionGroup *grpp,
-                          const dacsample_t *samples, size_t depth);
+                          dacsample_t *samples, size_t depth);
   void dacStartConversionI(DACDriver *dacp, const DACConversionGroup *grpp,
-                           const dacsample_t *samples, size_t depth);
+                           dacsample_t *samples, size_t depth);
   void dacStopConversion(DACDriver *dacp);
   void dacStopConversionI(DACDriver *dacp);
 #if DAC_USE_WAIT
   msg_t dacConvert(DACDriver *dacp, const DACConversionGroup *grpp,
-                   const dacsample_t *samples, size_t depth);
+                   dacsample_t *samples, size_t depth);
 #endif
 #if DAC_USE_MUTUAL_EXCLUSION
   void dacAcquireBus(DACDriver *dacp);

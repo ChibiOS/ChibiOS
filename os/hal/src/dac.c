@@ -165,7 +165,7 @@ void dacPutChannelX(DACDriver *dacp, dacchannel_t channel, dacsample_t sample) {
  */
 void dacStartConversion(DACDriver *dacp,
                         const DACConversionGroup *grpp,
-                        const dacsample_t *samples,
+                        dacsample_t *samples,
                         size_t depth) {
 
   osalSysLock();
@@ -193,7 +193,7 @@ void dacStartConversion(DACDriver *dacp,
  */
 void dacStartConversionI(DACDriver *dacp,
                          const DACConversionGroup *grpp,
-                         const dacsample_t *samples,
+                         dacsample_t *samples,
                          size_t depth) {
 
   osalDbgCheckClassI();
@@ -294,7 +294,7 @@ void dacStopConversionI(DACDriver *dacp) {
  */
 msg_t dacConvert(DACDriver *dacp,
                  const DACConversionGroup *grpp,
-                 const dacsample_t *samples,
+                 dacsample_t *samples,
                  size_t depth) {
   msg_t msg;
 
