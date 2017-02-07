@@ -107,6 +107,7 @@ static void usb_pm_reset(USBDriver *usbp) {
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] size      size of the packet buffer to allocate
+ * @return              The packet buffer address.
  */
 static uint32_t usb_pm_alloc(USBDriver *usbp, size_t size) {
   uint32_t next;
@@ -120,7 +121,7 @@ static uint32_t usb_pm_alloc(USBDriver *usbp, size_t size) {
 /**
  * @brief   Reads from a dedicated packet buffer.
  *
- * @param[in] udp       pointer to a @p stm32_usb_descriptor_t
+ * @param[in] ep        endpoint number
  * @param[out] buf      buffer where to copy the packet data
  * @return              The size of the receivee packet.
  *

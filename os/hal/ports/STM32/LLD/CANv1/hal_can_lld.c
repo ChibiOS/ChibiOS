@@ -68,6 +68,7 @@ CANDriver CAND3;
 /**
  * @brief   Programs the filters of CAN 1 and CAN 2.
  *
+ * @param[in] canp      pointer to the @p CANDriver object
  * @param[in] can2sb    number of the first filter assigned to CAN2
  * @param[in] num       number of entries in the filters array, if zero then
  *                      a default filter is programmed
@@ -1006,6 +1007,7 @@ void can_lld_wakeup(CANDriver *canp) {
  * @brief   Programs the filters.
  * @note    This is an STM32-specific API.
  *
+ * @param[in] canp      pointer to the @p CANDriver object
  * @param[in] can2sb    number of the first filter assigned to CAN2
  * @param[in] num       number of entries in the filters array, if zero then
  *                      a default filter is programmed
@@ -1014,7 +1016,8 @@ void can_lld_wakeup(CANDriver *canp) {
  *
  * @api
  */
-void canSTM32SetFilters(CANDriver *canp, uint32_t can2sb, uint32_t num, const CANFilter *cfp) {
+void canSTM32SetFilters(CANDriver *canp, uint32_t can2sb,
+                        uint32_t num, const CANFilter *cfp) {
 
 #if STM32_CAN_USE_CAN2
   osalDbgCheck((can2sb <= STM32_CAN_MAX_FILTERS) &&

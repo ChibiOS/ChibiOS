@@ -154,7 +154,7 @@ UARTDriver UARTD8;
 /**
  * @brief   Status bits translation.
  *
- * @param[in] sr        USART SR register value
+ * @param[in] isr       USART SR register value
  *
  * @return  The error flags.
  */

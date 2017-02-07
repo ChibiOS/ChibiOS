@@ -134,7 +134,7 @@ void qspiStop(QSPIDriver *qspip) {
  * @post    At the end of the operation the configured callback is invoked.
  *
  * @param[in] qspip     pointer to the @p QSPIDriver object
- * @param[in] cmd       pointer to the command descriptor
+ * @param[in] cmdp      pointer to the command descriptor
  *
  * @api
  */
@@ -156,7 +156,7 @@ void qspiStartCommand(QSPIDriver *qspip, const qspi_command_t *cmdp) {
  * @post    At the end of the operation the configured callback is invoked.
  *
  * @param[in] qspip     pointer to the @p QSPIDriver object
- * @param[in] cmd       pointer to the command descriptor
+ * @param[in] cmdp      pointer to the command descriptor
  * @param[in] n         number of bytes to send
  * @param[in] txbuf     the pointer to the transmit buffer
  *
@@ -182,7 +182,7 @@ void qspiStartSend(QSPIDriver *qspip, const qspi_command_t *cmdp,
  * @post    At the end of the operation the configured callback is invoked.
  *
  * @param[in] qspip     pointer to the @p QSPIDriver object
- * @param[in] cmd       pointer to the command descriptor
+ * @param[in] cmdp      pointer to the command descriptor
  * @param[in] n         number of bytes to send
  * @param[out] rxbuf    the pointer to the receive buffer
  *
