@@ -69,44 +69,44 @@
         .globl      _port_switch
         .type       _port_switch, @function
 _port_switch:
-        e_subi      sp, sp, 80
-        mflr        r0
-        e_stw       r0, 84(sp)
-        mfcr        r0
-        se_stw      r0, 0(sp)
-        e_stmw      r14, 4(sp)
+        subi        %sp, %sp, 80
+        mflr        %r0
+        stw         %r0, 84(%sp)
+        mfcr        %r0
+        stw         %r0, 0(%sp)
+        stmw        %r14, 4(%sp)
 
-        se_stw      sp, 12(r4)
-        se_lwz      sp, 12(r3)
+        stw         %sp, 12(%r4)
+        lwz         %sp, 12(%r3)
 
-        e_lmw       r14, 4(sp)
-        se_lwz      r0, 0(sp)
-        mtcr        r0
-        e_lwz       r0, 84(sp)
-        mtlr        r0
-        e_addi      sp, sp, 80
-        se_blr
+        lmw         %r14, 4(%sp)
+        lwz         %r0, 0(%sp)
+        mtcr        %r0
+        lwz         %r0, 84(%sp)
+        mtlr        %r0
+        addi        %sp, %sp, 80
+        blr
 
         .align      2
         .globl      _port_thread_start
         .type       _port_thread_start, @function
 _port_thread_start:
 #if CH_DBG_SYSTEM_STATE_CHECK
-        e_bl        _dbg_check_unlock
+        bl          _dbg_check_unlock
 #endif
 #if CH_DBG_STATISTICS
-        e_bl        _stats_stop_measure_crit_thd
+        bl          _stats_stop_measure_crit_thd
 #endif
         wrteei      1
-        mr          r3, r31
-        mtctr       r30
-        se_bctrl
+        mr          %r3, %r31
+        mtctr       %r30
+        bctrl
 #if defined(_CHIBIOS_RT_CONF_)
-        li          r0, 0
+        li          %r0, 0
         bl          chThdExit
 #endif
 #if defined(_CHIBIOS_NIL_CONF_)
-        se_li       r0, 0
+        se_li       %r0, 0
         e_bl        chSysHalt
 #endif
 

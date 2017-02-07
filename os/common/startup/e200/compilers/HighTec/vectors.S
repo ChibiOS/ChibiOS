@@ -16,7 +16,7 @@
 
 /**
  * @file    vectors.s
- * @brief   INTC vectors table.
+ * @brief   SPC56x vectors table.
  *
  * @addtogroup PPC_GCC_CORE
  * @{
@@ -2600,12 +2600,12 @@ vector1020:
 vector1021:
 vector1022:
 vector1023:
-         e_b        _unhandled_irq
+         b          _unhandled_irq
 
         .weak       _unhandled_irq
         .type       _unhandled_irq, @function
 _unhandled_irq:
-         e_b        _unhandled_irq
+         b          _unhandled_irq
 
 #endif /* !defined(__DOXYGEN__) */
 

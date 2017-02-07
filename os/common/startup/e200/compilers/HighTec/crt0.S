@@ -92,150 +92,150 @@
         .type       _boot_address, @function
 _boot_address:
         /* Stack setup.*/
-        e_lis       r1, __process_stack_end__@h
-        e_or2i      r1, __process_stack_end__@l
-        se_li       r0, 0
-        e_stwu      r0, -8(r1)
+        lis         %r1, __process_stack_end__@h
+        ori         %r1, %r1, __process_stack_end__@l
+        li          %r0, 0
+        stwu        %r0, -8(%r1)
 
         /* Small sections registers initialization.*/
-        e_lis       r2, __sdata2_start__@h
-        e_or2i      r2, __sdata2_start__@l
-        e_lis       r13, __sdata_start__@h
-        e_or2i      r13, __sdata_start__@l
+        lis         %r2, __sdata2_start__@h
+        ori         %r2, %r2, __sdata2_start__@l
+        lis         %r13, __sdata_start__@h
+        ori         %r13, %r13, __sdata_start__@l
 
         /* Early initialization.*/
-        e_bl        __early_init
+        bl          __early_init
 
 #if CRT0_INIT_STACKS == TRUE
         /* Stacks fill pattern.*/
-        e_lis       r7, CRT0_STACKS_FILL_PATTERN@h
-        e_or2i      r7, CRT0_STACKS_FILL_PATTERN@l
+        lis         %r7, CRT0_STACKS_FILL_PATTERN@h
+        ori         %r7, %r7, CRT0_STACKS_FILL_PATTERN@l
 
        /* IRQ Stack initialization. Note, the architecture does not use this
           stack, the size is usually zero. An OS can have special SW handling
           and require this. A 4 bytes alignment is assmend and required.*/
-        e_lis       r4, __irq_stack_base__@h
-        e_or2i      r4, __irq_stack_base__@l
-        e_lis       r5, __irq_stack_end__@h
-        e_or2i      r5, __irq_stack_end__@l
+        lis         %r4, __irq_stack_base__@h
+        ori         %r4, %r4, __irq_stack_base__@l
+        lis         %r5, __irq_stack_end__@h
+        ori         %r5, %r5, __irq_stack_end__@l
 .irqsloop:
-        se_cmpl     r4, r5
-        se_bge      .irqsend
-        se_stw      r7, 0(r4)
-        se_addi     r4, 4
-        se_b        .irqsloop
+        cmpl        cr0, %r4, %r5
+        bge         cr0, .irqsend
+        stw         %r7, 0(%r4)
+        addi        %r4, %r4, 4
+        b           .irqsloop
 .irqsend:
 
         /* Process Stack initialization. Note, does not overwrite the already
            written EABI frame. A 4 bytes alignment is assmend and required.*/
-        e_lis       r4, __process_stack_base__@h
-        e_or2i      r4, __process_stack_base__@l
-        e_lis       r5, (__process_stack_end__ - 8)@h
-        e_or2i      r5, (__process_stack_end__ - 8)@l
+        lis         %r4, __process_stack_base__@h
+        ori         %r4, %r4, __process_stack_base__@l
+        lis         %r5, (__process_stack_end__ - 8)@h
+        ori         %r5, %r5, (__process_stack_end__ - 8)@l
 .prcsloop:
-        se_cmpl     r4, r5
-        se_bge      .prcsend
-        se_stw      r7, 0(r4)
-        se_addi     r4, 4
-        se_b        .prcsloop
+        cmpl        cr0, %r4, %r5
+        bge         cr0, .prcsend
+        stw         %r7, 0(%r4)
+        addi        %r4, %r4, 4
+        b           .prcsloop
 .prcsend:
 #endif
 
 #if CRT0_INIT_BSS == TRUE
         /* BSS clearing.*/
-        e_lis       r4, __bss_start__@h
-        e_or2i      r4, __bss_start__@l
-        e_lis       r5, __bss_end__@h
-        e_or2i      r5, __bss_end__@l
-        se_li       r7, 0
+        lis         %r4, __bss_start__@h
+        ori         %r4, %r4, __bss_start__@l
+        lis         %r5, __bss_end__@h
+        ori         %r5, %r5, __bss_end__@l
+        li          %r7, 0
 .bssloop:
-        se_cmpl     r4, r5
-        se_bge      .bssend
-        se_stw      r7, 0(r4)
-        se_addi     r4, 4
-        se_b        .bssloop
+        cmpl        cr0, %r4, %r5
+        bge         cr0, .bssend
+        stw         %r7, 0(%r4)
+        addi        %r4, %r4, 4
+        b           .bssloop
 .bssend:
 #endif
 
 #if CRT0_INIT_DATA == TRUE
         /* DATA initialization.*/
-        e_lis       r4, __romdata_start__@h
-        e_or2i      r4, __romdata_start__@l
-        e_lis       r5, __data_start__@h
-        e_or2i      r5, __data_start__@l
-        e_lis       r6, __data_end__@h
-        e_or2i      r6, __data_end__@l
+        lis         %r4, __romdata_start__@h
+        ori         %r4, %r4, __romdata_start__@l
+        lis         %r5, __data_start__@h
+        ori         %r5, %r5, __data_start__@l
+        lis         %r6, __data_end__@h
+        ori         %r6, %r6, __data_end__@l
 .dataloop:
-        se_cmpl     r5, r6
-        se_bge      .dataend
-        se_lwz      r7, 0(r4)
-        se_addi     r4, 4
-        se_stw      r7, 0(r5)
-        se_addi     r5, 4
-        se_b        .dataloop
+        cmpl        cr0, %r5, %r6
+        bge         cr0, .dataend
+        lwz         %r7, 0(%r4)
+        addi        %r4, %r4, 4
+        stw         %r7, 0(%r5)
+        addi        %r5, %r5, 4
+        b           .dataloop
 .dataend:
 #endif
 
         /* Late initialization.*/
-        e_bl        __late_init
+        bl          __late_init
 
 #if CRT0_CALL_CONSTRUCTORS == TRUE
         /* Constructors invocation.*/
-        e_lis       r4, __init_array_start@h
-        e_or2i      r4, __init_array_start@l
-        e_lis       r5, __init_array_end@h
-        e_or2i      r5, __init_array_end@l
+        lis         %r4, __init_array_start@h
+        ori         %r4, %r4, __init_array_start@l
+        lis         %r5, __init_array_end@h
+        ori         %r5, %r5, __init_array_end@l
 .iniloop:
-        se_cmpl     r4, r5
-        se_bge      .iniend
-        se_lwz      r6, 0(r4)
-        mtctr       r6
-        se_addi     r4, 4
-        se_bctrl
-        se_b        .iniloop
+        cmplw       %cr0, %r4, %r5
+        bge         %cr0, .iniend
+        lwz         %r6, 0(%r4)
+        mtctr       %r6
+        addi        %r4, %r4, 4
+        bctrl
+        b           .iniloop
 .iniend:
 #endif
 
         /* Main program invocation.*/
-        e_bl        main
+        bl          main
 
 #if CRT0_CALL_DESTRUCTORS == TRUE
         /* Destructors invocation.*/
-        e_lis       r4, __fini_array_start@h
-        e_or2i      r4, __fini_array_start@l
-        e_lis       r5, __fini_array_end@h
-        e_or2i      r5, __fini_array_end@l
+        lis         %r4, __fini_array_start@h
+        ori         %r4, %r4, __fini_array_start@l
+        lis         %r5, __fini_array_end@h
+        ori         %r5, %r5, __fini_array_end@l
 .finiloop:
-        se_cmpl     r4, r5
-        se_bge      .finiend
-        se_lwz      r6, 0(r4)
-        mtctr       r6
-        se_addi     r4, 4
-        se_bctrl
-        se_b        .finiloop
+        cmplw       %cr0, %r4, %r5
+        bge         %cr0, .finiend
+        lwz         %r6, 0(%r4)
+        mtctr       %r6
+        addi        %r4, %r4, 4
+        bctrl
+        b           .finiloop
 .finiend:
 #endif
 
         /* Branching to the defined exit handler.*/
-        e_b         __default_exit
+        b           __default_exit
 
         /* Default main exit code, infinite loop.*/
         .weak       __default_exit
         .type       __default_exit, @function
 __default_exit:
-        e_b         __default_exit
+        b           __default_exit
 
         /* Default early initialization code, none.*/
         .weak       __early_init
         .type       __early_init, @function
 __early_init:
-        se_blr
+        blr
 
         /* Default late initialization code, none.*/
         .weak       __late_init
         .type       __late_init, @function
 __late_init:
-        se_blr
+        blr
 
 #endif /* !defined(__DOXYGEN__) */
 
