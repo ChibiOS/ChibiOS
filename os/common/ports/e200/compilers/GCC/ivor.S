@@ -58,7 +58,7 @@
         .type       _IVOR10, @function
 _IVOR10:
         /* Saving the external context (port_extctx structure).*/
-        stwu        sp, -80(sp)
+        e_stwu       sp, -80(sp)
 #if PPC_USE_VLE && PPC_SUPPORTS_VLE_MULTI
         e_stmvsrrw  8(sp)                  /* Saves PC, MSR.               */
         e_stmvsprw  16(sp)                 /* Saves CR, LR, CTR, XER.      */
@@ -91,11 +91,11 @@ _IVOR10:
 
         /* Increasing the SPGR0 register.*/
         mfspr       r0, 272
-        eaddi       r0, r0, 1
+        se_addi     r0, 1
         mtspr       272, r0
 
         /* Reset DIE bit in TSR register.*/
-        lis         r3, 0x0800             /* DIS bit mask.                */
+        e_lis       r3, 0x0800             /* DIS bit mask.                */
         mtspr       336, r3                /* TSR register.                */
 
         /* Restoring pre-IRQ MSR register value.*/
@@ -107,14 +107,14 @@ _IVOR10:
         mtMSR       r0
 
 #if CH_DBG_SYSTEM_STATE_CHECK
-        bl          _dbg_check_enter_isr
-        bl          _dbg_check_lock_from_isr
+        e_bl        _dbg_check_enter_isr
+        e_bl        _dbg_check_lock_from_isr
 #endif
         /* System tick handler invocation.*/
-        bl          chSysTimerHandlerI
+        e_bl        chSysTimerHandlerI
 #if CH_DBG_SYSTEM_STATE_CHECK
-        bl          _dbg_check_unlock_from_isr
-        bl          _dbg_check_leave_isr
+        e_bl        _dbg_check_unlock_from_isr
+        e_bl        _dbg_check_leave_isr
 #endif
 
 #if PPC_USE_IRQ_PREEMPTION
@@ -123,7 +123,7 @@ _IVOR10:
 #endif
 
         /* Jumps to the common IVOR epilogue code.*/
-        b           _ivor_exit
+        e_b         _ivor_exit
 #endif /* PPC_SUPPORTS_DECREMENTER */
 
         /*
