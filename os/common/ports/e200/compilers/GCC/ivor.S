@@ -41,6 +41,10 @@
 #include "chconf.h"
 #include "chcore.h"
 
+#if defined(__HIGHTEC__)
+#define se_beq beq
+#endif
+
 #if !defined(__DOXYGEN__)
 
         .section    .handlers, "ax"

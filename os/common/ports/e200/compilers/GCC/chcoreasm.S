@@ -46,6 +46,10 @@
 #include "chconf.h"
 #include "chcore.h"
 
+#if defined(__HIGHTEC__)
+#define e_subi subi
+#endif
+
 #if !defined(__DOXYGEN__)
 
 /*

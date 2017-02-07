@@ -24,6 +24,10 @@
 
 #include "boot.h"
 
+#if defined(__HIGHTEC__)
+#define se_bge bge
+#endif
+
 #if !defined(__DOXYGEN__)
 
         /* BAM record.*/
