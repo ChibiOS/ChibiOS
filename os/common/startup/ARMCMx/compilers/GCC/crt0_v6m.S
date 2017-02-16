@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    crt0_v6m.s
+ * @file    crt0_v6m.S
  * @brief   Generic ARMv6-M (Cortex-M0/M1) startup file for ChibiOS.
  *
  * @addtogroup ARMCMx_GCC_STARTUP_V6M

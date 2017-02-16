@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    e200/compilers/GCC/chcoreasm.s
+ * @file    e200/compilers/GCC/chcoreasm.S
  * @brief   Power Architecture port low level code.
  *
  * @addtogroup PPC_GCC_CORE

@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    GCC/crt0.s
+ * @file    GCC/crt0.S
  * @brief   Generic PowerPC startup file for GCC.
  *
  * @addtogroup PPC_GCC_CORE

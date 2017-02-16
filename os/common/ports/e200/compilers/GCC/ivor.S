@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    ivor.s
+ * @file    GCC/ivor.S
  * @brief   Kernel ISRs.
  *
  * @addtogroup PPC_CORE

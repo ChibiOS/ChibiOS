@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    ARM/compilers/GCC/chcoreasm.s
+ * @file    ARM/compilers/GCC/chcoreasm.S
  * @brief   ARM architecture port low level code.
  *
  * @addtogroup ARM_CORE

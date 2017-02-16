@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    vectors.s
+ * @file    vectors.S
  * @brief   INTC vectors table.
  *
  * @addtogroup PPC_GCC_CORE

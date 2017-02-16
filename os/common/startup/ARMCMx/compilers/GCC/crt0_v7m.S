@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    crt0_v7m.s
+ * @file    crt0_v7m.S
  * @brief   Generic ARMv7-M (Cortex-M3/M4/M7) startup file for ChibiOS.
  *
  * @addtogroup ARMCMx_GCC_STARTUP_V7M
