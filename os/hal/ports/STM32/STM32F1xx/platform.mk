@@ -17,8 +17,8 @@ ifneq ($(findstring HAL_USE_ADC TRUE,$(HALCONF)),)
 PLATFORMSRC += $(CHIBIOS)/os/hal/ports/STM32/STM32F1xx/hal_adc_lld.c
 endif
 else
+PLATFORMSRC += $(CHIBIOS)/os/hal/ports/STM32/STM32F1xx/hal_ext_lld_isr.c \
                $(CHIBIOS)/os/hal/ports/STM32/STM32F1xx/hal_adc_lld.c
-PLATFORMSRC += $(CHIBIOS)/os/hal/ports/STM32/STM32F1xx/hal_ext_lld_isr.c
 endif
 
 # Drivers compatible with the platform.
