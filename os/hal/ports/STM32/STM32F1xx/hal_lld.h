@@ -20,6 +20,7 @@
  * @pre     This module requires the following macros to be defined in the
  *          @p board.h file:
  *          - STM32_LSECLK.
+ *          - STM32_LSE_BYPASS (optionally).
  *          - STM32_HSECLK.
  *          - STM32_HSE_BYPASS (optionally).
  *          .

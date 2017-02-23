@@ -66,7 +66,13 @@ static void hal_lld_backup_domain_init(void) {
 
   /* If enabled then the LSE is started.*/
 #if STM32_LSE_ENABLED
+#if defined(STM32_LSE_BYPASS)
+  /* LSE Bypass.*/
+  RCC->BDCR |= RCC_BDCR_LSEON | RCC_BDCR_LSEBYP;
+#else
+  /* No LSE Bypass.*/
   RCC->BDCR |= RCC_BDCR_LSEON;
+#endif
   while ((RCC->BDCR & RCC_BDCR_LSERDY) == 0)
     ;                                     /* Waits until LSE is stable.   */
 #endif /* STM32_LSE_ENABLED */
