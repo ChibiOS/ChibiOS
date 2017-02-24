@@ -114,6 +114,22 @@ typedef enum {
  * @brief   Converts a mailbox index to a bit mask.
  */
 #define CAN_MAILBOX_TO_MASK(mbx) (1U << ((mbx) - 1U))
+
+/**
+ * @brief   Legacy name for @p canTransmitTimeout().
+ *
+ * @deprecated
+ */
+#define canTransmit(canp, mailbox, ctfp, timeout)                           \
+  canTransmitTimeout(canp, mailbox, ctfp, timeout)
+
+/**
+ * @brief   Legacy name for @p canReceiveTimeout().
+ *
+ * @deprecated
+ */
+#define canReceive(canp, mailbox, crfp, timeout)                            \
+  canReceiveTimeout(canp, mailbox, crfp, timeout)
 /** @} */
 
 /*===========================================================================*/
@@ -131,16 +147,16 @@ extern "C" {
                        canmbx_t mailbox,
                        const CANTxFrame *ctfp);
   bool canTryReceiveI(CANDriver *canp,
-                       canmbx_t mailbox,
-                       CANRxFrame *crfp);
-  msg_t canTransmit(CANDriver *canp,
-                    canmbx_t mailbox,
-                    const CANTxFrame *ctfp,
-                    systime_t timeout);
-  msg_t canReceive(CANDriver *canp,
-                   canmbx_t mailbox,
-                   CANRxFrame *crfp,
-                   systime_t timeout);
+                      canmbx_t mailbox,
+                      CANRxFrame *crfp);
+  msg_t canTransmitTimeout(CANDriver *canp,
+                           canmbx_t mailbox,
+                           const CANTxFrame *ctfp,
+                           systime_t timeout);
+  msg_t canReceiveTimeout(CANDriver *canp,
+                          canmbx_t mailbox,
+                          CANRxFrame *crfp,
+                          systime_t timeout);
 #if CAN_USE_SLEEP_MODE
   void canSleep(CANDriver *canp);
   void canWakeup(CANDriver *canp);
