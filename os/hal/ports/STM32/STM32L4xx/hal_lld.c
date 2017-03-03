@@ -156,7 +156,11 @@ void stm32_clock_init(void) {
 
 #if !STM32_NO_INIT
   /* PWR clock enable.*/
-  RCC->APB1ENR1 |= RCC_APB1ENR1_PWREN;
+#if defined(HAL_USE_RTC) && defined(RCC_APB1ENR1_RTCAPBEN)
+  RCC->APB1ENR1 = RCC_APB1ENR1_PWREN | RCC_APB1ENR1_RTCAPBEN;
+#else
+  RCC->APB1ENR1 = RCC_APB1ENR1_PWREN;
+#endif
 
   /* Initial clocks setup and wait for MSI stabilization, the MSI clock is
      always enabled because it is the fall back clock when PLL the fails.
