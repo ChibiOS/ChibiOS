@@ -71,7 +71,7 @@
  * @{
  */
 #define STM32_HSI16CLK          16000000    /**< High speed internal clock. */
-#define STM32_LSICLK            38000       /**< Low speed internal clock.  */
+#define STM32_LSICLK            32000       /**< Low speed internal clock.  */
 /** @} */
 
 /**
