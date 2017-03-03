@@ -726,7 +726,7 @@ void sd_lld_init(void) {
 #endif
 
 #if STM32_SERIAL_USE_LPUART1
-  sdObjectInit(&LPSD1, NULL, notifylp1);
+  sdObjectInit(&LPSD1);
   iqObjectInit(&LPSD1.iqueue, sd_in_buflp1, sizeof sd_in_buflp1, NULL, &LPSD1);
   oqObjectInit(&LPSD1.oqueue, sd_out_buflp1, sizeof sd_out_buflp1, notifylp1, &LPSD1);
   LPSD1.usart = LPUART1;
