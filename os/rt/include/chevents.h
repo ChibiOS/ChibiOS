@@ -100,7 +100,7 @@ typedef void (*evhandler_t)(eventid_t id);
  * @brief   Data part of a static event source initializer.
  * @details This macro should be used when statically initializing an event
  *          source that is part of a bigger structure.
- * @param name the name of the event source variable
+ * @param name          the name of the event source variable
  */
 #define _EVENTSOURCE_DATA(name) {(void *)(&name)}
 
@@ -173,11 +173,11 @@ static inline void chEvtObjectInit(event_source_t *esp) {
 }
 
 /**
- * @brief     Registers an Event Listener on an Event Source.
+ * @brief   Registers an Event Listener on an Event Source.
  * @details Once a thread has registered as listener on an event source it
- *             will be notified of all events broadcasted there.
- * @note     Multiple Event Listeners can specify the same bits to be ORed to
- *             different threads.
+ *          will be notified of all events broadcasted there.
+ * @note    Multiple Event Listeners can specify the same bits to be ORed to
+ *          different threads.
  *
  * @param[in] esp       pointer to the @p event_source_t structure
  * @param[out] elp      pointer to the @p event_listener_t structure
