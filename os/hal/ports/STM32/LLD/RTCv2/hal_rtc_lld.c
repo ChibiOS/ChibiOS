@@ -512,7 +512,8 @@ void rtcSTM32SetPeriodicWakeup(RTCDriver *rtcp, const RTCWakeup *wakeupspec) {
     while (!(rtcp->rtc->ISR & RTC_ISR_WUTWF))
       ;
     rtcp->rtc->WUTR = wakeupspec->wutr & 0xFFFF;
-    rtcp->rtc->CR   = (wakeupspec->wutr >> 16) & 0x7;
+    rtcp->rtc->CR &= ~RTC_CR_WUCKSEL;
+    rtcp->rtc->CR |= (wakeupspec->wutr >> 16) & RTC_CR_WUCKSEL;
     rtcp->rtc->CR |= RTC_CR_WUTIE;
     rtcp->rtc->CR |= RTC_CR_WUTE;
   }

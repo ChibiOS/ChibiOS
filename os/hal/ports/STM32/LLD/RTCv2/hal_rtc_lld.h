@@ -160,6 +160,7 @@ typedef struct {
   /**
    * @brief   Wakeup as encoded in RTC WUTR register.
    * @note    ((WUTR == 0) || (WUCKSEL == 3)) are a forbidden combination.
+   * @note    Bits 16..18 are copied in the CR bits 0..2 (WUCKSEL).
    */
   uint32_t                  wutr;
 } RTCWakeup;
