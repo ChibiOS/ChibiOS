@@ -399,6 +399,9 @@ void rtcSTM32GetSecMsec(RTCDriver *rtcp, uint32_t *tv_sec, uint32_t *tv_msec) {
   /* Required because access to CNT and DIV.*/
   rtc_apb1_sync();
 
+  /* wait for previous write accesses to complete.*/
+  rtc_wait_write_completed();
+
   /* Loops until two consecutive read returning the same value.*/
   do {
     *tv_sec = ((uint32_t)(rtcp->rtc->CNTH) << 16) + rtcp->rtc->CNTL;
