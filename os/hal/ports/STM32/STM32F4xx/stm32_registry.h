@@ -595,8 +595,8 @@
 
 /* QUADSPI attributes.*/
 #define STM32_HAS_QUADSPI1                  TRUE
-#define STM32_QUADSPI1_HANDLER              Vector1AC
-#define STM32_QUADSPI1_NUMBER               91
+#define STM32_QUADSPI1_HANDLER              Vector1B0
+#define STM32_QUADSPI1_NUMBER               92
 #define STM32_QUADSPI1_DMA_MSK              STM32_DMA_STREAM_ID_MSK(2, 7)
 #define STM32_QUADSPI1_DMA_CHN              0x30000000
 

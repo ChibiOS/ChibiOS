@@ -714,6 +714,36 @@
 /** @} */
 
 /**
+ * @name    QUADSPI peripherals specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the QUADSPI1 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableQUADSPI1(lp) rccEnableAHB3(RCC_AHB3ENR_QSPIEN, lp)
+
+/**
+ * @brief   Disables the QUADSPI1 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableQUADSPI1(lp) rccDisableAHB3(RCC_AHB3ENR_QSPIEN, lp)
+
+/**
+ * @brief   Resets the QUADSPI1 peripheral.
+ *
+ * @api
+ */
+#define rccResetQUADSPI1() rccResetAHB3(RCC_AHB3RSTR_QSPIRST)
+/** @} */
+
+/**
  * @name    SDIO peripheral specific RCC operations
  * @{
  */
