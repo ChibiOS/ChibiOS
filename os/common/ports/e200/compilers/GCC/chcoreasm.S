@@ -80,8 +80,8 @@ _port_switch:
         se_stw      r0, 0(sp)
         e_stmw      r14, 4(sp)
 
-        se_stw      sp, 12(r4)
-        se_lwz      sp, 12(r3)
+        se_stw      sp, CONTEXT_OFFSET(r4)
+        se_lwz      sp, CONTEXT_OFFSET(r3)
 
         e_lmw       r14, 4(sp)
         se_lwz      r0, 0(sp)
