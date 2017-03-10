@@ -342,7 +342,7 @@ _coreinit:
         e_li        r3, LICSR1_ICINV
         mtspr       1011, r3       /* LICSR1 */
 .inv:   mfspr       r3, 1011       /* LICSR1 */
-        e_andi.     r3, r3, LICSR1_ICINV
+        e_and2i.    r3, LICSR1_ICINV
         se_bne      .inv
         e_lis       r3, BOOT_LICSR1_DEFAULT@h
         e_or2i      r3, BOOT_LICSR1_DEFAULT@l
