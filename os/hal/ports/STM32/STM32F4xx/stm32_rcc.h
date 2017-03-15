@@ -440,6 +440,38 @@
 /** @} */
 
 /**
+ * @name    CRC peripherals specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the CRC peripheral clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableCRC(lp) rccEnableAHB(RCC_AHB1ENR_CRCEN, lp)
+
+/**
+ * @brief   Disables the CRC peripheral clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableCRC(lp) rccDisableAHB(RCC_AHB1ENR_CRCEN, lp)
+
+/**
+ * @brief   Resets the CRC peripheral.
+ *
+ * @api
+ */
+#define rccResetCRC() rccResetAHB(RCC_AHB1RSTR_CRCRST)
+/** @} */
+
+/**
  * @name    PWR interface specific RCC operations
  * @{
  */
