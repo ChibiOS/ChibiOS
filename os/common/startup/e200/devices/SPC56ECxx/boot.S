@@ -26,6 +26,7 @@
 
 #if defined(__HIGHTEC__)
 #define se_bge bge
+#define se_bne bne
 #endif
 
 #if !defined(__DOXYGEN__)

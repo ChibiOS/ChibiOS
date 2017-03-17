@@ -214,7 +214,7 @@ _ivor_exit:
         e_bl        _dbg_check_lock
 #endif
         e_bl        chSchIsPreemptionRequired
-        se_cmpl     r3, 0
+        se_cmpi     r3, 0
         se_beq      .noresch
         e_bl        chSchDoReschedule
 .noresch:
