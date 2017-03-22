@@ -80,9 +80,9 @@ a series of important improvements, new features have been added.
   handling and callbacks.
 - EXT driver is still supported but marked as deprecated.
 - New interface for flash devices (used by EX).
-- New interfaces for accelleromet, barometer, compass, gyroscope,
+- New interfaces for accelerometer, barometer, compass, gyroscope,
   hygrometer and thermometer devices (used by EX).
-- Added an I2C bit banged driver as fallback for faulty hardwares.
+- Added an I2C bit banged driver as fall-back for faulty hardwares.
 - Improved OSAL architecture with shared sub-modules.
 - All file names have been prefixed by "hal_" in order to prevent collisions
   with 3rd parties files. This should make integration of external libraries
