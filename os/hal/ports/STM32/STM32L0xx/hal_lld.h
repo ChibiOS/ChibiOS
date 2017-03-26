@@ -269,7 +269,7 @@
 
 #define STM32_LPTIM1SEL_MASK    (3 << 18)   /**< LPTIM1 clock source mask.  */
 #define STM32_LPTIM1SEL_APB     (0 << 18)   /**< LPTIM1 clock is APB.       */
-#define STM32_LPTIM1SEL_SYSCLK  (1 << 18)   /**< LPTIM1 clock is SYSCLK.    */
+#define STM32_LPTIM1SEL_LSI     (1 << 18)   /**< LPTIM1 clock is LSI.       */
 #define STM32_LPTIM1SEL_HSI16   (2 << 18)   /**< LPTIM1 clock is HSI16.     */
 #define STM32_LPTIM1SEL_LSE     (3 << 18)   /**< LPTIM1 clock is LSE.       */
 
