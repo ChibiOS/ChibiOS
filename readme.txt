@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.8 ***
+- HAL: Fixed wrong clock source definition for LPTIM on STM32L0xx (bug #819).
 - HAL: Fixed STM32L432 bringup issues (bug #818).
 - HAL: Fixed DAC driver problem with API signature (bug #817).
 - HAL: Fixed STM32 OTGv1 driver not serving interrupts for endpoints > 5
