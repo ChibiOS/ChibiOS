@@ -157,6 +157,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Fixed STM32 RTCv1 synchronization problem (bug #820)(backported
+       to 16.1.8).
 - HAL: Fixed wrong clock source definition for LPTIM on STM32L0xx (bug #819)
        (backported to 16.1.8).
 - HAL: Fixed STM32L432 bringup issues (bug #818)(backported to 16.1.8).
