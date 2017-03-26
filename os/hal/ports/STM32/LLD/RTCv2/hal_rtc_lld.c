@@ -509,6 +509,7 @@ void rtcSTM32SetPeriodicWakeup(RTCDriver *rtcp, const RTCWakeup *wakeupspec) {
     osalDbgCheck(wakeupspec->wutr != 0x30000);
 
     rtcp->rtc->CR &= ~RTC_CR_WUTE;
+    rtcp->rtc->CR &= ~RTC_CR_WUTIE;
     while (!(rtcp->rtc->ISR & RTC_ISR_WUTWF))
       ;
     rtcp->rtc->WUTR = wakeupspec->wutr & 0xFFFF;
@@ -518,8 +519,8 @@ void rtcSTM32SetPeriodicWakeup(RTCDriver *rtcp, const RTCWakeup *wakeupspec) {
     rtcp->rtc->CR |= RTC_CR_WUTE;
   }
   else {
-    rtcp->rtc->CR &= ~RTC_CR_WUTIE;
     rtcp->rtc->CR &= ~RTC_CR_WUTE;
+    rtcp->rtc->CR &= ~RTC_CR_WUTIE;
   }
 
   /* Leaving a reentrant critical zone.*/
