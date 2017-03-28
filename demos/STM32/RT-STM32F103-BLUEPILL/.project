@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>RT-STM32F103-MAPLEMINI</name>
+	<name>RT-STM32F103-BLUEPILL</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -79,7 +79,7 @@
 		<link>
 			<name>board</name>
 			<type>2</type>
-			<locationURI>CHIBIOS/os/hal/boards/MAPLEMINI_STM32_F103</locationURI>
+			<locationURI>CHIBIOS/os/hal/boards/BLUEPILL_STM32_F103</locationURI>
 		</link>
 		<link>
 			<name>os</name>
