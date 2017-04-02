@@ -157,6 +157,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Fixed osThreadSetPriority() returns old priority instead of a status
+       code (bug #823)(backported to 16.1.8).
 - HAL: Fixed problem in rtcSTM32SetPeriodicWakeup() (bug #821)(backported
        to 16.1.8).
 - HAL: Fixed STM32 RTCv1 synchronization problem (bug #820)(backported

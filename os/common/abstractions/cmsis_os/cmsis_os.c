@@ -148,19 +148,16 @@ osStatus osThreadTerminate(osThreadId thread_id) {
  * @note    This can interfere with the priority inheritance mechanism.
  */
 osStatus osThreadSetPriority(osThreadId thread_id, osPriority newprio) {
-  osPriority oldprio;
   thread_t * tp = (thread_t *)thread_id;
 
   chSysLock();
 
   /* Changing priority.*/
 #if CH_CFG_USE_MUTEXES
-  oldprio = (osPriority)tp->realprio;
   if ((tp->prio == tp->realprio) || ((tprio_t)newprio > tp->prio))
     tp->prio = (tprio_t)newprio;
   tp->realprio = (tprio_t)newprio;
 #else
-  oldprio = tp->prio;
   tp->prio = (tprio_t)newprio;
 #endif
 
@@ -202,7 +199,7 @@ osStatus osThreadSetPriority(osThreadId thread_id, osPriority newprio) {
 
   chSysUnlock();
 
-  return oldprio;
+  return osOK;
 }
 
 /**
