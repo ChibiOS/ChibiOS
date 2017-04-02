@@ -27,6 +27,8 @@
  *          .
  *          One of the following macros must also be defined:
  *          - STM32F745xx, STM32F746xx, STM32F756xx very high-performance MCUs.
+ *          - STM32F767xx, STM32F769xx, STM32F777xx, STM32F779xx very
+ *            high-performance MCUs.
  *          .
  *
  * @addtogroup HAL
@@ -64,6 +66,12 @@
 #define PLATFORM_NAME           "STM32F767 Very High Performance with DSP and DP FPU"
 
 #elif defined(STM32F769xx)
+#define PLATFORM_NAME           "STM32F769 Very High Performance with DSP and DP FPU"
+
+#elif defined(STM32F777xx)
+#define PLATFORM_NAME           "STM32F767 Very High Performance with DSP and DP FPU"
+
+#elif defined(STM32F779xx)
 #define PLATFORM_NAME           "STM32F769 Very High Performance with DSP and DP FPU"
 
 #else

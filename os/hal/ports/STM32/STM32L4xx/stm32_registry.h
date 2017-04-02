@@ -209,6 +209,7 @@
 
 /* SDMMC attributes.*/
 #define STM32_HAS_SDMMC1                    FALSE
+#define STM32_HAS_SDMMC2                    FALSE
 
 /* SPI attributes.*/
 #define STM32_HAS_SPI1                      TRUE
@@ -558,6 +559,8 @@
 #define STM32_SDC_SDMMC1_DMA_MSK            (STM32_DMA_STREAM_ID_MSK(2, 4) |\
                                              STM32_DMA_STREAM_ID_MSK(2, 5))
 #define STM32_SDC_SDMMC1_DMA_CHN            0x00077000
+
+#define STM32_HAS_SDMMC2                    FALSE
 
 /* SPI attributes.*/
 #define STM32_HAS_SPI1                      TRUE
