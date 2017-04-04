@@ -824,7 +824,7 @@ void gpt_lld_start_timer(GPTDriver *gptp, gptcnt_t interval) {
   gptp->tim->CNT   = 0;                         /* Reset counter.           */
 
   /* NOTE: After generating the UG event it takes several clock cycles before
-     SR bit 0 goes to 1. This is because the clearing of CNT has been inserted
+     SR bit 0 goes to 1. This is why the clearing of CNT has been inserted
      before the clearing of SR, to give it some time.*/
   gptp->tim->SR    = 0;                         /* Clear pending IRQs.      */
   if (NULL != gptp->config->callback)
