@@ -475,7 +475,7 @@
  * @brief   LPTIM1 clock source.
  */
 #if !defined(STM32_LPTIM1SEL) || defined(__DOXYGEN__)
-#define STM32_LPTIM1SEL                     STM32_LPTIM1SEL_APB
+#define STM32_LPTIM1SEL                     STM32_LPTIM1SEL_LSI
 #endif
 
 /**
@@ -1063,8 +1063,8 @@
 /**
  * @brief   LPTIM1 frequency.
  */
-#if (STM32_LPTIM1SEL == STM32_LPTIM1SEL_APB) || defined(__DOXYGEN__)
-#define STM32_LPTIM1CLK             STM32_PCLK1
+#if (STM32_LPTIM1SEL == STM32_LPTIM1SEL_LSI) || defined(__DOXYGEN__)
+#define STM32_LPTIM1CLK             STM32_LSICLK
 #elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_SYSCLK
 #define STM32_LPTIM1CLK             STM32_SYSCLK
 #elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_HSI16
