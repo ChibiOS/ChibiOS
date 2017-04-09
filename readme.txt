@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.8 ***
+- HAL: Fixed invalid SDC OCR initialization value (bug #826).
 - HAL: Fixed osThreadSetPriority() returns old priority instead of a status
        code (bug #823)).
 - HAL: Fixed problem in rtcSTM32SetPeriodicWakeup() (bug #821).

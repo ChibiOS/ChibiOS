@@ -183,10 +183,10 @@ static bool sdc_init(SDCDriver *sdcp) {
   uint32_t resp[1];
 
   if ((sdcp->cardmode &  SDC_MODE_CARDTYPE_MASK) == SDC_MODE_CARDTYPE_SDV20) {
-    ocr = 0xC0100000U;
+    ocr = SDC_INIT_OCR_V20;
   }
   else {
-    ocr = 0x80100000U;
+    ocr = SDC_INIT_OCR;
   }
 
   i = 0;
