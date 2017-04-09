@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.8 ***
+- HAL: Fixed wrong number of EXTI lines for STM32F303x8 (bug #827).
 - HAL: Fixed invalid SDC OCR initialization value (bug #826).
 - HAL: Fixed osThreadSetPriority() returns old priority instead of a status
        code (bug #823)).
