@@ -252,8 +252,8 @@
 #define STM32_I2C1SEL_HSI16     (2 << 12)   /**< I2C1 clock is HSI16.       */
 
 #define STM32_LPTIM1SEL_MASK    (3 << 18)   /**< LPTIM1 clock source mask.  */
-#define STM32_LPTIM1SEL_LSI     (0 << 18)   /**< LPTIM1 clock is LSI.       */
-#define STM32_LPTIM1SEL_SYSCLK  (1 << 18)   /**< LPTIM1 clock is SYSCLK.    */
+#define STM32_LPTIM1SEL_APB     (0 << 18)   /**< LPTIM1 clock is LSI.       */
+#define STM32_LPTIM1SEL_LSI     (1 << 18)   /**< LPTIM1 clock is SYSCLK.    */
 #define STM32_LPTIM1SEL_HSI16   (2 << 18)   /**< LPTIM1 clock is HSI16.     */
 #define STM32_LPTIM1SEL_LSE     (3 << 18)   /**< LPTIM1 clock is LSE.       */
 
@@ -1063,10 +1063,10 @@
 /**
  * @brief   LPTIM1 frequency.
  */
-#if (STM32_LPTIM1SEL == STM32_LPTIM1SEL_LSI) || defined(__DOXYGEN__)
+#if (STM32_LPTIM1SEL == STM32_LPTIM1SEL_APB) || defined(__DOXYGEN__)
+#define STM32_LPTIM1CLK             STM32_PCLK1
+#elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_LSI
 #define STM32_LPTIM1CLK             STM32_LSICLK
-#elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_SYSCLK
-#define STM32_LPTIM1CLK             STM32_SYSCLK
 #elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_HSI16
 #define STM32_LPTIM1CLK             STM32_HSI16CLK
 #elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_LSE
