@@ -157,6 +157,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Fixed wrong number of EXTI lines for STM32F303x8 (bug #827)(backported
+       to 16.1.8).
 - HAL: Fixed invalid SDC OCR initialization value (bug #826)(backported
        to 16.1.8).
 - HAL: Fixed osThreadSetPriority() returns old priority instead of a status
