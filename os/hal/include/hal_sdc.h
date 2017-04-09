@@ -92,6 +92,20 @@
 #if !defined(SDC_NICE_WAITING) || defined(__DOXYGEN__)
 #define SDC_NICE_WAITING                    TRUE
 #endif
+
+/**
+ * @brief   OCR initialization constant for V20 cards.
+ */
+#if !defined(SDC_INIT_OCR_V20) || defined(__DOXYGEN__)
+#define SDC_INIT_OCR_V20                    0x50FF8000U
+#endif
+
+/**
+ * @brief   OCR initialization constant for non-V20 cards.
+ */
+#if !defined(SDC_INIT_OCR) || defined(__DOXYGEN__)
+#define SDC_INIT_OCR                        0x80100000U
+#endif
 /** @} */
 
 /*===========================================================================*/
