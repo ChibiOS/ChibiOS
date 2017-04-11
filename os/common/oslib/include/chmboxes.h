@@ -159,10 +159,6 @@ static inline cnt_t chMBGetUsedCountI(mailbox_t *mbp) {
 
 /**
  * @brief   Returns the number of free message slots into a mailbox.
- * @note    Can be invoked in any system state but if invoked out of a locked
- *          state then the returned value may change after reading.
- * @note    The returned value can be less than zero when there are waiting
- *          threads on the internal semaphore.
  *
  * @param[in] mbp       the pointer to an initialized mailbox_t object
  * @return              The number of empty message slots.

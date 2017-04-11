@@ -2985,6 +2985,23 @@ test_assert_lock(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");]]
                   </step>
                   <step>
                     <description>
+                      <value>Testing the behavior of API when the mailbox is in reset state then return in active state.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[msg1 = chMBPost(&mb1, (msg_t)0, TIME_INFINITE);
+test_assert(msg1 == MSG_RESET, "not in reset state");
+msg1 = chMBPostAhead(&mb1, (msg_t)0, TIME_INFINITE);
+test_assert(msg1 == MSG_RESET, "not in reset state");
+msg1 = chMBFetch(&mb1, &msg2, TIME_INFINITE);
+test_assert(msg1 == MSG_RESET, "not in reset state");
+chMBResumeX(&mb1);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
                       <value>Filling the mailbox using chMBPost() and chMBPostAhead() once, no errors expected.</value>
                     </description>
                     <tags>
@@ -3094,7 +3111,7 @@ unsigned i;]]></value>
                   </step>
                   <step>
                     <description>
-                      <value>Resetting the mailbox, conditions are checked, no errors expected.</value>
+                      <value>Resetting the mailbox, conditions are checked, no errors expected. The mailbox is then returned in active state.</value>
                     </description>
                     <tags>
                       <value />
@@ -3106,7 +3123,8 @@ chSysUnlock();
 test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "not empty");
 test_assert_lock(chMBGetUsedCountI(&mb1) == 0, "still full");
 test_assert_lock(mb1.buffer == mb1.wrptr, "write pointer not aligned to base");
-test_assert_lock(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");]]></value>
+test_assert_lock(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");
+chMBResumeX(&mb1);]]></value>
                     </code>
                   </step>
                   <step>
@@ -3251,13 +3269,14 @@ test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");]]></value>
                   </step>
                   <step>
                     <description>
-                      <value>Resetting the mailbox.</value>
+                      <value>Resetting the mailbox. The mailbox is then returned in active state.</value>
                     </description>
                     <tags>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[chMBReset(&mb1);]]></value>
+                      <value><![CDATA[chMBReset(&mb1);
+chMBResumeX(&mb1);]]></value>
                     </code>
                   </step>
                   <step>

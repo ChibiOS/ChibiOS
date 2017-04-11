@@ -328,10 +328,10 @@ void chSysTimerHandlerI(void) {
 
       /* Did the timer reach zero?*/
       if (--tp->timeout == (systime_t)0) {
-        /* Timeout on semaphores requires a special handling because the
-           semaphore counter must be incremented.*/
+        /* Timeout on queues/semaphores requires a special handling because
+           the counter must be incremented.*/
         /*lint -save -e9013 [15.7] There is no else because it is not needed.*/
-        if (NIL_THD_IS_WTSEM(tp)) {
+        if (NIL_THD_IS_WTQUEUE(tp)) {
           tp->u1.semp->cnt++;
         }
         else if (NIL_THD_IS_SUSP(tp)) {
@@ -367,20 +367,16 @@ void chSysTimerHandlerI(void) {
       tp->timeout = timeout;
 
       if (timeout == (systime_t)0) {
-#if CH_CFG_USE_SEMAPHORES == TRUE
-        /* Timeout on semaphores requires a special handling because the
-           semaphore counter must be incremented.*/
-        if (NIL_THD_IS_WTSEM(tp)) {
-          tp->u1.semp->cnt++;
+        /* Timeout on thread queues requires a special handling because the
+           counter must be incremented.*/
+        if (NIL_THD_IS_WTQUEUE(tp)) {
+          tp->u1.tqp->cnt++;
         }
         else {
-#endif
           if (NIL_THD_IS_SUSP(tp)) {
             *tp->u1.trp = NULL;
           }
-#if CH_CFG_USE_SEMAPHORES == TRUE
         }
-#endif
         (void) chSchReadyI(tp, MSG_TIMEOUT);
       }
       else {
@@ -761,6 +757,90 @@ void chThdSleepUntil(systime_t abstime) {
   chSysUnlock();
 }
 
+/**
+ * @brief   Dequeues and wakes up one thread from the threads queue object.
+ * @details Dequeues one thread from the queue without checking if the queue
+ *          is empty.
+ * @pre     The queue must contain at least an object.
+ *
+ * @param[in] tqp       pointer to the threads queue object
+ * @param[in] msg       the message code
+ *
+ * @iclass
+ */
+void chThdDoDequeueNextI(threads_queue_t *tqp, msg_t msg) {
+  thread_reference_t tr = nil.threads;
+
+  chDbgAssert(tqp->cnt > (cnt_t)0, "empty queue");
+
+  while (true) {
+    /* Is this thread waiting on this queue?*/
+    if (tr->u1.tqp == tqp) {
+      tqp->cnt++;
+
+      chDbgAssert(NIL_THD_IS_WTQUEUE(tr), "not waiting");
+
+      (void) chSchReadyI(tr, msg);
+      return;
+    }
+    tr++;
+
+    chDbgAssert(tr < &nil.threads[CH_CFG_NUM_THREADS],
+                "pointer out of range");
+  }
+}
+
+/**
+ * @brief   Dequeues and wakes up one thread from the threads queue object,
+ *          if any.
+ *
+ * @param[in] tqp       pointer to the threads queue object
+ * @param[in] msg       the message code
+ *
+ * @iclass
+ */
+void chThdDequeueNextI(threads_queue_t *tqp, msg_t msg) {
+
+  chDbgCheckClassI();
+  chDbgCheck(tqp != NULL);
+
+  if (tqp->cnt <= (cnt_t)0) {
+    chThdDoDequeueNextI(tqp, msg);
+  }
+}
+
+/**
+ * @brief   Dequeues and wakes up all threads from the threads queue object.
+ *
+ * @param[in] tqp       pointer to the threads queue object
+ * @param[in] msg       the message code
+ *
+ * @iclass
+ */
+void chThdDequeueAllI(threads_queue_t *tqp, msg_t msg) {
+  thread_t *tp;
+
+  chDbgCheckClassI();
+  chDbgCheck(tqp != NULL);
+
+  tp = nil.threads;
+  while (tqp->cnt < (cnt_t)0) {
+
+    chDbgAssert(tp < &nil.threads[CH_CFG_NUM_THREADS],
+                "pointer out of range");
+
+    /* Is this thread waiting on this queue?*/
+    if (tp->u1.tqp == tqp) {
+
+      chDbgAssert(NIL_THD_IS_WTQUEUE(tp), "not waiting");
+
+      tqp->cnt++;
+      (void) chSchReadyI(tp, msg);
+    }
+    tp++;
+  }
+}
+
 #if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Performs a wait operation on a semaphore with timeout specification.
@@ -823,8 +903,8 @@ msg_t chSemWaitTimeoutS(semaphore_t *sp, systime_t timeout) {
       return MSG_TIMEOUT;
     }
     sp->cnt = cnt - (cnt_t)1;
-    nil.current->u1.semp = sp;
-    return chSchGoSleepTimeoutS(NIL_STATE_WTSEM, timeout);
+    nil.current->u1.tqp = (threads_queue_t *)sp;
+    return chSchGoSleepTimeoutS(NIL_STATE_WTQUEUE, timeout);
   }
   sp->cnt = cnt - (cnt_t)1;
   return MSG_OK;
@@ -862,21 +942,7 @@ void chSemSignalI(semaphore_t *sp) {
   chDbgCheck(sp != NULL);
 
   if (++sp->cnt <= (cnt_t)0) {
-    thread_reference_t tr = nil.threads;
-    while (true) {
-      /* Is this thread waiting on this semaphore?*/
-      if (tr->u1.semp == sp) {
-
-        chDbgAssert(NIL_THD_IS_WTSEM(tr), "not waiting");
-
-        (void) chSchReadyI(tr, MSG_OK);
-        return;
-      }
-      tr++;
-
-      chDbgAssert(tr < &nil.threads[CH_CFG_NUM_THREADS],
-                  "pointer out of range");
-    }
+    chThdDoDequeueNextI((threads_queue_t *)sp, MSG_OK);
   }
 }
 
@@ -932,9 +998,9 @@ void chSemResetI(semaphore_t *sp, cnt_t n) {
                 "pointer out of range");
 
     /* Is this thread waiting on this semaphore?*/
-    if (tp->u1.semp == sp) {
+    if (tp->u1.tqp == (threads_queue_t *)sp) {
 
-      chDbgAssert(NIL_THD_IS_WTSEM(tp), "not waiting");
+      chDbgAssert(NIL_THD_IS_WTQUEUE(tp), "not waiting");
 
       cnt++;
       (void) chSchReadyI(tp, MSG_RESET);

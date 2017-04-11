@@ -70,15 +70,17 @@ static MAILBOX_DECL(mb1, mb_buffer, MB_SIZE);
  * - [4.1.1] Testing the mailbox size.
  * - [4.1.2] Resetting the mailbox, conditions are checked, no errors
  *   expected.
- * - [4.1.3] Filling the mailbox using chMBPost() and chMBPostAhead()
+ * - [4.1.3] Testing the behavior of API when the mailbox is in reset
+ *   state then return in active state.
+ * - [4.1.4] Filling the mailbox using chMBPost() and chMBPostAhead()
  *   once, no errors expected.
- * - [4.1.4] Testing intermediate conditions. Data pointers must be
+ * - [4.1.5] Testing intermediate conditions. Data pointers must be
  *   aligned, semaphore counters are checked.
- * - [4.1.5] Emptying the mailbox using chMBFetch(), no errors
+ * - [4.1.6] Emptying the mailbox using chMBFetch(), no errors
  *   expected.
- * - [4.1.6] Posting and then fetching one more message, no errors
+ * - [4.1.7] Posting and then fetching one more message, no errors
  *   expected.
- * - [4.1.7] Testing final conditions. Data pointers must be aligned to
+ * - [4.1.8] Testing final conditions. Data pointers must be aligned to
  *   buffer start, semaphore counters are checked.
  * .
  */
@@ -112,9 +114,22 @@ static void test_004_001_execute(void) {
     test_assert_lock(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");
   }
 
-  /* [4.1.3] Filling the mailbox using chMBPost() and chMBPostAhead()
-     once, no errors expected.*/
+  /* [4.1.3] Testing the behavior of API when the mailbox is in reset
+     state then return in active state.*/
   test_set_step(3);
+  {
+    msg1 = chMBPost(&mb1, (msg_t)0, TIME_INFINITE);
+    test_assert(msg1 == MSG_RESET, "not in reset state");
+    msg1 = chMBPostAhead(&mb1, (msg_t)0, TIME_INFINITE);
+    test_assert(msg1 == MSG_RESET, "not in reset state");
+    msg1 = chMBFetch(&mb1, &msg2, TIME_INFINITE);
+    test_assert(msg1 == MSG_RESET, "not in reset state");
+    chMBResumeX(&mb1);
+  }
+
+  /* [4.1.4] Filling the mailbox using chMBPost() and chMBPostAhead()
+     once, no errors expected.*/
+  test_set_step(4);
   {
     for (i = 0; i < MB_SIZE - 1; i++) {
       msg1 = chMBPost(&mb1, 'B' + i, TIME_INFINITE);
@@ -124,18 +139,18 @@ static void test_004_001_execute(void) {
     test_assert(msg1 == MSG_OK, "wrong wake-up message");
   }
 
-  /* [4.1.4] Testing intermediate conditions. Data pointers must be
+  /* [4.1.5] Testing intermediate conditions. Data pointers must be
      aligned, semaphore counters are checked.*/
-  test_set_step(4);
+  test_set_step(5);
   {
     test_assert_lock(chMBGetFreeCountI(&mb1) == 0, "still empty");
     test_assert_lock(chMBGetUsedCountI(&mb1) == MB_SIZE, "not full");
     test_assert_lock(mb1.rdptr == mb1.wrptr, "pointers not aligned");
   }
 
-  /* [4.1.5] Emptying the mailbox using chMBFetch(), no errors
+  /* [4.1.6] Emptying the mailbox using chMBFetch(), no errors
      expected.*/
-  test_set_step(5);
+  test_set_step(6);
   {
     for (i = 0; i < MB_SIZE; i++) {
       msg1 = chMBFetch(&mb1, &msg2, TIME_INFINITE);
@@ -145,9 +160,9 @@ static void test_004_001_execute(void) {
     test_assert_sequence("ABCD", "wrong get sequence");
   }
 
-  /* [4.1.6] Posting and then fetching one more message, no errors
+  /* [4.1.7] Posting and then fetching one more message, no errors
      expected.*/
-  test_set_step(6);
+  test_set_step(7);
   {
     msg1 = chMBPost(&mb1, 'B' + i, TIME_INFINITE);
     test_assert(msg1 == MSG_OK, "wrong wake-up message");
@@ -155,9 +170,9 @@ static void test_004_001_execute(void) {
     test_assert(msg1 == MSG_OK, "wrong wake-up message");
   }
 
-  /* [4.1.7] Testing final conditions. Data pointers must be aligned to
+  /* [4.1.8] Testing final conditions. Data pointers must be aligned to
      buffer start, semaphore counters are checked.*/
-  test_set_step(7);
+  test_set_step(8);
   {
     test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "not empty");
     test_assert_lock(chMBGetUsedCountI(&mb1) == 0, "still full");
@@ -226,6 +241,7 @@ static void test_004_002_execute(void) {
     test_assert_lock(chMBGetUsedCountI(&mb1) == 0, "still full");
     test_assert_lock(mb1.buffer == mb1.wrptr, "write pointer not aligned to base");
     test_assert_lock(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");
+    chMBResumeX(&mb1);
   }
 
   /* [4.2.3] Filling the mailbox using chMBPostI() and chMBPostAheadI()
@@ -352,7 +368,8 @@ static void test_004_003_execute(void) {
   /* [4.3.3] Resetting the mailbox.*/
   test_set_step(3);
   {
-    chMBReset(&mb1);
+    chMBReset(&mb1);;
+    chMBResumeX(&mb1);
   }
 
   /* [4.3.4] Testing chMBFetch() and chMBFetchI() timeout.*/
