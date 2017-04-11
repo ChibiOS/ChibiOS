@@ -758,6 +758,45 @@ void chThdSleepUntil(systime_t abstime) {
 }
 
 /**
+ * @brief   Enqueues the caller thread on a threads queue object.
+ * @details The caller thread is enqueued and put to sleep until it is
+ *          dequeued or the specified timeouts expires.
+ *
+ * @param[in] tqp       pointer to the threads queue object
+ * @param[in] timeout   the timeout in system ticks, the special values are
+ *                      handled as follow:
+ *                      - @a TIME_INFINITE the thread enters an infinite sleep
+ *                        state.
+ *                      - @a TIME_IMMEDIATE the thread is not enqueued and
+ *                        the function returns @p MSG_TIMEOUT as if a timeout
+ *                        occurred.
+ *                      .
+ * @return              The message from @p osalQueueWakeupOneI() or
+ *                      @p osalQueueWakeupAllI() functions.
+ * @retval MSG_TIMEOUT  if the thread has not been dequeued within the
+ *                      specified timeout or if the function has been
+ *                      invoked with @p TIME_IMMEDIATE as timeout
+ *                      specification.
+ *
+ * @sclass
+ */
+msg_t chThdEnqueueTimeoutS(threads_queue_t *tqp, systime_t timeout) {
+
+  chDbgCheckClassS();
+  chDbgCheck(tqp != NULL);
+
+  chDbgAssert(tqp->cnt <= (cnt_t)0, "invalid counter");
+
+  if (TIME_IMMEDIATE == timeout) {
+    return MSG_TIMEOUT;
+  }
+
+  tqp->cnt--;
+  nil.current->u1.tqp = tqp;
+  return chSchGoSleepTimeoutS(NIL_STATE_WTQUEUE, timeout);
+}
+
+/**
  * @brief   Dequeues and wakes up one thread from the threads queue object.
  * @details Dequeues one thread from the queue without checking if the queue
  *          is empty.
@@ -769,23 +808,23 @@ void chThdSleepUntil(systime_t abstime) {
  * @iclass
  */
 void chThdDoDequeueNextI(threads_queue_t *tqp, msg_t msg) {
-  thread_reference_t tr = nil.threads;
+  thread_t *tp = nil.threads;
 
-  chDbgAssert(tqp->cnt > (cnt_t)0, "empty queue");
+  chDbgAssert(tqp->cnt < (cnt_t)0, "empty queue");
 
   while (true) {
     /* Is this thread waiting on this queue?*/
-    if (tr->u1.tqp == tqp) {
+    if (tp->u1.tqp == tqp) {
       tqp->cnt++;
 
-      chDbgAssert(NIL_THD_IS_WTQUEUE(tr), "not waiting");
+      chDbgAssert(NIL_THD_IS_WTQUEUE(tp), "not waiting");
 
-      (void) chSchReadyI(tr, msg);
+      (void) chSchReadyI(tp, msg);
       return;
     }
-    tr++;
+    tp++;
 
-    chDbgAssert(tr < &nil.threads[CH_CFG_NUM_THREADS],
+    chDbgAssert(tp < &nil.threads[CH_CFG_NUM_THREADS],
                 "pointer out of range");
   }
 }
@@ -804,7 +843,7 @@ void chThdDequeueNextI(threads_queue_t *tqp, msg_t msg) {
   chDbgCheckClassI();
   chDbgCheck(tqp != NULL);
 
-  if (tqp->cnt <= (cnt_t)0) {
+  if (tqp->cnt < (cnt_t)0) {
     chThdDoDequeueNextI(tqp, msg);
   }
 }
@@ -903,7 +942,7 @@ msg_t chSemWaitTimeoutS(semaphore_t *sp, systime_t timeout) {
       return MSG_TIMEOUT;
     }
     sp->cnt = cnt - (cnt_t)1;
-    nil.current->u1.tqp = (threads_queue_t *)sp;
+    nil.current->u1.semp = sp;
     return chSchGoSleepTimeoutS(NIL_STATE_WTQUEUE, timeout);
   }
   sp->cnt = cnt - (cnt_t)1;
@@ -942,7 +981,21 @@ void chSemSignalI(semaphore_t *sp) {
   chDbgCheck(sp != NULL);
 
   if (++sp->cnt <= (cnt_t)0) {
-    chThdDoDequeueNextI((threads_queue_t *)sp, MSG_OK);
+    thread_t *tp = nil.threads;
+    while (true) {
+      /* Is this thread waiting on this semaphore?*/
+      if (tp->u1.semp == sp) {
+
+        chDbgAssert(NIL_THD_IS_WTQUEUE(tp), "not waiting");
+
+        (void) chSchReadyI(tp, MSG_OK);
+        return;
+      }
+      tp++;
+
+      chDbgAssert(tp < &nil.threads[CH_CFG_NUM_THREADS],
+                  "pointer out of range");
+    }
   }
 }
 
@@ -998,7 +1051,7 @@ void chSemResetI(semaphore_t *sp, cnt_t n) {
                 "pointer out of range");
 
     /* Is this thread waiting on this semaphore?*/
-    if (tp->u1.tqp == (threads_queue_t *)sp) {
+    if (tp->u1.semp == sp) {
 
       chDbgAssert(NIL_THD_IS_WTQUEUE(tp), "not waiting");
 

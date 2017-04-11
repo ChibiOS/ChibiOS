@@ -219,6 +219,8 @@ struct event_source {
  */
 typedef semaphore_t mutex_t;
 
+
+#if 0
 /**
  * @brief   Type of a thread queue.
  * @details A thread queue is a queue of sleeping threads, queued threads
@@ -227,8 +229,9 @@ typedef semaphore_t mutex_t;
  *          because there are no real threads.
  */
 typedef struct {
-  semaphore_t   sem;
+  thread_reference_t    tr;
 } threads_queue_t;
+#endif
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -444,8 +447,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void osalThreadDequeueNextI(threads_queue_t *tqp, msg_t msg);
-  void osalThreadDequeueAllI(threads_queue_t *tqp, msg_t msg);
+
 #ifdef __cplusplus
 }
 #endif
@@ -766,7 +768,7 @@ static inline void osalThreadResumeS(thread_reference_t *trp, msg_t msg) {
  */
 static inline void osalThreadQueueObjectInit(threads_queue_t *tqp) {
 
-  chSemObjectInit(&tqp->sem, (cnt_t)0);
+  chThdQueueObjectInit(tqp);
 }
 
 /**
@@ -795,7 +797,33 @@ static inline void osalThreadQueueObjectInit(threads_queue_t *tqp) {
 static inline msg_t osalThreadEnqueueTimeoutS(threads_queue_t *tqp,
                                               systime_t time) {
 
-  return chSemWaitTimeoutS(&tqp->sem, time);
+  return chThdEnqueueTimeoutS(tqp, time);
+}
+
+/**
+ * @brief   Dequeues and wakes up one thread from the queue, if any.
+ *
+ * @param[in] tqp       pointer to the threads queue object
+ * @param[in] msg       the message code
+ *
+ * @iclass
+ */
+static inline void osalThreadDequeueNextI(threads_queue_t *tqp, msg_t msg) {
+
+  chThdDequeueNextI(tqp, msg);
+}
+
+/**
+ * @brief   Dequeues and wakes up all threads from the queue.
+ *
+ * @param[in] tqp       pointer to the threads queue object
+ * @param[in] msg       the message code
+ *
+ * @iclass
+ */
+static inline void osalThreadDequeueAllI(threads_queue_t *tqp, msg_t msg) {
+
+  chThdDequeueAllI(tqp, msg);
 }
 
 /**

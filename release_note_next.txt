@@ -65,6 +65,8 @@ a series of important improvements, new features have been added.
 
 - Now uses the common ports architecture.
 - Now uses the new shared RTOS components.
+- Added implementation of thread queues directly in the kernel, removed it
+  from NIL OSAL.
 - All new features are optional so there is no code size increase.
 - Enhanced source-level compatibility with RT.
 - Enhanced debug features.

@@ -534,6 +534,9 @@ struct nil_thread {
     void                *p;         /**< @brief Generic pointer.            */
     thread_reference_t  *trp;       /**< @brief Pointer to thread reference.*/
     threads_queue_t     *tqp;       /**< @brief Pointer to thread queue.    */
+#if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
+    semaphore_t         *semp;      /**< @brief Pointer to semaphore.       */
+#endif
 #if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
     eventmask_t         ewmask;     /**< @brief Enabled events mask.        */
 #endif
@@ -909,6 +912,29 @@ struct nil_system {
  * @api
  */
 #define US2RTC(freq, usec) (rtcnt_t)((((freq) + 999999UL) / 1000000UL) * (usec))
+/** @} */
+
+/**
+ * @name    Threads queues
+ */
+/**
+ * @brief   Data part of a static threads queue object initializer.
+ * @details This macro should be used when statically initializing a threads
+ *          queue that is part of a bigger structure.
+ *
+ * @param[in] name      the name of the threads queue variable
+ */
+#define _THREADS_QUEUE_DATA(name) {(cnt_t)0}
+
+/**
+ * @brief   Static threads queue object initializer.
+ * @details Statically initialized threads queues require no explicit
+ *          initialization using @p queue_init().
+ *
+ * @param[in] name      the name of the threads queue variable
+ */
+#define _THREADS_QUEUE_DECL(name)                                           \
+  threads_queue_t name = _THREADS_QUEUE_DATA(name)
 /** @} */
 
 /**
@@ -1367,6 +1393,7 @@ extern "C" {
   void chThdResumeI(thread_reference_t *trp, msg_t msg);
   void chThdSleep(systime_t timeout);
   void chThdSleepUntil(systime_t abstime);
+  msg_t chThdEnqueueTimeoutS(threads_queue_t *tqp, systime_t timeout);
   void chThdDoDequeueNextI(threads_queue_t *tqp, msg_t msg);
   void chThdDequeueNextI(threads_queue_t *tqp, msg_t msg);
   void chThdDequeueAllI(threads_queue_t *tqp, msg_t msg);
