@@ -213,6 +213,7 @@ msg_t chMBPostS(mailbox_t *mbp, msg_t msg, systime_t timeout) {
 
       /* If there is a reader waiting then makes it ready.*/
       chThdDequeueNextI(&mbp->qr, MSG_OK);
+      chSchRescheduleS();
 
       return MSG_OK;
     }
@@ -337,6 +338,7 @@ msg_t chMBPostAheadS(mailbox_t *mbp, msg_t msg, systime_t timeout) {
 
       /* If there is a reader waiting then makes it ready.*/
       chThdDequeueNextI(&mbp->qr, MSG_OK);
+      chSchRescheduleS();
 
       return MSG_OK;
     }
@@ -461,6 +463,7 @@ msg_t chMBFetchS(mailbox_t *mbp, msg_t *msgp, systime_t timeout) {
 
       /* If there is a writer waiting then makes it ready.*/
       chThdDequeueNextI(&mbp->qw, MSG_OK);
+      chSchRescheduleS();
 
       return MSG_OK;
     }
