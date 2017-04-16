@@ -419,7 +419,7 @@ static void otg_epout_handler(USBDriver *usbp, usbep_t ep) {
     USBOutEndpointState *osp;
 
     /* Receive transfer complete, checking if it is a SETUP transfer on EP0,
-       that it must be ignored, the STUPM handler will take care of it.*/
+       than it must be ignored, the STUPM handler will take care of it.*/
     if ((ep == 0) && (usbp->ep0state == USB_EP0_WAITING_SETUP))
       return;
 
@@ -427,7 +427,9 @@ static void otg_epout_handler(USBDriver *usbp, usbep_t ep) {
     osp = usbp->epc[ep]->out_state;
 
     /* A short packet always terminates a transaction.*/
-    if (((osp->rxcnt % usbp->epc[ep]->out_maxsize) == 0) &&
+/*    if (((osp->rxcnt % usbp->epc[ep]->out_maxsize) == 0) &&
+        (osp->rxsize < osp->totsize)) {*/
+    if (((otgp->oe[ep].DOEPTSIZ & DOEPTSIZ_PKTCNT_MASK) == 0) &&
         (osp->rxsize < osp->totsize)) {
       /* In case the transaction covered only part of the total transfer
          then another transaction is immediately started in order to
