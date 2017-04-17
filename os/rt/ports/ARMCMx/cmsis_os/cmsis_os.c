@@ -157,7 +157,7 @@ osStatus osThreadSetPriority(osThreadId thread_id, osPriority newprio) {
     tp->p_prio = (tprio_t)newprio;
   tp->p_realprio = (tprio_t)newprio;
 #else
-  tp->prio = (tprio_t)newprio;
+  tp->p_prio = (tprio_t)newprio;
 #endif
 
   /* The following states need priority queues reordering.*/
