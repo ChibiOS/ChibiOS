@@ -42,10 +42,6 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if CH_CFG_USE_SEMAPHORES == FALSE
-#error "CH_CFG_USE_MAILBOXES requires CH_CFG_USE_SEMAPHORES"
-#endif
-
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
@@ -60,10 +56,10 @@ typedef struct {
                                                     after the buffer.       */
   msg_t                 *mb_wrptr;      /**< @brief Write pointer.          */
   msg_t                 *mb_rdptr;      /**< @brief Read pointer.           */
-  semaphore_t           mb_fullsem;     /**< @brief Full counter
-                                                    @p semaphore_t.         */
-  semaphore_t           mb_emptysem;    /**< @brief Empty counter
-                                                    @p semaphore_t.         */
+  cnt_t                 mb_cnt;         /**< @brief Messages in queue.      */
+  bool                  mb_reset;       /**< @brief True in reset state.    */
+  threads_queue_t       mb_qw;          /**< @brief Queued writers.         */
+  threads_queue_t       mb_qr;          /**< @brief Queued readers.         */
 } mailbox_t;
 
 /*===========================================================================*/
@@ -79,13 +75,15 @@ typedef struct {
  * @param[in] buffer    pointer to the mailbox buffer area
  * @param[in] size      size of the mailbox buffer area
  */
-#define _MAILBOX_DATA(name, buffer, size) {                             \
-  (msg_t *)(buffer),                                                    \
-  (msg_t *)(buffer) + size,                                             \
-  (msg_t *)(buffer),                                                    \
-  (msg_t *)(buffer),                                                    \
-  _SEMAPHORE_DATA(name.mb_fullsem, 0),                                  \
-  _SEMAPHORE_DATA(name.mb_emptysem, size),                              \
+#define _MAILBOX_DATA(name, buffer, size) {                                 \
+  (msg_t *)(buffer),                                                        \
+  (msg_t *)(buffer) + size,                                                 \
+  (msg_t *)(buffer),                                                        \
+  (msg_t *)(buffer),                                                        \
+  (cnt_t)0,                                                                 \
+  false,                                                                    \
+  _THREADS_QUEUE_DATA(name.mb_qw),                                          \
+  _THREADS_QUEUE_DATA(name.mb_qr),                                          \
 }
 
 /**
@@ -97,7 +95,7 @@ typedef struct {
  * @param[in] buffer    pointer to the mailbox buffer area
  * @param[in] size      size of the mailbox buffer area
  */
-#define MAILBOX_DECL(name, buffer, size)                                \
+#define MAILBOX_DECL(name, buffer, size)                                    \
   mailbox_t name = _MAILBOX_DATA(name, buffer, size)
 
 /*===========================================================================*/
@@ -128,27 +126,39 @@ extern "C" {
 /*===========================================================================*/
 
 /**
- * @brief   Returns the mailbox buffer size.
+ * @brief   Returns the mailbox buffer size as number of messages.
  *
  * @param[in] mbp       the pointer to an initialized mailbox_t object
  * @return              The size of the mailbox.
  *
  * @iclass
  */
-static inline size_t chMBGetSizeI(mailbox_t *mbp) {
+static inline cnt_t chMBGetSizeI(mailbox_t *mbp) {
 
   /*lint -save -e9033 [10.8] Perfectly safe pointers
     arithmetic.*/
-  return (size_t)(mbp->mb_top - mbp->mb_buffer);
+  return (cnt_t)(mbp->mb_top - mbp->mb_buffer);
   /*lint -restore*/
 }
 
 /**
+ * @brief   Returns the number of used message slots into a mailbox.
+ *
+ * @param[in] mbp       the pointer to an initialized mailbox_t object
+ * @return              The number of queued messages.
+ * @retval QUEUE_RESET  if the queue is in reset state.
+ *
+ * @iclass
+ */
+static inline cnt_t chMBGetUsedCountI(mailbox_t *mbp) {
+
+  chDbgCheckClassI();
+
+  return mbp->mb_cnt;
+}
+
+/**
  * @brief   Returns the number of free message slots into a mailbox.
- * @note    Can be invoked in any system state but if invoked out of a locked
- *          state then the returned value may change after reading.
- * @note    The returned value can be less than zero when there are waiting
- *          threads on the internal semaphore.
  *
  * @param[in] mbp       the pointer to an initialized mailbox_t object
  * @return              The number of empty message slots.
@@ -159,26 +169,7 @@ static inline cnt_t chMBGetFreeCountI(mailbox_t *mbp) {
 
   chDbgCheckClassI();
 
-  return chSemGetCounterI(&mbp->mb_emptysem);
-}
-
-/**
- * @brief   Returns the number of used message slots into a mailbox.
- * @note    Can be invoked in any system state but if invoked out of a locked
- *          state then the returned value may change after reading.
- * @note    The returned value can be less than zero when there are waiting
- *          threads on the internal semaphore.
- *
- * @param[in] mbp       the pointer to an initialized mailbox_t object
- * @return              The number of queued messages.
- *
- * @iclass
- */
-static inline cnt_t chMBGetUsedCountI(mailbox_t *mbp) {
-
-  chDbgCheckClassI();
-
-  return chSemGetCounterI(&mbp->mb_fullsem);
+  return chMBGetSizeI(mbp) - chMBGetUsedCountI(mbp);
 }
 
 /**
@@ -198,6 +189,18 @@ static inline msg_t chMBPeekI(mailbox_t *mbp) {
   chDbgCheckClassI();
 
   return *mbp->mb_rdptr;
+}
+
+/**
+ * @brief   Terminates the reset state.
+ *
+ * @param[in] mbp       the pointer to an initialized mailbox_t object
+ *
+ * @xclass
+ */
+static inline void chMBResumeX(mailbox_t *mbp) {
+
+  mbp->mb_reset = false;
 }
 
 #endif /* CH_CFG_USE_MAILBOXES == TRUE */
