@@ -88,17 +88,22 @@ void chMBObjectInit(mailbox_t *mbp, msg_t *buf, cnt_t n) {
   chDbgCheck((mbp != NULL) && (buf != NULL) && (n > (cnt_t)0));
 
   mbp->mb_buffer = buf;
-  mbp->mb_rdptr = buf;
-  mbp->mb_wrptr = buf;
-  mbp->mb_top = &buf[n];
-  chSemObjectInit(&mbp->mb_emptysem, n);
-  chSemObjectInit(&mbp->mb_fullsem, (cnt_t)0);
+  mbp->mb_rdptr  = buf;
+  mbp->mb_wrptr  = buf;
+  mbp->mb_top    = &buf[n];
+  mbp->mb_cnt    = (cnt_t)0;
+  mbp->mb_reset  = false;
+  chThdQueueObjectInit(&mbp->mb_qw);
+  chThdQueueObjectInit(&mbp->mb_qr);
 }
 
 /**
  * @brief   Resets a @p mailbox_t object.
  * @details All the waiting threads are resumed with status @p MSG_RESET and
  *          the queued messages are lost.
+ * @post    The mailbox is in reset state, all operations will fail and
+ *          return @p MSG reset until the mailbox is enabled again using
+ *          @p chMBResumeX().
  *
  * @param[in] mbp       the pointer to an initialized @p mailbox_t object
  *
@@ -116,6 +121,9 @@ void chMBReset(mailbox_t *mbp) {
  * @brief   Resets a @p mailbox_t object.
  * @details All the waiting threads are resumed with status @p MSG_RESET and
  *          the queued messages are lost.
+ * @post    The mailbox is in reset state, all operations will fail and
+ *          return @p MSG reset until the mailbox is enabled again using
+ *          @p chMBResumeX().
  *
  * @param[in] mbp       the pointer to an initialized @p mailbox_t object
  *
@@ -128,8 +136,10 @@ void chMBResetI(mailbox_t *mbp) {
 
   mbp->mb_wrptr = mbp->mb_buffer;
   mbp->mb_rdptr = mbp->mb_buffer;
-  chSemResetI(&mbp->mb_emptysem, (cnt_t)(mbp->mb_top - mbp->mb_buffer));
-  chSemResetI(&mbp->mb_fullsem, (cnt_t)0);
+  mbp->mb_cnt   = (cnt_t)0;
+  mbp->mb_reset = true;
+  chThdDequeueAllI(&mbp->mb_qw, MSG_RESET);
+  chThdDequeueAllI(&mbp->mb_qr, MSG_RESET);
 }
 
 /**
@@ -146,7 +156,7 @@ void chMBResetI(mailbox_t *mbp) {
  *                      .
  * @return              The operation status.
  * @retval MSG_OK       if a message has been correctly posted.
- * @retval MSG_RESET    if the mailbox has been reset while waiting.
+ * @retval MSG_RESET    if the mailbox has been reset.
  * @retval MSG_TIMEOUT  if the operation has timed out.
  *
  * @api
@@ -175,7 +185,7 @@ msg_t chMBPost(mailbox_t *mbp, msg_t msg, systime_t timeout) {
  *                      .
  * @return              The operation status.
  * @retval MSG_OK       if a message has been correctly posted.
- * @retval MSG_RESET    if the mailbox has been reset while waiting.
+ * @retval MSG_RESET    if the mailbox has been reset.
  * @retval MSG_TIMEOUT  if the operation has timed out.
  *
  * @sclass
@@ -186,15 +196,30 @@ msg_t chMBPostS(mailbox_t *mbp, msg_t msg, systime_t timeout) {
   chDbgCheckClassS();
   chDbgCheck(mbp != NULL);
 
-  rdymsg = chSemWaitTimeoutS(&mbp->mb_emptysem, timeout);
-  if (rdymsg == MSG_OK) {
-    *mbp->mb_wrptr++ = msg;
-    if (mbp->mb_wrptr >= mbp->mb_top) {
-      mbp->mb_wrptr = mbp->mb_buffer;
+  do {
+    /* If the mailbox is in reset state then returns immediately.*/
+    if (mbp->mb_reset) {
+      return MSG_RESET;
     }
-    chSemSignalI(&mbp->mb_fullsem);
-    chSchRescheduleS();
-  }
+
+    /* Is there a free message slot in queue? if so then post.*/
+    if (chMBGetFreeCountI(mbp) > (cnt_t)0) {
+      *mbp->mb_wrptr++ = msg;
+      if (mbp->mb_wrptr >= mbp->mb_top) {
+        mbp->mb_wrptr = mbp->mb_buffer;
+      }
+      mbp->mb_cnt++;
+
+      /* If there is a reader waiting then makes it ready.*/
+      chThdDequeueNextI(&mbp->mb_qr, MSG_OK);
+      chSchRescheduleS();
+
+      return MSG_OK;
+    }
+
+    /* No space in the queue, waiting for a slot to become available.*/
+    rdymsg = chThdEnqueueTimeoutS(&mbp->mb_qw, timeout);
+  } while (rdymsg == MSG_OK);
 
   return rdymsg;
 }
@@ -208,6 +233,7 @@ msg_t chMBPostS(mailbox_t *mbp, msg_t msg, systime_t timeout) {
  * @param[in] msg       the message to be posted on the mailbox
  * @return              The operation status.
  * @retval MSG_OK       if a message has been correctly posted.
+ * @retval MSG_RESET    if the mailbox has been reset.
  * @retval MSG_TIMEOUT  if the mailbox is full and the message cannot be
  *                      posted.
  *
@@ -218,18 +244,27 @@ msg_t chMBPostI(mailbox_t *mbp, msg_t msg) {
   chDbgCheckClassI();
   chDbgCheck(mbp != NULL);
 
-  if (chSemGetCounterI(&mbp->mb_emptysem) <= (cnt_t)0) {
-    return MSG_TIMEOUT;
+  /* If the mailbox is in reset state then returns immediately.*/
+  if (mbp->mb_reset) {
+    return MSG_RESET;
   }
 
-  chSemFastWaitI(&mbp->mb_emptysem);
-  *mbp->mb_wrptr++ = msg;
-  if (mbp->mb_wrptr >= mbp->mb_top) {
-     mbp->mb_wrptr = mbp->mb_buffer;
-  }
-  chSemSignalI(&mbp->mb_fullsem);
+  /* Is there a free message slot in queue? if so then post.*/
+  if (chMBGetFreeCountI(mbp) > (cnt_t)0) {
+    *mbp->mb_wrptr++ = msg;
+    if (mbp->mb_wrptr >= mbp->mb_top) {
+      mbp->mb_wrptr = mbp->mb_buffer;
+    }
+    mbp->mb_cnt++;
 
-  return MSG_OK;
+    /* If there is a reader waiting then makes it ready.*/
+    chThdDequeueNextI(&mbp->mb_qr, MSG_OK);
+
+    return MSG_OK;
+  }
+
+  /* No space, immediate timeout.*/
+  return MSG_TIMEOUT;
 }
 
 /**
@@ -246,7 +281,7 @@ msg_t chMBPostI(mailbox_t *mbp, msg_t msg) {
  *                      .
  * @return              The operation status.
  * @retval MSG_OK       if a message has been correctly posted.
- * @retval MSG_RESET    if the mailbox has been reset while waiting.
+ * @retval MSG_RESET    if the mailbox has been reset.
  * @retval MSG_TIMEOUT  if the operation has timed out.
  *
  * @api
@@ -275,7 +310,7 @@ msg_t chMBPostAhead(mailbox_t *mbp, msg_t msg, systime_t timeout) {
  *                      .
  * @return              The operation status.
  * @retval MSG_OK       if a message has been correctly posted.
- * @retval MSG_RESET    if the mailbox has been reset while waiting.
+ * @retval MSG_RESET    if the mailbox has been reset.
  * @retval MSG_TIMEOUT  if the operation has timed out.
  *
  * @sclass
@@ -286,15 +321,30 @@ msg_t chMBPostAheadS(mailbox_t *mbp, msg_t msg, systime_t timeout) {
   chDbgCheckClassS();
   chDbgCheck(mbp != NULL);
 
-  rdymsg = chSemWaitTimeoutS(&mbp->mb_emptysem, timeout);
-  if (rdymsg == MSG_OK) {
-    if (--mbp->mb_rdptr < mbp->mb_buffer) {
-      mbp->mb_rdptr = mbp->mb_top - 1;
+  do {
+    /* If the mailbox is in reset state then returns immediately.*/
+    if (mbp->mb_reset) {
+      return MSG_RESET;
     }
-    *mbp->mb_rdptr = msg;
-    chSemSignalI(&mbp->mb_fullsem);
-    chSchRescheduleS();
-  }
+
+    /* Is there a free message slot in queue? if so then post.*/
+    if (chMBGetFreeCountI(mbp) > (cnt_t)0) {
+      if (--mbp->mb_rdptr < mbp->mb_buffer) {
+        mbp->mb_rdptr = mbp->mb_top - 1;
+      }
+      *mbp->mb_rdptr = msg;
+      mbp->mb_cnt++;
+
+      /* If there is a reader waiting then makes it ready.*/
+      chThdDequeueNextI(&mbp->mb_qr, MSG_OK);
+      chSchRescheduleS();
+
+      return MSG_OK;
+    }
+
+    /* No space in the queue, waiting for a slot to become available.*/
+    rdymsg = chThdEnqueueTimeoutS(&mbp->mb_qw, timeout);
+  } while (rdymsg == MSG_OK);
 
   return rdymsg;
 }
@@ -308,6 +358,7 @@ msg_t chMBPostAheadS(mailbox_t *mbp, msg_t msg, systime_t timeout) {
  * @param[in] msg       the message to be posted on the mailbox
  * @return              The operation status.
  * @retval MSG_OK       if a message has been correctly posted.
+ * @retval MSG_RESET    if the mailbox has been reset.
  * @retval MSG_TIMEOUT  if the mailbox is full and the message cannot be
  *                      posted.
  *
@@ -318,17 +369,27 @@ msg_t chMBPostAheadI(mailbox_t *mbp, msg_t msg) {
   chDbgCheckClassI();
   chDbgCheck(mbp != NULL);
 
-  if (chSemGetCounterI(&mbp->mb_emptysem) <= (cnt_t)0) {
-    return MSG_TIMEOUT;
+  /* If the mailbox is in reset state then returns immediately.*/
+  if (mbp->mb_reset) {
+    return MSG_RESET;
   }
-  chSemFastWaitI(&mbp->mb_emptysem);
-  if (--mbp->mb_rdptr < mbp->mb_buffer) {
-    mbp->mb_rdptr = mbp->mb_top - 1;
-  }
-  *mbp->mb_rdptr = msg;
-  chSemSignalI(&mbp->mb_fullsem);
 
-  return MSG_OK;
+  /* Is there a free message slot in queue? if so then post.*/
+  if (chMBGetFreeCountI(mbp) > (cnt_t)0) {
+    if (--mbp->mb_rdptr < mbp->mb_buffer) {
+      mbp->mb_rdptr = mbp->mb_top - 1;
+    }
+    *mbp->mb_rdptr = msg;
+    mbp->mb_cnt++;
+
+    /* If there is a reader waiting then makes it ready.*/
+    chThdDequeueNextI(&mbp->mb_qr, MSG_OK);
+
+    return MSG_OK;
+  }
+
+  /* No space, immediate timeout.*/
+  return MSG_TIMEOUT;
 }
 
 /**
@@ -345,7 +406,7 @@ msg_t chMBPostAheadI(mailbox_t *mbp, msg_t msg) {
  *                      .
  * @return              The operation status.
  * @retval MSG_OK       if a message has been correctly fetched.
- * @retval MSG_RESET    if the mailbox has been reset while waiting.
+ * @retval MSG_RESET    if the mailbox has been reset.
  * @retval MSG_TIMEOUT  if the operation has timed out.
  *
  * @api
@@ -374,7 +435,7 @@ msg_t chMBFetch(mailbox_t *mbp, msg_t *msgp, systime_t timeout) {
  *                      .
  * @return              The operation status.
  * @retval MSG_OK       if a message has been correctly fetched.
- * @retval MSG_RESET    if the mailbox has been reset while waiting.
+ * @retval MSG_RESET    if the mailbox has been reset.
  * @retval MSG_TIMEOUT  if the operation has timed out.
  *
  * @sclass
@@ -385,15 +446,30 @@ msg_t chMBFetchS(mailbox_t *mbp, msg_t *msgp, systime_t timeout) {
   chDbgCheckClassS();
   chDbgCheck((mbp != NULL) && (msgp != NULL));
 
-  rdymsg = chSemWaitTimeoutS(&mbp->mb_fullsem, timeout);
-  if (rdymsg == MSG_OK) {
-    *msgp = *mbp->mb_rdptr++;
-    if (mbp->mb_rdptr >= mbp->mb_top) {
-      mbp->mb_rdptr = mbp->mb_buffer;
+  do {
+    /* If the mailbox is in reset state then returns immediately.*/
+    if (mbp->mb_reset) {
+      return MSG_RESET;
     }
-    chSemSignalI(&mbp->mb_emptysem);
-    chSchRescheduleS();
-  }
+
+    /* Is there a message in queue? if so then fetch.*/
+    if (chMBGetUsedCountI(mbp) > (cnt_t)0) {
+      *msgp = *mbp->mb_rdptr++;
+      if (mbp->mb_rdptr >= mbp->mb_top) {
+        mbp->mb_rdptr = mbp->mb_buffer;
+      }
+      mbp->mb_cnt--;
+
+      /* If there is a writer waiting then makes it ready.*/
+      chThdDequeueNextI(&mbp->mb_qw, MSG_OK);
+      chSchRescheduleS();
+
+      return MSG_OK;
+    }
+
+    /* No message in the queue, waiting for a message to become available.*/
+    rdymsg = chThdEnqueueTimeoutS(&mbp->mb_qr, timeout);
+  } while (rdymsg == MSG_OK);
 
   return rdymsg;
 }
@@ -407,6 +483,7 @@ msg_t chMBFetchS(mailbox_t *mbp, msg_t *msgp, systime_t timeout) {
  * @param[out] msgp     pointer to a message variable for the received message
  * @return              The operation status.
  * @retval MSG_OK       if a message has been correctly fetched.
+ * @retval MSG_RESET    if the mailbox has been reset.
  * @retval MSG_TIMEOUT  if the mailbox is empty and a message cannot be
  *                      fetched.
  *
@@ -417,17 +494,27 @@ msg_t chMBFetchI(mailbox_t *mbp, msg_t *msgp) {
   chDbgCheckClassI();
   chDbgCheck((mbp != NULL) && (msgp != NULL));
 
-  if (chSemGetCounterI(&mbp->mb_fullsem) <= (cnt_t)0) {
-    return MSG_TIMEOUT;
+  /* If the mailbox is in reset state then returns immediately.*/
+  if (mbp->mb_reset) {
+    return MSG_RESET;
   }
-  chSemFastWaitI(&mbp->mb_fullsem);
-  *msgp = *mbp->mb_rdptr++;
-  if (mbp->mb_rdptr >= mbp->mb_top) {
-    mbp->mb_rdptr = mbp->mb_buffer;
-  }
-  chSemSignalI(&mbp->mb_emptysem);
 
-  return MSG_OK;
+  /* Is there a message in queue? if so then fetch.*/
+  if (chMBGetUsedCountI(mbp) > (cnt_t)0) {
+    *msgp = *mbp->mb_rdptr++;
+    if (mbp->mb_rdptr >= mbp->mb_top) {
+      mbp->mb_rdptr = mbp->mb_buffer;
+    }
+    mbp->mb_cnt--;
+
+    /* If there is a writer waiting then makes it ready.*/
+    chThdDequeueNextI(&mbp->mb_qw, MSG_OK);
+
+    return MSG_OK;
+  }
+
+  /* No message, immediate timeout.*/
+  return MSG_TIMEOUT;
 }
 #endif /* CH_CFG_USE_MAILBOXES == TRUE */
 
