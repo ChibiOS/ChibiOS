@@ -157,6 +157,7 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Removed unused file in STM32 TIM driver (bug #831).
 - HAL: Fixed wrong comment in STM32F7 mcuconf (bug #830)(backported to 16.1.8).
 - RT:  Fixed race condition in chBMReset() (bug #828)(backported to 16.1.8).
 - HAL: Fixed wrong number of EXTI lines for STM32F303x8 (bug #827)(backported
