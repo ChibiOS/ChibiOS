@@ -433,10 +433,11 @@ static void otg_epout_handler(USBDriver *usbp, usbep_t ep) {
     osp = usbp->epc[ep]->out_state;
 
     /* A short packet always terminates a transaction.*/
-    if (((osp->rxcnt % usbp->epc[ep]->out_maxsize) == 0) &&
+    if ((ep == 0) &&
+        ((osp->rxcnt % usbp->epc[ep]->out_maxsize) == 0) &&
         (osp->rxsize < osp->totsize)) {
-      /* In case the transaction covered only part of the total transfer
-         then another transaction is immediately started in order to
+      /* For EP 0 only, in case the transaction covered only part of the total
+         transfer then another transaction is immediately started in order to
          cover the remaining.*/
       osp->rxsize = osp->totsize - osp->rxsize;
       osp->rxcnt  = 0;

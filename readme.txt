@@ -157,6 +157,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Fixed transaction end problem with STM32 OTGv1 driver (bug #832)
+       (backported to 16.1.8).
 - HAL: Removed unused file in STM32 TIM driver (bug #831).
 - HAL: Fixed wrong comment in STM32F7 mcuconf (bug #830)(backported to 16.1.8).
 - RT:  Fixed race condition in chBMReset() (bug #828)(backported to 16.1.8).
