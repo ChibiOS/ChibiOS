@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.8 ***
+- HAL: Fixed transaction end problem with STM32 OTGv1 driver (bug #832).
 - HAL: Fixed wrong comment in STM32F7 mcuconf (bug #830).
 - RT:  Fixed race condition in chBMReset() (bug #828).
 - HAL: Fixed wrong number of EXTI lines for STM32F303x8 (bug #827).
