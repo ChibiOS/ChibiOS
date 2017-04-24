@@ -88,6 +88,9 @@
 *****************************************************************************
 
 *** Next ***
+- RT:  Added safe versions of the time conversion functions, the new versions
+       are prefixed with LL_ and use an internal 64 bits representation and
+       assertions for overflow conditions.
 - HAL: Added support for STM32F3 Discovery REV-C or higher.
 - EXT: Integrated latest FatFS 0.12b.
 - HAL: Implemented separated virtual timers module under /os/hal/osal/lib,

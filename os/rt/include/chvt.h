@@ -25,6 +25,8 @@
  * @{
  */
 
+#include <limits.h>
+
 #ifndef CHVT_H
 #define CHVT_H
 
@@ -91,13 +93,16 @@
 /*===========================================================================*/
 
 /**
- * @name    Time conversion utilities
+ * @name    Fast time conversion utilities
  * @{
  */
 /**
  * @brief   Seconds to system ticks.
  * @details Converts from seconds to system ticks number.
  * @note    The result is rounded upward to the next tick boundary.
+ * @note    Use of this macro for large values is not secure because
+ *          integer overflows, make sure your value can be correctly
+ *          converted.
  *
  * @param[in] sec       number of seconds
  * @return              The number of ticks.
@@ -111,6 +116,9 @@
  * @brief   Milliseconds to system ticks.
  * @details Converts from milliseconds to system ticks number.
  * @note    The result is rounded upward to the next tick boundary.
+ * @note    Use of this macro for large values is not secure because
+ *          integer overflows, make sure your value can be correctly
+ *          converted.
  *
  * @param[in] msec      number of milliseconds
  * @return              The number of ticks.
@@ -125,6 +133,9 @@
  * @brief   Microseconds to system ticks.
  * @details Converts from microseconds to system ticks number.
  * @note    The result is rounded upward to the next tick boundary.
+ * @note    Use of this macro for large values is not secure because
+ *          integer overflows, make sure your value can be correctly
+ *          converted.
  *
  * @param[in] usec      number of microseconds
  * @return              The number of ticks.
@@ -139,6 +150,9 @@
  * @brief   System ticks to seconds.
  * @details Converts from system ticks number to seconds.
  * @note    The result is rounded up to the next second boundary.
+ * @note    Use of this macro for large values is not secure because
+ *          integer overflows, make sure your value can be correctly
+ *          converted.
  *
  * @param[in] n         number of system ticks
  * @return              The number of seconds.
@@ -151,6 +165,9 @@
  * @brief   System ticks to milliseconds.
  * @details Converts from system ticks number to milliseconds.
  * @note    The result is rounded up to the next millisecond boundary.
+ * @note    Use of this macro for large values is not secure because
+ *          integer overflows, make sure your value can be correctly
+ *          converted.
  *
  * @param[in] n         number of system ticks
  * @return              The number of milliseconds.
@@ -164,6 +181,9 @@
  * @brief   System ticks to microseconds.
  * @details Converts from system ticks number to microseconds.
  * @note    The result is rounded up to the next microsecond boundary.
+ * @note    Use of this macro for large values is not secure because
+ *          integer overflows, make sure your value can be correctly
+ *          converted.
  *
  * @param[in] n         number of system ticks
  * @return              The number of microseconds.
@@ -195,6 +215,142 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
+
+/**
+ * @name    Secure time conversion utilities
+ * @{
+ */
+/**
+ * @brief   Seconds to system ticks.
+ * @details Converts from seconds to system ticks number.
+ * @note    The result is rounded upward to the next tick boundary.
+ * @note    This function uses a 64 bits internal representation,
+ *          use with non-constant parameters can lead to inefficient
+ *          code because 64 bits arithmetic would be used at runtime.
+ *
+ * @param[in] sec       number of seconds
+ * @return              The number of ticks.
+ *
+ * @api
+ */
+static inline systime_t LL_S2ST(unsigned int sec) {
+  uint64_t ticks = (uint64_t)sec * (uint64_t)CH_CFG_ST_FREQUENCY;
+
+  chDbgAssert(ticks < (uint64_t)TIME_INFINITE, "conversion overflow");
+
+  return (systime_t)ticks;
+}
+
+/**
+ * @brief   Milliseconds to system ticks.
+ * @details Converts from milliseconds to system ticks number.
+ * @note    The result is rounded upward to the next tick boundary.
+ * @note    This function uses a 64 bits internal representation,
+ *          use with non-constant parameters can lead to inefficient
+ *          code because 64 bits arithmetic would be used at runtime.
+ *
+ * @param[in] msec      number of milliseconds
+ * @return              The number of ticks.
+ *
+ * @api
+ */
+static inline systime_t LL_MS2ST(unsigned int msec) {
+  uint64_t ticks = (((uint64_t)msec * (uint64_t)CH_CFG_ST_FREQUENCY) + 999ULL)
+                   / 1000ULL;
+
+  chDbgAssert(ticks < (uint64_t)TIME_INFINITE, "conversion overflow");
+
+  return (systime_t)ticks;
+}
+
+/**
+ * @brief   Microseconds to system ticks.
+ * @details Converts from microseconds to system ticks number.
+ * @note    The result is rounded upward to the next tick boundary.
+ * @note    This function uses a 64 bits internal representation,
+ *          use with non-constant parameters can lead to inefficient
+ *          code because 64 bits arithmetic would be used at runtime.
+ *
+ * @param[in] usec      number of microseconds
+ * @return              The number of ticks.
+ *
+ * @api
+ */
+static inline systime_t LL_US2ST(unsigned int usec) {
+  uint64_t ticks = (((uint64_t)usec * (uint64_t)CH_CFG_ST_FREQUENCY) + 999999ULL)
+                   / 1000000ULL;
+
+  chDbgAssert(ticks < (uint64_t)TIME_INFINITE, "conversion overflow");
+
+  return (systime_t)ticks;
+}
+
+/**
+ * @brief   System ticks to seconds.
+ * @details Converts from system ticks number to seconds.
+ * @note    The result is rounded up to the next second boundary.
+ * @note    This function uses a 64 bits internal representation,
+ *          use with non-constant parameters can lead to inefficient
+ *          code because 64 bits arithmetic would be used at runtime.
+ *
+ * @param[in] n         number of system ticks
+ * @return              The number of seconds.
+ *
+ * @api
+ */
+static inline unsigned int LL_ST2S(systime_t n) {
+  uint64_t sec = ((uint64_t)n + (uint64_t)CH_CFG_ST_FREQUENCY - 1ULL)
+                 / (uint64_t)CH_CFG_ST_FREQUENCY;
+
+  chDbgAssert(sec < (uint64_t)UINT_MAX, "conversion overflow");
+
+  return (unsigned int)sec;
+}
+
+/**
+ * @brief   System ticks to milliseconds.
+ * @details Converts from system ticks number to milliseconds.
+ * @note    The result is rounded up to the next millisecond boundary.
+ * @note    This function uses a 64 bits internal representation,
+ *          use with non-constant parameters can lead to inefficient
+ *          code because 64 bits arithmetic would be used at runtime.
+ *
+ * @param[in] n         number of system ticks
+ * @return              The number of milliseconds.
+ *
+ * @api
+ */
+static inline unsigned int LL_ST2MS(systime_t n) {
+  uint64_t msec = ((uint64_t)n * 1000ULL + (uint64_t)CH_CFG_ST_FREQUENCY - 1ULL)
+                   / (uint64_t)CH_CFG_ST_FREQUENCY;
+
+  chDbgAssert(msec < (uint64_t)UINT_MAX, "conversion overflow");
+
+  return (unsigned int)msec;
+}
+
+/**
+ * @brief   System ticks to microseconds.
+ * @details Converts from system ticks number to microseconds.
+ * @note    The result is rounded up to the next microsecond boundary.
+ * @note    This function uses a 64 bits internal representation,
+ *          use with non-constant parameters can lead to inefficient
+ *          code because 64 bits arithmetic would be used at runtime.
+ *
+ * @param[in] n         number of system ticks
+ * @return              The number of microseconds.
+ *
+ * @api
+ */
+static inline unsigned int LL_ST2US(systime_t n) {
+  uint64_t usec = ((uint64_t)n * 1000000ULL + (uint64_t)CH_CFG_ST_FREQUENCY - 1ULL)
+                   / (uint64_t)CH_CFG_ST_FREQUENCY;
+
+  chDbgAssert(usec < (uint64_t)UINT_MAX, "conversion overflow");
+
+  return (unsigned int)usec;
+}
+/** @} */
 
 /**
  * @brief   Initializes a @p virtual_timer_t object.
