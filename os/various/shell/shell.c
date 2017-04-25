@@ -235,7 +235,7 @@ static int get_history(ShellHistory *shp, char *line, int dir) {
 
 #if (SHELL_USE_COMPLETION == TRUE) || defined(__DOXYGEN__)
 static void get_completions(ShellConfig *scfg, char *line) {
-  ShellCommand *lcp = shell_local_commands;
+  const ShellCommand *lcp = shell_local_commands;
   const ShellCommand *scp = scfg->sc_commands;
   char **scmp = scfg->sc_completion;
   char help_cmp[] = "help";
