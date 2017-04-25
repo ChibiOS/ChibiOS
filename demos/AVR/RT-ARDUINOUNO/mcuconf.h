@@ -41,6 +41,22 @@
 #define AVR_EXT_USE_INT5                   FALSE
 
 /*
+ * PCINT driver system settings.
+ */
+#define AVR_EXT_USE_PCINT0                 FALSE
+#define AVR_EXT_USE_PCINT1                 FALSE
+#define AVR_EXT_USE_PCINT2                 FALSE
+#define AVR_EXT_USE_PCINT3                 FALSE
+#define AVR_EXT_USE_PCINT4                 FALSE
+#define AVR_EXT_USE_PCINT5                 FALSE
+#define AVR_EXT_USE_PCINT6                 FALSE
+#define AVR_EXT_USE_PCINT7                 FALSE
+#define AVR_EXT_USE_PCINT8                 FALSE
+#define AVR_EXT_USE_PCINT9                 FALSE
+#define AVR_EXT_USE_PCINT10                FALSE
+
+
+/*
  * CAN driver system settings.
  */
 
