@@ -543,14 +543,29 @@ void sdc_lld_set_data_clk(SDCDriver *sdcp, sdcbusclk_t clk) {
 #if 0
   if (SDC_CLK_50MHz == clk) {
     sdcp->sdmmc->CLKCR = (sdcp->sdmmc->CLKCR & 0xFFFFFF00U) |
+#if STM32_SDC_SDMMC_PWRSAV
+                         SDMMC_CLKDIV_HS | SDMMC_CLKCR_BYPASS |
+                         SDMMC_CLKCR_PWRSAV;
+#else
                          SDMMC_CLKDIV_HS | SDMMC_CLKCR_BYPASS;
+#endif
   }
-  else
+  else {
+#if STM32_SDC_SDMMC_PWRSAV
+    sdcp->sdmmc->CLKCR = (sdcp->sdmmc->CLKCR & 0xFFFFFF00U) | SDMMC_CLKDIV_HS |
+                         SDMMC_CLKCR_PWRSAV;
+#else
     sdcp->sdmmc->CLKCR = (sdcp->sdmmc->CLKCR & 0xFFFFFF00U) | SDMMC_CLKDIV_HS;
+#endif
+  }
 #else
   (void)clk;
 
-  sdcp->sdmmc->CLKCR = (sdcp->sdmmc->CLKCR & 0xFFFFFF00U) | SDMMC_CLKDIV_HS;
+#if STM32_SDC_SDMMC_PWRSAV
+#else
+  sdcp->sdmmc->CLKCR = (sdcp->sdmmc->CLKCR & 0xFFFFFF00U) | SDMMC_CLKDIV_HS |
+                       SDMMC_CLKCR_PWRSAV;
+#endif
 #endif
 }
 

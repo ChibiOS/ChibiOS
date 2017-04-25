@@ -88,6 +88,7 @@
 *****************************************************************************
 
 *** Next ***
+- HAL: Added clock power saving switch to STM32 SDMMCv1 driver, default is on.
 - RT:  Added safe versions of the time conversion functions, the new versions
        are prefixed with LL_ and use an internal 64 bits representation and
        assertions for overflow conditions.
