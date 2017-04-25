@@ -425,7 +425,7 @@
 #define STM32_HAS_OTG1                      TRUE
 #define STM32_OTG1_ENDPOINTS                5
 #define STM32_HAS_OTG2                      TRUE
-#define STM32_OTG2_ENDPOINTS                8
+#define STM32_OTG2_ENDPOINTS                7
 
 #define STM32_HAS_USB                       FALSE
 
@@ -771,7 +771,7 @@
 #define STM32_HAS_OTG1                      TRUE
 #define STM32_OTG1_ENDPOINTS                6
 #define STM32_HAS_OTG2                      TRUE
-#define STM32_OTG2_ENDPOINTS                8
+#define STM32_OTG2_ENDPOINTS                7
 
 #define STM32_HAS_USB                       FALSE
 
