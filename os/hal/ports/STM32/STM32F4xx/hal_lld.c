@@ -244,7 +244,6 @@ void stm32_clock_init(void) {
   /* PLLSAI activation.*/
   RCC->PLLSAICFGR = STM32_PLLSAIR | STM32_PLLSAIN | STM32_PLLSAIP |
                     STM32_PLLSAIQ | STM32_PLLSAIM;
-  
   RCC->CR |= RCC_CR_PLLSAION;
 
   /* Waiting for PLL lock.*/
