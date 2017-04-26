@@ -18,14 +18,14 @@
 
 /**
  * @file  AVR/hal_ext_lld.h
- * @brief EXT Driver subsystem low level driver source.
+ * @brief EXT Driver subsystem low level driver header.
  *
  * @addtogroup EXT
  * @{
  */
 
-#ifndef _HAL_EXT_LLD_H_
-#define _HAL_EXT_LLD_H_
+#ifndef HAL_EXT_LLD_H
+#define HAL_EXT_LLD_H
 
 #if HAL_USE_EXT || defined(__DOXYGEN__)
 
@@ -550,6 +550,6 @@ extern "C" {
 
 #endif /* HAL_USE_EXT */
 
-#endif /* _HAL_EXT_LLD_H_ */
+#endif /* HAL_EXT_LLD_H */
 
 /** @} */
