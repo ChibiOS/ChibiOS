@@ -14,8 +14,8 @@
     limitations under the License.
 */
 
-#ifndef _AVR_PINS_H_
-#define _AVR_PINS_H_
+#ifndef AVR_PINS_H
+#define AVR_PINS_H
 
 #include <avr/io.h>
 
@@ -156,4 +156,4 @@
 #warning "Device not supported by EXT driver"
 #endif /* AVR_EXT_USE_PCINT10 */
 
-#endif /* _AVR_PINS_H_ */
+#endif /* AVR_PINS_H */
