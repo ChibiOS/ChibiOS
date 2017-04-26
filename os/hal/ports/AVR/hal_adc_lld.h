@@ -16,7 +16,7 @@
 
 /**
  * @file    hal_adc_lld.h
- * @brief   ADC Driver subsystem low level driver source.
+ * @brief   ADC Driver subsystem low level driver header.
  *
  * @addtogroup ADC
  * @{
