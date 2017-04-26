@@ -17,7 +17,7 @@
 */
 
 /**
- * @file  AVR/hal_ext_lld.c
+ * @file  hal_ext_lld.c
  * @brief AVR EXT subsystem low level driver source.
  *
  * @addtogroup EXT

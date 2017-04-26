@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    AVR/icu_lld.c
+ * @file    hal_icu_lld.c
  * @brief   AVR ICU driver subsystem low level driver source.
  *
  * @addtogroup ICU

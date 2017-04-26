@@ -20,7 +20,7 @@
 */
 
 /**
- * @file    AVR/pwm_lld.c
+ * @file    hal_pwm_lld.c
  * @brief   AVR PWM driver subsystem low level driver.
  *
  * @addtogroup PWM

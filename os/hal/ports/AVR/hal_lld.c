@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    AVR/hal_lld.c
+ * @file    hal_lld.c
  * @brief   AVR HAL subsystem low level driver code.
  *
  * @addtogroup HAL
