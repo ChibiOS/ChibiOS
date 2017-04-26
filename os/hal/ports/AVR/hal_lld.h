@@ -15,15 +15,15 @@
 */
 
 /**
- * @file    AVR/hal_lld.h
+ * @file    hal_lld.h
  * @brief   AVR HAL subsystem low level driver header.
  *
  * @addtogroup HAL
  * @{
  */
 
-#ifndef _HAL_LLD_H_
-#define _HAL_LLD_H_
+#ifndef HAL_LLD_H
+#define HAL_LLD_H
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -67,6 +67,6 @@ extern "C" {
 }
 #endif
 
-#endif /* _HAL_LLD_H_ */
+#endif /* HAL_LLD_H */
 
 /** @} */
