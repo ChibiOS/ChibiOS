@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _I2C_LLD_H_
-#define _I2C_LLD_H_
+#ifndef I2C_LLD_H
+#define I2C_LLD_H
 
 #if HAL_USE_I2C || defined(__DOXYGEN__)
 
@@ -215,6 +215,6 @@ extern "C" {
 
 #endif /* HAL_USE_I2C */
 
-#endif /* _I2C_LLD_H_ */
+#endif /* I2C_LLD_H */
 
 /** @} */
