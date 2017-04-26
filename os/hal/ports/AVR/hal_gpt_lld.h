@@ -21,14 +21,14 @@
 
 /**
  * @file    hal_gpt_lld.h
- * @brief   AVR GPT driver subsystem low level driver.
+ * @brief   AVR GPT driver subsystem low level driver header.
  *
  * @addtogroup GPT
  * @{
  */
 
-#ifndef _GPT_LLD_H_
-#define _GPT_LLD_H_
+#ifndef GPT_LLD_H
+#define GPT_LLD_H
 
 #if HAL_USE_GPT || defined(__DOXYGEN__)
 
@@ -216,6 +216,6 @@ extern "C" {
 
 #endif /* HAL_USE_GPT */
 
-#endif /* _GPT_LLD_H_ */
+#endif /* GPT_LLD_H */
 
 /** @} */
