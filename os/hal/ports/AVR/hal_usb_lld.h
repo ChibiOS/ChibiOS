@@ -15,15 +15,15 @@
 */
 
 /**
- * @file    usb_lld.h
+ * @file    hal_usb_lld.h
  * @brief   AVR USB subsystem low level driver header.
  *
  * @addtogroup USB
  * @{
  */
 
-#ifndef _USB_LLD_H_
-#define _USB_LLD_H_
+#ifndef HAL_USB_LLD_H
+#define HAL_USB_LLD_H
 
 #if (HAL_USE_USB == TRUE) || defined(__DOXYGEN__)
 
@@ -397,6 +397,6 @@ extern "C" {
 
 #endif /* HAL_USE_USB == TRUE */
 
-#endif /* _USB_LLD_H_ */
+#endif /* HAL_USB_LLD_H */
 
 /** @} */

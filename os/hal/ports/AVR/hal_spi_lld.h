@@ -15,15 +15,15 @@
 */
 
 /**
- * @file    AVR/spi_lld.h
+ * @file    hal_spi_lld.h
  * @brief   AVR SPI subsystem low level driver header.
  *
  * @addtogroup SPI
  * @{
  */
 
-#ifndef _SPI_LLD_H_
-#define _SPI_LLD_H_
+#ifndef HAL_SPI_LLD_H
+#define HAL_SPI_LLD_H
 
 #if HAL_USE_SPI || defined(__DOXYGEN__)
 
@@ -252,6 +252,6 @@ extern "C" {
 
 #endif /* HAL_USE_SPI */
 
-#endif /* _SPI_LLD_H_ */
+#endif /* HAL_SPI_LLD_H */
 
 /** @} */
