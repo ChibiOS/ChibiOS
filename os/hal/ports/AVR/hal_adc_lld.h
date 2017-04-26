@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef ADC_LLD_H
-#define ADC_LLD_H
+#ifndef HAL_ADC_LLD_H
+#define HAL_ADC_LLD_H
 
 #if HAL_USE_ADC || defined(__DOXYGEN__)
 
@@ -193,6 +193,6 @@ extern "C" {
 
 #endif /* HAL_USE_ADC */
 
-#endif /* ADC_LLD_H */
+#endif /* HAL_ADC_LLD_H */
 
 /** @} */

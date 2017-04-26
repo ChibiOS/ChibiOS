@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef PAL_LLD_H
-#define PAL_LLD_H
+#ifndef HAL_PAL_LLD_H
+#define HAL_PAL_LLD_H
 
 #include "avr_pins.h"
 
