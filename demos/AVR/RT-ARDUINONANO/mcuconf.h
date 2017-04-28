@@ -96,7 +96,7 @@
 #define AVR_SERIAL_USE_USART1              FALSE
 
 /*
- * I2C driver system settings.
+ ²* I2C driver system settings.
  */
 #define AVR_I2C_USE_I2C1                   FALSE
 
@@ -105,5 +105,11 @@
  */
 #define AVR_SPI_USE_SPI1                   FALSE
 #define AVR_SPI_USE_16BIT_POLLED_EXCHANGE  FALSE
+
+/*
+ * USB driver system settings.
+ */
+#define AVR_USB_USE_USB1                   FALSE
+#define AVR_USB_USE_NAMED_ADDRESS_SPACES   FALSE
 
 #endif /* MCUCONF_H */
