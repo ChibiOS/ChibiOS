@@ -448,7 +448,7 @@ struct port_context {
   asm volatile ("mtspr   %[p0], %[p1]" : : [p0] "n" (spr), [p1] "r" (val))
 
 /**
- * @brief   Writes to a special register.
+ * @brief   Reads a special register.
  *
  * @param[in] spr       special register number
  * @param[in] val       returned value, must be an automatic variable
