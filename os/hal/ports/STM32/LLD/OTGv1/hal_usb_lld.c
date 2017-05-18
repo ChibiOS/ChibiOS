@@ -290,12 +290,6 @@ static void otg_rxfifo_handler(USBDriver *usbp) {
     break;
   case GRXSTSP_OUT_DATA:
     cnt = (sts & GRXSTSP_BCNT_MASK) >> GRXSTSP_BCNT_OFF;
-
-    if (cnt == 0) {
-      asm ("nop");
-    }
-
-
     ep  = (sts & GRXSTSP_EPNUM_MASK) >> GRXSTSP_EPNUM_OFF;
     otg_fifo_read_to_buffer(usbp->otg->FIFO[0],
                             usbp->epc[ep]->out_state->rxbuf,
