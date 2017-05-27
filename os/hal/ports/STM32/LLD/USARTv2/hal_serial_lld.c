@@ -53,14 +53,18 @@
 #define USART_CR1_M_1                       (1 << 28)
 #endif
 
-/* Handling the case where UART4 and UART5 are actually USARTs, this happens
-   in the STM32F0xx.*/
+/* Workarounds for those devices where UARTs are USARTs.*/
 #if defined(USART4)
-#define UART4                               USART4
+#define UART4 USART4
 #endif
-
 #if defined(USART5)
-#define UART5                               USART5
+#define UART5 USART5
+#endif
+#if defined(USART7)
+#define UART7 USART7
+#endif
+#if defined(USART8)
+#define UART8 USART8
 #endif
 
 /*===========================================================================*/

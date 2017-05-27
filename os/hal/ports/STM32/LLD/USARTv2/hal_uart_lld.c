@@ -30,6 +30,20 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
+/* For compatibility for those devices without LIN support in the USARTs.*/
+#if !defined(USART_ISR_LBDF)
+#define USART_ISR_LBDF                      0
+#endif
+
+#if !defined(USART_CR2_LBDIE)
+#define USART_CR2_LBDIE                     0
+#endif
+
+/* STM32L0xx/STM32F7xx ST headers difference.*/
+#if !defined(USART_ISR_LBDF)
+#define USART_ISR_LBDF                      USART_ISR_LBD
+#endif
+
 /* STM32L0xx/STM32F7xx ST headers difference.*/
 #if !defined(USART_ISR_LBDF)
 #define USART_ISR_LBDF USART_ISR_LBD
