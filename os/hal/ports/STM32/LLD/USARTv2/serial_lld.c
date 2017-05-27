@@ -44,14 +44,23 @@
 #define USART_ISR_LBDF                      USART_ISR_LBD
 #endif
 
-/* Handling the case where UART4 and UART5 are actually USARTs, this happens
-   in the STM32F0xx.*/
-#if defined(USART4)
-#define UART4                               USART4
+/* STM32L0xx/STM32F7xx ST headers difference.*/
+#if !defined(USART_ISR_LBDF)
+#define USART_ISR_LBDF USART_ISR_LBD
 #endif
 
+/* Workarounds for those devices where UARTs are USARTs.*/
+#if defined(USART4)
+#define UART4 USART4
+#endif
 #if defined(USART5)
-#define UART5                               USART5
+#define UART5 USART5
+#endif
+#if defined(USART7)
+#define UART7 USART7
+#endif
+#if defined(USART8)
+#define UART8 USART8
 #endif
 
 /*===========================================================================*/
