@@ -72,6 +72,9 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+*** 16.1.9 ***
+- HAL: Fixed dependency to kernel in uart lld (v1) (bug #838).
+
 *** 16.1.8 ***
 - HAL: Fixed invalid constant in STM32F4 PLLSAI initialization code (bug #834).
 - HAL: Fixed STM32 OTGv1 number of endpoints (bug #833).
