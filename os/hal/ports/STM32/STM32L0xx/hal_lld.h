@@ -1049,6 +1049,16 @@
 #endif
 
 /**
+ * @brief   USART4 frequency.
+ */
+#define STM32_UART4CLK              STM32_PCLK1
+
+/**
+ * @brief   USART5 frequency.
+ */
+#define STM32_UART5CLK              STM32_PCLK1
+
+/**
  * @brief   LPUART1 frequency.
  */
 #if (STM32_LPUART1SEL == STM32_LPUART1SEL_APB) || defined(__DOXYGEN__)

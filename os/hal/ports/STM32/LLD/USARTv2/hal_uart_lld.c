@@ -99,6 +99,20 @@
   STM32_DMA_GETCHANNEL(STM32_UART_UART8_TX_DMA_STREAM,                      \
                        STM32_UART8_TX_DMA_CHN)
 
+/* Workarounds for those devices where UARTs are USARTs.*/
+#if defined(USART4)
+#define UART4 USART4
+#endif
+#if defined(USART5)
+#define UART5 USART5
+#endif
+#if defined(USART7)
+#define UART7 USART7
+#endif
+#if defined(USART8)
+#define UART8 USART8
+#endif
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
