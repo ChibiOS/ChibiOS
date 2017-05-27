@@ -161,6 +161,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Fixed invalid number of elements in STM32F3xx EXT demo (bug #839)
+       (backported to 16.1.9).
 - HAL: Fixed dependency to kernel in uart lld (v1) (bug #838)(backported
        to 16.1.9).
 - HAL: Fixed STM32 OTGv1 number of endpoints (bug #833)(backported to 16.1.8).
