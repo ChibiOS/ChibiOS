@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.9 ***
+- HAL: Fixed invalid number of elements in STM32F3xx EXT demo (bug #839).
 - HAL: Fixed dependency to kernel in uart lld (v1) (bug #838).
 
 *** 16.1.8 ***
