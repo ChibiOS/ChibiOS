@@ -565,10 +565,10 @@ void uart_lld_start(UARTDriver *uartp) {
     if (&UARTD4 == uartp) {
       bool b;
 
-      chDbgAssert((uartp->config->cr2 & STM32_UART45_CR2_CHECK_MASK) == 0,
-                  "specified invalid bits in UART4 CR2 register settings");
-      chDbgAssert((uartp->config->cr3 & STM32_UART45_CR3_CHECK_MASK) == 0,
-                  "specified invalid bits in UART4 CR3 register settings");
+      osalDbgAssert((uartp->config->cr2 & STM32_UART45_CR2_CHECK_MASK) == 0,
+                    "specified invalid bits in UART4 CR2 register settings");
+      osalDbgAssert((uartp->config->cr3 & STM32_UART45_CR3_CHECK_MASK) == 0,
+                    "specified invalid bits in UART4 CR3 register settings");
 
       b = dmaStreamAllocate(uartp->dmarx,
                             STM32_UART_UART4_IRQ_PRIORITY,
@@ -591,10 +591,10 @@ void uart_lld_start(UARTDriver *uartp) {
     if (&UARTD5 == uartp) {
       bool b;
 
-      chDbgAssert((uartp->config->cr2 & STM32_UART45_CR2_CHECK_MASK) == 0,
-                  "specified invalid bits in UART5 CR2 register settings");
-      chDbgAssert((uartp->config->cr3 & STM32_UART45_CR3_CHECK_MASK) == 0,
-                  "specified invalid bits in UART5 CR3 register settings");
+      osalDbgAssert((uartp->config->cr2 & STM32_UART45_CR2_CHECK_MASK) == 0,
+                    "specified invalid bits in UART5 CR2 register settings");
+      osalDbgAssert((uartp->config->cr3 & STM32_UART45_CR3_CHECK_MASK) == 0,
+                    "specified invalid bits in UART5 CR3 register settings");
 
       b = dmaStreamAllocate(uartp->dmarx,
                             STM32_UART_UART5_IRQ_PRIORITY,
