@@ -84,6 +84,7 @@
  */
 #if !defined(STM32_SDC_SDMMC_CLOCK_DELAY) || defined(__DOXYGEN__)
 #define STM32_SDC_SDMMC_CLOCK_DELAY         10
+#endif
 
 /**
  * @brief   Card clock power saving enable.
