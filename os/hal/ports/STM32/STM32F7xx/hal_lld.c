@@ -262,15 +262,12 @@ void stm32_clock_init(void) {
   /* DCKCFGR1 register initialization, note, must take care of the _OFF
      pseudo settings.*/
   {
-    uint32_t dckcfgr1 = 0;
+    uint32_t dckcfgr1 = STM32_PLLI2SDIVQ | STM32_PLLSAIDIVQ | STM32_PLLSAIDIVR;
 #if STM32_SAI2SEL != STM32_SAI2SEL_OFF
     dckcfgr1 |= STM32_SAI2SEL;
 #endif
 #if STM32_SAI1SEL != STM32_SAI1SEL_OFF
     dckcfgr1 |= STM32_SAI1SEL;
-#endif
-#if STM32_PLLSAIDIVR != STM32_PLLSAIDIVR_OFF
-    dckcfgr1 |= STM32_PLLSAIDIVR;
 #endif
     RCC->DCKCFGR1 = dckcfgr1;
   }

@@ -263,6 +263,7 @@
 #define STM32_I2SSRC_MASK       (1 << 23)   /**< I2CSRC mask.               */
 #define STM32_I2SSRC_PLLI2S     (0 << 23)   /**< I2SSRC is PLLI2S.          */
 #define STM32_I2SSRC_CKIN       (1 << 23)   /**< I2S_CKIN is PLLI2S.        */
+#define STM32_I2SSRC_OFF        (1 << 23)   /**< ISS clock not required.    */
 
 #define STM32_MCO1PRE_MASK      (7 << 24)   /**< MCO1PRE mask.              */
 #define STM32_MCO1PRE_DIV1      (0 << 24)   /**< MCO1 divided by 1.         */
@@ -301,7 +302,6 @@
 #define STM32_PLLSAIDIVR_DIV4   (1 << 16)   /**< LCD_CLK is R divided by 4. */
 #define STM32_PLLSAIDIVR_DIV8   (2 << 16)   /**< LCD_CLK is R divided by 8. */
 #define STM32_PLLSAIDIVR_DIV16  (3 << 16)   /**< LCD_CLK is R divided by 16.*/
-#define STM32_PLLSAIDIVR_OFF    0xFFFFFFFFU /**< LCD CLK is not required.   */
 
 #define STM32_SAI1SEL_MASK      (3 << 20)   /**< SAI1SEL mask.              */
 #define STM32_SAI1SEL_SAIPLL    (0 << 20)   /**< SAI1 source is SAIPLL.     */
@@ -659,6 +659,13 @@
 #endif
 
 /**
+ * @brief   PLLI2SDIVQ divider value (SAI clock divider).
+ */
+#if !defined(STM32_PLLI2SDIVQ_VALUE) || defined(__DOXYGEN__)
+#define STM32_PLLI2SDIVQ_VALUE              2
+#endif
+
+/**
  * @brief   PLLI2SR divider value.
  * @note    The allowed values are 2..7.
  */
@@ -699,10 +706,17 @@
 #endif
 
 /**
+ * @brief   PLLSAIDIVQ divider value (SAI clock divider).
+ */
+#if !defined(STM32_PLLSAIDIVQ_VALUE) || defined(__DOXYGEN__)
+#define STM32_PLLSAIDIVQ_VALUE              2
+#endif
+
+/**
  * @brief   PLLSAIDIVR divider value (LCD clock divider).
  */
-#if !defined(STM32_PLLSAIDIVR) || defined(__DOXYGEN__)
-#define STM32_PLLSAIDIVR                    STM32_PLLSAIDIVR_OFF
+#if !defined(STM32_PLLSAIDIVR_VALUE) || defined(__DOXYGEN__)
+#define STM32_PLLSAIDIVR_VALUE              2
 #endif
 
 /**
@@ -717,6 +731,13 @@
  */
 #if !defined(STM32_SAI2SEL) || defined(__DOXYGEN__)
 #define STM32_SAI2SEL                       STM32_SAI2SEL_OFF
+#endif
+
+/**
+ * @brief   LCD-TFT clock enable switch.
+ */
+#if !defined(STM32_LCDTFT_REQUIRED) || defined(__DOXYGEN__)
+#define STM32_LCDTFT_REQUIRED               FALSE
 #endif
 
 /**
@@ -945,9 +966,9 @@
 #error "HSI not enabled, required by STM32_SAI2SEL"
 #endif
 
-#if (STM32_PLLSAIDIVR != STM32_PLLSAIDIVR_OFF) &&                           \
+#if STM32_LCDTFT_REQUIRED &&                                                \
     (STM32_PLLSRC == STM32_PLLSRC_HSI)
-#error "HSI not enabled, required by STM32_PLLSAIDIVR"
+#error "HSI not enabled, required by STM32_LCDTFT_REQUIRED"
 #endif
 
 #endif /* !STM32_HSI_ENABLED */
@@ -1009,9 +1030,9 @@
 #error "HSE not enabled, required by STM32_SAI2SEL"
 #endif
 
-#if (STM32_PLLSAIDIVR != STM32_PLLSAIDIVR_OFF) &&                           \
+#if STM32_LCDTFT_REQUIRED &&                                                \
     (STM32_PLLSRC == STM32_PLLSRC_HSE)
-#error "HSE not enabled, required by STM32_PLLSAIDIVR"
+#error "HSE not enabled, required by STM32_LCDTFT_REQUIRED"
 #endif
 
 #if STM32_RTCSEL == STM32_RTCSEL_HSEDIV
@@ -1404,11 +1425,24 @@
  */
 #define STM32_PLLI2S_R_CLKOUT       (STM32_PLLI2SVCO / STM32_PLLI2SR_VALUE)
 
+/**
+ * @brief   STM32_PLLI2SDIVQ field.
+ */
+#if (STM32_PLLI2SDIVQ_VALUE < 1) || (STM32_PLLI2SDIVQ_VALUE > 32)
+#error "STM32_PLLI2SDIVQ_VALUE out of acceptable range"
+#endif
+#define STM32_PLLI2SDIVQ            (STM32_PLLI2SDIVQ_VALUE << 0)
+
+/**
+ * @brief   PLLI2S Q output clock frequency after divisor.
+ */
+#define STM32_PLLI2SDIVQ_CLKOUT     (STM32_PLLI2S_Q_CLKOUT / STM32_PLLI2SDIVQ_VALUE)
+
 /*
  * PLLSAI enable check.
  */
 #if (STM32_CLOCK48_REQUIRED && (STM32_CK48MSEL == STM32_CK48MSEL_PLLSAI)) | \
-    (STM32_PLLSAIDIVR != STM32_PLLSAIDIVR_OFF) ||                           \
+    STM32_LCDTFT_REQUIRED ||                                                \
     (STM32_SAI1SEL == STM32_SAI1SEL_SAIPLL) ||                              \
     (STM32_SAI2SEL == STM32_SAI2SEL_SAIPLL) ||                              \
     defined(__DOXYGEN__)
@@ -1496,6 +1530,43 @@
  * @brief   PLLSAI R output clock frequency.
  */
 #define STM32_PLLSAI_R_CLKOUT       (STM32_PLLSAIVCO / STM32_PLLSAIR_VALUE)
+
+/**
+ * @brief   STM32_PLLSAIDIVQ field.
+ */
+#if (STM32_PLLSAIDIVQ_VALUE < 1) || (STM32_PLLSAIDIVQ_VALUE > 32)
+#error "STM32_PLLSAIDIVQ_VALUE out of acceptable range"
+#endif
+#define STM32_PLLSAIDIVQ            (STM32_PLLSAIDIVQ_VALUE << 8)
+
+/**
+ * @brief   PLLSAI Q output clock frequency after divisor.
+ */
+#define STM32_PLLSAIDIVQ_CLKOUT     (STM32_PLLSAI_Q_CLKOUT / STM32_PLLSAIDIVQ_VALUE)
+
+/*
+ * STM32_PLLSAIDIVR field.
+ */
+#if (STM32_PLLSAIDIVR_VALUE == 2) || defined(__DOXYGEN__)
+#define STM32_PLLSAIDIVR            (0 << 16)
+
+#elif STM32_PLLSAIDIVR_VALUE == 4
+#define STM32_PLLSAIDIVR            (1 << 16)
+
+#elif STM32_PLLSAIDIVR_VALUE == 8
+#define STM32_PLLSAIDIVR            (2 << 16)
+
+#elif STM32_PLLSAIDIVR_VALUE == 16
+#define STM32_PLLSAIDIVR            (3 << 16)
+
+#else
+#error "invalid STM32_PLLSAIDIVR_VALUE value specified"
+#endif
+
+/**
+ * @brief   PLLSAI R output clock frequency after divisor.
+ */
+#define STM32_PLLSAIDIVR_CLKOUT       (STM32_PLLSAI_R_CLKOUT / STM32_PLLSAIDIVR_VALUE)
 
 /**
  * @brief   MCO1 divider clock.
@@ -1819,6 +1890,49 @@
 #else /* !STM32_CLOCK48_REQUIRED */
 #define STM32_PLL48CLK              0
 #endif /* !STM32_CLOCK48_REQUIRED */
+
+/**
+ * @brief   I2S frequency.
+ */
+#if (STM32_I2SSRC == STM32_I2SSRC_OFF) || defined(__DOXYGEN__)
+#define STM32_I2SCLK                0
+#elif STM32_I2SSRC == STM32_I2SSRC_CKIN
+#define STM32_I2SCLK                0 /* Unknown, would require a board value */
+#elif STM32_I2SSRC == STM32_I2SSRC_PLLI2S
+#define STM32_I2SCLK                STM32_PLLI2S_R_CLKOUT
+#else
+#error "invalid source selected for I2S clock"
+#endif
+
+/**
+ * @brief   SAI1 frequency.
+ */
+#if (STM32_SAI1SEL == STM32_SAI1SEL_OFF) || defined(__DOXYGEN__)
+#define STM32_SAI1CLK               0
+#elif STM32_SAI1SEL == STM32_SAI1SEL_SAIPLL
+#define STM32_SAI1SEL               STM32_PLLSAIDIVQ_CLKOUT
+#elif STM32_SAI1SEL == STM32_SAI1SEL_I2SPLL
+#define STM32_SAI1SEL               STM32_PLLI2SDIVQ_CLKOUT
+#elif STM32_SAI1SEL == STM32_SAI1SEL_CKIN
+#define STM32_SAI1SEL               0 /* Unknown, would require a board value */
+#else
+#error "invalid source selected for SAI1 clock"
+#endif
+
+/**
+ * @brief   SAI2 frequency.
+ */
+#if (STM32_SAI2SEL == STM32_SAI2SEL_OFF) || defined(__DOXYGEN__)
+#define STM32_SAI2CLK               0
+#elif STM32_SAI2SEL == STM32_SAI2SEL_SAIPLL
+#define STM32_SAI2SEL               STM32_PLLSAIDIVQ_CLKOUT
+#elif STM32_SAI2SEL == STM32_SAI2SEL_I2SPLL
+#define STM32_SAI2SEL               STM32_PLLI2SDIVQ_CLKOUT
+#elif STM32_SAI2SEL == STM32_SAI2SEL_CKIN
+#define STM32_SAI2SEL               0 /* Unknown, would require a board value */
+#else
+#error "invalid source selected for SAI2 clock"
+#endif
 
 /**
  * @brief   SDMMC frequency.

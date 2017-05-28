@@ -167,6 +167,7 @@
        to 16.1.9).
 - HAL: Fixed issue with not supported LIN on STM32F070xB (bug #837)(backported
        to 16.1.9).
+- HAL: fixed missing DCKFG1 fields (bug #835).
 - HAL: Fixed STM32 OTGv1 number of endpoints (bug #833)(backported to 16.1.8).
 - HAL: Fixed transaction end problem with STM32 OTGv1 driver (bug #832)
        (backported to 16.1.8).
