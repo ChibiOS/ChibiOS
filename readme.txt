@@ -76,6 +76,7 @@
 - HAL: Fixed invalid number of elements in STM32F3xx EXT demo (bug #839).
 - HAL: Fixed dependency to kernel in uart lld (v1) (bug #838).
 - HAL: Fixed issue with not supported LIN on STM32F070xB (bug #837).
+- HAL: Fixed SPI operations silently drop length bits (bug #825).
 
 *** 16.1.8 ***
 - HAL: Fixed invalid constant in STM32F4 PLLSAI initialization code (bug #834).
