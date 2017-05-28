@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.9 ***
+- HAL: Fixed invalid DMA channels for STM32F334 ADC2 (bug #840).
 - HAL: Fixed invalid number of elements in STM32F3xx EXT demo (bug #839).
 - HAL: Fixed dependency to kernel in uart lld (v1) (bug #838).
 - HAL: Fixed issue with not supported LIN on STM32F070xB (bug #837).
