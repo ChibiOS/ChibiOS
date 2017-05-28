@@ -179,6 +179,8 @@
        to 16.1.8).
 - HAL: Fixed invalid SDC OCR initialization value (bug #826)(backported
        to 16.1.8).
+- HAL: Fixed SPI operations silently drop length bits (bug #825)(backported
+       to 16.1.9).
 - HAL: Fixed osThreadSetPriority() returns old priority instead of a status
        code (bug #823)(backported to 16.1.8).
 - HAL: Fixed problem in rtcSTM32SetPeriodicWakeup() (bug #821)(backported
