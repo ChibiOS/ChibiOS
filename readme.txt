@@ -161,6 +161,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Fixed invalid DMA channels for STM32F334 ADC2 (bug #840)(backported
+       to 16.1.9).
 - HAL: Fixed invalid number of elements in STM32F3xx EXT demo (bug #839)
        (backported to 16.1.9).
 - HAL: Fixed dependency to kernel in uart lld (v1) (bug #838)(backported
