@@ -186,7 +186,7 @@ osStatus osThreadSetPriority(osThreadId thread_id, osPriority newprio) {
   case CH_STATE_READY:
 #if CH_DBG_ENABLE_ASSERTS
     /* Prevents an assertion in chSchReadyI().*/
-    tp->state = CH_STATE_CURRENT;
+    tp->p_state = CH_STATE_CURRENT;
 #endif
     /* Re-enqueues tp with its new priority on the ready list.*/
     chSchReadyI(queue_dequeue(tp));
