@@ -68,23 +68,24 @@ static void adcerrorcallback(ADCDriver *adcp, adcerror_t err) {
 
 /*
  * ADC conversion group.
- * Mode:        Continuous, 16 samples of 2 channels, HS triggered by
+ * Mode:        Continuous, 16 samples of 2 channels, HW triggered by
  *              GPT4-TRGO.
- * Channels:    VRef, PC1.
+ * Channels:    VRef, PA0.
  */
 static const ADCConversionGroup adcgrpcfg1 = {
   true,
   ADC_GRP1_NUM_CHANNELS,
   adccallback,
   adcerrorcallback,
-  ADC_CFGR_CONT | ADC_CFGR_EXTEN_RISING | ADC_CFGR_EXTSEL_SRC(12), /* CFGR   */
+  ADC_CFGR_EXTEN_RISING | ADC_CFGR_EXTSEL_SRC(12),                 /* CFGR   */
   ADC_TR(0, 4095),                                                 /* TR1    */
   {                                                                /* SMPR[2]*/
-    ADC_SMPR1_SMP_AN0(ADC_SMPR_SMP_247P5),
-    ADC_SMPR1_SMP_AN2(ADC_SMPR_SMP_247P5)
+    ADC_SMPR1_SMP_AN0(ADC_SMPR_SMP_247P5) |
+    ADC_SMPR1_SMP_AN5(ADC_SMPR_SMP_247P5),
+    0
   },
   {                                                                /* SQR[4] */
-    ADC_SQR1_SQ1_N(ADC_CHANNEL_IN0) | ADC_SQR1_SQ2_N(ADC_CHANNEL_IN2),
+    ADC_SQR1_SQ1_N(ADC_CHANNEL_IN0) | ADC_SQR1_SQ2_N(ADC_CHANNEL_IN5),
     0,
     0,
     0
@@ -145,9 +146,11 @@ int main(void) {
   adcSTM32EnableVREF(&ADCD1);
   adcSTM32EnableTS(&ADCD1);
 
+  palSetLineMode(LINE_ARD_A0, PAL_MODE_INPUT_ANALOG);
+
   /*
    * Starts an ADC continuous conversion triggered with a period of
-   * 1/1000000 second.
+   * 1/10000 second.
    */
   adcStartConversion(&ADCD1, &adcgrpcfg1, samples1, ADC_GRP1_BUF_DEPTH);
   gptStartContinuous(&GPTD4, 100);
