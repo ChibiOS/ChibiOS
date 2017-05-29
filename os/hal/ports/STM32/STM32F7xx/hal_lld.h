@@ -20,6 +20,7 @@
  * @pre     This module requires the following macros to be defined in the
  *          @p board.h file:
  *          - STM32_LSECLK.
+ *          - STM32_LSEDRV.
  *          - STM32_LSE_BYPASS (optionally).
  *          - STM32_HSECLK.
  *          - STM32_HSE_BYPASS (optionally).
@@ -872,6 +873,22 @@
 #error "Using a wrong mcuconf.h file, STM32F7xx_MCUCONF not defined"
 #endif
 
+/*
+ * Board file checks.
+ */
+#if !defined(STM32_LSECLK)
+#error "STM32_LSECLK not defined in board.h"
+#endif
+#if !defined(STM32_LSEDRV)
+#error "STM32_LSEDRV not defined in board.h"
+#endif
+#if !defined(STM32_HSECLK)
+#error "STM32_HSECLK not defined in board.h"
+#endif
+#if !defined(STM32_VDD)
+#error "STM32_VDD not defined in board.h"
+#endif
+
 /**
  * @brief   Maximum frequency thresholds and wait states for flash access.
  * @note    The values are valid for 2.7V to 3.6V supply range.
@@ -1064,6 +1081,14 @@
 
 #if (STM32_LSECLK < STM32_LSECLK_MIN) || (STM32_LSECLK > STM32_LSECLK_MAX)
 #error "STM32_LSECLK outside acceptable range (STM32_LSECLK_MIN...STM32_LSECLK_MAX)"
+#endif
+
+#if !defined(STM32_LSEDRV)
+#error "STM32_LSEDRV not defined"
+#endif
+
+#if (STM32_LSEDRV >> 3) > 3
+#error "STM32_LSEDRV outside acceptable range ((0<<3)...(3<<3))"
 #endif
 
 #else /* !STM32_LSE_ENABLED */
