@@ -537,17 +537,17 @@ void i2c_lld_init(void) {
 void i2c_lld_start(I2CDriver *i2cp) {
   I2C_TypeDef *dp = i2cp->i2c;
 
-  i2cp->txdmamode = STM32_DMA_CR_PSIZE_BYTE | STM32_DMA_CR_MSIZE_BYTE |
-                    STM32_DMA_CR_MINC       | STM32_DMA_CR_DMEIE |
-                    STM32_DMA_CR_TEIE       | STM32_DMA_CR_TCIE |
-                    STM32_DMA_CR_DIR_M2P;
-  i2cp->rxdmamode = STM32_DMA_CR_PSIZE_BYTE | STM32_DMA_CR_MSIZE_BYTE |
-                    STM32_DMA_CR_MINC       | STM32_DMA_CR_DMEIE |
-                    STM32_DMA_CR_TEIE       | STM32_DMA_CR_TCIE |
-                    STM32_DMA_CR_DIR_P2M;
-
   /* If in stopped state then enables the I2C and DMA clocks.*/
   if (i2cp->state == I2C_STOP) {
+
+    i2cp->txdmamode = STM32_DMA_CR_PSIZE_BYTE | STM32_DMA_CR_MSIZE_BYTE |
+                      STM32_DMA_CR_MINC       | STM32_DMA_CR_DMEIE |
+                      STM32_DMA_CR_TEIE       | STM32_DMA_CR_TCIE |
+                      STM32_DMA_CR_DIR_M2P;
+    i2cp->rxdmamode = STM32_DMA_CR_PSIZE_BYTE | STM32_DMA_CR_MSIZE_BYTE |
+                      STM32_DMA_CR_MINC       | STM32_DMA_CR_DMEIE |
+                      STM32_DMA_CR_TEIE       | STM32_DMA_CR_TCIE |
+                      STM32_DMA_CR_DIR_P2M;
 
 #if STM32_I2C_USE_I2C1
     if (&I2CD1 == i2cp) {
