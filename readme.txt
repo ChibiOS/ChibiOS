@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.9 ***
+- HAL: Fixed wrong ARR initialization in STM32 GPT driver (bug #843).
 - HAL: Fixed wrong configuration in STM32L4xx GPT-ADC demo (bug #842).
 - HAL: Fixed invalid field name in CMSIS RTOS wrapper (bug #841).
 - HAL: Fixed invalid DMA channels for STM32F334 ADC2 (bug #840).
