@@ -769,7 +769,7 @@
 /* USB attributes.*/
 #define STM32_OTG_STEPPING                  2
 #define STM32_HAS_OTG1                      TRUE
-#define STM32_OTG1_ENDPOINTS                6
+#define STM32_OTG1_ENDPOINTS                5
 #define STM32_HAS_OTG2                      TRUE
 #define STM32_OTG2_ENDPOINTS                7
 
@@ -1464,7 +1464,7 @@
 /* USB attributes.*/
 #define STM32_OTG_STEPPING                  1
 #define STM32_HAS_OTG1                      TRUE
-#define STM32_OTG1_ENDPOINTS                4
+#define STM32_OTG1_ENDPOINTS                3
 
 #define STM32_HAS_OTG2                      FALSE
 #define STM32_HAS_USB                       FALSE
@@ -1759,7 +1759,7 @@
 /* USB attributes.*/
 #define STM32_OTG_STEPPING                  1
 #define STM32_HAS_OTG1                      TRUE
-#define STM32_OTG1_ENDPOINTS                4
+#define STM32_OTG1_ENDPOINTS                3
 
 #define STM32_HAS_OTG2                      FALSE
 #define STM32_HAS_USB                       FALSE
@@ -2665,7 +2665,7 @@
 /* USB attributes.*/
 #define STM32_OTG_STEPPING                  1
 #define STM32_HAS_OTG1                      TRUE
-#define STM32_OTG1_ENDPOINTS                4
+#define STM32_OTG1_ENDPOINTS                3
 #define STM32_HAS_OTG2                      FALSE
 
 #define STM32_HAS_USB                       FALSE

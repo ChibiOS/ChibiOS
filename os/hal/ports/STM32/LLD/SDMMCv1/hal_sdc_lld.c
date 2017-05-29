@@ -562,9 +562,10 @@ void sdc_lld_set_data_clk(SDCDriver *sdcp, sdcbusclk_t clk) {
   (void)clk;
 
 #if STM32_SDC_SDMMC_PWRSAV
-#else
   sdcp->sdmmc->CLKCR = (sdcp->sdmmc->CLKCR & 0xFFFFFF00U) | SDMMC_CLKDIV_HS |
                        SDMMC_CLKCR_PWRSAV;
+#else
+  sdcp->sdmmc->CLKCR = (sdcp->sdmmc->CLKCR & 0xFFFFFF00U) | SDMMC_CLKDIV_HS;
 #endif
 #endif
 }
@@ -583,7 +584,7 @@ void sdc_lld_stop_clk(SDCDriver *sdcp) {
 }
 
 /**
- * @brief   Switches the bus to 4 bits mode.
+ * @brief   Switches the bus to 1, 4 or 8 bits mode.
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
  * @param[in] mode      bus mode
@@ -750,7 +751,7 @@ bool sdc_lld_read_special(SDCDriver *sdcp, uint8_t *buf, size_t bytes,
                           uint8_t cmd, uint32_t arg) {
   uint32_t resp[1];
 
-  if(sdc_lld_prepare_read_bytes(sdcp, buf, bytes))
+  if (sdc_lld_prepare_read_bytes(sdcp, buf, bytes))
     goto error;
 
   if (sdc_lld_send_cmd_short_crc(sdcp, cmd, arg, resp)
