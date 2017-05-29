@@ -677,10 +677,10 @@ void gpt_lld_start(GPTDriver *gptp) {
                 "invalid frequency");
 
   /* Timer configuration.*/
-  gptp->tim->CR1  = 0;                          /* Initially stopped.       */
-  gptp->tim->CR2  = gptp->config->cr2;
-  gptp->tim->PSC  = psc;                        /* Prescaler value.         */
-  gptp->tim->SR   = 0;                          /* Clear pending IRQs.      */
+  gptp->tim->CR1 = 0;                           /* Initially stopped.       */
+  gptp->tim->CR2 = gptp->config->cr2;
+  gptp->tim->PSC = psc;                         /* Prescaler value.         */
+  gptp->tim->SR = 0;                            /* Clear pending IRQs.      */
   gptp->tim->DIER = gptp->config->dier &        /* DMA-related DIER bits.   */
                     ~STM32_TIM_DIER_IRQ_MASK;
 }
@@ -695,9 +695,9 @@ void gpt_lld_start(GPTDriver *gptp) {
 void gpt_lld_stop(GPTDriver *gptp) {
 
   if (gptp->state == GPT_READY) {
-    gptp->tim->CR1  = 0;                        /* Timer disabled.          */
+    gptp->tim->CR1 = 0;                         /* Timer disabled.          */
     gptp->tim->DIER = 0;                        /* All IRQs disabled.       */
-    gptp->tim->SR   = 0;                        /* Clear pending IRQs.      */
+    gptp->tim->SR = 0;                          /* Clear pending IRQs.      */
 
 #if STM32_GPT_USE_TIM1
     if (&GPTD1 == gptp) {
@@ -819,14 +819,14 @@ void gpt_lld_stop(GPTDriver *gptp) {
  */
 void gpt_lld_start_timer(GPTDriver *gptp, gptcnt_t interval) {
 
-  gptp->tim->ARR   = (uint32_t)(interval - 1);  /* Time constant.           */
-  gptp->tim->EGR   = STM32_TIM_EGR_UG;          /* Update event.            */
-  gptp->tim->CNT   = 0;                         /* Reset counter.           */
+  gptp->tim->ARR = (uint32_t)(interval);        /* Time constant.           */
+  gptp->tim->EGR = STM32_TIM_EGR_UG;            /* Update event.            */
+  gptp->tim->CNT = 0;                           /* Reset counter.           */
 
   /* NOTE: After generating the UG event it takes several clock cycles before
      SR bit 0 goes to 1. This is why the clearing of CNT has been inserted
      before the clearing of SR, to give it some time.*/
-  gptp->tim->SR    = 0;                         /* Clear pending IRQs.      */
+  gptp->tim->SR = 0;                            /* Clear pending IRQs.      */
   if (NULL != gptp->config->callback)
     gptp->tim->DIER |= STM32_TIM_DIER_UIE;      /* Update Event IRQ enabled.*/
   gptp->tim->CR1 = STM32_TIM_CR1_ARPE | STM32_TIM_CR1_URS | STM32_TIM_CR1_CEN;
@@ -841,8 +841,8 @@ void gpt_lld_start_timer(GPTDriver *gptp, gptcnt_t interval) {
  */
 void gpt_lld_stop_timer(GPTDriver *gptp) {
 
-  gptp->tim->CR1   = 0;                         /* Initially stopped.       */
-  gptp->tim->SR    = 0;                         /* Clear pending IRQs.      */
+  gptp->tim->CR1 = 0;                           /* Initially stopped.       */
+  gptp->tim->SR = 0;                            /* Clear pending IRQs.      */
 
   /* All interrupts disabled.*/
   gptp->tim->DIER &= ~STM32_TIM_DIER_IRQ_MASK;
@@ -861,13 +861,13 @@ void gpt_lld_stop_timer(GPTDriver *gptp) {
  */
 void gpt_lld_polled_delay(GPTDriver *gptp, gptcnt_t interval) {
 
-  gptp->tim->ARR  = (uint32_t)(interval - 1);   /* Time constant.           */
-  gptp->tim->EGR  = STM32_TIM_EGR_UG;           /* Update event.            */
-  gptp->tim->SR   = 0;                          /* Clear pending IRQs.      */
-  gptp->tim->CR1  = STM32_TIM_CR1_OPM | STM32_TIM_CR1_URS | STM32_TIM_CR1_CEN;
+  gptp->tim->ARR = (uint32_t)(interval);        /* Time constant.           */
+  gptp->tim->EGR = STM32_TIM_EGR_UG;            /* Update event.            */
+  gptp->tim->SR = 0;                            /* Clear pending IRQs.      */
+  gptp->tim->CR1 = STM32_TIM_CR1_OPM | STM32_TIM_CR1_URS | STM32_TIM_CR1_CEN;
   while (!(gptp->tim->SR & STM32_TIM_SR_UIF))
     ;
-  gptp->tim->SR   = 0;                          /* Clear pending IRQs.      */
+  gptp->tim->SR = 0;                            /* Clear pending IRQs.      */
 }
 
 /**
