@@ -325,6 +325,13 @@
 #endif
 
 /**
+ * @brief   Enables or disables the HSI16 clock divider.
+ */
+#if !defined(STM32_HSI16_DIVIDER_ENABLED) || defined(__DOXYGEN__)
+#define STM32_HSI16_DIVIDER_ENABLED         FALSE
+#endif
+
+/**
  * @brief   Enables or disables the LSI clock source.
  */
 #if !defined(STM32_LSI_ENABLED) || defined(__DOXYGEN__)
@@ -675,6 +682,15 @@
 
 #endif /* !STM32_HSI16_ENABLED */
 
+/*
+ * @brief   Divided HSI16 clock.
+ */
+#if STM32_HSI16_DIVIDER_ENABLED || defined(__DOXYGEN__)
+#define STM32_HSI16DIVCLK           (STM32_HSI16CLK / 4)
+#else
+#define STM32_HSI16DIVCLK           STM32_HSI16CLK
+#endif
+
 /* HSE related checks.*/
 #if STM32_HSE_ENABLED
 #if STM32_HSECLK == 0
@@ -798,7 +814,7 @@
 #if (STM32_PLLSRC == STM32_PLLSRC_HSE) || defined(__DOXYGEN__)
 #define STM32_PLLCLKIN              STM32_HSECLK
 #elif STM32_PLLSRC == STM32_PLLSRC_HSI16
-#define STM32_PLLCLKIN              STM32_HSI16CLK
+#define STM32_PLLCLKIN              STM32_HSI16DIVCLK
 #else
 #error "invalid STM32_PLLSRC value specified"
 #endif
@@ -954,7 +970,7 @@
 #elif STM32_MCOSEL == STM32_MCOSEL_SYSCLK
 #define STM32_MCODIVCLK             STM32_SYSCLK
 #elif STM32_MCOSEL == STM32_MCOSEL_HSI16
-#define STM32_MCODIVCLK             STM32_HSI16CLK
+#define STM32_MCODIVCLK             STM32_HSI16DIVCLK
 #elif STM32_MCOSEL == STM32_MCOSEL_MSI
 #define STM32_MCODIVCLK             STM32_MSICLK
 #elif STM32_MCOSEL == STM32_MCOSEL_HSE
@@ -1026,7 +1042,7 @@
 #elif STM32_USART1SEL == STM32_USART1SEL_SYSCLK
 #define STM32_USART1CLK             STM32_SYSCLK
 #elif STM32_USART1SEL == STM32_USART1SEL_HSI16
-#define STM32_USART1CLK             STM32_HSI16CLK
+#define STM32_USART1CLK             STM32_HSI16DIVCLK
 #elif STM32_USART1SEL == STM32_USART1SEL_LSE
 #define STM32_USART1CLK             STM32_LSECLK
 #else
@@ -1041,7 +1057,7 @@
 #elif STM32_USART2SEL == STM32_USART2SEL_SYSCLK
 #define STM32_USART2CLK             STM32_SYSCLK
 #elif STM32_USART2SEL == STM32_USART2SEL_HSI16
-#define STM32_USART2CLK             STM32_HSI16CLK
+#define STM32_USART2CLK             STM32_HSI16DIVCLK
 #elif STM32_USART2SEL == STM32_USART2SEL_LSE
 #define STM32_USART2CLK             STM32_LSECLK
 #else
@@ -1066,7 +1082,7 @@
 #elif STM32_LPUART1SEL == STM32_LPUART1SEL_SYSCLK
 #define STM32_LPUART1CLK            STM32_SYSCLK
 #elif STM32_LPUART1SEL == STM32_LPUART1SEL_HSI16
-#define STM32_LPUART1CLK            STM32_HSI16CLK
+#define STM32_LPUART1CLK            STM32_HSI16DIVCLK
 #elif STM32_LPUART1SEL == STM32_LPUART1SEL_LSE
 #define STM32_LPUART1CLK            STM32_LSECLK
 #else
@@ -1081,7 +1097,7 @@
 #elif STM32_I2C1SEL == STM32_I2C1SEL_SYSCLK
 #define STM32_I2C1CLK               STM32_SYSCLK
 #elif STM32_I2C1SEL == STM32_I2C1SEL_HSI16
-#define STM32_I2C1CLK               STM32_HSI16CLK
+#define STM32_I2C1CLK               STM32_HSI16DIVCLK
 #else
 #error "invalid source selected for I2C1 clock"
 #endif
@@ -1094,7 +1110,7 @@
 #elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_LSI
 #define STM32_LPTIM1CLK             STM32_LSICLK
 #elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_HSI16
-#define STM32_LPTIM1CLK             STM32_HSI16CLK
+#define STM32_LPTIM1CLK             STM32_HSI16DIVCLK
 #elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_LSE
 #define STM32_LPTIM1CLK             STM32_LSECLK
 #else

@@ -208,6 +208,12 @@ void stm32_clock_init(void) {
   RCC->CR |= RCC_CR_HSION;
   while ((RCC->CR & RCC_CR_HSIRDY) == 0)
     ;                           /* Waits until HSI16 is stable.             */
+
+#if STM32_HSI16_DIVIDER_ENABLED
+  RCC->CR |= RCC_CR_HSIDIVEN;
+  while ((RCC->CR & RCC_CR_HSIDIVF) == 0)
+    ;
+#endif
 #endif
 
 #if STM32_HSE_ENABLED
