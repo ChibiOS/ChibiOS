@@ -80,6 +80,7 @@
 - HAL: Fixed dependency to kernel in uart lld (v1) (bug #838).
 - HAL: Fixed issue with not supported LIN on STM32F070xB (bug #837).
 - HAL: Fixed SPI operations silently drop length bits (bug #825).
+- HAL: Fixed I2Cv1 Freeze when started twice (bug #781).
 
 *** 16.1.8 ***
 - HAL: Fixed invalid constant in STM32F4 PLLSAI initialization code (bug #834).
