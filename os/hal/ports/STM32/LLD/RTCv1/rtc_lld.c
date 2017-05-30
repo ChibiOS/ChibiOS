@@ -137,7 +137,7 @@ static void rtc_decode(uint32_t tv_sec,
   t = localtime_r((time_t *)&(tv_sec), &tim);
   osalDbgAssert(t != NULL, "conversion failed");
 #else
-  struct tm *t = localtime(&tv_sec);
+  t = localtime(&tv_sec);
   memcpy(&tim, t, sizeof(struct tm));
 #endif
 
