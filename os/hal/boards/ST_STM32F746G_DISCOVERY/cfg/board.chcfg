@@ -884,8 +884,8 @@
         Level="High"
         Speed="Maximum"
         Resistor="Floating"
-        Mode="Input"
-        Alternate="0" />
+        Mode="Alternate"
+        Alternate="12" />
       <pin9
         ID="DCMI_VSYNC"
         Type="PushPull"
@@ -1176,8 +1176,8 @@
         Level="High"
         Speed="Maximum"
         Resistor="Floating"
-        Mode="Alternate"
-        Alternate="14" />
+        Mode="Output"
+        Alternate="0" />
       <pin13
         ID="LCD_INT"
         Type="PushPull"

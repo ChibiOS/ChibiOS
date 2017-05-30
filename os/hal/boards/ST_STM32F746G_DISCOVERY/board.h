@@ -1176,7 +1176,7 @@
  * PG5  - FMC_BA1                   (alternate 12).
  * PG6  - ARD_D2                    (input pullup).
  * PG7  - ARD_D4                    (input pullup).
- * PG8  - FMC_SDCLK                 (input floating).
+ * PG8  - FMC_SDCLK                 (alternate 12).
  * PG9  - DCMI_VSYNC                (input pullup).
  * PG10 - SAI2_SDB                  (input pullup).
  * PG11 - RMII_TX_EN                (alternate 11).
@@ -1193,7 +1193,7 @@
                                      PIN_MODE_ALTERNATE(GPIOG_FMC_BA1) |    \
                                      PIN_MODE_INPUT(GPIOG_ARD_D2) |         \
                                      PIN_MODE_INPUT(GPIOG_ARD_D4) |         \
-                                     PIN_MODE_INPUT(GPIOG_FMC_SDCLK) |      \
+                                     PIN_MODE_ALTERNATE(GPIOG_FMC_SDCLK) |  \
                                      PIN_MODE_INPUT(GPIOG_DCMI_VSYNC) |     \
                                      PIN_MODE_INPUT(GPIOG_SAI2_SDB) |       \
                                      PIN_MODE_ALTERNATE(GPIOG_RMII_TX_EN) | \
@@ -1273,7 +1273,7 @@
                                      PIN_AFIO_AF(GPIOG_FMC_BA1, 12U) |      \
                                      PIN_AFIO_AF(GPIOG_ARD_D2, 0U) |        \
                                      PIN_AFIO_AF(GPIOG_ARD_D4, 0U))
-#define VAL_GPIOG_AFRH              (PIN_AFIO_AF(GPIOG_FMC_SDCLK, 0U) |     \
+#define VAL_GPIOG_AFRH              (PIN_AFIO_AF(GPIOG_FMC_SDCLK, 12U) |    \
                                      PIN_AFIO_AF(GPIOG_DCMI_VSYNC, 0U) |    \
                                      PIN_AFIO_AF(GPIOG_SAI2_SDB, 0U) |      \
                                      PIN_AFIO_AF(GPIOG_RMII_TX_EN, 11U) |   \
@@ -1414,7 +1414,7 @@
  * PI9  - LCD_VSYNC                 (alternate 14).
  * PI10 - LCD_HSYNC                 (alternate 14).
  * PI11 - BUTTON_USER               (input floating).
- * PI12 - LCD_DISP                  (alternate 14).
+ * PI12 - LCD_DISP                  (output pushpull maximum).
  * PI13 - LCD_INT                   (alternate 14).
  * PI14 - LCD_CLK                   (alternate 14).
  * PI15 - LCD_R0                    (alternate 14).
@@ -1431,7 +1431,7 @@
                                      PIN_MODE_ALTERNATE(GPIOI_LCD_VSYNC) |  \
                                      PIN_MODE_ALTERNATE(GPIOI_LCD_HSYNC) |  \
                                      PIN_MODE_INPUT(GPIOI_BUTTON_USER) |    \
-                                     PIN_MODE_ALTERNATE(GPIOI_LCD_DISP) |   \
+                                     PIN_MODE_OUTPUT(GPIOI_LCD_DISP) |      \
                                      PIN_MODE_ALTERNATE(GPIOI_LCD_INT) |    \
                                      PIN_MODE_ALTERNATE(GPIOI_LCD_CLK) |    \
                                      PIN_MODE_ALTERNATE(GPIOI_LCD_R0))
@@ -1511,7 +1511,7 @@
                                      PIN_AFIO_AF(GPIOI_LCD_VSYNC, 14U) |    \
                                      PIN_AFIO_AF(GPIOI_LCD_HSYNC, 14U) |    \
                                      PIN_AFIO_AF(GPIOI_BUTTON_USER, 0U) |   \
-                                     PIN_AFIO_AF(GPIOI_LCD_DISP, 14U) |     \
+                                     PIN_AFIO_AF(GPIOI_LCD_DISP, 0U) |      \
                                      PIN_AFIO_AF(GPIOI_LCD_INT, 14U) |      \
                                      PIN_AFIO_AF(GPIOI_LCD_CLK, 14U) |      \
                                      PIN_AFIO_AF(GPIOI_LCD_R0, 14U))
