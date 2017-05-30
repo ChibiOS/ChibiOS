@@ -161,6 +161,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Duplicated variable definition in STM32 RTCv1 driver (bug #845)
+       (backported to 16.1.9).
 - HAL: Fixed wrong ARR initialization in STM32 GPT driver (bug #843)(backported
        to 16.1.9).
 - HAL: Fixed wrong configuration in STM32L4xx GPT-ADC demo (bug #842)(backported
