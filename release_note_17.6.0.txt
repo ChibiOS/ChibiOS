@@ -22,7 +22,9 @@ a series of important improvements, new features have been added.
   - Memory Pools now have a new variant named "Guarded Memory Pool" including
     a semaphore that guards the allocation function, the caller waits if there
     is not an object available in the pool.
-- FatFS 0.10b has been integrated.
+  - Improved mailboxes, now it is possible to set a mailbox in a persistent
+    reset state.
+- FatFS 0.12b has been integrated.
 - Rationalized source tree to reduce code duplication.
 - New unit test library.
 - Test suites have been rewritten using an unique code generation system
