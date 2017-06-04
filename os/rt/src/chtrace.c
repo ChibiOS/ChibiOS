@@ -208,7 +208,7 @@ void chDbgWriteTrace(void *up1, void *up2) {
 /**
  * @brief   Suspends one or more trace events.
  *
- * @paramin mask        mask of the trace events to be suspended
+ * @param[in] mask      mask of the trace events to be suspended
  *
  * @iclass
  */
@@ -222,7 +222,7 @@ void chDbgSuspendTraceI(uint16_t mask) {
 /**
  * @brief   Suspends one or more trace events.
  *
- * @paramin mask        mask of the trace events to be suspended
+ * @param[in] mask      mask of the trace events to be suspended
  *
  * @api
  */
@@ -236,7 +236,7 @@ void chDbgSuspendTrace(uint16_t mask) {
 /**
  * @brief   Resumes one or more trace events.
  *
- * @paramin mask        mask of the trace events to be resumed
+ * @param[in] mask      mask of the trace events to be resumed
  *
  * @iclass
  */
@@ -250,7 +250,7 @@ void chDbgResumeTraceI(uint16_t mask) {
 /**
  * @brief   Resumes one or more trace events.
  *
- * @paramin mask        mask of the trace events to be resumed
+ * @param[in] mask      mask of the trace events to be resumed
  *
  * @api
  */
