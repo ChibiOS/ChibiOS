@@ -1,0 +1,93 @@
+******************************************************************************
+*** ChibiOS next Release Notes.                                            ***
+******************************************************************************
+
+ChibiOS next is composed of several independent but inter-operable
+sub-projects: RT, NIL, HAL, EX.
+
+*** ChibiOS next highlights ****
+
+This release is focused on RTOS general improvements, both RT and NIL received
+a series of important improvements, new features have been added.
+
+*** ChibiOS next general improvements ***
+
+- Shared licensing headers under /os/licenses, now all products are handled
+  by the same license include files.
+- New ChibiOS/EX subsystems. EX sits on top of HAL and provides portable
+  drivers for devices residing the MCU like MEMS, sensors, memories,
+  displays etc.
+- Shared RTOS components, now allocators, mailboxes and binary semaphores
+  are usable by both RT and NIL.
+  - Memory Pools now have a new variant named "Guarded Memory Pool" including
+    a semaphore that guards the allocation function, the caller waits if there
+    is not an object available in the pool.
+- FatFS 0.10b has been integrated.
+- Rationalized source tree to reduce code duplication.
+- New unit test library.
+- Test suites have been rewritten using an unique code generation system
+  starting from XML descriptions.
+- Startup files have been separated from ports and licensed under Apache 2.0
+  license, now it is possible to use ChibiOS startups and ld files in projects
+  without RT, NIL, HAL or EX.
+- Improved GCC ld scatter files with multi RAM/Flash regions capability.
+- GCC makefiles system improvements.
+- Support for all new Nucleo and Discovery boards from ST.
+- CMSIS updated to version 4.50.
+- Enhanced shell with history and quoted parameters. Common commands have
+  beed included in a shared module in order to avoid duplication in the
+  various demos.
+
+*** What's new in RT/NIL ports ***
+
+- Common ports architecture. Now RTOS ports work for both RT and NIL, no
+  more code duplication. Ports are now also licensed for both NIL and RT.
+- MPU use for hardware stack checking in ARMCMx port.
+
+*** What's new in RT 4.0.0 ***
+
+- Now uses the common ports architecture.
+- Now uses the new shared RTOS components.
+- New threading API, now creating static threads is even faster.
+- Extended priority range from 1..127 to 1..255.
+- Enhanced dynamic threading, safer and easier to use.
+- Enhanced Registry, it is now possible to find threads by name, by pointer
+  or by working area.
+- Enhanced trace buffer, it is able to store events regarding not just threads
+  but also IRQs, halts and user events. The trace record now stores both the
+  "slow" system time and a RT stamp for increased accuracy.
+- New kernel hooks for a more flexible code instrumentation.
+- Removed I/O queues, now the HAL has an improved equivalent.
+- Experimental NASA OSAL implementation.
+- Posix simulator added.
+
+*** What's new in NIL 2.0.0 ***
+
+- Now uses the common ports architecture.
+- Now uses the new shared RTOS components.
+- Added implementation of thread queues directly in the kernel, removed it
+  from NIL OSAL.
+- All new features are optional so there is no code size increase.
+- Enhanced source-level compatibility with RT.
+- Enhanced debug features.
+  - State checker like in RT.
+  - Parameters checks like in RT.
+
+*** What's new in HAL 5.0.0 ***
+
+- Improved serial driver.
+  - It is possible to set a different buffer size for each port.
+  - SW overruns and HW overruns now have a separate event flag.
+- Events handling in the PAL driver. Now it is able to support interrupts
+  handling and callbacks.
+- EXT driver is still supported but marked as deprecated.
+- New interface for flash devices (used by EX).
+- New interfaces for accelerometer, barometer, compass, gyroscope,
+  hygrometer and thermometer devices (used by EX).
+- Added an I2C bit banged driver as fall-back for faulty hardwares.
+- Improved OSAL architecture with shared sub-modules.
+- All file names have been prefixed by "hal_" in order to prevent collisions
+  with 3rd parties files. This should make integration of external libraries
+  much easier.
+- Improved behavior of HAL queues, now the timeout is absolute not just an
+  inter-byte timeout.

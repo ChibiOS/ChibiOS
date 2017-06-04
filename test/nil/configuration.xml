@@ -1,0 +1,1491 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SPC5-Config version="1.0.0">
+  <application name="ChibiOS/NIL Test Suite" version="1.0.0" standalone="true" locked="false">
+    <description>Test Specification for ChibiOS/NIL.</description>
+    <component id="org.chibios.spc5.components.portable.generic_startup">
+      <component id="org.chibios.spc5.components.portable.chibios_unitary_tests_engine" />
+    </component>
+    <instances>
+      <instance locked="false" id="org.chibios.spc5.components.portable.generic_startup" />
+      <instance locked="false" id="org.chibios.spc5.components.portable.chibios_unitary_tests_engine">
+        <description>
+          <copyright>
+            <value><![CDATA[/*
+    ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/]]></value>
+          </copyright>
+          <introduction>
+            <value>Test suite for ChibiOS/NIL. The purpose of this suite is to perform unit tests on the NIL modules and to converge to 100% code coverage through successive improvements.</value>
+          </introduction>
+        </description>
+        <global_data_and_code>
+          <global_definitions>
+            <value><![CDATA[#define TEST_SUITE_NAME                     "ChibiOS/NIL Test Suite"
+
+extern semaphore_t gsem1, gsem2;
+extern thread_reference_t gtr1;
+extern THD_WORKING_AREA(wa_test_support, 128);
+
+THD_FUNCTION(test_support, arg);]]></value>
+          </global_definitions>
+          <global_code>
+            <value><![CDATA[semaphore_t gsem1, gsem2;
+thread_reference_t gtr1;
+
+/*
+ * Support thread.
+ */
+THD_WORKING_AREA(wa_test_support, 128);
+THD_FUNCTION(test_support, arg) {
+#if CH_CFG_USE_EVENTS == TRUE
+  thread_t *tp = (thread_t *)arg;
+#else
+  (void)arg;
+#endif
+
+  /* Initializing global resources.*/
+  chSemObjectInit(&gsem1, 0);
+  chSemObjectInit(&gsem2, 0);
+
+  while (true) {
+    chSysLock();
+    if (chSemGetCounterI(&gsem1) < 0)
+      chSemSignalI(&gsem1);
+    chSemResetI(&gsem2, 0);
+    chThdResumeI(&gtr1, MSG_OK);
+#if CH_CFG_USE_EVENTS == TRUE
+    chEvtSignalI(tp, 0x55);
+#endif
+    chSchRescheduleS();
+    chSysUnlock();
+
+    chThdSleepMilliseconds(250);
+  }
+}]]></value>
+          </global_code>
+        </global_data_and_code>
+        <sequences>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
+              <value>Threads Functionality.</value>
+            </brief>
+            <description>
+              <value>This sequence tests the ChibiOS/NIL functionalities related to threading.</value>
+            </description>
+            <condition>
+              <value />
+            </condition>
+            <shared_code>
+              <value><![CDATA[#include "ch.h"]]></value>
+            </shared_code>
+            <cases>
+              <case>
+                <brief>
+                  <value>System Tick Counter functionality.</value>
+                </brief>
+                <description>
+                  <value>The functionality of the API @p chVTGetSystemTimeX() is tested.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>A System Tick Counter increment is expected, the test simply hangs if it does not happen.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[systime_t time = chVTGetSystemTimeX();
+while (time == chVTGetSystemTimeX()) {
+}]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Thread Sleep functionality.</value>
+                </brief>
+                <description>
+                  <value>The functionality of @p chThdSleep() and derivatives is tested.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[systime_t time;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>The current system time is read then a sleep is performed for 100 system ticks and on exit the system time is verified again.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[time = chVTGetSystemTimeX();
+chThdSleep(100);
+test_assert_time_window(time + 100,
+                        time + 100 + 1,
+                        "out of time window");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The current system time is read then a sleep is performed for 100000 microseconds and on exit the system time is verified again.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[time = chVTGetSystemTimeX();
+chThdSleepMicroseconds(100000);
+test_assert_time_window(time + US2ST(100000),
+                        time + US2ST(100000) + 1,
+                        "out of time window");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The current system time is read then a sleep is performed for 100 milliseconds and on exit the system time is verified again.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[time = chVTGetSystemTimeX();
+chThdSleepMilliseconds(100);
+test_assert_time_window(time + MS2ST(100),
+                        time + MS2ST(100) + 1,
+                        "out of time window");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The current system time is read then a sleep is performed for 1 second and on exit the system time is verified again.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[time = chVTGetSystemTimeX();
+chThdSleepSeconds(1);
+test_assert_time_window(time + S2ST(1),
+                        time + S2ST(1) + 1,
+                        "out of time window");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Function chThdSleepUntil() is tested with a timeline of "now" + 100 ticks.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[time = chVTGetSystemTimeX();
+chThdSleepUntil(time + 100);
+test_assert_time_window(time + 100,
+                        time + 100 + 1,
+                        "out of time window");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+            </cases>
+          </sequence>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
+              <value>Semaphores.</value>
+            </brief>
+            <description>
+              <value>This sequence tests the ChibiOS/NIL functionalities related to counter semaphores.</value>
+            </description>
+            <condition>
+              <value>CH_CFG_USE_SEMAPHORES</value>
+            </condition>
+            <shared_code>
+              <value><![CDATA[#include "ch.h"
+
+static semaphore_t sem1;]]></value>
+            </shared_code>
+            <cases>
+              <case>
+                <brief>
+                  <value>Semaphore primitives, no state change.</value>
+                </brief>
+                <description>
+                  <value>Wait, Signal and Reset primitives are tested. The testing thread does not trigger a state change.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chSemObjectInit(&sem1, 1);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value><![CDATA[chSemReset(&sem1, 0);]]></value>
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>The function chSemWait() is invoked, after return the counter and the returned message are tested.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[msg_t msg;
+
+msg = chSemWait(&sem1);
+test_assert_lock(chSemGetCounterI(&sem1) == 0, "wrong counter value");
+test_assert(MSG_OK == msg, "wrong returned message");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The function chSemSignal() is invoked, after return the counter is tested.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chSemSignal(&sem1);
+test_assert_lock(chSemGetCounterI(&sem1) == 1, "wrong counter value");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The function chSemReset() is invoked, after return the counter is tested.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chSemReset(&sem1, 2);
+test_assert_lock(chSemGetCounterI(&sem1) == 2, "wrong counter value");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Semaphore primitives, with state change.</value>
+                </brief>
+                <description>
+                  <value>Wait, Signal and Reset primitives are tested. The testing thread triggers a state change.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chSemObjectInit(&gsem1, 0);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value><![CDATA[chSemReset(&gsem1, 0);]]></value>
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>The function chSemWait() is invoked, after return the counter and the returned message are tested. The semaphore is signaled by another thread.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[msg_t msg;
+
+msg = chSemWait(&gsem1);
+test_assert_lock(chSemGetCounterI(&gsem1) == 0, "wrong counter value");
+test_assert(MSG_OK == msg, "wrong returned message");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The function chSemWait() is invoked, after return the counter and the returned message are tested. The semaphore is reset by another thread.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[msg_t msg;
+
+msg = chSemWait(&gsem2);
+test_assert_lock(chSemGetCounterI(&gsem2) == 0,"wrong counter value");
+test_assert(MSG_RESET == msg, "wrong returned message");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Semaphores timeout.</value>
+                </brief>
+                <description>
+                  <value>Timeout on semaphores is tested.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chSemObjectInit(&sem1, 0);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value><![CDATA[chSemReset(&sem1, 0);]]></value>
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[systime_t time;
+msg_t msg;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>The function chSemWaitTimeout() is invoked a first time, after return the system time, the counter and the returned message are tested.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[time = chVTGetSystemTimeX();
+msg = chSemWaitTimeout(&sem1, MS2ST(1000));
+test_assert_time_window(time + MS2ST(1000),
+                        time + MS2ST(1000) + 1,
+                        "out of time window");
+test_assert_lock(chSemGetCounterI(&sem1) == 0, "wrong counter value");
+test_assert(MSG_TIMEOUT == msg, "wrong timeout message");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The function chSemWaitTimeout() is invoked again, after return the system time, the counter and the returned message are tested.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[time = chVTGetSystemTimeX();
+msg = chSemWaitTimeout(&sem1, MS2ST(1000));
+test_assert_time_window(time + MS2ST(1000),
+                        time + MS2ST(1000) + 1,
+                        "out of time window");
+test_assert_lock(chSemGetCounterI(&sem1) == 0, "wrong counter value");
+test_assert(MSG_TIMEOUT == msg, "wrong timeout message");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+            </cases>
+          </sequence>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
+              <value>Suspend/Resume and Event Flags.</value>
+            </brief>
+            <description>
+              <value>This sequence tests the ChibiOS/NIL functionalities related to threads suspend/resume and event flags.</value>
+            </description>
+            <condition>
+              <value />
+            </condition>
+            <shared_code>
+              <value><![CDATA[static thread_reference_t tr1;]]></value>
+            </shared_code>
+            <cases>
+              <case>
+                <brief>
+                  <value>Suspend and Resume functionality.</value>
+                </brief>
+                <description>
+                  <value>The functionality of chThdSuspendTimeoutS() and chThdResumeI() is tested.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[tr1 = NULL;]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[systime_t time;
+msg_t msg;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>The function chThdSuspendTimeoutS() is invoked, the thread is remotely resumed with message @p MSG_OK. On return the message and the state of the reference are tested.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chSysLock();
+msg = chThdSuspendTimeoutS(&gtr1, TIME_INFINITE);
+chSysUnlock();
+test_assert(NULL == gtr1, "not NULL");
+test_assert(MSG_OK == msg,"wrong returned message");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The function chThdSuspendTimeoutS() is invoked, the thread is not resumed so a timeout must occur. On return the message and the state of the reference are tested.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chSysLock();
+time = chVTGetSystemTimeX();
+msg = chThdSuspendTimeoutS(&tr1, MS2ST(1000));
+chSysUnlock();
+test_assert_time_window(time + MS2ST(1000),
+                        time + MS2ST(1000) + 1,
+                        "out of time window");
+test_assert(NULL == tr1, "not NULL");
+test_assert(MSG_TIMEOUT == msg, "wrong returned message");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Events Flags functionality.</value>
+                </brief>
+                <description>
+                  <value>Event flags functionality is tested.</value>
+                </description>
+                <condition>
+                  <value>CH_CFG_USE_EVENTS</value>
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[systime_t time;
+eventmask_t events;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>A set of event flags are set on the current thread then the function chEvtWaitAnyTimeout() is invoked, the function is supposed to return immediately because the event flags are already pending, after return the events mask is tested.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[time = chVTGetSystemTimeX();
+chEvtSignal(chThdGetSelfX(), 0x55);
+events = chEvtWaitAnyTimeout(ALL_EVENTS, MS2ST(1000));
+test_assert((eventmask_t)0 != events, "timed out");
+test_assert((eventmask_t)0x55 == events, "wrong events mask");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The pending event flags mask is cleared then the function chEvtWaitAnyTimeout() is invoked, after return the events mask is tested. The thread is signaled by another thread.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[time = chVTGetSystemTimeX();
+chThdGetSelfX()->epmask = 0;
+events = chEvtWaitAnyTimeout(ALL_EVENTS, MS2ST(1000));
+test_assert((eventmask_t)0 != events, "timed out");
+test_assert((eventmask_t)0x55 == events, "wrong events mask");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The function chEvtWaitAnyTimeout() is invoked, no event can wakeup the thread, the function must return because timeout.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[time = chVTGetSystemTimeX();
+events = chEvtWaitAnyTimeout(0, MS2ST(1000));
+test_assert_time_window(time + MS2ST(1000),
+                        time + MS2ST(1000) + 1,
+                        "out of time window");
+test_assert((eventmask_t)0 == events, "wrong events mask");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+            </cases>
+          </sequence>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
+              <value>Mailboxes.</value>
+            </brief>
+            <description>
+              <value>This sequence tests the ChibiOS/NIL functionalities related to mailboxes.</value>
+            </description>
+            <condition>
+              <value>CH_CFG_USE_MAILBOXES</value>
+            </condition>
+            <shared_code>
+              <value><![CDATA[#define ALLOWED_DELAY MS2ST(5)
+#define MB_SIZE 4
+
+static msg_t mb_buffer[MB_SIZE];
+static MAILBOX_DECL(mb1, mb_buffer, MB_SIZE);]]></value>
+            </shared_code>
+            <cases>
+              <case>
+                <brief>
+                  <value>Mailbox normal API, non-blocking tests.</value>
+                </brief>
+                <description>
+                  <value>The mailbox normal API is tested without triggering blocking conditions.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chMBObjectInit(&mb1, mb_buffer, MB_SIZE);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value><![CDATA[chMBReset(&mb1);]]></value>
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[msg_t msg1, msg2;
+unsigned i;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Testing the mailbox size.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "wrong size");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Resetting the mailbox, conditions are checked, no errors expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chMBReset(&mb1);
+test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "not empty");
+test_assert_lock(chMBGetUsedCountI(&mb1) == 0, "still full");
+test_assert_lock(mb1.buffer == mb1.wrptr, "write pointer not aligned to base");
+test_assert_lock(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing the behavior of API when the mailbox is in reset state then return in active state.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[msg1 = chMBPost(&mb1, (msg_t)0, TIME_INFINITE);
+test_assert(msg1 == MSG_RESET, "not in reset state");
+msg1 = chMBPostAhead(&mb1, (msg_t)0, TIME_INFINITE);
+test_assert(msg1 == MSG_RESET, "not in reset state");
+msg1 = chMBFetch(&mb1, &msg2, TIME_INFINITE);
+test_assert(msg1 == MSG_RESET, "not in reset state");
+chMBResumeX(&mb1);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Filling the mailbox using chMBPost() and chMBPostAhead() once, no errors expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[for (i = 0; i < MB_SIZE - 1; i++) {
+  msg1 = chMBPost(&mb1, 'B' + i, TIME_INFINITE);
+  test_assert(msg1 == MSG_OK, "wrong wake-up message");
+}
+msg1 = chMBPostAhead(&mb1, 'A', TIME_INFINITE);
+test_assert(msg1 == MSG_OK, "wrong wake-up message");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing intermediate conditions. Data pointers must be aligned, semaphore counters are checked.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_assert_lock(chMBGetFreeCountI(&mb1) == 0, "still empty");
+test_assert_lock(chMBGetUsedCountI(&mb1) == MB_SIZE, "not full");
+test_assert_lock(mb1.rdptr == mb1.wrptr, "pointers not aligned");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Emptying the mailbox using chMBFetch(), no errors expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[for (i = 0; i < MB_SIZE; i++) {
+  msg1 = chMBFetch(&mb1, &msg2, TIME_INFINITE);
+  test_assert(msg1 == MSG_OK, "wrong wake-up message");
+  test_emit_token(msg2);
+}
+test_assert_sequence("ABCD", "wrong get sequence");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Posting and then fetching one more message, no errors expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[msg1 = chMBPost(&mb1, 'B' + i, TIME_INFINITE);
+test_assert(msg1 == MSG_OK, "wrong wake-up message");
+msg1 = chMBFetch(&mb1, &msg2, TIME_INFINITE);
+test_assert(msg1 == MSG_OK, "wrong wake-up message");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing final conditions. Data pointers must be aligned to buffer start, semaphore counters are checked.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "not empty");
+test_assert_lock(chMBGetUsedCountI(&mb1) == 0, "still full");
+test_assert(mb1.buffer == mb1.wrptr, "write pointer not aligned to base");
+test_assert(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Mailbox I-Class API, non-blocking tests.</value>
+                </brief>
+                <description>
+                  <value>The mailbox I-Class API is tested without triggering blocking conditions.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chMBObjectInit(&mb1, mb_buffer, MB_SIZE);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value><![CDATA[chMBReset(&mb1);]]></value>
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[msg_t msg1, msg2;
+unsigned i;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Testing the mailbox size.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "wrong size");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Resetting the mailbox, conditions are checked, no errors expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chSysLock();
+chMBResetI(&mb1);
+chSysUnlock();
+test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "not empty");
+test_assert_lock(chMBGetUsedCountI(&mb1) == 0, "still full");
+test_assert_lock(mb1.buffer == mb1.wrptr, "write pointer not aligned to base");
+test_assert_lock(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");
+chMBResumeX(&mb1);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Filling the mailbox using chMBPostI() and chMBPostAheadI() once, no errors expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[for (i = 0; i < MB_SIZE - 1; i++) {
+  chSysLock();
+  msg1 = chMBPostI(&mb1, 'B' + i);
+  chSysUnlock();
+  test_assert(msg1 == MSG_OK, "wrong wake-up message");
+}
+chSysLock();
+msg1 = chMBPostAheadI(&mb1, 'A');
+chSysUnlock();
+test_assert(msg1 == MSG_OK, "wrong wake-up message");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing intermediate conditions. Data pointers must be aligned, semaphore counters are checked.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_assert_lock(chMBGetFreeCountI(&mb1) == 0, "still empty");
+test_assert_lock(chMBGetUsedCountI(&mb1) == MB_SIZE, "not full");
+test_assert_lock(mb1.rdptr == mb1.wrptr, "pointers not aligned");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Emptying the mailbox using chMBFetchI(), no errors expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[for (i = 0; i < MB_SIZE; i++) {
+  chSysLock();
+  msg1 = chMBFetchI(&mb1, &msg2);
+  chSysUnlock();
+  test_assert(msg1 == MSG_OK, "wrong wake-up message");
+  test_emit_token(msg2);
+}
+test_assert_sequence("ABCD", "wrong get sequence");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Posting and then fetching one more message, no errors expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[msg1 = chMBPost(&mb1, 'B' + i, TIME_INFINITE);
+test_assert(msg1 == MSG_OK, "wrong wake-up message");
+msg1 = chMBFetch(&mb1, &msg2, TIME_INFINITE);
+test_assert(msg1 == MSG_OK, "wrong wake-up message");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing final conditions. Data pointers must be aligned to buffer start, semaphore counters are checked.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "not empty");
+test_assert_lock(chMBGetUsedCountI(&mb1) == 0, "still full");
+test_assert(mb1.buffer == mb1.wrptr, "write pointer not aligned to base");
+test_assert(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Mailbox timeouts.</value>
+                </brief>
+                <description>
+                  <value>The mailbox API is tested for timeouts.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chMBObjectInit(&mb1, mb_buffer, MB_SIZE);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value><![CDATA[chMBReset(&mb1);]]></value>
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[msg_t msg1, msg2;
+unsigned i;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Filling the mailbox.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[for (i = 0; i < MB_SIZE; i++) {
+  msg1 = chMBPost(&mb1, 'B' + i, TIME_INFINITE);
+  test_assert(msg1 == MSG_OK, "wrong wake-up message");
+}]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing chMBPost(), chMBPostI(), chMBPostAhead() and chMBPostAheadI() timeout.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[msg1 = chMBPost(&mb1, 'X', 1);
+test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
+chSysLock();
+msg1 = chMBPostI(&mb1, 'X');
+chSysUnlock();
+test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
+msg1 = chMBPostAhead(&mb1, 'X', 1);
+test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
+chSysLock();
+msg1 = chMBPostAheadI(&mb1, 'X');
+chSysUnlock();
+test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Resetting the mailbox.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chMBReset(&mb1);;
+chMBResumeX(&mb1);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing chMBFetch() and chMBFetchI() timeout.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[msg1 = chMBFetch(&mb1, &msg2, 1);
+test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
+chSysLock();
+msg1 = chMBFetchI(&mb1, &msg2);
+chSysUnlock();
+test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+            </cases>
+          </sequence>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
+              <value>Memory Pools.</value>
+            </brief>
+            <description>
+              <value>This sequence tests the ChibiOS/NIL functionalities related to memory pools.</value>
+            </description>
+            <condition>
+              <value>CH_CFG_USE_MEMPOOLS</value>
+            </condition>
+            <shared_code>
+              <value><![CDATA[#define MEMORY_POOL_SIZE 4
+
+static uint32_t objects[MEMORY_POOL_SIZE];
+static MEMORYPOOL_DECL(mp1, sizeof (uint32_t), NULL);
+
+#if CH_CFG_USE_SEMAPHORES
+static GUARDEDMEMORYPOOL_DECL(gmp1, sizeof (uint32_t));
+#endif
+
+static void *null_provider(size_t size, unsigned align) {
+
+  (void)size;
+  (void)align;
+
+  return NULL;
+}]]></value>
+            </shared_code>
+            <cases>
+              <case>
+                <brief>
+                  <value>Loading and emptying a memory pool.</value>
+                </brief>
+                <description>
+                  <value>The memory pool functionality is tested by loading and emptying it, all conditions are tested.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chPoolObjectInit(&mp1, sizeof (uint32_t), NULL);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[unsigned i;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Adding the objects to the pool using chPoolLoadArray().</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chPoolLoadArray(&mp1, objects, MEMORY_POOL_SIZE);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Emptying the pool using chPoolAlloc().</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[for (i = 0; i < MEMORY_POOL_SIZE; i++)
+  test_assert(chPoolAlloc(&mp1) != NULL, "list empty");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Now must be empty.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_assert(chPoolAlloc(&mp1) == NULL, "list not empty");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Adding the objects to the pool using chPoolFree().</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[for (i = 0; i < MEMORY_POOL_SIZE; i++)
+  chPoolFree(&mp1, &objects[i]);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Emptying the pool using chPoolAlloc() again.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[for (i = 0; i < MEMORY_POOL_SIZE; i++)
+  test_assert(chPoolAlloc(&mp1) != NULL, "list empty");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Now must be empty again.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_assert(chPoolAlloc(&mp1) == NULL, "list not empty");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Covering the case where a provider is unable to return more memory.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chPoolObjectInit(&mp1, sizeof (uint32_t), null_provider);
+test_assert(chPoolAlloc(&mp1) == NULL, "provider returned memory");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Loading and emptying a guarded memory pool without waiting.</value>
+                </brief>
+                <description>
+                  <value>The memory pool functionality is tested by loading and emptying it, all conditions are tested.</value>
+                </description>
+                <condition>
+                  <value>CH_CFG_USE_SEMAPHORES</value>
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chGuardedPoolObjectInit(&gmp1, sizeof (uint32_t));]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[unsigned i;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Adding the objects to the pool using chGuardedPoolLoadArray().</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chGuardedPoolLoadArray(&gmp1, objects, MEMORY_POOL_SIZE);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Emptying the pool using chGuardedPoolAllocTimeout().</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[for (i = 0; i < MEMORY_POOL_SIZE; i++)
+  test_assert(chGuardedPoolAllocTimeout(&gmp1, TIME_IMMEDIATE) != NULL, "list empty");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Now must be empty.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_assert(chGuardedPoolAllocTimeout(&gmp1, TIME_IMMEDIATE) == NULL, "list not empty");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Adding the objects to the pool using chGuardedPoolFree().</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[for (i = 0; i < MEMORY_POOL_SIZE; i++)
+  chGuardedPoolFree(&gmp1, &objects[i]);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Emptying the pool using chGuardedPoolAllocTimeout() again.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[for (i = 0; i < MEMORY_POOL_SIZE; i++)
+  test_assert(chGuardedPoolAllocTimeout(&gmp1, TIME_IMMEDIATE) != NULL, "list empty");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Now must be empty again.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_assert(chGuardedPoolAllocTimeout(&gmp1, TIME_IMMEDIATE) == NULL, "list not empty");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Guarded Memory Pools timeout.</value>
+                </brief>
+                <description>
+                  <value>The timeout features for the Guarded Memory Pools is tested.</value>
+                </description>
+                <condition>
+                  <value>CH_CFG_USE_SEMAPHORES</value>
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chGuardedPoolObjectInit(&gmp1, sizeof (uint32_t));]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Trying to allocate with 100mS timeout, must fail because the pool is empty.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_assert(chGuardedPoolAllocTimeout(&gmp1, MS2ST(100)) == NULL, "list not empty");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+            </cases>
+          </sequence>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
+              <value>Memory Heaps.</value>
+            </brief>
+            <description>
+              <value>This sequence tests the ChibiOS/NIL functionalities related to memory heaps.</value>
+            </description>
+            <condition>
+              <value>CH_CFG_USE_HEAP</value>
+            </condition>
+            <shared_code>
+              <value><![CDATA[#define ALLOC_SIZE 16
+#define HEAP_SIZE (ALLOC_SIZE * 8)
+
+static memory_heap_t test_heap;
+static CH_HEAP_AREA(myheap, HEAP_SIZE);]]></value>
+            </shared_code>
+            <cases>
+              <case>
+                <brief>
+                  <value>Allocation and fragmentation.</value>
+                </brief>
+                <description>
+                  <value>Series of allocations/deallocations are performed in carefully designed sequences in order to stimulate all the possible code paths inside the allocator. The test expects to find the heap back to the initial status after each sequence.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chHeapObjectInit(&test_heap, myheap, sizeof(myheap));]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[void *p1, *p2, *p3;
+size_t n, sz;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Testing initial conditions, the heap must not be fragmented and one free block present.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_assert(chHeapStatus(&test_heap, &sz, NULL) == 1, "heap fragmented");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Trying to allocate an block bigger than available space, an error is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[p1 = chHeapAlloc(&test_heap, HEAP_SIZE * 2);
+test_assert(p1 == NULL, "allocation not failed");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Single block allocation using chHeapAlloc() then the block is freed using chHeapFree(), must not fail.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[p1 = chHeapAlloc(&test_heap, ALLOC_SIZE);
+test_assert(p1 != NULL, "allocation failed");
+chHeapFree(p1);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Using chHeapStatus() to assess the heap state. There must be at least one free block of sufficient size.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[size_t total_size, largest_size;
+
+n = chHeapStatus(&test_heap, &total_size, &largest_size);
+test_assert(n == 1, "missing free block");
+test_assert(total_size >= ALLOC_SIZE, "unexpected heap state");
+test_assert(total_size == largest_size, "unexpected heap state");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Allocating then freeing in the same order.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[p1 = chHeapAlloc(&test_heap, ALLOC_SIZE);
+p2 = chHeapAlloc(&test_heap, ALLOC_SIZE);
+p3 = chHeapAlloc(&test_heap, ALLOC_SIZE);
+chHeapFree(p1);                                 /* Does not merge.*/
+chHeapFree(p2);                                 /* Merges backward.*/
+chHeapFree(p3);                                 /* Merges both sides.*/
+test_assert(chHeapStatus(&test_heap, &n, NULL) == 1, "heap fragmented");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Allocating then freeing in reverse order.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[p1 = chHeapAlloc(&test_heap, ALLOC_SIZE);
+p2 = chHeapAlloc(&test_heap, ALLOC_SIZE);
+p3 = chHeapAlloc(&test_heap, ALLOC_SIZE);
+chHeapFree(p3);                                 /* Merges forward.*/
+chHeapFree(p2);                                 /* Merges forward.*/
+chHeapFree(p1);                                 /* Merges forward.*/
+test_assert(chHeapStatus(&test_heap, &n, NULL) == 1, "heap fragmented");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Small fragments handling. Checking the behavior when allocating blocks with size not multiple of alignment unit.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[p1 = chHeapAlloc(&test_heap, ALLOC_SIZE + 1);
+p2 = chHeapAlloc(&test_heap, ALLOC_SIZE);
+chHeapFree(p1);
+test_assert(chHeapStatus(&test_heap, &n, NULL) == 2, "invalid state");
+p1 = chHeapAlloc(&test_heap, ALLOC_SIZE);
+/* Note, the first situation happens when the alignment size is smaller
+   than the header size, the second in the other cases.*/
+test_assert((chHeapStatus(&test_heap, &n, NULL) == 1) ||
+            (chHeapStatus(&test_heap, &n, NULL) == 2), "heap fragmented");
+chHeapFree(p2);
+chHeapFree(p1);
+test_assert(chHeapStatus(&test_heap, &n, NULL) == 1, "heap fragmented");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Skipping a fragment, the first fragment in the list is too small so the allocator must pick the second one.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[p1 = chHeapAlloc(&test_heap, ALLOC_SIZE);
+p2 = chHeapAlloc(&test_heap, ALLOC_SIZE);
+chHeapFree(p1);
+test_assert( chHeapStatus(&test_heap, &n, NULL) == 2, "invalid state");
+p1 = chHeapAlloc(&test_heap, ALLOC_SIZE * 2); /* Skips first fragment.*/
+chHeapFree(p1);
+chHeapFree(p2);
+test_assert(chHeapStatus(&test_heap, &n, NULL) == 1, "heap fragmented");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Allocating the whole available space.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[(void)chHeapStatus(&test_heap, &n, NULL);
+p1 = chHeapAlloc(&test_heap, n);
+test_assert(p1 != NULL, "allocation failed");
+test_assert(chHeapStatus(&test_heap, NULL, NULL) == 0, "not empty");
+chHeapFree(p1);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing final conditions. The heap geometry must be the same than the one registered at beginning.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_assert(chHeapStatus(&test_heap, &n, NULL) == 1, "heap fragmented");
+test_assert(n == sz, "size changed");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Default Heap.</value>
+                </brief>
+                <description>
+                  <value>The default heap is pre-allocated in the system. We test base functionality.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[void *p1;
+size_t total_size, largest_size;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Single block allocation using chHeapAlloc() then the block is freed using chHeapFree(), must not fail.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[(void)chHeapStatus(NULL, &total_size, &largest_size);
+p1 = chHeapAlloc(&test_heap, ALLOC_SIZE);
+test_assert(p1 != NULL, "allocation failed");
+chHeapFree(p1);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Testing allocation failure.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[p1 = chHeapAlloc(NULL, (size_t)-256);
+test_assert(p1 == NULL, "allocation not failed");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+            </cases>
+          </sequence>
+        </sequences>
+      </instance>
+    </instances>
+    <exportedFeatures />
+  </application>
+</SPC5-Config>

@@ -1,0 +1,55 @@
+
+*** ChibiOS/NIL Test Suite
+***
+*** Compiled:     Mar 17 2017 - 14:30:12
+*** Platform:     SPC560Dxx Car Body and Convenience
+*** Test Board:   EVB with SPC560Dxx Mini Module
+
+----------------------------------------------------------------------------
+--- Test Case 1.1 (System Tick Counter functionality)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
+--- Test Case 1.2 (Thread Sleep functionality)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
+--- Test Case 2.1 (Semaphore primitives, no state change)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
+--- Test Case 2.2 (Semaphore primitives, with state change)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
+--- Test Case 2.3 (Semaphores timeout)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
+--- Test Case 3.1 (Suspend and Resume functionality)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
+--- Test Case 3.2 (Events Flags functionality)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
+--- Test Case 4.1 (Mailbox normal API, non-blocking tests)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
+--- Test Case 4.2 (Mailbox I-Class API, non-blocking tests)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
+--- Test Case 4.3 (Mailbox timeouts)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
+--- Test Case 5.1 (Loading and emptying a memory pool)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
+--- Test Case 5.2 (Loading and emptying a guarded memory pool without waiting)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
+--- Test Case 5.3 (Guarded Memory Pools timeout)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
+--- Test Case 6.1 (Allocation and fragmentation)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
+--- Test Case 6.2 (Default Heap)
+--- Result: SUCCESS
+----------------------------------------------------------------------------
+
+Final result: SUCCESS
