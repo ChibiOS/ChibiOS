@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chmem.h
+ * @file    chalign.h
  * @brief   Memory alignment macros and structures.
  *
  * @addtogroup mem
