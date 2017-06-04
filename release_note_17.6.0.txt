@@ -1,5 +1,5 @@
 ******************************************************************************
-*** ChibiOS next Release Notes.                                            ***
+*** ChibiOS 17.6.0 Release Notes.                                            ***
 ******************************************************************************
 
 ChibiOS next is composed of several independent but inter-operable
