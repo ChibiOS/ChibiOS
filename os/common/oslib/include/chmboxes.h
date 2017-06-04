@@ -133,7 +133,7 @@ extern "C" {
  *
  * @iclass
  */
-static inline cnt_t chMBGetSizeI(mailbox_t *mbp) {
+static inline cnt_t chMBGetSizeI(const mailbox_t *mbp) {
 
   /*lint -save -e9033 [10.8] Perfectly safe pointers
     arithmetic.*/
@@ -150,7 +150,7 @@ static inline cnt_t chMBGetSizeI(mailbox_t *mbp) {
  *
  * @iclass
  */
-static inline cnt_t chMBGetUsedCountI(mailbox_t *mbp) {
+static inline cnt_t chMBGetUsedCountI(const mailbox_t *mbp) {
 
   chDbgCheckClassI();
 
@@ -165,7 +165,7 @@ static inline cnt_t chMBGetUsedCountI(mailbox_t *mbp) {
  *
  * @iclass
  */
-static inline cnt_t chMBGetFreeCountI(mailbox_t *mbp) {
+static inline cnt_t chMBGetFreeCountI(const mailbox_t *mbp) {
 
   chDbgCheckClassI();
 
@@ -184,7 +184,7 @@ static inline cnt_t chMBGetFreeCountI(mailbox_t *mbp) {
  *
  * @iclass
  */
-static inline msg_t chMBPeekI(mailbox_t *mbp) {
+static inline msg_t chMBPeekI(const mailbox_t *mbp) {
 
   chDbgCheckClassI();
 

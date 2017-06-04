@@ -25,8 +25,6 @@
  * @{
  */
 
-#include <limits.h>
-
 #ifndef CHVT_H
 #define CHVT_H
 
@@ -53,7 +51,17 @@
  *          see the specific function documentation.
  */
 #define TIME_INFINITE   ((systime_t)-1)
+
+/**
+ * @brief   Maximum time constant.
+ */
+#define TIME_MAXIMUM    ((systime_t)-2)
 /** @} */
+
+/**
+ * @brief   Maximum unsigned integer.
+ */
+#define __UINT_MAX      ((unsigned int)-1)
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -236,7 +244,7 @@ extern "C" {
 static inline systime_t LL_S2ST(unsigned int sec) {
   uint64_t ticks = (uint64_t)sec * (uint64_t)CH_CFG_ST_FREQUENCY;
 
-  chDbgAssert(ticks < (uint64_t)TIME_INFINITE, "conversion overflow");
+  chDbgAssert(ticks <= (uint64_t)TIME_MAXIMUM, "conversion overflow");
 
   return (systime_t)ticks;
 }
@@ -258,7 +266,7 @@ static inline systime_t LL_MS2ST(unsigned int msec) {
   uint64_t ticks = (((uint64_t)msec * (uint64_t)CH_CFG_ST_FREQUENCY) + 999ULL)
                    / 1000ULL;
 
-  chDbgAssert(ticks < (uint64_t)TIME_INFINITE, "conversion overflow");
+  chDbgAssert(ticks <= (uint64_t)TIME_MAXIMUM, "conversion overflow");
 
   return (systime_t)ticks;
 }
@@ -280,7 +288,7 @@ static inline systime_t LL_US2ST(unsigned int usec) {
   uint64_t ticks = (((uint64_t)usec * (uint64_t)CH_CFG_ST_FREQUENCY) + 999999ULL)
                    / 1000000ULL;
 
-  chDbgAssert(ticks < (uint64_t)TIME_INFINITE, "conversion overflow");
+  chDbgAssert(ticks <= (uint64_t)TIME_MAXIMUM, "conversion overflow");
 
   return (systime_t)ticks;
 }
@@ -302,7 +310,7 @@ static inline unsigned int LL_ST2S(systime_t n) {
   uint64_t sec = ((uint64_t)n + (uint64_t)CH_CFG_ST_FREQUENCY - 1ULL)
                  / (uint64_t)CH_CFG_ST_FREQUENCY;
 
-  chDbgAssert(sec < (uint64_t)UINT_MAX, "conversion overflow");
+  chDbgAssert(sec < (uint64_t)__UINT_MAX, "conversion overflow");
 
   return (unsigned int)sec;
 }
@@ -321,10 +329,10 @@ static inline unsigned int LL_ST2S(systime_t n) {
  * @api
  */
 static inline unsigned int LL_ST2MS(systime_t n) {
-  uint64_t msec = ((uint64_t)n * 1000ULL + (uint64_t)CH_CFG_ST_FREQUENCY - 1ULL)
+  uint64_t msec = (((uint64_t)n * 1000ULL) + (uint64_t)CH_CFG_ST_FREQUENCY - 1ULL)
                    / (uint64_t)CH_CFG_ST_FREQUENCY;
 
-  chDbgAssert(msec < (uint64_t)UINT_MAX, "conversion overflow");
+  chDbgAssert(msec < (uint64_t)__UINT_MAX, "conversion overflow");
 
   return (unsigned int)msec;
 }
@@ -343,10 +351,10 @@ static inline unsigned int LL_ST2MS(systime_t n) {
  * @api
  */
 static inline unsigned int LL_ST2US(systime_t n) {
-  uint64_t usec = ((uint64_t)n * 1000000ULL + (uint64_t)CH_CFG_ST_FREQUENCY - 1ULL)
+  uint64_t usec = (((uint64_t)n * 1000000ULL) + (uint64_t)CH_CFG_ST_FREQUENCY - 1ULL)
                    / (uint64_t)CH_CFG_ST_FREQUENCY;
 
-  chDbgAssert(usec < (uint64_t)UINT_MAX, "conversion overflow");
+  chDbgAssert(usec < (uint64_t)__UINT_MAX, "conversion overflow");
 
   return (unsigned int)usec;
 }
