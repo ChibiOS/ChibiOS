@@ -37,9 +37,12 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  int chvprintf(BaseSequentialStream *chp, const char *fmt, va_list ap);
-  int chprintf(BaseSequentialStream *chp, const char *fmt, ...);
-  int chsnprintf(char *str, size_t size, const char *fmt, ...);
+  int chvprintf(BaseSequentialStream *chp, const char *fmt, va_list ap)
+    __attribute__((format(printf, 2, 0)));
+  int chprintf(BaseSequentialStream *chp, const char *fmt, ...)
+    __attribute__((format(printf, 2, 3)));
+  int chsnprintf(char *str, size_t size, const char *fmt, ...)
+    __attribute__((format(printf, 3, 4)));
 #ifdef __cplusplus
 }
 #endif
