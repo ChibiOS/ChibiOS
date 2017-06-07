@@ -25,6 +25,7 @@
 #ifndef CHPRINTF_H
 #define CHPRINTF_H
 
+#include "hal.h"
 #include <stdarg.h>
 
 /**
