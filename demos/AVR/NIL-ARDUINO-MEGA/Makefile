@@ -40,7 +40,7 @@
 #----------------------------------------------------------------------------
 
 # MCU name
-MCU = atmega1280
+MCU = atmega2560
 
 # Processor frequency.
 F_CPU = 16000000
@@ -49,7 +49,7 @@ F_CPU = 16000000
 FORMAT = ihex
 
 # Target file name (without extension).
-TARGET = nil
+TARGET = ch
 
 # Object files directory
 #     To put object files in current directory, use a dot (.), do NOT make
@@ -254,12 +254,12 @@ LDFLAGS += $(PRINTF_LIB) $(SCANF_LIB) $(MATH_LIB)
 # Type: avrdude -c ?
 # to get a full listing.
 #
-AVRDUDE_PROGRAMMER = arduino
+AVRDUDE_PROGRAMMER = wiring
 
 # com1 = serial port. Use lpt1 to connect to parallel port.
-AVRDUDE_PORT = /dev/tty.usbserial-A7004IPU  # programmer connected to serial device
+AVRDUDE_PORT = /dev/ttyUSB0  # programmer connected to serial device
 
-AVRDUDE_WRITE_FLASH = -U flash:w:$(TARGET).hex
+AVRDUDE_WRITE_FLASH = -D -U flash:w:$(TARGET).hex
 #AVRDUDE_WRITE_EEPROM = -U eeprom:w:$(TARGET).eep
 
 # Uncomment the following if you want avrdude's erase cycle counter.
@@ -278,7 +278,7 @@ AVRDUDE_WRITE_FLASH = -U flash:w:$(TARGET).hex
 
 AVRDUDE_FLAGS = -p $(MCU)
 AVRDUDE_FLAGS += -P $(AVRDUDE_PORT)
-AVRDUDE_FLAGS += -b 57600
+AVRDUDE_FLAGS += -b 115200
 AVRDUDE_FLAGS += -c $(AVRDUDE_PROGRAMMER)
 AVRDUDE_FLAGS += $(AVRDUDE_NO_VERIFY)
 AVRDUDE_FLAGS += $(AVRDUDE_VERBOSE)
