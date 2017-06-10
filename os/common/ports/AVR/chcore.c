@@ -150,7 +150,7 @@ void _port_thread_start(void) {
   asm volatile ("movw    r24, r4");
   asm volatile ("movw    r30, r2");
   asm volatile ("icall");
-  asm volatile ("call    chThdExit");
+  asm volatile ("call    chSysHalt");
 }
 
 /** @} */
