@@ -119,8 +119,8 @@ include $(CHIBIOS)/os/common/startup/ARM/compilers/GCC/mk/startup_sama5d2.mk
 #include $(CHIBIOS)/os/hal/boards/OLIMEX_LPC_P2148/board.mk
 #include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 # RTOS files (optional).
-#include $(CHIBIOS)/os/rt/rt.mk
-#include $(CHIBIOS)/os/common/ports/ARM/compilers/GCC/mk/port_generic.mk
+include $(CHIBIOS)/os/rt/rt.mk
+include $(CHIBIOS)/os/common/ports/ARMCMAx-TZ/compilers/GCC/mk/port_generic.mk
 # Other files (optional).
 #include $(CHIBIOS)/test/rt/test.mk
 
@@ -180,7 +180,7 @@ INCDIR = $(CHIBIOS)/os/license \
 # Compiler settings
 #
 
-MCU  = arm9
+MCU  = cortex-a5
 
 #TRGT = arm-elf-
 TRGT = arm-none-eabi-

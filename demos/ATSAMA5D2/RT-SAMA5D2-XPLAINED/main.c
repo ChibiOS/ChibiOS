@@ -16,10 +16,14 @@
 
 #include <stdbool.h>
 
+#include "ch.h"
+
 /*
  * Application entry point.
  */
 int main(void) {
+
+  chSysInit();
 
   while (true) {
   }

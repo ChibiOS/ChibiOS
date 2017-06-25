@@ -31,7 +31,7 @@
 /**
  * @brief   ARM core model.
  */
-#define ARM_CORE                ARM_CORE_ARM9
+#define ARM_CORE                ARM_CORE_CORTEX_A5
 
 /**
  * @brief   Thumb-capable.
