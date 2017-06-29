@@ -9,7 +9,7 @@ The demo runs on an STM32 Nucleo64-L476RG board. It has been tested with the X-N
 ** The Demo **
 
 The application demonstrates the use of the STM32L4xx I2C driver in order
-to acquire data from LSM6DS0 using ChibiOS/EX.
+to acquire data from LSM6DS0 using ChibiOS/EX .
 
 ** Board Setup **
 
