@@ -22,6 +22,8 @@
  * @file    l3gd20.h
  * @brief   L3GD20 MEMS interface module header.
  *
+ * @addtogroup L3GD20
+ * @ingroup EX_ST
  * @{
  */
 #ifndef _L3GD20_H_

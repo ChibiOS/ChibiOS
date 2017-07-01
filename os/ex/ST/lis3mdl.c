@@ -22,7 +22,8 @@
  * @file    lis3mdl.c
  * @brief   LIS3MDL MEMS interface module code.
  *
- * @addtogroup lis3mdl
+ * @addtogroup LIS3MDL
+ * @ingroup EX_ST
  * @{
  */
 

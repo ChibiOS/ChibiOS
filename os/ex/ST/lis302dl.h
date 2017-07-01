@@ -22,6 +22,8 @@
  * @file    lis302dl.h
  * @brief   LIS302DL MEMS interface module header.
  *
+ * @addtogroup LIS302DL
+ * @ingroup EX_ST
  * @{
  */
 

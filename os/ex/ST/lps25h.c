@@ -22,7 +22,8 @@
  * @file    lps25h.c
  * @brief   LPS25H MEMS interface module code.
  *
- * @addtogroup lps25h
+ * @addtogroup LPS25H
+ * @ingroup EX_ST
  * @{
  */
 

@@ -1,0 +1,38 @@
+/*
+    ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+/**
+ * @defgroup HAL HAL
+ * @brief   Hardware Abstraction Layer.
+ * @details Under ChibiOS the set of the various device driver interfaces
+ * is called the HAL subsystem: Hardware Abstraction Layer. The HAL is the
+ * abstract interface between ChibiOS applications and hardware.
+ *
+ * @section hal_interfaces HAL Interfaces
+ * An interface is a binary structure allowing the access to a service
+ * using virtual functions. This allows to create drivers that can be
+ * accessed using a common interface.
+ * The concept of interface is commonly found in object-oriented languages
+ * like Java or C++, their meaning in ChibiOS/HAL is exactly the same.
+ *
+ */
+
+/**
+ * @defgroup HAL_GYROSCOPE Generic Gyroscope Interfaces
+ * @brief   HAL Generic Gyroscope Interfaces.
+ *
+ * @ingroup HAL_PERIPHERAL_INTERFACES
+ */

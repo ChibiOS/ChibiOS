@@ -22,6 +22,8 @@
  * @file    lsm6ds0.h
  * @brief   LSM6DS0 MEMS interface module header.
  *
+ * @addtogroup LSM6DS0
+ * @ingroup EX_ST
  * @{
  */
 #ifndef _LSM6DS0_H_

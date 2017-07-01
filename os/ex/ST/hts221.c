@@ -22,7 +22,8 @@
  * @file    hts221.c
  * @brief   HTS221 MEMS interface module code.
  *
- * @addtogroup hts221
+ * @addtogroup HTS221
+ * @ingroup EX_ST
  * @{
  */
 

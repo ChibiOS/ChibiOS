@@ -22,7 +22,8 @@
  * @file    lis3dsh.c
  * @brief   LIS3DSH MEMS interface module code.
  *
- * @addtogroup lis3dsh
+ * @addtogroup LIS3DSH
+ * @ingroup EX_ST
  * @{
  */
 

@@ -22,6 +22,9 @@
  * @file    hts221.h
  * @brief   HTS221 MEMS interface module header.
  *
+ *
+ * @addtogroup HTS221
+ * @ingroup EX_ST
  * @{
  */
 #ifndef _HTS221_H_
