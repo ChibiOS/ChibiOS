@@ -88,6 +88,8 @@
 *****************************************************************************
 
 *** 17.6.1 ***
+- NIL: Fixed documentation-related issues (bug #850).
+- RT:  Fixed documentation-related issues (bug #850).
 - RT:  Fixed leftover chcustomer.h file (bug #849).
 - RT:  Fixed invalid check in chchecks.h (bug #848).
 

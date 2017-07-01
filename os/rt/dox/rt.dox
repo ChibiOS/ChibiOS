@@ -34,11 +34,6 @@
  */
 
 /**
- * @defgroup types Kernel Types
- * @ingroup kernel
- */
-
-/**
  * @defgroup base Base Kernel Services
  * @details Base kernel services, the base subsystems are always included in
  *          the OS builds.
@@ -112,6 +107,12 @@
  */
 
 /**
+ * @defgroup mem Memory Alignment
+ * @details Memory Alignment services.
+ * @ingroup kernel
+ */
+
+/**
  * @defgroup memory Memory Management
  * @details Memory Management services.
  * @ingroup kernel
@@ -137,17 +138,6 @@
  * @ingroup memory
  */
 
- /**
- * @defgroup streams Streams and Files
- * @details Stream and Files interfaces.
- * @ingroup kernel
- */
-
-/**
- * @defgroup data_streams Abstract Sequential Streams
- * @ingroup streams
- */
-
 /**
  * @defgroup registry Registry
  * @ingroup kernel
@@ -155,6 +145,11 @@
 
 /**
  * @defgroup debug Debug
+ * @ingroup kernel
+ */
+
+/**
+ * @defgroup trace Trace
  * @ingroup kernel
  */
 

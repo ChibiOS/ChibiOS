@@ -163,6 +163,7 @@ static inline void *chHeapAlloc(memory_heap_t *heapp, size_t size) {
  *          same value aligned to the next @p CH_HEAP_ALIGNMENT multiple.
  *
  * @param[in] p         pointer to the memory block
+ * @return              Size of the block.
  *
  * @api
  */
