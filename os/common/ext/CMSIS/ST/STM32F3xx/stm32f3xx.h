@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f3xx.h
   * @author  MCD Application Team
-  * @version V2.2.0
-  * @date    13-November-2015
+  * @version V2.3.1
+  * @date    16-December-2016
   * @brief   CMSIS STM32F3xx Device Peripheral Access Layer Header File.           
   *            
   *          The file is the unique include file that the application programmer
@@ -18,7 +18,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2015 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -98,13 +98,14 @@
   /* #define STM32F373xC */   /*!< STM32F373C8, STM32F373CB, STM32F373CC,
                                    STM32F373R8, STM32F373RB, STM32F373RC,
                                    STM32F373V8, STM32F373VB and STM32F373VC Devices */
-  /* #define STM32F334x8 */   /*!< STM32F334C4, STM32F334C6, STM32F334C8,
+  /* #define STM32F334x8 */   /*!< STM32F334K4, STM32F334K6, STM32F334K8,
+                                   STM32F334C4, STM32F334C6, STM32F334C8,
                                    STM32F334R4, STM32F334R6 and STM32F334R8 Devices */
   /* #define STM32F318xx */   /*!< STM32F318K8, STM32F318C8: STM32F301x8 with regulator off: STM32F318xx Devices */
   /* #define STM32F328xx */   /*!< STM32F328C8, STM32F328R8: STM32F334x8 with regulator off: STM32F328xx Devices */
   /* #define STM32F358xx */   /*!< STM32F358CC, STM32F358RC, STM32F358VC: STM32F303xC with regulator off: STM32F358xx Devices */
   /* #define STM32F378xx */   /*!< STM32F378CC, STM32F378RC, STM32F378VC: STM32F373xC with regulator off: STM32F378xx Devices */
-  /* #define STM32F398xx */   /*!< STM32F398CE, STM32F398RE, STM32F398VE: STM32F303xE with regulator off: STM32F398xx Devices */
+  /* #define STM32F398xx */   /*!< STM32F398VE: STM32F303xE with regulator off: STM32F398xx Devices */
 #endif
    
 /*  Tip: To avoid modifying this file each time you need to switch between these
@@ -120,17 +121,17 @@
 #endif /* USE_HAL_DRIVER */
 
 /**
-  * @brief CMSIS Device version number V2.2.0
+  * @brief CMSIS Device version number V2.3.1
   */
-#define __STM32F3xx_CMSIS_DEVICE_VERSION_MAIN   (0x02) /*!< [31:24] main version */                                  
-#define __STM32F3xx_CMSIS_DEVICE_VERSION_SUB1   (0x02) /*!< [23:16] sub1 version */
-#define __STM32F3xx_CMSIS_DEVICE_VERSION_SUB2   (0x00) /*!< [15:8]  sub2 version */
-#define __STM32F3xx_CMSIS_DEVICE_VERSION_RC     (0x00) /*!< [7:0]  release candidate */
-#define __STM32F3xx_CMSIS_DEVICE_VERSION        ((__CMSIS_DEVICE_VERSION_MAIN     << 24)\
-                                      |(__CMSIS_DEVICE_HAL_VERSION_SUB1 << 16)\
-                                      |(__CMSIS_DEVICE_HAL_VERSION_SUB2 << 8 )\
-                                      |(__CMSIS_DEVICE_HAL_VERSION_RC))
-                                             
+#define __STM32F3_CMSIS_VERSION_MAIN   (0x02) /*!< [31:24] main version */                                  
+#define __STM32F3_CMSIS_VERSION_SUB1   (0x03) /*!< [23:16] sub1 version */
+#define __STM32F3_CMSIS_VERSION_SUB2   (0x01) /*!< [15:8]  sub2 version */
+#define __STM32F3_CMSIS_VERSION_RC     (0x00) /*!< [7:0]  release candidate */
+#define __STM32F3_CMSIS_VERSION        ((__STM32F3_CMSIS_VERSION_MAIN     << 24)\
+                                       |(__STM32F3_CMSIS_VERSION_SUB1 << 16)\
+                                       |(__STM32F3_CMSIS_VERSION_SUB2 << 8 )\
+                                       |(__STM32F3_CMSIS_VERSION_RC))
+
 /**
   * @}
   */

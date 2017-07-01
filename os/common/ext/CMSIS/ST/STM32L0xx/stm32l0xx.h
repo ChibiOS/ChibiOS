@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32l0xx.h
   * @author  MCD Application Team
-  * @version V1.5.0
-  * @date    8-January-2016
+  * @version V1.7.1
+  * @date    25-November-2016
   * @brief   CMSIS Cortex-M0+ Device Peripheral Access Layer Header File. 
   *          This file contains all the peripheral register's definitions, bits 
   *          definitions and memory mapping for STM32L0xx devices.            
@@ -12,8 +12,8 @@
   *          is using in the C source code, usually in main.c. This file contains:
   *           - Configuration section that allows to select:
   *              - The device used in the target application
-  *              - To use or not the peripheral’s drivers in application code(i.e. 
-  *                code will be based on direct access to peripheral’s registers 
+  *              - To use or not the peripheral's drivers in application code(i.e. 
+  *                code will be based on direct access to peripheral's registers 
   *                rather than drivers API), this option is controlled by 
   *                "#define USE_HAL_DRIVER"
   *  
@@ -114,16 +114,16 @@
 #endif /* USE_HAL_DRIVER */
 
 /**
-  * @brief CMSIS Device version number V1.5.0
+  * @brief CMSIS Device version number V1.7.1
   */
 #define __STM32L0xx_CMSIS_VERSION_MAIN   (0x01) /*!< [31:24] main version */
-#define __STM32L0xx_CMSIS_VERSION_SUB1   (0x05) /*!< [23:16] sub1 version */
-#define __STM32L0xx_CMSIS_VERSION_SUB2   (0x00) /*!< [15:8]  sub2 version */
+#define __STM32L0xx_CMSIS_VERSION_SUB1   (0x07) /*!< [23:16] sub1 version */
+#define __STM32L0xx_CMSIS_VERSION_SUB2   (0x01) /*!< [15:8]  sub2 version */
 #define __STM32L0xx_CMSIS_VERSION_RC     (0x00) /*!< [7:0]  release candidate */
 #define __STM32L0xx_CMSIS_VERSION        ((__STM32L0xx_CMSIS_VERSION_MAIN     << 24)\
-                                      |(__STM32L0xx_CMSIS_VERSION_SUB1 << 16)\
-                                      |(__STM32L0xx_CMSIS_VERSION_SUB2 << 8 )\
-                                      |(__STM32L0xx_CMSIS_VERSION))
+                                         |(__STM32L0xx_CMSIS_VERSION_SUB1 << 16)\
+                                         |(__STM32L0xx_CMSIS_VERSION_SUB2 << 8 )\
+                                         |(__STM32L0xx_CMSIS_VERSION_RC))
                                              
 /**
   * @}
