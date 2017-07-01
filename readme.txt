@@ -94,3 +94,4 @@
 - RT:  Fixed invalid check in chchecks.h (bug #848)(backported to 17.6.1).
 - HAL: Fixed STM32F070xB: USART invalid DMA channels (bug #847)(backported
        to 17.6.1).
+- VAR: Fixed CMSIS_OS issue in timers (bug #846)(backported to 17.6.1).
