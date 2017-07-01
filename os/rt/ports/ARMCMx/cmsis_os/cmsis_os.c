@@ -91,7 +91,7 @@ osStatus osKernelInitialize(void) {
   chPoolObjectInit(&sempool, sizeof(semaphore_t), chCoreAlloc);
   chPoolLoadArray(&sempool, semaphores, CMSIS_CFG_NUM_SEMAPHORES);
 
-  chPoolObjectInit(&timpool, sizeof(virtual_timer_t), chCoreAlloc);
+  chPoolObjectInit(&timpool, sizeof(struct os_timer_cb), chCoreAlloc);
   chPoolLoadArray(&timpool, timers, CMSIS_CFG_NUM_TIMERS);
 
   return osOK;
