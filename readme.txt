@@ -87,5 +87,9 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+*** 17.6.1 ***
+- RT:  Fixed leftover chcustomer.h file (bug #849).
+- RT:  Fixed invalid check in chchecks.h (bug #848).
+
 *** 17.6.0 ***
 - First 17.6.0 release, see release note 17.6.0.
