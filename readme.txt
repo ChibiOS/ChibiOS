@@ -93,6 +93,7 @@
 - RT:  Fixed leftover chcustomer.h file (bug #849).
 - RT:  Fixed invalid check in chchecks.h (bug #848).
 - HAL: Fixed STM32F070xB: USART invalid DMA channels (bug #847).
+- VAR: Fixed CMSIS_OS issue in timers (bug #846).
 
 *** 17.6.0 ***
 - First 17.6.0 release, see release note 17.6.0.
