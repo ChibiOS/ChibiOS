@@ -18,5 +18,5 @@
  * @defgroup HAL_BAROMETER Generic Barometer Interface
  * @brief   HAL Generic Barometer Interface.
  *
- * @ingroup HAL_PERIPHERAL_INTERFACES
+ * @ingroup HAL_ABSTRACT_PERIPHERALS
  */

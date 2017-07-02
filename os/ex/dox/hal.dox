@@ -27,8 +27,8 @@
  */
 
 /**
- * @defgroup HAL_PERIPHERAL_INTERFACES Peripheral Interfaces
- * @brief   HAL Peripheral Interfaces.
+ * @defgroup HAL_ABSTRACT_PERIPHERALS Abstract Peripheral Interfaces
+ * @brief   HAL Abstract Peripheral Interfaces.
  *
  * @ingroup HAL
  */

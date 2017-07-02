@@ -18,5 +18,5 @@
  * @defgroup HAL_HYGROMETER Generic Hygrometer Interface
  * @brief   HAL Generic Hygrometer Interface.
  *
- * @ingroup HAL_PERIPHERAL_INTERFACES
+ * @ingroup HAL_ABSTRACT_PERIPHERALS
  */

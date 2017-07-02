@@ -18,5 +18,5 @@
  * @defgroup HAL_THERMOMETER Generic Thermometer Interface
  * @brief   HAL Generic Thermometer Interface.
  *
- * @ingroup HAL_PERIPHERAL_INTERFACES
+ * @ingroup HAL_ABSTRACT_PERIPHERALS
  */

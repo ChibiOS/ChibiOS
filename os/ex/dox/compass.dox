@@ -18,5 +18,5 @@
  * @defgroup HAL_COMPASS Generic Compass Interface
  * @brief   HAL Generic Compass Interface.
  *
- * @ingroup HAL_PERIPHERAL_INTERFACES
+ * @ingroup HAL_ABSTRACT_PERIPHERALS
  */

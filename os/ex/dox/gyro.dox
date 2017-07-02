@@ -18,5 +18,5 @@
  * @defgroup HAL_GYROSCOPE Generic Gyroscope Interface
  * @brief   HAL Generic Gyroscope Interface.
  *
- * @ingroup HAL_PERIPHERAL_INTERFACES
+ * @ingroup HAL_ABSTRACT_PERIPHERALS
  */

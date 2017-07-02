@@ -18,5 +18,5 @@
  * @defgroup HAL_FLASH Generic Flash Driver Interface
  * @brief   HAL Generic Flash Driver Interface.
  *
- * @ingroup HAL_PERIPHERAL_INTERFACES
+ * @ingroup HAL_ABSTRACT_PERIPHERALS
  */

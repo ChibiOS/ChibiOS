@@ -18,5 +18,5 @@
  * @defgroup HAL_SENSORS Generic Sensor Interface
  * @brief   HAL Generic Sensor Interface.
  *
- * @ingroup HAL_PERIPHERAL_INTERFACES
+ * @ingroup HAL_ABSTRACT_PERIPHERALS
  */
