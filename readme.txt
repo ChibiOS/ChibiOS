@@ -43,6 +43,7 @@
   |  |  +--ports/         - RTOS ports usable by both RT and NIL.
   |  |  +--startup/       - Startup support for all compilers and platforms.
   |  +--ex/               - EX component.
+  |  |  +--dox/           - EX documentation resources.
   |  |  +--Micron/        - EX complex drivers for Micron devices.
   |  |  +--ST/            - EX complex drivers for STMicroelectronics devices.
   |  |  +--subsystems/    - EX subsystems.
@@ -88,6 +89,8 @@
 *****************************************************************************
 
 *** Next ***
+- EX:  Fixed documentation-related issues (bug #852)(backported to 17.6.1).
+- HAL: Fixed documentation-related issues (bug #852)(backported to 17.6.1).
 - HAL: Fixed wrong frame size code in STM32 USARTv2 UART driver (bug #851)
        (backported to 17.6.1 and 16.1.9).
 - NIL: Fixed documentation-related issues (bug #850)(backported to 17.6.1).
