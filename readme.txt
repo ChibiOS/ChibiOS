@@ -88,6 +88,7 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 *** 17.6.1 ***
+- EX:  Fixed documentation-related issues (bug #852).
 - HAL: Fixed documentation-related issues (bug #852).
 - HAL: Fixed wrong frame size code in STM32 USARTv2 UART driver (bug #851).
 - NIL: Fixed documentation-related issues (bug #850).

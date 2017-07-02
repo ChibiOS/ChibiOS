@@ -22,6 +22,8 @@
  * @file    l3gd20.h
  * @brief   L3GD20 MEMS interface module header.
  *
+ * @addtogroup L3GD20
+ * @ingroup EX_ST
  * @{
  */
 #ifndef _L3GD20_H_
@@ -377,7 +379,7 @@ typedef enum {
 
 /**
  * @brief   L3GD20 LP2 filter mode.
- * @detail  To activate LP2 HP should be active
+ * @details To activate LP2 HP should be active
  */
 typedef enum {
   L3GD20_LP2M_ON = 0x00,            /**< LP2 filter activated.              */
@@ -465,7 +467,7 @@ typedef struct {
   l3gd20_hpcf_t             hpconfiguration;
   /**
    * @brief   L3GD20 LP2 filter mode.
-   * @detail  To activate LP2 HP should be active
+   * @details To activate LP2 HP should be active
    */
   l3gd20_lp2m_t             lp2mode;
 #endif

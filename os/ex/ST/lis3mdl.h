@@ -22,6 +22,8 @@
  * @file    lis3mdl.h
  * @brief   LIS3MDL MEMS interface module header.
  *
+ * @addtogroup LIS3MDL
+ * @ingroup EX_ST
  * @{
  */
 #ifndef _LIS3MDL_H_
