@@ -87,7 +87,9 @@
 *****************************************************************************
 *** Releases and Change Log                                               ***
 *****************************************************************************
+
 *** 17.6.1 ***
+- HAL: Fixed invalid handling of DST flag in STM32 RTCv2 (bug #854).
 - HAL: Fixed extra right parenthesis in STM32F4 registry (bug #853).
 - EX:  Fixed documentation-related issues (bug #852).
 - HAL: Fixed documentation-related issues (bug #852).
