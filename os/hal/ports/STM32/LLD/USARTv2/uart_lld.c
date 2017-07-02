@@ -132,6 +132,11 @@
 #define UART8 USART8
 #endif
 
+/* Workaround for more differences in headers.*/
+#if !defined(USART_CR1_M0)
+#define USART_CR1_M0 USART_CR1_M
+#endif
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -772,7 +777,7 @@ void uart_lld_start(UARTDriver *uartp) {
 
     /* Static DMA setup, the transfer size depends on the USART settings,
        it is 16 bits if M=1 and PCE=0 else it is 8 bits.*/
-    if ((uartp->config->cr1 & (USART_CR1_M | USART_CR1_PCE)) == USART_CR1_M)
+    if ((uartp->config->cr1 & (USART_CR1_M | USART_CR1_PCE)) == USART_CR1_M0)
       uartp->dmamode |= STM32_DMA_CR_PSIZE_HWORD | STM32_DMA_CR_MSIZE_HWORD;
     dmaStreamSetPeripheral(uartp->dmarx, &uartp->usart->RDR);
     dmaStreamSetPeripheral(uartp->dmatx, &uartp->usart->TDR);

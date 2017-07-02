@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.9 ***
+- HAL: Fixed wrong frame size code in STM32 USARTv2 UART driver (bug #851).
 - VAR: Fixed CMSIS_OS issue in timers (bug #846).
 - HAL: Duplicated variable definition in STM32 RTCv1 driver (bug #845).
 - HAL: Fixed wrong ARR initialization in STM32 GPT driver (bug #843).
