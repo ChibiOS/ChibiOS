@@ -345,9 +345,10 @@ void rtc_lld_set_time(RTCDriver *rtcp, const RTCDateTime *timespec) {
 
   /* Writing the registers.*/
   rtc_enter_init();
-  rtcp->rtc->TR  = tr;
-  rtcp->rtc->DR  = dr;
-  rtcp->rtc->CR |= timespec->dstflag << RTC_CR_BKP_OFFSET;
+  rtcp->rtc->TR = tr;
+  rtcp->rtc->DR = dr;
+  rtcp->rtc->CR = (rtcp->rtc->CR & ~(1U << RTC_CR_BKP_OFFSET)) |
+                  (timespec->dstflag << RTC_CR_BKP_OFFSET);
   rtc_exit_init();
 
   /* Leaving a reentrant critical zone.*/
