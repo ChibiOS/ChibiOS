@@ -15,8 +15,8 @@
 */
 
 /**
- * @defgroup HAL_FLASH Generic Flash Driver Interface
- * @brief   HAL Generic Flash Driver Interface.
+ * @defgroup HAL_COMPASS Generic Compass Interface
+ * @brief   HAL Generic Compass Interface.
  *
  * @ingroup HAL_ABSTRACT_PERIPHERALS
  */

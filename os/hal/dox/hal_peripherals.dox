@@ -14,9 +14,9 @@
     limitations under the License.
 */
 
-/**
- * @defgroup HAL_FLASH Generic Flash Driver Interface
- * @brief   HAL Generic Flash Driver Interface.
+ /**
+ * @defgroup HAL_ABSTRACT_PERIPHERALS Abstract Peripheral Interfaces
+ * @brief   HAL Abstract Peripheral Interfaces.
  *
- * @ingroup HAL_ABSTRACT_PERIPHERALS
+ * @ingroup HAL_INTERFACES
  */

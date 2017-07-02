@@ -15,8 +15,8 @@
 */
 
 /**
- * @defgroup HAL_FLASH Generic Flash Driver Interface
- * @brief   HAL Generic Flash Driver Interface.
+ * @defgroup HAL_HYGROMETER Generic Hygrometer Interface
+ * @brief   HAL Generic Hygrometer Interface.
  *
  * @ingroup HAL_ABSTRACT_PERIPHERALS
  */

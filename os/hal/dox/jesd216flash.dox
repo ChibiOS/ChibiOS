@@ -15,8 +15,8 @@
 */
 
 /**
- * @defgroup HAL_FLASH Generic Flash Driver Interface
- * @brief   HAL Generic Flash Driver Interface.
+ * @defgroup HAL_JESD216_FLASH JESD216 Compliant Flash Driver Interface
+ * @brief   HAL JESD216 Compliant Flash Driver Interface.
  *
  * @ingroup HAL_ABSTRACT_PERIPHERALS
  */
