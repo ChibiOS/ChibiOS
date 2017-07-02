@@ -101,7 +101,7 @@ msg_t hts221I2CWriteRegister(I2CDriver *i2cp, uint8_t* txbuf, size_t n) {
  *          calibration registers.
  * @notapi
  *
- * @param[in] dev        pointer to the HTS221 interface
+ * @param[in] devp       pointer to the HTS221 interface
  * @param[in] flag       flag to select parameters
  * @return               the operation status.
  */

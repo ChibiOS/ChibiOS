@@ -75,7 +75,7 @@ static void lis3dshSPIReadRegister(SPIDriver *spip, uint8_t reg,  size_t n,
  * @param[in] spip      pointer to the SPI interface
  * @param[in] reg       starting register address
  * @param[in] n         number of adjacent registers to write
- * @param[in] value     pointer to a buffer of values.
+ * @param[in] b         pointer to a buffer of values.
  */
 static void lis3dshSPIWriteRegister(SPIDriver *spip, uint8_t reg, size_t n,
                                     uint8_t* b) {

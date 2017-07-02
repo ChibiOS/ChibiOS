@@ -200,7 +200,7 @@ typedef struct {
  * @brief   Sensors get axes number.
  *
  * @param[in] ip        pointer to a @p BaseFlash or derived class
- * @return              An error code.
+ * @return              A flash device descriptor.
  *
  * @api
  */
@@ -230,7 +230,7 @@ typedef struct {
  * @param[in] ip        pointer to a @p BaseFlash or derived class
  * @param[in] offset    flash offset
  * @param[in] n         number of bytes to be programmed
- * @param[in] wp        pointer to the data buffer
+ * @param[in] pp        pointer to the data buffer
  * @return              An error code.
  * @retval FLASH_NO_ERROR if there is no erase operation in progress.
  * @retval FLASH_BUSY_ERASING if there is an erase operation in progress.

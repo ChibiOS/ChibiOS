@@ -57,12 +57,12 @@
  * @param[in] b         pointer to an output buffer.
  */
 static void l3gd20SPIReadRegister(SPIDriver *spip, uint8_t reg,  size_t n,
-                                     uint8_t* rxbuf) {
+                                     uint8_t* b) {
   uint8_t cmd;
   (n == 1) ? (cmd = reg | L3GD20_RW) : (cmd = reg | L3GD20_RW | L3GD20_MS);
   spiSelect(spip);
   spiSend(spip, 1, &cmd);
-  spiReceive(spip, n, rxbuf);
+  spiReceive(spip, n, b);
   spiUnselect(spip);
 }
 
@@ -73,7 +73,7 @@ static void l3gd20SPIReadRegister(SPIDriver *spip, uint8_t reg,  size_t n,
  * @param[in] spip      pointer to the SPI interface
  * @param[in] reg       starting register address
  * @param[in] n         number of adjacent registers to write
- * @param[in] value     pointer to a buffer of values.
+ * @param[in] b         pointer to a buffer of values.
  */
 static void l3gd20SPIWriteRegister(SPIDriver *spip, uint8_t reg, size_t n,
                                    uint8_t* b) {

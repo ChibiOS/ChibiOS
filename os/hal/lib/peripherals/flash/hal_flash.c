@@ -50,7 +50,10 @@
  * @brief   Waits until the current erase operation is finished.
  *
  * @param[in] devp      pointer to a @p BaseFlash object
- * @param[in] cb        polling callback or @p NULL
+ * 
+ * @return              An error code.
+ * @retval FLASH_NO_ERROR if there is no erase operation in progress.
+ * @retval FLASH_ERROR_ERASE if the erase operation failed.
  */
 flash_error_t flashWaitErase(BaseFlash *devp) {
 
@@ -71,6 +74,11 @@ flash_error_t flashWaitErase(BaseFlash *devp) {
 
 /**
  * @brief   Returns the offset of a sector.
+ *
+ * @param[in] devp      pointer to a @p BaseFlash object
+ * @param[in] sector    flash sector number
+ *
+ * @return the offset of the sector
  */
 flash_offset_t flashGetSectorOffset(BaseFlash *devp,
                                     flash_sector_t sector) {
@@ -91,6 +99,11 @@ flash_offset_t flashGetSectorOffset(BaseFlash *devp,
 
 /**
  * @brief   Returns the size of a sector.
+ *
+ * @param[in] devp      pointer to a @p BaseFlash object
+ * @param[in] sector    flash sector number
+ *
+ * @return the size of the sector
  */
 uint32_t flashGetSectorSize(BaseFlash *devp,
                             flash_sector_t sector) {
@@ -108,5 +121,4 @@ uint32_t flashGetSectorSize(BaseFlash *devp,
 
   return size;
 }
-
 /** @} */
