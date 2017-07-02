@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 17.6.1 ***
+- HAL: Fixed unaligned STM32F0xx mcuconf.h files (bug #855).
 - HAL: Fixed invalid handling of DST flag in STM32 RTCv2 (bug #854).
 - HAL: Fixed extra right parenthesis in STM32F4 registry (bug #853).
 - EX:  Fixed documentation-related issues (bug #852).
