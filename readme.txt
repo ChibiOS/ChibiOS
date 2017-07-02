@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** Next ***
+- HAL: Fixed extra right parenthesis in STM32F4 registry (bug #853)(backported 
+       to 17.6.1).
 - EX:  Fixed documentation-related issues (bug #852)(backported to 17.6.1).
 - HAL: Fixed documentation-related issues (bug #852)(backported to 17.6.1).
 - HAL: Fixed wrong frame size code in STM32 USARTv2 UART driver (bug #851)
