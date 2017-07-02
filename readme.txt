@@ -88,6 +88,8 @@
 *****************************************************************************
 
 *** Next ***
+- HAL: Fixed wrong frame size code in STM32 USARTv2 UART driver (bug #851)
+       (backported to 17.6.1 and 16.1.9).
 - NIL: Fixed documentation-related issues (bug #850)(backported to 17.6.1).
 - RT:  Fixed documentation-related issues (bug #850)(backported to 17.6.1).
 - RT:  Fixed leftover chcustomer.h file (bug #849)(backported to 17.6.1).
