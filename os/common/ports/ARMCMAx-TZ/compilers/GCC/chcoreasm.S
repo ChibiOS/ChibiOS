@@ -64,7 +64,7 @@
                 .equ    SCR_FW,     0x10
                 .equ    SCR_AW,     0x20
 
-                .set    MON_S_SCR,  0
+                .set    MON_S_SCR,  SCR_IRQ
                 .set    MON_NS_SCR, SCR_FIQ|SCR_NS
 
                 .text
