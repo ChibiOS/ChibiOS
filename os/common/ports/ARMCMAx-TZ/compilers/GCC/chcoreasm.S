@@ -50,13 +50,22 @@
                 .set    MODE_FIQ, 0x11
                 .set    MODE_IRQ, 0x12
                 .set    MODE_SVC, 0x13
-                .set    MODE_MONITOR, 0x16
+                .set    MODE_MON, 0x16
                 .set    MODE_ABT, 0x17
                 .set    MODE_UND, 0x1B
                 .set    MODE_SYS, 0x1F
 
-                .equ    I_BIT, 0x80
-                .equ    F_BIT, 0x40
+                .equ    I_BIT,      0x80
+                .equ    F_BIT,      0x40
+                .equ    SCR_NS,     0x01
+                .equ    SCR_IRQ,    0x02
+                .equ    SCR_FIQ,    0x04
+                .equ    SCR_EA,     0x08
+                .equ    SCR_FW,     0x10
+                .equ    SCR_AW,     0x20
+
+                .set    MON_S_SCR,  0
+                .set    MON_NS_SCR, SCR_FIQ|SCR_NS
 
                 .text
 
@@ -85,10 +94,10 @@ _port_switch_arm:
  *      |     r2     |  | External context: IRQ handler frame
  *      |     r1     |  |
  *      |     r0     |  |
- *      |   LR_IRQ   |  |   (user code return address)
+ *      |   LR_IRQ   |  |   (user code return address)(could be in non-secure space)
  *      |   PSR_USR  | -+   (user code status)
  *      |    ....    | <- chSchDoReschedule() stack frame, optimize it for space
- *      |     LR     | -+   (system code return address)
+ *      |     LR     | -+   (system code return address)(always in secure space)
  *      |     r11    |  |
  *      |     r10    |  |
  *      |     r9     |  |
@@ -98,11 +107,86 @@ _port_switch_arm:
  *      |     r5     |  |
  * SP-> |     r4     | -+
  * Low  +------------+
+ *
+ */
+
+/*
+ * We are on an architecures with security extension exploited.
+ * The following execution path is taken by the execution units running in
+ * non-secure state when a fiq interrupt is fired.
+ * It originates by the monitor fiq vector and runs in monitor mode,
+ * ie in secure state.
+ * It assumes the following, set at boot time, or wherever it needs:
+ *   SCR.FW  == 0 and SCR.FIQ == 1 and SCR.IRQ == 0 in non-secure state,
+ *      ie FIQs are taken to monitor mode, IRQ locally
+ *   SCR.FIQ == 0 and SCR.IRQ == 1 and CPSR.I == 1 in secure state,
+ *      ie the secure code takes fiq locally and runs always with IRQ disabled(?)
+ *   MVBAR holds the address of the monitor vectors base.
+ *   The code and the stacks memory reside in secure memory.
  */
                 .balign 16
                 .code   32
+                .global Mon_Fiq_Handler
                 .global Fiq_Handler
+Mon_Fiq_Handler:
+                // here the fiq is taken from non-secure state
+                // current mode is monitor (so current state is secure)
+                stmfd   sp!, {lr}               // save lr into monitor stack
+                ldr     lr, =#MON_S_SCR         // set secure SCR before to switch to FIQ mode
+                mrc     p15, 0, lr, c1, c1, 0
+                cpsid   if, #MODE_FIQ           // secure FIQ mode
+                stmfd   sp!, {r0-r3, r12}       // IRQ frame
+                ldr     r0, =ARM_IRQ_VECTOR_REG
+                ldr     r0, [r0]
+                ldr     lr, =_mon_fiq_ret_arm   // ISR return point.
+                bx      r0                      // Calling the ISR.
+_mon_fiq_ret_arm:
+                cmp     r0, #0
+                ldmfd   sp!, {r0-r3, r12}
+                cpsid   if, #MODE_MON
+                ldr     lr, =#MON_NS_SCR        // set non-secure SCR before return
+                mrceq   p15, 0, lr, c1, c1, 0   // only if it will return
+                ldmfd   sp!, {lr}
+                subeqs  pc, lr, #4              // No reschedule, returns.
+
+                // Now the frame is created in the system stack, the IRQ
+                // and monitor stacks are empty, the state is secure.
+                msr     CPSR_c, #MODE_SYS | I_BIT | F_BIT
+                stmfd   sp!, {r0-r3, r12, lr}
+                msr     CPSR_c, #MODE_MON | I_BIT | F_BIT
+                mrs     r0, SPSR
+                mov     r1, lr
+                msr     CPSR_c, #MODE_SYS | I_BIT | F_BIT
+                stmfd   sp!, {r0, r1}           // Push R0=SPSR, R1=LR_IRQ.
+
+                // Context switch.
+#if CH_DBG_SYSTEM_STATE_CHECK
+                bl      _dbg_check_lock
+#endif
+                bl      chSchDoReschedule
+#if CH_DBG_SYSTEM_STATE_CHECK
+                bl      _dbg_check_unlock
+#endif
+
+                // Re-establish the IRQ conditions again.
+                ldmfd   sp!, {r0, r1}           // Pop R0=SPSR, R1=LR_IRQ.
+                msr     CPSR_c, #MODE_MON | I_BIT | F_BIT
+                msr     SPSR_fsxc, r0
+                mov     lr, r1
+                msr     CPSR_c, #MODE_SYS | I_BIT | F_BIT
+                ldmfd   sp!, {r0-r3, r12, lr}
+                msr     CPSR_c, #MODE_MON | I_BIT | F_BIT
+                stmfd   sp!, {lr}               // save lr into monitor stack
+                ldr     lr, =#MON_NS_SCR        // set non-secure SCR before return
+                mrc     p15, 0, lr, c1, c1, 0
+                ldmfd   sp!, {lr}
+                subs    pc, lr, #4              // return into non-secure world
+/*
+ *
+ */
 Fiq_Handler:
+                // the fiq is taken locally from secure state
+                // current mode is fiq
                 stmfd   sp!, {r0-r3, r12, lr}
                 ldr     r0, =ARM_IRQ_VECTOR_REG
                 ldr     r0, [r0]
