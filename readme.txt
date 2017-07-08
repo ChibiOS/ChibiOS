@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 17.6.1 ***
+- HAL: Fixed missing DMA I2C3 streams in STM32F411 registry (bug #860).
 - HAL: Fixed missing Ethernet PHY in some STM32 Nucleo-144 board files (bug 
        #859).
 - VAR: Fixed priority issue in STM32 Nucleo-64 F401RE demo (bug #858).
