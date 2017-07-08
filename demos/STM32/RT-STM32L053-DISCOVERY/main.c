@@ -16,8 +16,6 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "usbcfg.h"
-
 #include "ch_test.h"
 
 /*
@@ -52,21 +50,10 @@ int main(void) {
   chSysInit();
 
   /*
-   * Initializes a serial-over-USB CDC driver.
+   * Activates the serial driver 1 using the driver default configuration.
    */
-  sduObjectInit(&SDU1);
-  sduStart(&SDU1, &serusbcfg);
+  sdStart(&SD1, NULL);
 
-  /*
-   * Activates the USB driver and then the USB bus pull-up on D+.
-   * Note, a delay is inserted in order to not have to disconnect the cable
-   * after a reset.
-   */
-  usbDisconnectBus(serusbcfg.usbp);
-  chThdSleepMilliseconds(1000);
-  usbStart(serusbcfg.usbp, &usbcfg);
-  usbConnectBus(serusbcfg.usbp);
-  chThdSleepMilliseconds(1000);
   /*
    * Creates the blinker thread.
    */
@@ -78,7 +65,7 @@ int main(void) {
    */
   while (true) {
     if (palReadLine(LINE_BUTTON))
-      test_execute((BaseSequentialStream *)&SDU1);
+      test_execute((BaseSequentialStream *)&SD1);
     chThdSleepMilliseconds(500);
   }
 }
