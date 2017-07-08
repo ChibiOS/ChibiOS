@@ -11,6 +11,11 @@
   <board_name>STMicroelectronics STM32 Nucleo144-F207ZG</board_name>
   <board_id>ST_NUCLEO144_F207ZG</board_id>
   <board_functions></board_functions>
+  <headers></headers>
+  <ethernet_phy>
+    <identifier>MII_LAN8742A_ID</identifier>
+    <bus_type>RMII</bus_type>
+  </ethernet_phy>
   <subtype>STM32F207xx</subtype>
   <clocks
     HSEFrequency="8000000"

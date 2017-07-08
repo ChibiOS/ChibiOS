@@ -33,6 +33,12 @@
 #define BOARD_NAME                  "STMicroelectronics STM32 Nucleo144-F446ZE"
 
 /*
+ * Ethernet PHY type.
+ */
+#define BOARD_PHY_ID                MII_LAN8742A_ID
+#define BOARD_PHY_RMII
+
+/*
  * Board oscillators-related settings.
  * NOTE: LSE not fitted.
  */
