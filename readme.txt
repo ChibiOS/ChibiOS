@@ -92,6 +92,7 @@
 - VAR: Fixed priority issue in STM32 Nucleo-64 F401RE demo(bug #858).
 - VAR: Fixed STM32L053 Discovery demo which is unaligned to standard demos (bug 
        #857).
+- HAL: Fixed HSI48 which is not correctly enabled in STM32L0xx port (bug #856).
 - HAL: Fixed unaligned STM32F0xx mcuconf.h files (bug #855).
 - HAL: Fixed invalid handling of DST flag in STM32 RTCv2 (bug #854).
 - HAL: Fixed extra right parenthesis in STM32F4 registry (bug #853).

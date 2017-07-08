@@ -172,7 +172,7 @@ void hal_lld_init(void) {
 }
 
 /**
- * @brief   STM32L1xx voltage, clocks and PLL initialization.
+ * @brief   STM32L0xx voltage, clocks and PLL initialization.
  * @note    All the involved constants come from the file @p board.h.
  * @note    This function should be invoked just after the system reset.
  *
@@ -260,6 +260,23 @@ void stm32_clock_init(void) {
     ;                           /* Waits until PLL is stable.               */
 #endif
 
+#if STM32_ACTIVATE_HSI48
+  /* Enabling SYSCFG clock. */
+  rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, FALSE);
+  /* Configuring SYSCFG to enable VREFINT and HSI48 VREFINT buffer. */
+  SYSCFG->CFGR3 = STM32_VREFINT_EN | SYSCFG_CFGR3_ENREF_HSI48;
+
+  while (!(SYSCFG->CFGR3 & SYSCFG_CFGR3_VREFINT_RDYF))
+    ;                             /* Waits until VREFINT is stable.         */
+  /* Disabling SYSCFG clock. */
+  rccDisableAPB2(RCC_APB2ENR_SYSCFGEN, FALSE);
+
+  /* Enabling HSI48. */
+  RCC->CRRCR |= RCC_CRRCR_HSI48ON;
+  while (!(RCC->CRRCR & RCC_CRRCR_HSI48RDY))
+    ;                             /* Waits until HSI48 is stable.           */
+#endif
+
   /* Other clock-related settings (dividers, MCO etc).*/
   RCC->CR   |= STM32_RTCPRE;
   RCC->CFGR |= STM32_MCOPRE | STM32_MCOSEL |
@@ -271,7 +288,7 @@ void stm32_clock_init(void) {
   FLASH->ACR = STM32_FLASHBITS;
 #endif
 
-  /* Switching to the configured clock source if it is different from MSI.*/
+  /* Switching to the configured clock source if it is different from MSI.  */
 #if (STM32_SW != STM32_SW_MSI)
   RCC->CFGR |= STM32_SW;        /* Switches on the selected clock source.   */
   while ((RCC->CFGR & RCC_CFGR_SWS) != (STM32_SW << 2))

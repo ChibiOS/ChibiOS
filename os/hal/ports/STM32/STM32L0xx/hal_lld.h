@@ -278,6 +278,13 @@
 #define STM32_HSI48SEL_HSI48    (1 << 26)   /**< USB48 clock is HSI48.      */
 /** @} */
 
+/**
+ * @name    SYSCFG_CFGR3_ register bits definitions
+ * @{
+ */
+#define STM32_VREFINT_EN        (1 << 0)    /**< VREFINT enable switch.     */
+/** @} */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -758,9 +765,8 @@
 #endif /* !STM32_LSE_ENABLED */
 
 /* PLL related checks.*/
-#if STM32_USB_CLOCK_ENABLED ||                                              \
-    (STM32_SW == STM32_SW_PLL) ||                                           \
-    (STM32_MCOSEL == STM32_MCOSEL_PLL) ||                                   \
+#if (STM32_SW == STM32_SW_PLL) || (STM32_MCOSEL == STM32_MCOSEL_PLL) ||       \
+    (STM32_USB_CLOCK_ENABLED && (STM32_HSI48SEL == STM32_HSI48SEL_USBPLL)) || \
     defined(__DOXYGEN__)
 /**
  * @brief   PLL activation flag.
@@ -768,6 +774,17 @@
 #define STM32_ACTIVATE_PLL          TRUE
 #else
 #define STM32_ACTIVATE_PLL          FALSE
+#endif
+
+/* HSI48 related checks.*/
+#if (STM32_USB_CLOCK_ENABLED && (STM32_HSI48SEL == STM32_HSI48SEL_HSI48)) ||  \
+    defined(__DOXYGEN__)
+/**
+ * @brief   HSI48 activation flag.
+ */
+#define STM32_ACTIVATE_HSI48        TRUE
+#else
+#define STM32_ACTIVATE_HSI48        FALSE
 #endif
 
 /**
