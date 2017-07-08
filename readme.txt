@@ -89,7 +89,9 @@
 *****************************************************************************
 
 *** 17.6.1 ***
-- VAR: Fixed priority issue in STM32 Nucleo-64 F401RE demo(bug #858).
+- HAL: Fixed missing Ethernet PHY in some STM32 Nucleo-144 board files (bug 
+       #859).
+- VAR: Fixed priority issue in STM32 Nucleo-64 F401RE demo (bug #858).
 - VAR: Fixed STM32L053 Discovery demo which is unaligned to standard demos (bug 
        #857).
 - HAL: Fixed HSI48 which is not correctly enabled in STM32L0xx port (bug #856).
