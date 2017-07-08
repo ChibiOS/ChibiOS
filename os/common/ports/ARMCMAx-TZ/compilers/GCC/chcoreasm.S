@@ -112,17 +112,16 @@ _port_switch_arm:
 
 /*
  * We are facing an architecure with security extension exploited.
- * The following two monitor execution paths are taken by the execution units
+ * The following two monitor execution paths are followed by the execution units
  * running in secure state when an irq is fired (Mon_Irq_Handler), and in non-secure
  * state when a fiq interrupt is fired (Mon_Fiq_Handler).
  * They originate by the monitor irq/fiq vector and run in monitor mode,
  * ie in secure state.
  * It assumes the following, set at boot time, or wherever it needs:
  *   SCR.FW  == 0 and SCR.FIQ == 1 and SCR.IRQ == 0 in non-secure state,
- *      ie FIQs are taken to monitor mode, IRQ locally
+ *      ie, in non-secure state, FIQs are taken to monitor mode and IRQs locally
  *   SCR.FW  == 0 and SCR.FIQ == 0 and SCR.IRQ == 1 in secure state,
- *      ie the secure code takes fiq locally and the non-secure code takes irq locally
- *      ie the secure code takes irq to monitor and the non-secure code takes fiq to monitor
+ *      ie, in the secure-state, FIQs are taken locally and IRQs to monitor
  *   MVBAR holds the address of the monitor vectors base.
  *   The code and the stacks memory reside both in secure memory.
  */
@@ -136,8 +135,9 @@ Mon_Irq_Handler:
                 // current mode is monitor (so current state is secure)
                 //
                 // This procedure is challenging, because the irq must be
-                // executed in the context of the NT thread.
-                // So we shall switch to a NT thread and return into non-secure
+                // executed in the context of the NT thread, it must run
+                // in non-secure state.
+                // So we shall switch to a NT thread(?) and return into non-secure
                 // world where the IRQ will be served.
 
                 // The frame is created in the system stack,
