@@ -22,7 +22,8 @@
  * @file    lsm6ds0.c
  * @brief   LSM6DS0 MEMS interface module code.
  *
- * @addtogroup lsm6ds0
+ * @addtogroup LSM6DS0
+ * @ingroup EX_ST
  * @{
  */
 

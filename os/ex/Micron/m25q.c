@@ -21,7 +21,8 @@
  * @file    m25q.c
  * @brief   Micron serial flash driver code.
  *
- * @addtogroup m25q
+ * @addtogroup M25Q
+ * @ingroup EX_MICRON
  * @{
  */
 

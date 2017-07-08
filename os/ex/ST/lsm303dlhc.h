@@ -22,6 +22,8 @@
  * @file    lsm303dlhc.h
  * @brief LSM303DLHC MEMS interface module header.
  *
+ * @addtogroup LSM303DLHC
+ * @ingroup EX_ST
  * @{
  */
 #ifndef _LSM303DLHC_H_

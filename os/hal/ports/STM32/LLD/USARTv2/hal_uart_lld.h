@@ -136,8 +136,8 @@
  * @brief   USART3..8 interrupt priority level setting.
  * @note    Only valid on those devices with a shared IRQ.
  */
-#if !defined(STM32_UART_USART3_8_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_UART_USART3_8_PRIORITY        12
+#if !defined(STM32_UART_USART3_8_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_UART_USART3_8_IRQ_PRIORITY    12
 #endif
 
 /**

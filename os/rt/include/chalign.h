@@ -70,7 +70,7 @@
   /*lint -restore*/
 
 /**
- * @brief   Aligns to the new aligned memory address.
+ * @brief   Aligns to the next aligned memory address.
  *
  * @param[in] p         variable to be aligned
  * @param[in] a         alignment, must be a power of two

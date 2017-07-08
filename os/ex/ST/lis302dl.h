@@ -22,6 +22,8 @@
  * @file    lis302dl.h
  * @brief   LIS302DL MEMS interface module header.
  *
+ * @addtogroup LIS302DL
+ * @ingroup EX_ST
  * @{
  */
 
@@ -159,6 +161,7 @@
 #define LIS302DL_CTRL_REG3_PP_OD    (1 << 6)    /**< Push-pull open-drain     */
 #define LIS302DL_CTRL_REG3_IHL      (1 << 7)    /**< Int active high low      */
 /** @} */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -333,7 +336,7 @@ typedef struct LIS302DLDriver LIS302DLDriver;
 
 
 /**
- * @extends BaseAccelerometerVMT.
+ * @extends BaseAccelerometerVMT
  *
  * @brief   @p LIS302DL virtual methods table.
  */
@@ -358,7 +361,7 @@ struct LIS302DLVMT {
   float                     fullscale;
 
 /**
- * @extends BaseAccelerometer.
+ * @extends BaseAccelerometer
  *
  * @brief   LIS302DL 3-axis accelerometer class.
  * @details This class extends @p BaseAccelerometer by adding physical

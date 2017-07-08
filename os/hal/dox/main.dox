@@ -119,7 +119,7 @@
  *
  * @ingroup IO
  */
-
+ 
 /**
  * @defgroup HAL_INNER_CODE Inner Code
  * @brief   HAL Inner Code.

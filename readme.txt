@@ -43,6 +43,7 @@
   |  |  +--ports/         - RTOS ports usable by both RT and NIL.
   |  |  +--startup/       - Startup support for all compilers and platforms.
   |  +--ex/               - EX component.
+  |  |  +--dox/           - EX documentation resources.
   |  |  +--Micron/        - EX complex drivers for Micron devices.
   |  |  +--ST/            - EX complex drivers for STMicroelectronics devices.
   |  |  +--subsystems/    - EX subsystems.
@@ -86,6 +87,22 @@
 *****************************************************************************
 *** Releases and Change Log                                               ***
 *****************************************************************************
+
+*** 17.6.1 ***
+- VAR: Fixed STM32L053 Discovery demo which is unaligned to standard demos (bug 
+       #857).
+- HAL: Fixed unaligned STM32F0xx mcuconf.h files (bug #855).
+- HAL: Fixed invalid handling of DST flag in STM32 RTCv2 (bug #854).
+- HAL: Fixed extra right parenthesis in STM32F4 registry (bug #853).
+- EX:  Fixed documentation-related issues (bug #852).
+- HAL: Fixed documentation-related issues (bug #852).
+- HAL: Fixed wrong frame size code in STM32 USARTv2 UART driver (bug #851).
+- NIL: Fixed documentation-related issues (bug #850).
+- RT:  Fixed documentation-related issues (bug #850).
+- RT:  Fixed leftover chcustomer.h file (bug #849).
+- RT:  Fixed invalid check in chchecks.h (bug #848).
+- HAL: Fixed STM32F070xB: USART invalid DMA channels (bug #847).
+- VAR: Fixed CMSIS_OS issue in timers (bug #846).
 
 *** 17.6.0 ***
 - First 17.6.0 release, see release note 17.6.0.

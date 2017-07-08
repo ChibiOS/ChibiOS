@@ -22,7 +22,8 @@
  * @file    lsm303dlhc.c
  * @brief   LSM303DLHC MEMS interface module code.
  *
- * @addtogroup lsm303dlhc
+ * @addtogroup LSM303DLHC
+ * @ingroup EX_ST
  * @{
  */
 
