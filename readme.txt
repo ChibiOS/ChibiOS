@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 17.6.1 ***
+- VAR: Fixed priority issue in STM32 Nucleo-64 F401RE demo(bug #858).
 - VAR: Fixed STM32L053 Discovery demo which is unaligned to standard demos (bug 
        #857).
 - HAL: Fixed unaligned STM32F0xx mcuconf.h files (bug #855).
