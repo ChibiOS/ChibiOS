@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 17.6.1 ***
+- HAL: Fixed incorrect UTG stepping in STM32F412 registry (bug #861).
 - HAL: Fixed missing DMA I2C3 streams in STM32F411 registry (bug #860).
 - HAL: Fixed missing Ethernet PHY in some STM32 Nucleo-144 board files (bug 
        #859).
