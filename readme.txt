@@ -73,6 +73,8 @@
 *****************************************************************************
 
 *** 16.1.9 ***
+- HAL: Fixed STM32 USBv1 fails the state check when USB_USE_WAIT is TRUE
+       (bug #863).
 - HAL: Fixed invalid handling of DST flag in STM32 RTCv2 (bug #854).
 - HAL: Fixed wrong frame size code in STM32 USARTv2 UART driver (bug #851).
 - VAR: Fixed CMSIS_OS issue in timers (bug #846).
