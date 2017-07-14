@@ -1,5 +1,5 @@
 ifeq ($(USE_SMART_BUILD),yes)
-ifneq ($(findstring HAL_USE_ADC TRUE,$(HALCONF)),)
+ifneq ($(findstring HAL_USE_EXT TRUE,$(HALCONF)),)
 PLATFORMSRC += $(CHIBIOS)/os/hal/ports/AVR/MEGA/EXTv1/hal_ext_lld.c
 endif
 else

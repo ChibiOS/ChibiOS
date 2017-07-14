@@ -1,5 +1,5 @@
 ifeq ($(USE_SMART_BUILD),yes)
-ifneq ($(findstring HAL_USE_ADC TRUE,$(HALCONF)),)
+ifneq ($(findstring HAL_USE_USB TRUE,$(HALCONF)),)
 PLATFORMSRC += $(CHIBIOS)/os/hal/ports/AVR/MEGA/USBv1/hal_usb_lld.c
 endif
 else
