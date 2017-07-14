@@ -60,21 +60,22 @@ OBJDIR = .
 CHIBIOS = ../../..
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/boards/SPARKFUN_PRO_MICRO/board.mk
-include $(CHIBIOS)/os/hal/ports/AVR/platform.mk
+include $(CHIBIOS)/os/hal/ports/AVR/MEGA/platform.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/AVR/compilers/GCC/mk/port.mk
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = $(KERNSRC) \
-      $(PORTSRC) \
-      $(OSALSRC) \
-      $(HALSRC) \
-      $(PLATFORMSRC) \
-      $(BOARDSRC) \
-      $(TESTSRC) \
+SRC = $(KERNSRC)                      \
+      $(PORTSRC)                      \
+      $(OSALSRC)                      \
+      $(HALSRC)                       \
+      $(PLATFORMSRC)                  \
+      $(BOARDSRC)                     \
+      $(TESTSRC)                      \
       $(CHIBIOS)/os/various/evtimer.c \
-      usbcfg.c main.c
+      usbcfg.c                        \
+      main.c
 
 # List C++ source files here. (C dependencies are automatically generated.)
 CPPSRC =
