@@ -39,6 +39,9 @@
 # To rebuild project do "make clean" then "make all".
 #----------------------------------------------------------------------------
 
+# Configuration of Smart Build. (can be yes, no)
+USE_SMART_BUILD = yes
+
 # MCU name
 MCU = atmega32u4
 
