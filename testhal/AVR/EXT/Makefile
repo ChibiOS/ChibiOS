@@ -60,7 +60,7 @@ OBJDIR = .
 CHIBIOS = ../../..
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/boards/ARDUINO_MEGA/board.mk
-include $(CHIBIOS)/os/hal/ports/AVR/platform.mk
+include $(CHIBIOS)/os/hal/ports/AVR/MEGA/platform.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/AVR/compilers/GCC/mk/port.mk
@@ -68,13 +68,13 @@ include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = $(KERNSRC) \
-      $(PORTSRC) \
-      $(OSALSRC) \
-      $(HALSRC) \
-      $(PLATFORMSRC) \
-      $(BOARDSRC) \
-	  $(STREAMSSRC) \
+SRC = $(KERNSRC)                      \
+      $(PORTSRC)                      \
+      $(OSALSRC)                      \
+      $(HALSRC)                       \
+      $(PLATFORMSRC)                  \
+      $(BOARDSRC)                     \
+      $(STREAMSSRC)                   \
       $(CHIBIOS)/os/various/evtimer.c \
       main.c
 
