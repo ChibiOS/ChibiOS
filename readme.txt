@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.9 ***
+- RT:  Fixed misplaced assertion in semaphores code (bug #865).
 - HAL: Fixed STM32 USBv1 fails the state check when USB_USE_WAIT is TRUE
        (bug #863).
 - HAL: Fixed invalid handling of DST flag in STM32 RTCv2 (bug #854).
