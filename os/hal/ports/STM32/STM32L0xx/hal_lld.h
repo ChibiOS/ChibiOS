@@ -114,11 +114,11 @@
  * @name    RCC_CR register bits definitions
  * @{
  */
-#define STM32_RTCPRE_MASK       (3 << 29)   /**< RTCPRE mask.               */
-#define STM32_RTCPRE_DIV2       (0 << 29)   /**< HSE divided by 2.          */
-#define STM32_RTCPRE_DIV4       (1 << 29)   /**< HSE divided by 4.          */
-#define STM32_RTCPRE_DIV8       (2 << 29)   /**< HSE divided by 2.          */
-#define STM32_RTCPRE_DIV16      (3 << 29)   /**< HSE divided by 16.         */
+#define STM32_RTCPRE_MASK       (3 << 20)   /**< RTCPRE mask.               */
+#define STM32_RTCPRE_DIV2       (0 << 20)   /**< HSE divided by 2.          */
+#define STM32_RTCPRE_DIV4       (1 << 20)   /**< HSE divided by 4.          */
+#define STM32_RTCPRE_DIV8       (2 << 20)   /**< HSE divided by 2.          */
+#define STM32_RTCPRE_DIV16      (3 << 20)   /**< HSE divided by 16.         */
 /** @} */
 
 /**
