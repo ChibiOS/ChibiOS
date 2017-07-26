@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** Next ***
+- HAL:  Fixed wrong bit mask in STM32L0 hal lld (bug #866)(backported to
+       17.6.1 and 16.1.9).
 - RT:  Fixed misplaced assertion in semaphores code (bug #865)(backported to
        17.6.1 and 16.1.9).
 - HAL: Fixed STM32 USBv1 fails the state check when USB_USE_WAIT is TRUE
