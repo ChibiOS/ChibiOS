@@ -64,8 +64,8 @@
                 .equ    SCR_FW,     0x10
                 .equ    SCR_AW,     0x20
 
-                .set    MON_S_SCR,  SCR_IRQ
-                .set    MON_NS_SCR, SCR_FIQ|SCR_NS
+                .equ    MON_S_SCR,  SCR_IRQ
+                .equ    MON_NS_SCR, SCR_FIQ|SCR_NS
 
                 .text
 
@@ -161,7 +161,7 @@ Mon_Irq_Handler:
                 ldmfd   sp!, {r0-r3, r12, lr}
                 msr     CPSR_c, #MODE_MON | I_BIT | F_BIT
                 stmfd   sp!, {lr}               // save lr into monitor stack
-                ldr     lr, =#MON_NS_SCR        // set non-secure SCR before return
+                ldr     lr, =MON_NS_SCR        // set non-secure SCR before return
                 mrc     p15, 0, lr, c1, c1, 0
                 ldmfd   sp!, {lr}
                 subs    pc, lr, #4              // return into non-secure world
@@ -173,7 +173,7 @@ Mon_Fiq_Handler:
                 // here the fiq is taken from non-secure state
                 // current mode is monitor (so current state is secure)
                 stmfd   sp!, {lr}               // save lr into monitor stack
-                ldr     lr, =#MON_S_SCR         // set secure SCR before to switch to FIQ mode
+                ldr     lr, =MON_S_SCR         // set secure SCR before to switch to FIQ mode
                 mrc     p15, 0, lr, c1, c1, 0
                 cpsid   if, #MODE_FIQ           // secure FIQ mode
                 stmfd   sp!, {r0-r3, r12}       // IRQ frame, save scratch registers
@@ -185,7 +185,7 @@ _mon_fiq_ret_arm:
                 cmp     r0, #0
                 ldmfd   sp!, {r0-r3, r12}
                 cpsid   if, #MODE_MON
-                ldr     lr, =#MON_NS_SCR        // set non-secure SCR before return
+                ldr     lr, =MON_NS_SCR        // set non-secure SCR before return
                 mrceq   p15, 0, lr, c1, c1, 0   // only if it will return
                 ldmfd   sp!, {lr}
                 subeqs  pc, lr, #4              // No reschedule, returns.
@@ -218,7 +218,7 @@ _mon_fiq_ret_arm:
                 ldmfd   sp!, {r0-r3, r12, lr}
                 msr     CPSR_c, #MODE_MON | I_BIT | F_BIT
                 stmfd   sp!, {lr}               // save lr into monitor stack
-                ldr     lr, =#MON_NS_SCR        // set non-secure SCR before return
+                ldr     lr, =MON_NS_SCR        // set non-secure SCR before return
                 mrc     p15, 0, lr, c1, c1, 0
                 ldmfd   sp!, {lr}
                 subs    pc, lr, #4              // return into non-secure world
