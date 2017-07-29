@@ -1,4 +1,4 @@
-# List of the ChibiOS generic LPC214x file.
+# List of the ChibiOS generic SAMA5D2 file.
 STARTUPSRC = $(CHIBIOS)/os/common/startup/ARM/compilers/GCC/crt1.c
 
 STARTUPASM = $(CHIBIOS)/os/common/startup/ARM/compilers/GCC/vectors.S \

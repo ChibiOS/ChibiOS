@@ -15,13 +15,13 @@
 */
 
 /**
- * @file    LPC214x/armparams.h
- * @brief   ARM parameters for the LPC214x.
+ * @file    SAMA5D2/armparams.h
+ * @brief   ARM parameters for the SAMA5D2x.
  *
- * @defgroup ARM_LPC214x LPC214x Specific Parameters
+ * @defgroup ARM_SAMA5D2x Specific Parameters
  * @ingroup ARM_SPECIFIC
  * @details This file contains the ARM specific parameters for the
- *          LPC214x platform.
+ *          SAMA5D2x platform.
  * @{
  */
 
@@ -56,7 +56,6 @@
 #else
 #define ARM_IRQ_VECTOR_REG      0xF803C014
 #endif
-
 #endif /* ARMPARAMS_H */
 
 /** @} */
