@@ -44,7 +44,12 @@ static void extcb(EXTDriver *extp, expchannel_t channel) {
  */
 static const EXTConfig extcfg = {
   {
+    {EXT_CH_MODE_DISABLED , NULL},      /* INT0 Config. */
+    {EXT_CH_MODE_DISABLED , NULL},      /* INT1 Config. */
+    {EXT_CH_MODE_DISABLED , NULL},      /* INT2 Config. */
+    {EXT_CH_MODE_DISABLED , NULL},      /* INT3 Config. */
     {EXT_CH_MODE_RISING_EDGE , extcb},  /* INT4 Config. */
+    {EXT_CH_MODE_DISABLED , NULL},      /* INT5 Config. */
   }
 };
 
@@ -65,7 +70,7 @@ int main(void) {
   /*
    * External interrupt on the Pin D2 of the Arduino Mega2560.
    */
-  palSetPadMode(IOPORT5, PE4, PAL_MODE_INPUT);
+  palSetPadMode(IOPORT5, PE4, PAL_MODE_INPUT);  /* INT4 pin. */
 
   /*
    * Start the serial driver.
