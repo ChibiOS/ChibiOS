@@ -89,7 +89,9 @@
 *****************************************************************************
 
 *** Next ***
-- HAL:  Fixed wrong bit mask in STM32L0 hal lld (bug #866)(backported to
+- HAL: Fixed wrong PPRE2 and LSI related macros in STM32L0 hal lld (bug #868)
+       (backported to 17.6.1 and 16.1.9).
+- HAL: Fixed wrong bit mask in STM32L0 hal lld (bug #866)(backported to
        17.6.1 and 16.1.9).
 - RT:  Fixed misplaced assertion in semaphores code (bug #865)(backported to
        17.6.1 and 16.1.9).
