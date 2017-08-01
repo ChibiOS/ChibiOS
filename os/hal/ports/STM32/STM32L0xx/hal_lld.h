@@ -98,7 +98,7 @@
  */
 #define STM32_HSI16CLK          16000000    /**< 16MHz internal clock.      */
 #define STM32_HSI48CLK          48000000    /**< 48MHz internal clock.      */
-#define STM32_LSICLK            38000       /**< Low speed internal clock.  */
+#define STM32_LSICLK            37000       /**< Low speed internal clock.  */
 /** @} */
 
 /**
@@ -160,12 +160,12 @@
 #define STM32_PPRE1_DIV8        (6 << 8)    /**< HCLK divided by 8.         */
 #define STM32_PPRE1_DIV16       (7 << 8)    /**< HCLK divided by 16.        */
 
-#define STM32_PPRE2_MASK        (7 << 12)   /**< PPRE2 field mask.          */
-#define STM32_PPRE2_DIV1        (0 << 12)   /**< HCLK divided by 1.         */
-#define STM32_PPRE2_DIV2        (4 << 12)   /**< HCLK divided by 2.         */
-#define STM32_PPRE2_DIV4        (5 << 12)   /**< HCLK divided by 4.         */
-#define STM32_PPRE2_DIV8        (6 << 12)   /**< HCLK divided by 8.         */
-#define STM32_PPRE2_DIV16       (7 << 12)   /**< HCLK divided by 16.        */
+#define STM32_PPRE2_MASK        (7 << 11)   /**< PPRE2 field mask.          */
+#define STM32_PPRE2_DIV1        (0 << 11)   /**< HCLK divided by 1.         */
+#define STM32_PPRE2_DIV2        (4 << 11)   /**< HCLK divided by 2.         */
+#define STM32_PPRE2_DIV4        (5 << 11)   /**< HCLK divided by 4.         */
+#define STM32_PPRE2_DIV8        (6 << 11)   /**< HCLK divided by 8.         */
+#define STM32_PPRE2_DIV16       (7 << 11)   /**< HCLK divided by 16.        */
 
 #define STM32_STOPWUCK_MASK     (1 << 15)   /**< PLLDIV field mask.         */
 #define STM32_STOPWUCK_MSI      (0 << 15)   /**< MSI is wakeup clock.       */
