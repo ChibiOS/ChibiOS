@@ -110,8 +110,8 @@ DEBUG = dwarf-2
 #     Use forward slashes for directory separators.
 #     For a directory that has spaces, enclose it in quotes.
 EXTRAINCDIRS = $(CHIBIOS)/os/license $(PORTINC) $(KERNINC) $(TESTINC) \
-               $(HALINC) $(OSALINC) $(PLATFORMINC) \
-               $(BOARDINC) $(CHIBIOS)/os/various/shell \
+               $(HALINC) $(OSALINC) $(PLATFORMINC)                    \
+               $(BOARDINC) $(CHIBIOS)/os/various/shell                \
                $(STREAMSINC)
 
 # Compiler flag to set the C Standard level.
