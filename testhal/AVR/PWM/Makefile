@@ -108,7 +108,7 @@ DEBUG = dwarf-2
 #     Use forward slashes for directory separators.
 #     For a directory that has spaces, enclose it in quotes.
 EXTRAINCDIRS = $(CHIBIOS)/os/license $(PORTINC) $(KERNINC) $(TESTINC) \
-               $(HALINC) $(OSALINC) $(PLATFORMINC) \
+               $(HALINC) $(OSALINC) $(PLATFORMINC)                    \
 							 $(STREAMSINC) $(BOARDINC) $(CHIBIOS)/os/various
 
 # Compiler flag to set the C Standard level.
@@ -229,6 +229,7 @@ MATH_LIB = -lm
 EXTRALIBDIRS =
 
 #---------------- External Memory Options ----------------
+
 
 # 64 KB of external RAM, starting after internal RAM (ATmega128!),
 # used for variables (.data/.bss) and heap (malloc()).
