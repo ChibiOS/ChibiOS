@@ -8,7 +8,13 @@ PLATFORMINC := $(CHIBIOS)/os/hal/ports/common/ARMCMx \
 
 # Optional platform files.
 ifeq ($(USE_SMART_BUILD),yes)
-HALCONF := $(strip $(shell cat halconf.h | egrep -e "\#define"))
+
+# Configuration files directory
+ifeq ($(CONFDIR),)
+  CONFDIR = .
+endif
+
+HALCONF := $(strip $(shell cat $(CONFDIR)/halconf.h | egrep -e "\#define"))
 
 ifneq ($(findstring HAL_USE_ADC TRUE,$(HALCONF)),)
 PLATFORMSRC += $(CHIBIOS)/os/hal/ports/STM32/STM32F37x/hal_adc_lld.c

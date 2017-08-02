@@ -66,6 +66,15 @@ endif
 ifeq ($(BUILDDIR),.)
   BUILDDIR = build
 endif
+
+# Dependencies directory
+ifeq ($(DEPDIR),)
+  DEPDIR = .dep
+endif
+ifeq ($(DEPDIR),.)
+  DEPDIR = .dep
+endif
+
 OUTFILES := $(BUILDDIR)/$(PROJECT).elf \
             $(BUILDDIR)/$(PROJECT).hex \
             $(BUILDDIR)/$(PROJECT).bin \
@@ -153,10 +162,10 @@ else
 endif
 
 # Generate dependency information
-ASFLAGS  += -MD -MP -MF .dep/$(@F).d
-ASXFLAGS += -MD -MP -MF .dep/$(@F).d
-CFLAGS   += -MD -MP -MF .dep/$(@F).d
-CPPFLAGS += -MD -MP -MF .dep/$(@F).d
+ASFLAGS  += -MD -MP -MF $(DEPDIR)/$(@F).d
+ASXFLAGS += -MD -MP -MF $(DEPDIR)/$(@F).d
+CFLAGS   += -MD -MP -MF $(DEPDIR)/$(@F).d
+CPPFLAGS += -MD -MP -MF $(DEPDIR)/$(@F).d
 
 # Paths where to search for sources
 VPATH     = $(SRCPATHS)
@@ -306,7 +315,7 @@ $(BUILDDIR)/lib$(PROJECT).a: $(OBJS)
 
 clean: CLEAN_RULE_HOOK
 	@echo Cleaning
-	-rm -fR .dep $(BUILDDIR)
+	-rm -fR $(DEPDIR) $(BUILDDIR)
 	@echo
 	@echo Done
 
@@ -315,6 +324,6 @@ CLEAN_RULE_HOOK:
 #
 # Include the dependency files, should be the last of the makefile
 #
--include $(shell mkdir .dep 2>/dev/null) $(wildcard .dep/*)
+-include $(shell mkdir $(DEPDIR) 2>/dev/null) $(wildcard $(DEPDIR)/*)
 
 # *** EOF ***

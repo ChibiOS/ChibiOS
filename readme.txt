@@ -89,6 +89,10 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added to the Makefiles the ability to change the default build,
+       dependencies and configuration directories. This makes possible
+       to have multiple non-conflicting makefiles in the same project.
+       Updated the various platform.mk implementing "smard build" mode.
 - HAL: Fixed wrong PPRE2 and LSI related macros in STM32L0 hal lld (bug #868)
        (backported to 17.6.1 and 16.1.9).
 - HAL: Fixed wrong bit mask in STM32L0 hal lld (bug #866)(backported to
