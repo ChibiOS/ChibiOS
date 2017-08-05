@@ -18,6 +18,7 @@
 
 #include "ch.h"
 
+static uint32_t counter = 0;
 /*
  * Application entry point.
  */
@@ -26,5 +27,6 @@ int main(void) {
   chSysInit();
 
   while (true) {
+    counter++;
   }
 }

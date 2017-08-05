@@ -19,4 +19,12 @@
 
 #define SAMA5D2x_MCUCONF
 
+/*
+ * HAL driver system settings.
+ */
+#define SAMA_NO_INIT                        FALSE
+#define SAMA_MOSCRC_ENABLED                 TRUE
+#define SAMA_MOSCXT_ENABLED                 TRUE
+#define SAMA_MOSC_SEL                       SAMA_MOSC_MOSCRC
+#define SAMA_OSC_SEL                        SAMA_OSC_OSCRC
 #endif /* MCUCONF_H */

@@ -57,7 +57,18 @@ void hal_lld_init(void) {
 #if defined(SAMA5_DMA_REQUIRED)
   dmaInit();
 #endif
-
 }
 
+/**
+ * @brief   SAMA clocks and PLL initialization.
+ * @note    All the involved constants come from the file @p board.h.
+ * @note    This function should be invoked just after the system reset.
+ *
+ * @special
+ */
+void sama_clock_init(void) {
+#if !SAMA_NO_INIT
+
+#endif /* !SAMA_NO_INIT */
+}
 /** @} */

@@ -15,3 +15,13 @@
 */
 
 #include "hal.h"
+
+/**
+ * @brief   Early initialization code.
+ * @details This initialization must be performed just after stack setup
+ *          and before any other initialization.
+ */
+void __early_init(void) {
+
+  sama_clock_init();
+}

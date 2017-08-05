@@ -48,29 +48,113 @@
  * @{
  */
 #if defined(SAMA5D21) || defined(__DOXYGEN__)
-#define PLATFORM_NAME           "ARM Cortex-A5 processor based embedded MPU, 500Mhz, Neon, L2 cache, TrustZone, 16-bit DDR, BGA196"
+#define PLATFORM_NAME           "500Mhz processor with TrustZone, 16-bit DDR, BGA196"
 
 #elif defined(SAMA5D22)
-#define PLATFORM_NAME           "ARM Cortex-A5 processor based embedded MPU, 500Mhz, Neon, L2 cache, TrustZone, 16-bit DDR, CAN, BGA196"
+#define PLATFORM_NAME           "500Mhz processor with TrustZone, 16-bit DDR, CAN, BGA196"
 
 #elif defined(SAMA5D23)
-#define PLATFORM_NAME           "ARM Cortex-A5 processor based embedded MPU, 500Mhz, Neon, L2 cache, TrustZone, 16-bit DDR, CAN, Enhanced Security, BGA196"
+#define PLATFORM_NAME           "500Mhz processor with TrustZone, 16-bit DDR, CAN, Enhanced Security, BGA196"
 
 #elif defined(SAMA5D24)
-#define PLATFORM_NAME           "ARM Cortex-A5 processor based embedded MPU, 500Mhz, Neon, L2 cache, TrustZone, 16/32-bit DDR, USB HSIC, BGA256"
+#define PLATFORM_NAME           "A500Mhz processor with TrustZone, 16/32-bit DDR, USB HSIC, BGA256"
 
 #elif defined(SAMA5D25)
-#define PLATFORM_NAME           "ARM Cortex-A5 processor based embedded MPU, 500Mhz, Neon, L2 cache, TrustZone, 16/32-bit DDR, BGA289"
+#define PLATFORM_NAME           "500Mhz processor with TrustZone, 16/32-bit DDR, BGA289"
 
 #elif defined(SAMA5D26)
-#define PLATFORM_NAME           "ARM Cortex-A5 processor based embedded MPU, 500Mhz, Neon, L2 cache, TrustZone, 16/32-bit DDR, CAN, BGA289"
+#define PLATFORM_NAME           "500Mhz processor with TrustZone, 16/32-bit DDR, CAN, BGA289"
 
 #elif defined(SAMA5D27)
-#define PLATFORM_NAME           "ARM Cortex-A5 processor based embedded MPU, 500Mhz, Neon, L2 cache, TrustZone, 16/32-bit DDR, CAN, Enhanced Security, BGA289"
+#define PLATFORM_NAME           "500Mhz processor with TrustZone, 16/32-bit DDR, CAN, Enhanced Security, BGA289"
 
 #else
 #error "SAMA5D2x device unsupported or not specified"
 #endif
+/** @} */
+
+/**
+ * @name    Absolute Maximum Ratings
+ * @{
+ */
+/**
+ * @brief   Maximum processor clock frequency.
+ */
+#define SAMA_PCK_MAX            500000000
+
+/**
+ * @brief   Minimum processor clock frequency.
+ */
+#define SAMA_PCK_MIN            250000000
+
+/**
+ * @brief   Maximum processor clock frequency.
+ */
+#define SAMA_MCK_MAX            125000000
+
+/**
+ * @brief   Minimum processor clock frequency.
+ */
+#define SAMA_MCK_MIN            166000000
+
+/**
+ * @brief   Maximum Main Crystal Oscillator clock frequency.
+ */
+#define SAMA_MOSCXTCLK_MAX      24000000
+
+/**
+ * @brief   Minimum Main Crystal Oscillator clock frequency.
+ */
+#define SAMA_MOSCXTCLK_MIN      8000000
+
+/**
+ * @brief   Crystal 32 clock frequency.
+ */
+#define SAMA_OSCXTCLK           32768
+
+/**
+ * @brief   Maximum PLLs input clock frequency.
+ */
+#define SAMA_PLLIN_MAX          24000000
+
+/**
+ * @brief   Minimum PLLs input clock frequency.
+ */
+#define SAMA_PLLIN_MIN          800000
+
+/**
+ * @brief   Maximum PLL output clock frequency.
+ */
+#define SAMA_PLLOUT_MAX         1200000000
+
+/**
+ * @brief   Minimum PLL output clock frequency.
+ */
+#define SAMA_PLLOUT_MIN         600000000
+/** @} */
+
+/**
+ * @name    Internal clock sources
+ * @{
+ */
+#define SAMA_MOSCRCCLK         12000000     /**< RC Main oscillator clock. */
+#define SAMA_OSCRCCLK          32000        /**< RC Slow oscillator clock. */
+/** @} */
+
+/**
+ * @name    PCM_MOR register bits definitions
+ * @{
+ */                                           
+#define SAMA_MOSC_MOSCRC        (0 << 24)   /**< MCK source is MOSCRC.     */
+#define SAMA_MOSC_MOSCXT        (1 << 24)   /**< MCK source is MOSCXT.     */
+/** @} */
+
+/**
+ * @name    SCK_CR register bits definitions
+ * @{
+ */                                           
+#define SAMA_OSC_OSCRC          (0 << 3)    /**< MCK source is MOSCRC.     */
+#define SAMA_OSC_OSCXT          (1 << 3)    /**< MCK source is MOSCXT.     */
 /** @} */
 
 /*===========================================================================*/
@@ -78,9 +162,43 @@
 /*===========================================================================*/
 
 /**
- * @name    PLATFORM configuration options
+ * @name    Configuration options
  * @{
  */
+/**
+ * @brief   Disables the PMC initialization in the HAL.
+ */
+#if !defined(SAMA_NO_INIT) || defined(__DOXYGEN__)
+#define SAMA_NO_INIT                        FALSE
+#endif
+
+/**
+ * @brief   Enables or disables the MOSCRC clock source.
+ */
+#if !defined(SAMA_MOSCRC_ENABLED) || defined(__DOXYGEN__)
+#define SAMA_MOSCRC_ENABLED                 TRUE
+#endif
+
+/**
+ * @brief   Enables or disables the MOSCXT clock source.
+ */
+#if !defined(SAMA_MOSCXT_ENABLED) || defined(__DOXYGEN__)
+#define SAMA_MOSCXT_ENABLED                 TRUE
+#endif
+
+/**
+ * @brief   Main clock source selection.
+ */
+#if !defined(SAMA_MOSC_SEL) || defined(__DOXYGEN__)
+#define SAMA_MOSC_SEL                       SAMA_MOSC_MOSCRC
+#endif
+
+/**
+ * @brief   Slow clock source selection.
+ */
+#if !defined(SAMA_OSC_SEL) || defined(__DOXYGEN__)
+#define SAMA_OSC_SEL                        SAMA_OSC_OSCRC
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -110,6 +228,7 @@
 extern "C" {
 #endif
   void hal_lld_init(void);
+  void sama_clock_init(void);
 #ifdef __cplusplus
 }
 #endif
