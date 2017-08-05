@@ -298,7 +298,7 @@ struct port_context {
  *          port implementation.
  */
 #define PORT_IRQ_HANDLER(id)                                                \
-    __attribute__((interrupt("FIQ"))) void id(void)
+    __attribute__((interrupt("FIQ"))) bool id(void)
 
 /**
  * @brief   Fast IRQ handler function declaration.
@@ -306,7 +306,7 @@ struct port_context {
  *          port implementation.
  */
 #define PORT_FAST_IRQ_HANDLER(id)                                           \
-  __attribute__((interrupt("FIQ"))) void id(void)
+  __attribute__((interrupt("FIQ"))) bool id(void)
 
 /**
  * @brief   Performs a context switch between two threads.
@@ -434,20 +434,20 @@ static inline bool port_is_isr_context(void) {
 /**
  * @brief   Kernel-lock action.
  * @details In this port it disables the FIQ sources and keeps IRQ sources
- *          enabled.
+ *          disabled.
  */
 static inline void port_lock(void) {
 
-  __asm volatile ("msr     CPSR_c, #0x5F" : : : "memory");
+  __asm volatile ("msr     CPSR_c, #0xDF" : : : "memory");
 }
 
 /**
  * @brief   Kernel-unlock action.
- * @details In this port it enables both the IRQ and FIQ sources.
+ * @details In this port it enables the FIQ sources.
  */
 static inline void port_unlock(void) {
 
-  __asm volatile ("msr     CPSR_c, #0x1F" : : : "memory");
+  __asm volatile ("msr     CPSR_c, #0x9F" : : : "memory");
 }
 
 /**
@@ -468,30 +468,31 @@ static inline void port_unlock_from_isr(void) {
 
 /**
  * @brief   Disables all the interrupt sources.
- * @details In this port it disables FIQ sources.
+ * @details In this port it disables FIQ sources and keeps IRQ sources
+ *          disabled.
  */
 static inline void port_disable(void) {
 
-  __asm volatile ("msr     CPSR_c, #0x5F" : : : "memory");
+  __asm volatile ("msr     CPSR_c, #0xDF" : : : "memory");
 }
 
 /**
  * @brief   Disables the interrupt sources below kernel-level priority.
  * @note    Interrupt sources above kernel level remains enabled.
- * @note    In this port it disables the FIQ sources.
+ * @note    In this port it disables the FIQ and IRQ sources.
  */
 static inline void port_suspend(void) {
 
-  __asm volatile ("msr     CPSR_c, #0x5F" : : : "memory");
+  __asm volatile ("msr     CPSR_c, #0xDF" : : : "memory");
 }
 
 /**
  * @brief   Enables all the interrupt sources.
- * @note    In this port it enables both the IRQ and FIQ sources.
+ * @note    In this port it enables the FIQ sources.
  */
 static inline void port_enable(void) {
 
-  __asm volatile ("msr     CPSR_c, #0x1F" : : : "memory");
+  __asm volatile ("msr     CPSR_c, #0x9F" : : : "memory");
 }
 
 /**
