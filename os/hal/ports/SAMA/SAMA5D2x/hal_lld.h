@@ -15,8 +15,15 @@
 */
 
 /**
- * @file    hal_lld.h
- * @brief   PLATFORM HAL subsystem low level driver header.
+ * @file    SAMA5D2x/hal_lld.h
+ * @brief   SAMA5D2x HAL subsystem low level driver header.
+ * @pre     This module requires the following macros to be defined in the
+ *          @p board.h file:
+ *          - SAMA_MOSCXTCLK.
+ *          .
+ *          One of the following macros must also be defined:
+ *          - SAMA5D21, SAMA5D22, SAMA5D23, SAMA5D24, SAMA5D25, SAMA5D26,
+ *            SAMA5D27, SAMA5D28.
  *
  * @addtogroup HAL
  * @{
@@ -137,24 +144,49 @@
  * @name    Internal clock sources
  * @{
  */
-#define SAMA_MOSCRCCLK         12000000     /**< RC Main oscillator clock. */
-#define SAMA_OSCRCCLK          32000        /**< RC Slow oscillator clock. */
-/** @} */
-
-/**
- * @name    PCM_MOR register bits definitions
- * @{
- */                                           
-#define SAMA_MOSC_MOSCRC        (0 << 24)   /**< MCK source is MOSCRC.     */
-#define SAMA_MOSC_MOSCXT        (1 << 24)   /**< MCK source is MOSCXT.     */
+#define SAMA_MOSCRCCLK          12000000    /**< RC Main oscillator clock. */
+#define SAMA_OSCRCCLK           32000       /**< RC Slow oscillator clock. */
 /** @} */
 
 /**
  * @name    SCK_CR register bits definitions
  * @{
  */                                           
-#define SAMA_OSC_OSCRC          (0 << 3)    /**< MCK source is MOSCRC.     */
-#define SAMA_OSC_OSCXT          (1 << 3)    /**< MCK source is MOSCXT.     */
+#define SAMA_OSC_OSCRC          (0 << 3)    /**< Slow Clock source MOSCRC. */
+#define SAMA_OSC_OSCXT          (1 << 3)    /**< Slow Clock source MOSCXT. */
+/** @} */
+
+/**
+ * @name    PCM_MOR register bits definitions
+ * @{
+ */                                           
+#define SAMA_MOSC_MOSCRC        (0 << 24)   /**< Main Clock source MOSCRC. */
+#define SAMA_MOSC_MOSCXT        (1 << 24)   /**< Main Clock source MOSCXT. */
+/** @} */
+
+/**
+ * @name    PCM_MCR register bits definitions
+ * @{
+ */                                           
+#define SAMA_MCK_SLOW_CLK       (0 << 0)    /**< MCK source is Slow Clock. */
+#define SAMA_MCK_MAIN_CLK       (1 << 0)    /**< MCK source is Main Clock. */
+#define SAMA_MCK_PLLA_CLK       (2 << 0)    /**< MCK source is PLLA Clock. */
+#define SAMA_MCK_UPLL_CLK       (3 << 0)    /**< MCK source is UPLL Clock. */
+
+#define SAMA_MCK_PRE_DIV1       (0 << 4)    /**< MCK not prescaled.        */
+#define SAMA_MCK_PRE_DIV2       (1 << 4)    /**< MCK prescaled by 2.       */
+#define SAMA_MCK_PRE_DIV4       (2 << 4)    /**< MCK prescaled by 4.       */
+#define SAMA_MCK_PRE_DIV8       (3 << 4)    /**< MCK prescaled by 8.       */
+#define SAMA_MCK_PRE_DIV16      (4 << 4)    /**< MCK prescaled by 16.      */
+#define SAMA_MCK_PRE_DIV32      (5 << 4)    /**< MCK prescaled by 32.      */
+#define SAMA_MCK_PRE_DIV64      (6 << 4)    /**< MCK prescaled by 64.      */
+
+#define SAMA_MCK_MDIV_DIV1      (0 << 8)    /**< MCK is not divided.       */
+#define SAMA_MCK_MDIV_DIV2      (1 << 8)    /**< MCK is divided by 2.      */
+#define SAMA_MCK_MDIV_DIV3      (3 << 8)    /**< MCK is divided by 3.      */
+#define SAMA_MCK_MDIV_DIV4      (2 << 8)    /**< MCK is divided by 4.      */
+
+#define SAMA_MCK_PLLADIV2       (1 << 12)   /**< PLLA is divided by 2.     */
 /** @} */
 
 /*===========================================================================*/
@@ -183,7 +215,7 @@
  * @brief   Enables or disables the MOSCXT clock source.
  */
 #if !defined(SAMA_MOSCXT_ENABLED) || defined(__DOXYGEN__)
-#define SAMA_MOSCXT_ENABLED                 TRUE
+#define SAMA_MOSCXT_ENABLED                 FALSE
 #endif
 
 /**
@@ -199,6 +231,41 @@
 #if !defined(SAMA_OSC_SEL) || defined(__DOXYGEN__)
 #define SAMA_OSC_SEL                        SAMA_OSC_OSCRC
 #endif
+
+/**
+ * @brief   Master clock source selection.
+ */
+#if !defined(SAMA_MCK_SEL) || defined(__DOXYGEN__)
+#define SAMA_MCK_SEL                        SAMA_MCK_PLLA_CLK
+#endif
+
+/**
+ * @brief   Master clock prescaler.
+ */
+#if !defined(SAMA_MCK_PRES) || defined(__DOXYGEN__)
+#define SAMA_MCK_PRES                       SAMA_MCK_PRE_DIV2
+#endif
+
+/**
+ * @brief   Master clock divider.
+ */
+#if !defined(SAMA_MCK_MDIV) || defined(__DOXYGEN__)
+#define SAMA_MCK_MDIV                       SAMA_MCK_MDIV_DIV1
+#endif
+
+/**
+ * @brief   PLLA clock multiplier.
+ */
+#if !defined(SAMA_PLLA_MUL_VALUE) || defined(__DOXYGEN__)
+#define SAMA_PLLA_MUL_VALUE                 83
+#endif
+
+/**
+ * @brief   PLLADIV2 clock divider.
+ */
+#if !defined(SAMA_PLLADIV2_EN) || defined(__DOXYGEN__)
+#define SAMA_PLLADIV2_EN                    FALSE
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -210,6 +277,85 @@
  */
 #if !defined(SAMA5D2x_MCUCONF)
 #error "Using a wrong mcuconf.h file, SAMA5D2x_MCUCONF not defined"
+#endif
+
+/**
+ * @brief   MAIN clock value.
+ */
+/* Main oscillator is fed by internal RC. */
+#if (SAMA_MOSC_SEL == SAMA_MOSC_MOSCRC) || defined(__DOXYGEN__)
+#if !SAMA_MOSCRC_ENABLED
+#error "Internal RC oscillator disabled (required by SAMA_MOSC_SEL)."
+#endif
+#define SAMA_MAIN_CLK                       SAMA_MOSCRCCLK
+
+/* Main oscillator is fed by external XTAL. */  
+#elif (SAMA_MOSC_SEL == SAMA_MOSC_MOSCXT)
+#if !SAMA_MOSCXT_ENABLED
+#error "External crystal oscillator disabled (required by SAMA_MOSC_SEL)."
+#endif
+#define SAMA_MAIN_CLK                       SAMA_MOSCXTCLK
+/* Checks on external crystal range. */
+#if (SAMA_MOSCXTCLK > SAMA_MOSCXTCLK_MAX) ||                                \
+    (SAMA_MOSCXTCLK < SAMA_MOSCXTCLK_MIN)
+#error "External crystal oscillator out of range."
+#endif
+
+/* Unallowed condition. */ 
+#else
+#error "Wrong SAMA_MOSC_SEL value."  
+#endif /* SAMA_MOSCXTCLK */
+
+#if (SAMA_MCK_SEL == SAMA_MCK_PLLA_CLK) || defined(__DOXYGEN__)
+#define SAMA_ACTIVATE_PLLA                  TRUE
+#else
+#define SAMA_ACTIVATE_PLLA                  FALSE
+#endif
+
+/**
+ * @brief   PLLAMUL field.
+ */
+#if ((SAMA_PLLA_MUL_VALUE >= 1) && (SAMA_PLLA_MUL_VALUE <= 127)) ||          \
+    defined(__DOXYGEN__)
+#define SAMA_PLLA_MUL                       ((SAMA_PLLA_MUL_VALUE + 1) << 18)
+#else
+#error "invalid SAMA_PLLA_MUL_VALUE value specified"
+#endif
+
+/**
+ * @brief   PLLA input clock frequency.
+ * @todo    Condider to add DIVA to this. On SAMA5D27 DIVA is a nonsense since
+ *          it could be only 1 or 0 whereas 0 means PLLA disabled. This could
+ *          be useful for other chip beloging to this family
+ */
+#define SAMA_PLLACLKIN                      SAMA_MAIN_CLK
+
+/* PLLA input frequency range check.*/
+#if (SAMA_PLLACLKIN < SAMA_PLLIN_MIN) || (SAMA_PLLACLKIN > SAMA_PLLIN_MAX)
+#error "SAMA_PLLACLKIN out of range"
+#endif
+
+/**
+ * @brief   PLLA output clock frequency.
+ */
+#define SAMA_PLLACLKOUT                     (SAMA_MAIN_CLK * SAMA_PLLA_MUL_VALUE)
+
+/* PLLA output frequency range check.*/
+#if (SAMA_PLLACLKOUT < SAMA_PLLOUT_MIN) || (SAMA_PLLACLKOUT > SAMA_PLLOUT_MAX)
+#error "SAMA_PLLACLKOUT out of range"
+#endif
+
+/**
+ * @brief   PLLADIV2 divider value.
+ */
+#if SAMA_PLLADIV2_EN || defined(__DOXYGEN__)
+#define SAMA_PLLADIV2                       SAMA_MCK_PLLADIV2
+#else
+#define SAMA_PLLADIV                        0
+#endif
+
+#if (SAMA_MCK_MDIV == SAMA_MCK_MDIV_DIV3) && !SAMA_PLLADIV2_EN
+#error "PLLADIV2 must be always enabled when Main Clock Divider is 3"
 #endif
 
 /*===========================================================================*/

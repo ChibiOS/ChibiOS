@@ -14,9 +14,8 @@
     limitations under the License.
 */
 
-#include <stdbool.h>
-
 #include "ch.h"
+#include "hal.h"
 
 static uint32_t counter = 0;
 /*
@@ -24,6 +23,14 @@ static uint32_t counter = 0;
  */
 int main(void) {
 
+  /*
+   * System initializations.
+   * - HAL initialization, this also initializes the configured device drivers
+   *   and performs the board-specific initializations.
+   * - Kernel initialization, the main() function becomes a thread and the
+   *   RTOS is active.
+   */
+  halInit();
   chSysInit();
 
   while (true) {

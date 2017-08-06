@@ -25,3 +25,10 @@ void __early_init(void) {
 
   sama_clock_init();
 }
+
+/**
+ * @brief   Board-specific initialization code.
+ * @todo    Add your board-specific code, if any.
+ */
+void boardInit(void) {
+}
