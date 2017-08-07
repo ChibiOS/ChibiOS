@@ -22,14 +22,14 @@
 /*
  * HAL driver system settings.
  */
-#define SAMA_NO_INIT                        TRUE
+#define SAMA_NO_INIT                        FALSE
 #define SAMA_MOSCRC_ENABLED                 TRUE
 #define SAMA_MOSCXT_ENABLED                 FALSE
 #define SAMA_MOSC_SEL                       SAMA_MOSC_MOSCRC
 #define SAMA_OSC_SEL                        SAMA_OSC_OSCXT
 #define SAMA_MCK_SEL                        SAMA_MCK_PLLA_CLK
-#define SAMA_MCK_PRES                       SAMA_MCK_PRE_DIV2
-#define SAMA_MCK_MDIV                       SAMA_MCK_MDIV_DIV1
+#define SAMA_MCK_PRES_VALUE                 1
+#define SAMA_MCK_MDIV_VALUE                 3
 #define SAMA_PLLA_MUL_VALUE                 83
-#define SAMA_PLLADIV2_EN                    FALSE
+#define SAMA_PLLADIV2_EN                    TRUE
 #endif /* MCUCONF_H */

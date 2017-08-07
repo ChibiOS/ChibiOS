@@ -6,7 +6,7 @@
 <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.doReset" value="false"/>
 <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.imageFileName" value=""/>
 <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.imageOffset" value=""/>
-<stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.initCommands" value="mon reg cpsr = 0xd3&#13;&#10;set *0xF8048000 = 0xA5000004&#13;&#10;set *0x00A00100 = 0&#13;&#10;set *0xF8048044 = 0x00008000&#13;&#10;mon cp15 1 0 0 0 = 0x00C50078&#13;&#10;set *0xF0014004 = 0x4&#13;&#10;set *0xF0014014 = 1&lt;&lt;13&#13;&#10;"/>
+<stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.initCommands" value="mon reg cpsr = 0xd3&#13;&#10;set *0xF8048000 = 0xA5000004&#13;&#10;set *0x00A00100 = 0&#13;&#10;set *0xF8048044 = 0x00008000&#13;&#10;mon cp15 1 0 0 0 = 0x00C50078&#13;&#10;set *0xF0014004 = 0x4&#13;&#10;set *0xF0014014 = 1&lt;&lt;13"/>
 <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.ipAddress" value="localhost"/>
 <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.jtagDevice" value="Generic TCP/IP"/>
 <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.loadImage" value="true"/>
@@ -17,7 +17,7 @@
 <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.setPcRegister" value="false"/>
 <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.setResume" value="true"/>
 <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.setStopAt" value="true"/>
-<stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.stopAt" value="sama_clock_init"/>
+<stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.stopAt" value="main"/>
 <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.symbolsFileName" value=""/>
 <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.symbolsOffset" value=""/>
 <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.useFileForImage" value="false"/>

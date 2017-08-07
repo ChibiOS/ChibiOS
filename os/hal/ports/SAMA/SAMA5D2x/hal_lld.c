@@ -88,16 +88,26 @@ void sama_clock_init(void) {
     ;                                       /* Waits until MOSCRC is stable.*/
 
   /* Switching Main Oscillator Source to MOSRC. */
-  mor = PMC->CKGR_MOR;
+  mor = PMC->CKGR_MOR | CKGR_MOR_KEY_PASSWD;
   mor &= ~CKGR_MOR_MOSCSEL;
-  mor |= (SAMA_MOSC_MOSCRC | CKGR_MOR_KEY_PASSWD);
+  mor |= SAMA_MOSC_MOSCRC;
   PMC->CKGR_MOR = mor;
+
+  while (!(PMC->PMC_SR & PMC_SR_MOSCSELS))
+    ;                                       /* Waits until MOSCSEL has changed.*/
 
   /* Switching Master Clock source to Main Clock. */
   mckr = PMC->PMC_MCKR;
   mckr &= ~PMC_MCKR_CSS_Msk;
   mckr |= PMC_MCKR_CSS_MAIN_CLK;
   PMC->PMC_MCKR = mckr;
+
+  while (!(PMC->PMC_SR & PMC_SR_MCKRDY))
+    ;                                       /* Waits until Master Clock is stable.*/
+
+  /* Switching Main Frequency Source to MOSCRC. */
+  PMC->CKGR_MCFR &= ~CKGR_MCFR_CCSS;
+
 }
 
   /*
@@ -152,9 +162,13 @@ void sama_clock_init(void) {
   PMC->PMC_MCKR = mckr;
   while (!(PMC->PMC_SR & PMC_SR_MCKRDY))
     ;                                       /* Waits until MCK is stable.   */
-  mckr = SAMA_MCK_PRES | SAMA_MCK_MDIV | SAMA_MCK_SEL;
+
+  mckr &= ~(PMC_MCKR_PRES_Msk | PMC_MCKR_MDIV_Msk);
+  mckr |= (SAMA_MCK_PRES | SAMA_MCK_MDIV);
 #if SAMA_PLLADIV2_EN
   mckr |= PMC_MCKR_PLLADIV2;
+#else
+  mckr &= ~PMC_MCKR_PLLADIV2;
 #endif
   PMC->PMC_MCKR = mckr;
   while (!(PMC->PMC_SR & PMC_SR_MCKRDY))

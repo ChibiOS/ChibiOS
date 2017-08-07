@@ -30,12 +30,12 @@
 /*
  * Board oscillators-related settings.
  */
-#if !defined(SAM_SLCK)
-#define SAM_SLCK                    32768U
+#if !defined(SAMA_OSCXTCLK)
+#define SAMA_OSCXTCLK               32768U
 #endif
 
-#if !defined(SAM_MAINCK)
-#define SAM_MAINCK                  12000000U
+#if !defined(SAMA_MOSCXTCLK)
+#define SAMA_MOSCXTCLK              12000000U
 #endif
 
 /*

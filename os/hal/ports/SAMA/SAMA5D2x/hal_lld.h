@@ -20,6 +20,7 @@
  * @pre     This module requires the following macros to be defined in the
  *          @p board.h file:
  *          - SAMA_MOSCXTCLK.
+ *          - SAMA_OSCXTCLK
  *          .
  *          One of the following macros must also be defined:
  *          - SAMA5D21, SAMA5D22, SAMA5D23, SAMA5D24, SAMA5D25, SAMA5D26,
@@ -95,14 +96,14 @@
 #define SAMA_PCK_MIN            250000000
 
 /**
- * @brief   Maximum processor clock frequency.
+ * @brief   Maximum master clock frequency.
  */
-#define SAMA_MCK_MAX            125000000
+#define SAMA_MCK_MAX            166000000
 
 /**
- * @brief   Minimum processor clock frequency.
+ * @brief   Minimum master clock frequency.
  */
-#define SAMA_MCK_MIN            166000000
+#define SAMA_MCK_MIN            125000000
 
 /**
  * @brief   Maximum Main Crystal Oscillator clock frequency.
@@ -113,11 +114,6 @@
  * @brief   Minimum Main Crystal Oscillator clock frequency.
  */
 #define SAMA_MOSCXTCLK_MIN      8000000
-
-/**
- * @brief   Crystal 32 clock frequency.
- */
-#define SAMA_OSCXTCLK           32768
 
 /**
  * @brief   Maximum PLLs input clock frequency.
@@ -242,15 +238,15 @@
 /**
  * @brief   Master clock prescaler.
  */
-#if !defined(SAMA_MCK_PRES) || defined(__DOXYGEN__)
-#define SAMA_MCK_PRES                       SAMA_MCK_PRE_DIV2
+#if !defined(SAMA_MCK_PRES_VALUE) || defined(__DOXYGEN__)
+#define SAMA_MCK_PRES_VALUE                 1
 #endif
 
 /**
  * @brief   Master clock divider.
  */
-#if !defined(SAMA_MCK_MDIV) || defined(__DOXYGEN__)
-#define SAMA_MCK_MDIV                       SAMA_MCK_MDIV_DIV1
+#if !defined(SAMA_MCK_MDIV_VALUE) || defined(__DOXYGEN__)
+#define SAMA_MCK_MDIV_VALUE                 3
 #endif
 
 /**
@@ -264,7 +260,7 @@
  * @brief   PLLADIV2 clock divider.
  */
 #if !defined(SAMA_PLLADIV2_EN) || defined(__DOXYGEN__)
-#define SAMA_PLLADIV2_EN                    FALSE
+#define SAMA_PLLADIV2_EN                    TRUE
 #endif
 /** @} */
 
@@ -277,6 +273,18 @@
  */
 #if !defined(SAMA5D2x_MCUCONF)
 #error "Using a wrong mcuconf.h file, SAMA5D2x_MCUCONF not defined"
+#endif
+
+/**
+ * @brief   Slow clock value.
+ */
+/* Main oscillator is fed by internal RC. */
+#if (SAMA_OSC_SEL == SAMA_OSC_OSCRC) || defined(__DOXYGEN__)
+#define SAMA_SLOW_CLK                       SAMA_OSCRCCLK
+#elif (SAMA_OSC_SEL == SAMA_OSC_OSCXT)
+#define SAMA_SLOW_CLK                       SAMA_OSCXTCLK
+#else
+#error "Wrong SAMA_OSC_SEL value."
 #endif
 
 /**
@@ -324,9 +332,9 @@
 
 /**
  * @brief   PLLA input clock frequency.
- * @todo    Condider to add DIVA to this. On SAMA5D27 DIVA is a nonsense since
+ * @todo    Consider to add DIVA to this. On SAMA5D27 DIVA is a nonsense since
  *          it could be only 1 or 0 whereas 0 means PLLA disabled. This could
- *          be useful for other chip beloging to this family
+ *          be useful for other chip belonging to this family
  */
 #define SAMA_PLLACLKIN                      SAMA_MAIN_CLK
 
@@ -354,10 +362,80 @@
 #define SAMA_PLLADIV                        0
 #endif
 
+/**
+ * @brief   Master Clock prescaler.
+ */
+#if (SAMA_MCK_PRES_VALUE == 1) || defined(__DOXYGEN__)
+#define SAMA_MCK_PRES                       SAMA_MCK_PRE_DIV1
+#elif (SAMA_MCK_PRES_VALUE == 2)
+#define SAMA_MCK_PRES                       SAMA_MCK_PRE_DIV2
+#elif (SAMA_MCK_PRES_VALUE == 4)
+#define SAMA_MCK_PRES                       SAMA_MCK_PRE_DIV4
+#elif (SAMA_MCK_PRES_VALUE == 8)
+#define SAMA_MCK_PRES                       SAMA_MCK_PRE_DIV8
+#elif (SAMA_MCK_PRES_VALUE == 16)
+#define SAMA_MCK_PRES                       SAMA_MCK_PRE_DIV16
+#elif (SAMA_MCK_PRES_VALUE == 32)
+#define SAMA_MCK_PRES                       SAMA_MCK_PRE_DIV32
+#elif (SAMA_MCK_PRES_VALUE == 64)
+#define SAMA_MCK_PRES                       SAMA_MCK_PRE_DIV64
+#else
+#error "Wrong SAMA_MCK_PRES_VALUE."
+#endif
+
+/**
+ * @brief   Master Clock divider.
+ */
+#if (SAMA_MCK_MDIV_VALUE == 1) || defined(__DOXYGEN__)
+#define SAMA_MCK_MDIV                       SAMA_MCK_MDIV_DIV1
+#elif (SAMA_MCK_MDIV_VALUE == 2)
+#define SAMA_MCK_MDIV                       SAMA_MCK_MDIV_DIV2
+#elif (SAMA_MCK_MDIV_VALUE == 3)
+#define SAMA_MCK_MDIV                       SAMA_MCK_MDIV_DIV3
+#elif (SAMA_MCK_MDIV_VALUE == 4)
+#define SAMA_MCK_MDIV                       SAMA_MCK_MDIV_DIV4
+#else
+#error "Wrong SAMA_MCK_MDIV_VALUE."
+#endif
+
+/* Check on MDIV and PLLADIV2 value. */
 #if (SAMA_MCK_MDIV == SAMA_MCK_MDIV_DIV3) && !SAMA_PLLADIV2_EN
 #error "PLLADIV2 must be always enabled when Main Clock Divider is 3"
 #endif
 
+/**
+ * @brief   Processor Clock frequency.
+ */
+#if (SAMA_MCK_SEL == SAMA_MCK_SLOW_CLK) || defined(__DOXYGEN__)
+#define SAMA_PCKOUT                         (SAMA_SLOW_CLK / SAMA_MCK_PRES_VALUE)
+#elif (SAMA_MCK_SEL == SAMA_MCK_MAIN_CLK)
+#define SAMA_PCKOUT                         (SAMA_MAIN_CLK / SAMA_MCK_PRES_VALUE)
+#elif (SAMA_MCK_SEL == SAMA_MCK_PLLA_CLK)
+#if SAMA_PLLADIV2_EN
+#define SAMA_PCKOUT                         (SAMA_PLLACLKOUT / SAMA_MCK_PRES_VALUE / 2)
+#else
+#define SAMA_PCKOUT                         (SAMA_PLLACLKOUT / SAMA_MCK_PRES_VALUE)
+#endif
+#elif (SAMA_MCK_SEL == SAMA_MCK_UPLL_CLK)
+#error "UPLL still unsupported"
+#else
+#error "Wrong SAMA_MCK_SEL."
+#endif
+
+/**
+ * @brief   Master Clock frequency.
+ */
+#define SAMA_MCKOUT                         (SAMA_PCKOUT / SAMA_MCK_MDIV_VALUE)
+
+/* Checks on Processor Clock crystal range. */
+#if (SAMA_PCKOUT > SAMA_PCK_MAX) || (SAMA_PCKOUT < SAMA_PCK_MIN)
+#error "Processor clock frequency out of range."
+#endif
+
+/* Checks on Master Clock crystal range. */
+#if (SAMA_MCKOUT > SAMA_MCK_MAX) || (SAMA_MCKOUT < SAMA_MCK_MIN)
+#error "Master clock frequency out of range."
+#endif
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
