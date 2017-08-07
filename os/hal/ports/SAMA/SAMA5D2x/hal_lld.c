@@ -73,44 +73,54 @@ void hal_lld_init(void) {
  */
 void sama_clock_init(void) {
 #if !SAMA_NO_INIT
-/* Setting Slow clock source. */
-SCKC->SCKC_CR = SAMA_OSC_SEL;
+  uint32_t mor, pllar, mckr;
+  /* Disabling PMC write protection. */
+  PMC->PMC_WPMR = PMC_WPMR_WPKEY_PASSWD;
 
-/* Disabling PMC write protection. */
-PMC->PMC_WPMR = PMC_WPMR_WPKEY_PASSWD | PMC_WPMR_WPEN;
-PMC->PMC_WPMR = PMC_WPMR_WPKEY_PASSWD;     
-
-/*
- * Main oscillator configuration block.
- */
+  /* Enforces the reset default configuration of clock tree. */
 {
-  /* Switching on RC. */
-  uint32_t mor = SAMA_MOR_ONE | CKGR_MOR_KEY_PASSWD | CKGR_MOR_MOSCRCEN;
-  PMC->CKGR_MOR |= mor;
+  /* Setting Slow Clock source to OSCRC. */
+  SCKC->SCKC_CR = 0U;
+
+  /* Enabling MOSCRC. */
+  PMC->CKGR_MOR |= (CKGR_MOR_KEY_PASSWD | CKGR_MOR_MOSCRCEN);
   while (!(PMC->PMC_SR & PMC_SR_MOSCRCS))
     ;                                       /* Waits until MOSCRC is stable.*/
 
+  /* Switching Main Oscillator Source to MOSRC. */
+  mor = PMC->CKGR_MOR;
+  mor &= ~CKGR_MOR_MOSCSEL;
+  mor |= (SAMA_MOSC_MOSCRC | CKGR_MOR_KEY_PASSWD);
+  PMC->CKGR_MOR = mor;
+
+  /* Switching Master Clock source to Main Clock. */
+  mckr = PMC->PMC_MCKR;
+  mckr &= ~PMC_MCKR_CSS_Msk;
+  mckr |= PMC_MCKR_CSS_MAIN_CLK;
+  PMC->PMC_MCKR = mckr;
+}
+
+  /*
+   * Main oscillator configuration block.
+   */
+{
+  mor = PMC->CKGR_MOR | CKGR_MOR_KEY_PASSWD;
 #if SAMA_MOSCXT_ENABLED
-  uint32_t mor = SAMA_MOR_ONE | CKGR_MOR_KEY_PASSWD | CKGR_MOR_MOSCXTEN;
-  PMC->CKGR_MOR |= mor;
+  mor |= CKGR_MOR_MOSCXTEN;
+  PMC->CKGR_MOR = mor;
   while (!(PMC->PMC_SR & PMC_SR_MOSCXTS))
     ;                                       /* Waits until MOSCXT is stable.*/
+#else
+  mor &= ~CKGR_MOR_MOSCXTEN;
+  PMC->CKGR_MOR = mor;
 #endif
 
-  /* Switching MOC source. */
-  mor = SAMA_MOR_ONE | SAMA_MOR_MOSCXTST | CKGR_MOR_KEY_PASSWD |
-        CKGR_MOR_MOSCRCEN;
-  #if SAMA_MOSCXT_ENABLED
-  mor |= CKGR_MOR_MOSCXTEN;
-  #endif
+  /* Switching Main Clock source. */
+  mor &= ~CKGR_MOR_MOSCSEL;
   mor |= SAMA_MOSC_SEL;
   PMC->CKGR_MOR = mor;
 
-  /* Disabling unused sources. */
-#if !SAMA_MOSCXT_ENABLED
-  PMC->CKGR_MOR &= ~ CKGR_MOR_MOSCXTEN;
-#endif
-
+  /* Eventually disabling MOSCRC. */
 #if !SAMA_MOSCRC_ENABLED
   PMC->CKGR_MOR &= ~ CKGR_MOR_MOSCRCEN;
 #endif
@@ -120,9 +130,9 @@ PMC->PMC_WPMR = PMC_WPMR_WPKEY_PASSWD;
  * PLLA configuration block.
  */
 {
-  uint32_t pllar = SAMA_PLLA_ONE;
+  pllar = SAMA_PLLA_ONE | CKGR_PLLAR_PLLACOUNT(0x3F);
 #if SAMA_ACTIVATE_PLLA
-  pllar |= CKGR_PLLAR_DIVA_BYPASS | SAMA_PLLA_MUL; 
+  pllar |= CKGR_PLLAR_DIVA_BYPASS | SAMA_PLLA_MUL;
 #endif
   PMC->CKGR_PLLAR = pllar;                  /* Writing PLLA register.       */
 
@@ -136,18 +146,26 @@ PMC->PMC_WPMR = PMC_WPMR_WPKEY_PASSWD;
  * Master clock configuration block.
  */
 {
-  uint32_t mckr = SAMA_MCK_PRES | SAMA_MCK_MDIV | SAMA_MCK_SEL;
+  mckr = PMC->PMC_MCKR;
+  mckr &= ~PMC_MCKR_CSS_Msk;
+  mckr |= SAMA_MCK_SEL;
+  PMC->PMC_MCKR = mckr;
+  while (!(PMC->PMC_SR & PMC_SR_MCKRDY))
+    ;                                       /* Waits until MCK is stable.   */
+  mckr = SAMA_MCK_PRES | SAMA_MCK_MDIV | SAMA_MCK_SEL;
 #if SAMA_PLLADIV2_EN
   mckr |= PMC_MCKR_PLLADIV2;
 #endif
   PMC->PMC_MCKR = mckr;
-
   while (!(PMC->PMC_SR & PMC_SR_MCKRDY))
     ;                                       /* Waits until MCK is stable.   */
+
+  /* Setting Slow clock source. */
+  SCKC->SCKC_CR = SAMA_OSC_SEL;
 }
 
 /* Enabling write protection.  */
-PMC->PMC_WPMR = PMC_WPMR_WPKEY_PASSWD | PMC_WPMR_WPEN;             
+PMC->PMC_WPMR = PMC_WPMR_WPKEY_PASSWD | PMC_WPMR_WPEN;
 
 #endif /* !SAMA_NO_INIT */
 }
