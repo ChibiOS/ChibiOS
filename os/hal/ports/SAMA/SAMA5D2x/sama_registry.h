@@ -49,7 +49,7 @@
 /*===========================================================================*/
 #if defined(SAMA5D27) || defined(__DOXYGEN__)
 /* PCM Peripheral IDs.*/
-#define SAMA_PID_SAIC0          (1 << 0)    /**< SAIC0 FIQ PID.             */
+#define SAMA_PID_SAIC0          (1 << 0)    /**< SAIC0 FIQ PID.            */
 #define SAMA_PID_ARM            (1 << 2)    /**< ARM PID.                  */
 #define SAMA_PID_PIT            (1 << 3)    /**< PIT PID.                  */
 #define SAMA_PID_WDT            (1 << 4)    /**< WDT PID.                  */
