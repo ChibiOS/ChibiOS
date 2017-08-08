@@ -33,6 +33,8 @@
 #ifndef _HAL_LLD_H_
 #define _HAL_LLD_H_
 
+#include "sama_registry.h"
+
 /* If the device type is not externally defined, for example from the Makefile,
    then a file named board.h is included. This file must contain a device
    definition compatible with the vendor include file.*/
