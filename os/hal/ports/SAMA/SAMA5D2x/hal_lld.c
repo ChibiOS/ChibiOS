@@ -75,7 +75,7 @@ void sama_clock_init(void) {
 #if !SAMA_NO_INIT
   uint32_t mor, pllar, mckr;
   /* Disabling PMC write protection. */
-  PMC->PMC_WPMR = PMC_WPMR_WPKEY_PASSWD;
+  pmcDisableWP();
 
   /* Enforces the reset default configuration of clock tree. */
 {
@@ -178,8 +178,8 @@ void sama_clock_init(void) {
   SCKC->SCKC_CR = SAMA_OSC_SEL;
 }
 
-/* Enabling write protection.  */
-PMC->PMC_WPMR = PMC_WPMR_WPKEY_PASSWD | PMC_WPMR_WPEN;
+  /* Enabling write protection.  */
+  pmcEnableWP();
 
 #endif /* !SAMA_NO_INIT */
 }

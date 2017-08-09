@@ -409,14 +409,14 @@
  * @brief   Processor Clock frequency.
  */
 #if (SAMA_MCK_SEL == SAMA_MCK_SLOW_CLK) || defined(__DOXYGEN__)
-#define SAMA_PCKOUT                         (SAMA_SLOW_CLK / SAMA_MCK_PRES_VALUE)
+#define SAMA_PCK                            (SAMA_SLOW_CLK / SAMA_MCK_PRES_VALUE)
 #elif (SAMA_MCK_SEL == SAMA_MCK_MAIN_CLK)
-#define SAMA_PCKOUT                         (SAMA_MAIN_CLK / SAMA_MCK_PRES_VALUE)
+#define SAMA_PCK                            (SAMA_MAIN_CLK / SAMA_MCK_PRES_VALUE)
 #elif (SAMA_MCK_SEL == SAMA_MCK_PLLA_CLK)
 #if SAMA_PLLADIV2_EN
-#define SAMA_PCKOUT                         (SAMA_PLLACLKOUT / SAMA_MCK_PRES_VALUE / 2)
+#define SAMA_PCK                            (SAMA_PLLACLKOUT / SAMA_MCK_PRES_VALUE / 2)
 #else
-#define SAMA_PCKOUT                         (SAMA_PLLACLKOUT / SAMA_MCK_PRES_VALUE)
+#define SAMA_PCK                            (SAMA_PLLACLKOUT / SAMA_MCK_PRES_VALUE)
 #endif
 #elif (SAMA_MCK_SEL == SAMA_MCK_UPLL_CLK)
 #error "UPLL still unsupported"
@@ -427,15 +427,15 @@
 /**
  * @brief   Master Clock frequency.
  */
-#define SAMA_MCKOUT                         (SAMA_PCKOUT / SAMA_MCK_MDIV_VALUE)
+#define SAMA_MCK                            (SAMA_PCK / SAMA_MCK_MDIV_VALUE)
 
 /* Checks on Processor Clock crystal range. */
-#if (SAMA_PCKOUT > SAMA_PCK_MAX) || (SAMA_PCKOUT < SAMA_PCK_MIN)
+#if (SAMA_PCK > SAMA_PCK_MAX) || (SAMA_PCK < SAMA_PCK_MIN)
 #error "Processor clock frequency out of range."
 #endif
 
 /* Checks on Master Clock crystal range. */
-#if (SAMA_MCKOUT > SAMA_MCK_MAX) || (SAMA_MCKOUT < SAMA_MCK_MIN)
+#if (SAMA_MCK > SAMA_MCK_MAX) || (SAMA_MCK < SAMA_MCK_MIN)
 #error "Master clock frequency out of range."
 #endif
 /*===========================================================================*/
@@ -449,6 +449,9 @@
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
+
+/* Various helpers.*/
+#include "sama_pmc.h"
 
 #ifdef __cplusplus
 extern "C" {
