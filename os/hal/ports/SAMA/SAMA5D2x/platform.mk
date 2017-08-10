@@ -2,11 +2,10 @@
 
 PLATFORMSRC := $(CHIBIOS)/os/hal/ports/SAMA/SAMA5D2x/hal_lld.c \
                $(CHIBIOS)/os/hal/ports/SAMA/SAMA5D2x/hal_st_lld.c \
-               $(CHIBIOS)/os/hal/ports/common/ARMCAx/aic.c
+               $(CHIBIOS)/os/hal/ports/SAMA/SAMA5D2x/aic.c
      
 # Required include directories.
-PLATFORMINC := $(CHIBIOS)/os/hal/ports/SAMA/SAMA5D2x \
-               $(CHIBIOS)/os/hal/ports/common/ARMCAx
+PLATFORMINC := $(CHIBIOS)/os/hal/ports/SAMA/SAMA5D2x
 
 # TODO: Add smart build.
 
