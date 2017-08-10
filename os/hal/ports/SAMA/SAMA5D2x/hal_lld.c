@@ -62,6 +62,7 @@ void hal_lld_init(void) {
 #if defined(SAMA5_DMA_REQUIRED)
   dmaInit();
 #endif
+  /* Advanced interrupt controller init */
   aicInit();
 }
 
