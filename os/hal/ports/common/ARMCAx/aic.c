@@ -161,7 +161,7 @@ void aicDisableIt(uint32_t source) {
 /**
  * @brief   Clears interrupts coming from the selected source.
  *
- * @param[in] source    interrupt source
+ * @param[in] source    interrupt source to Clear
  */
 void aicClearIt(uint32_t source) {
 
@@ -174,7 +174,7 @@ void aicClearIt(uint32_t source) {
 /**
  * @brief   Sets interrupts coming from the selected source.
  *
- * @param[in] source    interrupt source
+ * @param[in] source    interrupt source to Set
  */
 void aicSetIt(uint32_t source) {
 
