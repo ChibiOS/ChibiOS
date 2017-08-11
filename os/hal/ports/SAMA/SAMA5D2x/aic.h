@@ -44,25 +44,7 @@
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
-/**
- * @brief   Enable write protection on AIC registers block.
- *
- * @param[in] aicx    pointer to a AIC register block
- * @api
- */
-#define aicEnableWP(aic) {                                                  \
-  aic->AIC_WPMR = AIC_WPMR_WPKEY_PASSWD | AIC_WPMR_WPEN;                    \
-}
 
-/**
- * @brief   Disable write protection on AIC registers block.
- *
- * @param[in] aicx    pointer to a AIC register block
- * @api
- */
-#define aicDisableWP(aic) {                                                 \
-  aic->AIC_WPMR = AIC_WPMR_WPKEY_PASSWD;                                    \
-}
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -71,9 +53,9 @@
 extern "C" {
 #endif
   void aicInit(void);
-  void aicConfigureInt(uint32_t source, uint8_t prior);
-  void aicSetSourceVector(uint32_t source, bool (*handler)(void));
-  void aicSetSpuriousVector(bool (*handler)(void));
+  void aicSetSourcePriority(uint32_t source, uint8_t priority);
+  void aicSetSourceHandler(uint32_t source, bool (*handler)(void));
+  void aicSetSpuriousHandler(bool (*handler)(void));
   void aicEnableInt(uint32_t source);
   void aicDisableInt(uint32_t source);
   void aicClearInt(uint32_t source);

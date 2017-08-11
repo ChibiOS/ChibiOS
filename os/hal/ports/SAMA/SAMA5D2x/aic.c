@@ -45,6 +45,32 @@
 /*===========================================================================*/
 
 /*===========================================================================*/
+/* Driver local macros.                                                      */
+/*===========================================================================*/
+
+/**
+ * @brief   Enable write protection on AIC registers block.
+ *
+ * @param[in] aicp    pointer to a AIC register block
+ *
+ * @notapi
+ */
+#define aicEnableWP(aicp) {                                                  \
+  aicp->AIC_WPMR = AIC_WPMR_WPKEY_PASSWD | AIC_WPMR_WPEN;                    \
+}
+
+/**
+ * @brief   Disable write protection on AIC registers block.
+ *
+ * @param[in] aicp    pointer to a AIC register block
+ *
+ * @notapi
+ */
+#define aicDisableWP(aicp) {                                                 \
+  aicp->AIC_WPMR = AIC_WPMR_WPKEY_PASSWD;                                    \
+}
+
+/*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
 
@@ -73,14 +99,16 @@ void aicInit(void) {
 
 /**
  * @brief   Configures an interrupt in the AIC.
+ * @note    Source cannot be ID_SAIC_FIQ (0).
  *
  * @param[in] source    interrupt source to configure
- * @param[in] prior     priority level of the source selected
- *                      by INTSEL except FIQ source (source 0).
+ * @param[in] priority  priority level of the selected source.
  */
-void aicConfigureInt(uint32_t source, uint8_t prior) {
+void aicSetSourcePriority(uint32_t source, uint8_t priority) {
 
   Aic *aic = SAIC;
+
+  osalDbgCheck(source != ID_SAIC_FIQ);
 
   /* Disable write protection */
   aicDisableWP(aic);
@@ -89,7 +117,7 @@ void aicConfigureInt(uint32_t source, uint8_t prior) {
   /* Disable the interrupt first */
   aic->AIC_IDCR = AIC_IDCR_INTD;
   /* Configure priority */
-  aic->AIC_SMR = AIC_SMR_PRIOR(prior);
+  aic->AIC_SMR = AIC_SMR_PRIOR(priority);
   /* Clear interrupt */
   aic->AIC_ICCR = AIC_ICCR_INTCLR;
   /* Enable write protection */
@@ -97,12 +125,12 @@ void aicConfigureInt(uint32_t source, uint8_t prior) {
 }
 
 /**
- * @brief   Sets the source vector of an interrupt.
+ * @brief   Sets the source handler of an interrupt.
  *
  * @param[in] source    interrupt source to configure
  * @param[in] handler   handler for the interrupt source selected
  */
-void aicSetSourceVector(uint32_t source, bool (*handler)(void)) {
+void aicSetSourceHandler(uint32_t source, bool (*handler)(void)) {
 
   Aic *aic = SAIC;
 
@@ -116,11 +144,11 @@ void aicSetSourceVector(uint32_t source, bool (*handler)(void)) {
 }
 
 /**
- * @brief   Sets the spurious vector of an interrupt.
+ * @brief   Sets the spurious handler of an interrupt.
  *
  * @param[in] handler   handler for the interrupt
  */
-void aicSetSpuriousVector(bool (*handler)(void)) {
+void aicSetSpuriousHandler(bool (*handler)(void)) {
 
   Aic *aic = SAIC;
 
