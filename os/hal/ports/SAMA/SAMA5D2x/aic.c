@@ -83,7 +83,7 @@ void aicConfigureInt(uint32_t source, uint8_t prior) {
   Aic *aic = SAIC;
 
   /* Disable write protection */
-  aic->AIC_WPMR = AIC_WPMR_WPKEY_PASSWD;
+  aicDisableWP(aic);
   /* Set source id */
   aic->AIC_SSR = source;
   /* Disable the interrupt first */
@@ -93,7 +93,7 @@ void aicConfigureInt(uint32_t source, uint8_t prior) {
   /* Clear interrupt */
   aic->AIC_ICCR = AIC_ICCR_INTCLR;
   /* Enable write protection */
-  aic->AIC_WPMR = AIC_WPMR_WPKEY_PASSWD | AIC_WPMR_WPEN;
+  aicEnableWP(aic);
 }
 
 /**
@@ -107,12 +107,12 @@ void aicSetSourceVector(uint32_t source, bool (*handler)(void)) {
   Aic *aic = SAIC;
 
   /* Disable write protection */
-  aic->AIC_WPMR = AIC_WPMR_WPKEY_PASSWD;
+  aicDisableWP(aic);
   /* Select source and assign handler */
   aic->AIC_SSR = AIC_SSR_INTSEL(source);
   aic->AIC_SVR = (uint32_t)handler;
   /* Enable write protection */
-  aic->AIC_WPMR = AIC_WPMR_WPKEY_PASSWD | AIC_WPMR_WPEN;
+  aicEnableWP(aic);
 }
 
 /**
@@ -125,11 +125,11 @@ void aicSetSpuriousVector(bool (*handler)(void)) {
   Aic *aic = SAIC;
 
   /* Disable write protection */
-  aic->AIC_WPMR = AIC_WPMR_WPKEY_PASSWD;
+  aicDisableWP(aic);
   /* Assign handler */
   aic->AIC_SPU = (uint32_t)handler;
   /* Enable write protection */
-  aic->AIC_WPMR = AIC_WPMR_WPKEY_PASSWD | AIC_WPMR_WPEN;
+  aicEnableWP(aic);
 }
 
 /**

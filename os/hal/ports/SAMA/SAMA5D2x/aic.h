@@ -44,7 +44,25 @@
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+/**
+ * @brief   Enable write protection on AIC registers block.
+ *
+ * @param[in] aicx    pointer to a AIC register block
+ * @api
+ */
+#define aicEnableWP(aic) {                                                  \
+  aic->AIC_WPMR = AIC_WPMR_WPKEY_PASSWD | AIC_WPMR_WPEN;                    \
+}
 
+/**
+ * @brief   Disable write protection on AIC registers block.
+ *
+ * @param[in] aicx    pointer to a AIC register block
+ * @api
+ */
+#define aicDisableWP(aic) {                                                 \
+  aic->AIC_WPMR = AIC_WPMR_WPKEY_PASSWD;                                    \
+}
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
