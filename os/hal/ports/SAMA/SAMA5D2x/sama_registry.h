@@ -51,6 +51,8 @@
 #if defined(SAMA5D27) || defined(__DOXYGEN__)
 
 /* AIC IDs. */
+#define SAMA_AIC_FIQ            0U          /**< FIQ AIC Identifier.       */
+#define SAMA_AIC_SYS            1U          /**< SYS AIC Identifier.       */
 #define SAMA_AIC_ARM            2U          /**< ARM AIC Identifier.       */
 #define SAMA_AIC_PIT            3U          /**< PIT AIC Identifier.       */
 #define SAMA_AIC_WDT            4U          /**< WDT AIC Identifier.       */
@@ -103,16 +105,31 @@
 #define SAMA_AIC_QSPI1          53U         /**< QSPI1 AIC Identifier.     */
 #define SAMA_AIC_I2SC0          54U         /**< I2SC0 AIC Identifier.     */
 #define SAMA_AIC_I2SC1          55U         /**< I2SC1 AIC Identifier.     */
-#define SAMA_AIC_MCAN0          56U         /**< MCAN0 AIC Identifier.     */
-#define SAMA_AIC_MCAN1          57U         /**< MCAN1 AIC Identifier.     */
+#define SAMA_AIC_MCAN0_INT0     56U         /**< MCAN0 INT0 AIC Identifier.*/
+#define SAMA_AIC_MCAN1_INT0     57U         /**< MCAN1 INT0 AIC Identifier.*/
 #define SAMA_AIC_PTC            58U         /**< PTC AIC Identifier.       */
 #define SAMA_AIC_CLASSD         59U         /**< CLASSD AIC Identifier.    */
 #define SAMA_AIC_SFR            60U         /**< SFR AIC Identifier.       */
 #define SAMA_AIC_SAIC1          61U         /**< SAIC AIC Identifier.      */
 #define SAMA_AIC_AIC1           62U         /**< AIC AIC Identifier.       */
 #define SAMA_AIC_L2CC           63U         /**< L2CC AIC Identifier.      */
+#define SAMA_AIC_MCAN0_INT1     64U         /**< MCAN0 INT1 AIC Identifier.*/
+#define SAMA_AIC_MCAN1_INT1     65U         /**< MCAN1 INT1 AIC Identifier.*/
+#define SAMA_AIC_GMAC0_Q1       66U         /**< GMAC Q1 AIC Identifier.   */
+#define SAMA_AIC_GMAC0_Q2       67U         /**< GMAC Q2 AIC Identifier.   */
+#define SAMA_AIC_PIOB           68U         /**< PIOB AIC Identifier..     */
+#define SAMA_AIC_PIOC           69U         /**< PIOC AIC Identifier.      */
+#define SAMA_AIC_PIOD           70U         /**< PIOD AIC Identifier.      */
+#define SAMA_AIC_SDMMC0_TIMER   71U         /**< SDMMC0 TMR AIC Identifier.*/
+#define SAMA_AIC_SDMMC1_TIMER   72U         /**< SDMMC1 TMR AIC Identifier.*/
+#define SAMA_AIC_SYSC           74U         /**< SYSC AIC Identifier.      */
+#define SAMA_AIC_ACC            75U         /**< ACC AIC Identifier.       */
+#define SAMA_AIC_RXLP           76U         /**< RXLP AIC Identifier.      */
+#define SAMA_AIC_CHIPID         78U         /**< CHIPID AIC Identifier.    */
 
 /* PCM Peripheral IDs.*/
+#define SAMA_PID_FIQ                        (1 << (SAMA_AIC_FIQ & 0x1F))
+#define SAMA_PID_SYS                        (1 << (SAMA_AIC_SYS & 0x1F))
 #define SAMA_PID_ARM                        (1 << (SAMA_AIC_ARM & 0x1F))
 #define SAMA_PID_PIT                        (1 << (SAMA_AIC_PIT & 0x1F))
 #define SAMA_PID_WDT                        (1 << (SAMA_AIC_WDT & 0x1F))
@@ -165,14 +182,28 @@
 #define SAMA_PID_QSPI1                      (1 << (SAMA_AIC_QSPI1 & 0x1F))
 #define SAMA_PID_I2SC0                      (1 << (SAMA_AIC_I2SC0 & 0x1F))
 #define SAMA_PID_I2SC1                      (1 << (SAMA_AIC_I2SC1 & 0x1F))
-#define SAMA_PID_MCAN0                      (1 << (SAMA_AIC_MCAN0 & 0x1F))
-#define SAMA_PID_MCAN1                      (1 << (SAMA_AIC_MCAN1 & 0x1F))
+#define SAMA_PID_MCAN0_INT0                 (1 << (SAMA_AIC_MCAN0_INT0 & 0x1F))
+#define SAMA_PID_MCAN1_INT0                 (1 << (SAMA_AIC_MCAN1_INT0 & 0x1F))
 #define SAMA_PID_PTC                        (1 << (SAMA_AIC_PTC & 0x1F))
 #define SAMA_PID_CLASSD                     (1 << (SAMA_AIC_CLASSD & 0x1F))
 #define SAMA_PID_SFR                        (1 << (SAMA_AIC_SFR & 0x1F))
 #define SAMA_PID_SAIC1                      (1 << (SAMA_AIC_SAIC1 & 0x1F))
 #define SAMA_PID_AIC1                       (1 << (SAMA_AIC_AIC1 & 0x1F))
 #define SAMA_PID_L2CC                       (1 << (SAMA_AIC_L2CC & 0x1F))
+#define SAMA_PID_MCAN0_INT1                 (1 << (SAMA_AIC_MCAN0_INT1 & 0x1F))
+#define SAMA_PID_MCAN1_INT1                 (1 << (SAMA_AIC_MCAN1_INT1 & 0x1F))
+#define SAMA_PID_GMAC0_Q1                   (1 << (SAMA_AIC_GMAC0_Q1 & 0x1F))
+#define SAMA_PID_GMAC0_Q2                   (1 << (SAMA_AIC_GMAC0_Q2 & 0x1F))
+#define SAMA_PID_PIOB                       (1 << (SAMA_AIC_PIOB & 0x1F))
+#define SAMA_PID_PIOC                       (1 << (SAMA_AIC_PIOC & 0x1F))
+#define SAMA_PID_PIOD                       (1 << (SAMA_AIC_PIOD & 0x1F))
+#define SAMA_PID_SDMMC0_TIMER               (1 << (SAMA_AIC_SDMMC0_TIMER & 0x1F))
+#define SAMA_PID_SDMMC1_TIMER               (1 << (SAMA_AIC_SDMMC1_TIMER & 0x1F))
+#define SAMA_PID_SYSC                       (1 << (SAMA_AIC_SYSC & 0x1F))
+#define SAMA_PID_ACC                        (1 << (SAMA_AIC_ACC & 0x1F))
+#define SAMA_PID_RXLP                       (1 << (SAMA_AIC_RXLP & 0x1F))
+#define SAMA_PID_CHIPID                     (1 << (SAMA_AIC_CHIPID & 0x1F))
+
 #endif /* defined(SAMA5D27) */
 
 /** @} */
