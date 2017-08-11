@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    common/ARMCAx/aic.c
- * @brief   Cortex-Ax AIC support code.
+ * @file    SAMA5D2x/aic.c
+ * @brief   SAMA AIC support code.
  *
- * @addtogroup COMMON_ARMCAx_AIC
+ * @addtogroup COMMON_SAMA5D2x_AIC
  * @{
  */
 
@@ -78,7 +78,7 @@ void aicInit(void) {
  * @param[in] prior     priority level of the source selected
  *                      by INTSEL except FIQ source (source 0).
  */
-void aicConfigureIt(uint32_t source, uint8_t prior) {
+void aicConfigureInt(uint32_t source, uint8_t prior) {
 
   Aic *aic = SAIC;
 
@@ -137,7 +137,7 @@ void aicSetSpuriousVector(bool (*handler)(void)) {
  *
  * @param[in] source    interrupt source to enable
  */
-void aicEnableIt(uint32_t source) {
+void aicEnableInt(uint32_t source) {
 
   Aic *aic = SAIC;
 
@@ -150,7 +150,7 @@ void aicEnableIt(uint32_t source) {
  *
  * @param[in] source    interrupt source to disable
  */
-void aicDisableIt(uint32_t source) {
+void aicDisableInt(uint32_t source) {
 
   Aic *aic = SAIC;
 
@@ -163,7 +163,7 @@ void aicDisableIt(uint32_t source) {
  *
  * @param[in] source    interrupt source to Clear
  */
-void aicClearIt(uint32_t source) {
+void aicClearInt(uint32_t source) {
 
   Aic *aic = SAIC;
 
@@ -176,7 +176,7 @@ void aicClearIt(uint32_t source) {
  *
  * @param[in] source    interrupt source to Set
  */
-void aicSetIt(uint32_t source) {
+void aicSetInt(uint32_t source) {
 
   Aic *aic = SAIC;
 

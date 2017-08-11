@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    common/ARMCMAx/aic.h
- * @brief   Cortex-MAx AIC support macros and structures.
+ * @file    SAMA5D2x/aic.h
+ * @brief   SAMA AIC support macros and structures.
  *
- * @addtogroup COMMON_ARMCMAx_AIC
+ * @addtogroup COMMON_SAMA5D2x_AIC
  * @{
  */
 
@@ -45,10 +45,6 @@
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
-/**
- * @brief   Priority level to priority mask conversion macro.
- */
-
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -57,13 +53,13 @@
 extern "C" {
 #endif
   void aicInit(void);
-  void aicConfigureIt(uint32_t source, uint8_t prior);
+  void aicConfigureInt(uint32_t source, uint8_t prior);
   void aicSetSourceVector(uint32_t source, bool (*handler)(void));
   void aicSetSpuriousVector(bool (*handler)(void));
-  void aicEnableIt(uint32_t source);
-  void aicDisableIt(uint32_t source);
-  void aicClearIt(uint32_t source);
-  void aicSetIt(uint32_t source);
+  void aicEnableInt(uint32_t source);
+  void aicDisableInt(uint32_t source);
+  void aicClearInt(uint32_t source);
+  void aicSetInt(uint32_t source);
 #ifdef __cplusplus
 }
 #endif
