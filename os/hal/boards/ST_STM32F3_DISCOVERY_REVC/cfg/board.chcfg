@@ -5,11 +5,12 @@
   xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/boards/stm32f3xx_board.xsd">
   <configuration_settings>
   	<templates_path>resources/gencfg/processors/boards/stm32f3xx/templates</templates_path>
+    <board_files_path>$(CHIBIOS)/os/hal/boards/</board_files_path>
   	<output_path>..</output_path>
   	<hal_version>3.0.x</hal_version>
   </configuration_settings>
   <board_name>STMicroelectronics STM32F3-Discovery</board_name>
-  <board_id>ST_STM32F3_DISCOVERY</board_id>
+  <board_id>ST_STM32F3_DISCOVERY_REVC</board_id>
   <board_functions></board_functions>
   <subtype>STM32F303xC</subtype>
   <clocks HSEFrequency="8000000" HSEBypass="true" LSEFrequency="0"
@@ -317,7 +318,7 @@
         Mode="Alternate"
         Alternate="7" />
       <pin5
-        ID="VCP_RX"
+        ID="VCP_TX"
         Type="PushPull"
         Speed="Minimum"
         Resistor="PullUp"
