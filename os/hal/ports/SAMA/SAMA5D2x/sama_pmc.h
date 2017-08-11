@@ -52,7 +52,7 @@
 /**
  * @brief   Enable write protection on PMC registers block.
  *
- * @api
+ * @notapi
  */
 #define pmcEnableWP() {                                                     \
   PMC->PMC_WPMR = PMC_WPMR_WPKEY_PASSWD | PMC_WPMR_WPEN;                    \
@@ -61,7 +61,7 @@
 /**
  * @brief   Disable write protection on PMC registers block.
  *
- * @api
+ * @notapi
  */
 #define pmcDisableWP() {                                                    \
   PMC->PMC_WPMR = PMC_WPMR_WPKEY_PASSWD;                                    \
@@ -133,7 +133,7 @@
  *
  * @api
  */
-#define pmcEnablePIT() pmcEnablePidLow(SAMA_PID_PIT)
+#define pmcEnablePIT() pmcEnablePidLow(ID_PIT_MSK)
 
 /**
  * @brief   Disables the PIT peripheral clock.
