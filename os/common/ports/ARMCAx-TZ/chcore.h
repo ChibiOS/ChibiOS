@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    ARMCMAx-TZ/chcore.h
- * @brief   ARMCMAx-TZ architecture port macros and structures.
+ * @file    ARMCAx-TZ/chcore.h
+ * @brief   ARMCAx-TZ architecture port macros and structures.
  *
- * @addtogroup ARMCMAx-TZ_CORE
+ * @addtogroup ARMCAx-TZ_CORE
  * @{
  */
 
