@@ -17,7 +17,25 @@
 #include "ch.h"
 #include "hal.h"
 
-static uint32_t counter = 0;
+static uint32_t seconds_counter;
+static uint32_t minutes_counter;
+
+/*
+ * Seconds counter thread.
+ */
+static THD_WORKING_AREA(waThread1, 128);
+static THD_FUNCTION(Thread1, arg) {
+
+  (void)arg;
+
+  chRegSetThreadName("counter");
+
+  while (true) {
+    chThdSleepMilliseconds(1000);
+    seconds_counter++;
+  }
+}
+
 /*
  * Application entry point.
  */
@@ -33,7 +51,17 @@ int main(void) {
   halInit();
   chSysInit();
 
+  /*
+   * Creates the example thread.
+   */
+  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+
+  /*
+   * Normal main() thread activity, in this demo it does nothing except
+   * increasing the minutes counter.
+   */
   while (true) {
-    counter++;
+    chThdSleepSeconds(60);
+    minutes_counter++;
   }
 }

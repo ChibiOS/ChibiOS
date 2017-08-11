@@ -37,6 +37,18 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/**
+ * @name    Configuration options
+ * @{
+ */
+/**
+ * @brief   SysTick timer IRQ priority.
+ */
+#if !defined(SAMA_ST_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_ST_IRQ_PRIORITY                7
+#endif
+/** @} */
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
