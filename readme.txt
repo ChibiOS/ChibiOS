@@ -93,6 +93,8 @@
        dependencies and configuration directories. This makes possible
        to have multiple non-conflicting makefiles in the same project.
        Updated the various platform.mk implementing "smard build" mode.
+- HAL: Fixed STM32 USARTv2 serial incorrect buffer size declarations
+       (bug #871)(backported to 17.6.1).
 - HAL: Fixed board file configuration for STM32F3 Discovery REVC (bug #869)
        (backported to 17.6.1).
 - HAL: Fixed wrong PPRE2 and LSI related macros in STM32L0 hal lld (bug #868)
