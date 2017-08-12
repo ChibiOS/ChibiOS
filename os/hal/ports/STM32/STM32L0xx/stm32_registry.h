@@ -67,7 +67,7 @@
 /* DMA attributes.*/
 #define STM32_ADVANCED_DMA                  TRUE
 #define STM32_DMA_SUPPORTS_CSELR            TRUE
-#define STM32_DMA1_NUM_CHANNELS             7
+#define STM32_DMA1_NUM_CHANNELS             5
 #define STM32_DMA2_NUM_CHANNELS             0
 #define STM32_DMA1_CH1_HANDLER              Vector64
 #define STM32_DMA1_CH23_HANDLER             Vector68

@@ -92,7 +92,9 @@
 - NEW: Added to the Makefiles the ability to change the default build,
        dependencies and configuration directories. This makes possible
        to have multiple non-conflicting makefiles in the same project.
-       Updated the various platform.mk implementing "smard build" mode.
+       Updated the various platform.mk implementing "smart build" mode.
+- HAL: Fixed invalid number of DMA channels on STM32L011 (bug #872)
+       (backported to 17.6.1).
 - HAL: Fixed STM32 USARTv2 serial incorrect buffer size declarations
        (bug #871)(backported to 17.6.1).
 - HAL: Fixed board file configuration for STM32F3 Discovery REVC (bug #869)
