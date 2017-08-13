@@ -16,7 +16,7 @@
 
 /**
  * @file    USARTv1/hal_uart_lld.c
- * @brief   AVR low level UART driver code.
+ * @brief   AVR Tiny low level UART driver source file.
  *
  * @addtogroup UART
  * @{
