@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    hal_lld.h
- * @brief   AVR HAL subsystem low level driver header.
+ * @file    ATTinyxxx/hal_lld.h
+ * @brief   AVR Tiny HAL subsystem low level driver header.
  *
  * @addtogroup HAL
  * @{
@@ -37,7 +37,7 @@
 /**
  * @brief   Platform name.
  */
-#define PLATFORM_NAME "AVR"
+#define PLATFORM_NAME "AVR Tiny"
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
