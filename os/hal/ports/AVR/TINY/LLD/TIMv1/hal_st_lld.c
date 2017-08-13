@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    hal_st_lld.c
- * @brief   AVR ST subsystem low level driver source.
+ * @file    TIMv1/hal_st_lld.c
+ * @brief   AVR Tiny ST subsystem low level driver source file.
  *
  * @addtogroup ST
  * @{

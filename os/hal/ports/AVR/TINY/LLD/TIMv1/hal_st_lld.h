@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    hal_st_lld.h
- * @brief   ST Driver subsystem low level driver header.
+ * @file    TIMv1/hal_st_lld.h
+ * @brief   AVR Tiny ST Driver subsystem low level driver header file.
  * @details This header is designed to be include-able without having to
  *          include other files from the HAL.
  *
