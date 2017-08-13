@@ -62,7 +62,6 @@
 #define STM32_LPUART1SEL                    STM32_LPUART1SEL_APB
 #define STM32_I2C1SEL                       STM32_I2C1SEL_APB
 #define STM32_LPTIM1SEL                     STM32_LPTIM1SEL_APB
-#define STM32_HSI48SEL                      STM32_HSI48SEL_HSI48
 
 /*
  * ADC driver system settings.
