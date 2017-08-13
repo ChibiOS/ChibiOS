@@ -63,7 +63,7 @@ OBJDIR = .
 CHIBIOS = ../../..
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/boards/DIGISPARK_ATTINY_167/board.mk
-include $(CHIBIOS)/os/hal/ports/AVR/TINY/platform.mk
+include $(CHIBIOS)/os/hal/ports/AVR/TINY/ATTinyxxx/platform.mk
 include $(CHIBIOS)/os/hal/osal/nil/osal.mk
 include $(CHIBIOS)/os/nil/nil.mk
 include $(CHIBIOS)/os/common/ports/AVR/compilers/GCC/mk/port.mk
