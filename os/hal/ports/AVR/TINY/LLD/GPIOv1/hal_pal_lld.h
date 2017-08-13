@@ -15,8 +15,8 @@
 */
 
 /**
- * @file	hal_pal_lld.h
- * @brief	AVR GPIO low level driver header.
+ * @file	GPIOv1/hal_pal_lld.h
+ * @brief	AVR Tiny GPIO low level driver header file.
  *
  * @addtogroup PAL
  * @{
