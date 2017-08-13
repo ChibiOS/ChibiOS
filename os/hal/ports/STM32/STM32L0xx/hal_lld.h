@@ -512,7 +512,7 @@
  * @bief    USB/RNG clock source.
  */
 #if !defined(STM32_HSI48SEL) || defined(__DOXYGEN__)
-#define STM32_HSI48SEL                      STM32_HSI48SEL_HSI48
+#define STM32_HSI48SEL                      STM32_HSI48SEL_USBPLL
 #endif
 /** @} */
 

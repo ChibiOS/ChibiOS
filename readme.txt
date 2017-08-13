@@ -97,6 +97,8 @@
        (backported to 17.6.1).
 - HAL: Fixed STM32 USARTv2 serial incorrect buffer size declarations
        (bug #871)(backported to 17.6.1).
+- HAL: Fixed bug in STM32L0xx port related to STM32L0x1 (bug #870)
+       (backported to 17.6.1).
 - HAL: Fixed board file configuration for STM32F3 Discovery REVC (bug #869)
        (backported to 17.6.1).
 - HAL: Fixed wrong PPRE2 and LSI related macros in STM32L0 hal lld (bug #868)
