@@ -44,6 +44,11 @@
  */
                 .global Reset_Handler
 Reset_Handler:
+				/*
+				 * Set secure VBAR to system vectors table
+				 */
+                ldr		r0, =_start
+                mcr 	p15, 0, r0, c12, c0, 0
                 /*
                  * Stack pointers initialization.
                  */
