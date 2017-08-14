@@ -65,9 +65,10 @@ OSAL_IRQ_HANDLER(PIT_Handler) {
   OSAL_IRQ_PROLOGUE();
 
   osalSysLockFromISR();
+  (void)PIT->PIT_PIVR;    /* acknowledge PIT interrupt */
   osalOsTimerHandlerI();
   osalSysUnlockFromISR();
-
+  aicAckInt();
   OSAL_IRQ_EPILOGUE();
 }
 #endif /* OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC */
@@ -89,7 +90,6 @@ void st_lld_init(void) {
 
   PIT->PIT_MR = PIT_MR_PIV((SAMA_PIT / OSAL_ST_FREQUENCY) - 1);
   PIT->PIT_MR |= PIT_MR_PITEN | PIT_MR_PITIEN;
-
 
   /* IRQ enabled.*/
   aicSetSourcePriority(ID_PIT, SAMA_ST_IRQ_PRIORITY);
