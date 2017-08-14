@@ -327,7 +327,7 @@
  */
 #if ((SAMA_PLLA_MUL_VALUE >= 1) && (SAMA_PLLA_MUL_VALUE <= 127)) ||          \
     defined(__DOXYGEN__)
-#define SAMA_PLLA_MUL                       ((SAMA_PLLA_MUL_VALUE + 1) << 18)
+#define SAMA_PLLA_MUL                       ((SAMA_PLLA_MUL_VALUE - 1) << 18)
 #else
 #error "invalid SAMA_PLLA_MUL_VALUE value specified"
 #endif
