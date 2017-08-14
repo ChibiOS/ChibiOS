@@ -45,7 +45,7 @@
  * @brief   SysTick timer IRQ priority.
  */
 #if !defined(SAMA_ST_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define SAMA_ST_IRQ_PRIORITY                7
+#define SAMA_ST_IRQ_PRIORITY                0
 #endif
 /** @} */
 
