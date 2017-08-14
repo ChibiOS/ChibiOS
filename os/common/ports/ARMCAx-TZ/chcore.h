@@ -298,7 +298,7 @@ struct port_context {
  *          port implementation.
  */
 #define PORT_IRQ_HANDLER(id)                                                \
-    __attribute__((interrupt("FIQ"))) bool id(void)
+  bool id(void)
 
 /**
  * @brief   Fast IRQ handler function declaration.
@@ -306,7 +306,7 @@ struct port_context {
  *          port implementation.
  */
 #define PORT_FAST_IRQ_HANDLER(id)                                           \
-  __attribute__((interrupt("FIQ"))) bool id(void)
+  bool id(void)
 
 /**
  * @brief   Performs a context switch between two threads.
