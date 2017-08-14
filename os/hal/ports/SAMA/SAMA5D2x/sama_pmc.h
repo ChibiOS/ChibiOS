@@ -78,7 +78,7 @@
 #define pmcEnablePidLow(mask) {                                             \
   pmcDisableWP();                                                           \
   PMC->PMC_PCER0 |= (mask);                                                 \
-  pmcDisableWP();                                                           \
+  pmcEnableWP();                                                           \
 }
 
 /**
@@ -92,7 +92,7 @@
 #define pmcDisablePidLow(mask) {                                            \
   pmcDisableWP();                                                           \
   PMC->PMC_PCDR0 |= (mask);                                                 \
-  pmcDisableWP();                                                           \
+  pmcEnableWP();                                                           \
 }
 
 /**
@@ -106,7 +106,7 @@
 #define pmcEnablePidHigh(mask) {                                            \
   pmcDisableWP();                                                           \
   PMC->PMC_PCER1 |= (mask);                                                 \
-  pmcDisableWP();                                                           \
+  pmcEnableWP();                                                           \
 }
 
 /**
@@ -120,7 +120,7 @@
 #define pmcDisablePidHigh(mask) {                                           \
   pmcDisableWP();                                                           \
   PMC->PMC_PCDR1 |= (mask);                                                 \
-  pmcDisableWP();                                                           \
+  pmcEnableWP();                                                           \
 }
 /** @} */
 
