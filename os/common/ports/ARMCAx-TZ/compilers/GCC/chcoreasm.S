@@ -151,7 +151,7 @@ Mon_Irq_Handler:
                 msr     CPSR_c, #MODE_SYS | I_BIT | F_BIT
                 stmfd   sp!, {r0, r1}           // Push R0=SPSR, R1=LR_IRQ.
 
-                /* bl      chSchDoNTReschedule */
+                /* Save the s_ctx e recover the ns_ctx */
 
                 // Re-establish the original conditions
                 ldmfd   sp!, {r0, r1}           // Pop R0=SPSR, R1=LR_IRQ.
@@ -171,8 +171,9 @@ Mon_Irq_Handler:
  *
  */
 Mon_Fiq_Handler:
-                // Here the fiq is taken from non-secure state
-                // current mode is monitor (so current state is secure).
+                // Here the fiq is taken from non-secure state, via the FIQ vector
+                // that is in the mon vector table.
+                // Current mode is monitor (so current state is secure).
                 // Note also that we never leave secure state while sec FIQ was disabled,
                 // then it's always safe to process the FIQ here.
                 stmfd   sp!, {lr}               // save lr into monitor stack
@@ -278,8 +279,7 @@ _fiq_ret_arm:
 
 /*
  * Threads trampoline code.
- * NOTE: The threads always start in ARM mode and then switches to the
- * thread-function mode.
+ * NOTE: The threads always start in ARM mode.
  */
                 .balign 16
                 .code   32
@@ -288,6 +288,7 @@ _port_thread_start:
 #if CH_DBG_SYSTEM_STATE_CHECK
                 bl      _dbg_check_unlock
 #endif
+				msr     CPSR_c, #MODE_SYS | I_BIT
                 mov     r0, r5
                 mov     lr, pc
                 bx      r4
