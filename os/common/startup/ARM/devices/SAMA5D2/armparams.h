@@ -52,9 +52,9 @@
 /**
  * @brief   Address of the IRQ vector register in the interrupt controller.
  */
-#define ARM_IRQ_VECTOR_REG      0xF803C014U
+#define ARM_IRQ_VECTOR_REG      0xF803C010U
 #else
-#define ARM_IRQ_VECTOR_REG      0xF803C014
+#define ARM_IRQ_VECTOR_REG      0xF803C010
 #endif
 #endif /* ARMPARAMS_H */
 
