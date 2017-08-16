@@ -63,7 +63,7 @@ OBJDIR = .
 CHIBIOS = ../../..
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/boards/ARDUINO_MEGA/board.mk
-include $(CHIBIOS)/os/hal/ports/AVR/MEGA/platform.mk
+include $(CHIBIOS)/os/hal/ports/AVR/MEGA/ATMEGAxx/platform.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/AVR/compilers/GCC/mk/port.mk
@@ -229,6 +229,7 @@ MATH_LIB = -lm
 EXTRALIBDIRS =
 
 #---------------- External Memory Options ----------------
+
 
 # 64 KB of external RAM, starting after internal RAM (ATmega128!),
 # used for variables (.data/.bss) and heap (malloc()).
