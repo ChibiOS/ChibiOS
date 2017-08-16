@@ -23,9 +23,9 @@
  * HAL driver system settings.
  */
 #define SAMA_NO_INIT                        FALSE
-#define SAMA_MOSCRC_ENABLED                 TRUE
-#define SAMA_MOSCXT_ENABLED                 FALSE
-#define SAMA_MOSC_SEL                       SAMA_MOSC_MOSCRC
+#define SAMA_MOSCRC_ENABLED                 FALSE
+#define SAMA_MOSCXT_ENABLED                 TRUE
+#define SAMA_MOSC_SEL                       SAMA_MOSC_MOSCXT
 #define SAMA_OSC_SEL                        SAMA_OSC_OSCXT
 #define SAMA_MCK_SEL                        SAMA_MCK_PLLA_CLK
 #define SAMA_MCK_PRES_VALUE                 1
