@@ -129,14 +129,16 @@ void sama_clock_init(void) {
     ;                                       /* Waits until MOSCXT is stable.*/
   /* Counter Clock Source to MOSCXT. */
   PMC->CKGR_MCFR |= CKGR_MCFR_CCSS;
-  PMC->CKGR_MCFR |= CKGR_MCFR_RCMEAS;
-  while (!(PMC->CKGR_MCFR & CKGR_MCFR_MAINFRDY))
-    ;
-  mainf = CKGR_MCFR_MAINF(PMC->CKGR_MCFR);
 #else
   mor &= ~CKGR_MOR_MOSCXTEN;
   PMC->CKGR_MOR = mor;
 #endif
+
+  PMC->CKGR_MCFR |= CKGR_MCFR_RCMEAS;
+  while (!(PMC->CKGR_MCFR & CKGR_MCFR_MAINFRDY))
+    ;
+  mainf = CKGR_MCFR_MAINF(PMC->CKGR_MCFR);
+  (void)mainf;
 
   /* Switching Main Clock source. */
   mor &= ~CKGR_MOR_MOSCSEL;
