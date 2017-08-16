@@ -75,7 +75,7 @@ void hal_lld_init(void) {
  */
 void sama_clock_init(void) {
 #if !SAMA_NO_INIT
-  uint32_t mor, pllar, mckr;
+  uint32_t mor, pllar, mckr, mainf;
   /* Disabling PMC write protection. */
   pmcDisableWP();
 
@@ -107,7 +107,7 @@ void sama_clock_init(void) {
   while (!(PMC->PMC_SR & PMC_SR_MCKRDY))
     ;                                       /* Waits until Master Clock is stable.*/
 
-  /* Switching Main Frequency Source to MOSCRC. */
+  /* Counter Clock Source to MOSCRC. */
   PMC->CKGR_MCFR &= ~CKGR_MCFR_CCSS;
 
 }
@@ -116,12 +116,23 @@ void sama_clock_init(void) {
    * Main oscillator configuration block.
    */
 {
+  /* Setting Slow clock source. */
+  SCKC->SCKC_CR = SAMA_OSC_SEL;
+  while ((SAMA_OSC_SEL && !(PMC->PMC_SR & PMC_SR_OSCSELS)) ||
+        (!SAMA_OSC_SEL &&  (PMC->PMC_SR & PMC_SR_OSCSELS)))
+    ;                                       /* Waits until MOSCxxS switch is done.*/
   mor = PMC->CKGR_MOR | CKGR_MOR_KEY_PASSWD;
 #if SAMA_MOSCXT_ENABLED
   mor |= CKGR_MOR_MOSCXTEN;
   PMC->CKGR_MOR = mor;
   while (!(PMC->PMC_SR & PMC_SR_MOSCXTS))
     ;                                       /* Waits until MOSCXT is stable.*/
+  /* Counter Clock Source to MOSCXT. */
+  PMC->CKGR_MCFR |= CKGR_MCFR_CCSS;
+  PMC->CKGR_MCFR |= CKGR_MCFR_RCMEAS;
+  while (!(PMC->CKGR_MCFR & CKGR_MCFR_MAINFRDY))
+    ;
+  mainf = CKGR_MCFR_MAINF(PMC->CKGR_MCFR);
 #else
   mor &= ~CKGR_MOR_MOSCXTEN;
   PMC->CKGR_MOR = mor;
@@ -176,8 +187,6 @@ void sama_clock_init(void) {
   while (!(PMC->PMC_SR & PMC_SR_MCKRDY))
     ;                                       /* Waits until MCK is stable.   */
 
-  /* Setting Slow clock source. */
-  SCKC->SCKC_CR = SAMA_OSC_SEL;
 }
 
   /* Enabling write protection.  */
