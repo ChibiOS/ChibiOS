@@ -138,6 +138,12 @@ void sama_clock_init(void) {
   while (!(PMC->CKGR_MCFR & CKGR_MCFR_MAINFRDY))
     ;
   mainf = CKGR_MCFR_MAINF(PMC->CKGR_MCFR);
+  /*
+   * TODO: check mainf
+   * select alternate clock source if mainf is out of range.
+   * This function should start trying to use crystal osc sources and
+   * should switch to alternate sources if mainf is invalid.
+   */
   (void)mainf;
 
   /* Switching Main Clock source. */
@@ -178,8 +184,8 @@ void sama_clock_init(void) {
   while (!(PMC->PMC_SR & PMC_SR_MCKRDY))
     ;                                       /* Waits until MCK is stable.   */
 
-  mckr &= ~(PMC_MCKR_PRES_Msk | PMC_MCKR_MDIV_Msk);
-  mckr |= (SAMA_MCK_PRES | SAMA_MCK_MDIV);
+  mckr &= ~(PMC_MCKR_PRES_Msk | PMC_MCKR_MDIV_Msk | PMC_MCKR_H32MXDIV);
+  mckr |= (SAMA_MCK_PRES | SAMA_MCK_MDIV | SAMA_H64MX_H32MX_DIV);
 #if SAMA_PLLADIV2_EN
   mckr |= PMC_MCKR_PLLADIV2;
 #else
