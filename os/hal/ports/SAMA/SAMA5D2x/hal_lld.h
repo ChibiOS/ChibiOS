@@ -185,6 +185,7 @@
 #define SAMA_MCK_MDIV_DIV4      (2 << 8)    /**< MCK is divided by 4.      */
 
 #define SAMA_MCK_PLLADIV2       (1 << 12)   /**< PLLA is divided by 2.     */
+
 /** @} */
 
 /*===========================================================================*/
@@ -403,6 +404,18 @@
 /* Check on MDIV and PLLADIV2 value. */
 #if (SAMA_MCK_MDIV == SAMA_MCK_MDIV_DIV3) && !SAMA_PLLADIV2_EN
 #error "PLLADIV2 must be always enabled when Main Clock Divider is 3"
+#endif
+
+/**
+ * @brief   Matrix H64H32 clock ratio.
+ */
+
+#if ((SAMA_H64MX_H32MX_RATIO == 2) || defined(__DOXYGEN__))
+#define SAMA_H64MX_H32MX_DIV  PMC_MCKR_H32MXDIV_H32MXDIV2
+#elif (SAMA_H64MX_H32MX_RATIO == 1)
+#define SAMA_H64MX_H32MX_DIV  PMC_MCKR_H32MXDIV_H32MXDIV1
+#else
+#error "H64MX H32MX clock ratio out of range."
 #endif
 
 /**
