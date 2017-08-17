@@ -109,7 +109,7 @@
 /*
  * USB driver system settings.
  */
-#define AVR_USB_USE_USB1                   FALSE
+#define AVR_USB_USE_USB1                   TRUE
 #define AVR_USB_USE_NAMED_ADDRESS_SPACES   FALSE
 
 #endif /* MCUCONF_H */
