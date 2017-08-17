@@ -31,7 +31,7 @@
 /**
  * @brief   Periodic Interrupt Timer frequency.
  */
-#define SAMA_PIT                            (SAMA_MCK / 16)
+#define SAMA_PIT                            (SAMA_MCK / 16 / SAMA_H64MX_H32MX_RATIO)
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
