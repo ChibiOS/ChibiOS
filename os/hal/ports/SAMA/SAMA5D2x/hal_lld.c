@@ -140,8 +140,9 @@ void sama_clock_init(void) {
   mainf = CKGR_MCFR_MAINF(PMC->CKGR_MCFR);
   /*
    * TODO: check mainf
-   * select alternate clock source if mainf is out of range.
-   * This function should start trying to use crystal osc sources and
+   * select alternate clock source if mainf is out of range:
+   * if the system is configured to use crystal osc,
+   * this function should start trying to use crystal osc sources and
    * should switch to alternate sources if mainf is invalid.
    */
   (void)mainf;
