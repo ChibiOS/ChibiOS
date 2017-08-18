@@ -407,18 +407,6 @@
 #endif
 
 /**
- * @brief   Matrix H64H32 clock ratio.
- */
-
-#if ((SAMA_H64MX_H32MX_RATIO == 2) || defined(__DOXYGEN__))
-#define SAMA_H64MX_H32MX_DIV  PMC_MCKR_H32MXDIV_H32MXDIV2
-#elif (SAMA_H64MX_H32MX_RATIO == 1)
-#define SAMA_H64MX_H32MX_DIV  PMC_MCKR_H32MXDIV_H32MXDIV1
-#else
-#error "H64MX H32MX clock ratio out of range."
-#endif
-
-/**
  * @brief   Processor Clock frequency.
  */
 #if (SAMA_MCK_SEL == SAMA_MCK_SLOW_CLK) || defined(__DOXYGEN__)
@@ -451,6 +439,21 @@
 #if (SAMA_MCK > SAMA_MCK_MAX) || (SAMA_MCK < SAMA_MCK_MIN)
 #error "Master clock frequency out of range."
 #endif
+
+/**
+ * @brief   Matrix H64H32 clock ratio.
+ */
+#if ((SAMA_H64MX_H32MX_RATIO == 2) || defined(__DOXYGEN__))
+#define SAMA_H64MX_H32MX_DIV  PMC_MCKR_H32MXDIV_H32MXDIV2
+#elif (SAMA_H64MX_H32MX_RATIO == 1)
+#define SAMA_H64MX_H32MX_DIV  PMC_MCKR_H32MXDIV_H32MXDIV1
+#if (SAMA_MCK > 83000000)
+#error "Invalid H32MXCLK. MCK > 83MHz wants SAMA_H64MX_H32MX_RATIO == 2"
+#endif
+#else
+#error "H64MX H32MX clock ratio out of range."
+#endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
