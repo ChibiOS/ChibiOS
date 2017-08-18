@@ -32,6 +32,6 @@
 #define SAMA_MCK_MDIV_VALUE                 3
 #define SAMA_PLLA_MUL_VALUE                 83
 #define SAMA_PLLADIV2_EN                    TRUE
-#define SAMA_H64MX_H32MX_RATIO              1
+#define SAMA_H64MX_H32MX_RATIO              2
 
 #endif /* MCUCONF_H */
