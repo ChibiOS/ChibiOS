@@ -230,6 +230,9 @@
 #define USB_EP_MODE_TYPE_INTR           0x0003U /**< Interrupt endpoint.    */
 /** @} */
 
+#define USB_IN_STATE                    0x08
+#define USB_OUT_STATE                   0x10
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -285,13 +288,13 @@ typedef enum {
  * @brief   Type of an endpoint zero state machine states.
  */
 typedef enum {
-  USB_EP0_STP_WAITING = 0,              /**< Waiting for SETUP data.        */
-  USB_EP0_IN_TX = 1,                    /**< Transmitting.                  */
-  USB_EP0_IN_WAITING_TX0 = 2,           /**< Waiting transmit 0.            */
-  USB_EP0_IN_SENDING_STS = 3,           /**< Sending status.                */
-  USB_EP0_OUT_WAITING_STS = 4,          /**< Waiting status.                */
-  USB_EP0_OUT_RX = 5,                   /**< Receiving.                     */
-  USB_EP0_ERROR = 6                     /**< Error, EP0 stalled.            */
+  USB_EP0_STP_WAITING = 0,                      /**< Waiting for SETUP data.*/
+  USB_EP0_IN_TX = USB_IN_STATE | 1,             /**< Transmitting.          */
+  USB_EP0_IN_WAITING_TX0 = USB_IN_STATE | 2,    /**< Waiting transmit 0.    */
+  USB_EP0_IN_SENDING_STS = USB_IN_STATE | 3,    /**< Sending status.        */
+  USB_EP0_OUT_WAITING_STS = USB_OUT_STATE | 4,  /**< Waiting status.        */
+  USB_EP0_OUT_RX = USB_OUT_STATE | 5,           /**< Receiving.             */
+  USB_EP0_ERROR = 6                             /**< Error, EP0 stalled.    */
 } usbep0state_t;
 
 /**

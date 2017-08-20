@@ -418,10 +418,19 @@ static void otg_epout_handler(USBDriver *usbp, usbep_t ep) {
   if ((epint & DOEPINT_XFRC) && (otgp->DOEPMSK & DOEPMSK_XFRCM)) {
     USBOutEndpointState *osp;
 
-    /* Receive transfer complete, checking if it is a SETUP transfer on EP0,
-       than it must be ignored, the STUPM handler will take care of it.*/
-    if ((ep == 0) && (usbp->ep0state == USB_EP0_WAITING_SETUP))
+#if defined(STM32_OTG_SEQUENCE_WORKAROUND)
+    /* If an OUT transaction end interrupt is processed after the state
+       machine advanced to an IN state then it is ignored, this is caused
+       on some devices (L4) by STUP and XFRCM interrupts arriving in random
+       order.*/
+    if ((ep == 0) && ((usbp->ep0state & USB_OUT_STATE) == 0))
       return;
+#else
+    /* Receive transfer complete, checking if it is a SETUP transfer on EP0,
+       than it must be ignored, the STUP handler will take care of it.*/
+    if ((ep == 0) && (usbp->ep0state == USB_EP0_STP_WAITING))
+      return;
+#endif
 
     /* OUT state structure pointer for this endpoint.*/
     osp = usbp->epc[ep]->out_state;
@@ -994,7 +1003,7 @@ void usb_lld_reset(USBDriver *usbp) {
 
   /* EP0 initialization, it is a special case.*/
   usbp->epc[0] = &ep0config;
-  otgp->oe[0].DOEPTSIZ = 0;
+  otgp->oe[0].DOEPTSIZ = DOEPTSIZ_STUPCNT(3);
   otgp->oe[0].DOEPCTL = DOEPCTL_SD0PID | DOEPCTL_USBAEP | DOEPCTL_EPTYP_CTRL |
                         DOEPCTL_MPSIZ(ep0config.out_maxsize);
   otgp->ie[0].DIEPTSIZ = 0;

@@ -727,6 +727,7 @@
 #define STM32_HAS_UART8                     FALSE
 
 /* USB attributes.*/
+#define STM32_OTG_SEQUENCE_WORKAROUND
 #define STM32_OTG_STEPPING                  2
 #define STM32_HAS_OTG1                      TRUE
 #define STM32_OTG1_ENDPOINTS                5
