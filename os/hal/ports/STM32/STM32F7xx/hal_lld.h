@@ -1456,7 +1456,7 @@
 #if (STM32_PLLI2SDIVQ_VALUE < 1) || (STM32_PLLI2SDIVQ_VALUE > 32)
 #error "STM32_PLLI2SDIVQ_VALUE out of acceptable range"
 #endif
-#define STM32_PLLI2SDIVQ            (STM32_PLLI2SDIVQ_VALUE << 0)
+#define STM32_PLLI2SDIVQ            ((STM32_PLLI2SDIVQ_VALUE - 1) << 0)
 
 /**
  * @brief   PLLI2S Q output clock frequency after divisor.
@@ -1562,7 +1562,7 @@
 #if (STM32_PLLSAIDIVQ_VALUE < 1) || (STM32_PLLSAIDIVQ_VALUE > 32)
 #error "STM32_PLLSAIDIVQ_VALUE out of acceptable range"
 #endif
-#define STM32_PLLSAIDIVQ            (STM32_PLLSAIDIVQ_VALUE << 8)
+#define STM32_PLLSAIDIVQ            ((STM32_PLLSAIDIVQ_VALUE - 1) << 8)
 
 /**
  * @brief   PLLSAI Q output clock frequency after divisor.
