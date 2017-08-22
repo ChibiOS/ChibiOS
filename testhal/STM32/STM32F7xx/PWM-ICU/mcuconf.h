@@ -65,6 +65,7 @@
 #define STM32_PLLI2SP_VALUE                 4
 #define STM32_PLLI2SQ_VALUE                 4
 #define STM32_PLLI2SR_VALUE                 4
+#define STM32_PLLI2SDIVQ_VALUE              2
 #define STM32_PLLSAIN_VALUE                 192
 #define STM32_PLLSAIP_VALUE                 4
 #define STM32_PLLSAIQ_VALUE                 4
