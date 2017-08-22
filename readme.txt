@@ -111,6 +111,8 @@
        17.6.1 and 16.1.9).
 - RT:  Fixed misplaced assertion in semaphores code (bug #865)(backported to
        17.6.1 and 16.1.9).
+- RT:  Fixed event cast cleanup for compilation warnings (bug #864)(backported
+       to 17.6.1 and 16.1.9).
 - HAL: Fixed STM32 USBv1 fails the state check when USB_USE_WAIT is TRUE
        (bug #863)(backported to 17.6.1 and 16.1.9).
 - HAL: Fixed incorrect OTG stepping in STM32F412 registry (bug #861)
