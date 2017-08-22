@@ -76,6 +76,7 @@
 - HAL: Fixed wrong PPRE2 and LSI related macros in STM32L0 hal lld (bug #868).
 - HAL: Fixed wrong bit mask in STM32L0 hal lld (bug #866).
 - RT:  Fixed misplaced assertion in semaphores code (bug #865).
+- RT:  Fixed event cast cleanup for compilation warnings (bug #864).
 - HAL: Fixed STM32 USBv1 fails the state check when USB_USE_WAIT is TRUE
        (bug #863).
 - HAL: Fixed invalid handling of DST flag in STM32 RTCv2 (bug #854).

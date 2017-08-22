@@ -102,7 +102,7 @@ typedef void (*evhandler_t)(eventid_t id);
  *          source that is part of a bigger structure.
  * @param name the name of the event source variable
  */
-#define _EVENTSOURCE_DATA(name) {(void *)(&name)}
+#define _EVENTSOURCE_DATA(name) {(event_listener_t *)(&name)}
 
 /**
  * @brief   Static event source initializer.
