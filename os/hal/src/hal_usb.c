@@ -751,8 +751,17 @@ void _usb_wakeup(USBDriver *usbp) {
 void _usb_ep0setup(USBDriver *usbp, usbep_t ep) {
   size_t max;
 
-  osalDbgAssert(usbp->ep0state == USB_EP0_STP_WAITING, "not in setup state");
+  /* Is the EP0 state machine in the correct state for handling setup
+     packets?*/
+  if (usbp->ep0state != USB_EP0_STP_WAITING) {
+    /* This is unexpected could require handling with a warning event.*/
+    /* TODO: handling here.*/
 
+    /* Resetting the EP0 state machine and going ahead.*/
+    usbp->ep0state = USB_EP0_STP_WAITING;
+  }
+
+  /* Reading the setup data into the driver buffer.*/
   usbReadSetup(usbp, ep, usbp->setup);
 
   /* First verify if the application has an handler installed for this
