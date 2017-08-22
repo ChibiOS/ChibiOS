@@ -1935,11 +1935,11 @@
 #if (STM32_SAI1SEL == STM32_SAI1SEL_OFF) || defined(__DOXYGEN__)
 #define STM32_SAI1CLK               0
 #elif STM32_SAI1SEL == STM32_SAI1SEL_SAIPLL
-#define STM32_SAI1SEL               STM32_PLLSAIDIVQ_CLKOUT
+#define STM32_SAI1CLK               STM32_PLLSAIDIVQ_CLKOUT
 #elif STM32_SAI1SEL == STM32_SAI1SEL_I2SPLL
-#define STM32_SAI1SEL               STM32_PLLI2SDIVQ_CLKOUT
+#define STM32_SAI1CLK               STM32_PLLI2SDIVQ_CLKOUT
 #elif STM32_SAI1SEL == STM32_SAI1SEL_CKIN
-#define STM32_SAI1SEL               0 /* Unknown, would require a board value */
+#define STM32_SAI1CLK               0 /* Unknown, would require a board value */
 #else
 #error "invalid source selected for SAI1 clock"
 #endif
@@ -1950,11 +1950,11 @@
 #if (STM32_SAI2SEL == STM32_SAI2SEL_OFF) || defined(__DOXYGEN__)
 #define STM32_SAI2CLK               0
 #elif STM32_SAI2SEL == STM32_SAI2SEL_SAIPLL
-#define STM32_SAI2SEL               STM32_PLLSAIDIVQ_CLKOUT
+#define STM32_SAI2CLK               STM32_PLLSAIDIVQ_CLKOUT
 #elif STM32_SAI2SEL == STM32_SAI2SEL_I2SPLL
-#define STM32_SAI2SEL               STM32_PLLI2SDIVQ_CLKOUT
+#define STM32_SAI2CLK               STM32_PLLI2SDIVQ_CLKOUT
 #elif STM32_SAI2SEL == STM32_SAI2SEL_CKIN
-#define STM32_SAI2SEL               0 /* Unknown, would require a board value */
+#define STM32_SAI2CLK               0 /* Unknown, would require a board value */
 #else
 #error "invalid source selected for SAI2 clock"
 #endif
