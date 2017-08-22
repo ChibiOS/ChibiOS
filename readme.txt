@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 17.6.1 ***
+- HAL: Fixed wrong SAI1 and SAI2 clock selection (bug #873).
 - HAL: Fixed invalid number of DMA channels on STM32L011 (bug #872).
 - HAL: Fixed STM32 USARTv2 serial incorrect buffer size declarations
        (bug #871).
