@@ -93,6 +93,8 @@
        dependencies and configuration directories. This makes possible
        to have multiple non-conflicting makefiles in the same project.
        Updated the various platform.mk implementing "smart build" mode.
+- HAL: Fixed wrong I2S and SAI freq divisor (bug #874)
+       (backported to 17.6.1).
 - HAL: Fixed wrong SAI1 and SAI2 clock selection (bug #873)
        (backported to 17.6.1).
 - HAL: Fixed invalid number of DMA channels on STM32L011 (bug #872)
