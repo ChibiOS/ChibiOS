@@ -90,6 +90,118 @@ static char *ftoa(char *p, double num, unsigned long precision) {
   l = (long)((num - l) * precision);
   return long_to_string_with_divisor(p, l, 10, precision / 10);
 }
+#if CHPRINTF_USE_EXP
+inline unsigned int ftou(float x)
+{
+  union {
+    float   f;
+    unsigned int  i;
+  } u;
+
+  u.f = x;
+
+  return u.i;
+}
+
+static char *fmt_fexp(char *p, double x, int n)
+{
+  int   i, be, ma;
+  int   de = 0;
+  float   h;
+  char  *s;
+
+  if ((n == 0) || (n > FLOAT_PRECISION))
+    n = FLOAT_PRECISION;
+
+  if (x < 0) {
+    *p++ = '-';
+    x = - x;
+  }
+
+  be = (ftou(x) >> 23) & 0xFF;
+  ma = ftou(x) & 0x7FFFFF;
+
+  if (be == 0xFF) {
+    if (ma != 0)
+    {
+      s = "NaN";
+      for (p = s; *p; p++)
+        ;
+    }
+    else
+    {
+      s = "Inf";
+      for (p = s; *p; p++)
+        ;
+    }
+    return p;
+  }
+  else if (be != 0) {
+
+    do {
+      be = ((ftou(x) >> 23) & 0xFF) - 127;
+
+      if (be < 0) {
+
+        x *= 10.f;
+        de--;
+      }
+      else if (be > 3) {
+
+        x /= 10.f;
+        de++;
+      }
+      else
+        break;
+    }
+    while (1);
+  }
+
+  h = .5f;
+  for (i = 0; i < n; ++i)
+    h /= 10.f;
+
+  x += h;
+  i = (int) x;
+
+  if (i > 9) {
+
+    x /= 10.f;
+    de++;
+  }
+
+  i = (int) x;
+  x -= i;
+
+  *p++ = '0' + i;
+  *p++ = '.';
+
+  while (n > 0) {
+
+    x *= 10.f;
+    i = (int) x;
+    x -= i;
+
+    *p++ = '0' + i;
+    n--;
+  }
+
+  *p++ = 'E';
+
+  if (de >= 0)
+  {
+    *p++ = '+';
+  }
+  else
+  {
+    *p++ = '-';
+    de = -de;
+  }
+
+  p = ch_ltoa(p, (long)de, 10);
+  return p;
+}
+#endif
 #endif
 
 /**
@@ -224,6 +336,12 @@ int chvprintf(BaseSequentialStream *chp, const char *fmt, va_list ap) {
       }
       p = ftoa(p, f, precision);
       break;
+#if CHPRINTF_USE_EXP
+    case 'e':
+      f = (float) va_arg(ap, double);
+      p = fmt_fexp(p, f, precision);
+      break;
+#endif
 #endif
     case 'X':
     case 'x':
