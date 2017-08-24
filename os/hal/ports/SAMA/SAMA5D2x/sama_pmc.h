@@ -78,7 +78,7 @@
 #define pmcEnablePidLow(mask) {                                             \
   pmcDisableWP();                                                           \
   PMC->PMC_PCER0 |= (mask);                                                 \
-  pmcEnableWP();                                                           \
+  pmcEnableWP();                                                            \
 }
 
 /**
@@ -140,7 +140,35 @@
  *
  * @api
  */
-#define pmcDisablePIT() pmcDisablePidLow(SAMA_PID_PIT)
+#define pmcDisablePIT() pmcDisablePidLow(ID_PIT_MSK)
+
+/**
+ * @brief   Enables the XDMAC0 peripheral clock.
+ *
+ * @api
+ */
+#define pmcEnableXDMAC0() pmcEnablePidLow(ID_XDMAC0_MSK)
+
+/**
+ * @brief   Disables the XDMAC0 peripheral clock.
+ *
+ * @api
+ */
+#define pmcDisableXDMAC0() pmcDisablePidLow(ID_XDMAC0_MSK)
+
+/**
+ * @brief   Enables the XDMAC1 peripheral clock.
+ *
+ * @api
+ */
+#define pmcEnableXDMAC1() pmcEnablePidLow(ID_XDMAC1_MSK)
+
+/**
+ * @brief   Disables the XDMAC1 peripheral clock.
+ *
+ * @api
+ */
+#define pmcDisableXDMAC1() pmcDisablePidLow(ID_XDMAC1_MSK)
 
 /** @} */
 
