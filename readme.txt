@@ -93,6 +93,8 @@
        dependencies and configuration directories. This makes possible
        to have multiple non-conflicting makefiles in the same project.
        Updated the various platform.mk implementing "smart build" mode.
+- HAL: Fixed invalid STM32 CAN3 filters initialization (bug #878)
+       (backported to 17.6.1).
 - HAL: Fixed missing CAN definitions in STM32L432 registry entry (bug #877)
        (backported to 17.6.1).
 - HAL: Fixed missing STM32_TIM_MAX_CHANNELS definition in STM32L0 registry
