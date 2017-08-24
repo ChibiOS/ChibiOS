@@ -73,6 +73,8 @@
 *****************************************************************************
 
 *** 16.1.9 ***
+- HAL: Fixed missing STM32_TIM_MAX_CHANNELS definition in STM32L0 registry
+       (bug #876).
 - HAL: Fixed STM32 OTGv1 driver fails on STM32L4 (bug #875).
 - HAL: Fixed wrong PPRE2 and LSI related macros in STM32L0 hal lld (bug #868).
 - HAL: Fixed wrong bit mask in STM32L0 hal lld (bug #866).
