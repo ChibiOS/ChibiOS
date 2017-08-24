@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 17.6.1 ***
+- HAL: Fixed missing CAN definitions in STM32L432 registry entry (bug #877).
 - HAL: Fixed missing STM32_TIM_MAX_CHANNELS definition in STM32L0 registry
        (bug #876).
 - HAL: Fixed STM32 OTGv1 driver fails on STM32L4 (bug #875).
