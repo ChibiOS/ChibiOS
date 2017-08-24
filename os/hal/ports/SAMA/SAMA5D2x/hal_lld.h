@@ -469,7 +469,7 @@
 /* Various helpers.*/
 #include "sama_pmc.h"
 #include "aic.h"
-/* #include "sama_xdmac.h" */
+#include "sama_xdmac.h" 
 
 #ifdef __cplusplus
 extern "C" {
