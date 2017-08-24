@@ -93,6 +93,8 @@
        dependencies and configuration directories. This makes possible
        to have multiple non-conflicting makefiles in the same project.
        Updated the various platform.mk implementing "smart build" mode.
+- HAL: Fixed STM32 OTGv1 driver fails on STM32L4 (bug #875)
+       (backported to 17.6.1 and 16.1.9).
 - HAL: Fixed wrong I2S and SAI freq divisor (bug #874)
        (backported to 17.6.1).
 - HAL: Fixed wrong SAI1 and SAI2 clock selection (bug #873)
