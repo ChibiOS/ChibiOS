@@ -278,19 +278,21 @@ static void otg_fifo_read_to_buffer(volatile uint32_t *fifop,
 static void otg_rxfifo_handler(USBDriver *usbp) {
   uint32_t sts, cnt, ep;
 
+  /* Popping the event word out of the RX FIFO.*/
   sts = usbp->otg->GRXSTSP;
+
+  /* Event details.*/
+  cnt = (sts & GRXSTSP_BCNT_MASK) >> GRXSTSP_BCNT_OFF;
+  ep  = (sts & GRXSTSP_EPNUM_MASK) >> GRXSTSP_EPNUM_OFF;
+
   switch (sts & GRXSTSP_PKTSTS_MASK) {
-  case GRXSTSP_SETUP_COMP:
-    break;
   case GRXSTSP_SETUP_DATA:
-    cnt = (sts & GRXSTSP_BCNT_MASK) >> GRXSTSP_BCNT_OFF;
-    ep  = (sts & GRXSTSP_EPNUM_MASK) >> GRXSTSP_EPNUM_OFF;
     otg_fifo_read_to_buffer(usbp->otg->FIFO[0], usbp->epc[ep]->setup_buf,
                             cnt, 8);
     break;
+  case GRXSTSP_SETUP_COMP:
+    break;
   case GRXSTSP_OUT_DATA:
-    cnt = (sts & GRXSTSP_BCNT_MASK) >> GRXSTSP_BCNT_OFF;
-    ep  = (sts & GRXSTSP_EPNUM_MASK) >> GRXSTSP_EPNUM_OFF;
     otg_fifo_read_to_buffer(usbp->otg->FIFO[0],
                             usbp->epc[ep]->out_state->rxbuf,
                             cnt,
@@ -299,10 +301,12 @@ static void otg_rxfifo_handler(USBDriver *usbp) {
     usbp->epc[ep]->out_state->rxbuf += cnt;
     usbp->epc[ep]->out_state->rxcnt += cnt;
     break;
-  case GRXSTSP_OUT_GLOBAL_NAK:
   case GRXSTSP_OUT_COMP:
+    break;
+  case GRXSTSP_OUT_GLOBAL_NAK:
+    break;
   default:
-    ;
+    break;
   }
 }
 
@@ -415,34 +419,41 @@ static void otg_epout_handler(USBDriver *usbp, usbep_t ep) {
        specific callback.*/
     _usb_isr_invoke_setup_cb(usbp, ep);
   }
+
   if ((epint & DOEPINT_XFRC) && (otgp->DOEPMSK & DOEPMSK_XFRCM)) {
     USBOutEndpointState *osp;
-
-    /* Receive transfer complete, checking if it is a SETUP transfer on EP0,
-       than it must be ignored, the STUPM handler will take care of it.*/
-    if ((ep == 0) && (usbp->ep0state == USB_EP0_WAITING_SETUP))
-      return;
 
     /* OUT state structure pointer for this endpoint.*/
     osp = usbp->epc[ep]->out_state;
 
-    /* A short packet always terminates a transaction.*/
-    if ((ep == 0) &&
-        ((osp->rxcnt % usbp->epc[ep]->out_maxsize) == 0) &&
-        (osp->rxsize < osp->totsize)) {
-      /* For EP 0 only, in case the transaction covered only part of the total
-         transfer then another transaction is immediately started in order to
+    /* EP0 requires special handling.*/
+    if (ep == 0) {
+
+#if defined(STM32_OTG_SEQUENCE_WORKAROUND)
+      /* If an OUT transaction end interrupt is processed while the state
+         machine is not in an OUT state then it is ignored, this is caused
+         on some devices (L4) apparently injecting spurious data complete
+         words in the RX FIFO.*/
+      if ((usbp->ep0state & USB_OUT_STATE) == 0)
+        return;
+#endif
+
+      /* In case the transaction covered only part of the total transfer
+         then another transaction is immediately started in order to
          cover the remaining.*/
-      osp->rxsize = osp->totsize - osp->rxsize;
-      osp->rxcnt  = 0;
-      osalSysLockFromISR();
-      usb_lld_start_out(usbp, ep);
-      osalSysUnlockFromISR();
+      if (((osp->rxcnt % usbp->epc[ep]->out_maxsize) == 0) &&
+          (osp->rxsize < osp->totsize)) {
+        osp->rxsize = osp->totsize - osp->rxsize;
+        osp->rxcnt  = 0;
+        osalSysLockFromISR();
+        usb_lld_start_out(usbp, ep);
+        osalSysUnlockFromISR();
+        return;
+      }
     }
-    else {
-      /* End on OUT transfer.*/
-      _usb_isr_invoke_out_cb(usbp, ep);
-    }
+
+    /* End on OUT transfer.*/
+    _usb_isr_invoke_out_cb(usbp, ep);
   }
 }
 
@@ -994,7 +1005,7 @@ void usb_lld_reset(USBDriver *usbp) {
 
   /* EP0 initialization, it is a special case.*/
   usbp->epc[0] = &ep0config;
-  otgp->oe[0].DOEPTSIZ = 0;
+  otgp->oe[0].DOEPTSIZ = DOEPTSIZ_STUPCNT(3);
   otgp->oe[0].DOEPCTL = DOEPCTL_SD0PID | DOEPCTL_USBAEP | DOEPCTL_EPTYP_CTRL |
                         DOEPCTL_MPSIZ(ep0config.out_maxsize);
   otgp->ie[0].DIEPTSIZ = 0;

@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 17.6.1 ***
+- HAL: Fixed STM32 OTGv1 driver fails on STM32L4 (bug #875).
 - HAL: Fixed wrong I2S and SAI freq divisor (bug #874).
 - HAL: Fixed wrong SAI1 and SAI2 clock selection (bug #873).
 - HAL: Fixed invalid number of DMA channels on STM32L011 (bug #872).
