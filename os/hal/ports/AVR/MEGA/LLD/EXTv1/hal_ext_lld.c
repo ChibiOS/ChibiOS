@@ -264,13 +264,13 @@ void ext_lld_channel_enable(EXTDriver *extp, expchannel_t channel) {
 #endif
 #if AVR_EXT_USE_INT2 || defined(__DOXYGEN__)
   if (channel == INT2) {
-    EIMSK |= 1 << INT2;
-  ext_lld_set_intx_edges(channel, extp->config->channels[channel].mode);
+    EIMSK |= (1 << INT2);
+    ext_lld_set_intx_edges(channel, extp->config->channels[channel].mode);
   }
 #endif
 #if AVR_EXT_USE_INT3 || defined(__DOXYGEN__)
   if (channel == INT3) {
-    EIMSK |= 1 << INT3;
+    EIMSK |= (1 << INT3);
     ext_lld_set_intx_edges(channel, extp->config->channels[channel].mode);
   }
 #endif
