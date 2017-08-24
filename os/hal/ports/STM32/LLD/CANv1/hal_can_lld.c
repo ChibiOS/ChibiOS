@@ -162,14 +162,13 @@ static void can_lld_set_filters(CANDriver* canp,
 #endif
     canp->can->FM1R = 0;
     canp->can->FFA1R = 0;
-#if STM32_CAN_USE_CAN2
-    if(canp == &CAND1) {
-      canp->can->FS1R = 1 | (1 << can2sb);
-      canp->can->FA1R = 1 | (1 << can2sb);
-    }
-#else
     canp->can->FS1R = 1;
     canp->can->FA1R = 1;
+#if STM32_CAN_USE_CAN2
+    if(canp == &CAND1) {
+      canp->can->FS1R |= 1 << can2sb;
+      canp->can->FA1R |= 1 << can2sb;
+    }
 #endif
   }
   canp->can->FMR &= ~CAN_FMR_FINIT;
