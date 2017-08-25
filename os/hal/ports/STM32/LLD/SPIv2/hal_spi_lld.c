@@ -440,7 +440,6 @@ void spi_lld_start(SPIDriver *spip) {
  * @notapi
  */
 void spi_lld_stop(SPIDriver *spip) {
-  uint32_t cr1;
 
   /* If in ready state then disables the SPI clock.*/
   if (spip->state == SPI_READY) {
