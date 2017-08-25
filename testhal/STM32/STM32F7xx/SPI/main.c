@@ -32,7 +32,7 @@ static const SPIConfig hs_spicfg = {
   NULL,
   GPIOB,
   GPIOB_ARD_D15,
-  SPI_CR1_BR_0,
+  SPI_CR1_CPOL | SPI_CR1_BR_0,
   SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0
 };
 
@@ -167,15 +167,25 @@ int main(void) {
   /*
    * Starting the transmitter and receiver threads.
    */
-  chThdCreateStatic(spi_thread_1_wa, sizeof(spi_thread_1_wa),
-                    NORMALPRIO + 1, spi_thread_1, NULL);
-  chThdCreateStatic(spi_thread_2_wa, sizeof(spi_thread_2_wa),
-                    NORMALPRIO + 1, spi_thread_2, NULL);
+//  chThdCreateStatic(spi_thread_1_wa, sizeof(spi_thread_1_wa),
+//                    NORMALPRIO + 1, spi_thread_1, NULL);
+//  chThdCreateStatic(spi_thread_2_wa, sizeof(spi_thread_2_wa),
+//                    NORMALPRIO + 1, spi_thread_2, NULL);
 
   /*
    * Normal main() thread activity, in this demo it does nothing.
    */
+  uint8_t byte = 0x55;
   while (true) {
     chThdSleepMilliseconds(500);
+    spiStart(&SPID2, &hs_spicfg);
+
+    spiSelect(&SPID2);
+    spiSend(&SPID2, 1, &byte);
+    spiUnselect(&SPID2);
+
+    spiSelect(&SPID2);
+    spiSend(&SPID2, 1, &byte);
+    spiUnselect(&SPID2);
   }
 }
