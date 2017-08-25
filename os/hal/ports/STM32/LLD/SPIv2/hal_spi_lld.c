@@ -425,7 +425,7 @@ void spi_lld_start(SPIDriver *spip) {
   }
 
   /* SPI setup and enable.*/
-  spip->spi->CR1  = 0;
+  spip->spi->CR1 &= ~SPI_CR1_SPE;
   spip->spi->CR1  = spip->config->cr1 | SPI_CR1_MSTR;
   spip->spi->CR2  = spip->config->cr2 | SPI_CR2_FRXTH | SPI_CR2_SSOE |
                     SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
