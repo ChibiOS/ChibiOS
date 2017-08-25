@@ -440,13 +440,15 @@ void spi_lld_start(SPIDriver *spip) {
  * @notapi
  */
 void spi_lld_stop(SPIDriver *spip) {
+  uint32_t cr1;
 
   /* If in ready state then disables the SPI clock.*/
   if (spip->state == SPI_READY) {
 
     /* SPI disable.*/
-    spip->spi->CR1 = 0;
-    spip->spi->CR2 = 0;
+    spip->spi->CR1 &= ~SPI_CR1_SPE;
+    spip->spi->CR1  = 0;
+    spip->spi->CR2  = 0;
     dmaStreamRelease(spip->dmarx);
     dmaStreamRelease(spip->dmatx);
 
