@@ -172,9 +172,9 @@ OSAL_IRQ_HANDLER(dmaHandler) {
         }
       }
       /* Execute callback */
-      //if (pendingInt && channel->dma_func) {
+      if (pendingInt && channel->dma_func) {
         channel->dma_func(channel->dma_param,cis);
-      //}
+      }
     }
   }
   OSAL_IRQ_EPILOGUE();
