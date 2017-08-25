@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.9 ***
+- HAL: Fixed STM32 SPI problem in spi_lld_start() (bug #879).
 - HAL: Fixed missing STM32_TIM_MAX_CHANNELS definition in STM32L0 registry
        (bug #876).
 - HAL: Fixed STM32 OTGv1 driver fails on STM32L4 (bug #875).
