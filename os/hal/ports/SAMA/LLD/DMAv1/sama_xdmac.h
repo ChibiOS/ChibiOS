@@ -110,6 +110,17 @@ typedef struct {
  * @name    Macro Functions
  * @{
  */
+/**
+ * @brief   Get content of Channel Interrupt Status register.
+ * @note    Reading interrupt is equivalent to clearing interrupt.
+ *
+ * @param[in] dmachp      pointer to a sama_dma_channel_t structure
+ * @return    XDMAC_CISx  content of Channel Interrupt Status register
+ *
+ * @notapi
+ */
+#define dmaGetChannelInt(dmachp)                                      \
+  (dmachp)->xdmac->XDMAC_CHID[(dmachp)->chid].XDMAC_CIS
 
 /**
  * @brief   Associates a source to a DMA channel.

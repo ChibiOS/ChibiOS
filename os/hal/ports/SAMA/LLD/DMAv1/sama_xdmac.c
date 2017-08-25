@@ -95,18 +95,6 @@ sama_dma_channel_t _sama_dma_channel_t[XDMAC_CHANNELS_TOT];
  #define dmaGetGlobalInt(xdmacp)    xdmacp->XDMAC_GIS
 
 /**
- * @brief   Get content of Channel Interrupt Status register.
- * @note    Reading interrupt is equivalent to clearing interrupt.
- *
- * @param[in] dmachp      pointer to a sama_dma_channel_t structure
- * @return    XDMAC_CISx  content of Channel Interrupt Status register
- *
- * @notapi
- */
-#define dmaGetChannelInt(dmachp)                                     \
-  (dmachp)->xdmac->XDMAC_CHID[(dmachp)->chid].XDMAC_CIS
-
-/**
  * @brief   Get content of Channel Interrupt Mask register.
  *
  * @param[in] dmachp      pointer to a sama_dma_channel_t structure
@@ -144,7 +132,7 @@ OSAL_IRQ_HANDLER(dmaHandler) {
     gcs = dmaGetGlobal(xdmac);
     for (chan = 0; chan < XDMAC_CHANNELS; chan++) {
       sama_dma_channel_t *channel = &_sama_dma_channel_t[(cont * XDMAC_CHANNELS) + chan];
-      bool pendingInt = false;
+      bool pendingInt = 0;
 
       if (!(gis & (0x1 << chan)))
       /* There is no pending interrupt for this channel */
@@ -159,16 +147,16 @@ OSAL_IRQ_HANDLER(dmaHandler) {
 
         if (cis & XDMAC_CIS_BIS) {
           if (!(dmaGetChannelIntMask(channel) & XDMAC_CIM_LIM)) {
-            pendingInt = true;
+            pendingInt = 1;
           }
         }
 
         if (cis & XDMAC_CIS_LIS) {
-          pendingInt = true;
+          pendingInt = 1;
         }
 
         if (cis & XDMAC_CIS_DIS) {
-          pendingInt = true;;
+          pendingInt = 1;
         }
       }
       /* Execute callback */
