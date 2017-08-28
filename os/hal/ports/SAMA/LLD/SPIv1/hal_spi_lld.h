@@ -64,14 +64,6 @@
 #define SAMA_DMA_REQUIRED
 #endif
 
-#if SAMA_SPI_USE_SPI0 && !SAMA_HAS_SPI0
-#error "SPI0 not present in the selected device"
-#endif
-
-#if SAMA_SPI_USE_SPI1 && !SAMA_HAS_SPI1
-#error "SPI1 not present in the selected device"
-#endif
-
 #if !SAMA_SPI_USE_SPI0 && !SAMA_SPI_USE_SPI1
 #error "SPI driver activated but no SPI peripheral assigned"
 #endif
