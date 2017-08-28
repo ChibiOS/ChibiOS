@@ -89,6 +89,12 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added an USB_CDC multi-target demo application showcasing how to
+       manage a project with multiple target boards/devices and handle
+       portability issues.
+- NEW: Improved the various rules.mk to handle "touching" of all
+       included makefiles, now the makefile is no more assumed to
+       be called "Makefile".
 - NEW: Added to the Makefiles the ability to change the default build,
        dependencies and configuration directories. This makes possible
        to have multiple non-conflicting makefiles in the same project.
