@@ -15,58 +15,37 @@
 */
 
 /**
- * @file    portab.h
- * @brief   Application portability macros and structures.
+ * @file    portab.c
+ * @brief   Application portability module code.
  *
  * @addtogroup application_portability
  * @{
  */
 
-#ifndef PORTAB_H
-#define PORTAB_H
+#include "portab.h"
 
 /*===========================================================================*/
-/* Module constants.                                                         */
-/*===========================================================================*/
-
-#define PORTAB_USB1                 USBD1
-
-#define PORTAB_SDU1                 SDU1
-
-#define PORTAB_BLINK_LED1           LINE_LED_GREEN
-
-/*===========================================================================*/
-/* Module pre-compile time settings.                                         */
+/* Module local definitions.                                                 */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Derived constants and error checks.                                       */
+/* Module exported variables.                                                */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Module data structures and types.                                         */
+/* Module local types.                                                       */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Module macros.                                                            */
+/* Module local variables.                                                   */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* External declarations.                                                    */
+/* Module local functions.                                                   */
 /*===========================================================================*/
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#ifdef __cplusplus
-}
-#endif
-
 /*===========================================================================*/
-/* Module inline functions.                                                  */
+/* Module exported functions.                                                */
 /*===========================================================================*/
-
-#endif /* PORTAB_H */
 
 /** @} */

@@ -33,7 +33,7 @@
 
 #define PORTAB_SDU1                 SDU1
 
-#define PORTAB_BLINK_LED1           LINE_LED_GREEN
+#define PORTAB_BLINK_LED1           LINE_LED3_RED
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -50,6 +50,13 @@
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
+
+/*
+ * DP resistor control is not possible on the STM32F3-Discovery, using stubs
+ * for the connection macros.
+ */
+#define usb_lld_connect_bus(usbp)
+#define usb_lld_disconnect_bus(usbp)
 
 /*===========================================================================*/
 /* External declarations.                                                    */

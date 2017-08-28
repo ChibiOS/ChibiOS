@@ -121,6 +121,7 @@ CSRC = $(STARTUPSRC) \
        $(TESTSRC) \
        $(STREAMSSRC) \
        $(SHELLSRC) \
+       $(CONFDIR)/portab.c \
        src/usbcfg.c main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -154,7 +155,7 @@ ASMXSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
 INCDIR = $(CHIBIOS)/os/license \
          $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) $(TESTINC) \
-         $(STREAMSINC) $(SHELLINC) ./cfg-stm32l476_discovery ./src
+         $(STREAMSINC) $(SHELLINC) $(CONFDIR) ./src
 
 #
 # Project, sources and paths

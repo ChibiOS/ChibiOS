@@ -98,9 +98,9 @@ static THD_FUNCTION(Thread1, arg) {
     systime_t time;
 
     time = serusbcfg.usbp->state == USB_ACTIVE ? 250 : 500;
-    palClearLine(LINE_LED_GREEN);
+    palClearLine(PORTAB_BLINK_LED1);
     chThdSleepMilliseconds(time);
-    palSetLine(LINE_LED_GREEN);
+    palSetLine(PORTAB_BLINK_LED1);
     chThdSleepMilliseconds(time);
   }
 }
