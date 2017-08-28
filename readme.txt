@@ -89,6 +89,11 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added shared Eclipse debug configurations for OpenOCD under
+       ./tools/eclipse/debug. Now it is no more required to re-create
+       those each time a new workspace is created, just import the global
+       ChibiOS project in it. The configurations will appear under the
+       Eclipse Tools menu.
 - NEW: Added an USB_CDC multi-target demo application showcasing how to
        manage a project with multiple target boards/devices and handle
        portability issues.
