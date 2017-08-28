@@ -170,6 +170,35 @@
  */
 #define pmcDisableXDMAC1() pmcDisablePidLow(ID_XDMAC1_MSK)
 
+/**
+ * @brief   Enables the SPI0 peripheral clock.
+ *
+ * @api
+ */
+#define pmcEnableSPI0() pmcEnablePidHigh(ID_SPI0_MSK)
+
+/**
+ * @brief   Disables the SPI0 peripheral clock.
+ *
+ * @api
+ */
+#define pmcDisableSPI0() pmcDisablePidHigh(ID_SPI0_MSK)
+
+/**
+ * @brief   Enables the SPI1 peripheral clock.
+ *
+ * @api
+ */
+#define pmcEnableSPI1() pmcEnablePidHigh(ID_SPI1_MSK)
+
+/**
+ * @brief   Disables the SPI11 peripheral clock.
+ *
+ * @api
+ */
+#define pmcDisableSPI1() pmcDisablePidHigh(ID_SPI1_MSK)
+
+
 /** @} */
 
 /*===========================================================================*/
