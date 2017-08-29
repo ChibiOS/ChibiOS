@@ -124,7 +124,7 @@
 /**
  * @brief   Type of a PAL event callback.
  */
-typedef void (*palcallback_t)(void);
+typedef void (*palcallback_t)(void *arg);
 
 #include "hal_pal_lld.h"
 
@@ -526,14 +526,15 @@ typedef struct {
  * @param[in] pad       pad number within the port
  * @param[in] mode      pad event mode
  * @param[in] callback  event callback function
+ * @param[in] arg       callback argument
  * 
  * @iclass
  */
 #if !defined(pal_lld_enablepadevent) || defined(__DOXYGEN__)
-#define palPadEnableEventI(port, pad, mode, callback)
+#define palPadEnableEventI(port, pad, mode, callback, arg)
 #else
-#define palPadEnableEventI(port, pad, mode, callback)                       \
-  pal_lld_enablepadevent(port, pad, mode, callback)
+#define palPadEnableEventI(port, pad, mode, callback, arg)                  \
+  pal_lld_enablepadevent(port, pad, mode, callback, arg)
 #endif
 
 /**
@@ -669,15 +670,16 @@ typedef struct {
  * @param[in] line      line identifier
  * @param[in] mode      line event mode
  * @param[in] callback  event callback function
+ * @param[in] arg       callback argument
  *
  * @iclass
  */
 #if !defined(pal_lld_lineenableevent) || defined(__DOXYGEN__)
-#define palLineEnableEventI(line, mode, callback)                           \
-  palPadEnableEventI(PAL_PORT(line), PAL_PAD(line), mode, callback)
+#define palLineEnableEventI(line, mode, callback, arg)                      \
+  palPadEnableEventI(PAL_PORT(line), PAL_PAD(line), mode, callback, arg)
 #else
-#define palLineEnableEventI(line, mode, callback)                           \
-  pal_lld_lineenableevent(line, mode, callback)
+#define palLineEnableEventI(line, mode, callback, arg)                      \
+  pal_lld_lineenableevent(line, mode, callback, arg)
 #endif
 
 /**

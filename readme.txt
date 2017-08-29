@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added an argument to PAL events callback. API changed thus this
+       causes a major number change in HAL.
 - NEW: Added shared Eclipse debug configurations for OpenOCD under
        ./tools/eclipse/debug. Now it is no more required to re-create
        those each time a new workspace is created, just import the global
