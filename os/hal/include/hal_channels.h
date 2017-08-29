@@ -37,6 +37,15 @@
 #define HAL_CHANNELS_H
 
 /**
+ * @name    Default control operation codes.
+ * @{
+ */
+#define CHN_CTL_INVALID         0   /** @brief Invalid operation code.      */
+#define CHN_CTL_NOP             1   /** @brief Does nothing.                */
+#define CHN_CTL_TX_WAIT         2   /** @brief Wait for TX completion.      */
+/** @} */
+
+/**
  * @brief   @p BaseChannel specific methods.
  */
 #define _base_channel_methods                                               \
@@ -49,7 +58,9 @@
   size_t (*writet)(void *instance, const uint8_t *bp,                       \
                    size_t n, systime_t time);                               \
   /* Channel read method with timeout specification.*/                      \
-  size_t (*readt)(void *instance, uint8_t *bp, size_t n, systime_t time);
+  size_t (*readt)(void *instance, uint8_t *bp, size_t n, systime_t time);   \
+  /* Channel put method with timeout specification.*/                       \
+  msg_t (*ctl)(void *instance, unsigned int operation, void *arg);
 
 /**
  * @brief   @p BaseChannel specific data.
@@ -193,6 +204,22 @@ typedef struct {
  * @api
  */
 #define chnReadTimeout(ip, bp, n, time) ((ip)->vmt->readt(ip, bp, n, time))
+
+/**
+ * @brief   Control operation on a channel.
+ *
+ * @param[in] ip        pointer to a @p BaseChannel or derived class
+ * @param[in] operation control operation code
+ * @param[in,out] arg   operation argument
+ *
+ * @return              The control operation status.
+ * @retval MSG_OK       in case of success.
+ * @retval MSG_TIMEOUT  in case of operation timeout.
+ * @retval MSG_RESET    in case of operation reset.
+ *
+ * @api
+ */
+#define chnControl(sdp, operation, arg) ((ip)->vmt->ctl(ip, operation, arg)
 /** @} */
 
 /**

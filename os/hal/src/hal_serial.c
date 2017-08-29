@@ -89,9 +89,31 @@ static size_t _readt(void *ip, uint8_t *bp, size_t n, systime_t timeout) {
   return iqReadTimeout(&((SerialDriver *)ip)->iqueue, bp, n, timeout);
 }
 
+static msg_t _ctl(void *ip, unsigned int operation, void *arg) {
+  SerialDriver *sdp = (SerialDriver *)ip;
+
+  osalDbgCheck(sdp != NULL);
+
+  switch (operation) {
+  case CHN_CTL_NOP:
+    osalDbgCheck(arg == NULL);
+    break;
+  default:
+#if defined(SD_LLD_IMPLEMENTS_CTL)
+    return sd_lld_control(sdp, operation, arg);
+#else
+  case CHN_CTL_INVALID:
+    osalDbgAssert(false, "invalid CTL operation");
+    break;
+#endif
+  }
+  return MSG_OK;
+}
+
 static const struct SerialDriverVMT vmt = {
   _write, _read, _put, _get,
-  _putt, _gett, _writet, _readt
+  _putt, _gett, _writet, _readt,
+  _ctl
 };
 
 /*===========================================================================*/
@@ -296,6 +318,25 @@ bool sdGetWouldBlock(SerialDriver *sdp) {
   osalSysUnlock();
 
   return b;
+}
+
+/**
+ * @brief   Control operation on a serial port.
+ *
+ * @param[in] sdp       pointer to a @p SerialDriver object
+ * @param[in] operation control operation code
+ * @param[in,out] arg   operation argument
+ *
+ * @return              The control operation status.
+ * @retval MSG_OK       in case of success.
+ * @retval MSG_TIMEOUT  in case of operation timeout.
+ * @retval MSG_RESET    in case of operation reset.
+ *
+ * @api
+ */
+msg_t sdControl(SerialDriver *sdp, unsigned int operation, void *arg) {
+
+  return _ctl((void *)sdp, operation, arg);
 }
 
 #endif /* HAL_USE_SERIAL == TRUE */

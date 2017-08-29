@@ -89,6 +89,10 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added to the serial driver and channels interface a new "control"
+       function that allows to implement extensions in the LLD without
+       touching the high level interface. Conceptually it is similar
+       to Posix ioctl().
 - NEW: Added an argument to PAL events callback. API changed thus this
        causes a major number change in HAL.
 - NEW: Added shared Eclipse debug configurations for OpenOCD under
