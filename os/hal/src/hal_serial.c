@@ -101,11 +101,10 @@ static msg_t _ctl(void *ip, unsigned int operation, void *arg) {
   default:
 #if defined(SD_LLD_IMPLEMENTS_CTL)
     return sd_lld_control(sdp, operation, arg);
-#else
+#endif
   case CHN_CTL_INVALID:
     osalDbgAssert(false, "invalid CTL operation");
     break;
-#endif
   }
   return MSG_OK;
 }

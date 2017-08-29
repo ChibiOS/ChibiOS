@@ -124,9 +124,35 @@ static size_t _readt(void *ip, uint8_t *bp, size_t n, systime_t timeout) {
   return ibqReadTimeout(&((SerialUSBDriver *)ip)->ibqueue, bp, n, timeout);
 }
 
+static msg_t _ctl(void *ip, unsigned int operation, void *arg) {
+  SerialUSBDriver *sdup = (SerialUSBDriver *)ip;
+
+  osalDbgCheck(sdup != NULL);
+
+  switch (operation) {
+  case CHN_CTL_NOP:
+    osalDbgCheck(arg == NULL);
+    break;
+  default:
+#if defined(SDU_LLD_IMPLEMENTS_CTL)
+    /* The SDU driver does not have a LLD but the application can use this
+       hook to implement extra controls by supplying this function.*/ 
+    extern msg_t sdu_lld_control(SerialUSBDriver *sdup,
+                                 unsigned int operation,
+                                 void *arg);
+    return sdu_lld_control(sdup, operation, arg);
+#endif
+  case CHN_CTL_INVALID:
+    osalDbgAssert(false, "invalid CTL operation");
+    break;
+  }
+  return MSG_OK;
+}
+
 static const struct SerialUSBDriverVMT vmt = {
   _write, _read, _put, _get,
-  _putt, _gett, _writet, _readt
+  _putt, _gett, _writet, _readt,
+  _ctl
 };
 
 /**
@@ -488,6 +514,25 @@ void sduInterruptTransmitted(USBDriver *usbp, usbep_t ep) {
 
   (void)usbp;
   (void)ep;
+}
+
+/**
+ * @brief   Control operation on a serial USB port.
+ *
+ * @param[in] usbp       pointer to a @p USBDriver object
+ * @param[in] operation control operation code
+ * @param[in,out] arg   operation argument
+ *
+ * @return              The control operation status.
+ * @retval MSG_OK       in case of success.
+ * @retval MSG_TIMEOUT  in case of operation timeout.
+ * @retval MSG_RESET    in case of operation reset.
+ *
+ * @api
+ */
+msg_t sduControl(USBDriver *usbp, unsigned int operation, void *arg) {
+
+  return _ctl((void *)usbp, operation, arg);
 }
 
 #endif /* HAL_USE_SERIAL_USB == TRUE */
