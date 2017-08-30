@@ -38,9 +38,23 @@
 #error "missing or unsupported platform for GPIOv3 PAL driver"
 #endif
 
+/* Handling a difference in ST headers.*/
+#if defined(STM32L4XX)
+#define EMR     EMR1
+#define IMR     IMR1
+#define PR      PR1
+#define RTSR    RTSR1
+#define FTSR    FTSR1
+#endif
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
+
+/**
+ * @brief   Event records for the 16 GPIO EXTI channels.
+ */
+palevent_t _pal_events[16];
 
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
@@ -191,6 +205,117 @@ void _pal_lld_setgroupmode(ioportid_t port,
     pupdr <<= 2;
     moder <<= 2;
     bit++;
+  }
+}
+
+/**
+ * @brief   Pad event enable.
+ * @details This function programs an event callback in the specified mode.
+ * @note    Programming an unknown or unsupported mode is silently ignored.
+ *
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
+ * @param[in] mode      pad event mode
+ * @param[in] callback  event callback function
+ * @param[in] arg       callback argument
+ *
+ * @notapi
+ */
+void _pal_lld_enablepadevent(ioportid_t port,
+                             iopadid_t pad,
+                             ioeventmode_t mode,
+                             palcallback_t callback,
+                             void *arg) {
+
+  uint32_t padmask, cridx, crmask, portidx;
+
+  /* Mask of the pad.*/
+  padmask = 1U << (uint32_t)pad;
+
+  /* Multiple channel setting of the same channel not allowed, first disable
+     it. This is done because on STM32 the same channel cannot be mapped on
+     multiple ports.*/
+  osalDbgAssert(((EXTI->RTSR & padmask) == 0U) &&
+                ((EXTI->FTSR & padmask) == 0U), "channel already in use");
+
+  /* Index and mask of the SYSCFG CR register to be used.*/
+  cridx  = (uint32_t)pad >> 2U;
+  crmask = ~(0xFU << (((uint32_t)pad & 3U) * 4U));
+
+  /* Port index is obtained assuming that GPIO ports are placed at regular
+     0x400 intervalis in memory space. So far this is true for all devices.*/
+  portidx = (uint32_t)port >> 10U;
+
+  /* Port selection in SYSCFG.*/
+  SYSCFG->EXTICR[cridx] = (SYSCFG->EXTICR[cridx] & crmask) | portidx;
+
+  /* Programming edge registers.*/
+  if (mode & PAL_EVENT_MODE_RISING_EDGE)
+    EXTI->RTSR |= padmask;
+  else
+    EXTI->RTSR &= ~padmask;
+  if (mode & PAL_EVENT_MODE_FALLING_EDGE)
+    EXTI->FTSR |= padmask;
+  else
+    EXTI->FTSR &= ~padmask;
+
+  /* Programming interrupt and event registers.*/
+  if (callback != NULL) {
+    EXTI->IMR |= padmask;
+    EXTI->EMR &= ~padmask;
+  }
+  else {
+    EXTI->EMR |= padmask;
+    EXTI->IMR &= ~padmask;
+  }
+
+  /* Setting up callback and argument for this event.*/
+  _pal_set_event(pad, callback, arg);
+}
+
+/**
+ * @brief   Pad event disable.
+ * @details This function disables previously programmed event callbacks.
+ *
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
+ *
+ * @notapi
+ */
+void _pal_lld_disablepadevent(ioportid_t port, iopadid_t pad) {
+  uint32_t padmask, rtsr1, ftsr1;
+
+  rtsr1 = EXTI->RTSR1;
+  ftsr1 = EXTI->FTSR1;
+
+  /* Mask of the pad.*/
+  padmask = 1U << (uint32_t)pad;
+
+  /* If either RTRS1 or FTSR1 is enabled then the channel is in use.*/
+  if (((rtsr1 | ftsr1) & padmask) != 0U) {
+    uint32_t cridx, croff, crport, portidx;
+
+    /* Index and mask of the SYSCFG CR register to be used.*/
+    cridx  = (uint32_t)pad >> 2U;
+    croff = ((uint32_t)pad & 3U) * 4U;
+
+    /* Port index is obtained assuming that GPIO ports are placed at regular
+       0x400 intervalis in memory space. So far this is true for all devices.*/
+    portidx = (uint32_t)port >> 10U;
+
+    crport = (SYSCFG->EXTICR[cridx] >> croff) & 0xFU;
+
+    osalDbgAssert(crport == portidx, "channel mapped on different port");
+
+    /* Disabling channel.*/
+    EXTI->IMR  &= ~padmask;
+    EXTI->EMR  &= ~padmask;
+    EXTI->RTSR  = rtsr1 & ~padmask;
+    EXTI->FTSR  = ftsr1 & ~padmask;
+    EXTI->PR    = padmask;
+
+    /* Clearing callback and argument for this event.*/
+    _pal_clear_event(pad);
   }
 }
 

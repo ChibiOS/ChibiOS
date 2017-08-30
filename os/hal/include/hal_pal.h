@@ -126,6 +126,14 @@
  */
 typedef void (*palcallback_t)(void *arg);
 
+/**
+ * @brief   Type of a PAL event record.
+ */
+typedef struct {
+  palcallback_t         cb;
+  void                  *arg;
+} palevent_t;
+
 #include "hal_pal_lld.h"
 
 /**
@@ -201,6 +209,52 @@ typedef struct {
  */
 #define IOBUS_DECL(name, port, width, offset)                               \
   IOBus name = _IOBUS_DATA(name, port, width, offset)
+
+/**
+ * @name    Low level driver helper macros
+ * @{
+ */
+/**
+ * @brief   Common ISR code.
+ * @note    This macro is meant to be used in the low level drivers
+ *          implementation only.
+ *
+ * @param[in] e         event index
+ *
+ * @notapi
+ */
+#define _pal_isr_code(e) _pal_events[e].cb(_pal_events[e].arg)
+
+/**
+ * @brief   PAL event setup.
+ * @note    This macro is meant to be used in the low level drivers
+ *          implementation only.
+ *
+ * @param[in] e         event index
+ * @param[in] c         callback pointer
+ * @param[in] a         callback argument
+ *
+ * @notapi
+ */
+#define _pal_set_event(e, c, a) {                                           \
+  _pal_events[e].cb = c;                                                    \
+  _pal_events[e].arg = a;                                                   \
+}
+
+/**
+ * @brief   PAL event clear.
+ * @note    This macro is meant to be used in the low level drivers
+ *          implementation only.
+ *
+ * @param[in] e         event index
+ *
+ * @notapi
+ */
+#define _pal_clear_event(e) {                                               \
+  _pal_events[e].cb = NULL;                                                 \
+  _pal_events[e].arg = NULL;                                                \
+}
+/** @} */
 
 /**
  * @name    Macro Functions
