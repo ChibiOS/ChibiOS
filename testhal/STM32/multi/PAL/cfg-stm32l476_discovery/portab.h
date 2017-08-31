@@ -30,6 +30,7 @@
 /*===========================================================================*/
 
 #define PORTAB_BLINK_LED1           LINE_LED_GREEN
+#define PORTAB_BLINK_LED2           LINE_LED_RED
 #define PORTAB_BLINK_BUTTON         LINE_JOY_DOWN
 
 /*===========================================================================*/

@@ -22,6 +22,7 @@
 /* Generic code.                                                             */
 /*===========================================================================*/
 
+#if defined(PORTAB_BLINK_LED2)
 /*
  * LED blinker thread, times are in milliseconds.
  */
@@ -31,12 +32,13 @@ static THD_FUNCTION(Thread1, arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (true) {
-    palClearLine(PORTAB_BLINK_LED1);
+    palClearLine(PORTAB_BLINK_LED2);
     chThdSleepMilliseconds(500);
-    palSetLine(PORTAB_BLINK_LED1);
+    palSetLine(PORTAB_BLINK_LED2);
     chThdSleepMilliseconds(500);
   }
 }
+#endif
 
 /*
  * Application entry point.
@@ -53,10 +55,12 @@ int main(void) {
   halInit();
   chSysInit();
 
+#if defined(PORTAB_BLINK_LED2)
   /*
    * Creates the blinker thread.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+#endif
 
   /*
    * Normal main() thread activity.
