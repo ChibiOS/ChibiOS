@@ -22,28 +22,46 @@
 /* Generic code.                                                             */
 /*===========================================================================*/
 
-#if defined(PORTAB_BLINK_LED2)
+#if defined(PORTAB_LINE_LED2)
 /*
  * LED blinker thread, times are in milliseconds.
  */
 static THD_WORKING_AREA(waThread1, 128);
 static THD_FUNCTION(Thread1, arg) {
-
   (void)arg;
   chRegSetThreadName("blinker");
   while (true) {
-    palClearLine(PORTAB_BLINK_LED2);
-    chThdSleepMilliseconds(500);
-    palSetLine(PORTAB_BLINK_LED2);
-    chThdSleepMilliseconds(500);
+    systime_t time = palReadLine(PORTAB_LINE_BUTTON) == PAL_LOW ? 500 : 250;
+    palClearLine(PORTAB_LINE_LED2);
+    chThdSleepMilliseconds(time);
+    palSetLine(PORTAB_LINE_LED2);
+    chThdSleepMilliseconds(time);
   }
 }
 #endif
+
+event_source_t button_pressed_event;
+event_source_t button_released_event;
+
+static void button_cb(void *arg) {
+
+  (void)arg;
+
+  chSysLockFromISR();
+  if (palReadLine(PORTAB_LINE_BUTTON) == PAL_LOW) {
+    chEvtBroadcastI(&button_released_event);
+  }
+  else {
+    chEvtBroadcastI(&button_pressed_event);
+  }
+  chSysUnlockFromISR();
+}
 
 /*
  * Application entry point.
  */
 int main(void) {
+  event_listener_t el0, el1;
 
   /*
    * System initializations.
@@ -55,17 +73,35 @@ int main(void) {
   halInit();
   chSysInit();
 
-#if defined(PORTAB_BLINK_LED2)
+  /* Events initialization and registration.*/
+  chEvtObjectInit(&button_pressed_event);
+  chEvtObjectInit(&button_released_event);
+  chEvtRegister(&button_pressed_event, &el0, 0);
+  chEvtRegister(&button_released_event, &el1, 1);
+
+#if defined(PORTAB_LINE_LED2)
   /*
    * Creates the blinker thread.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 #endif
 
+  /* Enabling callback on both edges of the button line.*/
+  palLineEnableEvent(PORTAB_LINE_BUTTON, PAL_EVENT_MODE_BOTH_EDGES,
+                     button_cb, NULL);
+
   /*
    * Normal main() thread activity.
    */
   while (true) {
-    chThdSleepMilliseconds(1000);
+    eventmask_t events;
+
+    events = chEvtWaitOne(EVENT_MASK(0) | EVENT_MASK(1));
+    if (events & EVENT_MASK(0)) {
+      palSetLine(PORTAB_LINE_LED1);
+    }
+    if (events & EVENT_MASK(1)) {
+      palClearLine(PORTAB_LINE_LED1);
+    }
   }
 }

@@ -327,7 +327,7 @@ OSAL_IRQ_HANDLER(Vector140) {
  *
  * @notapi
  */
-void stm32_irq_enable(void) {
+void irqInit(void) {
 
 #if HAL_USE_PAL || HAL_USE_EXT
   nvicEnableVector(EXTI0_IRQn, STM32_IRQ_EXTI0_PRIORITY);
@@ -352,7 +352,7 @@ void stm32_irq_enable(void) {
  *
  * @notapi
  */
-void stm32_irq_disable(void) {
+void irqDeinit(void) {
 
 #if HAL_USE_PAL || HAL_USE_EXT
   nvicDisableVector(EXTI0_IRQn);

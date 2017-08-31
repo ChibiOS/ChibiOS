@@ -29,9 +29,9 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
-#define PORTAB_BLINK_LED1           LINE_LED_GREEN
-#define PORTAB_BLINK_LED2           LINE_LED_RED
-#define PORTAB_BLINK_BUTTON         LINE_JOY_DOWN
+#define PORTAB_LINE_LED1            LINE_LED_GREEN
+#define PORTAB_LINE_LED2            LINE_LED_RED
+#define PORTAB_LINE_BUTTON          LINE_JOY_CENTER
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */

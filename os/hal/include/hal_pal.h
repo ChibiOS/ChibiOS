@@ -608,6 +608,42 @@ typedef struct {
 #endif
 
 /**
+ * @brief   Pad event enable.
+ * @details This function programs an event callback in the specified mode.
+ * @note    Programming an unknown or unsupported mode is silently ignored.
+ *
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
+ * @param[in] mode      pad event mode
+ * @param[in] callback  event callback function
+ * @param[in] arg       callback argument
+ *
+ * @api
+ */
+#define palPadEnableEvent(port, pad, mode, callback, arg)                   \
+  do {                                                                      \
+    osalSysLock();                                                          \
+    palPadEnableEventI(port, pad, mode, callback, arg);                     \
+    osalSysUnlock();                                                        \
+  } while (false)
+
+/**
+ * @brief   Pad event disable.
+ * @details This function disables previously programmed event callbacks.
+ *
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
+ *
+ * @api
+ */
+#define palPadDisableEvent(port, pad)                                       \
+  do {                                                                      \
+    osalSysLock();                                                          \
+    palPadDisableEventI(port, pad);                                         \
+    osalSysUnlock();                                                        \
+  } while (false)
+
+/**
  * @brief   Reads an input line logic state.
  * @note    The function can be called from any context.
  *
@@ -750,6 +786,36 @@ typedef struct {
 #define palLineDisableEventI(line) pal_lld_linedisableevent(line)
 #endif
 
+/**
+ * @brief   Line event enable.
+ *
+ * @param[in] line      line identifier
+ * @param[in] mode      line event mode
+ * @param[in] callback  event callback function
+ * @param[in] arg       callback argument
+ *
+ * @api
+ */
+#define palLineEnableEvent(line, mode, callback, arg)                       \
+  do {                                                                      \
+    osalSysLock();                                                          \
+    palLineEnableEventI(line, mode, callback, arg);                         \
+    osalSysUnlock();                                                        \
+  } while (false)
+
+/**
+ * @brief   Line event disable.
+ *
+ * @param[in] line      line identifier
+ *
+ * @api
+ */
+#define palLineDisableEvent(line)                                           \
+  do {                                                                      \
+    osalSysLock();                                                          \
+    palLineDisableEventI(line);                                             \
+    osalSysUnlock();                                                        \
+  } while (false)
 /** @} */
 
 /*===========================================================================*/

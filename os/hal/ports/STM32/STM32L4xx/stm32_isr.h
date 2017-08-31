@@ -141,8 +141,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void stm32_irq_enable(void);
-  void stm32_irq_disable(void);
+  void irqInit(void);
+  void irqDeinit(void);
 #ifdef __cplusplus
 }
 #endif
