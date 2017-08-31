@@ -31,28 +31,26 @@ static THD_FUNCTION(Thread1, arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (true) {
-    systime_t time = palReadLine(PORTAB_LINE_BUTTON) == PAL_LOW ? 500 : 250;
-    palClearLine(PORTAB_LINE_LED2);
-    chThdSleepMilliseconds(time);
-    palSetLine(PORTAB_LINE_LED2);
+    systime_t time = palReadLine(PORTAB_LINE_BUTTON) == PORTAB_BUTTON_PRESSED ? 250 : 500;
+    palToggleLine(PORTAB_LINE_LED2);
     chThdSleepMilliseconds(time);
   }
 }
 #endif
 
-event_source_t button_pressed_event;
-event_source_t button_released_event;
+static event_source_t button_pressed_event;
+static event_source_t button_released_event;
 
 static void button_cb(void *arg) {
 
   (void)arg;
 
   chSysLockFromISR();
-  if (palReadLine(PORTAB_LINE_BUTTON) == PAL_LOW) {
-    chEvtBroadcastI(&button_released_event);
+  if (palReadLine(PORTAB_LINE_BUTTON) == PORTAB_BUTTON_PRESSED) {
+    chEvtBroadcastI(&button_pressed_event);
   }
   else {
-    chEvtBroadcastI(&button_pressed_event);
+    chEvtBroadcastI(&button_released_event);
   }
   chSysUnlockFromISR();
 }
