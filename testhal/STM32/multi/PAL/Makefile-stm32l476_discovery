@@ -86,7 +86,7 @@ endif
 PROJECT = ch
 
 # Imported source files and paths
-CHIBIOS  := ../../..
+CHIBIOS  := ../../../..
 CONFDIR  := ./cfg-stm32l476_discovery
 BUILDDIR := ./build-stm32l476_discovery
 DEPDIR   := ./.dep-stm32l476_discovery
@@ -122,7 +122,7 @@ CSRC = $(STARTUPSRC) \
        $(STREAMSSRC) \
        $(SHELLSRC) \
        $(CONFDIR)/portab.c \
-       src/usbcfg.c main.c
+       main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -155,7 +155,7 @@ ASMXSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
 INCDIR = $(CHIBIOS)/os/license \
          $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) $(TESTINC) \
-         $(STREAMSINC) $(SHELLINC) $(CONFDIR) ./src
+         $(STREAMSINC) $(SHELLINC) $(CONFDIR)
 
 #
 # Project, sources and paths
