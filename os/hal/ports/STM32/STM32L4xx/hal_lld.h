@@ -2090,6 +2090,7 @@
 #include "nvic.h"
 #include "stm32_dma.h"
 #include "stm32_rcc.h"
+#include "stm32_isr.h"
 
 #ifdef __cplusplus
 extern "C" {
