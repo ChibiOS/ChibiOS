@@ -31,6 +31,9 @@
 
 #define PORTAB_LINE_LED1            LINE_LED_GREEN
 #define PORTAB_LINE_LED2            LINE_LED_RED
+#define PORTAB_LEN_OFF              PAL_LOW
+#define PORTAB_LEN_ON               PAL_HIGH
+
 #define PORTAB_LINE_BUTTON          LINE_JOY_CENTER
 #define PORTAB_BUTTON_PRESSED       PAL_HIGH
 

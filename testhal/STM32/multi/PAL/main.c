@@ -96,10 +96,10 @@ int main(void) {
 
     events = chEvtWaitOne(EVENT_MASK(0) | EVENT_MASK(1));
     if (events & EVENT_MASK(0)) {
-      palSetLine(PORTAB_LINE_LED1);
+      palWriteLine(PORTAB_LINE_LED1, PORTAB_LEN_ON);
     }
     if (events & EVENT_MASK(1)) {
-      palClearLine(PORTAB_LINE_LED1);
+      palWriteLine(PORTAB_LINE_LED1, PORTAB_LEN_OFF);
     }
   }
 }
