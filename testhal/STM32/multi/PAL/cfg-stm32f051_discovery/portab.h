@@ -29,8 +29,8 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
-#define PORTAB_LINE_LED1            LINE_LED4_BLUE
-#define PORTAB_LINE_LED2            LINE_LED3_RED
+#define PORTAB_LINE_LED1            LINE_LED3
+#define PORTAB_LINE_LED2            LINE_LED4
 #define PORTAB_LEN_OFF              PAL_LOW
 #define PORTAB_LEN_ON               PAL_HIGH
 

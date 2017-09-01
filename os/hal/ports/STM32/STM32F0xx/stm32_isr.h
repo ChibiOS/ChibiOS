@@ -16,7 +16,7 @@
 
 /**
  * @file    STM32F0xx/stm32_isr.h
- * @brief   ISR remapper driver header.
+ * @brief   STM32F0xx ISR handler header.
  *
  * @addtogroup STM32F0xx_ISR
  * @{
@@ -97,6 +97,53 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/**
+ * @name    Configuration options
+ * @{
+ */
+/**
+ * @brief   EXTI0..1 interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_EXTI0_1_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_EXTI0_1_PRIORITY          3
+#endif
+
+/**
+ * @brief   EXTI2..3 interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_EXTI2_3_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_EXTI2_3_PRIORITY          3
+#endif
+
+/**
+ * @brief   EXTI4..15 interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_EXTI4_15_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_EXTI4_15_PRIORITY         3
+#endif
+
+/**
+ * @brief   EXTI16 interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_EXTI16_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_EXTI16_PRIORITY           3
+#endif
+
+/**
+ * @brief   EXTI17,19,20 interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_EXTI17_20_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_EXTI17_20_PRIORITY        3
+#endif
+
+/**
+ * @brief   EXTI21,22 interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_EXTI21_22_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_EXTI21_22_PRIORITY        3
+#endif
+/** @} */
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -112,6 +159,15 @@
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void irqInit(void);
+  void irqDeinit(void);
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* STM32_ISR_H */
 
