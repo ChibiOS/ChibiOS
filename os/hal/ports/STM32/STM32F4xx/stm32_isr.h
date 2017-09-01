@@ -16,7 +16,7 @@
 
 /**
  * @file    STM32F4xx/stm32_isr.h
- * @brief   ISR remapper driver header.
+ * @brief   STM32F4xx ISR handler header.
  *
  * @addtogroup STM32F4xx_ISR
  * @{
@@ -199,6 +199,15 @@
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void irqInit(void);
+  void irqDeinit(void);
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* STM32_ISR_H */
 

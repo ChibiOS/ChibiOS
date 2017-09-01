@@ -86,7 +86,7 @@ endif
 PROJECT = ch
 
 # Imported source files and paths
-CHIBIOS = ../../..
+CHIBIOS = ../../../..
 CONFDIR  := ./cfg-stm32f407_discovery
 BUILDDIR := ./build-stm32f407_discovery
 DEPDIR   := ./.dep-stm32f407_discovery
