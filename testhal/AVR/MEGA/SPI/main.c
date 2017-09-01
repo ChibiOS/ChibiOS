@@ -41,12 +41,13 @@ void spiCallback(SPIDriver *spip) {
  * @biref   SPI configuration strucrture.
  */
 static const SPIConfig spiCfg = {
-  IOPORT2,          /* SPI chip select port.  */
-  7,                /* SPI chip select pad.   */
-  SPI_CPOL0_CPHA0,  /* SPI mode.              */
-  SPI_MSB_FIRST,    /* SPI bit order.         */
-  SPI_SCK_FOSC_128, /* SPI clock.             */
-  spiCallback       /* SPI callback.          */
+  spiCallback,                  /* SPI callback.                  */
+  IOPORT2,                      /* SPI chip select port.          */
+  7,                            /* SPI chip select pad.           */
+  SPI_CR_DORD_MSB_FIRST     |   /* SPI Data order.                */
+  SPI_CR_CPOL_CPHA_MODE(0)  |   /* SPI clock polarity and phase.  */
+  SPI_CR_SCK_FOSC_128,          /* SPI clock.                     */
+  SPI_SR_SCK_FOSC_2             /* SPI double speed bit.          */
 };
 
 /*
