@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    hal_spi_lld.c
+ * @file    AVR/hal_spi_lld.c
  * @brief   AVR SPI subsystem low level driver source.
  *
  * @addtogroup SPI
@@ -111,8 +111,6 @@ void spi_lld_start(SPIDriver *spip) {
 
   uint8_t dummy;
 
-  /* Configures the peripheral.*/
-
   if (spip->state == SPI_STOP) {
     /* Enables the peripheral.*/
 #if AVR_SPI_USE_SPI1
@@ -123,75 +121,29 @@ void spi_lld_start(SPIDriver *spip) {
 #elif defined(PRR)
       PRR &= ~(1 << PRSPI);
 #endif
-
-      /* SPI enable, SPI interrupt enable */
-      SPCR |= ((1 << SPE) | (1 << SPIE));
-
-      SPCR |= (1 << MSTR);
-      DDR_SPI1 |=  ((1 << SPI1_MOSI) | (1 << SPI1_SCK));
-      DDR_SPI1 &= ~(1 << SPI1_MISO);
-      spip->config->ssport->dir |= (1 << spip->config->sspad);
-
-      switch (spip->config->bitorder) {
-      case SPI_LSB_FIRST:
-        SPCR |= (1 << DORD);
-        break;
-      case SPI_MSB_FIRST: /* fallthrough */
-      default:
-        SPCR &= ~(1 << DORD);
-        break;
-      }
-
-      SPCR &= ~((1 << CPOL) | (1 << CPHA));
-      switch (spip->config->mode) {
-      case SPI_MODE_1:
-        SPCR |= (1 << CPHA);
-        break;
-      case SPI_MODE_2:
-        SPCR |= (1 << CPOL);
-        break;
-      case SPI_MODE_3:
-        SPCR |= ((1 << CPOL) | (1 << CPHA));
-        break;
-      case SPI_MODE_0: /* fallthrough */
-      default: break;
-      }
-
-      SPCR &= ~((1 << SPR1) | (1 << SPR0));
-      SPSR &= ~(1 << SPI2X);
-      switch (spip->config->clockrate) {
-      case SPI_SCK_FOSC_2:
-        SPSR |= (1 << SPI2X);
-        break;
-      case SPI_SCK_FOSC_8:
-        SPSR |= (1 << SPI2X);
-        SPCR |= (1 << SPR0);
-        break;
-      case SPI_SCK_FOSC_16:
-        SPCR |= (1 << SPR0);
-        break;
-      case SPI_SCK_FOSC_32:
-        SPSR |= (1 << SPI2X);
-        SPCR |= (1 << SPR1);
-        break;
-      case SPI_SCK_FOSC_64:
-        SPCR |= (1 << SPR1);
-        break;
-      case SPI_SCK_FOSC_128:
-        SPCR |= ((1 << SPR1) | (1 << SPR0));
-        break;
-      case SPI_SCK_FOSC_4: /* fallthrough */
-      default: break;
-      }
-
-      /* dummy reads before enabling interrupt */
-      dummy = SPSR;
-      dummy = SPDR;
-      (void) dummy; /* suppress warning about unused variable */
-      SPCR |= (1 << SPIE);
+#endif
     }
-#endif /* AVR_SPI_USE_SPI1 */
   }
+
+#if AVR_SPI_USE_SPI1
+  if (&SPID1 == spip) {
+    /* Configures the peripheral.*/
+    /* Note that some bits are forced:
+	   SPI interrupt disabled,
+	   SPI enabled,
+	   SPI master enabled */
+    SPCR = (spip->config->spcr & ~(SPI_CR_SPIE)) | SPI_CR_MSTR | SPI_CR_SPE;
+    SPSR = spip->config->spsr;
+
+    /* dummy reads before enabling interrupt */
+    dummy = SPSR;
+    dummy = SPDR;
+    (void) dummy; /* suppress warning about unused variable */
+
+    /* Enable SPI interrupts */
+    SPCR |= SPI_CR_SPIE;
+  }
+#endif /* AVR_SPI_USE_SPI1 */
 }
 
 /**
@@ -209,8 +161,7 @@ void spi_lld_stop(SPIDriver *spip) {
     /* Disables the peripheral.*/
 #if AVR_SPI_USE_SPI1
     if (&SPID1 == spip) {
-      SPCR &= ((1 << SPIE) | (1 << SPE));
-      spip->config->ssport->dir &= ~(1 << spip->config->sspad);
+      SPCR &= (SPI_CR_SPIE | SPI_CR_SPE);
     }
 /* Disable SPI clock using Power Reduction Register */
 #if defined(PRR0)
@@ -298,22 +249,23 @@ uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame) {
 
   uint16_t spdr = 0;
   uint8_t dummy;
+  (void)spip;
 
   /* disable interrupt */
-  SPCR &= ~(1 << SPIE);
+  SPCR &= ~(SPI_CR_SPIE);
 
   SPDR = frame >> 8;
-  while (!(SPSR & (1 << SPIF))) ;
+  while (!(SPSR & SPI_SR_SPIF)) ;
   spdr = SPDR << 8;
 
   SPDR = frame & 0xFF;
-  while (!(SPSR & (1 << SPIF))) ;
+  while (!(SPSR & SPI_SR_SPIF)) ;
   spdr |= SPDR;
 
   dummy = SPSR;
   dummy = SPDR;
   (void) dummy; /* suppress warning about unused variable */
-  SPCR |= (1 << SPIE);
+  SPCR |= SPI_CR_SPIE;
 
   return spdr;
 }
@@ -322,18 +274,19 @@ uint8_t spi_lld_polled_exchange(SPIDriver *spip, uint8_t frame) {
 
   uint8_t spdr = 0;
   uint8_t dummy;
+  (void)spip;
 
   /* disable interrupt */
-  SPCR &= ~(1 << SPIE);
+  SPCR &= ~(SPI_CR_SPIE);
 
   SPDR = frame;
-  while (!(SPSR & (1 << SPIF))) ;
+  while (!(SPSR & SPI_SR_SPIF)) ;
   spdr = SPDR;
 
   dummy = SPSR;
   dummy = SPDR;
   (void) dummy; /* suppress warning about unused variable */
-  SPCR |= (1 << SPIE);
+  SPCR |= SPI_CR_SPIE;
 
   return spdr;
 }

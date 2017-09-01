@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    hal_spi_lld.h
+ * @file    AVR/hal_spi_lld.h
  * @brief   AVR SPI subsystem low level driver header.
  *
  * @addtogroup SPI
@@ -31,29 +31,46 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
-/** @brief SPI Mode (Polarity/Phase) */
-#define SPI_CPOL0_CPHA0    0
-#define SPI_CPOL0_CPHA1    1
-#define SPI_CPOL1_CPHA0    2
-#define SPI_CPOL1_CPHA1    3
+/**
+ * @name SPI Configuration Register
+ * @{
+ */
+#define SPI_CR_SPIE              (1 << SPIE)
 
-#define SPI_MODE_0         SPI_CPOL0_CPHA0
-#define SPI_MODE_1         SPI_CPOL0_CPHA1
-#define SPI_MODE_2         SPI_CPOL1_CPHA0
-#define SPI_MODE_3         SPI_CPOL1_CPHA1
+#define SPI_CR_SPE               (1 << SPE)
 
-/** @brief Bit order */
-#define SPI_LSB_FIRST      0
-#define SPI_MSB_FIRST      1
+#define SPI_CR_DORD_MSB_FIRST    (0 << DORD)
+#define SPI_CR_DORD_LSB_FIRST    (1 << DORD)
 
-/** @brief SPI clock rate FOSC/x */
-#define SPI_SCK_FOSC_2     0
-#define SPI_SCK_FOSC_4     1
-#define SPI_SCK_FOSC_8     2
-#define SPI_SCK_FOSC_16    3
-#define SPI_SCK_FOSC_32    4
-#define SPI_SCK_FOSC_64    5
-#define SPI_SCK_FOSC_128   6
+#define SPI_CR_MSTR              (1 << MSTR)
+
+#define SPI_CR_CPOL_CPHA_MODE(n) ((n) << CPHA)
+
+#define SPI_CR_SCK_FOSC_2        (0 << SPR0)
+#define SPI_CR_SCK_FOSC_4        (0 << SPR0)
+#define SPI_CR_SCK_FOSC_8        (1 << SPR0)
+#define SPI_CR_SCK_FOSC_16       (1 << SPR0)
+#define SPI_CR_SCK_FOSC_32       (2 << SPR0)
+#define SPI_CR_SCK_FOSC_64       (2 << SPR0)
+#define SPI_CR_SCK_FOSC_128      (3 << SPR0)
+/** @} */
+
+/**
+ * @name SPI Status Register
+ * {
+ */
+#define SPI_SR_SPIF              (1 << SPIF)
+
+#define SPI_SR_WCOL              (1 << WCOL)
+
+#define SPI_SR_SCK_FOSC_2        (1 << SPI2X)
+#define SPI_SR_SCK_FOSC_4        (0 << SPI2X)
+#define SPI_SR_SCK_FOSC_8        (1 << SPI2X)
+#define SPI_SR_SCK_FOSC_16       (0 << SPI2X)
+#define SPI_SR_SCK_FOSC_32       (1 << SPI2X)
+#define SPI_SR_SCK_FOSC_64       (0 << SPI2X)
+#define SPI_SR_SCK_FOSC_128      (0 << SPI2X)
+/** @} */
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -68,7 +85,7 @@
  * @details If set to @p TRUE the support for SPI1 is included.
  */
 #if !defined(AVR_SPI_USE_SPI1) || defined(__DOXYGEN__)
-#define AVR_SPI_USE_SPI1               FALSE
+#define AVR_SPI_USE_SPI1  FALSE
 #endif
 /** @} */
 
@@ -100,6 +117,11 @@ typedef void (*spicallback_t)(SPIDriver *spip);
  */
 typedef struct {
   /**
+   * @brief Operation complete callback.
+   */
+  spicallback_t         end_cb;
+  /* End of the mandatory fields.*/
+  /**
    * @brief Port used of Slave Select
    */
   ioportid_t            ssport;
@@ -108,22 +130,13 @@ typedef struct {
    */
   uint8_t               sspad;
   /**
-   * @brief Polarity/Phase mode
+   * @brief SPI Control Register initialization data.
    */
-  uint8_t               mode;
+  uint8_t               spcr;
   /**
-   * @brief Use MSB/LSB first?
+   * @brief SPI Status Register initialization data.
    */
-  uint8_t               bitorder;
-  /**
-   * @brief Clock rate of the subsystem
-   */
-  uint8_t               clockrate;
-  /**
-   * @brief Operation complete callback.
-   */
-  spicallback_t         end_cb;
-  /* End of the mandatory fields.*/
+  uint8_t               spsr;
 } SPIConfig;
 
 /**
