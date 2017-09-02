@@ -20,8 +20,8 @@
 */
 
 /**
- * @file    hal_pwm_lld.c
- * @brief   AVR PWM driver subsystem low level driver.
+ * @file    TIMv1/hal_pwm_lld.c
+ * @brief   AVR/MEGA PWM subsystem low level driver source.
  *
  * @addtogroup PWM
  * @{
@@ -103,8 +103,8 @@ PWMDriver PWMD5;
 static void config_channel(volatile uint8_t *tccra,
                            uint8_t com1,
                            uint8_t com0,
-                           pwmmode_t mode)
-{
+                           pwmmode_t mode) {
+
   *tccra &= ~((1 << com1) | (1 << com0));
   if (mode == PWM_OUTPUT_ACTIVE_HIGH)
     *tccra |= ((1 << com1) | (0 << com0)); /* non inverting mode */
@@ -112,8 +112,8 @@ static void config_channel(volatile uint8_t *tccra,
     *tccra |= (1 << com1) | (1 << com0);   /* inverting mode */
 }
 
-static uint8_t timer_index(PWMDriver *pwmp)
-{
+static uint8_t timer_index(PWMDriver *pwmp) {
+
   uint8_t index = 0;
 
 #if AVR_PWM_USE_TIM1 || defined(__DOXYGEN__)
@@ -149,29 +149,29 @@ static uint8_t timer_index(PWMDriver *pwmp)
  * interrupt for compare1&2 and clock overflow. pwmd1 & pwmd2
  */
 #if AVR_PWM_USE_TIM1 || defined(__DOXYGEN__)
-OSAL_IRQ_HANDLER(TIMER1_OVF_vect)
-{
+OSAL_IRQ_HANDLER(TIMER1_OVF_vect) {
+
   OSAL_IRQ_PROLOGUE();
   PWMD1.config->callback(&PWMD1);
   OSAL_IRQ_EPILOGUE();
 }
 
-OSAL_IRQ_HANDLER(TIMER1_COMPA_vect)
-{
+OSAL_IRQ_HANDLER(TIMER1_COMPA_vect) {
+
   OSAL_IRQ_PROLOGUE();
   PWMD1.config->channels[0].callback(&PWMD1);
   OSAL_IRQ_EPILOGUE();
 }
 
-OSAL_IRQ_HANDLER(TIMER1_COMPB_vect)
-{
+OSAL_IRQ_HANDLER(TIMER1_COMPB_vect) {
+
   OSAL_IRQ_PROLOGUE();
   PWMD1.config->channels[1].callback(&PWMD1);
   OSAL_IRQ_EPILOGUE();
 }
 #if PWM_CHANNELS > 2
-OSAL_IRQ_HANDLER(TIMER1_COMPC_vect)
-{
+OSAL_IRQ_HANDLER(TIMER1_COMPC_vect) {
+
   OSAL_IRQ_PROLOGUE();
   PWMD1.config->channels[2].callback(&PWMD1);
   OSAL_IRQ_EPILOGUE();
@@ -180,22 +180,22 @@ OSAL_IRQ_HANDLER(TIMER1_COMPC_vect)
 #endif
 
 #if AVR_PWM_USE_TIM2 || defined(__DOXYGEN__)
-OSAL_IRQ_HANDLER(TIMER2_OVF_vect)
-{
+OSAL_IRQ_HANDLER(TIMER2_OVF_vect) {
+
   OSAL_IRQ_PROLOGUE();
   PWMD2.config->callback(&PWMD2);
   OSAL_IRQ_EPILOGUE();
 }
 
-OSAL_IRQ_HANDLER(TIMER2_COMPA_vect)
-{
+OSAL_IRQ_HANDLER(TIMER2_COMPA_vect) {
+
   OSAL_IRQ_PROLOGUE();
   PWMD2.config->channels[0].callback(&PWMD2);
   OSAL_IRQ_EPILOGUE();
 }
 
-OSAL_IRQ_HANDLER(TIMER2_COMPB_vect)
-{
+OSAL_IRQ_HANDLER(TIMER2_COMPB_vect) {
+
   OSAL_IRQ_PROLOGUE();
   PWMD2.config->channels[1].callback(&PWMD2);
   OSAL_IRQ_EPILOGUE();
@@ -203,29 +203,29 @@ OSAL_IRQ_HANDLER(TIMER2_COMPB_vect)
 #endif
 
 #if AVR_PWM_USE_TIM3 || defined(__DOXYGEN__)
-OSAL_IRQ_HANDLER(TIMER3_OVF_vect)
-{
+OSAL_IRQ_HANDLER(TIMER3_OVF_vect) {
+
   OSAL_IRQ_PROLOGUE();
   PWMD3.config->callback(&PWMD3);
   OSAL_IRQ_EPILOGUE();
 }
 
-OSAL_IRQ_HANDLER(TIMER3_COMPA_vect)
-{
+OSAL_IRQ_HANDLER(TIMER3_COMPA_vect) {
+
   OSAL_IRQ_PROLOGUE();
   PWMD3.config->channels[0].callback(&PWMD3);
   OSAL_IRQ_EPILOGUE();
 }
 
-OSAL_IRQ_HANDLER(TIMER3_COMPB_vect)
-{
+OSAL_IRQ_HANDLER(TIMER3_COMPB_vect) {
+
   OSAL_IRQ_PROLOGUE();
   PWMD3.config->channels[1].callback(&PWMD3);
   OSAL_IRQ_EPILOGUE();
 }
 
-OSAL_IRQ_HANDLER(TIMER3_COMPC_vect)
-{
+OSAL_IRQ_HANDLER(TIMER3_COMPC_vect) {
+
   OSAL_IRQ_PROLOGUE();
   PWMD3.config->channels[2].callback(&PWMD3);
   OSAL_IRQ_EPILOGUE();
@@ -233,29 +233,29 @@ OSAL_IRQ_HANDLER(TIMER3_COMPC_vect)
 #endif
 
 #if AVR_PWM_USE_TIM4 || defined(__DOXYGEN__)
-OSAL_IRQ_HANDLER(TIMER4_OVF_vect)
-{
+OSAL_IRQ_HANDLER(TIMER4_OVF_vect) {
+
   OSAL_IRQ_PROLOGUE();
   PWMD4.config->callback(&PWMD4);
   OSAL_IRQ_EPILOGUE();
 }
 
-OSAL_IRQ_HANDLER(TIMER4_COMPA_vect)
-{
+OSAL_IRQ_HANDLER(TIMER4_COMPA_vect) {
+
   OSAL_IRQ_PROLOGUE();
   PWMD4.config->channels[0].callback(&PWMD4);
   OSAL_IRQ_EPILOGUE();
 }
 
-OSAL_IRQ_HANDLER(TIMER4_COMPB_vect)
-{
+OSAL_IRQ_HANDLER(TIMER4_COMPB_vect) {
+
   OSAL_IRQ_PROLOGUE();
   PWMD4.config->channels[1].callback(&PWMD4);
   OSAL_IRQ_EPILOGUE();
 }
 
-OSAL_IRQ_HANDLER(TIMER4_COMPC_vect)
-{
+OSAL_IRQ_HANDLER(TIMER4_COMPC_vect) {
+
   OSAL_IRQ_PROLOGUE();
   PWMD4.config->channels[2].callback(&PWMD4);
   OSAL_IRQ_EPILOGUE();
@@ -263,29 +263,29 @@ OSAL_IRQ_HANDLER(TIMER4_COMPC_vect)
 #endif
 
 #if AVR_PWM_USE_TIM5 || defined(__DOXYGEN__)
-OSAL_IRQ_HANDLER(TIMER5_OVF_vect)
-{
+OSAL_IRQ_HANDLER(TIMER5_OVF_vect) {
+
   OSAL_IRQ_PROLOGUE();
   PWMD5.config->callback(&PWMD5);
   OSAL_IRQ_EPILOGUE();
 }
 
-OSAL_IRQ_HANDLER(TIMER5_COMPA_vect)
-{
+OSAL_IRQ_HANDLER(TIMER5_COMPA_vect) {
+
   OSAL_IRQ_PROLOGUE();
   PWMD5.config->channels[0].callback(&PWMD5);
   OSAL_IRQ_EPILOGUE();
 }
 
-OSAL_IRQ_HANDLER(TIMER5_COMPB_vect)
-{
+OSAL_IRQ_HANDLER(TIMER5_COMPB_vect) {
+
   OSAL_IRQ_PROLOGUE();
   PWMD5.config->channels[1].callback(&PWMD5);
   OSAL_IRQ_EPILOGUE();
 }
 
-OSAL_IRQ_HANDLER(TIMER5_COMPC_vect)
-{
+OSAL_IRQ_HANDLER(TIMER5_COMPC_vect) {
+
   OSAL_IRQ_PROLOGUE();
   PWMD5.config->channels[2].callback(&PWMD5);
   OSAL_IRQ_EPILOGUE();
@@ -301,8 +301,8 @@ OSAL_IRQ_HANDLER(TIMER5_COMPC_vect)
  *
  * @notapi
  */
-void pwm_lld_init(void)
-{
+void pwm_lld_init(void) {
+
 #if AVR_PWM_USE_TIM1 || defined(__DOXYGEN__)
   pwmObjectInit(&PWMD1);
   PWMD1.channels = PWM_CHANNELS;
@@ -346,8 +346,8 @@ void pwm_lld_init(void)
  *
  * @notapi
  */
-void pwm_lld_start(PWMDriver *pwmp)
-{
+void pwm_lld_start(PWMDriver *pwmp) {
+
   if (pwmp->state == PWM_STOP) {
 
 #if AVR_PWM_USE_TIM2 || defined(__DOXYGEN__)
@@ -378,8 +378,8 @@ void pwm_lld_start(PWMDriver *pwmp)
  *
  * @notapi
  */
-void pwm_lld_stop(PWMDriver *pwmp)
-{
+void pwm_lld_stop(PWMDriver *pwmp) {
+
   uint8_t i = timer_index(pwmp);
   *regs_table[i].tccrb &= ~((1 << CS12) | (1 << CS11) | (1 << CS10));
   *regs_table[i].timsk = 0;
@@ -401,8 +401,7 @@ void pwm_lld_stop(PWMDriver *pwmp)
  *
  * @notapi
  */
-void pwm_lld_change_period(PWMDriver *pwmp, pwmcnt_t period)
-{
+void pwm_lld_change_period(PWMDriver *pwmp, pwmcnt_t period) {
 }
 
 /**
@@ -421,8 +420,8 @@ void pwm_lld_change_period(PWMDriver *pwmp, pwmcnt_t period)
  */
 void pwm_lld_enable_channel(PWMDriver *pwmp,
                             pwmchannel_t channel,
-                            pwmcnt_t width)
-{
+                            pwmcnt_t width) {
+
   uint16_t val = width;
   if (val > MAX_PWM_VALUE)
     val = MAX_PWM_VALUE;
@@ -487,8 +486,8 @@ void pwm_lld_enable_channel(PWMDriver *pwmp,
  *
  * @notapi
  */
-void pwm_lld_disable_channel(PWMDriver *pwmp, pwmchannel_t channel)
-{
+void pwm_lld_disable_channel(PWMDriver *pwmp, pwmchannel_t channel) {
+
   uint8_t i = timer_index(pwmp);
   config_channel(regs_table[i].tccra,
                  7 - 2*channel,
@@ -507,6 +506,7 @@ void pwm_lld_disable_channel(PWMDriver *pwmp, pwmchannel_t channel)
  * @notapi
  */
 void pwm_lld_enable_periodic_notification(PWMDriver *pwmp) {
+
   uint8_t i = timer_index(pwmp);
   *regs_table[i].timsk |= (1 << TOIE1);
 }
@@ -521,6 +521,7 @@ void pwm_lld_enable_periodic_notification(PWMDriver *pwmp) {
  * @notapi
  */
 void pwm_lld_disable_periodic_notification(PWMDriver *pwmp) {
+
   uint8_t i = timer_index(pwmp);
   *regs_table[i].timsk &= ~(1 << TOIE1);
 }
@@ -538,6 +539,7 @@ void pwm_lld_disable_periodic_notification(PWMDriver *pwmp) {
  */
 void pwm_lld_enable_channel_notification(PWMDriver *pwmp,
                                          pwmchannel_t channel) {
+
   uint8_t i = timer_index(pwmp);
   *regs_table[i].timsk |= (1 << (channel + 1));
 }

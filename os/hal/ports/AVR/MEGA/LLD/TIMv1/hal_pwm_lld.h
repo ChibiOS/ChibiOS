@@ -20,8 +20,8 @@
 */
 
 /**
- * @file    hal_pwm_lld.h
- * @brief   AVR PWM driver subsystem low level driver header.
+ * @file    TIMv1/hal_pwm_lld.h
+ * @brief   AVR/MEGA PWM subsystem low level driver header.
  *
  * @addtogroup PWM
  * @{
