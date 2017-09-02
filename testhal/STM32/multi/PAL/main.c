@@ -152,4 +152,3 @@ int main(void) {
 }
 #endif /* !defined(PAL_USE_WAIT) */
 
-
