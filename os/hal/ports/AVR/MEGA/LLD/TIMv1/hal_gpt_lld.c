@@ -20,8 +20,8 @@
 */
 
 /**
- * @file    hal_gpt_lld.c
- * @brief   AVR GPT driver subsystem low level driver.
+ * @file    TIMv1/hal_gpt_lld.c
+ * @brief   AVR/MEGA GPT subsystem low level driver source.
  *
  * @addtogroup GPT
  * @{
@@ -102,6 +102,7 @@ static uint8_t  clock_source_base[]= { 5, 4, 3, 2, 1 };
 /*===========================================================================*/
 
 static uint8_t prescaler(uint16_t freq, uint16_t *ratio, uint8_t n) {
+
   uint8_t i;
 
   for (i = 0; i < n; ++i) {
@@ -115,6 +116,7 @@ static uint8_t prescaler(uint16_t freq, uint16_t *ratio, uint8_t n) {
 }
 
 static void gpt_lld_serve_interrupt(GPTDriver *gptp) {
+
   gptp->counter++;
   if (gptp->counter == gptp->period) {
     gptp->counter = 0;
@@ -130,7 +132,9 @@ static void gpt_lld_dummy_callback(GPTDriver *gptp) {
 }
 
 static uint8_t getTimerIndex(GPTDriver *gptp) {
+
   uint8_t index = 0;
+
 #if AVR_GPT_USE_TIM1 || defined(__DOXYGEN__)
   if (gptp == &GPTD1) return index;
   else index++;
@@ -264,6 +268,7 @@ void gpt_lld_init(void) {
  * @notapi
  */
 void gpt_lld_start(GPTDriver *gptp) {
+
   uint8_t psc;
 
   if (gptp->state == GPT_STOP) {
@@ -343,6 +348,7 @@ void gpt_lld_start_timer(GPTDriver *gptp, gptcnt_t period) {
  * @notapi
  */
 void gpt_lld_stop_timer(GPTDriver *gptp) {
+
   uint8_t i = getTimerIndex(gptp);
 
   *regs_table[i].tccrb &= ~((7 << CS10) | (1 << OCIE1A));

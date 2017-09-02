@@ -20,8 +20,8 @@
 */
 
 /**
- * @file    hal_gpt_lld.h
- * @brief   AVR GPT driver subsystem low level driver header.
+ * @file    TIMv1/hal_gpt_lld.h
+ * @brief   AVR/MEGA GPT subsystem low level driver header.
  *
  * @addtogroup GPT
  * @{
