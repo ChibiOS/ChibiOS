@@ -123,9 +123,13 @@ void hal_lld_init(void) {
   /* Initializes the backup domain.*/
   hal_lld_backup_domain_init();
 
+  /* DMA subsystems initialization.*/
 #if defined(STM32_DMA_REQUIRED)
   dmaInit();
 #endif
+
+  /* IRQ subsystem initialization.*/
+  irqInit();
 
 #if STM32_SRAM2_NOCACHE
   /* The SRAM2 bank can optionally made a non cache-able area for use by

@@ -4,6 +4,14 @@
 
 all:
 	@echo
+	@echo === Building for STM32L053-Discovery ===============================
+	@make --no-print-directory -f Makefile-stm32l053_discovery all
+	@echo ====================================================================
+	@echo
+	@echo === Building for STM32L151-Discovery ===============================
+	@make --no-print-directory -f Makefile-stm32l151_discovery all
+	@echo ====================================================================
+	@echo
 	@echo === Building for STM32L476-Discovery ===============================
 	@make --no-print-directory -f Makefile-stm32l476_discovery all
 	@echo ====================================================================
@@ -24,8 +32,16 @@ all:
 	@make --no-print-directory -f Makefile-stm32f407_discovery all
 	@echo ====================================================================
 	@echo
+	@echo === Building for STM32F746-Discovery ===============================
+	@make --no-print-directory -f Makefile-stm32f746_discovery all
+	@echo ====================================================================
+	@echo
 
 clean:
+	@echo
+	-@make --no-print-directory -f Makefile-stm32l053_discovery clean
+	@echo
+	-@make --no-print-directory -f Makefile-stm32l151_discovery clean
 	@echo
 	-@make --no-print-directory -f Makefile-stm32l476_discovery clean
 	@echo
@@ -36,6 +52,8 @@ clean:
 	-@make --no-print-directory -f Makefile-stm32f373_eval clean
 	@echo
 	-@make --no-print-directory -f Makefile-stm32f407_discovery clean
+	@echo
+	-@make --no-print-directory -f Makefile-stm32f746_discovery clean
 	@echo
 
 #

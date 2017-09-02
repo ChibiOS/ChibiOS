@@ -15,17 +15,15 @@
 */
 
 /**
- * @file    STM32L0xx/hal_ext_lld_isr.h
- * @brief   STM32L0xx EXT subsystem low level driver ISR header.
+ * @file    STM32L0xx/stm32_isr.h
+ * @brief   STM32L0xx ISR handler header.
  *
- * @addtogroup EXT
+ * @addtogroup STM32L0xx_ISR
  * @{
  */
 
-#ifndef HAL_EXT_LLD_ISR_H
-#define HAL_EXT_LLD_ISR_H
-
-#if HAL_USE_EXT || defined(__DOXYGEN__)
+#ifndef STM32_ISR_H
+#define STM32_ISR_H
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -42,43 +40,43 @@
 /**
  * @brief   EXTI0..1 interrupt priority level setting.
  */
-#if !defined(STM32_EXT_EXTI0_1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_EXT_EXTI0_1_IRQ_PRIORITY      3
+#if !defined(STM32_IRQ_EXTI0_1_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_EXTI0_1_PRIORITY          3
 #endif
 
 /**
  * @brief   EXTI2..3 interrupt priority level setting.
  */
-#if !defined(STM32_EXT_EXTI2_3_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_EXT_EXTI2_3_IRQ_PRIORITY      3
+#if !defined(STM32_IRQ_EXTI2_3_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_EXTI2_3_PRIORITY          3
 #endif
 
 /**
  * @brief   EXTI4..15 interrupt priority level setting.
  */
-#if !defined(STM32_EXT_EXTI4_15_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_EXT_EXTI4_15_IRQ_PRIORITY     3
+#if !defined(STM32_IRQ_EXTI4_15_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_EXTI4_15_PRIORITY         3
 #endif
 
 /**
  * @brief   EXTI16 (PVD) interrupt priority level setting.
  */
-#if !defined(STM32_EXT_EXTI16_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_EXT_EXTI16_IRQ_PRIORITY       3
+#if !defined(STM32_IRQ_EXTI16_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_EXTI16_PRIORITY           3
 #endif
 
 /**
  * @brief   EXTI17,19,20 interrupt priority level setting.
  */
-#if !defined(STM32_EXT_EXTI17_20_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_EXT_EXTI17_20_IRQ_PRIORITY    3
+#if !defined(STM32_IRQ_EXTI17_20_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_EXTI17_20_PRIORITY        3
 #endif
 
 /**
  * @brief   EXTI21,22 interrupt priority level setting.
  */
-#if !defined(STM32_EXT_EXTI21_22_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_EXT_EXTI21_22_IRQ_PRIORITY    3
+#if !defined(STM32_IRQ_EXTI21_22_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_EXTI21_22_PRIORITY        3
 #endif
 /** @} */
 
@@ -101,14 +99,12 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void ext_lld_exti_irq_enable(void);
-  void ext_lld_exti_irq_disable(void);
+  void irqInit(void);
+  void irqDeinit(void);
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* HAL_USE_EXT */
-
-#endif /* HAL_EXT_LLD_ISR_H */
+#endif /* STM32_ISR_H */
 
 /** @} */
