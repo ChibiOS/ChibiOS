@@ -20,6 +20,10 @@ all:
 	@make --no-print-directory -f Makefile-stm32f051_discovery all
 	@echo ====================================================================
 	@echo
+	@echo === Building for STM32F103-Olimex ==================================
+	@make --no-print-directory -f Makefile-stm32f103_olimex all
+	@echo ====================================================================
+	@echo
 	@echo === Building for STM32F303-Discovery ===============================
 	@make --no-print-directory -f Makefile-stm32f303_discovery all
 	@echo ====================================================================
@@ -46,6 +50,8 @@ clean:
 	-@make --no-print-directory -f Makefile-stm32l476_discovery clean
 	@echo
 	-@make --no-print-directory -f Makefile-stm32f051_discovery clean
+	@echo
+	-@make --no-print-directory -f Makefile-stm32f103_olimex clean
 	@echo
 	-@make --no-print-directory -f Makefile-stm32f303_discovery clean
 	@echo
