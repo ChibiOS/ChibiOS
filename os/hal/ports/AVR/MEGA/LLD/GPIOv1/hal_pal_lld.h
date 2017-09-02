@@ -15,8 +15,8 @@
 */
 
 /**
- * @file	hal_pal_lld.h
- * @brief	AVR GPIO low level driver header.
+ * @file	GPIOv1/hal_pal_lld.h
+ * @brief	AVR/MEGA PAL subsystem low level driver header.
  *
  * @addtogroup PAL
  * @{
@@ -329,3 +329,4 @@ extern "C" {
 #endif /* HAL_PAL_LLD_H */
 
 /** @} */
+

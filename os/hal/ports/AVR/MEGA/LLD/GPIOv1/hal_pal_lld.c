@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    hal_pal_lld.c
- * @brief   AVR GPIO low level driver code.
+ * @file    GPIOv1/hal_pal_lld.c
+ * @brief   AVR/MEGA PAL subsystem low level driver source.
  *
  * @addtogroup PAL
  * @{
@@ -154,3 +154,4 @@ void _pal_lld_setgroupmode(ioportid_t port,
 #endif /* HAL_USE_PAL */
 
 /** @} */
+
