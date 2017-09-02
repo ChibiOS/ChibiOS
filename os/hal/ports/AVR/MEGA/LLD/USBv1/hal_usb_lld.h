@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    hal_usb_lld.h
- * @brief   AVR USB subsystem low level driver header.
+ * @file    USBv1/hal_usb_lld.h
+ * @brief   AVR/MEGA USB subsystem low level driver header.
  *
  * @addtogroup USB
  * @{

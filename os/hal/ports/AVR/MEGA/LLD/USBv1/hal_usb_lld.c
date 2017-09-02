@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    hal_usb_lld.c
- * @brief   AVR USB subsystem low level driver source.
+ * @file    USBv1/hal_usb_lld.c
+ * @brief   AVR/MEGA USB subsystem low level driver source.
  *
  * @addtogroup USB
  * @{
@@ -134,6 +134,7 @@ static void usb_pll_on(void) {
 }
 
 static int usb_pll_is_locked(void) {
+
   return !!(PLLCSR & (1 << PLOCK));
 }
 
@@ -147,6 +148,7 @@ static int usb_pll_is_locked(void) {
  * @isr
  */
 OSAL_IRQ_HANDLER(USB_GEN_vect) {
+
   uint8_t usbint, udint;
   USBDriver * const usbp = &USBD1;
 
@@ -236,6 +238,7 @@ OSAL_IRQ_HANDLER(USB_GEN_vect) {
 }
 
 static void usb_fifo_write(USBDriver *usbp, usbep_t ep, size_t n) {
+
   const USBEndpointConfig *epcp = usbp->epc[ep];
   USBInEndpointState *isp = epcp->in_state;
   syssts_t sts;
@@ -260,6 +263,7 @@ static void usb_fifo_write(USBDriver *usbp, usbep_t ep, size_t n) {
 }
 
 static void usb_fifo_read(USBDriver *usbp, usbep_t ep, size_t n) {
+
   const USBEndpointConfig *epcp = usbp->epc[ep];
   USBOutEndpointState *osp = epcp->out_state;
   syssts_t sts;
@@ -280,6 +284,7 @@ static void usb_fifo_read(USBDriver *usbp, usbep_t ep, size_t n) {
 }
 
 static void ep_isr(USBDriver *usbp, usbep_t ep) {
+
   const USBEndpointConfig *epcp = usbp->epc[ep];
   size_t n;
   UENUM = ep & 0xf;
@@ -354,6 +359,7 @@ static void ep_isr(USBDriver *usbp, usbep_t ep) {
  * @isr
  */
 OSAL_IRQ_HANDLER(USB_COM_vect) {
+
   USBDriver *usbp = &USBD1;
   const uint8_t epnum_orig = UENUM;
   uint8_t i;
@@ -383,6 +389,7 @@ OSAL_IRQ_HANDLER(USB_COM_vect) {
  * @notapi
  */
 void usb_lld_init(void) {
+
 #if AVR_USB_USE_USB1 == TRUE
   /* Driver initialization.*/
   usbObjectInit(&USBD1);
@@ -401,6 +408,7 @@ void usb_lld_init(void) {
  * @notapi
  */
 void usb_lld_start(USBDriver *usbp) {
+
   if (usbp->state == USB_STOP) {
     /* Enables the peripheral.*/
 #if AVR_USB_USE_USB1 == TRUE
@@ -440,6 +448,7 @@ void usb_lld_start(USBDriver *usbp) {
  * @notapi
  */
 void usb_lld_stop(USBDriver *usbp) {
+
   if (usbp->state == USB_READY) {
     /* Disables the peripheral.*/
 #if AVR_USB_USE_USB1 == TRUE
@@ -476,6 +485,7 @@ void usb_lld_stop(USBDriver *usbp) {
  * @notapi
  */
 void usb_lld_reset(USBDriver *usbp) {
+
   /* Post-reset initialization.*/
   /* Reset and enable via toggling the USB macro logic overall enable bit */
   USBCON &= ~(1 << USBE);
@@ -524,6 +534,7 @@ void usb_lld_reset(USBDriver *usbp) {
  * @notapi
  */
 void usb_lld_set_address(USBDriver *usbp) {
+
   UDADDR = (UDADDR & (1 << ADDEN)) | (usbp->address & 0x7F);
 
   UDADDR |= (1 << ADDEN);
@@ -538,6 +549,7 @@ void usb_lld_set_address(USBDriver *usbp) {
  * @notapi
  */
 void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
+
   uint16_t size = 0;
   const USBEndpointConfig *epcp = usbp->epc[ep];
 
@@ -613,6 +625,7 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
  * @notapi
  */
 void usb_lld_disable_endpoints(USBDriver *usbp) {
+
   uint8_t i;
   for (i = 1; i <= USB_MAX_ENDPOINTS; ++i) {
     UENUM = i;
@@ -634,6 +647,7 @@ void usb_lld_disable_endpoints(USBDriver *usbp) {
  * @notapi
  */
 usbepstatus_t usb_lld_get_status_out(USBDriver *usbp, usbep_t ep) {
+
   /* Select this endpoint number for subsequent commands */
   UENUM = ep & 0xf;
 
@@ -657,6 +671,7 @@ usbepstatus_t usb_lld_get_status_out(USBDriver *usbp, usbep_t ep) {
  * @notapi
  */
 usbepstatus_t usb_lld_get_status_in(USBDriver *usbp, usbep_t ep) {
+
   return usb_lld_get_status_out(usbp, ep);
 }
 
@@ -675,6 +690,7 @@ usbepstatus_t usb_lld_get_status_in(USBDriver *usbp, usbep_t ep) {
  * @notapi
  */
 void usb_lld_read_setup(USBDriver *usbp, usbep_t ep, uint8_t *buf) {
+
   uint8_t i;
   /* Select this endpoint number for subsequent commands */
   UENUM = ep & 0xf;
@@ -700,6 +716,7 @@ void usb_lld_read_setup(USBDriver *usbp, usbep_t ep, uint8_t *buf) {
  * @notapi
  */
 void usb_lld_end_setup(USBDriver *usbp, usbep_t ep) {
+
   /* Select this endpoint number for subsequent commands */
   UENUM = ep & 0xf;
 
@@ -730,6 +747,7 @@ void usb_lld_end_setup(USBDriver *usbp, usbep_t ep) {
  * @notapi
  */
 void usb_lld_start_out(USBDriver *usbp, usbep_t ep) {
+
   USBOutEndpointState *osp = usbp->epc[ep]->out_state;
   syssts_t sts;
 
@@ -758,6 +776,7 @@ void usb_lld_start_out(USBDriver *usbp, usbep_t ep) {
  * @notapi
  */
 void usb_lld_start_in(USBDriver *usbp, usbep_t ep) {
+
   USBInEndpointState *isp = usbp->epc[ep]->in_state;
   syssts_t sts;
 
@@ -787,6 +806,7 @@ void usb_lld_start_in(USBDriver *usbp, usbep_t ep) {
  * @notapi
  */
 void usb_lld_stall_out(USBDriver *usbp, usbep_t ep) {
+
   syssts_t sts;
   (void)usbp;
 
@@ -808,6 +828,7 @@ void usb_lld_stall_out(USBDriver *usbp, usbep_t ep) {
  * @notapi
  */
 void usb_lld_stall_in(USBDriver *usbp, usbep_t ep) {
+
   usb_lld_stall_out(usbp, ep);
 }
 
@@ -820,6 +841,7 @@ void usb_lld_stall_in(USBDriver *usbp, usbep_t ep) {
  * @notapi
  */
 void usb_lld_clear_out(USBDriver *usbp, usbep_t ep) {
+
   syssts_t sts;
   (void)usbp;
 
@@ -841,6 +863,7 @@ void usb_lld_clear_out(USBDriver *usbp, usbep_t ep) {
  * @notapi
  */
 void usb_lld_clear_in(USBDriver *usbp, usbep_t ep) {
+
   usb_lld_clear_out(usbp, ep);
 }
 
