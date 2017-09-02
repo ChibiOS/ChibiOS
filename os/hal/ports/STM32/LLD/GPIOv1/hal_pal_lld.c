@@ -235,14 +235,8 @@ void _pal_lld_enablepadevent(ioportid_t port,
     EXTI->FTSR &= ~padmask;
 
   /* Programming interrupt and event registers.*/
-  if (callback != NULL) {
-    EXTI->IMR |= padmask;
-    EXTI->EMR &= ~padmask;
-  }
-  else {
-    EXTI->EMR |= padmask;
-    EXTI->IMR &= ~padmask;
-  }
+  EXTI->IMR |= padmask;
+  EXTI->EMR &= ~padmask;
 
   /* Setting up callback and argument for this event.*/
   _pal_set_event(pad, callback, arg);

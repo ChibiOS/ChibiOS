@@ -38,6 +38,53 @@ static THD_FUNCTION(Thread1, arg) {
 }
 #endif
 
+#if defined(PAL_USE_WAIT) || defined(__DOXYGEN__)
+
+/*
+ * Application entry point.
+ */
+int main(void) {
+
+  /*
+   * System initializations.
+   * - HAL initialization, this also initializes the configured device drivers
+   *   and performs the board-specific initializations.
+   * - Kernel initialization, the main() function becomes a thread and the
+   *   RTOS is active.
+   */
+  halInit();
+  chSysInit();
+
+#if defined(PORTAB_LINE_LED2)
+  /*
+   * Creates the blinker thread.
+   */
+  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+#endif
+
+  /* Enabling callback on both edges of the button line.*/
+  palEnableLineEvent(PORTAB_LINE_BUTTON, PAL_EVENT_MODE_BOTH_EDGES,
+                     NULL, NULL);
+
+  /*
+   * Normal main() thread activity.
+   */
+  while (true) {
+    /* Waiting for an edge on the button.*/
+    palWaitLineTimeout(PORTAB_LINE_BUTTON, TIME_INFINITE);
+
+    /* Action depending on button state.*/
+    if (palReadLine(PORTAB_LINE_BUTTON) == PORTAB_BUTTON_PRESSED) {
+      palWriteLine(PORTAB_LINE_LED1, PORTAB_LEN_ON);
+    }
+    else {
+      palWriteLine(PORTAB_LINE_LED1, PORTAB_LEN_OFF);
+    }
+  }
+}
+
+#else /* !defined(PAL_USE_WAIT) */
+
 static event_source_t button_pressed_event;
 static event_source_t button_released_event;
 
@@ -85,7 +132,7 @@ int main(void) {
 #endif
 
   /* Enabling callback on both edges of the button line.*/
-  palLineEnableEvent(PORTAB_LINE_BUTTON, PAL_EVENT_MODE_BOTH_EDGES,
+  palEnableLineEvent(PORTAB_LINE_BUTTON, PAL_EVENT_MODE_BOTH_EDGES,
                      button_cb, NULL);
 
   /*
@@ -103,3 +150,6 @@ int main(void) {
     }
   }
 }
+#endif /* !defined(PAL_USE_WAIT) */
+
+

@@ -117,6 +117,46 @@ void palSetBusMode(IOBus *bus, iomode_t mode) {
   palSetGroupMode(bus->portid, bus->mask, bus->offset, mode);
 }
 
+#if defined(PAL_USE_WAIT) || defined(__DOXYGEN__)
+/**
+ * @brief   Waits for an edge on the specified port/pad.
+ *
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
+ * @returns             The operation state.
+ * @retval MSG_OK       if an edge has been detected.
+ * @retval MSG_TIMEOUT  if a timeout occurred before an edge cound be detected.
+ * @retval MSG_RESET    if the event has been disabled while the thread was
+ *                      waiting for an edge.
+ *
+ * @sclass
+ */
+msg_t palWaitPadTimeoutS(ioportid_t port, iopadid_t pad, systime_t timeout) {
+
+  palevent_t *pep = pal_lld_get_pad_event(port, pad);
+  return osalThreadEnqueueTimeoutS(&pep->threads, timeout);
+}
+
+/**
+ * @brief   Waits for an edge on the specified line.
+ *
+ * @param[in] line      line identifier
+ * @param[in] timeout   operation timeout
+ * @returns             The operation state.
+ * @retval MSG_OK       if an edge has been detected.
+ * @retval MSG_TIMEOUT  if a timeout occurred before an edge cound be detected.
+ * @retval MSG_RESET    if the event has been disabled while the thread was
+ *                      waiting for an edge.
+ *
+ * @sclass
+ */
+msg_t palWaitLineTimeoutS(ioline_t line, systime_t timeout) {
+
+  palevent_t *pep = pal_lld_get_line_event(line);
+  return osalThreadEnqueueTimeoutS(&pep->threads, timeout);
+}
+#endif /* defined(PAL_USE_WAIT) */
+
 #endif /* HAL_USE_PAL == TRUE */
 
 /** @} */

@@ -577,6 +577,27 @@ typedef uint32_t iopadid_t;
 #define pal_lld_disablepadevent(port, pad)                                  \
   _pal_lld_disablepadevent(port, pad)
 
+/**
+ * @brief   Returns a PAL event structure associated to a pad.
+ *
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
+ *
+ * @notapi
+ */
+#define pal_lld_get_pad_event(port, pad)                                    \
+  &_pal_events[pad]; (void)(port)
+
+/**
+ * @brief   Returns a PAL event structure associated to a line.
+ *
+ * @param[in] line      line identifier
+ *
+ * @notapi
+ */
+#define pal_lld_get_line_event(line)                                        \
+  &_pal_events[PAL_PAD(line)]
+
 #if !defined(__DOXYGEN__)
 extern const PALConfig pal_default_config;
 extern palevent_t _pal_events[16];

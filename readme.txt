@@ -89,6 +89,9 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Implemented PAL enhancements on all existing STM32 ports.
+- NEW: PAL driver enhanced with improved callbacks capability and new
+       synchronous API for edge synchronization.
 - NEW: Added to the serial driver and channels interface a new "control"
        function that allows to implement extensions in the LLD without
        touching the high level interface. Conceptually it is similar

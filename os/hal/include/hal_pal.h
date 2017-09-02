@@ -113,6 +113,19 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/**
+ * @name    PAL configuration options
+ * @{
+ */
+/**
+ * @brief   Enables synchronous APIs.
+ * @note    Disabling this option saves both code and data space.
+ */
+#if !defined(PAL_USE_WAIT) || defined(__DOXYGEN__)
+#define PAL_USE_WAIT                TRUE
+#endif
+/** @} */
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -130,7 +143,19 @@ typedef void (*palcallback_t)(void *arg);
  * @brief   Type of a PAL event record.
  */
 typedef struct {
+#if defined(PAL_USE_WAIT) || defined(__DOXYGEN__)
+  /**
+   * @brief   Threads queued for an event.
+   */
+  threads_queue_t       threads;
+#endif
+  /**
+   * @brief   Event callback.
+   */
   palcallback_t         cb;
+  /**
+   * @brief   Event callback argument.
+   */
   void                  *arg;
 } palevent_t;
 
@@ -223,7 +248,22 @@ typedef struct {
  *
  * @notapi
  */
-#define _pal_isr_code(e) _pal_events[e].cb(_pal_events[e].arg)
+#if defined(PAL_USE_WAIT) || defined(__DOXYGEN__)
+#define _pal_isr_code(e) do {                                               \
+  if (_pal_events[e].cb != NULL) {                                          \
+    _pal_events[e].cb(_pal_events[e].arg);                                  \
+  }                                                                         \
+  osalSysLockFromISR();                                                     \
+  osalThreadDequeueAllI(&_pal_events[e].threads, MSG_OK);                   \
+  osalSysUnlockFromISR();                                                   \
+} while (false)
+#else
+#define _pal_isr_code(e) do {                                               \
+  if (_pal_events[e].cb != NULL) {                                          \
+    _pal_events[e].cb(_pal_events[e].arg);                                  \
+  }                                                                         \
+} while (false)
+#endif
 
 /**
  * @brief   PAL event setup.
@@ -236,10 +276,18 @@ typedef struct {
  *
  * @notapi
  */
+#if defined(PAL_USE_WAIT) || defined(__DOXYGEN__)
+#define _pal_set_event(e, c, a) {                                           \
+  osalThreadQueueObjectInit(&_pal_events[e].threads);                       \
+  _pal_events[e].cb = c;                                                    \
+  _pal_events[e].arg = a;                                                   \
+}
+#else
 #define _pal_set_event(e, c, a) {                                           \
   _pal_events[e].cb = c;                                                    \
   _pal_events[e].arg = a;                                                   \
 }
+#endif
 
 /**
  * @brief   PAL event clear.
@@ -250,10 +298,18 @@ typedef struct {
  *
  * @notapi
  */
+#if defined(PAL_USE_WAIT) || defined(__DOXYGEN__)
+#define _pal_clear_event(e) {                                               \
+  osalThreadDequeueAllI(&_pal_events[e].threads, MSG_RESET);                \
+  _pal_events[e].cb = NULL;                                                 \
+  _pal_events[e].arg = NULL;                                                \
+}
+#else
 #define _pal_clear_event(e) {                                               \
   _pal_events[e].cb = NULL;                                                 \
   _pal_events[e].arg = NULL;                                                \
 }
+#endif
 /** @} */
 
 /**
@@ -585,9 +641,9 @@ typedef struct {
  * @iclass
  */
 #if !defined(pal_lld_enablepadevent) || defined(__DOXYGEN__)
-#define palPadEnableEventI(port, pad, mode, callback, arg)
+#define palEnablePadEventI(port, pad, mode, callback, arg)
 #else
-#define palPadEnableEventI(port, pad, mode, callback, arg)                  \
+#define palEnablePadEventI(port, pad, mode, callback, arg)                  \
   pal_lld_enablepadevent(port, pad, mode, callback, arg)
 #endif
 
@@ -601,9 +657,9 @@ typedef struct {
  * @iclass
  */
 #if !defined(pal_lld_disablepadevent) || defined(__DOXYGEN__)
-#define palPadDisableEventI(port, pad)
+#define palDisablePadEventI(port, pad)
 #else
-#define palPadDisableEventI(port, pad)                                      \
+#define PadDisablepalEventI(port, pad)                                      \
   pal_lld_disablepadevent(port, pad)
 #endif
 
@@ -620,10 +676,10 @@ typedef struct {
  *
  * @api
  */
-#define palPadEnableEvent(port, pad, mode, callback, arg)                   \
+#define palEnablePadEvent(port, pad, mode, callback, arg)                   \
   do {                                                                      \
     osalSysLock();                                                          \
-    palPadEnableEventI(port, pad, mode, callback, arg);                     \
+    palEnablePadEventI(port, pad, mode, callback, arg);                     \
     osalSysUnlock();                                                        \
   } while (false)
 
@@ -636,10 +692,10 @@ typedef struct {
  *
  * @api
  */
-#define palPadDisableEvent(port, pad)                                       \
+#define palDisablePadEvent(port, pad)                                       \
   do {                                                                      \
     osalSysLock();                                                          \
-    palPadDisableEventI(port, pad);                                         \
+    palisablePadDEventI(port, pad);                                         \
     osalSysUnlock();                                                        \
   } while (false)
 
@@ -764,12 +820,12 @@ typedef struct {
  *
  * @iclass
  */
-#if !defined(pal_lld_lineenableevent) || defined(__DOXYGEN__)
-#define palLineEnableEventI(line, mode, callback, arg)                      \
-  palPadEnableEventI(PAL_PORT(line), PAL_PAD(line), mode, callback, arg)
+#if !defined(pal_lld_enablelineevent) || defined(__DOXYGEN__)
+#define palEnableLineEventI(line, mode, callback, arg)                      \
+  palEnablePadEventI(PAL_PORT(line), PAL_PAD(line), mode, callback, arg)
 #else
-#define palLineEnableEventI(line, mode, callback, arg)                      \
-  pal_lld_lineenableevent(line, mode, callback, arg)
+#define palEnableLineEventI(line, mode, callback, arg)                      \
+    pal_lld_enablelineevent(line, mode, callback, arg)
 #endif
 
 /**
@@ -779,11 +835,11 @@ typedef struct {
  *
  * @iclass
  */
-#if !defined(pal_lld_linedisableevent) || defined(__DOXYGEN__)
-#define palLineDisableEventI(line)                                          \
-  palPadDisableEventI(PAL_PORT(line), PAL_PAD(line))
+#if !defined(pal_lld_disablelineevent) || defined(__DOXYGEN__)
+#define palDisableLineEventI(line)                                          \
+  palDisablePadEventI(PAL_PORT(line), PAL_PAD(line))
 #else
-#define palLineDisableEventI(line) pal_lld_linedisableevent(line)
+#define palDisableLineEventI(line) pal_lld_disablelineevent(line)
 #endif
 
 /**
@@ -796,10 +852,10 @@ typedef struct {
  *
  * @api
  */
-#define palLineEnableEvent(line, mode, callback, arg)                       \
+#define palEnableLineEvent(line, mode, callback, arg)                       \
   do {                                                                      \
     osalSysLock();                                                          \
-    palLineEnableEventI(line, mode, callback, arg);                         \
+    palEnableLineEventI(line, mode, callback, arg);                         \
     osalSysUnlock();                                                        \
   } while (false)
 
@@ -810,12 +866,57 @@ typedef struct {
  *
  * @api
  */
-#define palLineDisableEvent(line)                                           \
+#define paDisableLineEvent(line)                                            \
   do {                                                                      \
     osalSysLock();                                                          \
-    palLineDisableEventI(line);                                             \
+    palDisableLineEventI(line);                                             \
     osalSysUnlock();                                                        \
   } while (false)
+
+#if defined(PAL_USE_WAIT) || defined(__DOXYGEN__)
+/**
+ * @brief   Waits for an edge on the specified port/pad.
+ *
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
+ * @returns             The operation state.
+ * @retval MSG_OK       if an edge has been detected.
+ * @retval MSG_TIMEOUT  if a timeout occurred before an edge cound be detected.
+ * @retval MSG_RESET    if the event has been disabled while the thread was
+ *                      waiting for an edge.
+ *
+ * @api
+ */
+#define palWaitPadTimeout(port, pad, timeout)                               \
+  do {                                                                      \
+    osalSysLock();                                                          \
+    palWaitPadTimeoutS(port, pad, timeout);                                 \
+    osalSysUnlock();                                                        \
+  } while (false)
+
+
+/**
+ * @brief   Waits for an edge on the specified line.
+ *
+ * @param[in] line      line identifier
+ * @param[in] timeout   operation timeout
+ * @returns             The operation state.
+ * @retval MSG_OK       if an edge has been detected.
+ * @retval MSG_TIMEOUT  if a timeout occurred before an edge cound be detected.
+ * @retval MSG_RESET    if the event has been disabled while the thread was
+ *                      waiting for an edge.
+ *
+ * @api
+ */
+#define palWaitLineTimeout(line, timeout)                                   \
+  do {                                                                      \
+    osalSysLock();                                                          \
+    palWaitLineTimeoutS(line, timeout);                                     \
+    osalSysUnlock();                                                        \
+  } while (false)
+
+#endif /* defined(PAL_USE_WAIT) */
+
 /** @} */
 
 /*===========================================================================*/
@@ -828,6 +929,10 @@ extern "C" {
   ioportmask_t palReadBus(IOBus *bus);
   void palWriteBus(IOBus *bus, ioportmask_t bits);
   void palSetBusMode(IOBus *bus, iomode_t mode);
+#if defined(PAL_USE_WAIT) || defined(__DOXYGEN__)
+  msg_t palWaitPadTimeoutS(ioportid_t port, iopadid_t pad, systime_t timeout);
+  msg_t palWaitLineTimeoutS(ioline_t line, systime_t timeout);
+#endif /* defined(PAL_USE_WAIT) */
 #ifdef __cplusplus
 }
 #endif
