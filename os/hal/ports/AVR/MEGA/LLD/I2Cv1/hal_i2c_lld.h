@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    hal_i2c_lld.h
- * @brief   AVR I2C subsystem low level driver header.
+ * @file    I2Cv1/hal_i2c_lld.h
+ * @brief   AVR/MEGA I2C subsystem low level driver header.
  *
  * @addtogroup I2C
  * @{

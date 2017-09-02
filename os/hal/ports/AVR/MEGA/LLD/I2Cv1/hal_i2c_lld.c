@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    hal_i2c_lld.c
- * @brief   AVR I2C subsystem low level driver source.
+ * @file    I2Cv1/hal_i2c_lld.c
+ * @brief   AVR/MEGA I2C subsystem low level driver source.
  *
  * @addtogroup I2C
  * @{
@@ -144,6 +144,7 @@ OSAL_IRQ_HANDLER(TWI_vect) {
  * @notapi
  */
 void i2c_lld_init(void) {
+
   i2cObjectInit(&I2CD1);
   I2CD1.thread = NULL;
 }
@@ -156,6 +157,7 @@ void i2c_lld_init(void) {
  * @notapi
  */
 void i2c_lld_start(I2CDriver *i2cp) {
+
   uint32_t clock_speed = 100000;
 
   /* TODO: Test TWI without external pull-ups (use internal) */
@@ -209,6 +211,7 @@ void i2c_lld_stop(I2CDriver *i2cp) {
 msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
                                      uint8_t *rxbuf, size_t rxbytes,
                                      systime_t timeout) {
+
   i2cp->errors = I2C_NO_ERROR;
   i2cp->addr = addr;
   i2cp->txbuf = NULL;
@@ -251,6 +254,7 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
                                       const uint8_t *txbuf, size_t txbytes,
                                       uint8_t *rxbuf, size_t rxbytes,
                                       systime_t timeout) {
+
   i2cp->errors = I2C_NO_ERROR;
   i2cp->addr = addr;
   i2cp->txbuf = txbuf;
@@ -268,3 +272,4 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
 #endif /* HAL_USE_I2C */
 
 /** @} */
+
