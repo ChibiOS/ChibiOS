@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    AVR/hal_spi_lld.c
- * @brief   AVR SPI subsystem low level driver source.
+ * @file    SPIv1/hal_spi_lld.c
+ * @brief   AVR/MEGA SPI subsystem low level driver source.
  *
  * @addtogroup SPI
  * @{
