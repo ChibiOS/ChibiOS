@@ -143,7 +143,7 @@ typedef void (*palcallback_t)(void *arg);
  * @brief   Type of a PAL event record.
  */
 typedef struct {
-#if defined(PAL_USE_WAIT) || defined(__DOXYGEN__)
+#if PAL_USE_WAIT || defined(__DOXYGEN__)
   /**
    * @brief   Threads queued for an event.
    */
@@ -248,7 +248,7 @@ typedef struct {
  *
  * @notapi
  */
-#if defined(PAL_USE_WAIT) || defined(__DOXYGEN__)
+#if PAL_USE_WAIT || defined(__DOXYGEN__)
 #define _pal_isr_code(e) do {                                               \
   if (_pal_events[e].cb != NULL) {                                          \
     _pal_events[e].cb(_pal_events[e].arg);                                  \
@@ -276,7 +276,7 @@ typedef struct {
  *
  * @notapi
  */
-#if defined(PAL_USE_WAIT) || defined(__DOXYGEN__)
+#if PAL_USE_WAIT || defined(__DOXYGEN__)
 #define _pal_set_event(e, c, a) {                                           \
   osalThreadQueueObjectInit(&_pal_events[e].threads);                       \
   _pal_events[e].cb = c;                                                    \
@@ -298,7 +298,7 @@ typedef struct {
  *
  * @notapi
  */
-#if defined(PAL_USE_WAIT) || defined(__DOXYGEN__)
+#if PAL_USE_WAIT || defined(__DOXYGEN__)
 #define _pal_clear_event(e) {                                               \
   osalThreadDequeueAllI(&_pal_events[e].threads, MSG_RESET);                \
   _pal_events[e].cb = NULL;                                                 \
@@ -873,7 +873,7 @@ typedef struct {
     osalSysUnlock();                                                        \
   } while (false)
 
-#if defined(PAL_USE_WAIT) || defined(__DOXYGEN__)
+#if PAL_USE_WAIT || defined(__DOXYGEN__)
 /**
  * @brief   Waits for an edge on the specified port/pad.
  *
@@ -915,7 +915,7 @@ typedef struct {
     osalSysUnlock();                                                        \
   } while (false)
 
-#endif /* defined(PAL_USE_WAIT) */
+#endif /* PAL_USE_WAIT */
 
 /** @} */
 
@@ -929,10 +929,10 @@ extern "C" {
   ioportmask_t palReadBus(IOBus *bus);
   void palWriteBus(IOBus *bus, ioportmask_t bits);
   void palSetBusMode(IOBus *bus, iomode_t mode);
-#if defined(PAL_USE_WAIT) || defined(__DOXYGEN__)
+#if PAL_USE_WAIT || defined(__DOXYGEN__)
   msg_t palWaitPadTimeoutS(ioportid_t port, iopadid_t pad, systime_t timeout);
   msg_t palWaitLineTimeoutS(ioline_t line, systime_t timeout);
-#endif /* defined(PAL_USE_WAIT) */
+#endif /* PAL_USE_WAIT */
 #ifdef __cplusplus
 }
 #endif

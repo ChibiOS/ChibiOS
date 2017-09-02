@@ -38,7 +38,7 @@ static THD_FUNCTION(Thread1, arg) {
 }
 #endif
 
-#if defined(PAL_USE_WAIT) || defined(__DOXYGEN__)
+#if PAL_USE_WAIT || defined(__DOXYGEN__)
 
 /*
  * Application entry point.
@@ -83,7 +83,7 @@ int main(void) {
   }
 }
 
-#else /* !defined(PAL_USE_WAIT) */
+#else /* !PAL_USE_WAIT */
 
 static event_source_t button_pressed_event;
 static event_source_t button_released_event;
@@ -150,5 +150,5 @@ int main(void) {
     }
   }
 }
-#endif /* !defined(PAL_USE_WAIT) */
+#endif /* !PAL_USE_WAIT */
 
