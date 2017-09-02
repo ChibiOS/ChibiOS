@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    hal_serial_lld.c
- * @brief   AVR low level serial driver code.
+ * @file    USARTv1/hal_serial_lld.c
+ * @brief   AVR/MEGA SERIAL subsystem low level driver code.
  *
  * @addtogroup SERIAL
  * @{
