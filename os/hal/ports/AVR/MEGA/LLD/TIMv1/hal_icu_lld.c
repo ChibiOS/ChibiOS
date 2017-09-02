@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    hal_icu_lld.c
- * @brief   AVR ICU driver subsystem low level driver source.
+ * @file    TIMv1/hal_icu_lld.c
+ * @brief   AVR/MEGA ICU subsystem low level driver source.
  *
  * @addtogroup ICU
  * @{
@@ -93,8 +93,8 @@ ICUDriver ICUD5;
 static inline void handle_capture_isr(ICUDriver *icup,
                                       volatile uint16_t *icr,
                                       volatile uint8_t  *tccrb,
-                                      volatile uint16_t *tcnt)
-{
+                                      volatile uint16_t *tcnt) {
+
   uint16_t value = *icr;
   uint8_t rising = (*tccrb & (1 << ICES1)) ? 1 : 0;
   *tccrb ^= (1 << ICES1);
@@ -112,8 +112,8 @@ static inline void handle_capture_isr(ICUDriver *icup,
   }
 }
 
-static uint8_t index(ICUDriver *icup)
-{
+static uint8_t index(ICUDriver *icup) {
+
   uint8_t index = 0;
 #if AVR_ICU_USE_TIM1 || defined(__DOXYGEN__)
   if (icup == &ICUD1) return index;
@@ -138,15 +138,15 @@ static uint8_t index(ICUDriver *icup)
 /*===========================================================================*/
 
 #if AVR_ICU_USE_TIM1 || defined(__DOXYGEN__)
-OSAL_IRQ_HANDLER(TIMER1_CAPT_vect)
-{
+OSAL_IRQ_HANDLER(TIMER1_CAPT_vect) {
+
   OSAL_IRQ_PROLOGUE();
   handle_capture_isr(&ICUD1, &ICR1, &TCCR1B, &TCNT1);
   OSAL_IRQ_EPILOGUE();
 }
 
-OSAL_IRQ_HANDLER(TIMER1_OVF_vect)
-{
+OSAL_IRQ_HANDLER(TIMER1_OVF_vect) {
+
   OSAL_IRQ_PROLOGUE();
   ICUD1.config->overflow_cb(&ICUD1);
   OSAL_IRQ_EPILOGUE();
@@ -154,15 +154,15 @@ OSAL_IRQ_HANDLER(TIMER1_OVF_vect)
 #endif
 
 #if AVR_ICU_USE_TIM3 || defined(__DOXYGEN__)
-OSAL_IRQ_HANDLER(TIMER3_CAPT_vect)
-{
+OSAL_IRQ_HANDLER(TIMER3_CAPT_vect) {
+
   OSAL_IRQ_PROLOGUE();
   handle_capture_isr(&ICUD3, &ICR3, &TCCR3B, &TCNT3);
   OSAL_IRQ_EPILOGUE();
 }
 
-OSAL_IRQ_HANDLER(TIMER3_OVF_vect)
-{
+OSAL_IRQ_HANDLER(TIMER3_OVF_vect) {
+
   OSAL_IRQ_PROLOGUE();
   ICUD3.config->overflow_cb(&ICUD3);
   OSAL_IRQ_EPILOGUE();
@@ -170,15 +170,15 @@ OSAL_IRQ_HANDLER(TIMER3_OVF_vect)
 #endif
 
 #if AVR_ICU_USE_TIM4 || defined(__DOXYGEN__)
-OSAL_IRQ_HANDLER(TIMER4_CAPT_vect)
-{
+OSAL_IRQ_HANDLER(TIMER4_CAPT_vect) {
+
   OSAL_IRQ_PROLOGUE();
   handle_capture_isr(&ICUD4, &ICR4, &TCCR4B, &TCNT4);
   OSAL_IRQ_EPILOGUE();
 }
 
-OSAL_IRQ_HANDLER(TIMER4_OVF_vect)
-{
+OSAL_IRQ_HANDLER(TIMER4_OVF_vect) {
+
   OSAL_IRQ_PROLOGUE();
   ICUD4.config->overflow_cb(&ICUD4);
   OSAL_IRQ_EPILOGUE();
@@ -186,15 +186,15 @@ OSAL_IRQ_HANDLER(TIMER4_OVF_vect)
 #endif
 
 #if AVR_ICU_USE_TIM5 || defined(__DOXYGEN__)
-OSAL_IRQ_HANDLER(TIMER5_CAPT_vect)
-{
+OSAL_IRQ_HANDLER(TIMER5_CAPT_vect) {
+
   OSAL_IRQ_PROLOGUE();
   handle_capture_isr(&ICUD5, &ICR5, &TCCR5B, &TCNT5);
   OSAL_IRQ_EPILOGUE();
 }
 
-OSAL_IRQ_HANDLER(TIMER5_OVF_vect)
-{
+OSAL_IRQ_HANDLER(TIMER5_OVF_vect) {
+
   OSAL_IRQ_PROLOGUE();
   ICUD5.config->overflow_cb(&ICUD5);
   OSAL_IRQ_EPILOGUE();

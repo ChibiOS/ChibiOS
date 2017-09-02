@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    hal_icu_lld.h
- * @brief   AVR ICU driver subsystem low level driver header.
+ * @file    TIMv1/hal_icu_lld.h
+ * @brief   AVR/MEGA ICU subsystem low level driver header.
  *
  * @addtogroup ICU
  * @{
