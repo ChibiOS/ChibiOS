@@ -54,6 +54,19 @@
 #define GPIOC_LED               12
 
 /*
+ * IO lines assignments.
+ */
+#define LINE_BUTTON                 PAL_LINE(GPIOA, 0U)
+#define LINE_SPI1NSS                PAL_LINE(GPIOA, 4U)
+#define LINE_SPI2NSS                PAL_LINE(GPIOB, 12U)
+#define LINE_USB_P                  PAL_LINE(GPIOC, 4U)
+#define LINE_MMCWP                  PAL_LINE(GPIOC, 6U)
+#define LINE_MMCCP                  PAL_LINE(GPIOC, 7U)
+#define LINE_CAN_CNTL               PAL_LINE(GPIOC, 10U)
+#define LINE_USB_DISC               PAL_LINE(GPIOC, 11U)
+#define LINE_LED                    PAL_LINE(GPIOC, 12U)
+
+/*
  * I/O ports initial setup, this configuration is established soon after reset
  * in the initialization code.
  *
