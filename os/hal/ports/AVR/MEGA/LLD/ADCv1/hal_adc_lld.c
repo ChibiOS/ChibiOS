@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    hal_adc_lld.c
- * @brief   ADC Driver subsystem low level driver source.
+ * @file    ADCv1/hal_adc_lld.c
+ * @brief   AVR/MEGA ADC subsystem low level driver source.
  *
  * @addtogroup ADC
  * @{
@@ -37,6 +37,7 @@
 #if AVR_ADC_USE_ADC1 || defined(__DOXYGEN__)
 ADCDriver ADCD1;
 #endif
+
 /*===========================================================================*/
 /* Driver local variables.                                                   */
 /*===========================================================================*/
@@ -45,7 +46,8 @@ ADCDriver ADCD1;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static size_t getAdcChannelNumberFromMask(uint8_t mask, uint8_t currentChannel) {
+static size_t getAdcChannelNumberFromMask(uint8_t mask,
+                                          uint8_t currentChannel) {
 
   for (uint8_t i = 0; mask > 0; i++) {
     if (mask & 0x01) {
@@ -63,7 +65,6 @@ static size_t getAdcChannelNumberFromMask(uint8_t mask, uint8_t currentChannel) 
 static void setAdcChannel(uint8_t channelNum) {
 
   ADMUX = (ADMUX & 0xf8) | (channelNum & 0x07);
-
 }
 
 /*===========================================================================*/
@@ -118,7 +119,6 @@ void adc_lld_init(void) {
 
   //uso aref, only valid for arduino. arduino ha aref collegato
   ADMUX = (0 << REFS1) | (0 << REFS0);
-
 }
 
 /**
@@ -153,7 +153,6 @@ void adc_lld_stop(ADCDriver *adcp) {
     /* Clock de-activation.*/
     ADCSRA &= ~(1 << ADEN);
   }
-
 }
 
 /**
@@ -169,7 +168,6 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 
   setAdcChannel(getAdcChannelNumberFromMask(adcp->grpp->channelsMask,0));
   ADCSRA |= 1 << ADSC;
-
 }
 
 /**
@@ -181,8 +179,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
  */
 void adc_lld_stop_conversion(ADCDriver *adcp) {
 
-    ADCSRA &= ~(1 << ADSC);
-
+  ADCSRA &= ~(1 << ADSC);
 }
 
 #endif /* HAL_USE_ADC */
