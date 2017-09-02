@@ -51,7 +51,8 @@
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if HAL_USE_PAL || defined(__DOXYGEN__)
+#if (HAL_USE_PAL && (PAL_USE_WAIT || PAL_USE_CALLBACKS)) || defined(__DOXYGEN__)
+#if !defined(STM32_DISABLE_EXTI0_1_HANDLER)
 /**
  * @brief   EXTI[0]...EXTI[1] interrupt handler.
  *
@@ -71,7 +72,9 @@ OSAL_IRQ_HANDLER(Vector54) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 
+#if !defined(STM32_DISABLE_EXTI2_3_HANDLER)
 /**
  * @brief   EXTI[2]...EXTI[3] interrupt handler.
  *
@@ -91,7 +94,9 @@ OSAL_IRQ_HANDLER(Vector58) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 
+#if !defined(STM32_DISABLE_EXTI4_15_HANDLER)
 /**
  * @brief   EXTI[4]...EXTI[15] interrupt handler.
  *
@@ -123,8 +128,9 @@ OSAL_IRQ_HANDLER(Vector5C) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 
-#endif /* HAL_USE_PAL */
+#endif /* HAL_USE_PAL && (PAL_USE_WAIT || PAL_USE_CALLBACKS) */
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */

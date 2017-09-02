@@ -80,6 +80,14 @@ palevent_t _pal_events[16];
  */
 void _pal_lld_init(const PALConfig *config) {
 
+#if PAL_USE_CALLBACKS || PAL_USE_WAIT || defined(__DOXYGEN__)
+  unsigned i;
+
+  for (i = 0; i < 16; i++) {
+    _pal_init_event(i);
+  }
+#endif
+
   /*
    * Enables the GPIO related clocks.
    */
@@ -183,24 +191,20 @@ void _pal_lld_setgroupmode(ioportid_t port,
   port->CRL = (port->CRL & ml) | crl;
 }
 
+#if PAL_USE_CALLBACKS || PAL_USE_WAIT || defined(__DOXYGEN__)
 /**
  * @brief   Pad event enable.
- * @details This function programs an event callback in the specified mode.
  * @note    Programming an unknown or unsupported mode is silently ignored.
  *
  * @param[in] port      port identifier
  * @param[in] pad       pad number within the port
  * @param[in] mode      pad event mode
- * @param[in] callback  event callback function
- * @param[in] arg       callback argument
  *
  * @notapi
  */
 void _pal_lld_enablepadevent(ioportid_t port,
                              iopadid_t pad,
-                             ioeventmode_t mode,
-                             palcallback_t callback,
-                             void *arg) {
+                             ioeventmode_t mode) {
 
   uint32_t padmask, cridx, crmask, portidx;
 
@@ -218,7 +222,7 @@ void _pal_lld_enablepadevent(ioportid_t port,
   crmask = ~(0xFU << (((uint32_t)pad & 3U) * 4U));
 
   /* Port index is obtained assuming that GPIO ports are placed at regular
-     0x400 intervalis in memory space. So far this is true for all devices.*/
+     0x400 intervals in memory space. So far this is true for all devices.*/
   portidx = (uint32_t)port >> 10U;
 
   /* Port selection in SYSCFG.*/
@@ -237,14 +241,11 @@ void _pal_lld_enablepadevent(ioportid_t port,
   /* Programming interrupt and event registers.*/
   EXTI->IMR |= padmask;
   EXTI->EMR &= ~padmask;
-
-  /* Setting up callback and argument for this event.*/
-  _pal_set_event(pad, callback, arg);
 }
 
 /**
  * @brief   Pad event disable.
- * @details This function disables previously programmed event callbacks.
+ * @details This function also disables previously programmed event callbacks.
  *
  * @param[in] port      port identifier
  * @param[in] pad       pad number within the port
@@ -269,7 +270,7 @@ void _pal_lld_disablepadevent(ioportid_t port, iopadid_t pad) {
     croff = ((uint32_t)pad & 3U) * 4U;
 
     /* Port index is obtained assuming that GPIO ports are placed at regular
-       0x400 intervalis in memory space. So far this is true for all devices.*/
+       0x400 intervals in memory space. So far this is true for all devices.*/
     portidx = (uint32_t)port >> 10U;
 
     crport = (AFIO->EXTICR[cridx] >> croff) & 0xFU;
@@ -282,11 +283,14 @@ void _pal_lld_disablepadevent(ioportid_t port, iopadid_t pad) {
     EXTI->RTSR  = rtsr1 & ~padmask;
     EXTI->FTSR  = ftsr1 & ~padmask;
     EXTI->PR    = padmask;
-
-    /* Clearing callback and argument for this event.*/
-    _pal_clear_event(pad);
   }
+
+#if PAL_USE_CALLBACKS || PAL_USE_WAIT
+  /* Callback cleared and/or thread reset.*/
+  _pal_clear_event(pad);
+#endif
 }
+#endif /* PAL_USE_CALLBACKS || PAL_USE_WAIT */
 
 #endif /* HAL_USE_PAL */
 

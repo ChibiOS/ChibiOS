@@ -117,6 +117,42 @@ void palSetBusMode(IOBus *bus, iomode_t mode) {
   palSetGroupMode(bus->portid, bus->mask, bus->offset, mode);
 }
 
+#if PAL_USE_CALLBACKS || defined(__DOXYGEN__)
+/**
+ * @brief   Associates a callback to a port/pad.
+ *
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
+ * @param[in] callback  event callback function
+ * @param[in] arg       callback argument
+ *
+ * @api
+ */
+void palSetPadCallbackI(ioportid_t port, iopadid_t pad,
+                        palcallback_t cb, void *arg) {
+
+  palevent_t *pep = pal_lld_get_pad_event(port, pad);
+  pep->cb = cb;
+  pep->arg = arg;
+}
+
+/**
+ * @brief   Associates a callback to a line.
+ *
+ * @param[in] line      line identifier
+ * @param[in] callback  event callback function
+ * @param[in] arg       callback argument
+ *
+ * @api
+ */
+void palSetLineCallbackI(ioline_t line, palcallback_t cb, void *arg) {
+
+  palevent_t *pep = pal_lld_get_line_event(line);
+  pep->cb = cb;
+  pep->arg = arg;
+}
+#endif /* PAL_USE_CALLBACKS */
+
 #if PAL_USE_WAIT || defined(__DOXYGEN__)
 /**
  * @brief   Waits for an edge on the specified port/pad.

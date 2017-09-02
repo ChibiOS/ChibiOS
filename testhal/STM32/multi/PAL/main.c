@@ -63,8 +63,7 @@ int main(void) {
 #endif
 
   /* Enabling events on both edges of the button line.*/
-  palEnableLineEvent(PORTAB_LINE_BUTTON, PAL_EVENT_MODE_BOTH_EDGES,
-                     NULL, NULL);
+  palEnableLineEvent(PORTAB_LINE_BUTTON, PAL_EVENT_MODE_BOTH_EDGES);
 
   /*
    * Normal main() thread activity.
@@ -83,7 +82,9 @@ int main(void) {
   }
 }
 
-#else /* !PAL_USE_WAIT */
+#endif /* PAL_USE_WAIT */
+
+#if !PAL_USE_WAIT && PAL_USE_CALLBACKS
 
 static event_source_t button_pressed_event;
 static event_source_t button_released_event;
@@ -132,8 +133,8 @@ int main(void) {
 #endif
 
   /* Enabling events on both edges of the button line.*/
-  palEnableLineEvent(PORTAB_LINE_BUTTON, PAL_EVENT_MODE_BOTH_EDGES,
-                     button_cb, NULL);
+  palEnableLineEvent(PORTAB_LINE_BUTTON, PAL_EVENT_MODE_BOTH_EDGES);
+  palSetLineCallback(PORTAB_LINE_BUTTON, button_cb, NULL);
 
   /*
    * Normal main() thread activity.
@@ -150,5 +151,37 @@ int main(void) {
     }
   }
 }
-#endif /* !PAL_USE_WAIT */
+#endif /* !PAL_USE_WAIT && PAL_USE_CALLBACKS */
 
+#if !PAL_USE_WAIT && !PAL_USE_CALLBACKS
+/*
+ * Application entry point.
+ */
+int main(void) {
+
+  /*
+   * System initializations.
+   * - HAL initialization, this also initializes the configured device drivers
+   *   and performs the board-specific initializations.
+   * - Kernel initialization, the main() function becomes a thread and the
+   *   RTOS is active.
+   */
+  halInit();
+  chSysInit();
+
+#if defined(PORTAB_LINE_LED2)
+  /*
+   * Creates the blinker thread.
+   */
+  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+#endif
+
+  /*
+   * Normal main() thread activity.
+   */
+  while (true) {
+    palToggleLine(PORTAB_LINE_LED1);
+    chThdSleepMilliseconds(500);
+  }
+}
+#endif /* !PAL_USE_WAIT && !PAL_USE_CALLBACKS */

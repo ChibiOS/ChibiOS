@@ -563,19 +563,16 @@ typedef uint32_t iopadid_t;
 
 /**
  * @brief   Pad event enable.
- * @details This function programs an event callback in the specified mode.
  * @note    Programming an unknown or unsupported mode is silently ignored.
  *
  * @param[in] port      port identifier
  * @param[in] pad       pad number within the port
  * @param[in] mode      pad event mode
- * @param[in] callback  event callback function
- * @param[in] arg       callback argument
  *
  * @notapi
  */
-#define pal_lld_enablepadevent(port, pad, mode, callback, arg)              \
-  _pal_lld_enablepadevent(port, pad, mode, callback, arg)
+#define pal_lld_enablepadevent(port, pad, mode)                             \
+  _pal_lld_enablepadevent(port, pad, mode)
 
 /**
  * @brief   Pad event disable.
@@ -624,9 +621,7 @@ extern "C" {
                              iomode_t mode);
   void _pal_lld_enablepadevent(ioportid_t port,
                                iopadid_t pad,
-                               ioeventmode_t mode,
-                               palcallback_t callback,
-                               void *arg);
+                               ioeventmode_t mode);
   void _pal_lld_disablepadevent(ioportid_t port, iopadid_t pad);
 #ifdef __cplusplus
 }

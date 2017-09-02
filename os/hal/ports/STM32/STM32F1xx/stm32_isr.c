@@ -51,7 +51,7 @@
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if HAL_USE_PAL || defined(__DOXYGEN__)
+#if (HAL_USE_PAL && (PAL_USE_WAIT || PAL_USE_CALLBACKS))|| defined(__DOXYGEN__)
 #if !defined(STM32_DISABLE_EXTI0_HANDLER)
 /**
  * @brief   EXTI[0] interrupt handler.
