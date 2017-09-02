@@ -62,7 +62,7 @@ int main(void) {
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 #endif
 
-  /* Enabling callback on both edges of the button line.*/
+  /* Enabling events on both edges of the button line.*/
   palEnableLineEvent(PORTAB_LINE_BUTTON, PAL_EVENT_MODE_BOTH_EDGES,
                      NULL, NULL);
 
@@ -131,7 +131,7 @@ int main(void) {
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 #endif
 
-  /* Enabling callback on both edges of the button line.*/
+  /* Enabling events on both edges of the button line.*/
   palEnableLineEvent(PORTAB_LINE_BUTTON, PAL_EVENT_MODE_BOTH_EDGES,
                      button_cb, NULL);
 
