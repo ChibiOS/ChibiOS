@@ -15,8 +15,8 @@
 */
 
 /**
- * @file  AVR/hal_ext_lld.c
- * @brief AVR EXT subsystem low level driver source.
+ * @file  EXTv1/hal_ext_lld.c
+ * @brief AVR/MEGA EXT subsystem low level driver source.
  *
  * @addtogroup EXT
  * @{
@@ -374,4 +374,3 @@ void ext_lld_stop(EXTDriver *extp) {
 #endif /* HAL_USE_EXT */
 
 /** @} */
-
