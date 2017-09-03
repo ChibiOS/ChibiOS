@@ -235,7 +235,7 @@ void _pal_lld_enablepadevent(ioportid_t port,
                              iopadid_t pad,
                              ioeventmode_t mode) {
 
-  uint32_t padmask, cridx, crmask, portidx;
+  uint32_t padmask, cridx, croff, crmask, portidx;
 
   /* Mask of the pad.*/
   padmask = 1U << (uint32_t)pad;
@@ -248,14 +248,15 @@ void _pal_lld_enablepadevent(ioportid_t port,
 
   /* Index and mask of the SYSCFG CR register to be used.*/
   cridx  = (uint32_t)pad >> 2U;
-  crmask = ~(0xFU << (((uint32_t)pad & 3U) * 4U));
+  croff = ((uint32_t)pad & 3U) * 4U;
+  crmask = ~(0xFU << croff);
 
   /* Port index is obtained assuming that GPIO ports are placed at regular
      0x400 intervals in memory space. So far this is true for all devices.*/
-  portidx = (uint32_t)port >> 10U;
+  portidx = ((uint32_t)port >> 10U) & 0xFU;
 
   /* Port selection in SYSCFG.*/
-  SYSCFG->EXTICR[cridx] = (SYSCFG->EXTICR[cridx] & crmask) | portidx;
+  SYSCFG->EXTICR[cridx] = (SYSCFG->EXTICR[cridx] & crmask) | (portidx << croff);
 
   /* Programming edge registers.*/
   if (mode & PAL_EVENT_MODE_RISING_EDGE)
@@ -300,7 +301,7 @@ void _pal_lld_disablepadevent(ioportid_t port, iopadid_t pad) {
 
     /* Port index is obtained assuming that GPIO ports are placed at regular
        0x400 intervals in memory space. So far this is true for all devices.*/
-    portidx = (uint32_t)port >> 10U;
+    portidx = ((uint32_t)port >> 10U) & 0xFU;
 
     crport = (SYSCFG->EXTICR[cridx] >> croff) & 0xFU;
 
