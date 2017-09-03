@@ -327,7 +327,7 @@
 #define STM32_TIM_DCR_DBA(n)                ((n) << 0)
 
 #define STM32_TIM_DCR_DBL_MASK              (31U << 8)
-#define STM32_TIM_DCR_DBL(b)                ((n) << 8)
+#define STM32_TIM_DCR_DBL(n)                ((n) << 8)
 /** @} */
 
 /**

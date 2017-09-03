@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.9 ***
+- HAL: Fixed TIMx DBL field macro broken (bug #880).
 - HAL: Fixed STM32 SPI problem in spi_lld_start() (bug #879).
 - HAL: Fixed missing STM32_TIM_MAX_CHANNELS definition in STM32L0 registry
        (bug #876).
