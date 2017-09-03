@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 17.6.1 ***
+- HAL: Fixed TIMx DBL field macro broken (bug #880).
 - HAL: Fixed STM32 SPI problem in spi_lld_start() (bug #879).
 - HAL: Fixed invalid STM32 CAN3 filters initialization (bug #878).
 - HAL: Fixed missing CAN definitions in STM32L432 registry entry (bug #877).
