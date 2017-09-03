@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: SPI driver improvements, now it is possible to select different
+       modes for CS line handling.
 - NEW: Implemented PAL enhancements on all existing STM32 ports.
 - NEW: PAL driver enhanced with improved callbacks capability and new
        synchronous API for edge synchronization.
