@@ -115,6 +115,8 @@
        dependencies and configuration directories. This makes possible
        to have multiple non-conflicting makefiles in the same project.
        Updated the various platform.mk implementing "smart build" mode.
+- HAL: Fixed TIMx DBL field macro broken (bug #880)(backported
+       to 17.6.1 and 16.1.9).
 - HAL: Fixed STM32 SPI problem in spi_lld_start() (bug #879)(backported
        to 17.6.1 and 16.1.9).
 - HAL: Fixed invalid STM32 CAN3 filters initialization (bug #878)
