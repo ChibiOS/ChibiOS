@@ -396,6 +396,10 @@
 #define STM32_DMA_REQUIRED
 #endif
 
+#if SPI_SELECT_MODE == SPI_SELECT_MODE_LLD
+#error "SPI_SELECT_MODE_LLD not supported by this driver"
+#endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
@@ -421,15 +425,33 @@ typedef struct {
    * @brief Operation complete callback or @p NULL.
    */
   spicallback_t             end_cb;
-  /* End of the mandatory fields.*/
+#if (SPI_SELECT_MODE == SPI_SELECT_MODE_LINE) || defined(__DOXYGEN__)
   /**
-   * @brief The chip select line port.
+   * @brief The chip select line.
+   */
+  ioportid_t                ssline;
+#endif
+#if (SPI_SELECT_MODE == SPI_SELECT_MODE_PORT) || defined(__DOXYGEN__)
+  /**
+   * @brief The chip select port.
    */
   ioportid_t                ssport;
   /**
-   * @brief The chip select line pad number.
+   * @brief The chip select port mask.
    */
-  uint16_t                  sspad;
+  uint8fast_t               ssmask;
+#endif
+#if (SPI_SELECT_MODE == SPI_SELECT_MODE_PAD) || defined(__DOXYGEN__)
+  /**
+   * @brief The chip select port.
+   */
+  ioportid_t                ssport;
+  /**
+   * @brief The chip select pad number.
+   */
+  uint_fast8_t              sspad;
+#endif
+  /* End of the mandatory fields.*/
   /**
    * @brief SPI CR1 register initialization data.
    */
@@ -528,8 +550,6 @@ extern "C" {
   void spi_lld_init(void);
   void spi_lld_start(SPIDriver *spip);
   void spi_lld_stop(SPIDriver *spip);
-  void spi_lld_select(SPIDriver *spip);
-  void spi_lld_unselect(SPIDriver *spip);
   void spi_lld_ignore(SPIDriver *spip, size_t n);
   void spi_lld_exchange(SPIDriver *spip, size_t n,
                         const void *txbuf, void *rxbuf);

@@ -31,6 +31,19 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @name    Chip Select modes
+ * @{
+ */
+#define SPI_SELECT_MODE_NONE                0   /** @brief @p spiSelect() and
+                                                    @p spiUnselect() do
+                                                    nothing.                */
+#define SPI_SELECT_MODE_PAD                 1   /** @brief Legacy mode.     */
+#define SPI_SELECT_MODE_PORT                2   /** @brief Fastest mode.    */
+#define SPI_SELECT_MODE_LINE                3   /** @brief Packed mode.     */
+#define SPI_SELECT_MODE_LLD                 4   /** @brief LLD-defined mode.*/
+/** @} */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -44,7 +57,7 @@
  * @note    Disabling this option saves both code and data space.
  */
 #if !defined(SPI_USE_WAIT) || defined(__DOXYGEN__)
-#define SPI_USE_WAIT                TRUE
+#define SPI_USE_WAIT                        TRUE
 #endif
 
 /**
@@ -52,13 +65,29 @@
  * @note    Disabling this option saves both code and data space.
  */
 #if !defined(SPI_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
-#define SPI_USE_MUTUAL_EXCLUSION    TRUE
+#define SPI_USE_MUTUAL_EXCLUSION            TRUE
+#endif
+
+/**
+ * @brief   Enables the use of the .
+ * @note    Disabling this option saves both code and data space.
+ */
+#if !defined(SPI_SELECT_MODE) || defined(__DOXYGEN__)
+#define SPI_SELECT_MODE                     SPI_SELECT_MODE_PAD
 #endif
 /** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+#if (SPI_SELECT_MODE != SPI_SELECT_MODE_NONE) &&                            \
+    (SPI_SELECT_MODE != SPI_SELECT_MODE_PAD)  &&                            \
+    (SPI_SELECT_MODE != SPI_SELECT_MODE_PORT) &&                            \
+    (SPI_SELECT_MODE != SPI_SELECT_MODE_LINE) &&                            \
+    (SPI_SELECT_MODE != SPI_SELECT_MODE_LLD)
+#error "invalid SPI_SELECT_MODE setting"
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -85,6 +114,7 @@ typedef enum {
  * @name    Macro Functions
  * @{
  */
+#if (SPI_SELECT_MODE == SPI_SELECT_MODE_LLD) || defined(__DOXYGEN__)
 /**
  * @brief   Asserts the slave select signal and prepares for transfers.
  *
@@ -92,9 +122,10 @@ typedef enum {
  *
  * @iclass
  */
-#define spiSelectI(spip) {                                                  \
+#define spiSelectI(spip)                                                    \
+do {                                                                        \
   spi_lld_select(spip);                                                     \
-}
+} while (false)
 
 /**
  * @brief   Deasserts the slave select signal.
@@ -104,9 +135,49 @@ typedef enum {
  *
  * @iclass
  */
-#define spiUnselectI(spip) {                                                \
+#define spiUnselectI(spip)                                                  \
+do {                                                                        \
   spi_lld_unselect(spip);                                                   \
-}
+} while (false)
+
+#elif SPI_SELECT_MODE == SPI_SELECT_MODE_LINE
+#define spiSelectI(spip)                                                    \
+do {                                                                        \
+  palClearLine(spip->config->ssline);                                       \
+} while (false)
+
+#define spiUnselectI(spip)                                                  \
+do {                                                                        \
+  palSetLine(spip->config->ssline);                                         \
+} while (false)
+
+#elif SPI_SELECT_MODE == SPI_SELECT_MODE_PORT
+#define spiSelectI(spip)                                                    \
+do {                                                                        \
+  palClearPort(spip->config->ssport, spip->config->ssmask);                 \
+} while (false)
+
+#define spiUnselectI(spip)                                                  \
+do {                                                                        \
+  palSetPort(spip->config->ssport, spip->config->ssmask);                   \
+} while (false)
+
+#elif SPI_SELECT_MODE == SPI_SELECT_MODE_PAD
+#define spiSelectI(spip)                                                    \
+do {                                                                        \
+  palClearPad(spip->config->ssport, spip->config->sspad);                   \
+} while (false)
+
+#define spiUnselectI(spip)                                                  \
+do {                                                                        \
+  palSetPad(spip->config->ssport, spip->config->sspad);                     \
+} while (false)
+
+#elif SPI_SELECT_MODE == SPI_SELECT_MODE_NONE
+#define spiSelectI(spip)
+
+#define spiUnselectI(spip)
+#endif
 
 /**
  * @brief   Ignores data on the SPI bus.
