@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _OSAL_H_
-#define _OSAL_H_
+#ifndef OSAL.H
+#define OSAL.H
 
 #include <stddef.h>
 #include <stdint.h>
@@ -936,6 +936,6 @@ static inline void osalMutexUnlock(mutex_t *mp) {
 #endif
 }
 
-#endif /* _OSAL_H_ */
+#endif /* OSAL.H */
 
 /** @} */
