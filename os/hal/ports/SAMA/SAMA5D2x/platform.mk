@@ -12,3 +12,4 @@ PLATFORMINC := $(CHIBIOS)/os/hal/ports/SAMA/SAMA5D2x
 # Drivers compatible with the platform.
 include $(CHIBIOS)/os/hal/ports/SAMA/LLD/DMAv1/driver.mk
 include $(CHIBIOS)/os/hal/ports/SAMA/LLD/SPIv1/driver.mk
+include $(CHIBIOS)/os/hal/ports/SAMA/LLD/USARTv1/driver.mk
