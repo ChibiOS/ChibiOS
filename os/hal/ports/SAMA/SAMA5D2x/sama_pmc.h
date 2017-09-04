@@ -120,7 +120,7 @@
 #define pmcDisablePidHigh(mask) {                                           \
   pmcDisableWP();                                                           \
   PMC->PMC_PCDR1 |= (mask);                                                 \
-  pmcEnableWP();                                                           \
+  pmcEnableWP();                                                            \
 }
 /** @} */
 
@@ -198,6 +198,75 @@
  */
 #define pmcDisableSPI1() pmcDisablePidHigh(ID_SPI1_MSK)
 
+/**
+ * @brief   Enables the UART0 peripheral clock.
+ *
+ * @api
+ */
+#define pmcEnableUART0() pmcEnablePidLow(ID_UART0_MSK)
+
+/**
+ * @brief   Disables the UART0 peripheral clock.
+ *
+ * @api
+ */
+#define pmcDisableUART0() pmcDisablePidLow(ID_UART0_MSK)
+
+/**
+ * @brief   Enables the UART1 peripheral clock.
+ *
+ * @api
+ */
+#define pmcEnableUART1() pmcEnablePidLow(ID_UART1_MSK)
+
+/**
+ * @brief   Disables the UART1 peripheral clock.
+ *
+ * @api
+ */
+#define pmcDisableUART1() pmcDisablePidLow(ID_UART1_MSK)
+
+/**
+ * @brief   Enables the UART2 peripheral clock.
+ *
+ * @api
+ */
+#define pmcEnableUART2() pmcEnablePidLow(ID_UART2_MSK)
+
+/**
+ * @brief   Disables the UART2 peripheral clock.
+ *
+ * @api
+ */
+#define pmcDisableUART2() pmcDisablePidLow(ID_UART2_MSK)
+
+/**
+ * @brief   Enables the UART3 peripheral clock.
+ *
+ * @api
+ */
+#define pmcEnableUART3() pmcEnablePidLow(ID_UART3_MSK)
+
+/**
+ * @brief   Disables the UART3 peripheral clock.
+ *
+ * @api
+ */
+#define pmcDisableUART3() pmcDisablePidLow(ID_UART3_MSK)
+
+/**
+ * @brief   Enables the UART4 peripheral clock.
+ *
+ * @api
+ */
+#define pmcEnableUART4() pmcEnablePidLow(ID_UART4_MSK)
+
+/**
+ * @brief   Disables the UART4 peripheral clock.
+ *
+ * @api
+ */
+#define pmcDisableUART4() pmcDisablePidLow(ID_UART4_MSK)
 
 /** @} */
 
