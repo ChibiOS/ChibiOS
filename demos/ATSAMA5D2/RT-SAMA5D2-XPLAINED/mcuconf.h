@@ -39,8 +39,23 @@
  */
 #define SAMA_SPI_USE_SPI0                   FALSE
 #define SAMA_SPI_USE_SPI1                   FALSE
-#define SAMA_SPI_SPI0_IRQ_PRIORITY          10
-#define SAMA_SPI_SPI1_IRQ_PRIORITY          10
+#define SAMA_SPI_SPI0_IRQ_PRIORITY          7
+#define SAMA_SPI_SPI1_IRQ_PRIORITY          7
 #define SAMA_SPI_DMA_ERROR_HOOK(spip)       osalSysHalt("DMA failure")
+
+/*
+ * SERIAL driver system settings.
+ */
+#define SAMA_SERIAL_USE_UART0               FALSE
+#define SAMA_SERIAL_USE_UART1               FALSE
+#define SAMA_SERIAL_USE_UART2               FALSE
+#define SAMA_SERIAL_USE_UART3               FALSE
+#define SAMA_SERIAL_USE_UART4               FALSE
+#define SAMA_SERIAL_USE_UART5               FALSE
+#define SAMA_SERIAL_UART0_PRIORITY          4
+#define SAMA_SERIAL_UART1_PRIORITY          4
+#define SAMA_SERIAL_UART2_PRIORITY          4
+#define SAMA_SERIAL_UART3_PRIORITY          4
+#define SAMA_SERIAL_UART4_PRIORITY          4
 
 #endif /* MCUCONF_H */
