@@ -454,6 +454,15 @@
 #error "H64MX H32MX clock ratio out of range."
 #endif
 
+/**
+ * @brief   UARTx clock.
+ */
+#define SAMA_UART0CLK                       (SAMA_MCK / SAMA_H64MX_H32MX_RATIO)
+#define SAMA_UART1CLK                       (SAMA_MCK / SAMA_H64MX_H32MX_RATIO)
+#define SAMA_UART2CLK                       (SAMA_MCK / SAMA_H64MX_H32MX_RATIO)
+#define SAMA_UART3CLK                       (SAMA_MCK / SAMA_H64MX_H32MX_RATIO)
+#define SAMA_UART4CLK                       (SAMA_MCK / SAMA_H64MX_H32MX_RATIO)
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
