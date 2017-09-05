@@ -384,7 +384,7 @@ msg_t uartSendTimeout(UARTDriver *uartp, size_t *np,
   /* Waiting for result.*/
   msg = osalThreadSuspendTimeoutS(&uartp->threadtx, timeout);
   if (msg != MSG_OK) {
-    *np = uartStopSendI(uartp);
+    *np -= uartStopSendI(uartp);
   }
   osalSysUnlock();
 
@@ -475,7 +475,7 @@ msg_t uartReceiveTimeout(UARTDriver *uartp, size_t *np,
   /* Waiting for result.*/
   msg = osalThreadSuspendTimeoutS(&uartp->threadrx, timeout);
   if (msg != MSG_OK) {
-    *np = uartStopReceiveI(uartp);
+    *np -= uartStopReceiveI(uartp);
   }
   osalSysUnlock();
 
