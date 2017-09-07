@@ -61,12 +61,15 @@ OBJDIR = .
 
 # Imported source files
 CHIBIOS = ../../..
+# HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/boards/ARDUINO_MEGA/board.mk
 include $(CHIBIOS)/os/hal/ports/AVR/MEGA/ATMEGAxx/platform.mk
 include $(CHIBIOS)/os/hal/osal/nil/osal.mk
+# RTOS files (optional).
 include $(CHIBIOS)/os/nil/nil.mk
 include $(CHIBIOS)/os/common/ports/AVR/compilers/GCC/mk/port.mk
+# Other files (optional).
 include $(CHIBIOS)/test/nil/test.mk
 
 # List C source files here. (C dependencies are automatically generated.)

@@ -61,10 +61,12 @@ OBJDIR = .
 
 # Imported source files
 CHIBIOS = ../../..
+# HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/boards/MT-DB-X4/board.mk
 include $(CHIBIOS)/os/hal/ports/AVR/XMEGA/ATXMEGAxxxA4U/platform.mk
 include $(CHIBIOS)/os/hal/osal/nil/osal.mk
+# RTOS files (optional).
 include $(CHIBIOS)/os/nil/nil.mk
 include $(CHIBIOS)/os/common/ports/AVR/compilers/GCC/mk/port.mk
 
