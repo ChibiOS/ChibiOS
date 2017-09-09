@@ -115,6 +115,8 @@
        dependencies and configuration directories. This makes possible
        to have multiple non-conflicting makefiles in the same project.
        Updated the various platform.mk implementing "smart build" mode.
+- HAL: Fixed USB GET_DESCRIPTOR not handled for Interface Recipients (bug #885)
+       (backported to 17.6.1 and 16.1.9).
 - HAL: Fixed error in uartReceiveTimeout() and uartSendTimeout() (bug #883)
        (backported to 17.6.1 and 16.1.9).
 - HAL: Fixed TIMx DBL field macro broken (bug #880)(backported
