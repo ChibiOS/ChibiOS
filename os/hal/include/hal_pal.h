@@ -807,7 +807,7 @@ typedef struct {
 #if !defined(pal_lld_disablepadevent) || defined(__DOXYGEN__)
 #define palDisablePadEventI(port, pad)
 #else
-#define PadDisablepalEventI(port, pad)                                      \
+#define palDisablePadEventI(port, pad)                                      \
   pal_lld_disablepadevent(port, pad)
 #endif
 
@@ -840,7 +840,7 @@ typedef struct {
 #define palDisablePadEvent(port, pad)                                       \
   do {                                                                      \
     osalSysLock();                                                          \
-    palisablePadDEventI(port, pad);                                         \
+    palDisablePadDEventI(port, pad);                                         \
     osalSysUnlock();                                                        \
   } while (false)
 
