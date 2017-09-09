@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.9 ***
+- HAL: Fixed USB GET_DESCRIPTOR not handled for Interface Recipients (bug #885).
 - HAL: Fixed error in uartReceiveTimeout() and uartSendTimeout() (bug #883).
 - HAL: Fixed TIMx DBL field macro broken (bug #880).
 - HAL: Fixed STM32 SPI problem in spi_lld_start() (bug #879).
