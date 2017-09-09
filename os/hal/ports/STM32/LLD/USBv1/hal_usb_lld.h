@@ -422,7 +422,7 @@ struct USBDriver {
 /**
  * @brief   Connects the USB device.
  *
- * @api
+ * @notapi
  */
 #if !defined(usb_lld_connect_bus)
 #define usb_lld_connect_bus(usbp) (STM32_USB->BCDR |= USB_BCDR_DPPU)
@@ -431,7 +431,7 @@ struct USBDriver {
 /**
  * @brief   Disconnect the USB device.
  *
- * @api
+ * @notapi
  */
 #if !defined(usb_lld_disconnect_bus)
 #define usb_lld_disconnect_bus(usbp) (STM32_USB->BCDR &= ~USB_BCDR_DPPU)
@@ -447,6 +447,20 @@ struct USBDriver {
 #define usb_lld_disconnect_bus(usbp) (SYSCFG->PMC &= ~SYSCFG_PMC_USB_PU)
 #endif
 #endif /* STM32L1XX */
+
+/**
+ * @brief   Start of host wake-up procedure.
+ *
+ * @notapi
+ */
+#define usb_lld_start_wakeup_host(usbp) (STM32_USB->CNTR |= USB_CNTR_RESUME)
+
+/**
+ * @brief   Stop of host wake-up procedure.
+ *
+ * @notapi
+ */
+#define usb_lld_stop_wakeup_host(usbp) (STM32_USB->CNTR &= ~USB_CNTR_RESUME)
 
 /*===========================================================================*/
 /* External declarations.                                                    */

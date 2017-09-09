@@ -541,7 +541,7 @@ struct USBDriver {
 /**
  * @brief   Connects the USB device.
  *
- * @api
+ * @notapi
  */
 #if (STM32_OTG_STEPPING == 1) || defined(__DOXYGEN__)
 #define usb_lld_connect_bus(usbp) ((usbp)->otg->GCCFG |= GCCFG_VBUSBSEN)
@@ -552,13 +552,27 @@ struct USBDriver {
 /**
  * @brief   Disconnect the USB device.
  *
- * @api
+ * @notapi
  */
 #if (STM32_OTG_STEPPING == 1) || defined(__DOXYGEN__)
 #define usb_lld_disconnect_bus(usbp) ((usbp)->otg->GCCFG &= ~GCCFG_VBUSBSEN)
 #else
 #define usb_lld_disconnect_bus(usbp) ((usbp)->otg->DCTL |= DCTL_SDIS)
 #endif
+
+/**
+ * @brief   Start of host wake-up procedure.
+ *
+ * @notapi
+ */
+#define usb_lld_start_wakeup_host(usbp) ((usbp)->otg->DCTL |= DCTL_RWUSIG)
+
+/**
+ * @brief   Stop of host wake-up procedure.
+ *
+ * @notapi
+ */
+#define usb_lld_stop_wakeup_host(usbp) ((usbp)->otg->DCTL &= ~DCTL_RWUSIG)
 
 /*===========================================================================*/
 /* External declarations.                                                    */

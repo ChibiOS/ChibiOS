@@ -245,9 +245,20 @@
 #define USB_USE_WAIT                        FALSE
 #endif
 
+/**
+ * @brief   Host wake-up procedure duration.
+ */
+#if !defined(USB_HOST_WAKEUP_DURATION) || defined(__DOXYGEN__)
+#define USB_HOST_WAKEUP_DURATION            2
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+#if (USB_HOST_WAKEUP_DURATION < 2) || (USB_HOST_WAKEUP_DURATION > 15)
+#error "invalid USB_HOST_WAKEUP_DURATION setting, it must be between 2 and 15"
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -620,6 +631,7 @@ extern "C" {
 #endif
   bool usbStallReceiveI(USBDriver *usbp, usbep_t ep);
   bool usbStallTransmitI(USBDriver *usbp, usbep_t ep);
+  void usbWakeupHost(USBDriver *usbp);
   void _usb_reset(USBDriver *usbp);
   void _usb_suspend(USBDriver *usbp);
   void _usb_wakeup(USBDriver *usbp);

@@ -556,9 +556,6 @@ static void usb_lld_serve_interrupt(USBDriver *usbp) {
       otgp->PCGCCTL &= ~(PCGCCTL_STPPCLK | PCGCCTL_GATEHCLK);
     }
 
-    /* Clear the Remote Wake-up Signaling.*/
-    otgp->DCTL |= DCTL_RWUSIG;
-
     _usb_wakeup(usbp);
   }
 
