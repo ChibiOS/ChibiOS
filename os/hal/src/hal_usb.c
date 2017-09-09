@@ -644,13 +644,7 @@ void usbWakeupHost(USBDriver *usbp) {
 
   if (usbp->state == USB_SUSPENDED) {
     /* Starting host wakeup procedure.*/
-    usb_lld_start_wakeup_host(usbp);
-
-    /* Holding it for the configured time, it must be 2..15 msecs.*/
-    osalThreadSleepMilliseconds(USB_HOST_WAKEUP_DURATION);
-
-    /* Stopping host wake up procedure.*/
-    usb_lld_stop_wakeup_host(usbp);
+    usb_lld_wakeup_host(usbp);
   }
 }
 
