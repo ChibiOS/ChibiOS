@@ -249,7 +249,7 @@ void _pal_lld_enablepadevent(ioportid_t port,
 
   /* Port index is obtained assuming that GPIO ports are placed at regular
      0x400 intervals in memory space. So far this is true for all devices.*/
-  portidx = ((uint32_t)port >> 10U) & 0xFU;
+  portidx = (((uint32_t)port - (uint32_t)GPIOA) >> 10U) & 0xFU;
 
   /* Port selection in SYSCFG.*/
   SYSCFG->EXTICR[cridx] = (SYSCFG->EXTICR[cridx] & crmask) | (portidx << croff);
@@ -297,7 +297,7 @@ void _pal_lld_disablepadevent(ioportid_t port, iopadid_t pad) {
 
     /* Port index is obtained assuming that GPIO ports are placed at regular
        0x400 intervals in memory space. So far this is true for all devices.*/
-    portidx = ((uint32_t)port >> 10U) & 0xFU;
+    portidx = (((uint32_t)port - (uint32_t)GPIOA) >> 10U) & 0xFU;
 
     crport = (SYSCFG->EXTICR[cridx] >> croff) & 0xFU;
 
