@@ -632,6 +632,23 @@ bool usbStallTransmitI(USBDriver *usbp, usbep_t ep) {
 }
 
 /**
+ * @brief   Host wake-up procedure.
+ * @note    It is silently ignored if the USB device is not in the
+ *          @p USB_SUSPENDED state.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ *
+ * @api
+ */
+void usbWakeupHost(USBDriver *usbp) {
+
+  if (usbp->state == USB_SUSPENDED) {
+    /* Starting host wakeup procedure.*/
+    usb_lld_wakeup_host(usbp);
+  }
+}
+
+/**
  * @brief   USB reset routine.
  * @details This function must be invoked when an USB bus reset condition is
  *          detected.

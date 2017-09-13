@@ -336,6 +336,13 @@ struct USBDriver {
  */
 #define usb_lld_disconnect_bus(usbp)
 
+/**
+ * @brief   Start of host wake-up procedure.
+ *
+ * @notapi
+ */
+#define usb_lld_wakeup_host(usbp)
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/

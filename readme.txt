@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** 17.6.1 ***
+- NEW: Added to the HAL USB driver a new function usbWakeupHost() for
+       standby exit.
 - HAL: Fixed USB GET_DESCRIPTOR not handled for Interface Recipients (bug #885).
 - RT:  MAILBOX_DECL size parameter is actually a count (bug #884).
 - HAL: Fixed error in uartReceiveTimeout() and uartSendTimeout() (bug #883).
