@@ -71,6 +71,9 @@ __attribute__((naked, weak))
 #endif
 void _port_switch(thread_t *ntp, thread_t *otp) {
 
+  (void)ntp;
+  (void)otp;
+
   asm volatile ("push    r2");
   asm volatile ("push    r3");
   asm volatile ("push    r4");
