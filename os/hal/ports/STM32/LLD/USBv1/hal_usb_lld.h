@@ -105,6 +105,13 @@
 #define STM32_USB_USE_FAST_COPY             FALSE
 #endif
 
+/**
+ * @brief   Host wake-up procedure duration.
+ */
+#if !defined(USB_HOST_WAKEUP_DURATION) || defined(__DOXYGEN__)
+#define USB_HOST_WAKEUP_DURATION            2
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -146,6 +153,10 @@
 
 #if !defined(STM32_USB1_LP_NUMBER)
 #error "STM32_USB1_LP_NUMBER not defined"
+#endif
+
+#if (USB_HOST_WAKEUP_DURATION < 2) || (USB_HOST_WAKEUP_DURATION > 15)
+#error "invalid USB_HOST_WAKEUP_DURATION setting, it must be between 2 and 15"
 #endif
 
 /*===========================================================================*/
@@ -422,7 +433,7 @@ struct USBDriver {
 /**
  * @brief   Connects the USB device.
  *
- * @api
+ * @notapi
  */
 #if !defined(usb_lld_connect_bus)
 #define usb_lld_connect_bus(usbp) (STM32_USB->BCDR |= USB_BCDR_DPPU)
@@ -431,7 +442,7 @@ struct USBDriver {
 /**
  * @brief   Disconnect the USB device.
  *
- * @api
+ * @notapi
  */
 #if !defined(usb_lld_disconnect_bus)
 #define usb_lld_disconnect_bus(usbp) (STM32_USB->BCDR &= ~USB_BCDR_DPPU)
@@ -447,6 +458,18 @@ struct USBDriver {
 #define usb_lld_disconnect_bus(usbp) (SYSCFG->PMC &= ~SYSCFG_PMC_USB_PU)
 #endif
 #endif /* STM32L1XX */
+
+/**
+ * @brief   Start of host wake-up procedure.
+ *
+ * @notapi
+ */
+#define usb_lld_wakeup_host(usbp)                                           \
+  do{                                                                       \
+    STM32_USB->CNTR |= USB_CNTR_RESUME;                                     \
+    osalThreadSleepMilliseconds(USB_HOST_WAKEUP_DURATION);                  \
+    STM32_USB->CNTR &= ~USB_CNTR_RESUME;                                    \
+  } while (false)
 
 /*===========================================================================*/
 /* External declarations.                                                    */

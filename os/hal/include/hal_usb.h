@@ -620,6 +620,7 @@ extern "C" {
 #endif
   bool usbStallReceiveI(USBDriver *usbp, usbep_t ep);
   bool usbStallTransmitI(USBDriver *usbp, usbep_t ep);
+  void usbWakeupHost(USBDriver *usbp);
   void _usb_reset(USBDriver *usbp);
   void _usb_suspend(USBDriver *usbp);
   void _usb_wakeup(USBDriver *usbp);
