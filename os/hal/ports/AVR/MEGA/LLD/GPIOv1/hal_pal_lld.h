@@ -52,6 +52,35 @@
 #define PAL_WHOLE_PORT ((ioportmask_t)0xFF)
 
 /**
+ * @name    Line handling macros
+ * @{
+ */
+/**
+ * @brief   Forms a line identifier.
+ * @details A port/pad pair are encoded into an @p ioline_t type. The encoding
+ *          of this type is platform-dependent.
+ * @note    In this driver the pad number and the port identifier are 
+ *          encoded in a structure of type ioline_t.
+ */
+#define PAL_LINE(port, pad) _pal_lld_setlineid(port, pad)
+
+/**
+ * @brief   Decodes a port identifier from a line identifier.
+ */
+#define PAL_PORT(line) _pal_lld_getportfromline(line)
+
+/**
+ * @brief   Decodes a pad identifier from a line identifier.
+ */
+#define PAL_PAD(line) _pal_lld_getpadfromline(line)
+
+/**
+ * @brief   Value identifying an invalid line.
+ */
+#define PAL_NOLINE                      0U
+/** @} */
+
+/**
  * @brief   AVR setup registers.
  */
 typedef struct {
@@ -131,6 +160,24 @@ typedef uint8_t iomode_t;
  *          variables of this type.
  */
 typedef volatile avr_gpio_registers_t * ioportid_t;
+
+/**
+ * @brief   Type of an pad identifier.
+ */
+typedef uint8_t iopadid_t;
+
+/**
+ * @brief   Type of an I/O line.
+ */
+typedef struct {
+  ioportid_t  port; /* Line port identifier.  */
+  iopadid_t   pad;  /* Line pad identifier.   */
+}ioline_t;
+
+/**
+ * @brief   Type of an event mode.
+ */
+typedef uint8_t ioeventmode_t;
 
 /*===========================================================================*/
 /* I/O Ports Identifiers.                                                    */
@@ -311,6 +358,60 @@ typedef volatile avr_gpio_registers_t * ioportid_t;
 #define pal_lld_clearpad(port, pad)                                         \
   port->out &= ~_BV(pad)
 
+/**
+ * @brief   Pad event enable.
+ * @details This function programs an event callback in the specified mode.
+ * @note    Programming an unknown or unsupported mode is silently ignored.
+ *
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
+ * @param[in] mode      pad event mode
+ * @param[in] callback  event callback function
+ * @param[in] arg       callback argument
+ *
+ * @notapi
+ */
+#define pal_lld_enablepadevent(port, pad, mode, callback, arg)              \
+  _pal_lld_enablepadevent(port, pad, mode, callback, arg)
+
+/**
+ * @brief   Pad event disable.
+ * @details This function disables previously programmed event callbacks.
+ *
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
+ *
+ * @notapi
+ */
+#define pal_lld_disablepadevent(port, pad)                                  \
+  _pal_lld_disablepadevent(port, pad)
+
+/**
+ * @brief   Returns a PAL event structure associated to a pad.
+ *
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
+ *
+ * @notapi
+ */
+#define pal_lld_get_pad_event(port, pad)                                    \
+  &_pal_events[pad]; (void)(port)
+
+/**
+ * @brief   Returns a PAL event structure associated to a line.
+ *
+ * @param[in] line      line identifier
+ *
+ * @notapi
+ */
+#define pal_lld_get_line_event(line)                                        \
+  &_pal_events[PAL_PAD(line)]
+
+#if !defined(__DOXYGEN__)
+extern const PALConfig pal_default_config;
+extern palevent_t _pal_events[16];
+#endif
+
 extern ROMCONST PALConfig pal_default_config;
 
 #ifdef __cplusplus
@@ -320,6 +421,18 @@ extern "C" {
   void _pal_lld_setgroupmode(ioportid_t port,
                              ioportmask_t mask,
                              iomode_t mode);
+
+  void _pal_lld_enablepadevent(ioportid_t port,
+                               iopadid_t pad,
+                               ioeventmode_t mode,
+                               palcallback_t callback,
+                               void *arg);
+  void _pal_lld_disablepadevent(ioportid_t port, iopadid_t pad);
+
+  ioline_t _pal_lld_setlineid(ioportid_t port, uint8_t pad);
+  ioportid_t _pal_lld_getportfromline(ioline_t line);
+  uint8_t _pal_lld_getpadfromline(ioline_t line);
+
 #ifdef __cplusplus
 }
 #endif
