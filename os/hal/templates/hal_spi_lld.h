@@ -80,6 +80,32 @@ typedef struct {
    * @brief Operation complete callback or @p NULL.
    */
   spicallback_t             end_cb;
+#if (SPI_SELECT_MODE == SPI_SELECT_MODE_LINE) || defined(__DOXYGEN__)
+  /**
+   * @brief The chip select line.
+   */
+  ioportid_t                ssline;
+#endif
+#if (SPI_SELECT_MODE == SPI_SELECT_MODE_PORT) || defined(__DOXYGEN__)
+  /**
+   * @brief The chip select port.
+   */
+  ioportid_t                ssport;
+  /**
+   * @brief The chip select port mask.
+   */
+  uint8fast_t               ssmask;
+#endif
+#if (SPI_SELECT_MODE == SPI_SELECT_MODE_PAD) || defined(__DOXYGEN__)
+  /**
+   * @brief The chip select port.
+   */
+  ioportid_t                ssport;
+  /**
+   * @brief The chip select pad number.
+   */
+  uint_fast8_t              sspad;
+#endif
   /* End of the mandatory fields.*/
 } SPIConfig;
 

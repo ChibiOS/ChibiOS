@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added to the HAL USB driver a new function usbWakeupHost() for
+       standby exit.
 - NEW: SPI driver improvements, now it is possible to select different
        modes for CS line handling.
 - NEW: Implemented PAL enhancements on all existing STM32 ports.
