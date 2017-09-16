@@ -18,7 +18,7 @@
 #define _BOARD_H_
 
 /*
- * Setup for the PJRC Teensy2++ board.
+ * Setup for the Arduino Leonardo board.
  */
 
 /*
@@ -27,51 +27,92 @@
 #define BOARD_ARDUINO_LEONARDO
 #define BOARD_NAME "Arduino Leonardo"
 
-/* All inputs with pull-ups */
+/*
+ * IO pins assignments.
+ */
+#define BOARD_LED1  7
+
+/*
+ * IO lines assignments.
+ */
+#define LINE_LED1   PAL_LINE(IOPORT3, 7U)
+
+/*
+ * Port A setup.
+ * All inputs with pull-ups.
+ */
 #define VAL_DDRA  0x00
 #define VAL_PORTA 0xFF
 
-/* All inputs with pull-ups */
+/*
+ * Port B setup.
+ * All inputs with pull-ups.
+ */
 #define VAL_DDRB  0x00
 #define VAL_PORTB 0xFF
 
-/* All inputs except PC7 which has a LED connected */
+/*
+ * Port C setup.
+ * All inputs except PC7 which has a LED connected.
+ */
 #define VAL_DDRC  0x80
 #define VAL_PORTC 0xFF
 
-/* All inputs with pull-ups except PD5, TXLED  */
+/*
+ * Port D setup.
+ * All inputs with pull-ups except PD5, TXLED.
+ */
 #define VAL_DDRD  0x10
 #define VAL_PORTD 0xFF
 
-/* All inputs with pull-ups */
+/*
+ * Port E setup.
+ * All inputs with pull-ups.
+ */
 #define VAL_DDRE  0x00
 #define VAL_PORTE 0xFF
 
-/* All inputs with pull-ups */
+/*
+ * Port F setup.
+ * All inputs with pull-ups.
+ */
 #define VAL_DDRF  0x00
 #define VAL_PORTF 0xFF
 
-/* All inputs with pull-ups */
+/*
+ * Port G setup.
+ * All inputs with pull-ups.
+ */
 #define VAL_DDRG  0x00
 #define VAL_PORTG 0xFF
 
-/* All inputs with pull-ups */
+/*
+ * Port H setup.
+ * All inputs with pull-ups.
+ */
 #define VAL_DDRH  0x00
 #define VAL_PORTH 0xFF
 
-/* All inputs with pull-ups */
+/*
+ * Port J setup.
+ * All inputs with pull-ups.
+ */
 #define VAL_DDRJ  0x00
 #define VAL_PORTJ 0xFF
 
-/* All inputs with pull-ups */
+/*
+ * Port K setup.
+ * All inputs with pull-ups.
+ */
 #define VAL_DDRK  0x00
 #define VAL_PORTK 0xFF
 
-/* All inputs with pull-ups */
+/*
+ * Port L setup.
+ * All inputs with pull-ups.
+ */
 #define VAL_DDRL  0x00
 #define VAL_PORTL 0xFF
-
-#define BOARD_LED1        7
 
 #if !defined(_FROM_ASM_)
 #ifdef __cplusplus
