@@ -79,12 +79,12 @@
 		<link>
 			<name>board</name>
 			<type>2</type>
-			<location>/home/chibi/Chibilogic/ChibiOS_trunk/os/hal/boards/ATSAMA5D2_XULT</location>
+			<locationURI>CHIBIOS/os/hal/boards/ATSAMA5D2_XULT</locationURI>
 		</link>
 		<link>
 			<name>os</name>
 			<type>2</type>
-			<location>/home/chibi/Chibilogic/ChibiOS_trunk/os</location>
+			<locationURI>CHIBIOS/os</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
