@@ -92,7 +92,7 @@
 #define pmcDisablePidLow(mask) {                                            \
   pmcDisableWP();                                                           \
   PMC->PMC_PCDR0 |= (mask);                                                 \
-  pmcEnableWP();                                                           \
+  pmcEnableWP();                                                            \
 }
 
 /**
@@ -106,7 +106,7 @@
 #define pmcEnablePidHigh(mask) {                                            \
   pmcDisableWP();                                                           \
   PMC->PMC_PCER1 |= (mask);                                                 \
-  pmcEnableWP();                                                           \
+  pmcEnableWP();                                                            \
 }
 
 /**
