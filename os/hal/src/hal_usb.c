@@ -846,7 +846,7 @@ void _usb_ep0setup(USBDriver *usbp, usbep_t ep) {
       /* Starts the receive phase.*/
       usbp->ep0state = USB_EP0_OUT_RX;
       osalSysLockFromISR();
-      usbStartReceiveI(usbp, 0, usbp->ep0next, usbp->ep0n);
+      usbStartReceiveI(usbp, 0, (uint8_t *)usbp->ep0next, usbp->ep0n);
       osalSysUnlockFromISR();
     }
     else {
