@@ -143,9 +143,6 @@ POST_MAKE_ALL_RULE_HOOK:
 
 $(OBJS): | $(BUILDDIR) $(OBJDIR) $(LSTDIR)
 
-#$(BUILDDIR):
-#	@mkdir -p $(BUILDDIR)
-
 $(BUILDDIR):
 ifneq ($(USE_VERBOSE_COMPILE),yes)
 	@echo Compiler Options
@@ -278,16 +275,6 @@ clean: CLEAN_RULE_HOOK
 	@echo Done
 
 CLEAN_RULE_HOOK:
-
-#
-# Programming rules.
-#
-# TODO: Make this generic according tool used to program.(avr, bosac, etc...).
-program: $(BUILDDIR)/$(PROJECT).hex $(BUILDDIR)/$(PROJECT).eep
-	@echo
-	@echo Programming $(MCU) device.
-	$(AVRDUDE) $(AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FLASH) $(AVRDUDE_WRITE_EEPROM)
-	@echo Done
 
 #
 # Include the dependency files, should be the last of the makefile
