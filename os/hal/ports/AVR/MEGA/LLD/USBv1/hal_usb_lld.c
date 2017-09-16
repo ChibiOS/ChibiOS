@@ -323,7 +323,7 @@ static void ep_isr(USBDriver *usbp, usbep_t ep) {
     _usb_isr_invoke_setup_cb(usbp, ep);
   } else if ((UEIENX & (1 << RXOUTE)) && (UEINTX & (1 << RXOUTI))) {
     /* Received OUT data from host */
-    if (ep == 0 && usbp->ep0state == USB_EP0_WAITING_STS) {
+    if (ep == 0 && usbp->ep0state == USB_EP0_OUT_WAITING_STS) {
       /* SETUP/control transaction complete, invoke the callback. */
       UEIENX &= ~(1 << RXOUTE);
       UEINTX &= ~((1 << RXOUTI) | (1 << FIFOCON));
