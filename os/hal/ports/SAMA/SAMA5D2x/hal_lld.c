@@ -178,7 +178,11 @@ void sama_clock_init(void) {
     ;                                       /* Waits until MCK is stable.   */
 
   mckr &= ~(PMC_MCKR_PRES_Msk | PMC_MCKR_MDIV_Msk | PMC_MCKR_H32MXDIV);
-  mckr |= (SAMA_MCK_PRES | SAMA_MCK_MDIV | SAMA_H64MX_H32MX_DIV);
+  
+  /* Note that prescaler and divider must be changed with separate accesses.*/
+  mckr |= SAMA_MCK_PRES;
+  mckr |= SAMA_MCK_MDIV;
+  mckr |= SAMA_H64MX_H32MX_DIV;
 #if SAMA_PLLADIV2_EN
   mckr |= PMC_MCKR_PLLADIV2;
 #else
