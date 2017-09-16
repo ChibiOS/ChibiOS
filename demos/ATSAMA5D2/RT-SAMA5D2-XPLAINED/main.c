@@ -21,14 +21,14 @@
 #define AICREDIR_KEY 0x5B6C0E26u
 
 /*
- * Seconds counter thread.
+ * Blinker thread.
  */
 static THD_WORKING_AREA(waThread1, 128);
 static THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
   bool ld = true;
-  chRegSetThreadName("counter");
+  chRegSetThreadName("blinker");
 
   while (true) {
   /* TODO: Replace with toggle function of GPIO */
