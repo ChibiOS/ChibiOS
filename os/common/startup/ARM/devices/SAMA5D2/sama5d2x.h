@@ -180,7 +180,7 @@
 #define PERID_SPI1_TX      8
 #define PERID_SPI1_RX      9
 #define PERID_PWM_TX       10
-#define PERID_PWM_RX       0xff
+#define PERID_PWM_RX       0XFF
 #define PERID_FLEXCOM0_TX  11
 #define PERID_FLEXCOM0_RX  12
 #define PERID_FLEXCOM1_TX  13
@@ -195,14 +195,14 @@
 #define PERID_SSC0_RX      22
 #define PERID_SSC1_TX      23
 #define PERID_SSC1_RX      24
-#define PERID_ADC_TX       0xff
+#define PERID_ADC_TX       0XFF
 #define PERID_ADC_RX       25
 #define PERID_AES_TX       26
 #define PERID_AES_RX       27
 #define PERID_TDES_TX      28
 #define PERID_TDES_RX      29
 #define PERID_SHA_TX       30
-#define PERID_SHA_RX       0xff
+#define PERID_SHA_RX       0XFF
 #define PERID_I2SC0_TX     31
 #define PERID_I2SC0_RX     32
 #define PERID_I2SC1_TX     33
@@ -217,15 +217,15 @@
 #define PERID_UART3_RX     42
 #define PERID_UART4_TX     43
 #define PERID_UART4_RX     44
-#define PERID_TC0_TX       0xff
+#define PERID_TC0_TX       0XFF
 #define PERID_TC0_RX       45
-#define PERID_TC1_TX       0xff
+#define PERID_TC1_TX       0XFF
 #define PERID_TC1_RX       46
 #define PERID_CLASSD_TX    47
-#define PERID_CLASSD_RX    0xff
+#define PERID_CLASSD_RX    0XFF
 #define PERID_QSPI1_TX     48
 #define PERID_QSPI1_RX     49
-#define PERID_PDMIC_TX     0xff
+#define PERID_PDMIC_TX     0XFF
 #define PERID_PDMIC_RX     50
 
 #define ID_SAIC_FIQ_MSK       (1 << (ID_SAIC_FIQ & 0x1F))
