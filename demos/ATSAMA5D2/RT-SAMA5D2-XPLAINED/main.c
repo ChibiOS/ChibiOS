@@ -23,7 +23,7 @@
 /*
  * Seconds counter thread.
  */
-static THD_WORKING_AREA(waThread1, 512);
+static THD_WORKING_AREA(waThread1, 128);
 static THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
@@ -40,7 +40,6 @@ static THD_FUNCTION(Thread1, arg) {
       PIOA->PIO_PIO_[1].S_PIO_SODR = S_PIO_SODR_P5;
       ld = true;
     }
-    chprintf((BaseSequentialStream *)&SD0, "THD ChibiOS is running!\r\n\n");
     chThdSleepMilliseconds(500);
   }
 }
