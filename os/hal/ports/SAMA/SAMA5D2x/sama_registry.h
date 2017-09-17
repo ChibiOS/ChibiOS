@@ -52,6 +52,12 @@
 
 #endif /* defined(SAMA5D27) */
 
+/* PIO attributes.*/
+#define SAMA_HAS_PIOA                       TRUE
+#define SAMA_HAS_PIOB                       TRUE
+#define SAMA_HAS_PIOC                       TRUE
+#define SAMA_HAS_PIOD                       FALSE
+
 /** @} */
 
 #endif /* SAMA_REGISTRY_H */
