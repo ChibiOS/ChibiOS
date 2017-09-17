@@ -34,14 +34,14 @@ static THD_FUNCTION(spi_thread_1, p) {
   (void)p;
   chRegSetThreadName("SPI thread 1");
   while (true) {
-    spiAcquireBus(&SPID2);              /* Acquire ownership of the bus.    */
+    spiAcquireBus(&PORTAB_SPI1);        /* Acquire ownership of the bus.    */
     palWriteLine(PORTAB_LINE_LED1, PORTAB_LED_ON);
-    spiStart(&SPID2, &hs_spicfg);       /* Setup transfer parameters.       */
-    spiSelect(&SPID2);                  /* Slave Select assertion.          */
-    spiExchange(&SPID2, 512,
+    spiStart(&PORTAB_SPI1, &hs_spicfg); /* Setup transfer parameters.       */
+    spiSelect(&PORTAB_SPI1);            /* Slave Select assertion.          */
+    spiExchange(&PORTAB_SPI1, 512,
                 txbuf, rxbuf);          /* Atomic transfer operations.      */
-    spiUnselect(&SPID2);                /* Slave Select de-assertion.       */
-    spiReleaseBus(&SPID2);              /* Ownership release.               */
+    spiUnselect(&PORTAB_SPI1);          /* Slave Select de-assertion.       */
+    spiReleaseBus(&PORTAB_SPI1);        /* Ownership release.               */
   }
 }
 
@@ -54,14 +54,14 @@ static THD_FUNCTION(spi_thread_2, p) {
   (void)p;
   chRegSetThreadName("SPI thread 2");
   while (true) {
-    spiAcquireBus(&SPID2);              /* Acquire ownership of the bus.    */
+    spiAcquireBus(&PORTAB_SPI1);        /* Acquire ownership of the bus.    */
     palWriteLine(PORTAB_LINE_LED1, PORTAB_LED_OFF);
-    spiStart(&SPID2, &ls_spicfg);       /* Setup transfer parameters.       */
-    spiSelect(&SPID2);                  /* Slave Select assertion.          */
-    spiExchange(&SPID2, 512,
+    spiStart(&PORTAB_SPI1, &ls_spicfg); /* Setup transfer parameters.       */
+    spiSelect(&PORTAB_SPI1);            /* Slave Select assertion.          */
+    spiExchange(&PORTAB_SPI1, 512,
                 txbuf, rxbuf);          /* Atomic transfer operations.      */
-    spiUnselect(&SPID2);                /* Slave Select de-assertion.       */
-    spiReleaseBus(&SPID2);              /* Ownership release.               */
+    spiUnselect(&PORTAB_SPI1);          /* Slave Select de-assertion.       */
+    spiReleaseBus(&PORTAB_SPI1);        /* Ownership release.               */
   }
 }
 
@@ -98,17 +98,9 @@ int main(void) {
   chSysInit();
 
   /*
-   * SPI2 I/O pins setup.
+   * Board-dependent GPIO setup code.
    */
-  palSetPadMode(GPIOB, 13, PAL_MODE_ALTERNATE(0) |
-                           PAL_STM32_OSPEED_HIGHEST);       /* New SCK.     */
-  palSetPadMode(GPIOB, 14, PAL_MODE_ALTERNATE(0) |
-                           PAL_STM32_OSPEED_HIGHEST);       /* New MISO.    */
-  palSetPadMode(GPIOB, 15, PAL_MODE_ALTERNATE(0) |
-                           PAL_STM32_OSPEED_HIGHEST);       /* New MOSI.    */
-  palSetPad(GPIOB, 12);
-  palSetPadMode(GPIOB, 12, PAL_MODE_OUTPUT_PUSHPULL |
-                           PAL_STM32_OSPEED_HIGHEST);       /* New CS.      */
+  portab_setup();
 
   /*
    * Prepare transmit pattern.

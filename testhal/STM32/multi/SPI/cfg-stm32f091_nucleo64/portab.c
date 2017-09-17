@@ -72,4 +72,20 @@ const SPIConfig ls_spicfg = {
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
+void portab_setup(void) {
+
+  /*
+   * SPI2 I/O pins setup.
+   */
+  palSetPadMode(GPIOB, 13, PAL_MODE_ALTERNATE(0) |
+                           PAL_STM32_OSPEED_HIGHEST);       /* New SCK.     */
+  palSetPadMode(GPIOB, 14, PAL_MODE_ALTERNATE(0) |
+                           PAL_STM32_OSPEED_HIGHEST);       /* New MISO.    */
+  palSetPadMode(GPIOB, 15, PAL_MODE_ALTERNATE(0) |
+                           PAL_STM32_OSPEED_HIGHEST);       /* New MOSI.    */
+  palSetPad(GPIOB, 12);
+  palSetPadMode(GPIOB, 12, PAL_MODE_OUTPUT_PUSHPULL |
+                           PAL_STM32_OSPEED_HIGHEST);       /* New CS.      */
+}
+
 /** @} */
