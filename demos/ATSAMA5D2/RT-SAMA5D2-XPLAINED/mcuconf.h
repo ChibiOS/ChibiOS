@@ -22,6 +22,7 @@
 /*
  * HAL driver system settings.
  */
+#define SAMA_HAL_IS_SECURE                  TRUE
 #define SAMA_NO_INIT                        FALSE
 #define SAMA_MOSCRC_ENABLED                 TRUE
 #define SAMA_MOSCXT_ENABLED                 FALSE

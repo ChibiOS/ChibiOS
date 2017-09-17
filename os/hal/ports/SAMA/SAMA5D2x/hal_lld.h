@@ -197,6 +197,15 @@
  * @{
  */
 /**
+ * @brief   Defines if the code is running in the secure side of the ARM Trust
+ *          Zone. It must be @p TRUE whenever the code is compiled for the
+ *          secure side.
+ */
+#if !defined(SAMA_NO_INIT) || defined(__DOXYGEN__)
+#define SAMA_HAL_IS_SECURE                  TRUE
+#endif
+
+/**
  * @brief   Disables the PMC initialization in the HAL.
  */
 #if !defined(SAMA_NO_INIT) || defined(__DOXYGEN__)
