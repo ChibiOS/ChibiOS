@@ -12,7 +12,8 @@ TESTSRC = ${CHIBIOS}/test/lib/ch_test.c \
           ${CHIBIOS}/test/rt/source/test/test_sequence_009.c \
           ${CHIBIOS}/test/rt/source/test/test_sequence_010.c \
           ${CHIBIOS}/test/rt/source/test/test_sequence_011.c \
-          ${CHIBIOS}/test/rt/source/test/test_sequence_012.c
+          ${CHIBIOS}/test/rt/source/test/test_sequence_012.c \
+          ${CHIBIOS}/test/rt/source/test/test_sequence_013.c
 
 # Required include directories
 TESTINC = ${CHIBIOS}/test/lib \
