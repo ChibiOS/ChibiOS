@@ -74,10 +74,10 @@ int main(void) {
 
     /* Action depending on button state.*/
     if (palReadLine(PORTAB_LINE_BUTTON) == PORTAB_BUTTON_PRESSED) {
-      palWriteLine(PORTAB_LINE_LED1, PORTAB_LEN_ON);
+      palWriteLine(PORTAB_LINE_LED1, PORTAB_LED_ON);
     }
     else {
-      palWriteLine(PORTAB_LINE_LED1, PORTAB_LEN_OFF);
+      palWriteLine(PORTAB_LINE_LED1, PORTAB_LED_OFF);
     }
   }
 }
@@ -144,10 +144,10 @@ int main(void) {
 
     events = chEvtWaitOne(EVENT_MASK(0) | EVENT_MASK(1));
     if (events & EVENT_MASK(0)) {
-      palWriteLine(PORTAB_LINE_LED1, PORTAB_LEN_ON);
+      palWriteLine(PORTAB_LINE_LED1, PORTAB_LED_ON);
     }
     if (events & EVENT_MASK(1)) {
-      palWriteLine(PORTAB_LINE_LED1, PORTAB_LEN_OFF);
+      palWriteLine(PORTAB_LINE_LED1, PORTAB_LED_OFF);
     }
   }
 }

@@ -31,8 +31,8 @@
 
 #define PORTAB_LINE_LED1            LINE_ARD_D13
 //#define PORTAB_LINE_LED2            LINE_LED4
-#define PORTAB_LEN_OFF              PAL_LOW
-#define PORTAB_LEN_ON               PAL_HIGH
+#define PORTAB_LED_OFF              PAL_LOW
+#define PORTAB_LED_ON               PAL_HIGH
 
 #define PORTAB_LINE_BUTTON          LINE_BUTTON_USER
 #define PORTAB_BUTTON_PRESSED       PAL_HIGH

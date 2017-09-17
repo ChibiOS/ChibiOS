@@ -89,6 +89,9 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added a multi-target demo applications for PAL, SPI and USB-CDC
+       showcasing how to manage a project with multiple target boards/devices
+       and handle portability issues.
 - NEW: Added to the HAL USB driver a new function usbWakeupHost() for
        standby exit.
 - NEW: SPI driver improvements, now it is possible to select different
@@ -107,9 +110,6 @@
        those each time a new workspace is created, just import the global
        ChibiOS project in it. The configurations will appear under the
        Eclipse Tools menu.
-- NEW: Added an USB_CDC multi-target demo application showcasing how to
-       manage a project with multiple target boards/devices and handle
-       portability issues.
 - NEW: Improved the various rules.mk to handle "touching" of all
        included makefiles, now the makefile is no more assumed to
        be called "Makefile".
