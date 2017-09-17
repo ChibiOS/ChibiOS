@@ -1,5 +1,5 @@
 *****************************************************************************
-** ChibiOS/HAL - Unified USB driver demo.                                  **
+** ChibiOS/HAL - Unified PAL driver demo.                                  **
 *****************************************************************************
 
 ** TARGET **
@@ -8,7 +8,7 @@ The demo can be compiled to run on multiple STM32 target boards.
 
 ** The Demo **
 
-The application demonstrates the use of the HAL USB driver.
+The application demonstrates the use of the HAL PAL driver.
 
 ** Build Procedure **
 
