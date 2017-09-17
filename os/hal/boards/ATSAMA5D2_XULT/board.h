@@ -206,6 +206,16 @@
 #define PIOD_PIN30                  30U
 #define PIOD_PIN31                  31U
 
+/*
+ * IO lines assignments.
+ */
+#define BOARD_LINE(port, pad)                                               \
+  ((uint32_t)((uint32_t)(port)) | ((uint32_t)(pad)))
+
+#define LINE_LED_BLUE               BOARD_LINE(PIOB, 0U)
+#define LINE_LED_GREEN              BOARD_LINE(PIOB, 5U)
+#define LINE_LED_RED                BOARD_LINE(PIOB, 6U)
+
 #if !defined(_FROM_ASM_)
 #ifdef __cplusplus
 extern "C" {

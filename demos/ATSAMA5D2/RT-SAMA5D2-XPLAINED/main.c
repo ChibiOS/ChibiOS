@@ -27,9 +27,7 @@ static THD_FUNCTION(Thread1, arg) {
   chRegSetThreadName("blinker");
 
   while (true) {
-    PIOA->PIO_PIO_[1].S_PIO_CODR = S_PIO_CODR_P5;
-    chThdSleepMilliseconds(500);
-    PIOA->PIO_PIO_[1].S_PIO_SODR = S_PIO_SODR_P5;
+    palToggleLine(LINE_LED_BLUE);
     chThdSleepMilliseconds(500);
   }
 }

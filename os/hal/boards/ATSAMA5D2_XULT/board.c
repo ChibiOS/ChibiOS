@@ -16,6 +16,7 @@
 
 #include "hal.h"
 
+#define _PIOA                       ((Pio*)0xFC038000U)
 /*
  * SAMA PIO CFGR masks.
  */
@@ -110,64 +111,64 @@ void boardInit(void) {
   /* Configuring all PIO A pads with default configuration.  */
 #if SAMA_HAS_PIOA
 #if SAMA_HAL_IS_SECURE
-  PIOA->PIO_PIO_[SAMA_PIOA].S_PIO_SIOSR = SAMA_DEFAULT_SIOSR;
-  PIOA->PIO_PIO_[SAMA_PIOA].S_PIO_SIONR = SAMA_DEFAULT_SIONR;
+  _PIOA->PIO_PIO_[SAMA_PIOA].S_PIO_SIOSR = SAMA_DEFAULT_SIOSR;
+  _PIOA->PIO_PIO_[SAMA_PIOA].S_PIO_SIONR = SAMA_DEFAULT_SIONR;
 #endif /* SAMA_HAL_IS_SECURE */
-  PIOA->PIO_PIO_[SAMA_PIOA].S_PIO_MSKR = SAMA_DEFAULT_MSKR;
-  PIOA->PIO_PIO_[SAMA_PIOA].S_PIO_CFGR = SAMA_DEFAULT_CFGR;
+  _PIOA->PIO_PIO_[SAMA_PIOA].S_PIO_MSKR = SAMA_DEFAULT_MSKR;
+  _PIOA->PIO_PIO_[SAMA_PIOA].S_PIO_CFGR = SAMA_DEFAULT_CFGR;
 #endif /* SAMA_HAS_PIOA */
 
   /* Configuring all PIO B pads with default configuration.  */
 #if SAMA_HAS_PIOB
 #if SAMA_HAL_IS_SECURE
-  PIOA->PIO_PIO_[SAMA_PIOB].S_PIO_SIOSR = SAMA_DEFAULT_SIOSR;
-  PIOA->PIO_PIO_[SAMA_PIOB].S_PIO_SIONR = SAMA_DEFAULT_SIONR;
+  _PIOA->PIO_PIO_[SAMA_PIOB].S_PIO_SIOSR = SAMA_DEFAULT_SIOSR;
+  _PIOA->PIO_PIO_[SAMA_PIOB].S_PIO_SIONR = SAMA_DEFAULT_SIONR;
 #endif /* SAMA_HAL_IS_SECURE */
-  PIOA->PIO_PIO_[SAMA_PIOB].S_PIO_MSKR = SAMA_DEFAULT_MSKR;
-  PIOA->PIO_PIO_[SAMA_PIOB].S_PIO_CFGR = SAMA_DEFAULT_CFGR;
+  _PIOA->PIO_PIO_[SAMA_PIOB].S_PIO_MSKR = SAMA_DEFAULT_MSKR;
+  _PIOA->PIO_PIO_[SAMA_PIOB].S_PIO_CFGR = SAMA_DEFAULT_CFGR;
 #endif /* SAMA_HAS_PIOB */
 
   /* Configuring all PIO C pads with default configuration.  */
 #if SAMA_HAS_PIOC
 #if SAMA_HAL_IS_SECURE
-  PIOA->PIO_PIO_[SAMA_PIOC].S_PIO_SIOSR = SAMA_DEFAULT_SIOSR;
-  PIOA->PIO_PIO_[SAMA_PIOC].S_PIO_SIONR = SAMA_DEFAULT_SIONR;
+  _PIOA->PIO_PIO_[SAMA_PIOC].S_PIO_SIOSR = SAMA_DEFAULT_SIOSR;
+  _PIOA->PIO_PIO_[SAMA_PIOC].S_PIO_SIONR = SAMA_DEFAULT_SIONR;
 #endif /* SAMA_HAL_IS_SECURE */
-  PIOA->PIO_PIO_[SAMA_PIOC].S_PIO_MSKR = SAMA_DEFAULT_MSKR;
-  PIOA->PIO_PIO_[SAMA_PIOC].S_PIO_CFGR = SAMA_DEFAULT_CFGR;
+  _PIOA->PIO_PIO_[SAMA_PIOC].S_PIO_MSKR = SAMA_DEFAULT_MSKR;
+  _PIOA->PIO_PIO_[SAMA_PIOC].S_PIO_CFGR = SAMA_DEFAULT_CFGR;
 #endif /* SAMA_HAS_PIOC */
 
   /* Configuring all PIO D pads with default configuration.  */
 #if SAMA_HAS_PIOD
 #if SAMA_HAL_IS_SECURE
-  PIOA->PIO_PIO_[SAMA_PIOD].S_PIO_SIOSR = SAMA_DEFAULT_SIOSR;
-  PIOA->PIO_PIO_[SAMA_PIOD].S_PIO_SIONR = SAMA_DEFAULT_SIONR;
+  _PIOA->PIO_PIO_[SAMA_PIOD].S_PIO_SIOSR = SAMA_DEFAULT_SIOSR;
+  _PIOA->PIO_PIO_[SAMA_PIOD].S_PIO_SIONR = SAMA_DEFAULT_SIONR;
 #endif /* SAMA_HAL_IS_SECURE */
-  PIOA->PIO_PIO_[SAMA_PIOD].S_PIO_MSKR = SAMA_DEFAULT_MSKR;
-  PIOA->PIO_PIO_[SAMA_PIOD].S_PIO_CFGR = SAMA_DEFAULT_CFGR;
+  _PIOA->PIO_PIO_[SAMA_PIOD].S_PIO_MSKR = SAMA_DEFAULT_MSKR;
+  _PIOA->PIO_PIO_[SAMA_PIOD].S_PIO_CFGR = SAMA_DEFAULT_CFGR;
 #endif /* SAMA_HAS_PIOD */
 
   /* Initialize PIO registers for defined pads.*/
   i = 0;
   while (sama_inits[i].pio_id != -1) {
 #if SAMA_HAL_IS_SECURE
-    PIOA->PIO_PIO_[sama_inits[i].pio_id].S_PIO_SIOSR = sama_inits[i].pio_msk;
-    PIOA->PIO_PIO_[sama_inits[i].pio_id].S_PIO_MSKR = sama_inits[i].pio_msk;
-    PIOA->PIO_PIO_[sama_inits[i].pio_id].S_PIO_CFGR = sama_inits[i].pio_cfg;
+    _PIOA->PIO_PIO_[sama_inits[i].pio_id].S_PIO_SIOSR = sama_inits[i].pio_msk;
+    _PIOA->PIO_PIO_[sama_inits[i].pio_id].S_PIO_MSKR = sama_inits[i].pio_msk;
+    _PIOA->PIO_PIO_[sama_inits[i].pio_id].S_PIO_CFGR = sama_inits[i].pio_cfg;
     if(sama_inits[i].pio_ods == SAMA_PIO_HIGH) {
-      PIOA->PIO_PIO_[sama_inits[i].pio_id].S_PIO_SODR = sama_inits[i].pio_msk;
+      _PIOA->PIO_PIO_[sama_inits[i].pio_id].S_PIO_SODR = sama_inits[i].pio_msk;
     }
     else {
-      PIOA->PIO_PIO_[sama_inits[i].pio_id].S_PIO_CODR = sama_inits[i].pio_msk;
+      _PIOA->PIO_PIO_[sama_inits[i].pio_id].S_PIO_CODR = sama_inits[i].pio_msk;
     }
 #else
-    PIOA->PIO_IO_GROUP[sama_inits[i].pio_id].PIO_MSKR = sama_inits[i].pio_msk;
-    PIOA->PIO_IO_GROUP[sama_inits[i].pio_id].PIO_CFGR = sama_inits[i].pio_cfg;
+    _PIOA->PIO_IO_GROUP[sama_inits[i].pio_id].PIO_MSKR = sama_inits[i].pio_msk;
+    _PIOA->PIO_IO_GROUP[sama_inits[i].pio_id].PIO_CFGR = sama_inits[i].pio_cfg;
     if(sama_inits[i].pio_ods == SAMA_PIO_HIGH) {
-      PIOA->PIO_IO_GROUP[sama_inits[i].pio_id].PIO_SODR = sama_inits[i].pio_msk;
+      _PIOA->PIO_IO_GROUP[sama_inits[i].pio_id].PIO_SODR = sama_inits[i].pio_msk;
     }
     else {
-      PIOA->PIO_IO_GROUP[sama_inits[i].pio_id].PIO_CODR = sama_inits[i].pio_msk;
+      _PIOA->PIO_IO_GROUP[sama_inits[i].pio_id].PIO_CODR = sama_inits[i].pio_msk;
     }
 #endif /* SAMA_HAL_IS_SECURE */
     i++;

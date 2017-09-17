@@ -54,10 +54,27 @@
 
 /* PIO attributes.*/
 #define SAMA_HAS_PIOA                       TRUE
-#define SAMA_HAS_PIOB                       TRUE
-#define SAMA_HAS_PIOC                       TRUE
-#define SAMA_HAS_PIOD                       FALSE
+#if SAMA_HAL_IS_SECURE
+#define PIOA_BASE                           0xFC039000U
+#else
+#define PIOA_BASE                           0xFC038000U
+#endif
 
+#define SAMA_HAS_PIOB                       TRUE
+#if SAMA_HAL_IS_SECURE
+#define PIOB_BASE                           0xFC039040U
+#else
+#define PIOB_BASE                           0xFC038040U
+#endif
+
+#define SAMA_HAS_PIOC                       TRUE
+#if SAMA_HAL_IS_SECURE
+#define PIOC_BASE                           0xFC039080U
+#else
+#define PIOC_BASE                           0xFC038080U
+#endif
+
+#define SAMA_HAS_PIOD                       FALSE
 /** @} */
 
 #endif /* SAMA_REGISTRY_H */
