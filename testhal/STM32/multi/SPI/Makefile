@@ -1,0 +1,18 @@
+##############################################################################
+# Multi-project makefile rules
+#
+
+all:
+	@echo
+	@echo === Building for STM32F091-Nucleo64 ================================
+	@make --no-print-directory -f Makefile-stm32f091_nucleo64 all
+	@echo ====================================================================
+	@echo
+
+clean:
+	@echo
+	-@make --no-print-directory -f Makefile-stm32f091_nucleo64 clean
+	@echo
+
+#
+##############################################################################
