@@ -152,7 +152,6 @@ void boardInit(void) {
   while (sama_inits[i].pio_id != -1) {
 #if SAMA_HAL_IS_SECURE
     PIOA->PIO_PIO_[sama_inits[i].pio_id].S_PIO_SIOSR = sama_inits[i].pio_msk;
-#endif /* SAMA_HAL_IS_SECURE */
     PIOA->PIO_PIO_[sama_inits[i].pio_id].S_PIO_MSKR = sama_inits[i].pio_msk;
     PIOA->PIO_PIO_[sama_inits[i].pio_id].S_PIO_CFGR = sama_inits[i].pio_cfg;
     if(sama_inits[i].pio_ods == SAMA_PIO_HIGH) {
@@ -161,6 +160,16 @@ void boardInit(void) {
     else {
       PIOA->PIO_PIO_[sama_inits[i].pio_id].S_PIO_CODR = sama_inits[i].pio_msk;
     }
+#else
+    PIOA->PIO_IO_GROUP[sama_inits[i].pio_id].PIO_MSKR = sama_inits[i].pio_msk;
+    PIOA->PIO_IO_GROUP[sama_inits[i].pio_id].PIO_CFGR = sama_inits[i].pio_cfg;
+    if(sama_inits[i].pio_ods == SAMA_PIO_HIGH) {
+      PIOA->PIO_IO_GROUP[sama_inits[i].pio_id].PIO_SODR = sama_inits[i].pio_msk;
+    }
+    else {
+      PIOA->PIO_IO_GROUP[sama_inits[i].pio_id].PIO_CODR = sama_inits[i].pio_msk;
+    }
+#endif /* SAMA_HAL_IS_SECURE */
     i++;
   }
 }
