@@ -59,6 +59,17 @@
  * @notapi
  */
 void hal_lld_init(void) {
+
+  /* Disabling PMC write protection. */
+  pmcDisableWP();
+
+  /* Enabling matrix clock */
+  pmcEnableH32MX();
+  pmcEnableH64MX();
+
+  /* Enabling write protection.  */
+  pmcEnableWP();
+
 #if defined(SAMA_DMA_REQUIRED)
   dmaInit();
 #endif
