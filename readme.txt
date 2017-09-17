@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 17.6.1 ***
+- HAL: Fixed EXT low level driver bug on AVR port (bug #886).
 - NEW: Improved RT and NIL test suite to report version numbers and
        configuration settings.
 - NEW: Added a test suite generator tool written in FTL.
