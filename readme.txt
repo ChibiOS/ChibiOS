@@ -91,6 +91,7 @@
 *** 17.6.1 ***
 - NEW: Improved RT and NIL test suite to report version numbers and
        configuration settings.
+- NEW: Added a test suite generator tool written in FTL.
 - NEW: Added to the HAL USB driver a new function usbWakeupHost() for
        standby exit.
 - HAL: Fixed USB GET_DESCRIPTOR not handled for Interface Recipients (bug #885).
