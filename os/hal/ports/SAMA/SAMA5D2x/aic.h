@@ -29,6 +29,11 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   AIC unique redirect key.
+ */
+#define AIC_REDIR_KEY                       0x5B6C0E26U
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -47,10 +52,9 @@
 
 /**
  * @brief   Acknowledge the current interrupt.
- *
  */
-#define aicAckInt() {                                                  \
-  SAIC->AIC_EOICR = AIC_EOICR_ENDIT;                                         \
+#define aicAckInt() {                                                       \
+  SAIC->AIC_EOICR = AIC_EOICR_ENDIT;                                        \
 }
 
 /*===========================================================================*/

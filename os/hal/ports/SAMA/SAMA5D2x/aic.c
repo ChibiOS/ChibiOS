@@ -82,7 +82,17 @@
  */
 void aicInit(void) {
 
+#if SAMA_HAL_IS_SECURE
   Aic *aic = SAIC;
+  /* Redirect interrupts */
+  uint32_t aicredir = SFR_AICREDIR_AICREDIRKEY(AIC_REDIR_KEY);
+  SFR->SFR_AICREDIR = (aicredir ^ SFR->SFR_SN1);
+#else
+  Aic *aic = AIC;
+  /* Redirect interrupts */
+  uint32_t aicredir = SFR_AICREDIR_AICREDIRKEY(AIC_REDIR_KEY);
+  SFR->SFR_AICREDIR = (aicredir ^ SFR->SFR_SN1) | SFR_AICREDIR_NSAIC;
+#endif
 
   unsigned i;
   /* Disable all interrupts */
