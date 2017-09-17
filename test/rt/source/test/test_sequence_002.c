@@ -22,13 +22,16 @@
  * @file    test_sequence_002.c
  * @brief   Test Sequence 002 code.
  *
- * @page test_sequence_002 [2] Threads Functionality
+ * @page test_sequence_002 [2] System layer and port interface
  *
  * File: @ref test_sequence_002.c
  *
  * <h2>Description</h2>
- * This sequence tests the ChibiOS/RT functionalities related to
- * threading.
+ * The functionality of the system layer and port interface is tested.
+ * Basic RT functionality is taken for granted or this test suite could
+ * not even be executed. Errors in implementation are detected by
+ * executing this sequence with the state checker enabled
+ * (CH_DBG_STATE_CHECKER=TRUE).
  *
  * <h2>Test Cases</h2>
  * - @subpage test_002_001
@@ -42,9 +45,21 @@
  * Shared code.
  ****************************************************************************/
 
-static THD_FUNCTION(thread, p) {
+/* Timer callback for testing system functions in ISR context.*/
+static void vtcb(void *p) {
+  syssts_t sts;
 
-  test_emit_token(*(char *)p);
+  (void)p;
+
+  /* Testing normal case.*/
+  chSysLockFromISR();
+  chSysUnlockFromISR();
+
+  /* Reentrant case.*/
+  chSysLockFromISR();
+  sts = chSysGetStatusAndLockX();
+  chSysRestoreStatusX(sts);
+  chSysUnlockFromISR();
 }
 
 /****************************************************************************
@@ -52,293 +67,216 @@ static THD_FUNCTION(thread, p) {
  ****************************************************************************/
 
 /**
- * @page test_002_001 [2.1] Thread Sleep functionality
+ * @page test_002_001 [2.1] System integrity functionality
  *
  * <h2>Description</h2>
- * The functionality of @p chThdSleep() and derivatives is tested.
+ * The system self-test functionality is invoked in order to make an
+ * initial system state assessment and for coverage.
  *
  * <h2>Test Steps</h2>
- * - [2.1.1] The current system time is read then a sleep is performed
- *   for 100 system ticks and on exit the system time is verified
- *   again.
- * - [2.1.2] The current system time is read then a sleep is performed
- *   for 100000 microseconds and on exit the system time is verified
- *   again.
- * - [2.1.3] The current system time is read then a sleep is performed
- *   for 100 milliseconds and on exit the system time is verified
- *   again.
- * - [2.1.4] The current system time is read then a sleep is performed
- *   for 1 second and on exit the system time is verified again.
- * - [2.1.5] Function chThdSleepUntil() is tested with a timeline of
- *   "now" + 100 ticks.
+ * - [2.1.1] Testing Ready List integrity.
+ * - [2.1.2] Testing Virtual Timers List integrity.
+ * - [2.1.3] Testing Registry List integrity.
+ * - [2.1.4] Testing Port-defined integrity.
  * .
  */
 
 static void test_002_001_execute(void) {
-  systime_t time;
+  bool result;
 
-  /* [2.1.1] The current system time is read then a sleep is performed
-     for 100 system ticks and on exit the system time is verified
-     again.*/
+  /* [2.1.1] Testing Ready List integrity.*/
   test_set_step(1);
   {
-    time = chVTGetSystemTimeX();
-    chThdSleep(100);
-    test_assert_time_window(time + 100,
-                            time + 100 + CH_CFG_ST_TIMEDELTA + 1,
-                            "out of time window");
+    chSysLock();
+    result = chSysIntegrityCheckI(CH_INTEGRITY_RLIST);
+    chSysUnlock();
+    test_assert(result == false, "ready list check failed");
   }
 
-  /* [2.1.2] The current system time is read then a sleep is performed
-     for 100000 microseconds and on exit the system time is verified
-     again.*/
+  /* [2.1.2] Testing Virtual Timers List integrity.*/
   test_set_step(2);
   {
-    time = chVTGetSystemTimeX();
-    chThdSleepMicroseconds(100000);
-    test_assert_time_window(time + US2ST(100000),
-                            time + US2ST(100000) + CH_CFG_ST_TIMEDELTA + 1,
-                            "out of time window");
+    chSysLock();
+    result = chSysIntegrityCheckI(CH_INTEGRITY_VTLIST);
+    chSysUnlock();
+    test_assert(result == false, "virtual timers list check failed");
   }
 
-  /* [2.1.3] The current system time is read then a sleep is performed
-     for 100 milliseconds and on exit the system time is verified
-     again.*/
+  /* [2.1.3] Testing Registry List integrity.*/
   test_set_step(3);
   {
-    time = chVTGetSystemTimeX();
-    chThdSleepMilliseconds(100);
-    test_assert_time_window(time + MS2ST(100),
-                            time + MS2ST(100) + CH_CFG_ST_TIMEDELTA + 1,
-                            "out of time window");
+    chSysLock();
+    result = chSysIntegrityCheckI(CH_INTEGRITY_REGISTRY);
+    chSysUnlock();
+    test_assert(result == false, "registry list check failed");
   }
 
-  /* [2.1.4] The current system time is read then a sleep is performed
-     for 1 second and on exit the system time is verified again.*/
+  /* [2.1.4] Testing Port-defined integrity.*/
   test_set_step(4);
   {
-    time = chVTGetSystemTimeX();
-    chThdSleepSeconds(1);
-    test_assert_time_window(time + S2ST(1),
-                            time + S2ST(1) + CH_CFG_ST_TIMEDELTA + 1,
-                            "out of time window");
-  }
-
-  /* [2.1.5] Function chThdSleepUntil() is tested with a timeline of
-     "now" + 100 ticks.*/
-  test_set_step(5);
-  {
-    time = chVTGetSystemTimeX();
-    chThdSleepUntil(time + 100);
-    test_assert_time_window(time + 100,
-                            time + 100 + CH_CFG_ST_TIMEDELTA + 1,
-                            "out of time window");
+    chSysLock();
+    result = chSysIntegrityCheckI(CH_INTEGRITY_PORT);
+    chSysUnlock();
+    test_assert(result == false, "port layer check failed");
   }
 }
 
 static const testcase_t test_002_001 = {
-  "Thread Sleep functionality",
+  "System integrity functionality",
   NULL,
   NULL,
   test_002_001_execute
 };
 
 /**
- * @page test_002_002 [2.2] Ready List functionality, threads priority order
+ * @page test_002_002 [2.2] Critical zones functionality
  *
  * <h2>Description</h2>
- * Five threads, are enqueued in the ready list and atomically
- * executed. The test expects the threads to perform their operations
- * in correct priority order regardless of the initial order.
+ * The critical zones API is invoked for coverage.
  *
  * <h2>Test Steps</h2>
- * - [2.2.1] Creating 5 threads with increasing priority, execution
- *   sequence is tested.
- * - [2.2.2] Creating 5 threads with decreasing priority, execution
- *   sequence is tested.
- * - [2.2.3] Creating 5 threads with pseudo-random priority, execution
- *   sequence is tested.
+ * - [2.2.1] Testing chSysGetStatusAndLockX() and
+ *   chSysRestoreStatusX(), non reentrant case.
+ * - [2.2.2] Testing chSysGetStatusAndLockX() and
+ *   chSysRestoreStatusX(), reentrant case.
+ * - [2.2.3] Testing chSysUnconditionalLock().
+ * - [2.2.4] Testing chSysUnconditionalUnlock().
+ * - [2.2.5] Testing from ISR context using a virtual timer.
  * .
  */
 
 static void test_002_002_execute(void) {
+  syssts_t sts;
+  virtual_timer_t vt;
 
-  /* [2.2.1] Creating 5 threads with increasing priority, execution
-     sequence is tested.*/
+  /* [2.2.1] Testing chSysGetStatusAndLockX() and
+     chSysRestoreStatusX(), non reentrant case.*/
   test_set_step(1);
   {
-    threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()-5, thread, "E");
-    threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriorityX()-4, thread, "D");
-    threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriorityX()-3, thread, "C");
-    threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()-2, thread, "B");
-    threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()-1, thread, "A");
-    test_wait_threads();
-    test_assert_sequence("ABCDE", "invalid sequence");
+    sts = chSysGetStatusAndLockX();
+    chSysRestoreStatusX(sts);
   }
 
-  /* [2.2.2] Creating 5 threads with decreasing priority, execution
-     sequence is tested.*/
+  /* [2.2.2] Testing chSysGetStatusAndLockX() and
+     chSysRestoreStatusX(), reentrant case.*/
   test_set_step(2);
   {
-    threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()-1, thread, "A");
-    threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()-2, thread, "B");
-    threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriorityX()-3, thread, "C");
-    threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriorityX()-4, thread, "D");
-    threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()-5, thread, "E");
-    test_wait_threads();
-    test_assert_sequence("ABCDE", "invalid sequence");
+    chSysLock();
+    sts = chSysGetStatusAndLockX();
+    chSysRestoreStatusX(sts);
+    chSysUnlock();
   }
 
-  /* [2.2.3] Creating 5 threads with pseudo-random priority, execution
-     sequence is tested.*/
+  /* [2.2.3] Testing chSysUnconditionalLock().*/
   test_set_step(3);
   {
-    threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriorityX()-4, thread, "D");
-    threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()-5, thread, "E");
-    threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()-1, thread, "A");
-    threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()-2, thread, "B");
-    threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriorityX()-3, thread, "C");
-    test_wait_threads();
-    test_assert_sequence("ABCDE", "invalid sequence");
+    chSysUnconditionalLock();
+    chSysUnconditionalLock();
+    chSysUnlock();
+  }
+
+  /* [2.2.4] Testing chSysUnconditionalUnlock().*/
+  test_set_step(4);
+  {
+    chSysLock();
+    chSysUnconditionalUnlock();
+    chSysUnconditionalUnlock();
+  }
+
+  /* [2.2.5] Testing from ISR context using a virtual timer.*/
+  test_set_step(5);
+  {
+    chVTObjectInit(&vt);
+    chVTSet(&vt, 1, vtcb, NULL);
+    chThdSleep(10);
+
+    test_assert(chVTIsArmed(&vt) == false, "timer still armed");
   }
 }
 
 static const testcase_t test_002_002 = {
-  "Ready List functionality, threads priority order",
+  "Critical zones functionality",
   NULL,
   NULL,
   test_002_002_execute
 };
 
 /**
- * @page test_002_003 [2.3] Priority change test
+ * @page test_002_003 [2.3] Interrupts handling functionality
  *
  * <h2>Description</h2>
- * A series of priority changes are performed on the current thread in
- * order to verify that the priority change happens as expected.
+ * The interrupts handling API is invoked for coverage.
  *
  * <h2>Test Steps</h2>
- * - [2.3.1] Thread priority is increased by one then a check is
- *   performed.
- * - [2.3.2] Thread priority is returned to the previous value then a
- *   check is performed.
+ * - [2.3.1] Testing chSysSuspend(), chSysDisable() and chSysEnable().
  * .
  */
 
 static void test_002_003_execute(void) {
-  tprio_t prio, p1;
 
-  /* [2.3.1] Thread priority is increased by one then a check is
-     performed.*/
+  /* [2.3.1] Testing chSysSuspend(), chSysDisable() and
+     chSysEnable().*/
   test_set_step(1);
   {
-    prio = chThdGetPriorityX();
-    p1 = chThdSetPriority(prio + 1);
-    test_assert(p1 == prio, "unexpected returned priority level");
-    test_assert(chThdGetPriorityX() == prio + 1, "unexpected priority level");
-  }
-
-  /* [2.3.2] Thread priority is returned to the previous value then a
-     check is performed.*/
-  test_set_step(2);
-  {
-    p1 = chThdSetPriority(p1);
-    test_assert(p1 == prio + 1, "unexpected returned priority level");
-    test_assert(chThdGetPriorityX() == prio, "unexpected priority level");
+    chSysSuspend();
+    chSysDisable();
+    chSysSuspend();
+    chSysEnable();
   }
 }
 
 static const testcase_t test_002_003 = {
-  "Priority change test",
+  "Interrupts handling functionality",
   NULL,
   NULL,
   test_002_003_execute
 };
 
-#if (CH_CFG_USE_MUTEXES) || defined(__DOXYGEN__)
 /**
- * @page test_002_004 [2.4] Priority change test with Priority Inheritance
+ * @page test_002_004 [2.4] System Tick Counter functionality
  *
  * <h2>Description</h2>
- * A series of priority changes are performed on the current thread in
- * order to verify that the priority change happens as expected.
- *
- * <h2>Conditions</h2>
- * This test is only executed if the following preprocessor condition
- * evaluates to true:
- * - CH_CFG_USE_MUTEXES
- * .
+ * The functionality of the API @p chVTGetSystemTimeX() is tested.
  *
  * <h2>Test Steps</h2>
- * - [2.4.1] Simulating a priority boost situation (prio > realprio).
- * - [2.4.2] Raising thread priority above original priority but below
- *   the boosted level.
- * - [2.4.3] Raising thread priority above the boosted level.
- * - [2.4.4] Restoring original conditions.
+ * - [2.4.1] A System Tick Counter increment is expected, the test
+ *   simply hangs if it does not happen.
  * .
  */
 
 static void test_002_004_execute(void) {
-  tprio_t prio, p1;
 
-  /* [2.4.1] Simulating a priority boost situation (prio > realprio).*/
+  /* [2.4.1] A System Tick Counter increment is expected, the test
+     simply hangs if it does not happen.*/
   test_set_step(1);
   {
-    prio = chThdGetPriorityX();
-    chThdGetSelfX()->prio += 2;
-    test_assert(chThdGetPriorityX() == prio + 2, "unexpected priority level");
-  }
-
-  /* [2.4.2] Raising thread priority above original priority but below
-     the boosted level.*/
-  test_set_step(2);
-  {
-    p1 = chThdSetPriority(prio + 1);
-    test_assert(p1 == prio, "unexpected returned priority level");
-    test_assert(chThdGetSelfX()->prio == prio + 2, "unexpected priority level");
-    test_assert(chThdGetSelfX()->realprio == prio + 1, "unexpected returned real priority level");
-  }
-
-  /* [2.4.3] Raising thread priority above the boosted level.*/
-  test_set_step(3);
-  {
-    p1 = chThdSetPriority(prio + 3);
-    test_assert(p1 == prio + 1, "unexpected returned priority level");
-    test_assert(chThdGetSelfX()->prio == prio + 3, "unexpected priority level");
-    test_assert(chThdGetSelfX()->realprio == prio + 3, "unexpected real priority level");
-  }
-
-  /* [2.4.4] Restoring original conditions.*/
-  test_set_step(4);
-  {
-    chSysLock();
-    chThdGetSelfX()->prio = prio;
-    chThdGetSelfX()->realprio = prio;
-    chSysUnlock();
+    systime_t time = chVTGetSystemTimeX();
+    while (time == chVTGetSystemTimeX()) {
+#if defined(SIMULATOR)
+      _sim_check_for_interrupts();
+#endif
+    }
   }
 }
 
 static const testcase_t test_002_004 = {
-  "Priority change test with Priority Inheritance",
+  "System Tick Counter functionality",
   NULL,
   NULL,
   test_002_004_execute
 };
-#endif /* CH_CFG_USE_MUTEXES */
 
 /****************************************************************************
  * Exported data.
  ****************************************************************************/
 
 /**
- * @brief   Threads Functionality.
+ * @brief   System layer and port interface.
  */
 const testcase_t * const test_sequence_002[] = {
   &test_002_001,
   &test_002_002,
   &test_002_003,
-#if (CH_CFG_USE_MUTEXES) || defined(__DOXYGEN__)
   &test_002_004,
-#endif
   NULL
 };

@@ -22,22 +22,17 @@
  * @file    test_sequence_001.c
  * @brief   Test Sequence 001 code.
  *
- * @page test_sequence_001 [1] System layer and port interface
+ * @page test_sequence_001 [1] Information
  *
  * File: @ref test_sequence_001.c
  *
  * <h2>Description</h2>
- * The functionality of the system layer and port interface is tested.
- * Basic RT functionality is taken for granted or this test suite could
- * not even be executed. Errors in implementation are detected by
- * executing this sequence with the state checker enabled
- * (CH_DBG_STATE_CHECKER=TRUE).
+ * This sequence reports configuration and version information about
+ * the RT kernel.
  *
  * <h2>Test Cases</h2>
  * - @subpage test_001_001
  * - @subpage test_001_002
- * - @subpage test_001_003
- * - @subpage test_001_004
  * .
  */
 
@@ -45,225 +40,179 @@
  * Shared code.
  ****************************************************************************/
 
-/* Timer callback for testing system functions in ISR context.*/
-static void vtcb(void *p) {
-  syssts_t sts;
-
-  (void)p;
-
-  /* Testing normal case.*/
-  chSysLockFromISR();
-  chSysUnlockFromISR();
-
-  /* Reentrant case.*/
-  chSysLockFromISR();
-  sts = chSysGetStatusAndLockX();
-  chSysRestoreStatusX(sts);
-  chSysUnlockFromISR();
-}
+#include "ch.h"
 
 /****************************************************************************
  * Test cases.
  ****************************************************************************/
 
 /**
- * @page test_001_001 [1.1] System integrity functionality
+ * @page test_001_001 [1.1] Kernel Info
  *
  * <h2>Description</h2>
- * The system self-test functionality is invoked in order to make an
- * initial system state assessment and for coverage.
+ * The version numbers are reported.
  *
  * <h2>Test Steps</h2>
- * - [1.1.1] Testing Ready List integrity.
- * - [1.1.2] Testing Virtual Timers List integrity.
- * - [1.1.3] Testing Registry List integrity.
- * - [1.1.4] Testing Port-defined integrity.
+ * - [1.1.1] Prints the version string.
  * .
  */
 
 static void test_001_001_execute(void) {
-  bool result;
 
-  /* [1.1.1] Testing Ready List integrity.*/
+  /* [1.1.1] Prints the version string.*/
   test_set_step(1);
   {
-    chSysLock();
-    result = chSysIntegrityCheckI(CH_INTEGRITY_RLIST);
-    chSysUnlock();
-    test_assert(result == false, "ready list check failed");
-  }
-
-  /* [1.1.2] Testing Virtual Timers List integrity.*/
-  test_set_step(2);
-  {
-    chSysLock();
-    result = chSysIntegrityCheckI(CH_INTEGRITY_VTLIST);
-    chSysUnlock();
-    test_assert(result == false, "virtual timers list check failed");
-  }
-
-  /* [1.1.3] Testing Registry List integrity.*/
-  test_set_step(3);
-  {
-    chSysLock();
-    result = chSysIntegrityCheckI(CH_INTEGRITY_REGISTRY);
-    chSysUnlock();
-    test_assert(result == false, "registry list check failed");
-  }
-
-  /* [1.1.4] Testing Port-defined integrity.*/
-  test_set_step(4);
-  {
-    chSysLock();
-    result = chSysIntegrityCheckI(CH_INTEGRITY_PORT);
-    chSysUnlock();
-    test_assert(result == false, "port layer check failed");
+    test_println("*** Product:                   ChibiOS/RT");
+    test_print("*** Stable Flag:               ");
+    test_printn(CH_KERNEL_STABLE);
+    test_println("");
+    test_print("*** Version String:            ");
+    test_println(CH_KERNEL_VERSION);
+    test_print("*** Major Number:              ");
+    test_printn(CH_KERNEL_MAJOR);
+    test_println("");
+    test_print("*** Minor Number:              ");
+    test_printn(CH_KERNEL_MINOR);
+    test_println("");
+    test_print("*** Patch Number:              ");
+    test_printn(CH_KERNEL_PATCH);
+    test_println("");
   }
 }
 
 static const testcase_t test_001_001 = {
-  "System integrity functionality",
+  "Kernel Info",
   NULL,
   NULL,
   test_001_001_execute
 };
 
 /**
- * @page test_001_002 [1.2] Critical zones functionality
+ * @page test_001_002 [1.2] Kernel Settings
  *
  * <h2>Description</h2>
- * The critical zones API is invoked for coverage.
+ * The static kernel settings are reported.
  *
  * <h2>Test Steps</h2>
- * - [1.2.1] Testing chSysGetStatusAndLockX() and
- *   chSysRestoreStatusX(), non reentrant case.
- * - [1.2.2] Testing chSysGetStatusAndLockX() and
- *   chSysRestoreStatusX(), reentrant case.
- * - [1.2.3] Testing chSysUnconditionalLock().
- * - [1.2.4] Testing chSysUnconditionalUnlock().
- * - [1.2.5] Testing from ISR context using a virtual timer.
+ * - [1.2.1] Prints the configuration options settings.
  * .
  */
 
 static void test_001_002_execute(void) {
-  syssts_t sts;
-  virtual_timer_t vt;
 
-  /* [1.2.1] Testing chSysGetStatusAndLockX() and
-     chSysRestoreStatusX(), non reentrant case.*/
+  /* [1.2.1] Prints the configuration options settings.*/
   test_set_step(1);
   {
-    sts = chSysGetStatusAndLockX();
-    chSysRestoreStatusX(sts);
-  }
-
-  /* [1.2.2] Testing chSysGetStatusAndLockX() and
-     chSysRestoreStatusX(), reentrant case.*/
-  test_set_step(2);
-  {
-    chSysLock();
-    sts = chSysGetStatusAndLockX();
-    chSysRestoreStatusX(sts);
-    chSysUnlock();
-  }
-
-  /* [1.2.3] Testing chSysUnconditionalLock().*/
-  test_set_step(3);
-  {
-    chSysUnconditionalLock();
-    chSysUnconditionalLock();
-    chSysUnlock();
-  }
-
-  /* [1.2.4] Testing chSysUnconditionalUnlock().*/
-  test_set_step(4);
-  {
-    chSysLock();
-    chSysUnconditionalUnlock();
-    chSysUnconditionalUnlock();
-  }
-
-  /* [1.2.5] Testing from ISR context using a virtual timer.*/
-  test_set_step(5);
-  {
-    chVTObjectInit(&vt);
-    chVTSet(&vt, 1, vtcb, NULL);
-    chThdSleep(10);
-
-    test_assert(chVTIsArmed(&vt) == false, "timer still armed");
+    test_print("*** CH_CFG_ST_RESOLUTION:      ");
+    test_printn(CH_CFG_ST_RESOLUTION);
+    test_println("");
+    test_print("*** CH_CFG_ST_FREQUENCY:       ");
+    test_printn(CH_CFG_ST_FREQUENCY);
+    test_println("");
+    test_print("*** CH_CFG_ST_TIMEDELTA:       ");
+    test_printn(CH_CFG_ST_TIMEDELTA);
+    test_println("");
+    test_print("*** CH_CFG_TIME_QUANTUM:       ");
+    test_printn(CH_CFG_TIME_QUANTUM);
+    test_println("");
+    test_print("*** CH_CFG_MEMCORE_SIZE:       ");
+    test_printn(CH_CFG_MEMCORE_SIZE);
+    test_println("");
+    test_print("*** CH_CFG_NO_IDLE_THREAD:     ");
+    test_printn(CH_CFG_NO_IDLE_THREAD);
+    test_println("");
+    test_print("*** CH_CFG_OPTIMIZE_SPEED:     ");
+    test_printn(CH_CFG_OPTIMIZE_SPEED);
+    test_println("");
+    test_print("*** CH_CFG_USE_TM:             ");
+    test_printn(CH_CFG_USE_TM);
+    test_println("");
+    test_print("*** CH_CFG_USE_REGISTRY:       ");
+    test_printn(CH_CFG_USE_REGISTRY);
+    test_println("");
+    test_print("*** CH_CFG_USE_WAITEXIT:       ");
+    test_printn(CH_CFG_USE_WAITEXIT);
+    test_println("");
+    test_print("*** CH_CFG_USE_SEMAPHORES:     ");
+    test_printn(CH_CFG_USE_SEMAPHORES);
+    test_println("");
+    test_print("*** CH_CFG_USE_SEMAPHORES_PRI: ");
+    test_printn(CH_CFG_USE_SEMAPHORES_PRIORITY);
+    test_println("");
+    test_print("*** CH_CFG_USE_MUTEXES:        ");
+    test_printn(CH_CFG_USE_MUTEXES);
+    test_println("");
+    test_print("*** CH_CFG_USE_MUTEXES_RECURS: ");
+    test_printn(CH_CFG_USE_MUTEXES_RECURSIVE);
+    test_println("");
+    test_print("*** CH_CFG_USE_CONDVARS:       ");
+    test_printn(CH_CFG_USE_CONDVARS);
+    test_println("");
+    test_print("*** CH_CFG_USE_CONDVARS_TIMEO: ");
+    test_printn(CH_CFG_USE_CONDVARS_TIMEOUT);
+    test_println("");
+    test_print("*** CH_CFG_USE_EVENTS:         ");
+    test_printn(CH_CFG_USE_EVENTS);
+    test_println("");
+    test_print("*** CH_CFG_USE_EVENTS_TIMEOUT: ");
+    test_printn(CH_CFG_USE_EVENTS_TIMEOUT);
+    test_println("");
+    test_print("*** CH_CFG_USE_MESSAGES:       ");
+    test_printn(CH_CFG_USE_MESSAGES);
+    test_println("");
+    test_print("*** CH_CFG_USE_MESSAGES_PRI:   ");
+    test_printn(CH_CFG_USE_MESSAGES_PRIORITY);
+    test_println("");
+    test_print("*** CH_CFG_USE_MAILBOXES:      ");
+    test_printn(CH_CFG_USE_MAILBOXES);
+    test_println("");
+    test_print("*** CH_CFG_USE_MEMCORE:        ");
+    test_printn(CH_CFG_USE_MEMCORE);
+    test_println("");
+    test_print("*** CH_CFG_USE_HEAP:           ");
+    test_printn(CH_CFG_USE_HEAP);
+    test_println("");
+    test_print("*** CH_CFG_USE_MEMPOOLS:       ");
+    test_printn(CH_CFG_USE_MEMPOOLS);
+    test_println("");
+    test_print("*** CH_CFG_USE_DYNAMIC:        ");
+    test_printn(CH_CFG_USE_DYNAMIC);
+    test_println("");
+    test_print("*** CH_DBG_STATISTICS:         ");
+    test_printn(CH_DBG_STATISTICS);
+    test_println("");
+    test_print("*** CH_DBG_SYSTEM_STATE_CHECK: ");
+    test_printn(CH_DBG_SYSTEM_STATE_CHECK);
+    test_println("");
+    test_print("*** CH_DBG_ENABLE_CHECKS:      ");
+    test_printn(CH_DBG_ENABLE_CHECKS);
+    test_println("");
+    test_print("*** CH_DBG_ENABLE_ASSERTS:     ");
+    test_printn(CH_DBG_ENABLE_ASSERTS);
+    test_println("");
+    test_print("*** CH_DBG_TRACE_MASK:         ");
+    test_printn(CH_DBG_TRACE_MASK);
+    test_println("");
+    test_print("*** CH_DBG_TRACE_BUFFER_SIZE:  ");
+    test_printn(CH_DBG_TRACE_BUFFER_SIZE);
+    test_println("");
+    test_print("*** CH_DBG_ENABLE_STACK_CHECK: ");
+    test_printn(CH_DBG_ENABLE_STACK_CHECK);
+    test_println("");
+    test_print("*** CH_DBG_FILL_THREADS:       ");
+    test_printn(CH_DBG_FILL_THREADS);
+    test_println("");
+    test_print("*** CH_DBG_THREADS_PROFILING:  ");
+    test_printn(CH_DBG_THREADS_PROFILING);
+    test_println("");
   }
 }
 
 static const testcase_t test_001_002 = {
-  "Critical zones functionality",
+  "Kernel Settings",
   NULL,
   NULL,
   test_001_002_execute
-};
-
-/**
- * @page test_001_003 [1.3] Interrupts handling functionality
- *
- * <h2>Description</h2>
- * The interrupts handling API is invoked for coverage.
- *
- * <h2>Test Steps</h2>
- * - [1.3.1] Testing chSysSuspend(), chSysDisable() and chSysEnable().
- * .
- */
-
-static void test_001_003_execute(void) {
-
-  /* [1.3.1] Testing chSysSuspend(), chSysDisable() and
-     chSysEnable().*/
-  test_set_step(1);
-  {
-    chSysSuspend();
-    chSysDisable();
-    chSysSuspend();
-    chSysEnable();
-  }
-}
-
-static const testcase_t test_001_003 = {
-  "Interrupts handling functionality",
-  NULL,
-  NULL,
-  test_001_003_execute
-};
-
-/**
- * @page test_001_004 [1.4] System Tick Counter functionality
- *
- * <h2>Description</h2>
- * The functionality of the API @p chVTGetSystemTimeX() is tested.
- *
- * <h2>Test Steps</h2>
- * - [1.4.1] A System Tick Counter increment is expected, the test
- *   simply hangs if it does not happen.
- * .
- */
-
-static void test_001_004_execute(void) {
-
-  /* [1.4.1] A System Tick Counter increment is expected, the test
-     simply hangs if it does not happen.*/
-  test_set_step(1);
-  {
-    systime_t time = chVTGetSystemTimeX();
-    while (time == chVTGetSystemTimeX()) {
-#if defined(SIMULATOR)
-      _sim_check_for_interrupts();
-#endif
-    }
-  }
-}
-
-static const testcase_t test_001_004 = {
-  "System Tick Counter functionality",
-  NULL,
-  NULL,
-  test_001_004_execute
 };
 
 /****************************************************************************
@@ -271,12 +220,10 @@ static const testcase_t test_001_004 = {
  ****************************************************************************/
 
 /**
- * @brief   System layer and port interface.
+ * @brief   Information.
  */
 const testcase_t * const test_sequence_001[] = {
   &test_001_001,
   &test_001_002,
-  &test_001_003,
-  &test_001_004,
   NULL
 };

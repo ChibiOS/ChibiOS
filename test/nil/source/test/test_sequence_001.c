@@ -22,13 +22,13 @@
  * @file    test_sequence_001.c
  * @brief   Test Sequence 001 code.
  *
- * @page test_sequence_001 [1] Threads Functionality
+ * @page test_sequence_001 [1] Information
  *
  * File: @ref test_sequence_001.c
  *
  * <h2>Description</h2>
- * This sequence tests the ChibiOS/NIL functionalities related to
- * threading.
+ * This sequence reports configuration and version information about
+ * the NIL kernel.
  *
  * <h2>Test Cases</h2>
  * - @subpage test_001_001
@@ -47,123 +47,115 @@
  ****************************************************************************/
 
 /**
- * @page test_001_001 [1.1] System Tick Counter functionality
+ * @page test_001_001 [1.1] Kernel Info
  *
  * <h2>Description</h2>
- * The functionality of the API @p chVTGetSystemTimeX() is tested.
+ * The version numbers are reported.
  *
  * <h2>Test Steps</h2>
- * - [1.1.1] A System Tick Counter increment is expected, the test
- *   simply hangs if it does not happen.
+ * - [1.1.1] Prints the version string.
  * .
  */
 
 static void test_001_001_execute(void) {
 
-  /* [1.1.1] A System Tick Counter increment is expected, the test
-     simply hangs if it does not happen.*/
+  /* [1.1.1] Prints the version string.*/
   test_set_step(1);
   {
-    systime_t time = chVTGetSystemTimeX();
-    while (time == chVTGetSystemTimeX()) {
-    }
+    test_println("*** Product:                   ChibiOS/NIL");
+    test_print("*** Stable Flag:               ");
+    test_printn(CH_KERNEL_STABLE);
+    test_println("");
+    test_print("*** Version String:            ");
+    test_println(CH_KERNEL_VERSION);
+    test_print("*** Major Number:              ");
+    test_printn(CH_KERNEL_MAJOR);
+    test_println("");
+    test_print("*** Minor Number:              ");
+    test_printn(CH_KERNEL_MINOR);
+    test_println("");
+    test_print("*** Patch Number:              ");
+    test_printn(CH_KERNEL_PATCH);
+    test_println("");
   }
 }
 
 static const testcase_t test_001_001 = {
-  "System Tick Counter functionality",
+  "Kernel Info",
   NULL,
   NULL,
   test_001_001_execute
 };
 
 /**
- * @page test_001_002 [1.2] Thread Sleep functionality
+ * @page test_001_002 [1.2] Kernel Settings
  *
  * <h2>Description</h2>
- * The functionality of @p chThdSleep() and derivatives is tested.
+ * The static kernel settings are reported.
  *
  * <h2>Test Steps</h2>
- * - [1.2.1] The current system time is read then a sleep is performed
- *   for 100 system ticks and on exit the system time is verified
- *   again.
- * - [1.2.2] The current system time is read then a sleep is performed
- *   for 100000 microseconds and on exit the system time is verified
- *   again.
- * - [1.2.3] The current system time is read then a sleep is performed
- *   for 100 milliseconds and on exit the system time is verified
- *   again.
- * - [1.2.4] The current system time is read then a sleep is performed
- *   for 1 second and on exit the system time is verified again.
- * - [1.2.5] Function chThdSleepUntil() is tested with a timeline of
- *   "now" + 100 ticks.
+ * - [1.2.1] Prints the configuration options settings.
  * .
  */
 
 static void test_001_002_execute(void) {
-  systime_t time;
 
-  /* [1.2.1] The current system time is read then a sleep is performed
-     for 100 system ticks and on exit the system time is verified
-     again.*/
+  /* [1.2.1] Prints the configuration options settings.*/
   test_set_step(1);
   {
-    time = chVTGetSystemTimeX();
-    chThdSleep(100);
-    test_assert_time_window(time + 100,
-                            time + 100 + 1,
-                            "out of time window");
-  }
-
-  /* [1.2.2] The current system time is read then a sleep is performed
-     for 100000 microseconds and on exit the system time is verified
-     again.*/
-  test_set_step(2);
-  {
-    time = chVTGetSystemTimeX();
-    chThdSleepMicroseconds(100000);
-    test_assert_time_window(time + US2ST(100000),
-                            time + US2ST(100000) + 1,
-                            "out of time window");
-  }
-
-  /* [1.2.3] The current system time is read then a sleep is performed
-     for 100 milliseconds and on exit the system time is verified
-     again.*/
-  test_set_step(3);
-  {
-    time = chVTGetSystemTimeX();
-    chThdSleepMilliseconds(100);
-    test_assert_time_window(time + MS2ST(100),
-                            time + MS2ST(100) + 1,
-                            "out of time window");
-  }
-
-  /* [1.2.4] The current system time is read then a sleep is performed
-     for 1 second and on exit the system time is verified again.*/
-  test_set_step(4);
-  {
-    time = chVTGetSystemTimeX();
-    chThdSleepSeconds(1);
-    test_assert_time_window(time + S2ST(1),
-                            time + S2ST(1) + 1,
-                            "out of time window");
-  }
-
-  /* [1.2.5] Function chThdSleepUntil() is tested with a timeline of
-     "now" + 100 ticks.*/
-  test_set_step(5);
-  {
-    time = chVTGetSystemTimeX();
-    chThdSleepUntil(time + 100);
-    test_assert_time_window(time + 100,
-                            time + 100 + 1,
-                            "out of time window");
+    test_print("*** CH_CFG_NUM_THREADS:        ");
+    test_printn(CH_CFG_NUM_THREADS);
+    test_println("");
+    test_print("*** CH_CFG_ST_RESOLUTION:      ");
+    test_printn(CH_CFG_ST_RESOLUTION);
+    test_println("");
+    test_print("*** CH_CFG_ST_FREQUENCY:       ");
+    test_printn(CH_CFG_ST_FREQUENCY);
+    test_println("");
+    test_print("*** CH_CFG_ST_TIMEDELTA:       ");
+    test_printn(CH_CFG_ST_TIMEDELTA);
+    test_println("");
+    test_print("*** CH_CFG_USE_SEMAPHORES:     ");
+    test_printn(CH_CFG_USE_SEMAPHORES);
+    test_println("");
+    test_print("*** CH_CFG_USE_MUTEXES:        ");
+    test_printn(CH_CFG_USE_MUTEXES);
+    test_println("");
+    test_print("*** CH_CFG_USE_EVENTS:         ");
+    test_printn(CH_CFG_USE_EVENTS);
+    test_println("");
+    test_print("*** CH_CFG_USE_MAILBOXES:      ");
+    test_printn(CH_CFG_USE_MAILBOXES);
+    test_println("");
+    test_print("*** CH_CFG_USE_MEMCORE:        ");
+    test_printn(CH_CFG_USE_MEMCORE);
+    test_println("");
+    test_print("*** CH_CFG_USE_HEAP:           ");
+    test_printn(CH_CFG_USE_HEAP);
+    test_println("");
+    test_print("*** CH_CFG_USE_MEMPOOLS:       ");
+    test_printn(CH_CFG_USE_MEMPOOLS);
+    test_println("");
+    test_print("*** CH_DBG_STATISTICS:         ");
+    test_printn(CH_DBG_STATISTICS);
+    test_println("");
+    test_print("*** CH_DBG_SYSTEM_STATE_CHECK: ");
+    test_printn(CH_DBG_SYSTEM_STATE_CHECK);
+    test_println("");
+    test_print("*** CH_DBG_ENABLE_CHECKS:      ");
+    test_printn(CH_DBG_ENABLE_CHECKS);
+    test_println("");
+    test_print("*** CH_DBG_ENABLE_ASSERTS:     ");
+    test_printn(CH_DBG_ENABLE_ASSERTS);
+    test_println("");
+    test_print("*** CH_DBG_ENABLE_STACK_CHECK: ");
+    test_printn(CH_DBG_ENABLE_STACK_CHECK);
+    test_println("");
   }
 }
 
 static const testcase_t test_001_002 = {
-  "Thread Sleep functionality",
+  "Kernel Settings",
   NULL,
   NULL,
   test_001_002_execute
@@ -174,7 +166,7 @@ static const testcase_t test_001_002 = {
  ****************************************************************************/
 
 /**
- * @brief   Threads Functionality.
+ * @brief   Information.
  */
 const testcase_t * const test_sequence_001[] = {
   &test_001_001,
