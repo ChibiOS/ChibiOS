@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Improved RT and NIL test suite to report version numbers and
+       configuration settings.
 - NEW: Added a multi-target demo applications for PAL, SPI and USB-CDC
        showcasing how to manage a project with multiple target boards/devices
        and handle portability issues.

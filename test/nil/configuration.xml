@@ -82,6 +82,156 @@ THD_FUNCTION(test_support, arg) {
               <value>Internal Tests</value>
             </type>
             <brief>
+              <value>Information.</value>
+            </brief>
+            <description>
+              <value>This sequence reports configuration and version information about the NIL kernel.</value>
+            </description>
+            <condition>
+              <value />
+            </condition>
+            <shared_code>
+              <value><![CDATA[#include "ch.h"]]></value>
+            </shared_code>
+            <cases>
+              <case>
+                <brief>
+                  <value>Kernel Info.</value>
+                </brief>
+                <description>
+                  <value>The version numbers are reported.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Prints the version string.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_println("*** Product:                   ChibiOS/NIL");
+test_print("*** Stable Flag:               ");
+test_printn(CH_KERNEL_STABLE);
+test_println("");
+test_print("*** Version String:            ");
+test_println(CH_KERNEL_VERSION);
+test_print("*** Major Number:              ");
+test_printn(CH_KERNEL_MAJOR);
+test_println("");
+test_print("*** Minor Number:              ");
+test_printn(CH_KERNEL_MINOR);
+test_println("");
+test_print("*** Patch Number:              ");
+test_printn(CH_KERNEL_PATCH);
+test_println("");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Kernel Settings.</value>
+                </brief>
+                <description>
+                  <value>The static kernel settings are reported.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Prints the configuration options settings.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_print("*** CH_CFG_NUM_THREADS:        ");
+test_printn(CH_CFG_NUM_THREADS);
+test_println("");
+test_print("*** CH_CFG_ST_RESOLUTION:      ");
+test_printn(CH_CFG_ST_RESOLUTION);
+test_println("");
+test_print("*** CH_CFG_ST_FREQUENCY:       ");
+test_printn(CH_CFG_ST_FREQUENCY);
+test_println("");
+test_print("*** CH_CFG_ST_TIMEDELTA:       ");
+test_printn(CH_CFG_ST_TIMEDELTA);
+test_println("");
+test_print("*** CH_CFG_USE_SEMAPHORES:     ");
+test_printn(CH_CFG_USE_SEMAPHORES);
+test_println("");
+test_print("*** CH_CFG_USE_MUTEXES:        ");
+test_printn(CH_CFG_USE_MUTEXES);
+test_println("");
+test_print("*** CH_CFG_USE_EVENTS:         ");
+test_printn(CH_CFG_USE_EVENTS);
+test_println("");
+test_print("*** CH_CFG_USE_MAILBOXES:      ");
+test_printn(CH_CFG_USE_MAILBOXES);
+test_println("");
+test_print("*** CH_CFG_USE_MEMCORE:        ");
+test_printn(CH_CFG_USE_MEMCORE);
+test_println("");
+test_print("*** CH_CFG_USE_HEAP:           ");
+test_printn(CH_CFG_USE_HEAP);
+test_println("");
+test_print("*** CH_CFG_USE_MEMPOOLS:       ");
+test_printn(CH_CFG_USE_MEMPOOLS);
+test_println("");
+test_print("*** CH_DBG_STATISTICS:         ");
+test_printn(CH_DBG_STATISTICS);
+test_println("");
+test_print("*** CH_DBG_SYSTEM_STATE_CHECK: ");
+test_printn(CH_DBG_SYSTEM_STATE_CHECK);
+test_println("");
+test_print("*** CH_DBG_ENABLE_CHECKS:      ");
+test_printn(CH_DBG_ENABLE_CHECKS);
+test_println("");
+test_print("*** CH_DBG_ENABLE_ASSERTS:     ");
+test_printn(CH_DBG_ENABLE_ASSERTS);
+test_println("");
+test_print("*** CH_DBG_ENABLE_STACK_CHECK: ");
+test_printn(CH_DBG_ENABLE_STACK_CHECK);
+test_println("");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+            </cases>
+          </sequence>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
               <value>Threads Functionality.</value>
             </brief>
             <description>

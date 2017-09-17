@@ -19,16 +19,16 @@
 #include "test_root.h"
 
 /**
- * @file    test_sequence_011.c
- * @brief   Test Sequence 011 code.
+ * @file    test_sequence_007.c
+ * @brief   Test Sequence 007 code.
  *
- * @page test_sequence_011 [11] Memory Heaps
+ * @page test_sequence_007 [7] Memory Heaps
  *
- * File: @ref test_sequence_011.c
+ * File: @ref test_sequence_007.c
  *
  * <h2>Description</h2>
- * This sequence tests the ChibiOS/RT functionalities related to memory
- * heaps.
+ * This sequence tests the ChibiOS/NIL functionalities related to
+ * memory heaps.
  *
  * <h2>Conditions</h2>
  * This sequence is only executed if the following preprocessor condition
@@ -37,8 +37,8 @@
  * .
  *
  * <h2>Test Cases</h2>
- * - @subpage test_011_001
- * - @subpage test_011_002
+ * - @subpage test_007_001
+ * - @subpage test_007_002
  * .
  */
 
@@ -51,14 +51,15 @@
 #define ALLOC_SIZE 16
 #define HEAP_SIZE (ALLOC_SIZE * 8)
 
-memory_heap_t test_heap;
+static memory_heap_t test_heap;
+static CH_HEAP_AREA(myheap, HEAP_SIZE);
 
 /****************************************************************************
  * Test cases.
  ****************************************************************************/
 
 /**
- * @page test_011_001 [11.1] Allocation and fragmentation
+ * @page test_007_001 [7.1] Allocation and fragmentation
  *
  * <h2>Description</h2>
  * Series of allocations/deallocations are performed in carefully
@@ -67,51 +68,51 @@ memory_heap_t test_heap;
  * initial status after each sequence.
  *
  * <h2>Test Steps</h2>
- * - [11.1.1] Testing initial conditions, the heap must not be
+ * - [7.1.1] Testing initial conditions, the heap must not be
  *   fragmented and one free block present.
- * - [11.1.2] Trying to allocate an block bigger than available space,
+ * - [7.1.2] Trying to allocate an block bigger than available space,
  *   an error is expected.
- * - [11.1.3] Single block allocation using chHeapAlloc() then the
- *   block is freed using chHeapFree(), must not fail.
- * - [11.1.4] Using chHeapStatus() to assess the heap state. There must
+ * - [7.1.3] Single block allocation using chHeapAlloc() then the block
+ *   is freed using chHeapFree(), must not fail.
+ * - [7.1.4] Using chHeapStatus() to assess the heap state. There must
  *   be at least one free block of sufficient size.
- * - [11.1.5] Allocating then freeing in the same order.
- * - [11.1.6] Allocating then freeing in reverse order.
- * - [11.1.7] Small fragments handling. Checking the behavior when
+ * - [7.1.5] Allocating then freeing in the same order.
+ * - [7.1.6] Allocating then freeing in reverse order.
+ * - [7.1.7] Small fragments handling. Checking the behavior when
  *   allocating blocks with size not multiple of alignment unit.
- * - [11.1.8] Skipping a fragment, the first fragment in the list is
- *   too small so the allocator must pick the second one.
- * - [11.1.9] Allocating the whole available space.
- * - [11.1.10] Testing final conditions. The heap geometry must be the
+ * - [7.1.8] Skipping a fragment, the first fragment in the list is too
+ *   small so the allocator must pick the second one.
+ * - [7.1.9] Allocating the whole available space.
+ * - [7.1.10] Testing final conditions. The heap geometry must be the
  *   same than the one registered at beginning.
  * .
  */
 
-static void test_011_001_setup(void) {
-  chHeapObjectInit(&test_heap, test_buffer, sizeof(test_buffer));
+static void test_007_001_setup(void) {
+  chHeapObjectInit(&test_heap, myheap, sizeof(myheap));
 }
 
-static void test_011_001_execute(void) {
+static void test_007_001_execute(void) {
   void *p1, *p2, *p3;
   size_t n, sz;
 
-  /* [11.1.1] Testing initial conditions, the heap must not be
+  /* [7.1.1] Testing initial conditions, the heap must not be
      fragmented and one free block present.*/
   test_set_step(1);
   {
     test_assert(chHeapStatus(&test_heap, &sz, NULL) == 1, "heap fragmented");
   }
 
-  /* [11.1.2] Trying to allocate an block bigger than available space,
+  /* [7.1.2] Trying to allocate an block bigger than available space,
      an error is expected.*/
   test_set_step(2);
   {
-    p1 = chHeapAlloc(&test_heap, sizeof test_buffer * 2);
+    p1 = chHeapAlloc(&test_heap, HEAP_SIZE * 2);
     test_assert(p1 == NULL, "allocation not failed");
   }
 
-  /* [11.1.3] Single block allocation using chHeapAlloc() then the
-     block is freed using chHeapFree(), must not fail.*/
+  /* [7.1.3] Single block allocation using chHeapAlloc() then the block
+     is freed using chHeapFree(), must not fail.*/
   test_set_step(3);
   {
     p1 = chHeapAlloc(&test_heap, ALLOC_SIZE);
@@ -119,7 +120,7 @@ static void test_011_001_execute(void) {
     chHeapFree(p1);
   }
 
-  /* [11.1.4] Using chHeapStatus() to assess the heap state. There must
+  /* [7.1.4] Using chHeapStatus() to assess the heap state. There must
      be at least one free block of sufficient size.*/
   test_set_step(4);
   {
@@ -131,7 +132,7 @@ static void test_011_001_execute(void) {
     test_assert(total_size == largest_size, "unexpected heap state");
   }
 
-  /* [11.1.5] Allocating then freeing in the same order.*/
+  /* [7.1.5] Allocating then freeing in the same order.*/
   test_set_step(5);
   {
     p1 = chHeapAlloc(&test_heap, ALLOC_SIZE);
@@ -143,7 +144,7 @@ static void test_011_001_execute(void) {
     test_assert(chHeapStatus(&test_heap, &n, NULL) == 1, "heap fragmented");
   }
 
-  /* [11.1.6] Allocating then freeing in reverse order.*/
+  /* [7.1.6] Allocating then freeing in reverse order.*/
   test_set_step(6);
   {
     p1 = chHeapAlloc(&test_heap, ALLOC_SIZE);
@@ -155,7 +156,7 @@ static void test_011_001_execute(void) {
     test_assert(chHeapStatus(&test_heap, &n, NULL) == 1, "heap fragmented");
   }
 
-  /* [11.1.7] Small fragments handling. Checking the behavior when
+  /* [7.1.7] Small fragments handling. Checking the behavior when
      allocating blocks with size not multiple of alignment unit.*/
   test_set_step(7);
   {
@@ -173,8 +174,8 @@ static void test_011_001_execute(void) {
     test_assert(chHeapStatus(&test_heap, &n, NULL) == 1, "heap fragmented");
   }
 
-  /* [11.1.8] Skipping a fragment, the first fragment in the list is
-     too small so the allocator must pick the second one.*/
+  /* [7.1.8] Skipping a fragment, the first fragment in the list is too
+     small so the allocator must pick the second one.*/
   test_set_step(8);
   {
     p1 = chHeapAlloc(&test_heap, ALLOC_SIZE);
@@ -187,7 +188,7 @@ static void test_011_001_execute(void) {
     test_assert(chHeapStatus(&test_heap, &n, NULL) == 1, "heap fragmented");
   }
 
-  /* [11.1.9] Allocating the whole available space.*/
+  /* [7.1.9] Allocating the whole available space.*/
   test_set_step(9);
   {
     (void)chHeapStatus(&test_heap, &n, NULL);
@@ -197,7 +198,7 @@ static void test_011_001_execute(void) {
     chHeapFree(p1);
   }
 
-  /* [11.1.10] Testing final conditions. The heap geometry must be the
+  /* [7.1.10] Testing final conditions. The heap geometry must be the
      same than the one registered at beginning.*/
   test_set_step(10);
   {
@@ -206,33 +207,33 @@ static void test_011_001_execute(void) {
   }
 }
 
-static const testcase_t test_011_001 = {
+static const testcase_t test_007_001 = {
   "Allocation and fragmentation",
-  test_011_001_setup,
+  test_007_001_setup,
   NULL,
-  test_011_001_execute
+  test_007_001_execute
 };
 
 /**
- * @page test_011_002 [11.2] Default Heap
+ * @page test_007_002 [7.2] Default Heap
  *
  * <h2>Description</h2>
  * The default heap is pre-allocated in the system. We test base
  * functionality.
  *
  * <h2>Test Steps</h2>
- * - [11.2.1] Single block allocation using chHeapAlloc() then the
- *   block is freed using chHeapFree(), must not fail.
- * - [11.2.2] Testing allocation failure.
+ * - [7.2.1] Single block allocation using chHeapAlloc() then the block
+ *   is freed using chHeapFree(), must not fail.
+ * - [7.2.2] Testing allocation failure.
  * .
  */
 
-static void test_011_002_execute(void) {
+static void test_007_002_execute(void) {
   void *p1;
   size_t total_size, largest_size;
 
-  /* [11.2.1] Single block allocation using chHeapAlloc() then the
-     block is freed using chHeapFree(), must not fail.*/
+  /* [7.2.1] Single block allocation using chHeapAlloc() then the block
+     is freed using chHeapFree(), must not fail.*/
   test_set_step(1);
   {
     (void)chHeapStatus(NULL, &total_size, &largest_size);
@@ -241,7 +242,7 @@ static void test_011_002_execute(void) {
     chHeapFree(p1);
   }
 
-  /* [11.2.2] Testing allocation failure.*/
+  /* [7.2.2] Testing allocation failure.*/
   test_set_step(2);
   {
     p1 = chHeapAlloc(NULL, (size_t)-256);
@@ -249,11 +250,11 @@ static void test_011_002_execute(void) {
   }
 }
 
-static const testcase_t test_011_002 = {
+static const testcase_t test_007_002 = {
   "Default Heap",
   NULL,
   NULL,
-  test_011_002_execute
+  test_007_002_execute
 };
 
 /****************************************************************************
@@ -263,9 +264,9 @@ static const testcase_t test_011_002 = {
 /**
  * @brief   Memory Heaps.
  */
-const testcase_t * const test_sequence_011[] = {
-  &test_011_001,
-  &test_011_002,
+const testcase_t * const test_sequence_007[] = {
+  &test_007_001,
+  &test_007_002,
   NULL
 };
 
