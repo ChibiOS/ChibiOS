@@ -52,6 +52,9 @@ int main(void) {
    */
   sdStart(&SD0, NULL);
 
+  /* Redirecting  UART0 RX on PB26 and UART0 TX on PB 27. */
+  palSetGroupMode(PIOB, PAL_PORT_BIT(26) | PAL_PORT_BIT(27), 0U,
+                  PAL_SAMA_FUNC_PERIPH_C);
   /*
    * Creates the blinker thread.
    */

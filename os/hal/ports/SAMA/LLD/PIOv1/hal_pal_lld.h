@@ -222,7 +222,9 @@ typedef struct {
   volatile uint32_t IDR;
   volatile uint32_t IMR;
   volatile uint32_t ISR;
-  volatile uint32_t Reserved2[3];
+  volatile uint32_t SIONR;
+  volatile uint32_t SIOSR;
+  volatile uint32_t IOSSR;
   volatile uint32_t IOFR;
 } sama_pio_t;
 #else
@@ -239,9 +241,7 @@ typedef struct {
   volatile uint32_t IDR;
   volatile uint32_t IMR;
   volatile uint32_t ISR;
-  volatile uint32_t SIONR;
-  volatile uint32_t SIOSR;
-  volatile uint32_t IOSSR;
+  volatile uint32_t Reserved2[3];
   volatile uint32_t IOFR;
 } sama_pio_t;  
 #endif
@@ -489,11 +489,6 @@ typedef uint32_t iopadid_t;
  * @notapi
  */
 #define pal_lld_get_line_event(line)
-
-#if !defined(__DOXYGEN__)
-extern const PALConfig pal_default_config;
-extern palevent_t _pal_events[16];
-#endif
 
 #ifdef __cplusplus
 extern "C" {
