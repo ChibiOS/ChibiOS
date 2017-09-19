@@ -116,7 +116,7 @@
 #define PIOB_LED_RED                6U
 #define PIOB_PIN7                   7U
 #define PIOB_PIN8                   8U
-#define PIOB_PIN9                   9U
+#define PIOB_USER_PB                9U
 #define PIOB_PIN10                  10U
 #define PIOB_PIN11                  11U
 #define PIOB_PIN12                  12U
@@ -215,6 +215,7 @@
 #define LINE_LED_BLUE               BOARD_LINE(PIOB, 0U)
 #define LINE_LED_GREEN              BOARD_LINE(PIOB, 5U)
 #define LINE_LED_RED                BOARD_LINE(PIOB, 6U)
+#define LINE_USER_PB                BOARD_LINE(PIOB, 9U)
 
 #if !defined(_FROM_ASM_)
 #ifdef __cplusplus
