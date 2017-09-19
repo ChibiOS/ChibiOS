@@ -1,9 +1,13 @@
 
 *** ChibiOS/NIL Test Suite
 ***
-*** Compiled:     Sep 19 2017 - 10:25:17
+*** Compiled:     Sep 19 2017 - 12:12:41
 *** Platform:     STM32F303xC Analog & DSP
 *** Test Board:   STMicroelectronics STM32F3-Discovery
+*** Compiler:     GCC 5.4.1 20160919 (release) [ARM/embedded-5-branch revision 240496]
+*** Architecture: ARMv7E-M
+*** Core Variant: Cortex-M4
+*** Port Info:    Advanced kernel mode
 
 ----------------------------------------------------------------------------
 --- Test Case 1.1 (Kernel Info)
