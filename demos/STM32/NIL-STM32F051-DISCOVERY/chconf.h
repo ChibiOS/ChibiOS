@@ -42,7 +42,7 @@
  * @note    This number is not inclusive of the idle thread which is
  *          Implicitly handled.
  */
-#define CH_CFG_NUM_THREADS                  3
+#define CH_CFG_NUM_THREADS                  4
 
 /** @} */
 

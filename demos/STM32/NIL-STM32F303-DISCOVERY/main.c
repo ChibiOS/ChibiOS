@@ -95,7 +95,7 @@ THD_FUNCTION(Thread3, arg) {
 
   /* Waiting for button push and activation of the test suite.*/
   while (true) {
-    if (palReadPad(GPIOA, GPIOA_BUTTON))
+    if (palReadLine(LINE_BUTTON))
       test_execute((BaseSequentialStream *)&SD1);
     chThdSleepMilliseconds(500);
   }
