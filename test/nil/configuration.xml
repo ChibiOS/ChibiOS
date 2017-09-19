@@ -11,7 +11,7 @@
         <description>
           <copyright>
             <value><![CDATA[/*
-    ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2017 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -34,14 +34,35 @@
           <global_definitions>
             <value><![CDATA[#define TEST_SUITE_NAME                     "ChibiOS/NIL Test Suite"
 
+#define TEST_REPORT_HOOK_HEADER test_print_port_info();
+
 extern semaphore_t gsem1, gsem2;
 extern thread_reference_t gtr1;
 extern THD_WORKING_AREA(wa_test_support, 128);
 
+void test_print_port_info(void);
 THD_FUNCTION(test_support, arg);]]></value>
           </global_definitions>
           <global_code>
-            <value><![CDATA[semaphore_t gsem1, gsem2;
+            <value><![CDATA[void test_print_port_info(void) {
+
+#ifdef PORT_COMPILER_NAME
+  test_print("*** Compiler:     ");
+  test_println(PORT_COMPILER_NAME);
+#endif
+  test_print("*** Architecture: ");
+  test_println(PORT_ARCHITECTURE_NAME);
+#ifdef PORT_CORE_VARIANT_NAME
+  test_print("*** Core Variant: ");
+  test_println(PORT_CORE_VARIANT_NAME);
+#endif
+#ifdef PORT_INFO
+  test_print("*** Port Info:    ");
+  test_println(PORT_INFO);
+#endif
+}
+
+semaphore_t gsem1, gsem2;
 thread_reference_t gtr1;
 
 /*
