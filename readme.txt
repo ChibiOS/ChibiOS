@@ -89,12 +89,12 @@
 *****************************************************************************
 
 *** 17.6.1 ***
-- HAL: Fixed EXT low level driver bug on AVR port (bug #886).
 - NEW: Improved RT and NIL test suite to report version numbers and
        configuration settings.
 - NEW: Added a test suite generator tool written in FTL.
 - NEW: Added to the HAL USB driver a new function usbWakeupHost() for
        standby exit.
+- HAL: Fixed EXT low level driver bug on AVR port (bug #886).
 - HAL: Fixed USB GET_DESCRIPTOR not handled for Interface Recipients (bug #885).
 - RT:  MAILBOX_DECL size parameter is actually a count (bug #884).
 - HAL: Fixed error in uartReceiveTimeout() and uartSendTimeout() (bug #883).
