@@ -54,7 +54,7 @@ int main(void) {
 
   /* Redirecting  UART0 RX on PB26 and UART0 TX on PB 27. */
   palSetGroupMode(PIOB, PAL_PORT_BIT(26) | PAL_PORT_BIT(27), 0U,
-                  PAL_SAMA_FUNC_PERIPH_C);
+                  PAL_SAMA_FUNC_PERIPH_C | PAL_MODE_SECURE);
   /*
    * Creates the blinker thread.
    */

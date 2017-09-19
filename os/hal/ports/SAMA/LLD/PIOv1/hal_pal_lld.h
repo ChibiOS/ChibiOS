@@ -83,6 +83,34 @@
 #define PAL_SAMA_DRVSTR_ME             (2U << 16U)
 #define PAL_SAMA_DRVSTR_HI             (3U << 16U)
 
+#define PAL_SAMA_EVTSEL_MASK           (7U << 24U)
+#define PAL_SAMA_EVTSEL_FALLING        (0U << 24U)
+#define PAL_SAMA_EVTSEL_RISING         (1U << 24U)
+#define PAL_SAMA_EVTSEL_BOTH           (2U << 24U)
+#define PAL_SAMA_EVTSEL_LOW            (3U << 24U)
+#define PAL_SAMA_EVTSEL_HIGH           (4U << 24U)
+
+#define PAL_SAMA_PCFS_MASK             (1U << 29U)
+#define PAL_SAMA_ICFS_MASK             (1U << 30U)
+
+
+#define PAL_SAMA_CFGR_MASK             PAL_SAMA_FUNC_MASK |                 \
+                                       PAL_SAMA_DIR_MASK |                  \
+                                       PAL_SAMA_PUEN_MASK |                 \
+                                       PAL_SAMA_PDEN_MASK |                 \
+                                       PAL_SAMA_IFEN_MASK |                 \
+                                       PAL_SAMA_IFSCEN_MASK |               \
+                                       PAL_SAMA_OPD_MASK |                  \
+                                       PAL_SAMA_SCHMITT_MASK |              \
+                                       PAL_SAMA_DRVSTR_MASK
+
+#if SAMA_HAL_IS_SECURE
+#define PAL_SAMA_SECURE_MASK           (1U << 31U)
+
+#define PAL_SAMA_NON_SECURE            (0U << 31U)
+#define PAL_SAMA_SECURE                (1U << 31U)
+#endif /* SAMA_HAL_IS_SECURE */
+
 /**
  * @name    Standard I/O mode flags
  * @{
@@ -135,6 +163,20 @@
  */
 #define PAL_MODE_OUTPUT_OPENDRAIN       (PAL_SAMA_DIR_OUTPUT |              \
                                          PAL_SAMA_OPD_OPENDRAIN)
+
+#if SAMA_HAL_IS_SECURE || defined(__DOXYGEN__)
+/**
+ * @brief   Secure pad.
+ * @note    Available only on Secure HAL.
+ */
+#define PAL_MODE_SECURE                 PAL_SAMA_SECURE
+
+/**
+ * @brief   Non secure pad.
+ * @note    Available only on Secure HAL.
+ */
+#define PAL_MODE_NON_SECURE             PAL_SAMA_NON_SECURE
+#endif
 /** @} */
 
 /* Discarded definitions from the Atmel headers, the PAL driver uses its own
@@ -431,10 +473,7 @@ typedef uint32_t iopadid_t;
  * @notapi
  */
 #define pal_lld_setgroupmode(port, mask, offset, mode)                      \
-  do {                                                                      \
-    (port)->MSKR = ((mask) << (offset));                                    \
-    (port)->CFGR = (mode);                                                  \
-  } while (false)
+  _pal_lld_setgroupmode(port, mask << offset, mode)
 
 /**
  * @brief   Writes a logical state on an output pad.
@@ -493,7 +532,9 @@ typedef uint32_t iopadid_t;
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+   void _pal_lld_setgroupmode(ioportid_t port,
+                              ioportmask_t mask,
+                              iomode_t mode);
 #ifdef __cplusplus
 }
 #endif

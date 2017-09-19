@@ -50,6 +50,37 @@
 /* Driver exported functions.                                                */
 /*===========================================================================*/
 
-#endif /* HAL_USE_PAL */
+/**
+ * @brief   Pads mode setup.
+ * @details This function programs a pads group belonging to the same port
+ *          with the specified mode.
+ * @note    @p PAL_MODE_UNCONNECTED is implemented as push pull at minimum
+ *          speed.
+ *
+ * @param[in] port      the port identifier
+ * @param[in] mask      the group mask
+ * @param[in] mode      the mode
+ *
+ * @notapi
+ */
+void _pal_lld_setgroupmode(ioportid_t port,
+                           ioportmask_t mask,
+                           iomode_t mode) {
 
+  uint32_t mskr = (mask);
+  uint32_t cfgr = (mode & (PAL_SAMA_CFGR_MASK));
+
+#if SAMA_HAL_IS_SECURE
+  if(mode && PAL_SAMA_SECURE_MASK) {
+    port->SIOSR = mask;
+  }
+  else {
+    port->SIONR = mask;
+  }
+#endif /* SAMA_HAL_IS_SECURE */
+  port->MSKR = mskr;
+  port->CFGR = cfgr;
+}
+
+#endif /* HAL_USE_PAL */
 /** @} */
