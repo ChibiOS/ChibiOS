@@ -16,6 +16,7 @@
 
 #include "ch.h"
 #include "hal.h"
+#include "ch_test.h"
 
 /*
  * LED blinker thread, times are in milliseconds.
@@ -65,6 +66,8 @@ int main(void) {
    * sleeping in a loop and check the button state.
    */
   while (true) {
+    if(!palReadPad(PIOB, PIOB_USER_PB))
+      test_execute((BaseSequentialStream *)&SD0);
     chThdSleepMilliseconds(500);
   }
 }
