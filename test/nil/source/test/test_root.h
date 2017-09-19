@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2017 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -51,10 +51,13 @@ extern "C" {
 
 #define TEST_SUITE_NAME                     "ChibiOS/NIL Test Suite"
 
+#define TEST_REPORT_HOOK_HEADER test_print_port_info();
+
 extern semaphore_t gsem1, gsem2;
 extern thread_reference_t gtr1;
 extern THD_WORKING_AREA(wa_test_support, 128);
 
+void test_print_port_info(void);
 THD_FUNCTION(test_support, arg);
 
 #endif /* !defined(__DOXYGEN__) */

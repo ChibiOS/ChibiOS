@@ -11,7 +11,7 @@
         <description>
           <copyright>
             <value><![CDATA[/*
-    ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2017 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -63,16 +63,37 @@
 #define WA_SIZE MEM_ALIGN_NEXT(THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE),	\
                                PORT_WORKING_AREA_ALIGN)
 
+#define TEST_REPORT_HOOK_HEADER test_print_port_info();
+
 extern uint8_t test_buffer[WA_SIZE * 5];
 extern thread_t *threads[MAX_THREADS];
 extern void * ROMCONST wa[5];
 
+void test_print_port_info(void);
 void test_terminate_threads(void);
 void test_wait_threads(void);
 systime_t test_wait_tick(void);]]></value>
           </global_definitions>
           <global_code>
-            <value><![CDATA[/*
+            <value><![CDATA[void test_print_port_info(void) {
+
+#ifdef PORT_COMPILER_NAME
+  test_print("*** Compiler:     ");
+  test_println(PORT_COMPILER_NAME);
+#endif
+  test_print("*** Architecture: ");
+  test_println(PORT_ARCHITECTURE_NAME);
+#ifdef PORT_CORE_VARIANT_NAME
+  test_print("*** Core Variant: ");
+  test_println(PORT_CORE_VARIANT_NAME);
+#endif
+#ifdef PORT_INFO
+  test_print("*** Port Info:    ");
+  test_println(PORT_INFO);
+#endif
+}
+
+/*
  * Global test buffer holding 5 working areas.
  */
 ALIGNED_VAR(PORT_WORKING_AREA_ALIGN) uint8_t test_buffer[WA_SIZE * 5];
