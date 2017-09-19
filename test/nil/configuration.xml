@@ -124,19 +124,19 @@ THD_FUNCTION(test_support, arg) {
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[test_println("*** Product:                   ChibiOS/NIL");
-test_print("*** Stable Flag:               ");
+                      <value><![CDATA[test_println("--- Product:                   ChibiOS/NIL");
+test_print("--- Stable Flag:               ");
 test_printn(CH_KERNEL_STABLE);
 test_println("");
-test_print("*** Version String:            ");
+test_print("--- Version String:            ");
 test_println(CH_KERNEL_VERSION);
-test_print("*** Major Number:              ");
+test_print("--- Major Number:              ");
 test_printn(CH_KERNEL_MAJOR);
 test_println("");
-test_print("*** Minor Number:              ");
+test_print("--- Minor Number:              ");
 test_printn(CH_KERNEL_MINOR);
 test_println("");
-test_print("*** Patch Number:              ");
+test_print("--- Patch Number:              ");
 test_printn(CH_KERNEL_PATCH);
 test_println("");]]></value>
                     </code>
@@ -173,52 +173,52 @@ test_println("");]]></value>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[test_print("*** CH_CFG_NUM_THREADS:        ");
+                      <value><![CDATA[test_print("--- CH_CFG_NUM_THREADS:        ");
 test_printn(CH_CFG_NUM_THREADS);
 test_println("");
-test_print("*** CH_CFG_ST_RESOLUTION:      ");
+test_print("--- CH_CFG_ST_RESOLUTION:      ");
 test_printn(CH_CFG_ST_RESOLUTION);
 test_println("");
-test_print("*** CH_CFG_ST_FREQUENCY:       ");
+test_print("--- CH_CFG_ST_FREQUENCY:       ");
 test_printn(CH_CFG_ST_FREQUENCY);
 test_println("");
-test_print("*** CH_CFG_ST_TIMEDELTA:       ");
+test_print("--- CH_CFG_ST_TIMEDELTA:       ");
 test_printn(CH_CFG_ST_TIMEDELTA);
 test_println("");
-test_print("*** CH_CFG_USE_SEMAPHORES:     ");
+test_print("--- CH_CFG_USE_SEMAPHORES:     ");
 test_printn(CH_CFG_USE_SEMAPHORES);
 test_println("");
-test_print("*** CH_CFG_USE_MUTEXES:        ");
+test_print("--- CH_CFG_USE_MUTEXES:        ");
 test_printn(CH_CFG_USE_MUTEXES);
 test_println("");
-test_print("*** CH_CFG_USE_EVENTS:         ");
+test_print("--- CH_CFG_USE_EVENTS:         ");
 test_printn(CH_CFG_USE_EVENTS);
 test_println("");
-test_print("*** CH_CFG_USE_MAILBOXES:      ");
+test_print("--- CH_CFG_USE_MAILBOXES:      ");
 test_printn(CH_CFG_USE_MAILBOXES);
 test_println("");
-test_print("*** CH_CFG_USE_MEMCORE:        ");
+test_print("--- CH_CFG_USE_MEMCORE:        ");
 test_printn(CH_CFG_USE_MEMCORE);
 test_println("");
-test_print("*** CH_CFG_USE_HEAP:           ");
+test_print("--- CH_CFG_USE_HEAP:           ");
 test_printn(CH_CFG_USE_HEAP);
 test_println("");
-test_print("*** CH_CFG_USE_MEMPOOLS:       ");
+test_print("--- CH_CFG_USE_MEMPOOLS:       ");
 test_printn(CH_CFG_USE_MEMPOOLS);
 test_println("");
-test_print("*** CH_DBG_STATISTICS:         ");
+test_print("--- CH_DBG_STATISTICS:         ");
 test_printn(CH_DBG_STATISTICS);
 test_println("");
-test_print("*** CH_DBG_SYSTEM_STATE_CHECK: ");
+test_print("--- CH_DBG_SYSTEM_STATE_CHECK: ");
 test_printn(CH_DBG_SYSTEM_STATE_CHECK);
 test_println("");
-test_print("*** CH_DBG_ENABLE_CHECKS:      ");
+test_print("--- CH_DBG_ENABLE_CHECKS:      ");
 test_printn(CH_DBG_ENABLE_CHECKS);
 test_println("");
-test_print("*** CH_DBG_ENABLE_ASSERTS:     ");
+test_print("--- CH_DBG_ENABLE_ASSERTS:     ");
 test_printn(CH_DBG_ENABLE_ASSERTS);
 test_println("");
-test_print("*** CH_DBG_ENABLE_STACK_CHECK: ");
+test_print("--- CH_DBG_ENABLE_STACK_CHECK: ");
 test_printn(CH_DBG_ENABLE_STACK_CHECK);
 test_println("");]]></value>
                     </code>
