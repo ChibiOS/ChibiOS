@@ -1,9 +1,13 @@
 
 *** ChibiOS/NIL Test Suite
 ***
-*** Compiled:     Sep 19 2017 - 11:11:04
+*** Compiled:     Sep 19 2017 - 12:06:00
 *** Platform:     STM32F051x8 Entry Level Access Line devices
 *** Test Board:   ST STM32F0-Discovery
+*** Compiler:     GCC 5.4.1 20160919 (release) [ARM/embedded-5-branch revision 240496]
+*** Architecture: ARMv6-M
+*** Core Variant: Cortex-M0
+*** Port Info:    Preemption through NMI
 
 ----------------------------------------------------------------------------
 --- Test Case 1.1 (Kernel Info)
