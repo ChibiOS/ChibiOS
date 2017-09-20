@@ -94,6 +94,13 @@
 - NEW: Added a test suite generator tool written in FTL.
 - NEW: Added to the HAL USB driver a new function usbWakeupHost() for
        standby exit.
+- NEW: Added shared Eclipse debug configurations for OpenOCD under
+       ./tools/eclipse/debug. Now it is no more required to re-create
+       those each time a new workspace is created, just import the global
+       ChibiOS project in it. The configurations will appear under the
+       Eclipse Tools menu. It is required to create an OPENOCD environment
+       variable pointing to the OpenOCD executable. It will be done in
+       ChibiStudio 20 by default.
 - HAL: Fixed EXT low level driver bug on AVR port (bug #886).
 - HAL: Fixed USB GET_DESCRIPTOR not handled for Interface Recipients (bug #885).
 - RT:  MAILBOX_DECL size parameter is actually a count (bug #884).
