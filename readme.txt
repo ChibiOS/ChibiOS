@@ -112,7 +112,9 @@
        ./tools/eclipse/debug. Now it is no more required to re-create
        those each time a new workspace is created, just import the global
        ChibiOS project in it. The configurations will appear under the
-       Eclipse Tools menu.
+       Eclipse Tools menu. It is required to create an OPENOCD environment
+       variable pointing to the OpenOCD executable. It will be done in
+       ChibiStudio 20 by default.
 - NEW: Improved the various rules.mk to handle "touching" of all
        included makefiles, now the makefile is no more assumed to
        be called "Makefile".
