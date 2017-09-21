@@ -79,10 +79,43 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+/**
+ * @brief   Descriptor Structure mbr Register.
+ */
+#define XDMA_UBC_UBLEN_Pos         0
+#define    XDMA_UBC_UBLEN_Msk      (0xffffffu << XDMA_UBC_UBLEN_Pos)
+#define    XDMA_UBC_UBLEN(value)   ((XDMA_UBC_UBLEN_Msk                           \
+                                   & ((value) << XDMA_UBC_UBLEN_Pos)))
+#define XDMA_UBC_NDE               (0x1u << 24)
+#define   XDMA_UBC_NDE_FETCH_DIS   (0x0u << 24)
+#define   XDMA_UBC_NDE_FETCH_EN    (0x1u << 24)
 
+#define XDMA_UBC_NSEN              (0x1u << 25)
+#define   XDMA_UBC_NSEN_UNCHANGED  (0x0u << 25)
+#define   XDMA_UBC_NSEN_UPDATED    (0x1u << 25)
+
+#define XDMA_UBC_NDEN              (0x1u << 26)
+#define   XDMA_UBC_NDEN_UNCHANGED  (0x0u << 26)
+#define   XDMA_UBC_NDEN_UPDATED    (0x1u << 26)
+
+#define XDMA_UBC_NVIEW_Pos 27
+#define    XDMA_UBC_NVIEW_Msk      (0x3u << XDMA_UBC_NVIEW_Pos)
+#define    XDMA_UBC_NVIEW_NDV0     (0x0u << XDMA_UBC_NVIEW_Pos)
+#define    XDMA_UBC_NVIEW_NDV1     (0x1u << XDMA_UBC_NVIEW_Pos)
+#define    XDMA_UBC_NVIEW_NDV2     (0x2u << XDMA_UBC_NVIEW_Pos)
+#define    XDMA_UBC_NVIEW_NDV3     (0x3u << XDMA_UBC_NVIEW_Pos)
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
+/**
+ * @brief   Linker List Descriptor view0.
+ */
+typedef struct {
+  void    *mbr_nda;     /* Next Descriptor Address */
+  uint32_t mbr_ubc;     /* Microblock Control      */
+  void    *mbr_ta;      /* Transfer Address        */
+}lld_view0;
+
 /**
  * @brief   SAMA5D2 DMA ISR function type.
  *
@@ -152,21 +185,7 @@ typedef struct {
   (dmachp)->xdmac->XDMAC_CHID[(dmachp)->chid].XDMAC_CDA = XDMAC_CDA_DA((uint32_t)addr); \
 }
 
-/**
- * @brief   Sets the number of transfers to be performed.
- * @note    This function can be invoked in both ISR or thread context.
- *
- * @pre     The channel must have been allocated using @p dmaChannelAllocate().
- * @post    After use the channel can be released using @p dmaChannelRelease().
- *
- * @param[in] dmastp    pointer to a sama_dma_channel_t structure
- * @param[in] size      value to be written in the XDMAC_CUBC register
- *
- * @special
- */
-#define dmaChannelSetTransactionSize(dmachp, size) {                               \
-  (dmachp)->xdmac->XDMAC_CHID[(dmachp)->chid].XDMAC_CUBC = XDMAC_CUBC_UBLEN(size); \
-}
+
 
 /**
  * @brief   Sets the channel mode settings.
@@ -209,9 +228,12 @@ typedef struct {
  *
  * @special
  */
-#define dmaChannelDisable(dmachp) {                                       \
-  (dmachp)->xdmac->XDMAC_GD |= XDMAC_GD_DI0 << ((dmachp)->chid);          \
-  dmaGetChannelInt(dmachp);                                               \
+#define dmaChannelDisable(dmachp) {                                        \
+  (dmachp)->xdmac->XDMAC_GD |= XDMAC_GD_DI0 << ((dmachp)->chid);           \
+  while ((dmachp)->xdmac->XDMAC_GS == (XDMAC_GS_ST0 << (dmachp)->chid)) {  \
+    ;                                                                      \
+  }                                                                        \
+  dmaGetChannelInt(dmachp);                                                \
 }
 
 /**
@@ -234,6 +256,7 @@ typedef struct {
  *                      .
  * @param[in] src       source address
  * @param[in] dst       destination address
+ * @param[in] mode      transfer's configuration
  * @param[in] n         number of data units to copy
  */
 #define dmaStartMemCopy(dmachp, mode, src, dst, n) {                              \
@@ -274,6 +297,7 @@ extern sama_dma_channel_t _sama_dma_channel_t[XDMAC_CHANNELS_TOT];
 extern "C" {
 #endif
   void dmaInit(void);
+  void dmaChannelSetTransactionSize(sama_dma_channel_t *dmachp, size_t n);
   sama_dma_channel_t* dmaChannelAllocate(uint32_t priority,
                                          sama_dmaisr_t func,
                                          void *param);
