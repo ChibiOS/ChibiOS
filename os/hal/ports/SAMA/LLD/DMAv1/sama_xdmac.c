@@ -117,7 +117,7 @@ OSAL_IRQ_HANDLER(dmaHandler) {
 
   OSAL_IRQ_PROLOGUE();
   for (cont = 0; cont < XDMAC_CONTROLLERS; cont++) {
-    uint32_t chan, gis, gcs, cis;
+    uint32_t chan, gis, flags;
 
     Xdmac *xdmac = dmaControllerSelect(cont);
 
@@ -128,11 +128,9 @@ OSAL_IRQ_HANDLER(dmaHandler) {
     /* There is no interrupt pending for this xdmac controller */
       continue;
 
-    /* Read Global Status Register */
-    gcs = dmaGetGlobal(xdmac);
     for (chan = 0; chan < XDMAC_CHANNELS; chan++) {
       sama_dma_channel_t *channel = &_sama_dma_channel_t[(cont * XDMAC_CHANNELS) + chan];
-      bool pendingInt = 0;
+      bool pendingInt = FALSE;
 
       if (!(gis & (0x1 << chan)))
       /* There is no pending interrupt for this channel */
@@ -142,29 +140,30 @@ OSAL_IRQ_HANDLER(dmaHandler) {
       /* Channel is free */
         continue;
 
-      if (!(gcs & (0x1 << chan))) {
-        cis = dmaGetChannelInt(channel);
+      uint32_t cis = dmaGetChannelInt(channel);
 
-        if (cis & XDMAC_CIS_BIS) {
-          if (!(dmaGetChannelIntMask(channel) & XDMAC_CIM_LIM)) {
-            pendingInt = 1;
-          }
-        }
-
-        if (cis & XDMAC_CIS_LIS) {
-          pendingInt = 1;
-        }
-
-        if (cis & XDMAC_CIS_DIS) {
-          pendingInt = 1;
+      if (cis & XDMAC_CIS_BIS) {
+        if (!(dmaGetChannelIntMask(channel) & XDMAC_CIM_LIM)) {
+          pendingInt = TRUE;
         }
       }
+
+      if (cis & XDMAC_CIS_LIS) {
+        pendingInt = TRUE;
+      }
+
+      if (cis & XDMAC_CIS_DIS) {
+        pendingInt = TRUE;
+      }
+      flags = cis;
+
       /* Execute callback */
       if (pendingInt && channel->dma_func) {
-        channel->dma_func(channel->dma_param,cis);
+        channel->dma_func(channel->dma_param,flags);
       }
     }
   }
+  aicAckInt();
   OSAL_IRQ_EPILOGUE();
 }
 
@@ -198,9 +197,47 @@ void dmaInit(void) {
       dmaGetChannelInt(channel);
     }
 
-      uint32_t id = dmaGetControllerId(xdmac);
-      /* set aic source handler */
-      aicSetSourceHandler(id, dmaHandler);
+    uint32_t id = dmaGetControllerId(xdmac);
+    /* set aic source handler */
+    aicSetSourceHandler(id, dmaHandler);
+  }
+}
+
+/**
+ * @brief   Sets the number of transfers to be performed.
+ * @note    This function can be invoked in both ISR or thread context.
+ *
+ * @pre     The channel must have been allocated using @p dmaChannelAllocate().
+ * @post    After use the channel can be released using @p dmaChannelRelease().
+ *
+ * @param[in] dmastp    pointer to a sama_dma_channel_t structure
+ * @param[in] size      value to be written in the XDMAC_CUBC register
+ *
+ * @special
+ */
+void dmaChannelSetTransactionSize(sama_dma_channel_t *dmachp, size_t n) {
+
+uint32_t i;
+uint32_t divisor;
+  /* Single block single microblock */
+  if (n <= XDMAC_MAX_BT_SIZE) {
+    (dmachp)->xdmac->XDMAC_CHID[(dmachp)->chid].XDMAC_CUBC = XDMAC_CUBC_UBLEN(n);
+  }
+  /* Single block multiple microblocks */
+  else {
+   /* If n exceeds XDMAC_MAX_BT_SIZE, split the transfer in microblocks */
+    for (i = 2; i < XDMAC_MAX_BT_SIZE; i++) {
+      divisor = XDMAC_MAX_BT_SIZE / i;
+      if (n % divisor)
+        continue;
+      if ((n / divisor) <= XDMAC_MAX_BLOCK_LEN) {
+        (dmachp)->xdmac->XDMAC_CHID[(dmachp)->chid].XDMAC_CUBC = XDMAC_CUBC_UBLEN(i);
+        (dmachp)->xdmac->XDMAC_CHID[(dmachp)->chid].XDMAC_CBC =
+                                                   XDMAC_CBC_BLEN((n / divisor) - 1);
+        break;
+      }
+    }
+    osalDbgAssert(n == XDMAC_MAX_BT_SIZE, "unsupported DMA transfer size");
   }
 }
 
@@ -259,8 +296,7 @@ sama_dma_channel_t* dmaChannelAllocate(uint32_t priority,
     }
 
   /* Enable channel interrupt */
-  /* Only works for single block transfer */
-    channel->xdmac->XDMAC_CHID[channel->chid].XDMAC_CIE = XDMAC_CIE_BIE;
+    channel->xdmac->XDMAC_CHID[channel->chid].XDMAC_CIE =  XDMAC_CIE_BIE;
     channel->xdmac->XDMAC_GIE = XDMAC_GIE_IE0 << (channel->chid);
   }
   return channel;
