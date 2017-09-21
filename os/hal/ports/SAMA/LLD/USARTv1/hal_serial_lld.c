@@ -31,6 +31,32 @@
 /*===========================================================================*/
 
 /*===========================================================================*/
+/* Driver local macros.                                                      */
+/*===========================================================================*/
+
+/**
+ * @brief   Enable write protection on SD registers block.
+ *
+ * @param[in] sdp    pointer to a SD register block
+ *
+ * @notapi
+ */
+#define sdEnableWP(sdp) {                                                    \
+  sdp->UART_WPMR = UART_WPMR_WPKEY_PASSWD | UART_WPMR_WPEN;                  \
+}
+
+/**
+ * @brief   Disable write protection on SD registers block.
+ *
+ * @param[in] sdp    pointer to a SD register block
+ *
+ * @notapi
+ */
+#define sdDisableWP(sdp) {                                                   \
+  sdp->UART_WPMR = UART_WPMR_WPKEY_PASSWD;                                   \
+}
+
+/*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
@@ -46,7 +72,7 @@ SerialDriver SD1;
 
 /** @brief UART2 serial driver identifier.*/
 #if SAMA_SERIAL_USE_UART2 || defined(__DOXYGEN__)
-SerialDriver SD3;
+SerialDriver SD2;
 #endif
 
 /** @brief UART3 serial driver identifier.*/
@@ -125,6 +151,8 @@ static uint8_t sd_out_buf4[SAMA_SERIAL_UART4_IN_BUF_SIZE];
 static void uart_init(SerialDriver *sdp, const SerialConfig *config) {
   Uart *u = sdp->uart;
 
+  /* Disabling write protection */
+  sdDisableWP(u);
   /* Baud rate setting.*/
   u->UART_BRGR = UART_BRGR_CD(sdp->clock / (16 * config->speed));
 
@@ -136,6 +164,8 @@ static void uart_init(SerialDriver *sdp, const SerialConfig *config) {
   u->UART_CR |= UART_CR_RSTSTA;
   /* Enabling Tx and Rx */
   u->UART_CR |= UART_CR_RXEN | UART_CR_TXEN;
+  /* Enabling write protection */
+    sdEnableWP(u);
 
 }
 
@@ -147,8 +177,12 @@ static void uart_init(SerialDriver *sdp, const SerialConfig *config) {
  */
 static void uart_deinit(Uart *u) {
 
+  /* Disabling write protection */
+  sdDisableWP(u);
   u->UART_CR = 0;
   u->UART_MR = 0;
+  /* Enabling write protection */
+  sdEnableWP(u);
 
 }
 
