@@ -5,7 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -gnu99 -G -Ospeed -Onounroll
+  USE_OPT = -gnu99 -G -dual_debug -Ospeed -Onounroll
 endif
 
 # C specific options here (added to USE_OPT).
