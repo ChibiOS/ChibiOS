@@ -148,10 +148,10 @@ MOT  = gsrec
 BIN  = gmemfile
 
 # Define C warning options here
-CWARN = --ghstd=last
+CWARN = -Wunknown-pragmas -Wimplicit-int -Wshadow -Wtrigraphs -Wundef
 
 # Define C++ warning options here
-CPPWARN = --ghstd=last
+CPPWARN = -Wunknown-pragmas -Wimplicit-int -Wshadow -Wtrigraphs -Wundef
 
 #
 # Compiler settings

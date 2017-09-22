@@ -58,14 +58,6 @@ ifeq ($(BUILDDIR),.)
   BUILDDIR = build
 endif
 
-# Dependencies directory
-ifeq ($(DEPDIR),)
-  DEPDIR = .dep
-endif
-ifeq ($(DEPDIR),.)
-  DEPDIR = .dep
-endif
-
 OUTFILES = $(BUILDDIR)/$(PROJECT).elf $(BUILDDIR)/$(PROJECT).hex \
            $(BUILDDIR)/$(PROJECT).mot $(BUILDDIR)/$(PROJECT).bin \
            $(BUILDDIR)/$(PROJECT).dmp
@@ -240,7 +232,7 @@ $(BUILDDIR)/lib$(PROJECT).a: $(OBJS)
 
 clean: CLEAN_RULE_HOOK
 	@echo Cleaning
-	-rm -fR $(DEPDIR) $(BUILDDIR)
+	-rm -fR $(BUILDDIR)
 	@echo
 	@echo Done
 
@@ -249,6 +241,6 @@ CLEAN_RULE_HOOK:
 #
 # Include the dependency files, should be the last of the makefile
 #
--include $(shell mkdir $(DEPDIR) 2>/dev/null) $(wildcard $(DEPDIR)/*)
+-include $(wildcard $(OBJDIR)/*.d)
 
 # *** EOF ***
