@@ -11,27 +11,26 @@ CPPOPT = $(USE_CPPOPT)
 
 # Garbage collection
 ifeq ($(USE_LINK_GC),yes)
-  OPT += -ffunction-sections -fdata-sections -fno-common
-  LDOPT := --gc-sections
-else
-  LDOPT := --no-gc-sections
+  OPT += --no_commons
+  LDOPT := -delete
 endif
 
 # Linker extra options
 ifneq ($(USE_LDOPT),)
-  LDOPT := $(LDOPT),$(USE_LDOPT)
+  LDOPT := $(LDOPT) $(USE_LDOPT)
 endif
 
 # Link time optimizations
 ifeq ($(USE_LTO),yes)
-  OPT += -flto
+  OPT += -Owholeprogram
 endif
 
 # VLE option handling.
 ifeq ($(USE_VLE),yes)
   DDEFS += -DPPC_USE_VLE=1
   DADEFS += -DPPC_USE_VLE=1
-  MCU += -mvle
+  OPT += -vle
+  COPT += -vle
 else
   DDEFS += -DPPC_USE_VLE=0
   DADEFS += -DPPC_USE_VLE=0
@@ -39,16 +38,16 @@ endif
 
 # Process stack size
 ifeq ($(USE_PROCESS_STACKSIZE),)
-  LDOPT := $(LDOPT),--defsym=__process_stack_size__=0x400
+  LDOPT := $(LDOPT) -C__process_stack_size__=0x400 #,--defsym=__process_stack_size__=0x400
 else
-  LDOPT := $(LDOPT),--defsym=__process_stack_size__=$(USE_PROCESS_STACKSIZE)
+  LDOPT := $(LDOPT) -C__process_stack_size__=$(USE_PROCESS_STACKSIZE) #,--defsym=__process_stack_size__=$(USE_PROCESS_STACKSIZE)
 endif
 
 # Exceptions stack size
 ifeq ($(USE_EXCEPTIONS_STACKSIZE),)
-  LDOPT := $(LDOPT),--defsym=__irq_stack_size__=0x400
+  LDOPT := $(LDOPT) -C__irq_stack_size__=0x400 #,--defsym=__irq_stack_size__=0x400
 else
-  LDOPT := $(LDOPT),--defsym=__irq_stack_size__=$(USE_EXCEPTIONS_STACKSIZE)
+  LDOPT := $(LDOPT) -C__irq_stack_size__=$(USE_EXCEPTIONS_STACKSIZE) #,--defsym=__irq_stack_size__=$(USE_EXCEPTIONS_STACKSIZE)
 endif
 
 # Output directory and files
@@ -69,7 +68,7 @@ endif
 
 OUTFILES = $(BUILDDIR)/$(PROJECT).elf $(BUILDDIR)/$(PROJECT).hex \
            $(BUILDDIR)/$(PROJECT).mot $(BUILDDIR)/$(PROJECT).bin \
-           $(BUILDDIR)/$(PROJECT).dmp $(BUILDDIR)/$(PROJECT).list           
+           $(BUILDDIR)/$(PROJECT).dmp
 
 # Source files groups and paths
 SRC	      = $(CSRC)$(CPPSRC)
@@ -98,19 +97,29 @@ ADEFS 	  = $(DADEFS) $(UADEFS)
 LIBS      = $(DLIBS) $(ULIBS)
 
 # Various settings
-MCFLAGS   = -mcpu=$(MCU)
-ODFLAGS	  = -x --syms
-ASFLAGS   = $(MCFLAGS) -Wa,-amhls=$(LSTDIR)/$(notdir $(<:.s=.lst)) $(ADEFS)
-ASXFLAGS  = $(MCFLAGS) -Wa,-amhls=$(LSTDIR)/$(notdir $(<:.S=.lst)) $(ADEFS)
-CFLAGS    = $(MCFLAGS) $(OPT) $(COPT) $(CWARN) -Wa,-alms=$(LSTDIR)/$(notdir $(<:.c=.lst)) $(DEFS)
-CPPFLAGS  = $(MCFLAGS) $(OPT) $(CPPOPT) $(CPPWARN) -Wa,-alms=$(LSTDIR)/$(notdir $(<:.cpp=.lst)) $(DEFS)
-LDFLAGS   = $(MCFLAGS) $(OPT) -nostartfiles $(LLIBDIR) -Wl,-Map=$(BUILDDIR)/$(PROJECT).map,--cref,--no-warn-mismatch,--library-path=$(RULESPATH)/ld,$(LDOPT),--script=$(LDSCRIPT)
+WARN      = --incorrect_pragma_warnings --unknown_pragma_warnings --prototype_warnings --diag_error 236
+LIST      = -list -tmp=$(OBJDIR)  
+
+MCFLAGS   = -cpu=$(MCU)
+
+ODFLAGS	  = -ysec -full
+
+ASFLAGS   = $(MCFLAGS) $(OPT) $(LIST) -list=$(LSTDIR)/$(notdir $(<:.s=.lst))  $(ADEFS) $(WARN)  -preprocess_assembly_files
+ASXFLAGS  = $(MCFLAGS) $(OPT) $(LIST) -list=$(LSTDIR)/$(notdir $(<:.S=.lst))  $(ADEFS) $(WARN)  -preprocess_assembly_files    
+CFLAGS    = $(MCFLAGS) $(OPT) $(COPT)   $(CWARN)   $(LIST) -list=$(LSTDIR)/$(notdir $(<:.c=.lst))   $(DEFS)               
+CPPFLAGS  = $(MCFLAGS) $(OPT) $(CPPOPT) $(CPPWARN) $(LIST) -list=$(LSTDIR)/$(notdir $(<:.cpp=.lst)) $(DEFS)                                
+
+LDFLAGS  := $(MCFLAGS) $(OPT) -nostartfiles $(LLIBDIR) 
+LDFLAGS  += -map=$(BUILDDIR)/$(PROJECT).map
+LDFLAGS  += -Mx
+LDFLAGS  += $(LDOPT)
+LDFLAGS  += $(LDSCRIPT)
 
 # Generate dependency information
-ASFLAGS  += -MD -MP -MF $(DEPDIR)/$(@F).d
-ASXFLAGS += -MD -MP -MF $(DEPDIR)/$(@F).d
-CFLAGS   += -MD -MP -MF $(DEPDIR)/$(@F).d
-CPPFLAGS += -MD -MP -MF $(DEPDIR)/$(@F).d
+ASFLAGS  += -MD
+ASXFLAGS += -MD 
+CFLAGS   += -MD
+CPPFLAGS += -MD
 
 # Paths where to search for sources
 VPATH     = $(SRCPATHS)
@@ -188,45 +197,37 @@ endif
 
 %.hex: %.elf $(LDSCRIPT)
 ifeq ($(USE_VERBOSE_COMPILE),yes)
-	$(HEX) $< $@
+	$(HEX) $< -o $@
 else
 	@echo Creating $@
-	@$(HEX) $< $@
+	@$(HEX) $< -o $@
 endif
 
 %.mot: %.elf $(LDSCRIPT)
 ifeq ($(USE_VERBOSE_COMPILE),yes)
-	$(MOT) $< $@
+	$(MOT) $< -o $@
 else
 	@echo Creating $@
-	@$(MOT) $< $@
+	@$(MOT) $< -o $@
 endif
 
 %.bin: %.elf $(LDSCRIPT)
 ifeq ($(USE_VERBOSE_COMPILE),yes)
-	$(BIN) $< $@
+	$(BIN) $< -o $@
 else
 	@echo Creating $@
-	@$(BIN) $< $@
+	@$(BIN) $< -o $@
 endif
 
 %.dmp: %.elf $(LDSCRIPT)
 ifeq ($(USE_VERBOSE_COMPILE),yes)
 	$(OD) $(ODFLAGS) $< > $@
-	$(SZ) $<
 else
 	@echo Creating $@
 	@$(OD) $(ODFLAGS) $< > $@
 	@echo
-	@$(SZ) $<
-endif
-
-%.list: %.elf $(LDSCRIPT)
-ifeq ($(USE_VERBOSE_COMPILE),yes)
-	$(OD) -S $< > $@
-else
-	@echo Creating $@
-	@$(OD) -S $< > $@
+#	@$(SZ) -addr -file -hex $<
+#	@echo
 	@echo Done
 endif
 
