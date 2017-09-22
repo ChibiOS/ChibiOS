@@ -5,7 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16
+  USE_OPT = -c99 -Ospeed -Onounroll
 endif
 
 # C specific options here (added to USE_OPT).
@@ -133,33 +133,25 @@ INCDIR = $(CHIBIOS)/os/license \
 # Compiler settings
 #
 
-#MCU  = e200zx -meabi -msdata=none -mnew-mnemonics -mregnames # HighTec
-MCU  = e200z4 -meabi -msdata=none -mregnames # Free GCC
+MCU  = ppc564xcz0
 
-#TRGT = ppc-vle-
-#TRGT = powerpc-eabivle-
-TRGT = ppc-freevle-eabi-
-CC   = $(TRGT)gcc
-CPPC = $(TRGT)g++
-# Enable loading with g++ only if you need C++ runtime support.
-# NOTE: You can use C++ even without C++ support if you are careful. C++
-#       runtime support makes code size explode.
-LD   = $(TRGT)gcc
-#LD   = $(TRGT)g++
-CP   = $(TRGT)objcopy
-AS   = $(TRGT)gcc -x assembler-with-cpp
-AR   = $(TRGT)ar
-OD   = $(TRGT)objdump
-SZ   = $(TRGT)size
-HEX  = $(CP) -O ihex
-MOT  = $(CP) -O srec
-BIN  = $(CP) -O binary
+TRGT = 
+CC   = $(TRGT)ccppc
+CPPC = $(TRGT)cxppc
+LD   = $(TRGT)cxppc
+AS   = $(TRGT)ccppc
+AR   = $(TRGT)ax
+OD   = $(TRGT)gdump
+SZ   = $(TRGT)gfunsize
+HEX  = gsrec -hex386 
+MOT  = gsrec
+BIN  = gmemfile
 
 # Define C warning options here
-CWARN = -Wall -Wextra -Wundef -Wstrict-prototypes
+CWARN = --ghstd=last
 
 # Define C++ warning options here
-CPPWARN = -Wall -Wextra -Wundef
+CPPWARN = --ghstd=last
 
 #
 # Compiler settings
@@ -188,5 +180,5 @@ ULIBS =
 # End of user defines
 ##############################################################################
 
-RULESPATH = $(CHIBIOS)/os/common/startup/e200/compilers/GCC
+RULESPATH = $(CHIBIOS)/os/common/startup/e200/compilers/GHS
 include $(RULESPATH)/rules.mk

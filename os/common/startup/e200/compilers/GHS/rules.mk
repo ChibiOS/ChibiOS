@@ -71,7 +71,7 @@ OUTFILES = $(BUILDDIR)/$(PROJECT).elf $(BUILDDIR)/$(PROJECT).hex \
            $(BUILDDIR)/$(PROJECT).dmp
 
 # Source files groups and paths
-SRC	      = $(CSRC)$(CPPSRC)
+SRC       = $(CSRC)$(CPPSRC)
 SRCPATHS  = $(sort $(dir $(ASMXSRC)) $(dir $(ASMSRC)) $(dir $(SRC)))
 
 # Various directories
@@ -83,7 +83,7 @@ COBJS     = $(addprefix $(OBJDIR)/, $(notdir $(CSRC:.c=.o)))
 CPPOBJS   = $(addprefix $(OBJDIR)/, $(notdir $(CPPSRC:.cpp=.o)))
 ASMOBJS   = $(addprefix $(OBJDIR)/, $(notdir $(ASMSRC:.s=.o)))
 ASMXOBJS  = $(addprefix $(OBJDIR)/, $(notdir $(ASMXSRC:.S=.o)))
-OBJS	  = $(ASMXOBJS) $(ASMOBJS) $(COBJS) $(CPPOBJS)
+OBJS      = $(ASMXOBJS) $(ASMOBJS) $(COBJS) $(CPPOBJS)
 
 # Paths
 IINCDIR   = $(patsubst %,-I%,$(INCDIR) $(DINCDIR) $(UINCDIR))
@@ -91,7 +91,7 @@ LLIBDIR   = $(patsubst %,-L%,$(DLIBDIR) $(ULIBDIR))
 
 # Macros
 DEFS      = $(DDEFS) $(UDEFS)
-ADEFS 	  = $(DADEFS) $(UADEFS)
+ADEFS     = $(DADEFS) $(UADEFS)
 
 # Libs
 LIBS      = $(DLIBS) $(ULIBS)
@@ -102,7 +102,7 @@ LIST      = -list -tmp=$(OBJDIR)
 
 MCFLAGS   = -cpu=$(MCU)
 
-ODFLAGS	  = -ysec -full
+ODFLAGS   = -ysec -full
 
 ASFLAGS   = $(MCFLAGS) $(OPT) $(LIST) -list=$(LSTDIR)/$(notdir $(<:.s=.lst))  $(ADEFS) $(WARN)  -preprocess_assembly_files
 ASXFLAGS  = $(MCFLAGS) $(OPT) $(LIST) -list=$(LSTDIR)/$(notdir $(<:.S=.lst))  $(ADEFS) $(WARN)  -preprocess_assembly_files    
