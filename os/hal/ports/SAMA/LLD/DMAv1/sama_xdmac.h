@@ -228,12 +228,12 @@ typedef struct {
  *
  * @special
  */
-#define dmaChannelDisable(dmachp) {                                        \
-  (dmachp)->xdmac->XDMAC_GD |= XDMAC_GD_DI0 << ((dmachp)->chid);           \
-  while ((dmachp)->xdmac->XDMAC_GS == (XDMAC_GS_ST0 << (dmachp)->chid)) {  \
-    ;                                                                      \
-  }                                                                        \
-  dmaGetChannelInt(dmachp);                                                \
+#define dmaChannelDisable(dmachp) {                                              \
+  (dmachp)->xdmac->XDMAC_GD |= XDMAC_GD_DI0 << ((dmachp)->chid);                 \
+  while (((dmachp)->xdmac->XDMAC_GS) & (XDMAC_GS_ST0 << (dmachp)->chid)) == 1) { \
+    ;                                                                            \
+  }                                                                              \
+  dmaGetChannelInt(dmachp);                                                      \
 }
 
 /**
