@@ -336,6 +336,7 @@ static void wakeup(void *p) {
 #endif
 #if (CH_CFG_USE_CONDVARS == TRUE) && (CH_CFG_USE_CONDVARS_TIMEOUT == TRUE)
   case CH_STATE_WTCOND:
+    /* Falls into, intentional. */
 #endif
   case CH_STATE_QUEUED:
     /* States requiring dequeuing.*/
