@@ -34,10 +34,6 @@
 #define TRUE                                1
 #endif
 
-#if defined(__HIGHTEC__)
-#define se_bge bge
-#endif
-
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -90,7 +86,9 @@
 
 #if !defined(__DOXYGEN__)
 
-        .section    .crt0, "ax"
+        .vle
+
+        .section    .crt0, "axv"
         .align		2
         .globl      _boot_address
         .type       _boot_address, @function

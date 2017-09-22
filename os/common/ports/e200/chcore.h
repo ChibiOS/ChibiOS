@@ -28,6 +28,10 @@
 #ifndef CHCORE_H
 #define CHCORE_H
 
+#if defined(__ghs__) && !defined(_FROM_ASM_)
+#include <ppc_ghs.h>
+#endif
+
 #include "intc.h"
 
 /*===========================================================================*/
@@ -89,6 +93,9 @@
 
 #elif defined(__MWERKS__)
 #define PORT_COMPILER_NAME              "CW"
+
+#elif defined(__ghs__)
+#define PORT_COMPILER_NAME              "GHS " __VERSION__
 
 #else
 #error "unsupported compiler"
@@ -444,8 +451,13 @@ struct port_context {
  * @param[in] spr       special register number
  * @param[in] val       value to be written, must be an automatic variable
  */
+#if !defined(__ghs__) || defined(__DOXYGEN__)
 #define port_write_spr(spr, val)                                            \
   asm volatile ("mtspr   %[p0], %[p1]" : : [p0] "n" (spr), [p1] "r" (val))
+#else
+#define port_write_spr(spr, val)                                            \
+  __MTSPR(spr, val);
+#endif
 
 /**
  * @brief   Reads a special register.
@@ -453,8 +465,13 @@ struct port_context {
  * @param[in] spr       special register number
  * @param[in] val       returned value, must be an automatic variable
  */
+#if !defined(__ghs__) || defined(__DOXYGEN__)
 #define port_read_spr(spr, val)                                             \
   asm volatile ("mfspr   %[p0], %[p1]" : [p0] "=r" (val) : [p1] "n" (spr))
+#else
+#define port_read_spr(spr, val)                                             \
+  val = __MFSPR(spr)
+#endif
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -483,6 +500,9 @@ extern "C" {
    asm module.*/
 #if !defined(_FROM_ASM_)
 
+extern void _IVOR4(void);
+extern void _IVOR10(void);
+
 /**
  * @brief   Kernel port layer initialization.
  * @details IVOR4 and IVOR10 initialization.
@@ -500,12 +520,10 @@ static inline void port_init(void) {
   {
     /* The CPU supports IVOR registers, the kernel requires IVOR4 and IVOR10
        and the initialization is performed here.*/
-    extern void _IVOR4(void);
-    port_write_spr(404, _IVOR4);
+    port_write_spr(404, (uint32_t)_IVOR4);
 
 #if PPC_SUPPORTS_DECREMENTER
-    extern void _IVOR10(void);
-    port_write_spr(410, _IVOR10);
+    port_write_spr(410, (uint32_t)_IVOR10);
 #endif
   }
 #endif
@@ -527,7 +545,12 @@ static inline void port_init(void) {
 static inline syssts_t port_get_irq_status(void) {
   uint32_t sts;
 
+#if defined(__ghs__)
+  sts = __GETSR();
+#else
   asm volatile ("mfmsr   %[p0]" : [p0] "=r" (sts) :);
+#endif
+
   return sts;
 }
 
@@ -567,7 +590,11 @@ static inline bool port_is_isr_context(void) {
  */
 static inline void port_lock(void) {
 
+#if defined(__ghs__)
+  __DI();
+#else
   asm volatile ("wrteei  0" : : : "memory");
+#endif
 }
 
 /**
@@ -576,7 +603,11 @@ static inline void port_lock(void) {
  */
 static inline void port_unlock(void) {
 
+#if defined(__ghs__)
+  __EI();
+#else
   asm volatile("wrteei  1" : : : "memory");
+#endif
 }
 
 /**
@@ -601,7 +632,11 @@ static inline void port_unlock_from_isr(void) {
  */
 static inline void port_disable(void) {
 
+#if defined(__ghs__)
+  __DI();
+#else
   asm volatile ("wrteei  0" : : : "memory");
+#endif
 }
 
 /**
@@ -611,7 +646,11 @@ static inline void port_disable(void) {
  */
 static inline void port_suspend(void) {
 
+#if defined(__ghs__)
+  __DI();
+#else
   asm volatile ("wrteei  0" : : : "memory");
+#endif
 }
 
 /**
@@ -620,7 +659,11 @@ static inline void port_suspend(void) {
  */
 static inline void port_enable(void) {
 
+#if defined(__ghs__)
+  __EI();
+#else
   asm volatile ("wrteei  1" : : : "memory");
+#endif
 }
 
 /**

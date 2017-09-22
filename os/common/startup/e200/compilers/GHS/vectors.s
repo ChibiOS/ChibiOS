@@ -31,11 +31,13 @@
 
 #if !defined(__DOXYGEN__)
 
+        .vle
+
         /* Software vectors table. The vectors are accessed from the IVOR4
            handler only. In order to declare an interrupt handler just create
            a function withe the same name of a vector, the symbol will
            override the weak symbol declared here.*/
-        .section    .vectors, "ax"
+        .section    .vectors, "axv"
         .align		4
         .globl      _vectors
 _vectors:
@@ -806,7 +808,7 @@ _vectors:
         .long       vector1020, vector1021, vector1022, vector1023
 #endif
 
-        .text
+        .section    .vletext, "axv"
         .align      2
 
         .weak       vector0,    vector1,    vector2,    vector3
