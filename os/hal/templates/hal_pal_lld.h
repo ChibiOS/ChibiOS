@@ -404,7 +404,6 @@ typedef uint32_t iopadid_t;
     (void)mode;                                                             \
   } while (false)
 
-
 /**
  * @brief   Returns a PAL event structure associated to a pad.
  *

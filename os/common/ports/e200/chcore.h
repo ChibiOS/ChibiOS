@@ -95,7 +95,7 @@
 #define PORT_COMPILER_NAME              "CW"
 
 #elif defined(__ghs__)
-#define PORT_COMPILER_NAME              "GHS " __VERSION__
+#define PORT_COMPILER_NAME              "GHS"
 
 #else
 #error "unsupported compiler"
