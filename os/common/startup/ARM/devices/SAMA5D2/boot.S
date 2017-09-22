@@ -1,0 +1,56 @@
+/*
+    ChibiOS - Copyright (C) 2006..2017 Giovanni Di Sirio
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+/**
+ * @file    SAMA5D2/boot.S
+ * @brief   SAMA5D2 boot-related code.
+ *
+ * @addtogroup SAMA5D2_BOOT
+ * @{
+ */
+#if !defined(__DOXYGEN__)
+
+                .set    AIC_REDIR_KEY, 0x5B6C0E26 << 1
+                .set    SFR_SN1, 	   0xF8030050
+                .set	SFR_AICREDIR,  0xF8030054
+
+                .section .boot
+                .code   32
+                .balign 4
+/*
+ * Boot initialization code
+ */
+				.global Boot_Handler
+Boot_Handler:
+				/*
+				 * Set VBAR to system vectors table
+				 */
+                ldr		r0, =_start
+                mcr 	p15, 0, r0, c12, c0, 0
+                /*
+                 * Do not redirect secure interrupts to AIC
+                 */
+				ldr		r0, =AIC_REDIR_KEY
+				ldr     r1, =SFR_SN1
+				ldr		r1, [r1]
+				eor		r0, r0, r1
+				bic		r0, r0, #0x1
+				ldr		r1, =SFR_AICREDIR
+				str		r0, [r1]
+				b       Reset_Handler
+#endif /* !defined(__DOXYGEN__) */
+
+/** @} */
