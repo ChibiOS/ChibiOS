@@ -61,7 +61,7 @@
 
         .vle
 
-        .section    .text_vle, "axv"
+        .section    .vletext, "axv"
 
         .align		2
         .globl      _port_switch
