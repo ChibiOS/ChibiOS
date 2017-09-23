@@ -218,7 +218,7 @@ int main(void) {
   halInit();
   chSysInit();
 
-  /* Configure the I2C Driver and i2C Pins.   */
+  /* Configure the I2C Driver and I2C Pins.   */
   palSetLineMode(LINE_ARD_D15, PAL_MODE_ALTERNATE(4) |
                  PAL_STM32_OSPEED_HIGHEST | PAL_STM32_OTYPE_OPENDRAIN);
   palSetLineMode(LINE_ARD_D14, PAL_MODE_ALTERNATE(4) |
