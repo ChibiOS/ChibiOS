@@ -2639,6 +2639,12 @@
       <file>
         <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\test_sequence_012.h</name>
       </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\test_sequence_013.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\test_sequence_013.h</name>
+      </file>
     </group>
   </group>
   <file>

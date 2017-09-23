@@ -349,7 +349,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>4</Optim>
+            <Optim>3</Optim>
             <oTime>1</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>0</OneElfS>
@@ -1401,6 +1401,16 @@
               <FileName>test_sequence_012.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\..\test\rt\source\test\test_sequence_012.h</FilePath>
+            </File>
+            <File>
+              <FileName>test_sequence_013.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\test\rt\source\test\test_sequence_013.c</FilePath>
+            </File>
+            <File>
+              <FileName>test_sequence_013.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\test\rt\source\test\test_sequence_013.h</FilePath>
             </File>
           </Files>
         </Group>
