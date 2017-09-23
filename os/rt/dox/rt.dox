@@ -34,6 +34,11 @@
  */
 
 /**
+ * @defgroup checks License Checks
+ * @ingroup kernel
+ */
+
+/**
  * @defgroup base Base Kernel Services
  * @details Base kernel services, the base subsystems are always included in
  *          the OS builds.
