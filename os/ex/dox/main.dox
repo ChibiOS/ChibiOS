@@ -27,9 +27,17 @@
  * @section ex_complex_drivers_architecture EX Complex Drivers Architecture
  * Each EX driver can be considered as a standalone Complex Device Driver. For 
  * ease of use these drivers are grouped by vendor:
- * - Micron Technology Peripherals
- * - STMicroelectronics Peripherals
+ * - Bosch Devices
+ * - Micron Technology Devices
+ * - STMicroelectronics Devices
  * .
+ *
+ * @section bosch_devices Bosch Devices
+ * This section contains all the drivers of devices produced by Bosch. 
+ * Devices currently supported are MEMS and are:
+ *   - @b BMP085: Digital pressure sensor;
+ * .
+ *
  * @section micron_devices Micron Technology Devices
  * This section contains all the drivers of devices produced by
  * Micron Technology. Devices currently supported are FLASH and are:
@@ -50,6 +58,13 @@
  * .
  */
 
+ /**
+ * @defgroup EX_BOSCH Bosch Devices
+ * @brief   Bosch Devices.
+ *
+ * @ingroup EX
+ */
+ 
 /**
  * @defgroup EX_MICRON Micron Technology Devices
  * @brief   Micron Technology Devices.

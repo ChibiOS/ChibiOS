@@ -20,13 +20,10 @@
 
 /**
  * @file    bmp085.h
- *
  * @brief   BMP085 Digital pressure sensor interface module header.
  *
- * @author  Theodore Ateba, tf.ateba@gmail.com
- *
- * @date    19 July 2016
- *
+ * @addtogroup BMP085
+ * @ingroup EX_BOSCH
  * @{
  */
 
@@ -70,28 +67,19 @@
  * @brief   BMP085 barometer subsystem characteristics.
  * @{
  */
-#define BMP085_BARO_NUMBER_OF_AXES  1U    /**< Number of axes.              */
+#define BMP085_BARO_NUMBER_OF_AXES  1U    /**< Number of axes               */
 
-#define BMP085_P_RES                0.01  /**< Press resolution.            */
-
-#define BMP085_CR_P_VAL0            0x34  /**< Press control reg value 0.   */
-#define BMP085_CR_P_VAL1            0x74  /**< Press control reg value 1.   */
-#define BMP085_CR_P_VAL2            0xB4  /**< Press control reg value 2.   */
-#define BMP085_CR_P_VAL3            0xF4  /**< Press control reg value 3.   */
+#define BMP085_P_RES                0.01  /**< LSB/hP                       */
 /** @} */
 
 /**
  * @brief   BMP085 thermometer subsystem characteristics.
  * @{
  */
-#define BMP085_THERMO_NUMBER_OF_AXES 1U  /**< Number of axis.               */
+#define BMP085_THERMO_NUMBER_OF_AXES 1U  /**< Number of axes                */
 
-#define BMP085_T_RES                0.1   /**< Temp resolution.             */
-
-#define BMP085_CR_T_VAL             0x2E  /**< Temp control register value. */
+#define BMP085_T_RES                0.1   /**< LSB/C°                       */
 /** @} */
-
-#define BMP085_SAD                  0x77  /**< Slave address.               */
 
 /**
  * @name  BMP085 Registers addresses.
@@ -151,7 +139,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(BMP085_BARO_USE_ADVANCED) || defined(__DOXYGEN__)
-#define BMP085_BARO_USE_AVANCED             FALSE
+#define BMP085_BARO_USE_ADVANCED            FALSE
 #endif
 
 /**
@@ -160,7 +148,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(BMP085_THERMO_USE_ADVANCED) || defined(__DOXYGEN__)
-#define BMP085_THERMO_USE_AVANCED           FALSE
+#define BMP085_THERMO_USE_DAVANCED          FALSE
 #endif
 
 /**

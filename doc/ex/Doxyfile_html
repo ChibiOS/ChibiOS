@@ -799,6 +799,7 @@ WARN_LOGFILE           =
 
 INPUT                  = ./src \
                          ../../os/ex/dox \
+                         ../../os/ex/Bosch \
                          ../../os/ex/ST \
                          ../../os/ex/Micron \
                          ../../os/hal/lib/peripherals/sensors \

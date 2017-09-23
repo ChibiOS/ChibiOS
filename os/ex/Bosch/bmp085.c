@@ -20,31 +20,28 @@
 
 /**
  * @file        bmp085.c
- *
  * @brief       BMP085 Digital pressure sensor interface module code.
  *
- * @author      Theodore Ateba, tf.ateba@gmail.com
- *
- * @date        19 July 2016
- *
- * TODO:        Read the altitude with the sensor.
- *
+ * @addtogroup BMP085
+ * @ingroup EX_BOSCH
  * @{
  */
 
-/*==========================================================================*/
-/* Include files.                                                           */
-/*==========================================================================*/
-
-/* ChibiOS HAL file. */
 #include "hal.h"
-
-/* ChibiOS EX file. */
 #include "bmp085.h"
 
 /*==========================================================================*/
 /* Driver local definitions.                                                */
 /*==========================================================================*/
+
+#define BMP085_SAD                  0x77
+
+#define BMP085_CR_P_VAL0            0x34
+#define BMP085_CR_P_VAL1            0x74
+#define BMP085_CR_P_VAL2            0xB4
+#define BMP085_CR_P_VAL3            0xF4
+
+#define BMP085_CR_T_VAL             0x2E
 
 /*==========================================================================*/
 /* Driver exported variables.                                               */
@@ -176,6 +173,7 @@ static void calcul_t(int32_t ut, float *ctp) {
  * @brief   Calcul the true pressure.
  *
  * @param[in]   up    uncompensated pressure
+ * @param[in]   oss   over sampling setting
  * @param[out]  cpp   pointer of the compensated pressure
  */
 static void calcul_p(int32_t up, uint8_t oss, float *cpp) {
@@ -290,7 +288,7 @@ static msg_t start_p_measurement(BMP085Driver *devp) {
  *
  * @return      msg     the operation status
  */
-msg_t acquire_ut(BMP085Driver *devp, int32_t *utemp) {
+static msg_t acquire_ut(BMP085Driver *devp, int32_t *utemp) {
 
   uint8_t rxbuf[2];
   msg_t msg;
@@ -327,7 +325,7 @@ msg_t acquire_ut(BMP085Driver *devp, int32_t *utemp) {
  *
  * @return      msg     the operation status
  */
-msg_t acquire_up(BMP085Driver *devp, int32_t *upress) {
+static msg_t acquire_up(BMP085Driver *devp, int32_t *upress) {
 
   uint8_t rxbuf[3];
   uint8_t oss;

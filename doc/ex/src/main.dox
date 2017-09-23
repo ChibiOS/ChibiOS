@@ -21,6 +21,7 @@
  * @mainpage Introduction
  * @author Giovanni Di Sirio (gdisirio@users.sourceforge.net).
  * @author Rocco Marco Guglielmi (guglielmir@playembedded.org).
+ * @author Theodore Ateba (tf.ateba@gmail.com).
  *
  * <h2>Features</h2>
  * - EXternal devices (EX) supporting numerous devices external to the MCU
@@ -39,4 +40,6 @@
  *    - @b LSM303DLHC: Ultra compact high performance e-compass;
  * - Currently Micron Technology supported devices are:
  *    - @b M25Q: Serial NOR Flash;
+ * - Currently Bosch supported devices are:
+ *    - @b BMP085: Digital pressure sensor;
  */
