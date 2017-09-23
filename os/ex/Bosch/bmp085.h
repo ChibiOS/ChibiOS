@@ -143,12 +143,12 @@
 #endif
 
 /**
- * @brief   BMP085 termomether subsystem advanced configurations switch.
+ * @brief   BMP085 thermometer subsystem advanced configurations switch.
  * @details If set to @p TRUE more configurations are available.
  * @note    The default is @p FALSE.
  */
 #if !defined(BMP085_THERMO_USE_ADVANCED) || defined(__DOXYGEN__)
-#define BMP085_THERMO_USE_DAVANCED          FALSE
+#define BMP085_THERMO_USE_ADVANCED          FALSE
 #endif
 
 /**
