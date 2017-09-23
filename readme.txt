@@ -101,6 +101,7 @@
        Eclipse Tools menu. It is required to create an OPENOCD environment
        variable pointing to the OpenOCD executable. It will be done in
        ChibiStudio 20 by default.
+- NIL: Fixed duplicated entries in NIL documentation (bug #887).
 - HAL: Fixed EXT low level driver bug on AVR port (bug #886).
 - HAL: Fixed USB GET_DESCRIPTOR not handled for Interface Recipients (bug #885).
 - RT:  MAILBOX_DECL size parameter is actually a count (bug #884).
