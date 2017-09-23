@@ -28,7 +28,7 @@
  * @ingroup NIL
  */
 
-/**
+/*-*
  * @defgroup NIL_TYPES Kernel Types
  * @ingroup NIL
  */
@@ -38,12 +38,12 @@
  * @ingroup NIL
  */
 
-/**
+/*-*
  * @defgroup NIL_CORE Port Layer
  * @ingroup NIL
  */
 
-/**
+/*-*
  * @defgroup NIL_TIMER Timer Interface
  * @ingroup NIL
  */
