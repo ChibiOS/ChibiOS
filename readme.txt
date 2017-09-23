@@ -122,6 +122,8 @@
        dependencies and configuration directories. This makes possible
        to have multiple non-conflicting makefiles in the same project.
        Updated the various platform.mk implementing "smart build" mode.
+- NIL: Fixed duplicated entries in NIL documentation (bug #887)(backported
+       to 17.6.1).
 - HAL: Fixed USB GET_DESCRIPTOR not handled for Interface Recipients (bug #885)
        (backported to 17.6.1 and 16.1.9).
 - RT:  MAILBOX_DECL size parameter is actually a count (bug #884)

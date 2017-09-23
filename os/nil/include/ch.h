@@ -55,7 +55,7 @@
 /**
  * @brief   Kernel version string.
  */
-#define CH_KERNEL_VERSION       "2.0.0"
+#define CH_KERNEL_VERSION       "2.0.1"
 
 /**
  * @brief   Kernel version major number.
@@ -70,7 +70,7 @@
 /**
  * @brief   Kernel version patch number.
  */
-#define CH_KERNEL_PATCH         0
+#define CH_KERNEL_PATCH         1
 /** @} */
 
 /**
@@ -139,7 +139,7 @@
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
 
-/**
+/*-*
  * @brief   Number of user threads in the application.
  * @note    This number is not inclusive of the idle thread which is
  *          implicitly handled.
@@ -148,7 +148,7 @@
 #define CH_CFG_NUM_THREADS                  2
 #endif
 
-/**
+/*-*
  * @brief   System time counter resolution.
  * @note    Allowed values are 16 or 32 bits.
  */
@@ -156,7 +156,7 @@
 #define CH_CFG_ST_RESOLUTION                32
 #endif
 
-/**
+/*-*
  * @brief   System tick frequency.
  * @note    This value together with the @p CH_CFG_ST_RESOLUTION
  *          option defines the maximum amount of time allowed for
@@ -166,7 +166,7 @@
 #define CH_CFG_ST_FREQUENCY                 100
 #endif
 
-/**
+/*-*
  * @brief   Time delta constant for the tick-less mode.
  * @note    If this value is zero then the system uses the classic
  *          periodic tick. This value represents the minimum number
@@ -178,7 +178,7 @@
 #define CH_CFG_ST_TIMEDELTA                 0
 #endif
 
-/**
+/*-*
  * @brief   Semaphores APIs.
  * @details If enabled then the Semaphores APIs are included in the kernel.
  *
@@ -188,7 +188,7 @@
 #define CH_CFG_USE_SEMAPHORES               TRUE
 #endif
 
-/**
+/*-*
  * @brief   Mutexes APIs.
  * @details If enabled then the mutexes APIs are included in the kernel.
  *
@@ -199,7 +199,7 @@
 #define CH_CFG_USE_MUTEXES                  FALSE
 #endif
 
-/**
+/*-*
  * @brief   Events Flags APIs.
  * @details If enabled then the event flags APIs are included in the kernel.
  *
@@ -209,7 +209,7 @@
 #define CH_CFG_USE_EVENTS                   TRUE
 #endif
 
-/**
+/*-*
  * @brief   Mailboxes APIs.
  * @details If enabled then the asynchronous messages (mailboxes) APIs are
  *          included in the kernel.
@@ -221,7 +221,7 @@
 #define CH_CFG_USE_MAILBOXES                TRUE
 #endif
 
-/**
+/*-*
  * @brief   Core Memory Manager APIs.
  * @details If enabled then the core memory manager APIs are included
  *          in the kernel.
@@ -232,7 +232,7 @@
 #define CH_CFG_USE_MEMCORE                  TRUE
 #endif
 
-/**
+/*-*
  * @brief   Heap Allocator APIs.
  * @details If enabled then the memory heap allocator APIs are included
  *          in the kernel.
@@ -243,7 +243,7 @@
 #define CH_CFG_USE_HEAP                     TRUE
 #endif
 
-/**
+/*-*
  * @brief   Memory Pools Allocator APIs.
  * @details If enabled then the memory pools allocator APIs are included
  *          in the kernel.
@@ -254,7 +254,7 @@
 #define CH_CFG_USE_MEMPOOLS                 TRUE
 #endif
 
-/**
+/*-*
  * @brief   Debug option, kernel statistics.
  *
  * @note    Feature not currently implemented.
@@ -264,7 +264,7 @@
 #define CH_DBG_STATISTICS                   FALSE
 #endif
 
-/**
+/*-*
  * @brief   Debug option, system state check.
  * @note    This is a planned feature, not yet implemented.
  *
@@ -274,7 +274,7 @@
 #define CH_DBG_SYSTEM_STATE_CHECK           FALSE
 #endif
 
-/**
+/*-*
  * @brief   Debug option, parameters checks.
  *
  * @note    The default is @p FALSE.
@@ -283,7 +283,7 @@
 #define CH_DBG_ENABLE_CHECKS                FALSE
 #endif
 
-/**
+/*-*
  * @brief   System assertions.
  *
  * @note    The default is @p FALSE.
@@ -292,7 +292,7 @@
 #define CH_DBG_ENABLE_ASSERTS               FALSE
 #endif
 
-/**
+/*-*
  * @brief   Stack check.
  *
  * @note    The default is @p FALSE.
@@ -301,14 +301,14 @@
 #define CH_DBG_ENABLE_STACK_CHECK           FALSE
 #endif
 
-/**
+/*-*
  * @brief   System initialization hook.
  */
 #if !defined(CH_CFG_SYSTEM_INIT_HOOK) || defined(__DOXYGEN__)
 #define CH_CFG_SYSTEM_INIT_HOOK() {}
 #endif
 
-/**
+/*-*
  * @brief   Threads descriptor structure extension.
  * @details User fields added to the end of the @p thread_t structure.
  */
@@ -316,14 +316,14 @@
 #define CH_CFG_THREAD_EXT_FIELDS
 #endif
 
-/**
+/*-*
  * @brief   Threads initialization hook.
  */
 #if !defined(CH_CFG_THREAD_EXT_INIT_HOOK) || defined(__DOXYGEN__)
 #define CH_CFG_THREAD_EXT_INIT_HOOK(tr) {}
 #endif
 
-/**
+/*-*
  * @brief   Idle thread enter hook.
  * @note    This hook is invoked within a critical zone, no OS functions
  *          should be invoked from here.
@@ -333,7 +333,7 @@
 #define CH_CFG_IDLE_ENTER_HOOK() {}
 #endif
 
-/**
+/*-*
  * @brief   Idle thread leave hook.
  * @note    This hook is invoked within a critical zone, no OS functions
  *          should be invoked from here.
@@ -343,7 +343,7 @@
 #define CH_CFG_IDLE_LEAVE_HOOK() {}
 #endif
 
-/**
+/*-*
  * @brief   System halt hook.
  */
 #if !defined(CH_CFG_SYSTEM_HALT_HOOK) || defined(__DOXYGEN__)
