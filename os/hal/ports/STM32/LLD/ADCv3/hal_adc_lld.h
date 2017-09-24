@@ -264,14 +264,14 @@
 /**
  * @brief   ADC3 interrupt priority level setting.
  */
-#if !defined(STM32_ADC3_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#if !defined(STM32_ADC_ADC3_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_ADC_ADC3_IRQ_PRIORITY         5
 #endif
 
 /**
  * @brief   ADC4 interrupt priority level setting.
  */
-#if !defined(STM32_ADC4_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#if !defined(STM32_ADC_ADC4_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_ADC_ADC4_IRQ_PRIORITY         5
 #endif
 
