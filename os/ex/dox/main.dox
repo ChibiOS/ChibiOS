@@ -16,7 +16,7 @@
 
 /**
  * @defgroup EX EX
- * @brief   EXternal periferals.
+ * @brief   EXternal peripherals.
  * @details Under ChibiOS the set of the complex device driver interfaces 
  * dedicated to external peripherals is called the EX subsystem. The EX resides 
  * on top of HAL and is actually a set of libraries for external devices like
