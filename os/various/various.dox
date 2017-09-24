@@ -79,3 +79,13 @@
  *
  * @ingroup various
  */
+
+/**
+ * @defgroup LWIP_THREAD LWIP bindings
+ *
+ * @brief   lwIP port and wrapper thread.
+ * @details This module implements the lwIP system abstraction and wrapper
+ *          thread.
+ *
+ * @ingroup various
+ */

@@ -61,17 +61,47 @@ typedef uint32_t        u32_t;
 typedef int32_t         s32_t;
 typedef uint32_t        mem_ptr_t;
 
-#define PACK_STRUCT_STRUCT __attribute__((packed))
-
-#define LWIP_PLATFORM_DIAG(x)
-#define LWIP_PLATFORM_ASSERT(x) {                                       \
-  osalSysHalt(x);                                                          \
-}
+#define PACK_STRUCT_STRUCT          __attribute__((packed))
 
 #ifndef BYTE_ORDER
 #define BYTE_ORDER LITTLE_ENDIAN
 #endif
 
-#define LWIP_PROVIDE_ERRNO
+/**
+ * @brief   Use lwIP provided error codes by default. 
+ */
+#ifndef LWIP_PROVIDE_ERRNO
+#define LWIP_PROVIDE_ERRNO          1
+#endif
+
+/** 
+ * @brief   Use system provided struct timeval by default.
+ */
+#ifndef LWIP_TIMEVAL_PRIVATE
+#define LWIP_TIMEVAL_PRIVATE        0
+#include <sys/time.h>
+#endif
+
+/**
+ * @brief   Use a no-op diagnostic output macro by default.
+ */
+#if !defined(LWIP_PLATFORM_DIAG)
+#define LWIP_PLATFORM_DIAG(x)
+#endif
+
+/**
+ * @brief   Halt the system on lwIP assert failure by default.
+ */
+#if !defined(LWIP_PLATFORM_ASSERT)
+#define LWIP_PLATFORM_ASSERT(x)     osalSysHalt(x)
+#endif
+
+/**
+ * @brief   The NETIF API is required by lwipthread.
+ */
+#ifdef LWIP_NETIF_API
+#undef LWIP_NETIF_API
+#endif
+#define LWIP_NETIF_API              1
 
 #endif /* __CC_H__ */

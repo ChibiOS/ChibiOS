@@ -48,7 +48,9 @@
  *
  */
 
-// see http://lwip.wikia.com/wiki/Porting_for_an_OS for instructions
+/*
+ * See http://lwip.wikia.com/wiki/Porting_for_an_OS for instructions.
+ */
 
 #include "hal.h"
 

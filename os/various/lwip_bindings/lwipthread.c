@@ -60,20 +60,23 @@
 
 #include "lwipthread.h"
 
-#include "lwip/opt.h"
-
-#include "lwip/def.h"
-#include "lwip/mem.h"
-#include "lwip/pbuf.h"
-#include "lwip/sys.h"
+#include <lwip/opt.h>
+#include <lwip/def.h>
+#include <lwip/mem.h>
+#include <lwip/pbuf.h>
+#include <lwip/sys.h>
 #include <lwip/stats.h>
 #include <lwip/snmp.h>
 #include <lwip/tcpip.h>
-#include "netif/etharp.h"
-#include "netif/ppp_oe.h"
+#include <netif/etharp.h>
+#include <netif/ppp_oe.h>
 
 #if LWIP_DHCP
 #include <lwip/dhcp.h>
+#endif
+
+#if LWIP_AUTOIP
+#include <lwip/autoip.h>
 #endif
 
 #define PERIODIC_TIMER_ID       1
@@ -97,7 +100,7 @@ static void low_level_init(struct netif *netif) {
   netif->hwaddr_len = ETHARP_HWADDR_LEN;
 
   /* maximum transfer unit */
-  netif->mtu = 1500;
+  netif->mtu = LWIP_NETIF_MTU;
 
   /* device capabilities */
   /* don't set NETIF_FLAG_ETHARP if this device is not an Ethernet one */
@@ -107,7 +110,19 @@ static void low_level_init(struct netif *netif) {
 }
 
 /*
- * Transmits a frame.
+ * This function does the actual transmission of the packet. The packet is
+ * contained in the pbuf that is passed to the function. This pbuf
+ * might be chained.
+ *
+ * @param netif the lwip network interface structure for this ethernetif
+ * @param p the MAC packet to send (e.g. IP packet including MAC addresses and type)
+ * @return ERR_OK if the packet could be sent
+ *         an err_t value if the packet couldn't be sent
+ *
+ * @note Returning ERR_MEM here if a DMA queue of your MAC is full can lead to
+ *       strange results. You might consider waiting for space in the DMA queue
+ *       to become available since the stack doesn't retry to send a packet
+ *       dropped because of memory failure (except for the TCP timers).
  */
 static err_t low_level_output(struct netif *netif, struct pbuf *p) {
   struct pbuf *q;
@@ -182,13 +197,19 @@ static struct pbuf *low_level_input(struct netif *netif) {
 }
 
 /*
- * Initialization.
+ * Called at the beginning of the program to set up the
+ * network interface. It calls the function low_level_init() to do the
+ * actual setup of the hardware.
+ *
+ * This function should be passed as a parameter to netifapi_netif_add().
+ *
+ * @param netif the lwip network interface structure for this ethernetif
+ * @return ERR_OK if the loopif is initialised
+ *         ERR_MEM if private data couldn't be allocated
+ *         any other err_t on error
  */
 static err_t ethernetif_init(struct netif *netif) {
-#if LWIP_NETIF_HOSTNAME
-  /* Initialize interface hostname */
-  netif->hostname = "lwip";
-#endif /* LWIP_NETIF_HOSTNAME */
+  osalDbgAssert((netif != NULL), "netif != NULL");
 
   /*
    * Initialize the snmp variables and counters inside the struct netif.
@@ -222,11 +243,13 @@ static err_t ethernetif_init(struct netif *netif) {
 static THD_FUNCTION(lwip_thread, p) {
   event_timer_t evt;
   event_listener_t el0, el1;
-  struct ip_addr ip, gateway, netmask;
-  static struct netif thisif;
+  ip_addr_t ip, gateway, netmask;
+  static struct netif thisif = { 0 };
   static const MACConfig mac_config = {thisif.hwaddr};
+  net_addr_mode_t addressMode;
+  err_t result;
 
-  chRegSetThreadName("lwipthread");
+  chRegSetThreadName(LWIP_THREAD_NAME);
 
   /* Initializes the thing.*/
   tcpip_init(NULL, NULL);
@@ -241,6 +264,10 @@ static THD_FUNCTION(lwip_thread, p) {
     ip.addr = opts->address;
     gateway.addr = opts->gateway;
     netmask.addr = opts->netmask;
+    addressMode = opts->addrMode;
+#if LWIP_NETIF_HOSTNAME
+    thisif.hostname = opts->ourHostName;
+#endif
   }
   else {
     thisif.hwaddr[0] = LWIP_ETHADDR_0;
@@ -252,12 +279,41 @@ static THD_FUNCTION(lwip_thread, p) {
     LWIP_IPADDR(&ip);
     LWIP_GATEWAY(&gateway);
     LWIP_NETMASK(&netmask);
+    addressMode = NET_ADDRESS_STATIC;
+#if LWIP_NETIF_HOSTNAME
+    thisif.hostname = NULL;
+#endif
   }
+
+#if LWIP_NETIF_HOSTNAME
+  if (thisif.hostname == NULL)
+    thisif.hostname = LWIP_NETIF_HOSTNAME_STRING;
+#endif
+
   macStart(&ETHD1, &mac_config);
-  netif_add(&thisif, &ip, &netmask, &gateway, NULL, ethernetif_init, tcpip_input);
+
+  /* Add interface. */
+  result = netifapi_netif_add(&thisif, &ip, &netmask, &gateway, NULL, ethernetif_init, tcpip_input);
+  if (result != ERR_OK)
+  {
+    chThdSleepMilliseconds(1000);     // Give some time to print any other diagnostics.
+    osalSysHalt("netif_add error");   // Not sure what else we can do if an error occurs here.
+  };
 
   netif_set_default(&thisif);
-  netif_set_up(&thisif);
+  
+  switch (addressMode)
+  {
+#if LWIP_AUTOIP
+    case NET_ADDRESS_AUTO:
+        autoip_start(&thisif);
+        break;
+#endif
+
+    default:
+      netif_set_up(&thisif);
+      break;
+  }
 
   /* Setup event sources.*/
   evtObjectInit(&evt, LWIP_LINK_POLL_INTERVAL);
@@ -279,14 +335,16 @@ static THD_FUNCTION(lwip_thread, p) {
           tcpip_callback_with_block((tcpip_callback_fn) netif_set_link_up,
                                      &thisif, 0);
 #if LWIP_DHCP
-          dhcp_start(&thisif);
+          if (addressMode == NET_ADDRESS_DHCP)
+            dhcp_start(&thisif);
 #endif
         }
         else {
           tcpip_callback_with_block((tcpip_callback_fn) netif_set_link_down,
                                      &thisif, 0);
 #if LWIP_DHCP
-          dhcp_stop(&thisif);
+          if (addressMode == NET_ADDRESS_DHCP)
+            dhcp_stop(&thisif);
 #endif
         }
       }
@@ -308,6 +366,7 @@ static THD_FUNCTION(lwip_thread, p) {
           if (thisif.input(p, &thisif) == ERR_OK)
             break;
           LWIP_DEBUGF(NETIF_DEBUG, ("ethernetif_input: IP input error\n"));
+          /* Falls through */
         default:
           pbuf_free(p);
         }
@@ -324,7 +383,6 @@ static THD_FUNCTION(lwip_thread, p) {
  *                      then the static configuration is used.
  */
 void lwipInit(const lwipthread_opts_t *opts) {
-
   /* Creating the lwIP thread (it changes priority internally).*/
   chThdCreateStatic(wa_lwip_thread, sizeof (wa_lwip_thread),
                     chThdGetPriorityX() - 1, lwip_thread, (void *)opts);
