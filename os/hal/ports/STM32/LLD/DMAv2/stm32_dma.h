@@ -648,6 +648,20 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
     ;                                                                       \
   dmaStreamClearInterrupt(dmastp);                                          \
 }
+
+/**
+ * @brief   DMA stream current target.
+ * @note    This function can be invoked in both ISR or thread context.
+ * @pre     The stream must have been allocated using @p dmaStreamAllocate().
+ * @post    After use the stream can be released using @p dmaStreamRelease().
+ *
+ * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
+ * @return              Current memory target index.
+ *
+ * @special
+ */
+#define dmaStreamGetCurrentTarget(dmastp)                                   \
+  (((dmastp)->stream->CR >> DMA_SxCR_CT_Pos) & 1U)
 /** @} */
 
 /*===========================================================================*/
