@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Integrated the latest FatFS 0.13 with patches.
 - NEW: Improved RT and NIL test suite to report version numbers and
        configuration settings.
 - NEW: Added a test suite generator tool written in FTL.
