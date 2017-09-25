@@ -257,6 +257,20 @@ static inline void chEvtBroadcastI(event_source_t *esp) {
 }
 
 /**
+ * @brief   Adds (OR) a set of events to the current thread, this is
+ *          @b much faster than using @p chEvtBroadcast() or @p chEvtSignal().
+ *
+ * @param[in] events    the events to be added
+ * @return              The mask of currently pending events.
+ *
+ * @iclass
+ */
+static inline eventmask_t chEvtAddEventsI(eventmask_t events) {
+
+  return currp->epending |= events;
+}
+
+/**
  * @brief   Returns the events mask.
  * @details The pending events mask is returned but not altered in any way.
  *
