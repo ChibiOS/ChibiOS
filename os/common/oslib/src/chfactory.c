@@ -146,13 +146,13 @@ dyn_object_t *chFactoryCreateObject(const char *name, size_t size) {
   }
 
   /* Initializing object data and metadata.*/
-  strncpy(&dop->list.name, name, CH_CFG_FACTORY_MAX_NAMES_LENGHT);
+  strncpy(dop->list.name, name, CH_CFG_FACTORY_MAX_NAMES_LENGHT);
   dop->list.refs = 1;
   dop->list.next = ch_factory.obj_list.next;
   memset((void *)dop->obj, 0, size);
 
   /* Updating factory list.*/
-  ch_factory.obj_list.next = dop;
+  ch_factory.obj_list.next = (dyn_element_t *)dop;
 
   chSysUnlock();
 
