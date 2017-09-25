@@ -161,7 +161,7 @@ void palSetLineCallbackI(ioline_t line, palcallback_t cb, void *arg) {
  * @param[in] pad       pad number within the port
  * @returns             The operation state.
  * @retval MSG_OK       if an edge has been detected.
- * @retval MSG_TIMEOUT  if a timeout occurred before an edge cound be detected.
+ * @retval MSG_TIMEOUT  if a timeout occurred before an edge could be detected.
  * @retval MSG_RESET    if the event has been disabled while the thread was
  *                      waiting for an edge.
  *
@@ -180,7 +180,7 @@ msg_t palWaitPadTimeoutS(ioportid_t port, iopadid_t pad, systime_t timeout) {
  * @param[in] timeout   operation timeout
  * @returns             The operation state.
  * @retval MSG_OK       if an edge has been detected.
- * @retval MSG_TIMEOUT  if a timeout occurred before an edge cound be detected.
+ * @retval MSG_TIMEOUT  if a timeout occurred before an edge could be detected.
  * @retval MSG_RESET    if the event has been disabled while the thread was
  *                      waiting for an edge.
  *
