@@ -131,7 +131,7 @@ typedef struct ch_dyn_object {
   /**
    * @brief   List element of the dynamic object.
    */
-  dyn_element_t         list;
+  dyn_element_t         element;
   /**
    * @brief   Physical objects.
    * @note    This requires C99.
@@ -148,7 +148,7 @@ typedef struct ch_dyn_semaphore {
   /**
    * @brief   List element of the dynamic semaphore.
    */
-  dyn_element_t         list;
+  dyn_element_t         element;
   /**
    * @brief   Physical semaphore.
    */
@@ -212,6 +212,22 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
+
+/**
+ * @brief   Duplicates an object reference.
+ *
+ * @param[in] dep       pointer to the element field of the object
+ *
+ * @iclass
+ */
+static inline dyn_element_t *chFactoryDuplicateReferenceI(dyn_element_t *dep) {
+
+  chDbgCheckClassI();
+
+  dep->refs++;
+
+  return dep;
+}
 
 #endif /* CH_CFG_USE_FACTORY == TRUE */
 
