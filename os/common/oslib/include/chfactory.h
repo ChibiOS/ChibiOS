@@ -136,8 +136,8 @@ typedef struct ch_dyn_object {
    * @brief   Physical objects.
    * @note    This requires C99.
    */
-  uint8_t               obj[];
-} dyn_object_t;
+  uint8_t               buffer[];
+} dyn_buffer_t;
 #endif
 
 #if (CH_CFG_FACTORY_SEMAPHORES == TRUE) || defined(__DOXIGEN__)
@@ -194,11 +194,12 @@ objects_factory_t ch_factory;
 extern "C" {
 #endif
   void _factory_init(void);
+//  dyn_registered_object_t *chFactoryRegisterObject(const char *name,
+//                                                   void *objp);
 #if (CH_CFG_FACTORY_GENERIC == TRUE) || defined(__DOXIGEN__)
-  dyn_object_t *chFactoryCreateObject(const char *name, size_t size);
-  dyn_object_t *chFactoryFindObject(const char *name);
-  void chFactoryReleaseObject(dyn_object_t *dop);
-  size_t chFactoryGetObjectSize(dyn_object_t *dop);
+  dyn_buffer_t *chFactoryCreateBuffer(const char *name, size_t size);
+  dyn_buffer_t *chFactoryFindBuffer(const char *name);
+  void chFactoryReleaseBuffer(dyn_buffer_t *dbp);
 #endif
 #if (CH_CFG_FACTORY_SEMAPHORES == TRUE) || defined(__DOXIGEN__)
   dyn_semaphore_t *chFactoryCreateSemaphore(const char *name, cnt_t n);
@@ -215,6 +216,7 @@ extern "C" {
 
 /**
  * @brief   Duplicates an object reference.
+ * @note    This function can be used on any kind of dynamic object.
  *
  * @param[in] dep       pointer to the element field of the object
  *
@@ -228,6 +230,20 @@ static inline dyn_element_t *chFactoryDuplicateReferenceI(dyn_element_t *dep) {
 
   return dep;
 }
+
+#if (CH_CFG_FACTORY_GENERIC == TRUE) || defined(__DOXIGEN__)
+/**
+ * @brief   Returns the size of a generic dynamic buffer object.
+ *
+ * @return              The size of the buffer object in bytes.
+ *
+ * @api
+ */
+static inline size_t chFactoryGetBufferSize(dyn_buffer_t *dbp) {
+
+  return chHeapGetSize(dbp) - sizeof (dyn_element_t);
+}
+#endif
 
 #endif /* CH_CFG_USE_FACTORY == TRUE */
 
