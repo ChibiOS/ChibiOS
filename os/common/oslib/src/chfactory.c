@@ -119,7 +119,7 @@ static dyn_element_t *dyn_list_unlink(dyn_list_t *dlp, dyn_element_t *element) {
  */
 void _factory_init(void) {
 
-#if CH_CFG_FACTORY_GENERIC == TRUE
+#if CH_CFG_FACTORY_GENERIC_BUFFER == TRUE
   dyn_list_init(&ch_factory.obj_list);
 #endif
 #if CH_CFG_FACTORY_SEMAPHORES == TRUE
@@ -130,7 +130,7 @@ void _factory_init(void) {
 #endif
 }
 
-#if (CH_CFG_FACTORY_GENERIC == TRUE) || defined(__DOXIGEN__)
+#if (CH_CFG_FACTORY_GENERIC_BUFFER == TRUE) || defined(__DOXIGEN__)
 /**
  * @brief   Creates a generic dynamic buffer object.
  * @post    A reference to the buffer object is returned and the reference
@@ -247,7 +247,7 @@ void chFactoryReleaseBuffer(dyn_buffer_t *dbp) {
 
   chSysUnlock();
 }
-#endif /* CH_CFG_FACTORY_GENERIC = TRUE */
+#endif /* CH_CFG_FACTORY_GENERIC_BUFFER = TRUE */
 
 #if (CH_CFG_FACTORY_SEMAPHORES == TRUE) || defined(__DOXIGEN__)
 /**

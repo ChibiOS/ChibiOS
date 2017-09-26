@@ -51,8 +51,8 @@
  * @brief   Enables factory for generic objects.
  * @note    Generic objects require the heap allocator.
  */
-#if !defined(CH_CFG_FACTORY_GENERIC) || defined(__DOXYGEN__)
-#define CH_CFG_FACTORY_GENERIC              TRUE
+#if !defined(CH_CFG_FACTORY_GENERIC_BUFFER) || defined(__DOXYGEN__)
+#define CH_CFG_FACTORY_GENERIC_BUFFER       TRUE
 #endif
 
 /**
@@ -70,7 +70,7 @@
   ((CH_CFG_FACTORY_SEMAPHORES == TRUE))
 
 #define CH_FACTORY_REQUIRES_HEAP                                            \
-  ((CH_CFG_FACTORY_GENERIC == TRUE))
+  ((CH_CFG_FACTORY_GENERIC_BUFFER == TRUE))
 
 #if (CH_CFG_FACTORY_MAX_NAMES_LENGHT < 0) ||                                \
     (CH_CFG_FACTORY_MAX_NAMES_LENGHT > 32)
@@ -123,7 +123,7 @@ typedef struct ch_dyn_list {
     dyn_element_t       *next;
 } dyn_list_t;
 
-#if (CH_CFG_FACTORY_GENERIC == TRUE) || defined(__DOXIGEN__)
+#if (CH_CFG_FACTORY_GENERIC_BUFFER == TRUE) || defined(__DOXIGEN__)
 /**
  * @brief   Type of a dynamic semaphore.
  */
@@ -160,12 +160,12 @@ typedef struct ch_dyn_semaphore {
  * @brief   Type of the factory main object.
  */
 typedef struct ch_objects_factory {
-#if (CH_CFG_FACTORY_GENERIC == TRUE) || defined(__DOXIGEN__)
+#if (CH_CFG_FACTORY_GENERIC_BUFFER == TRUE) || defined(__DOXIGEN__)
   /**
    * @brief   List of the allocated objects.
    */
   dyn_list_t            obj_list;
-#endif /* CH_CFG_FACTORY_GENERIC = TRUE */
+#endif /* CH_CFG_FACTORY_GENERIC_BUFFER = TRUE */
 #if (CH_CFG_FACTORY_SEMAPHORES == TRUE) || defined(__DOXIGEN__)
   /**
    * @brief   List of the allocated semaphores.
@@ -196,7 +196,7 @@ extern "C" {
   void _factory_init(void);
 //  dyn_registered_object_t *chFactoryRegisterObject(const char *name,
 //                                                   void *objp);
-#if (CH_CFG_FACTORY_GENERIC == TRUE) || defined(__DOXIGEN__)
+#if (CH_CFG_FACTORY_GENERIC_BUFFER == TRUE) || defined(__DOXIGEN__)
   dyn_buffer_t *chFactoryCreateBuffer(const char *name, size_t size);
   dyn_buffer_t *chFactoryFindBuffer(const char *name);
   void chFactoryReleaseBuffer(dyn_buffer_t *dbp);
@@ -231,7 +231,7 @@ static inline dyn_element_t *chFactoryDuplicateReferenceI(dyn_element_t *dep) {
   return dep;
 }
 
-#if (CH_CFG_FACTORY_GENERIC == TRUE) || defined(__DOXIGEN__)
+#if (CH_CFG_FACTORY_GENERIC_BUFFER == TRUE) || defined(__DOXIGEN__)
 /**
  * @brief   Returns the size of a generic dynamic buffer object.
  *
