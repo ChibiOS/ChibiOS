@@ -74,7 +74,12 @@
 #define PIOC_BASE                           0xFC038080U
 #endif
 
-#define SAMA_HAS_PIOD                       FALSE
+#define SAMA_HAS_PIOD                       TRUE
+#if SAMA_HAL_IS_SECURE
+#define PIOD_BASE                           0xFC0390C0U
+#else
+#define PIOD_BASE                           0xFC0380C0U
+#endif
 /** @} */
 
 #endif /* SAMA_REGISTRY_H */
