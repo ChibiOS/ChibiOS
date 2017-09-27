@@ -472,6 +472,15 @@
 #define SAMA_UART3CLK                       (SAMA_MCK / SAMA_H64MX_H32MX_RATIO)
 #define SAMA_UART4CLK                       (SAMA_MCK / SAMA_H64MX_H32MX_RATIO)
 
+/**
+ * @brief   FLEXCOMx clock.
+ */
+#define SAMA_FLEXCOM0CLK                    (SAMA_MCK / SAMA_H64MX_H32MX_RATIO)
+#define SAMA_FLEXCOM1CLK                    (SAMA_MCK / SAMA_H64MX_H32MX_RATIO)
+#define SAMA_FLEXCOM2CLK                    (SAMA_MCK / SAMA_H64MX_H32MX_RATIO)
+#define SAMA_FLEXCOM3CLK                    (SAMA_MCK / SAMA_H64MX_H32MX_RATIO)
+#define SAMA_FLEXCOM4CLK                    (SAMA_MCK / SAMA_H64MX_H32MX_RATIO)
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
