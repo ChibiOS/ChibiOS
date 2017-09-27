@@ -34,6 +34,7 @@
 /* Driver local macros.                                                      */
 /*===========================================================================*/
 
+#if SAMA_SERIAL_USE_UART
 /**
  * @brief   Enable write protection on SD registers block.
  *
@@ -55,6 +56,31 @@
 #define sdDisableWP(sdp) {                                                   \
   sdp->UART_WPMR = UART_WPMR_WPKEY_PASSWD;                                   \
 }
+#endif
+
+#if SAMA_SERIAL_USE_FLEXCOM
+/**
+ * @brief   Enable write protection on SD registers block.
+ *
+ * @param[in] sdp    pointer to a SD register block
+ *
+ * @notapi
+ */
+#define sdFlexEnableWP(sdp) {                                                    \
+  sdp->usart->US_WPMR = US_WPMR_WPKEY_PASSWD | US_WPMR_WPEN;                     \
+}
+
+/**
+ * @brief   Disable write protection on SD registers block.
+ *
+ * @param[in] sdp    pointer to a SD register block
+ *
+ * @notapi
+ */
+#define sdFlexDisableWP(sdp) {                                                   \
+  sdp->usart->US_WPMR = US_WPMR_WPKEY_PASSWD;                                    \
+}
+#endif
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -85,6 +111,31 @@ SerialDriver SD3;
 SerialDriver SD4;
 #endif
 
+/** @brief FLEXCOM0 serial driver identifier.*/
+#if SAMA_SERIAL_USE_FLEXCOM0 || defined(__DOXYGEN__)
+SerialDriver SDFLEX0;
+#endif
+
+/** @brief FLEXCOM1 serial driver identifier.*/
+#if SAMA_SERIAL_USE_FLEXCOM1 || defined(__DOXYGEN__)
+SerialDriver SDFLEX1;
+#endif
+
+/** @brief FLEXCOM2 serial driver identifier.*/
+#if SAMA_SERIAL_USE_FLEXCOM2 || defined(__DOXYGEN__)
+SerialDriver SDFLEX2;
+#endif
+
+/** @brief FLEXCOM3 serial driver identifier.*/
+#if SAMA_SERIAL_USE_FLEXCOM3 || defined(__DOXYGEN__)
+SerialDriver SDFLEX3;
+#endif
+
+/** @brief FLEXCOM0 serial driver identifier.*/
+#if SAMA_SERIAL_USE_FLEXCOM4 || defined(__DOXYGEN__)
+SerialDriver SDFLEX4;
+#endif
+
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
@@ -94,7 +145,11 @@ static const SerialConfig default_config =
 {
   SERIAL_DEFAULT_BITRATE,
   0,
+#if SAMA_SERIAL_USE_FLEXCOM
+  US_MR_CHRL_8_BIT | US_MR_PAR_NO
+#else
   UART_MR_PAR_NO
+#endif
 };
 
 #if SAMA_SERIAL_USE_UART0 || defined(__DOXYGEN__)
@@ -137,6 +192,46 @@ static uint8_t sd_in_buf4[SAMA_SERIAL_UART4_IN_BUF_SIZE];
 static uint8_t sd_out_buf4[SAMA_SERIAL_UART4_IN_BUF_SIZE];
 #endif
 
+#if SAMA_SERIAL_USE_FLEXCOM0 || defined(__DOXYGEN__)
+/** @brief Input buffer for SDFLEX0.*/
+static uint8_t sdFlex_in_buf0[SAMA_SERIAL_FLEXCOM0_IN_BUF_SIZE];
+
+/** @brief Output buffer for SDFLEX0.*/
+static uint8_t sdFlex_out_buf0[SAMA_SERIAL_FLEXCOM0_OUT_BUF_SIZE];
+#endif
+
+#if SAMA_SERIAL_USE_FLEXCOM1 || defined(__DOXYGEN__)
+/** @brief Input buffer for SDFLEX1.*/
+static uint8_t sdFlex_in_buf1[SAMA_SERIAL_FLEXCOM1_IN_BUF_SIZE];
+
+/** @brief Output buffer for SDFLEX1.*/
+static uint8_t sdFlex_out_buf1[SAMA_SERIAL_FLEXCOM1_OUT_BUF_SIZE];
+#endif
+
+#if SAMA_SERIAL_USE_FLEXCOM2 || defined(__DOXYGEN__)
+/** @brief Input buffer for SDFLEX2.*/
+static uint8_t sdFlex_in_buf2[SAMA_SERIAL_FLEXCOM2_IN_BUF_SIZE];
+
+/** @brief Output buffer for SDFLEX2.*/
+static uint8_t sdFlex_out_buf2[SAMA_SERIAL_FLEXCOM2_OUT_BUF_SIZE];
+#endif
+
+#if SAMA_SERIAL_USE_FLEXCOM3 || defined(__DOXYGEN__)
+/** @brief Input buffer for SDFLEX3.*/
+static uint8_t sdFlex_in_buf3[SAMA_SERIAL_FLEXCOM3_IN_BUF_SIZE];
+
+/** @brief Output buffer for SDFLEX3.*/
+static uint8_t sdFlex_out_buf3[SAMA_SERIAL_FLEXCOM3_OUT_BUF_SIZE];
+#endif
+
+#if SAMA_SERIAL_USE_FLEXCOM4 || defined(__DOXYGEN__)
+/** @brief Input buffer for SDFLEX4.*/
+static uint8_t sdFlex_in_buf4[SAMA_SERIAL_FLEXCOM4_IN_BUF_SIZE];
+
+/** @brief Output buffer for SDFLEX4.*/
+static uint8_t sdFlex_out_buf4[SAMA_SERIAL_FLEXCOM4_OUT_BUF_SIZE];
+#endif
+
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
@@ -149,24 +244,62 @@ static uint8_t sd_out_buf4[SAMA_SERIAL_UART4_IN_BUF_SIZE];
  * @param[in] config    the architecture-dependent serial driver configuration
  */
 static void uart_init(SerialDriver *sdp, const SerialConfig *config) {
-  Uart *u = sdp->uart;
+#if SAMA_SERIAL_USE_UART && SAMA_SERIAL_USE_FLEXCOM
+  if (sdp->uart != NULL)
+#endif /* SAMA_SERIAL_USE_UART && SAMA_SERIAL_USE_FLEXCOM */
+#if SAMA_SERIAL_USE_UART
+  {
+    Uart *u = sdp->uart;
 
-  /* Disabling write protection */
-  sdDisableWP(u);
-  /* Baud rate setting.*/
-  u->UART_BRGR = UART_BRGR_CD(sdp->clock / (16 * config->speed));
+    /* Disabling write protection */
+    sdDisableWP(u);
+    /* Baud rate setting.*/
+    u->UART_BRGR = UART_BRGR_CD(sdp->clock / (16 * config->speed));
 
-  u->UART_CR = config->cr;
-  u->UART_MR = config->mr;
-  u->UART_IER = UART_IER_RXRDY;
+    u->UART_CR = config->cr;
+    u->UART_MR = config->mr;
+    u->UART_IER = UART_IER_RXRDY;
 
-  /* Clearing error status bit */
-  u->UART_CR |= UART_CR_RSTSTA;
-  /* Enabling Tx and Rx */
-  u->UART_CR |= UART_CR_RXEN | UART_CR_TXEN;
-  /* Enabling write protection */
+    /* Clearing error status bit */
+    u->UART_CR |= UART_CR_RSTSTA;
+    /* Enabling Tx and Rx */
+    u->UART_CR |= UART_CR_RXEN | UART_CR_TXEN;
+    /* Enabling write protection */
     sdEnableWP(u);
+  }
+#endif /* SAMA_SERIAL_USE_UART */
+#if SAMA_SERIAL_USE_UART && SAMA_SERIAL_USE_FLEXCOM
+  else if (sdp->usart != NULL)
+#endif /* SAMA_SERIAL_USE_UART && SAMA_SERIAL_USE_FLEXCOM */
+#if SAMA_SERIAL_USE_FLEXCOM
+  {
+    Flexcom *fl = sdp->flexcom;
+    Usart *us = sdp->usart;
 
+    /* Disabling write protection */
+    sdFlexDisableWP(sdp)
+    /* Enabling USART on FLEXCOM */
+    fl->FLEX_MR = FLEX_MR_OPMODE_USART;
+    /* Baud rate setting (OVER = 0 and SYNC = 0)*/
+    us->US_BRGR = US_BRGR_CD(sdp->clock / (16 * config->speed));
+
+    us->US_CR = config->cr;
+    us->US_MR = config->mr;
+    us->US_IER = US_IER_RXRDY;
+
+    /* Clearing status bit */
+    us->US_CR |= US_CR_RSTSTA;
+    /* Enabling Tx and Rx */
+    us->US_CR |= US_CR_RXEN | US_CR_TXEN;
+    /* Enabling write protection */
+    sdFlexEnableWP(sdp)
+  }
+#endif /* SAMA_SERIAL_USE_FLEXCOM */
+#if SAMA_SERIAL_USE_UART && SAMA_SERIAL_USE_FLEXCOM
+  else {
+    osalDbgAssert(FALSE, "invalid state");
+  }
+#endif /* SAMA_SERIAL_USE_UART && SAMA_SERIAL_USE_FLEXCOM */
 }
 
 /**
@@ -175,15 +308,42 @@ static void uart_init(SerialDriver *sdp, const SerialConfig *config) {
  *
  * @param[in] u         pointer to an UART I/O block
  */
-static void uart_deinit(Uart *u) {
+static void uart_deinit(SerialDriver *sdp) {
+#if SAMA_SERIAL_USE_UART && SAMA_SERIAL_USE_FLEXCOM
+  if (sdp->uart != NULL)
+#endif /* SAMA_SERIAL_USE_UART && SAMA_SERIAL_USE_FLEXCOM */
+#if SAMA_SERIAL_USE_UART
+  {
+    Uart *u = sdp->uart;
+    /* Disabling write protection */
+    sdDisableWP(u);
+    u->UART_CR = 0;
+    u->UART_MR = 0;
+    /* Enabling write protection */
+    sdEnableWP(u);
+  }
+#endif /* SAMA_SERIAL_USE_UART */
+#if SAMA_SERIAL_USE_UART && SAMA_SERIAL_USE_FLEXCOM
+  else if (sdp->usart != NULL)
+#endif /* SAMA_SERIAL_USE_UART && SAMA_SERIAL_USE_FLEXCOM */
+#if SAMA_SERIAL_USE_FLEXCOM
+  {
+    Usart *us = sdp->usart;
 
-  /* Disabling write protection */
-  sdDisableWP(u);
-  u->UART_CR = 0;
-  u->UART_MR = 0;
-  /* Enabling write protection */
-  sdEnableWP(u);
+    /* Disabling write protection */
+    sdFlexDisableWP(sdp)
+    us->US_CR = 0;
+    us->US_MR = 0;
 
+    /* Enabling write protection */
+    sdFlexEnableWP(sdp)
+  }
+#endif /* SAMA_SERIAL_USE_FLEXCOM */
+#if SAMA_SERIAL_USE_UART && SAMA_SERIAL_USE_FLEXCOM
+  else {
+    osalDbgAssert(FALSE, "invalid state");
+  }
+#endif /* SAMA_SERIAL_USE_UART && SAMA_SERIAL_USE_FLEXCOM */
 }
 
 /**
@@ -195,17 +355,18 @@ static void uart_deinit(Uart *u) {
 static void set_error(SerialDriver *sdp, uint32_t isr) {
   eventflags_t sts = 0;
 
-  if (isr & UART_SR_OVRE)
+  if (isr & (UART_SR_OVRE | US_CSR_OVRE))
     sts |= SD_OVERRUN_ERROR;
-  if (isr & UART_SR_PARE)
+  if (isr & (UART_SR_PARE | US_CSR_PARE))
     sts |= SD_PARITY_ERROR;
-  if (isr & UART_SR_FRAME)
+  if (isr & (UART_SR_FRAME | US_CSR_FRAME))
     sts |= UART_SR_FRAME;
   osalSysLockFromISR();
   chnAddFlagsI(sdp, sts);
   osalSysUnlockFromISR();
 }
 
+#if SAMA_SERIAL_USE_UART
 /**
  * @brief   Common IRQ handler.
  *
@@ -248,7 +409,7 @@ static void serve_interrupt(SerialDriver *sdp) {
   }
 
   /* Physical transmission end.*/
-  if ((imr & UART_SR_TXEMPTY) && (sr & (UART_SR_TXRDY | UART_SR_TXEMPTY))) {
+  if ((imr & UART_IMR_TXEMPTY) && (sr & (UART_SR_TXRDY | UART_SR_TXEMPTY))) {
     osalSysLockFromISR();
     if (oqIsEmptyI(&sdp->oqueue))
       chnAddFlagsI(sdp, CHN_TRANSMISSION_END);
@@ -256,6 +417,60 @@ static void serve_interrupt(SerialDriver *sdp) {
     osalSysUnlockFromISR();
   }
 }
+#endif
+
+#if SAMA_SERIAL_USE_FLEXCOM
+/**
+ * @brief   Common IRQ handler.
+ *
+ * @param[in] sdp       communication channel associated to the UART
+ */
+static void serve_uartFlex_interrupt(SerialDriver *sdp) {
+  Usart *us = sdp->usart;
+  uint32_t imr = us->US_IMR;
+  uint32_t sr;
+
+  /* Reading and clearing status.*/
+  sr = us->US_CSR;
+  us->US_CR |= US_CR_RSTSTA;
+
+  /* Error condition detection.*/
+  if (sr & (US_CSR_OVRE | US_CSR_FRAME  | US_CSR_PARE)){
+    set_error(sdp, sr);
+  }
+
+  /* Data available.*/
+  if (sr & US_CSR_RXRDY) {
+    osalSysLockFromISR();
+    sdIncomingDataI(sdp, (uint8_t)us->US_RHR);
+    osalSysUnlockFromISR();
+  }
+
+  /* Transmission buffer empty.*/
+  if ((imr & US_IMR_TXRDY) && (sr & US_CSR_TXRDY)) {
+    msg_t b;
+    osalSysLockFromISR();
+    b = oqGetI(&sdp->oqueue);
+    if (b < MSG_OK) {
+      chnAddFlagsI(sdp, CHN_OUTPUT_EMPTY);
+      us->US_IDR |= US_IDR_TXRDY;
+      us->US_IER = US_IER_TXEMPTY;
+    }
+    else
+      us->US_THR = b;
+    osalSysUnlockFromISR();
+  }
+
+  /* Physical transmission end.*/
+  if ((imr & US_IMR_TXEMPTY) && (sr & (US_CSR_TXRDY | US_CSR_TXEMPTY))) {
+    osalSysLockFromISR();
+    if (oqIsEmptyI(&sdp->oqueue))
+      chnAddFlagsI(sdp, CHN_TRANSMISSION_END);
+    us->US_IDR |= US_IDR_TXRDY | US_IDR_TXEMPTY;
+    osalSysUnlockFromISR();
+  }
+}
+#endif
 
 #if SAMA_SERIAL_USE_UART0 || defined(__DOXYGEN__)
 static void notify0(io_queue_t *qp) {
@@ -294,6 +509,46 @@ static void notify4(io_queue_t *qp) {
 
   (void)qp;
   UART4->UART_IER |= UART_IER_TXRDY;
+}
+#endif
+
+#if SAMA_SERIAL_USE_FLEXCOM0 || defined(__DOXYGEN__)
+static void notifyFlex0(io_queue_t *qp) {
+
+  (void)qp;
+  USART0->US_IER |= US_IER_TXRDY;
+}
+#endif
+
+#if SAMA_SERIAL_USE_FLEXCOM1 || defined(__DOXYGEN__)
+static void notifyFlex1(io_queue_t *qp) {
+
+  (void)qp;
+  USART1->US_IER |= US_IER_TXRDY;
+}
+#endif
+
+#if SAMA_SERIAL_USE_FLEXCOM2 || defined(__DOXYGEN__)
+static void notifyFlex2(io_queue_t *qp) {
+
+  (void)qp;
+  USART2->US_IER |= US_IER_TXRDY;
+}
+#endif
+
+#if SAMA_SERIAL_USE_FLEXCOM3 || defined(__DOXYGEN__)
+static void notifyFlex3(io_queue_t *qp) {
+
+  (void)qp;
+  USART3->US_IER |= US_IER_TXRDY;
+}
+#endif
+
+#if SAMA_SERIAL_USE_FLEXCOM4 || defined(__DOXYGEN__)
+static void notifyFlex4(io_queue_t *qp) {
+
+  (void)qp;
+  USART4->US_IER |= US_IER_TXRDY;
 }
 #endif
 
@@ -381,6 +636,86 @@ OSAL_IRQ_HANDLER(SAMA_UART4_HANDLER) {
 }
 #endif
 
+#if SAMA_SERIAL_USE_FLEXCOM0 || defined(__DOXYGEN__)
+/**
+ * @brief   FLEXCOM0 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(SAMA_UART_FLEXCOM0_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  serve_uartFlex_interrupt(&SDFLEX0);
+  aicAckInt();
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+
+#if SAMA_SERIAL_USE_FLEXCOM1 || defined(__DOXYGEN__)
+/**
+ * @brief   FLEXCOM1 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(SAMA_UART_FLEXCOM1_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  serve_uartFlex_interrupt(&SDFLEX1);
+  aicAckInt();
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+
+#if SAMA_SERIAL_USE_FLEXCOM2 || defined(__DOXYGEN__)
+/**
+ * @brief   FLEXCOM2 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(SAMA_UART_FLEXCOM2_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  serve_uartFlex_interrupt(&SDFLEX2);
+  aicAckInt();
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+
+#if SAMA_SERIAL_USE_FLEXCOM3 || defined(__DOXYGEN__)
+/**
+ * @brief   FLEXCOM3 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(SAMA_UART_FLEXCOM3_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  serve_uartFlex_interrupt(&SDFLEX3);
+  aicAckInt();
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+
+#if SAMA_SERIAL_USE_FLEXCOM4 || defined(__DOXYGEN__)
+/**
+ * @brief   FLEXCOM4 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(SAMA_UART_FLEXCOM4_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  serve_uartFlex_interrupt(&SDFLEX4);
+  aicAckInt();
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -399,7 +734,7 @@ void sd_lld_init(void) {
   SD0.uart = UART0;
   SD0.clock = SAMA_UART0CLK;
 
-  aicSetSourcePriority(ID_UART0, SAMA_SERIAL_UART0_PRIORITY);
+  aicSetSourcePriority(ID_UART0, SAMA_SERIAL_UART0_IRQ_PRIORITY);
   aicSetSourceHandler(ID_UART0, SAMA_UART0_HANDLER);
   aicEnableInt(ID_UART0);
 #endif
@@ -411,7 +746,7 @@ void sd_lld_init(void) {
   SD1.uart = UART1;
   SD1.clock = SAMA_UART1CLK;
 
-  aicSetSourcePriority(ID_UART1, SAMA_SERIAL_UART1_PRIORITY);
+  aicSetSourcePriority(ID_UART1, SAMA_SERIAL_UART1_IRQ_PRIORITY);
   aicSetSourceHandler(ID_UART1, SAMA_UART1_HANDLER);
   aicEnableInt(ID_UART1);
 #endif
@@ -423,7 +758,7 @@ void sd_lld_init(void) {
   SD2.uart = UART2;
   SD2.clock = SAMA_UART2CLK;
 
-  aicSetSourcePriority(ID_UART2, SAMA_SERIAL_UART2_PRIORITY);
+  aicSetSourcePriority(ID_UART2, SAMA_SERIAL_UART2_IRQ_PRIORITY);
   aicSetSourceHandler(ID_UART2, SAMA_UART2_HANDLER);
   aicEnableInt(ID_UART2);
 #endif
@@ -435,7 +770,7 @@ void sd_lld_init(void) {
   SD3.uart = UART3;
   SD3.clock = SAMA_UART3CLK;
 
-  aicSetSourcePriority(ID_UART3, SAMA_SERIAL_UART3_PRIORITY);
+  aicSetSourcePriority(ID_UART3, SAMA_SERIAL_UART3_IRQ_PRIORITY);
   aicSetSourceHandler(ID_UART3, SAMA_UART3_HANDLER);
   aicEnableInt(ID_UART3);
 #endif
@@ -447,12 +782,76 @@ void sd_lld_init(void) {
   SD4.uart = UART4;
   SD4.clock = SAMA_UART4CLK;
 
-  aicSetSourcePriority(ID_UART4, SAMA_SERIAL_UART4_PRIORITY);
+  aicSetSourcePriority(ID_UART4, SAMA_SERIAL_UART4_IRQ_PRIORITY);
   aicSetSourceHandler(ID_UART4, SAMA_UART4_HANDLER);
   aicEnableInt(ID_UART4);
 #endif
 
+#if SAMA_SERIAL_USE_FLEXCOM0
+  sdObjectInit(&SDFLEX0);
+  iqObjectInit(&SDFLEX0.iqueue, sdFlex_in_buf0, sizeof sdFlex_in_buf0, NULL, &SDFLEX0);
+  oqObjectInit(&SDFLEX0.oqueue, sdFlex_out_buf0, sizeof sdFlex_out_buf0, notifyFlex0, &SDFLEX0);
+  SDFLEX0.flexcom = FLEXCOM0;
+  SDFLEX0.usart   = USART0;
+  SDFLEX0.clock   = SAMA_FLEXCOM0CLK;
+
+  aicSetSourcePriority(ID_USART0, SAMA_SERIAL_FLEXCOM0_IRQ_PRIORITY);
+  aicSetSourceHandler(ID_USART0, SAMA_UART_FLEXCOM0_HANDLER);
+  aicEnableInt(ID_USART0);
+#endif
+
+#if SAMA_SERIAL_USE_FLEXCOM1
+  sdObjectInit(&SDFLEX1);
+  iqObjectInit(&SDFLEX1.iqueue, sdFlex_in_buf1, sizeof sdFlex_in_buf1, NULL, &SDFLEX1);
+  oqObjectInit(&SDFLEX1.oqueue, sdFlex_out_buf1, sizeof sdFlex_out_buf1, notifyFlex1, &SDFLEX1);
+  SDFLEX1.flexcom = FLEXCOM1;
+  SDFLEX1.usart   = USART1;
+  SDFLEX1.clock   = SAMA_FLEXCOM1CLK;
+
+  aicSetSourcePriority(ID_USART1, SAMA_SERIAL_FLEXCOM1_IRQ_PRIORITY);
+  aicSetSourceHandler(ID_USART1, SAMA_UART_FLEXCOM1_HANDLER);
+  aicEnableInt(ID_USART1);
+#endif
+
+#if SAMA_SERIAL_USE_FLEXCOM2
+  sdObjectInit(&SDFLEX2);
+  iqObjectInit(&SDFLEX2.iqueue, sdFlex_in_buf2, sizeof sdFlex_in_buf2, NULL, &SDFLEX2);
+  oqObjectInit(&SDFLEX2.oqueue, sdFlex_out_buf2, sizeof sdFlex_out_buf2, notifyFlex2, &SDFLEX2);
+  SDFLEX2.flexcom = FLEXCOM2;
+  SDFLEX2.usart   = USART2;
+  SDFLEX2.clock   = SAMA_FLEXCOM2CLK;
+
+  aicSetSourcePriority(ID_USART2, SAMA_SERIAL_FLEXCOM2_IRQ_PRIORITY);
+  aicSetSourceHandler(ID_USART2, SAMA_UART_FLEXCOM2_HANDLER);
+  aicEnableInt(ID_USART2);
+#endif
+
+#if SAMA_SERIAL_USE_FLEXCOM3
+  sdObjectInit(&SDFLEX3);
+  iqObjectInit(&SDFLEX3.iqueue, sdFlex_in_buf3, sizeof sdFlex_in_buf3, NULL, &SDFLEX3);
+  oqObjectInit(&SDFLEX3.oqueue, sdFlex_out_buf3, sizeof sdFlex_out_buf3, notifyFlex3, &SDFLEX3);
+  SDFLEX3.flexcom = FLEXCOM3;
+  SDFLEX3.usart   = USART3;
+  SDFLEX3.clock   = SAMA_FLEXCOM3CLK;
+
+  aicSetSourcePriority(ID_USART3, SAMA_SERIAL_FLEXCOM3_IRQ_PRIORITY);
+  aicSetSourceHandler(ID_USART3, SAMA_UART_FLEXCOM3_HANDLER);
+  aicEnableInt(ID_USART3);
+#endif
 }
+
+#if SAMA_SERIAL_USE_FLEXCOM4
+  sdObjectInit(&SDFLEX4);
+  iqObjectInit(&SDFLEX4.iqueue, sdFlex_in_buf4, sizeof sdFlex_in_buf4, NULL, &SDFLEX4);
+  oqObjectInit(&SDFLEX4.oqueue, sdFlex_out_buf4, sizeof sdFlex_out_buf4, notifyFlex4, &SDFLEX4);
+  SDFLEX4.flexcom = FLEXCOM4;
+  SDFLEX4.usart   = USART4;
+  SDFLEX4.clock   = SAMA_FLEXCOM4CLK;
+
+  aicSetSourcePriority(ID_USART4, SAMA_SERIAL_FLEXCOM4_IRQ_PRIORITY);
+  aicSetSourceHandler(ID_USART4, SAMA_UART_FLEXCOM4_HANDLER);
+  aicEnableInt(ID_USART4);
+#endif
 
 /**
  * @brief   Low level serial driver configuration and (re)start.
@@ -466,9 +865,10 @@ void sd_lld_init(void) {
  */
 void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 
-  if (config == NULL)
-    config = &default_config;
+  if (config == NULL) {
 
+    config = &default_config;
+  }
   if (sdp->state == SD_STOP) {
 #if SAMA_SERIAL_USE_UART0
     if (&SD0 == sdp) {
@@ -495,6 +895,31 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
       pmcEnableUART4();
     }
 #endif
+#if SAMA_SERIAL_USE_FLEXCOM0
+    if (&SDFLEX0 == sdp) {
+      pmcEnableFLEXCOM0();
+    }
+#endif
+#if SAMA_SERIAL_USE_FLEXCOM1
+    if (&SDFLEX1 == sdp) {
+      pmcEnableFLEXCOM1();
+    }
+#endif
+#if SAMA_SERIAL_USE_FLEXCOM2
+    if (&SDFLEX2 == sdp) {
+      pmcEnableFLEXCOM2();
+    }
+#endif
+#if SAMA_SERIAL_USE_FLEXCOM3
+    if (&SDFLEX3 == sdp) {
+      pmcEnableFLEXCOM3();
+    }
+#endif
+#if SAMA_SERIAL_USE_FLEXCOM4
+    if (&SDFLEX4 == sdp) {
+      pmcEnableFLEXCOM4();
+    }
+#endif
   }
   uart_init(sdp, config);
 }
@@ -512,7 +937,7 @@ void sd_lld_stop(SerialDriver *sdp) {
 
   if (sdp->state == SD_READY) {
     /* UART is de-initialized then clocks are disabled.*/
-    uart_deinit(sdp->uart);
+    uart_deinit(sdp);
 
 #if SAMA_SERIAL_USE_UART0
     if (&SD0 == sdp) {
@@ -541,6 +966,30 @@ void sd_lld_stop(SerialDriver *sdp) {
 #if SAMA_SERIAL_USE_UART4
     if (&SD4 == sdp) {
       pmcDisableUART4();
+      return;
+    }
+#endif
+#if SAMA_SERIAL_USE_FLEXCOM0
+    if (&SDFLEX0 == sdp) {
+      pmcDisableFLEXCOM0();
+      return;
+    }
+#endif
+#if SAMA_SERIAL_USE_FLEXCOM1
+    if (&SDFLEX1 == sdp) {
+      pmcDisableFLEXCOM1();
+      return;
+    }
+#endif
+#if SAMA_SERIAL_USE_FLEXCOM2
+    if (&SDFLEX2 == sdp) {
+      pmcDisableFLEXCOM2();
+      return;
+    }
+#endif
+#if SAMA_SERIAL_USE_FLEXCOM3
+    if (&SDFLEX3 == sdp) {
+      pmcDisableFLEXCOM3();
       return;
     }
 #endif

@@ -94,38 +94,118 @@
 #endif
 
 /**
+ * @brief   FLEXCOM0 driver enable switch.
+ * @details If set to @p TRUE the support for FLEXCOM0 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(SAMA_SERIAL_USE_FLEXCOM0) || defined(__DOXYGEN__)
+#define SAMA_SERIAL_USE_FLEXCOM0            FALSE
+#endif
+
+/**
+ * @brief   FLEXCOM1 driver enable switch.
+ * @details If set to @p TRUE the support for FLEXCOM1 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(SAMA_SERIAL_USE_FLEXCOM1) || defined(__DOXYGEN__)
+#define SAMA_SERIAL_USE_FLEXCOM1            FALSE
+#endif
+
+/**
+ * @brief   FLEXCOM2 driver enable switch.
+ * @details If set to @p TRUE the support for FLEXCOM2 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(SAMA_SERIAL_USE_FLEXCOM2) || defined(__DOXYGEN__)
+#define SAMA_SERIAL_USE_FLEXCOM2            FALSE
+#endif
+
+/**
+ * @brief   FLEXCOM3 driver enable switch.
+ * @details If set to @p TRUE the support for FLEXCOM3 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(SAMA_SERIAL_USE_FLEXCOM3) || defined(__DOXYGEN__)
+#define SAMA_SERIAL_USE_FLEXCOM3            FALSE
+#endif
+
+/**
+ * @brief   FLEXCOM4 driver enable switch.
+ * @details If set to @p TRUE the support for FLEXCOM4 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(SAMA_SERIAL_USE_FLEXCOM4) || defined(__DOXYGEN__)
+#define SAMA_SERIAL_USE_FLEXCOM4            FALSE
+#endif
+
+/**
  * @brief   UART0 interrupt priority level setting.
  */
-#if !defined(SAMA_SERIAL_UART0_PRIORITY) || defined(__DOXYGEN__)
-#define SAMA_SERIAL_UART0_PRIORITY          4
+#if !defined(SAMA_SERIAL_UART0_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_SERIAL_UART0_IRQ_PRIORITY      4
 #endif
 
 /**
  * @brief   UART1 interrupt priority level setting.
  */
-#if !defined(SAMA_SERIAL_UART1_PRIORITY) || defined(__DOXYGEN__)
-#define SAMA_SERIAL_UART1_PRIORITY          4
+#if !defined(SAMA_SERIAL_UART1_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_SERIAL_UART1_IRQ_PRIORITY      4
 #endif
 
 /**
  * @brief   UART2 interrupt priority level setting.
  */
-#if !defined(SAMA_SERIAL_UART2_PRIORITY) || defined(__DOXYGEN__)
-#define SAMA_SERIAL_UART2_PRIORITY          4
+#if !defined(SAMA_SERIAL_UART2_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_SERIAL_UART2_IRQ_PRIORITY      4
 #endif
 
 /**
  * @brief   UART3 interrupt priority level setting.
  */
-#if !defined(SAMA_SERIAL_UART3_PRIORITY) || defined(__DOXYGEN__)
-#define SAMA_SERIAL_UART3_PRIORITY          4
+#if !defined(SAMA_SERIAL_UART3_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_SERIAL_UART3_IRQ_PRIORITY      4
 #endif
 
 /**
  * @brief   UART4 interrupt priority level setting.
  */
-#if !defined(SAMA_SERIAL_UART4_PRIORITY) || defined(__DOXYGEN__)
-#define SAMA_SERIAL_UART4_PRIORITY          4
+#if !defined(SAMA_SERIAL_UART4_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_SERIAL_UART4_IRQ_PRIORITY      4
+#endif
+
+/**
+ * @brief   FLEXCOM0 interrupt priority level setting.
+ */
+#if !defined(SAMA_SERIAL_FLEXCOM0_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_SERIAL_FLEXCOM0_IRQ_PRIORITY   4
+#endif
+
+/**
+ * @brief   FLEXCOM1 interrupt priority level setting.
+ */
+#if !defined(SAMA_SERIAL_FLEXCOM1_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_SERIAL_FLEXCOM1_IRQ_PRIORITY   4
+#endif
+
+/**
+ * @brief   FLEXCOM2 interrupt priority level setting.
+ */
+#if !defined(SAMA_SERIAL_FLEXCOM2_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_SERIAL_FLEXCOM2_IRQ_PRIORITY   4
+#endif
+
+/**
+ * @brief   FLEXCOM3 interrupt priority level setting.
+ */
+#if !defined(SAMA_SERIAL_FLEXCOM3_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_SERIAL_FLEXCOM3_IRQ_PRIORITY   4
+#endif
+
+/**
+ * @brief   FLEXCOM4 interrupt priority level setting.
+ */
+#if !defined(SAMA_SERIAL_FLEXCOM4_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_SERIAL_FLEXCOM4_IRQ_PRIORITY   4
 #endif
 
 /**
@@ -198,15 +278,106 @@
 #define SAMA_SERIAL_UART4_OUT_BUF_SIZE      SERIAL_BUFFERS_SIZE
 #endif
 
+/**
+ * @brief   Input buffer size for FLEXCOM0.
+ */
+#if !defined(SAMA_SERIAL_FLEXCOM0_IN_BUF_SIZE) || defined(__DOXYGEN__)
+#define SAMA_SERIAL_FLEXCOM0_IN_BUF_SIZE    SERIAL_BUFFERS_SIZE
+#endif
+
+/**
+ * @brief   Output buffer size for FLEXCOM0.
+ */
+#if !defined(SAMA_SERIAL_FLEXCOM0_OUT_BUF_SIZE) || defined(__DOXYGEN__)
+#define SAMA_SERIAL_FLEXCOM0_OUT_BUF_SIZE   SERIAL_BUFFERS_SIZE
+#endif
+
+/**
+ * @brief   Input buffer size for FLEXCOM1.
+ */
+#if !defined(SAMA_SERIAL_FLEXCOM1_IN_BUF_SIZE) || defined(__DOXYGEN__)
+#define SAMA_SERIAL_FLEXCOM1_IN_BUF_SIZE    SERIAL_BUFFERS_SIZE
+#endif
+
+/**
+ * @brief   Output buffer size for FLEXCOM1.
+ */
+#if !defined(SAMA_SERIAL_FLEXCOM1_OUT_BUF_SIZE) || defined(__DOXYGEN__)
+#define SAMA_SERIAL_FLEXCOM1_OUT_BUF_SIZE   SERIAL_BUFFERS_SIZE
+#endif
+
+/**
+ * @brief   Input buffer size for FLEXCOM2.
+ */
+#if !defined(SAMA_SERIAL_FLEXCOM2_IN_BUF_SIZE) || defined(__DOXYGEN__)
+#define SAMA_SERIAL_FLEXCOM2_IN_BUF_SIZE    SERIAL_BUFFERS_SIZE
+#endif
+
+/**
+ * @brief   Output buffer size for FLEXCOM2.
+ */
+#if !defined(SAMA_SERIAL_FLEXCOM2_OUT_BUF_SIZE) || defined(__DOXYGEN__)
+#define SAMA_SERIAL_FLEXCOM2_OUT_BUF_SIZE   SERIAL_BUFFERS_SIZE
+#endif
+
+/**
+ * @brief   Input buffer size for FLEXCOM3.
+ */
+#if !defined(SAMA_SERIAL_FLEXCOM3_IN_BUF_SIZE) || defined(__DOXYGEN__)
+#define SAMA_SERIAL_FLEXCOM3_IN_BUF_SIZE    SERIAL_BUFFERS_SIZE
+#endif
+
+/**
+ * @brief   Output buffer size for FLEXCOM3.
+ */
+#if !defined(SAMA_SERIAL_FLEXCOM3_OUT_BUF_SIZE) || defined(__DOXYGEN__)
+#define SAMA_SERIAL_FLEXCOM3_OUT_BUF_SIZE   SERIAL_BUFFERS_SIZE
+#endif
+
+/**
+ * @brief   Input buffer size for FLEXCOM4.
+ */
+#if !defined(SAMA_SERIAL_FLEXCOM4_IN_BUF_SIZE) || defined(__DOXYGEN__)
+#define SAMA_SERIAL_FLEXCOM4_IN_BUF_SIZE    SERIAL_BUFFERS_SIZE
+#endif
+
+/**
+ * @brief   Output buffer size for FLEXCOM4.
+ */
+#if !defined(SAMA_SERIAL_FLEXCOM4_OUT_BUF_SIZE) || defined(__DOXYGEN__)
+#define SAMA_SERIAL_FLEXCOM4_OUT_BUF_SIZE   SERIAL_BUFFERS_SIZE
+#endif
+
 /** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+/**
+ * @brief   At least an UART unit is in use.
+ */
+#define SAMA_SERIAL_USE_UART (SAMA_SERIAL_USE_UART0 ||                      \
+                              SAMA_SERIAL_USE_UART1 ||                      \
+                              SAMA_SERIAL_USE_UART2 ||                      \
+                              SAMA_SERIAL_USE_UART3 ||                      \
+                              SAMA_SERIAL_USE_UART4)
+
+/**
+ * @brief   At least an FLEXCOM unit is in use.
+ */
+#define SAMA_SERIAL_USE_FLEXCOM (SAMA_SERIAL_USE_FLEXCOM0 ||                \
+                                 SAMA_SERIAL_USE_FLEXCOM1 ||                \
+                                 SAMA_SERIAL_USE_FLEXCOM2 ||                \
+                                 SAMA_SERIAL_USE_FLEXCOM3 ||                \
+                                 SAMA_SERIAL_USE_FLEXCOM4)
+
 #if !SAMA_SERIAL_USE_UART0 && !SAMA_SERIAL_USE_UART1 &&                     \
     !SAMA_SERIAL_USE_UART2 && !SAMA_SERIAL_USE_UART3 &&                     \
-    !SAMA_SERIAL_USE_UART4
+    !SAMA_SERIAL_USE_UART4 &&                                               \
+    !SAMA_SERIAL_USE_FLEXCOM0 && !SAMA_SERIAL_USE_FLEXCOM1 &&               \
+    !SAMA_SERIAL_USE_FLEXCOM2 && !SAMA_SERIAL_USE_FLEXCOM3 &&               \
+    !SAMA_SERIAL_USE_FLEXCOM4
 #error "SERIAL driver activated but no USART/UART peripheral assigned"
 #endif
 
@@ -241,18 +412,22 @@ typedef struct {
 /**
  * @brief   @p SerialDriver specific data.
  */
-#define _serial_driver_data                                                 \
-  _base_asynchronous_channel_data                                           \
-  /* Driver state.*/                                                        \
-  sdstate_t                 state;                                          \
-  /* Input queue.*/                                                         \
-  input_queue_t             iqueue;                                         \
-  /* Output queue.*/                                                        \
-  output_queue_t            oqueue;                                         \
-  /* End of the mandatory fields.*/                                         \
-  /* Pointer to the UART registers block.*/                                 \
-  Uart                      *uart;                                          \
-  /* Clock frequency for the associated USART/UART.*/                       \
+#define _serial_driver_data                                                \
+  _base_asynchronous_channel_data                                          \
+  /* Driver state.*/                                                       \
+  sdstate_t                 state;                                         \
+  /* Input queue.*/                                                        \
+  input_queue_t             iqueue;                                        \
+  /* Output queue.*/                                                       \
+  output_queue_t            oqueue;                                        \
+  /* End of the mandatory fields.*/                                        \
+/* Pointer to the UART registers block.*/                                  \
+  Uart                      *uart;                                         \
+  /* Pointer to the FLEXCOM registers block.*/                             \
+  Flexcom                   *flexcom;                                      \
+  /* Pointer to the UART registers block.*/                                \
+  Usart                     *usart;                                        \
+  /* Clock frequency for the associated USART/UART.*/                      \
   uint32_t                  clock;
 
 /*===========================================================================*/
@@ -277,6 +452,21 @@ extern SerialDriver SD3;
 #endif
 #if SAMA_SERIAL_USE_UART4 && !defined(__DOXYGEN__)
 extern SerialDriver SD4;
+#endif
+#if SAMA_SERIAL_USE_FLEXCOM0 && !defined(__DOXYGEN__)
+extern SerialDriver SDFLEX0;
+#endif
+#if SAMA_SERIAL_USE_FLEXCOM1 && !defined(__DOXYGEN__)
+extern SerialDriver SDFLEX1;
+#endif
+#if SAMA_SERIAL_USE_FLEXCOM2 && !defined(__DOXYGEN__)
+extern SerialDriver SDFLEX2;
+#endif
+#if SAMA_SERIAL_USE_FLEXCOM3 && !defined(__DOXYGEN__)
+extern SerialDriver SDFLEX3;
+#endif
+#if SAMA_SERIAL_USE_FLEXCOM4 && !defined(__DOXYGEN__)
+extern SerialDriver SDFLEX4;
 #endif
 
 #ifdef __cplusplus
