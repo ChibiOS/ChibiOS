@@ -310,6 +310,76 @@
  */
 #define pmcDisableUART4() pmcDisablePidLow(ID_UART4_MSK)
 
+/**
+ * @brief   Enables the FLEXCOM0 peripheral clock.
+ *
+ * @api
+ */
+#define pmcEnableFLEXCOM0() pmcEnablePidLow(ID_FLEXCOM0_MSK)
+
+/**
+ * @brief   Disables the FLEXCOM0 peripheral clock.
+ *
+ * @api
+ */
+#define pmcDisableFLEXCOM0() pmcDisablePidLow(ID_FLEXCOM0_MSK)
+
+/**
+ * @brief   Enables the FLEXCOM1 peripheral clock.
+ *
+ * @api
+ */
+#define pmcEnableFLEXCOM1() pmcEnablePidLow(ID_FLEXCOM1_MSK)
+
+/**
+ * @brief   Disables the FLEXCOM1 peripheral clock.
+ *
+ * @api
+ */
+#define pmcDisableFLEXCOM1() pmcDisablePidLow(ID_FLEXCOM1_MSK)
+
+/**
+ * @brief   Enables the FLEXCOM2 peripheral clock.
+ *
+ * @api
+ */
+#define pmcEnableFLEXCOM2() pmcEnablePidLow(ID_FLEXCOM2_MSK)
+
+/**
+ * @brief   Disables the FLEXCOM2 peripheral clock.
+ *
+ * @api
+ */
+#define pmcDisableFLEXCOM2() pmcDisablePidLow(ID_FLEXCOM2_MSK)
+
+/**
+ * @brief   Enables the FLEXCOM0 peripheral clock.
+ *
+ * @api
+ */
+#define pmcEnableFLEXCOM3() pmcEnablePidLow(ID_FLEXCOM3_MSK)
+
+/**
+ * @brief   Disables the FLEXCOM3 peripheral clock.
+ *
+ * @api
+ */
+#define pmcDisableFLEXCOM3() pmcDisablePidLow(ID_FLEXCOM3_MSK)
+
+/**
+ * @brief   Enables the FLEXCOM4 peripheral clock.
+ *
+ * @api
+ */
+#define pmcEnableFLEXCOM4() pmcEnablePidLow(ID_FLEXCOM4_MSK)
+
+/**
+ * @brief   Disables the FLEXCOM4 peripheral clock.
+ *
+ * @api
+ */
+#define pmcDisableFLEXCOM4() pmcDisablePidLow(ID_FLEXCOM4_MSK)
+
 /** @} */
 
 /*===========================================================================*/
