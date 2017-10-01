@@ -15,6 +15,3 @@ on PB5 (pin 13 on Arduino IDE) every second.
 ** Build Procedure **
 
 The demo was built using the GCC AVR toolchain.
-
-** Notes **
-
