@@ -55,12 +55,12 @@
 /**
  * @brief   Kernel version string.
  */
-#define CH_KERNEL_VERSION       "2.0.1"
+#define CH_KERNEL_VERSION       "3.0.0"
 
 /**
  * @brief   Kernel version major number.
  */
-#define CH_KERNEL_MAJOR         2
+#define CH_KERNEL_MAJOR         3
 
 /**
  * @brief   Kernel version minor number.
@@ -70,7 +70,7 @@
 /**
  * @brief   Kernel version patch number.
  */
-#define CH_KERNEL_PATCH         1
+#define CH_KERNEL_PATCH         0
 /** @} */
 
 /**
