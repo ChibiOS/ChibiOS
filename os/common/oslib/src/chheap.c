@@ -106,7 +106,7 @@ static memory_heap_t default_heap;
  */
 void _heap_init(void) {
 
-  default_heap.provider = chCoreAllocAligned;
+  default_heap.provider = chCoreAllocAlignedWithOffset;
   H_NEXT(&default_heap.header) = NULL;
   H_PAGES(&default_heap.header) = 0;
 #if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
@@ -164,7 +164,7 @@ void chHeapObjectInit(memory_heap_t *heapp, void *buf, size_t size) {
  * @api
  */
 void *chHeapAllocAligned(memory_heap_t *heapp, size_t size, unsigned align) {
-  heap_header_t *qp, *hp;
+  heap_header_t *qp, *hp, *ahp;
   size_t pages;
 
   chDbgCheck((size > 0U) && MEM_IS_VALID_ALIGNMENT(align));
@@ -188,7 +188,6 @@ void *chHeapAllocAligned(memory_heap_t *heapp, size_t size, unsigned align) {
   /* Start of the free blocks list.*/
   qp = &heapp->header;
   while (H_NEXT(qp) != NULL) {
-    heap_header_t *ahp;
 
     /* Next free block.*/
     hp = H_NEXT(qp);
@@ -261,13 +260,16 @@ void *chHeapAllocAligned(memory_heap_t *heapp, size_t size, unsigned align) {
   /* More memory is required, tries to get it from the associated provider
      else fails.*/
   if (heapp->provider != NULL) {
-    hp = heapp->provider((pages + 1U) * CH_HEAP_ALIGNMENT, align);
-    if (hp != NULL) {
+    ahp = heapp->provider((pages + 1U) * CH_HEAP_ALIGNMENT,
+                          align,
+                          sizeof (heap_header_t));
+    if (ahp != NULL) {
+      hp = ahp - 1U;
       H_HEAP(hp) = heapp;
       H_SIZE(hp) = size;
 
       /*lint -save -e9087 [11.3] Safe cast.*/
-      return (void *)H_BLOCK(hp);
+      return (void *)ahp;
       /*lint -restore*/
     }
   }
