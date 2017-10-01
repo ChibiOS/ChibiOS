@@ -130,7 +130,7 @@ void *chPoolAllocI(memory_pool_t *mp) {
     mp->next = mp->next->next;
   }
   else if (mp->provider != NULL) {
-    objp = mp->provider(mp->object_size, PORT_NATURAL_ALIGN, 0U); /* TODO: Alignment is not properly handled */
+    objp = mp->provider(mp->object_size, PORT_NATURAL_ALIGN); /* TODO: Alignment is not properly handled */
   }
   /*lint -restore*/
 
