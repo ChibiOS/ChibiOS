@@ -88,6 +88,9 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+*** 14.6.2 ***
+- LIB: Fixed heap allocator returning unaligned blocks (bug #888).
+
 *** 17.6.1 ***
 - NEW: Integrated the latest FatFS 0.13 with patches.
 - NEW: Improved RT and NIL test suite to report version numbers and
