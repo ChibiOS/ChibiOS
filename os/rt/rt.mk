@@ -54,6 +54,9 @@ endif
 ifneq ($(findstring CH_CFG_USE_MEMPOOLS TRUE,$(CHCONF)),)
 KERNSRC += $(CHIBIOS)/os/common/oslib/src/chmempools.c
 endif
+ifneq ($(findstring CH_CFG_USE_FACTORY TRUE,$(CHCONF)),)
+KERNSRC += $(CHIBIOS)/os/common/oslib/src/chfactory.c
+endif
 else
 KERNSRC := $(CHIBIOS)/os/rt/src/chsys.c \
            $(CHIBIOS)/os/rt/src/chdebug.c \

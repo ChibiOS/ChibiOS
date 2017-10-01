@@ -48,11 +48,17 @@
 #endif
 
 /**
- * @brief   Enables factory for generic objects.
- * @note    Generic objects require the heap allocator.
+ * @brief   Enables the registry of generic objects.
  */
-#if !defined(CH_CFG_FACTORY_GENERIC_BUFFER) || defined(__DOXYGEN__)
-#define CH_CFG_FACTORY_GENERIC_BUFFER       TRUE
+#if !defined(CH_CFG_FACTORY_OBJECTS_REGISTRY) || defined(__DOXYGEN__)
+#define CH_CFG_FACTORY_OBJECTS_REGISTRY     TRUE
+#endif
+
+/**
+ * @brief   Enables factory for generic buffers.
+ */
+#if !defined(CH_CFG_FACTORY_GENERIC_BUFFERS) || defined(__DOXYGEN__)
+#define CH_CFG_FACTORY_GENERIC_BUFFERS      TRUE
 #endif
 
 /**
@@ -70,7 +76,7 @@
   ((CH_CFG_FACTORY_SEMAPHORES == TRUE))
 
 #define CH_FACTORY_REQUIRES_HEAP                                            \
-  ((CH_CFG_FACTORY_GENERIC_BUFFER == TRUE))
+  ((CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE))
 
 #if (CH_CFG_FACTORY_MAX_NAMES_LENGHT < 0) ||                                \
     (CH_CFG_FACTORY_MAX_NAMES_LENGHT > 32)
@@ -123,17 +129,34 @@ typedef struct ch_dyn_list {
     dyn_element_t       *next;
 } dyn_list_t;
 
-#if (CH_CFG_FACTORY_GENERIC_BUFFER == TRUE) || defined(__DOXIGEN__)
+#if (CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE) || defined(__DOXIGEN__)
 /**
- * @brief   Type of a dynamic semaphore.
+ * @brief   Type of a registered object.
  */
-typedef struct ch_dyn_object {
+typedef struct ch_registered_static_object {
   /**
-   * @brief   List element of the dynamic object.
+   * @brief   List element of the registered object.
    */
   dyn_element_t         element;
   /**
-   * @brief   Physical objects.
+   * @brief   Pointer to the object.
+   * @note    The type of the object is not stored in anyway.
+   */
+  void                  *objp;
+} registered_object_t;
+#endif
+
+#if (CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE) || defined(__DOXIGEN__)
+/**
+ * @brief   Type of a dynamic buffer object.
+ */
+typedef struct ch_dyn_object {
+  /**
+   * @brief   List element of the dynamic buffer object.
+   */
+  dyn_element_t         element;
+  /**
+   * @brief   Physical buffer objects.
    * @note    This requires C99.
    */
   uint8_t               buffer[];
@@ -160,12 +183,20 @@ typedef struct ch_dyn_semaphore {
  * @brief   Type of the factory main object.
  */
 typedef struct ch_objects_factory {
-#if (CH_CFG_FACTORY_GENERIC_BUFFER == TRUE) || defined(__DOXIGEN__)
   /**
-   * @brief   List of the allocated objects.
+   * @brief   List of the registered objects.
    */
   dyn_list_t            obj_list;
-#endif /* CH_CFG_FACTORY_GENERIC_BUFFER = TRUE */
+  /**
+   * @brief   Pool of the available registered objects.
+   */
+  memory_pool_t         obj_pool;
+#if (CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE) || defined(__DOXIGEN__)
+  /**
+   * @brief   List of the allocated buffer objects.
+   */
+  dyn_list_t            buf_list;
+#endif /* CH_CFG_FACTORY_GENERIC_BUFFERS = TRUE */
 #if (CH_CFG_FACTORY_SEMAPHORES == TRUE) || defined(__DOXIGEN__)
   /**
    * @brief   List of the allocated semaphores.
@@ -194,9 +225,13 @@ objects_factory_t ch_factory;
 extern "C" {
 #endif
   void _factory_init(void);
-//  dyn_registered_object_t *chFactoryRegisterObject(const char *name,
-//                                                   void *objp);
-#if (CH_CFG_FACTORY_GENERIC_BUFFER == TRUE) || defined(__DOXIGEN__)
+#if (CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE) || defined(__DOXIGEN__)
+  registered_object_t *chFactoryRegisterObject(const char *name,
+                                                            void *objp);
+  registered_object_t *chFactoryFindObject(const char *name);
+  void chFactoryReleaseObject(registered_object_t *rop);
+#endif
+#if (CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE) || defined(__DOXIGEN__)
   dyn_buffer_t *chFactoryCreateBuffer(const char *name, size_t size);
   dyn_buffer_t *chFactoryFindBuffer(const char *name);
   void chFactoryReleaseBuffer(dyn_buffer_t *dbp);
@@ -231,7 +266,7 @@ static inline dyn_element_t *chFactoryDuplicateReferenceI(dyn_element_t *dep) {
   return dep;
 }
 
-#if (CH_CFG_FACTORY_GENERIC_BUFFER == TRUE) || defined(__DOXIGEN__)
+#if (CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE) || defined(__DOXIGEN__)
 /**
  * @brief   Returns the size of a generic dynamic buffer object.
  *

@@ -19,11 +19,12 @@
 
 /**
  * @file    chfactory.c
- * @brief   ChibiOS objects factory code.
+ * @brief   ChibiOS objects factory and registry code.
  *
  * @addtogroup objects_factory
  * @details The object factory is a subsystem that allows to:
- *          - Create objects and assign them a name.
+ *          - Register static objects by name.
+ *          - Dynamically create objects and assign them a name.
  *          - Retrieve existing objects by name.
  *          - Free objects by reference.
  *          .
@@ -77,7 +78,7 @@ static inline void dyn_list_init(dyn_list_t *dlp) {
   dlp->next = (dyn_element_t *)dlp;
 }
 
-static dyn_element_t *dyn_list_find(dyn_list_t *dlp, const char *name) {
+static dyn_element_t *dyn_list_find(const char *name, dyn_list_t *dlp) {
   dyn_element_t *p = dlp->next;
 
   while (p != (dyn_element_t *)dlp) {
@@ -87,10 +88,13 @@ static dyn_element_t *dyn_list_find(dyn_list_t *dlp, const char *name) {
     p = p->next;
   }
 
+  chDbgAssert(true, "invalid reference passed");
+
   return NULL;
 }
 
-static dyn_element_t *dyn_list_unlink(dyn_list_t *dlp, dyn_element_t *element) {
+static dyn_element_t *dyn_list_unlink(dyn_element_t *element,
+                                      dyn_list_t *dlp) {
   dyn_element_t *prev = (dyn_element_t *)dlp;
 
   /* Scanning the list.*/
@@ -108,6 +112,114 @@ static dyn_element_t *dyn_list_unlink(dyn_list_t *dlp, dyn_element_t *element) {
   return NULL;
 }
 
+#if (CH_FACTORY_REQUIRES_HEAP == TRUE) || defined(__DOXYGEN__)
+static dyn_element_t *dyn_create_object_heap(const char *name,
+                                             dyn_list_t *dlp,
+                                             size_t size) {
+  dyn_element_t *dep;
+
+  chDbgCheck(name != NULL);
+
+  /* Checking if an object with this name has already been created.*/
+  dep = dyn_list_find(name, dlp);
+  if (dep != NULL) {
+    return NULL;
+  }
+
+  /* Allocating space for the new buffer object.*/
+  dep = (dyn_element_t *)chHeapAlloc(NULL, size);
+  if (dep) {
+    return NULL;
+  }
+
+  /* Initializing object list element.*/
+  strncpy(dep->name, name, CH_CFG_FACTORY_MAX_NAMES_LENGHT);
+  dep->refs = 1U;
+  dep->next = dlp->next;
+
+  /* Updating factory list.*/
+  dlp->next = dep;
+
+  return dep;
+}
+
+static void dyn_release_object_heap(dyn_element_t *dep,
+                                    dyn_list_t *dlp) {
+
+  chDbgCheck(dep != NULL);
+  chDbgAssert(dep->refs > 0U, "invalid references number");
+
+  dep = dyn_list_unlink(dep, dlp);
+
+  dep->refs--;
+  if (dep->refs == 0U) {
+    chHeapFree((void *)dep);
+  }
+}
+#endif /* CH_FACTORY_REQUIRES_HEAP == TRUE */
+
+#if (CH_FACTORY_REQUIRES_POOLS == TRUE) || defined(__DOXYGEN__)
+static dyn_element_t *dyn_create_object_pool(const char *name,
+                                             dyn_list_t *dlp,
+                                             memory_pool_t *mp) {
+  dyn_element_t *dep;
+
+  chDbgCheck(name != NULL);
+
+  /* Checking if an object object with this name has already been created.*/
+  dep = dyn_list_find(name, dlp);
+  if (dep != NULL) {
+    return NULL;
+  }
+
+  /* Allocating space for the new object.*/
+  dep = (dyn_element_t *)chPoolAlloc(mp);
+  if (dep == NULL) {
+    return NULL;
+  }
+
+  /* Initializing object list element.*/
+  strncpy(dep->name, name, CH_CFG_FACTORY_MAX_NAMES_LENGHT);
+  dep->refs = 1U;
+  dep->next = ch_factory.sem_list.next;
+
+  /* Updating factory list.*/
+  dlp->next = (dyn_element_t *)dep;
+
+  return dep;
+}
+
+static void dyn_release_object_pool(dyn_element_t *dep,
+                                    dyn_list_t *dlp,
+                                    memory_pool_t *mp) {
+
+  chDbgCheck(dep != NULL);
+  chDbgAssert(dep->refs > 0U, "invalid references number");
+
+  dep = dyn_list_unlink(dep, dlp);
+
+  dep->refs--;
+  if (dep->refs == 0U) {
+    chPoolFree(mp, (void *)dep);
+  }
+}
+#endif /* CH_FACTORY_REQUIRES_POOLS == TRUE */
+
+static dyn_element_t *dyn_find_object(const char *name, dyn_list_t *dlp) {
+  dyn_element_t *dep;
+
+  chDbgCheck(name != NULL);
+
+  /* Checking if an object with this name has already been created.*/
+  dep = dyn_list_find(name, dlp);
+  if (dep != NULL) {
+    /* Increasing references counter.*/
+    dep->refs++;
+  }
+
+  return dep;
+}
+
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
@@ -119,8 +231,14 @@ static dyn_element_t *dyn_list_unlink(dyn_list_t *dlp, dyn_element_t *element) {
  */
 void _factory_init(void) {
 
-#if CH_CFG_FACTORY_GENERIC_BUFFER == TRUE
+#if CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE
   dyn_list_init(&ch_factory.obj_list);
+  chPoolObjectInit(&ch_factory.obj_pool,
+                   sizeof (registered_object_t),
+                   chCoreAllocAlignedI);
+#endif
+#if CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE
+  dyn_list_init(&ch_factory.buf_list);
 #endif
 #if CH_CFG_FACTORY_SEMAPHORES == TRUE
   dyn_list_init(&ch_factory.sem_list);
@@ -130,52 +248,113 @@ void _factory_init(void) {
 #endif
 }
 
-#if (CH_CFG_FACTORY_GENERIC_BUFFER == TRUE) || defined(__DOXIGEN__)
+#if (CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE) || defined(__DOXIGEN__)
+/**
+ * @brief   Registers a generic object.
+ * @post    A reference to the registered object is returned and the
+ *          reference counter is initialized to one.
+ *
+ * @param[in] name      name to be assigned to the registered object
+ * @param[in] objp      pointer to the object to be registered
+ *
+ * @api
+ */
+registered_object_t *chFactoryRegisterObject(const char *name,
+                                             void *objp) {
+  registered_object_t *rop;
+
+  chSysLock();
+
+  rop = (registered_object_t *)dyn_create_object_pool(name,
+                                                      &ch_factory.obj_list,
+                                                      &ch_factory.obj_pool);
+  if (rop != NULL) {
+    /* Initializing registered object data.*/
+    rop->objp = objp;
+  }
+
+  chSysUnlock();
+
+  return rop;
+}
+
+/**
+ * @brief   Retrieves a registered object.
+ * @post    A reference to the registered object is returned with the
+ *          reference counter increased by one.
+ *
+ * @param[in] name      name of the registered object
+ *
+ * @return              The reference to the found registered object.
+ * @retval NULL         if a registered object with the specified name
+ *                      does not exist.
+ *
+ * @api
+ */
+registered_object_t *chFactoryFindObject(const char *name) {
+  registered_object_t *rop;
+
+  chSysLock();
+
+  rop = (registered_object_t *)dyn_find_object(name, &ch_factory.obj_list);
+
+  chSysUnlock();
+
+  return rop;
+}
+
+/**
+ * @brief   Releases a registered object.
+ * @details The reference counter of the registered object is decreased
+ *          by one, if reaches zero then the registered object memory
+ *          is freed.
+ * @note    The object itself is not freed, it could be static, only the
+ *          allocated list element is freed.
+ *
+ * @param[in] rop       registered object reference
+ *
+ * @api
+ */
+void chFactoryReleaseObject(registered_object_t *rop){
+
+  chSysLock();
+
+  dyn_release_object_pool(&rop->element,
+                          &ch_factory.obj_list,
+                          &ch_factory.obj_pool);
+
+  chSysUnlock();
+}
+#endif /* CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE */
+
+#if (CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE) || defined(__DOXIGEN__)
 /**
  * @brief   Creates a generic dynamic buffer object.
- * @post    A reference to the buffer object is returned and the reference
- *          counter is initialized to one.
- * @post    The buffer object is zero filled.
+ * @post    A reference to the dynamic buffer object is returned and the
+ *          reference counter is initialized to one.
+ * @post    The dynamic buffer object is filled with zeros.
  *
- * @param[in] name      name to be assigned to the new buffer object
- * @param[in] size      payload size of the buffer object to be created
+ * @param[in] name      name to be assigned to the new dynamic  buffer object
+ * @param[in] size      payload size of the dynamic buffer object to be created
  *
- * @return              The reference to the created buffer object.
- * @retval NULL         if the buffer object cannot be allocated or a buffer
- *                      object with the same name exists.
+ * @return              The reference to the created dynamic buffer object.
+ * @retval NULL         if the dynamic buffer object cannot be allocated or
+ *                      a dynamic buffer object with the same name exists.
  *
  * @api
  */
 dyn_buffer_t *chFactoryCreateBuffer(const char *name, size_t size) {
   dyn_buffer_t *dbp;
 
-  chDbgCheck(name != NULL);
-
   chSysLock();
 
-  /* Checking if a buffer object with this name has already been created.*/
-  dbp = (dyn_buffer_t *)dyn_list_find(&ch_factory.obj_list, name);
+  dbp = (dyn_buffer_t *)dyn_create_object_heap(name,
+                                               &ch_factory.buf_list,
+                                               size);
   if (dbp != NULL) {
-    /* Object exists, error.*/
-    chSysUnlock();
-    return NULL;
+    /* Initializing buffer object data.*/
+    memset((void *)dbp->buffer, 0, size);
   }
-
-  /* Allocating space for the new buffer object.*/
-  dbp = chHeapAlloc(NULL, size);
-  if (dbp == NULL) {
-    chSysUnlock();
-    return NULL;
-  }
-
-  /* Initializing buffer object data and metadata.*/
-  strncpy(dbp->element.name, name, CH_CFG_FACTORY_MAX_NAMES_LENGHT);
-  dbp->element.refs = 1;
-  dbp->element.next = ch_factory.obj_list.next;
-  memset((void *)dbp->buffer, 0, size);
-
-  /* Updating factory list.*/
-  ch_factory.obj_list.next = (dyn_element_t *)dbp;
 
   chSysUnlock();
 
@@ -183,35 +362,24 @@ dyn_buffer_t *chFactoryCreateBuffer(const char *name, size_t size) {
 }
 
 /**
- * @brief   Retrieves a generic dynamic buffer object.
- * @post    A reference to the buffer object is returned with the reference
- *          counter increased by one.
+ * @brief   Retrieves a dynamic buffer object.
+ * @post    A reference to the dynamic buffer object is returned with the
+ *          reference counter increased by one.
  *
- * @param[in] name      name to be assigned to the new buffer object
+ * @param[in] name      name of the dynamic buffer object
  *
- * @return              The reference to the found buffer object.
- * @retval NULL         if a buffer object with the specified name name does
- *                      not exist.
+ * @return              The reference to the found dynamic buffer object.
+ * @retval NULL         if a dynamic buffer object with the specified name
+ *                      does not exist.
  *
  * @api
  */
 dyn_buffer_t *chFactoryFindBuffer(const char *name) {
   dyn_buffer_t *dbp;
 
-  chDbgCheck(name != NULL);
-
   chSysLock();
 
-  /* Checking if a buffer object with this name has already been created.*/
-  dbp = (dyn_buffer_t *)dyn_list_find(&ch_factory.obj_list, name);
-  if (dbp == NULL) {
-    /* The buffer object does not exists, error.*/
-    chSysUnlock();
-    return NULL;
-  }
-
-  /* Increasing references counter.*/
-  dbp->element.refs += 1;
+  dbp = (dyn_buffer_t *)dyn_find_object(name, &ch_factory.buf_list);
 
   chSysUnlock();
 
@@ -220,81 +388,52 @@ dyn_buffer_t *chFactoryFindBuffer(const char *name) {
 
 /**
  * @brief   Releases a generic dynamic buffer object.
- * @details The reference counter of the buffer object is decreased by one, if
- *          reaches zero then the buffer object memory is freed.
+ * @details The reference counter of the dynamic buffer object is decreased
+ *          by one, if reaches zero then the dynamic buffer object memory
+ *          is freed.
  *
- * @param[in] dbp       generic buffer object reference
+ * @param[in] dbp       dynamic buffer object reference
  *
  * @api
  */
 void chFactoryReleaseBuffer(dyn_buffer_t *dbp) {
 
-  chDbgCheck(dbp != NULL);
-
   chSysLock();
 
-  chDbgAssert(dbp->element.refs > 0U, "invalid references number");
-
-  dbp = (dyn_buffer_t *)dyn_list_unlink(&ch_factory.obj_list,
-                                        &dbp->element);
-
-  chDbgAssert(dbp != NULL, "invalid reference passed");
-
-  dbp->element.refs--;
-  if (dbp->element.refs == 0) {
-    chHeapFree((void *)dbp);
-  }
+  dyn_release_object_heap(&dbp->element, &ch_factory.buf_list);
 
   chSysUnlock();
 }
-#endif /* CH_CFG_FACTORY_GENERIC_BUFFER = TRUE */
+#endif /* CH_CFG_FACTORY_GENERIC_BUFFERS = TRUE */
 
 #if (CH_CFG_FACTORY_SEMAPHORES == TRUE) || defined(__DOXIGEN__)
 /**
  * @brief   Creates a dynamic semaphore object.
- * @post    A reference to the semaphore object is returned and the reference
- *          counter is initialized to one.
- * @post    The semaphore object is initialized and ready to use.
+ * @post    A reference to the dynamic semaphore object is returned and the
+ *          reference counter is initialized to one.
+ * @post    The dynamic semaphore object is initialized and ready to use.
  *
- * @param[in] name      name to be assigned to the new semaphore object
- * @param[in] n         semaphore object counter initialization value
+ * @param[in] name      name to be assigned to the new dynamic semaphore object
+ * @param[in] n         dynamic semaphore object counter initialization value
  *
- * @return              The reference to the created semaphore object.
- * @retval NULL         if the semaphore object cannot be allocated or a
- *                      semaphore with the same name exists.
+ * @return              The reference to the created dynamic semaphore object.
+ * @retval NULL         if the dynamic semaphore object cannot be allocated or
+ *                      a dynamic semaphore with the same name exists.
  *
  * @api
  */
 dyn_semaphore_t *chFactoryCreateSemaphore(const char *name, cnt_t n) {
   dyn_semaphore_t *dsp;
 
-  chDbgCheck(name != NULL);
-
   chSysLock();
 
-  /* Checking if a semaphore object with this name has already been created.*/
-  dsp = (dyn_semaphore_t *)dyn_list_find(&ch_factory.sem_list, name);
+  dsp = (dyn_semaphore_t *)dyn_create_object_pool(name,
+                                                  &ch_factory.sem_list,
+                                                  &ch_factory.sem_pool);
   if (dsp != NULL) {
-    /* The semaphore object exists, error.*/
-    chSysUnlock();
-    return NULL;
+    /* Initializing semaphore object dataa.*/
+    chSemObjectInit(&dsp->sem, n);
   }
-
-  /* Allocating space for the new semaphore object.*/
-  dsp = chCoreAlloc(sizeof (dyn_semaphore_t));
-  if (dsp == NULL) {
-    chSysUnlock();
-    return NULL;
-  }
-
-  /* Initializing semaphore object data and metadata.*/
-  strncpy(dsp->element.name, name, CH_CFG_FACTORY_MAX_NAMES_LENGHT);
-  dsp->element.refs = 1;
-  dsp->element.next = ch_factory.obj_list.next;
-  chSemObjectInit(&dsp->sem, n);
-
-  /* Updating factory list.*/
-  ch_factory.obj_list.next = (dyn_element_t *)dsp;
 
   chSysUnlock();
 
@@ -302,35 +441,24 @@ dyn_semaphore_t *chFactoryCreateSemaphore(const char *name, cnt_t n) {
 }
 
 /**
- * @brief   Retrieves a generic dynamic semaphore object.
- * @post    A reference to the semaphore object is returned with the reference
- *          counter increased by one.
+ * @brief   Retrieves a dynamic semaphore object.
+ * @post    A reference to the dynamic semaphore object is returned with the
+ *          reference counter increased by one.
  *
- * @param[in] name      name to be assigned to the new semaphore object
+ * @param[in] name      name of the dynamic semaphore object
  *
- * @return              The reference to the found semaphore object.
- * @retval NULL         if a semaphore object with the specified name name does
- *                      not exist.
+ * @return              The reference to the found dynamic semaphore object.
+ * @retval NULL         if a dynamic semaphore object with the specified name
+ *                      does not exist.
  *
  * @api
  */
 dyn_semaphore_t *chFactoryFindSemaphore(const char *name) {
   dyn_semaphore_t *dsp;
 
-  chDbgCheck(name != NULL);
-
   chSysLock();
 
-  /* Checking if a semaphore object with this name has already been created.*/
-  dsp = (dyn_semaphore_t *)dyn_list_find(&ch_factory.obj_list, name);
-  if (dsp == NULL) {
-    /* The semaphore object does not exists, error.*/
-    chSysUnlock();
-    return NULL;
-  }
-
-  /* Increasing references counter.*/
-  dsp->element.refs += 1;
+  dsp = (dyn_semaphore_t *)dyn_find_object(name, &ch_factory.sem_list);
 
   chSysUnlock();
 
@@ -338,31 +466,22 @@ dyn_semaphore_t *chFactoryFindSemaphore(const char *name) {
 }
 
 /**
- * @brief   Releases a semaphore dynamic object.
- * @details The reference counter of the semaphore object is decreased by one,
- *          if reaches zero then the semaphore object memory is freed.
+ * @brief   Releases a dynamic semaphore object.
+ * @details The reference counter of the dynamic semaphore object is decreased
+ *          by one, if reaches zero then the dynamic semaphore object memory
+ *          is freed.
  *
- * @param[in] dsp       semaphore object reference
+ * @param[in] dsp       dynamic semaphore object reference
  *
  * @api
  */
 void chFactoryReleaseSemaphore(dyn_semaphore_t *dsp) {
 
-  chDbgCheck(dsp != NULL);
-
   chSysLock();
 
-  chDbgAssert(dsp->element.refs > 0U, "invalid references number");
-
-  dsp = (dyn_semaphore_t *)dyn_list_unlink(&ch_factory.sem_list,
-                                           &dsp->element);
-
-  chDbgAssert(dsp != NULL, "invalid reference passed");
-
-  dsp->element.refs--;
-  if (dsp->element.refs == 0) {
-    chPoolFree(&ch_factory.sem_pool, (void *)dsp);
-  }
+  dyn_release_object_pool(&dsp->element,
+                          &ch_factory.sem_list,
+                          &ch_factory.sem_pool);
 
   chSysUnlock();
 }
