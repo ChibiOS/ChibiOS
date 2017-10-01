@@ -1780,7 +1780,7 @@
 #define STM32_ADC1_NUMBER                   12
 #define STM32_ADC1_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(1, 1) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 2) |\
-                                             STM32_DMA_STREAM_ID_MSK(3, 5))
+                                             STM32_DMA_STREAM_ID_MSK(2, 5))
 #define STM32_ADC1_DMA_CHN                  0x00100011
 
 #define STM32_HAS_ADC2                      FALSE
@@ -1877,7 +1877,7 @@
 #define STM32_I2C1_RX_DMA_CHN               0x02000200
 #define STM32_I2C1_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 2) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 6))
-#define STM32_I2C1_TX_DMA_CHN               0x00200002
+#define STM32_I2C1_TX_DMA_CHN               0x00200020
 
 #define STM32_HAS_I2C2                      TRUE
 #define STM32_I2C2_RX_DMA_MSK               STM32_DMA_STREAM_ID_MSK(1, 5)
@@ -1919,7 +1919,7 @@
                                              STM32_DMA_STREAM_ID_MSK(1, 6))
 #define STM32_SPI2_RX_DMA_CHN               0x00303000
 #define STM32_SPI2_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 5) |\
-                                             STM32_DMA_STREAM_ID_MSK(1, 5))
+                                             STM32_DMA_STREAM_ID_MSK(1, 7))
 #define STM32_SPI2_TX_DMA_CHN               0x03030000
 
 #define STM32_HAS_SPI3                      FALSE
