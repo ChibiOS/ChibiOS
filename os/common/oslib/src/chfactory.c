@@ -235,7 +235,7 @@ void _factory_init(void) {
   dyn_list_init(&ch_factory.obj_list);
   chPoolObjectInit(&ch_factory.obj_pool,
                    sizeof (registered_object_t),
-                   chCoreAllocAlignedI);
+                   chCoreAllocAlignedWithOffsetI);
 #endif
 #if CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE
   dyn_list_init(&ch_factory.buf_list);
@@ -244,7 +244,7 @@ void _factory_init(void) {
   dyn_list_init(&ch_factory.sem_list);
   chPoolObjectInit(&ch_factory.sem_pool,
                    sizeof (dyn_semaphore_t),
-                   chCoreAllocAlignedI);
+                   chCoreAllocAlignedWithOffsetI);
 #endif
 }
 
