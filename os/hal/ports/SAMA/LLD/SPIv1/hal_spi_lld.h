@@ -44,29 +44,184 @@
  * @details If set to @p TRUE the support for SPI0 is included.
  */
 #if !defined(SAMA_SPI_USE_SPI0) || defined(__DOXYGEN__)
-#define SAMA_SPI_USE_SPI0              FALSE
+#define SAMA_SPI_USE_SPI0                   FALSE
 #endif
-/** @} */
+
 /**
  * @brief   SPI1 driver enable switch.
  * @details If set to @p TRUE the support for SPI1 is included.
  * @note    The default is @p FALSE.
  */
 #if !defined(SAMA_SPI_USE_SPI1) || defined(__DOXYGEN__)
-#define SAMA_SPI_USE_SPI1                 FALSE
+#define SAMA_SPI_USE_SPI1                   FALSE
 #endif
 
+/**
+ * @brief   SPI FLEXCOM0 driver enable switch.
+ * @details If set to @p TRUE the support for FLEXCOM0 is included.
+ */
+#if !defined(SAMA_SPI_USE_FLEXCOM0) || defined(__DOXYGEN__)
+#define SAMA_SPI_USE_FLEXCOM0               FALSE
+#endif
+
+/**
+ * @brief   SPI FLEXCOM1 driver enable switch.
+ * @details If set to @p TRUE the support for FLEXCOM1 is included.
+ */
+#if !defined(SAMA_SPI_USE_FLEXCOM1) || defined(__DOXYGEN__)
+#define SAMA_SPI_USE_FLEXCOM1               FALSE
+#endif
+
+/**
+ * @brief   SPI FLEXCOM2 driver enable switch.
+ * @details If set to @p TRUE the support for FLEXCOM2 is included.
+ */
+#if !defined(SAMA_SPI_USE_FLEXCOM2) || defined(__DOXYGEN__)
+#define SAMA_SPI_USE_FLEXCOM2               FALSE
+#endif
+
+/**
+ * @brief   SPI FLEXCOM3 driver enable switch.
+ * @details If set to @p TRUE the support for FLEXCOM3 is included.
+ */
+#if !defined(SAMA_SPI_USE_FLEXCOM3) || defined(__DOXYGEN__)
+#define SAMA_SPI_USE_FLEXCOM3               FALSE
+#endif
+
+/**
+ * @brief   SPI FLEXCOM4 driver enable switch.
+ * @details If set to @p TRUE the support for FLEXCOM4 is included.
+ */
+#if !defined(SAMA_SPI_USE_FLEXCOM4) || defined(__DOXYGEN__)
+#define SAMA_SPI_USE_FLEXCOM4               FALSE
+#endif
+
+/**
+ * @brief   SPI0 DMA interrupt priority level setting.
+ */
+#if !defined(SAMA_SPI_SPI0_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_SPI_SPI0_DMA_IRQ_PRIORITY      4
+#endif
+
+/**
+ * @brief   SPI1 DMA interrupt priority level setting.
+ */
+#if !defined(SAMA_SPI_SPI1_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_SPI_SPI1_DMA_IRQ_PRIORITY      4
+#endif
+
+/**
+ * @brief   FLEXCOM0 DMA interrupt priority level setting.
+ */
+#if !defined(SAMA_SPI_FLEXCOM0_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_SPI_FLEXCOM0_DMA_IRQ_PRIORITY  4
+#endif
+
+/**
+ * @brief   FLEXCOM1 DMA interrupt priority level setting.
+ */
+#if !defined(SAMA_SPI_FLEXCOM1_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_SPI_FLEXCOM1_DMA_IRQ_PRIORITY  4
+#endif
+
+/**
+ * @brief   FLEXCOM2 DMA interrupt priority level setting.
+ */
+#if !defined(SAMA_SPI_FLEXCOM2_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_SPI_FLEXCOM2_DMA_IRQ_PRIORITY  4
+#endif
+
+/**
+ * @brief   FLEXCOM3 DMA interrupt priority level setting.
+ */
+#if !defined(SAMA_SPI_FLEXCOM3_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_SPI_FLEXCOM3_DMA_IRQ_PRIORITY  4
+#endif
+
+/**
+ * @brief   FLEXCOM4 DMA interrupt priority level setting.
+ */
+#if !defined(SAMA_SPI_FLEXCOM4_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_SPI_FLEXCOM4_DMA_IRQ_PRIORITY  4
+#endif
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+/**
+ * @brief   At least an SPI unit is in use.
+ */
+#define SAMA_SPI_USE_SPI (SAMA_SPI_USE_SPI0 ||                               \
+                          SAMA_SPI_USE_SPI1)
+
+/**
+ * @brief   At least an FLEXCOM unit is in use.
+ */
+#define SAMA_SPI_USE_FLEXCOM (SAMA_SPI_USE_FLEXCOM0 ||                       \
+                              SAMA_SPI_USE_FLEXCOM1 ||                       \
+                              SAMA_SPI_USE_FLEXCOM2 ||                       \
+                              SAMA_SPI_USE_FLEXCOM3 ||                       \
+                              SAMA_SPI_USE_FLEXCOM4)
+
+#if !SAMA_SPI_USE_SPI0 && !SAMA_SPI_USE_SPI1 &&                              \
+    !SAMA_SPI_USE_FLEXCOM0 && !SAMA_SPI_USE_FLEXCOM1 &&                      \
+    !SAMA_SPI_USE_FLEXCOM2 && !SAMA_SPI_USE_FLEXCOM3 &&                      \
+    !SAMA_SPI_USE_FLEXCOM4
+#error "SPI driver activated but no SPI peripheral assigned"
+#endif
+
+/* Checks on allocation of UARTx units.*/
+#if SAMA_SPI_USE_FLEXCOM0
+#if defined(SAMA_FLEXCOM0_IS_USED)
+#error "SPIFLEXD0 requires FLEXCOM0 but the peripheral is already used"
+#else
+#define SAMA_FLEXCOM0_IS_USED
+#endif
+#endif
+
+#if SAMA_SPI_USE_FLEXCOM1
+#if defined(SAMA_FLEXCOM1_IS_USED)
+#error "SPIFLEXD1 requires FLEXCOM1 but the peripheral is already used"
+#else
+#define SAMA_FLEXCOM1_IS_USED
+#endif
+#endif
+
+#if SAMA_SPI_USE_FLEXCOM2
+#if defined(SAMA_FLEXCOM2_IS_USED)
+#error "SPIFLEXD2 requires FLEXCOM2 but the peripheral is already used"
+#else
+#define SAMA_FLEXCOM2_IS_USED
+#endif
+#endif
+
+#if SAMA_SPI_USE_FLEXCOM3
+#if defined(SAMA_FLEXCOM3_IS_USED)
+#error "SPIFLEXD3 requires FLEXCOM3 but the peripheral is already used"
+#else
+#define SAMA_FLEXCOM3_IS_USED
+#endif
+#endif
+
+#if SAMA_SPI_USE_FLEXCOM4
+#if defined(SAMA_FLEXCOM4_IS_USED)
+#error "SPIFLEXD4 requires FLEXCOM4 but the peripheral is already used"
+#else
+#define SAMA_FLEXCOM4_IS_USED
+#endif
+#endif
+
+#if SPI_SELECT_MODE == (SPI_SELECT_MODE_LLD || SPI_SELECT_MODE_PAD ||        \
+                        SPI_SELECT_MODE_PORT || SPI_SELECT_MODE_LINE)
+#error "SPI_SELECT_MODE_NONE is supported by this driver"
+#endif
+
 #if !defined(SAMA_DMA_REQUIRED)
 #define SAMA_DMA_REQUIRED
 #endif
 
-#if !SAMA_SPI_USE_SPI0 && !SAMA_SPI_USE_SPI1
-#error "SPI driver activated but no SPI peripheral assigned"
-#endif
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
@@ -141,6 +296,12 @@ struct SPIDriver {
    * @brief Pointer to the SPIx registers block.
    */
   Spi                      *spi;
+#if SAMA_SPI_USE_FLEXCOM
+  /**
+   * @brief Pointer to the FLEXCOMx registers block.
+   */
+  Flexcom                  *flexcom;
+#endif
   /**
    * @brief   Receive DMA stream.
    */
@@ -175,6 +336,26 @@ extern SPIDriver SPID0;
 
 #if SAMA_SPI_USE_SPI1 && !defined(__DOXYGEN__)
 extern SPIDriver SPID1;
+#endif
+
+#if SAMA_SPI_USE_FLEXCOM0 && !defined(__DOXYGEN__)
+extern SPIDriver SPIFLEXD0;
+#endif
+
+#if SAMA_SPI_USE_FLEXCOM1 && !defined(__DOXYGEN__)
+extern SPIDriver SPIFLEXD1;
+#endif
+
+#if SAMA_SPI_USE_FLEXCOM2 && !defined(__DOXYGEN__)
+extern SPIDriver SPIFLEXD2;
+#endif
+
+#if SAMA_SPI_USE_FLEXCOM3 && !defined(__DOXYGEN__)
+extern SPIDriver SPIFLEXD3;
+#endif
+
+#if SAMA_SPI_USE_FLEXCOM4 && !defined(__DOXYGEN__)
+extern SPIDriver SPIFLEXD4;
 #endif
 
 #ifdef __cplusplus

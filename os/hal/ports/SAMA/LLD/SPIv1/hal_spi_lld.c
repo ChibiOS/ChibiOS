@@ -75,6 +75,41 @@ SPIDriver SPID0;
 SPIDriver SPID1;
 #endif
 
+/**
+ * @brief   SPI FLEXCOM0 driver identifier.
+ */
+#if SAMA_SPI_USE_FLEXCOM0 || defined(__DOXYGEN__)
+SPIDriver SPIFLEXD0;
+#endif
+
+/**
+ * @brief   SPI FLEXCOM1 driver identifier.
+ */
+#if SAMA_SPI_USE_FLEXCOM1 || defined(__DOXYGEN__)
+SPIDriver SPIFLEXD1;
+#endif
+
+/**
+ * @brief   SPI FLEXCOM2 driver identifier.
+ */
+#if SAMA_SPI_USE_FLEXCOM2 || defined(__DOXYGEN__)
+SPIDriver SPIFLEXD2;
+#endif
+
+/**
+ * @brief   SPI FLEXCOM3 driver identifier.
+ */
+#if SAMA_SPI_USE_FLEXCOM3 || defined(__DOXYGEN__)
+SPIDriver SPIFLEXD3;
+#endif
+
+/**
+ * @brief   SPI FLEXCOM4 driver identifier.
+ */
+#if SAMA_SPI_USE_FLEXCOM4 || defined(__DOXYGEN__)
+SPIDriver SPIFLEXD4;
+#endif
+
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
@@ -206,6 +241,161 @@ void spi_lld_init(void) {
                     XDMAC_CC_DAM_FIXED_AM |
                     XDMAC_CC_PERID(PERID_SPI1_TX);
 #endif /* SAMA_SPI_USE_SPI1 */
+
+#if SAMA_SPI_USE_FLEXCOM0
+  /* Driver initialization.*/
+  spiObjectInit(&SPIFLEXD0);
+  SPIFLEXD0.spi       = FCOMSPI0;
+  SPIFLEXD0.flexcom   = FLEXCOM0;
+  SPIFLEXD0.dmarx     = NULL;
+  SPIFLEXD0.dmatx     = NULL;
+  SPIFLEXD0.rxdmamode = XDMAC_CC_TYPE_PER_TRAN |
+                        XDMAC_CC_MBSIZE_SINGLE |
+                        XDMAC_CC_DSYNC_PER2MEM |
+                        XDMAC_CC_PROT_SEC |
+                        XDMAC_CC_CSIZE_CHK_1 |
+                        XDMAC_CC_DWIDTH_BYTE |
+                        XDMAC_CC_SIF_AHB_IF1 |
+                        XDMAC_CC_DIF_AHB_IF0 |
+                        XDMAC_CC_SAM_FIXED_AM |
+                        XDMAC_CC_DAM_INCREMENTED_AM |
+                        XDMAC_CC_PERID(PERID_FLEXCOM0_RX);
+  SPIFLEXD0.txdmamode = XDMAC_CC_TYPE_PER_TRAN |
+                        XDMAC_CC_MBSIZE_SINGLE |
+                        XDMAC_CC_DSYNC_MEM2PER |
+                        XDMAC_CC_PROT_SEC |
+                        XDMAC_CC_CSIZE_CHK_1 |
+                        XDMAC_CC_DWIDTH_BYTE |
+                        XDMAC_CC_SIF_AHB_IF0 |
+                        XDMAC_CC_DIF_AHB_IF1 |
+                        XDMAC_CC_SAM_INCREMENTED_AM |
+                        XDMAC_CC_DAM_FIXED_AM |
+                        XDMAC_CC_PERID(PERID_FLEXCOM0_TX);
+#endif /* SAMA_SPI_USE_FLEXCOM0 */
+
+#if SAMA_SPI_USE_FLEXCOM1
+  /* Driver initialization.*/
+  spiObjectInit(&SPIFLEXD1);
+  SPIFLEXD1.spi       = FCOMSPI1;
+  SPIFLEXD1.flexcom   = FLEXCOM1;
+  SPIFLEXD1.dmarx     = NULL;
+  SPIFLEXD1.dmatx     = NULL;
+  SPIFLEXD1.rxdmamode = XDMAC_CC_TYPE_PER_TRAN |
+                        XDMAC_CC_MBSIZE_SINGLE |
+                        XDMAC_CC_DSYNC_PER2MEM |
+                        XDMAC_CC_PROT_SEC |
+                        XDMAC_CC_CSIZE_CHK_1 |
+                        XDMAC_CC_DWIDTH_BYTE |
+                        XDMAC_CC_SIF_AHB_IF1 |
+                        XDMAC_CC_DIF_AHB_IF0 |
+                        XDMAC_CC_SAM_FIXED_AM |
+                        XDMAC_CC_DAM_INCREMENTED_AM |
+                        XDMAC_CC_PERID(PERID_FLEXCOM1_RX);
+  SPIFLEXD1.txdmamode = XDMAC_CC_TYPE_PER_TRAN |
+                        XDMAC_CC_MBSIZE_SINGLE |
+                        XDMAC_CC_DSYNC_MEM2PER |
+                        XDMAC_CC_PROT_SEC |
+                        XDMAC_CC_CSIZE_CHK_1 |
+                        XDMAC_CC_DWIDTH_BYTE |
+                        XDMAC_CC_SIF_AHB_IF0 |
+                        XDMAC_CC_DIF_AHB_IF1 |
+                        XDMAC_CC_SAM_INCREMENTED_AM |
+                        XDMAC_CC_DAM_FIXED_AM |
+                        XDMAC_CC_PERID(PERID_FLEXCOM1_TX);
+#endif /* SAMA_SPI_USE_FLEXCOM1 */
+
+#if SAMA_SPI_USE_FLEXCOM2
+  /* Driver initialization.*/
+  spiObjectInit(&SPIFLEXD2);
+  SPIFLEXD2.spi       = FCOMSPI2;
+  SPIFLEXD2.flexcom   = FLEXCOM2;
+  SPIFLEXD2.dmarx     = NULL;
+  SPIFLEXD2.dmatx     = NULL;
+  SPIFLEXD2.rxdmamode = XDMAC_CC_TYPE_PER_TRAN |
+                        XDMAC_CC_MBSIZE_SINGLE |
+                        XDMAC_CC_DSYNC_PER2MEM |
+                        XDMAC_CC_PROT_SEC |
+                        XDMAC_CC_CSIZE_CHK_1 |
+                        XDMAC_CC_DWIDTH_BYTE |
+                        XDMAC_CC_SIF_AHB_IF1 |
+                        XDMAC_CC_DIF_AHB_IF0 |
+                        XDMAC_CC_SAM_FIXED_AM |
+                        XDMAC_CC_DAM_INCREMENTED_AM |
+                        XDMAC_CC_PERID(PERID_FLEXCOM2_RX);
+  SPIFLEXD2.txdmamode = XDMAC_CC_TYPE_PER_TRAN |
+                        XDMAC_CC_MBSIZE_SINGLE |
+                        XDMAC_CC_DSYNC_MEM2PER |
+                        XDMAC_CC_PROT_SEC |
+                        XDMAC_CC_CSIZE_CHK_1 |
+                        XDMAC_CC_DWIDTH_BYTE |
+                        XDMAC_CC_SIF_AHB_IF0 |
+                        XDMAC_CC_DIF_AHB_IF1 |
+                        XDMAC_CC_SAM_INCREMENTED_AM |
+                        XDMAC_CC_DAM_FIXED_AM |
+                        XDMAC_CC_PERID(PERID_FLEXCOM2_TX);
+#endif /* SAMA_SPI_USE_FLEXCOM2 */
+
+#if SAMA_SPI_USE_FLEXCOM3
+  /* Driver initialization.*/
+  spiObjectInit(&SPIFLEXD3);
+  SPIFLEXD3.spi       = FCOMSPI3;
+  SPIFLEXD3.flexcom   = FLEXCOM3;
+  SPIFLEXD3.dmarx     = NULL;
+  SPIFLEXD3.dmatx     = NULL;
+  SPIFLEXD3.rxdmamode = XDMAC_CC_TYPE_PER_TRAN |
+                        XDMAC_CC_MBSIZE_SINGLE |
+                        XDMAC_CC_DSYNC_PER2MEM |
+                        XDMAC_CC_PROT_SEC |
+                        XDMAC_CC_CSIZE_CHK_1 |
+                        XDMAC_CC_DWIDTH_BYTE |
+                        XDMAC_CC_SIF_AHB_IF1 |
+                        XDMAC_CC_DIF_AHB_IF0 |
+                        XDMAC_CC_SAM_FIXED_AM |
+                        XDMAC_CC_DAM_INCREMENTED_AM |
+                        XDMAC_CC_PERID(PERID_FLEXCOM3_RX);
+  SPIFLEXD3.txdmamode = XDMAC_CC_TYPE_PER_TRAN |
+                        XDMAC_CC_MBSIZE_SINGLE |
+                        XDMAC_CC_DSYNC_MEM2PER |
+                        XDMAC_CC_PROT_SEC |
+                        XDMAC_CC_CSIZE_CHK_1 |
+                        XDMAC_CC_DWIDTH_BYTE |
+                        XDMAC_CC_SIF_AHB_IF0 |
+                        XDMAC_CC_DIF_AHB_IF1 |
+                        XDMAC_CC_SAM_INCREMENTED_AM |
+                        XDMAC_CC_DAM_FIXED_AM |
+                        XDMAC_CC_PERID(PERID_FLEXCOM3_TX);
+#endif /* SAMA_SPI_USE_FLEXCOM3 */
+
+#if SAMA_SPI_USE_FLEXCOM4
+  /* Driver initialization.*/
+  spiObjectInit(&SPIFLEXD4);
+  SPIFLEXD4.spi       = FCOMSPI4;
+  SPIFLEXD4.flexcom   = FLEXCOM4;
+  SPIFLEXD4.dmarx     = NULL;
+  SPIFLEXD4.dmatx     = NULL;
+  SPIFLEXD4.rxdmamode = XDMAC_CC_TYPE_PER_TRAN |
+                        XDMAC_CC_MBSIZE_SINGLE |
+                        XDMAC_CC_DSYNC_PER2MEM |
+                        XDMAC_CC_PROT_SEC |
+                        XDMAC_CC_CSIZE_CHK_1 |
+                        XDMAC_CC_DWIDTH_BYTE |
+                        XDMAC_CC_SIF_AHB_IF1 |
+                        XDMAC_CC_DIF_AHB_IF0 |
+                        XDMAC_CC_SAM_FIXED_AM |
+                        XDMAC_CC_DAM_INCREMENTED_AM |
+                        XDMAC_CC_PERID(PERID_FLEXCOM4_RX);
+  SPIFLEXD4.txdmamode = XDMAC_CC_TYPE_PER_TRAN |
+                        XDMAC_CC_MBSIZE_SINGLE |
+                        XDMAC_CC_DSYNC_MEM2PER |
+                        XDMAC_CC_PROT_SEC |
+                        XDMAC_CC_CSIZE_CHK_1 |
+                        XDMAC_CC_DWIDTH_BYTE |
+                        XDMAC_CC_SIF_AHB_IF0 |
+                        XDMAC_CC_DIF_AHB_IF1 |
+                        XDMAC_CC_SAM_INCREMENTED_AM |
+                        XDMAC_CC_DAM_FIXED_AM |
+                        XDMAC_CC_PERID(PERID_FLEXCOM4_TX);
+#endif /* SAMA_SPI_USE_FLEXCOM4 */
 }
 
 /**
@@ -220,46 +410,134 @@ void spi_lld_start(SPIDriver *spip) {
   /* Configures the peripheral.*/
 
   if (spip->state == SPI_STOP) {
-  /* Execute a software reset of the SPI twice */
-    spip->spi->SPI_CR = SPI_CR_SWRST;
-    spip->spi->SPI_CR = SPI_CR_SWRST;
 
 #if SAMA_SPI_USE_SPI0
     if (&SPID0 == spip) {
-      spip->dmarx = dmaChannelAllocate(SAMA_SPI_SPI0_IRQ_PRIORITY,
+      spip->dmarx = dmaChannelAllocate(SAMA_SPI_SPI0_DMA_IRQ_PRIORITY,
                                        (sama_dmaisr_t)spi_lld_serve_rx_interrupt,
                                        (void *)spip);
 
-      spip->dmatx = dmaChannelAllocate(SAMA_SPI_SPI0_IRQ_PRIORITY,
+      spip->dmatx = dmaChannelAllocate(SAMA_SPI_SPI0_DMA_IRQ_PRIORITY,
                                        (sama_dmaisr_t)spi_lld_serve_tx_interrupt,
                                        (void *)spip);
 
     /* Enable SPI0 clock */
       pmcEnableSPI0();
-
     }
 #endif /* SAMA_SPI_USE_SPI0 */
 #if SAMA_SPI_USE_SPI1
     if (&SPID1 == spip) {
-      spip->dmarx = dmaChannelAllocate(SAMA_SPI_SPI1_IRQ_PRIORITY,
+      spip->dmarx = dmaChannelAllocate(SAMA_SPI_SPI1_DMA_IRQ_PRIORITY,
                                        (sama_dmaisr_t)spi_lld_serve_rx_interrupt,
                                        (void *)spip);
 
-      spip->dmatx = dmaChannelAllocate(SAMA_SPI_SPI1_IRQ_PRIORITY,
+      spip->dmatx = dmaChannelAllocate(SAMA_SPI_SPI1_DMA_IRQ_PRIORITY,
                                        (sama_dmaisr_t)spi_lld_serve_tx_interrupt,
                                        (void *)spip);
     /* Enable SPI1 clock */
       pmcEnableSPI1();
-
     }
 #endif /* SAMA_SPI_USE_SPI1 */
+#if SAMA_SPI_USE_FLEXCOM0
+    if (&SPIFLEXD0 == spip) {
+      spip->dmarx = dmaChannelAllocate(SAMA_SPI_FLEXCOM0_DMA_IRQ_PRIORITY,
+                                       (sama_dmaisr_t)spi_lld_serve_rx_interrupt,
+                                       (void *)spip);
+
+      spip->dmatx = dmaChannelAllocate(SAMA_SPI_FLEXCOM0_DMA_IRQ_PRIORITY,
+                                       (sama_dmaisr_t)spi_lld_serve_tx_interrupt,
+                                       (void *)spip);
+    /* Enabling USART on FLEXCOM */
+      spip->flexcom->FLEX_MR = FLEX_MR_OPMODE_SPI;
+    /* Enable FLEXCOM0 clock */
+      pmcEnableFLEXCOM0();
+    }
+#endif /* SAMA_SPI_USE_FLEXCOM0 */
+#if SAMA_SPI_USE_FLEXCOM1
+    if (&SPIFLEXD1 == spip) {
+      spip->dmarx = dmaChannelAllocate(SAMA_SPI_FLEXCOM1_DMA_IRQ_PRIORITY,
+                                       (sama_dmaisr_t)spi_lld_serve_rx_interrupt,
+                                       (void *)spip);
+
+      spip->dmatx = dmaChannelAllocate(SAMA_SPI_FLEXCOM1_DMA_IRQ_PRIORITY,
+                                       (sama_dmaisr_t)spi_lld_serve_tx_interrupt,
+                                       (void *)spip);
+    /* Enabling USART on FLEXCOM */
+      spip->flexcom->FLEX_MR = FLEX_MR_OPMODE_SPI;
+    /* Enable FLEXCOM1 clock */
+      pmcEnableFLEXCOM1();
+    }
+#endif /* SAMA_SPI_USE_FLEXCOM1 */
+#if SAMA_SPI_USE_FLEXCOM2
+    if (&SPIFLEXD2 == spip) {
+      spip->dmarx = dmaChannelAllocate(SAMA_SPI_FLEXCOM2_DMA_IRQ_PRIORITY,
+                                       (sama_dmaisr_t)spi_lld_serve_rx_interrupt,
+                                       (void *)spip);
+
+      spip->dmatx = dmaChannelAllocate(SAMA_SPI_FLEXCOM2_DMA_IRQ_PRIORITY,
+                                       (sama_dmaisr_t)spi_lld_serve_tx_interrupt,
+                                       (void *)spip);
+    /* Enabling USART on FLEXCOM */
+      spip->flexcom->FLEX_MR = FLEX_MR_OPMODE_SPI;
+    /* Enable FLEXCOM2 clock */
+      pmcEnableFLEXCOM2();
+    }
+#endif /* SAMA_SPI_USE_FLEXCOM2 */
+#if SAMA_SPI_USE_FLEXCOM3
+    if (&SPIFLEXD3 == spip) {
+      spip->dmarx = dmaChannelAllocate(SAMA_SPI_FLEXCOM3_DMA_IRQ_PRIORITY,
+                                       (sama_dmaisr_t)spi_lld_serve_rx_interrupt,
+                                       (void *)spip);
+
+      spip->dmatx = dmaChannelAllocate(SAMA_SPI_FLEXCOM3_DMA_IRQ_PRIORITY,
+                                       (sama_dmaisr_t)spi_lld_serve_tx_interrupt,
+                                       (void *)spip);
+    /* Enabling USART on FLEXCOM */
+      spip->flexcom->FLEX_MR = FLEX_MR_OPMODE_SPI;
+    /* Enable FLEXCOM3 clock */
+      pmcEnableFLEXCOM3();
+    }
+#endif /* SAMA_SPI_USE_FLEXCOM3 */
+#if SAMA_SPI_USE_FLEXCOM4
+    if (&SPIFLEXD4 == spip) {
+      spip->dmarx = dmaChannelAllocate(SAMA_SPI_FLEXCOM4_DMA_IRQ_PRIORITY,
+                                       (sama_dmaisr_t)spi_lld_serve_rx_interrupt,
+                                       (void *)spip);
+
+      spip->dmatx = dmaChannelAllocate(SAMA_SPI_FLEXCOM4_DMA_IRQ_PRIORITY,
+                                       (sama_dmaisr_t)spi_lld_serve_tx_interrupt,
+                                       (void *)spip);
+    /* Enabling USART on FLEXCOM */
+      spip->flexcom->FLEX_MR = FLEX_MR_OPMODE_SPI;
+    /* Enable FLEXCOM4 clock */
+      pmcEnableFLEXCOM4();
+    }
+#endif /* SAMA_SPI_USE_FLEXCOM4 */
   }
+
+  /* Set mode */
+  dmaChannelSetMode(spip->dmarx, spip->rxdmamode);
+  dmaChannelSetMode(spip->dmatx, spip->txdmamode);
 
   /* Disable write protection */
   spiDisableWP(spip->spi);
+
+  /* Execute a software reset of the SPI twice */
+  spip->spi->SPI_CR = SPI_CR_SWRST;
+  spip->spi->SPI_CR = SPI_CR_SWRST;
+
   /* SPI configuration */
   spip->spi->SPI_MR = spip->config->mr;
+  spip->spi->SPI_MR &= ~SPI_MR_PCS_Msk;
+  spip->spi->SPI_MR |=  SPI_PCS(spip->config->npcs);
   spip->spi->SPI_CSR[spip->config->npcs] = spip->config->csr;
+
+  /* if SPI_CSRx_BITS > 8, dma is set to 16 bits  */
+  if (((spip->spi->SPI_CSR[spip->config->npcs] >> 4) & 0xF) > 0) {
+    dmaChannelSetMode(spip->dmatx, spip->txdmamode | XDMAC_CC_DWIDTH_HALFWORD);
+    dmaChannelSetMode(spip->dmarx, spip->rxdmamode | XDMAC_CC_DWIDTH_HALFWORD);
+  }
+
   /* Enable SPI */
   spip->spi->SPI_CR |= SPI_CR_SPIEN;
   /* Enable write protection.  */
@@ -285,6 +563,7 @@ void spi_lld_stop(SPIDriver *spip) {
     spip->spi->SPI_CR |= SPI_CR_SPIDIS;
   /* Enable write protection */
     spiEnableWP(spip->spi);
+
 #if SAMA_SPI_USE_SPI0
     if (&SPID0 == spip)
     /* Disable SPI0 clock */
@@ -296,10 +575,47 @@ void spi_lld_stop(SPIDriver *spip) {
     /* Disable SPI1 clock */
       pmcDisableSPI1();
 
-#endif /* SAMA_SPI_USE_SPI1 */
+#endif /* SAMA_SPI_USE_FLEXCOM0 */
+
+#if SAMA_SPI_USE_FLEXCOM0
+    if (&SPIFLEXD0 == spip)
+    /* Disable FLEXCOM0 clock */
+      pmcDisableFLEXCOM0();
+
+#endif /* SAMA_SPI_USE_FLEXCOM0 */
+
+#if SAMA_SPI_USE_FLEXCOM1
+    if (&SPIFLEXD1 == spip)
+    /* Disable FLEXCOM1 clock */
+      pmcDisableFLEXCOM1();
+
+#endif /* SAMA_SPI_USE_FLEXCOM1 */
+
+#if SAMA_SPI_USE_FLEXCOM2
+    if (&SPIFLEXD2 == spip)
+    /* Disable FLEXCOM2 clock */
+      pmcDisableFLEXCOM2();
+
+#endif /* SAMA_SPI_USE_FLEXCOM2 */
+
+#if SAMA_SPI_USE_FLEXCOM3
+    if (&SPIFLEXD3 == spip)
+    /* Disable FLEXCOM3 clock */
+      pmcDisableFLEXCOM3();
+
+#endif /* SAMA_SPI_USE_FLEXCOM3 */
+
+#if SAMA_SPI_USE_FLEXCOM4
+    if (&SPIFLEXD4 == spip)
+    /* Disable FLEXCOM4 clock */
+      pmcDisableFLEXCOM4();
+
+#endif /* SAMA_SPI_USE_FLEXCOM4 */
   }
 }
 
+#if (SPI_SELECT_MODE == (SPI_SELECT_MODE_LLD || SPI_SELECT_MODE_PAD ||        \
+                         SPI_SELECT_MODE_PORT || SPI_SELECT_MODE_LINE)) || defined(__DOXYGEN__)
 /**
  * @brief   Asserts the slave select signal and prepares for transfers.
  *
@@ -308,21 +624,7 @@ void spi_lld_stop(SPIDriver *spip) {
  * @notapi
  */
 void spi_lld_select(SPIDriver *spip) {
-
-  /**
-   * NOTE: This should only be called in master mode.
-   */
-
-  uint16_t pad =  spip->config->npcs;
-  /* Disable write protection */
-  spiDisableWP(spip->spi);
-
-  spip->spi->SPI_MR &= ~SPI_MR_PCS_Msk;
-  spip->spi->SPI_MR |=  SPI_PCS(pad);
-
-  /* Enable write protection */
-  spiEnableWP(spip->spi);
-
+  /* No implementation on SAMA.*/
 }
 
 /**
@@ -334,13 +636,9 @@ void spi_lld_select(SPIDriver *spip) {
  * @notapi
  */
 void spi_lld_unselect(SPIDriver *spip) {
-
-  /**
-   * NOTE: This should only be called in master mode.
-   */
-  spip->spi->SPI_CR = SPI_CR_LASTXFER;
-
+  /* No implementation on SAMA.*/
 }
+#endif
 
 /**
  * @brief   Exchanges data on the SPI bus.
@@ -360,21 +658,18 @@ void spi_lld_unselect(SPIDriver *spip) {
 void spi_lld_exchange(SPIDriver *spip, size_t n,
                       const void *txbuf, void *rxbuf) {
 
-  osalDbgAssert(n > XDMAC_MAX_BT_SIZE, "unsupported DMA transfer size");
   /* Writing channel */
   dmaChannelSetSource(spip->dmatx, txbuf);
   dmaChannelSetDestination(spip->dmatx, &spip->spi->SPI_TDR);
   dmaChannelSetTransactionSize(spip->dmatx, n);
-  dmaChannelSetMode(spip->dmatx, spip->txdmamode);
+
   /* Reading channel */
   dmaChannelSetSource(spip->dmarx, &spip->spi->SPI_RDR);
   dmaChannelSetDestination(spip->dmarx, rxbuf);
   dmaChannelSetTransactionSize(spip->dmarx, n);
-  dmaChannelSetMode(spip->dmarx, spip->rxdmamode);
 
   dmaChannelEnable(spip->dmarx);
   dmaChannelEnable(spip->dmatx);
-
 }
 
 /**
@@ -392,17 +687,15 @@ void spi_lld_exchange(SPIDriver *spip, size_t n,
  */
 void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
 
-  osalDbgAssert(n > XDMAC_MAX_BT_SIZE, "unsupported DMA transfer size");
   /* Writing channel */
   dmaChannelSetSource(spip->dmatx, txbuf);
   dmaChannelSetDestination(spip->dmatx, &spip->spi->SPI_TDR);
   dmaChannelSetTransactionSize(spip->dmatx, n);
-  dmaChannelSetMode(spip->dmatx, spip->txdmamode);
+
   /* Reading channel */
   dmaChannelSetSource(spip->dmarx, &spip->spi->SPI_RDR);
   dmaChannelSetDestination(spip->dmarx, &dummyrx);
   dmaChannelSetTransactionSize(spip->dmarx, n);
-  dmaChannelSetMode(spip->dmarx, spip->rxdmamode);
 
   dmaChannelEnable(spip->dmarx);
   dmaChannelEnable(spip->dmatx);
@@ -423,21 +716,18 @@ void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
  */
 void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
 
-  osalDbgAssert(n > XDMAC_MAX_BT_SIZE, "unsupported DMA transfer size");
   /* Writing channel */
   dmaChannelSetSource(spip->dmatx, &dummytx);
   dmaChannelSetDestination(spip->dmatx, &spip->spi->SPI_TDR);
   dmaChannelSetTransactionSize(spip->dmatx, n);
-  dmaChannelSetMode(spip->dmatx, spip->txdmamode);
+
   /* Reading channel */
   dmaChannelSetSource(spip->dmarx, &spip->spi->SPI_RDR);
   dmaChannelSetDestination(spip->dmarx, rxbuf);
   dmaChannelSetTransactionSize(spip->dmarx, n);
-  dmaChannelSetMode(spip->dmarx, spip->rxdmamode);
 
   dmaChannelEnable(spip->dmarx);
   dmaChannelEnable(spip->dmatx);
-
 }
 
 #endif /* HAL_USE_SPI */
