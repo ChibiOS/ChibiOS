@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 14.6.2 ***
+- HAL: Fixed various STM32 registry problems (bug #889).
 - LIB: Fixed heap allocator returning unaligned blocks (bug #888).
 
 *** 17.6.1 ***
