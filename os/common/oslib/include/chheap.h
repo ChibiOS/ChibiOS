@@ -95,7 +95,7 @@ union heap_header {
  * @brief   Structure describing a memory heap.
  */
 struct memory_heap {
-  memgetfunc_t          provider;   /**< @brief Memory blocks provider for
+  memgetfunc2_t         provider;   /**< @brief Memory blocks provider for
                                                 this heap.                  */
   heap_header_t         header;     /**< @brief Free blocks list header.    */
 #if CH_CFG_USE_MUTEXES == TRUE

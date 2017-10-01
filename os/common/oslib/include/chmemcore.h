@@ -68,7 +68,12 @@
 /**
  * @brief   Memory get function.
  */
-typedef void *(*memgetfunc_t)(size_t size, unsigned align, size_t offset);
+typedef void *(*memgetfunc_t)(size_t size, unsigned align);
+
+/**
+ * @brief   Enhanced memory get function.
+ */
+typedef void *(*memgetfunc2_t)(size_t size, unsigned align, size_t offset);
 
 /**
  * @brief   Type of memory core object.
