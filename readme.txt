@@ -124,6 +124,8 @@
        dependencies and configuration directories. This makes possible
        to have multiple non-conflicting makefiles in the same project.
        Updated the various platform.mk implementing "smart build" mode.
+- HAL: Fixed various STM32 registry problems (bug #889)(backported to 17.6.2
+       and 16.1.10).
 - LIB: Fixed heap allocator returning unaligned blocks (bug #888)(backported
        to 17.6.2).
 - NIL: Fixed duplicated entries in NIL documentation (bug #887)(backported
