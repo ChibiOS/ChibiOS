@@ -287,6 +287,7 @@ sama_dma_channel_t* dmaChannelAllocate(uint32_t priority,
   /* Setting aic */
     aicSetSourcePriority(id, priority);
     aicEnableInt(id);
+
   /* Enabling DMA clocks required by the current channel set.*/
     if (id == ID_XDMAC0) {
       pmcEnableXDMAC0();
