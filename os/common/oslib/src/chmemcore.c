@@ -52,6 +52,11 @@
 /* Module exported variables.                                                */
 /*===========================================================================*/
 
+/**
+ * @brief   Memory core descriptor.
+ */
+memcore_t ch_memcore;
+
 /*===========================================================================*/
 /* Module local types.                                                       */
 /*===========================================================================*/
@@ -59,9 +64,6 @@
 /*===========================================================================*/
 /* Module local variables.                                                   */
 /*===========================================================================*/
-
-static uint8_t *nextmem;
-static uint8_t *endmem;
 
 /*===========================================================================*/
 /* Module local functions.                                                   */
@@ -82,63 +84,74 @@ void _core_init(void) {
   extern uint8_t __heap_end__[];
 
   /*lint -save -e9033 [10.8] Required cast operations.*/
-  nextmem = __heap_base__;
-  endmem  = __heap_end__;
+  ch_memcore.nextmem = __heap_base__;
+  ch_memcore.endmem  = __heap_end__;
   /*lint restore*/
 #else
   static uint8_t static_heap[CH_CFG_MEMCORE_SIZE];
 
-  nextmem = &static_heap[0];
-  endmem  = &static_heap[CH_CFG_MEMCORE_SIZE];
+  ch_memcore.nextmem = &static_heap[0];
+  ch_memcore.endmem  = &static_heap[CH_CFG_MEMCORE_SIZE];
 #endif
 }
 
 /**
  * @brief   Allocates a memory block.
- * @details The allocated block is guaranteed to be properly aligned to the
- *          specified alignment.
+ * @details This function allocates a block of @p offset + @p size bytes. The
+ *          returned pointer has @p offset bytes before its address and
+ *          @p size bytes after.
  *
  * @param[in] size      the size of the block to be allocated.
  * @param[in] align     desired memory alignment
+ * @param[in] offset    aligned pointer offset
  * @return              A pointer to the allocated memory block.
  * @retval NULL         allocation failed, core memory exhausted.
  *
  * @iclass
  */
-void *chCoreAllocAlignedI(size_t size, unsigned align) {
-  uint8_t *p;
+void *chCoreAllocAlignedWithOffsetI(size_t size,
+                                    unsigned align,
+                                    size_t offset) {
+  uint8_t *p, *next;
 
   chDbgCheckClassI();
   chDbgCheck(MEM_IS_VALID_ALIGNMENT(align));
 
   size = MEM_ALIGN_NEXT(size, align);
-  p = (uint8_t *)MEM_ALIGN_NEXT(nextmem, align);
+  p = (uint8_t *)MEM_ALIGN_NEXT(ch_memcore.nextmem + offset, align);
+  next = p + size;
 
-  if (((size_t)endmem - (size_t)p) < size) {
+  /* Considering also the case where there is numeric overflow.*/
+  if ((next > ch_memcore.endmem) || (next < ch_memcore.nextmem)) {
     return NULL;
   }
-  nextmem = p + size;
+
+  ch_memcore.nextmem = next;
 
   return p;
 }
 
 /**
  * @brief   Allocates a memory block.
- * @details The allocated block is guaranteed to be properly aligned to the
- *          specified alignment.
+ * @details This function allocates a block of @p offset + @p size bytes. The
+ *          returned pointer has @p offset bytes before its address and
+ *          @p size bytes after.
  *
- * @param[in] size      the size of the block to be allocated
+ * @param[in] size      the size of the block to be allocated.
  * @param[in] align     desired memory alignment
+ * @param[in] offset    aligned pointer offset
  * @return              A pointer to the allocated memory block.
  * @retval NULL         allocation failed, core memory exhausted.
  *
  * @api
  */
-void *chCoreAllocAligned(size_t size, unsigned align) {
+void *chCoreAllocAlignedWithOffset(size_t size,
+                                   unsigned align,
+                                   size_t offset) {
   void *p;
 
   chSysLock();
-  p = chCoreAllocAlignedI(size, align);
+  p = chCoreAllocAlignedWithOffsetI(size, align, offset);
   chSysUnlock();
 
   return p;
@@ -154,7 +167,7 @@ void *chCoreAllocAligned(size_t size, unsigned align) {
 size_t chCoreGetStatusX(void) {
 
   /*lint -save -e9033 [10.8] The cast is safe.*/
-  return (size_t)(endmem - nextmem);
+  return (size_t)(ch_memcore.endmem - ch_memcore.nextmem);
   /*lint -restore*/
 }
 #endif /* CH_CFG_USE_MEMCORE == TRUE */

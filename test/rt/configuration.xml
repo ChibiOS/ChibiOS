@@ -3547,10 +3547,11 @@ static MEMORYPOOL_DECL(mp1, sizeof (uint32_t), NULL);
 static GUARDEDMEMORYPOOL_DECL(gmp1, sizeof (uint32_t));
 #endif
 
-static void *null_provider(size_t size, unsigned align) {
+static void *null_provider(size_t size, unsigned align, size_t offset) {
 
   (void)size;
   (void)align;
+  (void)offset;
 
   return NULL;
 }]]></value>
