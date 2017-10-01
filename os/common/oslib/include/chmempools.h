@@ -74,7 +74,7 @@ typedef struct {
  * @brief   Guarded memory pool descriptor.
  */
 typedef struct {
-  semaphore_t           sem;            /**< @brief Counter semaphore quarding
+  semaphore_t           sem;            /**< @brief Counter semaphore guarding
                                                     the memory pool.        */
   memory_pool_t         pool;           /**< @brief The memory pool itself. */
 } guarded_memory_pool_t;
