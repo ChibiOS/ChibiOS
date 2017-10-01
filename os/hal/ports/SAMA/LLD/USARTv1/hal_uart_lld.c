@@ -31,6 +31,58 @@
 /*===========================================================================*/
 
 /*===========================================================================*/
+/* Driver local macros.                                                      */
+/*===========================================================================*/
+
+#if SAMA_UART_USE_UART
+/**
+ * @brief   Enable write protection on UART registers block.
+ *
+ * @param[in] uartp    pointer to a UART register block
+ *
+ * @notapi
+ */
+#define uartEnableWP(uartp) {                                                \
+  uartp->UART_WPMR = UART_WPMR_WPKEY_PASSWD | UART_WPMR_WPEN;                \
+}
+
+/**
+ * @brief   Disable write protection on UART registers block.
+ *
+ * @param[in] uartp    pointer to a UART register block
+ *
+ * @notapi
+ */
+#define uartDisableWP(uartp) {                                               \
+  uartp->UART_WPMR = UART_WPMR_WPKEY_PASSWD;                                 \
+}
+#endif
+
+#if SAMA_UART_USE_FLEXCOM
+/**
+ * @brief   Enable write protection on FLEXCOM registers block.
+ *
+ * @param[in] uartp    pointer to a FLEXCOM register block
+ *
+ * @notapi
+ */
+#define uartFlexEnableWP(uartp) {                                            \
+  uartp->US_WPMR = US_WPMR_WPKEY_PASSWD | US_WPMR_WPEN;                      \
+}
+
+/**
+ * @brief   Disable write protection on FLEXCOM registers block.
+ *
+ * @param[in] uartp    pointer to a FLEXCOM register block
+ *
+ * @notapi
+ */
+#define uartFlexDisableWP(uartp) {                                           \
+  uartp->US_WPMR = US_WPMR_WPKEY_PASSWD;                                     \
+}
+#endif
+
+/*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
@@ -39,12 +91,12 @@
 UARTDriver UARTD0;
 #endif
 
-/** @brief USART1 UART driver identifier.*/
+/** @brief UART1 UART driver identifier.*/
 #if SAMA_UART_USE_UART1 || defined(__DOXYGEN__)
 UARTDriver UARTD1;
 #endif
 
-/** @brief USART2 UART driver identifier.*/
+/** @brief UART2 UART driver identifier.*/
 #if SAMA_UART_USE_UART2 || defined(__DOXYGEN__)
 UARTDriver UARTD2;
 #endif
@@ -57,6 +109,31 @@ UARTDriver UARTD3;
 /** @brief UART4 UART driver identifier.*/
 #if SAMA_UART_USE_UART4 || defined(__DOXYGEN__)
 UARTDriver UARTD4;
+#endif
+
+/** @brief FLEXCOM0 UART driver identifier.*/
+#if SAMA_UART_USE_FLEXCOM0 || defined(__DOXYGEN__)
+UARTDriver UARTFLEXD0;
+#endif
+
+/** @brief FLEXCOM1 UART driver identifier.*/
+#if SAMA_UART_USE_FLEXCOM1 || defined(__DOXYGEN__)
+UARTDriver UARTFLEXD1;
+#endif
+
+/** @brief FLEXCOM2 UART driver identifier.*/
+#if SAMA_UART_USE_FLEXCOM2 || defined(__DOXYGEN__)
+UARTDriver UARTFLEXD2;
+#endif
+
+/** @brief FLEXCOM3 UART driver identifier.*/
+#if SAMA_UART_USE_FLEXCOM3 || defined(__DOXYGEN__)
+UARTDriver UARTFLEXD3;
+#endif
+
+/** @brief FLEXCOM4 UART driver identifier.*/
+#if SAMA_UART_USE_FLEXCOM4 || defined(__DOXYGEN__)
+UARTDriver UARTFLEXD4;
 #endif
 
 /*===========================================================================*/
@@ -81,11 +158,11 @@ UARTDriver UARTD4;
 static uartflags_t translate_errors(uint32_t isr) {
   uartflags_t sts = 0;
 
-  if (isr & UART_SR_OVRE)
+  if (isr & (UART_SR_OVRE | US_CSR_OVRE))
     sts |= UART_OVERRUN_ERROR;
-  if (isr & UART_SR_PARE)
+  if (isr & (UART_SR_PARE | US_CSR_PARE))
     sts |= UART_PARITY_ERROR;
-  if (isr & UART_SR_FRAME)
+  if (isr & (UART_SR_FRAME | US_CSR_FRAME))
     sts |= UART_SR_FRAME;
   return sts;
 }
@@ -128,11 +205,51 @@ static void uart_stop(UARTDriver *uartp) {
   dmaChannelDisable(uartp->dmarx);
   dmaChannelDisable(uartp->dmatx);
   
-  /* Stops UART operations.*/
-  uartp->uart->UART_CR = UART_CR_RSTRX | UART_CR_RSTTX;
+#if SAMA_UART_USE_UART && SAMA_UART_USE_FLEXCOM
+  if (uartp->uart != NULL)
+#endif /* SAMA_UART_USE_UART && SAMA_UART_USE_FLEXCOM */
+#if SAMA_UART_USE_UART
+  {
+    Uart *u = uartp->uart;
 
-  /* Resets UART's register */
-  uartp->uart->UART_MR = 0;
+    /* Disabling write protection */
+    uartDisableWP(u);
+
+    /* Stops UART operations.*/
+    uartp->uart->UART_CR = UART_CR_RSTRX | UART_CR_RSTTX;
+
+    /* Resets UART's register */
+    uartp->uart->UART_MR = 0;
+
+    /* Enabling write protection */
+    uartEnableWP(u);
+  }
+#endif /* SAMA_UART_USE_UART */
+#if SAMA_UART_USE_UART && SAMA_UART_USE_FLEXCOM
+  else if (uartp->usart != NULL)
+#endif /* SAMA_UART_USE_UART && SAMA_UART_USE_FLEXCOM */
+#if SAMA_UART_USE_FLEXCOM
+  {
+    Usart *us = uartp->usart;
+
+    /* Disabling write protection */
+    uartFlexDisableWP(us);
+
+    /* Stops UART operations.*/
+    us->US_CR = US_CR_RSTRX | US_CR_RSTTX;
+
+    /* Resets UART's register */
+    us->US_MR = 0;
+
+    /* Disabling write protection */
+    uartFlexEnableWP(us);
+  }
+#endif /* SAMA_UART_USE_FLEXCOM */
+#if SAMA_UART_USE_UART && SAMA_UART_USE_FLEXCOM
+  else {
+    osalDbgAssert(FALSE, "invalid state");
+  }
+#endif /* SAMA_UART_USE_UART && SAMA_UART_USE_FLEXCOM */
 }
 
 /**
@@ -142,33 +259,89 @@ static void uart_stop(UARTDriver *uartp) {
  * @param[in] uartp     pointer to the @p UARTDriver object
  */
 static void uart_start(UARTDriver *uartp) {
+
   uint32_t cr;
   const uint32_t tmo = uartp->config->timeout;
-  Uart *u = uartp->uart;
+#if SAMA_UART_USE_UART && SAMA_UART_USE_FLEXCOM
+  if (uartp->uart != NULL)
+#endif /* SAMA_UART_USE_UART && SAMA_UART_USE_FLEXCOM */
+#if SAMA_UART_USE_UART
+  {
+    Uart *u = uartp->uart;
 
-  /* Defensive programming, starting from a clean state.*/
-  uart_stop(uartp);
+    /* Defensive programming, starting from a clean state.*/
+    uart_stop(uartp);
 
-  /* Baud rate setting.*/
-  u->UART_BRGR = UART_BRGR_CD(uartp->clock / (16 * uartp->config->speed));
+    /* Disabling write protection */
+    uartDisableWP(u);
 
-  /* Clearing pending flags */
-  u->UART_CR = UART_CR_RSTSTA;
+    /* Baud rate setting.*/
+    u->UART_BRGR = UART_BRGR_CD(uartp->clock / (16 * uartp->config->speed));
 
-  /* Enabling interrupts */
-  u->UART_IER = UART_IER_OVRE | UART_IER_FRAME | UART_IER_PARE;
+    /* Clearing pending flags */
+    u->UART_CR = UART_CR_RSTSTA;
 
-  cr = UART_CR_RXEN | UART_CR_TXEN;
-  u->UART_CR = uartp->config->cr | cr;
-  u->UART_MR = uartp->config->mr;
+    /* Enabling interrupts */
+    u->UART_IER = UART_IER_OVRE | UART_IER_FRAME | UART_IER_PARE;
 
-  /* Set receive timeout and checks if it is really applied.*/
-  if (tmo > 0) {
-    /*
-     * TODO: insert Function parameters check
-     */
-    u->UART_RTOR = tmo;
+    cr = UART_CR_RXEN | UART_CR_TXEN;
+    u->UART_CR = uartp->config->cr | cr;
+    u->UART_MR = uartp->config->mr;
+
+    /* Set receive timeout and checks if it is really applied.*/
+    if (tmo > 0) {
+      /*
+       * TODO: insert Function parameters check
+       */
+      u->UART_RTOR = tmo;
+    }
+    /* Enabling write protection */
+    uartEnableWP(u);
   }
+#endif /* SAMA_UART_USE_UART */
+#if SAMA_UART_USE_UART && SAMA_UART_USE_FLEXCOM
+  else if (uartp->usart != NULL)
+#endif /* SAMA_UART_USE_UART && SAMA_UART_USE_FLEXCOM */
+#if SAMA_UART_USE_FLEXCOM
+  {
+    Usart *us = uartp->usart;
+
+    /* Defensive programming, starting from a clean state.*/
+    uart_stop(uartp);
+
+    /* Disabling write protection */
+    uartFlexDisableWP(us);
+
+    /* Baud rate setting.*/
+    us->US_BRGR = US_BRGR_CD(uartp->clock / (16 * uartp->config->speed));
+
+    /* Clearing pending flags */
+    us->US_CR = US_CR_RSTSTA;
+
+    /* Enabling interrupts */
+    us->US_IER = US_IER_OVRE | US_IER_FRAME | US_IER_PARE;
+
+    cr = US_CR_RXEN | US_CR_TXEN;
+    us->US_CR = uartp->config->cr | cr;
+    us->US_MR = uartp->config->mr;
+
+    /* Set receive timeout and checks if it is really applied.*/
+    if (tmo > 0) {
+      /*
+       * TODO: insert Function parameters check
+       */
+      us->US_RTOR = tmo;
+    }
+
+    /* Enabling write protection */
+    uartFlexEnableWP(us);
+  }
+#endif /* SAMA_UART_USE_FLEXCOM */
+#if SAMA_UART_USE_UART && SAMA_UART_USE_FLEXCOM
+  else {
+    osalDbgAssert(FALSE, "invalid state");
+  }
+#endif /* SAMA_UART_USE_UART && SAMA_UART_USE_FLEXCOM */
 
   /* Starting the receiver idle loop.*/
   uart_enter_rx_idle_loop(uartp);
@@ -227,6 +400,7 @@ static void uart_lld_serve_tx_end_irq(UARTDriver *uartp, uint32_t flags) {
   _uart_tx1_isr_code(uartp);
 }
 
+#if SAMA_UART_USE_UART
 /**
  * @brief   UART common service routine.
  *
@@ -253,6 +427,37 @@ static void serve_uart_irq(UARTDriver *uartp) {
     _uart_tx2_isr_code(uartp);
   }
 }
+#endif
+
+#if SAMA_UART_USE_FLEXCOM
+/**
+ * @brief   UART common service routine.
+ *
+ * @param[in] uartp     pointer to the @p UARTDriver object
+ */
+static void serve_uartFlex_irq(UARTDriver *uartp) {
+  Usart *us = uartp->usart;
+  uint32_t imr = us->US_IMR;
+  uint32_t sr;
+
+  /* Reading and clearing status.*/
+  sr = us->US_CSR;
+  us->US_CR |= US_CR_RSTSTA;
+
+  if (sr & (US_CSR_OVRE | US_CSR_FRAME  | US_CSR_PARE)) {
+    _uart_rx_error_isr_code(uartp, translate_errors(sr));
+  }
+
+  if ((imr & US_IMR_TXEMPTY) && (sr & (US_CSR_TXRDY | US_CSR_TXEMPTY))) {
+    /* TC interrupt disabled.*/
+    us->US_IDR |= US_IDR_TXEMPTY;
+
+    /* End of transmission, a callback is generated.*/
+    _uart_tx2_isr_code(uartp);
+  }
+}
+#endif
+
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
@@ -337,6 +542,86 @@ OSAL_IRQ_HANDLER(SAMA_UART4_HANDLER) {
   OSAL_IRQ_EPILOGUE();
 }
 #endif /* SAMA_UART_USE_UART4 */
+
+#if SAMA_UART_USE_FLEXCOM0 || defined(__DOXYGEN__)
+/**
+ * @brief   FLEXCOM0 IRQ handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(SAMA_UART_FLEXCOM0_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  serve_uartFlex_irq(&UARTFLEXD0);
+  aicAckInt();
+  OSAL_IRQ_EPILOGUE();
+}
+#endif /* SAMA_UART_USE_FLEXCOM0 */
+
+#if SAMA_UART_USE_FLEXCOM1 || defined(__DOXYGEN__)
+/**
+ * @brief   FLEXCOM1 IRQ handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(SAMA_UART_FLEXCOM1_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  serve_uartFlex_irq(&UARTFLEXD1);
+  aicAckInt();
+  OSAL_IRQ_EPILOGUE();
+}
+#endif /* SAMA_UART_USE_FLEXCOM1 */
+
+#if SAMA_UART_USE_FLEXCOM2 || defined(__DOXYGEN__)
+/**
+ * @brief   FLEXCOM2 IRQ handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(SAMA_UART_FLEXCOM2_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  serve_uartFlex_irq(&UARTFLEXD2);
+  aicAckInt();
+  OSAL_IRQ_EPILOGUE();
+}
+#endif /* SAMA_UART_USE_FLEXCOM2 */
+
+#if SAMA_UART_USE_FLEXCOM3 || defined(__DOXYGEN__)
+/**
+ * @brief   FLEXCOM3 IRQ handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(SAMA_UART_FLEXCOM3_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  serve_uartFlex_irq(&UARTFLEXD3);
+  aicAckInt();
+  OSAL_IRQ_EPILOGUE();
+}
+#endif /* SAMA_UART_USE_FLEXCOM3 */
+
+#if SAMA_UART_USE_FLEXCOM4 || defined(__DOXYGEN__)
+/**
+ * @brief   FLEXCOM4 IRQ handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(SAMA_UART_FLEXCOM4_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  serve_uartFlex_irq(&UARTFLEXD4);
+  aicAckInt();
+  OSAL_IRQ_EPILOGUE();
+}
+#endif /* SAMA_UART_USE_FLEXCOM4 */
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -499,7 +784,163 @@ void uart_lld_init(void) {
   UARTD4.dmatx     = 0;
 #endif
 
+#if SAMA_UART_USE_FLEXCOM0
+  uartObjectInit(&UARTFLEXD0);
+  UARTFLEXD0.flexcom   = FLEXCOM0;
+  UARTFLEXD0.usart     = USART0;
+  UARTFLEXD0.clock     = SAMA_FLEXCOM0CLK;
+  UARTFLEXD0.rxdmamode = XDMAC_CC_TYPE_PER_TRAN |
+                         XDMAC_CC_MBSIZE_SINGLE |
+                         XDMAC_CC_DSYNC_PER2MEM |
+                         XDMAC_CC_PROT_SEC |
+                         XDMAC_CC_CSIZE_CHK_1 |
+                         XDMAC_CC_DWIDTH_BYTE |
+                         XDMAC_CC_SIF_AHB_IF1 |
+                         XDMAC_CC_DIF_AHB_IF0 |
+                         XDMAC_CC_SAM_FIXED_AM |
+                         XDMAC_CC_DAM_INCREMENTED_AM |
+                         XDMAC_CC_PERID(PERID_FLEXCOM0_RX);
+  UARTFLEXD0.txdmamode = XDMAC_CC_TYPE_PER_TRAN |
+                         XDMAC_CC_MBSIZE_SINGLE |
+                         XDMAC_CC_DSYNC_MEM2PER |
+                         XDMAC_CC_PROT_SEC |
+                         XDMAC_CC_CSIZE_CHK_1 |
+                         XDMAC_CC_DWIDTH_BYTE |
+                         XDMAC_CC_SIF_AHB_IF0 |
+                         XDMAC_CC_DIF_AHB_IF1 |
+                         XDMAC_CC_SAM_INCREMENTED_AM |
+                         XDMAC_CC_DAM_FIXED_AM |
+                         XDMAC_CC_PERID(PERID_FLEXCOM0_TX);
+  UARTFLEXD0.dmarx     = 0;
+  UARTFLEXD0.dmatx     = 0;
+#endif
+
+#if SAMA_UART_USE_FLEXCOM1
+  uartObjectInit(&UARTFLEXD1);
+  UARTFLEXD1.flexcom   = FLEXCOM1;
+  UARTFLEXD1.usart     = USART1;
+  UARTFLEXD1.clock     = SAMA_FLEXCOM1CLK;
+  UARTFLEXD1.rxdmamode = XDMAC_CC_TYPE_PER_TRAN |
+                         XDMAC_CC_MBSIZE_SINGLE |
+                         XDMAC_CC_DSYNC_PER2MEM |
+                         XDMAC_CC_PROT_SEC |
+                         XDMAC_CC_CSIZE_CHK_1 |
+                         XDMAC_CC_DWIDTH_BYTE |
+                         XDMAC_CC_SIF_AHB_IF1 |
+                         XDMAC_CC_DIF_AHB_IF0 |
+                         XDMAC_CC_SAM_FIXED_AM |
+                         XDMAC_CC_DAM_INCREMENTED_AM |
+                         XDMAC_CC_PERID(PERID_FLEXCOM1_RX);
+  UARTFLEXD1.txdmamode = XDMAC_CC_TYPE_PER_TRAN |
+                         XDMAC_CC_MBSIZE_SINGLE |
+                         XDMAC_CC_DSYNC_MEM2PER |
+                         XDMAC_CC_PROT_SEC |
+                         XDMAC_CC_CSIZE_CHK_1 |
+                         XDMAC_CC_DWIDTH_BYTE |
+                         XDMAC_CC_SIF_AHB_IF0 |
+                         XDMAC_CC_DIF_AHB_IF1 |
+                         XDMAC_CC_SAM_INCREMENTED_AM |
+                         XDMAC_CC_DAM_FIXED_AM |
+                         XDMAC_CC_PERID(PERID_FLEXCOM1_TX);
+  UARTFLEXD1.dmarx     = 0;
+  UARTFLEXD1.dmatx     = 0;
+#endif
+
+#if SAMA_UART_USE_FLEXCOM2
+  uartObjectInit(&UARTFLEXD2);
+  UARTFLEXD2.flexcom   = FLEXCOM2;
+  UARTFLEXD2.usart     = USART2;
+  UARTFLEXD2.clock     = SAMA_FLEXCOM2CLK;
+  UARTFLEXD2.rxdmamode = XDMAC_CC_TYPE_PER_TRAN |
+                         XDMAC_CC_MBSIZE_SINGLE |
+                         XDMAC_CC_DSYNC_PER2MEM |
+                         XDMAC_CC_PROT_SEC |
+                         XDMAC_CC_CSIZE_CHK_1 |
+                         XDMAC_CC_DWIDTH_BYTE |
+                         XDMAC_CC_SIF_AHB_IF1 |
+                         XDMAC_CC_DIF_AHB_IF0 |
+                         XDMAC_CC_SAM_FIXED_AM |
+                         XDMAC_CC_DAM_INCREMENTED_AM |
+                         XDMAC_CC_PERID(PERID_FLEXCOM2_RX);
+  UARTFLEXD2.txdmamode = XDMAC_CC_TYPE_PER_TRAN |
+                         XDMAC_CC_MBSIZE_SINGLE |
+                         XDMAC_CC_DSYNC_MEM2PER |
+                         XDMAC_CC_PROT_SEC |
+                         XDMAC_CC_CSIZE_CHK_1 |
+                         XDMAC_CC_DWIDTH_BYTE |
+                         XDMAC_CC_SIF_AHB_IF0 |
+                         XDMAC_CC_DIF_AHB_IF1 |
+                         XDMAC_CC_SAM_INCREMENTED_AM |
+                         XDMAC_CC_DAM_FIXED_AM |
+                         XDMAC_CC_PERID(PERID_FLEXCOM2_TX);
+  UARTFLEXD2.dmarx     = 0;
+  UARTFLEXD2.dmatx     = 0;
+#endif
+
+#if SAMA_UART_USE_FLEXCOM3
+  uartObjectInit(&UARTFLEXD3);
+  UARTFLEXD3.flexcom   = FLEXCOM3;
+  UARTFLEXD3.usart     = USART3;
+  UARTFLEXD3.clock     = SAMA_FLEXCOM3CLK;
+  UARTFLEXD3.rxdmamode = XDMAC_CC_TYPE_PER_TRAN |
+                         XDMAC_CC_MBSIZE_SINGLE |
+                         XDMAC_CC_DSYNC_PER2MEM |
+                         XDMAC_CC_PROT_SEC |
+                         XDMAC_CC_CSIZE_CHK_1 |
+                         XDMAC_CC_DWIDTH_BYTE |
+                         XDMAC_CC_SIF_AHB_IF1 |
+                         XDMAC_CC_DIF_AHB_IF0 |
+                         XDMAC_CC_SAM_FIXED_AM |
+                         XDMAC_CC_DAM_INCREMENTED_AM |
+                         XDMAC_CC_PERID(PERID_FLEXCOM3_RX);
+  UARTFLEXD3.txdmamode = XDMAC_CC_TYPE_PER_TRAN |
+                         XDMAC_CC_MBSIZE_SINGLE |
+                         XDMAC_CC_DSYNC_MEM2PER |
+                         XDMAC_CC_PROT_SEC |
+                         XDMAC_CC_CSIZE_CHK_1 |
+                         XDMAC_CC_DWIDTH_BYTE |
+                         XDMAC_CC_SIF_AHB_IF0 |
+                         XDMAC_CC_DIF_AHB_IF1 |
+                         XDMAC_CC_SAM_INCREMENTED_AM |
+                         XDMAC_CC_DAM_FIXED_AM |
+                         XDMAC_CC_PERID(PERID_FLEXCOM3_TX);
+  UARTFLEXD3.dmarx     = 0;
+  UARTFLEXD3.dmatx     = 0;
+#endif
+
+#if SAMA_UART_USE_FLEXCOM4
+  uartObjectInit(&UARTFLEXD4);
+  UARTFLEXD4.flexcom   = FLEXCOM4;
+  UARTFLEXD4.usart     = USART4;
+  UARTFLEXD4.clock     = SAMA_FLEXCOM4CLK;
+  UARTFLEXD4.rxdmamode = XDMAC_CC_TYPE_PER_TRAN |
+                         XDMAC_CC_MBSIZE_SINGLE |
+                         XDMAC_CC_DSYNC_PER2MEM |
+                         XDMAC_CC_PROT_SEC |
+                         XDMAC_CC_CSIZE_CHK_1 |
+                         XDMAC_CC_DWIDTH_BYTE |
+                         XDMAC_CC_SIF_AHB_IF1 |
+                         XDMAC_CC_DIF_AHB_IF0 |
+                         XDMAC_CC_SAM_FIXED_AM |
+                         XDMAC_CC_DAM_INCREMENTED_AM |
+                         XDMAC_CC_PERID(PERID_FLEXCOM4_RX);
+  UARTFLEXD4.txdmamode = XDMAC_CC_TYPE_PER_TRAN |
+                         XDMAC_CC_MBSIZE_SINGLE |
+                         XDMAC_CC_DSYNC_MEM2PER |
+                         XDMAC_CC_PROT_SEC |
+                         XDMAC_CC_CSIZE_CHK_1 |
+                         XDMAC_CC_DWIDTH_BYTE |
+                         XDMAC_CC_SIF_AHB_IF0 |
+                         XDMAC_CC_DIF_AHB_IF1 |
+                         XDMAC_CC_SAM_INCREMENTED_AM |
+                         XDMAC_CC_DAM_FIXED_AM |
+                         XDMAC_CC_PERID(PERID_FLEXCOM4_TX);
+  UARTFLEXD4.dmarx     = 0;
+  UARTFLEXD4.dmatx     = 0;
+#endif
+
 }
+
 
 /**
  * @brief   Configures and activates the UART peripheral.
@@ -513,11 +954,11 @@ void uart_lld_start(UARTDriver *uartp) {
   if (uartp->state == UART_STOP) {
 #if SAMA_UART_USE_UART0
     if (&UARTD0 == uartp) {
-      uartp->dmarx = dmaChannelAllocate(SAMA_UART_UART0_IRQ_PRIORITY,
+      uartp->dmarx = dmaChannelAllocate(SAMA_UART_UART0_DMA_IRQ_PRIORITY,
                                        (sama_dmaisr_t)uart_lld_serve_rx_end_irq,
                                        (void *)uartp);
 
-      uartp->dmatx = dmaChannelAllocate(SAMA_UART_UART0_IRQ_PRIORITY,
+      uartp->dmatx = dmaChannelAllocate(SAMA_UART_UART0_DMA_IRQ_PRIORITY,
                                        (sama_dmaisr_t)uart_lld_serve_tx_end_irq,
                                        (void *)uartp);
       pmcEnableUART0();
@@ -537,11 +978,11 @@ void uart_lld_start(UARTDriver *uartp) {
 
 #if SAMA_UART_USE_UART1
     if (&UARTD1 == uartp) {
-      uartp->dmarx = dmaChannelAllocate(SAMA_UART_UART1_IRQ_PRIORITY,
+      uartp->dmarx = dmaChannelAllocate(SAMA_UART_UART1_DMA_IRQ_PRIORITY,
                                       (sama_dmaisr_t)uart_lld_serve_rx_end_irq,
                                       (void *)uartp);
 
-      uartp->dmatx = dmaChannelAllocate(SAMA_UART_UART1_IRQ_PRIORITY,
+      uartp->dmatx = dmaChannelAllocate(SAMA_UART_UART1_DMA_IRQ_PRIORITY,
                                       (sama_dmaisr_t)uart_lld_serve_tx_end_irq,
                                       (void *)uartp);
       pmcEnableUART1();
@@ -561,11 +1002,11 @@ void uart_lld_start(UARTDriver *uartp) {
 
 #if SAMA_UART_USE_UART2
     if (&UARTD2 == uartp) {
-      uartp->dmarx = dmaChannelAllocate(SAMA_UART_UART2_IRQ_PRIORITY,
+      uartp->dmarx = dmaChannelAllocate(SAMA_UART_UART2_DMA_IRQ_PRIORITY,
                                        (sama_dmaisr_t)uart_lld_serve_rx_end_irq,
                                        (void *)uartp);
 
-      uartp->dmatx = dmaChannelAllocate(SAMA_UART_UART2_IRQ_PRIORITY,
+      uartp->dmatx = dmaChannelAllocate(SAMA_UART_UART2_DMA_IRQ_PRIORITY,
                                        (sama_dmaisr_t)uart_lld_serve_tx_end_irq,
                                        (void *)uartp);
       pmcEnableUART2();
@@ -585,11 +1026,11 @@ void uart_lld_start(UARTDriver *uartp) {
 
 #if SAMA_UART_USE_UART3
     if (&UARTD3 == uartp) {
-      uartp->dmarx = dmaChannelAllocate(SAMA_UART_UART3_IRQ_PRIORITY,
+      uartp->dmarx = dmaChannelAllocate(SAMA_UART_UART3_DMA_IRQ_PRIORITY,
                                        (sama_dmaisr_t)uart_lld_serve_rx_end_irq,
                                        (void *)uartp);
 
-      uartp->dmatx = dmaChannelAllocate(SAMA_UART_UART3_IRQ_PRIORITY,
+      uartp->dmatx = dmaChannelAllocate(SAMA_UART_UART3_DMA_IRQ_PRIORITY,
                                        (sama_dmaisr_t)uart_lld_serve_tx_end_irq,
                                        (void *)uartp);
       pmcEnableUART3();
@@ -609,11 +1050,11 @@ void uart_lld_start(UARTDriver *uartp) {
 
 #if SAMA_UART_USE_UART4
     if (&UARTD4 == uartp) {
-      uartp->dmarx = dmaChannelAllocate(SAMA_UART_UART4_IRQ_PRIORITY,
+      uartp->dmarx = dmaChannelAllocate(SAMA_UART_UART4_DMA_IRQ_PRIORITY,
                                        (sama_dmaisr_t)uart_lld_serve_rx_end_irq,
                                        (void *)uartp);
 
-      uartp->dmatx = dmaChannelAllocate(SAMA_UART_UART4_IRQ_PRIORITY,
+      uartp->dmatx = dmaChannelAllocate(SAMA_UART_UART4_DMA_IRQ_PRIORITY,
                                        (sama_dmaisr_t)uart_lld_serve_tx_end_irq,
                                        (void *)uartp);
       pmcEnableUART4();
@@ -627,6 +1068,136 @@ void uart_lld_start(UARTDriver *uartp) {
 
       /* Configuring source and mode of rxdma channel*/
       dmaChannelSetSource(uartp->dmarx, &uartp->uart->UART_RHR);
+      dmaChannelSetMode(uartp->dmarx, uartp->rxdmamode);
+    }
+#endif
+
+#if SAMA_UART_USE_FLEXCOM0
+    if (&UARTFLEXD0 == uartp) {
+      uartp->dmarx = dmaChannelAllocate(SAMA_UART_FLEXCOM0_DMA_IRQ_PRIORITY,
+                                       (sama_dmaisr_t)uart_lld_serve_rx_end_irq,
+                                       (void *)uartp);
+
+      uartp->dmatx = dmaChannelAllocate(SAMA_UART_FLEXCOM0_DMA_IRQ_PRIORITY,
+                                       (sama_dmaisr_t)uart_lld_serve_tx_end_irq,
+                                       (void *)uartp);
+      /* Enabling USART on FLEXCOM */
+      uartp->flexcom->FLEX_MR = FLEX_MR_OPMODE_USART;
+      pmcEnableFLEXCOM0();
+      aicSetSourcePriority(ID_USART0, SAMA_UART_FLEXCOM0_IRQ_PRIORITY);
+      aicSetSourceHandler(ID_USART0, SAMA_UART_FLEXCOM0_HANDLER);
+      aicEnableInt(ID_USART0);
+
+      /* Configuring destination and mode of txdma channel*/
+      dmaChannelSetDestination(uartp->dmatx, &uartp->usart->US_THR);
+      dmaChannelSetMode(uartp->dmatx, uartp->txdmamode);
+
+      /* Configuring source and mode of rxdma channel*/
+      dmaChannelSetSource(uartp->dmarx, &uartp->usart->US_RHR);
+      dmaChannelSetMode(uartp->dmarx, uartp->rxdmamode);
+    }
+#endif
+
+#if SAMA_UART_USE_FLEXCOM1
+    if (&UARTFLEXD1 == uartp) {
+      uartp->dmarx = dmaChannelAllocate(SAMA_UART_FLEXCOM1_DMA_IRQ_PRIORITY,
+                                       (sama_dmaisr_t)uart_lld_serve_rx_end_irq,
+                                       (void *)uartp);
+
+      uartp->dmatx = dmaChannelAllocate(SAMA_UART_FLEXCOM1_DMA_IRQ_PRIORITY,
+                                       (sama_dmaisr_t)uart_lld_serve_tx_end_irq,
+                                       (void *)uartp);
+      /* Enabling USART on FLEXCOM */
+      uartp->flexcom->FLEX_MR = FLEX_MR_OPMODE_USART;
+      pmcEnableFLEXCOM1();
+      aicSetSourcePriority(ID_USART1, SAMA_UART_FLEXCOM1_IRQ_PRIORITY);
+      aicSetSourceHandler(ID_USART1, SAMA_UART_FLEXCOM1_HANDLER);
+      aicEnableInt(ID_USART1);
+
+      /* Configuring destination and mode of txdma channel*/
+      dmaChannelSetDestination(uartp->dmatx, &uartp->usart->US_THR);
+      dmaChannelSetMode(uartp->dmatx, uartp->txdmamode);
+
+      /* Configuring source and mode of rxdma channel*/
+      dmaChannelSetSource(uartp->dmarx, &uartp->usart->US_RHR);
+      dmaChannelSetMode(uartp->dmarx, uartp->rxdmamode);
+    }
+#endif
+
+#if SAMA_UART_USE_FLEXCOM2
+    if (&UARTFLEXD2 == uartp) {
+      uartp->dmarx = dmaChannelAllocate(SAMA_UART_FLEXCOM2_DMA_IRQ_PRIORITY,
+                                       (sama_dmaisr_t)uart_lld_serve_rx_end_irq,
+                                       (void *)uartp);
+
+      uartp->dmatx = dmaChannelAllocate(SAMA_UART_FLEXCOM2_DMA_IRQ_PRIORITY,
+                                       (sama_dmaisr_t)uart_lld_serve_tx_end_irq,
+                                       (void *)uartp);
+      /* Enabling USART on FLEXCOM */
+      uartp->flexcom->FLEX_MR = FLEX_MR_OPMODE_USART;
+      pmcEnableFLEXCOM2();
+      aicSetSourcePriority(ID_USART2, SAMA_UART_FLEXCOM2_IRQ_PRIORITY);
+      aicSetSourceHandler(ID_USART2, SAMA_UART_FLEXCOM2_HANDLER);
+      aicEnableInt(ID_USART2);
+
+      /* Configuring destination and mode of txdma channel*/
+      dmaChannelSetDestination(uartp->dmatx, &uartp->usart->US_THR);
+      dmaChannelSetMode(uartp->dmatx, uartp->txdmamode);
+
+      /* Configuring source and mode of rxdma channel*/
+      dmaChannelSetSource(uartp->dmarx, &uartp->usart->US_RHR);
+      dmaChannelSetMode(uartp->dmarx, uartp->rxdmamode);
+    }
+#endif
+
+#if SAMA_UART_USE_FLEXCOM3
+    if (&UARTFLEXD3 == uartp) {
+      uartp->dmarx = dmaChannelAllocate(SAMA_UART_FLEXCOM3_DMA_IRQ_PRIORITY,
+                                       (sama_dmaisr_t)uart_lld_serve_rx_end_irq,
+                                       (void *)uartp);
+
+      uartp->dmatx = dmaChannelAllocate(SAMA_UART_FLEXCOM3_DMA_IRQ_PRIORITY,
+                                       (sama_dmaisr_t)uart_lld_serve_tx_end_irq,
+                                       (void *)uartp);
+      /* Enabling USART on FLEXCOM */
+      uartp->flexcom->FLEX_MR = FLEX_MR_OPMODE_USART;
+      pmcEnableFLEXCOM3();
+      aicSetSourcePriority(ID_USART3, SAMA_UART_FLEXCOM3_IRQ_PRIORITY);
+      aicSetSourceHandler(ID_USART3, SAMA_UART_FLEXCOM3_HANDLER);
+      aicEnableInt(ID_USART3);
+
+      /* Configuring destination and mode of txdma channel*/
+      dmaChannelSetDestination(uartp->dmatx, &uartp->usart->US_THR);
+      dmaChannelSetMode(uartp->dmatx, uartp->txdmamode);
+
+      /* Configuring source and mode of rxdma channel*/
+      dmaChannelSetSource(uartp->dmarx, &uartp->usart->US_RHR);
+      dmaChannelSetMode(uartp->dmarx, uartp->rxdmamode);
+    }
+#endif
+
+#if SAMA_UART_USE_FLEXCOM4
+    if (&UARTFLEXD4 == uartp) {
+      uartp->dmarx = dmaChannelAllocate(SAMA_UART_FLEXCOM4_DMA_IRQ_PRIORITY,
+                                       (sama_dmaisr_t)uart_lld_serve_rx_end_irq,
+                                       (void *)uartp);
+
+      uartp->dmatx = dmaChannelAllocate(SAMA_UART_FLEXCOM4_DMA_IRQ_PRIORITY,
+                                       (sama_dmaisr_t)uart_lld_serve_tx_end_irq,
+                                       (void *)uartp);
+      /* Enabling USART on FLEXCOM */
+      uartp->flexcom->FLEX_MR = FLEX_MR_OPMODE_USART;
+      pmcEnableFLEXCOM4();
+      aicSetSourcePriority(ID_USART4, SAMA_UART_FLEXCOM4_IRQ_PRIORITY);
+      aicSetSourceHandler(ID_USART4, SAMA_UART_FLEXCOM4_HANDLER);
+      aicEnableInt(ID_USART4);
+
+      /* Configuring destination and mode of txdma channel*/
+      dmaChannelSetDestination(uartp->dmatx, &uartp->usart->US_THR);
+      dmaChannelSetMode(uartp->dmatx, uartp->txdmamode);
+
+      /* Configuring source and mode of rxdma channel*/
+      dmaChannelSetSource(uartp->dmarx, &uartp->usart->US_RHR);
       dmaChannelSetMode(uartp->dmarx, uartp->rxdmamode);
     }
 #endif
@@ -693,6 +1264,40 @@ void uart_lld_stop(UARTDriver *uartp) {
     }
 #endif
 
+#if SAMA_UART_USE_FLEXCOM0
+    if (&UARTFLEXD0 == uartp) {
+      pmcDisableFLEXCOM0();
+      return;
+    }
+#endif
+
+#if SAMA_UART_USE_FLEXCOM1
+    if (&UARTFLEXD1 == uartp) {
+      pmcDisableFLEXCOM1();
+      return;
+    }
+#endif
+
+#if SAMA_UART_USE_FLEXCOM2
+    if (&UARTFLEXD2 == uartp) {
+      pmcDisableFLEXCOM2();
+      return;
+    }
+#endif
+
+#if SAMA_UART_USE_FLEXCOM3
+    if (&UARTFLEXD3 == uartp) {
+      pmcDisableFLEXCOM3();
+      return;
+    }
+#endif
+
+#if SAMA_UART_USE_FLEXCOM4
+    if (&UARTFLEXD4 == uartp) {
+      pmcDisableFLEXCOM4();
+      return;
+    }
+#endif
   }
 }
 
@@ -709,15 +1314,22 @@ void uart_lld_stop(UARTDriver *uartp) {
  */
 void uart_lld_start_send(UARTDriver *uartp, size_t n, const void *txbuf) {
 
-  /* TX DMA channel preparation.*/
-  dmaChannelSetSource(uartp->dmatx, txbuf);
-  dmaChannelSetTransactionSize(uartp->dmatx, n);
-
   /* Only enable TC interrupt if there's a callback attached to it.
      Also we need to clear TC flag which could be set before. */
   if (uartp->config->txend2_cb != NULL) {
-    uartp->uart->UART_IER = UART_IER_TXEMPTY;
+#if SAMA_UART_USE_UART
+    if (uartp->uart != NULL)
+      uartp->uart->UART_IER = UART_IER_TXEMPTY;
+#endif
+#if SAMA_UART_USE_FLEXCOM
+    if (uartp->usart != NULL)
+      uartp->usart->US_IER = US_IER_TXEMPTY;
+#endif
   }
+
+  /* TX DMA channel preparation.*/
+  dmaChannelSetSource(uartp->dmatx, txbuf);
+  dmaChannelSetTransactionSize(uartp->dmatx, n);
 
   /* Starting transfer.*/
   dmaChannelEnable(uartp->dmatx);
@@ -768,7 +1380,14 @@ void uart_lld_start_receive(UARTDriver *uartp, size_t n, void *rxbuf) {
   uartp->dmarx->xdmac->XDMAC_CHID[uartp->dmarx->chid].XDMAC_CNDC = 0;
 
   /* RX DMA channel preparation.*/
-  dmaChannelSetSource(uartp->dmarx, &uartp->uart->UART_RHR);
+#if SAMA_UART_USE_UART
+  if (uartp->uart != NULL)
+    dmaChannelSetSource(uartp->dmarx, &uartp->uart->UART_RHR);
+#endif
+#if SAMA_UART_USE_FLEXCOM
+  if (uartp->usart != NULL)
+    dmaChannelSetSource(uartp->dmarx, &uartp->usart->US_RHR);
+#endif
   dmaChannelSetDestination(uartp->dmarx, rxbuf);
   dmaChannelSetTransactionSize(uartp->dmarx, n);
   dmaChannelSetMode(uartp->dmarx, uartp->rxdmamode);

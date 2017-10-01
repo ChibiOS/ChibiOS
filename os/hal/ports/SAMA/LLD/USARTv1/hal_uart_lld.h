@@ -41,7 +41,7 @@
  */
 /**
  * @brief   UART driver on UART0 enable switch.
- * @details If set to @p TRUE the support for USART1 is included.
+ * @details If set to @p TRUE the support for UART0 is included.
  * @note    The default is @p FALSE.
  */
 #if !defined(SAMA_UART_USE_UART0) || defined(__DOXYGEN__)
@@ -85,6 +85,51 @@
 #endif
 
 /**
+ * @brief   UART driver on FLEXCOM0 enable switch.
+ * @details If set to @p TRUE the support for FLEXCOM0 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(SAMA_UART_USE_FLEXCOM0) || defined(__DOXYGEN__)
+#define SAMA_UART_USE_FLEXCOM0              FALSE
+#endif
+
+/**
+ * @brief   UART driver on FLEXCOM1 enable switch.
+ * @details If set to @p TRUE the support for FLEXCOM1 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(SAMA_UART_USE_FLEXCOM1) || defined(__DOXYGEN__)
+#define SAMA_UART_USE_FLEXCOM1              FALSE
+#endif
+
+/**
+ * @brief   UART driver on FLEXCOM2 enable switch.
+ * @details If set to @p TRUE the support for FLEXCOM2 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(SAMA_UART_USE_FLEXCOM2) || defined(__DOXYGEN__)
+#define SAMA_UART_USE_FLEXCOM2              FALSE
+#endif
+
+/**
+ * @brief   UART driver on FLEXCOM3 enable switch.
+ * @details If set to @p TRUE the support for FLEXCOM3 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(SAMA_UART_USE_FLEXCOM3) || defined(__DOXYGEN__)
+#define SAMA_UART_USE_FLEXCOM3              FALSE
+#endif
+
+/**
+ * @brief   UART driver on FLEXCOM4 enable switch.
+ * @details If set to @p TRUE the support for FLEXCOM4 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(SAMA_UART_USE_FLEXCOM4) || defined(__DOXYGEN__)
+#define SAMA_UART_USE_FLEXCOM4              FALSE
+#endif
+
+/**
  * @brief   UART0 interrupt priority level setting.
  */
 #if !defined(SAMA_UART_UART0_IRQ_PRIORITY) || defined(__DOXYGEN__)
@@ -120,6 +165,111 @@
 #endif
 
 /**
+ * @brief   FLEXCOM0 interrupt priority level setting.
+ */
+#if !defined(SAMA_UART_FLEXCOM0_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_UART_FLEXCOM0_IRQ_PRIORITY     4
+#endif
+
+/**
+ * @brief   FLEXCOM1 interrupt priority level setting.
+ */
+#if !defined(SAMA_UART_FLEXCOM1_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_UART_FLEXCOM1_IRQ_PRIORITY     4
+#endif
+
+/**
+ * @brief   FLEXCOM2 interrupt priority level setting.
+ */
+#if !defined(SAMA_UART_FLEXCOM2_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_UART_FLEXCOM2_IRQ_PRIORITY     4
+#endif
+
+/**
+ * @brief   FLEXCOM3 interrupt priority level setting.
+ */
+#if !defined(SAMA_UART_FLEXCOM3_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_UART_FLEXCOM3_IRQ_PRIORITY     4
+#endif
+
+/**
+ * @brief   FLEXCOM4 interrupt priority level setting.
+ */
+#if !defined(SAMA_UART_FLEXCOM4_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_UART_FLEXCOM4_IRQ_PRIORITY     4
+#endif
+
+/**
+ * @brief   UART0 DMA interrupt priority level setting.
+ */
+#if !defined(SAMA_UART_UART0_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_UART_UART0_DMA_IRQ_PRIORITY    4
+#endif
+
+/**
+ * @brief   UART1 DMA interrupt priority level setting.
+ */
+#if !defined(SAMA_UART_UART1_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_UART_UART1_DMA_IRQ_PRIORITY    4
+#endif
+
+/**
+ * @brief   UART2 DMA interrupt priority level setting.
+ */
+#if !defined(SAMA_UART_UART2_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_UART_UART2_DMA_IRQ_PRIORITY    4
+#endif
+
+/**
+ * @brief   UART3 DMA interrupt priority level setting.
+ */
+#if !defined(SAMA_UART_UART3_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_UART_UART3_DMA_IRQ_PRIORITY    4
+#endif
+
+/**
+ * @brief   UART4 DMA interrupt priority level setting.
+ */
+#if !defined(SAMA_UART_UART4_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_UART_UART4_DMA_IRQ_PRIORITY    4
+#endif
+
+/**
+ * @brief   FLEXCOM0 DMA interrupt priority level setting.
+ */
+#if !defined(SAMA_UART_FLEXCOM0_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_UART_FLEXCOM0_DMA_IRQ_PRIORITY 4
+#endif
+
+/**
+ * @brief   FLEXCOM1 DMA interrupt priority level setting.
+ */
+#if !defined(SAMA_UART_FLEXCOM1_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_UART_FLEXCOM1_DMA_IRQ_PRIORITY 4
+#endif
+
+/**
+ * @brief   FLEXCOM2 DMA interrupt priority level setting.
+ */
+#if !defined(SAMA_UART_FLEXCOM2_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_UART_FLEXCOM2_DMA_IRQ_PRIORITY 4
+#endif
+
+/**
+ * @brief   FLEXCOM3 DMA interrupt priority level setting.
+ */
+#if !defined(SAMA_UART_FLEXCOM3_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_UART_FLEXCOM3_DMA_IRQ_PRIORITY 4
+#endif
+
+/**
+ * @brief   FLEXCOM4 DMA interrupt priority level setting.
+ */
+#if !defined(SAMA_UART_FLEXCOM4_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SAMA_UART_FLEXCOM4_DMA_IRQ_PRIORITY 4
+#endif
+
+/**
  * @brief   UART DMA error hook.
  * @note    The default action for DMA errors is a system halt because DMA
  *          error can only happen because programming errors.
@@ -133,15 +283,113 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-/*TODO: check every peripheral */
-#if SAMA_UART_USE_UART0 && SAMA_SERIAL_USE_UART0
-#error "UART0 already in use"
-#endif
+/**
+ * @brief   At least an UART unit is in use.
+ */
+#define SAMA_UART_USE_UART (SAMA_UART_USE_UART0 ||                          \
+                            SAMA_UART_USE_UART1 ||                          \
+                            SAMA_UART_USE_UART2 ||                          \
+                            SAMA_UART_USE_UART3 ||                          \
+                            SAMA_UART_USE_UART4)
+
+/**
+ * @brief   At least an FLEXCOM unit is in use.
+ */
+#define SAMA_UART_USE_FLEXCOM (SAMA_UART_USE_FLEXCOM0 ||                    \
+                               SAMA_UART_USE_FLEXCOM1 ||                    \
+                               SAMA_UART_USE_FLEXCOM2 ||                    \
+                               SAMA_UART_USE_FLEXCOM3 ||                    \
+                               SAMA_UART_USE_FLEXCOM4)
+
 
 #if !SAMA_UART_USE_UART0 && !SAMA_UART_USE_UART1 &&                         \
     !SAMA_UART_USE_UART2 && !SAMA_UART_USE_UART3 &&                         \
-    !SAMA_UART_USE_UART4
+    !SAMA_UART_USE_UART4 &&                                                 \
+    !SAMA_UART_USE_FLEXCOM0 && !SAMA_UART_USE_FLEXCOM1 &&                   \
+    !SAMA_UART_USE_FLEXCOM2 && !SAMA_UART_USE_FLEXCOM3 &&                   \
+    !SAMA_UART_USE_FLEXCOM4
 #error "UART driver activated but no USART/UART peripheral assigned"
+#endif
+
+/* Checks on allocation of UARTx units.*/
+#if SAMA_UART_USE_UART0
+#if defined(SAMA_UART0_IS_USED)
+#error "UARTD0 requires UART0 but the peripheral is already used"
+#else
+#define SAMA_UART0_IS_USED
+#endif
+#endif
+
+#if SAMA_UART_USE_UART1
+#if defined(SAMA_UART1_IS_USED)
+#error "UARTD1 requires UART1 but the peripheral is already used"
+#else
+#define SAMA_UART1_IS_USED
+#endif
+#endif
+
+#if SAMA_UART_USE_UART2
+#if defined(SAMA_UART2_IS_USED)
+#error "UARTD2 requires UART2 but the peripheral is already used"
+#else
+#define SAMA_UART2_IS_USED
+#endif
+#endif
+
+#if SAMA_UART_USE_UART3
+#if defined(SAMA_UART3_IS_USED)
+#error "UARTD3 requires UART3 but the peripheral is already used"
+#else
+#define SAMA_UART3_IS_USED
+#endif
+#endif
+
+#if SAMA_UART_USE_UART4
+#if defined(SAMA_UART4_IS_USED)
+#error "UARTD4 requires UART4 but the peripheral is already used"
+#else
+#define SAMA_UART4_IS_USED
+#endif
+#endif
+
+#if SAMA_UART_USE_FLEXCOM0
+#if defined(SAMA_FLEXCOM0_IS_USED)
+#error "UARTFLEXD0 requires FLEXCOM0 but the peripheral is already used"
+#else
+#define SAMA_FLEXCOM0_IS_USED
+#endif
+#endif
+
+#if SAMA_UART_USE_FLEXCOM1
+#if defined(SAMA_FLEXCOM1_IS_USED)
+#error "UARTFLEXD1 requires FLEXCOM1 but the peripheral is already used"
+#else
+#define SAMA_FLEXCOM1_IS_USED
+#endif
+#endif
+
+#if SAMA_UART_USE_FLEXCOM2
+#if defined(SAMA_FLEXCOM2_IS_USED)
+#error "UARTFLEXD2 requires FLEXCOM2 but the peripheral is already used"
+#else
+#define SAMA_FLEXCOM2_IS_USED
+#endif
+#endif
+
+#if SAMA_UART_USE_FLEXCOM3
+#if defined(SAMA_FLEXCOM3_IS_USED)
+#error "UARTFLEXD3 requires FLEXCOM3 but the peripheral is already used"
+#else
+#define SAMA_FLEXCOM3_IS_USED
+#endif
+#endif
+
+#if SAMA_UART_USE_FLEXCOM4
+#if defined(SAMA_FLEXCOM4_IS_USED)
+#error "UARTFLEXD4 requires FLEXCOM4 but the peripheral is already used"
+#else
+#define SAMA_FLEXCOM4_IS_USED
+#endif
 #endif
 
 #if !defined(SAMA_DMA_REQUIRED)
@@ -281,10 +529,18 @@ struct UARTDriver {
   UART_DRIVER_EXT_FIELDS
 #endif
   /* End of the mandatory fields.*/
+#if SAMA_UART_USE_UART
   /**
    * @brief   Pointer to the UART registers block.
    */
   Uart                      *uart;
+#endif
+#if SAMA_UART_USE_FLEXCOM
+  /* Pointer to the FLEXCOM registers block.*/
+  Flexcom                   *flexcom;
+  /* Pointer to the USART registers block.*/
+  Usart                     *usart;
+#endif
   /**
    * @brief   Clock frequency for the associated USART/UART.
    */
@@ -337,6 +593,26 @@ extern UARTDriver UARTD3;
 
 #if SAMA_UART_USE_UART4 && !defined(__DOXYGEN__)
 extern UARTDriver UARTD4;
+#endif
+
+#if SAMA_UART_USE_FLEXCOM0 && !defined(__DOXYGEN__)
+extern UARTDriver UARTFLEXD0;
+#endif
+
+#if SAMA_UART_USE_FLEXCOM1 && !defined(__DOXYGEN__)
+extern UARTDriver UARTFLEXD1;
+#endif
+
+#if SAMA_UART_USE_FLEXCOM2 && !defined(__DOXYGEN__)
+extern UARTDriver UARTFLEXD2;
+#endif
+
+#if SAMA_UART_USE_FLEXCOM3 && !defined(__DOXYGEN__)
+extern UARTDriver UARTFLEXD3;
+#endif
+
+#if SAMA_UART_USE_FLEXCOM4 && !defined(__DOXYGEN__)
+extern UARTDriver UARTFLEXD4;
 #endif
 
 #ifdef __cplusplus

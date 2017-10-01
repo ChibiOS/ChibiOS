@@ -67,7 +67,7 @@
  * @notapi
  */
 #define sdFlexEnableWP(sdp) {                                                    \
-  sdp->usart->US_WPMR = US_WPMR_WPKEY_PASSWD | US_WPMR_WPEN;                     \
+  sdp->US_WPMR = US_WPMR_WPKEY_PASSWD | US_WPMR_WPEN;                            \
 }
 
 /**
@@ -78,7 +78,7 @@
  * @notapi
  */
 #define sdFlexDisableWP(sdp) {                                                   \
-  sdp->usart->US_WPMR = US_WPMR_WPKEY_PASSWD;                                    \
+  sdp->US_WPMR = US_WPMR_WPKEY_PASSWD;                                           \
 }
 #endif
 
@@ -113,27 +113,27 @@ SerialDriver SD4;
 
 /** @brief FLEXCOM0 serial driver identifier.*/
 #if SAMA_SERIAL_USE_FLEXCOM0 || defined(__DOXYGEN__)
-SerialDriver SDFLEX0;
+SerialDriver SFLEXD0;
 #endif
 
 /** @brief FLEXCOM1 serial driver identifier.*/
 #if SAMA_SERIAL_USE_FLEXCOM1 || defined(__DOXYGEN__)
-SerialDriver SDFLEX1;
+SerialDriver SFLEXD1;
 #endif
 
 /** @brief FLEXCOM2 serial driver identifier.*/
 #if SAMA_SERIAL_USE_FLEXCOM2 || defined(__DOXYGEN__)
-SerialDriver SDFLEX2;
+SerialDriver SFLEXD2;
 #endif
 
 /** @brief FLEXCOM3 serial driver identifier.*/
 #if SAMA_SERIAL_USE_FLEXCOM3 || defined(__DOXYGEN__)
-SerialDriver SDFLEX3;
+SerialDriver SFLEXD3;
 #endif
 
 /** @brief FLEXCOM0 serial driver identifier.*/
 #if SAMA_SERIAL_USE_FLEXCOM4 || defined(__DOXYGEN__)
-SerialDriver SDFLEX4;
+SerialDriver SFLEXD4;
 #endif
 
 /*===========================================================================*/
@@ -193,42 +193,42 @@ static uint8_t sd_out_buf4[SAMA_SERIAL_UART4_IN_BUF_SIZE];
 #endif
 
 #if SAMA_SERIAL_USE_FLEXCOM0 || defined(__DOXYGEN__)
-/** @brief Input buffer for SDFLEX0.*/
+/** @brief Input buffer for SFLEXD0.*/
 static uint8_t sdFlex_in_buf0[SAMA_SERIAL_FLEXCOM0_IN_BUF_SIZE];
 
-/** @brief Output buffer for SDFLEX0.*/
+/** @brief Output buffer for SFLEXD0.*/
 static uint8_t sdFlex_out_buf0[SAMA_SERIAL_FLEXCOM0_OUT_BUF_SIZE];
 #endif
 
 #if SAMA_SERIAL_USE_FLEXCOM1 || defined(__DOXYGEN__)
-/** @brief Input buffer for SDFLEX1.*/
+/** @brief Input buffer for SFLEXD1.*/
 static uint8_t sdFlex_in_buf1[SAMA_SERIAL_FLEXCOM1_IN_BUF_SIZE];
 
-/** @brief Output buffer for SDFLEX1.*/
+/** @brief Output buffer for SFLEXD1.*/
 static uint8_t sdFlex_out_buf1[SAMA_SERIAL_FLEXCOM1_OUT_BUF_SIZE];
 #endif
 
 #if SAMA_SERIAL_USE_FLEXCOM2 || defined(__DOXYGEN__)
-/** @brief Input buffer for SDFLEX2.*/
+/** @brief Input buffer for SFLEXD2.*/
 static uint8_t sdFlex_in_buf2[SAMA_SERIAL_FLEXCOM2_IN_BUF_SIZE];
 
-/** @brief Output buffer for SDFLEX2.*/
+/** @brief Output buffer for SFLEXD2.*/
 static uint8_t sdFlex_out_buf2[SAMA_SERIAL_FLEXCOM2_OUT_BUF_SIZE];
 #endif
 
 #if SAMA_SERIAL_USE_FLEXCOM3 || defined(__DOXYGEN__)
-/** @brief Input buffer for SDFLEX3.*/
+/** @brief Input buffer for SFLEXD3.*/
 static uint8_t sdFlex_in_buf3[SAMA_SERIAL_FLEXCOM3_IN_BUF_SIZE];
 
-/** @brief Output buffer for SDFLEX3.*/
+/** @brief Output buffer for SFLEXD3.*/
 static uint8_t sdFlex_out_buf3[SAMA_SERIAL_FLEXCOM3_OUT_BUF_SIZE];
 #endif
 
 #if SAMA_SERIAL_USE_FLEXCOM4 || defined(__DOXYGEN__)
-/** @brief Input buffer for SDFLEX4.*/
+/** @brief Input buffer for SFLEXD4.*/
 static uint8_t sdFlex_in_buf4[SAMA_SERIAL_FLEXCOM4_IN_BUF_SIZE];
 
-/** @brief Output buffer for SDFLEX4.*/
+/** @brief Output buffer for SFLEXD4.*/
 static uint8_t sdFlex_out_buf4[SAMA_SERIAL_FLEXCOM4_OUT_BUF_SIZE];
 #endif
 
@@ -277,7 +277,7 @@ static void uart_init(SerialDriver *sdp, const SerialConfig *config) {
     Usart *us = sdp->usart;
 
     /* Disabling write protection */
-    sdFlexDisableWP(sdp)
+    sdFlexDisableWP(us)
     /* Enabling USART on FLEXCOM */
     fl->FLEX_MR = FLEX_MR_OPMODE_USART;
     /* Baud rate setting (OVER = 0 and SYNC = 0)*/
@@ -292,7 +292,7 @@ static void uart_init(SerialDriver *sdp, const SerialConfig *config) {
     /* Enabling Tx and Rx */
     us->US_CR |= US_CR_RXEN | US_CR_TXEN;
     /* Enabling write protection */
-    sdFlexEnableWP(sdp)
+    sdFlexEnableWP(us)
   }
 #endif /* SAMA_SERIAL_USE_FLEXCOM */
 #if SAMA_SERIAL_USE_UART && SAMA_SERIAL_USE_FLEXCOM
@@ -331,12 +331,12 @@ static void uart_deinit(SerialDriver *sdp) {
     Usart *us = sdp->usart;
 
     /* Disabling write protection */
-    sdFlexDisableWP(sdp)
+    sdFlexDisableWP(us)
     us->US_CR = 0;
     us->US_MR = 0;
 
     /* Enabling write protection */
-    sdFlexEnableWP(sdp)
+    sdFlexEnableWP(us)
   }
 #endif /* SAMA_SERIAL_USE_FLEXCOM */
 #if SAMA_SERIAL_USE_UART && SAMA_SERIAL_USE_FLEXCOM
@@ -642,11 +642,11 @@ OSAL_IRQ_HANDLER(SAMA_UART4_HANDLER) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(SAMA_UART_FLEXCOM0_HANDLER) {
+OSAL_IRQ_HANDLER(SAMA_SERIAL_FLEXCOM0_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  serve_uartFlex_interrupt(&SDFLEX0);
+  serve_uartFlex_interrupt(&SFLEXD0);
   aicAckInt();
   OSAL_IRQ_EPILOGUE();
 }
@@ -658,11 +658,11 @@ OSAL_IRQ_HANDLER(SAMA_UART_FLEXCOM0_HANDLER) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(SAMA_UART_FLEXCOM1_HANDLER) {
+OSAL_IRQ_HANDLER(SAMA_SERIAL_FLEXCOM1_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  serve_uartFlex_interrupt(&SDFLEX1);
+  serve_uartFlex_interrupt(&SFLEXD1);
   aicAckInt();
   OSAL_IRQ_EPILOGUE();
 }
@@ -674,11 +674,11 @@ OSAL_IRQ_HANDLER(SAMA_UART_FLEXCOM1_HANDLER) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(SAMA_UART_FLEXCOM2_HANDLER) {
+OSAL_IRQ_HANDLER(SAMA_SERIAL_FLEXCOM2_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  serve_uartFlex_interrupt(&SDFLEX2);
+  serve_uartFlex_interrupt(&SFLEXD2);
   aicAckInt();
   OSAL_IRQ_EPILOGUE();
 }
@@ -690,11 +690,11 @@ OSAL_IRQ_HANDLER(SAMA_UART_FLEXCOM2_HANDLER) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(SAMA_UART_FLEXCOM3_HANDLER) {
+OSAL_IRQ_HANDLER(SAMA_SERIAL_FLEXCOM3_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  serve_uartFlex_interrupt(&SDFLEX3);
+  serve_uartFlex_interrupt(&SFLEXD3);
   aicAckInt();
   OSAL_IRQ_EPILOGUE();
 }
@@ -706,11 +706,11 @@ OSAL_IRQ_HANDLER(SAMA_UART_FLEXCOM3_HANDLER) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(SAMA_UART_FLEXCOM4_HANDLER) {
+OSAL_IRQ_HANDLER(SAMA_SERIAL_FLEXCOM4_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  serve_uartFlex_interrupt(&SDFLEX4);
+  serve_uartFlex_interrupt(&SFLEXD4);
   aicAckInt();
   OSAL_IRQ_EPILOGUE();
 }
@@ -788,70 +788,70 @@ void sd_lld_init(void) {
 #endif
 
 #if SAMA_SERIAL_USE_FLEXCOM0
-  sdObjectInit(&SDFLEX0);
-  iqObjectInit(&SDFLEX0.iqueue, sdFlex_in_buf0, sizeof sdFlex_in_buf0, NULL, &SDFLEX0);
-  oqObjectInit(&SDFLEX0.oqueue, sdFlex_out_buf0, sizeof sdFlex_out_buf0, notifyFlex0, &SDFLEX0);
-  SDFLEX0.flexcom = FLEXCOM0;
-  SDFLEX0.usart   = USART0;
-  SDFLEX0.clock   = SAMA_FLEXCOM0CLK;
+  sdObjectInit(&SFLEXD0);
+  iqObjectInit(&SFLEXD0.iqueue, sdFlex_in_buf0, sizeof sdFlex_in_buf0, NULL, &SFLEXD0);
+  oqObjectInit(&SFLEXD0.oqueue, sdFlex_out_buf0, sizeof sdFlex_out_buf0, notifyFlex0, &SFLEXD0);
+  SFLEXD0.flexcom = FLEXCOM0;
+  SFLEXD0.usart   = USART0;
+  SFLEXD0.clock   = SAMA_FLEXCOM0CLK;
 
   aicSetSourcePriority(ID_USART0, SAMA_SERIAL_FLEXCOM0_IRQ_PRIORITY);
-  aicSetSourceHandler(ID_USART0, SAMA_UART_FLEXCOM0_HANDLER);
+  aicSetSourceHandler(ID_USART0, SAMA_SERIAL_FLEXCOM0_HANDLER);
   aicEnableInt(ID_USART0);
 #endif
 
 #if SAMA_SERIAL_USE_FLEXCOM1
-  sdObjectInit(&SDFLEX1);
-  iqObjectInit(&SDFLEX1.iqueue, sdFlex_in_buf1, sizeof sdFlex_in_buf1, NULL, &SDFLEX1);
-  oqObjectInit(&SDFLEX1.oqueue, sdFlex_out_buf1, sizeof sdFlex_out_buf1, notifyFlex1, &SDFLEX1);
-  SDFLEX1.flexcom = FLEXCOM1;
-  SDFLEX1.usart   = USART1;
-  SDFLEX1.clock   = SAMA_FLEXCOM1CLK;
+  sdObjectInit(&SFLEXD1);
+  iqObjectInit(&SFLEXD1.iqueue, sdFlex_in_buf1, sizeof sdFlex_in_buf1, NULL, &SFLEXD1);
+  oqObjectInit(&SFLEXD1.oqueue, sdFlex_out_buf1, sizeof sdFlex_out_buf1, notifyFlex1, &SFLEXD1);
+  SFLEXD1.flexcom = FLEXCOM1;
+  SFLEXD1.usart   = USART1;
+  SFLEXD1.clock   = SAMA_FLEXCOM1CLK;
 
   aicSetSourcePriority(ID_USART1, SAMA_SERIAL_FLEXCOM1_IRQ_PRIORITY);
-  aicSetSourceHandler(ID_USART1, SAMA_UART_FLEXCOM1_HANDLER);
+  aicSetSourceHandler(ID_USART1, SAMA_SERIAL_FLEXCOM1_HANDLER);
   aicEnableInt(ID_USART1);
 #endif
 
 #if SAMA_SERIAL_USE_FLEXCOM2
-  sdObjectInit(&SDFLEX2);
-  iqObjectInit(&SDFLEX2.iqueue, sdFlex_in_buf2, sizeof sdFlex_in_buf2, NULL, &SDFLEX2);
-  oqObjectInit(&SDFLEX2.oqueue, sdFlex_out_buf2, sizeof sdFlex_out_buf2, notifyFlex2, &SDFLEX2);
-  SDFLEX2.flexcom = FLEXCOM2;
-  SDFLEX2.usart   = USART2;
-  SDFLEX2.clock   = SAMA_FLEXCOM2CLK;
+  sdObjectInit(&SFLEXD2);
+  iqObjectInit(&SFLEXD2.iqueue, sdFlex_in_buf2, sizeof sdFlex_in_buf2, NULL, &SFLEXD2);
+  oqObjectInit(&SFLEXD2.oqueue, sdFlex_out_buf2, sizeof sdFlex_out_buf2, notifyFlex2, &SFLEXD2);
+  SFLEXD2.flexcom = FLEXCOM2;
+  SFLEXD2.usart   = USART2;
+  SFLEXD2.clock   = SAMA_FLEXCOM2CLK;
 
   aicSetSourcePriority(ID_USART2, SAMA_SERIAL_FLEXCOM2_IRQ_PRIORITY);
-  aicSetSourceHandler(ID_USART2, SAMA_UART_FLEXCOM2_HANDLER);
+  aicSetSourceHandler(ID_USART2, SAMA_SERIAL_FLEXCOM2_HANDLER);
   aicEnableInt(ID_USART2);
 #endif
 
 #if SAMA_SERIAL_USE_FLEXCOM3
-  sdObjectInit(&SDFLEX3);
-  iqObjectInit(&SDFLEX3.iqueue, sdFlex_in_buf3, sizeof sdFlex_in_buf3, NULL, &SDFLEX3);
-  oqObjectInit(&SDFLEX3.oqueue, sdFlex_out_buf3, sizeof sdFlex_out_buf3, notifyFlex3, &SDFLEX3);
-  SDFLEX3.flexcom = FLEXCOM3;
-  SDFLEX3.usart   = USART3;
-  SDFLEX3.clock   = SAMA_FLEXCOM3CLK;
+  sdObjectInit(&SFLEXD3);
+  iqObjectInit(&SFLEXD3.iqueue, sdFlex_in_buf3, sizeof sdFlex_in_buf3, NULL, &SFLEXD3);
+  oqObjectInit(&SFLEXD3.oqueue, sdFlex_out_buf3, sizeof sdFlex_out_buf3, notifyFlex3, &SFLEXD3);
+  SFLEXD3.flexcom = FLEXCOM3;
+  SFLEXD3.usart   = USART3;
+  SFLEXD3.clock   = SAMA_FLEXCOM3CLK;
 
   aicSetSourcePriority(ID_USART3, SAMA_SERIAL_FLEXCOM3_IRQ_PRIORITY);
-  aicSetSourceHandler(ID_USART3, SAMA_UART_FLEXCOM3_HANDLER);
+  aicSetSourceHandler(ID_USART3, SAMA_SERIAL_FLEXCOM3_HANDLER);
   aicEnableInt(ID_USART3);
 #endif
-}
 
 #if SAMA_SERIAL_USE_FLEXCOM4
-  sdObjectInit(&SDFLEX4);
-  iqObjectInit(&SDFLEX4.iqueue, sdFlex_in_buf4, sizeof sdFlex_in_buf4, NULL, &SDFLEX4);
-  oqObjectInit(&SDFLEX4.oqueue, sdFlex_out_buf4, sizeof sdFlex_out_buf4, notifyFlex4, &SDFLEX4);
-  SDFLEX4.flexcom = FLEXCOM4;
-  SDFLEX4.usart   = USART4;
-  SDFLEX4.clock   = SAMA_FLEXCOM4CLK;
+  sdObjectInit(&SFLEXD4);
+  iqObjectInit(&SFLEXD4.iqueue, sdFlex_in_buf4, sizeof sdFlex_in_buf4, NULL, &SFLEXD4);
+  oqObjectInit(&SFLEXD4.oqueue, sdFlex_out_buf4, sizeof sdFlex_out_buf4, notifyFlex4, &SFLEXD4);
+  SFLEXD4.flexcom = FLEXCOM4;
+  SFLEXD4.usart   = USART4;
+  SFLEXD4.clock   = SAMA_FLEXCOM4CLK;
 
   aicSetSourcePriority(ID_USART4, SAMA_SERIAL_FLEXCOM4_IRQ_PRIORITY);
-  aicSetSourceHandler(ID_USART4, SAMA_UART_FLEXCOM4_HANDLER);
+  aicSetSourceHandler(ID_USART4, SAMA_SERIAL_FLEXCOM4_HANDLER);
   aicEnableInt(ID_USART4);
 #endif
+}
 
 /**
  * @brief   Low level serial driver configuration and (re)start.
@@ -896,27 +896,27 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
     }
 #endif
 #if SAMA_SERIAL_USE_FLEXCOM0
-    if (&SDFLEX0 == sdp) {
+    if (&SFLEXD0 == sdp) {
       pmcEnableFLEXCOM0();
     }
 #endif
 #if SAMA_SERIAL_USE_FLEXCOM1
-    if (&SDFLEX1 == sdp) {
+    if (&SFLEXD1 == sdp) {
       pmcEnableFLEXCOM1();
     }
 #endif
 #if SAMA_SERIAL_USE_FLEXCOM2
-    if (&SDFLEX2 == sdp) {
+    if (&SFLEXD2 == sdp) {
       pmcEnableFLEXCOM2();
     }
 #endif
 #if SAMA_SERIAL_USE_FLEXCOM3
-    if (&SDFLEX3 == sdp) {
+    if (&SFLEXD3 == sdp) {
       pmcEnableFLEXCOM3();
     }
 #endif
 #if SAMA_SERIAL_USE_FLEXCOM4
-    if (&SDFLEX4 == sdp) {
+    if (&SFLEXD4 == sdp) {
       pmcEnableFLEXCOM4();
     }
 #endif
@@ -970,26 +970,32 @@ void sd_lld_stop(SerialDriver *sdp) {
     }
 #endif
 #if SAMA_SERIAL_USE_FLEXCOM0
-    if (&SDFLEX0 == sdp) {
+    if (&SFLEXD0 == sdp) {
       pmcDisableFLEXCOM0();
       return;
     }
 #endif
 #if SAMA_SERIAL_USE_FLEXCOM1
-    if (&SDFLEX1 == sdp) {
+    if (&SFLEXD1 == sdp) {
       pmcDisableFLEXCOM1();
       return;
     }
 #endif
 #if SAMA_SERIAL_USE_FLEXCOM2
-    if (&SDFLEX2 == sdp) {
+    if (&SFLEXD2 == sdp) {
       pmcDisableFLEXCOM2();
       return;
     }
 #endif
 #if SAMA_SERIAL_USE_FLEXCOM3
-    if (&SDFLEX3 == sdp) {
+    if (&SFLEXD3 == sdp) {
       pmcDisableFLEXCOM3();
+      return;
+    }
+#endif
+#if SAMA_SERIAL_USE_FLEXCOM4
+    if (&SFLEXD4 == sdp) {
+      pmcDisableFLEXCOM4();
       return;
     }
 #endif

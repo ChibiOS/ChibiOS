@@ -381,6 +381,87 @@
 #error "SERIAL driver activated but no USART/UART peripheral assigned"
 #endif
 
+/* Checks on allocation of UARTx units.*/
+#if SAMA_SERIAL_USE_UART0
+#if defined(SAMA_UART0_IS_USED)
+#error "SD0 requires UART0 but the peripheral is already used"
+#else
+#define SAMA_UART0_IS_USED
+#endif
+#endif
+
+#if SAMA_SERIAL_USE_UART1
+#if defined(SAMA_UART1_IS_USED)
+#error "SD1 requires UART1 but the peripheral is already used"
+#else
+#define SAMA_UART1_IS_USED
+#endif
+#endif
+
+#if SAMA_SERIAL_USE_UART2
+#if defined(SAMA_UART2_IS_USED)
+#error "SD2 requires UART2 but the peripheral is already used"
+#else
+#define SAMA_UART2_IS_USED
+#endif
+#endif
+
+#if SAMA_SERIAL_USE_UART3
+#if defined(SAMA_UART3_IS_USED)
+#error "SD3 requires UART3 but the peripheral is already used"
+#else
+#define SAMA_UART3_IS_USED
+#endif
+#endif
+
+#if SAMA_SERIAL_USE_UART4
+#if defined(SAMA_UART4_IS_USED)
+#error "SD4 requires UART4 but the peripheral is already used"
+#else
+#define SAMA_UART4_IS_USED
+#endif
+#endif
+
+#if SAMA_SERIAL_USE_FLEXCOM0
+#if defined(SAMA_FLEXCOM0_IS_USED)
+#error "SFLEXD0 requires FLEXCOM0 but the peripheral is already used"
+#else
+#define SAMA_FLEXCOM0_IS_USED
+#endif
+#endif
+
+#if SAMA_SERIAL_USE_FLEXCOM1
+#if defined(SAMA_FLEXCOM1_IS_USED)
+#error "SFLEXD1 requires FLEXCOM1 but the peripheral is already used"
+#else
+#define SAMA_FLEXCOM1_IS_USED
+#endif
+#endif
+
+#if SAMA_SERIAL_USE_FLEXCOM2
+#if defined(SAMA_FLEXCOM2_IS_USED)
+#error "SFLEXD2 requires FLEXCOM2 but the peripheral is already used"
+#else
+#define SAMA_FLEXCOM2_IS_USED
+#endif
+#endif
+
+#if SAMA_SERIAL_USE_FLEXCOM3
+#if defined(SAMA_FLEXCOM3_IS_USED)
+#error "SFLEXD3 requires FLEXCOM3 but the peripheral is already used"
+#else
+#define SAMA_FLEXCOM3_IS_USED
+#endif
+#endif
+
+#if SAMA_SERIAL_USE_FLEXCOM4
+#if defined(SAMA_FLEXCOM4_IS_USED)
+#error "SFLEXD4 requires FLEXCOM4 but the peripheral is already used"
+#else
+#define SAMA_FLEXCOM4_IS_USED
+#endif
+#endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
@@ -454,19 +535,19 @@ extern SerialDriver SD3;
 extern SerialDriver SD4;
 #endif
 #if SAMA_SERIAL_USE_FLEXCOM0 && !defined(__DOXYGEN__)
-extern SerialDriver SDFLEX0;
+extern SerialDriver SFLEXD0;
 #endif
 #if SAMA_SERIAL_USE_FLEXCOM1 && !defined(__DOXYGEN__)
-extern SerialDriver SDFLEX1;
+extern SerialDriver SFLEXD1;
 #endif
 #if SAMA_SERIAL_USE_FLEXCOM2 && !defined(__DOXYGEN__)
-extern SerialDriver SDFLEX2;
+extern SerialDriver SFLEXD2;
 #endif
 #if SAMA_SERIAL_USE_FLEXCOM3 && !defined(__DOXYGEN__)
-extern SerialDriver SDFLEX3;
+extern SerialDriver SFLEXD3;
 #endif
 #if SAMA_SERIAL_USE_FLEXCOM4 && !defined(__DOXYGEN__)
-extern SerialDriver SDFLEX4;
+extern SerialDriver SFLEXD4;
 #endif
 
 #ifdef __cplusplus
