@@ -100,6 +100,8 @@
 #include "chmemcore.h"
 #include "chheap.h"
 #include "chmempools.h"
+#include "chfifo.h"
+#include "chfactory.h"
 #include "chdynamic.h"
 
 #if !defined(_CHIBIOS_RT_CONF_)

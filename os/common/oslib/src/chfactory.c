@@ -42,7 +42,6 @@
 #include <string.h>
 
 #include "ch.h"
-#include "chfactory.h"
 
 #if (CH_CFG_USE_FACTORY == TRUE) || defined(__DOXYGEN__)
 

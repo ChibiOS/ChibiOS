@@ -261,7 +261,7 @@ typedef struct ch_objects_factory {
 /*===========================================================================*/
 
 #if !defined(__DOXYGEN__)
-objects_factory_t ch_factory;
+extern objects_factory_t ch_factory;
 #endif
 
 #ifdef __cplusplus

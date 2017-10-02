@@ -29,7 +29,7 @@
 #define CHFIFO_H
 
 #if !defined(CH_CFG_USE_FIFO)
-#define CH_CFG_USE_FIFO                     FALSE
+#define CH_CFG_USE_FIFO                     TRUE
 #endif
 
 #if (CH_CFG_USE_FIFO == TRUE) || defined(__DOXYGEN__)
@@ -83,25 +83,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void *chFifoAllocObjectI(objects_fifo_t *ofp);
-  void *chFifoAllocObjectTimeout(objects_fifo_t *ofp,
-                                 systime_t timeout);
-  msg_t chFifoReleaseObjectI(objects_fifo_t *ofp,
-                             void *objp);
-  msg_t chFifoReleaseObject(objects_fifo_t *ofp,
-                            void *objp);
-  msg_t chFifoPostObjectI(objects_fifo_t *ofp,
-                          void *objp);
-  msg_t chFifoPostObjectS(objects_fifo_t *ofp,
-                          void *objp);
-  msg_t chFifoPostObject(objects_fifo_t *ofp, void *obj);
-  msg_t chFifoFetchObjectI(objects_fifo_t *ofp,
-                           void **objpp);
-  msg_t chFifoFetchObjectS(objects_fifo_t *ofp,
-                           void **objpp);
-  msg_t chFifoFetchObjectTimeout(objects_fifo_t *ofp,
-                                 void **objpp,
-                                 systime_t timeout);
+
 #ifdef __cplusplus
 }
 #endif
@@ -113,14 +95,201 @@ extern "C" {
 /**
  * @brief   Initializes a mail object.
  *
- * @param[out] mop      pointer to a @p mail_t structure
+ * @param[out] ofp      pointer to a @p objects_fifo_t structure
+ * @param[in] objsize   size of objects
+ * @param[in] objn      number of objects available
+ * @param[in] objbuf    pointer to the buffer of objects, it must be able
+ *                      to hold @p objn objects of @p objsize size
+ * @param[in] msgbuf    pointer to the buffer of messages, it must be able
+ *                      to hold @p objn messages
  *
  * @init
  */
-static inline void chMailObjectInit(mail_t *mop) {
+static inline void chMailObjectInit(objects_fifo_t *ofp, size_t objsize,
+                                    size_t objn, void *objbuf,
+                                    msg_t *msgbuf) {
 
+  chGuardedPoolObjectInit(&ofp->free, objsize);
+  chGuardedPoolLoadArray(&ofp->free, objbuf, objn);
+  chMBObjectInit(&ofp->mbx, msgbuf, (cnt_t)objn); /* TODO: make this a size_t, no more sems there.*/
 }
 
+/**
+ * @brief   Allocates a free object.
+ *
+ * @param[in] ofp       pointer to a @p objects_fifo_t structure
+ * @return              The pointer to the allocated object.
+ * @retval NULL         if an object is not immediately available.
+ *
+ * @iclass
+ */
+static inline void *chFifoAllocObjectI(objects_fifo_t *ofp) {
+
+  return chGuardedPoolAllocI(&ofp->free);
+}
+
+/**
+ * @brief   Allocates a free object.
+ *
+ * @param[in] ofp       pointer to a @p objects_fifo_t structure
+ * @param[in] timeout   the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              The pointer to the allocated object.
+ * @retval NULL         if an object is not available within the specified
+ *                      timeout.
+ *
+ * @iclass
+ */
+static inline void *chFifoAllocObjectTimeout(objects_fifo_t *ofp,
+                                             systime_t timeout) {
+
+  return chGuardedPoolAllocTimeout(&ofp->free, timeout);
+}
+
+/**
+ * @brief   Releases a fetched object.
+ *
+ * @param[in] ofp       pointer to a @p objects_fifo_t structure
+ * @param[in] objp      pointer to the object to be released
+ *
+ * @iclass
+ */
+static inline void chFifoReleaseObjectI(objects_fifo_t *ofp,
+                                        void *objp) {
+
+  chGuardedPoolFreeI(&ofp->free, objp);
+}
+
+/**
+ * @brief   Releases a fetched object.
+ *
+ * @param[in] ofp       pointer to a @p objects_fifo_t structure
+ * @param[in] objp      pointer to the object to be released
+ *
+ * @api
+ */
+static inline void chFifoReleaseObject(objects_fifo_t *ofp,
+                                       void *objp) {
+
+  chGuardedPoolFree(&ofp->free, objp);
+}
+
+/**
+ * @brief   Posts an object.
+ * @note    By design the object can be always immediately posted.
+ *
+ * @param[in] ofp       pointer to a @p objects_fifo_t structure
+ * @param[in] objp      pointer to the object to be released
+ *
+ * @iclass
+ */
+static inline void chFifoPostObjectI(objects_fifo_t *ofp,
+                                     void *objp) {
+  msg_t msg;
+
+  msg = chMBPostI(&ofp->mbx, (msg_t)objp);
+  chDbgAssert(msg == MSG_OK, "post failed");
+}
+
+/**
+ * @brief   Posts an object.
+ * @note    By design the object can be always immediately posted.
+ *
+ * @param[in] ofp       pointer to a @p objects_fifo_t structure
+ * @param[in] objp      pointer to the object to be released
+ *
+ * @sclass
+ */
+static inline void chFifoPostObjectS(objects_fifo_t *ofp,
+                                      void *objp) {
+  msg_t msg;
+
+  msg = chMBPostS(&ofp->mbx, (msg_t)objp, TIME_IMMEDIATE);
+  chDbgAssert(msg == MSG_OK, "post failed");
+}
+
+/**
+ * @brief   Posts an object.
+ * @note    By design the object can be always immediately posted.
+ *
+ * @param[in] ofp       pointer to a @p objects_fifo_t structure
+ * @param[in] objp      pointer to the object to be released
+ *
+ * @api
+ */
+static inline void chFifoPostObject(objects_fifo_t *ofp, void *objp) {
+
+  msg_t msg;
+
+  msg = chMBPost(&ofp->mbx, (msg_t)objp, TIME_IMMEDIATE);
+  chDbgAssert(msg == MSG_OK, "post failed");
+}
+
+/**
+ * @brief   Fetches an object.
+ *
+ * @param[in] ofp       pointer to a @p objects_fifo_t structure
+ * @param[in] objpp     pointer to the fetched object reference
+ * @return              The operation status.
+ * @retval MSG_OK       if an object has been correctly fetched.
+ * @retval MSG_TIMEOUT  if the FIFO is empty and a message cannot be fetched.
+ *
+ * @api
+ */
+static inline msg_t chFifoFetchObjectI(objects_fifo_t *ofp,
+                                       void **objpp) {
+
+  return chMBFetchI(&ofp->mbx, (msg_t *)objpp);
+}
+
+/**
+ * @brief   Fetches an object.
+ *
+ * @param[in] ofp       pointer to a @p objects_fifo_t structure
+ * @param[in] objpp     pointer to the fetched object reference
+ * @param[in] timeout   the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              The operation status.
+ * @retval MSG_OK       if an object has been correctly fetched.
+ * @retval MSG_TIMEOUT  if the operation has timed out.
+ *
+ * @sclass
+ */
+static inline msg_t chFifoFetchObjectTimeoutS(objects_fifo_t *ofp,
+                                              void **objpp,
+                                              systime_t timeout) {
+
+  return chMBFetchS(&ofp->mbx, (msg_t *)objpp, timeout);
+}
+
+/**
+ * @brief   Fetches an object.
+ *
+ * @param[in] ofp       pointer to a @p objects_fifo_t structure
+ * @param[in] objpp     pointer to the fetched object reference
+ * @param[in] timeout   the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              The operation status.
+ * @retval MSG_OK       if an object has been correctly fetched.
+ * @retval MSG_TIMEOUT  if the operation has timed out.
+ *
+ * @api
+ */
+static inline msg_t chFifoFetchObjectTimeout(objects_fifo_t *ofp,
+                                             void **objpp,
+                                             systime_t timeout) {
+
+  return chMBFetch(&ofp->mbx, (msg_t *)objpp, timeout);
+}
 #endif /* CH_CFG_USE_FIFO == TRUE */
 
 #endif /* CHFIFO_H */
