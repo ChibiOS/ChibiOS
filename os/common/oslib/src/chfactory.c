@@ -246,6 +246,9 @@ void _factory_init(void) {
                    sizeof (dyn_semaphore_t),
                    chCoreAllocAlignedI);
 #endif
+#if CH_CFG_FACTORY_MAILBOXES == TRUE
+  dyn_list_init(&ch_factory.mbx_list);
+#endif
 }
 
 #if (CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE) || defined(__DOXIGEN__)
@@ -334,7 +337,7 @@ void chFactoryReleaseObject(registered_object_t *rop){
  *          reference counter is initialized to one.
  * @post    The dynamic buffer object is filled with zeros.
  *
- * @param[in] name      name to be assigned to the new dynamic  buffer object
+ * @param[in] name      name to be assigned to the new dynamic buffer object
  * @param[in] size      payload size of the dynamic buffer object to be created
  *
  * @return              The reference to the created dynamic buffer object.
@@ -387,7 +390,7 @@ dyn_buffer_t *chFactoryFindBuffer(const char *name) {
 }
 
 /**
- * @brief   Releases a generic dynamic buffer object.
+ * @brief   Releases a dynamic buffer object.
  * @details The reference counter of the dynamic buffer object is decreased
  *          by one, if reaches zero then the dynamic buffer object memory
  *          is freed.
@@ -486,6 +489,86 @@ void chFactoryReleaseSemaphore(dyn_semaphore_t *dsp) {
   chSysUnlock();
 }
 #endif /* CH_CFG_FACTORY_SEMAPHORES = TRUE */
+
+#if (CH_CFG_FACTORY_MAILBOXES == TRUE) || defined(__DOXIGEN__)
+/**
+ * @brief   Creates a dynamic mailbox object.
+ * @post    A reference to the dynamic mailbox object is returned and the
+ *          reference counter is initialized to one.
+ * @post    The dynamic buffer object is filled with zeros.
+ *
+ * @param[in] name      name to be assigned to the new dynamic mailbox object
+ * @param[in] n         mailbox buffer size as number of messages
+ *
+ * @return              The reference to the created dynamic mailbox object.
+ * @retval NULL         if the dynamic mailbox object cannot be allocated or
+ *                      a dynamic mailbox object with the same name exists.
+ *
+ * @api
+ */
+dyn_mailbox_t *chFactoryCreateMailbox(const char *name, cnt_t n) {
+  dyn_mailbox_t *dmp;
+
+  chSysLock();
+
+  dmp = (dyn_mailbox_t *)dyn_create_object_heap(name,
+                                                &ch_factory.mbx_list,
+                                                sizeof (dyn_mailbox_t) +
+                                                ((size_t)n * sizeof (msg_t)));
+  if (dmp != NULL) {
+    /* Initializing mailbox object data.*/
+    chMBObjectInit(&dmp->mbx, dmp->buffer, n);
+  }
+
+  chSysUnlock();
+
+  return dmp;
+}
+
+/**
+ * @brief   Retrieves a dynamic mailbox object.
+ * @post    A reference to the dynamic mailbox object is returned with the
+ *          reference counter increased by one.
+ *
+ * @param[in] name      name of the dynamic mailbox object
+ *
+ * @return              The reference to the found dynamic mailbox object.
+ * @retval NULL         if a dynamic mailbox object with the specified name
+ *                      does not exist.
+ *
+ * @api
+ */
+dyn_mailbox_t *chFactoryFindMailbox(const char *name) {
+  dyn_mailbox_t *dmp;
+
+  chSysLock();
+
+  dmp = (dyn_mailbox_t *)dyn_find_object(name, &ch_factory.mbx_list);
+
+  chSysUnlock();
+
+  return dmp;
+}
+
+/**
+ * @brief   Releases a dynamic mailbox object.
+ * @details The reference counter of the dynamic mailbox object is decreased
+ *          by one, if reaches zero then the dynamic mailbox object memory
+ *          is freed.
+ *
+ * @param[in] dbp       dynamic mailbox object reference
+ *
+ * @api
+ */
+void chFactoryReleaseMailbox(dyn_mailbox_t *dmp) {
+
+  chSysLock();
+
+  dyn_release_object_heap(&dmp->element, &ch_factory.mbx_list);
+
+  chSysUnlock();
+}
+#endif /* CH_CFG_FACTORY_MAILBOXES = TRUE */
 
 #endif /* CH_CFG_USE_FACTORY == TRUE */
 

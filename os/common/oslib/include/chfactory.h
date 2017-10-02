@@ -68,6 +68,13 @@
 #define CH_CFG_FACTORY_SEMAPHORES           TRUE
 #endif
 
+/**
+ * @brief   Enables factory for mailboxes.
+ */
+#if !defined(CH_CFG_FACTORY_MAILBOXES) || defined(__DOXYGEN__)
+#define CH_CFG_FACTORY_MAILBOXES            TRUE
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -76,7 +83,8 @@
   ((CH_CFG_FACTORY_SEMAPHORES == TRUE))
 
 #define CH_FACTORY_REQUIRES_HEAP                                            \
-  ((CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE))
+  ((CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE) ||                              \
+   (CH_CFG_FACTORY_MAILBOXES == TRUE))
 
 #if (CH_CFG_FACTORY_MAX_NAMES_LENGHT < 0) ||                                \
     (CH_CFG_FACTORY_MAX_NAMES_LENGHT > 32)
@@ -97,6 +105,10 @@
 
 #if (CH_CFG_FACTORY_SEMAPHORES == TRUE) && (CH_CFG_USE_SEMAPHORES == FALSE)
 #error "CH_CFG_FACTORY_SEMAPHORES requires CH_CFG_USE_SEMAPHORES"
+#endif
+
+#if (CH_CFG_FACTORY_MAILBOXES == TRUE) && (CH_CFG_USE_MAILBOXES == FALSE)
+#error "CH_CFG_FACTORY_MAILBOXES requires CH_CFG_USE_MAILBOXES"
 #endif
 
 /*===========================================================================*/
@@ -156,7 +168,7 @@ typedef struct ch_dyn_object {
    */
   dyn_element_t         element;
   /**
-   * @brief   Physical buffer objects.
+   * @brief   The buffer.
    * @note    This requires C99.
    */
   uint8_t               buffer[];
@@ -173,10 +185,31 @@ typedef struct ch_dyn_semaphore {
    */
   dyn_element_t         element;
   /**
-   * @brief   Physical semaphore.
+   * @brief   The semaphore.
    */
   semaphore_t           sem;
 } dyn_semaphore_t;
+#endif
+
+#if (CH_CFG_FACTORY_MAILBOXES == TRUE) || defined(__DOXIGEN__)
+/**
+ * @brief   Type of a dynamic buffer object.
+ */
+typedef struct ch_dyn_mailbox {
+  /**
+   * @brief   List element of the dynamic buffer object.
+   */
+  dyn_element_t         element;
+  /**
+   * @brief   The mailbox.
+   */
+  mailbox_t             mbx;
+  /**
+   * @brief   Mailbox buffer.
+   * @note    This requires C99.
+   */
+  msg_t                 buffer[];
+} dyn_mailbox_t;
 #endif
 
 /**
@@ -207,6 +240,12 @@ typedef struct ch_objects_factory {
    */
   memory_pool_t         sem_pool;
 #endif /* CH_CFG_FACTORY_SEMAPHORES = TRUE */
+#if (CH_CFG_FACTORY_MAILBOXES == TRUE) || defined(__DOXIGEN__)
+  /**
+   * @brief   List of the allocated buffer objects.
+   */
+  dyn_list_t            mbx_list;
+#endif /* CH_CFG_FACTORY_MAILBOXES = TRUE */
 } objects_factory_t;
 
 /*===========================================================================*/
@@ -240,6 +279,11 @@ extern "C" {
   dyn_semaphore_t *chFactoryCreateSemaphore(const char *name, cnt_t n);
   dyn_semaphore_t *chFactoryFindSemaphore(const char *name);
   void chFactoryReleaseSemaphore(dyn_semaphore_t *dsp);
+#endif
+#if (CH_CFG_FACTORY_MAILBOXES == TRUE) || defined(__DOXIGEN__)
+  dyn_mailbox_t *chFactoryCreateMailbox(const char *name, cnt_t n);
+  dyn_mailbox_t *chFactoryFindMailbox(const char *name);
+  void chFactoryReleaseMailbox(dyn_mailbox_t *dmp);
 #endif
 #ifdef __cplusplus
 }
