@@ -28,6 +28,10 @@
 #ifndef CHMEMCORE_H
 #define CHMEMCORE_H
 
+#if !defined(CH_CFG_USE_MEMCORE)
+#define CH_CFG_USE_MEMCORE                  FALSE
+#endif
+
 #if (CH_CFG_USE_MEMCORE == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/

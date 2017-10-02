@@ -28,6 +28,10 @@
 #ifndef CHFACTORY_H
 #define CHFACTORY_H
 
+#if !defined(CH_CFG_USE_FACTORY)
+#define CH_CFG_USE_FACTORY                  FALSE
+#endif
+
 #if (CH_CFG_USE_FACTORY == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/

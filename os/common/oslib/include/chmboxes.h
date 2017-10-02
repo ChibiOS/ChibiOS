@@ -28,6 +28,10 @@
 #ifndef CHMBOXES_H
 #define CHMBOXES_H
 
+#if !defined(CH_CFG_USE_MAILBOXES)
+#define CH_CFG_USE_MAILBOXES                FALSE
+#endif
+
 #if (CH_CFG_USE_MAILBOXES == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
