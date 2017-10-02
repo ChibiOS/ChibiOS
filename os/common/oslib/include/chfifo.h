@@ -20,6 +20,22 @@
 /**
  * @file    chfifo.h
  * @brief   Objects FIFO structures and macros.
+ * @details This module implements a generic FIFO queue of objects by
+ *          coupling a Guarded Memory Pool (for objects storage) and
+ *          a MailBox.<br>
+ *          On the sender side free objects are taken from the pool, filled
+ *          and then sent to the receiver, on the receiver side objects are
+ *          fetched, used and then returned to the pool.
+ *          Operations defined for object FIFOs:
+ *          - <b>Take</b>: An object is taken from the pool of the free
+ *            objects, can be blocking.
+ *          - <b>Return</b>: An object is returned to the pool of the
+ *            free objects, it is guaranteed to be non-blocking.
+ *          - <b>Send</b>: An object is sent through the mailbox, it is
+ *            guaranteed to be non-blocking
+ *          - <b>Receive</b>: An object is received from the mailbox,
+ *            can be blocking.
+ *          .
  *
  * @addtogroup objects_fifo
  * @{
@@ -123,7 +139,7 @@ static inline void chMailObjectInit(objects_fifo_t *ofp, size_t objsize,
  *
  * @iclass
  */
-static inline void *chFifoAllocObjectI(objects_fifo_t *ofp) {
+static inline void *chFifoTakeObjectI(objects_fifo_t *ofp) {
 
   return chGuardedPoolAllocI(&ofp->free);
 }
@@ -143,8 +159,8 @@ static inline void *chFifoAllocObjectI(objects_fifo_t *ofp) {
  *
  * @iclass
  */
-static inline void *chFifoAllocObjectTimeout(objects_fifo_t *ofp,
-                                             systime_t timeout) {
+static inline void *chFifoTakeObjectTimeout(objects_fifo_t *ofp,
+                                            systime_t timeout) {
 
   return chGuardedPoolAllocTimeout(&ofp->free, timeout);
 }
@@ -157,8 +173,8 @@ static inline void *chFifoAllocObjectTimeout(objects_fifo_t *ofp,
  *
  * @iclass
  */
-static inline void chFifoReleaseObjectI(objects_fifo_t *ofp,
-                                        void *objp) {
+static inline void chFifoReturnObjectI(objects_fifo_t *ofp,
+                                       void *objp) {
 
   chGuardedPoolFreeI(&ofp->free, objp);
 }
@@ -171,8 +187,8 @@ static inline void chFifoReleaseObjectI(objects_fifo_t *ofp,
  *
  * @api
  */
-static inline void chFifoReleaseObject(objects_fifo_t *ofp,
-                                       void *objp) {
+static inline void chFifoReturnObject(objects_fifo_t *ofp,
+                                      void *objp) {
 
   chGuardedPoolFree(&ofp->free, objp);
 }
@@ -186,7 +202,7 @@ static inline void chFifoReleaseObject(objects_fifo_t *ofp,
  *
  * @iclass
  */
-static inline void chFifoPostObjectI(objects_fifo_t *ofp,
+static inline void chFifoSendObjectI(objects_fifo_t *ofp,
                                      void *objp) {
   msg_t msg;
 
@@ -203,8 +219,8 @@ static inline void chFifoPostObjectI(objects_fifo_t *ofp,
  *
  * @sclass
  */
-static inline void chFifoPostObjectS(objects_fifo_t *ofp,
-                                      void *objp) {
+static inline void chFifoSendObjectS(objects_fifo_t *ofp,
+                                     void *objp) {
   msg_t msg;
 
   msg = chMBPostS(&ofp->mbx, (msg_t)objp, TIME_IMMEDIATE);
@@ -220,7 +236,7 @@ static inline void chFifoPostObjectS(objects_fifo_t *ofp,
  *
  * @api
  */
-static inline void chFifoPostObject(objects_fifo_t *ofp, void *objp) {
+static inline void chFifoSendObject(objects_fifo_t *ofp, void *objp) {
 
   msg_t msg;
 
@@ -239,8 +255,8 @@ static inline void chFifoPostObject(objects_fifo_t *ofp, void *objp) {
  *
  * @api
  */
-static inline msg_t chFifoFetchObjectI(objects_fifo_t *ofp,
-                                       void **objpp) {
+static inline msg_t chFifoReceiveObjectI(objects_fifo_t *ofp,
+                                         void **objpp) {
 
   return chMBFetchI(&ofp->mbx, (msg_t *)objpp);
 }
@@ -261,9 +277,9 @@ static inline msg_t chFifoFetchObjectI(objects_fifo_t *ofp,
  *
  * @sclass
  */
-static inline msg_t chFifoFetchObjectTimeoutS(objects_fifo_t *ofp,
-                                              void **objpp,
-                                              systime_t timeout) {
+static inline msg_t chFifoReceiveObjectTimeoutS(objects_fifo_t *ofp,
+                                                void **objpp,
+                                                systime_t timeout) {
 
   return chMBFetchS(&ofp->mbx, (msg_t *)objpp, timeout);
 }
@@ -284,9 +300,9 @@ static inline msg_t chFifoFetchObjectTimeoutS(objects_fifo_t *ofp,
  *
  * @api
  */
-static inline msg_t chFifoFetchObjectTimeout(objects_fifo_t *ofp,
-                                             void **objpp,
-                                             systime_t timeout) {
+static inline msg_t chFifoReceiveObjectTimeout(objects_fifo_t *ofp,
+                                               void **objpp,
+                                               systime_t timeout) {
 
   return chMBFetch(&ofp->mbx, (msg_t *)objpp, timeout);
 }
