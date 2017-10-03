@@ -505,7 +505,7 @@ void chFactoryReleaseSemaphore(dyn_semaphore_t *dsp) {
  *
  * @api
  */
-dyn_mailbox_t *chFactoryCreateMailbox(const char *name, cnt_t n) {
+dyn_mailbox_t *chFactoryCreateMailbox(const char *name, size_t n) {
   dyn_mailbox_t *dmp;
 
   chSysLock();
@@ -513,7 +513,7 @@ dyn_mailbox_t *chFactoryCreateMailbox(const char *name, cnt_t n) {
   dmp = (dyn_mailbox_t *)dyn_create_object_heap(name,
                                                 &ch_factory.mbx_list,
                                                 sizeof (dyn_mailbox_t) +
-                                                ((size_t)n * sizeof (msg_t)));
+                                                (n * sizeof (msg_t)));
   if (dmp != NULL) {
     /* Initializing mailbox object data.*/
     chMBObjectInit(&dmp->mbx, dmp->buffer, n);

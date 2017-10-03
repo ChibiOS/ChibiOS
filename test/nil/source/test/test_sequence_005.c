@@ -72,11 +72,11 @@ static MAILBOX_DECL(mb1, mb_buffer, MB_SIZE);
  *   expected.
  * - [5.1.3] Testing the behavior of API when the mailbox is in reset
  *   state then return in active state.
- * - [5.1.4] Filling the mailbox using chMBPost() and chMBPostAhead()
- *   once, no errors expected.
+ * - [5.1.4] Filling the mailbox using chMBPostTimeout() and
+ *   chMBPostAheadTimeout() once, no errors expected.
  * - [5.1.5] Testing intermediate conditions. Data pointers must be
  *   aligned, semaphore counters are checked.
- * - [5.1.6] Emptying the mailbox using chMBFetch(), no errors
+ * - [5.1.6] Emptying the mailbox using chMBFetchTimeout(), no errors
  *   expected.
  * - [5.1.7] Posting and then fetching one more message, no errors
  *   expected.
@@ -118,24 +118,24 @@ static void test_005_001_execute(void) {
      state then return in active state.*/
   test_set_step(3);
   {
-    msg1 = chMBPost(&mb1, (msg_t)0, TIME_INFINITE);
+    msg1 = chMBPostTimeout(&mb1, (msg_t)0, TIME_INFINITE);
     test_assert(msg1 == MSG_RESET, "not in reset state");
-    msg1 = chMBPostAhead(&mb1, (msg_t)0, TIME_INFINITE);
+    msg1 = chMBPostAheadTimeout(&mb1, (msg_t)0, TIME_INFINITE);
     test_assert(msg1 == MSG_RESET, "not in reset state");
-    msg1 = chMBFetch(&mb1, &msg2, TIME_INFINITE);
+    msg1 = chMBFetchTimeout(&mb1, &msg2, TIME_INFINITE);
     test_assert(msg1 == MSG_RESET, "not in reset state");
     chMBResumeX(&mb1);
   }
 
-  /* [5.1.4] Filling the mailbox using chMBPost() and chMBPostAhead()
-     once, no errors expected.*/
+  /* [5.1.4] Filling the mailbox using chMBPostTimeout() and
+     chMBPostAheadTimeout() once, no errors expected.*/
   test_set_step(4);
   {
     for (i = 0; i < MB_SIZE - 1; i++) {
-      msg1 = chMBPost(&mb1, 'B' + i, TIME_INFINITE);
+      msg1 = chMBPostTimeout(&mb1, 'B' + i, TIME_INFINITE);
       test_assert(msg1 == MSG_OK, "wrong wake-up message");
     }
-    msg1 = chMBPostAhead(&mb1, 'A', TIME_INFINITE);
+    msg1 = chMBPostAheadTimeout(&mb1, 'A', TIME_INFINITE);
     test_assert(msg1 == MSG_OK, "wrong wake-up message");
   }
 
@@ -148,12 +148,12 @@ static void test_005_001_execute(void) {
     test_assert_lock(mb1.rdptr == mb1.wrptr, "pointers not aligned");
   }
 
-  /* [5.1.6] Emptying the mailbox using chMBFetch(), no errors
+  /* [5.1.6] Emptying the mailbox using chMBFetchTimeout(), no errors
      expected.*/
   test_set_step(6);
   {
     for (i = 0; i < MB_SIZE; i++) {
-      msg1 = chMBFetch(&mb1, &msg2, TIME_INFINITE);
+      msg1 = chMBFetchTimeout(&mb1, &msg2, TIME_INFINITE);
       test_assert(msg1 == MSG_OK, "wrong wake-up message");
       test_emit_token(msg2);
     }
@@ -164,9 +164,9 @@ static void test_005_001_execute(void) {
      expected.*/
   test_set_step(7);
   {
-    msg1 = chMBPost(&mb1, 'B' + i, TIME_INFINITE);
+    msg1 = chMBPostTimeout(&mb1, 'B' + i, TIME_INFINITE);
     test_assert(msg1 == MSG_OK, "wrong wake-up message");
-    msg1 = chMBFetch(&mb1, &msg2, TIME_INFINITE);
+    msg1 = chMBFetchTimeout(&mb1, &msg2, TIME_INFINITE);
     test_assert(msg1 == MSG_OK, "wrong wake-up message");
   }
 
@@ -287,9 +287,9 @@ static void test_005_002_execute(void) {
      expected.*/
   test_set_step(6);
   {
-    msg1 = chMBPost(&mb1, 'B' + i, TIME_INFINITE);
+    msg1 = chMBPostTimeout(&mb1, 'B' + i, TIME_INFINITE);
     test_assert(msg1 == MSG_OK, "wrong wake-up message");
-    msg1 = chMBFetch(&mb1, &msg2, TIME_INFINITE);
+    msg1 = chMBFetchTimeout(&mb1, &msg2, TIME_INFINITE);
     test_assert(msg1 == MSG_OK, "wrong wake-up message");
   }
 
@@ -319,10 +319,10 @@ static const testcase_t test_005_002 = {
  *
  * <h2>Test Steps</h2>
  * - [5.3.1] Filling the mailbox.
- * - [5.3.2] Testing chMBPost(), chMBPostI(), chMBPostAhead() and
- *   chMBPostAheadI() timeout.
+ * - [5.3.2] Testing chMBPostTimeout(), chMBPostI(),
+ *   chMBPostAheadTimeout() and chMBPostAheadI() timeout.
  * - [5.3.3] Resetting the mailbox.
- * - [5.3.4] Testing chMBFetch() and chMBFetchI() timeout.
+ * - [5.3.4] Testing chMBFetchTimeout() and chMBFetchI() timeout.
  * .
  */
 
@@ -342,22 +342,22 @@ static void test_005_003_execute(void) {
   test_set_step(1);
   {
     for (i = 0; i < MB_SIZE; i++) {
-      msg1 = chMBPost(&mb1, 'B' + i, TIME_INFINITE);
+      msg1 = chMBPostTimeout(&mb1, 'B' + i, TIME_INFINITE);
       test_assert(msg1 == MSG_OK, "wrong wake-up message");
     }
   }
 
-  /* [5.3.2] Testing chMBPost(), chMBPostI(), chMBPostAhead() and
-     chMBPostAheadI() timeout.*/
+  /* [5.3.2] Testing chMBPostTimeout(), chMBPostI(),
+     chMBPostAheadTimeout() and chMBPostAheadI() timeout.*/
   test_set_step(2);
   {
-    msg1 = chMBPost(&mb1, 'X', 1);
+    msg1 = chMBPostTimeout(&mb1, 'X', 1);
     test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
     chSysLock();
     msg1 = chMBPostI(&mb1, 'X');
     chSysUnlock();
     test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
-    msg1 = chMBPostAhead(&mb1, 'X', 1);
+    msg1 = chMBPostAheadTimeout(&mb1, 'X', 1);
     test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
     chSysLock();
     msg1 = chMBPostAheadI(&mb1, 'X');
@@ -372,10 +372,10 @@ static void test_005_003_execute(void) {
     chMBResumeX(&mb1);
   }
 
-  /* [5.3.4] Testing chMBFetch() and chMBFetchI() timeout.*/
+  /* [5.3.4] Testing chMBFetchTimeout() and chMBFetchI() timeout.*/
   test_set_step(4);
   {
-    msg1 = chMBFetch(&mb1, &msg2, 1);
+    msg1 = chMBFetchTimeout(&mb1, &msg2, 1);
     test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
     chSysLock();
     msg1 = chMBFetchI(&mb1, &msg2);

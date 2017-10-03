@@ -127,7 +127,7 @@ static inline void chMailObjectInit(objects_fifo_t *ofp, size_t objsize,
 
   chGuardedPoolObjectInit(&ofp->free, objsize);
   chGuardedPoolLoadArray(&ofp->free, objbuf, objn);
-  chMBObjectInit(&ofp->mbx, msgbuf, (cnt_t)objn); /* TODO: make this a size_t, no more sems there.*/
+  chMBObjectInit(&ofp->mbx, msgbuf, objn);
 }
 
 /**
@@ -223,7 +223,7 @@ static inline void chFifoSendObjectS(objects_fifo_t *ofp,
                                      void *objp) {
   msg_t msg;
 
-  msg = chMBPostS(&ofp->mbx, (msg_t)objp, TIME_IMMEDIATE);
+  msg = chMBPostTimeoutS(&ofp->mbx, (msg_t)objp, TIME_IMMEDIATE);
   chDbgAssert(msg == MSG_OK, "post failed");
 }
 
@@ -240,7 +240,7 @@ static inline void chFifoSendObject(objects_fifo_t *ofp, void *objp) {
 
   msg_t msg;
 
-  msg = chMBPost(&ofp->mbx, (msg_t)objp, TIME_IMMEDIATE);
+  msg = chMBPostTimeout(&ofp->mbx, (msg_t)objp, TIME_IMMEDIATE);
   chDbgAssert(msg == MSG_OK, "post failed");
 }
 
@@ -281,7 +281,7 @@ static inline msg_t chFifoReceiveObjectTimeoutS(objects_fifo_t *ofp,
                                                 void **objpp,
                                                 systime_t timeout) {
 
-  return chMBFetchS(&ofp->mbx, (msg_t *)objpp, timeout);
+  return chMBFetchTimeoutS(&ofp->mbx, (msg_t *)objpp, timeout);
 }
 
 /**
@@ -304,7 +304,7 @@ static inline msg_t chFifoReceiveObjectTimeout(objects_fifo_t *ofp,
                                                void **objpp,
                                                systime_t timeout) {
 
-  return chMBFetch(&ofp->mbx, (msg_t *)objpp, timeout);
+  return chMBFetchTimeout(&ofp->mbx, (msg_t *)objpp, timeout);
 }
 #endif /* CH_CFG_USE_FIFO == TRUE */
 

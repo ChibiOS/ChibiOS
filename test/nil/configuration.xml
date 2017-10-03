@@ -827,28 +827,28 @@ test_assert_lock(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");]]
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[msg1 = chMBPost(&mb1, (msg_t)0, TIME_INFINITE);
+                      <value><![CDATA[msg1 = chMBPostTimeout(&mb1, (msg_t)0, TIME_INFINITE);
 test_assert(msg1 == MSG_RESET, "not in reset state");
-msg1 = chMBPostAhead(&mb1, (msg_t)0, TIME_INFINITE);
+msg1 = chMBPostAheadTimeout(&mb1, (msg_t)0, TIME_INFINITE);
 test_assert(msg1 == MSG_RESET, "not in reset state");
-msg1 = chMBFetch(&mb1, &msg2, TIME_INFINITE);
+msg1 = chMBFetchTimeout(&mb1, &msg2, TIME_INFINITE);
 test_assert(msg1 == MSG_RESET, "not in reset state");
 chMBResumeX(&mb1);]]></value>
                     </code>
                   </step>
                   <step>
                     <description>
-                      <value>Filling the mailbox using chMBPost() and chMBPostAhead() once, no errors expected.</value>
+                      <value>Filling the mailbox using chMBPostTimeout() and chMBPostAheadTimeout() once, no errors expected.</value>
                     </description>
                     <tags>
                       <value />
                     </tags>
                     <code>
                       <value><![CDATA[for (i = 0; i < MB_SIZE - 1; i++) {
-  msg1 = chMBPost(&mb1, 'B' + i, TIME_INFINITE);
+  msg1 = chMBPostTimeout(&mb1, 'B' + i, TIME_INFINITE);
   test_assert(msg1 == MSG_OK, "wrong wake-up message");
 }
-msg1 = chMBPostAhead(&mb1, 'A', TIME_INFINITE);
+msg1 = chMBPostAheadTimeout(&mb1, 'A', TIME_INFINITE);
 test_assert(msg1 == MSG_OK, "wrong wake-up message");]]></value>
                     </code>
                   </step>
@@ -867,14 +867,14 @@ test_assert_lock(mb1.rdptr == mb1.wrptr, "pointers not aligned");]]></value>
                   </step>
                   <step>
                     <description>
-                      <value>Emptying the mailbox using chMBFetch(), no errors expected.</value>
+                      <value>Emptying the mailbox using chMBFetchTimeout(), no errors expected.</value>
                     </description>
                     <tags>
                       <value />
                     </tags>
                     <code>
                       <value><![CDATA[for (i = 0; i < MB_SIZE; i++) {
-  msg1 = chMBFetch(&mb1, &msg2, TIME_INFINITE);
+  msg1 = chMBFetchTimeout(&mb1, &msg2, TIME_INFINITE);
   test_assert(msg1 == MSG_OK, "wrong wake-up message");
   test_emit_token(msg2);
 }
@@ -889,9 +889,9 @@ test_assert_sequence("ABCD", "wrong get sequence");]]></value>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[msg1 = chMBPost(&mb1, 'B' + i, TIME_INFINITE);
+                      <value><![CDATA[msg1 = chMBPostTimeout(&mb1, 'B' + i, TIME_INFINITE);
 test_assert(msg1 == MSG_OK, "wrong wake-up message");
-msg1 = chMBFetch(&mb1, &msg2, TIME_INFINITE);
+msg1 = chMBFetchTimeout(&mb1, &msg2, TIME_INFINITE);
 test_assert(msg1 == MSG_OK, "wrong wake-up message");]]></value>
                     </code>
                   </step>
@@ -1022,9 +1022,9 @@ test_assert_sequence("ABCD", "wrong get sequence");]]></value>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[msg1 = chMBPost(&mb1, 'B' + i, TIME_INFINITE);
+                      <value><![CDATA[msg1 = chMBPostTimeout(&mb1, 'B' + i, TIME_INFINITE);
 test_assert(msg1 == MSG_OK, "wrong wake-up message");
-msg1 = chMBFetch(&mb1, &msg2, TIME_INFINITE);
+msg1 = chMBFetchTimeout(&mb1, &msg2, TIME_INFINITE);
 test_assert(msg1 == MSG_OK, "wrong wake-up message");]]></value>
                     </code>
                   </step>
@@ -1076,26 +1076,26 @@ unsigned i;]]></value>
                     </tags>
                     <code>
                       <value><![CDATA[for (i = 0; i < MB_SIZE; i++) {
-  msg1 = chMBPost(&mb1, 'B' + i, TIME_INFINITE);
+  msg1 = chMBPostTimeout(&mb1, 'B' + i, TIME_INFINITE);
   test_assert(msg1 == MSG_OK, "wrong wake-up message");
 }]]></value>
                     </code>
                   </step>
                   <step>
                     <description>
-                      <value>Testing chMBPost(), chMBPostI(), chMBPostAhead() and chMBPostAheadI() timeout.</value>
+                      <value>Testing chMBPostTimeout(), chMBPostI(), chMBPostAheadTimeout() and chMBPostAheadI() timeout.</value>
                     </description>
                     <tags>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[msg1 = chMBPost(&mb1, 'X', 1);
+                      <value><![CDATA[msg1 = chMBPostTimeout(&mb1, 'X', 1);
 test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
 chSysLock();
 msg1 = chMBPostI(&mb1, 'X');
 chSysUnlock();
 test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
-msg1 = chMBPostAhead(&mb1, 'X', 1);
+msg1 = chMBPostAheadTimeout(&mb1, 'X', 1);
 test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
 chSysLock();
 msg1 = chMBPostAheadI(&mb1, 'X');
@@ -1117,13 +1117,13 @@ chMBResumeX(&mb1);]]></value>
                   </step>
                   <step>
                     <description>
-                      <value>Testing chMBFetch() and chMBFetchI() timeout.</value>
+                      <value>Testing chMBFetchTimeout() and chMBFetchI() timeout.</value>
                     </description>
                     <tags>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[msg1 = chMBFetch(&mb1, &msg2, 1);
+                      <value><![CDATA[msg1 = chMBFetchTimeout(&mb1, &msg2, 1);
 test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
 chSysLock();
 msg1 = chMBFetchI(&mb1, &msg2);

@@ -285,7 +285,7 @@ extern "C" {
   void chFactoryReleaseSemaphore(dyn_semaphore_t *dsp);
 #endif
 #if (CH_CFG_FACTORY_MAILBOXES == TRUE) || defined(__DOXIGEN__)
-  dyn_mailbox_t *chFactoryCreateMailbox(const char *name, cnt_t n);
+  dyn_mailbox_t *chFactoryCreateMailbox(const char *name, size_t n);
   dyn_mailbox_t *chFactoryFindMailbox(const char *name);
   void chFactoryReleaseMailbox(dyn_mailbox_t *dmp);
 #endif
