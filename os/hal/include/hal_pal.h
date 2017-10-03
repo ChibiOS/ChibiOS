@@ -214,8 +214,8 @@ typedef struct {
  * @brief   Bits group mask helper.
  * @details This macro calculates the mask of a bits group.
  *
- * @param[in] width         group width
- * @return                  The group mask.
+ * @param[in] width     group width
+ * @return              The group mask.
  */
 #if !defined(PAL_GROUP_MASK) || defined(__DOXYGEN__)
 #define PAL_GROUP_MASK(width) ((ioportmask_t)(1U << (width)) - 1U)
@@ -229,7 +229,7 @@ typedef struct {
  * @param[in] name      name of the IOBus variable
  * @param[in] port      I/O port descriptor
  * @param[in] width     bus width in bits
- * @param[in] offset     bus bit offset within the port
+ * @param[in] offset    bus bit offset within the port
  */
 #define _IOBUS_DATA(name, port, width, offset)                              \
   {port, PAL_GROUP_MASK(width), offset}
