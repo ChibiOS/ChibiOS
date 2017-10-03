@@ -121,7 +121,7 @@ extern "C" {
  *
  * @init
  */
-static inline void chMailObjectInit(objects_fifo_t *ofp, size_t objsize,
+static inline void chFifoObjectInit(objects_fifo_t *ofp, size_t objsize,
                                     size_t objn, void *objbuf,
                                     msg_t *msgbuf) {
 
