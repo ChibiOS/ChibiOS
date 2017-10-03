@@ -109,7 +109,7 @@ extern "C" {
 /*===========================================================================*/
 
 /**
- * @brief   Initializes a mail object.
+ * @brief   Initializes a FIFO object.
  *
  * @param[out] ofp      pointer to a @p objects_fifo_t structure
  * @param[in] objsize   size of objects
