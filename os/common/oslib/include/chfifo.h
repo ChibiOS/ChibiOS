@@ -157,7 +157,28 @@ static inline void *chFifoTakeObjectI(objects_fifo_t *ofp) {
  * @retval NULL         if an object is not available within the specified
  *                      timeout.
  *
- * @iclass
+ * @sclass
+ */
+static inline void *chFifoTakeObjectTimeoutS(objects_fifo_t *ofp,
+                                             systime_t timeout) {
+
+  return chGuardedPoolAllocTimeoutS(&ofp->free, timeout);
+}
+
+/**
+ * @brief   Allocates a free object.
+ *
+ * @param[in] ofp       pointer to a @p objects_fifo_t structure
+ * @param[in] timeout   the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              The pointer to the allocated object.
+ * @retval NULL         if an object is not available within the specified
+ *                      timeout.
+ *
+ * @api
  */
 static inline void *chFifoTakeObjectTimeout(objects_fifo_t *ofp,
                                             systime_t timeout) {
@@ -253,7 +274,7 @@ static inline void chFifoSendObject(objects_fifo_t *ofp, void *objp) {
  * @retval MSG_OK       if an object has been correctly fetched.
  * @retval MSG_TIMEOUT  if the FIFO is empty and a message cannot be fetched.
  *
- * @api
+ * @iclass
  */
 static inline msg_t chFifoReceiveObjectI(objects_fifo_t *ofp,
                                          void **objpp) {
