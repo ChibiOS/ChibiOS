@@ -248,6 +248,9 @@ void _factory_init(void) {
 #if CH_CFG_FACTORY_MAILBOXES == TRUE
   dyn_list_init(&ch_factory.mbx_list);
 #endif
+#if CH_CFG_FACTORY_OBJ_FIFOS == TRUE
+  dyn_list_init(&ch_factory.fifo_list);
+#endif
 }
 
 #if (CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE) || defined(__DOXIGEN__)
@@ -494,7 +497,7 @@ void chFactoryReleaseSemaphore(dyn_semaphore_t *dsp) {
  * @brief   Creates a dynamic mailbox object.
  * @post    A reference to the dynamic mailbox object is returned and the
  *          reference counter is initialized to one.
- * @post    The dynamic buffer object is filled with zeros.
+ * @post    The dynamic mailbox object is initialized and ready to use.
  *
  * @param[in] name      name to be assigned to the new dynamic mailbox object
  * @param[in] n         mailbox buffer size as number of messages
@@ -516,7 +519,7 @@ dyn_mailbox_t *chFactoryCreateMailbox(const char *name, size_t n) {
                                                 (n * sizeof (msg_t)));
   if (dmp != NULL) {
     /* Initializing mailbox object data.*/
-    chMBObjectInit(&dmp->mbx, dmp->buffer, n);
+    chMBObjectInit(&dmp->mbx, dmp->msgbuf, n);
   }
 
   chSysUnlock();
@@ -564,6 +567,93 @@ void chFactoryReleaseMailbox(dyn_mailbox_t *dmp) {
   chSysLock();
 
   dyn_release_object_heap(&dmp->element, &ch_factory.mbx_list);
+
+  chSysUnlock();
+}
+#endif /* CH_CFG_FACTORY_MAILBOXES = TRUE */
+
+#if (CH_CFG_FACTORY_OBJ_FIFOS == TRUE) || defined(__DOXIGEN__)
+/**
+ * @brief   Creates a dynamic "objects FIFO" object.
+ * @post    A reference to the dynamic "objects FIFO" object is returned and
+ *          the reference counter is initialized to one.
+ * @post    The dynamic "objects FIFO" object is initialized and ready to use.
+ *
+ * @param[in] name      name to be assigned to the new dynamic "objects FIFO"
+ *                      object
+ *
+ * @return              The reference to the created dynamic "objects FIFO"
+ *                      object.
+ * @retval NULL         if the dynamic "objects FIFO" object cannot be
+ *                      allocated or a dynamic "objects FIFO" object with
+ *                      the same name exists.
+ *
+ * @api
+ */
+dyn_objects_fifo_t *chFactoryCreateObjectsFIFO(const char *name,
+                                               size_t objsize,
+                                               size_t objn) {
+  dyn_objects_fifo_t *dofp;
+
+  chSysLock();
+
+  dofp = (dyn_objects_fifo_t *)dyn_create_object_heap(name,
+                                                      &ch_factory.fifo_list,
+                                                      sizeof (dyn_objects_fifo_t) +
+                                                      (objn * sizeof (msg_t)) +
+                                                      (objn * objsize));
+  if (dofp != NULL) {
+    /* Initializing mailbox object data.*/
+    chFifoObjectInit(&dofp->fifo, objsize, objn,
+                     dofp->msgbuf, (void *)&dofp->msgbuf[objn]);
+  }
+
+  chSysUnlock();
+
+  return dofp;
+}
+
+/**
+ * @brief   Retrieves a dynamic "objects FIFO" object.
+ * @post    A reference to the dynamic "objects FIFO" object is returned with
+ *          the reference counter increased by one.
+ *
+ * @param[in] name      name of the dynamic "objects FIFO" object
+ *
+ * @return              The reference to the found dynamic "objects FIFO"
+ *                      object.
+ * @retval NULL         if a dynamic "objects FIFO" object with the specified
+ *                      name does not exist.
+ *
+ * @api
+ */
+dyn_objects_fifo_t *chFactoryFindObjectsFIFO(const char *name) {
+  dyn_objects_fifo_t *dofp;
+
+  chSysLock();
+
+  dofp = (dyn_objects_fifo_t *)dyn_find_object(name, &ch_factory.fifo_list);
+
+  chSysUnlock();
+
+  return dofp;
+}
+
+/**
+ * @brief   Releases a dynamic "objects FIFO" object.
+ * @details The reference counter of the dynamic "objects FIFO" object is
+ *          decreased by one, if reaches zero then the dynamic "objects FIFO"
+ *          object memory is freed.
+ *
+ * @param[in] dofp      dynamic "objects FIFO" object reference
+ *
+ * @api
+ */
+void chFactoryReleaseObjectsFIFO(dyn_objects_fifo_t *dofp) {
+
+  chSysLock();
+
+  dyn_release_object_heap(&dofp->element, &ch_factory.fifo_list);
 
   chSysUnlock();
 }

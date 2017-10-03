@@ -79,6 +79,13 @@
 #define CH_CFG_FACTORY_MAILBOXES            TRUE
 #endif
 
+/**
+ * @brief   Enables factory for objects FIFOs.
+ */
+#if !defined(CH_CFG_FACTORY_OBJ_FIFOS) || defined(__DOXYGEN__)
+#define CH_CFG_FACTORY_OBJ_FIFOS            TRUE
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -88,7 +95,8 @@
 
 #define CH_FACTORY_REQUIRES_HEAP                                            \
   ((CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE) ||                              \
-   (CH_CFG_FACTORY_MAILBOXES == TRUE))
+   (CH_CFG_FACTORY_MAILBOXES == TRUE) ||                                    \
+   (CH_CFG_FACTORY_OBJ_FIFOS == TRUE))
 
 #if (CH_CFG_FACTORY_MAX_NAMES_LENGHT < 0) ||                                \
     (CH_CFG_FACTORY_MAX_NAMES_LENGHT > 32)
@@ -113,6 +121,10 @@
 
 #if (CH_CFG_FACTORY_MAILBOXES == TRUE) && (CH_CFG_USE_MAILBOXES == FALSE)
 #error "CH_CFG_FACTORY_MAILBOXES requires CH_CFG_USE_MAILBOXES"
+#endif
+
+#if (CH_CFG_FACTORY_OBJ_FIFOS == TRUE) && (CH_CFG_USE_OBJ_FIFOS == FALSE)
+#error "CH_CFG_FACTORY_OBJ_FIFOS requires CH_CFG_USE_OBJ_FIFOS"
 #endif
 
 /*===========================================================================*/
@@ -209,11 +221,34 @@ typedef struct ch_dyn_mailbox {
    */
   mailbox_t             mbx;
   /**
-   * @brief   Mailbox buffer.
+   * @brief   Messages buffer.
    * @note    This requires C99.
    */
-  msg_t                 buffer[];
+  msg_t                 msgbuf[];
 } dyn_mailbox_t;
+#endif
+
+#if (CH_CFG_FACTORY_OBJ_FIFOS == TRUE) || defined(__DOXIGEN__)
+/**
+ * @brief   Type of a dynamic buffer object.
+ */
+typedef struct ch_dyn_objects_fifo {
+  /**
+   * @brief   List element of the dynamic buffer object.
+   */
+  dyn_element_t         element;
+  /**
+   * @brief   The objects FIFO.
+   */
+  objects_fifo_t        fifo;
+  /**
+   * @brief   Messages buffer.
+   * @note    This open array is followed by another area containing the
+   *          objects, this area is not represented in this structure.
+   * @note    This requires C99.
+   */
+  msg_t                 msgbuf[];
+} dyn_objects_fifo_t;
 #endif
 
 /**
@@ -250,6 +285,12 @@ typedef struct ch_objects_factory {
    */
   dyn_list_t            mbx_list;
 #endif /* CH_CFG_FACTORY_MAILBOXES = TRUE */
+#if (CH_CFG_FACTORY_OBJ_FIFOS == TRUE) || defined(__DOXIGEN__)
+  /**
+   * @brief   List of the allocated "objects FIFO" objects.
+   */
+  dyn_list_t            fifo_list;
+#endif /* CH_CFG_FACTORY_OBJ_FIFOS = TRUE */
 } objects_factory_t;
 
 /*===========================================================================*/
@@ -288,6 +329,13 @@ extern "C" {
   dyn_mailbox_t *chFactoryCreateMailbox(const char *name, size_t n);
   dyn_mailbox_t *chFactoryFindMailbox(const char *name);
   void chFactoryReleaseMailbox(dyn_mailbox_t *dmp);
+#endif
+#if (CH_CFG_FACTORY_OBJ_FIFOS == TRUE) || defined(__DOXIGEN__)
+  dyn_objects_fifo_t *chFactoryCreateObjectsFIFO(const char *name,
+                                                 size_t objsize,
+                                                 size_t objn);
+  dyn_objects_fifo_t *chFactoryFindObjectsFIFO(const char *name);
+  void chFactoryReleaseObjectsFIFO(dyn_objects_fifo_t *dofp);
 #endif
 #ifdef __cplusplus
 }

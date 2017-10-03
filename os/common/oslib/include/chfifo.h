@@ -44,11 +44,11 @@
 #ifndef CHFIFO_H
 #define CHFIFO_H
 
-#if !defined(CH_CFG_USE_FIFO)
-#define CH_CFG_USE_FIFO                     TRUE
+#if !defined(CH_CFG_USE_OBJ_FIFOS)
+#define CH_CFG_USE_OBJ_FIFOS                TRUE
 #endif
 
-#if (CH_CFG_USE_FIFO == TRUE) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_OBJ_FIFOS == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -327,7 +327,7 @@ static inline msg_t chFifoReceiveObjectTimeout(objects_fifo_t *ofp,
 
   return chMBFetchTimeout(&ofp->mbx, (msg_t *)objpp, timeout);
 }
-#endif /* CH_CFG_USE_FIFO == TRUE */
+#endif /* CH_CFG_USE_OBJ_FIFOS == TRUE */
 
 #endif /* CHFIFO_H */
 
