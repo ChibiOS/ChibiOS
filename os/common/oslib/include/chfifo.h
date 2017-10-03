@@ -77,7 +77,7 @@
 /**
  * @brief   Type of an objects FIFO.
  */
-typedef struct {
+typedef struct ch_objects_fifo {
   /**
    * @brief   Pool of the free objects.
    */
