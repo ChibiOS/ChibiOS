@@ -31,7 +31,7 @@
  * @brief   Float type support.
  */
 #if !defined(CHPRINTF_USE_FLOAT) || defined(__DOXYGEN__)
-#define CHPRINTF_USE_FLOAT          TRUE
+#define CHPRINTF_USE_FLOAT          FALSE
 #endif
 
 #ifdef __cplusplus
