@@ -41,17 +41,3 @@ REGION_ALIAS("DATA_RAM", ram0);
 REGION_ALIAS("BSS_RAM", ram0);
 
 INCLUDE rules.ld
-
-/* Override of the ENTRY
-   in order to point towards boot code */
-ENTRY(Boot_Handler)
-
-/* Extending the startup section to include
-   the boot code */
-SECTIONS
-{
-    startup : ALIGN(16) SUBALIGN(16)
-    {
-        KEEP(*(.boot))
-    } > flash
-}
