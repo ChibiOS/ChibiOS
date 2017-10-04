@@ -51,6 +51,7 @@ SECTIONS
     startup : ALIGN(16) SUBALIGN(16)
     {
         KEEP(*(.vectors))
+        KEEP(*(.boot))
     } > flash
 
     constructors : ALIGN(4) SUBALIGN(4)
