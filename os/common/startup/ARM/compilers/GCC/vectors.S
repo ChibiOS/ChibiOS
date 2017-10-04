@@ -95,10 +95,10 @@ _unhandled_exception:
 /*
  * Default boot handler. Jump to Reset_Handler
  */
+                .section .boot, "ax"
                 .weak	Boot_Handler
 Boot_Handler:
-				b		Reset_Handler
-
+                b       Reset_Handler
 #endif
 
 /** @} */
