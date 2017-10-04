@@ -333,7 +333,8 @@ extern "C" {
 #if (CH_CFG_FACTORY_OBJ_FIFOS == TRUE) || defined(__DOXIGEN__)
   dyn_objects_fifo_t *chFactoryCreateObjectsFIFO(const char *name,
                                                  size_t objsize,
-                                                 size_t objn);
+                                                 size_t objn,
+                                                 unsigned objalign);
   dyn_objects_fifo_t *chFactoryFindObjectsFIFO(const char *name);
   void chFactoryReleaseObjectsFIFO(dyn_objects_fifo_t *dofp);
 #endif

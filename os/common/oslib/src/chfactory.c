@@ -581,7 +581,9 @@ void chFactoryReleaseMailbox(dyn_mailbox_t *dmp) {
  *
  * @param[in] name      name to be assigned to the new dynamic "objects FIFO"
  *                      object
- *
+ * @param[in] objsize   size of objects
+ * @param[in] objn      number of objects available
+ * @param[in] objalign  required objects alignment
  * @return              The reference to the created dynamic "objects FIFO"
  *                      object.
  * @retval NULL         if the dynamic "objects FIFO" object cannot be
@@ -592,7 +594,8 @@ void chFactoryReleaseMailbox(dyn_mailbox_t *dmp) {
  */
 dyn_objects_fifo_t *chFactoryCreateObjectsFIFO(const char *name,
                                                size_t objsize,
-                                               size_t objn) {
+                                               size_t objn,
+                                               unsigned objalign) {
   dyn_objects_fifo_t *dofp;
 
   chSysLock();
@@ -604,7 +607,7 @@ dyn_objects_fifo_t *chFactoryCreateObjectsFIFO(const char *name,
                                                       (objn * objsize));
   if (dofp != NULL) {
     /* Initializing mailbox object data.*/
-    chFifoObjectInit(&dofp->fifo, objsize, objn,
+    chFifoObjectInit(&dofp->fifo, objsize, objn, objalign,
                      dofp->msgbuf, (void *)&dofp->msgbuf[objn]);
   }
 

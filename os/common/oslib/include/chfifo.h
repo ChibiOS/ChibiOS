@@ -110,22 +110,26 @@ extern "C" {
 
 /**
  * @brief   Initializes a FIFO object.
+ * @pre     The messages size must be a multiple of the alignment
+ *          requirement.
  *
  * @param[out] ofp      pointer to a @p objects_fifo_t structure
  * @param[in] objsize   size of objects
  * @param[in] objn      number of objects available
+ * @param[in] objalign  required objects alignment
  * @param[in] objbuf    pointer to the buffer of objects, it must be able
- *                      to hold @p objn objects of @p objsize size
+ *                      to hold @p objn objects of @p objsize size with
+ *                      @p objealign alignment
  * @param[in] msgbuf    pointer to the buffer of messages, it must be able
  *                      to hold @p objn messages
  *
  * @init
  */
 static inline void chFifoObjectInit(objects_fifo_t *ofp, size_t objsize,
-                                    size_t objn, void *objbuf,
-                                    msg_t *msgbuf) {
+                                    size_t objn, unsigned objalign,
+                                    void *objbuf, msg_t *msgbuf) {
 
-  chGuardedPoolObjectInit(&ofp->free, objsize);
+  chGuardedPoolObjectInitAligned(&ofp->free, objsize, objalign);
   chGuardedPoolLoadArray(&ofp->free, objbuf, objn);
   chMBObjectInit(&ofp->mbx, msgbuf, objn);
 }

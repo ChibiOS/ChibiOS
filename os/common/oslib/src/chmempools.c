@@ -67,18 +67,21 @@
  * @param[in] size      the size of the objects contained in this memory pool,
  *                      the minimum accepted size is the size of a pointer to
  *                      void.
+ * @param[in] align     required memory alignment
  * @param[in] provider  memory provider function for the memory pool or
  *                      @p NULL if the pool is not allowed to grow
  *                      automatically
  *
  * @init
  */
-void chPoolObjectInit(memory_pool_t *mp, size_t size, memgetfunc_t provider) {
+void chPoolObjectInitAligned(memory_pool_t *mp, size_t size,
+                             unsigned align, memgetfunc_t provider) {
 
   chDbgCheck((mp != NULL) && (size >= sizeof(void *)));
 
   mp->next = NULL;
   mp->object_size = size;
+  mp->align = align;
   mp->provider = provider;
 }
 
@@ -87,6 +90,8 @@ void chPoolObjectInit(memory_pool_t *mp, size_t size, memgetfunc_t provider) {
  * @pre     The memory pool must be already been initialized.
  * @pre     The array elements must be of the right size for the specified
  *          memory pool.
+ * @pre     The array elements size must be a multiple of the alignment
+ *          requirement for the pool.
  * @post    The memory pool contains the elements of the input array.
  *
  * @param[in] mp        pointer to a @p memory_pool_t structure
@@ -130,7 +135,7 @@ void *chPoolAllocI(memory_pool_t *mp) {
     mp->next = mp->next->next;
   }
   else if (mp->provider != NULL) {
-    objp = mp->provider(mp->object_size, PORT_NATURAL_ALIGN); /* TODO: Alignment is not properly handled */
+    objp = mp->provider(mp->object_size, mp->align);
   }
   /*lint -restore*/
 
@@ -175,6 +180,9 @@ void chPoolFreeI(memory_pool_t *mp, void *objp) {
   chDbgCheckClassI();
   chDbgCheck((mp != NULL) && (objp != NULL));
 
+  chDbgAssert(((size_t)objp & MEM_ALIGN_MASK(mp->align)) == 0U,
+              "unaligned object");
+
   php->next = mp->next;
   mp->next = php;
 }
@@ -206,12 +214,15 @@ void chPoolFree(memory_pool_t *mp, void *objp) {
  * @param[in] size      the size of the objects contained in this guarded
  *                      memory pool, the minimum accepted size is the size
  *                      of a pointer to void.
+ * @param[in] align     required memory alignment
  *
  * @init
  */
-void chGuardedPoolObjectInit(guarded_memory_pool_t *gmp, size_t size) {
+void chGuardedPoolObjectInitAligned(guarded_memory_pool_t *gmp,
+                                    size_t size,
+                                    unsigned align) {
 
-  chPoolObjectInit(&gmp->pool, size, NULL);
+  chPoolObjectInitAligned(&gmp->pool, size, align, NULL);
   chSemObjectInit(&gmp->sem, (cnt_t)0);
 }
 

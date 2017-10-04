@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added alignment capability to memory pools.
 - NEW: Mailbox API changed by adding "Timeout" to those function that have
        timeout capability, for consistency with the rest of the system.
 - NEW: Modified mailboxes to use a size_t as counter instead of a cnt_t,
