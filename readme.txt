@@ -88,6 +88,9 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+*** 17.6.3 ***
+- HAL: Fixed CHPRINTF_USE_FLOAT defaulted to TRUE (bug #890).
+
 *** 17.6.2 ***
 - HAL: Fixed various STM32 registry problems (bug #889).
 - LIB: Fixed heap allocator returning unaligned blocks (bug #888).
