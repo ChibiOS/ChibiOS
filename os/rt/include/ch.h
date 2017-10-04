@@ -74,6 +74,10 @@
 #error "invalid configuration file"
 #endif
 
+#if !defined(_CHIBIOS_RT_CONF_VER_5_0_)
+#error "obsolete or unknown configuration file"
+#endif
+
 #include "chlicense.h"
 #include "chchecks.h"
 #include "chsystypes.h"

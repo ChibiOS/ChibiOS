@@ -29,6 +29,9 @@
 #define CHCONF_H
 
 #define _CHIBIOS_RT_CONF_
+#define _CHIBIOS_RT_CONF_VER_5_0_
+#define _CHIBIOS_RT_CONF_
+#define _CHIBIOS_RT_CONF_VER_5_0_VER_5_0_
 
 /*===========================================================================*/
 /**
@@ -332,12 +335,14 @@
 #define CH_CFG_USE_FACTORY                  TRUE
 
 /**
- * @brief   Enables the registry of generic objects.
+ * @brief   Maximum length for object names.
+ * @details If the specified length is zero then the name is stored by
+ *          pointer but this could have unintended side effects.
  */
 #define CH_CFG_FACTORY_MAX_NAMES_LENGHT     8
 
 /**
- * @brief   Enables factory for generic buffers.
+ * @brief   Enables the registry of generic objects.
  */
 #define CH_CFG_FACTORY_OBJECTS_REGISTRY     TRUE
 
