@@ -90,6 +90,7 @@
 
 *** 17.6.3 ***
 - HAL: Fixed CHPRINTF_USE_FLOAT defaulted to TRUE (bug #890).
+- HAL: Fixed various STM32 registry problems (more instances)(bug #889).
 
 *** 17.6.2 ***
 - HAL: Fixed various STM32 registry problems (bug #889).
