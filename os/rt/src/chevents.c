@@ -157,14 +157,30 @@ void chEvtUnregister(event_source_t *esp, event_listener_t *elp) {
  * @param[in] events    the events to be cleared
  * @return              The mask of pending events that were cleared.
  *
+ * @iclass
+ */
+eventmask_t chEvtGetAndClearEventsI(eventmask_t events) {
+  eventmask_t m;
+
+  m = currp->epending & events;
+  currp->epending &= ~events;
+
+  return m;
+}
+
+/**
+ * @brief   Clears the pending events specified in the events mask.
+ *
+ * @param[in] events    the events to be cleared
+ * @return              The mask of pending events that were cleared.
+ *
  * @api
  */
 eventmask_t chEvtGetAndClearEvents(eventmask_t events) {
   eventmask_t m;
 
   chSysLock();
-  m = currp->epending & events;
-  currp->epending &= ~events;
+  m = chEvtGetAndClearEventsI(events);
   chSysUnlock();
 
   return m;

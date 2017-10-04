@@ -125,6 +125,7 @@ extern "C" {
                                   eventmask_t events,
                                   eventflags_t wflags);
   void chEvtUnregister(event_source_t *esp, event_listener_t *elp);
+  eventmask_t chEvtGetAndClearEventsI(eventmask_t events);
   eventmask_t chEvtGetAndClearEvents(eventmask_t events);
   eventmask_t chEvtAddEvents(eventmask_t events);
   eventflags_t chEvtGetAndClearFlags(event_listener_t *elp);

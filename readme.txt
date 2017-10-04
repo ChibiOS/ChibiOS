@@ -94,7 +94,8 @@
        timeout capability, for consistency with the rest of the system.
 - NEW: Modified mailboxes to use a size_t as counter instead of a cnt_t,
        this is a leftover of semaphores in previous mailboxes implementation.
-- NEW: Added a new function to RT events chEvtAddEventsI().
+- NEW: Added a new functions to RT events chEvtGetAndClearEventsI() and
+       chEvtAddEventsI().
 - NEW: Integrated the latest FatFS 0.13 with patches.
 - NEW: Improved RT and NIL test suite to report version numbers and
        configuration settings.
