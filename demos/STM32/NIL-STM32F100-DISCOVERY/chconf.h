@@ -149,6 +149,15 @@
 #define CH_CFG_USE_MEMPOOLS                 TRUE
 
 /**
+ * @brief  Objects FIFOs APIs.
+ * @details If enabled then the objects FIFOs APIs are included
+ *          in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#define CH_CFG_USE_OBJ_FIFOS                TRUE
+
+/**
  * @brief   Managed RAM size.
  * @details Size of the RAM area to be managed by the OS. If set to zero
  *          then the whole available RAM is used. The core memory is made

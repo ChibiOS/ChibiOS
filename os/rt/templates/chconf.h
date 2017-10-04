@@ -48,7 +48,7 @@
  * @details Frequency of the system timer that drives the system ticks. This
  *          setting also defines the system tick time unit.
  */
-#define CH_CFG_ST_FREQUENCY                 1000
+#define CH_CFG_ST_FREQUENCY                 10000
 
 /**
  * @brief   Time delta constant for the tick-less mode.
@@ -58,7 +58,7 @@
  *          The value one is not valid, timeouts are rounded up to
  *          this value.
  */
-#define CH_CFG_ST_TIMEDELTA                 0
+#define CH_CFG_ST_TIMEDELTA                 2
 
 /** @} */
 
@@ -140,7 +140,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#define CH_CFG_USE_TM                       FALSE
+#define CH_CFG_USE_TM                       TRUE
 
 /**
  * @brief   Threads registry APIs.
@@ -293,6 +293,28 @@
  * @note    The default is @p TRUE.
  */
 #define CH_CFG_USE_MEMPOOLS                 TRUE
+
+/**
+ * @brief  Objects FIFOs APIs.
+ * @details If enabled then the objects FIFOs APIs are included
+ *          in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#define CH_CFG_USE_OBJ_FIFOS                TRUE
+
+/**
+ * @name    Objects factory settings.
+ * @{
+ */
+#define CH_CFG_USE_FACTORY                  TRUE
+#define CH_CFG_FACTORY_MAX_NAMES_LENGHT     8
+#define CH_CFG_FACTORY_OBJECTS_REGISTRY     TRUE
+#define CH_CFG_FACTORY_GENERIC_BUFFERS      TRUE
+#define CH_CFG_FACTORY_SEMAPHORES           TRUE
+#define CH_CFG_FACTORY_MAILBOXES            TRUE
+#define CH_CFG_FACTORY_OBJ_FIFOS            TRUE
+/** @} */
 
 /**
  * @brief   Dynamic Threads APIs.
