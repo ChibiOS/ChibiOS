@@ -1880,10 +1880,12 @@
 #define STM32_I2C1_TX_DMA_CHN               0x00200020
 
 #define STM32_HAS_I2C2                      TRUE
-#define STM32_I2C2_RX_DMA_MSK               STM32_DMA_STREAM_ID_MSK(1, 5)
-#define STM32_I2C2_RX_DMA_CHN               0x00000000
-#define STM32_I2C2_TX_DMA_MSK               STM32_DMA_STREAM_ID_MSK(1, 4)
-#define STM32_I2C2_TX_DMA_CHN               0x00000000
+#define STM32_I2C2_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 5) |\
+                                             STM32_DMA_STREAM_ID_MSK(2, 2))
+#define STM32_I2C2_RX_DMA_CHN               0x00020020
+#define STM32_I2C2_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 4) |\
+                                             STM32_DMA_STREAM_ID_MSK(2, 1))
+#define STM32_I2C2_TX_DMA_CHN               0x00002002
 
 #define STM32_HAS_I2C3                      FALSE
 #define STM32_HAS_I2C4                      FALSE
