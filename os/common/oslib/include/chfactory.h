@@ -47,8 +47,8 @@
  * @details If the specified length is zero then the name is stored by
  *          pointer but this could have unintended side effects.
  */
-#if !defined(CH_CFG_FACTORY_MAX_NAMES_LENGHT) || defined(__DOXYGEN__)
-#define CH_CFG_FACTORY_MAX_NAMES_LENGHT     8
+#if !defined(CH_CFG_FACTORY_MAX_NAMES_LENGTH) || defined(__DOXYGEN__)
+#define CH_CFG_FACTORY_MAX_NAMES_LENGTH     8
 #endif
 
 /**
@@ -98,9 +98,9 @@
    (CH_CFG_FACTORY_MAILBOXES == TRUE) ||                                    \
    (CH_CFG_FACTORY_OBJ_FIFOS == TRUE))
 
-#if (CH_CFG_FACTORY_MAX_NAMES_LENGHT < 0) ||                                \
-    (CH_CFG_FACTORY_MAX_NAMES_LENGHT > 32)
-#error "invalid CH_CFG_FACTORY_MAX_NAMES_LENGHT value"
+#if (CH_CFG_FACTORY_MAX_NAMES_LENGTH < 0) ||                                \
+    (CH_CFG_FACTORY_MAX_NAMES_LENGTH > 32)
+#error "invalid CH_CFG_FACTORY_MAX_NAMES_LENGTH value"
 #endif
 
 #if CH_CFG_USE_MEMCORE == FALSE
@@ -143,8 +143,8 @@ typedef struct ch_dyn_element {
    * @brief   Number of references to this object.
    */
   ucnt_t                refs;
-#if (CH_CFG_FACTORY_MAX_NAMES_LENGHT > 0) || defined(__DOXIGEN__)
-  char                  name[CH_CFG_FACTORY_MAX_NAMES_LENGHT];
+#if (CH_CFG_FACTORY_MAX_NAMES_LENGTH > 0) || defined(__DOXYGEN__)
+  char                  name[CH_CFG_FACTORY_MAX_NAMES_LENGTH];
 #else
   const char            *name;
 #endif
@@ -157,7 +157,7 @@ typedef struct ch_dyn_list {
     dyn_element_t       *next;
 } dyn_list_t;
 
-#if (CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE) || defined(__DOXIGEN__)
+#if (CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Type of a registered object.
  */
@@ -174,7 +174,7 @@ typedef struct ch_registered_static_object {
 } registered_object_t;
 #endif
 
-#if (CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE) || defined(__DOXIGEN__)
+#if (CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Type of a dynamic buffer object.
  */
@@ -191,7 +191,7 @@ typedef struct ch_dyn_object {
 } dyn_buffer_t;
 #endif
 
-#if (CH_CFG_FACTORY_SEMAPHORES == TRUE) || defined(__DOXIGEN__)
+#if (CH_CFG_FACTORY_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Type of a dynamic semaphore.
  */
@@ -207,7 +207,7 @@ typedef struct ch_dyn_semaphore {
 } dyn_semaphore_t;
 #endif
 
-#if (CH_CFG_FACTORY_MAILBOXES == TRUE) || defined(__DOXIGEN__)
+#if (CH_CFG_FACTORY_MAILBOXES == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Type of a dynamic buffer object.
  */
@@ -228,7 +228,7 @@ typedef struct ch_dyn_mailbox {
 } dyn_mailbox_t;
 #endif
 
-#if (CH_CFG_FACTORY_OBJ_FIFOS == TRUE) || defined(__DOXIGEN__)
+#if (CH_CFG_FACTORY_OBJ_FIFOS == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Type of a dynamic buffer object.
  */
@@ -263,13 +263,13 @@ typedef struct ch_objects_factory {
    * @brief   Pool of the available registered objects.
    */
   memory_pool_t         obj_pool;
-#if (CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE) || defined(__DOXIGEN__)
+#if (CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   List of the allocated buffer objects.
    */
   dyn_list_t            buf_list;
 #endif /* CH_CFG_FACTORY_GENERIC_BUFFERS = TRUE */
-#if (CH_CFG_FACTORY_SEMAPHORES == TRUE) || defined(__DOXIGEN__)
+#if (CH_CFG_FACTORY_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   List of the allocated semaphores.
    */
@@ -279,13 +279,13 @@ typedef struct ch_objects_factory {
    */
   memory_pool_t         sem_pool;
 #endif /* CH_CFG_FACTORY_SEMAPHORES = TRUE */
-#if (CH_CFG_FACTORY_MAILBOXES == TRUE) || defined(__DOXIGEN__)
+#if (CH_CFG_FACTORY_MAILBOXES == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   List of the allocated buffer objects.
    */
   dyn_list_t            mbx_list;
 #endif /* CH_CFG_FACTORY_MAILBOXES = TRUE */
-#if (CH_CFG_FACTORY_OBJ_FIFOS == TRUE) || defined(__DOXIGEN__)
+#if (CH_CFG_FACTORY_OBJ_FIFOS == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   List of the allocated "objects FIFO" objects.
    */
@@ -309,28 +309,28 @@ extern objects_factory_t ch_factory;
 extern "C" {
 #endif
   void _factory_init(void);
-#if (CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE) || defined(__DOXIGEN__)
+#if (CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE) || defined(__DOXYGEN__)
   registered_object_t *chFactoryRegisterObject(const char *name,
                                                             void *objp);
   registered_object_t *chFactoryFindObject(const char *name);
   void chFactoryReleaseObject(registered_object_t *rop);
 #endif
-#if (CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE) || defined(__DOXIGEN__)
+#if (CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE) || defined(__DOXYGEN__)
   dyn_buffer_t *chFactoryCreateBuffer(const char *name, size_t size);
   dyn_buffer_t *chFactoryFindBuffer(const char *name);
   void chFactoryReleaseBuffer(dyn_buffer_t *dbp);
 #endif
-#if (CH_CFG_FACTORY_SEMAPHORES == TRUE) || defined(__DOXIGEN__)
+#if (CH_CFG_FACTORY_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
   dyn_semaphore_t *chFactoryCreateSemaphore(const char *name, cnt_t n);
   dyn_semaphore_t *chFactoryFindSemaphore(const char *name);
   void chFactoryReleaseSemaphore(dyn_semaphore_t *dsp);
 #endif
-#if (CH_CFG_FACTORY_MAILBOXES == TRUE) || defined(__DOXIGEN__)
+#if (CH_CFG_FACTORY_MAILBOXES == TRUE) || defined(__DOXYGEN__)
   dyn_mailbox_t *chFactoryCreateMailbox(const char *name, size_t n);
   dyn_mailbox_t *chFactoryFindMailbox(const char *name);
   void chFactoryReleaseMailbox(dyn_mailbox_t *dmp);
 #endif
-#if (CH_CFG_FACTORY_OBJ_FIFOS == TRUE) || defined(__DOXIGEN__)
+#if (CH_CFG_FACTORY_OBJ_FIFOS == TRUE) || defined(__DOXYGEN__)
   dyn_objects_fifo_t *chFactoryCreateObjectsFIFO(const char *name,
                                                  size_t objsize,
                                                  size_t objn,
@@ -351,6 +351,7 @@ extern "C" {
  * @note    This function can be used on any kind of dynamic object.
  *
  * @param[in] dep       pointer to the element field of the object
+ * @return              The duplicated object reference.
  *
  * @iclass
  */
@@ -363,10 +364,11 @@ static inline dyn_element_t *chFactoryDuplicateReferenceI(dyn_element_t *dep) {
   return dep;
 }
 
-#if (CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE) || defined(__DOXIGEN__)
+#if (CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Returns the size of a generic dynamic buffer object.
  *
+ * @param[in] dbp       dynamic buffer object reference
  * @return              The size of the buffer object in bytes.
  *
  * @api

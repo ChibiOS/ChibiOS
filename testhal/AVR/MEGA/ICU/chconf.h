@@ -360,7 +360,7 @@
  * @details If the specified length is zero then the name is stored by
  *          pointer but this could have unintended side effects.
  */
-#define CH_CFG_FACTORY_MAX_NAMES_LENGHT     8
+#define CH_CFG_FACTORY_MAX_NAMES_LENGTH     8
 
 /**
  * @brief   Enables the registry of generic objects.

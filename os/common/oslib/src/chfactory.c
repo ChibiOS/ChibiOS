@@ -81,7 +81,7 @@ static dyn_element_t *dyn_list_find(const char *name, dyn_list_t *dlp) {
   dyn_element_t *p = dlp->next;
 
   while (p != (dyn_element_t *)dlp) {
-    if (strncmp(p->name, name, CH_CFG_FACTORY_MAX_NAMES_LENGHT) == 0) {
+    if (strncmp(p->name, name, CH_CFG_FACTORY_MAX_NAMES_LENGTH) == 0) {
       return p;
     }
     p = p->next;
@@ -132,7 +132,7 @@ static dyn_element_t *dyn_create_object_heap(const char *name,
   }
 
   /* Initializing object list element.*/
-  strncpy(dep->name, name, CH_CFG_FACTORY_MAX_NAMES_LENGHT);
+  strncpy(dep->name, name, CH_CFG_FACTORY_MAX_NAMES_LENGTH);
   dep->refs = 1U;
   dep->next = dlp->next;
 
@@ -178,7 +178,7 @@ static dyn_element_t *dyn_create_object_pool(const char *name,
   }
 
   /* Initializing object list element.*/
-  strncpy(dep->name, name, CH_CFG_FACTORY_MAX_NAMES_LENGHT);
+  strncpy(dep->name, name, CH_CFG_FACTORY_MAX_NAMES_LENGTH);
   dep->refs = 1U;
   dep->next = ch_factory.sem_list.next;
 
@@ -261,6 +261,10 @@ void _factory_init(void) {
  *
  * @param[in] name      name to be assigned to the registered object
  * @param[in] objp      pointer to the object to be registered
+ *
+ * @return              The reference to the registered object.
+ * @retval NULL         if the object to be registered cannot be allocated or
+ *                      a registered object with the same name exists.
  *
  * @api
  */
@@ -558,7 +562,7 @@ dyn_mailbox_t *chFactoryFindMailbox(const char *name) {
  *          by one, if reaches zero then the dynamic mailbox object memory
  *          is freed.
  *
- * @param[in] dbp       dynamic mailbox object reference
+ * @param[in] dmp       dynamic mailbox object reference
  *
  * @api
  */
