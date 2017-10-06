@@ -175,28 +175,28 @@
  *
  * @api
  */
-#define pmcEnableH32MX() pmcEnablePidLow(ID_MATRIX0_MSK)
+#define pmcEnableH32MX() pmcEnablePidLow(ID_MATRIX1_MSK)
 
 /**
  * @brief   Disables the H32MX peripheral clock.
  *
  * @api
  */
-#define pmcDisableH32MX() pmcDisablePidLow(ID_MATRIX0_MSK)
+#define pmcDisableH32MX() pmcDisablePidLow(ID_MATRIX1_MSK)
 
 /**
  * @brief   Enables the H64MX peripheral clock.
  *
  * @api
  */
-#define pmcEnableH64MX() pmcEnablePidLow(ID_MATRIX1_MSK)
+#define pmcEnableH64MX() pmcEnablePidLow(ID_MATRIX0_MSK)
 
 /**
  * @brief   Disables the H64MX peripheral clock.
  *
  * @api
  */
-#define pmcDisableH64MX() pmcDisablePidLow(ID_MATRIX1_MSK)
+#define pmcDisableH64MX() pmcDisablePidLow(ID_MATRIX0_MSK)
 
 /**
  * @brief   Enables the PIO peripheral clock.
