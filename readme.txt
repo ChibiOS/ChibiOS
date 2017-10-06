@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 17.6.3 ***
+- HAL: Fixed IRQ sharing issue in STM32 DMAv1 driver (bug #891).
 - HAL: Fixed CHPRINTF_USE_FLOAT defaulted to TRUE (bug #890).
 - HAL: Fixed various STM32 registry problems (more instances)(bug #889).
 
