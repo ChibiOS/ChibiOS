@@ -133,6 +133,8 @@
        dependencies and configuration directories. This makes possible
        to have multiple non-conflicting makefiles in the same project.
        Updated the various platform.mk implementing "smart build" mode.
+- BLD: Fixed USE_OPT not passed to assembler in rules.mk (bug #892)(backported
+       to 17.6.3 and 16.1.10).
 - HAL: Fixed IRQ sharing issue in STM32 DMAv1 driver (bug #891)(backported
        to 17.6.3 and 16.1.10).
 - HAL: Fixed various STM32 registry problems (bug #889)(backported to 17.6.2
