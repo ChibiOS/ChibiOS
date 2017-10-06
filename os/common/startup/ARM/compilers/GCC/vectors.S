@@ -93,7 +93,7 @@ Irq_Handler:
 _unhandled_exception:
                 b       _unhandled_exception
 /*
- * Default boot handler. Jump to Reset_Handler
+ * Default boot handler. Jump to Reset_Handler.
  */
                 .section .boot, "ax"
                 .weak	Boot_Handler
