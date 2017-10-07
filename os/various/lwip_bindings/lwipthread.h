@@ -58,7 +58,7 @@
  * @brief  lwIP thread stack size.
  */
 #if !defined(LWIP_THREAD_STACK_SIZE) || defined(__DOXYGEN__)
-#define LWIP_THREAD_STACK_SIZE              576
+#define LWIP_THREAD_STACK_SIZE              672
 #endif
 
 /**

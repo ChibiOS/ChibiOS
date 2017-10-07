@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Integrated lwIP 2.0.3 and improved lwIP bindings.
 - NEW: The chconf.h configuration files now are tagged with the version
        number for safety. The system rejects obsolete files during
        compilation.

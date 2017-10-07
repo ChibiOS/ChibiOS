@@ -69,7 +69,11 @@
 #include <lwip/snmp.h>
 #include <lwip/tcpip.h>
 #include <netif/etharp.h>
+#include <lwip/netifapi.h>
+
+#if PPPOE_SUPPORT
 #include <netif/ppp_oe.h>
+#endif
 
 #if LWIP_DHCP
 #include <lwip/dhcp.h>
@@ -141,6 +145,17 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p) {
     macWriteTransmitDescriptor(&td, (uint8_t *)q->payload, (size_t)q->len);
   macReleaseTransmitDescriptor(&td);
 
+  MIB2_STATS_NETIF_ADD(netif, ifoutoctets, p->tot_len);
+  if (((u8_t*)p->payload)[0] & 1) {
+    /* broadcast or multicast packet*/
+    MIB2_STATS_NETIF_INC(netif, ifoutnucastpkts);
+  } 
+  else {
+    /* unicast packet */
+    MIB2_STATS_NETIF_INC(netif, ifoutucastpkts);
+  }
+  /* increase ifoutdiscards or ifouterrors on error */
+
 #if ETH_PAD_SIZE
   pbuf_header(p, ETH_PAD_SIZE);         /* reclaim the padding word */
 #endif
@@ -152,48 +167,69 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p) {
 
 /*
  * Receives a frame.
+ * Allocates a pbuf and transfers the bytes of the incoming
+ * packet from the interface into the pbuf.
+ *
+ * @param netif the lwip network interface structure for this ethernetif
+ * @return a pbuf filled with the received packet (including MAC header)
+ *         NULL on memory error
  */
-static struct pbuf *low_level_input(struct netif *netif) {
+static bool low_level_input(struct netif *netif, struct pbuf **pbuf) {
   MACReceiveDescriptor rd;
-  struct pbuf *p, *q;
+  struct pbuf *q;
   u16_t len;
 
   (void)netif;
-  if (macWaitReceiveDescriptor(&ETHD1, &rd, TIME_IMMEDIATE) == MSG_OK) {
-    len = (u16_t)rd.size;
+
+  osalDbgAssert(pbuf != NULL, "invalid null pointer");
+
+  if (macWaitReceiveDescriptor(&ETHD1, &rd, TIME_IMMEDIATE) != MSG_OK)
+    return false;
+
+  len = (u16_t)rd.size;
 
 #if ETH_PAD_SIZE
-    len += ETH_PAD_SIZE;        /* allow room for Ethernet padding */
+  len += ETH_PAD_SIZE;        /* allow room for Ethernet padding */
 #endif
 
-    /* We allocate a pbuf chain of pbufs from the pool. */
-    p = pbuf_alloc(PBUF_RAW, len, PBUF_POOL);
+  /* We allocate a pbuf chain of pbufs from the pool. */
+  *pbuf = pbuf_alloc(PBUF_RAW, len, PBUF_POOL);
 
-    if (p != NULL) {
-
+  if (*pbuf != NULL) {
 #if ETH_PAD_SIZE
-      pbuf_header(p, -ETH_PAD_SIZE); /* drop the padding word */
+    pbuf_header(pbuf, -ETH_PAD_SIZE); /* drop the padding word */
 #endif
 
-      /* Iterates through the pbuf chain. */
-      for(q = p; q != NULL; q = q->next)
-        macReadReceiveDescriptor(&rd, (uint8_t *)q->payload, (size_t)q->len);
-      macReleaseReceiveDescriptor(&rd);
+    /* Iterates through the pbuf chain. */
+    for(q = *pbuf; q != NULL; q = q->next)
+      macReadReceiveDescriptor(&rd, (uint8_t *)q->payload, (size_t)q->len);
+    macReleaseReceiveDescriptor(&rd);
 
-#if ETH_PAD_SIZE
-      pbuf_header(p, ETH_PAD_SIZE); /* reclaim the padding word */
-#endif
+    MIB2_STATS_NETIF_ADD(netif, ifinoctets, *pbuf->tot_len);
 
-      LINK_STATS_INC(link.recv);
-    }
+    if (*(uint8_t *)((*pbuf)->payload) & 1) {
+      /* broadcast or multicast packet*/
+      MIB2_STATS_NETIF_INC(netif, ifinnucastpkts);
+    } 
     else {
-      macReleaseReceiveDescriptor(&rd);
-      LINK_STATS_INC(link.memerr);
-      LINK_STATS_INC(link.drop);
+      /* unicast packet*/
+      MIB2_STATS_NETIF_INC(netif, ifinucastpkts);
     }
-    return p;
+
+#if ETH_PAD_SIZE
+    pbuf_header(pbuf, ETH_PAD_SIZE); /* reclaim the padding word */
+#endif
+
+    LINK_STATS_INC(link.recv);
   }
-  return NULL;
+  else {
+    macReleaseReceiveDescriptor(&rd);     // Drop packet
+    LINK_STATS_INC(link.memerr);
+    LINK_STATS_INC(link.drop);
+    MIB2_STATS_NETIF_INC(netif, ifindiscards);
+  }
+  
+  return true;
 }
 
 /*
@@ -216,7 +252,7 @@ static err_t ethernetif_init(struct netif *netif) {
    * The last argument should be replaced with your link speed, in units
    * of bits per second.
    */
-  NETIF_INIT_SNMP(netif, snmp_ifType_ethernet_csmacd, LWIP_LINK_SPEED);
+  MIB2_INIT_NETIF(netif, snmp_ifType_ethernet_csmacd, LWIP_LINK_SPEED);
 
   netif->state = NULL;
   netif->name[0] = LWIP_IFNAME0;
@@ -301,7 +337,7 @@ static THD_FUNCTION(lwip_thread, p) {
   };
 
   netif_set_default(&thisif);
-  
+
   switch (addressMode)
   {
 #if LWIP_AUTOIP
@@ -349,26 +385,29 @@ static THD_FUNCTION(lwip_thread, p) {
         }
       }
     }
+    
     if (mask & FRAME_RECEIVED_ID) {
       struct pbuf *p;
-      while ((p = low_level_input(&thisif)) != NULL) {
-        struct eth_hdr *ethhdr = p->payload;
-        switch (htons(ethhdr->type)) {
-        /* IP or ARP packet? */
-        case ETHTYPE_IP:
-        case ETHTYPE_ARP:
+      while (low_level_input(&thisif, &p)) {
+        if (p != NULL) {
+          struct eth_hdr *ethhdr = p->payload;
+          switch (htons(ethhdr->type)) {
+            /* IP or ARP packet? */
+            case ETHTYPE_IP:
+            case ETHTYPE_ARP:
 #if PPPOE_SUPPORT
-        /* PPPoE packet? */
-        case ETHTYPE_PPPOEDISC:
-        case ETHTYPE_PPPOE:
+            /* PPPoE packet? */
+            case ETHTYPE_PPPOEDISC:
+            case ETHTYPE_PPPOE:
 #endif /* PPPOE_SUPPORT */
-          /* full packet send to tcpip_thread to process */
-          if (thisif.input(p, &thisif) == ERR_OK)
-            break;
-          LWIP_DEBUGF(NETIF_DEBUG, ("ethernetif_input: IP input error\n"));
+              /* full packet send to tcpip_thread to process */
+              if (thisif.input(p, &thisif) == ERR_OK)
+                break;
+              LWIP_DEBUGF(NETIF_DEBUG, ("ethernetif_input: IP input error\n"));
           /* Falls through */
-        default:
-          pbuf_free(p);
+            default:
+              pbuf_free(p);
+          }
         }
       }
     }

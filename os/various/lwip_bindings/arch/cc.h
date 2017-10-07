@@ -53,28 +53,10 @@
 
 #include <hal.h>
 
-typedef uint8_t         u8_t;
-typedef int8_t          s8_t;
-typedef uint16_t        u16_t;
-typedef int16_t         s16_t;
-typedef uint32_t        u32_t;
-typedef int32_t         s32_t;
-typedef uint32_t        mem_ptr_t;
-
-#define PACK_STRUCT_STRUCT          __attribute__((packed))
-
-#ifndef BYTE_ORDER
-#define BYTE_ORDER LITTLE_ENDIAN
-#endif
+/* Use errno provided by system. */
+#define LWIP_ERRNO_INCLUDE <errno.h>
 
 /**
- * @brief   Use lwIP provided error codes by default. 
- */
-#ifndef LWIP_PROVIDE_ERRNO
-#define LWIP_PROVIDE_ERRNO          1
-#endif
-
-/** 
  * @brief   Use system provided struct timeval by default.
  */
 #ifndef LWIP_TIMEVAL_PRIVATE
