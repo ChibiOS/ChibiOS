@@ -25,7 +25,7 @@
 #include "shell.h"
 
 #include "lwipthread.h"
-#include "httpd.h"
+#include "lwip/apps/httpd.h"
 
 #include "ff.h"
 

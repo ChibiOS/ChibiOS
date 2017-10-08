@@ -14,5 +14,4 @@ LWSRC = $(COREFILES) $(CORE4FILES) $(APIFILES) $(LWBINDSRC) $(NETIFFILES) $(HTTP
 
 LWINC = \
         $(CHIBIOS)/os/various/lwip_bindings \
-        $(LWIPDIR)/include \
-        $(LWIPDIR)/include/lwip/apps
+        $(LWIPDIR)/include
