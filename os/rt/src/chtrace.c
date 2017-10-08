@@ -85,7 +85,7 @@ static NOINLINE void trace_next(void) {
 void _trace_init(void) {
   unsigned i;
 
-  ch.dbg.trace_buffer.suspended = (uint16_t)CH_DBG_TRACE_MASK;
+  ch.dbg.trace_buffer.suspended = (uint16_t)~CH_DBG_TRACE_MASK;
   ch.dbg.trace_buffer.size      = CH_DBG_TRACE_BUFFER_SIZE;
   ch.dbg.trace_buffer.ptr       = &ch.dbg.trace_buffer.buffer[0];
   for (i = 0U; i < (unsigned)CH_DBG_TRACE_BUFFER_SIZE; i++) {
