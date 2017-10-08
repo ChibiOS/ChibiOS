@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** 17.6.3 ***
+- RT:  Fixed trace Buffer activation bits state reversed in chconf.h
+       (bug #895).
 - BLD: Fixed USE_OPT not passed to assembler in rules.mk (bug #892).
 - HAL: Fixed IRQ sharing issue in STM32 DMAv1 driver (bug #891).
 - HAL: Fixed CHPRINTF_USE_FLOAT defaulted to TRUE (bug #890).
