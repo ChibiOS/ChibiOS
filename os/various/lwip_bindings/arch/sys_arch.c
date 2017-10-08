@@ -160,12 +160,12 @@ void sys_mbox_free(sys_mbox_t *mbox) {
 
 void sys_mbox_post(sys_mbox_t *mbox, void *msg) {
 
-  chMBPost(*mbox, (msg_t)msg, TIME_INFINITE);
+  chMBPostTimeout(*mbox, (msg_t)msg, TIME_INFINITE);
 }
 
 err_t sys_mbox_trypost(sys_mbox_t *mbox, void *msg) {
 
-  if (chMBPost(*mbox, (msg_t)msg, TIME_IMMEDIATE) == MSG_TIMEOUT) {
+  if (chMBPostTimeout(*mbox, (msg_t)msg, TIME_IMMEDIATE) == MSG_TIMEOUT) {
     SYS_STATS_INC(mbox.err);
     return ERR_MEM;
   }
@@ -178,7 +178,7 @@ u32_t sys_arch_mbox_fetch(sys_mbox_t *mbox, void **msg, u32_t timeout) {
   osalSysLock();
   tmo = timeout > 0 ? MS2ST((systime_t)timeout) : TIME_INFINITE;
   start = osalOsGetSystemTimeX();
-  if (chMBFetchS(*mbox, (msg_t *)msg, tmo) != MSG_OK) {
+  if (chMBFetchTimeoutS(*mbox, (msg_t *)msg, tmo) != MSG_OK) {
     osalSysUnlock();
     return SYS_ARCH_TIMEOUT;
   }
@@ -189,7 +189,7 @@ u32_t sys_arch_mbox_fetch(sys_mbox_t *mbox, void **msg, u32_t timeout) {
 
 u32_t sys_arch_mbox_tryfetch(sys_mbox_t *mbox, void **msg) {
 
-  if (chMBFetch(*mbox, (msg_t *)msg, TIME_IMMEDIATE) == MSG_TIMEOUT)
+  if (chMBFetchTimeout(*mbox, (msg_t *)msg, TIME_IMMEDIATE) == MSG_TIMEOUT)
     return SYS_MBOX_EMPTY;
   return 0;
 }
