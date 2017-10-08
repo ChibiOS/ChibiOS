@@ -54,6 +54,9 @@
 #define CH_DBG_TRACE_MASK_ISR               2U
 #define CH_DBG_TRACE_MASK_HALT              4U
 #define CH_DBG_TRACE_MASK_USER              8U
+#define CH_DBG_TRACE_MASK_SLOW              (CH_DBG_TRACE_MASK_SWITCH |     \
+                                             CH_DBG_TRACE_MASK_HALT |       \
+                                             CH_DBG_TRACE_MASK_USER)
 #define CH_DBG_TRACE_MASK_ALL               (CH_DBG_TRACE_MASK_SWITCH |     \
                                              CH_DBG_TRACE_MASK_ISR |        \
                                              CH_DBG_TRACE_MASK_HALT |       \

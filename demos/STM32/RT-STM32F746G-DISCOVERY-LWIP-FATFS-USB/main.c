@@ -25,7 +25,7 @@
 #include "shell.h"
 
 #include "lwipthread.h"
-#include "web/web.h"
+#include "httpd.h"
 
 #include "ff.h"
 
@@ -324,8 +324,9 @@ int main(void) {
   /*
    * Creates the HTTP thread (it changes priority internally).
    */
-  chThdCreateStatic(wa_http_server, sizeof(wa_http_server), NORMALPRIO + 1,
-                    http_server, NULL);
+//  chThdCreateStatic(wa_http_server, sizeof(wa_http_server), NORMALPRIO + 1,
+//                    http_server, NULL);
+  httpd_init();
 
   /*
    * Normal main() thread activity, handling SD card events and shell
