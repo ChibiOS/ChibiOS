@@ -89,6 +89,9 @@ endif
 
 # Define project name here
 PROJECT = ch
+CONFDIR  := ./cfg
+BUILDDIR := ./build
+DEPDIR   := ./.dep
 
 # Imported source files and paths
 CHIBIOS = ../../..
@@ -127,7 +130,7 @@ CSRC = $(STARTUPSRC) \
        $(STREAMSSRC) \
        $(SHELLSRC) \
        $(CHIBIOS)/os/various/evtimer.c \
-       usbcfg.c main.c
+       src/usbcfg.c main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -161,7 +164,7 @@ INCDIR = $(CHIBIOS)/os/license \
          $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) $(TESTINC) \
          $(STREAMSINC) $(SHELLINC) $(LWINC) $(FATFSINC) \
-         $(CHIBIOS)/os/various
+         $(CHIBIOS)/os/various $(CONFDIR) ./src
 
 #
 # Project, sources and paths
