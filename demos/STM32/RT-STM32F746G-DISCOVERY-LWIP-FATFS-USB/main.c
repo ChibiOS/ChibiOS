@@ -322,10 +322,8 @@ int main(void) {
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   /*
-   * Creates the HTTP thread (it changes priority internally).
+   * Starts the HTTP server.
    */
-//  chThdCreateStatic(wa_http_server, sizeof(wa_http_server), NORMALPRIO + 1,
-//                    http_server, NULL);
   httpd_init();
 
   /*
