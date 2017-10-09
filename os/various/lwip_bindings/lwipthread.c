@@ -71,10 +71,6 @@
 #include <netif/etharp.h>
 #include <lwip/netifapi.h>
 
-#if PPPOE_SUPPORT
-#include <netif/ppp_oe.h>
-#endif
-
 #if LWIP_DHCP
 #include <lwip/dhcp.h>
 #endif
@@ -395,11 +391,6 @@ static THD_FUNCTION(lwip_thread, p) {
             /* IP or ARP packet? */
             case ETHTYPE_IP:
             case ETHTYPE_ARP:
-#if PPPOE_SUPPORT
-            /* PPPoE packet? */
-            case ETHTYPE_PPPOEDISC:
-            case ETHTYPE_PPPOE:
-#endif /* PPPOE_SUPPORT */
               /* full packet send to tcpip_thread to process */
               if (thisif.input(p, &thisif) == ERR_OK)
                 break;
