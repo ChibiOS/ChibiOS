@@ -36,5 +36,7 @@
 #include "static_lwipopts.h"
 
 /* Optional, application-specific settings.*/
+#define TCPIP_MBOX_SIZE                 MEMP_NUM_PBUF
+#define SLIPIF_THREAD_STACKSIZE         1024
 
 #endif /* LWIP_HDR_LWIPOPTS_H__ */
