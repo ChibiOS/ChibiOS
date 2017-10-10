@@ -173,11 +173,6 @@ static void cmd_tree(BaseSequentialStream *chp, int argc, char *argv[]) {
   chprintf(chp,
            "FS: %lu free clusters with %lu sectors (%lu bytes) per cluster\r\n",
            fre_clust, (uint32_t)fsp->csize, (uint32_t)fsp->csize * 512);
-  chprintf(chp,
-           "    %lu bytes (%lu MB) free of %lu MB\r\n",
-           fre_sect * 512,
-           fre_sect / 2 / 1024,
-           tot_sect / 2 / 1024);
   fbuff[0] = 0;
   scan_files(chp, (char *)fbuff);
 }

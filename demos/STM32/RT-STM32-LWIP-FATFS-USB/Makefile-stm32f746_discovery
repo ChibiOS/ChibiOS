@@ -89,9 +89,9 @@ endif
 
 # Define project name here
 PROJECT = ch
-CONFDIR  := ./cfg
-BUILDDIR := ./build
-DEPDIR   := ./.dep
+CONFDIR  := ./cfg-stm32f746_discovery
+BUILDDIR := ./build-stm32f746_discovery
+DEPDIR   := ./.dep-stm32f746_discovery
 
 # Imported source files and paths
 CHIBIOS = ../../..
@@ -164,7 +164,7 @@ INCDIR = $(CHIBIOS)/os/license \
          $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) $(TESTINC) \
          $(STREAMSINC) $(SHELLINC) $(LWINC) $(FATFSINC) \
-         $(CHIBIOS)/os/various $(CONFDIR) ./src
+         $(CHIBIOS)/os/various $(CONFDIR) ./cfg ./src
 
 #
 # Project, sources and paths

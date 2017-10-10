@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>RT-STM32F746G-DISCOVERY-LWIP-FATFS-USB</name>
+	<name>RT-STM32-LWIP-FATFS-USB</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -77,11 +77,6 @@
 		<nature>org.eclipse.cdt.core.ccnature</nature>
 	</natures>
 	<linkedResources>
-		<link>
-			<name>board</name>
-			<type>2</type>
-			<locationURI>CHIBIOS/os/hal/boards/ST_STM32F746G_DISCOVERY</locationURI>
-		</link>
 		<link>
 			<name>fatfs</name>
 			<type>2</type>
