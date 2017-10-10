@@ -29,6 +29,7 @@
 
 #include "ff.h"
 
+#include "portab.h"
 #include "usbcfg.h"
 
 /*===========================================================================*/
@@ -153,7 +154,7 @@ static FRESULT scan_files(BaseSequentialStream *chp, char *path) {
 
 static void cmd_tree(BaseSequentialStream *chp, int argc, char *argv[]) {
   FRESULT err;
-  uint32_t fre_clust, fre_sect, tot_sect;
+  uint32_t fre_clust;
   FATFS *fsp;
 
   (void)argv;
@@ -183,7 +184,7 @@ static const ShellCommand commands[] = {
 };
 
 static const ShellConfig shell_cfg1 = {
-  (BaseSequentialStream *)&SDU2,
+  (BaseSequentialStream *)&PORTAB_SDU1,
   commands
 };
 
@@ -245,7 +246,7 @@ static THD_FUNCTION(Thread1, arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (true) {
-    palToggleLine(LINE_ARD_D13);
+    palToggleLine(PORTAB_BLINK_LED1);
     chThdSleepMilliseconds(fs_ready ? 250 : 500);
   }
 }
@@ -274,15 +275,15 @@ int main(void) {
   lwipInit(NULL);
 
   /*
-   * Initialize board LED.
+   * Target-dependent setup code.
    */
-  palSetLineMode(LINE_ARD_D13, PAL_MODE_OUTPUT_PUSHPULL);
+  portab_setup();
 
   /*
    * Initializes a serial-over-USB CDC driver.
    */
-  sduObjectInit(&SDU2);
-  sduStart(&SDU2, &serusbcfg);
+  sduObjectInit(&PORTAB_SDU1);
+  sduStart(&PORTAB_SDU1, &serusbcfg);
 
   /*
    * Activates the USB driver and then the USB bus pull-up on D+.
@@ -300,10 +301,8 @@ int main(void) {
   shellInit();
 
   /*
-   * Activates the serial driver 1 and SDC driver 1 using default
-   * configuration.
+   * Activates the  SDC driver 1 using default configuration.
    */
-  sdStart(&SD1, NULL);
   sdcStart(&SDCD1, NULL);
 
   /*
@@ -329,7 +328,7 @@ int main(void) {
   chEvtRegister(&removed_event, &el1, 1);
   chEvtRegister(&shell_terminated, &el2, 2);
   while (true) {
-    if (!shelltp && (SDU2.config->usbp->state == USB_ACTIVE)) {
+    if (!shelltp && (PORTAB_SDU1.config->usbp->state == USB_ACTIVE)) {
       shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
                                     "shell", NORMALPRIO + 1,
                                     shellThread, (void *)&shell_cfg1);

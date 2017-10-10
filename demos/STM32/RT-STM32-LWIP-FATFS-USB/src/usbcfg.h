@@ -19,7 +19,7 @@
 
 extern const USBConfig usbcfg;
 extern SerialUSBConfig serusbcfg;
-extern SerialUSBDriver SDU2;
+extern SerialUSBDriver PORTAB_SDU1;
 
 #endif  /* USBCFG_H */
 

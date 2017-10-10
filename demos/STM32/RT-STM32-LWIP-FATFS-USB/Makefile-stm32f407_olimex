@@ -74,11 +74,6 @@ ifeq ($(USE_FPU),)
   USE_FPU = no
 endif
 
-# FPU-related options.
-ifeq ($(USE_FPU_OPT),)
-  USE_FPU_OPT = -mfloat-abi=$(USE_FPU) -mfpu=fpv5-sp-d16 -fsingle-precision-constant
-endif
-
 #
 # Architecture or project specific options
 ##############################################################################
@@ -89,18 +84,18 @@ endif
 
 # Define project name here
 PROJECT = ch
-CONFDIR  := ./cfg-stm32f746_discovery
-BUILDDIR := ./build-stm32f746_discovery
-DEPDIR   := ./.dep-stm32f746_discovery
+CONFDIR  := ./cfg-stm32f407_olimex
+BUILDDIR := ./build-stm32f407_olimex
+DEPDIR   := ./.dep-stm32f407_olimex
 
 # Imported source files and paths
 CHIBIOS = ../../..
 # Startup files.
-include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32f7xx.mk
+include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32f4xx.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/ports/STM32/STM32F7xx/platform.mk
-include $(CHIBIOS)/os/hal/boards/ST_STM32F746G_DISCOVERY/board.mk
+include $(CHIBIOS)/os/hal/ports/STM32/STM32F4xx/platform.mk
+include $(CHIBIOS)/os/hal/boards/OLIMEX_STM32_E407/board.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
@@ -113,7 +108,7 @@ include $(CHIBIOS)/os/various/lwip_bindings/lwip.mk
 include $(CHIBIOS)/os/various/fatfs_bindings/fatfs.mk
 
 # Define linker script file here
-LDSCRIPT= $(STARTUPLD)/STM32F746xG.ld
+LDSCRIPT= $(STARTUPLD)/STM32F407xG.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -175,7 +170,7 @@ INCDIR = $(CHIBIOS)/os/license \
 # Compiler settings
 #
 
-MCU  = cortex-m7
+MCU  = cortex-m4
 
 #TRGT = arm-elf-
 TRGT = arm-none-eabi-
