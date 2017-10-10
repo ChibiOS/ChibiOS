@@ -29,7 +29,9 @@
 #define LWIP_TIMERS                     1
 #define LWIP_TIMERS_CUSTOM              0
 
-#define LWIP_TCPIP_CORE_LOCKING         0
+#define LWIP_TCPIP_CORE_LOCKING         1
+#define LWIP_TCPIP_CORE_LOCKING_INPUT   0
+#define LWIP_COMPAT_MUTEX_ALLOWED
 
 #define SYS_LIGHTWEIGHT_PROT            0
 
