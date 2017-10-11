@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 17.6.3 ***
+- LIB: Fixed call protocol violation in chCoreAlloc() (bug #896).
 - RT:  Fixed trace Buffer activation bits state reversed in chconf.h
        (bug #895).
 - BLD: Fixed USE_OPT not passed to assembler in rules.mk (bug #892).
