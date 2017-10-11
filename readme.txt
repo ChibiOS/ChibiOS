@@ -134,6 +134,8 @@
        dependencies and configuration directories. This makes possible
        to have multiple non-conflicting makefiles in the same project.
        Updated the various platform.mk implementing "smart build" mode.
+- LIB: Fixed call protocol violation in chCoreAlloc() (bug #896)(backported
+       to 17.6.3).
 - RT:  Fixed trace Buffer activation bits state reversed in chconf.h
        (bug #895)(backported to 17.6.3).
 - BLD: Fixed USE_OPT not passed to assembler in rules.mk (bug #892)(backported

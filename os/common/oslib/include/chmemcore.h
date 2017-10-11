@@ -192,7 +192,7 @@ static inline void *chCoreAllocI(size_t size) {
  */
 static inline void *chCoreAlloc(size_t size) {
 
-  return chCoreAllocAlignedWithOffsetI(size, PORT_NATURAL_ALIGN, 0U);
+  return chCoreAllocAlignedWithOffset(size, PORT_NATURAL_ALIGN, 0U);
 }
 
 #endif /* CH_CFG_USE_MEMCORE == TRUE */
