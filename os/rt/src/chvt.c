@@ -146,9 +146,18 @@ void chVTDoSetI(virtual_timer_t *vtp, sysinterval_t delay,
       p = p->next;
     }
     else if (delta < p->delta) {
-     /* A small delay that will become the first element in the delta list
-        and next deadline.*/
-      port_timer_set_alarm(chTimeAddX(ch.vtlist.lasttime, delta));
+      sysinterval_t deadline_delta;
+
+      /* A small delay that will become the first element in the delta list
+         and next deadline.*/
+      deadline_delta = delta;
+#if CH_CFG_INTERVALS_SIZE > CH_CFG_ST_RESOLUTION
+      /* The delta could be too large for the physical timer to handle.*/
+      if (deadline_delta > (sysinterval_t)TIME_MAX_SYSTIME) {
+        deadline_delta = (sysinterval_t)TIME_MAX_SYSTIME;
+      }
+#endif
+      port_timer_set_alarm(chTimeAddX(ch.vtlist.lasttime, deadline_delta));
     }
   }
 #else /* CH_CFG_ST_TIMEDELTA == 0 */
@@ -207,7 +216,7 @@ void chVTDoResetI(virtual_timer_t *vtp) {
      is the last of the list, restoring it.*/
   ch.vtlist.delta = (sysinterval_t)-1;
 #else /* CH_CFG_ST_TIMEDELTA > 0 */
-  sysinterval_t nowdelta, delta;
+  sysinterval_t nowdelta, delta, deadline_delta;
 
   /* If the timer is not the first of the list then it is simply unlinked
      else the operation is more complex.*/
@@ -263,7 +272,15 @@ void chVTDoResetI(virtual_timer_t *vtp) {
     delta = (systime_t)CH_CFG_ST_TIMEDELTA;
   }
 
-  port_timer_set_alarm(chTimeAddX(ch.vtlist.lasttime, nowdelta + delta));
+  /* Next deadline.*/
+  deadline_delta = nowdelta + delta;
+#if CH_CFG_INTERVALS_SIZE > CH_CFG_ST_RESOLUTION
+  /* The delta could be too large for the physical timer to handle.*/
+  if (deadline_delta > (sysinterval_t)TIME_MAX_SYSTIME) {
+    deadline_delta = (sysinterval_t)TIME_MAX_SYSTIME;
+  }
+#endif
+  port_timer_set_alarm(chTimeAddX(ch.vtlist.lasttime, deadline_delta));
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 }
 

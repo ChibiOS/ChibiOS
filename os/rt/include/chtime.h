@@ -42,7 +42,7 @@
  * @note    Not all functions accept @p TIME_IMMEDIATE as timeout parameter,
  *          see the specific function documentation.
  */
-#define TIME_IMMEDIATE  ((sysinterval_t)0)
+#define TIME_IMMEDIATE      ((sysinterval_t)0)
 
 /**
  * @brief   Infinite interval specification for all functions with a timeout
@@ -50,12 +50,17 @@
  * @note    Not all functions accept @p TIME_INFINITE as timeout parameter,
  *          see the specific function documentation.
  */
-#define TIME_INFINITE   ((sysinterval_t)-1)
+#define TIME_INFINITE       ((sysinterval_t)-1)
 
 /**
  * @brief   Maximum interval constant usable as timeout.
  */
-#define TIME_MAXIMUM    ((sysinterval_t)-2)
+#define TIME_MAX_INTERVAL   ((sysinterval_t)-2)
+
+/**
+ * @brief   Maximum system of system time before it wraps.
+ */
+#define TIME_MAX_SYSTIME    ((systime_t)-1)
 /** @} */
 
 /*===========================================================================*/
@@ -141,11 +146,11 @@ typedef uint16_t systime_t;
  * @brief   Type of time interval.
  * @note    It is selectable in configuration between 16, 32 or 64 bits
  */
-#if (CH_CFG_ST_RESOLUTION == 64) || defined(__DOXYGEN__)
+#if (CH_CFG_INTERVALS_SIZE == 64) || defined(__DOXYGEN__)
 typedef uint64_t sysinterval_t;
-#elif CH_CFG_ST_RESOLUTION == 32
+#elif CH_CFG_INTERVALS_SIZE == 32
 typedef uint32_t sysinterval_t;
-#elif CH_CFG_ST_RESOLUTION == 16
+#elif CH_CFG_INTERVALS_SIZE == 16
 typedef uint16_t sysinterval_t;
 #endif
 
@@ -336,7 +341,7 @@ static inline sysinterval_t chTimeS2I(time_secs_t secs) {
 
   ticks = (time_conv_t)secs * (time_conv_t)CH_CFG_ST_FREQUENCY;
 
-  chDbgAssert(ticks <= (time_conv_t)TIME_MAXIMUM,
+  chDbgAssert(ticks <= (time_conv_t)TIME_MAX_INTERVAL,
               "conversion overflow");
 
   return (sysinterval_t)ticks;
@@ -358,7 +363,7 @@ static inline sysinterval_t chTimeMS2I(time_msecs_t msec) {
   ticks = (((time_conv_t)msec * (time_conv_t)CH_CFG_ST_FREQUENCY) +
            (time_conv_t)999) / (time_conv_t)1000;
 
-  chDbgAssert(ticks <= (time_conv_t)TIME_MAXIMUM,
+  chDbgAssert(ticks <= (time_conv_t)TIME_MAX_INTERVAL,
               "conversion overflow");
 
   return (sysinterval_t)ticks;
@@ -380,7 +385,7 @@ static inline sysinterval_t chTimeUS2I(time_usecs_t usec) {
   ticks = (((time_conv_t)usec * (time_conv_t)CH_CFG_ST_FREQUENCY) +
            (time_conv_t)999999) / (time_conv_t)1000000;
 
-  chDbgAssert(ticks <= (time_conv_t)TIME_MAXIMUM,
+  chDbgAssert(ticks <= (time_conv_t)TIME_MAX_INTERVAL,
               "conversion overflow");
 
   return (sysinterval_t)ticks;

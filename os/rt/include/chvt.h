@@ -72,7 +72,7 @@
 extern "C" {
 #endif
   void _vt_init(void);
-  void chVTDoSetI(virtual_timer_t *vtp, systime_t delay,
+  void chVTDoSetI(virtual_timer_t *vtp, sysinterval_t delay,
                   vtfunc_t vtfunc, void *par);
   void chVTDoResetI(virtual_timer_t *vtp);
 #ifdef __cplusplus
@@ -447,6 +447,12 @@ static inline void chVTDoTickI(void) {
   if (delta < (sysinterval_t)CH_CFG_ST_TIMEDELTA) {
     delta = (sysinterval_t)CH_CFG_ST_TIMEDELTA;
   }
+#if CH_CFG_INTERVALS_SIZE > CH_CFG_ST_RESOLUTION
+  /* The delta could be too large for the physical timer to handle.*/
+  if (delta > (sysinterval_t)TIME_MAX_SYSTIME) {
+    delta = (sysinterval_t)TIME_MAX_SYSTIME;
+  }
+#endif
   port_timer_set_alarm(chTimeAddX(now, delta));
 
   chDbgAssert(chTimeDiffX(ch.vtlist.lasttime, chVTGetSystemTimeX()) <=
