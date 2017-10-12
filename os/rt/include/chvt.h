@@ -401,7 +401,7 @@ static inline void chVTDoTickI(void) {
 
   /* All timers within the time window are triggered and removed,
      note that the loop is stopped by the timers header having
-     "ch.vtlist.vt_delta == (systime_t)-1" which is greater than
+     "ch.vtlist.vt_delta == (sysinterval_t)-1" which is greater than
      all deltas.*/
   while (vtp->delta <= chTimeDiffX(ch.vtlist.lasttime, now)) {
     vtfunc_t fn;

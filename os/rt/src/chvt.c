@@ -95,7 +95,7 @@ void _vt_init(void) {
 void chVTDoSetI(virtual_timer_t *vtp, sysinterval_t delay,
                 vtfunc_t vtfunc, void *par) {
   virtual_timer_t *p;
-  systime_t delta;
+  sysinterval_t delta;
 
   chDbgCheckClassI();
   chDbgCheck((vtp != NULL) && (vtfunc != NULL) && (delay != TIME_IMMEDIATE));
@@ -109,8 +109,8 @@ void chVTDoSetI(virtual_timer_t *vtp, sysinterval_t delay,
 
     /* If the requested delay is lower than the minimum safe delta then it
        is raised to the minimum safe value.*/
-    if (delay < (systime_t)CH_CFG_ST_TIMEDELTA) {
-      delay = (systime_t)CH_CFG_ST_TIMEDELTA;
+    if (delay < (sysinterval_t)CH_CFG_ST_TIMEDELTA) {
+      delay = (sysinterval_t)CH_CFG_ST_TIMEDELTA;
     }
 
     /* Special case where the timers list is empty.*/
@@ -216,7 +216,7 @@ void chVTDoResetI(virtual_timer_t *vtp) {
      is the last of the list, restoring it.*/
   ch.vtlist.delta = (sysinterval_t)-1;
 #else /* CH_CFG_ST_TIMEDELTA > 0 */
-  sysinterval_t nowdelta, delta, deadline_delta;
+  sysinterval_t nowdelta, delta;
 
   /* If the timer is not the first of the list then it is simply unlinked
      else the operation is more complex.*/
@@ -268,19 +268,19 @@ void chVTDoResetI(virtual_timer_t *vtp) {
 
   /* Making sure to not schedule an event closer than CH_CFG_ST_TIMEDELTA
      ticks from now.*/
-  if (delta < (systime_t)CH_CFG_ST_TIMEDELTA) {
-    delta = (systime_t)CH_CFG_ST_TIMEDELTA;
+  if (delta < (sysinterval_t)CH_CFG_ST_TIMEDELTA) {
+    delta = nowdelta + (sysinterval_t)CH_CFG_ST_TIMEDELTA;
   }
-
-  /* Next deadline.*/
-  deadline_delta = nowdelta + delta;
+  else {
+    delta = nowdelta + delta;
 #if CH_CFG_INTERVALS_SIZE > CH_CFG_ST_RESOLUTION
-  /* The delta could be too large for the physical timer to handle.*/
-  if (deadline_delta > (sysinterval_t)TIME_MAX_SYSTIME) {
-    deadline_delta = (sysinterval_t)TIME_MAX_SYSTIME;
-  }
+    /* The delta could be too large for the physical timer to handle.*/
+    if (delta > (sysinterval_t)TIME_MAX_SYSTIME) {
+      delta = (sysinterval_t)TIME_MAX_SYSTIME;
+    }
 #endif
-  port_timer_set_alarm(chTimeAddX(ch.vtlist.lasttime, deadline_delta));
+  }
+  port_timer_set_alarm(chTimeAddX(ch.vtlist.lasttime, delta));
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 }
 
