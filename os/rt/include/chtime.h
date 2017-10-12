@@ -481,8 +481,7 @@ static inline systime_t chTimeAddX(systime_t systime,
  *
  * @xclass
  */
-static inline sysinterval_t chTimeSubtractX(systime_t start,
-                                            systime_t end) {
+static inline sysinterval_t chTimeDiffX(systime_t start, systime_t end) {
 
   return (sysinterval_t)(end - start);
 }

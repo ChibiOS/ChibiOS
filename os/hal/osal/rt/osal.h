@@ -636,7 +636,7 @@ static inline bool osalOsIsTimeWithinX(systime_t time,
                                        systime_t start,
                                        systime_t end) {
 
-  return chVTIsTimeWithinX(time, start, end);
+  return chTimeIsInRangeX(time, start, end);
 }
 
 /**

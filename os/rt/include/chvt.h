@@ -149,30 +149,9 @@ static inline systime_t chVTGetSystemTime(void) {
  *
  * @xclass
  */
-static inline systime_t chVTTimeElapsedSinceX(systime_t start) {
+static inline sysinterval_t chVTTimeElapsedSinceX(systime_t start) {
 
-  return chVTGetSystemTimeX() - start;
-}
-
-/**
- * @brief   Checks if the specified time is within the specified time window.
- * @note    When start==end then the function returns always true because the
- *          whole time range is specified.
- * @note    This function can be called from any context.
- *
- * @param[in] time      the time to be verified
- * @param[in] start     the start of the time window (inclusive)
- * @param[in] end       the end of the time window (non inclusive)
- * @retval true         current time within the specified time window.
- * @retval false        current time not within the specified time window.
- *
- * @xclass
- */
-static inline bool chVTIsTimeWithinX(systime_t time,
-                                     systime_t start,
-                                     systime_t end) {
-
-  return (bool)((systime_t)(time - start) < (systime_t)(end - start));
+  return chTimeDiffX(chVTGetSystemTimeX(), start);
 }
 
 /**
@@ -190,7 +169,7 @@ static inline bool chVTIsTimeWithinX(systime_t time,
  */
 static inline bool chVTIsSystemTimeWithinX(systime_t start, systime_t end) {
 
-  return chVTIsTimeWithinX(chVTGetSystemTimeX(), start, end);
+  return chTimeIsInRangeX(chVTGetSystemTimeX(), start, end);
 }
 
 /**
@@ -208,7 +187,7 @@ static inline bool chVTIsSystemTimeWithinX(systime_t start, systime_t end) {
  */
 static inline bool chVTIsSystemTimeWithin(systime_t start, systime_t end) {
 
-  return chVTIsTimeWithinX(chVTGetSystemTime(), start, end);
+  return chTimeIsInRangeX(chVTGetSystemTime(), start, end);
 }
 
 /**
@@ -227,7 +206,7 @@ static inline bool chVTIsSystemTimeWithin(systime_t start, systime_t end) {
  *
  * @iclass
  */
-static inline bool chVTGetTimersStateI(systime_t *timep) {
+static inline bool chVTGetTimersStateI(sysinterval_t *timep) {
 
   chDbgCheckClassI();
 
@@ -239,8 +218,10 @@ static inline bool chVTGetTimersStateI(systime_t *timep) {
 #if CH_CFG_ST_TIMEDELTA == 0
     *timep = ch.vtlist.next->delta;
 #else
-    *timep = ch.vtlist.lasttime + ch.vtlist.next->delta +
-             CH_CFG_ST_TIMEDELTA - chVTGetSystemTimeX();
+    *timep = chTimeDiffX(chVTGetSystemTimeX(),
+                         chTimeAddX(ch.vtlist.lasttime,
+                                    ch.vtlist.next->delta +
+                                    (sysinterval_t)CH_CFG_ST_TIMEDELTA));
 #endif
   }
 
@@ -340,7 +321,7 @@ static inline void chVTReset(virtual_timer_t *vtp) {
  *
  * @iclass
  */
-static inline void chVTSetI(virtual_timer_t *vtp, systime_t delay,
+static inline void chVTSetI(virtual_timer_t *vtp, sysinterval_t delay,
                             vtfunc_t vtfunc, void *par) {
 
   chVTResetI(vtp);
@@ -369,7 +350,7 @@ static inline void chVTSetI(virtual_timer_t *vtp, systime_t delay,
  *
  * @api
  */
-static inline void chVTSet(virtual_timer_t *vtp, systime_t delay,
+static inline void chVTSet(virtual_timer_t *vtp, sysinterval_t delay,
                            vtfunc_t vtfunc, void *par) {
 
   chSysLock();
@@ -395,7 +376,7 @@ static inline void chVTDoTickI(void) {
   if (&ch.vtlist != (virtual_timers_list_t *)ch.vtlist.next) {
     /* The list is not empty, processing elements on top.*/
     --ch.vtlist.next->delta;
-    while (ch.vtlist.next->delta == (systime_t)0) {
+    while (ch.vtlist.next->delta == (sysinterval_t)0) {
       virtual_timer_t *vtp;
       vtfunc_t fn;
 
@@ -411,7 +392,8 @@ static inline void chVTDoTickI(void) {
   }
 #else /* CH_CFG_ST_TIMEDELTA > 0 */
   virtual_timer_t *vtp;
-  systime_t now, delta;
+  systime_t now;
+  sysinterval_t delta;
 
   /* First timer to be processed.*/
   vtp = ch.vtlist.next;
@@ -421,11 +403,11 @@ static inline void chVTDoTickI(void) {
      note that the loop is stopped by the timers header having
      "ch.vtlist.vt_delta == (systime_t)-1" which is greater than
      all deltas.*/
-  while (vtp->delta <= (systime_t)(now - ch.vtlist.lasttime)) {
+  while (vtp->delta <= chTimeDiffX(ch.vtlist.lasttime, now)) {
     vtfunc_t fn;
 
     /* The "last time" becomes this timer's expiration time.*/
-    ch.vtlist.lasttime += vtp->delta;
+    ch.vtlist.lasttime = chTimeAddX(ch.vtlist.lasttime, vtp->delta);
 
     vtp->next->prev = (virtual_timer_t *)&ch.vtlist;
     ch.vtlist.next = vtp->next;
@@ -461,14 +443,14 @@ static inline void chVTDoTickI(void) {
   }
 
   /* Recalculating the next alarm time.*/
-  delta = ch.vtlist.lasttime + vtp->delta - now;
-  if (delta < (systime_t)CH_CFG_ST_TIMEDELTA) {
-    delta = (systime_t)CH_CFG_ST_TIMEDELTA;
+  delta = chTimeDiffX(now, chTimeAddX(ch.vtlist.lasttime, vtp->delta));
+  if (delta < (sysinterval_t)CH_CFG_ST_TIMEDELTA) {
+    delta = (sysinterval_t)CH_CFG_ST_TIMEDELTA;
   }
-  port_timer_set_alarm(now + delta);
+  port_timer_set_alarm(chTimeAddX(now, delta));
 
-  chDbgAssert((chVTGetSystemTimeX() - ch.vtlist.lasttime) <=
-              (now + delta - ch.vtlist.lasttime),
+  chDbgAssert(chTimeDiffX(ch.vtlist.lasttime, chVTGetSystemTimeX()) <=
+              chTimeDiffX(ch.vtlist.lasttime, chTimeAddX(now, delta)),
               "exceeding delta");
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 }
