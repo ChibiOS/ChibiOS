@@ -162,7 +162,7 @@ void chMBResetI(mailbox_t *mbp) {
  *
  * @api
  */
-msg_t chMBPostTimeout(mailbox_t *mbp, msg_t msg, systime_t timeout) {
+msg_t chMBPostTimeout(mailbox_t *mbp, msg_t msg, sysinterval_t timeout) {
   msg_t rdymsg;
 
   chSysLock();
@@ -191,7 +191,7 @@ msg_t chMBPostTimeout(mailbox_t *mbp, msg_t msg, systime_t timeout) {
  *
  * @sclass
  */
-msg_t chMBPostTimeoutS(mailbox_t *mbp, msg_t msg, systime_t timeout) {
+msg_t chMBPostTimeoutS(mailbox_t *mbp, msg_t msg, sysinterval_t timeout) {
   msg_t rdymsg;
 
   chDbgCheckClassS();
@@ -287,7 +287,7 @@ msg_t chMBPostI(mailbox_t *mbp, msg_t msg) {
  *
  * @api
  */
-msg_t chMBPostAheadTimeout(mailbox_t *mbp, msg_t msg, systime_t timeout) {
+msg_t chMBPostAheadTimeout(mailbox_t *mbp, msg_t msg, sysinterval_t timeout) {
   msg_t rdymsg;
 
   chSysLock();
@@ -316,7 +316,7 @@ msg_t chMBPostAheadTimeout(mailbox_t *mbp, msg_t msg, systime_t timeout) {
  *
  * @sclass
  */
-msg_t chMBPostAheadTimeoutS(mailbox_t *mbp, msg_t msg, systime_t timeout) {
+msg_t chMBPostAheadTimeoutS(mailbox_t *mbp, msg_t msg, sysinterval_t timeout) {
   msg_t rdymsg;
 
   chDbgCheckClassS();
@@ -412,7 +412,7 @@ msg_t chMBPostAheadI(mailbox_t *mbp, msg_t msg) {
  *
  * @api
  */
-msg_t chMBFetchTimeout(mailbox_t *mbp, msg_t *msgp, systime_t timeout) {
+msg_t chMBFetchTimeout(mailbox_t *mbp, msg_t *msgp, sysinterval_t timeout) {
   msg_t rdymsg;
 
   chSysLock();
@@ -441,7 +441,7 @@ msg_t chMBFetchTimeout(mailbox_t *mbp, msg_t *msgp, systime_t timeout) {
  *
  * @sclass
  */
-msg_t chMBFetchTimeoutS(mailbox_t *mbp, msg_t *msgp, systime_t timeout) {
+msg_t chMBFetchTimeoutS(mailbox_t *mbp, msg_t *msgp, sysinterval_t timeout) {
   msg_t rdymsg;
 
   chDbgCheckClassS();

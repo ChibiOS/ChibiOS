@@ -190,7 +190,7 @@ typedef struct {
  *
  * @api
  */
-#define chThdSleepSeconds(sec) chThdSleep(S2ST(sec))
+#define chThdSleepSeconds(sec) chThdSleep(TIME_S2I(sec))
 
 /**
  * @brief   Delays the invoking thread for the specified number of
@@ -206,7 +206,7 @@ typedef struct {
  *
  * @api
  */
-#define chThdSleepMilliseconds(msec) chThdSleep(MS2ST(msec))
+#define chThdSleepMilliseconds(msec) chThdSleep(TIME_MS2I(msec))
 
 /**
  * @brief   Delays the invoking thread for the specified number of
@@ -222,7 +222,7 @@ typedef struct {
  *
  * @api
  */
-#define chThdSleepMicroseconds(usec) chThdSleep(US2ST(usec))
+#define chThdSleepMicroseconds(usec) chThdSleep(TIME_US2I(usec))
 /** @} */
 
 /*===========================================================================*/
@@ -255,14 +255,14 @@ extern "C" {
   tprio_t chThdSetPriority(tprio_t newprio);
   void chThdTerminate(thread_t *tp);
   msg_t chThdSuspendS(thread_reference_t *trp);
-  msg_t chThdSuspendTimeoutS(thread_reference_t *trp, systime_t timeout);
+  msg_t chThdSuspendTimeoutS(thread_reference_t *trp, sysinterval_t timeout);
   void chThdResumeI(thread_reference_t *trp, msg_t msg);
   void chThdResumeS(thread_reference_t *trp, msg_t msg);
   void chThdResume(thread_reference_t *trp, msg_t msg);
-  msg_t chThdEnqueueTimeoutS(threads_queue_t *tqp, systime_t timeout);
+  msg_t chThdEnqueueTimeoutS(threads_queue_t *tqp, sysinterval_t timeout);
   void chThdDequeueNextI(threads_queue_t *tqp, msg_t msg);
   void chThdDequeueAllI(threads_queue_t *tqp, msg_t msg);
-  void chThdSleep(systime_t time);
+  void chThdSleep(sysinterval_t time);
   void chThdSleepUntil(systime_t time);
   systime_t chThdSleepUntilWindowed(systime_t prev, systime_t next);
   void chThdYield(void);
@@ -376,9 +376,9 @@ static inline thread_t *chThdStartI(thread_t *tp) {
 }
 
 /**
- * @brief   Suspends the invoking thread for the specified time.
+ * @brief   Suspends the invoking thread for the specified number of ticks.
  *
- * @param[in] time      the delay in system ticks, the special values are
+ * @param[in] ticks     the delay in system ticks, the special values are
  *                      handled as follow:
  *                      - @a TIME_INFINITE the thread enters an infinite sleep
  *                        state.
@@ -387,11 +387,11 @@ static inline thread_t *chThdStartI(thread_t *tp) {
  *
  * @sclass
  */
-static inline void chThdSleepS(systime_t time) {
+static inline void chThdSleepS(sysinterval_t ticks) {
 
-  chDbgCheck(time != TIME_IMMEDIATE);
+  chDbgCheck(ticks != TIME_IMMEDIATE);
 
-  (void) chSchGoSleepTimeoutS(CH_STATE_SLEEPING, time);
+  (void) chSchGoSleepTimeoutS(CH_STATE_SLEEPING, ticks);
 }
 
 /**

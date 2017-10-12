@@ -646,7 +646,7 @@ void chThdTerminate(thread_t *tp) {
  *
  * @api
  */
-void chThdSleep(systime_t time) {
+void chThdSleep(sysinterval_t time) {
 
   chSysLock();
   chThdSleepS(time);
@@ -667,11 +667,12 @@ void chThdSleep(systime_t time) {
  * @api
  */
 void chThdSleepUntil(systime_t time) {
+  sysinterval_t interval;
 
   chSysLock();
-  time -= chVTGetSystemTimeX();
-  if (time > (systime_t)0) {
-    chThdSleepS(time);
+  interval = chTimeSubtractX(time, chVTGetSystemTimeX());
+  if (interval > (sysinterval_t)0) {
+    chThdSleepS(interval);
   }
   chSysUnlock();
 }
@@ -695,8 +696,8 @@ systime_t chThdSleepUntilWindowed(systime_t prev, systime_t next) {
 
   chSysLock();
   time = chVTGetSystemTimeX();
-  if (chVTIsTimeWithinX(time, prev, next)) {
-    chThdSleepS(next - time);
+  if (chTimeIsInRangeX(time, prev, next)) {
+    chThdSleepS(chTimeSubtractX(next, time));
   }
   chSysUnlock();
 
@@ -758,7 +759,7 @@ msg_t chThdSuspendS(thread_reference_t *trp) {
  *
  * @sclass
  */
-msg_t chThdSuspendTimeoutS(thread_reference_t *trp, systime_t timeout) {
+msg_t chThdSuspendTimeoutS(thread_reference_t *trp, sysinterval_t timeout) {
   thread_t *tp = chThdGetSelfX();
 
   chDbgAssert(*trp == NULL, "not NULL");
@@ -858,7 +859,7 @@ void chThdResume(thread_reference_t *trp, msg_t msg) {
  *
  * @sclass
  */
-msg_t chThdEnqueueTimeoutS(threads_queue_t *tqp, systime_t timeout) {
+msg_t chThdEnqueueTimeoutS(threads_queue_t *tqp, sysinterval_t timeout) {
 
   if (TIME_IMMEDIATE == timeout) {
     return MSG_TIMEOUT;

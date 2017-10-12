@@ -476,7 +476,7 @@ extern "C" {
   thread_t *chSchReadyI(thread_t *tp);
   thread_t *chSchReadyAheadI(thread_t *tp);
   void chSchGoSleepS(tstate_t newstate);
-  msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time);
+  msg_t chSchGoSleepTimeoutS(tstate_t newstate, sysinterval_t timeout);
   void chSchWakeupS(thread_t *ntp, msg_t msg);
   void chSchRescheduleS(void);
   bool chSchIsPreemptionRequired(void);

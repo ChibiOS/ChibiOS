@@ -360,7 +360,7 @@ static void wakeup(void *p) {
  *          @ref thread_states are defined into @p threads.h.
  *
  * @param[in] newstate  the new thread state
- * @param[in] time      the number of ticks before the operation timeouts, the
+ * @param[in] timeout   the number of ticks before the operation timeouts, the
  *                      special values are handled as follow:
  *                      - @a TIME_INFINITE the thread enters an infinite sleep
  *                        state, this is equivalent to invoking
@@ -372,14 +372,14 @@ static void wakeup(void *p) {
  *
  * @sclass
  */
-msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
+msg_t chSchGoSleepTimeoutS(tstate_t newstate, sysinterval_t timeout) {
 
   chDbgCheckClassS();
 
-  if (TIME_INFINITE != time) {
+  if (TIME_INFINITE != timeout) {
     virtual_timer_t vt;
 
-    chVTDoSetI(&vt, time, wakeup, currp);
+    chVTDoSetI(&vt, timeout, wakeup, currp);
     chSchGoSleepS(newstate);
     if (chVTIsArmedI(&vt)) {
       chVTDoResetI(&vt);

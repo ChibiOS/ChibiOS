@@ -321,7 +321,7 @@ typedef struct {
  *
  * @api
  */
-#define OSAL_MS2ST(msec) MS2ST(msec)
+#define OSAL_MS2ST(msec) TIME_MS2I(msec)
 
 /**
  * @brief   Microseconds to system ticks.
@@ -333,7 +333,7 @@ typedef struct {
  *
  * @api
  */
-#define OSAL_US2ST(usec) US2ST(usec)
+#define OSAL_US2ST(usec) TIME_US2I(usec)
 /** @} */
 
 /**
