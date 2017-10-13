@@ -57,7 +57,7 @@ void output_single_cycle(const uint16_t low, const uint16_t high) {
   palClearPad(IOPORT4, 4);
 }
 
-static WORKING_AREA(waThread1, 64);
+static THD_WORKING_AREA(waThread1, 64);
 static THD_FUNCTION(Thread1, arg) {
 
   BaseSequentialStream *serp = (BaseSequentialStream *) &SD1;
@@ -73,7 +73,7 @@ static THD_FUNCTION(Thread1, arg) {
   }
 }
 
-static WORKING_AREA(waThread2, 64);
+static THD_WORKING_AREA(waThread2, 64);
 static THD_FUNCTION(Thread2, arg) {
 
   BaseSequentialStream *serp = (BaseSequentialStream *) &SD1;
@@ -115,26 +115,26 @@ int main(void) {
     BaseSequentialStream *serp = (BaseSequentialStream *) &SD1;
 
     chprintf(serp, "Testing 50 duty cycle\r\n");
-    icuEnable(&ICUD3);
+    icuStartCapture(&ICUD3);
     output_single_cycle(500, 500);
-    icuDisable(&ICUD3);
+    icuStopCapture(&ICUD3);
     chEvtWaitAny((eventmask_t) 3);
 
     chprintf(serp, "Testing 25 duty cycle\r\n");
-    icuEnable(&ICUD3);
+    icuStartCapture(&ICUD3);
     output_single_cycle(250, 750);
-    icuDisable(&ICUD3);
+    icuStopCapture(&ICUD3);
     chEvtWaitAny((eventmask_t) 3);
 
     chprintf(serp, "Testing 75 duty cycle\r\n");
-    icuEnable(&ICUD3);
+    icuStartCapture(&ICUD3);
     output_single_cycle(750, 250);
-    icuDisable(&ICUD3);
+    icuStopCapture(&ICUD3);
     chEvtWaitAny((eventmask_t) 3);
 
     chprintf(serp, "Testing overflow\r\n");
-    icuEnable(&ICUD3);
+    icuStartCapture(&ICUD3);
     chEvtWaitAny((eventmask_t) 3);
-    icuDisable(&ICUD3);
+    icuStopCapture(&ICUD3);
   }
 }
