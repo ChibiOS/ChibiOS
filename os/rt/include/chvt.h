@@ -395,19 +395,26 @@ static inline void chVTDoTickI(void) {
   systime_t now;
   sysinterval_t delta;
 
-  /* First timer to be processed.*/
+  /* Looping through timers.*/
   vtp = ch.vtlist.next;
-  now = chVTGetSystemTimeX();
-
-  /* All timers within the time window are triggered and removed,
-     note that the loop is stopped by the timers header having
-     "ch.vtlist.vt_delta == (sysinterval_t)-1" which is greater than
-     all deltas.*/
-  while (vtp->delta <= chTimeDiffX(ch.vtlist.lasttime, now)) {
+  while (true) {
     vtfunc_t fn;
 
+    /* The loop is stopped by the timers header having
+       "ch.vtlist.vt_delta == (sysinterval_t)-1" which
+       is greater than all deltas.*/
+    now = chVTGetSystemTimeX();
+    if (vtp->delta > chTimeDiffX(ch.vtlist.lasttime, now)) {
+      break;
+    }
+
+#if 0
     /* The "last time" becomes this timer's expiration time.*/
     ch.vtlist.lasttime = chTimeAddX(ch.vtlist.lasttime, vtp->delta);
+#else
+    /* The "last time" is set to the current time.*/
+    ch.vtlist.lasttime = now;
+#endif
 
     vtp->next->prev = (virtual_timer_t *)&ch.vtlist;
     ch.vtlist.next = vtp->next;
@@ -431,10 +438,8 @@ static inline void chVTDoTickI(void) {
        of the list.*/
     chSysLockFromISR();
 
-    /* Next element in the list, the current time could have advanced so
-       recalculating the time window.*/
+    /* Next element in the list.*/
     vtp = ch.vtlist.next;
-    now = chVTGetSystemTimeX();
   }
 
   /* if the list is empty, nothing else to do.*/

@@ -125,6 +125,13 @@ void chVTDoSetI(virtual_timer_t *vtp, sysinterval_t delay,
       vtp->prev = (virtual_timer_t *)&ch.vtlist;
       vtp->delta = delay;
 
+#if CH_CFG_INTERVALS_SIZE > CH_CFG_ST_RESOLUTION
+      /* The delta could be too large for the physical timer to handle.*/
+      if (delay > (sysinterval_t)TIME_MAX_SYSTIME) {
+        delay = (sysinterval_t)TIME_MAX_SYSTIME;
+      }
+#endif
+
       /* Being the first element in the list the alarm timer is started.*/
       port_timer_start_alarm(chTimeAddX(ch.vtlist.lasttime, delay));
 
