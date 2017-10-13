@@ -398,48 +398,48 @@ static inline void chVTDoTickI(void) {
   /* Looping through timers.*/
   vtp = ch.vtlist.next;
   while (true) {
-    vtfunc_t fn;
+    sysinterval_t nowdelta;
 
-    /* The loop is stopped by the timers header having
-       "ch.vtlist.vt_delta == (sysinterval_t)-1" which
-       is greater than all deltas.*/
+    /* Getting the system time as reference.*/
     now = chVTGetSystemTimeX();
-    if (vtp->delta > chTimeDiffX(ch.vtlist.lasttime, now)) {
+    nowdelta = chTimeDiffX(ch.vtlist.lasttime, now);
+
+    /* The list scan is limited by the timers header having
+       "ch.vtlist.vt_delta == (sysinterval_t)-1" which is
+       greater than all deltas.*/
+    if (vtp->delta > nowdelta) {
       break;
     }
 
-#if 0
-    /* The "last time" becomes this timer's expiration time.*/
-    ch.vtlist.lasttime = chTimeAddX(ch.vtlist.lasttime, vtp->delta);
-#else
+    /* Consuming all timers between "vtp->lasttime" and now.*/
+    do {
+      vtfunc_t fn;
+
+      /* Recalculated delta.*/
+      nowdelta = nowdelta - vtp->delta;
+
+      vtp->next->prev = (virtual_timer_t *)&ch.vtlist;
+      ch.vtlist.next = vtp->next;
+      fn = vtp->func;
+      vtp->func = NULL;
+
+      /* if the list becomes empty then the timer is stopped.*/
+      if (ch.vtlist.next == (virtual_timer_t *)&ch.vtlist) {
+        port_timer_stop_alarm();
+      }
+
+      /* The callback is invoked outside the kernel critical zone.*/
+      chSysUnlockFromISR();
+      fn(vtp->par);
+      chSysLockFromISR();
+
+      /* Next element in the list.*/
+      vtp = ch.vtlist.next;
+    }
+    while (vtp->delta <= nowdelta);
+
     /* The "last time" is set to the current time.*/
     ch.vtlist.lasttime = now;
-#endif
-
-    vtp->next->prev = (virtual_timer_t *)&ch.vtlist;
-    ch.vtlist.next = vtp->next;
-    fn = vtp->func;
-    vtp->func = NULL;
-
-    /* if the list becomes empty then the timer is stopped.*/
-    if (ch.vtlist.next == (virtual_timer_t *)&ch.vtlist) {
-      port_timer_stop_alarm();
-    }
-
-    /* Leaving the system critical zone in order to execute the callback
-       and in order to give a preemption chance to higher priority
-       interrupts.*/
-    chSysUnlockFromISR();
-
-    /* The callback is invoked outside the kernel critical zone.*/
-    fn(vtp->par);
-
-    /* Re-entering the critical zone in order to continue the exploration
-       of the list.*/
-    chSysLockFromISR();
-
-    /* Next element in the list.*/
-    vtp = ch.vtlist.next;
   }
 
   /* if the list is empty, nothing else to do.*/
