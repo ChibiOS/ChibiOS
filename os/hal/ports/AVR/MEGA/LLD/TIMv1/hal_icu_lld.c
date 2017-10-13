@@ -112,7 +112,7 @@ static inline void handle_capture_isr(ICUDriver *icup,
   }
 }
 
-static uint8_t index(ICUDriver *icup) {
+static uint8_t tmrIndex(ICUDriver *icup) {
 
   uint8_t index = 0;
 #if AVR_ICU_USE_TIM1 || defined(__DOXYGEN__)
@@ -131,6 +131,7 @@ static uint8_t index(ICUDriver *icup) {
   if (icup == &ICUD5) return index;
   else index++;
 #endif
+  return 255;
 }
 
 /*===========================================================================*/
@@ -236,7 +237,7 @@ void icu_lld_init(void) {
 void icu_lld_start(ICUDriver *icup) {
 
   if (icup->state == ICU_STOP) {
-    uint8_t i = index(icup);
+    uint8_t i = tmrIndex(icup);
     /* Normal waveform generation (counts from 0 to 0xFFFF) */
     *regs_table[i].tccra &= ~((1 << WGM11) | (1 << WGM10));
     *regs_table[i].tccrb &= ~((1 << WGM13) | (1 << WGM12));
@@ -277,9 +278,9 @@ void icu_lld_stop(ICUDriver *icup) {
  *
  * @notapi
  */
-void icu_lld_enable(ICUDriver *icup) {
+void icu_lld_start_capture(ICUDriver *icup) {
 
-  uint8_t i = index(icup);
+  uint8_t i = tmrIndex(icup);
   icup->width = icup->period = 0;
   *regs_table[i].tcnt = 0;
   *regs_table[i].timsk |= (1 << ICIE1);
@@ -294,9 +295,9 @@ void icu_lld_enable(ICUDriver *icup) {
  *
  * @notapi
  */
-void icu_lld_disable(ICUDriver *icup) {
+void icu_lld_stop_capture(ICUDriver *icup) {
 
-  uint8_t i = index(icup);
+  uint8_t i = tmrIndex(icup);
   *regs_table[i].timsk &= ~((1 << ICIE1) | (1 << TOIE1));
 }
 
