@@ -29,9 +29,9 @@ static THD_FUNCTION(Thread1, arg) {
   chRegSetThreadName("blinker");
   while (true) {
     palSetLine(LINE_ARD_D13);
-    chThdSleepMilliseconds(500);
+    chThdSleepMilliseconds(1000);
     palClearLine(LINE_ARD_D13);
-    chThdSleepMilliseconds(500);
+    chThdSleepMilliseconds(1000);
   }
 }
 
@@ -64,7 +64,7 @@ int main(void) {
   /*
    * Creates the example thread.
    */
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO+1, Thread1, NULL);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
@@ -73,6 +73,6 @@ int main(void) {
   while (true) {
 //    if (palReadLine(LINE_BUTTON_USER))
 //      test_execute((BaseSequentialStream *)&SD1);
-    chThdSleepMilliseconds(500);
+    chThdSleepMilliseconds(2000);
   }
 }

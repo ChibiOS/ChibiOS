@@ -393,12 +393,11 @@ static inline void chVTDoTickI(void) {
 #else /* CH_CFG_ST_TIMEDELTA > 0 */
   virtual_timer_t *vtp;
   systime_t now;
-  sysinterval_t delta;
+  sysinterval_t delta, nowdelta;
 
   /* Looping through timers.*/
   vtp = ch.vtlist.next;
   while (true) {
-    sysinterval_t nowdelta;
 
     /* Getting the system time as reference.*/
     now = chVTGetSystemTimeX();
@@ -407,7 +406,7 @@ static inline void chVTDoTickI(void) {
     /* The list scan is limited by the timers header having
        "ch.vtlist.vt_delta == (sysinterval_t)-1" which is
        greater than all deltas.*/
-    if (vtp->delta > nowdelta) {
+    if (nowdelta < vtp->delta) {
       break;
     }
 
@@ -415,8 +414,9 @@ static inline void chVTDoTickI(void) {
     do {
       vtfunc_t fn;
 
-      /* Recalculated delta.*/
-      nowdelta = nowdelta - vtp->delta;
+      /* The "last time" becomes this timer's expiration time.*/
+      ch.vtlist.lasttime += vtp->delta;
+      nowdelta -= vtp->delta;
 
       vtp->next->prev = (virtual_timer_t *)&ch.vtlist;
       ch.vtlist.next = vtp->next;
@@ -437,15 +437,17 @@ static inline void chVTDoTickI(void) {
       vtp = ch.vtlist.next;
     }
     while (vtp->delta <= nowdelta);
-
-    /* The "last time" is set to the current time.*/
-    ch.vtlist.lasttime = now;
   }
 
   /* if the list is empty, nothing else to do.*/
   if (ch.vtlist.next == (virtual_timer_t *)&ch.vtlist) {
     return;
   }
+
+  /* The "unprocessed nowdelta" time slice is added to "last time"
+     and subtracted to next timer's delta.*/
+  ch.vtlist.lasttime += nowdelta;
+  ch.vtlist.next->delta -= nowdelta;
 
   /* Recalculating the next alarm time.*/
   delta = chTimeDiffX(now, chTimeAddX(ch.vtlist.lasttime, vtp->delta));
@@ -454,7 +456,7 @@ static inline void chVTDoTickI(void) {
   }
 #if CH_CFG_INTERVALS_SIZE > CH_CFG_ST_RESOLUTION
   /* The delta could be too large for the physical timer to handle.*/
-  if (delta > (sysinterval_t)TIME_MAX_SYSTIME) {
+  else if (delta > (sysinterval_t)TIME_MAX_SYSTIME) {
     delta = (sysinterval_t)TIME_MAX_SYSTIME;
   }
 #endif

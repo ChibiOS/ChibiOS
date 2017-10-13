@@ -488,7 +488,7 @@ static inline systime_t chTimeAddX(systime_t systime,
  */
 static inline sysinterval_t chTimeDiffX(systime_t start, systime_t end) {
 
-  return (sysinterval_t)(end - start);
+  return (sysinterval_t)((systime_t)(end - start));
 }
 
 
@@ -509,7 +509,7 @@ static inline bool chTimeIsInRangeX(systime_t time,
                                     systime_t start,
                                     systime_t end) {
 
-  return (bool)((systime_t)(time - start) < (systime_t)(end - start));
+  return (bool)((time - start) < (end - start));
 }
 
 /** @} */
