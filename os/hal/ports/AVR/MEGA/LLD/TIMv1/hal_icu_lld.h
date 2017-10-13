@@ -157,6 +157,45 @@ struct ICUDriver {
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
+
+/**
+ * @brief   Returns the width of the latest pulse.
+ * @details The pulse width is defined as number of ticks between the start
+ *          edge and the stop edge.
+ *
+ * @param[in] icup      pointer to the @p ICUDriver object
+ * @return              The number of ticks.
+ *
+ * @notapi
+ */
+/* #define icu_lld_get_width(icup) 1 */
+
+/**
+ * @brief   Returns the width of the latest cycle.
+ * @details The cycle width is defined as number of ticks between a start
+ *          edge and the next start edge.
+ *
+ * @param[in] icup      pointer to the @p ICUDriver object
+ * @return              The number of ticks.
+ *
+ * @notapi
+ */
+/* #define icu_lld_get_period(icup) 1 */
+
+/**
+ * @brief   Check on notifications status.
+ *
+ * @param[in] icup      pointer to the @p ICUDriver object
+ * @return              The notifications status.
+ * @retval false        if notifications are not enabled.
+ * @retval true         if notifications are enabled.
+ *
+ * @notapi
+ */
+/* TODO: The following macros must be implement. */
+#define icu_lld_are_notifications_enabled(icup)                             \
+  (bool)(FALSE)
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -177,11 +216,15 @@ extern ICUDriver ICUD5;
 #ifdef __cplusplus
 extern "C" {
 #endif
+
   void icu_lld_init(void);
   void icu_lld_start(ICUDriver *icup);
   void icu_lld_stop(ICUDriver *icup);
-  void icu_lld_enable(ICUDriver *icup);
-  void icu_lld_disable(ICUDriver *icup);
+  void icu_lld_start_capture(ICUDriver *icup);
+  void icu_lld_stop_capture(ICUDriver *icup);
+  bool icu_lld_wait_capture(ICUDriver *icup);           /* TODO: Implement. */
+  void icu_lld_enable_notifications(ICUDriver *icup);   /* TODO: Implement. */
+  void icu_lld_disable_notifications(ICUDriver *icup);  /* TODO: Implement. */
   icucnt_t icu_lld_get_width(ICUDriver *icup);
   icucnt_t icu_lld_get_period(ICUDriver *icup);
 #ifdef __cplusplus
