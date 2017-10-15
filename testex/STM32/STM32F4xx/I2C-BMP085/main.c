@@ -31,9 +31,6 @@
 /* Variables and Driver configuration for the demo.                         */
 /*==========================================================================*/
 
-/* Use to write to the serial driver                                        */
-//static BaseSequentialStream *chp = (BaseSequentialStream*) &SD2;
-
 /* BMP085 Driver: This object represent an BMP085 instance.                 */
 static BMP085Driver BMP085D1;
 
@@ -55,29 +52,20 @@ static const I2CConfig i2cConfig = {
 };
 
 /**
- * @brief BMP085 Barometer configuration structure.
- */
-static const BMP085BaroConfig bmp085BaroConfig = {
-  BMP085_BARO_CT_LOW,   /* Pressure conversion time.                        */
-  BMP085_BARO_MODE_LOW, /* BMP085 Mode.                                     */
-  BMP085_BARO_OSS_0     /* Oversempling setting.                            */
-};
-
-/**
- * @brief BMP085 Thermometeer configuration structure.
- */
-static const BMP085ThermoConfig bmp085ThermoConfig = {
-  BMP085_THERMO_CT_LOW  /* Temperature conversion time                      */
-};
-
-/**
  * @brief BMP085 configuration structure.
  */
 static const BMP085Config bmp085Config = {
   &I2CD1,               /* I2C Driver pointer.                              */
   &i2cConfig,           /* I2C Driver configuration.                        */
-  &bmp085BaroConfig,    /* BMP085 Baromether configuration.                 */
-  &bmp085ThermoConfig   /* BMP085 Thermometer configuration.                */
+  NULL,                 /* Sensibility.                                     */
+  NULL,                 /* bias.                                            */
+  NULL,                 /* Output data rate.                                */
+#if BMP085_USE_ADVANCED || defined(__DOXYGEN__)
+  BMP085_BARO_CT_LOW,   /* Pressure conversion time.                        */
+  BMP085_BARO_MODE_LOW, /* BMP085 Mode.                                     */
+  BMP085_BARO_OSS_0,    /* Oversempling setting.                            */
+  BMP085_THERMO_CT_LOW, /* Temperature conversion time                      */
+#endif
 };
 
 /*==========================================================================*/
