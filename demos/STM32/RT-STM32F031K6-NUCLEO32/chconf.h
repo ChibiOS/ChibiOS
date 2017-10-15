@@ -302,7 +302,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#define CH_CFG_USE_OBJ_FIFOS                TRUE
+#define CH_CFG_USE_OBJ_FIFOS                FALSE
 
 /**
  * @brief   Dynamic Threads APIs.
@@ -313,7 +313,7 @@
  * @note    Requires @p CH_CFG_USE_WAITEXIT.
  * @note    Requires @p CH_CFG_USE_HEAP and/or @p CH_CFG_USE_MEMPOOLS.
  */
-#define CH_CFG_USE_DYNAMIC                  TRUE
+#define CH_CFG_USE_DYNAMIC                  FALSE
 
 /** @} */
 
@@ -331,7 +331,7 @@
  *
  * @note    The default is @p FALSE.
  */
-#define CH_CFG_USE_FACTORY                  TRUE
+#define CH_CFG_USE_FACTORY                  FALSE
 
 /**
  * @brief   Maximum length for object names.
