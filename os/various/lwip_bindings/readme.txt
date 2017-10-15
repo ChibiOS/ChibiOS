@@ -1,4 +1,4 @@
-This directory contains the ChibiOS/RT "official" bindings with the lwIP
+This directory contains the ChibiOS "official" bindings with the lwIP
 TCP/IP stack: http://savannah.nongnu.org/projects/lwip
 
 In order to use lwIP within ChibiOS/RT project, unzip lwIP under
