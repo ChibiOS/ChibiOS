@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32h743xx.h
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    21-April-2017
+  * @version V1.1.0
+  * @date    31-August-2017
   * @brief   CMSIS STM32H743xx Device Peripheral Access Layer Header File.
   *
   *          This file contains:
@@ -1846,7 +1846,9 @@ typedef struct
   uint32_t Reserved30[2];             /*!< Reserved                                     030h */
   __IO uint32_t GCCFG;                /*!< General Purpose IO Register                  038h */
   __IO uint32_t CID;                  /*!< User ID Register                             03Ch */
-  uint32_t  Reserved5[3];             /*!< Reserved                                040h-048h */
+  __IO uint32_t GSNPSID;              /* USB_OTG core ID                                 040h*/
+  __IO uint32_t GHWCFG1;              /* User HW config1                                 044h*/
+  __IO uint32_t GHWCFG2;              /* User HW config2                                 048h*/
   __IO uint32_t GHWCFG3;              /*!< User HW config3                              04Ch */
   uint32_t  Reserved6;                /*!< Reserved                                     050h */ 
   __IO uint32_t GLPMCFG;              /*!< LPM Register                                 054h */
@@ -1966,11 +1968,14 @@ typedef struct
 #define D3_SRAM_BASE              ((uint32_t)0x38000000) /*!< Base address of : Backup SRAM(64 KB) over AXI->AHB Bridge                               */ 
 
 #define PERIPH_BASE               ((uint32_t)0x40000000) /*!< Base address of : AHB/ABP Peripherals                                                   */
-#define QSPI_BASE                 ((uint32_t)0x90000000) /*!< Base address of : QSPI memories  accessible over AXI                                    */
+#define QSPI_BASE                 ((uint32_t)0x90000000) /*!< Base address of : QSPI memories accessible over AXI                                     */
 
 #define FLASH_BANK1_BASE          ((uint32_t)0x08000000) /*!< Base address of : Flash Bank1 accessible over AXI                                       */ 
-#define FLASH_BANK2_BASE          ((uint32_t)0x08100000) /*!< Base address of : Flash Bank2  accessible over AXI                                      */ 
+#define FLASH_BANK2_BASE          ((uint32_t)0x08100000) /*!< Base address of : Flash Bank2 accessible over AXI                                       */ 
+#define FLASH_END                 ((uint32_t)0x081FFFFF) /*!< FLASH end address                                                                       */
 
+/* Legacy define */
+#define FLASH_BASE                FLASH_BANK1_BASE
 
 
 /*!< Peripheral memory map */
@@ -13681,9 +13686,6 @@ typedef struct
 #define PWR_CR3_USB33DEN_Pos           (24U)                                   
 #define PWR_CR3_USB33DEN_Msk           (0x1U << PWR_CR3_USB33DEN_Pos)          /*!< 0x01000000 */
 #define PWR_CR3_USB33DEN               PWR_CR3_USB33DEN_Msk                    /*!< VDD33_USB voltage level detector enable */
-#define PWR_CR3_SDEXTRDY_Pos           (16U)                                   
-#define PWR_CR3_SDEXTRDY_Msk           (0x1U << PWR_CR3_SDEXTRDY_Pos)          /*!< 0x00010000 */
-#define PWR_CR3_SDEXTRDY               PWR_CR3_SDEXTRDY_Msk                    /*!< Step Down converter External supply ready */
 #define PWR_CR3_VBRS_Pos               (9U)                                    
 #define PWR_CR3_VBRS_Msk               (0x1U << PWR_CR3_VBRS_Pos)              /*!< 0x00000200 */
 #define PWR_CR3_VBRS                   PWR_CR3_VBRS_Msk                        /*!< VBAT charging resistor selection */
@@ -14713,9 +14715,6 @@ typedef struct
 #define RCC_AHB3ENR_JPGDECEN_Pos               (5U)                            
 #define RCC_AHB3ENR_JPGDECEN_Msk               (0x1U << RCC_AHB3ENR_JPGDECEN_Pos) /*!< 0x00000020 */
 #define RCC_AHB3ENR_JPGDECEN                   RCC_AHB3ENR_JPGDECEN_Msk        
-#define RCC_AHB3ENR_FLASHEN_Pos                (8U)                            
-#define RCC_AHB3ENR_FLASHEN_Msk                (0x1U << RCC_AHB3ENR_FLASHEN_Pos) /*!< 0x00000100 */
-#define RCC_AHB3ENR_FLASHEN                    RCC_AHB3ENR_FLASHEN_Msk         
 #define RCC_AHB3ENR_FMCEN_Pos                  (12U)                           
 #define RCC_AHB3ENR_FMCEN_Msk                  (0x1U << RCC_AHB3ENR_FMCEN_Pos) /*!< 0x00001000 */
 #define RCC_AHB3ENR_FMCEN                      RCC_AHB3ENR_FMCEN_Msk           
@@ -14774,8 +14773,8 @@ typedef struct
 #define RCC_AHB2ENR_SDMMC2EN_Pos               (9U)                            
 #define RCC_AHB2ENR_SDMMC2EN_Msk               (0x1U << RCC_AHB2ENR_SDMMC2EN_Pos) /*!< 0x00000200 */
 #define RCC_AHB2ENR_SDMMC2EN                   RCC_AHB2ENR_SDMMC2EN_Msk        
-#define RCC_AHB2ENR_D2SRAM1EN_Pos              (30U)                           
-#define RCC_AHB2ENR_D2SRAM1EN_Msk              (0x1U << RCC_AHB2ENR_D2SRAM1EN_Pos) /*!< 0x40000000 */
+#define RCC_AHB2ENR_D2SRAM1EN_Pos              (29U)                           
+#define RCC_AHB2ENR_D2SRAM1EN_Msk              (0x1U << RCC_AHB2ENR_D2SRAM1EN_Pos) /*!< 0x20000000 */
 #define RCC_AHB2ENR_D2SRAM1EN                  RCC_AHB2ENR_D2SRAM1EN_Msk       
 #define RCC_AHB2ENR_D2SRAM2EN_Pos              (30U)                           
 #define RCC_AHB2ENR_D2SRAM2EN_Msk              (0x1U << RCC_AHB2ENR_D2SRAM2EN_Pos) /*!< 0x40000000 */
@@ -15699,7 +15698,7 @@ typedef struct
 #define RCC_APB4LPENR_SAI4LPEN_Pos             (21U)                           
 #define RCC_APB4LPENR_SAI4LPEN_Msk             (0x1U << RCC_APB4LPENR_SAI4LPEN_Pos) /*!< 0x00200000 */
 #define RCC_APB4LPENR_SAI4LPEN                 RCC_APB4LPENR_SAI4LPEN_Msk      
-         
+
 /********************  Bit definition for RCC_RSR register  *******************/
 #define RCC_RSR_RMVF_Pos                       (16U)                           
 #define RCC_RSR_RMVF_Msk                       (0x1U << RCC_RSR_RMVF_Pos)      /*!< 0x00010000 */
@@ -23862,49 +23861,6 @@ typedef struct
 #define USB_OTG_FRMNUM_2                         (0x4U << USB_OTG_FRMNUM_Pos)  /*!< 0x00800000 */
 #define USB_OTG_FRMNUM_3                         (0x8U << USB_OTG_FRMNUM_Pos)  /*!< 0x01000000 */
 
-/********************  Bit definition for OTG register  ********************/
-
-#define USB_OTG_CHNUM_Pos                        (0U)                          
-#define USB_OTG_CHNUM_Msk                        (0xFU << USB_OTG_CHNUM_Pos)   /*!< 0x0000000F */
-#define USB_OTG_CHNUM                            USB_OTG_CHNUM_Msk             /*!< Channel number */
-#define USB_OTG_CHNUM_0                          (0x1U << USB_OTG_CHNUM_Pos)   /*!< 0x00000001 */
-#define USB_OTG_CHNUM_1                          (0x2U << USB_OTG_CHNUM_Pos)   /*!< 0x00000002 */
-#define USB_OTG_CHNUM_2                          (0x4U << USB_OTG_CHNUM_Pos)   /*!< 0x00000004 */
-#define USB_OTG_CHNUM_3                          (0x8U << USB_OTG_CHNUM_Pos)   /*!< 0x00000008 */
-#define USB_OTG_BCNT_Pos                         (4U)                          
-#define USB_OTG_BCNT_Msk                         (0x7FFU << USB_OTG_BCNT_Pos)  /*!< 0x00007FF0 */
-#define USB_OTG_BCNT                             USB_OTG_BCNT_Msk              /*!< Byte count */
-
-#define USB_OTG_DPID_Pos                         (15U)                         
-#define USB_OTG_DPID_Msk                         (0x3U << USB_OTG_DPID_Pos)    /*!< 0x00018000 */
-#define USB_OTG_DPID                             USB_OTG_DPID_Msk              /*!< Data PID */
-#define USB_OTG_DPID_0                           (0x1U << USB_OTG_DPID_Pos)    /*!< 0x00008000 */
-#define USB_OTG_DPID_1                           (0x2U << USB_OTG_DPID_Pos)    /*!< 0x00010000 */
-
-#define USB_OTG_PKTSTS_Pos                       (17U)                         
-#define USB_OTG_PKTSTS_Msk                       (0xFU << USB_OTG_PKTSTS_Pos)  /*!< 0x001E0000 */
-#define USB_OTG_PKTSTS                           USB_OTG_PKTSTS_Msk            /*!< Packet status */
-#define USB_OTG_PKTSTS_0                         (0x1U << USB_OTG_PKTSTS_Pos)  /*!< 0x00020000 */
-#define USB_OTG_PKTSTS_1                         (0x2U << USB_OTG_PKTSTS_Pos)  /*!< 0x00040000 */
-#define USB_OTG_PKTSTS_2                         (0x4U << USB_OTG_PKTSTS_Pos)  /*!< 0x00080000 */
-#define USB_OTG_PKTSTS_3                         (0x8U << USB_OTG_PKTSTS_Pos)  /*!< 0x00100000 */
-
-#define USB_OTG_EPNUM_Pos                        (0U)                          
-#define USB_OTG_EPNUM_Msk                        (0xFU << USB_OTG_EPNUM_Pos)   /*!< 0x0000000F */
-#define USB_OTG_EPNUM                            USB_OTG_EPNUM_Msk             /*!< Endpoint number */
-#define USB_OTG_EPNUM_0                          (0x1U << USB_OTG_EPNUM_Pos)   /*!< 0x00000001 */
-#define USB_OTG_EPNUM_1                          (0x2U << USB_OTG_EPNUM_Pos)   /*!< 0x00000002 */
-#define USB_OTG_EPNUM_2                          (0x4U << USB_OTG_EPNUM_Pos)   /*!< 0x00000004 */
-#define USB_OTG_EPNUM_3                          (0x8U << USB_OTG_EPNUM_Pos)   /*!< 0x00000008 */
-
-#define USB_OTG_FRMNUM_Pos                       (21U)                         
-#define USB_OTG_FRMNUM_Msk                       (0xFU << USB_OTG_FRMNUM_Pos)  /*!< 0x01E00000 */
-#define USB_OTG_FRMNUM                           USB_OTG_FRMNUM_Msk            /*!< Frame number */
-#define USB_OTG_FRMNUM_0                         (0x1U << USB_OTG_FRMNUM_Pos)  /*!< 0x00200000 */
-#define USB_OTG_FRMNUM_1                         (0x2U << USB_OTG_FRMNUM_Pos)  /*!< 0x00400000 */
-#define USB_OTG_FRMNUM_2                         (0x4U << USB_OTG_FRMNUM_Pos)  /*!< 0x00800000 */
-#define USB_OTG_FRMNUM_3                         (0x8U << USB_OTG_FRMNUM_Pos)  /*!< 0x01000000 */
-
 /********************  Bit definition forUSB_OTG_GRXFSIZ register  ********************/
 #define USB_OTG_GRXFSIZ_RXFD_Pos                 (0U)                          
 #define USB_OTG_GRXFSIZ_RXFD_Msk                 (0xFFFFU << USB_OTG_GRXFSIZ_RXFD_Pos) /*!< 0x0000FFFF */
@@ -24584,6 +24540,9 @@ typedef struct
 #define USB_OTG_DOEPINT_OTEPDIS_Pos              (4U)                          
 #define USB_OTG_DOEPINT_OTEPDIS_Msk              (0x1U << USB_OTG_DOEPINT_OTEPDIS_Pos) /*!< 0x00000010 */
 #define USB_OTG_DOEPINT_OTEPDIS                  USB_OTG_DOEPINT_OTEPDIS_Msk   /*!< OUT token received when endpoint disabled */
+#define USB_OTG_DOEPINT_OTEPSPR_Pos              (5U)                          
+#define USB_OTG_DOEPINT_OTEPSPR_Msk              (0x1U << USB_OTG_DOEPINT_OTEPSPR_Pos) /*!< 0x00000020 */
+#define USB_OTG_DOEPINT_OTEPSPR                  USB_OTG_DOEPINT_OTEPSPR_Msk   /*!< OUT Status Phase Received interrupt */
 #define USB_OTG_DOEPINT_B2BSTUP_Pos              (6U)                          
 #define USB_OTG_DOEPINT_B2BSTUP_Msk              (0x1U << USB_OTG_DOEPINT_B2BSTUP_Pos) /*!< 0x00000040 */
 #define USB_OTG_DOEPINT_B2BSTUP                  USB_OTG_DOEPINT_B2BSTUP_Msk   /*!< Back-to-back SETUP packets received */
@@ -25322,7 +25281,7 @@ typedef struct
 
 #define FLASH_SIZE                         0x200000  /* 2MB */
 #define FLASH_BANK_SIZE                    (FLASH_SIZE >> 1)   /* 1MB */
-    
+
 #define FLASH_SECTOR_SIZE 0x00020000 /* 128 KB */
 
 
