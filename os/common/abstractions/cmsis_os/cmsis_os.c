@@ -510,7 +510,7 @@ osStatus osMessagePut(osMessageQId queue_id,
     chSysUnlockFromISR();
   }
   else
-    msg = chMBPost((mailbox_t *)queue_id, (msg_t)info, timeout);
+    msg = chMBPostTimeout((mailbox_t *)queue_id, (msg_t)info, timeout);
 
   return msg == MSG_OK ? osOK : osEventTimeout;
 }
@@ -541,7 +541,7 @@ osEvent osMessageGet(osMessageQId queue_id,
     chSysUnlockFromISR();
   }
   else {
-    msg = chMBFetch((mailbox_t *)queue_id, (msg_t*)&event.value.v, timeout);
+    msg = chMBFetchTimeout((mailbox_t *)queue_id, (msg_t*)&event.value.v, timeout);
   }
 
   /* Returned event type.*/

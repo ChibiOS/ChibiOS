@@ -819,21 +819,21 @@ int32 OS_QueueGet(uint32 queue_id, void *data, uint32 size,
 
   /* Special time handling.*/
   if (timeout == OS_PEND) {
-    msgsts = chMBFetch(&oqp->mb, &msg, TIME_INFINITE);
+    msgsts = chMBFetchTimeout(&oqp->mb, &msg, TIME_INFINITE);
     if (msgsts < MSG_OK) {
       *size_copied = 0;
       return OS_ERROR;
     }
   }
   else if (timeout == OS_CHECK) {
-    msgsts = chMBFetch(&oqp->mb, &msg, TIME_IMMEDIATE);
+    msgsts = chMBFetchTimeout(&oqp->mb, &msg, TIME_IMMEDIATE);
     if (msgsts < MSG_OK) {
       *size_copied = 0;
       return OS_QUEUE_EMPTY;
     }
   }
   else {
-    msgsts = chMBFetch(&oqp->mb, &msg, (systime_t)timeout);
+    msgsts = chMBFetchTimeout(&oqp->mb, &msg, (systime_t)timeout);
     if (msgsts < MSG_OK) {
       *size_copied = 0;
       return OS_QUEUE_TIMEOUT;
@@ -901,7 +901,7 @@ int32 OS_QueuePut(uint32 queue_id, void *data, uint32 size, uint32 flags) {
   memcpy(omsg->buf, data, size);
 
   /* Posting the message.*/
-  msgsts = chMBPost(&oqp->mb, (msg_t)omsg, TIME_INFINITE);
+  msgsts = chMBPostTimeout(&oqp->mb, (msg_t)omsg, TIME_INFINITE);
   if (msgsts < MSG_OK) {
     return OS_ERROR;
   }

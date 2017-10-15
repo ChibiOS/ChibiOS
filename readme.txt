@@ -89,6 +89,10 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Updated STM32F1xx headers to 1.6, STM32F3xx to 1.9, STM32L0xx to 1.10,
+       STM32L4xx to 1.9, STM32H7xx to 1.1.
+- NEW: Updated CMSIS to 5.1.1, changed directories organization under
+       /os/ext/ARM/CMSIS to match the one in CMSIS, removed /os/ext/CMSIS.
 - NEW: Integrated lwIP 2.0.3 and improved lwIP bindings.
 - NEW: The chconf.h configuration files now are tagged with the version
        number for safety. The system rejects obsolete files during
