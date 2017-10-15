@@ -1655,7 +1655,7 @@ namespace chibios_rt {
      */
     msg_t post(T msg, systime_t time) {
 
-      return chMBPost(&mb, reinterpret_cast<msg_t>(msg), time);
+      return chMBPostTimeout(&mb, reinterpret_cast<msg_t>(msg), time);
     }
 
     /**
@@ -1678,7 +1678,7 @@ namespace chibios_rt {
      */
     msg_t postS(T msg, systime_t time) {
 
-      return chMBPostS(&mb, reinterpret_cast<msg_t>(msg), time);
+      return chMBPostTimeoutS(&mb, reinterpret_cast<msg_t>(msg), time);
     }
 
     /**
@@ -1719,7 +1719,7 @@ namespace chibios_rt {
      */
     msg_t postAhead(T msg, systime_t time) {
 
-      return chMBPostAhead(&mb, reinterpret_cast<msg_t>(msg), time);
+      return chMBPostAheadTimeout(&mb, reinterpret_cast<msg_t>(msg), time);
     }
 
     /**
@@ -1742,7 +1742,7 @@ namespace chibios_rt {
      */
     msg_t postAheadS(T msg, systime_t time) {
 
-      return chMBPostAheadS(&mb, reinterpret_cast<msg_t>(msg), time);
+      return chMBPostAheadTimeoutS(&mb, reinterpret_cast<msg_t>(msg), time);
     }
 
     /**
@@ -1783,7 +1783,7 @@ namespace chibios_rt {
      */
     msg_t fetch(T *msgp, systime_t time) {
 
-      return chMBFetch(&mb, reinterpret_cast<msg_t*>(msgp), time);
+      return chMBFetchTimeout(&mb, reinterpret_cast<msg_t*>(msgp), time);
     }
 
     /**
@@ -1806,7 +1806,7 @@ namespace chibios_rt {
      */
     msg_t fetchS(T *msgp, systime_t time) {
 
-      return chMBFetchS(&mb, reinterpret_cast<msg_t*>(msgp), time);
+      return chMBFetchTimeoutS(&mb, reinterpret_cast<msg_t*>(msgp), time);
     }
 
     /**
