@@ -45,7 +45,7 @@
 /**
  * @brief   BMP085 driver version string.
  */
-#define EX_BMP085_VERSION           "1.0.0"
+#define EX_BMP085_VERSION           "1.0.1"
 
 /**
  * @brief   BMP085 driver version major number.
@@ -60,7 +60,7 @@
 /**
  * @brief   BMP085 driver version patch number.
  */
-#define EX_BMP085_PATCH             0
+#define EX_BMP085_PATCH             1
 /** @}*/
 
 /**
@@ -134,21 +134,12 @@
 #endif
 
 /**
- * @brief   BMP085 barometer subsystem advanced configurations switch.
+ * @brief   BMP085 sensor subsystem advanced configurations switch.
  * @details If set to @p TRUE more configurations are available.
- * @note    The default is @p FALSE.
+ * @note    The default is @p TRUE.
  */
-#if !defined(BMP085_BARO_USE_ADVANCED) || defined(__DOXYGEN__)
-#define BMP085_BARO_USE_ADVANCED            FALSE
-#endif
-
-/**
- * @brief   BMP085 thermometer subsystem advanced configurations switch.
- * @details If set to @p TRUE more configurations are available.
- * @note    The default is @p FALSE.
- */
-#if !defined(BMP085_THERMO_USE_ADVANCED) || defined(__DOXYGEN__)
-#define BMP085_THERMO_USE_ADVANCED          FALSE
+#if !defined(BMP085_USE_ADVANCED) || defined(__DOXYGEN__)
+#define BMP085_USE_ADVANCED            TRUE
 #endif
 
 /**
@@ -214,24 +205,23 @@ typedef enum {
 }bmp085_baro_oss_t;
 
 /**
- * @brief BMP085 barometer subsystem configuration structure.
+ * @brief BMP085 barometer subsystem calibration data.
  */
 typedef struct {
-  /**
-   * @brief BMP085 barometer subsystem pressure conversion time.
-   */
-  bmp085_baro_ct_t    ct;
+  int16_t   ac1;
+  int16_t   ac2;
+  int16_t   ac3;
+  int16_t   b1;
+  int16_t   b2;
+  int16_t   mb;
+  int16_t   mc;
+  int16_t   md;
+  uint16_t  ac4;
+  uint16_t  ac5;
+  uint16_t  ac6;
+  int32_t   b5;
+} bmp085_cd_t;
 
-  /**
-   * @brief BMP085 barometer subsystem mode.
-   */
-  bmp085_baro_mode_t  mode;
-
-  /**
-   * @brief BMP085 barometer subsystem oversampling setting.
-   */
-  bmp085_baro_oss_t   oss;
-} BMP085BaroConfig;
 /** @} */
 
 /**
@@ -249,15 +239,6 @@ typedef enum {
   BMP085_THERMO_CT_LUHR = 0x1A  /**< Conv time in ultra high res. mode.     */
 } bmp085_thermo_ct_t;
 
-/**
- * @brief BMP085 thermometer subsystem configuration structure.
- */
-typedef struct {
-  /**
-   * @brief BMP085 thermometer subsystem temperature conversion time.
-   */
-  bmp085_thermo_ct_t  conversionTime;
-} BMP085ThermoConfig;
 /** @} */
 
 /**
@@ -278,6 +259,7 @@ typedef enum {
  * @brief BMP085 configuration structure.
  */
 typedef struct {
+#if BMP085_USE_I2C || defined(__DOXYGEN__)
  /**
   * @brief I2C driver associated to this BMP085.
   */
@@ -287,16 +269,44 @@ typedef struct {
    * @brief I2C configuration associated to this BMP085 subsystem.
    */
   const I2CConfig           *i2ccfg;
+#endif /* BMP085_USE_I2C */
+  /**
+   * @brief HTS221 initial sensitivity.
+   * @note  Value are respectively related to hygrometer
+   *        and thermometer.
+   */
+  float*                    sensitivity;
+  /**
+   * @brief HTS221 initial bias.
+   * @note  Value are respectively related to hygrometer
+   *        and thermometer.
+   */
+  float*                    bias;
+  /**
+   * @brief HTS221 output data rate selection.
+   */
+  float*                    outputdatarate;
+#if BMP085_USE_ADVANCED || defined(__DOXYGEN__)
+  /**
+   * @brief BMP085 barometer subsystem pressure conversion time.
+   */
+  bmp085_baro_ct_t          bct;
 
   /**
-   * @brief BMP085 barometer subsystem configuration structure
+   * @brief BMP085 barometer subsystem mode.
    */
-  const BMP085BaroConfig    *barocfg;
+  bmp085_baro_mode_t        mode;
 
   /**
-   * @brief BMP085 thermometer subsystem configuration structure
+   * @brief BMP085 barometer subsystem oversampling setting.
    */
-  const BMP085ThermoConfig  *thermocfg;
+  bmp085_baro_oss_t         oss;
+
+  /**
+   * @brief BMP085 thermometer subsystem temperature conversion time.
+   */
+  bmp085_thermo_ct_t        tct;
+#endif /* BMP085_USE_ADVANCED */
 } BMP085Config;
 
 /**
@@ -351,8 +361,13 @@ struct BMP085THERMOVMT {
   /* Current thermometer sensitivity. */                                     \
   float               thermosensitivity[BMP085_THERMO_NUMBER_OF_AXES];       \
   /* Thermometer bias data.           */                                     \
-  int32_t             thermobias[BMP085_THERMO_NUMBER_OF_AXES];
+  int32_t             thermobias[BMP085_THERMO_NUMBER_OF_AXES];              \
+  /* BMP085 calibration data. */                                             \
+  bmp085_cd_t         calibrationdata;
 
+/**
+ * @brief   BMP085 driver structure.
+ */
 struct BMP085Driver {
   /** @brief BaseSensor Virtual Methods Table.                              */
   const struct BaseSensorVMT      *vmt_basesensor;
@@ -360,7 +375,7 @@ struct BMP085Driver {
   const struct BaseBarometerVMT   *vmt_basebarometer;
   /** @brief BaseThermometer Virtual Methods Table.                         */
   const struct BaseThermometerVMT *vmt_basethermometer;
-  _bmp085_data
+  _bmp085_data;
 };
 
 /** @} */

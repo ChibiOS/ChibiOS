@@ -51,22 +51,6 @@
 /* Driver local variables and types.                                        */
 /*==========================================================================*/
 
-/**
- * @brief Variables for Temperature and Pressure measurement.
- */
-static int16_t  ac1;
-static int16_t  ac2;
-static int16_t  ac3;
-static int16_t  b1;
-static int16_t  b2;
-static int16_t  mb;
-static int16_t  mc;
-static int16_t  md;
-static uint16_t ac4;
-static uint16_t ac5;
-static uint16_t ac6;
-static int32_t  b5;
-
 /*==========================================================================*/
 /* Driver local functions.                                                  */
 /*==========================================================================*/
@@ -136,17 +120,17 @@ static msg_t bmp085ReadCoefficient(BMP085Driver *devp, uint8_t reg) {
 #endif /* BMP085_SHARED_I2C */
 
   if (msg == MSG_OK) {
-    ac1 = ((rxbuf[ 0] << 8) | rxbuf[ 1]);
-    ac2 = ((rxbuf[ 2] << 8) | rxbuf[ 3]);
-    ac3 = ((rxbuf[ 4] << 8) | rxbuf[ 5]);
-    ac4 = ((rxbuf[ 6] << 8) | rxbuf[ 7]);
-    ac5 = ((rxbuf[ 8] << 8) | rxbuf[ 9]);
-    ac6 = ((rxbuf[10] << 8) | rxbuf[11]);
-    b1  = ((rxbuf[12] << 8) | rxbuf[13]);
-    b2  = ((rxbuf[14] << 8) | rxbuf[15]);
-    mb  = ((rxbuf[16] << 8) | rxbuf[17]);
-    mc  = ((rxbuf[18] << 8) | rxbuf[19]);
-    md  = ((rxbuf[20] << 8) | rxbuf[21]);
+    devp->calibrationdata.ac1 = ((rxbuf[ 0] << 8) | rxbuf[ 1]);
+    devp->calibrationdata.ac2 = ((rxbuf[ 2] << 8) | rxbuf[ 3]);
+    devp->calibrationdata.ac3 = ((rxbuf[ 4] << 8) | rxbuf[ 5]);
+    devp->calibrationdata.ac4 = ((rxbuf[ 6] << 8) | rxbuf[ 7]);
+    devp->calibrationdata.ac5 = ((rxbuf[ 8] << 8) | rxbuf[ 9]);
+    devp->calibrationdata.ac6 = ((rxbuf[10] << 8) | rxbuf[11]);
+    devp->calibrationdata.b1  = ((rxbuf[12] << 8) | rxbuf[13]);
+    devp->calibrationdata.b2  = ((rxbuf[14] << 8) | rxbuf[15]);
+    devp->calibrationdata.mb  = ((rxbuf[16] << 8) | rxbuf[17]);
+    devp->calibrationdata.mc  = ((rxbuf[18] << 8) | rxbuf[19]);
+    devp->calibrationdata.md  = ((rxbuf[20] << 8) | rxbuf[21]);
   }
 
   return msg;
@@ -155,28 +139,30 @@ static msg_t bmp085ReadCoefficient(BMP085Driver *devp, uint8_t reg) {
 /**
  * @brief   Calcul the true temperature.
  *
+ * @param[in]   devp  pointer to the BMP085 device driver sensor
  * @param[in]   ut    uncompensated temperature
  * @param[out]  ctp   pointer of the compensated temperature
  */
-static void calcul_t(int32_t ut, float *ctp) {
+static void calcul_t(BMP085Driver *devp, int32_t ut, float *ctp) {
 
   int32_t x1, x2;
 
   /* Converting the temperature value. */
-  x1 = ((ut - ac6) * ac5) >> 15;
-  x2 = (mc << 11) / (x1 + md);
-  b5 = x1 + x2;
-  *ctp = (float)((b5 + 8) >> 4)*BMP085_T_RES;
+  x1 = ((ut - devp->calibrationdata.ac6) * devp->calibrationdata.ac5) >> 15;
+  x2 = (devp->calibrationdata.mc << 11) / (x1 + devp->calibrationdata.md);
+  devp->calibrationdata.b5 = x1 + x2;
+  *ctp = (float)((devp->calibrationdata.b5 + 8) >> 4)*BMP085_T_RES;
 }
 
 /**
  * @brief   Calcul the true pressure.
  *
+ * @param[in]   devp  pointer to the BMP085 device driver sensor
  * @param[in]   up    uncompensated pressure
  * @param[in]   oss   over sampling setting
  * @param[out]  cpp   pointer of the compensated pressure
  */
-static void calcul_p(int32_t up, uint8_t oss, float *cpp) {
+static void calcul_p(BMP085Driver *devp, int32_t up, uint8_t oss, float *cpp) {
 
   int32_t   press;
   int32_t		x1,x2,x3;
@@ -184,15 +170,15 @@ static void calcul_p(int32_t up, uint8_t oss, float *cpp) {
   uint32_t	b4,b7;
 
   /* Converting the pressure value. */
-  b6 = b5 - 4000;
-  x1 = (b2 * ((b6 * b6) >> 12)) >> 11;
-  x2 = (ac2 * b6) >> 11;
+  b6 = devp->calibrationdata.b5 - 4000;
+  x1 = (devp->calibrationdata.b2 * ((b6 * b6) >> 12)) >> 11;
+  x2 = (devp->calibrationdata.ac2 * b6) >> 11;
   x3 = x1 + x2;
-  b3 = ((((int32_t)ac1 * 4 + x3) << oss) + 2) >> 2;
-  x1 = ((ac3)*b6) >> 13;
-  x2 = (b1 * (b6*b6 >> 12)) >> 16;
+  b3 = ((((int32_t)devp->calibrationdata.ac1 * 4 + x3) << oss) + 2) >> 2;
+  x1 = ((devp->calibrationdata.ac3)*b6) >> 13;
+  x2 = (devp->calibrationdata.b1 * (b6*b6 >> 12)) >> 16;
   x3 = ((x1 + x2) + 2) >> 2;
-  b4 = ac4 * (uint32_t)(x3 + 32768) >> 15;
+  b4 = devp->calibrationdata.ac4 * (uint32_t)(x3 + 32768) >> 15;
   b7 = ((uint32_t)up - b3)*(50000 >> oss);
 
   if (b7 < 0x80000000)
@@ -217,18 +203,15 @@ static msg_t start_t_measurement(BMP085Driver *devp) {
 
   uint8_t txbuf[2] = {BMP085_AD_CR, BMP085_CR_T_VAL};
 
-  if ((devp)->config->thermocfg != NULL) {
-    i2cAcquireBus(devp->config->i2cp);
-    msg_t msg = bmp085I2CWriteRegister(devp->config->i2cp, txbuf, 2);
-    i2cReleaseBus(devp->config->i2cp);
+  i2cAcquireBus(devp->config->i2cp);
+  msg_t msg = bmp085I2CWriteRegister(devp->config->i2cp, txbuf, 2);
+  i2cReleaseBus(devp->config->i2cp);
 
-    /* Conversion time for the temperature. */
-    chThdSleepMilliseconds(BMP085_THERMO_CT_LOW);
+  /* Conversion time for the temperature. */
+  chThdSleepMilliseconds(BMP085_THERMO_CT_LOW);
+  //chThdSleepMilliseconds(devp->config.tct); // TODO: use this instead of the top line:
 
-    return msg;
-  }
-  else
-    return MSG_RESET;
+  return msg;
 }
 
 /**
@@ -242,7 +225,7 @@ static msg_t start_p_measurement(BMP085Driver *devp) {
   uint8_t oss, delay;
   uint8_t txbuf[2];
 
-  oss = devp->config->barocfg->oss;
+  oss = devp->config->oss;
   txbuf[0] = BMP085_AD_CR;
 
   /* Check the oss according the bmp085 mode. */
@@ -332,7 +315,7 @@ static msg_t acquire_up(BMP085Driver *devp, int32_t *upress) {
   msg_t msg;
 
   /* Get the oversampling setting from the driver configuratioin. */
-  oss = devp->config->barocfg->oss;
+  oss = devp->config->oss;
 
   /* Start the pressure measurement. */
   start_p_measurement(devp);
@@ -345,7 +328,7 @@ static msg_t acquire_up(BMP085Driver *devp, int32_t *upress) {
  /* Get the pressure */
   msg = bmp085I2CReadRegister(devp->config->i2cp, BMP085_AD_P_DR_MSB, rxbuf,
                               3);
-
+                              
 #if BMP085_SHARED_I2C
   i2cReleaseBus(devp->config->i2cp);
 #endif /* BMP085_SHARED_I2C */
@@ -486,18 +469,14 @@ static msg_t sens_read_raw(void *ip, int32_t axes[]) {
   int32_t* bp = axes;
   msg_t msg;
 
-  if (((BMP085Driver *)ip)->config->barocfg != NULL) {
-    msg = baro_read_raw(ip, bp);
+  msg = baro_read_raw(ip, bp);
 
-    if (msg != MSG_OK)
-      return msg;
+  if (msg != MSG_OK)
+    return msg;
 
-    bp += BMP085_BARO_NUMBER_OF_AXES;
-	}
+  bp += BMP085_BARO_NUMBER_OF_AXES;
 
-  if (((BMP085Driver *)ip)->config->thermocfg != NULL) {
-    msg = thermo_read_raw(ip, bp);
-	}
+  msg = thermo_read_raw(ip, bp);
 
   return msg;
 }
@@ -522,10 +501,10 @@ static msg_t baro_read_cooked(void *ip, float axes[]) {
                 "baro_read_cooked(), invalid state");
 
   msg = baro_read_raw(ip, raw);
-  oss = ((BMP085Driver *)ip)->config->barocfg->oss;
+  oss = ((BMP085Driver *)ip)->config->oss;
 
   for (i = 0; i < BMP085_BARO_NUMBER_OF_AXES; i++)
-    calcul_p(raw[i], oss, &axes[i]);
+    calcul_p(ip, raw[i], oss, &axes[i]);
 
   return msg;
 }
@@ -550,7 +529,7 @@ static msg_t thermo_read_cooked(void *ip, float axes[]) {
   msg = thermo_read_raw(ip, raw);
 
   for (i = 0; i < BMP085_THERMO_NUMBER_OF_AXES; i++)
-    calcul_t(raw[i], &axes[i]);
+    calcul_t(ip, raw[i], &axes[i]);
 
   return msg;
 }
@@ -568,17 +547,13 @@ static msg_t sens_read_cooked(void *ip, float axes[]) {
   float* bp = axes;
   msg_t msg;
 
-  if (((BMP085Driver *)ip)->config->barocfg != NULL) {
-    msg = baro_read_cooked(ip, bp);
+  msg = baro_read_cooked(ip, bp);
 
-    if (msg != MSG_OK)
-      return msg;
+  if (msg != MSG_OK)
+    return msg;
 
-    bp += BMP085_BARO_NUMBER_OF_AXES;
-  }
-
-  if (((BMP085Driver *)ip)->config->thermocfg != NULL)
-    msg = thermo_read_cooked(ip, bp);
+  bp += BMP085_BARO_NUMBER_OF_AXES;
+  msg = thermo_read_cooked(ip, bp);
 
   return msg;
 }
