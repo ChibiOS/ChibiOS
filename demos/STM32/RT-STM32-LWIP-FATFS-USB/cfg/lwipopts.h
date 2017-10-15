@@ -36,7 +36,19 @@
 #include "static_lwipopts.h"
 
 /* Optional, application-specific settings.*/
+#if !defined(TCPIP_MBOX_SIZE)
 #define TCPIP_MBOX_SIZE                 MEMP_NUM_PBUF
+#endif
+#if !defined(TCPIP_THREAD_STACKSIZE)
 #define TCPIP_THREAD_STACKSIZE          1024
+#endif
+
+/* Use ChibiOS specific priorities. */
+#if !defined(TCPIP_THREAD_PRIO)
+#define TCPIP_THREAD_PRIO               (LOWPRIO + 1)
+#endif
+#if !defined(LWIP_THREAD_PRIORITY)
+#define LWIP_THREAD_PRIORITY            (LOWPRIO)
+#endif
 
 #endif /* LWIP_HDR_LWIPOPTS_H__ */
