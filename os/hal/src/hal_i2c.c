@@ -173,7 +173,7 @@ msg_t i2cMasterTransmitTimeout(I2CDriver *i2cp,
                                size_t txbytes,
                                uint8_t *rxbuf,
                                size_t rxbytes,
-                               systime_t timeout) {
+                               sysinterval_t timeout) {
   msg_t rdymsg;
 
   osalDbgCheck((i2cp != NULL) && (addr != 0U) &&
@@ -222,7 +222,7 @@ msg_t i2cMasterReceiveTimeout(I2CDriver *i2cp,
                               i2caddr_t addr,
                               uint8_t *rxbuf,
                               size_t rxbytes,
-                              systime_t timeout){
+                              sysinterval_t timeout) {
 
   msg_t rdymsg;
 

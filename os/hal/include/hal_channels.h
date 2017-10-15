@@ -51,14 +51,15 @@
 #define _base_channel_methods                                               \
   _base_sequential_stream_methods                                           \
   /* Channel put method with timeout specification.*/                       \
-  msg_t (*putt)(void *instance, uint8_t b, systime_t time);                 \
+  msg_t (*putt)(void *instance, uint8_t b, sysinterval_t time);             \
   /* Channel get method with timeout specification.*/                       \
-  msg_t (*gett)(void *instance, systime_t time);                            \
+  msg_t (*gett)(void *instance, sysinterval_t time);                        \
   /* Channel write method with timeout specification.*/                     \
   size_t (*writet)(void *instance, const uint8_t *bp,                       \
-                   size_t n, systime_t time);                               \
+                   size_t n, sysinterval_t time);                           \
   /* Channel read method with timeout specification.*/                      \
-  size_t (*readt)(void *instance, uint8_t *bp, size_t n, systime_t time);   \
+  size_t (*readt)(void *instance, uint8_t *bp, size_t n,                    \
+                  sysinterval_t time);                                      \
   /* Channel put method with timeout specification.*/                       \
   msg_t (*ctl)(void *instance, unsigned int operation, void *arg);
 

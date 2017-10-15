@@ -149,7 +149,7 @@ void macStop(MACDriver *macp) {
  */
 msg_t macWaitTransmitDescriptor(MACDriver *macp,
                                 MACTransmitDescriptor *tdp,
-                                systime_t timeout) {
+                                sysinterval_t timeout) {
   msg_t msg;
   systime_t now;
 
@@ -157,7 +157,7 @@ msg_t macWaitTransmitDescriptor(MACDriver *macp,
   osalDbgAssert(macp->state == MAC_ACTIVE, "not active");
 
   while (((msg = mac_lld_get_transmit_descriptor(macp, tdp)) != MSG_OK) &&
-         (timeout > (systime_t)0)) {
+         (timeout > (sysinterval_t)0)) {
     osalSysLock();
     now = osalOsGetSystemTimeX();
     msg = osalThreadEnqueueTimeoutS(&macp->tdqueue, timeout);
@@ -209,7 +209,7 @@ void macReleaseTransmitDescriptor(MACTransmitDescriptor *tdp) {
  */
 msg_t macWaitReceiveDescriptor(MACDriver *macp,
                                MACReceiveDescriptor *rdp,
-                               systime_t timeout) {
+                               sysinterval_t timeout) {
   msg_t msg;
   systime_t now;
 
@@ -217,7 +217,7 @@ msg_t macWaitReceiveDescriptor(MACDriver *macp,
   osalDbgAssert(macp->state == MAC_ACTIVE, "not active");
 
   while (((msg = mac_lld_get_receive_descriptor(macp, rdp)) != MSG_OK) &&
-         (timeout > (systime_t)0)) {
+         (timeout > (sysinterval_t)0)) {
     osalSysLock();
     now = osalOsGetSystemTimeX();
     msg = osalThreadEnqueueTimeoutS(&macp->rdqueue, timeout);

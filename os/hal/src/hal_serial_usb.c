@@ -104,22 +104,24 @@ static msg_t _get(void *ip) {
   return ibqGetTimeout(&((SerialUSBDriver *)ip)->ibqueue, TIME_INFINITE);
 }
 
-static msg_t _putt(void *ip, uint8_t b, systime_t timeout) {
+static msg_t _putt(void *ip, uint8_t b, sysinterval_t timeout) {
 
   return obqPutTimeout(&((SerialUSBDriver *)ip)->obqueue, b, timeout);
 }
 
-static msg_t _gett(void *ip, systime_t timeout) {
+static msg_t _gett(void *ip, sysinterval_t timeout) {
 
   return ibqGetTimeout(&((SerialUSBDriver *)ip)->ibqueue, timeout);
 }
 
-static size_t _writet(void *ip, const uint8_t *bp, size_t n, systime_t timeout) {
+static size_t _writet(void *ip, const uint8_t *bp, size_t n,
+                      sysinterval_t timeout) {
 
   return obqWriteTimeout(&((SerialUSBDriver *)ip)->obqueue, bp, n, timeout);
 }
 
-static size_t _readt(void *ip, uint8_t *bp, size_t n, systime_t timeout) {
+static size_t _readt(void *ip, uint8_t *bp, size_t n,
+                     sysinterval_t timeout) {
 
   return ibqReadTimeout(&((SerialUSBDriver *)ip)->ibqueue, bp, n, timeout);
 }
