@@ -1006,8 +1006,9 @@ extern "C" {
   void palSetLineCallbackI(ioline_t line, palcallback_t cb, void *arg);
 #endif /* PAL_USE_CALLBACKS */
 #if PAL_USE_WAIT || defined(__DOXYGEN__)
-  msg_t palWaitPadTimeoutS(ioportid_t port, iopadid_t pad, systime_t timeout);
-  msg_t palWaitLineTimeoutS(ioline_t line, systime_t timeout);
+  msg_t palWaitPadTimeoutS(ioportid_t port, iopadid_t pad,
+                           sysinterval_t timeout);
+  msg_t palWaitLineTimeoutS(ioline_t line, sysinterval_t timeout);
 #endif /* PAL_USE_WAIT */
 #ifdef __cplusplus
 }

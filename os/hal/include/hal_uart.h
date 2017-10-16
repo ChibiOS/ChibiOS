@@ -359,11 +359,11 @@ extern "C" {
   size_t uartStopReceiveI(UARTDriver *uartp);
 #if UART_USE_WAIT == TRUE
   msg_t uartSendTimeout(UARTDriver *uartp, size_t *np,
-                        const void *txbuf, systime_t timeout);
+                        const void *txbuf, sysinterval_t timeout);
   msg_t uartSendFullTimeout(UARTDriver *uartp, size_t *np,
-                            const void *txbuf, systime_t timeout);
+                            const void *txbuf, sysinterval_t timeout);
   msg_t uartReceiveTimeout(UARTDriver *uartp, size_t *np,
-                           void *rxbuf, systime_t timeout);
+                           void *rxbuf, sysinterval_t timeout);
 #endif
 #if UART_USE_MUTUAL_EXCLUSION == TRUE
   void uartAcquireBus(UARTDriver *uartp);

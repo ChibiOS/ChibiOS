@@ -233,7 +233,7 @@ bool canTryReceiveI(CANDriver *canp,
 msg_t canTransmitTimeout(CANDriver *canp,
                          canmbx_t mailbox,
                          const CANTxFrame *ctfp,
-                         systime_t timeout) {
+                         sysinterval_t timeout) {
 
   osalDbgCheck((canp != NULL) && (ctfp != NULL) &&
                (mailbox <= (canmbx_t)CAN_TX_MAILBOXES));
@@ -281,7 +281,7 @@ msg_t canTransmitTimeout(CANDriver *canp,
 msg_t canReceiveTimeout(CANDriver *canp,
                         canmbx_t mailbox,
                         CANRxFrame *crfp,
-                        systime_t timeout) {
+                        sysinterval_t timeout) {
 
   osalDbgCheck((canp != NULL) && (crfp != NULL) &&
                (mailbox <= (canmbx_t)CAN_RX_MAILBOXES));

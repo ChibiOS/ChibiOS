@@ -875,8 +875,9 @@ static inline void osalEventBroadcastFlags(event_source_t *esp,
   osalDbgCheck(esp != NULL);
 
   chSysLock();
-  osalEventBroadcastFlagsI(esp, flags);
-  chSchRescheduleS();
+  esp->flags |= flags;
+  if (esp->cb != NULL) {
+    esp->cb(esp);
   chSysUnlock();
 }
 

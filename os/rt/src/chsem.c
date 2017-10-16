@@ -217,7 +217,7 @@ msg_t chSemWaitS(semaphore_t *sp) {
  * @brief   Performs a wait operation on a semaphore with timeout specification.
  *
  * @param[in] sp        pointer to a @p semaphore_t structure
- * @param[in] time      the number of ticks before the operation timeouts,
+ * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
@@ -232,11 +232,11 @@ msg_t chSemWaitS(semaphore_t *sp) {
  *
  * @api
  */
-msg_t chSemWaitTimeout(semaphore_t *sp, systime_t time) {
+msg_t chSemWaitTimeout(semaphore_t *sp, sysinterval_t timeout) {
   msg_t msg;
 
   chSysLock();
-  msg = chSemWaitTimeoutS(sp, time);
+  msg = chSemWaitTimeoutS(sp, timeout);
   chSysUnlock();
 
   return msg;
@@ -246,7 +246,7 @@ msg_t chSemWaitTimeout(semaphore_t *sp, systime_t time) {
  * @brief   Performs a wait operation on a semaphore with timeout specification.
  *
  * @param[in] sp        pointer to a @p semaphore_t structure
- * @param[in] time      the number of ticks before the operation timeouts,
+ * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
@@ -261,7 +261,7 @@ msg_t chSemWaitTimeout(semaphore_t *sp, systime_t time) {
  *
  * @sclass
  */
-msg_t chSemWaitTimeoutS(semaphore_t *sp, systime_t time) {
+msg_t chSemWaitTimeoutS(semaphore_t *sp, sysinterval_t timeout) {
 
   chDbgCheckClassS();
   chDbgCheck(sp != NULL);
@@ -270,7 +270,7 @@ msg_t chSemWaitTimeoutS(semaphore_t *sp, systime_t time) {
               "inconsistent semaphore");
 
   if (--sp->cnt < (cnt_t)0) {
-    if (TIME_IMMEDIATE == time) {
+    if (TIME_IMMEDIATE == timeout) {
       sp->cnt++;
 
       return MSG_TIMEOUT;
@@ -278,7 +278,7 @@ msg_t chSemWaitTimeoutS(semaphore_t *sp, systime_t time) {
     currp->u.wtsemp = sp;
     sem_insert(currp, &sp->queue);
 
-    return chSchGoSleepTimeoutS(CH_STATE_WTSEM, time);
+    return chSchGoSleepTimeoutS(CH_STATE_WTSEM, timeout);
   }
 
   return MSG_OK;

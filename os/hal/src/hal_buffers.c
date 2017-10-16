@@ -188,7 +188,7 @@ void ibqPostFullBufferI(input_buffers_queue_t *ibqp, size_t size) {
  * @api
  */
 msg_t ibqGetFullBufferTimeout(input_buffers_queue_t *ibqp,
-                              systime_t timeout) {
+                              sysinterval_t timeout) {
   msg_t msg;
 
   osalSysLock();
@@ -220,7 +220,7 @@ msg_t ibqGetFullBufferTimeout(input_buffers_queue_t *ibqp,
    * @sclass
    */
   msg_t ibqGetFullBufferTimeoutS(input_buffers_queue_t *ibqp,
-                                 systime_t timeout) {
+                                 sysinterval_t timeout) {
 
   osalDbgCheckClassS();
 
@@ -306,7 +306,7 @@ void ibqReleaseEmptyBuffer(input_buffers_queue_t *ibqp) {
  *
  * @api
  */
-msg_t ibqGetTimeout(input_buffers_queue_t *ibqp, systime_t timeout) {
+msg_t ibqGetTimeout(input_buffers_queue_t *ibqp, sysinterval_t timeout) {
   msg_t msg;
 
   osalSysLock();
@@ -356,9 +356,9 @@ msg_t ibqGetTimeout(input_buffers_queue_t *ibqp, systime_t timeout) {
  * @api
  */
 size_t ibqReadTimeout(input_buffers_queue_t *ibqp, uint8_t *bp,
-                      size_t n, systime_t timeout) {
+                      size_t n, sysinterval_t timeout) {
   size_t r = 0;
-  systime_t deadline;
+  sysinterval_t deadline;
 
   osalDbgCheck(n > 0U);
 
@@ -380,7 +380,7 @@ size_t ibqReadTimeout(input_buffers_queue_t *ibqp, uint8_t *bp,
         msg = ibqGetFullBufferTimeoutS(ibqp, timeout);
       }
       else {
-        systime_t next_timeout = deadline - osalOsGetSystemTimeX();
+        sysinterval_t next_timeout = deadline - osalOsGetSystemTimeX();
 
         /* Handling the case where the system time went past the deadline,
            in this case next becomes a very high number because the system
@@ -562,7 +562,7 @@ void obqReleaseEmptyBufferI(output_buffers_queue_t *obqp) {
  * @api
  */
 msg_t obqGetEmptyBufferTimeout(output_buffers_queue_t *obqp,
-                                systime_t timeout) {
+                                sysinterval_t timeout) {
   msg_t msg;
 
   osalSysLock();
@@ -594,7 +594,7 @@ msg_t obqGetEmptyBufferTimeout(output_buffers_queue_t *obqp,
  * @sclass
  */
 msg_t obqGetEmptyBufferTimeoutS(output_buffers_queue_t *obqp,
-                                systime_t timeout) {
+                                sysinterval_t timeout) {
 
   osalDbgCheckClassS();
 
@@ -688,7 +688,7 @@ void obqPostFullBufferS(output_buffers_queue_t *obqp, size_t size) {
  * @api
  */
 msg_t obqPutTimeout(output_buffers_queue_t *obqp, uint8_t b,
-                    systime_t timeout) {
+                    sysinterval_t timeout) {
   msg_t msg;
 
   osalSysLock();
@@ -738,9 +738,9 @@ msg_t obqPutTimeout(output_buffers_queue_t *obqp, uint8_t b,
  * @api
  */
 size_t obqWriteTimeout(output_buffers_queue_t *obqp, const uint8_t *bp,
-                       size_t n, systime_t timeout) {
+                       size_t n, sysinterval_t timeout) {
   size_t w = 0;
-  systime_t deadline;
+  sysinterval_t deadline;
 
   osalDbgCheck(n > 0U);
 
@@ -762,7 +762,7 @@ size_t obqWriteTimeout(output_buffers_queue_t *obqp, const uint8_t *bp,
         msg = obqGetEmptyBufferTimeoutS(obqp, timeout);
       }
       else {
-        systime_t next_timeout = deadline - osalOsGetSystemTimeX();
+        sysinterval_t next_timeout = deadline - osalOsGetSystemTimeX();
 
         /* Handling the case where the system time went past the deadline,
            in this case next becomes a very high number because the system

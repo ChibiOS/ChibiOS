@@ -184,11 +184,11 @@ extern "C" {
   void macSetAddress(MACDriver *macp, const uint8_t *p);
   msg_t macWaitTransmitDescriptor(MACDriver *macp,
                                   MACTransmitDescriptor *tdp,
-                                  systime_t timeout);
+                                  sysinterval_t timeout);
   void macReleaseTransmitDescriptor(MACTransmitDescriptor *tdp);
   msg_t macWaitReceiveDescriptor(MACDriver *macp,
                                  MACReceiveDescriptor *rdp,
-                                 systime_t timeout);
+                                 sysinterval_t timeout);
   void macReleaseReceiveDescriptor(MACReceiveDescriptor *rdp);
   bool macPollLinkStatus(MACDriver *macp);
 #ifdef __cplusplus

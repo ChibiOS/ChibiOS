@@ -152,11 +152,11 @@ extern "C" {
   msg_t canTransmitTimeout(CANDriver *canp,
                            canmbx_t mailbox,
                            const CANTxFrame *ctfp,
-                           systime_t timeout);
+                           sysinterval_t timeout);
   msg_t canReceiveTimeout(CANDriver *canp,
                           canmbx_t mailbox,
                           CANRxFrame *crfp,
-                          systime_t timeout);
+                          sysinterval_t timeout);
 #if CAN_USE_SLEEP_MODE
   void canSleep(CANDriver *canp);
   void canWakeup(CANDriver *canp);

@@ -367,7 +367,7 @@ size_t uartStopReceiveI(UARTDriver *uartp) {
  * @api
  */
 msg_t uartSendTimeout(UARTDriver *uartp, size_t *np,
-                      const void *txbuf, systime_t timeout) {
+                      const void *txbuf, sysinterval_t timeout) {
   msg_t msg;
 
   osalDbgCheck((uartp != NULL) && (*np > 0U) && (txbuf != NULL));
@@ -412,7 +412,7 @@ msg_t uartSendTimeout(UARTDriver *uartp, size_t *np,
  * @api
  */
 msg_t uartSendFullTimeout(UARTDriver *uartp, size_t *np,
-                          const void *txbuf, systime_t timeout) {
+                          const void *txbuf, sysinterval_t timeout) {
   msg_t msg;
 
   osalDbgCheck((uartp != NULL) && (*np > 0U) && (txbuf != NULL));
@@ -459,7 +459,7 @@ msg_t uartSendFullTimeout(UARTDriver *uartp, size_t *np,
  * @api
  */
 msg_t uartReceiveTimeout(UARTDriver *uartp, size_t *np,
-                         void *rxbuf, systime_t timeout) {
+                         void *rxbuf, sysinterval_t timeout) {
   msg_t msg;
 
   osalDbgCheck((uartp != NULL) && (*np > 0U) && (rxbuf != NULL));

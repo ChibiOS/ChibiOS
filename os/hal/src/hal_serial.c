@@ -69,22 +69,24 @@ static msg_t _get(void *ip) {
   return iqGetTimeout(&((SerialDriver *)ip)->iqueue, TIME_INFINITE);
 }
 
-static msg_t _putt(void *ip, uint8_t b, systime_t timeout) {
+static msg_t _putt(void *ip, uint8_t b, sysinterval_t timeout) {
 
   return oqPutTimeout(&((SerialDriver *)ip)->oqueue, b, timeout);
 }
 
-static msg_t _gett(void *ip, systime_t timeout) {
+static msg_t _gett(void *ip, sysinterval_t timeout) {
 
   return iqGetTimeout(&((SerialDriver *)ip)->iqueue, timeout);
 }
 
-static size_t _writet(void *ip, const uint8_t *bp, size_t n, systime_t timeout) {
+static size_t _writet(void *ip, const uint8_t *bp, size_t n,
+                      sysinterval_t timeout) {
 
   return oqWriteTimeout(&((SerialDriver *)ip)->oqueue, bp, n, timeout);
 }
 
-static size_t _readt(void *ip, uint8_t *bp, size_t n, systime_t timeout) {
+static size_t _readt(void *ip, uint8_t *bp, size_t n,
+                     sysinterval_t timeout) {
 
   return iqReadTimeout(&((SerialDriver *)ip)->iqueue, bp, n, timeout);
 }

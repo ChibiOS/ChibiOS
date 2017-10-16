@@ -239,7 +239,7 @@ msg_t chCondWaitS(condition_variable_t *cp) {
  *          mutex, the mutex ownership is lost.
  *
  * @param[in] cp        pointer to the @p condition_variable_t structure
- * @param[in] time      the number of ticks before the operation timeouts, the
+ * @param[in] timeout   the number of ticks before the operation timeouts, the
  *                      special values are handled as follow:
  *                      - @a TIME_INFINITE no timeout.
  *                      - @a TIME_IMMEDIATE this value is not allowed.
@@ -255,11 +255,11 @@ msg_t chCondWaitS(condition_variable_t *cp) {
  *
  * @api
  */
-msg_t chCondWaitTimeout(condition_variable_t *cp, systime_t time) {
+msg_t chCondWaitTimeout(condition_variable_t *cp, sysinterval_t timeout) {
   msg_t msg;
 
   chSysLock();
-  msg = chCondWaitTimeoutS(cp, time);
+  msg = chCondWaitTimeoutS(cp, timeout);
   chSysUnlock();
 
   return msg;
@@ -277,7 +277,7 @@ msg_t chCondWaitTimeout(condition_variable_t *cp, systime_t time) {
  *          mutex, the mutex ownership is lost.
  *
  * @param[in] cp        pointer to the @p condition_variable_t structure
- * @param[in] time      the number of ticks before the operation timeouts, the
+ * @param[in] timeout   the number of ticks before the operation timeouts, the
  *                      special values are handled as follow:
  *                      - @a TIME_INFINITE no timeout.
  *                      - @a TIME_IMMEDIATE this value is not allowed.
@@ -293,12 +293,12 @@ msg_t chCondWaitTimeout(condition_variable_t *cp, systime_t time) {
  *
  * @sclass
  */
-msg_t chCondWaitTimeoutS(condition_variable_t *cp, systime_t time) {
+msg_t chCondWaitTimeoutS(condition_variable_t *cp, sysinterval_t timeout) {
   mutex_t *mp;
   msg_t msg;
 
   chDbgCheckClassS();
-  chDbgCheck((cp != NULL) && (time != TIME_IMMEDIATE));
+  chDbgCheck((cp != NULL) && (timeout != TIME_IMMEDIATE));
   chDbgAssert(currp->mtxlist != NULL, "not owning a mutex");
 
   /* Getting "current" mutex and releasing it.*/
@@ -309,7 +309,7 @@ msg_t chCondWaitTimeoutS(condition_variable_t *cp, systime_t time) {
      again.*/
   currp->u.wtobjp = cp;
   queue_prio_insert(currp, &cp->queue);
-  msg = chSchGoSleepTimeoutS(CH_STATE_WTCOND, time);
+  msg = chSchGoSleepTimeoutS(CH_STATE_WTCOND, timeout);
   if (msg != MSG_TIMEOUT) {
     chMtxLockS(mp);
   }

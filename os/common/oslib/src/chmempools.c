@@ -268,7 +268,7 @@ void chGuardedPoolLoadArray(guarded_memory_pool_t *gmp, void *p, size_t n) {
  * @sclass
  */
 void *chGuardedPoolAllocTimeoutS(guarded_memory_pool_t *gmp,
-                                 systime_t timeout) {
+                                 sysinterval_t timeout) {
   msg_t msg;
 
   msg = chSemWaitTimeoutS(&gmp->sem, timeout);
@@ -295,7 +295,7 @@ void *chGuardedPoolAllocTimeoutS(guarded_memory_pool_t *gmp,
  * @api
  */
 void *chGuardedPoolAllocTimeout(guarded_memory_pool_t *gmp,
-                                systime_t timeout) {
+                                sysinterval_t timeout) {
   void *p;
 
   chSysLock();

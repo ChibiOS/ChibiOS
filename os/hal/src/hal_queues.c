@@ -138,7 +138,7 @@ msg_t iqPutI(input_queue_t *iqp, uint8_t b) {
  *
  * @api
  */
-msg_t iqGetTimeout(input_queue_t *iqp, systime_t timeout) {
+msg_t iqGetTimeout(input_queue_t *iqp, sysinterval_t timeout) {
   uint8_t b;
 
   osalSysLock();
@@ -194,7 +194,7 @@ msg_t iqGetTimeout(input_queue_t *iqp, systime_t timeout) {
  * @api
  */
 size_t iqReadTimeout(input_queue_t *iqp, uint8_t *bp,
-                     size_t n, systime_t timeout) {
+                     size_t n, sysinterval_t timeout) {
   systime_t deadline;
   qnotify_t nfy = iqp->q_notify;
   size_t r = 0;
@@ -206,7 +206,7 @@ size_t iqReadTimeout(input_queue_t *iqp, uint8_t *bp,
   /* Time deadline for the whole operation, note the result is invalid
      when timeout is TIME_INFINITE or TIME_IMMEDIATE but in that case
      the deadline is not used.*/
-  deadline = osalOsGetSystemTimeX() + timeout;
+  deadline = osalTimeAddX(osalOsGetSystemTimeX(), timeout);
 
   while (true) {
     /* Waiting until there is a character available or a timeout occurs.*/
@@ -219,7 +219,8 @@ size_t iqReadTimeout(input_queue_t *iqp, uint8_t *bp,
         msg = osalThreadEnqueueTimeoutS(&iqp->q_waiting, timeout);
       }
       else {
-        systime_t next_timeout = deadline - osalOsGetSystemTimeX();
+        sysinterval_t next_timeout = osalTimeDiffX(osalOsGetSystemTimeX(),
+                                                   deadline);
 
         /* Handling the case where the system time went past the deadline,
            in this case next becomes a very high number because the system
@@ -334,7 +335,7 @@ void oqResetI(output_queue_t *oqp) {
  *
  * @api
  */
-msg_t oqPutTimeout(output_queue_t *oqp, uint8_t b, systime_t timeout) {
+msg_t oqPutTimeout(output_queue_t *oqp, uint8_t b, sysinterval_t timeout) {
 
   osalSysLock();
 
@@ -419,7 +420,7 @@ msg_t oqGetI(output_queue_t *oqp) {
  * @api
  */
 size_t oqWriteTimeout(output_queue_t *oqp, const uint8_t *bp,
-                      size_t n, systime_t timeout) {
+                      size_t n, sysinterval_t timeout) {
   systime_t deadline;
   qnotify_t nfy = oqp->q_notify;
   size_t w = 0;
@@ -431,7 +432,7 @@ size_t oqWriteTimeout(output_queue_t *oqp, const uint8_t *bp,
   /* Time deadline for the whole operation, note the result is invalid
      when timeout is TIME_INFINITE or TIME_IMMEDIATE but in that case
      the deadline is not used.*/
-  deadline = osalOsGetSystemTimeX() + timeout;
+  deadline = osalTimeAddX(osalOsGetSystemTimeX(), timeout);
 
   while (true) {
     msg_t msg;
@@ -443,7 +444,8 @@ size_t oqWriteTimeout(output_queue_t *oqp, const uint8_t *bp,
         msg = osalThreadEnqueueTimeoutS(&oqp->q_waiting, timeout);
       }
       else {
-        systime_t next_timeout = deadline - osalOsGetSystemTimeX();
+        sysinterval_t next_timeout = osalTimeDiffX(osalOsGetSystemTimeX(),
+                                                   deadline);
 
         /* Handling the case where the system time went past the deadline,
            in this case next becomes a very high number because the system

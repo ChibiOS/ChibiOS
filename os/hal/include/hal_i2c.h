@@ -145,11 +145,11 @@ extern "C" {
                                  i2caddr_t addr,
                                  const uint8_t *txbuf, size_t txbytes,
                                  uint8_t *rxbuf, size_t rxbytes,
-                                 systime_t timeout);
+                                 sysinterval_t timeout);
   msg_t i2cMasterReceiveTimeout(I2CDriver *i2cp,
                                 i2caddr_t addr,
                                 uint8_t *rxbuf, size_t rxbytes,
-                                systime_t timeout);
+                                sysinterval_t timeout);
 #if I2C_USE_MUTUAL_EXCLUSION == TRUE
   void i2cAcquireBus(I2CDriver *i2cp);
   void i2cReleaseBus(I2CDriver *i2cp);
