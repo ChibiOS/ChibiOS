@@ -16,7 +16,7 @@
 
 #include "hal.h"
 #include "ch.h"
-#include "ch_test.h"
+#include "nil_test_root.h"
 
 /*
  * Thread 1.
