@@ -1,13 +1,15 @@
 [#ftl]
 [#import "/@ftllibs/libutils.ftl" as utils /]
-[@pp.dropOutputFile /]
-[@pp.changeOutputFile name="test_root.c" /]
 [#list conf.*.application.instances.instance as inst]
   [#if inst.@id?string == "org.chibios.spc5.components.portable.chibios_unitary_tests_engine"]
     [#assign instance = inst /]
     [#break]
   [/#if]
 [/#list]
+[#assign prefix_lower = instance.global_data_and_code.code_prefix.value[0]?trim?lower_case /]
+[#assign prefix_upper = instance.global_data_and_code.code_prefix.value[0]?trim?upper_case /]
+[@pp.dropOutputFile /]
+[@pp.changeOutputFile name=prefix_lower+"test_root.c" /]
 [@utils.EmitIndentedCCode "" 2 instance.description.copyright.value[0] /]
 
 /**
@@ -24,7 +26,7 @@
  * <h2>Test Sequences</h2>
 [#if instance.sequences.sequence?size > 0]
   [#list instance.sequences.sequence as sequence]
- * - @subpage test_sequence_${(sequence_index + 1)?string("000")}
+ * - @subpage ${prefix_lower}test_sequence_${(sequence_index + 1)?string("000")}
   [/#list]
  * .
 [#else]
@@ -33,13 +35,13 @@
  */
 
 /**
- * @file    test_root.c
+ * @file    ${prefix_lower}test_root.c
  * @brief   Test Suite root structures code.
  */
 
 #include "hal.h"
 #include "ch_test.h"
-#include "test_root.h"
+#include "${prefix_lower}test_root.h"
 
 #if !defined(__DOXYGEN__)
 
@@ -50,12 +52,12 @@
 /**
  * @brief   Array of all the test sequences.
  */
-const testcase_t * const *test_suite[] = {
+const testcase_t * const *${prefix_lower}test_suite[] = {
 [#list instance.sequences.sequence as sequence]
   [#if sequence.condition.value[0]?trim?length > 0]
 #if (${sequence.condition.value[0]}) || defined(__DOXYGEN__)
   [/#if]
-  test_sequence_${(sequence_index + 1)?string("000")},
+  ${prefix_lower}test_sequence_${(sequence_index + 1)?string("000")},
   [#if sequence.condition.value[0]?trim?length > 0]
 #endif
   [/#if]

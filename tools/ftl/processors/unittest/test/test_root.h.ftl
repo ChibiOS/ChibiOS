@@ -1,25 +1,27 @@
 [#ftl]
 [#import "/@ftllibs/libutils.ftl" as utils /]
-[@pp.dropOutputFile /]
-[@pp.changeOutputFile name="test_root.h" /]
 [#list conf.*.application.instances.instance as inst]
   [#if inst.@id?string == "org.chibios.spc5.components.portable.chibios_unitary_tests_engine"]
     [#assign instance = inst /]
     [#break]
   [/#if]
 [/#list]
+[#assign prefix_lower = instance.global_data_and_code.code_prefix.value[0]?trim?lower_case /]
+[#assign prefix_upper = instance.global_data_and_code.code_prefix.value[0]?trim?upper_case /]
+[@pp.dropOutputFile /]
+[@pp.changeOutputFile name=prefix_lower+"test_root.h" /]
 [@utils.EmitIndentedCCode "" 2 instance.description.copyright.value[0] /]
 
 /**
- * @file    test_root.h
+ * @file    ${prefix_lower}test_root.h
  * @brief   Test Suite root structures header.
  */
 
-#ifndef TEST_ROOT_H
-#define TEST_ROOT_H
+#ifndef ${prefix_upper}TEST_ROOT_H
+#define ${prefix_upper}TEST_ROOT_H
 
 [#list instance.sequences.sequence as sequence]
-#include "test_sequence_${(sequence_index + 1)?string("000")}.h"
+#include "${prefix_lower}test_sequence_${(sequence_index + 1)?string("000")}.h"
 [/#list]
 
 #if !defined(__DOXYGEN__)
@@ -28,7 +30,7 @@
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-extern const testcase_t * const *test_suite[];
+extern const testcase_t * const *${prefix_lower}test_suite[];
 
 #ifdef __cplusplus
 extern "C" {
@@ -47,4 +49,4 @@ extern "C" {
 [/#if]
 #endif /* !defined(__DOXYGEN__) */
 
-#endif /* TEST_ROOT_H */
+#endif /* ${prefix_upper}TEST_ROOT_H */
