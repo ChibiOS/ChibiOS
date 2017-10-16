@@ -217,13 +217,14 @@ void test_emit_token_i(char token) {
  *
  * @param[in] stream    pointer to a @p BaseSequentialStream object for test
  *                      output
+ * @param[in] tsp       test suite to execute
  * @return              A failure boolean value casted to @p msg_t.
  * @retval false        if no errors occurred.
  * @retval true         if one or more tests failed.
  *
  * @api
  */
-msg_t test_execute(BaseSequentialStream *stream, testsuite_t ts) {
+msg_t test_execute(BaseSequentialStream *stream, const testsuite_t *tsp) {
   int i, j;
 
   test_chp = stream;
@@ -251,21 +252,21 @@ msg_t test_execute(BaseSequentialStream *stream, testsuite_t ts) {
 
   test_global_fail = false;
   i = 0;
-  while (ts[i] != NULL) {
+  while (tsp->sequences[i] != NULL) {
     j = 0;
-    while (ts[i][j] != NULL) {
+    while (tsp->sequences[i]->cases[j] != NULL) {
       print_line();
       test_print("--- Test Case ");
       test_printn(i + 1);
       test_print(".");
       test_printn(j + 1);
       test_print(" (");
-      test_print(ts[i][j]->name);
+      test_print(tsp->sequences[i]->cases[j]->name);
       test_println(")");
 #if TEST_DELAY_BETWEEN_TESTS > 0
       osalThreadSleepMilliseconds(TEST_DELAY_BETWEEN_TESTS);
 #endif
-      execute_test(ts[i][j]);
+      execute_test(tsp->sequences[i]->cases[j]);
       if (test_local_fail) {
         test_print("--- Result: FAILURE (#");
         test_printn(test_step);

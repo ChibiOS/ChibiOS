@@ -30,7 +30,7 @@
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-extern const testcase_t * const *${prefix_lower}test_suite[];
+extern const testsuite_t ${prefix_lower}test_suite;
 
 #ifdef __cplusplus
 extern "C" {

@@ -220,10 +220,18 @@ static const testcase_t rt_test_001_002 = {
  ****************************************************************************/
 
 /**
- * @brief   Information.
+ * @brief   Array of test cases.
  */
-const testcase_t * const rt_test_sequence_001[] = {
+const testcase_t * const rt_test_sequence_001_array[] = {
   &rt_test_001_001,
   &rt_test_001_002,
   NULL
+};
+
+/**
+ * @brief   Information.
+ */
+const testsequence_t rt_test_sequence_001 = {
+  NULL,
+  rt_test_sequence_001_array
 };

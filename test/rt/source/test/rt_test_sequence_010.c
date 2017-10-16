@@ -281,9 +281,9 @@ static const testcase_t rt_test_010_003 = {
  ****************************************************************************/
 
 /**
- * @brief   Memory Pools.
+ * @brief   Array of test cases.
  */
-const testcase_t * const rt_test_sequence_010[] = {
+const testcase_t * const rt_test_sequence_010_array[] = {
   &rt_test_010_001,
 #if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
   &rt_test_010_002,
@@ -292,6 +292,14 @@ const testcase_t * const rt_test_sequence_010[] = {
   &rt_test_010_003,
 #endif
   NULL
+};
+
+/**
+ * @brief   Memory Pools.
+ */
+const testsequence_t rt_test_sequence_010 = {
+  NULL,
+  rt_test_sequence_010_array
 };
 
 #endif /* CH_CFG_USE_MEMPOOLS */

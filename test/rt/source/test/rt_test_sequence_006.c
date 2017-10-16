@@ -1037,9 +1037,9 @@ static const testcase_t rt_test_006_009 = {
  ****************************************************************************/
 
 /**
- * @brief   Mutexes, Condition Variables and Priority Inheritance.
+ * @brief   Array of test cases.
  */
-const testcase_t * const rt_test_sequence_006[] = {
+const testcase_t * const rt_test_sequence_006_array[] = {
   &rt_test_006_001,
 #if (CH_DBG_THREADS_PROFILING) || defined(__DOXYGEN__)
   &rt_test_006_002,
@@ -1064,6 +1064,14 @@ const testcase_t * const rt_test_sequence_006[] = {
   &rt_test_006_009,
 #endif
   NULL
+};
+
+/**
+ * @brief   Mutexes, Condition Variables and Priority Inheritance.
+ */
+const testsequence_t rt_test_sequence_006 = {
+  NULL,
+  rt_test_sequence_006_array
 };
 
 #endif /* CH_CFG_USE_MUTEXES */

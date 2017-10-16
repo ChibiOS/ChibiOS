@@ -73,7 +73,7 @@ int main(void) {
    */
   while (true) {
     if (palReadLine(LINE_BUTTON_USER))
-      test_execute((BaseSequentialStream *)&SD1, rt_test_suite);
+      test_execute((BaseSequentialStream *)&SD1, &rt_test_suite);
     chThdSleepMilliseconds(2000);
   }
 }

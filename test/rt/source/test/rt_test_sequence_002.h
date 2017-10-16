@@ -22,6 +22,6 @@
 #ifndef RT_TEST_SEQUENCE_002_H
 #define RT_TEST_SEQUENCE_002_H
 
-extern const testcase_t * const rt_test_sequence_002[];
+extern const testsequence_t rt_test_sequence_002;
 
 #endif /* RT_TEST_SEQUENCE_002_H */

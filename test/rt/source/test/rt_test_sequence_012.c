@@ -269,9 +269,9 @@ static const testcase_t rt_test_012_002 = {
  ****************************************************************************/
 
 /**
- * @brief   Dynamic threads.
+ * @brief   Array of test cases.
  */
-const testcase_t * const rt_test_sequence_012[] = {
+const testcase_t * const rt_test_sequence_012_array[] = {
 #if (CH_CFG_USE_HEAP) || defined(__DOXYGEN__)
   &rt_test_012_001,
 #endif
@@ -279,6 +279,14 @@ const testcase_t * const rt_test_sequence_012[] = {
   &rt_test_012_002,
 #endif
   NULL
+};
+
+/**
+ * @brief   Dynamic threads.
+ */
+const testsequence_t rt_test_sequence_012 = {
+  NULL,
+  rt_test_sequence_012_array
 };
 
 #endif /* CH_CFG_USE_DYNAMIC */

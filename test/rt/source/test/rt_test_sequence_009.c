@@ -397,13 +397,21 @@ static const testcase_t rt_test_009_003 = {
  ****************************************************************************/
 
 /**
- * @brief   Mailboxes.
+ * @brief   Array of test cases.
  */
-const testcase_t * const rt_test_sequence_009[] = {
+const testcase_t * const rt_test_sequence_009_array[] = {
   &rt_test_009_001,
   &rt_test_009_002,
   &rt_test_009_003,
   NULL
+};
+
+/**
+ * @brief   Mailboxes.
+ */
+const testsequence_t rt_test_sequence_009 = {
+  NULL,
+  rt_test_sequence_009_array
 };
 
 #endif /* CH_CFG_USE_MAILBOXES */

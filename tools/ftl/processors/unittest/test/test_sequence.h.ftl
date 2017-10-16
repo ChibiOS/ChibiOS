@@ -21,7 +21,7 @@
 #ifndef ${prefix_upper}TEST_SEQUENCE_${(sequence_index + 1)?string("000")}_H
 #define ${prefix_upper}TEST_SEQUENCE_${(sequence_index + 1)?string("000")}_H
 
-extern const testcase_t * const ${prefix_lower}test_sequence_${(sequence_index + 1)?string("000")}[];
+extern const testsequence_t ${prefix_lower}test_sequence_${(sequence_index + 1)?string("000")};
 
 #endif /* ${prefix_upper}TEST_SEQUENCE_${(sequence_index + 1)?string("000")}_H */
 [/#list]

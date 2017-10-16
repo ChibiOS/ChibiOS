@@ -1000,9 +1000,9 @@ static const testcase_t rt_test_013_012 = {
  ****************************************************************************/
 
 /**
- * @brief   Benchmarks.
+ * @brief   Array of test cases.
  */
-const testcase_t * const rt_test_sequence_013[] = {
+const testcase_t * const rt_test_sequence_013_array[] = {
 #if (CH_CFG_USE_MESSAGES) || defined(__DOXYGEN__)
   &rt_test_013_001,
 #endif
@@ -1028,4 +1028,12 @@ const testcase_t * const rt_test_sequence_013[] = {
 #endif
   &rt_test_013_012,
   NULL
+};
+
+/**
+ * @brief   Benchmarks.
+ */
+const testsequence_t rt_test_sequence_013 = {
+  NULL,
+  rt_test_sequence_013_array
 };

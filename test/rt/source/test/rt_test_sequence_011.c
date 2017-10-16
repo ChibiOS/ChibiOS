@@ -261,12 +261,20 @@ static const testcase_t rt_test_011_002 = {
  ****************************************************************************/
 
 /**
- * @brief   Memory Heaps.
+ * @brief   Array of test cases.
  */
-const testcase_t * const rt_test_sequence_011[] = {
+const testcase_t * const rt_test_sequence_011_array[] = {
   &rt_test_011_001,
   &rt_test_011_002,
   NULL
+};
+
+/**
+ * @brief   Memory Heaps.
+ */
+const testsequence_t rt_test_sequence_011 = {
+  NULL,
+  rt_test_sequence_011_array
 };
 
 #endif /* CH_CFG_USE_HEAP */

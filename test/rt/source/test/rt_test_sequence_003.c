@@ -331,9 +331,9 @@ static const testcase_t rt_test_003_004 = {
  ****************************************************************************/
 
 /**
- * @brief   Threads Functionality.
+ * @brief   Array of test cases.
  */
-const testcase_t * const rt_test_sequence_003[] = {
+const testcase_t * const rt_test_sequence_003_array[] = {
   &rt_test_003_001,
   &rt_test_003_002,
   &rt_test_003_003,
@@ -341,4 +341,12 @@ const testcase_t * const rt_test_sequence_003[] = {
   &rt_test_003_004,
 #endif
   NULL
+};
+
+/**
+ * @brief   Threads Functionality.
+ */
+const testsequence_t rt_test_sequence_003 = {
+  NULL,
+  rt_test_sequence_003_array
 };

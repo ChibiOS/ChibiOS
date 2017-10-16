@@ -191,9 +191,9 @@ static const testcase_t ${prefix_lower}test_${(sequence_index + 1)?string("000")
  ****************************************************************************/
 
 /**
- * @brief   ${utils.WithDot(sequence.brief.value[0]?string)}
+ * @brief   Array of test cases.
  */
-const testcase_t * const ${prefix_lower}test_sequence_${(sequence_index + 1)?string("000")}[] = {
+const testcase_t * const ${prefix_lower}test_sequence_${(sequence_index + 1)?string("000")}_array[] = {
   [#list sequence.cases.case as case]
    [#if case.condition.value[0]?trim?length > 0]
 #if (${case.condition.value[0]?trim}) || defined(__DOXYGEN__)
@@ -204,6 +204,14 @@ const testcase_t * const ${prefix_lower}test_sequence_${(sequence_index + 1)?str
     [/#if]
   [/#list]
   NULL
+};
+
+/**
+ * @brief   ${utils.WithDot(sequence.brief.value[0]?string)}
+ */
+const testsequence_t ${prefix_lower}test_sequence_${(sequence_index + 1)?string("000")} = {
+  NULL,
+  ${prefix_lower}test_sequence_${(sequence_index + 1)?string("000")}_array
 };
   [#if sequence.condition.value[0]?trim?length > 0]
 

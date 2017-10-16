@@ -493,9 +493,9 @@ static const testcase_t rt_test_005_006 = {
  ****************************************************************************/
 
 /**
- * @brief   Counter and Binary Semaphores.
+ * @brief   Array of test cases.
  */
-const testcase_t * const rt_test_sequence_005[] = {
+const testcase_t * const rt_test_sequence_005_array[] = {
   &rt_test_005_001,
   &rt_test_005_002,
   &rt_test_005_003,
@@ -503,6 +503,14 @@ const testcase_t * const rt_test_sequence_005[] = {
   &rt_test_005_005,
   &rt_test_005_006,
   NULL
+};
+
+/**
+ * @brief   Counter and Binary Semaphores.
+ */
+const testsequence_t rt_test_sequence_005 = {
+  NULL,
+  rt_test_sequence_005_array
 };
 
 #endif /* CH_CFG_USE_SEMAPHORES */

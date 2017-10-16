@@ -551,9 +551,9 @@ static const testcase_t rt_test_008_007 = {
  ****************************************************************************/
 
 /**
- * @brief   Event Sources and Event Flags.
+ * @brief   Array of test cases.
  */
-const testcase_t * const rt_test_sequence_008[] = {
+const testcase_t * const rt_test_sequence_008_array[] = {
   &rt_test_008_001,
   &rt_test_008_002,
   &rt_test_008_003,
@@ -564,6 +564,14 @@ const testcase_t * const rt_test_sequence_008[] = {
 #endif
   &rt_test_008_007,
   NULL
+};
+
+/**
+ * @brief   Event Sources and Event Flags.
+ */
+const testsequence_t rt_test_sequence_008 = {
+  NULL,
+  rt_test_sequence_008_array
 };
 
 #endif /* CH_CFG_USE_EVENTS */

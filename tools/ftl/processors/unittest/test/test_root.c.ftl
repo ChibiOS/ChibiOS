@@ -50,19 +50,27 @@
 /*===========================================================================*/
 
 /**
- * @brief   Array of all the test sequences.
+ * @brief   Array of test sequences.
  */
-const testcase_t * const *${prefix_lower}test_suite[] = {
+const testsequence_t * const ${prefix_lower}test_suite_array[] = {
 [#list instance.sequences.sequence as sequence]
   [#if sequence.condition.value[0]?trim?length > 0]
 #if (${sequence.condition.value[0]}) || defined(__DOXYGEN__)
   [/#if]
-  ${prefix_lower}test_sequence_${(sequence_index + 1)?string("000")},
+  &${prefix_lower}test_sequence_${(sequence_index + 1)?string("000")},
   [#if sequence.condition.value[0]?trim?length > 0]
 #endif
   [/#if]
 [/#list]
   NULL
+};
+
+/**
+ * @brief   Test suite root structure.
+ */
+const testsuite_t ${prefix_lower}test_suite = {
+  NULL,
+  ${prefix_lower}test_suite_array
 };
 
 /*===========================================================================*/

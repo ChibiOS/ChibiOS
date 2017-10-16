@@ -113,11 +113,19 @@ static const testcase_t rt_test_007_001 = {
  ****************************************************************************/
 
 /**
- * @brief   Synchronous Messages.
+ * @brief   Array of test cases.
  */
-const testcase_t * const rt_test_sequence_007[] = {
+const testcase_t * const rt_test_sequence_007_array[] = {
   &rt_test_007_001,
   NULL
+};
+
+/**
+ * @brief   Synchronous Messages.
+ */
+const testsequence_t rt_test_sequence_007 = {
+  NULL,
+  rt_test_sequence_007_array
 };
 
 #endif /* CH_CFG_USE_MESSAGES */

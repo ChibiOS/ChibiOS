@@ -271,12 +271,20 @@ static const testcase_t rt_test_002_004 = {
  ****************************************************************************/
 
 /**
- * @brief   System layer and port interface.
+ * @brief   Array of test cases.
  */
-const testcase_t * const rt_test_sequence_002[] = {
+const testcase_t * const rt_test_sequence_002_array[] = {
   &rt_test_002_001,
   &rt_test_002_002,
   &rt_test_002_003,
   &rt_test_002_004,
   NULL
+};
+
+/**
+ * @brief   System layer and port interface.
+ */
+const testsequence_t rt_test_sequence_002 = {
+  NULL,
+  rt_test_sequence_002_array
 };

@@ -42,7 +42,7 @@
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-extern const testcase_t * const *rt_test_suite[];
+extern const testsuite_t rt_test_suite;
 
 #ifdef __cplusplus
 extern "C" {
