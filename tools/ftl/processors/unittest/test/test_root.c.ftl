@@ -40,7 +40,6 @@
  */
 
 #include "hal.h"
-#include "ch_test.h"
 #include "${prefix_lower}test_root.h"
 
 #if !defined(__DOXYGEN__)

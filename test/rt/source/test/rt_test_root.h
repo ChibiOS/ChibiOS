@@ -22,6 +22,8 @@
 #ifndef RT_TEST_ROOT_H
 #define RT_TEST_ROOT_H
 
+#include "ch_test.h"
+
 #include "rt_test_sequence_001.h"
 #include "rt_test_sequence_002.h"
 #include "rt_test_sequence_003.h"

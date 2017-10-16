@@ -14,7 +14,6 @@
 [@utils.EmitIndentedCCode "" 2 instance.description.copyright.value[0] /]
 
 #include "hal.h"
-#include "ch_test.h"
 #include "${prefix_lower}test_root.h"
 
 /**

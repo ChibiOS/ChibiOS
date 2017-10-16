@@ -16,7 +16,7 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "ch_test.h"
+#include "rt_test_root.h"
 
 #include "chprintf.h"
 #include "shell.h"

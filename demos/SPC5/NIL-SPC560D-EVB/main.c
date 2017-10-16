@@ -110,7 +110,7 @@ THD_FUNCTION(Thread2, arg) {
   /* Waiting for button push and activation of the test suite.*/
   while (true) {
     if (palReadPad(PORT_E, PE_BUTTON1))
-      test_execute((BaseSequentialStream *)&SD1);
+      test_execute((BaseSequentialStream *)&SD1, &rt_test_suite);
     chThdSleepMilliseconds(500);
   }
 }

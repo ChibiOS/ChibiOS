@@ -67,7 +67,7 @@ int main(void) {
      waiting for a button event, then the test suite is executed.*/
   while (true) {
     if (palReadLine(LINE_BUTTON_USER))
-      test_execute((BaseSequentialStream *)&SD1);
+      test_execute((BaseSequentialStream *)&SD1, &rt_test_suite);
     OS_TaskDelay(500);
   }
 }

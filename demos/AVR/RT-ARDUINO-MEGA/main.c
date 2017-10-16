@@ -16,7 +16,7 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "ch_test.h"
+#include "rt_test_root.h"
 
 static THD_WORKING_AREA(waThread1, 32);
 static THD_FUNCTION(Thread1, arg) {
@@ -56,7 +56,7 @@ int main(void) {
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
-  test_execute((BaseSequentialStream *)&SD1);
+  test_execute((BaseSequentialStream *)&SD1, &rt_test_suite);
   while(TRUE) {
     chThdSleepMilliseconds(1000);
   }

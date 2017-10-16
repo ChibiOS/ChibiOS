@@ -16,7 +16,7 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "ch_test.h"
+#include "rt_test_root.h"
 
 /*
  * LEDs blinker thread, times are in milliseconds.
@@ -69,7 +69,7 @@ int main(void) {
    */
   while (true) {
     if (palReadLine(LINE_JOY_CENTER))
-      test_execute((BaseSequentialStream *)&SD2);
+      test_execute((BaseSequentialStream *)&SD2, &rt_test_suite);
     chThdSleepMilliseconds(500);
   }
 }

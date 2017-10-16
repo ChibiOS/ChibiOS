@@ -20,6 +20,8 @@
 #ifndef ${prefix_upper}TEST_ROOT_H
 #define ${prefix_upper}TEST_ROOT_H
 
+#include "ch_test.h"
+
 [#list instance.sequences.sequence as sequence]
 #include "${prefix_lower}test_sequence_${(sequence_index + 1)?string("000")}.h"
 [/#list]

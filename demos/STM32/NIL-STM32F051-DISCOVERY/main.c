@@ -72,7 +72,7 @@ THD_FUNCTION(Thread3, arg) {
   /* Waiting for button push and activation of the test suite.*/
   while (true) {
     if (palReadLine(LINE_BUTTON))
-      test_execute((BaseSequentialStream *)&SD1);
+      test_execute((BaseSequentialStream *)&SD1, &rt_test_suite);
     chThdSleepMilliseconds(500);
   }
 }
