@@ -16,15 +16,15 @@
 
 #include "hal.h"
 #include "ch_test.h"
-#include "test_root.h"
+#include "rt_test_root.h"
 
 /**
- * @file    test_sequence_013.c
+ * @file    rt_test_sequence_013.c
  * @brief   Test Sequence 013 code.
  *
- * @page test_sequence_013 [13] Benchmarks
+ * @page rt_test_sequence_013 [13] Benchmarks
  *
- * File: @ref test_sequence_013.c
+ * File: @ref rt_test_sequence_013.c
  *
  * <h2>Description</h2>
  * This module implements a series of system benchmarks. The benchmarks
@@ -35,18 +35,18 @@
  * regressions between successive ChibiOS/RT releases.
  *
  * <h2>Test Cases</h2>
- * - @subpage test_013_001
- * - @subpage test_013_002
- * - @subpage test_013_003
- * - @subpage test_013_004
- * - @subpage test_013_005
- * - @subpage test_013_006
- * - @subpage test_013_007
- * - @subpage test_013_008
- * - @subpage test_013_009
- * - @subpage test_013_010
- * - @subpage test_013_011
- * - @subpage test_013_012
+ * - @subpage rt_test_013_001
+ * - @subpage rt_test_013_002
+ * - @subpage rt_test_013_003
+ * - @subpage rt_test_013_004
+ * - @subpage rt_test_013_005
+ * - @subpage rt_test_013_006
+ * - @subpage rt_test_013_007
+ * - @subpage rt_test_013_008
+ * - @subpage rt_test_013_009
+ * - @subpage rt_test_013_010
+ * - @subpage rt_test_013_011
+ * - @subpage rt_test_013_012
  * .
  */
 
@@ -81,7 +81,7 @@ NOINLINE static unsigned int msg_loop_test(thread_t *tp) {
 
   uint32_t n = 0;
   start = test_wait_tick();
-  end = start + MS2ST(1000);
+  end = start + TIME_MS2I(1000);
   do {
     (void)chMsgSend(tp, 1);
     n++;
@@ -141,7 +141,7 @@ static THD_FUNCTION(bmk_thread8, p) {
 
 #if (CH_CFG_USE_MESSAGES) || defined(__DOXYGEN__)
 /**
- * @page test_013_001 [13.1] Messages performance #1
+ * @page rt_test_013_001 [13.1] Messages performance #1
  *
  * <h2>Description</h2>
  * A message server thread is created with a lower priority than the
@@ -163,7 +163,7 @@ static THD_FUNCTION(bmk_thread8, p) {
  * .
  */
 
-static void test_013_001_execute(void) {
+static void rt_test_013_001_execute(void) {
   uint32_t n;
 
   /* [13.1.1] The messenger thread is started at a lower priority than
@@ -192,17 +192,17 @@ static void test_013_001_execute(void) {
   }
 }
 
-static const testcase_t test_013_001 = {
+static const testcase_t rt_test_013_001 = {
   "Messages performance #1",
   NULL,
   NULL,
-  test_013_001_execute
+  rt_test_013_001_execute
 };
 #endif /* CH_CFG_USE_MESSAGES */
 
 #if (CH_CFG_USE_MESSAGES) || defined(__DOXYGEN__)
 /**
- * @page test_013_002 [13.2] Messages performance #2
+ * @page rt_test_013_002 [13.2] Messages performance #2
  *
  * <h2>Description</h2>
  * A message server thread is created with an higher priority than the
@@ -224,7 +224,7 @@ static const testcase_t test_013_001 = {
  * .
  */
 
-static void test_013_002_execute(void) {
+static void rt_test_013_002_execute(void) {
   uint32_t n;
 
   /* [13.2.1] The messenger thread is started at an higher priority
@@ -253,17 +253,17 @@ static void test_013_002_execute(void) {
   }
 }
 
-static const testcase_t test_013_002 = {
+static const testcase_t rt_test_013_002 = {
   "Messages performance #2",
   NULL,
   NULL,
-  test_013_002_execute
+  rt_test_013_002_execute
 };
 #endif /* CH_CFG_USE_MESSAGES */
 
 #if (CH_CFG_USE_MESSAGES) || defined(__DOXYGEN__)
 /**
- * @page test_013_003 [13.3] Messages performance #3
+ * @page rt_test_013_003 [13.3] Messages performance #3
  *
  * <h2>Description</h2>
  * A message server thread is created with an higher priority than the
@@ -288,7 +288,7 @@ static const testcase_t test_013_002 = {
  * .
  */
 
-static void test_013_003_execute(void) {
+static void rt_test_013_003_execute(void) {
   uint32_t n;
 
   /* [13.3.1] The messenger thread is started at an higher priority
@@ -327,16 +327,16 @@ static void test_013_003_execute(void) {
   }
 }
 
-static const testcase_t test_013_003 = {
+static const testcase_t rt_test_013_003 = {
   "Messages performance #3",
   NULL,
   NULL,
-  test_013_003_execute
+  rt_test_013_003_execute
 };
 #endif /* CH_CFG_USE_MESSAGES */
 
 /**
- * @page test_013_004 [13.4] Context Switch performance
+ * @page rt_test_013_004 [13.4] Context Switch performance
  *
  * <h2>Description</h2>
  * A thread is created that just performs a @p chSchGoSleepS() into a
@@ -354,7 +354,7 @@ static const testcase_t test_013_003 = {
  * .
  */
 
-static void test_013_004_execute(void) {
+static void rt_test_013_004_execute(void) {
   thread_t *tp;
   uint32_t n;
 
@@ -373,7 +373,7 @@ static void test_013_004_execute(void) {
 
     n = 0;
     start = test_wait_tick();
-    end = start + MS2ST(1000);
+    end = start + TIME_MS2I(1000);
     do {
       chSysLock();
       chSchWakeupS(tp, MSG_OK);
@@ -406,15 +406,15 @@ static void test_013_004_execute(void) {
   }
 }
 
-static const testcase_t test_013_004 = {
+static const testcase_t rt_test_013_004 = {
   "Context Switch performance",
   NULL,
   NULL,
-  test_013_004_execute
+  rt_test_013_004_execute
 };
 
 /**
- * @page test_013_005 [13.5] Threads performance, full cycle
+ * @page rt_test_013_005 [13.5] Threads performance, full cycle
  *
  * <h2>Description</h2>
  * Threads are continuously created and terminated into a loop. A full
@@ -431,7 +431,7 @@ static const testcase_t test_013_004 = {
  * .
  */
 
-static void test_013_005_execute(void) {
+static void rt_test_013_005_execute(void) {
   uint32_t n;
   tprio_t prio = chThdGetPriorityX() - 1;
   systime_t start, end;
@@ -443,7 +443,7 @@ static void test_013_005_execute(void) {
   {
     n = 0;
     start = test_wait_tick();
-    end = start + MS2ST(1000);
+    end = start + TIME_MS2I(1000);
     do {
       chThdWait(chThdCreateStatic(wa[0], WA_SIZE, prio, bmk_thread3, NULL));
       n++;
@@ -462,15 +462,15 @@ static void test_013_005_execute(void) {
   }
 }
 
-static const testcase_t test_013_005 = {
+static const testcase_t rt_test_013_005 = {
   "Threads performance, full cycle",
   NULL,
   NULL,
-  test_013_005_execute
+  rt_test_013_005_execute
 };
 
 /**
- * @page test_013_006 [13.6] Threads performance, create/exit only
+ * @page rt_test_013_006 [13.6] Threads performance, create/exit only
  *
  * <h2>Description</h2>
  * Threads are continuously created and terminated into a loop. A
@@ -488,7 +488,7 @@ static const testcase_t test_013_005 = {
  * .
  */
 
-static void test_013_006_execute(void) {
+static void rt_test_013_006_execute(void) {
   uint32_t n;
   tprio_t prio = chThdGetPriorityX() + 1;
   systime_t start, end;
@@ -500,7 +500,7 @@ static void test_013_006_execute(void) {
   {
     n = 0;
     start = test_wait_tick();
-    end = start + MS2ST(1000);
+    end = start + TIME_MS2I(1000);
     do {
 #if CH_CFG_USE_REGISTRY
       chThdRelease(chThdCreateStatic(wa[0], WA_SIZE, prio, bmk_thread3, NULL));
@@ -523,16 +523,16 @@ static void test_013_006_execute(void) {
   }
 }
 
-static const testcase_t test_013_006 = {
+static const testcase_t rt_test_013_006 = {
   "Threads performance, create/exit only",
   NULL,
   NULL,
-  test_013_006_execute
+  rt_test_013_006_execute
 };
 
 #if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
 /**
- * @page test_013_007 [13.7] Mass reschedule performance
+ * @page rt_test_013_007 [13.7] Mass reschedule performance
  *
  * <h2>Description</h2>
  * Five threads are created and atomically rescheduled by resetting the
@@ -556,11 +556,11 @@ static const testcase_t test_013_006 = {
  * .
  */
 
-static void test_013_007_setup(void) {
+static void rt_test_013_007_setup(void) {
   chSemObjectInit(&sem1, 0);
 }
 
-static void test_013_007_execute(void) {
+static void rt_test_013_007_execute(void) {
   uint32_t n;
 
   /* [13.7.1] Five threads are created at higher priority that
@@ -582,7 +582,7 @@ static void test_013_007_execute(void) {
 
     n = 0;
     start = test_wait_tick();
-    end = start + MS2ST(1000);
+    end = start + TIME_MS2I(1000);
     do {
       chSemReset(&sem1, 0);
       n++;
@@ -611,16 +611,16 @@ static void test_013_007_execute(void) {
   }
 }
 
-static const testcase_t test_013_007 = {
+static const testcase_t rt_test_013_007 = {
   "Mass reschedule performance",
-  test_013_007_setup,
+  rt_test_013_007_setup,
   NULL,
-  test_013_007_execute
+  rt_test_013_007_execute
 };
 #endif /* CH_CFG_USE_SEMAPHORES */
 
 /**
- * @page test_013_008 [13.8] Round-Robin voluntary reschedule
+ * @page rt_test_013_008 [13.8] Round-Robin voluntary reschedule
  *
  * <h2>Description</h2>
  * Five threads are created at equal priority, each thread just
@@ -637,7 +637,7 @@ static const testcase_t test_013_007 = {
  * .
  */
 
-static void test_013_008_execute(void) {
+static void rt_test_013_008_execute(void) {
   uint32_t n;
 
   /* [13.8.1] The five threads are created at lower priority. The
@@ -671,15 +671,15 @@ static void test_013_008_execute(void) {
   }
 }
 
-static const testcase_t test_013_008 = {
+static const testcase_t rt_test_013_008 = {
   "Round-Robin voluntary reschedule",
   NULL,
   NULL,
-  test_013_008_execute
+  rt_test_013_008_execute
 };
 
 /**
- * @page test_013_009 [13.9] Virtual Timers set/reset performance
+ * @page rt_test_013_009 [13.9] Virtual Timers set/reset performance
  *
  * <h2>Description</h2>
  * A virtual timer is set and immediately reset into a continuous
@@ -694,7 +694,7 @@ static const testcase_t test_013_008 = {
  * .
  */
 
-static void test_013_009_execute(void) {
+static void rt_test_013_009_execute(void) {
   static virtual_timer_t vt1, vt2;
   uint32_t n;
 
@@ -707,7 +707,7 @@ static void test_013_009_execute(void) {
 
     n = 0;
     start = test_wait_tick();
-    end = start + MS2ST(1000);
+    end = start + TIME_MS2I(1000);
     do {
       chSysLock();
       chVTDoSetI(&vt1, 1, tmo, NULL);
@@ -731,16 +731,16 @@ static void test_013_009_execute(void) {
   }
 }
 
-static const testcase_t test_013_009 = {
+static const testcase_t rt_test_013_009 = {
   "Virtual Timers set/reset performance",
   NULL,
   NULL,
-  test_013_009_execute
+  rt_test_013_009_execute
 };
 
 #if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
 /**
- * @page test_013_010 [13.10] Semaphores wait/signal performance
+ * @page rt_test_013_010 [13.10] Semaphores wait/signal performance
  *
  * <h2>Description</h2>
  * A counting semaphore is taken/released into a continuous loop, no
@@ -761,11 +761,11 @@ static const testcase_t test_013_009 = {
  * .
  */
 
-static void test_013_010_setup(void) {
+static void rt_test_013_010_setup(void) {
   chSemObjectInit(&sem1, 1);
 }
 
-static void test_013_010_execute(void) {
+static void rt_test_013_010_execute(void) {
   uint32_t n;
 
   /* [13.10.1] A semaphore is teken and released. The operation is
@@ -776,7 +776,7 @@ static void test_013_010_execute(void) {
 
     n = 0;
     start = test_wait_tick();
-    end = start + MS2ST(1000);
+    end = start + TIME_MS2I(1000);
     do {
       chSemWait(&sem1);
       chSemSignal(&sem1);
@@ -802,17 +802,17 @@ static void test_013_010_execute(void) {
   }
 }
 
-static const testcase_t test_013_010 = {
+static const testcase_t rt_test_013_010 = {
   "Semaphores wait/signal performance",
-  test_013_010_setup,
+  rt_test_013_010_setup,
   NULL,
-  test_013_010_execute
+  rt_test_013_010_execute
 };
 #endif /* CH_CFG_USE_SEMAPHORES */
 
 #if (CH_CFG_USE_MUTEXES) || defined(__DOXYGEN__)
 /**
- * @page test_013_011 [13.11] Mutexes lock/unlock performance
+ * @page rt_test_013_011 [13.11] Mutexes lock/unlock performance
  *
  * <h2>Description</h2>
  * A mutex is locked/unlocked into a continuous loop, no Context Switch
@@ -833,11 +833,11 @@ static const testcase_t test_013_010 = {
  * .
  */
 
-static void test_013_011_setup(void) {
+static void rt_test_013_011_setup(void) {
   chMtxObjectInit(&mtx1);
 }
 
-static void test_013_011_execute(void) {
+static void rt_test_013_011_execute(void) {
   uint32_t n;
 
   /* [13.11.1] A mutex is locked and unlocked. The operation is
@@ -848,7 +848,7 @@ static void test_013_011_execute(void) {
 
     n = 0;
     start = test_wait_tick();
-    end = start + MS2ST(1000);
+    end = start + TIME_MS2I(1000);
     do {
       chMtxLock(&mtx1);
       chMtxUnlock(&mtx1);
@@ -874,16 +874,16 @@ static void test_013_011_execute(void) {
   }
 }
 
-static const testcase_t test_013_011 = {
+static const testcase_t rt_test_013_011 = {
   "Mutexes lock/unlock performance",
-  test_013_011_setup,
+  rt_test_013_011_setup,
   NULL,
-  test_013_011_execute
+  rt_test_013_011_execute
 };
 #endif /* CH_CFG_USE_MUTEXES */
 
 /**
- * @page test_013_012 [13.12] RAM Footprint
+ * @page rt_test_013_012 [13.12] RAM Footprint
  *
  * <h2>Description</h2>
  * The memory size of the various kernel objects is printed.
@@ -901,7 +901,7 @@ static const testcase_t test_013_011 = {
  * .
  */
 
-static void test_013_012_execute(void) {
+static void rt_test_013_012_execute(void) {
 
   /* [13.12.1] The size of the system area is printed.*/
   test_set_step(1);
@@ -988,11 +988,11 @@ static void test_013_012_execute(void) {
   }
 }
 
-static const testcase_t test_013_012 = {
+static const testcase_t rt_test_013_012 = {
   "RAM Footprint",
   NULL,
   NULL,
-  test_013_012_execute
+  rt_test_013_012_execute
 };
 
 /****************************************************************************
@@ -1002,30 +1002,30 @@ static const testcase_t test_013_012 = {
 /**
  * @brief   Benchmarks.
  */
-const testcase_t * const test_sequence_013[] = {
+const testcase_t * const rt_test_sequence_013[] = {
 #if (CH_CFG_USE_MESSAGES) || defined(__DOXYGEN__)
-  &test_013_001,
+  &rt_test_013_001,
 #endif
 #if (CH_CFG_USE_MESSAGES) || defined(__DOXYGEN__)
-  &test_013_002,
+  &rt_test_013_002,
 #endif
 #if (CH_CFG_USE_MESSAGES) || defined(__DOXYGEN__)
-  &test_013_003,
+  &rt_test_013_003,
 #endif
-  &test_013_004,
-  &test_013_005,
-  &test_013_006,
+  &rt_test_013_004,
+  &rt_test_013_005,
+  &rt_test_013_006,
 #if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
-  &test_013_007,
+  &rt_test_013_007,
 #endif
-  &test_013_008,
-  &test_013_009,
+  &rt_test_013_008,
+  &rt_test_013_009,
 #if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
-  &test_013_010,
+  &rt_test_013_010,
 #endif
 #if (CH_CFG_USE_MUTEXES) || defined(__DOXYGEN__)
-  &test_013_011,
+  &rt_test_013_011,
 #endif
-  &test_013_012,
+  &rt_test_013_012,
   NULL
 };

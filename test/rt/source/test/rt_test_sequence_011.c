@@ -16,15 +16,15 @@
 
 #include "hal.h"
 #include "ch_test.h"
-#include "test_root.h"
+#include "rt_test_root.h"
 
 /**
- * @file    test_sequence_011.c
+ * @file    rt_test_sequence_011.c
  * @brief   Test Sequence 011 code.
  *
- * @page test_sequence_011 [11] Memory Heaps
+ * @page rt_test_sequence_011 [11] Memory Heaps
  *
- * File: @ref test_sequence_011.c
+ * File: @ref rt_test_sequence_011.c
  *
  * <h2>Description</h2>
  * This sequence tests the ChibiOS/RT functionalities related to memory
@@ -37,8 +37,8 @@
  * .
  *
  * <h2>Test Cases</h2>
- * - @subpage test_011_001
- * - @subpage test_011_002
+ * - @subpage rt_test_011_001
+ * - @subpage rt_test_011_002
  * .
  */
 
@@ -58,7 +58,7 @@ memory_heap_t test_heap;
  ****************************************************************************/
 
 /**
- * @page test_011_001 [11.1] Allocation and fragmentation
+ * @page rt_test_011_001 [11.1] Allocation and fragmentation
  *
  * <h2>Description</h2>
  * Series of allocations/deallocations are performed in carefully
@@ -87,11 +87,11 @@ memory_heap_t test_heap;
  * .
  */
 
-static void test_011_001_setup(void) {
+static void rt_test_011_001_setup(void) {
   chHeapObjectInit(&test_heap, test_buffer, sizeof(test_buffer));
 }
 
-static void test_011_001_execute(void) {
+static void rt_test_011_001_execute(void) {
   void *p1, *p2, *p3;
   size_t n, sz;
 
@@ -206,15 +206,15 @@ static void test_011_001_execute(void) {
   }
 }
 
-static const testcase_t test_011_001 = {
+static const testcase_t rt_test_011_001 = {
   "Allocation and fragmentation",
-  test_011_001_setup,
+  rt_test_011_001_setup,
   NULL,
-  test_011_001_execute
+  rt_test_011_001_execute
 };
 
 /**
- * @page test_011_002 [11.2] Default Heap
+ * @page rt_test_011_002 [11.2] Default Heap
  *
  * <h2>Description</h2>
  * The default heap is pre-allocated in the system. We test base
@@ -227,7 +227,7 @@ static const testcase_t test_011_001 = {
  * .
  */
 
-static void test_011_002_execute(void) {
+static void rt_test_011_002_execute(void) {
   void *p1;
   size_t total_size, largest_size;
 
@@ -249,11 +249,11 @@ static void test_011_002_execute(void) {
   }
 }
 
-static const testcase_t test_011_002 = {
+static const testcase_t rt_test_011_002 = {
   "Default Heap",
   NULL,
   NULL,
-  test_011_002_execute
+  rt_test_011_002_execute
 };
 
 /****************************************************************************
@@ -263,9 +263,9 @@ static const testcase_t test_011_002 = {
 /**
  * @brief   Memory Heaps.
  */
-const testcase_t * const test_sequence_011[] = {
-  &test_011_001,
-  &test_011_002,
+const testcase_t * const rt_test_sequence_011[] = {
+  &rt_test_011_001,
+  &rt_test_011_002,
   NULL
 };
 

@@ -16,7 +16,8 @@
 
 #include "ch.h"
 #include "hal.h"
-//#include "ch_test.h"
+#include "ch_test.h"
+#include "rt_test_root.h"
 
 /*
  * This is a periodic thread that does absolutely nothing except flashing
@@ -71,8 +72,8 @@ int main(void) {
    * sleeping in a loop and check the button state.
    */
   while (true) {
-//    if (palReadLine(LINE_BUTTON_USER))
-//      test_execute((BaseSequentialStream *)&SD1);
+    if (palReadLine(LINE_BUTTON_USER))
+      test_execute((BaseSequentialStream *)&SD1, rt_test_suite);
     chThdSleepMilliseconds(2000);
   }
 }

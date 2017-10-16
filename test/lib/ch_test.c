@@ -24,7 +24,6 @@
 
 #include "hal.h"
 #include "ch_test.h"
-#include "test_root.h"
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
@@ -134,7 +133,7 @@ bool _test_assert_time_window(systime_t start,
                               systime_t end,
                               const char *msg) {
 
-  return _test_assert(osalOsIsTimeWithinX(osalOsGetSystemTimeX(), start, end),
+  return _test_assert(osalTimeIsInRangeX(osalOsGetSystemTimeX(), start, end),
                       msg);
 }
 
@@ -224,7 +223,7 @@ void test_emit_token_i(char token) {
  *
  * @api
  */
-msg_t test_execute(BaseSequentialStream *stream) {
+msg_t test_execute(BaseSequentialStream *stream, testsuite_t ts) {
   int i, j;
 
   test_chp = stream;
@@ -252,21 +251,21 @@ msg_t test_execute(BaseSequentialStream *stream) {
 
   test_global_fail = false;
   i = 0;
-  while (test_suite[i]) {
+  while (ts[i] != NULL) {
     j = 0;
-    while (test_suite[i][j]) {
+    while (ts[i][j] != NULL) {
       print_line();
       test_print("--- Test Case ");
       test_printn(i + 1);
       test_print(".");
       test_printn(j + 1);
       test_print(" (");
-      test_print(test_suite[i][j]->name);
+      test_print(ts[i][j]->name);
       test_println(")");
 #if TEST_DELAY_BETWEEN_TESTS > 0
       osalThreadSleepMilliseconds(TEST_DELAY_BETWEEN_TESTS);
 #endif
-      execute_test(test_suite[i][j]);
+      execute_test(ts[i][j]);
       if (test_local_fail) {
         test_print("--- Result: FAILURE (#");
         test_printn(test_step);

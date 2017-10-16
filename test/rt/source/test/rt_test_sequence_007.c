@@ -16,15 +16,15 @@
 
 #include "hal.h"
 #include "ch_test.h"
-#include "test_root.h"
+#include "rt_test_root.h"
 
 /**
- * @file    test_sequence_007.c
+ * @file    rt_test_sequence_007.c
  * @brief   Test Sequence 007 code.
  *
- * @page test_sequence_007 [7] Synchronous Messages
+ * @page rt_test_sequence_007 [7] Synchronous Messages
  *
- * File: @ref test_sequence_007.c
+ * File: @ref rt_test_sequence_007.c
  *
  * <h2>Description</h2>
  * This module implements the test sequence for the Synchronous
@@ -37,7 +37,7 @@
  * .
  *
  * <h2>Test Cases</h2>
- * - @subpage test_007_001
+ * - @subpage rt_test_007_001
  * .
  */
 
@@ -60,7 +60,7 @@ static THD_FUNCTION(msg_thread1, p) {
  ****************************************************************************/
 
 /**
- * @page test_007_001 [7.1] Messages Server loop
+ * @page rt_test_007_001 [7.1] Messages Server loop
  *
  * <h2>Description</h2>
  * A messenger thread is spawned that sends four messages back to the
@@ -73,7 +73,7 @@ static THD_FUNCTION(msg_thread1, p) {
  * .
  */
 
-static void test_007_001_execute(void) {
+static void rt_test_007_001_execute(void) {
   thread_t *tp;
   msg_t msg;
 
@@ -101,11 +101,11 @@ static void test_007_001_execute(void) {
   }
 }
 
-static const testcase_t test_007_001 = {
+static const testcase_t rt_test_007_001 = {
   "Messages Server loop",
   NULL,
   NULL,
-  test_007_001_execute
+  rt_test_007_001_execute
 };
 
 /****************************************************************************
@@ -115,8 +115,8 @@ static const testcase_t test_007_001 = {
 /**
  * @brief   Synchronous Messages.
  */
-const testcase_t * const test_sequence_007[] = {
-  &test_007_001,
+const testcase_t * const rt_test_sequence_007[] = {
+  &rt_test_007_001,
   NULL
 };
 

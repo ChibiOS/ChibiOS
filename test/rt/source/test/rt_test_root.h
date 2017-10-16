@@ -15,26 +15,26 @@
 */
 
 /**
- * @file    test_root.h
+ * @file    rt_test_root.h
  * @brief   Test Suite root structures header.
  */
 
-#ifndef TEST_ROOT_H
-#define TEST_ROOT_H
+#ifndef RT_TEST_ROOT_H
+#define RT_TEST_ROOT_H
 
-#include "test_sequence_001.h"
-#include "test_sequence_002.h"
-#include "test_sequence_003.h"
-#include "test_sequence_004.h"
-#include "test_sequence_005.h"
-#include "test_sequence_006.h"
-#include "test_sequence_007.h"
-#include "test_sequence_008.h"
-#include "test_sequence_009.h"
-#include "test_sequence_010.h"
-#include "test_sequence_011.h"
-#include "test_sequence_012.h"
-#include "test_sequence_013.h"
+#include "rt_test_sequence_001.h"
+#include "rt_test_sequence_002.h"
+#include "rt_test_sequence_003.h"
+#include "rt_test_sequence_004.h"
+#include "rt_test_sequence_005.h"
+#include "rt_test_sequence_006.h"
+#include "rt_test_sequence_007.h"
+#include "rt_test_sequence_008.h"
+#include "rt_test_sequence_009.h"
+#include "rt_test_sequence_010.h"
+#include "rt_test_sequence_011.h"
+#include "rt_test_sequence_012.h"
+#include "rt_test_sequence_013.h"
 
 #if !defined(__DOXYGEN__)
 
@@ -42,7 +42,7 @@
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-extern const testcase_t * const *test_suite[];
+extern const testcase_t * const *rt_test_suite[];
 
 #ifdef __cplusplus
 extern "C" {
@@ -60,7 +60,7 @@ extern "C" {
 /*
  * Allowed delay in timeout checks.
  */
-#define ALLOWED_DELAY MS2ST(2)
+#define ALLOWED_DELAY TIME_MS2I(2)
 
 /*
  * Maximum number of test threads.
@@ -99,4 +99,4 @@ systime_t test_wait_tick(void);
 
 #endif /* !defined(__DOXYGEN__) */
 
-#endif /* TEST_ROOT_H */
+#endif /* RT_TEST_ROOT_H */

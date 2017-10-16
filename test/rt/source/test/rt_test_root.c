@@ -21,30 +21,30 @@
  * through successive improvements.
  *
  * <h2>Test Sequences</h2>
- * - @subpage test_sequence_001
- * - @subpage test_sequence_002
- * - @subpage test_sequence_003
- * - @subpage test_sequence_004
- * - @subpage test_sequence_005
- * - @subpage test_sequence_006
- * - @subpage test_sequence_007
- * - @subpage test_sequence_008
- * - @subpage test_sequence_009
- * - @subpage test_sequence_010
- * - @subpage test_sequence_011
- * - @subpage test_sequence_012
- * - @subpage test_sequence_013
+ * - @subpage rt_test_sequence_001
+ * - @subpage rt_test_sequence_002
+ * - @subpage rt_test_sequence_003
+ * - @subpage rt_test_sequence_004
+ * - @subpage rt_test_sequence_005
+ * - @subpage rt_test_sequence_006
+ * - @subpage rt_test_sequence_007
+ * - @subpage rt_test_sequence_008
+ * - @subpage rt_test_sequence_009
+ * - @subpage rt_test_sequence_010
+ * - @subpage rt_test_sequence_011
+ * - @subpage rt_test_sequence_012
+ * - @subpage rt_test_sequence_013
  * .
  */
 
 /**
- * @file    test_root.c
+ * @file    rt_test_root.c
  * @brief   Test Suite root structures code.
  */
 
 #include "hal.h"
 #include "ch_test.h"
-#include "test_root.h"
+#include "rt_test_root.h"
 
 #if !defined(__DOXYGEN__)
 
@@ -55,36 +55,36 @@
 /**
  * @brief   Array of all the test sequences.
  */
-const testcase_t * const *test_suite[] = {
-  test_sequence_001,
-  test_sequence_002,
-  test_sequence_003,
-  test_sequence_004,
+const testcase_t * const *rt_test_suite[] = {
+  rt_test_sequence_001,
+  rt_test_sequence_002,
+  rt_test_sequence_003,
+  rt_test_sequence_004,
 #if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
-  test_sequence_005,
+  rt_test_sequence_005,
 #endif
 #if (CH_CFG_USE_MUTEXES) || defined(__DOXYGEN__)
-  test_sequence_006,
+  rt_test_sequence_006,
 #endif
 #if (CH_CFG_USE_MESSAGES) || defined(__DOXYGEN__)
-  test_sequence_007,
+  rt_test_sequence_007,
 #endif
 #if (CH_CFG_USE_EVENTS) || defined(__DOXYGEN__)
-  test_sequence_008,
+  rt_test_sequence_008,
 #endif
 #if (CH_CFG_USE_MAILBOXES) || defined(__DOXYGEN__)
-  test_sequence_009,
+  rt_test_sequence_009,
 #endif
 #if (CH_CFG_USE_MEMPOOLS) || defined(__DOXYGEN__)
-  test_sequence_010,
+  rt_test_sequence_010,
 #endif
 #if (CH_CFG_USE_HEAP) || defined(__DOXYGEN__)
-  test_sequence_011,
+  rt_test_sequence_011,
 #endif
 #if (CH_CFG_USE_DYNAMIC) || defined(__DOXYGEN__)
-  test_sequence_012,
+  rt_test_sequence_012,
 #endif
-  test_sequence_013,
+  rt_test_sequence_013,
   NULL
 };
 

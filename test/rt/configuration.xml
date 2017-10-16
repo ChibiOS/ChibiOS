@@ -31,13 +31,16 @@
           </introduction>
         </description>
         <global_data_and_code>
+          <code_prefix>
+            <value>rt_</value>
+          </code_prefix>
           <global_definitions>
             <value><![CDATA[#define TEST_SUITE_NAME                     "ChibiOS/RT Test Suite"
 
 /*
  * Allowed delay in timeout checks.
  */
-#define ALLOWED_DELAY MS2ST(2)
+#define ALLOWED_DELAY TIME_MS2I(2)
 
 /*
  * Maximum number of test threads.
@@ -702,8 +705,8 @@ test_assert_time_window(time + 100,
                     <code>
                       <value><![CDATA[time = chVTGetSystemTimeX();
 chThdSleepMicroseconds(100000);
-test_assert_time_window(time + US2ST(100000),
-                        time + US2ST(100000) + CH_CFG_ST_TIMEDELTA + 1,
+test_assert_time_window(time + TIME_US2I(100000),
+                        time + TIME_US2I(100000) + CH_CFG_ST_TIMEDELTA + 1,
                         "out of time window");]]></value>
                     </code>
                   </step>
@@ -717,8 +720,8 @@ test_assert_time_window(time + US2ST(100000),
                     <code>
                       <value><![CDATA[time = chVTGetSystemTimeX();
 chThdSleepMilliseconds(100);
-test_assert_time_window(time + MS2ST(100),
-                        time + MS2ST(100) + CH_CFG_ST_TIMEDELTA + 1,
+test_assert_time_window(time + TIME_MS2I(100),
+                        time + TIME_MS2I(100) + CH_CFG_ST_TIMEDELTA + 1,
                         "out of time window");]]></value>
                     </code>
                   </step>
@@ -732,8 +735,8 @@ test_assert_time_window(time + MS2ST(100),
                     <code>
                       <value><![CDATA[time = chVTGetSystemTimeX();
 chThdSleepSeconds(1);
-test_assert_time_window(time + S2ST(1),
-                        time + S2ST(1) + CH_CFG_ST_TIMEDELTA + 1,
+test_assert_time_window(time + TIME_S2I(1),
+                        time + TIME_S2I(1) + CH_CFG_ST_TIMEDELTA + 1,
                         "out of time window");]]></value>
                     </code>
                   </step>
@@ -1037,10 +1040,10 @@ test_wait_threads();]]></value>
                     <code>
                       <value><![CDATA[chSysLock();
 time = chVTGetSystemTimeX();
-msg = chThdSuspendTimeoutS(&tr1, MS2ST(1000));
+msg = chThdSuspendTimeoutS(&tr1, TIME_MS2I(1000));
 chSysUnlock();
-test_assert_time_window(time + MS2ST(1000),
-                        time + MS2ST(1000) + CH_CFG_ST_TIMEDELTA + 1,
+test_assert_time_window(time + TIME_MS2I(1000),
+                        time + TIME_MS2I(1000) + CH_CFG_ST_TIMEDELTA + 1,
                         "out of time window");
 test_assert(NULL == tr1, "not NULL");
 test_assert(MSG_TIMEOUT == msg, "wrong returned message");]]></value>
@@ -1268,7 +1271,7 @@ test_assert(sem1.cnt == 0, "counter not zero");]]></value>
                     <code>
                       <value><![CDATA[threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() - 1,
                                thread2, 0);
-msg = chSemWaitTimeout(&sem1, MS2ST(500));
+msg = chSemWaitTimeout(&sem1, TIME_MS2I(500));
 test_wait_threads();
 test_assert(msg == MSG_OK, "wrong wake-up message");
 test_assert(queue_isempty(&sem1.queue), "queue not empty");
@@ -1283,10 +1286,10 @@ test_assert(sem1.cnt == 0, "counter not zero");]]></value>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[target_time = test_wait_tick() + MS2ST(5 * 50);
+                      <value><![CDATA[target_time = test_wait_tick() + TIME_MS2I(5 * 50);
 for (i = 0; i < 5; i++) {
   test_emit_token('A' + i);
-  msg = chSemWaitTimeout(&sem1, MS2ST(50));
+  msg = chSemWaitTimeout(&sem1, TIME_MS2I(50));
   test_assert(msg == MSG_TIMEOUT, "wrong wake-up message");
   test_assert(queue_isempty(&sem1.queue), "queue not empty");
   test_assert(sem1.cnt == 0, "counter not zero");
@@ -1544,7 +1547,7 @@ void test_cpu_pulse(unsigned duration) {
   systime_t start, end, now;
 
   start = chThdGetTicksX(chThdGetSelfX());
-  end = start + MS2ST(duration);
+  end = start + TIME_MS2I(duration);
   do {
     now = chThdGetTicksX(chThdGetSelfX());
 #if defined(SIMULATOR)
@@ -1833,7 +1836,7 @@ test_assert_sequence("ABC", "invalid sequence");]]></value>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[test_assert_time_window(time + MS2ST(100), time + MS2ST(100) + ALLOWED_DELAY,
+                      <value><![CDATA[test_assert_time_window(time + TIME_MS2I(100), time + TIME_MS2I(100) + ALLOWED_DELAY,
                         "out of time window");]]></value>
                     </code>
                   </step>
@@ -1898,7 +1901,7 @@ test_assert_sequence("ABCDE", "invalid sequence");]]></value>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[test_assert_time_window(time + MS2ST(110), time + MS2ST(110) + ALLOWED_DELAY,
+                      <value><![CDATA[test_assert_time_window(time + TIME_MS2I(110), time + TIME_MS2I(110) + ALLOWED_DELAY,
                         "out of time window");]]></value>
                     </code>
                   </step>
@@ -2803,7 +2806,7 @@ test_assert(m == 0, "stuck event");]]></value>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[target_time = test_wait_tick() + MS2ST(50);
+                      <value><![CDATA[target_time = test_wait_tick() + TIME_MS2I(50);
 threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() - 1,
                                evt_thread3, chThdGetSelfX());]]></value>
                     </code>
@@ -2883,7 +2886,7 @@ test_assert(m == 0, "stuck event");]]></value>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[target_time = test_wait_tick() + MS2ST(50);
+                      <value><![CDATA[target_time = test_wait_tick() + TIME_MS2I(50);
 threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() - 1,
                                evt_thread3, chThdGetSelfX());]]></value>
                     </code>
@@ -2974,7 +2977,7 @@ test_assert(m == 0, "stuck event");]]></value>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[target_time = test_wait_tick() + MS2ST(50);
+                      <value><![CDATA[target_time = test_wait_tick() + TIME_MS2I(50);
 threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() - 1,
                                evt_thread3, chThdGetSelfX());]]></value>
                     </code>
@@ -3044,11 +3047,11 @@ test_assert(m == 0, "spurious event");]]></value>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[m = chEvtWaitOneTimeout(ALL_EVENTS, MS2ST(50));
+                      <value><![CDATA[m = chEvtWaitOneTimeout(ALL_EVENTS, TIME_MS2I(50));
 test_assert(m == 0, "spurious event");
-m = chEvtWaitAnyTimeout(ALL_EVENTS, MS2ST(50));
+m = chEvtWaitAnyTimeout(ALL_EVENTS, TIME_MS2I(50));
 test_assert(m == 0, "spurious event");
-m = chEvtWaitAllTimeout(ALL_EVENTS, MS2ST(50));
+m = chEvtWaitAllTimeout(ALL_EVENTS, TIME_MS2I(50));
 test_assert(m == 0, "spurious event");]]></value>
                     </code>
                   </step>
@@ -3100,7 +3103,7 @@ chEvtRegisterMask(&es2, &el2, 4);]]></value>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[target_time = test_wait_tick() + MS2ST(50);
+                      <value><![CDATA[target_time = test_wait_tick() + TIME_MS2I(50);
 threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() - 1,
                                evt_thread7, "A");]]></value>
                     </code>
@@ -3784,7 +3787,7 @@ test_assert(chPoolAlloc(&mp1) == NULL, "provider returned memory");]]></value>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[test_assert(chGuardedPoolAllocTimeout(&gmp1, MS2ST(100)) == NULL, "list not empty");]]></value>
+                      <value><![CDATA[test_assert(chGuardedPoolAllocTimeout(&gmp1, TIME_MS2I(100)) == NULL, "list not empty");]]></value>
                     </code>
                   </step>
                 </steps>
@@ -4340,7 +4343,7 @@ NOINLINE static unsigned int msg_loop_test(thread_t *tp) {
   
   uint32_t n = 0;
   start = test_wait_tick();
-  end = start + MS2ST(1000);
+  end = start + TIME_MS2I(1000);
   do {
     (void)chMsgSend(tp, 1);
     n++;
@@ -4643,7 +4646,7 @@ uint32_t n;]]></value>
 
 n = 0;
 start = test_wait_tick();
-end = start + MS2ST(1000);
+end = start + TIME_MS2I(1000);
 do {
   chSysLock();
   chSchWakeupS(tp, MSG_OK);
@@ -4722,7 +4725,7 @@ systime_t start, end;]]></value>
                     <code>
                       <value><![CDATA[n = 0;
 start = test_wait_tick();
-end = start + MS2ST(1000);
+end = start + TIME_MS2I(1000);
 do {
   chThdWait(chThdCreateStatic(wa[0], WA_SIZE, prio, bmk_thread3, NULL));
   n++;
@@ -4781,7 +4784,7 @@ systime_t start, end;]]></value>
                     <code>
                       <value><![CDATA[n = 0;
 start = test_wait_tick();
-end = start + MS2ST(1000);
+end = start + TIME_MS2I(1000);
 do {
 #if CH_CFG_USE_REGISTRY
   chThdRelease(chThdCreateStatic(wa[0], WA_SIZE, prio, bmk_thread3, NULL));
@@ -4860,7 +4863,7 @@ threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()+1, bmk_thread
   
 n = 0;
 start = test_wait_tick();
-end = start + MS2ST(1000);
+end = start + TIME_MS2I(1000);
 do {
   chSemReset(&sem1, 0);
   n++;
@@ -5004,7 +5007,7 @@ uint32_t n;]]></value>
   
 n = 0;
 start = test_wait_tick();
-end = start + MS2ST(1000);
+end = start + TIME_MS2I(1000);
 do {
   chSysLock();
   chVTDoSetI(&vt1, 1, tmo, NULL);
@@ -5069,7 +5072,7 @@ The performance is calculated by measuring the number of iterations after a seco
   
 n = 0;
 start = test_wait_tick();
-end = start + MS2ST(1000);
+end = start + TIME_MS2I(1000);
 do {
   chSemWait(&sem1);
   chSemSignal(&sem1);
@@ -5136,7 +5139,7 @@ The performance is calculated by measuring the number of iterations after a seco
   
 n = 0;
 start = test_wait_tick();
-end = start + MS2ST(1000);
+end = start + TIME_MS2I(1000);
 do {
   chMtxLock(&mtx1);
   chMtxUnlock(&mtx1);

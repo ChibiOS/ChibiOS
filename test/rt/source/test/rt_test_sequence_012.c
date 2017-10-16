@@ -16,15 +16,15 @@
 
 #include "hal.h"
 #include "ch_test.h"
-#include "test_root.h"
+#include "rt_test_root.h"
 
 /**
- * @file    test_sequence_012.c
+ * @file    rt_test_sequence_012.c
  * @brief   Test Sequence 012 code.
  *
- * @page test_sequence_012 [12] Dynamic threads
+ * @page rt_test_sequence_012 [12] Dynamic threads
  *
- * File: @ref test_sequence_012.c
+ * File: @ref rt_test_sequence_012.c
  *
  * <h2>Description</h2>
  * This module implements the test sequence for the dynamic thread
@@ -37,8 +37,8 @@
  * .
  *
  * <h2>Test Cases</h2>
- * - @subpage test_012_001
- * - @subpage test_012_002
+ * - @subpage rt_test_012_001
+ * - @subpage rt_test_012_002
  * .
  */
 
@@ -66,7 +66,7 @@ static THD_FUNCTION(dyn_thread1, p) {
 
 #if (CH_CFG_USE_HEAP) || defined(__DOXYGEN__)
 /**
- * @page test_012_001 [12.1] Threads creation from Memory Heap
+ * @page rt_test_012_001 [12.1] Threads creation from Memory Heap
  *
  * <h2>Description</h2>
  * Two threads are started by allocating the memory from the Memory
@@ -92,11 +92,11 @@ static THD_FUNCTION(dyn_thread1, p) {
  * .
  */
 
-static void test_012_001_setup(void) {
+static void rt_test_012_001_setup(void) {
   chHeapObjectInit(&heap1, test_buffer, sizeof test_buffer);
 }
 
-static void test_012_001_execute(void) {
+static void rt_test_012_001_execute(void) {
   size_t n1, total1, largest1;
   size_t n2, total2, largest2;
   tprio_t prio;
@@ -162,17 +162,17 @@ static void test_012_001_execute(void) {
   }
 }
 
-static const testcase_t test_012_001 = {
+static const testcase_t rt_test_012_001 = {
   "Threads creation from Memory Heap",
-  test_012_001_setup,
+  rt_test_012_001_setup,
   NULL,
-  test_012_001_execute
+  rt_test_012_001_execute
 };
 #endif /* CH_CFG_USE_HEAP */
 
 #if (CH_CFG_USE_MEMPOOLS) || defined(__DOXYGEN__)
 /**
- * @page test_012_002 [12.2] Threads creation from Memory Pool
+ * @page rt_test_012_002 [12.2] Threads creation from Memory Pool
  *
  * <h2>Description</h2>
  * Five thread creation are attempted from a pool containing only four
@@ -196,11 +196,11 @@ static const testcase_t test_012_001 = {
  * .
  */
 
-static void test_012_002_setup(void) {
+static void rt_test_012_002_setup(void) {
   chPoolObjectInit(&mp1, THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE), NULL);
 }
 
-static void test_012_002_execute(void) {
+static void rt_test_012_002_execute(void) {
   unsigned i;
   tprio_t prio;
 
@@ -256,11 +256,11 @@ static void test_012_002_execute(void) {
   }
 }
 
-static const testcase_t test_012_002 = {
+static const testcase_t rt_test_012_002 = {
   "Threads creation from Memory Pool",
-  test_012_002_setup,
+  rt_test_012_002_setup,
   NULL,
-  test_012_002_execute
+  rt_test_012_002_execute
 };
 #endif /* CH_CFG_USE_MEMPOOLS */
 
@@ -271,12 +271,12 @@ static const testcase_t test_012_002 = {
 /**
  * @brief   Dynamic threads.
  */
-const testcase_t * const test_sequence_012[] = {
+const testcase_t * const rt_test_sequence_012[] = {
 #if (CH_CFG_USE_HEAP) || defined(__DOXYGEN__)
-  &test_012_001,
+  &rt_test_012_001,
 #endif
 #if (CH_CFG_USE_MEMPOOLS) || defined(__DOXYGEN__)
-  &test_012_002,
+  &rt_test_012_002,
 #endif
   NULL
 };

@@ -16,22 +16,22 @@
 
 #include "hal.h"
 #include "ch_test.h"
-#include "test_root.h"
+#include "rt_test_root.h"
 
 /**
- * @file    test_sequence_004.c
+ * @file    rt_test_sequence_004.c
  * @brief   Test Sequence 004 code.
  *
- * @page test_sequence_004 [4] Suspend/Resume
+ * @page rt_test_sequence_004 [4] Suspend/Resume
  *
- * File: @ref test_sequence_004.c
+ * File: @ref rt_test_sequence_004.c
  *
  * <h2>Description</h2>
  * This sequence tests the ChibiOS/RT functionalities related to
  * threads suspend/resume.
  *
  * <h2>Test Cases</h2>
- * - @subpage test_004_001
+ * - @subpage rt_test_004_001
  * .
  */
 
@@ -55,7 +55,7 @@ static THD_FUNCTION(thread1, p) {
  ****************************************************************************/
 
 /**
- * @page test_004_001 [4.1] Suspend and Resume functionality
+ * @page rt_test_004_001 [4.1] Suspend and Resume functionality
  *
  * <h2>Description</h2>
  * The functionality of chThdSuspendTimeoutS() and chThdResumeI() is
@@ -71,11 +71,11 @@ static THD_FUNCTION(thread1, p) {
  * .
  */
 
-static void test_004_001_setup(void) {
+static void rt_test_004_001_setup(void) {
   tr1 = NULL;
 }
 
-static void test_004_001_execute(void) {
+static void rt_test_004_001_execute(void) {
   systime_t time;
   msg_t msg;
 
@@ -100,21 +100,21 @@ static void test_004_001_execute(void) {
   {
     chSysLock();
     time = chVTGetSystemTimeX();
-    msg = chThdSuspendTimeoutS(&tr1, MS2ST(1000));
+    msg = chThdSuspendTimeoutS(&tr1, TIME_MS2I(1000));
     chSysUnlock();
-    test_assert_time_window(time + MS2ST(1000),
-                            time + MS2ST(1000) + CH_CFG_ST_TIMEDELTA + 1,
+    test_assert_time_window(time + TIME_MS2I(1000),
+                            time + TIME_MS2I(1000) + CH_CFG_ST_TIMEDELTA + 1,
                             "out of time window");
     test_assert(NULL == tr1, "not NULL");
     test_assert(MSG_TIMEOUT == msg, "wrong returned message");
   }
 }
 
-static const testcase_t test_004_001 = {
+static const testcase_t rt_test_004_001 = {
   "Suspend and Resume functionality",
-  test_004_001_setup,
+  rt_test_004_001_setup,
   NULL,
-  test_004_001_execute
+  rt_test_004_001_execute
 };
 
 /****************************************************************************
@@ -124,7 +124,7 @@ static const testcase_t test_004_001 = {
 /**
  * @brief   Suspend/Resume.
  */
-const testcase_t * const test_sequence_004[] = {
-  &test_004_001,
+const testcase_t * const rt_test_sequence_004[] = {
+  &rt_test_004_001,
   NULL
 };

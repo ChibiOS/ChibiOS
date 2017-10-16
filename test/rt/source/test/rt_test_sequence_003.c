@@ -16,25 +16,25 @@
 
 #include "hal.h"
 #include "ch_test.h"
-#include "test_root.h"
+#include "rt_test_root.h"
 
 /**
- * @file    test_sequence_003.c
+ * @file    rt_test_sequence_003.c
  * @brief   Test Sequence 003 code.
  *
- * @page test_sequence_003 [3] Threads Functionality
+ * @page rt_test_sequence_003 [3] Threads Functionality
  *
- * File: @ref test_sequence_003.c
+ * File: @ref rt_test_sequence_003.c
  *
  * <h2>Description</h2>
  * This sequence tests the ChibiOS/RT functionalities related to
  * threading.
  *
  * <h2>Test Cases</h2>
- * - @subpage test_003_001
- * - @subpage test_003_002
- * - @subpage test_003_003
- * - @subpage test_003_004
+ * - @subpage rt_test_003_001
+ * - @subpage rt_test_003_002
+ * - @subpage rt_test_003_003
+ * - @subpage rt_test_003_004
  * .
  */
 
@@ -52,7 +52,7 @@ static THD_FUNCTION(thread, p) {
  ****************************************************************************/
 
 /**
- * @page test_003_001 [3.1] Thread Sleep functionality
+ * @page rt_test_003_001 [3.1] Thread Sleep functionality
  *
  * <h2>Description</h2>
  * The functionality of @p chThdSleep() and derivatives is tested.
@@ -74,7 +74,7 @@ static THD_FUNCTION(thread, p) {
  * .
  */
 
-static void test_003_001_execute(void) {
+static void rt_test_003_001_execute(void) {
   systime_t time;
 
   /* [3.1.1] The current system time is read then a sleep is performed
@@ -96,8 +96,8 @@ static void test_003_001_execute(void) {
   {
     time = chVTGetSystemTimeX();
     chThdSleepMicroseconds(100000);
-    test_assert_time_window(time + US2ST(100000),
-                            time + US2ST(100000) + CH_CFG_ST_TIMEDELTA + 1,
+    test_assert_time_window(time + TIME_US2I(100000),
+                            time + TIME_US2I(100000) + CH_CFG_ST_TIMEDELTA + 1,
                             "out of time window");
   }
 
@@ -108,8 +108,8 @@ static void test_003_001_execute(void) {
   {
     time = chVTGetSystemTimeX();
     chThdSleepMilliseconds(100);
-    test_assert_time_window(time + MS2ST(100),
-                            time + MS2ST(100) + CH_CFG_ST_TIMEDELTA + 1,
+    test_assert_time_window(time + TIME_MS2I(100),
+                            time + TIME_MS2I(100) + CH_CFG_ST_TIMEDELTA + 1,
                             "out of time window");
   }
 
@@ -119,8 +119,8 @@ static void test_003_001_execute(void) {
   {
     time = chVTGetSystemTimeX();
     chThdSleepSeconds(1);
-    test_assert_time_window(time + S2ST(1),
-                            time + S2ST(1) + CH_CFG_ST_TIMEDELTA + 1,
+    test_assert_time_window(time + TIME_S2I(1),
+                            time + TIME_S2I(1) + CH_CFG_ST_TIMEDELTA + 1,
                             "out of time window");
   }
 
@@ -136,15 +136,15 @@ static void test_003_001_execute(void) {
   }
 }
 
-static const testcase_t test_003_001 = {
+static const testcase_t rt_test_003_001 = {
   "Thread Sleep functionality",
   NULL,
   NULL,
-  test_003_001_execute
+  rt_test_003_001_execute
 };
 
 /**
- * @page test_003_002 [3.2] Ready List functionality, threads priority order
+ * @page rt_test_003_002 [3.2] Ready List functionality, threads priority order
  *
  * <h2>Description</h2>
  * Five threads, are enqueued in the ready list and atomically
@@ -161,7 +161,7 @@ static const testcase_t test_003_001 = {
  * .
  */
 
-static void test_003_002_execute(void) {
+static void rt_test_003_002_execute(void) {
 
   /* [3.2.1] Creating 5 threads with increasing priority, execution
      sequence is tested.*/
@@ -203,15 +203,15 @@ static void test_003_002_execute(void) {
   }
 }
 
-static const testcase_t test_003_002 = {
+static const testcase_t rt_test_003_002 = {
   "Ready List functionality, threads priority order",
   NULL,
   NULL,
-  test_003_002_execute
+  rt_test_003_002_execute
 };
 
 /**
- * @page test_003_003 [3.3] Priority change test
+ * @page rt_test_003_003 [3.3] Priority change test
  *
  * <h2>Description</h2>
  * A series of priority changes are performed on the current thread in
@@ -225,7 +225,7 @@ static const testcase_t test_003_002 = {
  * .
  */
 
-static void test_003_003_execute(void) {
+static void rt_test_003_003_execute(void) {
   tprio_t prio, p1;
 
   /* [3.3.1] Thread priority is increased by one then a check is
@@ -248,16 +248,16 @@ static void test_003_003_execute(void) {
   }
 }
 
-static const testcase_t test_003_003 = {
+static const testcase_t rt_test_003_003 = {
   "Priority change test",
   NULL,
   NULL,
-  test_003_003_execute
+  rt_test_003_003_execute
 };
 
 #if (CH_CFG_USE_MUTEXES) || defined(__DOXYGEN__)
 /**
- * @page test_003_004 [3.4] Priority change test with Priority Inheritance
+ * @page rt_test_003_004 [3.4] Priority change test with Priority Inheritance
  *
  * <h2>Description</h2>
  * A series of priority changes are performed on the current thread in
@@ -278,7 +278,7 @@ static const testcase_t test_003_003 = {
  * .
  */
 
-static void test_003_004_execute(void) {
+static void rt_test_003_004_execute(void) {
   tprio_t prio, p1;
 
   /* [3.4.1] Simulating a priority boost situation (prio > realprio).*/
@@ -318,11 +318,11 @@ static void test_003_004_execute(void) {
   }
 }
 
-static const testcase_t test_003_004 = {
+static const testcase_t rt_test_003_004 = {
   "Priority change test with Priority Inheritance",
   NULL,
   NULL,
-  test_003_004_execute
+  rt_test_003_004_execute
 };
 #endif /* CH_CFG_USE_MUTEXES */
 
@@ -333,12 +333,12 @@ static const testcase_t test_003_004 = {
 /**
  * @brief   Threads Functionality.
  */
-const testcase_t * const test_sequence_003[] = {
-  &test_003_001,
-  &test_003_002,
-  &test_003_003,
+const testcase_t * const rt_test_sequence_003[] = {
+  &rt_test_003_001,
+  &rt_test_003_002,
+  &rt_test_003_003,
 #if (CH_CFG_USE_MUTEXES) || defined(__DOXYGEN__)
-  &test_003_004,
+  &rt_test_003_004,
 #endif
   NULL
 };

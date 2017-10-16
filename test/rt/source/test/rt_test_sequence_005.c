@@ -16,15 +16,15 @@
 
 #include "hal.h"
 #include "ch_test.h"
-#include "test_root.h"
+#include "rt_test_root.h"
 
 /**
- * @file    test_sequence_005.c
+ * @file    rt_test_sequence_005.c
  * @brief   Test Sequence 005 code.
  *
- * @page test_sequence_005 [5] Counter and Binary Semaphores
+ * @page rt_test_sequence_005 [5] Counter and Binary Semaphores
  *
- * File: @ref test_sequence_005.c
+ * File: @ref rt_test_sequence_005.c
  *
  * <h2>Description</h2>
  * This sequence tests the ChibiOS/RT functionalities related to
@@ -37,12 +37,12 @@
  * .
  *
  * <h2>Test Cases</h2>
- * - @subpage test_005_001
- * - @subpage test_005_002
- * - @subpage test_005_003
- * - @subpage test_005_004
- * - @subpage test_005_005
- * - @subpage test_005_006
+ * - @subpage rt_test_005_001
+ * - @subpage rt_test_005_002
+ * - @subpage rt_test_005_003
+ * - @subpage rt_test_005_004
+ * - @subpage rt_test_005_005
+ * - @subpage rt_test_005_006
  * .
  */
 
@@ -89,7 +89,7 @@ static THD_FUNCTION(thread4, p) {
  ****************************************************************************/
 
 /**
- * @page test_005_001 [5.1] Semaphore primitives, no state change
+ * @page rt_test_005_001 [5.1] Semaphore primitives, no state change
  *
  * <h2>Description</h2>
  * Wait, Signal and Reset primitives are tested. The testing thread
@@ -105,15 +105,15 @@ static THD_FUNCTION(thread4, p) {
  * .
  */
 
-static void test_005_001_setup(void) {
+static void rt_test_005_001_setup(void) {
   chSemObjectInit(&sem1, 1);
 }
 
-static void test_005_001_teardown(void) {
+static void rt_test_005_001_teardown(void) {
   chSemReset(&sem1, 0);
 }
 
-static void test_005_001_execute(void) {
+static void rt_test_005_001_execute(void) {
 
   /* [5.1.1] The function chSemWait() is invoked, after return the
      counter and the returned message are tested.*/
@@ -143,15 +143,15 @@ static void test_005_001_execute(void) {
   }
 }
 
-static const testcase_t test_005_001 = {
+static const testcase_t rt_test_005_001 = {
   "Semaphore primitives, no state change",
-  test_005_001_setup,
-  test_005_001_teardown,
-  test_005_001_execute
+  rt_test_005_001_setup,
+  rt_test_005_001_teardown,
+  rt_test_005_001_execute
 };
 
 /**
- * @page test_005_002 [5.2] Semaphore enqueuing test
+ * @page rt_test_005_002 [5.2] Semaphore enqueuing test
  *
  * <h2>Description</h2>
  * Five threads with randomized priorities are enqueued to a semaphore
@@ -168,11 +168,11 @@ static const testcase_t test_005_001 = {
  * .
  */
 
-static void test_005_002_setup(void) {
+static void rt_test_005_002_setup(void) {
   chSemObjectInit(&sem1, 0);
 }
 
-static void test_005_002_execute(void) {
+static void rt_test_005_002_execute(void) {
 
   /* [5.2.1] Five threads are created with mixed priority levels (not
      increasing nor decreasing). Threads enqueue on a semaphore
@@ -204,15 +204,15 @@ static void test_005_002_execute(void) {
   }
 }
 
-static const testcase_t test_005_002 = {
+static const testcase_t rt_test_005_002 = {
   "Semaphore enqueuing test",
-  test_005_002_setup,
+  rt_test_005_002_setup,
   NULL,
-  test_005_002_execute
+  rt_test_005_002_execute
 };
 
 /**
- * @page test_005_003 [5.3] Semaphore timeout test
+ * @page rt_test_005_003 [5.3] Semaphore timeout test
  *
  * <h2>Description</h2>
  * The three possible semaphore waiting modes (do not wait, wait with
@@ -228,11 +228,11 @@ static const testcase_t test_005_002 = {
  * .
  */
 
-static void test_005_003_setup(void) {
+static void rt_test_005_003_setup(void) {
   chSemObjectInit(&sem1, 0);
 }
 
-static void test_005_003_execute(void) {
+static void rt_test_005_003_execute(void) {
   unsigned i;
   systime_t target_time;
   msg_t msg;
@@ -251,7 +251,7 @@ static void test_005_003_execute(void) {
   {
     threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() - 1,
                                    thread2, 0);
-    msg = chSemWaitTimeout(&sem1, MS2ST(500));
+    msg = chSemWaitTimeout(&sem1, TIME_MS2I(500));
     test_wait_threads();
     test_assert(msg == MSG_OK, "wrong wake-up message");
     test_assert(queue_isempty(&sem1.queue), "queue not empty");
@@ -261,10 +261,10 @@ static void test_005_003_execute(void) {
   /* [5.3.3] Testing timeout condition.*/
   test_set_step(3);
   {
-    target_time = test_wait_tick() + MS2ST(5 * 50);
+    target_time = test_wait_tick() + TIME_MS2I(5 * 50);
     for (i = 0; i < 5; i++) {
       test_emit_token('A' + i);
-      msg = chSemWaitTimeout(&sem1, MS2ST(50));
+      msg = chSemWaitTimeout(&sem1, TIME_MS2I(50));
       test_assert(msg == MSG_TIMEOUT, "wrong wake-up message");
       test_assert(queue_isempty(&sem1.queue), "queue not empty");
       test_assert(sem1.cnt == 0, "counter not zero");
@@ -275,15 +275,15 @@ static void test_005_003_execute(void) {
   }
 }
 
-static const testcase_t test_005_003 = {
+static const testcase_t rt_test_005_003 = {
   "Semaphore timeout test",
-  test_005_003_setup,
+  rt_test_005_003_setup,
   NULL,
-  test_005_003_execute
+  rt_test_005_003_execute
 };
 
 /**
- * @page test_005_004 [5.4] Testing chSemAddCounterI() functionality
+ * @page rt_test_005_004 [5.4] Testing chSemAddCounterI() functionality
  *
  * <h2>Description</h2>
  * The functon is tested by waking up a thread then the semaphore
@@ -296,11 +296,11 @@ static const testcase_t test_005_003 = {
  * .
  */
 
-static void test_005_004_setup(void) {
+static void rt_test_005_004_setup(void) {
   chSemObjectInit(&sem1, 0);
 }
 
-static void test_005_004_execute(void) {
+static void rt_test_005_004_execute(void) {
 
   /* [5.4.1] A thread is created, it goes to wait on the semaphore.*/
   test_set_step(1);
@@ -322,15 +322,15 @@ static void test_005_004_execute(void) {
   }
 }
 
-static const testcase_t test_005_004 = {
+static const testcase_t rt_test_005_004 = {
   "Testing chSemAddCounterI() functionality",
-  test_005_004_setup,
+  rt_test_005_004_setup,
   NULL,
-  test_005_004_execute
+  rt_test_005_004_execute
 };
 
 /**
- * @page test_005_005 [5.5] Testing chSemWaitSignal() functionality
+ * @page rt_test_005_005 [5.5] Testing chSemWaitSignal() functionality
  *
  * <h2>Description</h2>
  * This test case explicitly addresses the @p chSemWaitSignal()
@@ -352,15 +352,15 @@ static const testcase_t test_005_004 = {
  * .
  */
 
-static void test_005_005_setup(void) {
+static void rt_test_005_005_setup(void) {
   chSemObjectInit(&sem1, 0);
 }
 
-static void test_005_005_teardown(void) {
+static void rt_test_005_005_teardown(void) {
   test_wait_threads();
 }
 
-static void test_005_005_execute(void) {
+static void rt_test_005_005_execute(void) {
 
   /* [5.5.1] An higher priority thread is created that performs
      non-atomical wait and signal operations on a semaphore.*/
@@ -390,15 +390,15 @@ static void test_005_005_execute(void) {
   }
 }
 
-static const testcase_t test_005_005 = {
+static const testcase_t rt_test_005_005 = {
   "Testing chSemWaitSignal() functionality",
-  test_005_005_setup,
-  test_005_005_teardown,
-  test_005_005_execute
+  rt_test_005_005_setup,
+  rt_test_005_005_teardown,
+  rt_test_005_005_execute
 };
 
 /**
- * @page test_005_006 [5.6] Testing Binary Semaphores special case
+ * @page rt_test_005_006 [5.6] Testing Binary Semaphores special case
  *
  * <h2>Description</h2>
  * This test case tests the binary semaphores functionality. The test
@@ -421,11 +421,11 @@ static const testcase_t test_005_005 = {
  * .
  */
 
-static void test_005_006_teardown(void) {
+static void rt_test_005_006_teardown(void) {
   test_wait_threads();
 }
 
-static void test_005_006_execute(void) {
+static void rt_test_005_006_execute(void) {
   binary_semaphore_t bsem;
   msg_t msg;
 
@@ -481,11 +481,11 @@ static void test_005_006_execute(void) {
   }
 }
 
-static const testcase_t test_005_006 = {
+static const testcase_t rt_test_005_006 = {
   "Testing Binary Semaphores special case",
   NULL,
-  test_005_006_teardown,
-  test_005_006_execute
+  rt_test_005_006_teardown,
+  rt_test_005_006_execute
 };
 
 /****************************************************************************
@@ -495,13 +495,13 @@ static const testcase_t test_005_006 = {
 /**
  * @brief   Counter and Binary Semaphores.
  */
-const testcase_t * const test_sequence_005[] = {
-  &test_005_001,
-  &test_005_002,
-  &test_005_003,
-  &test_005_004,
-  &test_005_005,
-  &test_005_006,
+const testcase_t * const rt_test_sequence_005[] = {
+  &rt_test_005_001,
+  &rt_test_005_002,
+  &rt_test_005_003,
+  &rt_test_005_004,
+  &rt_test_005_005,
+  &rt_test_005_006,
   NULL
 };
 

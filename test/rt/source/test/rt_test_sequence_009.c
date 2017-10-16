@@ -16,15 +16,15 @@
 
 #include "hal.h"
 #include "ch_test.h"
-#include "test_root.h"
+#include "rt_test_root.h"
 
 /**
- * @file    test_sequence_009.c
+ * @file    rt_test_sequence_009.c
  * @brief   Test Sequence 009 code.
  *
- * @page test_sequence_009 [9] Mailboxes
+ * @page rt_test_sequence_009 [9] Mailboxes
  *
- * File: @ref test_sequence_009.c
+ * File: @ref rt_test_sequence_009.c
  *
  * <h2>Description</h2>
  * This sequence tests the ChibiOS/RT functionalities related to
@@ -37,9 +37,9 @@
  * .
  *
  * <h2>Test Cases</h2>
- * - @subpage test_009_001
- * - @subpage test_009_002
- * - @subpage test_009_003
+ * - @subpage rt_test_009_001
+ * - @subpage rt_test_009_002
+ * - @subpage rt_test_009_003
  * .
  */
 
@@ -59,7 +59,7 @@ static MAILBOX_DECL(mb1, mb_buffer, MB_SIZE);
  ****************************************************************************/
 
 /**
- * @page test_009_001 [9.1] Mailbox normal API, non-blocking tests
+ * @page rt_test_009_001 [9.1] Mailbox normal API, non-blocking tests
  *
  * <h2>Description</h2>
  * The mailbox normal API is tested without triggering blocking
@@ -84,15 +84,15 @@ static MAILBOX_DECL(mb1, mb_buffer, MB_SIZE);
  * .
  */
 
-static void test_009_001_setup(void) {
+static void rt_test_009_001_setup(void) {
   chMBObjectInit(&mb1, mb_buffer, MB_SIZE);
 }
 
-static void test_009_001_teardown(void) {
+static void rt_test_009_001_teardown(void) {
   chMBReset(&mb1);
 }
 
-static void test_009_001_execute(void) {
+static void rt_test_009_001_execute(void) {
   msg_t msg1, msg2;
   unsigned i;
 
@@ -180,15 +180,15 @@ static void test_009_001_execute(void) {
   }
 }
 
-static const testcase_t test_009_001 = {
+static const testcase_t rt_test_009_001 = {
   "Mailbox normal API, non-blocking tests",
-  test_009_001_setup,
-  test_009_001_teardown,
-  test_009_001_execute
+  rt_test_009_001_setup,
+  rt_test_009_001_teardown,
+  rt_test_009_001_execute
 };
 
 /**
- * @page test_009_002 [9.2] Mailbox I-Class API, non-blocking tests
+ * @page rt_test_009_002 [9.2] Mailbox I-Class API, non-blocking tests
  *
  * <h2>Description</h2>
  * The mailbox I-Class API is tested without triggering blocking
@@ -211,15 +211,15 @@ static const testcase_t test_009_001 = {
  * .
  */
 
-static void test_009_002_setup(void) {
+static void rt_test_009_002_setup(void) {
   chMBObjectInit(&mb1, mb_buffer, MB_SIZE);
 }
 
-static void test_009_002_teardown(void) {
+static void rt_test_009_002_teardown(void) {
   chMBReset(&mb1);
 }
 
-static void test_009_002_execute(void) {
+static void rt_test_009_002_execute(void) {
   msg_t msg1, msg2;
   unsigned i;
 
@@ -303,15 +303,15 @@ static void test_009_002_execute(void) {
   }
 }
 
-static const testcase_t test_009_002 = {
+static const testcase_t rt_test_009_002 = {
   "Mailbox I-Class API, non-blocking tests",
-  test_009_002_setup,
-  test_009_002_teardown,
-  test_009_002_execute
+  rt_test_009_002_setup,
+  rt_test_009_002_teardown,
+  rt_test_009_002_execute
 };
 
 /**
- * @page test_009_003 [9.3] Mailbox timeouts
+ * @page rt_test_009_003 [9.3] Mailbox timeouts
  *
  * <h2>Description</h2>
  * The mailbox API is tested for timeouts.
@@ -326,15 +326,15 @@ static const testcase_t test_009_002 = {
  * .
  */
 
-static void test_009_003_setup(void) {
+static void rt_test_009_003_setup(void) {
   chMBObjectInit(&mb1, mb_buffer, MB_SIZE);
 }
 
-static void test_009_003_teardown(void) {
+static void rt_test_009_003_teardown(void) {
   chMBReset(&mb1);
 }
 
-static void test_009_003_execute(void) {
+static void rt_test_009_003_execute(void) {
   msg_t msg1, msg2;
   unsigned i;
 
@@ -385,11 +385,11 @@ static void test_009_003_execute(void) {
   }
 }
 
-static const testcase_t test_009_003 = {
+static const testcase_t rt_test_009_003 = {
   "Mailbox timeouts",
-  test_009_003_setup,
-  test_009_003_teardown,
-  test_009_003_execute
+  rt_test_009_003_setup,
+  rt_test_009_003_teardown,
+  rt_test_009_003_execute
 };
 
 /****************************************************************************
@@ -399,10 +399,10 @@ static const testcase_t test_009_003 = {
 /**
  * @brief   Mailboxes.
  */
-const testcase_t * const test_sequence_009[] = {
-  &test_009_001,
-  &test_009_002,
-  &test_009_003,
+const testcase_t * const rt_test_sequence_009[] = {
+  &rt_test_009_001,
+  &rt_test_009_002,
+  &rt_test_009_003,
   NULL
 };
 

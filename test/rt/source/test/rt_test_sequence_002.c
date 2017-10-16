@@ -16,15 +16,15 @@
 
 #include "hal.h"
 #include "ch_test.h"
-#include "test_root.h"
+#include "rt_test_root.h"
 
 /**
- * @file    test_sequence_002.c
+ * @file    rt_test_sequence_002.c
  * @brief   Test Sequence 002 code.
  *
- * @page test_sequence_002 [2] System layer and port interface
+ * @page rt_test_sequence_002 [2] System layer and port interface
  *
- * File: @ref test_sequence_002.c
+ * File: @ref rt_test_sequence_002.c
  *
  * <h2>Description</h2>
  * The functionality of the system layer and port interface is tested.
@@ -34,10 +34,10 @@
  * (CH_DBG_STATE_CHECKER=TRUE).
  *
  * <h2>Test Cases</h2>
- * - @subpage test_002_001
- * - @subpage test_002_002
- * - @subpage test_002_003
- * - @subpage test_002_004
+ * - @subpage rt_test_002_001
+ * - @subpage rt_test_002_002
+ * - @subpage rt_test_002_003
+ * - @subpage rt_test_002_004
  * .
  */
 
@@ -67,7 +67,7 @@ static void vtcb(void *p) {
  ****************************************************************************/
 
 /**
- * @page test_002_001 [2.1] System integrity functionality
+ * @page rt_test_002_001 [2.1] System integrity functionality
  *
  * <h2>Description</h2>
  * The system self-test functionality is invoked in order to make an
@@ -81,7 +81,7 @@ static void vtcb(void *p) {
  * .
  */
 
-static void test_002_001_execute(void) {
+static void rt_test_002_001_execute(void) {
   bool result;
 
   /* [2.1.1] Testing Ready List integrity.*/
@@ -121,15 +121,15 @@ static void test_002_001_execute(void) {
   }
 }
 
-static const testcase_t test_002_001 = {
+static const testcase_t rt_test_002_001 = {
   "System integrity functionality",
   NULL,
   NULL,
-  test_002_001_execute
+  rt_test_002_001_execute
 };
 
 /**
- * @page test_002_002 [2.2] Critical zones functionality
+ * @page rt_test_002_002 [2.2] Critical zones functionality
  *
  * <h2>Description</h2>
  * The critical zones API is invoked for coverage.
@@ -145,7 +145,7 @@ static const testcase_t test_002_001 = {
  * .
  */
 
-static void test_002_002_execute(void) {
+static void rt_test_002_002_execute(void) {
   syssts_t sts;
   virtual_timer_t vt;
 
@@ -194,15 +194,15 @@ static void test_002_002_execute(void) {
   }
 }
 
-static const testcase_t test_002_002 = {
+static const testcase_t rt_test_002_002 = {
   "Critical zones functionality",
   NULL,
   NULL,
-  test_002_002_execute
+  rt_test_002_002_execute
 };
 
 /**
- * @page test_002_003 [2.3] Interrupts handling functionality
+ * @page rt_test_002_003 [2.3] Interrupts handling functionality
  *
  * <h2>Description</h2>
  * The interrupts handling API is invoked for coverage.
@@ -212,7 +212,7 @@ static const testcase_t test_002_002 = {
  * .
  */
 
-static void test_002_003_execute(void) {
+static void rt_test_002_003_execute(void) {
 
   /* [2.3.1] Testing chSysSuspend(), chSysDisable() and
      chSysEnable().*/
@@ -225,15 +225,15 @@ static void test_002_003_execute(void) {
   }
 }
 
-static const testcase_t test_002_003 = {
+static const testcase_t rt_test_002_003 = {
   "Interrupts handling functionality",
   NULL,
   NULL,
-  test_002_003_execute
+  rt_test_002_003_execute
 };
 
 /**
- * @page test_002_004 [2.4] System Tick Counter functionality
+ * @page rt_test_002_004 [2.4] System Tick Counter functionality
  *
  * <h2>Description</h2>
  * The functionality of the API @p chVTGetSystemTimeX() is tested.
@@ -244,7 +244,7 @@ static const testcase_t test_002_003 = {
  * .
  */
 
-static void test_002_004_execute(void) {
+static void rt_test_002_004_execute(void) {
 
   /* [2.4.1] A System Tick Counter increment is expected, the test
      simply hangs if it does not happen.*/
@@ -259,11 +259,11 @@ static void test_002_004_execute(void) {
   }
 }
 
-static const testcase_t test_002_004 = {
+static const testcase_t rt_test_002_004 = {
   "System Tick Counter functionality",
   NULL,
   NULL,
-  test_002_004_execute
+  rt_test_002_004_execute
 };
 
 /****************************************************************************
@@ -273,10 +273,10 @@ static const testcase_t test_002_004 = {
 /**
  * @brief   System layer and port interface.
  */
-const testcase_t * const test_sequence_002[] = {
-  &test_002_001,
-  &test_002_002,
-  &test_002_003,
-  &test_002_004,
+const testcase_t * const rt_test_sequence_002[] = {
+  &rt_test_002_001,
+  &rt_test_002_002,
+  &rt_test_002_003,
+  &rt_test_002_004,
   NULL
 };

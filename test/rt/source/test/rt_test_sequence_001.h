@@ -15,13 +15,13 @@
 */
 
 /**
- * @file    test_sequence_007.h
- * @brief   Test Sequence 007 header.
+ * @file    rt_test_sequence_001.h
+ * @brief   Test Sequence 001 header.
  */
 
-#ifndef TEST_SEQUENCE_007_H
-#define TEST_SEQUENCE_007_H
+#ifndef RT_TEST_SEQUENCE_001_H
+#define RT_TEST_SEQUENCE_001_H
 
-extern const testcase_t * const test_sequence_007[];
+extern const testcase_t * const rt_test_sequence_001[];
 
-#endif /* TEST_SEQUENCE_007_H */
+#endif /* RT_TEST_SEQUENCE_001_H */

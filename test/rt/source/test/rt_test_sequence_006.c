@@ -16,15 +16,15 @@
 
 #include "hal.h"
 #include "ch_test.h"
-#include "test_root.h"
+#include "rt_test_root.h"
 
 /**
- * @file    test_sequence_006.c
+ * @file    rt_test_sequence_006.c
  * @brief   Test Sequence 006 code.
  *
- * @page test_sequence_006 [6] Mutexes, Condition Variables and Priority Inheritance
+ * @page rt_test_sequence_006 [6] Mutexes, Condition Variables and Priority Inheritance
  *
- * File: @ref test_sequence_006.c
+ * File: @ref rt_test_sequence_006.c
  *
  * <h2>Description</h2>
  * This sequence tests the ChibiOS/RT functionalities related to
@@ -37,15 +37,15 @@
  * .
  *
  * <h2>Test Cases</h2>
- * - @subpage test_006_001
- * - @subpage test_006_002
- * - @subpage test_006_003
- * - @subpage test_006_004
- * - @subpage test_006_005
- * - @subpage test_006_006
- * - @subpage test_006_007
- * - @subpage test_006_008
- * - @subpage test_006_009
+ * - @subpage rt_test_006_001
+ * - @subpage rt_test_006_002
+ * - @subpage rt_test_006_003
+ * - @subpage rt_test_006_004
+ * - @subpage rt_test_006_005
+ * - @subpage rt_test_006_006
+ * - @subpage rt_test_006_007
+ * - @subpage rt_test_006_008
+ * - @subpage rt_test_006_009
  * .
  */
 
@@ -72,7 +72,7 @@ void test_cpu_pulse(unsigned duration) {
   systime_t start, end, now;
 
   start = chThdGetTicksX(chThdGetSelfX());
-  end = start + MS2ST(duration);
+  end = start + TIME_MS2I(duration);
   do {
     now = chThdGetTicksX(chThdGetSelfX());
 #if defined(SIMULATOR)
@@ -234,7 +234,7 @@ static THD_FUNCTION(thread9, p) {
  ****************************************************************************/
 
 /**
- * @page test_006_001 [6.1] Priority enqueuing test
+ * @page rt_test_006_001 [6.1] Priority enqueuing test
  *
  * <h2>Description</h2>
  * Five threads, with increasing priority, are enqueued on a locked
@@ -253,11 +253,11 @@ static THD_FUNCTION(thread9, p) {
  * .
  */
 
-static void test_006_001_setup(void) {
+static void rt_test_006_001_setup(void) {
   chMtxObjectInit(&m1);
 }
 
-static void test_006_001_execute(void) {
+static void rt_test_006_001_execute(void) {
   tprio_t prio;
 
   /* [6.1.1] Getting the initial priority.*/
@@ -295,16 +295,16 @@ static void test_006_001_execute(void) {
   }
 }
 
-static const testcase_t test_006_001 = {
+static const testcase_t rt_test_006_001 = {
   "Priority enqueuing test",
-  test_006_001_setup,
+  rt_test_006_001_setup,
   NULL,
-  test_006_001_execute
+  rt_test_006_001_execute
 };
 
 #if (CH_DBG_THREADS_PROFILING) || defined(__DOXYGEN__)
 /**
- * @page test_006_002 [6.2] Priority inheritance, simple case
+ * @page rt_test_006_002 [6.2] Priority inheritance, simple case
  *
  * <h2>Description</h2>
  * Three threads are involved in the classic priority inversion
@@ -330,11 +330,11 @@ static const testcase_t test_006_001 = {
  * .
  */
 
-static void test_006_002_setup(void) {
+static void rt_test_006_002_setup(void) {
   chMtxObjectInit(&m1);
 }
 
-static void test_006_002_execute(void) {
+static void rt_test_006_002_execute(void) {
   systime_t time;
 
   /* [6.2.1] Getting the system time for test duration measurement.*/
@@ -359,22 +359,22 @@ static void test_006_002_execute(void) {
      time windows (100mS...100mS+ALLOWED_DELAY).*/
   test_set_step(3);
   {
-    test_assert_time_window(time + MS2ST(100), time + MS2ST(100) + ALLOWED_DELAY,
+    test_assert_time_window(time + TIME_MS2I(100), time + TIME_MS2I(100) + ALLOWED_DELAY,
                             "out of time window");
   }
 }
 
-static const testcase_t test_006_002 = {
+static const testcase_t rt_test_006_002 = {
   "Priority inheritance, simple case",
-  test_006_002_setup,
+  rt_test_006_002_setup,
   NULL,
-  test_006_002_execute
+  rt_test_006_002_execute
 };
 #endif /* CH_DBG_THREADS_PROFILING */
 
 #if (CH_DBG_THREADS_PROFILING) || defined(__DOXYGEN__)
 /**
- * @page test_006_003 [6.3] Priority inheritance, complex case
+ * @page rt_test_006_003 [6.3] Priority inheritance, complex case
  *
  * <h2>Description</h2>
  * Five threads are involved in the complex priority inversion
@@ -399,12 +399,12 @@ static const testcase_t test_006_002 = {
  * .
  */
 
-static void test_006_003_setup(void) {
+static void rt_test_006_003_setup(void) {
   chMtxObjectInit(&m1); /* Mutex B.*/
   chMtxObjectInit(&m2); /* Mutex A.*/
 }
 
-static void test_006_003_execute(void) {
+static void rt_test_006_003_execute(void) {
   systime_t time;
 
   /* [6.3.1] Getting the system time for test duration measurement.*/
@@ -431,21 +431,21 @@ static void test_006_003_execute(void) {
      time windows (110mS...110mS+ALLOWED_DELAY).*/
   test_set_step(3);
   {
-    test_assert_time_window(time + MS2ST(110), time + MS2ST(110) + ALLOWED_DELAY,
+    test_assert_time_window(time + TIME_MS2I(110), time + TIME_MS2I(110) + ALLOWED_DELAY,
                             "out of time window");
   }
 }
 
-static const testcase_t test_006_003 = {
+static const testcase_t rt_test_006_003 = {
   "Priority inheritance, complex case",
-  test_006_003_setup,
+  rt_test_006_003_setup,
   NULL,
-  test_006_003_execute
+  rt_test_006_003_execute
 };
 #endif /* CH_DBG_THREADS_PROFILING */
 
 /**
- * @page test_006_004 [6.4] Priority return verification
+ * @page rt_test_006_004 [6.4] Priority return verification
  *
  * <h2>Description</h2>
  * Two threads are spawned that try to lock the mutexes already locked
@@ -476,16 +476,16 @@ static const testcase_t test_006_003 = {
  * .
  */
 
-static void test_006_004_setup(void) {
+static void rt_test_006_004_setup(void) {
   chMtxObjectInit(&m1);
   chMtxObjectInit(&m2);
 }
 
-static void test_006_004_teardown(void) {
+static void rt_test_006_004_teardown(void) {
   test_wait_threads();
 }
 
-static void test_006_004_execute(void) {
+static void rt_test_006_004_execute(void) {
   tprio_t p, pa, pb;
 
   /* [6.4.1] Getting current thread priority P(0) and assigning to the
@@ -555,16 +555,16 @@ static void test_006_004_execute(void) {
   }
 }
 
-static const testcase_t test_006_004 = {
+static const testcase_t rt_test_006_004 = {
   "Priority return verification",
-  test_006_004_setup,
-  test_006_004_teardown,
-  test_006_004_execute
+  rt_test_006_004_setup,
+  rt_test_006_004_teardown,
+  rt_test_006_004_execute
 };
 
 #if (!CH_CFG_USE_MUTEXES_RECURSIVE) || defined(__DOXYGEN__)
 /**
- * @page test_006_005 [6.5] Repeated locks, non recursive scenario
+ * @page rt_test_006_005 [6.5] Repeated locks, non recursive scenario
  *
  * <h2>Description</h2>
  * The behavior of multiple mutex locks from the same thread is tested
@@ -590,11 +590,11 @@ static const testcase_t test_006_004 = {
  * .
  */
 
-static void test_006_005_setup(void) {
+static void rt_test_006_005_setup(void) {
   chMtxObjectInit(&m1);
 }
 
-static void test_006_005_execute(void) {
+static void rt_test_006_005_execute(void) {
   bool b;
   tprio_t prio;
 
@@ -655,17 +655,17 @@ static void test_006_005_execute(void) {
   }
 }
 
-static const testcase_t test_006_005 = {
+static const testcase_t rt_test_006_005 = {
   "Repeated locks, non recursive scenario",
-  test_006_005_setup,
+  rt_test_006_005_setup,
   NULL,
-  test_006_005_execute
+  rt_test_006_005_execute
 };
 #endif /* !CH_CFG_USE_MUTEXES_RECURSIVE */
 
 #if (CH_CFG_USE_MUTEXES_RECURSIVE) || defined(__DOXYGEN__)
 /**
- * @page test_006_006 [6.6] Repeated locks using, recursive scenario
+ * @page rt_test_006_006 [6.6] Repeated locks using, recursive scenario
  *
  * <h2>Description</h2>
  * The behavior of multiple mutex locks from the same thread is tested
@@ -696,11 +696,11 @@ static const testcase_t test_006_005 = {
  * .
  */
 
-static void test_006_006_setup(void) {
+static void rt_test_006_006_setup(void) {
   chMtxObjectInit(&m1);
 }
 
-static void test_006_006_execute(void) {
+static void rt_test_006_006_execute(void) {
   bool b;
   tprio_t prio;
 
@@ -792,17 +792,17 @@ static void test_006_006_execute(void) {
   }
 }
 
-static const testcase_t test_006_006 = {
+static const testcase_t rt_test_006_006 = {
   "Repeated locks using, recursive scenario",
-  test_006_006_setup,
+  rt_test_006_006_setup,
   NULL,
-  test_006_006_execute
+  rt_test_006_006_execute
 };
 #endif /* CH_CFG_USE_MUTEXES_RECURSIVE */
 
 #if (CH_CFG_USE_CONDVARS) || defined(__DOXYGEN__)
 /**
- * @page test_006_007 [6.7] Condition Variable signal test
+ * @page rt_test_006_007 [6.7] Condition Variable signal test
  *
  * <h2>Description</h2>
  * Five threads take a mutex and then enter a conditional variable
@@ -826,12 +826,12 @@ static const testcase_t test_006_006 = {
  * .
  */
 
-static void test_006_007_setup(void) {
+static void rt_test_006_007_setup(void) {
   chCondObjectInit(&c1);
   chMtxObjectInit(&m1);
 }
 
-static void test_006_007_execute(void) {
+static void rt_test_006_007_execute(void) {
 
   /* [6.7.1] Starting the five threads with increasing priority, the
      threads will queue on the condition variable.*/
@@ -863,17 +863,17 @@ static void test_006_007_execute(void) {
   }
 }
 
-static const testcase_t test_006_007 = {
+static const testcase_t rt_test_006_007 = {
   "Condition Variable signal test",
-  test_006_007_setup,
+  rt_test_006_007_setup,
   NULL,
-  test_006_007_execute
+  rt_test_006_007_execute
 };
 #endif /* CH_CFG_USE_CONDVARS */
 
 #if (CH_CFG_USE_CONDVARS) || defined(__DOXYGEN__)
 /**
- * @page test_006_008 [6.8] Condition Variable broadcast test
+ * @page rt_test_006_008 [6.8] Condition Variable broadcast test
  *
  * <h2>Description</h2>
  * Five threads take a mutex and then enter a conditional variable
@@ -895,12 +895,12 @@ static const testcase_t test_006_007 = {
  * .
  */
 
-static void test_006_008_setup(void) {
+static void rt_test_006_008_setup(void) {
   chCondObjectInit(&c1);
   chMtxObjectInit(&m1);
 }
 
-static void test_006_008_execute(void) {
+static void rt_test_006_008_execute(void) {
 
   /* [6.8.1] Starting the five threads with increasing priority, the
      threads will queue on the condition variable.*/
@@ -924,17 +924,17 @@ static void test_006_008_execute(void) {
   }
 }
 
-static const testcase_t test_006_008 = {
+static const testcase_t rt_test_006_008 = {
   "Condition Variable broadcast test",
-  test_006_008_setup,
+  rt_test_006_008_setup,
   NULL,
-  test_006_008_execute
+  rt_test_006_008_execute
 };
 #endif /* CH_CFG_USE_CONDVARS */
 
 #if (CH_CFG_USE_CONDVARS) || defined(__DOXYGEN__)
 /**
- * @page test_006_009 [6.9] Condition Variable priority boost test
+ * @page rt_test_006_009 [6.9] Condition Variable priority boost test
  *
  * <h2>Description</h2>
  * This test case verifies the priority boost of a thread waiting on a
@@ -966,13 +966,13 @@ static const testcase_t test_006_008 = {
  * .
  */
 
-static void test_006_009_setup(void) {
+static void rt_test_006_009_setup(void) {
   chCondObjectInit(&c1);
   chMtxObjectInit(&m1);
   chMtxObjectInit(&m2);
 }
 
-static void test_006_009_execute(void) {
+static void rt_test_006_009_execute(void) {
   tprio_t prio;
 
   /* [6.9.1] Reading current base priority.*/
@@ -1024,11 +1024,11 @@ static void test_006_009_execute(void) {
   }
 }
 
-static const testcase_t test_006_009 = {
+static const testcase_t rt_test_006_009 = {
   "Condition Variable priority boost test",
-  test_006_009_setup,
+  rt_test_006_009_setup,
   NULL,
-  test_006_009_execute
+  rt_test_006_009_execute
 };
 #endif /* CH_CFG_USE_CONDVARS */
 
@@ -1039,29 +1039,29 @@ static const testcase_t test_006_009 = {
 /**
  * @brief   Mutexes, Condition Variables and Priority Inheritance.
  */
-const testcase_t * const test_sequence_006[] = {
-  &test_006_001,
+const testcase_t * const rt_test_sequence_006[] = {
+  &rt_test_006_001,
 #if (CH_DBG_THREADS_PROFILING) || defined(__DOXYGEN__)
-  &test_006_002,
+  &rt_test_006_002,
 #endif
 #if (CH_DBG_THREADS_PROFILING) || defined(__DOXYGEN__)
-  &test_006_003,
+  &rt_test_006_003,
 #endif
-  &test_006_004,
+  &rt_test_006_004,
 #if (!CH_CFG_USE_MUTEXES_RECURSIVE) || defined(__DOXYGEN__)
-  &test_006_005,
+  &rt_test_006_005,
 #endif
 #if (CH_CFG_USE_MUTEXES_RECURSIVE) || defined(__DOXYGEN__)
-  &test_006_006,
+  &rt_test_006_006,
 #endif
 #if (CH_CFG_USE_CONDVARS) || defined(__DOXYGEN__)
-  &test_006_007,
+  &rt_test_006_007,
 #endif
 #if (CH_CFG_USE_CONDVARS) || defined(__DOXYGEN__)
-  &test_006_008,
+  &rt_test_006_008,
 #endif
 #if (CH_CFG_USE_CONDVARS) || defined(__DOXYGEN__)
-  &test_006_009,
+  &rt_test_006_009,
 #endif
   NULL
 };

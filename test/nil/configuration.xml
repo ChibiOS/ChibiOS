@@ -31,6 +31,9 @@
           </introduction>
         </description>
         <global_data_and_code>
+          <code_prefix>
+            <value>nil_</value>
+          </code_prefix>
           <global_definitions>
             <value><![CDATA[#define TEST_SUITE_NAME                     "ChibiOS/NIL Test Suite"
 

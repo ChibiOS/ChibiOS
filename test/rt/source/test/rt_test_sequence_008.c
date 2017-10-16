@@ -16,15 +16,15 @@
 
 #include "hal.h"
 #include "ch_test.h"
-#include "test_root.h"
+#include "rt_test_root.h"
 
 /**
- * @file    test_sequence_008.c
+ * @file    rt_test_sequence_008.c
  * @brief   Test Sequence 008 code.
  *
- * @page test_sequence_008 [8] Event Sources and Event Flags
+ * @page rt_test_sequence_008 [8] Event Sources and Event Flags
  *
- * File: @ref test_sequence_008.c
+ * File: @ref rt_test_sequence_008.c
  *
  * <h2>Description</h2>
  * This module implements the test sequence for the Events subsystem.
@@ -36,13 +36,13 @@
  * .
  *
  * <h2>Test Cases</h2>
- * - @subpage test_008_001
- * - @subpage test_008_002
- * - @subpage test_008_003
- * - @subpage test_008_004
- * - @subpage test_008_005
- * - @subpage test_008_006
- * - @subpage test_008_007
+ * - @subpage rt_test_008_001
+ * - @subpage rt_test_008_002
+ * - @subpage rt_test_008_003
+ * - @subpage rt_test_008_004
+ * - @subpage rt_test_008_005
+ * - @subpage rt_test_008_006
+ * - @subpage rt_test_008_007
  * .
  */
 
@@ -79,7 +79,7 @@ static THD_FUNCTION(evt_thread7, p) {
  ****************************************************************************/
 
 /**
- * @page test_008_001 [8.1] Events registration
+ * @page rt_test_008_001 [8.1] Events registration
  *
  * <h2>Description</h2>
  * Two event listeners are registered on an event source and then
@@ -99,7 +99,7 @@ static THD_FUNCTION(evt_thread7, p) {
  * .
  */
 
-static void test_008_001_execute(void) {
+static void rt_test_008_001_execute(void) {
   event_listener_t el1, el2;
 
   /* [8.1.1] An Event Source is initialized.*/
@@ -134,15 +134,15 @@ static void test_008_001_execute(void) {
   }
 }
 
-static const testcase_t test_008_001 = {
+static const testcase_t rt_test_008_001 = {
   "Events registration",
   NULL,
   NULL,
-  test_008_001_execute
+  rt_test_008_001_execute
 };
 
 /**
- * @page test_008_002 [8.2] Event Flags dispatching
+ * @page rt_test_008_002 [8.2] Event Flags dispatching
  *
  * <h2>Description</h2>
  * The test dispatches three event flags and verifies that the
@@ -154,11 +154,11 @@ static const testcase_t test_008_001 = {
  * .
  */
 
-static void test_008_002_setup(void) {
+static void rt_test_008_002_setup(void) {
   chEvtGetAndClearEvents(ALL_EVENTS);
 }
 
-static void test_008_002_execute(void) {
+static void rt_test_008_002_execute(void) {
 
   /* [8.2.1] Three evenf flag bits are raised then chEvtDispatch() is
      invoked, the sequence of handlers calls is tested.*/
@@ -169,15 +169,15 @@ static void test_008_002_execute(void) {
   }
 }
 
-static const testcase_t test_008_002 = {
+static const testcase_t rt_test_008_002 = {
   "Event Flags dispatching",
-  test_008_002_setup,
+  rt_test_008_002_setup,
   NULL,
-  test_008_002_execute
+  rt_test_008_002_execute
 };
 
 /**
- * @page test_008_003 [8.3] Events Flags wait using chEvtWaitOne()
+ * @page rt_test_008_003 [8.3] Events Flags wait using chEvtWaitOne()
  *
  * <h2>Description</h2>
  * Functionality of chEvtWaitOne() is tested under various scenarios.
@@ -194,11 +194,11 @@ static const testcase_t test_008_002 = {
  * .
  */
 
-static void test_008_003_setup(void) {
+static void rt_test_008_003_setup(void) {
   chEvtGetAndClearEvents(ALL_EVENTS);
 }
 
-static void test_008_003_execute(void) {
+static void rt_test_008_003_execute(void) {
   eventmask_t m;
   systime_t target_time;
 
@@ -226,7 +226,7 @@ static void test_008_003_execute(void) {
      thread will set an event flag after 50mS.*/
   test_set_step(3);
   {
-    target_time = test_wait_tick() + MS2ST(50);
+    target_time = test_wait_tick() + TIME_MS2I(50);
     threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() - 1,
                                    evt_thread3, chThdGetSelfX());
   }
@@ -246,15 +246,15 @@ static void test_008_003_execute(void) {
   }
 }
 
-static const testcase_t test_008_003 = {
+static const testcase_t rt_test_008_003 = {
   "Events Flags wait using chEvtWaitOne()",
-  test_008_003_setup,
+  rt_test_008_003_setup,
   NULL,
-  test_008_003_execute
+  rt_test_008_003_execute
 };
 
 /**
- * @page test_008_004 [8.4] Events Flags wait using chEvtWaitAny()
+ * @page rt_test_008_004 [8.4] Events Flags wait using chEvtWaitAny()
  *
  * <h2>Description</h2>
  * Functionality of chEvtWaitAny() is tested under various scenarios.
@@ -271,11 +271,11 @@ static const testcase_t test_008_003 = {
  * .
  */
 
-static void test_008_004_setup(void) {
+static void rt_test_008_004_setup(void) {
   chEvtGetAndClearEvents(ALL_EVENTS);
 }
 
-static void test_008_004_execute(void) {
+static void rt_test_008_004_execute(void) {
   eventmask_t m;
   systime_t target_time;
 
@@ -299,7 +299,7 @@ static void test_008_004_execute(void) {
      thread will set an event flag after 50mS.*/
   test_set_step(3);
   {
-    target_time = test_wait_tick() + MS2ST(50);
+    target_time = test_wait_tick() + TIME_MS2I(50);
     threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() - 1,
                                    evt_thread3, chThdGetSelfX());
   }
@@ -319,15 +319,15 @@ static void test_008_004_execute(void) {
   }
 }
 
-static const testcase_t test_008_004 = {
+static const testcase_t rt_test_008_004 = {
   "Events Flags wait using chEvtWaitAny()",
-  test_008_004_setup,
+  rt_test_008_004_setup,
   NULL,
-  test_008_004_execute
+  rt_test_008_004_execute
 };
 
 /**
- * @page test_008_005 [8.5] Events Flags wait using chEvtWaitAll()
+ * @page rt_test_008_005 [8.5] Events Flags wait using chEvtWaitAll()
  *
  * <h2>Description</h2>
  * Functionality of chEvtWaitAll() is tested under various scenarios.
@@ -345,11 +345,11 @@ static const testcase_t test_008_004 = {
  * .
  */
 
-static void test_008_005_setup(void) {
+static void rt_test_008_005_setup(void) {
   chEvtGetAndClearEvents(ALL_EVENTS);
 }
 
-static void test_008_005_execute(void) {
+static void rt_test_008_005_execute(void) {
   eventmask_t m;
   systime_t target_time;
 
@@ -379,7 +379,7 @@ static void test_008_005_execute(void) {
      thread will set another event flag after 50mS.*/
   test_set_step(4);
   {
-    target_time = test_wait_tick() + MS2ST(50);
+    target_time = test_wait_tick() + TIME_MS2I(50);
     threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() - 1,
                                    evt_thread3, chThdGetSelfX());
   }
@@ -399,16 +399,16 @@ static void test_008_005_execute(void) {
   }
 }
 
-static const testcase_t test_008_005 = {
+static const testcase_t rt_test_008_005 = {
   "Events Flags wait using chEvtWaitAll()",
-  test_008_005_setup,
+  rt_test_008_005_setup,
   NULL,
-  test_008_005_execute
+  rt_test_008_005_execute
 };
 
 #if (CH_CFG_USE_EVENTS_TIMEOUT) || defined(__DOXYGEN__)
 /**
- * @page test_008_006 [8.6] Events Flags wait timeouts
+ * @page rt_test_008_006 [8.6] Events Flags wait timeouts
  *
  * <h2>Description</h2>
  * Timeout functionality is tested for chEvtWaitOneTimeout(),
@@ -428,11 +428,11 @@ static const testcase_t test_008_005 = {
  * .
  */
 
-static void test_008_006_setup(void) {
+static void rt_test_008_006_setup(void) {
   chEvtGetAndClearEvents(ALL_EVENTS);
 }
 
-static void test_008_006_execute(void) {
+static void rt_test_008_006_execute(void) {
   eventmask_t m;
 
   /* [8.6.1] The functions are invoked first with TIME_IMMEDIATE
@@ -451,25 +451,25 @@ static void test_008_006_execute(void) {
      timeout condition is tested.*/
   test_set_step(2);
   {
-    m = chEvtWaitOneTimeout(ALL_EVENTS, MS2ST(50));
+    m = chEvtWaitOneTimeout(ALL_EVENTS, TIME_MS2I(50));
     test_assert(m == 0, "spurious event");
-    m = chEvtWaitAnyTimeout(ALL_EVENTS, MS2ST(50));
+    m = chEvtWaitAnyTimeout(ALL_EVENTS, TIME_MS2I(50));
     test_assert(m == 0, "spurious event");
-    m = chEvtWaitAllTimeout(ALL_EVENTS, MS2ST(50));
+    m = chEvtWaitAllTimeout(ALL_EVENTS, TIME_MS2I(50));
     test_assert(m == 0, "spurious event");
   }
 }
 
-static const testcase_t test_008_006 = {
+static const testcase_t rt_test_008_006 = {
   "Events Flags wait timeouts",
-  test_008_006_setup,
+  rt_test_008_006_setup,
   NULL,
-  test_008_006_execute
+  rt_test_008_006_execute
 };
 #endif /* CH_CFG_USE_EVENTS_TIMEOUT */
 
 /**
- * @page test_008_007 [8.7] Broadcasting using chEvtBroadcast()
+ * @page rt_test_008_007 [8.7] Broadcasting using chEvtBroadcast()
  *
  * <h2>Description</h2>
  * Functionality of chEvtBroadcast() is tested.
@@ -487,13 +487,13 @@ static const testcase_t test_008_006 = {
  * .
  */
 
-static void test_008_007_setup(void) {
+static void rt_test_008_007_setup(void) {
   chEvtGetAndClearEvents(ALL_EVENTS);
   chEvtObjectInit(&es1);
   chEvtObjectInit(&es2);
 }
 
-static void test_008_007_execute(void) {
+static void rt_test_008_007_execute(void) {
   eventmask_t m;
   event_listener_t el1, el2;
   systime_t target_time;
@@ -511,7 +511,7 @@ static void test_008_007_execute(void) {
      other after 50mS.*/
   test_set_step(2);
   {
-    target_time = test_wait_tick() + MS2ST(50);
+    target_time = test_wait_tick() + TIME_MS2I(50);
     threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() - 1,
                                    evt_thread7, "A");
   }
@@ -539,11 +539,11 @@ static void test_008_007_execute(void) {
   }
 }
 
-static const testcase_t test_008_007 = {
+static const testcase_t rt_test_008_007 = {
   "Broadcasting using chEvtBroadcast()",
-  test_008_007_setup,
+  rt_test_008_007_setup,
   NULL,
-  test_008_007_execute
+  rt_test_008_007_execute
 };
 
 /****************************************************************************
@@ -553,16 +553,16 @@ static const testcase_t test_008_007 = {
 /**
  * @brief   Event Sources and Event Flags.
  */
-const testcase_t * const test_sequence_008[] = {
-  &test_008_001,
-  &test_008_002,
-  &test_008_003,
-  &test_008_004,
-  &test_008_005,
+const testcase_t * const rt_test_sequence_008[] = {
+  &rt_test_008_001,
+  &rt_test_008_002,
+  &rt_test_008_003,
+  &rt_test_008_004,
+  &rt_test_008_005,
 #if (CH_CFG_USE_EVENTS_TIMEOUT) || defined(__DOXYGEN__)
-  &test_008_006,
+  &rt_test_008_006,
 #endif
-  &test_008_007,
+  &rt_test_008_007,
   NULL
 };
 

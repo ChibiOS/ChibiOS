@@ -16,15 +16,15 @@
 
 #include "hal.h"
 #include "ch_test.h"
-#include "test_root.h"
+#include "rt_test_root.h"
 
 /**
- * @file    test_sequence_010.c
+ * @file    rt_test_sequence_010.c
  * @brief   Test Sequence 010 code.
  *
- * @page test_sequence_010 [10] Memory Pools
+ * @page rt_test_sequence_010 [10] Memory Pools
  *
- * File: @ref test_sequence_010.c
+ * File: @ref rt_test_sequence_010.c
  *
  * <h2>Description</h2>
  * This sequence tests the ChibiOS/RT functionalities related to memory
@@ -37,9 +37,9 @@
  * .
  *
  * <h2>Test Cases</h2>
- * - @subpage test_010_001
- * - @subpage test_010_002
- * - @subpage test_010_003
+ * - @subpage rt_test_010_001
+ * - @subpage rt_test_010_002
+ * - @subpage rt_test_010_003
  * .
  */
 
@@ -71,7 +71,7 @@ static void *null_provider(size_t size, unsigned align) {
  ****************************************************************************/
 
 /**
- * @page test_010_001 [10.1] Loading and emptying a memory pool
+ * @page rt_test_010_001 [10.1] Loading and emptying a memory pool
  *
  * <h2>Description</h2>
  * The memory pool functionality is tested by loading and emptying it,
@@ -89,11 +89,11 @@ static void *null_provider(size_t size, unsigned align) {
  * .
  */
 
-static void test_010_001_setup(void) {
+static void rt_test_010_001_setup(void) {
   chPoolObjectInit(&mp1, sizeof (uint32_t), NULL);
 }
 
-static void test_010_001_execute(void) {
+static void rt_test_010_001_execute(void) {
   unsigned i;
 
   /* [10.1.1] Adding the objects to the pool using chPoolLoadArray().*/
@@ -144,16 +144,16 @@ static void test_010_001_execute(void) {
   }
 }
 
-static const testcase_t test_010_001 = {
+static const testcase_t rt_test_010_001 = {
   "Loading and emptying a memory pool",
-  test_010_001_setup,
+  rt_test_010_001_setup,
   NULL,
-  test_010_001_execute
+  rt_test_010_001_execute
 };
 
 #if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
 /**
- * @page test_010_002 [10.2] Loading and emptying a guarded memory pool without waiting
+ * @page rt_test_010_002 [10.2] Loading and emptying a guarded memory pool without waiting
  *
  * <h2>Description</h2>
  * The memory pool functionality is tested by loading and emptying it,
@@ -177,11 +177,11 @@ static const testcase_t test_010_001 = {
  * .
  */
 
-static void test_010_002_setup(void) {
+static void rt_test_010_002_setup(void) {
   chGuardedPoolObjectInit(&gmp1, sizeof (uint32_t));
 }
 
-static void test_010_002_execute(void) {
+static void rt_test_010_002_execute(void) {
   unsigned i;
 
   /* [10.2.1] Adding the objects to the pool using
@@ -227,17 +227,17 @@ static void test_010_002_execute(void) {
   }
 }
 
-static const testcase_t test_010_002 = {
+static const testcase_t rt_test_010_002 = {
   "Loading and emptying a guarded memory pool without waiting",
-  test_010_002_setup,
+  rt_test_010_002_setup,
   NULL,
-  test_010_002_execute
+  rt_test_010_002_execute
 };
 #endif /* CH_CFG_USE_SEMAPHORES */
 
 #if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
 /**
- * @page test_010_003 [10.3] Guarded Memory Pools timeout
+ * @page rt_test_010_003 [10.3] Guarded Memory Pools timeout
  *
  * <h2>Description</h2>
  * The timeout features for the Guarded Memory Pools is tested.
@@ -254,25 +254,25 @@ static const testcase_t test_010_002 = {
  * .
  */
 
-static void test_010_003_setup(void) {
+static void rt_test_010_003_setup(void) {
   chGuardedPoolObjectInit(&gmp1, sizeof (uint32_t));
 }
 
-static void test_010_003_execute(void) {
+static void rt_test_010_003_execute(void) {
 
   /* [10.3.1] Trying to allocate with 100mS timeout, must fail because
      the pool is empty.*/
   test_set_step(1);
   {
-    test_assert(chGuardedPoolAllocTimeout(&gmp1, MS2ST(100)) == NULL, "list not empty");
+    test_assert(chGuardedPoolAllocTimeout(&gmp1, TIME_MS2I(100)) == NULL, "list not empty");
   }
 }
 
-static const testcase_t test_010_003 = {
+static const testcase_t rt_test_010_003 = {
   "Guarded Memory Pools timeout",
-  test_010_003_setup,
+  rt_test_010_003_setup,
   NULL,
-  test_010_003_execute
+  rt_test_010_003_execute
 };
 #endif /* CH_CFG_USE_SEMAPHORES */
 
@@ -283,13 +283,13 @@ static const testcase_t test_010_003 = {
 /**
  * @brief   Memory Pools.
  */
-const testcase_t * const test_sequence_010[] = {
-  &test_010_001,
+const testcase_t * const rt_test_sequence_010[] = {
+  &rt_test_010_001,
 #if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
-  &test_010_002,
+  &rt_test_010_002,
 #endif
 #if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
-  &test_010_003,
+  &rt_test_010_003,
 #endif
   NULL
 };
