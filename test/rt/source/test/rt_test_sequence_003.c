@@ -83,8 +83,8 @@ static void rt_test_003_001_execute(void) {
   {
     time = chVTGetSystemTimeX();
     chThdSleep(100);
-    test_assert_time_window(time + 100,
-                            time + 100 + CH_CFG_ST_TIMEDELTA + 1,
+    test_assert_time_window(chTimeAddX(time, 100),
+                            chTimeAddX(time, 100 + CH_CFG_ST_TIMEDELTA + 1),
                             "out of time window");
   }
 
@@ -95,8 +95,8 @@ static void rt_test_003_001_execute(void) {
   {
     time = chVTGetSystemTimeX();
     chThdSleepMicroseconds(100000);
-    test_assert_time_window(time + TIME_US2I(100000),
-                            time + TIME_US2I(100000) + CH_CFG_ST_TIMEDELTA + 1,
+    test_assert_time_window(chTimeAddX(time, TIME_US2I(100000)),
+                            chTimeAddX(time, TIME_US2I(100000) + CH_CFG_ST_TIMEDELTA + 1),
                             "out of time window");
   }
 
@@ -107,8 +107,8 @@ static void rt_test_003_001_execute(void) {
   {
     time = chVTGetSystemTimeX();
     chThdSleepMilliseconds(100);
-    test_assert_time_window(time + TIME_MS2I(100),
-                            time + TIME_MS2I(100) + CH_CFG_ST_TIMEDELTA + 1,
+    test_assert_time_window(chTimeAddX(time, TIME_MS2I(100)),
+                            chTimeAddX(time, TIME_MS2I(100) + CH_CFG_ST_TIMEDELTA + 1),
                             "out of time window");
   }
 
@@ -118,8 +118,8 @@ static void rt_test_003_001_execute(void) {
   {
     time = chVTGetSystemTimeX();
     chThdSleepSeconds(1);
-    test_assert_time_window(time + TIME_S2I(1),
-                            time + TIME_S2I(1) + CH_CFG_ST_TIMEDELTA + 1,
+    test_assert_time_window(chTimeAddX(time, TIME_S2I(1)),
+                            chTimeAddX(time, TIME_S2I(1) + CH_CFG_ST_TIMEDELTA + 1),
                             "out of time window");
   }
 
@@ -128,9 +128,9 @@ static void rt_test_003_001_execute(void) {
   test_set_step(5);
   {
     time = chVTGetSystemTimeX();
-    chThdSleepUntil(time + 100);
-    test_assert_time_window(time + 100,
-                            time + 100 + CH_CFG_ST_TIMEDELTA + 1,
+    chThdSleepUntil(chTimeAddX(time, 100));
+    test_assert_time_window(chTimeAddX(time, 100),
+                            chTimeAddX(time, 100 + CH_CFG_ST_TIMEDELTA + 1),
                             "out of time window");
   }
 }

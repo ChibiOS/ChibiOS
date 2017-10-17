@@ -260,7 +260,7 @@ static void rt_test_005_003_execute(void) {
   /* [5.3.3] Testing timeout condition.*/
   test_set_step(3);
   {
-    target_time = test_wait_tick() + TIME_MS2I(5 * 50);
+    target_time = chTimeAddX(test_wait_tick(), TIME_MS2I(5 * 50));
     for (i = 0; i < 5; i++) {
       test_emit_token('A' + i);
       msg = chSemWaitTimeout(&sem1, TIME_MS2I(50));
@@ -269,7 +269,8 @@ static void rt_test_005_003_execute(void) {
       test_assert(sem1.cnt == 0, "counter not zero");
     }
     test_assert_sequence("ABCDE", "invalid sequence");
-    test_assert_time_window(target_time, target_time + ALLOWED_DELAY,
+    test_assert_time_window(target_time,
+                            chTimeAddX(target_time, ALLOWED_DELAY),
                             "out of time window");
   }
 }

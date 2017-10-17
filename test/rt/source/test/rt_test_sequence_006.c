@@ -71,7 +71,7 @@ void test_cpu_pulse(unsigned duration) {
   systime_t start, end, now;
 
   start = chThdGetTicksX(chThdGetSelfX());
-  end = start + TIME_MS2I(duration);
+  end = chTimeAddX(start, TIME_MS2I(duration));
   do {
     now = chThdGetTicksX(chThdGetSelfX());
 #if defined(SIMULATOR)
@@ -358,7 +358,8 @@ static void rt_test_006_002_execute(void) {
      time windows (100mS...100mS+ALLOWED_DELAY).*/
   test_set_step(3);
   {
-    test_assert_time_window(time + TIME_MS2I(100), time + TIME_MS2I(100) + ALLOWED_DELAY,
+    test_assert_time_window(chTimeAddX(time, TIME_MS2I(100)),
+                            chTimeAddX(time, TIME_MS2I(100) + ALLOWED_DELAY),
                             "out of time window");
   }
 }
@@ -430,7 +431,8 @@ static void rt_test_006_003_execute(void) {
      time windows (110mS...110mS+ALLOWED_DELAY).*/
   test_set_step(3);
   {
-    test_assert_time_window(time + TIME_MS2I(110), time + TIME_MS2I(110) + ALLOWED_DELAY,
+    test_assert_time_window(chTimeAddX(time, TIME_MS2I(110)),
+                            chTimeAddX(time, TIME_MS2I(110) + ALLOWED_DELAY),
                             "out of time window");
   }
 }

@@ -225,7 +225,7 @@ static void rt_test_008_003_execute(void) {
      thread will set an event flag after 50mS.*/
   test_set_step(3);
   {
-    target_time = test_wait_tick() + TIME_MS2I(50);
+    target_time = chTimeAddX(test_wait_tick(), TIME_MS2I(50));
     threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() - 1,
                                    evt_thread3, chThdGetSelfX());
   }
@@ -236,7 +236,8 @@ static void rt_test_008_003_execute(void) {
   test_set_step(4);
   {
     m = chEvtWaitOne(ALL_EVENTS);
-    test_assert_time_window(target_time, target_time + ALLOWED_DELAY,
+    test_assert_time_window(target_time,
+                            chTimeAddX(target_time, ALLOWED_DELAY),
                             "out of time window");
     test_assert(m == 1, "event flag error");
     m = chEvtGetAndClearEvents(ALL_EVENTS);
@@ -298,7 +299,7 @@ static void rt_test_008_004_execute(void) {
      thread will set an event flag after 50mS.*/
   test_set_step(3);
   {
-    target_time = test_wait_tick() + TIME_MS2I(50);
+    target_time = chTimeAddX(test_wait_tick(), TIME_MS2I(50));
     threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() - 1,
                                    evt_thread3, chThdGetSelfX());
   }
@@ -309,7 +310,8 @@ static void rt_test_008_004_execute(void) {
   test_set_step(4);
   {
     m = chEvtWaitAny(ALL_EVENTS);
-    test_assert_time_window(target_time, target_time + ALLOWED_DELAY,
+    test_assert_time_window(target_time,
+                            chTimeAddX(target_time, ALLOWED_DELAY),
                             "out of time window");
     test_assert(m == 1, "event flag error");
     m = chEvtGetAndClearEvents(ALL_EVENTS);
@@ -378,7 +380,7 @@ static void rt_test_008_005_execute(void) {
      thread will set another event flag after 50mS.*/
   test_set_step(4);
   {
-    target_time = test_wait_tick() + TIME_MS2I(50);
+    target_time = chTimeAddX(test_wait_tick(), TIME_MS2I(50));
     threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() - 1,
                                    evt_thread3, chThdGetSelfX());
   }
@@ -389,7 +391,8 @@ static void rt_test_008_005_execute(void) {
   test_set_step(5);
   {
     m = chEvtWaitAll(5);
-    test_assert_time_window(target_time, target_time + ALLOWED_DELAY,
+    test_assert_time_window(target_time,
+                            chTimeAddX(target_time, ALLOWED_DELAY),
                             "out of time window");
     test_assert(m == 5, "event flags error");
     m = chEvtGetAndClearEvents(ALL_EVENTS);
@@ -510,7 +513,7 @@ static void rt_test_008_007_execute(void) {
      other after 50mS.*/
   test_set_step(2);
   {
-    target_time = test_wait_tick() + TIME_MS2I(50);
+    target_time = chTimeAddX(test_wait_tick(), TIME_MS2I(50));
     threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() - 1,
                                    evt_thread7, "A");
   }
@@ -521,7 +524,8 @@ static void rt_test_008_007_execute(void) {
   test_set_step(3);
   {
     m = chEvtWaitAll(5);
-    test_assert_time_window(target_time, target_time + ALLOWED_DELAY,
+    test_assert_time_window(target_time,
+                            chTimeAddX(target_time, ALLOWED_DELAY),
                             "out of time window");
     m = chEvtGetAndClearEvents(ALL_EVENTS);
     test_assert(m == 0, "stuck event");

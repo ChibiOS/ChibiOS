@@ -80,7 +80,7 @@ NOINLINE static unsigned int msg_loop_test(thread_t *tp) {
 
   uint32_t n = 0;
   start = test_wait_tick();
-  end = start + TIME_MS2I(1000);
+  end = chTimeAddX(start, TIME_MS2I(1000));
   do {
     (void)chMsgSend(tp, 1);
     n++;
@@ -372,7 +372,7 @@ static void rt_test_010_004_execute(void) {
 
     n = 0;
     start = test_wait_tick();
-    end = start + TIME_MS2I(1000);
+    end = chTimeAddX(start, TIME_MS2I(1000));
     do {
       chSysLock();
       chSchWakeupS(tp, MSG_OK);
@@ -442,7 +442,7 @@ static void rt_test_010_005_execute(void) {
   {
     n = 0;
     start = test_wait_tick();
-    end = start + TIME_MS2I(1000);
+    end = chTimeAddX(start, TIME_MS2I(1000));
     do {
       chThdWait(chThdCreateStatic(wa[0], WA_SIZE, prio, bmk_thread3, NULL));
       n++;
@@ -499,7 +499,7 @@ static void rt_test_010_006_execute(void) {
   {
     n = 0;
     start = test_wait_tick();
-    end = start + TIME_MS2I(1000);
+    end = chTimeAddX(start, TIME_MS2I(1000));
     do {
 #if CH_CFG_USE_REGISTRY
       chThdRelease(chThdCreateStatic(wa[0], WA_SIZE, prio, bmk_thread3, NULL));
@@ -581,7 +581,7 @@ static void rt_test_010_007_execute(void) {
 
     n = 0;
     start = test_wait_tick();
-    end = start + TIME_MS2I(1000);
+    end = chTimeAddX(start, TIME_MS2I(1000));
     do {
       chSemReset(&sem1, 0);
       n++;
@@ -706,7 +706,7 @@ static void rt_test_010_009_execute(void) {
 
     n = 0;
     start = test_wait_tick();
-    end = start + TIME_MS2I(1000);
+    end = chTimeAddX(start, TIME_MS2I(1000));
     do {
       chSysLock();
       chVTDoSetI(&vt1, 1, tmo, NULL);
@@ -775,7 +775,7 @@ static void rt_test_010_010_execute(void) {
 
     n = 0;
     start = test_wait_tick();
-    end = start + TIME_MS2I(1000);
+    end = chTimeAddX(start, TIME_MS2I(1000));
     do {
       chSemWait(&sem1);
       chSemSignal(&sem1);
@@ -847,7 +847,7 @@ static void rt_test_010_011_execute(void) {
 
     n = 0;
     start = test_wait_tick();
-    end = start + TIME_MS2I(1000);
+    end = chTimeAddX(start, TIME_MS2I(1000));
     do {
       chMtxLock(&mtx1);
       chMtxUnlock(&mtx1);
