@@ -31,9 +31,6 @@
  * - @subpage rt_test_sequence_008
  * - @subpage rt_test_sequence_009
  * - @subpage rt_test_sequence_010
- * - @subpage rt_test_sequence_011
- * - @subpage rt_test_sequence_012
- * - @subpage rt_test_sequence_013
  * .
  */
 
@@ -71,19 +68,10 @@ const testsequence_t * const rt_test_suite_array[] = {
 #if (CH_CFG_USE_EVENTS) || defined(__DOXYGEN__)
   &rt_test_sequence_008,
 #endif
-#if (CH_CFG_USE_MAILBOXES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_DYNAMIC) || defined(__DOXYGEN__)
   &rt_test_sequence_009,
 #endif
-#if (CH_CFG_USE_MEMPOOLS) || defined(__DOXYGEN__)
   &rt_test_sequence_010,
-#endif
-#if (CH_CFG_USE_HEAP) || defined(__DOXYGEN__)
-  &rt_test_sequence_011,
-#endif
-#if (CH_CFG_USE_DYNAMIC) || defined(__DOXYGEN__)
-  &rt_test_sequence_012,
-#endif
-  &rt_test_sequence_013,
   NULL
 };
 

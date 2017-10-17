@@ -21,7 +21,7 @@
  * @file    rt_test_sequence_005.c
  * @brief   Test Sequence 005 code.
  *
- * @page rt_test_sequence_005 [5] Counter and Binary Semaphores
+ * @page rt_test_sequence_005 [5] Counter Semaphores
  *
  * File: @ref rt_test_sequence_005.c
  *
@@ -505,7 +505,7 @@ const testcase_t * const rt_test_sequence_005_array[] = {
 };
 
 /**
- * @brief   Counter and Binary Semaphores.
+ * @brief   Counter Semaphores.
  */
 const testsequence_t rt_test_sequence_005 = {
   NULL,

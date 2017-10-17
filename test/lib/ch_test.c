@@ -229,11 +229,13 @@ msg_t test_execute(BaseSequentialStream *stream, const testsuite_t *tsp) {
 
   test_chp = stream;
   test_println("");
-#if defined(TEST_SUITE_NAME)
-  test_println("*** " TEST_SUITE_NAME);
-#else
-  test_println("*** ChibiOS test suite");
-#endif
+  if (tsp->name != NULL) {
+    test_print("*** ");
+    test_println(tsp->name);
+  }
+  else {
+    test_println("*** Test Suite");
+  }
   test_println("***");
   test_print("*** Compiled:     ");
   test_println(__DATE__ " - " __TIME__);

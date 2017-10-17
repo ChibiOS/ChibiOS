@@ -21,375 +21,247 @@
  * @file    rt_test_sequence_009.c
  * @brief   Test Sequence 009 code.
  *
- * @page rt_test_sequence_009 [9] Mailboxes
+ * @page rt_test_sequence_009 [9] Dynamic threads
  *
  * File: @ref rt_test_sequence_009.c
  *
  * <h2>Description</h2>
- * This sequence tests the ChibiOS/RT functionalities related to
- * mailboxes.
+ * This module implements the test sequence for the dynamic thread
+ * creation APIs.
  *
  * <h2>Conditions</h2>
  * This sequence is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_USE_MAILBOXES
+ * - CH_CFG_USE_DYNAMIC
  * .
  *
  * <h2>Test Cases</h2>
  * - @subpage rt_test_009_001
  * - @subpage rt_test_009_002
- * - @subpage rt_test_009_003
  * .
  */
 
-#if (CH_CFG_USE_MAILBOXES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_DYNAMIC) || defined(__DOXYGEN__)
 
 /****************************************************************************
  * Shared code.
  ****************************************************************************/
 
-#define MB_SIZE 4
+#if CH_CFG_USE_HEAP
+static memory_heap_t heap1;
+#endif
+#if CH_CFG_USE_MEMPOOLS
+static memory_pool_t mp1;
+#endif
 
-static msg_t mb_buffer[MB_SIZE];
-static MAILBOX_DECL(mb1, mb_buffer, MB_SIZE);
+static THD_FUNCTION(dyn_thread1, p) {
+
+  test_emit_token(*(char *)p);
+}
 
 /****************************************************************************
  * Test cases.
  ****************************************************************************/
 
+#if (CH_CFG_USE_HEAP) || defined(__DOXYGEN__)
 /**
- * @page rt_test_009_001 [9.1] Mailbox normal API, non-blocking tests
+ * @page rt_test_009_001 [9.1] Threads creation from Memory Heap
  *
  * <h2>Description</h2>
- * The mailbox normal API is tested without triggering blocking
- * conditions.
+ * Two threads are started by allocating the memory from the Memory
+ * Heap then a third thread is started with a huge stack
+ * requirement.<br> The test expects the first two threads to
+ * successfully start and the third one to fail.
+ *
+ * <h2>Conditions</h2>
+ * This test is only executed if the following preprocessor condition
+ * evaluates to true:
+ * - CH_CFG_USE_HEAP
+ * .
  *
  * <h2>Test Steps</h2>
- * - [9.1.1] Testing the mailbox size.
- * - [9.1.2] Resetting the mailbox, conditions are checked, no errors
- *   expected.
- * - [9.1.3] Testing the behavior of API when the mailbox is in reset
- *   state then return in active state.
- * - [9.1.4] Filling the mailbox using chMBPostTimeout() and
- *   chMBPostAheadTimeout() once, no errors expected.
- * - [9.1.5] Testing intermediate conditions. Data pointers must be
- *   aligned, semaphore counters are checked.
- * - [9.1.6] Emptying the mailbox using chMBFetchTimeout(), no errors
- *   expected.
- * - [9.1.7] Posting and then fetching one more message, no errors
- *   expected.
- * - [9.1.8] Testing final conditions. Data pointers must be aligned to
- *   buffer start, semaphore counters are checked.
+ * - [9.1.1] Getting base priority for threads.
+ * - [9.1.2] Getting heap info before the test.
+ * - [9.1.3] Creating thread 1, it is expected to succeed.
+ * - [9.1.4] Creating thread 2, it is expected to succeed.
+ * - [9.1.5] Creating thread 3, it is expected to fail.
+ * - [9.1.6] Letting threads execute then checking the start order and
+ *   freeing memory.
+ * - [9.1.7] Getting heap info again for verification.
  * .
  */
 
 static void rt_test_009_001_setup(void) {
-  chMBObjectInit(&mb1, mb_buffer, MB_SIZE);
-}
-
-static void rt_test_009_001_teardown(void) {
-  chMBReset(&mb1);
+  chHeapObjectInit(&heap1, test_buffer, sizeof test_buffer);
 }
 
 static void rt_test_009_001_execute(void) {
-  msg_t msg1, msg2;
-  unsigned i;
+  size_t n1, total1, largest1;
+  size_t n2, total2, largest2;
+  tprio_t prio;
 
-  /* [9.1.1] Testing the mailbox size.*/
+  /* [9.1.1] Getting base priority for threads.*/
   test_set_step(1);
   {
-    test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "wrong size");
+    prio = chThdGetPriorityX();
   }
 
-  /* [9.1.2] Resetting the mailbox, conditions are checked, no errors
-     expected.*/
+  /* [9.1.2] Getting heap info before the test.*/
   test_set_step(2);
   {
-    chMBReset(&mb1);
-    test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "not empty");
-    test_assert_lock(chMBGetUsedCountI(&mb1) == 0, "still full");
-    test_assert_lock(mb1.buffer == mb1.wrptr, "write pointer not aligned to base");
-    test_assert_lock(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");
+    n1 = chHeapStatus(&heap1, &total1, &largest1);
+    test_assert(n1 == 1, "heap fragmented");
   }
 
-  /* [9.1.3] Testing the behavior of API when the mailbox is in reset
-     state then return in active state.*/
+  /* [9.1.3] Creating thread 1, it is expected to succeed.*/
   test_set_step(3);
   {
-    msg1 = chMBPostTimeout(&mb1, (msg_t)0, TIME_INFINITE);
-    test_assert(msg1 == MSG_RESET, "not in reset state");
-    msg1 = chMBPostAheadTimeout(&mb1, (msg_t)0, TIME_INFINITE);
-    test_assert(msg1 == MSG_RESET, "not in reset state");
-    msg1 = chMBFetchTimeout(&mb1, &msg2, TIME_INFINITE);
-    test_assert(msg1 == MSG_RESET, "not in reset state");
-    chMBResumeX(&mb1);
+    threads[0] = chThdCreateFromHeap(&heap1,
+                                     THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE),
+                                     "dyn1",
+                                     prio-1, dyn_thread1, "A");
+    test_assert(threads[0] != NULL, "thread creation failed");
   }
 
-  /* [9.1.4] Filling the mailbox using chMBPostTimeout() and
-     chMBPostAheadTimeout() once, no errors expected.*/
+  /* [9.1.4] Creating thread 2, it is expected to succeed.*/
   test_set_step(4);
   {
-    for (i = 0; i < MB_SIZE - 1; i++) {
-      msg1 = chMBPostTimeout(&mb1, 'B' + i, TIME_INFINITE);
-      test_assert(msg1 == MSG_OK, "wrong wake-up message");
-    }
-    msg1 = chMBPostAheadTimeout(&mb1, 'A', TIME_INFINITE);
-    test_assert(msg1 == MSG_OK, "wrong wake-up message");
+    threads[1] = chThdCreateFromHeap(&heap1,
+                                     THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE),
+                                     "dyn2",
+                                     prio-2, dyn_thread1, "B");
+    test_assert(threads[1] != NULL, "thread creation failed");
   }
 
-  /* [9.1.5] Testing intermediate conditions. Data pointers must be
-     aligned, semaphore counters are checked.*/
+  /* [9.1.5] Creating thread 3, it is expected to fail.*/
   test_set_step(5);
   {
-    test_assert_lock(chMBGetFreeCountI(&mb1) == 0, "still empty");
-    test_assert_lock(chMBGetUsedCountI(&mb1) == MB_SIZE, "not full");
-    test_assert_lock(mb1.rdptr == mb1.wrptr, "pointers not aligned");
+    threads[2] = chThdCreateFromHeap(&heap1,
+                                     THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE * 1024),
+                                     "dyn3",
+                                     prio-3, dyn_thread1, "C");
+    test_assert(threads[2] == NULL, "thread creation not failed");
   }
 
-  /* [9.1.6] Emptying the mailbox using chMBFetchTimeout(), no errors
-     expected.*/
+  /* [9.1.6] Letting threads execute then checking the start order and
+     freeing memory.*/
   test_set_step(6);
   {
-    for (i = 0; i < MB_SIZE; i++) {
-      msg1 = chMBFetchTimeout(&mb1, &msg2, TIME_INFINITE);
-      test_assert(msg1 == MSG_OK, "wrong wake-up message");
-      test_emit_token(msg2);
-    }
-    test_assert_sequence("ABCD", "wrong get sequence");
+    test_wait_threads();
+    test_assert_sequence("AB", "invalid sequence");
   }
 
-  /* [9.1.7] Posting and then fetching one more message, no errors
-     expected.*/
+  /* [9.1.7] Getting heap info again for verification.*/
   test_set_step(7);
   {
-    msg1 = chMBPostTimeout(&mb1, 'B' + i, TIME_INFINITE);
-    test_assert(msg1 == MSG_OK, "wrong wake-up message");
-    msg1 = chMBFetchTimeout(&mb1, &msg2, TIME_INFINITE);
-    test_assert(msg1 == MSG_OK, "wrong wake-up message");
-  }
-
-  /* [9.1.8] Testing final conditions. Data pointers must be aligned to
-     buffer start, semaphore counters are checked.*/
-  test_set_step(8);
-  {
-    test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "not empty");
-    test_assert_lock(chMBGetUsedCountI(&mb1) == 0, "still full");
-    test_assert(mb1.buffer == mb1.wrptr, "write pointer not aligned to base");
-    test_assert(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");
+    n2 = chHeapStatus(&heap1, &total2, &largest2);
+    test_assert(n1 == n2, "fragmentation changed");
+    test_assert(total1 == total2, "total free space changed");
+    test_assert(largest1 == largest2, "largest fragment size changed");
   }
 }
 
 static const testcase_t rt_test_009_001 = {
-  "Mailbox normal API, non-blocking tests",
+  "Threads creation from Memory Heap",
   rt_test_009_001_setup,
-  rt_test_009_001_teardown,
+  NULL,
   rt_test_009_001_execute
 };
+#endif /* CH_CFG_USE_HEAP */
 
+#if (CH_CFG_USE_MEMPOOLS) || defined(__DOXYGEN__)
 /**
- * @page rt_test_009_002 [9.2] Mailbox I-Class API, non-blocking tests
+ * @page rt_test_009_002 [9.2] Threads creation from Memory Pool
  *
  * <h2>Description</h2>
- * The mailbox I-Class API is tested without triggering blocking
- * conditions.
+ * Five thread creation are attempted from a pool containing only four
+ * elements.<br> The test expects the first four threads to
+ * successfully start and the last one to fail.
+ *
+ * <h2>Conditions</h2>
+ * This test is only executed if the following preprocessor condition
+ * evaluates to true:
+ * - CH_CFG_USE_MEMPOOLS
+ * .
  *
  * <h2>Test Steps</h2>
- * - [9.2.1] Testing the mailbox size.
- * - [9.2.2] Resetting the mailbox, conditions are checked, no errors
- *   expected. The mailbox is then returned in active state.
- * - [9.2.3] Filling the mailbox using chMBPostI() and chMBPostAheadI()
- *   once, no errors expected.
- * - [9.2.4] Testing intermediate conditions. Data pointers must be
- *   aligned, semaphore counters are checked.
- * - [9.2.5] Emptying the mailbox using chMBFetchI(), no errors
- *   expected.
- * - [9.2.6] Posting and then fetching one more message, no errors
- *   expected.
- * - [9.2.7] Testing final conditions. Data pointers must be aligned to
- *   buffer start, semaphore counters are checked.
+ * - [9.2.1] Adding four working areas to the pool.
+ * - [9.2.2] Getting base priority for threads.
+ * - [9.2.3] Creating the five threads.
+ * - [9.2.4] Testing that only the fifth thread creation failed.
+ * - [9.2.5] Letting them run, free the memory then checking the
+ *   execution sequence.
+ * - [9.2.6] Testing that the pool contains four elements again.
  * .
  */
 
 static void rt_test_009_002_setup(void) {
-  chMBObjectInit(&mb1, mb_buffer, MB_SIZE);
-}
-
-static void rt_test_009_002_teardown(void) {
-  chMBReset(&mb1);
+  chPoolObjectInit(&mp1, THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE), NULL);
 }
 
 static void rt_test_009_002_execute(void) {
-  msg_t msg1, msg2;
   unsigned i;
+  tprio_t prio;
 
-  /* [9.2.1] Testing the mailbox size.*/
+  /* [9.2.1] Adding four working areas to the pool.*/
   test_set_step(1);
   {
-    test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "wrong size");
+    for (i = 0; i < 4; i++)
+      chPoolFree(&mp1, wa[i]);
   }
 
-  /* [9.2.2] Resetting the mailbox, conditions are checked, no errors
-     expected. The mailbox is then returned in active state.*/
+  /* [9.2.2] Getting base priority for threads.*/
   test_set_step(2);
   {
-    chSysLock();
-    chMBResetI(&mb1);
-    chSysUnlock();
-    test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "not empty");
-    test_assert_lock(chMBGetUsedCountI(&mb1) == 0, "still full");
-    test_assert_lock(mb1.buffer == mb1.wrptr, "write pointer not aligned to base");
-    test_assert_lock(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");
-    chMBResumeX(&mb1);
+    prio = chThdGetPriorityX();
   }
 
-  /* [9.2.3] Filling the mailbox using chMBPostI() and chMBPostAheadI()
-     once, no errors expected.*/
+  /* [9.2.3] Creating the five threads.*/
   test_set_step(3);
   {
-    for (i = 0; i < MB_SIZE - 1; i++) {
-      chSysLock();
-      msg1 = chMBPostI(&mb1, 'B' + i);
-      chSysUnlock();
-      test_assert(msg1 == MSG_OK, "wrong wake-up message");
-    }
-    chSysLock();
-    msg1 = chMBPostAheadI(&mb1, 'A');
-    chSysUnlock();
-    test_assert(msg1 == MSG_OK, "wrong wake-up message");
+    threads[0] = chThdCreateFromMemoryPool(&mp1, "dyn1", prio-1, dyn_thread1, "A");
+    threads[1] = chThdCreateFromMemoryPool(&mp1, "dyn2", prio-2, dyn_thread1, "B");
+    threads[2] = chThdCreateFromMemoryPool(&mp1, "dyn3", prio-3, dyn_thread1, "C");
+    threads[3] = chThdCreateFromMemoryPool(&mp1, "dyn4", prio-4, dyn_thread1, "D");
+    threads[4] = chThdCreateFromMemoryPool(&mp1, "dyn5", prio-5, dyn_thread1, "E");
   }
 
-  /* [9.2.4] Testing intermediate conditions. Data pointers must be
-     aligned, semaphore counters are checked.*/
+  /* [9.2.4] Testing that only the fifth thread creation failed.*/
   test_set_step(4);
   {
-    test_assert_lock(chMBGetFreeCountI(&mb1) == 0, "still empty");
-    test_assert_lock(chMBGetUsedCountI(&mb1) == MB_SIZE, "not full");
-    test_assert_lock(mb1.rdptr == mb1.wrptr, "pointers not aligned");
+    test_assert((threads[0] != NULL) &&
+                (threads[1] != NULL) &&
+                (threads[2] != NULL) &&
+                (threads[3] != NULL),
+                "thread creation failed");
+    test_assert(threads[4] == NULL,
+                "thread creation not failed");
   }
 
-  /* [9.2.5] Emptying the mailbox using chMBFetchI(), no errors
-     expected.*/
+  /* [9.2.5] Letting them run, free the memory then checking the
+     execution sequence.*/
   test_set_step(5);
   {
-    for (i = 0; i < MB_SIZE; i++) {
-      chSysLock();
-      msg1 = chMBFetchI(&mb1, &msg2);
-      chSysUnlock();
-      test_assert(msg1 == MSG_OK, "wrong wake-up message");
-      test_emit_token(msg2);
-    }
-    test_assert_sequence("ABCD", "wrong get sequence");
+    test_wait_threads();
+    test_assert_sequence("ABCD", "invalid sequence");
   }
 
-  /* [9.2.6] Posting and then fetching one more message, no errors
-     expected.*/
+  /* [9.2.6] Testing that the pool contains four elements again.*/
   test_set_step(6);
   {
-    msg1 = chMBPostTimeout(&mb1, 'B' + i, TIME_INFINITE);
-    test_assert(msg1 == MSG_OK, "wrong wake-up message");
-    msg1 = chMBFetchTimeout(&mb1, &msg2, TIME_INFINITE);
-    test_assert(msg1 == MSG_OK, "wrong wake-up message");
-  }
-
-  /* [9.2.7] Testing final conditions. Data pointers must be aligned to
-     buffer start, semaphore counters are checked.*/
-  test_set_step(7);
-  {
-    test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "not empty");
-    test_assert_lock(chMBGetUsedCountI(&mb1) == 0, "still full");
-    test_assert(mb1.buffer == mb1.wrptr, "write pointer not aligned to base");
-    test_assert(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");
+    for (i = 0; i < 4; i++)
+      test_assert(chPoolAlloc(&mp1) != NULL, "pool list empty");
+    test_assert(chPoolAlloc(&mp1) == NULL, "pool list not empty");
   }
 }
 
 static const testcase_t rt_test_009_002 = {
-  "Mailbox I-Class API, non-blocking tests",
+  "Threads creation from Memory Pool",
   rt_test_009_002_setup,
-  rt_test_009_002_teardown,
+  NULL,
   rt_test_009_002_execute
 };
-
-/**
- * @page rt_test_009_003 [9.3] Mailbox timeouts
- *
- * <h2>Description</h2>
- * The mailbox API is tested for timeouts.
- *
- * <h2>Test Steps</h2>
- * - [9.3.1] Filling the mailbox.
- * - [9.3.2] Testing chMBPostTimeout(), chMBPostI(),
- *   chMBPostAheadTimeout() and chMBPostAheadI() timeout.
- * - [9.3.3] Resetting the mailbox. The mailbox is then returned in
- *   active state.
- * - [9.3.4] Testing chMBFetchTimeout() and chMBFetchI() timeout.
- * .
- */
-
-static void rt_test_009_003_setup(void) {
-  chMBObjectInit(&mb1, mb_buffer, MB_SIZE);
-}
-
-static void rt_test_009_003_teardown(void) {
-  chMBReset(&mb1);
-}
-
-static void rt_test_009_003_execute(void) {
-  msg_t msg1, msg2;
-  unsigned i;
-
-  /* [9.3.1] Filling the mailbox.*/
-  test_set_step(1);
-  {
-    for (i = 0; i < MB_SIZE; i++) {
-      msg1 = chMBPostTimeout(&mb1, 'B' + i, TIME_INFINITE);
-      test_assert(msg1 == MSG_OK, "wrong wake-up message");
-    }
-  }
-
-  /* [9.3.2] Testing chMBPostTimeout(), chMBPostI(),
-     chMBPostAheadTimeout() and chMBPostAheadI() timeout.*/
-  test_set_step(2);
-  {
-    msg1 = chMBPostTimeout(&mb1, 'X', 1);
-    test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
-    chSysLock();
-    msg1 = chMBPostI(&mb1, 'X');
-    chSysUnlock();
-    test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
-    msg1 = chMBPostAheadTimeout(&mb1, 'X', 1);
-    test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
-    chSysLock();
-    msg1 = chMBPostAheadI(&mb1, 'X');
-    chSysUnlock();
-    test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
-  }
-
-  /* [9.3.3] Resetting the mailbox. The mailbox is then returned in
-     active state.*/
-  test_set_step(3);
-  {
-    chMBReset(&mb1);
-    chMBResumeX(&mb1);
-  }
-
-  /* [9.3.4] Testing chMBFetchTimeout() and chMBFetchI() timeout.*/
-  test_set_step(4);
-  {
-    msg1 = chMBFetchTimeout(&mb1, &msg2, 1);
-    test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
-    chSysLock();
-    msg1 = chMBFetchI(&mb1, &msg2);
-    chSysUnlock();
-    test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
-  }
-}
-
-static const testcase_t rt_test_009_003 = {
-  "Mailbox timeouts",
-  rt_test_009_003_setup,
-  rt_test_009_003_teardown,
-  rt_test_009_003_execute
-};
+#endif /* CH_CFG_USE_MEMPOOLS */
 
 /****************************************************************************
  * Exported data.
@@ -399,18 +271,21 @@ static const testcase_t rt_test_009_003 = {
  * @brief   Array of test cases.
  */
 const testcase_t * const rt_test_sequence_009_array[] = {
+#if (CH_CFG_USE_HEAP) || defined(__DOXYGEN__)
   &rt_test_009_001,
+#endif
+#if (CH_CFG_USE_MEMPOOLS) || defined(__DOXYGEN__)
   &rt_test_009_002,
-  &rt_test_009_003,
+#endif
   NULL
 };
 
 /**
- * @brief   Mailboxes.
+ * @brief   Dynamic threads.
  */
 const testsequence_t rt_test_sequence_009 = {
   NULL,
   rt_test_sequence_009_array
 };
 
-#endif /* CH_CFG_USE_MAILBOXES */
+#endif /* CH_CFG_USE_DYNAMIC */

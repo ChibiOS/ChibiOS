@@ -24,7 +24,6 @@
  * - @subpage oslib_test_sequence_001
  * - @subpage oslib_test_sequence_002
  * - @subpage oslib_test_sequence_003
- * - @subpage oslib_test_sequence_004
  * .
  */
 
@@ -46,17 +45,14 @@
  * @brief   Array of test sequences.
  */
 const testsequence_t * const oslib_test_suite_array[] = {
-#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MAILBOXES) || defined(__DOXYGEN__)
   &oslib_test_sequence_001,
 #endif
-#if (CH_CFG_USE_MAILBOXES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MEMPOOLS) || defined(__DOXYGEN__)
   &oslib_test_sequence_002,
 #endif
-#if (CH_CFG_USE_MEMPOOLS) || defined(__DOXYGEN__)
-  &oslib_test_sequence_003,
-#endif
 #if (CH_CFG_USE_HEAP) || defined(__DOXYGEN__)
-  &oslib_test_sequence_004,
+  &oslib_test_sequence_003,
 #endif
   NULL
 };
@@ -72,75 +68,5 @@ const testsuite_t oslib_test_suite = {
 /*===========================================================================*/
 /* Shared code.                                                              */
 /*===========================================================================*/
-
-void test_print_port_info(void) {
-
-#ifdef PORT_COMPILER_NAME
-  test_print("*** Compiler:     ");
-  test_println(PORT_COMPILER_NAME);
-#endif
-  test_print("*** Architecture: ");
-  test_println(PORT_ARCHITECTURE_NAME);
-#ifdef PORT_CORE_VARIANT_NAME
-  test_print("*** Core Variant: ");
-  test_println(PORT_CORE_VARIANT_NAME);
-#endif
-#ifdef PORT_INFO
-  test_print("*** Port Info:    ");
-  test_println(PORT_INFO);
-#endif
-}
-
-/*
- * Global test buffer holding 5 working areas.
- */
-ALIGNED_VAR(PORT_WORKING_AREA_ALIGN) uint8_t test_buffer[WA_SIZE * 5];
-
-/*
- * Pointers to the spawned threads.
- */
-thread_t *threads[MAX_THREADS];
-
-/*
- * Pointers to the working areas.
- */
-void * ROMCONST wa[5] = {test_buffer + (WA_SIZE * 0),
-                         test_buffer + (WA_SIZE * 1),
-                         test_buffer + (WA_SIZE * 2),
-                         test_buffer + (WA_SIZE * 3),
-                         test_buffer + (WA_SIZE * 4)};
-
-/*
- * Sets a termination request in all the test-spawned threads.
- */
-void test_terminate_threads(void) {
-  unsigned i;
-
-  for (i = 0; i < MAX_THREADS; i++)
-    if (threads[i])
-      chThdTerminate(threads[i]);
-}
-
-/*
- * Waits for the completion of all the test-spawned threads.
- */
-void test_wait_threads(void) {
-  unsigned i;
-
-  for (i = 0; i < MAX_THREADS; i++)
-    if (threads[i] != NULL) {
-      chThdWait(threads[i]);
-      threads[i] = NULL;
-    }
-}
-
-/*
- * Delays execution until next system time tick.
- */
-systime_t test_wait_tick(void) {
-
-  chThdSleep(1);
-  return chVTGetSystemTime();
-}
 
 #endif /* !defined(__DOXYGEN__) */

@@ -34,9 +34,6 @@
 #include "rt_test_sequence_008.h"
 #include "rt_test_sequence_009.h"
 #include "rt_test_sequence_010.h"
-#include "rt_test_sequence_011.h"
-#include "rt_test_sequence_012.h"
-#include "rt_test_sequence_013.h"
 
 #if !defined(__DOXYGEN__)
 
@@ -56,8 +53,6 @@ extern "C" {
 /*===========================================================================*/
 /* Shared definitions.                                                       */
 /*===========================================================================*/
-
-#define TEST_SUITE_NAME                     "ChibiOS/RT Test Suite"
 
 /*
  * Allowed delay in timeout checks.

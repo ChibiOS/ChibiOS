@@ -27,7 +27,6 @@
 #include "oslib_test_sequence_001.h"
 #include "oslib_test_sequence_002.h"
 #include "oslib_test_sequence_003.h"
-#include "oslib_test_sequence_004.h"
 
 #if !defined(__DOXYGEN__)
 
@@ -47,48 +46,6 @@ extern "C" {
 /*===========================================================================*/
 /* Shared definitions.                                                       */
 /*===========================================================================*/
-
-#define TEST_SUITE_NAME                     "ChibiOS/RT Test Suite"
-
-/*
- * Allowed delay in timeout checks.
- */
-#define ALLOWED_DELAY TIME_MS2I(2)
-
-/*
- * Maximum number of test threads.
- */
-#define MAX_THREADS             5
-
-/*
- * Stack size of test threads.
- */
-#if defined(CH_ARCHITECTURE_AVR) || defined(CH_ARCHITECTURE_MSP430)
-#define THREADS_STACK_SIZE      48
-#elif defined(CH_ARCHITECTURE_STM8)
-#define THREADS_STACK_SIZE      64
-#elif defined(CH_ARCHITECTURE_SIMIA32)
-#define THREADS_STACK_SIZE      512
-#else
-#define THREADS_STACK_SIZE      128
-#endif
-
-/*
- * Working Area size of test threads.
- */
-#define WA_SIZE MEM_ALIGN_NEXT(THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE),	\
-                               PORT_WORKING_AREA_ALIGN)
-
-#define TEST_REPORT_HOOK_HEADER test_print_port_info();
-
-extern uint8_t test_buffer[WA_SIZE * 5];
-extern thread_t *threads[MAX_THREADS];
-extern void * ROMCONST wa[5];
-
-void test_print_port_info(void);
-void test_terminate_threads(void);
-void test_wait_threads(void);
-systime_t test_wait_tick(void);
 
 #endif /* !defined(__DOXYGEN__) */
 
