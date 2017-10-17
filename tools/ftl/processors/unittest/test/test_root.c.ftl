@@ -68,7 +68,7 @@ const testsequence_t * const ${prefix_lower}test_suite_array[] = {
  * @brief   Test suite root structure.
  */
 const testsuite_t ${prefix_lower}test_suite = {
-  NULL,
+  "${utils.WithDot(conf.*.application.description[0]?trim)}",
   ${prefix_lower}test_suite_array
 };
 

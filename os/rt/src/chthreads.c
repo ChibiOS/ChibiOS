@@ -670,7 +670,7 @@ void chThdSleepUntil(systime_t time) {
   sysinterval_t interval;
 
   chSysLock();
-  interval = chTimeDiffX(time, chVTGetSystemTimeX());
+  interval = chTimeDiffX(chVTGetSystemTimeX(), time);
   if (interval > (sysinterval_t)0) {
     chThdSleepS(interval);
   }
@@ -697,7 +697,7 @@ systime_t chThdSleepUntilWindowed(systime_t prev, systime_t next) {
   chSysLock();
   time = chVTGetSystemTimeX();
   if (chTimeIsInRangeX(time, prev, next)) {
-    chThdSleepS(chTimeDiffX(next, time));
+    chThdSleepS(chTimeDiffX(time, next));
   }
   chSysUnlock();
 

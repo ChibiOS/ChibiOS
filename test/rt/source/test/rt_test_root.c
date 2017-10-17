@@ -79,7 +79,7 @@ const testsequence_t * const rt_test_suite_array[] = {
  * @brief   Test suite root structure.
  */
 const testsuite_t rt_test_suite = {
-  NULL,
+  "ChibiOS/RT Library Test Suite.",
   rt_test_suite_array
 };
 

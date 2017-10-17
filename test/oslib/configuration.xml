@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <SPC5-Config version="1.0.0">
   <application name="ChibiOS/RT Test Suite" version="1.0.0" standalone="true" locked="false">
-    <description>Test Specification for ChibiOS/RT.</description>
+    <description>ChibiOS OS Library Test Suite.</description>
     <component id="org.chibios.spc5.components.portable.generic_startup">
       <component id="org.chibios.spc5.components.portable.chibios_unitary_tests_engine" />
     </component>

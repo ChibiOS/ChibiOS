@@ -61,7 +61,7 @@ const testsequence_t * const oslib_test_suite_array[] = {
  * @brief   Test suite root structure.
  */
 const testsuite_t oslib_test_suite = {
-  NULL,
+  "ChibiOS OS Library Test Suite.",
   oslib_test_suite_array
 };
 
