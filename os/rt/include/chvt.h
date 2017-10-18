@@ -151,7 +151,7 @@ static inline systime_t chVTGetSystemTime(void) {
  */
 static inline sysinterval_t chVTTimeElapsedSinceX(systime_t start) {
 
-  return chTimeDiffX(chVTGetSystemTimeX(), start);
+  return chTimeDiffX(start, chVTGetSystemTimeX());
 }
 
 /**

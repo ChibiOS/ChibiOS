@@ -132,7 +132,7 @@
 
 /**
  * @brief   Type of system time.
- * @note    It is selectable in configuration between 16, 32 or 64 bits
+ * @note    It is selectable in configuration between 16, 32 or 64 bits.
  */
 #if (CH_CFG_ST_RESOLUTION == 64) || defined(__DOXYGEN__)
 typedef uint64_t systime_t;
@@ -144,7 +144,7 @@ typedef uint16_t systime_t;
 
 /**
  * @brief   Type of time interval.
- * @note    It is selectable in configuration between 16, 32 or 64 bits
+ * @note    It is selectable in configuration between 16, 32 or 64 bits.
  */
 #if (CH_CFG_INTERVALS_SIZE == 64) || defined(__DOXYGEN__)
 typedef uint64_t sysinterval_t;
@@ -157,19 +157,19 @@ typedef uint16_t sysinterval_t;
 #if (CH_CFG_TIME_TYPES_SIZE == 32) || defined(__DOXYGEN__)
 /**
  * @brief   Type of seconds.
- * @note    It is selectable in configuration between 16 or 32 bits
+ * @note    It is selectable in configuration between 16 or 32 bits.
  */
 typedef uint32_t time_secs_t;
 
 /**
  * @brief   Type of milliseconds.
- * @note    It is selectable in configuration between 16 or 32 bits
+ * @note    It is selectable in configuration between 16 or 32 bits.
  */
 typedef uint32_t time_msecs_t;
 
 /**
  * @brief   Type of microseconds.
- * @note    It is selectable in configuration between 16 or 32 bits
+ * @note    It is selectable in configuration between 16 or 32 bits.
  */
 typedef uint32_t time_usecs_t;
 
@@ -238,7 +238,7 @@ typedef uint32_t time_conv_t;
  *          integer overflows, make sure your value can be correctly
  *          converted.
  *
- * @param[in] usecs      number of microseconds
+ * @param[in] usecs     number of microseconds
  * @return              The number of ticks.
  *
  * @api
@@ -490,7 +490,6 @@ static inline sysinterval_t chTimeDiffX(systime_t start, systime_t end) {
 
   return (sysinterval_t)((systime_t)(end - start));
 }
-
 
 /**
  * @brief   Checks if the specified time is within the specified time range.
