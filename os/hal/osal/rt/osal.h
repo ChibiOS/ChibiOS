@@ -47,8 +47,8 @@
 #define TRUE                                (!FALSE)
 #endif
 
-#define OSAL_SUCCESS                        FALSE
-#define OSAL_FAILED                         TRUE
+#define OSAL_SUCCESS                        false
+#define OSAL_FAILED                         true
 /** @} */
 
 #if 0
@@ -56,9 +56,9 @@
  * @name    Messages
  * @{
  */
-#define MSG_OK                              RDY_OK
-#define MSG_RESET                           RDY_RESET
-#define MSG_TIMEOUT                         RDY_TIMEOUT
+#define MSG_OK                              (msg_t)0
+#define MSG_TIMEOUT                         (msg_t)-1
+#define MSG_RESET                           (msg_t)-2
 /** @} */
 #endif
 
@@ -176,7 +176,7 @@ typedef thread_t * thread_reference_t;
 typedef uint32_t eventflags_t;
 #endif
 
-#if !CH_CFG_USE_EVENTS
+#if (CH_CFG_USE_EVENTS == FALSE) || defined(__DOXYGEN__)
 /**
  * @brief   Type of an event flags object.
  * @note    The content of this structure is not part of the API and should
@@ -185,12 +185,29 @@ typedef uint32_t eventflags_t;
  * @note    Retrieval and clearing of the flags are not defined in this
  *          API and are implementation-dependent.
  */
-typedef struct {
+typedef struct event_source event_source_t;
+
+/**
+ * @brief   Type of an event source callback.
+ * @note    This type is not part of the OSAL API and is provided
+ *          exclusively as an example and for convenience.
+ */
+typedef void (*eventcallback_t)(event_source_t *esp);
+
+/**
+ * @brief   Events source object.
+ * @note    The content of this structure is not part of the API and should
+ *          not be relied upon. Implementers may define this structure in
+ *          an entirely different way.
+ * @note    Retrieval and clearing of the flags are not defined in this
+ *          API and are implementation-dependent.
+ */
+struct event_source {
   volatile eventflags_t flags;      /**< @brief Stored event flags.         */
   eventcallback_t       cb;         /**< @brief Event source callback.      */
   void                  *param;     /**< @brief User defined field.         */
-} event_source_t;
-#endif
+};
+#endif /* CH_CFG_USE_EVENTS == FALSE */
 
 /**
  * @brief   Type of a mutex.
@@ -220,13 +237,6 @@ typedef struct {
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
-
-/* Temporary names provided for ChibiOS 2.x compatibility.*/
-#define osalQueueInit osalThreadQueueObjectInit
-#define osalQueueWakeupAllI osalThreadDequeueAllI
-#define osalQueueWakeupOneI osalThreadDequeueNextI
-#define osalQueueGoSleepTimeoutS osalThreadEnqueueTimeoutS
-#define osalEventInit osalEventObjectInit
 
 /**
  * @name    Debug related macros
@@ -575,7 +585,7 @@ static inline void osalSysRestoreStatusX(syssts_t sts) {
  *
  * @xclass
  */
-#if PORT_SUPPORTS_RT || defined(__DOXYGEN__)
+#if (PORT_SUPPORTS_RT == TRUE) || defined(__DOXYGEN__)
 static inline void osalSysPolledDelayX(rtcnt_t cycles) {
 
   chSysPolledDelayX(cycles);
@@ -722,7 +732,7 @@ static inline void osalThreadSleep(sysinterval_t delay) {
  */
 static inline msg_t osalThreadSuspendS(thread_reference_t *trp) {
 
-  return chThdSuspendS(trp);
+  return chThdSuspendTimeoutS(trp, TIME_INFINITE);
 }
 
 /**
@@ -847,11 +857,11 @@ static inline void osalThreadDequeueAllI(threads_queue_t *tqp, msg_t msg) {
   chThdDequeueAllI(tqp, msg);
 }
 
-#if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
+#if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
 /**
- * @brief   Initializes an event flags object.
+ * @brief   Initializes an event source object.
  *
- * @param[out] esp      pointer to the event flags object
+ * @param[out] esp      pointer to the event source object
  *
  * @init
  */
@@ -864,13 +874,13 @@ static inline void osalEventObjectInit(osal_event_source_t *esp) {
 
   osalDbgCheck(esp != NULL);
 
-  esp->flags = 0;
+  esp->flags = (eventflags_t)0;
   esp->cb    = NULL;
   esp->param = NULL;
 }
 #endif
 
-#if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
+#if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Add flags to an event source object.
  *
@@ -897,7 +907,7 @@ static inline void osalEventBroadcastFlagsI(event_source_t *esp,
 }
 #endif
 
-#if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
+#if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Add flags to an event source object.
  *
@@ -925,7 +935,7 @@ static inline void osalEventBroadcastFlags(event_source_t *esp,
 }
 #endif
 
-#if !CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
+#if (CH_CFG_USE_EVENTS == FALSE) || defined(__DOXYGEN__)
 /**
  * @brief   Event callback setup.
  * @note    The callback is invoked from ISR context and can
