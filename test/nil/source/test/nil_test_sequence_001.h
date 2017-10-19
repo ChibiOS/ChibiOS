@@ -15,13 +15,13 @@
 */
 
 /**
- * @file    test_sequence_003.h
- * @brief   Test Sequence 003 header.
+ * @file    nil_test_sequence_001.h
+ * @brief   Test Sequence 001 header.
  */
 
-#ifndef TEST_SEQUENCE_003_H
-#define TEST_SEQUENCE_003_H
+#ifndef NIL_TEST_SEQUENCE_001_H
+#define NIL_TEST_SEQUENCE_001_H
 
-extern const testcase_t * const test_sequence_003[];
+extern const testsequence_t nil_test_sequence_001;
 
-#endif /* TEST_SEQUENCE_003_H */
+#endif /* NIL_TEST_SEQUENCE_001_H */

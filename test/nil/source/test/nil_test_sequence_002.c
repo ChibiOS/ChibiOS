@@ -15,24 +15,23 @@
 */
 
 #include "hal.h"
-#include "ch_test.h"
-#include "test_root.h"
+#include "nil_test_root.h"
 
 /**
- * @file    test_sequence_002.c
+ * @file    nil_test_sequence_002.c
  * @brief   Test Sequence 002 code.
  *
- * @page test_sequence_002 [2] Threads Functionality
+ * @page nil_test_sequence_002 [2] Threads Functionality
  *
- * File: @ref test_sequence_002.c
+ * File: @ref nil_test_sequence_002.c
  *
  * <h2>Description</h2>
  * This sequence tests the ChibiOS/NIL functionalities related to
  * threading.
  *
  * <h2>Test Cases</h2>
- * - @subpage test_002_001
- * - @subpage test_002_002
+ * - @subpage nil_test_002_001
+ * - @subpage nil_test_002_002
  * .
  */
 
@@ -47,7 +46,7 @@
  ****************************************************************************/
 
 /**
- * @page test_002_001 [2.1] System Tick Counter functionality
+ * @page nil_test_002_001 [2.1] System Tick Counter functionality
  *
  * <h2>Description</h2>
  * The functionality of the API @p chVTGetSystemTimeX() is tested.
@@ -58,7 +57,7 @@
  * .
  */
 
-static void test_002_001_execute(void) {
+static void nil_test_002_001_execute(void) {
 
   /* [2.1.1] A System Tick Counter increment is expected, the test
      simply hangs if it does not happen.*/
@@ -70,15 +69,15 @@ static void test_002_001_execute(void) {
   }
 }
 
-static const testcase_t test_002_001 = {
+static const testcase_t nil_test_002_001 = {
   "System Tick Counter functionality",
   NULL,
   NULL,
-  test_002_001_execute
+  nil_test_002_001_execute
 };
 
 /**
- * @page test_002_002 [2.2] Thread Sleep functionality
+ * @page nil_test_002_002 [2.2] Thread Sleep functionality
  *
  * <h2>Description</h2>
  * The functionality of @p chThdSleep() and derivatives is tested.
@@ -100,7 +99,7 @@ static const testcase_t test_002_001 = {
  * .
  */
 
-static void test_002_002_execute(void) {
+static void nil_test_002_002_execute(void) {
   systime_t time;
 
   /* [2.2.1] The current system time is read then a sleep is performed
@@ -110,8 +109,8 @@ static void test_002_002_execute(void) {
   {
     time = chVTGetSystemTimeX();
     chThdSleep(100);
-    test_assert_time_window(time + 100,
-                            time + 100 + 1,
+    test_assert_time_window(chTimeAddX(time, 100),
+                            chTimeAddX(time, 100 + 1),
                             "out of time window");
   }
 
@@ -122,8 +121,8 @@ static void test_002_002_execute(void) {
   {
     time = chVTGetSystemTimeX();
     chThdSleepMicroseconds(100000);
-    test_assert_time_window(time + US2ST(100000),
-                            time + US2ST(100000) + 1,
+    test_assert_time_window(chTimeAddX(time, TIME_US2I(100000)),
+                            chTimeAddX(time, TIME_US2I(100000) + 1),
                             "out of time window");
   }
 
@@ -134,8 +133,8 @@ static void test_002_002_execute(void) {
   {
     time = chVTGetSystemTimeX();
     chThdSleepMilliseconds(100);
-    test_assert_time_window(time + MS2ST(100),
-                            time + MS2ST(100) + 1,
+    test_assert_time_window(chTimeAddX(time, TIME_MS2I(100)),
+                            chTimeAddX(time, TIME_MS2I(100) + 1),
                             "out of time window");
   }
 
@@ -145,8 +144,8 @@ static void test_002_002_execute(void) {
   {
     time = chVTGetSystemTimeX();
     chThdSleepSeconds(1);
-    test_assert_time_window(time + S2ST(1),
-                            time + S2ST(1) + 1,
+    test_assert_time_window(chTimeAddX(time, TIME_S2I(1)),
+                            chTimeAddX(time, TIME_S2I(1) + 1),
                             "out of time window");
   }
 
@@ -155,18 +154,18 @@ static void test_002_002_execute(void) {
   test_set_step(5);
   {
     time = chVTGetSystemTimeX();
-    chThdSleepUntil(time + 100);
-    test_assert_time_window(time + 100,
-                            time + 100 + 1,
+    chThdSleepUntil(chTimeAddX(time, 100));
+    test_assert_time_window(chTimeAddX(time, 100),
+                            chTimeAddX(time, 100 + 1),
                             "out of time window");
   }
 }
 
-static const testcase_t test_002_002 = {
+static const testcase_t nil_test_002_002 = {
   "Thread Sleep functionality",
   NULL,
   NULL,
-  test_002_002_execute
+  nil_test_002_002_execute
 };
 
 /****************************************************************************
@@ -174,10 +173,18 @@ static const testcase_t test_002_002 = {
  ****************************************************************************/
 
 /**
+ * @brief   Array of test cases.
+ */
+const testcase_t * const nil_test_sequence_002_array[] = {
+  &nil_test_002_001,
+  &nil_test_002_002,
+  NULL
+};
+
+/**
  * @brief   Threads Functionality.
  */
-const testcase_t * const test_sequence_002[] = {
-  &test_002_001,
-  &test_002_002,
-  NULL
+const testsequence_t nil_test_sequence_002 = {
+  NULL,
+  nil_test_sequence_002_array
 };

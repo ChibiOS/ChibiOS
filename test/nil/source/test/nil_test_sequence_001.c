@@ -15,24 +15,23 @@
 */
 
 #include "hal.h"
-#include "ch_test.h"
-#include "test_root.h"
+#include "nil_test_root.h"
 
 /**
- * @file    test_sequence_001.c
+ * @file    nil_test_sequence_001.c
  * @brief   Test Sequence 001 code.
  *
- * @page test_sequence_001 [1] Information
+ * @page nil_test_sequence_001 [1] Information
  *
- * File: @ref test_sequence_001.c
+ * File: @ref nil_test_sequence_001.c
  *
  * <h2>Description</h2>
  * This sequence reports configuration and version information about
  * the NIL kernel.
  *
  * <h2>Test Cases</h2>
- * - @subpage test_001_001
- * - @subpage test_001_002
+ * - @subpage nil_test_001_001
+ * - @subpage nil_test_001_002
  * .
  */
 
@@ -47,7 +46,7 @@
  ****************************************************************************/
 
 /**
- * @page test_001_001 [1.1] Kernel Info
+ * @page nil_test_001_001 [1.1] Kernel Info
  *
  * <h2>Description</h2>
  * The version numbers are reported.
@@ -57,7 +56,7 @@
  * .
  */
 
-static void test_001_001_execute(void) {
+static void nil_test_001_001_execute(void) {
 
   /* [1.1.1] Prints the version string.*/
   test_set_step(1);
@@ -80,15 +79,15 @@ static void test_001_001_execute(void) {
   }
 }
 
-static const testcase_t test_001_001 = {
+static const testcase_t nil_test_001_001 = {
   "Kernel Info",
   NULL,
   NULL,
-  test_001_001_execute
+  nil_test_001_001_execute
 };
 
 /**
- * @page test_001_002 [1.2] Kernel Settings
+ * @page nil_test_001_002 [1.2] Kernel Settings
  *
  * <h2>Description</h2>
  * The static kernel settings are reported.
@@ -98,7 +97,7 @@ static const testcase_t test_001_001 = {
  * .
  */
 
-static void test_001_002_execute(void) {
+static void nil_test_001_002_execute(void) {
 
   /* [1.2.1] Prints the configuration options settings.*/
   test_set_step(1);
@@ -154,11 +153,11 @@ static void test_001_002_execute(void) {
   }
 }
 
-static const testcase_t test_001_002 = {
+static const testcase_t nil_test_001_002 = {
   "Kernel Settings",
   NULL,
   NULL,
-  test_001_002_execute
+  nil_test_001_002_execute
 };
 
 /****************************************************************************
@@ -166,10 +165,18 @@ static const testcase_t test_001_002 = {
  ****************************************************************************/
 
 /**
+ * @brief   Array of test cases.
+ */
+const testcase_t * const nil_test_sequence_001_array[] = {
+  &nil_test_001_001,
+  &nil_test_001_002,
+  NULL
+};
+
+/**
  * @brief   Information.
  */
-const testcase_t * const test_sequence_001[] = {
-  &test_001_001,
-  &test_001_002,
-  NULL
+const testsequence_t nil_test_sequence_001 = {
+  NULL,
+  nil_test_sequence_001_array
 };

@@ -17,6 +17,7 @@
 #include "ch.h"
 #include "hal.h"
 #include "nil_test_root.h"
+#include "oslib_test_root.h"
 
 /*
  * LEDs blinker thread, times are in milliseconds.
@@ -109,8 +110,10 @@ THD_FUNCTION(Thread2, arg) {
 
   /* Waiting for button push and activation of the test suite.*/
   while (true) {
-    if (palReadPad(PORT_E, PE_BUTTON1))
-      test_execute((BaseSequentialStream *)&SD1, &rt_test_suite);
+    if (palReadPad(PORT_E, PE_BUTTON1)) {
+      test_execute((BaseSequentialStream *)&SD1, &nil_test_suite);
+      test_execute((BaseSequentialStream *)&SD1, &oslib_test_suite);
+    }
     chThdSleepMilliseconds(500);
   }
 }

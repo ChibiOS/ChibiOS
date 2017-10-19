@@ -15,24 +15,23 @@
 */
 
 #include "hal.h"
-#include "ch_test.h"
-#include "test_root.h"
+#include "nil_test_root.h"
 
 /**
- * @file    test_sequence_004.c
+ * @file    nil_test_sequence_004.c
  * @brief   Test Sequence 004 code.
  *
- * @page test_sequence_004 [4] Suspend/Resume and Event Flags
+ * @page nil_test_sequence_004 [4] Suspend/Resume and Event Flags
  *
- * File: @ref test_sequence_004.c
+ * File: @ref nil_test_sequence_004.c
  *
  * <h2>Description</h2>
  * This sequence tests the ChibiOS/NIL functionalities related to
  * threads suspend/resume and event flags.
  *
  * <h2>Test Cases</h2>
- * - @subpage test_004_001
- * - @subpage test_004_002
+ * - @subpage nil_test_004_001
+ * - @subpage nil_test_004_002
  * .
  */
 
@@ -47,7 +46,7 @@ static thread_reference_t tr1;
  ****************************************************************************/
 
 /**
- * @page test_004_001 [4.1] Suspend and Resume functionality
+ * @page nil_test_004_001 [4.1] Suspend and Resume functionality
  *
  * <h2>Description</h2>
  * The functionality of chThdSuspendTimeoutS() and chThdResumeI() is
@@ -63,11 +62,11 @@ static thread_reference_t tr1;
  * .
  */
 
-static void test_004_001_setup(void) {
+static void nil_test_004_001_setup(void) {
   tr1 = NULL;
 }
 
-static void test_004_001_execute(void) {
+static void nil_test_004_001_execute(void) {
   systime_t time;
   msg_t msg;
 
@@ -90,26 +89,26 @@ static void test_004_001_execute(void) {
   {
     chSysLock();
     time = chVTGetSystemTimeX();
-    msg = chThdSuspendTimeoutS(&tr1, MS2ST(1000));
+    msg = chThdSuspendTimeoutS(&tr1, TIME_MS2I(1000));
     chSysUnlock();
-    test_assert_time_window(time + MS2ST(1000),
-                            time + MS2ST(1000) + 1,
+    test_assert_time_window(chTimeAddX(time, TIME_MS2I(1000)),
+                            chTimeAddX(time, TIME_MS2I(1000) + 1),
                             "out of time window");
     test_assert(NULL == tr1, "not NULL");
     test_assert(MSG_TIMEOUT == msg, "wrong returned message");
   }
 }
 
-static const testcase_t test_004_001 = {
+static const testcase_t nil_test_004_001 = {
   "Suspend and Resume functionality",
-  test_004_001_setup,
+  nil_test_004_001_setup,
   NULL,
-  test_004_001_execute
+  nil_test_004_001_execute
 };
 
 #if (CH_CFG_USE_EVENTS) || defined(__DOXYGEN__)
 /**
- * @page test_004_002 [4.2] Events Flags functionality
+ * @page nil_test_004_002 [4.2] Events Flags functionality
  *
  * <h2>Description</h2>
  * Event flags functionality is tested.
@@ -133,7 +132,7 @@ static const testcase_t test_004_001 = {
  * .
  */
 
-static void test_004_002_execute(void) {
+static void nil_test_004_002_execute(void) {
   systime_t time;
   eventmask_t events;
 
@@ -145,7 +144,7 @@ static void test_004_002_execute(void) {
   {
     time = chVTGetSystemTimeX();
     chEvtSignal(chThdGetSelfX(), 0x55);
-    events = chEvtWaitAnyTimeout(ALL_EVENTS, MS2ST(1000));
+    events = chEvtWaitAnyTimeout(ALL_EVENTS, TIME_MS2I(1000));
     test_assert((eventmask_t)0 != events, "timed out");
     test_assert((eventmask_t)0x55 == events, "wrong events mask");
   }
@@ -157,7 +156,7 @@ static void test_004_002_execute(void) {
   {
     time = chVTGetSystemTimeX();
     chThdGetSelfX()->epmask = 0;
-    events = chEvtWaitAnyTimeout(ALL_EVENTS, MS2ST(1000));
+    events = chEvtWaitAnyTimeout(ALL_EVENTS, TIME_MS2I(1000));
     test_assert((eventmask_t)0 != events, "timed out");
     test_assert((eventmask_t)0x55 == events, "wrong events mask");
   }
@@ -167,19 +166,19 @@ static void test_004_002_execute(void) {
   test_set_step(3);
   {
     time = chVTGetSystemTimeX();
-    events = chEvtWaitAnyTimeout(0, MS2ST(1000));
-    test_assert_time_window(time + MS2ST(1000),
-                            time + MS2ST(1000) + 1,
+    events = chEvtWaitAnyTimeout(0, TIME_MS2I(1000));
+    test_assert_time_window(chTimeAddX(time, TIME_MS2I(1000)),
+                            chTimeAddX(time, TIME_MS2I(1000) + 1),
                             "out of time window");
     test_assert((eventmask_t)0 == events, "wrong events mask");
   }
 }
 
-static const testcase_t test_004_002 = {
+static const testcase_t nil_test_004_002 = {
   "Events Flags functionality",
   NULL,
   NULL,
-  test_004_002_execute
+  nil_test_004_002_execute
 };
 #endif /* CH_CFG_USE_EVENTS */
 
@@ -188,12 +187,20 @@ static const testcase_t test_004_002 = {
  ****************************************************************************/
 
 /**
- * @brief   Suspend/Resume and Event Flags.
+ * @brief   Array of test cases.
  */
-const testcase_t * const test_sequence_004[] = {
-  &test_004_001,
+const testcase_t * const nil_test_sequence_004_array[] = {
+  &nil_test_004_001,
 #if (CH_CFG_USE_EVENTS) || defined(__DOXYGEN__)
-  &test_004_002,
+  &nil_test_004_002,
 #endif
   NULL
+};
+
+/**
+ * @brief   Suspend/Resume and Event Flags.
+ */
+const testsequence_t nil_test_sequence_004 = {
+  NULL,
+  nil_test_sequence_004_array
 };

@@ -15,16 +15,15 @@
 */
 
 #include "hal.h"
-#include "ch_test.h"
-#include "test_root.h"
+#include "nil_test_root.h"
 
 /**
- * @file    test_sequence_003.c
+ * @file    nil_test_sequence_003.c
  * @brief   Test Sequence 003 code.
  *
- * @page test_sequence_003 [3] Semaphores
+ * @page nil_test_sequence_003 [3] Semaphores
  *
- * File: @ref test_sequence_003.c
+ * File: @ref nil_test_sequence_003.c
  *
  * <h2>Description</h2>
  * This sequence tests the ChibiOS/NIL functionalities related to
@@ -37,9 +36,9 @@
  * .
  *
  * <h2>Test Cases</h2>
- * - @subpage test_003_001
- * - @subpage test_003_002
- * - @subpage test_003_003
+ * - @subpage nil_test_003_001
+ * - @subpage nil_test_003_002
+ * - @subpage nil_test_003_003
  * .
  */
 
@@ -58,7 +57,7 @@ static semaphore_t sem1;
  ****************************************************************************/
 
 /**
- * @page test_003_001 [3.1] Semaphore primitives, no state change
+ * @page nil_test_003_001 [3.1] Semaphore primitives, no state change
  *
  * <h2>Description</h2>
  * Wait, Signal and Reset primitives are tested. The testing thread
@@ -74,15 +73,15 @@ static semaphore_t sem1;
  * .
  */
 
-static void test_003_001_setup(void) {
+static void nil_test_003_001_setup(void) {
   chSemObjectInit(&sem1, 1);
 }
 
-static void test_003_001_teardown(void) {
+static void nil_test_003_001_teardown(void) {
   chSemReset(&sem1, 0);
 }
 
-static void test_003_001_execute(void) {
+static void nil_test_003_001_execute(void) {
 
   /* [3.1.1] The function chSemWait() is invoked, after return the
      counter and the returned message are tested.*/
@@ -112,15 +111,15 @@ static void test_003_001_execute(void) {
   }
 }
 
-static const testcase_t test_003_001 = {
+static const testcase_t nil_test_003_001 = {
   "Semaphore primitives, no state change",
-  test_003_001_setup,
-  test_003_001_teardown,
-  test_003_001_execute
+  nil_test_003_001_setup,
+  nil_test_003_001_teardown,
+  nil_test_003_001_execute
 };
 
 /**
- * @page test_003_002 [3.2] Semaphore primitives, with state change
+ * @page nil_test_003_002 [3.2] Semaphore primitives, with state change
  *
  * <h2>Description</h2>
  * Wait, Signal and Reset primitives are tested. The testing thread
@@ -136,15 +135,15 @@ static const testcase_t test_003_001 = {
  * .
  */
 
-static void test_003_002_setup(void) {
+static void nil_test_003_002_setup(void) {
   chSemObjectInit(&gsem1, 0);
 }
 
-static void test_003_002_teardown(void) {
+static void nil_test_003_002_teardown(void) {
   chSemReset(&gsem1, 0);
 }
 
-static void test_003_002_execute(void) {
+static void nil_test_003_002_execute(void) {
 
   /* [3.2.1] The function chSemWait() is invoked, after return the
      counter and the returned message are tested. The semaphore is
@@ -171,15 +170,15 @@ static void test_003_002_execute(void) {
   }
 }
 
-static const testcase_t test_003_002 = {
+static const testcase_t nil_test_003_002 = {
   "Semaphore primitives, with state change",
-  test_003_002_setup,
-  test_003_002_teardown,
-  test_003_002_execute
+  nil_test_003_002_setup,
+  nil_test_003_002_teardown,
+  nil_test_003_002_execute
 };
 
 /**
- * @page test_003_003 [3.3] Semaphores timeout
+ * @page nil_test_003_003 [3.3] Semaphores timeout
  *
  * <h2>Description</h2>
  * Timeout on semaphores is tested.
@@ -194,15 +193,15 @@ static const testcase_t test_003_002 = {
  * .
  */
 
-static void test_003_003_setup(void) {
+static void nil_test_003_003_setup(void) {
   chSemObjectInit(&sem1, 0);
 }
 
-static void test_003_003_teardown(void) {
+static void nil_test_003_003_teardown(void) {
   chSemReset(&sem1, 0);
 }
 
-static void test_003_003_execute(void) {
+static void nil_test_003_003_execute(void) {
   systime_t time;
   msg_t msg;
 
@@ -212,9 +211,9 @@ static void test_003_003_execute(void) {
   test_set_step(1);
   {
     time = chVTGetSystemTimeX();
-    msg = chSemWaitTimeout(&sem1, MS2ST(1000));
-    test_assert_time_window(time + MS2ST(1000),
-                            time + MS2ST(1000) + 1,
+    msg = chSemWaitTimeout(&sem1, TIME_MS2I(1000));
+    test_assert_time_window(chTimeAddX(time, TIME_MS2I(1000)),
+                            chTimeAddX(time, TIME_MS2I(1000) + 1),
                             "out of time window");
     test_assert_lock(chSemGetCounterI(&sem1) == 0, "wrong counter value");
     test_assert(MSG_TIMEOUT == msg, "wrong timeout message");
@@ -226,20 +225,20 @@ static void test_003_003_execute(void) {
   test_set_step(2);
   {
     time = chVTGetSystemTimeX();
-    msg = chSemWaitTimeout(&sem1, MS2ST(1000));
-    test_assert_time_window(time + MS2ST(1000),
-                            time + MS2ST(1000) + 1,
+    msg = chSemWaitTimeout(&sem1, TIME_MS2I(1000));
+    test_assert_time_window(chTimeAddX(time, TIME_MS2I(1000)),
+                            chTimeAddX(time, TIME_MS2I(1000) + 1),
                             "out of time window");
     test_assert_lock(chSemGetCounterI(&sem1) == 0, "wrong counter value");
     test_assert(MSG_TIMEOUT == msg, "wrong timeout message");
   }
 }
 
-static const testcase_t test_003_003 = {
+static const testcase_t nil_test_003_003 = {
   "Semaphores timeout",
-  test_003_003_setup,
-  test_003_003_teardown,
-  test_003_003_execute
+  nil_test_003_003_setup,
+  nil_test_003_003_teardown,
+  nil_test_003_003_execute
 };
 
 /****************************************************************************
@@ -247,13 +246,21 @@ static const testcase_t test_003_003 = {
  ****************************************************************************/
 
 /**
+ * @brief   Array of test cases.
+ */
+const testcase_t * const nil_test_sequence_003_array[] = {
+  &nil_test_003_001,
+  &nil_test_003_002,
+  &nil_test_003_003,
+  NULL
+};
+
+/**
  * @brief   Semaphores.
  */
-const testcase_t * const test_sequence_003[] = {
-  &test_003_001,
-  &test_003_002,
-  &test_003_003,
-  NULL
+const testsequence_t nil_test_sequence_003 = {
+  NULL,
+  nil_test_sequence_003_array
 };
 
 #endif /* CH_CFG_USE_SEMAPHORES */

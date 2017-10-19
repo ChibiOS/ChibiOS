@@ -15,20 +15,19 @@
 */
 
 /**
- * @file    test_root.h
+ * @file    nil_test_root.h
  * @brief   Test Suite root structures header.
  */
 
-#ifndef TEST_ROOT_H
-#define TEST_ROOT_H
+#ifndef NIL_TEST_ROOT_H
+#define NIL_TEST_ROOT_H
 
-#include "test_sequence_001.h"
-#include "test_sequence_002.h"
-#include "test_sequence_003.h"
-#include "test_sequence_004.h"
-#include "test_sequence_005.h"
-#include "test_sequence_006.h"
-#include "test_sequence_007.h"
+#include "ch_test.h"
+
+#include "nil_test_sequence_001.h"
+#include "nil_test_sequence_002.h"
+#include "nil_test_sequence_003.h"
+#include "nil_test_sequence_004.h"
 
 #if !defined(__DOXYGEN__)
 
@@ -36,7 +35,7 @@
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-extern const testcase_t * const *test_suite[];
+extern const testsuite_t nil_test_suite;
 
 #ifdef __cplusplus
 extern "C" {
@@ -62,4 +61,4 @@ THD_FUNCTION(test_support, arg);
 
 #endif /* !defined(__DOXYGEN__) */
 
-#endif /* TEST_ROOT_H */
+#endif /* NIL_TEST_ROOT_H */

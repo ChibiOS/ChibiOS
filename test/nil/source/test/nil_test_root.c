@@ -21,24 +21,20 @@
  * through successive improvements.
  *
  * <h2>Test Sequences</h2>
- * - @subpage test_sequence_001
- * - @subpage test_sequence_002
- * - @subpage test_sequence_003
- * - @subpage test_sequence_004
- * - @subpage test_sequence_005
- * - @subpage test_sequence_006
- * - @subpage test_sequence_007
+ * - @subpage nil_test_sequence_001
+ * - @subpage nil_test_sequence_002
+ * - @subpage nil_test_sequence_003
+ * - @subpage nil_test_sequence_004
  * .
  */
 
 /**
- * @file    test_root.c
+ * @file    nil_test_root.c
  * @brief   Test Suite root structures code.
  */
 
 #include "hal.h"
-#include "ch_test.h"
-#include "test_root.h"
+#include "nil_test_root.h"
 
 #if !defined(__DOXYGEN__)
 
@@ -47,25 +43,24 @@
 /*===========================================================================*/
 
 /**
- * @brief   Array of all the test sequences.
+ * @brief   Array of test sequences.
  */
-const testcase_t * const *test_suite[] = {
-  test_sequence_001,
-  test_sequence_002,
+const testsequence_t * const nil_test_suite_array[] = {
+  &nil_test_sequence_001,
+  &nil_test_sequence_002,
 #if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
-  test_sequence_003,
+  &nil_test_sequence_003,
 #endif
-  test_sequence_004,
-#if (CH_CFG_USE_MAILBOXES) || defined(__DOXYGEN__)
-  test_sequence_005,
-#endif
-#if (CH_CFG_USE_MEMPOOLS) || defined(__DOXYGEN__)
-  test_sequence_006,
-#endif
-#if (CH_CFG_USE_HEAP) || defined(__DOXYGEN__)
-  test_sequence_007,
-#endif
+  &nil_test_sequence_004,
   NULL
+};
+
+/**
+ * @brief   Test suite root structure.
+ */
+const testsuite_t nil_test_suite = {
+  "Test Specification for ChibiOS/NIL.",
+  nil_test_suite_array
 };
 
 /*===========================================================================*/
