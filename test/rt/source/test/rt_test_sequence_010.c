@@ -1033,6 +1033,6 @@ const testcase_t * const rt_test_sequence_010_array[] = {
  * @brief   Benchmarks.
  */
 const testsequence_t rt_test_sequence_010 = {
-  NULL,
+  "Benchmarks",
   rt_test_sequence_010_array
 };

@@ -1071,7 +1071,7 @@ const testcase_t * const rt_test_sequence_006_array[] = {
  * @brief   Mutexes, Condition Variables and Priority Inheritance.
  */
 const testsequence_t rt_test_sequence_006 = {
-  NULL,
+  "Mutexes, Condition Variables and Priority Inheritance",
   rt_test_sequence_006_array
 };
 

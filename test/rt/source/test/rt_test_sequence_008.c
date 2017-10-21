@@ -573,7 +573,7 @@ const testcase_t * const rt_test_sequence_008_array[] = {
  * @brief   Event Sources and Event Flags.
  */
 const testsequence_t rt_test_sequence_008 = {
-  NULL,
+  "Event Sources and Event Flags",
   rt_test_sequence_008_array
 };
 

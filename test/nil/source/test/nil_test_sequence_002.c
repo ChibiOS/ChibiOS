@@ -185,6 +185,6 @@ const testcase_t * const nil_test_sequence_002_array[] = {
  * @brief   Threads Functionality.
  */
 const testsequence_t nil_test_sequence_002 = {
-  NULL,
+  "Threads Functionality",
   nil_test_sequence_002_array
 };

@@ -296,7 +296,7 @@ const testcase_t * const oslib_test_sequence_002_array[] = {
  * @brief   Memory Pools.
  */
 const testsequence_t oslib_test_sequence_002 = {
-  NULL,
+  "Memory Pools",
   oslib_test_sequence_002_array
 };
 

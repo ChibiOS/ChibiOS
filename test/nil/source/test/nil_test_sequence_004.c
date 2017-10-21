@@ -201,6 +201,6 @@ const testcase_t * const nil_test_sequence_004_array[] = {
  * @brief   Suspend/Resume and Event Flags.
  */
 const testsequence_t nil_test_sequence_004 = {
-  NULL,
+  "Suspend/Resume and Event Flags",
   nil_test_sequence_004_array
 };

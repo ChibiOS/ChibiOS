@@ -231,6 +231,6 @@ const testcase_t * const rt_test_sequence_001_array[] = {
  * @brief   Information.
  */
 const testsequence_t rt_test_sequence_001 = {
-  NULL,
+  "Information",
   rt_test_sequence_001_array
 };

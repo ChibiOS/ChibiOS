@@ -225,7 +225,7 @@ void test_emit_token_i(char token) {
  * @api
  */
 msg_t test_execute(BaseSequentialStream *stream, const testsuite_t *tsp) {
-  int i, j;
+  int tseq, tcase;
 
   test_chp = stream;
   test_println("");
@@ -253,22 +253,28 @@ msg_t test_execute(BaseSequentialStream *stream, const testsuite_t *tsp) {
   test_println("");
 
   test_global_fail = false;
-  i = 0;
-  while (tsp->sequences[i] != NULL) {
-    j = 0;
-    while (tsp->sequences[i]->cases[j] != NULL) {
+  tseq = 0;
+  while (tsp->sequences[tseq] != NULL) {
+    print_line();
+    test_print("--- Test Sequence ");
+    test_printn(tseq + 1);
+    test_print(" (");
+    test_print(tsp->sequences[tseq]->name);
+    test_println(")");
+    tcase = 0;
+    while (tsp->sequences[tseq]->cases[tcase] != NULL) {
       print_line();
       test_print("--- Test Case ");
-      test_printn(i + 1);
+      test_printn(tseq + 1);
       test_print(".");
-      test_printn(j + 1);
+      test_printn(tcase + 1);
       test_print(" (");
-      test_print(tsp->sequences[i]->cases[j]->name);
+      test_print(tsp->sequences[tseq]->cases[tcase]->name);
       test_println(")");
 #if TEST_DELAY_BETWEEN_TESTS > 0
       osalThreadSleepMilliseconds(TEST_DELAY_BETWEEN_TESTS);
 #endif
-      execute_test(tsp->sequences[i]->cases[j]);
+      execute_test(tsp->sequences[tseq]->cases[tcase]);
       if (test_local_fail) {
         test_print("--- Result: FAILURE (#");
         test_printn(test_step);
@@ -278,11 +284,12 @@ msg_t test_execute(BaseSequentialStream *stream, const testsuite_t *tsp) {
         test_print(test_failure_message);
         test_println("\")");
       }
-      else
+      else {
         test_println("--- Result: SUCCESS");
-      j++;
+      }
+      tcase++;
     }
-    i++;
+    tseq++;
   }
   print_line();
   test_println("");

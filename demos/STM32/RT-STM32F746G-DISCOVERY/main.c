@@ -53,8 +53,7 @@ int main(void) {
 
   /*
    * ARD_D13 is programmed as output (board LED).
-   */
-  palClearLine(LINE_ARD_D13);
+   */  palClearLine(LINE_ARD_D13);
   palSetLineMode(LINE_ARD_D13, PAL_MODE_OUTPUT_PUSHPULL);
 
   /*

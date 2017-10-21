@@ -284,6 +284,6 @@ const testcase_t * const rt_test_sequence_002_array[] = {
  * @brief   System layer and port interface.
  */
 const testsequence_t rt_test_sequence_002 = {
-  NULL,
+  "System layer and port interface",
   rt_test_sequence_002_array
 };

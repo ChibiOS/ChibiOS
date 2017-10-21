@@ -284,7 +284,7 @@ const testcase_t * const rt_test_sequence_009_array[] = {
  * @brief   Dynamic threads.
  */
 const testsequence_t rt_test_sequence_009 = {
-  NULL,
+  "Dynamic threads",
   rt_test_sequence_009_array
 };
 

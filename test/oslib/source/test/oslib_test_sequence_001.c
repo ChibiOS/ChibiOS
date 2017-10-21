@@ -409,7 +409,7 @@ const testcase_t * const oslib_test_sequence_001_array[] = {
  * @brief   Mailboxes.
  */
 const testsequence_t oslib_test_sequence_001 = {
-  NULL,
+  "Mailboxes",
   oslib_test_sequence_001_array
 };
 

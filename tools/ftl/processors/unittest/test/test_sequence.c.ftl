@@ -209,7 +209,7 @@ const testcase_t * const ${prefix_lower}test_sequence_${(sequence_index + 1)?str
  * @brief   ${utils.WithDot(sequence.brief.value[0]?string)}
  */
 const testsequence_t ${prefix_lower}test_sequence_${(sequence_index + 1)?string("000")} = {
-  NULL,
+  "${utils.WithoutDot(sequence.brief.value[0]?string)}",
   ${prefix_lower}test_sequence_${(sequence_index + 1)?string("000")}_array
 };
   [#if sequence.condition.value[0]?trim?length > 0]

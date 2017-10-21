@@ -509,7 +509,7 @@ const testcase_t * const rt_test_sequence_005_array[] = {
  * @brief   Counter Semaphores.
  */
 const testsequence_t rt_test_sequence_005 = {
-  NULL,
+  "Counter Semaphores",
   rt_test_sequence_005_array
 };
 

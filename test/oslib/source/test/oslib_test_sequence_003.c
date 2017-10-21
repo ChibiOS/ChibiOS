@@ -273,7 +273,7 @@ const testcase_t * const oslib_test_sequence_003_array[] = {
  * @brief   Memory Heaps.
  */
 const testsequence_t oslib_test_sequence_003 = {
-  NULL,
+  "Memory Heaps",
   oslib_test_sequence_003_array
 };
 

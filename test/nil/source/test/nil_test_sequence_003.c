@@ -259,7 +259,7 @@ const testcase_t * const nil_test_sequence_003_array[] = {
  * @brief   Semaphores.
  */
 const testsequence_t nil_test_sequence_003 = {
-  NULL,
+  "Semaphores",
   nil_test_sequence_003_array
 };
 

@@ -123,7 +123,7 @@ const testcase_t * const rt_test_sequence_007_array[] = {
  * @brief   Synchronous Messages.
  */
 const testsequence_t rt_test_sequence_007 = {
-  NULL,
+  "Synchronous Messages",
   rt_test_sequence_007_array
 };
 

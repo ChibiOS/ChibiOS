@@ -177,6 +177,6 @@ const testcase_t * const nil_test_sequence_001_array[] = {
  * @brief   Information.
  */
 const testsequence_t nil_test_sequence_001 = {
-  NULL,
+  "Information",
   nil_test_sequence_001_array
 };

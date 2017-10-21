@@ -346,6 +346,6 @@ const testcase_t * const rt_test_sequence_003_array[] = {
  * @brief   Threads Functionality.
  */
 const testsequence_t rt_test_sequence_003 = {
-  NULL,
+  "Threads Functionality",
   rt_test_sequence_003_array
 };

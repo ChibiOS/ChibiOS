@@ -132,6 +132,6 @@ const testcase_t * const rt_test_sequence_004_array[] = {
  * @brief   Suspend/Resume.
  */
 const testsequence_t rt_test_sequence_004 = {
-  NULL,
+  "Suspend/Resume",
   rt_test_sequence_004_array
 };
