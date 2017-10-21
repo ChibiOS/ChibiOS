@@ -30,9 +30,9 @@ static THD_FUNCTION(Thread1, arg) {
   chRegSetThreadName("blinker");
   while (true) {
     palSetLine(LINE_ARD_D13);
-    chThdSleepMilliseconds(1000);
+    chThdSleepMilliseconds(500);
     palClearLine(LINE_ARD_D13);
-    chThdSleepMilliseconds(1000);
+    chThdSleepMilliseconds(500);
   }
 }
 
@@ -53,7 +53,8 @@ int main(void) {
 
   /*
    * ARD_D13 is programmed as output (board LED).
-   */  palClearLine(LINE_ARD_D13);
+   */
+  palClearLine(LINE_ARD_D13);
   palSetLineMode(LINE_ARD_D13, PAL_MODE_OUTPUT_PUSHPULL);
 
   /*
@@ -75,6 +76,6 @@ int main(void) {
       test_execute((BaseSequentialStream *)&SD1, &rt_test_suite);
       test_execute((BaseSequentialStream *)&SD1, &oslib_test_suite);
     }
-    chThdSleepMilliseconds(2000);
+    chThdSleepMilliseconds(500);
   }
 }
