@@ -37,7 +37,7 @@
  */
 #define CRY_LLD_SUPPORTS_AES_ECB            TRUE
 #define CRY_LLD_SUPPORTS_AES_CBC            TRUE
-#define CRY_LLD_SUPPORTS_AES_CFB            TRUE
+#define CRY_LLD_SUPPORTS_AES_CFB            FALSE
 #define CRY_LLD_SUPPORTS_AES_CTR            TRUE
 /** @{ */
 
@@ -78,23 +78,6 @@ typedef uint32_t crykey_t;
 typedef struct CRYDriver CRYDriver;
 
 /**
- * @brief   CRY notification callback type.
- *
- * @param[in] cryp      pointer to the @p CRYDriver object triggering the
- *                      callback
- */
-typedef void (*crycallback_t)(CRYDriver *cryp);
-
-/**
- * @brief   CRY error callback type.
- *
- * @param[in] cryp      pointer to the @p CRYDriver object triggering the
- *                      callback
- * @param[in] err       CRY error code
- */
-typedef void (*cryerrorcallback_t)(CRYDriver *cryp, cryerror_t err);
-
-/**
  * @brief   Driver configuration structure.
  * @note    It could be empty on some architectures.
  */
@@ -122,6 +105,12 @@ struct CRYDriver {
    * @brief   Size of transient key.
    */
   size_t                    key0_size;
+#if (HAL_CRY_USE_FALLBACK == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   Key buffer for the fall-back implementation.
+   */
+  uint8_t                   key0_buffer[HAL_CRY_MAX_KEY_SIZE];
+#endif
 #if defined(CRY_DRIVER_EXT_FIELDS)
   CRY_DRIVER_EXT_FIELDS
 #endif

@@ -35,7 +35,7 @@
 /*===========================================================================*/
 
 /** @brief CRY1 driver identifier.*/
-#if PLATFORM_CRY_USE_CRY1 || defined(__DOXYGEN__)
+#if STM32_CRY_USE_CRYP1 || defined(__DOXYGEN__)
 CRYDriver CRYD1;
 #endif
 
@@ -151,7 +151,7 @@ cryerror_t cry_lld_encrypt_AES_ECB(CRYDriver *cryp,
   (void)in;
   (void)out;
 
-  return CRY_NOERROR;
+  return CRY_ERR_INV_ALGO;
 }
 
 /**
@@ -187,7 +187,7 @@ cryerror_t cry_lld_decrypt_AES_ECB(CRYDriver *cryp,
   (void)in;
   (void)out;
 
-  return CRY_NOERROR;
+  return CRY_ERR_INV_ALGO;
 }
 
 /**
@@ -226,7 +226,7 @@ cryerror_t cry_lld_encrypt_AES_CBC(CRYDriver *cryp,
   (void)out;
   (void)iv;
 
-  return CRY_NOERROR;
+  return CRY_ERR_INV_ALGO;
 }
 
 /**
@@ -265,7 +265,7 @@ cryerror_t cry_lld_decrypt_AES_CBC(CRYDriver *cryp,
   (void)out;
   (void)iv;
 
-  return CRY_NOERROR;
+  return CRY_ERR_INV_ALGO;
 }
 
 /**
@@ -304,7 +304,7 @@ cryerror_t cry_lld_encrypt_AES_CFB(CRYDriver *cryp,
   (void)out;
   (void)iv;
 
-  return CRY_NOERROR;
+  return CRY_ERR_INV_ALGO;
 }
 
 /**
@@ -343,7 +343,7 @@ cryerror_t cry_lld_decrypt_AES_CFB(CRYDriver *cryp,
   (void)out;
   (void)iv;
 
-  return CRY_NOERROR;
+  return CRY_ERR_INV_ALGO;
 }
 
 /**
@@ -385,7 +385,7 @@ cryerror_t cry_lld_encrypt_AES_CTR(CRYDriver *cryp,
   (void)nonce;
   (void)cnt;
 
-  return CRY_NOERROR;
+  return CRY_ERR_INV_ALGO;
 }
 
 /**
@@ -427,7 +427,7 @@ cryerror_t cry_lld_decrypt_AES_CTR(CRYDriver *cryp,
   (void)nonce;
   (void)cnt;
 
-  return CRY_NOERROR;
+  return CRY_ERR_INV_ALGO;
 }
 
 #endif /* HAL_USE_CRY == TRUE */

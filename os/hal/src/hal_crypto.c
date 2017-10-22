@@ -22,6 +22,8 @@
  * @{
  */
 
+#include <string.h>
+
 #include "hal.h"
 
 #if (HAL_USE_CRY == TRUE) || defined(__DOXYGEN__)
@@ -47,7 +49,7 @@
 /*===========================================================================*/
 
 /**
- * @brief   Crypto Driver initialization.
+ * @brief   Cryptographic Driver initialization.
  * @note    This function is implicitly invoked by @p halInit(), there is
  *          no need to explicitly initialize the driver.
  *
@@ -55,7 +57,9 @@
  */
 void cryInit(void) {
 
+#if HAL_CRY_ENFORCE_FALLBACK == FALSE
   cry_lld_init();
+#endif
 }
 
 /**
@@ -75,7 +79,7 @@ void cryObjectInit(CRYDriver *cryp) {
 }
 
 /**
- * @brief   Configures and activates the CRY peripheral.
+ * @brief   Configures and activates the cryptographic peripheral.
  *
  * @param[in] cryp      pointer to the @p CRYDriver object
  * @param[in] config    pointer to the @p CRYConfig object. Depending on
@@ -91,13 +95,15 @@ void cryStart(CRYDriver *cryp, const CRYConfig *config) {
   osalDbgAssert((cryp->state == CRY_STOP) || (cryp->state == CRY_READY),
                 "invalid state");
   cryp->config = config;
+#if HAL_CRY_ENFORCE_FALLBACK == FALSE
   cry_lld_start(cryp);
+#endif
   cryp->state = CRY_READY;
   osalSysUnlock();
 }
 
 /**
- * @brief   Deactivates the CRY peripheral.
+ * @brief   Deactivates the cryptographic peripheral.
  *
  * @param[in] cryp      pointer to the @p CRYDriver object
  *
@@ -112,7 +118,9 @@ void cryStop(CRYDriver *cryp) {
   osalDbgAssert((cryp->state == CRY_STOP) || (cryp->state == CRY_READY),
                 "invalid state");
 
+#if HAL_CRY_ENFORCE_FALLBACK == FALSE
   cry_lld_stop(cryp);
+#endif
   cryp->config = NULL;
   cryp->state  = CRY_STOP;
 
@@ -140,21 +148,32 @@ cryerror_t cryLoadTransientKey(CRYDriver *cryp,
                                const uint8_t *keyp) {
   cryerror_t err;
 
-  /* Storing the transient key metadata.*/
-  cryp->key0_type = algorithm;
-  cryp->key0_size = size;
+  osalDbgCheck((cryp != NULL) && (size <= HAL_CRY_MAX_KEY_SIZE) &&
+               (keyp != NULL));
 
+
+#if HAL_CRY_ENFORCE_FALLBACK == FALSE
   /* Key setup in the low level driver.*/
   err = cry_lld_loadkey(cryp, algorithm, size, keyp);
-  if (err != CRY_NOERROR) {
-    cryp->key0_type = cry_algo_none;
-    cryp->key0_size = (size_t)0;
+#else
+  err = CRY_ERR_INV_ALGO;
+#endif
+
+#if HAL_CRY_USE_FALLBACK == TRUE
+  if (err == CRY_ERR_INV_ALGO) {
+    err = cry_fallback_loadkey(cryp, algorithm, size, keyp);
+  }
+#endif
+
+  if (err == CRY_NOERROR) {
+    /* Storing the transient key info.*/
+    cryp->key0_type = algorithm;
+    cryp->key0_size = size;
   }
 
   return err;
 }
 
-#if (CRY_LLD_SUPPORTS_AES_ECB == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Encryption operation using AES-ECB.
  *
@@ -182,12 +201,24 @@ cryerror_t cryEncryptAES_ECB(CRYDriver *cryp,
                              const uint8_t *in,
                              uint8_t *out) {
 
-  osalDbgCheck((in != NULL) && (out != NULL) &&
+  osalDbgCheck((cryp != NULL) && (in != NULL) && (out != NULL) &&
                ((size & (size_t)15) == (size_t)0));
 
   osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
+#if CRY_LLD_SUPPORTS_AES_ECB == TRUE
   return cry_lld_encrypt_AES_ECB(cryp, key_id, size, in, out);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_encrypt_AES_ECB(cryp, key_id, size, in, out);
+#else
+  (void)cryp;
+  (void)key_id;
+  (void)size;
+  (void)in;
+  (void)out;
+
+  return CRY_ERR_INV_ALGO;
+#endif
 }
 
 /**
@@ -217,16 +248,26 @@ cryerror_t cryDecryptAES_ECB(CRYDriver *cryp,
                              const uint8_t *in,
                              uint8_t *out) {
 
-  osalDbgCheck((in != NULL) && (out != NULL) &&
+  osalDbgCheck((cryp != NULL) && (in != NULL) && (out != NULL) &&
                ((size & (size_t)15) == (size_t)0));
 
   osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
+#if CRY_LLD_SUPPORTS_AES_ECB == TRUE
   return cry_lld_decrypt_AES_ECB(cryp, key_id, size, in, out);
-}
-#endif /* CRY_LLD_SUPPORTS_AES_ECB == TRUE */
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_decrypt_AES_ECB(cryp, key_id, size, in, out);
+#else
+  (void)cryp;
+  (void)key_id;
+  (void)size;
+  (void)in;
+  (void)out;
 
-#if (CRY_LLD_SUPPORTS_AES_CBC == TRUE) || defined(__DOXYGEN__)
+  return CRY_ERR_INV_ALGO;
+#endif
+}
+
 /**
  * @brief   Encryption operation using AES-CBC.
  *
@@ -256,12 +297,25 @@ cryerror_t cryEncryptAES_CBC(CRYDriver *cryp,
                              uint8_t *out,
                              const uint8_t *iv) {
 
-  osalDbgCheck((in != NULL) && (out != NULL) && (iv != NULL) &&
-               ((size & (size_t)15) == (size_t)0));
+  osalDbgCheck((cryp != NULL) && (in != NULL) && (out != NULL) &&
+               (iv != NULL) && ((size & (size_t)15) == (size_t)0));
 
   osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
+#if CRY_LLD_SUPPORTS_AES_CBC == TRUE
   return cry_lld_encrypt_AES_CBC(cryp, key_id, size, in, out, iv);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_encrypt_AES_CBC(cryp, key_id, size, in, out, iv);
+#else
+  (void)cryp;
+  (void)key_id;
+  (void)size;
+  (void)in;
+  (void)out;
+  (void)iv;
+
+  return CRY_ERR_INV_ALGO;
+#endif
 }
 
 /**
@@ -293,16 +347,27 @@ cryerror_t cryDecryptAES_CBC(CRYDriver *cryp,
                              uint8_t *out,
                              const uint8_t *iv) {
 
-  osalDbgCheck((in != NULL) && (out != NULL) && (iv != NULL) &&
-               ((size & (size_t)15) == (size_t)0));
+  osalDbgCheck((cryp != NULL) && (in != NULL) && (out != NULL) &&
+               (iv != NULL) && ((size & (size_t)15) == (size_t)0));
 
   osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
+#if CRY_LLD_SUPPORTS_AES_CBC == TRUE
   return cry_lld_decrypt_AES_CBC(cryp, key_id, size, in, out, iv);
-}
-#endif /* CRY_LLD_SUPPORTS_AES_CBC == TRUE */
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_decrypt_AES_CBC(cryp, key_id, size, in, out, iv);
+#else
+  (void)cryp;
+  (void)key_id;
+  (void)size;
+  (void)in;
+  (void)out;
+  (void)iv;
 
-#if (CRY_LLD_SUPPORTS_AES_CFB == TRUE) || defined(__DOXYGEN__)
+  return CRY_ERR_INV_ALGO;
+#endif
+}
+
 /**
  * @brief   Encryption operation using AES-CFB.
  *
@@ -332,12 +397,25 @@ cryerror_t cryEncryptAES_CFB(CRYDriver *cryp,
                              uint8_t *out,
                              const uint8_t *iv) {
 
-  osalDbgCheck((in != NULL) && (out != NULL) && (iv != NULL) &&
-               ((size & (size_t)15) == (size_t)0));
+  osalDbgCheck((cryp != NULL) && (in != NULL) && (out != NULL) &&
+               (iv != NULL) && ((size & (size_t)15) == (size_t)0));
 
   osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
-  return cry_lld_encrypt_AES_CBC(cryp, key_id, size, in, out, iv);
+#if CRY_LLD_SUPPORTS_AES_CFB == TRUE
+  return cry_lld_encrypt_AES_CFB(cryp, key_id, size, in, out, iv);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_encrypt_AES_CFB(cryp, key_id, size, in, out, iv);
+#else
+  (void)cryp;
+  (void)key_id;
+  (void)size;
+  (void)in;
+  (void)out;
+  (void)iv;
+
+  return CRY_ERR_INV_ALGO;
+#endif
 }
 
 /**
@@ -369,16 +447,27 @@ cryerror_t cryDecryptAES_CFB(CRYDriver *cryp,
                              uint8_t *out,
                              const uint8_t *iv) {
 
-  osalDbgCheck((in != NULL) && (out != NULL) && (iv != NULL) &&
-               ((size & (size_t)15) == (size_t)0));
+  osalDbgCheck((cryp != NULL) && (in != NULL) && (out != NULL) &&
+               (iv != NULL) && ((size & (size_t)15) == (size_t)0));
 
   osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
-  return cry_lld_decrypt_AES_CBC(cryp, key_id, size, in, out, iv);
-}
-#endif /* CRY_LLD_SUPPORTS_AES_CFB == TRUE */
+#if CRY_LLD_SUPPORTS_AES_CFB == TRUE
+  return cry_lld_decrypt_AES_CFB(cryp, key_id, size, in, out, iv);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_decrypt_AES_CFB(cryp, key_id, size, in, out, iv);
+#else
+  (void)cryp;
+  (void)key_id;
+  (void)size;
+  (void)in;
+  (void)out;
+  (void)iv;
 
-#if (CRY_LLD_SUPPORTS_AES_CTR == TRUE) || defined(__DOXYGEN__)
+  return CRY_ERR_INV_ALGO;
+#endif
+}
+
 /**
  * @brief   Encryption operation using AES-CTR.
  *
@@ -410,13 +499,27 @@ cryerror_t cryEncryptAES_CTR(CRYDriver *cryp,
                              const uint8_t *nonce,
                              uint8_t *cnt) {
 
-  osalDbgCheck((in != NULL) && (out != NULL) &&
+  osalDbgCheck((cryp != NULL) && (in != NULL) && (out != NULL) &&
                (nonce != NULL) && (cnt != NULL) &&
                ((size & (size_t)15) == (size_t)0));
 
   osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
+#if CRY_LLD_SUPPORTS_AES_CTR == TRUE
   return cry_lld_encrypt_AES_CTR(cryp, key_id, size, in, out, nonce, cnt);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_encrypt_AES_CTR(cryp, key_id, size, in, out, nonce, cnt);
+#else
+  (void)cryp;
+  (void)key_id;
+  (void)size;
+  (void)in;
+  (void)out;
+  (void)nonce;
+  (void)cnt;
+
+  return CRY_ERR_INV_ALGO;
+#endif
 }
 
 /**
@@ -450,15 +553,28 @@ cryerror_t cryDecryptAES_CTR(CRYDriver *cryp,
                              const uint8_t *nonce,
                              uint8_t *cnt) {
 
-  osalDbgCheck((in != NULL) && (out != NULL) &&
+  osalDbgCheck((cryp != NULL) && (in != NULL) && (out != NULL) &&
                (nonce != NULL) && (cnt != NULL) &&
                ((size & (size_t)15) == (size_t)0));
 
   osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
+#if CRY_LLD_SUPPORTS_AES_CTR == TRUE
   return cry_lld_decrypt_AES_CTR(cryp, key_id, size, in, out, nonce, cnt);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_decrypt_AES_CTR(cryp, key_id, size, in, out, nonce, cnt);
+#else
+  (void)cryp;
+  (void)key_id;
+  (void)size;
+  (void)in;
+  (void)out;
+  (void)nonce;
+  (void)cnt;
+
+  return CRY_ERR_INV_ALGO;
+#endif
 }
-#endif /* CRY_LLD_SUPPORTS_AES_CTR == TRUE */
 
 #endif /* HAL_USE_CRY == TRUE */
 

@@ -31,13 +31,41 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * #brief   Maximum size of a key for all supported algorithms.
+ */
+#define HAL_CRY_MAX_KEY_SIZE                32
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Enables the SW fall-back of the cryptographic driver.
+ * @details When enabled, this option, activates a fall-back software
+ *          implementation for algorithms not supported by the underlying
+ *          hardware.
+ * @note    Fall-back implementations may not be present for all algorithms.
+ */
+#if !defined(HAL_CRY_USE_FALLBACK) || defined(__DOXYGEN__)
+#define HAL_CRY_USE_FALLBACK                FALSE
+#endif
+
+/**
+ * @brief   Makes the driver forcibly use the fall-back implementations.
+ */
+#if !defined(HAL_CRY_ENFORCE_FALLBACK) || defined(__DOXYGEN__)
+#define HAL_CRY_ENFORCE_FALLBACK            FALSE
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+#if HAL_CRY_ENFORCE_FALLBACK == TRUE
+#undef HAL_CRY_USE_FALLBACK
+#define HAL_CRY_USE_FALLBACK                TRUE
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -74,7 +102,33 @@ typedef enum {
   cry_algo_tripledes
 } cryalgorithm_t;
 
+#if HAL_CRY_ENFORCE_FALLBACK == FALSE
+/* Use the defined low level driver.*/
 #include "hal_crypto_lld.h"
+#else
+/* No LLD at all, using the standalone mode.*/
+
+#define CRY_LLD_SUPPORTS_AES_ECB            FALSE
+#define CRY_LLD_SUPPORTS_AES_CBC            FALSE
+#define CRY_LLD_SUPPORTS_AES_CFB            FALSE
+#define CRY_LLD_SUPPORTS_AES_CTR            FALSE
+
+typedef uint_fast8_t crykey_t;
+
+typedef struct CRYDriver CRYDriver;
+
+typedef struct {
+  uint32_t                  dummy;
+} CRYConfig;
+
+struct CRYDriver {
+  crystate_t                state;
+  const CRYConfig           *config;
+  cryalgorithm_t            key0_type;
+  size_t                    key0_size;
+  uint8_t                   key0_buffer[HAL_CRY_MAX_KEY_SIZE];
+};
+#endif
 
 #if !defined(CRY_LLD_SUPPORTS_AES_ECB) ||                                   \
     !defined(CRY_LLD_SUPPORTS_AES_CBC) ||                                   \
@@ -104,13 +158,10 @@ extern "C" {
   void cryObjectInit(CRYDriver *cryp);
   void cryStart(CRYDriver *cryp, const CRYConfig *config);
   void cryStop(CRYDriver *cryp);
-
   cryerror_t cryLoadTransientKey(CRYDriver *cryp,
                                  cryalgorithm_t algorithm,
                                  size_t size,
                                  const uint8_t *keyp);
-
-#if CRY_LLD_SUPPORTS_AES_ECB == TRUE
   cryerror_t cryEncryptAES_ECB(CRYDriver *cryp,
                                crykey_t key_id,
                                size_t size,
@@ -121,9 +172,6 @@ extern "C" {
                                size_t size,
                                const uint8_t *in,
                                uint8_t *out);
-#endif /* CRY_LLD_SUPPORTS_AES_ECB == TRUE */
-
-#if CRY_LLD_SUPPORTS_AES_CBC == TRUE
   cryerror_t cryEncryptAES_CBC(CRYDriver *cryp,
                                crykey_t key_id,
                                size_t size,
@@ -136,9 +184,6 @@ extern "C" {
                                const uint8_t *in,
                                uint8_t *out,
                                const uint8_t *iv);
-#endif /* CRY_LLD_SUPPORTS_AES_CBC == TRUE */
-
-#if CRY_LLD_SUPPORTS_AES_CFB == TRUE
   cryerror_t cryEncryptAES_CFB(CRYDriver *cryp,
                                crykey_t key_id,
                                size_t size,
@@ -151,9 +196,6 @@ extern "C" {
                                const uint8_t *in,
                                uint8_t *out,
                                const uint8_t *iv);
-#endif /* CRY_LLD_SUPPORTS_AES_CFB == TRUE */
-
-#if CRY_LLD_SUPPORTS_AES_CTR == TRUE
   cryerror_t cryEncryptAES_CTR(CRYDriver *cryp,
                                crykey_t key_id,
                                size_t size,
@@ -168,7 +210,6 @@ extern "C" {
                                uint8_t *out,
                                const uint8_t *nonce,
                                uint8_t *cnt);
-#endif /* CRY_LLD_SUPPORTS_AES_CTR == TRUE */
 #ifdef __cplusplus
 }
 #endif
