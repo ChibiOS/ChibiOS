@@ -20,6 +20,9 @@ endif
 ifneq ($(findstring HAL_USE_CAN TRUE,$(HALCONF)),)
 HALSRC += $(CHIBIOS)/os/hal/src/hal_can.c
 endif
+ifneq ($(findstring HAL_USE_CRY TRUE,$(HALCONF)),)
+HALSRC += $(CHIBIOS)/os/hal/src/hal_crypto.c
+endif
 ifneq ($(findstring HAL_USE_DAC TRUE,$(HALCONF)),)
 HALSRC += $(CHIBIOS)/os/hal/src/hal_dac.c
 endif

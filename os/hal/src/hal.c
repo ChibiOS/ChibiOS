@@ -70,6 +70,9 @@ void halInit(void) {
 #if (HAL_USE_CAN == TRUE) || defined(__DOXYGEN__)
   canInit();
 #endif
+#if (HAL_USE_CRY == TRUE) || defined(__DOXYGEN__)
+  cryInit();
+#endif
 #if (HAL_USE_DAC == TRUE) || defined(__DOXYGEN__)
   dacInit();
 #endif

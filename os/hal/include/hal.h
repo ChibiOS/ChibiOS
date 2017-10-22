@@ -42,6 +42,10 @@
 #define HAL_USE_CAN                         FALSE
 #endif
 
+#if !defined(HAL_USE_CRY)
+#define HAL_USE_CRY                         FALSE
+#endif
+
 #if !defined(HAL_USE_DAC)
 #define HAL_USE_DAC                         FALSE
 #endif
@@ -124,6 +128,7 @@
 #include "hal_pal.h"
 #include "hal_adc.h"
 #include "hal_can.h"
+#include "hal_crypto.h"
 #include "hal_dac.h"
 #include "hal_ext.h"
 #include "hal_gpt.h"
