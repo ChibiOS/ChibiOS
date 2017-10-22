@@ -32,16 +32,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
-
-#ifdef __cplusplus
-#define  __I  volatile         /**< Defines 'read-only'  permissions */
-#else
-#define  __I  volatile const   /**< Defines 'read-only'  permissions */
-#endif
-
-#define  __O  volatile         /**< Defines 'write-only' permissions */
-#define  __IO volatile         /**< Defines 'read/write' permissions */
- 
+#include "ARMCA5.h"
 /**
   * @brief SAMA5D2 Family
   */
@@ -70,6 +61,7 @@
 #else
  #error "Please select first the target SAMA5D2x device used in your application (in sama5d2x.h file)"
 #endif
+
 /**@} */
 
 /**
@@ -317,7 +309,56 @@
 #define ID_RXLP_MSK           (1 << (ID_RXLP & 0x1F))
 #define ID_CHIPID_MSK         (1 << (ID_CHIPID & 0x1F))
 
-/**@} */
+/* MASTER MATRIX ID DEFINITION FOR SAMA5D2x */
+
+#define H64MX_MASTER_BRIDGE_FROM_AXI  0
+#define H64MX_MASTER_XDMAC0_0         1
+#define H64MX_MASTER_XDMAC0_1         2
+#define H64MX_MASTER_XDMAC1_0         3
+#define H64MX_MASTER_XDMAC1_1         4
+#define H64MX_MASTER_LCDC_DMA_0       5
+#define H64MX_MASTER_LCDC_DMA_1       6
+#define H64MX_MASTER_SDMMC0           7
+#define H64MX_MASTER_SDMMC1           8
+#define H64MX_MASTER_ISC_DMA          9
+#define H64MX_MASTER_AESB            10
+#define H64MX_MASTER_BRIDGE_H64MX    11
+
+#define H32MX_MASTER_BRIDGE_H32MX     0
+#define H32MX_MASTER_ICM              1
+#define H32MX_MASTER_UHPHS_EHCI_DMA   2
+#define H32MX_MASTER_UHPHS_OHCI_DMA   3
+#define H32MX_MASTER_UDPHS_DMA        4
+#define H32MX_MASTER_GMAC_DMA         5
+#define H32MX_MASTER_CAN0_DMA         6
+#define H32MX_MASTER_CAN1_DMA         7
+
+ /* SLAVE MATRIX ID DEFINITIONS FOR SAMA5D2x */
+
+ #define H64MX_SLAVE_BRIDGE_H32MX     0
+ #define H64MX_SLAVE_APB              1
+ #define H64MX_SLAVE_SDMMC            1
+ #define H64MX_SLAVE_DDR_PORT0        2
+ #define H64MX_SLAVE_DDR_PORT1        3
+ #define H64MX_SLAVE_DDR_PORT2        4
+ #define H64MX_SLAVE_DDR_PORT3        5
+ #define H64MX_SLAVE_DDR_PORT4        6
+ #define H64MX_SLAVE_DDR_PORT5        7
+ #define H64MX_SLAVE_DDR_PORT6        8
+ #define H64MX_SLAVE_DDR_PORT7        9
+ #define H64MX_SLAVE_SRAM            10
+ #define H64MX_SLAVE_L2C_SRAM        11
+ #define H64MX_SLAVE_QSPI0           12
+ #define H64MX_SLAVE_QSPI1           13
+ #define H64MX_SLAVE_AESB            14
+
+ #define H32MX_SLAVE_BRIDGE_H64MX     0
+ #define H32MX_SLAVE_APB0             1
+ #define H32MX_SLAVE_APB1             2
+ #define H32MX_SLAVE_EBI              3
+ #define H32MX_SLAVE_NFC_CMD          3
+ #define H32MX_SLAVE_NFC_SRAM         4
+ #define H32MX_SLAVE_USB              5
 
 #ifdef __cplusplus
 }

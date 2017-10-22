@@ -1495,7 +1495,9 @@ __STATIC_INLINE void PTIM_SetLoadValue(uint32_t value) {
 /** \brief Get the load value from timers LOAD register.
 * \return Timer_Type::LOAD
 */
-__STATIC_INLINE uint32_t PTIM_GetLoadValue() {
+/* CHIBIOS FIX */
+//__STATIC_INLINE uint32_t PTIM_GetLoadValue() {
+__STATIC_INLINE uint32_t PTIM_GetLoadValue(void) {
   return(PTIM->LOAD);
 }
 
@@ -1508,7 +1510,9 @@ __STATIC_INLINE void PTIM_SetCurrentValue(uint32_t value) {
 /** \brief Get current counter value from timers COUNTER register.
 * \result Timer_Type::COUNTER
 */
-__STATIC_INLINE uint32_t PTIM_GetCurrentValue() {
+/* CHIBIOS FIX */
+//__STATIC_INLINE uint32_t PTIM_GetCurrentValue() {
+__STATIC_INLINE uint32_t PTIM_GetCurrentValue(void) {
   return(PTIM->COUNTER);
 }
 

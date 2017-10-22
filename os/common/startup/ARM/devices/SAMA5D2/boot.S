@@ -23,9 +23,11 @@
  */
 #if !defined(__DOXYGEN__)
 
-                .set    AIC_REDIR_KEY, 0x5B6C0E26 << 1
-                .set    SFR_SN1, 	   0xF8030050
-                .set	SFR_AICREDIR,  0xF8030054
+                .set    AIC_REDIR_KEY,  0x5B6C0E26 << 1
+                .set    SFR_SN1, 	    0xF8030050
+                .set	SFR_AICREDIR,   0xF8030054
+                .set    SFR_L2CC_HRAMC, 0xF8030058
+                .set    L2CC_CR,        0x00A00100
 
                 .section .boot
                 .code   32
@@ -35,22 +37,45 @@
  */
 				.global Boot_Handler
 Boot_Handler:
-				/*
-				 * Set VBAR to system vectors table
-				 */
-                ldr		r0, =_start
-                mcr 	p15, 0, r0, c12, c0, 0
+                /*
+                 * Set VBAR to system vectors table
+                 */
+                ldr     r0, =_start
+                mcr     p15, 0, r0, c12, c0, 0
                 /*
                  * Do not redirect secure interrupts to AIC
                  */
-				ldr		r0, =AIC_REDIR_KEY
+				ldr     r0, =AIC_REDIR_KEY
 				ldr     r1, =SFR_SN1
-				ldr		r1, [r1]
-				eor		r0, r0, r1
-				bic		r0, r0, #0x1
-				ldr		r1, =SFR_AICREDIR
-				str		r0, [r1]
-				b       Reset_Handler
+				ldr     r1, [r1]
+				eor     r0, r0, r1
+				bic     r0, r0, #0x1
+				ldr     r1, =SFR_AICREDIR
+				str     r0, [r1]
+                /*
+                 * Reset SCTLR Settings
+                 */
+                mrc     p15, 0, r0, c1, c0, 0       // Read CP15 System Control register
+                bic     r0, r0, #(0x1 << 12)        // Clear I bit 12 to disable I Cache
+                bic     r0, r0, #(0x1 <<  2)        // Clear C bit  2 to disable D Cache
+                bic     r0, r0, #0x1                // Clear M bit  0 to disable MMU
+                bic     r0, r0, #(0x1 << 11)        // Clear Z bit 11 to disable branch prediction
+                bic     r0, r0, #(0x1 << 13)        // Clear V bit 13 to disable hivecs
+                mcr     p15, 0, r0, c1, c0, 0       // Write value back to CP15 System Control register
+                isb
+                /*
+                 * Turn off L2Cache
+                 */
+                bic     r0, r0, #0x1
+                ldr     r1, =L2CC_CR
+                str     r0, [r1]
+                /*
+                 * Configure the L2 cache to be used as an internal SRAM
+                 */
+                bic     r0, r0, #0x1
+                ldr     r1, =SFR_L2CC_HRAMC
+                str     r0, [r1]
+                b       Reset_Handler
 #endif /* !defined(__DOXYGEN__) */
 
 /** @} */

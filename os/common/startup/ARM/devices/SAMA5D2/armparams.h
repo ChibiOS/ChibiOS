@@ -34,6 +34,11 @@
 #define ARM_CORE                ARM_CORE_CORTEX_A5
 
 /**
+ * @brief   Cortex core model.
+ */
+#define CORTEX_MODEL            5
+
+/**
  * @brief   Thumb-capable.
  */
 #define ARM_SUPPORTS_THUMB      1
@@ -44,17 +49,43 @@
 #define ARM_SUPPORTS_THUMB2     1
 
 /**
+ * @brief   VFPv4-D16 FPU.
+ */
+#define TARGET_FEATURE_EXTENSION_REGISTER_COUNT    16
+
+/**
  * @brief   Implementation of the wait-for-interrupt state enter.
  */
 #define ARM_WFI_IMPL            asm volatile ("wfi")
 
 #if !defined(_FROM_ASM_) || defined(__DOXYGEN__)
+/* If the device type is not externally defined, for example from the Makefile,
+   then a file named board.h is included. This file must contain a device
+   definition compatible with the vendor include file.*/
+#if !defined (SAMA5D21) && !defined (SAMA5D22) &&  !defined (SAMA5D23) &&   \
+    !defined (SAMA5D24) && !defined (SAMA5D25) &&  !defined (SAMA5D26) &&   \
+    !defined (SAMA5D27) && !defined (SAMA5D28)
+#include "board.h"
+#endif
+
+/* Including the device CMSIS header. Note, we are not using the definitions
+   from this header because we need this file to be usable also from
+   assembler source files. We verify that the info matches instead.*/
+#include "sama5d2x.h"
+
+/*lint -save -e9029 [10.4] Signedness comes from external files, it is
+  unpredictable but gives no problems.*/
+#if CORTEX_MODEL != __CORTEX_A
+#error "CMSIS __CORTEX_A mismatch"
+#endif
+
 /**
  * @brief   Address of the IRQ vector register in the interrupt controller.
  */
 #define ARM_IRQ_VECTOR_REG      0xF803C010U
 #else
 #define ARM_IRQ_VECTOR_REG      0xF803C010
+
 #endif
 #endif /* ARMPARAMS_H */
 
