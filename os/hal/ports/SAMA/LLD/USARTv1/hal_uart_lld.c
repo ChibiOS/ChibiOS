@@ -113,27 +113,27 @@ UARTDriver UARTD4;
 
 /** @brief FLEXCOM0 UART driver identifier.*/
 #if SAMA_UART_USE_FLEXCOM0 || defined(__DOXYGEN__)
-UARTDriver UARTFLEXD0;
+UARTDriver FUARTD0;
 #endif
 
 /** @brief FLEXCOM1 UART driver identifier.*/
 #if SAMA_UART_USE_FLEXCOM1 || defined(__DOXYGEN__)
-UARTDriver UARTFLEXD1;
+UARTDriver FUARTD1;
 #endif
 
 /** @brief FLEXCOM2 UART driver identifier.*/
 #if SAMA_UART_USE_FLEXCOM2 || defined(__DOXYGEN__)
-UARTDriver UARTFLEXD2;
+UARTDriver FUARTD2;
 #endif
 
 /** @brief FLEXCOM3 UART driver identifier.*/
 #if SAMA_UART_USE_FLEXCOM3 || defined(__DOXYGEN__)
-UARTDriver UARTFLEXD3;
+UARTDriver FUARTD3;
 #endif
 
 /** @brief FLEXCOM4 UART driver identifier.*/
 #if SAMA_UART_USE_FLEXCOM4 || defined(__DOXYGEN__)
-UARTDriver UARTFLEXD4;
+UARTDriver FUARTD4;
 #endif
 
 /*===========================================================================*/
@@ -553,7 +553,7 @@ OSAL_IRQ_HANDLER(SAMA_UART_FLEXCOM0_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  serve_uartFlex_irq(&UARTFLEXD0);
+  serve_uartFlex_irq(&FUARTD0);
   aicAckInt();
   OSAL_IRQ_EPILOGUE();
 }
@@ -569,7 +569,7 @@ OSAL_IRQ_HANDLER(SAMA_UART_FLEXCOM1_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  serve_uartFlex_irq(&UARTFLEXD1);
+  serve_uartFlex_irq(&FUARTD1);
   aicAckInt();
   OSAL_IRQ_EPILOGUE();
 }
@@ -585,7 +585,7 @@ OSAL_IRQ_HANDLER(SAMA_UART_FLEXCOM2_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  serve_uartFlex_irq(&UARTFLEXD2);
+  serve_uartFlex_irq(&FUARTD2);
   aicAckInt();
   OSAL_IRQ_EPILOGUE();
 }
@@ -601,7 +601,7 @@ OSAL_IRQ_HANDLER(SAMA_UART_FLEXCOM3_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  serve_uartFlex_irq(&UARTFLEXD3);
+  serve_uartFlex_irq(&FUARTD3);
   aicAckInt();
   OSAL_IRQ_EPILOGUE();
 }
@@ -617,7 +617,7 @@ OSAL_IRQ_HANDLER(SAMA_UART_FLEXCOM4_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  serve_uartFlex_irq(&UARTFLEXD4);
+  serve_uartFlex_irq(&FUARTD4);
   aicAckInt();
   OSAL_IRQ_EPILOGUE();
 }
@@ -785,158 +785,158 @@ void uart_lld_init(void) {
 #endif
 
 #if SAMA_UART_USE_FLEXCOM0
-  uartObjectInit(&UARTFLEXD0);
-  UARTFLEXD0.flexcom   = FLEXCOM0;
-  UARTFLEXD0.usart     = USART0;
-  UARTFLEXD0.clock     = SAMA_FLEXCOM0CLK;
-  UARTFLEXD0.rxdmamode = XDMAC_CC_TYPE_PER_TRAN |
-                         XDMAC_CC_MBSIZE_SINGLE |
-                         XDMAC_CC_DSYNC_PER2MEM |
-                         XDMAC_CC_PROT_SEC |
-                         XDMAC_CC_CSIZE_CHK_1 |
-                         XDMAC_CC_DWIDTH_BYTE |
-                         XDMAC_CC_SIF_AHB_IF1 |
-                         XDMAC_CC_DIF_AHB_IF0 |
-                         XDMAC_CC_SAM_FIXED_AM |
-                         XDMAC_CC_DAM_INCREMENTED_AM |
-                         XDMAC_CC_PERID(PERID_FLEXCOM0_RX);
-  UARTFLEXD0.txdmamode = XDMAC_CC_TYPE_PER_TRAN |
-                         XDMAC_CC_MBSIZE_SINGLE |
-                         XDMAC_CC_DSYNC_MEM2PER |
-                         XDMAC_CC_PROT_SEC |
-                         XDMAC_CC_CSIZE_CHK_1 |
-                         XDMAC_CC_DWIDTH_BYTE |
-                         XDMAC_CC_SIF_AHB_IF0 |
-                         XDMAC_CC_DIF_AHB_IF1 |
-                         XDMAC_CC_SAM_INCREMENTED_AM |
-                         XDMAC_CC_DAM_FIXED_AM |
-                         XDMAC_CC_PERID(PERID_FLEXCOM0_TX);
-  UARTFLEXD0.dmarx     = 0;
-  UARTFLEXD0.dmatx     = 0;
+  uartObjectInit(&FUARTD0);
+  FUARTD0.flexcom   = FLEXCOM0;
+  FUARTD0.usart     = USART0;
+  FUARTD0.clock     = SAMA_FLEXCOM0CLK;
+  FUARTD0.rxdmamode = XDMAC_CC_TYPE_PER_TRAN |
+                      XDMAC_CC_MBSIZE_SINGLE |
+                      XDMAC_CC_DSYNC_PER2MEM |
+                      XDMAC_CC_PROT_SEC |
+                      XDMAC_CC_CSIZE_CHK_1 |
+                      XDMAC_CC_DWIDTH_BYTE |
+                      XDMAC_CC_SIF_AHB_IF1 |
+                      XDMAC_CC_DIF_AHB_IF0 |
+                      XDMAC_CC_SAM_FIXED_AM |
+                      XDMAC_CC_DAM_INCREMENTED_AM |
+                      XDMAC_CC_PERID(PERID_FLEXCOM0_RX);
+  FUARTD0.txdmamode = XDMAC_CC_TYPE_PER_TRAN |
+                      XDMAC_CC_MBSIZE_SINGLE |
+                      XDMAC_CC_DSYNC_MEM2PER |
+                      XDMAC_CC_PROT_SEC |
+                      XDMAC_CC_CSIZE_CHK_1 |
+                      XDMAC_CC_DWIDTH_BYTE |
+                      XDMAC_CC_SIF_AHB_IF0 |
+                      XDMAC_CC_DIF_AHB_IF1 |
+                      XDMAC_CC_SAM_INCREMENTED_AM |
+                      XDMAC_CC_DAM_FIXED_AM |
+                      XDMAC_CC_PERID(PERID_FLEXCOM0_TX);
+  FUARTD0.dmarx     = 0;
+  FUARTD0.dmatx     = 0;
 #endif
 
 #if SAMA_UART_USE_FLEXCOM1
-  uartObjectInit(&UARTFLEXD1);
-  UARTFLEXD1.flexcom   = FLEXCOM1;
-  UARTFLEXD1.usart     = USART1;
-  UARTFLEXD1.clock     = SAMA_FLEXCOM1CLK;
-  UARTFLEXD1.rxdmamode = XDMAC_CC_TYPE_PER_TRAN |
-                         XDMAC_CC_MBSIZE_SINGLE |
-                         XDMAC_CC_DSYNC_PER2MEM |
-                         XDMAC_CC_PROT_SEC |
-                         XDMAC_CC_CSIZE_CHK_1 |
-                         XDMAC_CC_DWIDTH_BYTE |
-                         XDMAC_CC_SIF_AHB_IF1 |
-                         XDMAC_CC_DIF_AHB_IF0 |
-                         XDMAC_CC_SAM_FIXED_AM |
-                         XDMAC_CC_DAM_INCREMENTED_AM |
-                         XDMAC_CC_PERID(PERID_FLEXCOM1_RX);
-  UARTFLEXD1.txdmamode = XDMAC_CC_TYPE_PER_TRAN |
-                         XDMAC_CC_MBSIZE_SINGLE |
-                         XDMAC_CC_DSYNC_MEM2PER |
-                         XDMAC_CC_PROT_SEC |
-                         XDMAC_CC_CSIZE_CHK_1 |
-                         XDMAC_CC_DWIDTH_BYTE |
-                         XDMAC_CC_SIF_AHB_IF0 |
-                         XDMAC_CC_DIF_AHB_IF1 |
-                         XDMAC_CC_SAM_INCREMENTED_AM |
-                         XDMAC_CC_DAM_FIXED_AM |
-                         XDMAC_CC_PERID(PERID_FLEXCOM1_TX);
-  UARTFLEXD1.dmarx     = 0;
-  UARTFLEXD1.dmatx     = 0;
+  uartObjectInit(&FUARTD1);
+  FUARTD1.flexcom   = FLEXCOM1;
+  FUARTD1.usart     = USART1;
+  FUARTD1.clock     = SAMA_FLEXCOM1CLK;
+  FUARTD1.rxdmamode = XDMAC_CC_TYPE_PER_TRAN |
+                      XDMAC_CC_MBSIZE_SINGLE |
+                      XDMAC_CC_DSYNC_PER2MEM |
+                      XDMAC_CC_PROT_SEC |
+                      XDMAC_CC_CSIZE_CHK_1 |
+                      XDMAC_CC_DWIDTH_BYTE |
+                      XDMAC_CC_SIF_AHB_IF1 |
+                      XDMAC_CC_DIF_AHB_IF0 |
+                      XDMAC_CC_SAM_FIXED_AM |
+                      XDMAC_CC_DAM_INCREMENTED_AM |
+                      XDMAC_CC_PERID(PERID_FLEXCOM1_RX);
+  FUARTD1.txdmamode = XDMAC_CC_TYPE_PER_TRAN |
+                      XDMAC_CC_MBSIZE_SINGLE |
+                      XDMAC_CC_DSYNC_MEM2PER |
+                      XDMAC_CC_PROT_SEC |
+                      XDMAC_CC_CSIZE_CHK_1 |
+                      XDMAC_CC_DWIDTH_BYTE |
+                      XDMAC_CC_SIF_AHB_IF0 |
+                      XDMAC_CC_DIF_AHB_IF1 |
+                      XDMAC_CC_SAM_INCREMENTED_AM |
+                      XDMAC_CC_DAM_FIXED_AM |
+                      XDMAC_CC_PERID(PERID_FLEXCOM1_TX);
+  FUARTD1.dmarx     = 0;
+  FUARTD1.dmatx     = 0;
 #endif
 
 #if SAMA_UART_USE_FLEXCOM2
-  uartObjectInit(&UARTFLEXD2);
-  UARTFLEXD2.flexcom   = FLEXCOM2;
-  UARTFLEXD2.usart     = USART2;
-  UARTFLEXD2.clock     = SAMA_FLEXCOM2CLK;
-  UARTFLEXD2.rxdmamode = XDMAC_CC_TYPE_PER_TRAN |
-                         XDMAC_CC_MBSIZE_SINGLE |
-                         XDMAC_CC_DSYNC_PER2MEM |
-                         XDMAC_CC_PROT_SEC |
-                         XDMAC_CC_CSIZE_CHK_1 |
-                         XDMAC_CC_DWIDTH_BYTE |
-                         XDMAC_CC_SIF_AHB_IF1 |
-                         XDMAC_CC_DIF_AHB_IF0 |
-                         XDMAC_CC_SAM_FIXED_AM |
-                         XDMAC_CC_DAM_INCREMENTED_AM |
-                         XDMAC_CC_PERID(PERID_FLEXCOM2_RX);
-  UARTFLEXD2.txdmamode = XDMAC_CC_TYPE_PER_TRAN |
-                         XDMAC_CC_MBSIZE_SINGLE |
-                         XDMAC_CC_DSYNC_MEM2PER |
-                         XDMAC_CC_PROT_SEC |
-                         XDMAC_CC_CSIZE_CHK_1 |
-                         XDMAC_CC_DWIDTH_BYTE |
-                         XDMAC_CC_SIF_AHB_IF0 |
-                         XDMAC_CC_DIF_AHB_IF1 |
-                         XDMAC_CC_SAM_INCREMENTED_AM |
-                         XDMAC_CC_DAM_FIXED_AM |
-                         XDMAC_CC_PERID(PERID_FLEXCOM2_TX);
-  UARTFLEXD2.dmarx     = 0;
-  UARTFLEXD2.dmatx     = 0;
+  uartObjectInit(&FUARTD2);
+  FUARTD2.flexcom   = FLEXCOM2;
+  FUARTD2.usart     = USART2;
+  FUARTD2.clock     = SAMA_FLEXCOM2CLK;
+  FUARTD2.rxdmamode = XDMAC_CC_TYPE_PER_TRAN |
+                      XDMAC_CC_MBSIZE_SINGLE |
+                      XDMAC_CC_DSYNC_PER2MEM |
+                      XDMAC_CC_PROT_SEC |
+                      XDMAC_CC_CSIZE_CHK_1 |
+                      XDMAC_CC_DWIDTH_BYTE |
+                      XDMAC_CC_SIF_AHB_IF1 |
+                      XDMAC_CC_DIF_AHB_IF0 |
+                      XDMAC_CC_SAM_FIXED_AM |
+                      XDMAC_CC_DAM_INCREMENTED_AM |
+                      XDMAC_CC_PERID(PERID_FLEXCOM2_RX);
+  FUARTD2.txdmamode = XDMAC_CC_TYPE_PER_TRAN |
+                      XDMAC_CC_MBSIZE_SINGLE |
+                      XDMAC_CC_DSYNC_MEM2PER |
+                      XDMAC_CC_PROT_SEC |
+                      XDMAC_CC_CSIZE_CHK_1 |
+                      XDMAC_CC_DWIDTH_BYTE |
+                      XDMAC_CC_SIF_AHB_IF0 |
+                      XDMAC_CC_DIF_AHB_IF1 |
+                      XDMAC_CC_SAM_INCREMENTED_AM |
+                      XDMAC_CC_DAM_FIXED_AM |
+                      XDMAC_CC_PERID(PERID_FLEXCOM2_TX);
+  FUARTD2.dmarx     = 0;
+  FUARTD2.dmatx     = 0;
 #endif
 
 #if SAMA_UART_USE_FLEXCOM3
-  uartObjectInit(&UARTFLEXD3);
-  UARTFLEXD3.flexcom   = FLEXCOM3;
-  UARTFLEXD3.usart     = USART3;
-  UARTFLEXD3.clock     = SAMA_FLEXCOM3CLK;
-  UARTFLEXD3.rxdmamode = XDMAC_CC_TYPE_PER_TRAN |
-                         XDMAC_CC_MBSIZE_SINGLE |
-                         XDMAC_CC_DSYNC_PER2MEM |
-                         XDMAC_CC_PROT_SEC |
-                         XDMAC_CC_CSIZE_CHK_1 |
-                         XDMAC_CC_DWIDTH_BYTE |
-                         XDMAC_CC_SIF_AHB_IF1 |
-                         XDMAC_CC_DIF_AHB_IF0 |
-                         XDMAC_CC_SAM_FIXED_AM |
-                         XDMAC_CC_DAM_INCREMENTED_AM |
-                         XDMAC_CC_PERID(PERID_FLEXCOM3_RX);
-  UARTFLEXD3.txdmamode = XDMAC_CC_TYPE_PER_TRAN |
-                         XDMAC_CC_MBSIZE_SINGLE |
-                         XDMAC_CC_DSYNC_MEM2PER |
-                         XDMAC_CC_PROT_SEC |
-                         XDMAC_CC_CSIZE_CHK_1 |
-                         XDMAC_CC_DWIDTH_BYTE |
-                         XDMAC_CC_SIF_AHB_IF0 |
-                         XDMAC_CC_DIF_AHB_IF1 |
-                         XDMAC_CC_SAM_INCREMENTED_AM |
-                         XDMAC_CC_DAM_FIXED_AM |
-                         XDMAC_CC_PERID(PERID_FLEXCOM3_TX);
-  UARTFLEXD3.dmarx     = 0;
-  UARTFLEXD3.dmatx     = 0;
+  uartObjectInit(&FUARTD3);
+  FUARTD3.flexcom   = FLEXCOM3;
+  FUARTD3.usart     = USART3;
+  FUARTD3.clock     = SAMA_FLEXCOM3CLK;
+  FUARTD3.rxdmamode = XDMAC_CC_TYPE_PER_TRAN |
+                      XDMAC_CC_MBSIZE_SINGLE |
+                      XDMAC_CC_DSYNC_PER2MEM |
+                      XDMAC_CC_PROT_SEC |
+                      XDMAC_CC_CSIZE_CHK_1 |
+                      XDMAC_CC_DWIDTH_BYTE |
+                      XDMAC_CC_SIF_AHB_IF1 |
+                      XDMAC_CC_DIF_AHB_IF0 |
+                      XDMAC_CC_SAM_FIXED_AM |
+                      XDMAC_CC_DAM_INCREMENTED_AM |
+                      XDMAC_CC_PERID(PERID_FLEXCOM3_RX);
+  FUARTD3.txdmamode = XDMAC_CC_TYPE_PER_TRAN |
+                      XDMAC_CC_MBSIZE_SINGLE |
+                      XDMAC_CC_DSYNC_MEM2PER |
+                      XDMAC_CC_PROT_SEC |
+                      XDMAC_CC_CSIZE_CHK_1 |
+                      XDMAC_CC_DWIDTH_BYTE |
+                      XDMAC_CC_SIF_AHB_IF0 |
+                      XDMAC_CC_DIF_AHB_IF1 |
+                      XDMAC_CC_SAM_INCREMENTED_AM |
+                      XDMAC_CC_DAM_FIXED_AM |
+                      XDMAC_CC_PERID(PERID_FLEXCOM3_TX);
+  FUARTD3.dmarx     = 0;
+  FUARTD3.dmatx     = 0;
 #endif
 
 #if SAMA_UART_USE_FLEXCOM4
-  uartObjectInit(&UARTFLEXD4);
-  UARTFLEXD4.flexcom   = FLEXCOM4;
-  UARTFLEXD4.usart     = USART4;
-  UARTFLEXD4.clock     = SAMA_FLEXCOM4CLK;
-  UARTFLEXD4.rxdmamode = XDMAC_CC_TYPE_PER_TRAN |
-                         XDMAC_CC_MBSIZE_SINGLE |
-                         XDMAC_CC_DSYNC_PER2MEM |
-                         XDMAC_CC_PROT_SEC |
-                         XDMAC_CC_CSIZE_CHK_1 |
-                         XDMAC_CC_DWIDTH_BYTE |
-                         XDMAC_CC_SIF_AHB_IF1 |
-                         XDMAC_CC_DIF_AHB_IF0 |
-                         XDMAC_CC_SAM_FIXED_AM |
-                         XDMAC_CC_DAM_INCREMENTED_AM |
-                         XDMAC_CC_PERID(PERID_FLEXCOM4_RX);
-  UARTFLEXD4.txdmamode = XDMAC_CC_TYPE_PER_TRAN |
-                         XDMAC_CC_MBSIZE_SINGLE |
-                         XDMAC_CC_DSYNC_MEM2PER |
-                         XDMAC_CC_PROT_SEC |
-                         XDMAC_CC_CSIZE_CHK_1 |
-                         XDMAC_CC_DWIDTH_BYTE |
-                         XDMAC_CC_SIF_AHB_IF0 |
-                         XDMAC_CC_DIF_AHB_IF1 |
-                         XDMAC_CC_SAM_INCREMENTED_AM |
-                         XDMAC_CC_DAM_FIXED_AM |
-                         XDMAC_CC_PERID(PERID_FLEXCOM4_TX);
-  UARTFLEXD4.dmarx     = 0;
-  UARTFLEXD4.dmatx     = 0;
+  uartObjectInit(&FUARTD4);
+  FUARTD4.flexcom   = FLEXCOM4;
+  FUARTD4.usart     = USART4;
+  FUARTD4.clock     = SAMA_FLEXCOM4CLK;
+  FUARTD4.rxdmamode = XDMAC_CC_TYPE_PER_TRAN |
+                      XDMAC_CC_MBSIZE_SINGLE |
+                      XDMAC_CC_DSYNC_PER2MEM |
+                      XDMAC_CC_PROT_SEC |
+                      XDMAC_CC_CSIZE_CHK_1 |
+                      XDMAC_CC_DWIDTH_BYTE |
+                      XDMAC_CC_SIF_AHB_IF1 |
+                      XDMAC_CC_DIF_AHB_IF0 |
+                      XDMAC_CC_SAM_FIXED_AM |
+                      XDMAC_CC_DAM_INCREMENTED_AM |
+                      XDMAC_CC_PERID(PERID_FLEXCOM4_RX);
+  FUARTD4.txdmamode = XDMAC_CC_TYPE_PER_TRAN |
+                      XDMAC_CC_MBSIZE_SINGLE |
+                      XDMAC_CC_DSYNC_MEM2PER |
+                      XDMAC_CC_PROT_SEC |
+                      XDMAC_CC_CSIZE_CHK_1 |
+                      XDMAC_CC_DWIDTH_BYTE |
+                      XDMAC_CC_SIF_AHB_IF0 |
+                      XDMAC_CC_DIF_AHB_IF1 |
+                      XDMAC_CC_SAM_INCREMENTED_AM |
+                      XDMAC_CC_DAM_FIXED_AM |
+                      XDMAC_CC_PERID(PERID_FLEXCOM4_TX);
+  FUARTD4.dmarx     = 0;
+  FUARTD4.dmatx     = 0;
 #endif
 
 }
@@ -1073,7 +1073,7 @@ void uart_lld_start(UARTDriver *uartp) {
 #endif
 
 #if SAMA_UART_USE_FLEXCOM0
-    if (&UARTFLEXD0 == uartp) {
+    if (&FUARTD0 == uartp) {
       uartp->dmarx = dmaChannelAllocate(SAMA_UART_FLEXCOM0_DMA_IRQ_PRIORITY,
                                        (sama_dmaisr_t)uart_lld_serve_rx_end_irq,
                                        (void *)uartp);
@@ -1099,7 +1099,7 @@ void uart_lld_start(UARTDriver *uartp) {
 #endif
 
 #if SAMA_UART_USE_FLEXCOM1
-    if (&UARTFLEXD1 == uartp) {
+    if (&FUARTD1 == uartp) {
       uartp->dmarx = dmaChannelAllocate(SAMA_UART_FLEXCOM1_DMA_IRQ_PRIORITY,
                                        (sama_dmaisr_t)uart_lld_serve_rx_end_irq,
                                        (void *)uartp);
@@ -1125,7 +1125,7 @@ void uart_lld_start(UARTDriver *uartp) {
 #endif
 
 #if SAMA_UART_USE_FLEXCOM2
-    if (&UARTFLEXD2 == uartp) {
+    if (&FUARTD2 == uartp) {
       uartp->dmarx = dmaChannelAllocate(SAMA_UART_FLEXCOM2_DMA_IRQ_PRIORITY,
                                        (sama_dmaisr_t)uart_lld_serve_rx_end_irq,
                                        (void *)uartp);
@@ -1151,7 +1151,7 @@ void uart_lld_start(UARTDriver *uartp) {
 #endif
 
 #if SAMA_UART_USE_FLEXCOM3
-    if (&UARTFLEXD3 == uartp) {
+    if (&FUARTD3 == uartp) {
       uartp->dmarx = dmaChannelAllocate(SAMA_UART_FLEXCOM3_DMA_IRQ_PRIORITY,
                                        (sama_dmaisr_t)uart_lld_serve_rx_end_irq,
                                        (void *)uartp);
@@ -1177,7 +1177,7 @@ void uart_lld_start(UARTDriver *uartp) {
 #endif
 
 #if SAMA_UART_USE_FLEXCOM4
-    if (&UARTFLEXD4 == uartp) {
+    if (&FUARTD4 == uartp) {
       uartp->dmarx = dmaChannelAllocate(SAMA_UART_FLEXCOM4_DMA_IRQ_PRIORITY,
                                        (sama_dmaisr_t)uart_lld_serve_rx_end_irq,
                                        (void *)uartp);
@@ -1202,10 +1202,9 @@ void uart_lld_start(UARTDriver *uartp) {
     }
 #endif
 
-    /* Static DMA setup, the transfer size depends on the USART settings,
-       it is 16 bits if M=1 and PCE=0 else it is 8 bits.*/
-   // if ((uartp->config->cr1 & (USART_CR1_M | USART_CR1_PCE)) == USART_CR1_M0)
-   //   uartp->dmamode |= STM32_DMA_CR_PSIZE_HWORD | STM32_DMA_CR_MSIZE_HWORD;
+/*
+ * TODO: Configure DMA for bit > 9
+ */
 
     uartp->rxbuf = 0;
   }
@@ -1265,35 +1264,35 @@ void uart_lld_stop(UARTDriver *uartp) {
 #endif
 
 #if SAMA_UART_USE_FLEXCOM0
-    if (&UARTFLEXD0 == uartp) {
+    if (&FUARTD0 == uartp) {
       pmcDisableFLEXCOM0();
       return;
     }
 #endif
 
 #if SAMA_UART_USE_FLEXCOM1
-    if (&UARTFLEXD1 == uartp) {
+    if (&FUARTD1 == uartp) {
       pmcDisableFLEXCOM1();
       return;
     }
 #endif
 
 #if SAMA_UART_USE_FLEXCOM2
-    if (&UARTFLEXD2 == uartp) {
+    if (&FUARTD2 == uartp) {
       pmcDisableFLEXCOM2();
       return;
     }
 #endif
 
 #if SAMA_UART_USE_FLEXCOM3
-    if (&UARTFLEXD3 == uartp) {
+    if (&FUARTD3 == uartp) {
       pmcDisableFLEXCOM3();
       return;
     }
 #endif
 
 #if SAMA_UART_USE_FLEXCOM4
-    if (&UARTFLEXD4 == uartp) {
+    if (&FUARTD4 == uartp) {
       pmcDisableFLEXCOM4();
       return;
     }

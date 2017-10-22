@@ -175,7 +175,7 @@
 /* Checks on allocation of UARTx units.*/
 #if SAMA_SPI_USE_FLEXCOM0
 #if defined(SAMA_FLEXCOM0_IS_USED)
-#error "SPIFLEXD0 requires FLEXCOM0 but the peripheral is already used"
+#error "FSPID0 requires FLEXCOM0 but the peripheral is already used"
 #else
 #define SAMA_FLEXCOM0_IS_USED
 #endif
@@ -183,7 +183,7 @@
 
 #if SAMA_SPI_USE_FLEXCOM1
 #if defined(SAMA_FLEXCOM1_IS_USED)
-#error "SPIFLEXD1 requires FLEXCOM1 but the peripheral is already used"
+#error "FSPID1 requires FLEXCOM1 but the peripheral is already used"
 #else
 #define SAMA_FLEXCOM1_IS_USED
 #endif
@@ -191,7 +191,7 @@
 
 #if SAMA_SPI_USE_FLEXCOM2
 #if defined(SAMA_FLEXCOM2_IS_USED)
-#error "SPIFLEXD2 requires FLEXCOM2 but the peripheral is already used"
+#error "FSPID2 requires FLEXCOM2 but the peripheral is already used"
 #else
 #define SAMA_FLEXCOM2_IS_USED
 #endif
@@ -199,7 +199,7 @@
 
 #if SAMA_SPI_USE_FLEXCOM3
 #if defined(SAMA_FLEXCOM3_IS_USED)
-#error "SPIFLEXD3 requires FLEXCOM3 but the peripheral is already used"
+#error "FSPID3 requires FLEXCOM3 but the peripheral is already used"
 #else
 #define SAMA_FLEXCOM3_IS_USED
 #endif
@@ -207,7 +207,7 @@
 
 #if SAMA_SPI_USE_FLEXCOM4
 #if defined(SAMA_FLEXCOM4_IS_USED)
-#error "SPIFLEXD4 requires FLEXCOM4 but the peripheral is already used"
+#error "FSPID4 requires FLEXCOM4 but the peripheral is already used"
 #else
 #define SAMA_FLEXCOM4_IS_USED
 #endif
@@ -339,23 +339,23 @@ extern SPIDriver SPID1;
 #endif
 
 #if SAMA_SPI_USE_FLEXCOM0 && !defined(__DOXYGEN__)
-extern SPIDriver SPIFLEXD0;
+extern SPIDriver FSPID0;
 #endif
 
 #if SAMA_SPI_USE_FLEXCOM1 && !defined(__DOXYGEN__)
-extern SPIDriver SPIFLEXD1;
+extern SPIDriver FSPID1;
 #endif
 
 #if SAMA_SPI_USE_FLEXCOM2 && !defined(__DOXYGEN__)
-extern SPIDriver SPIFLEXD2;
+extern SPIDriver FSPID2;
 #endif
 
 #if SAMA_SPI_USE_FLEXCOM3 && !defined(__DOXYGEN__)
-extern SPIDriver SPIFLEXD3;
+extern SPIDriver FSPID3;
 #endif
 
 #if SAMA_SPI_USE_FLEXCOM4 && !defined(__DOXYGEN__)
-extern SPIDriver SPIFLEXD4;
+extern SPIDriver FSPID4;
 #endif
 
 #ifdef __cplusplus

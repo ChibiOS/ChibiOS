@@ -18,7 +18,7 @@
  * @file    SAMA5D2x/aic.h
  * @brief   SAMA AIC support macros and structures.
  *
- * @addtogroup COMMON_SAMA5D2x_AIC
+ * @addtogroup SAMA5D2x_AIC
  * @{
  */
 
@@ -53,9 +53,15 @@
 /**
  * @brief   Acknowledge the current interrupt.
  */
-#define aicAckInt() {                                                       \
-  SAIC->AIC_EOICR = AIC_EOICR_ENDIT;                                        \
+#if SAMA_HAL_IS_SECURE
+#define aicAckInt() {                                                     \
+  SAIC->AIC_EOICR = AIC_EOICR_ENDIT;                                      \
 }
+#else
+#define aicAckInt() {                                                     \
+  AIC->AIC_EOICR = AIC_EOICR_ENDIT;                                       \
+}
+#endif
 
 /*===========================================================================*/
 /* External declarations.                                                    */

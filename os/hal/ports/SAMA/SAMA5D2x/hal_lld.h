@@ -35,20 +35,6 @@
 
 #include "sama_registry.h"
 
-/* If the device type is not externally defined, for example from the Makefile,
-   then a file named board.h is included. This file must contain a device
-   definition compatible with the vendor include file.*/
-#if !defined (SAMA5D21) && !defined (SAMA5D22) &&  !defined (SAMA5D23) &&   \
-    !defined (SAMA5D24) && !defined (SAMA5D25) &&  !defined (SAMA5D26) &&   \
-    !defined (SAMA5D27) && !defined (SAMA5D28)
-#include "board.h"
-#endif
-
-/* Including the device CMSIS header. Note, we are not using the definitions
-   from this header because we need this file to be usable also from
-   assembler source files. We verify that the info matches instead.*/
-#include "sama5d2x.h"
-
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -496,7 +482,9 @@
 /* Various helpers.*/
 #include "sama_pmc.h"
 #include "aic.h"
+#include "sama_matrix.h"
 #include "sama_xdmac.h" 
+#include "sama_cache.h"
 
 #ifdef __cplusplus
 extern "C" {

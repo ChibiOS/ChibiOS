@@ -1,8 +1,10 @@
 # Required platform files.
 
-PLATFORMSRC := $(CHIBIOS)/os/hal/ports/SAMA/SAMA5D2x/hal_lld.c \
-               $(CHIBIOS)/os/hal/ports/SAMA/SAMA5D2x/hal_st_lld.c \
-               $(CHIBIOS)/os/hal/ports/SAMA/SAMA5D2x/aic.c
+PLATFORMSRC := $(CHIBIOS)/os/hal/ports/SAMA/SAMA5D2x/hal_lld.c     \
+               $(CHIBIOS)/os/hal/ports/SAMA/SAMA5D2x/hal_st_lld.c  \
+               $(CHIBIOS)/os/hal/ports/SAMA/SAMA5D2x/aic.c         \
+               $(CHIBIOS)/os/hal/ports/SAMA/SAMA5D2x/sama_matrix.c \
+               $(CHIBIOS)/os/hal/ports/SAMA/SAMA5D2x/sama_cache.c
                
 # Required include directories.
 PLATFORMINC := $(CHIBIOS)/os/hal/ports/SAMA/SAMA5D2x

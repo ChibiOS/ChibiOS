@@ -18,7 +18,7 @@
  * @file    SAMA5D2x/aic.c
  * @brief   SAMA AIC support code.
  *
- * @addtogroup COMMON_SAMA5D2x_AIC
+ * @addtogroup SAMA5D2x_AIC
  * @{
  */
 
@@ -70,6 +70,16 @@
   aicp->AIC_WPMR = AIC_WPMR_WPKEY_PASSWD;                                    \
 }
 
+/**
+ * @brief   Checks if a IRQ priority is within the valid range.
+ * @param[in] prio      IRQ priority
+ *
+ * @retval              The check result.
+ * @retval FALSE        invalid IRQ priority.
+ * @retval TRUE         correct IRQ priority.
+ */
+#define SAMA_IRQ_IS_VALID_PRIORITY(prio) ((prio) <= 7U)
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -94,11 +104,6 @@ void aicInit(void) {
     aic->AIC_SSR = i;
     aic->AIC_IDCR = AIC_IDCR_INTD;
   }
-  /* Clear All pending interrupts flags */
-  for (i = 0; i < ID_PERIPH_COUNT; i++) {
-    aic->AIC_SSR = i;
-    aic->AIC_ICCR = AIC_ICCR_INTCLR;
-  }
 }
 
 /**
@@ -110,10 +115,14 @@ void aicInit(void) {
  */
 void aicSetSourcePriority(uint32_t source, uint8_t priority) {
 
+#if SAMA_HAL_IS_SECURE
   Aic *aic = SAIC;
+#else
+  Aic *aic = AIC;
+#endif
 
   osalDbgCheck(source != ID_SAIC_FIQ);
-
+  osalDbgAssert(SAMA_IRQ_IS_VALID_PRIORITY(priority), "invalid irq priority");
   /* Disable write protection */
   aicDisableWP(aic);
   /* Set source id */
@@ -136,7 +145,11 @@ void aicSetSourcePriority(uint32_t source, uint8_t priority) {
  */
 void aicSetSourceHandler(uint32_t source, bool (*handler)(void)) {
 
+#if SAMA_HAL_IS_SECURE
   Aic *aic = SAIC;
+#else
+  Aic *aic = AIC;
+#endif
 
   /* Disable write protection */
   aicDisableWP(aic);
@@ -154,7 +167,11 @@ void aicSetSourceHandler(uint32_t source, bool (*handler)(void)) {
  */
 void aicSetSpuriousHandler(bool (*handler)(void)) {
 
+#if SAMA_HAL_IS_SECURE
   Aic *aic = SAIC;
+#else
+  Aic *aic = AIC;
+#endif
 
   /* Disable write protection */
   aicDisableWP(aic);
@@ -171,7 +188,11 @@ void aicSetSpuriousHandler(bool (*handler)(void)) {
  */
 void aicEnableInt(uint32_t source) {
 
+#if SAMA_HAL_IS_SECURE
   Aic *aic = SAIC;
+#else
+  Aic *aic = AIC;
+#endif
 
   aic->AIC_SSR = AIC_SSR_INTSEL(source);
   aic->AIC_IECR = AIC_IECR_INTEN;
@@ -184,7 +205,11 @@ void aicEnableInt(uint32_t source) {
  */
 void aicDisableInt(uint32_t source) {
 
+#if SAMA_HAL_IS_SECURE
   Aic *aic = SAIC;
+#else
+  Aic *aic = AIC;
+#endif
 
   aic->AIC_SSR = AIC_SSR_INTSEL(source);
   aic->AIC_IDCR = AIC_IDCR_INTD;
@@ -197,7 +222,11 @@ void aicDisableInt(uint32_t source) {
  */
 void aicClearInt(uint32_t source) {
 
+#if SAMA_HAL_IS_SECURE
   Aic *aic = SAIC;
+#else
+  Aic *aic = AIC;
+#endif
 
   aic->AIC_SSR = AIC_SSR_INTSEL(source);
   aic->AIC_ICCR = AIC_ICCR_INTCLR;
@@ -210,7 +239,11 @@ void aicClearInt(uint32_t source) {
  */
 void aicSetInt(uint32_t source) {
 
+#if SAMA_HAL_IS_SECURE
   Aic *aic = SAIC;
+#else
+  Aic *aic = AIC;
+#endif
 
   aic->AIC_SSR = AIC_SSR_INTSEL(source);
   aic->AIC_ISCR = AIC_ISCR_INTSET;

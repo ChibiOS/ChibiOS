@@ -354,7 +354,7 @@
 
 #if SAMA_UART_USE_FLEXCOM0
 #if defined(SAMA_FLEXCOM0_IS_USED)
-#error "UARTFLEXD0 requires FLEXCOM0 but the peripheral is already used"
+#error "FUARTD0 requires FLEXCOM0 but the peripheral is already used"
 #else
 #define SAMA_FLEXCOM0_IS_USED
 #endif
@@ -362,7 +362,7 @@
 
 #if SAMA_UART_USE_FLEXCOM1
 #if defined(SAMA_FLEXCOM1_IS_USED)
-#error "UARTFLEXD1 requires FLEXCOM1 but the peripheral is already used"
+#error "FUARTD1 requires FLEXCOM1 but the peripheral is already used"
 #else
 #define SAMA_FLEXCOM1_IS_USED
 #endif
@@ -370,7 +370,7 @@
 
 #if SAMA_UART_USE_FLEXCOM2
 #if defined(SAMA_FLEXCOM2_IS_USED)
-#error "UARTFLEXD2 requires FLEXCOM2 but the peripheral is already used"
+#error "FUARTD2 requires FLEXCOM2 but the peripheral is already used"
 #else
 #define SAMA_FLEXCOM2_IS_USED
 #endif
@@ -378,7 +378,7 @@
 
 #if SAMA_UART_USE_FLEXCOM3
 #if defined(SAMA_FLEXCOM3_IS_USED)
-#error "UARTFLEXD3 requires FLEXCOM3 but the peripheral is already used"
+#error "FUARTD3 requires FLEXCOM3 but the peripheral is already used"
 #else
 #define SAMA_FLEXCOM3_IS_USED
 #endif
@@ -386,7 +386,7 @@
 
 #if SAMA_UART_USE_FLEXCOM4
 #if defined(SAMA_FLEXCOM4_IS_USED)
-#error "UARTFLEXD4 requires FLEXCOM4 but the peripheral is already used"
+#error "FUARTD4 requires FLEXCOM4 but the peripheral is already used"
 #else
 #define SAMA_FLEXCOM4_IS_USED
 #endif
@@ -596,23 +596,23 @@ extern UARTDriver UARTD4;
 #endif
 
 #if SAMA_UART_USE_FLEXCOM0 && !defined(__DOXYGEN__)
-extern UARTDriver UARTFLEXD0;
+extern UARTDriver FUARTD0;
 #endif
 
 #if SAMA_UART_USE_FLEXCOM1 && !defined(__DOXYGEN__)
-extern UARTDriver UARTFLEXD1;
+extern UARTDriver FUARTD1;
 #endif
 
 #if SAMA_UART_USE_FLEXCOM2 && !defined(__DOXYGEN__)
-extern UARTDriver UARTFLEXD2;
+extern UARTDriver FUARTD2;
 #endif
 
 #if SAMA_UART_USE_FLEXCOM3 && !defined(__DOXYGEN__)
-extern UARTDriver UARTFLEXD3;
+extern UARTDriver FUARTD3;
 #endif
 
 #if SAMA_UART_USE_FLEXCOM4 && !defined(__DOXYGEN__)
-extern UARTDriver UARTFLEXD4;
+extern UARTDriver FUARTD4;
 #endif
 
 #ifdef __cplusplus
