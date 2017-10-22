@@ -163,7 +163,7 @@ cryerror_t cryLoadTransientKey(CRYDriver *cryp,
  *                      transient key, other values are keys stored in an
  *                      unspecified way
  * @param[in] size      size of the plaintext buffer, this number must be a
- *                      multiple of the selected key size
+ *                      multiple of 16
  * @param[in] in        buffer containing the input plaintext
  * @param[out] out      buffer for the output cyphertext
  * @return              The operation status.
@@ -182,7 +182,10 @@ cryerror_t cryEncryptAES_ECB(CRYDriver *cryp,
                              const uint8_t *in,
                              uint8_t *out) {
 
-  osalDbgCheck((in != NULL) && (out != NULL));
+  osalDbgCheck((in != NULL) && (out != NULL) &&
+               ((size & (size_t)15) == (size_t)0));
+
+  osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
   return cry_lld_encrypt_AES_ECB(cryp, key_id, size, in, out);
 }
@@ -195,7 +198,7 @@ cryerror_t cryEncryptAES_ECB(CRYDriver *cryp,
  *                      transient key, other values are keys stored in an
  *                      unspecified way
  * @param[in] size      size of the plaintext buffer, this number must be a
- *                      multiple of the selected key size
+ *                      multiple of 16
  * @param[in] in        buffer containing the input plaintext
  * @param[out] out      buffer for the output cyphertext
  * @return              The operation status.
@@ -214,7 +217,9 @@ cryerror_t cryDecryptAES_ECB(CRYDriver *cryp,
                              const uint8_t *in,
                              uint8_t *out) {
 
-  osalDbgCheck((in != NULL) && (out != NULL));
+  osalDbgCheck((in != NULL) && (out != NULL) &&
+               ((size & (size_t)15) == (size_t)0));
+
   osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
   return cry_lld_decrypt_AES_ECB(cryp, key_id, size, in, out);
@@ -230,7 +235,7 @@ cryerror_t cryDecryptAES_ECB(CRYDriver *cryp,
  *                      transient key, other values are keys stored in an
  *                      unspecified way
  * @param[in] size      size of the plaintext buffer, this number must be a
- *                      multiple of the selected key size
+ *                      multiple of 16
  * @param[in] in        buffer containing the input plaintext
  * @param[out] out      buffer for the output cyphertext
  * @param[in] iv        input vector
@@ -251,7 +256,9 @@ cryerror_t cryEncryptAES_CBC(CRYDriver *cryp,
                              uint8_t *out,
                              const uint8_t *iv) {
 
-  osalDbgCheck((in != NULL) && (out != NULL) && (iv != NULL));
+  osalDbgCheck((in != NULL) && (out != NULL) && (iv != NULL) &&
+               ((size & (size_t)15) == (size_t)0));
+
   osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
   return cry_lld_encrypt_AES_CBC(cryp, key_id, size, in, out, iv);
@@ -265,7 +272,7 @@ cryerror_t cryEncryptAES_CBC(CRYDriver *cryp,
  *                      transient key, other values are keys stored in an
  *                      unspecified way
  * @param[in] size      size of the plaintext buffer, this number must be a
- *                      multiple of the selected key size
+ *                      multiple of 16
  * @param[in] in        buffer containing the input plaintext
  * @param[out] out      buffer for the output cyphertext
  * @param[in] iv        input vector
@@ -286,7 +293,9 @@ cryerror_t cryDecryptAES_CBC(CRYDriver *cryp,
                              uint8_t *out,
                              const uint8_t *iv) {
 
-  osalDbgCheck((in != NULL) && (out != NULL) && (iv != NULL));
+  osalDbgCheck((in != NULL) && (out != NULL) && (iv != NULL) &&
+               ((size & (size_t)15) == (size_t)0));
+
   osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
   return cry_lld_decrypt_AES_CBC(cryp, key_id, size, in, out, iv);
@@ -302,7 +311,7 @@ cryerror_t cryDecryptAES_CBC(CRYDriver *cryp,
  *                      transient key, other values are keys stored in an
  *                      unspecified way
  * @param[in] size      size of the plaintext buffer, this number must be a
- *                      multiple of the selected key size
+ *                      multiple of 16
  * @param[in] in        buffer containing the input plaintext
  * @param[out] out      buffer for the output cyphertext
  * @param[in] iv        input vector
@@ -323,7 +332,9 @@ cryerror_t cryEncryptAES_CFB(CRYDriver *cryp,
                              uint8_t *out,
                              const uint8_t *iv) {
 
-  osalDbgCheck((in != NULL) && (out != NULL) && (iv != NULL));
+  osalDbgCheck((in != NULL) && (out != NULL) && (iv != NULL) &&
+               ((size & (size_t)15) == (size_t)0));
+
   osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
   return cry_lld_encrypt_AES_CBC(cryp, key_id, size, in, out, iv);
@@ -337,7 +348,7 @@ cryerror_t cryEncryptAES_CFB(CRYDriver *cryp,
  *                      transient key, other values are keys stored in an
  *                      unspecified way
  * @param[in] size      size of the plaintext buffer, this number must be a
- *                      multiple of the selected key size
+ *                      multiple of 16
  * @param[in] in        buffer containing the input plaintext
  * @param[out] out      buffer for the output cyphertext
  * @param[in] iv        input vector
@@ -358,7 +369,9 @@ cryerror_t cryDecryptAES_CFB(CRYDriver *cryp,
                              uint8_t *out,
                              const uint8_t *iv) {
 
-  osalDbgCheck((in != NULL) && (out != NULL) && (iv != NULL));
+  osalDbgCheck((in != NULL) && (out != NULL) && (iv != NULL) &&
+               ((size & (size_t)15) == (size_t)0));
+
   osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
   return cry_lld_decrypt_AES_CBC(cryp, key_id, size, in, out, iv);
@@ -374,7 +387,7 @@ cryerror_t cryDecryptAES_CFB(CRYDriver *cryp,
  *                      transient key, other values are keys stored in an
  *                      unspecified way
  * @param[in] size      size of the plaintext buffer, this number must be a
- *                      multiple of the selected key size
+ *                      multiple of 16
  * @param[in] in        buffer containing the input plaintext
  * @param[out] out      buffer for the output cyphertext
  * @param[in] nonce     the "nonce" constant
@@ -398,7 +411,9 @@ cryerror_t cryEncryptAES_CTR(CRYDriver *cryp,
                              uint8_t *cnt) {
 
   osalDbgCheck((in != NULL) && (out != NULL) &&
-               (nonce != NULL) && (cnt != NULL));
+               (nonce != NULL) && (cnt != NULL) &&
+               ((size & (size_t)15) == (size_t)0));
+
   osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
   return cry_lld_encrypt_AES_CTR(cryp, key_id, size, in, out, nonce, cnt);
@@ -412,7 +427,7 @@ cryerror_t cryEncryptAES_CTR(CRYDriver *cryp,
  *                      transient key, other values are keys stored in an
  *                      unspecified way
  * @param[in] size      size of the plaintext buffer, this number must be a
- *                      multiple of the selected key size
+ *                      multiple of 16
  * @param[in] in        buffer containing the input plaintext
  * @param[out] out      buffer for the output cyphertext
  * @param[in] nonce     the "nonce" constant
@@ -436,7 +451,9 @@ cryerror_t cryDecryptAES_CTR(CRYDriver *cryp,
                              uint8_t *cnt) {
 
   osalDbgCheck((in != NULL) && (out != NULL) &&
-               (nonce != NULL) && (cnt != NULL));
+               (nonce != NULL) && (cnt != NULL) &&
+               ((size & (size_t)15) == (size_t)0));
+
   osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
   return cry_lld_decrypt_AES_CTR(cryp, key_id, size, in, out, nonce, cnt);
