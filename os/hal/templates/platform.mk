@@ -1,6 +1,12 @@
 # List of all the template platform files.
 ifeq ($(USE_SMART_BUILD),yes)
-HALCONF := $(strip $(shell cat halconf.h | egrep -e "\#define"))
+
+# Configuration files directory
+ifeq ($(CONFDIR),)
+  CONFDIR = .
+endif
+
+HALCONF := $(strip $(shell cat $(CONFDIR)/halconf.h | egrep -e "\#define"))
 
 PLATFORMSRC := ${CHIBIOS}/os/hal/templates/hal_lld.c \
                ${CHIBIOS}/os/hal/templates/hal_st_lld.c
@@ -9,6 +15,9 @@ PLATFORMSRC += ${CHIBIOS}/os/hal/templates/hal_adc_lld.c
 endif
 ifneq ($(findstring HAL_USE_CAN TRUE,$(HALCONF)),)
 PLATFORMSRC += ${CHIBIOS}/os/hal/templates/hal_can_lld.c
+endif
+ifneq ($(findstring HAL_USE_CRY TRUE,$(HALCONF)),)
+PLATFORMSRC += ${CHIBIOS}/os/hal/templates/hal_cry_lld.c
 endif
 ifneq ($(findstring HAL_USE_DAC TRUE,$(HALCONF)),)
 PLATFORMSRC += ${CHIBIOS}/os/hal/templates/hal_dac_lld.c

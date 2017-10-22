@@ -16,9 +16,9 @@
 
 /**
  * @file    hal_cry_lld.h
- * @brief   PLATFORM CRY subsystem low level driver header.
+ * @brief   PLATFORM cryptographic subsystem low level driver header.
  *
- * @addtogroup CRY
+ * @addtogroup CRYPTO
  * @{
  */
 
@@ -30,6 +30,16 @@
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
+
+/**
+ * @name    Driver capability switches
+ * @{
+ */
+#define CRY_LLD_SUPPORTS_AES_ECB            TRUE
+#define CRY_LLD_SUPPORTS_AES_CBC            TRUE
+#define CRY_LLD_SUPPORTS_AES_CFB            TRUE
+#define CRY_LLD_SUPPORTS_AES_CTR            TRUE
+/** @{ */
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -97,23 +107,21 @@ typedef struct {
  */
 struct CRYDriver {
   /**
-   * @brief Driver state.
+   * @brief   Driver state.
    */
   crystate_t                state;
   /**
-   * @brief Current configuration data.
+   * @brief   Current configuration data.
    */
   const CRYConfig           *config;
   /**
-   * @brief Waiting thread.
+   * @brief   Algorithm type of transient key.
    */
-  thread_reference_t        thread;
-#if (CRY_USE_MUTUAL_EXCLUSION == TRUE) || defined(__DOXYGEN__)
+  cryalgorithm_t            key0_type;
   /**
-   * @brief Mutex protecting the peripheral.
+   * @brief   Size of transient key.
    */
-  mutex_t                   mutex;
-#endif
+  size_t                    key0_size;
 #if defined(CRY_DRIVER_EXT_FIELDS)
   CRY_DRIVER_EXT_FIELDS
 #endif
@@ -138,6 +146,58 @@ extern "C" {
   void cry_lld_init(void);
   void cry_lld_start(CRYDriver *cryp);
   void cry_lld_stop(CRYDriver *cryp);
+  cryerror_t cry_lld_loadkey(CRYDriver *cryp,
+                             cryalgorithm_t algorithm,
+                             size_t size,
+                             const uint8_t *keyp);
+  cryerror_t cry_lld_encrypt_AES_ECB(CRYDriver *cryp,
+                                     crykey_t key_id,
+                                     size_t size,
+                                     const uint8_t *in,
+                                     uint8_t *out);
+  cryerror_t cry_lld_decrypt_AES_ECB(CRYDriver *cryp,
+                                     crykey_t key_id,
+                                     size_t size,
+                                     const uint8_t *in,
+                                     uint8_t *out);
+  cryerror_t cry_lld_encrypt_AES_CBC(CRYDriver *cryp,
+                                     crykey_t key_id,
+                                     size_t size,
+                                     const uint8_t *in,
+                                     uint8_t *out,
+                                     const uint8_t *iv);
+  cryerror_t cry_lld_decrypt_AES_CBC(CRYDriver *cryp,
+                                     crykey_t key_id,
+                                     size_t size,
+                                     const uint8_t *in,
+                                     uint8_t *out,
+                                     const uint8_t *iv);
+  cryerror_t cry_lld_encrypt_AES_CFB(CRYDriver *cryp,
+                                     crykey_t key_id,
+                                     size_t size,
+                                     const uint8_t *in,
+                                     uint8_t *out,
+                                     const uint8_t *iv);
+  cryerror_t cry_lld_decrypt_AES_CFB(CRYDriver *cryp,
+                                     crykey_t key_id,
+                                     size_t size,
+                                     const uint8_t *in,
+                                     uint8_t *out,
+                                     const uint8_t *iv);
+  cryerror_t cry_lld_encrypt_AES_CTR(CRYDriver *cryp,
+                                     crykey_t key_id,
+                                     size_t size,
+                                     const uint8_t *in,
+                                     uint8_t *out,
+                                     const uint8_t *nonce,
+                                     uint8_t *cnt);
+  cryerror_t cry_lld_decrypt_AES_CTR(CRYDriver *cryp,
+                                     crykey_t key_id,
+                                     size_t size,
+                                     const uint8_t *in,
+                                     uint8_t *out,
+                                     const uint8_t *nonce,
+                                     uint8_t *cnt);
 #ifdef __cplusplus
 }
 #endif
