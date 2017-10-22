@@ -52,6 +52,13 @@
 #endif
 
 /**
+ * @brief   Enables the cryptographic subsystem.
+ */
+#if !defined(HAL_USE_CRY) || defined(__DOXYGEN__)
+#define HAL_USE_CRY                 FALSE
+#endif
+
+/**
  * @brief   Enables the DAC subsystem.
  */
 #if !defined(HAL_USE_DAC) || defined(__DOXYGEN__)
@@ -206,6 +213,28 @@
  */
 #if !defined(CAN_USE_SLEEP_MODE) || defined(__DOXYGEN__)
 #define CAN_USE_SLEEP_MODE          TRUE
+#endif
+
+/*===========================================================================*/
+/* CRY driver related settings.                                              */
+/*===========================================================================*/
+
+/**
+ * @brief   Enables the SW fall-back of the cryptographic driver.
+ * @details When enabled, this option, activates a fall-back software
+ *          implementation for algorithms not supported by the underlying
+ *          hardware.
+ * @note    Fall-back implementations may not be present for all algorithms.
+ */
+#if !defined(HAL_CRY_USE_FALLBACK) || defined(__DOXYGEN__)
+#define HAL_CRY_USE_FALLBACK                FALSE
+#endif
+
+/**
+ * @brief   Makes the driver forcibly use the fall-back implementations.
+ */
+#if !defined(HAL_CRY_ENFORCE_FALLBACK) || defined(__DOXYGEN__)
+#define HAL_CRY_ENFORCE_FALLBACK            FALSE
 #endif
 
 /*===========================================================================*/
