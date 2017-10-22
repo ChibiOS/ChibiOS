@@ -35,27 +35,6 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
-/**
- * @name    CRYPTO configuration options
- * @{
- */
-/**
- * @brief   Enables asynchronous APIs.
- * @note    Disabling this option saves both code and data space.
- */
-#if !defined(CRY_USE_CALLBACKS) || defined(__DOXYGEN__)
-#define CRY_USE_CALLBACKS                   TRUE
-#endif
-
-/**
- * @brief   Enables the @p cryAcquireBus() and @p cryReleaseBus() APIs.
- * @note    Disabling this option saves both code and data space.
- */
-#if !defined(CRY_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
-#define CRY_USE_MUTUAL_EXCLUSION            TRUE
-#endif
-/** @} */
-
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -70,8 +49,7 @@
 typedef enum {
   CRY_UNINIT = 0,                           /**< Not initialized.           */
   CRY_STOP = 1,                             /**< Stopped.                   */
-  CRY_READY = 2,                            /**< Ready.                     */
-  CRY_ACTIVE = 3                            /**< Operation running.         */
+  CRY_READY = 2                             /**< Ready.                     */
 } crystate_t;
 
 /**
@@ -85,6 +63,17 @@ typedef enum {
   CRY_ERR_INV_KEY_ID = 4                    /**< Invalid key type.          */
 } cryerror_t;
 
+/**
+ * @brief   Type of an algorithm identifier.
+ * @note    It is only used to determine the key required for operations.
+ */
+typedef enum {
+  cry_algo_none = 0,
+  cry_algo_aes,
+  cry_algo_des,
+  cry_algo_tripledes
+} cryalgorithm_t;
+
 #include "hal_crypto_lld.h"
 
 #if !defined(CRY_LLD_SUPPORTS_AES_ECB) ||                                   \
@@ -93,24 +82,6 @@ typedef enum {
     !defined(CRY_LLD_SUPPORTS_AES_CTR)
 #error "CRYPTO LLD does not export required switches"
 #endif
-
-/**
- * @brief   Type of an algorithm identifier.
- */
-typedef enum {
-#if (CRY_LLD_SUPPORTS_AES_ECB == TRUE) || defined(__DOXYGEN__)
-  cry_algo_aes_ecb,
-#endif
-#if (CRY_LLD_SUPPORTS_AES_CBC == TRUE) || defined(__DOXYGEN__)
-  cry_algo_aes_cbc,
-#endif
-#if (CRY_LLD_SUPPORTS_AES_CFB == TRUE) || defined(__DOXYGEN__)
-  cry_algo_aes_cfb,
-#endif
-#if (CRY_LLD_SUPPORTS_AES_CTR == TRUE) || defined(__DOXYGEN__)
-  cry_algo_aes_ctr,
-#endif
-} cryalgorithm_t;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -133,29 +104,34 @@ extern "C" {
   void cryObjectInit(CRYDriver *cryp);
   void cryStart(CRYDriver *cryp, const CRYConfig *config);
   void cryStop(CRYDriver *cryp);
+
   cryerror_t cryLoadTransientKey(CRYDriver *cryp,
                                  cryalgorithm_t algorithm,
                                  size_t size,
                                  const uint8_t *keyp);
 
 #if CRY_LLD_SUPPORTS_AES_ECB == TRUE
-  cryerror_t cryEncryptAES_ECB(crykey_t key_id,
+  cryerror_t cryEncryptAES_ECB(CRYDriver *cryp,
+                               crykey_t key_id,
                                size_t size,
                                const uint8_t *in,
                                uint8_t *out);
-  cryerror_t cryDecryptAES_ECB(crykey_t key_id,
+  cryerror_t cryDecryptAES_ECB(CRYDriver *cryp,
+                               crykey_t key_id,
                                size_t size,
                                const uint8_t *in,
                                uint8_t *out);
 #endif /* CRY_LLD_SUPPORTS_AES_ECB == TRUE */
 
 #if CRY_LLD_SUPPORTS_AES_CBC == TRUE
-  cryerror_t cryEncryptAES_CBC(crykey_t key_id,
+  cryerror_t cryEncryptAES_CBC(CRYDriver *cryp,
+                               crykey_t key_id,
                                size_t size,
                                const uint8_t *in,
                                uint8_t *out,
                                const uint8_t *iv);
-  cryerror_t cryDecryptAES_CBC(crykey_t key_id,
+  cryerror_t cryDecryptAES_CBC(CRYDriver *cryp,
+                               crykey_t key_id,
                                size_t size,
                                const uint8_t *in,
                                uint8_t *out,
@@ -163,12 +139,14 @@ extern "C" {
 #endif /* CRY_LLD_SUPPORTS_AES_CBC == TRUE */
 
 #if CRY_LLD_SUPPORTS_AES_CFB == TRUE
-  cryerror_t cryEncryptAES_CFB(crykey_t key_id,
+  cryerror_t cryEncryptAES_CFB(CRYDriver *cryp,
+                               crykey_t key_id,
                                size_t size,
                                const uint8_t *in,
                                uint8_t *out,
                                const uint8_t *iv);
-  cryerror_t cryDecryptAES_CFB(crykey_t key_id,
+  cryerror_t cryDecryptAES_CFB(CRYDriver *cryp,
+                               crykey_t key_id,
                                size_t size,
                                const uint8_t *in,
                                uint8_t *out,
@@ -176,24 +154,21 @@ extern "C" {
 #endif /* CRY_LLD_SUPPORTS_AES_CFB == TRUE */
 
 #if CRY_LLD_SUPPORTS_AES_CTR == TRUE
-  cryerror_t cryEncryptAES_CTR(crykey_t key_id,
+  cryerror_t cryEncryptAES_CTR(CRYDriver *cryp,
+                               crykey_t key_id,
                                size_t size,
                                const uint8_t *in,
                                uint8_t *out,
                                const uint8_t *nonce,
                                uint8_t *cnt);
-  cryerror_t cryDecryptAES_CTR(crykey_t key_id,
+  cryerror_t cryDecryptAES_CTR(CRYDriver *cryp,
+                               crykey_t key_id,
                                size_t size,
                                const uint8_t *in,
                                uint8_t *out,
                                const uint8_t *nonce,
                                uint8_t *cnt);
 #endif /* CRY_LLD_SUPPORTS_AES_CTR == TRUE */
-
-#if ADC_USE_MUTUAL_EXCLUSION == TRUE
-  void cryAcquireBus(CRYDriver *cryp);
-  void cryReleaseBus(CRYDriver *cryp);
-#endif
 #ifdef __cplusplus
 }
 #endif

@@ -34,8 +34,8 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
-/** @brief CRYP1 driver identifier.*/
-#if STM32_CRY_USE_CRYP1 || defined(__DOXYGEN__)
+/** @brief CRY1 driver identifier.*/
+#if PLATFORM_CRY_USE_CRY1 || defined(__DOXYGEN__)
 CRYDriver CRYD1;
 #endif
 
@@ -92,6 +92,31 @@ void cry_lld_stop(CRYDriver *cryp) {
   }
 }
 
+/**
+ * @brief   Initializes the transient key for a specific algorithm.
+ *
+ * @param[in] cryp      pointer to the @p CRYDriver object
+ * @param[in] keyp      pointer to the key data
+ * @return              The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the specified algorithm is unknown or
+ *                              unsupported.
+ * @retval CRY_ERR_INV_KEY_SIZE if the specified key size is invalid.
+ *
+ * @notapi
+ */
+cryerror_t cry_lld_loadkey(CRYDriver *cryp,
+                           cryalgorithm_t algorithm,
+                           size_t size,
+                           const uint8_t *keyp) {
+
+  (void)cryp;
+  (void)algorithm;
+  (void)size;
+  (void)keyp;
+
+  return CRY_NOERROR;
+}
 #endif /* HAL_USE_CRY */
 
 /** @} */
