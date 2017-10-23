@@ -78,7 +78,7 @@ void test_cpu_pulse(unsigned duration) {
     _sim_check_for_interrupts();
 #endif
   }
-  while (chVTIsTimeWithinX(now, start, end));
+  while (chTimeIsInRangeX(now, start, end));
 }
 #endif /* CH_DBG_THREADS_PROFILING */
 
