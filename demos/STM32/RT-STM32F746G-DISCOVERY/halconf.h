@@ -55,7 +55,7 @@
  * @brief   Enables the cryptographic subsystem.
  */
 #if !defined(HAL_USE_CRY) || defined(__DOXYGEN__)
-#define HAL_USE_CRY                 TRUE
+#define HAL_USE_CRY                 FALSE
 #endif
 
 /**
@@ -227,7 +227,7 @@
  * @note    Fall-back implementations may not be present for all algorithms.
  */
 #if !defined(HAL_CRY_USE_FALLBACK) || defined(__DOXYGEN__)
-#define HAL_CRY_USE_FALLBACK                TRUE
+#define HAL_CRY_USE_FALLBACK                FALSE
 #endif
 
 /**

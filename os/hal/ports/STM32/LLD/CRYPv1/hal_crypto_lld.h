@@ -39,6 +39,7 @@
 #define CRY_LLD_SUPPORTS_AES_CBC            TRUE
 #define CRY_LLD_SUPPORTS_AES_CFB            FALSE
 #define CRY_LLD_SUPPORTS_AES_CTR            TRUE
+#define CRY_LLD_SUPPORTS_AES_GCM            TRUE
 /** @{ */
 
 /*===========================================================================*/
@@ -178,15 +179,31 @@ extern "C" {
                                      size_t size,
                                      const uint8_t *in,
                                      uint8_t *out,
-                                     const uint8_t *nonce,
-                                     uint8_t *cnt);
+                                     const uint8_t *iv);
   cryerror_t cry_lld_decrypt_AES_CTR(CRYDriver *cryp,
                                      crykey_t key_id,
                                      size_t size,
                                      const uint8_t *in,
                                      uint8_t *out,
-                                     const uint8_t *nonce,
-                                     uint8_t *cnt);
+                                     const uint8_t *iv);
+  cryerror_t cry_lld_encrypt_AES_GCM(CRYDriver *cryp,
+                                     crykey_t key_id,
+                                     size_t size,
+                                     const uint8_t *in,
+                                     uint8_t *out,
+                                     const uint8_t *iv,
+                                     size_t aadsize,
+                                     const uint8_t *aad,
+                                     uint8_t *authtag);
+  cryerror_t cry_lld_decrypt_AES_GCM(CRYDriver *cryp,
+                                     crykey_t key_id,
+                                     size_t size,
+                                     const uint8_t *in,
+                                     uint8_t *out,
+                                     const uint8_t *iv,
+                                     size_t aadsize,
+                                     const uint8_t *aad,
+                                     uint8_t *authtag);
 #ifdef __cplusplus
 }
 #endif

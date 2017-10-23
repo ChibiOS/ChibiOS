@@ -95,8 +95,7 @@ typedef enum {
   CRY_ERR_INV_ALGO = 1,                     /**< Invalid cypher/mode.       */
   CRY_ERR_INV_KEY_SIZE = 2,                 /**< Invalid key size.          */
   CRY_ERR_INV_KEY_TYPE = 3,                 /**< Invalid key type.          */
-  CRY_ERR_INV_KEY_ID = 4,                   /**< Invalid key type.          */
-  CRY_ERR_AUTH_FAILED = 5                   /**< Authentication failed.     */
+  CRY_ERR_INV_KEY_ID = 4                    /**< Invalid key type.          */
 } cryerror_t;
 
 /**
@@ -120,6 +119,7 @@ typedef enum {
 #define CRY_LLD_SUPPORTS_AES_CBC            FALSE
 #define CRY_LLD_SUPPORTS_AES_CFB            FALSE
 #define CRY_LLD_SUPPORTS_AES_CTR            FALSE
+#define CRY_LLD_SUPPORTS_AES_GCM            FALSE
 
 typedef uint_fast8_t crykey_t;
 
@@ -141,8 +141,9 @@ struct CRYDriver {
 #if !defined(CRY_LLD_SUPPORTS_AES_ECB) ||                                   \
     !defined(CRY_LLD_SUPPORTS_AES_CBC) ||                                   \
     !defined(CRY_LLD_SUPPORTS_AES_CFB) ||                                   \
-    !defined(CRY_LLD_SUPPORTS_AES_CTR)
-#error "CRYPTO LLD does not export required switches"
+    !defined(CRY_LLD_SUPPORTS_AES_CTR) ||                                   \
+    !defined(CRY_LLD_SUPPORTS_AES_GCM)
+#error "CRYPTO LLD does not export the required switches"
 #endif
 
 /*===========================================================================*/
@@ -209,33 +210,31 @@ extern "C" {
                                size_t size,
                                const uint8_t *in,
                                uint8_t *out,
-                               const uint8_t *nonce,
-                               uint8_t *cnt);
+                               const uint8_t *iv);
   cryerror_t cryDecryptAES_CTR(CRYDriver *cryp,
                                crykey_t key_id,
                                size_t size,
                                const uint8_t *in,
                                uint8_t *out,
-                               const uint8_t *nonce,
-                               uint8_t *cnt);
+                               const uint8_t *iv);
   cryerror_t cryEncryptAES_GCM(CRYDriver *cryp,
                                crykey_t key_id,
-                               bitsize_t size,
+                               size_t size,
                                const uint8_t *in,
                                uint8_t *out,
-                               bitsize_t ivsize,
                                const uint8_t *iv,
-                               bitsize_t authsize,
-                               uint8_t *authout);
+                               size_t aadsize,
+                               const uint8_t *aad,
+                               uint8_t *authtag);
   cryerror_t cryDecryptAES_GCM(CRYDriver *cryp,
                                crykey_t key_id,
-                               bitsize_t size,
+                               size_t size,
                                const uint8_t *in,
                                uint8_t *out,
-                               bitsize_t ivsize,
                                const uint8_t *iv,
-                               bitsize_t authsize,
-                               const uint8_t *authin);
+                               size_t aadsize,
+                               const uint8_t *aad,
+                               uint8_t *authtag);
 #ifdef __cplusplus
 }
 #endif
