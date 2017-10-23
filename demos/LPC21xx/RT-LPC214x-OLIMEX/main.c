@@ -17,6 +17,7 @@
 #include "ch.h"
 #include "hal.h"
 #include "rt_test_root.h"
+#include "oslib_test_root.h"
 
 #define BOTH_BUTTONS (PAL_PORT_BIT(PA_BUTTON1) | PAL_PORT_BIT(PA_BUTTON2))
 
@@ -89,8 +90,10 @@ int main(void) {
   while (true) {
     if (!palReadPad(IOPORT1, PA_BUTTON1))
       sdWrite(&SD1, (uint8_t *)"Hello World!\r\n", 14);
-    if (!palReadPad(IOPORT1, PA_BUTTON2))
+    if (!palReadPad(IOPORT1, PA_BUTTON2)) {
       test_execute((BaseSequentialStream *)&SD1, &rt_test_suite);
+      test_execute((BaseSequentialStream *)&SD1, &oslib_test_suite);
+    }
     chThdSleepMilliseconds(500);
   }
   return 0;

@@ -17,6 +17,7 @@
 #include "ch.h"
 #include "hal.h"
 #include "rt_test_root.h"
+#include "oslib_test_root.h"
 
 #include "lwipthread.h"
 
@@ -75,8 +76,10 @@ int main(void) {
    * sleeping in a loop and check the button state.
    */
   while (true) {
-    if (palReadPad(GPIOC, GPIOC_SWITCH_TAMPER) == 0)
+    if (palReadPad(GPIOC, GPIOC_SWITCH_TAMPER) == 0) {
       test_execute((BaseSequentialStream *)&SD3, &rt_test_suite);
+      test_execute((BaseSequentialStream *)&SD3, &oslib_test_suite);
+    }
     chThdSleepMilliseconds(500);
   }
 }

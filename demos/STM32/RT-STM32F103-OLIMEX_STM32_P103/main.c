@@ -17,6 +17,7 @@
 #include "ch.h"
 #include "hal.h"
 #include "rt_test_root.h"
+#include "oslib_test_root.h"
 
 /*
  * Blinker thread.
@@ -67,8 +68,10 @@ int main(void) {
    * pressed the test procedure is launched.
    */
   while (true) {
-    if (palReadPad(GPIOA, GPIOA_BUTTON))
+    if (palReadPad(GPIOA, GPIOA_BUTTON)) {
       test_execute((BaseSequentialStream *)&SD2, &rt_test_suite);
+      test_execute((BaseSequentialStream *)&SD2, &oslib_test_suite);
+    }
     chThdSleepMilliseconds(500);
   }
 }

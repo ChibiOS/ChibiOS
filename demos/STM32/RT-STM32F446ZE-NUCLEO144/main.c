@@ -17,6 +17,7 @@
 #include "ch.h"
 #include "hal.h"
 #include "rt_test_root.h"
+#include "oslib_test_root.h"
 
 /*
  * This is a periodic thread that does absolutely nothing except flashing
@@ -73,8 +74,10 @@ int main(void) {
    * sleeping in a loop and check the button state.
    */
   while (true) {
-    if (palReadLine(LINE_BUTTON))
+    if (palReadLine(LINE_BUTTON)) {
       test_execute((BaseSequentialStream *)&SD3, &rt_test_suite);
+      test_execute((BaseSequentialStream *)&SD3, &oslib_test_suite);
+    }
     chThdSleepMilliseconds(500);
   }
 }

@@ -17,6 +17,7 @@
 #include "ch.h"
 #include "hal.h"
 #include "rt_test_root.h"
+#include "oslib_test_root.h"
 
 /*
  * Green LED blinker thread, times are in milliseconds.
@@ -64,8 +65,10 @@ int main(void) {
    * sleeping in a loop and check the button state.
    */
   while (true) {
-    if (palReadLine(LINE_BUTTON))
+    if (palReadLine(LINE_BUTTON)) {
       test_execute((BaseSequentialStream *)&SD1, &rt_test_suite);
+      test_execute((BaseSequentialStream *)&SD1, &oslib_test_suite);
+    }
     chThdSleepMilliseconds(500);
   }
 }
