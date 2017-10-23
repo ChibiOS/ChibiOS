@@ -22,8 +22,6 @@
  * @{
  */
 
-#include <string.h>
-
 #include "hal.h"
 
 #if (HAL_USE_CRY == TRUE) || defined(__DOXYGEN__)

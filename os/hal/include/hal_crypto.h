@@ -72,6 +72,13 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Size, in bits, of a crypto field or message.
+ * @note    It is assumed, for simplicity, that this type is equivalent to
+ *          a @p size_t.
+ */
+typedef size_t bitsize_t;
+
+/**
  * @brief   Driver state machine possible states.
  */
 typedef enum {
@@ -88,7 +95,8 @@ typedef enum {
   CRY_ERR_INV_ALGO = 1,                     /**< Invalid cypher/mode.       */
   CRY_ERR_INV_KEY_SIZE = 2,                 /**< Invalid key size.          */
   CRY_ERR_INV_KEY_TYPE = 3,                 /**< Invalid key type.          */
-  CRY_ERR_INV_KEY_ID = 4                    /**< Invalid key type.          */
+  CRY_ERR_INV_KEY_ID = 4,                   /**< Invalid key type.          */
+  CRY_ERR_AUTH_FAILED = 5                   /**< Authentication failed.     */
 } cryerror_t;
 
 /**
@@ -210,6 +218,24 @@ extern "C" {
                                uint8_t *out,
                                const uint8_t *nonce,
                                uint8_t *cnt);
+  cryerror_t cryEncryptAES_GCM(CRYDriver *cryp,
+                               crykey_t key_id,
+                               bitsize_t size,
+                               const uint8_t *in,
+                               uint8_t *out,
+                               bitsize_t ivsize,
+                               const uint8_t *iv,
+                               bitsize_t authsize,
+                               uint8_t *authout);
+  cryerror_t cryDecryptAES_GCM(CRYDriver *cryp,
+                               crykey_t key_id,
+                               bitsize_t size,
+                               const uint8_t *in,
+                               uint8_t *out,
+                               bitsize_t ivsize,
+                               const uint8_t *iv,
+                               bitsize_t authsize,
+                               const uint8_t *authin);
 #ifdef __cplusplus
 }
 #endif
