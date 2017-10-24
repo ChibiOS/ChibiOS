@@ -47,7 +47,7 @@ const testsequence_t * const nasa_osal_test_suite_array[] = {
  * @brief   Test suite root structure.
  */
 const testsuite_t nasa_osal_test_suite = {
-  "Test specification for the NASA OSAL ChibiOS extension.",
+  "NASA OSAL Test Suite",
   nasa_osal_test_suite_array
 };
 

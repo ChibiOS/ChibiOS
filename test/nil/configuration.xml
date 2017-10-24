@@ -9,6 +9,9 @@
       <instance locked="false" id="org.chibios.spc5.components.portable.generic_startup" />
       <instance locked="false" id="org.chibios.spc5.components.portable.chibios_unitary_tests_engine">
         <description>
+          <brief>
+            <value>ChibiOS/NIL Test Suite.</value>
+          </brief>
           <copyright>
             <value><![CDATA[/*
     ChibiOS - Copyright (C) 2006..2017 Giovanni Di Sirio
@@ -100,9 +103,6 @@ THD_FUNCTION(test_support, arg) {
 }]]></value>
           </global_code>
         </global_data_and_code>
-          <code_prefix>
-            <value>nil_</value>
-          </code_prefix>
         <sequences>
           <sequence>
             <type index="0">

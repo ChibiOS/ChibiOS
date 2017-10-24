@@ -27,6 +27,7 @@
 #include "oslib_test_sequence_001.h"
 #include "oslib_test_sequence_002.h"
 #include "oslib_test_sequence_003.h"
+#include "oslib_test_sequence_004.h"
 
 #if !defined(__DOXYGEN__)
 

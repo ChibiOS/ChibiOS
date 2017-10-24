@@ -24,6 +24,7 @@
  * - @subpage oslib_test_sequence_001
  * - @subpage oslib_test_sequence_002
  * - @subpage oslib_test_sequence_003
+ * - @subpage oslib_test_sequence_004
  * .
  */
 
@@ -54,6 +55,9 @@ const testsequence_t * const oslib_test_suite_array[] = {
 #if (CH_CFG_USE_HEAP) || defined(__DOXYGEN__)
   &oslib_test_sequence_003,
 #endif
+#if ((CH_CFG_USE_FACTORY == TRUE) && (CH_CFG_USE_MEMPOOLS == TRUE) && (CH_CFG_USE_HEAP == TRUE)) || defined(__DOXYGEN__)
+  &oslib_test_sequence_004,
+#endif
   NULL
 };
 
@@ -61,7 +65,7 @@ const testsequence_t * const oslib_test_suite_array[] = {
  * @brief   Test suite root structure.
  */
 const testsuite_t oslib_test_suite = {
-  "ChibiOS OS Library Test Suite.",
+  "ChibiOS OS Library Test Suite",
   oslib_test_suite_array
 };
 

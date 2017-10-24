@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <SPC5-Config version="1.0.0">
   <application name="ChibiOS/RT Test Suite" version="1.0.0" standalone="true" locked="false">
-    <description>ChibiOS/RT Test Suite.</description>
+    <description>Test Specification for ChibiOS/RT.</description>
     <component id="org.chibios.spc5.components.portable.generic_startup">
       <component id="org.chibios.spc5.components.portable.chibios_unitary_tests_engine" />
     </component>
@@ -9,6 +9,9 @@
       <instance locked="false" id="org.chibios.spc5.components.portable.generic_startup" />
       <instance locked="false" id="org.chibios.spc5.components.portable.chibios_unitary_tests_engine">
         <description>
+          <brief>
+            <value>ChibiOS/RT Test Suite.</value>
+          </brief>
           <copyright>
             <value><![CDATA[/*
     ChibiOS - Copyright (C) 2006..2017 Giovanni Di Sirio

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <SPC5-Config version="1.0.0">
-  <application name="ChibiOS/RT Test Suite" version="1.0.0" standalone="true" locked="false">
-    <description>ChibiOS OS Library Test Suite.</description>
+  <application name="ChibiOS OS Library Test Suite" version="1.0.0" standalone="true" locked="false">
+    <description>Test Specification for ChibiOS OS Library.</description>
     <component id="org.chibios.spc5.components.portable.generic_startup">
       <component id="org.chibios.spc5.components.portable.chibios_unitary_tests_engine" />
     </component>
@@ -9,6 +9,9 @@
       <instance locked="false" id="org.chibios.spc5.components.portable.generic_startup" />
       <instance locked="false" id="org.chibios.spc5.components.portable.chibios_unitary_tests_engine">
         <description>
+          <brief>
+            <value>ChibiOS OS Library Test Suite.</value>
+          </brief>
           <copyright>
             <value><![CDATA[/*
     ChibiOS - Copyright (C) 2006..2017 Giovanni Di Sirio
@@ -945,6 +948,24 @@ test_assert(p1 == NULL, "allocation not failed");]]></value>
                 </steps>
               </case>
             </cases>
+          </sequence>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
+              <value>Objects Factory.</value>
+            </brief>
+            <description>
+              <value>This sequence tests the ChibiOS library functionalities related to the object factory.</value>
+            </description>
+            <condition>
+              <value>(CH_CFG_USE_FACTORY == TRUE) &amp;&amp; (CH_CFG_USE_MEMPOOLS == TRUE) &amp;&amp; (CH_CFG_USE_HEAP == TRUE)</value>
+            </condition>
+            <shared_code>
+              <value />
+            </shared_code>
+            <cases />
           </sequence>
         </sequences>
       </instance>

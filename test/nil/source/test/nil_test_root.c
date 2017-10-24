@@ -59,7 +59,7 @@ const testsequence_t * const nil_test_suite_array[] = {
  * @brief   Test suite root structure.
  */
 const testsuite_t nil_test_suite = {
-  "Test Specification for ChibiOS/NIL.",
+  "ChibiOS/NIL Test Suite",
   nil_test_suite_array
 };
 
