@@ -47,6 +47,13 @@
 #define TEST_DELAY_BETWEEN_TESTS            200
 #endif
 
+/**
+ * @brief   Delay inserted between test cases.
+ */
+#if !defined(TEST_SHOW_SEQUENCES) || defined(__DOXYGEN__)
+#define TEST_SHOW_SEQUENCES                 TRUE
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/

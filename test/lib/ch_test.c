@@ -94,6 +94,14 @@ static void print_line(void) {
   streamWrite(test_chp, (const uint8_t *)"\r\n", 2);
 }
 
+static void print_fat_line(void) {
+  unsigned i;
+
+  for (i = 0; i < 76; i++)
+    streamPut(test_chp, '=');
+  streamWrite(test_chp, (const uint8_t *)"\r\n", 2);
+}
+
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
@@ -255,12 +263,14 @@ msg_t test_execute(BaseSequentialStream *stream, const testsuite_t *tsp) {
   test_global_fail = false;
   tseq = 0;
   while (tsp->sequences[tseq] != NULL) {
-    print_line();
-    test_print("--- Test Sequence ");
+#if TEST_SHOW_SEQUENCES == TRUE
+    print_fat_line();
+    test_print("=== Test Sequence ");
     test_printn(tseq + 1);
     test_print(" (");
     test_print(tsp->sequences[tseq]->name);
     test_println(")");
+#endif
     tcase = 0;
     while (tsp->sequences[tseq]->cases[tcase] != NULL) {
       print_line();
