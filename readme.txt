@@ -89,6 +89,13 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added an "Objects FIFO" object to the OS Library, it allows to
+       exchange complex objects between threads/ISRs. It is based on a
+       mailbox and a guarded memory pool.
+- NEW: Added an "Objects Factory" to the OS Library, it allows to dynamically
+       allocate reference-counted kernel objects/buffers or to register
+       static objects. Allocated/registered objects can be retrieved by name.
+- NEW: The OS Library now has its own test suite.
 - NEW: Updated STM32F1xx headers to 1.6, STM32F3xx to 1.9, STM32L0xx to 1.10,
        STM32L4xx to 1.9, STM32H7xx to 1.1.
 - NEW: Updated CMSIS to 5.1.1, changed directories organization under
@@ -106,7 +113,8 @@
        chEvtAddEventsI().
 - NEW: Integrated the latest FatFS 0.13 with patches.
 - NEW: Improved RT and NIL test suite to report version numbers and
-       configuration settings.
+       configuration settings. Now it is possible to run multiple test suites
+       in the same application.
 - NEW: Added a test suite generator tool written in FTL.
 - NEW: Added a multi-target demo applications for PAL, SPI and USB-CDC
        showcasing how to manage a project with multiple target boards/devices
