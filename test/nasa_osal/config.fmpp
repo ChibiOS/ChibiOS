@@ -7,7 +7,7 @@ freemarkerLinks: {
 }
 
 data : {
-  conf:xml (
+  xml:xml (
     configuration.xml
     {
     }
