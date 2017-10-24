@@ -1,26 +1,25 @@
 /* Copyright statement.*/
 
 #include "hal.h"
-#include "ch_test.h"
-#include "test_root.h"
+#include "nasa_osal_test_root.h"
 
 /**
- * @file    test_sequence_006.c
+ * @file    nasa_osal_test_sequence_006.c
  * @brief   Test Sequence 006 code.
  *
- * @page test_sequence_006 [6] Mutex Semaphores Functionality
+ * @page nasa_osal_test_sequence_006 [6] Mutex Semaphores Functionality
  *
- * File: @ref test_sequence_006.c
+ * File: @ref nasa_osal_test_sequence_006.c
  *
  * <h2>Description</h2>
  * This sequence tests the NASA OSAL over ChibiOS/RT functionalities
  * related to mutex semaphores.
  *
  * <h2>Test Cases</h2>
- * - @subpage test_006_001
- * - @subpage test_006_002
- * - @subpage test_006_003
- * - @subpage test_006_004
+ * - @subpage nasa_osal_test_006_001
+ * - @subpage nasa_osal_test_006_002
+ * - @subpage nasa_osal_test_006_003
+ * - @subpage nasa_osal_test_006_004
  * .
  */
 
@@ -37,7 +36,7 @@ uint32 msid;
  ****************************************************************************/
 
 /**
- * @page test_006_001 [6.1] OS_MutSemCreate() and OS_MutSemDelete() errors
+ * @page nasa_osal_test_006_001 [6.1] OS_MutSemCreate() and OS_MutSemDelete() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_MutSemCreate() and OS_MutSemDelete() is
@@ -58,7 +57,7 @@ uint32 msid;
  * .
  */
 
-static void test_006_001_execute(void) {
+static void nasa_osal_test_006_001_execute(void) {
 
   /* [6.1.1] OS_MutSemCreate() is invoked with sem_id set to NULL, an
      error is expected.*/
@@ -129,15 +128,15 @@ static void test_006_001_execute(void) {
   }
 }
 
-static const testcase_t test_006_001 = {
+static const testcase_t nasa_osal_test_006_001 = {
   "OS_MutSemCreate() and OS_MutSemDelete() errors",
   NULL,
   NULL,
-  test_006_001_execute
+  nasa_osal_test_006_001_execute
 };
 
 /**
- * @page test_006_002 [6.2] OS_MutSemGive() errors
+ * @page nasa_osal_test_006_002 [6.2] OS_MutSemGive() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_MutSemGive() is tested.
@@ -148,7 +147,7 @@ static const testcase_t test_006_001 = {
  * .
  */
 
-static void test_006_002_execute(void) {
+static void nasa_osal_test_006_002_execute(void) {
 
   /* [6.2.1] OS_MutSemGive() is invoked with sem_id set to -1, an error
      is expected.*/
@@ -161,15 +160,15 @@ static void test_006_002_execute(void) {
   }
 }
 
-static const testcase_t test_006_002 = {
+static const testcase_t nasa_osal_test_006_002 = {
   "OS_MutSemGive() errors",
   NULL,
   NULL,
-  test_006_002_execute
+  nasa_osal_test_006_002_execute
 };
 
 /**
- * @page test_006_003 [6.3] OS_MutSemTake() errors
+ * @page nasa_osal_test_006_003 [6.3] OS_MutSemTake() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_MutSemTake() is tested.
@@ -180,7 +179,7 @@ static const testcase_t test_006_002 = {
  * .
  */
 
-static void test_006_003_execute(void) {
+static void nasa_osal_test_006_003_execute(void) {
 
   /* [6.3.1] OS_MutSemTake() is invoked with sem_id set to -1, an error
      is expected.*/
@@ -193,15 +192,15 @@ static void test_006_003_execute(void) {
   }
 }
 
-static const testcase_t test_006_003 = {
+static const testcase_t nasa_osal_test_006_003 = {
   "OS_MutSemTake() errors",
   NULL,
   NULL,
-  test_006_003_execute
+  nasa_osal_test_006_003_execute
 };
 
 /**
- * @page test_006_004 [6.4] OS_MutSemGetIdByName() errors
+ * @page nasa_osal_test_006_004 [6.4] OS_MutSemGetIdByName() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_MutSemGetIdByName() is tested.
@@ -216,7 +215,7 @@ static const testcase_t test_006_003 = {
  * .
  */
 
-static void test_006_004_execute(void) {
+static void nasa_osal_test_006_004_execute(void) {
 
   /* [6.4.1] OS_MutSemGetIdByName() is invoked with sem_id set to NULL,
      an error is expected.*/
@@ -249,11 +248,11 @@ static void test_006_004_execute(void) {
   }
 }
 
-static const testcase_t test_006_004 = {
+static const testcase_t nasa_osal_test_006_004 = {
   "OS_MutSemGetIdByName() errors",
   NULL,
   NULL,
-  test_006_004_execute
+  nasa_osal_test_006_004_execute
 };
 
 /****************************************************************************
@@ -261,12 +260,20 @@ static const testcase_t test_006_004 = {
  ****************************************************************************/
 
 /**
+ * @brief   Array of test cases.
+ */
+const testcase_t * const nasa_osal_test_sequence_006_array[] = {
+  &nasa_osal_test_006_001,
+  &nasa_osal_test_006_002,
+  &nasa_osal_test_006_003,
+  &nasa_osal_test_006_004,
+  NULL
+};
+
+/**
  * @brief   Mutex Semaphores Functionality.
  */
-const testcase_t * const test_sequence_006[] = {
-  &test_006_001,
-  &test_006_002,
-  &test_006_003,
-  &test_006_004,
-  NULL
+const testsequence_t nasa_osal_test_sequence_006 = {
+  "Mutex Semaphores Functionality",
+  nasa_osal_test_sequence_006_array
 };

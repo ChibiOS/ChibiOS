@@ -98,7 +98,8 @@ include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
 # Other files (optional).
-include $(CHIBIOS)/test/nasa_osal/test.mk
+include $(CHIBIOS)/test/lib/test.mk
+include $(CHIBIOS)/test/nasa_osal/nasa_osal_test.mk
 include $(CHIBIOS)/os/common/abstractions/nasa_cfe/osal/cfe_osal.mk
 include $(CHIBIOS)/os/common/abstractions/nasa_cfe/psp/cfe_psp.mk
 

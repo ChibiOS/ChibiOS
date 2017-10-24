@@ -1,26 +1,25 @@
 /* Copyright statement.*/
 
 #include "hal.h"
-#include "ch_test.h"
-#include "test_root.h"
+#include "nasa_osal_test_root.h"
 
 /**
- * @file    test_sequence_001.c
+ * @file    nasa_osal_test_sequence_001.c
  * @brief   Test Sequence 001 code.
  *
- * @page test_sequence_001 [1] Tasks Functionality
+ * @page nasa_osal_test_sequence_001 [1] Tasks Functionality
  *
- * File: @ref test_sequence_001.c
+ * File: @ref nasa_osal_test_sequence_001.c
  *
  * <h2>Description</h2>
  * This sequence tests the NASA OSAL over ChibiOS/RT functionalities
  * related to threading.
  *
  * <h2>Test Cases</h2>
- * - @subpage test_001_001
- * - @subpage test_001_002
- * - @subpage test_001_003
- * - @subpage test_001_004
+ * - @subpage nasa_osal_test_001_001
+ * - @subpage nasa_osal_test_001_002
+ * - @subpage nasa_osal_test_001_003
+ * - @subpage nasa_osal_test_001_004
  * .
  */
 
@@ -70,7 +69,7 @@ static void test_task_delete(void) {
  ****************************************************************************/
 
 /**
- * @page test_001_001 [1.1] OS_TaskCreate() errors
+ * @page nasa_osal_test_001_001 [1.1] OS_TaskCreate() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_TaskCreate() is tested.
@@ -93,7 +92,7 @@ static void test_task_delete(void) {
  * .
  */
 
-static void test_001_001_execute(void) {
+static void nasa_osal_test_001_001_execute(void) {
 
   /* [1.1.1] OS_TaskCreate() is invoked with task_id set to NULL, an
      error is expected.*/
@@ -265,15 +264,15 @@ static void test_001_001_execute(void) {
   }
 }
 
-static const testcase_t test_001_001 = {
+static const testcase_t nasa_osal_test_001_001 = {
   "OS_TaskCreate() errors",
   NULL,
   NULL,
-  test_001_001_execute
+  nasa_osal_test_001_001_execute
 };
 
 /**
- * @page test_001_002 [1.2] OS_TaskCreate() priority ordering
+ * @page nasa_osal_test_001_002 [1.2] OS_TaskCreate() priority ordering
  *
  * <h2>Description</h2>
  * Four tasks are created at different priorities and in different
@@ -293,7 +292,7 @@ static const testcase_t test_001_001 = {
  * .
  */
 
-static void test_001_002_execute(void) {
+static void nasa_osal_test_001_002_execute(void) {
 
   /* [1.2.1] Four tasks are created in priority order from low to
      high.*/
@@ -451,15 +450,15 @@ static void test_001_002_execute(void) {
   }
 }
 
-static const testcase_t test_001_002 = {
+static const testcase_t nasa_osal_test_001_002 = {
   "OS_TaskCreate() priority ordering",
   NULL,
   NULL,
-  test_001_002_execute
+  nasa_osal_test_001_002_execute
 };
 
 /**
- * @page test_001_003 [1.3] OS_TaskDelete() errors
+ * @page nasa_osal_test_001_003 [1.3] OS_TaskDelete() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_TaskDelete() is tested.
@@ -470,7 +469,7 @@ static const testcase_t test_001_002 = {
  * .
  */
 
-static void test_001_003_execute(void) {
+static void nasa_osal_test_001_003_execute(void) {
 
   /* [1.3.1] OS_TaskDelete() is invoked with task_id set to -1, an
      error is expected.*/
@@ -483,15 +482,15 @@ static void test_001_003_execute(void) {
   }
 }
 
-static const testcase_t test_001_003 = {
+static const testcase_t nasa_osal_test_001_003 = {
   "OS_TaskDelete() errors",
   NULL,
   NULL,
-  test_001_003_execute
+  nasa_osal_test_001_003_execute
 };
 
 /**
- * @page test_001_004 [1.4] OS_TaskDelete() and OS_TaskInstallDeleteHandler() functionality
+ * @page nasa_osal_test_001_004 [1.4] OS_TaskDelete() and OS_TaskInstallDeleteHandler() functionality
  *
  * <h2>Description</h2>
  * OS_TaskDelete() and OS_TaskInstallDeleteHandler() are tested for
@@ -504,7 +503,7 @@ static const testcase_t test_001_003 = {
  * .
  */
 
-static void test_001_004_execute(void) {
+static void nasa_osal_test_001_004_execute(void) {
   uint32 tid;
 
   /* [1.4.1] Creating a task executing an infinite loop.*/
@@ -535,11 +534,11 @@ static void test_001_004_execute(void) {
   }
 }
 
-static const testcase_t test_001_004 = {
+static const testcase_t nasa_osal_test_001_004 = {
   "OS_TaskDelete() and OS_TaskInstallDeleteHandler() functionality",
   NULL,
   NULL,
-  test_001_004_execute
+  nasa_osal_test_001_004_execute
 };
 
 /****************************************************************************
@@ -547,12 +546,20 @@ static const testcase_t test_001_004 = {
  ****************************************************************************/
 
 /**
+ * @brief   Array of test cases.
+ */
+const testcase_t * const nasa_osal_test_sequence_001_array[] = {
+  &nasa_osal_test_001_001,
+  &nasa_osal_test_001_002,
+  &nasa_osal_test_001_003,
+  &nasa_osal_test_001_004,
+  NULL
+};
+
+/**
  * @brief   Tasks Functionality.
  */
-const testcase_t * const test_sequence_001[] = {
-  &test_001_001,
-  &test_001_002,
-  &test_001_003,
-  &test_001_004,
-  NULL
+const testsequence_t nasa_osal_test_sequence_001 = {
+  "Tasks Functionality",
+  nasa_osal_test_sequence_001_array
 };

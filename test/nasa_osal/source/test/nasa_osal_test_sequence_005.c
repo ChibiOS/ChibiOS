@@ -1,28 +1,27 @@
 /* Copyright statement.*/
 
 #include "hal.h"
-#include "ch_test.h"
-#include "test_root.h"
+#include "nasa_osal_test_root.h"
 
 /**
- * @file    test_sequence_005.c
+ * @file    nasa_osal_test_sequence_005.c
  * @brief   Test Sequence 005 code.
  *
- * @page test_sequence_005 [5] Counter Semaphores Functionality
+ * @page nasa_osal_test_sequence_005 [5] Counter Semaphores Functionality
  *
- * File: @ref test_sequence_005.c
+ * File: @ref nasa_osal_test_sequence_005.c
  *
  * <h2>Description</h2>
  * This sequence tests the NASA OSAL over ChibiOS/RT functionalities
  * related to counter semaphores.
  *
  * <h2>Test Cases</h2>
- * - @subpage test_005_001
- * - @subpage test_005_002
- * - @subpage test_005_003
- * - @subpage test_005_004
- * - @subpage test_005_005
- * - @subpage test_005_006
+ * - @subpage nasa_osal_test_005_001
+ * - @subpage nasa_osal_test_005_002
+ * - @subpage nasa_osal_test_005_003
+ * - @subpage nasa_osal_test_005_004
+ * - @subpage nasa_osal_test_005_005
+ * - @subpage nasa_osal_test_005_006
  * .
  */
 
@@ -39,7 +38,7 @@ uint32 csid;
  ****************************************************************************/
 
 /**
- * @page test_005_001 [5.1] OS_CountSemCreate() and OS_CountSemDelete() errors
+ * @page nasa_osal_test_005_001 [5.1] OS_CountSemCreate() and OS_CountSemDelete() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_CountSemCreate() and OS_CountSemDelete()
@@ -62,7 +61,7 @@ uint32 csid;
  * .
  */
 
-static void test_005_001_execute(void) {
+static void nasa_osal_test_005_001_execute(void) {
 
   /* [5.1.1] OS_CountSemCreate() is invoked with sem_id set to NULL, an
      error is expected.*/
@@ -149,15 +148,15 @@ static void test_005_001_execute(void) {
   }
 }
 
-static const testcase_t test_005_001 = {
+static const testcase_t nasa_osal_test_005_001 = {
   "OS_CountSemCreate() and OS_CountSemDelete() errors",
   NULL,
   NULL,
-  test_005_001_execute
+  nasa_osal_test_005_001_execute
 };
 
 /**
- * @page test_005_002 [5.2] OS_CountSemGive() errors
+ * @page nasa_osal_test_005_002 [5.2] OS_CountSemGive() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_CountSemGive() is tested.
@@ -168,7 +167,7 @@ static const testcase_t test_005_001 = {
  * .
  */
 
-static void test_005_002_execute(void) {
+static void nasa_osal_test_005_002_execute(void) {
 
   /* [5.2.1] OS_CountSemGive() is invoked with sem_id set to -1, an
      error is expected.*/
@@ -181,15 +180,15 @@ static void test_005_002_execute(void) {
   }
 }
 
-static const testcase_t test_005_002 = {
+static const testcase_t nasa_osal_test_005_002 = {
   "OS_CountSemGive() errors",
   NULL,
   NULL,
-  test_005_002_execute
+  nasa_osal_test_005_002_execute
 };
 
 /**
- * @page test_005_003 [5.3] OS_CountSemTake() errors
+ * @page nasa_osal_test_005_003 [5.3] OS_CountSemTake() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_CountSemTake() is tested.
@@ -200,7 +199,7 @@ static const testcase_t test_005_002 = {
  * .
  */
 
-static void test_005_003_execute(void) {
+static void nasa_osal_test_005_003_execute(void) {
 
   /* [5.3.1] OS_CountSemTake() is invoked with sem_id set to -1, an
      error is expected.*/
@@ -213,15 +212,15 @@ static void test_005_003_execute(void) {
   }
 }
 
-static const testcase_t test_005_003 = {
+static const testcase_t nasa_osal_test_005_003 = {
   "OS_CountSemTake() errors",
   NULL,
   NULL,
-  test_005_003_execute
+  nasa_osal_test_005_003_execute
 };
 
 /**
- * @page test_005_004 [5.4] OS_CountSemTimedWait() errors
+ * @page nasa_osal_test_005_004 [5.4] OS_CountSemTimedWait() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_CountSemTimedWait() is tested.
@@ -234,18 +233,18 @@ static const testcase_t test_005_003 = {
  * .
  */
 
-static void test_005_004_setup(void) {
+static void nasa_osal_test_005_004_setup(void) {
   csid = 0;
   (void) OS_CountSemCreate(&csid, "test semaphore", 0, 0);
 }
 
-static void test_005_004_teardown(void) {
+static void nasa_osal_test_005_004_teardown(void) {
   if (csid > 0) {
     (void) OS_CountSemDelete(csid);
   }
 }
 
-static void test_005_004_execute(void) {
+static void nasa_osal_test_005_004_execute(void) {
 
   /* [5.4.1] OS_CountSemTimedWait() is invoked with sem_id set to -1,
      an error is expected.*/
@@ -268,15 +267,15 @@ static void test_005_004_execute(void) {
   }
 }
 
-static const testcase_t test_005_004 = {
+static const testcase_t nasa_osal_test_005_004 = {
   "OS_CountSemTimedWait() errors",
-  test_005_004_setup,
-  test_005_004_teardown,
-  test_005_004_execute
+  nasa_osal_test_005_004_setup,
+  nasa_osal_test_005_004_teardown,
+  nasa_osal_test_005_004_execute
 };
 
 /**
- * @page test_005_005 [5.5] OS_CountSemGetIdByName() errors
+ * @page nasa_osal_test_005_005 [5.5] OS_CountSemGetIdByName() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_CountSemGetIdByName() is tested.
@@ -291,7 +290,7 @@ static const testcase_t test_005_004 = {
  * .
  */
 
-static void test_005_005_execute(void) {
+static void nasa_osal_test_005_005_execute(void) {
 
   /* [5.5.1] OS_CountSemGetIdByName() is invoked with sem_id set to
      NULL, an error is expected.*/
@@ -324,15 +323,15 @@ static void test_005_005_execute(void) {
   }
 }
 
-static const testcase_t test_005_005 = {
+static const testcase_t nasa_osal_test_005_005 = {
   "OS_CountSemGetIdByName() errors",
   NULL,
   NULL,
-  test_005_005_execute
+  nasa_osal_test_005_005_execute
 };
 
 /**
- * @page test_005_006 [5.6] OS_CountSemTimedWait() timeout functionality
+ * @page nasa_osal_test_005_006 [5.6] OS_CountSemTimedWait() timeout functionality
  *
  * <h2>Description</h2>
  * OS_CountSemCreate() timeout functionality is tested.
@@ -343,18 +342,18 @@ static const testcase_t test_005_005 = {
  * .
  */
 
-static void test_005_006_setup(void) {
+static void nasa_osal_test_005_006_setup(void) {
   csid = 0;
   (void) OS_CountSemCreate(&csid, "test semaphore", 0, 0);
 }
 
-static void test_005_006_teardown(void) {
+static void nasa_osal_test_005_006_teardown(void) {
   if (csid > 0) {
     (void) OS_CountSemDelete(csid);
   }
 }
 
-static void test_005_006_execute(void) {
+static void nasa_osal_test_005_006_execute(void) {
 
   /* [5.6.1] OS_CountSemTimedWait() is invoked with timeout set to one
      second, an error is expected.*/
@@ -367,11 +366,11 @@ static void test_005_006_execute(void) {
   }
 }
 
-static const testcase_t test_005_006 = {
+static const testcase_t nasa_osal_test_005_006 = {
   "OS_CountSemTimedWait() timeout functionality",
-  test_005_006_setup,
-  test_005_006_teardown,
-  test_005_006_execute
+  nasa_osal_test_005_006_setup,
+  nasa_osal_test_005_006_teardown,
+  nasa_osal_test_005_006_execute
 };
 
 /****************************************************************************
@@ -379,14 +378,22 @@ static const testcase_t test_005_006 = {
  ****************************************************************************/
 
 /**
+ * @brief   Array of test cases.
+ */
+const testcase_t * const nasa_osal_test_sequence_005_array[] = {
+  &nasa_osal_test_005_001,
+  &nasa_osal_test_005_002,
+  &nasa_osal_test_005_003,
+  &nasa_osal_test_005_004,
+  &nasa_osal_test_005_005,
+  &nasa_osal_test_005_006,
+  NULL
+};
+
+/**
  * @brief   Counter Semaphores Functionality.
  */
-const testcase_t * const test_sequence_005[] = {
-  &test_005_001,
-  &test_005_002,
-  &test_005_003,
-  &test_005_004,
-  &test_005_005,
-  &test_005_006,
-  NULL
+const testsequence_t nasa_osal_test_sequence_005 = {
+  "Counter Semaphores Functionality",
+  nasa_osal_test_sequence_005_array
 };

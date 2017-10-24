@@ -1,26 +1,25 @@
 /* Copyright statement.*/
 
 #include "hal.h"
-#include "ch_test.h"
-#include "test_root.h"
+#include "nasa_osal_test_root.h"
 
 /**
- * @file    test_sequence_002.c
+ * @file    nasa_osal_test_sequence_002.c
  * @brief   Test Sequence 002 code.
  *
- * @page test_sequence_002 [2] Queues Functionality
+ * @page nasa_osal_test_sequence_002 [2] Queues Functionality
  *
- * File: @ref test_sequence_002.c
+ * File: @ref nasa_osal_test_sequence_002.c
  *
  * <h2>Description</h2>
  * This sequence tests the NASA OSAL over ChibiOS/RT functionalities
  * related to queues.
  *
  * <h2>Test Cases</h2>
- * - @subpage test_002_001
- * - @subpage test_002_002
- * - @subpage test_002_003
- * - @subpage test_002_004
+ * - @subpage nasa_osal_test_002_001
+ * - @subpage nasa_osal_test_002_002
+ * - @subpage nasa_osal_test_002_003
+ * - @subpage nasa_osal_test_002_004
  * .
  */
 
@@ -54,7 +53,7 @@ static void test_task_writer(void) {
  ****************************************************************************/
 
 /**
- * @page test_002_001 [2.1] OS_QueueCreate() and OS_QueueDelete() errors
+ * @page nasa_osal_test_002_001 [2.1] OS_QueueCreate() and OS_QueueDelete() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_QueueCreate() and OS_QueueDelete() is
@@ -75,7 +74,7 @@ static void test_task_writer(void) {
  * .
  */
 
-static void test_002_001_execute(void) {
+static void nasa_osal_test_002_001_execute(void) {
 
   /* [2.1.1] OS_QueueCreate() is invoked with queue_id set to NULL, an
      error is expected.*/
@@ -150,15 +149,15 @@ static void test_002_001_execute(void) {
   }
 }
 
-static const testcase_t test_002_001 = {
+static const testcase_t nasa_osal_test_002_001 = {
   "OS_QueueCreate() and OS_QueueDelete() errors",
   NULL,
   NULL,
-  test_002_001_execute
+  nasa_osal_test_002_001_execute
 };
 
 /**
- * @page test_002_002 [2.2] OS_QueueGetIdByName() errors
+ * @page nasa_osal_test_002_002 [2.2] OS_QueueGetIdByName() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_QueueGetIdByName() is tested.
@@ -173,7 +172,7 @@ static const testcase_t test_002_001 = {
  * .
  */
 
-static void test_002_002_execute(void) {
+static void nasa_osal_test_002_002_execute(void) {
 
   /* [2.2.1] OS_QueueGetIdByName() is invoked with queue_id set to
      NULL, an error is expected.*/
@@ -206,15 +205,15 @@ static void test_002_002_execute(void) {
   }
 }
 
-static const testcase_t test_002_002 = {
+static const testcase_t nasa_osal_test_002_002 = {
   "OS_QueueGetIdByName() errors",
   NULL,
   NULL,
-  test_002_002_execute
+  nasa_osal_test_002_002_execute
 };
 
 /**
- * @page test_002_003 [2.3] OS_QueuePut() and OS_QueueGet() functionality
+ * @page nasa_osal_test_002_003 [2.3] OS_QueuePut() and OS_QueueGet() functionality
  *
  * <h2>Description</h2>
  * A task writes on a queue, the messages are retrieved on the other
@@ -228,12 +227,12 @@ static const testcase_t test_002_002 = {
  * .
  */
 
-static void test_002_003_setup(void) {
+static void nasa_osal_test_002_003_setup(void) {
   qid = 0;
   tid = 0;
 }
 
-static void test_002_003_teardown(void) {
+static void nasa_osal_test_002_003_teardown(void) {
   if (qid != 0) {
     (void) OS_QueueDelete(qid);
   }
@@ -243,7 +242,7 @@ static void test_002_003_teardown(void) {
   }
 }
 
-static void test_002_003_execute(void) {
+static void nasa_osal_test_002_003_execute(void) {
   uint32 tid;
   unsigned i;
 
@@ -295,15 +294,15 @@ static void test_002_003_execute(void) {
   }
 }
 
-static const testcase_t test_002_003 = {
+static const testcase_t nasa_osal_test_002_003 = {
   "OS_QueuePut() and OS_QueueGet() functionality",
-  test_002_003_setup,
-  test_002_003_teardown,
-  test_002_003_execute
+  nasa_osal_test_002_003_setup,
+  nasa_osal_test_002_003_teardown,
+  nasa_osal_test_002_003_execute
 };
 
 /**
- * @page test_002_004 [2.4] OS_QueueGet() with timeout functionality
+ * @page nasa_osal_test_002_004 [2.4] OS_QueueGet() with timeout functionality
  *
  * <h2>Description</h2>
  * OS_QueueGet() timeout functionality is tested.
@@ -316,18 +315,18 @@ static const testcase_t test_002_003 = {
  * .
  */
 
-static void test_002_004_setup(void) {
+static void nasa_osal_test_002_004_setup(void) {
   qid = 0;
   (void) OS_QueueCreate(&qid, "test queue", 2, MESSAGE_SIZE, 0);
 }
 
-static void test_002_004_teardown(void) {
+static void nasa_osal_test_002_004_teardown(void) {
   if (qid != 0) {
     OS_QueueDelete(qid);
   }
 }
 
-static void test_002_004_execute(void) {
+static void nasa_osal_test_002_004_execute(void) {
   uint32 local_qid;
   uint32 copied;
   char data[MESSAGE_SIZE];
@@ -362,11 +361,11 @@ static void test_002_004_execute(void) {
   }
 }
 
-static const testcase_t test_002_004 = {
+static const testcase_t nasa_osal_test_002_004 = {
   "OS_QueueGet() with timeout functionality",
-  test_002_004_setup,
-  test_002_004_teardown,
-  test_002_004_execute
+  nasa_osal_test_002_004_setup,
+  nasa_osal_test_002_004_teardown,
+  nasa_osal_test_002_004_execute
 };
 
 /****************************************************************************
@@ -374,12 +373,20 @@ static const testcase_t test_002_004 = {
  ****************************************************************************/
 
 /**
+ * @brief   Array of test cases.
+ */
+const testcase_t * const nasa_osal_test_sequence_002_array[] = {
+  &nasa_osal_test_002_001,
+  &nasa_osal_test_002_002,
+  &nasa_osal_test_002_003,
+  &nasa_osal_test_002_004,
+  NULL
+};
+
+/**
  * @brief   Queues Functionality.
  */
-const testcase_t * const test_sequence_002[] = {
-  &test_002_001,
-  &test_002_002,
-  &test_002_003,
-  &test_002_004,
-  NULL
+const testsequence_t nasa_osal_test_sequence_002 = {
+  "Queues Functionality",
+  nasa_osal_test_sequence_002_array
 };

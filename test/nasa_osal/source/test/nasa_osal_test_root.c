@@ -7,23 +7,22 @@
  * converge to 100% code coverage through successive improvements.
  *
  * <h2>Test Sequences</h2>
- * - @subpage test_sequence_001
- * - @subpage test_sequence_002
- * - @subpage test_sequence_003
- * - @subpage test_sequence_004
- * - @subpage test_sequence_005
- * - @subpage test_sequence_006
+ * - @subpage nasa_osal_test_sequence_001
+ * - @subpage nasa_osal_test_sequence_002
+ * - @subpage nasa_osal_test_sequence_003
+ * - @subpage nasa_osal_test_sequence_004
+ * - @subpage nasa_osal_test_sequence_005
+ * - @subpage nasa_osal_test_sequence_006
  * .
  */
 
 /**
- * @file    test_root.c
+ * @file    nasa_osal_test_root.c
  * @brief   Test Suite root structures code.
  */
 
 #include "hal.h"
-#include "ch_test.h"
-#include "test_root.h"
+#include "nasa_osal_test_root.h"
 
 #if !defined(__DOXYGEN__)
 
@@ -32,16 +31,24 @@
 /*===========================================================================*/
 
 /**
- * @brief   Array of all the test sequences.
+ * @brief   Array of test sequences.
  */
-const testcase_t * const *test_suite[] = {
-  test_sequence_001,
-  test_sequence_002,
-  test_sequence_003,
-  test_sequence_004,
-  test_sequence_005,
-  test_sequence_006,
+const testsequence_t * const nasa_osal_test_suite_array[] = {
+  &nasa_osal_test_sequence_001,
+  &nasa_osal_test_sequence_002,
+  &nasa_osal_test_sequence_003,
+  &nasa_osal_test_sequence_004,
+  &nasa_osal_test_sequence_005,
+  &nasa_osal_test_sequence_006,
   NULL
+};
+
+/**
+ * @brief   Test suite root structure.
+ */
+const testsuite_t nasa_osal_test_suite = {
+  "Test specification for the NASA OSAL ChibiOS extension.",
+  nasa_osal_test_suite_array
 };
 
 /*===========================================================================*/

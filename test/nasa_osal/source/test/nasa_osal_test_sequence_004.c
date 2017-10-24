@@ -1,29 +1,28 @@
 /* Copyright statement.*/
 
 #include "hal.h"
-#include "ch_test.h"
-#include "test_root.h"
+#include "nasa_osal_test_root.h"
 
 /**
- * @file    test_sequence_004.c
+ * @file    nasa_osal_test_sequence_004.c
  * @brief   Test Sequence 004 code.
  *
- * @page test_sequence_004 [4] Binary Semaphores Functionality
+ * @page nasa_osal_test_sequence_004 [4] Binary Semaphores Functionality
  *
- * File: @ref test_sequence_004.c
+ * File: @ref nasa_osal_test_sequence_004.c
  *
  * <h2>Description</h2>
  * This sequence tests the NASA OSAL over ChibiOS/RT functionalities
  * related to binary semaphores.
  *
  * <h2>Test Cases</h2>
- * - @subpage test_004_001
- * - @subpage test_004_002
- * - @subpage test_004_003
- * - @subpage test_004_004
- * - @subpage test_004_005
- * - @subpage test_004_006
- * - @subpage test_004_007
+ * - @subpage nasa_osal_test_004_001
+ * - @subpage nasa_osal_test_004_002
+ * - @subpage nasa_osal_test_004_003
+ * - @subpage nasa_osal_test_004_004
+ * - @subpage nasa_osal_test_004_005
+ * - @subpage nasa_osal_test_004_006
+ * - @subpage nasa_osal_test_004_007
  * .
  */
 
@@ -40,7 +39,7 @@ uint32 bsid;
  ****************************************************************************/
 
 /**
- * @page test_004_001 [4.1] OS_BinSemCreate() and OS_BinSemDelete() errors
+ * @page nasa_osal_test_004_001 [4.1] OS_BinSemCreate() and OS_BinSemDelete() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_BinSemCreate() and OS_BinSemDelete() is
@@ -63,7 +62,7 @@ uint32 bsid;
  * .
  */
 
-static void test_004_001_execute(void) {
+static void nasa_osal_test_004_001_execute(void) {
 
   /* [4.1.1] OS_BinSemCreate() is invoked with sem_id set to NULL, an
      error is expected.*/
@@ -150,15 +149,15 @@ static void test_004_001_execute(void) {
   }
 }
 
-static const testcase_t test_004_001 = {
+static const testcase_t nasa_osal_test_004_001 = {
   "OS_BinSemCreate() and OS_BinSemDelete() errors",
   NULL,
   NULL,
-  test_004_001_execute
+  nasa_osal_test_004_001_execute
 };
 
 /**
- * @page test_004_002 [4.2] OS_BinSemFlush() errors
+ * @page nasa_osal_test_004_002 [4.2] OS_BinSemFlush() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_BinSemFlush() is tested.
@@ -169,7 +168,7 @@ static const testcase_t test_004_001 = {
  * .
  */
 
-static void test_004_002_execute(void) {
+static void nasa_osal_test_004_002_execute(void) {
 
   /* [4.2.1] OS_BinSemFlush() is invoked with sem_id set to -1, an
      error is expected.*/
@@ -182,15 +181,15 @@ static void test_004_002_execute(void) {
   }
 }
 
-static const testcase_t test_004_002 = {
+static const testcase_t nasa_osal_test_004_002 = {
   "OS_BinSemFlush() errors",
   NULL,
   NULL,
-  test_004_002_execute
+  nasa_osal_test_004_002_execute
 };
 
 /**
- * @page test_004_003 [4.3] OS_BinSemGive() errors
+ * @page nasa_osal_test_004_003 [4.3] OS_BinSemGive() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_BinSemGive() is tested.
@@ -201,7 +200,7 @@ static const testcase_t test_004_002 = {
  * .
  */
 
-static void test_004_003_execute(void) {
+static void nasa_osal_test_004_003_execute(void) {
 
   /* [4.3.1] OS_BinSemGive() is invoked with sem_id set to -1, an error
      is expected.*/
@@ -214,15 +213,15 @@ static void test_004_003_execute(void) {
   }
 }
 
-static const testcase_t test_004_003 = {
+static const testcase_t nasa_osal_test_004_003 = {
   "OS_BinSemGive() errors",
   NULL,
   NULL,
-  test_004_003_execute
+  nasa_osal_test_004_003_execute
 };
 
 /**
- * @page test_004_004 [4.4] OS_BinSemTake() errors
+ * @page nasa_osal_test_004_004 [4.4] OS_BinSemTake() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_BinSemTake() is tested.
@@ -233,7 +232,7 @@ static const testcase_t test_004_003 = {
  * .
  */
 
-static void test_004_004_execute(void) {
+static void nasa_osal_test_004_004_execute(void) {
 
   /* [4.4.1] OS_BinSemTake() is invoked with sem_id set to -1, an error
      is expected.*/
@@ -246,15 +245,15 @@ static void test_004_004_execute(void) {
   }
 }
 
-static const testcase_t test_004_004 = {
+static const testcase_t nasa_osal_test_004_004 = {
   "OS_BinSemTake() errors",
   NULL,
   NULL,
-  test_004_004_execute
+  nasa_osal_test_004_004_execute
 };
 
 /**
- * @page test_004_005 [4.5] OS_BinSemTimedWait() errors
+ * @page nasa_osal_test_004_005 [4.5] OS_BinSemTimedWait() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_BinSemTimedWait() is tested.
@@ -267,18 +266,18 @@ static const testcase_t test_004_004 = {
  * .
  */
 
-static void test_004_005_setup(void) {
+static void nasa_osal_test_004_005_setup(void) {
   bsid = 0;
   (void) OS_BinSemCreate(&bsid, "test semaphore", 0, 0);
 }
 
-static void test_004_005_teardown(void) {
+static void nasa_osal_test_004_005_teardown(void) {
   if (bsid > 0) {
     (void) OS_BinSemDelete(bsid);
   }
 }
 
-static void test_004_005_execute(void) {
+static void nasa_osal_test_004_005_execute(void) {
 
   /* [4.5.1] OS_BinSemTimedWait() is invoked with sem_id set to -1, an
      error is expected.*/
@@ -301,15 +300,15 @@ static void test_004_005_execute(void) {
   }
 }
 
-static const testcase_t test_004_005 = {
+static const testcase_t nasa_osal_test_004_005 = {
   "OS_BinSemTimedWait() errors",
-  test_004_005_setup,
-  test_004_005_teardown,
-  test_004_005_execute
+  nasa_osal_test_004_005_setup,
+  nasa_osal_test_004_005_teardown,
+  nasa_osal_test_004_005_execute
 };
 
 /**
- * @page test_004_006 [4.6] OS_BinSemGetIdByName() errors
+ * @page nasa_osal_test_004_006 [4.6] OS_BinSemGetIdByName() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_BinSemGetIdByName() is tested.
@@ -324,7 +323,7 @@ static const testcase_t test_004_005 = {
  * .
  */
 
-static void test_004_006_execute(void) {
+static void nasa_osal_test_004_006_execute(void) {
 
   /* [4.6.1] OS_BinSemGetIdByName() is invoked with sem_id set to NULL,
      an error is expected.*/
@@ -357,15 +356,15 @@ static void test_004_006_execute(void) {
   }
 }
 
-static const testcase_t test_004_006 = {
+static const testcase_t nasa_osal_test_004_006 = {
   "OS_BinSemGetIdByName() errors",
   NULL,
   NULL,
-  test_004_006_execute
+  nasa_osal_test_004_006_execute
 };
 
 /**
- * @page test_004_007 [4.7] OS_BinSemTimedWait() timeout functionality
+ * @page nasa_osal_test_004_007 [4.7] OS_BinSemTimedWait() timeout functionality
  *
  * <h2>Description</h2>
  * OS_BinSemCreate() timeout functionality is tested.
@@ -376,18 +375,18 @@ static const testcase_t test_004_006 = {
  * .
  */
 
-static void test_004_007_setup(void) {
+static void nasa_osal_test_004_007_setup(void) {
   bsid = 0;
   (void) OS_BinSemCreate(&bsid, "test semaphore", 0, 0);
 }
 
-static void test_004_007_teardown(void) {
+static void nasa_osal_test_004_007_teardown(void) {
   if (bsid > 0) {
     (void) OS_BinSemDelete(bsid);
   }
 }
 
-static void test_004_007_execute(void) {
+static void nasa_osal_test_004_007_execute(void) {
 
   /* [4.7.1] OS_BinSemTimedWait() is invoked with timeout set to one
      second, an error is expected.*/
@@ -400,11 +399,11 @@ static void test_004_007_execute(void) {
   }
 }
 
-static const testcase_t test_004_007 = {
+static const testcase_t nasa_osal_test_004_007 = {
   "OS_BinSemTimedWait() timeout functionality",
-  test_004_007_setup,
-  test_004_007_teardown,
-  test_004_007_execute
+  nasa_osal_test_004_007_setup,
+  nasa_osal_test_004_007_teardown,
+  nasa_osal_test_004_007_execute
 };
 
 /****************************************************************************
@@ -412,15 +411,23 @@ static const testcase_t test_004_007 = {
  ****************************************************************************/
 
 /**
+ * @brief   Array of test cases.
+ */
+const testcase_t * const nasa_osal_test_sequence_004_array[] = {
+  &nasa_osal_test_004_001,
+  &nasa_osal_test_004_002,
+  &nasa_osal_test_004_003,
+  &nasa_osal_test_004_004,
+  &nasa_osal_test_004_005,
+  &nasa_osal_test_004_006,
+  &nasa_osal_test_004_007,
+  NULL
+};
+
+/**
  * @brief   Binary Semaphores Functionality.
  */
-const testcase_t * const test_sequence_004[] = {
-  &test_004_001,
-  &test_004_002,
-  &test_004_003,
-  &test_004_004,
-  &test_004_005,
-  &test_004_006,
-  &test_004_007,
-  NULL
+const testsequence_t nasa_osal_test_sequence_004 = {
+  "Binary Semaphores Functionality",
+  nasa_osal_test_sequence_004_array
 };

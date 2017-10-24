@@ -1,27 +1,26 @@
 /* Copyright statement.*/
 
 #include "hal.h"
-#include "ch_test.h"
-#include "test_root.h"
+#include "nasa_osal_test_root.h"
 
 /**
- * @file    test_sequence_003.c
+ * @file    nasa_osal_test_sequence_003.c
  * @brief   Test Sequence 003 code.
  *
- * @page test_sequence_003 [3] Timers Functionality
+ * @page nasa_osal_test_sequence_003 [3] Timers Functionality
  *
- * File: @ref test_sequence_003.c
+ * File: @ref nasa_osal_test_sequence_003.c
  *
  * <h2>Description</h2>
  * This sequence tests the NASA OSAL over ChibiOS/RT functionalities
  * related to timers.
  *
  * <h2>Test Cases</h2>
- * - @subpage test_003_001
- * - @subpage test_003_002
- * - @subpage test_003_003
- * - @subpage test_003_004
- * - @subpage test_003_005
+ * - @subpage nasa_osal_test_003_001
+ * - @subpage nasa_osal_test_003_002
+ * - @subpage nasa_osal_test_003_003
+ * - @subpage nasa_osal_test_003_004
+ * - @subpage nasa_osal_test_003_005
  * .
  */
 
@@ -48,7 +47,7 @@ static void tmr_callback(uint32 timer_id) {
  ****************************************************************************/
 
 /**
- * @page test_003_001 [3.1] OS_TimerCreate() and OS_TimerDelete() errors
+ * @page nasa_osal_test_003_001 [3.1] OS_TimerCreate() and OS_TimerDelete() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_TimerCreate() and OS_TimerDelete() is
@@ -73,7 +72,7 @@ static void tmr_callback(uint32 timer_id) {
  * .
  */
 
-static void test_003_001_execute(void) {
+static void nasa_osal_test_003_001_execute(void) {
 
   /* [3.1.1] OS_TimerCreate() is invoked with timer_id set to NULL, an
      error is expected.*/
@@ -178,15 +177,15 @@ static void test_003_001_execute(void) {
   }
 }
 
-static const testcase_t test_003_001 = {
+static const testcase_t nasa_osal_test_003_001 = {
   "OS_TimerCreate() and OS_TimerDelete() errors",
   NULL,
   NULL,
-  test_003_001_execute
+  nasa_osal_test_003_001_execute
 };
 
 /**
- * @page test_003_002 [3.2] OS_TimerSet() errors
+ * @page nasa_osal_test_003_002 [3.2] OS_TimerSet() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_TimerSet() is tested.
@@ -197,7 +196,7 @@ static const testcase_t test_003_001 = {
  * .
  */
 
-static void test_003_002_execute(void) {
+static void nasa_osal_test_003_002_execute(void) {
 
   /* [3.2.1] OS_TimerSet() is invoked with timer_id set to -1, an error
      is expected.*/
@@ -210,15 +209,15 @@ static void test_003_002_execute(void) {
   }
 }
 
-static const testcase_t test_003_002 = {
+static const testcase_t nasa_osal_test_003_002 = {
   "OS_TimerSet() errors",
   NULL,
   NULL,
-  test_003_002_execute
+  nasa_osal_test_003_002_execute
 };
 
 /**
- * @page test_003_003 [3.3] OS_TimerGetIdByName() errors
+ * @page nasa_osal_test_003_003 [3.3] OS_TimerGetIdByName() errors
  *
  * <h2>Description</h2>
  * Parameters checking in OS_TimerGetIdByName() is tested.
@@ -233,7 +232,7 @@ static const testcase_t test_003_002 = {
  * .
  */
 
-static void test_003_003_execute(void) {
+static void nasa_osal_test_003_003_execute(void) {
 
   /* [3.3.1] OS_TimerGetIdByName() is invoked with timer_id set to
      NULL, an error is expected.*/
@@ -266,15 +265,15 @@ static void test_003_003_execute(void) {
   }
 }
 
-static const testcase_t test_003_003 = {
+static const testcase_t nasa_osal_test_003_003 = {
   "OS_TimerGetIdByName() errors",
   NULL,
   NULL,
-  test_003_003_execute
+  nasa_osal_test_003_003_execute
 };
 
 /**
- * @page test_003_004 [3.4] OS_TimerSet() one-shot functionality
+ * @page nasa_osal_test_003_004 [3.4] OS_TimerSet() one-shot functionality
  *
  * <h2>Description</h2>
  * A timer is tested in one-shot mode.
@@ -286,7 +285,7 @@ static const testcase_t test_003_003 = {
  * .
  */
 
-static void test_003_004_setup(void) {
+static void nasa_osal_test_003_004_setup(void) {
   uint32 accuracy;
 
   cnt = 0;
@@ -294,13 +293,13 @@ static void test_003_004_setup(void) {
   (void) OS_TimerCreate(&tmid, "test timer", &accuracy, tmr_callback);
 }
 
-static void test_003_004_teardown(void) {
+static void nasa_osal_test_003_004_teardown(void) {
   if (tmid != 0) {
     (void) OS_TimerDelete(tmid);
   }
 }
 
-static void test_003_004_execute(void) {
+static void nasa_osal_test_003_004_execute(void) {
   uint32 local_tmid;
 
   /* [3.4.1] Retrieving the timer by name.*/
@@ -329,15 +328,15 @@ static void test_003_004_execute(void) {
   }
 }
 
-static const testcase_t test_003_004 = {
+static const testcase_t nasa_osal_test_003_004 = {
   "OS_TimerSet() one-shot functionality",
-  test_003_004_setup,
-  test_003_004_teardown,
-  test_003_004_execute
+  nasa_osal_test_003_004_setup,
+  nasa_osal_test_003_004_teardown,
+  nasa_osal_test_003_004_execute
 };
 
 /**
- * @page test_003_005 [3.5] OS_TimerSet() periodic functionality
+ * @page nasa_osal_test_003_005 [3.5] OS_TimerSet() periodic functionality
  *
  * <h2>Description</h2>
  * A timer is tested in periodic mode.
@@ -350,7 +349,7 @@ static const testcase_t test_003_004 = {
  * .
  */
 
-static void test_003_005_setup(void) {
+static void nasa_osal_test_003_005_setup(void) {
   uint32 accuracy;
 
   cnt = 0;
@@ -358,14 +357,14 @@ static void test_003_005_setup(void) {
   (void) OS_TimerCreate(&tmid, "test timer", &accuracy, tmr_callback);
 }
 
-static void test_003_005_teardown(void) {
+static void nasa_osal_test_003_005_teardown(void) {
   if (tmid != 0) {
     (void) OS_TimerSet(tmid, 0, 0);
     (void) OS_TimerDelete(tmid);
   }
 }
 
-static void test_003_005_execute(void) {
+static void nasa_osal_test_003_005_execute(void) {
   uint32 local_tmid;
 
   /* [3.5.1] Retrieving the timer by name.*/
@@ -403,11 +402,11 @@ static void test_003_005_execute(void) {
   }
 }
 
-static const testcase_t test_003_005 = {
+static const testcase_t nasa_osal_test_003_005 = {
   "OS_TimerSet() periodic functionality",
-  test_003_005_setup,
-  test_003_005_teardown,
-  test_003_005_execute
+  nasa_osal_test_003_005_setup,
+  nasa_osal_test_003_005_teardown,
+  nasa_osal_test_003_005_execute
 };
 
 /****************************************************************************
@@ -415,13 +414,21 @@ static const testcase_t test_003_005 = {
  ****************************************************************************/
 
 /**
+ * @brief   Array of test cases.
+ */
+const testcase_t * const nasa_osal_test_sequence_003_array[] = {
+  &nasa_osal_test_003_001,
+  &nasa_osal_test_003_002,
+  &nasa_osal_test_003_003,
+  &nasa_osal_test_003_004,
+  &nasa_osal_test_003_005,
+  NULL
+};
+
+/**
  * @brief   Timers Functionality.
  */
-const testcase_t * const test_sequence_003[] = {
-  &test_003_001,
-  &test_003_002,
-  &test_003_003,
-  &test_003_004,
-  &test_003_005,
-  NULL
+const testsequence_t nasa_osal_test_sequence_003 = {
+  "Timers Functionality",
+  nasa_osal_test_sequence_003_array
 };

@@ -1,19 +1,21 @@
 /* Copyright statement.*/
 
 /**
- * @file    test_root.h
+ * @file    nasa_osal_test_root.h
  * @brief   Test Suite root structures header.
  */
 
-#ifndef TEST_ROOT_H
-#define TEST_ROOT_H
+#ifndef NASA_OSAL_TEST_ROOT_H
+#define NASA_OSAL_TEST_ROOT_H
 
-#include "test_sequence_001.h"
-#include "test_sequence_002.h"
-#include "test_sequence_003.h"
-#include "test_sequence_004.h"
-#include "test_sequence_005.h"
-#include "test_sequence_006.h"
+#include "ch_test.h"
+
+#include "nasa_osal_test_sequence_001.h"
+#include "nasa_osal_test_sequence_002.h"
+#include "nasa_osal_test_sequence_003.h"
+#include "nasa_osal_test_sequence_004.h"
+#include "nasa_osal_test_sequence_005.h"
+#include "nasa_osal_test_sequence_006.h"
 
 #if !defined(__DOXYGEN__)
 
@@ -21,7 +23,7 @@
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-extern const testcase_t * const *test_suite[];
+extern const testsuite_t nasa_osal_test_suite;
 
 #ifdef __cplusplus
 extern "C" {
@@ -46,4 +48,4 @@ extern THD_WORKING_AREA(wa_test4, TASKS_STACK_SIZE);
 
 #endif /* !defined(__DOXYGEN__) */
 
-#endif /* TEST_ROOT_H */
+#endif /* NASA_OSAL_TEST_ROOT_H */

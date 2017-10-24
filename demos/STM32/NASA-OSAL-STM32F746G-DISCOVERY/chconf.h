@@ -331,7 +331,7 @@
  *
  * @note    The default is @p FALSE.
  */
-#define CH_CFG_USE_FACTORY                  TRUE
+#define CH_CFG_USE_FACTORY                  FALSE
 
 /**
  * @brief   Maximum length for object names.

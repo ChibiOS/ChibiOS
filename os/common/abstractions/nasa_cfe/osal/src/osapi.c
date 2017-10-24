@@ -161,7 +161,7 @@ static osal_t osal;
  * @brief   System time callback.
  */
 static void systime_update(void *p) {
-  systime_t delay = (systime_t)p;
+  sysinterval_t delay = (sysinterval_t)p;
 
   chSysLockFromISR();
   osal.localtime.microsecs += 1000;
@@ -185,7 +185,7 @@ static void timer_handler(void *p) {
   /* Timer restart if an interval is defined.*/
   if (otp->interval_time != 0) {
     chSysLockFromISR();
-    chVTSetI(&otp->vt, US2ST(otp->interval_time), timer_handler, p);
+    chVTSetI(&otp->vt, TIME_US2I(otp->interval_time), timer_handler, p);
     chSysUnlockFromISR();
   }
 }
@@ -268,7 +268,7 @@ int32 OS_API_Init(void) {
   osal.localtime.microsecs = 0;
   osal.localtime.seconds   = 0;
   chVTObjectInit(&osal.vt);
-  chVTSet(&osal.vt, MS2ST(1), systime_update, (void *)MS2ST(1));
+  chVTSet(&osal.vt, TIME_MS2I(1), systime_update, (void *)TIME_MS2I(1));
 
   /* Timers pool initialization.*/
   chPoolObjectInit(&osal.timers_pool,
@@ -429,7 +429,7 @@ int32 OS_SetLocalTime(OS_time_t *time_struct) {
  */
 int32 OS_Milli2Ticks(uint32 milli_seconds) {
 
-  return (int32)MS2ST(milli_seconds);
+  return (int32)TIME_MS2I(milli_seconds);
 }
 
 /*-- timers API -------------------------------------------------------------*/
@@ -560,7 +560,7 @@ int32 OS_TimerSet(uint32 timer_id, uint32 start_time, uint32 interval_time) {
   else {
     otp->start_time    = start_time;
     otp->interval_time = interval_time;
-    chVTSetI(&otp->vt, US2ST(start_time), timer_handler, (void *)timer_id);
+    chVTSetI(&otp->vt, TIME_US2I(start_time), timer_handler, (void *)timer_id);
   }
 
   /* Leaving the critical zone.*/
@@ -833,7 +833,7 @@ int32 OS_QueueGet(uint32 queue_id, void *data, uint32 size,
     }
   }
   else {
-    msgsts = chMBFetchTimeout(&oqp->mb, &msg, (systime_t)timeout);
+    msgsts = chMBFetchTimeout(&oqp->mb, &msg, (sysinterval_t)timeout);
     if (msgsts < MSG_OK) {
       *size_copied = 0;
       return OS_QUEUE_TIMEOUT;
@@ -1210,7 +1210,7 @@ int32 OS_BinSemTimedWait(uint32 sem_id, uint32 msecs) {
     return OS_SEM_FAILURE;
   }
 
-  msg = chBSemWaitTimeoutS(bsp, MS2ST(msecs));
+  msg = chBSemWaitTimeoutS(bsp, TIME_MS2I(msecs));
 
   chSysUnlock();
 
@@ -1467,7 +1467,7 @@ int32 OS_CountSemTimedWait(uint32 sem_id, uint32 msecs) {
     return OS_SEM_FAILURE;
   }
 
-  msg = chSemWaitTimeoutS(sp, MS2ST(msecs));
+  msg = chSemWaitTimeoutS(sp, TIME_MS2I(msecs));
 
   chSysUnlock();
 
