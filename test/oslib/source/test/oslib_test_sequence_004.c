@@ -77,8 +77,6 @@ static void oslib_test_004_001_execute(void) {
   /* [4.1.1] Retrieving a registered object by name, must not exist.*/
   test_set_step(1);
   {
-    registered_object_t *rop;
-
     rop = chFactoryFindObject("myobj");
     test_assert(rop == NULL, "found");
   }
@@ -86,7 +84,6 @@ static void oslib_test_004_001_execute(void) {
   /* [4.1.2] Registering an object, it must not exists, must succeed.*/
   test_set_step(2);
   {
-    registered_object_t *rop;
     static uint32_t myobj = 0x55aa;
 
     rop = chFactoryRegisterObject("myobj", (void *)&myobj);
@@ -119,12 +116,12 @@ static void oslib_test_004_001_execute(void) {
     rop2 = (registered_object_t *)chFactoryDuplicateReference((dyn_element_t *)rop1);
     test_assert(rop1 == rop2, "object reference mismatch");
     test_assert(*(uint32_t *)(rop2->objp) == 0x55aa, "object mismatch");
-    test_assert(rop1->element.refs == 3, "object reference mismatch");
-
-    chFactoryReleaseObject(rop1);
-    test_assert(rop->element.refs == 2, "references mismatch");
+    test_assert(rop2->element.refs == 3, "object reference mismatch");
 
     chFactoryReleaseObject(rop2);
+    test_assert(rop1->element.refs == 2, "references mismatch");
+
+    chFactoryReleaseObject(rop1);
     test_assert(rop->element.refs == 1, "references mismatch");
   }
 
