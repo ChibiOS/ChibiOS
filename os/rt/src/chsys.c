@@ -116,6 +116,9 @@ void chSysInit(void) {
 #if CH_CFG_USE_HEAP == TRUE
   _heap_init();
 #endif
+#if CH_CFG_USE_FACTORY == TRUE
+  _factory_init();
+#endif
 #if CH_DBG_STATISTICS == TRUE
   _stats_init();
 #endif

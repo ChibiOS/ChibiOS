@@ -353,11 +353,9 @@ extern "C" {
  * @param[in] dep       pointer to the element field of the object
  * @return              The duplicated object reference.
  *
- * @iclass
+ * @api
  */
-static inline dyn_element_t *chFactoryDuplicateReferenceI(dyn_element_t *dep) {
-
-  chDbgCheckClassI();
+static inline dyn_element_t *chFactoryDuplicateReference(dyn_element_t *dep) {
 
   dep->refs++;
 
