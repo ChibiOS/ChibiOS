@@ -103,6 +103,10 @@
 #error "invalid CH_CFG_FACTORY_MAX_NAMES_LENGTH value"
 #endif
 
+#if (CH_CFG_USE_MUTEXES == FALSE) && (CH_CFG_USE_SEMAPHORES == FALSE)
+#error "CH_CFG_USE_FACTORY requires CH_CFG_USE_MUTEXES and/or CH_CFG_USE_SEMAPHORES"
+#endif
+
 #if CH_CFG_USE_MEMCORE == FALSE
 #error "CH_CFG_USE_FACTORY requires CH_CFG_USE_MEMCORE"
 #endif
@@ -255,6 +259,14 @@ typedef struct ch_dyn_objects_fifo {
  * @brief   Type of the factory main object.
  */
 typedef struct ch_objects_factory {
+  /**
+   * @brief   Factory access mutex or semaphore.
+   */
+#if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
+  mutex_t               mtx;
+#else
+  semaphore_t           sem;
+#endif
   /**
    * @brief   List of the registered objects.
    */

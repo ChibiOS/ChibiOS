@@ -49,6 +49,17 @@
 /* Module local definitions.                                                 */
 /*===========================================================================*/
 
+/*
+ * Defaults on the best synchronization mechanism available.
+ */
+#if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
+#define F_LOCK()        chMtxLock(&ch_factory.mtx)
+#define F_UNLOCK()      chMtxUnlock(&ch_factory.mtx)
+#else
+#define F_LOCK()        (void) chSemWait(ch_factory.sem)
+#define F_UNLOCK()      chSemSignal(ch_factory.sem)
+#endif
+
 /*===========================================================================*/
 /* Module exported variables.                                                */
 /*===========================================================================*/
@@ -148,10 +159,10 @@ static void dyn_release_object_heap(dyn_element_t *dep,
   chDbgCheck(dep != NULL);
   chDbgAssert(dep->refs > 0U, "invalid references number");
 
-  dep = dyn_list_unlink(dep, dlp);
 
   dep->refs--;
   if (dep->refs == 0U) {
+    dep = dyn_list_unlink(dep, dlp);
     chHeapFree((void *)dep);
   }
 }
@@ -180,7 +191,7 @@ static dyn_element_t *dyn_create_object_pool(const char *name,
   /* Initializing object list element.*/
   strncpy(dep->name, name, CH_CFG_FACTORY_MAX_NAMES_LENGTH);
   dep->refs = 1U;
-  dep->next = ch_factory.sem_list.next;
+  dep->next = dlp->next;
 
   /* Updating factory list.*/
   dlp->next = (dyn_element_t *)dep;
@@ -195,10 +206,9 @@ static void dyn_release_object_pool(dyn_element_t *dep,
   chDbgCheck(dep != NULL);
   chDbgAssert(dep->refs > 0U, "invalid references number");
 
-  dep = dyn_list_unlink(dep, dlp);
-
   dep->refs--;
   if (dep->refs == 0U) {
+    dep = dyn_list_unlink(dep, dlp);
     chPoolFree(mp, (void *)dep);
   }
 }
@@ -229,6 +239,12 @@ static dyn_element_t *dyn_find_object(const char *name, dyn_list_t *dlp) {
  * @init
  */
 void _factory_init(void) {
+
+#if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
+  chMtxObjectInit(&ch_factory.mtx);
+#else
+  chSemObjectInit(&ch_factory.sem, (cnt_t)1);
+#endif
 
 #if CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE
   dyn_list_init(&ch_factory.obj_list);
@@ -272,7 +288,7 @@ registered_object_t *chFactoryRegisterObject(const char *name,
                                              void *objp) {
   registered_object_t *rop;
 
-  chSysLock();
+  F_LOCK();
 
   rop = (registered_object_t *)dyn_create_object_pool(name,
                                                       &ch_factory.obj_list,
@@ -282,7 +298,7 @@ registered_object_t *chFactoryRegisterObject(const char *name,
     rop->objp = objp;
   }
 
-  chSysUnlock();
+  F_UNLOCK();
 
   return rop;
 }
@@ -303,11 +319,11 @@ registered_object_t *chFactoryRegisterObject(const char *name,
 registered_object_t *chFactoryFindObject(const char *name) {
   registered_object_t *rop;
 
-  chSysLock();
+  F_LOCK();
 
   rop = (registered_object_t *)dyn_find_object(name, &ch_factory.obj_list);
 
-  chSysUnlock();
+  F_UNLOCK();
 
   return rop;
 }
@@ -326,13 +342,13 @@ registered_object_t *chFactoryFindObject(const char *name) {
  */
 void chFactoryReleaseObject(registered_object_t *rop){
 
-  chSysLock();
+  F_LOCK();
 
   dyn_release_object_pool(&rop->element,
                           &ch_factory.obj_list,
                           &ch_factory.obj_pool);
 
-  chSysUnlock();
+  F_UNLOCK();
 }
 #endif /* CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE */
 
@@ -355,7 +371,7 @@ void chFactoryReleaseObject(registered_object_t *rop){
 dyn_buffer_t *chFactoryCreateBuffer(const char *name, size_t size) {
   dyn_buffer_t *dbp;
 
-  chSysLock();
+  F_LOCK();
 
   dbp = (dyn_buffer_t *)dyn_create_object_heap(name,
                                                &ch_factory.buf_list,
@@ -365,7 +381,7 @@ dyn_buffer_t *chFactoryCreateBuffer(const char *name, size_t size) {
     memset((void *)dbp->buffer, 0, size);
   }
 
-  chSysUnlock();
+  F_UNLOCK();
 
   return dbp;
 }
@@ -386,11 +402,11 @@ dyn_buffer_t *chFactoryCreateBuffer(const char *name, size_t size) {
 dyn_buffer_t *chFactoryFindBuffer(const char *name) {
   dyn_buffer_t *dbp;
 
-  chSysLock();
+  F_LOCK();
 
   dbp = (dyn_buffer_t *)dyn_find_object(name, &ch_factory.buf_list);
 
-  chSysUnlock();
+  F_UNLOCK();
 
   return dbp;
 }
@@ -407,11 +423,11 @@ dyn_buffer_t *chFactoryFindBuffer(const char *name) {
  */
 void chFactoryReleaseBuffer(dyn_buffer_t *dbp) {
 
-  chSysLock();
+  F_LOCK();
 
   dyn_release_object_heap(&dbp->element, &ch_factory.buf_list);
 
-  chSysUnlock();
+  F_UNLOCK();
 }
 #endif /* CH_CFG_FACTORY_GENERIC_BUFFERS = TRUE */
 
@@ -434,7 +450,7 @@ void chFactoryReleaseBuffer(dyn_buffer_t *dbp) {
 dyn_semaphore_t *chFactoryCreateSemaphore(const char *name, cnt_t n) {
   dyn_semaphore_t *dsp;
 
-  chSysLock();
+  F_LOCK();
 
   dsp = (dyn_semaphore_t *)dyn_create_object_pool(name,
                                                   &ch_factory.sem_list,
@@ -444,7 +460,7 @@ dyn_semaphore_t *chFactoryCreateSemaphore(const char *name, cnt_t n) {
     chSemObjectInit(&dsp->sem, n);
   }
 
-  chSysUnlock();
+  F_UNLOCK();
 
   return dsp;
 }
@@ -465,11 +481,11 @@ dyn_semaphore_t *chFactoryCreateSemaphore(const char *name, cnt_t n) {
 dyn_semaphore_t *chFactoryFindSemaphore(const char *name) {
   dyn_semaphore_t *dsp;
 
-  chSysLock();
+  F_LOCK();
 
   dsp = (dyn_semaphore_t *)dyn_find_object(name, &ch_factory.sem_list);
 
-  chSysUnlock();
+  F_UNLOCK();
 
   return dsp;
 }
@@ -486,13 +502,13 @@ dyn_semaphore_t *chFactoryFindSemaphore(const char *name) {
  */
 void chFactoryReleaseSemaphore(dyn_semaphore_t *dsp) {
 
-  chSysLock();
+  F_LOCK();
 
   dyn_release_object_pool(&dsp->element,
                           &ch_factory.sem_list,
                           &ch_factory.sem_pool);
 
-  chSysUnlock();
+  F_UNLOCK();
 }
 #endif /* CH_CFG_FACTORY_SEMAPHORES = TRUE */
 
@@ -515,7 +531,7 @@ void chFactoryReleaseSemaphore(dyn_semaphore_t *dsp) {
 dyn_mailbox_t *chFactoryCreateMailbox(const char *name, size_t n) {
   dyn_mailbox_t *dmp;
 
-  chSysLock();
+  F_LOCK();
 
   dmp = (dyn_mailbox_t *)dyn_create_object_heap(name,
                                                 &ch_factory.mbx_list,
@@ -526,7 +542,7 @@ dyn_mailbox_t *chFactoryCreateMailbox(const char *name, size_t n) {
     chMBObjectInit(&dmp->mbx, dmp->msgbuf, n);
   }
 
-  chSysUnlock();
+  F_UNLOCK();
 
   return dmp;
 }
@@ -547,11 +563,11 @@ dyn_mailbox_t *chFactoryCreateMailbox(const char *name, size_t n) {
 dyn_mailbox_t *chFactoryFindMailbox(const char *name) {
   dyn_mailbox_t *dmp;
 
-  chSysLock();
+  F_LOCK();
 
   dmp = (dyn_mailbox_t *)dyn_find_object(name, &ch_factory.mbx_list);
 
-  chSysUnlock();
+  F_UNLOCK();
 
   return dmp;
 }
@@ -568,11 +584,11 @@ dyn_mailbox_t *chFactoryFindMailbox(const char *name) {
  */
 void chFactoryReleaseMailbox(dyn_mailbox_t *dmp) {
 
-  chSysLock();
+  F_LOCK();
 
   dyn_release_object_heap(&dmp->element, &ch_factory.mbx_list);
 
-  chSysUnlock();
+  F_UNLOCK();
 }
 #endif /* CH_CFG_FACTORY_MAILBOXES = TRUE */
 
@@ -602,7 +618,7 @@ dyn_objects_fifo_t *chFactoryCreateObjectsFIFO(const char *name,
                                                unsigned objalign) {
   dyn_objects_fifo_t *dofp;
 
-  chSysLock();
+  F_LOCK();
 
   dofp = (dyn_objects_fifo_t *)dyn_create_object_heap(name,
                                                       &ch_factory.fifo_list,
@@ -615,7 +631,7 @@ dyn_objects_fifo_t *chFactoryCreateObjectsFIFO(const char *name,
                      dofp->msgbuf, (void *)&dofp->msgbuf[objn]);
   }
 
-  chSysUnlock();
+  F_UNLOCK();
 
   return dofp;
 }
@@ -637,11 +653,11 @@ dyn_objects_fifo_t *chFactoryCreateObjectsFIFO(const char *name,
 dyn_objects_fifo_t *chFactoryFindObjectsFIFO(const char *name) {
   dyn_objects_fifo_t *dofp;
 
-  chSysLock();
+  F_LOCK();
 
   dofp = (dyn_objects_fifo_t *)dyn_find_object(name, &ch_factory.fifo_list);
 
-  chSysUnlock();
+  F_UNLOCK();
 
   return dofp;
 }
@@ -658,11 +674,11 @@ dyn_objects_fifo_t *chFactoryFindObjectsFIFO(const char *name) {
  */
 void chFactoryReleaseObjectsFIFO(dyn_objects_fifo_t *dofp) {
 
-  chSysLock();
+  F_LOCK();
 
   dyn_release_object_heap(&dofp->element, &ch_factory.fifo_list);
 
-  chSysUnlock();
+  F_UNLOCK();
 }
 #endif /* CH_CFG_FACTORY_MAILBOXES = TRUE */
 
