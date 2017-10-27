@@ -39,6 +39,7 @@
  * - @subpage oslib_test_004_001
  * - @subpage oslib_test_004_002
  * - @subpage oslib_test_004_003
+ * - @subpage oslib_test_004_004
  * .
  */
 
@@ -397,6 +398,120 @@ static const testcase_t oslib_test_004_003 = {
 };
 #endif /* CH_CFG_FACTORY_SEMAPHORES == TRUE */
 
+#if (CH_CFG_FACTORY_MAILBOXES == TRUE) || defined(__DOXYGEN__)
+/**
+ * @page oslib_test_004_004 [4.4] Dynamic Mailboxes Factory
+ *
+ * <h2>Description</h2>
+ * This test case verifies the dynamic mailboxes factory.
+ *
+ * <h2>Conditions</h2>
+ * This test is only executed if the following preprocessor condition
+ * evaluates to true:
+ * - CH_CFG_FACTORY_MAILBOXES == TRUE
+ * .
+ *
+ * <h2>Test Steps</h2>
+ * - [4.4.1] Retrieving a dynamic mailbox by name, must not exist.
+ * - [4.4.2] Creating a dynamic mailbox it must not exists, must
+ *   succeed.
+ * - [4.4.3] Creating a dynamic mailbox with the same name, must fail.
+ * - [4.4.4] Retrieving the dynamic mailbox by name, must exist, then
+ *   increasing the reference counter, finally releasing both
+ *   references.
+ * - [4.4.5] Releasing the first reference to the dynamic mailbox must
+ *   not trigger an assertion.
+ * - [4.4.6] Retrieving the dynamic mailbox by name again, must not
+ *   exist.
+ * .
+ */
+
+static void oslib_test_004_004_teardown(void) {
+  dyn_mailbox_t *dmp;
+
+  dmp = chFactoryFindMailbox("mymbx");
+  if (dmp != NULL) {
+    while (dmp->element.refs > 0U) {
+      chFactoryReleaseMailbox(dmp);
+    }
+  }
+}
+
+static void oslib_test_004_004_execute(void) {
+  dyn_mailbox_t *dmp;
+
+  /* [4.4.1] Retrieving a dynamic mailbox by name, must not exist.*/
+  test_set_step(1);
+  {
+    dmp = chFactoryFindMailbox("mymbx");
+    test_assert(dmp == NULL, "found");
+  }
+
+  /* [4.4.2] Creating a dynamic mailbox it must not exists, must
+     succeed.*/
+  test_set_step(2);
+  {
+    dmp = chFactoryCreateMailbox("mymbx", 16U);
+    test_assert(dmp != NULL, "cannot create");
+  }
+
+  /* [4.4.3] Creating a dynamic mailbox with the same name, must
+     fail.*/
+  test_set_step(3);
+  {
+    dyn_mailbox_t *dmp1;
+
+    dmp1 = chFactoryCreateMailbox("mymbx", 16U);
+    test_assert(dmp1 == NULL, "can create");
+  }
+
+  /* [4.4.4] Retrieving the dynamic mailbox by name, must exist, then
+     increasing the reference counter, finally releasing both
+     references.*/
+  test_set_step(4);
+  {
+    dyn_mailbox_t *dmp1, *dmp2;
+
+    dmp1 = chFactoryFindMailbox("mymbx");
+    test_assert(dmp1 != NULL, "not found");
+    test_assert(dmp == dmp1, "object reference mismatch");
+    test_assert(dmp1->element.refs == 2, "object reference mismatch");
+
+    dmp2 = (dyn_mailbox_t *)chFactoryDuplicateReference((dyn_element_t *)dmp1);
+    test_assert(dmp1 == dmp2, "object reference mismatch");
+    test_assert(dmp2->element.refs == 3, "object reference mismatch");
+
+    chFactoryReleaseMailbox(dmp2);
+    test_assert(dmp1->element.refs == 2, "references mismatch");
+
+    chFactoryReleaseMailbox(dmp1);
+    test_assert(dmp->element.refs == 1, "references mismatch");
+  }
+
+  /* [4.4.5] Releasing the first reference to the dynamic mailbox must
+     not trigger an assertion.*/
+  test_set_step(5);
+  {
+    chFactoryReleaseMailbox(dmp);
+  }
+
+  /* [4.4.6] Retrieving the dynamic mailbox by name again, must not
+     exist.*/
+  test_set_step(6);
+  {
+    dmp = chFactoryFindMailbox("mymbx");
+    test_assert(dmp == NULL, "found");
+  }
+}
+
+static const testcase_t oslib_test_004_004 = {
+  "Dynamic Mailboxes Factory",
+  NULL,
+  oslib_test_004_004_teardown,
+  oslib_test_004_004_execute
+};
+#endif /* CH_CFG_FACTORY_MAILBOXES == TRUE */
+
 /****************************************************************************
  * Exported data.
  ****************************************************************************/
@@ -413,6 +528,9 @@ const testcase_t * const oslib_test_sequence_004_array[] = {
 #endif
 #if (CH_CFG_FACTORY_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
   &oslib_test_004_003,
+#endif
+#if (CH_CFG_FACTORY_MAILBOXES == TRUE) || defined(__DOXYGEN__)
+  &oslib_test_004_004,
 #endif
   NULL
 };
