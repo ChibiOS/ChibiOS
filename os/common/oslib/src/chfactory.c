@@ -138,7 +138,7 @@ static dyn_element_t *dyn_create_object_heap(const char *name,
 
   /* Allocating space for the new buffer object.*/
   dep = (dyn_element_t *)chHeapAlloc(NULL, size);
-  if (dep) {
+  if (dep == NULL) {
     return NULL;
   }
 

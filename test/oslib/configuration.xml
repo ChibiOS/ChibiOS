@@ -974,14 +974,21 @@ test_assert(p1 == NULL, "allocation not failed");]]></value>
                   <value>This test case verifies the static objects registry.</value>
                 </description>
                 <condition>
-                  <value />
+                  <value>CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE</value>
                 </condition>
                 <various_code>
                   <setup_code>
                     <value />
                   </setup_code>
                   <teardown_code>
-                    <value />
+                    <value><![CDATA[registered_object_t *rop;
+
+rop = chFactoryFindObject("myobj");
+if (rop != NULL) {
+  while (rop->element.refs > 0U) {
+    chFactoryReleaseObject(rop);
+  }
+}]]></value>
                   </teardown_code>
                   <local_variables>
                     <value><![CDATA[registered_object_t *rop;]]></value>
@@ -1078,6 +1085,124 @@ test_assert(rop->element.refs == 1, "references mismatch");]]></value>
                     <code>
                       <value><![CDATA[rop = chFactoryFindObject("myobj");
 test_assert(rop == NULL, "found");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Dynamic Buffers Factory.</value>
+                </brief>
+                <description>
+                  <value>This test case verifies the dynamic buffers factory.</value>
+                </description>
+                <condition>
+                  <value>CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE</value>
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value><![CDATA[dyn_buffer_t *dbp;
+
+dbp = chFactoryFindBuffer("mybuf");
+if (dbp != NULL) {
+  while (dbp->element.refs > 0U) {
+    chFactoryReleaseBuffer(dbp);
+  }
+}]]></value>
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[dyn_buffer_t *dbp;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Retrieving a dynamic buffer by name, must not exist.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[dbp = chFactoryFindBuffer("mybuf");
+test_assert(dbp == NULL, "found");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Creating a dynamic buffer it must not exists, must succeed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[dbp = chFactoryCreateBuffer("mybuf", 128U);
+test_assert(dbp != NULL, "cannot create");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Creating a dynamic buffer with the same name, must fail.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[dyn_buffer_t *dbp1;
+
+dbp1 = chFactoryCreateBuffer("mybuf", 128U);
+test_assert(dbp1 == NULL, "can create");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Retrieving the dynamic buffer by name, must exist, then increasing the reference counter, finally releasing both references.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[dyn_buffer_t *dbp1, *dbp2;
+
+dbp1 = chFactoryFindBuffer("mybuf");
+test_assert(dbp1 != NULL, "not found");
+test_assert(dbp == dbp1, "object reference mismatch");
+test_assert(dbp1->element.refs == 2, "object reference mismatch");
+
+dbp2 = (dyn_buffer_t *)chFactoryDuplicateReference((dyn_element_t *)dbp1);
+test_assert(dbp1 == dbp2, "object reference mismatch");
+test_assert(dbp2->element.refs == 3, "object reference mismatch");
+
+chFactoryReleaseBuffer(dbp2);
+test_assert(dbp1->element.refs == 2, "references mismatch");
+
+chFactoryReleaseBuffer(dbp1);
+test_assert(dbp->element.refs == 1, "references mismatch");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Releasing the first reference to the dynamic buffer, must not trigger an assertion.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chFactoryReleaseBuffer(dbp);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Retrieving the dynamic buffer by name again, must not exist.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[dbp = chFactoryFindBuffer("mybuf");
+test_assert(dbp == NULL, "found");]]></value>
                     </code>
                   </step>
                 </steps>

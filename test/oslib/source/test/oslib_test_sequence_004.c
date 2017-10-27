@@ -37,6 +37,7 @@
  *
  * <h2>Test Cases</h2>
  * - @subpage oslib_test_004_001
+ * - @subpage oslib_test_004_002
  * .
  */
 
@@ -51,11 +52,18 @@
  * Test cases.
  ****************************************************************************/
 
+#if (CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE) || defined(__DOXYGEN__)
 /**
  * @page oslib_test_004_001 [4.1] Objects Registry
  *
  * <h2>Description</h2>
  * This test case verifies the static objects registry.
+ *
+ * <h2>Conditions</h2>
+ * This test is only executed if the following preprocessor condition
+ * evaluates to true:
+ * - CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE
+ * .
  *
  * <h2>Test Steps</h2>
  * - [4.1.1] Retrieving a registered object by name, must not exist.
@@ -70,6 +78,17 @@
  *   exist.
  * .
  */
+
+static void oslib_test_004_001_teardown(void) {
+  registered_object_t *rop;
+
+  rop = chFactoryFindObject("myobj");
+  if (rop != NULL) {
+    while (rop->element.refs > 0U) {
+      chFactoryReleaseObject(rop);
+    }
+  }
+}
 
 static void oslib_test_004_001_execute(void) {
   registered_object_t *rop;
@@ -144,9 +163,123 @@ static void oslib_test_004_001_execute(void) {
 static const testcase_t oslib_test_004_001 = {
   "Objects Registry",
   NULL,
-  NULL,
+  oslib_test_004_001_teardown,
   oslib_test_004_001_execute
 };
+#endif /* CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE */
+
+#if (CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE) || defined(__DOXYGEN__)
+/**
+ * @page oslib_test_004_002 [4.2] Dynamic Buffers Factory
+ *
+ * <h2>Description</h2>
+ * This test case verifies the dynamic buffers factory.
+ *
+ * <h2>Conditions</h2>
+ * This test is only executed if the following preprocessor condition
+ * evaluates to true:
+ * - CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE
+ * .
+ *
+ * <h2>Test Steps</h2>
+ * - [4.2.1] Retrieving a dynamic buffer by name, must not exist.
+ * - [4.2.2] Creating a dynamic buffer it must not exists, must
+ *   succeed.
+ * - [4.2.3] Creating a dynamic buffer with the same name, must fail.
+ * - [4.2.4] Retrieving the dynamic buffer by name, must exist, then
+ *   increasing the reference counter, finally releasing both
+ *   references.
+ * - [4.2.5] Releasing the first reference to the dynamic buffer, must
+ *   not trigger an assertion.
+ * - [4.2.6] Retrieving the dynamic buffer by name again, must not
+ *   exist.
+ * .
+ */
+
+static void oslib_test_004_002_teardown(void) {
+  dyn_buffer_t *dbp;
+
+  dbp = chFactoryFindBuffer("mybuf");
+  if (dbp != NULL) {
+    while (dbp->element.refs > 0U) {
+      chFactoryReleaseBuffer(dbp);
+    }
+  }
+}
+
+static void oslib_test_004_002_execute(void) {
+  dyn_buffer_t *dbp;
+
+  /* [4.2.1] Retrieving a dynamic buffer by name, must not exist.*/
+  test_set_step(1);
+  {
+    dbp = chFactoryFindBuffer("mybuf");
+    test_assert(dbp == NULL, "found");
+  }
+
+  /* [4.2.2] Creating a dynamic buffer it must not exists, must
+     succeed.*/
+  test_set_step(2);
+  {
+    dbp = chFactoryCreateBuffer("mybuf", 128U);
+    test_assert(dbp != NULL, "cannot create");
+  }
+
+  /* [4.2.3] Creating a dynamic buffer with the same name, must fail.*/
+  test_set_step(3);
+  {
+    dyn_buffer_t *dbp1;
+
+    dbp1 = chFactoryCreateBuffer("mybuf", 128U);
+    test_assert(dbp1 == NULL, "can create");
+  }
+
+  /* [4.2.4] Retrieving the dynamic buffer by name, must exist, then
+     increasing the reference counter, finally releasing both
+     references.*/
+  test_set_step(4);
+  {
+    dyn_buffer_t *dbp1, *dbp2;
+
+    dbp1 = chFactoryFindBuffer("mybuf");
+    test_assert(dbp1 != NULL, "not found");
+    test_assert(dbp == dbp1, "object reference mismatch");
+    test_assert(dbp1->element.refs == 2, "object reference mismatch");
+
+    dbp2 = (dyn_buffer_t *)chFactoryDuplicateReference((dyn_element_t *)dbp1);
+    test_assert(dbp1 == dbp2, "object reference mismatch");
+    test_assert(dbp2->element.refs == 3, "object reference mismatch");
+
+    chFactoryReleaseBuffer(dbp2);
+    test_assert(dbp1->element.refs == 2, "references mismatch");
+
+    chFactoryReleaseBuffer(dbp1);
+    test_assert(dbp->element.refs == 1, "references mismatch");
+  }
+
+  /* [4.2.5] Releasing the first reference to the dynamic buffer, must
+     not trigger an assertion.*/
+  test_set_step(5);
+  {
+    chFactoryReleaseBuffer(dbp);
+  }
+
+  /* [4.2.6] Retrieving the dynamic buffer by name again, must not
+     exist.*/
+  test_set_step(6);
+  {
+    dbp = chFactoryFindBuffer("mybuf");
+    test_assert(dbp == NULL, "found");
+  }
+}
+
+static const testcase_t oslib_test_004_002 = {
+  "Dynamic Buffers Factory",
+  NULL,
+  oslib_test_004_002_teardown,
+  oslib_test_004_002_execute
+};
+#endif /* CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE */
 
 /****************************************************************************
  * Exported data.
@@ -156,7 +289,12 @@ static const testcase_t oslib_test_004_001 = {
  * @brief   Array of test cases.
  */
 const testcase_t * const oslib_test_sequence_004_array[] = {
+#if (CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE) || defined(__DOXYGEN__)
   &oslib_test_004_001,
+#endif
+#if (CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE) || defined(__DOXYGEN__)
+  &oslib_test_004_002,
+#endif
   NULL
 };
 
