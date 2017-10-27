@@ -38,6 +38,7 @@
  * <h2>Test Cases</h2>
  * - @subpage oslib_test_004_001
  * - @subpage oslib_test_004_002
+ * - @subpage oslib_test_004_003
  * .
  */
 
@@ -281,6 +282,121 @@ static const testcase_t oslib_test_004_002 = {
 };
 #endif /* CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE */
 
+#if (CH_CFG_FACTORY_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
+/**
+ * @page oslib_test_004_003 [4.3] Dynamic Semaphores Factory
+ *
+ * <h2>Description</h2>
+ * This test case verifies the dynamic semaphores factory.
+ *
+ * <h2>Conditions</h2>
+ * This test is only executed if the following preprocessor condition
+ * evaluates to true:
+ * - CH_CFG_FACTORY_SEMAPHORES == TRUE
+ * .
+ *
+ * <h2>Test Steps</h2>
+ * - [4.3.1] Retrieving a dynamic semaphore by name, must not exist.
+ * - [4.3.2] Creating a dynamic semaphore it must not exists, must
+ *   succeed.
+ * - [4.3.3] Creating a dynamic semaphore with the same name, must
+ *   fail.
+ * - [4.3.4] Retrieving the dynamic semaphore by name, must exist, then
+ *   increasing the reference counter, finally releasing both
+ *   references.
+ * - [4.3.5] Releasing the first reference to the dynamic semaphore
+ *   must not trigger an assertion.
+ * - [4.3.6] Retrieving the dynamic semaphore by name again, must not
+ *   exist.
+ * .
+ */
+
+static void oslib_test_004_003_teardown(void) {
+  dyn_semaphore_t *dsp;
+
+  dsp = chFactoryFindSemaphore("mysem");
+  if (dsp != NULL) {
+    while (dsp->element.refs > 0U) {
+      chFactoryReleaseSemaphore(dsp);
+    }
+  }
+}
+
+static void oslib_test_004_003_execute(void) {
+  dyn_semaphore_t *dsp;
+
+  /* [4.3.1] Retrieving a dynamic semaphore by name, must not exist.*/
+  test_set_step(1);
+  {
+    dsp = chFactoryFindSemaphore("mysem");
+    test_assert(dsp == NULL, "found");
+  }
+
+  /* [4.3.2] Creating a dynamic semaphore it must not exists, must
+     succeed.*/
+  test_set_step(2);
+  {
+    dsp = chFactoryCreateSemaphore("mysem", 0);
+    test_assert(dsp != NULL, "cannot create");
+  }
+
+  /* [4.3.3] Creating a dynamic semaphore with the same name, must
+     fail.*/
+  test_set_step(3);
+  {
+    dyn_semaphore_t *dsp1;
+
+    dsp1 = chFactoryCreateSemaphore("mysem", 0);
+    test_assert(dsp1 == NULL, "can create");
+  }
+
+  /* [4.3.4] Retrieving the dynamic semaphore by name, must exist, then
+     increasing the reference counter, finally releasing both
+     references.*/
+  test_set_step(4);
+  {
+    dyn_semaphore_t *dsp1, *dsp2;
+
+    dsp1 = chFactoryFindSemaphore("mysem");
+    test_assert(dsp1 != NULL, "not found");
+    test_assert(dsp == dsp1, "object reference mismatch");
+    test_assert(dsp1->element.refs == 2, "object reference mismatch");
+
+    dsp2 = (dyn_semaphore_t *)chFactoryDuplicateReference((dyn_element_t *)dsp1);
+    test_assert(dsp1 == dsp2, "object reference mismatch");
+    test_assert(dsp2->element.refs == 3, "object reference mismatch");
+
+    chFactoryReleaseSemaphore(dsp2);
+    test_assert(dsp1->element.refs == 2, "references mismatch");
+
+    chFactoryReleaseSemaphore(dsp1);
+    test_assert(dsp->element.refs == 1, "references mismatch");
+  }
+
+  /* [4.3.5] Releasing the first reference to the dynamic semaphore
+     must not trigger an assertion.*/
+  test_set_step(5);
+  {
+    chFactoryReleaseSemaphore(dsp);
+  }
+
+  /* [4.3.6] Retrieving the dynamic semaphore by name again, must not
+     exist.*/
+  test_set_step(6);
+  {
+    dsp = chFactoryFindSemaphore("mysem");
+    test_assert(dsp == NULL, "found");
+  }
+}
+
+static const testcase_t oslib_test_004_003 = {
+  "Dynamic Semaphores Factory",
+  NULL,
+  oslib_test_004_003_teardown,
+  oslib_test_004_003_execute
+};
+#endif /* CH_CFG_FACTORY_SEMAPHORES == TRUE */
+
 /****************************************************************************
  * Exported data.
  ****************************************************************************/
@@ -294,6 +410,9 @@ const testcase_t * const oslib_test_sequence_004_array[] = {
 #endif
 #if (CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE) || defined(__DOXYGEN__)
   &oslib_test_004_002,
+#endif
+#if (CH_CFG_FACTORY_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
+  &oslib_test_004_003,
 #endif
   NULL
 };
