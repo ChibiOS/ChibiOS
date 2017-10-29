@@ -35,7 +35,125 @@
  * @{
  */
 
+#include <string.h>
+
 #include "hal.h"
+
+/*===========================================================================*/
+/* Driver local definitions.                                                 */
+/*===========================================================================*/
+
+/**
+ * @brief   Non-blocking input queue read.
+ * @details The function reads data from an input queue into a buffer. The
+ *          operation completes when the specified amount of data has been
+ *          transferred or when the input queue has been emptied.
+ *
+ * @param[in] iqp       pointer to an @p input_queue_t structure
+ * @param[out] bp       pointer to the data buffer
+ * @param[in] n         the maximum amount of data to be transferred, the
+ *                      value 0 is reserved
+ * @return              The number of bytes effectively transferred.
+ *
+ * @notapi
+ */
+static size_t iq_read(input_queue_t *iqp, uint8_t *bp, size_t n) {
+  size_t s1, s2;
+
+  osalDbgCheck(n > 0U);
+
+  /* Number of bytes that can be read in a single atomic operation.*/
+  if (n > iqGetFullI(iqp)) {
+    n = iqGetFullI(iqp);
+  }
+
+  /* Number of bytes before buffer limit.*/
+  s1 = iqp->q_top - iqp->q_rdptr;
+  if (n < s1) {
+    memcpy((void *)bp, (void *)iqp->q_rdptr, n);
+    iqp->q_rdptr += n;
+  }
+  else if (n > s1) {
+    memcpy((void *)bp, (void *)iqp->q_rdptr, s1);
+    s2 = n - s1;
+    bp += s1;
+    memcpy((void *)bp, (void *)iqp->q_buffer, s2);
+    iqp->q_rdptr = iqp->q_buffer + s2;
+  }
+  else { /* n == s1 */
+    memcpy((void *)bp, (void *)iqp->q_rdptr, n);
+    iqp->q_rdptr = iqp->q_buffer;
+  }
+
+  iqp->q_counter -= n;
+  return n;
+}
+
+/**
+ * @brief   Non-blocking output queue write.
+ * @details The function writes data from a buffer to an output queue. The
+ *          operation completes when the specified amount of data has been
+ *          transferred or when the output queue has been filled.
+ *
+ * @param[in] oqp       pointer to an @p output_queue_t structure
+ * @param[in] bp        pointer to the data buffer
+ * @param[in] n         the maximum amount of data to be transferred, the
+ *                      value 0 is reserved
+ * @return              The number of bytes effectively transferred.
+ *
+ * @notapi
+ */
+static size_t oq_write(output_queue_t *oqp, const uint8_t *bp, size_t n) {
+  size_t s1, s2;
+
+  osalDbgCheck(n > 0U);
+
+  /* Number of bytes that can be written in a single atomic operation.*/
+  if (n > oqGetEmptyI(oqp)) {
+    n = oqGetEmptyI(oqp);
+  }
+
+  /* Number of bytes before buffer limit.*/
+  s1 = oqp->q_top - oqp->q_wrptr;
+  if (n < s1) {
+    memcpy((void *)oqp->q_wrptr, (void *)bp, n);
+    oqp->q_wrptr += n;
+  }
+  else if (n > s1) {
+    memcpy((void *)oqp->q_wrptr, (void *)bp, s1);
+    s2 = n - s1;
+    bp += s1;
+    memcpy((void *)oqp->q_buffer, (void *)bp, s2);
+    oqp->q_wrptr = oqp->q_buffer + s2;
+  }
+  else { /* n == s1 */
+    memcpy((void *)oqp->q_wrptr, (void *)bp, n);
+    oqp->q_wrptr = oqp->q_buffer;
+  }
+
+  oqp->q_counter -= n;
+  return n;
+}
+
+/*===========================================================================*/
+/* Driver exported variables.                                                */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver local variables and types.                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver local functions.                                                   */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver interrupt handlers.                                                */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver exported functions.                                                */
+/*===========================================================================*/
 
 /**
  * @brief   Initializes an input queue.

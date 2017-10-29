@@ -25,6 +25,10 @@
 #ifndef HAL_QUEUES_H
 #define HAL_QUEUES_H
 
+/*===========================================================================*/
+/* Driver constants.                                                         */
+/*===========================================================================*/
+
 /**
  * @name    Queue functions returned status value
  * @{
@@ -35,6 +39,18 @@
 #define Q_EMPTY         MSG_TIMEOUT /**< @brief Queue empty.                */
 #define Q_FULL          MSG_TIMEOUT /**< @brief Queue full,                 */
 /** @} */
+
+/*===========================================================================*/
+/* Driver pre-compile time settings.                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver data structures and types.                                         */
+/*===========================================================================*/
 
 /**
  * @brief   Type of a generic I/O queue structure.
@@ -67,6 +83,34 @@ struct io_queue {
   qnotify_t             q_notify;   /**< @brief Data notification callback. */
   void                  *q_link;    /**< @brief Application defined field.  */
 };
+
+/**
+ * @extends io_queue_t
+ *
+ * @brief   Type of an input queue structure.
+ * @details This structure represents a generic asymmetrical input queue.
+ *          Writing to the queue is non-blocking and can be performed from
+ *          interrupt handlers or from within a kernel lock zone.
+ *          Reading the queue can be a blocking operation and is supposed to
+ *          be performed by a system thread.
+ */
+typedef io_queue_t input_queue_t;
+
+/**
+ * @extends io_queue_t
+ *
+ * @brief   Type of an output queue structure.
+ * @details This structure represents a generic asymmetrical output queue.
+ *          Reading from the queue is non-blocking and can be performed from
+ *          interrupt handlers or from within a kernel lock zone.
+ *          Writing the queue can be a blocking operation and is supposed to
+ *          be performed by a system thread.
+ */
+typedef io_queue_t output_queue_t;
+
+/*===========================================================================*/
+/* Driver macros.                                                            */
+/*===========================================================================*/
 
 /**
  * @name    Macro Functions
@@ -107,24 +151,7 @@ struct io_queue {
  * @special
  */
 #define qGetLink(qp) ((qp)->q_link)
-/** @} */
 
-/**
- * @extends io_queue_t
- *
- * @brief   Type of an input queue structure.
- * @details This structure represents a generic asymmetrical input queue.
- *          Writing to the queue is non-blocking and can be performed from
- *          interrupt handlers or from within a kernel lock zone.
- *          Reading the queue can be a blocking operation and is supposed to
- *          be performed by a system thread.
- */
-typedef io_queue_t input_queue_t;
-
-/**
- * @name    Macro Functions
- * @{
- */
 /**
  * @brief   Returns the filled space into an input queue.
  *
@@ -187,24 +214,7 @@ typedef io_queue_t input_queue_t;
  * @api
  */
 #define iqGet(iqp) iqGetTimeout(iqp, TIME_INFINITE)
-/** @} */
 
-/**
- * @extends io_queue_t
- *
- * @brief   Type of an output queue structure.
- * @details This structure represents a generic asymmetrical output queue.
- *          Reading from the queue is non-blocking and can be performed from
- *          interrupt handlers or from within a kernel lock zone.
- *          Writing the queue can be a blocking operation and is supposed to
- *          be performed by a system thread.
- */
-typedef io_queue_t output_queue_t;
-
-/**
- * @name    Macro Functions
- * @{
- */
 /**
  * @brief   Returns the filled space into an output queue.
  *
@@ -269,6 +279,11 @@ typedef io_queue_t output_queue_t;
  * @api
  */
 #define oqPut(oqp, b) oqPutTimeout(oqp, b, TIME_INFINITE)
+/** @} */
+
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
  /** @} */
 
 #ifdef __cplusplus
