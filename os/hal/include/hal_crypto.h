@@ -104,9 +104,8 @@ typedef enum {
  */
 typedef enum {
   cry_algo_none = 0,
-  cry_algo_aes,
-  cry_algo_des,
-  cry_algo_tripledes
+  cry_algo_aes,                             /**< AES 128, 192, 256 bits.    */
+  cry_algo_des                              /**< DES 56, TDES 112, 168 bits.*/
 } cryalgorithm_t;
 
 #if HAL_CRY_ENFORCE_FALLBACK == FALSE
@@ -115,11 +114,15 @@ typedef enum {
 #else
 /* No LLD at all, using the standalone mode.*/
 
+#define CRY_LLD_SUPPORTS_AES                FALSE
 #define CRY_LLD_SUPPORTS_AES_ECB            FALSE
 #define CRY_LLD_SUPPORTS_AES_CBC            FALSE
 #define CRY_LLD_SUPPORTS_AES_CFB            FALSE
 #define CRY_LLD_SUPPORTS_AES_CTR            FALSE
 #define CRY_LLD_SUPPORTS_AES_GCM            FALSE
+#define CRY_LLD_SUPPORTS_DES                FALSE
+#define CRY_LLD_SUPPORTS_DES_ECB            FALSE
+#define CRY_LLD_SUPPORTS_DES_CBC            FALSE
 
 typedef uint_fast8_t crykey_t;
 
@@ -138,11 +141,15 @@ struct CRYDriver {
 };
 #endif
 
-#if !defined(CRY_LLD_SUPPORTS_AES_ECB) ||                                   \
+#if !defined(CRY_LLD_SUPPORTS_AES) ||                                       \
+    !defined(CRY_LLD_SUPPORTS_AES_ECB) ||                                   \
     !defined(CRY_LLD_SUPPORTS_AES_CBC) ||                                   \
     !defined(CRY_LLD_SUPPORTS_AES_CFB) ||                                   \
     !defined(CRY_LLD_SUPPORTS_AES_CTR) ||                                   \
-    !defined(CRY_LLD_SUPPORTS_AES_GCM)
+    !defined(CRY_LLD_SUPPORTS_AES_GCM) ||                                   \
+    !defined(CRY_LLD_SUPPORTS_DES) ||                                       \
+    !defined(CRY_LLD_SUPPORTS_DES_ECB) ||                                   \
+    !defined(CRY_LLD_SUPPORTS_DES_CBC)
 #error "CRYPTO LLD does not export the required switches"
 #endif
 
@@ -171,6 +178,14 @@ extern "C" {
                                  cryalgorithm_t algorithm,
                                  size_t size,
                                  const uint8_t *keyp);
+  cryerror_t cryEncryptAES(CRYDriver *cryp,
+                               crykey_t key_id,
+                               const uint8_t *in,
+                               uint8_t *out);
+  cryerror_t cryDecryptAES(CRYDriver *cryp,
+                           crykey_t key_id,
+                           const uint8_t *in,
+                           uint8_t *out);
   cryerror_t cryEncryptAES_ECB(CRYDriver *cryp,
                                crykey_t key_id,
                                size_t size,
@@ -235,6 +250,36 @@ extern "C" {
                                size_t aadsize,
                                const uint8_t *aad,
                                uint8_t *authtag);
+  cryerror_t cryEncryptDES(CRYDriver *cryp,
+                           crykey_t key_id,
+                           const uint8_t *in,
+                           uint8_t *out);
+  cryerror_t cryDecryptDES(CRYDriver *cryp,
+                           crykey_t key_id,
+                           const uint8_t *in,
+                           uint8_t *out);
+  cryerror_t cryEncryptDES_ECB(CRYDriver *cryp,
+                               crykey_t key_id,
+                               size_t size,
+                               const uint8_t *in,
+                               uint8_t *out);
+  cryerror_t cryDecryptDES_ECB(CRYDriver *cryp,
+                               crykey_t key_id,
+                               size_t size,
+                               const uint8_t *in,
+                               uint8_t *out);
+  cryerror_t cryEncryptDES_CBC(CRYDriver *cryp,
+                               crykey_t key_id,
+                               size_t size,
+                               const uint8_t *in,
+                               uint8_t *out,
+                               const uint8_t *iv);
+  cryerror_t cryDecryptDES_CBC(CRYDriver *cryp,
+                               crykey_t key_id,
+                               size_t size,
+                               const uint8_t *in,
+                               uint8_t *out,
+                               const uint8_t *iv);
 #ifdef __cplusplus
 }
 #endif

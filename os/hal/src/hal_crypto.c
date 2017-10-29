@@ -127,6 +127,8 @@ void cryStop(CRYDriver *cryp) {
 
 /**
  * @brief   Initializes the transient key for a specific algorithm.
+ * @note    It is the underlying implementation to decide which combinations
+ *          of algorithm and key size are allowable.
  *
  * @param[in] cryp      pointer to the @p CRYDriver object
  * @param[in] algorithm the algorithm identifier
@@ -136,7 +138,8 @@ void cryStop(CRYDriver *cryp) {
  * @retval CRY_NOERROR          if the operation succeeded.
  * @retval CRY_ERR_INV_ALGO     if the specified algorithm is unknown or
  *                              unsupported.
- * @retval CRY_ERR_INV_KEY_SIZE if the specified key size is invalid.
+ * @retval CRY_ERR_INV_KEY_SIZE if the specified key size is invalid for
+ *                              the specified algorithm.
  *
  * @api
  */
@@ -173,8 +176,96 @@ cryerror_t cryLoadTransientKey(CRYDriver *cryp,
 }
 
 /**
+ * @brief   Encryption of a single block using AES.
+ * @note    The implementation of this function must guarantee that it can
+ *          be called from any context.
+ *
+ * @param[in] cryp      pointer to the @p CRYDriver object
+ * @param[in] key_id    the key to be used for the operation, zero is the
+ *                      transient key, other values are keys stored in an
+ *                      unspecified way
+ * @param[in] in        buffer containing the input plaintext
+ * @param[out] out      buffer for the output cyphertext
+ * @return              The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
+ *                              device instance.
+ * @retval CRY_ERR_INV_KEY_TYPE the selected key is invalid for this operation.
+ * @retval CRY_ERR_INV_KEY_ID   if the specified key identifier is invalid
+ *                              or refers to an empty key slot.
+ *
+ * @special
+ */
+cryerror_t cryEncryptAES(CRYDriver *cryp,
+                         crykey_t key_id,
+                         const uint8_t *in,
+                         uint8_t *out) {
+
+  osalDbgCheck((cryp != NULL) && (in != NULL) && (out != NULL));
+
+  osalDbgAssert(cryp->state == CRY_READY, "not ready");
+
+#if CRY_LLD_SUPPORTS_AES == TRUE
+  return cry_lld_encrypt_AES(cryp, key_id, in, out);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_encrypt_AES(cryp, key_id, in, out);
+#else
+  (void)cryp;
+  (void)key_id;
+  (void)in;
+  (void)out;
+
+  return CRY_ERR_INV_ALGO;
+#endif
+}
+
+/**
+ * @brief   Decryption of a single block using AES.
+ * @note    The implementation of this function must guarantee that it can
+ *          be called from any context.
+ *
+ * @param[in] cryp      pointer to the @p CRYDriver object
+ * @param[in] key_id    the key to be used for the operation, zero is the
+ *                      transient key, other values are keys stored in an
+ *                      unspecified way
+ * @param[in] in        buffer containing the input cyphertext
+ * @param[out] out      buffer for the output plaintext
+ * @return              The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
+ *                              device instance.
+ * @retval CRY_ERR_INV_KEY_TYPE the selected key is invalid for this operation.
+ * @retval CRY_ERR_INV_KEY_ID   if the specified key identifier is invalid
+ *                              or refers to an empty key slot.
+ *
+ * @special
+ */
+cryerror_t cryDecryptAES(CRYDriver *cryp,
+                         crykey_t key_id,
+                         const uint8_t *in,
+                         uint8_t *out) {
+
+  osalDbgCheck((cryp != NULL) && (in != NULL) && (out != NULL));
+
+  osalDbgAssert(cryp->state == CRY_READY, "not ready");
+
+#if CRY_LLD_SUPPORTS_AES == TRUE
+  return cry_lld_decrypt_AES(cryp, key_id, in, out);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_decrypt_AES(cryp, key_id, in, out);
+#else
+  (void)cryp;
+  (void)key_id;
+  (void)in;
+  (void)out;
+
+  return CRY_ERR_INV_ALGO;
+#endif
+}
+
+/**
  * @brief   Encryption operation using AES-ECB.
- * @note    The function operates on data buffers whose lenght is a multiple
+ * @note    The function operates on data buffers whose length is a multiple
  *          of an AES block, this means that padding must be done by the
  *          caller.
  *
@@ -192,7 +283,7 @@ cryerror_t cryLoadTransientKey(CRYDriver *cryp,
  *                              device instance.
  * @retval CRY_ERR_INV_KEY_TYPE the selected key is invalid for this operation.
  * @retval CRY_ERR_INV_KEY_ID   if the specified key identifier is invalid
- *                              or refers and empty key slot.
+ *                              or refers to an empty key slot.
  *
  * @api
  */
@@ -224,7 +315,7 @@ cryerror_t cryEncryptAES_ECB(CRYDriver *cryp,
 
 /**
  * @brief   Decryption operation using AES-ECB.
- * @note    The function operates on data buffers whose lenght is a multiple
+ * @note    The function operates on data buffers whose length is a multiple
  *          of an AES block, this means that padding must be done by the
  *          caller.
  *
@@ -242,7 +333,7 @@ cryerror_t cryEncryptAES_ECB(CRYDriver *cryp,
  *                              device instance.
  * @retval CRY_ERR_INV_KEY_TYPE the selected key is invalid for this operation.
  * @retval CRY_ERR_INV_KEY_ID   if the specified key identifier is invalid
- *                              or refers and empty key slot.
+ *                              or refers to an empty key slot.
  *
  * @api
  */
@@ -274,7 +365,7 @@ cryerror_t cryDecryptAES_ECB(CRYDriver *cryp,
 
 /**
  * @brief   Encryption operation using AES-CBC.
- * @note    The function operates on data buffers whose lenght is a multiple
+ * @note    The function operates on data buffers whose length is a multiple
  *          of an AES block, this means that padding must be done by the
  *          caller.
  *
@@ -286,14 +377,14 @@ cryerror_t cryDecryptAES_ECB(CRYDriver *cryp,
  *                      multiple of 16
  * @param[in] in        buffer containing the input plaintext
  * @param[out] out      buffer for the output cyphertext
- * @param[in] iv        128 bits initial vector
+ * @param[in] iv        128 bits input vector
  * @return              The operation status.
  * @retval CRY_NOERROR          if the operation succeeded.
  * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
  *                              device instance.
  * @retval CRY_ERR_INV_KEY_TYPE the selected key is invalid for this operation.
  * @retval CRY_ERR_INV_KEY_ID   if the specified key identifier is invalid
- *                              or refers and empty key slot.
+ *                              or refers to an empty key slot.
  *
  * @api
  */
@@ -327,7 +418,7 @@ cryerror_t cryEncryptAES_CBC(CRYDriver *cryp,
 
 /**
  * @brief   Decryption operation using AES-CBC.
- * @note    The function operates on data buffers whose lenght is a multiple
+ * @note    The function operates on data buffers whose length is a multiple
  *          of an AES block, this means that padding must be done by the
  *          caller.
  *
@@ -339,14 +430,14 @@ cryerror_t cryEncryptAES_CBC(CRYDriver *cryp,
  *                      multiple of 16
  * @param[in] in        buffer containing the input cyphertext
  * @param[out] out      buffer for the output plaintext
- * @param[in] iv        128 bits initial vector
+ * @param[in] iv        128 bits input vector
  * @return              The operation status.
  * @retval CRY_NOERROR          if the operation succeeded.
  * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
  *                              device instance.
  * @retval CRY_ERR_INV_KEY_TYPE the selected key is invalid for this operation.
  * @retval CRY_ERR_INV_KEY_ID   if the specified key identifier is invalid
- *                              or refers and empty key slot.
+ *                              or refers to an empty key slot.
  *
  * @api
  */
@@ -380,7 +471,7 @@ cryerror_t cryDecryptAES_CBC(CRYDriver *cryp,
 
 /**
  * @brief   Encryption operation using AES-CFB.
- * @note    The function operates on data buffers whose lenght is a multiple
+ * @note    The function operates on data buffers whose length is a multiple
  *          of an AES block, this means that padding must be done by the
  *          caller.
  *
@@ -392,14 +483,14 @@ cryerror_t cryDecryptAES_CBC(CRYDriver *cryp,
  *                      multiple of 16
  * @param[in] in        buffer containing the input plaintext
  * @param[out] out      buffer for the output cyphertext
- * @param[in] iv        128 bits initial vector
+ * @param[in] iv        128 bits input vector
  * @return              The operation status.
  * @retval CRY_NOERROR          if the operation succeeded.
  * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
  *                              device instance.
  * @retval CRY_ERR_INV_KEY_TYPE the selected key is invalid for this operation.
  * @retval CRY_ERR_INV_KEY_ID   if the specified key identifier is invalid
- *                              or refers and empty key slot.
+ *                              or refers to an empty key slot.
  *
  * @api
  */
@@ -433,7 +524,7 @@ cryerror_t cryEncryptAES_CFB(CRYDriver *cryp,
 
 /**
  * @brief   Decryption operation using AES-CFB.
- * @note    The function operates on data buffers whose lenght is a multiple
+ * @note    The function operates on data buffers whose length is a multiple
  *          of an AES block, this means that padding must be done by the
  *          caller.
  *
@@ -445,14 +536,14 @@ cryerror_t cryEncryptAES_CFB(CRYDriver *cryp,
  *                      multiple of 16
  * @param[in] in        buffer containing the input cyphertext
  * @param[out] out      buffer for the output plaintext
- * @param[in] iv        128 bits initial vector
+ * @param[in] iv        128 bits input vector
  * @return              The operation status.
  * @retval CRY_NOERROR          if the operation succeeded.
  * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
  *                              device instance.
  * @retval CRY_ERR_INV_KEY_TYPE the selected key is invalid for this operation.
  * @retval CRY_ERR_INV_KEY_ID   if the specified key identifier is invalid
- *                              or refers and empty key slot.
+ *                              or refers to an empty key slot.
  *
  * @api
  */
@@ -486,7 +577,7 @@ cryerror_t cryDecryptAES_CFB(CRYDriver *cryp,
 
 /**
  * @brief   Encryption operation using AES-CTR.
- * @note    The function operates on data buffers whose lenght is a multiple
+ * @note    The function operates on data buffers whose length is a multiple
  *          of an AES block, this means that padding must be done by the
  *          caller.
  *
@@ -498,7 +589,7 @@ cryerror_t cryDecryptAES_CFB(CRYDriver *cryp,
  *                      multiple of 16
  * @param[in] in        buffer containing the input plaintext
  * @param[out] out      buffer for the output cyphertext
- * @param[in] iv        128 bits initial vector + counter, it contains
+ * @param[in] iv        128 bits input vector + counter, it contains
  *                      a 96 bits IV and a 32 bits counter
  * @return              The operation status.
  * @retval CRY_NOERROR          if the operation succeeded.
@@ -506,7 +597,7 @@ cryerror_t cryDecryptAES_CFB(CRYDriver *cryp,
  *                              device instance.
  * @retval CRY_ERR_INV_KEY_TYPE the selected key is invalid for this operation.
  * @retval CRY_ERR_INV_KEY_ID   if the specified key identifier is invalid
- *                              or refers and empty key slot.
+ *                              or refers to an empty key slot.
  *
  * @api
  */
@@ -541,7 +632,7 @@ cryerror_t cryEncryptAES_CTR(CRYDriver *cryp,
 
 /**
  * @brief   Decryption operation using AES-CTR.
- * @note    The function operates on data buffers whose lenght is a multiple
+ * @note    The function operates on data buffers whose length is a multiple
  *          of an AES block, this means that padding must be done by the
  *          caller.
  *
@@ -553,7 +644,7 @@ cryerror_t cryEncryptAES_CTR(CRYDriver *cryp,
  *                      multiple of 16
  * @param[in] in        buffer containing the input cyphertext
  * @param[out] out      buffer for the output plaintext
- * @param[in] iv        128 bits initial vector + counter, it contains
+ * @param[in] iv        128 bits input vector + counter, it contains
  *                      a 96 bits IV and a 32 bits counter
  * @return              The operation status.
  * @retval CRY_NOERROR          if the operation succeeded.
@@ -561,7 +652,7 @@ cryerror_t cryEncryptAES_CTR(CRYDriver *cryp,
  *                              device instance.
  * @retval CRY_ERR_INV_KEY_TYPE the selected key is invalid for this operation.
  * @retval CRY_ERR_INV_KEY_ID   if the specified key identifier is invalid
- *                              or refers and empty key slot.
+ *                              or refers to an empty key slot.
  *
  * @api
  */
@@ -596,7 +687,7 @@ cryerror_t cryDecryptAES_CTR(CRYDriver *cryp,
 
 /**
  * @brief   Encryption operation using AES-GCM.
- * @note    The function operates on data buffers whose lenght is a multiple
+ * @note    The function operates on data buffers whose length is a multiple
  *          of an AES block, this means that padding must be done by the
  *          caller.
  *
@@ -608,7 +699,7 @@ cryerror_t cryDecryptAES_CTR(CRYDriver *cryp,
  *                      multiple of 16
  * @param[in] in        buffer containing the input plaintext
  * @param[out] out       buffer for the output cyphertext
- * @param[in] iv        128 bits initial vector + counter, it contains
+ * @param[in] iv        128 bits input vector + counter, it contains
  *                      a 96 bits IV and a 32 bits counter
  * @param[in] aadsize   size of the authentication data, this number must be a
  *                      multiple of 16
@@ -620,7 +711,7 @@ cryerror_t cryDecryptAES_CTR(CRYDriver *cryp,
  *                              device instance.
  * @retval CRY_ERR_INV_KEY_TYPE the selected key is invalid for this operation.
  * @retval CRY_ERR_INV_KEY_ID   if the specified key identifier is invalid
- *                              or refers and empty key slot.
+ *                              or refers to an empty key slot.
  *
  * @api
  */
@@ -664,7 +755,7 @@ cryerror_t cryEncryptAES_GCM(CRYDriver *cryp,
 
 /**
  * @brief   Decryption operation using AES-GCM.
- * @note    The function operates on data buffers whose lenght is a multiple
+ * @note    The function operates on data buffers whose length is a multiple
  *          of an AES block, this means that padding must be done by the
  *          caller.
  *
@@ -676,7 +767,7 @@ cryerror_t cryEncryptAES_GCM(CRYDriver *cryp,
  *                      multiple of 16
  * @param[in] in        buffer for the output cyphertext
  * @param[out] out      buffer containing the input plaintext
- * @param[in] iv        128 bits initial vector + counter, it contains
+ * @param[in] iv        128 bits input vector + counter, it contains
  *                      a 96 bits IV and a 32 bits counter
  * @param[in] aadsize   size of the authentication data, this number must be a
  *                      multiple of 16
@@ -688,7 +779,7 @@ cryerror_t cryEncryptAES_GCM(CRYDriver *cryp,
  *                              device instance.
  * @retval CRY_ERR_INV_KEY_TYPE the selected key is invalid for this operation.
  * @retval CRY_ERR_INV_KEY_ID   if the specified key identifier is invalid
- *                              or refers and empty key slot.
+ *                              or refers to an empty key slot.
  *
  * @api
  */
@@ -725,6 +816,301 @@ cryerror_t cryDecryptAES_GCM(CRYDriver *cryp,
   (void)aadsize;
   (void)aad;
   (void)authtag;
+
+  return CRY_ERR_INV_ALGO;
+#endif
+}
+
+/**
+ * @brief   Encryption of a single block using (T)DES.
+ * @note    The implementation of this function must guarantee that it can
+ *          be called from any context.
+ *
+ * @param[in] cryp      pointer to the @p CRYDriver object
+ * @param[in] key_id    the key to be used for the operation, zero is the
+ *                      transient key, other values are keys stored in an
+ *                      unspecified way
+ * @param[in] in        buffer containing the input plaintext
+ * @param[out] out      buffer for the output cyphertext
+ * @return              The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
+ *                              device instance.
+ * @retval CRY_ERR_INV_KEY_TYPE the selected key is invalid for this operation.
+ * @retval CRY_ERR_INV_KEY_ID   if the specified key identifier is invalid
+ *                              or refers to an empty key slot.
+ *
+ * @special
+ */
+cryerror_t cryEncryptDES(CRYDriver *cryp,
+                         crykey_t key_id,
+                         const uint8_t *in,
+                         uint8_t *out) {
+
+  osalDbgCheck((cryp != NULL) && (in != NULL) && (out != NULL));
+
+  osalDbgAssert(cryp->state == CRY_READY, "not ready");
+
+#if CRY_LLD_SUPPORTS_DES == TRUE
+  return cry_lld_encrypt_DES(cryp, key_id, in, out);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_encrypt_DES(cryp, key_id, in, out);
+#else
+  (void)cryp;
+  (void)key_id;
+  (void)in;
+  (void)out;
+
+  return CRY_ERR_INV_ALGO;
+#endif
+}
+
+/**
+ * @brief   Decryption of a single block using (T)DES.
+ * @note    The implementation of this function must guarantee that it can
+ *          be called from any context.
+ *
+ *
+ * @param[in] cryp      pointer to the @p CRYDriver object
+ * @param[in] key_id    the key to be used for the operation, zero is the
+ *                      transient key, other values are keys stored in an
+ *                      unspecified way
+ * @param[in] in        buffer containing the input cyphertext
+ * @param[out] out      buffer for the output plaintext
+ * @return              The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
+ *                              device instance.
+ * @retval CRY_ERR_INV_KEY_TYPE the selected key is invalid for this operation.
+ * @retval CRY_ERR_INV_KEY_ID   if the specified key identifier is invalid
+ *                              or refers to an empty key slot.
+ *
+ * @special
+ */
+cryerror_t cryDecryptDES(CRYDriver *cryp,
+                         crykey_t key_id,
+                         const uint8_t *in,
+                         uint8_t *out) {
+
+  osalDbgCheck((cryp != NULL) && (in != NULL) && (out != NULL));
+
+  osalDbgAssert(cryp->state == CRY_READY, "not ready");
+
+#if CRY_LLD_SUPPORTS_DES == TRUE
+  return cry_lld_decrypt_DES(cryp, key_id, in, out);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_decrypt_DES(cryp, key_id, in, out);
+#else
+  (void)cryp;
+  (void)key_id;
+  (void)in;
+  (void)out;
+
+  return CRY_ERR_INV_ALGO;
+#endif
+}
+
+/**
+ * @brief   Encryption operation using (T)DES-ECB.
+ * @note    The function operates on data buffers whose length is a multiple
+ *          of an DES block, this means that padding must be done by the
+ *          caller.
+ *
+ * @param[in] cryp      pointer to the @p CRYDriver object
+ * @param[in] key_id    the key to be used for the operation, zero is the
+ *                      transient key, other values are keys stored in an
+ *                      unspecified way
+ * @param[in] size      size of the plaintext buffer, this number must be a
+ *                      multiple of 8
+ * @param[in] in        buffer containing the input plaintext
+ * @param[out] out      buffer for the output cyphertext
+ * @return              The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
+ *                              device instance.
+ * @retval CRY_ERR_INV_KEY_TYPE the selected key is invalid for this operation.
+ * @retval CRY_ERR_INV_KEY_ID   if the specified key identifier is invalid
+ *                              or refers to an empty key slot.
+ *
+ * @api
+ */
+cryerror_t cryEncryptDES_ECB(CRYDriver *cryp,
+                              crykey_t key_id,
+                              size_t size,
+                              const uint8_t *in,
+                              uint8_t *out) {
+
+  osalDbgCheck((cryp != NULL) && (in != NULL) && (out != NULL) &&
+               ((size & (size_t)7) == (size_t)0));
+
+  osalDbgAssert(cryp->state == CRY_READY, "not ready");
+
+#if CRY_LLD_SUPPORTS_DES_ECB == TRUE
+  return cry_lld_encrypt_DES_ECB(cryp, key_id, size, in, out);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_encrypt_DES_ECB(cryp, key_id, size, in, out);
+#else
+  (void)cryp;
+  (void)key_id;
+  (void)size;
+  (void)in;
+  (void)out;
+
+  return CRY_ERR_INV_ALGO;
+#endif
+}
+
+/**
+ * @brief   Decryption operation using (T)DES-ECB.
+ * @note    The function operates on data buffers whose length is a multiple
+ *          of an DES block, this means that padding must be done by the
+ *          caller.
+ *
+ * @param[in] cryp      pointer to the @p CRYDriver object
+ * @param[in] key_id    the key to be used for the operation, zero is the
+ *                      transient key, other values are keys stored in an
+ *                      unspecified way
+ * @param[in] size      size of the plaintext buffer, this number must be a
+ *                      multiple of 8
+ * @param[in] in        buffer containing the input cyphertext
+ * @param[out] out      buffer for the output plaintext
+ * @return              The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
+ *                              device instance.
+ * @retval CRY_ERR_INV_KEY_TYPE the selected key is invalid for this operation.
+ * @retval CRY_ERR_INV_KEY_ID   if the specified key identifier is invalid
+ *                              or refers to an empty key slot.
+ *
+ * @api
+ */
+cryerror_t cryDecryptDES_ECB(CRYDriver *cryp,
+                             crykey_t key_id,
+                             size_t size,
+                             const uint8_t *in,
+                             uint8_t *out) {
+
+  osalDbgCheck((cryp != NULL) && (in != NULL) && (out != NULL) &&
+               ((size & (size_t)7) == (size_t)0));
+
+  osalDbgAssert(cryp->state == CRY_READY, "not ready");
+
+#if CRY_LLD_SUPPORTS_DES_ECB == TRUE
+  return cry_lld_decrypt_DES_ECB(cryp, key_id, size, in, out);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_decrypt_DES_ECB(cryp, key_id, size, in, out);
+#else
+  (void)cryp;
+  (void)key_id;
+  (void)size;
+  (void)in;
+  (void)out;
+
+  return CRY_ERR_INV_ALGO;
+#endif
+}
+
+/**
+ * @brief   Encryption operation using (T)DES-CBC.
+ * @note    The function operates on data buffers whose length is a multiple
+ *          of an DES block, this means that padding must be done by the
+ *          caller.
+ *
+ * @param[in] cryp      pointer to the @p CRYDriver object
+ * @param[in] key_id    the key to be used for the operation, zero is the
+ *                      transient key, other values are keys stored in an
+ *                      unspecified way
+ * @param[in] size      size of the plaintext buffer, this number must be a
+ *                      multiple of 8
+ * @param[in] in        buffer containing the input plaintext
+ * @param[out] out      buffer for the output cyphertext
+ * @param[in] iv        64 bits input vector
+ * @return              The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
+ *                              device instance.
+ * @retval CRY_ERR_INV_KEY_TYPE the selected key is invalid for this operation.
+ * @retval CRY_ERR_INV_KEY_ID   if the specified key identifier is invalid
+ *                              or refers to an empty key slot.
+ *
+ * @api
+ */
+cryerror_t cryEncryptDES_CBC(CRYDriver *cryp,
+                             crykey_t key_id,
+                             size_t size,
+                             const uint8_t *in,
+                             uint8_t *out,
+                             const uint8_t *iv) {
+
+  osalDbgCheck((cryp != NULL) && (in != NULL) && (out != NULL) &&
+               (iv != NULL) && ((size & (size_t)7) == (size_t)0));
+
+  osalDbgAssert(cryp->state == CRY_READY, "not ready");
+
+#if CRY_LLD_SUPPORTS_DES_CBC == TRUE
+  return cry_lld_encrypt_DES_CBC(cryp, key_id, size, in, out, iv);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_encrypt_DES_CBC(cryp, key_id, size, in, out, iv);
+#else
+  (void)cryp;
+  (void)key_id;
+  (void)size;
+  (void)in;
+  (void)out;
+  (void)iv;
+
+  return CRY_ERR_INV_ALGO;
+#endif
+}
+
+/**
+ * @brief   Decryption operation using (T)DES-CBC.
+ * @note    The function operates on data buffers whose length is a multiple
+ *          of an DES block, this means that padding must be done by the
+ *          caller.
+ *
+ * @param[in] cryp      pointer to the @p CRYDriver object
+ * @param[in] key_id    the key to be used for the operation, zero is the
+ *                      transient key, other values are keys stored in an
+ *                      unspecified way
+ * @param[in] size      size of the plaintext buffer, this number must be a
+ *                      multiple of 8
+ * @param[in] in        buffer containing the input cyphertext
+ * @param[out] out      buffer for the output plaintext
+ * @param[in] iv        64 bits input vector
+ * @return              The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
+ *                              device instance.
+ * @retval CRY_ERR_INV_KEY_TYPE the selected key is invalid for this operation.
+ * @retval CRY_ERR_INV_KEY_ID   if the specified key identifier is invalid
+ *                              or refers to an empty key slot.
+ *
+ * @api
+ */
+cryerror_t cryDecryptDES_CBC(CRYDriver *cryp,
+                             crykey_t key_id,
+                             size_t size,
+                             const uint8_t *in,
+                             uint8_t *out,
+                             const uint8_t *iv) {
+
+  osalDbgCheck((cryp != NULL) && (in != NULL) && (out != NULL) &&
+               (iv != NULL) && ((size & (size_t)7) == (size_t)0));
+
+  osalDbgAssert(cryp->state == CRY_READY, "not ready");
+
+#if CRY_LLD_SUPPORTS_DES_CBC == TRUE
+  return cry_lld_decrypt_DES_CBC(cryp, key_id, size, in, out, iv);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_decrypt_DES_CBC(cryp, key_id, size, in, out, iv);
+#else
+  (void)cryp;
+  (void)key_id;
+  (void)size;
+  (void)in;
+  (void)out;
+  (void)iv;
 
   return CRY_ERR_INV_ALGO;
 #endif
