@@ -1052,7 +1052,7 @@ test_assert(*(uint32_t *)(rop1->objp) == 0x55aa, "object mismatch");
 test_assert(rop == rop1, "object reference mismatch");
 test_assert(rop1->element.refs == 2, "object reference mismatch");
 
-rop2 = (registered_object_t *)chFactoryDuplicateReference((dyn_element_t *)rop1);
+rop2 = (registered_object_t *)chFactoryDuplicateReference(&rop1->element);
 test_assert(rop1 == rop2, "object reference mismatch");
 test_assert(*(uint32_t *)(rop2->objp) == 0x55aa, "object mismatch");
 test_assert(rop2->element.refs == 3, "object reference mismatch");
@@ -1171,7 +1171,7 @@ test_assert(dbp1 != NULL, "not found");
 test_assert(dbp == dbp1, "object reference mismatch");
 test_assert(dbp1->element.refs == 2, "object reference mismatch");
 
-dbp2 = (dyn_buffer_t *)chFactoryDuplicateReference((dyn_element_t *)dbp1);
+dbp2 = (dyn_buffer_t *)chFactoryDuplicateReference(&dbp1->element);
 test_assert(dbp1 == dbp2, "object reference mismatch");
 test_assert(dbp2->element.refs == 3, "object reference mismatch");
 
@@ -1289,7 +1289,7 @@ test_assert(dsp1 != NULL, "not found");
 test_assert(dsp == dsp1, "object reference mismatch");
 test_assert(dsp1->element.refs == 2, "object reference mismatch");
 
-dsp2 = (dyn_semaphore_t *)chFactoryDuplicateReference((dyn_element_t *)dsp1);
+dsp2 = (dyn_semaphore_t *)chFactoryDuplicateReference(&dsp1->element);
 test_assert(dsp1 == dsp2, "object reference mismatch");
 test_assert(dsp2->element.refs == 3, "object reference mismatch");
 
@@ -1407,7 +1407,7 @@ test_assert(dmp1 != NULL, "not found");
 test_assert(dmp == dmp1, "object reference mismatch");
 test_assert(dmp1->element.refs == 2, "object reference mismatch");
 
-dmp2 = (dyn_mailbox_t *)chFactoryDuplicateReference((dyn_element_t *)dmp1);
+dmp2 = (dyn_mailbox_t *)chFactoryDuplicateReference(&dmp1->element);
 test_assert(dmp1 == dmp2, "object reference mismatch");
 test_assert(dmp2->element.refs == 3, "object reference mismatch");
 
@@ -1439,6 +1439,124 @@ test_assert(dmp->element.refs == 1, "references mismatch");]]></value>
                     <code>
                       <value><![CDATA[dmp = chFactoryFindMailbox("mymbx");
 test_assert(dmp == NULL, "found");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Dynamic Objects FIFOs Factory.</value>
+                </brief>
+                <description>
+                  <value>This test case verifies the dynamic objects FIFOs factory.</value>
+                </description>
+                <condition>
+                  <value>CH_CFG_FACTORY_OBJ_FIFOS == TRUE</value>
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value><![CDATA[dyn_objects_fifo_t *dofp;
+
+dofp = chFactoryFindObjectsFIFO("myfifo");
+if (dofp != NULL) {
+  while (dofp->element.refs > 0U) {
+    chFactoryReleaseObjectsFIFO(dofp);
+  }
+}]]></value>
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[dyn_objects_fifo_t *dofp;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Retrieving a dynamic objects FIFO by name, must not exist.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[dofp = chFactoryFindObjectsFIFO("myfifo");
+test_assert(dofp == NULL, "found");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Creating a dynamic objects FIFO it must not exists, must succeed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[dofp = chFactoryCreateObjectsFIFO("myfifo", 16U, 16U, PORT_NATURAL_ALIGN);
+test_assert(dofp != NULL, "cannot create");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Creating a dynamic objects FIFO with the same name, must fail.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[dyn_objects_fifo_t *dofp1;
+
+dofp1 = chFactoryCreateObjectsFIFO("myfifo", 16U, 16U, PORT_NATURAL_ALIGN);
+test_assert(dofp1 == NULL, "can create");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Retrieving the dynamic objects FIFO by name, must exist, then increasing the reference counter, finally releasing both references.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[dyn_objects_fifo_t *dofp1, *dofp2;
+
+dofp1 = chFactoryFindObjectsFIFO("myfifo");
+test_assert(dofp1 != NULL, "not found");
+test_assert(dofp == dofp1, "object reference mismatch");
+test_assert(dofp1->element.refs == 2, "object reference mismatch");
+
+dofp2 = (dyn_objects_fifo_t *)chFactoryDuplicateReference(&dofp1->element);
+test_assert(dofp1 == dofp2, "object reference mismatch");
+test_assert(dofp2->element.refs == 3, "object reference mismatch");
+
+chFactoryReleaseObjectsFIFO(dofp2);
+test_assert(dofp1->element.refs == 2, "references mismatch");
+
+chFactoryReleaseObjectsFIFO(dofp1);
+test_assert(dofp->element.refs == 1, "references mismatch");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Releasing the first reference to the dynamic objects FIFO must not trigger an assertion.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chFactoryReleaseObjectsFIFO(dofp);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Retrieving the dynamic objects FIFO by name again, must not exist.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[dofp = chFactoryFindObjectsFIFO("myfifo");
+test_assert(dofp == NULL, "found");]]></value>
                     </code>
                   </step>
                 </steps>

@@ -40,6 +40,7 @@
  * - @subpage oslib_test_004_002
  * - @subpage oslib_test_004_003
  * - @subpage oslib_test_004_004
+ * - @subpage oslib_test_004_005
  * .
  */
 
@@ -134,7 +135,7 @@ static void oslib_test_004_001_execute(void) {
     test_assert(rop == rop1, "object reference mismatch");
     test_assert(rop1->element.refs == 2, "object reference mismatch");
 
-    rop2 = (registered_object_t *)chFactoryDuplicateReference((dyn_element_t *)rop1);
+    rop2 = (registered_object_t *)chFactoryDuplicateReference(&rop1->element);
     test_assert(rop1 == rop2, "object reference mismatch");
     test_assert(*(uint32_t *)(rop2->objp) == 0x55aa, "object mismatch");
     test_assert(rop2->element.refs == 3, "object reference mismatch");
@@ -248,7 +249,7 @@ static void oslib_test_004_002_execute(void) {
     test_assert(dbp == dbp1, "object reference mismatch");
     test_assert(dbp1->element.refs == 2, "object reference mismatch");
 
-    dbp2 = (dyn_buffer_t *)chFactoryDuplicateReference((dyn_element_t *)dbp1);
+    dbp2 = (dyn_buffer_t *)chFactoryDuplicateReference(&dbp1->element);
     test_assert(dbp1 == dbp2, "object reference mismatch");
     test_assert(dbp2->element.refs == 3, "object reference mismatch");
 
@@ -363,7 +364,7 @@ static void oslib_test_004_003_execute(void) {
     test_assert(dsp == dsp1, "object reference mismatch");
     test_assert(dsp1->element.refs == 2, "object reference mismatch");
 
-    dsp2 = (dyn_semaphore_t *)chFactoryDuplicateReference((dyn_element_t *)dsp1);
+    dsp2 = (dyn_semaphore_t *)chFactoryDuplicateReference(&dsp1->element);
     test_assert(dsp1 == dsp2, "object reference mismatch");
     test_assert(dsp2->element.refs == 3, "object reference mismatch");
 
@@ -477,7 +478,7 @@ static void oslib_test_004_004_execute(void) {
     test_assert(dmp == dmp1, "object reference mismatch");
     test_assert(dmp1->element.refs == 2, "object reference mismatch");
 
-    dmp2 = (dyn_mailbox_t *)chFactoryDuplicateReference((dyn_element_t *)dmp1);
+    dmp2 = (dyn_mailbox_t *)chFactoryDuplicateReference(&dmp1->element);
     test_assert(dmp1 == dmp2, "object reference mismatch");
     test_assert(dmp2->element.refs == 3, "object reference mismatch");
 
@@ -512,6 +513,122 @@ static const testcase_t oslib_test_004_004 = {
 };
 #endif /* CH_CFG_FACTORY_MAILBOXES == TRUE */
 
+#if (CH_CFG_FACTORY_OBJ_FIFOS == TRUE) || defined(__DOXYGEN__)
+/**
+ * @page oslib_test_004_005 [4.5] Dynamic Objects FIFOs Factory
+ *
+ * <h2>Description</h2>
+ * This test case verifies the dynamic objects FIFOs factory.
+ *
+ * <h2>Conditions</h2>
+ * This test is only executed if the following preprocessor condition
+ * evaluates to true:
+ * - CH_CFG_FACTORY_OBJ_FIFOS == TRUE
+ * .
+ *
+ * <h2>Test Steps</h2>
+ * - [4.5.1] Retrieving a dynamic objects FIFO by name, must not exist.
+ * - [4.5.2] Creating a dynamic objects FIFO it must not exists, must
+ *   succeed.
+ * - [4.5.3] Creating a dynamic objects FIFO with the same name, must
+ *   fail.
+ * - [4.5.4] Retrieving the dynamic objects FIFO by name, must exist,
+ *   then increasing the reference counter, finally releasing both
+ *   references.
+ * - [4.5.5] Releasing the first reference to the dynamic objects FIFO
+ *   must not trigger an assertion.
+ * - [4.5.6] Retrieving the dynamic objects FIFO by name again, must
+ *   not exist.
+ * .
+ */
+
+static void oslib_test_004_005_teardown(void) {
+  dyn_objects_fifo_t *dofp;
+
+  dofp = chFactoryFindObjectsFIFO("myfifo");
+  if (dofp != NULL) {
+    while (dofp->element.refs > 0U) {
+      chFactoryReleaseObjectsFIFO(dofp);
+    }
+  }
+}
+
+static void oslib_test_004_005_execute(void) {
+  dyn_objects_fifo_t *dofp;
+
+  /* [4.5.1] Retrieving a dynamic objects FIFO by name, must not
+     exist.*/
+  test_set_step(1);
+  {
+    dofp = chFactoryFindObjectsFIFO("myfifo");
+    test_assert(dofp == NULL, "found");
+  }
+
+  /* [4.5.2] Creating a dynamic objects FIFO it must not exists, must
+     succeed.*/
+  test_set_step(2);
+  {
+    dofp = chFactoryCreateObjectsFIFO("myfifo", 16U, 16U, PORT_NATURAL_ALIGN);
+    test_assert(dofp != NULL, "cannot create");
+  }
+
+  /* [4.5.3] Creating a dynamic objects FIFO with the same name, must
+     fail.*/
+  test_set_step(3);
+  {
+    dyn_objects_fifo_t *dofp1;
+
+    dofp1 = chFactoryCreateObjectsFIFO("myfifo", 16U, 16U, PORT_NATURAL_ALIGN);
+    test_assert(dofp1 == NULL, "can create");
+  }
+
+  /* [4.5.4] Retrieving the dynamic objects FIFO by name, must exist,
+     then increasing the reference counter, finally releasing both
+     references.*/
+  test_set_step(4);
+  {
+    dyn_objects_fifo_t *dofp1, *dofp2;
+
+    dofp1 = chFactoryFindObjectsFIFO("myfifo");
+    test_assert(dofp1 != NULL, "not found");
+    test_assert(dofp == dofp1, "object reference mismatch");
+    test_assert(dofp1->element.refs == 2, "object reference mismatch");
+
+    dofp2 = (dyn_objects_fifo_t *)chFactoryDuplicateReference(&dofp1->element);
+    test_assert(dofp1 == dofp2, "object reference mismatch");
+    test_assert(dofp2->element.refs == 3, "object reference mismatch");
+
+    chFactoryReleaseObjectsFIFO(dofp2);
+    test_assert(dofp1->element.refs == 2, "references mismatch");
+
+    chFactoryReleaseObjectsFIFO(dofp1);
+    test_assert(dofp->element.refs == 1, "references mismatch");
+  }
+
+  /* [4.5.5] Releasing the first reference to the dynamic objects FIFO
+     must not trigger an assertion.*/
+  test_set_step(5);
+  {
+    chFactoryReleaseObjectsFIFO(dofp);
+  }
+
+  /* [4.5.6] Retrieving the dynamic objects FIFO by name again, must
+     not exist.*/
+  test_set_step(6);
+  {
+    dofp = chFactoryFindObjectsFIFO("myfifo");
+    test_assert(dofp == NULL, "found");
+  }
+}
+
+static const testcase_t oslib_test_004_005 = {
+  "Dynamic Objects FIFOs Factory",
+  NULL,
+  oslib_test_004_005_teardown,
+  oslib_test_004_005_execute
+};
+#endif /* CH_CFG_FACTORY_OBJ_FIFOS == TRUE */
+
 /****************************************************************************
  * Exported data.
  ****************************************************************************/
@@ -531,6 +648,9 @@ const testcase_t * const oslib_test_sequence_004_array[] = {
 #endif
 #if (CH_CFG_FACTORY_MAILBOXES == TRUE) || defined(__DOXYGEN__)
   &oslib_test_004_004,
+#endif
+#if (CH_CFG_FACTORY_OBJ_FIFOS == TRUE) || defined(__DOXYGEN__)
+  &oslib_test_004_005,
 #endif
   NULL
 };
