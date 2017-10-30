@@ -293,15 +293,19 @@ extern "C" {
                     qnotify_t infy, void *link);
   void iqResetI(input_queue_t *iqp);
   msg_t iqPutI(input_queue_t *iqp, uint8_t b);
+  msg_t iqGetI(input_queue_t *iqp);
   msg_t iqGetTimeout(input_queue_t *iqp, sysinterval_t timeout);
+  size_t iqReadI(input_queue_t *iqp, uint8_t *bp, size_t n);
   size_t iqReadTimeout(input_queue_t *iqp, uint8_t *bp,
                        size_t n, sysinterval_t timeout);
 
   void oqObjectInit(output_queue_t *oqp, uint8_t *bp, size_t size,
                     qnotify_t onfy, void *link);
   void oqResetI(output_queue_t *oqp);
+  msg_t oqPutI(output_queue_t *oqp, uint8_t b);
   msg_t oqPutTimeout(output_queue_t *oqp, uint8_t b, sysinterval_t timeout);
   msg_t oqGetI(output_queue_t *oqp);
+  size_t oqWriteI(output_queue_t *oqp, const uint8_t *bp, size_t n);
   size_t oqWriteTimeout(output_queue_t *oqp, const uint8_t *bp,
                         size_t n, sysinterval_t timeout);
 #ifdef __cplusplus
