@@ -44,7 +44,7 @@
  * @name    SAMA-specific I/O mode flags
  * @{
  */
-#define PAL_SAMA_FUNC_MASK             (3U << 0U)
+#define PAL_SAMA_FUNC_MASK             (7U << 0U)
 #define PAL_SAMA_FUNC_GPIO             (0U << 0U)
 #define PAL_SAMA_FUNC_PERIPH_A         (1U << 0U)
 #define PAL_SAMA_FUNC_PERIPH_B         (2U << 0U)
