@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 17.6.3 ***
+- LIB: Fixed heap buffer alignment not enforced (bug #899).
 - LIB: Fixed call protocol violation in chCoreAlloc() (bug #896).
 - RT:  Fixed trace Buffer activation bits state reversed in chconf.h
        (bug #895).

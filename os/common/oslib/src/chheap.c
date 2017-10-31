@@ -118,8 +118,9 @@ void _heap_init(void) {
 
 /**
  * @brief   Initializes a memory heap from a static memory area.
- * @pre     Both the heap buffer base and the heap size must be aligned to
- *          the @p heap_header_t type size.
+ * @note    The heap buffer base and size are adjusted if the passed buffer
+ *          is not aligned to @p CH_HEAP_ALIGNMENT. This mean that the
+ *          effective heap size can be less than @p size.
  *
  * @param[out] heapp    pointer to the memory heap descriptor to be initialized
  * @param[in] buf       heap buffer base
@@ -128,12 +129,15 @@ void _heap_init(void) {
  * @init
  */
 void chHeapObjectInit(memory_heap_t *heapp, void *buf, size_t size) {
-  heap_header_t *hp = buf;
+  heap_header_t *hp = (heap_header_t *)MEM_ALIGN_NEXT(buf, CH_HEAP_ALIGNMENT);
 
-  chDbgCheck((heapp != NULL) && (size > 0U) &&
-             MEM_IS_ALIGNED(buf, CH_HEAP_ALIGNMENT) &&
-             MEM_IS_ALIGNED(size, CH_HEAP_ALIGNMENT));
+  chDbgCheck((heapp != NULL) && (size > 0U));
 
+  /* Adjusting the size in case the initial block was not correctly
+     aligned.*/
+  size -= (size_t)((uint8_t *)hp - (uint8_t *)buf);
+
+  /* Initializing the heap header.*/
   heapp->provider = NULL;
   H_NEXT(&heapp->header) = hp;
   H_PAGES(&heapp->header) = 0;
