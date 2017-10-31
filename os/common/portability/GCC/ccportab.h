@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    ARMCMx/compilers/GCC/ccportab.h
+ * @file    GCC/ccportab.h
  * @brief   Compiler portability layer.
  *
  * @defgroup CC_PORTAB Compiler portability.
