@@ -467,6 +467,11 @@
 #define SAMA_FLEXCOM3CLK                    (SAMA_MCK / SAMA_H64MX_H32MX_RATIO)
 #define SAMA_FLEXCOM4CLK                    (SAMA_MCK / SAMA_H64MX_H32MX_RATIO)
 
+/**
+ * @brief   TCx clock.
+ */
+#define SAMA_TC0CLK                         (SAMA_MCK / SAMA_H64MX_H32MX_RATIO)
+#define SAMA_TC1CLK                         (SAMA_MCK / SAMA_H64MX_H32MX_RATIO)
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
@@ -485,6 +490,7 @@
 #include "sama_matrix.h"
 #include "sama_xdmac.h" 
 #include "sama_cache.h"
+#include "hal_tc_lld.h"
 
 #ifdef __cplusplus
 extern "C" {
