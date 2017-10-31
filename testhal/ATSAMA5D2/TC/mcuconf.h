@@ -46,10 +46,11 @@
 /*
  * TC driver system settings.
  */
+#define HAL_USE_TC                          TRUE
 #define SAMA_USE_TC0                        TRUE
 #define SAMA_USE_TC1                        FALSE
 #define SAMA_TC0_IRQ_PRIORITY               2
-#define SAMA_TC1_IRQ_PRIORITY               4
+#define SAMA_TC1_IRQ_PRIORITY               2
 
 /*
  * SPI driver system settings.
