@@ -380,6 +380,34 @@
  */
 #define pmcDisableFLEXCOM4() pmcDisablePidLow(ID_FLEXCOM4_MSK)
 
+/**
+ * @brief   Enables the TC0 peripheral clock.
+ *
+ * @api
+ */
+#define pmcEnableTC0() pmcEnablePidHigh(ID_TC0_MSK)
+
+/**
+ * @brief   Disables the TC0 peripheral clock.
+ *
+ * @api
+ */
+#define pmcDisableTC0() pmcDisablePidHigh(ID_TC0_MSK)
+
+/**
+ * @brief   Enables the TC1 peripheral clock.
+ *
+ * @api
+ */
+#define pmcEnableTC1() pmcEnablePidHigh(ID_TC1_MSK)
+
+/**
+ * @brief   Disables the TC1 peripheral clock.
+ *
+ * @api
+ */
+#define pmcDisableTC1() pmcDisablePidHigh(ID_TC1_MSK)
+
 /** @} */
 
 /*===========================================================================*/
