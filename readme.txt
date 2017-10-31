@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added I-class functions to the serial driver: sdGetI(), sdReadI(),
+       sdPutI() and sdWriteI().
 - NEW: Modified the HAL queues to improve performance. Added new
        functions iqGetI(), iqReadI(), oqPutI() and oqWriteI().
 - NEW: Added an "Objects FIFO" object to the OS Library, it allows to
