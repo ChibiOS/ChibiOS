@@ -94,7 +94,7 @@
 #define CC_NO_INLINE    __attribute__((noinline))
 
 /**
- * @brief   Marks a function as not inlineable.
+ * @brief   Enforces a function inline.
  * @note    Can be implemented as an empty macro if not supported by the
  *          compiler.
  */
