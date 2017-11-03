@@ -80,6 +80,15 @@
 #define SAMA_SERIAL_FLEXCOM4_IRQ_PRIORITY   4
 
 /*
+ * TC driver system settings.
+ */
+#define HAL_USE_TC                          FALSE
+#define SAMA_USE_TC0                        FALSE
+#define SAMA_USE_TC1                        FALSE
+#define SAMA_TC0_IRQ_PRIORITY               2
+#define SAMA_TC1_IRQ_PRIORITY               2
+
+/*
  * UART driver system settings.
  */
 #define SAMA_UART_USE_UART0                 FALSE
