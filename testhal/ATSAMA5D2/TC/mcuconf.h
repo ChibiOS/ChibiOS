@@ -36,14 +36,6 @@
 #define SAMA_H64MX_H32MX_RATIO              2
 
 /*
- * GPT driver system settings.
- */
-#define SAMA_GPT_USE_TC0                    FALSE
-#define SAMA_GPT_USE_TC1                    FALSE
-#define SAMA_GPT_TC0_IRQ_PRIORITY           4
-#define SAMA_GPT_TC1_IRQ_PRIORITY           4
-
-/*
  * TC driver system settings.
  */
 #define HAL_USE_TC                          TRUE
