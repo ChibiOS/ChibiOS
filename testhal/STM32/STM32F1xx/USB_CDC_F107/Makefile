@@ -60,13 +60,18 @@ endif
 # Stack size to be allocated to the Cortex-M process stack. This stack is
 # the stack used by the main() thread.
 ifeq ($(USE_PROCESS_STACKSIZE),)
-  USE_PROCESS_STACKSIZE = 0x200
+  USE_PROCESS_STACKSIZE = 0x400
 endif
 
 # Stack size to the allocated to the Cortex-M main/exceptions stack. This
 # stack is used for processing interrupts and exceptions.
 ifeq ($(USE_EXCEPTIONS_STACKSIZE),)
   USE_EXCEPTIONS_STACKSIZE = 0x400
+endif
+
+# Enables the use of FPU (no, softfp, hard).
+ifeq ($(USE_FPU),)
+  USE_FPU = no
 endif
 
 #
@@ -147,7 +152,7 @@ ASMXSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
 INCDIR = $(CHIBIOS)/os/license \
          $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) $(TESTINC) \
-         $(STREAMSINC) $(SHELLINC)
+         $(STREAMSINC) $(SHELLINC) $(CONFDIR)
 
 #
 # Project, sources and paths
@@ -157,7 +162,7 @@ INCDIR = $(CHIBIOS)/os/license \
 # Compiler settings
 #
 
-MCU  = cortex-m0
+MCU  = cortex-m3
 
 #TRGT = arm-elf-
 TRGT = arm-none-eabi-
