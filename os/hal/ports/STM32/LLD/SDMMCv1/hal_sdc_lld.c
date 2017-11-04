@@ -528,7 +528,7 @@ void sdc_lld_start_clk(SDCDriver *sdcp) {
   sdcp->sdmmc->CLKCR |= SDMMC_CLKCR_CLKEN;
 
   /* Clock activation delay.*/
-  osalThreadSleep(OSAL_MS2ST(STM32_SDC_SDMMC_CLOCK_DELAY));
+  osalThreadSleep(OSAL_MS2I(STM32_SDC_SDMMC_CLOCK_DELAY));
 }
 
 /**

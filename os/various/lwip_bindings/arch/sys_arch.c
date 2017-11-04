@@ -101,18 +101,19 @@ void sys_sem_signal_S(sys_sem_t *sem) {
 }
 
 u32_t sys_arch_sem_wait(sys_sem_t *sem, u32_t timeout) {
-  systime_t tmo, start, remaining;
+  systime_t start;
+  sysinterval_t tmo, remaining;
 
   osalSysLock();
-  tmo = timeout > 0 ? MS2ST((systime_t)timeout) : TIME_INFINITE;
+  tmo = timeout > 0 ? TIME_MS2I((time_msecs_t)timeout) : TIME_INFINITE;
   start = osalOsGetSystemTimeX();
   if (chSemWaitTimeoutS(*sem, tmo) != MSG_OK) {
     osalSysUnlock();
     return SYS_ARCH_TIMEOUT;
   }
-  remaining = osalOsGetSystemTimeX() - start;
+  remaining = chTimeDiffX(start, osalOsGetSystemTimeX());
   osalSysUnlock();
-  return (u32_t)ST2MS(remaining);
+  return (u32_t)TIME_I2MS(remaining);
 }
 
 int sys_sem_valid(sys_sem_t *sem) {
@@ -173,18 +174,19 @@ err_t sys_mbox_trypost(sys_mbox_t *mbox, void *msg) {
 }
 
 u32_t sys_arch_mbox_fetch(sys_mbox_t *mbox, void **msg, u32_t timeout) {
-  systime_t tmo, start, remaining;
+  systime_t start;
+  sysinterval_t tmo, remaining;
 
   osalSysLock();
-  tmo = timeout > 0 ? MS2ST((systime_t)timeout) : TIME_INFINITE;
+  tmo = timeout > 0 ? TIME_MS2I((time_msecs_t)timeout) : TIME_INFINITE;
   start = osalOsGetSystemTimeX();
   if (chMBFetchTimeoutS(*mbox, (msg_t *)msg, tmo) != MSG_OK) {
     osalSysUnlock();
     return SYS_ARCH_TIMEOUT;
   }
-  remaining = osalOsGetSystemTimeX() - start;
+  remaining = chTimeDiffX(start, osalOsGetSystemTimeX());
   osalSysUnlock();
-  return (u32_t)ST2MS(remaining);
+  return (u32_t)TIME_I2MS(remaining);
 }
 
 u32_t sys_arch_mbox_tryfetch(sys_mbox_t *mbox, void **msg) {

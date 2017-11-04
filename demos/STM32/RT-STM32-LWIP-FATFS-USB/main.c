@@ -80,7 +80,7 @@ static void tmrfunc(void *p) {
       chEvtBroadcastI(&removed_event);
     }
   }
-  chVTSetI(&tmr, MS2ST(POLLING_DELAY), tmrfunc, bbdp);
+  chVTSetI(&tmr, TIME_MS2I(POLLING_DELAY), tmrfunc, bbdp);
   chSysUnlockFromISR();
 }
 
@@ -97,7 +97,7 @@ static void tmr_init(void *p) {
   chEvtObjectInit(&removed_event);
   chSysLock();
   cnt = POLLING_INTERVAL;
-  chVTSetI(&tmr, MS2ST(POLLING_DELAY), tmrfunc, p);
+  chVTSetI(&tmr, TIME_MS2I(POLLING_DELAY), tmrfunc, p);
   chSysUnlock();
 }
 
@@ -333,6 +333,6 @@ int main(void) {
                                     "shell", NORMALPRIO + 1,
                                     shellThread, (void *)&shell_cfg1);
     }
-    chEvtDispatch(evhndl, chEvtWaitOneTimeout(ALL_EVENTS, MS2ST(500)));
+    chEvtDispatch(evhndl, chEvtWaitOneTimeout(ALL_EVENTS, TIME_MS2I(500)));
   }
 }

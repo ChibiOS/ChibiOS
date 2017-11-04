@@ -65,7 +65,7 @@
  * @brief   Link poll interval.
  */
 #if !defined(LWIP_LINK_POLL_INTERVAL) || defined(__DOXYGEN__)
-#define LWIP_LINK_POLL_INTERVAL             S2ST(5)
+#define LWIP_LINK_POLL_INTERVAL             TIME_S2I(5)
 #endif
 
 /**

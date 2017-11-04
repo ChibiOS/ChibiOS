@@ -129,7 +129,7 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p) {
   MACTransmitDescriptor td;
 
   (void)netif;
-  if (macWaitTransmitDescriptor(&ETHD1, &td, MS2ST(LWIP_SEND_TIMEOUT)) != MSG_OK)
+  if (macWaitTransmitDescriptor(&ETHD1, &td, TIME_MS2I(LWIP_SEND_TIMEOUT)) != MSG_OK)
     return ERR_TIMEOUT;
 
 #if ETH_PAD_SIZE

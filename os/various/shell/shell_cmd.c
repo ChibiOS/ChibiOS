@@ -32,6 +32,7 @@
 
 #if (SHELL_CMD_TEST_ENABLED == TRUE) || defined(__DOXYGEN__)
 #include "rt_test_root.h"
+#include "oslib_test_root.h"
 #endif
 
 /*===========================================================================*/
@@ -171,17 +172,38 @@ static void cmd_threads(BaseSequentialStream *chp, int argc, char *argv[]) {
 #endif
 
 #if (SHELL_CMD_TEST_ENABLED == TRUE) || defined(__DOXYGEN__)
+static THD_FUNCTION(test_rt, arg) {
+  BaseSequentialStream *chp = (BaseSequentialStream *)arg;
+  test_execute(chp, &rt_test_suite);
+}
+
+static THD_FUNCTION(test_oslib, arg) {
+  BaseSequentialStream *chp = (BaseSequentialStream *)arg;
+  test_execute(chp, &oslib_test_suite);
+}
+
 static void cmd_test(BaseSequentialStream *chp, int argc, char *argv[]) {
   thread_t *tp;
+  tfunc_t tfp;
 
   (void)argv;
-  if (argc > 0) {
-    shellUsage(chp, "test");
+  if (argc != 1) {
+    shellUsage(chp, "test rt|oslib");
+    return;
+  }
+  if (!strcmp(argv[0], "rt")) {
+    tfp = test_rt;
+  }
+  else if (!strcmp(argv[0], "oslib")) {
+    tfp = test_oslib;
+  }
+  else {
+    shellUsage(chp, "test rt|oslib");
     return;
   }
   tp = chThdCreateFromHeap(NULL, SHELL_CMD_TEST_WA_SIZE,
                            "test", chThdGetPriorityX(),
-                           (tfunc_t)test_execute, chp);
+                           tfp, chp);
   if (tp == NULL) {
     chprintf(chp, "out of memory"SHELL_NEWLINE_STR);
     return;
