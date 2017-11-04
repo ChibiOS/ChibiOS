@@ -76,7 +76,8 @@ KERNSRC := $(CHIBIOS)/os/rt/src/chsys.c \
            $(CHIBIOS)/os/common/oslib/src/chmboxes.c \
            $(CHIBIOS)/os/common/oslib/src/chmemcore.c \
            $(CHIBIOS)/os/common/oslib/src/chheap.c \
-           $(CHIBIOS)/os/common/oslib/src/chmempools.c
+           $(CHIBIOS)/os/common/oslib/src/chmempools.c \
+           $(CHIBIOS)/os/common/oslib/src/chfactory.c
 endif
 
 # Required include directories

@@ -56,8 +56,8 @@
 #define F_LOCK()        chMtxLock(&ch_factory.mtx)
 #define F_UNLOCK()      chMtxUnlock(&ch_factory.mtx)
 #else
-#define F_LOCK()        (void) chSemWait(ch_factory.sem)
-#define F_UNLOCK()      chSemSignal(ch_factory.sem)
+#define F_LOCK()        (void) chSemWait(&ch_factory.sem)
+#define F_UNLOCK()      chSemSignal(&ch_factory.sem)
 #endif
 
 /*===========================================================================*/

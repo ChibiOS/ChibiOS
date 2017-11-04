@@ -263,6 +263,60 @@
 #if !defined(CH_CFG_USE_MEMPOOLS) || defined(__DOXYGEN__)
 #define CH_CFG_USE_MEMPOOLS                 TRUE
 #endif
+/**
+ * @brief   Objects Factory APIs.
+ * @details If enabled then the objects factory APIs are included in the
+ *          kernel.
+ *
+ * @note    The default is @p FALSE.
+ */
+#if !defined(CH_CFG_USE_FACTORY) || defined(__DOXYGEN__)
+#define CH_CFG_USE_FACTORY                  TRUE
+#endif
+
+/**
+ * @brief   Maximum length for object names.
+ * @details If the specified length is zero then the name is stored by
+ *          pointer but this could have unintended side effects.
+ */
+#if !defined(CH_CFG_FACTORY_MAX_NAMES_LENGTH) || defined(__DOXYGEN__)
+#define CH_CFG_FACTORY_MAX_NAMES_LENGTH     8
+#endif
+
+/**
+ * @brief   Enables the registry of generic objects.
+ */
+#if !defined(CH_CFG_FACTORY_OBJECTS_REGISTRY) || defined(__DOXYGEN__)
+#define CH_CFG_FACTORY_OBJECTS_REGISTRY     TRUE
+#endif
+
+/**
+ * @brief   Enables factory for generic buffers.
+ */
+#if !defined(CH_CFG_FACTORY_GENERIC_BUFFERS) || defined(__DOXYGEN__)
+#define CH_CFG_FACTORY_GENERIC_BUFFERS      TRUE
+#endif
+
+/**
+ * @brief   Enables factory for semaphores.
+ */
+#if !defined(CH_CFG_FACTORY_SEMAPHORES) || defined(__DOXYGEN__)
+#define CH_CFG_FACTORY_SEMAPHORES           TRUE
+#endif
+
+/**
+ * @brief   Enables factory for mailboxes.
+ */
+#if !defined(CH_CFG_FACTORY_MAILBOXES) || defined(__DOXYGEN__)
+#define CH_CFG_FACTORY_MAILBOXES            TRUE
+#endif
+
+/**
+ * @brief   Enables factory for objects FIFOs.
+ */
+#if !defined(CH_CFG_FACTORY_OBJ_FIFOS) || defined(__DOXYGEN__)
+#define CH_CFG_FACTORY_OBJ_FIFOS            TRUE
+#endif
 
 /*-*
  * @brief   Debug option, kernel statistics.
@@ -412,6 +466,10 @@
 
 #if !defined(_CHIBIOS_NIL_CONF_)
 #error "missing or wrong configuration file"
+#endif
+
+#if !defined(_CHIBIOS_NIL_CONF_VER_3_0_)
+#error "obsolete or unknown configuration file"
 #endif
 
 #if CH_CFG_NUM_THREADS < 1
@@ -1501,8 +1559,10 @@ extern "C" {
 /* Optional subsystems.*/
 #include "chmboxes.h"
 #include "chmemcore.h"
-#include "chmempools.h"
 #include "chheap.h"
+#include "chmempools.h"
+#include "chfifo.h"
+#include "chfactory.h"
 
 #endif /* CH_H */
 

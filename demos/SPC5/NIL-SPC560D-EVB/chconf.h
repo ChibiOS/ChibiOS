@@ -29,7 +29,7 @@
 #define CHCONF_H
 
 #define _CHIBIOS_NIL_CONF_
-#define _CHIBIOS_NIL_CONF_VER_5_0_
+#define _CHIBIOS_NIL_CONF_VER_3_0_
 
 /*===========================================================================*/
 /**
