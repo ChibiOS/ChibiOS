@@ -28,7 +28,7 @@ static i2cflags_t errors = 0;
 /* This is main function. */
 void request_fake(void){
   msg_t status = MSG_OK;
-  systime_t tmo = MS2ST(4);
+  sysinterval_t tmo = TIME_MS2I(4);
 
   i2cAcquireBus(&I2CD1);
   status = i2cMasterReceiveTimeout(&I2CD1, addr, rx_data, 2, tmo);

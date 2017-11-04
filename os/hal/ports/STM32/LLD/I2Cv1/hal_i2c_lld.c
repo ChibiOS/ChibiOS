@@ -737,7 +737,7 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
 
   /* Calculating the time window for the timeout on the busy bus condition.*/
   start = osalOsGetSystemTimeX();
-  end = start + OSAL_MS2ST(STM32_I2C_BUSY_TIMEOUT);
+  end = osalTimeAddX(start, OSAL_MS2I(STM32_I2C_BUSY_TIMEOUT));
 
   /* Waits until BUSY flag is reset or, alternatively, for a timeout
      condition.*/
@@ -751,7 +751,7 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
 
     /* If the system time went outside the allowed window then a timeout
        condition is returned.*/
-    if (!osalOsIsTimeWithinX(osalOsGetSystemTimeX(), start, end))
+    if (!osalTimeIsInRangeX(osalOsGetSystemTimeX(), start, end))
       return MSG_TIMEOUT;
 
     osalSysUnlock();
@@ -822,7 +822,7 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
 
   /* Calculating the time window for the timeout on the busy bus condition.*/
   start = osalOsGetSystemTimeX();
-  end = start + OSAL_MS2ST(STM32_I2C_BUSY_TIMEOUT);
+  end = osalTimeAddX(start, OSAL_MS2I(STM32_I2C_BUSY_TIMEOUT));
 
   /* Waits until BUSY flag is reset or, alternatively, for a timeout
      condition.*/
@@ -836,7 +836,7 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
 
     /* If the system time went outside the allowed window then a timeout
        condition is returned.*/
-    if (!osalOsIsTimeWithinX(osalOsGetSystemTimeX(), start, end))
+    if (!osalTimeIsInRangeX(osalOsGetSystemTimeX(), start, end))
       return MSG_TIMEOUT;
 
     osalSysUnlock();

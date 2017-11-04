@@ -54,7 +54,7 @@ static uint8_t accel_tx_data[8];
  */
 void lis3Start(void){
   msg_t status = MSG_OK;
-  systime_t tmo = MS2ST(4);
+  sysinterval_t tmo = TIME_MS2I(4);
 
   /* configure accelerometer */
   accel_tx_data[0] = ACCEL_CTRL_REG1 | AUTO_INCREMENT_BIT;
@@ -88,7 +88,7 @@ static void raw2g(uint8_t *raw, float *g) {
  */
 void lis3GetAcc(float *result) {
   msg_t status = MSG_OK;
-  systime_t tmo = MS2ST(4);
+  sysinterval_t tmo = TIME_MS2I(4);
 
   /* read in burst mode */
   memset(accel_rx_data, 0x55, sizeof(accel_rx_data));
