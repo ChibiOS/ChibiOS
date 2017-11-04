@@ -100,7 +100,7 @@ include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/port_v6m.mk
 # Other files (optional).
 include $(CHIBIOS)/test/lib/test.mk
 include $(CHIBIOS)/test/rt/rt_test.mk
-include $(CHIBIOS)/test/oslib/oslib_test.mk
+#include $(CHIBIOS)/test/oslib/oslib_test.mk
 
 # Define linker script file here
 LDSCRIPT= $(STARTUPLD)/STM32F031x6.ld

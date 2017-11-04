@@ -95,7 +95,7 @@ protected:
     while (true) {
       switch(curr->action) {
       case SLEEP:
-        sleep(MS2ST(curr->value));
+        sleep(TIME_MS2I(curr->value));
         break;
       case GOTO:
         curr = &base[curr->value];
@@ -187,7 +187,7 @@ int main(void) {
       tester.start(NORMALPRIO);
       tester.wait();
     };
-    BaseThread::sleep(MS2ST(500));
+    BaseThread::sleep(TIME_MS2I(500));
   }
 
   return 0;
