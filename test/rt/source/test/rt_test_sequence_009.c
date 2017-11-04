@@ -137,7 +137,7 @@ static void rt_test_009_001_execute(void) {
   test_set_step(5);
   {
     threads[2] = chThdCreateFromHeap(&heap1,
-                                     THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE * 1024),
+                                     THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE * 32),
                                      "dyn3",
                                      prio-3, dyn_thread1, "C");
     test_assert(threads[2] == NULL, "thread creation not failed");

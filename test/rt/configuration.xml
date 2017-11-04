@@ -3264,7 +3264,7 @@ test_assert(threads[1] != NULL, "thread creation failed");]]></value>
                     </tags>
                     <code>
                       <value><![CDATA[threads[2] = chThdCreateFromHeap(&heap1,
-                                 THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE * 1024),
+                                 THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE * 32),
                                  "dyn3",
                                  prio-3, dyn_thread1, "C");
 test_assert(threads[2] == NULL, "thread creation not failed");]]></value>
