@@ -58,7 +58,7 @@ static void txend2(UARTDriver *uartp) {
   palSetPad(GPIOD, GPIOD_LED5);
   chSysLockFromISR();
   chVTResetI(&vt5);
-  chVTSetI(&vt5, MS2ST(200), led5off, NULL);
+  chVTSetI(&vt5, TIME_MS2I(200), led5off, NULL);
   chSysUnlockFromISR();
 }
 
@@ -84,7 +84,7 @@ static void rxchar(UARTDriver *uartp, uint16_t c) {
   palSetPad(GPIOD, GPIOD_LED4);
   chSysLockFromISR();
   chVTResetI(&vt4);
-  chVTSetI(&vt4, MS2ST(200), led4off, NULL);
+  chVTSetI(&vt4, TIME_MS2I(200), led4off, NULL);
   chSysUnlockFromISR();
 }
 
@@ -99,7 +99,7 @@ static void rxend(UARTDriver *uartp) {
   palSetPad(GPIOD, GPIOD_LED3);
   chSysLockFromISR();
   chVTResetI(&vt3);
-  chVTSetI(&vt3, MS2ST(200), led3off, NULL);
+  chVTSetI(&vt3, TIME_MS2I(200), led3off, NULL);
   chSysUnlockFromISR();
 }
 

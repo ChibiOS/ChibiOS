@@ -106,7 +106,7 @@ void cmd_sdc(BaseSequentialStream *chp, int argc, char *argv[]) {
     /* Single block read performance, aligned.*/
     chprintf(chp, "Single block aligned read performance:           ");
     start = chVTGetSystemTime();
-    end = start + MS2ST(1000);
+    end = chTimeAddX(start, TIME_MS2I(1000));
     n = 0;
     do {
       if (blkRead(&SDCD1, startblk, buf, 1)) {
@@ -120,7 +120,7 @@ void cmd_sdc(BaseSequentialStream *chp, int argc, char *argv[]) {
     /* Multiple sequential blocks read performance, aligned.*/
     chprintf(chp, "16 sequential blocks aligned read performance:   ");
     start = chVTGetSystemTime();
-    end = start + MS2ST(1000);
+    end = chTimeAddX(start, TIME_MS2I(1000));
     n = 0;
     do {
       if (blkRead(&SDCD1, startblk, buf, SDC_BURST_SIZE)) {
@@ -135,7 +135,7 @@ void cmd_sdc(BaseSequentialStream *chp, int argc, char *argv[]) {
     /* Single block read performance, unaligned.*/
     chprintf(chp, "Single block unaligned read performance:         ");
     start = chVTGetSystemTime();
-    end = start + MS2ST(1000);
+    end = chTimeAddX(start, TIME_MS2I(1000));
     n = 0;
     do {
       if (blkRead(&SDCD1, startblk, buf + 1, 1)) {
@@ -149,7 +149,7 @@ void cmd_sdc(BaseSequentialStream *chp, int argc, char *argv[]) {
     /* Multiple sequential blocks read performance, unaligned.*/
     chprintf(chp, "16 sequential blocks unaligned read performance: ");
     start = chVTGetSystemTime();
-    end = start + MS2ST(1000);
+    end = chTimeAddX(start, TIME_MS2I(1000));
     n = 0;
     do {
       if (blkRead(&SDCD1, startblk, buf + 1, SDC_BURST_SIZE)) {
