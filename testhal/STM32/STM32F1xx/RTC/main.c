@@ -141,7 +141,7 @@ int main(void) {
   while (true){
 
     /* Wait until alarm callback signaled semaphore.*/
-    status = chBSemWaitTimeout(&alarm_sem, S2ST(RTC_ALARMPERIOD + 5));
+    status = chBSemWaitTimeout(&alarm_sem, TIME_S2I(RTC_ALARMPERIOD + 5));
 
     if (status == MSG_TIMEOUT){
       osalSysHalt("time is out");
