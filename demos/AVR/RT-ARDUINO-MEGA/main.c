@@ -58,6 +58,8 @@ int main(void) {
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   test_execute((BaseSequentialStream *)&SD1, &rt_test_suite);
+  test_execute((BaseSequentialStream *)&SD1, &oslib_test_suite);
+
   while(TRUE) {
     chThdSleepMilliseconds(1000);
   }
