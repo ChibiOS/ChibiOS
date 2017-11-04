@@ -84,6 +84,7 @@ endif
 
 # Define project name here
 PROJECT = ch
+CONFDIR  := ./cfg
 
 # Imported source files and paths
 CHIBIOS = ../../..
@@ -152,7 +153,7 @@ INCDIR = $(CHIBIOS)/os/license \
          $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) $(TESTINC) \
          $(LWINC) \
-         $(CHIBIOS)/os/various
+         $(CHIBIOS)/os/various $(CONFDIR)
 
 #
 # Project, sources and paths
