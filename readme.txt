@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** 17.6.3 ***
+- HAL: Fixed function uartSendFullTimeout() failing on STM32 USARTv1 and
+       v2 drivers (bug #901).
 - HAL: Fixed broken I2C fallback driver (bug #900).
 - LIB: Fixed heap buffer alignment not enforced (bug #899).
 - LIB: Fixed call protocol violation in chCoreAlloc() (bug #896).
