@@ -16,16 +16,16 @@
 
 /**
  * @file    hal_pal_lld.h
- * @brief   Win32 simulator low level PAL driver header.
+ * @brief   Simulator low level PAL driver header.
  *
- * @addtogroup WIN32_PAL
+ * @addtogroup SIMULATOR_PAL
  * @{
  */
 
 #ifndef HAL_PAL_LLD_H
 #define HAL_PAL_LLD_H
 
-#if HAL_USE_PAL || defined(__DOXYGEN__)
+#if (HAL_USE_PAL == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Unsupported modes and specific modes                                      */
@@ -87,9 +87,40 @@ typedef struct {
 
 /**
  * @brief   Whole port mask.
- * @brief   This macro specifies all the valid bits into a port.
+ * @details This macro specifies all the valid bits into a port.
  */
-#define PAL_WHOLE_PORT ((ioportmask_t)0xFFFFFFFF)
+#define PAL_WHOLE_PORT              ((ioportmask_t)0xFFFFFFFFU)
+/** @} */
+
+/**
+ * @name    Line handling macros
+ * @{
+ */
+/**
+ * @brief   Forms a line identifier.
+ * @details A port/pad pair are encoded into an @p ioline_t type. The encoding
+ *          of this type is platform-dependent.
+ */
+#define PAL_LINE(port, pad)                                                 \
+  ((ioline_t)((uint32_t)(port)) | ((uint32_t)(pad)))
+
+/**
+ * @brief   Decodes a port identifier from a line identifier.
+ */
+#define PAL_PORT(line)                                                      \
+  ((sim_vio_port_t *)(((uint32_t)(line)) & 0xFFFFFFF0U))
+
+/**
+ * @brief   Decodes a pad identifier from a line identifier.
+ */
+#define PAL_PAD(line)                                                       \
+  ((uint32_t)((uint32_t)(line) & 0x0000000FU))
+
+/**
+ * @brief   Value identifying an invalid line.
+ */
+#define PAL_NOLINE                      0U
+/** @} */
 
 /**
  * @brief   Digital I/O port sized unsigned type.
@@ -102,9 +133,19 @@ typedef uint32_t ioportmask_t;
 typedef uint32_t iomode_t;
 
 /**
+ * @brief   Type of an I/O line.
+ */
+typedef uint32_t ioline_t;
+
+/**
  * @brief   Port Identifier.
  */
-typedef sim_vio_port_t *ioportid_t;
+typedef sim_vio_port_t * ioportid_t;
+
+/**
+ * @brief   Type of an pad identifier.
+ */
+typedef uint32_t iopadid_t;
 
 /*===========================================================================*/
 /* I/O Ports Identifiers.                                                    */
@@ -172,6 +213,7 @@ typedef sim_vio_port_t *ioportid_t;
  * @brief   Pads group mode setup.
  * @details This function programs a pads group belonging to the same port
  *          with the specified mode.
+ * @note    Programming an unknown or unsupported mode is silently ignored.
  *
  * @param[in] port      port identifier
  * @param[in] mask      group mask
@@ -182,6 +224,25 @@ typedef sim_vio_port_t *ioportid_t;
  */
 #define pal_lld_setgroupmode(port, mask, offset, mode)                      \
   _pal_lld_setgroupmode(port, mask << offset, mode)
+
+/**
+ * @brief   Returns a PAL event structure associated to a pad.
+ *
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
+ *
+ * @notapi
+ */
+#define pal_lld_get_pad_event(port, pad) NULL; (void)(port); (void)pad
+
+/**
+ * @brief   Returns a PAL event structure associated to a line.
+ *
+ * @param[in] line      line identifier
+ *
+ * @notapi
+ */
+#define pal_lld_get_line_event(line) NULL; (void)line
 
 #if !defined(__DOXYGEN__)
 extern sim_vio_port_t vio_port_1;
@@ -199,7 +260,7 @@ extern "C" {
 }
 #endif
 
-#endif /* HAL_USE_PAL */
+#endif /* HAL_USE_PAL == TRUE */
 
 #endif /* HAL_PAL_LLD_H */
 
