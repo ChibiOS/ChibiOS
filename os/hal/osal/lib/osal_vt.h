@@ -29,14 +29,6 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
-/**
- * @name    Special time constants
- * @{
- */
-#define TIME_IMMEDIATE                      ((systime_t)0)
-#define TIME_INFINITE                       ((systime_t)-1)
-/** @} */
-
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -73,7 +65,7 @@ typedef struct {
                                                 list.                       */
   virtual_timer_t       *vt_prev;   /**< @brief Last timer in the timers
                                                 list.                       */
-  systime_t             vt_time;    /**< @brief Must be initialized to -1.  */
+  sysinterval_t         vt_delta;   /**< @brief Must be initialized to -1.  */
   volatile systime_t    vt_systime; /**< @brief System Time counter.        */
 } virtual_timers_list_t;
 
@@ -90,7 +82,7 @@ struct virtual_timer {
                                                 list.                       */
   virtual_timer_t       *vt_prev;   /**< @brief Previous timer in the timers
                                                 list.                       */
-  systime_t             vt_time;    /**< @brief Time delta before timeout.  */
+  sysinterval_t         vt_delta;   /**< @brief Time delta before timeout.  */
   vtfunc_t              vt_func;    /**< @brief Timer callback function
                                                 pointer.                    */
   void                  *vt_par;    /**< @brief Timer callback function
@@ -115,7 +107,7 @@ extern "C" {
   void vtInit(void);
   bool vtIsArmedI(virtual_timer_t *vtp);
   void vtDoTickI(void);
-  void vtSetI(virtual_timer_t *vtp, systime_t time,
+  void vtSetI(virtual_timer_t *vtp, sysinterval_t timeout,
               vtfunc_t vtfunc, void *par);
   void vtResetI(virtual_timer_t *vtp);
 #ifdef __cplusplus

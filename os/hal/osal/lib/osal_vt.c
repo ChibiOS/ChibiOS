@@ -66,7 +66,7 @@ void vtInit(void) {
 
   /* Virtual Timers initialization.*/
   vtlist.vt_next = vtlist.vt_prev = (void *)&vtlist;
-  vtlist.vt_time = (systime_t)-1;
+  vtlist.vt_delta = (sysinterval_t)-1;
   vtlist.vt_systime = 0;
 }
 
@@ -97,8 +97,8 @@ void vtDoTickI(void) {
   if (&vtlist != (virtual_timers_list_t *)vtlist.vt_next) {
     virtual_timer_t *vtp;
 
-    --vtlist.vt_next->vt_time;
-    while (!(vtp = vtlist.vt_next)->vt_time) {
+    --vtlist.vt_next->vt_delta;
+    while (!(vtp = vtlist.vt_next)->vt_delta) {
       vtfunc_t fn = vtp->vt_func;
       vtp->vt_func = (vtfunc_t)NULL;
       vtp->vt_next->vt_prev = (void *)&vtlist;
@@ -115,7 +115,7 @@ void vtDoTickI(void) {
  * @note    The associated function is invoked from interrupt context.
  *
  * @param[out] vtp      the @p virtual_timer_t structure pointer
- * @param[in] time      the number of ticks before the operation timeouts, the
+ * @param[in] timeout   the number of ticks before the operation timeouts, the
  *                      special values are handled as follow:
  *                      - @a TIME_INFINITE is allowed but interpreted as a
  *                        normal time specification.
@@ -129,23 +129,23 @@ void vtDoTickI(void) {
  *
  * @iclass
  */
-void vtSetI(virtual_timer_t *vtp, systime_t time,
+void vtSetI(virtual_timer_t *vtp, sysinterval_t timeout,
             vtfunc_t vtfunc, void *par) {
   virtual_timer_t *p;
 
   vtp->vt_par = par;
   vtp->vt_func = vtfunc;
   p = vtlist.vt_next;
-  while (p->vt_time < time) {
-    time -= p->vt_time;
+  while (p->vt_delta < timeout) {
+    timeout -= p->vt_delta;
     p = p->vt_next;
   }
 
   vtp->vt_prev = (vtp->vt_next = p)->vt_prev;
   vtp->vt_prev->vt_next = p->vt_prev = vtp;
-  vtp->vt_time = time;
+  vtp->vt_delta = timeout;
   if (p != (void *)&vtlist)
-    p->vt_time -= time;
+    p->vt_delta -= timeout;
 }
 
 /**
@@ -159,7 +159,7 @@ void vtSetI(virtual_timer_t *vtp, systime_t time,
 void vtResetI(virtual_timer_t *vtp) {
 
   if (vtp->vt_next != (void *)&vtlist)
-    vtp->vt_next->vt_time += vtp->vt_time;
+    vtp->vt_next->vt_delta += vtp->vt_delta;
   vtp->vt_prev->vt_next = vtp->vt_next;
   vtp->vt_next->vt_prev = vtp->vt_prev;
   vtp->vt_func = (vtfunc_t)NULL;
