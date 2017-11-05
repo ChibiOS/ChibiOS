@@ -730,9 +730,10 @@ void uart_lld_start_send(UARTDriver *uartp, size_t n, const void *txbuf) {
   dmaStreamSetMode(uartp->dmatx, uartp->dmamode    | STM32_DMA_CR_DIR_M2P |
                                  STM32_DMA_CR_MINC | STM32_DMA_CR_TCIE);
 
-  /* Only enable TC interrupt if there's a callback attached to it.
-     Also we need to clear TC flag which could be set before. */
-  if (uartp->config->txend2_cb != NULL) {
+  /* Only enable TC interrupt if there's a callback attached to it or
+     if called from uartSendFullTimeout(). Also we need to clear TC flag
+     which could be set before.*/
+  if ((uartp->config->txend2_cb != NULL) || (uartp->early == false)) {
     uartp->usart->SR = ~USART_SR_TC;
     uartp->usart->CR1 |= USART_CR1_TCIE;
   }
