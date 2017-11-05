@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 17.6.3 ***
+- NIL: Fixed core and Heap allocators not functional in NIL (bug #902).
 - HAL: Fixed function uartSendFullTimeout() failing on STM32 USARTv1 and
        v2 drivers (bug #901).
 - HAL: Fixed broken I2C fallback driver (bug #900).

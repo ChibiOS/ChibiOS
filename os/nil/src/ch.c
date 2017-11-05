@@ -260,6 +260,11 @@ void chSysInit(void) {
   nil.lock_cnt = (cnt_t)1;
 #endif
 
+  /* Memory core initialization, if enabled.*/
+#if CH_CFG_USE_MEMCORE == TRUE
+  _core_init();
+#endif
+
   /* Heap initialization, if enabled.*/
 #if CH_CFG_USE_HEAP == TRUE
   _heap_init();
