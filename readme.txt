@@ -150,6 +150,8 @@
        dependencies and configuration directories. This makes possible
        to have multiple non-conflicting makefiles in the same project.
        Updated the various platform.mk implementing "smart build" mode.
+- LIB: Fixed typo for function evtStop (bug #897)(backported to 17.6.4
+       and 16.1.10).
 - NIL: Fixed core and Heap allocators not functional in NIL (bug #902)
        (backported to 17.6.3).
 - HAL: Fixed function uartSendFullTimeout() failing on STM32 USARTv1 and
