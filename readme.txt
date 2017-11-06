@@ -88,6 +88,9 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+*** 17.6.4 ***
+- LIB: Fixed typo for function evtStop (bug #897).
+
 *** 17.6.3 ***
 - NIL: Fixed core and Heap allocators not functional in NIL (bug #902).
 - HAL: Fixed function uartSendFullTimeout() failing on STM32 USARTv1 and
