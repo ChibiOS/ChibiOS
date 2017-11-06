@@ -84,7 +84,7 @@ extern "C" {
  *
  * @param[in] etp       pointer to an initialized @p event_timer_t structure.
  */
-static inline void vevtStop(event_timer_t *etp) {
+static inline void evtStop(event_timer_t *etp) {
 
   chVTReset(&etp->et_vt);
 }
