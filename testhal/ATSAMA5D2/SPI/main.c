@@ -41,7 +41,7 @@ static void rxend(SPIDriver *spip) {
   palClearLine(LINE_LED_RED);
   chSysLockFromISR();
   chVTResetI(&vt3);
-  chVTSetI(&vt3, MS2ST(200), led3off, NULL);
+  chVTSetI(&vt3, TIME_MS2I(200), led3off, NULL);
   chSysUnlockFromISR();
 }
 
