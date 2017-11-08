@@ -121,6 +121,11 @@ int main(void) {
   chSysInit();
 
   /*
+   * Board-dependent initialization.
+   */
+  portab_setup();
+
+  /*
    * Initializes a serial-over-USB CDC driver.
    */
   sduObjectInit(&PORTAB_SDU1);

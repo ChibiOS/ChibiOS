@@ -58,7 +58,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+  void portab_setup(void);
 #ifdef __cplusplus
 }
 #endif
