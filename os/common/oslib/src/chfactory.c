@@ -98,7 +98,7 @@ static dyn_element_t *dyn_list_find(const char *name, dyn_list_t *dlp) {
     p = p->next;
   }
 
-  chDbgAssert(true, "invalid reference passed");
+  chDbgAssert(false, "invalid reference passed");
 
   return NULL;
 }
