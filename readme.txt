@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Modified the STM32 OTGv1 driver to work without pump thread, transfers
+       are now done in the ISR.
 - NEW: Added I-class functions to the serial driver: sdGetI(), sdReadI(),
        sdPutI() and sdWriteI().
 - NEW: Modified the HAL queues to improve performance. Added new

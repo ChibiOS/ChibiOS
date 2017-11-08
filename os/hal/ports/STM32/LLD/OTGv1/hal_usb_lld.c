@@ -325,8 +325,12 @@ static bool otg_txfifo_handler(USBDriver *usbp, usbep_t ep) {
     uint32_t n;
 
     /* Transaction end condition.*/
-    if (usbp->epc[ep]->in_state->txcnt >= usbp->epc[ep]->in_state->txsize)
+    if (usbp->epc[ep]->in_state->txcnt >= usbp->epc[ep]->in_state->txsize) {
+#if 1
+      usbp->otg->DIEPEMPMSK &= ~DIEPEMPMSK_INEPTXFEM(ep);
+#endif
       return true;
+    }
 
     /* Number of bytes remaining in current transaction.*/
     n = usbp->epc[ep]->in_state->txsize - usbp->epc[ep]->in_state->txcnt;
@@ -345,10 +349,10 @@ static bool otg_txfifo_handler(USBDriver *usbp, usbep_t ep) {
                                usbp->epc[ep]->in_state->txbuf,
                                n);
     usbp->epc[ep]->in_state->txbuf += n;
+    usbp->epc[ep]->in_state->txcnt += n;
 #if STM32_USB_OTGFIFO_FILL_BASEPRI
   __set_BASEPRI(0);
 #endif
-    usbp->epc[ep]->in_state->txcnt += n;
   }
 }
 
@@ -390,12 +394,17 @@ static void otg_epin_handler(USBDriver *usbp, usbep_t ep) {
   }
   if ((epint & DIEPINT_TXFE) &&
       (otgp->DIEPEMPMSK & DIEPEMPMSK_INEPTXFEM(ep))) {
+#if 0
     /* The thread is made ready, it will be scheduled on ISR exit.*/
     osalSysLockFromISR();
     usbp->txpending |= (1 << ep);
     otgp->DIEPEMPMSK &= ~(1 << ep);
     osalThreadResumeI(&usbp->wait, MSG_OK);
     osalSysUnlockFromISR();
+#else
+    /* TX FIFO empty or emptying.*/
+    otg_txfifo_handler(usbp, ep);
+#endif
   }
 }
 
@@ -483,12 +492,17 @@ static void otg_isoc_in_failed_handler(USBDriver *usbp) {
       /* Prepare data for next frame */
       _usb_isr_invoke_in_cb(usbp, ep);
 
+#if 0
       /* Pump out data for next frame */
       osalSysLockFromISR();
       otgp->DIEPEMPMSK &= ~(1 << ep);
       usbp->txpending |= (1 << ep);
       osalThreadResumeI(&usbp->wait, MSG_OK);
       osalSysUnlockFromISR();
+#else
+    /* TX FIFO empty or emptying.*/
+    otg_txfifo_handler(usbp, ep);
+#endif
     }
   }
 }
@@ -536,10 +550,10 @@ static void usb_lld_serve_interrupt(USBDriver *usbp) {
 
   /* Reset interrupt handling.*/
   if (sts & GINTSTS_USBRST) {
-
+#if 0
     /* Resetting pending operations.*/
     usbp->txpending = 0;
-
+#endif
     /* Default reset action.*/
     _usb_reset(usbp);
 
@@ -564,10 +578,10 @@ static void usb_lld_serve_interrupt(USBDriver *usbp) {
 
   /* Suspend handling.*/
   if (sts & GINTSTS_USBSUSP) {
-
+#if 0
     /* Resetting pending operations.*/
     usbp->txpending = 0;
-
+#endif
     /* Default suspend action.*/
     _usb_suspend(usbp);
   }
@@ -601,6 +615,7 @@ static void usb_lld_serve_interrupt(USBDriver *usbp) {
   }
 
   /* RX FIFO not empty handling.*/
+#if 0
   if (sts & GINTSTS_RXFLVL) {
     /* The interrupt is masked while the thread has control or it would
        be triggered again.*/
@@ -609,6 +624,13 @@ static void usb_lld_serve_interrupt(USBDriver *usbp) {
     osalThreadResumeI(&usbp->wait, MSG_OK);
     osalSysUnlockFromISR();
   }
+#else
+  /* Performing the whole FIFO emptying in the ISR, it is advised to keep
+     this IRQ at a very low priority level.*/
+  if ((sts & GINTSTS_RXFLVL) != 0U) {
+    otg_rxfifo_handler(usbp);
+  }
+#endif
 
   /* IN/OUT endpoints event handling.*/
   src = otgp->DAINT;
@@ -724,10 +746,13 @@ void usb_lld_init(void) {
   /* Driver initialization.*/
 #if STM32_USB_USE_OTG1
   usbObjectInit(&USBD1);
+#if 0
   USBD1.wait      = NULL;
+#endif
   USBD1.otg       = OTG_FS;
   USBD1.otgparams = &fsparams;
 
+#if 0
 #if defined(_CHIBIOS_RT_)
   USBD1.tr = NULL;
   /* Filling the thread working area here because the function
@@ -742,13 +767,17 @@ void usb_lld_init(void) {
 #endif /* CH_DBG_FILL_THREADS */
 #endif /* defined(_CHIBIOS_RT_) */
 #endif
+#endif
 
 #if STM32_USB_USE_OTG2
   usbObjectInit(&USBD2);
+#if 0
   USBD2.wait      = NULL;
+#endif
   USBD2.otg       = OTG_HS;
   USBD2.otgparams = &hsparams;
 
+#if 0
 #if defined(_CHIBIOS_RT_)
   USBD2.tr = NULL;
   /* Filling the thread working area here because the function
@@ -762,6 +791,7 @@ void usb_lld_init(void) {
   }
 #endif /* CH_DBG_FILL_THREADS */
 #endif /* defined(_CHIBIOS_RT_) */
+#endif
 #endif
 }
 
@@ -846,9 +876,10 @@ void usb_lld_start(USBDriver *usbp) {
     }
 #endif
 
+#if 0
     /* Clearing mask of TXFIFOs to be filled.*/
     usbp->txpending = 0;
-
+#endif
     /* PHY enabled.*/
     otgp->PCGCCTL = 0;
 
@@ -898,6 +929,7 @@ void usb_lld_start(USBDriver *usbp) {
     /* Clears all pending IRQs, if any. */
     otgp->GINTSTS  = 0xFFFFFFFF;
 
+#if 0
 #if defined(_CHIBIOS_RT_)
     /* Creates the data pump thread. Note, it is created only once.*/
     if (usbp->tr == NULL) {
@@ -914,7 +946,7 @@ void usb_lld_start(USBDriver *usbp) {
       chSchRescheduleS();
   }
 #endif
-
+#endif
     /* Global interrupts enable.*/
     otgp->GAHBCFG |= GAHBCFG_GINTMSK;
   }
@@ -937,8 +969,9 @@ void usb_lld_stop(USBDriver *usbp) {
        active.*/
     otg_disable_ep(usbp);
 
+#if 0
     usbp->txpending = 0;
-
+#endif
     otgp->DAINTMSK   = 0;
     otgp->GAHBCFG    = 0;
     otgp->GCCFG      = 0;
@@ -1317,6 +1350,7 @@ void usb_lld_clear_in(USBDriver *usbp, usbep_t ep) {
   usbp->otg->ie[ep].DIEPCTL &= ~DIEPCTL_STALL;
 }
 
+#if 0
 /**
  * @brief   USB data transfer loop.
  * @details This function must be executed by a system thread in order to
@@ -1381,6 +1415,7 @@ void usb_lld_pump(void *p) {
     osalSysLock();
   }
 }
+#endif
 
 #endif /* HAL_USE_USB */
 

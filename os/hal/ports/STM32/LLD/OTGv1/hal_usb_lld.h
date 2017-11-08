@@ -508,6 +508,7 @@ struct USBDriver {
    * @brief   Pointer to the next address in the packet memory.
    */
   uint32_t                      pmnext;
+#if 0
   /**
    * @brief   Mask of TXFIFOs to be filled by the pump thread.
    */
@@ -525,6 +526,7 @@ struct USBDriver {
    * @brief   Working area for the dedicated data pump thread;
    */
   THD_WORKING_AREA(wa_pump, STM32_USB_OTG_THREAD_STACK_SIZE);
+#endif
 #endif
 };
 
