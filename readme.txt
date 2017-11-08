@@ -152,6 +152,7 @@
        dependencies and configuration directories. This makes possible
        to have multiple non-conflicting makefiles in the same project.
        Updated the various platform.mk implementing "smart build" mode.
+- HAL: Fixed ADC does not build on STM32F030 (bug #903)(backported to 17.6.4).
 - LIB: Fixed typo for function evtStop (bug #897)(backported to 17.6.4
        and 16.1.10).
 - NIL: Fixed core and Heap allocators not functional in NIL (bug #902)

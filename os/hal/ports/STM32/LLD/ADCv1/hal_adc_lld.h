@@ -434,10 +434,10 @@ extern "C" {
   void adcSTM32DisableVREF(void);
   void adcSTM32EnableTS(void);
   void adcSTM32DisableTS(void);
-#ifdef STM32F0XX
+#if defined(ADC_CCR_VBATEN)
   void adcSTM32EnableVBAT(void);
   void adcSTM32DisableVBAT(void);
-#endif /* STM32F0XX */
+#endif
 #ifdef __cplusplus
 }
 #endif

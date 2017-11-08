@@ -395,7 +395,7 @@ void adcSTM32DisableTS(void) {
   ADC->CCR &= ~ADC_CCR_TSEN;
 }
 
-#ifdef STM32F0XX
+#if defined(ADC_CCR_VBATEN) || defined(__DOXYGEN__)
 /**
  * @brief   Enables the VBATEN bit.
  * @details The VBATEN bit is required in order to sample the VBAT channel.
@@ -425,7 +425,7 @@ void adcSTM32DisableVBAT(void) {
 
   ADC->CCR &= ~ADC_CCR_VBATEN;
 }
-#endif /* STM32F0XX */
+#endif /* defined(ADC_CCR_VBATEN) */
 
 #endif /* HAL_USE_ADC */
 
