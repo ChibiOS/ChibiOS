@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 17.6.4 ***
+- HAL: Fixed ADC does not build on STM32F030 (bug #903).
 - LIB: Fixed typo for function evtStop (bug #897).
 
 *** 17.6.3 ***
