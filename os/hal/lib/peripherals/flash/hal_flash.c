@@ -54,6 +54,7 @@
  * @return              An error code.
  * @retval FLASH_NO_ERROR if there is no erase operation in progress.
  * @retval FLASH_ERROR_ERASE if the erase operation failed.
+ * @retval FLASH_ERROR_HW_FAILURE if access to the memory failed.
  */
 flash_error_t flashWaitErase(BaseFlash *devp) {
 

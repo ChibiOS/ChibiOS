@@ -112,10 +112,11 @@ typedef enum {
   MFS_NO_ERROR = 0,
   MFS_WARN_REPAIR = 1,
   MFS_WARN_GC = 2,
-  MFS_ERR_NOT_FOUND = -1,
-  MFS_ERR_CRC = -2,
-  MFS_ERR_FLASH_FAILURE = -3,
-  MFS_ERR_INTERNAL = -4
+  MFS_ERR_NOT_ERASED = -1,
+  MFS_ERR_NOT_FOUND = -2,
+  MFS_ERR_CRC = -3,
+  MFS_ERR_FLASH_FAILURE = -4,
+  MFS_ERR_INTERNAL = -5
 } mfs_error_t;
 
 /**
@@ -206,7 +207,7 @@ typedef struct {
    */
   flash_sector_t            bank1_start;
   /**
-   * #brief   Number of sectors for bank 1.
+   * @brief   Number of sectors for bank 1.
    */
   flash_sector_t            bank1_sectors;
 } MFSConfig;
@@ -246,6 +247,14 @@ typedef struct {
    * @note    Zero means that ther is not a record with that id.
    */
   flash_offset_t            instances[MFS_CFG_MAX_RECORDS];
+  /**
+   * @brief   Transient buffer.
+   */
+  union {
+    mfs_data_header_t       dhdr;
+    mfs_bank_header_t       bhdr;
+    uint8_t                 data[32];
+  } buffer;
 } MFSDriver;
 
 /*===========================================================================*/
