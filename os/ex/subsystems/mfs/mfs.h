@@ -66,6 +66,16 @@
 #if !defined(MFS_CFG_WRITE_VERIFY) || defined(__DOXYGEN__)
 #define MFS_CFG_WRITE_VERIFY                TRUE
 #endif
+
+/**
+ * @brief   Enables a stronger and slower check procedure on mount.
+ * @details Strong checking requires reading of the whole written data and
+ *          this can be slow, normal checking only checks integrity of
+ *          metadata, data errors would be detected on read.
+ */
+#if !defined(MFS_CFG_STRONG_CHECKING) || defined(__DOXYGEN__)
+#define MFS_CFG_STRONG_CHECKING             TRUE
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -74,6 +84,10 @@
 
 #if MFS_CFG_MAX_RECORDS < 0
 #error "invalid MFS_CFG_MAX_RECORDS value"
+#endif
+
+#if (MFS_CFG_MAX_REPAIR_ATTEMPTS < 1) || (MFS_CFG_MAX_REPAIR_ATTEMPTS > 10)
+#error "invalid MFS_MAX_REPAIR_ATTEMPTS value"
 #endif
 
 #if (MFS_CFG_MAX_REPAIR_ATTEMPTS < 1) || (MFS_CFG_MAX_REPAIR_ATTEMPTS > 10)
@@ -130,33 +144,46 @@ typedef enum {
 } mfs_bank_state_t;
 
 /**
- * @brief   Type of a bank header.
- * @note    The header resides in the first 16 bytes of a bank extending
- *          to the next page boundary.
+ * @brief   Type of a record state assessment.
  */
-typedef struct {
-  /**
-   * @brief   Bank magic 1.
-   */
-  uint32_t                  magic1;
-  /**
-   * @brief   Bank magic 2.
-   */
-  uint32_t                  magic2;
-  /**
-   * @brief   Usage counter of the bank.
-   * @details This value is increased each time a bank swap is performed. It
-   *          indicates how much wearing the flash has already endured.
-   */
-  uint32_t                  counter;
-  /**
-   * @brief   First data element.
-   */
-  flash_offset_t            next;
-  /**
-   * @brief   Header CRC.
-   */
-  uint16_t                  crc;
+typedef enum {
+  MFS_RECORD_ERASED = 0,
+  MFS_RECORD_OK = 1,
+  MFS_RECORD_CRC = 2,
+  MFS_RECORD_GARBAGE = 3
+} mfs_record_state_t;
+
+/**
+ * @brief   Type of a bank header.
+ * @note    The header resides in the first 16 bytes of a bank.
+ */
+typedef union {
+  struct {
+    /**
+     * @brief   Bank magic 1.
+     */
+    uint32_t                magic1;
+    /**
+     * @brief   Bank magic 2.
+     */
+    uint32_t                magic2;
+    /**
+     * @brief   Usage counter of the bank.
+     * @details This value is increased each time a bank swap is performed. It
+     *          indicates how much wearing the flash has already endured.
+     */
+    uint32_t                counter;
+    /**
+     * @brief   Reserved field.
+     */
+    uint16_t                reserved1;
+    /**
+     * @brief   Header CRC.
+     */
+    uint16_t                crc;
+  } fields;
+  uint8_t                   hdr8[16];
+  uint32_t                  hdr32[4];
 } mfs_bank_header_t;
 
 /**
@@ -164,26 +191,30 @@ typedef struct {
  * @details This structure is placed before each written data block.
  */
 typedef struct {
-  /**
-   * @brief   Data header magic.
-   */
-  uint16_t                  magic;
-  /**
-   * @brief   Data CRC.
-   */
-  uint16_t                  crc;
-  /**
-   * @brief   Data identifier.
-   */
-  uint16_t                  id;
-  /**
-   * @brief   Data attributes.
-   */
-  uint16_t                  flags;
-  /**
-   * @brief   Data size.
-   */
-  uint32_t                  size;
+  struct {
+    /**
+     * @brief   Data header magic.
+     */
+    uint16_t                magic;
+    /**
+     * @brief   Data CRC.
+     */
+    uint16_t                crc;
+    /**
+     * @brief   Data identifier.
+     */
+    uint16_t                id;
+    /**
+     * @brief   Data attributes.
+     */
+    uint16_t                flags;
+    /**
+     * @brief   Data size.
+     */
+    uint32_t                size;
+  } fields;
+  uint8_t                   hdr8[12];
+  uint32_t                  hdr32[3];
 } mfs_data_header_t;
 
 /**
@@ -195,11 +226,21 @@ typedef struct {
    */
   BaseFlash                 *flashp;
   /**
+   * @brief   Erased value.
+   */
+  uint32_t                  erased;
+  /**
+   * @brief   Banks size.
+   */
+  flash_offset_t            bank_size;
+  /**
    * @brief   Base sector index for bank 0.
    */
   flash_sector_t            bank0_start;
   /**
-   * #brief   Number of sectors for bank 0.
+   * @brief   Number of sectors for bank 0.
+   * @note    The total size of bank0 sectors must be greater or equal to
+   *          @p bank_size.
    */
   flash_sector_t            bank0_sectors;
   /**
@@ -208,6 +249,8 @@ typedef struct {
   flash_sector_t            bank1_start;
   /**
    * @brief   Number of sectors for bank 1.
+   * @note    The total size of bank1 sectors must be greater or equal to
+   *          @p bank_size.
    */
   flash_sector_t            bank1_sectors;
 } MFSConfig;
@@ -230,6 +273,10 @@ typedef struct {
    * @brief   Bank currently in use.
    */
   mfs_bank_t                current_bank;
+  /**
+   * @brief   Usage counter of the current bank.
+   */
+  uint32_t                  current_counter;
   /**
    * @brief   Size in bytes of banks.
    */
