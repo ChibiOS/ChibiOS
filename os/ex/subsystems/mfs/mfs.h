@@ -217,6 +217,17 @@ typedef struct {
   uint32_t                  hdr32[3];
 } mfs_data_header_t;
 
+typedef struct {
+  /**
+   * @brief   Offset of the record header.
+   */
+  flash_offset_t            offset;
+  /**
+   * @brief   Record data size.
+   */
+  uint32_t                  size;
+} mfs_record_descriptor_t;
+
 /**
  * @brief   Type of a MFS configuration structure.
  */
@@ -278,10 +289,6 @@ typedef struct {
    */
   uint32_t                  current_counter;
   /**
-   * @brief   Size in bytes of banks.
-   */
-  uint32_t                  banks_size;
-  /**
    * @brief   Pointer to the next free position in the current bank.
    */
   flash_offset_t            next_offset;
@@ -293,7 +300,7 @@ typedef struct {
    * @brief   Offsets of the most recent instance of the records.
    * @note    Zero means that ther is not a record with that id.
    */
-  flash_offset_t            instances[MFS_CFG_MAX_RECORDS];
+  mfs_record_descriptor_t   descriptors[MFS_CFG_MAX_RECORDS];
   /**
    * @brief   Transient buffer.
    */
@@ -333,6 +340,7 @@ extern "C" {
   mfs_error_t mfsWriteRecord(MFSDriver *devp, uint32_t id,
                              uint32_t n, const uint8_t *buffer);
   mfs_error_t mfsEraseRecord(MFSDriver *devp, uint32_t id);
+  mfs_error_t mfsPerformGarbageCollection(MFSDriver *mfsp);
 #ifdef __cplusplus
 }
 #endif
