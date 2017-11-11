@@ -408,7 +408,67 @@
  */
 #define pmcDisableTC1() pmcDisablePidHigh(ID_TC1_MSK)
 
+
+/**
+ * @brief   Enables the AES peripheral clock.
+ *
+ * @api
+ */
+#define pmcEnableAES() 	pmcEnablePidLow(ID_AES_MSK)
+
+/**
+ * @brief   Disables the AES peripheral clock.
+ *
+ * @api
+ */
+#define pmcDisableAES() pmcDisablePidLow(ID_AES_MSK)
+
+/**
+ * @brief   Enables the TRNG peripheral clock.
+ *
+ * @api
+ */
+#define pmcEnableTRNG()	pmcEnablePidHigh(ID_TRNG_MSK)
+/**
+ * @brief   Disables the TRNG peripheral clock.
+ *
+ * @api
+ */
+#define pmcDisableTRNG() pmcDisablePidHigh(ID_TRNG_MSK)
+
+/**
+ * @brief   Enables the DES peripheral clock.
+ *
+ * @api
+ */
+#define pmcEnableDES()	pmcEnablePidLow(ID_TDES_MSK)
+/**
+ * @brief   Disables the DES peripheral clock.
+ *
+ * @api
+ */
+#define pmcDisableDES() pmcDisablePidLow(ID_TDES_MSK)
+
+/**
+ * @brief   Enables the SHA peripheral clock.
+ *
+ * @api
+ */
+#define pmcEnableSHA()	pmcEnablePidLow(ID_SHA_MSK)
+/**
+ * @brief   Disables the SHA peripheral clock.
+ *
+ * @api
+ */
+#define pmcDisableSHA() pmcDisablePidLow(ID_SHA_MSK)
+
+
 /** @} */
+
+
+
+
+
 
 /*===========================================================================*/
 /* External declarations.                                                    */

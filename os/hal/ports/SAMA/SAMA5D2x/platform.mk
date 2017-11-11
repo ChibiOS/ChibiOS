@@ -5,7 +5,8 @@ PLATFORMSRC := $(CHIBIOS)/os/hal/ports/SAMA/SAMA5D2x/hal_lld.c     \
                $(CHIBIOS)/os/hal/ports/SAMA/SAMA5D2x/aic.c         \
                $(CHIBIOS)/os/hal/ports/SAMA/SAMA5D2x/sama_matrix.c \
                $(CHIBIOS)/os/hal/ports/SAMA/SAMA5D2x/sama_cache.c  \
-               $(CHIBIOS)/os/hal/ports/SAMA/SAMA5D2x/hal_tc_lld.c
+               $(CHIBIOS)/os/hal/ports/SAMA/SAMA5D2x/hal_tc_lld.c	\
+               $(CHIBIOS)/os/hal/ports/SAMA/SAMA5D2x/hal_crypto_lld.c
                
 # Required include directories.
 PLATFORMINC := $(CHIBIOS)/os/hal/ports/SAMA/SAMA5D2x
@@ -29,3 +30,4 @@ include $(CHIBIOS)/os/hal/ports/SAMA/LLD/PIOv1/driver.mk
 include $(CHIBIOS)/os/hal/ports/SAMA/LLD/SPIv1/driver.mk
 include $(CHIBIOS)/os/hal/ports/SAMA/LLD/RTCv1/driver.mk
 include $(CHIBIOS)/os/hal/ports/SAMA/LLD/USARTv1/driver.mk
+include $(CHIBIOS)/os/hal/ports/SAMA/LLD/Cryptov1/driver.mk
