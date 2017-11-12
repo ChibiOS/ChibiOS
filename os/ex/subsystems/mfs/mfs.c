@@ -418,53 +418,6 @@ static mfs_error_t mfs_bank_write_header(MFSDriver *mfsp,
 }
 
 /**
- * @brief   Determines the state of a flash bank.
- *
- * @param[in] mfsp      pointer to the @p MFSDriver object
- * @param[in] bank      the bank identifier
- * @param[out] cntp     bank counter value, only valid if the bank header is
- *                      correct.
- *
- * @return              The operation status.
- * @retval MFS_NO_ERROR if the operation has been successfully completed.
- * @retval MFS_ERR_HEADER if the header is corrupt or missing.
- * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
- *                      failures.
- */
-static mfs_error_t mfs_bank_verify_header(MFSDriver *mfsp,
-                                          mfs_bank_t bank,
-                                          uint32_t *cntp) {
-  uint16_t crc;
-
-  /* Reading the current bank header.*/
-  RET_ON_ERROR(mfs_flash_read(mfsp, mfs_flash_get_bank_offset(mfsp, bank),
-                              sizeof (mfs_bank_header_t),
-                              (void *)&mfsp->buffer.bhdr));
-
-  /* Checking fields integrity.*/
-  if ((mfsp->buffer.bhdr.fields.magic1 != MFS_BANK_MAGIC_1) ||
-      (mfsp->buffer.bhdr.fields.magic2 != MFS_BANK_MAGIC_2) ||
-      (mfsp->buffer.bhdr.fields.counter == mfsp->config->erased) ||
-      (mfsp->buffer.bhdr.fields.reserved1 != (uint16_t)mfsp->config->erased)) {
-    return MFS_ERR_HEADER;
-  }
-
-  /* Verifying CRC.*/
-  crc = crc16(0xFFFFU, mfsp->buffer.bhdr.hdr8,
-              sizeof (mfs_bank_header_t) - sizeof (uint16_t));
-  if (crc != mfsp->buffer.bhdr.fields.crc) {
-    return MFS_ERR_HEADER;
-  }
-
-  /* Returning the counter value.*/
-  if (cntp != NULL) {
-    *cntp = mfsp->buffer.bhdr.fields.counter;
-  }
-
-  return MFS_NO_ERROR;
-}
-
-/**
  * @brief   Scans blocks searching for records.
  * @note    The block integrity is strongly checked.
  *
@@ -481,9 +434,7 @@ static mfs_error_t mfs_bank_verify_header(MFSDriver *mfsp,
  */
 static mfs_error_t mfs_bank_scan_records(MFSDriver *mfsp,
                                          mfs_bank_t bank,
-                                         mfs_bank_state_t *statep,
-                                         mfs_scan_cb_t foundcb,
-                                         mfs_scan_cb_t endcb) {
+                                         mfs_bank_state_t *statep) {
   flash_offset_t hdr_offset, start_offset, end_offset;
   mfs_record_state_t sts;
   bool warning = false;
@@ -508,8 +459,16 @@ static mfs_error_t mfs_bank_scan_records(MFSDriver *mfsp,
     }
     else if (sts == MFS_RECORD_OK) {
       /* Record OK.*/
-      if (foundcb != NULL) {
-        foundcb(mfsp, hdr_offset);
+      uint32_t size = mfsp->buffer.dhdr.fields.size;
+
+      /* Zero-sized records are erase markers.*/
+      if (size == 0U) {
+        mfsp->descriptors[mfsp->buffer.dhdr.fields.id - 1].offset = 0U;
+        mfsp->descriptors[mfsp->buffer.dhdr.fields.id - 1].size   = 0U;
+      }
+      else {
+        mfsp->descriptors[mfsp->buffer.dhdr.fields.id - 1].offset = hdr_offset;
+        mfsp->descriptors[mfsp->buffer.dhdr.fields.id - 1].size   = size;
       }
     }
     else if (sts == MFS_RECORD_CRC) {
@@ -528,10 +487,8 @@ static mfs_error_t mfs_bank_scan_records(MFSDriver *mfsp,
     return MFS_ERR_INTERNAL;
   }
 
-  /* Final callback.*/
-  if (endcb != NULL) {
-    endcb(mfsp, hdr_offset);
-  }
+  /* Final.*/
+  mfsp->next_offset = hdr_offset;
 
   if (warning) {
     *statep = MFS_BANK_PARTIAL;
@@ -541,66 +498,6 @@ static mfs_error_t mfs_bank_scan_records(MFSDriver *mfsp,
   }
 
   return MFS_NO_ERROR;
-}
-
-/**
- * @brief   Determines the state of a flash bank.
- *
- * @param[in] mfsp      pointer to the @p MFSDriver object
- * @param[in] bank      the bank identifier
- * @param[out] statep   bank state
- * @param[out] cntp     bank counter value, only valid if the bank is not
- *                      in the @p MFS_BANK_GARBAGE or @p MFS_BANK_ERASED
- *                      states.
- *
- * @return              The operation status.
- * @retval MFS_NO_ERROR if the operation has been successfully completed.
- * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
- *                      failures.
- */
-static mfs_error_t mfs_bank_get_state(MFSDriver *mfsp,
-                                      mfs_bank_t bank,
-                                      mfs_bank_state_t *statep,
-                                      uint32_t *cntp) {
-  mfs_error_t err;
-
-  /* Special case where the block is fully erased.*/
-  err = mfs_bank_verify_erase(mfsp, bank);
-  if (err == MFS_NO_ERROR) {
-    *statep = MFS_BANK_ERASED;
-    return MFS_BANK_OK;
-  }
-
-  /* Bank header verification.*/
-  *statep = MFS_BANK_GARBAGE;
-  RET_ON_ERROR(mfs_bank_verify_header(mfsp, bank, cntp));
-
-  return mfs_bank_scan_records(mfsp, bank, statep, NULL, NULL);
-}
-
-/**
- * @brief   Private callback of @p mfs_bank_mount().
- */
-static void mfs_bank_mount_found_cb(MFSDriver *mfsp, flash_offset_t offset) {
-  uint32_t size = mfsp->buffer.dhdr.fields.size;
-
-  /* Zero-sized records are erase markers.*/
-  if (size == 0U) {
-    mfsp->descriptors[mfsp->buffer.dhdr.fields.id - 1].offset = 0U;
-    mfsp->descriptors[mfsp->buffer.dhdr.fields.id - 1].size   = 0U;
-  }
-  else {
-    mfsp->descriptors[mfsp->buffer.dhdr.fields.id - 1].offset = offset;
-    mfsp->descriptors[mfsp->buffer.dhdr.fields.id - 1].size   = size;
-  }
-}
-
-/**
- * @brief   Private callback of @p mfs_bank_mount().
- */
-static void mfs_bank_mount_end_cb(MFSDriver *mfsp, flash_offset_t offset) {
-
-  mfsp->next_offset = offset;
 }
 
 /**
@@ -620,21 +517,62 @@ static mfs_error_t mfs_bank_mount(MFSDriver *mfsp,
                                   mfs_bank_t bank,
                                   mfs_bank_state_t *statep) {
   unsigned i;
+  bool dirty;
+  mfs_error_t err;
+  uint16_t crc;
 
-  /* Resetting previous state.*/
+  /* Resetting the bank state.*/
   mfs_state_reset(mfsp);
 
-  /* Bank header verification.*/
+  /* Worst case is default.*/
   *statep = MFS_BANK_GARBAGE;
-  RET_ON_ERROR(mfs_bank_verify_header(mfsp, bank, &mfsp->current_counter));
+
+  /* Reading the current bank header.*/
+  RET_ON_ERROR(mfs_flash_read(mfsp, mfs_flash_get_bank_offset(mfsp, bank),
+                              sizeof (mfs_bank_header_t),
+                              (void *)&mfsp->buffer.bhdr));
+
+  /* Checking the special case where the header is erased.*/
+  dirty = false;
+  for (i = 0; i < 4; i++) {
+    if (mfsp->buffer.bhdr.hdr32[i] != mfsp->config->erased) {
+      dirty = true;
+      break;
+    }
+  }
+
+  /* If the header is erased then it could be the whole block erased.*/
+  if (!dirty) {
+    err = mfs_bank_verify_erase(mfsp, bank);
+    if (err == MFS_NO_ERROR) {
+      *statep = MFS_BANK_ERASED;
+    }
+    return MFS_NO_ERROR;
+  }
+
+  /* Checking header fields integrity.*/
+  if ((mfsp->buffer.bhdr.fields.magic1 != MFS_BANK_MAGIC_1) ||
+      (mfsp->buffer.bhdr.fields.magic2 != MFS_BANK_MAGIC_2) ||
+      (mfsp->buffer.bhdr.fields.counter == mfsp->config->erased) ||
+      (mfsp->buffer.bhdr.fields.reserved1 != (uint16_t)mfsp->config->erased)) {
+    return MFS_NO_ERROR;
+  }
+
+  /* Verifying header CRC.*/
+  crc = crc16(0xFFFFU, mfsp->buffer.bhdr.hdr8,
+              sizeof (mfs_bank_header_t) - sizeof (uint16_t));
+  if (crc != mfsp->buffer.bhdr.fields.crc) {
+    return MFS_NO_ERROR;
+  }
+
+  /* Header is OK, storing metadata.*/
+  mfsp->current_bank = bank;
+  mfsp->current_counter = mfsp->buffer.bhdr.fields.counter;
 
   /* Scanning for the most recent instance of all records.*/
-  RET_ON_ERROR(mfs_bank_scan_records(mfsp, bank, statep,
-                                     mfs_bank_mount_found_cb,
-                                     mfs_bank_mount_end_cb));
+  RET_ON_ERROR(mfs_bank_scan_records(mfsp, bank, statep));
 
   /* Calculating the effective used size.*/
-  mfsp->current_bank = bank;
   for (i = 0; i < MFS_CFG_MAX_RECORDS; i++) {
     if (mfsp->descriptors[i].offset != 0U) {
       mfsp->used_space += mfsp->descriptors[i].size + sizeof (mfs_data_header_t);
@@ -701,9 +639,11 @@ static mfs_error_t mfs_try_mount(MFSDriver *mfsp) {
   uint32_t cnt0 = 0, cnt1 = 0;
   mfs_error_t err;
 
-  /* Assessing the state of the two banks.*/
-  RET_ON_ERROR(mfs_bank_get_state(mfsp, MFS_BANK_0, &sts0, &cnt0));
-  RET_ON_ERROR(mfs_bank_get_state(mfsp, MFS_BANK_1, &sts1, &cnt1));
+  /* Assessing the state of the two banks by trying to mount them.*/
+  RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_0, &sts0));
+  cnt0 = mfsp->current_counter;
+  RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_1, &sts1));
+  cnt1 = mfsp->current_counter;
 
   /* Handling all possible scenarios, each one requires its own recovery
      strategy.*/
@@ -718,7 +658,7 @@ static mfs_error_t mfs_try_mount(MFSDriver *mfsp) {
 
   case PAIR(MFS_BANK_ERASED, MFS_BANK_OK):
     /* Normal situation, bank one is used.*/
-    RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_1, &sts));
+    RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_1, &sts)); /* Not necessary.*/
     err = MFS_NO_ERROR;
     break;
 
@@ -989,7 +929,7 @@ mfs_error_t mfsMount(MFSDriver *mfsp) {
 }
 
 /**
- * @brief   Unmounts a manage flash storage.
+ * @brief   Unmounts a managed flash storage.
  */
 mfs_error_t mfsUnmount(MFSDriver *mfsp) {
 
@@ -1100,12 +1040,14 @@ mfs_error_t mfsEraseRecord(MFSDriver *mfsp, uint32_t id) {
 
 /**
  * @brief   Enforces a garbage collection operation.
- * @details Garbage collection is usually performed on mount, it involves:
- *          integrity check, removal of obsolete data and a flash bank swap.
+ * @details Garbage collection involves: integrity check, optionally repairs,
+ *          obsolete data removal, data compaction and a flash bank swap.
  *
  * @param[in] mfsp      pointer to the @p MFSDriver object
  * @return              The operation status.
  * @retval MFS_NO_ERROR if the operation has been successfully completed.
+ * @retval MFS_WARN_REPAIR if the operation has been completed but a
+ *                      repair has been performed.
  * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
  *                      failures.
  *
