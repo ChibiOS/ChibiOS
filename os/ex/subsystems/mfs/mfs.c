@@ -174,7 +174,7 @@ static mfs_error_t mfs_flash_read(MFSDriver *mfsp, flash_offset_t offset,
  *
  * @param[in] mfsp      pointer to the @p MFSDriver object
  * @param[in] offset    flash offset
- * @param[in] n         number of bytes to be writen
+ * @param[in] n         number of bytes to be written
  * @param[in] wp        pointer to the data buffer
  * @return              The operation status.
  * @retval MFS_NO_ERROR if the operation has been successfully completed.
@@ -192,6 +192,51 @@ static mfs_error_t mfs_flash_write(MFSDriver *mfsp,
   ferr = flashProgram(mfsp->config->flashp, offset, n, wp);
   if (ferr != FLASH_NO_ERROR) {
     return MFS_ERR_FLASH_FAILURE;
+  }
+
+  /* TODO: Implement verify.*/
+
+  return MFS_NO_ERROR;
+}
+
+/**
+ * @brief   Flash copy.
+ * @note    If the option @p MFS_CFG_WRITE_VERIFY is enabled then the flash
+ *          is also read back for verification.
+ *
+ * @param[in] mfsp      pointer to the @p MFSDriver object
+ * @param[in] doffset   destination flash offset
+ * @param[in] soffset   source flash offset
+ * @param[in] n         number of bytes to be copied
+ * @return              The operation status.
+ * @retval MFS_NO_ERROR if the operation has been successfully completed.
+ * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
+ *                      failures.
+ *
+ * @notapi
+ */
+static mfs_error_t mfs_flash_copy(MFSDriver *mfsp,
+                                  flash_offset_t doffset,
+                                  flash_offset_t soffset,
+                                  uint32_t n) {
+
+  /* Splitting the operation in smaller operations because the buffer is
+     small.*/
+  while (n > 0U) {
+    /* Data size that can be written in a single program page operation.*/
+    size_t chunk = (size_t)(((doffset | (MFS_CFG_BUFFER_SIZE - 1U)) + 1U) -
+                            doffset);
+    if (chunk > n) {
+      chunk = n;
+    }
+
+    RET_ON_ERROR(mfs_flash_read(mfsp, soffset, chunk, mfsp->buffer.data));
+    RET_ON_ERROR(mfs_flash_write(mfsp, doffset, chunk, mfsp->buffer.data));
+
+    /* Next page.*/
+    soffset += chunk;
+    doffset += chunk;
+    n       -= chunk;
   }
 
   return MFS_NO_ERROR;
@@ -360,7 +405,7 @@ static mfs_error_t mfs_bank_write_header(MFSDriver *mfsp,
   }
 
   bhdr.fields.magic1    = MFS_BANK_MAGIC_1;
-  bhdr.fields.magic1    = MFS_BANK_MAGIC_1;
+  bhdr.fields.magic2    = MFS_BANK_MAGIC_2;
   bhdr.fields.counter   = cnt;
   bhdr.fields.reserved1 = (uint16_t)mfsp->config->erased;
   bhdr.fields.crc       = crc16(0xFFFFU, bhdr.hdr8,
@@ -373,14 +418,59 @@ static mfs_error_t mfs_bank_write_header(MFSDriver *mfsp,
 }
 
 /**
+ * @brief   Determines the state of a flash bank.
+ *
+ * @param[in] mfsp      pointer to the @p MFSDriver object
+ * @param[in] bank      the bank identifier
+ * @param[out] cntp     bank counter value, only valid if the bank header is
+ *                      correct.
+ *
+ * @return              The operation status.
+ * @retval MFS_NO_ERROR if the operation has been successfully completed.
+ * @retval MFS_ERR_HEADER if the header is corrupt or missing.
+ * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
+ *                      failures.
+ */
+static mfs_error_t mfs_bank_verify_header(MFSDriver *mfsp,
+                                          mfs_bank_t bank,
+                                          uint32_t *cntp) {
+  uint16_t crc;
+
+  /* Reading the current bank header.*/
+  RET_ON_ERROR(mfs_flash_read(mfsp, mfs_flash_get_bank_offset(mfsp, bank),
+                              sizeof (mfs_bank_header_t),
+                              (void *)&mfsp->buffer.bhdr));
+
+  /* Checking fields integrity.*/
+  if ((mfsp->buffer.bhdr.fields.magic1 != MFS_BANK_MAGIC_1) ||
+      (mfsp->buffer.bhdr.fields.magic2 != MFS_BANK_MAGIC_2) ||
+      (mfsp->buffer.bhdr.fields.counter == mfsp->config->erased) ||
+      (mfsp->buffer.bhdr.fields.reserved1 != (uint16_t)mfsp->config->erased)) {
+    return MFS_ERR_HEADER;
+  }
+
+  /* Verifying CRC.*/
+  crc = crc16(0xFFFFU, mfsp->buffer.bhdr.hdr8,
+              sizeof (mfs_bank_header_t) - sizeof (uint16_t));
+  if (crc != mfsp->buffer.bhdr.fields.crc) {
+    return MFS_ERR_HEADER;
+  }
+
+  /* Returning the counter value.*/
+  if (cntp != NULL) {
+    *cntp = mfsp->buffer.bhdr.fields.counter;
+  }
+
+  return MFS_NO_ERROR;
+}
+
+/**
  * @brief   Scans blocks searching for records.
  * @note    The block integrity is strongly checked.
  *
  * @param[in] mfsp      pointer to the @p MFSDriver object
  * @param[in] bank      the bank identifier
  * @param[out] statep   bank state
- * @param[out] cntp     bank counter value, only valid if the bank is not
- *                      in the @p MFS_BANK_GARBAGE state.
  * @param[in] foundcb   callback to be called for each found record or @p NULL
  * @param[in] endcb     callback to be called after scanning or @p NULL
  *
@@ -392,44 +482,14 @@ static mfs_error_t mfs_bank_write_header(MFSDriver *mfsp,
 static mfs_error_t mfs_bank_scan_records(MFSDriver *mfsp,
                                          mfs_bank_t bank,
                                          mfs_bank_state_t *statep,
-                                         uint32_t *cntp,
                                          mfs_scan_cb_t foundcb,
                                          mfs_scan_cb_t endcb) {
   flash_offset_t hdr_offset, start_offset, end_offset;
   mfs_record_state_t sts;
-  uint16_t crc;
   bool warning = false;
-
-  /* Default state.*/
-  *statep = MFS_BANK_GARBAGE;
 
   start_offset = mfs_flash_get_bank_offset(mfsp, bank);
   end_offset   = start_offset + mfsp->config->bank_size;
-
-  /* Reading the current bank header.*/
-  RET_ON_ERROR(mfs_flash_read(mfsp, start_offset,
-                              sizeof (mfs_bank_header_t),
-                              (void *)&mfsp->buffer.bhdr));
-
-  /* Checking fields integrity.*/
-  if ((mfsp->buffer.bhdr.fields.magic1 != MFS_BANK_MAGIC_1) ||
-      (mfsp->buffer.bhdr.fields.magic2 != MFS_BANK_MAGIC_2) ||
-      (mfsp->buffer.bhdr.fields.counter == mfsp->config->erased) ||
-      (mfsp->buffer.bhdr.fields.reserved1 != (uint16_t)mfsp->config->erased)) {
-    return MFS_NO_ERROR;
-  }
-
-  /* Verifying CRC.*/
-  crc = crc16(0xFFFFU, mfsp->buffer.bhdr.hdr8,
-              sizeof (mfs_bank_header_t) - sizeof (uint16_t));
-  if (crc != mfsp->buffer.bhdr.fields.crc) {
-    return MFS_NO_ERROR;
-  }
-
-  /* Returning the counter value.*/
-  if (cntp != NULL) {
-    *cntp = mfsp->buffer.bhdr.fields.counter;
-  }
 
   /* Scanning records.*/
   hdr_offset = start_offset + (flash_offset_t)sizeof(mfs_bank_header_t);
@@ -511,7 +571,11 @@ static mfs_error_t mfs_bank_get_state(MFSDriver *mfsp,
     return MFS_BANK_OK;
   }
 
-  return mfs_bank_scan_records(mfsp, bank, statep, cntp, NULL, NULL);
+  /* Bank header verification.*/
+  *statep = MFS_BANK_GARBAGE;
+  RET_ON_ERROR(mfs_bank_verify_header(mfsp, bank, cntp));
+
+  return mfs_bank_scan_records(mfsp, bank, statep, NULL, NULL);
 }
 
 /**
@@ -560,8 +624,12 @@ static mfs_error_t mfs_bank_mount(MFSDriver *mfsp,
   /* Resetting previous state.*/
   mfs_state_reset(mfsp);
 
+  /* Bank header verification.*/
+  *statep = MFS_BANK_GARBAGE;
+  RET_ON_ERROR(mfs_bank_verify_header(mfsp, bank, &mfsp->current_counter));
+
+  /* Scanning for the most recent instance of all records.*/
   RET_ON_ERROR(mfs_bank_scan_records(mfsp, bank, statep,
-                                     &mfsp->current_counter,
                                      mfs_bank_mount_found_cb,
                                      mfs_bank_mount_end_cb));
 
@@ -592,10 +660,25 @@ static mfs_error_t mfs_bank_mount(MFSDriver *mfsp,
 static mfs_error_t mfs_bank_copy(MFSDriver *mfsp,
                                  mfs_bank_t sbank,
                                  mfs_bank_t dbank) {
+  unsigned i;
+  mfs_bank_state_t sts;
+  flash_offset_t dest_offset;
 
-  (void)mfsp;
-  (void)sbank;
-  (void)dbank;
+  RET_ON_ERROR(mfs_bank_mount(mfsp, sbank, &sts));
+
+  /* Write address.*/
+  dest_offset = mfs_flash_get_bank_offset(mfsp, dbank) +
+                sizeof (mfs_bank_header_t);
+
+  /* Copying the most recent record instances only.*/
+  for (i = 0; i < MFS_CFG_MAX_RECORDS; i++) {
+    if (mfsp->descriptors[i].offset != 0) {
+      RET_ON_ERROR(mfs_flash_copy(mfsp, dest_offset,
+                                  mfsp->descriptors[i].offset,
+                                  mfsp->descriptors[i].size));
+      dest_offset += mfsp->descriptors[i].size;
+    }
+  }
 
   return MFS_NO_ERROR;
 }
@@ -616,7 +699,7 @@ static mfs_error_t mfs_bank_copy(MFSDriver *mfsp,
 static mfs_error_t mfs_try_mount(MFSDriver *mfsp) {
   mfs_bank_state_t sts, sts0, sts1;
   uint32_t cnt0 = 0, cnt1 = 0;
-  mfs_error_t err = MFS_NO_ERROR;
+  mfs_error_t err;
 
   /* Assessing the state of the two banks.*/
   RET_ON_ERROR(mfs_bank_get_state(mfsp, MFS_BANK_0, &sts0, &cnt0));
@@ -630,11 +713,13 @@ static mfs_error_t mfs_try_mount(MFSDriver *mfsp) {
     /* Both banks erased, first initialization.*/
     RET_ON_ERROR(mfs_bank_write_header(mfsp, MFS_BANK_0, 1));
     RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_0, &sts));
+    err = MFS_NO_ERROR;
     break;
 
   case PAIR(MFS_BANK_ERASED, MFS_BANK_OK):
     /* Normal situation, bank one is used.*/
     RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_1, &sts));
+    err = MFS_NO_ERROR;
     break;
 
   case PAIR(MFS_BANK_ERASED, MFS_BANK_PARTIAL):
@@ -657,6 +742,7 @@ static mfs_error_t mfs_try_mount(MFSDriver *mfsp) {
   case PAIR(MFS_BANK_OK, MFS_BANK_ERASED):
     /* Normal situation, bank zero is used.*/
     RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_0, &sts));
+    err = MFS_NO_ERROR;
     break;
 
   case PAIR(MFS_BANK_OK, MFS_BANK_OK):
@@ -838,7 +924,8 @@ void mfsObjectInit(MFSDriver *mfsp) {
 void mfsStart(MFSDriver *mfsp, const MFSConfig *config) {
 
   osalDbgCheck((mfsp != NULL) && (config != NULL));
-  osalDbgAssert(mfsp->state != MFS_UNINIT, "invalid state");
+  osalDbgAssert((mfsp->state == MFS_STOP) || (mfsp->state == MFS_READY),
+                "invalid state");
 
   if (mfsp->state == MFS_STOP) {
 
@@ -857,10 +944,12 @@ void mfsStart(MFSDriver *mfsp, const MFSConfig *config) {
 void mfsStop(MFSDriver *mfsp) {
 
   osalDbgCheck(mfsp != NULL);
-  osalDbgAssert(mfsp->state != MFS_UNINIT, "invalid state");
+  osalDbgAssert((mfsp->state == MFS_STOP) || (mfsp->state == MFS_READY),
+                "invalid state");
 
   if (mfsp->state != MFS_STOP) {
-
+    mfsp->config = NULL;
+    mfs_state_reset(mfsp);
     mfsp->state = MFS_STOP;
   }
 }
@@ -883,13 +972,17 @@ void mfsStop(MFSDriver *mfsp) {
 mfs_error_t mfsMount(MFSDriver *mfsp) {
   unsigned i;
 
+  osalDbgAssert(mfsp->state == MFS_READY, "invalid state");
+
   /* Attempting to mount the managed partition.*/
   for (i = 0; i < MFS_CFG_MAX_REPAIR_ATTEMPTS; i++) {
     mfs_error_t err;
 
     err = mfs_try_mount(mfsp);
-    if (!MFS_IS_ERROR(err))
+    if (!MFS_IS_ERROR(err)) {
+      mfsp->state = MFS_MOUNTED;
       return err;
+    }
   }
 
   return MFS_ERR_FLASH_FAILURE;
@@ -900,7 +993,10 @@ mfs_error_t mfsMount(MFSDriver *mfsp) {
  */
 mfs_error_t mfsUnmount(MFSDriver *mfsp) {
 
-  (void)mfsp;
+  osalDbgAssert(mfsp->state == MFS_MOUNTED, "invalid state");
+
+  mfs_state_reset(mfsp);
+  mfsp->state = MFS_READY;
 
   return MFS_NO_ERROR;
 }
@@ -926,10 +1022,17 @@ mfs_error_t mfsUnmount(MFSDriver *mfsp) {
 mfs_error_t mfsReadRecord(MFSDriver *mfsp, uint32_t id,
                           uint32_t *np, uint8_t *buffer) {
 
-  (void)mfsp;
+  osalDbgAssert(mfsp->state == MFS_MOUNTED, "invalid state");
+
+  /* Marking the start of the operation.*/
+  mfsp->state = MFS_ACTIVE;
+
   (void)id;
   (void)np;
   (void)buffer;
+
+  /* Operation over.*/
+  mfsp->state = MFS_MOUNTED;
 
   return MFS_NO_ERROR;
 }
@@ -952,10 +1055,17 @@ mfs_error_t mfsReadRecord(MFSDriver *mfsp, uint32_t id,
 mfs_error_t mfsWriteRecord(MFSDriver *mfsp, uint32_t id,
                            uint32_t n, const uint8_t *buffer) {
 
-  (void)mfsp;
+  osalDbgAssert(mfsp->state == MFS_MOUNTED, "invalid state");
+
+  /* Marking the start of the operation.*/
+  mfsp->state = MFS_ACTIVE;
+
   (void)id;
   (void)n;
   (void)buffer;
+
+  /* Operation over.*/
+  mfsp->state = MFS_MOUNTED;
 
   return MFS_NO_ERROR;
 }
@@ -975,8 +1085,15 @@ mfs_error_t mfsWriteRecord(MFSDriver *mfsp, uint32_t id,
  */
 mfs_error_t mfsEraseRecord(MFSDriver *mfsp, uint32_t id) {
 
-  (void)mfsp;
+  osalDbgAssert(mfsp->state == MFS_MOUNTED, "invalid state");
+
+  /* Marking the start of the operation.*/
+  mfsp->state = MFS_ACTIVE;
+
   (void)id;
+
+  /* Operation over.*/
+  mfsp->state = MFS_MOUNTED;
 
   return MFS_NO_ERROR;
 }
@@ -996,7 +1113,13 @@ mfs_error_t mfsEraseRecord(MFSDriver *mfsp, uint32_t id) {
  */
 mfs_error_t mfsPerformGarbageCollection(MFSDriver *mfsp) {
 
-  (void)mfsp;
+  osalDbgAssert(mfsp->state == MFS_MOUNTED, "invalid state");
+
+  /* Marking the start of the operation.*/
+  mfsp->state = MFS_ACTIVE;
+
+  /* Operation over.*/
+  mfsp->state = MFS_MOUNTED;
 
   return MFS_NO_ERROR;
 }

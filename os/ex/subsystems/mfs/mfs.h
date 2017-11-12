@@ -76,6 +76,17 @@
 #if !defined(MFS_CFG_STRONG_CHECKING) || defined(__DOXYGEN__)
 #define MFS_CFG_STRONG_CHECKING             TRUE
 #endif
+
+/**
+ * @brief   Size of the buffer used for data copying.
+ * @note    The buffer size must be a power of two and not smaller than
+ *          16 bytes.
+ * @note    Larger buffers improve performance, buffers with size multiple
+ *          of the flash program page size work better.
+ */
+#if !defined(MFS_CFG_BUFFER_SIZE) || defined(__DOXYGEN__)
+#define MFS_CFG_BUFFER_SIZE                 32
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -92,6 +103,14 @@
 
 #if (MFS_CFG_MAX_REPAIR_ATTEMPTS < 1) || (MFS_CFG_MAX_REPAIR_ATTEMPTS > 10)
 #error "invalid MFS_MAX_REPAIR_ATTEMPTS value"
+#endif
+
+#if MFS_CFG_BUFFER_SIZE <= 16
+#error "invalid MFS_CFG_BUFFER_SIZE value"
+#endif
+
+#if (MFS_CFG_BUFFER_SIZE & (MFS_CFG_BUFFER_SIZE - 1)) != 0
+#error "MFS_CFG_BUFFER_SIZE is not a power of two"
 #endif
 
 /*===========================================================================*/
@@ -129,8 +148,9 @@ typedef enum {
   MFS_ERR_NOT_ERASED = -1,
   MFS_ERR_NOT_FOUND = -2,
   MFS_ERR_CRC = -3,
-  MFS_ERR_FLASH_FAILURE = -4,
-  MFS_ERR_INTERNAL = -5
+  MFS_ERR_HEADER = -4,
+  MFS_ERR_FLASH_FAILURE = -5,
+  MFS_ERR_INTERNAL = -6
 } mfs_error_t;
 
 /**
@@ -307,7 +327,7 @@ typedef struct {
   union {
     mfs_data_header_t       dhdr;
     mfs_bank_header_t       bhdr;
-    uint8_t                 data[32];
+    uint8_t                 data[MFS_CFG_BUFFER_SIZE];
   } buffer;
 } MFSDriver;
 
