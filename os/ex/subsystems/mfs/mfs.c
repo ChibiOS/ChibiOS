@@ -696,7 +696,7 @@ static mfs_error_t mfs_try_mount(MFSDriver *mfsp) {
     else {
       /* Bank 1 is newer.*/
       RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_0));
-      RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_1, &sts));
+      RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_1, &sts)); /* Not necessary.*/
     }
     err = MFS_WARN_REPAIR;
     break;
@@ -742,7 +742,7 @@ static mfs_error_t mfs_try_mount(MFSDriver *mfsp) {
       /* Normal bank one is more recent than the partial bank zero, the
          partial bank has to be erased.*/
       RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_0));
-      RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_1, &sts));
+      RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_1, &sts)); /* Not necessary.*/
     }
     else {
       /* Partial bank zero is more recent than the normal bank one.*/
@@ -797,7 +797,7 @@ static mfs_error_t mfs_try_mount(MFSDriver *mfsp) {
   case PAIR(MFS_BANK_GARBAGE, MFS_BANK_OK):
     /* Bank zero is unreadable, bank one is normal.*/
     RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_0));
-    RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_1, &sts));
+    RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_1, &sts)); /* Not necessary.*/
     err = MFS_WARN_REPAIR;
     break;
 
