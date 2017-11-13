@@ -431,7 +431,11 @@ static mfs_error_t mfs_bank_write_header(MFSDriver *mfsp,
  *
  * @param[in] mfsp      pointer to the @p MFSDriver object
  * @param[in] bank      the bank identifier
- * @param[out] statep   bank state
+ * @param[out] statep   bank state, it can be:
+ *                      - MFS_BANK_PARTIAL
+ *                      - MFS_BANK_OK
+ *                      .
+ *
  * @param[in] foundcb   callback to be called for each found record or @p NULL
  * @param[in] endcb     callback to be called after scanning or @p NULL
  *
@@ -509,11 +513,89 @@ static mfs_error_t mfs_bank_scan_records(MFSDriver *mfsp,
 }
 
 /**
+ * @brief   Determines the state of a bank.
+ * @note    This function does not test the bank integrity by scanning
+ *          the data area, it just checks the header.
+ *
+ * @param[in] mfsp      pointer to the @p MFSDriver object
+ * @param[in] bank      bank to be checked
+ * @param[out] statep   bank state, it can be:
+ *                      - MFS_BANK_ERASED
+ *                      - MFS_BANK_GARBAGE
+ *                      - MFS_BANK_OK
+ *                      .
+ * @param[out] cntp     bank counter
+ * @return              The operation status.
+ * @retval MFS_NO_ERROR if the operation has been successfully completed.
+ * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
+ *                      failures.
+ *
+ * @notapi
+ */
+static mfs_error_t mfs_bank_get_state(MFSDriver *mfsp,
+                                      mfs_bank_t bank,
+                                      mfs_bank_state_t *statep,
+                                      uint32_t * cntp) {
+  unsigned i;
+  mfs_error_t err;
+  uint16_t crc;
+
+  /* Worst case is default.*/
+  *statep = MFS_BANK_GARBAGE;
+  *cntp   = 0U;
+
+  /* Reading the current bank header.*/
+  RET_ON_ERROR(mfs_flash_read(mfsp, mfs_flash_get_bank_offset(mfsp, bank),
+                              sizeof (mfs_bank_header_t),
+                              (void *)&mfsp->buffer.bhdr));
+
+  /* Checking the special case where the header is erased.*/
+  for (i = 0; i < 4; i++) {
+    if (mfsp->buffer.bhdr.hdr32[i] != mfsp->config->erased) {
+
+      /* Checking header fields integrity.*/
+      if ((mfsp->buffer.bhdr.fields.magic1 != MFS_BANK_MAGIC_1) ||
+          (mfsp->buffer.bhdr.fields.magic2 != MFS_BANK_MAGIC_2) ||
+          (mfsp->buffer.bhdr.fields.counter == mfsp->config->erased) ||
+          (mfsp->buffer.bhdr.fields.reserved1 != (uint16_t)mfsp->config->erased)) {
+        return MFS_NO_ERROR;
+      }
+
+      /* Verifying header CRC.*/
+      crc = crc16(0xFFFFU, mfsp->buffer.bhdr.hdr8,
+                  sizeof (mfs_bank_header_t) - sizeof (uint16_t));
+      if (crc != mfsp->buffer.bhdr.fields.crc) {
+        return MFS_NO_ERROR;
+      }
+
+      *statep = MFS_BANK_OK;
+      *cntp   = mfsp->buffer.bhdr.fields.counter;
+
+      return MFS_NO_ERROR;
+    }
+  }
+
+  /* If the header is erased then it could be the whole block erased.*/
+  err = mfs_bank_verify_erase(mfsp, bank);
+  if (err == MFS_NO_ERROR) {
+    *statep = MFS_BANK_ERASED;
+  }
+
+  return MFS_NO_ERROR;
+}
+
+/**
  * @brief   Selects a bank as current.
+ * @note    The bank header is assumed to be valid.
  *
  * @param[in] mfsp      pointer to the @p MFSDriver object
  * @param[in] bank      bank to be scanned
- * @param[out] statep   bank state
+ * @param[out] statep   bank state, it can be:
+ *                      - MFS_BANK_ERASED
+ *                      - MFS_BANK_GARBAGE
+ *                      - MFS_BANK_PARTIAL
+ *                      - MFS_BANK_OK
+ *                      .
  * @return              The operation status.
  * @retval MFS_NO_ERROR if the operation has been successfully completed.
  * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
@@ -525,57 +607,11 @@ static mfs_error_t mfs_bank_mount(MFSDriver *mfsp,
                                   mfs_bank_t bank,
                                   mfs_bank_state_t *statep) {
   unsigned i;
-  bool dirty;
-  mfs_error_t err;
-  uint16_t crc;
 
-  /* Resetting the bank state.*/
+  /* Resetting the bank state, then reading the required header data.*/
   mfs_state_reset(mfsp);
-
-  /* Worst case is default.*/
-  *statep = MFS_BANK_GARBAGE;
-
-  /* Reading the current bank header.*/
-  RET_ON_ERROR(mfs_flash_read(mfsp, mfs_flash_get_bank_offset(mfsp, bank),
-                              sizeof (mfs_bank_header_t),
-                              (void *)&mfsp->buffer.bhdr));
-
-  /* Checking the special case where the header is erased.*/
-  dirty = false;
-  for (i = 0; i < 4; i++) {
-    if (mfsp->buffer.bhdr.hdr32[i] != mfsp->config->erased) {
-      dirty = true;
-      break;
-    }
-  }
-
-  /* If the header is erased then it could be the whole block erased.*/
-  if (!dirty) {
-    err = mfs_bank_verify_erase(mfsp, bank);
-    if (err == MFS_NO_ERROR) {
-      *statep = MFS_BANK_ERASED;
-    }
-    return MFS_NO_ERROR;
-  }
-
-  /* Checking header fields integrity.*/
-  if ((mfsp->buffer.bhdr.fields.magic1 != MFS_BANK_MAGIC_1) ||
-      (mfsp->buffer.bhdr.fields.magic2 != MFS_BANK_MAGIC_2) ||
-      (mfsp->buffer.bhdr.fields.counter == mfsp->config->erased) ||
-      (mfsp->buffer.bhdr.fields.reserved1 != (uint16_t)mfsp->config->erased)) {
-    return MFS_NO_ERROR;
-  }
-
-  /* Verifying header CRC.*/
-  crc = crc16(0xFFFFU, mfsp->buffer.bhdr.hdr8,
-              sizeof (mfs_bank_header_t) - sizeof (uint16_t));
-  if (crc != mfsp->buffer.bhdr.fields.crc) {
-    return MFS_NO_ERROR;
-  }
-
-  /* Header is OK, storing metadata.*/
+  RET_ON_ERROR(mfs_bank_get_state(mfsp, bank, statep, &mfsp->current_counter));
   mfsp->current_bank = bank;
-  mfsp->current_counter = mfsp->buffer.bhdr.fields.counter;
 
   /* Scanning for the most recent instance of all records.*/
   RET_ON_ERROR(mfs_bank_scan_records(mfsp, bank, statep));
@@ -592,11 +628,10 @@ static mfs_error_t mfs_bank_mount(MFSDriver *mfsp,
 }
 
 /**
- * @brief   Copies all records from a bank to another.
+ * @brief   Enforces a garbage collection.
+ * @details Storage data is compacted into a single bank.
  *
- * @param[in] mfsp      pointer to the @p MFSDriver object
- * @param[in] sbank     source bank
- * @param[in] dbank     destination bank
+ * @param[out] mfsp     pointer to the @p MFSDriver object
  * @return              The operation status.
  * @retval MFS_NO_ERROR if the operation has been successfully completed.
  * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
@@ -604,14 +639,17 @@ static mfs_error_t mfs_bank_mount(MFSDriver *mfsp,
  *
  * @notapi
  */
-static mfs_error_t mfs_bank_copy(MFSDriver *mfsp,
-                                 mfs_bank_t sbank,
-                                 mfs_bank_t dbank) {
+static mfs_error_t mfs_garbage_collect(MFSDriver *mfsp) {
   unsigned i;
-  mfs_bank_state_t sts;
+  mfs_bank_t dbank;
   flash_offset_t dest_offset;
 
-  RET_ON_ERROR(mfs_bank_mount(mfsp, sbank, &sts));
+  if (mfsp->current_bank == MFS_BANK_0) {
+    dbank = MFS_BANK_1;
+  }
+  else {
+    dbank = MFS_BANK_0;
+  }
 
   /* Write address.*/
   dest_offset = mfs_flash_get_bank_offset(mfsp, dbank) +
@@ -623,9 +661,19 @@ static mfs_error_t mfs_bank_copy(MFSDriver *mfsp,
       RET_ON_ERROR(mfs_flash_copy(mfsp, dest_offset,
                                   mfsp->descriptors[i].offset,
                                   mfsp->descriptors[i].size));
+      mfsp->descriptors[i].offset = dest_offset;
       dest_offset += mfsp->descriptors[i].size;
     }
   }
+
+  /* The header is written after the data.*/
+  RET_ON_ERROR(mfs_bank_write_header(mfsp, dbank, 1));
+
+  /* New current bank.*/
+  mfsp->current_bank = dbank;
+
+  /* The source bank is erased last.*/
+  RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_0));
 
   return MFS_NO_ERROR;
 }
@@ -645,14 +693,13 @@ static mfs_error_t mfs_bank_copy(MFSDriver *mfsp,
  */
 static mfs_error_t mfs_try_mount(MFSDriver *mfsp) {
   mfs_bank_state_t sts, sts0, sts1;
+  mfs_bank_t bank;
   uint32_t cnt0 = 0, cnt1 = 0;
-  mfs_error_t err;
+  bool warning = false;
 
   /* Assessing the state of the two banks by trying to mount them.*/
-  RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_0, &sts0));
-  cnt0 = mfsp->current_counter;
-  RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_1, &sts1));
-  cnt1 = mfsp->current_counter;
+  RET_ON_ERROR(mfs_bank_get_state(mfsp, MFS_BANK_0, &sts0, &cnt0));
+  RET_ON_ERROR(mfs_bank_get_state(mfsp, MFS_BANK_1, &sts1, &cnt1));
 
   /* Handling all possible scenarios, each one requires its own recovery
      strategy.*/
@@ -661,37 +708,7 @@ static mfs_error_t mfs_try_mount(MFSDriver *mfsp) {
   case PAIR(MFS_BANK_ERASED, MFS_BANK_ERASED):
     /* Both banks erased, first initialization.*/
     RET_ON_ERROR(mfs_bank_write_header(mfsp, MFS_BANK_0, 1));
-    RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_0, &sts));
-    err = MFS_NO_ERROR;
-    break;
-
-  case PAIR(MFS_BANK_ERASED, MFS_BANK_OK):
-    /* Normal situation, bank one is used.*/
-    RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_1, &sts)); /* Not necessary.*/
-    err = MFS_NO_ERROR;
-    break;
-
-  case PAIR(MFS_BANK_ERASED, MFS_BANK_PARTIAL):
-    /* Bank zero is erased, bank one has problems.*/
-    RET_ON_ERROR(mfs_bank_copy(mfsp, MFS_BANK_1, MFS_BANK_0));
-    RET_ON_ERROR(mfs_bank_write_header(mfsp, MFS_BANK_0, cnt1 + 1));
-    RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_1));
-    RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_0, &sts));
-    err = MFS_WARN_REPAIR;
-    break;
-
-  case PAIR(MFS_BANK_ERASED, MFS_BANK_GARBAGE):
-    /* Bank zero is erased, bank one is not readable.*/
-    RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_1));
-    RET_ON_ERROR(mfs_bank_write_header(mfsp, MFS_BANK_0, 1));
-    RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_0, &sts));
-    err = MFS_WARN_REPAIR;
-    break;
-
-  case PAIR(MFS_BANK_OK, MFS_BANK_ERASED):
-    /* Normal situation, bank zero is used.*/
-    RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_0, &sts));
-    err = MFS_NO_ERROR;
+    bank = MFS_BANK_0;
     break;
 
   case PAIR(MFS_BANK_OK, MFS_BANK_OK):
@@ -700,124 +717,14 @@ static mfs_error_t mfs_try_mount(MFSDriver *mfsp) {
     if (cnt0 > cnt1) {
       /* Bank 0 is newer.*/
       RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_1));
-      RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_0, &sts));
+      bank = MFS_BANK_0;
     }
     else {
       /* Bank 1 is newer.*/
       RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_0));
-      RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_1, &sts)); /* Not necessary.*/
+      bank = MFS_BANK_1;
     }
-    err = MFS_WARN_REPAIR;
-    break;
-
-  case PAIR(MFS_BANK_OK, MFS_BANK_PARTIAL):
-    /* Bank zero is normal, bank one has problems.*/
-    if (cnt0 > cnt1) {
-      /* Normal bank zero is more recent than the partial bank one, the
-         partial bank needs to be erased.*/
-      RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_1));
-      RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_0, &sts));
-    }
-    else {
-      /* Partial bank one is more recent than the normal bank zero.*/
-      RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_0));
-      RET_ON_ERROR(mfs_bank_copy(mfsp, MFS_BANK_1, MFS_BANK_0));
-      RET_ON_ERROR(mfs_bank_write_header(mfsp, MFS_BANK_0, cnt1 + 1));
-      RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_1));
-      RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_0, &sts));
-    }
-    err = MFS_WARN_REPAIR;
-    break;
-
-  case PAIR(MFS_BANK_OK, MFS_BANK_GARBAGE):
-    /* Bank zero is normal, bank one is unreadable.*/
-    RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_1));
-    RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_0, &sts));
-    err = MFS_WARN_REPAIR;
-    break;
-
-  case PAIR(MFS_BANK_PARTIAL, MFS_BANK_ERASED):
-    /* Bank zero has problems, bank one is erased.*/
-    RET_ON_ERROR(mfs_bank_copy(mfsp, MFS_BANK_0, MFS_BANK_1));
-    RET_ON_ERROR(mfs_bank_write_header(mfsp, MFS_BANK_1, cnt0 + 1));
-    RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_0));
-    RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_1, &sts));
-    err = MFS_WARN_REPAIR;
-    break;
-
-  case PAIR(MFS_BANK_PARTIAL, MFS_BANK_OK):
-    /* Bank zero has problems, bank one is normal.*/
-    if (cnt1 > cnt0) {
-      /* Normal bank one is more recent than the partial bank zero, the
-         partial bank has to be erased.*/
-      RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_0));
-      RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_1, &sts)); /* Not necessary.*/
-    }
-    else {
-      /* Partial bank zero is more recent than the normal bank one.*/
-      RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_1));
-      RET_ON_ERROR(mfs_bank_copy(mfsp, MFS_BANK_0, MFS_BANK_1));
-      RET_ON_ERROR(mfs_bank_write_header(mfsp, MFS_BANK_1, cnt0 + 1));
-      RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_0));
-      RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_1, &sts));
-    }
-    err = MFS_WARN_REPAIR;
-    break;
-
-  case PAIR(MFS_BANK_PARTIAL, MFS_BANK_PARTIAL):
-    /* Both banks have problems.*/
-    if (cnt0 > cnt1) {
-      /* Bank zero is newer, copying in bank one and using it.*/
-      RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_1));
-      RET_ON_ERROR(mfs_bank_copy(mfsp, MFS_BANK_0, MFS_BANK_1));
-      RET_ON_ERROR(mfs_bank_write_header(mfsp, MFS_BANK_1, cnt0 + 1));
-      RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_0));
-      RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_1, &sts));
-    }
-    else {
-      /* Bank one is newer, copying in bank zero and using it.*/
-      RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_0));
-      RET_ON_ERROR(mfs_bank_copy(mfsp, MFS_BANK_1, MFS_BANK_0));
-      RET_ON_ERROR(mfs_bank_write_header(mfsp, MFS_BANK_0, cnt1 + 1));
-      RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_1));
-      RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_0, &sts));
-    }
-    err = MFS_WARN_REPAIR;
-    break;
-
-  case PAIR(MFS_BANK_PARTIAL, MFS_BANK_GARBAGE):
-    /* Bank zero has problems, bank one is unreadable.*/
-    RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_1));
-    RET_ON_ERROR(mfs_bank_copy(mfsp, MFS_BANK_0, MFS_BANK_1));
-    RET_ON_ERROR(mfs_bank_write_header(mfsp, MFS_BANK_1, cnt0 + 1));
-    RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_0));
-    RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_1, &sts));
-    err = MFS_WARN_REPAIR;
-    break;
-
-  case PAIR(MFS_BANK_GARBAGE, MFS_BANK_ERASED):
-    /* Bank zero is unreadable, bank one is erased.*/
-    RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_1));
-    RET_ON_ERROR(mfs_bank_write_header(mfsp, MFS_BANK_0, 1));
-    RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_0, &sts));
-    err = MFS_WARN_REPAIR;
-    break;
-
-  case PAIR(MFS_BANK_GARBAGE, MFS_BANK_OK):
-    /* Bank zero is unreadable, bank one is normal.*/
-    RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_0));
-    RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_1, &sts)); /* Not necessary.*/
-    err = MFS_WARN_REPAIR;
-    break;
-
-  case PAIR(MFS_BANK_GARBAGE, MFS_BANK_PARTIAL):
-    /* Bank zero is unreadable, bank one has problems.*/
-    RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_0));
-    RET_ON_ERROR(mfs_bank_copy(mfsp, MFS_BANK_1, MFS_BANK_0));
-    RET_ON_ERROR(mfs_bank_write_header(mfsp, MFS_BANK_0, cnt0 + 1));
-    RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_1));
-    RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_0, &sts));
-    err = MFS_WARN_REPAIR;
+    warning = true;
     break;
 
   case PAIR(MFS_BANK_GARBAGE, MFS_BANK_GARBAGE):
@@ -825,55 +732,70 @@ static mfs_error_t mfs_try_mount(MFSDriver *mfsp) {
     RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_0));
     RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_1));
     RET_ON_ERROR(mfs_bank_write_header(mfsp, MFS_BANK_0, 1));
-    RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_0, &sts));
-    err = MFS_WARN_REPAIR;
+    bank = MFS_BANK_0;
+    warning = true;
+    break;
+
+  case PAIR(MFS_BANK_ERASED, MFS_BANK_OK):
+    /* Normal situation, bank one is used.*/
+    bank = MFS_BANK_1;
+    break;
+
+  case PAIR(MFS_BANK_OK, MFS_BANK_ERASED):
+    /* Normal situation, bank zero is used.*/
+    bank = MFS_BANK_0;
+    break;
+
+  case PAIR(MFS_BANK_ERASED, MFS_BANK_GARBAGE):
+    /* Bank zero is erased, bank one is not readable.*/
+    RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_1));
+    RET_ON_ERROR(mfs_bank_write_header(mfsp, MFS_BANK_0, 1));
+    bank = MFS_BANK_0;
+    warning = true;
+    break;
+
+  case PAIR(MFS_BANK_GARBAGE, MFS_BANK_ERASED):
+    /* Bank zero is not readable, bank one is erased.*/
+    RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_0));
+    RET_ON_ERROR(mfs_bank_write_header(mfsp, MFS_BANK_1, 1));
+    bank = MFS_BANK_1;
+    warning = true;
+    break;
+
+  case PAIR(MFS_BANK_OK, MFS_BANK_GARBAGE):
+    /* Bank zero is normal, bank one is unreadable.*/
+    RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_1));
+    bank = MFS_BANK_0;
+    warning = true;
+    break;
+
+  case PAIR(MFS_BANK_GARBAGE, MFS_BANK_OK):
+    /* Bank zero is unreadable, bank one is normal.*/
+    RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_0));
+    bank = MFS_BANK_1;
+    warning = true;
     break;
 
   default:
-    osalSysHalt("internal error");
+    return MFS_ERR_INTERNAL;
   }
 
-  /* If the last mount reported an anomaly then this is an error
-     because the bank has just been checked/repaired.*/
-  if (sts != MFS_BANK_OK) {
-    mfs_state_reset(mfsp);
-    return MFS_ERR_FLASH_FAILURE;
+  /* Mounting the bank.*/
+  RET_ON_ERROR(mfs_bank_mount(mfsp, bank, &sts));
+
+  /* This condition should not occur, the bank has just been repaired.*/
+  if ((sts == MFS_BANK_ERASED) || (sts == MFS_BANK_GARBAGE)) {
+    return MFS_ERR_INTERNAL;
   }
 
-  return err;
-}
-
-/**
- * @brief   Enforces a garbage collection.
- * @details Storage data is compacted into a single bank.
- *
- * @param[out] mfsp     pointer to the @p MFSDriver object
- * @return              The operation status.
- * @retval MFS_NO_ERROR if the operation has been successfully completed.
- * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
- *                      failures.
- *
- * @notapi
- */
-static mfs_error_t mfs_garbage_collect(MFSDriver *mfsp,
-                                       mfs_bank_state_t *statep) {
-
-  if (mfsp->current_bank == MFS_BANK_0) {
-    RET_ON_ERROR(mfs_bank_copy(mfsp, MFS_BANK_0, MFS_BANK_1));
-    RET_ON_ERROR(mfs_bank_write_header(mfsp, MFS_BANK_1,
-                                       mfsp->current_counter + 1U));
-    RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_0));
-    RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_1, statep));
-  }
-  else {
-    RET_ON_ERROR(mfs_bank_copy(mfsp, MFS_BANK_1, MFS_BANK_0));
-    RET_ON_ERROR(mfs_bank_write_header(mfsp, MFS_BANK_0,
-                                       mfsp->current_counter + 1U));
-    RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_1));
-    RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_0, statep));
+  /* In case of detected problems then a garbage collection is performed in
+     order to repair/remove anomalies.*/
+  if (sts == MFS_BANK_PARTIAL) {
+    RET_ON_ERROR(mfs_garbage_collect(mfsp));
+    warning = true;
   }
 
-  return MFS_NO_ERROR;
+  return warning ? MFS_WARN_REPAIR : MFS_NO_ERROR;
 }
 
 /*===========================================================================*/
@@ -909,11 +831,9 @@ void mfsStart(MFSDriver *mfsp, const MFSConfig *config) {
   osalDbgAssert((mfsp->state == MFS_STOP) || (mfsp->state == MFS_READY),
                 "invalid state");
 
-  if (mfsp->state == MFS_STOP) {
-
-    mfsp->config = config;
-    mfsp->state  = MFS_READY;
-  }
+  mfsp->config = config;
+  mfs_state_reset(mfsp);
+  mfsp->state  = MFS_READY;
 } 
 
 /**
@@ -929,11 +849,9 @@ void mfsStop(MFSDriver *mfsp) {
   osalDbgAssert((mfsp->state == MFS_STOP) || (mfsp->state == MFS_READY),
                 "invalid state");
 
-  if (mfsp->state != MFS_STOP) {
-    mfsp->config = NULL;
-    mfs_state_reset(mfsp);
-    mfsp->state = MFS_STOP;
-  }
+  mfsp->config = NULL;
+  mfs_state_reset(mfsp);
+  mfsp->state = MFS_STOP;
 }
 
 /**
@@ -1081,7 +999,6 @@ mfs_error_t mfsReadRecord(MFSDriver *mfsp, uint32_t id,
 mfs_error_t mfsWriteRecord(MFSDriver *mfsp, uint32_t id,
                            size_t n, const uint8_t *buffer) {
   flash_offset_t free, required;
-  mfs_bank_state_t sts;
   bool warning = false;
 
   osalDbgCheck((mfsp != NULL) && (id >= 1) && (id <= MFS_CFG_MAX_RECORDS) &&
@@ -1104,7 +1021,7 @@ mfs_error_t mfsWriteRecord(MFSDriver *mfsp, uint32_t id,
     /* We need to perform a garbage collection, there is enough space
        but it has to be freed.*/
     warning = true;
-    RET_ON_ERROR(mfs_garbage_collect(mfsp, &sts));
+    RET_ON_ERROR(mfs_garbage_collect(mfsp));
   }
 
   /* Writing the data header without the magic, it will be written last.*/
@@ -1162,7 +1079,6 @@ mfs_error_t mfsWriteRecord(MFSDriver *mfsp, uint32_t id,
  */
 mfs_error_t mfsEraseRecord(MFSDriver *mfsp, uint32_t id) {
   flash_offset_t free, required;
-  mfs_bank_state_t sts;
   bool warning = false;
 
   osalDbgCheck((mfsp != NULL) && (id >= 1) && (id <= MFS_CFG_MAX_RECORDS));
@@ -1186,7 +1102,7 @@ mfs_error_t mfsEraseRecord(MFSDriver *mfsp, uint32_t id) {
     /* We need to perform a garbage collection, there is enough space
        but it has to be freed.*/
     warning = true;
-    RET_ON_ERROR(mfs_garbage_collect(mfsp, &sts));
+    RET_ON_ERROR(mfs_garbage_collect(mfsp));
   }
 
   /* Writing the data header with size set to zero, it means that the
@@ -1224,11 +1140,10 @@ mfs_error_t mfsEraseRecord(MFSDriver *mfsp, uint32_t id) {
  * @api
  */
 mfs_error_t mfsPerformGarbageCollection(MFSDriver *mfsp) {
-  mfs_bank_state_t sts;
 
   osalDbgAssert(mfsp->state == MFS_MOUNTED, "invalid state");
 
-  return mfs_garbage_collect(mfsp, &sts);
+  return mfs_garbage_collect(mfsp);
 }
 
 /** @} */
