@@ -132,8 +132,7 @@ typedef enum {
   MFS_UNINIT = 0,
   MFS_STOP = 1,
   MFS_READY = 2,
-  MFS_MOUNTED = 3,
-  MFS_ACTIVE = 4
+  MFS_MOUNTED = 3
 } mfs_state_t;
 
 /**
