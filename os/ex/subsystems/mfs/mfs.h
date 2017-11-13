@@ -35,7 +35,7 @@
 
 #define MFS_BANK_MAGIC_1                    0xEC705ADEU
 #define MFS_BANK_MAGIC_2                    0xF0339CC5U
-#define MFS_HEADER_MAGIC                    0x5FAEU
+#define MFS_HEADER_MAGIC                    0x5FAE45F0U
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -145,12 +145,14 @@ typedef enum {
   MFS_NO_ERROR = 0,
   MFS_WARN_REPAIR = 1,
   MFS_WARN_GC = 2,
-  MFS_ERR_NOT_ERASED = -1,
-  MFS_ERR_NOT_FOUND = -2,
-  MFS_ERR_CRC = -3,
-  MFS_ERR_HEADER = -4,
-  MFS_ERR_FLASH_FAILURE = -5,
-  MFS_ERR_INTERNAL = -6
+  MFS_ERR_NOT_FOUND = -1,
+  MFS_ERR_INV_SIZE = -2,
+  MFS_ERR_VERIFY = -3,
+  MFS_ERR_CRC = -4,
+  MFS_ERR_HEADER = -5,
+  MFS_ERR_OUT_OF_MEM = -6,
+  MFS_ERR_FLASH_FAILURE = -7,
+  MFS_ERR_INTERNAL = -8
 } mfs_error_t;
 
 /**
@@ -215,19 +217,15 @@ typedef struct {
     /**
      * @brief   Data header magic.
      */
-    uint16_t                magic;
-    /**
-     * @brief   Data CRC.
-     */
-    uint16_t                crc;
+    uint32_t                magic;
     /**
      * @brief   Data identifier.
      */
     uint16_t                id;
     /**
-     * @brief   Data attributes.
+     * @brief   Data CRC.
      */
-    uint16_t                flags;
+    uint16_t                crc;
     /**
      * @brief   Data size.
      */
@@ -315,7 +313,7 @@ typedef struct {
   /**
    * @brief   Used space in the current bank without considering erased records.
    */
-  uint32_t                  used_space;
+  flash_offset_t            used_space;
   /**
    * @brief   Offsets of the most recent instance of the records.
    * @note    Zero means that ther is not a record with that id.
@@ -355,10 +353,11 @@ extern "C" {
   void mfsStop(MFSDriver *devp);
   mfs_error_t mfsMount(MFSDriver *devp);
   mfs_error_t mfsUnmount(MFSDriver *devp);
+  mfs_error_t mfsErase(MFSDriver *mfsp);
   mfs_error_t mfsReadRecord(MFSDriver *devp, uint32_t id,
-                            uint32_t *np, uint8_t *buffer);
+                            size_t *np, uint8_t *buffer);
   mfs_error_t mfsWriteRecord(MFSDriver *devp, uint32_t id,
-                             uint32_t n, const uint8_t *buffer);
+                             size_t n, const uint8_t *buffer);
   mfs_error_t mfsEraseRecord(MFSDriver *devp, uint32_t id);
   mfs_error_t mfsPerformGarbageCollection(MFSDriver *mfsp);
 #ifdef __cplusplus

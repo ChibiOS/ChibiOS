@@ -62,12 +62,6 @@
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
-/**
- * @brief   Type of a records scan callback function.
- */
-typedef void (*mfs_scan_cb_t)(MFSDriver *mfsp, flash_offset_t offset);
-
-
 static const uint16_t crc16_table[256] = {
   0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50A5, 0x60C6, 0x70E7,
   0x8108, 0x9129, 0xA14A, 0xB16B, 0xC18C, 0xD1AD, 0xE1CE, 0xF1EF,
@@ -178,6 +172,7 @@ static mfs_error_t mfs_flash_read(MFSDriver *mfsp, flash_offset_t offset,
  * @param[in] wp        pointer to the data buffer
  * @return              The operation status.
  * @retval MFS_NO_ERROR if the operation has been successfully completed.
+ * @retval MFS_ERR_VERIFY if the verify operation failed.
  * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
  *                      failures.
  *
@@ -343,7 +338,7 @@ static mfs_error_t mfs_bank_erase(MFSDriver *mfsp, mfs_bank_t bank) {
  * @param[in] bank      bank to be verified
  * @return              The operation status.
  * @retval MFS_NO_ERROR if the operation has been successfully completed.
- * @retval MFS_ERR_NOT_ERASED if the bank is not erased
+ * @retval MFS_ERR_VERIFY if the bank is not erased
  * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
  *                      failures.
  *
@@ -366,7 +361,7 @@ static mfs_error_t mfs_bank_verify_erase(MFSDriver *mfsp, mfs_bank_t bank) {
 
     ferr = flashVerifyErase(mfsp->config->flashp, sector);
     if (ferr == FLASH_ERROR_VERIFY) {
-      return MFS_ERR_NOT_ERASED;
+      return MFS_ERR_VERIFY;
     }
     if (ferr != FLASH_NO_ERROR) {
       return MFS_ERR_FLASH_FAILURE;
@@ -573,6 +568,7 @@ static mfs_error_t mfs_bank_mount(MFSDriver *mfsp,
   RET_ON_ERROR(mfs_bank_scan_records(mfsp, bank, statep));
 
   /* Calculating the effective used size.*/
+  mfsp->used_space = sizeof (mfs_bank_header_t);
   for (i = 0; i < MFS_CFG_MAX_RECORDS; i++) {
     if (mfsp->descriptors[i].offset != 0U) {
       mfsp->used_space += mfsp->descriptors[i].size + sizeof (mfs_data_header_t);
@@ -834,6 +830,39 @@ static mfs_error_t mfs_try_mount(MFSDriver *mfsp) {
   return err;
 }
 
+/**
+ * @brief   Enforces a garbage collection.
+ * @details Storage data is compacted into a single bank.
+ *
+ * @param[out] mfsp     pointer to the @p MFSDriver object
+ * @return              The operation status.
+ * @retval MFS_NO_ERROR if the operation has been successfully completed.
+ * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
+ *                      failures.
+ *
+ * @notapi
+ */
+static mfs_error_t mfs_garbage_collect(MFSDriver *mfsp,
+                                       mfs_bank_state_t *statep) {
+
+  if (mfsp->current_bank == MFS_BANK_0) {
+    RET_ON_ERROR(mfs_bank_copy(mfsp, MFS_BANK_0, MFS_BANK_1));
+    RET_ON_ERROR(mfs_bank_write_header(mfsp, MFS_BANK_1,
+                                       mfsp->current_counter + 1U));
+    RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_0));
+    RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_1, statep));
+  }
+  else {
+    RET_ON_ERROR(mfs_bank_copy(mfsp, MFS_BANK_1, MFS_BANK_0));
+    RET_ON_ERROR(mfs_bank_write_header(mfsp, MFS_BANK_0,
+                                       mfsp->current_counter + 1U));
+    RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_1));
+    RET_ON_ERROR(mfs_bank_mount(mfsp, MFS_BANK_0, statep));
+  }
+
+  return MFS_NO_ERROR;
+}
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -912,6 +941,7 @@ void mfsStop(MFSDriver *mfsp) {
 mfs_error_t mfsMount(MFSDriver *mfsp) {
   unsigned i;
 
+  osalDbgCheck(mfsp != NULL);
   osalDbgAssert(mfsp->state == MFS_READY, "invalid state");
 
   /* Attempting to mount the managed partition.*/
@@ -942,6 +972,28 @@ mfs_error_t mfsUnmount(MFSDriver *mfsp) {
 }
 
 /**
+ * @brief   Destroys the state of the managed storage by erasing the flash.
+ *
+ * @param[in] mfsp      pointer to the @p MFSDriver object
+ * @return              The operation status.
+ * @retval MFS_NO_ERROR if the operation has been successfully completed.
+ * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
+ *                      failures.
+ *
+ * @api
+ */
+mfs_error_t mfsErase(MFSDriver *mfsp) {
+
+  osalDbgCheck(mfsp != NULL);
+  osalDbgAssert(mfsp->state == MFS_READY, "invalid state");
+
+  RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_0));
+  RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_1));
+
+  return MFS_NO_ERROR;
+}
+
+/**
  * @brief   Retrieves and reads a data record.
  *
  * @param[in] mfsp      pointer to the @p MFSDriver object
@@ -949,10 +1001,12 @@ mfs_error_t mfsUnmount(MFSDriver *mfsp) {
  *                      @p 1 and @p MFS_CFG_MAX_RECORDS
  * @param[in,out] np    on input is the maximum buffer size, on return it is
  *                      the size of the data copied into the buffer
- * @param[in] buffer    pointer to a buffer for record data
+ * @param[out] buffer   pointer to a buffer for record data
  * @return              The operation status.
  * @retval MFS_NO_ERROR if the operation has been successfully completed.
  * @retval MFS_ERR_NOT_FOUND if the specified id does not exists.
+ * @retval MFS_ERR_INV_SIZE if the passed buffer is not large enough to
+ *                      contain the record data.
  * @retval MFS_ERR_CRC  if retrieved data has a CRC error.
  * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
  *                      failures.
@@ -960,21 +1014,47 @@ mfs_error_t mfsUnmount(MFSDriver *mfsp) {
  * @api
  */
 mfs_error_t mfsReadRecord(MFSDriver *mfsp, uint32_t id,
-                          uint32_t *np, uint8_t *buffer) {
+                          size_t *np, uint8_t *buffer) {
+  mfs_error_t err;
 
+  osalDbgCheck((mfsp != NULL) && (id >= 1) && (id <= MFS_CFG_MAX_RECORDS) &&
+               (np != NULL) && (buffer != NULL));
   osalDbgAssert(mfsp->state == MFS_MOUNTED, "invalid state");
 
   /* Marking the start of the operation.*/
   mfsp->state = MFS_ACTIVE;
 
-  (void)id;
-  (void)np;
-  (void)buffer;
+  /* Checking if the requested record actually exists.*/
+  if (mfsp->descriptors[id].offset != 0U) {
+    /* Making sure to not overflow the buffer.*/
+    if (*np < mfsp->descriptors[id].size) {
+      err = MFS_ERR_INV_SIZE;
+    }
+    else {
+      /* Data read from flash.*/
+      *np = mfsp->descriptors[id].size;
+      err = mfs_flash_read(mfsp,
+                           mfsp->descriptors[id].offset + sizeof (mfs_data_header_t),
+                           *np,
+                           buffer);
+
+      /* Checking CRC.*/
+      if (err == MFS_NO_ERROR) {
+        uint16_t crc = crc16(0xFFFFU, buffer, *np);
+        if (crc != mfsp->buffer.dhdr.fields.crc) {
+          err = MFS_ERR_CRC;
+        }
+      }
+    }
+  }
+  else {
+    err = MFS_ERR_NOT_FOUND;
+  }
 
   /* Operation over.*/
   mfsp->state = MFS_MOUNTED;
 
-  return MFS_NO_ERROR;
+  return err;
 }
 
 /**
@@ -987,27 +1067,77 @@ mfs_error_t mfsReadRecord(MFSDriver *mfsp, uint32_t id,
  * @param[in] buffer    pointer to a buffer for record data
  * @return              The operation status.
  * @retval MFS_NO_ERROR if the operation has been successfully completed.
+ * @retval MFS_WARN_GC  if the operation triggered a garbage collection.
+ * @retval MFS_ERR_OUT_OF_MEM if there is not enough flash space for the
+ *                      operation.
  * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
  *                      failures.
  *
  * @api
  */
 mfs_error_t mfsWriteRecord(MFSDriver *mfsp, uint32_t id,
-                           uint32_t n, const uint8_t *buffer) {
+                           size_t n, const uint8_t *buffer) {
+  flash_offset_t free, required;
+  mfs_bank_state_t sts;
+  bool warning = false;
 
+  osalDbgCheck((mfsp != NULL) && (id >= 1) && (id <= MFS_CFG_MAX_RECORDS) &&
+               (n > 0U) && (buffer != NULL));
   osalDbgAssert(mfsp->state == MFS_MOUNTED, "invalid state");
 
   /* Marking the start of the operation.*/
   mfsp->state = MFS_ACTIVE;
 
-  (void)id;
-  (void)n;
-  (void)buffer;
+  /* If the required space is beyond the available (compacted) block
+     size then an error is returned.
+     NOTE: The space for one extra header is reserved in order to allow
+     for an erase operation after the space has been fully allocated.*/
+  required = ((flash_offset_t)sizeof (mfs_data_header_t) * 2U) +
+             (flash_offset_t)n;
+  if (required > mfsp->config->bank_size - mfsp->used_space) {
+    return MFS_ERR_OUT_OF_MEM;
+  }
+
+  /* Checking for immediately (not compacted) available space.*/
+  free = mfsp->config->bank_size - mfsp->next_offset;
+  if (required > free) {
+    /* We need to perform a garbage collection, there is enough space
+       but it has to be freed.*/
+    warning = true;
+    RET_ON_ERROR(mfs_garbage_collect(mfsp, &sts));
+  }
+
+  /* Writing the data header without the magic, it will be written last.*/
+  mfsp->buffer.dhdr.fields.magic = (uint32_t)mfsp->config->erased;
+  mfsp->buffer.dhdr.fields.id    = (uint16_t)id;
+  mfsp->buffer.dhdr.fields.size  = (uint32_t)n;
+  mfsp->buffer.dhdr.fields.crc   = crc16(0xFFFFU, buffer, n);
+  RET_ON_ERROR(mfs_flash_write(mfsp,
+                               mfsp->next_offset,
+                               sizeof (mfs_data_header_t),
+                               mfsp->buffer.data));
+
+  /* Writing the data part.*/
+  RET_ON_ERROR(mfs_flash_write(mfsp,
+                               mfsp->next_offset + sizeof (mfs_data_header_t),
+                               n,
+                               buffer));
+
+  /* Finally writing the magic number, it seals the transaction.*/
+  mfsp->buffer.dhdr.fields.magic = (uint32_t)MFS_HEADER_MAGIC;
+  RET_ON_ERROR(mfs_flash_write(mfsp,
+                               mfsp->next_offset,
+                               sizeof (uint32_t),
+                               mfsp->buffer.data));
+
+  /* Adjusting bank-related metadata.*/
+  mfsp->next_offset += sizeof (mfs_data_header_t) + n;
+  mfsp->used_space  -= sizeof (mfs_data_header_t) + n;
 
   /* Operation over.*/
   mfsp->state = MFS_MOUNTED;
 
-  return MFS_NO_ERROR;
+  return warning ? MFS_WARN_GC : MFS_NO_ERROR;
 }
 
 /**
@@ -1054,16 +1184,20 @@ mfs_error_t mfsEraseRecord(MFSDriver *mfsp, uint32_t id) {
  * @api
  */
 mfs_error_t mfsPerformGarbageCollection(MFSDriver *mfsp) {
+  mfs_error_t err;
+  mfs_bank_state_t sts;
 
   osalDbgAssert(mfsp->state == MFS_MOUNTED, "invalid state");
 
   /* Marking the start of the operation.*/
   mfsp->state = MFS_ACTIVE;
 
+  err = mfs_garbage_collect(mfsp, &sts);
+
   /* Operation over.*/
   mfsp->state = MFS_MOUNTED;
 
-  return MFS_NO_ERROR;
+  return err;
 }
 
 /** @} */
