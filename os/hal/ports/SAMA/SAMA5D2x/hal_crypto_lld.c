@@ -817,26 +817,24 @@ cryerror_t cry_lld_encrypt_DES(CRYDriver *cryp, crykey_t key_id,
 
 	cryerror_t ret = CRY_NOERROR;
 
-	if(key_id != 0 )
+	if (key_id != 0)
 		return CRY_ERR_INV_KEY_ID;
 
-	if (  ( cryp->config->tdes_algo == TDES_ALGO_SINGLE && cryp->key0_size != 8 ) ||
-		 ( cryp->config->tdes_algo == TDES_ALGO_TRIPLE && cryp->key0_size != 24 ) )
-		 return CRY_ERR_INV_KEY_SIZE;
+	if ((cryp->config->tdes_algo == TDES_ALGO_SINGLE && cryp->key0_size != 8)
+			|| (cryp->config->tdes_algo == TDES_ALGO_TRIPLE
+					&& !(cryp->key0_size == 16 || cryp->key0_size == 24)))
+		return CRY_ERR_INV_KEY_SIZE;
 
-	tdes_config_t params = {		cryp->config->tdes_algo,
-									0
-							};
+	tdes_config_t params = { cryp->config->tdes_algo, 0 };
 
-		if (!(cryp->enabledPer & TDES_PER)) {
-			cryp->enabledPer |= TDES_PER;
-			pmcEnableDES();
-		}
+	if (!(cryp->enabledPer & TDES_PER)) {
+		cryp->enabledPer |= TDES_PER;
+		pmcEnableDES();
+	}
 
-		ret = sama_tdes_lld_polling(cryp,&params, true, in,
-				8, out,NULL);
+	ret = sama_tdes_lld_polling(cryp, &params, true, in, 8, out, NULL);
 
-			return ret;
+	return ret;
 }
 
 /**
@@ -865,21 +863,23 @@ cryerror_t cry_lld_decrypt_DES(CRYDriver *cryp, crykey_t key_id,
 		const uint8_t *in, uint8_t *out) {
 
 	cryerror_t ret = CRY_NOERROR;
-		tdes_config_t params = {		cryp->config->tdes_algo,
-										0
-										};
-		if(key_id != 0 )
-						  return CRY_ERR_INV_KEY_ID;
-		if (!(cryp->enabledPer & TDES_PER)) {
-			cryp->enabledPer |= TDES_PER;
-			pmcEnableDES();
-		}
+	tdes_config_t params = { cryp->config->tdes_algo, 0 };
+	if (key_id != 0)
+		return CRY_ERR_INV_KEY_ID;
 
-		ret = sama_tdes_lld_polling(cryp,&params, false, in,
-				8, out,NULL);
+	if ((cryp->config->tdes_algo == TDES_ALGO_SINGLE && cryp->key0_size != 8)
+			|| (cryp->config->tdes_algo == TDES_ALGO_TRIPLE
+					&& !(cryp->key0_size == 16 || cryp->key0_size == 24)))
+		return CRY_ERR_INV_KEY_SIZE;
 
+	if (!(cryp->enabledPer & TDES_PER)) {
+		cryp->enabledPer |= TDES_PER;
+		pmcEnableDES();
+	}
 
-			return ret;
+	ret = sama_tdes_lld_polling(cryp, &params, false, in, 8, out, NULL);
+
+	return ret;
 }
 
 /**
@@ -911,17 +911,20 @@ cryerror_t cry_lld_encrypt_DES_ECB(CRYDriver *cryp, crykey_t key_id,
 
 	cryerror_t ret = CRY_NOERROR;
 	tdes_config_t params = { cryp->config->tdes_algo, TDES_MODE_ECB };
+
 	if (key_id != 0)
 		return CRY_ERR_INV_KEY_ID;
 
-	if (cryp->key0_size != 16 && cryp->key0_size != 24) {
+	if (cryp->config->tdes_algo == TDES_ALGO_SINGLE && cryp->key0_size != 8) {
+			return CRY_ERR_INV_KEY_SIZE;
+	}
+	if (cryp->config->tdes_algo == TDES_ALGO_TRIPLE && !(cryp->key0_size == 16 || cryp->key0_size == 24) ) {
 		return CRY_ERR_INV_KEY_SIZE;
 	}
 
 	if (!(cryp->enabledPer & TDES_PER)) {
 		cryp->enabledPer |= TDES_PER;
-		pmcEnableDES()
-		;
+		pmcEnableDES();
 	}
 	if (cryp->config->transfer_mode == TRANSFER_POLLING)
 		ret = sama_tdes_lld_polling(cryp, &params, true, in, size, out, NULL);
@@ -963,9 +966,12 @@ cryerror_t cry_lld_decrypt_DES_ECB(CRYDriver *cryp, crykey_t key_id,
 	if (key_id != 0)
 		return CRY_ERR_INV_KEY_ID;
 
-	if (cryp->key0_size != 16 && cryp->key0_size != 24) {
-		return CRY_ERR_INV_KEY_SIZE;
-	}
+	if (cryp->config->tdes_algo == TDES_ALGO_SINGLE && cryp->key0_size != 8) {
+				return CRY_ERR_INV_KEY_SIZE;
+		}
+		if (cryp->config->tdes_algo == TDES_ALGO_TRIPLE && !(cryp->key0_size == 16 || cryp->key0_size == 24) ) {
+			return CRY_ERR_INV_KEY_SIZE;
+		}
 	if (!(cryp->enabledPer & TDES_PER)) {
 		cryp->enabledPer |= TDES_PER;
 		pmcEnableDES()
@@ -1011,8 +1017,12 @@ cryerror_t cry_lld_encrypt_DES_CBC(CRYDriver *cryp, crykey_t key_id,
 
 	cryerror_t ret = CRY_NOERROR;
 	tdes_config_t params = { cryp->config->tdes_algo, TDES_MODE_CBC };
+
 	if (key_id != 0)
 		return CRY_ERR_INV_KEY_ID;
+
+	if (cryp->config->tdes_algo == TDES_ALGO_SINGLE)
+			return CRY_ERR_INV_ALGO;
 
 	if (cryp->key0_size != 16 && cryp->key0_size != 24) {
 		return CRY_ERR_INV_KEY_SIZE;
@@ -1061,8 +1071,12 @@ cryerror_t cry_lld_decrypt_DES_CBC(CRYDriver *cryp, crykey_t key_id,
 
 	cryerror_t ret = CRY_NOERROR;
 	tdes_config_t params = { cryp->config->tdes_algo, TDES_MODE_CBC };
+
 	if (key_id != 0)
 		return CRY_ERR_INV_KEY_ID;
+
+	if (cryp->config->tdes_algo == TDES_ALGO_SINGLE)
+		return CRY_ERR_INV_ALGO;
 
 	if (cryp->key0_size != 16 && cryp->key0_size != 24) {
 		return CRY_ERR_INV_KEY_SIZE;

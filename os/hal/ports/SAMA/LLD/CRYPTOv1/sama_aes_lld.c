@@ -16,10 +16,6 @@
 #include "hal.h"
 #include "sama_crypto_lld.h"
 
-
-
-
-
 void sama_aes_lld_write_key(const uint32_t * key, const uint32_t * vectors,
 		uint32_t len) {
 
@@ -160,6 +156,8 @@ cryerror_t sama_aes_lld_process_polling(CRYDriver *cryp, aesparams *params,
 cryerror_t sama_aes_lld_process_dma(CRYDriver *cryp,  aesparams *params,
 		const uint8_t *in, uint8_t *out, size_t indata_len) {
 
+	cryerror_t ret;
+
 	osalDbgAssert(cryp->thread == NULL, "already waiting");
 
 	//set chunk size
@@ -168,7 +166,7 @@ cryerror_t sama_aes_lld_process_dma(CRYDriver *cryp,  aesparams *params,
 	if ((cryp->config->cfbs != AES_CFBS_128))
 		cryp->dmachunksize = DMA_CHUNK_SIZE_1;
 
-	//set dma with
+	//set dma width
 	cryp->dmawith = DMA_DATA_WIDTH_WORD;
 
 	if (cryp->config->cfbs == AES_CFBS_16)
@@ -198,6 +196,9 @@ cryerror_t sama_aes_lld_process_dma(CRYDriver *cryp,  aesparams *params,
 	XDMAC_CC_DAM_FIXED_AM |
 	XDMAC_CC_PERID(PERID_AES_TX);
 
+	dmaChannelSetMode(cryp->dmarx, cryp->rxdmamode);
+	dmaChannelSetMode(cryp->dmatx, cryp->txdmamode);
+
 	/* Writing channel */
 	dmaChannelSetSource(cryp->dmatx, in);
 	dmaChannelSetDestination(cryp->dmatx, AES->AES_IDATAR);
@@ -209,16 +210,33 @@ cryerror_t sama_aes_lld_process_dma(CRYDriver *cryp,  aesparams *params,
 	dmaChannelSetDestination(cryp->dmarx, out);
 	dmaChannelSetTransactionSize(cryp->dmarx,  ( indata_len / DMA_DATA_WIDTH_TO_BYTE(cryp->dmawith)));
 
-	if (params->encrypt)
-		AES->AES_MR |= AES_MR_CIPHER;
-	else
-		AES->AES_MR &= ~AES_MR_CIPHER;
+	//AES soft reset
+		AES->AES_CR = AES_CR_SWRST;
 
-	AES->AES_MR |= (((AES_MR_SMOD_Msk & (AES_MR_SMOD_IDATAR0_START)))
-			| AES_MR_CKEY_PASSWD);
+	//AES set op mode
+		AES->AES_MR |= ((AES_MR_OPMOD_Msk & (params->mode)) | AES_MR_CKEY_PASSWD);
 
-	//Enable aes interrupt
-	AES->AES_IER = AES_IER_DATRDY;
+	//AES set key size
+	ret = sama_aes_lld_set_key_size(cryp->key0_size);
+
+	if (ret == CRY_NOERROR) {
+
+		AES->AES_MR |= (AES_MR_CFBS(cryp->config->cfbs) | AES_MR_CKEY_PASSWD);
+
+		sama_aes_lld_write_key(key0_buffer,( const uint32_t *) params->iv, cryp->key0_size);
+
+		if (params->encrypt)
+			AES->AES_MR |= AES_MR_CIPHER;
+		else
+			AES->AES_MR &= ~AES_MR_CIPHER;
+
+		AES->AES_MR |= (((AES_MR_SMOD_Msk & (AES_MR_SMOD_IDATAR0_START)))
+				| AES_MR_CKEY_PASSWD);
+
+		//Enable aes interrupt
+		AES->AES_IER = AES_IER_DATRDY;
+
+	}
 
 	osalSysLock();
 
