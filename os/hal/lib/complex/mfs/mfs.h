@@ -324,7 +324,9 @@ typedef struct {
   union {
     mfs_data_header_t       dhdr;
     mfs_bank_header_t       bhdr;
-    uint8_t                 data[MFS_CFG_BUFFER_SIZE];
+    uint8_t                 data8[MFS_CFG_BUFFER_SIZE];
+    uint16_t                data16[MFS_CFG_BUFFER_SIZE / sizeof (uint16_t)];
+    uint32_t                data32[MFS_CFG_BUFFER_SIZE / sizeof (uint32_t)];
   } buffer;
 } MFSDriver;
 
