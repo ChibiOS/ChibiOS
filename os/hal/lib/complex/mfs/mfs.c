@@ -771,6 +771,48 @@ static mfs_error_t mfs_try_mount(MFSDriver *mfsp) {
   return warning ? MFS_WARN_REPAIR : MFS_NO_ERROR;
 }
 
+/**
+ * @brief   Configures and activates a MFS driver.
+ *
+ * @param[in] mfsp      pointer to the @p MFSDriver object
+ * @param[in] config    pointer to the configuration
+ * @return              The operation status.
+ * @retval MFS_NO_ERROR if the operation has been successfully completed.
+ * @retval MFS_WARN_GC  if the operation triggered a garbage collection.
+ * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
+ *                      failures. Makes the driver enter the @p MFS_ERROR state.
+ * @retval MFS_ERR_INTERNAL if an internal logic failure is detected.
+ *
+ * @api
+ */
+mfs_error_t mfs_mount(MFSDriver *mfsp) {
+  unsigned i;
+
+  /* Resetting previous state.*/
+  mfs_state_reset(mfsp);
+
+  /* Attempting to mount the managed partition.*/
+  for (i = 0; i < MFS_CFG_MAX_REPAIR_ATTEMPTS; i++) {
+    mfs_error_t err;
+
+    err = mfs_try_mount(mfsp);
+    if (err == MFS_ERR_INTERNAL) {
+      /* Special case, do not retry on internal errors but report
+         immediately.*/
+      mfsp->state = MFS_ERROR;
+      return err;
+    }
+    if (!MFS_IS_ERROR(err)) {
+      mfsp->state  = MFS_READY;
+      return err;
+    }
+  }
+
+  /* Driver start failed.*/
+  mfsp->state = MFS_ERROR;
+  return MFS_ERR_FLASH_FAILURE;
+}
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -805,7 +847,6 @@ void mfsObjectInit(MFSDriver *mfsp) {
  * @api
  */
 mfs_error_t mfsStart(MFSDriver *mfsp, const MFSConfig *config) {
-  unsigned i;
 
   osalDbgCheck((mfsp != NULL) && (config != NULL));
   osalDbgAssert((mfsp->state == MFS_STOP) || (mfsp->state == MFS_READY) ||
@@ -814,29 +855,7 @@ mfs_error_t mfsStart(MFSDriver *mfsp, const MFSConfig *config) {
   /* Storing configuration.*/
   mfsp->config = config;
 
-  /* Resetting previous state.*/
-  mfs_state_reset(mfsp);
-
-  /* Attempting to mount the managed partition.*/
-  for (i = 0; i < MFS_CFG_MAX_REPAIR_ATTEMPTS; i++) {
-    mfs_error_t err;
-
-    err = mfs_try_mount(mfsp);
-    if (err == MFS_ERR_INTERNAL) {
-      /* Special case, do not retry on internal errors but report
-         immediately.*/
-      mfsp->state = MFS_ERROR;
-      return err;
-    }
-    if (!MFS_IS_ERROR(err)) {
-      mfsp->state  = MFS_READY;
-      return err;
-    }
-  }
-
-  /* Driver start failed.*/
-  mfsp->state = MFS_ERROR;
-  return MFS_ERR_FLASH_FAILURE;
+  return mfs_mount(mfsp);
 } 
 
 /**
@@ -878,9 +897,8 @@ mfs_error_t mfsErase(MFSDriver *mfsp) {
 
   RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_0));
   RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_1));
-  /* TODO: Remount.*/
 
-  return MFS_NO_ERROR;
+  return mfs_mount(mfsp);
 }
 
 /**
