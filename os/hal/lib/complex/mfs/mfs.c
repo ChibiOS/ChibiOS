@@ -442,7 +442,7 @@ static mfs_error_t mfs_bank_scan_records(MFSDriver *mfsp,
   hdr_offset = start_offset + (flash_offset_t)sizeof(mfs_bank_header_t);
   while (hdr_offset < end_offset) {
     /* Reading the current record header.*/
-    RET_ON_ERROR(mfs_flash_read(mfsp, start_offset,
+    RET_ON_ERROR(mfs_flash_read(mfsp, hdr_offset,
                                 sizeof (mfs_data_header_t),
                                 (void *)&mfsp->buffer.dhdr));
 
@@ -632,12 +632,13 @@ static mfs_error_t mfs_garbage_collect(MFSDriver *mfsp) {
 
   /* Copying the most recent record instances only.*/
   for (i = 0; i < MFS_CFG_MAX_RECORDS; i++) {
+    uint32_t totsize = mfsp->descriptors[i].size + sizeof (mfs_data_header_t);
     if (mfsp->descriptors[i].offset != 0) {
       RET_ON_ERROR(mfs_flash_copy(mfsp, dest_offset,
                                   mfsp->descriptors[i].offset,
-                                  mfsp->descriptors[i].size));
+                                  totsize));
       mfsp->descriptors[i].offset = dest_offset;
-      dest_offset += mfsp->descriptors[i].size;
+      dest_offset += totsize;
     }
   }
 
@@ -1059,15 +1060,15 @@ mfs_error_t mfsWriteRecord(MFSDriver *mfsp, uint32_t id,
   /* The size of the old record instance, if present, must be subtracted
      to the total used size.*/
   if (mfsp->descriptors[id - 1U].offset != 0U) {
-    mfsp->used_space  -= sizeof (mfs_data_header_t) +
-                         mfsp->descriptors[id - 1U].size;
+    mfsp->used_space -= sizeof (mfs_data_header_t) +
+                        mfsp->descriptors[id - 1U].size;
   }
 
   /* Adjusting bank-related metadata.*/
   mfsp->descriptors[id - 1U].offset = mfsp->next_offset;
   mfsp->descriptors[id - 1U].size   = (uint32_t)n;
   mfsp->next_offset += sizeof (mfs_data_header_t) + n;
-  mfsp->used_space  -= sizeof (mfs_data_header_t) + n;
+  mfsp->used_space  += sizeof (mfs_data_header_t) + n;
 
   return warning ? MFS_WARN_GC : MFS_NO_ERROR;
 }

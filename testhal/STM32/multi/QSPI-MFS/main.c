@@ -92,7 +92,7 @@ static THD_FUNCTION(Thread1, arg) {
  * Application entry point.
  */
 int main(void) {
-  flash_error_t err;
+  mfs_error_t err;
   uint8_t *addr;
 
   /*
@@ -122,62 +122,22 @@ int main(void) {
   /* Mounting the MFS volume defined in the configuration.*/
   mfsObjectInit(&mfs);
   mfsStart(&mfs, &mfscfg1);
-  mfsMount(&mfs);
+
+  err = mfsUnmount(&mfs);
+  err = mfsErase(&mfs);
+  err = mfsMount(&mfs);
+
+  err = mfsWriteRecord(&mfs, 1, 64, pattern);
+  err = mfsWriteRecord(&mfs, 2, 64, pattern);
+  err = mfsWriteRecord(&mfs, 1, 128, pattern);
+  err = mfsWriteRecord(&mfs, 2, 128, pattern);
+
+  err = mfsPerformGarbageCollection(&mfs);
 
   /* Reading.*/
-  err = flashRead(&m25q, 0, 128, buffer);
-  if (err != FLASH_NO_ERROR)
-    chSysHalt("read error");
+  flashRead(&m25q, 0, 128, buffer);
 
-  mfsUnmount(&mfs);
-  mfsErase(&mfs);
-
-#if 0
-  /* Erasing the first sector and waiting for completion.*/
-  (void) flashStartEraseSector(&m25q, 0);
-  err = flashWaitErase((BaseFlash *)&m25q);
-  if (err != FLASH_NO_ERROR)
-    chSysHalt("erase error");
-
-  /* Verifying the erase operation.*/
-  err = flashVerifyErase(&m25q, 0);
-  if (err != FLASH_NO_ERROR)
-    chSysHalt("verify erase error");
-
-  /* Programming a pattern.*/
-  err = flashProgram(&m25q, 0, 128, pattern);
-  if (err != FLASH_NO_ERROR)
-    chSysHalt("program error");
-
-  /* Verifying the erase operation.*/
-  err = flashVerifyErase(&m25q, 0);
-  if (err != FLASH_ERROR_VERIFY)
-    chSysHalt("verify non-erase error");
-
-  /* Memory mapping the device.*/
-  m25qMemoryMap(&m25q, &addr);
-
-  /* Unmapping the device.*/
-  m25qMemoryUnmap(&m25q);
-
-  /* Reading it back.*/
-  memset(buffer, 0, 128);
-  err = flashRead(&m25q, 16, 128, buffer);
-  if (err != FLASH_NO_ERROR)
-    chSysHalt("read error");
-
-  /* Reading it back.*/
-  memset(buffer, 0, 128);
-  err = flashRead(&m25q, 0, 128, buffer);
-  if (err != FLASH_NO_ERROR)
-    chSysHalt("read error");
-
-  /* Erasing again.*/
-  (void) flashStartEraseSector(&m25q, 0);
-  err = flashWaitErase((BaseFlash *)&m25q);
-  if (err != FLASH_NO_ERROR)
-    chSysHalt("erase error");
-#endif
+  err = mfsUnmount(&mfs);
 
   /*
    * Normal main() thread activity, in this demo it does nothing.

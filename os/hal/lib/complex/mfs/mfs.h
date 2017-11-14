@@ -210,7 +210,7 @@ typedef union {
  * @brief   Type of a data block header.
  * @details This structure is placed before each written data block.
  */
-typedef struct {
+typedef union {
   struct {
     /**
      * @brief   Data header magic.
