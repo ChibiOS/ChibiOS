@@ -20,6 +20,7 @@
 #include "hal.h"
 
 #include "m25q.h"
+#include "mfs.h"
 
 /* 16MB device, 2 cycles delay after NCS.*/
 const QSPIConfig qspicfg1 = {
@@ -60,6 +61,17 @@ const M25QConfig m25qcfg1 = {
   &qspicfg1
 };
 
+MFSDriver mfs;
+
+const MFSConfig mfscfg1 = {
+  (BaseFlash *)&m25q,
+  0xFFFFFFFFU,
+  131072U,
+  0,
+  2,
+  2,
+  2
+};
 /*
  * LED blinker thread, times are in milliseconds.
  */
@@ -103,17 +115,24 @@ int main(void) {
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO + 1, Thread1, NULL);
 
-  /*
-   * Initializing and starting M25Q driver.
-   */
+  /* Initializing and starting M25Q driver.*/
   m25qObjectInit(&m25q);
   m25qStart(&m25q, &m25qcfg1);
+
+  /* Mounting the MFS volume defined in the configuration.*/
+  mfsObjectInit(&mfs);
+  mfsStart(&mfs, &mfscfg1);
+  mfsMount(&mfs);
 
   /* Reading.*/
   err = flashRead(&m25q, 0, 128, buffer);
   if (err != FLASH_NO_ERROR)
     chSysHalt("read error");
 
+  mfsUnmount(&mfs);
+  mfsErase(&mfs);
+
+#if 0
   /* Erasing the first sector and waiting for completion.*/
   (void) flashStartEraseSector(&m25q, 0);
   err = flashWaitErase((BaseFlash *)&m25q);
@@ -158,6 +177,7 @@ int main(void) {
   err = flashWaitErase((BaseFlash *)&m25q);
   if (err != FLASH_NO_ERROR)
     chSysHalt("erase error");
+#endif
 
   /*
    * Normal main() thread activity, in this demo it does nothing.
