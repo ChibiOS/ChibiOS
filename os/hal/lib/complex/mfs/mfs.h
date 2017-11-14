@@ -132,7 +132,7 @@ typedef enum {
   MFS_UNINIT = 0,
   MFS_STOP = 1,
   MFS_READY = 2,
-  MFS_MOUNTED = 3
+  MFS_ERROR = 3
 } mfs_state_t;
 
 /**
@@ -349,10 +349,8 @@ typedef struct {
 extern "C" {
 #endif
   void mfsObjectInit(MFSDriver *devp);
-  void mfsStart(MFSDriver *devp, const MFSConfig *config);
+  mfs_error_t mfsStart(MFSDriver *devp, const MFSConfig *config);
   void mfsStop(MFSDriver *devp);
-  mfs_error_t mfsMount(MFSDriver *devp);
-  mfs_error_t mfsUnmount(MFSDriver *devp);
   mfs_error_t mfsErase(MFSDriver *mfsp);
   mfs_error_t mfsReadRecord(MFSDriver *devp, uint32_t id,
                             size_t *np, uint8_t *buffer);

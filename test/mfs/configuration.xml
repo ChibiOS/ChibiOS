@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <SPC5-Config version="1.0.0">
-  <application name="ChibiOS/NIL Test Suite" version="1.0.0" standalone="true" locked="false">
+  <application name="ChibiOS/HAL MFS Test Suite" version="1.0.0" standalone="true" locked="false">
     <description>Test Specification for ChibiOS/HAL MFS Complex Driver.</description>
     <component id="org.chibios.spc5.components.portable.generic_startup">
       <component id="org.chibios.spc5.components.portable.chibios_unitary_tests_engine" />
@@ -35,10 +35,10 @@
         </description>
         <global_data_and_code>
           <code_prefix>
-            <value>nil_</value>
+            <value>mfs_</value>
           </code_prefix>
           <global_definitions>
-            <value><![CDATA[#define TEST_SUITE_NAME                     "ChibiOS/NIL Test Suite"
+            <value><![CDATA[#define TEST_SUITE_NAME                     "ChibiOS/HAL MFS Test Suite"
 
 #define TEST_REPORT_HOOK_HEADER test_print_port_info();
 
@@ -114,6 +114,9 @@ THD_FUNCTION(test_support, arg) {
             <description>
               <value>The APIs are tested for functionality, correct cases and expected error cases are tested.</value>
             </description>
+            <condition>
+              <value />
+            </condition>
             <shared_code>
               <value><![CDATA[#include <string.h>
 #include "key_storage.h"

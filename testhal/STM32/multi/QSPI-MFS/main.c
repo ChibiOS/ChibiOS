@@ -93,7 +93,6 @@ static THD_FUNCTION(Thread1, arg) {
  */
 int main(void) {
   mfs_error_t err;
-  uint8_t *addr;
 
   /*
    * System initializations.
@@ -121,11 +120,8 @@ int main(void) {
 
   /* Mounting the MFS volume defined in the configuration.*/
   mfsObjectInit(&mfs);
-  mfsStart(&mfs, &mfscfg1);
-
-  err = mfsUnmount(&mfs);
+  err = mfsStart(&mfs, &mfscfg1);
   err = mfsErase(&mfs);
-  err = mfsMount(&mfs);
 
   err = mfsWriteRecord(&mfs, 1, 64, pattern);
   err = mfsWriteRecord(&mfs, 2, 64, pattern);
@@ -134,10 +130,9 @@ int main(void) {
 
   err = mfsPerformGarbageCollection(&mfs);
 
-  /* Reading.*/
-  flashRead(&m25q, 0, 128, buffer);
+  mfsStop(&mfs);
 
-  err = mfsUnmount(&mfs);
+  (void)err;
 
   /*
    * Normal main() thread activity, in this demo it does nothing.

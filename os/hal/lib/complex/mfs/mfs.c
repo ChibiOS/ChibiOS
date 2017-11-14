@@ -154,7 +154,7 @@ static mfs_error_t mfs_flash_read(MFSDriver *mfsp, flash_offset_t offset,
 
   ferr = flashRead(mfsp->config->flashp, offset, n, rp);
   if (ferr != FLASH_NO_ERROR) {
-    mfsp->state = MFS_READY;
+    mfsp->state = MFS_ERROR;
     return MFS_ERR_FLASH_FAILURE;
   }
 
@@ -182,7 +182,7 @@ static mfs_error_t mfs_flash_write(MFSDriver *mfsp,
 
   ferr = flashProgram(mfsp->config->flashp, offset, n, wp);
   if (ferr != FLASH_NO_ERROR) {
-    mfsp->state = MFS_READY;
+    mfsp->state = MFS_ERROR;
     return MFS_ERR_FLASH_FAILURE;
   }
 
@@ -192,7 +192,7 @@ static mfs_error_t mfs_flash_write(MFSDriver *mfsp,
     size_t chunk = n <= MFS_CFG_BUFFER_SIZE ? n : MFS_CFG_BUFFER_SIZE;
     RET_ON_ERROR(mfs_flash_read(mfsp, offset, chunk, mfsp->buffer.data8));
     if (memcmp((void *)mfsp->buffer.data8, (void *)wp, chunk)) {
-      mfsp->state = MFS_READY;
+      mfsp->state = MFS_ERROR;
       return MFS_ERR_FLASH_FAILURE;
     }
     n -= chunk;
@@ -314,17 +314,17 @@ static mfs_error_t mfs_bank_erase(MFSDriver *mfsp, mfs_bank_t bank) {
 
     ferr = flashStartEraseSector(mfsp->config->flashp, sector);
     if (ferr != FLASH_NO_ERROR) {
-      mfsp->state = MFS_READY;
+      mfsp->state = MFS_ERROR;
       return MFS_ERR_FLASH_FAILURE;
     }
     ferr = flashWaitErase(mfsp->config->flashp);
     if (ferr != FLASH_NO_ERROR) {
-      mfsp->state = MFS_READY;
+      mfsp->state = MFS_ERROR;
       return MFS_ERR_FLASH_FAILURE;
     }
     ferr = flashVerifyErase(mfsp->config->flashp, sector);
     if (ferr != FLASH_NO_ERROR) {
-      mfsp->state = MFS_READY;
+      mfsp->state = MFS_ERROR;
       return MFS_ERR_FLASH_FAILURE;
     }
 
@@ -363,7 +363,7 @@ static mfs_error_t mfs_bank_verify_erase(MFSDriver *mfsp, mfs_bank_t bank) {
       return MFS_ERR_NOT_ERASED;
     }
     if (ferr != FLASH_NO_ERROR) {
-      mfsp->state = MFS_READY;
+      mfsp->state = MFS_ERROR;
       return MFS_ERR_FLASH_FAILURE;
     }
 
@@ -795,17 +795,48 @@ void mfsObjectInit(MFSDriver *mfsp) {
  *
  * @param[in] mfsp      pointer to the @p MFSDriver object
  * @param[in] config    pointer to the configuration
+ * @return              The operation status.
+ * @retval MFS_NO_ERROR if the operation has been successfully completed.
+ * @retval MFS_WARN_GC  if the operation triggered a garbage collection.
+ * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
+ *                      failures. Makes the driver enter the @p MFS_ERROR state.
+ * @retval MFS_ERR_INTERNAL if an internal logic failure is detected.
  *
  * @api
  */
-void mfsStart(MFSDriver *mfsp, const MFSConfig *config) {
+mfs_error_t mfsStart(MFSDriver *mfsp, const MFSConfig *config) {
+  unsigned i;
 
   osalDbgCheck((mfsp != NULL) && (config != NULL));
-  osalDbgAssert((mfsp->state == MFS_STOP) || (mfsp->state == MFS_READY),
-                "invalid state");
+  osalDbgAssert((mfsp->state == MFS_STOP) || (mfsp->state == MFS_READY) ||
+                (mfsp->state == MFS_ERROR), "invalid state");
 
+  /* Storing configuration.*/
   mfsp->config = config;
-  mfsp->state  = MFS_READY;
+
+  /* Resetting previous state.*/
+  mfs_state_reset(mfsp);
+
+  /* Attempting to mount the managed partition.*/
+  for (i = 0; i < MFS_CFG_MAX_REPAIR_ATTEMPTS; i++) {
+    mfs_error_t err;
+
+    err = mfs_try_mount(mfsp);
+    if (err == MFS_ERR_INTERNAL) {
+      /* Special case, do not retry on internal errors but report
+         immediately.*/
+      mfsp->state = MFS_ERROR;
+      return err;
+    }
+    if (!MFS_IS_ERROR(err)) {
+      mfsp->state  = MFS_READY;
+      return err;
+    }
+  }
+
+  /* Driver start failed.*/
+  mfsp->state = MFS_ERROR;
+  return MFS_ERR_FLASH_FAILURE;
 } 
 
 /**
@@ -818,80 +849,11 @@ void mfsStart(MFSDriver *mfsp, const MFSConfig *config) {
 void mfsStop(MFSDriver *mfsp) {
 
   osalDbgCheck(mfsp != NULL);
-  osalDbgAssert((mfsp->state == MFS_STOP) || (mfsp->state == MFS_READY),
-                "invalid state");
+  osalDbgAssert((mfsp->state == MFS_STOP) || (mfsp->state == MFS_READY) ||
+                (mfsp->state == MFS_ERROR), "invalid state");
 
   mfsp->config = NULL;
   mfsp->state = MFS_STOP;
-}
-
-/**
- * @brief   Mounts a managed flash storage.
- * @details This functions checks the storage internal state and eventually
- *          performs the required initialization or repair operations.
- *
- * @param[in] mfsp      pointer to the @p MFSDriver object
- * @return              The operation status.
- * @retval MFS_NO_ERROR if the operation has been successfully completed.
- * @retval MFS_WARN_REPAIR if the operation has been completed but a
- *                      repair has been performed.
- * @retval MFS_ERR_INV_STATE if the volume is mounted.
- * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
- *                      failures. Causes the volume to be unmounted.
- *
- * @api
- */
-mfs_error_t mfsMount(MFSDriver *mfsp) {
-  unsigned i;
-
-  osalDbgCheck(mfsp != NULL);
-  osalDbgAssert((mfsp->state == MFS_READY) || (mfsp->state == MFS_MOUNTED),
-                "invalid state");
-
-  if (mfsp->state != MFS_READY) {
-    return MFS_ERR_INV_STATE;
-  }
-
-  /* Clearing state.*/
-  mfs_state_reset(mfsp);
-
-  /* Attempting to mount the managed partition.*/
-  for (i = 0; i < MFS_CFG_MAX_REPAIR_ATTEMPTS; i++) {
-    mfs_error_t err;
-
-    err = mfs_try_mount(mfsp);
-    if (!MFS_IS_ERROR(err)) {
-      mfsp->state = MFS_MOUNTED;
-      return err;
-    }
-  }
-
-  return MFS_ERR_FLASH_FAILURE;
-}
-
-/**
- * @brief   Unmounts a managed flash storage.
- *
- * @param[in] mfsp      pointer to the @p MFSDriver object
- * @return              The operation status.
- * @retval MFS_NO_ERROR if the operation has been successfully completed.
- * @retval MFS_ERR_INV_STATE if the volume is not mounted.
- *
- * @api
- */
-mfs_error_t mfsUnmount(MFSDriver *mfsp) {
-
-  osalDbgCheck(mfsp != NULL);
-  osalDbgAssert((mfsp->state == MFS_READY) || (mfsp->state == MFS_MOUNTED),
-                "invalid state");
-
-  if (mfsp->state != MFS_MOUNTED) {
-    return MFS_ERR_INV_STATE;
-  }
-
-  mfsp->state = MFS_READY;
-
-  return MFS_NO_ERROR;
 }
 
 /**
@@ -899,18 +861,16 @@ mfs_error_t mfsUnmount(MFSDriver *mfsp) {
  *
  * @param[in] mfsp      pointer to the @p MFSDriver object
  * @return              The operation status.
- * @retval MFS_ERR_INV_STATE if the volume is mounted.
+ * @retval MFS_ERR_INV_STATE if the driver is in not in @p MSG_READY state.
  * @retval MFS_NO_ERROR if the operation has been successfully completed.
  * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
- *                      failures. Causes the volume to be unmounted.
+ *                      failures. Makes the driver enter the @p MFS_ERROR state.
  *
  * @api
  */
 mfs_error_t mfsErase(MFSDriver *mfsp) {
 
   osalDbgCheck(mfsp != NULL);
-  osalDbgAssert((mfsp->state == MFS_READY) || (mfsp->state == MFS_MOUNTED),
-                "invalid state");
 
   if (mfsp->state != MFS_READY) {
     return MFS_ERR_INV_STATE;
@@ -918,6 +878,7 @@ mfs_error_t mfsErase(MFSDriver *mfsp) {
 
   RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_0));
   RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_1));
+  /* TODO: Remount.*/
 
   return MFS_NO_ERROR;
 }
@@ -933,12 +894,12 @@ mfs_error_t mfsErase(MFSDriver *mfsp) {
  * @param[out] buffer   pointer to a buffer for record data
  * @return              The operation status.
  * @retval MFS_NO_ERROR if the operation has been successfully completed.
- * @retval MFS_ERR_INV_STATE if the volume is not mounted.
+ * @retval MFS_ERR_INV_STATE if the driver is in not in @p MSG_READY state.
  * @retval MFS_ERR_INV_SIZE if the passed buffer is not large enough to
  *                      contain the record data.
  * @retval MFS_ERR_NOT_FOUND if the specified id does not exists.
  * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
- *                      failures. Causes the volume to be unmounted.
+ *                      failures. Makes the driver enter the @p MFS_ERROR state.
  *
  * @api
  */
@@ -948,10 +909,8 @@ mfs_error_t mfsReadRecord(MFSDriver *mfsp, uint32_t id,
 
   osalDbgCheck((mfsp != NULL) && (id >= 1) && (id <= MFS_CFG_MAX_RECORDS) &&
                (np != NULL) && (buffer != NULL));
-  osalDbgAssert((mfsp->state == MFS_READY) || (mfsp->state == MFS_MOUNTED),
-                "invalid state");
 
-  if (mfsp->state != MFS_MOUNTED) {
+  if (mfsp->state != MFS_READY) {
     return MFS_ERR_INV_STATE;
   }
 
@@ -975,7 +934,7 @@ mfs_error_t mfsReadRecord(MFSDriver *mfsp, uint32_t id,
   /* Checking CRC.*/
   crc = crc16(0xFFFFU, buffer, *np);
   if (crc != mfsp->buffer.dhdr.fields.crc) {
-    mfsp->state = MFS_READY;
+    mfsp->state = MFS_ERROR;
     return MFS_ERR_FLASH_FAILURE;
   }
 
@@ -993,11 +952,11 @@ mfs_error_t mfsReadRecord(MFSDriver *mfsp, uint32_t id,
  * @return              The operation status.
  * @retval MFS_NO_ERROR if the operation has been successfully completed.
  * @retval MFS_WARN_GC  if the operation triggered a garbage collection.
- * @retval MFS_ERR_INV_STATE if the volume is not mounted.
+ * @retval MFS_ERR_INV_STATE if the driver is in not in @p MSG_READY state.
  * @retval MFS_ERR_OUT_OF_MEM if there is not enough flash space for the
  *                      operation.
  * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
- *                      failures. Causes the volume to be unmounted.
+ *                      failures. Makes the driver enter the @p MFS_ERROR state.
  *
  * @api
  */
@@ -1008,10 +967,8 @@ mfs_error_t mfsWriteRecord(MFSDriver *mfsp, uint32_t id,
 
   osalDbgCheck((mfsp != NULL) && (id >= 1) && (id <= MFS_CFG_MAX_RECORDS) &&
                (n > 0U) && (buffer != NULL));
-  osalDbgAssert((mfsp->state == MFS_READY) || (mfsp->state == MFS_MOUNTED),
-                "invalid state");
 
-  if (mfsp->state != MFS_MOUNTED) {
+  if (mfsp->state != MFS_READY) {
     return MFS_ERR_INV_STATE;
   }
 
@@ -1082,9 +1039,9 @@ mfs_error_t mfsWriteRecord(MFSDriver *mfsp, uint32_t id,
  * @return              The operation status.
  * @retval MFS_NO_ERROR if the operation has been successfully completed.
  * @retval MFS_WARN_GC  if the operation triggered a garbage collection.
- * @retval MFS_ERR_INV_STATE if the volume is not mounted.
+ * @retval MFS_ERR_INV_STATE if the driver is in not in @p MSG_READY state.
  * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
- *                      failures. Causes the volume to be unmounted.
+ *                      failures. Makes the driver enter the @p MFS_ERROR state.
  * @retval MFS_ERR_INTERNAL if an internal logic failure is detected.
  *
  * @api
@@ -1094,10 +1051,8 @@ mfs_error_t mfsEraseRecord(MFSDriver *mfsp, uint32_t id) {
   bool warning = false;
 
   osalDbgCheck((mfsp != NULL) && (id >= 1) && (id <= MFS_CFG_MAX_RECORDS));
-  osalDbgAssert((mfsp->state == MFS_READY) || (mfsp->state == MFS_MOUNTED),
-                "invalid state");
 
-  if (mfsp->state != MFS_MOUNTED) {
+  if (mfsp->state != MFS_READY) {
     return MFS_ERR_INV_STATE;
   }
 
@@ -1151,19 +1106,17 @@ mfs_error_t mfsEraseRecord(MFSDriver *mfsp, uint32_t id) {
  * @param[in] mfsp      pointer to the @p MFSDriver object
  * @return              The operation status.
  * @retval MFS_NO_ERROR if the operation has been successfully completed.
- * @retval MFS_ERR_INV_STATE if the volume is not mounted.
+ * @retval MFS_ERR_INV_STATE if the driver is in not in @p MSG_READY state.
  * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
- *                      failures. Causes the volume to be unmounted.
+ *                      failures. Makes the driver enter the @p MFS_ERROR state.
  *
  * @api
  */
 mfs_error_t mfsPerformGarbageCollection(MFSDriver *mfsp) {
 
   osalDbgCheck(mfsp != NULL);
-  osalDbgAssert((mfsp->state == MFS_READY) || (mfsp->state == MFS_MOUNTED),
-                "invalid state");
 
-  if (mfsp->state != MFS_MOUNTED) {
+  if (mfsp->state != MFS_READY) {
     return MFS_ERR_INV_STATE;
   }
 
