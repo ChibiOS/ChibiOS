@@ -321,7 +321,7 @@ void dmaChannelRelease(sama_dma_channel_t *dmachp) {
   osalDbgCheck(dmachp != NULL);
   uint8_t id;
   /* Check if the channel is free.*/
-  osalDbgAssert(dmachp->state != SAMA_DMA_NOT_FREE,
+  osalDbgAssert(dmachp->state != SAMA_DMA_FREE,
                 "not allocated");
   id = dmaGetControllerId(dmachp->xdmac);
   /* Disables the associated IRQ vector.*/
