@@ -24,7 +24,7 @@
 #include <string.h>
 #include "hal.h"
 
-#if (HAL_USE_CRY == TRUE) || defined(__DOXYGEN__)
+#if HAL_USE_CRY || defined(__DOXYGEN__)
 
 #include "sama_crypto_lld.h"
 /*===========================================================================*/
@@ -1096,8 +1096,6 @@ cryerror_t cry_lld_decrypt_DES_CBC(CRYDriver *cryp, crykey_t key_id,
 	return ret;
 }
 
-
-
-#endif /* HAL_USE_CRY == TRUE */
+#endif /* HAL_USE_CRY */
 
 /** @} */

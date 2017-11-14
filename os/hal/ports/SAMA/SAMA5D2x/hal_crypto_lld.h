@@ -25,7 +25,7 @@
 #ifndef HAL_CRYPTO_LLD_H
 #define HAL_CRYPTO_LLD_H
 
-#if (HAL_USE_CRY == TRUE) || defined(__DOXYGEN__)
+#if HAL_USE_CRY || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -292,7 +292,7 @@ extern "C" {
 }
 #endif
 
-#endif /* HAL_USE_CRY == TRUE */
+#endif /* HAL_USE_CRY */
 
 #endif /* HAL_CRYPTO_LLD_H */
 
