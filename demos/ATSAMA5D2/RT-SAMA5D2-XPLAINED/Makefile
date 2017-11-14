@@ -112,7 +112,7 @@ PROJECT = ch
 # Imported source files and paths
 CHIBIOS = ../../..
 # Startup files.
-include $(CHIBIOS)/os/common/startup/ARM/compilers/GCC/mk/startup_sama5d2.mk
+include $(CHIBIOS)/os/common/startup/ARMCAx-TZ/compilers/GCC/mk/startup_sama5d2.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/ports/SAMA/SAMA5D2x/platform.mk
@@ -127,7 +127,7 @@ include $(CHIBIOS)/test/rt/rt_test.mk
 include $(CHIBIOS)/test/oslib/oslib_test.mk
 
 # Define linker script file here
-LDSCRIPT= $(STARTUPLD)/SAMA5D2-T.ld
+LDSCRIPT= $(STARTUPLD)/SAMA5D2.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -240,7 +240,7 @@ ULIBS =
 # End of user defines
 ##############################################################################
 
-RULESPATH = $(CHIBIOS)/os/common/startup/ARM/compilers/GCC
+RULESPATH = $(CHIBIOS)/os/common/startup/ARMCAx-TZ/compilers/GCC
 include $(RULESPATH)/rules.mk
 
 ##############################################################################
