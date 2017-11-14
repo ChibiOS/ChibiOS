@@ -1,0 +1,862 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SPC5-Config version="1.0.0">
+  <application name="ChibiOS/NIL Test Suite" version="1.0.0" standalone="true" locked="false">
+    <description>Test Specification for ChibiOS/HAL MFS Complex Driver.</description>
+    <component id="org.chibios.spc5.components.portable.generic_startup">
+      <component id="org.chibios.spc5.components.portable.chibios_unitary_tests_engine" />
+    </component>
+    <instances>
+      <instance locked="false" id="org.chibios.spc5.components.portable.generic_startup" />
+      <instance locked="false" id="org.chibios.spc5.components.portable.chibios_unitary_tests_engine">
+        <description>
+          <brief>
+            <value>ChibiOS/HAL MFS Test Suite.</value>
+          </brief>
+          <copyright>
+            <value><![CDATA[/*
+    ChibiOS - Copyright (C) 2006..2017 Giovanni Di Sirio
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/]]></value>
+          </copyright>
+          <introduction>
+            <value>Test suite for ChibiOS/HAL MFS. The purpose of this suite is to perform unit tests on the MFS module and to converge to 100% code coverage through successive improvements.</value>
+          </introduction>
+        </description>
+        <global_data_and_code>
+          <code_prefix>
+            <value>nil_</value>
+          </code_prefix>
+          <global_definitions>
+            <value><![CDATA[#define TEST_SUITE_NAME                     "ChibiOS/NIL Test Suite"
+
+#define TEST_REPORT_HOOK_HEADER test_print_port_info();
+
+extern semaphore_t gsem1, gsem2;
+extern thread_reference_t gtr1;
+extern THD_WORKING_AREA(wa_test_support, 128);
+
+void test_print_port_info(void);
+THD_FUNCTION(test_support, arg);]]></value>
+          </global_definitions>
+          <global_code>
+            <value><![CDATA[void test_print_port_info(void) {
+
+#ifdef PORT_COMPILER_NAME
+  test_print("*** Compiler:     ");
+  test_println(PORT_COMPILER_NAME);
+#endif
+  test_print("*** Architecture: ");
+  test_println(PORT_ARCHITECTURE_NAME);
+#ifdef PORT_CORE_VARIANT_NAME
+  test_print("*** Core Variant: ");
+  test_println(PORT_CORE_VARIANT_NAME);
+#endif
+#ifdef PORT_INFO
+  test_print("*** Port Info:    ");
+  test_println(PORT_INFO);
+#endif
+}
+
+semaphore_t gsem1, gsem2;
+thread_reference_t gtr1;
+
+/*
+ * Support thread.
+ */
+THD_WORKING_AREA(wa_test_support, 128);
+THD_FUNCTION(test_support, arg) {
+#if CH_CFG_USE_EVENTS == TRUE
+  thread_t *tp = (thread_t *)arg;
+#else
+  (void)arg;
+#endif
+
+  /* Initializing global resources.*/
+  chSemObjectInit(&gsem1, 0);
+  chSemObjectInit(&gsem2, 0);
+
+  while (true) {
+    chSysLock();
+    if (chSemGetCounterI(&gsem1) < 0)
+      chSemSignalI(&gsem1);
+    chSemResetI(&gsem2, 0);
+    chThdResumeI(&gtr1, MSG_OK);
+#if CH_CFG_USE_EVENTS == TRUE
+    chEvtSignalI(tp, 0x55);
+#endif
+    chSchRescheduleS();
+    chSysUnlock();
+
+    chThdSleepMilliseconds(250);
+  }
+}]]></value>
+          </global_code>
+        </global_data_and_code>
+        <sequences>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
+              <value>Functional tests.</value>
+            </brief>
+            <description>
+              <value>The APIs are tested for functionality, correct cases and expected error cases are tested.</value>
+            </description>
+            <shared_code>
+              <value><![CDATA[#include <string.h>
+#include "key_storage.h"
+
+static const uint8_t pattern1[] = {
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+};
+
+static const uint8_t pattern2[] = {
+  16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+  32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47
+};
+
+static const uint8_t pattern3[] = {
+  48, 49, 50, 51, 52, 53, 54, 55, 56, 57
+};
+
+static const uint8_t pattern512[] = {
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+  16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+  32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
+  48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+  16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+  32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
+  48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+  16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+  32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
+  48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+  16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+  32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
+  48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+  16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+  32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
+  48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+  16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+  32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
+  48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+  16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+  32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
+  48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+  16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+  32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
+  48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63
+};]]></value>
+            </shared_code>
+            <cases>
+              <case>
+                <brief>
+                  <value>Testing ksInit() behavior.</value>
+                </brief>
+                <description>
+                  <value>The initialization function is tested. This function can fail only in case of Flash Array failures or in case of unexpected internal errors.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value><![CDATA[ksDeinit();]]></value>
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Erasing the flash array using a low level function.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[bool result;
+
+ks_lld_init();
+result = ks_lld_block_erase(KS_BLOCK0);
+test_assert(!result, "Block 0 erase failure");
+result = ks_lld_block_erase(KS_BLOCK1);
+test_assert(!result, "Block 1 erase failure");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Calling ksInit() on an uninitialized flash array, KS_NOERROR is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[kserror_t error;
+
+error = ksInit();
+test_assert(error == KS_NOERROR, "initialization error with erased flash");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Calling ksInit() on a newly initialized flash array, KS_NOERROR is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[kserror_t error;
+
+error = ksInit();
+test_assert(error == KS_NOERROR, "initialization error with initialized flash");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Checking for non existing keys.</value>
+                </brief>
+                <description>
+                  <value>The keys space is explored with an initialized but empty keys storage, no key should exist.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[ksInit();]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value><![CDATA[ksDeinit();]]></value>
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Exploring the keys space, KS_KEY_NOT_FOUND is expected for each key.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[kserror_t error;
+kskey_t key;
+size_t size;
+uint8_t *keyp;
+
+for (key = 0; key < KS_CFG_NUM_KEYS; key++) {
+  error = ksGetKey(key, &size, &keyp);
+  test_assert(error == KS_KEY_NOT_FOUND,
+              "found a key that should not exists");
+}]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Creating, updating and erasing a key.</value>
+                </brief>
+                <description>
+                  <value>A key is created, updated several times with different payloads and finally erased.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[ksInit();]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value><![CDATA[ksDeinit();]]></value>
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[size_t size;
+uint8_t *keyp;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>The key must not already exists, KS_KEY_NOT_FOUND is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[kserror_t error = ksGetKey(0, &size, &keyp);
+test_assert(error == KS_KEY_NOT_FOUND, "key was already present");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Creating the key then retrieving it again, KS_KEY_NOT_FOUND is expected, key content and size are compared with the original.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[kserror_t error;
+
+error = ksWriteKey(0, sizeof(pattern1), pattern1);
+test_assert(error == KS_NOERROR, "error creating the key");
+error = ksGetKey(0, &size, &keyp);
+test_assert(error == KS_NOERROR, "key not found");
+test_assert(size == sizeof(pattern1), "unexpected key length");
+test_assert(memcmp(pattern1, keyp, size) == 0, "wrong key content");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Updating the key then retrieving it again, KS_NOERROR is expected, key content and size are compared with the original.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[kserror_t error;
+
+error = ksWriteKey(0, sizeof(pattern2), pattern2);
+test_assert(error == KS_NOERROR, "error updating the key");
+error = ksGetKey(0, &size, &keyp);
+test_assert(error == KS_NOERROR, "key not found");
+test_assert(size == sizeof(pattern2), "unexpected key length");
+test_assert(memcmp(pattern2, keyp, size) == 0, "wrong key content");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Updating the key again with an unaligned key size then retrieving it again, KS_NOERROR is expected, key content and size are compared with the original.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[kserror_t error;
+
+error = ksWriteKey(0, sizeof(pattern3), pattern3);
+test_assert(error == KS_NOERROR, "error updating the key");
+error = ksGetKey(0, &size, &keyp);
+test_assert(error == KS_NOERROR, "key not found");
+test_assert(size == sizeof(pattern3), "unexpected key length");
+test_assert(memcmp(pattern3, keyp, size) == 0, "wrong key content");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Erasing the key the then retrieving it, KS_NOERROR is expected on erase, KS_KEY_NOT_FOUND is expected on retrieve.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[kserror_t error;
+
+error = ksEraseKey(0);
+test_assert(error == KS_NOERROR, "error erasing the key");
+error = ksGetKey(0, &size, &keyp);
+test_assert(error == KS_KEY_NOT_FOUND, "key not erased");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Erasing the whole storage.</value>
+                </brief>
+                <description>
+                  <value>The key storage is erased and re-initialized.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[ks_lld_block_erase(KS_BLOCK0);
+ks_lld_block_erase(KS_BLOCK1);
+ksInit();]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value><![CDATA[ksDeinit();]]></value>
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Creating keys 0, 1 and 2, KS_NOERROR is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[kserror_t error;
+
+error = ksWriteKey(0, sizeof(pattern1), pattern1);
+test_assert(error == KS_NOERROR, "error creating the key");
+error = ksWriteKey(1, sizeof(pattern2), pattern2);
+test_assert(error == KS_NOERROR, "error creating the key");
+error = ksWriteKey(2, sizeof(pattern3), pattern3);
+test_assert(error == KS_NOERROR, "error creating the key");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Erasing storage and verify that the keys have been removed, KS_NOERROR is expected on erase, KS_KEY_NOT_FOUND is expected on retrieve.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[kserror_t error;
+size_t size;
+uint8_t *keyp;
+
+error = ksErase();
+test_assert(error == KS_NOERROR, "storage erase error");
+error = ksGetKey(0, &size, &keyp);
+test_assert(error == KS_KEY_NOT_FOUND, "key 0 still present");
+error = ksGetKey(1, &size, &keyp);
+test_assert(error == KS_KEY_NOT_FOUND, "key 1 still present");
+error = ksGetKey(2, &size, &keyp);
+test_assert(error == KS_KEY_NOT_FOUND, "key 2 still present");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Testing storage size limit.</value>
+                </brief>
+                <description>
+                  <value>The storage is entirely filled with different keys and the final error is tested.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[ksInit();
+ksErase();]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value><![CDATA[ksDeinit();]]></value>
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Filling up the storage by writing keys with increasing IDs, KS_NOERROR is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[kskey_t key;
+kskey_t kmax = (KS_LLD_BLOCKS_SIZE - sizeof(kskeyheader_t)) /
+               (sizeof(kskeyheader_t) + sizeof(pattern512));
+
+for (key = 0; key < kmax; key++) {
+  kserror_t error;
+  size_t size;
+  uint8_t *keyp;
+
+  error = ksWriteKey(key, sizeof(pattern512), pattern512);
+  test_assert(error == KS_NOERROR, "error creating the key");
+  error = ksGetKey(key, &size, &keyp);
+  test_assert(error == KS_NOERROR, "key not found");
+  test_assert(size == sizeof(pattern512), "unexpected key length");
+  test_assert(memcmp(pattern512, keyp, size) == 0, "wrong key content");
+}]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Creating one more key, should fail, KS_OUT_OF_MEM is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[kserror_t error;
+kskey_t kmax = (KS_LLD_BLOCKS_SIZE - sizeof(kskeyheader_t)) /
+               (sizeof(kskeyheader_t) + sizeof(pattern512));
+
+error = ksWriteKey(kmax, sizeof(pattern512), pattern512);
+test_assert(error == KS_OUT_OF_MEM, "creation didn't fail");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Adding a smaller key to fill the final gap. A reinitialization is performed and KS_NOERROR is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[kserror_t error;
+size_t remaining;
+
+remaining = KS_LLD_BLOCK0_ADDRESS + KS_LLD_BLOCKS_SIZE - (size_t)ks.free_next;
+test_assert(remaining >= sizeof(kskeyheader_t), "not enough space");
+test_assert((remaining & KS_LLD_PAGE_SIZE) == 0, "unaligned space");
+
+if (remaining > sizeof(kskeyheader_t) * 2) {
+  error = ksWriteKey(KS_CFG_NUM_KEYS - 1,
+                     remaining - (sizeof(kskeyheader_t) * 2),
+                     pattern512);
+  test_assert(error == KS_NOERROR, "error filling remaining space");
+}
+else {
+  if (remaining == sizeof(kskeyheader_t) * 2) {
+    error = ksEraseKey(1);
+    test_assert(error == KS_NOERROR, "error filling remaining space");
+  }
+  error = ksEraseKey(0);
+  test_assert(error == KS_NOERROR, "error filling remaining space");
+}
+
+remaining = KS_LLD_BLOCK0_ADDRESS + KS_LLD_BLOCKS_SIZE - (size_t)ks.free_next;
+test_assert(remaining == 0, "remaining space not zero");
+
+ksDeinit();
+error = ksInit();
+test_assert(error == KS_NOERROR, "initialization error");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Testing garbage collection by writing.</value>
+                </brief>
+                <description>
+                  <value>The garbage collection procedure is triggeredby a write operation and the state of both banks is checked.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[ksInit();
+ksErase();]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value><![CDATA[ksDeinit();]]></value>
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Filling up the storage by writing keys with increasing IDs, KS_NOERROR is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[kskey_t key;
+kskey_t kmax = (KS_LLD_BLOCKS_SIZE - sizeof(kskeyheader_t)) /
+               (sizeof(kskeyheader_t) + sizeof(pattern512));
+
+for (key = 0; key < kmax; key++) {
+  kserror_t error;
+  size_t size;
+  uint8_t *keyp;
+
+  error = ksWriteKey(key, sizeof(pattern512), pattern512);
+  test_assert(error == KS_NOERROR, "error creating the key");
+  error = ksGetKey(key, &size, &keyp);
+  test_assert(error == KS_NOERROR, "key not found");
+  test_assert(size == sizeof(pattern512), "unexpected key length");
+  test_assert(memcmp(pattern512, keyp, size) == 0, "wrong key content");
+}]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Erasing one key in the middle, KS_NOERROR is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[kserror_t error;
+size_t size;
+uint8_t *keyp;
+
+error = ksEraseKey(16);
+test_assert(error == KS_NOERROR, "error erasing the key");
+error = ksGetKey(16, &size, &keyp);
+test_assert(error == KS_KEY_NOT_FOUND, "key not erased");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Writing one more key triggers garbage collection, KS_WARNING is expected, KS state is checked for correctness after the operation.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[kserror_t error;
+size_t size;
+uint8_t *keyp;
+
+test_assert(ks.header->fields.instance == 1, "not first instance");
+error = ksWriteKey(16, sizeof(pattern512), pattern512);
+test_assert(error == KS_WARNING, "error creating the key");
+test_assert(ks.header->fields.instance == 2, "not second instance");
+error = ksGetKey(16, &size, &keyp);
+test_assert(error == KS_NOERROR, "key not found");
+test_assert(size == sizeof(pattern512), "unexpected key length");
+test_assert(memcmp(pattern512, keyp, size) == 0, "wrong key content");
+test_assert(ks.block == KS_BLOCK1, "unexpected block");
+test_assert(ks_lld_is_block_erased(KS_BLOCK0) == true, "block 0 not erased");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Checking for all keys in the new bank, KS_NOERROR is expected for each key.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[kskey_t key;
+kskey_t kmax = (KS_LLD_BLOCKS_SIZE - sizeof(kskeyheader_t)) /
+               (sizeof(kskeyheader_t) + sizeof(pattern512));
+
+for (key = 0; key < KS_CFG_NUM_KEYS; key++) {
+  kserror_t error;
+  size_t size;
+  uint8_t *keyp;
+
+  if (key < kmax) {
+    error = ksGetKey(key, &size, &keyp);
+    test_assert(error == KS_NOERROR, "key not found");
+    test_assert(size == sizeof(pattern512), "unexpected key length");
+    test_assert(memcmp(pattern512, keyp, size) == 0, "wrong key content");
+  }
+  else {
+    error = ksGetKey(key, &size, &keyp);
+    test_assert(error == KS_KEY_NOT_FOUND, "found unexpected key");
+  }
+}]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Erasing one key in the middle, KS_NOERROR is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[kserror_t error;
+size_t size;
+uint8_t *keyp;
+
+error = ksEraseKey(16);
+test_assert(error == KS_NOERROR, "error erasing the key");
+error = ksGetKey(16, &size, &keyp);
+test_assert(error == KS_KEY_NOT_FOUND, "key not erased");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Writing one more key triggers garbage collection, KS_WARNING is expected, KS state is checked for correctness after the operation.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[kserror_t error;
+size_t size;
+uint8_t *keyp;
+
+test_assert(ks.header->fields.instance == 2, "not second instance");
+error = ksWriteKey(16, sizeof(pattern512), pattern512);
+test_assert(error == KS_WARNING, "error creating the key");
+test_assert(ks.header->fields.instance == 3, "not third instance");
+error = ksGetKey(16, &size, &keyp);
+test_assert(error == KS_NOERROR, "key not found");
+test_assert(size == sizeof(pattern512), "unexpected key length");
+test_assert(memcmp(pattern512, keyp, size) == 0, "wrong key content");
+test_assert(ks.block == KS_BLOCK0, "unexpected block");
+test_assert(ks_lld_is_block_erased(KS_BLOCK1) == true, "block 0 not erased");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Checking for all keys in the new bank, KS_NOERROR is expected for each key.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[kskey_t key;
+kskey_t kmax = (KS_LLD_BLOCKS_SIZE - sizeof(kskeyheader_t)) /
+               (sizeof(kskeyheader_t) + sizeof(pattern512));
+
+for (key = 0; key < KS_CFG_NUM_KEYS; key++) {
+  kserror_t error;
+  size_t size;
+  uint8_t *keyp;
+
+  if (key < kmax) {
+    error = ksGetKey(key, &size, &keyp);
+    test_assert(error == KS_NOERROR, "key not found");
+    test_assert(size == sizeof(pattern512), "unexpected key length");
+    test_assert(memcmp(pattern512, keyp, size) == 0, "wrong key content");
+  }
+  else {
+    error = ksGetKey(key, &size, &keyp);
+    test_assert(error == KS_KEY_NOT_FOUND, "found unexpected key");
+  }
+}]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Testing garbage collection by erasing</value>
+                </brief>
+                <description>
+                  <value>The garbage collection procedure is triggeredby an erase operation and the state of both banks is checked.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[ksInit();
+ksErase();]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value><![CDATA[ksDeinit();]]></value>
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Filling up the storage by writing keys with increasing IDs, KS_NOERROR is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[kskey_t key;
+kskey_t kmax = (KS_LLD_BLOCKS_SIZE - sizeof(kskeyheader_t)) /
+               (sizeof(kskeyheader_t) + sizeof(pattern512));
+
+for (key = 0; key < kmax; key++) {
+  kserror_t error;
+  size_t size;
+  uint8_t *keyp;
+
+  error = ksWriteKey(key, sizeof(pattern512), pattern512);
+  test_assert(error == KS_NOERROR, "error creating the key");
+  error = ksGetKey(key, &size, &keyp);
+  test_assert(error == KS_NOERROR, "key not found");
+  test_assert(size == sizeof(pattern512), "unexpected key length");
+  test_assert(memcmp(pattern512, keyp, size) == 0, "wrong key content");
+}]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Erase keys until the flash bank is filled entirely.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[kserror_t error;
+size_t size;
+uint8_t *keyp;
+kskey_t key;
+kskey_t kmax = (KS_LLD_BLOCKS_SIZE - sizeof(kskeyheader_t)) /
+               (sizeof(kskeyheader_t) + sizeof(pattern512));
+kskey_t n = ((KS_LLD_BLOCKS_SIZE - sizeof(kskeyheader_t)) -
+             (kmax * (sizeof(kskeyheader_t) + sizeof(pattern512)))) /
+            sizeof(kskeyheader_t);
+
+for (key = 0; key < n; key++) {
+  error = ksEraseKey(key);
+  test_assert(error == KS_NOERROR, "error erasing the key");
+  error = ksGetKey(key, &size, &keyp);
+  test_assert(error == KS_KEY_NOT_FOUND, "key not erased");
+}]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Erasing one more key triggers garbage collection, KS_WARNING is expected, KS state is checked for correctness after the operation.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[kserror_t error;
+size_t size;
+uint8_t *keyp;
+
+test_assert(ks.header->fields.instance == 1, "not first instance");
+error = ksEraseKey(16);
+test_assert(error == KS_WARNING, "error erasing the key");
+test_assert(ks.header->fields.instance == 2, "not second instance");
+error = ksGetKey(16, &size, &keyp);
+test_assert(error == KS_KEY_NOT_FOUND, "key not erased");
+test_assert(ks.block == KS_BLOCK1, "unexpected block");
+test_assert(ks_lld_is_block_erased(KS_BLOCK0) == true, "block 0 not erased");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+            </cases>
+          </sequence>
+        </sequences>
+      </instance>
+    </instances>
+    <exportedFeatures />
+  </application>
+</SPC5-Config>
