@@ -14,6 +14,9 @@
     limitations under the License.
 */
 #include "hal.h"
+
+#if (HAL_USE_CRY == TRUE) || defined(__DOXYGEN__)
+
 #include "sama_crypto_lld.h"
 
 void sama_aes_lld_write_key(const uint32_t * key, const uint32_t * vectors,
@@ -251,3 +254,6 @@ cryerror_t sama_aes_lld_process_dma(CRYDriver *cryp,  aesparams *params,
 
 }
 
+#endif /* HAL_USE_CRY */
+
+/** @} */

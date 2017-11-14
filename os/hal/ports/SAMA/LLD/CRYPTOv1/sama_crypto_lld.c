@@ -14,6 +14,9 @@
     limitations under the License.
 */
 #include "hal.h"
+
+#if HAL_USE_CRY || defined(__DOXYGEN__)
+
 #include "sama_crypto_lld.h"
 
 #define KEY0_BUFFER_SIZE_W	HAL_CRY_MAX_KEY_SIZE/4
@@ -191,3 +194,7 @@ static void crypto_lld_serve_write_interrupt(CRYDriver *cryp, uint32_t flags) {
 }
 
 #endif
+
+#endif /* HAL_USE_CRY */
+
+/** @} */

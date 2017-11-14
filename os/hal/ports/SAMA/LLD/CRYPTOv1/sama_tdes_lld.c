@@ -14,6 +14,9 @@
  limitations under the License.
  */
 #include "hal.h"
+
+#if (HAL_USE_CRY == TRUE) || defined(__DOXYGEN__)
+
 #include "sama_crypto_lld.h"
 #include "sama_tdes_lld.h"
 
@@ -254,4 +257,8 @@ cryerror_t sama_tdes_lld_dma(CRYDriver *cryp, tdes_config_t *params,
 
 	return CRY_NOERROR;
 }
+
+#endif /* HAL_USE_CRY */
+
+/** @} */
 

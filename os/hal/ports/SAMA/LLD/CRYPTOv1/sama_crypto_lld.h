@@ -16,6 +16,8 @@
 #ifndef SAMA_CRYPTO_LLD_H_
 #define SAMA_CRYPTO_LLD_H_
 
+#if HAL_USE_CRY || defined(__DOXYGEN__)
+
 extern void 		samaCryptoDriverInit(CRYDriver *cryp);
 extern void 		samaCryptoDriverStart(CRYDriver *cryp);
 extern void 		samaCryptoDriverStop(CRYDriver *cryp);
@@ -50,5 +52,8 @@ extern uint32_t key0_buffer[HAL_CRY_MAX_KEY_SIZE/4];
 #include "sama_aes_lld.h"
 #include "sama_tdes_lld.h"
 
+#endif /* HAL_USE_CRY */
 
 #endif //SAMA_CRYPTO_LLD_H_
+
+/** @} */
