@@ -86,6 +86,13 @@ void samaCryptoDriverStart(CRYDriver *cryp) {
 }
 
 void samaCryptoDriverStop(CRYDriver *cryp) {
+#if defined(SAMA_DMA_REQUIRED)
+	if (cryp->config->transfer_mode == TRANSFER_DMA)
+	{
+		dmaChannelRelease(cryp->dmarx);
+		dmaChannelRelease(cryp->dmatx);
+	}
+#endif
 	samaCryptoDriverDisable(cryp);
 }
 
