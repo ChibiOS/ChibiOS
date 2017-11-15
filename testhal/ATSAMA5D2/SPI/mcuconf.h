@@ -123,4 +123,6 @@
 #define SAMA_UART_FLEXCOM4_DMA_IRQ_PRIORITY 4
 #define SAMA_UART_DMA_ERROR_HOOK(uartp)     osalSysHalt("DMA failure")
 
+#define SPI_SELECT_MODE                     SPI_SELECT_MODE_NONE
+
 #endif /* MCUCONF_H */
