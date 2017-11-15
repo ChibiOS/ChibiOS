@@ -187,7 +187,7 @@
  *          Zone. It must be @p TRUE whenever the code is compiled for the
  *          secure side.
  */
-#if !defined(SAMA_NO_INIT) || defined(__DOXYGEN__)
+#if !defined(SAMA_HAL_IS_SECURE) || defined(__DOXYGEN__)
 #define SAMA_HAL_IS_SECURE                  TRUE
 #endif
 
