@@ -34,6 +34,12 @@ static THD_FUNCTION(Thread1, arg) {
   }
 }
 
+static const SerialConfig sdcfg = {
+  115200,
+  0,
+  UART_MR_PAR_NO
+};
+
 /*
  * Application entry point.
  */
@@ -52,11 +58,11 @@ int main(void) {
   /*
    * Activates the serial driver 0 using the driver default configuration.
    */
-  sdStart(&SD0, NULL);
+  sdStart(&SD1, &sdcfg);
 
-  /* Redirecting  UART0 RX on PB26 and UART0 TX on PB 27. */
-  palSetGroupMode(PIOB, PAL_PORT_BIT(26) | PAL_PORT_BIT(27), 0U,
-                  PAL_SAMA_FUNC_PERIPH_C | PAL_MODE_SECURE);
+  /* Redirecting  UART0 RX on PD2 and UART0 TX on PD3. */
+  palSetGroupMode(PIOD, PAL_PORT_BIT(2) | PAL_PORT_BIT(3), 0U,
+                  PAL_SAMA_FUNC_PERIPH_A | PAL_MODE_SECURE);
   /*
    * Creates the blinker thread.
    */
@@ -68,8 +74,8 @@ int main(void) {
    */
   while (true) {
     if(!palReadPad(PIOB, PIOB_USER_PB)) {
-      test_execute((BaseSequentialStream *)&SD0, &rt_test_suite);
-      test_execute((BaseSequentialStream *)&SD0, &oslib_test_suite);
+      test_execute((BaseSequentialStream *)&SD1, &rt_test_suite);
+      test_execute((BaseSequentialStream *)&SD1, &oslib_test_suite);
     }
     chThdSleepMilliseconds(500);
   }

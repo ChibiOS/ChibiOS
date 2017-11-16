@@ -57,8 +57,8 @@
 /*
  * SERIAL driver system settings.
  */
-#define SAMA_SERIAL_USE_UART0               TRUE
-#define SAMA_SERIAL_USE_UART1               FALSE
+#define SAMA_SERIAL_USE_UART0               FALSE
+#define SAMA_SERIAL_USE_UART1               TRUE
 #define SAMA_SERIAL_USE_UART2               FALSE
 #define SAMA_SERIAL_USE_UART3               FALSE
 #define SAMA_SERIAL_USE_UART4               FALSE
