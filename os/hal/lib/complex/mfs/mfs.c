@@ -934,7 +934,7 @@ mfs_error_t mfsReadRecord(MFSDriver *mfsp, mfs_id_t id,
   }
 
   /* Checking if the requested record actually exists.*/
-  if (mfsp->descriptors[id - 1U].offset != 0U) {
+  if (mfsp->descriptors[id - 1U].offset == 0U) {
     return MFS_ERR_NOT_FOUND;
   }
 
@@ -942,6 +942,12 @@ mfs_error_t mfsReadRecord(MFSDriver *mfsp, mfs_id_t id,
   if (*np < mfsp->descriptors[id - 1U].size) {
     return MFS_ERR_INV_SIZE;
   }
+
+  /* Header read from flash.*/
+  RET_ON_ERROR(mfs_flash_read(mfsp,
+                              mfsp->descriptors[id - 1U].offset,
+                              *np,
+                              mfsp->buffer.data8));
 
   /* Data read from flash.*/
   *np = mfsp->descriptors[id - 1U].size;

@@ -42,7 +42,7 @@ const M25QConfig m25qcfg1 = {
 const MFSConfig mfscfg1 = {
   (BaseFlash *)&m25q,
   0xFFFFFFFFU,
-  131072U,
+  4096U,
   0,
   2,
   2,
