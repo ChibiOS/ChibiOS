@@ -6,7 +6,7 @@
 # @brief  AVR Make file, it can be use to build, and program an application to
 #         an AVR MCU like atmega328p, atmega2560 and so on.
 #
-# @author Theodore Ateba, tfateba@gmail.com
+# @author Theodore Ateba, tf.ateba@gmail.com
 #
 ##############################################################################
 
