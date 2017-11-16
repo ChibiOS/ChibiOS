@@ -32,32 +32,6 @@ const QSPIConfig qspicfg1 = {
   STM32_DCR_FSIZE(24) | STM32_DCR_CSHT(1)
 };
 
-qspi_command_t cmd_read_id = {
-  QSPI_CFG_CMD(0x9E) | QSPI_CFG_CMD_MODE_ONE_LINE |
-  QSPI_CFG_ADDR_MODE_NONE |
-  QSPI_CFG_ALT_MODE_NONE |
-  QSPI_CFG_DUMMY_CYCLES(0) |
-  QSPI_CFG_DATA_MODE_ONE_LINE,
-  0,
-  0
-};
-
-/*
- * Generic buffer.
- */
-uint8_t buffer[2048];
-
-const uint8_t pattern[128] = {
-  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-  16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-  16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-  16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-  16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31
-};
-
 M25QDriver m25q;
 
 const M25QConfig m25qcfg1 = {
@@ -105,24 +79,20 @@ int main(void) {
   halInit();
   chSysInit();
 
-  /*
-   * Board-dependent GPIO setup code.
-   */
+  /*Board-dependent GPIO setup code.*/
   portab_setup();
 
-  /*
-   * Starting a serial port for test report output.
-   */
+  /* Starting a serial port for test report output.*/
   sdStart(&PORTAB_SD1, NULL);
 
-  /*
-   * Creates the blinker thread.
-   */
+  /* Initializing and starting M25Q driver.*/
+  m25qObjectInit(&m25q);
+  m25qStart(&m25q, &m25qcfg1);
+
+  /* Creates the blinker thread.*/
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
-  /*
-   * Normal main() thread activity, in this demo it does nothing.
-   */
+  /* Normal main() thread activity, in this demo it does nothing.*/
   while (true) {
     if (palReadLine(PORTAB_LINE_BUTTON) == PORTAB_BUTTON_PRESSED) {
       test_execute((BaseSequentialStream *)&PORTAB_SD1, &mfs_test_suite);
