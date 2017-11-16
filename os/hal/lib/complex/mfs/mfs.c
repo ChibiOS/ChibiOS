@@ -921,11 +921,12 @@ mfs_error_t mfsErase(MFSDriver *mfsp) {
  *
  * @api
  */
-mfs_error_t mfsReadRecord(MFSDriver *mfsp, uint32_t id,
+mfs_error_t mfsReadRecord(MFSDriver *mfsp, mfs_id_t id,
                           size_t *np, uint8_t *buffer) {
   uint16_t crc;
 
-  osalDbgCheck((mfsp != NULL) && (id >= 1) && (id <= MFS_CFG_MAX_RECORDS) &&
+  osalDbgCheck((mfsp != NULL) &&
+               (id >= 1) && (id <= (mfs_id_t)MFS_CFG_MAX_RECORDS) &&
                (np != NULL) && (buffer != NULL));
 
   if (mfsp->state != MFS_READY) {
@@ -978,12 +979,13 @@ mfs_error_t mfsReadRecord(MFSDriver *mfsp, uint32_t id,
  *
  * @api
  */
-mfs_error_t mfsWriteRecord(MFSDriver *mfsp, uint32_t id,
+mfs_error_t mfsWriteRecord(MFSDriver *mfsp, mfs_id_t id,
                            size_t n, const uint8_t *buffer) {
   flash_offset_t free, required;
   bool warning = false;
 
-  osalDbgCheck((mfsp != NULL) && (id >= 1) && (id <= MFS_CFG_MAX_RECORDS) &&
+  osalDbgCheck((mfsp != NULL) &&
+               (id >= 1) && (id <= (mfs_id_t)MFS_CFG_MAX_RECORDS) &&
                (n > 0U) && (buffer != NULL));
 
   if (mfsp->state != MFS_READY) {
@@ -1064,11 +1066,12 @@ mfs_error_t mfsWriteRecord(MFSDriver *mfsp, uint32_t id,
  *
  * @api
  */
-mfs_error_t mfsEraseRecord(MFSDriver *mfsp, uint32_t id) {
+mfs_error_t mfsEraseRecord(MFSDriver *mfsp, mfs_id_t id) {
   flash_offset_t free, required;
   bool warning = false;
 
-  osalDbgCheck((mfsp != NULL) && (id >= 1) && (id <= MFS_CFG_MAX_RECORDS));
+  osalDbgCheck((mfsp != NULL) &&
+               (id >= 1U) && (id <= (mfs_id_t)MFS_CFG_MAX_RECORDS));
 
   if (mfsp->state != MFS_READY) {
     return MFS_ERR_INV_STATE;

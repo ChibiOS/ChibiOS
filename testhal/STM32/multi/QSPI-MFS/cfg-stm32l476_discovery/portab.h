@@ -37,6 +37,8 @@
 #define PORTAB_LINE_BUTTON          LINE_JOY_CENTER
 #define PORTAB_BUTTON_PRESSED       PAL_HIGH
 
+#define PORTAB_SD1                  SD2
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -60,7 +62,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+  void portab_setup(void);
 #ifdef __cplusplus
 }
 #endif

@@ -174,6 +174,11 @@ typedef enum {
 } mfs_record_state_t;
 
 /**
+ * @brief   Type of a record identifier.
+ */
+typedef uint32_t mfs_id_t;
+
+/**
  * @brief   Type of a bank header.
  * @note    The header resides in the first 16 bytes of a bank.
  */
@@ -352,11 +357,11 @@ extern "C" {
   mfs_error_t mfsStart(MFSDriver *devp, const MFSConfig *config);
   void mfsStop(MFSDriver *devp);
   mfs_error_t mfsErase(MFSDriver *mfsp);
-  mfs_error_t mfsReadRecord(MFSDriver *devp, uint32_t id,
+  mfs_error_t mfsReadRecord(MFSDriver *devp, mfs_id_t id,
                             size_t *np, uint8_t *buffer);
-  mfs_error_t mfsWriteRecord(MFSDriver *devp, uint32_t id,
+  mfs_error_t mfsWriteRecord(MFSDriver *devp, mfs_id_t id,
                              size_t n, const uint8_t *buffer);
-  mfs_error_t mfsEraseRecord(MFSDriver *devp, uint32_t id);
+  mfs_error_t mfsEraseRecord(MFSDriver *devp, mfs_id_t id);
   mfs_error_t mfsPerformGarbageCollection(MFSDriver *mfsp);
 #ifdef __cplusplus
 }

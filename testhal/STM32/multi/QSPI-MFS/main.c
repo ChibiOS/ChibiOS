@@ -22,6 +22,10 @@
 #include "m25q.h"
 #include "mfs.h"
 
+#include "mfs_test_root.h"
+
+#include "portab.h"
+
 /* 16MB device, 2 cycles delay after NCS.*/
 const QSPIConfig qspicfg1 = {
   NULL,
@@ -61,8 +65,6 @@ const M25QConfig m25qcfg1 = {
   &qspicfg1
 };
 
-MFSDriver mfs;
-
 const MFSConfig mfscfg1 = {
   (BaseFlash *)&m25q,
   0xFFFFFFFFU,
@@ -81,9 +83,9 @@ static THD_FUNCTION(Thread1, arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (true) {
-    palToggleLine(LINE_LED_GREEN);
+    palToggleLine(PORTAB_LINE_LED1);
     chThdSleepMilliseconds(500);
-    palToggleLine(LINE_LED_GREEN);
+    palToggleLine(PORTAB_LINE_LED1);
     chThdSleepMilliseconds(500);
   }
 }
@@ -92,7 +94,6 @@ static THD_FUNCTION(Thread1, arg) {
  * Application entry point.
  */
 int main(void) {
-  mfs_error_t err;
 
   /*
    * System initializations.
@@ -105,39 +106,27 @@ int main(void) {
   chSysInit();
 
   /*
-   * LED line as output.
+   * Board-dependent GPIO setup code.
    */
-  palSetLineMode(LINE_LED_GREEN, PAL_MODE_OUTPUT_PUSHPULL);
+  portab_setup();
+
+  /*
+   * Starting a serial port for test report output.
+   */
+  sdStart(&PORTAB_SD1, NULL);
 
   /*
    * Creates the blinker thread.
    */
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO + 1, Thread1, NULL);
-
-  /* Initializing and starting M25Q driver.*/
-  m25qObjectInit(&m25q);
-  m25qStart(&m25q, &m25qcfg1);
-
-  /* Mounting the MFS volume defined in the configuration.*/
-  mfsObjectInit(&mfs);
-  err = mfsStart(&mfs, &mfscfg1);
-  err = mfsErase(&mfs);
-
-  err = mfsWriteRecord(&mfs, 1, 64, pattern);
-  err = mfsWriteRecord(&mfs, 2, 64, pattern);
-  err = mfsWriteRecord(&mfs, 1, 128, pattern);
-  err = mfsWriteRecord(&mfs, 2, 128, pattern);
-
-  err = mfsPerformGarbageCollection(&mfs);
-
-  mfsStop(&mfs);
-
-  (void)err;
+  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   /*
    * Normal main() thread activity, in this demo it does nothing.
    */
   while (true) {
+    if (palReadLine(PORTAB_LINE_BUTTON) == PORTAB_BUTTON_PRESSED) {
+      test_execute((BaseSequentialStream *)&PORTAB_SD1, &mfs_test_suite);
+    }
     chThdSleepMilliseconds(500);
   }
   return 0;

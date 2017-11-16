@@ -38,68 +38,77 @@
             <value>mfs_</value>
           </code_prefix>
           <global_definitions>
-            <value><![CDATA[#define TEST_SUITE_NAME                     "ChibiOS/HAL MFS Test Suite"
+            <value><![CDATA[#include "mfs.h"
 
-#define TEST_REPORT_HOOK_HEADER test_print_port_info();
+#define TEST_SUITE_NAME "ChibiOS/HAL MFS Test Suite"
 
-extern semaphore_t gsem1, gsem2;
-extern thread_reference_t gtr1;
-extern THD_WORKING_AREA(wa_test_support, 128);
+#define TEST_REPORT_HOOK_HEADER test_print_mfs_info();
 
-void test_print_port_info(void);
-THD_FUNCTION(test_support, arg);]]></value>
+extern const MFSConfig mfscfg1;
+extern MFSDriver mfs1;
+extern uint8_t mfs_buffer[512];
+
+flash_error_t bank_erase(mfs_bank_t bank);
+flash_error_t bank_verify_erased(mfs_bank_t bank);
+void test_print_mfs_info(void);]]></value>
           </global_definitions>
           <global_code>
-            <value><![CDATA[void test_print_port_info(void) {
+            <value><![CDATA[#include "mfs.h"
 
-#ifdef PORT_COMPILER_NAME
-  test_print("*** Compiler:     ");
-  test_println(PORT_COMPILER_NAME);
-#endif
-  test_print("*** Architecture: ");
-  test_println(PORT_ARCHITECTURE_NAME);
-#ifdef PORT_CORE_VARIANT_NAME
-  test_print("*** Core Variant: ");
-  test_println(PORT_CORE_VARIANT_NAME);
-#endif
-#ifdef PORT_INFO
-  test_print("*** Port Info:    ");
-  test_println(PORT_INFO);
-#endif
+MFSDriver mfs1;
+uint8_t mfs_buffer[512];
+
+void test_print_mfs_info(void) {
+
 }
 
-semaphore_t gsem1, gsem2;
-thread_reference_t gtr1;
+flash_error_t bank_erase(mfs_bank_t bank) {
+  flash_sector_t sector, end;
 
-/*
- * Support thread.
- */
-THD_WORKING_AREA(wa_test_support, 128);
-THD_FUNCTION(test_support, arg) {
-#if CH_CFG_USE_EVENTS == TRUE
-  thread_t *tp = (thread_t *)arg;
-#else
-  (void)arg;
-#endif
-
-  /* Initializing global resources.*/
-  chSemObjectInit(&gsem1, 0);
-  chSemObjectInit(&gsem2, 0);
-
-  while (true) {
-    chSysLock();
-    if (chSemGetCounterI(&gsem1) < 0)
-      chSemSignalI(&gsem1);
-    chSemResetI(&gsem2, 0);
-    chThdResumeI(&gtr1, MSG_OK);
-#if CH_CFG_USE_EVENTS == TRUE
-    chEvtSignalI(tp, 0x55);
-#endif
-    chSchRescheduleS();
-    chSysUnlock();
-
-    chThdSleepMilliseconds(250);
+  if (bank == MFS_BANK_0) {
+    sector = mfscfg1.bank0_start;
+    end    = mfscfg1.bank0_start + mfscfg1.bank0_sectors;
   }
+  else {
+    sector = mfscfg1.bank1_start;
+    end    = mfscfg1.bank1_start + mfscfg1.bank0_sectors;
+  }
+
+  while (sector < end) {
+    flash_error_t ferr;
+
+    ferr = flashStartEraseSector(mfscfg1.flashp, sector);
+    if (ferr != FLASH_NO_ERROR)
+      return ferr;
+    ferr = flashWaitErase(mfscfg1.flashp);
+    if (ferr != FLASH_NO_ERROR)
+      return ferr;
+    sector++;
+  }
+  return FLASH_NO_ERROR;
+}
+
+flash_error_t bank_verify_erased(mfs_bank_t bank) {
+  flash_sector_t sector, end;
+
+  if (bank == MFS_BANK_0) {
+    sector = mfscfg1.bank0_start;
+    end    = mfscfg1.bank0_start + mfscfg1.bank0_sectors;
+  }
+  else {
+    sector = mfscfg1.bank1_start;
+    end    = mfscfg1.bank1_start + mfscfg1.bank0_sectors;
+  }
+
+  while (sector < end) {
+    flash_error_t ferr;
+
+    ferr = flashVerifyErase(mfscfg1.flashp, sector);
+    if (ferr != FLASH_NO_ERROR)
+      return ferr;
+    sector++;
+  }
+  return FLASH_NO_ERROR;
 }]]></value>
           </global_code>
         </global_data_and_code>
@@ -119,7 +128,7 @@ THD_FUNCTION(test_support, arg) {
             </condition>
             <shared_code>
               <value><![CDATA[#include <string.h>
-#include "key_storage.h"
+#include "mfs.h"
 
 static const uint8_t pattern1[] = {
   0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
@@ -172,7 +181,7 @@ static const uint8_t pattern512[] = {
             <cases>
               <case>
                 <brief>
-                  <value>Testing ksInit() behavior.</value>
+                  <value>Testing mfsStart() behavior.</value>
                 </brief>
                 <description>
                   <value>The initialization function is tested. This function can fail only in case of Flash Array failures or in case of unexpected internal errors.</value>
@@ -182,10 +191,10 @@ static const uint8_t pattern512[] = {
                 </condition>
                 <various_code>
                   <setup_code>
-                    <value />
+                    <value><![CDATA[mfsObjectInit(&mfs1);]]></value>
                   </setup_code>
                   <teardown_code>
-                    <value><![CDATA[ksDeinit();]]></value>
+                    <value><![CDATA[mfsStop(&mfs1);]]></value>
                   </teardown_code>
                   <local_variables>
                     <value />
@@ -200,61 +209,60 @@ static const uint8_t pattern512[] = {
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[bool result;
+                      <value><![CDATA[flash_error_t ferr;
 
-ks_lld_init();
-result = ks_lld_block_erase(KS_BLOCK0);
-test_assert(!result, "Block 0 erase failure");
-result = ks_lld_block_erase(KS_BLOCK1);
-test_assert(!result, "Block 1 erase failure");]]></value>
+ferr = bank_erase(MFS_BANK_0);
+test_assert(ferr == FLASH_NO_ERROR, "Bank 0 erase failure");
+ferr = bank_erase(MFS_BANK_1);
+test_assert(ferr == FLASH_NO_ERROR, "Bank 1 erase failure");]]></value>
                     </code>
                   </step>
                   <step>
                     <description>
-                      <value>Calling ksInit() on an uninitialized flash array, KS_NOERROR is expected.</value>
+                      <value>Calling mfsStart() on an uninitialized flash array, MFS_NO_ERROR is expected.</value>
                     </description>
                     <tags>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[kserror_t error;
+                      <value><![CDATA[mfs_error_t err;
 
-error = ksInit();
-test_assert(error == KS_NOERROR, "initialization error with erased flash");]]></value>
+err = mfsStart(&mfs1, &mfscfg1);
+test_assert(err == MFS_NO_ERROR, "initialization error with erased flash");]]></value>
                     </code>
                   </step>
                   <step>
                     <description>
-                      <value>Calling ksInit() on a newly initialized flash array, KS_NOERROR is expected.</value>
+                      <value>Calling mfsStart() on a newly initialized flash array, MFS_NO_ERROR is expected.</value>
                     </description>
                     <tags>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[kserror_t error;
+                      <value><![CDATA[mfs_error_t err;
 
-error = ksInit();
-test_assert(error == KS_NOERROR, "initialization error with initialized flash");]]></value>
+err = mfsStart(&mfs1, &mfscfg1);
+test_assert(err == MFS_NO_ERROR, "initialization error with initialized flash");]]></value>
                     </code>
                   </step>
                 </steps>
               </case>
               <case>
                 <brief>
-                  <value>Checking for non existing keys.</value>
+                  <value>Checking for non existing record.</value>
                 </brief>
                 <description>
-                  <value>The keys space is explored with an initialized but empty keys storage, no key should exist.</value>
+                  <value>The records space is explored with an initialized but empty managed storage, no record should exist.</value>
                 </description>
                 <condition>
                   <value />
                 </condition>
                 <various_code>
                   <setup_code>
-                    <value><![CDATA[ksInit();]]></value>
+                    <value><![CDATA[mfsStart(&mfs1, &mfscfg1);]]></value>
                   </setup_code>
                   <teardown_code>
-                    <value><![CDATA[ksDeinit();]]></value>
+                    <value><![CDATA[mfsStop(&mfs1);]]></value>
                   </teardown_code>
                   <local_variables>
                     <value />
@@ -263,21 +271,21 @@ test_assert(error == KS_NOERROR, "initialization error with initialized flash");
                 <steps>
                   <step>
                     <description>
-                      <value>Exploring the keys space, KS_KEY_NOT_FOUND is expected for each key.</value>
+                      <value>Exploring the records space, MFS_ERR_NOT_FOUND is expected for each index.</value>
                     </description>
                     <tags>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[kserror_t error;
-kskey_t key;
+                      <value><![CDATA[mfs_error_t err;
+mfs_id_t id;
 size_t size;
-uint8_t *keyp;
 
-for (key = 0; key < KS_CFG_NUM_KEYS; key++) {
-  error = ksGetKey(key, &size, &keyp);
-  test_assert(error == KS_KEY_NOT_FOUND,
-              "found a key that should not exists");
+for (id = 1; id <= MFS_CFG_MAX_RECORDS; id++) {
+  size = sizeof mfs_buffer;
+  err = mfsReadRecord(&mfs1, id, &size, mfs_buffer);
+  test_assert(err == MFS_ERR_NOT_FOUND,
+              "found a record that should not exists");
 }]]></value>
                     </code>
                   </step>
@@ -285,107 +293,92 @@ for (key = 0; key < KS_CFG_NUM_KEYS; key++) {
               </case>
               <case>
                 <brief>
-                  <value>Creating, updating and erasing a key.</value>
+                  <value>Creating, updating and erasing a record.</value>
                 </brief>
                 <description>
-                  <value>A key is created, updated several times with different payloads and finally erased.</value>
+                  <value>A record is created, updated several times with different payloads and finally erased.</value>
                 </description>
                 <condition>
                   <value />
                 </condition>
                 <various_code>
                   <setup_code>
-                    <value><![CDATA[ksInit();]]></value>
+                    <value><![CDATA[mfsStart(&mfs1, &mfscfg1);]]></value>
                   </setup_code>
                   <teardown_code>
-                    <value><![CDATA[ksDeinit();]]></value>
+                    <value><![CDATA[mfsStop(&mfs1);]]></value>
                   </teardown_code>
                   <local_variables>
-                    <value><![CDATA[size_t size;
-uint8_t *keyp;]]></value>
+                    <value><![CDATA[size_t size;]]></value>
                   </local_variables>
                 </various_code>
                 <steps>
                   <step>
                     <description>
-                      <value>The key must not already exists, KS_KEY_NOT_FOUND is expected.</value>
+                      <value>The record must not already exists, MFS_ERR_NOT_FOUND is expected.</value>
                     </description>
                     <tags>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[kserror_t error = ksGetKey(0, &size, &keyp);
-test_assert(error == KS_KEY_NOT_FOUND, "key was already present");]]></value>
+                      <value><![CDATA[size = sizeof mfs_buffer;
+mfs_error_t err = mfsReadRecord(&mfs1, 1, &size, mfs_buffer);
+test_assert(err == MFS_ERR_NOT_FOUND , "record was already present");]]></value>
                     </code>
                   </step>
                   <step>
                     <description>
-                      <value>Creating the key then retrieving it again, KS_KEY_NOT_FOUND is expected, key content and size are compared with the original.</value>
+                      <value>Creating the record then retrieving it again, MFS_ERR_NOT_FOUND is expected, record content and size are compared with the original.</value>
                     </description>
                     <tags>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[kserror_t error;
+                      <value><![CDATA[mfs_error_t err;
 
-error = ksWriteKey(0, sizeof(pattern1), pattern1);
-test_assert(error == KS_NOERROR, "error creating the key");
-error = ksGetKey(0, &size, &keyp);
-test_assert(error == KS_NOERROR, "key not found");
-test_assert(size == sizeof(pattern1), "unexpected key length");
-test_assert(memcmp(pattern1, keyp, size) == 0, "wrong key content");]]></value>
+err = mfsWriteRecord(&mfs1, 1, sizeof pattern1, pattern1);
+test_assert(err == MFS_NO_ERROR, "error creating the record");
+size = sizeof mfs_buffer;
+err = mfsReadRecord(&mfs1, 1, &size, mfs_buffer);
+test_assert(err == MFS_NO_ERROR, "record not found");
+test_assert(size == sizeof pattern1, "unexpected record length");
+test_assert(memcmp(pattern1, mfs_buffer, size) == 0, "wrong record content");]]></value>
                     </code>
                   </step>
                   <step>
                     <description>
-                      <value>Updating the key then retrieving it again, KS_NOERROR is expected, key content and size are compared with the original.</value>
+                      <value>Updating the record then retrieving it again, MFS_NO_ERROR is expected,  record content and size are compared with the original.</value>
                     </description>
                     <tags>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[kserror_t error;
+                      <value><![CDATA[mfs_error_t err;
 
-error = ksWriteKey(0, sizeof(pattern2), pattern2);
-test_assert(error == KS_NOERROR, "error updating the key");
-error = ksGetKey(0, &size, &keyp);
-test_assert(error == KS_NOERROR, "key not found");
-test_assert(size == sizeof(pattern2), "unexpected key length");
-test_assert(memcmp(pattern2, keyp, size) == 0, "wrong key content");]]></value>
+err = mfsWriteRecord(&mfs1, 1, sizeof pattern2, pattern2);
+test_assert(err == MFS_NO_ERROR, "error updating the record");
+size = sizeof mfs_buffer;
+err = mfsReadRecord(&mfs1, 1, &size, mfs_buffer);
+test_assert(err == MFS_NO_ERROR, "record not found");
+test_assert(size == sizeof pattern2, "unexpected record length");
+test_assert(memcmp(pattern2, mfs_buffer, size) == 0, "wrong record content");]]></value>
                     </code>
                   </step>
                   <step>
                     <description>
-                      <value>Updating the key again with an unaligned key size then retrieving it again, KS_NOERROR is expected, key content and size are compared with the original.</value>
+                      <value>Erasing the record then trying to retrieve it again, MFS_NO_ERROR is expected on erase, MFS_ERR_NOT_FOUND is expected on retrieve.</value>
                     </description>
                     <tags>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[kserror_t error;
+                      <value><![CDATA[mfs_error_t err;
 
-error = ksWriteKey(0, sizeof(pattern3), pattern3);
-test_assert(error == KS_NOERROR, "error updating the key");
-error = ksGetKey(0, &size, &keyp);
-test_assert(error == KS_NOERROR, "key not found");
-test_assert(size == sizeof(pattern3), "unexpected key length");
-test_assert(memcmp(pattern3, keyp, size) == 0, "wrong key content");]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>Erasing the key the then retrieving it, KS_NOERROR is expected on erase, KS_KEY_NOT_FOUND is expected on retrieve.</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[kserror_t error;
-
-error = ksEraseKey(0);
-test_assert(error == KS_NOERROR, "error erasing the key");
-error = ksGetKey(0, &size, &keyp);
-test_assert(error == KS_KEY_NOT_FOUND, "key not erased");]]></value>
+err = mfsEraseRecord(&mfs1, 1);
+test_assert(err == MFS_NO_ERROR, "error erasing the record");
+size = sizeof mfs_buffer;
+err = mfsReadRecord(&mfs1, 1, &size, mfs_buffer);
+test_assert(err == MFS_ERR_NOT_FOUND, "record not erased");]]></value>
                     </code>
                   </step>
                 </steps>
@@ -395,19 +388,19 @@ test_assert(error == KS_KEY_NOT_FOUND, "key not erased");]]></value>
                   <value>Erasing the whole storage.</value>
                 </brief>
                 <description>
-                  <value>The key storage is erased and re-initialized.</value>
+                  <value>The managed storage is erased and re-initialized.</value>
                 </description>
                 <condition>
                   <value />
                 </condition>
                 <various_code>
                   <setup_code>
-                    <value><![CDATA[ks_lld_block_erase(KS_BLOCK0);
-ks_lld_block_erase(KS_BLOCK1);
-ksInit();]]></value>
+                    <value><![CDATA[bank_erase(MFS_BANK_0);
+bank_erase(MFS_BANK_1);
+mfsStart(&mfs1, &mfscfg1);]]></value>
                   </setup_code>
                   <teardown_code>
-                    <value><![CDATA[ksDeinit();]]></value>
+                    <value><![CDATA[mfsStop(&mfs1);]]></value>
                   </teardown_code>
                   <local_variables>
                     <value />
@@ -416,42 +409,44 @@ ksInit();]]></value>
                 <steps>
                   <step>
                     <description>
-                      <value>Creating keys 0, 1 and 2, KS_NOERROR is expected.</value>
+                      <value>Creating records 1, 2 and 3, MFS_NO_ERROR is expected.</value>
                     </description>
                     <tags>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[kserror_t error;
+                      <value><![CDATA[mfs_error_t err;
 
-error = ksWriteKey(0, sizeof(pattern1), pattern1);
-test_assert(error == KS_NOERROR, "error creating the key");
-error = ksWriteKey(1, sizeof(pattern2), pattern2);
-test_assert(error == KS_NOERROR, "error creating the key");
-error = ksWriteKey(2, sizeof(pattern3), pattern3);
-test_assert(error == KS_NOERROR, "error creating the key");]]></value>
+err = mfsWriteRecord(&mfs1, 1, sizeof pattern1, pattern1);
+test_assert(err == MFS_NO_ERROR, "error creating record 1");
+err = mfsWriteRecord(&mfs1, 2, sizeof pattern2, pattern2);
+test_assert(err == MFS_NO_ERROR, "error creating record 2");
+err = mfsWriteRecord(&mfs1, 3, sizeof pattern3, pattern3);
+test_assert(err == MFS_NO_ERROR, "error creating record 3");]]></value>
                     </code>
                   </step>
                   <step>
                     <description>
-                      <value>Erasing storage and verify that the keys have been removed, KS_NOERROR is expected on erase, KS_KEY_NOT_FOUND is expected on retrieve.</value>
+                      <value>Erasing storage and verify that the records have been removed, MFS_NO_ERROR is expected on erase, MFS_ERR_NOT_FOUND is expected on retrieve.</value>
                     </description>
                     <tags>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[kserror_t error;
+                      <value><![CDATA[mfs_error_t err;
 size_t size;
-uint8_t *keyp;
 
-error = ksErase();
-test_assert(error == KS_NOERROR, "storage erase error");
-error = ksGetKey(0, &size, &keyp);
-test_assert(error == KS_KEY_NOT_FOUND, "key 0 still present");
-error = ksGetKey(1, &size, &keyp);
-test_assert(error == KS_KEY_NOT_FOUND, "key 1 still present");
-error = ksGetKey(2, &size, &keyp);
-test_assert(error == KS_KEY_NOT_FOUND, "key 2 still present");]]></value>
+err = mfsErase(&mfs1);
+test_assert(err == MFS_NO_ERROR, "storage erase error");
+size = sizeof mfs_buffer;
+err = mfsReadRecord(&mfs1, 1, &size, mfs_buffer);
+test_assert(err == MFS_ERR_NOT_FOUND, "record 0 still present");
+size = sizeof mfs_buffer;
+err = mfsReadRecord(&mfs1, 2, &size, mfs_buffer);
+test_assert(err == MFS_ERR_NOT_FOUND, "record 1 still present");
+size = sizeof mfs_buffer;
+err = mfsReadRecord(&mfs1, 3, &size, mfs_buffer);
+test_assert(err == MFS_ERR_NOT_FOUND, "record 2 still present");]]></value>
                     </code>
                   </step>
                 </steps>
@@ -461,18 +456,18 @@ test_assert(error == KS_KEY_NOT_FOUND, "key 2 still present");]]></value>
                   <value>Testing storage size limit.</value>
                 </brief>
                 <description>
-                  <value>The storage is entirely filled with different keys and the final error is tested.</value>
+                  <value>The storage is entirely filled with different records and the final error is tested.</value>
                 </description>
                 <condition>
                   <value />
                 </condition>
                 <various_code>
                   <setup_code>
-                    <value><![CDATA[ksInit();
-ksErase();]]></value>
+                    <value><![CDATA[mfsStart(&mfs1, &mfscfg1);
+mfsErase(&mfs1);]]></value>
                   </setup_code>
                   <teardown_code>
-                    <value><![CDATA[ksDeinit();]]></value>
+                    <value><![CDATA[mfsStop(&mfs1);]]></value>
                   </teardown_code>
                   <local_variables>
                     <value />
@@ -481,82 +476,86 @@ ksErase();]]></value>
                 <steps>
                   <step>
                     <description>
-                      <value>Filling up the storage by writing keys with increasing IDs, KS_NOERROR is expected.</value>
+                      <value>Filling up the storage by writing records with increasing IDs, MFS_NO_ERROR is expected.</value>
                     </description>
                     <tags>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[kskey_t key;
-kskey_t kmax = (KS_LLD_BLOCKS_SIZE - sizeof(kskeyheader_t)) /
-               (sizeof(kskeyheader_t) + sizeof(pattern512));
+                      <value><![CDATA[mfs_id_t id;
+mfs_id_t id_max = (mfscfg1.bank_size - sizeof (mfs_bank_header_t)) /
+                  (sizeof (mfs_data_header_t) + sizeof pattern512);
 
-for (key = 0; key < kmax; key++) {
-  kserror_t error;
+for (id = 1; id <= id_max; id++) {
+  mfs_error_t err;
   size_t size;
-  uint8_t *keyp;
 
-  error = ksWriteKey(key, sizeof(pattern512), pattern512);
-  test_assert(error == KS_NOERROR, "error creating the key");
-  error = ksGetKey(key, &size, &keyp);
-  test_assert(error == KS_NOERROR, "key not found");
-  test_assert(size == sizeof(pattern512), "unexpected key length");
-  test_assert(memcmp(pattern512, keyp, size) == 0, "wrong key content");
+  err = mfsWriteRecord(&mfs1, id, sizeof pattern512, pattern512);
+  test_assert(err == MFS_NO_ERROR, "error creating the record");
+  size = sizeof mfs_buffer;
+  err = mfsReadRecord(&mfs1, id, &size, mfs_buffer);
+  test_assert(err == MFS_NO_ERROR,
+              "record not found");
+  test_assert(size == sizeof pattern512,
+              "unexpected record length");
+  test_assert(memcmp(pattern512, mfs_buffer, size) == 0,
+              "wrong record content");
 }]]></value>
                     </code>
                   </step>
                   <step>
                     <description>
-                      <value>Creating one more key, should fail, KS_OUT_OF_MEM is expected.</value>
+                      <value>Creating one more record, should fail, MFS_ERR_OUT_OF_MEM is expected.</value>
                     </description>
                     <tags>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[kserror_t error;
-kskey_t kmax = (KS_LLD_BLOCKS_SIZE - sizeof(kskeyheader_t)) /
-               (sizeof(kskeyheader_t) + sizeof(pattern512));
+                      <value><![CDATA[mfs_error_t err;
+mfs_id_t id_max = (mfscfg1.bank_size - sizeof (mfs_bank_header_t)) /
+                  (sizeof (mfs_data_header_t) + sizeof pattern512);
 
-error = ksWriteKey(kmax, sizeof(pattern512), pattern512);
-test_assert(error == KS_OUT_OF_MEM, "creation didn't fail");]]></value>
+err = mfsWriteRecord(&mfs1, id_max, sizeof pattern512 , pattern512);
+test_assert(err == MFS_ERR_OUT_OF_MEM, "creation didn't fail");]]></value>
                     </code>
                   </step>
                   <step>
                     <description>
-                      <value>Adding a smaller key to fill the final gap. A reinitialization is performed and KS_NOERROR is expected.</value>
+                      <value>Adding a smaller record to fill the final gap. A reinitialization is performed and MFS_NO_ERROR is expected.</value>
                     </description>
                     <tags>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[kserror_t error;
+                      <value><![CDATA[mfs_error_t err;
 size_t remaining;
 
-remaining = KS_LLD_BLOCK0_ADDRESS + KS_LLD_BLOCKS_SIZE - (size_t)ks.free_next;
-test_assert(remaining >= sizeof(kskeyheader_t), "not enough space");
-test_assert((remaining & KS_LLD_PAGE_SIZE) == 0, "unaligned space");
+remaining = (size_t)flashGetSectorOffset(mfscfg1.flashp, mfscfg1.bank0_start) +
+            (size_t)mfscfg1.bank_size - (size_t)mfs1.next_offset;
+test_assert(remaining >= sizeof (mfs_data_header_t), "not enough space");
 
-if (remaining > sizeof(kskeyheader_t) * 2) {
-  error = ksWriteKey(KS_CFG_NUM_KEYS - 1,
-                     remaining - (sizeof(kskeyheader_t) * 2),
-                     pattern512);
-  test_assert(error == KS_NOERROR, "error filling remaining space");
+if (remaining > sizeof (mfs_data_header_t) * 2U) {
+  err = mfsWriteRecord(&mfs1, MFS_CFG_MAX_RECORDS - 1U,
+                       remaining - (sizeof (mfs_data_header_t) * 2U),
+                       pattern512);
+  test_assert(err == MFS_NO_ERROR, "error filling remaining space");
 }
 else {
-  if (remaining == sizeof(kskeyheader_t) * 2) {
-    error = ksEraseKey(1);
-    test_assert(error == KS_NOERROR, "error filling remaining space");
+  if (remaining == sizeof (mfs_data_header_t) * 2U) {
+    err = mfsEraseRecord(&mfs1, 2);
+    test_assert(err == MFS_NO_ERROR, "error filling remaining space");
   }
-  error = ksEraseKey(0);
-  test_assert(error == KS_NOERROR, "error filling remaining space");
+  err = mfsEraseRecord(&mfs1, 1);
+  test_assert(err == MFS_NO_ERROR, "error filling remaining space");
 }
 
-remaining = KS_LLD_BLOCK0_ADDRESS + KS_LLD_BLOCKS_SIZE - (size_t)ks.free_next;
-test_assert(remaining == 0, "remaining space not zero");
+remaining = (size_t)flashGetSectorOffset(mfscfg1.flashp, mfscfg1.bank0_start) +
+            (size_t)mfscfg1.bank_size - (size_t)mfs1.next_offset;
+test_assert(remaining == 0U, "remaining space not zero");
 
-ksDeinit();
-error = ksInit();
-test_assert(error == KS_NOERROR, "initialization error");]]></value>
+mfsStop(&mfs1);
+err = mfsStart(&mfs1, &mfscfg1);
+test_assert(err == MFS_NO_ERROR, "initialization error");]]></value>
                     </code>
                   </step>
                 </steps>
@@ -573,11 +572,11 @@ test_assert(error == KS_NOERROR, "initialization error");]]></value>
                 </condition>
                 <various_code>
                   <setup_code>
-                    <value><![CDATA[ksInit();
-ksErase();]]></value>
+                    <value><![CDATA[mfsStart(&mfs1, &mfscfg1);
+mfsErase(&mfs1);]]></value>
                   </setup_code>
                   <teardown_code>
-                    <value><![CDATA[ksDeinit();]]></value>
+                    <value><![CDATA[mfsStop(&mfs1);]]></value>
                   </teardown_code>
                   <local_variables>
                     <value />
@@ -586,170 +585,175 @@ ksErase();]]></value>
                 <steps>
                   <step>
                     <description>
-                      <value>Filling up the storage by writing keys with increasing IDs, KS_NOERROR is expected.</value>
+                      <value>Filling up the storage by writing records with increasing IDs, MFS_NO_ERROR is expected.</value>
                     </description>
                     <tags>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[kskey_t key;
-kskey_t kmax = (KS_LLD_BLOCKS_SIZE - sizeof(kskeyheader_t)) /
-               (sizeof(kskeyheader_t) + sizeof(pattern512));
+                      <value><![CDATA[mfs_id_t id;
+mfs_id_t id_max = (mfscfg1.bank_size - sizeof (mfs_bank_header_t)) /
+                  (sizeof (mfs_data_header_t) + sizeof pattern512);
 
-for (key = 0; key < kmax; key++) {
-  kserror_t error;
+for (id = 1; id <= id_max; id++) {
+  mfs_error_t err;
   size_t size;
-  uint8_t *keyp;
 
-  error = ksWriteKey(key, sizeof(pattern512), pattern512);
-  test_assert(error == KS_NOERROR, "error creating the key");
-  error = ksGetKey(key, &size, &keyp);
-  test_assert(error == KS_NOERROR, "key not found");
-  test_assert(size == sizeof(pattern512), "unexpected key length");
-  test_assert(memcmp(pattern512, keyp, size) == 0, "wrong key content");
+  err = mfsWriteRecord(&mfs1, id, sizeof pattern512, pattern512);
+  test_assert(err == MFS_NO_ERROR, "error creating the record");
+  size = sizeof mfs_buffer;
+  err = mfsReadRecord(&mfs1, id, &size, mfs_buffer);
+  test_assert(err == MFS_NO_ERROR,
+              "record not found");
+  test_assert(size == sizeof pattern512,
+              "unexpected record length");
+  test_assert(memcmp(pattern512, mfs_buffer, size) == 0,
+              "wrong record content");
 }]]></value>
                     </code>
                   </step>
                   <step>
                     <description>
-                      <value>Erasing one key in the middle, KS_NOERROR is expected.</value>
+                      <value>Erasing one record in the middle, MFS_NO_ERROR is expected.</value>
                     </description>
                     <tags>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[kserror_t error;
+                      <value><![CDATA[mfs_error_t err;
 size_t size;
-uint8_t *keyp;
 
-error = ksEraseKey(16);
-test_assert(error == KS_NOERROR, "error erasing the key");
-error = ksGetKey(16, &size, &keyp);
-test_assert(error == KS_KEY_NOT_FOUND, "key not erased");]]></value>
+err = mfsEraseRecord(&mfs1, MFS_CFG_MAX_RECORDS / 2);
+test_assert(err == MFS_NO_ERROR, "error erasing the record");
+size = sizeof mfs_buffer;
+err = mfsReadRecord(&mfs1, MFS_CFG_MAX_RECORDS / 2, &size, mfs_buffer);
+test_assert(err == MFS_ERR_NOT_FOUND, "record not erased");]]></value>
                     </code>
                   </step>
                   <step>
                     <description>
-                      <value>Writing one more key triggers garbage collection, KS_WARNING is expected, KS state is checked for correctness after the operation.</value>
+                      <value>Writing one more record triggers garbage collection, MFS_WARN_GC is expected, KS state is checked for correctness after the operation.</value>
                     </description>
                     <tags>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[kserror_t error;
+                      <value><![CDATA[mfs_error_t err;
 size_t size;
-uint8_t *keyp;
 
-test_assert(ks.header->fields.instance == 1, "not first instance");
-error = ksWriteKey(16, sizeof(pattern512), pattern512);
-test_assert(error == KS_WARNING, "error creating the key");
-test_assert(ks.header->fields.instance == 2, "not second instance");
-error = ksGetKey(16, &size, &keyp);
-test_assert(error == KS_NOERROR, "key not found");
-test_assert(size == sizeof(pattern512), "unexpected key length");
-test_assert(memcmp(pattern512, keyp, size) == 0, "wrong key content");
-test_assert(ks.block == KS_BLOCK1, "unexpected block");
-test_assert(ks_lld_is_block_erased(KS_BLOCK0) == true, "block 0 not erased");]]></value>
+test_assert(mfs1.current_counter == 1, "not first instance");
+err = mfsWriteRecord(&mfs1, 16, sizeof pattern512, pattern512);
+test_assert(err == MFS_WARN_GC, "error creating the record");
+test_assert(mfs1.current_counter == 2, "not second instance");
+size = sizeof mfs_buffer;
+err = mfsReadRecord(&mfs1, 16, &size, mfs_buffer);
+test_assert(err == MFS_NO_ERROR, "record not found");
+test_assert(size == sizeof pattern512, "unexpected record length");
+test_assert(memcmp(pattern512, mfs_buffer, size) == 0, "wrong record content");
+test_assert(mfs1.current_bank == MFS_BANK_1, "unexpected bank");
+test_assert(bank_verify_erased(MFS_BANK_0) == FLASH_NO_ERROR, "bank 0 not erased");]]></value>
                     </code>
                   </step>
                   <step>
                     <description>
-                      <value>Checking for all keys in the new bank, KS_NOERROR is expected for each key.</value>
+                      <value>Checking for all records in the new bank, MFS_NOERROR is expected for each record.</value>
                     </description>
                     <tags>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[kskey_t key;
-kskey_t kmax = (KS_LLD_BLOCKS_SIZE - sizeof(kskeyheader_t)) /
-               (sizeof(kskeyheader_t) + sizeof(pattern512));
+                      <value><![CDATA[mfs_id_t id;
+mfs_id_t id_max = (mfscfg1.bank_size - sizeof (mfs_bank_header_t)) /
+                  (sizeof (mfs_data_header_t) + sizeof pattern512);
 
-for (key = 0; key < KS_CFG_NUM_KEYS; key++) {
-  kserror_t error;
+for (id = 1; id <= id_max; id++) {
+  mfs_error_t err;
   size_t size;
-  uint8_t *keyp;
 
-  if (key < kmax) {
-    error = ksGetKey(key, &size, &keyp);
-    test_assert(error == KS_NOERROR, "key not found");
-    test_assert(size == sizeof(pattern512), "unexpected key length");
-    test_assert(memcmp(pattern512, keyp, size) == 0, "wrong key content");
+  if (id < id_max) {
+    size = sizeof mfs_buffer;
+    err = mfsReadRecord(&mfs1, id, &size, mfs_buffer);
+    test_assert(err == MFS_NO_ERROR, "record not found");
+    test_assert(size == sizeof pattern512, "unexpected record length");
+    test_assert(memcmp(pattern512, mfs_buffer, size) == 0, "wrong record content");
   }
   else {
-    error = ksGetKey(key, &size, &keyp);
-    test_assert(error == KS_KEY_NOT_FOUND, "found unexpected key");
+    size = sizeof mfs_buffer;
+    err = mfsReadRecord(&mfs1, id, &size, mfs_buffer);
+    test_assert(err == MFS_ERR_NOT_FOUND, "found unexpected record");
   }
 }]]></value>
                     </code>
                   </step>
                   <step>
                     <description>
-                      <value>Erasing one key in the middle, KS_NOERROR is expected.</value>
+                      <value>Erasing one record in the middle, MFS_NO_ERROR is expected.</value>
                     </description>
                     <tags>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[kserror_t error;
+                      <value><![CDATA[mfs_error_t err;
 size_t size;
-uint8_t *keyp;
 
-error = ksEraseKey(16);
-test_assert(error == KS_NOERROR, "error erasing the key");
-error = ksGetKey(16, &size, &keyp);
-test_assert(error == KS_KEY_NOT_FOUND, "key not erased");]]></value>
+err = mfsEraseRecord(&mfs1, MFS_CFG_MAX_RECORDS / 2);
+test_assert(err == MFS_NO_ERROR, "error erasing the record");
+size = sizeof mfs_buffer;
+err = mfsReadRecord(&mfs1, MFS_CFG_MAX_RECORDS / 2, &size, mfs_buffer);
+test_assert(err == MFS_ERR_NOT_FOUND, "record not erased");]]></value>
                     </code>
                   </step>
                   <step>
                     <description>
-                      <value>Writing one more key triggers garbage collection, KS_WARNING is expected, KS state is checked for correctness after the operation.</value>
+                      <value>Writing one more record triggers garbage collection, MFS_WARN_GC is expected, MFS object state is checked for correctness after the operation.</value>
                     </description>
                     <tags>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[kserror_t error;
+                      <value><![CDATA[mfs_error_t err;
 size_t size;
-uint8_t *keyp;
 
-test_assert(ks.header->fields.instance == 2, "not second instance");
-error = ksWriteKey(16, sizeof(pattern512), pattern512);
-test_assert(error == KS_WARNING, "error creating the key");
-test_assert(ks.header->fields.instance == 3, "not third instance");
-error = ksGetKey(16, &size, &keyp);
-test_assert(error == KS_NOERROR, "key not found");
-test_assert(size == sizeof(pattern512), "unexpected key length");
-test_assert(memcmp(pattern512, keyp, size) == 0, "wrong key content");
-test_assert(ks.block == KS_BLOCK0, "unexpected block");
-test_assert(ks_lld_is_block_erased(KS_BLOCK1) == true, "block 0 not erased");]]></value>
+test_assert(mfs1.current_counter == 2, "not second instance");
+err = mfsWriteRecord(&mfs1, MFS_CFG_MAX_RECORDS / 2, sizeof pattern512, pattern512);
+test_assert(err == MFS_WARN_GC, "error creating the record");
+test_assert(mfs1.current_counter == 3, "not third instance");
+size = sizeof mfs_buffer;
+err = mfsReadRecord(&mfs1, MFS_CFG_MAX_RECORDS / 2, &size, mfs_buffer);
+test_assert(err == MFS_NO_ERROR, "record not found");
+test_assert(size == sizeof pattern512, "unexpected record length");
+test_assert(memcmp(pattern512, mfs_buffer, size) == 0, "wrong record content");
+test_assert(mfs1.current_bank == MFS_BANK_0, "unexpected bank");
+test_assert(bank_verify_erased(MFS_BANK_1) == FLASH_NO_ERROR, "bank 1 not erased");]]></value>
                     </code>
                   </step>
                   <step>
                     <description>
-                      <value>Checking for all keys in the new bank, KS_NOERROR is expected for each key.</value>
+                      <value>Checking for all records in the new bank, MFS_NO_ERROR is expected for each key.</value>
                     </description>
                     <tags>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[kskey_t key;
-kskey_t kmax = (KS_LLD_BLOCKS_SIZE - sizeof(kskeyheader_t)) /
-               (sizeof(kskeyheader_t) + sizeof(pattern512));
+                      <value><![CDATA[mfs_id_t id;
+mfs_id_t id_max = (mfscfg1.bank_size - sizeof (mfs_bank_header_t)) /
+                  (sizeof (mfs_data_header_t) + sizeof pattern512);
 
-for (key = 0; key < KS_CFG_NUM_KEYS; key++) {
-  kserror_t error;
+for (id = 1; id <= MFS_CFG_MAX_RECORDS; id++) {
+  mfs_error_t err;
   size_t size;
-  uint8_t *keyp;
 
-  if (key < kmax) {
-    error = ksGetKey(key, &size, &keyp);
-    test_assert(error == KS_NOERROR, "key not found");
-    test_assert(size == sizeof(pattern512), "unexpected key length");
-    test_assert(memcmp(pattern512, keyp, size) == 0, "wrong key content");
+  if (id < id_max) {
+    size = sizeof mfs_buffer;
+    err = mfsReadRecord(&mfs1, id, &size, mfs_buffer);
+    test_assert(err == MFS_NO_ERROR, "record not found");
+    test_assert(size == sizeof pattern512, "unexpected record length");
+    test_assert(memcmp(pattern512, mfs_buffer, size) == 0, "wrong record content");
   }
   else {
-    error = ksGetKey(key, &size, &keyp);
-    test_assert(error == KS_KEY_NOT_FOUND, "found unexpected key");
+    size = sizeof mfs_buffer;
+    err = mfsReadRecord(&mfs1, id, &size, mfs_buffer);
+    test_assert(err == MFS_ERR_NOT_FOUND, "found unexpected record");
   }
 }]]></value>
                     </code>
@@ -761,18 +765,18 @@ for (key = 0; key < KS_CFG_NUM_KEYS; key++) {
                   <value>Testing garbage collection by erasing</value>
                 </brief>
                 <description>
-                  <value>The garbage collection procedure is triggeredby an erase operation and the state of both banks is checked.</value>
+                  <value>The garbage collection procedure is triggered by an erase operation and the state of both banks is checked.</value>
                 </description>
                 <condition>
                   <value />
                 </condition>
                 <various_code>
                   <setup_code>
-                    <value><![CDATA[ksInit();
-ksErase();]]></value>
+                    <value><![CDATA[mfsStart(&mfs1, &mfscfg1);
+mfsErase(&mfs1);]]></value>
                   </setup_code>
                   <teardown_code>
-                    <value><![CDATA[ksDeinit();]]></value>
+                    <value><![CDATA[mfsStop(&mfs1);]]></value>
                   </teardown_code>
                   <local_variables>
                     <value />
@@ -781,76 +785,76 @@ ksErase();]]></value>
                 <steps>
                   <step>
                     <description>
-                      <value>Filling up the storage by writing keys with increasing IDs, KS_NOERROR is expected.</value>
+                      <value>Filling up the storage by writing records with increasing IDs, MFS_NO_ERROR is expected.</value>
                     </description>
                     <tags>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[kskey_t key;
-kskey_t kmax = (KS_LLD_BLOCKS_SIZE - sizeof(kskeyheader_t)) /
-               (sizeof(kskeyheader_t) + sizeof(pattern512));
+                      <value><![CDATA[mfs_id_t id;
+mfs_id_t id_max = (mfscfg1.bank_size - sizeof (mfs_bank_header_t)) /
+                  (sizeof (mfs_data_header_t) + sizeof pattern512);
 
-for (key = 0; key < kmax; key++) {
-  kserror_t error;
+for (id = 1; id <= id_max; id++) {
+  mfs_error_t err;
   size_t size;
-  uint8_t *keyp;
 
-  error = ksWriteKey(key, sizeof(pattern512), pattern512);
-  test_assert(error == KS_NOERROR, "error creating the key");
-  error = ksGetKey(key, &size, &keyp);
-  test_assert(error == KS_NOERROR, "key not found");
-  test_assert(size == sizeof(pattern512), "unexpected key length");
-  test_assert(memcmp(pattern512, keyp, size) == 0, "wrong key content");
+  err = mfsWriteRecord(&mfs1, id, sizeof pattern512, pattern512);
+  test_assert(err == MFS_NO_ERROR, "error creating the record");
+  size = sizeof mfs_buffer;
+  err = mfsReadRecord(&mfs1, id, &size, mfs_buffer);
+  test_assert(err == MFS_NO_ERROR, "record not found");
+  test_assert(size == sizeof pattern512, "unexpected record length");
+  test_assert(memcmp(pattern512, mfs_buffer, size) == 0, "wrong record content");
 }]]></value>
                     </code>
                   </step>
                   <step>
                     <description>
-                      <value>Erase keys until the flash bank is filled entirely.</value>
+                      <value>Erase records until the flash bank is filled entirely.</value>
                     </description>
                     <tags>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[kserror_t error;
+                      <value><![CDATA[mfs_error_t err;
 size_t size;
-uint8_t *keyp;
-kskey_t key;
-kskey_t kmax = (KS_LLD_BLOCKS_SIZE - sizeof(kskeyheader_t)) /
-               (sizeof(kskeyheader_t) + sizeof(pattern512));
-kskey_t n = ((KS_LLD_BLOCKS_SIZE - sizeof(kskeyheader_t)) -
-             (kmax * (sizeof(kskeyheader_t) + sizeof(pattern512)))) /
-            sizeof(kskeyheader_t);
+mfs_id_t id;
+mfs_id_t id_max = (mfscfg1.bank_size - sizeof (mfs_bank_header_t)) /
+                  (sizeof (mfs_data_header_t) + sizeof pattern512);
+mfs_id_t n = ((mfscfg1.bank_size - sizeof (mfs_bank_header_t)) -
+              (id_max * (sizeof (mfs_data_header_t) + sizeof pattern512))) /
+             sizeof (mfs_data_header_t);
 
-for (key = 0; key < n; key++) {
-  error = ksEraseKey(key);
-  test_assert(error == KS_NOERROR, "error erasing the key");
-  error = ksGetKey(key, &size, &keyp);
-  test_assert(error == KS_KEY_NOT_FOUND, "key not erased");
+for (id = 1; id <= n; id++) {
+  err = mfsEraseRecord(&mfs1, id);
+  test_assert(err == MFS_NO_ERROR, "error erasing the record");
+  size = sizeof mfs_buffer;
+  err = mfsReadRecord(&mfs1, id, &size, mfs_buffer);
+  test_assert(err == MFS_ERR_NOT_FOUND, "record not erased");
 }]]></value>
                     </code>
                   </step>
                   <step>
                     <description>
-                      <value>Erasing one more key triggers garbage collection, KS_WARNING is expected, KS state is checked for correctness after the operation.</value>
+                      <value>Erasing one more record triggers garbage collection, MFS_WARN_GC is expected, KS state is checked for correctness after the operation.</value>
                     </description>
                     <tags>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[kserror_t error;
+                      <value><![CDATA[mfs_error_t err;
 size_t size;
-uint8_t *keyp;
 
-test_assert(ks.header->fields.instance == 1, "not first instance");
-error = ksEraseKey(16);
-test_assert(error == KS_WARNING, "error erasing the key");
-test_assert(ks.header->fields.instance == 2, "not second instance");
-error = ksGetKey(16, &size, &keyp);
-test_assert(error == KS_KEY_NOT_FOUND, "key not erased");
-test_assert(ks.block == KS_BLOCK1, "unexpected block");
-test_assert(ks_lld_is_block_erased(KS_BLOCK0) == true, "block 0 not erased");]]></value>
+test_assert(mfs1.current_counter == 1, "not first instance");
+err = mfsEraseRecord(&mfs1, MFS_CFG_MAX_RECORDS / 2);
+test_assert(err == MFS_WARN_GC, "error erasing the record");
+test_assert(mfs1.current_counter == 2, "not second instance");
+size = sizeof mfs_buffer;
+err = mfsReadRecord(&mfs1, MFS_CFG_MAX_RECORDS / 2, &size, mfs_buffer);
+test_assert(err == MFS_ERR_NOT_FOUND, "record not erased");
+test_assert(mfs1.current_bank == MFS_BANK_1, "unexpected bank");
+test_assert(bank_verify_erased(MFS_BANK_0) == FLASH_NO_ERROR, "bank 0 not erased");]]></value>
                     </code>
                   </step>
                 </steps>

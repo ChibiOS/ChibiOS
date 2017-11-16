@@ -102,6 +102,8 @@ include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
 # Other files (optional).
+include $(CHIBIOS)/test/lib/test.mk
+include $(CHIBIOS)/test/mfs/mfs_test.mk
 include $(CHIBIOS)/os/ex/Micron/m25q.mk
 include $(CHIBIOS)/os/hal/lib/complex/mfs/mfs.mk
 include $(CHIBIOS)/os/hal/lib/streams/streams.mk
