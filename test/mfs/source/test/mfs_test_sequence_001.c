@@ -711,18 +711,18 @@ static void mfs_test_001_007_execute(void) {
   {
     mfs_id_t id;
     mfs_id_t id_max = (mfscfg1.bank_size - sizeof (mfs_bank_header_t)) /
-                      (sizeof (mfs_data_header_t) + sizeof pattern512);
+                      (sizeof (mfs_data_header_t) + (sizeof pattern512 / 2));
 
     for (id = 1; id <= id_max; id++) {
       mfs_error_t err;
       size_t size;
 
-      err = mfsWriteRecord(&mfs1, id, sizeof pattern512, pattern512);
+      err = mfsWriteRecord(&mfs1, id, (sizeof pattern512 / 2), pattern512);
       test_assert(err == MFS_NO_ERROR, "error creating the record");
       size = sizeof mfs_buffer;
       err = mfsReadRecord(&mfs1, id, &size, mfs_buffer);
       test_assert(err == MFS_NO_ERROR, "record not found");
-      test_assert(size == sizeof pattern512, "unexpected record length");
+      test_assert(size == (sizeof pattern512 / 2), "unexpected record length");
       test_assert(memcmp(pattern512, mfs_buffer, size) == 0, "wrong record content");
     }
   }
@@ -734,9 +734,9 @@ static void mfs_test_001_007_execute(void) {
     size_t size;
     mfs_id_t id;
     mfs_id_t id_max = (mfscfg1.bank_size - sizeof (mfs_bank_header_t)) /
-                      (sizeof (mfs_data_header_t) + sizeof pattern512);
+                      (sizeof (mfs_data_header_t) + (sizeof pattern512 / 2));
     mfs_id_t n = ((mfscfg1.bank_size - sizeof (mfs_bank_header_t)) -
-                  (id_max * (sizeof (mfs_data_header_t) + sizeof pattern512))) /
+                  (id_max * (sizeof (mfs_data_header_t) + (sizeof pattern512 / 2)))) /
                  sizeof (mfs_data_header_t);
 
     for (id = 1; id <= n; id++) {
@@ -755,13 +755,15 @@ static void mfs_test_001_007_execute(void) {
   {
     mfs_error_t err;
     size_t size;
+    mfs_id_t id_max = (mfscfg1.bank_size - sizeof (mfs_bank_header_t)) /
+                      (sizeof (mfs_data_header_t) + (sizeof pattern512 / 2));
 
     test_assert(mfs1.current_counter == 1, "not first instance");
-    err = mfsEraseRecord(&mfs1, MFS_CFG_MAX_RECORDS / 2);
+    err = mfsEraseRecord(&mfs1, id_max);
     test_assert(err == MFS_WARN_GC, "error erasing the record");
     test_assert(mfs1.current_counter == 2, "not second instance");
     size = sizeof mfs_buffer;
-    err = mfsReadRecord(&mfs1, MFS_CFG_MAX_RECORDS / 2, &size, mfs_buffer);
+    err = mfsReadRecord(&mfs1, id_max, &size, mfs_buffer);
     test_assert(err == MFS_ERR_NOT_FOUND, "record not erased");
     test_assert(mfs1.current_bank == MFS_BANK_1, "unexpected bank");
     test_assert(bank_verify_erased(MFS_BANK_0) == FLASH_NO_ERROR, "bank 0 not erased");
