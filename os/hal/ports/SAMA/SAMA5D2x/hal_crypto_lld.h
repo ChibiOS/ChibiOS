@@ -94,6 +94,20 @@ typedef enum  {
 }aesciphersize_t;
 
 
+typedef enum  {
+	CRY_SHA_1,
+	CRY_SHA_224,
+	CRY_SHA_256,
+	CRY_SHA_384,
+	CRY_SHA_512,
+}shadalgo_t;
+
+typedef struct
+{
+	shadalgo_t algo;
+
+}shaparams_t;
+
 /**
  * @brief   CRY key identifier type.
  */

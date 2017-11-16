@@ -51,6 +51,7 @@ extern uint32_t key0_buffer[HAL_CRY_MAX_KEY_SIZE/4];
 
 #include "sama_aes_lld.h"
 #include "sama_tdes_lld.h"
+#include "sama_sha_lld.h"
 
 #endif /* HAL_USE_CRY */
 
