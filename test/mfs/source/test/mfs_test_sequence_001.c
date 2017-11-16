@@ -452,14 +452,16 @@ static void mfs_test_001_005_execute(void) {
                 (size_t)mfscfg1.bank_size - (size_t)mfs1.next_offset;
     test_assert(remaining >= sizeof (mfs_data_header_t), "not enough space");
 
-    if (remaining > sizeof (mfs_data_header_t) * 2U) {
-      err = mfsWriteRecord(&mfs1, MFS_CFG_MAX_RECORDS - 1U,
-                           remaining - (sizeof (mfs_data_header_t) * 2U),
+    if (remaining > sizeof (mfs_data_header_t) * 2) {
+      err = mfsWriteRecord(&mfs1, MFS_CFG_MAX_RECORDS,
+                           remaining - (sizeof (mfs_data_header_t) * 2),
                            pattern512);
+      test_assert(err == MFS_NO_ERROR, "error filling remaining space");
+      err = mfsEraseRecord(&mfs1, MFS_CFG_MAX_RECORDS);
       test_assert(err == MFS_NO_ERROR, "error filling remaining space");
     }
     else {
-      if (remaining == sizeof (mfs_data_header_t) * 2U) {
+      if (remaining == sizeof (mfs_data_header_t) * 2) {
         err = mfsEraseRecord(&mfs1, 2);
         test_assert(err == MFS_NO_ERROR, "error filling remaining space");
       }

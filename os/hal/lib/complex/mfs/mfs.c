@@ -196,6 +196,7 @@ static mfs_error_t mfs_flash_write(MFSDriver *mfsp,
       return MFS_ERR_FLASH_FAILURE;
     }
     n -= chunk;
+    offset += (flash_offset_t)chunk;
     wp += chunk;
   }
 #endif
