@@ -63,18 +63,18 @@ void test_print_mfs_info(void) {
 }
 
 flash_error_t bank_erase(mfs_bank_t bank) {
-  flash_sector_t sector, end;
+  flash_sector_t sector, n;
 
   if (bank == MFS_BANK_0) {
     sector = mfscfg1.bank0_start;
-    end    = mfscfg1.bank0_start + mfscfg1.bank0_sectors;
+    n      = mfscfg1.bank0_sectors;
   }
   else {
     sector = mfscfg1.bank1_start;
-    end    = mfscfg1.bank1_start + mfscfg1.bank0_sectors;
+    n      = mfscfg1.bank1_sectors;
   }
 
-  while (sector < end) {
+  while (n--) {
     flash_error_t ferr;
 
     ferr = flashStartEraseSector(mfscfg1.flashp, sector);
@@ -89,18 +89,18 @@ flash_error_t bank_erase(mfs_bank_t bank) {
 }
 
 flash_error_t bank_verify_erased(mfs_bank_t bank) {
-  flash_sector_t sector, end;
+  flash_sector_t sector, n;
 
   if (bank == MFS_BANK_0) {
     sector = mfscfg1.bank0_start;
-    end    = mfscfg1.bank0_start + mfscfg1.bank0_sectors;
+    n      = mfscfg1.bank0_sectors;
   }
   else {
     sector = mfscfg1.bank1_start;
-    end    = mfscfg1.bank1_start + mfscfg1.bank0_sectors;
+    n      = mfscfg1.bank1_sectors;
   }
 
-  while (sector < end) {
+  while (n--) {
     flash_error_t ferr;
 
     ferr = flashVerifyErase(mfscfg1.flashp, sector);

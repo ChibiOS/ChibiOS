@@ -617,10 +617,11 @@ static mfs_error_t mfs_bank_mount(MFSDriver *mfsp,
  */
 static mfs_error_t mfs_garbage_collect(MFSDriver *mfsp) {
   unsigned i;
-  mfs_bank_t dbank;
+  mfs_bank_t sbank, dbank;
   flash_offset_t dest_offset;
 
-  if (mfsp->current_bank == MFS_BANK_0) {
+  sbank = mfsp->current_bank;
+  if (sbank == MFS_BANK_0) {
     dbank = MFS_BANK_1;
   }
   else {
@@ -652,7 +653,7 @@ static mfs_error_t mfs_garbage_collect(MFSDriver *mfsp) {
   RET_ON_ERROR(mfs_bank_write_header(mfsp, dbank, mfsp->current_counter));
 
   /* The source bank is erased last.*/
-  RET_ON_ERROR(mfs_bank_erase(mfsp, MFS_BANK_0));
+  RET_ON_ERROR(mfs_bank_erase(mfsp, sbank));
 
   return MFS_NO_ERROR;
 }
@@ -1010,7 +1011,8 @@ mfs_error_t mfsWriteRecord(MFSDriver *mfsp, mfs_id_t id,
   }
 
   /* Checking for immediately (not compacted) available space.*/
-  free = mfsp->config->bank_size - mfsp->next_offset;
+  free = (mfs_flash_get_bank_offset(mfsp, mfsp->current_bank) +
+          mfsp->config->bank_size) - mfsp->next_offset;
   if (required > free) {
     /* We need to perform a garbage collection, there is enough space
        but it has to be freed.*/
@@ -1097,7 +1099,8 @@ mfs_error_t mfsEraseRecord(MFSDriver *mfsp, mfs_id_t id) {
   }
 
   /* Checking for immediately (not compacted) available space.*/
-  free = mfsp->config->bank_size - mfsp->next_offset;
+  free = (mfs_flash_get_bank_offset(mfsp, mfsp->current_bank) +
+          mfsp->config->bank_size) - mfsp->next_offset;
   if (required > free) {
     /* We need to perform a garbage collection, there is enough space
        but it has to be freed.*/
