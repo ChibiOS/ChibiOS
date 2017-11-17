@@ -731,7 +731,7 @@ test_assert(bank_verify_erased(MFS_BANK_1) == FLASH_NO_ERROR, "bank 1 not erased
                   </step>
                   <step>
                     <description>
-                      <value>Checking for all records in the new bank, MFS_NO_ERROR is expected for each key.</value>
+                      <value>Checking for all records in the new bank, MFS_NO_ERROR is expected for each record.</value>
                     </description>
                     <tags>
                       <value />
@@ -859,6 +859,150 @@ err = mfsReadRecord(&mfs1, id_max, &size, mfs_buffer);
 test_assert(err == MFS_ERR_NOT_FOUND, "record not erased");
 test_assert(mfs1.current_bank == MFS_BANK_1, "unexpected bank");
 test_assert(bank_verify_erased(MFS_BANK_0) == FLASH_NO_ERROR, "bank 0 not erased");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+            </cases>
+          </sequence>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
+              <value>API Invalid Cases tests.</value>
+            </brief>
+            <description>
+              <value>This test sequence tests the error coded returned by the various APIs when called when the system is not initialized.</value>
+            </description>
+            <condition>
+              <value />
+            </condition>
+            <shared_code>
+              <value><![CDATA[#include "mfs.h"]]></value>
+            </shared_code>
+            <cases>
+              <case>
+                <brief>
+                  <value>Initialization error from APIs.</value>
+                </brief>
+                <description>
+                  <value>The API functions are invoked without prior initialization.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>The function mfsErase() is called, MFS_ERR_INV_STATE is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[mfs_error_t err = mfsErase(&mfs1);
+test_assert(err == MFS_ERR_INV_STATE, "mfsErase() returned wrong status");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The function mfsWriteRecord() is called, MFS_ERR_INV_STATE is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[mfs_error_t err = mfsWriteRecord(&mfs1, 1, 16, mfs_buffer);
+test_assert(err == MFS_ERR_INV_STATE, "mfsWriteRecord() returned wrong status");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The function mfsEraseRecord() is called, MFS_ERR_INV_STATE is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[mfs_error_t err = mfsEraseRecord(&mfs1, 1);
+test_assert(err == MFS_ERR_INV_STATE, "mfsEraseRecord() returned wrong status");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The function mfsReadRecord() is called, MFS_ERR_INV_STATE is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[size_t size = sizeof mfs_buffer;
+mfs_error_t err = mfsReadRecord(&mfs1, 1, &size, mfs_buffer);
+test_assert(err == MFS_ERR_INV_STATE, "mfsReadRecord() returned wrong status");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The function mfsPerformGarbageCollection() is called, MFS_ERR_INV_STATE is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[mfs_error_t err = mfsPerformGarbageCollection(&mfs1);
+test_assert(err == MFS_ERR_INV_STATE, "mfsPerformGarbageCollection() returned wrong status");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Erasing non existing record.</value>
+                </brief>
+                <description>
+                  <value>An erase operation is attempted on an non-existing record.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[mfsStart(&mfs1, &mfscfg1);
+mfsErase(&mfs1);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value><![CDATA[mfsStop(&mfs1);]]></value>
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Record one is erased, the error MFS_ERR_NOT_FOUND is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[mfs_error_t err;
+
+err = mfsEraseRecord(&mfs1, 1);
+test_assert(err != MFS_NO_ERROR, "record was present");
+test_assert(err == MFS_ERR_NOT_FOUND, "invalid error code");]]></value>
                     </code>
                   </step>
                 </steps>

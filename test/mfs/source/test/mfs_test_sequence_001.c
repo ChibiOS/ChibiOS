@@ -507,7 +507,7 @@ static const testcase_t mfs_test_001_005 = {
  *   MFS_WARN_GC is expected, MFS object state is checked for
  *   correctness after the operation.
  * - [1.6.7] Checking for all records in the new bank, MFS_NO_ERROR is
- *   expected for each key.
+ *   expected for each record.
  * .
  */
 
@@ -643,7 +643,7 @@ static void mfs_test_001_006_execute(void) {
   }
 
   /* [1.6.7] Checking for all records in the new bank, MFS_NO_ERROR is
-     expected for each key.*/
+     expected for each record.*/
   test_set_step(7);
   {
     mfs_id_t id;

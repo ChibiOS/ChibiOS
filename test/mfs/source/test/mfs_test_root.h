@@ -25,6 +25,7 @@
 #include "ch_test.h"
 
 #include "mfs_test_sequence_001.h"
+#include "mfs_test_sequence_002.h"
 
 #if !defined(__DOXYGEN__)
 
