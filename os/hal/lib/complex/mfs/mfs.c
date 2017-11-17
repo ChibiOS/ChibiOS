@@ -672,7 +672,7 @@ static mfs_error_t mfs_try_mount(MFSDriver *mfsp) {
   uint32_t cnt0 = 0, cnt1 = 0;
   bool warning = false;
 
-  /* Assessing the state of the two banks by trying to mount them.*/
+  /* Assessing the state of the two banks.*/
   RET_ON_ERROR(mfs_bank_get_state(mfsp, MFS_BANK_0, &sts0, &cnt0));
   RET_ON_ERROR(mfs_bank_get_state(mfsp, MFS_BANK_1, &sts1, &cnt1));
 
