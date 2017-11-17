@@ -886,6 +886,7 @@ void mfsStop(MFSDriver *mfsp) {
  * @retval MFS_NO_ERROR if the operation has been successfully completed.
  * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
  *                      failures. Makes the driver enter the @p MFS_ERROR state.
+ * @retval MFS_ERR_INTERNAL if an internal logic failure is detected.
  *
  * @api
  */
@@ -920,6 +921,7 @@ mfs_error_t mfsErase(MFSDriver *mfsp) {
  * @retval MFS_ERR_NOT_FOUND if the specified id does not exists.
  * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
  *                      failures. Makes the driver enter the @p MFS_ERROR state.
+ * @retval MFS_ERR_INTERNAL if an internal logic failure is detected.
  *
  * @api
  */
@@ -984,6 +986,7 @@ mfs_error_t mfsReadRecord(MFSDriver *mfsp, mfs_id_t id,
  *                      operation.
  * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
  *                      failures. Makes the driver enter the @p MFS_ERROR state.
+ * @retval MFS_ERR_INTERNAL if an internal logic failure is detected.
  *
  * @api
  */
@@ -1140,6 +1143,7 @@ mfs_error_t mfsEraseRecord(MFSDriver *mfsp, mfs_id_t id) {
  * @retval MFS_ERR_INV_STATE if the driver is in not in @p MSG_READY state.
  * @retval MFS_ERR_FLASH_FAILURE if the flash memory is unusable because HW
  *                      failures. Makes the driver enter the @p MFS_ERROR state.
+ * @retval MFS_ERR_INTERNAL if an internal logic failure is detected.
  *
  * @api
  */
