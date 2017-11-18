@@ -28,26 +28,27 @@
 
 /* 16MB device, 2 cycles delay after NCS.*/
 const QSPIConfig qspicfg1 = {
-  NULL,
-  STM32_DCR_FSIZE(24) | STM32_DCR_CSHT(1)
+  .end_cb           = NULL,
+  .dcr              = STM32_DCR_FSIZE(24) | STM32_DCR_CSHT(1)
+};
+
+const M25QConfig m25qcfg1 = {
+  .busp             = &QSPID1,
+  .buscfg           = &qspicfg1
 };
 
 M25QDriver m25q;
 
-const M25QConfig m25qcfg1 = {
-  &QSPID1,
-  &qspicfg1
+const MFSConfig mfscfg1 = {
+  .flashp           = (BaseFlash *)&m25q,
+  .erased           = 0xFFFFFFFFU,
+  .bank_size        = 4096U,
+  .bank0_start      = 0U,
+  .bank0_sectors    = 1U,
+  .bank1_start      = 1U,
+  .bank1_sectors    = 1U
 };
 
-const MFSConfig mfscfg1 = {
-  (BaseFlash *)&m25q,
-  0xFFFFFFFFU,
-  4096U,
-  0,
-  2,
-  2,
-  2
-};
 /*
  * LED blinker thread, times are in milliseconds.
  */

@@ -319,7 +319,7 @@ typedef struct {
   flash_offset_t            used_space;
   /**
    * @brief   Offsets of the most recent instance of the records.
-   * @note    Zero means that ther is not a record with that id.
+   * @note    Zero means that there is not a record with that id.
    */
   mfs_record_descriptor_t   descriptors[MFS_CFG_MAX_RECORDS];
   /**
