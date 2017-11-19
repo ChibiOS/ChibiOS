@@ -61,6 +61,16 @@
 #define STM32_RTCSEL                        STM32_RTCSEL_LSI
 
 /*
+ * IRQ system settings.
+ */
+#define STM32_IRQ_EXTI0_1_IRQ_PRIORITY      3
+#define STM32_IRQ_EXTI2_3_IRQ_PRIORITY      3
+#define STM32_IRQ_EXTI4_15_IRQ_PRIORITY     3
+#define STM32_IRQ_EXTI16_IRQ_PRIORITY       3
+#define STM32_IRQ_EXTI17_20_IRQ_PRIORITY    3
+#define STM32_IRQ_EXTI21_22_IRQ_PRIORITY    3
+
+/*
  * ADC driver system settings.
  */
 #define STM32_ADC_USE_ADC1                  FALSE
@@ -79,24 +89,14 @@
  * DAC driver system settings.
  */
 #define STM32_DAC_DUAL_MODE                 FALSE
-#define STM32_DAC_USE_DAC1_CH1              TRUE
-#define STM32_DAC_USE_DAC1_CH2              TRUE
-#define STM32_DAC_DAC1_CH1_IRQ_PRIORITY     10
-#define STM32_DAC_DAC1_CH2_IRQ_PRIORITY     10
+#define STM32_DAC_USE_DAC1_CH1              FALSE
+#define STM32_DAC_USE_DAC1_CH2              FALSE
+#define STM32_DAC_DAC1_CH1_IRQ_PRIORITY     2
+#define STM32_DAC_DAC1_CH2_IRQ_PRIORITY     2
 #define STM32_DAC_DAC1_CH1_DMA_PRIORITY     2
 #define STM32_DAC_DAC1_CH2_DMA_PRIORITY     2
 #define STM32_DAC_DAC1_CH1_DMA_STREAM       STM32_DMA_STREAM_ID(1, 3)
 #define STM32_DAC_DAC1_CH2_DMA_STREAM       STM32_DMA_STREAM_ID(1, 4)
-
-/*
- * EXT driver system settings.
- */
-#define STM32_EXT_EXTI0_1_IRQ_PRIORITY      3
-#define STM32_EXT_EXTI2_3_IRQ_PRIORITY      3
-#define STM32_EXT_EXTI4_15_IRQ_PRIORITY     3
-#define STM32_EXT_EXTI16_IRQ_PRIORITY       3
-#define STM32_EXT_EXTI17_20_IRQ_PRIORITY    3
-#define STM32_EXT_EXTI21_22_IRQ_PRIORITY    3
 
 /*
  * GPT driver system settings.
@@ -128,25 +128,6 @@
 #define STM32_I2C_I2C2_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 5)
 #define STM32_I2C_I2C2_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 4)
 #define STM32_I2C_DMA_ERROR_HOOK(i2cp)      osalSysHalt("DMA failure")
-
-/*
- * I2S driver system settings.
- */
-#define STM32_I2S_USE_SPI1                  FALSE
-#define STM32_I2S_USE_SPI2                  FALSE
-#define STM32_I2S_SPI1_MODE                 (STM32_I2S_MODE_MASTER |        \
-                                             STM32_I2S_MODE_RX)
-#define STM32_I2S_SPI2_MODE                 (STM32_I2S_MODE_MASTER |        \
-                                             STM32_I2S_MODE_RX)
-#define STM32_I2S_SPI1_IRQ_PRIORITY         2
-#define STM32_I2S_SPI2_IRQ_PRIORITY         2
-#define STM32_I2S_SPI1_DMA_PRIORITY         1
-#define STM32_I2S_SPI2_DMA_PRIORITY         1
-#define STM32_I2S_SPI1_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 2)
-#define STM32_I2S_SPI1_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 3)
-#define STM32_I2S_SPI2_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 4)
-#define STM32_I2S_SPI2_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 5)
-#define STM32_I2S_DMA_ERROR_HOOK(i2sp)      osalSysHalt("DMA failure")
 
 /*
  * I2S driver system settings.

@@ -79,24 +79,6 @@
 #define STM32_ADC_ADC1_DMA_STREAM           STM32_DMA_STREAM_ID(1, 1)
 
 /*
- * DAC driver system settings.
- */
-#define STM32_DAC_USE_DAC1_CH1              FALSE
-#define STM32_DAC_DAC1_CH1_IRQ_PRIORITY     10
-#define STM32_DAC_DAC1_CH1_DMA_PRIORITY     2
-#define STM32_DAC_DAC1_CH1_DMA_STREAM       STM32_DMA_STREAM_ID(1, 3)
-
-/*
- * EXT driver system settings.
- */
-#define STM32_IRQ_EXTI0_1_PRIORITY          3
-#define STM32_IRQ_EXTI2_3_PRIORITY          3
-#define STM32_IRQ_EXTI4_15_PRIORITY         3
-#define STM32_IRQ_EXTI16_PRIORITY           3
-#define STM32_IRQ_EXTI17_20_PRIORITY        3
-#define STM32_IRQ_EXTI21_22_PRIORITY        3
-
-/*
  * GPT driver system settings.
  */
 #define STM32_GPT_USE_TIM1                  FALSE

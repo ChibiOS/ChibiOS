@@ -60,6 +60,15 @@
 #define STM32_RTCSEL                        STM32_RTCSEL_LSI
 
 /*
+ * IRQ system settings.
+ */
+#define STM32_IRQ_EXTI0_1_IRQ_PRIORITY      3
+#define STM32_IRQ_EXTI2_3_IRQ_PRIORITY      3
+#define STM32_IRQ_EXTI4_15_IRQ_PRIORITY     3
+#define STM32_IRQ_EXTI16_IRQ_PRIORITY       3
+#define STM32_IRQ_EXTI17_20_IRQ_PRIORITY    3
+
+/*
  * ADC driver system settings.
  */
 #define STM32_ADC_USE_ADC1                  FALSE
@@ -69,13 +78,23 @@
 #define STM32_ADC_ADC1_DMA_STREAM           STM32_DMA_STREAM_ID(1, 1)
 
 /*
- * EXT driver system settings.
+ * CAN driver system settings.
  */
-#define STM32_EXT_EXTI0_1_IRQ_PRIORITY      3
-#define STM32_EXT_EXTI2_3_IRQ_PRIORITY      3
-#define STM32_EXT_EXTI4_15_IRQ_PRIORITY     3
-#define STM32_EXT_EXTI16_IRQ_PRIORITY       3
-#define STM32_EXT_EXTI17_20_IRQ_PRIORITY    3
+#define STM32_CAN_USE_CAN1                  FALSE
+#define STM32_CAN_CAN1_IRQ_PRIORITY         3
+
+/*
+ * DAC driver system settings.
+ */
+#define STM32_DAC_DUAL_MODE                 FALSE
+#define STM32_DAC_USE_DAC1_CH1              FALSE
+#define STM32_DAC_USE_DAC1_CH2              FALSE
+#define STM32_DAC_DAC1_CH1_IRQ_PRIORITY     2
+#define STM32_DAC_DAC1_CH2_IRQ_PRIORITY     2
+#define STM32_DAC_DAC1_CH1_DMA_PRIORITY     2
+#define STM32_DAC_DAC1_CH2_DMA_PRIORITY     2
+#define STM32_DAC_DAC1_CH1_DMA_STREAM       STM32_DMA_STREAM_ID(1, 3)
+#define STM32_DAC_DAC1_CH2_DMA_STREAM       STM32_DMA_STREAM_ID(1, 4)
 
 /*
  * GPT driver system settings.

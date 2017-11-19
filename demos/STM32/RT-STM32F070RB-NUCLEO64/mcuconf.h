@@ -60,6 +60,16 @@
 #define STM32_RTCSEL                        STM32_RTCSEL_LSI
 
 /*
+ * IRQ system settings.
+ */
+#define STM32_IRQ_EXTI0_1_IRQ_PRIORITY      3
+#define STM32_IRQ_EXTI2_3_IRQ_PRIORITY      3
+#define STM32_IRQ_EXTI4_15_IRQ_PRIORITY     3
+#define STM32_IRQ_EXTI16_IRQ_PRIORITY       3
+#define STM32_IRQ_EXTI17_20_IRQ_PRIORITY    3
+#define STM32_IRQ_EXTI21_22_IRQ_PRIORITY    3
+
+/*
  * ADC driver system settings.
  */
 #define STM32_ADC_USE_ADC1                  FALSE
@@ -69,24 +79,16 @@
 #define STM32_ADC_ADC1_DMA_STREAM           STM32_DMA_STREAM_ID(1, 1)
 
 /*
- * EXT driver system settings.
- */
-#define STM32_EXT_EXTI0_1_IRQ_PRIORITY      3
-#define STM32_EXT_EXTI2_3_IRQ_PRIORITY      3
-#define STM32_EXT_EXTI4_15_IRQ_PRIORITY     3
-#define STM32_EXT_EXTI16_IRQ_PRIORITY       3
-#define STM32_EXT_EXTI17_20_IRQ_PRIORITY    3
-#define STM32_EXT_EXTI21_22_IRQ_PRIORITY    3
-
-/*
  * GPT driver system settings.
  */
 #define STM32_GPT_USE_TIM1                  FALSE
+#define STM32_GPT_USE_TIM2                  FALSE
 #define STM32_GPT_USE_TIM3                  FALSE
 #define STM32_GPT_USE_TIM6                  FALSE
 #define STM32_GPT_USE_TIM7                  FALSE
 #define STM32_GPT_USE_TIM14                 FALSE
 #define STM32_GPT_TIM1_IRQ_PRIORITY         2
+#define STM32_GPT_TIM2_IRQ_PRIORITY         2
 #define STM32_GPT_TIM3_IRQ_PRIORITY         2
 #define STM32_GPT_TIM6_IRQ_PRIORITY         2
 #define STM32_GPT_TIM7_IRQ_PRIORITY         2
@@ -124,8 +126,10 @@
  */
 #define STM32_PWM_USE_ADVANCED              FALSE
 #define STM32_PWM_USE_TIM1                  FALSE
+#define STM32_PWM_USE_TIM2                  FALSE
 #define STM32_PWM_USE_TIM3                  FALSE
 #define STM32_PWM_TIM1_IRQ_PRIORITY         3
+#define STM32_PWM_TIM2_IRQ_PRIORITY         3
 #define STM32_PWM_TIM3_IRQ_PRIORITY         3
 
 /*
