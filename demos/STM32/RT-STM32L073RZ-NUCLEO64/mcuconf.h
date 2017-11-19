@@ -18,14 +18,14 @@
 #define MCUCONF_H
 
 /*
- * STM32L1xx drivers configuration.
+ * STM32L0xx drivers configuration.
  * The following settings override the default settings present in
  * the various device driver implementation headers.
  * Note that the settings for each driver only have effect if the whole
  * driver is enabled in halconf.h.
  *
  * IRQ priorities:
- * 15...0       Lowest...Highest.
+ * 3...0       Lowest...Highest.
  *
  * DMA priorities:
  * 0...3        Lowest...Highest.
@@ -68,6 +68,16 @@
 #define STM32_HSI48SEL                      STM32_HSI48SEL_HSI48
 
 /*
+ * IRQ system settings.
+ */
+#define STM32_IRQ_EXTI0_1_PRIORITY          3
+#define STM32_IRQ_EXTI2_3_PRIORITY          3
+#define STM32_IRQ_EXTI4_15_PRIORITY         3
+#define STM32_IRQ_EXTI16_PRIORITY           3
+#define STM32_IRQ_EXTI17_20_PRIORITY        3
+#define STM32_IRQ_EXTI21_22_PRIORITY        3
+
+/*
  * ADC driver system settings.
  * Note, IRQ is shared with EXT channels 21 and 22.
  */
@@ -90,16 +100,6 @@
 #define STM32_DAC_DAC1_CH2_DMA_PRIORITY     2
 #define STM32_DAC_DAC1_CH1_DMA_STREAM       STM32_DMA_STREAM_ID(1, 2)
 #define STM32_DAC_DAC1_CH2_DMA_STREAM       STM32_DMA_STREAM_ID(1, 4)
-
-/*
- * EXT driver system settings.
- */
-#define STM32_EXT_EXTI0_1_IRQ_PRIORITY      3
-#define STM32_EXT_EXTI2_3_IRQ_PRIORITY      3
-#define STM32_EXT_EXTI4_15_IRQ_PRIORITY     3
-#define STM32_EXT_EXTI16_IRQ_PRIORITY       3
-#define STM32_EXT_EXTI17_20_IRQ_PRIORITY    3
-#define STM32_EXT_EXTI21_22_IRQ_PRIORITY    3
 
 /*
  * GPT driver system settings.

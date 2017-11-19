@@ -67,6 +67,16 @@
 #define STM32_HSI48SEL                      STM32_HSI48SEL_HSI48
 
 /*
+ * IRQ system settings.
+ */
+#define STM32_IRQ_EXTI0_1_PRIORITY          3
+#define STM32_IRQ_EXTI2_3_PRIORITY          3
+#define STM32_IRQ_EXTI4_15_PRIORITY         3
+#define STM32_IRQ_EXTI16_PRIORITY           3
+#define STM32_IRQ_EXTI17_20_PRIORITY        3
+#define STM32_IRQ_EXTI21_22_PRIORITY        3
+
+/*
  * ADC driver system settings.
  * Note, IRQ is shared with EXT channels 21 and 22.
  */
@@ -76,16 +86,6 @@
 #define STM32_ADC_ADC1_DMA_IRQ_PRIORITY     2
 #define STM32_ADC_ADC1_DMA_STREAM           STM32_DMA_STREAM_ID(1, 1)
 #define STM32_ADC_PRESCALER_VALUE           1
-
-/*
- * EXT driver system settings.
- */
-#define STM32_EXT_EXTI0_1_IRQ_PRIORITY      3
-#define STM32_EXT_EXTI2_3_IRQ_PRIORITY      3
-#define STM32_EXT_EXTI4_15_IRQ_PRIORITY     3
-#define STM32_EXT_EXTI16_IRQ_PRIORITY       3
-#define STM32_EXT_EXTI17_20_IRQ_PRIORITY    3
-#define STM32_EXT_EXTI21_22_IRQ_PRIORITY    3
 
 /*
  * GPT driver system settings.
