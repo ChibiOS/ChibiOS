@@ -105,7 +105,7 @@
 #define STM32_IRQ_EXTI18_PRIORITY           6
 #define STM32_IRQ_EXTI19_PRIORITY           6
 #define STM32_IRQ_EXTI20_PRIORITY           6
-#define STM32_IRQ_EXTI2122_PRIORITY         15
+#define STM32_IRQ_EXTI21_22_PRIORITY        15
 
 /*
  * ADC driver system settings.
@@ -278,7 +278,7 @@
 #define STM32_SPI_DMA_ERROR_HOOK(spip)      osalSysHalt("DMA failure")
 
 /*
- * ST driver system settings.+++
+ * ST driver system settings.
  */
 #define STM32_ST_IRQ_PRIORITY               8
 #define STM32_ST_USE_TIMER                  2
@@ -328,7 +328,7 @@
 #define STM32_USB_OTGFIFO_FILL_BASEPRI      0
 
 /*
- * WDG driver system settings.+++
+ * WDG driver system settings.
  */
 #define STM32_WDG_USE_IWDG                  FALSE
 

@@ -92,6 +92,22 @@
 #define STM32_RTCSEL                        STM32_RTCSEL_LSI
 
 /*
+ * IRQ system settings.
+ */
+#define STM32_IRQ_EXTI0_PRIORITY            6
+#define STM32_IRQ_EXTI1_PRIORITY            6
+#define STM32_IRQ_EXTI2_PRIORITY            6
+#define STM32_IRQ_EXTI3_PRIORITY            6
+#define STM32_IRQ_EXTI4_PRIORITY            6
+#define STM32_IRQ_EXTI5_9_PRIORITY          6
+#define STM32_IRQ_EXTI10_15_PRIORITY        6
+#define STM32_IRQ_EXTI1635_38_PRIORITY      6
+#define STM32_IRQ_EXTI18_PRIORITY           6
+#define STM32_IRQ_EXTI19_PRIORITY           6
+#define STM32_IRQ_EXTI20_PRIORITY           6
+#define STM32_IRQ_EXTI21_22_PRIORITY        15
+
+/*
  * ADC driver system settings.
  */
 #define STM32_ADC_DUAL_MODE                 FALSE
@@ -132,23 +148,6 @@
 #define STM32_DAC_DAC1_CH2_DMA_STREAM       STM32_DMA_STREAM_ID(1, 4)
 
 /*
- * EXT driver system settings.
- */
-#define STM32_EXT_EXTI0_IRQ_PRIORITY        6
-#define STM32_EXT_EXTI1_IRQ_PRIORITY        6
-#define STM32_EXT_EXTI2_IRQ_PRIORITY        6
-#define STM32_EXT_EXTI3_IRQ_PRIORITY        6
-#define STM32_EXT_EXTI4_IRQ_PRIORITY        6
-#define STM32_EXT_EXTI5_9_IRQ_PRIORITY      6
-#define STM32_EXT_EXTI10_15_IRQ_PRIORITY    6
-#define STM32_EXT_EXTI1635_38_IRQ_PRIORITY  6
-#define STM32_EXT_EXTI18_IRQ_PRIORITY       6
-#define STM32_EXT_EXTI19_IRQ_PRIORITY       6
-#define STM32_EXT_EXTI20_IRQ_PRIORITY       6
-#define STM32_EXT_EXTI2122_IRQ_PRIORITY     15
-
-
-/*
  * GPT driver system settings.
  */
 #define STM32_GPT_USE_TIM1                  FALSE
@@ -164,8 +163,8 @@
 #define STM32_GPT_USE_TIM17                 FALSE
 #define STM32_GPT_TIM1_IRQ_PRIORITY         7
 #define STM32_GPT_TIM2_IRQ_PRIORITY         7
-#define STM32_GPT_TIM3_IRQ_PRIORITY         7
-#define STM32_GPT_TIM4_IRQ_PRIORITY         7
+#define STM32_GPT_TIM3_IRQ_PRIORITY         6
+#define STM32_GPT_TIM4_IRQ_PRIORITY         8
 #define STM32_GPT_TIM5_IRQ_PRIORITY         7
 #define STM32_GPT_TIM6_IRQ_PRIORITY         7
 #define STM32_GPT_TIM7_IRQ_PRIORITY         7
