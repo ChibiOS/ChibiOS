@@ -90,6 +90,7 @@
 
 *** 17.6.4 ***
 - HAL: Fixed DAC CH2 marked as not present in STM32F091 registry (bug #905).
+- LIB: Fixed chHeapGetSize value is not obtained from the header (bug #904).
 - HAL: Fixed ADC does not build on STM32F030 (bug #903).
 - LIB: Fixed typo for function evtStop (bug #897).
 
