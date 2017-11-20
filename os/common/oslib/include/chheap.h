@@ -173,7 +173,7 @@ static inline void *chHeapAlloc(memory_heap_t *heapp, size_t size) {
  */
 static inline size_t chHeapGetSize(const void *p) {
 
-  return ((heap_header_t *)p)->used.size;
+  return ((heap_header_t *)p - 1U)->used.size;
 }
 
 #endif /* CH_CFG_USE_HEAP == TRUE */

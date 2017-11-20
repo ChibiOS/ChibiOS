@@ -155,6 +155,8 @@
        Updated the various platform.mk implementing "smart build" mode.
 - HAL: Fixed DAC CH2 marked as not present in STM32F091 registry (bug #905)
        (backported to 17.6.4 and 16.1.10).
+- LIB: Fixed chHeapGetSize value is not obtained from the header (bug #904)
+       (backported to 17.6.4).
 - HAL: Fixed ADC does not build on STM32F030 (bug #903)(backported to 17.6.4).
 - LIB: Fixed typo for function evtStop (bug #897)(backported to 17.6.4
        and 16.1.10).
