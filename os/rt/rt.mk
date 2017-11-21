@@ -83,3 +83,7 @@ endif
 # Required include directories
 KERNINC := $(CHIBIOS)/os/rt/include \
            $(CHIBIOS)/os/common/oslib/include
+
+# Shared variables
+ALLCSRC += $(KERNSRC)
+ALLINC  += $(KERNINC)

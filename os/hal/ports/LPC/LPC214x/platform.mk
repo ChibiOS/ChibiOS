@@ -8,3 +8,7 @@ PLATFORMSRC = ${CHIBIOS}/os/hal/ports/LPC/LPC214x/hal_lld.c \
 
 # Required include directories
 PLATFORMINC = ${CHIBIOS}/os/hal/ports/LPC/LPC214x
+
+# Shared variables
+ALLCSRC += $(PLATFORMSRC)
+ALLINC  += $(PLATFORMINC)

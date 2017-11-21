@@ -14,6 +14,11 @@
     limitations under the License.
 */
 
+/*
+ * This file has been automatically generated using ChibiStudio board
+ * generator plugin. Do not edit manually.
+ */
+
 #include "hal.h"
 
 #if HAL_USE_PAL || defined(__DOXYGEN__)

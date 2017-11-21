@@ -31,3 +31,7 @@ include $(CHIBIOS)/os/hal/ports/SAMA/LLD/SPIv1/driver.mk
 include $(CHIBIOS)/os/hal/ports/SAMA/LLD/RTCv1/driver.mk
 include $(CHIBIOS)/os/hal/ports/SAMA/LLD/USARTv1/driver.mk
 include $(CHIBIOS)/os/hal/ports/SAMA/LLD/CRYPTOv1/driver.mk
+
+# Shared variables
+ALLCSRC += $(PLATFORMSRC)
+ALLINC  += $(PLATFORMINC)

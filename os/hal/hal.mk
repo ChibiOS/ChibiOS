@@ -111,3 +111,7 @@ endif
 
 # Required include directories
 HALINC = $(CHIBIOS)/os/hal/include
+
+# Shared variables
+ALLCSRC += $(HALSRC)
+ALLINC  += $(HALINC)

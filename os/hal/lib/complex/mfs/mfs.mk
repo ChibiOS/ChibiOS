@@ -3,3 +3,7 @@ MFSSRC := $(CHIBIOS)/os/hal/lib/complex/mfs/mfs.c
 
 # Required include directories
 MFSINC := $(CHIBIOS)/os/hal/lib/complex/mfs
+
+# Shared variables
+ALLCSRC += $(MFSSRC)
+ALLINC  += $(MFSINC)

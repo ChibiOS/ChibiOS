@@ -6,3 +6,8 @@ PORTASM = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/chcoreasm_v6m.S
 
 PORTINC = $(CHIBIOS)/os/common/ports/ARMCMx \
           $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC
+
+# Shared variables
+ALLASM  += $(PORTASM)
+ALLCSRC += $(PORTSRC)
+ALLINC  += $(PORTINC)

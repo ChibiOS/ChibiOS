@@ -9,3 +9,8 @@ STARTUPINC = ${CHIBIOS}/os/common/startup/ARM/devices/SAMA5D2 \
              $(CHIBIOS)/os/common/ext/ARM/CMSIS/Core_A/Include 
 
 STARTUPLD  = ${CHIBIOS}/os/common/startup/ARM/compilers/GCC/ld
+
+# Shared variables
+ALLASM  += $(STARTUPASM)
+ALLCSRC += $(STARTUPSRC)
+ALLINC  += $(STARTUPINC)

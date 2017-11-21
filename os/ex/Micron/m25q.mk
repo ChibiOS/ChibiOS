@@ -6,3 +6,7 @@ M25QSRC := $(CHIBIOS)/os/hal/lib/peripherals/flash/hal_flash.c \
 # Required include directories
 M25QINC := $(CHIBIOS)/os/hal/lib/peripherals/flash \
            $(CHIBIOS)/os/ex/Micron
+
+# Shared variables
+ALLCSRC += $(M25QSRC)
+ALLINC  += $(M25QINC)

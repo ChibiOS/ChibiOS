@@ -13,3 +13,7 @@ include $(CHIBIOS)/os/hal/ports/AVR/MEGA/LLD/SPIv1/driver.mk
 include $(CHIBIOS)/os/hal/ports/AVR/MEGA/LLD/TIMv1/driver.mk
 include $(CHIBIOS)/os/hal/ports/AVR/MEGA/LLD/USARTv1/driver.mk
 include $(CHIBIOS)/os/hal/ports/AVR/MEGA/LLD/USBv1/driver.mk
+
+# Shared variables
+ALLCSRC += $(PLATFORMSRC)
+ALLINC  += $(PLATFORMINC)

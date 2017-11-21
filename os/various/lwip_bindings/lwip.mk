@@ -15,3 +15,7 @@ LWSRC = $(COREFILES) $(CORE4FILES) $(APIFILES) $(LWBINDSRC) $(NETIFFILES) $(HTTP
 LWINC = \
         $(CHIBIOS)/os/various/lwip_bindings \
         $(LWIPDIR)/include
+
+# Shared variables
+ALLCSRC += $(LWIPSRC)
+ALLINC  += $(LWIPINC)

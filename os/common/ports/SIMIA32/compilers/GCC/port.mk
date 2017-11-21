@@ -5,3 +5,8 @@ PORTASM =
 
 PORTINC = ${CHIBIOS}/os/common/ports/SIMIA32/compilers/GCC \
           ${CHIBIOS}/os/common/ports/SIMIA32
+
+# Shared variables
+ALLASM  += $(PORTASM)
+ALLCSRC += $(PORTSRC)
+ALLINC  += $(PORTINC)

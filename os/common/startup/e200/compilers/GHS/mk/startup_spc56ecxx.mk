@@ -9,3 +9,8 @@ STARTUPINC = ${CHIBIOS}/os/common/startup/e200/compilers/GHS \
              ${CHIBIOS}/os/common/startup/e200/devices/SPC56ECxx
 
 STARTUPLD  = ${CHIBIOS}/os/common/startup/e200/compilers/GHS/ld
+
+# Shared variables
+ALLASM  += $(STARTUPASM)
+ALLCSRC += $(STARTUPSRC)
+ALLINC  += $(STARTUPINC)

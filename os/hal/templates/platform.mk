@@ -96,3 +96,7 @@ endif
 
 # Required include directories
 PLATFORMINC = ${CHIBIOS}/os/hal/templates
+
+# Shared variables
+ALLCSRC += $(PLATFORMSRC)
+ALLINC  += $(PLATFORMINC)

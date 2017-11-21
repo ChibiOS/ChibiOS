@@ -3,3 +3,7 @@ BOARDSRC = $(CHIBIOS)/os/hal/boards/ST_STM32F3_DISCOVERY_REVC/board.c
 
 # Required include directories
 BOARDINC = $(CHIBIOS)/os/hal/boards/ST_STM32F3_DISCOVERY_REVC
+
+# Shared variables
+ALLCSRC += $(BOARDSRC)
+ALLINC  += $(BOARDINC)

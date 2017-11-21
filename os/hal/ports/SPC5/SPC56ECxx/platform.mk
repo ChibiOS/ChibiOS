@@ -13,3 +13,7 @@ PLATFORMINC = ${CHIBIOS}/os/hal/ports/SPC5/SPC56ECxx \
               ${CHIBIOS}/os/hal/ports/SPC5/LLD/LINFlex_v1 \
               ${CHIBIOS}/os/hal/ports/SPC5/LLD/DSPI_v1 \
               ${CHIBIOS}/os/hal/ports/SPC5/LLD/STM_v1
+
+# Shared variables
+ALLCSRC += $(PLATFORMSRC)
+ALLINC  += $(PLATFORMINC)

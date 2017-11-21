@@ -30,3 +30,7 @@ endif
 # Required include directories
 KERNINC := ${CHIBIOS}/os/nil/include \
            ${CHIBIOS}/os/common/oslib/include
+
+# Shared variables
+ALLCSRC += $(KERNSRC)
+ALLINC  += $(KERNINC)
