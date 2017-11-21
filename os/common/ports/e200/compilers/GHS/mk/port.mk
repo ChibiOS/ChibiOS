@@ -8,6 +8,6 @@ PORTINC = $(CHIBIOS)/os/common/ports/e200 \
           $(CHIBIOS)/os/common/ports/e200/compilers/GHS
 
 # Shared variables
-ALLASM  += $(PORTASM)
-ALLCSRC += $(PORTSRC)
-ALLINC  += $(PORTINC)
+ALLXASMSRC += $(PORTASM)
+ALLCSRC    += $(PORTSRC)
+ALLINC     += $(PORTINC)

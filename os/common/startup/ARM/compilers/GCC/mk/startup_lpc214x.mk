@@ -9,6 +9,6 @@ STARTUPINC = ${CHIBIOS}/os/common/startup/ARM/devices/LPC214x
 STARTUPLD  = ${CHIBIOS}/os/common/startup/ARM/compilers/GCC/ld
 
 # Shared variables
-ALLASM  += $(STARTUPASM)
-ALLCSRC += $(STARTUPSRC)
-ALLINC  += $(STARTUPINC)
+ALLXASMSRC += $(STARTUPASM)
+ALLCSRC    += $(STARTUPSRC)
+ALLINC     += $(STARTUPINC)
