@@ -30,7 +30,17 @@ static THD_FUNCTION(Thread1, arg) {
 
   while (true) {
     palToggleLine(LINE_LED_BLUE);
-    chThdSleepMilliseconds(500);
+    chThdSleepMilliseconds(80);
+    palToggleLine(LINE_LED_BLUE);
+    chThdSleepMilliseconds(120);
+    palToggleLine(LINE_LED_BLUE);
+    chThdSleepMilliseconds(120);
+    palToggleLine(LINE_LED_BLUE);
+    chThdSleepMilliseconds(120);
+    palToggleLine(LINE_LED_BLUE);
+    chThdSleepMilliseconds(160);
+    palToggleLine(LINE_LED_BLUE);
+    chThdSleepMilliseconds(600);
   }
 }
 
