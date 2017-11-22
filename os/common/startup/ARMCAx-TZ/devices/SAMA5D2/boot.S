@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    SAMA5D2/boot_tz.S
+ * @file    SAMA5D2/boot.S
  * @brief   SAMA5D2 boot-related code managing the trusted zone.
  *
  * @addtogroup SAMA5D2_BOOT
@@ -89,7 +89,7 @@ Boot_Handler:
                  * Configure the intial catching of the interrupts
                  */
                 ldr     r0, =SCR_RESET_VAL          // IRQ and ABT to monitor in secure mode
-                mrc     p15, 0, r0, c1, c1, 0
+                mcr     p15, 0, r0, c1, c1, 0
 
                 b       Reset_Handler
 #endif /* !defined(__DOXYGEN__) */
