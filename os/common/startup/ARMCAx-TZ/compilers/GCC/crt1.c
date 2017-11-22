@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    ARMCMx/compilers/GCC/crt1.c
+ * @file    ARMCAx-TZ/compilers/GCC/crt1.c
  * @brief   Startup stub functions.
  *
- * @addtogroup ARMCMx_GCC_STARTUP
+ * @addtogroup ARMCAx_GCC_STARTUP
  * @{
  */
 
