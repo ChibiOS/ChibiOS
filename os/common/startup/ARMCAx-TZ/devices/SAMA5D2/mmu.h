@@ -28,7 +28,7 @@
 #ifndef MMU_H
 #define MMU_H
 
-#if !defined(CH_CFG_USE_MMU) || defined(__DOXYGEN__)
+#if defined(CH_CFG_USE_MMU) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module constants.                                                         */

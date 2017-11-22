@@ -25,7 +25,7 @@
  * @{
  */
 
-#if !defined(CH_CFG_USE_MMU) || defined(__DOXYGEN__)
+#if defined(CH_CFG_USE_MMU) || defined(__DOXYGEN__)
 
 #include <stddef.h>
 #include <stdint.h>
