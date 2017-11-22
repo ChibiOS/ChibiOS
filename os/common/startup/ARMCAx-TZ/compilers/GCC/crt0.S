@@ -18,7 +18,7 @@
  * @file    crt0.S
  * @brief   Generic ARM startup file.
  *
- * @addtogroup ARM_GCC_STARTUP
+ * @addtogroup ARMCAx_GCC_STARTUP
  * @{
  */
 
@@ -120,6 +120,9 @@ bssloop:
                  * Late initialization.
                  */
 #if !defined(THUMB_NO_INTERWORKING)
+#if defined(CH_CFG_USE_MMU)
+                bl      __mmu_init
+#endif
                 bl      __late_init
 #else /* defined(THUMB_NO_INTERWORKING) */
                 add     r0, pc, #1
