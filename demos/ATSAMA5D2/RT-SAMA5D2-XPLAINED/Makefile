@@ -225,7 +225,7 @@ CPPWARN = -Wall -Wextra -Wundef
 UDEFS = -DCH_CFG_USE_MMU
 
 # Define ASM defines here
-UADEFS =
+UADEFS = -DCH_CFG_USE_MMU
 
 # List all user directories here
 UINCDIR =
