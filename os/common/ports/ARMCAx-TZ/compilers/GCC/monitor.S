@@ -63,7 +63,7 @@
                 .set    SCR_FW,         0x10
                 .set    SCR_AW,         0x20
 
-                .set    MON_S_SCR,      (SCR_IRQ)
+                .set    MON_S_SCR,      (SCR_IRQ)           // (SCR_EA|SCR_IRQ)
                 .set    MON_NS_SCR,     (SCR_FIQ|SCR_NS)
 
                 .set    MSG_OK,         0
@@ -139,8 +139,8 @@ sm_fiq:
                 mov     r1, lr
                 msr     CPSR_c, #MODE_SYS | I_BIT | F_BIT
                 stmfd   sp!, {r0, r1}                       // push R0=SPSR, R1=LR_MON.
-
-                ldr     r0, =_ns_thread                     // check point: ns_tread != 0
+                                                            // check point: ns_tread != 0
+                ldr     r0, =_ns_thread
                 mov     r1, #MSG_TIMEOUT
 #if CH_DBG_SYSTEM_STATE_CHECK
                 bl      _dbg_check_lock
