@@ -39,6 +39,7 @@
 #else
 #include "cmsis_armcc.h"
 #endif
+#include "ccportab.h"
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
@@ -77,7 +78,7 @@
  *
  * Domains are 'manager'. Accesses are not checked against the permission bits in tlb.
  */
-static uint32_t mmuTable[4096] __attribute__ ((aligned (16384)));
+static uint32_t mmuTable[4096] CC_ALIGN(16384);
 
 /*===========================================================================*/
 /* Module local functions.                                                   */
