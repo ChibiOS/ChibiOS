@@ -327,7 +327,7 @@ void __mmu_init(void) {
                   TTE_SECT_EXE_NEVER |
                   TTE_SECT_S | TTE_TYPE_SECT;
   /*
-   * Invalidate I/D cache
+   * Invalidate L1 I/D cache
    * Enable caches and MMU
    */
   __set_TTBR0((uint32_t)mmuTable|0x5B);
@@ -336,7 +336,7 @@ void __mmu_init(void) {
   __ISB();
 
   /*
-   * I cache invalidate and enable
+   * L1 I cache invalidate and enable
    */
   pm = __get_SCTLR();
   if ((pm & SCTLR_I_Msk) == 0) {
@@ -350,7 +350,7 @@ void __mmu_init(void) {
   if ((pm & SCTLR_M_Msk) == 0)
     __set_SCTLR(pm | SCTLR_M_Msk);
   /*
-   * D cache clean, invalidate and enable
+   * L1 D cache clean, invalidate and enable
    */
   pm = __get_SCTLR();
   if ((pm & SCTLR_C_Msk) == 0) {
