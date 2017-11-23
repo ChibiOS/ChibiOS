@@ -519,32 +519,40 @@ void pwm_lld_start(PWMDriver *pwmp) {
   switch (pwmp->config->channels[0].mode & PWM_OUTPUT_MASK) {
   case PWM_OUTPUT_ACTIVE_LOW:
     ccer |= STM32_TIM_CCER_CC1P;
+    /* Falls through.*/
   case PWM_OUTPUT_ACTIVE_HIGH:
     ccer |= STM32_TIM_CCER_CC1E;
+    /* Falls through.*/
   default:
     ;
   }
   switch (pwmp->config->channels[1].mode & PWM_OUTPUT_MASK) {
   case PWM_OUTPUT_ACTIVE_LOW:
     ccer |= STM32_TIM_CCER_CC2P;
+    /* Falls through.*/
   case PWM_OUTPUT_ACTIVE_HIGH:
     ccer |= STM32_TIM_CCER_CC2E;
+    /* Falls through.*/
   default:
     ;
   }
   switch (pwmp->config->channels[2].mode & PWM_OUTPUT_MASK) {
   case PWM_OUTPUT_ACTIVE_LOW:
     ccer |= STM32_TIM_CCER_CC3P;
+    /* Falls through.*/
   case PWM_OUTPUT_ACTIVE_HIGH:
     ccer |= STM32_TIM_CCER_CC3E;
+    /* Falls through.*/
   default:
     ;
   }
   switch (pwmp->config->channels[3].mode & PWM_OUTPUT_MASK) {
   case PWM_OUTPUT_ACTIVE_LOW:
     ccer |= STM32_TIM_CCER_CC4P;
+    /* Falls through.*/
   case PWM_OUTPUT_ACTIVE_HIGH:
     ccer |= STM32_TIM_CCER_CC4E;
+    /* Falls through.*/
   default:
     ;
   }
@@ -561,24 +569,30 @@ void pwm_lld_start(PWMDriver *pwmp) {
     switch (pwmp->config->channels[0].mode & PWM_COMPLEMENTARY_OUTPUT_MASK) {
     case PWM_COMPLEMENTARY_OUTPUT_ACTIVE_LOW:
       ccer |= STM32_TIM_CCER_CC1NP;
+      /* Falls through.*/
     case PWM_COMPLEMENTARY_OUTPUT_ACTIVE_HIGH:
       ccer |= STM32_TIM_CCER_CC1NE;
+      /* Falls through.*/
     default:
       ;
     }
     switch (pwmp->config->channels[1].mode & PWM_COMPLEMENTARY_OUTPUT_MASK) {
     case PWM_COMPLEMENTARY_OUTPUT_ACTIVE_LOW:
       ccer |= STM32_TIM_CCER_CC2NP;
+      /* Falls through.*/
     case PWM_COMPLEMENTARY_OUTPUT_ACTIVE_HIGH:
       ccer |= STM32_TIM_CCER_CC2NE;
+      /* Falls through.*/
     default:
       ;
     }
     switch (pwmp->config->channels[2].mode & PWM_COMPLEMENTARY_OUTPUT_MASK) {
     case PWM_COMPLEMENTARY_OUTPUT_ACTIVE_LOW:
       ccer |= STM32_TIM_CCER_CC3NP;
+      /* Falls through.*/
     case PWM_COMPLEMENTARY_OUTPUT_ACTIVE_HIGH:
       ccer |= STM32_TIM_CCER_CC3NE;
+      /* Falls through.*/
     default:
       ;
     }

@@ -146,6 +146,11 @@
        Eclipse Tools menu. It is required to create an OPENOCD environment
        variable pointing to the OpenOCD executable. It will be done in
        ChibiStudio 20 by default.
+- NEW: Now .mk files are able to add their files to a common directory,
+       there is no more need to edit various variables in Makefiles
+       anymore.
+- NEW: Added to new makefiles the ability to recursively compile everything
+       placed under ./source, if present.
 - NEW: Improved the various rules.mk to handle "touching" of all
        included makefiles, now the makefile is no more assumed to
        be called "Makefile".
@@ -153,6 +158,10 @@
        dependencies and configuration directories. This makes possible
        to have multiple non-conflicting makefiles in the same project.
        Updated the various platform.mk implementing "smart build" mode.
+- RT:  Fixed gcc7 implicit-fallthrough (bug #906)(backported to 17.6.4
+       and 16.1.10).
+- HAL: Fixed gcc7 implicit-fallthrough (bug #906)(backported to 17.6.4
+       and 16.1.10).
 - HAL: Fixed DAC CH2 marked as not present in STM32F091 registry (bug #905)
        (backported to 17.6.4 and 16.1.10).
 - LIB: Fixed chHeapGetSize value is not obtained from the header (bug #904)
