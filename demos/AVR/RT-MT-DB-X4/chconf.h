@@ -52,6 +52,18 @@
 #define CH_CFG_ST_FREQUENCY                 14545
 
 /**
+ * @brief   Time intervals data size.
+ * @note    Allowed values are 16, 32 or 64 bits.
+ */
+#define CH_CFG_INTERVALS_SIZE               32
+
+/**
+ * @brief   Time types data size.
+ * @note    Allowed values are 16 or 32 bits.
+ */
+#define CH_CFG_TIME_TYPES_SIZE              32
+
+/**
  * @brief   Time delta constant for the tick-less mode.
  * @note    If this value is zero then the system uses the classic
  *          periodic tick. This value represents the minimum number
