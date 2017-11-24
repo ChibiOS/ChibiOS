@@ -108,7 +108,7 @@ bool chSchIsPreemptionRequired(void) {
      if the first thread on the ready queue has a higher priority.
      Otherwise, if the running thread has used up its time quantum, reschedule
      if the first thread on the ready queue has equal or higher priority.*/
-  return chVTIsArmed(&ch.preempt_vt) ? (p1 > p2) : (p1 >= p2);
+  return chVTIsArmedI(&ch.preempt_vt) ? (p1 > p2) : (p1 >= p2);
 }
 /**
  * @brief   Switches to the first thread on the runnable queue.
@@ -134,7 +134,7 @@ void chSchDoReschedule(void) {
 
   /* There are two different scenarios to handle on preemption: time quantum
      elapsed or not.*/
-  if (!chVTIsArmed(&ch.preempt_vt)) {
+  if (!chVTIsArmedI(&ch.preempt_vt)) {
 
     /* The thread consumed its time quantum so it is enqueued behind threads
        with same priority level, however, it acquires a new time quantum.*/
