@@ -462,6 +462,7 @@ void chSchRescheduleS(void) {
   }
 }
 
+#if !defined(CH_SCH_IS_PREEMPTION_REQUIRED_HOOKED)
 /**
  * @brief   Evaluates if preemption is required.
  * @details The decision is taken by comparing the relative priorities and
@@ -491,6 +492,7 @@ bool chSchIsPreemptionRequired(void) {
   return p1 > p2;
 #endif
 }
+#endif /* !defined(CH_SCH_IS_PREEMPTION_REQUIRED_HOOKED) */
 
 /**
  * @brief   Switches to the first thread on the runnable queue.
@@ -554,6 +556,7 @@ void chSchDoRescheduleAhead(void) {
   chSysSwitch(currp, otp);
 }
 
+#if !defined(CH_SCH_DO_RESCHEDULE_HOOKED)
 /**
  * @brief   Switches to the first thread on the runnable queue.
  * @details The current thread is positioned in the ready list behind or
@@ -602,5 +605,6 @@ void chSchDoReschedule(void) {
   /* Swap operation as tail call.*/
   chSysSwitch(currp, otp);
 }
+#endif /*!defined(CH_SCH_DO_RESCHEDULE_HOOKED) */
 
 /** @} */
