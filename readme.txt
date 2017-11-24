@@ -110,7 +110,8 @@
 - NEW: Integrated lwIP 2.0.3 and improved lwIP bindings.
 - NEW: The chconf.h configuration files now are tagged with the version
        number for safety. The system rejects obsolete files during
-       compilation.
+       compilation. Stronger checks are performed on chconf.h, now missing
+       settings trigger an error instead of getting a default.
 - NEW: Added alignment capability to memory pools.
 - NEW: Mailbox API changed by adding "Timeout" to those function that have
        timeout capability, for consistency with the rest of the system.

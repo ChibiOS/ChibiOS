@@ -114,18 +114,6 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !defined(CH_CFG_IDLE_ENTER_HOOK)
-#error "CH_CFG_IDLE_ENTER_HOOK not defined in chconf.h"
-#endif
-
-#if !defined(CH_CFG_IDLE_LEAVE_HOOK)
-#error "CH_CFG_IDLE_LEAVE_HOOK not defined in chconf.h"
-#endif
-
-#if !defined(CH_CFG_IDLE_LOOP_HOOK)
-#error "CH_CFG_IDLE_LOOP_HOOK not defined in chconf.h"
-#endif
-
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
@@ -438,6 +426,7 @@ struct ch_system {
    */
   kernel_stats_t        kernel_stats;
 #endif
+  CH_CFG_SYSTEM_EXTRA_FIELDS
 };
 
 /*===========================================================================*/

@@ -92,10 +92,6 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !defined(CH_CFG_TRACE_HOOK)
-#error "CH_CFG_TRACE_HOOK not defined in chconf.h"
-#endif
-
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/

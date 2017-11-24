@@ -66,19 +66,33 @@
 #define CH_KERNEL_PATCH         0
 /** @} */
 
-/* Configuration headers and checks.*/
-#include "chtypes.h"
+/**
+ * @name    Constants for configuration options
+ */
+/**
+ * @brief   Generic 'false' preprocessor boolean constant.
+ * @note    It is meant to be used in configuration files as switch.
+ */
+#if !defined(FALSE) || defined(__DOXYGEN__)
+#define FALSE               0
+#endif
+
+/**
+ * @brief   Generic 'true' preprocessor boolean constant.
+ * @note    It is meant to be used in configuration files as switch.
+ */
+#if !defined(TRUE) || defined(__DOXYGEN__)
+#define TRUE                1
+#endif
+/** @} */
+
+/* Configuration headers, checks and licensing restrictions.*/
 #include "chconf.h"
+#include "chchecks.h"
+#include "chlicense.h"
+#include "chrestrictions.h"
 
-#if !defined(_CHIBIOS_RT_CONF_)
-#error "invalid configuration file"
-#endif
-
-#if !defined(_CHIBIOS_RT_CONF_VER_5_0_)
-#error "obsolete or unknown configuration file"
-#endif
-
-/* Early function prototypes required by the following headers.*/
+/* Early function prototype required by the following headers.*/
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -87,9 +101,8 @@ extern "C" {
 }
 #endif
 
-/* Including everything else.*/
-#include "chlicense.h"
-#include "chchecks.h"
+/* Base kernel headers.*/
+#include "chtypes.h" /* TODO: Rename and rework.*/
 #include "chsystypes.h"
 #include "chdebug.h"
 #include "chtime.h"
@@ -111,6 +124,8 @@ extern "C" {
 #include "chcond.h"
 #include "chevents.h"
 #include "chmsg.h"
+
+/* OSLIB headers.*/
 #include "chmboxes.h"
 #include "chmemcore.h"
 #include "chheap.h"

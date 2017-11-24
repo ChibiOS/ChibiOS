@@ -158,6 +158,9 @@ void chSysInit(void) {
   chTMStartMeasurementX(&currp->stats);
 #endif
 
+  /* Initialization hook.*/
+  CH_CFG_SYSTEM_INIT_HOOK();
+
   /* It is alive now.*/
   chSysEnable();
 
