@@ -99,6 +99,13 @@ void __mmu_init(void) {
   uint32_t pm;
 
   /*
+   * Invalidate L1 D Cache if it was disabled
+   */
+  pm = __get_SCTLR();
+  if ((pm & SCTLR_C_Msk) == 0) {
+    __L1C_CleanInvalidateCache(DCISW_INVALIDATE);
+  }
+  /*
    * Default, undefined regions
    */
   for (pm = 0; pm < 4096; ++pm)
@@ -327,9 +334,10 @@ void __mmu_init(void) {
                   TTE_SECT_EXE_NEVER |
                   TTE_SECT_S | TTE_TYPE_SECT;
   /*
-   * Invalidate L1 I/D cache
+   * Invalidate TLB and L1 I cache
    * Enable caches and MMU
    */
+  MMU_InvalidateTLB();
   __set_TTBR0((uint32_t)mmuTable|0x5B);
   __set_DACR(0xC0000000);
   __DSB();
@@ -350,11 +358,10 @@ void __mmu_init(void) {
   if ((pm & SCTLR_M_Msk) == 0)
     __set_SCTLR(pm | SCTLR_M_Msk);
   /*
-   * L1 D cache clean, invalidate and enable
+   * L1 D cache enable
    */
   pm = __get_SCTLR();
   if ((pm & SCTLR_C_Msk) == 0) {
-    __L1C_CleanInvalidateCache(DCISW_CLEAN_AND_INV);
     __set_SCTLR(pm | SCTLR_C_Msk);
   }
 }
