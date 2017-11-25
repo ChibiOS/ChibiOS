@@ -134,7 +134,7 @@ cryerror_t sama_sha_lld_process(CRYDriver *cryp,
 	SHA->SHA_IER = SHA_IER_DATRDY;
 
 	uint32_t buf_in_size;
-	uint8_t *p=in;
+	const uint8_t *p=in;
 
 	while (indata_len) {
 			buf_in_size = min_u32(indata_len, SHA_UPDATE_LEN);
