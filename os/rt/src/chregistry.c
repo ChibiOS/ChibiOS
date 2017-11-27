@@ -108,7 +108,7 @@ ROMCONST chdebug_t ch_debug = {
   (uint8_t)0,
 #endif
 #if CH_CFG_TIME_QUANTUM > 0
-  (uint8_t)_offsetof(thread_t, preempt),
+  (uint8_t)_offsetof(thread_t, ticks),
 #else
   (uint8_t)0,
 #endif

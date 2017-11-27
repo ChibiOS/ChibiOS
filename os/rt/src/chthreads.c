@@ -91,7 +91,7 @@ thread_t *_thread_init(thread_t *tp, const char *name, tprio_t prio) {
   tp->state     = CH_STATE_WTSTART;
   tp->flags     = CH_FLAG_MODE_STATIC;
 #if CH_CFG_TIME_QUANTUM > 0
-  tp->preempt   = (tslices_t)CH_CFG_TIME_QUANTUM;
+  tp->ticks     = (tslices_t)CH_CFG_TIME_QUANTUM;
 #endif
 #if CH_CFG_USE_MUTEXES == TRUE
   tp->realprio  = prio;

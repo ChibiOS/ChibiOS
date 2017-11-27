@@ -181,7 +181,7 @@ struct ch_thread {
    * @brief   Number of ticks remaining to this thread.
    */
 #if (CH_CFG_TIME_QUANTUM > 0) || defined(__DOXYGEN__)
-  tslices_t             preempt;
+  tslices_t             ticks;
 #endif
 #if (CH_DBG_THREADS_PROFILING == TRUE) || defined(__DOXYGEN__)
   /**
@@ -694,7 +694,7 @@ static inline void chSchPreemption(void) {
   tprio_t p2 = currp->prio;
 
 #if CH_CFG_TIME_QUANTUM > 0
-  if (currp->preempt > (tslices_t)0) {
+  if (currp->ticks > (tslices_t)0) {
     if (p1 > p2) {
       chSchDoRescheduleAhead();
     }
