@@ -87,7 +87,7 @@ void chPoolObjectInitAligned(memory_pool_t *mp, size_t size,
 
 /**
  * @brief   Loads a memory pool with an array of static objects.
- * @pre     The memory pool must be already been initialized.
+ * @pre     The memory pool must already be initialized.
  * @pre     The array elements must be of the right size for the specified
  *          memory pool.
  * @pre     The array elements size must be a multiple of the alignment
@@ -115,7 +115,7 @@ void chPoolLoadArray(memory_pool_t *mp, void *p, size_t n) {
 
 /**
  * @brief   Allocates an object from a memory pool.
- * @pre     The memory pool must be already been initialized.
+ * @pre     The memory pool must already be initialized.
  *
  * @param[in] mp        pointer to a @p memory_pool_t structure
  * @return              The pointer to the allocated object.
@@ -144,7 +144,7 @@ void *chPoolAllocI(memory_pool_t *mp) {
 
 /**
  * @brief   Allocates an object from a memory pool.
- * @pre     The memory pool must be already been initialized.
+ * @pre     The memory pool must already be initialized.
  *
  * @param[in] mp        pointer to a @p memory_pool_t structure
  * @return              The pointer to the allocated object.
@@ -164,7 +164,7 @@ void *chPoolAlloc(memory_pool_t *mp) {
 
 /**
  * @brief   Releases an object into a memory pool.
- * @pre     The memory pool must be already been initialized.
+ * @pre     The memory pool must already be initialized.
  * @pre     The freed object must be of the right size for the specified
  *          memory pool.
  * @pre     The added object must be properly aligned.
@@ -189,7 +189,7 @@ void chPoolFreeI(memory_pool_t *mp, void *objp) {
 
 /**
  * @brief   Releases an object into a memory pool.
- * @pre     The memory pool must be already been initialized.
+ * @pre     The memory pool must already be initialized.
  * @pre     The freed object must be of the right size for the specified
  *          memory pool.
  * @pre     The added object must be properly aligned.
@@ -228,7 +228,7 @@ void chGuardedPoolObjectInitAligned(guarded_memory_pool_t *gmp,
 
 /**
  * @brief   Loads a guarded memory pool with an array of static objects.
- * @pre     The guarded memory pool must be already been initialized.
+ * @pre     The guarded memory pool must already be initialized.
  * @pre     The array elements must be of the right size for the specified
  *          guarded memory pool.
  * @post    The guarded memory pool contains the elements of the input array.
@@ -254,7 +254,7 @@ void chGuardedPoolLoadArray(guarded_memory_pool_t *gmp, void *p, size_t n) {
 
 /**
  * @brief   Allocates an object from a guarded memory pool.
- * @pre     The guarded memory pool must be already been initialized.
+ * @pre     The guarded memory pool must already be initialized.
  *
  * @param[in] gmp       pointer to a @p guarded_memory_pool_t structure
  * @param[in] timeout   the number of ticks before the operation timeouts,
@@ -281,7 +281,7 @@ void *chGuardedPoolAllocTimeoutS(guarded_memory_pool_t *gmp,
 
 /**
  * @brief   Allocates an object from a guarded memory pool.
- * @pre     The guarded memory pool must be already been initialized.
+ * @pre     The guarded memory pool must already be initialized.
  *
  * @param[in] gmp       pointer to a @p guarded_memory_pool_t structure
  * @param[in] timeout   the number of ticks before the operation timeouts,
@@ -307,7 +307,7 @@ void *chGuardedPoolAllocTimeout(guarded_memory_pool_t *gmp,
 
 /**
  * @brief   Releases an object into a guarded memory pool.
- * @pre     The guarded memory pool must be already been initialized.
+ * @pre     The guarded memory pool must already be initialized.
  * @pre     The freed object must be of the right size for the specified
  *          guarded memory pool.
  * @pre     The added object must be properly aligned.
@@ -325,7 +325,7 @@ void chGuardedPoolFreeI(guarded_memory_pool_t *gmp, void *objp) {
 
 /**
  * @brief   Releases an object into a guarded memory pool.
- * @pre     The guarded memory pool must be already been initialized.
+ * @pre     The guarded memory pool must already be initialized.
  * @pre     The freed object must be of the right size for the specified
  *          guarded memory pool.
  * @pre     The added object must be properly aligned.
