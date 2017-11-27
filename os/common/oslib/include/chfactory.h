@@ -323,7 +323,7 @@ extern "C" {
   void _factory_init(void);
 #if (CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE) || defined(__DOXYGEN__)
   registered_object_t *chFactoryRegisterObject(const char *name,
-                                                            void *objp);
+                                               void *objp);
   registered_object_t *chFactoryFindObject(const char *name);
   void chFactoryReleaseObject(registered_object_t *rop);
 #endif
@@ -374,6 +374,21 @@ static inline dyn_element_t *chFactoryDuplicateReference(dyn_element_t *dep) {
   return dep;
 }
 
+#if (CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Returns the pointer to the inner registered object.
+ *
+ * @param[in] rop       registered object reference
+ * @return              The pointer to the registered object.
+ *
+ * @api
+ */
+static inline void *chFactoryGetObject(registered_object_t *rop) {
+
+  return rop->objp;
+}
+#endif /* CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE */
+
 #if (CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Returns the size of a generic dynamic buffer object.
@@ -387,7 +402,65 @@ static inline size_t chFactoryGetBufferSize(dyn_buffer_t *dbp) {
 
   return chHeapGetSize(dbp) - sizeof (dyn_element_t);
 }
-#endif
+
+/**
+ * @brief   Returns the pointer to the inner buffer.
+ *
+ * @param[in] dbp       dynamic buffer object reference
+ * @return              The pointer to the dynamic buffer.
+ *
+ * @api
+ */
+static inline uint8_t *chFactoryGetBuffer(dyn_buffer_t *dbp) {
+
+  return dbp->buffer;
+}
+#endif /* CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE */
+
+#if (CH_CFG_FACTORY_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Returns the pointer to the inner semaphore.
+ *
+ * @param[in] dsp       dynamic semaphore object reference
+ * @return              The pointer to the semaphore.
+ *
+ * @api
+ */
+static inline semaphore_t *chFactoryGetSemaphore(dyn_semaphore_t *dsp) {
+
+  return &dsp->sem;
+}
+#endif /* CH_CFG_FACTORY_SEMAPHORES == TRUE */
+
+#if (CH_CFG_FACTORY_MAILBOXES == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Returns the pointer to the inner mailbox.
+ *
+ * @param[in] dmp       dynamic mailbox object reference
+ * @return              The pointer to the mailbox.
+ *
+ * @api
+ */
+static inline mailbox_t *chFactoryGetMailbox(dyn_mailbox_t *dmp) {
+
+  return &dmp->mbx;
+}
+#endif /* CH_CFG_FACTORY_MAILBOXES == TRUE */
+
+#if (CH_CFG_FACTORY_OBJ_FIFOS == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Returns the pointer to the inner objects FIFO.
+ *
+ * @param[in] dofp      dynamic "objects FIFO" object reference
+ * @return              The pointer to the objects FIFO.
+ *
+ * @api
+ */
+static inline objects_fifo_t *chFactoryGetObjectsFIFO(dyn_objects_fifo_t *dofp) {
+
+  return &dofp->fifo;
+}
+#endif /* CH_CFG_FACTORY_OBJ_FIFOS == TRUE */
 
 #endif /* CH_CFG_USE_FACTORY == TRUE */
 

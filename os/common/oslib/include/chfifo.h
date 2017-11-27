@@ -223,7 +223,7 @@ static inline void chFifoReturnObject(objects_fifo_t *ofp,
  * @note    By design the object can be always immediately posted.
  *
  * @param[in] ofp       pointer to a @p objects_fifo_t structure
- * @param[in] objp      pointer to the object to be released
+ * @param[in] objp      pointer to the object to be posted
  *
  * @iclass
  */
@@ -240,7 +240,7 @@ static inline void chFifoSendObjectI(objects_fifo_t *ofp,
  * @note    By design the object can be always immediately posted.
  *
  * @param[in] ofp       pointer to a @p objects_fifo_t structure
- * @param[in] objp      pointer to the object to be released
+ * @param[in] objp      pointer to the object to be posted
  *
  * @sclass
  */
