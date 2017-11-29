@@ -28,6 +28,12 @@
 #define BOARD_NAME                  "Atmel SAM A5 D27 Xplained Ultra"
 
 /*
+ * Ethernet PHY type.
+ */
+#define BOARD_PHY_ID                MII_KSZ8081_ID
+#define BOARD_PHY_RMII
+
+/*
  * Board oscillators-related settings.
  */
 #if !defined(SAMA_OSCXTCLK)
@@ -121,16 +127,16 @@
 #define PIOB_PIN11                  11U
 #define PIOB_PIN12                  12U
 #define PIOB_PIN13                  13U
-#define PIOB_PIN14                  14U
-#define PIOB_PIN15                  15U
-#define PIOB_PIN16                  16U
-#define PIOB_PIN17                  17U
-#define PIOB_PIN18                  18U
-#define PIOB_PIN19                  19U
-#define PIOB_PIN20                  20U
-#define PIOB_PIN21                  21U
-#define PIOB_PIN22                  22U
-#define PIOB_PIN23                  23U
+#define PIOB_ETH_GTXCK              14U
+#define PIOB_ETH_GTXEN              15U
+#define PIOB_ETH_GRXDV              16U
+#define PIOB_ETH_GRXER              17U
+#define PIOB_ETH_GRX0               18U
+#define PIOB_ETH_GRX1               19U
+#define PIOB_ETH_GTX0               20U
+#define PIOB_ETH_GTX1               21U
+#define PIOB_ETH_GMDC               22U
+#define PIOB_ETH_GMDIO              23U
 #define PIOB_PIN24                  24U
 #define PIOB_PIN25                  25U
 #define PIOB_PIN26                  26U
