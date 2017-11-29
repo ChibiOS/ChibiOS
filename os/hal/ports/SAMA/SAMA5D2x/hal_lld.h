@@ -472,6 +472,12 @@
  */
 #define SAMA_TC0CLK                         (SAMA_MCK / SAMA_H64MX_H32MX_RATIO)
 #define SAMA_TC1CLK                         (SAMA_MCK / SAMA_H64MX_H32MX_RATIO)
+
+/**
+ * @brief   GMAC0 clock.
+ */
+#define SAMA_GMAC0CLK                       (SAMA_MCK / SAMA_H64MX_H32MX_RATIO)
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
