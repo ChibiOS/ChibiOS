@@ -462,6 +462,20 @@
  */
 #define pmcDisableSHA() pmcDisablePidLow(ID_SHA_MSK)
 
+/**
+ * @brief   Enables the ETH0 peripheral clock.
+ *
+ * @api
+ */
+#define pmcEnableETH0() pmcEnablePidLow(ID_GMAC0_MSK)
+
+/**
+ * @brief   Disables the ETH0 peripheral clock.
+ *
+ * @api
+ */
+#define pmcDisableETH0() pmcDisablePidLow(ID_GMAC0_MSK)
+
 
 /** @} */
 
