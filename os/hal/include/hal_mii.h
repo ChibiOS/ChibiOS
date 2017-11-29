@@ -162,6 +162,7 @@
  */
 #define MII_DM9161_ID           0x0181b8a0
 #define MII_AM79C875_ID         0x00225540
+#define MII_KSZ8081_ID          0x00221560
 #define MII_KS8721_ID           0x00221610
 #define MII_STE101P_ID          0x00061C50
 #define MII_DP83848I_ID         0x20005C90
