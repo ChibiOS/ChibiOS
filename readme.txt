@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added STM32F030x4 support.
 - NEW: Added a Managed Flash Storage module to the HAL.
 - NEW: Modified the STM32 OTGv1 driver to work without pump thread, transfers
        are now done in the ISR.
