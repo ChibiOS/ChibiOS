@@ -49,10 +49,10 @@
  */
 #if defined(STM32L432xx) || defined(STM32L471xx) ||                         \
     defined(STM32L475xx) || defined(STM32L476xx) ||                         \
-    defined(__DOXYGEN__)
+    defined(STM32L496xx) || defined(__DOXYGEN__)
 #define PLATFORM_NAME           "STM32L4xx Ultra Low Power"
 
-#elif defined(STM32L485xx) || defined(STM32L486xx)
+#elif defined(STM32L485xx) || defined(STM32L486xx) || defined(STM32L4A6xx)
 #define PLATFORM_NAME           "STM32L4xx Ultra Low Power with Crypto"
 
 #else
@@ -166,6 +166,7 @@
 #define STM32_MCOSEL_PLL        (5 << 24)   /**< PLL clock on MCO pin.      */
 #define STM32_MCOSEL_LSI        (6 << 24)   /**< LSI clock on MCO pin.      */
 #define STM32_MCOSEL_LSE        (7 << 24)   /**< LSE clock on MCO pin.      */
+#define STM32_MCOSEL_HSI48      (8 << 24)   /**< HSI48 clock on MCO pin.    */
 
 #define STM32_MCOPRE_MASK       (7 << 28)   /**< MCOPRE field mask.         */
 #define STM32_MCOPRE_DIV1       (0 << 28)   /**< MCO divided by 1.          */
@@ -1236,6 +1237,18 @@
 #error "invalid STM32_PLLR_VALUE value specified"
 #endif
 
+#if defined(STM32L496xx) || defined(STM32L4A6xx)
+/**
+ * @brief   STM32_PLLPDIV field. (Only for STM32L496xx/4A6xx)
+ */
+#if ((STM32_PLLPDIV_VALUE != 1) && (STM32_PLLPDIV_VALUE <= 31)) ||          \
+    defined(__DOXYGEN__)
+#define STM32_PLLPDIV               (STM32_PLLPDIV_VALUE << 27)
+#else
+#error "invalid STM32_PLLPDIV_VALUE value specified"
+#endif
+#endif
+
 /**
  * @brief   STM32_PLLPEN field.
  */
@@ -1527,6 +1540,18 @@
 #error "invalid STM32_PLLSAI1R_VALUE value specified"
 #endif
 
+#if defined(STM32L496xx) || defined(STM32L4A6xx)
+/**
+ * @brief   STM32_PLLSAI1PDIV field. (Only for STM32L496xx/4A6xx)
+ */
+#if ((STM32_PLLSAI1PDIV_VALUE != 1) && (STM32_PLLSAI1PDIV_VALUE <= 31)) ||  \
+    defined(__DOXYGEN__)
+#define STM32_PLLSAI1PDIV           (STM32_PLLSAI1PDIV_VALUE << 27)
+#else
+#error "invalid STM32_PLLSAI1PDIV_VALUE value specified"
+#endif
+#endif
+
 /**
  * @brief   STM32_PLLSAI1PEN field.
  */
@@ -1668,6 +1693,18 @@
 
 #else
 #error "invalid STM32_PLLSAI2R_VALUE value specified"
+#endif
+
+#if defined(STM32L496xx) || defined(STM32L4A6xx)
+/**
+ * @brief   STM32_PLLSAI2PDIV field. (Only for STM32L496xx/4A6xx)
+ */
+#if ((STM32_PLLSAI2PDIV_VALUE != 1) && (STM32_PLLSAI2PDIV_VALUE <= 31)) ||  \
+    defined(__DOXYGEN__)
+#define STM32_PLLSAI2PDIV           (STM32_PLLSAI2PDIV_VALUE << 27)
+#else
+#error "invalid STM32_PLLSAI2PDIV_VALUE value specified"
+#endif
 #endif
 
 /**
@@ -2090,7 +2127,6 @@
 #include "nvic.h"
 #include "stm32_dma.h"
 #include "stm32_rcc.h"
-#include "stm32_isr.h"
 
 #ifdef __cplusplus
 extern "C" {
