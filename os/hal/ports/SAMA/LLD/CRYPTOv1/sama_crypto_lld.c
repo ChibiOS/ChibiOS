@@ -15,13 +15,11 @@
 */
 #include "hal.h"
 
-#if HAL_USE_CRY || defined(__DOXYGEN__)
+#if (HAL_USE_CRY == TRUE) || defined(__DOXYGEN__)
 
 #include "sama_crypto_lld.h"
 
-#define KEY0_BUFFER_SIZE_W	HAL_CRY_MAX_KEY_SIZE/4
 
-uint32_t key0_buffer[KEY0_BUFFER_SIZE_W];
 
 #if defined(SAMA_DMA_REQUIRED)
 static void crypto_lld_serve_read_interrupt(CRYDriver *cryp, uint32_t flags);
@@ -63,12 +61,11 @@ static void crypto_lld_serve_write_interrupt(CRYDriver *cryp, uint32_t flags);
 void samaCryptoDriverInit(CRYDriver *cryp) {
 	cryp->enabledPer = 0;
 	cryp->thread = NULL;
+	osalMutexObjectInit(&cryp->mutex);
 }
 
 void samaCryptoDriverStart(CRYDriver *cryp) {
 
-
-	samaClearKeyBuffer();
 
 	if (cryp->config->transfer_mode == TRANSFER_DMA)
 	{
@@ -96,40 +93,6 @@ void samaCryptoDriverStop(CRYDriver *cryp) {
 	samaCryptoDriverDisable(cryp);
 }
 
-
-/**
- * write key into internal buffer
- */
-cryerror_t samaCryptoDriverWriteTransientKey(const uint8_t *keyp,size_t size)
-{
-	uint8_t *p = (uint8_t *)key0_buffer;
-
-	if (size <= HAL_CRY_MAX_KEY_SIZE)
-	{
-	  samaClearKeyBuffer();
-
-	  for (size_t i=0;i<size;i++)
-	  {
-		  p[i] = keyp[i];
-	  }
-	}
-	else
-	{
-	  return CRY_ERR_INV_KEY_SIZE;
-	}
-
-	  return CRY_NOERROR;
-}
-
-
-void samaClearKeyBuffer(void)
-{
-	for (size_t i=0;i<KEY0_BUFFER_SIZE_W;i++)
-  {
-	  key0_buffer[i] = 0;
-  }
-}
-
 void samaCryptoDriverDisable(CRYDriver *cryp)
 {
 		if ((cryp->enabledPer & AES_PER)) {
@@ -146,6 +109,7 @@ void samaCryptoDriverDisable(CRYDriver *cryp)
 		}
 		if ((cryp->enabledPer & TRNG_PER)) {
 			cryp->enabledPer &= ~TRNG_PER;
+			TRNG->TRNG_CR = TRNG_CR_KEY_PASSWD;
 			pmcDisableTRNG();
 		}
 }

@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2017 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -13,24 +13,15 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
-#ifndef HAL_LLD_SAMA_TRNG_H_
-#define HAL_LLD_SAMA_TRNG_H_
 
+/**
+ * @file    cry_test_sequence_006.h
+ * @brief   Test Sequence 006 header.
+ */
 
+#ifndef CRY_TEST_SEQUENCE_006_H
+#define CRY_TEST_SEQUENCE_006_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+extern const testsequence_t cry_test_sequence_006;
 
-extern void trng_lld_init(void);
-extern void trng_lld_start(void);
-extern void trng_lld_stop(void);
-extern void trng_lld_getrandom(uint32_t * random);
-
-#ifdef __cplusplus
-}
-#endif
-
-
-
-#endif /* HAL_LLD_SAMA_TRNG_H_ */
+#endif /* CRY_TEST_SEQUENCE_006_H */

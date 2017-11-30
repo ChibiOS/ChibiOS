@@ -78,24 +78,22 @@ cryerror_t sama_tdes_lld_polling(CRYDriver *cryp, tdes_config_t *params,
 	}
 
 	TDES->TDES_MR = mode;
-
+	osalMutexLock(&cryp->mutex);
 	//write keys
-	/* Write the 64-bit key(s) in the different Key Word Registers,
-	 * depending on whether one, two or three keys are required. */
 
-	TDES->TDES_KEY1WR[0] = key0_buffer[0];
-	TDES->TDES_KEY1WR[1] = key0_buffer[1];
+	TDES->TDES_KEY1WR[0] = cryp->key0_buffer[0];
+	TDES->TDES_KEY1WR[1] = cryp->key0_buffer[1];
 
 	if (cryp->key0_size > 8) {
-		TDES->TDES_KEY2WR[0] = key0_buffer[2];
-		TDES->TDES_KEY2WR[1] = key0_buffer[3];
+		TDES->TDES_KEY2WR[0] = cryp->key0_buffer[2];
+		TDES->TDES_KEY2WR[1] = cryp->key0_buffer[3];
 	} else {
 		TDES->TDES_KEY2WR[0] = 0x0;
 		TDES->TDES_KEY2WR[1] = 0x0;
 	}
 	if (cryp->key0_size > 16) {
-		TDES->TDES_KEY3WR[0] = key0_buffer[4];
-		TDES->TDES_KEY3WR[1] = key0_buffer[5];
+		TDES->TDES_KEY3WR[0] = cryp->key0_buffer[4];
+		TDES->TDES_KEY3WR[1] = cryp->key0_buffer[5];
 	} else {
 		TDES->TDES_KEY3WR[0] = 0x0;
 		TDES->TDES_KEY3WR[1] = 0x0;
@@ -108,8 +106,8 @@ cryerror_t sama_tdes_lld_polling(CRYDriver *cryp, tdes_config_t *params,
 	if (params->algo == TDES_ALGO_XTEA) {
 		TDES->TDES_XTEA_RNDR = TDES_XTEA_RNDR_XTEA_RNDS(32);
 	}
-
-	/* Iterate per 64-bit data block */
+	osalMutexUnlock(&cryp->mutex);
+	//load 64 bit data size in tdes registers
 	for (i = 0; i < data_len; i += size) {
 		if (size == 8)
 			tdes_set_input((uint32_t *) ((data) + i),
@@ -177,15 +175,14 @@ cryerror_t sama_tdes_lld_dma(CRYDriver *cryp, tdes_config_t *params,
 	dmaChannelSetMode(cryp->dmarx, cryp->rxdmamode);
 	dmaChannelSetMode(cryp->dmatx, cryp->txdmamode);
 
-	/* Writing channel */
+	// Writing channel
 	dmaChannelSetSource(cryp->dmatx, data);
 	dmaChannelSetDestination(cryp->dmatx, TDES->TDES_IDATAR);
 	dmaChannelSetTransactionSize(cryp->dmatx,
 			(data_len / DMA_DATA_WIDTH_TO_BYTE(cryp->dmawith)));
 
-	//  ( data_len / DMA_DATA_WIDTH_TO_BYTE(cryp->dmawith))
 
-	/* Reading channel */
+	// Reading channel
 	dmaChannelSetSource(cryp->dmarx, TDES->TDES_ODATAR);
 	dmaChannelSetDestination(cryp->dmarx, out);
 	dmaChannelSetTransactionSize(cryp->dmarx,
@@ -217,29 +214,34 @@ cryerror_t sama_tdes_lld_dma(CRYDriver *cryp, tdes_config_t *params,
 
 	TDES->TDES_MR = mode;
 
+	osalMutexLock(&cryp->mutex);
+
 	//write keys
-	TDES->TDES_KEY1WR[0] = key0_buffer[0];
-	TDES->TDES_KEY1WR[1] = key0_buffer[1];
+	TDES->TDES_KEY1WR[0] = cryp->key0_buffer[0];
+	TDES->TDES_KEY1WR[1] = cryp->key0_buffer[1];
 
 	if (cryp->key0_size > 8) {
-		TDES->TDES_KEY2WR[0] = key0_buffer[2];
-		TDES->TDES_KEY2WR[1] = key0_buffer[3];
+		TDES->TDES_KEY2WR[0] = cryp->key0_buffer[2];
+		TDES->TDES_KEY2WR[1] = cryp->key0_buffer[3];
 	} else {
 		TDES->TDES_KEY2WR[0] = 0x0;
 		TDES->TDES_KEY2WR[1] = 0x0;
 	}
 	if (cryp->key0_size > 16) {
-		TDES->TDES_KEY3WR[0] = key0_buffer[4];
-		TDES->TDES_KEY3WR[1] = key0_buffer[5];
+		TDES->TDES_KEY3WR[0] = cryp->key0_buffer[4];
+		TDES->TDES_KEY3WR[1] = cryp->key0_buffer[5];
 	} else {
 		TDES->TDES_KEY3WR[0] = 0x0;
 		TDES->TDES_KEY3WR[1] = 0x0;
 	}
-	/* The Initialization Vector Registers apply to all modes except ECB. */
+	//initialize vectors registers ( except ECB mode)
 	if (params->mode != TDES_MODE_ECB && vectors != NULL) {
 		TDES->TDES_IVR[0] = vectors[0];
 		TDES->TDES_IVR[1] = vectors[1];
 	}
+
+	osalMutexUnlock(&cryp->mutex);
+
 	if (params->algo == TDES_ALGO_XTEA) {
 		TDES->TDES_XTEA_RNDR = TDES_XTEA_RNDR_XTEA_RNDS(32);
 	}

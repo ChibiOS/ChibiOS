@@ -21,9 +21,8 @@
 extern void 		samaCryptoDriverInit(CRYDriver *cryp);
 extern void 		samaCryptoDriverStart(CRYDriver *cryp);
 extern void 		samaCryptoDriverStop(CRYDriver *cryp);
-extern cryerror_t 	samaCryptoDriverWriteTransientKey(const uint8_t *keyp,size_t size);
 extern void 		samaCryptoDriverDisable(CRYDriver *cryp);
-extern void 		samaClearKeyBuffer(void);
+
 
 #define AES_PER		0x01
 #define TRNG_PER	0x02
@@ -42,10 +41,6 @@ extern void 		samaClearKeyBuffer(void);
 #define DMA_CHUNK_SIZE_16  			4
 
 #define DMA_DATA_WIDTH_TO_BYTE(w)   (1 << w)
-
-
-
-extern uint32_t key0_buffer[HAL_CRY_MAX_KEY_SIZE/4];
 
 
 

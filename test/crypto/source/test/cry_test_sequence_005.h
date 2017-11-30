@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2017 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -13,18 +13,15 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
-#ifndef CRYPTOLIB_LLD_SAMA_SHA_H_
-#define CRYPTOLIB_LLD_SAMA_SHA_H_
 
+/**
+ * @file    cry_test_sequence_005.h
+ * @brief   Test Sequence 005 header.
+ */
 
+#ifndef CRY_TEST_SEQUENCE_005_H
+#define CRY_TEST_SEQUENCE_005_H
 
-cryerror_t sama_sha_lld_process(CRYDriver *cryp,
-										shaparams_t *params,
-										const uint8_t *in,
-										uint8_t *out,
-										size_t indata_len
-										);
+extern const testsequence_t cry_test_sequence_005;
 
-
-
-#endif /* CRYPTOLIB_LLD_SAMA_SHA_H_ */
+#endif /* CRY_TEST_SEQUENCE_005_H */

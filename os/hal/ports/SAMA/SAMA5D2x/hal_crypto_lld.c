@@ -83,6 +83,12 @@ void cry_lld_init(void) {
 void cry_lld_start(CRYDriver *cryp) {
 
 	if (cryp->state == CRY_STOP) {
+		//clear key
+		for (size_t i=0;i<KEY0_BUFFER_SIZE_W;i++)
+		  {
+			cryp->key0_buffer[i] = 0;
+		  }
+
 #if PLATFORM_CRY_USE_CRY1
 		if (&CRYD1 == cryp) {
 			samaCryptoDriverStart(&CRYD1);
@@ -126,9 +132,33 @@ void cry_lld_stop(CRYDriver *cryp) {
 cryerror_t cry_lld_loadkey(CRYDriver *cryp, cryalgorithm_t algorithm,
 		size_t size, const uint8_t *keyp) {
 
-	(void)(cryp);
-	(void)(algorithm);
-	return samaCryptoDriverWriteTransientKey(keyp, size);
+
+	uint8_t *p = (uint8_t *)cryp->key0_buffer;
+
+	(void)algorithm;
+
+
+		if (size <= HAL_CRY_MAX_KEY_SIZE)
+		{
+			osalMutexLock(&cryp->mutex);
+			//clear key
+			for (size_t i=0;i<KEY0_BUFFER_SIZE_W;i++)
+			{
+				cryp->key0_buffer[i] = 0;
+			}
+
+		  for (size_t i=0;i<size;i++)
+		  {
+			  p[i] = keyp[i];
+		  }
+		  osalMutexUnlock(&cryp->mutex);
+		}
+		else
+		{
+		  return CRY_ERR_INV_KEY_SIZE;
+		}
+
+		  return CRY_NOERROR;
 
 }
 
@@ -1094,6 +1124,131 @@ cryerror_t cry_lld_decrypt_DES_CBC(CRYDriver *cryp, crykey_t key_id,
 		ret = sama_tdes_lld_dma(cryp, &params, false, in, size, out, iv);
 
 	return ret;
+}
+
+
+
+/**
+ * @brief   Hash using SHA1.
+ * @NOTE    Use of this algorithm is not recommended because proven weak.
+ *
+ * @param[in] cryp      pointer to the @p CRYDriver object
+ * @param[in] size      size of input buffer
+ * @param[in] in        buffer containing the input text
+ * @param[out] out      160 bits output buffer
+ * @return              The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
+ *                              device instance.
+ *
+ * @api
+ */
+cryerror_t cry_lld_SHA1(CRYDriver *cryp, size_t size,
+                        const uint8_t *in, uint8_t *out) {
+
+  cryerror_t ret;
+
+  shaparams_t params = {CRY_SHA_1};
+
+  ret = sama_sha_lld_process(cryp,
+  											&params,
+											in,
+  											out,
+											size
+  											);
+
+  return ret;
+}
+
+/**
+ * @brief   Hash using SHA256.
+ *
+ * @param[in] cryp      pointer to the @p CRYDriver object
+ * @param[in] size      size of input buffer
+ * @param[in] in        buffer containing the input text
+ * @param[out] out      256 bits output buffer
+ * @return              The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
+ *                              device instance.
+ *
+ * @api
+ */
+cryerror_t cry_lld_SHA256(CRYDriver *cryp, size_t size,
+                          const uint8_t *in, uint8_t *out) {
+
+	 cryerror_t ret;
+
+	  shaparams_t params = {CRY_SHA_256};
+
+	  ret = sama_sha_lld_process(cryp,
+	  											&params,
+												in,
+	  											out,
+												size
+	  											);
+
+	  return ret;
+}
+
+/**
+ * @brief   Hash using SHA512.
+ *
+ * @param[in] cryp      pointer to the @p CRYDriver object
+ * @param[in] size      size of input buffer
+ * @param[in] in        buffer containing the input text
+ * @param[out] out      512 bits output buffer
+ * @return              The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
+ *                              device instance.
+ *
+ * @api
+ */
+cryerror_t cry_lld_SHA512(CRYDriver *cryp, size_t size,
+                          const uint8_t *in, uint8_t *out) {
+
+	 cryerror_t ret;
+
+	  shaparams_t params = {CRY_SHA_512};
+
+	  ret = sama_sha_lld_process(cryp,
+	  											&params,
+												in,
+	  											out,
+												size
+	  											);
+
+	  return ret;
+}
+
+/**
+ * @brief   True random numbers generator.
+ *
+ * @param[in] cryp      pointer to the @p CRYDriver object
+ * @param[out] out      128 bits output buffer
+ * @return              The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
+ *                              device instance.
+ *
+ * @api
+ */
+cryerror_t cry_lld_TRNG(CRYDriver *cryp, uint8_t *out) {
+
+	if (!(cryp->enabledPer & TRNG_PER)) {
+		cryp->enabledPer |= TRNG_PER;
+		pmcEnableTRNG();
+
+		//start trng
+		TRNG->TRNG_CR = TRNG_CR_ENABLE | TRNG_CR_KEY_PASSWD;
+	}
+
+	while (!(TRNG->TRNG_ISR & TRNG_ISR_DATRDY));
+
+	*((uint32_t*) out) = TRNG->TRNG_ODATA;
+
+	return (cryerror_t)CRY_NOERROR;
 }
 
 #endif /* HAL_USE_CRY */

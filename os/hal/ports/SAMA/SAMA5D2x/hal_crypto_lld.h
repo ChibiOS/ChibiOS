@@ -25,7 +25,7 @@
 #ifndef HAL_CRYPTO_LLD_H
 #define HAL_CRYPTO_LLD_H
 
-#if HAL_USE_CRY || defined(__DOXYGEN__)
+#if (HAL_USE_CRY == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -40,10 +40,14 @@
 #define CRY_LLD_SUPPORTS_AES_CBC            TRUE
 #define CRY_LLD_SUPPORTS_AES_CFB            TRUE
 #define CRY_LLD_SUPPORTS_AES_CTR            TRUE
-#define CRY_LLD_SUPPORTS_AES_GCM            TRUE
+#define CRY_LLD_SUPPORTS_AES_GCM            FALSE
 #define CRY_LLD_SUPPORTS_DES                TRUE
 #define CRY_LLD_SUPPORTS_DES_ECB            TRUE
 #define CRY_LLD_SUPPORTS_DES_CBC            TRUE
+#define CRY_LLD_SUPPORTS_SHA1               TRUE
+#define CRY_LLD_SUPPORTS_SHA256             TRUE
+#define CRY_LLD_SUPPORTS_SHA512             TRUE
+#define CRY_LLD_SUPPORTS_TRNG               TRUE
 /** @{ */
 
 /*===========================================================================*/
@@ -99,13 +103,13 @@ typedef enum  {
 	CRY_SHA_224,
 	CRY_SHA_256,
 	CRY_SHA_384,
-	CRY_SHA_512,
+	CRY_SHA_512
+
 }shadalgo_t;
 
 typedef struct
 {
 	shadalgo_t algo;
-
 }shaparams_t;
 
 /**
@@ -138,14 +142,22 @@ typedef struct {
 
 } CRYConfig;
 
+#define KEY0_BUFFER_SIZE_W	HAL_CRY_MAX_KEY_SIZE/4
+#define SHA_MAX_PADDING_LEN (2 * 128)
+#define SHA_UPDATE_LEN 		(128 * 1024)
+
 #define CRY_DRIVER_EXT_FIELDS	thread_reference_t        thread;		\
 								sama_dma_channel_t       *dmarx;		\
 								sama_dma_channel_t       *dmatx;		\
 								uint32_t                 rxdmamode;		\
 								uint32_t                 txdmamode;		\
-								uint8_t						dmawith;		\
-								uint8_t				 dmachunksize;	\
-								uint8_t enabledPer;
+								uint8_t						dmawith;	\
+								uint8_t				 dmachunksize;		\
+								uint8_t 				enabledPer;		\
+								mutex_t                   mutex;		\
+								uint32_t key0_buffer[KEY0_BUFFER_SIZE_W];	\
+								uint8_t sha_buffer[SHA_MAX_PADDING_LEN];
+
 /**
  * @brief   Structure representing an CRY driver.
  */
@@ -302,11 +314,18 @@ extern "C" {
                                      const uint8_t *in,
                                      uint8_t *out,
                                      const uint8_t *iv);
+  cryerror_t cry_lld_SHA1(CRYDriver *cryp, size_t size,
+                          const uint8_t *in, uint8_t *out);
+  cryerror_t cry_lld_SHA256(CRYDriver *cryp, size_t size,
+                            const uint8_t *in, uint8_t *out);
+  cryerror_t cry_lld_SHA512(CRYDriver *cryp, size_t size,
+                            const uint8_t *in, uint8_t *out);
+  cryerror_t cry_lld_TRNG(CRYDriver *cryp, uint8_t *out);
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* HAL_USE_CRY */
+#endif /* HAL_USE_CRY == TRUE */
 
 #endif /* HAL_CRYPTO_LLD_H */
 

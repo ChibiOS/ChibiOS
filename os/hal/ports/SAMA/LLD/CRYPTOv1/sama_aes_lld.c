@@ -125,7 +125,11 @@ cryerror_t sama_aes_lld_process_polling(CRYDriver *cryp, aesparams *params,
 
 		AES->AES_MR |= (AES_MR_CFBS(cryp->config->cfbs) | AES_MR_CKEY_PASSWD);
 
-		sama_aes_lld_write_key(key0_buffer,( const uint32_t *) params->iv, cryp->key0_size);
+		osalMutexLock(&cryp->mutex);
+
+		sama_aes_lld_write_key(cryp->key0_buffer,( const uint32_t *) params->iv, cryp->key0_size);
+
+		osalMutexUnlock(&cryp->mutex);
 
 		if (params->encrypt)
 			AES->AES_MR |= AES_MR_CIPHER;
@@ -202,13 +206,13 @@ cryerror_t sama_aes_lld_process_dma(CRYDriver *cryp,  aesparams *params,
 	dmaChannelSetMode(cryp->dmarx, cryp->rxdmamode);
 	dmaChannelSetMode(cryp->dmatx, cryp->txdmamode);
 
-	/* Writing channel */
+	// Writing channel
 	dmaChannelSetSource(cryp->dmatx, in);
 	dmaChannelSetDestination(cryp->dmatx, AES->AES_IDATAR);
 	dmaChannelSetTransactionSize(cryp->dmatx,  ( indata_len / DMA_DATA_WIDTH_TO_BYTE(cryp->dmawith)));
 
 
-	/* Reading channel */
+	// Reading channel
 	dmaChannelSetSource(cryp->dmarx, AES->AES_ODATAR);
 	dmaChannelSetDestination(cryp->dmarx, out);
 	dmaChannelSetTransactionSize(cryp->dmarx,  ( indata_len / DMA_DATA_WIDTH_TO_BYTE(cryp->dmawith)));
@@ -226,7 +230,11 @@ cryerror_t sama_aes_lld_process_dma(CRYDriver *cryp,  aesparams *params,
 
 		AES->AES_MR |= (AES_MR_CFBS(cryp->config->cfbs) | AES_MR_CKEY_PASSWD);
 
-		sama_aes_lld_write_key(key0_buffer,( const uint32_t *) params->iv, cryp->key0_size);
+		osalMutexLock(&cryp->mutex);
+
+		sama_aes_lld_write_key(cryp->key0_buffer,( const uint32_t *) params->iv, cryp->key0_size);
+
+		osalMutexUnlock(&cryp->mutex);
 
 		if (params->encrypt)
 			AES->AES_MR |= AES_MR_CIPHER;

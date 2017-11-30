@@ -25,6 +25,8 @@
  * - @subpage cry_test_sequence_002
  * - @subpage cry_test_sequence_003
  * - @subpage cry_test_sequence_004
+ * - @subpage cry_test_sequence_005
+ * - @subpage cry_test_sequence_006
  * .
  */
 
@@ -50,6 +52,8 @@ const testsequence_t * const cry_test_suite_array[] = {
   &cry_test_sequence_002,
   &cry_test_sequence_003,
   &cry_test_sequence_004,
+  &cry_test_sequence_005,
+  &cry_test_sequence_006,
   NULL
 };
 
@@ -106,6 +110,12 @@ er justo eros, commodo ut massa eu, bibendum elementum tellus. N\
 am quis dolor in libero placerat congue. Sed sodales urna sceler\
 isque dui faucibus, vitae malesuada dui fermentum. Proin ultrici\
 es sit amet justo at ornare. Suspendisse efficitur purus nullam.";
+
+
+const uint8_t sha_msg0[SHA_LEN_0] = "hi!";
+
+const uint8_t sha_msg1[SHA_LEN_1] = "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq";
+
 
 ALIGNED_VAR(4) uint32_t msg_clear[TEST_MSG_DATA_WORD_LEN];
 ALIGNED_VAR(4) uint32_t msg_encrypted[TEST_MSG_DATA_WORD_LEN];
