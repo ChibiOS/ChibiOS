@@ -855,6 +855,102 @@ cryerror_t cry_lld_decrypt_DES_CBC(CRYDriver *cryp,
   return CRY_ERR_INV_ALGO;
 }
 
+/**
+ * @brief   Hash using SHA1.
+ * @NOTE    Use of this algorithm is not recommended because proven weak.
+ *
+ * @param[in] cryp      pointer to the @p CRYDriver object
+ * @param[in] size      size of input buffer
+ * @param[in] in        buffer containing the input text
+ * @param[out] out      160 bits output buffer
+ * @return              The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
+ *                              device instance.
+ *
+ * @api
+ */
+cryerror_t cry_lld_SHA1(CRYDriver *cryp, size_t size,
+                        const uint8_t *in, uint8_t *out) {
+
+  (void)cryp;
+  (void)size;
+  (void)in;
+  (void)out;
+
+  return CRY_ERR_INV_ALGO;
+}
+
+/**
+ * @brief   Hash using SHA256.
+ *
+ * @param[in] cryp      pointer to the @p CRYDriver object
+ * @param[in] size      size of input buffer
+ * @param[in] in        buffer containing the input text
+ * @param[out] out      256 bits output buffer
+ * @return              The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
+ *                              device instance.
+ *
+ * @api
+ */
+cryerror_t cry_lld_SHA256(CRYDriver *cryp, size_t size,
+                          const uint8_t *in, uint8_t *out) {
+
+  (void)cryp;
+  (void)size;
+  (void)in;
+  (void)out;
+
+  return CRY_ERR_INV_ALGO;
+}
+
+/**
+ * @brief   Hash using SHA512.
+ *
+ * @param[in] cryp      pointer to the @p CRYDriver object
+ * @param[in] size      size of input buffer
+ * @param[in] in        buffer containing the input text
+ * @param[out] out      512 bits output buffer
+ * @return              The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
+ *                              device instance.
+ *
+ * @api
+ */
+cryerror_t cry_lld_SHA512(CRYDriver *cryp, size_t size,
+                          const uint8_t *in, uint8_t *out) {
+
+  (void)cryp;
+  (void)size;
+  (void)in;
+  (void)out;
+
+  return CRY_ERR_INV_ALGO;
+}
+
+/**
+ * @brief   True random numbers generator.
+ *
+ * @param[in] cryp      pointer to the @p CRYDriver object
+ * @param[out] out      128 bits output buffer
+ * @return              The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
+ *                              device instance.
+ *
+ * @api
+ */
+cryerror_t cry_lld_TRNG(CRYDriver *cryp, uint8_t *out) {
+
+  (void)cryp;
+  (void)out;
+
+  return CRY_ERR_INV_ALGO;
+}
+
 #endif /* HAL_USE_CRY == TRUE */
 
 /** @} */

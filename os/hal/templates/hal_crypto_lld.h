@@ -44,6 +44,10 @@
 #define CRY_LLD_SUPPORTS_DES                TRUE
 #define CRY_LLD_SUPPORTS_DES_ECB            TRUE
 #define CRY_LLD_SUPPORTS_DES_CBC            TRUE
+#define CRY_LLD_SUPPORTS_SHA1               TRUE
+#define CRY_LLD_SUPPORTS_SHA256             TRUE
+#define CRY_LLD_SUPPORTS_SHA512             TRUE
+#define CRY_LLD_SUPPORTS_TRNG               TRUE
 /** @{ */
 
 /*===========================================================================*/
@@ -246,6 +250,13 @@ extern "C" {
                                      const uint8_t *in,
                                      uint8_t *out,
                                      const uint8_t *iv);
+  cryerror_t cry_lld_SHA1(CRYDriver *cryp, size_t size,
+                          const uint8_t *in, uint8_t *out);
+  cryerror_t cry_lld_SHA256(CRYDriver *cryp, size_t size,
+                            const uint8_t *in, uint8_t *out);
+  cryerror_t cry_lld_SHA512(CRYDriver *cryp, size_t size,
+                            const uint8_t *in, uint8_t *out);
+  cryerror_t cry_lld_TRNG(CRYDriver *cryp, uint8_t *out);
 #ifdef __cplusplus
 }
 #endif

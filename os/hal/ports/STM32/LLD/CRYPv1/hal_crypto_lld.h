@@ -44,6 +44,10 @@
 #define CRY_LLD_SUPPORTS_DES                TRUE
 #define CRY_LLD_SUPPORTS_DES_ECB            TRUE
 #define CRY_LLD_SUPPORTS_DES_CBC            TRUE
+#define CRY_LLD_SUPPORTS_SHA1               TRUE
+#define CRY_LLD_SUPPORTS_SHA256             TRUE
+#define CRY_LLD_SUPPORTS_SHA512             TRUE
+#define CRY_LLD_SUPPORTS_TRNG               TRUE
 /** @{ */
 
 /*===========================================================================*/
@@ -51,16 +55,16 @@
 /*===========================================================================*/
 
 /**
- * @name    PLATFORM configuration options
+ * @name    STM32 configuration options
  * @{
  */
 /**
  * @brief   CRY1 driver enable switch.
- * @details If set to @p TRUE the support for CRY1 is included.
+ * @details If set to @p TRUE the support for CRYP1 is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(PLATFORM_CRY_USE_CRY1) || defined(__DOXYGEN__)
-#define PLATFORM_CRY_USE_CRY1                  FALSE
+#if !defined(STM32_CRY_USE_CRYP1) || defined(__DOXYGEN__)
+#define STM32_CRY_USE_CRYP1                 FALSE
 #endif
 /** @} */
 
@@ -130,7 +134,7 @@ struct CRYDriver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if (PLATFORM_CRY_USE_CRY1 == TRUE) && !defined(__DOXYGEN__)
+#if (STM32_CRY_USE_CRYP1 == TRUE) && !defined(__DOXYGEN__)
 extern CRYDriver CRYD1;
 #endif
 
@@ -246,6 +250,13 @@ extern "C" {
                                      const uint8_t *in,
                                      uint8_t *out,
                                      const uint8_t *iv);
+  cryerror_t cry_lld_SHA1(CRYDriver *cryp, size_t size,
+                          const uint8_t *in, uint8_t *out);
+  cryerror_t cry_lld_SHA256(CRYDriver *cryp, size_t size,
+                            const uint8_t *in, uint8_t *out);
+  cryerror_t cry_lld_SHA512(CRYDriver *cryp, size_t size,
+                            const uint8_t *in, uint8_t *out);
+  cryerror_t cry_lld_TRNG(CRYDriver *cryp, uint8_t *out);
 #ifdef __cplusplus
 }
 #endif

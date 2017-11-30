@@ -273,7 +273,7 @@ cryerror_t cryDecryptAES(CRYDriver *cryp,
  * @param[in] key_id    the key to be used for the operation, zero is the
  *                      transient key, other values are keys stored in an
  *                      unspecified way
- * @param[in] size      size of the plaintext buffer, this number must be a
+ * @param[in] size      size of both buffers, this number must be a
  *                      multiple of 16
  * @param[in] in        buffer containing the input plaintext
  * @param[out] out      buffer for the output cyphertext
@@ -323,7 +323,7 @@ cryerror_t cryEncryptAES_ECB(CRYDriver *cryp,
  * @param[in] key_id    the key to be used for the operation, zero is the
  *                      transient key, other values are keys stored in an
  *                      unspecified way
- * @param[in] size      size of the plaintext buffer, this number must be a
+ * @param[in] size      size of both buffers, this number must be a
  *                      multiple of 16
  * @param[in] in        buffer containing the input cyphertext
  * @param[out] out      buffer for the output plaintext
@@ -373,7 +373,7 @@ cryerror_t cryDecryptAES_ECB(CRYDriver *cryp,
  * @param[in] key_id    the key to be used for the operation, zero is the
  *                      transient key, other values are keys stored in an
  *                      unspecified way
- * @param[in] size      size of the plaintext buffer, this number must be a
+ * @param[in] size      size of both buffers, this number must be a
  *                      multiple of 16
  * @param[in] in        buffer containing the input plaintext
  * @param[out] out      buffer for the output cyphertext
@@ -426,7 +426,7 @@ cryerror_t cryEncryptAES_CBC(CRYDriver *cryp,
  * @param[in] key_id    the key to be used for the operation, zero is the
  *                      transient key, other values are keys stored in an
  *                      unspecified way
- * @param[in] size      size of the plaintext buffer, this number must be a
+ * @param[in] size      size of both buffers, this number must be a
  *                      multiple of 16
  * @param[in] in        buffer containing the input cyphertext
  * @param[out] out      buffer for the output plaintext
@@ -479,7 +479,7 @@ cryerror_t cryDecryptAES_CBC(CRYDriver *cryp,
  * @param[in] key_id    the key to be used for the operation, zero is the
  *                      transient key, other values are keys stored in an
  *                      unspecified way
- * @param[in] size      size of the plaintext buffer, this number must be a
+ * @param[in] size      size of both buffers, this number must be a
  *                      multiple of 16
  * @param[in] in        buffer containing the input plaintext
  * @param[out] out      buffer for the output cyphertext
@@ -532,7 +532,7 @@ cryerror_t cryEncryptAES_CFB(CRYDriver *cryp,
  * @param[in] key_id    the key to be used for the operation, zero is the
  *                      transient key, other values are keys stored in an
  *                      unspecified way
- * @param[in] size      size of the plaintext buffer, this number must be a
+ * @param[in] size      size of both buffers, this number must be a
  *                      multiple of 16
  * @param[in] in        buffer containing the input cyphertext
  * @param[out] out      buffer for the output plaintext
@@ -585,7 +585,7 @@ cryerror_t cryDecryptAES_CFB(CRYDriver *cryp,
  * @param[in] key_id    the key to be used for the operation, zero is the
  *                      transient key, other values are keys stored in an
  *                      unspecified way
- * @param[in] size      size of the plaintext buffer, this number must be a
+ * @param[in] size      size of both buffers, this number must be a
  *                      multiple of 16
  * @param[in] in        buffer containing the input plaintext
  * @param[out] out      buffer for the output cyphertext
@@ -640,7 +640,7 @@ cryerror_t cryEncryptAES_CTR(CRYDriver *cryp,
  * @param[in] key_id    the key to be used for the operation, zero is the
  *                      transient key, other values are keys stored in an
  *                      unspecified way
- * @param[in] size      size of the plaintext buffer, this number must be a
+ * @param[in] size      size of both buffers, this number must be a
  *                      multiple of 16
  * @param[in] in        buffer containing the input cyphertext
  * @param[out] out      buffer for the output plaintext
@@ -920,7 +920,7 @@ cryerror_t cryDecryptDES(CRYDriver *cryp,
  * @param[in] key_id    the key to be used for the operation, zero is the
  *                      transient key, other values are keys stored in an
  *                      unspecified way
- * @param[in] size      size of the plaintext buffer, this number must be a
+ * @param[in] size      size of both buffers, this number must be a
  *                      multiple of 8
  * @param[in] in        buffer containing the input plaintext
  * @param[out] out      buffer for the output cyphertext
@@ -970,7 +970,7 @@ cryerror_t cryEncryptDES_ECB(CRYDriver *cryp,
  * @param[in] key_id    the key to be used for the operation, zero is the
  *                      transient key, other values are keys stored in an
  *                      unspecified way
- * @param[in] size      size of the plaintext buffer, this number must be a
+ * @param[in] size      size of both buffers, this number must be a
  *                      multiple of 8
  * @param[in] in        buffer containing the input cyphertext
  * @param[out] out      buffer for the output plaintext
@@ -1020,7 +1020,7 @@ cryerror_t cryDecryptDES_ECB(CRYDriver *cryp,
  * @param[in] key_id    the key to be used for the operation, zero is the
  *                      transient key, other values are keys stored in an
  *                      unspecified way
- * @param[in] size      size of the plaintext buffer, this number must be a
+ * @param[in] size      size of both buffers, this number must be a
  *                      multiple of 8
  * @param[in] in        buffer containing the input plaintext
  * @param[out] out      buffer for the output cyphertext
@@ -1073,7 +1073,7 @@ cryerror_t cryEncryptDES_CBC(CRYDriver *cryp,
  * @param[in] key_id    the key to be used for the operation, zero is the
  *                      transient key, other values are keys stored in an
  *                      unspecified way
- * @param[in] size      size of the plaintext buffer, this number must be a
+ * @param[in] size      size of both buffers, this number must be a
  *                      multiple of 8
  * @param[in] in        buffer containing the input cyphertext
  * @param[out] out      buffer for the output plaintext
@@ -1111,6 +1111,142 @@ cryerror_t cryDecryptDES_CBC(CRYDriver *cryp,
   (void)in;
   (void)out;
   (void)iv;
+
+  return CRY_ERR_INV_ALGO;
+#endif
+}
+
+/**
+ * @brief   Hash using SHA1.
+ * @NOTE    Use of this algorithm is not recommended because proven weak.
+ *
+ * @param[in] cryp      pointer to the @p CRYDriver object
+ * @param[in] size      size of input buffer
+ * @param[in] in        buffer containing the input text
+ * @param[out] out      160 bits output buffer
+ * @return              The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
+ *                              device instance.
+ *
+ * @api
+ */
+cryerror_t crySHA1(CRYDriver *cryp, size_t size,
+                   const uint8_t *in, uint8_t *out) {
+
+  osalDbgCheck((cryp != NULL) && (in != NULL) && (out != NULL));
+
+  osalDbgAssert(cryp->state == CRY_READY, "not ready");
+
+#if CRY_LLD_SUPPORTS_SHA1 == TRUE
+  return cry_lld_SHA1(cryp, size, in, out);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_SHA1(cryp, size, in, out);
+#else
+  (void)cryp;
+  (void)size;
+  (void)in;
+  (void)out;
+
+  return CRY_ERR_INV_ALGO;
+#endif
+}
+
+/**
+ * @brief   Hash using SHA256.
+ *
+ * @param[in] cryp      pointer to the @p CRYDriver object
+ * @param[in] size      size of input buffer
+ * @param[in] in        buffer containing the input text
+ * @param[out] out      256 bits output buffer
+ * @return              The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
+ *                              device instance.
+ *
+ * @api
+ */
+cryerror_t crySHA256(CRYDriver *cryp, size_t size,
+                     const uint8_t *in, uint8_t *out) {
+
+  osalDbgCheck((cryp != NULL) && (in != NULL) && (out != NULL));
+
+  osalDbgAssert(cryp->state == CRY_READY, "not ready");
+
+#if CRY_LLD_SUPPORTS_SHA256 == TRUE
+  return cry_lld_SHA256(cryp, size, in, out);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_SHA256(cryp, size, in, out);
+#else
+  (void)cryp;
+  (void)size;
+  (void)in;
+  (void)out;
+
+  return CRY_ERR_INV_ALGO;
+#endif
+}
+
+/**
+ * @brief   Hash using SHA512.
+ *
+ * @param[in] cryp      pointer to the @p CRYDriver object
+ * @param[in] size      size of input buffer
+ * @param[in] in        buffer containing the input text
+ * @param[out] out      512 bits output buffer
+ * @return              The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
+ *                              device instance.
+ *
+ * @api
+ */
+cryerror_t crySHA512(CRYDriver *cryp, size_t size,
+                     const uint8_t *in, uint8_t *out) {
+
+  osalDbgCheck((cryp != NULL) && (in != NULL) && (out != NULL));
+
+  osalDbgAssert(cryp->state == CRY_READY, "not ready");
+
+#if CRY_LLD_SUPPORTS_SHA512 == TRUE
+  return cry_lld_SHA512(cryp, size, in, out);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_SHA512(cryp, size, in, out);
+#else
+  (void)cryp;
+  (void)size;
+  (void)in;
+  (void)out;
+
+  return CRY_ERR_INV_ALGO;
+#endif
+}
+
+/**
+ * @brief   True random numbers generator.
+ *
+ * @param[in] cryp      pointer to the @p CRYDriver object
+ * @param[out] out      128 bits output buffer
+ * @return              The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
+ *                              device instance.
+ *
+ * @api
+ */
+cryerror_t cryTRNG(CRYDriver *cryp, uint8_t *out) {
+
+  osalDbgCheck((cryp != NULL) && (out != NULL));
+
+  osalDbgAssert(cryp->state == CRY_READY, "not ready");
+
+#if CRY_LLD_SUPPORTS_TRNG == TRUE
+  return cry_lld_TRNG(cryp, out);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_TRNG(cryp, out);
+#else
+  (void)cryp;
+  (void)out;
 
   return CRY_ERR_INV_ALGO;
 #endif

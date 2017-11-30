@@ -280,6 +280,13 @@ extern "C" {
                                const uint8_t *in,
                                uint8_t *out,
                                const uint8_t *iv);
+  cryerror_t crySHA1(CRYDriver *cryp, size_t size,
+                     const uint8_t *in, uint8_t *out);
+  cryerror_t crySHA256(CRYDriver *cryp, size_t size,
+                       const uint8_t *in, uint8_t *out);
+  cryerror_t crySHA512(CRYDriver *cryp, size_t size,
+                       const uint8_t *in, uint8_t *out);
+  cryerror_t cryTRNG(CRYDriver *cryp, uint8_t *out);
 #ifdef __cplusplus
 }
 #endif
