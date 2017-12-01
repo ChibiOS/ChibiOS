@@ -113,6 +113,21 @@ static FATFS SDC_FS;
 /* FS mounted and ready.*/
 static bool fs_ready = FALSE;
 
+#if !HAL_USE_SDC
+
+/* Maximum speed SPI configuration (18MHz, CPHA=0, CPOL=0, MSb first).*/
+static SPIConfig hs_spicfg = {NULL, IOPORT3, GPIOC_SPI3_SD_CS, 0, 0};
+
+/* Low speed SPI configuration (281.250kHz, CPHA=0, CPOL=0, MSb first).*/
+static SPIConfig ls_spicfg = {NULL, IOPORT3, GPIOC_SPI3_SD_CS,
+                              SPI_CR1_BR_2 | SPI_CR1_BR_1,
+                              0};
+
+/* MMC/SD over SPI driver configuration.*/
+static MMCConfig mmccfg = {&SPID3, &ls_spicfg, &hs_spicfg};
+
+#endif
+
 /* Generic large buffer.*/
 static uint8_t fbuff[1024];
 
@@ -194,6 +209,10 @@ static const ShellConfig shell_cfg1 = {
 
 static thread_t *shelltp = NULL;
 
+#if !HAL_USE_SDC
+MMCDriver MMCD1;
+#endif
+
 /*
  * Card insertion event.
  */
@@ -204,12 +223,20 @@ static void InsertHandler(eventid_t id) {
   /*
    * On insertion SDC initialization and FS mount.
    */
+#if HAL_USE_SDC
   if (sdcConnect(&SDCD1))
+#else
+  if (mmcConnect(&MMCD1))
+#endif
     return;
 
   err = f_mount(&SDC_FS, "/", 1);
   if (err != FR_OK) {
+#if HAL_USE_SDC
     sdcDisconnect(&SDCD1);
+#else
+    mmcDisconnect(&MMCD1);
+#endif
     return;
   }
   fs_ready = TRUE;
@@ -221,7 +248,11 @@ static void InsertHandler(eventid_t id) {
 static void RemoveHandler(eventid_t id) {
 
   (void)id;
-  sdcDisconnect(&SDCD1);
+#if HAL_USE_SDC
+    sdcDisconnect(&SDCD1);
+#else
+    mmcDisconnect(&MMCD1);
+#endif
   fs_ready = FALSE;
 }
 
@@ -300,15 +331,30 @@ int main(void) {
    */
   shellInit();
 
+#if HAL_USE_SDC
   /*
    * Activates the  SDC driver 1 using default configuration.
    */
+
   sdcStart(&SDCD1, NULL);
 
   /*
    * Activates the card insertion monitor.
    */
   tmr_init(&SDCD1);
+#else
+  /*
+   * Initializes the MMC driver to work with SPI3.
+   */
+  palSetPad(IOPORT3, GPIOC_SPI3_SD_CS);
+  mmcObjectInit(&MMCD1);
+  mmcStart(&MMCD1, &mmccfg);
+
+  /*
+   * Activates the card insertion monitor.
+   */
+  tmr_init(&MMCD1);
+#endif
 
   /*
    * Creates the blinker thread.
