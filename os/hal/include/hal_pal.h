@@ -360,13 +360,13 @@ typedef struct {
  * @note    This function is implicitly invoked by @p halInit(), there is
  *          no need to explicitly initialize the driver.
  *
- * @param[in] config pointer to an architecture specific configuration
- *            structure. This structure is defined in the low level driver
- *            header.
- *
  * @init
  */
+#if defined(PAL_NEW_INIT) || defined(__DOXYGEN__)
+#define palInit() pal_lld_init()
+#else
 #define palInit(config) pal_lld_init(config)
+#endif
 
 /**
  * @brief   Reads the physical I/O port states.

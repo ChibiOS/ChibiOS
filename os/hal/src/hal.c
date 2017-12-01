@@ -62,7 +62,11 @@ void halInit(void) {
   hal_lld_init();
 
 #if (HAL_USE_PAL == TRUE) || defined(__DOXYGEN__)
+#if defined(PAL_NEW_INIT)
+  palInit();
+#else
   palInit(&pal_default_config);
+#endif
 #endif
 #if (HAL_USE_ADC == TRUE) || defined(__DOXYGEN__)
   adcInit();
