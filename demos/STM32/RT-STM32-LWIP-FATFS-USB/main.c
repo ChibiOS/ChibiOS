@@ -113,21 +113,6 @@ static FATFS SDC_FS;
 /* FS mounted and ready.*/
 static bool fs_ready = FALSE;
 
-#if !HAL_USE_SDC
-
-/* Maximum speed SPI configuration (18MHz, CPHA=0, CPOL=0, MSb first).*/
-static SPIConfig hs_spicfg = {NULL, IOPORT3, GPIOC_SPI3_SD_CS, 0, 0};
-
-/* Low speed SPI configuration (281.250kHz, CPHA=0, CPOL=0, MSb first).*/
-static SPIConfig ls_spicfg = {NULL, IOPORT3, GPIOC_SPI3_SD_CS,
-                              SPI_CR1_BR_2 | SPI_CR1_BR_1,
-                              0};
-
-/* MMC/SD over SPI driver configuration.*/
-static MMCConfig mmccfg = {&SPID3, &ls_spicfg, &hs_spicfg};
-
-#endif
-
 /* Generic large buffer.*/
 static uint8_t fbuff[1024];
 
@@ -208,10 +193,6 @@ static const ShellConfig shell_cfg1 = {
 /*===========================================================================*/
 
 static thread_t *shelltp = NULL;
-
-#if !HAL_USE_SDC
-MMCDriver MMCD1;
-#endif
 
 /*
  * Card insertion event.
@@ -348,7 +329,7 @@ int main(void) {
    */
   palSetPad(IOPORT3, GPIOC_SPI3_SD_CS);
   mmcObjectInit(&MMCD1);
-  mmcStart(&MMCD1, &mmccfg);
+  mmcStart(&MMCD1, &portab_mmccfg);
 
   /*
    * Activates the card insertion monitor.

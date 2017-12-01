@@ -55,6 +55,9 @@
 /* External declarations.                                                    */
 /*===========================================================================*/
 
+extern const MMCConfig portab_mmccfg;
+extern MMCDriver MMCD1;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
