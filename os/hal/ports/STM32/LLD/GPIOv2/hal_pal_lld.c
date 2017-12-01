@@ -63,17 +63,6 @@ palevent_t _pal_events[16];
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static void initgpio(stm32_gpio_t *gpiop, const stm32_gpio_setup_t *config) {
-
-  gpiop->OTYPER  = config->otyper;
-  gpiop->OSPEEDR = config->ospeedr;
-  gpiop->PUPDR   = config->pupdr;
-  gpiop->ODR     = config->odr;
-  gpiop->AFRL    = config->afrl;
-  gpiop->AFRH    = config->afrh;
-  gpiop->MODER   = config->moder;
-}
-
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
@@ -83,14 +72,11 @@ static void initgpio(stm32_gpio_t *gpiop, const stm32_gpio_setup_t *config) {
 /*===========================================================================*/
 
 /**
- * @brief   STM32 I/O ports configuration.
- * @details Ports A-D(E, F, G, H) clocks enabled.
- *
- * @param[in] config    the STM32 ports configuration
+ * @brief   PAL driver initialization.
  *
  * @notapi
  */
-void _pal_lld_init(const PALConfig *config) {
+void _pal_lld_init(void) {
 
 #if PAL_USE_CALLBACKS || PAL_USE_WAIT || defined(__DOXYGEN__)
   unsigned i;
@@ -100,6 +86,7 @@ void _pal_lld_init(const PALConfig *config) {
   }
 #endif
 
+#if 0
   /*
    * Enables the GPIO related clocks.
    */
@@ -117,42 +104,6 @@ void _pal_lld_init(const PALConfig *config) {
   RCC->AHB1ENR   |= AHB1_EN_MASK;
   RCC->AHB1LPENR |= AHB1_LPEN_MASK;
 #endif
-
-  /*
-   * Initial GPIO setup.
-   */
-#if STM32_HAS_GPIOA
-  initgpio(GPIOA, &config->PAData);
-#endif
-#if STM32_HAS_GPIOB
-  initgpio(GPIOB, &config->PBData);
-#endif
-#if STM32_HAS_GPIOC
-  initgpio(GPIOC, &config->PCData);
-#endif
-#if STM32_HAS_GPIOD
-  initgpio(GPIOD, &config->PDData);
-#endif
-#if STM32_HAS_GPIOE
-  initgpio(GPIOE, &config->PEData);
-#endif
-#if STM32_HAS_GPIOF
-  initgpio(GPIOF, &config->PFData);
-#endif
-#if STM32_HAS_GPIOG
-  initgpio(GPIOG, &config->PGData);
-#endif
-#if STM32_HAS_GPIOH
-  initgpio(GPIOH, &config->PHData);
-#endif
-#if STM32_HAS_GPIOI
-  initgpio(GPIOI, &config->PIData);
-#endif
-#if STM32_HAS_GPIOJ
-  initgpio(GPIOJ, &config->PJData);
-#endif
-#if STM32_HAS_GPIOK
-  initgpio(GPIOK, &config->PKData);
 #endif
 }
 
