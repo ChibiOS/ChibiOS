@@ -22,6 +22,10 @@
 #ifndef BOARD_H
 #define BOARD_H
 
+/*===========================================================================*/
+/* Driver constants.                                                         */
+/*===========================================================================*/
+
 /*
  * Setup for STMicroelectronics STM32L476-Discovery board.
  */
@@ -217,6 +221,7 @@
 #define LINE_OTG_FS_DP              PAL_LINE(GPIOA, 12U)
 #define LINE_SWDIO                  PAL_LINE(GPIOA, 13U)
 #define LINE_SWCLK                  PAL_LINE(GPIOA, 14U)
+
 #define LINE_LCD_SEG21              PAL_LINE(GPIOB, 0U)
 #define LINE_LCD_SEG2               PAL_LINE(GPIOB, 1U)
 #define LINE_LED_RED                PAL_LINE(GPIOB, 2U)
@@ -236,6 +241,7 @@
 #define LINE_LCD_SEG3               PAL_LINE(GPIOB, 13U)
 #define LINE_LCD_SEG19              PAL_LINE(GPIOB, 14U)
 #define LINE_LCD_SEG4               PAL_LINE(GPIOB, 15U)
+
 #define LINE_MAG_CS                 PAL_LINE(GPIOC, 0U)
 #define LINE_MAG_INT                PAL_LINE(GPIOC, 1U)
 #define LINE_MAG_DRDY               PAL_LINE(GPIOC, 2U)
@@ -252,6 +258,7 @@
 #define LINE_MFX_IRQ_OUT            PAL_LINE(GPIOC, 13U)
 #define LINE_OSC32_IN               PAL_LINE(GPIOC, 14U)
 #define LINE_OSC32_OUT              PAL_LINE(GPIOC, 15U)
+
 #define LINE_EXT_RST                PAL_LINE(GPIOD, 0U)
 #define LINE_MEMS_SCK               PAL_LINE(GPIOD, 1U)
 #define LINE_GYRO_INT1              PAL_LINE(GPIOD, 2U)
@@ -268,6 +275,7 @@
 #define LINE_LCD_SEG7               PAL_LINE(GPIOD, 13U)
 #define LINE_LCD_SEG15              PAL_LINE(GPIOD, 14U)
 #define LINE_LCD_SEG8               PAL_LINE(GPIOD, 15U)
+
 #define LINE_XL_CS                  PAL_LINE(GPIOE, 0U)
 #define LINE_XL_INT                 PAL_LINE(GPIOE, 1U)
 #define LINE_SAI1_MCK               PAL_LINE(GPIOE, 2U)
@@ -284,8 +292,27 @@
 #define LINE_QSPI_D1                PAL_LINE(GPIOE, 13U)
 #define LINE_QSPI_D2                PAL_LINE(GPIOE, 14U)
 #define LINE_QSPI_D3                PAL_LINE(GPIOE, 15U)
+
+
+
 #define LINE_OSC_IN                 PAL_LINE(GPIOH, 0U)
 #define LINE_OSC_OUT                PAL_LINE(GPIOH, 1U)
+
+/*===========================================================================*/
+/* Driver pre-compile time settings.                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver data structures and types.                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver macros.                                                            */
+/*===========================================================================*/
 
 /*
  * I/O ports initial setup, this configuration is established soon after reset
@@ -1505,6 +1532,9 @@
                                      PIN_LOCKR_DISABLED(GPIOH_PIN14) |      \
                                      PIN_LOCKR_DISABLED(GPIOH_PIN15))
 
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
 
 #if !defined(_FROM_ASM_)
 #ifdef __cplusplus

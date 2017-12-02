@@ -25,11 +25,17 @@
 #ifndef HAL_PAL_LLD_H
 #define HAL_PAL_LLD_H
 
+#include "stm32_gpio.h"
+
 #if HAL_USE_PAL || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Unsupported modes and specific modes                                      */
 /*===========================================================================*/
+
+/* Specifies palInit() without parameter, required until all platforms will
+   be updated to the new style.*/
+#define PAL_NEW_INIT
 
 #undef PAL_MODE_RESET
 #undef PAL_MODE_UNCONNECTED
@@ -223,109 +229,6 @@
 /** @} */
 
 /**
- * @brief   STM32 GPIO registers block.
- */
-typedef struct {
-
-  volatile uint32_t     MODER;
-  volatile uint32_t     OTYPER;
-  volatile uint32_t     OSPEEDR;
-  volatile uint32_t     PUPDR;
-  volatile uint32_t     IDR;
-  volatile uint32_t     ODR;
-  volatile union {
-    uint32_t            W;
-    struct {
-      uint16_t          set;
-      uint16_t          clear;
-    } H;
-  } BSRR;
-  volatile uint32_t     LOCKR;
-  volatile uint32_t     AFRL;
-  volatile uint32_t     AFRH;
-  volatile uint32_t     BRR;
-  volatile uint32_t     ASCR;
-} stm32_gpio_t;
-
-/**
- * @brief   GPIO port setup info.
- */
-typedef struct {
-  /** Initial value for MODER register.*/
-  uint32_t              moder;
-  /** Initial value for OTYPER register.*/
-  uint32_t              otyper;
-  /** Initial value for OSPEEDR register.*/
-  uint32_t              ospeedr;
-  /** Initial value for PUPDR register.*/
-  uint32_t              pupdr;
-  /** Initial value for ODR register.*/
-  uint32_t              odr;
-  /** Initial value for AFRL register.*/
-  uint32_t              afrl;
-  /** Initial value for AFRH register.*/
-  uint32_t              afrh;
-  /** Initial value for ASCR register.*/
-  uint32_t              ascr;
-  /** Initial value for LOCKR register.*/
-  uint32_t              lockr;
-} stm32_gpio_setup_t;
-
-/**
- * @brief   STM32 GPIO static initializer.
- * @details An instance of this structure must be passed to @p palInit() at
- *          system startup time in order to initialize the digital I/O
- *          subsystem. This represents only the initial setup, specific pads
- *          or whole ports can be reprogrammed at later time.
- */
-typedef struct {
-#if STM32_HAS_GPIOA || defined(__DOXYGEN__)
-  /** @brief Port A setup data.*/
-  stm32_gpio_setup_t    PAData;
-#endif
-#if STM32_HAS_GPIOB || defined(__DOXYGEN__)
-  /** @brief Port B setup data.*/
-  stm32_gpio_setup_t    PBData;
-#endif
-#if STM32_HAS_GPIOC || defined(__DOXYGEN__)
-  /** @brief Port C setup data.*/
-  stm32_gpio_setup_t    PCData;
-#endif
-#if STM32_HAS_GPIOD || defined(__DOXYGEN__)
-  /** @brief Port D setup data.*/
-  stm32_gpio_setup_t    PDData;
-#endif
-#if STM32_HAS_GPIOE || defined(__DOXYGEN__)
-  /** @brief Port E setup data.*/
-  stm32_gpio_setup_t    PEData;
-#endif
-#if STM32_HAS_GPIOF || defined(__DOXYGEN__)
-  /** @brief Port F setup data.*/
-  stm32_gpio_setup_t    PFData;
-#endif
-#if STM32_HAS_GPIOG || defined(__DOXYGEN__)
-  /** @brief Port G setup data.*/
-  stm32_gpio_setup_t    PGData;
-#endif
-#if STM32_HAS_GPIOH || defined(__DOXYGEN__)
-  /** @brief Port H setup data.*/
-  stm32_gpio_setup_t    PHData;
-#endif
-#if STM32_HAS_GPIOI || defined(__DOXYGEN__)
-  /** @brief Port I setup data.*/
-  stm32_gpio_setup_t    PIData;
-#endif
-#if STM32_HAS_GPIOJ || defined(__DOXYGEN__)
-  /** @brief Port I setup data.*/
-  stm32_gpio_setup_t    PJData;
-#endif
-#if STM32_HAS_GPIOK || defined(__DOXYGEN__)
-  /** @brief Port I setup data.*/
-  stm32_gpio_setup_t    PKData;
-#endif
-} PALConfig;
-
-/**
  * @brief   Type of digital I/O port sized unsigned integer.
  */
 typedef uint32_t ioportmask_t;
@@ -451,7 +354,7 @@ typedef uint32_t iopadid_t;
  *
  * @notapi
  */
-#define pal_lld_init(config) _pal_lld_init(config)
+#define pal_lld_init() _pal_lld_init()
 
 /**
  * @brief   Reads an I/O port.
@@ -608,14 +511,13 @@ typedef uint32_t iopadid_t;
   &_pal_events[PAL_PAD(line)]
 
 #if !defined(__DOXYGEN__)
-extern const PALConfig pal_default_config;
 extern palevent_t _pal_events[16];
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void _pal_lld_init(const PALConfig *config);
+  void _pal_lld_init(void);
   void _pal_lld_setgroupmode(ioportid_t port,
                              ioportmask_t mask,
                              iomode_t mode);
