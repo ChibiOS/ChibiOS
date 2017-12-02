@@ -98,8 +98,10 @@ static void hal_lld_backup_domain_init(void) {
  */
 void hal_lld_init(void) {
 
-  /* Reset of all peripherals.*/
-  rccResetAHB(~RCC_AHBRSTR_FLITFRST);
+  /* Reset of all peripherals.
+     Note, GPIOs are not reset because initialized before this point in
+     board files.*/
+  rccResetAHB(~(RCC_AHBRSTR_FLITFRST | STM32_GPIO_EN_MASK));
   rccResetAPB1(~RCC_APB1RSTR_PWRRST);
   rccResetAPB2(~0);
 

@@ -170,6 +170,46 @@
   RCC->AHBRSTR |= (mask);                                                   \
   RCC->AHBRSTR = 0;                                                         \
 }
+
+/**
+ * @brief   Enables the clock of one or more peripheral on the IOP bus.
+ *
+ * @param[in] mask      IOP peripherals mask
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableIOP(mask, lp) {                                            \
+  RCC->IOPENR |= (mask);                                                    \
+  if (lp)                                                                   \
+    RCC->IOPSMENR |= (mask);                                                \
+}
+
+/**
+ * @brief   Disables the clock of one or more peripheral on the IOP bus.
+ *
+ * @param[in] mask      IOP peripherals mask
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableIOP(mask, lp) {                                           \
+  RCC->IOPENR &= ~(mask);                                                   \
+  if (lp)                                                                   \
+    RCC->IOPSMENR &= ~(mask);                                               \
+}
+
+/**
+ * @brief   Resets one or more peripheral on the IOP bus.
+ *
+ * @param[in] mask      IOP peripherals mask
+ *
+ * @api
+ */
+#define rccResetIOP(mask) {                                                 \
+  RCC->IOPRSTR |= (mask);                                                   \
+  RCC->IOPRSTR = 0;                                                         \
+}
 /** @} */
 
 /**

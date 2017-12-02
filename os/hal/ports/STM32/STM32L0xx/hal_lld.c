@@ -150,7 +150,7 @@ OSAL_IRQ_HANDLER(STM32_DMA1_CH4567_HANDLER) {
  */
 void hal_lld_init(void) {
 
-  /* Reset of all peripherals.*/
+  /* Reset of all peripherals except those on IOP.*/
   rccResetAHB(~RCC_AHBRSTR_MIFRST);
   rccResetAPB1(~RCC_APB1RSTR_PWRRST);
   rccResetAPB2(~0);

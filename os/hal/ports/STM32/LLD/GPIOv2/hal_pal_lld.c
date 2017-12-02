@@ -30,22 +30,6 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-#if defined(STM32L0XX) || defined(STM32L1XX)
-#define AHB_EN_MASK     STM32_GPIO_EN_MASK
-#define AHB_LPEN_MASK   AHB_EN_MASK
-
-#elif defined(STM32F0XX) || defined(STM32F3XX) || defined(STM32F37X)
-#define AHB_EN_MASK     STM32_GPIO_EN_MASK
-#define AHB_LPEN_MASK   0
-
-#elif defined(STM32F2XX) || defined(STM32F4XX) || defined(STM32F7XX)
-#define AHB1_EN_MASK    STM32_GPIO_EN_MASK
-#define AHB1_LPEN_MASK  AHB1_EN_MASK
-
-#else
-#error "missing or unsupported platform for GPIOv2 PAL driver"
-#endif
-
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -84,26 +68,6 @@ void _pal_lld_init(void) {
   for (i = 0; i < 16; i++) {
     _pal_init_event(i);
   }
-#endif
-
-#if 0
-  /*
-   * Enables the GPIO related clocks.
-   */
-#if defined(STM32L0XX)
-  RCC->IOPENR |= AHB_EN_MASK;
-  RCC->IOPSMENR |= AHB_LPEN_MASK;
-#elif defined(STM32L1XX)
-  rccEnableAHB(AHB_EN_MASK, TRUE);
-  RCC->AHBLPENR |= AHB_LPEN_MASK;
-#elif defined(STM32F0XX)
-  rccEnableAHB(AHB_EN_MASK, TRUE);
-#elif defined(STM32F3XX) || defined(STM32F37X)
-  rccEnableAHB(AHB_EN_MASK, TRUE);
-#elif defined(STM32F2XX) || defined(STM32F4XX) || defined(STM32F7XX)
-  RCC->AHB1ENR   |= AHB1_EN_MASK;
-  RCC->AHB1LPENR |= AHB1_LPEN_MASK;
-#endif
 #endif
 }
 

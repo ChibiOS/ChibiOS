@@ -115,7 +115,7 @@ void hal_lld_init(void) {
 
   /* Reset of all peripherals. AHB3 is not reseted because it could have
      been initialized in the board initialization file (board.c).
-     Note, GPIO are not reset because initialized before this point in
+     Note, GPIOs are not reset because initialized before this point in
      board files.*/
   rccResetAHB1(~STM32_GPIO_EN_MASK);
   rccResetAHB2(~0);
