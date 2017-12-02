@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added tool for board files generation from command line.
 - NEW: Added STM32L496xx/STM32L4A6xx support.
 - NEW: Added STM32F030x4 support.
 - NEW: Added a Managed Flash Storage module to the HAL.

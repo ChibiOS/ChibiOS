@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2017 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -21,6 +21,10 @@
 
 #ifndef BOARD_H
 #define BOARD_H
+
+/*===========================================================================*/
+/* Driver constants.                                                         */
+/*===========================================================================*/
 
 /*
  * Setup for Mikroe Clicker 2 for STM32 board.
@@ -222,24 +226,20 @@
 #define LINE_OTG_FS_DP              PAL_LINE(GPIOA, 12U)
 #define LINE_SWDIO                  PAL_LINE(GPIOA, 13U)
 #define LINE_SWCLK                  PAL_LINE(GPIOA, 14U)
-
 #define LINE_I2C2_SCL               PAL_LINE(GPIOB, 10U)
 #define LINE_I2C2_SDA               PAL_LINE(GPIOB, 11U)
 #define LINE_SPI2_SCK               PAL_LINE(GPIOB, 13U)
 #define LINE_SPI2_MISO              PAL_LINE(GPIOB, 14U)
 #define LINE_SPI2_MOSI              PAL_LINE(GPIOB, 15U)
-
 #define LINE_I2C3_SDA               PAL_LINE(GPIOC, 9U)
 #define LINE_SPI3_SCK               PAL_LINE(GPIOC, 10U)
 #define LINE_SPI3_MISO              PAL_LINE(GPIOC, 11U)
 #define LINE_SPI3_MOSI              PAL_LINE(GPIOC, 12U)
-
 #define LINE_USART2_TX              PAL_LINE(GPIOD, 5U)
 #define LINE_USART2_RX              PAL_LINE(GPIOD, 6U)
 #define LINE_USART3_TX              PAL_LINE(GPIOD, 8U)
 #define LINE_USART3_RX              PAL_LINE(GPIOD, 9U)
 #define LINE_MB2_PWM                PAL_LINE(GPIOD, 12U)
-
 #define LINE_BUTTON1                PAL_LINE(GPIOE, 0U)
 #define LINE_MB1_RST                PAL_LINE(GPIOE, 7U)
 #define LINE_MB1_CS                 PAL_LINE(GPIOE, 8U)
@@ -251,9 +251,21 @@
 #define LINE_MB2_INT                PAL_LINE(GPIOE, 14U)
 #define LINE_LED2                   PAL_LINE(GPIOE, 15U)
 
+/*===========================================================================*/
+/* Driver pre-compile time settings.                                         */
+/*===========================================================================*/
 
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
 
+/*===========================================================================*/
+/* Driver data structures and types.                                         */
+/*===========================================================================*/
 
+/*===========================================================================*/
+/* Driver macros.                                                            */
+/*===========================================================================*/
 
 /*
  * I/O ports initial setup, this configuration is established soon after reset
@@ -1330,6 +1342,9 @@
                                      PIN_AFIO_AF(GPIOI_PIN14, 0U) |         \
                                      PIN_AFIO_AF(GPIOI_PIN15, 0U))
 
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
 
 #if !defined(_FROM_ASM_)
 #ifdef __cplusplus

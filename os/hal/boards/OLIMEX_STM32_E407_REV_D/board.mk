@@ -7,7 +7,3 @@ BOARDINC = $(CHIBIOS)/os/hal/boards/OLIMEX_STM32_E407_REV_D
 # Shared variables
 ALLCSRC += $(BOARDSRC)
 ALLINC  += $(BOARDINC)
-
-# Shared variables
-ALLCSRC += $(BOARDSRC)
-ALLINC  += $(BOARDINC)

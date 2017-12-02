@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2017 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -216,17 +216,13 @@
 #define LINE_USB_DP                 PAL_LINE(GPIOA, 12U)
 #define LINE_SWDIO                  PAL_LINE(GPIOA, 13U)
 #define LINE_SWCLK                  PAL_LINE(GPIOA, 14U)
-
 #define LINE_SWO                    PAL_LINE(GPIOB, 3U)
 #define LINE_I2C1_SCL               PAL_LINE(GPIOB, 6U)
 #define LINE_LSM303DLHC_SCL         PAL_LINE(GPIOB, 6U)
 #define LINE_I2C1_SDA               PAL_LINE(GPIOB, 7U)
 #define LINE_LSM303DLHC_SDA         PAL_LINE(GPIOB, 7U)
-
 #define LINE_OSC32_IN               PAL_LINE(GPIOC, 14U)
 #define LINE_OSC32_OUT              PAL_LINE(GPIOC, 15U)
-
-
 #define LINE_L3GD20_INT1            PAL_LINE(GPIOE, 0U)
 #define LINE_L3GD20_INT2            PAL_LINE(GPIOE, 1U)
 #define LINE_LSM303DLHC_DRDY        PAL_LINE(GPIOE, 2U)
@@ -242,11 +238,8 @@
 #define LINE_LED10_RED              PAL_LINE(GPIOE, 13U)
 #define LINE_LED8_ORANGE            PAL_LINE(GPIOE, 14U)
 #define LINE_LED6_GREEN             PAL_LINE(GPIOE, 15U)
-
 #define LINE_OSC_IN                 PAL_LINE(GPIOF, 0U)
 #define LINE_OSC_OUT                PAL_LINE(GPIOF, 1U)
-
-
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */

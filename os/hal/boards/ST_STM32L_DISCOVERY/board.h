@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2017 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -167,18 +167,13 @@
 #define LINE_JTAG_TMS               PAL_LINE(GPIOA, 13U)
 #define LINE_JTAG_TCK               PAL_LINE(GPIOA, 14U)
 #define LINE_JTAG_TDI               PAL_LINE(GPIOA, 15U)
-
 #define LINE_BOOT1                  PAL_LINE(GPIOB, 2U)
 #define LINE_JTAG_TDO               PAL_LINE(GPIOB, 3U)
 #define LINE_JTAG_TRST              PAL_LINE(GPIOB, 4U)
 #define LINE_LED4                   PAL_LINE(GPIOB, 6U)
 #define LINE_LED3                   PAL_LINE(GPIOB, 7U)
-
 #define LINE_OSC32_IN               PAL_LINE(GPIOC, 14U)
 #define LINE_OSC32_OUT              PAL_LINE(GPIOC, 15U)
-
-
-
 #define LINE_OSC_IN                 PAL_LINE(GPIOH, 0U)
 #define LINE_OSC_OUT                PAL_LINE(GPIOH, 1U)
 

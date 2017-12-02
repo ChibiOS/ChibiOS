@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2017 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -163,7 +163,6 @@
 #define LINE_SWDIO                  PAL_LINE(GPIOA, 13U)
 #define LINE_SWCLK                  PAL_LINE(GPIOA, 14U)
 #define LINE_EPD1_CS                PAL_LINE(GPIOA, 15U)
-
 #define LINE_TS_G3_IO2              PAL_LINE(GPIOB, 0U)
 #define LINE_TS_G3_IO3              PAL_LINE(GPIOB, 1U)
 #define LINE_EPD1_RESET             PAL_LINE(GPIOB, 2U)
@@ -180,12 +179,9 @@
 #define LINE_NFC_SCK                PAL_LINE(GPIOB, 13U)
 #define LINE_NFC_MISO               PAL_LINE(GPIOB, 14U)
 #define LINE_NFC_MOSI               PAL_LINE(GPIOB, 15U)
-
 #define LINE_MFX_IRQ_OUT            PAL_LINE(GPIOC, 13U)
 #define LINE_OSC32_IN               PAL_LINE(GPIOC, 14U)
 #define LINE_OSC32_OUT              PAL_LINE(GPIOC, 15U)
-
-
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
