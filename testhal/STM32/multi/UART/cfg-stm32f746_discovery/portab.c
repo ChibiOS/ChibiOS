@@ -44,11 +44,11 @@ void rxerr(UARTDriver *uartp, uartflags_t e);
  * UART driver configuration structure.
  */
 UARTConfig uart_cfg_1 = {
-                         NULL,
-                         NULL,
-                         NULL,
-                         NULL,
-                         NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
   NULL,
   0,
   38400,

@@ -73,6 +73,8 @@ UARTConfig uart_cfg_1 = {
 
 void portab_setup(void) {
 
+  palSetPadMode(GPIOA, 2, PAL_MODE_ALTERNATE(7));
+  palSetPadMode(GPIOA, 3, PAL_MODE_ALTERNATE(7));
 }
 
 /** @} */
