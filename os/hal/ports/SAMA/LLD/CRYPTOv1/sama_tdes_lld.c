@@ -44,6 +44,9 @@ cryerror_t sama_tdes_lld_polling(CRYDriver *cryp, tdes_config_t *params,
 	uint32_t i;
 	uint8_t size = 8;
 	uint32_t *vectors = (uint32_t *) iv;
+
+	osalMutexLock(&cryp->mutex);
+
 	//soft reset
 	TDES->TDES_CR = TDES_CR_SWRST;
 	//configure
@@ -78,7 +81,7 @@ cryerror_t sama_tdes_lld_polling(CRYDriver *cryp, tdes_config_t *params,
 	}
 
 	TDES->TDES_MR = mode;
-	osalMutexLock(&cryp->mutex);
+
 	//write keys
 
 	TDES->TDES_KEY1WR[0] = cryp->key0_buffer[0];
@@ -106,7 +109,7 @@ cryerror_t sama_tdes_lld_polling(CRYDriver *cryp, tdes_config_t *params,
 	if (params->algo == TDES_ALGO_XTEA) {
 		TDES->TDES_XTEA_RNDR = TDES_XTEA_RNDR_XTEA_RNDS(32);
 	}
-	osalMutexUnlock(&cryp->mutex);
+
 	//load 64 bit data size in tdes registers
 	for (i = 0; i < data_len; i += size) {
 		if (size == 8)
@@ -129,6 +132,9 @@ cryerror_t sama_tdes_lld_polling(CRYDriver *cryp, tdes_config_t *params,
 			tdes_get_output((uint32_t *) ((out) + i), NULL);
 	}
 
+	osalMutexUnlock(&cryp->mutex);
+
+
 	return CRY_NOERROR;
 }
 
@@ -138,6 +144,8 @@ cryerror_t sama_tdes_lld_dma(CRYDriver *cryp, tdes_config_t *params,
 
 	uint32_t mode = 0;
 	uint32_t *vectors = (uint32_t *) iv;
+
+	osalMutexLock(&cryp->mutex);
 
 	cryp->dmachunksize = DMA_CHUNK_SIZE_1;
 
@@ -214,7 +222,7 @@ cryerror_t sama_tdes_lld_dma(CRYDriver *cryp, tdes_config_t *params,
 
 	TDES->TDES_MR = mode;
 
-	osalMutexLock(&cryp->mutex);
+
 
 	//write keys
 	TDES->TDES_KEY1WR[0] = cryp->key0_buffer[0];
@@ -240,7 +248,7 @@ cryerror_t sama_tdes_lld_dma(CRYDriver *cryp, tdes_config_t *params,
 		TDES->TDES_IVR[1] = vectors[1];
 	}
 
-	osalMutexUnlock(&cryp->mutex);
+
 
 	if (params->algo == TDES_ALGO_XTEA) {
 		TDES->TDES_XTEA_RNDR = TDES_XTEA_RNDR_XTEA_RNDS(32);
@@ -256,6 +264,8 @@ cryerror_t sama_tdes_lld_dma(CRYDriver *cryp, tdes_config_t *params,
 
 	osalThreadSuspendS(&cryp->thread);
 	osalSysUnlock();
+
+	osalMutexUnlock(&cryp->mutex);
 
 	return CRY_NOERROR;
 }

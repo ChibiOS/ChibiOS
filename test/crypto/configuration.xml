@@ -2677,6 +2677,285 @@ for (int i = 0; i < 16; i++) {
       </cases>
           </sequence>
 
+
+<sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
+              <value>SHA</value>
+            </brief>
+            <description>
+              <value>SHA testing</value>
+            </description>
+            <condition>
+              <value />
+            </condition>
+            <shared_code>
+              <value><![CDATA[
+#include <string.h>
+#include "ref_sha.h"
+
+#define MAX_DIGEST_SIZE_INBYTE  64
+#define MAX_DIGEST_SIZE_INWORD  (MAX_DIGEST_SIZE_INBYTE/4)
+static uint32_t digest[MAX_DIGEST_SIZE_INWORD];
+
+static const CRYConfig configSHA_DMA=
+{
+    TRANSFER_DMA,
+    0,
+    0
+};
+
+                ]]></value>
+            </shared_code>
+            <cases>
+       <case>
+                <brief>
+                  <value>SHA1 DMA</value>
+                </brief>
+                <description>
+                  <value>testing SHA1 in DMA mode</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[
+memset(msg_clear, 0, TEST_MSG_DATA_BYTE_LEN);
+memset(digest, 0, MAX_DIGEST_SIZE_INWORD);
+memcpy((char*) msg_clear, sha_msg0, SHA_LEN_0);
+cryStart(&CRYD1, &configSHA_DMA);
+
+                      ]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value><![CDATA[cryStop(&CRYD1);]]></value>
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[
+  cryerror_t ret;
+  uint32_t *ref;
+]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                 
+                   <step>
+                    <description>
+                      <value>Digest</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[
+//---- One Block Test
+ret = crySHA1(&CRYD1,SHA_LEN_0,(uint8_t*)msg_clear,(uint8_t*)digest);
+
+
+test_assert(ret == CRY_NOERROR, "sha1 failed");
+
+
+SHOW_DATA(digest,5);
+
+ref = (uint32_t*)refSHA_SHA1_3;
+for (int i = 0; i < 5; i++) {
+  test_assert(digest[i] == ref[i], "sha1 digest mismatch");
+}
+
+//---- Multi Block Test
+memset(msg_clear, 0, TEST_MSG_DATA_BYTE_LEN);
+memcpy((char*) msg_clear, sha_msg1, SHA_LEN_1);
+
+ret = crySHA1(&CRYD1,SHA_LEN_1,(uint8_t*)msg_clear,(uint8_t*)digest);
+
+test_assert(ret == CRY_NOERROR, "sha1 failed");
+
+ SHOW_DATA(digest,5);
+
+
+ref = (uint32_t*)refSHA_SHA1_56;
+for (int i = 0; i < 5; i++) {
+  test_assert(digest[i] == ref[i], "sha1 digest mismatch");
+}
+
+
+]]></value>
+                    </code>
+                  </step>
+                  
+                
+
+                 
+ 
+                </steps>
+              </case>
+              
+   <case>
+                <brief>
+                  <value>SHA256 DMA</value>
+                </brief>
+                <description>
+                  <value>testing SHA256 in DMA mode</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[
+memset(msg_clear, 0, TEST_MSG_DATA_BYTE_LEN);
+memset(digest, 0, MAX_DIGEST_SIZE_INWORD);
+memcpy((char*) msg_clear, sha_msg0, SHA_LEN_0);
+cryStart(&CRYD1, &configSHA_DMA);
+
+                      ]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value><![CDATA[cryStop(&CRYD1);]]></value>
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[
+  cryerror_t ret;
+  uint32_t *ref;
+]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                 
+                   <step>
+                    <description>
+                      <value>Digest</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[
+
+//---- One Block Test
+ret = crySHA256(&CRYD1,SHA_LEN_0,(uint8_t*)msg_clear,(uint8_t*)digest);
+
+test_assert(ret == CRY_NOERROR, "sha256 failed");
+
+SHOW_DATA(digest,8);
+
+ref = (uint32_t*)refSHA_SHA256_3;
+for (int i = 0; i < 8; i++) {
+  test_assert(digest[i] == ref[i], "sha256 digest mismatch");
+}
+
+//---- Multi Block Test
+memset(msg_clear, 0, TEST_MSG_DATA_BYTE_LEN);
+memcpy((char*) msg_clear, sha_msg1, SHA_LEN_1);
+
+ret = crySHA256(&CRYD1,SHA_LEN_1,(uint8_t*)msg_clear,(uint8_t*)digest);
+
+test_assert(ret == CRY_NOERROR, "sha256 failed");
+
+
+ SHOW_DATA(digest,8);
+
+ref = (uint32_t*)refSHA_SHA256_56;
+for (int i = 0; i < 8; i++) {
+  test_assert(digest[i] == ref[i], "sha256 digest mismatch");
+}
+
+
+]]></value>
+                    </code>
+                  </step>
+                  
+                
+
+                 
+ 
+                </steps>
+              </case>           
+ <case>
+                <brief>
+                  <value>SHA512 DMA</value>
+                </brief>
+                <description>
+                  <value>testing SHA512 in DMA mode</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[
+memset(msg_clear, 0, TEST_MSG_DATA_BYTE_LEN);
+memset(digest, 0, MAX_DIGEST_SIZE_INWORD);
+memcpy((char*) msg_clear, sha_msg0, SHA_LEN_0);
+cryStart(&CRYD1, &configSHA_DMA);
+
+                      ]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value><![CDATA[cryStop(&CRYD1);]]></value>
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[
+  cryerror_t ret;
+  uint32_t *ref;
+]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                 
+                   <step>
+                    <description>
+                      <value>Digest</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[
+//---- One Block Test
+ret = crySHA512(&CRYD1,SHA_LEN_0,(uint8_t*)msg_clear,(uint8_t*)digest);
+
+test_assert(ret == CRY_NOERROR, "sha512 failed");
+
+SHOW_DATA(digest,16);
+
+ref = (uint32_t*)refSHA_SHA512_3;
+for (int i = 0; i < 16; i++) {
+  test_assert(digest[i] == ref[i], "sha512 digest mismatch");
+}
+
+//---- Multi Block Test
+memset(msg_clear, 0, TEST_MSG_DATA_BYTE_LEN);
+memcpy((char*) msg_clear, sha_msg1, SHA_LEN_1);
+
+ret = crySHA512(&CRYD1,SHA_LEN_1,(uint8_t*)msg_clear,(uint8_t*)digest);
+
+test_assert(ret == CRY_NOERROR, "sha512 failed");
+
+
+ SHOW_DATA(digest,16);
+
+ref = (uint32_t*)refSHA_SHA512_56;
+for (int i = 0; i < 16; i++) {
+  test_assert(digest[i] == ref[i], "sha512 digest mismatch");
+}
+
+
+]]></value>
+                    </code>
+                  </step>
+                  
+                
+
+                 
+ 
+                </steps>
+              </case>   
+      </cases>
+          </sequence>
         </sequences>
       </instance>
     </instances>

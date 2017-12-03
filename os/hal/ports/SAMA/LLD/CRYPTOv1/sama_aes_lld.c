@@ -112,6 +112,7 @@ cryerror_t sama_aes_lld_process_polling(CRYDriver *cryp, aesparams *params,
 	uint32_t i;
 	cryerror_t ret;
 
+	osalMutexLock(&cryp->mutex);
 //AES soft reset
 	AES->AES_CR = AES_CR_SWRST;
 
@@ -125,11 +126,11 @@ cryerror_t sama_aes_lld_process_polling(CRYDriver *cryp, aesparams *params,
 
 		AES->AES_MR |= (AES_MR_CFBS(cryp->config->cfbs) | AES_MR_CKEY_PASSWD);
 
-		osalMutexLock(&cryp->mutex);
+
 
 		sama_aes_lld_write_key(cryp->key0_buffer,( const uint32_t *) params->iv, cryp->key0_size);
 
-		osalMutexUnlock(&cryp->mutex);
+
 
 		if (params->encrypt)
 			AES->AES_MR |= AES_MR_CIPHER;
@@ -156,6 +157,8 @@ cryerror_t sama_aes_lld_process_polling(CRYDriver *cryp, aesparams *params,
 
 	}
 
+	osalMutexUnlock(&cryp->mutex);
+
 	return CRY_NOERROR;
 
 }
@@ -166,6 +169,8 @@ cryerror_t sama_aes_lld_process_dma(CRYDriver *cryp,  aesparams *params,
 	cryerror_t ret;
 
 	osalDbgAssert(cryp->thread == NULL, "already waiting");
+
+	osalMutexLock(&cryp->mutex);
 
 	//set chunk size
 	cryp->dmachunksize = DMA_CHUNK_SIZE_4;
@@ -230,11 +235,7 @@ cryerror_t sama_aes_lld_process_dma(CRYDriver *cryp,  aesparams *params,
 
 		AES->AES_MR |= (AES_MR_CFBS(cryp->config->cfbs) | AES_MR_CKEY_PASSWD);
 
-		osalMutexLock(&cryp->mutex);
-
 		sama_aes_lld_write_key(cryp->key0_buffer,( const uint32_t *) params->iv, cryp->key0_size);
-
-		osalMutexUnlock(&cryp->mutex);
 
 		if (params->encrypt)
 			AES->AES_MR |= AES_MR_CIPHER;
@@ -257,6 +258,8 @@ cryerror_t sama_aes_lld_process_dma(CRYDriver *cryp,  aesparams *params,
 	osalThreadSuspendS(&cryp->thread);
 
 	osalSysUnlock();
+
+	osalMutexUnlock(&cryp->mutex);
 
 	return CRY_NOERROR;
 

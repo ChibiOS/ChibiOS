@@ -133,8 +133,6 @@ static void crypto_lld_serve_read_interrupt(CRYDriver *cryp, uint32_t flags) {
 #endif
 
   /* Stop everything.*/
-
-  dmaChannelDisable(cryp->dmatx);
   dmaChannelDisable(cryp->dmarx);
   /* Portable CRY ISR code defined in the high level driver, note, it is
      a macro.*/
@@ -161,7 +159,10 @@ static void crypto_lld_serve_write_interrupt(CRYDriver *cryp, uint32_t flags) {
   (void)flags;
 #endif
 
+  dmaChannelDisable(cryp->dmatx);
 
+  if (cryp->rxdmamode == 0xFFFFFFFF)
+	  _cry_isr_code(cryp);
 }
 
 #endif

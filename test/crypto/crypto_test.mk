@@ -8,7 +8,8 @@ TESTSRC += 	 ${CHIBIOS}/test/crypto/source/test/cry_test_root.c \
            	 ${CHIBIOS}/test/crypto/source/test/cry_test_sequence_003.c		\
            	 ${CHIBIOS}/test/crypto/source/test/cry_test_sequence_004.c		\
 			 ${CHIBIOS}/test/crypto/source/test/cry_test_sequence_005.c		\
-			 ${CHIBIOS}/test/crypto/source/test/cry_test_sequence_006.c
+			 ${CHIBIOS}/test/crypto/source/test/cry_test_sequence_006.c		\
+			 ${CHIBIOS}/test/crypto/source/test/cry_test_sequence_007.c
 # Required include directories
 TESTINC +=  ${CHIBIOS}/test/crypto/source/testref	\
 			${CHIBIOS}/test/crypto/source/test
