@@ -34,6 +34,29 @@
 /* Module exported variables.                                                */
 /*===========================================================================*/
 
+void txend1(UARTDriver *uartp);
+void txend2(UARTDriver *uartp);
+void rxend(UARTDriver *uartp);
+void rxchar(UARTDriver *uartp, uint16_t c);
+void rxerr(UARTDriver *uartp, uartflags_t e);
+
+/*
+ * UART driver configuration structure.
+ */
+UARTConfig uart_cfg_1 = {
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  0,
+  38400,
+  0,
+  USART_CR2_LINEN,
+  0
+};
+
 /*===========================================================================*/
 /* Module local types.                                                       */
 /*===========================================================================*/
