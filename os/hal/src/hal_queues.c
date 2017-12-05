@@ -606,11 +606,6 @@ msg_t oqGetI(output_queue_t *oqp) {
  * @param[in] bp        pointer to the data buffer
  * @param[in] n         the maximum amount of data to be transferred, the
  *                      value 0 is reserved
- * @param[in] timeout   the number of ticks before the operation timeouts,
- *                      the following special values are allowed:
- *                      - @a TIME_IMMEDIATE immediate timeout.
- *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The number of bytes effectively transferred.
  *
  * @iclass
