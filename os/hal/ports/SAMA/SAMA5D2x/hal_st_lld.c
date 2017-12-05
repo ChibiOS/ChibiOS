@@ -92,6 +92,7 @@ void st_lld_init(void) {
 
   PIT->PIT_MR = PIT_MR_PIV((SAMA_PIT / OSAL_ST_FREQUENCY) - 1);
   PIT->PIT_MR |= PIT_MR_PITEN | PIT_MR_PITIEN;
+  (void) PIT->PIT_PIVR;    /* reset PIT PICNT counter */
 
   /* IRQ enabled.*/
   aicSetSourcePriority(ID_PIT, SAMA_ST_IRQ_PRIORITY);
