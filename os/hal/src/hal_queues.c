@@ -213,8 +213,7 @@ void iqResetI(input_queue_t *iqp) {
  * @param[in] b         the byte value to be written in the queue
  * @return              The operation status.
  * @retval MSG_OK       if the operation has been completed with success.
- * @retval MSG_TIMEOUT  if the queue is full and the operation cannot be
- *                      completed.
+ * @retval MSG_TIMEOUT  if the queue is full.
  *
  * @iclass
  */
@@ -247,7 +246,7 @@ msg_t iqPutI(input_queue_t *iqp, uint8_t b) {
  *
  * @param[in] iqp       pointer to an @p input_queue_t structure
  * @return              A byte value from the queue.
- * @retval MSG_TIMEOUT  if the specified time expired.
+ * @retval MSG_TIMEOUT  if the queue is empty.
  * @retval MSG_RESET    if the queue has been reset.
  *
  * @iclass
@@ -483,7 +482,7 @@ void oqResetI(output_queue_t *oqp) {
  * @param[in] b         the byte value to be written in the queue
  * @return              The operation status.
  * @retval MSG_OK       if the operation succeeded.
- * @retval MSG_TIMEOUT  if the specified time expired.
+ * @retval MSG_TIMEOUT  if the queue is full.
  * @retval MSG_RESET    if the queue has been reset.
  *
  * @iclass
