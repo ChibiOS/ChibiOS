@@ -32,14 +32,13 @@ SECTIONS
     {
         __ivpr_base__ = .;
         *(.boot)
-    } > flash
-
-    .boot1 ALIGN(16) :
-    {
         *(.handlers)
         *(.crt0)
+    } > flash
+
+    .vectors ALIGN(0x800) :
+    {
         /* The vectors table requires a 2kB alignment.*/
-        . = ALIGN(0x800);
         *(.vectors)
     } > flash
 
