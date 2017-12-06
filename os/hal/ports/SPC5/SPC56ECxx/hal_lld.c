@@ -76,7 +76,7 @@ void hal_lld_init(void) {
   n = halSPCGetSystemClock() / OSAL_ST_FREQUENCY;
   port_write_spr(22, n);                            /* Init. DEC register.  */
   port_write_spr(54, n);                            /* Init. DECAR register.*/
-  n = 0x0440;                                       /* DIE ARE bits.        */
+  n = 0x04400000;                                   /* DIE ARE bits.        */
   port_write_spr(340, n);                           /* TCR register.        */
 
   /* TB counter enabled for debug and measurements.*/
