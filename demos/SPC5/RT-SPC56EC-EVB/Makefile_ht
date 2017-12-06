@@ -82,6 +82,12 @@ PROJECT = ch
 
 # Imported source files and paths
 CHIBIOS = ../../..
+CONFDIR  := .
+BUILDDIR := ./build-ht
+DEPDIR   := ./.dep-ht
+
+# Licensing files.
+include $(CHIBIOS)/os/license/license.mk
 # Startup files.
 include $(CHIBIOS)/os/common/startup/e200/compilers/GCC/mk/startup_spc56ecxx.mk
 # HAL-OSAL files (optional).
@@ -103,44 +109,56 @@ include $(CHIBIOS)/os/various/shell/shell.mk
 LDSCRIPT= $(STARTUPLD)/SPC56EC74.ld
 
 # C sources here.
-CSRC = $(STARTUPSRC) \
-       $(KERNSRC) \
-       $(PORTSRC) \
-       $(OSALSRC) \
-       $(HALSRC) \
-       $(PLATFORMSRC) \
-       $(BOARDSRC) \
+CSRC = $(ALLCSRC) \
        $(TESTSRC) \
-       $(STREAMSSRC) \
-       $(SHELLSRC) \
        main.c
 
 # C++ sources here.
-CPPSRC =
+CPPSRC = $(AllCPPSRC)
 
 # List ASM source files here
-ASMSRC =
-ASMXSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
+ASMSRC = $(ALLASMSRC)
+ASMXSRC = $(ALLXASMSRC)
 
-INCDIR = $(CHIBIOS)/os/license \
-         $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
-         $(HALINC) $(PLATFORMINC) $(BOARDINC) $(TESTINC) \
-         $(STREAMSINC) $(SHELLINC)
+INCDIR = $(ALLINC) $(TESTINC) $(CONFDIR)
 
 #
 # Project, sources and paths
 ##############################################################################
 
 ##############################################################################
+# Start of user section
+#
+
+# List all user C define here, like -D_DEBUG=1
+UDEFS = -DSPC56ECXX_FMPLL_CLOCK_ERRATA_WORKAROUND=0
+
+# Define ASM defines here
+UADEFS =
+
+# List all user directories here
+UINCDIR =
+
+# List the user directory to look for the libraries here
+ULIBDIR =
+
+# List all user libraries here
+ULIBS =
+
+#
+# End of user defines
+##############################################################################
+
+##############################################################################
 # Compiler settings
 #
 
-#MCU  = e200zx -meabi -msdata=none -mnew-mnemonics -mregnames # HighTec
-MCU  = e200z4 -meabi -msdata=none -mregnames # Free GCC
+MCU  = e200zx -meabi -msdata=none -mnew-mnemonics -mregnames # HighTec
+#MCU  = e200z4 -meabi -msdata=none -mregnames # Free GCC
 
-#TRGT = ppc-vle-
+TRGT = ppc-vle-
 #TRGT = powerpc-eabivle-
-TRGT = ppc-freevle-eabi-
+#TRGT = ppc-freevle-eabi-
 CC   = $(TRGT)gcc
 CPPC = $(TRGT)g++
 # Enable loading with g++ only if you need C++ runtime support.
@@ -165,29 +183,6 @@ CPPWARN = -Wall -Wextra -Wundef
 
 #
 # Compiler settings
-##############################################################################
-
-##############################################################################
-# Start of user section
-#
-
-# List all user C define here, like -D_DEBUG=1
-UDEFS = -DSPC56ECXX_FMPLL_CLOCK_ERRATA_WORKAROUND=0
-
-# Define ASM defines here
-UADEFS =
-
-# List all user directories here
-UINCDIR =
-
-# List the user directory to look for the libraries here
-ULIBDIR =
-
-# List all user libraries here
-ULIBS =
-
-#
-# End of user defines
 ##############################################################################
 
 RULESPATH = $(CHIBIOS)/os/common/startup/e200/compilers/GCC

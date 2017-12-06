@@ -82,6 +82,10 @@ PROJECT = ch
 
 # Imported source files and paths
 CHIBIOS = ../../..
+CONFDIR  := .
+BUILDDIR := ./build-ghs
+DEPDIR   := ./.dep-ghs
+
 # Startup files.
 include $(CHIBIOS)/os/common/startup/e200/compilers/GHS/mk/startup_spc56ecxx.mk
 # HAL-OSAL files (optional).
@@ -103,32 +107,44 @@ include $(CHIBIOS)/os/various/shell/shell.mk
 LDSCRIPT= $(STARTUPLD)/SPC56EC74.ld
 
 # C sources here.
-CSRC = $(STARTUPSRC) \
-       $(KERNSRC) \
-       $(PORTSRC) \
-       $(OSALSRC) \
-       $(HALSRC) \
-       $(PLATFORMSRC) \
-       $(BOARDSRC) \
+CSRC = $(ALLCSRC) \
        $(TESTSRC) \
-       $(STREAMSSRC) \
-       $(SHELLSRC) \
        main.c
 
 # C++ sources here.
-CPPSRC =
+CPPSRC = $(AllCPPSRC)
 
 # List ASM source files here
-ASMSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
-ASMXSRC =
+ASMSRC = $(ALLASMSRC)
+ASMXSRC = $(ALLXASMSRC)
 
-INCDIR = $(CHIBIOS)/os/license \
-         $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
-         $(HALINC) $(PLATFORMINC) $(BOARDINC) $(TESTINC) \
-         $(STREAMSINC) $(SHELLINC)
+INCDIR = $(ALLINC) $(TESTINC) $(CONFDIR)
 
 #
 # Project, sources and paths
+##############################################################################
+
+##############################################################################
+# Start of user section
+#
+
+# List all user C define here, like -D_DEBUG=1
+UDEFS = -DSPC56ECXX_FMPLL_CLOCK_ERRATA_WORKAROUND=0
+
+# Define ASM defines here
+UADEFS =
+
+# List all user directories here
+UINCDIR =
+
+# List the user directory to look for the libraries here
+ULIBDIR =
+
+# List all user libraries here
+ULIBS =
+
+#
+# End of user defines
 ##############################################################################
 
 ##############################################################################
@@ -157,29 +173,6 @@ CPPWARN = -Wunknown-pragmas -Wimplicit-int -Wshadow -Wtrigraphs -Wundef
 
 #
 # Compiler settings
-##############################################################################
-
-##############################################################################
-# Start of user section
-#
-
-# List all user C define here, like -D_DEBUG=1
-UDEFS = -DSPC56ECXX_FMPLL_CLOCK_ERRATA_WORKAROUND=0
-
-# Define ASM defines here
-UADEFS =
-
-# List all user directories here
-UINCDIR =
-
-# List the user directory to look for the libraries here
-ULIBDIR =
-
-# List all user libraries here
-ULIBS =
-
-#
-# End of user defines
 ##############################################################################
 
 RULESPATH = $(CHIBIOS)/os/common/startup/e200/compilers/GHS
