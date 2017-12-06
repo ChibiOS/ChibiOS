@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    SPC560BCxx/hal_lld.c
- * @brief   SPC560B/Cxx HAL subsystem low level driver source.
+ * @file    SPC56ECxx/hal_lld.c
+ * @brief   SPC56ECxx HAL subsystem low level driver source.
  *
  * @addtogroup HAL
  * @{
@@ -88,7 +88,7 @@ void hal_lld_init(void) {
 }
 
 /**
- * @brief   SPC560B/Cxx clocks and PLL initialization.
+ * @brief   SPC56ECxx clocks and PLL initialization.
  * @note    All the involved constants come from the file @p board.h and
  *          @p hal_lld.h
  * @note    This function must be invoked only after the system reset.
