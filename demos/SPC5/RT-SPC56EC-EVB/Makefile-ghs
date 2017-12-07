@@ -86,6 +86,8 @@ CONFDIR  := .
 BUILDDIR := ./build-ghs
 DEPDIR   := ./.dep-ghs
 
+# Licensing files.
+include $(CHIBIOS)/os/license/license.mk
 # Startup files.
 include $(CHIBIOS)/os/common/startup/e200/compilers/GHS/mk/startup_spc56ecxx.mk
 # HAL-OSAL files (optional).
