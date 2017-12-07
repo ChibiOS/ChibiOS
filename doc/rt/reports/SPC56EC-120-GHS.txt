@@ -1,7 +1,7 @@
 
 *** ChibiOS/RT Test Suite
 ***
-*** Compiled:     Dec  7 2017 - 08:49:34
+*** Compiled:     Dec  7 2017 - 08:47:19
 *** Platform:     SPC56ECxx Gateway
 *** Test Board:   EVB with SPC56ECxx Mini Module
 
@@ -172,47 +172,47 @@
 === Test Sequence 10 (Benchmarks)
 ----------------------------------------------------------------------------
 --- Test Case 10.1 (Messages performance #1)
---- Score : 368754 msgs/S, 737508 ctxswc/S
+--- Score : 368797 msgs/S, 737594 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.2 (Messages performance #2)
---- Score : 305736 msgs/S, 611472 ctxswc/S
+--- Score : 324839 msgs/S, 649678 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.3 (Messages performance #3)
---- Score : 305739 msgs/S, 611478 ctxswc/S
+--- Score : 324837 msgs/S, 649674 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.4 (Context Switch performance)
---- Score : 1090808 ctxswc/S
+--- Score : 1115008 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.5 (Threads performance, full cycle)
---- Score : 246592 threads/S
+--- Score : 268113 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.6 (Threads performance, create/exit only)
---- Score : 317909 threads/S
+--- Score : 332039 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.7 (Mass reschedule performance)
---- Score : 94148 reschedules/S, 564888 ctxswc/S
+--- Score : 99059 reschedules/S, 594354 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.8 (Round-Robin voluntary reschedule)
---- Score : 680140 ctxswc/S
+--- Score : 635160 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.9 (Virtual Timers set/reset performance)
---- Score : 1675388 timers/S
+--- Score : 1774952 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.10 (Semaphores wait/signal performance)
---- Score : 1749644 wait+signal/S
+--- Score : 1728804 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.11 (Mutexes lock/unlock performance)
---- Score : 1318240 lock+unlock/S
+--- Score : 1473752 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.12 (RAM Footprint)
@@ -232,7 +232,7 @@ Final result: SUCCESS
 
 *** ChibiOS OS Library Test Suite
 ***
-*** Compiled:     Dec  7 2017 - 08:49:34
+*** Compiled:     Dec  7 2017 - 08:47:19
 *** Platform:     SPC56ECxx Gateway
 *** Test Board:   EVB with SPC56ECxx Mini Module
 
