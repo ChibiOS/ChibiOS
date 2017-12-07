@@ -89,7 +89,7 @@ DEPDIR   := ./.dep-ht
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
 # Startup files.
-include $(CHIBIOS)/os/common/startup/e200/compilers/GCC/mk/startup_spc56ecxx.mk
+include $(CHIBIOS)/os/common/startup/e200/compilers/GCC/mk/startup_spc560dxx.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/boards/ST_EVB_SPC560D/board.mk

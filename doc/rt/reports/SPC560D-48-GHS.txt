@@ -1,7 +1,7 @@
 
 *** ChibiOS/RT Test Suite
 ***
-*** Compiled:     Dec  7 2017 - 11:53:10
+*** Compiled:     Dec  7 2017 - 11:24:43
 *** Platform:     SPC560Dxx Car Body and Convenience
 *** Test Board:   EVB with SPC560Dxx Mini Module
 
@@ -10,7 +10,7 @@
 ----------------------------------------------------------------------------
 --- Test Case 1.1 (Port Info)
 --- Architecture:              Power Architecture e200
---- Compiler:                  CW
+--- Compiler:                  GHS
 --- Natural alignment:         4
 --- Stack alignment:           8
 --- Working area alignment:    8
@@ -180,47 +180,47 @@
 === Test Sequence 10 (Benchmarks)
 ----------------------------------------------------------------------------
 --- Test Case 10.1 (Messages performance #1)
---- Score : 133569 msgs/S, 267138 ctxswc/S
+--- Score : 132825 msgs/S, 265650 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.2 (Messages performance #2)
---- Score : 119863 msgs/S, 239726 ctxswc/S
+--- Score : 118666 msgs/S, 237332 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.3 (Messages performance #3)
---- Score : 119861 msgs/S, 239722 ctxswc/S
+--- Score : 118666 msgs/S, 237332 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.4 (Context Switch performance)
---- Score : 426992 ctxswc/S
+--- Score : 411776 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.5 (Threads performance, full cycle)
---- Score : 96603 threads/S
+--- Score : 92130 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.6 (Threads performance, create/exit only)
---- Score : 119864 threads/S
+--- Score : 114402 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.7 (Mass reschedule performance)
---- Score : 38663 reschedules/S, 231978 ctxswc/S
+--- Score : 37359 reschedules/S, 224154 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.8 (Round-Robin voluntary reschedule)
---- Score : 262740 ctxswc/S
+--- Score : 252320 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.9 (Virtual Timers set/reset performance)
---- Score : 559300 timers/S
+--- Score : 552160 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.10 (Semaphores wait/signal performance)
---- Score : 521272 wait+signal/S
+--- Score : 480592 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.11 (Mutexes lock/unlock performance)
---- Score : 444904 lock+unlock/S
+--- Score : 432748 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.12 (RAM Footprint)
@@ -240,7 +240,7 @@ Final result: SUCCESS
 
 *** ChibiOS OS Library Test Suite
 ***
-*** Compiled:     Dec  7 2017 - 11:53:10
+*** Compiled:     Dec  7 2017 - 11:24:43
 *** Platform:     SPC560Dxx Car Body and Convenience
 *** Test Board:   EVB with SPC560Dxx Mini Module
 
@@ -284,13 +284,13 @@ Final result: SUCCESS
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 4.3 (Dynamic Semaphores Factory)
---- Result: FAILURE (#2 [] "cannot create")
+--- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 4.4 (Dynamic Mailboxes Factory)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 4.5 (Dynamic Objects FIFOs Factory)
---- Result: FAILURE (#2 [] "cannot create")
+--- Result: SUCCESS
 ----------------------------------------------------------------------------
 
-Final result: FAILURE
+Final result: SUCCESS
