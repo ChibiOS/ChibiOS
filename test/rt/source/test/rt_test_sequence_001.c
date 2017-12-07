@@ -32,6 +32,7 @@
  * <h2>Test Cases</h2>
  * - @subpage rt_test_001_001
  * - @subpage rt_test_001_002
+ * - @subpage rt_test_001_003
  * .
  */
 
@@ -46,10 +47,10 @@
  ****************************************************************************/
 
 /**
- * @page rt_test_001_001 [1.1] Kernel Info
+ * @page rt_test_001_001 [1.1] Port Info
  *
  * <h2>Description</h2>
- * The version numbers are reported.
+ * Port-related info are reported.
  *
  * <h2>Test Steps</h2>
  * - [1.1.1] Prints the version string.
@@ -59,6 +60,55 @@
 static void rt_test_001_001_execute(void) {
 
   /* [1.1.1] Prints the version string.*/
+  test_set_step(1);
+  {
+#if defined(PORT_ARCHITECTURE_NAME)
+    test_print("--- Architecture:              ");
+    test_println(PORT_ARCHITECTURE_NAME);
+#endif
+#if defined(PORT_COMPILER_NAME)
+    test_print("--- Compiler:                  ");
+    test_println(PORT_COMPILER_NAME);
+#endif
+#if defined(PORT_NATURAL_ALIGN)
+    test_print("--- Natural alignment:         ");
+    test_printn(PORT_NATURAL_ALIGN);
+    test_println("");
+#endif
+#if defined(PORT_STACK_ALIGN)
+    test_print("--- Stack alignment:           ");
+    test_printn(PORT_STACK_ALIGN);
+    test_println("");
+#endif
+#if defined(PORT_WORKING_AREA_ALIGN)
+    test_print("--- Working area alignment:    ");
+    test_printn(PORT_WORKING_AREA_ALIGN);
+    test_println("");
+#endif
+  }
+}
+
+static const testcase_t rt_test_001_001 = {
+  "Port Info",
+  NULL,
+  NULL,
+  rt_test_001_001_execute
+};
+
+/**
+ * @page rt_test_001_002 [1.2] Kernel Info
+ *
+ * <h2>Description</h2>
+ * The version numbers are reported.
+ *
+ * <h2>Test Steps</h2>
+ * - [1.2.1] Prints the version string.
+ * .
+ */
+
+static void rt_test_001_002_execute(void) {
+
+  /* [1.2.1] Prints the version string.*/
   test_set_step(1);
   {
     test_println("--- Product:                   ChibiOS/RT");
@@ -79,27 +129,27 @@ static void rt_test_001_001_execute(void) {
   }
 }
 
-static const testcase_t rt_test_001_001 = {
+static const testcase_t rt_test_001_002 = {
   "Kernel Info",
   NULL,
   NULL,
-  rt_test_001_001_execute
+  rt_test_001_002_execute
 };
 
 /**
- * @page rt_test_001_002 [1.2] Kernel Settings
+ * @page rt_test_001_003 [1.3] Kernel Settings
  *
  * <h2>Description</h2>
  * The static kernel settings are reported.
  *
  * <h2>Test Steps</h2>
- * - [1.2.1] Prints the configuration options settings.
+ * - [1.3.1] Prints the configuration options settings.
  * .
  */
 
-static void rt_test_001_002_execute(void) {
+static void rt_test_001_003_execute(void) {
 
-  /* [1.2.1] Prints the configuration options settings.*/
+  /* [1.3.1] Prints the configuration options settings.*/
   test_set_step(1);
   {
     test_print("--- CH_CFG_ST_RESOLUTION:      ");
@@ -207,11 +257,11 @@ static void rt_test_001_002_execute(void) {
   }
 }
 
-static const testcase_t rt_test_001_002 = {
+static const testcase_t rt_test_001_003 = {
   "Kernel Settings",
   NULL,
   NULL,
-  rt_test_001_002_execute
+  rt_test_001_003_execute
 };
 
 /****************************************************************************
@@ -224,6 +274,7 @@ static const testcase_t rt_test_001_002 = {
 const testcase_t * const rt_test_sequence_001_array[] = {
   &rt_test_001_001,
   &rt_test_001_002,
+  &rt_test_001_003,
   NULL
 };
 

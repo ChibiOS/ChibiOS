@@ -170,6 +170,63 @@ systime_t test_wait_tick(void) {
             <cases>
               <case>
                 <brief>
+                  <value>Port Info.</value>
+                </brief>
+                <description>
+                  <value>Port-related info are reported.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Prints the version string.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[#if defined(PORT_ARCHITECTURE_NAME)
+test_print("--- Architecture:              ");
+test_println(PORT_ARCHITECTURE_NAME);
+#endif
+#if defined(PORT_COMPILER_NAME)
+test_print("--- Compiler:                  ");
+test_println(PORT_COMPILER_NAME);
+#endif
+#if defined(PORT_NATURAL_ALIGN)
+test_print("--- Natural alignment:         ");
+test_printn(PORT_NATURAL_ALIGN);
+test_println("");
+#endif
+#if defined(PORT_STACK_ALIGN)
+test_print("--- Stack alignment:           ");
+test_printn(PORT_STACK_ALIGN);
+test_println("");
+#endif
+#if defined(PORT_WORKING_AREA_ALIGN)
+test_print("--- Working area alignment:    ");
+test_printn(PORT_WORKING_AREA_ALIGN);
+test_println("");
+#endif]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
                   <value>Kernel Info.</value>
                 </brief>
                 <description>

@@ -1,14 +1,22 @@
 
 *** ChibiOS/RT Test Suite
 ***
-*** Compiled:     Dec  7 2017 - 08:49:34
+*** Compiled:     Dec  7 2017 - 09:48:31
 *** Platform:     SPC56ECxx Gateway
 *** Test Board:   EVB with SPC56ECxx Mini Module
 
 ============================================================================
 === Test Sequence 1 (Information)
 ----------------------------------------------------------------------------
---- Test Case 1.1 (Kernel Info)
+--- Test Case 1.1 (Port Info)
+--- Architecture:              Power Architecture e200
+--- Compiler:                  GCC 4.6.3 build on 2013-01-07
+--- Natural alignment:         4
+--- Stack alignment:           8
+--- Working area alignment:    8
+--- Result: SUCCESS
+----------------------------------------------------------------------------
+--- Test Case 1.2 (Kernel Info)
 --- Product:                   ChibiOS/RT
 --- Stable Flag:               0
 --- Version String:            5.0.0
@@ -17,7 +25,7 @@
 --- Patch Number:              0
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
---- Test Case 1.2 (Kernel Settings)
+--- Test Case 1.3 (Kernel Settings)
 --- CH_CFG_ST_RESOLUTION:      32
 --- CH_CFG_ST_FREQUENCY:       1000
 --- CH_CFG_ST_TIMEDELTA:       0
@@ -176,7 +184,7 @@
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.2 (Messages performance #2)
---- Score : 305736 msgs/S, 611472 ctxswc/S
+--- Score : 305735 msgs/S, 611470 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.3 (Messages performance #3)
@@ -192,7 +200,7 @@
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.6 (Threads performance, create/exit only)
---- Score : 317909 threads/S
+--- Score : 317908 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.7 (Mass reschedule performance)
@@ -212,7 +220,7 @@
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.11 (Mutexes lock/unlock performance)
---- Score : 1318240 lock+unlock/S
+--- Score : 1318244 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.12 (RAM Footprint)
@@ -232,7 +240,7 @@ Final result: SUCCESS
 
 *** ChibiOS OS Library Test Suite
 ***
-*** Compiled:     Dec  7 2017 - 08:49:34
+*** Compiled:     Dec  7 2017 - 09:48:31
 *** Platform:     SPC56ECxx Gateway
 *** Test Board:   EVB with SPC56ECxx Mini Module
 
