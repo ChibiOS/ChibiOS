@@ -139,5 +139,4 @@ int main(void) {
     chThdWait(shelltp);               /* Waiting termination.             */
     chThdSleepMilliseconds(1000);
   }
-  return 0;
 }
