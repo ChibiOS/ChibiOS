@@ -71,7 +71,8 @@
  * @name    Internal clock sources
  * @{
  */
-#define STM32_HSI16CLK          16000000    /**< High speed internal clock. */
+#define STM32_HSI16CLK          16000000    /**< 16MHz internal clock.  */
+#define STM32_HSI48CLK          48000000    /**< 48MHz internal clock.      */
 #define STM32_LSICLK            32000       /**< Low speed internal clock.  */
 /** @} */
 
@@ -157,7 +158,7 @@
 #define STM32_STOPWUCK_MSI      (0 << 15)   /**< Wakeup clock is MSI.       */
 #define STM32_STOPWUCK_HSI16    (1 << 15)   /**< Wakeup clock is HSI16.     */
 
-#define STM32_MCOSEL_MASK       (7 << 24)   /**< MCOSEL field mask.         */
+#define STM32_MCOSEL_MASK       (15 << 24)  /**< MCOSEL field mask.         */
 #define STM32_MCOSEL_NOCLOCK    (0 << 24)   /**< No clock on MCO pin.       */
 #define STM32_MCOSEL_SYSCLK     (1 << 24)   /**< SYSCLK on MCO pin.         */
 #define STM32_MCOSEL_MSI        (2 << 24)   /**< MSI clock on MCO pin.      */
@@ -269,7 +270,11 @@
 #define STM32_SAI2SEL_OFF       0xFFFFFFFFU /**< SAI2 clock is not required.*/
 
 #define STM32_CLK48SEL_MASK     (3 << 26)   /**< CLK48SEL mask.             */
+#if !STM32_CLOCK_HAS_HSI48
 #define STM32_CLK48SEL_NOCLK    (0 << 26)   /**< CLK48 disabled.            */
+#else
+#define STM32_CLK48SEL_HSI48    (0 << 26)   /**< CLK48 source is HSI48.     */
+#endif
 #define STM32_CLK48SEL_PLLSAI1  (1 << 26)   /**< CLK48 source is PLLSAI1-Q. */
 #define STM32_CLK48SEL_PLL      (2 << 26)   /**< CLK48 source is PLL-Q.     */
 #define STM32_CLK48SEL_MSI      (3 << 26)   /**< CLK48 source is MSI.       */
@@ -360,6 +365,13 @@
  */
 #if !defined(STM32_HSI16_ENABLED) || defined(__DOXYGEN__)
 #define STM32_HSI16_ENABLED                 FALSE
+#endif
+
+/**
+ * @brief   Enables or disables the HSI48 clock source.
+ */
+#if !defined(STM32_HSI48_ENABLED) || defined(__DOXYGEN__)
+#define STM32_HSI48_ENABLED                 FALSE
 #endif
 
 /**
@@ -1001,8 +1013,21 @@
     (STM32_PLLSRC == STM32_PLLSRC_HSI16)
 #error "HSI16 not enabled, required by STM32_SAI2SEL"
 #endif
-
 #endif /* !STM32_HSI16_ENABLED */
+
+#if STM32_CLOCK_HAS_HSI48
+#if STM32_HSI48_ENABLED
+#else /* !STM32_HSI48_ENABLED */
+
+#if STM32_MCOSEL == STM32_MCOSEL_HSI48
+#error "HSI48 not enabled, required by STM32_MCOSEL"
+#endif
+
+#if STM32_CLK48SEL == STM32_CLK48SEL_HSI48
+#error "HSI48 not enabled, required by STM32_CLK48SEL"
+#endif
+#endif /* !STM32_HSI48_ENABLED */
+#endif /* STM32_CLOCK_HAS_HSI48 */
 
 /*
  * HSE related checks.
@@ -1793,6 +1818,9 @@
 #elif STM32_MCOSEL == STM32_MCOSEL_LSE
 #define STM32_MCODIVCLK             STM32_LSECLK
 
+#elif STM32_MCOSEL == STM32_MCOSEL_HSI48
+#define STM32_MCODIVCLK             STM32_HSI48CLK
+
 #else
 #error "invalid STM32_MCOSEL value specified"
 #endif
@@ -2000,6 +2028,8 @@
 /**
  * @brief   48MHz clock frequency.
  */
+#if !STM32_CLOCK_HAS_HSI48 || defined(__DOXYGEN__)
+
 #if (STM32_CLK48SEL == STM32_CLK48SEL_NOCLK) || defined(__DOXYGEN__)
 #define STM32_48CLK                 0
 #elif STM32_CLK48SEL == STM32_CLK48SEL_PLLSAI1
@@ -2011,6 +2041,26 @@
 #else
 #error "invalid source selected for 48CLK clock"
 #endif
+
+#else /* STM32_CLOCK_HAS_HSI48 */
+
+#if (STM32_CLK48SEL == STM32_CLK48SEL_HSI48) || defined(__DOXYGEN__)
+#define STM32_48CLK                 STM32_HSI48CLK
+#elif STM32_CLK48SEL == STM32_CLK48SEL_PLLSAI1
+#define STM32_48CLK                 (STM32_PLLSAI1VCO / STM32_PLLSAI1Q_VALUE)
+#elif STM32_CLK48SEL == STM32_CLK48SEL_PLL
+#define STM32_48CLK                 (STM32_PLLVCO / STM32_PLLQ_VALUE)
+#elif STM32_CLK48SEL == STM32_CLK48SEL_MSI
+#define STM32_48CLK                 STM32_MSICLK
+#else
+#error "invalid source selected for 48CLK clock"
+#endif
+
+#endif /* STM32_CLOCK_HAS_HSI48 */
+
+/**
+ * @brief   USB clock point.
+ */
 #define STM32_USBCLK                STM32_48CLK
 
 /**

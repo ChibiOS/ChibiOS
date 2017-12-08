@@ -52,6 +52,9 @@
 
 #if defined(STM32L432xx) || defined(__DOXYGEN__)
 
+/* Clock attributes.*/
+#define STM32_CLOCK_HAS_HSI48               TRUE
+
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
 #define STM32_ADC1_HANDLER                  Vector88
@@ -370,6 +373,9 @@
 /*===========================================================================*/
 
 #if defined(STM32L476xx)
+
+/* Clock attributes.*/
+#define STM32_CLOCK_HAS_HSI48               FALSE
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
@@ -773,6 +779,9 @@
 /*===========================================================================*/
 
 #if defined(STM32L496xx)
+
+/* Clock attributes.*/
+#define STM32_CLOCK_HAS_HSI48               FALSE
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE

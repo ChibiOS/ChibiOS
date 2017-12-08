@@ -191,7 +191,16 @@ void stm32_clock_init(void) {
   /* HSI activation.*/
   RCC->CR |= RCC_CR_HSION;
   while ((RCC->CR & RCC_CR_HSIRDY) == 0)
-    ;                                       /* Wait until HSI is stable.    */
+    ;                                       /* Wait until HSI16 is stable.  */
+#endif
+
+#if STM32_CLOCK_HAS_HSI48
+#if STM32_HSI48_ENABLED
+  /* HSI activation.*/
+  RCC->CRRCR |= RCC_CRRCR_HSI48ON;
+  while ((RCC->CRRCR & RCC_CRRCR_HSI48RDY) == 0)
+    ;                                       /* Wait until HSI48 is stable.  */
+#endif
 #endif
 
 #if STM32_HSE_ENABLED
