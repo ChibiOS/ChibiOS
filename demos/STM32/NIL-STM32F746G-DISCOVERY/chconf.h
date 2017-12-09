@@ -58,7 +58,7 @@
  * @brief   System time counter resolution.
  * @note    Allowed values are 16 or 32 bits.
  */
-#define CH_CFG_ST_RESOLUTION                32
+#define CH_CFG_ST_RESOLUTION                16
 
 /**
  * @brief   System tick frequency.
@@ -66,19 +66,7 @@
  *          option defines the maximum amount of time allowed for
  *          timeouts.
  */
-#define CH_CFG_ST_FREQUENCY                 5000
-
-/**
- * @brief   Time intervals data size.
- * @note    Allowed values are 16, 32 or 64 bits.
- */
-#define CH_CFG_INTERVALS_SIZE               32
-
-/**
- * @brief   Time types data size.
- * @note    Allowed values are 16 or 32 bits.
- */
-#define CH_CFG_TIME_TYPES_SIZE              32
+#define CH_CFG_ST_FREQUENCY                 10000
 
 /**
  * @brief   Time delta constant for the tick-less mode.
