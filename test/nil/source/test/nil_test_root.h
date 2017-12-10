@@ -50,8 +50,6 @@ extern "C" {
 
 #define TEST_SUITE_NAME                     "ChibiOS/NIL Test Suite"
 
-#define TEST_REPORT_HOOK_HEADER test_print_port_info();
-
 extern semaphore_t gsem1, gsem2;
 extern thread_reference_t gtr1;
 extern THD_WORKING_AREA(wa_test_support, 128);
