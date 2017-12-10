@@ -1,7 +1,7 @@
 
 *** ChibiOS/RT Test Suite
 ***
-*** Compiled:     Dec  7 2017 - 09:22:24
+*** Compiled:     Dec 10 2017 - 13:15:45
 *** Platform:     STM32F746 Very High Performance with DSP and FPU
 *** Test Board:   STMicroelectronics STM32F746G-Discovery
 
@@ -9,57 +9,69 @@
 === Test Sequence 1 (Information)
 ----------------------------------------------------------------------------
 --- Test Case 1.1 (Port Info)
---- Architecture:              ARMv7E-M
---- Compiler:                  GCC 5.4.1 20160609 (release) [ARM/embedded-5-branch revision 237715]
---- Natural alignment:         4
---- Stack alignment:           8
---- Working area alignment:    8
+--- Architecture:                       ARMv7E-M
+--- Core Variant:                       Cortex-M7
+--- Compiler:                           GCC 5.4.1 20160919 (release) [ARM/embedded-5-branch revision 240496]
+--- Port Info:                          Advanced kernel mode
+--- Natural alignment:                  4
+--- Stack alignment:                    8
+--- Working area alignment:             8
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 1.2 (Kernel Info)
---- Product:                   ChibiOS/RT
---- Stable Flag:               0
---- Version String:            5.0.0
---- Major Number:              5
---- Minor Number:              0
---- Patch Number:              0
+--- Product:                            ChibiOS/RT
+--- Stable Flag:                        0
+--- Version String:                     5.0.0
+--- Major Number:                       5
+--- Minor Number:                       0
+--- Patch Number:                       0
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 1.3 (Kernel Settings)
---- CH_CFG_ST_RESOLUTION:      32
---- CH_CFG_ST_FREQUENCY:       10000
---- CH_CFG_ST_TIMEDELTA:       2
---- CH_CFG_TIME_QUANTUM:       0
---- CH_CFG_MEMCORE_SIZE:       0
---- CH_CFG_NO_IDLE_THREAD:     0
---- CH_CFG_OPTIMIZE_SPEED:     1
---- CH_CFG_USE_TM:             1
---- CH_CFG_USE_REGISTRY:       1
---- CH_CFG_USE_WAITEXIT:       1
---- CH_CFG_USE_SEMAPHORES:     1
---- CH_CFG_USE_SEMAPHORES_PRI: 0
---- CH_CFG_USE_MUTEXES:        1
---- CH_CFG_USE_MUTEXES_RECURS: 0
---- CH_CFG_USE_CONDVARS:       1
---- CH_CFG_USE_CONDVARS_TIMEO: 1
---- CH_CFG_USE_EVENTS:         1
---- CH_CFG_USE_EVENTS_TIMEOUT: 1
---- CH_CFG_USE_MESSAGES:       1
---- CH_CFG_USE_MESSAGES_PRI:   0
---- CH_CFG_USE_MAILBOXES:      1
---- CH_CFG_USE_MEMCORE:        1
---- CH_CFG_USE_HEAP:           1
---- CH_CFG_USE_MEMPOOLS:       1
---- CH_CFG_USE_DYNAMIC:        1
---- CH_DBG_STATISTICS:         0
---- CH_DBG_SYSTEM_STATE_CHECK: 0
---- CH_DBG_ENABLE_CHECKS:      0
---- CH_DBG_ENABLE_ASSERTS:     0
---- CH_DBG_TRACE_MASK:         0
---- CH_DBG_TRACE_BUFFER_SIZE:  128
---- CH_DBG_ENABLE_STACK_CHECK: 0
---- CH_DBG_FILL_THREADS:       0
---- CH_DBG_THREADS_PROFILING:  0
+--- CH_CFG_ST_RESOLUTION:               32
+--- CH_CFG_ST_FREQUENCY:                10000
+--- CH_CFG_INTERVALS_SIZE:              32
+--- CH_CFG_TIME_TYPES_SIZE:             32
+--- CH_CFG_ST_TIMEDELTA:                2
+--- CH_CFG_TIME_QUANTUM:                0
+--- CH_CFG_MEMCORE_SIZE:                0
+--- CH_CFG_NO_IDLE_THREAD:              0
+--- CH_CFG_OPTIMIZE_SPEED:              1
+--- CH_CFG_USE_TM:                      1
+--- CH_CFG_USE_REGISTRY:                1
+--- CH_CFG_USE_WAITEXIT:                1
+--- CH_CFG_USE_SEMAPHORES:              1
+--- CH_CFG_USE_SEMAPHORES_PRI:          0
+--- CH_CFG_USE_MUTEXES:                 1
+--- CH_CFG_USE_MUTEXES_RECURS:          0
+--- CH_CFG_USE_CONDVARS:                1
+--- CH_CFG_USE_CONDVARS_TIMEO:          1
+--- CH_CFG_USE_EVENTS:                  1
+--- CH_CFG_USE_EVENTS_TIMEOUT:          1
+--- CH_CFG_USE_MESSAGES:                1
+--- CH_CFG_USE_MESSAGES_PRI:            0
+--- CH_CFG_USE_MAILBOXES:               1
+--- CH_CFG_USE_MEMCORE:                 1
+--- CH_CFG_USE_HEAP:                    1
+--- CH_CFG_USE_MEMPOOLS:                1
+--- CH_CFG_USE_OBJ_FIFOS:               1
+--- CH_CFG_USE_DYNAMIC:                 1
+--- CH_CFG_USE_FACTORY:                 1
+--- CH_CFG_FACTORY_MAX_NAMES_LENGTH:    8
+--- CH_CFG_FACTORY_OBJECTS_REGISTRY:    1
+--- CH_CFG_FACTORY_GENERIC_BUFFERS:     1
+--- CH_CFG_FACTORY_SEMAPHORES:          1
+--- CH_CFG_FACTORY_MAILBOXES:           1
+--- CH_CFG_FACTORY_OBJ_FIFOS:           1
+--- CH_DBG_STATISTICS:                  0
+--- CH_DBG_SYSTEM_STATE_CHECK:          0
+--- CH_DBG_ENABLE_CHECKS:               0
+--- CH_DBG_ENABLE_ASSERTS:              0
+--- CH_DBG_TRACE_MASK:                  0
+--- CH_DBG_TRACE_BUFFER_SIZE:           128
+--- CH_DBG_ENABLE_STACK_CHECK:          0
+--- CH_DBG_FILL_THREADS:                0
+--- CH_DBG_THREADS_PROFILING:           0
 --- Result: SUCCESS
 ============================================================================
 === Test Sequence 2 (System layer and port interface)
@@ -174,7 +186,7 @@
 === Test Sequence 10 (Benchmarks)
 ----------------------------------------------------------------------------
 --- Test Case 10.1 (Messages performance #1)
---- Score : 931025 msgs/S, 1862050 ctxswc/S
+--- Score : 931026 msgs/S, 1862052 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.2 (Messages performance #2)
@@ -182,7 +194,7 @@
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.3 (Messages performance #3)
---- Score : 818173 msgs/S, 1636346 ctxswc/S
+--- Score : 818174 msgs/S, 1636348 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.4 (Context Switch performance)
@@ -198,23 +210,23 @@
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.7 (Mass reschedule performance)
---- Score : 291889 reschedules/S, 1751334 ctxswc/S
+--- Score : 293476 reschedules/S, 1760856 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.8 (Round-Robin voluntary reschedule)
---- Score : 2102168 ctxswc/S
+--- Score : 2303980 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.9 (Virtual Timers set/reset performance)
---- Score : 1928652 timers/S
+--- Score : 1928654 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.10 (Semaphores wait/signal performance)
---- Score : 2918896 wait+signal/S
+--- Score : 2918900 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.11 (Mutexes lock/unlock performance)
---- Score : 2399976 lock+unlock/S
+--- Score : 2399984 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.12 (RAM Footprint)
@@ -234,7 +246,7 @@ Final result: SUCCESS
 
 *** ChibiOS OS Library Test Suite
 ***
-*** Compiled:     Dec  7 2017 - 09:22:24
+*** Compiled:     Dec 10 2017 - 13:15:45
 *** Platform:     STM32F746 Very High Performance with DSP and FPU
 *** Test Board:   STMicroelectronics STM32F746G-Discovery
 

@@ -87,24 +87,6 @@ const testsuite_t rt_test_suite = {
 /* Shared code.                                                              */
 /*===========================================================================*/
 
-void test_print_port_info(void) {
-
-#ifdef PORT_COMPILER_NAME
-  test_print("*** Compiler:     ");
-  test_println(PORT_COMPILER_NAME);
-#endif
-  test_print("*** Architecture: ");
-  test_println(PORT_ARCHITECTURE_NAME);
-#ifdef PORT_CORE_VARIANT_NAME
-  test_print("*** Core Variant: ");
-  test_println(PORT_CORE_VARIANT_NAME);
-#endif
-#ifdef PORT_INFO
-  test_print("*** Port Info:    ");
-  test_println(PORT_INFO);
-#endif
-}
-
 /*
  * Global test buffer holding 5 working areas.
  */
