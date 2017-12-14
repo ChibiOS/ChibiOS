@@ -90,6 +90,8 @@
 
 *** 17.6.4 ***
 - Fixed some minor documentation issues.
+- RT:  Fixed compile error with assertions enabled and dynamic extensions
+       disabled (bug #909).
 - RT:  Fixed gcc7 implicit-fallthrough (bug #906).
 - HAL: Fixed gcc7 implicit-fallthrough (bug #906).
 - HAL: Fixed DAC CH2 marked as not present in STM32F091 registry (bug #905).
