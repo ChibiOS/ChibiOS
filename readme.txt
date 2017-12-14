@@ -163,6 +163,8 @@
        dependencies and configuration directories. This makes possible
        to have multiple non-conflicting makefiles in the same project.
        Updated the various platform.mk implementing "smart build" mode.
+- RT:  Fixed compile error with assertions enabled and dynamic extensions
+       disabled (bug #909)(backported to 17.6.4).
 - RT:  Fixed gcc7 implicit-fallthrough (bug #906)(backported to 17.6.4
        and 16.1.10).
 - HAL: Fixed gcc7 implicit-fallthrough (bug #906)(backported to 17.6.4
