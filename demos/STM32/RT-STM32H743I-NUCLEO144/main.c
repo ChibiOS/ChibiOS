@@ -14,11 +14,12 @@
     limitations under the License.
 */
 
-#include "ch.h"
-#include "hal.h"
-#include "rt_test_root.h"
-#include "oslib_test_root.h"
+//#include "ch.h"
+//#include "hal.h"
+//#include "rt_test_root.h"
+//#include "oslib_test_root.h"
 
+#if 0
 /*
  * This is a periodic thread that does absolutely nothing except flashing
  * a LED.
@@ -35,12 +36,14 @@ static THD_FUNCTION(Thread1, arg) {
     chThdSleepMilliseconds(500);
   }
 }
+#endif
 
 /*
  * Application entry point.
  */
 int main(void) {
 
+#if 0
   /*
    * System initializations.
    * - HAL initialization, this also initializes the configured device drivers
@@ -48,7 +51,7 @@ int main(void) {
    * - Kernel initialization, the main() function becomes a thread and the
    *   RTOS is active.
    */
- halInit();
+  halInit();
   chSysInit();
 
   /*
@@ -66,16 +69,19 @@ int main(void) {
    * Creates the example thread.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO+1, Thread1, NULL);
+#endif
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
    * sleeping in a loop and check the button state.
    */
-  while (true) {
+  while (1) {
+#if 0
     if (palReadLine(LINE_BUTTON_USER)) {
       test_execute((BaseSequentialStream *)&SD1, &rt_test_suite);
       test_execute((BaseSequentialStream *)&SD1, &oslib_test_suite);
     }
     chThdSleepMilliseconds(500);
+#endif
   }
 }
