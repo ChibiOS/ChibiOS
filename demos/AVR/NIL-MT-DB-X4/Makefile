@@ -92,11 +92,6 @@ include $(CHIBIOS)/os/hal/osal/nil/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/nil/nil.mk
 include $(CHIBIOS)/os/common/ports/AVR/compilers/GCC/mk/port.mk
-# Other files (optional).
-include $(CHIBIOS)/test/lib/test.mk
-include $(CHIBIOS)/test/nil/nil_test.mk
-include $(CHIBIOS)/test/oslib/oslib_test.mk
-
 
 # List C source files here. (C dependencies are automatically generated.)
 CSRC =  $(KERNSRC)                      \
@@ -111,8 +106,8 @@ CSRC =  $(KERNSRC)                      \
 # List C++ sources file here.
 CPPSRC =
 
-INCDIR =  $(CHIBIOS)/os/license $(PORTINC) $(KERNINC)     \
-          $(HALINC) $(OSALINC) $(PLATFORMINC) $(TESTINC)  \
+INCDIR =  $(CHIBIOS)/os/license $(PORTINC) $(KERNINC) \
+          $(HALINC) $(OSALINC) $(PLATFORMINC)         \
           $(BOARDINC)
 
 #

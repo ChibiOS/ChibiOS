@@ -93,7 +93,6 @@ include $(CHIBIOS)/os/hal/osal/nil/osal.mk
 include $(CHIBIOS)/os/nil/nil.mk
 include $(CHIBIOS)/os/common/ports/AVR/compilers/GCC/mk/port.mk
 
-
 # List C source files here. (C dependencies are automatically generated.)
 CSRC =  $(KERNSRC)                      \
         $(PORTSRC)                      \
