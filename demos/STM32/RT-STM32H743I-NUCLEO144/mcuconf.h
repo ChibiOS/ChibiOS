@@ -31,17 +31,32 @@
  * 0...3        Lowest...Highest.
  */
 
-#define STM32F7xx_MCUCONF
+#define STM32H7xx_MCUCONF
 
 /*
- * HAL driver system settings.
+ * General settins.
  */
 #define STM32_NO_INIT                       FALSE
-#define STM32_PVD_ENABLE                    FALSE
-#define STM32_PLS                           STM32_PLS_LEV0
-#define STM32_BKPRAM_ENABLE                 FALSE
+#define STM32_HCLK_ENFORCED_VALUE           STM32_HSICLK
+
+/*
+ * PWR system settings.
+ * Constants are taken from the ST header, reading manual is required.
+ */
+#define STM32_PWR_CR1                       (PWR_CR1_SVOS_1 | PWR_CR1_SVOS_0)
+#define STM32_PWR_CR2                       (PWR_CR2_BREN)
+#define STM32_PWR_CR3                       (PWR_CR3_SCUEN | PWR_CR3_LDOEN)
+#define STM32_PWR_CPUCR                     0
+#define STM32_PWR_D3CR                      (PWR_D3CR_VOS_0)
+
+/*
+ * Clock tree settings.
+ * Constants are taken from the ST header, reading manual is required.
+ */
 #define STM32_HSI_ENABLED                   TRUE
-#define STM32_LSI_ENABLED                   FALSE
+#define STM32_LSI_ENABLED                   TRUE
+#define STM32_CSI_ENABLED                   TRUE
+#define STM32_HSI48_ENABLED                 TRUE
 #define STM32_HSE_ENABLED                   TRUE
 #define STM32_LSE_ENABLED                   TRUE
 #define STM32_CLOCK48_REQUIRED              TRUE

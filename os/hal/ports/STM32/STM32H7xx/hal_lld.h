@@ -205,47 +205,33 @@
 /** @} */
 
 /**
- * @name    PWR_CR register bits definitions
+ * @name    Register helpers not found in ST headers
  * @{
  */
-#define STM32_VOS_SCALE3        (PWR_CR1_VOS_0)
-#define STM32_VOS_SCALE2        (PWR_CR1_VOS_1)
-#define STM32_VOS_SCALE1        (PWR_CR1_VOS_1 | PWR_CR1_VOS_0)
-
-#define STM32_PLS_MASK          (7 << 5)    /**< PLS bits mask.             */
-#define STM32_PLS_LEV0          (0 << 5)    /**< PVD level 0.               */
-#define STM32_PLS_LEV1          (1 << 5)    /**< PVD level 1.               */
-#define STM32_PLS_LEV2          (2 << 5)    /**< PVD level 2.               */
-#define STM32_PLS_LEV3          (3 << 5)    /**< PVD level 3.               */
-#define STM32_PLS_LEV4          (4 << 5)    /**< PVD level 4.               */
-#define STM32_PLS_LEV5          (5 << 5)    /**< PVD level 5.               */
-#define STM32_PLS_LEV6          (6 << 5)    /**< PVD level 6.               */
-#define STM32_PLS_LEV7          (7 << 5)    /**< PVD level 7.               */
-/** @} */
-
-/**
- * @name    RCC_PLLCFGR register bits definitions
- * @{
- */
-#define STM32_PLLP_MASK         (3 << 16)   /**< PLLP mask.                 */
-#define STM32_PLLP_DIV2         (0 << 16)   /**< PLL clock divided by 2.    */
-#define STM32_PLLP_DIV4         (1 << 16)   /**< PLL clock divided by 4.    */
-#define STM32_PLLP_DIV6         (2 << 16)   /**< PLL clock divided by 6.    */
-#define STM32_PLLP_DIV8         (3 << 16)   /**< PLL clock divided by 8.    */
-
-#define STM32_PLLSRC_HSI        (0 << 22)   /**< PLL clock source is HSI.   */
-#define STM32_PLLSRC_HSE        (1 << 22)   /**< PLL clock source is HSE.   */
+#define RCC_PLLCKSELR_DIVM1_VALUE(n)    ((n) << RCC_PLLCKSELR_DIVM1_Pos)
+#define RCC_PLLCKSELR_DIVM2_VALUE(n)    ((n) << RCC_PLLCKSELR_DIVM2_Pos)
+#define RCC_PLLCKSELR_DIVM3_VALUE(n)    ((n) << RCC_PLLCKSELR_DIVM3_Pos)
+#define RCC_PLL1DIVR_DIVN1_VALUE(n)     ((n) << RCC_PLL1DIVR_N1)
+#define RCC_PLL1DIVR_DIVP1_VALUE(n)     ((n) << RCC_PLL1DIVR_P1)
+#define RCC_PLL1DIVR_DIVQ1_VALUE(n)     ((n) << RCC_PLL1DIVR_Q1)
+#define RCC_PLL1DIVR_DIVR1_VALUE(n)     ((n) << RCC_PLL1DIVR_R1)
+#define RCC_PLL1FRACR_FRACN1_VALUE(n)   ((n) << RCC_PLL1FRACR_FRACN1_Pos)
+#define RCC_PLL2DIVR_DIVN2_VALUE(n)     ((n) << RCC_PLL2DIVR_N2)
+#define RCC_PLL2DIVR_DIVP2_VALUE(n)     ((n) << RCC_PLL2DIVR_P2)
+#define RCC_PLL2DIVR_DIVQ2_VALUE(n)     ((n) << RCC_PLL2DIVR_Q2)
+#define RCC_PLL2DIVR_DIVR2_VALUE(n)     ((n) << RCC_PLL2DIVR_R2)
+#define RCC_PLL2FRACR_FRACN2_VALUE(n)   ((n) << RCC_PLL2FRACR_FRACN2_Pos)
+#define RCC_PLL3DIVR_DIVN3_VALUE(n)     ((n) << RCC_PLL3DIVR_N3)
+#define RCC_PLL3DIVR_DIVP3_VALUE(n)     ((n) << RCC_PLL3DIVR_P3)
+#define RCC_PLL3DIVR_DIVQ3_VALUE(n)     ((n) << RCC_PLL3DIVR_Q3)
+#define RCC_PLL3DIVR_DIVR3_VALUE(n)     ((n) << RCC_PLL3DIVR_R3)
+#define RCC_PLL3FRACR_FRACN3_VALUE(n)   ((n) << RCC_PLL3FRACR_FRACN3_Pos)
 /** @} */
 
 /**
  * @name    RCC_CFGR register bits definitions
  * @{
  */
-#define STM32_SW_MASK           (3 << 0)    /**< SW mask.                   */
-#define STM32_SW_HSI            (0 << 0)    /**< SYSCLK source is HSI.      */
-#define STM32_SW_HSE            (1 << 0)    /**< SYSCLK source is HSE.      */
-#define STM32_SW_PLL            (2 << 0)    /**< SYSCLK source is PLL.      */
-
 #define STM32_HPRE_MASK         (15 << 4)   /**< HPRE mask.                 */
 #define STM32_HPRE_DIV1         (0 << 4)    /**< SYSCLK divided by 1.       */
 #define STM32_HPRE_DIV2         (8 << 4)    /**< SYSCLK divided by 2.       */
@@ -461,24 +447,45 @@
 #endif
 
 /**
- * @brief   Enables or disables the programmable voltage detector.
+ * @brief   HCLK value assumed if @p STM32_NO_INIT is enabled.
  */
-#if !defined(STM32_PVD_ENABLE) || defined(__DOXYGEN__)
-#define STM32_PVD_ENABLE                    FALSE
+#if !defined(STM32_HCLK_ENFORCED_VALUE) || defined(__DOXYGEN__)
+#define STM32_HCLK_ENFORCED_VALUE           STM32_HSICLK
 #endif
 
 /**
- * @brief   Sets voltage level for programmable voltage detector.
+ * @brief   PWR CR1 initializer.
  */
-#if !defined(STM32_PLS) || defined(__DOXYGEN__)
-#define STM32_PLS                           STM32_PLS_LEV0
+#if !defined(STM32_PWR_CR1) || defined(__DOXYGEN__)
+#define STM32_PWR_CR1                       (PWR_CR1_SVOS_1 | PWR_CR1_SVOS_0)
 #endif
 
 /**
- * @brief   Enables the backup RAM regulator.
+ * @brief   PWR CR2 initializer.
  */
-#if !defined(STM32_BKPRAM_ENABLE) || defined(__DOXYGEN__)
-#define STM32_BKPRAM_ENABLE                 FALSE
+#if !defined(STM32_PWR_CR2) || defined(__DOXYGEN__)
+#define STM32_PWR_CR2                       (PWR_CR2_BREN)
+#endif
+
+/**
+ * @brief   PWR CR3 initializer.
+ */
+#if !defined(STM32_PWR_CR3) || defined(__DOXYGEN__)
+#define STM32_PWR_CR3                       (PWR_CR3_SCUEN | PWR_CR3_LDOEN)
+#endif
+
+/**
+ * @brief   PWR CPUCR initializer.
+ */
+#if !defined(STM32_PWR_CPUCR) || defined(__DOXYGEN__)
+#define STM32_PWR_CPUCR                     0
+#endif
+
+/**
+ * @brief   PWR D3CR initializer.
+ */
+#if !defined(STM32_PWR_D3CR) || defined(__DOXYGEN__)
+#define STM32_PWR_D3CR                      (PWR_D3CR_VOS_0)
 #endif
 
 /**
@@ -496,6 +503,20 @@
 #endif
 
 /**
+ * @brief   Enables or disables the LSI clock source.
+ */
+#if !defined(STM32_CSI_ENABLED) || defined(__DOXYGEN__)
+#define STM32_CSI_ENABLED                   FALSE
+#endif
+
+/**
+ * @brief   Enables or disables the HSI48 clock source.
+ */
+#if !defined(STM32_HSI48_ENABLED) || defined(__DOXYGEN__)
+#define STM32_HSI48_ENABLED                 TRUE
+#endif
+
+/**
  * @brief   Enables or disables the HSE clock source.
  */
 #if !defined(STM32_HSE_ENABLED) || defined(__DOXYGEN__)
@@ -510,59 +531,52 @@
 #endif
 
 /**
- * @brief   USB/SDIO clock setting.
- */
-#if !defined(STM32_CLOCK48_REQUIRED) || defined(__DOXYGEN__)
-#define STM32_CLOCK48_REQUIRED              TRUE
-#endif
-
-/**
  * @brief   Main clock source selection.
  * @note    If the selected clock source is not the PLL then the PLL is not
  *          initialized and started.
- * @note    The default value is calculated for a 216MHz system clock from
- *          an external 25MHz HSE clock.
+ * @note    The default value is calculated for a 400MHz system clock from
+ *          an external 8MHz HSE clock.
  */
 #if !defined(STM32_SW) || defined(__DOXYGEN__)
-#define STM32_SW                            STM32_SW_PLL
+#define STM32_SW                            RCC_CFGR_SW_PLL1
 #endif
 
 /**
  * @brief   Clock source for the PLLs.
  * @note    This setting has only effect if the PLL is selected as the
  *          system clock source.
- * @note    The default value is calculated for a 216MHz system clock from
- *          an external 25MHz HSE clock.
+ * @note    The default value is calculated for a 400MHz system clock from
+ *          an external 8MHz HSE clock.
  */
 #if !defined(STM32_PLLSRC) || defined(__DOXYGEN__)
-#define STM32_PLLSRC                        STM32_PLLSRC_HSE
+#define STM32_PLLSRC                        RCC_PLLCKSELR_PLLSRC_HSE
 #endif
 
 /**
  * @brief   PLLM divider value.
- * @note    The allowed values are 2..63.
- * @note    The default value is calculated for a 216MHz system clock from
- *          an external 25MHz HSE clock.
+ * @note    The allowed values are 1..63.
+ * @note    The default value is calculated for a 400MHz system clock from
+ *          an external 8MHz HSE clock.
  */
 #if !defined(STM32_PLLM_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLM_VALUE                    25
+#define STM32_PLLM_VALUE                    4
 #endif
 
 /**
  * @brief   PLLN multiplier value.
  * @note    The allowed values are 192..432.
- * @note    The default value is calculated for a 216MHz system clock from
- *          an external 25MHz HSE clock.
+ * @note    The default value is calculated for a 400MHz system clock from
+ *          an external 8MHz HSE clock.
  */
 #if !defined(STM32_PLLN_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLN_VALUE                    432
+#define STM32_PLLN_VALUE                    400
 #endif
 
 /**
  * @brief   PLLP divider value.
  * @note    The allowed values are 2, 4, 6, 8.
- * @note    The default value is calculated for a 216MHz system clock from
- *          an external 25MHz HSE clock.
+ * @note    The default value is calculated for a 400MHz system clock from
+ *          an external 8MHz HSE clock.
  */
 #if !defined(STM32_PLLP_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLLP_VALUE                    2
@@ -571,8 +585,8 @@
 /**
  * @brief   PLLQ divider value.
  * @note    The allowed values are 2..15.
- * @note    The default value is calculated for a 216MHz system clock from
- *          an external 25MHz HSE clock.
+ * @note    The default value is calculated for a 400MHz system clock from
+ *          an external 8MHz HSE clock.
  */
 #if !defined(STM32_PLLQ_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLLQ_VALUE                    9
