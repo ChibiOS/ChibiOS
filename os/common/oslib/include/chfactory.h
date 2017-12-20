@@ -325,6 +325,7 @@ extern "C" {
   registered_object_t *chFactoryRegisterObject(const char *name,
                                                void *objp);
   registered_object_t *chFactoryFindObject(const char *name);
+  registered_object_t *chFactoryFindObjectByPointer(void *objp);
   void chFactoryReleaseObject(registered_object_t *rop);
 #endif
 #if (CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE) || defined(__DOXYGEN__)

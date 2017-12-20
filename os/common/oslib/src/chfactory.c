@@ -327,6 +327,37 @@ registered_object_t *chFactoryFindObject(const char *name) {
 }
 
 /**
+ * @brief   Retrieves a registered object by pointer.
+ * @post    A reference to the registered object is returned with the
+ *          reference counter increased by one.
+ *
+ * @param[in] objp      pointer to the object to be retrieved
+ *
+ * @return              The reference to the found registered object.
+ * @retval NULL         if a registered object with the specified name
+ *                      does not exist.
+ *
+ * @api
+ */
+registered_object_t *chFactoryFindObjectByPointer(void *objp) {
+  registered_object_t *rop = (registered_object_t *)ch_factory.obj_list.next;
+
+  F_LOCK();
+
+  while ((void *)rop != (void *)&ch_factory.obj_list) {
+    if (rop->objp == objp) {
+      rop->element.refs++;
+      return rop;
+    }
+    rop = (registered_object_t *)rop->element.next;
+  }
+
+  F_UNLOCK();
+
+  return NULL;
+}
+
+/**
  * @brief   Releases a registered object.
  * @details The reference counter of the registered object is decreased
  *          by one, if reaches zero then the registered object memory
