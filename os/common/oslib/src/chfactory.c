@@ -657,7 +657,7 @@ dyn_objects_fifo_t *chFactoryCreateObjectsFIFO(const char *name,
   if (dofp != NULL) {
     /* Initializing mailbox object data.*/
     chFifoObjectInit(&dofp->fifo, objsize, objn, objalign,
-                     dofp->msgbuf, (void *)&dofp->msgbuf[objn]);
+                     (void *)&dofp->msgbuf[objn], dofp->msgbuf);
   }
 
   F_UNLOCK();
