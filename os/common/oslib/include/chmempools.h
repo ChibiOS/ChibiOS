@@ -299,7 +299,7 @@ static inline void chGuardedPoolAddI(guarded_memory_pool_t *gmp, void *objp) {
  *
  * @param[in] gmp       pointer to a @p guarded_memory_pool_t structure
  * @return              The pointer to the allocated object.
- * @retval NULL         if the operation timed out.
+ * @retval NULL         if the pool is empty.
  *
  * @iclass
  */
