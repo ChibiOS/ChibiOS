@@ -347,6 +347,9 @@ registered_object_t *chFactoryFindObjectByPointer(void *objp) {
   while ((void *)rop != (void *)&ch_factory.obj_list) {
     if (rop->objp == objp) {
       rop->element.refs++;
+
+      F_UNLOCK();
+
       return rop;
     }
     rop = (registered_object_t *)rop->element.next;
