@@ -55,13 +55,13 @@
  * @brief   Time intervals data size.
  * @note    Allowed values are 16, 32 or 64 bits.
  */
-#define CH_CFG_INTERVALS_SIZE               32
+#define CH_CFG_INTERVALS_SIZE               16
 
 /**
  * @brief   Time types data size.
  * @note    Allowed values are 16 or 32 bits.
  */
-#define CH_CFG_TIME_TYPES_SIZE              32
+#define CH_CFG_TIME_TYPES_SIZE              16
 
 /**
  * @brief   Time delta constant for the tick-less mode.
@@ -346,7 +346,7 @@
  *
  * @note    The default is @p FALSE.
  */
-#define CH_CFG_USE_FACTORY                  TRUE
+#define CH_CFG_USE_FACTORY                  FALSE
 
 /**
  * @brief   Maximum length for object names.
@@ -423,6 +423,14 @@
  * @note    The default is @p FALSE.
  */
 #define CH_DBG_ENABLE_ASSERTS               FALSE
+
+/**
+ * @brief   Debug option, trace buffer.
+ * @details If enabled then the trace buffer is activated.
+ *
+ * @note    The default is @p CH_DBG_TRACE_MASK_DISABLED.
+ */
+#define CH_DBG_TRACE_MASK                   CH_DBG_TRACE_MASK_DISABLED
 
 /**
  * @brief   Debug option, trace buffer.
@@ -506,9 +514,9 @@
 
 /**
  * @brief   Threads initialization hook.
- * @details User initialization code added to the @p _thread_init() function.
+ * @details User initialization code added to the @p chThdInit() API.
  *
- * @note    It is invoked from within @p _thread_init() and implicitly from all
+ * @note    It is invoked from within @p chThdInit() and implicitly from all
  *          the threads creation APIs.
  */
 #define CH_CFG_THREAD_INIT_HOOK(tp) {                                       \

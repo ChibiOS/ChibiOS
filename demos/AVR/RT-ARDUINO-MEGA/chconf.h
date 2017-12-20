@@ -106,7 +106,7 @@
  *          provide the @p __heap_base__ and @p __heap_end__ symbols.
  * @note    Requires @p CH_CFG_USE_MEMCORE.
  */
-#define CH_CFG_MEMCORE_SIZE                 16
+#define CH_CFG_MEMCORE_SIZE                 128
 
 /**
  * @brief   Idle thread automatic spawn suppression.
@@ -328,7 +328,7 @@
  * @note    Requires @p CH_CFG_USE_WAITEXIT.
  * @note    Requires @p CH_CFG_USE_HEAP and/or @p CH_CFG_USE_MEMPOOLS.
  */
-#define CH_CFG_USE_DYNAMIC                  TRUE
+#define CH_CFG_USE_DYNAMIC                  FALSE
 
 /** @} */
 
