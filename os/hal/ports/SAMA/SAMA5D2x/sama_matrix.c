@@ -77,6 +77,31 @@
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
+/**
+ * @brief   Configures peripheral security
+ *
+ * @param[in] mtxp      pointer to a MATRIX register block.
+ * @param[in] id        PERIPHERAL_ID.
+ * @param[in] mode      SECURE_PER or NOT_SECURE_PER.
+ *
+ * @retval true         Peripheral is not secured.
+ * @retval false        Peripheral is secured.
+ *
+ */
+bool mtxConfigPeriphSecurity(Matrix *mtxp, uint8_t id, bool mode) {
+
+  mtxDisableWP(mtxp);
+  if (mode) {
+    mtxp->MATRIX_SPSELR[id / 32] |= (MATRIX_SPSELR_NSECP0 << id);
+  }
+  else {
+    mtxp->MATRIX_SPSELR[id / 32] &= ~(MATRIX_SPSELR_NSECP0 << id);
+  }
+  mtxEnableWP(mtxp);
+
+  return (MATRIX0->MATRIX_SPSELR[id / 32] & (MATRIX_SPSELR_NSECP0 << id)) &
+         (MATRIX1->MATRIX_SPSELR[id / 32] & (MATRIX_SPSELR_NSECP0 << id));
+}
 
 /**
  * @brief    Associates slave with a kind of master

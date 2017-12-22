@@ -37,6 +37,9 @@
 #define NOT_SECURE_READ          0x1u
 #define NOT_SECURE_WRITE         0x1u
 
+#define SECURE_PER               FALSE
+#define NOT_SECURE_PER           TRUE
+
 #define NO_DEFAULT_MASTER        0x0u
 #define LAST_DEFAULT_MASTER      0x1u
 #define FIXED_DEFAULT_MASTER     0x2u
@@ -90,6 +93,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+ bool mtxConfigPeriphSecurity(Matrix *mtxp, uint8_t id, bool mode);
  void mtxConfigDefaultMaster(Matrix *mtxp, uint8_t slaveID,
                              uint8_t type, uint8_t masterID);
  void mtxConfigSlaveSec(Matrix *mtxp, uint8_t slaveID,
