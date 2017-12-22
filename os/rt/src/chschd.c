@@ -332,12 +332,12 @@ static void wakeup(void *p) {
 #if CH_CFG_USE_SEMAPHORES == TRUE
   case CH_STATE_WTSEM:
     chSemFastSignalI(tp->u.wtsemp);
-    /* Falls through.*/
 #endif
+    /* Falls through.*/
 #if (CH_CFG_USE_CONDVARS == TRUE) && (CH_CFG_USE_CONDVARS_TIMEOUT == TRUE)
   case CH_STATE_WTCOND:
-    /* Falls through.*/
 #endif
+    /* Falls through.*/
   case CH_STATE_QUEUED:
     /* States requiring dequeuing.*/
     (void) queue_dequeue(tp);
