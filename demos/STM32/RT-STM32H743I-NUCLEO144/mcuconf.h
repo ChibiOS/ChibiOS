@@ -18,7 +18,7 @@
 #define MCUCONF_H
 
 /*
- * STM32F7xx drivers configuration.
+ * STM32H7xx drivers configuration.
  * The following settings override the default settings present in
  * the various device driver implementation headers.
  * Note that the settings for each driver only have effect if the whole
@@ -34,14 +34,15 @@
 #define STM32H7xx_MCUCONF
 
 /*
- * General settins.
+ * General settings.
  */
 #define STM32_NO_INIT                       FALSE
 #define STM32_HCLK_ENFORCED_VALUE           STM32_HSICLK
 
 /*
  * PWR system settings.
- * Constants are taken from the ST header, reading manual is required.
+ * Reading STM32 Reference Manual is required.
+ * Constants are taken from the ST header.
  */
 #define STM32_PWR_CR1                       (PWR_CR1_SVOS_1 | PWR_CR1_SVOS_0)
 #define STM32_PWR_CR2                       (PWR_CR2_BREN)
@@ -51,8 +52,44 @@
 
 /*
  * Clock tree settings.
- * Constants are taken from the ST header, reading manual is required.
+ * Reading STM32 Reference Manual is required.
  */
+#define STM32_HSI_ENABLED                   TRUE
+#define STM32_LSI_ENABLED                   FALSE
+#define STM32_CSI_ENABLED                   FALSE
+#define STM32_HSI48_ENABLED                 TRUE
+#define STM32_HSE_ENABLED                   TRUE
+#define STM32_LSE_ENABLED                   TRUE
+#define STM32_HSIDIV                        STM32_HSIDIV_DIV1
+#define STM32_RTCPRE_VALUE                  8
+#define STM32_RTCSEL                        STM32_RTCSEL_LSE
+#define STM32_PLLSRC                        STM32_PLLSRC_HSE
+#define STM32_PLL1_ENABLED                  TRUE
+#define STM32_PLL1_DIVM_VALUE               4
+#define STM32_PLL1_DIVN_VALUE               400
+#define STM32_PLL1_FRACN_VALUE              0
+#define STM32_PLL1_DIVP_VALUE               2
+#define STM32_PLL1_DIVQ_VALUE               8
+#define STM32_PLL1_DIVR_VALUE               8
+#define STM32_PLL2_ENABLED                  TRUE
+#define STM32_PLL2_DIVM_VALUE               4
+#define STM32_PLL2_DIVN_VALUE               400
+#define STM32_PLL2_FRACN_VALUE              0
+#define STM32_PLL2_DIVP_VALUE               2
+#define STM32_PLL2_DIVQ_VALUE               8
+#define STM32_PLL2_DIVR_VALUE               8
+#define STM32_PLL3_ENABLED                  TRUE
+#define STM32_PLL3_DIVM_VALUE               4
+#define STM32_PLL3_DIVN_VALUE               400
+#define STM32_PLL3_FRACN_VALUE              0
+#define STM32_PLL3_DIVP_VALUE               2
+#define STM32_PLL3_DIVQ_VALUE               8
+#define STM32_PLL3_DIVR_VALUE               8
+
+
+
+
+
 #define STM32_HSI_ENABLED                   TRUE
 #define STM32_LSI_ENABLED                   TRUE
 #define STM32_CSI_ENABLED                   TRUE
