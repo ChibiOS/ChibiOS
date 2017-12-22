@@ -285,6 +285,7 @@
 #define STM32_MCO2SEL_PLLI2S    (1 << 30)   /**< PLLI2S clock on MCO2 pin.  */
 #define STM32_MCO2SEL_HSE       (2 << 30)   /**< HSE clock on MCO2 pin.     */
 #define STM32_MCO2SEL_PLL       (3 << 30)   /**< PLL clock on MCO2 pin.     */
+/** @} */
 
 /**
  * @name    RCC_PLLI2SCFGR register bits definitions
