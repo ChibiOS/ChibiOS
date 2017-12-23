@@ -14,12 +14,11 @@
     limitations under the License.
 */
 
-//#include "ch.h"
-//#include "hal.h"
+#include "ch.h"
+#include "hal.h"
 //#include "rt_test_root.h"
 //#include "oslib_test_root.h"
 
-#if 0
 /*
  * This is a periodic thread that does absolutely nothing except flashing
  * a LED.
@@ -36,14 +35,12 @@ static THD_FUNCTION(Thread1, arg) {
     chThdSleepMilliseconds(500);
   }
 }
-#endif
 
 /*
  * Application entry point.
  */
 int main(void) {
 
-#if 0
   /*
    * System initializations.
    * - HAL initialization, this also initializes the configured device drivers
@@ -63,13 +60,12 @@ int main(void) {
   /*
    * Activates the serial driver 1 using the driver default configuration.
    */
-  sdStart(&SD1, NULL);
+//  sdStart(&SD1, NULL);
 
   /*
    * Creates the example thread.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO+1, Thread1, NULL);
-#endif
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
@@ -81,7 +77,7 @@ int main(void) {
       test_execute((BaseSequentialStream *)&SD1, &rt_test_suite);
       test_execute((BaseSequentialStream *)&SD1, &oslib_test_suite);
     }
-    chThdSleepMilliseconds(500);
 #endif
+    chThdSleepMilliseconds(500);
   }
 }

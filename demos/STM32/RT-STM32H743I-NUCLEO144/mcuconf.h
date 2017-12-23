@@ -51,7 +51,7 @@
 #define STM32_PWR_D3CR                      (PWR_D3CR_VOS_0)
 
 /*
- * Clock tree settings.
+ * Clock tree static settings.
  * Reading STM32 Reference Manual is required.
  */
 #define STM32_HSI_ENABLED                   TRUE
@@ -62,7 +62,6 @@
 #define STM32_LSE_ENABLED                   TRUE
 #define STM32_HSIDIV                        STM32_HSIDIV_DIV1
 #define STM32_RTCPRE_VALUE                  8
-#define STM32_RTCSEL                        STM32_RTCSEL_LSE
 #define STM32_PLLSRC                        STM32_PLLSRC_HSE
 #define STM32_PLL1_ENABLED                  TRUE
 #define STM32_PLL1_DIVM_VALUE               4
@@ -85,65 +84,29 @@
 #define STM32_PLL3_DIVP_VALUE               2
 #define STM32_PLL3_DIVQ_VALUE               8
 #define STM32_PLL3_DIVR_VALUE               8
+#define STM32_CKPERSEL                      STM32_CKPERSEL_HSE_CLK
+#define STM32_MCO1SEL                       STM32_MCO1SEL_HSI_CK
+#define STM32_MCO1PRE                       4
+#define STM32_MCO2SEL                       STM32_MCO2SEL_SYS_CK
+#define STM32_MCO2PRE                       4
 
+/*
+ * Core clocks dynamic settings (can be changed at runtime).
+ * Reading STM32 Reference Manual is required.
+ */
+#define STM32_SW                            STM32_SW_PLL1_P_CK
+#define STM32_RTCSEL                        STM32_RTCSEL_LSE_CK
+#define STM32_D1CPRE                        STM32_D1CPRE_DIV1
+#define STM32_D1HPRE                        STM32_D1HPRE_DIV2
+#define STM32_D1PPRE3                       STM32_D1PPRE3_DIV2
+#define STM32_D2PPRE1                       STM32_D2PPRE1_DIV2
+#define STM32_D2PPRE2                       STM32_D2PPRE2_DIV2
+#define STM32_D3PPRE4                       STM32_D3PPRE4_DIV2
 
-
-
-
-#define STM32_HSI_ENABLED                   TRUE
-#define STM32_LSI_ENABLED                   TRUE
-#define STM32_CSI_ENABLED                   TRUE
-#define STM32_HSI48_ENABLED                 TRUE
-#define STM32_HSE_ENABLED                   TRUE
-#define STM32_LSE_ENABLED                   TRUE
-#define STM32_CLOCK48_REQUIRED              TRUE
-#define STM32_SW                            STM32_SW_PLL
-#define STM32_PLLSRC                        STM32_PLLSRC_HSE
-#define STM32_PLLM_VALUE                    25
-#define STM32_PLLN_VALUE                    432
-#define STM32_PLLP_VALUE                    2
-#define STM32_PLLQ_VALUE                    9
-#define STM32_HPRE                          STM32_HPRE_DIV1
-#define STM32_PPRE1                         STM32_PPRE1_DIV4
-#define STM32_PPRE2                         STM32_PPRE2_DIV2
-#define STM32_RTCSEL                        STM32_RTCSEL_LSE
-#define STM32_RTCPRE_VALUE                  25
-#define STM32_MCO1SEL                       STM32_MCO1SEL_HSI
-#define STM32_MCO1PRE                       STM32_MCO1PRE_DIV1
-#define STM32_MCO2SEL                       STM32_MCO2SEL_SYSCLK
-#define STM32_MCO2PRE                       STM32_MCO2PRE_DIV4
-#define STM32_I2SSRC                        STM32_I2SSRC_OFF
-#define STM32_PLLI2SN_VALUE                 192
-#define STM32_PLLI2SP_VALUE                 4
-#define STM32_PLLI2SQ_VALUE                 4
-#define STM32_PLLI2SR_VALUE                 4
-#define STM32_PLLI2SDIVQ_VALUE              2
-#define STM32_PLLSAIN_VALUE                 192
-#define STM32_PLLSAIP_VALUE                 4
-#define STM32_PLLSAIQ_VALUE                 4
-#define STM32_PLLSAIR_VALUE                 4
-#define STM32_PLLSAIDIVQ_VALUE              2
-#define STM32_PLLSAIDIVR_VALUE              2
-#define STM32_SAI1SEL                       STM32_SAI1SEL_OFF
-#define STM32_SAI2SEL                       STM32_SAI2SEL_OFF
-#define STM32_LCDTFT_REQUIRED               FALSE
-#define STM32_USART1SEL                     STM32_USART1SEL_PCLK2
-#define STM32_USART2SEL                     STM32_USART2SEL_PCLK1
-#define STM32_USART3SEL                     STM32_USART3SEL_PCLK1
-#define STM32_UART4SEL                      STM32_UART4SEL_PCLK1
-#define STM32_UART5SEL                      STM32_UART5SEL_PCLK1
-#define STM32_USART6SEL                     STM32_USART6SEL_PCLK2
-#define STM32_UART7SEL                      STM32_UART7SEL_PCLK1
-#define STM32_UART8SEL                      STM32_UART8SEL_PCLK1
-#define STM32_I2C1SEL                       STM32_I2C1SEL_PCLK1
-#define STM32_I2C2SEL                       STM32_I2C2SEL_PCLK1
-#define STM32_I2C3SEL                       STM32_I2C3SEL_PCLK1
-#define STM32_I2C4SEL                       STM32_I2C4SEL_PCLK1
-#define STM32_LPTIM1SEL                     STM32_LPTIM1SEL_PCLK1
-#define STM32_CECSEL                        STM32_CECSEL_LSE
-#define STM32_CK48MSEL                      STM32_CK48MSEL_PLL
-#define STM32_SDMMCSEL                      STM32_SDMMCSEL_PLL48CLK
-#define STM32_SRAM2_NOCACHE                 FALSE
+/*
+ * Peripherals clocks static settings.
+ * Reading STM32 Reference Manual is required.
+ */
 
 /*
  * IRQ system settings.

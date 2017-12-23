@@ -210,11 +210,21 @@
  */
 #define RCC_CR_HSIDIV_VALUE(n)          ((n) << 3U)
 
+#define RCC_CFGR_SW_VALUE(n)            ((n) << 0U)
 #define RCC_CFGR_RTCPRE_VALUE(n)        ((n) << 8U)
 #define RCC_CFGR_MCO1PRE_VALUE(n)       ((n) << 18U)
 #define RCC_CFGR_MCO1_VALUE(n)          ((n) << 22U)
 #define RCC_CFGR_MCO2PRE_VALUE(n)       ((n) << 25U)
 #define RCC_CFGR_MCO2_VALUE(n)          ((n) << 29U)
+
+#define RCC_D1CFGR_D1CPRE_VALUE(n)      ((n) << RCC_D1CFGR_D1CPRE_Pos)
+#define RCC_D1CFGR_D1HPRE_VALUE(n)      ((n) << RCC_D1CFGR_D1HPRE_Pos)
+#define RCC_D1CFGR_D1PPRE3_VALUE(n)     ((n) << RCC_D1CFGR_D1PPRE_Pos)
+
+#define RCC_D2CFGR_D2PPRE1_VALUE(n)     ((n) << RCC_D2CFGR_D2PPRE1_Pos)
+#define RCC_D2CFGR_D2PPRE2_VALUE(n)     ((n) << RCC_D2CFGR_D2PPRE2_Pos)
+
+#define RCC_D3CFGR_D3PPRE4_VALUE(n)     ((n) << RCC_D3CFGR_D3PPRE_Pos)
 
 #define RCC_PLLCKSELR_DIVM1_VALUE(n)    ((n) << RCC_PLLCKSELR_DIVM1_Pos)
 #define RCC_PLLCKSELR_DIVM2_VALUE(n)    ((n) << RCC_PLLCKSELR_DIVM2_Pos)
@@ -241,36 +251,90 @@
 
 #define RCC_PLL3FRACR_FRACN3_VALUE(n)   ((n) << RCC_PLL3FRACR_FRACN3_Pos)
 
+#define RCC_D1CCIPR_CKPERSEL_VALUE(n)   ((n) << RCC_D1CCIPR_CKPERSEL_Pos)
+
 #define RCC_BDCR_RTCSEL_VALUE(n)        ((n) << RCC_BDCR_RTCSEL_Pos)
 /** @} */
-
 
 /**
  * @name    Configuration switches to be used in @p mcuconf.h
  * @{
  */
-#define STM32_HSIDIV_DIV1               RCC_CR_HSIDIV_VALUE(0)
-#define STM32_HSIDIV_DIV2               RCC_CR_HSIDIV_VALUE(1)
-#define STM32_HSIDIV_DIV4               RCC_CR_HSIDIV_VALUE(2)
-#define STM32_HSIDIV_DIV8               RCC_CR_HSIDIV_VALUE(3)
+#define STM32_SW_HSI_CK                 RCC_CFGR_SW_VALUE(0U)
+#define STM32_SW_CSI_CK                 RCC_CFGR_SW_VALUE(1U)
+#define STM32_SW_HSE_CK                 RCC_CFGR_SW_VALUE(2U)
+#define STM32_SW_PLL1_P_CK              RCC_CFGR_SW_VALUE(3U)
 
-#define STM32_MCO1_HSI_CK               RCC_CFGR_MCO1_VALUE(0U)
-#define STM32_MCO1_LSE_CK               RCC_CFGR_MCO1_VALUE(1U)
-#define STM32_MCO1_HSE_CK               RCC_CFGR_MCO1_VALUE(2U)
-#define STM32_MCO1_PLL1_Q_CK            RCC_CFGR_MCO1_VALUE(3U)
-#define STM32_MCO1_HSI48_CK             RCC_CFGR_MCO1_VALUE(4U)
+#define STM32_D1CPRE_DIV1               RCC_D1CFGR_D1CPRE_VALUE(0U)
+#define STM32_D1CPRE_DIV2               RCC_D1CFGR_D1CPRE_VALUE(8U)
+#define STM32_D1CPRE_DIV4               RCC_D1CFGR_D1CPRE_VALUE(9U)
+#define STM32_D1CPRE_DIV8               RCC_D1CFGR_D1CPRE_VALUE(10U)
+#define STM32_D1CPRE_DIV16              RCC_D1CFGR_D1CPRE_VALUE(11U)
+#define STM32_D1CPRE_DIV64              RCC_D1CFGR_D1CPRE_VALUE(12U)
+#define STM32_D1CPRE_DIV128             RCC_D1CFGR_D1CPRE_VALUE(13U)
+#define STM32_D1CPRE_DIV256             RCC_D1CFGR_D1CPRE_VALUE(14U)
+#define STM32_D1CPRE_DIV512             RCC_D1CFGR_D1CPRE_VALUE(15U)
 
-#define STM32_MCO2_SYS_CK               RCC_CFGR_MCO2_VALUE(0U)
-#define STM32_MCO2_PLL2_Q_CK            RCC_CFGR_MCO2_VALUE(1U)
-#define STM32_MCO2_HSE_CK               RCC_CFGR_MCO2_VALUE(2U)
-#define STM32_MCO2_PLL1_P_CK            RCC_CFGR_MCO2_VALUE(3U)
-#define STM32_MCO2_CSI_CK               RCC_CFGR_MCO2_VALUE(4U)
-#define STM32_MCO2_LSI_CK               RCC_CFGR_MCO2_VALUE(5U)
+#define STM32_D1HPRE_DIV1               RCC_D1CFGR_D1HPRE_VALUE(0U)
+#define STM32_D1HPRE_DIV2               RCC_D1CFGR_D1HPRE_VALUE(8U)
+#define STM32_D1HPRE_DIV4               RCC_D1CFGR_D1HPRE_VALUE(9U)
+#define STM32_D1HPRE_DIV8               RCC_D1CFGR_D1HPRE_VALUE(10U)
+#define STM32_D1HPRE_DIV16              RCC_D1CFGR_D1HPRE_VALUE(11U)
+#define STM32_D1HPRE_DIV64              RCC_D1CFGR_D1HPRE_VALUE(12U)
+#define STM32_D1HPRE_DIV128             RCC_D1CFGR_D1HPRE_VALUE(13U)
+#define STM32_D1HPRE_DIV256             RCC_D1CFGR_D1HPRE_VALUE(14U)
+#define STM32_D1HPRE_DIV512             RCC_D1CFGR_D1HPRE_VALUE(15U)
+
+#define STM32_D1PPRE3_DIV1              RCC_D1CFGR_D1PPRE3_VALUE(0U)
+#define STM32_D1PPRE3_DIV2              RCC_D1CFGR_D1PPRE3_VALUE(4U)
+#define STM32_D1PPRE3_DIV4              RCC_D1CFGR_D1PPRE3_VALUE(5U)
+#define STM32_D1PPRE3_DIV8              RCC_D1CFGR_D1PPRE3_VALUE(6U)
+#define STM32_D1PPRE3_DIV16             RCC_D1CFGR_D1PPRE3_VALUE(7U)
+
+#define STM32_D2PPRE1_DIV1              RCC_D2CFGR_D2PPRE1_VALUE(0U)
+#define STM32_D2PPRE1_DIV2              RCC_D2CFGR_D2PPRE1_VALUE(4U)
+#define STM32_D2PPRE1_DIV4              RCC_D2CFGR_D2PPRE1_VALUE(5U)
+#define STM32_D2PPRE1_DIV8              RCC_D2CFGR_D2PPRE1_VALUE(6U)
+#define STM32_D2PPRE1_DIV16             RCC_D2CFGR_D2PPRE1_VALUE(7U)
+
+#define STM32_D2PPRE2_DIV1              RCC_D2CFGR_D2PPRE2_VALUE(0U)
+#define STM32_D2PPRE2_DIV2              RCC_D2CFGR_D2PPRE2_VALUE(4U)
+#define STM32_D2PPRE2_DIV4              RCC_D2CFGR_D2PPRE2_VALUE(5U)
+#define STM32_D2PPRE2_DIV8              RCC_D2CFGR_D2PPRE2_VALUE(6U)
+#define STM32_D2PPRE2_DIV16             RCC_D2CFGR_D2PPRE2_VALUE(7U)
+
+#define STM32_D3PPRE4_DIV1              RCC_D1CFGR_D3PPRE4_VALUE(0U)
+#define STM32_D3PPRE4_DIV2              RCC_D1CFGR_D3PPRE4_VALUE(4U)
+#define STM32_D3PPRE4_DIV4              RCC_D1CFGR_D3PPRE4_VALUE(5U)
+#define STM32_D3PPRE4_DIV8              RCC_D1CFGR_D3PPRE4_VALUE(6U)
+#define STM32_D3PPRE4_DIV16             RCC_D1CFGR_D3PPRE4_VALUE(7U)
+
+#define STM32_HSIDIV_DIV1               RCC_CR_HSIDIV_VALUE(0U)
+#define STM32_HSIDIV_DIV2               RCC_CR_HSIDIV_VALUE(1U)
+#define STM32_HSIDIV_DIV4               RCC_CR_HSIDIV_VALUE(2U)
+#define STM32_HSIDIV_DIV8               RCC_CR_HSIDIV_VALUE(3U)
+
+#define STM32_MCO1SEL_HSI_CK            RCC_CFGR_MCO1_VALUE(0U)
+#define STM32_MCO1SEL_LSE_CK            RCC_CFGR_MCO1_VALUE(1U)
+#define STM32_MCO1SEL_HSE_CK            RCC_CFGR_MCO1_VALUE(2U)
+#define STM32_MCO1SEL_PLL1_Q_CK         RCC_CFGR_MCO1_VALUE(3U)
+#define STM32_MCO1SEL_HSI48_CK          RCC_CFGR_MCO1_VALUE(4U)
+
+#define STM32_MCO2SEL_SYS_CK            RCC_CFGR_MCO2_VALUE(0U)
+#define STM32_MCO2SEL_PLL2_Q_CK         RCC_CFGR_MCO2_VALUE(1U)
+#define STM32_MCO2SEL_HSE_CK            RCC_CFGR_MCO2_VALUE(2U)
+#define STM32_MCO2SEL_PLL1_P_CK         RCC_CFGR_MCO2_VALUE(3U)
+#define STM32_MCO2SEL_CSI_CK            RCC_CFGR_MCO2_VALUE(4U)
+#define STM32_MCO2SEL_LSI_CK            RCC_CFGR_MCO2_VALUE(5U)
 
 #define STM32_RTCSEL_NOCLK              RCC_BDCR_RTCSEL_VALUE(0U)
-#define STM32_RTCSEL_LSE                RCC_BDCR_RTCSEL_VALUE(1U)
-#define STM32_RTCSEL_LSI                RCC_BDCR_RTCSEL_VALUE(2U)
-#define STM32_RTCSEL_HSEDIV             RCC_BDCR_RTCSEL_VALUE(3U)
+#define STM32_RTCSEL_LSE_CK             RCC_BDCR_RTCSEL_VALUE(1U)
+#define STM32_RTCSEL_LSI_CK             RCC_BDCR_RTCSEL_VALUE(2U)
+#define STM32_RTCSEL_HSE_1M_CK          RCC_BDCR_RTCSEL_VALUE(3U)
+
+#define STM32_CKPERSEL_HSI_KER_CLK      RCC_D1CCIPR_CKPERSEL_VALUE(0U)
+#define STM32_CKPERSEL_CSI_KER_CLK      RCC_D1CCIPR_CKPERSEL_VALUE(1U)
+#define STM32_CKPERSEL_HSE_CLK          RCC_D1CCIPR_CKPERSEL_VALUE(2U)
 /** @} */
 
 /*===========================================================================*/
@@ -388,13 +452,6 @@
 #endif
 
 /**
- * @brief   RTC clock source.
- */
-#if !defined(STM32_RTCSEL) || defined(__DOXYGEN__)
-#define STM32_RTCSEL                        STM32_RTCSEL_LSE
-#endif
-
-/**
  * @brief   Clock source for all PLLs.
  */
 #if !defined(STM32_PLLSRC) || defined(__DOXYGEN__)
@@ -410,6 +467,7 @@
 
 /**
  * @brief   PLL1 DIVM divider.
+ * @note    The allowed values are 1..63.
  */
 #if !defined(STM32_PLL1_DIVM_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLL1_DIVM_VALUE               4
@@ -417,6 +475,7 @@
 
 /**
  * @brief   PLL1 DIVN multiplier.
+ * @note    The allowed values are 4..512.
  */
 #if !defined(STM32_PLL1_DIVN_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLL1_DIVN_VALUE               400
@@ -424,6 +483,7 @@
 
 /**
  * @brief   PLL1 FRACN multiplier, zero if no fractional part.
+ * @note    The allowed values are 0..8191.
  */
 #if !defined(STM32_PLL1_FRACN_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLL1_FRACN_VALUE              0
@@ -431,6 +491,7 @@
 
 /**
  * @brief   PLL1 DIVP divider.
+ * @note    The allowed values are 2..128, odd values not allowed.
  */
 #if !defined(STM32_PLL1_DIVP_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLL1_DIVP_VALUE               2
@@ -438,6 +499,7 @@
 
 /**
  * @brief   PLL1 DIVQ divider.
+ * @note    The allowed values are 1..128.
  */
 #if !defined(STM32_PLL1_DIVQ_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLL1_DIVQ_VALUE               8
@@ -445,6 +507,7 @@
 
 /**
  * @brief   PLL1 DIVR divider.
+ * @note    The allowed values are 1..128.
  */
 #if !defined(STM32_PLL1_DIVR_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLL1_DIVR_VALUE               8
@@ -459,6 +522,7 @@
 
 /**
  * @brief   PLL2 DIVM divider.
+ * @note    The allowed values are 1..63.
  */
 #if !defined(STM32_PLL2_DIVM_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLL2_DIVM_VALUE               4
@@ -466,6 +530,7 @@
 
 /**
  * @brief   PLL2 DIVN multiplier.
+ * @note    The allowed values are 4..512.
  */
 #if !defined(STM32_PLL2_DIVN_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLL2_DIVN_VALUE               400
@@ -473,6 +538,7 @@
 
 /**
  * @brief   PLL2 FRACN multiplier, zero if no fractional part.
+ * @note    The allowed values are 0..8191.
  */
 #if !defined(STM32_PLL2_FRACN_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLL2_FRACN_VALUE              0
@@ -480,6 +546,7 @@
 
 /**
  * @brief   PLL2 DIVP divider.
+ * @note    The allowed values are 2..128, odd values not allowed.
  */
 #if !defined(STM32_PLL2_DIVP_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLL2_DIVP_VALUE               2
@@ -487,6 +554,7 @@
 
 /**
  * @brief   PLL2 DIVQ divider.
+ * @note    The allowed values are 1..128.
  */
 #if !defined(STM32_PLL2_DIVQ_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLL2_DIVQ_VALUE               8
@@ -494,6 +562,7 @@
 
 /**
  * @brief   PLL2 DIVR divider.
+ * @note    The allowed values are 1..128.
  */
 #if !defined(STM32_PLL2_DIVR_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLL2_DIVR_VALUE               8
@@ -508,6 +577,7 @@
 
 /**
  * @brief   PLL3 DIVM divider.
+ * @note    The allowed values are 1..63.
  */
 #if !defined(STM32_PLL3_DIVM_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLL3_DIVM_VALUE               4
@@ -515,6 +585,7 @@
 
 /**
  * @brief   PLL3 DIVN multiplier.
+ * @note    The allowed values are 4..512.
  */
 #if !defined(STM32_PLL3_DIVN_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLL3_DIVN_VALUE               400
@@ -522,6 +593,7 @@
 
 /**
  * @brief   PLL3 FRACN multiplier, zero if no fractional part.
+ * @note    The allowed values are 0..8191.
  */
 #if !defined(STM32_PLL3_FRACN_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLL3_FRACN_VALUE              0
@@ -529,6 +601,7 @@
 
 /**
  * @brief   PLL3 DIVP divider.
+ * @note    The allowed values are 2..128, odd values not allowed.
  */
 #if !defined(STM32_PLL3_DIVP_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLL3_DIVP_VALUE               2
@@ -536,6 +609,7 @@
 
 /**
  * @brief   PLL3 DIVQ divider.
+ * @note    The allowed values are 1..128.
  */
 #if !defined(STM32_PLL3_DIVQ_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLL3_DIVQ_VALUE               8
@@ -543,136 +617,125 @@
 
 /**
  * @brief   PLL3 DIVR divider.
+ * @note    The allowed values are 1..128.
  */
 #if !defined(STM32_PLL3_DIVR_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLL3_DIVR_VALUE               8
 #endif
 
+/**
+ * @brief   Peripherals clock selector.
+ */
+#if !defined(STM32_CKPERSEL) || defined(__DOXYGEN__)
+#define STM32_CKPERSEL                      STM32_CKPERSEL_HSE_CLK
+#endif
 
+/**
+ * @brief   MCO1 clock selector.
+ */
+#if !defined(STM32_MCO1SEL) || defined(__DOXYGEN__)
+#define STM32_MCO1SEL                       STM32_MCO1SEL_HSI_CK
+#endif
 
+/**
+ * @brief   MCO1 clock prescaler.
+ */
+#if !defined(STM32_MCO1PRE) || defined(__DOXYGEN__)
+#define STM32_MCO1PRE                       4
+#endif
 
+/**
+ * @brief   MCO2 clock selector.
+ */
+#if !defined(STM32_MCO2SEL) || defined(__DOXYGEN__)
+#define STM32_MCO2SEL                       STM32_MCO2SEL_SYS_CK
+#endif
 
-
-
-
-
-
-
+/**
+ * @brief   MCO2 clock prescaler.
+ */
+#if !defined(STM32_MCO2PRE) || defined(__DOXYGEN__)
+#define STM32_MCO2PRE                       4
+#endif
 
 /**
  * @brief   Main clock source selection.
- * @note    If the selected clock source is not the PLL then the PLL is not
- *          initialized and started.
- * @note    The default value is calculated for a 400MHz system clock from
- *          an external 8MHz HSE clock.
+ * @note    This setting can be modified at runtime.
  */
 #if !defined(STM32_SW) || defined(__DOXYGEN__)
-#define STM32_SW                            RCC_CFGR_SW_PLL1
+#define STM32_SW                            STM32_SW_PLL1_P_CK
 #endif
 
 /**
- * @brief   Clock source for the PLLs.
- * @note    This setting has only effect if the PLL is selected as the
- *          system clock source.
- * @note    The default value is calculated for a 400MHz system clock from
- *          an external 8MHz HSE clock.
+ * @brief   RTC clock selector.
+ * @note    This setting can be modified at runtime.
  */
-#if !defined(STM32_PLLSRC) || defined(__DOXYGEN__)
-#define STM32_PLLSRC                        RCC_PLLCKSELR_PLLSRC_HSE
+#if !defined(STM32_RTCSEL) || defined(__DOXYGEN__)
+#define STM32_RTCSEL                        STM32_RTCSEL_LSE
 #endif
 
 /**
- * @brief   PLLM divider value.
- * @note    The allowed values are 1..63.
- * @note    The default value is calculated for a 400MHz system clock from
- *          an external 8MHz HSE clock.
+ * @brief   Clock domain 1 core bus prescaler.
+ * @note    This setting can be modified at runtime.
  */
-#if !defined(STM32_PLLM_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLM_VALUE                    4
+#if !defined(STM32_D1CPRE) || defined(__DOXYGEN__)
+#define STM32_D1CPRE                        STM32_D1CPRE_DIV1
 #endif
 
 /**
- * @brief   PLLN multiplier value.
- * @note    The allowed values are 192..432.
- * @note    The default value is calculated for a 400MHz system clock from
- *          an external 8MHz HSE clock.
+ * @brief   Clock domain 1 HPRE prescaler.
+ * @note    This setting can be modified at runtime.
  */
-#if !defined(STM32_PLLN_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLN_VALUE                    400
+#if !defined(STM32_D1HPRE) || defined(__DOXYGEN__)
+#define STM32_D1HPRE                        STM32_D1HPRE_DIV2
 #endif
 
 /**
- * @brief   PLLP divider value.
- * @note    The allowed values are 2, 4, 6, 8.
- * @note    The default value is calculated for a 400MHz system clock from
- *          an external 8MHz HSE clock.
+ * @brief   Clock domain 1 peripherals bus prescaler.
+ * @note    This setting can be modified at runtime.
  */
-#if !defined(STM32_PLLP_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLP_VALUE                    2
+#if !defined(STM32_D1PPRE) || defined(__DOXYGEN__)
+#define STM32_D1PPRE3                       STM32_D1PPRE3_DIV2
 #endif
 
 /**
- * @brief   PLLQ divider value.
- * @note    The allowed values are 2..15.
- * @note    The default value is calculated for a 400MHz system clock from
- *          an external 8MHz HSE clock.
+ * @brief   Clock domain 2 peripherals bus 1 prescaler.
+ * @note    This setting can be modified at runtime.
  */
-#if !defined(STM32_PLLQ_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLQ_VALUE                    9
+#if !defined(STM32_D2PPRE1) || defined(__DOXYGEN__)
+#define STM32_D2PPRE1                       STM32_D2PPRE1_DIV2
 #endif
 
 /**
- * @brief   AHB prescaler value.
+ * @brief   Clock domain 2 peripherals bus 2 prescaler.
+ * @note    This setting can be modified at runtime.
  */
-#if !defined(STM32_HPRE) || defined(__DOXYGEN__)
-#define STM32_HPRE                          STM32_HPRE_DIV1
+#if !defined(STM32_D2PPRE2) || defined(__DOXYGEN__)
+#define STM32_D2PPRE2                       STM32_D2PPRE2_DIV2
 #endif
 
 /**
- * @brief   APB1 prescaler value.
+ * @brief   Clock domain 3 peripherals bus prescaler.
+ * @note    This setting can be modified at runtime.
  */
-#if !defined(STM32_PPRE1) || defined(__DOXYGEN__)
-#define STM32_PPRE1                         STM32_PPRE1_DIV4
+#if !defined(STM32_D3PPRE4) || defined(__DOXYGEN__)
+#define STM32_D3PPRE4                       STM32_D3PPRE4_DIV2
 #endif
 
-/**
- * @brief   APB2 prescaler value.
- */
-#if !defined(STM32_PPRE2) || defined(__DOXYGEN__)
-#define STM32_PPRE2                         STM32_PPRE2_DIV2
-#endif
 
-/**
- * @brief   MCO1 clock source value.
- * @note    The default value outputs HSI clock on MCO1 pin.
- */
-#if !defined(STM32_MCO1SEL) || defined(__DOXYGEN__)
-#define STM32_MCO1SEL                       STM32_MCO1SEL_HSI
-#endif
 
-/**
- * @brief   MCO1 prescaler value.
- * @note    The default value outputs HSI clock on MCO1 pin.
- */
-#if !defined(STM32_MCO1PRE) || defined(__DOXYGEN__)
-#define STM32_MCO1PRE                       STM32_MCO1PRE_DIV1
-#endif
 
-/**
- * @brief   MCO2 clock source value.
- * @note    The default value outputs SYSCLK / 4 on MCO2 pin.
- */
-#if !defined(STM32_MCO2SEL) || defined(__DOXYGEN__)
-#define STM32_MCO2SEL                       STM32_MCO2SEL_SYSCLK
-#endif
 
-/**
- * @brief   MCO2 prescaler value.
- * @note    The default value outputs SYSCLK / 4 on MCO2 pin.
- */
-#if !defined(STM32_MCO2PRE) || defined(__DOXYGEN__)
-#define STM32_MCO2PRE                       STM32_MCO2PRE_DIV4
-#endif
+
+
+
+
+
+
+
+
+
+
 
 /**
  * @brief   I2S clock source.
