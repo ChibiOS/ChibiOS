@@ -62,7 +62,7 @@
 #define STM32_LSE_ENABLED                   TRUE
 #define STM32_HSIDIV                        STM32_HSIDIV_DIV1
 #define STM32_RTCPRE_VALUE                  8
-#define STM32_PLLSRC                        STM32_PLLSRC_HSE
+#define STM32_PLLSRC                        STM32_PLLSRC_HSE_CK
 #define STM32_PLL1_ENABLED                  TRUE
 #define STM32_PLL1_DIVM_VALUE               4
 #define STM32_PLL1_DIVN_VALUE               400
@@ -84,7 +84,7 @@
 #define STM32_PLL3_DIVP_VALUE               2
 #define STM32_PLL3_DIVQ_VALUE               8
 #define STM32_PLL3_DIVR_VALUE               8
-#define STM32_CKPERSEL                      STM32_CKPERSEL_HSE_CLK
+#define STM32_CKPERSEL                      STM32_CKPERSEL_HSE_CK
 #define STM32_MCO1SEL                       STM32_MCO1SEL_HSI_CK
 #define STM32_MCO1PRE                       4
 #define STM32_MCO2SEL                       STM32_MCO2SEL_SYS_CK

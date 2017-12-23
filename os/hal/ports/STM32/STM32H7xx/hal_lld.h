@@ -208,6 +208,10 @@
  * @name    Register helpers not found in ST headers
  * @{
  */
+#define PWR_D3CR_VOS_SCALE3             (PWR_D3CR_VOS_0)
+#define PWR_D3CR_VOS_SCALE2             (PWR_D3CR_VOS_1)
+#define PWR_D3CR_VOS_SCALE1             (PWR_D3CR_VOS_1 | PWR_D3CR_VOS_0)
+
 #define RCC_CR_HSIDIV_VALUE(n)          ((n) << 3U)
 
 #define RCC_CFGR_SW_VALUE(n)            ((n) << 0U)
@@ -225,6 +229,8 @@
 #define RCC_D2CFGR_D2PPRE2_VALUE(n)     ((n) << RCC_D2CFGR_D2PPRE2_Pos)
 
 #define RCC_D3CFGR_D3PPRE4_VALUE(n)     ((n) << RCC_D3CFGR_D3PPRE_Pos)
+
+#define RCC_PLLCKSELR_PLLSRC_VALUE(n)   ((n) << RCC_PLLCKSELR_PLLSRC_Pos)
 
 #define RCC_PLLCKSELR_DIVM1_VALUE(n)    ((n) << RCC_PLLCKSELR_DIVM1_Pos)
 #define RCC_PLLCKSELR_DIVM2_VALUE(n)    ((n) << RCC_PLLCKSELR_DIVM2_Pos)
@@ -332,9 +338,13 @@
 #define STM32_RTCSEL_LSI_CK             RCC_BDCR_RTCSEL_VALUE(2U)
 #define STM32_RTCSEL_HSE_1M_CK          RCC_BDCR_RTCSEL_VALUE(3U)
 
-#define STM32_CKPERSEL_HSI_KER_CLK      RCC_D1CCIPR_CKPERSEL_VALUE(0U)
-#define STM32_CKPERSEL_CSI_KER_CLK      RCC_D1CCIPR_CKPERSEL_VALUE(1U)
-#define STM32_CKPERSEL_HSE_CLK          RCC_D1CCIPR_CKPERSEL_VALUE(2U)
+#define STM32_PLLSRC_HSI_CK             RCC_PLLCKSELR_PLLSRC_VALUE(0U)
+#define STM32_PLLSRC_CSI_CK             RCC_PLLCKSELR_PLLSRC_VALUE(1U)
+#define STM32_PLLSRC_HSE_CK             RCC_PLLCKSELR_PLLSRC_VALUE(2U)
+
+#define STM32_CKPERSEL_HSI_CK           RCC_D1CCIPR_CKPERSEL_VALUE(0U)
+#define STM32_CKPERSEL_CSI_CK           RCC_D1CCIPR_CKPERSEL_VALUE(1U)
+#define STM32_CKPERSEL_HSE_CK           RCC_D1CCIPR_CKPERSEL_VALUE(2U)
 /** @} */
 
 /*===========================================================================*/
@@ -455,7 +465,7 @@
  * @brief   Clock source for all PLLs.
  */
 #if !defined(STM32_PLLSRC) || defined(__DOXYGEN__)
-#define STM32_PLLSRC                        STM32_PLLSRC_HSE
+#define STM32_PLLSRC                        STM32_PLLSRC_HSE_CK
 #endif
 
 /**
@@ -627,7 +637,7 @@
  * @brief   Peripherals clock selector.
  */
 #if !defined(STM32_CKPERSEL) || defined(__DOXYGEN__)
-#define STM32_CKPERSEL                      STM32_CKPERSEL_HSE_CLK
+#define STM32_CKPERSEL                      STM32_CKPERSEL_HSE_CK
 #endif
 
 /**
@@ -663,7 +673,7 @@
  * @note    This setting can be modified at runtime.
  */
 #if !defined(STM32_SW) || defined(__DOXYGEN__)
-#define STM32_SW                            STM32_SW_PLL1_P_CK
+#define STM32_SW                            STM32_SW_PLL1_P_CK1_P_CK
 #endif
 
 /**
@@ -671,7 +681,7 @@
  * @note    This setting can be modified at runtime.
  */
 #if !defined(STM32_RTCSEL) || defined(__DOXYGEN__)
-#define STM32_RTCSEL                        STM32_RTCSEL_LSE
+#define STM32_RTCSEL                        STM32_RTCSEL_LSE_CK
 #endif
 
 /**
@@ -736,7 +746,7 @@
 
 
 
-
+#if 0
 /**
  * @brief   I2S clock source.
  */
@@ -969,6 +979,7 @@
 #if !defined(STM32_SRAM2_NOCACHE) || defined(__DOXYGEN__)
 #define STM32_SRAM2_NOCACHE                 FALSE
 #endif
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -998,103 +1009,27 @@
 #error "STM32_VDD not defined in board.h"
 #endif
 
-/**
- * @brief   Maximum frequency thresholds and wait states for flash access.
- * @note    The values are valid for 2.7V to 3.6V supply range.
- */
-#if ((STM32_VDD >= 270) && (STM32_VDD <= 360)) || defined(__DOXYGEN__)
-#define STM32_0WS_THRESHOLD         30000000
-#define STM32_1WS_THRESHOLD         60000000
-#define STM32_2WS_THRESHOLD         90000000
-#define STM32_3WS_THRESHOLD         120000000
-#define STM32_4WS_THRESHOLD         150000000
-#define STM32_5WS_THRESHOLD         180000000
-#define STM32_6WS_THRESHOLD         210000000
-#define STM32_7WS_THRESHOLD         0
-#define STM32_8WS_THRESHOLD         0
-
-#elif (STM32_VDD >= 240) && (STM32_VDD < 270)
-#define STM32_0WS_THRESHOLD         24000000
-#define STM32_1WS_THRESHOLD         48000000
-#define STM32_2WS_THRESHOLD         72000000
-#define STM32_3WS_THRESHOLD         96000000
-#define STM32_4WS_THRESHOLD         120000000
-#define STM32_5WS_THRESHOLD         144000000
-#define STM32_6WS_THRESHOLD         168000000
-#define STM32_7WS_THRESHOLD         192000000
-#define STM32_8WS_THRESHOLD         0
-
-#elif (STM32_VDD >= 210) && (STM32_VDD < 240)
-#define STM32_0WS_THRESHOLD         22000000
-#define STM32_1WS_THRESHOLD         44000000
-#define STM32_2WS_THRESHOLD         66000000
-#define STM32_3WS_THRESHOLD         88000000
-#define STM32_4WS_THRESHOLD         110000000
-#define STM32_5WS_THRESHOLD         132000000
-#define STM32_6WS_THRESHOLD         154000000
-#define STM32_7WS_THRESHOLD         176000000
-#define STM32_8WS_THRESHOLD         198000000
-
-#elif (STM32_VDD >= 180) && (STM32_VDD < 210)
-#define STM32_0WS_THRESHOLD         20000000
-#define STM32_1WS_THRESHOLD         40000000
-#define STM32_2WS_THRESHOLD         60000000
-#define STM32_3WS_THRESHOLD         80000000
-#define STM32_4WS_THRESHOLD         100000000
-#define STM32_5WS_THRESHOLD         120000000
-#define STM32_6WS_THRESHOLD         140000000
-#define STM32_7WS_THRESHOLD         160000000
-#define STM32_8WS_THRESHOLD         0
-
-#else
-#error "invalid VDD voltage specified"
-#endif
-
 /*
  * HSI related checks.
  */
 #if STM32_HSI_ENABLED
 #else /* !STM32_HSI_ENABLED */
 
-#if STM32_SW == STM32_SW_HSI
+#if STM32_SW == STM32_SW_HSI_CK
 #error "HSI not enabled, required by STM32_SW"
 #endif
 
-#if (STM32_SW == STM32_SW_PLL) && (STM32_PLLSRC == STM32_PLLSRC_HSI)
-#error "HSI not enabled, required by STM32_SW and STM32_PLLSRC"
+#if (STM32_PLLSRC == STM32_PLLSRC_HSI_CK) &&                                \
+    (STM32_PLL1_ENABLED || STM32_PLL2_ENABLED || STM32_PLL3_ENABLED)
+#error "HSI not enabled, required by STM32_PLLSRC and STM32_PLLx_ENABLED"
 #endif
 
-#if (STM32_MCO1SEL == STM32_MCO1SEL_HSI) ||                                 \
-    ((STM32_MCO1SEL == STM32_MCO1SEL_PLL) &&                                \
-     (STM32_PLLSRC == STM32_PLLSRC_HSI))
+#if STM32_CKPERSEL == STM32_CKPERSEL_HSI_CK
+#error "HSI not enabled, required by STM32_CKPERSEL"
+#endif
+
+#if STM32_MCO1SEL == STM32_MCO1SEL_HSI_CK
 #error "HSI not enabled, required by STM32_MCO1SEL"
-#endif
-
-#if (STM32_MCO2SEL == STM32_MCO2SEL_PLL) &&                                 \
-    (STM32_PLLSRC == STM32_PLLSRC_HSI)
-#error "HSI not enabled, required by STM32_MCO2SEL"
-#endif
-
-#if (STM32_I2SSRC == STM32_I2SSRC_PLLI2S) &&                                \
-    (STM32_PLLSRC == STM32_PLLSRC_HSI)
-#error "HSI not enabled, required by STM32_I2SSRC"
-#endif
-
-#if ((STM32_SAI1SEL == STM32_SAI1SEL_SAIPLL) ||                             \
-     (STM32_SAI1SEL == STM32_SAI1SEL_I2SPLL)) &&                            \
-    (STM32_PLLSRC == STM32_PLLSRC_HSI)
-#error "HSI not enabled, required by STM32_SAI1SEL"
-#endif
-
-#if ((STM32_SAI2SEL == STM32_SAI2SEL_SAIPLL) ||                             \
-     (STM32_SAI2SEL == STM32_SAI2SEL_I2SPLL)) &&                            \
-    (STM32_PLLSRC == STM32_PLLSRC_HSI)
-#error "HSI not enabled, required by STM32_SAI2SEL"
-#endif
-
-#if STM32_LCDTFT_REQUIRED &&                                                \
-    (STM32_PLLSRC == STM32_PLLSRC_HSI)
-#error "HSI not enabled, required by STM32_LCDTFT_REQUIRED"
 #endif
 
 #endif /* !STM32_HSI_ENABLED */
@@ -1108,8 +1043,8 @@
 #error "HSE frequency not defined"
 #else /* STM32_HSECLK != 0 */
 #if defined(STM32_HSE_BYPASS)
-#if (STM32_HSECLK < STM32_HSECLK_MIN) || (STM32_HSECLK > STM32_HSECLK_BYP_MAX)
-#error "STM32_HSECLK outside acceptable range (STM32_HSECLK_MIN...STM32_HSECLK_BYP_MAX)"
+#if (STM32_HSECLK < STM32_HSECLK_BYP_MIN) || (STM32_HSECLK > STM32_HSECLK_BYP_MAX)
+#error "STM32_HSECLK outside acceptable range (STM32_HSECLK_BYP_MIN...STM32_HSECLK_BYP_MAX)"
 #endif
 #else /* !defined(STM32_HSE_BYPASS) */
 #if (STM32_HSECLK < STM32_HSECLK_MIN) || (STM32_HSECLK > STM32_HSECLK_MAX)
@@ -1119,49 +1054,24 @@
 #endif /* STM32_HSECLK != 0 */
 #else /* !STM32_HSE_ENABLED */
 
-#if STM32_SW == STM32_SW_HSE
+#if STM32_SW == STM32_SW_HSE_CK
 #error "HSE not enabled, required by STM32_SW"
 #endif
 
-#if (STM32_SW == STM32_SW_PLL) && (STM32_PLLSRC == STM32_PLLSRC_HSE)
-#error "HSE not enabled, required by STM32_SW and STM32_PLLSRC"
+#if (STM32_PLLSRC == STM32_PLLSRC_HSE_CK) &&                                \
+    (STM32_PLL1_ENABLED || STM32_PLL2_ENABLED || STM32_PLL3_ENABLED)
+#error "HSE not enabled, required by STM32_PLLSRC and STM32_PLLx_ENABLED"
 #endif
 
-#if (STM32_MCO1SEL == STM32_MCO1SEL_HSE) ||                                 \
-    ((STM32_MCO1SEL == STM32_MCO1SEL_PLL) &&                                \
-     (STM32_PLLSRC == STM32_PLLSRC_HSE))
+#if STM32_MCO1SEL == STM32_MCO1SEL_HSE_CK
 #error "HSE not enabled, required by STM32_MCO1SEL"
 #endif
 
-#if (STM32_MCO2SEL == STM32_MCO2SEL_HSE) ||                                 \
-    ((STM32_MCO2SEL == STM32_MCO2SEL_PLL) &&                                \
-     (STM32_PLLSRC == STM32_PLLSRC_HSE))
+#if STM32_MCO2SEL == STM32_MCO2SEL_HSE_CK
 #error "HSE not enabled, required by STM32_MCO2SEL"
 #endif
 
-#if (STM32_I2SSRC == STM32_I2SSRC_PLLI2S) &&                                \
-    (STM32_PLLSRC == STM32_PLLSRC_HSE)
-#error "HSE not enabled, required by STM32_I2SSRC"
-#endif
-
-#if ((STM32_SAI1SEL == STM32_SAI1SEL_SAIPLL) |                              \
-     (STM32_SAI1SEL == STM32_SAI1SEL_I2SPLL)) &&                            \
-    (STM32_PLLSRC == STM32_PLLSRC_HSE)
-#error "HSE not enabled, required by STM32_SAI1SEL"
-#endif
-
-#if ((STM32_SAI2SEL == STM32_SAI2SEL_SAIPLL) |                              \
-     (STM32_SAI2SEL == STM32_SAI2SEL_I2SPLL)) &&                            \
-    (STM32_PLLSRC == STM32_PLLSRC_HSE)
-#error "HSE not enabled, required by STM32_SAI2SEL"
-#endif
-
-#if STM32_LCDTFT_REQUIRED &&                                                \
-    (STM32_PLLSRC == STM32_PLLSRC_HSE)
-#error "HSE not enabled, required by STM32_LCDTFT_REQUIRED"
-#endif
-
-#if STM32_RTCSEL == STM32_RTCSEL_HSEDIV
+#if STM32_RTCSEL == STM32_RTCSEL_HSE_1M_CK
 #error "HSE not enabled, required by STM32_RTCSEL"
 #endif
 
@@ -1173,8 +1083,12 @@
 #if STM32_LSI_ENABLED
 #else /* !STM32_LSI_ENABLED */
 
-#if STM32_RTCSEL == STM32_RTCSEL_LSI
+#if STM32_RTCSEL == STM32_RTCSEL_LSI_CK
 #error "LSI not enabled, required by STM32_RTCSEL"
+#endif
+
+#if STM32_MCO2SEL == STM32_MCO2SEL_LSI_CK
+#error "HSE not enabled, required by STM32_MCO2SEL"
 #endif
 
 #endif /* !STM32_LSI_ENABLED */
@@ -1188,8 +1102,14 @@
 #error "LSE frequency not defined"
 #endif
 
+#if defined(STM32_LSE_BYPASS)
+#if (STM32_LSECLK < STM32_LSECLK_MIN) || (STM32_LSECLK > STM32_LSECLK_BYP_MAX)
+#error "STM32_LSECLK outside acceptable range (STM32_LSECLK_MIN...STM32_LSECLK_BYP_MAX)"
+#endif
+#else
 #if (STM32_LSECLK < STM32_LSECLK_MIN) || (STM32_LSECLK > STM32_LSECLK_MAX)
 #error "STM32_LSECLK outside acceptable range (STM32_LSECLK_MIN...STM32_LSECLK_MAX)"
+#endif
 #endif
 
 #if !defined(STM32_LSEDRV)
@@ -1202,15 +1122,31 @@
 
 #else /* !STM32_LSE_ENABLED */
 
-#if STM32_RTCSEL == STM32_RTCSEL_LSE
+#if STM32_RTCSEL == STM32_RTCSEL_LSE_CK
 #error "LSE not enabled, required by STM32_RTCSEL"
 #endif
 
-#if STM32_MCO1SEL == STM32_MCO1SEL_LSE
+#if STM32_MCO1SEL == STM32_MCO1SEL_LSE_CK
 #error "LSE not enabled, required by STM32_MCO1SEL"
 #endif
 
 #endif /* !STM32_LSE_ENABLED */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * @brief   STM32_PLLM field.
@@ -1225,10 +1161,10 @@
 /**
  * @brief   PLLs input clock frequency.
  */
-#if (STM32_PLLSRC == STM32_PLLSRC_HSE) || defined(__DOXYGEN__)
+#if (STM32_PLLSRC == STM32_PLLSRC_HSE_CK) || defined(__DOXYGEN__)
 #define STM32_PLLCLKIN              (STM32_HSECLK / STM32_PLLM_VALUE)
 
-#elif STM32_PLLSRC == STM32_PLLSRC_HSI
+#elif STM32_PLLSRC == STM32_PLLSRC_HSI_CK
 #define STM32_PLLCLKIN              (STM32_HSICLK / STM32_PLLM_VALUE)
 
 #else
@@ -1246,7 +1182,7 @@
  * PLL enable check.
  */
 #if (STM32_CLOCK48_REQUIRED && (STM32_CK48MSEL == STM32_CK48MSEL_PLL)) ||   \
-    (STM32_SW == STM32_SW_PLL) ||                                           \
+    (STM32_SW == STM32_SW_PLL1_P_CK) ||                                           \
     (STM32_MCO1SEL == STM32_MCO1SEL_PLL) ||                                 \
     (STM32_MCO2SEL == STM32_MCO2SEL_PLL) ||                                 \
     defined(__DOXYGEN__)
@@ -1332,13 +1268,13 @@
 #if STM32_NO_INIT || defined(__DOXYGEN__)
 #define STM32_SYSCLK                STM32_HSICLK
 
-#elif (STM32_SW == STM32_SW_HSI)
+#elif (STM32_SW == STM32_SW_HSI_CK)
 #define STM32_SYSCLK                STM32_HSICLK
 
-#elif (STM32_SW == STM32_SW_HSE)
+#elif (STM32_SW == STM32_SW_HSE_CK)
 #define STM32_SYSCLK                STM32_HSECLK
 
-#elif (STM32_SW == STM32_SW_PLL)
+#elif (STM32_SW == STM32_SW_PLL1_P_CK)
 #define STM32_SYSCLK                STM32_PLL_P_CLKOUT
 
 #else
