@@ -104,7 +104,7 @@ static inline void init_pwr(void) {
 #if STM32_PWR_CR2 & PWR_CR2_BREN
   while ((PWR->CR2 & PWR_CR2_BRRDY) == 0)
     ;
-  rccEnableBKPSRAM(false);
+  rccEnableBKPRAM(false);
 #endif
 #if STM32_PWR_CR3 & PWR_CR3_USB33DEN
   while ((PWR->CR3 & PWR_CR3_USB33RDY) == 0)
@@ -134,15 +134,12 @@ void hal_lld_init(void) {
   rccResetAHB1(~0);
   rccResetAHB2(~0);
   rccResetAHB3(~(RCC_AHB3RSTR_CPURST | RCC_AHB3RSTR_FMCRST));
-  rccResetAHB4(~STM32_GPIO_EN_MASK);
+  rccResetAHB4(~(STM32_GPIO_EN_MASK));
   rccResetAPB1L(~0);
   rccResetAPB1H(~0);
   rccResetAPB2(~0);
   rccResetAPB3(~0);
   rccResetAPB4(~0);
-
-  /* Backup domain initialization.*/
-  init_bkp_domain();
 
   /* DMA subsystems initialization.*/
 #if defined(STM32_DMA_REQUIRED)
@@ -150,7 +147,7 @@ void hal_lld_init(void) {
 #endif
 
   /* IRQ subsystem initialization.*/
-  irqInit();
+//  irqInit();
 }
 
 /**
@@ -166,6 +163,9 @@ void stm32_clock_init(void) {
   /* PWR initialization.*/
   init_pwr();
 
+  /* Backup domain initialization.*/
+  init_bkp_domain();
+
   /* HSI setup, it enforces the reset situation in order to handle possible
      problems with JTAG probes and re-initializations.*/
   RCC->CR |= RCC_CR_HSION;                  /* Make sure HSI is ON.         */
@@ -180,10 +180,11 @@ void stm32_clock_init(void) {
     ;                                       /* Wait until HSI is selected.  */
 
   /* Registers cleared to reset values.*/
-  RCC->CR    = RCC_CR_HSION;               /* CR Reset value.              */
-  RCC->ICSCR = 0x40000000;                 /* ICSCR Reset value.           */
-  RCC->CFGR  = 0x00000000;                 /* CFGR reset value.            */
-  RCC->CSR   = 0x00000000;                 /* CSR reset value.             */
+  RCC->CR      = RCC_CR_HSION;             /* CR Reset value.              */
+  RCC->ICSCR   = 0x40000000;               /* ICSCR Reset value.           */
+  RCC->CFGR    = 0x00000000;               /* CFGR reset value.            */
+  RCC->CSR     = 0x00000000;               /* CSR reset value.             */
+  RCC->PLLCFGR = 0x01FF0000;               /* PLLCFGR reset value.         */
 
   /* HSE activation with optional bypass.*/
 #if STM32_HSE_ENABLED == TRUE
@@ -274,7 +275,7 @@ void stm32_clock_init(void) {
     while ((RCC->CR & rdymask) != rdymask)
       ;
   }
-#endif
+#endif /* STM32_PLL1_ENABLED || STM32_PLL2_ENABLED || STM32_PLL3_ENABLED */
 
   /* Other clock-related settings.*/
   RCC->CFGR = STM32_MCO2SEL | RCC_CFGR_MCO2PRE_VALUE(STM32_MCO2PRE_VALUE) |
@@ -305,7 +306,7 @@ void stm32_clock_init(void) {
 
   /* SYSCFG clock enabled here because it is a multi-functional unit shared
      among multiple drivers.*/
-  rccEnableAPB4(RCC_APB4ENR_SYSCFGEN);
+  rccEnableAPB4(RCC_APB4ENR_SYSCFGEN, true);
 }
 
 /** @} */

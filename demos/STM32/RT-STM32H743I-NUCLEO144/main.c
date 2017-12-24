@@ -29,9 +29,9 @@ static THD_FUNCTION(Thread1, arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (true) {
-    palSetLine(LINE_ARD_D13);
+//    palSetLine(LINE_ARD_D13);
     chThdSleepMilliseconds(500);
-    palClearLine(LINE_ARD_D13);
+//    palClearLine(LINE_ARD_D13);
     chThdSleepMilliseconds(500);
   }
 }
@@ -54,8 +54,8 @@ int main(void) {
   /*
    * ARD_D13 is programmed as output (board LED).
    */
-  palClearLine(LINE_ARD_D13);
-  palSetLineMode(LINE_ARD_D13, PAL_MODE_OUTPUT_PUSHPULL);
+//  palClearLine(LINE_ARD_D13);
+//  palSetLineMode(LINE_ARD_D13, PAL_MODE_OUTPUT_PUSHPULL);
 
   /*
    * Activates the serial driver 1 using the driver default configuration.
