@@ -37,32 +37,38 @@
  * General settings.
  */
 #define STM32_NO_INIT                       FALSE
-#define STM32_HCLK_ENFORCED_VALUE           STM32_HSICLK
+#define STM32_SYS_CK_ENFORCED_VALUE         STM32_HSICLK
 
 /*
  * PWR system settings.
  * Reading STM32 Reference Manual is required.
- * Constants are taken from the ST header.
+ * Register constants are taken from the ST header.
  */
-#define STM32_PWR_CR1                       (PWR_CR1_SVOS_1 | PWR_CR1_SVOS_0)
+#define STM32_VOS                           STM32_VOS_SCALE1
+#define STM32_PWR_CR1                       (PWR_CR1_PVDEN |                \
+                                             PWR_CR1_SVOS_1 |               \
+                                             PWR_CR1_SVOS_0)
 #define STM32_PWR_CR2                       (PWR_CR2_BREN)
-#define STM32_PWR_CR3                       (PWR_CR3_SCUEN | PWR_CR3_LDOEN)
+#define STM32_PWR_CR3                       (PWR_CR3_SCUEN |                \
+                                             PWR_CR3_LDOEN |                \
+                                             PWR_CR3_USBREGEN |             \
+                                             PWR_CR3_USB33DEN)
 #define STM32_PWR_CPUCR                     0
-#define STM32_PWR_D3CR                      (PWR_D3CR_VOS_0)
 
 /*
  * Clock tree static settings.
  * Reading STM32 Reference Manual is required.
  */
 #define STM32_HSI_ENABLED                   TRUE
-#define STM32_LSI_ENABLED                   FALSE
-#define STM32_CSI_ENABLED                   FALSE
+#define STM32_LSI_ENABLED                   TRUE
+#define STM32_CSI_ENABLED                   TRUE
 #define STM32_HSI48_ENABLED                 TRUE
 #define STM32_HSE_ENABLED                   TRUE
 #define STM32_LSE_ENABLED                   TRUE
 #define STM32_HSIDIV                        STM32_HSIDIV_DIV1
 #define STM32_RTCPRE_VALUE                  8
 #define STM32_PLLSRC                        STM32_PLLSRC_HSE_CK
+#define STM32_PLLCFGR_MASK                  ~0
 #define STM32_PLL1_ENABLED                  TRUE
 #define STM32_PLL1_DIVM_VALUE               4
 #define STM32_PLL1_DIVN_VALUE               400
@@ -86,9 +92,9 @@
 #define STM32_PLL3_DIVR_VALUE               8
 #define STM32_CKPERSEL                      STM32_CKPERSEL_HSE_CK
 #define STM32_MCO1SEL                       STM32_MCO1SEL_HSI_CK
-#define STM32_MCO1PRE                       4
+#define STM32_MCO1PRE_VALUE                 4
 #define STM32_MCO2SEL                       STM32_MCO2SEL_SYS_CK
-#define STM32_MCO2PRE                       4
+#define STM32_MCO2PRE_VALUE                 4
 
 /*
  * Core clocks dynamic settings (can be changed at runtime).
