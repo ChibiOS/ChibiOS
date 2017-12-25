@@ -187,13 +187,13 @@
 /** @} */
 
 /**
- * @name    Internal clock sources
+ * @name    Internal clock sources frequencies
  * @{
  */
-#define STM32_HSICLK            64000000
-#define STM32_HSI48CLK          48000000
-#define STM32_CSICLK            4000000
-#define STM32_LSICLK            32000
+#define STM32_HSI_OSC           64000000
+#define STM32_HSI48_OSC         48000000
+#define STM32_CSI_OSC           4000000
+#define STM32_LSI_OSC           32000
 /** @} */
 
 /**
@@ -1190,31 +1190,31 @@
  * @{
  */
 #if (STM32_VOS == STM32_VOS_SCALE1) || defined(__DOXYGEN__)
-#define STM32_0WS_THRESHOLD         70000000
-#define STM32_1WS_THRESHOLD         140000000
-#define STM32_2WS_THRESHOLD         210000000
-#define STM32_3WS_THRESHOLD         0
-#define STM32_4WS_THRESHOLD         0
-#define STM32_PLLOUT_MAX            400000000
-#define STM32_PLLOUT_MIN            1500000
+#define STM32_0WS_THRESHOLD         70000000U
+#define STM32_1WS_THRESHOLD         140000000U
+#define STM32_2WS_THRESHOLD         210000000U
+#define STM32_3WS_THRESHOLD         0U
+#define STM32_4WS_THRESHOLD         0U
+#define STM32_PLLOUT_MAX            400000000U
+#define STM32_PLLOUT_MIN            1500000U
 
 #elif STM32_VOS == STM32_VOS_SCALE2
-#define STM32_0WS_THRESHOLD         55000000
-#define STM32_1WS_THRESHOLD         110000000
-#define STM32_2WS_THRESHOLD         165000000
-#define STM32_3WS_THRESHOLD         220000000
-#define STM32_4WS_THRESHOLD         0
-#define STM32_PLLOUT_MAX            300000000
-#define STM32_PLLOUT_MIN            1500000
+#define STM32_0WS_THRESHOLD         55000000U
+#define STM32_1WS_THRESHOLD         110000000U
+#define STM32_2WS_THRESHOLD         165000000U
+#define STM32_3WS_THRESHOLD         220000000U
+#define STM32_4WS_THRESHOLD         0U
+#define STM32_PLLOUT_MAX            300000000U
+#define STM32_PLLOUT_MIN            1500000U
 
 #elif STM32_VOS == STM32_VOS_SCALE3
-#define STM32_0WS_THRESHOLD         45000000
-#define STM32_1WS_THRESHOLD         90000000
-#define STM32_2WS_THRESHOLD         135000000
-#define STM32_3WS_THRESHOLD         180000000
-#define STM32_4WS_THRESHOLD         225000000
-#define STM32_PLLOUT_MAX            200000000
-#define STM32_PLLOUT_MIN            1500000
+#define STM32_0WS_THRESHOLD         45000000U
+#define STM32_1WS_THRESHOLD         90000000U
+#define STM32_2WS_THRESHOLD         135000000U
+#define STM32_3WS_THRESHOLD         180000000U
+#define STM32_4WS_THRESHOLD         225000000U
+#define STM32_PLLOUT_MAX            200000000U
+#define STM32_PLLOUT_MIN            1500000U
 
 #else
 #error "invalid STM32_VOS setting specified"
@@ -1225,7 +1225,10 @@
  * HSI related checks.
  */
 #if STM32_HSI_ENABLED
+#define STM32_HSICLK            STM32_HSI_OSC
+
 #else /* !STM32_HSI_ENABLED */
+#define STM32_HSICLK            0U
 
 #if STM32_SW == STM32_SW_HSI_CK
 #error "HSI not enabled, required by STM32_SW"
@@ -1250,7 +1253,10 @@
  * HSI48 related checks.
  */
 #if STM32_HSI48_ENABLED
+#define STM32_HSI48CLK          STM32_HSI48_OSC
+
 #else /* !STM32_HSI48_ENABLED */
+#define STM32_HSI48CLK          0U
 
 #if STM32_MCO1SEL == STM32_MCO1SEL_HSI48_CK
 #error "HSI48 not enabled, required by STM32_MCO1SEL"
@@ -1262,7 +1268,10 @@
  * CSI related checks.
  */
 #if STM32_CSI_ENABLED
+#define STM32_CSICLK            STM32_CSI_OSC
+
 #else /* !STM32_CSI_ENABLED */
+#define STM32_CSICLK            0U
 
 #if STM32_SW == STM32_SW_CSI_CK
 #error "CSI not enabled, required by STM32_SW"
@@ -1288,8 +1297,12 @@
  */
 #if STM32_HSE_ENABLED
 
-#if STM32_HSECLK == 0
+#if !defined(STM32_HSECLK)
 #error "HSE frequency not defined"
+#endif
+
+#if STM32_HSECLK == 0
+#error "HSE oscllator not available"
 #else /* STM32_HSECLK != 0 */
 #if defined(STM32_HSE_BYPASS)
 #if (STM32_HSECLK < STM32_HSECLK_BYP_MIN) || (STM32_HSECLK > STM32_HSECLK_BYP_MAX)
@@ -1330,7 +1343,10 @@
  * LSI related checks.
  */
 #if STM32_LSI_ENABLED
+#define STM32_LSICLK            STM32_LSI_OSC
+
 #else /* !STM32_LSI_ENABLED */
+#define STM32_LSICLK            0U
 
 #if STM32_RTCSEL == STM32_RTCSEL_LSI_CK
 #error "LSI not enabled, required by STM32_RTCSEL"
@@ -1347,8 +1363,12 @@
  */
 #if STM32_LSE_ENABLED
 
-#if (STM32_LSECLK == 0)
+#if !defined(STM32_LSECLK)
 #error "LSE frequency not defined"
+#endif
+
+#if (STM32_LSECLK == 0)
+#error "LSE oscillator not available"
 #endif
 
 #if defined(STM32_LSE_BYPASS)
