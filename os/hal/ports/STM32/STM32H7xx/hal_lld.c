@@ -36,7 +36,7 @@
  * @brief   CMSIS system core clock variable.
  * @note    It is declared in system_stm32f7xx.h.
  */
-uint32_t SystemCoreClock = STM32_HCLK;
+uint32_t SystemCoreClock = STM32_C_CK;
 
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
@@ -92,23 +92,22 @@ static inline void init_bkp_domain(void) {
  * @brief   Initializes the PWR unit.
  */
 static inline void init_pwr(void) {
+#if 0
+  PWR_TypeDef *pwr = PWR; /* For inspection.*/
+  (void)pwr;
+#endif
 
-  PWR->CR1   = STM32_PWR_CR1;
+  PWR->CR1   = STM32_PWR_CR1 | 0xF0000000;
   PWR->CR2   = STM32_PWR_CR2;
   PWR->CR3   = STM32_PWR_CR3;
-  PWR->CR1   = STM32_PWR_CR1;
   PWR->CPUCR = STM32_PWR_CPUCR;
   PWR->D3CR  = STM32_VOS;
   while ((PWR->CSR1 & PWR_CSR1_ACTVOS) == 0)
     ;
 #if STM32_PWR_CR2 & PWR_CR2_BREN
-  while ((PWR->CR2 & PWR_CR2_BRRDY) == 0)
-    ;
-  rccEnableBKPRAM(false);
-#endif
-#if STM32_PWR_CR3 & PWR_CR3_USB33DEN
-  while ((PWR->CR3 & PWR_CR3_USB33RDY) == 0)
-    ;
+//  while ((PWR->CR2 & PWR_CR2_BRRDY) == 0)
+//    ;
+//  rccEnableBKPRAM(false);
 #endif
 }
 
@@ -158,8 +157,19 @@ void hal_lld_init(void) {
  * @special
  */
 void stm32_clock_init(void) {
+#if 0
+  RCC_TypeDef *rcc = RCC; /* For inspection.*/
+  (void)rcc;
+#endif
 
 #if STM32_NO_INIT == FALSE
+#if !defined(STM32_DISABLE_ERRATA_2_2_15)
+  /* Fix for errata 2.2.15: Reading from AXI SRAM might lead to data
+     read corruption.
+     AXI->TARG7_FN_MOD.*/
+  *((volatile uint32_t *)0x51000000 + 0x1108 + 0x7000) = 0x00000001U;
+#endif
+
   /* PWR initialization.*/
   init_pwr();
 
@@ -326,7 +336,7 @@ void stm32_clock_init(void) {
      from HSI.*/
 #if STM32_SW != STM32_SW_HSI_CK
   RCC->CFGR |= STM32_SW;        /* Switches on the selected clock source.   */
-  while ((RCC->CFGR & RCC_CFGR_SWS) != (STM32_SW << 2))
+  while ((RCC->CFGR & RCC_CFGR_SWS) != (STM32_SW << 3U))
     ;
 #endif
 

@@ -538,8 +538,7 @@
  * @brief   PWR CR1 initializer.
  */
 #if !defined(STM32_PWR_CR1) || defined(__DOXYGEN__)
-#define STM32_PWR_CR1                       (PWR_CR1_PVDEN |                \
-                                             PWR_CR1_SVOS_1 |               \
+#define STM32_PWR_CR1                       (PWR_CR1_SVOS_1 |               \
                                              PWR_CR1_SVOS_0)
 #endif
 
@@ -554,8 +553,7 @@
  * @brief   PWR CR3 initializer.
  */
 #if !defined(STM32_PWR_CR3) || defined(__DOXYGEN__)
-#define STM32_PWR_CR3                       (PWR_CR3_SCUEN |                \
-                                             PWR_CR3_LDOEN |                \
+#define STM32_PWR_CR3                       (PWR_CR3_LDOEN |                \
                                              PWR_CR3_USBREGEN |             \
                                              PWR_CR3_USB33DEN)
 #endif
@@ -2067,6 +2065,11 @@
 #else
 #error "invalid STM32_D1CPRE value specified"
 #endif
+
+/**
+ * @brief   Core clock.
+ */
+#define STM32_C_CK                  STM32_SYS_D1CPRE_CK
 
 /**
  * @brief   HCLK clock.

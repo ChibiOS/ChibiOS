@@ -77,6 +77,7 @@
 #define STM32_ETH_NUMBER                    61
 
 /* EXTI attributes.*/
+#define STM32_EXTI_ENHANCED
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
