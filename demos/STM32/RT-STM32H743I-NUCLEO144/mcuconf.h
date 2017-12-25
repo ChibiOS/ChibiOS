@@ -102,10 +102,6 @@
 #define STM32_PLL3_DIVP_VALUE               2
 #define STM32_PLL3_DIVQ_VALUE               8
 #define STM32_PLL3_DIVR_VALUE               8
-#define STM32_MCO1SEL                       STM32_MCO1SEL_HSI_CK
-#define STM32_MCO1PRE_VALUE                 4
-#define STM32_MCO2SEL                       STM32_MCO2SEL_SYS_CK
-#define STM32_MCO2PRE_VALUE                 4
 
 /*
  * Core clocks dynamic settings (can be changed at runtime).
@@ -124,6 +120,10 @@
  * Peripherals clocks static settings.
  * Reading STM32 Reference Manual is required.
  */
+#define STM32_MCO1SEL                       STM32_MCO1SEL_HSI_CK
+#define STM32_MCO1PRE_VALUE                 4
+#define STM32_MCO2SEL                       STM32_MCO2SEL_SYS_CK
+#define STM32_MCO2PRE_VALUE                 4
 #define STM32_CKPERSEL                      STM32_CKPERSEL_HSE_CK
 #define STM32_SDMMCSEL                      STM32_SDMMCSEL_PLL1_Q_CK
 #define STM32_QSPISEL                       STM32_QSPISEL_HCLK

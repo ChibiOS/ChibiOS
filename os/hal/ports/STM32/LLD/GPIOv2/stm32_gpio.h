@@ -96,7 +96,6 @@ typedef struct {
   volatile uint32_t     LOCKR;
   volatile uint32_t     AFRL;
   volatile uint32_t     AFRH;
-  volatile uint32_t     BRR;
 } stm32_gpio_t;
 
 /*===========================================================================*/
