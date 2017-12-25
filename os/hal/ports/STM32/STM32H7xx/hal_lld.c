@@ -254,19 +254,43 @@ void stm32_clock_init(void) {
 #if STM32_PLL1_ENABLED == TRUE
     onmask  |= RCC_CR_PLL1ON;
     rdymask |= RCC_CR_PLL1RDY;
-    cfgmask |= RCC_PLLCFGR_DIVR1EN | RCC_PLLCFGR_DIVQ1EN | RCC_PLLCFGR_DIVP1EN;
+#if STM32_PLL1_P_ENABLED == TRUE
+    cfgmask |= RCC_PLLCFGR_DIVP1EN;
+#endif
+#if STM32_PLL1_Q_ENABLED == TRUE
+    cfgmask |= RCC_PLLCFGR_DIVQ1EN;
+#endif
+#if STM32_PLL1_R_ENABLED == TRUE
+    cfgmask |= RCC_PLLCFGR_DIVR1EN;
+#endif
 #endif
 
 #if STM32_PLL2_ENABLED == TRUE
     onmask  |= RCC_CR_PLL2ON;
     rdymask |= RCC_CR_PLL2RDY;
-    cfgmask |= RCC_PLLCFGR_DIVR2EN | RCC_PLLCFGR_DIVQ2EN | RCC_PLLCFGR_DIVP2EN;
+#if STM32_PLL2_P_ENABLED == TRUE
+    cfgmask |= RCC_PLLCFGR_DIVP2EN;
+#endif
+#if STM32_PLL2_Q_ENABLED == TRUE
+    cfgmask |= RCC_PLLCFGR_DIVQ2EN;
+#endif
+#if STM32_PLL2_R_ENABLED == TRUE
+    cfgmask |= RCC_PLLCFGR_DIVR2EN;
+#endif
 #endif
 
 #if STM32_PLL3_ENABLED == TRUE
     onmask  |= RCC_CR_PLL3ON;
     rdymask |= RCC_CR_PLL3RDY;
-    cfgmask |= RCC_PLLCFGR_DIVR3EN | RCC_PLLCFGR_DIVQ3EN | RCC_PLLCFGR_DIVP3EN;
+#if STM32_PLL3_P_ENABLED == TRUE
+    cfgmask |= RCC_PLLCFGR_DIVP3EN;
+#endif
+#if STM32_PLL3_Q_ENABLED == TRUE
+    cfgmask |= RCC_PLLCFGR_DIVQ3EN;
+#endif
+#if STM32_PLL3_R_ENABLED == TRUE
+    cfgmask |= RCC_PLLCFGR_DIVR3EN;
+#endif
 #endif
 
     /* Activating enabled PLLs and waiting for all of them to become ready.*/
@@ -277,10 +301,23 @@ void stm32_clock_init(void) {
   }
 #endif /* STM32_PLL1_ENABLED || STM32_PLL2_ENABLED || STM32_PLL3_ENABLED */
 
-  /* Other clock-related settings.*/
-  RCC->CFGR = STM32_MCO2SEL | RCC_CFGR_MCO2PRE_VALUE(STM32_MCO2PRE_VALUE) |
-              STM32_MCO1SEL | RCC_CFGR_MCO1PRE_VALUE(STM32_MCO1PRE_VALUE) |
-              RCC_CFGR_RTCPRE_VALUE(STM32_RTCPRE_VALUE);
+  /* AHB and APB dividers.*/
+  RCC->D1CFGR = STM32_D1CPRE  | STM32_D1PPRE3 | STM32_D1HPRE;
+  RCC->D2CFGR = STM32_D2PPRE2 | STM32_D2PPRE1;
+  RCC->D3CFGR = STM32_D3PPRE4;
+
+  /* Peripherals clocks.*/
+  RCC->D1CCIPR  = STM32_CKPERSEL  | STM32_SDMMCSEL    | STM32_QSPISEL    |
+                  STM32_FMCSEL;
+  RCC->D2CCIP1R = STM32_SWPSEL    | STM32_FDCANSEL    | STM32_DFSDM1SEL  |
+                  STM32_SPDIFSEL  | STM32_SPDIFSEL    | STM32_SPI45SEL   |
+                  STM32_SPI123SEL | STM32_SAI23SEL    | STM32_SAI1SEL;
+  RCC->D2CCIP2R = STM32_LPTIM1SEL | STM32_CECSEL      | STM32_USBSEL     |
+                  STM32_I2C123SEL | STM32_RNGSEL      | STM32_USART16SEL |
+                  STM32_USART234578SEL;
+  RCC->D3CCIPR  = STM32_SPI6SEL   | STM32_SAI4BSEL    | STM32_SAI4ASEL   |
+                  STM32_ADCSEL    | STM32_LPTIM345SEL | STM32_LPTIM2SEL  |
+                  STM32_I2C4SEL   | STM32_LPUART1SEL;
 
   /* Flash setup.*/
   FLASH->ACR = FLASH_ACR_WRHIGHFREQ_2 | STM32_FLASHBITS;
@@ -293,6 +330,11 @@ void stm32_clock_init(void) {
     ;
 #endif
 
+  /* Other clock-related settings.*/
+  RCC->CFGR = STM32_MCO2SEL | RCC_CFGR_MCO2PRE_VALUE(STM32_MCO2PRE_VALUE) |
+              STM32_MCO1SEL | RCC_CFGR_MCO1PRE_VALUE(STM32_MCO1PRE_VALUE) |
+              RCC_CFGR_RTCPRE_VALUE(STM32_RTCPRE_VALUE);
+
 #if 0
   /* Peripheral clock sources.*/
   RCC->DCKCFGR2 = STM32_SDMMCSEL  | STM32_CK48MSEL  | STM32_CECSEL    |
@@ -303,6 +345,11 @@ void stm32_clock_init(void) {
                   STM32_USART1SEL;
 #endif
 #endif /* STM32_NO_INIT */
+
+  /* RAM1 2 and 3 clocks enabled.*/
+  rccEnableSRAM1(true);
+  rccEnableSRAM2(true);
+  rccEnableSRAM3(true);
 
   /* SYSCFG clock enabled here because it is a multi-functional unit shared
      among multiple drivers.*/

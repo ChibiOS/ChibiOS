@@ -246,6 +246,35 @@
 #define RCC_PLL3FRACR_FRACN3_VALUE(n)   ((n) << RCC_PLL3FRACR_FRACN3_Pos)
 
 #define RCC_D1CCIPR_CKPERSEL_VALUE(n)   ((n) << RCC_D1CCIPR_CKPERSEL_Pos)
+#define RCC_D1CCIPR_SDMMCSEL_VALUE(n)   ((n) << RCC_D1CCIPR_SDMMCSEL_Pos)
+#define RCC_D1CCIPR_QSPISEL_VALUE(n)    ((n) << RCC_D1CCIPR_QSPISEL_Pos)
+#define RCC_D1CCIPR_FMCSEL_VALUE(n)     ((n) << RCC_D1CCIPR_FMCSEL_Pos)
+
+#define RCC_D2CCIP1R_SWPSEL_VALUE(n)    ((n) << RCC_D2CCIP1R_SWPSEL_Pos)
+#define RCC_D2CCIP1R_FDCANSEL_VALUE(n)  ((n) << RCC_D2CCIP1R_FDCANSEL_Pos)
+#define RCC_D2CCIP1R_DFSDM1SEL_VALUE(n) ((n) << RCC_D2CCIP1R_DFSDM1SEL_Pos)
+#define RCC_D2CCIP1R_SPDIFSEL_VALUE(n)  ((n) << RCC_D2CCIP1R_SPDIFSEL_Pos)
+#define RCC_D2CCIP1R_SPI45SEL_VALUE(n)  ((n) << RCC_D2CCIP1R_SPI45SEL_Pos)
+#define RCC_D2CCIP1R_SPI123SEL_VALUE(n) ((n) << RCC_D2CCIP1R_SPI123SEL_Pos)
+#define RCC_D2CCIP1R_SAI23SEL_VALUE(n)  ((n) << RCC_D2CCIP1R_SAI23SEL_Pos)
+#define RCC_D2CCIP1R_SAI1SEL_VALUE(n)   ((n) << RCC_D2CCIP1R_SAI1SEL_Pos)
+
+#define RCC_D2CCIP2R_LPTIM1SEL_VALUE(n) ((n) << RCC_D2CCIP2R_LPTIM1SEL_Pos)
+#define RCC_D2CCIP2R_CECSEL_VALUE(n)    ((n) << RCC_D2CCIP2R_CECSEL_Pos)
+#define RCC_D2CCIP2R_USBSEL_VALUE(n)    ((n) << RCC_D2CCIP2R_USBSEL_Pos)
+#define RCC_D2CCIP2R_I2C123SEL_VALUE(n) ((n) << RCC_D2CCIP2R_I2C123SEL_Pos)
+#define RCC_D2CCIP2R_RNGSEL_VALUE(n)    ((n) << RCC_D2CCIP2R_RNGSEL_Pos)
+#define RCC_D2CCIP2R_USART16SEL_VALUE(n) ((n) << RCC_D2CCIP2R_USART16SEL_Pos)
+#define RCC_D2CCIP2R_USART234578SEL_VALUE(n) ((n) << RCC_D2CCIP2R_USART28SEL_Pos)
+
+#define RCC_D3CCIPR_SPI6SEL_VALUE(n)    ((n) << RCC_D3CCIPR_SPI6SEL_Pos)
+#define RCC_D3CCIPR_SAI4BSEL_VALUE(n)   ((n) << RCC_D3CCIPR_SAI4BSEL_Pos)
+#define RCC_D3CCIPR_SAI4ASEL_VALUE(n)   ((n) << RCC_D3CCIPR_SAI4ASEL_Pos)
+#define RCC_D3CCIPR_ADCSEL_VALUE(n)     ((n) << RCC_D3CCIPR_ADCSEL_Pos)
+#define RCC_D3CCIPR_LPTIM345SEL_VALUE(n) ((n) << RCC_D3CCIPR_LPTIM345SEL_Pos)
+#define RCC_D3CCIPR_LPTIM2SEL_VALUE(n)  ((n) << RCC_D3CCIPR_LPTIM2SEL_Pos)
+#define RCC_D3CCIPR_I2C4SEL_VALUE(n)    ((n) << RCC_D3CCIPR_I2C4SEL_Pos)
+#define RCC_D3CCIPR_LPUART1SEL_VALUE(n) ((n) << RCC_D3CCIPR_LPUART1SEL_Pos)
 
 #define RCC_BDCR_RTCSEL_VALUE(n)        ((n) << RCC_BDCR_RTCSEL_Pos)
 /** @} */
@@ -338,6 +367,149 @@
 #define STM32_CKPERSEL_HSI_CK           RCC_D1CCIPR_CKPERSEL_VALUE(0U)
 #define STM32_CKPERSEL_CSI_CK           RCC_D1CCIPR_CKPERSEL_VALUE(1U)
 #define STM32_CKPERSEL_HSE_CK           RCC_D1CCIPR_CKPERSEL_VALUE(2U)
+
+#define STM32_SDMMCSEL_PLL1_Q_CK        RCC_D1CCIPR_SDMMCSEL_VALUE(0U)
+#define STM32_SDMMCSEL_PLL2_R_CK        RCC_D1CCIPR_SDMMCSEL_VALUE(1U)
+
+#define STM32_QSPISEL_HCLK              RCC_D1CCIPR_QSPISEL_VALUE(0U)
+#define STM32_QSPISEL_PLL1_Q_CK         RCC_D1CCIPR_QSPISEL_VALUE(1U)
+#define STM32_QSPISEL_PLL2_R_CK         RCC_D1CCIPR_QSPISEL_VALUE(2U)
+#define STM32_QSPISEL_PER_CK            RCC_D1CCIPR_QSPISEL_VALUE(3U)
+
+#define STM32_FMCSEL_HCLK               RCC_D1CCIPR_FMCSEL_VALUE(0U)
+#define STM32_FMCSEL_PLL1_Q_CK          RCC_D1CCIPR_FMCSEL_VALUE(1U)
+#define STM32_FMCSEL_PLL2_R_CK          RCC_D1CCIPR_FMCSEL_VALUE(2U)
+#define STM32_FMCSEL_PER_CK             RCC_D1CCIPR_FMCSEL_VALUE(3U)
+
+#define STM32_SWPSEL_PCLK1              RCC_D2CCIP1R_SWPSEL_VALUE(0U)
+#define STM32_SWPSEL_HSI_KER_CK         RCC_D2CCIP1R_SWPSEL_VALUE(1U)
+
+#define STM32_FDCANSEL_HSE_CK           RCC_D2CCIP1R_FDCANSEL_VALUE(0U)
+#define STM32_FDCANSEL_PLL1_Q_CK        RCC_D2CCIP1R_FDCANSEL_VALUE(1U)
+#define STM32_FDCANSEL_PLL2_Q_CK        RCC_D2CCIP1R_FDCANSEL_VALUE(2U)
+
+#define STM32_DFSDM1SEL_PCLK2           RCC_D2CCIP1R_DFSDM1SEL_VALUE(0U)
+#define STM32_DFSDM1SEL_SYS_CK          RCC_D2CCIP1R_DFSDM1SEL_VALUE(1U)
+
+#define STM32_SPDIFSEL_PLL1_Q_CK        RCC_D2CCIP1R_SPDIFSEL_VALUE(0U)
+#define STM32_SPDIFSEL_PLL2_R_CK        RCC_D2CCIP1R_SPDIFSEL_VALUE(1U)
+#define STM32_SPDIFSEL_PLL3_R_CK        RCC_D2CCIP1R_SPDIFSEL_VALUE(2U)
+#define STM32_SPDIFSEL_HSI_KET_CLK      RCC_D2CCIP1R_SPDIFSEL_VALUE(3U)
+
+#define STM32_SPI45SEL_PCLK2            RCC_D2CCIP1R_SPI45SEL_VALUE(0U)
+#define STM32_SPI45SEL_PLL2_Q_CK        RCC_D2CCIP1R_SPI45SEL_VALUE(1U)
+#define STM32_SPI45SEL_PLL3_Q_CK        RCC_D2CCIP1R_SPI45SEL_VALUE(2U)
+#define STM32_SPI45SEL_HSI_KER_CK       RCC_D2CCIP1R_SPI45SEL_VALUE(3U)
+#define STM32_SPI45SEL_CSI_KER_CK       RCC_D2CCIP1R_SPI45SEL_VALUE(4U)
+#define STM32_SPI45SEL_HSE_CK           RCC_D2CCIP1R_SPI45SEL_VALUE(5U)
+
+#define STM32_SPI123SEL_PLL1_Q_CK       RCC_D2CCIP1R_SPI123SEL_VALUE(0U)
+#define STM32_SPI123SEL_PLL2_P_CK       RCC_D2CCIP1R_SPI123SEL_VALUE(1U)
+#define STM32_SPI123SEL_PLL3_P_CK       RCC_D2CCIP1R_SPI123SEL_VALUE(2U)
+#define STM32_SPI123SEL_I2S_CKIN        RCC_D2CCIP1R_SPI123SEL_VALUE(3U)
+#define STM32_SPI123SEL_PER_CK          RCC_D2CCIP1R_SPI123SEL_VALUE(4U)
+
+#define STM32_SAI23SEL_PLL1_Q_CK        RCC_D2CCIP1R_SAI23SEL_VALUE(0U)
+#define STM32_SAI23SEL_PLL2_P_CK        RCC_D2CCIP1R_SAI23SEL_VALUE(1U)
+#define STM32_SAI23SEL_PLL3_P_CK        RCC_D2CCIP1R_SAI23SEL_VALUE(2U)
+#define STM32_SAI23SEL_I2S_CKIN         RCC_D2CCIP1R_SAI23SEL_VALUE(3U)
+#define STM32_SAI23SEL_PER_CK           RCC_D2CCIP1R_SAI23SEL_VALUE(4U)
+
+#define STM32_SAI1SEL_PLL1_Q_CK         RCC_D2CCIP1R_SAI1SEL_VALUE(0U)
+#define STM32_SAI1SEL_PLL2_P_CK         RCC_D2CCIP1R_SAI1SEL_VALUE(1U)
+#define STM32_SAI1SEL_PLL3_P_CK         RCC_D2CCIP1R_SAI1SEL_VALUE(2U)
+#define STM32_SAI1SEL_I2S_CKIN          RCC_D2CCIP1R_SAI1SEL_VALUE(3U)
+#define STM32_SAI1SEL_PER_CK            RCC_D2CCIP1R_SAI1SEL_VALUE(4U)
+
+#define STM32_LPTIM1_PCLK1              RCC_D2CCIP2R_LPTIM1SEL_VALUE(0U)
+#define STM32_LPTIM1_PLL2_P_CK          RCC_D2CCIP2R_LPTIM1SEL_VALUE(1U)
+#define STM32_LPTIM1_PLL3_R_CJ          RCC_D2CCIP2R_LPTIM1SEL_VALUE(2U)
+#define STM32_LPTIM1_LSE_CK             RCC_D2CCIP2R_LPTIM1SEL_VALUE(3U)
+#define STM32_LPTIM1_LSI_CK             RCC_D2CCIP2R_LPTIM1SEL_VALUE(4U)
+#define STM32_LPTIM1_PER_CK             RCC_D2CCIP2R_LPTIM1SEL_VALUE(5U)
+
+#define STM32_CECSEL_LSE_CK             RCC_D2CCIP2R_CECSEL_VALUE(0U)
+#define STM32_CECSEL_LSI_CK             RCC_D2CCIP2R_CECSEL_VALUE(1U)
+#define STM32_CECSEL_CSI_KER_CK         RCC_D2CCIP2R_CECSEL_VALUE(2U)
+
+#define STM32_USBSEL_DISABLE            RCC_D2CCIP2R_USBSEL_VALUE(0U)
+#define STM32_USBSEL_PLL1_Q_CK          RCC_D2CCIP2R_USBSEL_VALUE(1U)
+#define STM32_USBSEL_PLL3_Q_CK          RCC_D2CCIP2R_USBSEL_VALUE(2U)
+#define STM32_USBSEL_HSI48_CK           RCC_D2CCIP2R_USBSEL_VALUE(3U)
+
+#define STM32_I2C123SEL_PCLK1           RCC_D2CCIP2R_I2C123SEL_VALUE(0U)
+#define STM32_I2C123SEL_PLL3_R_CK       RCC_D2CCIP2R_I2C123SEL_VALUE(1U)
+#define STM32_I2C123SEL_HSI_KER_CK      RCC_D2CCIP2R_I2C123SEL_VALUE(2U)
+#define STM32_I2C123SEL_CSI_KER_CK      RCC_D2CCIP2R_I2C123SEL_VALUE(3U)
+
+#define STM32_RNGSEL_HSI48_CK           RCC_D2CCIP2R_RNGSEL_VALUE(0U)
+#define STM32_RNGSEL_PLL1_Q_CK          RCC_D2CCIP2R_RNGSEL_VALUE(1U)
+#define STM32_RNGSEL_LSE_CK             RCC_D2CCIP2R_RNGSEL_VALUE(2U)
+#define STM32_RNGSEL_LSI_CK             RCC_D2CCIP2R_RNGSEL_VALUE(3U)
+
+#define STM32_USART16SEL_PCLK2          RCC_D2CCIP2R_USART16SEL_VALUE(0U)
+#define STM32_USART16SEL_PLL2_Q_CK      RCC_D2CCIP2R_USART16SEL_VALUE(1U)
+#define STM32_USART16SEL_PLL3_Q_CK      RCC_D2CCIP2R_USART16SEL_VALUE(2U)
+#define STM32_USART16SEL_HSI_KER_CK     RCC_D2CCIP2R_USART16SEL_VALUE(3U)
+#define STM32_USART16SEL_CSI_KER_CK     RCC_D2CCIP2R_USART16SEL_VALUE(4U)
+#define STM32_USART16SEL_LSE_CK         RCC_D2CCIP2R_USART16SEL_VALUE(5U)
+
+#define STM32_USART234578SEL_PCLK1      RCC_D2CCIP2R_USART234578SEL_VALUE(0U)
+#define STM32_USART234578SEL_PLL2_Q_CK  RCC_D2CCIP2R_USART234578SEL_VALUE(1U)
+#define STM32_USART234578SEL_PLL3_Q_CK  RCC_D2CCIP2R_USART234578SEL_VALUE(2U)
+#define STM32_USART234578SEL_HSI_KER_CK RCC_D2CCIP2R_USART234578SEL_VALUE(3U)
+#define STM32_USART234578SEL_CSI_KER_CK RCC_D2CCIP2R_USART234578SEL_VALUE(4U)
+#define STM32_USART234578SEL_LSE_CK     RCC_D2CCIP2R_USART234578SEL_VALUE(5U)
+
+#define STM32_SPI6SEL_PCLK4             RCC_D3CCIPR_SPI6SEL_VALUE(0U)
+#define STM32_SPI6SEL_PLL2_Q_CK         RCC_D3CCIPR_SPI6SEL_VALUE(1U)
+#define STM32_SPI6SEL_PLL3_Q_CK         RCC_D3CCIPR_SPI6SEL_VALUE(2U)
+#define STM32_SPI6SEL_HSI_KER_CK        RCC_D3CCIPR_SPI6SEL_VALUE(3U)
+#define STM32_SPI6SEL_CSI_KER_CK        RCC_D3CCIPR_SPI6SEL_VALUE(4U)
+#define STM32_SPI6SEL_HSE_CK            RCC_D3CCIPR_SPI6SEL_VALUE(5U)
+
+#define STM32_SAI4BSEL_PLL1_Q_CK        RCC_D3CCIPR_SAI4BSEL_VALUE(0U)
+#define STM32_SAI4BSEL_PLL2_P_CK        RCC_D3CCIPR_SAI4BSEL_VALUE(1U)
+#define STM32_SAI4BSEL_PLL3_P_CK        RCC_D3CCIPR_SAI4BSEL_VALUE(2U)
+#define STM32_SAI4BSEL_I2S_CKIN         RCC_D3CCIPR_SAI4BSEL_VALUE(3U)
+#define STM32_SAI4BSEL_PER_CK           RCC_D3CCIPR_SAI4BSEL_VALUE(4U)
+
+#define STM32_SAI4ASEL_PLL1_Q_CK        RCC_D3CCIPR_SAI4ASEL_VALUE(0U)
+#define STM32_SAI4ASEL_PLL2_P_CK        RCC_D3CCIPR_SAI4ASEL_VALUE(1U)
+#define STM32_SAI4ASEL_PLL3_P_CK        RCC_D3CCIPR_SAI4ASEL_VALUE(2U)
+#define STM32_SAI4ASEL_I2S_CKIN         RCC_D3CCIPR_SAI4ASEL_VALUE(3U)
+#define STM32_SAI4ASEL_PER_CK           RCC_D3CCIPR_SAI4ASEL_VALUE(4U)
+
+#define STM32_ADCSEL_PLL2_P_CK          RCC_D3CCIPR_ADCSEL_VALUE(0U)
+#define STM32_ADCSEL_PLL3_R_CK          RCC_D3CCIPR_ADCSEL_VALUE(0U)
+#define STM32_ADCSEL_PER_CK             RCC_D3CCIPR_ADCSEL_VALUE(0U)
+#define STM32_ADCSEL_DISABLE            RCC_D3CCIPR_ADCSEL_VALUE(0U)
+
+#define STM32_LPTIM345SEL_PCLK4         RCC_D3CCIPR_LPTIM345SEL_VALUE(0U)
+#define STM32_LPTIM345SEL_PLL2_P_CK     RCC_D3CCIPR_LPTIM345SEL_VALUE(1U)
+#define STM32_LPTIM345SEL_PLL3_P_CK     RCC_D3CCIPR_LPTIM345SEL_VALUE(2U)
+#define STM32_LPTIM345SEL_LSE_CK        RCC_D3CCIPR_LPTIM345SEL_VALUE(3U)
+#define STM32_LPTIM345SEL_LSI_CK        RCC_D3CCIPR_LPTIM345SEL_VALUE(4U)
+#define STM32_LPTIM345SEL_PER_CK        RCC_D3CCIPR_LPTIM345SEL_VALUE(5U)
+
+#define STM32_LPTIM2SEL_PCLK4           RCC_D3CCIPR_LPTIM2SEL_VALUE(0U)
+#define STM32_LPTIM2SEL_PLL2_P_CK       RCC_D3CCIPR_LPTIM2SEL_VALUE(1U)
+#define STM32_LPTIM2SEL_PLL3_P_CK       RCC_D3CCIPR_LPTIM2SEL_VALUE(2U)
+#define STM32_LPTIM2SEL_LSE_CK          RCC_D3CCIPR_LPTIM2SEL_VALUE(3U)
+#define STM32_LPTIM2SEL_LSI_CK          RCC_D3CCIPR_LPTIM2SEL_VALUE(4U)
+#define STM32_LPTIM2SEL_PER_CK          RCC_D3CCIPR_LPTIM2SEL_VALUE(5U)
+
+#define STM32_I2C4SEL_PCLK4             RCC_D3CCIPR_I2C4SEL_VALUE(0U)
+#define STM32_I2C4SEL_PLL3_R_CK         RCC_D3CCIPR_I2C4SEL_VALUE(1U)
+#define STM32_I2C4SEL_HSI_KER_CK        RCC_D3CCIPR_I2C4SEL_VALUE(2U)
+#define STM32_I2C4SEL_CSI_KER_CK        RCC_D3CCIPR_I2C4SEL_VALUE(3U)
+
+#define STM32_LPUART1SEL_PCLK4          RCC_D3CCIPR_LPUART1SEL_VALUE(0U)
+#define STM32_LPUART1SEL_PLL2_Q_CK      RCC_D3CCIPR_LPUART1SEL_VALUE(1U)
+#define STM32_LPUART1SEL_PLL3_Q_CK      RCC_D3CCIPR_LPUART1SEL_VALUE(2U)
+#define STM32_LPUART1SEL_HSI_KER_CK     RCC_D3CCIPR_LPUART1SEL_VALUE(3U)
+#define STM32_LPUART1SEL_CSI_KER_CK     RCC_D3CCIPR_LPUART1SEL_VALUE(4U)
+#define STM32_LPUART1SEL_LSE_CK         RCC_D3CCIPR_LPUART1SEL_VALUE(5U)
 /** @} */
 
 /*===========================================================================*/
@@ -484,6 +656,27 @@
 #endif
 
 /**
+ * @brief   Enables or disables the PLL1 P output.
+ */
+#if !defined(STM32_PLL1_P_ENABLED) || defined(__DOXYGEN__)
+#define STM32_PLL1_P_ENABLED                TRUE
+#endif
+
+/**
+ * @brief   Enables or disables the PLL1 Q output.
+ */
+#if !defined(STM32_PLL1_Q_ENABLED) || defined(__DOXYGEN__)
+#define STM32_PLL1_Q_ENABLED                TRUE
+#endif
+
+/**
+ * @brief   Enables or disables the PLL1 R output.
+ */
+#if !defined(STM32_PLL1_R_ENABLED) || defined(__DOXYGEN__)
+#define STM32_PLL1_R_ENABLED                TRUE
+#endif
+
+/**
  * @brief   PLL1 DIVM divider.
  * @note    The allowed values are 1..63.
  */
@@ -539,6 +732,27 @@
 #endif
 
 /**
+ * @brief   Enables or disables the PLL2 P output.
+ */
+#if !defined(STM32_PLL2_P_ENABLED) || defined(__DOXYGEN__)
+#define STM32_PLL1_2_ENABLED                TRUE
+#endif
+
+/**
+ * @brief   Enables or disables the PLL2 Q output.
+ */
+#if !defined(STM32_PLL2_Q_ENABLED) || defined(__DOXYGEN__)
+#define STM32_PLL2_Q_ENABLED                TRUE
+#endif
+
+/**
+ * @brief   Enables or disables the PLL2 R output.
+ */
+#if !defined(STM32_PLL2_R_ENABLED) || defined(__DOXYGEN__)
+#define STM32_PLL2_R_ENABLED                TRUE
+#endif
+
+/**
  * @brief   PLL2 DIVM divider.
  * @note    The allowed values are 1..63.
  */
@@ -591,6 +805,27 @@
  */
 #if !defined(STM32_PLL3_ENABLED) || defined(__DOXYGEN__)
 #define STM32_PLL3_ENABLED                  TRUE
+#endif
+
+/**
+ * @brief   Enables or disables the PLL3 P output.
+ */
+#if !defined(STM32_PLL3_P_ENABLED) || defined(__DOXYGEN__)
+#define STM32_PLL3_P_ENABLED                TRUE
+#endif
+
+/**
+ * @brief   Enables or disables the PLL3 Q output.
+ */
+#if !defined(STM32_PLL3_Q_ENABLED) || defined(__DOXYGEN__)
+#define STM32_PLL3_Q_ENABLED                TRUE
+#endif
+
+/**
+ * @brief   Enables or disables the PLL3 R output.
+ */
+#if !defined(STM32_PLL3_R_ENABLED) || defined(__DOXYGEN__)
+#define STM32_PLL3_R_ENABLED                TRUE
 #endif
 
 /**
@@ -740,253 +975,186 @@
 #define STM32_D3PPRE4                       STM32_D3PPRE4_DIV2
 #endif
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#if 0
 /**
- * @brief   I2S clock source.
+ * @brief   SDMMC clock source.
  */
-#if !defined(STM32_I2SSRC) || defined(__DOXYGEN__)
-#define STM32_I2SSRC                        STM32_I2SSRC_PLLI2S
+#if !defined(STM32_SDMMCSEL) || defined(__DOXYGEN__)
+#define STM32_SDMMCSEL                      STM32_SDMMCSEL_PLL1_Q_CK
 #endif
 
 /**
- * @brief   PLLI2SN multiplier value.
- * @note    The allowed values are 49..432.
+ * @brief   QSPI clock source.
  */
-#if !defined(STM32_PLLI2SN_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLI2SN_VALUE                 192
+#if !defined(STM32_QSPISEL) || defined(__DOXYGEN__)
+#define STM32_QSPISEL                       STM32_QSPISEL_HCLK
 #endif
 
 /**
- * @brief   PLLI2SP divider value.
- * @note    The allowed values are 2, 4, 6 and 8.
+ * @brief   FMC clock source.
  */
-#if !defined(STM32_PLLI2SP_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLI2SP_VALUE                 4
+#if !defined(STM32_FMCSEL) || defined(__DOXYGEN__)
+#define STM32_FMCSEL                        STM32_QSPISEL_HCLK
 #endif
 
 /**
- * @brief   PLLI2SQ divider value.
- * @note    The allowed values are 2..15.
+ * @brief   SWP clock source.
  */
-#if !defined(STM32_PLLI2SQ_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLI2SQ_VALUE                 4
+#if !defined(STM32_SWPSEL) || defined(__DOXYGEN__)
+#define STM32_SWPSEL                        STM32_SWPSEL_PCLK1
 #endif
 
 /**
- * @brief   PLLI2SDIVQ divider value (SAI clock divider).
+ * @brief   FDCAN clock source.
  */
-#if !defined(STM32_PLLI2SDIVQ_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLI2SDIVQ_VALUE              2
+#if !defined(STM32_FDCANSEL) || defined(__DOXYGEN__)
+#define STM32_FDCANSEL                      STM32_FDCANSEL_HSE_CK
 #endif
 
 /**
- * @brief   PLLI2SR divider value.
- * @note    The allowed values are 2..7.
+ * @brief   DFSDM1 clock source.
  */
-#if !defined(STM32_PLLI2SR_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLI2SR_VALUE                 4
+#if !defined(STM32_DFSDM1SEL) || defined(__DOXYGEN__)
+#define STM32_DFSDM1SEL                     STM32_DFSDM1SEL_PCLK2
 #endif
 
 /**
- * @brief   PLLSAIN multiplier value.
- * @note    The allowed values are 49..432.
+ * @brief   SPDIF clock source.
  */
-#if !defined(STM32_PLLSAIN_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLSAIN_VALUE                 192
+#if !defined(STM32_SPDIFSEL) || defined(__DOXYGEN__)
+#define STM32_SPDIFSEL                      STM32_SPDIFSEL_PLL1_Q_CK
 #endif
 
 /**
- * @brief   PLLSAIP divider value.
- * @note    The allowed values are 2, 4, 6 and 8.
+ * @brief   SPI45 clock source.
  */
-#if !defined(STM32_PLLSAIP_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLSAIP_VALUE                 4
+#if !defined(STM32_SPI45SEL) || defined(__DOXYGEN__)
+#define STM32_SPI45SEL                      STM32_SPI45SEL_PCLK2
 #endif
 
 /**
- * @brief   PLLSAIQ divider value.
- * @note    The allowed values are 2..15.
+ * @brief   SPI123 clock source.
  */
-#if !defined(STM32_PLLSAIQ_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLSAIQ_VALUE                 4
+#if !defined(STM32_SPI123SEL) || defined(__DOXYGEN__)
+#define STM32_SPI123SEL                     STM32_SPI123SEL_PLL1_Q_CK
 #endif
 
 /**
- * @brief   PLLSAIR divider value.
- * @note    The allowed values are 2..7.
+ * @brief   SAI23 clock source.
  */
-#if !defined(STM32_PLLSAIR_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLSAIR_VALUE                 4
+#if !defined(STM32_SAI23SEL) || defined(__DOXYGEN__)
+#define STM32_SAI23SEL                      STM32_SAI23SEL_PLL1_Q_CK
 #endif
 
 /**
- * @brief   PLLSAIDIVQ divider value (SAI clock divider).
- */
-#if !defined(STM32_PLLSAIDIVQ_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLSAIDIVQ_VALUE              2
-#endif
-
-/**
- * @brief   PLLSAIDIVR divider value (LCD clock divider).
- */
-#if !defined(STM32_PLLSAIDIVR_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLSAIDIVR_VALUE              2
-#endif
-
-/**
- * @brief   SAI1SEL value (SAI1 clock source).
+ * @brief   SAI1 clock source.
  */
 #if !defined(STM32_SAI1SEL) || defined(__DOXYGEN__)
-#define STM32_SAI1SEL                       STM32_SAI1SEL_OFF
-#endif
-
-/**
- * @brief   SAI2SEL value (SAI2 clock source).
- */
-#if !defined(STM32_SAI2SEL) || defined(__DOXYGEN__)
-#define STM32_SAI2SEL                       STM32_SAI2SEL_OFF
-#endif
-
-/**
- * @brief   LCD-TFT clock enable switch.
- */
-#if !defined(STM32_LCDTFT_REQUIRED) || defined(__DOXYGEN__)
-#define STM32_LCDTFT_REQUIRED               FALSE
-#endif
-
-/**
- * @brief   USART1 clock source.
- */
-#if !defined(STM32_USART1SEL) || defined(__DOXYGEN__)
-#define STM32_USART1SEL                     STM32_USART1SEL_PCLK2
-#endif
-
-/**
- * @brief   USART2 clock source.
- */
-#if !defined(STM32_USART2SEL) || defined(__DOXYGEN__)
-#define STM32_USART2SEL                     STM32_USART2SEL_PCLK1
-#endif
-
-/**
- * @brief   USART3 clock source.
- */
-#if !defined(STM32_USART3SEL) || defined(__DOXYGEN__)
-#define STM32_USART3SEL                     STM32_USART3SEL_PCLK1
-#endif
-
-/**
- * @brief   UART4 clock source.
- */
-#if !defined(STM32_UART4SEL) || defined(__DOXYGEN__)
-#define STM32_UART4SEL                      STM32_UART4SEL_PCLK1
-#endif
-
-/**
- * @brief   UART5 clock source.
- */
-#if !defined(STM32_UART5SEL) || defined(__DOXYGEN__)
-#define STM32_UART5SEL                      STM32_UART5SEL_PCLK1
-#endif
-
-/**
- * @brief   USART6 clock source.
- */
-#if !defined(STM32_USART6SEL) || defined(__DOXYGEN__)
-#define STM32_USART6SEL                     STM32_USART6SEL_PCLK2
-#endif
-
-/**
- * @brief   UART7 clock source.
- */
-#if !defined(STM32_UART7SEL) || defined(__DOXYGEN__)
-#define STM32_UART7SEL                      STM32_UART7SEL_PCLK1
-#endif
-
-/**
- * @brief   UART8 clock source.
- */
-#if !defined(STM32_UART8SEL) || defined(__DOXYGEN__)
-#define STM32_UART8SEL                      STM32_UART8SEL_PCLK1
-#endif
-
-/**
- * @brief   I2C1 clock source.
- */
-#if !defined(STM32_I2C1SEL) || defined(__DOXYGEN__)
-#define STM32_I2C1SEL                       STM32_I2C1SEL_PCLK1
-#endif
-
-/**
- * @brief   I2C2 clock source.
- */
-#if !defined(STM32_I2C2SEL) || defined(__DOXYGEN__)
-#define STM32_I2C2SEL                       STM32_I2C2SEL_PCLK1
-#endif
-
-/**
- * @brief   I2C3 clock source.
- */
-#if !defined(STM32_I2C3SEL) || defined(__DOXYGEN__)
-#define STM32_I2C3SEL                       STM32_I2C3SEL_PCLK1
-#endif
-
-/**
- * @brief   I2C4 clock source.
- */
-#if !defined(STM32_I2C4SEL) || defined(__DOXYGEN__)
-#define STM32_I2C4SEL                       STM32_I2C4SEL_PCLK1
+#define STM32_SAI1SEL                       STM32_SAI1SEL_PLL1_Q_CK
 #endif
 
 /**
  * @brief   LPTIM1 clock source.
  */
 #if !defined(STM32_LPTIM1SEL) || defined(__DOXYGEN__)
-#define STM32_LPTIM1SEL                     STM32_LPTIM1SEL_PCLK1
+#define STM32_LPTIM1SEL                     STM32_LPTIM1_PCLK1
 #endif
 
 /**
  * @brief   CEC clock source.
  */
 #if !defined(STM32_CECSEL) || defined(__DOXYGEN__)
-#define STM32_CECSEL                        STM32_CECSEL_LSE
+#define STM32_CECSEL                        STM32_CECSEL_LSE_CK
 #endif
 
 /**
- * @brief   PLL48CLK clock source.
+ * @brief   USB clock source.
  */
-#if !defined(STM32_CK48MSEL) || defined(__DOXYGEN__)
-#define STM32_CK48MSEL                      STM32_CK48MSEL_PLL
+#if !defined(STM32_USBSEL) || defined(__DOXYGEN__)
+#define STM32_USBSEL                        STM32_USBSEL_PLL1_Q_CK
 #endif
 
 /**
- * @brief   SDMMC clock source.
+ * @brief   I2C123 clock source.
  */
-#if !defined(STM32_SDMMCSEL) || defined(__DOXYGEN__)
-#define STM32_SDMMCSEL                      STM32_SDMMCSEL_PLL48CLK
+#if !defined(STM32_I2C123SEL) || defined(__DOXYGEN__)
+#define STM32_I2C123SEL                     STM32_I2C123SEL_PCLK1
 #endif
 
 /**
- * @brief   SRAM2 cache-ability.
- * @note    This setting uses the MPU region 7 if at @p TRUE.
+ * @brief   RNG clock source.
  */
-#if !defined(STM32_SRAM2_NOCACHE) || defined(__DOXYGEN__)
-#define STM32_SRAM2_NOCACHE                 FALSE
+#if !defined(STM32_RNGSEL) || defined(__DOXYGEN__)
+#define STM32_RNGSEL                        STM32_RNGSEL_HSI48_CK
 #endif
+
+/**
+ * @brief   USART16 clock source.
+ */
+#if !defined(STM32_USART16SEL) || defined(__DOXYGEN__)
+#define STM32_USART16SEL                    STM32_USART16SEL_PCLK2
+#endif
+
+/**
+ * @brief   USART234578 clock source.
+ */
+#if !defined(STM32_USART234578SEL) || defined(__DOXYGEN__)
+#define STM32_USART234578SEL                STM32_USART234578SEL_PCLK1
+#endif
+
+/**
+ * @brief   SPI6SEL clock source.
+ */
+#if !defined(STM32_SPI6SEL) || defined(__DOXYGEN__)
+#define STM32_SPI6SEL                       STM32_SPI6SEL_PCLK4
+#endif
+
+/**
+ * @brief   SAI4BSEL clock source.
+ */
+#if !defined(STM32_SAI4BSEL) || defined(__DOXYGEN__)
+#define STM32_SAI4BSEL                      STM32_SAI4BSEL_PLL1_Q_CK
+#endif
+
+/**
+ * @brief   SAI4ASEL clock source.
+ */
+#if !defined(STM32_SAI4ASEL) || defined(__DOXYGEN__)
+#define STM32_SAI4ASEL                      STM32_SAI4ASEL_PLL1_Q_CK
+#endif
+
+/**
+ * @brief   ADCSEL clock source.
+ */
+#if !defined(STM32_ADCSEL) || defined(__DOXYGEN__)
+#define STM32_ADCSEL                        STM32_ADCSEL_PLL2_P_CK
+#endif
+
+/**
+ * @brief   LPTIM345SEL clock source.
+ */
+#if !defined(STM32_LPTIM345SEL) || defined(__DOXYGEN__)
+#define STM32_LPTIM345SEL                   STM32_LPTIM345SEL_PCLK4
+#endif
+
+/**
+ * @brief   LPTIM2SEL clock source.
+ */
+#if !defined(STM32_LPTIM2SEL) || defined(__DOXYGEN__)
+#define STM32_LPTIM2SEL                     STM32_LPTIM2SEL_PCLK4
+#endif
+
+/**
+ * @brief   I2C4SEL clock source.
+ */
+#if !defined(STM32_I2C4SEL) || defined(__DOXYGEN__)
+#define STM32_I2C4SEL                       STM32_I2C4SEL_PCLK4
+#endif
+
+/**
+ * @brief   LPUART1SEL clock source.
+ */
+#if !defined(STM32_LPUART1SEL) || defined(__DOXYGEN__)
+#define STM32_LPUART1SEL                    STM32_LPUART1SEL_PCLK4
 #endif
 /** @} */
 
@@ -1563,6 +1731,8 @@
 #define STM32_PLLCFGR_PLL3VCOSEL    RCC_PLLCFGR_PLL3VCOSEL
 #endif
 
+#if ((STM32_PLL1_ENABLED == TRUE) && (STM32_PLL1_P_ENABLED == TRUE)) ||     \
+    defined(__DOXYGEN__)
 /**
  * @brief   PLL1 P output clock frequency.
  */
@@ -1574,7 +1744,12 @@
 #if (STM32_PLL1_P_CK < STM32_PLLOUT_MIN) || (STM32_PLL1_P_CK > STM32_PLLOUT_MAX)
 #error "STM32_PLL1_P_CLKOUT outside acceptable range (STM32_PLLOUT_MIN..STM32_PLLOUT_MAX)"
 #endif
+#else
+#define STM32_PLL1_P_CK             0U
+#endif
 
+#if ((STM32_PLL2_ENABLED == TRUE) && (STM32_PLL2_P_ENABLED == TRUE)) ||     \
+    defined(__DOXYGEN__)
 /**
  * @brief   PLL2 P output clock frequency.
  */
@@ -1586,7 +1761,12 @@
 #if (STM32_PLL2_P_CK < STM32_PLLOUT_MIN) || (STM32_PLL2_P_CK > STM32_PLLOUT_MAX)
 #error "STM32_PLL2_P_CLKOUT outside acceptable range (STM32_PLLOUT_MIN..STM32_PLLOUT_MAX)"
 #endif
+#else
+#define STM32_PLL2_P_CK             0U
+#endif
 
+#if ((STM32_PLL3_ENABLED == TRUE) && (STM32_PLL3_P_ENABLED == TRUE)) ||     \
+    defined(__DOXYGEN__)
 /**
  * @brief   PLL3 P output clock frequency.
  */
@@ -1598,7 +1778,12 @@
 #if (STM32_PLL3_P_CK < STM32_PLLOUT_MIN) || (STM32_PLL3_P_CK > STM32_PLLOUT_MAX)
 #error "STM32_PLL3_P_CLKOUT outside acceptable range (STM32_PLLOUT_MIN..STM32_PLLOUT_MAX)"
 #endif
+#else
+#define STM32_PLL3_P_CK             0U
+#endif
 
+#if ((STM32_PLL1_ENABLED == TRUE) && (STM32_PLL1_Q_ENABLED == TRUE)) ||     \
+    defined(__DOXYGEN__)
 /**
  * @brief   PLL1 Q output clock frequency.
  */
@@ -1610,7 +1795,12 @@
 #if (STM32_PLL1_Q_CK < STM32_PLLOUT_MIN) || (STM32_PLL1_Q_CK > STM32_PLLOUT_MAX)
 #error "STM32_PLL1_Q_CLKOUT outside acceptable range (STM32_PLLOUT_MIN..STM32_PLLOUT_MAX)"
 #endif
+#else
+#define STM32_PLL1_Q_CK             0U
+#endif
 
+#if ((STM32_PLL2_ENABLED == TRUE) && (STM32_PLL2_Q_ENABLED == TRUE)) ||     \
+    defined(__DOXYGEN__)
 /**
  * @brief   PLL2 Q output clock frequency.
  */
@@ -1622,7 +1812,12 @@
 #if (STM32_PLL2_Q_CK < STM32_PLLOUT_MIN) || (STM32_PLL2_Q_CK > STM32_PLLOUT_MAX)
 #error "STM32_PLL2_Q_CLKOUT outside acceptable range (STM32_PLLOUT_MIN..STM32_PLLOUT_MAX)"
 #endif
+#else
+#define STM32_PLL2_Q_CK             0U
+#endif
 
+#if ((STM32_PLL3_ENABLED == TRUE) && (STM32_PLL3_Q_ENABLED == TRUE)) ||     \
+    defined(__DOXYGEN__)
 /**
  * @brief   PLL3 Q output clock frequency.
  */
@@ -1634,7 +1829,12 @@
 #if (STM32_PLL3_Q_CK < STM32_PLLOUT_MIN) || (STM32_PLL3_Q_CK > STM32_PLLOUT_MAX)
 #error "STM32_PLL3_Q_CLKOUT outside acceptable range (STM32_PLLOUT_MIN..STM32_PLLOUT_MAX)"
 #endif
+#else
+#define STM32_PLL3_Q_CK             0U
+#endif
 
+#if ((STM32_PLL1_ENABLED == TRUE) && (STM32_PLL1_R_ENABLED == TRUE)) ||     \
+    defined(__DOXYGEN__)
 /**
  * @brief   PLL1 R output clock frequency.
  */
@@ -1646,7 +1846,12 @@
 #if (STM32_PLL1_R_CK < STM32_PLLOUT_MIN) || (STM32_PLL1_R_CK > STM32_PLLOUT_MAX)
 #error "STM32_PLL1_R_CLKOUT outside acceptable range (STM32_PLLOUT_MIN..STM32_PLLOUT_MAX)"
 #endif
+#else
+#define STM32_PLL1_R_CK             0U
+#endif
 
+#if ((STM32_PLL2_ENABLED == TRUE) && (STM32_PLL2_R_ENABLED == TRUE)) ||     \
+    defined(__DOXYGEN__)
 /**
  * @brief   PLL2 R output clock frequency.
  */
@@ -1658,7 +1863,12 @@
 #if (STM32_PLL2_R_CK < STM32_PLLOUT_MIN) || (STM32_PLL2_R_CK > STM32_PLLOUT_MAX)
 #error "STM32_PLL2_R_CLKOUT outside acceptable range (STM32_PLLOUT_MIN..STM32_PLLOUT_MAX)"
 #endif
+#else
+#define STM32_PLL2_R_CK             0U
+#endif
 
+#if ((STM32_PLL3_ENABLED == TRUE) && (STM32_PLL3_R_ENABLED == TRUE)) ||     \
+    defined(__DOXYGEN__)
 /**
  * @brief   PLL3 R output clock frequency.
  */
@@ -1669,6 +1879,9 @@
  */
 #if (STM32_PLL3_R_CK < STM32_PLLOUT_MIN) || (STM32_PLL3_R_CK > STM32_PLLOUT_MAX)
 #error "STM32_PLL3_R_CLKOUT outside acceptable range (STM32_PLLOUT_MIN..STM32_PLLOUT_MAX)"
+#endif
+#else
+#define STM32_PLL3_R_CK             0U
 #endif
 
 /**

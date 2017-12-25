@@ -559,11 +559,11 @@
 /** @} */
 
 /**
- * @name    BKPSRAM specific RCC operations
+ * @name    RAM specific RCC operations
  * @{
  */
 /**
- * @brief   Enables the BKPSRAM peripheral clock.
+ * @brief   Enables the BKPRAM clock.
  *
  * @param[in] lp        low power enable flag
  *
@@ -572,11 +572,59 @@
 #define rccEnableBKPRAM(lp) rccEnableAHB4(RCC_AHB4ENR_BKPRAMEN, lp)
 
 /**
- * @brief   Disables the BKPSRAM peripheral clock.
+ * @brief   Disables the BKPRAM clock.
  *
  * @api
  */
-#define rccDisableBKPSRAM() rccDisableAHB1(RCC_AHB1ENR_BKPSRAMEN)
+#define rccDisableBKPRAM() rccDisableAHB4(RCC_AHB4ENR_BKPRAMEN)
+
+/**
+ * @brief   Enables the SRAM1 clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableSRAM1(lp) rccEnableAHB2(RCC_AHB2ENR_D2SRAM1EN, lp)
+
+/**
+ * @brief   Disables the SRAM1 clock.
+ *
+ * @api
+ */
+#define rccDisableSRAM1() rccDisableAHB2(RCC_AHB2ENR_D2SRAM1EN)
+
+/**
+ * @brief   Enables the SRAM2 clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableSRAM2(lp) rccEnableAHB2(RCC_AHB2ENR_D2SRAM2EN, lp)
+
+/**
+ * @brief   Disables the SRAM2 clock.
+ *
+ * @api
+ */
+#define rccDisableSRAM2() rccDisableAHB2(RCC_AHB2ENR_D2SRAM2EN)
+
+/**
+ * @brief   Enables the SRAM3 clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableSRAM3(lp) rccEnableAHB2(RCC_AHB2ENR_D2SRAM3EN, lp)
+
+/**
+ * @brief   Disables the SRAM3 clock.
+ *
+ * @api
+ */
+#define rccDisableSRAM3() rccDisableAHB2(RCC_AHB2ENR_D2SRAM3EN)
 /** @} */
 
 /**

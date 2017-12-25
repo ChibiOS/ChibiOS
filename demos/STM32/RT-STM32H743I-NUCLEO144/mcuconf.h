@@ -67,9 +67,17 @@
 #define STM32_LSE_ENABLED                   TRUE
 #define STM32_HSIDIV                        STM32_HSIDIV_DIV1
 #define STM32_RTCPRE_VALUE                  8
+
+/*
+ * PLLs static settings.
+ * Reading STM32 Reference Manual is required.
+ */
 #define STM32_PLLSRC                        STM32_PLLSRC_HSE_CK
 #define STM32_PLLCFGR_MASK                  ~0
 #define STM32_PLL1_ENABLED                  TRUE
+#define STM32_PLL1_P_ENABLED                TRUE
+#define STM32_PLL1_Q_ENABLED                TRUE
+#define STM32_PLL1_R_ENABLED                TRUE
 #define STM32_PLL1_DIVM_VALUE               4
 #define STM32_PLL1_DIVN_VALUE               400
 #define STM32_PLL1_FRACN_VALUE              0
@@ -77,6 +85,9 @@
 #define STM32_PLL1_DIVQ_VALUE               8
 #define STM32_PLL1_DIVR_VALUE               8
 #define STM32_PLL2_ENABLED                  TRUE
+#define STM32_PLL2_P_ENABLED                TRUE
+#define STM32_PLL2_Q_ENABLED                TRUE
+#define STM32_PLL2_R_ENABLED                TRUE
 #define STM32_PLL2_DIVM_VALUE               4
 #define STM32_PLL2_DIVN_VALUE               400
 #define STM32_PLL2_FRACN_VALUE              0
@@ -84,13 +95,15 @@
 #define STM32_PLL2_DIVQ_VALUE               8
 #define STM32_PLL2_DIVR_VALUE               8
 #define STM32_PLL3_ENABLED                  TRUE
+#define STM32_PLL3_P_ENABLED                TRUE
+#define STM32_PLL3_Q_ENABLED                TRUE
+#define STM32_PLL3_R_ENABLED                TRUE
 #define STM32_PLL3_DIVM_VALUE               4
 #define STM32_PLL3_DIVN_VALUE               400
 #define STM32_PLL3_FRACN_VALUE              0
 #define STM32_PLL3_DIVP_VALUE               2
 #define STM32_PLL3_DIVQ_VALUE               8
 #define STM32_PLL3_DIVR_VALUE               8
-#define STM32_CKPERSEL                      STM32_CKPERSEL_HSE_CK
 #define STM32_MCO1SEL                       STM32_MCO1SEL_HSI_CK
 #define STM32_MCO1PRE_VALUE                 4
 #define STM32_MCO2SEL                       STM32_MCO2SEL_SYS_CK
@@ -113,6 +126,33 @@
  * Peripherals clocks static settings.
  * Reading STM32 Reference Manual is required.
  */
+#define STM32_CKPERSEL                      STM32_CKPERSEL_HSE_CK
+#define STM32_SDMMCSEL                      STM32_SDMMCSEL_PLL1_Q_CK
+#define STM32_QSPISEL                       STM32_QSPISEL_HCLK
+#define STM32_FMCSEL                        STM32_QSPISEL_HCLK
+#define STM32_SWPSEL                        STM32_SWPSEL_PCLK1
+#define STM32_FDCANSEL                      STM32_FDCANSEL_HSE_CK
+#define STM32_DFSDM1SEL                     STM32_DFSDM1SEL_PCLK2
+#define STM32_SPDIFSEL                      STM32_SPDIFSEL_PLL1_Q_CK
+#define STM32_SPI45SEL                      STM32_SPI45SEL_PCLK2
+#define STM32_SPI123SEL                     STM32_SPI123SEL_PLL1_Q_CK
+#define STM32_SAI23SEL                      STM32_SAI23SEL_PLL1_Q_CK
+#define STM32_SAI1SEL                       STM32_SAI1SEL_PLL1_Q_CK
+#define STM32_LPTIM1SEL                     STM32_LPTIM1_PCLK1
+#define STM32_CECSEL                        STM32_CECSEL_LSE_CK
+#define STM32_USBSEL                        STM32_USBSEL_PLL1_Q_CK
+#define STM32_I2C123SEL                     STM32_I2C123SEL_PCLK1
+#define STM32_RNGSEL                        STM32_RNGSEL_HSI48_CK
+#define STM32_USART16SEL                    STM32_USART16SEL_PCLK2
+#define STM32_USART234578SEL                STM32_USART234578SEL_PCLK1
+#define STM32_SPI6SEL                       STM32_SPI6SEL_PCLK4
+#define STM32_SAI4BSEL                      STM32_SAI4BSEL_PLL1_Q_CK
+#define STM32_SAI4ASEL                      STM32_SAI4ASEL_PLL1_Q_CK
+#define STM32_ADCSEL                        STM32_ADCSEL_PLL2_P_CK
+#define STM32_LPTIM345SEL                   STM32_LPTIM345SEL_PCLK4
+#define STM32_LPTIM2SEL                     STM32_LPTIM2SEL_PCLK4
+#define STM32_I2C4SEL                       STM32_I2C4SEL_PCLK4
+#define STM32_LPUART1SEL                    STM32_LPUART1SEL_PCLK4
 
 /*
  * IRQ system settings.
