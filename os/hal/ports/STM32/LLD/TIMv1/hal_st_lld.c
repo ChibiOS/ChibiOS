@@ -33,9 +33,9 @@
 #if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
 
 #if (OSAL_ST_RESOLUTION == 32)
-#define ST_ARR_INIT                         0xFFFFFFFF
+#define ST_ARR_INIT                         0xFFFFFFFFU
 #else
-#define ST_ARR_INIT                         0x0000FFFF
+#define ST_ARR_INIT                         0x0000FFFFU
 #endif
 
 #if STM32_ST_USE_TIMER == 2
@@ -180,11 +180,17 @@
 
 #if OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC
 
-#if STM32_HCLK % OSAL_ST_FREQUENCY != 0
+#if defined(STM32_CORE_CK)
+#define SYSTICK_CK                          STM32_CORE_CK
+#else
+#define SYSTICK_CK                          STM32_HCLK
+#endif
+
+#if SYSTICK_CK % OSAL_ST_FREQUENCY != 0
 #error "the selected ST frequency is not obtainable because integer rounding"
 #endif
 
-#if (STM32_HCLK / OSAL_ST_FREQUENCY) - 1 > 0xFFFFFF
+#if (SYSTICK_CK / OSAL_ST_FREQUENCY) - 1 > 0xFFFFFF
 #error "the selected ST frequency is not obtainable because SysTick timer counter limits"
 #endif
 
@@ -292,7 +298,7 @@ void st_lld_init(void) {
 #if OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC
   /* Periodic systick mode, the Cortex-Mx internal systick timer is used
      in this mode.*/
-  SysTick->LOAD = (STM32_HCLK / OSAL_ST_FREQUENCY) - 1;
+  SysTick->LOAD = (SYSTICK_CK / OSAL_ST_FREQUENCY) - 1;
   SysTick->VAL = 0;
   SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk |
                   SysTick_CTRL_ENABLE_Msk |

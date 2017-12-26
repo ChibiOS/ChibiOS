@@ -36,7 +36,7 @@
  * @brief   CMSIS system core clock variable.
  * @note    It is declared in system_stm32f7xx.h.
  */
-uint32_t SystemCoreClock = STM32_C_CK;
+uint32_t SystemCoreClock = STM32_CORE_CK;
 
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
@@ -183,18 +183,23 @@ void stm32_clock_init(void) {
     ;                                       /* Wait until HSI is stable.    */
 
   /* HSI is selected as new source without touching the other fields in
-     CFGR. Clearing the register has to be postponed after HSI is the
-     new source.*/
-  RCC->CFGR &= ~RCC_CFGR_SW;                /* Reset SW to HSI.             */
+     CFGR. This is only required when using a debugger than can cause
+     restarts.*/
+  RCC->CFGR    = 0x00000000U;               /* Reset SW to HSI.             */
   while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_HSI)
     ;                                       /* Wait until HSI is selected.  */
 
   /* Registers cleared to reset values.*/
   RCC->CR      = RCC_CR_HSION;             /* CR Reset value.              */
-  RCC->ICSCR   = 0x40000000;               /* ICSCR Reset value.           */
-  RCC->CFGR    = 0x00000000;               /* CFGR reset value.            */
-  RCC->CSR     = 0x00000000;               /* CSR reset value.             */
-  RCC->PLLCFGR = 0x01FF0000;               /* PLLCFGR reset value.         */
+  RCC->ICSCR   = 0x40000000U;              /* ICSCR Reset value.           */
+  RCC->CSR     = 0x00000000U;              /* CSR reset value.             */
+  RCC->PLLCFGR = 0x01FF0000U;              /* PLLCFGR reset value.         */
+
+  /* Other clock-related settings, done before other things because
+     recommended in the RM.*/
+  RCC->CFGR = STM32_MCO2SEL | RCC_CFGR_MCO2PRE_VALUE(STM32_MCO2PRE_VALUE) |
+              STM32_MCO1SEL | RCC_CFGR_MCO1PRE_VALUE(STM32_MCO1PRE_VALUE) |
+              RCC_CFGR_RTCPRE_VALUE(STM32_RTCPRE_VALUE);
 
   /* HSE activation with optional bypass.*/
 #if STM32_HSE_ENABLED == TRUE
@@ -327,11 +332,6 @@ void stm32_clock_init(void) {
   while ((RCC->CFGR & RCC_CFGR_SWS) != (STM32_SW << 3U))
     ;
 #endif
-
-  /* Other clock-related settings.*/
-  RCC->CFGR = STM32_MCO2SEL | RCC_CFGR_MCO2PRE_VALUE(STM32_MCO2PRE_VALUE) |
-              STM32_MCO1SEL | RCC_CFGR_MCO1PRE_VALUE(STM32_MCO1PRE_VALUE) |
-              RCC_CFGR_RTCPRE_VALUE(STM32_RTCPRE_VALUE);
 
 #if 0
   /* Peripheral clock sources.*/

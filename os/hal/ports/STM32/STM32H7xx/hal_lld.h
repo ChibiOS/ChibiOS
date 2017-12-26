@@ -2068,7 +2068,7 @@
 /**
  * @brief   Core clock.
  */
-#define STM32_C_CK                  STM32_SYS_D1CPRE_CK
+#define STM32_CORE_CK               STM32_SYS_D1CPRE_CK
 
 /**
  * @brief   HCLK clock.
