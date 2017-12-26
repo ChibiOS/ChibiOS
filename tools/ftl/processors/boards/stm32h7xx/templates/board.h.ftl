@@ -47,6 +47,23 @@
  */
 #define BOARD_${doc1.board.board_id[0]}
 #define BOARD_NAME                  "${doc1.board.board_name[0]}"
+[#if doc1.board.ethernet_phy[0]??]
+
+/*
+ * Ethernet PHY type.
+ */
+#define BOARD_PHY_ID                ${doc1.board.ethernet_phy.identifier[0]}
+[#if doc1.board.ethernet_phy.bus_type[0]?string == "RMII"]
+#define BOARD_PHY_RMII
+[/#if]
+[/#if]
+[#if doc1.board.usb_phy[0]?? && doc1.board.usb_phy.bus_type[0]?string == "ULPI"]
+
+/*
+ * The board has an ULPI USB PHY.
+ */
+#define BOARD_OTG2_USES_ULPI
+[/#if]
 
 /*
  * Board oscillators-related settings.
@@ -252,9 +269,9 @@ ${line + ")"}
     [#if speed == "Minimum"]
       [#assign out = "PIN_OSPEED_VERYLOW(" + port_name + "_" + name + ")" /]
     [#elseif speed == "Low"]
-      [#assign out = "PIN_OSPEED_VERYLOW(" + port_name + "_" + name + ")" /]
-    [#elseif speed == "High"]
       [#assign out = "PIN_OSPEED_LOW(" + port_name + "_" + name + ")" /]
+    [#elseif speed == "High"]
+      [#assign out = "PIN_OSPEED_MEDIUM(" + port_name + "_" + name + ")" /]
     [#else]
       [#assign out = "PIN_OSPEED_HIGH(" + port_name + "_" + name + ")" /]
     [/#if]

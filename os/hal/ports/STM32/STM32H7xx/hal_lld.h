@@ -1214,9 +1214,6 @@
 #if !defined(STM32_HSECLK)
 #error "STM32_HSECLK not defined in board.h"
 #endif
-#if !defined(STM32_VDD)
-#error "STM32_VDD not defined in board.h"
-#endif
 
 /**
  * @name    Constants depending on VOS setting

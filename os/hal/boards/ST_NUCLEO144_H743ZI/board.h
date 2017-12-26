@@ -58,15 +58,9 @@
 #define STM32_HSE_BYPASS
 
 /*
- * Board voltages.
- * Required for performance limits calculation.
- */
-#define STM32_VDD                   300U
-
-/*
  * MCU type as defined in the ST header.
  */
-#define STM32F767xx
+#define STM32H743xx
 
 /*
  * IO pins assignments.

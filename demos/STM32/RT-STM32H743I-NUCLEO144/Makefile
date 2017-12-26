@@ -163,7 +163,7 @@ INCDIR = $(ALLINC) $(TESTINC) $(CONFDIR)
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = -DSTM32H743xx
+UDEFS =
 
 # Define ASM defines here
 UADEFS =
