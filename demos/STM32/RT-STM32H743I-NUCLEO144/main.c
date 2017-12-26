@@ -16,8 +16,8 @@
 
 #include "ch.h"
 #include "hal.h"
-//#include "rt_test_root.h"
-//#include "oslib_test_root.h"
+#include "rt_test_root.h"
+#include "oslib_test_root.h"
 
 /*
  * This is a periodic thread that does absolutely nothing except flashing
@@ -54,7 +54,7 @@ int main(void) {
   /*
    * Activates the serial driver 1 using the driver default configuration.
    */
-//  sdStart(&SD1, NULL);
+  sdStart(&SD3, NULL);
 
   /*
    * Creates the example thread.
@@ -66,12 +66,10 @@ int main(void) {
    * sleeping in a loop and check the button state.
    */
   while (1) {
-#if 0
-    if (palReadLine(LINE_BUTTON_USER)) {
-      test_execute((BaseSequentialStream *)&SD1, &rt_test_suite);
-      test_execute((BaseSequentialStream *)&SD1, &oslib_test_suite);
+    if (palReadLine(LINE_BUTTON)) {
+      test_execute((BaseSequentialStream *)&SD3, &rt_test_suite);
+      test_execute((BaseSequentialStream *)&SD3, &oslib_test_suite);
     }
-#endif
     chThdSleepMilliseconds(500);
   }
 }
