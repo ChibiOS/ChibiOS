@@ -360,6 +360,12 @@
 #define STM32_RTCSEL_LSI_CK             RCC_BDCR_RTCSEL_VALUE(2U)
 #define STM32_RTCSEL_HSE_1M_CK          RCC_BDCR_RTCSEL_VALUE(3U)
 
+#define STM32_HRTIMSEL_C_CLK            RCC_CFGR_HRTIMSEL
+
+#define STM32_STOPKERWUCK_ENABLED       RCC_CFGR_STOPKERWUCK
+
+#define STM32_STOPWUCK_ENABLED          RCC_CFGR_STOPKERWUCK
+
 #define STM32_PLLSRC_HSI_CK             RCC_PLLCKSELR_PLLSRC_VALUE(0U)
 #define STM32_PLLSRC_CSI_CK             RCC_PLLCKSELR_PLLSRC_VALUE(1U)
 #define STM32_PLLSRC_HSE_CK             RCC_PLLCKSELR_PLLSRC_VALUE(2U)
@@ -620,14 +626,6 @@
  */
 #if !defined(STM32_HSIDIV) || defined(__DOXYGEN__)
 #define STM32_HSIDIV                        STM32_HSIDIV_DIV1
-#endif
-
-/**
- * @brief   RTC HSE prescaler value.
- * @note    The allowed values are 2..63.
- */
-#if !defined(STM32_RTCPRE_VALUE) || defined(__DOXYGEN__)
-#define STM32_RTCPRE_VALUE                  8
 #endif
 
 /**
@@ -908,6 +906,42 @@
  */
 #if !defined(STM32_MCO2PRE_VALUE) || defined(__DOXYGEN__)
 #define STM32_MCO2PRE_VALUE                 4
+#endif
+
+/**
+ * @brief   TIM clock prescaler selection.
+ */
+#if !defined(STM32_TIMPRE_ENABLE) || defined(__DOXYGEN__)
+#define STM32_TIMPRE_ENABLE                 FALSE
+#endif
+
+/**
+ * @brief   HRTIM clock prescaler selection.
+ */
+#if !defined(STM32_HRTIMSEL) || defined(__DOXYGEN__)
+#define STM32_HRTIMSEL                      0
+#endif
+
+/**
+ * @brief   Kernel clock selection after a wake up from system Stop.
+ */
+#if !defined(STM32_STOPKERWUCK) || defined(__DOXYGEN__)
+#define STM32_STOPKERWUCK                   0
+#endif
+
+/**
+ * @brief   System clock selection after a wake up from system Stop.
+ */
+#if !defined(STM32_STOPWUCK) || defined(__DOXYGEN__)
+#define STM32_STOPWUCK                      0
+#endif
+
+/**
+ * @brief   RTC HSE prescaler value.
+ * @note    The allowed values are 2..63.
+ */
+#if !defined(STM32_RTCPRE_VALUE) || defined(__DOXYGEN__)
+#define STM32_RTCPRE_VALUE                  8
 #endif
 
 /**
@@ -2220,6 +2254,31 @@
 #define STM32_FLASHBITS             0x00000007
 #endif
 
+/**
+ * @brief   Clock of timers connected to APB1
+ */
+#if (STM32_D2PPRE1 == STM32_D2PPRE1_DIV1) || defined(__DOXYGEN__)
+#define STM32_TIMCLK1               (STM32_PCLK1 * 1)
+#else
+#if (STM32_TIMPRE_ENABLE == FALSE) || (STM32_D2PPRE1 == STM32_D2PPRE1_DIV2)
+#define STM32_TIMCLK1               (STM32_PCLK1 * 2)
+#else
+#define STM32_TIMCLK1               (STM32_PCLK1 * 4)
+#endif
+#endif
+
+/**
+ * @brief   Clock of timers connected to APB2.
+ */
+#if (STM32_D2PPRE2 == STM32_D2PPRE2_DIV1) || defined(__DOXYGEN__)
+#define STM32_TIMCLK2               (STM32_PCLK2 * 1)
+#else
+#if (STM32_TIMPRE_ENABLE == FALSE) || (STM32_D2PPRE2 == STM32_D2PPRE2_DIV2)
+#define STM32_TIMCLK2               (STM32_PCLK2 * 2)
+#else
+#define STM32_TIMCLK2               (STM32_PCLK2 * 4)
+#endif
+#endif
 
 
 
@@ -2498,24 +2557,6 @@
 #define STM32_SDMMCCLK               STM32_SYSCLK
 #else
 #error "invalid source selected for SDMMC clock"
-#endif
-
-/**
- * @brief   Clock of timers connected to APB1
- */
-#if (STM32_PPRE1 == STM32_PPRE1_DIV1) || defined(__DOXYGEN__)
-#define STM32_TIMCLK1               (STM32_PCLK1 * 1)
-#else
-#define STM32_TIMCLK1               (STM32_PCLK1 * 2)
-#endif
-
-/**
- * @brief   Clock of timers connected to APB2.
- */
-#if (STM32_PPRE2 == STM32_PPRE2_DIV1) || defined(__DOXYGEN__)
-#define STM32_TIMCLK2               (STM32_PCLK2 * 1)
-#else
-#define STM32_TIMCLK2               (STM32_PCLK2 * 2)
 #endif
 #endif
 

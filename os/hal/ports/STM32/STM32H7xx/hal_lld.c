@@ -157,6 +157,8 @@ void hal_lld_init(void) {
  * @special
  */
 void stm32_clock_init(void) {
+  uint32_t cfgr;
+
 #if 0
   RCC_TypeDef *rcc = RCC; /* For inspection.*/
   (void)rcc;
@@ -197,9 +199,14 @@ void stm32_clock_init(void) {
 
   /* Other clock-related settings, done before other things because
      recommended in the RM.*/
-  RCC->CFGR = STM32_MCO2SEL | RCC_CFGR_MCO2PRE_VALUE(STM32_MCO2PRE_VALUE) |
-              STM32_MCO1SEL | RCC_CFGR_MCO1PRE_VALUE(STM32_MCO1PRE_VALUE) |
-              RCC_CFGR_RTCPRE_VALUE(STM32_RTCPRE_VALUE);
+  cfgr = STM32_MCO2SEL | RCC_CFGR_MCO2PRE_VALUE(STM32_MCO2PRE_VALUE) |
+         STM32_MCO1SEL | RCC_CFGR_MCO1PRE_VALUE(STM32_MCO1PRE_VALUE) |
+         RCC_CFGR_RTCPRE_VALUE(STM32_RTCPRE_VALUE) |
+         STM32_HRTIMSEL | STM32_STOPKERWUCK | STM32_STOPWUCK;
+#if STM32_TIMPRE_ENABLE == TRUE
+  cfgr |= RCC_CFGR_TIMPRE;
+#endif
+  RCC->CFGR = cfgr;
 
   /* HSE activation with optional bypass.*/
 #if STM32_HSE_ENABLED == TRUE

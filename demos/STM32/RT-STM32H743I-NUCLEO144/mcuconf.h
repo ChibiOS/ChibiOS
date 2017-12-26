@@ -64,7 +64,6 @@
 #define STM32_HSE_ENABLED                   TRUE
 #define STM32_LSE_ENABLED                   TRUE
 #define STM32_HSIDIV                        STM32_HSIDIV_DIV1
-#define STM32_RTCPRE_VALUE                  8
 
 /*
  * PLLs static settings.
@@ -124,6 +123,11 @@
 #define STM32_MCO1PRE_VALUE                 4
 #define STM32_MCO2SEL                       STM32_MCO2SEL_SYS_CK
 #define STM32_MCO2PRE_VALUE                 4
+#define STM32_TIMPRE_ENABLE                 TRUE
+#define STM32_HRTIMSEL                      0
+#define STM32_STOPKERWUCK                   0
+#define STM32_STOPWUCK                      0
+#define STM32_RTCPRE_VALUE                  8
 #define STM32_CKPERSEL                      STM32_CKPERSEL_HSE_CK
 #define STM32_SDMMCSEL                      STM32_SDMMCSEL_PLL1_Q_CK
 #define STM32_QSPISEL                       STM32_QSPISEL_HCLK
