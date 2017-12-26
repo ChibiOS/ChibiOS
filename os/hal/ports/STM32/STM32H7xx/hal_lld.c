@@ -146,7 +146,7 @@ void hal_lld_init(void) {
 #endif
 
   /* IRQ subsystem initialization.*/
-//  irqInit();
+  irqInit();
 }
 
 /**
