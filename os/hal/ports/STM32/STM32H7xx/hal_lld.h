@@ -428,12 +428,12 @@
 #define STM32_SAI1SEL_I2S_CKIN          RCC_D2CCIP1R_SAI1SEL_VALUE(3U)
 #define STM32_SAI1SEL_PER_CK            RCC_D2CCIP1R_SAI1SEL_VALUE(4U)
 
-#define STM32_LPTIM1_PCLK1              RCC_D2CCIP2R_LPTIM1SEL_VALUE(0U)
-#define STM32_LPTIM1_PLL2_P_CK          RCC_D2CCIP2R_LPTIM1SEL_VALUE(1U)
-#define STM32_LPTIM1_PLL3_R_CJ          RCC_D2CCIP2R_LPTIM1SEL_VALUE(2U)
-#define STM32_LPTIM1_LSE_CK             RCC_D2CCIP2R_LPTIM1SEL_VALUE(3U)
-#define STM32_LPTIM1_LSI_CK             RCC_D2CCIP2R_LPTIM1SEL_VALUE(4U)
-#define STM32_LPTIM1_PER_CK             RCC_D2CCIP2R_LPTIM1SEL_VALUE(5U)
+#define STM32_LPTIM1SEL_PCLK1           RCC_D2CCIP2R_LPTIM1SEL_VALUE(0U)
+#define STM32_LPTIM1SEL_PLL2_P_CK       RCC_D2CCIP2R_LPTIM1SEL_VALUE(1U)
+#define STM32_LPTIM1SEL_PLL3_R_CK       RCC_D2CCIP2R_LPTIM1SEL_VALUE(2U)
+#define STM32_LPTIM1SEL_LSE_CK          RCC_D2CCIP2R_LPTIM1SEL_VALUE(3U)
+#define STM32_LPTIM1SEL_LSI_CK          RCC_D2CCIP2R_LPTIM1SEL_VALUE(4U)
+#define STM32_LPTIM1SEL_PER_CK          RCC_D2CCIP2R_LPTIM1SEL_VALUE(5U)
 
 #define STM32_CECSEL_LSE_CK             RCC_D2CCIP2R_CECSEL_VALUE(0U)
 #define STM32_CECSEL_LSI_CK             RCC_D2CCIP2R_CECSEL_VALUE(1U)
@@ -2251,10 +2251,10 @@
 #define STM32_FLASHBITS             0x00000007
 #endif
 
+#if (STM32_D2PPRE1 == STM32_D2PPRE1_DIV1) || defined(__DOXYGEN__)
 /**
  * @brief   Clock of timers connected to APB1
  */
-#if (STM32_D2PPRE1 == STM32_D2PPRE1_DIV1) || defined(__DOXYGEN__)
 #define STM32_TIMCLK1               (STM32_PCLK1 * 1)
 #else
 #if (STM32_TIMPRE_ENABLE == FALSE) || (STM32_D2PPRE1 == STM32_D2PPRE1_DIV2)
@@ -2264,10 +2264,10 @@
 #endif
 #endif
 
+#if (STM32_D2PPRE2 == STM32_D2PPRE2_DIV1) || defined(__DOXYGEN__)
 /**
  * @brief   Clock of timers connected to APB2.
  */
-#if (STM32_D2PPRE2 == STM32_D2PPRE2_DIV1) || defined(__DOXYGEN__)
 #define STM32_TIMCLK2               (STM32_PCLK2 * 1)
 #else
 #if (STM32_TIMPRE_ENABLE == FALSE) || (STM32_D2PPRE2 == STM32_D2PPRE2_DIV2)
@@ -2275,6 +2275,86 @@
 #else
 #define STM32_TIMCLK2               (STM32_PCLK2 * 4)
 #endif
+#endif
+
+#if (STM32_LPTIM1SEL == STM32_LPTIM1SEL_PCLK1) || defined(__DOXYGEN__)
+/**
+ * @brief   LPTIM1 clock.
+ */
+#define STM32_LPTIM1CLK             STM32_PCLK1
+
+#elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_PLL2_P_CK
+#define STM32_LPTIM1CLK             STM32_PLL2_P_CK
+#elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_PLL3_R_CK
+#define STM32_LPTIM1CLK             STM32_PLL3_R_CK
+#elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_LSE_CK
+#define STM32_LPTIM1CLK             STM32_LSECLK
+#elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_LSI_CK
+#define STM32_LPTIM1CLK             STM32_LSICLK
+#elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_PER_CK
+#define STM32_LPTIM1CLK             STM32_PER_CK
+#else
+#error "invalid source selected for STM32_LPTIM1SEL clock"
+#endif
+
+#if (STM32_LPTIM2SEL == STM32_LPTIM2SEL_PCLK4) || defined(__DOXYGEN__)
+/**
+ * @brief   LPTIM2 clock.
+ */
+#define STM32_LPTIM2CLK             STM32_PCLK4
+
+#elif STM32_LPTIM2SEL == STM32_LPTIM2SEL_PLL2_P_CK
+#define STM32_LPTIM2CLK             STM32_PLL2_P_CK
+#elif STM32_LPTIM2SEL == STM32_LPTIM2SEL_PLL3_P_CK
+#define STM32_LPTIM2CLK             STM32_PLL3_P_CK
+#elif STM32_LPTIM2SEL == STM32_LPTIM2SEL_LSE_CK
+#define STM32_LPTIM2CLK             STM32_LSECLK
+#elif STM32_LPTIM2SEL == STM32_LPTIM2SEL_LSI_CK
+#define STM32_LPTIM2CLK             STM32_LSICLK
+#elif STM32_LPTIM2SEL == STM32_LPTIM2SEL_PER_CK
+#define STM32_LPTIM2CLK             STM32_PER_CK
+#else
+#error "invalid source selected for STM32_LPTIM2SEL clock"
+#endif
+
+#if (STM32_LPTIM345SEL == STM32_LPTIM345SEL_PCLK4) || defined(__DOXYGEN__)
+/**
+ * @brief   LPTIM3 clock.
+ */
+#define STM32_LPTIM3CLK             STM32_PCLK4
+
+/**
+ * @brief   LPTIM4 clock.
+ */
+#define STM32_LPTIM4CLK             STM32_PCLK4
+
+/**
+ * @brief   LPTIM5 clock.
+ */
+#define STM32_LPTIM5CLK             STM32_PCLK4
+
+#elif STM32_LPTIM345SEL == STM32_LPTIM345SEL_PLL2_P_CK
+#define STM32_LPTIM3CLK             STM32_PLL2_P_CK
+#define STM32_LPTIM4CLK             STM32_PLL2_P_CK
+#define STM32_LPTIM5CLK             STM32_PLL2_P_CK
+#elif STM32_LPTIM345SEL == STM32_LPTIM345SEL_PLL3_P_CK
+#define STM32_LPTIM3CLK             STM32_PLL3_P_CK
+#define STM32_LPTIM4CLK             STM32_PLL3_P_CK
+#define STM32_LPTIM5CLK             STM32_PLL3_P_CK
+#elif STM32_LPTIM345SEL == STM32_LPTIM345SEL_LSE_CK
+#define STM32_LPTIM3CLK             STM32_LSECLK
+#define STM32_LPTIM4CLK             STM32_LSECLK
+#define STM32_LPTIM5CLK             STM32_LSECLK
+#elif STM32_LPTIM345SEL == STM32_LPTIM345SEL_LSI_CK
+#define STM32_LPTIM3CLK             STM32_LSICLK
+#define STM32_LPTIM4CLK             STM32_LSICLK
+#define STM32_LPTIM5CLK             STM32_LSICLK
+#elif STM32_LPTIM345SEL == STM32_LPTIM345SEL_PER_CK
+#define STM32_LPTIM3CLK             STM32_PER_CK
+#define STM32_LPTIM4CLK             STM32_PER_CK
+#define STM32_LPTIM5CLK             STM32_PER_CK
+#else
+#error "invalid source selected for STM32_LPTIM345SEL clock"
 #endif
 
 #if (STM32_USART16SEL == STM32_USART16SEL_PCLK2) || defined(__DOXYGEN__)
@@ -2287,6 +2367,7 @@
  * @brief   USART6 clock.
  */
 #define STM32_USART6CLK             STM32_PCLK2
+
 #elif STM32_USART1SEL == STM32_USART16SEL_PLL2_Q_CK
 #define STM32_USART1CLK             STM32_PLL2_Q_CK
 #define STM32_USART6CLK             STM32_PLL2_Q_CK
@@ -2336,6 +2417,7 @@
  * @brief   USART8 clock.
  */
 #define STM32_USART8CLK             STM32_PCLK2
+
 #elif STM32_USART234578SEL == STM32_USART234578SEL_PLL2_Q_CK
 #define STM32_USART2CLK             STM32_PLL2_Q_CK
 #define STM32_USART3CLK             STM32_PLL2_Q_CK
@@ -2375,6 +2457,161 @@
 #error "invalid source selected for STM32_USART234578SEL clock"
 #endif
 
+#if (STM32_LPUART1SEL == STM32_LPUART1SEL_PCLK4) || defined(__DOXYGEN__)
+/**
+ * @brief   LPUART1 clock.
+ */
+#define STM32_LPUART1CLK            STM32_PCLK1
+
+#elif STM32_LPUART1SEL == STM32_LPUART1SEL_PLL2_Q_CK
+#define STM32_LPUART1CLK            STM32_PLL2_Q_CK
+#elif STM32_LPUART1SEL == STM32_LPUART1SEL_PLL3_Q_CK
+#define STM32_LPUART1CLK            STM32_PLL3_Q_CK
+#elif STM32_LPUART1SEL == STM32_LPUART1SEL_HSI_KER_CK
+#define STM32_LPUART1CLK            STM32_HSICLK
+#elif STM32_LPUART1SEL == STM32_LPUART1SEL_CSI_KER_CK
+#define STM32_LPUART1CLK            STM32_CSICLK
+#elif STM32_LPUART1SEL == STM32_LPUART1SEL_LSE_CK
+#define STM32_LPUART1CLK            STM32_LSECLK
+#else
+#error "invalid source selected for STM32_LPUART1SEL clock"
+#endif
+
+#if (STM32_SPI123SEL == STM32_SPI123SEL_PLL1_Q_CK) || defined(__DOXYGEN__)
+/**
+ * @brief   SPI1 clock.
+ */
+#define STM32_SPI1CLK               STM32_PLL1_Q_CK
+
+/**
+ * @brief   SPI2 clock.
+ */
+#define STM32_SPI2CLK               STM32_PLL1_Q_CK
+
+/**
+ * @brief   SPI3 clock.
+ */
+#define STM32_SPI3CLK               STM32_PLL1_Q_CK
+#elif STM32_SPI123SEL == STM32_SPI123SEL_PLL2_P_CK
+#define STM32_SPI1CLK               STM32_PLL2_P_CK
+#define STM32_SPI2CLK               STM32_PLL2_P_CK
+#define STM32_SPI3CLK               STM32_PLL2_P_CK
+#elif STM32_SPI123SEL == STM32_SPI123SEL_PLL3_P_CK
+#define STM32_SPI1CLK               STM32_PLL3_P_CK
+#define STM32_SPI2CLK               STM32_PLL3_P_CK
+#define STM32_SPI3CLK               STM32_PLL3_P_CK
+#elif STM32_SPI123SEL == STM32_SPI123SEL_I2S_CKIN
+#define STM32_SPI1CLK               0
+#define STM32_SPI2CLK               0
+#define STM32_SPI3CLK               0
+#elif STM32_SPI123SEL == STM32_SPI123SEL_PLL2_P_CK
+#define STM32_SPI1CLK               STM32_PER_CK
+#define STM32_SPI2CLK               STM32_PER_CK
+#define STM32_SPI3CLK               STM32_PER_CK
+#else
+#error "invalid source selected for STM32_SPI123SEL clock"
+#endif
+
+#if (STM32_SPI45SEL == STM32_SPI45SEL_PCLK2) || defined(__DOXYGEN__)
+/**
+ * @brief   SPI4 clock.
+ */
+#define STM32_SPI4CLK               STM32_PCLK2
+
+/**
+ * @brief   SPI5 clock.
+ */
+#define STM32_SPI5CLK               STM32_PCLK2
+
+#elif STM32_SPI45SEL == STM32_SPI45SEL_PLL2_Q_CK
+#define STM32_SPI4CLK               STM32_PLL2_Q_CK
+#define STM32_SPI5CLK               STM32_PLL2_Q_CK
+#elif STM32_SPI45SEL == STM32_SPI45SEL_PLL3_Q_CK
+#define STM32_SPI4CLK               STM32_PLL3_Q_CK
+#define STM32_SPI5CLK               STM32_PLL3_Q_CK
+#elif STM32_SPI45SEL == STM32_SPI45SEL_HSI_KER_CK
+#define STM32_SPI4CLK               STM32_HSICLK
+#define STM32_SPI5CLK               STM32_HSICLK
+#elif STM32_SPI45SEL == STM32_SPI45SEL_CSI_KER_CK
+#define STM32_SPI4CLK               STM32_CSICLK
+#define STM32_SPI5CLK               STM32_CSICLK
+#elif STM32_SPI45SEL == STM32_SPI45SEL_HSE_CK
+#define STM32_SPI4CLK               STM32_HSECLK
+#define STM32_SPI5CLK               STM32_HSECLK
+#else
+#error "invalid source selected for STM32_SPI45SEL clock"
+#endif
+
+#if (STM32_SPI6SEL == STM32_SPI6SEL_PCLK4) || defined(__DOXYGEN__)
+/**
+ * @brief   SPI6 clock.
+ */
+#define STM32_SPI6CLK               STM32_PCLK4
+
+#elif STM32_SPI6SEL == STM32_SPI6SEL_PLL2_P_CK
+#define STM32_SPI6CLK               STM32_PLL2_P_CK
+#elif STM32_SPI6SEL == STM32_SPI6SEL_PLL3_Q_CK
+#define STM32_SPI6CLK               STM32_PLL3_Q_CK
+#elif STM32_SPI6SEL == STM32_SPI6SEL_HSI_KER_CK
+#define STM32_SPI6CLK               STM32_HSICLK
+#elif STM32_SPI6SEL == STM32_SPI6SEL_CSI_KER_CK
+#define STM32_SPI6CLK               STM32_CSICLK
+#elif STM32_SPI6SEL == STM32_SPI6SEL_HSE_CK
+#define STM32_SPI6CLK               STM32_HSECLK
+#else
+#error "invalid source selected for STM32_SPI6SEL clock"
+#endif
+
+#if (STM32_I2C123SEL == STM32_I2C123SEL_PCLK1) || defined(__DOXYGEN__)
+/**
+ * @brief   I2C1 clock.
+ */
+#define STM32_I2C1CLK               STM32_PCLK1
+
+/**
+ * @brief   I2C2 clock.
+ */
+#define STM32_I2C2CLK               STM32_PCLK1
+
+/**
+ * @brief   I2C2 clock.
+ */
+#define STM32_I2C2CLK               STM32_PCLK1
+
+#elif STM32_I2C123SEL == STM32_I2C123SEL_PLL3_R_CK
+#define STM32_I2C1CLK               STM32_PLL3_R_CK
+#define STM32_I2C2CLK               STM32_PLL3_R_CK
+#define STM32_I2C2CLK               STM32_PLL3_R_CK
+
+#elif STM32_I2C123SEL == STM32_I2C123SEL_HSI_KER_CK
+#define STM32_I2C1CLK               STM32_HSICLK
+#define STM32_I2C2CLK               STM32_HSICLK
+#define STM32_I2C2CLK               STM32_HSICLK
+
+#elif STM32_I2C123SEL == STM32_I2C123SEL_CSI_KER_CK
+#define STM32_I2C1CLK               STM32_CSICLK
+#define STM32_I2C2CLK               STM32_CSICLK
+#define STM32_I2C2CLK               STM32_CSICLK
+#else
+#error "invalid source selected for STM32_I2C123SEL clock"
+#endif
+
+#if (STM32_I2C4SEL == STM32_I2C4SEL_PCLK4) || defined(__DOXYGEN__)
+/**
+ * @brief   I2C1 clock.
+ */
+#define STM32_I2C4CLK               STM32_PCLK4
+
+#elif STM32_I2C4SEL == STM32_I2C4SEL_PLL3_R_CK
+#define STM32_I2C4CLK               STM32_I2C123SEL_PLL3_R_CK
+#elif STM32_I2C4SEL == STM32_I2C4SEL_HSI_KER_CK
+#define STM32_I2C4CLK               STM32_HSICLK
+#elif STM32_I2C4SEL == STM32_I2C4SEL_CSI_KER_CK
+#define STM32_I2C4CLK               STM32_CSICLK
+#else
+#error "invalid source selected for STM32_I2C4SEL clock"
+#endif
+
 
 
 
@@ -2398,73 +2635,6 @@
 
 
 #if 0
-/**
- * @brief   I2C1 frequency.
- */
-#if (STM32_I2C1SEL == STM32_I2C1SEL_PCLK1) || defined(__DOXYGEN__)
-#define STM32_I2C1CLK               STM32_PCLK1
-#elif STM32_I2C1SEL == STM32_I2C1SEL_SYSCLK
-#define STM32_I2C1CLK               STM32_SYSCLK
-#elif STM32_I2C1SEL == STM32_I2C1SEL_HSI
-#define STM32_I2C1CLK               STM32_HSICLK
-#else
-#error "invalid source selected for I2C1 clock"
-#endif
-
-/**
- * @brief   I2C2 frequency.
- */
-#if (STM32_I2C2SEL == STM32_I2C2SEL_PCLK1) || defined(__DOXYGEN__)
-#define STM32_I2C2CLK               STM32_PCLK1
-#elif STM32_I2C2SEL == STM32_I2C2SEL_SYSCLK
-#define STM32_I2C2CLK               STM32_SYSCLK
-#elif STM32_I2C2SEL == STM32_I2C2SEL_HSI
-#define STM32_I2C2CLK               STM32_HSICLK
-#else
-#error "invalid source selected for I2C2 clock"
-#endif
-
-/**
- * @brief   I2C3 frequency.
- */
-#if (STM32_I2C3SEL == STM32_I2C3SEL_PCLK1) || defined(__DOXYGEN__)
-#define STM32_I2C3CLK               STM32_PCLK1
-#elif STM32_I2C3SEL == STM32_I2C3SEL_SYSCLK
-#define STM32_I2C3CLK               STM32_SYSCLK
-#elif STM32_I2C3SEL == STM32_I2C3SEL_HSI
-#define STM32_I2C3CLK               STM32_HSICLK
-#else
-#error "invalid source selected for I2C3 clock"
-#endif
-
-/**
- * @brief   I2C4 frequency.
- */
-#if (STM32_I2C4SEL == STM32_I2C4SEL_PCLK1) || defined(__DOXYGEN__)
-#define STM32_I2C4CLK               STM32_PCLK1
-#elif STM32_I2C4SEL == STM32_I2C4SEL_SYSCLK
-#define STM32_I2C4CLK               STM32_SYSCLK
-#elif STM32_I2C4SEL == STM32_I2C4SEL_HSI
-#define STM32_I2C4CLK               STM32_HSICLK
-#else
-#error "invalid source selected for I2C4 clock"
-#endif
-
-/**
- * @brief   LPTIM1 frequency.
- */
-#if (STM32_LPTIM1SEL == STM32_LPTIM1SEL_PCLK1) || defined(__DOXYGEN__)
-#define STM32_LPTIM1CLK             STM32_PCLK1
-#elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_LSI
-#define STM32_LPTIM1CLK             STM32_LSICLK
-#elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_HSI
-#define STM32_LPTIM1CLK             STM32_HSICLK
-#elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_LSE
-#define STM32_LPTIM1CLK             STM32_LSECLK
-#else
-#error "invalid source selected for LPTIM1 clock"
-#endif
-
 /**
  * @brief   48MHz frequency.
  */
