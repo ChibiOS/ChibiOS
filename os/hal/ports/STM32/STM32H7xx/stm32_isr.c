@@ -63,9 +63,9 @@ OSAL_IRQ_HANDLER(Vector58) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR;
-  pr &= EXTI->IMR & (1U << 0);
-  EXTI->PR = pr;
+  pr = EXTI_D1->PR1;
+  pr &= EXTI_D1->IMR1 & (1U << 0);
+  EXTI_D1->PR1 = pr;
 
   exti_serve_irq(pr, 0);
 
@@ -84,9 +84,9 @@ OSAL_IRQ_HANDLER(Vector5C) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR;
-  pr &= EXTI->IMR & (1U << 1);
-  EXTI->PR = pr;
+  pr = EXTI_D1->PR1;
+  pr &= EXTI_D1->IMR1 & (1U << 1);
+  EXTI_D1->PR1 = pr;
 
   exti_serve_irq(pr, 1);
 
@@ -105,9 +105,9 @@ OSAL_IRQ_HANDLER(Vector60) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR;
-  pr &= EXTI->IMR & (1U << 2);
-  EXTI->PR = pr;
+  pr = EXTI_D1->PR1;
+  pr &= EXTI_D1->IMR1 & (1U << 2);
+  EXTI_D1->PR1 = pr;
 
   exti_serve_irq(pr, 2);
 
@@ -126,9 +126,9 @@ OSAL_IRQ_HANDLER(Vector64) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR;
-  pr &= EXTI->IMR & (1U << 3);
-  EXTI->PR = pr;
+  pr = EXTI_D1->PR1;
+  pr &= EXTI_D1->IMR1 & (1U << 3);
+  EXTI_D1->PR1 = pr;
 
   exti_serve_irq(pr, 3);
 
@@ -147,9 +147,9 @@ OSAL_IRQ_HANDLER(Vector68) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR;
-  pr &= EXTI->IMR & (1U << 4);
-  EXTI->PR = pr;
+  pr = EXTI_D1->PR1;
+  pr &= EXTI_D1->IMR1 & (1U << 4);
+  EXTI_D1->PR1 = pr;
 
   exti_serve_irq(pr, 4);
 
@@ -168,10 +168,10 @@ OSAL_IRQ_HANDLER(Vector9C) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR;
-  pr &= EXTI->IMR & ((1U << 5) | (1U << 6) | (1U << 7) | (1U << 8) |
-                     (1U << 9));
-  EXTI->PR = pr;
+  pr = EXTI_D1->PR1;
+  pr &= EXTI_D1->IMR1 & ((1U << 5) | (1U << 6) | (1U << 7) | (1U << 8) |
+                         (1U << 9));
+  EXTI_D1->PR1 = pr;
 
   exti_serve_irq(pr, 5);
   exti_serve_irq(pr, 6);
@@ -194,10 +194,10 @@ OSAL_IRQ_HANDLER(VectorE0) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR;
-  pr &= EXTI->IMR & ((1U << 10) | (1U << 11) | (1U << 12) | (1U << 13) |
-                     (1U << 14) | (1U << 15));
-  EXTI->PR = pr;
+  pr = EXTI_D1->PR1;
+  pr &= EXTI_D1->IMR1 & ((1U << 10) | (1U << 11) | (1U << 12) | (1U << 13) |
+                         (1U << 14) | (1U << 15));
+  EXTI_D1->PR1 = pr;
 
   exti_serve_irq(pr, 10);
   exti_serve_irq(pr, 11);
