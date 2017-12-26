@@ -68,8 +68,44 @@
 #define STM32_HAS_DAC2_CH2                  FALSE
 
 /* DMA attributes.*/
-#define STM32_HAS_DMA1                      FALSE
-#define STM32_HAS_DMA2                      FALSE
+#define STM32_ADVANCED_DMA                  TRUE
+#define STM32_DMA_CACHE_HANDLING            TRUE
+
+#define STM32_HAS_DMA1                      TRUE
+#define STM32_DMA1_CH0_HANDLER              Vector6C
+#define STM32_DMA1_CH1_HANDLER              Vector70
+#define STM32_DMA1_CH2_HANDLER              Vector74
+#define STM32_DMA1_CH3_HANDLER              Vector78
+#define STM32_DMA1_CH4_HANDLER              Vector7C
+#define STM32_DMA1_CH5_HANDLER              Vector80
+#define STM32_DMA1_CH6_HANDLER              Vector84
+#define STM32_DMA1_CH7_HANDLER              VectorFC
+#define STM32_DMA1_CH0_NUMBER               11
+#define STM32_DMA1_CH1_NUMBER               12
+#define STM32_DMA1_CH2_NUMBER               13
+#define STM32_DMA1_CH3_NUMBER               14
+#define STM32_DMA1_CH4_NUMBER               15
+#define STM32_DMA1_CH5_NUMBER               16
+#define STM32_DMA1_CH6_NUMBER               17
+#define STM32_DMA1_CH7_NUMBER               47
+
+#define STM32_HAS_DMA2                      TRUE
+#define STM32_DMA2_CH0_HANDLER              Vector120
+#define STM32_DMA2_CH1_HANDLER              Vector124
+#define STM32_DMA2_CH2_HANDLER              Vector128
+#define STM32_DMA2_CH3_HANDLER              Vector12C
+#define STM32_DMA2_CH4_HANDLER              Vector130
+#define STM32_DMA2_CH5_HANDLER              Vector150
+#define STM32_DMA2_CH6_HANDLER              Vector154
+#define STM32_DMA2_CH7_HANDLER              Vector158
+#define STM32_DMA2_CH0_NUMBER               56
+#define STM32_DMA2_CH1_NUMBER               57
+#define STM32_DMA2_CH2_NUMBER               58
+#define STM32_DMA2_CH3_NUMBER               59
+#define STM32_DMA2_CH4_NUMBER               60
+#define STM32_DMA2_CH5_NUMBER               68
+#define STM32_DMA2_CH6_NUMBER               69
+#define STM32_DMA2_CH7_NUMBER               70
 
 /* ETH attributes.*/
 #define STM32_HAS_ETH                       TRUE
@@ -124,7 +160,16 @@
 #define STM32_HAS_SDMMC2                    FALSE
 
 /* SPI attributes.*/
-#define STM32_HAS_SPI1                      FALSE
+#define STM32_HAS_SPI1                      TRUE
+#define STM32_SPI1_SUPPORTS_I2S             TRUE
+#define STM32_SPI1_I2S_FULLDUPLEX           TRUE
+#define STM32_SPI1_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(2, 0) |\
+                                             STM32_DMA_STREAM_ID_MSK(2, 2))
+#define STM32_SPI1_RX_DMA_CHN               0x00000303
+#define STM32_SPI1_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(2, 3) |\
+                                             STM32_DMA_STREAM_ID_MSK(2, 5))
+#define STM32_SPI1_TX_DMA_CHN               0x00303000
+
 #define STM32_HAS_SPI2                      FALSE
 #define STM32_HAS_SPI3                      FALSE
 #define STM32_HAS_SPI4                      FALSE
