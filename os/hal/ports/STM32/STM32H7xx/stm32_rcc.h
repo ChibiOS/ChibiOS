@@ -749,66 +749,82 @@
  * @{
  */
 /**
- * @brief   Enables the OTG_FS peripheral clock.
+ * @brief   Enables the USB1_OTG_HS peripheral clock.
  *
  * @param[in] lp        low power enable flag
  *
  * @api
  */
-#define rccEnableOTG_FS(lp) rccEnableAHB2(RCC_AHB2ENR_OTGFSEN, lp)
+#define rccEnableUSB1_OTG_HS(lp) rccEnableAHB1(RCC_AHB1ENR_USB1OTGHSEN, lp)
 
 /**
- * @brief   Disables the OTG_FS peripheral clock.
+ * @brief   Disables the USB1_OTG_HS peripheral clock.
  *
  * @api
  */
-#define rccDisableOTG_FS() rccDisableAHB2(RCC_AHB2ENR_OTGFSEN)
+#define rccDisableUSB1_OTG_HS() rccDisableAHB1(RCC_AHB1ENR_USB1OTGHSEN)
 
 /**
- * @brief   Resets the OTG_FS peripheral.
+ * @brief   Resets the USB1_OTG_HS peripheral.
  *
  * @api
  */
-#define rccResetOTG_FS() rccResetAHB2(RCC_AHB2RSTR_OTGFSRST)
+#define rccResetUSB1_OTG_HS() rccResetAHB1(RCC_AHB1RSTR_USB1OTGHSRST)
 
 /**
- * @brief   Enables the OTG_HS peripheral clock.
+ * @brief   Enables the USB2_OTG_HS peripheral clock.
  *
  * @param[in] lp        low power enable flag
  *
  * @api
  */
-#define rccEnableOTG_HS(lp) rccEnableAHB1(RCC_AHB1ENR_OTGHSEN, lp)
+#define rccEnableUSB2_OTG_HS(lp) rccEnableAHB1(RCC_AHB1ENR_USB2OTGHSEN, lp)
 
 /**
- * @brief   Disables the OTG_HS peripheral clock.
+ * @brief   Disables the USB2_OTG_HS peripheral clock.
  *
  * @api
  */
-#define rccDisableOTG_HS() rccDisableAHB1(RCC_AHB1ENR_OTGHSEN)
+#define rccDisableUSB2_OTG_HS() rccDisableAHB1(RCC_AHB1ENR_USB2OTGHSEN)
 
 /**
- * @brief   Resets the OTG_HS peripheral.
+ * @brief   Resets the USB2_OTG_HS peripheral.
  *
  * @api
  */
-#define rccResetOTG_HS() rccResetAHB1(RCC_AHB1RSTR_OTGHRST)
+#define rccResetUSB2_OTG_HS() rccResetAHB1(RCC_AHB1RSTR_USB2OTGHSRST)
 
 /**
- * @brief   Enables the OTG_HS peripheral clock.
+ * @brief   Enables the USB1_OTG_HS ULPI peripheral clock.
  *
  * @param[in] lp        low power enable flag
  *
  * @api
  */
-#define rccEnableOTG_HSULPI(lp) rccEnableAHB1(RCC_AHB1ENR_OTGHSULPIEN, lp)
+#define rccEnableUSB1_HSULPI(lp) rccEnableAHB1(RCC_AHB1ENR_USB1OTGHSULPIEN, lp)
 
 /**
- * @brief   Disables the OTG_HS peripheral clock.
+ * @brief   Disables the USB1_OTG_HS peripheral clock.
  *
  * @api
  */
-#define rccDisableOTG_HSULPI() rccDisableAHB1(RCC_AHB1ENR_OTGHSULPIEN)
+#define rccDisableUSB1_HSULPI() rccDisableAHB1(RCC_AHB1ENR_USB1OTGHSULPIEN)
+
+/**
+ * @brief   Enables the USB2_OTG_HS ULPI peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableUSB2_HSULPI(lp) rccEnableAHB1(RCC_AHB1ENR_USB2OTGHSULPIEN, lp)
+
+/**
+ * @brief   Disables the USB2_OTG_HS peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableUSB2_HSULPI() rccDisableAHB1(RCC_AHB1ENR_USB2OTGHSULPIEN)
 /** @} */
 
 /**
@@ -850,21 +866,21 @@
  *
  * @api
  */
-#define rccEnableSDMMC1(lp) rccEnableAPB2(RCC_APB2ENR_SDMMC1EN, lp)
+#define rccEnableSDMMC1(lp) rccEnableAHB3(RCC_AHB3ENR_SDMMC1EN, lp)
 
 /**
  * @brief   Disables the SDMMC1 peripheral clock.
  *
  * @api
  */
-#define rccDisableSDMMC1() rccDisableAPB2(RCC_APB2ENR_SDMMC1EN)
+#define rccDisableSDMMC1() rccDisableAHB3(RCC_AHB3ENR_SDMMC1EN)
 
 /**
  * @brief   Resets the SDMMC1 peripheral.
  *
  * @api
  */
-#define rccResetSDMMC1() rccResetAPB2(RCC_APB2RSTR_SDMMC1RST)
+#define rccResetSDMMC1() rccResetAHB3(RCC_AHB3RSTR_SDMMC1RST)
 /** @} */
 
 /**
@@ -993,21 +1009,21 @@
  *
  * @api
  */
-#define rccEnableSPI6(lp) rccEnableAPB2(RCC_APB2ENR_SPI6EN, lp)
+#define rccEnableSPI6(lp) rccEnableAPB4(RCC_APB4ENR_SPI6EN, lp)
 
 /**
  * @brief   Disables the SPI6 peripheral clock.
  *
  * @api
  */
-#define rccDisableSPI6() rccDisableAPB2(RCC_APB2ENR_SPI6EN)
+#define rccDisableSPI6() rccDisableAPB4(RCC_APB4ENR_SPI6EN)
 
 /**
  * @brief   Resets the SPI6 peripheral.
  *
  * @api
  */
-#define rccResetSPI6() rccResetAPB2(RCC_APB2RSTR_SPI6RST)
+#define rccResetSPI6() rccResetAPB4(RCC_APB4RSTR_SPI6RST)
 /** @} */
 
 /**
@@ -1268,6 +1284,75 @@
  * @api
  */
 #define rccResetTIM14() rccResetAPB1L(RCC_APB1LRSTR_TIM14RST)
+
+/**
+ * @brief   Enables the TIM15 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableTIM15(lp) rccEnableAPB2(RCC_APB2ENR_TIM15EN, lp)
+
+/**
+ * @brief   Disables the TIM15 peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableTIM15(...) rccDisableAPB2(RCC_APB2ENR_TIM15EN)
+
+/**
+ * @brief   Resets the TIM15 peripheral.
+ *
+ * @api
+ */
+#define rccResetTIM15() rccResetAPB2(RCC_APB2RSTR_TIM15RST)
+
+/**
+ * @brief   Enables the TIM16 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableTIM1(lp) rccEnableAPB2(RCC_APB2ENR_TIM16EN, lp)
+
+/**
+ * @brief   Disables the TIM16 peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableTIM16(...) rccDisableAPB2(RCC_APB2ENR_TIM16EN)
+
+/**
+ * @brief   Resets the TIM16 peripheral.
+ *
+ * @api
+ */
+#define rccResetTIM16() rccResetAPB2(RCC_APB2RSTR_TIM16RST)
+
+/**
+ * @brief   Enables the TIM17 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableTIM17(lp) rccEnableAPB2(RCC_APB2ENR_TIM17EN, lp)
+
+/**
+ * @brief   Disables the TIM17 peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableTIM17(...) rccDisableAPB2(RCC_APB2ENR_TIM17EN)
+
+/**
+ * @brief   Resets the TIM17 peripheral.
+ *
+ * @api
+ */
+#define rccResetTIM17() rccResetAPB2(RCC_APB2RSTR_TIM17RST)
 /** @} */
 
 /**
@@ -1470,21 +1555,21 @@
  *
  * @api
  */
-#define rccEnableLTDC(lp) rccEnableAPB2(RCC_APB2ENR_LTDCEN, lp)
+#define rccEnableLTDC(lp) rccEnableAPB3(RCC_APB3ENR_LTDCEN, lp)
 
 /**
  * @brief   Disables the LTDC peripheral clock.
 . *
  * @api
  */
-#define rccDisableLTDC() rccDisableAPB2(RCC_APB2ENR_LTDCEN)
+#define rccDisableLTDC() rccDisableAPB3(RCC_APB3ENR_LTDCEN)
 
 /**
  * @brief   Resets the LTDC peripheral.
  *
  * @api
  */
-#define rccResetLTDC() rccResetAPB2(RCC_APB2RSTR_LTDCRST)
+#define rccResetLTDC() rccResetAPB3(RCC_APB3RSTR_LTDCRST)
 
 /**
  * @name    DMA2D peripheral specific RCC operations
@@ -1497,21 +1582,21 @@
  *
  * @api
  */
-#define rccEnableDMA2D(lp) rccEnableAHB1(RCC_AHB1ENR_DMA2DEN, lp)
+#define rccEnableDMA2D(lp) rccEnableAHB3(RCC_AHB3ENR_DMA2DEN, lp)
 
 /**
  * @brief   Disables the DMA2D peripheral clock.
  *
  * @api
  */
-#define rccDisableDMA2D() rccDisableAHB1(RCC_AHB1ENR_DMA2DEN)
+#define rccDisableDMA2D() rccDisableAHB3(RCC_AHB3ENR_DMA2DEN)
 
 /**
  * @brief   Resets the DMA2D peripheral.
  *
  * @api
  */
-#define rccResetDMA2D() rccResetAHB1(RCC_AHB1RSTR_DMA2DRST)
+#define rccResetDMA2D() rccResetAHB3(RCC_AHB3RSTR_DMA2DRST)
 /** @} */
 
 /**
