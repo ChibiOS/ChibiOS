@@ -1315,7 +1315,7 @@
  *
  * @api
  */
-#define rccEnableTIM1(lp) rccEnableAPB2(RCC_APB2ENR_TIM16EN, lp)
+#define rccEnableTIM16(lp) rccEnableAPB2(RCC_APB2ENR_TIM16EN, lp)
 
 /**
  * @brief   Disables the TIM16 peripheral clock.

@@ -30,54 +30,6 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-#define SPI1_RX_DMA_CHANNEL                                                 \
-  STM32_DMA_GETCHANNEL(STM32_SPI_SPI1_RX_DMA_STREAM,                        \
-                       STM32_SPI1_RX_DMA_CHN)
-
-#define SPI1_TX_DMA_CHANNEL                                                 \
-  STM32_DMA_GETCHANNEL(STM32_SPI_SPI1_TX_DMA_STREAM,                        \
-                       STM32_SPI1_TX_DMA_CHN)
-
-#define SPI2_RX_DMA_CHANNEL                                                 \
-  STM32_DMA_GETCHANNEL(STM32_SPI_SPI2_RX_DMA_STREAM,                        \
-                       STM32_SPI2_RX_DMA_CHN)
-
-#define SPI2_TX_DMA_CHANNEL                                                 \
-  STM32_DMA_GETCHANNEL(STM32_SPI_SPI2_TX_DMA_STREAM,                        \
-                       STM32_SPI2_TX_DMA_CHN)
-
-#define SPI3_RX_DMA_CHANNEL                                                 \
-  STM32_DMA_GETCHANNEL(STM32_SPI_SPI3_RX_DMA_STREAM,                        \
-                       STM32_SPI3_RX_DMA_CHN)
-
-#define SPI3_TX_DMA_CHANNEL                                                 \
-  STM32_DMA_GETCHANNEL(STM32_SPI_SPI3_TX_DMA_STREAM,                        \
-                       STM32_SPI3_TX_DMA_CHN)
-
-#define SPI4_RX_DMA_CHANNEL                                                 \
-  STM32_DMA_GETCHANNEL(STM32_SPI_SPI4_RX_DMA_STREAM,                        \
-                       STM32_SPI4_RX_DMA_CHN)
-
-#define SPI4_TX_DMA_CHANNEL                                                 \
-  STM32_DMA_GETCHANNEL(STM32_SPI_SPI4_TX_DMA_STREAM,                        \
-                       STM32_SPI4_TX_DMA_CHN)
-
-#define SPI5_RX_DMA_CHANNEL                                                 \
-  STM32_DMA_GETCHANNEL(STM32_SPI_SPI5_RX_DMA_STREAM,                        \
-                       STM32_SPI5_RX_DMA_CHN)
-
-#define SPI5_TX_DMA_CHANNEL                                                 \
-  STM32_DMA_GETCHANNEL(STM32_SPI_SPI5_TX_DMA_STREAM,                        \
-                       STM32_SPI5_TX_DMA_CHN)
-
-#define SPI6_RX_DMA_CHANNEL                                                 \
-  STM32_DMA_GETCHANNEL(STM32_SPI_SPI6_RX_DMA_STREAM,                        \
-                       STM32_SPI6_RX_DMA_CHN)
-
-#define SPI6_TX_DMA_CHANNEL                                                 \
-  STM32_DMA_GETCHANNEL(STM32_SPI_SPI6_TX_DMA_STREAM,                        \
-                       STM32_SPI6_TX_DMA_CHN)
-
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -187,16 +139,14 @@ void spi_lld_init(void) {
 #if STM32_SPI_USE_SPI1
   spiObjectInit(&SPID1);
   SPID1.spi       = SPI1;
-  SPID1.dmarx     = STM32_DMA_STREAM(STM32_SPI_SPI1_RX_DMA_STREAM);
-  SPID1.dmatx     = STM32_DMA_STREAM(STM32_SPI_SPI1_TX_DMA_STREAM);
-  SPID1.rxdmamode = STM32_DMA_CR_CHSEL(SPI1_RX_DMA_CHANNEL) |
-                    STM32_DMA_CR_PL(STM32_SPI_SPI1_DMA_PRIORITY) |
+  SPID1.dmarx     = STM32_DMA_STREAM(STM32_SPI_SPI1_RX_DMA_CHANNEL);
+  SPID1.dmatx     = STM32_DMA_STREAM(STM32_SPI_SPI1_TX_DMA_CHANNEL);
+  SPID1.rxdmamode = STM32_DMA_CR_PL(STM32_SPI_SPI1_DMA_PRIORITY) |
                     STM32_DMA_CR_DIR_P2M |
                     STM32_DMA_CR_TCIE |
                     STM32_DMA_CR_DMEIE |
                     STM32_DMA_CR_TEIE;
-  SPID1.txdmamode = STM32_DMA_CR_CHSEL(SPI1_TX_DMA_CHANNEL) |
-                    STM32_DMA_CR_PL(STM32_SPI_SPI1_DMA_PRIORITY) |
+  SPID1.txdmamode = STM32_DMA_CR_PL(STM32_SPI_SPI1_DMA_PRIORITY) |
                     STM32_DMA_CR_DIR_M2P |
                     STM32_DMA_CR_DMEIE |
                     STM32_DMA_CR_TEIE;
@@ -205,16 +155,14 @@ void spi_lld_init(void) {
 #if STM32_SPI_USE_SPI2
   spiObjectInit(&SPID2);
   SPID2.spi       = SPI2;
-  SPID2.dmarx     = STM32_DMA_STREAM(STM32_SPI_SPI2_RX_DMA_STREAM);
-  SPID2.dmatx     = STM32_DMA_STREAM(STM32_SPI_SPI2_TX_DMA_STREAM);
-  SPID2.rxdmamode = STM32_DMA_CR_CHSEL(SPI2_RX_DMA_CHANNEL) |
-                    STM32_DMA_CR_PL(STM32_SPI_SPI2_DMA_PRIORITY) |
+  SPID2.dmarx     = STM32_DMA_STREAM(STM32_SPI_SPI2_RX_DMA_CHANNEL);
+  SPID2.dmatx     = STM32_DMA_STREAM(STM32_SPI_SPI2_TX_DMA_CHANNEL);
+  SPID2.rxdmamode = STM32_DMA_CR_PL(STM32_SPI_SPI2_DMA_PRIORITY) |
                     STM32_DMA_CR_DIR_P2M |
                     STM32_DMA_CR_TCIE |
                     STM32_DMA_CR_DMEIE |
                     STM32_DMA_CR_TEIE;
-  SPID2.txdmamode = STM32_DMA_CR_CHSEL(SPI2_TX_DMA_CHANNEL) |
-                    STM32_DMA_CR_PL(STM32_SPI_SPI2_DMA_PRIORITY) |
+  SPID2.txdmamode = STM32_DMA_CR_PL(STM32_SPI_SPI2_DMA_PRIORITY) |
                     STM32_DMA_CR_DIR_M2P |
                     STM32_DMA_CR_DMEIE |
                     STM32_DMA_CR_TEIE;
@@ -223,16 +171,14 @@ void spi_lld_init(void) {
 #if STM32_SPI_USE_SPI3
   spiObjectInit(&SPID3);
   SPID3.spi       = SPI3;
-  SPID3.dmarx     = STM32_DMA_STREAM(STM32_SPI_SPI3_RX_DMA_STREAM);
-  SPID3.dmatx     = STM32_DMA_STREAM(STM32_SPI_SPI3_TX_DMA_STREAM);
-  SPID3.rxdmamode = STM32_DMA_CR_CHSEL(SPI3_RX_DMA_CHANNEL) |
-                    STM32_DMA_CR_PL(STM32_SPI_SPI3_DMA_PRIORITY) |
+  SPID3.dmarx     = STM32_DMA_STREAM(STM32_SPI_SPI3_RX_DMA_CHANNEL);
+  SPID3.dmatx     = STM32_DMA_STREAM(STM32_SPI_SPI3_TX_DMA_CHANNEL);
+  SPID3.rxdmamode = STM32_DMA_CR_PL(STM32_SPI_SPI3_DMA_PRIORITY) |
                     STM32_DMA_CR_DIR_P2M |
                     STM32_DMA_CR_TCIE |
                     STM32_DMA_CR_DMEIE |
                     STM32_DMA_CR_TEIE;
-  SPID3.txdmamode = STM32_DMA_CR_CHSEL(SPI3_TX_DMA_CHANNEL) |
-                    STM32_DMA_CR_PL(STM32_SPI_SPI3_DMA_PRIORITY) |
+  SPID3.txdmamode = STM32_DMA_CR_PL(STM32_SPI_SPI3_DMA_PRIORITY) |
                     STM32_DMA_CR_DIR_M2P |
                     STM32_DMA_CR_DMEIE |
                     STM32_DMA_CR_TEIE;
@@ -241,16 +187,14 @@ void spi_lld_init(void) {
 #if STM32_SPI_USE_SPI4
   spiObjectInit(&SPID4);
   SPID4.spi       = SPI4;
-  SPID4.dmarx     = STM32_DMA_STREAM(STM32_SPI_SPI4_RX_DMA_STREAM);
-  SPID4.dmatx     = STM32_DMA_STREAM(STM32_SPI_SPI4_TX_DMA_STREAM);
-  SPID4.rxdmamode = STM32_DMA_CR_CHSEL(SPI4_RX_DMA_CHANNEL) |
-                    STM32_DMA_CR_PL(STM32_SPI_SPI4_DMA_PRIORITY) |
+  SPID4.dmarx     = STM32_DMA_STREAM(STM32_SPI_SPI4_RX_DMA_CHANNEL);
+  SPID4.dmatx     = STM32_DMA_STREAM(STM32_SPI_SPI4_TX_DMA_CHANNEL);
+  SPID4.rxdmamode = STM32_DMA_CR_PL(STM32_SPI_SPI4_DMA_PRIORITY) |
                     STM32_DMA_CR_DIR_P2M |
                     STM32_DMA_CR_TCIE |
                     STM32_DMA_CR_DMEIE |
                     STM32_DMA_CR_TEIE;
-  SPID4.txdmamode = STM32_DMA_CR_CHSEL(SPI4_TX_DMA_CHANNEL) |
-                    STM32_DMA_CR_PL(STM32_SPI_SPI4_DMA_PRIORITY) |
+  SPID4.txdmamode = STM32_DMA_CR_PL(STM32_SPI_SPI4_DMA_PRIORITY) |
                     STM32_DMA_CR_DIR_M2P |
                     STM32_DMA_CR_DMEIE |
                     STM32_DMA_CR_TEIE;
@@ -259,16 +203,14 @@ void spi_lld_init(void) {
 #if STM32_SPI_USE_SPI5
   spiObjectInit(&SPID5);
   SPID5.spi       = SPI5;
-  SPID5.dmarx     = STM32_DMA_STREAM(STM32_SPI_SPI5_RX_DMA_STREAM);
-  SPID5.dmatx     = STM32_DMA_STREAM(STM32_SPI_SPI5_TX_DMA_STREAM);
-  SPID5.rxdmamode = STM32_DMA_CR_CHSEL(SPI5_RX_DMA_CHANNEL) |
-                    STM32_DMA_CR_PL(STM32_SPI_SPI5_DMA_PRIORITY) |
+  SPID5.dmarx     = STM32_DMA_STREAM(STM32_SPI_SPI5_RX_DMA_CHANNEL);
+  SPID5.dmatx     = STM32_DMA_STREAM(STM32_SPI_SPI5_TX_DMA_CHANNEL);
+  SPID5.rxdmamode = STM32_DMA_CR_PL(STM32_SPI_SPI5_DMA_PRIORITY) |
                     STM32_DMA_CR_DIR_P2M |
                     STM32_DMA_CR_TCIE |
                     STM32_DMA_CR_DMEIE |
                     STM32_DMA_CR_TEIE;
-  SPID5.txdmamode = STM32_DMA_CR_CHSEL(SPI5_TX_DMA_CHANNEL) |
-                    STM32_DMA_CR_PL(STM32_SPI_SPI5_DMA_PRIORITY) |
+  SPID5.txdmamode = STM32_DMA_CR_PL(STM32_SPI_SPI5_DMA_PRIORITY) |
                     STM32_DMA_CR_DIR_M2P |
                     STM32_DMA_CR_DMEIE |
                     STM32_DMA_CR_TEIE;
@@ -277,16 +219,14 @@ void spi_lld_init(void) {
 #if STM32_SPI_USE_SPI6
   spiObjectInit(&SPID6);
   SPID6.spi       = SPI6;
-  SPID6.dmarx     = STM32_DMA_STREAM(STM32_SPI_SPI6_RX_DMA_STREAM);
-  SPID6.dmatx     = STM32_DMA_STREAM(STM32_SPI_SPI6_TX_DMA_STREAM);
-  SPID6.rxdmamode = STM32_DMA_CR_CHSEL(SPI6_RX_DMA_CHANNEL) |
-                    STM32_DMA_CR_PL(STM32_SPI_SPI6_DMA_PRIORITY) |
+  SPID6.dmarx     = STM32_BDMA_STREAM(STM32_SPI_SPI6_RX_BDMA_CHANNEL);
+  SPID6.dmatx     = STM32_BDMA_STREAM(STM32_SPI_SPI6_TX_BDMA_CHANNEL);
+  SPID6.rxdmamode = STM32_DMA_CR_PL(STM32_SPI_SPI6_DMA_PRIORITY) |
                     STM32_DMA_CR_DIR_P2M |
                     STM32_DMA_CR_TCIE |
                     STM32_DMA_CR_DMEIE |
                     STM32_DMA_CR_TEIE;
-  SPID6.txdmamode = STM32_DMA_CR_CHSEL(SPI6_TX_DMA_CHANNEL) |
-                    STM32_DMA_CR_PL(STM32_SPI_SPI6_DMA_PRIORITY) |
+  SPID6.txdmamode = STM32_DMA_CR_PL(STM32_SPI_SPI6_DMA_PRIORITY) |
                     STM32_DMA_CR_DIR_M2P |
                     STM32_DMA_CR_DMEIE |
                     STM32_DMA_CR_TEIE;
@@ -301,7 +241,7 @@ void spi_lld_init(void) {
  * @notapi
  */
 void spi_lld_start(SPIDriver *spip) {
-  uint32_t ds;
+  uint32_t dsize;
 
   /* If in stopped state then enables the SPI and DMA clocks.*/
   if (spip->state == SPI_STOP) {
@@ -402,37 +342,44 @@ void spi_lld_start(SPIDriver *spip) {
     }
 #endif
 
-#if 0
     /* DMA setup.*/
-    dmaStreamSetPeripheral(spip->dmarx, &spip->spi->DR);
-    dmaStreamSetPeripheral(spip->dmatx, &spip->spi->DR);
-#endif
+    dmaStreamSetPeripheral(spip->dmarx, &spip->spi->RXDR);
+    dmaStreamSetPeripheral(spip->dmatx, &spip->spi->TXDR);
  }
 
-#if 0
   /* Configuration-specific DMA setup.*/
-  ds = spip->config->cr2 & SPI_CR2_DS;
-  if (!ds || (ds <= (SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0))) {
-    /* Frame width is 8 bits or smaller.*/
+  dsize = (spip->config->cfg2 & SPI_CFG1_DSIZE_Msk) + 1U;
+  if (dsize <= 8U) {
+    /* Frame width is between 4 and 8 bits.*/
     spip->rxdmamode = (spip->rxdmamode & ~STM32_DMA_CR_SIZE_MASK) |
                       STM32_DMA_CR_PSIZE_BYTE | STM32_DMA_CR_MSIZE_BYTE;
     spip->txdmamode = (spip->txdmamode & ~STM32_DMA_CR_SIZE_MASK) |
                       STM32_DMA_CR_PSIZE_BYTE | STM32_DMA_CR_MSIZE_BYTE;
   }
-  else {
-    /* Frame width is larger than 8 bits.*/
+  else if (dsize <= 16U) {
+    /* Frame width is between 9 and 16 bits.*/
     spip->rxdmamode = (spip->rxdmamode & ~STM32_DMA_CR_SIZE_MASK) |
                       STM32_DMA_CR_PSIZE_HWORD | STM32_DMA_CR_MSIZE_HWORD;
     spip->txdmamode = (spip->txdmamode & ~STM32_DMA_CR_SIZE_MASK) |
                       STM32_DMA_CR_PSIZE_HWORD | STM32_DMA_CR_MSIZE_HWORD;
+  }
+  else {
+    /* Frame width is between 16 and 32 bits.*/
+    spip->rxdmamode = (spip->rxdmamode & ~STM32_DMA_CR_SIZE_MASK) |
+                      STM32_DMA_CR_PSIZE_WORD | STM32_DMA_CR_MSIZE_WORD;
+    spip->txdmamode = (spip->txdmamode & ~STM32_DMA_CR_SIZE_MASK) |
+                      STM32_DMA_CR_PSIZE_WORD | STM32_DMA_CR_MSIZE_WORD;
   }
 
   /* SPI setup and enable.*/
   spip->spi->CR1 &= ~SPI_CR1_SPE;
-  spip->spi->CR1  = spip->config->cr1 | SPI_CR1_MSTR;
-  spip->spi->CR2  = spip->config->cr2 | SPI_CR2_FRXTH | SPI_CR2_SSOE |
-                    SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
-#endif
+  spip->spi->CR1  = 0U;
+  spip->spi->CR2  = 0U;
+  spip->spi->CFG1 = spip->config->cfg1 | SPI_CFG1_RXDMAEN | SPI_CFG1_TXDMAEN;
+  spip->spi->CFG2 = spip->config->cfg2 | SPI_CFG2_MASTER;
+//  spip->spi->CFG1 = spip->config->cfg1 | SPI_CR1_MSTR;
+//  spip->spi->CFG2 = spip->config->cfg2 | SPI_CR2_FRXTH | SPI_CR2_SSOE |
+//                    SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
   spip->spi->CR1 |= SPI_CR1_SPE;
 }
 
@@ -648,19 +595,21 @@ uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame) {
   if ((spip->config->cr2 & SPI_CR2_DS) <= (SPI_CR2_DS_2 |
                                            SPI_CR2_DS_1 |
                                            SPI_CR2_DS_0)) {
-    volatile uint8_t *spidr = (volatile uint8_t *)&spip->spi->DR;
+    volatile uint8_t *spidr = (volatile uint8_t *)&spip->spi->RXDR;
     *spidr = (uint8_t)frame;
     while ((spip->spi->SR & SPI_SR_RXNE) == 0)
       ;
     return (uint16_t)*spidr;
   }
   else {
-    spip->spi->DR = frame;
+    spip->spi->TXDR = frame;
     while ((spip->spi->SR & SPI_SR_RXNE) == 0)
       ;
     return spip->spi->DR;
   }
 #else
+  (void)spip;
+  (void)frame;
   return 0;
 #endif
 }

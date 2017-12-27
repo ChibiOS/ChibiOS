@@ -296,102 +296,6 @@
 #error "Invalid DMA priority assigned to SPI6"
 #endif
 
-/* The following checks are only required when there is a DMA able to
-   reassign streams to different channels.*/
-#if STM32_ADVANCED_DMA
-/* Check on the presence of the DMA streams settings in mcuconf.h.*/
-#if STM32_SPI_USE_SPI1 && (!defined(STM32_SPI_SPI1_RX_DMA_STREAM) ||        \
-                           !defined(STM32_SPI_SPI1_TX_DMA_STREAM))
-#error "SPI1 DMA streams not defined"
-#endif
-
-#if STM32_SPI_USE_SPI2 && (!defined(STM32_SPI_SPI2_RX_DMA_STREAM) ||        \
-                           !defined(STM32_SPI_SPI2_TX_DMA_STREAM))
-#error "SPI2 DMA streams not defined"
-#endif
-
-#if STM32_SPI_USE_SPI3 && (!defined(STM32_SPI_SPI3_RX_DMA_STREAM) ||        \
-                           !defined(STM32_SPI_SPI3_TX_DMA_STREAM))
-#error "SPI3 DMA streams not defined"
-#endif
-
-#if STM32_SPI_USE_SPI4 && (!defined(STM32_SPI_SPI4_RX_DMA_STREAM) ||        \
-                           !defined(STM32_SPI_SPI4_TX_DMA_STREAM))
-#error "SPI4 DMA streams not defined"
-#endif
-
-#if STM32_SPI_USE_SPI5 && (!defined(STM32_SPI_SPI5_RX_DMA_STREAM) ||        \
-                           !defined(STM32_SPI_SPI5_TX_DMA_STREAM))
-#error "SPI5 DMA streams not defined"
-#endif
-
-#if STM32_SPI_USE_SPI6 && (!defined(STM32_SPI_SPI6_RX_DMA_STREAM) ||        \
-                           !defined(STM32_SPI_SPI6_TX_DMA_STREAM))
-#error "SPI6 DMA streams not defined"
-#endif
-
-/* Check on the validity of the assigned DMA channels.*/
-#if STM32_SPI_USE_SPI1 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI1_RX_DMA_STREAM, STM32_SPI1_RX_DMA_MSK)
-#error "invalid DMA stream associated to SPI1 RX"
-#endif
-
-#if STM32_SPI_USE_SPI1 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI1_TX_DMA_STREAM, STM32_SPI1_TX_DMA_MSK)
-#error "invalid DMA stream associated to SPI1 TX"
-#endif
-
-#if STM32_SPI_USE_SPI2 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI2_RX_DMA_STREAM, STM32_SPI2_RX_DMA_MSK)
-#error "invalid DMA stream associated to SPI2 RX"
-#endif
-
-#if STM32_SPI_USE_SPI2 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI2_TX_DMA_STREAM, STM32_SPI2_TX_DMA_MSK)
-#error "invalid DMA stream associated to SPI2 TX"
-#endif
-
-#if STM32_SPI_USE_SPI3 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI3_RX_DMA_STREAM, STM32_SPI3_RX_DMA_MSK)
-#error "invalid DMA stream associated to SPI3 RX"
-#endif
-
-#if STM32_SPI_USE_SPI3 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI3_TX_DMA_STREAM, STM32_SPI3_TX_DMA_MSK)
-#error "invalid DMA stream associated to SPI3 TX"
-#endif
-
-#if STM32_SPI_USE_SPI4 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI4_RX_DMA_STREAM, STM32_SPI4_RX_DMA_MSK)
-#error "invalid DMA stream associated to SPI4 RX"
-#endif
-
-#if STM32_SPI_USE_SPI4 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI4_TX_DMA_STREAM, STM32_SPI4_TX_DMA_MSK)
-#error "invalid DMA stream associated to SPI4 TX"
-#endif
-
-#if STM32_SPI_USE_SPI5 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI5_RX_DMA_STREAM, STM32_SPI5_RX_DMA_MSK)
-#error "invalid DMA stream associated to SPI5 RX"
-#endif
-
-#if STM32_SPI_USE_SPI5 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI5_TX_DMA_STREAM, STM32_SPI5_TX_DMA_MSK)
-#error "invalid DMA stream associated to SPI5 TX"
-#endif
-
-#if STM32_SPI_USE_SPI6 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI6_RX_DMA_STREAM, STM32_SPI6_RX_DMA_MSK)
-#error "invalid DMA stream associated to SPI6 RX"
-#endif
-
-#if STM32_SPI_USE_SPI6 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI6_TX_DMA_STREAM, STM32_SPI6_TX_DMA_MSK)
-#error "invalid DMA stream associated to SPI6 TX"
-#endif
-#endif /* STM32_ADVANCED_DMA */
-
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED
 #endif
@@ -453,13 +357,13 @@ typedef struct {
 #endif
   /* End of the mandatory fields.*/
   /**
-   * @brief SPI CR1 register initialization data.
+   * @brief SPI CFG1 register initialization data.
    */
-  uint16_t                  cr1;
+  uint16_t                  cfg1;
   /**
-   * @brief SPI CR2 register initialization data.
+   * @brief SPI CFG2 register initialization data.
    */
-  uint16_t                  cr2;
+  uint16_t                  cfg2;
 } SPIConfig;
 
 /**

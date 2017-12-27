@@ -48,16 +48,6 @@
 #define STM32_DMA_ISR_MASK          0x3DU
 
 /**
- * @brief   Returns the channel associated to the specified stream.
- *
- * @param[in] id        the unique numeric stream identifier
- * @param[in] c         a stream/channel association word, one channel per
- *                      nibble
- * @return              Returns the channel associated to the stream.
- */
-#define STM32_DMA_GETCHANNEL(id, c) (((c) >> (((id) & 7U) * 4U)) & 15U)
-
-/**
  * @brief   Checks if a DMA priority is within the valid range.
  * @param[in] prio      DMA priority
  *
@@ -66,37 +56,6 @@
  * @retval TRUE         correct DMA priority.
  */
 #define STM32_DMA_IS_VALID_PRIORITY(prio) (((prio) >= 0U) && ((prio) <= 3U))
-
-/**
- * @brief   Returns an unique numeric identifier for a DMA stream.
- *
- * @param[in] dma       the DMA unit number
- * @param[in] stream    the stream number
- * @return              An unique numeric stream identifier.
- */
-#define STM32_DMA_STREAM_ID(dma, stream) ((((dma) - 1U) * 8U) + (stream))
-
-/**
- * @brief   Returns a DMA stream identifier mask.
- *
- *
- * @param[in] dma       the DMA unit number
- * @param[in] stream    the stream number
- * @return              A DMA stream identifier mask.
- */
-#define STM32_DMA_STREAM_ID_MSK(dma, stream)                                \
-  (1U << STM32_DMA_STREAM_ID(dma, stream))
-
-/**
- * @brief   Checks if a DMA stream unique identifier belongs to a mask.
- * @param[in] id        the stream numeric identifier
- * @param[in] mask      the stream numeric identifiers mask
- *
- * @retval              The check result.
- * @retval FALSE        id does not belong to the mask.
- * @retval TRUE         id belongs to the mask.
- */
-#define STM32_DMA_IS_VALID_ID(id, mask) (((1U << (id)) & (mask)))
 
 /**
  * @name    DMA streams identifiers
@@ -135,66 +94,58 @@
  */
 #define STM32_DMA_CR_RESET_VALUE    0x00000000U
 #define STM32_DMA_CR_EN             DMA_SxCR_EN
+#define STM32_DMA_CR_DMEIE          DMA_SxCR_DMEIE
 #define STM32_DMA_CR_TEIE           DMA_SxCR_TEIE
 #define STM32_DMA_CR_HTIE           DMA_SxCR_HTIE
 #define STM32_DMA_CR_TCIE           DMA_SxCR_TCIE
-#define STM32_DMA_CR_DIR_MASK       DMA_SxCR_DIR
+#define STM32_DMA_CR_PFCTRL         DMA_SxCR_PFCTRL
+#define STM32_DMA_CR_DIR_MASK       DMA_SxCR_DIR_Msk
 #define STM32_DMA_CR_DIR_P2M        0
 #define STM32_DMA_CR_DIR_M2P        DMA_SxCR_DIR_0
 #define STM32_DMA_CR_DIR_M2M        DMA_SxCR_DIR_1
 #define STM32_DMA_CR_CIRC           DMA_SxCR_CIRC
 #define STM32_DMA_CR_PINC           DMA_SxCR_PINC
 #define STM32_DMA_CR_MINC           DMA_SxCR_MINC
-#define STM32_DMA_CR_PSIZE_MASK     DMA_SxCR_PSIZE
+#define STM32_DMA_CR_PSIZE_MASK     DMA_SxCR_PSIZE_Msk
 #define STM32_DMA_CR_PSIZE_BYTE     0
 #define STM32_DMA_CR_PSIZE_HWORD    DMA_SxCR_PSIZE_0
 #define STM32_DMA_CR_PSIZE_WORD     DMA_SxCR_PSIZE_1
-#define STM32_DMA_CR_MSIZE_MASK     DMA_SxCR_MSIZE
+#define STM32_DMA_CR_MSIZE_MASK     DMA_SxCR_MSIZE_Msk
 #define STM32_DMA_CR_MSIZE_BYTE     0
 #define STM32_DMA_CR_MSIZE_HWORD    DMA_SxCR_MSIZE_0
 #define STM32_DMA_CR_MSIZE_WORD     DMA_SxCR_MSIZE_1
 #define STM32_DMA_CR_SIZE_MASK      (STM32_DMA_CR_PSIZE_MASK |              \
                                      STM32_DMA_CR_MSIZE_MASK)
-#define STM32_DMA_CR_PL_MASK        DMA_SxCR_PL
-#define STM32_DMA_CR_PL(n)          ((n) << 16U)
-/** @} */
-
-/**
- * @name    CR register constants only found in STM32F2xx/STM32F4xx
- * @{
- */
-#define STM32_DMA_CR_DMEIE          DMA_SxCR_DMEIE
-#define STM32_DMA_CR_PFCTRL         DMA_SxCR_PFCTRL
 #define STM32_DMA_CR_PINCOS         DMA_SxCR_PINCOS
+#define STM32_DMA_CR_PL_MASK        DMA_SxCR_PL_Msk
+#define STM32_DMA_CR_PL(n)          ((n) << 16U)
 #define STM32_DMA_CR_DBM            DMA_SxCR_DBM
 #define STM32_DMA_CR_CT             DMA_SxCR_CT
-#define STM32_DMA_CR_PBURST_MASK    DMA_SxCR_PBURST
+#define STM32_DMA_CR_PBURST_MASK    DMA_SxCR_PBURST_Msk
 #define STM32_DMA_CR_PBURST_SINGLE  0
 #define STM32_DMA_CR_PBURST_INCR4   DMA_SxCR_PBURST_0
 #define STM32_DMA_CR_PBURST_INCR8   DMA_SxCR_PBURST_1
 #define STM32_DMA_CR_PBURST_INCR16  (DMA_SxCR_PBURST_0 | DMA_SxCR_PBURST_1)
-#define STM32_DMA_CR_MBURST_MASK    DMA_SxCR_MBURST
+#define STM32_DMA_CR_MBURST_MASK    DMA_SxCR_MBURST_Msk
 #define STM32_DMA_CR_MBURST_SINGLE  0
 #define STM32_DMA_CR_MBURST_INCR4   DMA_SxCR_MBURST_0
 #define STM32_DMA_CR_MBURST_INCR8   DMA_SxCR_MBURST_1
 #define STM32_DMA_CR_MBURST_INCR16  (DMA_SxCR_MBURST_0 | DMA_SxCR_MBURST_1)
-#define STM32_DMA_CR_CHSEL_MASK     DMA_SxCR_CHSEL
-#define STM32_DMA_CR_CHSEL(n)       ((n) << 25U)
 /** @} */
 
 /**
- * @name    FCR register constants only found in STM32F2xx/STM32F4xx
+ * @name    FCR register constants
  * @{
  */
 #define STM32_DMA_FCR_RESET_VALUE   0x00000021U
-#define STM32_DMA_FCR_FEIE          DMA_SxFCR_FEIE
-#define STM32_DMA_FCR_FS_MASK       DMA_SxFCR_FS
-#define STM32_DMA_FCR_DMDIS         DMA_SxFCR_DMDIS
-#define STM32_DMA_FCR_FTH_MASK      DMA_SxFCR_FTH
+#define STM32_DMA_FCR_FTH_MASK      DMA_SxFCR_FTH_Msk
 #define STM32_DMA_FCR_FTH_1Q        0
 #define STM32_DMA_FCR_FTH_HALF      DMA_SxFCR_FTH_0
 #define STM32_DMA_FCR_FTH_3Q        DMA_SxFCR_FTH_1
 #define STM32_DMA_FCR_FTH_FULL      (DMA_SxFCR_FTH_0 | DMA_SxFCR_FTH_1)
+#define STM32_DMA_FCR_DMDIS         DMA_SxFCR_DMDIS
+#define STM32_DMA_FCR_FEIE          DMA_SxFCR_FEIE
+#define STM32_DMA_FCR_FS_MASK       DMA_SxFCR_FS_Msk
 /** @} */
 
 /**
