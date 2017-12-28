@@ -303,8 +303,15 @@
 #error "Invalid DMA priority assigned to SPI6"
 #endif
 
+#if STM32_SPI_USE_SPI1 | STM32_SPI_USE_SPI2 | STM32_SPI_USE_SPI1 |          \
+    STM32_SPI_USE_SPI4 | STM32_SPI_USE_SPI5
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED
+#endif
+#elif STM32_SPI_USE_SPI6
+#if !defined(STM32_BDMA_REQUIRED)
+#define STM32_BDMA_REQUIRED
+#endif
 #endif
 
 #if SPI_SELECT_MODE == SPI_SELECT_MODE_LLD
