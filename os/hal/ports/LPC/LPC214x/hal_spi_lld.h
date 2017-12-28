@@ -96,24 +96,42 @@ typedef struct {
   /**
    * @brief Operation complete callback or @p NULL.
    */
-  spicallback_t         end_cb;
+  spicallback_t             end_cb;
+#if (SPI_SELECT_MODE == SPI_SELECT_MODE_LINE) || defined(__DOXYGEN__)
+  /**
+   * @brief The chip select line.
+   */
+  ioline_t                  ssline;
+#endif
+#if (SPI_SELECT_MODE == SPI_SELECT_MODE_PORT) || defined(__DOXYGEN__)
+  /**
+   * @brief The chip select port.
+   */
+  ioportid_t                ssport;
+  /**
+   * @brief The chip select port mask.
+   */
+  ioportmask_t              ssmask;
+#endif
+#if (SPI_SELECT_MODE == SPI_SELECT_MODE_PAD) || defined(__DOXYGEN__)
+  /**
+   * @brief The chip select port.
+   */
+  ioportid_t                ssport;
+  /**
+   * @brief The chip select pad number.
+   */
+  uint_fast8_t              sspad;
+#endif
   /* End of the mandatory fields.*/
-  /**
-   * @brief The chip select line port.
-   */
-  ioportid_t            ssport;
-  /**
-   * @brief The chip select line pad number.
-   */
-  uint16_t              sspad;
   /**
    * @brief SSP CR0 initialization data.
    */
-  uint16_t              cr0;
+  uint16_t                  cr0;
   /**
    * @brief SSP CPSR initialization data.
    */
-  uint32_t              cpsr;
+  uint32_t                  cpsr;
 } SPIConfig;
 
 /**

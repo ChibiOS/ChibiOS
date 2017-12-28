@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    DMAv2/stm32_dma.h
+ * @file    DMAv3/stm32_dma.h
  * @brief   Enhanced-DMA helper driver header.
  *
  * @addtogroup STM32_DMA
@@ -28,13 +28,6 @@
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
-
-/**
- * @brief   DMA capability.
- * @details if @p TRUE then the DMA is able of burst transfers, FIFOs,
- *          scatter gather and other advanced features.
- */
-#define STM32_DMA_ADVANCED          TRUE
 
 /**
  * @brief   Total number of DMA streams.

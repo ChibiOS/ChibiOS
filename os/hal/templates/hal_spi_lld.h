@@ -84,7 +84,7 @@ typedef struct {
   /**
    * @brief The chip select line.
    */
-  ioportid_t                ssline;
+  ioline_t                  ssline;
 #endif
 #if (SPI_SELECT_MODE == SPI_SELECT_MODE_PORT) || defined(__DOXYGEN__)
   /**
@@ -94,7 +94,7 @@ typedef struct {
   /**
    * @brief The chip select port mask.
    */
-  uint8fast_t               ssmask;
+  ioportmask_t              ssmask;
 #endif
 #if (SPI_SELECT_MODE == SPI_SELECT_MODE_PAD) || defined(__DOXYGEN__)
   /**
