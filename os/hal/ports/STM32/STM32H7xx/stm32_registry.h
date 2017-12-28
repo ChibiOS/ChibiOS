@@ -162,18 +162,35 @@
 #define STM32_HAS_SPI1                      TRUE
 #define STM32_SPI1_SUPPORTS_I2S             TRUE
 #define STM32_SPI1_I2S_FULLDUPLEX           TRUE
-#define STM32_SPI1_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(2, 0) |\
-                                             STM32_DMA_STREAM_ID_MSK(2, 2))
-#define STM32_SPI1_RX_DMA_CHN               0x00000303
-#define STM32_SPI1_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(2, 3) |\
-                                             STM32_DMA_STREAM_ID_MSK(2, 5))
-#define STM32_SPI1_TX_DMA_CHN               0x00303000
+#define STM32_SPI1_HANDLER                  VectorCC
+#define STM32_SPI1_NUMBER                   35
 
-#define STM32_HAS_SPI2                      FALSE
-#define STM32_HAS_SPI3                      FALSE
-#define STM32_HAS_SPI4                      FALSE
-#define STM32_HAS_SPI5                      FALSE
-#define STM32_HAS_SPI6                      FALSE
+#define STM32_HAS_SPI2                      TRUE
+#define STM32_SPI2_SUPPORTS_I2S             TRUE
+#define STM32_SPI2_I2S_FULLDUPLEX           TRUE
+#define STM32_SPI2_HANDLER                  VectorD0
+#define STM32_SPI2_NUMBER                   36
+
+#define STM32_HAS_SPI3                      TRUE
+#define STM32_SPI3_SUPPORTS_I2S             TRUE
+#define STM32_SPI3_I2S_FULLDUPLEX           TRUE
+#define STM32_SPI3_HANDLER                  Vector10C
+#define STM32_SPI3_NUMBER                   51
+
+#define STM32_HAS_SPI4                      TRUE
+#define STM32_SPI4_SUPPORTS_I2S             FALSE
+#define STM32_SPI4_HANDLER                  Vector190
+#define STM32_SPI4_NUMBER                   84
+
+#define STM32_HAS_SPI5                      TRUE
+#define STM32_SPI5_SUPPORTS_I2S             FALSE
+#define STM32_SPI5_HANDLER                  Vector164
+#define STM32_SPI5_NUMBER                   85
+
+#define STM32_HAS_SPI6                      TRUE
+#define STM32_SPI6_SUPPORTS_I2S             FALSE
+#define STM32_SPI6_HANDLER                  Vector198
+#define STM32_SPI6_NUMBER                   86
 
 /* TIM attributes.*/
 #define STM32_TIM_MAX_CHANNELS              6

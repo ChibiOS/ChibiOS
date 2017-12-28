@@ -94,6 +94,13 @@
 #endif
 
 /**
+ * @brief   Filler pattern used when there is nothing to transmit.
+ */
+#if !defined(STM32_SPI_FILLER_PATTERN) || defined(__DOXYGEN__)
+#define STM32_SPI_FILLER_PATTERN            0xFFFFFFFFU
+#endif
+
+/**
  * @brief   SPI1 interrupt priority level setting.
  */
 #if !defined(STM32_SPI_SPI1_IRQ_PRIORITY) || defined(__DOXYGEN__)

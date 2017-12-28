@@ -68,62 +68,187 @@ SPIDriver SPID6;
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
-static const uint16_t dummytx = 0xFFFFU;
-static uint16_t dummyrx;
+static const uint32_t dummytx = STM32_SPI_FILLER_PATTERN;
+static uint32_t dummyrx;
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
 /**
- * @brief   Shared end-of-rx service routine.
+ * @brief   Shared DMA service routine.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] flags     pre-shifted content of the ISR register
  */
-static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t flags) {
+static void spi_serve_dma_interrupt(SPIDriver *spip, uint32_t flags) {
 
   /* DMA errors handling.*/
 #if defined(STM32_SPI_DMA_ERROR_HOOK)
+  (void)spip;
   if ((flags & (STM32_DMA_ISR_TEIF | STM32_DMA_ISR_DMEIF)) != 0) {
     STM32_SPI_DMA_ERROR_HOOK(spip);
   }
 #else
+  (void)spip;
   (void)flags;
 #endif
-
-  /* Stop everything.*/
-  dmaStreamDisable(spip->dmatx);
-  dmaStreamDisable(spip->dmarx);
-
-  /* Portable SPI ISR code defined in the high level driver, note, it is
-     a macro.*/
-  _spi_isr_code(spip);
 }
 
 /**
- * @brief   Shared end-of-tx service routine.
+ * @brief   Shared SPI service routine.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
- * @param[in] flags     pre-shifted content of the ISR register
  */
-static void spi_lld_serve_tx_interrupt(SPIDriver *spip, uint32_t flags) {
+static void spi_lld_serve_interrupt(SPIDriver *spip) {
+  uint32_t sr;
 
-  /* DMA errors handling.*/
-#if defined(STM32_SPI_DMA_ERROR_HOOK)
-  (void)spip;
-  if ((flags & (STM32_DMA_ISR_TEIF | STM32_DMA_ISR_DMEIF)) != 0) {
-    STM32_SPI_DMA_ERROR_HOOK(spip);
+  sr = spip->spi->SR & spip->spi->IER;
+  spip->spi->IFCR = sr;
+
+  if ((sr & SPI_SR_EOT) != 0U) {
+    /* Stop everything.*/
+    dmaStreamDisable(spip->dmatx);
+    dmaStreamDisable(spip->dmarx);
+
+    /* Portable SPI ISR code defined in the high level driver, note, it is
+       a macro.*/
+    _spi_isr_code(spip);
   }
-#else
-  (void)spip;
-  (void)flags;
-#endif
+  else if ((sr & SPI_SR_OVR) != 0U) {
+    /* TODO: faut notification.*/
+  }
 }
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
+
+#if STM32_SPI_USE_SPI1 || defined(__DOXYGEN__)
+#if !defined(STM32_SPI1_SUPPRESS_ISR)
+#if !defined(STM32_SPI1_HANDLER)
+#error "STM32_SPI1_HANDLER not defined"
+#endif
+/**
+ * @brief   SPI1 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_SPI1_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  spi_lld_serve_interrupt(&SPID1);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif /* !defined(STM32_SPI1_SUPPRESS_ISR) */
+#endif /* STM32_SPI_USE_SPI1 */
+
+#if STM32_SPI_USE_SPI2 || defined(__DOXYGEN__)
+#if !defined(STM32_SPI2_SUPPRESS_ISR)
+#if !defined(STM32_SPI2_HANDLER)
+#error "STM32_SPI2_HANDLER not defined"
+#endif
+/**
+ * @brief   SPI2 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_SPI2_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  spi_lld_serve_interrupt(&SPID2);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif /* !defined(STM32_SPI2_SUPPRESS_ISR) */
+#endif /* STM32_SPI_USE_SPI2 */
+
+#if STM32_SPI_USE_SPI3 || defined(__DOXYGEN__)
+#if !defined(STM32_SPI3_SUPPRESS_ISR)
+#if !defined(STM32_SPI3_HANDLER)
+#error "STM32_SPI3_HANDLER not defined"
+#endif
+/**
+ * @brief   SPI3 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_SPI3_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  spi_lld_serve_interrupt(&SPID3);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif /* !defined(STM32_SPI3_SUPPRESS_ISR) */
+#endif /* STM32_SPI_USE_SPI3 */
+
+#if STM32_SPI_USE_SPI4 || defined(__DOXYGEN__)
+#if !defined(STM32_SPI4_SUPPRESS_ISR)
+#if !defined(STM32_SPI4_HANDLER)
+#error "STM32_SPI4_HANDLER not defined"
+#endif
+/**
+ * @brief   SPI4 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_SPI4_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  spi_lld_serve_interrupt(&SPID4);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif /* !defined(STM32_SPI4_SUPPRESS_ISR) */
+#endif /* STM32_SPI_USE_SPI4 */
+
+#if STM32_SPI_USE_SPI5 || defined(__DOXYGEN__)
+#if !defined(STM32_SPI5_SUPPRESS_ISR)
+#if !defined(STM32_SPI5_HANDLER)
+#error "STM32_SPI5_HANDLER not defined"
+#endif
+/**
+ * @brief   SPI5 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_SPI5_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  spi_lld_serve_interrupt(&SPID5);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif /* !defined(STM32_SPI5_SUPPRESS_ISR) */
+#endif /* STM32_SPI_USE_SPI5 */
+
+#if STM32_SPI_USE_SPI6 || defined(__DOXYGEN__)
+#if !defined(STM32_SPI6_SUPPRESS_ISR)
+#if !defined(STM32_SPI6_HANDLER)
+#error "STM32_SPI6_HANDLER not defined"
+#endif
+/**
+ * @brief   SPI6 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_SPI6_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  spi_lld_serve_interrupt(&SPID6);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif /* !defined(STM32_SPI6_SUPPRESS_ISR) */
+#endif /* STM32_SPI_USE_SPI6 */
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -150,6 +275,9 @@ void spi_lld_init(void) {
                     STM32_DMA_CR_DIR_M2P |
                     STM32_DMA_CR_DMEIE |
                     STM32_DMA_CR_TEIE;
+#if !defined(STM32_SPI1_SUPPRESS_ISR)
+  nvicEnableVector(STM32_SPI1_NUMBER, STM32_SPI_SPI1_IRQ_PRIORITY);
+#endif
 #endif
 
 #if STM32_SPI_USE_SPI2
@@ -166,6 +294,9 @@ void spi_lld_init(void) {
                     STM32_DMA_CR_DIR_M2P |
                     STM32_DMA_CR_DMEIE |
                     STM32_DMA_CR_TEIE;
+#if !defined(STM32_SPI2_SUPPRESS_ISR)
+  nvicEnableVector(STM32_SPI2_NUMBER, STM32_SPI_SPI2_IRQ_PRIORITY);
+#endif
 #endif
 
 #if STM32_SPI_USE_SPI3
@@ -182,6 +313,9 @@ void spi_lld_init(void) {
                     STM32_DMA_CR_DIR_M2P |
                     STM32_DMA_CR_DMEIE |
                     STM32_DMA_CR_TEIE;
+#if !defined(STM32_SPI3_SUPPRESS_ISR)
+  nvicEnableVector(STM32_SPI3_NUMBER, STM32_SPI_SPI3_IRQ_PRIORITY);
+#endif
 #endif
 
 #if STM32_SPI_USE_SPI4
@@ -198,6 +332,9 @@ void spi_lld_init(void) {
                     STM32_DMA_CR_DIR_M2P |
                     STM32_DMA_CR_DMEIE |
                     STM32_DMA_CR_TEIE;
+#if !defined(STM32_SPI4_SUPPRESS_ISR)
+  nvicEnableVector(STM32_SPI4_NUMBER, STM32_SPI_SPI4_IRQ_PRIORITY);
+#endif
 #endif
 
 #if STM32_SPI_USE_SPI5
@@ -214,6 +351,9 @@ void spi_lld_init(void) {
                     STM32_DMA_CR_DIR_M2P |
                     STM32_DMA_CR_DMEIE |
                     STM32_DMA_CR_TEIE;
+#if !defined(STM32_SPI5_SUPPRESS_ISR)
+  nvicEnableVector(STM32_SPI5_NUMBER, STM32_SPI_SPI5_IRQ_PRIORITY);
+#endif
 #endif
 
 #if STM32_SPI_USE_SPI6
@@ -230,6 +370,9 @@ void spi_lld_init(void) {
                     STM32_DMA_CR_DIR_M2P |
                     STM32_DMA_CR_DMEIE |
                     STM32_DMA_CR_TEIE;
+#if !defined(STM32_SPI6_SUPPRESS_ISR)
+  nvicEnableVector(STM32_SPI6_NUMBER, STM32_SPI_SPI6_IRQ_PRIORITY);
+#endif
 #endif
 }
 
@@ -241,7 +384,7 @@ void spi_lld_init(void) {
  * @notapi
  */
 void spi_lld_start(SPIDriver *spip) {
-  uint32_t dsize;
+  uint32_t dsize, cfg1;
 
   /* If in stopped state then enables the SPI and DMA clocks.*/
   if (spip->state == SPI_STOP) {
@@ -250,15 +393,15 @@ void spi_lld_start(SPIDriver *spip) {
       bool b;
       b = dmaStreamAllocate(spip->dmarx,
                             STM32_SPI_SPI1_IRQ_PRIORITY,
-                            (stm32_dmaisr_t)spi_lld_serve_rx_interrupt,
+                            (stm32_dmaisr_t)spi_serve_dma_interrupt,
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
       b = dmaStreamAllocate(spip->dmatx,
                             STM32_SPI_SPI1_IRQ_PRIORITY,
-                            (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
+                            (stm32_dmaisr_t)spi_serve_dma_interrupt,
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
-      rccEnableSPI1(FALSE);
+      rccEnableSPI1(false);
     }
 #endif
 #if STM32_SPI_USE_SPI2
@@ -266,15 +409,15 @@ void spi_lld_start(SPIDriver *spip) {
       bool b;
       b = dmaStreamAllocate(spip->dmarx,
                             STM32_SPI_SPI2_IRQ_PRIORITY,
-                            (stm32_dmaisr_t)spi_lld_serve_rx_interrupt,
+                            (stm32_dmaisr_t)spi_serve_dma_interrupt,
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
       b = dmaStreamAllocate(spip->dmatx,
                             STM32_SPI_SPI2_IRQ_PRIORITY,
-                            (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
+                            (stm32_dmaisr_t)spi_serve_dma_interrupt,
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
-      rccEnableSPI2(FALSE);
+      rccEnableSPI2(false);
     }
 #endif
 #if STM32_SPI_USE_SPI3
@@ -282,15 +425,15 @@ void spi_lld_start(SPIDriver *spip) {
       bool b;
       b = dmaStreamAllocate(spip->dmarx,
                             STM32_SPI_SPI3_IRQ_PRIORITY,
-                            (stm32_dmaisr_t)spi_lld_serve_rx_interrupt,
+                            (stm32_dmaisr_t)spi_serve_dma_interrupt,
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
       b = dmaStreamAllocate(spip->dmatx,
                             STM32_SPI_SPI3_IRQ_PRIORITY,
-                            (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
+                            (stm32_dmaisr_t)spi_serve_dma_interrupt,
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
-      rccEnableSPI3(FALSE);
+      rccEnableSPI3(false);
     }
 #endif
 #if STM32_SPI_USE_SPI4
@@ -298,15 +441,15 @@ void spi_lld_start(SPIDriver *spip) {
       bool b;
       b = dmaStreamAllocate(spip->dmarx,
                             STM32_SPI_SPI4_IRQ_PRIORITY,
-                            (stm32_dmaisr_t)spi_lld_serve_rx_interrupt,
+                            (stm32_dmaisr_t)spi_serve_dma_interrupt,
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
       b = dmaStreamAllocate(spip->dmatx,
                             STM32_SPI_SPI4_IRQ_PRIORITY,
-                            (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
+                            (stm32_dmaisr_t)spi_serve_dma_interrupt,
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
-      rccEnableSPI4(FALSE);
+      rccEnableSPI4(false);
     }
 #endif
 #if STM32_SPI_USE_SPI5
@@ -314,15 +457,15 @@ void spi_lld_start(SPIDriver *spip) {
       bool b;
       b = dmaStreamAllocate(spip->dmarx,
                             STM32_SPI_SPI5_IRQ_PRIORITY,
-                            (stm32_dmaisr_t)spi_lld_serve_rx_interrupt,
+                            (stm32_dmaisr_t)spi_serve_dma_interrupt,
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
       b = dmaStreamAllocate(spip->dmatx,
                             STM32_SPI_SPI5_IRQ_PRIORITY,
-                            (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
+                            (stm32_dmaisr_t)spi_serve_dma_interrupt,
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
-      rccEnableSPI5(FALSE);
+      rccEnableSPI5(false);
     }
 #endif
 #if STM32_SPI_USE_SPI6
@@ -330,56 +473,67 @@ void spi_lld_start(SPIDriver *spip) {
       bool b;
       b = dmaStreamAllocate(spip->dmarx,
                             STM32_SPI_SPI6_IRQ_PRIORITY,
-                            (stm32_dmaisr_t)spi_lld_serve_rx_interrupt,
+                            (stm32_dmaisr_t)spi_serve_dma_interrupt,
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
       b = dmaStreamAllocate(spip->dmatx,
                             STM32_SPI_SPI6_IRQ_PRIORITY,
-                            (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
+                            (stm32_dmaisr_t)spi_serve_dma_interrupt,
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
-      rccEnableSPI6(FALSE);
+      rccEnableSPI6(false);
     }
 #endif
 
     /* DMA setup.*/
     dmaStreamSetPeripheral(spip->dmarx, &spip->spi->RXDR);
     dmaStreamSetPeripheral(spip->dmatx, &spip->spi->TXDR);
+    dmaStreamSetTransactionSize(spip->dmarx, 0U);
+    dmaStreamSetTransactionSize(spip->dmatx, 0U);
  }
 
   /* Configuration-specific DMA setup.*/
   dsize = (spip->config->cfg2 & SPI_CFG1_DSIZE_Msk) + 1U;
+  cfg1  = spip->config->cfg1 | SPI_CFG1_RXDMAEN | SPI_CFG1_TXDMAEN;
   if (dsize <= 8U) {
     /* Frame width is between 4 and 8 bits.*/
     spip->rxdmamode = (spip->rxdmamode & ~STM32_DMA_CR_SIZE_MASK) |
-                      STM32_DMA_CR_PSIZE_BYTE | STM32_DMA_CR_MSIZE_BYTE;
+                      STM32_DMA_CR_PSIZE_BYTE | STM32_DMA_CR_MSIZE_BYTE |
+                      STM32_DMA_CR_PFCTRL;
     spip->txdmamode = (spip->txdmamode & ~STM32_DMA_CR_SIZE_MASK) |
-                      STM32_DMA_CR_PSIZE_BYTE | STM32_DMA_CR_MSIZE_BYTE;
+                      STM32_DMA_CR_PSIZE_BYTE | STM32_DMA_CR_MSIZE_BYTE |
+                      STM32_DMA_CR_PFCTRL;
+    cfg1 |= SPI_CFG1_FTHLV_2;   /* FTHLV = 4.*/
   }
   else if (dsize <= 16U) {
     /* Frame width is between 9 and 16 bits.*/
     spip->rxdmamode = (spip->rxdmamode & ~STM32_DMA_CR_SIZE_MASK) |
-                      STM32_DMA_CR_PSIZE_HWORD | STM32_DMA_CR_MSIZE_HWORD;
+                      STM32_DMA_CR_PSIZE_HWORD | STM32_DMA_CR_MSIZE_HWORD |
+                      STM32_DMA_CR_PFCTRL;
     spip->txdmamode = (spip->txdmamode & ~STM32_DMA_CR_SIZE_MASK) |
-                      STM32_DMA_CR_PSIZE_HWORD | STM32_DMA_CR_MSIZE_HWORD;
+                      STM32_DMA_CR_PSIZE_HWORD | STM32_DMA_CR_MSIZE_HWORD |
+                      STM32_DMA_CR_PFCTRL;
+    cfg1 |= SPI_CFG1_FTHLV_1;   /* FTHLV = 2.*/
   }
   else {
     /* Frame width is between 16 and 32 bits.*/
     spip->rxdmamode = (spip->rxdmamode & ~STM32_DMA_CR_SIZE_MASK) |
-                      STM32_DMA_CR_PSIZE_WORD | STM32_DMA_CR_MSIZE_WORD;
+                      STM32_DMA_CR_PSIZE_WORD | STM32_DMA_CR_MSIZE_WORD |
+                      STM32_DMA_CR_PFCTRL;
     spip->txdmamode = (spip->txdmamode & ~STM32_DMA_CR_SIZE_MASK) |
-                      STM32_DMA_CR_PSIZE_WORD | STM32_DMA_CR_MSIZE_WORD;
+                      STM32_DMA_CR_PSIZE_WORD | STM32_DMA_CR_MSIZE_WORD |
+                      STM32_DMA_CR_PFCTRL;
+    cfg1 |= SPI_CFG1_FTHLV_0;   /* FTHLV = 1.*/
   }
 
   /* SPI setup and enable.*/
   spip->spi->CR1 &= ~SPI_CR1_SPE;
-  spip->spi->CR1  = 0U;
+  spip->spi->CR1  = SPI_CR1_MASRX;
   spip->spi->CR2  = 0U;
-  spip->spi->CFG1 = spip->config->cfg1 | SPI_CFG1_RXDMAEN | SPI_CFG1_TXDMAEN;
+  spip->spi->CFG1 = cfg1;
   spip->spi->CFG2 = spip->config->cfg2 | SPI_CFG2_MASTER;
-//  spip->spi->CFG1 = spip->config->cfg1 | SPI_CR1_MSTR;
-//  spip->spi->CFG2 = spip->config->cfg2 | SPI_CR2_FRXTH | SPI_CR2_SSOE |
-//                    SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
+  spip->spi->IER  = SPI_IER_OVRIE | SPI_IER_EOTIE;
+  spip->spi->IFCR = 0xFFFFFFFFU;
   spip->spi->CR1 |= SPI_CR1_SPE;
 }
 
@@ -397,8 +551,11 @@ void spi_lld_stop(SPIDriver *spip) {
 
     /* SPI disable.*/
     spip->spi->CR1 &= ~SPI_CR1_SPE;
-    spip->spi->CR1  = 0;
-    spip->spi->CR2  = 0;
+    spip->spi->CR1  = 0U;
+    spip->spi->CR2  = 0U;
+    spip->spi->CFG1 = 0U;
+    spip->spi->CFG2 = 0U;
+    spip->spi->IER  = 0U;
     dmaStreamRelease(spip->dmarx);
     dmaStreamRelease(spip->dmatx);
 
@@ -472,15 +629,16 @@ void spi_lld_ignore(SPIDriver *spip, size_t n) {
   osalDbgAssert(n < 65536, "unsupported DMA transfer size");
 
   dmaStreamSetMemory0(spip->dmarx, &dummyrx);
-  dmaStreamSetTransactionSize(spip->dmarx, n);
   dmaStreamSetMode(spip->dmarx, spip->rxdmamode);
 
   dmaStreamSetMemory0(spip->dmatx, &dummytx);
-  dmaStreamSetTransactionSize(spip->dmatx, n);
   dmaStreamSetMode(spip->dmatx, spip->txdmamode);
 
   dmaStreamEnable(spip->dmarx);
   dmaStreamEnable(spip->dmatx);
+
+  spip->spi->CR2 = (uint32_t)n;
+  spip->spi->CR1 |= SPI_CR1_CSTART;
 }
 
 /**
@@ -504,15 +662,16 @@ void spi_lld_exchange(SPIDriver *spip, size_t n,
   osalDbgAssert(n < 65536, "unsupported DMA transfer size");
 
   dmaStreamSetMemory0(spip->dmarx, rxbuf);
-  dmaStreamSetTransactionSize(spip->dmarx, n);
   dmaStreamSetMode(spip->dmarx, spip->rxdmamode | STM32_DMA_CR_MINC);
 
   dmaStreamSetMemory0(spip->dmatx, txbuf);
-  dmaStreamSetTransactionSize(spip->dmatx, n);
   dmaStreamSetMode(spip->dmatx, spip->txdmamode | STM32_DMA_CR_MINC);
 
   dmaStreamEnable(spip->dmarx);
   dmaStreamEnable(spip->dmatx);
+
+  spip->spi->CR2 = (uint32_t)n;
+  spip->spi->CR1 |= SPI_CR1_CSTART;
 }
 
 /**
@@ -533,15 +692,16 @@ void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
   osalDbgAssert(n < 65536, "unsupported DMA transfer size");
 
   dmaStreamSetMemory0(spip->dmarx, &dummyrx);
-  dmaStreamSetTransactionSize(spip->dmarx, n);
   dmaStreamSetMode(spip->dmarx, spip->rxdmamode);
 
   dmaStreamSetMemory0(spip->dmatx, txbuf);
-  dmaStreamSetTransactionSize(spip->dmatx, n);
   dmaStreamSetMode(spip->dmatx, spip->txdmamode | STM32_DMA_CR_MINC);
 
   dmaStreamEnable(spip->dmarx);
   dmaStreamEnable(spip->dmatx);
+
+  spip->spi->CR2 = (uint32_t)n;
+  spip->spi->CR1 |= SPI_CR1_CSTART;
 }
 
 /**
@@ -562,15 +722,16 @@ void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
   osalDbgAssert(n < 65536, "unsupported DMA transfer size");
 
   dmaStreamSetMemory0(spip->dmarx, rxbuf);
-  dmaStreamSetTransactionSize(spip->dmarx, n);
   dmaStreamSetMode(spip->dmarx, spip->rxdmamode | STM32_DMA_CR_MINC);
 
   dmaStreamSetMemory0(spip->dmatx, &dummytx);
-  dmaStreamSetTransactionSize(spip->dmatx, n);
   dmaStreamSetMode(spip->dmatx, spip->txdmamode);
 
   dmaStreamEnable(spip->dmarx);
   dmaStreamEnable(spip->dmatx);
+
+  spip->spi->CR2 = (uint32_t)n;
+  spip->spi->CR1 |= SPI_CR1_CSTART;
 }
 
 /**
