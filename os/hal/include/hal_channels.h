@@ -60,7 +60,7 @@
   /* Channel read method with timeout specification.*/                      \
   size_t (*readt)(void *instance, uint8_t *bp, size_t n,                    \
                   sysinterval_t time);                                      \
-  /* Channel put method with timeout specification.*/                       \
+  /* Channel control method.*/                                              \
   msg_t (*ctl)(void *instance, unsigned int operation, void *arg);
 
 /**
