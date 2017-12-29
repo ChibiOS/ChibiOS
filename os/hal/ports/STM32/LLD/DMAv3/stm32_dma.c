@@ -87,8 +87,8 @@ const stm32_dma_stream_t _stm32_dma_streams[STM32_DMA_STREAMS] = {
  * @brief   DMA ISR redirector type.
  */
 typedef struct {
-  stm32_dmaisr_t        dma_func;       /**< @brief DMA callback function.  */
-  void                  *dma_param;     /**< @brief DMA callback parameter. */
+  stm32_dmaisr_t        func;           /**< @brief DMA callback function.  */
+  void                  *param;         /**< @brief DMA callback parameter. */
 } dma_isr_redir_t;
 
 /**
@@ -121,8 +121,8 @@ OSAL_IRQ_HANDLER(STM32_DMA1_CH0_HANDLER) {
 
   flags = (DMA1->LISR >> 0U) & STM32_DMA_ISR_MASK;
   DMA1->LIFCR = flags << 0U;
-  if (dma_isr_redir[0].dma_func)
-    dma_isr_redir[0].dma_func(dma_isr_redir[0].dma_param, flags);
+  if (dma_isr_redir[0].func)
+    dma_isr_redir[0].func(dma_isr_redir[0].param, flags);
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -139,8 +139,8 @@ OSAL_IRQ_HANDLER(STM32_DMA1_CH1_HANDLER) {
 
   flags = (DMA1->LISR >> 6U) & STM32_DMA_ISR_MASK;
   DMA1->LIFCR = flags << 6U;
-  if (dma_isr_redir[1].dma_func)
-    dma_isr_redir[1].dma_func(dma_isr_redir[1].dma_param, flags);
+  if (dma_isr_redir[1].func)
+    dma_isr_redir[1].func(dma_isr_redir[1].param, flags);
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -157,8 +157,8 @@ OSAL_IRQ_HANDLER(STM32_DMA1_CH2_HANDLER) {
 
   flags = (DMA1->LISR >> 16U) & STM32_DMA_ISR_MASK;
   DMA1->LIFCR = flags << 16U;
-  if (dma_isr_redir[2].dma_func)
-    dma_isr_redir[2].dma_func(dma_isr_redir[2].dma_param, flags);
+  if (dma_isr_redir[2].func)
+    dma_isr_redir[2].func(dma_isr_redir[2].param, flags);
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -175,8 +175,8 @@ OSAL_IRQ_HANDLER(STM32_DMA1_CH3_HANDLER) {
 
   flags = (DMA1->LISR >> 22U) & STM32_DMA_ISR_MASK;
   DMA1->LIFCR = flags << 22U;
-  if (dma_isr_redir[3].dma_func)
-    dma_isr_redir[3].dma_func(dma_isr_redir[3].dma_param, flags);
+  if (dma_isr_redir[3].func)
+    dma_isr_redir[3].func(dma_isr_redir[3].param, flags);
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -193,8 +193,8 @@ OSAL_IRQ_HANDLER(STM32_DMA1_CH4_HANDLER) {
 
   flags = (DMA1->HISR >> 0U) & STM32_DMA_ISR_MASK;
   DMA1->HIFCR = flags << 0U;
-  if (dma_isr_redir[4].dma_func)
-    dma_isr_redir[4].dma_func(dma_isr_redir[4].dma_param, flags);
+  if (dma_isr_redir[4].func)
+    dma_isr_redir[4].func(dma_isr_redir[4].param, flags);
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -211,8 +211,8 @@ OSAL_IRQ_HANDLER(STM32_DMA1_CH5_HANDLER) {
 
   flags = (DMA1->HISR >> 6U) & STM32_DMA_ISR_MASK;
   DMA1->HIFCR = flags << 6U;
-  if (dma_isr_redir[5].dma_func)
-    dma_isr_redir[5].dma_func(dma_isr_redir[5].dma_param, flags);
+  if (dma_isr_redir[5].func)
+    dma_isr_redir[5].func(dma_isr_redir[5].param, flags);
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -229,8 +229,8 @@ OSAL_IRQ_HANDLER(STM32_DMA1_CH6_HANDLER) {
 
   flags = (DMA1->HISR >> 16U) & STM32_DMA_ISR_MASK;
   DMA1->HIFCR = flags << 16U;
-  if (dma_isr_redir[6].dma_func)
-    dma_isr_redir[6].dma_func(dma_isr_redir[6].dma_param, flags);
+  if (dma_isr_redir[6].func)
+    dma_isr_redir[6].func(dma_isr_redir[6].param, flags);
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -247,8 +247,8 @@ OSAL_IRQ_HANDLER(STM32_DMA1_CH7_HANDLER) {
 
   flags = (DMA1->HISR >> 22U) & STM32_DMA_ISR_MASK;
   DMA1->HIFCR = flags << 22U;
-  if (dma_isr_redir[7].dma_func)
-    dma_isr_redir[7].dma_func(dma_isr_redir[7].dma_param, flags);
+  if (dma_isr_redir[7].func)
+    dma_isr_redir[7].func(dma_isr_redir[7].param, flags);
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -265,8 +265,8 @@ OSAL_IRQ_HANDLER(STM32_DMA2_CH0_HANDLER) {
 
   flags = (DMA2->LISR >> 0U) & STM32_DMA_ISR_MASK;
   DMA2->LIFCR = flags << 0U;
-  if (dma_isr_redir[8].dma_func)
-    dma_isr_redir[8].dma_func(dma_isr_redir[8].dma_param, flags);
+  if (dma_isr_redir[8].func)
+    dma_isr_redir[8].func(dma_isr_redir[8].param, flags);
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -283,8 +283,8 @@ OSAL_IRQ_HANDLER(STM32_DMA2_CH1_HANDLER) {
 
   flags = (DMA2->LISR >> 6U) & STM32_DMA_ISR_MASK;
   DMA2->LIFCR = flags << 6U;
-  if (dma_isr_redir[9].dma_func)
-    dma_isr_redir[9].dma_func(dma_isr_redir[9].dma_param, flags);
+  if (dma_isr_redir[9].func)
+    dma_isr_redir[9].func(dma_isr_redir[9].param, flags);
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -301,8 +301,8 @@ OSAL_IRQ_HANDLER(STM32_DMA2_CH2_HANDLER) {
 
   flags = (DMA2->LISR >> 16U) & STM32_DMA_ISR_MASK;
   DMA2->LIFCR = flags << 16U;
-  if (dma_isr_redir[10].dma_func)
-    dma_isr_redir[10].dma_func(dma_isr_redir[10].dma_param, flags);
+  if (dma_isr_redir[10].func)
+    dma_isr_redir[10].func(dma_isr_redir[10].param, flags);
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -319,8 +319,8 @@ OSAL_IRQ_HANDLER(STM32_DMA2_CH3_HANDLER) {
 
   flags = (DMA2->LISR >> 22U) & STM32_DMA_ISR_MASK;
   DMA2->LIFCR = flags << 22U;
-  if (dma_isr_redir[11].dma_func)
-    dma_isr_redir[11].dma_func(dma_isr_redir[11].dma_param, flags);
+  if (dma_isr_redir[11].func)
+    dma_isr_redir[11].func(dma_isr_redir[11].param, flags);
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -337,8 +337,8 @@ OSAL_IRQ_HANDLER(STM32_DMA2_CH4_HANDLER) {
 
   flags = (DMA2->HISR >> 0U) & STM32_DMA_ISR_MASK;
   DMA2->HIFCR = flags << 0U;
-  if (dma_isr_redir[12].dma_func)
-    dma_isr_redir[12].dma_func(dma_isr_redir[12].dma_param, flags);
+  if (dma_isr_redir[12].func)
+    dma_isr_redir[12].func(dma_isr_redir[12].param, flags);
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -355,8 +355,8 @@ OSAL_IRQ_HANDLER(STM32_DMA2_CH5_HANDLER) {
 
   flags = (DMA2->HISR >> 6U) & STM32_DMA_ISR_MASK;
   DMA2->HIFCR = flags << 6U;
-  if (dma_isr_redir[13].dma_func)
-    dma_isr_redir[13].dma_func(dma_isr_redir[13].dma_param, flags);
+  if (dma_isr_redir[13].func)
+    dma_isr_redir[13].func(dma_isr_redir[13].param, flags);
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -373,8 +373,8 @@ OSAL_IRQ_HANDLER(STM32_DMA2_CH6_HANDLER) {
 
   flags = (DMA2->HISR >> 16U) & STM32_DMA_ISR_MASK;
   DMA2->HIFCR = flags << 16U;
-  if (dma_isr_redir[14].dma_func)
-    dma_isr_redir[14].dma_func(dma_isr_redir[14].dma_param, flags);
+  if (dma_isr_redir[14].func)
+    dma_isr_redir[14].func(dma_isr_redir[14].param, flags);
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -391,8 +391,8 @@ OSAL_IRQ_HANDLER(STM32_DMA2_CH7_HANDLER) {
 
   flags = (DMA2->HISR >> 22U) & STM32_DMA_ISR_MASK;
   DMA2->HIFCR = flags << 22U;
-  if (dma_isr_redir[15].dma_func)
-    dma_isr_redir[15].dma_func(dma_isr_redir[15].dma_param, flags);
+  if (dma_isr_redir[15].func)
+    dma_isr_redir[15].func(dma_isr_redir[15].param, flags);
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -412,7 +412,7 @@ void dmaInit(void) {
   dma_streams_mask = 0U;
   for (i = 0U; i < STM32_DMA_STREAMS; i++) {
     _stm32_dma_streams[i].stream->CR = 0U;
-    dma_isr_redir[i].dma_func = NULL;
+    dma_isr_redir[i].func = NULL;
   }
   DMA1->LIFCR = 0xFFFFFFFFU;
   DMA1->HIFCR = 0xFFFFFFFFU;
@@ -456,8 +456,8 @@ bool dmaStreamAllocate(const stm32_dma_stream_t *dmastp,
     return true;
 
   /* Marks the stream as allocated.*/
-  dma_isr_redir[dmastp->selfindex].dma_func  = func;
-  dma_isr_redir[dmastp->selfindex].dma_param = param;
+  dma_isr_redir[dmastp->selfindex].func  = func;
+  dma_isr_redir[dmastp->selfindex].param = param;
   dma_streams_mask |= (1U << dmastp->selfindex);
 
   /* Enabling DMA clocks required by the current streams set.*/
