@@ -956,7 +956,11 @@ void uart_lld_start_send(UARTDriver *uartp, size_t n, const void *txbuf) {
   /* Only enable TC interrupt if there's a callback attached to it or
      if called from uartSendFullTimeout(). Also we need to clear TC flag
      which could be set before.*/
+#if UART_USE_WAIT == TRUE
   if ((uartp->config->txend2_cb != NULL) || (uartp->early == false)) {
+#else
+  if (uartp->config->txend2_cb != NULL) {
+#endif
     uartp->usart->ICR = USART_ICR_TCCF;
     uartp->usart->CR1 |= USART_CR1_TCIE;
   }
