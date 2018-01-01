@@ -171,12 +171,12 @@
                 .text
 
 /*
- * Reset handler.
+ * CRT0 entry point.
  */
                 .align  2
                 .thumb_func
-                .global Reset_Handler
-Reset_Handler:
+                .global _crt0_entry
+_crt0_entry:
                 /* Interrupts are globally masked initially.*/
                 cpsid   i
 

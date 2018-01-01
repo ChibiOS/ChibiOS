@@ -1,8 +1,8 @@
 # List of the ChibiOS generic STM32H7xx startup and CMSIS files.
-STARTUPSRC = $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/crt1.c \
-             $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/vectors.c
+STARTUPSRC = $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/crt1.c
           
-STARTUPASM = $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/crt0_v7m.S
+STARTUPASM = $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/crt0_v7m.S \
+             $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/vectors.S
 
 STARTUPINC = $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC \
              $(CHIBIOS)/os/common/startup/ARMCMx/devices/STM32H7xx \
