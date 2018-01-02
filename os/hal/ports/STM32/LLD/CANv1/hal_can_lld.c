@@ -236,10 +236,7 @@ static void can_lld_tx_handler(CANDriver *canp) {
   }
 
   /* Signaling flags and waking up threads waiting for a transmission slot.*/
-  osalSysLockFromISR();
-  osalThreadDequeueAllI(&canp->txqueue, MSG_OK);
-  osalEventBroadcastFlagsI(&canp->txempty_event, flags);
-  osalSysUnlockFromISR();
+  _can_tx_empty_isr(canp, flags);
 }
 
 /**
@@ -256,17 +253,12 @@ static void can_lld_rx0_handler(CANDriver *canp) {
   if ((rf0r & CAN_RF0R_FMP0) > 0) {
     /* No more receive events until the queue 0 has been emptied.*/
     canp->can->IER &= ~CAN_IER_FMPIE0;
-    osalSysLockFromISR();
-    osalThreadDequeueAllI(&canp->rxqueue, MSG_OK);
-    osalEventBroadcastFlagsI(&canp->rxfull_event, CAN_MAILBOX_TO_MASK(1U));
-    osalSysUnlockFromISR();
+    _can_rx_full_isr(canp, CAN_MAILBOX_TO_MASK(1U));
   }
   if ((rf0r & CAN_RF0R_FOVR0) > 0) {
     /* Overflow events handling.*/
     canp->can->RF0R = CAN_RF0R_FOVR0;
-    osalSysLockFromISR();
-    osalEventBroadcastFlagsI(&canp->error_event, CAN_OVERFLOW_ERROR);
-    osalSysUnlockFromISR();
+    _can_error_isr(canp, CAN_OVERFLOW_ERROR);
   }
 }
 
@@ -284,17 +276,12 @@ static void can_lld_rx1_handler(CANDriver *canp) {
   if ((rf1r & CAN_RF1R_FMP1) > 0) {
     /* No more receive events until the queue 0 has been emptied.*/
     canp->can->IER &= ~CAN_IER_FMPIE1;
-    osalSysLockFromISR();
-    osalThreadDequeueAllI(&canp->rxqueue, MSG_OK);
-    osalEventBroadcastFlagsI(&canp->rxfull_event, CAN_MAILBOX_TO_MASK(2U));
-    osalSysUnlockFromISR();
+    _can_rx_full_isr(canp, CAN_MAILBOX_TO_MASK(2U));
   }
   if ((rf1r & CAN_RF1R_FOVR1) > 0) {
     /* Overflow events handling.*/
     canp->can->RF1R = CAN_RF1R_FOVR1;
-    osalSysLockFromISR();
-    osalEventBroadcastFlagsI(&canp->error_event, CAN_OVERFLOW_ERROR);
-    osalSysUnlockFromISR();
+    _can_error_isr(canp, CAN_OVERFLOW_ERROR);
   }
 }
 
@@ -317,9 +304,7 @@ static void can_lld_sce_handler(CANDriver *canp) {
   if (msr & CAN_MSR_WKUI) {
     canp->state = CAN_READY;
     canp->can->MCR &= ~CAN_MCR_SLEEP;
-    osalSysLockFromISR();
-    osalEventBroadcastFlagsI(&canp->wakeup_event, 0);
-    osalSysUnlockFromISR();
+    _can_wakeup_isr(canp);
   }
 #endif /* CAN_USE_SLEEP_MODE */
   /* Error event.*/
@@ -335,12 +320,9 @@ static void can_lld_sce_handler(CANDriver *canp) {
     flags = 0;
 #endif
 
-    osalSysLockFromISR();
     /* The content of the ESR register is copied unchanged in the upper
        half word of the listener flags mask.*/
-    osalEventBroadcastFlagsI(&canp->error_event,
-                             flags | (eventflags_t)(esr << 16U));
-    osalSysUnlockFromISR();
+    _can_error_isr(canp, flags | (eventflags_t)(esr << 16U));
   }
 }
 
@@ -636,16 +618,42 @@ void can_lld_init(void) {
   /* Driver initialization.*/
   canObjectInit(&CAND1);
   CAND1.can = CAN1;
+#if defined(STM32_CAN1_UNIFIED_NUMBER)
+    nvicEnableVector(STM32_CAN1_UNIFIED_NUMBER, STM32_CAN_CAN1_IRQ_PRIORITY);
+#else
+    nvicEnableVector(STM32_CAN1_TX_NUMBER, STM32_CAN_CAN1_IRQ_PRIORITY);
+    nvicEnableVector(STM32_CAN1_RX0_NUMBER, STM32_CAN_CAN1_IRQ_PRIORITY);
+    nvicEnableVector(STM32_CAN1_RX1_NUMBER, STM32_CAN_CAN1_IRQ_PRIORITY);
+    nvicEnableVector(STM32_CAN1_SCE_NUMBER, STM32_CAN_CAN1_IRQ_PRIORITY);
 #endif
+#endif
+
 #if STM32_CAN_USE_CAN2
   /* Driver initialization.*/
   canObjectInit(&CAND2);
   CAND2.can = CAN2;
+#if defined(STM32_CAN2_UNIFIED_NUMBER)
+    nvicEnableVector(STM32_CAN2_UNIFIED_NUMBER, STM32_CAN_CAN2_IRQ_PRIORITY);
+#else
+    nvicEnableVector(STM32_CAN2_TX_NUMBER, STM32_CAN_CAN2_IRQ_PRIORITY);
+    nvicEnableVector(STM32_CAN2_RX0_NUMBER, STM32_CAN_CAN2_IRQ_PRIORITY);
+    nvicEnableVector(STM32_CAN2_RX1_NUMBER, STM32_CAN_CAN2_IRQ_PRIORITY);
+    nvicEnableVector(STM32_CAN2_SCE_NUMBER, STM32_CAN_CAN2_IRQ_PRIORITY);
 #endif
+#endif
+
 #if STM32_CAN_USE_CAN3
   /* Driver initialization.*/
   canObjectInit(&CAND3);
   CAND3.can = CAN3;
+#if defined(STM32_CAN3_UNIFIED_NUMBER)
+    nvicEnableVector(STM32_CAN3_UNIFIED_NUMBER, STM32_CAN_CAN3_IRQ_PRIORITY);
+#else
+    nvicEnableVector(STM32_CAN3_TX_NUMBER, STM32_CAN_CAN3_IRQ_PRIORITY);
+    nvicEnableVector(STM32_CAN3_RX0_NUMBER, STM32_CAN_CAN3_IRQ_PRIORITY);
+    nvicEnableVector(STM32_CAN3_RX1_NUMBER, STM32_CAN_CAN3_IRQ_PRIORITY);
+    nvicEnableVector(STM32_CAN3_SCE_NUMBER, STM32_CAN_CAN3_IRQ_PRIORITY);
+#endif
 #endif
 
   /* Filters initialization.*/
@@ -674,14 +682,6 @@ void can_lld_start(CANDriver *canp) {
   /* Clock activation.*/
 #if STM32_CAN_USE_CAN1
   if (&CAND1 == canp) {
-#if defined(STM32_CAN1_UNIFIED_NUMBER)
-    nvicEnableVector(STM32_CAN1_UNIFIED_NUMBER, STM32_CAN_CAN1_IRQ_PRIORITY);
-#else
-    nvicEnableVector(STM32_CAN1_TX_NUMBER, STM32_CAN_CAN1_IRQ_PRIORITY);
-    nvicEnableVector(STM32_CAN1_RX0_NUMBER, STM32_CAN_CAN1_IRQ_PRIORITY);
-    nvicEnableVector(STM32_CAN1_RX1_NUMBER, STM32_CAN_CAN1_IRQ_PRIORITY);
-    nvicEnableVector(STM32_CAN1_SCE_NUMBER, STM32_CAN_CAN1_IRQ_PRIORITY);
-#endif
     rccEnableCAN1(FALSE);
   }
 #endif
@@ -691,28 +691,12 @@ void can_lld_start(CANDriver *canp) {
 
     osalDbgAssert(CAND1.state != CAN_STOP, "CAN1 must be started");
 
-#if defined(STM32_CAN2_UNIFIED_NUMBER)
-    nvicEnableVector(STM32_CAN2_UNIFIED_NUMBER, STM32_CAN_CAN2_IRQ_PRIORITY);
-#else
-    nvicEnableVector(STM32_CAN2_TX_NUMBER, STM32_CAN_CAN2_IRQ_PRIORITY);
-    nvicEnableVector(STM32_CAN2_RX0_NUMBER, STM32_CAN_CAN2_IRQ_PRIORITY);
-    nvicEnableVector(STM32_CAN2_RX1_NUMBER, STM32_CAN_CAN2_IRQ_PRIORITY);
-    nvicEnableVector(STM32_CAN2_SCE_NUMBER, STM32_CAN_CAN2_IRQ_PRIORITY);
-#endif
     rccEnableCAN2(FALSE);
   }
 #endif
 
 #if STM32_CAN_USE_CAN3
   if (&CAND3 == canp) {
-#if defined(STM32_CAN3_UNIFIED_NUMBER)
-    nvicEnableVector(STM32_CAN3_UNIFIED_NUMBER, STM32_CAN_CAN3_IRQ_PRIORITY);
-#else
-    nvicEnableVector(STM32_CAN3_TX_NUMBER, STM32_CAN_CAN3_IRQ_PRIORITY);
-    nvicEnableVector(STM32_CAN3_RX0_NUMBER, STM32_CAN_CAN3_IRQ_PRIORITY);
-    nvicEnableVector(STM32_CAN3_RX1_NUMBER, STM32_CAN_CAN3_IRQ_PRIORITY);
-    nvicEnableVector(STM32_CAN3_SCE_NUMBER, STM32_CAN_CAN3_IRQ_PRIORITY);
-#endif
     rccEnableCAN3(FALSE);
   }
 #endif
@@ -758,14 +742,6 @@ void can_lld_stop(CANDriver *canp) {
 
       CAN1->MCR = 0x00010002;                   /* Register reset value.    */
       CAN1->IER = 0x00000000;                   /* All sources disabled.    */
-#if defined(STM32_CAN1_UNIFIED_NUMBER)
-      nvicDisableVector(STM32_CAN1_UNIFIED_NUMBER);
-#else
-      nvicDisableVector(STM32_CAN1_TX_NUMBER);
-      nvicDisableVector(STM32_CAN1_RX0_NUMBER);
-      nvicDisableVector(STM32_CAN1_RX1_NUMBER);
-      nvicDisableVector(STM32_CAN1_SCE_NUMBER);
-#endif
       rccDisableCAN1(FALSE);
     }
 #endif
@@ -774,14 +750,6 @@ void can_lld_stop(CANDriver *canp) {
     if (&CAND2 == canp) {
       CAN2->MCR = 0x00010002;                   /* Register reset value.    */
       CAN2->IER = 0x00000000;                   /* All sources disabled.    */
-#if defined(STM32_CAN2_UNIFIED_NUMBER)
-      nvicDisableVector(STM32_CAN2_UNIFIED_NUMBER);
-#else
-      nvicDisableVector(STM32_CAN2_TX_NUMBER);
-      nvicDisableVector(STM32_CAN2_RX0_NUMBER);
-      nvicDisableVector(STM32_CAN2_RX1_NUMBER);
-      nvicDisableVector(STM32_CAN2_SCE_NUMBER);
-#endif
       rccDisableCAN2(FALSE);
     }
 #endif
@@ -790,14 +758,6 @@ void can_lld_stop(CANDriver *canp) {
     if (&CAND3 == canp) {
       CAN3->MCR = 0x00010002;                   /* Register reset value.    */
       CAN3->IER = 0x00000000;                   /* All sources disabled.    */
-#if defined(STM32_CAN3_UNIFIED_NUMBER)
-      nvicDisableVector(STM32_CAN3_UNIFIED_NUMBER);
-#else
-      nvicDisableVector(STM32_CAN3_TX_NUMBER);
-      nvicDisableVector(STM32_CAN3_RX0_NUMBER);
-      nvicDisableVector(STM32_CAN3_RX1_NUMBER);
-      nvicDisableVector(STM32_CAN3_SCE_NUMBER);
-#endif
       rccDisableCAN3(FALSE);
     }
 #endif

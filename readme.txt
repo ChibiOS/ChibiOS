@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added callbacks capability to the CAN driver.
+- NEW: Added initial STM32H7xx support.
 - NEW: Added GHS compiler support to the Power e200 port.
 - NEW: Added tool for board files generation from command line.
 - NEW: Added STM32L496xx/STM32L4A6xx support.

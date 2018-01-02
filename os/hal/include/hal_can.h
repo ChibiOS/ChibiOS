@@ -60,7 +60,7 @@
 /**
  * @brief   Special mailbox identifier.
  */
-#define CAN_ANY_MAILBOX             0
+#define CAN_ANY_MAILBOX             0U
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -130,6 +130,73 @@ typedef enum {
  */
 #define canReceive(canp, mailbox, crfp, timeout)                            \
   canReceiveTimeout(canp, mailbox, crfp, timeout)
+/** @} */
+
+/**
+ * @name    Low level driver helper macros
+ * @{
+ */
+#if !defined(CAN_ENFORCE_USE_CALLBACKS)
+/**
+ * @brief   TX mailbox empty event.
+ */
+#define _can_tx_empty_isr(canp, flags) {                                    \
+  osalSysLockFromISR();                                                     \
+  osalThreadDequeueAllI(&(canp)->txqueue, MSG_OK);                          \
+  osalEventBroadcastFlagsI(&(canp)->txempty_event, flags);                  \
+  osalSysUnlockFromISR();                                                   \
+}
+
+/**
+ * @brief   RX mailbox empty full event.
+ */
+#define _can_rx_full_isr(canp, flags) {                                     \
+  osalSysLockFromISR();                                                     \
+  osalThreadDequeueAllI(&(canp)->rxqueue, MSG_OK);                          \
+  osalEventBroadcastFlagsI(&(canp)->rxfull_event, flags);                   \
+  osalSysUnlockFromISR();                                                   \
+}
+
+/**
+ * @brief   Error event.
+ */
+#define _can_wakeup_isr(canp) {                                             \
+  osalSysLockFromISR();                                                     \
+  osalEventBroadcastFlagsI(&(canp)->wakeup_event, 0U);                       \
+  osalSysUnlockFromISR();                                                   \
+}
+
+/**
+ * @brief   Error event.
+ */
+#define _can_error_isr(canp, flags) {                                       \
+  osalSysLockFromISR();                                                     \
+  osalEventBroadcastFlagsI(&(canp)->error_event, flags);                    \
+  osalSysUnlockFromISR();                                                   \
+}
+#else /* defined(CAN_ENFORCE_USE_CALLBACKS) */
+#define _can_tx_empty_isr(canp, flags) {                                    \
+  (canp)->txempty_cb(canp, flags);                                          \
+  osalSysLockFromISR();                                                     \
+  osalThreadDequeueAllI(&(canp)->txqueue, MSG_OK);                          \
+  osalSysUnlockFromISR();                                                   \
+}
+
+#define _can_rx_full_isr(canp, flags) {                                     \
+  (canp)->rxfull_cb(canp, flags);                                           \
+  osalSysLockFromISR();                                                     \
+  osalThreadDequeueAllI(&(canp)->rxqueue, MSG_OK);                          \
+  osalSysUnlockFromISR();                                                   \
+}
+
+#define _can_wakeup_isr(canp) {                                             \
+  (canp)->wakeup_cb(canp, 0U);                                              \
+}
+
+#define _can_error_isr(canp, flags) {                                       \
+  (canp)->error_cb(canp, flags);                                            \
+}
+#endif /* defined(CAN_ENFORCE_USE_CALLBACKS) */
 /** @} */
 
 /*===========================================================================*/

@@ -68,9 +68,25 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Type of a structure representing an CAN driver.
+ */
+typedef struct CANDriver CANDriver;
+
+/**
  * @brief   Type of a transmission mailbox index.
  */
 typedef uint32_t canmbx_t;
+
+#if defined(CAN_ENFORCE_USE_CALLBACKS) || defined(__DOXYGEN__)
+/**
+ * @brief   Type of a CAN notification callback.
+ *
+ * @param[in] canp      pointer to the @p CANDriver object triggering the
+ *                      callback
+ * @param[in] flags     flags associated to the mailbox callback
+ */
+typedef void (*can_callback_t)(CANDriver *canp, uint32_t flags);
+#endif
 
 /**
  * @brief   CAN transmission frame.
@@ -131,7 +147,7 @@ typedef struct {
 /**
  * @brief   Structure representing an CAN driver.
  */
-typedef struct {
+struct CANDriver {
   /**
    * @brief   Driver state.
    */
@@ -148,6 +164,7 @@ typedef struct {
    * @brief   Receive threads queue.
    */
   threads_queue_t           rxqueue;
+#if !defined(CAN_ENFORCE_USE_CALLBACKS)
   /**
    * @brief   One or more frames become available.
    * @note    After broadcasting this event it will not be broadcasted again
@@ -165,7 +182,6 @@ typedef struct {
    * @brief   One or more transmission mailbox become available.
    * @note    The flags associated to the listeners will indicate which
    *          transmit mailboxes become empty.
-   *
    */
   event_source_t            txempty_event;
   /**
@@ -184,8 +200,37 @@ typedef struct {
    */
   event_source_t            wakeup_event;
 #endif
+#else /* defined(CAN_ENFORCE_USE_CALLBACKS) */
+  /**
+   * @brief   One or more frames become available.
+   * @note    After calling this function it will not be called again
+   *          until the received frames queue has been completely emptied. It
+   *          is <b>not</b> called for each received frame. It is
+   *          responsibility of the application to empty the queue by
+   *          repeatedly invoking @p chTryReceiveI().
+   *          This behavior minimizes the interrupt served by the system
+   *          because CAN traffic.
+   */
+  can_callback_t            rxfull_cb;
+  /**
+   * @brief   One or more transmission mailbox become available.
+   * @note    The flags associated to the callback will indicate which
+   *          transmit mailboxes become empty.
+   */
+  can_callback_t            txempty_cb;
+  /**
+   * @brief   A CAN bus error happened.
+   */
+  can_callback_t            error_cb;
+#if (CAN_USE_SLEEP_MODE == TRUE) || defined (__DOXYGEN__)
+  /**
+   * @brief   Exiting sleep state.
+   */
+  can_callback_t            wakeup_cb;
+#endif
+#endif
   /* End of the mandatory fields.*/
-} CANDriver;
+};
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
