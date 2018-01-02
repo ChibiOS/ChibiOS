@@ -176,25 +176,33 @@ typedef enum {
 }
 #else /* defined(CAN_ENFORCE_USE_CALLBACKS) */
 #define _can_tx_empty_isr(canp, flags) {                                    \
-  (canp)->txempty_cb(canp, flags);                                          \
+  if ((canp)->txempty_cb != NULL) {                                         \
+    (canp)->txempty_cb(canp, flags);                                        \
+  }                                                                         \
   osalSysLockFromISR();                                                     \
   osalThreadDequeueAllI(&(canp)->txqueue, MSG_OK);                          \
   osalSysUnlockFromISR();                                                   \
 }
 
 #define _can_rx_full_isr(canp, flags) {                                     \
-  (canp)->rxfull_cb(canp, flags);                                           \
+  if ((canp)->rxfull_cb != NULL) {                                          \
+    (canp)->rxfull_cb(canp, flags);                                         \
+  }                                                                         \
   osalSysLockFromISR();                                                     \
   osalThreadDequeueAllI(&(canp)->rxqueue, MSG_OK);                          \
   osalSysUnlockFromISR();                                                   \
 }
 
 #define _can_wakeup_isr(canp) {                                             \
-  (canp)->wakeup_cb(canp, 0U);                                              \
+  if ((canp)->wakeup_cb != NULL) {                                          \
+    (canp)->wakeup_cb(canp, 0U);                                            \
+  }                                                                         \
 }
 
 #define _can_error_isr(canp, flags) {                                       \
-  (canp)->error_cb(canp, flags);                                            \
+  if ((canp)->error_cb != NULL) {                                           \
+    (canp)->error_cb(canp, flags);                                          \
+  }                                                                         \
 }
 #endif /* defined(CAN_ENFORCE_USE_CALLBACKS) */
 /** @} */
