@@ -92,6 +92,9 @@ static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t flags) {
   (void)flags;
 #endif
 
+  /* Stopping SPI.*/
+  spip->spi->CR1 |= SPI_CR1_CSUSP;
+
   /* Stop everything.*/
   dmaStreamDisable(spip->dmatx);
   dmaStreamDisable(spip->dmarx);
