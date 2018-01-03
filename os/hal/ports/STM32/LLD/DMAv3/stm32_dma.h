@@ -25,6 +25,8 @@
 #ifndef STM32_DMA_H
 #define STM32_DMA_H
 
+#include "stm32_dmamux.h"
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -49,6 +51,16 @@
  * @retval TRUE         correct DMA priority.
  */
 #define STM32_DMA_IS_VALID_PRIORITY(prio) (((prio) >= 0U) && ((prio) <= 3U))
+
+/**
+ * @brief   Checks if a DMA channel is within the valid range.
+ * @param[in] ch        DMA channel
+ *
+ * @retval              The check result.
+ * @retval FALSE        invalid DMA channel.
+ * @retval TRUE         correct DMA channel.
+ */
+#define STM32_DMA_IS_VALID_CHANNEL(ch) (((ch) >= 0U) && ((ch) <= 15U))
 
 /**
  * @name    DMA streams identifiers
@@ -82,7 +94,7 @@
 /** @} */
 
 /**
- * @name    CR register constants common to all DMA types
+ * @name    CR register constants
  * @{
  */
 #define STM32_DMA_CR_RESET_VALUE    0x00000000U
@@ -307,12 +319,13 @@
  * @brief   STM32 DMA stream descriptor structure.
  */
 typedef struct {
-  DMA_Stream_TypeDef    *stream;        /**< @brief Associated DMA stream.  */
-  volatile uint32_t     *ifcr;          /**< @brief Associated IFCR reg.    */
-  uint8_t               ishift;         /**< @brief Bits offset in xIFCR
+  DMA_Stream_TypeDef        *stream;    /**< @brief Associated DMA stream.  */
+  volatile uint32_t         *ifcr;      /**< @brief Associated IFCR reg.    */
+  uint8_t                   ishift;     /**< @brief Bits offset in xIFCR
                                              register.                      */
-  uint8_t               selfindex;      /**< @brief Index to self in array. */
-  uint8_t               vector;         /**< @brief Associated IRQ vector.  */
+  DMAMUX_Channel_TypeDef    *mux;       /**< @brief Associated DMA stream.  */
+  uint8_t                   selfindex;  /**< @brief Index to self in array. */
+  uint8_t                   vector;     /**< @brief Associated IRQ vector.  */
 } stm32_dma_stream_t;
 
 /**
@@ -624,6 +637,7 @@ extern "C" {
                          uint32_t priority,
                          stm32_dmaisr_t func,
                          void *param);
+  void dmaSetRequestSource(const stm32_dma_stream_t *dmastp, uint32_t per);
   void dmaStreamRelease(const stm32_dma_stream_t *dmastp);
 #ifdef __cplusplus
 }

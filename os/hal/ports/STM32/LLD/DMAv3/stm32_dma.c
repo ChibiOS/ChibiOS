@@ -61,22 +61,22 @@
  *          instead: @p STM32_DMA1_STREAM0, @p STM32_DMA1_STREAM1 etc.
  */
 const stm32_dma_stream_t _stm32_dma_streams[STM32_DMA_STREAMS] = {
-  {DMA1_Stream0, &DMA1->LIFCR, 0, 0, STM32_DMA1_CH0_NUMBER},
-  {DMA1_Stream1, &DMA1->LIFCR, 6, 1, STM32_DMA1_CH1_NUMBER},
-  {DMA1_Stream2, &DMA1->LIFCR, 16, 2, STM32_DMA1_CH2_NUMBER},
-  {DMA1_Stream3, &DMA1->LIFCR, 22, 3, STM32_DMA1_CH3_NUMBER},
-  {DMA1_Stream4, &DMA1->HIFCR, 0, 4, STM32_DMA1_CH4_NUMBER},
-  {DMA1_Stream5, &DMA1->HIFCR, 6, 5, STM32_DMA1_CH5_NUMBER},
-  {DMA1_Stream6, &DMA1->HIFCR, 16, 6, STM32_DMA1_CH6_NUMBER},
-  {DMA1_Stream7, &DMA1->HIFCR, 22, 7, STM32_DMA1_CH7_NUMBER},
-  {DMA2_Stream0, &DMA2->LIFCR, 0, 8, STM32_DMA2_CH0_NUMBER},
-  {DMA2_Stream1, &DMA2->LIFCR, 6, 9, STM32_DMA2_CH1_NUMBER},
-  {DMA2_Stream2, &DMA2->LIFCR, 16, 10, STM32_DMA2_CH2_NUMBER},
-  {DMA2_Stream3, &DMA2->LIFCR, 22, 11, STM32_DMA2_CH3_NUMBER},
-  {DMA2_Stream4, &DMA2->HIFCR, 0, 12, STM32_DMA2_CH4_NUMBER},
-  {DMA2_Stream5, &DMA2->HIFCR, 6, 13, STM32_DMA2_CH5_NUMBER},
-  {DMA2_Stream6, &DMA2->HIFCR, 16, 14, STM32_DMA2_CH6_NUMBER},
-  {DMA2_Stream7, &DMA2->HIFCR, 22, 15, STM32_DMA2_CH7_NUMBER},
+  {DMA1_Stream0, &DMA1->LIFCR, 0, DMAMUX1_Channel0, 0, STM32_DMA1_CH0_NUMBER},
+  {DMA1_Stream1, &DMA1->LIFCR, 6, DMAMUX1_Channel1, 1, STM32_DMA1_CH1_NUMBER},
+  {DMA1_Stream2, &DMA1->LIFCR, 16, DMAMUX1_Channel2, 2, STM32_DMA1_CH2_NUMBER},
+  {DMA1_Stream3, &DMA1->LIFCR, 22, DMAMUX1_Channel3, 3, STM32_DMA1_CH3_NUMBER},
+  {DMA1_Stream4, &DMA1->HIFCR, 0, DMAMUX1_Channel4, 4, STM32_DMA1_CH4_NUMBER},
+  {DMA1_Stream5, &DMA1->HIFCR, 6, DMAMUX1_Channel5, 5, STM32_DMA1_CH5_NUMBER},
+  {DMA1_Stream6, &DMA1->HIFCR, 16, DMAMUX1_Channel6, 6, STM32_DMA1_CH6_NUMBER},
+  {DMA1_Stream7, &DMA1->HIFCR, 22, DMAMUX1_Channel7, 7, STM32_DMA1_CH7_NUMBER},
+  {DMA2_Stream0, &DMA2->LIFCR, 0, DMAMUX1_Channel8, 8, STM32_DMA2_CH0_NUMBER},
+  {DMA2_Stream1, &DMA2->LIFCR, 6, DMAMUX1_Channel9, 9, STM32_DMA2_CH1_NUMBER},
+  {DMA2_Stream2, &DMA2->LIFCR, 16, DMAMUX1_Channel10, 10, STM32_DMA2_CH2_NUMBER},
+  {DMA2_Stream3, &DMA2->LIFCR, 22, DMAMUX1_Channel11, 11, STM32_DMA2_CH3_NUMBER},
+  {DMA2_Stream4, &DMA2->HIFCR, 0, DMAMUX1_Channel12, 12, STM32_DMA2_CH4_NUMBER},
+  {DMA2_Stream5, &DMA2->HIFCR, 6, DMAMUX1_Channel13, 13, STM32_DMA2_CH5_NUMBER},
+  {DMA2_Stream6, &DMA2->HIFCR, 16, DMAMUX1_Channel14, 14, STM32_DMA2_CH6_NUMBER},
+  {DMA2_Stream7, &DMA2->HIFCR, 22, DMAMUX1_Channel15, 15, STM32_DMA2_CH7_NUMBER},
 };
 
 /*===========================================================================*/
@@ -479,6 +479,23 @@ bool dmaStreamAllocate(const stm32_dma_stream_t *dmastp,
   }
 
   return false;
+}
+
+
+/**
+ * @brief   Associates a peripheral request to a DMA stream.
+ * @note    This function can be invoked in both ISR or thread context.
+ *
+ * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
+ * @param[in] per       peripheral identifier
+ *
+ * @special
+ */
+void dmaSetRequestSource(const stm32_dma_stream_t *dmastp, uint32_t per) {
+
+  osalDbgCheck(per < 256U);
+
+  dmastp->mux->CCR = per;
 }
 
 /**
