@@ -31,6 +31,35 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @name    Register helpers not found in ST headers
+ * @{
+ */
+#define SPI_CFG1_MBR_VALUE(n)           ((n) << SPI_CFG1_MBR_Pos)
+#define SPI_CFG1_MBR_DIV2               SPI_CFG1_MBR_VALUE(0)
+#define SPI_CFG1_MBR_DIV4               SPI_CFG1_MBR_VALUE(1)
+#define SPI_CFG1_MBR_DIV8               SPI_CFG1_MBR_VALUE(2)
+#define SPI_CFG1_MBR_DIV16              SPI_CFG1_MBR_VALUE(3)
+#define SPI_CFG1_MBR_DIV32              SPI_CFG1_MBR_VALUE(4)
+#define SPI_CFG1_MBR_DIV64              SPI_CFG1_MBR_VALUE(5)
+#define SPI_CFG1_MBR_DIV128             SPI_CFG1_MBR_VALUE(6)
+#define SPI_CFG1_MBR_DIV256             SPI_CFG1_MBR_VALUE(7)
+#define SPI_CFG1_CRCSIZE_VALUE(n)       ((n) << SPI_CFG1_CRCSIZE_Pos)
+#define SPI_CFG1_UDRDET_VALUE(n)        ((n) << SPI_CFG1_UDRDET_Pos)
+#define SPI_CFG1_UDRCFG_VALUE(n)        ((n) << SPI_CFG1_UDRCFG_Pos)
+#define SPI_CFG1_FTHLV_VALUE(n)         ((n) << SPI_CFG1_FTHLV_Pos)
+#define SPI_CFG1_DSIZE_VALUE(n)         ((n) << SPI_CFG1_DSIZE_Pos)
+
+#define SPI_CFG2_SP_VALUE(n)            ((n) << SPI_CFG2_SP_Pos)
+#define SPI_CFG2_COMM_VALUE(n)          ((n) << SPI_CFG2_COMM_Pos)
+#define SPI_CFG2_COMM_FULL_DUPLEX       SPI_CFG2_COMM_VALUE(0)
+#define SPI_CFG2_COMM_TRANSMITTER       SPI_CFG2_COMM_VALUE(1)
+#define SPI_CFG2_COMM_RECEIVER          SPI_CFG2_COMM_VALUE(2)
+#define SPI_CFG2_COMM_HALF_DUPLEX       SPI_CFG2_COMM_VALUE(3)
+#define SPI_CFG2_MIDI_VALUE(n)          ((n) << SPI_CFG2_MIDI_Pos)
+#define SPI_CFG2_MSSI_VALUE(n)          ((n) << SPI_CFG2_MSSI_Pos)
+/** @} */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -517,11 +546,11 @@ typedef struct {
   /**
    * @brief SPI CFG1 register initialization data.
    */
-  uint16_t                  cfg1;
+  uint32_t                  cfg1;
   /**
    * @brief SPI CFG2 register initialization data.
    */
-  uint16_t                  cfg2;
+  uint32_t                  cfg2;
 } SPIConfig;
 
 /**
