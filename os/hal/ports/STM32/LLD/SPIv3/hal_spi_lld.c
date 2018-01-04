@@ -525,6 +525,7 @@ void spi_lld_start(SPIDriver *spip) {
   /* Configuration-specific DMA setup.*/
   dsize = (spip->config->cfg2 & SPI_CFG1_DSIZE_Msk) + 1U;
   cfg1  = spip->config->cfg1 | SPI_CFG1_RXDMAEN | SPI_CFG1_TXDMAEN;
+  cfg1 &= ~SPI_CFG1_FTHLV_Msk;
   if (dsize <= 8U) {
     /* Frame width is between 4 and 8 bits.*/
     spip->rxdmamode = (spip->rxdmamode & ~STM32_DMA_CR_SIZE_MASK) |
@@ -561,7 +562,7 @@ void spi_lld_start(SPIDriver *spip) {
   spip->spi->CR1  = SPI_CR1_MASRX;
   spip->spi->CR2  = 0U;
   spip->spi->CFG1 = cfg1;
-  spip->spi->CFG2 = spip->config->cfg2 | SPI_CFG2_MASTER;
+  spip->spi->CFG2 = (spip->config->cfg2 | SPI_CFG2_MASTER) & ~SPI_CFG2_COMM_Msk;
   spip->spi->IER  = SPI_IER_OVRIE;
   spip->spi->IFCR = 0xFFFFFFFFU;
   spip->spi->CR1 |= SPI_CR1_SPE;
