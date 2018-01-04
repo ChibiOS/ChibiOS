@@ -423,7 +423,7 @@ void spi_lld_start(SPIDriver *spip) {
       osalDbgAssert(!b, "stream already allocated");
       rccEnableSPI1(false);
       dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI1_RX);
-      dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI1_TX);
+      dmaSetRequestSource(spip->dmatx, STM32_DMAMUX1_SPI1_TX);
     }
 #endif
 #if STM32_SPI_USE_SPI2
@@ -441,7 +441,7 @@ void spi_lld_start(SPIDriver *spip) {
       osalDbgAssert(!b, "stream already allocated");
       rccEnableSPI2(false);
       dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI2_RX);
-      dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI2_TX);
+      dmaSetRequestSource(spip->dmatx, STM32_DMAMUX1_SPI2_TX);
     }
 #endif
 #if STM32_SPI_USE_SPI3
@@ -459,7 +459,7 @@ void spi_lld_start(SPIDriver *spip) {
       osalDbgAssert(!b, "stream already allocated");
       rccEnableSPI3(false);
       dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI3_RX);
-      dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI3_TX);
+      dmaSetRequestSource(spip->dmatx, STM32_DMAMUX1_SPI3_TX);
     }
 #endif
 #if STM32_SPI_USE_SPI4
@@ -477,7 +477,7 @@ void spi_lld_start(SPIDriver *spip) {
       osalDbgAssert(!b, "stream already allocated");
       rccEnableSPI4(false);
       dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI4_RX);
-      dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI4_TX);
+      dmaSetRequestSource(spip->dmatx, STM32_DMAMUX1_SPI4_TX);
     }
 #endif
 #if STM32_SPI_USE_SPI5
@@ -495,7 +495,7 @@ void spi_lld_start(SPIDriver *spip) {
       osalDbgAssert(!b, "stream already allocated");
       rccEnableSPI5(false);
       dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI5_RX);
-      dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI5_TX);
+      dmaSetRequestSource(spip->dmatx, STM32_DMAMUX1_SPI5_TX);
     }
 #endif
 #if STM32_SPI_USE_SPI6
@@ -513,7 +513,7 @@ void spi_lld_start(SPIDriver *spip) {
       osalDbgAssert(!b, "stream already allocated");
       rccEnableSPI6(false);
       dmaSetRequestSource(spip->dmarx, STM32_DMAMUX2_SPI6_RX);
-      dmaSetRequestSource(spip->dmarx, STM32_DMAMUX2_SPI6_TX);
+      dmaSetRequestSource(spip->dmatx, STM32_DMAMUX2_SPI6_TX);
     }
 #endif
 
@@ -529,31 +529,25 @@ void spi_lld_start(SPIDriver *spip) {
   if (dsize <= 8U) {
     /* Frame width is between 4 and 8 bits.*/
     spip->rxdmamode = (spip->rxdmamode & ~STM32_DMA_CR_SIZE_MASK) |
-                      STM32_DMA_CR_PSIZE_BYTE | STM32_DMA_CR_MSIZE_BYTE |
-                      STM32_DMA_CR_PFCTRL;
+                      STM32_DMA_CR_PSIZE_BYTE | STM32_DMA_CR_MSIZE_BYTE;
     spip->txdmamode = (spip->txdmamode & ~STM32_DMA_CR_SIZE_MASK) |
-                      STM32_DMA_CR_PSIZE_BYTE | STM32_DMA_CR_MSIZE_BYTE |
-                      STM32_DMA_CR_PFCTRL;
+                      STM32_DMA_CR_PSIZE_BYTE | STM32_DMA_CR_MSIZE_BYTE;
     cfg1 |= SPI_CFG1_FTHLV_2;   /* FTHLV = 4.*/
   }
   else if (dsize <= 16U) {
     /* Frame width is between 9 and 16 bits.*/
     spip->rxdmamode = (spip->rxdmamode & ~STM32_DMA_CR_SIZE_MASK) |
-                      STM32_DMA_CR_PSIZE_HWORD | STM32_DMA_CR_MSIZE_HWORD |
-                      STM32_DMA_CR_PFCTRL;
+                      STM32_DMA_CR_PSIZE_HWORD | STM32_DMA_CR_MSIZE_HWORD;
     spip->txdmamode = (spip->txdmamode & ~STM32_DMA_CR_SIZE_MASK) |
-                      STM32_DMA_CR_PSIZE_HWORD | STM32_DMA_CR_MSIZE_HWORD |
-                      STM32_DMA_CR_PFCTRL;
+                      STM32_DMA_CR_PSIZE_HWORD | STM32_DMA_CR_MSIZE_HWORD;
     cfg1 |= SPI_CFG1_FTHLV_1;   /* FTHLV = 2.*/
   }
   else {
     /* Frame width is between 16 and 32 bits.*/
     spip->rxdmamode = (spip->rxdmamode & ~STM32_DMA_CR_SIZE_MASK) |
-                      STM32_DMA_CR_PSIZE_WORD | STM32_DMA_CR_MSIZE_WORD |
-                      STM32_DMA_CR_PFCTRL;
+                      STM32_DMA_CR_PSIZE_WORD | STM32_DMA_CR_MSIZE_WORD;
     spip->txdmamode = (spip->txdmamode & ~STM32_DMA_CR_SIZE_MASK) |
-                      STM32_DMA_CR_PSIZE_WORD | STM32_DMA_CR_MSIZE_WORD |
-                      STM32_DMA_CR_PFCTRL;
+                      STM32_DMA_CR_PSIZE_WORD | STM32_DMA_CR_MSIZE_WORD;
     cfg1 |= SPI_CFG1_FTHLV_0;   /* FTHLV = 1.*/
   }
 

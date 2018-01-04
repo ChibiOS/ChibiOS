@@ -2509,7 +2509,7 @@
 #define STM32_SPI1CLK               0 /* Unknown, would require a board value */
 #define STM32_SPI2CLK               0 /* Unknown, would require a board value */
 #define STM32_SPI3CLK               0 /* Unknown, would require a board value */
-#elif STM32_SPI123SEL == STM32_SPI123SEL_PLL2_P_CK
+#elif STM32_SPI123SEL == STM32_SPI123SEL_PER_CK
 #define STM32_SPI1CLK               STM32_PER_CK
 #define STM32_SPI2CLK               STM32_PER_CK
 #define STM32_SPI3CLK               STM32_PER_CK
