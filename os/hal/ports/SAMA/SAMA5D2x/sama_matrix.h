@@ -94,48 +94,93 @@
 /** @} */
 
 /**
+ * @name    REGION MATRIX MASK macros
+ * @{
+ */
+/**
+ * @brief   Region 0.
+ */
+#define REGION_0_MSK             (0x1u << 0)
+
+/**
+ * @brief   Region 1.
+ */
+#define REGION_1_MSK             (0x1u << 1)
+
+/**
+ * @brief   Region 2.
+ */
+#define REGION_2_MSK             (0x1u << 2)
+
+/**
+ * @brief   Region 3.
+ */
+#define REGION_3_MSK             (0x1u << 3)
+
+/**
+ * @brief   Region 4.
+ */
+#define REGION_4_MSK             (0x1u << 4)
+
+/**
+ * @brief   Region 5.
+ */
+#define REGION_5_MSK             (0x1u << 5)
+
+/**
+ * @brief   Region 6.
+ */
+#define REGION_6_MSK             (0x1u << 6)
+
+/**
+ * @brief   Region 7.
+ */
+#define REGION_7_MSK             (0x1u << 7)
+/** @} */
+
+/**
  * @name    REGION MATRIX macros
  * @{
  */
 /**
  * @brief   Region 0.
  */
-#define REGION_0                 (0x1u << 0)
+#define REGION_0                 0x0u
 
 /**
  * @brief   Region 1.
  */
-#define REGION_1                 (0x1u << 1)
+#define REGION_1                 0x1u
 
 /**
  * @brief   Region 2.
  */
-#define REGION_2                 (0x1u << 2)
+#define REGION_2                 0x2u
 
 /**
  * @brief   Region 3.
  */
-#define REGION_3                 (0x1u << 3)
+#define REGION_3                 0x3u
 
 /**
  * @brief   Region 4.
  */
-#define REGION_4                 (0x1u << 4)
+#define REGION_4                 0x4u
 
 /**
  * @brief   Region 5.
  */
-#define REGION_5                 (0x1u << 5)
+#define REGION_5                 0x5u
 
 /**
  * @brief   Region 6.
  */
-#define REGION_6                 (0x1u << 6)
+#define REGION_6                 0x6u
 
 /**
  * @brief   Region 7.
  */
-#define REGION_7                 (0x1u << 7)
+#define REGION_7                 0x7u
 /** @} */
 
 /**
@@ -256,7 +301,7 @@
  *
  * @api
  */
-#define mtxRegionRdnsech(region, rdnsech)                   ((rdnsech << 8) << region)
+#define mtxRegionRdnsech(region, rdnsech)                   (rdnsech << region)
 
 /**
  * @brief   Configure WRNSECH per Region.
@@ -266,7 +311,7 @@
  *
  * @api
  */
-#define mtxRegionWrnsech(region, wrnsech)                   ((wrnsech << 16) << region)
+#define mtxRegionWrnsech(region, wrnsech)                   (wrnsech << region)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
