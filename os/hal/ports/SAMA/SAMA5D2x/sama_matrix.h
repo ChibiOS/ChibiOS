@@ -256,7 +256,7 @@
  *
  * @api
  */
-#define mtxRegionRdnsech(region, rdnsech)                   (rdnsech << region)
+#define mtxRegionRdnsech(region, rdnsech)                   ((rdnsech << 8) << region)
 
 /**
  * @brief   Configure WRNSECH per Region.
@@ -266,7 +266,7 @@
  *
  * @api
  */
-#define mtxRegionWrnsech(region, wrnsech)                   (wrnsech << region)
+#define mtxRegionWrnsech(region, wrnsech)                   ((wrnsech << 16) << region)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
