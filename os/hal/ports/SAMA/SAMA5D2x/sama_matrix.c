@@ -208,7 +208,7 @@ void mtxRemapRom(void) {
   /* Invalidate I-Cache*/
   L1C_InvalidateICacheAll();
 
-  /* Ivalidate Region */
+  /* Invalidate Region */
   cacheInvalidateRegion((void*)0, IRAM_SIZE);
 }
 
@@ -223,9 +223,9 @@ void mtxRemapRam(void) {
   /* Invalidate I-Cache*/
   L1C_InvalidateICacheAll();
 
-  /* Ivalidate Region */
+  /* Clean I-Region */
   cacheCleanRegion((void*)IRAM_ADDR, IRAM_SIZE);
-  /* Ivalidate Region */
+  /* Invalidate Region */
   cacheInvalidateRegion((void*)0, IRAM_SIZE);
 }
 
