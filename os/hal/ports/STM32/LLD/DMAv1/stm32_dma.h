@@ -259,6 +259,34 @@ typedef struct {
 /*===========================================================================*/
 
 /**
+ * @brief   Invalidates the data cache lines overlapping a DMA buffer.
+ * @note    It does nothing in this driver, it is supplied for compatibility.
+ *
+ * @param[in] saddr     start address of the DMA buffer
+ * @param[in] n         size of the DMA buffer in bytes
+ *
+ * @api
+ */
+#define dmaBufferInvalidate(addr, size) {                                   \
+  (void)(addr);                                                             \
+  (void)(size);                                                             \
+}
+
+/**
+ * @brief   Flushes the data cache lines overlapping a DMA buffer.
+ * @note    It does nothing in this driver, it is supplied for compatibility.
+ *
+ * @param[in] saddr     start address of the DMA buffer
+ * @param[in] n         size of the DMA buffer in bytes
+ *
+ * @api
+ */
+#define dmaBufferFlush(addr, size) {                                        \
+  (void)(addr);                                                             \
+  (void)(size);                                                             \
+}
+
+/**
  * @name    Macro Functions
  * @{
  */
