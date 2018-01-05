@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    SPIv2/hal_spi_lld.h
+ * @file    SPIv3/hal_spi_lld.h
  * @brief   STM32 SPI subsystem low level driver header.
  *
  * @addtogroup SPI

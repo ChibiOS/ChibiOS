@@ -138,6 +138,7 @@
 #define STM32_DMA_CR_TEIE           DMA_SxCR_TEIE
 #define STM32_DMA_CR_HTIE           DMA_SxCR_HTIE
 #define STM32_DMA_CR_TCIE           DMA_SxCR_TCIE
+#define STM32_DMA_CR_PFCTRL         DMA_SxCR_PFCTRL
 #define STM32_DMA_CR_DIR_MASK       DMA_SxCR_DIR
 #define STM32_DMA_CR_DIR_P2M        0
 #define STM32_DMA_CR_DIR_M2P        DMA_SxCR_DIR_0

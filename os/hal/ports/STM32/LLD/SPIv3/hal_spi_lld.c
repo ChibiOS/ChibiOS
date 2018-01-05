@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    SPIv2/hal_spi_lld.c
+ * @file    SPIv3/hal_spi_lld.c
  * @brief   STM32 SPI subsystem low level driver source.
  *
  * @addtogroup SPI
@@ -523,7 +523,7 @@ void spi_lld_start(SPIDriver *spip) {
  }
 
   /* Configuration-specific DMA setup.*/
-  dsize = (spip->config->cfg2 & SPI_CFG1_DSIZE_Msk) + 1U;
+  dsize = (spip->config->cfg1 & SPI_CFG1_DSIZE_Msk) + 1U;
   cfg1  = spip->config->cfg1 | SPI_CFG1_RXDMAEN | SPI_CFG1_TXDMAEN;
   cfg1 &= ~SPI_CFG1_FTHLV_Msk;
   if (dsize <= 8U) {
@@ -532,7 +532,7 @@ void spi_lld_start(SPIDriver *spip) {
                       STM32_DMA_CR_PSIZE_BYTE | STM32_DMA_CR_MSIZE_BYTE;
     spip->txdmamode = (spip->txdmamode & ~STM32_DMA_CR_SIZE_MASK) |
                       STM32_DMA_CR_PSIZE_BYTE | STM32_DMA_CR_MSIZE_BYTE;
-    cfg1 |= SPI_CFG1_FTHLV_2;   /* FTHLV = 4.*/
+    cfg1 |= SPI_CFG1_FTHLV_VALUE(0);
   }
   else if (dsize <= 16U) {
     /* Frame width is between 9 and 16 bits.*/
@@ -540,7 +540,7 @@ void spi_lld_start(SPIDriver *spip) {
                       STM32_DMA_CR_PSIZE_HWORD | STM32_DMA_CR_MSIZE_HWORD;
     spip->txdmamode = (spip->txdmamode & ~STM32_DMA_CR_SIZE_MASK) |
                       STM32_DMA_CR_PSIZE_HWORD | STM32_DMA_CR_MSIZE_HWORD;
-    cfg1 |= SPI_CFG1_FTHLV_1;   /* FTHLV = 2.*/
+    cfg1 |= SPI_CFG1_FTHLV_VALUE(0);
   }
   else {
     /* Frame width is between 16 and 32 bits.*/
@@ -548,7 +548,7 @@ void spi_lld_start(SPIDriver *spip) {
                       STM32_DMA_CR_PSIZE_WORD | STM32_DMA_CR_MSIZE_WORD;
     spip->txdmamode = (spip->txdmamode & ~STM32_DMA_CR_SIZE_MASK) |
                       STM32_DMA_CR_PSIZE_WORD | STM32_DMA_CR_MSIZE_WORD;
-    cfg1 |= SPI_CFG1_FTHLV_0;   /* FTHLV = 1.*/
+    cfg1 |= SPI_CFG1_FTHLV_VALUE(0);
   }
 
   /* SPI setup and enable.*/
