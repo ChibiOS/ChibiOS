@@ -17,13 +17,14 @@
 #include "ch.h"
 #include "hal.h"
 
+#include "ccportab.h"
 #include "portab.h"
 
 /*
  * SPI TX and RX buffers.
  */
-static uint8_t txbuf[512];
-static uint8_t rxbuf[512];
+CC_ALIGN(32) static uint8_t txbuf[512];
+CC_ALIGN(32) static uint8_t rxbuf[512];
 
 /*
  * SPI bus contender 1.

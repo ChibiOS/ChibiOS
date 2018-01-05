@@ -4,7 +4,8 @@ STARTUPSRC = $(CHIBIOS)/os/common/startup/ARM/compilers/GCC/crt1.c
 STARTUPASM = $(CHIBIOS)/os/common/startup/ARM/compilers/GCC/vectors.S \
              $(CHIBIOS)/os/common/startup/ARM/compilers/GCC/crt0.S
 
-STARTUPINC = ${CHIBIOS}/os/common/startup/ARM/devices/LPC214x
+STARTUPINC = $(CHIBIOS)/os/common/portability/GCC \
+             ${CHIBIOS}/os/common/startup/ARM/devices/LPC214x
 
 STARTUPLD  = ${CHIBIOS}/os/common/startup/ARM/compilers/GCC/ld
 
