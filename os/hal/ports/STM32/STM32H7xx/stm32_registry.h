@@ -67,6 +67,25 @@
 #define STM32_HAS_DAC2_CH1                  FALSE
 #define STM32_HAS_DAC2_CH2                  FALSE
 
+/* BDMA attributes.*/
+#define STM32_HAS_BDMA1                     TRUE
+#define STM32_BDMA1_CH0_HANDLER             Vector244
+#define STM32_BDMA1_CH1_HANDLER             Vector248
+#define STM32_BDMA1_CH2_HANDLER             Vector24C
+#define STM32_BDMA1_CH3_HANDLER             Vector250
+#define STM32_BDMA1_CH4_HANDLER             Vector254
+#define STM32_BDMA1_CH5_HANDLER             Vector258
+#define STM32_BDMA1_CH6_HANDLER             Vector25C
+#define STM32_BDMA1_CH7_HANDLER             Vector260
+#define STM32_BDMA1_CH0_NUMBER              129
+#define STM32_BDMA1_CH1_NUMBER              130
+#define STM32_BDMA1_CH2_NUMBER              131
+#define STM32_BDMA1_CH3_NUMBER              132
+#define STM32_BDMA1_CH4_NUMBER              133
+#define STM32_BDMA1_CH5_NUMBER              134
+#define STM32_BDMA1_CH6_NUMBER              135
+#define STM32_BDMA1_CH7_NUMBER              136
+
 /* DMA attributes.*/
 #define STM32_DMA_CACHE_HANDLING            TRUE
 

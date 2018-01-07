@@ -2877,6 +2877,7 @@
 #include "mpu.h"
 #include "stm32_isr.h"
 #include "stm32_dma.h"
+#include "stm32_bdma.h"
 #include "stm32_rcc.h"
 
 #ifdef __cplusplus

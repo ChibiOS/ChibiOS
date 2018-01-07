@@ -478,10 +478,14 @@
 
 #if STM32_SPI_USE_SPI1 | STM32_SPI_USE_SPI2 | STM32_SPI_USE_SPI1 |          \
     STM32_SPI_USE_SPI4 | STM32_SPI_USE_SPI5
+#define STM32_SPI_DMA_REQUIRED
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED
 #endif
-#elif STM32_SPI_USE_SPI6
+#endif
+
+#if STM32_SPI_USE_SPI6
+#define STM32_SPI_BDMA_REQUIRED
 #if !defined(STM32_BDMA_REQUIRED)
 #define STM32_BDMA_REQUIRED
 #endif
@@ -585,14 +589,46 @@ struct SPIDriver {
    * @brief Pointer to the SPIx registers block.
    */
   SPI_TypeDef               *spi;
+#if defined(STM32_SPI_DMA_REQUIRED) && defined(STM32_SPI_BDMA_REQUIRED)
   /**
-   * @brief   Receive DMA stream.
+   * @brief   DMA type for this instance.
    */
-  const stm32_dma_stream_t  *dmarx;
+  bool                      is_bdma;
+#endif
   /**
-   * @brief   Transmit DMA stream.
+   * @brief   Union of the RX DMA streams.
    */
-  const stm32_dma_stream_t  *dmatx;
+  union {
+#if defined(STM32_SPI_DMA_REQUIRED) || defined(__DOXYGEN__)
+    /**
+     * @brief   Receive DMA stream.
+     */
+    const stm32_dma_stream_t  *dma;
+#endif
+#if defined(STM32_SPI_BDMA_REQUIRED) || defined(__DOXYGEN__)
+    /**
+     * @brief   Receive BDMA stream.
+     */
+    const stm32_bdma_stream_t  *bdma;
+#endif
+  } rx;
+  /**
+   * @brief   Union of the TX DMA streams.
+   */
+  union {
+#if defined(STM32_SPI_DMA_REQUIRED) || defined(__DOXYGEN__)
+    /**
+     * @brief   Transmit DMA stream.
+     */
+    const stm32_dma_stream_t  *dma;
+#endif
+#if defined(STM32_SPI_BDMA_REQUIRED) || defined(__DOXYGEN__)
+    /**
+     * @brief   Transmit DMA stream.
+     */
+    const stm32_bdma_stream_t  *bdma;
+#endif
+  } tx;
   /**
    * @brief   RX DMA mode bit mask.
    */

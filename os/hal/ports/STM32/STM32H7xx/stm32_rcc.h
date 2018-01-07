@@ -500,6 +500,29 @@
  * @{
  */
 /**
+ * @brief   Enables the BDMA1 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableBDMA1(lp) rccEnableAHB4(RCC_AHB4ENR_BDMAEN, lp)
+
+/**
+ * @brief   Disables the BDMA1 peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableBDMA1() rccDisableAHB4(RCC_AHB4ENR_BDMAEN)
+
+/**
+ * @brief   Resets the BDMA1 peripheral.
+ *
+ * @api
+ */
+#define rccResetBDMA1() rccEnableAHB4(RCC_AHB4RSTR_BDMARST)
+
+/**
  * @brief   Enables the DMA1 peripheral clock.
  *
  * @param[in] lp        low power enable flag

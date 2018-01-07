@@ -357,7 +357,7 @@
 #define STM32_SPI_USE_SPI3                  TRUE
 #define STM32_SPI_USE_SPI4                  TRUE
 #define STM32_SPI_USE_SPI5                  TRUE
-#define STM32_SPI_USE_SPI6                  FALSE
+#define STM32_SPI_USE_SPI6                  TRUE
 #define STM32_SPI_SPI1_IRQ_PRIORITY         10
 #define STM32_SPI_SPI2_IRQ_PRIORITY         10
 #define STM32_SPI_SPI3_IRQ_PRIORITY         10

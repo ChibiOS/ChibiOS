@@ -141,6 +141,9 @@ void hal_lld_init(void) {
   rccResetAPB4(~0);
 
   /* DMA subsystems initialization.*/
+#if defined(STM32_BDMA_REQUIRED)
+  bdmaInit();
+#endif
 #if defined(STM32_DMA_REQUIRED)
   dmaInit();
 #endif
