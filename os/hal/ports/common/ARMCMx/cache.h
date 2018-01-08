@@ -100,22 +100,22 @@
 }
 
 #else /* __DCACHE_PRESENT == 0 */
-#define dmaBufferInvalidate(addr, size) {                                   \
+#define cacheBufferInvalidate(addr, size) {                                 \
   (void)(addr);                                                             \
   (void)(size);                                                             \
 }
-#define dmaBufferFlush(addr, size) {                                        \
+#define cacheBufferFlush(addr, size) {                                      \
   (void)(addr);                                                             \
   (void)(size);                                                             \
 }
 #endif
 
 #else /* !defined(__DCACHE_PRESENT) */
-#define dmaBufferInvalidate(addr, size) {                                   \
+#define cacheBufferInvalidate(addr, size) {                                 \
   (void)(addr);                                                             \
   (void)(size);                                                             \
 }
-#define dmaBufferFlush(addr, size) {                                        \
+#define cacheBufferFlush(addr, size) {                                      \
   (void)(addr);                                                             \
   (void)(size);                                                             \
 }
