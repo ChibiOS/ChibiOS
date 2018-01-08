@@ -158,10 +158,29 @@
                                              RCC_AHB4ENR_GPIOKEN)
 
 /* I2C attributes.*/
-#define STM32_HAS_I2C1                      FALSE
-#define STM32_HAS_I2C2                      FALSE
-#define STM32_HAS_I2C3                      FALSE
-#define STM32_HAS_I2C4                      FALSE
+#define STM32_HAS_I2C1                      TRUE
+#define STM32_I2C1_EVENT_HANDLER            VectorBC
+#define STM32_I2C1_ERROR_HANDLER            VectorC0
+#define STM32_I2C1_EVENT_NUMBER             31
+#define STM32_I2C1_ERROR_NUMBER             32
+
+#define STM32_HAS_I2C2                      TRUE
+#define STM32_I2C2_EVENT_HANDLER            VectorC4
+#define STM32_I2C2_ERROR_HANDLER            VectorC8
+#define STM32_I2C2_EVENT_NUMBER             33
+#define STM32_I2C2_ERROR_NUMBER             34
+
+#define STM32_HAS_I2C3                      TRUE
+#define STM32_I2C3_EVENT_HANDLER            Vector160
+#define STM32_I2C3_ERROR_HANDLER            Vector164
+#define STM32_I2C3_EVENT_NUMBER             72
+#define STM32_I2C3_ERROR_NUMBER             73
+
+#define STM32_HAS_I2C4                      TRUE
+#define STM32_I2C4_EVENT_HANDLER            Vector1BC
+#define STM32_I2C4_ERROR_HANDLER            Vector1C0
+#define STM32_I2C4_EVENT_NUMBER             95
+#define STM32_I2C4_ERROR_NUMBER             96
 
 /* QUADSPI attributes.*/
 #define STM32_HAS_QUADSPI1                  FALSE
