@@ -87,6 +87,8 @@
 #define STM32_BDMA1_CH7_NUMBER              136
 
 /* DMA attributes.*/
+#define STM32_ADVANCED_DMA                  TRUE
+
 #define STM32_HAS_DMA1                      TRUE
 #define STM32_DMA1_CH0_HANDLER              Vector6C
 #define STM32_DMA1_CH1_HANDLER              Vector70
