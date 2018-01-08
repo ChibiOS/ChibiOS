@@ -25,7 +25,6 @@
 #ifndef STM32_DMA_H
 #define STM32_DMA_H
 
-#include "cache.h"
 #include "stm32_dmamux.h"
 
 /*===========================================================================*/

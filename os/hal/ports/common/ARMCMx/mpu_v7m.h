@@ -15,19 +15,19 @@
 */
 
 /**
- * @file    common/ARMCMx/mpu.h
- * @brief   Cortex-Mx MPU support macros and structures.
+ * @file    common/ARMCMx/mpu_v7m.h
+ * @brief   ARMv7-M MPU support macros and structures.
  *
- * @addtogroup COMMON_ARMCMx_MPU
+ * @addtogroup COMMON_ARMCMx_MPUv7M
  * @{
  */
 
-#ifndef MPU_H
-#define MPU_H
-
-/* Other layers may include another header named mpu_v7m.h which is perfectly
-   compatible, doing a check here to avoid name conflicts.*/
 #ifndef MPUV7M_H
+#define MPUV7M_H
+
+/* Other layers may include another header named mpu.h which is perfectly
+   compatible, doing a check here to avoid name conflicts.*/
+#ifndef MPU_H
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -207,8 +207,8 @@ extern "C" {
 }
 #endif
 
-#endif /* MPUV7M_H */
-
 #endif /* MPU_H */
+
+#endif /* MPUV7M_H */
 
 /** @} */
