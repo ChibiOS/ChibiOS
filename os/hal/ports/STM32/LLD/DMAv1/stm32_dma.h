@@ -27,6 +27,8 @@
 #ifndef STM32_DMA_H
 #define STM32_DMA_H
 
+#include "cache.h"
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -257,34 +259,6 @@ typedef struct {
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
-
-/**
- * @brief   Invalidates the data cache lines overlapping a DMA buffer.
- * @note    It does nothing in this driver, it is supplied for compatibility.
- *
- * @param[in] saddr     start address of the DMA buffer
- * @param[in] n         size of the DMA buffer in bytes
- *
- * @api
- */
-#define dmaBufferInvalidate(addr, size) {                                   \
-  (void)(addr);                                                             \
-  (void)(size);                                                             \
-}
-
-/**
- * @brief   Flushes the data cache lines overlapping a DMA buffer.
- * @note    It does nothing in this driver, it is supplied for compatibility.
- *
- * @param[in] saddr     start address of the DMA buffer
- * @param[in] n         size of the DMA buffer in bytes
- *
- * @api
- */
-#define dmaBufferFlush(addr, size) {                                        \
-  (void)(addr);                                                             \
-  (void)(size);                                                             \
-}
 
 /**
  * @name    Macro Functions

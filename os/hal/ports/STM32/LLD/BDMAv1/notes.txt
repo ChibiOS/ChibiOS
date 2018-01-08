@@ -6,8 +6,6 @@ Driver capability:
 
 The file registry must export:
 
-STM32_DMAn_CHx_HANDLER      - Vector name for IRQ "x" (1..7). If the macro
+STM32_BDMAn_CHx_HANDLER     - Vector name for IRQ "x" (1..7). If the macro
                               is not exported then the ISR is not declared.
-STM32_DMAn_CHx_NUMBER       - Vector number for IRQ "x" (1..7).
-STM32_DMA_CACHE_HANDLING    - TRUE if the device requires explicit cache
-                              handling on DMA buffers.
+STM32_BDMAn_CHx_NUMBER      - Vector number for IRQ "x" (1..7).

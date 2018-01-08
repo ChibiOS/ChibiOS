@@ -42,8 +42,8 @@ static THD_FUNCTION(spi_thread_1, p) {
     spiExchange(&PORTAB_SPI1, 512,
                 txbuf, rxbuf);          /* Atomic transfer operations.      */
     spiUnselect(&PORTAB_SPI1);          /* Slave Select de-assertion.       */
-    dmaBufferInvalidate(&txbuf[0],      /* Cache invalidation over the      */
-                        sizeof txbuf);  /* buffer.                          */
+    cacheBufferInvalidate(&txbuf[0],    /* Cache invalidation over the      */
+                          sizeof txbuf);/* buffer.                          */
     spiReleaseBus(&PORTAB_SPI1);        /* Ownership release.               */
   }
 }
@@ -64,8 +64,8 @@ static THD_FUNCTION(spi_thread_2, p) {
     spiExchange(&PORTAB_SPI1, 512,
                 txbuf, rxbuf);          /* Atomic transfer operations.      */
     spiUnselect(&PORTAB_SPI1);          /* Slave Select de-assertion.       */
-    dmaBufferInvalidate(&txbuf[0],      /* Cache invalidation over the      */
-                        sizeof txbuf);  /* buffer.                          */
+    cacheBufferInvalidate(&txbuf[0],    /* Cache invalidation over the      */
+                          sizeof txbuf);/* buffer.                          */
     spiReleaseBus(&PORTAB_SPI1);        /* Ownership release.               */
   }
 }
@@ -112,7 +112,7 @@ int main(void) {
    */
   for (i = 0; i < sizeof(txbuf); i++)
     txbuf[i] = (uint8_t)i;
-  dmaBufferFlush(&txbuf[0], sizeof txbuf);
+  cacheBufferFlush(&txbuf[0], sizeof txbuf);
 
   /*
    * Starting the transmitter and receiver threads.
