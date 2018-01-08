@@ -150,10 +150,44 @@ void hal_lld_init(void) {
 
   /* IRQ subsystem initialization.*/
   irqInit();
+
+  /* MPU initialization.*/
+#if (STM32_NOCACHE_SRAM1_SRAM2 == TRUE) || (STM32_NOCACHE_SRAM3 == TRUE)
+  {
+    uint32_t base, size;
+
+#if (STM32_NOCACHE_SRAM1_SRAM2 == TRUE) && (STM32_NOCACHE_SRAM3 == TRUE)
+    base = 0x30000000U;
+    size = MPU_RASR_SIZE_512K;
+#elif (STM32_NOCACHE_SRAM1_SRAM2 == TRUE) && (STM32_NOCACHE_SRAM3 == FALSE)
+    base = 0x30000000U;
+    size = MPU_RASR_SIZE_256K;
+#elif (STM32_NOCACHE_SRAM1_SRAM2 == FALSE) && (STM32_NOCACHE_SRAM3 == TRUE)
+    base = 0x30040000U;
+    size = MPU_RASR_SIZE_16K;
+#else
+#error "invalid constants used in mcuconf.h"
+#endif
+
+    /* The SRAM2 bank can optionally made a non cache-able area for use by
+       DMA engines.*/
+    mpuConfigureRegion(MPU_REGION_7,
+                       base,
+                       MPU_RASR_ATTR_AP_RW_RW |
+                       MPU_RASR_ATTR_NON_CACHEABLE |
+                       size |
+                       MPU_RASR_ENABLE);
+    mpuEnable(MPU_CTRL_PRIVDEFENA);
+
+    /* Invalidating data cache to make sure that the MPU settings are taken
+       immediately.*/
+    SCB_CleanInvalidateDCache();
+  }
+#endif
 }
 
 /**
- * @brief   STM32F2xx clocks and PLL initialization.
+ * @brief   STM32H7xx clocks and PLL initialization.
  * @note    All the involved constants come from the file @p board.h.
  * @note    This function should be invoked just after the system reset.
  *

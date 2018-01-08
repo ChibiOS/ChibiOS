@@ -543,6 +543,22 @@
 #endif
 
 /**
+ * @brief   Add no-cache attribute to SRAM1 and SRAM2.
+ * @note    MPU region 7 is used if enabled.
+ */
+#if !defined(STM32_NOCACHE_SRAM1_SRAM2) || defined(__DOXYGEN__)
+#define STM32_NOCACHE_SRAM1_SRAM2           FALSE
+#endif
+
+/**
+ * @brief   Add no-cache attribute to SRAM3.
+ * @note    MPU region 7 is used if enabled.
+ */
+#if !defined(STM32_NOCACHE_SRAM3) || defined(__DOXYGEN__)
+#define STM32_NOCACHE_SRAM3                 TRUE
+#endif
+
+/**
  * @brief   PWR CR1 initializer.
  */
 #if !defined(STM32_PWR_CR1) || defined(__DOXYGEN__)

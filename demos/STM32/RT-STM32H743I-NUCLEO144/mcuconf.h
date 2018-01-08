@@ -40,6 +40,12 @@
 #define STM32_SYS_CK_ENFORCED_VALUE         STM32_HSICLK
 
 /*
+ * Memory attributes settings.
+ */
+#define STM32_NOCACHE_SRAM1_SRAM2           FALSE
+#define STM32_NOCACHE_SRAM3                 TRUE
+
+/*
  * PWR system settings.
  * Reading STM32 Reference Manual is required.
  * Register constants are taken from the ST header.
