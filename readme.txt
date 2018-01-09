@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added circular continuous mode to the SPI driver.
 - NEW: Added callbacks capability to the CAN driver.
 - NEW: Added initial STM32H7xx support.
 - NEW: Added GHS compiler support to the Power e200 port.

@@ -324,6 +324,7 @@ void spiAbort(SPIDriver *spip) {
 void spiIgnore(SPIDriver *spip, size_t n) {
 
   osalDbgCheck((spip != NULL) && (n > 0U));
+  osalDbgCheck((spip->config->circular == false) || ((n & 1U) == 0U));
 
   osalSysLock();
   osalDbgAssert(spip->state == SPI_READY, "not ready");
@@ -355,6 +356,7 @@ void spiExchange(SPIDriver *spip, size_t n,
 
   osalDbgCheck((spip != NULL) && (n > 0U) &&
                (rxbuf != NULL) && (txbuf != NULL));
+  osalDbgCheck((spip->config->circular == false) || ((n & 1U) == 0U));
 
   osalSysLock();
   osalDbgAssert(spip->state == SPI_READY, "not ready");
@@ -382,6 +384,7 @@ void spiExchange(SPIDriver *spip, size_t n,
 void spiSend(SPIDriver *spip, size_t n, const void *txbuf) {
 
   osalDbgCheck((spip != NULL) && (n > 0U) && (txbuf != NULL));
+  osalDbgCheck((spip->config->circular == false) || ((n & 1U) == 0U));
 
   osalSysLock();
   osalDbgAssert(spip->state == SPI_READY, "not ready");
@@ -409,6 +412,7 @@ void spiSend(SPIDriver *spip, size_t n, const void *txbuf) {
 void spiReceive(SPIDriver *spip, size_t n, void *rxbuf) {
 
   osalDbgCheck((spip != NULL) && (n > 0U) && (rxbuf != NULL));
+  osalDbgCheck((spip->config->circular == false) || ((n & 1U) == 0U));
 
   osalSysLock();
   osalDbgAssert(spip->state == SPI_READY, "not ready");
