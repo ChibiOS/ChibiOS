@@ -61,6 +61,14 @@
 #endif
 
 /**
+ * @brief   Enables circular transfers APIs.
+ * @note    Disabling this option saves both code and data space.
+ */
+#if !defined(SPI_USE_CIRCULAR) || defined(__DOXYGEN__)
+#define SPI_USE_CIRCULAR                    FALSE
+#endif
+
+/**
  * @brief   Enables the @p spiAcquireBus() and @p spiReleaseBus() APIs.
  * @note    Disabling this option saves both code and data space.
  */
@@ -105,6 +113,12 @@ typedef enum {
 } spistate_t;
 
 #include "hal_spi_lld.h"
+
+/* Some more checks, must happen after inclusion of the LLD header, this is
+   why are placed here.*/
+#if !defined(SPI_SUPPORTS_CIRCULAR)
+#define SPI_SUPPORTS_CIRCULAR               FALSE
+#endif
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -321,6 +335,46 @@ do {                                                                        \
     (spip)->state = SPI_READY;                                              \
   _spi_wakeup_isr(spip);                                                    \
 }
+
+/**
+ * @brief   Common ISR code in circular mode.
+ * @details This code handles the portable part of the ISR code:
+ *          - Callback invocation.
+ *          .
+ * @note    This macro is meant to be used in the low level drivers
+ *          implementation only.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ *
+ * @notapi
+ */
+#define _spi_isr_code_half1(spip) {                                         \
+  if ((spip)->config->end_cb) {                                             \
+    (spip)->config->end_cb(spip);                                           \
+  }                                                                         \
+}
+
+/**
+ * @brief   Common ISR code in circular mode.
+ * @details This code handles the portable part of the ISR code:
+ *          - Callback invocation.
+ *          - Driver state transitions.
+ *          .
+ * @note    This macro is meant to be used in the low level drivers
+ *          implementation only.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ *
+ * @notapi
+ */
+#define _spi_isr_code_half2(spip) {                                         \
+  if ((spip)->config->end_cb) {                                             \
+    (spip)->state = SPI_COMPLETE;                                           \
+    (spip)->config->end_cb(spip);                                           \
+    if ((spip)->state == SPI_COMPLETE)                                      \
+      (spip)->state = SPI_ACTIVE;                                           \
+  }                                                                         \
+}
 /** @} */
 
 /*===========================================================================*/
@@ -341,6 +395,10 @@ extern "C" {
                         const void *txbuf, void *rxbuf);
   void spiStartSend(SPIDriver *spip, size_t n, const void *txbuf);
   void spiStartReceive(SPIDriver *spip, size_t n, void *rxbuf);
+#if SPI_SUPPORTS_CIRCULAR == TRUE
+  void spiAbortI(SPIDriver *spip);
+  void spiAbort(SPIDriver *spip);
+#endif
 #if SPI_USE_WAIT == TRUE
   void spiIgnore(SPIDriver *spip, size_t n);
   void spiExchange(SPIDriver *spip, size_t n, const void *txbuf, void *rxbuf);

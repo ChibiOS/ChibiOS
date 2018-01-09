@@ -32,6 +32,11 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Circular mode support flag.
+ */
+#define SPI_SUPPORTS_CIRCULAR           TRUE
+
+/**
  * @name    Register helpers not found in ST headers
  * @{
  */
@@ -516,6 +521,12 @@ typedef void (*spicallback_t)(SPIDriver *spip);
  * @brief   Driver configuration structure.
  */
 typedef struct {
+#if (SPI_SUPPORTS_CIRCULAR == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   Enables the circular buffer mode.
+   */
+  bool                      circular;
+#endif
   /**
    * @brief Operation complete callback or @p NULL.
    */
@@ -682,6 +693,7 @@ extern "C" {
                         const void *txbuf, void *rxbuf);
   void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf);
   void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf);
+  void spi_lld_abort(SPIDriver *spip);
   uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame);
 #ifdef __cplusplus
 }

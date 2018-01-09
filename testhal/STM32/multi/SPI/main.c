@@ -26,6 +26,23 @@
 CC_ALIGN(32) static uint8_t txbuf[512];
 CC_ALIGN(32) static uint8_t rxbuf[512];
 
+#if SPI_SUPPORTS_CIRCULAR == TRUE
+/*
+ * SPI callback for circular operations.
+ */
+void spi_circular_cb(SPIDriver *spip) {
+
+  if(spip->state == SPI_COMPLETE) {
+    /* 2nd half.*/
+    palWriteLine(PORTAB_LINE_LED1, PORTAB_LED_OFF);
+  }
+  else {
+    /* 1st half.*/
+    palWriteLine(PORTAB_LINE_LED1, PORTAB_LED_ON);
+  }
+}
+#endif
+
 /*
  * SPI bus contender 1.
  */
@@ -70,7 +87,6 @@ static THD_FUNCTION(spi_thread_2, p) {
   }
 }
 
-#if defined(PORTAB_LINE_LED2)
 /*
  * LED blinker thread, times are in milliseconds.
  */
@@ -79,12 +95,19 @@ static THD_FUNCTION(Thread1, arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (true) {
-    systime_t time = palReadLine(PORTAB_LINE_BUTTON) == PORTAB_BUTTON_PRESSED ? 250 : 500;
+    bool key_pressed = palReadLine(PORTAB_LINE_BUTTON) == PORTAB_BUTTON_PRESSED;
+    systime_t time = key_pressed ? 250 : 500;
+#if SPI_SUPPORTS_CIRCULAR == TRUE
+    if (key_pressed) {
+      spiAbort(&PORTAB_SPI1);
+    }
+#endif
+#if defined(PORTAB_LINE_LED2)
     palToggleLine(PORTAB_LINE_LED2);
+#endif
     chThdSleepMilliseconds(time);
   }
 }
-#endif
 
 /*
  * Application entry point.
@@ -108,11 +131,29 @@ int main(void) {
   portab_setup();
 
   /*
+   * Creates the blinker thread.
+   */
+  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+
+  /*
    * Prepare transmit pattern.
    */
   for (i = 0; i < sizeof(txbuf); i++)
     txbuf[i] = (uint8_t)i;
   cacheBufferFlush(&txbuf[0], sizeof txbuf);
+
+#if SPI_SUPPORTS_CIRCULAR == TRUE
+  /*
+   * Starting a continous operation for test.
+   */
+  spiStart(&PORTAB_SPI1, &c_spicfg);  /* Setup transfer parameters.       */
+  spiSelect(&PORTAB_SPI1);            /* Slave Select assertion.          */
+  spiExchange(&PORTAB_SPI1, 512,
+              txbuf, rxbuf);          /* Atomic transfer operations.      */
+  spiUnselect(&PORTAB_SPI1);          /* Slave Select de-assertion.       */
+  cacheBufferInvalidate(&txbuf[0],    /* Cache invalidation over the      */
+                        sizeof txbuf);/* buffer.                          */
+#endif
 
   /*
    * Starting the transmitter and receiver threads.
@@ -121,13 +162,6 @@ int main(void) {
                     NORMALPRIO + 1, spi_thread_1, NULL);
   chThdCreateStatic(spi_thread_2_wa, sizeof(spi_thread_2_wa),
                     NORMALPRIO + 1, spi_thread_2, NULL);
-
-#if defined(PORTAB_LINE_LED2)
-  /*
-   * Creates the blinker thread.
-   */
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
-#endif
 
   /*
    * Normal main() thread activity, in this demo it does nothing.

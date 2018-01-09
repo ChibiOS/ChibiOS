@@ -263,6 +263,49 @@ void spiStartReceive(SPIDriver *spip, size_t n, void *rxbuf) {
   osalSysUnlock();
 }
 
+#if (SPI_SUPPORTS_CIRCULAR == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Aborts the ongoing SPI operation.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ *
+ * @iclass
+ */
+void spiAbortI(SPIDriver *spip) {
+
+  osalDbgCheckClassI();
+
+  osalDbgCheck(spip != NULL);
+  osalDbgAssert((spip->state == SPI_ACTIVE) || (spip->state == SPI_COMPLETE),
+                "invalid state");
+
+  spi_lld_abort(spip);
+  spip->state = SPI_READY;
+#if SPI_USE_WAIT == TRUE
+  osalThreadResumeI(&spip->thread, MSG_OK);
+#endif
+}
+
+/**
+ * @brief   Aborts the ongoing SPI operation, if any.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ *
+ * @api
+ */
+void spiAbort(SPIDriver *spip) {
+
+  osalSysLock();
+  osalDbgAssert((spip->state == SPI_READY) || (spip->state == SPI_ACTIVE),
+                "invalid state");
+  if (spip->state == SPI_ACTIVE) {
+    spiAbortI(spip);
+    osalOsRescheduleS();
+  }
+  osalSysUnlock();
+}
+#endif
+
 #if (SPI_USE_WAIT == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Ignores data on the SPI bus.
@@ -284,7 +327,6 @@ void spiIgnore(SPIDriver *spip, size_t n) {
 
   osalSysLock();
   osalDbgAssert(spip->state == SPI_READY, "not ready");
-  osalDbgAssert(spip->config->end_cb == NULL, "has callback");
   spiStartIgnoreI(spip, n);
   (void) osalThreadSuspendS(&spip->thread);
   osalSysUnlock();
@@ -316,7 +358,6 @@ void spiExchange(SPIDriver *spip, size_t n,
 
   osalSysLock();
   osalDbgAssert(spip->state == SPI_READY, "not ready");
-  osalDbgAssert(spip->config->end_cb == NULL, "has callback");
   spiStartExchangeI(spip, n, txbuf, rxbuf);
   (void) osalThreadSuspendS(&spip->thread);
   osalSysUnlock();
@@ -344,7 +385,6 @@ void spiSend(SPIDriver *spip, size_t n, const void *txbuf) {
 
   osalSysLock();
   osalDbgAssert(spip->state == SPI_READY, "not ready");
-  osalDbgAssert(spip->config->end_cb == NULL, "has callback");
   spiStartSendI(spip, n, txbuf);
   (void) osalThreadSuspendS(&spip->thread);
   osalSysUnlock();
@@ -372,7 +412,6 @@ void spiReceive(SPIDriver *spip, size_t n, void *rxbuf) {
 
   osalSysLock();
   osalDbgAssert(spip->state == SPI_READY, "not ready");
-  osalDbgAssert(spip->config->end_cb == NULL, "has callback");
   spiStartReceiveI(spip, n, rxbuf);
   (void) osalThreadSuspendS(&spip->thread);
   osalSysUnlock();

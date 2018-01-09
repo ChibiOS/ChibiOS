@@ -57,6 +57,7 @@
 /* External declarations.                                                    */
 /*===========================================================================*/
 
+extern const SPIConfig c_spicfg;
 extern const SPIConfig hs_spicfg;
 extern const SPIConfig ls_spicfg;
 
