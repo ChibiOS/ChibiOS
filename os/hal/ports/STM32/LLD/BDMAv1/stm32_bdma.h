@@ -60,7 +60,7 @@
  * @retval FALSE        invalid DMA channel.
  * @retval TRUE         correct DMA channel.
  */
-#define STM32_DMA_IS_VALID_CHANNEL(ch) (((ch) >= 0U) && ((ch) <= 15U))
+#define STM32_BDMA_IS_VALID_CHANNEL(ch) (((ch) >= 0U) && ((ch) <= 7U))
 
 /**
  * @name    BDMA streams identifiers

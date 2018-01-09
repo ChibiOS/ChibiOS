@@ -138,6 +138,62 @@
 #endif
 
 /**
+ * @brief   I2C1 RX DMA channel setting.
+ */
+#if !defined(STM32_I2C_I2C1_RX_DMA_CHANNEL) || defined(__DOXYGEN__)
+#define STM32_I2C_I2C1_RX_DMA_CHANNEL       6
+#endif
+
+/**
+ * @brief   I2C1 TX DMA channel setting.
+ */
+#if !defined(STM32_I2C_I2C1_TX_DMA_CHANNEL) || defined(__DOXYGEN__)
+#define STM32_I2C_I2C1_TX_DMA_CHANNEL       7
+#endif
+
+/**
+ * @brief   I2C2 RX DMA channel setting.
+ */
+#if !defined(STM32_I2C_I2C2_RX_DMA_CHANNEL) || defined(__DOXYGEN__)
+#define STM32_I2C_I2C2_RX_DMA_CHANNEL       8
+#endif
+
+/**
+ * @brief   I2C2 TX DMA channel setting.
+ */
+#if !defined(STM32_I2C_I2C2_TX_DMA_CHANNEL) || defined(__DOXYGEN__)
+#define STM32_I2C_I2C2_TX_DMA_CHANNEL       9
+#endif
+
+/**
+ * @brief   I2C3 RX DMA channel setting.
+ */
+#if !defined(STM32_I2C_I2C3_RX_DMA_CHANNEL) || defined(__DOXYGEN__)
+#define STM32_I2C_I2C3_RX_DMA_CHANNEL       8
+#endif
+
+/**
+ * @brief   I2C3 TX DMA channel setting.
+ */
+#if !defined(STM32_I2C_I2C3_TX_DMA_CHANNEL) || defined(__DOXYGEN__)
+#define STM32_I2C_I2C3_TX_DMA_CHANNEL       9
+#endif
+
+/**
+ * @brief   I2C4 RX DMA channel setting.
+ */
+#if !defined(STM32_I2C_I2C4_RX_BDMA_CHANNEL) || defined(__DOXYGEN__)
+#define STM32_I2C_I2C4_RX_BDMA_CHANNEL      0
+#endif
+
+/**
+ * @brief   I2C4 TX DMA channel setting.
+ */
+#if !defined(STM32_I2C_I2C4_TX_BDMA_CHANNEL) || defined(__DOXYGEN__)
+#define STM32_I2C_I2C4_TX_BDMA_CHANNEL      1
+#endif
+
+/**
  * @brief   I2C1 DMA priority (0..3|lowest..highest).
  * @note    The priority level is used for both the TX and RX DMA streams but
  *          because of the streams ordering the RX stream has always priority
@@ -244,6 +300,7 @@
     !STM32_DMA_IS_VALID_CHANNEL(STM32_I2C_I2C1_TX_DMA_CHANNEL)
 #error "Invalid DMA channel assigned to I2C1 TX"
 #endif
+
 #if STM32_I2C_USE_I2C2 &&                                                   \
     !STM32_DMA_IS_VALID_CHANNEL(STM32_I2C_I2C2_RX_DMA_CHANNEL)
 #error "Invalid DMA channel assigned to I2C2 RX"
@@ -253,6 +310,7 @@
     !STM32_DMA_IS_VALID_CHANNEL(STM32_I2C_I2C2_TX_DMA_CHANNEL)
 #error "Invalid DMA channel assigned to I2C2 TX"
 #endif
+
 #if STM32_I2C_USE_I2C3 &&                                                   \
     !STM32_DMA_IS_VALID_CHANNEL(STM32_I2C_I2C3_RX_DMA_CHANNEL)
 #error "Invalid DMA channel assigned to I2C3 RX"
@@ -262,14 +320,15 @@
     !STM32_DMA_IS_VALID_CHANNEL(STM32_I2C_I2C3_TX_DMA_CHANNEL)
 #error "Invalid DMA channel assigned to I2C3 TX"
 #endif
+
 #if STM32_I2C_USE_I2C4 &&                                                   \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_I2C_I2C4_RX_DMA_CHANNEL)
-#error "Invalid DMA channel assigned to I2C4 RX"
+    !STM32_BDMA_IS_VALID_CHANNEL(STM32_I2C_I2C4_RX_BDMA_CHANNEL)
+#error "Invalid BDMA channel assigned to I2C4 RX"
 #endif
 
 #if STM32_I2C_USE_I2C4 &&                                                   \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_I2C_I2C4_TX_DMA_CHANNEL)
-#error "Invalid DMA channel assigned to I2C4 TX"
+    !STM32_BDMA_IS_VALID_CHANNEL(STM32_I2C_I2C4_TX_BDMA_CHANNEL)
+#error "Invalid BDMA channel assigned to I2C4 TX"
 #endif
 
 #if STM32_I2C_USE_I2C1 &&                                                   \
@@ -376,6 +435,14 @@ struct I2CDriver {
    * @brief   Thread waiting for I/O completion.
    */
   thread_reference_t        thread;
+  /**
+   * @brief     Number of bytes in TX phase.
+   */
+  size_t                    txbytes;
+  /**
+   * @brief     Number of bytes in RX phase.
+   */
+  size_t                    rxbytes;
 #if (STM32_I2C_USE_DMA == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief RX DMA mode bit mask.
@@ -385,31 +452,55 @@ struct I2CDriver {
    * @brief TX DMA mode bit mask.
    */
   uint32_t                  txdmamode;
+#if defined(STM32_I2C_DMA_REQUIRED) && defined(STM32_I2C_BDMA_REQUIRED)
   /**
-   * @brief     Receive DMA channel.
+   * @brief   DMA type for this instance.
    */
-  const stm32_dma_stream_t  *dmarx;
+  bool                      is_bdma;
+#endif
   /**
-   * @brief     Transmit DMA channel.
+   * @brief   Union of the RX DMA streams.
    */
-  const stm32_dma_stream_t  *dmatx;
+  union {
+#if defined(STM32_I2C_DMA_REQUIRED) || defined(__DOXYGEN__)
+    /**
+     * @brief   Receive DMA stream.
+     */
+    const stm32_dma_stream_t  *dma;
+#endif
+#if defined(STM32_I2C_BDMA_REQUIRED) || defined(__DOXYGEN__)
+    /**
+     * @brief   Receive BDMA stream.
+     */
+    const stm32_bdma_stream_t  *bdma;
+#endif
+  } rx;
+  /**
+   * @brief   Union of the TX DMA streams.
+   */
+  union {
+#if defined(STM32_I2C_DMA_REQUIRED) || defined(__DOXYGEN__)
+    /**
+     * @brief   Transmit DMA stream.
+     */
+    const stm32_dma_stream_t  *dma;
+#endif
+#if defined(STM32_I2C_BDMA_REQUIRED) || defined(__DOXYGEN__)
+    /**
+     * @brief   Transmit DMA stream.
+     */
+    const stm32_bdma_stream_t  *bdma;
+#endif
+  } tx;
 #else /* STM32_I2C_USE_DMA == FALSE */
   /**
    * @brief     Pointer to the next TX buffer location.
    */
   const uint8_t             *txptr;
   /**
-   * @brief     Number of bytes in TX phase.
-   */
-  size_t                    txbytes;
-  /**
    * @brief     Pointer to the next RX buffer location.
    */
   uint8_t                   *rxptr;
-  /**
-   * @brief     Number of bytes in RX phase.
-   */
-  size_t                    rxbytes;
 #endif /* STM32_I2C_USE_DMA == FALSE */
   /**
    * @brief     Pointer to the I2Cx registers block.

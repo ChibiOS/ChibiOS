@@ -284,7 +284,9 @@ void spi_lld_init(void) {
 #if STM32_SPI_USE_SPI1
   spiObjectInit(&SPID1);
   SPID1.spi       = SPI1;
+#if defined(STM32_SPI_DMA_REQUIRED) && defined(STM32_SPI_BDMA_REQUIRED)
   SPID1.is_bdma   = false;
+#endif
   SPID1.rx.dma    = STM32_DMA_STREAM(STM32_SPI_SPI1_RX_DMA_CHANNEL);
   SPID1.tx.dma    = STM32_DMA_STREAM(STM32_SPI_SPI1_TX_DMA_CHANNEL);
   SPID1.rxdmamode = STM32_DMA_CR_PL(STM32_SPI_SPI1_DMA_PRIORITY) |
@@ -304,7 +306,9 @@ void spi_lld_init(void) {
 #if STM32_SPI_USE_SPI2
   spiObjectInit(&SPID2);
   SPID2.spi       = SPI2;
+#if defined(STM32_SPI_DMA_REQUIRED) && defined(STM32_SPI_BDMA_REQUIRED)
   SPID2.is_bdma   = false;
+#endif
   SPID2.rx.dma    = STM32_DMA_STREAM(STM32_SPI_SPI2_RX_DMA_CHANNEL);
   SPID2.tx.dma    = STM32_DMA_STREAM(STM32_SPI_SPI2_TX_DMA_CHANNEL);
   SPID2.rxdmamode = STM32_DMA_CR_PL(STM32_SPI_SPI2_DMA_PRIORITY) |
@@ -324,7 +328,9 @@ void spi_lld_init(void) {
 #if STM32_SPI_USE_SPI3
   spiObjectInit(&SPID3);
   SPID3.spi       = SPI3;
+#if defined(STM32_SPI_DMA_REQUIRED) && defined(STM32_SPI_BDMA_REQUIRED)
   SPID3.is_bdma   = false;
+#endif
   SPID3.rx.dma    = STM32_DMA_STREAM(STM32_SPI_SPI3_RX_DMA_CHANNEL);
   SPID3.tx.dma    = STM32_DMA_STREAM(STM32_SPI_SPI3_TX_DMA_CHANNEL);
   SPID3.rxdmamode = STM32_DMA_CR_PL(STM32_SPI_SPI3_DMA_PRIORITY) |
@@ -344,7 +350,9 @@ void spi_lld_init(void) {
 #if STM32_SPI_USE_SPI4
   spiObjectInit(&SPID4);
   SPID4.spi       = SPI4;
+#if defined(STM32_SPI_DMA_REQUIRED) && defined(STM32_SPI_BDMA_REQUIRED)
   SPID4.is_bdma   = false;
+#endif
   SPID4.rx.dma    = STM32_DMA_STREAM(STM32_SPI_SPI4_RX_DMA_CHANNEL);
   SPID4.tx.dma    = STM32_DMA_STREAM(STM32_SPI_SPI4_TX_DMA_CHANNEL);
   SPID4.rxdmamode = STM32_DMA_CR_PL(STM32_SPI_SPI4_DMA_PRIORITY) |
@@ -364,7 +372,9 @@ void spi_lld_init(void) {
 #if STM32_SPI_USE_SPI5
   spiObjectInit(&SPID5);
   SPID5.spi       = SPI5;
+#if defined(STM32_SPI_DMA_REQUIRED) && defined(STM32_SPI_BDMA_REQUIRED)
   SPID5.is_bdma   = false;
+#endif
   SPID5.rx.dma    = STM32_DMA_STREAM(STM32_SPI_SPI5_RX_DMA_CHANNEL);
   SPID5.tx.dma    = STM32_DMA_STREAM(STM32_SPI_SPI5_TX_DMA_CHANNEL);
   SPID5.rxdmamode = STM32_DMA_CR_PL(STM32_SPI_SPI5_DMA_PRIORITY) |
@@ -384,7 +394,9 @@ void spi_lld_init(void) {
 #if STM32_SPI_USE_SPI6
   spiObjectInit(&SPID6);
   SPID6.spi       = SPI6;
+#if defined(STM32_SPI_DMA_REQUIRED) && defined(STM32_SPI_BDMA_REQUIRED)
   SPID6.is_bdma   = true;
+#endif
   SPID6.rx.bdma   = STM32_BDMA_STREAM(STM32_SPI_SPI6_RX_BDMA_CHANNEL);
   SPID6.tx.bdma   = STM32_BDMA_STREAM(STM32_SPI_SPI6_TX_BDMA_CHANNEL);
   SPID6.rxdmamode = STM32_BDMA_CR_PL(STM32_SPI_SPI6_DMA_PRIORITY) |

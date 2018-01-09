@@ -31,18 +31,38 @@
 /*===========================================================================*/
 
 #if STM32_I2C_USE_DMA == TRUE
+
+#if defined(STM32_I2C_DMA_REQUIRED)
 #define DMAMODE_COMMON                                                      \
   (STM32_DMA_CR_PSIZE_BYTE | STM32_DMA_CR_MSIZE_BYTE |                      \
    STM32_DMA_CR_MINC       | STM32_DMA_CR_DMEIE      |                      \
    STM32_DMA_CR_TEIE       | STM32_DMA_CR_TCIE)
+#endif
+
+#if defined(STM32_I2C_BDMA_REQUIRED)
+#define BDMAMODE_COMMON                                                     \
+  (STM32_BDMA_CR_PSIZE_BYTE | STM32_BDMA_CR_MSIZE_BYTE |                    \
+   STM32_BDMA_CR_MINC       | STM32_BDMA_CR_DMEIE      |                    \
+   STM32_BDMA_CR_TEIE       | STM32_BDMA_CR_TCIE)
+#endif
+
 #endif /* STM32_I2C_USE_DMA == TRUE */
 
-#if STM32_I2C_USE_DMA == TRUE
-#define i2c_lld_get_rxbytes(i2cp) dmaStreamGetTransactionSize((i2cp)->dmarx)
-#define i2c_lld_get_txbytes(i2cp) dmaStreamGetTransactionSize((i2cp)->dmatx)
-#else
-#define i2c_lld_get_rxbytes(i2cp) (i2cp)->rxbytes
-#define i2c_lld_get_txbytes(i2cp) (i2cp)->txbytes
+#if 0
+#if defined(STM32_I2C_DMA_REQUIRED) && defined(STM32_I2C_BDMA_REQUIRED)
+  if(i2cp->is_bdma)
+#endif
+#if defined(STM32_I2C_BDMA_REQUIRED)
+  {
+  }
+#endif
+#if defined(STM32_I2C_DMA_REQUIRED) && defined(STM32_I2C_BDMA_REQUIRED)
+  else
+#endif
+#if defined(STM32_I2C_DMA_REQUIRED)
+  {
+  }
+#endif
 #endif
 
 /*===========================================================================*/
@@ -89,6 +109,88 @@ I2CDriver I2CD4;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+#if STM32_I2C_USE_DMA == TRUE
+static inline void i2c_lld_start_rx_dma(I2CDriver *i2cp) {
+
+#if defined(STM32_I2C_DMA_REQUIRED) && defined(STM32_I2C_BDMA_REQUIRED)
+  if(i2cp->is_bdma)
+#endif
+#if defined(STM32_I2C_BDMA_REQUIRED)
+  {
+    bdmaStreamEnable(i2cp->rx.bdma);
+  }
+#endif
+#if defined(STM32_I2C_DMA_REQUIRED) && defined(STM32_I2C_BDMA_REQUIRED)
+  else
+#endif
+#if defined(STM32_I2C_DMA_REQUIRED)
+  {
+    dmaStreamEnable(i2cp->rx.dma);
+  }
+#endif
+}
+
+static inline void i2c_lld_start_tx_dma(I2CDriver *i2cp) {
+
+#if defined(STM32_I2C_DMA_REQUIRED) && defined(STM32_I2C_BDMA_REQUIRED)
+  if(i2cp->is_bdma)
+#endif
+#if defined(STM32_I2C_BDMA_REQUIRED)
+  {
+    bdmaStreamEnable(i2cp->tx.bdma);
+  }
+#endif
+#if defined(STM32_I2C_DMA_REQUIRED) && defined(STM32_I2C_BDMA_REQUIRED)
+  else
+#endif
+#if defined(STM32_I2C_DMA_REQUIRED)
+  {
+    dmaStreamEnable(i2cp->tx.dma);
+  }
+#endif
+}
+
+static inline void i2c_lld_stop_rx_dma(I2CDriver *i2cp) {
+
+#if defined(STM32_I2C_DMA_REQUIRED) && defined(STM32_I2C_BDMA_REQUIRED)
+  if(i2cp->is_bdma)
+#endif
+#if defined(STM32_I2C_BDMA_REQUIRED)
+  {
+    bdmaStreamDisable(i2cp->rx.bdma);
+  }
+#endif
+#if defined(STM32_I2C_DMA_REQUIRED) && defined(STM32_I2C_BDMA_REQUIRED)
+  else
+#endif
+#if defined(STM32_I2C_DMA_REQUIRED)
+  {
+    dmaStreamDisable(i2cp->rx.dma);
+  }
+#endif
+}
+
+static inline void i2c_lld_stop_tx_dma(I2CDriver *i2cp) {
+
+#if defined(STM32_I2C_DMA_REQUIRED) && defined(STM32_I2C_BDMA_REQUIRED)
+  if(i2cp->is_bdma)
+#endif
+#if defined(STM32_I2C_BDMA_REQUIRED)
+  {
+    bdmaStreamDisable(i2cp->tx.bdma);
+  }
+#endif
+#if defined(STM32_I2C_DMA_REQUIRED) && defined(STM32_I2C_BDMA_REQUIRED)
+  else
+#endif
+#if defined(STM32_I2C_DMA_REQUIRED)
+  {
+    dmaStreamDisable(i2cp->tx.dma);
+  }
+#endif
+}
+#endif /* STM32_I2C_USE_DMA == TRUE */
+
 /**
  * @brief   Slave address setup.
  * @note    The RW bit is set to zero internally.
@@ -121,7 +223,7 @@ static void i2c_lld_setup_rx_transfer(I2CDriver *i2cp) {
   size_t n;
 
   /* The unit can transfer 255 bytes maximum in a single operation.*/
-  n = i2c_lld_get_rxbytes(i2cp);
+  n = i2cp->rxbytes;
   if (n > 255U) {
     n = 255U;
     reload = I2C_CR2_RELOAD;
@@ -129,6 +231,7 @@ static void i2c_lld_setup_rx_transfer(I2CDriver *i2cp) {
   else {
     reload = 0U;
   }
+  i2cp->rxbytes -= n;
 
   /* Configures the CR2 registers with both the calculated and static
      settings.*/
@@ -149,7 +252,7 @@ static void i2c_lld_setup_tx_transfer(I2CDriver *i2cp) {
   size_t n;
 
   /* The unit can transfer 255 bytes maximum in a single operation.*/
-  n = i2c_lld_get_txbytes(i2cp);
+  n = i2cp->txbytes;
   if (n > 255U) {
     n = 255U;
     reload = I2C_CR2_RELOAD;
@@ -157,6 +260,7 @@ static void i2c_lld_setup_tx_transfer(I2CDriver *i2cp) {
   else {
     reload = 0U;
   }
+  i2cp->txbytes -= n;
 
   /* Configures the CR2 registers with both the calculated and static
      settings.*/
@@ -184,8 +288,8 @@ static void i2c_lld_abort_operation(I2CDriver *i2cp) {
 
 #if STM32_I2C_USE_DMA == TRUE
   /* Stops the associated DMA streams.*/
-  dmaStreamDisable(i2cp->dmatx);
-  dmaStreamDisable(i2cp->dmarx);
+  i2c_lld_stop_rx_dma(i2cp);
+  i2c_lld_stop_tx_dma(i2cp);
 #else
   dp->CR1 &= ~(I2C_CR1_TXIE | I2C_CR1_RXIE);
 #endif
@@ -206,8 +310,8 @@ static void i2c_lld_serve_interrupt(I2CDriver *i2cp, uint32_t isr) {
   if ((isr & I2C_ISR_NACKF) != 0U) {
 #if STM32_I2C_USE_DMA == TRUE
     /* Stops the associated DMA streams.*/
-    dmaStreamDisable(i2cp->dmatx);
-    dmaStreamDisable(i2cp->dmarx);
+    i2c_lld_stop_rx_dma(i2cp);
+    i2c_lld_stop_tx_dma(i2cp);
 #endif
 
     /* Error flag.*/
@@ -273,17 +377,17 @@ static void i2c_lld_serve_interrupt(I2CDriver *i2cp, uint32_t isr) {
 
 #if STM32_I2C_USE_DMA == TRUE
       /* Disabling TX DMA channel.*/
-      dmaStreamDisable(i2cp->dmatx);
+      i2c_lld_stop_tx_dma(i2cp);
 #endif
 
       /* Starting receive phase if necessary.*/
-      if (i2c_lld_get_rxbytes(i2cp) > 0U) {
+      if (i2cp->rxbytes > 0U) {
         /* Setting up the peripheral.*/
         i2c_lld_setup_rx_transfer(i2cp);
 
 #if STM32_I2C_USE_DMA == TRUE
         /* Enabling RX DMA.*/
-        dmaStreamEnable(i2cp->dmarx);
+        i2c_lld_start_rx_dma(i2cp);
 #else
         /* RX interrupt enabled.*/
         dp->CR1 |= I2C_CR1_RXIE;
@@ -303,7 +407,7 @@ static void i2c_lld_serve_interrupt(I2CDriver *i2cp, uint32_t isr) {
       /* End of the receive phase.*/
 #if STM32_I2C_USE_DMA == TRUE
       /* Disabling RX DMA channel.*/
-      dmaStreamDisable(i2cp->dmarx);
+      i2c_lld_stop_rx_dma(i2cp);
 #endif
     }
 
@@ -330,8 +434,8 @@ static void i2c_lld_serve_error_interrupt(I2CDriver *i2cp, uint32_t isr) {
 
 #if STM32_I2C_USE_DMA == TRUE
   /* Clears DMA interrupt flags just to be safe.*/
-  dmaStreamDisable(i2cp->dmatx);
-  dmaStreamDisable(i2cp->dmarx);
+  i2c_lld_stop_rx_dma(i2cp);
+  i2c_lld_stop_tx_dma(i2cp);
 #else
   /* Disabling RX and TX interrupts.*/
   i2cp->i2c->CR1 &= ~(I2C_CR1_TXIE | I2C_CR1_RXIE);
@@ -591,41 +695,85 @@ void i2c_lld_init(void) {
 
 #if STM32_I2C_USE_I2C1
   i2cObjectInit(&I2CD1);
-  I2CD1.thread = NULL;
-  I2CD1.i2c    = I2C1;
+  I2CD1.thread  = NULL;
+  I2CD1.i2c     = I2C1;
 #if STM32_I2C_USE_DMA == TRUE
-  I2CD1.dmarx  = STM32_DMA_STREAM(STM32_I2C_I2C1_RX_DMA_CHANNEL);
-  I2CD1.dmatx  = STM32_DMA_STREAM(STM32_I2C_I2C1_TX_DMA_CHANNEL);
+#if defined(STM32_I2C_DMA_REQUIRED) && defined(STM32_I2C_BDMA_REQUIRED)
+  I2CD1.is_bdma = false;
+#endif
+  I2CD1.rx.dma  = STM32_DMA_STREAM(STM32_I2C_I2C1_RX_DMA_CHANNEL);
+  I2CD1.tx.dma  = STM32_DMA_STREAM(STM32_I2C_I2C1_TX_DMA_CHANNEL);
+#endif
+#if defined(STM32_I2C1_GLOBAL_NUMBER) || defined(__DOXYGEN__)
+      nvicEnableVector(STM32_I2C1_GLOBAL_NUMBER, STM32_I2C_I2C1_IRQ_PRIORITY);
+#elif defined(STM32_I2C1_EVENT_NUMBER) && defined(STM32_I2C1_ERROR_NUMBER)
+      nvicEnableVector(STM32_I2C1_EVENT_NUMBER, STM32_I2C_I2C1_IRQ_PRIORITY);
+      nvicEnableVector(STM32_I2C1_ERROR_NUMBER, STM32_I2C_I2C1_IRQ_PRIORITY);
+#else
+#error "I2C1 interrupt numbers not defined"
 #endif
 #endif /* STM32_I2C_USE_I2C1 */
 
 #if STM32_I2C_USE_I2C2
   i2cObjectInit(&I2CD2);
-  I2CD2.thread = NULL;
-  I2CD2.i2c    = I2C2;
+  I2CD2.thread  = NULL;
+  I2CD2.i2c     = I2C2;
 #if STM32_I2C_USE_DMA == TRUE
-  I2CD2.dmarx  = STM32_DMA_STREAM(STM32_I2C_I2C2_RX_DMA_CHANNEL);
-  I2CD2.dmatx  = STM32_DMA_STREAM(STM32_I2C_I2C2_TX_DMA_CHANNEL);
+#if defined(STM32_I2C_DMA_REQUIRED) && defined(STM32_I2C_BDMA_REQUIRED)
+  I2CD2.is_bdma = false;
+#endif
+  I2CD2.rx.dma  = STM32_DMA_STREAM(STM32_I2C_I2C2_RX_DMA_CHANNEL);
+  I2CD2.tx.dma  = STM32_DMA_STREAM(STM32_I2C_I2C2_TX_DMA_CHANNEL);
+#endif
+#if defined(STM32_I2C2_GLOBAL_NUMBER) || defined(__DOXYGEN__)
+      nvicEnableVector(STM32_I2C2_GLOBAL_NUMBER, STM32_I2C_I2C2_IRQ_PRIORITY);
+#elif defined(STM32_I2C2_EVENT_NUMBER) && defined(STM32_I2C2_ERROR_NUMBER)
+      nvicEnableVector(STM32_I2C2_EVENT_NUMBER, STM32_I2C_I2C2_IRQ_PRIORITY);
+      nvicEnableVector(STM32_I2C2_ERROR_NUMBER, STM32_I2C_I2C2_IRQ_PRIORITY);
+#else
+#error "I2C2 interrupt numbers not defined"
 #endif
 #endif /* STM32_I2C_USE_I2C2 */
 
 #if STM32_I2C_USE_I2C3
   i2cObjectInit(&I2CD3);
-  I2CD3.thread = NULL;
-  I2CD3.i2c    = I2C3;
+  I2CD3.thread  = NULL;
+  I2CD3.i2c     = I2C3;
 #if STM32_I2C_USE_DMA == TRUE
-  I2CD3.dmarx  = STM32_DMA_STREAM(STM32_I2C_I2C3_RX_DMA_CHANNEL);
-  I2CD3.dmatx  = STM32_DMA_STREAM(STM32_I2C_I2C3_TX_DMA_CHANNEL);
+#if defined(STM32_I2C_DMA_REQUIRED) && defined(STM32_I2C_BDMA_REQUIRED)
+  I2CD3.is_bdma = false;
+#endif
+  I2CD3.rx.dma  = STM32_DMA_STREAM(STM32_I2C_I2C3_RX_DMA_CHANNEL);
+  I2CD3.tx.dma  = STM32_DMA_STREAM(STM32_I2C_I2C3_TX_DMA_CHANNEL);
+#endif
+#if defined(STM32_I2C3_GLOBAL_NUMBER) || defined(__DOXYGEN__)
+      nvicEnableVector(STM32_I2C3_GLOBAL_NUMBER, STM32_I2C_I2C3_IRQ_PRIORITY);
+#elif defined(STM32_I2C3_EVENT_NUMBER) && defined(STM32_I2C3_ERROR_NUMBER)
+      nvicEnableVector(STM32_I2C3_EVENT_NUMBER, STM32_I2C_I2C3_IRQ_PRIORITY);
+      nvicEnableVector(STM32_I2C3_ERROR_NUMBER, STM32_I2C_I2C3_IRQ_PRIORITY);
+#else
+#error "I2C3 interrupt numbers not defined"
 #endif
 #endif /* STM32_I2C_USE_I2C3 */
 
 #if STM32_I2C_USE_I2C4
   i2cObjectInit(&I2CD4);
-  I2CD4.thread = NULL;
-  I2CD4.i2c    = I2C4;
+  I2CD4.thread  = NULL;
+  I2CD4.i2c     = I2C4;
 #if STM32_I2C_USE_DMA == TRUE
-  I2CD4.dmarx  = STM32_DMA_STREAM(STM32_I2C_I2C4_RX_DMA_CHANNEL);
-  I2CD4.dmatx  = STM32_DMA_STREAM(STM32_I2C_I2C4_TX_DMA_CHANNEL);
+#if defined(STM32_I2C_DMA_REQUIRED) && defined(STM32_I2C_BDMA_REQUIRED)
+  I2CD1.is_bdma = true;
+#endif
+  I2CD4.rx.bdma = STM32_BDMA_STREAM(STM32_I2C_I2C4_RX_BDMA_CHANNEL);
+  I2CD4.tx.bdma = STM32_BDMA_STREAM(STM32_I2C_I2C4_TX_BDMA_CHANNEL);
+#endif
+#if defined(STM32_I2C4_GLOBAL_NUMBER) || defined(__DOXYGEN__)
+      nvicEnableVector(STM32_I2C4_GLOBAL_NUMBER, STM32_I2C_I2C4_IRQ_PRIORITY);
+#elif defined(STM32_I2C4_EVENT_NUMBER) && defined(STM32_I2C4_ERROR_NUMBER)
+      nvicEnableVector(STM32_I2C4_EVENT_NUMBER, STM32_I2C_I2C4_IRQ_PRIORITY);
+      nvicEnableVector(STM32_I2C4_ERROR_NUMBER, STM32_I2C_I2C4_IRQ_PRIORITY);
+#else
+#error "I2C4 interrupt numbers not defined"
 #endif
 #endif /* STM32_I2C_USE_I2C4 */
 }
@@ -656,17 +804,17 @@ void i2c_lld_start(I2CDriver *i2cp) {
     if (&I2CD1 == i2cp) {
 
       rccResetI2C1();
-      rccEnableI2C1(FALSE);
+      rccEnableI2C1(false);
 #if STM32_I2C_USE_DMA == TRUE
       {
         bool b;
 
-        b = dmaStreamAllocate(i2cp->dmarx,
+        b = dmaStreamAllocate(i2cp->rx.dma,
                               STM32_I2C_I2C1_IRQ_PRIORITY,
                               NULL,
                               (void *)i2cp);
         osalDbgAssert(!b, "stream already allocated");
-        b = dmaStreamAllocate(i2cp->dmatx,
+        b = dmaStreamAllocate(i2cp->tx.dma,
                               STM32_I2C_I2C1_IRQ_PRIORITY,
                               NULL,
                               (void *)i2cp);
@@ -674,17 +822,10 @@ void i2c_lld_start(I2CDriver *i2cp) {
 
         i2cp->rxdmamode |= STM32_DMA_CR_PL(STM32_I2C_I2C1_DMA_PRIORITY);
         i2cp->txdmamode |= STM32_DMA_CR_PL(STM32_I2C_I2C1_DMA_PRIORITY);
+        dmaSetRequestSource(i2cp->rx.dma, STM32_DMAMUX1_I2C1_RX);
+        dmaSetRequestSource(i2cp->tx.dma, STM32_DMAMUX1_I2C1_TX);
       }
 #endif /* STM32_I2C_USE_DMA == TRUE */
-
-#if defined(STM32_I2C1_GLOBAL_NUMBER) || defined(__DOXYGEN__)
-      nvicEnableVector(STM32_I2C1_GLOBAL_NUMBER, STM32_I2C_I2C1_IRQ_PRIORITY);
-#elif defined(STM32_I2C1_EVENT_NUMBER) && defined(STM32_I2C1_ERROR_NUMBER)
-      nvicEnableVector(STM32_I2C1_EVENT_NUMBER, STM32_I2C_I2C1_IRQ_PRIORITY);
-      nvicEnableVector(STM32_I2C1_ERROR_NUMBER, STM32_I2C_I2C1_IRQ_PRIORITY);
-#else
-#error "I2C1 interrupt numbers not defined"
-#endif
     }
 #endif /* STM32_I2C_USE_I2C1 */
 
@@ -692,17 +833,17 @@ void i2c_lld_start(I2CDriver *i2cp) {
     if (&I2CD2 == i2cp) {
 
       rccResetI2C2();
-      rccEnableI2C2(FALSE);
+      rccEnableI2C2(false);
 #if STM32_I2C_USE_DMA == TRUE
       {
         bool b;
 
-        b = dmaStreamAllocate(i2cp->dmarx,
+        b = dmaStreamAllocate(i2cp->rx.dma,
                               STM32_I2C_I2C2_IRQ_PRIORITY,
                               NULL,
                               (void *)i2cp);
         osalDbgAssert(!b, "stream already allocated");
-        b = dmaStreamAllocate(i2cp->dmatx,
+        b = dmaStreamAllocate(i2cp->tx.dma,
                               STM32_I2C_I2C2_IRQ_PRIORITY,
                               NULL,
                               (void *)i2cp);
@@ -710,17 +851,10 @@ void i2c_lld_start(I2CDriver *i2cp) {
 
         i2cp->rxdmamode |= STM32_DMA_CR_PL(STM32_I2C_I2C2_DMA_PRIORITY);
         i2cp->txdmamode |= STM32_DMA_CR_PL(STM32_I2C_I2C2_DMA_PRIORITY);
+        dmaSetRequestSource(i2cp->rx.dma, STM32_DMAMUX1_I2C2_RX);
+        dmaSetRequestSource(i2cp->tx.dma, STM32_DMAMUX1_I2C2_TX);
       }
 #endif /*STM32_I2C_USE_DMA == TRUE */
-
-#if defined(STM32_I2C2_GLOBAL_NUMBER) || defined(__DOXYGEN__)
-      nvicEnableVector(STM32_I2C2_GLOBAL_NUMBER, STM32_I2C_I2C2_IRQ_PRIORITY);
-#elif defined(STM32_I2C2_EVENT_NUMBER) && defined(STM32_I2C2_ERROR_NUMBER)
-      nvicEnableVector(STM32_I2C2_EVENT_NUMBER, STM32_I2C_I2C2_IRQ_PRIORITY);
-      nvicEnableVector(STM32_I2C2_ERROR_NUMBER, STM32_I2C_I2C2_IRQ_PRIORITY);
-#else
-#error "I2C2 interrupt numbers not defined"
-#endif
     }
 #endif /* STM32_I2C_USE_I2C2 */
 
@@ -728,17 +862,17 @@ void i2c_lld_start(I2CDriver *i2cp) {
     if (&I2CD3 == i2cp) {
 
       rccResetI2C3();
-      rccEnableI2C3(FALSE);
+      rccEnableI2C3(false);
 #if STM32_I2C_USE_DMA == TRUE
       {
         bool b;
 
-        b = dmaStreamAllocate(i2cp->dmarx,
+        b = dmaStreamAllocate(i2cp->rx.dma,
                               STM32_I2C_I2C3_IRQ_PRIORITY,
                               NULL,
                               (void *)i2cp);
         osalDbgAssert(!b, "stream already allocated");
-        b = dmaStreamAllocate(i2cp->dmatx,
+        b = dmaStreamAllocate(i2cp->tx.dma,
                               STM32_I2C_I2C3_IRQ_PRIORITY,
                               NULL,
                               (void *)i2cp);
@@ -746,17 +880,10 @@ void i2c_lld_start(I2CDriver *i2cp) {
 
         i2cp->rxdmamode |= STM32_DMA_CR_PL(STM32_I2C_I2C3_DMA_PRIORITY);
         i2cp->txdmamode |= STM32_DMA_CR_PL(STM32_I2C_I2C3_DMA_PRIORITY);
+        dmaSetRequestSource(i2cp->rx.dma, STM32_DMAMUX1_I2C3_RX);
+        dmaSetRequestSource(i2cp->tx.dma, STM32_DMAMUX1_I2C3_TX);
       }
 #endif /*STM32_I2C_USE_DMA == TRUE */
-
-#if defined(STM32_I2C3_GLOBAL_NUMBER) || defined(__DOXYGEN__)
-      nvicEnableVector(STM32_I2C3_GLOBAL_NUMBER, STM32_I2C_I2C3_IRQ_PRIORITY);
-#elif defined(STM32_I2C3_EVENT_NUMBER) && defined(STM32_I2C3_ERROR_NUMBER)
-      nvicEnableVector(STM32_I2C3_EVENT_NUMBER, STM32_I2C_I2C3_IRQ_PRIORITY);
-      nvicEnableVector(STM32_I2C3_ERROR_NUMBER, STM32_I2C_I2C3_IRQ_PRIORITY);
-#else
-#error "I2C3 interrupt numbers not defined"
-#endif
     }
 #endif /* STM32_I2C_USE_I2C3 */
 
@@ -764,43 +891,36 @@ void i2c_lld_start(I2CDriver *i2cp) {
     if (&I2CD4 == i2cp) {
 
       rccResetI2C4();
-      rccEnableI2C4(FALSE);
+      rccEnableI2C4(false);
 #if STM32_I2C_USE_DMA == TRUE
       {
         bool b;
 
-        b = dmaStreamAllocate(i2cp->dmarx,
+        b = dmaStreamAllocate(i2cp->rx.dma,
                               STM32_I2C_I2C4_IRQ_PRIORITY,
                               NULL,
                               (void *)i2cp);
         osalDbgAssert(!b, "stream already allocated");
-        b = dmaStreamAllocate(i2cp->dmatx,
+        b = dmaStreamAllocate(i2cp->tx.dma,
                               STM32_I2C_I2C4_IRQ_PRIORITY,
                               NULL,
                               (void *)i2cp);
         osalDbgAssert(!b, "stream already allocated");
 
-        i2cp->rxdmamode |= STM32_DMA_CR_PL(STM32_I2C_I2C4_DMA_PRIORITY);
-        i2cp->txdmamode |= STM32_DMA_CR_PL(STM32_I2C_I2C4_DMA_PRIORITY);
+        i2cp->rxdmamode |= STM32_BDMA_CR_PL(STM32_I2C_I2C4_DMA_PRIORITY);
+        i2cp->txdmamode |= STM32_BDMA_CR_PL(STM32_I2C_I2C4_DMA_PRIORITY);
+        bdmaSetRequestSource(i2cp->rx.bdma, STM32_DMAMUX2_I2C4_RX);
+        bdmaSetRequestSource(i2cp->tx.bdma, STM32_DMAMUX2_I2C4_TX);
       }
 #endif /*STM32_I2C_USE_DMA == TRUE */
-
-#if defined(STM32_I2C4_GLOBAL_NUMBER) || defined(__DOXYGEN__)
-      nvicEnableVector(STM32_I2C4_GLOBAL_NUMBER, STM32_I2C_I2C4_IRQ_PRIORITY);
-#elif defined(STM32_I2C4_EVENT_NUMBER) && defined(STM32_I2C4_ERROR_NUMBER)
-      nvicEnableVector(STM32_I2C4_EVENT_NUMBER, STM32_I2C_I2C4_IRQ_PRIORITY);
-      nvicEnableVector(STM32_I2C4_ERROR_NUMBER, STM32_I2C_I2C4_IRQ_PRIORITY);
-#else
-#error "I2C4 interrupt numbers not defined"
-#endif
     }
 #endif /* STM32_I2C_USE_I2C4 */
   }
 
 #if STM32_I2C_USE_DMA == TRUE
   /* I2C registers pointed by the DMA.*/
-  dmaStreamSetPeripheral(i2cp->dmarx, &dp->RXDR);
-  dmaStreamSetPeripheral(i2cp->dmatx, &dp->TXDR);
+  dmaStreamSetPeripheral(i2cp->rx.dma, &dp->RXDR);
+  dmaStreamSetPeripheral(i2cp->tx.dma, &dp->TXDR);
 #endif
 
   /* Reset i2c peripheral, the TCIE bit will be handled separately.*/
@@ -832,8 +952,8 @@ void i2c_lld_stop(I2CDriver *i2cp) {
     /* I2C disable.*/
     i2c_lld_abort_operation(i2cp);
 #if STM32_I2C_USE_DMA == TRUE
-    dmaStreamRelease(i2cp->dmatx);
-    dmaStreamRelease(i2cp->dmarx);
+    dmaStreamRelease(i2cp->tx.dma);
+    dmaStreamRelease(i2cp->rx.dma);
 #endif
 
 #if STM32_I2C_USE_I2C1
@@ -847,7 +967,7 @@ void i2c_lld_stop(I2CDriver *i2cp) {
 #error "I2C1 interrupt numbers not defined"
 #endif
 
-      rccDisableI2C1(FALSE);
+      rccDisableI2C1();
     }
 #endif
 
@@ -862,7 +982,7 @@ void i2c_lld_stop(I2CDriver *i2cp) {
 #error "I2C2 interrupt numbers not defined"
 #endif
 
-      rccDisableI2C2(FALSE);
+      rccDisableI2C2();
     }
 #endif
 
@@ -877,7 +997,7 @@ void i2c_lld_stop(I2CDriver *i2cp) {
 #error "I2C3 interrupt numbers not defined"
 #endif
 
-      rccDisableI2C3(FALSE);
+      rccDisableI2C3();
     }
 #endif
 
@@ -892,7 +1012,7 @@ void i2c_lld_stop(I2CDriver *i2cp) {
 #error "I2C4 interrupt numbers not defined"
 #endif
 
-      rccDisableI2C4(FALSE);
+      rccDisableI2C4();
     }
 #endif
   }
@@ -932,14 +1052,17 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
   /* Releases the lock from high level driver.*/
   osalSysUnlock();
 
+  /* Sizes of transfer phases.*/
+  i2cp->txbytes = 0U;
+  i2cp->rxbytes = rxbytes;
+
 #if STM32_I2C_USE_DMA == TRUE
   /* RX DMA setup.*/
-  dmaStreamSetMode(i2cp->dmarx, i2cp->rxdmamode);
-  dmaStreamSetMemory0(i2cp->dmarx, rxbuf);
-  dmaStreamSetTransactionSize(i2cp->dmarx, rxbytes);
+  dmaStreamSetMode(i2cp->rx.dma, i2cp->rxdmamode);
+  dmaStreamSetMemory0(i2cp->rx.dma, rxbuf);
+  dmaStreamSetTransactionSize(i2cp->rx.dma, rxbytes);
 #else
-  i2cp->rxptr   = rxbuf;
-  i2cp->rxbytes = rxbytes;
+  i2cp->rxptr = rxbuf;
 #endif
 
   /* Calculating the time window for the timeout on the busy bus condition.*/
@@ -973,7 +1096,7 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
 
 #if STM32_I2C_USE_DMA == TRUE
   /* Enabling RX DMA.*/
-  dmaStreamEnable(i2cp->dmarx);
+  dmaStreamEnable(i2cp->rx.dma);
 
   /* Transfer complete interrupt enabled.*/
   dp->CR1 |= I2C_CR1_TCIE;
@@ -1035,21 +1158,23 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
   /* Releases the lock from high level driver.*/
   osalSysUnlock();
 
+  /* Sizes of transfer phases.*/
+  i2cp->txbytes = txbytes;
+  i2cp->rxbytes = rxbytes;
+
 #if STM32_I2C_USE_DMA == TRUE
   /* TX DMA setup.*/
-  dmaStreamSetMode(i2cp->dmatx, i2cp->txdmamode);
-  dmaStreamSetMemory0(i2cp->dmatx, txbuf);
-  dmaStreamSetTransactionSize(i2cp->dmatx, txbytes);
+  dmaStreamSetMode(i2cp->tx.dma, i2cp->txdmamode);
+  dmaStreamSetMemory0(i2cp->tx.dma, txbuf);
+  dmaStreamSetTransactionSize(i2cp->tx.dma, txbytes);
 
   /* RX DMA setup, note, rxbytes can be zero but we write the value anyway.*/
-  dmaStreamSetMode(i2cp->dmarx, i2cp->rxdmamode);
-  dmaStreamSetMemory0(i2cp->dmarx, rxbuf);
-  dmaStreamSetTransactionSize(i2cp->dmarx, rxbytes);
+  dmaStreamSetMode(i2cp->rx.dma, i2cp->rxdmamode);
+  dmaStreamSetMemory0(i2cp->rx.dma, rxbuf);
+  dmaStreamSetTransactionSize(i2cp->rx.dma, rxbytes);
 #else
-  i2cp->txptr   = txbuf;
-  i2cp->txbytes = txbytes;
-  i2cp->rxptr   = rxbuf;
-  i2cp->rxbytes = rxbytes;
+  i2cp->txptr = txbuf;
+  i2cp->rxptr = rxbuf;
 #endif
 
   /* Calculating the time window for the timeout on the busy bus condition.*/
@@ -1083,7 +1208,7 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
 
 #if STM32_I2C_USE_DMA == TRUE
   /* Enabling TX DMA.*/
-  dmaStreamEnable(i2cp->dmatx);
+  dmaStreamEnable(i2cp->tx.dma);
 
   /* Transfer complete interrupt enabled.*/
   dp->CR1 |= I2C_CR1_TCIE;

@@ -750,21 +750,21 @@
  *
  * @api
  */
-#define rccEnableI2C4(lp) rccEnableAPB1L(RCC_APB1LENR_I2C4EN, lp)
+#define rccEnableI2C4(lp) rccEnableAPB4(RCC_APB4ENR_I2C4EN, lp)
 
 /**
  * @brief   Disables the I2C4 peripheral clock.
  *
  * @api
  */
-#define rccDisableI2C4() rccDisableAPB1L(RCC_APB1LENR_I2C4EN)
+#define rccDisableI2C4() rccDisableAPB4(RCC_APB4ENR_I2C4EN)
 
 /**
  * @brief   Resets the I2C4 peripheral.
  *
  * @api
  */
-#define rccResetI2C4() rccResetAPB1L(RCC_APB1LRSTR_I2C4RST)
+#define rccResetI2C4() rccResetAPB4(RCC_APB4RSTR_I2C4RST)
 /** @} */
 
 /**

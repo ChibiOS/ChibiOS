@@ -242,14 +242,14 @@
 #endif
 
 /**
- * @brief   SPI6 RX DMA channel setting.
+ * @brief   SPI6 RX BDMA channel setting.
  */
 #if !defined(STM32_SPI_SPI6_RX_BDMA_CHANNEL) || defined(__DOXYGEN__)
 #define STM32_SPI_SPI6_RX_BDMA_CHANNEL      2
 #endif
 
 /**
- * @brief   SPI6 TX DMA channel setting.
+ * @brief   SPI6 TX BDMA channel setting.
  */
 #if !defined(STM32_SPI_SPI6_TX_BDMA_CHANNEL) || defined(__DOXYGEN__)
 #define STM32_SPI_SPI6_TX_BDMA_CHANNEL      3
@@ -437,13 +437,13 @@
 #endif
 
 #if STM32_SPI_USE_SPI6 &&                                                   \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_SPI_SPI6_RX_BDMA_CHANNEL)
+    !STM32_BDMA_IS_VALID_CHANNEL(STM32_SPI_SPI6_RX_BDMA_CHANNEL)
 #error "Invalid BDMA channel assigned to SPI6 RX"
 #endif
 
 #if STM32_SPI_USE_SPI6 &&                                                   \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_SPI_SPI6_TX_BDMA_CHANNEL)
-#error "Invalid BDMA channel assigned to SPI1 TX"
+    !STM32_BDMA_IS_VALID_CHANNEL(STM32_SPI_SPI6_TX_BDMA_CHANNEL)
+#error "Invalid BDMA channel assigned to SPI6 TX"
 #endif
 
 #if STM32_SPI_USE_SPI1 &&                                                   \
