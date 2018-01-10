@@ -60,15 +60,16 @@
  */
 void hal_lld_init(void) {
 
+#if (SAMA_HAL_IS_SECURE == TRUE)    /* The Matrix is PAS and PMC is always configured secure */
   /* Disabling PMC write protection. */
   pmcDisableWP();
 
   /* Enabling matrix clock */
   pmcEnableH32MX();
   pmcEnableH64MX();
-
   /* Enabling write protection.  */
   pmcEnableWP();
+#endif
 
 #if defined(SAMA_DMA_REQUIRED)
   dmaInit();
@@ -85,7 +86,7 @@ void hal_lld_init(void) {
  * @special
  */
 void sama_clock_init(void) {
-#if !SAMA_NO_INIT
+#if (!SAMA_NO_INIT && SAMA_HAL_IS_SECURE == TRUE)
   uint32_t mor, pllar, mckr, mainf;
   /* Disabling PMC write protection. */
   pmcDisableWP();
