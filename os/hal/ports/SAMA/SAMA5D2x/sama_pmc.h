@@ -476,6 +476,20 @@
  */
 #define pmcDisableETH0() pmcDisablePidLow(ID_GMAC0_MSK)
 
+/**
+ * @brief   Enables the SECUMOD peripheral clock.
+ *
+ * @api
+ */
+#define pmcEnableSEC() pmcEnablePidLow(ID_SECUMOD_MSK)
+
+/**
+ * @brief   Disables the SECUMOD peripheral clock.
+ *
+ * @api
+ */
+#define pmcDisableSEC() pmcDisablePidLow(ID_SECUMOD_MSK)
+
 
 /** @} */
 
