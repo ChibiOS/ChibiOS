@@ -39,7 +39,7 @@
 /**
  * @brief   This port supports a realtime counter.
  */
-#define PORT_SUPPORTS_RT                FALSE
+#define PORT_SUPPORTS_RT                TRUE
 
 /**
  * @brief   Natural alignment constant.
@@ -506,6 +506,29 @@ static inline void port_enable(void) {
 static inline void port_wait_for_interrupt(void) {
 
   asm volatile ("wfi" : : : "memory");
+}
+
+/**
+ * @brief   Returns the current value of the realtime counter.
+ *
+ * @return              The realtime counter value.
+ */
+static inline rtcnt_t port_rt_get_counter_value(void) {
+
+#if ((ARM_CORE == ARM_CORE_CORTEX_A5) || (ARM_CORE == ARM_CORE_CORTEX_A9) || defined(__DOXYGEN__))
+
+  rtcnt_t cyc;
+
+  __asm volatile("mrc p15, 0, %[p0], c9, c13, 0" : [p0] "=r" (cyc) :);
+
+  return cyc;
+#else
+/*
+ * TODO develop same function for ARM_CORE_CORTEX_A8
+ */
+  return 0;
+
+#endif
 }
 
 #if CH_CFG_ST_TIMEDELTA > 0
