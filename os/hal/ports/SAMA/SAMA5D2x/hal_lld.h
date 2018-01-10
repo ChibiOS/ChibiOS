@@ -497,6 +497,7 @@
 #include "sama_xdmac.h" 
 #include "sama_cache.h"
 #include "hal_tc_lld.h"
+#include "sama_secumod.h"
 
 #ifdef __cplusplus
 extern "C" {
