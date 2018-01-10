@@ -80,6 +80,13 @@
 #define SAMA_SERIAL_FLEXCOM4_IRQ_PRIORITY   4
 
 /*
+ * ST driver settings.
+ */
+#define SAMA_ST_USE_PIT                     TRUE
+#define SAMA_ST_USE_TC0                     FALSE
+#define SAMA_ST_USE_TC1                     FALSE
+
+/*
  * TC driver system settings.
  */
 #define HAL_USE_TC                          FALSE
