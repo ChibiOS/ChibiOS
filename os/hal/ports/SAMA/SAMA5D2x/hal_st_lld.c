@@ -33,6 +33,30 @@
  */
 #define SAMA_PIT                            (SAMA_MCK / 16 / SAMA_H64MX_H32MX_RATIO)
 
+#if (SAMA_ST_USE_TC0 == TRUE) || (SAMA_ST_USE_TC1 == TRUE)
+/**
+ * @brief   Enable write protection on TC registers block.
+ *
+ * @param[in] tc    pointer to a TC
+ *
+ * @notapi
+ */
+#define tcEnableWP(tc) {                                                     \
+  tc->TC_WPMR = TC_WPMR_WPKEY_PASSWD | TC_WPMR_WPEN;                         \
+}
+
+/**
+ * @brief   Disable write protection on TC registers block.
+ *
+ * @param[in] tc    pointer to a TC
+ *
+ * @notapi
+ */
+#define tcDisableWP(tc) {                                                     \
+  tc->TC_WPMR = TC_WPMR_WPKEY_PASSWD;                                         \
+}
+#endif
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -54,6 +78,38 @@
 /*===========================================================================*/
 
 #if (OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC) || defined(__DOXYGEN__)
+
+#if (SAMA_ST_USE_TC0)
+OSAL_IRQ_HANDLER(SAMA_ST_TC0_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+  if (((TC0->TC_CHANNEL[0].TC_SR & TC_SR_CPCS) != 0) &&
+      ((TC0->TC_CHANNEL[0].TC_IMR & TC_IMR_CPCS) != 0)) {
+    osalSysLockFromISR();
+    osalOsTimerHandlerI();
+    osalSysUnlockFromISR();
+  }
+  aicAckInt();
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+
+#if (SAMA_ST_USE_TC1)
+OSAL_IRQ_HANDLER(SAMA_ST_TC1_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+  if (((TC1->TC_CHANNEL[0].TC_SR & TC_SR_CPCS) != 0) &&
+      ((TC1->TC_CHANNEL[0].TC_IMR & TC_IMR_CPCS) != 0)) {
+    osalSysLockFromISR();
+    osalOsTimerHandlerI();
+    osalSysUnlockFromISR();
+  }
+  aicAckInt();
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+
+#if (SAMA_ST_USE_PIT == TRUE)
 /**
  * @brief   System Timer vector.
  * @details This interrupt is used for system tick in periodic mode.
@@ -73,6 +129,8 @@ OSAL_IRQ_HANDLER(PIT_Handler) {
   aicAckInt();
   OSAL_IRQ_EPILOGUE();
 }
+#endif /* SAMA_ST_USE_PIT == TRUE */
+
 #endif /* OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC */
 
 /*===========================================================================*/
@@ -87,6 +145,48 @@ OSAL_IRQ_HANDLER(PIT_Handler) {
 void st_lld_init(void) {
 
 #if (OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC)
+
+#if (SAMA_ST_USE_TC0 == TRUE)
+  pmcEnableTC0();
+  aicSetSourcePriority(ID_TC0, SAMA_TC0_IRQ_PRIORITY);
+  aicSetSourceHandler(ID_TC0, SAMA_ST_TC0_HANDLER);
+  aicEnableInt(ID_TC0);
+
+  tcDisableWP(TC0);
+  uint32_t rc = (SAMA_TC0CLK) / (OSAL_ST_FREQUENCY);
+  TC0->TC_CHANNEL[0].TC_EMR = TC_EMR_NODIVCLK;
+  TC0->TC_CHANNEL[0].TC_CMR = TC_CMR_WAVE | TC_CMR_ACPA_SET |
+                              TC_CMR_ACPC_CLEAR | TC_CMR_WAVSEL_UP_RC;
+  TC0->TC_CHANNEL[0].TC_RC = TC_RC_RC(rc);
+  TC0->TC_CHANNEL[0].TC_RA = TC_RA_RA(rc);
+  TC0->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKEN;
+  TC0->TC_CHANNEL[0].TC_CCR = TC_CCR_SWTRG;
+  TC0->TC_CHANNEL[0].TC_SR;                       /* Clear pending IRQs.          */
+  TC0->TC_CHANNEL[0].TC_IER |= TC_IER_CPCS;
+  tcEnableWP(TC0);
+#endif /* SAMA_ST_USE_TC0 == TRUE */
+
+#if (SAMA_ST_USE_TC1 == TRUE)
+  pmcEnableTC1();
+  aicSetSourcePriority(ID_TC1, SAMA_TC1_IRQ_PRIORITY);
+  aicSetSourceHandler(ID_TC1, SAMA_ST_TC1_HANDLER);
+  aicEnableInt(ID_TC1);
+
+  tcDisableWP(TC1);
+  uint32_t rc = (SAMA_TC1CLK) / (OSAL_ST_FREQUENCY);
+  TC1->TC_CHANNEL[0].TC_EMR = TC_EMR_NODIVCLK;
+  TC1->TC_CHANNEL[0].TC_CMR = TC_CMR_WAVE | TC_CMR_ACPA_SET |
+                              TC_CMR_ACPC_CLEAR | TC_CMR_WAVSEL_UP_RC;
+  TC1->TC_CHANNEL[0].TC_RC = TC_RC_RC(rc);
+  TC1->TC_CHANNEL[0].TC_RA = TC_RA_RA(rc);
+  TC1->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKEN;
+  TC1->TC_CHANNEL[0].TC_CCR = TC_CCR_SWTRG;
+  TC1->TC_CHANNEL[0].TC_SR;                       /* Clear pending IRQs.          */
+  TC1->TC_CHANNEL[0].TC_IER |= TC_IER_CPCS;
+  tcEnableWP(TC1);
+#endif /* SAMA_ST_USE_TC1 == TRUE */
+
+#if (SAMA_ST_USE_PIT == TRUE)
   /* Enabling PIT.*/
   pmcEnablePIT();
 
@@ -98,6 +198,8 @@ void st_lld_init(void) {
   aicSetSourcePriority(ID_PIT, SAMA_ST_IRQ_PRIORITY);
   aicSetSourceHandler(ID_PIT, PIT_Handler);
   aicEnableInt(ID_PIT);
+#endif /* SAMA_ST_USE_PIT == TRUE */
+
 #endif /* OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC */
 }
 
