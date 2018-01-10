@@ -28,6 +28,32 @@
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
+/**
+ * @name    INTERRUPT SOURCE TYPE mode macros
+ * @{
+ */
+/**
+ * @brief   High-level sensitive for internal source.
+ *          Low-level sensitive for external source.
+ */
+#define INT_LEVEL_SENSITIVE                     0x0U
+
+/**
+ * @brief   Negative-edge triggered for external source.
+ */
+#define EXT_NEGATIVE_EDGE                       0x1U
+
+/**
+ * @brief   High-level sensitive for internal source.
+ *          High-level sensitive for external source.
+ */
+#define EXT_HIGH_LEVEL                          0x2U
+
+/**
+ * @brief   Positive-edge triggered for external source.
+ */
+#define EXT_POSITIVE_EDGE                       0x3U
+/** @} */
 
 /**
  * @brief   AIC unique redirect key.
@@ -72,6 +98,7 @@ extern "C" {
 #endif
   void aicInit(void);
   void aicSetSourcePriority(uint32_t source, uint8_t priority);
+  void aicSetIntSourceType(uint32_t source, uint8_t type);
   void aicSetSourceHandler(uint32_t source, bool (*handler)(void));
   void aicSetSpuriousHandler(bool (*handler)(void));
   void aicEnableInt(uint32_t source);
