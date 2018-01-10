@@ -688,7 +688,7 @@ void i2c_lld_start(I2CDriver *i2cp) {
     if (&I2CD1 == i2cp) {
 
       rccResetI2C1();
-      rccEnableI2C1(FALSE);
+      rccEnableI2C1(false);
 #if STM32_I2C_USE_DMA == TRUE
       {
         bool b;
@@ -726,7 +726,7 @@ void i2c_lld_start(I2CDriver *i2cp) {
     if (&I2CD2 == i2cp) {
 
       rccResetI2C2();
-      rccEnableI2C2(FALSE);
+      rccEnableI2C2(false);
 #if STM32_I2C_USE_DMA == TRUE
       {
         bool b;
@@ -764,7 +764,7 @@ void i2c_lld_start(I2CDriver *i2cp) {
     if (&I2CD3 == i2cp) {
 
       rccResetI2C3();
-      rccEnableI2C3(FALSE);
+      rccEnableI2C3(false);
 #if STM32_I2C_USE_DMA == TRUE
       {
         bool b;
@@ -802,7 +802,7 @@ void i2c_lld_start(I2CDriver *i2cp) {
     if (&I2CD4 == i2cp) {
 
       rccResetI2C4();
-      rccEnableI2C4(FALSE);
+      rccEnableI2C4(false);
 #if STM32_I2C_USE_DMA == TRUE
       {
         bool b;
@@ -887,7 +887,7 @@ void i2c_lld_stop(I2CDriver *i2cp) {
 #error "I2C1 interrupt numbers not defined"
 #endif
 
-      rccDisableI2C1(FALSE);
+      rccDisableI2C1();
     }
 #endif
 
@@ -902,7 +902,7 @@ void i2c_lld_stop(I2CDriver *i2cp) {
 #error "I2C2 interrupt numbers not defined"
 #endif
 
-      rccDisableI2C2(FALSE);
+      rccDisableI2C2();
     }
 #endif
 
@@ -917,7 +917,7 @@ void i2c_lld_stop(I2CDriver *i2cp) {
 #error "I2C3 interrupt numbers not defined"
 #endif
 
-      rccDisableI2C3(FALSE);
+      rccDisableI2C3();
     }
 #endif
 
@@ -932,7 +932,7 @@ void i2c_lld_stop(I2CDriver *i2cp) {
 #error "I2C4 interrupt numbers not defined"
 #endif
 
-      rccDisableI2C4(FALSE);
+      rccDisableI2C4();
     }
 #endif
   }

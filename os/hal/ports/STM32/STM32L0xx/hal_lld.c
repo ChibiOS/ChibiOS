@@ -273,7 +273,7 @@ void stm32_clock_init(void) {
   while (!(SYSCFG->CFGR3 & SYSCFG_CFGR3_VREFINT_RDYF))
     ;                             /* Waits until VREFINT is stable.         */
   /* Disabling SYSCFG clock. */
-  rccDisableAPB2(RCC_APB2ENR_SYSCFGEN, FALSE);
+  rccDisableAPB2(RCC_APB2ENR_SYSCFGEN);
 
   /* Enabling HSI48. */
   RCC->CRRCR |= RCC_CRRCR_HSI48ON;

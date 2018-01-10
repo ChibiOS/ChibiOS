@@ -194,7 +194,7 @@ void qspi_lld_stop(QSPIDriver *qspip) {
     /* Stopping involved clocks.*/
 #if STM32_QSPI_USE_QUADSPI1
     if (&QSPID1 == qspip) {
-      rccDisableQUADSPI1(FALSE);
+      rccDisableQUADSPI1();
     }
 #endif
   }

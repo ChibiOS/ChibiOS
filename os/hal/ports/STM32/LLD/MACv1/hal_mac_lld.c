@@ -295,7 +295,7 @@ void mac_lld_init(void) {
 #endif
 
   /* MAC clocks stopped again.*/
-  rccDisableETH(false);
+  rccDisableETH();
 }
 
 /**
@@ -396,7 +396,7 @@ void mac_lld_stop(MACDriver *macp) {
     ETH->DMASR    = ETH->DMASR;
 
     /* MAC clocks stopped.*/
-    rccDisableETH(false);
+    rccDisableETH();
 
     /* ISR vector disabled.*/
     nvicDisableVector(STM32_ETH_NUMBER);

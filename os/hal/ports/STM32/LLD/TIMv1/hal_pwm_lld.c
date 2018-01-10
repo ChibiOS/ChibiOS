@@ -373,7 +373,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
     /* Clock activation and timer reset.*/
 #if STM32_PWM_USE_TIM1
     if (&PWMD1 == pwmp) {
-      rccEnableTIM1(FALSE);
+      rccEnableTIM1(false);
       rccResetTIM1();
 #if !defined(STM32_TIM1_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM1_UP_NUMBER, STM32_PWM_TIM1_IRQ_PRIORITY);
@@ -389,7 +389,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
 
 #if STM32_PWM_USE_TIM2
     if (&PWMD2 == pwmp) {
-      rccEnableTIM2(FALSE);
+      rccEnableTIM2(false);
       rccResetTIM2();
 #if !defined(STM32_TIM2_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM2_NUMBER, STM32_PWM_TIM2_IRQ_PRIORITY);
@@ -404,7 +404,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
 
 #if STM32_PWM_USE_TIM3
     if (&PWMD3 == pwmp) {
-      rccEnableTIM3(FALSE);
+      rccEnableTIM3(false);
       rccResetTIM3();
 #if !defined(STM32_TIM3_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM3_NUMBER, STM32_PWM_TIM3_IRQ_PRIORITY);
@@ -419,7 +419,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
 
 #if STM32_PWM_USE_TIM4
     if (&PWMD4 == pwmp) {
-      rccEnableTIM4(FALSE);
+      rccEnableTIM4(false);
       rccResetTIM4();
 #if !defined(STM32_TIM4_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM4_NUMBER, STM32_PWM_TIM4_IRQ_PRIORITY);
@@ -434,7 +434,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
 
 #if STM32_PWM_USE_TIM5
     if (&PWMD5 == pwmp) {
-      rccEnableTIM5(FALSE);
+      rccEnableTIM5(false);
       rccResetTIM5();
 #if !defined(STM32_TIM5_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM5_NUMBER, STM32_PWM_TIM5_IRQ_PRIORITY);
@@ -449,7 +449,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
 
 #if STM32_PWM_USE_TIM8
     if (&PWMD8 == pwmp) {
-      rccEnableTIM8(FALSE);
+      rccEnableTIM8(false);
       rccResetTIM8();
 #if !defined(STM32_TIM8_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM8_UP_NUMBER, STM32_PWM_TIM8_IRQ_PRIORITY);
@@ -465,7 +465,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
 
 #if STM32_PWM_USE_TIM9
     if (&PWMD9 == pwmp) {
-      rccEnableTIM9(FALSE);
+      rccEnableTIM9(false);
       rccResetTIM9();
 #if !defined(STM32_TIM9_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM9_NUMBER, STM32_PWM_TIM9_IRQ_PRIORITY);
@@ -640,7 +640,7 @@ void pwm_lld_stop(PWMDriver *pwmp) {
       nvicDisableVector(STM32_TIM1_UP_NUMBER);
       nvicDisableVector(STM32_TIM1_CC_NUMBER);
 #endif
-      rccDisableTIM1(FALSE);
+      rccDisableTIM1();
     }
 #endif
 
@@ -649,7 +649,7 @@ void pwm_lld_stop(PWMDriver *pwmp) {
 #if !defined(STM32_TIM2_SUPPRESS_ISR)
       nvicDisableVector(STM32_TIM2_NUMBER);
 #endif
-      rccDisableTIM2(FALSE);
+      rccDisableTIM2();
     }
 #endif
 
@@ -658,7 +658,7 @@ void pwm_lld_stop(PWMDriver *pwmp) {
 #if !defined(STM32_TIM3_SUPPRESS_ISR)
       nvicDisableVector(STM32_TIM3_NUMBER);
 #endif
-      rccDisableTIM3(FALSE);
+      rccDisableTIM3();
     }
 #endif
 
@@ -667,7 +667,7 @@ void pwm_lld_stop(PWMDriver *pwmp) {
 #if !defined(STM32_TIM4_SUPPRESS_ISR)
       nvicDisableVector(STM32_TIM4_NUMBER);
 #endif
-      rccDisableTIM4(FALSE);
+      rccDisableTIM4();
     }
 #endif
 
@@ -676,7 +676,7 @@ void pwm_lld_stop(PWMDriver *pwmp) {
 #if !defined(STM32_TIM5_SUPPRESS_ISR)
       nvicDisableVector(STM32_TIM5_NUMBER);
 #endif
-      rccDisableTIM5(FALSE);
+      rccDisableTIM5();
     }
 #endif
 
@@ -686,7 +686,7 @@ void pwm_lld_stop(PWMDriver *pwmp) {
       nvicDisableVector(STM32_TIM8_UP_NUMBER);
       nvicDisableVector(STM32_TIM8_CC_NUMBER);
 #endif
-      rccDisableTIM8(FALSE);
+      rccDisableTIM8();
     }
 #endif
 
@@ -695,7 +695,7 @@ void pwm_lld_stop(PWMDriver *pwmp) {
 #if !defined(STM32_TIM9_SUPPRESS_ISR)
       nvicDisableVector(STM32_TIM9_NUMBER);
 #endif
-      rccDisableTIM9(FALSE);
+      rccDisableTIM9();
     }
 #endif
   }

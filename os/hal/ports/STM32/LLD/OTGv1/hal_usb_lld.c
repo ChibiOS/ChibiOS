@@ -844,7 +844,7 @@ void usb_lld_start(USBDriver *usbp) {
 #else
       /* Workaround for the problem described here:
          http://forum.chibios.org/phpbb/viewtopic.php?f=16&t=1798.*/
-      rccDisableOTG_HSULPI(true);
+      rccDisableOTG_HSULPI();
 #endif
 
       /* Enables IRQ vector.*/
@@ -979,16 +979,16 @@ void usb_lld_stop(USBDriver *usbp) {
 #if STM32_USB_USE_OTG1
     if (&USBD1 == usbp) {
       nvicDisableVector(STM32_OTG1_NUMBER);
-      rccDisableOTG_FS(false);
+      rccDisableOTG_FS();
     }
 #endif
 
 #if STM32_USB_USE_OTG2
     if (&USBD2 == usbp) {
       nvicDisableVector(STM32_OTG2_NUMBER);
-      rccDisableOTG_HS(false);
+      rccDisableOTG_HS();
 #if defined(BOARD_OTG2_USES_ULPI)
-      rccDisableOTG_HSULPI(true)
+      rccDisableOTG_HSULPI()
 #endif
     }
 #endif

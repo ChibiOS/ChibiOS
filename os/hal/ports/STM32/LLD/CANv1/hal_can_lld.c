@@ -92,7 +92,7 @@ static void can_lld_set_filters(CANDriver* canp,
   /* Temporarily enabling CAN clock.*/
 #if STM32_CAN_USE_CAN1
   if(canp == &CAND1) {
-    rccEnableCAN1(FALSE);
+    rccEnableCAN1(false);
     /* Filters initialization.*/
     canp->can->FMR = (canp->can->FMR & 0xFFFF0000) | CAN_FMR_FINIT;
     canp->can->FMR = (canp->can->FMR & 0xFFFF0000) | (can2sb << 8) | CAN_FMR_FINIT;
@@ -101,7 +101,7 @@ static void can_lld_set_filters(CANDriver* canp,
 
 #if STM32_CAN_USE_CAN3
   if(canp == &CAND3) {
-    rccEnableCAN3(FALSE);
+    rccEnableCAN3(false);
     /* Filters initialization.*/
     canp->can->FMR = (canp->can->FMR & 0xFFFF0000) | CAN_FMR_FINIT;
   }
@@ -177,12 +177,12 @@ static void can_lld_set_filters(CANDriver* canp,
   /* Temporarily enabling CAN clock.*/
 #if STM32_CAN_USE_CAN1
   if(canp == &CAND1) {
-    rccDisableCAN1(FALSE);
+    rccDisableCAN1();
   }
 #endif
 #if STM32_CAN_USE_CAN3
   if(canp == &CAND3) {
-    rccDisableCAN3(FALSE);
+    rccDisableCAN3();
   }
 #endif
 }
@@ -682,7 +682,7 @@ void can_lld_start(CANDriver *canp) {
   /* Clock activation.*/
 #if STM32_CAN_USE_CAN1
   if (&CAND1 == canp) {
-    rccEnableCAN1(FALSE);
+    rccEnableCAN1(false);
   }
 #endif
 
@@ -691,13 +691,13 @@ void can_lld_start(CANDriver *canp) {
 
     osalDbgAssert(CAND1.state != CAN_STOP, "CAN1 must be started");
 
-    rccEnableCAN2(FALSE);
+    rccEnableCAN2(false);
   }
 #endif
 
 #if STM32_CAN_USE_CAN3
   if (&CAND3 == canp) {
-    rccEnableCAN3(FALSE);
+    rccEnableCAN3(false);
   }
 #endif
 
@@ -742,7 +742,7 @@ void can_lld_stop(CANDriver *canp) {
 
       CAN1->MCR = 0x00010002;                   /* Register reset value.    */
       CAN1->IER = 0x00000000;                   /* All sources disabled.    */
-      rccDisableCAN1(FALSE);
+      rccDisableCAN1();
     }
 #endif
 
@@ -750,7 +750,7 @@ void can_lld_stop(CANDriver *canp) {
     if (&CAND2 == canp) {
       CAN2->MCR = 0x00010002;                   /* Register reset value.    */
       CAN2->IER = 0x00000000;                   /* All sources disabled.    */
-      rccDisableCAN2(FALSE);
+      rccDisableCAN2();
     }
 #endif
 
@@ -758,7 +758,7 @@ void can_lld_stop(CANDriver *canp) {
     if (&CAND3 == canp) {
       CAN3->MCR = 0x00010002;                   /* Register reset value.    */
       CAN3->IER = 0x00000000;                   /* All sources disabled.    */
-      rccDisableCAN3(FALSE);
+      rccDisableCAN3();
     }
 #endif
   }
@@ -771,8 +771,8 @@ void can_lld_stop(CANDriver *canp) {
  * @param[in] mailbox   mailbox number, @p CAN_ANY_MAILBOX for any mailbox
  *
  * @return              The queue space availability.
- * @retval FALSE        no space in the transmit queue.
- * @retval TRUE         transmit slot available.
+ * @retval false        no space in the transmit queue.
+ * @retval true         transmit slot available.
  *
  * @notapi
  */
@@ -788,7 +788,7 @@ bool can_lld_is_tx_empty(CANDriver *canp, canmbx_t mailbox) {
   case 3:
     return (canp->can->TSR & CAN_TSR_TME2) != 0;
   default:
-    return FALSE;
+    return false;
   }
 }
 
@@ -844,8 +844,8 @@ void can_lld_transmit(CANDriver *canp,
  * @param[in] mailbox   mailbox number, @p CAN_ANY_MAILBOX for any mailbox
  *
  * @return              The queue space availability.
- * @retval FALSE        no space in the transmit queue.
- * @retval TRUE         transmit slot available.
+ * @retval false        no space in the transmit queue.
+ * @retval true         transmit slot available.
  *
  * @notapi
  */
@@ -860,7 +860,7 @@ bool can_lld_is_rx_nonempty(CANDriver *canp, canmbx_t mailbox) {
   case 2:
     return (canp->can->RF1R & CAN_RF1R_FMP1) != 0;
   default:
-    return FALSE;
+    return false;
   }
 }
 

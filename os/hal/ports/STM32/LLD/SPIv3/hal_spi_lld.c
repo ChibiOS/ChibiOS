@@ -1031,12 +1031,14 @@ void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
 
   spip->spi->CR1 |= SPI_CR1_CSTART;
 }
+
+#if (SPI_SUPPORTS_CIRCULAR == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Aborts the ongoing SPI operation, if any.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
  *
- * @api
+ * @notapi
  */
 void spi_lld_abort(SPIDriver *spip) {
 
@@ -1063,6 +1065,7 @@ void spi_lld_abort(SPIDriver *spip) {
   }
 #endif
 }
+#endif /* SPI_SUPPORTS_CIRCULAR == TRUE */
 
 /**
  * @brief   Exchanges one frame using a polled wait.
@@ -1075,6 +1078,8 @@ void spi_lld_abort(SPIDriver *spip) {
  * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] frame     the data frame to send over the SPI bus
  * @return              The received data frame from the SPI bus.
+ *
+ * @notapi
  */
 uint32_t spi_lld_polled_exchange(SPIDriver *spip, uint32_t frame) {
   uint32_t dsize = (spip->spi->CFG1 & SPI_CFG1_DSIZE_Msk) + 1U;

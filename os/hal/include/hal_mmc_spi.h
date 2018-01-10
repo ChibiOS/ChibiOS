@@ -140,8 +140,8 @@ typedef struct {
  *
  * @param[in] mmcp      pointer to the @p MMCDriver object
  * @return              The card state.
- * @retval FALSE        card not inserted.
- * @retval TRUE         card inserted.
+ * @retval false        card not inserted.
+ * @retval true         card inserted.
  *
  * @api
  */
@@ -152,8 +152,8 @@ typedef struct {
  *
  * @param[in] mmcp      pointer to the @p MMCDriver object
  * @return              The card state.
- * @retval FALSE        card not inserted.
- * @retval TRUE         card inserted.
+ * @retval false        card not inserted.
+ * @retval true         card inserted.
  *
  * @api
  */

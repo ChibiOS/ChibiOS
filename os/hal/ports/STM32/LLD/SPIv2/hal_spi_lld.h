@@ -31,6 +31,11 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Circular mode support flag.
+ */
+#define SPI_SUPPORTS_CIRCULAR           TRUE
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -421,6 +426,12 @@ typedef void (*spicallback_t)(SPIDriver *spip);
  * @brief   Driver configuration structure.
  */
 typedef struct {
+#if (SPI_SUPPORTS_CIRCULAR == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   Enables the circular buffer mode.
+   */
+  bool                      circular;
+#endif
   /**
    * @brief Operation complete callback or @p NULL.
    */
@@ -550,11 +561,18 @@ extern "C" {
   void spi_lld_init(void);
   void spi_lld_start(SPIDriver *spip);
   void spi_lld_stop(SPIDriver *spip);
+#if (SPI_SELECT_MODE == SPI_SELECT_MODE_LLD) || defined(__DOXYGEN__)
+  void spi_lld_select(SPIDriver *spip);
+  void spi_lld_unselect(SPIDriver *spip);
+#endif
   void spi_lld_ignore(SPIDriver *spip, size_t n);
   void spi_lld_exchange(SPIDriver *spip, size_t n,
                         const void *txbuf, void *rxbuf);
   void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf);
   void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf);
+#if (SPI_SUPPORTS_CIRCULAR == TRUE) || defined(__DOXYGEN__)
+  void spi_lld_abort(SPIDriver *spip);
+#endif
   uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame);
 #ifdef __cplusplus
 }

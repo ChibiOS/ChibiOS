@@ -217,7 +217,7 @@ typedef io_buffers_queue_t output_buffers_queue_t;
 }
 
 /**
- * @brief   Evaluates to @p TRUE if the specified input buffers queue is empty.
+ * @brief   Evaluates to @p true if the specified input buffers queue is empty.
  *
  * @param[in] ibqp      pointer to an @p input_buffers_queue_t structure
  * @return              The queue status.
@@ -229,7 +229,7 @@ typedef io_buffers_queue_t output_buffers_queue_t;
 #define ibqIsEmptyI(ibqp) ((bool)(bqSpaceI(ibqp) == 0U))
 
 /**
- * @brief   Evaluates to @p TRUE if the specified input buffers queue is full.
+ * @brief   Evaluates to @p true if the specified input buffers queue is full.
  *
  * @param[in] ibqp      pointer to an @p input_buffers_queue_t structure
  * @return              The queue status.

@@ -153,7 +153,7 @@ void adc_lld_init(void) {
 #endif
 
   /* Calibration procedure.*/
-  rccEnableADC1(FALSE);
+  rccEnableADC1(false);
 
   /* CCR setup.*/
 #if STM32_ADC_SUPPORTS_PRESCALER
@@ -167,7 +167,7 @@ void adc_lld_init(void) {
   osalDbgAssert(ADC1->CR != 0, "invalid register state");
   while (ADC1->CR & ADC_CR_ADCAL)
     ;
-  rccDisableADC1(FALSE);
+  rccDisableADC1();
 }
 
 /**
@@ -190,7 +190,7 @@ void adc_lld_start(ADCDriver *adcp) {
                             (void *)adcp);
       osalDbgAssert(!b, "stream already allocated");
       dmaStreamSetPeripheral(adcp->dmastp, &ADC1->DR);
-      rccEnableADC1(FALSE);
+      rccEnableADC1(false);
 
       /* Clock settings.*/
       adcp->adc->CFGR2 = STM32_ADC_ADC1_CKMODE;
@@ -236,7 +236,7 @@ void adc_lld_stop(ADCDriver *adcp) {
 
 #if STM32_ADC_USE_ADC1
     if (&ADCD1 == adcp)
-      rccDisableADC1(FALSE);
+      rccDisableADC1();
 #endif
   }
 }

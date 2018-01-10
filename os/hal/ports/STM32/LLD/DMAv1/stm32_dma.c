@@ -556,11 +556,11 @@ void dmaStreamRelease(const stm32_dma_stream_t *dmastp) {
 
   /* Shutting down clocks that are no more required, if any.*/
   if ((dma.streams_mask & STM32_DMA1_STREAMS_MASK) == 0U) {
-    rccDisableDMA1(false);
+    rccDisableDMA1();
   }
 #if STM32_DMA2_NUM_CHANNELS > 0
   if ((dma.streams_mask & STM32_DMA2_STREAMS_MASK) == 0U) {
-    rccDisableDMA2(false);
+    rccDisableDMA2();
   }
 #endif
 }

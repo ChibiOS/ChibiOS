@@ -21,6 +21,7 @@
  * Maximum speed SPI configuration (18MHz, CPHA=0, CPOL=0, MSb first).
  */
 static const SPIConfig hs_spicfg = {
+  false,
   NULL,
   GPIOA,
   GPIOA_SPI1NSS,
@@ -32,6 +33,7 @@ static const SPIConfig hs_spicfg = {
  * Low speed SPI configuration (281.250kHz, CPHA=0, CPOL=0, MSb first).
  */
 static const SPIConfig ls_spicfg = {
+  false,
   NULL,
   GPIOA,
   GPIOA_SPI1NSS,

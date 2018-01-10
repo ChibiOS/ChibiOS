@@ -152,8 +152,8 @@ typedef enum {
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
  * @return              The card state.
- * @retval FALSE        card not inserted.
- * @retval TRUE         card inserted.
+ * @retval false        card not inserted.
+ * @retval true         card inserted.
  *
  * @api
  */
@@ -168,8 +168,8 @@ typedef enum {
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
  * @return              The card state.
- * @retval FALSE        not write protected.
- * @retval TRUE         write protected.
+ * @retval false        not write protected.
+ * @retval true         write protected.
  *
  * @api
  */

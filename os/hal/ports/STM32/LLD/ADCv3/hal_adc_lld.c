@@ -535,29 +535,29 @@ void adc_lld_init(void) {
 #if defined(STM32F3XX)
 #if STM32_HAS_ADC1 && STM32_HAS_ADC2
 #if STM32_ADC_USE_ADC1 || STM32_ADC_USE_ADC2
-  rccEnableADC12(FALSE);
+  rccEnableADC12(false);
   rccResetADC12();
   ADC1_2_COMMON->CCR = STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_MDMA;
-  rccDisableADC12(FALSE);
+  rccDisableADC12();
 #endif
 #else
 #if STM32_ADC_USE_ADC1
-  rccEnableADC12(FALSE);
+  rccEnableADC12(false);
   rccResetADC12();
   ADC1_COMMON->CCR = STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_MDMA;
-  rccDisableADC12(FALSE);
+  rccDisableADC12();
 #endif
 #endif
 #if STM32_ADC_USE_ADC3 || STM32_ADC_USE_ADC4
-  rccEnableADC34(FALSE);
+  rccEnableADC34(false);
   rccResetADC34();
   ADC3_4_COMMON->CCR = STM32_ADC_ADC34_CLOCK_MODE | ADC_DMA_MDMA;
-  rccDisableADC34(FALSE);
+  rccDisableADC34();
 #endif
 #endif
 
 #if defined(STM32L4XX)
-  rccEnableADC123(FALSE);
+  rccEnableADC123(false);
   rccResetADC123();
 
 #if defined(ADC1_2_COMMON)
@@ -568,7 +568,7 @@ void adc_lld_init(void) {
   ADC1_COMMON->CCR = STM32_ADC_ADC123_CLOCK_MODE | ADC_DMA_MDMA;
 #endif
 
-  rccDisableADC123(FALSE);
+  rccDisableADC123();
 #endif
 }
 
@@ -599,10 +599,10 @@ void adc_lld_start(ADCDriver *adcp) {
 
       clkmask |= (1 << 0);
 #if defined(STM32F3XX)
-      rccEnableADC12(FALSE);
+      rccEnableADC12(false);
 #endif
 #if defined(STM32L4XX)
-      rccEnableADC123(FALSE);
+      rccEnableADC123(false);
 #endif
     }
 #endif /* STM32_ADC_USE_ADC1 */
@@ -618,10 +618,10 @@ void adc_lld_start(ADCDriver *adcp) {
 
       clkmask |= (1 << 1);
 #if defined(STM32F3XX)
-      rccEnableADC12(FALSE);
+      rccEnableADC12(false);
 #endif
 #if defined(STM32L4XX)
-      rccEnableADC123(FALSE);
+      rccEnableADC123(false);
 #endif
     }
 #endif /* STM32_ADC_USE_ADC2 */
@@ -637,10 +637,10 @@ void adc_lld_start(ADCDriver *adcp) {
 
       clkmask |= (1 << 2);
 #if defined(STM32F3XX)
-      rccEnableADC34(FALSE);
+      rccEnableADC34(false);
 #endif
 #if defined(STM32L4XX)
-      rccEnableADC123(FALSE);
+      rccEnableADC123(false);
 #endif
     }
 #endif /* STM32_ADC_USE_ADC3 */
@@ -656,10 +656,10 @@ void adc_lld_start(ADCDriver *adcp) {
 
       clkmask |= (1 << 3);
 #if defined(STM32F3XX)
-      rccEnableADC34(FALSE);
+      rccEnableADC34(false);
 #endif
 #if defined(STM32L4XX)
-      rccEnableADC123(FALSE);
+      rccEnableADC123(false);
 #endif
     }
 #endif /* STM32_ADC_USE_ADC4 */
@@ -758,20 +758,20 @@ void adc_lld_stop(ADCDriver *adcp) {
 #if defined(STM32F3XX)
 #if STM32_HAS_ADC1 || STM32_HAS_ADC2
     if ((clkmask & 0x3) == 0) {
-      rccDisableADC12(FALSE);
+      rccDisableADC12();
     }
 #endif
 
 #if STM32_HAS_ADC3 || STM32_HAS_ADC4
     if ((clkmask & 0xC) == 0) {
-      rccDisableADC34(FALSE);
+      rccDisableADC34();
     }
 #endif
 #endif
 
 #if defined(STM32L4XX)
     if ((clkmask & 0x7) == 0) {
-      rccDisableADC123(FALSE);
+      rccDisableADC123();
     }
 #endif
   }

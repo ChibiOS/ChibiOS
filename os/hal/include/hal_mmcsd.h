@@ -428,7 +428,7 @@ typedef struct {
  * @{
  */
 /**
- * @brief   Evaluates to @p TRUE if the R1 response contains error flags.
+ * @brief   Evaluates to @p true if the R1 response contains error flags.
  *
  * @param[in] r1        the r1 response
  */
@@ -442,7 +442,7 @@ typedef struct {
 #define MMCSD_R1_STS(r1)                (((r1) >> 9U) & 15U)
 
 /**
- * @brief   Evaluates to @p TRUE if the R1 response indicates a locked card.
+ * @brief   Evaluates to @p true if the R1 response indicates a locked card.
  *
  * @param[in] r1        the r1 response
  */

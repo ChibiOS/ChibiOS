@@ -119,8 +119,8 @@ void can_lld_stop(CANDriver *canp) {
  * @param[in] mailbox   mailbox number, @p CAN_ANY_MAILBOX for any mailbox
  *
  * @return              The queue space availability.
- * @retval FALSE        no space in the transmit queue.
- * @retval TRUE         transmit slot available.
+ * @retval false        no space in the transmit queue.
+ * @retval true         transmit slot available.
  *
  * @notapi
  */
@@ -168,8 +168,8 @@ void can_lld_transmit(CANDriver *canp,
  * @param[in] mailbox   mailbox number, @p CAN_ANY_MAILBOX for any mailbox
  *
  * @return              The queue space availability.
- * @retval FALSE        no space in the transmit queue.
- * @retval TRUE         transmit slot available.
+ * @retval false        no space in the transmit queue.
+ * @retval true         transmit slot available.
  *
  * @notapi
  */

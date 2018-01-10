@@ -140,13 +140,25 @@ static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t flags) {
   (void)flags;
 #endif
 
-  /* Stop everything.*/
-  dmaStreamDisable(spip->dmatx);
-  dmaStreamDisable(spip->dmarx);
+  if (spip->config->circular) {
+    if ((flags & STM32_DMA_ISR_HTIF) != 0U) {
+      /* Half buffer interrupt.*/
+      _spi_isr_code_half1(spip);
+    }
+    else {
+      /* End buffer interrupt.*/
+      _spi_isr_code_half2(spip);
+    }
+  }
+  else {
+    /* Stopping DMAs.*/
+    dmaStreamDisable(spip->dmatx);
+    dmaStreamDisable(spip->dmarx);
 
-  /* Portable SPI ISR code defined in the high level driver, note, it is
-     a macro.*/
-  _spi_isr_code(spip);
+    /* Portable SPI ISR code defined in the high level driver, note, it is
+       a macro.*/
+    _spi_isr_code(spip);
+  }
 }
 
 /**
@@ -317,7 +329,7 @@ void spi_lld_start(SPIDriver *spip) {
                             (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
-      rccEnableSPI1(FALSE);
+      rccEnableSPI1(false);
     }
 #endif
 #if STM32_SPI_USE_SPI2
@@ -333,7 +345,7 @@ void spi_lld_start(SPIDriver *spip) {
                             (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
-      rccEnableSPI2(FALSE);
+      rccEnableSPI2(false);
     }
 #endif
 #if STM32_SPI_USE_SPI3
@@ -349,7 +361,7 @@ void spi_lld_start(SPIDriver *spip) {
                             (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
-      rccEnableSPI3(FALSE);
+      rccEnableSPI3(false);
     }
 #endif
 #if STM32_SPI_USE_SPI4
@@ -365,7 +377,7 @@ void spi_lld_start(SPIDriver *spip) {
                             (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
-      rccEnableSPI4(FALSE);
+      rccEnableSPI4(false);
     }
 #endif
 #if STM32_SPI_USE_SPI5
@@ -381,7 +393,7 @@ void spi_lld_start(SPIDriver *spip) {
                             (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
-      rccEnableSPI5(FALSE);
+      rccEnableSPI5(false);
     }
 #endif
 #if STM32_SPI_USE_SPI6
@@ -397,7 +409,7 @@ void spi_lld_start(SPIDriver *spip) {
                             (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
-      rccEnableSPI6(FALSE);
+      rccEnableSPI6(false);
     }
 #endif
 
@@ -421,6 +433,16 @@ void spi_lld_start(SPIDriver *spip) {
     spip->txdmamode = (spip->txdmamode & ~STM32_DMA_CR_SIZE_MASK) |
                       STM32_DMA_CR_PSIZE_HWORD | STM32_DMA_CR_MSIZE_HWORD;
   }
+
+  if (spip->config->circular) {
+    spip->rxdmamode |= (STM32_DMA_CR_CIRC | STM32_DMA_CR_HTIE);
+    spip->txdmamode |= (STM32_DMA_CR_CIRC | STM32_DMA_CR_HTIE);
+  }
+  else {
+    spip->rxdmamode &= ~(STM32_DMA_CR_CIRC | STM32_DMA_CR_HTIE);
+    spip->txdmamode &= ~(STM32_DMA_CR_CIRC | STM32_DMA_CR_HTIE);
+  }
+
   /* SPI setup and enable.*/
   spip->spi->CR1 &= ~SPI_CR1_SPE;
   spip->spi->CR1  = spip->config->cr1 | SPI_CR1_MSTR | SPI_CR1_SSM |
@@ -451,27 +473,27 @@ void spi_lld_stop(SPIDriver *spip) {
 
 #if STM32_SPI_USE_SPI1
     if (&SPID1 == spip)
-      rccDisableSPI1(FALSE);
+      rccDisableSPI1();
 #endif
 #if STM32_SPI_USE_SPI2
     if (&SPID2 == spip)
-      rccDisableSPI2(FALSE);
+      rccDisableSPI2();
 #endif
 #if STM32_SPI_USE_SPI3
     if (&SPID3 == spip)
-      rccDisableSPI3(FALSE);
+      rccDisableSPI3();
 #endif
 #if STM32_SPI_USE_SPI4
     if (&SPID4 == spip)
-      rccDisableSPI4(FALSE);
+      rccDisableSPI4();
 #endif
 #if STM32_SPI_USE_SPI5
     if (&SPID5 == spip)
-      rccDisableSPI5(FALSE);
+      rccDisableSPI5();
 #endif
 #if STM32_SPI_USE_SPI6
     if (&SPID6 == spip)
-      rccDisableSPI6(FALSE);
+      rccDisableSPI6();
 #endif
   }
 }
@@ -619,6 +641,22 @@ void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
   dmaStreamEnable(spip->dmarx);
   dmaStreamEnable(spip->dmatx);
 }
+
+#if (SPI_SUPPORTS_CIRCULAR == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Aborts the ongoing SPI operation, if any.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ *
+ * @notapi
+ */
+void spi_lld_abort(SPIDriver *spip) {
+
+  /* Stopping DMAs.*/
+  dmaStreamDisable(spip->dmatx);
+  dmaStreamDisable(spip->dmarx);
+}
+#endif /* SPI_SUPPORTS_CIRCULAR == TRUE */
 
 /**
  * @brief   Exchanges one frame using a polled wait.

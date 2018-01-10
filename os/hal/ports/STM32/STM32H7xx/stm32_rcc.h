@@ -23,8 +23,8 @@
  * @addtogroup STM32F7xx_RCC
  * @{
  */
-#ifndef _STM32_RCC_
-#define _STM32_RCC_
+#ifndef STM32_RCC_H
+#define STM32_RCC_H
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -520,7 +520,7 @@
  *
  * @api
  */
-#define rccResetBDMA1() rccEnableAHB4(RCC_AHB4RSTR_BDMARST)
+#define rccResetBDMA1() rccResetAHB4(RCC_AHB4RSTR_BDMARST)
 
 /**
  * @brief   Enables the DMA1 peripheral clock.
@@ -658,7 +658,7 @@
  *
  * @api
  */
-#define rccDisableETH(...) rccDisableAHB1(RCC_AHB1ENR_ETHMACEN |            \
+#define rccDisableETH() rccDisableAHB1(RCC_AHB1ENR_ETHMACEN |            \
                                           RCC_AHB1ENR_ETHMACTXEN |          \
                                           RCC_AHB1ENR_ETHMACRXEN)
 
@@ -1067,7 +1067,7 @@
  *
  * @api
  */
-#define rccDisableTIM1(...) rccDisableAPB2(RCC_APB2ENR_TIM1EN)
+#define rccDisableTIM1() rccDisableAPB2(RCC_APB2ENR_TIM1EN)
 
 /**
  * @brief   Resets the TIM1 peripheral.
@@ -1090,7 +1090,7 @@
  *
  * @api
  */
-#define rccDisableTIM2(...) rccDisableAPB1L(RCC_APB1LENR_TIM2EN)
+#define rccDisableTIM2() rccDisableAPB1L(RCC_APB1LENR_TIM2EN)
 
 /**
  * @brief   Resets the TIM2 peripheral.
@@ -1113,7 +1113,7 @@
  *
  * @api
  */
-#define rccDisableTIM3(...) rccDisableAPB1L(RCC_APB1LENR_TIM3EN)
+#define rccDisableTIM3() rccDisableAPB1L(RCC_APB1LENR_TIM3EN)
 
 /**
  * @brief   Resets the TIM3 peripheral.
@@ -1136,7 +1136,7 @@
  *
  * @api
  */
-#define rccDisableTIM4(...) rccDisableAPB1L(RCC_APB1LENR_TIM4EN)
+#define rccDisableTIM4() rccDisableAPB1L(RCC_APB1LENR_TIM4EN)
 
 /**
  * @brief   Resets the TIM4 peripheral.
@@ -1157,11 +1157,9 @@
 /**
  * @brief   Disables the TIM5 peripheral clock.
  *
- * @param[in] lp        low power enable flag
- *
  * @api
  */
-#define rccDisableTIM5(lp) rccDisableAPB1L(RCC_APB1LENR_TIM5EN)
+#define rccDisableTIM5() rccDisableAPB1L(RCC_APB1LENR_TIM5EN)
 
 /**
  * @brief   Resets the TIM5 peripheral.
@@ -1184,7 +1182,7 @@
  *
  * @api
  */
-#define rccDisableTIM6(...) rccDisableAPB1L(RCC_APB1LENR_TIM6EN)
+#define rccDisableTIM6() rccDisableAPB1L(RCC_APB1LENR_TIM6EN)
 
 /**
  * @brief   Resets the TIM6 peripheral.
@@ -1207,7 +1205,7 @@
  *
  * @api
  */
-#define rccDisableTIM7(...) rccDisableAPB1L(RCC_APB1LENR_TIM7EN)
+#define rccDisableTIM7() rccDisableAPB1L(RCC_APB1LENR_TIM7EN)
 
 /**
  * @brief   Resets the TIM7 peripheral.
@@ -1230,7 +1228,7 @@
  *
  * @api
  */
-#define rccDisableTIM8(...) rccDisableAPB2(RCC_APB2ENR_TIM8EN)
+#define rccDisableTIM8() rccDisableAPB2(RCC_APB2ENR_TIM8EN)
 
 /**
  * @brief   Resets the TIM8 peripheral.
@@ -1253,7 +1251,7 @@
  *
  * @api
  */
-#define rccDisableTIM12(...) rccDisableAPB1L(RCC_APB1LENR_TIM12EN)
+#define rccDisableTIM12() rccDisableAPB1L(RCC_APB1LENR_TIM12EN)
 
 /**
  * @brief   Resets the TIM12 peripheral.
@@ -1276,7 +1274,7 @@
  *
  * @api
  */
-#define rccDisableTIM13(...) rccDisableAPB1L(RCC_APB1LENR_TIM13EN)
+#define rccDisableTIM13() rccDisableAPB1L(RCC_APB1LENR_TIM13EN)
 
 /**
  * @brief   Resets the TIM13 peripheral.
@@ -1299,7 +1297,7 @@
  *
  * @api
  */
-#define rccDisableTIM14(...) rccDisableAPB1L(RCC_APB1LENR_TIM14EN)
+#define rccDisableTIM14() rccDisableAPB1L(RCC_APB1LENR_TIM14EN)
 
 /**
  * @brief   Resets the TIM14 peripheral.
@@ -1322,7 +1320,7 @@
  *
  * @api
  */
-#define rccDisableTIM15(...) rccDisableAPB2(RCC_APB2ENR_TIM15EN)
+#define rccDisableTIM15() rccDisableAPB2(RCC_APB2ENR_TIM15EN)
 
 /**
  * @brief   Resets the TIM15 peripheral.
@@ -1345,7 +1343,7 @@
  *
  * @api
  */
-#define rccDisableTIM16(...) rccDisableAPB2(RCC_APB2ENR_TIM16EN)
+#define rccDisableTIM16() rccDisableAPB2(RCC_APB2ENR_TIM16EN)
 
 /**
  * @brief   Resets the TIM16 peripheral.
@@ -1368,7 +1366,7 @@
  *
  * @api
  */
-#define rccDisableTIM17(...) rccDisableAPB2(RCC_APB2ENR_TIM17EN)
+#define rccDisableTIM17() rccDisableAPB2(RCC_APB2ENR_TIM17EN)
 
 /**
  * @brief   Resets the TIM17 peripheral.
@@ -1396,7 +1394,7 @@
  *
  * @api
  */
-#define rccDisableUSART1(...) rccDisableAPB2(RCC_APB2ENR_USART1EN)
+#define rccDisableUSART1() rccDisableAPB2(RCC_APB2ENR_USART1EN)
 
 /**
  * @brief   Resets the USART1 peripheral.
@@ -1419,7 +1417,7 @@
  *
  * @api
  */
-#define rccDisableUSART2(...) rccDisableAPB1L(RCC_APB1LENR_USART2EN)
+#define rccDisableUSART2() rccDisableAPB1L(RCC_APB1LENR_USART2EN)
 
 /**
  * @brief   Resets the USART2 peripheral.
@@ -1442,7 +1440,7 @@
  *
  * @api
  */
-#define rccDisableUSART3(...) rccDisableAPB1L(RCC_APB1LENR_USART3EN)
+#define rccDisableUSART3() rccDisableAPB1L(RCC_APB1LENR_USART3EN)
 
 /**
  * @brief   Resets the USART3 peripheral.
@@ -1465,7 +1463,7 @@
  *
  * @api
  */
-#define rccDisableUART4(...) rccDisableAPB1L(RCC_APB1LENR_UART4EN)
+#define rccDisableUART4() rccDisableAPB1L(RCC_APB1LENR_UART4EN)
 
 /**
  * @brief   Resets the UART4 peripheral.
@@ -1488,7 +1486,7 @@
  *
  * @api
  */
-#define rccDisableUART5(...) rccDisableAPB1L(RCC_APB1LENR_UART5EN)
+#define rccDisableUART5() rccDisableAPB1L(RCC_APB1LENR_UART5EN)
 
 /**
  * @brief   Resets the UART5 peripheral.
@@ -1511,7 +1509,7 @@
  *
  * @api
  */
-#define rccDisableUSART6(...) rccDisableAPB2(RCC_APB2ENR_USART6EN)
+#define rccDisableUSART6() rccDisableAPB2(RCC_APB2ENR_USART6EN)
 
 /**
  * @brief   Resets the USART6 peripheral.
@@ -1534,7 +1532,7 @@
  *
  * @api
  */
-#define rccDisableUART7(...) rccDisableAPB1L(RCC_APB1LENR_UART7EN)
+#define rccDisableUART7() rccDisableAPB1L(RCC_APB1LENR_UART7EN)
 
 /**
  * @brief   Resets the UART7 peripheral.
@@ -1557,7 +1555,7 @@
  *
  * @api
  */
-#define rccDisableUART8(...) rccDisableAPB1L(RCC_APB1LENR_UART8EN)
+#define rccDisableUART8() rccDisableAPB1L(RCC_APB1LENR_UART8EN)
 
 /**
  * @brief   Resets the UART8 peripheral.
@@ -1645,9 +1643,9 @@
  * @api
  */
 #if defined(STM32_FSMC_IS_FMC)
-  #define rccDisableFSMC(...) rccDisableAHB3(RCC_AHB3ENR_FMCEN)
+  #define rccDisableFSMC() rccDisableAHB3(RCC_AHB3ENR_FMCEN)
 #else
-  #define rccDisableFSMC(...) rccDisableAHB3(RCC_AHB3ENR_FSMCEN)
+  #define rccDisableFSMC() rccDisableAHB3(RCC_AHB3ENR_FSMCEN)
 #endif
 
 /**
@@ -1673,6 +1671,6 @@ extern "C" {
 }
 #endif
 
-#endif /* _STM32_RCC_ */
+#endif /* STM32_RCC_H */
 
 /** @} */

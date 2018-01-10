@@ -29,10 +29,13 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
-#define PORTAB_LINE_LED1            LINE_LED5
-//#define PORTAB_LINE_LED2
+#define PORTAB_LINE_LED1            LINE_LED3
+#define PORTAB_LINE_LED2            LINE_LED4
 #define PORTAB_LED_OFF              PAL_LOW
 #define PORTAB_LED_ON               PAL_HIGH
+
+#define PORTAB_LINE_BUTTON          LINE_BUTTON
+#define PORTAB_BUTTON_PRESSED       PAL_HIGH
 
 #define PORTAB_SPI1                 SPID2
 
@@ -56,6 +59,7 @@
 /* External declarations.                                                    */
 /*===========================================================================*/
 
+extern const SPIConfig c_spicfg;
 extern const SPIConfig hs_spicfg;
 extern const SPIConfig ls_spicfg;
 

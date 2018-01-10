@@ -564,7 +564,7 @@ void i2c_lld_start(I2CDriver *i2cp) {
                             (stm32_dmaisr_t)i2c_lld_serve_tx_end_irq,
                             (void *)i2cp);
       osalDbgAssert(!b, "stream already allocated");
-      rccEnableI2C1(FALSE);
+      rccEnableI2C1(false);
       nvicEnableVector(I2C1_EV_IRQn, STM32_I2C_I2C1_IRQ_PRIORITY);
       nvicEnableVector(I2C1_ER_IRQn, STM32_I2C_I2C1_IRQ_PRIORITY);
 
@@ -590,7 +590,7 @@ void i2c_lld_start(I2CDriver *i2cp) {
                             (stm32_dmaisr_t)i2c_lld_serve_tx_end_irq,
                             (void *)i2cp);
       osalDbgAssert(!b, "stream already allocated");
-      rccEnableI2C2(FALSE);
+      rccEnableI2C2(false);
       nvicEnableVector(I2C2_EV_IRQn, STM32_I2C_I2C2_IRQ_PRIORITY);
       nvicEnableVector(I2C2_ER_IRQn, STM32_I2C_I2C2_IRQ_PRIORITY);
 
@@ -616,7 +616,7 @@ void i2c_lld_start(I2CDriver *i2cp) {
                             (stm32_dmaisr_t)i2c_lld_serve_tx_end_irq,
                             (void *)i2cp);
       osalDbgAssert(!b, "stream already allocated");
-      rccEnableI2C3(FALSE);
+      rccEnableI2C3(false);
       nvicEnableVector(I2C3_EV_IRQn, STM32_I2C_I2C3_IRQ_PRIORITY);
       nvicEnableVector(I2C3_ER_IRQn, STM32_I2C_I2C3_IRQ_PRIORITY);
 
@@ -666,7 +666,7 @@ void i2c_lld_stop(I2CDriver *i2cp) {
     if (&I2CD1 == i2cp) {
       nvicDisableVector(I2C1_EV_IRQn);
       nvicDisableVector(I2C1_ER_IRQn);
-      rccDisableI2C1(FALSE);
+      rccDisableI2C1();
     }
 #endif
 
@@ -674,7 +674,7 @@ void i2c_lld_stop(I2CDriver *i2cp) {
     if (&I2CD2 == i2cp) {
       nvicDisableVector(I2C2_EV_IRQn);
       nvicDisableVector(I2C2_ER_IRQn);
-      rccDisableI2C2(FALSE);
+      rccDisableI2C2();
     }
 #endif
 
@@ -682,7 +682,7 @@ void i2c_lld_stop(I2CDriver *i2cp) {
     if (&I2CD3 == i2cp) {
       nvicDisableVector(I2C3_EV_IRQn);
       nvicDisableVector(I2C3_ER_IRQn);
-      rccDisableI2C3(FALSE);
+      rccDisableI2C3();
     }
 #endif
   }
