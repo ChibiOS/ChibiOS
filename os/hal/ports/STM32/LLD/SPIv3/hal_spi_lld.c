@@ -1076,33 +1076,43 @@ void spi_lld_abort(SPIDriver *spip) {
  * @param[in] frame     the data frame to send over the SPI bus
  * @return              The received data frame from the SPI bus.
  */
-uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame) {
-#if 0
-  /*
-   * Data register must be accessed with the appropriate data size.
-   * Byte size access (uint8_t *) for transactions that are <= 8-bit.
-   * Halfword size access (uint16_t) for transactions that are <= 8-bit.
-   */
-  if ((spip->config->cr2 & SPI_CR2_DS) <= (SPI_CR2_DS_2 |
-                                           SPI_CR2_DS_1 |
-                                           SPI_CR2_DS_0)) {
-    volatile uint8_t *spidr = (volatile uint8_t *)&spip->spi->RXDR;
-    *spidr = (uint8_t)frame;
-    while ((spip->spi->SR & SPI_SR_RXNE) == 0)
+uint32_t spi_lld_polled_exchange(SPIDriver *spip, uint32_t frame) {
+  uint32_t dsize = (spip->spi->CFG1 & SPI_CFG1_DSIZE_Msk) + 1U;
+  uint32_t rxframe;
+
+  spip->spi->CR1 |= SPI_CR1_CSTART;
+
+  /* Data register must be accessed with the appropriate data size.
+     Byte size access (uint8_t *) for transactions that are <= 8-bit etc.*/
+  if (dsize <= 8U) {
+    /* Frame width is between 4 and 8 bits.*/
+    volatile uint8_t *txdrp8 = (volatile uint8_t *)&spip->spi->TXDR;
+    volatile uint8_t *rxdrp8 = (volatile uint8_t *)&spip->spi->RXDR;
+    *txdrp8 = (uint8_t)frame;
+    while ((spip->spi->SR & SPI_SR_RXP) == 0U)
       ;
-    return (uint16_t)*spidr;
+    rxframe = (uint32_t)*rxdrp8;
+  }
+  else if (dsize <= 16U) {
+    /* Frame width is between 9 and 16 bits.*/
+    volatile uint16_t *txdrp16 = (volatile uint16_t *)&spip->spi->TXDR;
+    volatile uint16_t *rxdrp16 = (volatile uint16_t *)&spip->spi->RXDR;
+    *txdrp16 = (uint16_t)frame;
+    while ((spip->spi->SR & SPI_SR_RXP) == 0U)
+      ;
+    rxframe = (uint32_t)*rxdrp16;
   }
   else {
+    /* Frame width is between 16 and 32 bits.*/
     spip->spi->TXDR = frame;
-    while ((spip->spi->SR & SPI_SR_RXNE) == 0)
+    while ((spip->spi->SR & SPI_SR_RXP) == 0U)
       ;
-    return spip->spi->DR;
+    rxframe = spip->spi->RXDR;
   }
-#else
-  (void)spip;
-  (void)frame;
-  return 0;
-#endif
+
+  spip->spi->CR1 |= SPI_CR1_CSUSP;
+
+  return rxframe;
 }
 
 #endif /* HAL_USE_SPI */
