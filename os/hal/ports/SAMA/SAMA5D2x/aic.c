@@ -98,12 +98,26 @@ void aicInit(void) {
   Aic *aic = AIC;
 #endif
 
+  aicDisableWP(aic);
   unsigned i;
   /* Disable all interrupts */
   for (i = 1; i < ID_PERIPH_COUNT; i++) {
     aic->AIC_SSR = i;
     aic->AIC_IDCR = AIC_IDCR_INTD;
+
+    /* Changes type */
+    aic->AIC_SSR = i;
+    aic->AIC_SMR = AIC_SMR_SRCTYPE(EXT_NEGATIVE_EDGE);
+
+    /* Clear pending interrupt */
+    aic->AIC_SSR = i;
+    aic->AIC_ICCR = AIC_ICCR_INTCLR;
+
+    /* Changes type */
+    aic->AIC_SSR = i;
+    aic->AIC_SMR = AIC_SMR_SRCTYPE(INT_LEVEL_SENSITIVE);
   }
+  aicEnableWP(aic);
 }
 
 /**
@@ -131,6 +145,33 @@ void aicSetSourcePriority(uint32_t source, uint8_t priority) {
   aic->AIC_IDCR = AIC_IDCR_INTD;
   /* Configure priority */
   aic->AIC_SMR = AIC_SMR_PRIOR(priority);
+  /* Clear interrupt */
+  aic->AIC_ICCR = AIC_ICCR_INTCLR;
+  /* Enable write protection */
+  aicEnableWP(aic);
+}
+
+/**
+ * @brief   Configures type of interrupt in the AIC.
+ *
+ * @param[in] source    interrupt source to configure
+ * @param[in] type      type interrupt of the selected source.
+ */
+void aicSetIntSourceType(uint32_t source, uint8_t type) {
+
+#if SAMA_HAL_IS_SECURE
+  Aic *aic = SAIC;
+#else
+  Aic *aic = AIC;
+#endif
+  /* Disable write protection */
+  aicDisableWP(aic);
+  /* Set source id */
+  aic->AIC_SSR = source;
+  /* Disable the interrupt first */
+  aic->AIC_IDCR = AIC_IDCR_INTD;
+  /* Configure priority */
+  aic->AIC_SMR = AIC_SMR_SRCTYPE(type);
   /* Clear interrupt */
   aic->AIC_ICCR = AIC_ICCR_INTCLR;
   /* Enable write protection */
