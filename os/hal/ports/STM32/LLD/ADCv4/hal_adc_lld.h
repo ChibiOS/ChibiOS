@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    ADCv3/hal_adc_lld.h
+ * @file    ADCv4/hal_adc_lld.h
  * @brief   STM32 ADC subsystem low level driver header.
  *
  * @addtogroup ADC
@@ -35,135 +35,90 @@
  * @name    Available analog channels
  * @{
  */
-#define ADC_CHANNEL_IN0         0   /**< @brief External analog input 0.    */
-#define ADC_CHANNEL_IN1         1   /**< @brief External analog input 1.    */
-#define ADC_CHANNEL_IN2         2   /**< @brief External analog input 2.    */
-#define ADC_CHANNEL_IN3         3   /**< @brief External analog input 3.    */
-#define ADC_CHANNEL_IN4         4   /**< @brief External analog input 4.    */
-#define ADC_CHANNEL_IN5         5   /**< @brief External analog input 5.    */
-#define ADC_CHANNEL_IN6         6   /**< @brief External analog input 6.    */
-#define ADC_CHANNEL_IN7         7   /**< @brief External analog input 7.    */
-#define ADC_CHANNEL_IN8         8   /**< @brief External analog input 8.    */
-#define ADC_CHANNEL_IN9         9   /**< @brief External analog input 9.    */
-#define ADC_CHANNEL_IN10        10  /**< @brief External analog input 10.   */
-#define ADC_CHANNEL_IN11        11  /**< @brief External analog input 11.   */
-#define ADC_CHANNEL_IN12        12  /**< @brief External analog input 12.   */
-#define ADC_CHANNEL_IN13        13  /**< @brief External analog input 13.   */
-#define ADC_CHANNEL_IN14        14  /**< @brief External analog input 14.   */
-#define ADC_CHANNEL_IN15        15  /**< @brief External analog input 15.   */
-#define ADC_CHANNEL_IN16        16  /**< @brief External analog input 16.   */
-#define ADC_CHANNEL_IN17        17  /**< @brief External analog input 17.   */
-#define ADC_CHANNEL_IN18        18  /**< @brief External analog input 18.   */
+#define ADC_CHANNEL_IN0         0U  /**< @brief External analog input 0.    */
+#define ADC_CHANNEL_IN1         1U  /**< @brief External analog input 1.    */
+#define ADC_CHANNEL_IN2         2U  /**< @brief External analog input 2.    */
+#define ADC_CHANNEL_IN3         3U  /**< @brief External analog input 3.    */
+#define ADC_CHANNEL_IN4         4U  /**< @brief External analog input 4.    */
+#define ADC_CHANNEL_IN5         5U  /**< @brief External analog input 5.    */
+#define ADC_CHANNEL_IN6         6U  /**< @brief External analog input 6.    */
+#define ADC_CHANNEL_IN7         7U  /**< @brief External analog input 7.    */
+#define ADC_CHANNEL_IN8         8U  /**< @brief External analog input 8.    */
+#define ADC_CHANNEL_IN9         9U  /**< @brief External analog input 9.    */
+#define ADC_CHANNEL_IN10        10U /**< @brief External analog input 10.   */
+#define ADC_CHANNEL_IN11        11U /**< @brief External analog input 11.   */
+#define ADC_CHANNEL_IN12        12U /**< @brief External analog input 12.   */
+#define ADC_CHANNEL_IN13        13U /**< @brief External analog input 13.   */
+#define ADC_CHANNEL_IN14        14U /**< @brief External analog input 14.   */
+#define ADC_CHANNEL_IN15        15U /**< @brief External analog input 15.   */
+#define ADC_CHANNEL_IN16        16U /**< @brief External analog input 16.   */
+#define ADC_CHANNEL_IN17        17U /**< @brief External analog input 17.   */
+#define ADC_CHANNEL_IN18        18U /**< @brief External analog input 18.   */
 /** @} */
 
 /**
  * @name    Sampling rates
  * @{
  */
-#if defined(STM32F3XX)
-#define ADC_SMPR_SMP_1P5        0   /**< @brief 14 cycles conversion time   */
-#define ADC_SMPR_SMP_2P5        1   /**< @brief 15 cycles conversion time.  */
-#define ADC_SMPR_SMP_4P5        2   /**< @brief 17 cycles conversion time.  */
-#define ADC_SMPR_SMP_7P5        3   /**< @brief 20 cycles conversion time.  */
-#define ADC_SMPR_SMP_19P5       4   /**< @brief 32 cycles conversion time.  */
-#define ADC_SMPR_SMP_61P5       5   /**< @brief 74 cycles conversion time.  */
-#define ADC_SMPR_SMP_181P5      6   /**< @brief 194 cycles conversion time. */
-#define ADC_SMPR_SMP_601P5      7   /**< @brief 614 cycles conversion time. */
+#if defined(STM32H7XX)
+#define ADC_SMPR_SMP_1P5        0U  /**< @brief 9 cycles conversion time    */
+#define ADC_SMPR_SMP_2P5        1U  /**< @brief 10 cycles conversion time.  */
+#define ADC_SMPR_SMP_8P5        2U  /**< @brief 16 cycles conversion time.  */
+#define ADC_SMPR_SMP_16P5       3U  /**< @brief 24 cycles conversion time.  */
+#define ADC_SMPR_SMP_32P5       4U  /**< @brief 40 cycles conversion time.  */
+#define ADC_SMPR_SMP_64P5       5U  /**< @brief 72 cycles conversion time.  */
+#define ADC_SMPR_SMP_384P5      6U  /**< @brief 392 cycles conversion time. */
+#define ADC_SMPR_SMP_810P5      7U  /**< @brief 818 cycles conversion time. */
 #endif
-#if defined(STM32L4XX)
-#define ADC_SMPR_SMP_2P5        0   /**< @brief 15 cycles conversion time   */
-#define ADC_SMPR_SMP_6P5        1   /**< @brief 19 cycles conversion time.  */
-#define ADC_SMPR_SMP_12P5       2   /**< @brief 25 cycles conversion time.  */
-#define ADC_SMPR_SMP_24P5       3   /**< @brief 37 cycles conversion time.  */
-#define ADC_SMPR_SMP_47P5       4   /**< @brief 60 cycles conversion time.  */
-#define ADC_SMPR_SMP_92P5       5   /**< @brief 105 cycles conversion time. */
-#define ADC_SMPR_SMP_247P5      6   /**< @brief 260 cycles conversion time. */
-#define ADC_SMPR_SMP_640P5      7   /**< @brief 653 cycles conversion time. */
-#endif
-/** @} */
-
-/**
- * @name    Resolution
- * @{
- */
-#define ADC_CFGR1_RES_12BIT     (0 << 3)
-#define ADC_CFGR1_RES_10BIT     (1 << 3)
-#define ADC_CFGR1_RES_8BIT      (2 << 3)
-#define ADC_CFGR1_RES_6BIT      (3 << 3)
 /** @} */
 
 /**
  * @name    CFGR register configuration helpers
  * @{
  */
-#define ADC_CFGR_DMACFG_MASK            (1 << 1)
-#define ADC_CFGR_DMACFG_ONESHOT         (0 << 1)
-#define ADC_CFGR_DMACFG_CIRCULAR        (1 << 1)
+#define ADC_CFGR_DMNGT_MASK             (3U << 0U)
+#define ADC_CFGR_DMNGT_NODMA            (0U << 0U)
+#define ADC_CFGR_DMNGT_ONESHOT          (1U << 0U)
+#define ADC_CFGR_DMNGT_DFSDM            (2U << 0U)
+#define ADC_CFGR_DMNGT_CIRCULAR         (3U << 0U)
 
-#define ADC_CFGR_RES_MASK               (3 << 3)
-#define ADC_CFGR_RES_12BITS             (0 << 3)
-#define ADC_CFGR_RES_10BITS             (1 << 3)
-#define ADC_CFGR_RES_8BITS              (2 << 3)
-#define ADC_CFGR_RES_6BITS              (3 << 3)
+#define ADC_CFGR_RES_MASK               (7U << 2U)
+#define ADC_CFGR_RES_16BITS             (0U << 2U)
+#define ADC_CFGR_RES_14BITS             (1U << 2U)
+#define ADC_CFGR_RES_12BITS             (2U << 2U)
+#define ADC_CFGR_RES_10BITS             (3U << 2U)
+#define ADC_CFGR_RES_8BITS              (4U << 2U)
 
-#define ADC_CFGR_ALIGN_MASK             (1 << 5)
-#define ADC_CFGR_ALIGN_RIGHT            (0 << 5)
-#define ADC_CFGR_ALIGN_LEFT             (1 << 5)
+#define ADC_CFGR_EXTSEL_MASK            (15U << 5U)
+#define ADC_CFGR_EXTSEL_SRC(n)          ((n) << 5U)
 
-#define ADC_CFGR_EXTSEL_MASK            (15 << 6)
-#define ADC_CFGR_EXTSEL_SRC(n)          ((n) << 6)
+#define ADC_CFGR_EXTEN_MASK             (3U << 10U)
+#define ADC_CFGR_EXTEN_DISABLED         (0U << 10U)
+#define ADC_CFGR_EXTEN_RISING           (1U << 10U)
+#define ADC_CFGR_EXTEN_FALLING          (2U << 10U)
+#define ADC_CFGR_EXTEN_BOTH             (3U << 10U)
 
-#define ADC_CFGR_EXTEN_MASK             (3 << 10)
-#define ADC_CFGR_EXTEN_DISABLED         (0 << 10)
-#define ADC_CFGR_EXTEN_RISING           (1 << 10)
-#define ADC_CFGR_EXTEN_FALLING          (2 << 10)
-#define ADC_CFGR_EXTEN_BOTH             (3 << 10)
+#define ADC_CFGR_DISCEN_MASK            (1U << 16U)
+#define ADC_CFGR_DISCEN_DISABLED        (0U << 16U)
+#define ADC_CFGR_DISCEN_ENABLED         (1U << 16U)
 
-#define ADC_CFGR_DISCEN_MASK            (1 << 16)
-#define ADC_CFGR_DISCEN_DISABLED        (0 << 16)
-#define ADC_CFGR_DISCEN_ENABLED         (1 << 16)
-
-#define ADC_CFGR_DISCNUM_MASK           (7 << 17)
-#define ADC_CFGR_DISCNUM_VAL(n)         ((n) << 17)
-
-#define ADC_CFGR_AWD1_DISABLED          0
-#define ADC_CFGR_AWD1_ALL               (1 << 23)
-#define ADC_CFGR_AWD1_SINGLE(n)         (((n) << 26) | (1 << 23) | (1 << 22))
+#define ADC_CFGR_DISCNUM_MASK           (7U << 17U)
+#define ADC_CFGR_DISCNUM_VAL(n)         ((n) << 17U)
 /** @} */
 
 /**
  * @name    CCR register configuration helpers
  * @{
  */
-#define ADC_CCR_DUAL_MASK               (31 << 0)
-#define ADC_CCR_DUAL_FIELD(n)           ((n) << 0)
-#define ADC_CCR_DELAY_MASK              (15 << 8)
-#define ADC_CCR_DELAY_FIELD(n)          ((n) << 8)
-#define ADC_CCR_DMACFG_MASK             (1 << 13)
-#define ADC_CCR_DMACFG_ONESHOT          (0 << 13)
-#define ADC_CCR_DMACFG_CIRCULAR         (1 << 13)
-#define ADC_CCR_MDMA_MASK               (3 << 14)
-#define ADC_CCR_MDMA_DISABLED           (0 << 14)
-#define ADC_CCR_MDMA_WORD               (2 << 14)
-#define ADC_CCR_MDMA_HWORD              (3 << 14)
-#define ADC_CCR_CKMODE_MASK             (3 << 16)
-#define ADC_CCR_CKMODE_ADCCK            (0 << 16)
-#define ADC_CCR_CKMODE_AHB_DIV1         (1 << 16)
-#define ADC_CCR_CKMODE_AHB_DIV2         (2 << 16)
-#define ADC_CCR_CKMODE_AHB_DIV4         (3 << 16)
-
-/* F3 headers do not define the following macros, L4 headers do.*/
-#if !defined(ADC_CCR_VREFEN) || defined(__DOXYGEN__)
-#define ADC_CCR_VREFEN                  (1 << 22)
-#endif
-
-#if !defined(ADC_CCR_TSEN) || defined(__DOXYGEN__)
-#define ADC_CCR_TSEN                    (1 << 23)
-#endif
-
-#if !defined(ADC_CCR_VBATEN) || defined(__DOXYGEN__)
-#define ADC_CCR_VBATEN                  (1 << 24)
-#endif
+#define ADC_CCR_DUAL_MASK               (31U << 0U)
+#define ADC_CCR_DUAL_FIELD(n)           ((n) << 0U)
+#define ADC_CCR_DELAY_MASK              (15U << 8U)
+#define ADC_CCR_DELAY_FIELD(n)          ((n) << 8U)
+#define ADC_CCR_CKMODE_MASK             (3U << 16U)
+#define ADC_CCR_CKMODE_ADCCK            (0U << 16U)
+#define ADC_CCR_CKMODE_AHB_DIV1         (1U << 16U)
+#define ADC_CCR_CKMODE_AHB_DIV2         (2U << 16U)
+#define ADC_CCR_CKMODE_AHB_DIV4         (3U << 16U)
 /** @} */
 
 /*===========================================================================*/
@@ -303,30 +258,19 @@
 #define STM32_ADC_ADC4_DMA_IRQ_PRIORITY     5
 #endif
 
-#if defined(STM32F3XX) || defined(__DOXYGEN__)
 /**
  * @brief   ADC1/ADC2 clock source and mode.
  */
 #if !defined(STM32_ADC_ADC12_CLOCK_MODE) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC12_CLOCK_MODE          ADC_CCR_CKMODE_AHB_DIV1
+#define STM32_ADC_ADC12_CLOCK_MODE          ADC_CCR_CKMODE_AHB_DIV4
 #endif
 
 /**
  * @brief   ADC3/ADC4 clock source and mode.
  */
 #if !defined(STM32_ADC_ADC34_CLOCK_MODE) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC34_CLOCK_MODE          ADC_CCR_CKMODE_AHB_DIV1
+#define STM32_ADC_ADC34_CLOCK_MODE          ADC_CCR_CKMODE_AHB_DIV4
 #endif
-#endif /* defined(STM32F3XX) */
-
-#if defined(STM32L4XX) || defined(__DOXYGEN__)
-/**
- * @brief   ADC1/ADC2/ADC3 clock source and mode.
- */
-#if !defined(STM32_ADC_ADC123_CLOCK_MODE) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC123_CLOCK_MODE         ADC_CCR_CKMODE_AHB_DIV1
-#endif
-#endif /* defined(STM32L4XX) */
 
 /** @} */
 
@@ -483,9 +427,8 @@
 #endif
 
 /* ADC clock source checks.*/
-#if defined(STM32F3XX)
 #if STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
-#define STM32_ADC12_CLOCK               STM32_ADC12CLK
+#define STM32_ADC12_CLOCK               STM32_ADCCLK
 #elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
 #define STM32_ADC12_CLOCK               (STM32_HCLK / 1)
 #elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV2
@@ -497,7 +440,7 @@
 #endif
 
 #if STM32_ADC_ADC34_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
-#define STM32_ADC34_CLOCK               STM32_ADC34CLK
+#define STM32_ADC34_CLOCK               STM32_ADCCLK
 #elif STM32_ADC_ADC34_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
 #define STM32_ADC34_CLOCK               (STM32_HCLK / 1)
 #elif STM32_ADC_ADC34_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV2
@@ -515,25 +458,6 @@
 #if STM32_ADC34_CLOCK > STM32_ADCCLK_MAX
 #error "STM32_ADC34_CLOCK exceeding maximum frequency (STM32_ADCCLK_MAX)"
 #endif
-#endif /* defined(STM32F3XX) */
-
-#if defined(STM32L4XX)
-#if STM32_ADC_ADC123_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
-#define STM32_ADC123_CLOCK              STM32_ADC12CLK
-#elif STM32_ADC_ADC123_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
-#define STM32_ADC123_CLOCK              (STM32_HCLK / 1)
-#elif STM32_ADC_ADC123_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV2
-#define STM32_ADC123_CLOCK              (STM32_HCLK / 2)
-#elif STM32_ADC_ADC123_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV4
-#define STM32_ADC123_CLOCK              (STM32_HCLK / 4)
-#else
-#error "invalid clock mode selected for STM32_ADC_ADC123_CLOCK_MODE"
-#endif
-
-#if STM32_ADC123_CLOCK > STM32_ADCCLK_MAX
-#error "STM32_ADC123_CLOCK exceeding maximum frequency (STM32_ADCCLK_MAX)"
-#endif
-#endif /* defined(STM32L4XX) */
 
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED

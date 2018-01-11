@@ -94,7 +94,7 @@
 #define STM32_PLL2_DIVM_VALUE               4
 #define STM32_PLL2_DIVN_VALUE               400
 #define STM32_PLL2_FRACN_VALUE              0
-#define STM32_PLL2_DIVP_VALUE               2
+#define STM32_PLL2_DIVP_VALUE               8
 #define STM32_PLL2_DIVQ_VALUE               8
 #define STM32_PLL2_DIVR_VALUE               8
 #define STM32_PLL3_ENABLED                  TRUE
@@ -104,7 +104,7 @@
 #define STM32_PLL3_DIVM_VALUE               4
 #define STM32_PLL3_DIVN_VALUE               400
 #define STM32_PLL3_FRACN_VALUE              0
-#define STM32_PLL3_DIVP_VALUE               2
+#define STM32_PLL3_DIVP_VALUE               8
 #define STM32_PLL3_DIVQ_VALUE               8
 #define STM32_PLL3_DIVR_VALUE               8
 
@@ -115,11 +115,11 @@
 #define STM32_SW                            STM32_SW_PLL1_P_CK
 #define STM32_RTCSEL                        STM32_RTCSEL_LSE_CK
 #define STM32_D1CPRE                        STM32_D1CPRE_DIV1
-#define STM32_D1HPRE                        STM32_D1HPRE_DIV2
-#define STM32_D1PPRE3                       STM32_D1PPRE3_DIV2
-#define STM32_D2PPRE1                       STM32_D2PPRE1_DIV2
-#define STM32_D2PPRE2                       STM32_D2PPRE2_DIV2
-#define STM32_D3PPRE4                       STM32_D3PPRE4_DIV2
+#define STM32_D1HPRE                        STM32_D1HPRE_DIV4
+#define STM32_D1PPRE3                       STM32_D1PPRE3_DIV1
+#define STM32_D2PPRE1                       STM32_D2PPRE1_DIV1
+#define STM32_D2PPRE2                       STM32_D2PPRE2_DIV1
+#define STM32_D3PPRE4                       STM32_D3PPRE4_DIV1
 
 /*
  * Peripherals clocks static settings.
@@ -183,8 +183,9 @@
 /*
  * ADC driver system settings.
  */
-#define STM32_ADC_ADCPRE                    ADC_CCR_ADCPRE_DIV4
-#define STM32_ADC_USE_ADC1                  FALSE
+#define STM32_ADC_ADC12_CLOCK_MODE          ADC_CCR_CKMODE_AHB_DIV4
+#define STM32_ADC_ADC34_CLOCK_MODE          ADC_CCR_CKMODE_AHB_DIV4
+#define STM32_ADC_USE_ADC1                  TRUE
 #define STM32_ADC_USE_ADC2                  FALSE
 #define STM32_ADC_USE_ADC3                  FALSE
 #define STM32_ADC_ADC1_DMA_CHANNEL          0

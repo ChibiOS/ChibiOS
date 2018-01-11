@@ -176,14 +176,19 @@
 #define STM32_PCLK4_MAX         (STM32_HCLK_MAX / 2)
 
 /**
- * @brief   Maximum SPI1, SPI2 and SPI3 max clock frequency.
+ * @brief   Maximum SPI1, SPI2 and SPI3 clock frequency.
  */
 #define STM32_SPI123_MAX        133000000
 
 /**
- * @brief   Maximum SPI4, SPI5 and SPI6 max clock frequency.
+ * @brief   Maximum SPI4, SPI5 and SPI6 clock frequency.
  */
 #define STM32_SPI456_MAX        100000000
+
+/**
+ * @brief   Maximum ADC clock frequency.
+ */
+#define STM32_ADCCLK_MAX        36000000
 /** @} */
 
 /**
@@ -795,7 +800,7 @@
  * @note    The allowed values are 2..128, odd values not allowed.
  */
 #if !defined(STM32_PLL2_DIVP_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLL2_DIVP_VALUE               2
+#define STM32_PLL2_DIVP_VALUE               8
 #endif
 
 /**
@@ -871,7 +876,7 @@
  * @note    The allowed values are 2..128, odd values not allowed.
  */
 #if !defined(STM32_PLL3_DIVP_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLL3_DIVP_VALUE               2
+#define STM32_PLL3_DIVP_VALUE               8
 #endif
 
 /**
@@ -990,15 +995,15 @@
  * @note    This setting can be modified at runtime.
  */
 #if !defined(STM32_D1HPRE) || defined(__DOXYGEN__)
-#define STM32_D1HPRE                        STM32_D1HPRE_DIV2
+#define STM32_D1HPRE                        STM32_D1HPRE_DIV4
 #endif
 
 /**
  * @brief   Clock domain 1 peripherals bus prescaler.
  * @note    This setting can be modified at runtime.
  */
-#if !defined(STM32_D1PPRE) || defined(__DOXYGEN__)
-#define STM32_D1PPRE3                       STM32_D1PPRE3_DIV2
+#if !defined(STM32_D1PPRE3) || defined(__DOXYGEN__)
+#define STM32_D1PPRE3                       STM32_D1PPRE3_DIV1
 #endif
 
 /**
@@ -1006,7 +1011,7 @@
  * @note    This setting can be modified at runtime.
  */
 #if !defined(STM32_D2PPRE1) || defined(__DOXYGEN__)
-#define STM32_D2PPRE1                       STM32_D2PPRE1_DIV2
+#define STM32_D2PPRE1                       STM32_D2PPRE1_DIV1
 #endif
 
 /**
@@ -1014,7 +1019,7 @@
  * @note    This setting can be modified at runtime.
  */
 #if !defined(STM32_D2PPRE2) || defined(__DOXYGEN__)
-#define STM32_D2PPRE2                       STM32_D2PPRE2_DIV2
+#define STM32_D2PPRE2                       STM32_D2PPRE2_DIV1
 #endif
 
 /**
@@ -1022,7 +1027,7 @@
  * @note    This setting can be modified at runtime.
  */
 #if !defined(STM32_D3PPRE4) || defined(__DOXYGEN__)
-#define STM32_D3PPRE4                       STM32_D3PPRE4_DIV2
+#define STM32_D3PPRE4                       STM32_D3PPRE4_DIV1
 #endif
 
 /**
