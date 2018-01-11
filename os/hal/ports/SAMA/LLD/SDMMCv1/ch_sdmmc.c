@@ -95,7 +95,8 @@ void SdMmcUpdateInformation(SdmmcDriver *drv, bool csd, bool extData)
 uint8_t SDMMC_Lib_SdStart(SdmmcDriver *drv, bool * retry)
 {
 	uint64_t mem_size;
-	uint32_t freq, drv_err, status;
+	//uint32_t freq;
+	uint32_t drv_err, status;
 	uint8_t error;
 	bool flag;
 	sSdCard *pSd = &drv->card;
@@ -153,7 +154,7 @@ uint8_t SDMMC_Lib_SdStart(SdmmcDriver *drv, bool * retry)
 	if (error)
 		return error;
 	else {
-		TRACE_1("RCA=%u\n\r",drv->card.wAddress );
+		TRACE_DEBUG_1("RCA=%u\n\r",drv->card.wAddress );
 	}
 
 	/* SEND_CSD (CMD9) to obtain the Card Specific Data (CSD register),
@@ -250,12 +251,14 @@ uint8_t SDMMC_Lib_SdStart(SdmmcDriver *drv, bool * retry)
 	}
 	else {
 		drv->card.wBlockSize = 512;
-		mem_size = SD_CSD_TOTAL_SIZE(pSd);
+		mem_size = SD_CSD_TOTAL_SIZE(pSd->CSD);
 		drv->card.dwNbBlocks = (uint32_t)(mem_size >> 9);
 		drv->card.dwTotalSize = mem_size >> 32 ? 0xFFFFFFFF
 		    : (uint32_t)mem_size;
 	}
 
+//TO BE DONE
+#if 0
 	/* Automatically select the max device clock frequency */
 	/* Calculate transfer speed */
 	freq = SdmmcGetMaxFreq(drv);
@@ -266,10 +269,10 @@ uint8_t SDMMC_Lib_SdStart(SdmmcDriver *drv, bool * retry)
 	error = HwSetClock(drv, &freq);
 	drv->card.dwCurrSpeed = freq;
 	if (error != SDMMC_OK && error != SDMMC_CHANGED) {
-		TRACE_1("clk %s\n\r", SD_StringifyRetCode(error));
+		TRACE_ERROR_1("clk %s\n\r", SD_StringifyRetCode(error));
 		return error;
 	}
-
+#endif
 	/* Check device status and eat past exceptions, which would otherwise
 	 * prevent upcoming data transaction routines from reliably checking
 	 * fresh exceptions. */
@@ -277,8 +280,11 @@ uint8_t SDMMC_Lib_SdStart(SdmmcDriver *drv, bool * retry)
 	if (error)
 		return error;
 	status = status & ~STATUS_STATE & ~STATUS_READY_FOR_DATA  & ~STATUS_APP_CMD;
-	//if (status)
-	//	trace_warning("st %lx\n\r", status);
+
+	//warning
+	if (status) {
+		TRACE_WARNING_1("st %lx\n\r", status);
+	}
 
 	return SDMMC_OK;
 }
@@ -457,7 +463,7 @@ uint8_t SdMmcSelect(SdmmcDriver *drv, uint16_t address, uint8_t statCheck)
 			if (currState == targetState)
 				return 0;
 			if (currState != srcState) {
-				TRACE_1("st %lx\n\r", currState);
+				TRACE_ERROR_1("st %lx\n\r", currState);
 				return SDMMC_ERR;
 			}
 			break;

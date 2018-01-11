@@ -23,7 +23,7 @@
  */
 
 #include "hal.h"
-
+#include "ccportab.h"
 #if (HAL_USE_SDMMC == TRUE) || defined(__DOXYGEN__)
 #include <string.h>
 #include "sama_sdmmc_lld.h"
@@ -129,10 +129,8 @@ void sdmmcStart(SdmmcDriver *sdmmcp, const SamaSDMMCConfig *config)
 
 	}
 
-	TRACE_LEV_1("[%s] Cannot init board for MMC\r\n","ERROR");
+	TRACE_ERROR("Cannot init board for MMC\r\n");
 	sdmmcp->state = MCID_INIT_ERROR;
-
-
 
 }
 
@@ -177,7 +175,7 @@ uint8_t sdmmcSendCmd(SdmmcDriver *sdmmcp)
 		uint8_t bRc;
 
 		if (sdmmcp->cmd.bCmd != 55) {
-			TRACE_2("Cmd%u(%lx)\n\r", sdmmcp->cmd.bCmd, sdmmcp->cmd.dwArg);
+			TRACE_INFO_2("Cmd%u(%lx)\n\r", sdmmcp->cmd.bCmd, sdmmcp->cmd.dwArg);
 		}
 
 		bRc = sdmmc_device_command(sdmmcp);
@@ -198,6 +196,7 @@ uint8_t sdmmcSendCmd(SdmmcDriver *sdmmcp)
 
 			 sdmmcp->control_param = 1;
 			 sdmmcp->timeout_elapsed = 0;
+			 sdmmcp->timeout_ticks = 30*1000;
 			 sdmmc_device_startTimeCount(sdmmcp);
 
 			 do
@@ -221,18 +220,17 @@ uint8_t sdmmcSendCmd(SdmmcDriver *sdmmcp)
 	}
 
 	bRc = sdmmcp->cmd.bStatus;
-				//TRACE_1("post cmd bRc = %d\r\n",bRc);
+
 		if (bRc == SDMMC_CHANGED)  {
-			//TRACE_2("Changed Cmd%u %s\n\r", sdmmcp->cmd.bCmd,SD_StringifyRetCode(bRc));
+			TRACE_DEBUG_2("Changed Cmd%u %s\n\r", sdmmcp->cmd.bCmd,SD_StringifyRetCode(bRc));
 		}
 		else if (bRc != SDMMC_OK) {
-			//TRACE_2("OK Cmd%u %s\n\r", sdmmcp->cmd.bCmd,SD_StringifyRetCode(bRc));
+			TRACE_DEBUG_2("OK Cmd%u %s\n\r", sdmmcp->cmd.bCmd,SD_StringifyRetCode(bRc));
 		}
 		else if (sdmmcp->cmd.cmdOp.bmBits.respType == 1 && sdmmcp->cmd.pResp) {
-			//TRACE_2("Resp Cmd%u st %lx\n\r", sdmmcp->cmd.bCmd, *sdmmcp->cmd.pResp);
+			TRACE_DEBUG_2("Resp Cmd%u st %lx\n\r", sdmmcp->cmd.bCmd, *sdmmcp->cmd.pResp);
 		}
 
-		//TRACE_1("[ret sending cmd] %d\r\n",bRc);
 		return bRc;
 }
 
@@ -252,14 +250,14 @@ bool sdmmcOpenDevice(SdmmcDriver *sdmmcp)
 		rc = sdmmc_device_start(sdmmcp);
 
 		if (rc != SDMMC_OK) {
-			TRACE_1("SD/MMC device initialization failed: %d\n\r", rc);
+			TRACE_INFO_1("SD/MMC device initialization failed: %d\n\r", rc);
 			return false;
 		}
 
-		if (sdmmc_device_identify(sdmmcp) == SDMMC_OK) {
+		if (sdmmc_device_identify(sdmmcp) != SDMMC_OK) {
 			return false;
 		}
-		TRACE("SD/MMC device initialization successful\n\r");
+		TRACE_INFO("SD/MMC device initialization successful\n\r");
 		return true;
 }
 
@@ -272,13 +270,13 @@ bool sdmmcCloseDevice(SdmmcDriver *sdmmcp)
 bool sdmmcShowDeviceInfo(SdmmcDriver *sdmmcp)
 {
 	sSdCard *pSd =&sdmmcp->card;
-		TRACE("Show Device Info:\n\r");
+		TRACE_INFO("Show Device Info:\n\r");
 
 	#ifndef SDMMC_TRIM_INFO
 		const uint8_t card_type = sdmmcp->card.bCardType;
-		TRACE_1("Card Type: %d\n\r", card_type);
+		TRACE_INFO_1("Card Type: %d\n\r", card_type);
 	#endif
-		TRACE("Dumping Status ... \n\r");
+		TRACE_INFO("Dumping Status ... \n\r");
 		SD_DumpStatus(pSd);
 	#ifndef SDMMC_TRIM_INFO
 		if (card_type & CARD_TYPE_bmSDMMC)
@@ -304,58 +302,24 @@ bool sdmmcShowDeviceInfo(SdmmcDriver *sdmmcp)
 
 bool sdmmcMountVolume(SdmmcDriver *sdmmcp, CH_SDMMC_FAT *fs)
 {
-#if 0
-	//TODO to be done
-	const TCHAR drive_path[] = { '0' + sdmmcp->config->slot_id, ':', '\0' };
-	DIR dir = { .sect = 0 };
-	FILINFO fno = { 0 };
 	FRESULT res;
-	bool is_dir, rc = true;
+	const TCHAR drive_path[] = { '0' + sdmmcp->config->slot_id, ':', '\0' };
 
 	(void)sdmmcp;
 	memset(fs, 0, sizeof(CH_SDMMC_FAT));
 	res = f_mount(fs, drive_path, 1);
 	if (res != FR_OK) {
-		TRACE_1("Failed to mount FAT file system, error %d\n\r", res);
+		TRACE_INFO_1("Failed to mount FAT file system, error %d\n\r", res);
 		return false;
-	}
-	res = f_opendir(&dir, drive_path);
-	if (res != FR_OK) {
-		TRACE_1("Failed to change to root directory, error %d\n\r", res);
-		return false;
-	} TRACE("Listing the files present in the root directory:\n\r");
-	for (;;) {
-		res = f_readdir(&dir, &fno);
-		if (res != FR_OK) {
-			TRACE_1("Error (%d) while listing files\n\r", res);
-			rc = false;
-			break;
-		}
-		if (fno.fname[0] == '\0')
-			break;
-		is_dir = fno.fattrib & AM_DIR ? true : false;
-		TRACE_3("    %s%s%c\n\r", is_dir ? "[" : "", fno.fname,is_dir ? ']' : ' ');
 	}
 
-	res = f_closedir(&dir);
-	if (res != FR_OK) {
-		TRACE_1("Failed to close directory, error %d\n\r", res);
-		rc = false;
-	}
-	return rc;
-#else
-	(void)sdmmcp;
-	(void)fs;
-	return 0;
-#endif
+	return true;
 }
 
 
 
 bool sdmmcUnmountVolume(SdmmcDriver *sdmmcp)
 {
-	#if 0
-	//TODO to be done
 	const TCHAR drive_path[] = { '0' + sdmmcp->config->slot_id, ':', '\0' };
 	FRESULT res;
 	bool rc = true;
@@ -365,13 +329,15 @@ bool sdmmcUnmountVolume(SdmmcDriver *sdmmcp)
 		rc = false;
 
 	return rc;
-#else
-	(void)sdmmcp;
 
-	return 0;
-#endif
 }
 
+bool CC_WEAK sdmmcGetInstance(uint8_t index, SdmmcDriver **sdmmcp)
+{
+	(void)index;
+	(void)sdmmcp;
+	return false;
+}
 
 #endif /* HAL_USE_SDMMC == TRUE */
 

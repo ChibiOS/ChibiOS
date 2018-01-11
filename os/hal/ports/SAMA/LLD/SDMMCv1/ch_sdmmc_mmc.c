@@ -238,7 +238,7 @@ uint8_t MmcInit(SdmmcDriver *driver)
 			error = error == SDMMC_CHANGED ? SDMMC_OK : error;
 		}
 		if (error != SDMMC_OK) {
-			TRACE_1("HS %s\n\r", SD_StringifyRetCode(error));
+			TRACE_ERROR_1("HS %s\n\r", SD_StringifyRetCode(error));
 			return error;
 		}
 	}
@@ -271,7 +271,7 @@ uint8_t MmcInit(SdmmcDriver *driver)
 			    && tim_mode == SDMMC_TIM_MMC_HS_DDR)
 				driver->card.bSpeedMode = tim_mode;
 			else if (error) {
-				TRACE_1("Width/DDR %s\n\r",
+				TRACE_ERROR_1("Width/DDR %s\n\r",
 				    SD_StringifyRetCode(error));
 				return error;
 			}
@@ -306,7 +306,7 @@ uint8_t MmcInit(SdmmcDriver *driver)
 			error = error == SDMMC_CHANGED ? SDMMC_OK : error;
 		}
 		if (error != SDMMC_OK) {
-			TRACE_1("HS200 %s\n\r", SD_StringifyRetCode(error));
+			TRACE_ERROR_1("HS200 %s\n\r", SD_StringifyRetCode(error));
 			return error;
 		}
 	}
@@ -367,7 +367,7 @@ uint8_t MmcInit(SdmmcDriver *driver)
 		return error;
 	status = status & ~STATUS_STATE & ~STATUS_READY_FOR_DATA & ~STATUS_APP_CMD;
 	if (status) {
-		TRACE_1("st %lx\n\r", status);
+		TRACE_WARNING_1("st %lx\n\r", status);
 	}
 
 	return SDMMC_OK;

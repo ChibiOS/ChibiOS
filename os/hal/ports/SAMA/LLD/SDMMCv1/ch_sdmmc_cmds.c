@@ -186,7 +186,7 @@ uint8_t Cmd1(SdmmcDriver *drv, bool * hc)
 	    ocr & SD_OCR_VDD_34_35 ? 'X' : '.',
 	    ocr & SD_OCR_VDD_35_36 ? 'X' : '.');
 #endif
-	TRACE_1("Device access 0x%lx\n\r", ocr >> 29 & 0x3ul);
+	TRACE_INFO_1("Device access 0x%lx\n\r", ocr >> 29 & 0x3ul);
 
 	*hc = (ocr & MMC_OCR_ACCESS_MODE) == MMC_OCR_ACCESS_SECTOR? true : false;
 
@@ -415,6 +415,30 @@ uint8_t Cmd11(SdmmcDriver *drv, uint32_t * pStatus)
 }
 
 /**
+ * Forces the card to stop transmission
+ * \param pSd      Pointer to a SD card driver instance.
+ * \param pStatus  Pointer to a status variable.
+ */
+uint8_t Cmd12(SdmmcDriver *drv, uint32_t * pStatus)
+{
+	sSdmmcCommand *pCmd = &drv->cmd;
+	uint8_t bRc;
+
+	_ResetCmd(pCmd);
+
+	/* Fill command */
+	pCmd->bCmd = 12;
+	pCmd->cmdOp.wVal = SDMMC_CMD_CSTOP | SDMMC_CMD_bmBUSY;
+	pCmd->pResp = pStatus;
+
+	drv->timeout_elapsed = -1;
+		/* Send command */
+		bRc = sdmmcSendCmd(drv);
+	return bRc;
+}
+
+
+/**
  * Addressed card sends its status register.
  * Returns the command transfer result (see SendMciCommand).
  * \param drv Pointer to \ref SdmmcDriver instance.
@@ -466,6 +490,47 @@ uint8_t Cmd14(SdmmcDriver *drv, uint8_t * pData, uint8_t len, uint32_t * pStatus
 	bRc = sdmmcSendCmd(drv);
 	return bRc;
 }
+
+/**
+ * Continously transfers datablocks from card to host until interrupted by a
+ * STOP_TRANSMISSION command.
+ * \param pSd       Pointer to a SD card driver instance.
+ * \param nbBlocks  Number of blocks to send.
+ * \param pData     Pointer to the buffer to be filled.
+ * The buffer shall follow the peripheral and DMA alignment requirements.
+ * \param address   Data Address on SD/MMC card.
+ * \param pStatus   Pointer to the response status.
+ * \param fCallback Pointer to optional callback invoked on command end.
+ *                  NULL:    Function return until command finished.
+ *                  Pointer: Return immediately and invoke callback at end.
+ *                  Callback argument is fixed to a pointer to sSdCard instance.
+ */
+uint8_t Cmd18(SdmmcDriver *drv,
+      uint16_t * nbBlock,
+      uint8_t * pData,
+      uint32_t address, uint32_t * pStatus)
+{
+	sSdmmcCommand *pCmd = &drv->cmd;
+	uint8_t bRc;
+
+	_ResetCmd(pCmd);
+
+	/* Fill command */
+	pCmd->cmdOp.wVal = SDMMC_CMD_CDATARX(1);
+	pCmd->bCmd = 18;
+	pCmd->dwArg = address;
+	pCmd->pResp = pStatus;
+	pCmd->wBlockSize = drv->card.wCurrBlockLen;
+	pCmd->wNbBlocks = *nbBlock;
+	pCmd->pData = pData;
+	drv->timeout_elapsed = -1;
+		/* Send command */
+		bRc = sdmmcSendCmd(drv);
+	if (bRc == SDMMC_CHANGED)
+		*nbBlock = pCmd->wNbBlocks;
+	return bRc;
+}
+
 /**
  * A host sends the bus test data pattern to a card.
  * \param drv Pointer to \ref SdmmcDriver instance.
@@ -512,6 +577,152 @@ uint8_t Cmd16(SdmmcDriver *drv, uint16_t blkLen)
 
 	return bRc;
 }
+
+
+/**
+ * Read single block command
+ * \param pSd  Pointer to a SD card driver instance.
+ * \param pData     Pointer to the buffer to be filled.
+ * The buffer shall follow the peripheral and DMA alignment requirements.
+ * \param address   Data Address on SD/MMC card.
+ * \param pStatus   Pointer response buffer as status return.
+ * \param fCallback Pointer to optional callback invoked on command end.
+ *                  NULL:    Function return until command finished.
+ *                  Pointer: Return immediately and invoke callback at end.
+ *                  Callback argument is fixed to a pointer to sSdCard instance.
+ */
+uint8_t Cmd17(SdmmcDriver *drv,
+      uint8_t * pData,
+      uint32_t address, uint32_t * pStatus)
+{
+	sSdmmcCommand *pCmd = &drv->cmd;
+	uint8_t bRc;
+
+	_ResetCmd(pCmd);
+
+	/* Fill command */
+	pCmd->cmdOp.wVal = SDMMC_CMD_CDATARX(1);
+	pCmd->bCmd = 17;
+	pCmd->dwArg = address;
+	pCmd->pResp = pStatus;
+	pCmd->wBlockSize =drv->card.wCurrBlockLen;
+	pCmd->wNbBlocks = 1;
+	pCmd->pData = pData;
+
+
+	drv->timeout_elapsed = -1;
+		/* Send command */
+		bRc = sdmmcSendCmd(drv);
+	return bRc;
+}
+
+
+/**
+ * Defines the number of blocks (read/write) and the reliable writer parameter
+ * (write) for a block read or write command
+ * data (CSD) on the CMD line.
+ * Returns the command transfer result (see SendMciCommand).
+ * \param pSd       Pointer to a SD card driver instance.
+ * \param write     Write Request parameter.
+ * \param blocks    number of blocks.
+ */
+uint8_t Cmd23(SdmmcDriver *drv, uint8_t write, uint32_t blocks, uint32_t * pStatus)
+{
+	sSdmmcCommand *pCmd = &drv->cmd;
+	uint8_t bRc;
+
+	_ResetCmd(pCmd);
+
+	/* Fill command */
+	pCmd->cmdOp.wVal = SDMMC_CMD_CNODATA(1);
+	pCmd->bCmd = 23;
+	pCmd->wNbBlocks = 0;
+	pCmd->dwArg = write << 31 | blocks;
+	pCmd->pResp = pStatus;
+
+	drv->timeout_elapsed = -1;
+			/* Send command */
+			bRc = sdmmcSendCmd(drv);
+	return bRc;
+}
+
+/**
+ * Write single block command
+ * \param pSd  Pointer to a SD card driver instance.
+ * \param blockSize Block size (shall be set to 512 in case of high capacity).
+ * \param pData     Pointer to the buffer to be filled.
+ * The buffer shall follow the peripheral and DMA alignment requirements.
+ * \param address   Data Address on SD/MMC card.
+ * \param pStatus   Pointer to response buffer as status.
+ * \param fCallback Pointer to optional callback invoked on command end.
+ *                  NULL:    Function return until command finished.
+ *                  Pointer: Return immediately and invoke callback at end.
+ *                  Callback argument is fixed to a pointer to sSdCard instance.
+ */
+uint8_t Cmd24(SdmmcDriver *drv,
+      uint8_t * pData,
+      uint32_t address, uint32_t * pStatus)
+{
+	sSdmmcCommand *pCmd = &drv->cmd;
+	uint8_t bRc;
+
+	_ResetCmd(pCmd);
+
+	/* Fill command */
+	pCmd->cmdOp.wVal = SDMMC_CMD_CDATATX(1);
+	pCmd->bCmd = 24;
+	pCmd->dwArg = address;
+	pCmd->pResp = pStatus;
+	pCmd->wBlockSize =drv->card.wCurrBlockLen;
+	pCmd->wNbBlocks = 1;
+	pCmd->pData = pData;
+	drv->timeout_elapsed = -1;
+			/* Send command */
+			bRc = sdmmcSendCmd(drv);
+	return bRc;
+}
+
+/**
+ * Write multiple block command
+ * \param pSd  Pointer to a SD card driver instance.
+ * \param blockSize Block size (shall be set to 512 in case of high capacity).
+ * \param nbBlock   Number of blocks to send.
+ * \param pData     Pointer to the buffer to be filled.
+ * The buffer shall follow the peripheral and DMA alignment requirements.
+ * \param address   Data Address on SD/MMC card.
+ * \param pStatus   Pointer to the response buffer as status.
+ * \param fCallback Pointer to optional callback invoked on command end.
+ *                  NULL:    Function return until command finished.
+ *                  Pointer: Return immediately and invoke callback at end.
+ *                  Callback argument is fixed to a pointer to sSdCard instance.
+ */
+uint8_t Cmd25(SdmmcDriver *drv,
+      uint16_t * nbBlock,
+      uint8_t * pData,
+      uint32_t address, uint32_t * pStatus)
+{
+	sSdmmcCommand *pCmd = &drv->cmd;
+	uint8_t bRc;
+
+	_ResetCmd(pCmd);
+
+	/* Fill command */
+	pCmd->cmdOp.wVal = SDMMC_CMD_CDATATX(1);
+	pCmd->bCmd = 25;
+	pCmd->dwArg = address;
+	pCmd->pResp = pStatus;
+	pCmd->wBlockSize =drv->card.wCurrBlockLen;
+	pCmd->wNbBlocks = *nbBlock;
+	pCmd->pData = pData;
+
+	drv->timeout_elapsed = -1;
+			/* Send command */
+			bRc = sdmmcSendCmd(drv);
+	if (bRc == SDMMC_CHANGED)
+		*nbBlock = pCmd->wNbBlocks;
+	return bRc;
+}
+
 
 /**
  * SDIO IO_RW_DIRECT command, response R5.
@@ -588,7 +799,7 @@ uint8_t Acmd6(SdmmcDriver *drv, uint8_t busWidth)
 	sSdmmcCommand *pCmd = &drv->cmd;
 	uint8_t error;
 
-	TRACE_1("Acmd%u\n\r", 6);
+	TRACE_INFO_1("Acmd%u\n\r", 6);
 
 	error = Cmd55(drv, drv->card.wAddress);
 
@@ -603,7 +814,7 @@ uint8_t Acmd6(SdmmcDriver *drv, uint8_t busWidth)
 	}
 	else {
 		if (error) {
-			TRACE_2("Acmd%u %s\n\r", 6, SD_StringifyRetCode(error));
+			TRACE_ERROR_2("Acmd%u %s\n\r", 6, SD_StringifyRetCode(error));
 		}
 	}
 	return error;
@@ -626,7 +837,7 @@ uint8_t Acmd13(SdmmcDriver *drv, uint8_t * pSSR, uint32_t * pResp)
 
 	//assert(pSd);
 
-	TRACE_1("Acmd%u\n\r", 13);
+	TRACE_INFO_1("Acmd%u\n\r", 13);
 
 	error = Cmd55(drv, drv->card.wAddress);
 
@@ -647,7 +858,7 @@ uint8_t Acmd13(SdmmcDriver *drv, uint8_t * pSSR, uint32_t * pResp)
 
 	} else {
 		if (error) {
-			TRACE_2("Acmd%u %s\n\r", 13, SD_StringifyRetCode(error));
+			TRACE_ERROR_2("Acmd%u %s\n\r", 13, SD_StringifyRetCode(error));
 		}
 	}
 	return error;
@@ -713,7 +924,7 @@ uint8_t Acmd41(SdmmcDriver *drv, bool * low_sig_lvl, bool * hc)
 		/* Supply voltage range is incompatible */
 		rc = SDMMC_BUSY;
 	if (rc != SDMMC_OK) {
-		TRACE_2("Acmd%u %s\n\r", 41, SD_StringifyRetCode(rc));
+		TRACE_ERROR_2("Acmd%u %s\n\r", 41, SD_StringifyRetCode(rc));
 	}
 	else {
 #if 0
@@ -761,7 +972,7 @@ uint8_t Acmd51(SdmmcDriver *drv, uint8_t * pSCR, uint32_t * pResp)
 	uint8_t error;
 
 
-	TRACE_1("Acmd%u\n\r", 51);
+	TRACE_INFO_1("Acmd%u\n\r", 51);
 
 	error = Cmd55(drv, drv->card.wAddress);
 
@@ -783,7 +994,7 @@ uint8_t Acmd51(SdmmcDriver *drv, uint8_t * pSCR, uint32_t * pResp)
 
 	} else {
 		if (error) {
-			TRACE_2("Acmd%u %s\n\r", 51, SD_StringifyRetCode(error));
+			TRACE_ERROR_2("Acmd%u %s\n\r", 51, SD_StringifyRetCode(error));
 		}
 	}
 	return error;
@@ -833,7 +1044,7 @@ uint8_t MmcCmd6(SdmmcDriver *drv, const void *pSwitchArg, uint32_t * pResp)
 	bRc = sdmmcSendCmd(drv);
 
 	if (!bRc && pResp && *pResp & STATUS_MMC_SWITCH) {
-		TRACE_1("st %lx\n\r", *pResp);
+		TRACE_INFO_1("st %lx\n\r", *pResp);
 	}
 	return bRc;
 }

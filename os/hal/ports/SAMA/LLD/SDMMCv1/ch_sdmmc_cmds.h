@@ -103,6 +103,60 @@ typedef struct _SdioCmd52Arg {
 #define STATUS_ADDRESS_MISALIGN  (1UL << 30)
 #define STATUS_ADDR_OUT_OR_RANGE (1UL << 31)
 
+#define STATUS_STOP ((uint32_t)( STATUS_CARD_IS_LOCKED \
+                        | STATUS_COM_CRC_ERROR \
+                        | STATUS_ILLEGAL_COMMAND \
+                        | STATUS_CC_ERROR \
+                        | STATUS_ERROR \
+                        | STATUS_STATE \
+                        | STATUS_READY_FOR_DATA ))
+
+#define STATUS_WRITE ((uint32_t)( STATUS_ADDR_OUT_OR_RANGE \
+                        | STATUS_ADDRESS_MISALIGN \
+                        | STATUS_BLOCK_LEN_ERROR \
+                        | STATUS_WP_VIOLATION \
+                        | STATUS_CARD_IS_LOCKED \
+                        | STATUS_COM_CRC_ERROR \
+                        | STATUS_ILLEGAL_COMMAND \
+                        | STATUS_CC_ERROR \
+                        | STATUS_ERROR \
+                        | STATUS_ERASE_RESET \
+                        | STATUS_STATE \
+                        | STATUS_READY_FOR_DATA ))
+
+#define STATUS_READ  ((uint32_t)( STATUS_ADDR_OUT_OR_RANGE \
+                        | STATUS_ADDRESS_MISALIGN \
+                        | STATUS_BLOCK_LEN_ERROR \
+                        | STATUS_CARD_IS_LOCKED \
+                        | STATUS_COM_CRC_ERROR \
+                        | STATUS_ILLEGAL_COMMAND \
+                        | STATUS_CARD_ECC_FAILED \
+                        | STATUS_CC_ERROR \
+                        | STATUS_ERROR \
+                        | STATUS_ERASE_RESET \
+                        | STATUS_STATE \
+                        | STATUS_READY_FOR_DATA ))
+
+#define STATUS_SD_SWITCH ((uint32_t)( STATUS_ADDR_OUT_OR_RANGE \
+                            | STATUS_CARD_IS_LOCKED \
+                            | STATUS_COM_CRC_ERROR \
+                            | STATUS_ILLEGAL_COMMAND \
+                            | STATUS_CARD_ECC_FAILED \
+                            | STATUS_CC_ERROR \
+                            | STATUS_ERROR \
+                            | STATUS_UNERRUN \
+                            | STATUS_OVERRUN \
+                            /*| STATUS_STATE*/))
+
+#define STATUS_MMC_SWITCH ((uint32_t)( STATUS_CARD_IS_LOCKED \
+                            | STATUS_COM_CRC_ERROR \
+                            | STATUS_ILLEGAL_COMMAND \
+                            | STATUS_CC_ERROR \
+                            | STATUS_ERROR \
+                            | STATUS_ERASE_RESET \
+                            /*| STATUS_STATE*/ \
+                            /*| STATUS_READY_FOR_DATA*/ \
+                            | STATUS_SWITCH_ERROR ))
 
 #define SD_OCR_S18A             (1ul << 24)	/**< Switching to 1.8V signaling level Accepted */
 #define SDIO_OCR_MP             (0x1ul << 27)	/**< SDIO: Memory present */
@@ -190,12 +244,24 @@ extern uint8_t Cmd5(SdmmcDriver *drv, uint32_t * pIo);
 extern uint8_t Cmd7(SdmmcDriver *drv, uint16_t address);
 extern uint8_t Cmd9(SdmmcDriver *drv);
 extern uint8_t Cmd11(SdmmcDriver *drv, uint32_t * pStatus);
+extern uint8_t Cmd12(SdmmcDriver *drv, uint32_t * pStatus);
 extern uint8_t Cmd13(SdmmcDriver *drv, uint32_t * pStatus);
 extern uint8_t Cmd14(SdmmcDriver *drv, uint8_t * pData, uint8_t len, uint32_t * pStatus);
 
 extern uint8_t Cmd16(SdmmcDriver *drv, uint16_t blkLen);
+extern uint8_t Cmd17(SdmmcDriver *drv,
+	      uint8_t * pData,
+	      uint32_t address, uint32_t * pStatus);
+extern uint8_t Cmd18(SdmmcDriver *drv,uint16_t * nbBlock,uint8_t * pData,uint32_t address, uint32_t * pStatus);
 extern uint8_t Cmd19(SdmmcDriver *drv, uint8_t * pData, uint8_t len, uint32_t * pStatus);
-
+extern uint8_t Cmd23(SdmmcDriver *drv, uint8_t write, uint32_t blocks, uint32_t * pStatus);
+extern uint8_t Cmd24(SdmmcDriver *drv,
+	      uint8_t * pData,
+	      uint32_t address, uint32_t * pStatus);
+extern uint8_t Cmd25(SdmmcDriver *drv,
+	      uint16_t * nbBlock,
+	      uint8_t * pData,
+	      uint32_t address, uint32_t * pStatus);
 extern uint8_t Cmd52(SdmmcDriver *drv,uint8_t wrFlag,uint8_t funcNb, uint8_t rdAfterWr, uint32_t addr, uint32_t * pIoData);
 
 extern uint8_t Cmd55(SdmmcDriver *drv, uint16_t cardAddr);

@@ -171,8 +171,7 @@ extern const uint16_t sdmmcTransUnits[8];
 extern const uint8_t sdTransMultipliers[16];
 extern const uint8_t mmcTransMultipliers[16];
 extern void SdParamReset(sSdCard * pSd);
-extern uint32_t SdmmcDecodeTransSpeed(uint32_t code,
-	      const uint16_t * unitCodes, const uint8_t * multiCodes);
+extern uint32_t SdmmcDecodeTransSpeed(uint32_t code,const uint16_t * unitCodes, const uint8_t * multiCodes);
 
 
 

@@ -3,7 +3,6 @@
 #include "ch_sdmmc_pmc.h"
 
 
-
 struct _pmc_main_osc {
 	uint32_t rc_freq;
 	uint32_t crystal_freq;
@@ -827,4 +826,6 @@ void pmc_disable_internal_osc(void)
 	PMC->CKGR_MOR = (PMC->CKGR_MOR & ~CKGR_MOR_MOSCRCEN & ~CKGR_MOR_KEY_Msk) | CKGR_MOR_KEY_PASSWD;
 #endif
 }
+
+
 

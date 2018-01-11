@@ -6,7 +6,10 @@
 #include "ch_sdmmc_sd.h"
 #include "ch_sdmmc_sdio.h"
 
-
+static uint8_t PerformSingleTransfer(SdmmcDriver *driver,uint32_t address, uint8_t * pData, uint8_t isRead);
+static uint8_t MoveToTransferState(SdmmcDriver *driver,uint32_t address,uint16_t * nbBlocks, uint8_t * pData, uint8_t isRead);
+static uint8_t _StopCmd(SdmmcDriver *driver);
+static uint8_t _WaitUntilReady(SdmmcDriver *driver, uint32_t last_dev_status);
 static uint8_t SdGetTimingFunction(uint8_t mode);
 static void SdSelectSlowerTiming(bool high_sig, uint8_t * mode);
 
@@ -77,6 +80,154 @@ const char * SD_StringifyIOCtrl(uint32_t dwCtrl)
 	return sdmmcInvalidCode;
 }
 #endif
+
+
+/**
+ * Read Blocks of data in a buffer pointed by pData. The buffer size must be at
+ * least 512 byte long. This function checks the SD card status register and
+ * address the card if required before sending the read command.
+ * \return 0 if successful; otherwise returns an \ref sdmmc_rc "error code".
+ * \param pSd      Pointer to a SD card driver instance.
+ * \param address  Address of the block to read.
+ * \param pData    Data buffer whose size is at least the block size. It shall
+ * follow the peripheral and DMA alignment requirements.
+ * \param length   Number of blocks to be read.
+ * \param pCallback Pointer to callback function that invoked when read done.
+ *                  0 to start a blocked read.
+ * \param pArgs     Pointer to callback function arguments.
+ */
+uint8_t SD_Read(SdmmcDriver *driver,uint32_t address,void *pData, uint32_t length)
+{
+	uint8_t *out = NULL;
+	uint32_t remaining, blk_no;
+	uint16_t limited;
+	uint8_t error = SDMMC_OK;
+
+
+	for (blk_no = address, remaining = length, out = (uint8_t *)pData;
+	    remaining != 0 && error == SDMMC_OK;
+	    blk_no += limited, remaining -= limited,
+	    out += (uint32_t)limited * (uint32_t)driver->card.wCurrBlockLen)
+	{
+		limited = (uint16_t)min_u32(remaining, 65535);
+		error = MoveToTransferState(driver, blk_no, &limited, out, 1);
+	}
+	//debug
+	TRACE_DEBUG_3("SDrd(%lu,%lu) %s\n\r", address, length, SD_StringifyRetCode(error));
+	return error;
+}
+
+/**
+ * Write Blocks of data in a buffer pointed by pData. The buffer size must be at
+ * least 512 byte long. This function checks the SD card status register and
+ * address the card if required before sending the read command.
+ * \return 0 if successful; otherwise returns an \ref sdmmc_rc "error code".
+ * \param pSd      Pointer to a SD card driver instance.
+ * \param address  Address of the block to write.
+ * \param pData    Data buffer whose size is at least the block size. It shall
+ * follow the peripheral and DMA alignment requirements.
+ * \param length   Number of blocks to be write.
+ * \param pCallback Pointer to callback function that invoked when write done.
+ *                  0 to start a blocked write.
+ * \param pArgs     Pointer to callback function arguments.
+ */
+uint8_t SD_Write(SdmmcDriver *driver,uint32_t address,const void *pData,uint32_t length)
+{
+	uint8_t *in = NULL;
+	uint32_t remaining, blk_no;
+	uint16_t limited;
+	uint8_t error = SDMMC_OK;
+
+//	assert(pSd != NULL);
+//	assert(pData != NULL);
+
+	for (blk_no = address, remaining = length, in = (uint8_t *)pData;
+	    remaining != 0 && error == SDMMC_OK;
+	    blk_no += limited, remaining -= limited,
+	    in += (uint32_t)limited * (uint32_t)driver->card.wCurrBlockLen) {
+		limited = (uint16_t)min_u32(remaining, 65535);
+		error = MoveToTransferState(driver, blk_no, &limited, in, 0);
+	}
+	//debug
+	TRACE_DEBUG_3("SDwr(%lu,%lu) %s\n\r", address, length, SD_StringifyRetCode(error));
+	return error;
+}
+
+/**
+ * Read Blocks of data in a buffer pointed by pData. The buffer size must be at
+ * least 512 byte long. This function checks the SD card status register and
+ * address the card if required before sending the read command.
+ * \return 0 if successful; otherwise returns an \ref sdmmc_rc "error code".
+ * \param pSd  Pointer to a SD card driver instance.
+ * \param address  Address of the block to read.
+ * \param nbBlocks Number of blocks to be read.
+ * \param pData    Data buffer whose size is at least the block size. It shall
+ * follow the peripheral and DMA alignment requirements.
+ */
+uint8_t SD_ReadBlocks(SdmmcDriver *driver, uint32_t address, void *pData, uint32_t nbBlocks)
+{
+	uint8_t error = 0;
+	uint8_t *pBytes = (uint8_t *) pData;
+
+
+	//debug
+	TRACE_DEBUG_2("RdBlks(%lu,%lu)\n\r", address, nbBlocks);
+
+	while (nbBlocks--) {
+		error = PerformSingleTransfer(driver, address, pBytes, 1);
+		if (error)
+			break;
+		address += 1;
+		pBytes = &pBytes[512];
+	}
+	return error;
+}
+
+/**
+ * Write Block of data pointed by pData. The buffer size must be at
+ * least 512 byte long. This function checks the SD card status register and
+ * address the card if required before sending the read command.
+ * \return 0 if successful; otherwise returns an \ref sdmmc_rc "error code".
+ * \param pSd  Pointer to a SD card driver instance.
+ * \param address  Address of block to write.
+ * \param nbBlocks Number of blocks to be read
+ * \param pData    Data buffer whose size is at least the block size. It shall
+ * follow the peripheral and DMA alignment requirements.
+ */
+uint8_t SD_WriteBlocks(SdmmcDriver *driver, uint32_t address, const void *pData, uint32_t nbBlocks)
+{
+	uint8_t error = 0;
+	uint8_t *pB = (uint8_t *) pData;
+
+
+	//debug
+	TRACE_DEBUG_2("WrBlks(%lu,%lu)\n\r", address, nbBlocks);
+
+	while (nbBlocks--) {
+		error = PerformSingleTransfer(driver, address, pB, 0);
+		if (error)
+			break;
+		address += 1;
+		pB = &pB[512];
+	}
+	return error;
+}
+
+uint8_t SD_GetStatus(SdmmcDriver *driver)
+{
+	uint32_t rc;
+
+	const sSdCard * pSd = &driver->card;
+
+	driver->control_param = 0;
+
+	rc = sdmmc_device_control(driver,SDMMC_IOCTL_GET_DEVICE);
+
+	if (rc != SDMMC_OK || !driver->control_param)
+		return SDMMC_NOT_SUPPORTED;
+
+	return pSd->bStatus == SDMMC_NOT_SUPPORTED ? SDMMC_ERR : pSd->bStatus;
+}
 
 uint8_t SdDecideBuswidth(SdmmcDriver *drv)
 {
@@ -155,7 +306,7 @@ uint8_t SdEnableHighSpeed(SdmmcDriver *drv)
 		return SDMMC_ERR;
 	sfs_v1 = SD_SWITCH_ST_DATA_STRUCT_VER(drv->card.sandbox1) >= 0x01;
 	mode_mask = SD_SWITCH_ST_FUN_GRP1_INFO(drv->card.sandbox1);
-	TRACE_1("Device timing functions: 0x%04x\n\r", mode_mask);
+	TRACE_DEBUG_1("Device timing functions: 0x%04x\n\r", mode_mask);
 	if (has_io && mode == SDMMC_TIM_SD_HS
 	    && !(mode_mask & 1 << SD_SWITCH_ST_ACC_HS))
 		return SDMMC_NOT_SUPPORTED;
@@ -181,7 +332,7 @@ uint8_t SdEnableHighSpeed(SdmmcDriver *drv)
 		return SDMMC_STATE;
 	/* Check the electrical power requirements of this device */
 	val = SD_SWITCH_ST_FUN_GRP4_INFO(drv->card.sandbox1);
-	TRACE_2("Device pwr & strength functions: 0x%04x & 0x%04x\n\r", val,
+	TRACE_DEBUG_2("Device pwr & strength functions: 0x%04x & 0x%04x\n\r", val,
 	    SD_SWITCH_ST_FUN_GRP3_INFO(drv->card.sandbox1));
 	if (!(val & 1 << SD_SWITCH_ST_MAX_PWR_1_44W))
 		pwr_func = SD_SWITCH_ST_MAX_PWR_0_72W;
@@ -192,7 +343,7 @@ uint8_t SdEnableHighSpeed(SdmmcDriver *drv)
 	if (error || status & STATUS_SWITCH_ERROR)
 		return SDMMC_ERR;
 	val = SD_SWITCH_ST_MAX_CURR_CONSUMPTION(drv->card.sandbox1);
-	TRACE_1("Device max current: %u mA\n\r", val);
+	TRACE_DEBUG_1("Device max current: %u mA\n\r", val);
 	if (val == 0 || val > (1440 * 10) / 36)
 		SdSelectSlowerTiming(drv->card.bCardSigLevel != 0, &mode);
 	else if (sfs_v1) {
@@ -257,7 +408,7 @@ Switch:
 	val = SD_SWITCH_ST_FUN_GRP4_RC(drv->card.sandbox1);
 
 	if (val != pwr_func) {
-		TRACE_1("Device power limit 0x%x\n\r", val);
+		TRACE_DEBUG_1("Device power limit 0x%x\n\r", val);
 	}
 
 Apply:
@@ -280,7 +431,7 @@ void SdGetExtInformation(SdmmcDriver *drv)
 	if (error == SDMMC_OK) {
 		card_status &= ~STATUS_READY_FOR_DATA;
 		if (card_status != (STATUS_APP_CMD | STATUS_TRAN)) {
-			TRACE_1("SCR st %lx\n\r", card_status);
+			TRACE_DEBUG_1("SCR st %lx\n\r", card_status);
 		}
 	}
 
@@ -289,7 +440,7 @@ void SdGetExtInformation(SdmmcDriver *drv)
 	if (error == SDMMC_OK) {
 		card_status &= ~STATUS_READY_FOR_DATA;
 		if (card_status != (STATUS_APP_CMD | STATUS_TRAN)) {
-			TRACE_1("SSR st %lx\n\r", card_status);
+			TRACE_DEBUG_1("SSR st %lx\n\r", card_status);
 		}
 	}
 }
@@ -529,10 +680,10 @@ void SD_DumpStatus(const sSdCard *pSd)
 			strcat(mode, "104");
 	}
 
-	TRACE_4("%s, %u-bit data, in %s mode at %lu kHz\n\r", text, pSd->bBusMode, mode, (pSd->dwCurrSpeed / 1000UL) );
+	TRACE_DEBUG_4("%s, %u-bit data, in %s mode at %lu kHz\n\r", text, pSd->bBusMode, mode, (pSd->dwCurrSpeed / 1000UL) );
 
 	if (pSd->bCardType & CARD_TYPE_bmSDMMC) {
-		TRACE_3("Device memory size: %lu MiB, %lu * %uB\n\r", SD_GetTotalSizeKB(pSd) / 1024ul, pSd->dwNbBlocks,pSd->wBlockSize);
+		TRACE_DEBUG_3("Device memory size: %lu MiB, %lu * %uB\n\r", SD_GetTotalSizeKB(pSd) / 1024ul, pSd->dwNbBlocks,pSd->wBlockSize);
 
 	}
 
@@ -777,5 +928,244 @@ void SD_DumpExtCSD(const uint8_t *pExtCSD)
 	_PrintField("BOOT_CFG 0x%X\r\n", MMC_EXT_BOOT_CONFIG(pExtCSD));
 	_PrintField("BOOT_BUS_WIDTH 0x%X\r\n", MMC_EXT_BOOT_BUS_WIDTH(pExtCSD));
 	_PrintField("ER_GRP_DEF 0x%X\r\n", MMC_EXT_ERASE_GROUP_DEF(pExtCSD));
+}
+
+
+
+/**
+ * Transfer a single data block.
+ * The device shall be in its Transfer State already.
+ * \param pSd      Pointer to a SD card driver instance.
+ * \param address  Address of the block to transfer.
+ * \param pData    Data buffer, whose size is at least one block size.
+ * \param isRead   Either 1 to read data from the device or 0 to write data.
+ * \return a \ref sdmmc_rc result code.
+ */
+static uint8_t PerformSingleTransfer(SdmmcDriver *driver,uint32_t address, uint8_t * pData, uint8_t isRead)
+{
+	uint8_t result = SDMMC_OK, error;
+	uint32_t sdmmc_address, status;
+
+	/* Convert block address into device-expected unit */
+	if (driver->card.bCardType & CARD_TYPE_bmHC)
+		sdmmc_address = address;
+	else if (address <= 0xfffffffful / driver->card.wCurrBlockLen)
+		sdmmc_address = address * driver->card.wCurrBlockLen;
+	else
+		return SDMMC_PARAM;
+
+	if (isRead)
+		/* Read a single data block */
+		error = Cmd17(driver, pData, sdmmc_address, &status);
+	else
+		/* Write a single data block */
+		error = Cmd24(driver, pData, sdmmc_address, &status);
+
+	if (!error) {
+		status = status & (isRead ? STATUS_READ : STATUS_WRITE)
+		    & ~STATUS_READY_FOR_DATA & ~STATUS_STATE;
+		if (status) {
+			//error
+			TRACE_1("st %lx\n\r", status);
+			error = SDMMC_ERR;
+		}
+	}
+	if (error) {
+		//error
+		TRACE_ERROR_3("Cmd%u(0x%lx) %s\n\r", isRead ? 17 : 24,sdmmc_address, SD_StringifyRetCode(error));
+		result = error;
+		error = Cmd13(driver, &status);
+		if (error) {
+			driver->card.bStatus = error;
+			return result;
+		}
+		error = _WaitUntilReady(driver, status);
+		if (error) {
+			driver->card.bStatus = error;
+			return result;
+		}
+	}
+	return result;
+}
+
+/**
+ * Move SD card to transfer state. The buffer size must be at
+ * least 512 byte long. This function checks the SD card status register and
+ * address the card if required before sending the transfer command.
+ * Returns 0 if successful; otherwise returns an code describing the error.
+ * \param pSd      Pointer to a SD card driver instance.
+ * \param address  Address of the block to transfer.
+ * \param nbBlocks Pointer to count of blocks to transfer. Pointer to 0
+ * for infinite transfer. Upon return, points to the count of blocks actually
+ * transferred.
+ * \param pData    Data buffer whose size is at least the block size.
+ * \param isRead   1 for read data and 0 for write data.
+ */
+static uint8_t MoveToTransferState(SdmmcDriver *driver,uint32_t address,uint16_t * nbBlocks, uint8_t * pData, uint8_t isRead)
+{
+	uint8_t result = SDMMC_OK, error;
+	uint32_t sdmmc_address, state, status;
+
+	/* Convert block address into device-expected unit */
+	if (driver->card.bCardType & CARD_TYPE_bmHC)
+		sdmmc_address = address;
+	else if (address <= 0xfffffffful / driver->card.wCurrBlockLen)
+		sdmmc_address = address * driver->card.wCurrBlockLen;
+	else
+		return SDMMC_PARAM;
+
+	if (driver->card.bSetBlkCnt) {
+		error = Cmd23(driver, 0, *nbBlocks, &status);
+		if (error)
+			return error;
+	}
+
+	if (isRead)
+		/* Move to Receiving data state */
+		error = Cmd18(driver, nbBlocks, pData, sdmmc_address, &status);
+	else
+		/* Move to Sending data state */
+		error = Cmd25(driver, nbBlocks, pData, sdmmc_address, &status);
+
+	if (error == SDMMC_CHANGED)
+		error = SDMMC_OK;
+
+	if (!error) {
+		status = status & (isRead ? STATUS_READ : STATUS_WRITE)
+		    & ~STATUS_READY_FOR_DATA & ~STATUS_STATE;
+
+		if (driver->card.bStopMultXfer)
+			error = _StopCmd(driver);
+
+		if (status) {
+			//error
+			TRACE_DEBUG_1("st %lx\n\r", status);
+			/* TODO ignore STATUS_ADDR_OUT_OR_RANGE if the read
+			 * operation is for the last block of memory area. */
+			error = SDMMC_ERR;
+		}
+		/* FIXME when not using the STOP_TRANSMISSION command (using the
+		 * SET_BLOCK_COUNT command instead), we should issue the
+		 * SEND_STATUS command, eat and handle any Execution Mode
+		 * exception. */
+	}
+	if (error) {
+		//error
+		TRACE_ERROR_4("Cmd%u(0x%lx, %u) %s\n\r", isRead ? 18 : 25,sdmmc_address, *nbBlocks, SD_StringifyRetCode(error));
+		result = error;
+		error = Cmd13(driver, &status);
+
+		if (error) {
+			driver->card.bStatus = error;
+			return result;
+		}
+
+		state = status & STATUS_STATE;
+
+		if (state == STATUS_DATA || state == STATUS_RCV) {
+
+			error = Cmd12(driver, &status);
+
+			if (error == SDMMC_OK) {
+				//info
+				TRACE_INFO_1("st %lx\n\r", status);
+
+				if (status & (STATUS_ERASE_SEQ_ERROR
+				    | STATUS_ERASE_PARAM | STATUS_UN_LOCK_FAILED
+				    | STATUS_ILLEGAL_COMMAND
+				    | STATUS_CIDCSD_OVERWRITE
+				    | STATUS_ERASE_RESET | STATUS_SWITCH_ERROR))
+					result = SDMMC_STATE;
+				else if (status & (STATUS_COM_CRC_ERROR
+				    | STATUS_CARD_ECC_FAILED | STATUS_ERROR))
+					result = SDMMC_ERR_IO;
+				else if (status & (STATUS_ADDR_OUT_OR_RANGE
+				    | STATUS_ADDRESS_MISALIGN
+				    | STATUS_BLOCK_LEN_ERROR
+				    | STATUS_WP_VIOLATION
+				    | STATUS_WP_ERASE_SKIP))
+					result = SDMMC_PARAM;
+				else if (status & STATUS_CC_ERROR)
+					result = SDMMC_ERR;
+			}
+			else if (error == SDMMC_NO_RESPONSE)
+				error = Cmd13(driver, &status);
+			if (error) {
+				driver->card.bStatus = error;
+				return result;
+			}
+		}
+		error = _WaitUntilReady(driver, status);
+
+		if (error) {
+			driver->card.bStatus = error;
+			return result;
+		}
+	}
+	return result;
+}
+
+/**
+ * Stop TX/RX
+ */
+static uint8_t _StopCmd(SdmmcDriver *driver)
+{
+	uint32_t status, state = STATUS_RCV;
+	uint32_t i;
+	uint8_t err, count;
+	/* When stopping a write operation, allow retrying several times */
+	for (i = 0; i < 9 && state == STATUS_RCV; i++) {
+		err = Cmd12(driver, &status);
+		if (err)
+			return err;
+		/* TODO handle any exception, raised in status; report that
+		 * the data transfer has failed. */
+
+		/* Wait until ready. Allow 30 ms. */
+		for (count = 0; count < 6; count++) {
+			/* Wait for about 5 ms - which equals 5 system ticks */
+			t_msleep(driver,5);
+			err = Cmd13(driver, &status);
+			if (err)
+				return err;
+			state = status & STATUS_STATE;
+
+			/* Invalid state */
+			if (state == STATUS_IDLE || state == STATUS_READY
+			    || state == STATUS_IDENT || state == STATUS_STBY
+			    || state == STATUS_DIS)
+				return SDMMC_NOT_INITIALIZED;
+
+			/* Ready? */
+			if ((status & STATUS_READY_FOR_DATA) ==
+			    STATUS_READY_FOR_DATA && state == STATUS_TRAN)
+				return SDMMC_OK;
+		}
+	}
+	return SDMMC_STATE;
+}
+
+static uint8_t _WaitUntilReady(SdmmcDriver *driver, uint32_t last_dev_status)
+{
+	uint32_t state, status = last_dev_status;
+	uint8_t err, count;
+
+	for (count = 0; count < 51; count++) {
+		state = status & STATUS_STATE;
+		if (state == STATUS_TRAN && status & STATUS_READY_FOR_DATA)
+			return SDMMC_OK;
+		/* Sending-data and Receive-data states may be encountered
+		 * temporarily further to single-block data transfers. */
+		/* FIXME state 15 "reserved for I/O mode" may be allowed */
+		if (state != STATUS_TRAN && state != STATUS_PRG
+		    && state != STATUS_DATA && state != STATUS_RCV)
+			return SDMMC_NOT_INITIALIZED;
+		/* Wait for about 10 ms - which equals 10 system ticks */
+		t_msleep(driver,10);
+		err = Cmd13(driver, &status);
+		if (err)
+			return err;
+	}
+	return SDMMC_BUSY;
 }
 

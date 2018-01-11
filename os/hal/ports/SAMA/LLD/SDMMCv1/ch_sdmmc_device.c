@@ -66,13 +66,13 @@ uint8_t  sdmmc_device_lowlevelcfg(SdmmcDriver *driver)
 
 	pmc_set_main_oscillator_freq(BOARD_MAIN_CLOCK_EXT_OSC);
 
-	TRACE_1("Processor clock: %u MHz\r\n", ((unsigned)(pmc_get_processor_clock() / 1000000) ));
-	TRACE_1("Master clock: %u MHz\r\n", ((unsigned)(pmc_get_master_clock() / 1000000)) );
+	TRACE_INFO_1("Processor clock: %u MHz\r\n", ((unsigned)(pmc_get_processor_clock() / 1000000) ));
+	TRACE_INFO_1("Master clock: %u MHz\r\n", ((unsigned)(pmc_get_master_clock() / 1000000)) );
 
-
+#if SDMMC_USE_TC == 1
 	driver->tctimer_id = get_tc_id_from_addr(driver->config->tctimer,driver->config->tc_chan);
 	pmc_configure_peripheral(driver->tctimer_id, NULL, true);
-
+#endif
 
 
 	if (driver->config->slot_id == SDMMC_SLOT0) {
@@ -180,18 +180,17 @@ uint8_t  sdmmc_device_lowlevelcfg(SdmmcDriver *driver)
 	if (res) {
 		//check res
 		res = IS_CACHE_ALIGNED(driver->config->data_buf);
-		TRACE_2("check data buf %d %08x\r\n", res, driver->config->data_buf);
+		TRACE_DEBUG_2("check data buf %d %08x\r\n", res, driver->config->data_buf);
 		res &= IS_CACHE_ALIGNED(driver->config->data_buf_size);
-		TRACE_2("check data_buf_size %d %08x\r\n", res,
+		TRACE_DEBUG_2("check data_buf_size %d %08x\r\n", res,
 				driver->config->data_buf_size);
 		res &= IS_CACHE_ALIGNED(driver->card.EXT);
-		TRACE_2("check libExt %d %08x\r\n", res, driver->card.EXT);
+		TRACE_DEBUG_2("check libExt %d %08x\r\n", res, driver->card.EXT);
 		//res &= IS_CACHE_ALIGNED(sizeof(driver->card.EXT));
 		//TRACE_2("check size libExt %d %08x\r\n",rc,sizeof(driver->card.EXT));
 
 		if (!res) {
-			TRACE(
-					"WARNING: buffers are not aligned on data cache lines. Please fix this before enabling DMA.\n\r");
+			TRACE_WARNING("WARNING: buffers are not aligned on data cache lines. Please fix this before enabling DMA.\n\r");
 			driver->use_polling = true;
 		} else {
 			driver->use_polling = false;
@@ -217,13 +216,11 @@ bool sdmmc_device_initialize(SdmmcDriver *driver)
 	driver->blk_size = (val <= 0x2 ? (512 << val) : 512);
 
 	//Configure the TC Timer
-
+#if SDMMC_USE_TC == 1
 	pmc_configure_peripheral(driver->tctimer_id, NULL, true);
-
 	tc_configure(driver->config->tctimer, driver->config->tc_chan, TC_CMR_WAVE | TC_CMR_WAVSEL_UP | TC_CMR_CPCDIS | TC_CMR_BURST_NONE | TC_CMR_TCCLKS_TIMER_CLOCK2);
-
 	driver->config->tctimer->TC_CHANNEL[driver->config->tc_chan].TC_EMR |= TC_EMR_NODIVCLK;
-
+#endif
 	/* Perform the initial I/O calibration sequence, manually.
 	 * Allow tSTARTUP = 2 usec for the analog circuitry to start up.
 	 * CNTVAL = fHCLOCK / (4 * (1 / tSTARTUP)) */
@@ -257,7 +254,7 @@ bool sdmmc_device_initialize(SdmmcDriver *driver)
 
 	driver->regs->SDMMC_TCR = (driver->regs->SDMMC_TCR & ~SDMMC_TCR_DTCVAL_Msk) | SDMMC_TCR_DTCVAL(exp);
 
-	TRACE_1("Set DAT line timeout to %lu ms\n\r", (10UL << (exp + 13UL))/ (base_freq / 100UL));
+	TRACE_DEBUG_1("Set DAT line timeout to %lu ms\n\r", (10UL << (exp + 13UL))/ (base_freq / 100UL));
 
 	/* Reset the peripheral. This will reset almost all registers.
 	 * It doesn't affect I/O calibration however. */
@@ -334,7 +331,7 @@ uint8_t sdmmc_device_identify(SdmmcDriver *drv)
 	if (drv->state != MCID_IDLE )
 		return SDMMC_STATE;
 
-	do {
+	Retry:
 		/* After power-on or CMD0, all cards?
 		 * CMD lines are in input mode, waiting for start bit of the next command.
 		 * The cards are initialized with a default relative card address
@@ -343,7 +340,7 @@ uint8_t sdmmc_device_identify(SdmmcDriver *drv)
 		error = SdMmcIdentify(drv);
 
 		if (error) {
-			TRACE_1("Identify %s\n\r", SD_StringifyRetCode(error));
+			TRACE_ERROR_1("Identify %s\n\r", SD_StringifyRetCode(error));
 			return error;
 		}
 
@@ -366,12 +363,10 @@ uint8_t sdmmc_device_identify(SdmmcDriver *drv)
 
 					if (!error) {
 						drv->card.bSpeedMode = SDMMC_TIM_SD_SDR12;
-						//goto Retry;
+						goto Retry;
 					}
 				}
 			}
-
-
 	#ifndef SDMMC_TRIM_SDIO
 		else if (drv->card.bCardType & CARD_TYPE_bmSDIO)
 			error = SdioInit(drv);
@@ -381,15 +376,14 @@ uint8_t sdmmc_device_identify(SdmmcDriver *drv)
 			error = MmcInit(drv);
 	#endif
 		else {
-			TRACE_1("Identify %s\n\r", "failed");
+			TRACE_ERROR_1("Identify %s\n\r", "failed");
 			return SDMMC_NOT_INITIALIZED;
 		}
 		if (error) {
-			TRACE_1("Init %s\n\r", SD_StringifyRetCode(error));
+			TRACE_ERROR_1("Init %s\n\r", SD_StringifyRetCode(error));
 			return error;
 		}
 
-	} while (retry==1);
 
 		drv->card.bStatus = SDMMC_OK;
 
@@ -428,21 +422,32 @@ void sdmmc_device_deInit(SdmmcDriver *drv)
  Fetch:
  	/* Fetch normal events */
  	events = regs->SDMMC_NISTR;
+#if SDMMC_USE_TC == 1
  	if (driver->use_polling) {
 
- 		if (driver->expect_auto_end
-
+ 		if (
+ 				driver->expect_auto_end
 				&& !(driver->config->tctimer->TC_CHANNEL[driver->config->tc_chan].TC_SR & TC_SR_CLKSTA)
-
  		)
  			events |= SDMMC_NISTR_CUSTOM_EVT;
+
+
  	} else {
  		if (driver->expect_auto_end) {
  			while (driver->config->tctimer->TC_CHANNEL[driver->config->tc_chan].TC_SR & TC_SR_CLKSTA);
-
  			events |= SDMMC_NISTR_CUSTOM_EVT;
  		}
  	}
+#else
+
+	if (driver->expect_auto_end)
+	{
+		while ( chSysIsCounterWithinX(chSysGetRealtimeCounterX(),driver->start_cycles ,driver->start_cycles+driver->timeout_cycles) );
+		events |= SDMMC_NISTR_CUSTOM_EVT;
+	}
+
+
+#endif
  	if (!events)
  		return;
  	//TRACE_1("events %08x\n\r",events);
@@ -661,9 +666,9 @@ void sdmmc_device_deInit(SdmmcDriver *drv)
  		 * Counter for this purpose. */
  		if (has_data && (cmd->bCmd == 18 || cmd->bCmd == 25)
  		    && !driver->use_set_blk_cnt) {
-
+#if SDMMC_USE_TC == 1
  			driver->config->tctimer->TC_CHANNEL[driver->config->tc_chan].TC_CCR  = TC_CCR_CLKEN | TC_CCR_SWTRG;
-
+#endif
  			driver->expect_auto_end = true;
  //#ifndef NDEBUG
  //			if (!set->cmd_line_released)
@@ -734,10 +739,12 @@ void sdmmc_device_deInit(SdmmcDriver *drv)
  	    && cmd->dwArg & 1ul << 31 && !cmd->cmdOp.bmBits.checkBsy)) {
  		/* Currently in the function switching period, wait for the
  		 * delay preconfigured in sdmmc_send_command(). */
-
+#if SDMMC_USE_TC == 1
  		driver->config->tctimer->TC_CHANNEL[driver->config->tc_chan].TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG;
  		while (driver->config->tctimer->TC_CHANNEL[driver->config->tc_chan].TC_SR & TC_SR_CLKSTA) ;
-
+#else
+ 		while ( chSysIsCounterWithinX(chSysGetRealtimeCounterX(),driver->start_cycles ,driver->start_cycles+driver->timeout_cycles) );
+#endif
  	}
 
  	/* Release this command */
@@ -878,14 +885,16 @@ void sdmmc_device_deInit(SdmmcDriver *drv)
  	uint32_t eister;
  	uint32_t mask;
  	uint32_t len;
+#if SDMMC_USE_TC == 1
  	uint32_t cycles;
+#endif
  	uint16_t cr;
  	uint16_t tmr;
 
  	uint8_t mc1r;
  	uint8_t rc = SDMMC_OK;
 
- 	//TRACE_1("[command] start %d\r\n",driver->cmd.bCmd);
+ 	TRACE_DEBUG_1("[command] start %d\r\n",driver->cmd.bCmd);
 
  	if (driver->state == MCID_OFF)
  		return SDMMC_STATE;
@@ -962,7 +971,7 @@ void sdmmc_device_deInit(SdmmcDriver *drv)
  	driver->dat_lines_released = false;
  	driver->expect_auto_end = false;
  	driver->cmd.bStatus = rc;
- 	//TRACE_1("command set status %d\r\n",driver->cmd.bStatus);
+ 	TRACE_DEBUG_1("command set status %d\r\n",driver->cmd.bStatus);
 
  	tmr = (regs->SDMMC_TMR & ~SDMMC_TMR_MSBSEL & ~SDMMC_TMR_DTDSEL
  	    & ~SDMMC_TMR_ACMDEN_Msk & ~SDMMC_TMR_BCEN & ~SDMMC_TMR_DMAEN)
@@ -1101,12 +1110,16 @@ void sdmmc_device_deInit(SdmmcDriver *drv)
  		 *    bits, hence 48 device clock cycles.
  		 * The sum of the above timings is the maximum time CMD12 will
  		 * take to complete. */
-
+#if SDMMC_USE_TC == 1
  		cycles = pmc_get_peripheral_clock(driver->tctimer_id) / (driver->dev_freq / (2ul + 64ul + 48ul));
 
- 		//TRACE_1("[command] has_data wait %d cycles\r\n",cycles);
+ 		TRACE_DEBUG_1("[command] has_data wait %d cycles\r\n",cycles);
  		/* The Timer operates with RC >= 1 */
  		driver->config->tctimer->TC_CHANNEL[driver->config->tc_chan].TC_RC = max_u32(cycles, 1);
+#else
+ 		driver->timeout_cycles = 2+64+48;
+ 		driver->start_cycles = chSysGetRealtimeCounterX();
+#endif
 
  	}
  	/* With SD devices, the 8-cycle function switching period will apply,
@@ -1114,18 +1127,21 @@ void sdmmc_device_deInit(SdmmcDriver *drv)
  	 * Note that MMC devices don't require this fixed delay, but regarding
  	 * GO_IDLE_STATE we have no mean to filter the MMC requests out. */
  	else if (wait_switch) {
-
+#if SDMMC_USE_TC == 1
  		cycles = pmc_get_peripheral_clock(driver->tctimer_id) / (driver->dev_freq / 8ul);
- 		//TRACE_1("[command] wait_switch %d cycles\r\n",cycles);
+ 		TRACE_DEBUG_1("[command] wait_switch %d cycles\r\n",cycles);
  		driver->config->tctimer->TC_CHANNEL[driver->config->tc_chan].TC_RC = max_u32(cycles, 1);
-
+#else
+ 		driver->timeout_ticks = 8;
+ 		driver->start_cycles = chSysGetRealtimeCounterX();
+#endif
  	}
  	if (!driver->use_polling) {
  		regs->SDMMC_NISIER |= SDMMC_NISIER_BRDRDY | SDMMC_NISIER_BWRRDY | SDMMC_NISIER_TRFC | SDMMC_NISIER_CMDC | SDMMC_NISIER_CINT;
  		regs->SDMMC_EISIER = eister;
  	}
 
- 	//TRACE_1("[command] finish %d OK\r\n",driver->cmd.bCmd);
+ 	TRACE_DEBUG_1("[command] finish %d OK\r\n",driver->cmd.bCmd);
  	return SDMMC_OK;
  }
 
@@ -1150,7 +1166,7 @@ void sdmmc_device_deInit(SdmmcDriver *drv)
 
  //#if TRACE_LEVEL >= TRACE_LEVEL_DEBUG
  	if (bCtl != SDMMC_IOCTL_BUSY_CHECK && bCtl != SDMMC_IOCTL_GET_DEVICE) {
- 		TRACE_2("SDMMC_IOCTL_%s(%lu)\n\r", SD_StringifyIOCtrl(bCtl),driver->control_param );
+ 		TRACE_DEBUG_2("SDMMC_IOCTL_%s(%lu)\n\r", SD_StringifyIOCtrl(bCtl),driver->control_param );
  	}
  //#endif
 
@@ -1217,7 +1233,7 @@ void sdmmc_device_deInit(SdmmcDriver *drv)
  		if (driver->control_param > 0xff)
  			return SDMMC_PARAM;
  		rc = sdmmc_set_bus_width(driver, driver->control_param);
- 		TRACE_1("Using a %u-bit data bus\n\r", sdmmc_get_bus_width(driver));
+ 		TRACE_DEBUG_1("Using a %u-bit data bus\n\r", sdmmc_get_bus_width(driver));
  		break;
 
  	case SDMMC_IOCTL_GET_HSMODE:
@@ -1283,7 +1299,7 @@ void sdmmc_device_deInit(SdmmcDriver *drv)
 
  		sdmmc_set_device_clock(driver, driver->control_param);
 
- TRACE_1("Clocking the device at %lu Hz\n\r", driver->dev_freq);
+ TRACE_DEBUG_1("Clocking the device at %lu Hz\n\r", driver->dev_freq);
  		if (driver->dev_freq > 95000000ul
  		    && (driver->tim_mode == SDMMC_TIM_MMC_HS200
  		    || driver->tim_mode == SDMMC_TIM_SD_SDR104
@@ -1345,7 +1361,7 @@ void sdmmc_device_deInit(SdmmcDriver *drv)
  //#if TRACE_LEVEL >= TRACE_LEVEL_ERROR
  	if (rc != SDMMC_OK && rc != SDMMC_CHANGED
  	    && bCtl != SDMMC_IOCTL_BUSY_CHECK) {
- 		TRACE_2("SDMMC_IOCTL_%s ended with %s\n\r",SD_StringifyIOCtrl(bCtl), SD_StringifyRetCode(rc));
+ 		TRACE_ERROR_2("SDMMC_IOCTL_%s ended with %s\n\r",SD_StringifyIOCtrl(bCtl), SD_StringifyRetCode(rc));
  	}
  //#endif
  	return rc;
@@ -1988,7 +2004,7 @@ static uint8_t sdmmc_set_bus_width(SdmmcDriver *driver, uint8_t bits)
 
  		*pIoValClk = drv->control_param;
 
- 		TRACE_1("Device clk %lu kHz\n\r", drv->control_param / 1000UL);
+ 		TRACE_DEBUG_1("Device clk %lu kHz\n\r", drv->control_param / 1000UL);
  	}
  	return rc;
  }

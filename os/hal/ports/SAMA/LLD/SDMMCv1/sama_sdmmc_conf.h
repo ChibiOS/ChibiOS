@@ -14,10 +14,17 @@ typedef FATFS CH_SDMMC_FAT;
 #define SAMA_SDMMC_TRACE	0
 #endif
 
+#ifndef SAMA_SDMMC_TRACE_LEVEL
+#define SAMA_SDMMC_TRACE_LEVEL 0
+#endif
 
 /** Default block size for SD/MMC access */
 #ifndef SDMMC_BLOCK_SIZE
 #define SDMMC_BLOCK_SIZE        512
+#endif
+
+#ifndef SDMMC_USE_TC
+#define SDMMC_USE_TC	0
 #endif
 
 

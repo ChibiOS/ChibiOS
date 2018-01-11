@@ -8,6 +8,8 @@
 #define SB1_SIZE	64
 #define SB2_SIZE	8
 
+#define SDMMC_BUFFER_SIZE (EXT_SIZE + SSR_SIZE + SCR_SIZE + SB1_SIZE + SB2_SIZE)
+
 /** Frequency of the board main clock oscillator */
 #define BOARD_MAIN_CLOCK_EXT_OSC 12000000
 #define MAIN_CLOCK_INT_OSC 12000000

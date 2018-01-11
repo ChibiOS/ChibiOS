@@ -3,6 +3,8 @@
 #include "ch_sdmmc_pmc.h"
 #include "ch_sdmmc_tc.h"
 
+#if SDMMC_USE_TC == 1
+
 /*------------------------------------------------------------------------------
  *         Global functions
  *------------------------------------------------------------------------------*/
@@ -249,3 +251,4 @@ uint32_t tc_get_cv(Tc* tc, uint32_t channel)
 	return ch->TC_CV;
 }
 
+#endif

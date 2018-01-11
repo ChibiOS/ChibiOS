@@ -75,10 +75,6 @@
 #define SD_SWITCH_ST_FUN_GRP_FUN_BUSY(funNdx) (1 << (funNdx))
 /**     @}*/
 
-
-
-
-
 /** We support 2.7 ~ 3.3V cards */
 #define SD_HOST_VOLTAGE_RANGE     (SD_OCR_VDD_27_28 +\
                                    SD_OCR_VDD_28_29 +\
@@ -91,6 +87,10 @@
                                    SD_OCR_VDD_35_36 )
 
 
+
+/**     @}*/
+
+extern uint8_t SD_GetStatus(SdmmcDriver *driver);
 extern uint8_t SdDecideBuswidth(SdmmcDriver *drv);
 extern uint8_t SdEnableHighSpeed(SdmmcDriver *drv);
 extern uint32_t SD_GetField(const uint8_t *reg, uint16_t reg_len, uint16_t field_start,
@@ -107,5 +107,10 @@ extern void SD_DumpSSR(const uint8_t *pSSR);
 extern const char * SD_StringifyRetCode(uint32_t dwRCode);
 extern const char * SD_StringifyIOCtrl(uint32_t dwCtrl);
 
+extern uint8_t SD_Read(SdmmcDriver *driver,uint32_t address,void *pData, uint32_t length);
+extern uint8_t SD_Write(SdmmcDriver *driver,uint32_t address,const void *pData,uint32_t length);
+extern uint8_t SD_ReadBlocks(SdmmcDriver *driver, uint32_t address, void *pData, uint32_t nbBlocks);
+extern uint8_t SD_WriteBlocks(SdmmcDriver *driver, uint32_t address, const void *pData, uint32_t nbBlocks);
+extern uint8_t SD_ReadBlocks(SdmmcDriver *driver, uint32_t address, void *pData, uint32_t nbBlocks);
 
 #endif /* CH_SDMMC_SD_H_ */

@@ -350,15 +350,6 @@ or not by mechanical write protect switch */
 
 
 
-#define STATUS_MMC_SWITCH ((uint32_t)( STATUS_CARD_IS_LOCKED \
-                            | STATUS_COM_CRC_ERROR \
-                            | STATUS_ILLEGAL_COMMAND \
-                            | STATUS_CC_ERROR \
-                            | STATUS_ERROR \
-                            | STATUS_ERASE_RESET \
-                            /*| STATUS_STATE*/ \
-                            /*| STATUS_READY_FOR_DATA*/ \
-                            | STATUS_SWITCH_ERROR ))
 
 #define   t_usleep(d,t) sdmmc_device_sleep(d,t,2)
 #define   t_msleep(d,t) sdmmc_device_sleep(d,t,1)
