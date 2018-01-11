@@ -111,10 +111,12 @@
 #error "RTC not present in the selected device"
 #endif
 
-#if !(STM32_RTCSEL == STM32_RTCSEL_LSE) &&                                  \
-    !(STM32_RTCSEL == STM32_RTCSEL_LSI) &&                                  \
-    !(STM32_RTCSEL == STM32_RTCSEL_HSEDIV)
-#error "invalid source selected for RTC clock"
+#if defined(STM32_RTC_CK) && !defined(STM32_RTCCLK)
+#define STM32_RTCCLK                        STM32_RTC_CK
+#endif
+
+#if !defined(STM32_RTCCLK)
+#error "RTC clock not exported by HAL layer"
 #endif
 
 #if STM32_PCLK1 < (STM32_RTCCLK * 7)

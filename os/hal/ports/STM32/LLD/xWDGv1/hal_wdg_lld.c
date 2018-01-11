@@ -35,6 +35,10 @@
 #define KR_KEY_WRITE                        0x5555U
 #define KR_KEY_PROTECT                      0x0000U
 
+#if !defined(IWDG) && defined(IWDG1)
+#define IWDG                                IWDG1
+#endif
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
