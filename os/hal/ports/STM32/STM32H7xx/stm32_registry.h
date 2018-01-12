@@ -42,8 +42,8 @@
 /* ADC attributes.*/
 #define STM32_ADC12_HANDLER                 Vector88
 #define STM32_ADC12_NUMBER                  18
-#define STM32_ADC34_HANDLER                 Vector23C
-#define STM32_ADC34_NUMBER                  127
+#define STM32_ADC3_HANDLER                  Vector23C
+#define STM32_ADC3_NUMBER                   127
 
 #define STM32_HAS_ADC1                      TRUE
 

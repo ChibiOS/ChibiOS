@@ -114,6 +114,10 @@
 #define ADC_CCR_DUAL_FIELD(n)           ((n) << 0U)
 #define ADC_CCR_DELAY_MASK              (15U << 8U)
 #define ADC_CCR_DELAY_FIELD(n)          ((n) << 8U)
+#define ADC_CCR_DAMDF_MASK              (3U << 14U)
+#define ADC_CCR_DAMDF_DISABLED          (0U << 14U)
+#define ADC_CCR_DAMDF_HWORD             (2U << 14U)
+#define ADC_CCR_DAMDF_WORD              (3U << 14U)
 #define ADC_CCR_CKMODE_MASK             (3U << 16U)
 #define ADC_CCR_CKMODE_ADCCK            (0U << 16U)
 #define ADC_CCR_CKMODE_AHB_DIV1         (1U << 16U)
@@ -130,8 +134,7 @@
  * @{
  */
 /**
- * @brief   Enables the ADC master/slave mode.
- * @note    In dual mode only ADCD1 and ADCD3 are available.
+ * @brief   Enables the ADC1 and ADC2 master/slave mode.
  */
 #if !defined(STM32_ADC_DUAL_MODE) || defined(__DOXYGEN__)
 #define STM32_ADC_DUAL_MODE                 FALSE
@@ -139,29 +142,20 @@
 
 /**
  * @brief   Makes the ADC samples type an 8bits one.
- * @note    10 and 12 bits sampling mode must not be used when this option
- *          is enabled.
+ * @note    10, 12, 14 and 16 bits sampling mode must not be used when this
+ *          option is enabled.
  */
 #if !defined(STM32_ADC_COMPACT_SAMPLES) || defined(__DOXYGEN__)
 #define STM32_ADC_COMPACT_SAMPLES           FALSE
 #endif
 
 /**
- * @brief   ADC1 driver enable switch.
- * @details If set to @p TRUE the support for ADC1 is included.
+ * @brief   ADC1/ADC2 driver enable switch.
+ * @details If set to @p TRUE the support for ADC1/ADC2 is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(STM32_ADC_USE_ADC1) || defined(__DOXYGEN__)
-#define STM32_ADC_USE_ADC1                  FALSE
-#endif
-
-/**
- * @brief   ADC2 driver enable switch.
- * @details If set to @p TRUE the support for ADC2 is included.
- * @note    The default is @p FALSE.
- */
-#if !defined(STM32_ADC_USE_ADC2) || defined(__DOXYGEN__)
-#define STM32_ADC_USE_ADC2                  FALSE
+#if !defined(STM32_ADC_USE_ADC12) || defined(__DOXYGEN__)
+#define STM32_ADC_USE_ADC12                 FALSE
 #endif
 
 /**
@@ -172,27 +166,26 @@
 #if !defined(STM32_ADC_USE_ADC3) || defined(__DOXYGEN__)
 #define STM32_ADC_USE_ADC3                  FALSE
 #endif
+
 /**
- * @brief   ADC4 driver enable switch.
- * @details If set to @p TRUE the support for ADC4 is included.
- * @note    The default is @p FALSE.
+ * @brief   ADC1/ADC2 DMA channel.
  */
-#if !defined(STM32_ADC_USE_ADC4) || defined(__DOXYGEN__)
-#define STM32_ADC_USE_ADC4                  FALSE
+#if !defined(STM32_ADC_ADC12_DMA_CHANNEL) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC12_DMA_CHANNEL         0
 #endif
 
 /**
- * @brief   ADC1 DMA priority (0..3|lowest..highest).
+ * @brief   ADC3 DMA channel.
  */
-#if !defined(STM32_ADC_ADC1_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC1_DMA_PRIORITY         2
+#if !defined(STM32_ADC_ADC3_DMA_CHANNEL) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC3_DMA_CHANNEL          1
 #endif
 
 /**
- * @brief   ADC2 DMA priority (0..3|lowest..highest).
+ * @brief   ADC1/ADC2 DMA priority (0..3|lowest..highest).
  */
-#if !defined(STM32_ADC_ADC2_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC2_DMA_PRIORITY         2
+#if !defined(STM32_ADC_ADC12_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC12_DMA_PRIORITY        2
 #endif
 
 /**
@@ -200,13 +193,6 @@
  */
 #if !defined(STM32_ADC_ADC3_DMA_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_ADC_ADC3_DMA_PRIORITY         2
-#endif
-
-/**
- * @brief   ADC4 DMA priority (0..3|lowest..highest).
- */
-#if !defined(STM32_ADC_ADC4_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC4_DMA_PRIORITY         2
 #endif
 
 /**
@@ -224,41 +210,6 @@
 #endif
 
 /**
- * @brief   ADC4 interrupt priority level setting.
- */
-#if !defined(STM32_ADC_ADC4_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC4_IRQ_PRIORITY         5
-#endif
-
-/**
- * @brief   ADC1 DMA interrupt priority level setting.
- */
-#if !defined(STM32_ADC_ADC1_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC1_DMA_IRQ_PRIORITY     5
-#endif
-
-/**
- * @brief   ADC2 DMA interrupt priority level setting.
- */
-#if !defined(STM32_ADC_ADC2_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC2_DMA_IRQ_PRIORITY     5
-#endif
-
-/**
- * @brief   ADC3 DMA interrupt priority level setting.
- */
-#if !defined(STM32_ADC_ADC3_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC3_DMA_IRQ_PRIORITY     5
-#endif
-
-/**
- * @brief   ADC4 DMA interrupt priority level setting.
- */
-#if !defined(STM32_ADC_ADC4_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC4_DMA_IRQ_PRIORITY     5
-#endif
-
-/**
  * @brief   ADC1/ADC2 clock source and mode.
  */
 #if !defined(STM32_ADC_ADC12_CLOCK_MODE) || defined(__DOXYGEN__)
@@ -266,12 +217,11 @@
 #endif
 
 /**
- * @brief   ADC3/ADC4 clock source and mode.
+ * @brief   ADC3 clock source and mode.
  */
-#if !defined(STM32_ADC_ADC34_CLOCK_MODE) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC34_CLOCK_MODE          ADC_CCR_CKMODE_AHB_DIV4
+#if !defined(STM32_ADC_ADC3_CLOCK_MODE) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC3_CLOCK_MODE           ADC_CCR_CKMODE_AHB_DIV4
 #endif
-
 /** @} */
 
 /*===========================================================================*/
@@ -285,16 +235,16 @@
 
 /* Registry checks.*/
 #if !defined(STM32_HAS_ADC1) || !defined(STM32_HAS_ADC2) ||                 \
-    !defined(STM32_HAS_ADC3) || !defined(STM32_HAS_ADC4)
+    !defined(STM32_HAS_ADC3)
 #error "STM32_ADC_USE_ADCx not defined in registry"
 #endif
 
 /* Units checks.*/
-#if STM32_ADC_USE_ADC1 && !STM32_HAS_ADC1
+#if STM32_ADC_USE_ADC12 && !STM32_HAS_ADC1
 #error "ADC1 not present in the selected device"
 #endif
 
-#if STM32_ADC_USE_ADC2 && !STM32_HAS_ADC2
+#if STM32_ADC_DUAL_MODE && !STM32_HAS_ADC2
 #error "ADC2 not present in the selected device"
 #endif
 
@@ -302,42 +252,30 @@
 #error "ADC3 not present in the selected device"
 #endif
 
-#if STM32_ADC_USE_ADC4 && !STM32_HAS_ADC4
-#error "ADC4 not present in the selected device"
-#endif
-
 /* IRQ handlers checks.*/
 #if STM32_HAS_ADC1 && !defined(STM32_ADC12_HANDLER)
-#error "STM32_ADCx_HANDLER not defined in registry"
+#error "STM32_ADC12_HANDLER not defined in registry"
 #endif
 
 #if STM32_HAS_ADC2 && !defined(STM32_ADC12_HANDLER)
-#error "STM32_ADCx_HANDLER not defined in registry"
+#error "STM32_ADC12_HANDLER not defined in registry"
 #endif
 
-#if STM32_HAS_ADC3 && !defined(STM32_ADC34_HANDLER)
-#error "STM32_ADCx_HANDLER not defined in registry"
-#endif
-
-#if STM32_HAS_ADC4 && !defined(STM32_ADC34_HANDLER)
-#error "STM32_ADCx_HANDLER not defined in registry"
+#if STM32_HAS_ADC3 && !defined(STM32_ADC3_HANDLER)
+#error "STM32_ADC3_HANDLER not defined in registry"
 #endif
 
 /* IRQ vector numbers checks.*/
 #if STM32_HAS_ADC1 && !defined(STM32_ADC12_NUMBER)
-#error "STM32_ADCx_NUMBER not defined in registry"
+#error "STM32_ADC12_NUMBER not defined in registry"
 #endif
 
 #if STM32_HAS_ADC2 && !defined(STM32_ADC12_NUMBER)
-#error "STM32_ADCx_NUMBER not defined in registry"
+#error "STM32_ADC12_NUMBER not defined in registry"
 #endif
 
-#if STM32_HAS_ADC3 && !defined(STM32_ADC34_NUMBER)
-#error "STM32_ADCx_NUMBER not defined in registry"
-#endif
-
-#if STM32_HAS_ADC4 && !defined(STM32_ADC34_NUMBER)
-#error "STM32_ADCx_NUMBER not defined in registry"
+#if STM32_HAS_ADC3 && !defined(STM32_ADC3_NUMBER)
+#error "STM32_ADC3_NUMBER not defined in registry"
 #endif
 
 /* Units checks related to dual mode.*/
@@ -345,75 +283,26 @@
 #error "ADC2 not present in the selected device, required for dual mode"
 #endif
 
-#if STM32_ADC_DUAL_MODE && STM32_ADC_USE_ADC3 && !STM32_HAS_ADC4
-#error "ADC4 not present in the selected device, required for dual mode"
-#endif
-
-#if STM32_ADC_DUAL_MODE && STM32_ADC_USE_ADC2
-#error "ADC2 cannot be used in dual mode"
-#endif
-
-#if STM32_ADC_DUAL_MODE && STM32_ADC_USE_ADC4
-#error "ADC4 cannot be used in dual mode"
-#endif
-
 /* At least one ADC must be assigned.*/
-#if !STM32_ADC_USE_ADC1 && !STM32_ADC_USE_ADC2 &&                           \
-    !STM32_ADC_USE_ADC3 && !STM32_ADC_USE_ADC4
+#if !STM32_ADC_USE_ADC12 && !STM32_ADC_USE_ADC3
 #error "ADC driver activated but no ADC peripheral assigned"
 #endif
 
-/* ADC IRQ priority tests.*/
-#if STM32_ADC_USE_ADC1 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC12_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to ADC1"
-#endif
-
-#if STM32_ADC_USE_ADC2 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC12_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to ADC2"
+/* DMA channel range tests.*/
+#if STM32_ADC_USE_ADC12 &&                                                  \
+    !STM32_DMA_IS_VALID_CHANNEL(STM32_ADC_ADC12_DMA_CHANNEL)
+#error "Invalid DMA channel assigned to ADC12"
 #endif
 
 #if STM32_ADC_USE_ADC3 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC34_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to ADC3"
-#endif
-
-#if STM32_ADC_USE_ADC4 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC34_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to ADC4"
-#endif
-
-/* DMA IRQ priority tests.*/
-#if STM32_ADC_USE_ADC1 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC1_DMA_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to ADC1 DMA"
-#endif
-
-#if STM32_ADC_USE_ADC2 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC2_DMA_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to ADC2 DMA"
-#endif
-
-#if STM32_ADC_USE_ADC3 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC3_DMA_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to ADC3 DMA"
-#endif
-
-#if STM32_ADC_USE_ADC4 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC4_DMA_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to ADC4 DMA"
+    !STM32_BDMA_IS_VALID_CHANNEL(STM32_ADC_ADC3_DMA_CHANNEL)
+#error "Invalid DMA channel assigned to ADC3"
 #endif
 
 /* DMA priority tests.*/
-#if STM32_ADC_USE_ADC1 &&                                                   \
-    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC1_DMA_PRIORITY)
+#if STM32_ADC_USE_ADC12 &&                                                  \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC12_DMA_PRIORITY)
 #error "Invalid DMA priority assigned to ADC1"
-#endif
-
-#if STM32_ADC_USE_ADC2 &&                                                   \
-    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC2_DMA_PRIORITY)
-#error "Invalid DMA priority assigned to ADC2"
 #endif
 
 #if STM32_ADC_USE_ADC3 &&                                                   \
@@ -421,9 +310,15 @@
 #error "Invalid DMA priority assigned to ADC3"
 #endif
 
-#if STM32_ADC_USE_ADC4 &&                                                   \
-    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC4_DMA_PRIORITY)
-#error "Invalid DMA priority assigned to ADC4"
+/* ADC IRQ priority tests.*/
+#if STM32_ADC_USE_ADC12 &&                                                  \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC12_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to ADC1"
+#endif
+
+#if STM32_ADC_USE_ADC3 &&                                                   \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC34_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to ADC3"
 #endif
 
 /* ADC clock source checks.*/
@@ -439,28 +334,42 @@
 #error "invalid clock mode selected for STM32_ADC_ADC12_CLOCK_MODE"
 #endif
 
-#if STM32_ADC_ADC34_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
-#define STM32_ADC34_CLOCK               STM32_ADCCLK
-#elif STM32_ADC_ADC34_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
-#define STM32_ADC34_CLOCK               (STM32_HCLK / 1)
-#elif STM32_ADC_ADC34_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV2
-#define STM32_ADC34_CLOCK               (STM32_HCLK / 2)
-#elif STM32_ADC_ADC34_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV4
-#define STM32_ADC34_CLOCK               (STM32_HCLK / 4)
+#if STM32_ADC_ADC3_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
+#define STM32_ADC3_CLOCK                STM32_ADCCLK
+#elif STM32_ADC_ADC3_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
+#define STM32_ADC3_CLOCK                (STM32_HCLK / 1)
+#elif STM32_ADC_ADC3_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV2
+#define STM32_ADC3_CLOCK                (STM32_HCLK / 2)
+#elif STM32_ADC_ADC3_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV4
+#define STM32_ADC3_CLOCK                (STM32_HCLK / 4)
 #else
-#error "invalid clock mode selected for STM32_ADC_ADC12_CLOCK_MODE"
+#error "invalid clock mode selected for STM32_ADC_ADC3_CLOCK_MODE"
 #endif
 
 #if STM32_ADC12_CLOCK > STM32_ADCCLK_MAX
 #error "STM32_ADC12_CLOCK exceeding maximum frequency (STM32_ADCCLK_MAX)"
 #endif
 
-#if STM32_ADC34_CLOCK > STM32_ADCCLK_MAX
-#error "STM32_ADC34_CLOCK exceeding maximum frequency (STM32_ADCCLK_MAX)"
+#if STM32_ADC3_CLOCK > STM32_ADCCLK_MAX
+#error "STM32_ADC3_CLOCK exceeding maximum frequency (STM32_ADCCLK_MAX)"
 #endif
 
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED
+#endif
+
+#if STM32_ADC_USE_ADC12
+#define STM32_ADC_DMA_REQUIRED
+#if !defined(STM32_DMA_REQUIRED)
+#define STM32_DMA_REQUIRED
+#endif
+#endif
+
+#if STM32_ADC_USE_ADC3
+#define STM32_ADC_BDMA_REQUIRED
+#if !defined(STM32_BDMA_REQUIRED)
+#define STM32_BDMA_REQUIRED
+#endif
 #endif
 
 /*===========================================================================*/
@@ -479,7 +388,7 @@ typedef uint8_t adcsample_t;
 /**
  * @brief   Channels number in a conversion group.
  */
-typedef uint16_t adc_channels_num_t;
+typedef uint32_t adc_channels_num_t;
 
 /**
  * @brief   Possible ADC failure causes.
@@ -546,26 +455,50 @@ typedef struct {
   /* End of the mandatory fields.*/
   /**
    * @brief   ADC CFGR register initialization data.
-   * @note    The bits DMAEN and DMACFG are enforced internally
-   *          to the driver, keep them to zero.
+   * @note    The bits DMNGT are enforced internally to the driver, keep
+   *          them to zero.
    * @note    The bits @p ADC_CFGR_CONT or @p ADC_CFGR_DISCEN must be
    *          specified in continuous mode or if the buffer depth is
    *          greater than one.
    */
   uint32_t                  cfgr;
-  /**
-   * @brief   ADC TR1 register initialization data.
-   */
-  uint32_t                  tr1;
 #if STM32_ADC_DUAL_MODE || defined(__DOXYGEN__)
   /**
    * @brief   ADC CCR register initialization data.
-   * @note    The bits CKMODE, MDMA, DMACFG are enforced internally to the
+   * @note    The bits CKMODE and DAMDF are enforced internally to the
    *          driver, keep them to zero.
    * @note    This field is only present in dual mode.
    */
   uint32_t                  ccr;
 #endif
+  /**
+   * @brief   ADC PCSEL register initialization data.
+   */
+  uint32_t                  pcsel;
+  /**
+   * @brief   ADC LTR1 register initialization data.
+   */
+  uint32_t                  ltr1;
+  /**
+   * @brief   ADC HTR1 register initialization data.
+   */
+  uint32_t                  htr1;
+  /**
+   * @brief   ADC LTR2 register initialization data.
+   */
+  uint32_t                  ltr2;
+  /**
+   * @brief   ADC HTR2 register initialization data.
+   */
+  uint32_t                  htr2;
+  /**
+   * @brief   ADC LTR3 register initialization data.
+   */
+  uint32_t                  ltr3;
+  /**
+   * @brief   ADC HTR3 register initialization data.
+   */
+  uint32_t                  htr3;
   /**
    * @brief   ADC SMPRx registers initialization data.
    */
@@ -575,6 +508,34 @@ typedef struct {
    */
   uint32_t                  sqr[4];
 #if STM32_ADC_DUAL_MODE || defined(__DOXYGEN__)
+  /**
+   * @brief   Slave ADC PCSEL register initialization data.
+   */
+  uint32_t                  spcsel;
+  /**
+   * @brief   Slave ADC LTR1 register initialization data.
+   */
+  uint32_t                  sltr1;
+  /**
+   * @brief   Slave ADC HTR1 register initialization data.
+   */
+  uint32_t                  shtr1;
+  /**
+   * @brief   Slave ADC LTR2 register initialization data.
+   */
+  uint32_t                  sltr2;
+  /**
+   * @brief   Slave ADC HTR2 register initialization data.
+   */
+  uint32_t                  shtr2;
+  /**
+   * @brief   Slave ADC LTR3 register initialization data.
+   */
+  uint32_t                  sltr3;
+  /**
+   * @brief   Slave ADC HTR3 register initialization data.
+   */
+  uint32_t                  shtr3;
   /**
    * @brief   Slave ADC SMPRx registers initialization data.
    * @note    This field is only present in dual mode.
@@ -653,9 +614,22 @@ struct ADCDriver {
    */
   ADC_Common_TypeDef        *adcc;
   /**
-   * @brief   Pointer to associated DMA channel.
+   * @brief   Union of the DMA data streams.
    */
-  const stm32_dma_stream_t  *dmastp;
+  union {
+#if defined(STM32_ADC_DMA_REQUIRED) || defined(__DOXYGEN__)
+    /**
+     * @brief   DMA stream.
+     */
+    const stm32_dma_stream_t  *dma;
+#endif
+#if defined(STM32_ADC_BDMA_REQUIRED) || defined(__DOXYGEN__)
+    /**
+     * @brief   BDMA stream.
+     */
+    const stm32_bdma_stream_t  *bdma;
+#endif
+  } data;
   /**
    * @brief   DMA mode bit mask.
    */
@@ -667,86 +641,72 @@ struct ADCDriver {
 /*===========================================================================*/
 
 /**
- * @name    Threashold register initializer
- * @{
- */
-#define ADC_TR(low, high)       (((uint32_t)(high) << 16) | (uint32_t)(low))
-/** @} */
-
-/**
  * @name    Sequences building helper macros
  * @{
  */
 /**
  * @brief   Number of channels in a conversion sequence.
  */
-#define ADC_SQR1_NUM_CH(n)      (((n) - 1) << 0)
+#define ADC_SQR1_NUM_CH(n)      (((n) - 1U) << 0U)
 
-#define ADC_SQR1_SQ1_N(n)       ((n) << 6)  /**< @brief 1st channel in seq. */
-#define ADC_SQR1_SQ2_N(n)       ((n) << 12) /**< @brief 2nd channel in seq. */
-#define ADC_SQR1_SQ3_N(n)       ((n) << 18) /**< @brief 3rd channel in seq. */
-#define ADC_SQR1_SQ4_N(n)       ((n) << 24) /**< @brief 4th channel in seq. */
+#define ADC_SQR1_SQ1_N(n)       ((n) << 6U) /**< @brief 1st channel in seq. */
+#define ADC_SQR1_SQ2_N(n)       ((n) << 12U)/**< @brief 2nd channel in seq. */
+#define ADC_SQR1_SQ3_N(n)       ((n) << 18U)/**< @brief 3rd channel in seq. */
+#define ADC_SQR1_SQ4_N(n)       ((n) << 24U)/**< @brief 4th channel in seq. */
 
-#define ADC_SQR2_SQ5_N(n)       ((n) << 0)  /**< @brief 5th channel in seq. */
-#define ADC_SQR2_SQ6_N(n)       ((n) << 6)  /**< @brief 6th channel in seq. */
-#define ADC_SQR2_SQ7_N(n)       ((n) << 12) /**< @brief 7th channel in seq. */
-#define ADC_SQR2_SQ8_N(n)       ((n) << 18) /**< @brief 8th channel in seq. */
-#define ADC_SQR2_SQ9_N(n)       ((n) << 24) /**< @brief 9th channel in seq. */
+#define ADC_SQR2_SQ5_N(n)       ((n) << 0U) /**< @brief 5th channel in seq. */
+#define ADC_SQR2_SQ6_N(n)       ((n) << 6U) /**< @brief 6th channel in seq. */
+#define ADC_SQR2_SQ7_N(n)       ((n) << 12U)/**< @brief 7th channel in seq. */
+#define ADC_SQR2_SQ8_N(n)       ((n) << 18U)/**< @brief 8th channel in seq. */
+#define ADC_SQR2_SQ9_N(n)       ((n) << 24U)/**< @brief 9th channel in seq. */
 
-#define ADC_SQR3_SQ10_N(n)      ((n) << 0)  /**< @brief 10th channel in seq.*/
-#define ADC_SQR3_SQ11_N(n)      ((n) << 6)  /**< @brief 11th channel in seq.*/
-#define ADC_SQR3_SQ12_N(n)      ((n) << 12) /**< @brief 12th channel in seq.*/
-#define ADC_SQR3_SQ13_N(n)      ((n) << 18) /**< @brief 13th channel in seq.*/
-#define ADC_SQR3_SQ14_N(n)      ((n) << 24) /**< @brief 14th channel in seq.*/
+#define ADC_SQR3_SQ10_N(n)      ((n) << 0U) /**< @brief 10th channel in seq.*/
+#define ADC_SQR3_SQ11_N(n)      ((n) << 6U) /**< @brief 11th channel in seq.*/
+#define ADC_SQR3_SQ12_N(n)      ((n) << 12U)/**< @brief 12th channel in seq.*/
+#define ADC_SQR3_SQ13_N(n)      ((n) << 18U)/**< @brief 13th channel in seq.*/
+#define ADC_SQR3_SQ14_N(n)      ((n) << 24U)/**< @brief 14th channel in seq.*/
 
-#define ADC_SQR4_SQ15_N(n)      ((n) << 0)  /**< @brief 15th channel in seq.*/
-#define ADC_SQR4_SQ16_N(n)      ((n) << 6)  /**< @brief 16th channel in seq.*/
+#define ADC_SQR4_SQ15_N(n)      ((n) << 0U) /**< @brief 15th channel in seq.*/
+#define ADC_SQR4_SQ16_N(n)      ((n) << 6U) /**< @brief 16th channel in seq.*/
 /** @} */
 
 /**
  * @name    Sampling rate settings helper macros
  * @{
  */
-#define ADC_SMPR1_SMP_AN0(n)    ((n) << 0)  /**< @brief AN0 sampling time.  */
-#define ADC_SMPR1_SMP_AN1(n)    ((n) << 3)  /**< @brief AN1 sampling time.  */
-#define ADC_SMPR1_SMP_AN2(n)    ((n) << 6)  /**< @brief AN2 sampling time.  */
-#define ADC_SMPR1_SMP_AN3(n)    ((n) << 9)  /**< @brief AN3 sampling time.  */
-#define ADC_SMPR1_SMP_AN4(n)    ((n) << 12) /**< @brief AN4 sampling time.  */
-#define ADC_SMPR1_SMP_AN5(n)    ((n) << 15) /**< @brief AN5 sampling time.  */
-#define ADC_SMPR1_SMP_AN6(n)    ((n) << 18) /**< @brief AN6 sampling time.  */
-#define ADC_SMPR1_SMP_AN7(n)    ((n) << 21) /**< @brief AN7 sampling time.  */
-#define ADC_SMPR1_SMP_AN8(n)    ((n) << 24) /**< @brief AN8 sampling time.  */
-#define ADC_SMPR1_SMP_AN9(n)    ((n) << 27) /**< @brief AN9 sampling time.  */
+#define ADC_SMPR1_SMP_AN0(n)    ((n) << 0U) /**< @brief AN0 sampling time.  */
+#define ADC_SMPR1_SMP_AN1(n)    ((n) << 3U) /**< @brief AN1 sampling time.  */
+#define ADC_SMPR1_SMP_AN2(n)    ((n) << 6U) /**< @brief AN2 sampling time.  */
+#define ADC_SMPR1_SMP_AN3(n)    ((n) << 9U) /**< @brief AN3 sampling time.  */
+#define ADC_SMPR1_SMP_AN4(n)    ((n) << 12U)/**< @brief AN4 sampling time.  */
+#define ADC_SMPR1_SMP_AN5(n)    ((n) << 15U)/**< @brief AN5 sampling time.  */
+#define ADC_SMPR1_SMP_AN6(n)    ((n) << 18U)/**< @brief AN6 sampling time.  */
+#define ADC_SMPR1_SMP_AN7(n)    ((n) << 21U)/**< @brief AN7 sampling time.  */
+#define ADC_SMPR1_SMP_AN8(n)    ((n) << 24U)/**< @brief AN8 sampling time.  */
+#define ADC_SMPR1_SMP_AN9(n)    ((n) << 27U)/**< @brief AN9 sampling time.  */
 
-#define ADC_SMPR2_SMP_AN10(n)   ((n) << 0)  /**< @brief AN10 sampling time. */
-#define ADC_SMPR2_SMP_AN11(n)   ((n) << 3)  /**< @brief AN11 sampling time. */
-#define ADC_SMPR2_SMP_AN12(n)   ((n) << 6)  /**< @brief AN12 sampling time. */
-#define ADC_SMPR2_SMP_AN13(n)   ((n) << 9)  /**< @brief AN13 sampling time. */
-#define ADC_SMPR2_SMP_AN14(n)   ((n) << 12) /**< @brief AN14 sampling time. */
-#define ADC_SMPR2_SMP_AN15(n)   ((n) << 15) /**< @brief AN15 sampling time. */
-#define ADC_SMPR2_SMP_AN16(n)   ((n) << 18) /**< @brief AN16 sampling time. */
-#define ADC_SMPR2_SMP_AN17(n)   ((n) << 21) /**< @brief AN17 sampling time. */
-#define ADC_SMPR2_SMP_AN18(n)   ((n) << 24) /**< @brief AN18 sampling time. */
+#define ADC_SMPR2_SMP_AN10(n)   ((n) << 0U) /**< @brief AN10 sampling time. */
+#define ADC_SMPR2_SMP_AN11(n)   ((n) << 3U) /**< @brief AN11 sampling time. */
+#define ADC_SMPR2_SMP_AN12(n)   ((n) << 6U) /**< @brief AN12 sampling time. */
+#define ADC_SMPR2_SMP_AN13(n)   ((n) << 9U) /**< @brief AN13 sampling time. */
+#define ADC_SMPR2_SMP_AN14(n)   ((n) << 12U)/**< @brief AN14 sampling time. */
+#define ADC_SMPR2_SMP_AN15(n)   ((n) << 15U)/**< @brief AN15 sampling time. */
+#define ADC_SMPR2_SMP_AN16(n)   ((n) << 18U)/**< @brief AN16 sampling time. */
+#define ADC_SMPR2_SMP_AN17(n)   ((n) << 21U)/**< @brief AN17 sampling time. */
+#define ADC_SMPR2_SMP_AN18(n)   ((n) << 24U)/**< @brief AN18 sampling time. */
+#define ADC_SMPR2_SMP_AN19(n)   ((n) << 27U)/**< @brief AN19 sampling time. */
 /** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if STM32_ADC_USE_ADC1 && !defined(__DOXYGEN__)
+#if STM32_ADC_USE_ADC12 && !defined(__DOXYGEN__)
 extern ADCDriver ADCD1;
-#endif
-
-#if STM32_ADC_USE_ADC2 && !defined(__DOXYGEN__)
-extern ADCDriver ADCD2;
 #endif
 
 #if STM32_ADC_USE_ADC3 && !defined(__DOXYGEN__)
 extern ADCDriver ADCD3;
-#endif
-
-#if STM32_ADC_USE_ADC4 && !defined(__DOXYGEN__)
-extern ADCDriver ADCD4;
 #endif
 
 #ifdef __cplusplus
