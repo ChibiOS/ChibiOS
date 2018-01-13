@@ -39,6 +39,9 @@
  */
 
 #include "hal.h"
+
+#if (HAL_USE_SDMMC == TRUE)
+
 #include "ccportab.h"
 #include "ffconf.h"
 #include "diskio.h"
@@ -305,3 +308,5 @@ DRESULT disk_ioctl(BYTE slot, BYTE cmd, void* buff)
 	}
 	return res;
 }
+#endif
+

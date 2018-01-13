@@ -1,4 +1,7 @@
 #include "hal.h"
+
+#if (HAL_USE_SDMMC == TRUE)
+
 #include "sama_sdmmc_lld.h"
 #include "ch_sdmmc_pmc.h"
 #include "ch_sdmmc_tc.h"
@@ -251,4 +254,5 @@ uint32_t tc_get_cv(Tc* tc, uint32_t channel)
 	return ch->TC_CV;
 }
 
+#endif
 #endif

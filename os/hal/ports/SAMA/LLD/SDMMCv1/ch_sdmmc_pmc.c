@@ -1,4 +1,7 @@
 #include "hal.h"
+
+#if (HAL_USE_SDMMC == TRUE)
+
 #include "sama_sdmmc_lld.h"
 #include "ch_sdmmc_pmc.h"
 
@@ -828,4 +831,5 @@ void pmc_disable_internal_osc(void)
 }
 
 
+#endif
 

@@ -1,5 +1,8 @@
 #include <string.h>
 #include "hal.h"
+
+#if (HAL_USE_SDMMC == TRUE)
+
 #include "sama_sdmmc_lld.h"
 #include "ch_sdmmc_device.h"
 #include "ch_sdmmc_cmds.h"
@@ -1249,3 +1252,4 @@ static void _ResetCmd(sSdmmcCommand * pCmd)
 	memset(pCmd, 0, sizeof (sSdmmcCommand));
 }
 
+#endif
