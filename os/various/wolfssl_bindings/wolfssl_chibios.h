@@ -39,6 +39,7 @@
 #ifndef WOLFSSL_SK_H
 #define WOLFSSL_SK_H
 #include "wolfssl/ssl.h"
+#include "wolfssl/wolfcrypt/types.h"
 #include "lwip/opt.h"
 #include "lwip/arch.h"
 #include "lwip/api.h"
@@ -63,5 +64,6 @@ int wolfssl_recv_cb(WOLFSSL *ssl, char *buf, int sz, void *ctx);
 
 void *chibios_alloc(void *heap, int size);
 void chibios_free(void *ptr);
+word32 LowResTimer(void);
 
 #endif

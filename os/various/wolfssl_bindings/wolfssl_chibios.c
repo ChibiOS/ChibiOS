@@ -188,7 +188,7 @@ int wolfssl_recv_cb(WOLFSSL *ssl, char *buf, int sz, void *ctx)
 #endif
 
 
-uint32_t LowResTimer(void)
+word32 LowResTimer(void)
 {
     systime_t t = chVTGetSystemTimeX();
     return ST2S(t);
