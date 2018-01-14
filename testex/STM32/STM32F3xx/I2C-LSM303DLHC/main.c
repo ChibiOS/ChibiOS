@@ -49,11 +49,11 @@ static const I2CConfig i2ccfg = {
 };
 
 static const LSM303DLHCAccConfig lsm303dlhcacccfg = {
-  NULL,                             /* Use default sensitivity.*/
-  NULL,                             /* Use default bias.*/
-  LSM303DLHC_ACC_FS_4G,             /* Full scale value 2g.*/
-  LSM303DLHC_ACC_ODR_100Hz,         /* Output data rate 100 Hz.*/
-#if LSM303DLHC_ACC_USE_ADVANCED || defined(__DOXYGEN__)
+  NULL,
+  NULL,
+  LSM303DLHC_ACC_FS_4G,
+  LSM303DLHC_ACC_ODR_100Hz,
+#if LSM303DLHC_ACC_USE_ADVANCED
   LSM303DLHC_ACC_LP_DISABLED,
   LSM303DLHC_ACC_HR_DISABLED,
   LSM303DLHC_ACC_BDU_BLOCK,
@@ -62,11 +62,11 @@ static const LSM303DLHCAccConfig lsm303dlhcacccfg = {
 };
 
 static const LSM303DLHCCompConfig lsm303dlhccompcfg = {
-  NULL,                             /* Use default sensitivity.*/
-  NULL,                             /* Use default bias.*/
-  LSM303DLHC_COMP_FS_1P3GA,         /* Full scale value 1.3 Gauss.*/
-  LSM303DLHC_COMP_ODR_30HZ,         /* Output data rate 30 Hz.*/
-#if LSM303DLHC_COMP_USE_ADVANCED || defined(__DOXYGEN__)
+  NULL,
+  NULL,
+  LSM303DLHC_COMP_FS_1P3GA,
+  LSM303DLHC_COMP_ODR_30HZ,
+#if LSM303DLHC_COMP_USE_ADVANCED
   LSM303DLHC_COMP_MD_BLOCK
 #endif
 };
@@ -345,7 +345,7 @@ int main(void) {
    * Creates the blinker thread.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
-  
+
   /*
    * LSM303DLHC Object Initialization
    */
@@ -355,10 +355,10 @@ int main(void) {
    * Activates the LSM303DLHC driver.
    */
   lsm303dlhcStart(&LSM303DLHCD1, &lsm303dlhccfg);
-  
+
   /*
    * Normal main() thread activity, spawning shells.
-   */   
+   */
   while (true) {
     if (SDU1.config->usbp->state == USB_ACTIVE) {
       thread_t *shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,

@@ -38,21 +38,22 @@ static char axisID[L3GD20_NUMBER_OF_AXES] = {'X', 'Y', 'Z'};
 static uint32_t i;
 
 static const SPIConfig spicfg = {
+  FALSE,
   NULL,
-  GPIOE,                                     /* port of L3GD20 CS.*/
-  GPIOE_L3GD20_CS,                           /* pin of L3GD20 CS.*/
-  SPI_CR1_BR_0 | SPI_CR1_CPOL | SPI_CR1_CPHA,/*   CR1 register.*/
-  0                                          /* CR2 register.*/
+  GPIOE,
+  GPIOE_L3GD20_CS,
+  SPI_CR1_BR_0 | SPI_CR1_CPOL | SPI_CR1_CPHA,
+  0
 };
 
 static L3GD20Config l3gd20cfg = {
-  &SPID1,                                    /* Pointer to SPI Driver.*/
-  &spicfg,                                   /* Pointer to SPI Configuration.*/
-  NULL,                                      /* Use default sensitivity.*/
-  NULL,                                      /* Use default bias.*/
-  L3GD20_FS_250DPS,                          /* Full scale value.*/
-  L3GD20_ODR_760HZ,                          /* Output data rate.*/
-#if L3GD20_USE_ADVANCED || defined(__DOXYGEN__)
+  &SPID1,
+  &spicfg,
+  NULL,
+  NULL,
+  L3GD20_FS_250DPS,
+  L3GD20_ODR_760HZ,
+#if L3GD20_USE_ADVANCED
   L3GD20_BDU_CONTINUOUS,
   L3GD20_END_LITTLE,
   L3GD20_BW3,

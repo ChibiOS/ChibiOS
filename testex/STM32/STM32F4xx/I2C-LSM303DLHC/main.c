@@ -46,11 +46,11 @@ static const I2CConfig i2ccfg = {
 };
 
 static const LSM303DLHCAccConfig lsm303dlhcacccfg = {
-  NULL,                             /* Use default sensitivity.*/
-  NULL,                             /* Use default bias.*/
-  LSM303DLHC_ACC_FS_4G,             /* Full scale value 2g.*/
-  LSM303DLHC_ACC_ODR_100Hz,         /* Output data rate 100 Hz.*/
-#if LSM303DLHC_ACC_USE_ADVANCED || defined(__DOXYGEN__)
+  NULL,
+  NULL,
+  LSM303DLHC_ACC_FS_4G,
+  LSM303DLHC_ACC_ODR_100Hz,
+#if LSM303DLHC_ACC_USE_ADVANCED
   LSM303DLHC_ACC_LP_DISABLED,
   LSM303DLHC_ACC_HR_DISABLED,
   LSM303DLHC_ACC_BDU_BLOCK,

@@ -38,23 +38,24 @@ static char axisID[LIS3DSH_NUMBER_OF_AXES] = {'X', 'Y', 'Z'};
 static uint32_t i;
 
 static const SPIConfig spicfg = {
+  FALSE,
   NULL,
-  GPIOE,                                     /* port of LIS3DSH CS.*/
-  GPIOE_CS_SPI,                              /* pin of LIS3DSH CS.*/
-  SPI_CR1_BR_0 | SPI_CR1_CPOL | SPI_CR1_CPHA,/* CR1 register.*/
-  0                                          /* CR2 register.*/
+  GPIOE,
+  GPIOE_CS_SPI,
+  SPI_CR1_BR_0 | SPI_CR1_CPOL | SPI_CR1_CPHA,
+  0
 };
 
 static LIS3DSHConfig lis3dshcfg = {
-  &SPID1,                                    /* Pointer to SPI Driver.*/
-  &spicfg,                                   /* Pointer to SPI Configuration.*/
-  NULL,                                      /* Use default sensitivity.*/
-  NULL,                                      /* Use default bias.*/
-  LIS3DSH_FS_2G,                             /* Full scale value.*/
-  LIS3DSH_ODR_100HZ,                         /* Output data rate.*/
-#if LIS3DSH_USE_ADVANCED || defined(__DOXYGEN__)
-  LIS3DSH_BW_400HZ,                          /* AA filter bandwidth.*/
-  LIS3DSH_BDU_CONTINUOUS,                    /* Block data update continuous.*/
+  &SPID1,
+  &spicfg,
+  NULL,
+  NULL,
+  LIS3DSH_FS_2G,
+  LIS3DSH_ODR_100HZ,
+#if LIS3DSH_USE_ADVANCED
+  LIS3DSH_BW_400HZ,
+  LIS3DSH_BDU_CONTINUOUS,
 #endif
 };
 

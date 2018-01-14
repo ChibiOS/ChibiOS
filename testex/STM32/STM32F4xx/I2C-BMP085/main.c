@@ -46,25 +46,25 @@ static float    cookeddata[BMP085_BARO_NUMBER_OF_AXES +
  * @brief I2C configuration structure.
  */
 static const I2CConfig i2cConfig = {
-  OPMODE_I2C,           /* I2C inetrface peration mode.                     */
-  400000,               /* I2C interface clock speed.                       */
-  FAST_DUTY_CYCLE_2,    /* I2C interface duty cycle mode.                   */
+  OPMODE_I2C,
+  400000,
+  FAST_DUTY_CYCLE_2,
 };
 
 /**
  * @brief BMP085 configuration structure.
  */
 static const BMP085Config bmp085Config = {
-  &I2CD1,               /* I2C Driver pointer.                              */
-  &i2cConfig,           /* I2C Driver configuration.                        */
-  NULL,                 /* Sensibility.                                     */
-  NULL,                 /* bias.                                            */
-  NULL,                 /* Output data rate.                                */
-#if BMP085_USE_ADVANCED || defined(__DOXYGEN__)
-  BMP085_BARO_CT_LOW,   /* Pressure conversion time.                        */
-  BMP085_BARO_MODE_LOW, /* BMP085 Mode.                                     */
-  BMP085_BARO_OSS_0,    /* Oversempling setting.                            */
-  BMP085_THERMO_CT_LOW, /* Temperature conversion time                      */
+  &I2CD1,
+  &i2cConfig,
+  NULL,
+  NULL,
+  NULL,
+#if BMP085_USE_ADVANCED
+  BMP085_BARO_CT_LOW,
+  BMP085_BARO_MODE_LOW,
+  BMP085_BARO_OSS_0,
+  BMP085_THERMO_CT_LOW,
 #endif
 };
 

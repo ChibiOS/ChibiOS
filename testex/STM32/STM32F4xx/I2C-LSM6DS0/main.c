@@ -44,21 +44,21 @@ static const I2CConfig i2ccfg = {
 };
 
 static const LSM6DS0AccConfig lsm6ds0acccfg = {
-  NULL,                         /* Use default sensitivity.*/
-  NULL,                         /* Use default bias.*/
-  LSM6DS0_ACC_FS_2G,            /* Full scale value 2g.*/
-  LSM6DS0_ACC_ODR_50Hz,         /* Output data rate 100 Hz.*/
-#if LSM6DS0_ACC_USE_ADVANCED || defined(__DOXYGEN__)
+  NULL,
+  NULL,
+  LSM6DS0_ACC_FS_2G,
+  LSM6DS0_ACC_ODR_50Hz,
+#if LSM6DS0_ACC_USE_ADVANCED
   LSM6DS0_ACC_DEC_X4,
 #endif
 };
 
 static const LSM6DS0GyroConfig lsm6ds0gyrocfg = {
-  NULL,                         /* Use default sensitivity.*/
-  NULL,                         /* Use default bias.*/
-  LSM6DS0_GYRO_FS_245DPS,       /* Full scale value 245DPS.*/
-  LSM6DS0_GYRO_ODR_119HZ_FC_31, /* Output data rate 119 Hz.*/
-#if LSM6DS0_GYRO_USE_ADVANCED || defined(__DOXYGEN__)
+  NULL,
+  NULL,
+  LSM6DS0_GYRO_FS_245DPS,
+  LSM6DS0_GYRO_ODR_119HZ_FC_31,
+#if LSM6DS0_GYRO_USE_ADVANCED
   LSM6DS0_GYRO_LP_DISABLED,
   LSM6DS0_GYRO_OUT_SEL_0,
   LSM6DS0_GYRO_HP_DISABLED,
