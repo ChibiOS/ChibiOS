@@ -184,9 +184,9 @@ void jesd216_cmd_addr(BUSDriver *busp,
 
   spiSelect(busp);
   buf[0] = cmd;
-  buf[1] = (uint8_t)(addr >> 16);
-  buf[2] = (uint8_t)(addr >> 8);
-  buf[3] = (uint8_t)(addr >> 0);
+  buf[1] = (uint8_t)(offset >> 16);
+  buf[2] = (uint8_t)(offset >> 8);
+  buf[3] = (uint8_t)(offset >> 0);
   spiSend(busp, 4, buf);
   spiUnselect(busp);
 #endif
@@ -231,9 +231,9 @@ void jesd216_cmd_addr_send(BUSDriver *busp,
 
   spiSelect(busp);
   buf[0] = cmd;
-  buf[1] = (uint8_t)(addr >> 16);
-  buf[2] = (uint8_t)(addr >> 8);
-  buf[3] = (uint8_t)(addr >> 0);
+  buf[1] = (uint8_t)(offset >> 16);
+  buf[2] = (uint8_t)(offset >> 8);
+  buf[3] = (uint8_t)(offset >> 0);
   spiSend(busp, 4, buf);
   spiSend(busp, n, p);
   spiUnselect(busp);
@@ -280,9 +280,9 @@ void jesd216_cmd_addr_receive(BUSDriver *busp,
 
   spiSelect(busp);
   buf[0] = cmd;
-  buf[1] = (uint8_t)(addr >> 16);
-  buf[2] = (uint8_t)(addr >> 8);
-  buf[3] = (uint8_t)(addr >> 0);
+  buf[1] = (uint8_t)(offset >> 16);
+  buf[2] = (uint8_t)(offset >> 8);
+  buf[3] = (uint8_t)(offset >> 0);
   spiSend(busp, 4, buf);
   spiReceive(busp, n, p);
   spiUnselect(busp);

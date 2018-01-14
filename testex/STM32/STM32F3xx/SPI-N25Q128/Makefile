@@ -99,7 +99,6 @@ include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
 # Other files (optional).
 include $(CHIBIOS)/os/ex/Micron/m25q.mk
-include $(CHIBIOS)/os/ex/subsystems/mfs/mfs.mk
 
 # Define linker script file here
 LDSCRIPT= $(STARTUPLD)/STM32F303xC.ld

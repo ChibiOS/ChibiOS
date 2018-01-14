@@ -131,4 +131,3 @@ received a series of important improvements, new features have been added.
 - Added STM32L496xx/STM32L4A6xx support.
 - Added STM32F030x4 support.
 - Added initial STM32H7xx support.
-  
