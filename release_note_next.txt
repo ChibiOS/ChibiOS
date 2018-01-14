@@ -73,9 +73,9 @@ received a series of important improvements, new features have been added.
 
 *** What's new in NIL 3.0.0 ***
 
-- The type systime_t has been split in systime_t and sysinterval_t, the
-  two can have different size. The system is now more rigorous in time
-  handling, an absolute time is something different from an interval.
+- The type systime_t has been split in systime_t and sysinterval_t. The
+  system is now more rigorous in time handling, an absolute time is
+  something different from an interval.
 - Time conversion macros have been renamed in TIME_S2I(), TIME_MS2I(),
   TIME_US2(), TIME_I2S(), TIME_I2MS() and TIME_I2US. Conversion is now done
   by casting all operands to a large time_conv_t type improving safety by
@@ -112,12 +112,12 @@ received a series of important improvements, new features have been added.
     callbacks in place of classic events.
 - Improved USB driver.
   - Added a usbWakeupHost() function for standby exit.
-- Modified the HAL queues to improve performance. Added new functions:
-  iqGetI(), iqReadI(), oqPutI() and oqWriteI().
+- ImprovedHAL queues to improve performance. Added new functions: iqGetI(),
+  iqReadI(), oqPutI() and oqWriteI().
 
 *** What's new in EX 1.0.0 ***
 
-- None changed.
+- No changes.
 
 *** What's new in STM32 HAL support ***
 
@@ -127,7 +127,7 @@ received a series of important improvements, new features have been added.
   STM32L4xx to 1.9, STM32H7xx to 1.1.
 - Implemented PAL enhancements in GPIOv1, GPIOv2 and GPIOv3 implementations.
 - Modified the STM32 OTGv1 driver to work without pump thread, transfers
-  are now done in the ISR.
+  are now done in the ISR. The driver is now greatly simplified.
 - Added STM32L496xx/STM32L4A6xx support.
 - Added STM32F030x4 support.
 - Added initial STM32H7xx support.
