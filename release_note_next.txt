@@ -3,91 +3,132 @@
 ******************************************************************************
 
 ChibiOS next is composed of several independent but inter-operable
-sub-projects: RT, NIL, HAL, EX.
+sub-projects: RT, NIL, HAL, EX. Plus several external libraries
+integrated in our structure: WolfSSL, FatFS and lwIP.
 
 *** ChibiOS next highlights ****
 
-This release is focused on RTOS general improvements, both RT and NIL received
-a series of important improvements, new features have been added.
+This release is focused on features and  general improvements, HAL, RT and NIL
+received a series of important improvements, new features have been added.
 
 *** ChibiOS next general improvements ***
 
-- Shared licensing headers under /os/licenses, now all products are handled
-  by the same license include files.
-- New ChibiOS/EX subsystems. EX sits on top of HAL and provides portable
-  drivers for devices residing the MCU like MEMS, sensors, memories,
-  displays etc.
-- Shared RTOS components, now allocators, mailboxes and binary semaphores
-  are usable by both RT and NIL.
-  - Memory Pools now have a new variant named "Guarded Memory Pool" including
-    a semaphore that guards the allocation function, the caller waits if there
-    is not an object available in the pool.
-- FatFS 0.10b has been integrated.
-- Rationalized source tree to reduce code duplication.
-- New unit test library.
-- Test suites have been rewritten using an unique code generation system
-  starting from XML descriptions.
-- Startup files have been separated from ports and licensed under Apache 2.0
-  license, now it is possible to use ChibiOS startups and ld files in projects
-  without RT, NIL, HAL or EX.
-- Improved GCC ld scatter files with multi RAM/Flash regions capability.
-- GCC makefiles system improvements.
-- Support for all new Nucleo and Discovery boards from ST.
-- CMSIS updated to version 4.50.
-- Enhanced shell with history and quoted parameters. Common commands have
-  beed included in a shared module in order to avoid duplication in the
-  various demos.
+- WolfSSL 1.12.2 has been integrated. HTTPS demo added.
+- FatFS 0.13 has been integrated.
+- lwIP 2.0.3 has been integrated.
+- CMSIS 5.1.1 has been integrated.
+- Improved build system based on make.
+- Improved integration with Eclipse, launch configurations have been
+  centralized for many projects.
+- Several HAL and test applications have become "multi projects", a single
+  project is able to build for multiple targets/boards.
+- Improved test engine.
+- Added a test suite generator written in FTL, now it is possible to generate
+  test code without the need of SPC5Studio.
+- Added a board files generator written in FTL, now it is possible to generate
+  board files without the need of ChibiStudio.
 
 *** What's new in RT/NIL ports ***
 
-- Common ports architecture. Now RTOS ports work for both RT and NIL, no
-  more code duplication. Ports are now also licensed for both NIL and RT.
-- MPU use for hardware stack checking in ARMCMx port.
+- GHS compiler support added to the Power e200z port.
+- Experimental ARM Cortex-A Trust Zone support.
 
-*** What's new in RT 4.0.0 ***
+*** What's new in OS Library ***
 
-- Now uses the common ports architecture.
-- Now uses the new shared RTOS components.
-- New threading API, now creating static threads is even faster.
-- Extended priority range from 1..127 to 1..255.
-- Enhanced dynamic threading, safer and easier to use.
-- Enhanced Registry, it is now possible to find threads by name, by pointer
-  or by working area.
-- Enhanced trace buffer, it is able to store events regarding not just threads
-  but also IRQs, halts and user events. The trace record now stores both the
-  "slow" system time and a RT stamp for increased accuracy.
-- New kernel hooks for a more flexible code instrumentation.
-- Removed I/O queues, now the HAL has an improved equivalent.
-- Experimental NASA OSAL implementation.
-- Posix simulator added.
+- OS library now has its own test suite.
+- Mailbox API changed by adding "Timeout" to those function that have
+  timeout capability, for consistency with the rest of the system.
+- Added an "Objects Factory" to the OS Library, it allows to dynamically
+  allocate reference-counted kernel objects/buffers or to register
+  static objects. Allocated/registered objects can be retrieved by name.
+- Added an "Objects FIFO" object to the OS Library, it allows to
+  exchange complex objects between threads/ISRs. It is based on a
+  mailbox and a guarded memory pool.
+- Added alignment handling to memory pools.
 
-*** What's new in NIL 2.0.0 ***
+*** What's new in RT 5.0.0 ***
 
-- Now uses the common ports architecture.
-- Now uses the new shared RTOS components.
-- Added implementation of thread queues directly in the kernel, removed it
-  from NIL OSAL.
-- All new features are optional so there is no code size increase.
-- Enhanced source-level compatibility with RT.
-- Enhanced debug features.
-  - State checker like in RT.
-  - Parameters checks like in RT.
+- The type systime_t has been split in systime_t and sysinterval_t, the
+  two can have different size. The system is now more rigorous in time
+  handling, an absolute time is something different from an interval,
+  sysinterval_t can be larger than the systime_t, this means that it is
+  now possible to use very long intervals when the system time uses a small
+  counter.
+- Time conversion macros have been renamed in TIME_S2I(), TIME_MS2I(),
+  TIME_US2(), TIME_I2S(), TIME_I2MS() and TIME_I2US. Conversion is now done
+  by casting all operands to a large time_conv_t type improving safety by
+  eliminating integer truncations.
+- Time conversion functions have been renamed in: chTimeS2I(), chTimeMS2I(),
+  chTimeUS2I(), chTimeI2S(), chTimeI2MS() and chTimeI2US().
+- New functions have been added for dealing with operations with time and
+  intervals: chTimeAddX() and chTimeDiffX().
+- All functions that have a timeout parameter now take a sysinterval_t type
+  instead of systime_t.
+- Improved test suite.
+- Enhanced Events API, added chEvtGetAndClearEventsI() and chEvtAddEventsI().
+- The chconf.h configuration files now are tagged with the version
+  number for safety. The system rejects obsolete files during
+  compilation. Stronger checks are performed on chconf.h, now missing
+  settings trigger an error instead of getting a default.
 
-*** What's new in HAL 5.0.0 ***
+*** What's new in NIL 3.0.0 ***
 
+- The type systime_t has been split in systime_t and sysinterval_t, the
+  two can have different size. The system is now more rigorous in time
+  handling, an absolute time is something different from an interval.
+- Time conversion macros have been renamed in TIME_S2I(), TIME_MS2I(),
+  TIME_US2(), TIME_I2S(), TIME_I2MS() and TIME_I2US. Conversion is now done
+  by casting all operands to a large time_conv_t type improving safety by
+  eliminating integer truncations.
+- New functions have been added for dealing with operations with time and
+  intervals: chTimeAddX() and chTimeDiffX().
+- All functions that have a timeout parameter now take a sysinterval_t type
+  instead of systime_t.
+- Improved test suite.
+- The chconf.h configuration files now are tagged with the version
+  number for safety. The system rejects obsolete files during
+  compilation.
+
+*** What's new in HAL 6.0.0 ***
+
+- Added a Managed Flash Storage module to the HAL. This modules handles
+  garbage collection, storage self-repair and wear leveling.
 - Improved serial driver.
-  - It is possible to set a different buffer size for each port.
-  - SW overruns and HW overruns now have a separate event flag.
-- Events handling in the PAL driver. Now it is able to support interrupts
-  handling and callbacks.
-- EXT driver is still supported but marked as deprecated.
-- New interface for flash devices (used by EX).
-- New interfaces for accelerometer, barometer, compass, gyroscope,
-  hygrometer and thermometer devices (used by EX).
-- Added an I2C bit banged driver as fall-back for faulty hardwares.
-- Improved OSAL architecture with shared sub-modules.
-- All file names have been prefixed by "hal_" in order to prevent collisions
-  with 3rd parties files. This should make integration of external libraries
-  much easier.
-- Improved behavior of HAL queues, now the timeout is absolute not just an
-  inter-byte timeout.
+  - Added a "control" function to the channels interface, it allows to add
+    custom features to the various implementations.
+  - Added I-class functions to the serial driver: sdGetI(), sdReadI(),
+    sdPutI() and sdWriteI().
+- Improved PAL driver.
+  - Added an user parameter to the PAL callbacks for consistency with other
+    drivers.
+  - Added blocking functions for edge synchronization: palWaitLineTimeout()
+    and palWaitLineTimeoutS().
+- Improved SPI driver.
+  - Now there are multiple modes for CS handling: by PAL pad (previous one), by
+    PAL line, by PAL port mask and LLD-specific.
+  - Added circular continuous mode to the SPI driver.
+- Improved CAN driver.
+  - Added callback capability to the CAN driver. Now it is possible to use
+    callbacks in place of classic events.
+- Improved USB driver.
+  - Added a usbWakeupHost() function for standby exit.
+- Modified the HAL queues to improve performance. Added new functions:
+  iqGetI(), iqReadI(), oqPutI() and oqWriteI().
+
+*** What's new in EX 1.0.0 ***
+
+- None changed.
+
+*** What's new in STM32 HAL support ***
+
+- Updated SPI drivers to implement the new circular mode of the HAL SPI
+  driver model.
+- Updated STM32F1xx headers to 1.6, STM32F3xx to 1.9, STM32L0xx to 1.10,
+  STM32L4xx to 1.9, STM32H7xx to 1.1.
+- Implemented PAL enhancements in GPIOv1, GPIOv2 and GPIOv3 implementations.
+- Modified the STM32 OTGv1 driver to work without pump thread, transfers
+  are now done in the ISR.
+- Added STM32L496xx/STM32L4A6xx support.
+- Added STM32F030x4 support.
+- Added initial STM32H7xx support.
+  
