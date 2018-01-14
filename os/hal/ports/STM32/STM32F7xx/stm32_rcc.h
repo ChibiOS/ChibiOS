@@ -528,7 +528,7 @@
  */
 #define rccEnableETH(lp) rccEnableAHB1(RCC_AHB1ENR_ETHMACEN |               \
                                        RCC_AHB1ENR_ETHMACTXEN |             \
-                                       RCC_AHB1ENR_ETHMACRXEN)
+                                       RCC_AHB1ENR_ETHMACRXEN, lp)
 
 /**
  * @brief   Disables the ETH peripheral clock.

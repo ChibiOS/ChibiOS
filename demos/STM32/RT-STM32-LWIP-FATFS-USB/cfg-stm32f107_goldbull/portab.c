@@ -30,10 +30,10 @@
 /*===========================================================================*/
 
 /* Maximum speed SPI configuration (18MHz, CPHA=0, CPOL=0, MSb first).*/
-static const SPIConfig hs_spicfg = {NULL, IOPORT3, GPIOC_SPI3_SD_CS, 0, 0};
+static const SPIConfig hs_spicfg = {false, NULL, IOPORT3, GPIOC_SPI3_SD_CS, 0, 0};
 
 /* Low speed SPI configuration (281.250kHz, CPHA=0, CPOL=0, MSb first).*/
-static const SPIConfig ls_spicfg = {NULL, IOPORT3, GPIOC_SPI3_SD_CS,
+static const SPIConfig ls_spicfg = {false, NULL, IOPORT3, GPIOC_SPI3_SD_CS,
                                     SPI_CR1_BR_2 | SPI_CR1_BR_1,
                                     0};
 

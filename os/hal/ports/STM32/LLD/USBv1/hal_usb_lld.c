@@ -588,6 +588,7 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
 #else
     osalDbgAssert(false, "isochronous support disabled");
 #endif
+    /* Falls through.*/
   case USB_EP_MODE_TYPE_BULK:
     epr = EPR_EP_TYPE_BULK;
     break;

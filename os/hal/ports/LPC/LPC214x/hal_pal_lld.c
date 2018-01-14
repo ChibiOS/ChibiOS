@@ -100,6 +100,7 @@ void _pal_lld_setgroupmode(ioportid_t port,
     break;
   case PAL_MODE_UNCONNECTED:
     port->FIO_PIN |= mask;
+    /* Falls through.*/
   case PAL_MODE_OUTPUT_PUSHPULL:
     port->FIO_DIR |= mask;
     break;
