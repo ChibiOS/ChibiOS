@@ -635,6 +635,9 @@ OSAL_IRQ_HANDLER(SAMA_UART_FLEXCOM4_HANDLER) {
 void uart_lld_init(void) {
 
 #if SAMA_UART_USE_UART0
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_UART0, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
   uartObjectInit(&UARTD0);
   UARTD0.uart      = UART0;
   UARTD0.clock     = SAMA_UART0CLK;
@@ -665,6 +668,9 @@ void uart_lld_init(void) {
 #endif
 
 #if SAMA_UART_USE_UART1
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_UART1, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
   uartObjectInit(&UARTD1);
   UARTD1.uart      = UART1;
   UARTD1.clock     = SAMA_UART1CLK;
@@ -695,6 +701,9 @@ void uart_lld_init(void) {
 #endif
 
 #if SAMA_UART_USE_UART2
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_UART2, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
   uartObjectInit(&UARTD2);
   UARTD2.uart      = UART2;
   UARTD2.clock     = SAMA_UART2CLK;
@@ -725,6 +734,9 @@ void uart_lld_init(void) {
 #endif
 
 #if SAMA_UART_USE_UART3
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_UART3, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
   uartObjectInit(&UARTD3);
   UARTD3.uart      = UART3;
   UARTD3.clock     = SAMA_UART3CLK;
@@ -755,6 +767,9 @@ void uart_lld_init(void) {
 #endif
 
 #if SAMA_UART_USE_UART4
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_UART4, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
   uartObjectInit(&UARTD4);
   UARTD4.uart      = UART4;
   UARTD4.clock     = SAMA_UART4CLK;
@@ -785,6 +800,9 @@ void uart_lld_init(void) {
 #endif
 
 #if SAMA_UART_USE_FLEXCOM0
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_FLEXCOM0, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
   uartObjectInit(&FUARTD0);
   FUARTD0.flexcom   = FLEXCOM0;
   FUARTD0.usart     = USART0;
@@ -816,6 +834,9 @@ void uart_lld_init(void) {
 #endif
 
 #if SAMA_UART_USE_FLEXCOM1
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_FLEXCOM1, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
   uartObjectInit(&FUARTD1);
   FUARTD1.flexcom   = FLEXCOM1;
   FUARTD1.usart     = USART1;
@@ -847,6 +868,9 @@ void uart_lld_init(void) {
 #endif
 
 #if SAMA_UART_USE_FLEXCOM2
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_FLEXCOM2, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
   uartObjectInit(&FUARTD2);
   FUARTD2.flexcom   = FLEXCOM2;
   FUARTD2.usart     = USART2;
@@ -878,6 +902,9 @@ void uart_lld_init(void) {
 #endif
 
 #if SAMA_UART_USE_FLEXCOM3
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_FLEXCOM3, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
   uartObjectInit(&FUARTD3);
   FUARTD3.flexcom   = FLEXCOM3;
   FUARTD3.usart     = USART3;
@@ -909,6 +936,9 @@ void uart_lld_init(void) {
 #endif
 
 #if SAMA_UART_USE_FLEXCOM4
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_FLEXCOM4, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
   uartObjectInit(&FUARTD4);
   FUARTD4.flexcom   = FLEXCOM4;
   FUARTD4.usart     = USART4;
