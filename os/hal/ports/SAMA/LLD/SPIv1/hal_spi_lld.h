@@ -31,6 +31,11 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Circular mode support flag.
+ */
+#define SPI_SUPPORTS_CIRCULAR           FALSE
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -149,7 +154,6 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
-
 /**
  * @brief   At least an SPI unit is in use.
  */
@@ -243,6 +247,12 @@ typedef void (*spicallback_t)(SPIDriver *spip);
  * @brief   Driver configuration structure.
  */
 typedef struct {
+#if (SPI_SUPPORTS_CIRCULAR == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   Enables the circular buffer mode.
+   */
+  bool                      circular;
+#endif
   /**
    * @brief Operation complete callback or @p NULL.
    */

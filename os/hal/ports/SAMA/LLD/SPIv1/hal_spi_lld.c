@@ -183,6 +183,9 @@ static void spi_lld_serve_tx_interrupt(SPIDriver *spip, uint32_t flags) {
 void spi_lld_init(void) {
 
 #if SAMA_SPI_USE_SPI0
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_SPI0, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
   /* Driver initialization.*/
   spiObjectInit(&SPID0);
   SPID0.spi       = SPI0;
@@ -213,6 +216,9 @@ void spi_lld_init(void) {
 #endif /* SAMA_SPI_USE_SPI0 */
 
 #if SAMA_SPI_USE_SPI1
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_SPI1, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
   /* Driver initialization.*/
   spiObjectInit(&SPID1);
   SPID1.spi       = SPI1;
@@ -243,6 +249,9 @@ void spi_lld_init(void) {
 #endif /* SAMA_SPI_USE_SPI1 */
 
 #if SAMA_SPI_USE_FLEXCOM0
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_FLEXCOM0, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
   /* Driver initialization.*/
   spiObjectInit(&FSPID0);
   FSPID0.spi       = FCOMSPI0;
@@ -274,6 +283,9 @@ void spi_lld_init(void) {
 #endif /* SAMA_SPI_USE_FLEXCOM0 */
 
 #if SAMA_SPI_USE_FLEXCOM1
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_FLEXCOM1, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
   /* Driver initialization.*/
   spiObjectInit(&FSPID1);
   FSPID1.spi       = FCOMSPI1;
@@ -305,6 +317,9 @@ void spi_lld_init(void) {
 #endif /* SAMA_SPI_USE_FLEXCOM1 */
 
 #if SAMA_SPI_USE_FLEXCOM2
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_FLEXCOM2, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
   /* Driver initialization.*/
   spiObjectInit(&FSPID2);
   FSPID2.spi       = FCOMSPI2;
@@ -336,6 +351,9 @@ void spi_lld_init(void) {
 #endif /* SAMA_SPI_USE_FLEXCOM2 */
 
 #if SAMA_SPI_USE_FLEXCOM3
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_FLEXCOM3, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
   /* Driver initialization.*/
   spiObjectInit(&FSPID3);
   FSPID3.spi       = FCOMSPI3;
@@ -367,6 +385,9 @@ void spi_lld_init(void) {
 #endif /* SAMA_SPI_USE_FLEXCOM3 */
 
 #if SAMA_SPI_USE_FLEXCOM4
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_FLEXCOM4, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
   /* Driver initialization.*/
   spiObjectInit(&FSPID4);
   FSPID4.spi       = FCOMSPI4;
