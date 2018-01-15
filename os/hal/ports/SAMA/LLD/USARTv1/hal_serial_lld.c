@@ -728,6 +728,9 @@ OSAL_IRQ_HANDLER(SAMA_SERIAL_FLEXCOM4_HANDLER) {
 void sd_lld_init(void) {
 
 #if SAMA_SERIAL_USE_UART0
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_UART0, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
   sdObjectInit(&SD0);
   iqObjectInit(&SD0.iqueue, sd_in_buf0, sizeof sd_in_buf0, NULL, &SD0);
   oqObjectInit(&SD0.oqueue, sd_out_buf0, sizeof sd_out_buf0, notify0, &SD0);
@@ -740,6 +743,9 @@ void sd_lld_init(void) {
 #endif
 
 #if SAMA_SERIAL_USE_UART1
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_UART1, SECURE_PER);
+#endif
   sdObjectInit(&SD1);
   iqObjectInit(&SD1.iqueue, sd_in_buf1, sizeof sd_in_buf1, NULL, &SD1);
   oqObjectInit(&SD1.oqueue, sd_out_buf1, sizeof sd_out_buf1, notify1, &SD1);
@@ -752,6 +758,9 @@ void sd_lld_init(void) {
 #endif
 
 #if SAMA_SERIAL_USE_UART2
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_UART2, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
   sdObjectInit(&SD2);
   iqObjectInit(&SD2.iqueue, sd_in_buf2, sizeof sd_in_buf2, NULL, &SD2);
   oqObjectInit(&SD2.oqueue, sd_out_buf2, sizeof sd_out_buf2, notify2, &SD2);
@@ -764,6 +773,9 @@ void sd_lld_init(void) {
 #endif
 
 #if SAMA_SERIAL_USE_UART3
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_UART3, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
   sdObjectInit(&SD3);
   iqObjectInit(&SD3.iqueue, sd_in_buf3, sizeof sd_in_buf3, NULL, &SD3);
   oqObjectInit(&SD3.oqueue, sd_out_buf3, sizeof sd_out_buf3, notify3, &SD3);
@@ -776,6 +788,9 @@ void sd_lld_init(void) {
 #endif
 
 #if SAMA_SERIAL_USE_UART4
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_UART4, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
   sdObjectInit(&SD4);
   iqObjectInit(&SD4.iqueue, sd_in_buf4, sizeof sd_in_buf4, NULL, &SD4);
   oqObjectInit(&SD4.oqueue, sd_out_buf4, sizeof sd_out_buf4, notify4, &SD4);
@@ -788,6 +803,9 @@ void sd_lld_init(void) {
 #endif
 
 #if SAMA_SERIAL_USE_FLEXCOM0
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_FLEXCOM0, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
   sdObjectInit(&FSD0);
   iqObjectInit(&FSD0.iqueue, sdFlex_in_buf0, sizeof sdFlex_in_buf0, NULL, &FSD0);
   oqObjectInit(&FSD0.oqueue, sdFlex_out_buf0, sizeof sdFlex_out_buf0, notifyFlex0, &FSD0);
@@ -801,6 +819,9 @@ void sd_lld_init(void) {
 #endif
 
 #if SAMA_SERIAL_USE_FLEXCOM1
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_FLEXCOM1, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
   sdObjectInit(&FSD1);
   iqObjectInit(&FSD1.iqueue, sdFlex_in_buf1, sizeof sdFlex_in_buf1, NULL, &FSD1);
   oqObjectInit(&FSD1.oqueue, sdFlex_out_buf1, sizeof sdFlex_out_buf1, notifyFlex1, &FSD1);
@@ -814,6 +835,9 @@ void sd_lld_init(void) {
 #endif
 
 #if SAMA_SERIAL_USE_FLEXCOM2
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_FLEXCOM2, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
   sdObjectInit(&FSD2);
   iqObjectInit(&FSD2.iqueue, sdFlex_in_buf2, sizeof sdFlex_in_buf2, NULL, &FSD2);
   oqObjectInit(&FSD2.oqueue, sdFlex_out_buf2, sizeof sdFlex_out_buf2, notifyFlex2, &FSD2);
@@ -827,6 +851,9 @@ void sd_lld_init(void) {
 #endif
 
 #if SAMA_SERIAL_USE_FLEXCOM3
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_FLEXCOM3, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
   sdObjectInit(&FSD3);
   iqObjectInit(&FSD3.iqueue, sdFlex_in_buf3, sizeof sdFlex_in_buf3, NULL, &FSD3);
   oqObjectInit(&FSD3.oqueue, sdFlex_out_buf3, sizeof sdFlex_out_buf3, notifyFlex3, &FSD3);
@@ -840,6 +867,9 @@ void sd_lld_init(void) {
 #endif
 
 #if SAMA_SERIAL_USE_FLEXCOM4
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_FLEXCOM4, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
   sdObjectInit(&FSD4);
   iqObjectInit(&FSD4.iqueue, sdFlex_in_buf4, sizeof sdFlex_in_buf4, NULL, &FSD4);
   oqObjectInit(&FSD4.oqueue, sdFlex_out_buf4, sizeof sdFlex_out_buf4, notifyFlex4, &FSD4);
