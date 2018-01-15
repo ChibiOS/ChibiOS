@@ -52,7 +52,49 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+/* Only one source for st */
+#if SAMA_ST_USE_TC0
+#if defined(ST_ASSIGNED)
+#error "ST already assigned"
+#else
+#define ST_ASSIGNED
+#endif
+#endif
 
+/* Only one source for st */
+#if SAMA_ST_USE_TC1
+#if defined(ST_ASSIGNED)
+#error "ST already assigned"
+#else
+#define ST_ASSIGNED
+#endif
+#endif
+
+/* Only one source for st */
+#if SAMA_ST_USE_PIT
+#if defined(ST_ASSIGNED)
+#error "ST already assigned"
+#else
+#define ST_ASSIGNED
+#endif
+#endif
+
+/* Checks on allocation of TCx units.*/
+#if SAMA_ST_USE_TC0
+#if defined(SAMA_TC0_IS_USED)
+#error "ST requires TC0 but the peripheral is already used"
+#else
+#define SAMA_TC0_IS_USED
+#endif
+#endif
+
+#if SAMA_ST_USE_TC1
+#if defined(SAMA_TC1_IS_USED)
+#error "ST requires TC1 but the peripheral is already used"
+#else
+#define SAMA_TC1_IS_USED
+#endif
+#endif
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/

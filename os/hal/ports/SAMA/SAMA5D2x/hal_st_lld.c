@@ -147,6 +147,9 @@ void st_lld_init(void) {
 #if (OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC)
 
 #if (SAMA_ST_USE_TC0 == TRUE)
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_TC0, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
   pmcEnableTC0();
   aicSetSourcePriority(ID_TC0, SAMA_TC0_IRQ_PRIORITY);
   aicSetSourceHandler(ID_TC0, SAMA_ST_TC0_HANDLER);
@@ -167,6 +170,9 @@ void st_lld_init(void) {
 #endif /* SAMA_ST_USE_TC0 == TRUE */
 
 #if (SAMA_ST_USE_TC1 == TRUE)
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_TC1, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
   pmcEnableTC1();
   aicSetSourcePriority(ID_TC1, SAMA_TC1_IRQ_PRIORITY);
   aicSetSourceHandler(ID_TC1, SAMA_ST_TC1_HANDLER);
@@ -187,6 +193,9 @@ void st_lld_init(void) {
 #endif /* SAMA_ST_USE_TC1 == TRUE */
 
 #if (SAMA_ST_USE_PIT == TRUE)
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_PIT, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
   /* Enabling PIT.*/
   pmcEnablePIT();
 
