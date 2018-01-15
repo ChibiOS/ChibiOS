@@ -244,7 +244,12 @@ OSAL_IRQ_HANDLER(SAMA_ETH_HANDLER) {
  * @notapi
  */
 void mac_lld_init(void) {
+
   unsigned i;
+
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_GMAC0, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
 
   configurePinsETH();
   macObjectInit(&ETHD0);
