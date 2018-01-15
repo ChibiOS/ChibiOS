@@ -83,6 +83,9 @@ OSAL_IRQ_HANDLER(SAMA_SDMMCD1_HANDLER) {
 void sdmmcInit(void)
 {
 #if PLATFORM_SDMMC_USE_SDMMC1 == TRUE
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX0, ID_SDMMC1, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
   /* Driver initialization.*/
 	sdmmcObjectInit(&SDMMCD1);
 #endif
