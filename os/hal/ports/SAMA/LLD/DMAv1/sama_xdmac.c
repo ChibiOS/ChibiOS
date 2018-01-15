@@ -180,6 +180,11 @@ void dmaInit(void) {
 
   uint8_t cont, chan;
 
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX0, ID_XDMAC0, SECURE_PER);
+  mtxConfigPeriphSecurity(MATRIX0, ID_XDMAC1, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
+
   for (cont = 0; cont < XDMAC_CONTROLLERS; cont++) {
 
     Xdmac *xdmac = dmaControllerSelect(cont);
