@@ -88,19 +88,26 @@
  * @retval false        Peripheral is secured.
  *
  */
-bool mtxConfigPeriphSecurity(Matrix *mtxp, uint8_t id, bool mode) {
+bool mtxConfigPeriphSecurity(Matrix *mtxp, uint32_t id, bool mode) {
 
-  mtxDisableWP(mtxp);
-  if (mode) {
-    mtxp->MATRIX_SPSELR[id / 32] |= (MATRIX_SPSELR_NSECP0 << id);
+  uint32_t mask;
+  if (id < 74) {
+    mask = id & 0x1F;
   }
   else {
-    mtxp->MATRIX_SPSELR[id / 32] &= ~(MATRIX_SPSELR_NSECP0 << id);
+    mask = (id & 0x1F) - 1;
+  }
+  mtxDisableWP(mtxp);
+  if (mode) {
+    mtxp->MATRIX_SPSELR[id / 32] |= (MATRIX_SPSELR_NSECP0 << mask);
+  }
+  else {
+    mtxp->MATRIX_SPSELR[id / 32] &= ~(MATRIX_SPSELR_NSECP0 << mask);
   }
   mtxEnableWP(mtxp);
 
-  return (MATRIX0->MATRIX_SPSELR[id / 32] & (MATRIX_SPSELR_NSECP0 << id)) &
-         (MATRIX1->MATRIX_SPSELR[id / 32] & (MATRIX_SPSELR_NSECP0 << id));
+  return (MATRIX0->MATRIX_SPSELR[id / 32] & (MATRIX_SPSELR_NSECP0 << mask)) &
+         (MATRIX1->MATRIX_SPSELR[id / 32] & (MATRIX_SPSELR_NSECP0 << mask));
 }
 
 /**

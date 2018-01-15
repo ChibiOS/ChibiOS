@@ -320,7 +320,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
- bool mtxConfigPeriphSecurity(Matrix *mtxp, uint8_t id, bool mode);
+ bool mtxConfigPeriphSecurity(Matrix *mtxp, uint32_t id, bool mode);
  void mtxConfigDefaultMaster(Matrix *mtxp, uint8_t slaveID,
                              uint8_t type, uint8_t masterID);
  void mtxConfigSlaveSec(Matrix *mtxp, uint8_t slaveID,
