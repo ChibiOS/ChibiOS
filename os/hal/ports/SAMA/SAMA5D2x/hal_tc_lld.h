@@ -133,6 +133,23 @@ typedef void (*tccallback_t)(TCDriver *tcp);
 #error "TC driver activated but no TC peripheral assigned"
 #endif
 
+/* Checks on allocation of TCx units.*/
+#if SAMA_USE_TC0
+#if defined(SAMA_TC0_IS_USED)
+#error "TC0 is already used"
+#else
+#define SAMA_TC0_IS_USED
+#endif
+#endif
+
+/* Checks on allocation of TCx units.*/
+#if SAMA_USE_TC1
+#if defined(SAMA_TC1_IS_USED)
+#error "TC1 is already used"
+#else
+#define SAMA_TC1_IS_USED
+#endif
+#endif
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/

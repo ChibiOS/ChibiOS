@@ -156,6 +156,9 @@ OSAL_IRQ_HANDLER(SAMA_TC1_HANDLER) {
 void tc_lld_init(void) {
 
 #if SAMA_USE_TC0
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_TC0, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
   /* Driver initialization.*/
   tcObjectInit(&TCD0);
   TCD0.channels = TC_CHANNELS;
@@ -164,6 +167,9 @@ void tc_lld_init(void) {
 #endif
 
 #if SAMA_USE_TC1
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_TC1, SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
   /* Driver initialization.*/
   tcObjectInit(&TCD1);
   TCD1.channels = TC_CHANNELS;
