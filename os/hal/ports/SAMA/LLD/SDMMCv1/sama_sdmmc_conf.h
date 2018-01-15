@@ -23,9 +23,6 @@ typedef FATFS CH_SDMMC_FAT;
 #define SDMMC_BLOCK_SIZE        512
 #endif
 
-#ifndef SDMMC_USE_TC
-#define SDMMC_USE_TC	0
-#endif
 
 
 #endif //SAMA_SDMMC_CONF_H

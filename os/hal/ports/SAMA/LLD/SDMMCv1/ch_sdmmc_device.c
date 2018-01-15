@@ -6,8 +6,6 @@
 #include "sama_sdmmc_lld.h"
 #include "ch_sdmmc_device.h"
 #include "ch_sdmmc_cmds.h"
-#include "ch_sdmmc_pmc.h"
-#include "ch_sdmmc_tc.h"
 #include "ch_sdmmc_sdio.h"
 #include "ch_sdmmc_sd.h"
 #include "ch_sdmmc_mmc.h"
@@ -67,16 +65,8 @@ uint8_t  sdmmc_device_lowlevelcfg(SdmmcDriver *driver)
 	uint8_t res;
 
 
-	pmc_set_main_oscillator_freq(BOARD_MAIN_CLOCK_EXT_OSC);
-
-	TRACE_INFO_1("Processor clock: %u MHz\r\n", ((unsigned)(pmc_get_processor_clock() / 1000000) ));
-	TRACE_INFO_1("Master clock: %u MHz\r\n", ((unsigned)(pmc_get_master_clock() / 1000000)) );
-
-#if SDMMC_USE_TC == 1
-	driver->tctimer_id = get_tc_id_from_addr(driver->config->tctimer,driver->config->tc_chan);
-	pmc_configure_peripheral(driver->tctimer_id, NULL, true);
-#endif
-
+	TRACE_INFO_1("Processor clock: %u MHz\r\n", ((unsigned)(SAMA_PCK / 1000000) ));
+	TRACE_INFO_1("Master clock: %u MHz\r\n", ((unsigned)(SAMA_MCK / 1000000)) );
 
 	if (driver->config->slot_id == SDMMC_SLOT0) {
 		driver->regs = SDMMC0;
@@ -87,18 +77,6 @@ uint8_t  sdmmc_device_lowlevelcfg(SdmmcDriver *driver)
 		pmcEnableSDMMC1()
 		;
 	}
-
-	pmc_configure_peripheral((SDMMC_SLOT0 + driver->config->slot_id), NULL, true);
-
-	if (driver->config->use_fastest_clock) {
-
-		pmc_enable_upll_clock();
-		pmc_enable_upll_bias();
-	}
-
-	pmc_configure_peripheral((SDMMC_SLOT0 + driver->config->slot_id),
-			&driver->config->pmccfg, true);
-
 
 	switch (driver->config->slot_id) {
 
@@ -112,31 +90,25 @@ uint8_t  sdmmc_device_lowlevelcfg(SdmmcDriver *driver)
 		/* Configure SDMMC0 pins */
 
 		/** SDMMC0 pin Card Detect (CD) */
-		//#define PIN_SDMMC0_CD_IOS1 { PIO_GROUP_A, PIO_PA13A_SDMMC0_CD, PIO_PERIPH_A, PIO_PULLUP }
-		palSetGroupMode(PIOA, PIO_PA13A_SDMMC0_CD, 0U,
+		palSetGroupMode(PIOA, (1u << PIOA_PIN13), 0U,
 				PAL_SAMA_FUNC_PERIPH_A | PAL_MODE_INPUT_PULLUP);
 
 		/** SDMMC0 pin Card Clock (CK) */
-		//#define PIN_SDMMC0_CK_IOS1 { PIO_GROUP_A, PIO_PA0A_SDMMC0_CK, PIO_PERIPH_A, PIO_DEFAULT }
-		palSetGroupMode(PIOA, PIO_PA0A_SDMMC0_CK, 0U, PAL_SAMA_FUNC_PERIPH_A);
+		palSetGroupMode(PIOA, (1u << 0), 0U, PAL_SAMA_FUNC_PERIPH_A);
 
 		/** SDMMC0 pin Card Command (CMD) */
-		//#define PIN_SDMMC0_CMD_IOS1 { PIO_GROUP_A, PIO_PA1A_SDMMC0_CMD, PIO_PERIPH_A, PIO_PULLUP }
-		palSetGroupMode(PIOA, PIO_PA1A_SDMMC0_CMD, 0U,
+		palSetGroupMode(PIOA, (1u << PIOA_PIN1), 0U,
 				PAL_SAMA_FUNC_PERIPH_A | PAL_MODE_INPUT_PULLUP);
 
 		/** SDMMC0 pin Card Reset (RSTN) */
-		//#define PIN_SDMMC0_RSTN_IOS1 { PIO_GROUP_A, PIO_PA10A_SDMMC0_RSTN, PIO_PERIPH_A, PIO_PULLUP }
-		palSetGroupMode(PIOA, PIO_PA10A_SDMMC0_RSTN, 0U,
+		palSetGroupMode(PIOA, (1u << PIOA_PIN10), 0U,
 				PAL_SAMA_FUNC_PERIPH_A | PAL_MODE_INPUT_PULLUP);
 
 		/** SDMMC0 pin VDD Selection (VDDSEL) */
-		//#define PIN_SDMMC0_VDDSEL_IOS1 { PIO_GROUP_A, PIO_PA11A_SDMMC0_VDDSEL, PIO_PERIPH_A, PIO_DEFAULT }
-		palSetGroupMode(PIOA, PIO_PA11A_SDMMC0_VDDSEL, 0U,
+		palSetGroupMode(PIOA, (1u << PIOA_PIN11), 0U,
 				PAL_SAMA_FUNC_PERIPH_A);
 
 		/** SDMMC0 pin 8-bit Data (DA0-7) */
-		//#define PINS_SDMMC0_DATA8B_IOS1 { PIO_GROUP_A, 0x000003fc, PIO_PERIPH_A, PIO_PULLUP }
 		palSetGroupMode(PIOA, 0x000003fc, 0U,
 				PAL_SAMA_FUNC_PERIPH_A | PAL_MODE_INPUT_PULLUP);
 
@@ -152,22 +124,18 @@ uint8_t  sdmmc_device_lowlevelcfg(SdmmcDriver *driver)
 		sdmmc_set_capabilities(SDMMC1, caps0, CAPS0_MASK, 0, 0);
 
 		/* Configure SDMMC1 pins */
-
 		/** SDMMC1 pin Card Detect (CD) */
-		palSetGroupMode(PIOA, PIO_PA30E_SDMMC1_CD, 0U,
+		palSetGroupMode(PIOA, (1u << PIOA_PIN30), 0U,
 				PAL_SAMA_FUNC_PERIPH_E | PAL_MODE_INPUT_PULLUP);
 
 		/** SDMMC1 pin Card Clock (CK) */
-		// #define PIN_SDMMC1_CK_IOS1 { PIO_GROUP_A, PIO_PA22E_SDMMC1_CK, PIO_PERIPH_E, PIO_DEFAULT }
-		palSetGroupMode(PIOA, PIO_PA22E_SDMMC1_CK, 0U, PAL_SAMA_FUNC_PERIPH_E);
+		palSetGroupMode(PIOA, (1u << PIOA_PIN22), 0U, PAL_SAMA_FUNC_PERIPH_E);
 
 		/** SDMMC1 pin Card Command (CMD) */
-		//#define PIN_SDMMC1_CMD_IOS1 { PIO_GROUP_A, PIO_PA28E_SDMMC1_CMD, PIO_PERIPH_E, PIO_PULLUP }
-		palSetGroupMode(PIOA, PIO_PA28E_SDMMC1_CMD, 0U,
+		palSetGroupMode(PIOA, (1u << PIOA_PIN28), 0U,
 				PAL_SAMA_FUNC_PERIPH_E | PAL_MODE_INPUT_PULLUP);
 
 		/** SDMMC1 pin 4-bit Data (DA0-3) */
-		//#define PINS_SDMMC1_DATA4B_IOS1 { PIO_GROUP_A, 0x003c0000, PIO_PERIPH_E, PIO_PULLUP }
 		palSetGroupMode(PIOA, 0x003c0000, 0U,
 				PAL_SAMA_FUNC_PERIPH_E | PAL_MODE_INPUT_PULLUP);
 
@@ -189,8 +157,7 @@ uint8_t  sdmmc_device_lowlevelcfg(SdmmcDriver *driver)
 				driver->config->data_buf_size);
 		res &= IS_CACHE_ALIGNED(driver->card.EXT);
 		TRACE_DEBUG_2("check libExt %d %08x\r\n", res, driver->card.EXT);
-		//res &= IS_CACHE_ALIGNED(sizeof(driver->card.EXT));
-		//TRACE_2("check size libExt %d %08x\r\n",rc,sizeof(driver->card.EXT));
+
 
 		if (!res) {
 			TRACE_WARNING("WARNING: buffers are not aligned on data cache lines. Please fix this before enabling DMA.\n\r");
@@ -218,16 +185,10 @@ bool sdmmc_device_initialize(SdmmcDriver *driver)
 
 	driver->blk_size = (val <= 0x2 ? (512 << val) : 512);
 
-	//Configure the TC Timer
-#if SDMMC_USE_TC == 1
-	pmc_configure_peripheral(driver->tctimer_id, NULL, true);
-	tc_configure(driver->config->tctimer, driver->config->tc_chan, TC_CMR_WAVE | TC_CMR_WAVSEL_UP | TC_CMR_CPCDIS | TC_CMR_BURST_NONE | TC_CMR_TCCLKS_TIMER_CLOCK2);
-	driver->config->tctimer->TC_CHANNEL[driver->config->tc_chan].TC_EMR |= TC_EMR_NODIVCLK;
-#endif
 	/* Perform the initial I/O calibration sequence, manually.
 	 * Allow tSTARTUP = 2 usec for the analog circuitry to start up.
 	 * CNTVAL = fHCLOCK / (4 * (1 / tSTARTUP)) */
-	val = pmc_get_peripheral_clock(ID_SDMMC0+driver->config->slot_id);
+	val = SAMA_MCK;
 	val = ROUND_INT_DIV(val, 4 * 500000UL);
 
 
@@ -247,7 +208,7 @@ bool sdmmc_device_initialize(SdmmcDriver *driver)
 	for (exp = 31, power = 1UL << 31; !(val & power) && power != 0;
 	    exp--, power >>= 1) ;
 	if (power == 0) {
-		//trace_warning("FTEOCLK is unknown\n\r");
+		TRACE_DEBUG("FTEOCLK is unknown\n\r");
 		exp = max_exp;
 	}
 	else {
@@ -304,10 +265,6 @@ uint8_t sdmmc_device_start(SdmmcDriver *drv)
 		return error;
 	}
 
-	//if (SD_GetStatus(drv) == SDMMC_NOT_SUPPORTED) {
-	//			TRACE("Device not detected.\n\r");
-	//			return SDMMC_NOT_SUPPORTED;
-	//	}
 
 	/* Initialization delay: The maximum of 1 msec, 74 clock cycles and supply
 	 * ramp up time. Supply ramp up time provides the time that the power is
@@ -425,23 +382,6 @@ void sdmmc_device_deInit(SdmmcDriver *drv)
  Fetch:
  	/* Fetch normal events */
  	events = regs->SDMMC_NISTR;
-#if SDMMC_USE_TC == 1
- 	if (driver->use_polling) {
-
- 		if (
- 				driver->expect_auto_end
-				&& !(driver->config->tctimer->TC_CHANNEL[driver->config->tc_chan].TC_SR & TC_SR_CLKSTA)
- 		)
- 			events |= SDMMC_NISTR_CUSTOM_EVT;
-
-
- 	} else {
- 		if (driver->expect_auto_end) {
- 			while (driver->config->tctimer->TC_CHANNEL[driver->config->tc_chan].TC_SR & TC_SR_CLKSTA);
- 			events |= SDMMC_NISTR_CUSTOM_EVT;
- 		}
- 	}
-#else
 
 	if (driver->expect_auto_end)
 	{
@@ -449,8 +389,6 @@ void sdmmc_device_deInit(SdmmcDriver *drv)
 		events |= SDMMC_NISTR_CUSTOM_EVT;
 	}
 
-
-#endif
  	if (!events)
  		return;
  	//TRACE_1("events %08x\n\r",events);
@@ -669,9 +607,7 @@ void sdmmc_device_deInit(SdmmcDriver *drv)
  		 * Counter for this purpose. */
  		if (has_data && (cmd->bCmd == 18 || cmd->bCmd == 25)
  		    && !driver->use_set_blk_cnt) {
-#if SDMMC_USE_TC == 1
- 			driver->config->tctimer->TC_CHANNEL[driver->config->tc_chan].TC_CCR  = TC_CCR_CLKEN | TC_CCR_SWTRG;
-#endif
+
  			driver->expect_auto_end = true;
  //#ifndef NDEBUG
  //			if (!set->cmd_line_released)
@@ -742,12 +678,9 @@ void sdmmc_device_deInit(SdmmcDriver *drv)
  	    && cmd->dwArg & 1ul << 31 && !cmd->cmdOp.bmBits.checkBsy)) {
  		/* Currently in the function switching period, wait for the
  		 * delay preconfigured in sdmmc_send_command(). */
-#if SDMMC_USE_TC == 1
- 		driver->config->tctimer->TC_CHANNEL[driver->config->tc_chan].TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG;
- 		while (driver->config->tctimer->TC_CHANNEL[driver->config->tc_chan].TC_SR & TC_SR_CLKSTA) ;
-#else
+
  		while ( chSysIsCounterWithinX(chSysGetRealtimeCounterX(),driver->start_cycles ,driver->start_cycles+driver->timeout_cycles) );
-#endif
+
  	}
 
  	/* Release this command */
@@ -799,7 +732,7 @@ void sdmmc_device_deInit(SdmmcDriver *drv)
  	 * is 32 whereas the real value is 40.5 */
  	mult_freq = (regs->SDMMC_CA1R & SDMMC_CA1R_CLKMULT_Msk) >> SDMMC_CA1R_CLKMULT_Pos;
  	if (mult_freq != 0)
- #if 0
+ #if 1
  		mult_freq = base_freq * (mult_freq + 1);
  #else
  		mult_freq = pmc_get_gck_clock(ID_SDMMC0+driver->config->slot_id);
@@ -888,9 +821,6 @@ void sdmmc_device_deInit(SdmmcDriver *drv)
  	uint32_t eister;
  	uint32_t mask;
  	uint32_t len;
-#if SDMMC_USE_TC == 1
- 	uint32_t cycles;
-#endif
  	uint16_t cr;
  	uint16_t tmr;
 
@@ -1113,16 +1043,10 @@ void sdmmc_device_deInit(SdmmcDriver *drv)
  		 *    bits, hence 48 device clock cycles.
  		 * The sum of the above timings is the maximum time CMD12 will
  		 * take to complete. */
-#if SDMMC_USE_TC == 1
- 		cycles = pmc_get_peripheral_clock(driver->tctimer_id) / (driver->dev_freq / (2ul + 64ul + 48ul));
 
- 		TRACE_DEBUG_1("[command] has_data wait %d cycles\r\n",cycles);
- 		/* The Timer operates with RC >= 1 */
- 		driver->config->tctimer->TC_CHANNEL[driver->config->tc_chan].TC_RC = max_u32(cycles, 1);
-#else
  		driver->timeout_cycles = 2+64+48;
  		driver->start_cycles = chSysGetRealtimeCounterX();
-#endif
+
 
  	}
  	/* With SD devices, the 8-cycle function switching period will apply,
@@ -1130,14 +1054,10 @@ void sdmmc_device_deInit(SdmmcDriver *drv)
  	 * Note that MMC devices don't require this fixed delay, but regarding
  	 * GO_IDLE_STATE we have no mean to filter the MMC requests out. */
  	else if (wait_switch) {
-#if SDMMC_USE_TC == 1
- 		cycles = pmc_get_peripheral_clock(driver->tctimer_id) / (driver->dev_freq / 8ul);
- 		TRACE_DEBUG_1("[command] wait_switch %d cycles\r\n",cycles);
- 		driver->config->tctimer->TC_CHANNEL[driver->config->tc_chan].TC_RC = max_u32(cycles, 1);
-#else
+
  		driver->timeout_ticks = 8;
  		driver->start_cycles = chSysGetRealtimeCounterX();
-#endif
+
  	}
  	if (!driver->use_polling) {
  		regs->SDMMC_NISIER |= SDMMC_NISIER_BRDRDY | SDMMC_NISIER_BWRRDY | SDMMC_NISIER_TRFC | SDMMC_NISIER_CMDC | SDMMC_NISIER_CINT;
@@ -1160,18 +1080,16 @@ void sdmmc_device_deInit(SdmmcDriver *drv)
   */
  uint32_t sdmmc_device_control(SdmmcDriver *driver, uint32_t bCtl)
  {
- 	//osalDbgCheck(driver);
 
- 	//struct sdmmc_set *set = (struct sdmmc_set *)_set;
  	uint32_t rc = SDMMC_OK;
- 	//uint32_t*param_u32 = (uint32_t *)param;
+
  	uint8_t byte;
 
- //#if TRACE_LEVEL >= TRACE_LEVEL_DEBUG
+
  	if (bCtl != SDMMC_IOCTL_BUSY_CHECK && bCtl != SDMMC_IOCTL_GET_DEVICE) {
  		TRACE_DEBUG_2("SDMMC_IOCTL_%s(%lu)\n\r", SD_StringifyIOCtrl(bCtl),driver->control_param );
  	}
- //#endif
+
 
  	switch (bCtl) {
  	case SDMMC_IOCTL_GET_DEVICE:
@@ -1361,12 +1279,12 @@ void sdmmc_device_deInit(SdmmcDriver *drv)
  		rc = SDMMC_NOT_SUPPORTED;
  		break;
  	}
- //#if TRACE_LEVEL >= TRACE_LEVEL_ERROR
+
  	if (rc != SDMMC_OK && rc != SDMMC_CHANGED
  	    && bCtl != SDMMC_IOCTL_BUSY_CHECK) {
  		TRACE_ERROR_2("SDMMC_IOCTL_%s ended with %s\n\r",SD_StringifyIOCtrl(bCtl), SD_StringifyRetCode(rc));
  	}
- //#endif
+
  	return rc;
  }
 
@@ -1387,9 +1305,9 @@ void sdmmc_device_deInit(SdmmcDriver *drv)
  		end = time + (systime_t)t;
 
  	do {
- 		//chSysLock();
+
  		now = chVTTimeElapsedSinceX(time);
- 		//chSysUnlock();
+
  		if (now >= end) {
  			f = 1;
  		}
@@ -1409,13 +1327,13 @@ void sdmmc_device_deInit(SdmmcDriver *drv)
  void sdmmc_device_checkTimeCount(SdmmcDriver *driver)
  {
  	if (driver->timeout_elapsed != -1) {
- 				// chSysLock();
+
  		driver->timeout_elapsed = 0;
  				 driver->now = chVTTimeElapsedSinceX( driver->time);
  					 if (driver->now >= driver->timeout_ticks ) {
  						 driver->timeout_elapsed = 1;
  					 }
- 				 //chSysUnlock();
+
  	}
  }
 
@@ -2011,5 +1929,7 @@ static uint8_t sdmmc_set_bus_width(SdmmcDriver *driver, uint8_t bits)
  	}
  	return rc;
  }
+
+
 
 #endif

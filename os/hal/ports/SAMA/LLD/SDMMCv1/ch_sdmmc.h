@@ -164,7 +164,6 @@ typedef enum {
 #define CARD_SDHCCOMBO  (CARD_TYPE_bmSDIO|CARD_SDHC)
 
 #include "ch_sdmmc_macros.h"
-#include "ch_sdmmc_pmc.h"
 #include "ch_sdmmc_trace.h"
 
 extern const uint16_t sdmmcTransUnits[8];

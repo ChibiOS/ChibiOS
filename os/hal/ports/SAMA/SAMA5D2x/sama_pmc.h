@@ -490,6 +490,33 @@
  */
 #define pmcDisableSEC() pmcDisablePidLow(ID_SECUMOD_MSK)
 
+/**
+ * @brief   Enables the SDMMC0 peripheral clock.
+ *
+ * @api
+ */
+#define pmcEnableSDMMC0() 	pmcEnablePidLow(ID_SDMMC0_MSK)
+
+/**
+ * @brief   Disables the SDMMC0 peripheral clock.
+ *
+ * @api
+ */
+#define pmcDisableSDMMC0() pmcDisablePidLow(ID_SDMMC0_MSK)
+
+/**
+ * @brief   Enables the SDMMC1 peripheral clock.
+ *
+ * @api
+ */
+#define pmcEnableSDMMC1() 	pmcEnablePidHigh(ID_SDMMC1_MSK)
+
+/**
+ * @brief   Disables the SDMMC1 peripheral clock.
+ *
+ * @api
+ */
+#define pmcDisableSDMMC1() pmcDisablePidHigh(ID_SDMMC1_MSK)
 
 /** @} */
 

@@ -98,7 +98,7 @@ void SdMmcUpdateInformation(SdmmcDriver *drv, bool csd, bool extData)
 uint8_t SDMMC_Lib_SdStart(SdmmcDriver *drv, bool * retry)
 {
 	uint64_t mem_size;
-	//uint32_t freq;
+	uint32_t freq;
 	uint32_t drv_err, status;
 	uint8_t error;
 	bool flag;
@@ -272,7 +272,7 @@ uint8_t SDMMC_Lib_SdStart(SdmmcDriver *drv, bool * retry)
 	error = HwSetClock(drv, &freq);
 	drv->card.dwCurrSpeed = freq;
 	if (error != SDMMC_OK && error != SDMMC_CHANGED) {
-		TRACE_ERROR_1("clk %s\n\r", SD_StringifyRetCode(error));
+		TRACE_ERROR_1("error clk %s\n\r", SD_StringifyRetCode(error));
 		return error;
 	}
 #endif
@@ -286,7 +286,7 @@ uint8_t SDMMC_Lib_SdStart(SdmmcDriver *drv, bool * retry)
 
 	//warning
 	if (status) {
-		TRACE_WARNING_1("st %lx\n\r", status);
+		TRACE_WARNING_1("warning st %lx\n\r", status);
 	}
 
 	return SDMMC_OK;

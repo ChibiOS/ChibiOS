@@ -53,25 +53,10 @@ static THD_FUNCTION(Thread1, arg) {
 	}
 }
 
-//for emmc
-#define CFG_FASTEST 	{								\
-							PMC_PCR_GCKCSS_UPLL_CLK,	\
-							1,							\
-						}
 
-#define CFG_SDMMC		{								\
-							PMC_PCR_GCKCSS_PLLA_CLK,	\
-							1,							\
-						}
 
 static const SamaSDMMCConfig sdmmc_slot1_cfg = {
 		SDMMC_SLOT1,
-		{ CFG_SDMMC },
-		false,
-#if SDMMC_USE_TC == 1
-		TC0,
-		0,
-#endif
 		sdmmcbuffer,
 		data_buf,
 		sizeof(data_buf),

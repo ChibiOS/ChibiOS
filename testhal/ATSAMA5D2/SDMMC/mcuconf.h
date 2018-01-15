@@ -82,7 +82,9 @@
 /*
  * SECUMOD
  */
-#define HAL_USE_SECUMOD                     TRUE
+#define SAMA_ST_USE_PIT                     TRUE
+#define SAMA_ST_USE_TC0                     FALSE
+#define SAMA_ST_USE_TC1                     FALSE
 
 /*
  * TC driver system settings.

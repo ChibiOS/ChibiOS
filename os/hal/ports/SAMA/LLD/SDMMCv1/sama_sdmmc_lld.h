@@ -75,14 +75,6 @@ typedef struct {
 
 	sdmmcslots_t slot_id;
 
-	struct	_pmc_periph_cfg pmccfg;
-
-	bool use_fastest_clock;
-#if SDMMC_USE_TC == 1
-	Tc * tctimer;
-	uint8_t tc_chan;
-#endif
-
 	uint8_t * bp;
 	uint8_t * data_buf;
 	uint32_t 	data_buf_size;
@@ -129,10 +121,10 @@ struct SamaSDMMCDriver
 	uint32_t timeout_ticks;
 	int8_t  timeout_elapsed;
 	systime_t time,now;
-#if SDMMC_USE_TC == 0
+
 	rtcnt_t timeout_cycles;
 	rtcnt_t start_cycles;
-#endif
+
 
 };
 typedef sSdCard sdmmclib;

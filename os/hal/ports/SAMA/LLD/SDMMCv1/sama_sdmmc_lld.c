@@ -24,6 +24,7 @@
 
 #include "hal.h"
 #include "ccportab.h"
+
 #if (HAL_USE_SDMMC == TRUE) || defined(__DOXYGEN__)
 #include <string.h>
 #include "sama_sdmmc_lld.h"
@@ -31,10 +32,13 @@
 #include "ch_sdmmc_sd.h"
 #include "ch_sdmmc_sdio.h"
 #include "ch_sdmmc_trace.h"
+
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
-
+#if SAMA_ST_USE_PIT == FALSE
+#error "SDMMC Driver needs SAMA_ST_USE_PIT"
+#endif
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
