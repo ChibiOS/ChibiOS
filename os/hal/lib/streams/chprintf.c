@@ -163,8 +163,9 @@ int chvprintf(BaseSequentialStream *chp, const char *fmt, va_list ap) {
         break;
       width = width * 10 + c;
     }
-    precision = 0;
+    precision = 6;
     if (c == '.') {
+      precision = 0;
       while (TRUE) {
         c = *fmt++;
         if (c >= '0' && c <= '9')

@@ -166,6 +166,8 @@
        dependencies and configuration directories. This makes possible
        to have multiple non-conflicting makefiles in the same project.
        Updated the various platform.mk implementing "smart build" mode.
+- HAL: Fixed chprintf float support for 0 precision (bug #910)(backported to
+       17.6.4 and 16.1.10).
 - RT:  Fixed compile error with assertions enabled and dynamic extensions
        disabled (bug #909)(backported to 17.6.4).
 - HAL: Fixed compile error HAL UART without WAIT (bug #908)(backported to
