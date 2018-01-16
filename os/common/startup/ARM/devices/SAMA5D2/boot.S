@@ -76,15 +76,6 @@ Boot_Handler:
                 ldr     r1, =SFR_L2CC_HRAMC
                 str     r0, [r1]
                 b       Reset_Handler
-                /*
-                 * Enabling Cycle counter
-                 */
-                mrc     p15, 0, r0, c9, c12, 0      // read PMCR register
-                orr     r0, r0, #(0x1)              // set E bit 0 to enable counter
-                mcr     p15, 0, r0, c9, c12, 0      // write r0
-                mrc     p15, 0, r0, c9, c12, 1      // read PMCNTENSET register
-                orr     r0, r0, #(0x1 << 31)        // set bit 31 to enable counter
-                mcr     p15, 0, r0, c9, c12, 1      // write r0
 #endif /* !defined(__DOXYGEN__) */
 
 /** @} */
