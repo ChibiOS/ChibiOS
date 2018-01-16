@@ -244,6 +244,7 @@
        to 17.6.1 and 16.1.9).
 - HAL: Fixed STM32 USBv1 fails the state check when USB_USE_WAIT is TRUE
        (bug #863)(backported to 17.6.1 and 16.1.9).
+- HAL: Fixed HSI48 clock support is missing in HAL for STM32L4x2 (bug #862).
 - HAL: Fixed incorrect OTG stepping in STM32F412 registry (bug #861)
        (backported to 17.6.1).
 - HAL: Fixed missing DMA I2C3 streams in STM32F411 registry (bug #860)
