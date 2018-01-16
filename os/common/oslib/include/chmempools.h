@@ -304,8 +304,15 @@ static inline void chGuardedPoolAddI(guarded_memory_pool_t *gmp, void *objp) {
  * @iclass
  */
 static inline void *chGuardedPoolAllocI(guarded_memory_pool_t *gmp) {
+  void *p;
 
-  return chPoolAllocI(&gmp->pool);
+  p = chPoolAllocI(&gmp->pool);
+  if (p != NULL) {
+    chSemFastWaitI(&gmp->sem);
+    chDbgAssert(chSemGetCounterI(&gmp->sem) >= (cnt_t)0,
+                "semaphore out of sync");
+  }
+  return p;
 }
 #endif /* CH_CFG_USE_SEMAPHORES == TRUE */
 

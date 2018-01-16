@@ -45,6 +45,7 @@ received a series of important improvements, new features have been added.
   exchange complex objects between threads/ISRs. It is based on a
   mailbox and a guarded memory pool.
 - Added alignment handling to memory pools.
+- Added a new chGuardedPoolAllocI() API to the guarded memory pools.
 
 *** What's new in RT 5.0.0 ***
 
