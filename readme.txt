@@ -275,3 +275,4 @@
        to 17.6.1).
 - VAR: Fixed CMSIS_OS issue in timers (bug #846)(backported to 17.6.1
        and 16.1.9).
+- HAL: Fixed injected ADC with regular conversion (bug #822).

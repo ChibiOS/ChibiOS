@@ -384,7 +384,8 @@ void adc_lld_stop_conversion(ADCDriver *adcp) {
 
   dmaStreamDisable(adcp->dmastp);
   adcp->adc->CR1 = 0;
-  adcp->adc->CR2 = 0;
+  /* Because ticket #822, preserving injected conversions.*/
+  adcp->adc->CR2 &= ~(ADC_CR2_SWSTART);
   adcp->adc->CR2 = ADC_CR2_ADON;
 }
 
