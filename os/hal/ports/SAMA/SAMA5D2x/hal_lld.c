@@ -60,6 +60,10 @@
  */
 void hal_lld_init(void) {
 
+#if (SAMA_HAL_IS_SECURE == TRUE)    /* The Matrix is PAS and PMC is always configured secure */
+  /* Disabling PMC write protection. */
+  pmcDisableWP();
+
   /* Configures peripherals as not-secure */
   MATRIX0->MATRIX_SPSELR[0] = 0xFFFFFFFF;
   MATRIX0->MATRIX_SPSELR[1] = 0xFFFFFFFF;
@@ -70,10 +74,6 @@ void hal_lld_init(void) {
 
   /* Configures PMC and RTC as secure */
   mtxConfigPeriphSecurity(MATRIX1, ID_SYSC, SECURE_PER);
-
-#if (SAMA_HAL_IS_SECURE == TRUE)    /* The Matrix is PAS and PMC is always configured secure */
-  /* Disabling PMC write protection. */
-  pmcDisableWP();
 
   /* Enabling matrix clock */
   pmcEnableH32MX();
