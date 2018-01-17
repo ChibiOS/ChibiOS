@@ -112,7 +112,7 @@ void hal_lld_init(void) {
   rccResetAPB2(0xFFFFFFFF);
 
   /* PWR clock enabled.*/
-  rccEnablePWRInterface(FALSE);
+  rccEnablePWRInterface(true);
 
   /* Initializes the backup domain.*/
   hal_lld_backup_domain_init();
@@ -132,7 +132,7 @@ void hal_lld_init(void) {
 
   /* SYSCFG clock enabled here because it is a multi-functional unit shared
      among multiple drivers.*/
-  rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, TRUE);
+  rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, true);
 
 #if STM32_HAS_USB
   /* USB IRQ relocated to not conflict with CAN.*/

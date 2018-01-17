@@ -153,7 +153,7 @@ void adc_lld_init(void) {
 #endif
 
   /* Calibration procedure.*/
-  rccEnableADC1(false);
+  rccEnableADC1(true);
 
   /* CCR setup.*/
 #if STM32_ADC_SUPPORTS_PRESCALER
@@ -190,7 +190,7 @@ void adc_lld_start(ADCDriver *adcp) {
                             (void *)adcp);
       osalDbgAssert(!b, "stream already allocated");
       dmaStreamSetPeripheral(adcp->dmastp, &ADC1->DR);
-      rccEnableADC1(false);
+      rccEnableADC1(true);
 
       /* Clock settings.*/
       adcp->adc->CFGR2 = STM32_ADC_ADC1_CKMODE;

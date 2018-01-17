@@ -62,6 +62,8 @@
   RCC->APB1LENR |= (mask);                                                  \
   if (lp)                                                                   \
     RCC->APB1LLPENR |= (mask);                                              \
+  else                                                                      \
+    RCC->APB1LLPENR &= ~(mask);                                             \
 }
 
 /**
@@ -76,6 +78,8 @@
   RCC->APB1HENR |= (mask);                                                  \
   if (lp)                                                                   \
     RCC->APB1HLPENR |= (mask);                                              \
+  else                                                                      \
+    RCC->APB1HLPENR &= ~(mask);                                             \
 }
 
 /**
@@ -87,7 +91,6 @@
  */
 #define rccDisableAPB1L(mask) {                                             \
   RCC->APB1LENR &= ~(mask);                                                 \
-  RCC->APB1LLPENR &= ~(mask);                                               \
 }
 
 /**
@@ -99,7 +102,6 @@
  */
 #define rccDisableAPB1H(mask) {                                             \
   RCC->APB1HENR &= ~(mask);                                                 \
-  RCC->APB1HLPENR &= ~(mask);                                               \
 }
 
 /**
@@ -138,6 +140,8 @@
   RCC->APB2ENR |= (mask);                                                   \
   if (lp)                                                                   \
     RCC->APB2LPENR |= (mask);                                               \
+  else                                                                      \
+    RCC->APB2LPENR &= ~(mask);                                              \
 }
 
 /**
@@ -149,7 +153,6 @@
  */
 #define rccDisableAPB2(mask) {                                              \
   RCC->APB2ENR &= ~(mask);                                                  \
-  RCC->APB2LPENR &= ~(mask);                                                \
 }
 
 /**
@@ -176,6 +179,8 @@
   RCC->APB3ENR |= (mask);                                                   \
   if (lp)                                                                   \
     RCC->APB3LPENR |= (mask);                                               \
+  else                                                                      \
+    RCC->APB3LPENR &= ~(mask);                                              \
 }
 
 /**
@@ -187,7 +192,6 @@
  */
 #define rccDisableAPB3(mask) {                                              \
   RCC->APB3ENR &= ~(mask);                                                  \
-  RCC->APB3LPENR &= ~(mask);                                                \
 }
 
 /**
@@ -214,6 +218,8 @@
   RCC->APB4ENR |= (mask);                                                   \
   if (lp)                                                                   \
     RCC->APB4LPENR |= (mask);                                               \
+  else                                                                      \
+    RCC->APB4LPENR &= ~(mask);                                              \
 }
 
 /**
@@ -225,7 +231,6 @@
  */
 #define rccDisableAPB4(mask) {                                              \
   RCC->APB4ENR &= ~(mask);                                                  \
-  RCC->APB4LPENR &= ~(mask);                                                \
 }
 
 /**
@@ -252,6 +257,8 @@
   RCC->AHB1ENR |= (mask);                                                   \
   if (lp)                                                                   \
     RCC->AHB1LPENR |= (mask);                                               \
+  else                                                                      \
+    RCC->AHB1LPENR &= ~(mask);                                              \
 }
 
 /**
@@ -263,7 +270,6 @@
  */
 #define rccDisableAHB1(mask) {                                              \
   RCC->AHB1ENR &= ~(mask);                                                  \
-  RCC->AHB1LPENR &= ~(mask);                                                \
 }
 
 /**
@@ -290,6 +296,8 @@
   RCC->AHB2ENR |= (mask);                                                   \
   if (lp)                                                                   \
     RCC->AHB2LPENR |= (mask);                                               \
+  else                                                                      \
+    RCC->AHB2LPENR &= ~(mask);                                              \
 }
 
 /**
@@ -301,7 +309,6 @@
  */
 #define rccDisableAHB2(mask) {                                              \
   RCC->AHB2ENR &= ~(mask);                                                  \
-  RCC->AHB2LPENR &= ~(mask);                                                \
 }
 
 /**
@@ -328,6 +335,8 @@
   RCC->AHB3ENR |= (mask);                                                   \
   if (lp)                                                                   \
     RCC->AHB3LPENR |= (mask);                                               \
+  else                                                                      \
+    RCC->AHB3LPENR &= ~(mask);                                              \
 }
 
 /**
@@ -339,7 +348,6 @@
  */
 #define rccDisableAHB3(mask) {                                              \
   RCC->AHB3ENR &= ~(mask);                                                  \
-  RCC->AHB3LPENR &= ~(mask);                                                \
 }
 
 /**
@@ -366,6 +374,8 @@
   RCC->AHB4ENR |= (mask);                                                   \
   if (lp)                                                                   \
     RCC->AHB4LPENR |= (mask);                                               \
+  else                                                                      \
+    RCC->AHB4LPENR &= ~(mask);                                              \
 }
 
 /**
@@ -377,7 +387,6 @@
  */
 #define rccDisableAHB4(mask) {                                              \
   RCC->AHB4ENR &= ~(mask);                                                  \
-  RCC->AHB4LPENR &= ~(mask);                                                \
 }
 
 /**

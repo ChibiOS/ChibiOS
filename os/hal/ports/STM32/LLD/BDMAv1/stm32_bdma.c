@@ -307,7 +307,7 @@ bool bdmaStreamAllocate(const stm32_bdma_stream_t *stp,
 
   /* Enabling BDMA clocks required by the current streams set.*/
   if ((bdma.streams_mask & STM32_BDMA_STREAMS_MASK) == 0U) {
-    rccEnableBDMA1(false);
+    rccEnableBDMA1(true);
   }
 
   /* Putting the stream in a safe state.*/

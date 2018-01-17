@@ -820,7 +820,7 @@ void i2c_lld_start(I2CDriver *i2cp) {
     if (&I2CD1 == i2cp) {
 
       rccResetI2C1();
-      rccEnableI2C1(false);
+      rccEnableI2C1(true);
 #if STM32_I2C_USE_DMA == TRUE
       {
         bool b;
@@ -849,7 +849,7 @@ void i2c_lld_start(I2CDriver *i2cp) {
     if (&I2CD2 == i2cp) {
 
       rccResetI2C2();
-      rccEnableI2C2(false);
+      rccEnableI2C2(true);
 #if STM32_I2C_USE_DMA == TRUE
       {
         bool b;
@@ -878,7 +878,7 @@ void i2c_lld_start(I2CDriver *i2cp) {
     if (&I2CD3 == i2cp) {
 
       rccResetI2C3();
-      rccEnableI2C3(false);
+      rccEnableI2C3(true);
 #if STM32_I2C_USE_DMA == TRUE
       {
         bool b;
@@ -907,7 +907,7 @@ void i2c_lld_start(I2CDriver *i2cp) {
     if (&I2CD4 == i2cp) {
 
       rccResetI2C4();
-      rccEnableI2C4(false);
+      rccEnableI2C4(true);
 #if STM32_I2C_USE_DMA == TRUE
       {
         bool b;

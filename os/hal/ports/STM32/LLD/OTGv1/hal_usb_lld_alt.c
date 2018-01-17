@@ -812,7 +812,7 @@ void usb_lld_start(USBDriver *usbp) {
 #if STM32_USB_USE_OTG1
     if (&USBD1 == usbp) {
       /* OTG FS clock enable and reset.*/
-      rccEnableOTG_FS(false);
+      rccEnableOTG_FS(true);
       rccResetOTG_FS();
 
       /* Enables IRQ vector.*/
@@ -832,7 +832,7 @@ void usb_lld_start(USBDriver *usbp) {
 #if STM32_USB_USE_OTG2
     if (&USBD2 == usbp) {
       /* OTG HS clock enable and reset.*/
-      rccEnableOTG_HS(false);
+      rccEnableOTG_HS(true);
       rccResetOTG_HS();
 
       /* ULPI clock is managed depending on the presence of an external

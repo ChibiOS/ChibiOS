@@ -157,7 +157,7 @@ void qspi_lld_start(QSPIDriver *qspip) {
                                  (stm32_dmaisr_t)qspi_lld_serve_dma_interrupt,
                                  (void *)qspip);
       osalDbgAssert(!b, "stream already allocated");
-      rccEnableQUADSPI1(false);
+      rccEnableQUADSPI1(true);
     }
 #endif
 

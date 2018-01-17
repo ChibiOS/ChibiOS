@@ -535,21 +535,21 @@ void adc_lld_init(void) {
 #if defined(STM32F3XX)
 #if STM32_HAS_ADC1 && STM32_HAS_ADC2
 #if STM32_ADC_USE_ADC1 || STM32_ADC_USE_ADC2
-  rccEnableADC12(false);
+  rccEnableADC12(true);
   rccResetADC12();
   ADC1_2_COMMON->CCR = STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_MDMA;
   rccDisableADC12();
 #endif
 #else
 #if STM32_ADC_USE_ADC1
-  rccEnableADC12(false);
+  rccEnableADC12(true);
   rccResetADC12();
   ADC1_COMMON->CCR = STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_MDMA;
   rccDisableADC12();
 #endif
 #endif
 #if STM32_ADC_USE_ADC3 || STM32_ADC_USE_ADC4
-  rccEnableADC34(false);
+  rccEnableADC34(true);
   rccResetADC34();
   ADC3_4_COMMON->CCR = STM32_ADC_ADC34_CLOCK_MODE | ADC_DMA_MDMA;
   rccDisableADC34();
@@ -557,7 +557,7 @@ void adc_lld_init(void) {
 #endif
 
 #if defined(STM32L4XX)
-  rccEnableADC123(false);
+  rccEnableADC123(true);
   rccResetADC123();
 
 #if defined(ADC1_2_COMMON)
@@ -599,10 +599,10 @@ void adc_lld_start(ADCDriver *adcp) {
 
       clkmask |= (1 << 0);
 #if defined(STM32F3XX)
-      rccEnableADC12(false);
+      rccEnableADC12(true);
 #endif
 #if defined(STM32L4XX)
-      rccEnableADC123(false);
+      rccEnableADC123(true);
 #endif
     }
 #endif /* STM32_ADC_USE_ADC1 */
@@ -618,10 +618,10 @@ void adc_lld_start(ADCDriver *adcp) {
 
       clkmask |= (1 << 1);
 #if defined(STM32F3XX)
-      rccEnableADC12(false);
+      rccEnableADC12(true);
 #endif
 #if defined(STM32L4XX)
-      rccEnableADC123(false);
+      rccEnableADC123(true);
 #endif
     }
 #endif /* STM32_ADC_USE_ADC2 */
@@ -637,10 +637,10 @@ void adc_lld_start(ADCDriver *adcp) {
 
       clkmask |= (1 << 2);
 #if defined(STM32F3XX)
-      rccEnableADC34(false);
+      rccEnableADC34(true);
 #endif
 #if defined(STM32L4XX)
-      rccEnableADC123(false);
+      rccEnableADC123(true);
 #endif
     }
 #endif /* STM32_ADC_USE_ADC3 */
@@ -656,10 +656,10 @@ void adc_lld_start(ADCDriver *adcp) {
 
       clkmask |= (1 << 3);
 #if defined(STM32F3XX)
-      rccEnableADC34(false);
+      rccEnableADC34(true);
 #endif
 #if defined(STM32L4XX)
-      rccEnableADC123(false);
+      rccEnableADC123(true);
 #endif
     }
 #endif /* STM32_ADC_USE_ADC4 */

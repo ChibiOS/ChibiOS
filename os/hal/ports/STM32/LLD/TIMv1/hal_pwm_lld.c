@@ -373,7 +373,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
     /* Clock activation and timer reset.*/
 #if STM32_PWM_USE_TIM1
     if (&PWMD1 == pwmp) {
-      rccEnableTIM1(false);
+      rccEnableTIM1(true);
       rccResetTIM1();
 #if !defined(STM32_TIM1_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM1_UP_NUMBER, STM32_PWM_TIM1_IRQ_PRIORITY);
@@ -389,7 +389,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
 
 #if STM32_PWM_USE_TIM2
     if (&PWMD2 == pwmp) {
-      rccEnableTIM2(false);
+      rccEnableTIM2(true);
       rccResetTIM2();
 #if !defined(STM32_TIM2_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM2_NUMBER, STM32_PWM_TIM2_IRQ_PRIORITY);
@@ -404,7 +404,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
 
 #if STM32_PWM_USE_TIM3
     if (&PWMD3 == pwmp) {
-      rccEnableTIM3(false);
+      rccEnableTIM3(true);
       rccResetTIM3();
 #if !defined(STM32_TIM3_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM3_NUMBER, STM32_PWM_TIM3_IRQ_PRIORITY);
@@ -419,7 +419,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
 
 #if STM32_PWM_USE_TIM4
     if (&PWMD4 == pwmp) {
-      rccEnableTIM4(false);
+      rccEnableTIM4(true);
       rccResetTIM4();
 #if !defined(STM32_TIM4_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM4_NUMBER, STM32_PWM_TIM4_IRQ_PRIORITY);
@@ -434,7 +434,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
 
 #if STM32_PWM_USE_TIM5
     if (&PWMD5 == pwmp) {
-      rccEnableTIM5(false);
+      rccEnableTIM5(true);
       rccResetTIM5();
 #if !defined(STM32_TIM5_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM5_NUMBER, STM32_PWM_TIM5_IRQ_PRIORITY);
@@ -449,7 +449,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
 
 #if STM32_PWM_USE_TIM8
     if (&PWMD8 == pwmp) {
-      rccEnableTIM8(false);
+      rccEnableTIM8(true);
       rccResetTIM8();
 #if !defined(STM32_TIM8_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM8_UP_NUMBER, STM32_PWM_TIM8_IRQ_PRIORITY);
@@ -465,7 +465,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
 
 #if STM32_PWM_USE_TIM9
     if (&PWMD9 == pwmp) {
-      rccEnableTIM9(false);
+      rccEnableTIM9(true);
       rccResetTIM9();
 #if !defined(STM32_TIM9_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM9_NUMBER, STM32_PWM_TIM9_IRQ_PRIORITY);

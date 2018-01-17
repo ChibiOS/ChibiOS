@@ -136,8 +136,8 @@ void hal_lld_init(void) {
   rccResetAPB2(0xFFFFFFFF);
 
   /* PWR and BD clocks enabled.*/
-  rccEnablePWRInterface(FALSE);
-  rccEnableBKPInterface(FALSE);
+  rccEnablePWRInterface(true);
+  rccEnableBKPInterface(true);
 
   /* Initializes the backup domain.*/
   hal_lld_backup_domain_init();

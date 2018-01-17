@@ -156,7 +156,7 @@ void hal_lld_init(void) {
   rccResetAPB2(~0);
 
   /* PWR clock enabled.*/
-  rccEnablePWRInterface(FALSE);
+  rccEnablePWRInterface(true);
 
   /* Initializes the backup domain.*/
   hal_lld_backup_domain_init();
@@ -266,7 +266,7 @@ void stm32_clock_init(void) {
 
 #if STM32_ACTIVATE_HSI48
   /* Enabling SYSCFG clock. */
-  rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, FALSE);
+  rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, true);
   /* Configuring SYSCFG to enable VREFINT and HSI48 VREFINT buffer. */
   SYSCFG->CFGR3 = STM32_VREFINT_EN | SYSCFG_CFGR3_ENREF_HSI48;
 
@@ -305,7 +305,7 @@ void stm32_clock_init(void) {
 
   /* SYSCFG clock enabled here because it is a multi-functional unit shared
      among multiple drivers.*/
-  rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, TRUE);
+  rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, true);
 #endif /* STM32_NO_INIT */
 }
 

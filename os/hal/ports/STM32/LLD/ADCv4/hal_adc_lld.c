@@ -360,13 +360,13 @@ void adc_lld_init(void) {
   /* ADC units pre-initializations.*/
 #if (STM32_HAS_ADC1 == TRUE) && (STM32_HAS_ADC2 == TRUE)
 #if STM32_ADC_USE_ADC12 == TRUE
-  rccEnableADC12(false);
+  rccEnableADC12(true);
   rccResetADC12();
   ADC12_COMMON->CCR = STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_DAMDF;
   rccDisableADC12();
 #endif
 #if STM32_ADC_USE_ADC3 == TRUE
-  rccEnableADC3(false);
+  rccEnableADC3(true);
   rccResetADC3();
   ADC3_COMMON->CCR = STM32_ADC_ADC3_CLOCK_MODE | ADC_DMA_DAMDF;
   rccDisableADC3();
@@ -398,7 +398,7 @@ void adc_lld_start(ADCDriver *adcp) {
                             (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
                             (void *)adcp);
       osalDbgAssert(!b, "stream already allocated");
-      rccEnableADC12(false);
+      rccEnableADC12(true);
     }
 #endif /* STM32_ADC_USE_ADC12 == TRUE */
 
@@ -410,7 +410,7 @@ void adc_lld_start(ADCDriver *adcp) {
                             (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
                             (void *)adcp);
       osalDbgAssert(!b, "stream already allocated");
-      rccEnableADC3(false);
+      rccEnableADC3(true);
     }
 #endif /* STM32_ADC_USE_ADC3 == TRUE */
 

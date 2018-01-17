@@ -386,7 +386,7 @@ void sdc_lld_start(SDCDriver *sdcp) {
     dmaStreamSetFIFO(sdcp->dma, STM32_DMA_FCR_DMDIS | STM32_DMA_FCR_FTH_FULL);
 #endif
     nvicEnableVector(STM32_SDIO_NUMBER, STM32_SDC_SDIO_IRQ_PRIORITY);
-    rccEnableSDIO(false);
+    rccEnableSDIO(true);
   }
 
   /* Configuration, card clock is initially stopped.*/

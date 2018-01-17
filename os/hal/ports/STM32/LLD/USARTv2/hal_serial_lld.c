@@ -767,47 +767,47 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
   if (sdp->state == SD_STOP) {
 #if STM32_SERIAL_USE_USART1
     if (&SD1 == sdp) {
-      rccEnableUSART1(false);
+      rccEnableUSART1(true);
     }
 #endif
 #if STM32_SERIAL_USE_USART2
     if (&SD2 == sdp) {
-      rccEnableUSART2(false);
+      rccEnableUSART2(true);
     }
 #endif
 #if STM32_SERIAL_USE_USART3
     if (&SD3 == sdp) {
-      rccEnableUSART3(false);
+      rccEnableUSART3(true);
     }
 #endif
 #if STM32_SERIAL_USE_UART4
     if (&SD4 == sdp) {
-      rccEnableUART4(false);
+      rccEnableUART4(true);
     }
 #endif
 #if STM32_SERIAL_USE_UART5
     if (&SD5 == sdp) {
-      rccEnableUART5(false);
+      rccEnableUART5(true);
     }
 #endif
 #if STM32_SERIAL_USE_USART6
     if (&SD6 == sdp) {
-      rccEnableUSART6(false);
+      rccEnableUSART6(true);
     }
 #endif
 #if STM32_SERIAL_USE_UART7
     if (&SD7 == sdp) {
-      rccEnableUART7(false);
+      rccEnableUART7(true);
     }
 #endif
 #if STM32_SERIAL_USE_UART8
     if (&SD8 == sdp) {
-      rccEnableUART8(false);
+      rccEnableUART8(true);
     }
 #endif
 #if STM32_SERIAL_USE_LPUART1
     if (&LPSD1 == sdp) {
-      rccEnableLPUART1(false);
+      rccEnableLPUART1(true);
     }
 #endif
   }

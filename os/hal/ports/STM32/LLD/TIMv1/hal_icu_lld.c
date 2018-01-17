@@ -395,7 +395,7 @@ void icu_lld_start(ICUDriver *icup) {
     /* Clock activation and timer reset.*/
 #if STM32_ICU_USE_TIM1
     if (&ICUD1 == icup) {
-      rccEnableTIM1(false);
+      rccEnableTIM1(true);
       rccResetTIM1();
 #if !defined(STM32_TIM1_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM1_UP_NUMBER, STM32_ICU_TIM1_IRQ_PRIORITY);
@@ -411,7 +411,7 @@ void icu_lld_start(ICUDriver *icup) {
 
 #if STM32_ICU_USE_TIM2
     if (&ICUD2 == icup) {
-      rccEnableTIM2(false);
+      rccEnableTIM2(true);
       rccResetTIM2();
 #if !defined(STM32_TIM2_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM2_NUMBER, STM32_ICU_TIM2_IRQ_PRIORITY);
@@ -426,7 +426,7 @@ void icu_lld_start(ICUDriver *icup) {
 
 #if STM32_ICU_USE_TIM3
     if (&ICUD3 == icup) {
-      rccEnableTIM3(false);
+      rccEnableTIM3(true);
       rccResetTIM3();
 #if !defined(STM32_TIM3_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM3_NUMBER, STM32_ICU_TIM3_IRQ_PRIORITY);
@@ -441,7 +441,7 @@ void icu_lld_start(ICUDriver *icup) {
 
 #if STM32_ICU_USE_TIM4
     if (&ICUD4 == icup) {
-      rccEnableTIM4(false);
+      rccEnableTIM4(true);
       rccResetTIM4();
 #if !defined(STM32_TIM4_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM4_NUMBER, STM32_ICU_TIM4_IRQ_PRIORITY);
@@ -456,7 +456,7 @@ void icu_lld_start(ICUDriver *icup) {
 
 #if STM32_ICU_USE_TIM5
     if (&ICUD5 == icup) {
-      rccEnableTIM5(false);
+      rccEnableTIM5(true);
       rccResetTIM5();
 #if !defined(STM32_TIM5_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM5_NUMBER, STM32_ICU_TIM5_IRQ_PRIORITY);
@@ -471,7 +471,7 @@ void icu_lld_start(ICUDriver *icup) {
 
 #if STM32_ICU_USE_TIM8
     if (&ICUD8 == icup) {
-      rccEnableTIM8(false);
+      rccEnableTIM8(true);
       rccResetTIM8();
 #if !defined(STM32_TIM8_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM8_UP_NUMBER, STM32_ICU_TIM8_IRQ_PRIORITY);
@@ -487,7 +487,7 @@ void icu_lld_start(ICUDriver *icup) {
 
 #if STM32_ICU_USE_TIM9
     if (&ICUD9 == icup) {
-      rccEnableTIM9(false);
+      rccEnableTIM9(true);
       rccResetTIM9();
 #if !defined(STM32_TIM9_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM9_NUMBER, STM32_ICU_TIM9_IRQ_PRIORITY);

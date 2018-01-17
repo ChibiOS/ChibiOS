@@ -52,7 +52,7 @@
 #define ST_HANDLER                          STM32_TIM2_HANDLER
 #define ST_NUMBER                           STM32_TIM2_NUMBER
 #define ST_CLOCK_SRC                        STM32_TIMCLK1
-#define ST_ENABLE_CLOCK()                   rccEnableTIM2(false)
+#define ST_ENABLE_CLOCK()                   rccEnableTIM2(true)
 #if defined(STM32F1XX)
 #define ST_ENABLE_STOP()                    DBGMCU->CR |= DBGMCU_CR_DBG_TIM2_STOP
 #elif defined(STM32L4XX)
@@ -77,7 +77,7 @@
 #define ST_HANDLER                          STM32_TIM3_HANDLER
 #define ST_NUMBER                           STM32_TIM3_NUMBER
 #define ST_CLOCK_SRC                        STM32_TIMCLK1
-#define ST_ENABLE_CLOCK()                   rccEnableTIM3(false)
+#define ST_ENABLE_CLOCK()                   rccEnableTIM3(true)
 #if defined(STM32F1XX)
 #define ST_ENABLE_STOP()                    DBGMCU->CR |= DBGMCU_CR_DBG_TIM3_STOP
 #elif defined(STM32L4XX)
@@ -102,7 +102,7 @@
 #define ST_HANDLER                          STM32_TIM4_HANDLER
 #define ST_NUMBER                           STM32_TIM4_NUMBER
 #define ST_CLOCK_SRC                        STM32_TIMCLK1
-#define ST_ENABLE_CLOCK()                   rccEnableTIM4(false)
+#define ST_ENABLE_CLOCK()                   rccEnableTIM4(true)
 #if defined(STM32F1XX)
 #define ST_ENABLE_STOP()                    DBGMCU->CR |= DBGMCU_CR_DBG_TIM4_STOP
 #elif defined(STM32L4XX)
@@ -127,7 +127,7 @@
 #define ST_HANDLER                          STM32_TIM5_HANDLER
 #define ST_NUMBER                           STM32_TIM5_NUMBER
 #define ST_CLOCK_SRC                        STM32_TIMCLK1
-#define ST_ENABLE_CLOCK()                   rccEnableTIM5(false)
+#define ST_ENABLE_CLOCK()                   rccEnableTIM5(true)
 #if defined(STM32F1XX)
 #define ST_ENABLE_STOP()                    DBGMCU->CR |= DBGMCU_CR_DBG_TIM5_STOP
 #elif defined(STM32L4XX)
@@ -152,7 +152,7 @@
 #define ST_HANDLER                          STM32_TIM21_HANDLER
 #define ST_NUMBER                           STM32_TIM21_NUMBER
 #define ST_CLOCK_SRC                        STM32_TIMCLK2
-#define ST_ENABLE_CLOCK()                   rccEnableTIM21(false)
+#define ST_ENABLE_CLOCK()                   rccEnableTIM21(true)
 #define ST_ENABLE_STOP()                    DBGMCU->APB1FZ |= DBGMCU_APB2_FZ_DBG_TIM21_STOP
 
 #elif STM32_ST_USE_TIMER == 22
@@ -169,7 +169,7 @@
 #define ST_HANDLER                          STM32_TIM22_HANDLER
 #define ST_NUMBER                           STM32_TIM22_NUMBER
 #define ST_CLOCK_SRC                        STM32_TIMCLK2
-#define ST_ENABLE_CLOCK()                   rccEnableTIM22(false)
+#define ST_ENABLE_CLOCK()                   rccEnableTIM22(true)
 #define ST_ENABLE_STOP()                    DBGMCU->APB1FZ |= DBGMCU_APB2_FZ_DBG_TIM21_STOP
 
 #else

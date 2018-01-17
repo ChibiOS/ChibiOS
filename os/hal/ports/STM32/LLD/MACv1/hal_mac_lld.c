@@ -267,7 +267,7 @@ void mac_lld_init(void) {
   rccResetETH();
 
   /* MAC clocks temporary activation.*/
-  rccEnableETH(false);
+  rccEnableETH(true);
 
   /* PHY address setup.*/
 #if defined(BOARD_PHY_ADDRESS)
@@ -317,7 +317,7 @@ void mac_lld_start(MACDriver *macp) {
   macp->txptr = (stm32_eth_tx_descriptor_t *)__eth_td;
 
   /* MAC clocks activation and commanded reset procedure.*/
-  rccEnableETH(false);
+  rccEnableETH(true);
 #if defined(STM32_MAC_DMABMR_SR)
   ETH->DMABMR |= ETH_DMABMR_SR;
   while(ETH->DMABMR & ETH_DMABMR_SR)

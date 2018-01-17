@@ -107,7 +107,7 @@ static inline void init_pwr(void) {
 #if STM32_PWR_CR2 & PWR_CR2_BREN
 //  while ((PWR->CR2 & PWR_CR2_BRRDY) == 0)
 //    ;
-//  rccEnableBKPRAM(false);
+//  rccEnableBKPRAM(true);
 #endif
 }
 

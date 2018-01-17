@@ -478,7 +478,7 @@ void usb_lld_start(USBDriver *usbp) {
 #if STM32_USB_USE_USB1
     if (&USBD1 == usbp) {
       /* USB clock enabled.*/
-      rccEnableUSB(false);
+      rccEnableUSB(true);
       /* Powers up the transceiver while holding the USB in reset state.*/
       STM32_USB->CNTR = CNTR_FRES;
       /* Enabling the USB IRQ vectors, this also gives enough time to allow

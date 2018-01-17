@@ -360,7 +360,7 @@ void i2s_lld_start(I2SDriver *i2sp) {
       bool b;
 
       /* Enabling I2S unit clock.*/
-      rccEnableSPI1(false);
+      rccEnableSPI1(true);
 
 #if STM32_I2S_RX_ENABLED(STM32_I2S_SPI1_MODE)
       b = dmaStreamAllocate(i2sp->dmarx,
@@ -394,7 +394,7 @@ void i2s_lld_start(I2SDriver *i2sp) {
       bool b;
 
       /* Enabling I2S unit clock.*/
-      rccEnableSPI2(false);
+      rccEnableSPI2(true);
 
 #if STM32_I2S_RX_ENABLED(STM32_I2S_SPI2_MODE)
       b = dmaStreamAllocate(i2sp->dmarx,
@@ -428,7 +428,7 @@ void i2s_lld_start(I2SDriver *i2sp) {
       bool b;
 
       /* Enabling I2S unit clock.*/
-      rccEnableSPI3(false);
+      rccEnableSPI3(true);
 
 #if STM32_I2S_RX_ENABLED(STM32_I2S_SPI3_MODE)
       b = dmaStreamAllocate(i2sp->dmarx,

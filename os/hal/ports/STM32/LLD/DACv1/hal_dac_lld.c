@@ -226,26 +226,26 @@ void dac_lld_start(DACDriver *dacp) {
     /* Enabling the clock source.*/
 #if STM32_DAC_USE_DAC1_CH1
     if (&DACD1 == dacp) {
-      rccEnableDAC1(false);
+      rccEnableDAC1(true);
     }
 #endif
 
 #if STM32_DAC_USE_DAC1_CH2
     if (&DACD2 == dacp) {
-      rccEnableDAC1(false);
+      rccEnableDAC1(true);
       channel = 1;
     }
 #endif
 
 #if STM32_DAC_USE_DAC2_CH1
     if (&DACD3 == dacp) {
-      rccEnableDAC2(false);
+      rccEnableDAC2(true);
     }
 #endif
 
 #if STM32_DAC_USE_DAC2_CH2
     if (&DACD4 == dacp) {
-      rccEnableDAC2(false);
+      rccEnableDAC2(true);
       channel = 1;
     }
 #endif

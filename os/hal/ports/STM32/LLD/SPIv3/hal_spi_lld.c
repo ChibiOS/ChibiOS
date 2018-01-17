@@ -514,7 +514,7 @@ void spi_lld_start(SPIDriver *spip) {
                             (stm32_dmaisr_t)spi_lld_serve_dma_tx_interrupt,
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
-      rccEnableSPI1(false);
+      rccEnableSPI1(true);
       dmaSetRequestSource(spip->rx.dma, STM32_DMAMUX1_SPI1_RX);
       dmaSetRequestSource(spip->tx.dma, STM32_DMAMUX1_SPI1_TX);
     }
@@ -532,7 +532,7 @@ void spi_lld_start(SPIDriver *spip) {
                             (stm32_dmaisr_t)spi_lld_serve_dma_tx_interrupt,
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
-      rccEnableSPI2(false);
+      rccEnableSPI2(true);
       dmaSetRequestSource(spip->rx.dma, STM32_DMAMUX1_SPI2_RX);
       dmaSetRequestSource(spip->tx.dma, STM32_DMAMUX1_SPI2_TX);
     }
@@ -550,7 +550,7 @@ void spi_lld_start(SPIDriver *spip) {
                             (stm32_dmaisr_t)spi_lld_serve_dma_tx_interrupt,
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
-      rccEnableSPI3(false);
+      rccEnableSPI3(true);
       dmaSetRequestSource(spip->rx.dma, STM32_DMAMUX1_SPI3_RX);
       dmaSetRequestSource(spip->tx.dma, STM32_DMAMUX1_SPI3_TX);
     }
@@ -568,7 +568,7 @@ void spi_lld_start(SPIDriver *spip) {
                             (stm32_dmaisr_t)spi_lld_serve_dma_tx_interrupt,
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
-      rccEnableSPI4(false);
+      rccEnableSPI4(true);
       dmaSetRequestSource(spip->rx.dma, STM32_DMAMUX1_SPI4_RX);
       dmaSetRequestSource(spip->tx.dma, STM32_DMAMUX1_SPI4_TX);
     }
@@ -586,7 +586,7 @@ void spi_lld_start(SPIDriver *spip) {
                             (stm32_dmaisr_t)spi_lld_serve_dma_tx_interrupt,
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
-      rccEnableSPI5(false);
+      rccEnableSPI5(true);
       dmaSetRequestSource(spip->rx.dma, STM32_DMAMUX1_SPI5_RX);
       dmaSetRequestSource(spip->tx.dma, STM32_DMAMUX1_SPI5_TX);
     }
@@ -604,7 +604,7 @@ void spi_lld_start(SPIDriver *spip) {
                             (stm32_bdmaisr_t)spi_lld_serve_bdma_tx_interrupt,
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
-      rccEnableSPI6(false);
+      rccEnableSPI6(true);
       bdmaSetRequestSource(spip->rx.bdma, STM32_DMAMUX2_SPI6_RX);
       bdmaSetRequestSource(spip->tx.bdma, STM32_DMAMUX2_SPI6_TX);
     }

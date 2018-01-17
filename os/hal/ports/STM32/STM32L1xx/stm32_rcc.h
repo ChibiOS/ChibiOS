@@ -63,6 +63,8 @@
   RCC->APB1ENR |= (mask);                                                   \
   if (lp)                                                                   \
     RCC->APB1LPENR |= (mask);                                               \
+  else                                                                      \
+    RCC->APB1LPENR &= ~(mask);                                              \
 }
 
 /**
@@ -74,7 +76,6 @@
  */
 #define rccDisableAPB1(mask) {                                              \
   RCC->APB1ENR &= ~(mask);                                                  \
-  RCC->APB1LPENR &= ~(mask);                                                \
 }
 
 /**
@@ -101,6 +102,8 @@
   RCC->APB2ENR |= (mask);                                                   \
   if (lp)                                                                   \
     RCC->APB2LPENR |= (mask);                                               \
+  else                                                                      \
+    RCC->APB2LPENR &= ~(mask);                                              \
 }
 
 /**
@@ -112,7 +115,6 @@
  */
 #define rccDisableAPB2(mask) {                                              \
   RCC->APB2ENR &= ~(mask);                                                  \
-  RCC->APB2LPENR &= ~(mask);                                                \
 }
 
 /**
@@ -139,6 +141,8 @@
   RCC->AHBENR |= (mask);                                                    \
   if (lp)                                                                   \
     RCC->AHBLPENR |= (mask);                                                \
+  else                                                                      \
+    RCC->AHBLPENR &= ~(mask);                                               \
 }
 
 /**
@@ -150,7 +154,6 @@
  */
 #define rccDisableAHB(mask) {                                               \
   RCC->AHBENR &= ~(mask);                                                   \
-  RCC->AHBLPENR &= ~(mask);                                                 \
 }
 
 /**

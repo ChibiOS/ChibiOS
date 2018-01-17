@@ -493,11 +493,11 @@ bool dmaStreamAllocate(const stm32_dma_stream_t *dmastp,
 
   /* Enabling DMA clocks required by the current streams set.*/
   if ((dma.streams_mask & STM32_DMA1_STREAMS_MASK) == 0U) {
-    rccEnableDMA1(false);
+    rccEnableDMA1(true);
   }
 #if STM32_DMA2_NUM_CHANNELS > 0
   if ((dma.streams_mask & STM32_DMA2_STREAMS_MASK) == 0U) {
-    rccEnableDMA2(false);
+    rccEnableDMA2(true);
   }
 #endif
 

@@ -63,6 +63,8 @@
   RCC->APB1ENR |= (mask);                                                   \
   if (lp)                                                                   \
     RCC->APB1SMENR |= (mask);                                               \
+  else                                                                      \
+    RCC->APB1SMENR &= ~(mask);                                              \
 }
 
 /**
@@ -74,7 +76,6 @@
  */
 #define rccDisableAPB1(mask) {                                              \
   RCC->APB1ENR &= ~(mask);                                                  \
-  RCC->APB1SMENR &= ~(mask);                                                \
 }
 
 /**
@@ -101,6 +102,8 @@
   RCC->APB2ENR |= (mask);                                                   \
   if (lp)                                                                   \
     RCC->APB2SMENR |= (mask);                                               \
+  else                                                                      \
+    RCC->APB2SMENR &= ~(mask);                                              \
 }
 
 /**
@@ -112,7 +115,6 @@
  */
 #define rccDisableAPB2(mask) {                                              \
   RCC->APB2ENR &= ~(mask);                                                  \
-  RCC->APB2SMENR &= ~(mask);                                                \
 }
 
 /**
@@ -139,6 +141,8 @@
   RCC->AHBENR |= (mask);                                                    \
   if (lp)                                                                   \
     RCC->AHBSMENR |= (mask);                                                \
+  else                                                                      \
+    RCC->AHBSMENR &= ~(mask);                                               \
 }
 
 /**
@@ -150,7 +154,6 @@
  */
 #define rccDisableAHB(mask) {                                               \
   RCC->AHBENR &= ~(mask);                                                   \
-  RCC->AHBSMENR &= ~(mask);                                                 \
 }
 
 /**
@@ -177,6 +180,8 @@
   RCC->IOPENR |= (mask);                                                    \
   if (lp)                                                                   \
     RCC->IOPSMENR |= (mask);                                                \
+  else                                                                      \
+    RCC->IOPSMENR &= ~(mask);                                               \
 }
 
 /**
@@ -188,7 +193,6 @@
  */
 #define rccDisableIOP(mask) {                                               \
   RCC->IOPENR &= ~(mask);                                                   \
-  RCC->IOPSMENR &= ~(mask);                                                 \
 }
 
 /**

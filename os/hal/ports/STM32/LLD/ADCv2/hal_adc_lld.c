@@ -243,7 +243,7 @@ void adc_lld_start(ADCDriver *adcp) {
                             (void *)adcp);
       osalDbgAssert(!b, "stream already allocated");
       dmaStreamSetPeripheral(adcp->dmastp, &ADC1->DR);
-      rccEnableADC1(false);
+      rccEnableADC1(true);
     }
 #endif /* STM32_ADC_USE_ADC1 */
 
@@ -256,7 +256,7 @@ void adc_lld_start(ADCDriver *adcp) {
                             (void *)adcp);
       osalDbgAssert(!b, "stream already allocated");
       dmaStreamSetPeripheral(adcp->dmastp, &ADC2->DR);
-      rccEnableADC2(false);
+      rccEnableADC2(true);
     }
 #endif /* STM32_ADC_USE_ADC2 */
 
@@ -269,7 +269,7 @@ void adc_lld_start(ADCDriver *adcp) {
                             (void *)adcp);
       osalDbgAssert(!b, "stream already allocated");
       dmaStreamSetPeripheral(adcp->dmastp, &ADC3->DR);
-      rccEnableADC3(false);
+      rccEnableADC3(true);
     }
 #endif /* STM32_ADC_USE_ADC3 */
 

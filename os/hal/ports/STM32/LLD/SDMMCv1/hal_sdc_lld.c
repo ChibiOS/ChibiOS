@@ -450,7 +450,7 @@ void sdc_lld_start(SDCDriver *sdcp) {
       dmaStreamSetFIFO(sdcp->dma, STM32_DMA_FCR_DMDIS |
                                   STM32_DMA_FCR_FTH_FULL);
 #endif
-      rccEnableSDMMC1(false);
+      rccEnableSDMMC1(true);
     }
 #endif /* STM32_SDC_USE_SDMMC1 */
 
@@ -466,7 +466,7 @@ void sdc_lld_start(SDCDriver *sdcp) {
       dmaStreamSetFIFO(sdcp->dma, STM32_DMA_FCR_DMDIS |
                                   STM32_DMA_FCR_FTH_FULL);
 #endif
-      rccEnableSDMMC2(false);
+      rccEnableSDMMC2(true);
     }
 #endif /* STM32_SDC_USE_SDMMC2 */
   }

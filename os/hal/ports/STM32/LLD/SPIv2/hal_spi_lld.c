@@ -330,7 +330,7 @@ void spi_lld_start(SPIDriver *spip) {
                             (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
-      rccEnableSPI1(false);
+      rccEnableSPI1(true);
     }
 #endif
 #if STM32_SPI_USE_SPI2
@@ -346,7 +346,7 @@ void spi_lld_start(SPIDriver *spip) {
                             (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
-      rccEnableSPI2(false);
+      rccEnableSPI2(true);
     }
 #endif
 #if STM32_SPI_USE_SPI3
@@ -362,7 +362,7 @@ void spi_lld_start(SPIDriver *spip) {
                             (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
-      rccEnableSPI3(false);
+      rccEnableSPI3(true);
     }
 #endif
 #if STM32_SPI_USE_SPI4
@@ -378,7 +378,7 @@ void spi_lld_start(SPIDriver *spip) {
                             (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
-      rccEnableSPI4(false);
+      rccEnableSPI4(true);
     }
 #endif
 #if STM32_SPI_USE_SPI5
@@ -394,7 +394,7 @@ void spi_lld_start(SPIDriver *spip) {
                             (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
-      rccEnableSPI5(false);
+      rccEnableSPI5(true);
     }
 #endif
 #if STM32_SPI_USE_SPI6
@@ -410,7 +410,7 @@ void spi_lld_start(SPIDriver *spip) {
                             (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
-      rccEnableSPI6(false);
+      rccEnableSPI6(true);
     }
 #endif
 

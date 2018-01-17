@@ -92,7 +92,7 @@ static void can_lld_set_filters(CANDriver* canp,
   /* Temporarily enabling CAN clock.*/
 #if STM32_CAN_USE_CAN1
   if(canp == &CAND1) {
-    rccEnableCAN1(false);
+    rccEnableCAN1(true);
     /* Filters initialization.*/
     canp->can->FMR = (canp->can->FMR & 0xFFFF0000) | CAN_FMR_FINIT;
     canp->can->FMR = (canp->can->FMR & 0xFFFF0000) | (can2sb << 8) | CAN_FMR_FINIT;
@@ -101,7 +101,7 @@ static void can_lld_set_filters(CANDriver* canp,
 
 #if STM32_CAN_USE_CAN3
   if(canp == &CAND3) {
-    rccEnableCAN3(false);
+    rccEnableCAN3(true);
     /* Filters initialization.*/
     canp->can->FMR = (canp->can->FMR & 0xFFFF0000) | CAN_FMR_FINIT;
   }
@@ -682,7 +682,7 @@ void can_lld_start(CANDriver *canp) {
   /* Clock activation.*/
 #if STM32_CAN_USE_CAN1
   if (&CAND1 == canp) {
-    rccEnableCAN1(false);
+    rccEnableCAN1(true);
   }
 #endif
 
@@ -691,13 +691,13 @@ void can_lld_start(CANDriver *canp) {
 
     osalDbgAssert(CAND1.state != CAN_STOP, "CAN1 must be started");
 
-    rccEnableCAN2(false);
+    rccEnableCAN2(true);
   }
 #endif
 
 #if STM32_CAN_USE_CAN3
   if (&CAND3 == canp) {
-    rccEnableCAN3(false);
+    rccEnableCAN3(true);
   }
 #endif
 
