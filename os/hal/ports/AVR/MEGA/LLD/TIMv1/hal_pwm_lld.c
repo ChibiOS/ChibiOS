@@ -35,6 +35,10 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
+#define TIM1_CS_OFFSET CS10
+#define TIM1_WGM_OFFSET1 WGM10
+#define TIM1_WGM_OFFSET2 WGM12
+
 typedef struct {
   volatile uint8_t *tccra;
   volatile uint8_t *tccrb;
@@ -46,28 +50,35 @@ typedef struct {
   volatile uint8_t *ocrcl;
   volatile uint8_t *tifr;
   volatile uint8_t *timsk;
+  volatile uint16_t *icr;
 } timer_registers_t;
 
 static timer_registers_t regs_table[]=
 {
 #if AVR_PWM_USE_TIM1 || defined(__DOXYGEN__)
 #if defined(OCR1C)
-  {&TCCR1A, &TCCR1B, &OCR1AH, &OCR1AL, &OCR1BH, &OCR1BL, &OCR1CH, &OCR1CL, &TIFR1, &TIMSK1},
+  {&TCCR1A, &TCCR1B, &OCR1AH, &OCR1AL, &OCR1BH, &OCR1BL, &OCR1CH, &OCR1CL,
+   &TIFR1, &TIMSK1, &ICR1},
 #else
-  {&TCCR1A, &TCCR1B, &OCR1AH, &OCR1AL, &OCR1BH, &OCR1BL, NULL, NULL, &TIFR1, &TIMSK1},
+  {&TCCR1A, &TCCR1B, &OCR1AH, &OCR1AL, &OCR1BH, &OCR1BL, NULL, NULL,
+   &TIFR1, &TIMSK1, &ICR1},
 #endif
 #endif
 #if AVR_PWM_USE_TIM2 || defined(__DOXYGEN__)
-  {&TCCR2A, &TCCR2B, &OCR2A, &OCR2A, &OCR2B, &OCR2B, NULL, NULL, &TIFR2, &TIMSK2},
+  {&TCCR2A, &TCCR2B, &OCR2A, &OCR2A, &OCR2B, &OCR2B, NULL, NULL,
+   &TIFR2, &TIMSK2, NULL},
 #endif
 #if AVR_PWM_USE_TIM3 || defined(__DOXYGEN__)
-  {&TCCR3A, &TCCR3B, &OCR3AH, &OCR3AL, &OCR3BH, &OCR3BL, &OCR3CH, &OCR3CL, &TIFR3, &TIMSK3},
+  {&TCCR3A, &TCCR3B, &OCR3AH, &OCR3AL, &OCR3BH, &OCR3BL, &OCR3CH, &OCR3CL,
+   &TIFR3, &TIMSK3, &ICR3},
 #endif
 #if AVR_PWM_USE_TIM4 || defined(__DOXYGEN__)
-  {&TCCR4A, &TCCR4B, &OCR4AH, &OCR4AL, &OCR4CH, &OCR4CL, &OCR4CH, &OCR4CL, &TIFR4, &TIMSK4},
+  {&TCCR4A, &TCCR4B, &OCR4AH, &OCR4AL, &OCR4CH, &OCR4CL, &OCR4CH, &OCR4CL,
+   &TIFR4, &TIMSK4, &ICR4},
 #endif
 #if AVR_PWM_USE_TIM5 || defined(__DOXYGEN__)
-  {&TCCR5A, &TCCR5B, &OCR5AH, &OCR5AL, &OCR5BH, &OCR5BL, &OCR5CH, &OCR5CL, &TIFR5, &TIMSK5},
+  {&TCCR5A, &TCCR5B, &OCR5AH, &OCR5AL, &OCR5BH, &OCR5BL, &OCR5CH, &OCR5CL,
+   &TIFR5, &TIMSK5, &ICR5},
 #endif
 };
 
@@ -306,41 +317,33 @@ void pwm_lld_init(void) {
 #if AVR_PWM_USE_TIM1 || defined(__DOXYGEN__)
   pwmObjectInit(&PWMD1);
   PWMD1.channels = PWM_CHANNELS;
-  TCCR1A = (1 << WGM11) | (1 << WGM10);
-  TCCR1B = (0 << WGM13) | (1 << WGM12);
 #endif
 
 #if AVR_PWM_USE_TIM2 || defined(__DOXYGEN__)
   pwmObjectInit(&PWMD2);
   PWMD2.channels = PWM_CHANNELS;
-  TCCR2A = (1 << WGM21) | (1 << WGM20);
-  TCCR2B = (0 << WGM22);
 #endif
 
 #if AVR_PWM_USE_TIM3 || defined(__DOXYGEN__)
   pwmObjectInit(&PWMD3);
   PWMD3.channels = PWM_CHANNELS;
-  TCCR3A = (1 << WGM31) | (1 << WGM30);
-  TCCR3B = (0 << WGM33) | (1 << WGM32);
 #endif
 
 #if AVR_PWM_USE_TIM4 || defined(__DOXYGEN__)
   pwmObjectInit(&PWMD4);
   PWMD4.channels = PWM_CHANNELS;
-  TCCR4A = (1 << WGM41) | (1 << WGM40);
-  TCCR4B = (0 << WGM43) | (1 << WGM42);
 #endif
 
 #if AVR_PWM_USE_TIM5 || defined(__DOXYGEN__)
   pwmObjectInit(&PWMD5);
   PWMD5.channels = PWM_CHANNELS;
-  TCCR5A = (1 << WGM51) | (1 << WGM50);
-  TCCR5B = (0 << WGM53) | (1 << WGM52);
 #endif
 }
 
 /**
  * @brief   Configures and activates the PWM peripheral.
+ * @note    We do not use the period value in Timer2 in order to
+ *          be able to use both PWM channels
  *
  * @param[in] pwmp      pointer to the @p PWMDriver object
  *
@@ -349,23 +352,62 @@ void pwm_lld_init(void) {
 void pwm_lld_start(PWMDriver *pwmp) {
 
   if (pwmp->state == PWM_STOP) {
+    uint8_t cs_value, wgm_value;
 
 #if AVR_PWM_USE_TIM2 || defined(__DOXYGEN__)
     if (pwmp == &PWMD2) {
-      TCCR2B &= ~((1 << CS22) | (1 << CS21));
-      TCCR2B |= (1 << CS20);
+      /* for now only fast pwm is supported */
+      wgm_value = 0x3;
+      cs_value = 1;
+
+      /* period is fixed for timer2 */
+      PWMD2.period = 0xFF;
+
+      /* A prescaler value can only be a suitable power of 2 (1, 8, 32,
+         64, 128 256 or 1024), so we choose the one that makes F_CPU
+         divided by it equal to the given frequency (fallback value is
+         1, to keep compatibility with old code */
+      const uint8_t log_ratio_timer2[] = {0, 3, 5, 6, 7, 8, 10};
+      uint8_t n;
+      for (n=0; n<sizeof(log_ratio_timer2)/sizeof(uint8_t); n++) {
+        if (pwmp->config->frequency == (F_CPU >> log_ratio_timer2[n])) {
+              cs_value = n + 1;
+              break;
+            }
+      }
+
+      TCCR2A = (wgm_value & 0x3) << TIM1_WGM_OFFSET1;
+      TCCR2B = ((cs_value << TIM1_CS_OFFSET) |
+                ((wgm_value >> 2) << TIM1_WGM_OFFSET2));
       if (pwmp->config->callback != NULL)
         TIMSK2 |= (1 << TOIE2);
       return;
     }
 #endif
 
+    /* for now only fast pwm is supported */
+    wgm_value = 0xE;
+    cs_value = 0x5;
+
+    /* A prescaler value can only be a suitable power of 2 (1, 8, 64,
+       256 or 1024), so we choose the one that makes F_CPU divided by
+       it equal to the given frequency (fallback value is 1024, to
+       keep compatibility with old code */
+    const uint8_t log_ratio_timer1[] = {0, 3, 6, 8, 10};
+    uint8_t n;
+    for (n=0; n<sizeof(log_ratio_timer1)/sizeof(uint8_t); n++) {
+      if (pwmp->config->frequency == (F_CPU >> log_ratio_timer1[n])) {
+        cs_value = n + 1;
+        break;
+      }
+    }
+
     uint8_t i = timer_index(pwmp);
 
-    /* TODO: support other prescaler options */
-
-    *regs_table[i].tccrb &= ~(1 << CS11);
-    *regs_table[i].tccrb |= (1 << CS12) | (1 << CS10);
+    *regs_table[i].icr = pwmp->period;
+    *regs_table[i].tccra = (wgm_value & 0x3) << TIM1_WGM_OFFSET1;
+    *regs_table[i].tccrb = ((cs_value << TIM1_CS_OFFSET) |
+                            ((wgm_value >> 2) << TIM1_WGM_OFFSET2));
     if (pwmp->config->callback != NULL)
       *regs_table[i].timsk = (1 << TOIE1);
   }
@@ -380,8 +422,17 @@ void pwm_lld_start(PWMDriver *pwmp) {
  */
 void pwm_lld_stop(PWMDriver *pwmp) {
 
+#if AVR_PWM_USE_TIM2 || defined(__DOXYGEN__)
+  if (pwmp == &PWMD2) {
+    TCCR2A = 0;
+    TCCR2B = 0;
+    TIMSK2 = 0;
+    return;
+  }
+#endif
   uint8_t i = timer_index(pwmp);
-  *regs_table[i].tccrb &= ~((1 << CS12) | (1 << CS11) | (1 << CS10));
+  *regs_table[i].tccra = 0;
+  *regs_table[i].tccrb = 0;
   *regs_table[i].timsk = 0;
 }
 
@@ -402,6 +453,16 @@ void pwm_lld_stop(PWMDriver *pwmp) {
  * @notapi
  */
 void pwm_lld_change_period(PWMDriver *pwmp, pwmcnt_t period) {
+
+#if AVR_PWM_USE_TIM2 || defined(__DOXYGEN__)
+  /* Can't change period in timer2 */
+  if (pwmp == &PWMD2) {
+    PWMD2.period = 0xFF;
+    return;
+  }
+#endif
+  uint8_t i = timer_index(pwmp);
+  *regs_table[i].icr = period;
 }
 
 /**
@@ -423,8 +484,6 @@ void pwm_lld_enable_channel(PWMDriver *pwmp,
                             pwmcnt_t width) {
 
   uint16_t val = width;
-  if (val > MAX_PWM_VALUE)
-    val = MAX_PWM_VALUE;
 
 #if AVR_PWM_USE_TIM2 || defined(__DOXYGEN__)
   if (pwmp == &PWMD2) {
@@ -432,16 +491,16 @@ void pwm_lld_enable_channel(PWMDriver *pwmp,
                    7 - 2*channel,
                    6 - 2*channel,
                    pwmp->config->channels[channel].mode);
-    TIMSK2 |= (1 << (channel + 1));
     /* Timer 2 is 8 bit */
     if (val > 0xFF)
       val = 0xFF;
-    if (pwmp->config->channels[channel].callback) {
-      switch (channel) {
-      case 0: OCR2A = val; break;
-      case 1: OCR2B = val; break;
-      }
+    switch (channel) {
+    case 0: OCR2A = val; break;
+    case 1: OCR2B = val; break;
     }
+    TIFR2 = 1 << (OCF2A + channel);
+    if (pwmp->config->channels[channel].callback)
+      TIMSK2 |= (1 << (OCIE2A + channel));
     return;
   }
 #endif
@@ -467,7 +526,7 @@ void pwm_lld_enable_channel(PWMDriver *pwmp,
   }
   *ocrh = val >> 8;
   *ocrl = val & 0xFF;
-  *regs_table[i].tifr |= (1 << (channel + 1));
+  *regs_table[i].tifr = (1 << (channel + 1));
   if (pwmp->config->channels[channel].callback != NULL)
     *regs_table[i].timsk |= (1 << (channel + 1));
 }

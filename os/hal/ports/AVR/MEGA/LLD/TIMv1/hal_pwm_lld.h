@@ -69,8 +69,6 @@
   #endif
 #endif
 
-#define MAX_PWM_VALUE           0x3FF
-
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -129,7 +127,7 @@ typedef struct {
    * @note    The low level can use assertions in order to catch invalid
    *          frequency specifications.
    */
-  uint16_t                  frequency;
+  uint32_t                  frequency;
   /**
    * @brief   PWM period in ticks.
    * @note    The low level can use assertions in order to catch invalid
