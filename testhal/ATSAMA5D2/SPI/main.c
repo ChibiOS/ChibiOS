@@ -47,7 +47,7 @@ static void rxend(SPIDriver *spip) {
   palClearLine(LINE_LED_RED);
   chSysLockFromISR();
   chVTResetI(&vt3);
-  chVTSetI(&vt3, TIME_MS2I(200), led3off, NULL);
+  chVTSetI(&vt3, TIME_MS2I(50), led3off, NULL);
   chSysUnlockFromISR();
 }
 
@@ -111,7 +111,7 @@ int main(void) {
   while (true) {
     if(!palReadPad(PIOB, PIOB_USER_PB)) {
       /* SPI operation in loopback*/
-      spiExchange(&SPID1, BUFFER_SIZE, &txbuf, &rxbuf);
+      spiStartExchange(&SPID1, BUFFER_SIZE, &txbuf, &rxbuf);
 
       /* D-Cache L1 is enabled */
       cacheInvalidateRegion(&rxbuf, sizeof(rxbuf));
