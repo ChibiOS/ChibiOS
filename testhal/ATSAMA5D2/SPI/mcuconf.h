@@ -53,16 +53,26 @@
 #define SAMA_SPI_FLEXCOM3_DMA_IRQ_PRIORITY  4
 #define SAMA_SPI_FLEXCOM4_DMA_IRQ_PRIORITY  4
 #define SAMA_SPI_DMA_ERROR_HOOK(spip)       osalSysHalt("DMA failure")
+#define SPI_SELECT_MODE                     SPI_SELECT_MODE_NONE
+
+/*
+ * SECUMOD driver system settings.
+ */
+#define HAL_USE_SECUMOD                     FALSE
+
+/*
+ * SDMMC driver system settings.
+ */
+#define HAL_USE_SDMMC                       FALSE
 
 /*
  * SERIAL driver system settings.
  */
-#define SAMA_SERIAL_USE_UART0               TRUE
-#define SAMA_SERIAL_USE_UART1               FALSE
+#define SAMA_SERIAL_USE_UART0               FALSE
+#define SAMA_SERIAL_USE_UART1               TRUE
 #define SAMA_SERIAL_USE_UART2               FALSE
 #define SAMA_SERIAL_USE_UART3               FALSE
 #define SAMA_SERIAL_USE_UART4               FALSE
-#define SAMA_SERIAL_USE_UART5               FALSE
 #define SAMA_SERIAL_USE_FLEXCOM0            FALSE
 #define SAMA_SERIAL_USE_FLEXCOM1            FALSE
 #define SAMA_SERIAL_USE_FLEXCOM2            FALSE
@@ -78,6 +88,13 @@
 #define SAMA_SERIAL_FLEXCOM2_IRQ_PRIORITY   4
 #define SAMA_SERIAL_FLEXCOM3_IRQ_PRIORITY   4
 #define SAMA_SERIAL_FLEXCOM4_IRQ_PRIORITY   4
+
+/*
+ * ST driver settings.
+ */
+#define SAMA_ST_USE_PIT                     TRUE
+#define SAMA_ST_USE_TC0                     FALSE
+#define SAMA_ST_USE_TC1                     FALSE
 
 /*
  * TC driver system settings.
@@ -122,7 +139,5 @@
 #define SAMA_UART_FLEXCOM3_DMA_IRQ_PRIORITY 4
 #define SAMA_UART_FLEXCOM4_DMA_IRQ_PRIORITY 4
 #define SAMA_UART_DMA_ERROR_HOOK(uartp)     osalSysHalt("DMA failure")
-
-#define SPI_SELECT_MODE                     SPI_SELECT_MODE_NONE
 
 #endif /* MCUCONF_H */

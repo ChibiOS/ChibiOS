@@ -25,6 +25,12 @@ static virtual_timer_t vt3;
 static char txbuf[BUFFER_SIZE] = "0123456789ABCDEF";
 static char rxbuf[BUFFER_SIZE];
 
+static const SerialConfig sdcfg = {
+  115200,
+  0,
+  UART_MR_PAR_NO
+};
+
 static void led3off(void *p) {
 
   (void)p;
@@ -88,12 +94,12 @@ int main(void) {
   /*
    * Activates the serial driver 0 using the driver default configuration.
    */
-  sdStart(&SD0, NULL);
+  sdStart(&SD1, &sdcfg);
   spiStart(&SPID1, &mst_spicfg);       /* Setup transfer parameters.       */
 
-  /* Redirecting  UART0 RX on PB26 and UART0 TX on PB 27. */
-  palSetGroupMode(PIOB, PAL_PORT_BIT(26) | PAL_PORT_BIT(27), 0U,
-                  PAL_SAMA_FUNC_PERIPH_C | PAL_MODE_SECURE);
+  /* Redirecting  UART1 RX on PD2 and UART1 TX on PD3. */
+  palSetGroupMode(PIOD, PAL_PORT_BIT(2) | PAL_PORT_BIT(3), 0U,
+                  PAL_SAMA_FUNC_PERIPH_A | PAL_MODE_SECURE);
 
   /* Redirecting  SPI1 pins. */
   palSetGroupMode(PIOD, PAL_PORT_BIT(25) | PAL_PORT_BIT(26) |
@@ -104,12 +110,17 @@ int main(void) {
 
   while (true) {
     if(!palReadPad(PIOB, PIOB_USER_PB)) {
+      /* SPI operation in loopback*/
       spiExchange(&SPID1, BUFFER_SIZE, &txbuf, &rxbuf);
+
+      /* D-Cache L1 is enabled */
+      cacheInvalidateRegion(&rxbuf, sizeof(rxbuf));
+
       if (!memcmp(txbuf, rxbuf, BUFFER_SIZE)){
-        chprintf((BaseSequentialStream*)&SD0, "Transfer complete\n\r");
+        chprintf((BaseSequentialStream*)&SD1, "Transfer complete\n\r");
       }
       else {
-        chprintf((BaseSequentialStream*)&SD0, "ERROR: Buffers are not the same!\n\r");
+        chprintf((BaseSequentialStream*)&SD1, "ERROR: Buffers are not the same!\n\r");
       }
     }
     chThdSleepMilliseconds(500);
