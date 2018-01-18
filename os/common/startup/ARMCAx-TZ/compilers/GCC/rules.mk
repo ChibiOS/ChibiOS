@@ -69,6 +69,13 @@ else
   LDOPT := $(LDOPT),--defsym=__sys_stack_size__=$(USE_SYSTEM_STACKSIZE)
 endif
 
+# Monitor stack size
+ifeq ($(USE_MONITOR_STACKSIZE),)
+  LDOPT := $(LDOPT),--defsym=__mon_stack_size__=0x64
+else
+  LDOPT := $(LDOPT),--defsym=__mon_stack_size__=$(USE_MONITOR_STACKSIZE)
+endif
+
 # Output directory and files
 ifeq ($(BUILDDIR),)
   BUILDDIR = build
