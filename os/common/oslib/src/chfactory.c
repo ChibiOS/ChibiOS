@@ -334,7 +334,7 @@ registered_object_t *chFactoryFindObject(const char *name) {
  * @param[in] objp      pointer to the object to be retrieved
  *
  * @return              The reference to the found registered object.
- * @retval NULL         if a registered object with the specified name
+ * @retval NULL         if a registered object with the specified pointer
  *                      does not exist.
  *
  * @api
