@@ -64,6 +64,8 @@ void hal_lld_init(void) {
   /* Disabling PMC write protection. */
   pmcDisableWP();
 
+  PIT->PIT_MR &= ~(PIT_MR_PITEN | PIT_MR_PITIEN);
+
   /* Configures peripherals as not-secure */
   MATRIX0->MATRIX_SPSELR[0] = 0xFFFFFFFF;
   MATRIX0->MATRIX_SPSELR[1] = 0xFFFFFFFF;
@@ -85,8 +87,10 @@ void hal_lld_init(void) {
 #if defined(SAMA_DMA_REQUIRED)
   dmaInit();
 #endif
+
   /* Advanced interrupt controller init */
   aicInit();
+
 }
 
 /**
