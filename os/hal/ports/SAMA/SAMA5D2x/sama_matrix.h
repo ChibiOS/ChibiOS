@@ -38,7 +38,7 @@
 #define LOWER_AREA_SECURABLE     0x0u
 
 /**
- * @brief   The low area of region is the non-securable one.
+ * @brief   The upper area of region is the non-securable one.
  */
 #define UPPER_AREA_SECURABLE     0x1u
 
