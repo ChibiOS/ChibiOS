@@ -127,6 +127,8 @@ include $(CHIBIOS)/test/rt/rt_test.mk
 include $(CHIBIOS)/test/oslib/oslib_test.mk
 
 # Define linker script file here
+#LDSCRIPT= $(STARTUPLD)/SAMA5D2.ld
+# Only if SAMA_NO_INIT is TRUE 
 LDSCRIPT= $(STARTUPLD)/SAMA5D2ddr.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
