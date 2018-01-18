@@ -18,7 +18,6 @@
 #include "hal.h"
 #include "rt_test_root.h"
 #include "oslib_test_root.h"
-
 /*
  * LED blinker thread, times are in milliseconds.
  */
