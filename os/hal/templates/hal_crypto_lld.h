@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    hal_cry_lld.h
+ * @file    hal_crypto_lld.h
  * @brief   PLATFORM cryptographic subsystem low level driver header.
  *
  * @addtogroup CRYPTO
