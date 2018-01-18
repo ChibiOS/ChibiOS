@@ -28,6 +28,7 @@
                 .set    MODE_FIQ, 0x11
                 .set    MODE_IRQ, 0x12
                 .set    MODE_SVC, 0x13
+                .set    MODE_MON, 0x16
                 .set    MODE_ABT, 0x17
                 .set    MODE_UND, 0x1B
                 .set    MODE_SYS, 0x1F
@@ -72,6 +73,11 @@ Reset_Handler:
                 msr     CPSR_c, #MODE_SVC | I_BIT | F_BIT
                 mov     sp, r0
                 ldr     r1, =__svc_stack_size__
+                sub     r0, r0, r1
+                /* Monitor */
+                msr     CPSR_c, #MODE_MON | I_BIT | F_BIT
+                mov     sp, r0
+                ldr     r1, =__mon_stack_size__
                 sub     r0, r0, r1
                 /* System */
                 msr     CPSR_c, #MODE_SYS | I_BIT | F_BIT
@@ -121,7 +127,7 @@ bssloop:
                  */
 #if !defined(THUMB_NO_INTERWORKING)
 #if defined(CH_CFG_USE_MMU)
-                bl      __mmu_init
+                bl      __core_init
 #endif
                 bl      __late_init
 #else /* defined(THUMB_NO_INTERWORKING) */
