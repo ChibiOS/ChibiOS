@@ -5,7 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -Og -ggdb -fomit-frame-pointer -falign-functions=16
+  USE_OPT = -O0 -ggdb -fomit-frame-pointer -falign-functions=16
 endif
 
 # C specific options here (added to USE_OPT).
@@ -72,7 +72,7 @@ endif
 # Stack size to the allocated to the ARM FIQ stack. This
 # stack is used for processing interrupts and exceptions.
 ifeq ($(USE_FIQ_STACKSIZE),)
-  USE_FIQ_STACKSIZE = 64
+  USE_FIQ_STACKSIZE = 0x400
 endif
 
 # Stack size to the allocated to the ARM Supervisor stack. This
@@ -127,7 +127,7 @@ include $(CHIBIOS)/test/rt/rt_test.mk
 include $(CHIBIOS)/test/oslib/oslib_test.mk
 
 # Define linker script file here
-LDSCRIPT= $(STARTUPLD)/SAMA5D2.ld
+LDSCRIPT= $(STARTUPLD)/SAMA5D2ddr.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
