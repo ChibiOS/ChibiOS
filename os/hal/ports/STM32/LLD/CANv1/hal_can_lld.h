@@ -275,7 +275,7 @@ typedef struct {
   /**
    * @brief   Number of the filter to be programmed.
    */
-  uint32_t                  filter;
+  uint32_t                  filter:16;
   /**
    * @brief   Filter mode.
    * @note    This bit represent the CAN_FM1R register bit associated to this

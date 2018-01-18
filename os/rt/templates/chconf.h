@@ -317,19 +317,6 @@
 #define CH_CFG_USE_OBJ_FIFOS                TRUE
 
 /**
- * @name    Objects factory settings.
- * @{
- */
-#define CH_CFG_USE_FACTORY                  TRUE
-#define CH_CFG_FACTORY_MAX_NAMES_LENGTH     8
-#define CH_CFG_FACTORY_OBJECTS_REGISTRY     TRUE
-#define CH_CFG_FACTORY_GENERIC_BUFFERS      TRUE
-#define CH_CFG_FACTORY_SEMAPHORES           TRUE
-#define CH_CFG_FACTORY_MAILBOXES            TRUE
-#define CH_CFG_FACTORY_OBJ_FIFOS            TRUE
-/** @} */
-
-/**
  * @brief   Dynamic Threads APIs.
  * @details If enabled then the dynamic threads creation APIs are included
  *          in the kernel.
