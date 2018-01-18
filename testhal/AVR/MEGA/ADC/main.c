@@ -73,7 +73,7 @@ static THD_FUNCTION(Thd2, arg) {
   while (TRUE) {
     /* Make ADC conversion of the voltage on A0. */
     adcConvert(&ADCD1, &my_conversion_group, sample_buff, MY_SAMPLING_NUMBER);
-    
+
     /* Making mean of sampled values.*/
     for (i = 0; i < MY_NUM_CH * MY_SAMPLING_NUMBER; i++) {
       adcConvA0 += sample_buff[i];
@@ -84,7 +84,7 @@ static THD_FUNCTION(Thd2, arg) {
   }
 }
 
-/*
+/**
  * Application entry point.
  */
 int main(void) {
@@ -112,7 +112,7 @@ int main(void) {
   chThdCreateStatic(waThd2, sizeof(waThd2), NORMALPRIO + 1, Thd2, NULL);
 
   chprintf(chp, "AVR ADC program example... \r\n");
-  
+
   while (TRUE) {
     chprintf(chp, "Measure the voltage on A0 pin: \r\n");
     chprintf(chp, "   %.3fv \r\n", voltageA0);
