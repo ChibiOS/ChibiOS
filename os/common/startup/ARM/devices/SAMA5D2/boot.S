@@ -21,6 +21,13 @@
  * @addtogroup SAMA5D2_BOOT
  * @{
  */
+#define FALSE 0
+#define TRUE  1
+#define _FROM_ASM_
+#include "chlicense.h"
+#include "chconf.h"
+#include "armparams.h"
+
 #if !defined(__DOXYGEN__)
 
                 .set    AIC_REDIR_KEY,  0x5B6C0E26 << 1
@@ -42,6 +49,8 @@ Boot_Handler:
                  */
                 ldr     r0, =_start
                 mcr     p15, 0, r0, c12, c0, 0
+
+#if (CH_CFG_SEC_WORLD == TRUE)
                 /*
                  * Do not redirect secure interrupts to AIC
                  */
@@ -52,6 +61,7 @@ Boot_Handler:
 				bic     r0, r0, #0x1
 				ldr     r1, =SFR_AICREDIR
 				str     r0, [r1]
+#endif
                 /*
                  * Reset SCTLR Settings
                  */
@@ -63,6 +73,7 @@ Boot_Handler:
                 bic     r0, r0, #(0x1 << 13)        // Clear V bit 13 to disable hivecs
                 mcr     p15, 0, r0, c1, c0, 0       // Write value back to CP15 System Control register
                 isb
+#if (CH_CFG_SEC_WORLD == TRUE)
                 /*
                  * Turn off L2Cache
                  */
@@ -75,6 +86,7 @@ Boot_Handler:
                 bic     r0, r0, #0x1
                 ldr     r1, =SFR_L2CC_HRAMC
                 str     r0, [r1]
+#endif
                 b       Reset_Handler
 #endif /* !defined(__DOXYGEN__) */
 
