@@ -249,6 +249,8 @@ void mac_lld_init(void) {
 
 #if SAMA_HAL_IS_SECURE
   mtxConfigPeriphSecurity(MATRIX1, ID_GMAC0, SECURE_PER);
+  mtxConfigPeriphSecurity(MATRIX1, ID_GMAC0_Q1, SECURE_PER);
+  mtxConfigPeriphSecurity(MATRIX1, ID_GMAC0_Q2, SECURE_PER);
 #endif /* SAMA_HAL_IS_SECURE */
 
   configurePinsETH();
@@ -276,6 +278,9 @@ void mac_lld_init(void) {
       }
   }
 
+  /* MAC clocks temporary activation.*/
+  pmcEnableETH0();
+
   /* Configures MDIO clock */
   GMAC0->GMAC_NCFGR = (GMAC0->GMAC_NCFGR & ~GMAC_NCFGR_CLK_Msk) | GMAC_CLK;
 
@@ -289,8 +294,6 @@ void mac_lld_init(void) {
   GMAC0->GMAC_UR &= ~GMAC_UR_RMII;
 #endif
 
-  /* MAC clocks temporary activation.*/
-  pmcEnableETH0();
   /* PHY address setup.*/
 #if defined(BOARD_PHY_ADDRESS)
   ETHD0.phyaddr = BOARD_PHY_ADDRESS;
