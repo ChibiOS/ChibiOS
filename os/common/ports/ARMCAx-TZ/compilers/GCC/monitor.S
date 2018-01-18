@@ -21,6 +21,9 @@
  * @addtogroup ARM_CORE
  * @{
  */
+#define TRUE    1
+#define FALSE   0
+
 #define _FROM_ASM_
 #include "chlicense.h"
 #include "chconf.h"
@@ -33,7 +36,7 @@
  * state when a fiq interrupt is fired (sm_fiq).
  * They originate by the monitor irq/fiq vector and run in monitor mode,
  * ie in secure state.
- * It assumes the following, set at boot time, or wherever it needs:
+ * It assumes the following, intially set at boot time, or wherever it needs:
  *   SCR.FW  == 0 and SCR.FIQ == 1 and SCR.IRQ == 0 in non-secure state,
  *      ie FIQs are taken to monitor mode, IRQs are taken locally
  *   SCR.FW  == 0 and SCR.FIQ == 0 and SCR.IRQ == 1 in secure state,
@@ -93,7 +96,27 @@ _monitor_vectors:
  * SMC entry
  */
 sm_call:
-                b   sm_call     // Unhandled
+                ldr     r12, =MON_S_SCR                     // enter in the secure world
+                mcr     p15, 0, r12, c1, c1, 0
+                ands    r0, r0                              // OS special service,
+                                                            // 0 == jump trampoline to non secure world
+                                                            // r1 contains the address where it jumps
+                beq     1f
+                msr     CPSR_c, #MODE_SYS | I_BIT           // switch to sys mode, foreign int disabled
+                stmfd   sp!, {lr}                           // save lr
+                bl      smcEntry                            // call the C smc handler
+                ldmfd   sp!, {lr}                           // restore lr
+                msr     CPSR_c, #MODE_MON | I_BIT | F_BIT   // switch to monitor mode
+                ldr     r12, =MON_NS_SCR                    // enter in the non-secure world
+                mcr     p15, 0, r12, c1, c1, 0
+                subs    pc, lr, #0                          // return from smc
+1:
+                mov     lr, r1                              // use the address in r1 as return address
+                                                            // in the non secure world
+                ldr     r12, =MON_NS_SCR                    // enter in the non-secure world
+                mcr     p15, 0, r12, c1, c1, 0
+                subs    pc, lr, #0                          // return from smc
+
 /*
  * FIQ entry
  *
@@ -109,11 +132,11 @@ sm_fiq:
                                                             // check point: SCR.NS == 1
                 stmfd   sp!, {r0}
                 ldr     r0, =MON_S_SCR                      // enter in the secure world
-                mrc     p15, 0, r0, c1, c1, 0
+                mcr     p15, 0, r0, c1, c1, 0
                 msr     CPSR_c, #MODE_SYS | I_BIT           // FIQ enabled, served via base table
                 msr     CPSR_c, #MODE_MON | I_BIT | F_BIT   // the handler returns here. Switch to monitor mode
                 ldr     r0, =MON_NS_SCR                     // set non-secure SCR before return
-                mrc     p15, 0, r0, c1, c1, 0
+                mcr     p15, 0, r0, c1, c1, 0
                 ldmfd   sp!, {r0}
                 subs    pc, lr, #4                          // return into non-secure world
 /*
@@ -123,9 +146,9 @@ sm_fiq:
  * Current mode is monitor (so current state is secure),
  * the previous mode and status is in mon.spsr and
  * the return address+4 is in mon.lr.
- * Because we are running in secure state, main thread is suspended in
- * the smc handler.
- * The main thread is resumed with MSG_TIMEOUT
+ * Because we are running in secure state, we are sure that
+ * the main thread is suspended in the smc handler.
+ * The main thread is then resumed with MSG_TIMEOUT
  * The non secure IRQ handler has then the responsibility to return into
  * secure state via a smc.
  *
@@ -142,12 +165,12 @@ sm_fiq:
                                                             // check point: ns_tread != 0
                 ldr     r0, =_ns_thread
                 mov     r1, #MSG_TIMEOUT
-#if CH_DBG_SYSTEM_STATE_CHECK
+#if (CH_DBG_SYSTEM_STATE_CHECK == TRUE)
                 bl      _dbg_check_lock
 #endif
                 bl      chThdResumeS                        // resume the ns_thread and serve the IRQ
                                                             // into non-secure world
-#if CH_DBG_SYSTEM_STATE_CHECK
+#if (CH_DBG_SYSTEM_STATE_CHECK == TRUE)
                 bl      _dbg_check_unlock
 #endif
                 // The ns_thread reentered smc, that set SRC.NS to 0
@@ -160,6 +183,12 @@ sm_fiq:
                 ldmfd   sp!, {r0-r3, r12, lr}
                 msr     CPSR_c, #MODE_MON | I_BIT | F_BIT
                 subs    pc, lr, #4                          // return into secure world
+
+                .global _ns_trampoline
+_ns_trampoline:
+                mov     r1, r0
+                ldr     r0, =#0
+                smc     #0
 
 #endif /* !defined(__DOXYGEN__) */
 
