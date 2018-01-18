@@ -99,7 +99,6 @@ Boot_Handler:
                  */
                 ldr     r0, =SCR_RESET_VAL          // IRQ and ABT to monitor in secure mode
                 mcr     p15, 0, r0, c1, c1, 0
-
                 b       Reset_Handler
 #endif /* !defined(__DOXYGEN__) */
 

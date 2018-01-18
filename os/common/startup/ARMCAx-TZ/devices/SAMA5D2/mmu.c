@@ -89,13 +89,13 @@ static uint32_t mmuTable[4096] CC_ALIGN(16384);
 /*===========================================================================*/
 
 /**
- * @brief   MMU Module initialization.
+ * @brief   Core/MMU Module initialization.
  * @note    This function is implicitly invoked on system initialization,
  *          there is no need to explicitly initialize the module.
  *
  * @notapi
  */
-void __mmu_init(void) {
+void __core_init(void) {
   uint32_t pm;
 
   /*
