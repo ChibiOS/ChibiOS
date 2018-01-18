@@ -59,80 +59,8 @@
 
                 .text
 
-/*
- * The following functions are only present if there is THUMB code in
- * the system.
- */
-#if defined(THUMB_PRESENT)
-                .balign 16
-                .code   16
-                .thumb_func
-                .global _port_get_cpsr
-_port_get_cpsr:
-                mov     r0, pc
-                bx      r0
-.code 32
-                mrs     r0, CPSR
-                bx      lr
 
                 .balign 16
-                .code   16
-                .thumb_func
-                .global _port_disable_thumb
-_port_disable_thumb:
-                mov     r3, pc
-                bx      r3
-.code 32
-                mrs     r3, CPSR
-                orr     r3, #I_BIT
-                msr     CPSR_c, r3
-                orr     r3, #F_BIT
-                msr     CPSR_c, r3
-                bx      lr
-
-                .balign 16
-                .code   16
-                .thumb_func
-                .global _port_suspend_thumb
-_port_suspend_thumb:
-                // Goes into _port_unlock_thumb
-
-                .code   16
-                .global _port_lock_thumb
-_port_lock_thumb:
-                mov     r3, pc
-                bx      r3
-                .code   32
-                msr     CPSR_c, #MODE_SYS | I_BIT
-                bx      lr
-
-                .balign 16
-                .code   16
-                .thumb_func
-                .global _port_enable_thumb
-_port_enable_thumb:
-                // Goes into _port_unlock_thumb
-
-                .code   16
-                .global _port_unlock_thumb
-_port_unlock_thumb:
-                mov     r3, pc
-                bx      r3
-                .code   32
-                msr     CPSR_c, #MODE_SYS
-                bx      lr
-#endif /* defined(THUMB_PRESENT) */
-
-                .balign 16
-#if defined(THUMB_PRESENT)
-                .code   16
-                .thumb_func
-                .global _port_switch_thumb
-_port_switch_thumb:
-                mov     r2, pc
-                bx      r2
-                // Goes into _port_switch_arm in ARM mode
-#endif /* defined(THUMB_PRESENT) */
 
                 .code   32
                 .global _port_switch_arm
@@ -140,12 +68,7 @@ _port_switch_arm:
                 stmfd   sp!, {r4, r5, r6, r7, r8, r9, r10, r11, lr}
                 str     sp, [r1, #12]
                 ldr     sp, [r0, #12]
-#if defined(THUMB_PRESENT)
-                ldmfd   sp!, {r4, r5, r6, r7, r8, r9, r10, r11, lr}
-                bx      lr
-#else /* !defined(THUMB_PRESENT)T */
                 ldmfd   sp!, {r4, r5, r6, r7, r8, r9, r10, r11, pc}
-#endif /* !defined(THUMB_PRESENT) */
 
 /*
  * Common IRQ code. It expects a macro ARM_IRQ_VECTOR_REG with the address
@@ -183,19 +106,9 @@ Irq_Handler:
                 stmfd   sp!, {r0-r3, r12, lr}
                 ldr     r0, =ARM_IRQ_VECTOR_REG
                 ldr     r0, [r0]
-#if !defined(THUMB_NO_INTERWORKING)
                 ldr     lr, =_irq_ret_arm       // ISR return point.
                 bx      r0                      // Calling the ISR.
 _irq_ret_arm:
-#else /* defined(THUMB_NO_INTERWORKING) */
-                add     r1, pc, #1
-                bx      r1
-                .code   16
-                bl      _bxr0                   // Calling the ISR.
-                mov     lr, pc
-                bx      lr
-                .code   32
-#endif /* defined(THUMB_NO_INTERWORKING) */
                 cmp     r0, #0
                 ldmfd   sp!, {r0-r3, r12, lr}
                 subeqs  pc, lr, #4              // No reschedule, returns.
@@ -211,10 +124,6 @@ _irq_ret_arm:
                 stmfd   sp!, {r0, r1}           // Push R0=SPSR, R1=LR_IRQ.
 
                 // Context switch.
-#if defined(THUMB_NO_INTERWORKING)
-                add     r0, pc, #1
-                bx      r0
-                .code   16
 #if CH_DBG_SYSTEM_STATE_CHECK
                 bl      _dbg_check_lock
 #endif
@@ -222,18 +131,6 @@ _irq_ret_arm:
 #if CH_DBG_SYSTEM_STATE_CHECK
                 bl      _dbg_check_unlock
 #endif
-                mov     lr, pc
-                bx      lr
-                .code   32
-#else /* !defined(THUMB_NO_INTERWORKING) */
-#if CH_DBG_SYSTEM_STATE_CHECK
-                bl      _dbg_check_lock
-#endif
-                bl      chSchDoReschedule
-#if CH_DBG_SYSTEM_STATE_CHECK
-                bl      _dbg_check_unlock
-#endif
-#endif /* !defined(THUMB_NO_INTERWORKING) */
 
                 // Re-establish the IRQ conditions again.
                 ldmfd   sp!, {r0, r1}           // Pop R0=SPSR, R1=LR_IRQ.
@@ -244,10 +141,6 @@ _irq_ret_arm:
                 ldmfd   sp!, {r0-r3, r12, lr}
                 msr     CPSR_c, #MODE_IRQ | I_BIT
                 subs    pc, lr, #4
-#if defined(THUMB_NO_INTERWORKING)
-                .code   16
-_bxr0:          bx      r0
-#endif
 
 /*
  * Threads trampoline code.
@@ -258,28 +151,6 @@ _bxr0:          bx      r0
                 .code   32
                 .globl  _port_thread_start
 _port_thread_start:
-#if defined(THUMB_NO_INTERWORKING)
-                add     r0, pc, #1
-                bx      r0
-                .code   16
-#if CH_DBG_SYSTEM_STATE_CHECK
-                bl      _dbg_check_unlock
-#endif
-                bl      _port_unlock_thumb
-                mov     r0, r5
-                bl      _bxr4
-#if defined(_CHIBIOS_RT_CONF_)
-                mov     r0, #0              /* MSG_OK */
-                bl      chThdExit
-_zombies:       b       _zombies
-#endif
-#if defined(_CHIBIOS_NIL_CONF_)
-                mov     r0, #0
-                bl      chSysHalt
-#endif
-_bxr4:          bx      r4
-
-#else /* !defined(THUMB_NO_INTERWORKING) */
 #if CH_DBG_SYSTEM_STATE_CHECK
                 bl      _dbg_check_unlock
 #endif
@@ -296,8 +167,6 @@ _zombies:       b       _zombies
                 mov     r0, #0
                 bl      chSysHalt
 #endif
-
-#endif /* !defined(THUMB_NO_INTERWORKING) */
 
 #endif /* !defined(__DOXYGEN__) */
 
