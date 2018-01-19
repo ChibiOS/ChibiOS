@@ -99,6 +99,7 @@ void smcInit(void) {
 
 /**
  * @brief   The trusted service call entry point.
+ * @pre     The foreign interrupts are disabled.
  * @post    A request is passed to the thread registered for the service.
  * @post    The service thread is resumed.
  *
@@ -184,7 +185,7 @@ msg_t smcServiceWaitRequest(smc_service_t *svcp)
 
   chSysLock();
   if (_ns_thread) {
-    /* Ack previous service invocation */
+    /* Ack the previous service invocation */
     chThdResumeI(&_ns_thread, MSG_OK);
   }
   r = chThdSuspendTimeoutS(&svcp->svct, TIME_INFINITE);

@@ -433,21 +433,20 @@ static inline bool port_is_isr_context(void) {
 
 /**
  * @brief   Kernel-lock action.
- * @details In this port it disables the FIQ sources and keeps IRQ sources
- *          disabled.
+ * @details In this port it disables the FIQ sources and keeps IRQ state.
  */
 static inline void port_lock(void) {
 
-  __asm volatile ("msr     CPSR_c, #0xDF" : : : "memory");
+  __asm volatile ("cpsid   f" : : : "memory");
 }
 
 /**
  * @brief   Kernel-unlock action.
- * @details In this port it enables the FIQ sources.
+ * @details In this port it enables the FIQ sources and keeps IRQ state.
  */
 static inline void port_unlock(void) {
 
-  __asm volatile ("msr     CPSR_c, #0x9F" : : : "memory");
+  __asm volatile ("cpsie   f" : : : "memory");
 }
 
 /**
@@ -488,11 +487,11 @@ static inline void port_suspend(void) {
 
 /**
  * @brief   Enables all the interrupt sources.
- * @note    In this port it enables the FIQ sources.
+ * @note    In this port it enables the FIQ and IRQ sources.
  */
 static inline void port_enable(void) {
 
-  __asm volatile ("msr     CPSR_c, #0x9F" : : : "memory");
+  __asm volatile ("msr     CPSR_c, #0x1F" : : : "memory");
 }
 
 /**
