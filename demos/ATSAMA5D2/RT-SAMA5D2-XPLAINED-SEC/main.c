@@ -80,8 +80,10 @@ static THD_FUNCTION(DummyTrustedService, arg) {
   svcp = (smc_service_t *)smc_hdl->objp;
   while (true) {
     m = smcServiceWaitRequest(svcp);
-    if (m == MSG_OK) {
+    if (m == MSG_OK && svcp->svc_datalen > 0) {
+      *((char *)svcp->svc_data + svcp->svc_datalen) = '\0';
       chprintf((BaseSequentialStream*)&SD1, (char *)svcp->svc_data);
+      chprintf((BaseSequentialStream*)&SD1, "\r\n");
     }
     chThdSleepMilliseconds(500);
   }
