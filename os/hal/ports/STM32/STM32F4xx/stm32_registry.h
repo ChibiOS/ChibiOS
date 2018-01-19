@@ -1776,7 +1776,8 @@
 #define STM32_SPI1_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(2, 0) |\
                                              STM32_DMA_STREAM_ID_MSK(2, 2))
 #define STM32_SPI1_RX_DMA_CHN               0x00000303
-#define STM32_SPI1_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(2, 3) |\
+#define STM32_SPI1_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(2, 2) |\
+                                             STM32_DMA_STREAM_ID_MSK(2, 3) |\
                                              STM32_DMA_STREAM_ID_MSK(2, 5))
 #define STM32_SPI1_TX_DMA_CHN               0x00303000
 
