@@ -166,6 +166,8 @@
        dependencies and configuration directories. This makes possible
        to have multiple non-conflicting makefiles in the same project.
        Updated the various platform.mk implementing "smart build" mode.
+- HAL: Fixed STM32 SDMMCv1 driver not setting DMA channel properly for SDCD2
+       instance (bug #912)(backported to 17.6.4).
 - LIB: Fixed inner semaphore not updated in chGuardedPoolAllocI() function
        (bug #911).
 - RT:  Fixed compile error with assertions enabled and dynamic extensions

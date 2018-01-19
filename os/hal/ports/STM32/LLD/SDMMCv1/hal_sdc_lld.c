@@ -424,8 +424,7 @@ void sdc_lld_start(SDCDriver *sdcp) {
     sdcp->config = &sdc_default_cfg;
   }
 
-  sdcp->dmamode = STM32_DMA_CR_CHSEL(SDMMC1_DMA_CHANNEL) |
-                  STM32_DMA_CR_PL(STM32_SDC_SDMMC1_DMA_PRIORITY) |
+  sdcp->dmamode = STM32_DMA_CR_PL(STM32_SDC_SDMMC1_DMA_PRIORITY) |
                   STM32_DMA_CR_PSIZE_WORD |
                   STM32_DMA_CR_MSIZE_WORD |
                   STM32_DMA_CR_MINC;
@@ -445,6 +444,7 @@ void sdc_lld_start(SDCDriver *sdcp) {
 
       osalDbgAssert(!b, "stream already allocated");
 
+      sdcp->dmamode |= STM32_DMA_CR_CHSEL(SDMMC1_DMA_CHANNEL);
       dmaStreamSetPeripheral(sdcp->dma, &sdcp->sdmmc->FIFO);
 #if STM32_DMA_ADVANCED
       dmaStreamSetFIFO(sdcp->dma, STM32_DMA_FCR_DMDIS |
@@ -461,6 +461,7 @@ void sdc_lld_start(SDCDriver *sdcp) {
 
       osalDbgAssert(!b, "stream already allocated");
 
+      sdcp->dmamode |= STM32_DMA_CR_CHSEL(SDMMC2_DMA_CHANNEL);
       dmaStreamSetPeripheral(sdcp->dma, &sdcp->sdmmc->FIFO);
 #if STM32_DMA_ADVANCED
       dmaStreamSetFIFO(sdcp->dma, STM32_DMA_FCR_DMDIS |
