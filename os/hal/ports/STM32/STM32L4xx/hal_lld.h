@@ -2103,7 +2103,7 @@
 /**
  * @brief   SDMMC frequency.
  */
-#define STM32_SDMMCCLK              STM32_48CLK
+#define STM32_SDMMC1CLK             STM32_48CLK
 
 /**
  * @brief   Clock of timers connected to APB1

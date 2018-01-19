@@ -166,6 +166,7 @@
        dependencies and configuration directories. This makes possible
        to have multiple non-conflicting makefiles in the same project.
        Updated the various platform.mk implementing "smart build" mode.
+- HAL: Fixed Clock selection for SDMMC2 missing in STM32F7 HAL (bug #913).
 - HAL: Fixed STM32 SDMMCv1 driver not setting DMA channel properly for SDCD2
        instance (bug #912)(backported to 17.6.4).
 - LIB: Fixed inner semaphore not updated in chGuardedPoolAllocI() function
