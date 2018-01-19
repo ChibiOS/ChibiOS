@@ -424,8 +424,7 @@ void sdc_lld_start(SDCDriver *sdcp) {
     sdcp->config = &sdc_default_cfg;
   }
 
-  sdcp->dmamode = STM32_DMA_CR_CHSEL(SDMMC1_DMA_CHANNEL) |
-                  STM32_DMA_CR_PL(STM32_SDC_SDMMC1_DMA_PRIORITY) |
+  sdcp->dmamode = STM32_DMA_CR_PL(STM32_SDC_SDMMC1_DMA_PRIORITY) |
                   STM32_DMA_CR_PSIZE_WORD |
                   STM32_DMA_CR_MSIZE_WORD |
                   STM32_DMA_CR_MINC;
@@ -445,12 +444,13 @@ void sdc_lld_start(SDCDriver *sdcp) {
 
       osalDbgAssert(!b, "stream already allocated");
 
+      sdcp->dmamode |= STM32_DMA_CR_CHSEL(SDMMC1_DMA_CHANNEL);
       dmaStreamSetPeripheral(sdcp->dma, &sdcp->sdmmc->FIFO);
 #if STM32_DMA_ADVANCED
       dmaStreamSetFIFO(sdcp->dma, STM32_DMA_FCR_DMDIS |
                                   STM32_DMA_FCR_FTH_FULL);
 #endif
-      rccEnableSDMMC1(FALSE);
+      rccEnableSDMMC1(false);
     }
 #endif /* STM32_SDC_USE_SDMMC1 */
 
@@ -461,12 +461,13 @@ void sdc_lld_start(SDCDriver *sdcp) {
 
       osalDbgAssert(!b, "stream already allocated");
 
+      sdcp->dmamode |= STM32_DMA_CR_CHSEL(SDMMC2_DMA_CHANNEL);
       dmaStreamSetPeripheral(sdcp->dma, &sdcp->sdmmc->FIFO);
 #if STM32_DMA_ADVANCED
       dmaStreamSetFIFO(sdcp->dma, STM32_DMA_FCR_DMDIS |
                                   STM32_DMA_FCR_FTH_FULL);
 #endif
-      rccEnableSDMMC2(FALSE);
+      rccEnableSDMMC2(false);
     }
 #endif /* STM32_SDC_USE_SDMMC2 */
   }
@@ -501,13 +502,13 @@ void sdc_lld_stop(SDCDriver *sdcp) {
     /* Clock deactivation.*/
 #if STM32_SDC_USE_SDMMC1
     if (&SDCD1 == sdcp) {
-      rccDisableSDMMC1(FALSE);
+      rccDisableSDMMC1(false);
     }
 #endif
 
 #if STM32_SDC_USE_SDMMC2
     if (&SDCD2 == sdcp) {
-      rccDisableSDMMC2(FALSE);
+      rccDisableSDMMC2(false);
     }
 #endif
   }
@@ -816,10 +817,10 @@ bool sdc_lld_read_aligned(SDCDriver *sdcp, uint32_t startblk,
                        SDMMC_DCTRL_DMAEN |
                        SDMMC_DCTRL_DTEN;
 
-  if (sdc_lld_prepare_read(sdcp, startblk, blocks, resp) == TRUE)
+  if (sdc_lld_prepare_read(sdcp, startblk, blocks, resp) == true)
     goto error;
 
-  if (sdc_lld_wait_transaction_end(sdcp, blocks, resp) == TRUE)
+  if (sdc_lld_wait_transaction_end(sdcp, blocks, resp) == true)
     goto error;
 
   return HAL_SUCCESS;
@@ -871,7 +872,7 @@ bool sdc_lld_write_aligned(SDCDriver *sdcp, uint32_t startblk,
   sdcp->sdmmc->DLEN  = blocks * MMCSD_BLOCK_SIZE;
 
   /* Talk to card what we want from it.*/
-  if (sdc_lld_prepare_write(sdcp, startblk, blocks, resp) == TRUE)
+  if (sdc_lld_prepare_write(sdcp, startblk, blocks, resp) == true)
     goto error;
 
   /* Transaction starts just after DTEN bit setting.*/
@@ -880,7 +881,7 @@ bool sdc_lld_write_aligned(SDCDriver *sdcp, uint32_t startblk,
                        SDMMC_DCTRL_DMAEN |
                        SDMMC_DCTRL_DTEN;
 
-  if (sdc_lld_wait_transaction_end(sdcp, blocks, resp) == TRUE)
+  if (sdc_lld_wait_transaction_end(sdcp, blocks, resp) == true)
     goto error;
 
   return HAL_SUCCESS;
