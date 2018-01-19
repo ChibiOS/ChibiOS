@@ -29,6 +29,7 @@
 #define CHSMC_H
 
 #include "ch.h"
+#include "ccportab.h"
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -36,12 +37,16 @@
 /*
  * Service registry errors
  */
-#define SMC_SVC_OK                MSG_RESET  /* No error */
-#define SMC_SVC_MANAGED           0x01    /* The service is already managed by a thread */
-#define SMC_SVC_THREAD_EXIST      0x02    /* The thread already manages a service */
-#define SMC_SVC_THREAD_NOENT      0x03    /* The thread is not in the registry */
+#define SMC_SVC_OK                MSG_RESET /* No error */
+#define SMC_SVC_MANAGED           0x01      /* The service is already managed by a thread */
+#define SMC_SVC_THREAD_EXIST      0x02      /* The thread already manages a service */
+#define SMC_SVC_THREAD_NOENT      0x03      /* The thread is not in the registry */
 
-#define SMC_SVC_PARAMS_MAX_N      3       /* Max number of parameters for a service */
+/*
+ * Special service handles
+ */
+#define SMC_HND_TRAMP             0
+#define SMC_HND_FIND              1
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -54,9 +59,12 @@
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
+typedef uint8_t * smc_params_area_t;
+
 typedef struct ch_smc_service {
   thread_reference_t  svct;
-  msg_t               params[SMC_SVC_PARAMS_MAX_N];
+  smc_params_area_t svc_data;
+  uint32_t  svc_datalen;
 } smc_service_t;
 
 /*===========================================================================*/
@@ -70,9 +78,11 @@ typedef struct ch_smc_service {
 #ifdef __cplusplus
 extern "C" {
 #endif
-thread_reference_t _ns_thread;
+extern thread_reference_t _ns_thread;
+CC_NO_RETURN void _ns_trampoline(uint32_t addr);
+void smcInit(void);
 msg_t smc_entry(msg_t svc_number, void *svc_data);
-smc_service_t * smcRegisterMeAsService(const char *svc_name);
+registered_object_t * smcRegisterMeAsService(const char *svc_name);
 #ifdef __cplusplus
 }
 #endif

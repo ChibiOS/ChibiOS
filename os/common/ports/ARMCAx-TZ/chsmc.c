@@ -24,7 +24,7 @@
  * @addtogroup SMC
  * @{
  */
-#include <string.h>
+//#include <string.h>
 
 #include "ch.h"
 #include "chsmc.h"
@@ -36,6 +36,7 @@
 /*===========================================================================*/
 /* Module exported variables.                                                */
 /*===========================================================================*/
+thread_reference_t _ns_thread;
 
 /*===========================================================================*/
 /* Module local types.                                                       */
@@ -50,29 +51,41 @@ static memory_pool_t svcs_pool;
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
+static bool isAddrspaceValid(void *addr, uint32_t len)
+{
+  (void) addr;
+  (void) len;
+  return TRUE;
+}
+
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
 /**
  * @brief   XXX Module initialization.
- * @note    This function is implicitly invoked on system initialization,
- *          there is no need to explicitly initialize the module.
  *
  * @notapi
  */
-void _smc_init(void) {
+void smcInit(void) {
   chPoolObjectInit(&svcs_pool, sizeof (smc_service_t),
                    chCoreAllocAlignedI);
+}
+
+registered_object_t *smcFindService(const char *name, uint32_t namelen) {
+  (void) name;
+  (void) namelen;
+  return 0;
 }
 
 /**
  * @brief   The trusted service call entry point.
  * @post    A request is passed to the thread registered for the service.
- * @post    The service thread is resumed, if necessary.
+ * @post    The service thread is resumed.
  *
  * @param[in] svc_handle  the handle of the service to be invoked
  * @param[in] svc_data    service request data, often a reference to a more complex structure
+ * @param[in] svc_datalen size of the svc_data memory area
  *
  * @return              a value defined by the service.
  * @retval MSG_OK       a success value.
@@ -80,16 +93,23 @@ void _smc_init(void) {
  *
  * @notapi
  */
-msg_t smcEntry(registered_object_t svc_handle, void *svc_data) {
+msg_t smcEntry(smc_service_t *svc_handle, smc_params_area_t svc_data, uint32_t svc_datalen) {
+  registered_object_t *rop;
   msg_t r;
 
   asm("bkpt #0\n\t");
-  chDbgAssert(_ns_thread == NULL, "main thread consistency");
-
+  if (!isAddrspaceValid(svc_data, svc_datalen))
+    return MSG_RESET;
+  rop = chFactoryFindObjectByPointer(svc_handle);
+  if (rop == NULL)
+    return MSG_RESET;
+  svc_handle->svc_data = svc_data;
+  svc_handle->svc_datalen = svc_datalen;
   chSysLock();
+  chThdResumeS(&svc_handle->svct, MSG_OK);
   r = chThdSuspendS(&_ns_thread);
-  _ns_thread = NULL;
   chSysUnlock();
+  chFactoryReleaseObject(rop);
   return r;
 }
 
@@ -100,36 +120,33 @@ msg_t smcEntry(registered_object_t svc_handle, void *svc_data) {
  *
  * @param[in] svc_name    the name of the service.
  *
- * @return                A new allocated service object.
+ * @return                a registered smc service object.
  * @retval NULL           if @p svc_name failed to be registered.
  *
  * @notapi
  */
-smc_service_t *smcRegisterMeAsService(const char *svc_name)
+registered_object_t *smcRegisterMeAsService(const char *svc_name)
 {
   registered_object_t *rop;
 
   smc_service_t *svcp = chPoolAlloc(&svcs_pool);
-  svcp->svct = chThdGetSelfX();
-  memset(svcp->params, 0, sizeof svcp->params);
   rop = chFactoryRegisterObject(svc_name, svcp);
   if (rop == NULL) {
     chPoolFree(&svcs_pool, svcp);
     return NULL;
   }
-  return svcp;
+  return rop;
 }
 
 /**
  * @brief   The calling thread is a service and wait the arrival of a request.
- * @post
+ * @post    the service object is filled with the parameters of the requestor.
  *
- * @param[in] svc_name    the name of the service
- * @param[in] svc_number  the number of the service
+ * @param[in] svcp          the service object reference.
  *
- * @return                  the
- * @retval SMC_SVC_OK       a success value.
- * @retval SMC_SVC_MANAGED  if the service @p scv_name already exists.
+ * @return                  the reason of the awakening
+ * @retval MSG_OK           a success value.
+ * @retval MSG_TIMEOUT      a success value.
  *
  * @notapi
  */
@@ -139,8 +156,6 @@ msg_t smcServiceWaitRequest(smc_service_t *svcp)
 
   chDbgCheck(svcp != NULL);
 
-  if (svcp->svct != chThdGetSelfX())
-    return MSG_TIMEOUT;
   chSysLock();
   r = chThdSuspendTimeoutS(&svcp->svct, TIME_INFINITE);
   chSysUnlock();
