@@ -78,7 +78,8 @@ static void smcReleaseService(smc_service_t *svc_handle) {
   rop = chFactoryFindObjectByPointer(svc_handle);
   if (rop == NULL)
     return;
-  chFactoryReleaseObject(rop);
+  chFactoryReleaseObject(rop); /* our ref */
+  chFactoryReleaseObject(rop); /* original ref */
 }
 #endif
 
@@ -182,6 +183,10 @@ msg_t smcServiceWaitRequest(smc_service_t *svcp)
   chDbgCheck(svcp != NULL);
 
   chSysLock();
+  if (_ns_thread) {
+    /* Ack previous service invocation */
+    chThdResumeI(&_ns_thread, MSG_OK);
+  }
   r = chThdSuspendTimeoutS(&svcp->svct, TIME_INFINITE);
   chSysUnlock();
   return r;
