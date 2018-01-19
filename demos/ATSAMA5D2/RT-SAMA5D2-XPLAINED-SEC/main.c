@@ -18,9 +18,8 @@
 #include "hal.h"
 #include "rt_test_root.h"
 #include "oslib_test_root.h"
-#include "ccportab.h"
 #include "chprintf.h"
-#include "string.h"
+#include "chsmc.h"
 
 /*
  * LED blinker thread, times are in milliseconds.
@@ -53,7 +52,38 @@ static const SerialConfig sdcfg = {
   UART_MR_PAR_NO
 };
 
-CC_NO_RETURN void _ns_trampoline(uint32_t addr);
+/*
+ *  Dummy trust service thread.
+ */
+static THD_WORKING_AREA(waDummyTrustedService, 512);
+static THD_FUNCTION(DummyTrustedService, arg) {
+
+  (void)arg;
+  msg_t m;
+  chRegSetThreadName("DTS");
+
+  /*
+   * Register the trust service
+   */
+  registered_object_t *smc_hdl = smcRegisterMeAsService("DummyTrustedService");
+  if (smc_hdl == NULL) {
+    /*
+     * Error: the service is already registered
+     * or memory is exhausted.
+     */
+    return;
+  }
+  /*
+   * Wait and process requests
+   */
+  while (true) {
+    m = smcServiceWaitRequest((smc_service_t *)smc_hdl->objp);
+    if (m == MSG_OK)
+      chThdSleepMilliseconds(500);
+    else
+      chThdSleepMilliseconds(5000);
+  }
+}
 
 /*
  * Application entry point.
@@ -69,6 +99,7 @@ int main(void) {
    */
   halInit();
   chSysInit();
+  smcInit();
 
   /*
    * Activates the serial driver 0 using the driver default configuration.
@@ -82,10 +113,17 @@ int main(void) {
    * Creates the blinker thread.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO-64, Thread1, NULL);
+  /*
+   * Creates the dummy service thread.
+   */
+  chThdCreateStatic(waDummyTrustedService, sizeof(waDummyTrustedService), NORMALPRIO-32,
+      DummyTrustedService, NULL);
 
   /*
-   * All DDR memory, also from AESB point of view is
-   * configured as non secure READ and WRITE.
+   * The DDR memory is divided in 4 regions. Each region is 2MB large.
+   * The first region is split in two areas, each 1MB large.
+   * The lower area of this first region is non secure.
+   * All the rest of the regions space is secured.
    */
   mtxSetSlaveRegionSize(MATRIX0, H64MX_SLAVE_DDR_PORT0, MATRIX_AREA_SIZE_2M, REGION_0_MSK);
   mtxSetSlaveRegionSize(MATRIX0, H64MX_SLAVE_DDR_PORT1, MATRIX_AREA_SIZE_2M, REGION_0_MSK);
@@ -123,14 +161,16 @@ int main(void) {
       mtxRegionWrnsech(REGION_1, NOT_SECURE_WRITE) |
       mtxRegionWrnsech(REGION_2, NOT_SECURE_WRITE) |
       mtxRegionWrnsech(REGION_3, NOT_SECURE_WRITE));
+
   /*
    * Jump in the NON SECURE world
    * This 'main' thread become the non secure environment as view by
    * the secure world.
    */
+  chThdSleepMilliseconds(1000);
   chprintf((BaseSequentialStream*)&SD1, "Jumping in the non secure world\n\r");
   _ns_trampoline(0x20000000);
   /*
-   * Never it goes here
+   * It never goes here
    */
 }
