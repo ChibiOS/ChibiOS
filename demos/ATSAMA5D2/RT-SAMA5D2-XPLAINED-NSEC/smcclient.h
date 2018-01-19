@@ -18,48 +18,65 @@
 */
 
 /**
- * @file    smcclient.c
- * @brief   SMC client module code.
+ * @file    smcclient.h
+ * @brief   smc Module macros and structures.
  *
  * @addtogroup SMC
  * @{
  */
 
-#include "ch.h"
-#include "smcclient.h"
+#ifndef SMCCLIENT_H
+#define SMCCLIENT_H
 
 /*===========================================================================*/
-/* Module local definitions.                                                 */
+/* Module constants.                                                         */
+/*===========================================================================*/
+/*
+ * Service registry errors
+ */
+#define SMC_SVC_OK                MSG_OK /* No error */
+
+/*
+ * Special service handles
+ */
+#define SMC_HND_TRAMP             ((smc_service_t)0)
+#define SMC_HND_GET               ((smc_service_t)1)
+
+/*===========================================================================*/
+/* Module pre-compile time settings.                                         */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Module exported variables.                                                */
+/* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Module local types.                                                       */
+/* Module data structures and types.                                         */
+/*===========================================================================*/
+typedef uint8_t * smc_params_area_t;
+typedef void * smc_service_t;
+
+/*===========================================================================*/
+/* Module macros.                                                            */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Module local variables.                                                   */
+/* External declarations.                                                    */
 /*===========================================================================*/
 
-/*===========================================================================*/
-/* Module local functions.                                                   */
-/*===========================================================================*/
-
-/*===========================================================================*/
-/* Module exported functions.                                                */
-/*===========================================================================*/
+#ifdef __cplusplus
+extern "C" {
+#endif
 msg_t smcInvokeService(smc_service_t handle, smc_params_area_t data,
-                       size_t size)
-{
-  msg_t result;
-
-  do {
-    asm volatile("smc #0" : "=r" (result) : "r" (handle), "r" (data), "r" (size));
-  } while (result == MSG_TIMEOUT);
-  return result;
+                       size_t size);
+#ifdef __cplusplus
 }
+#endif
+
+/*===========================================================================*/
+/* Module inline functions.                                                  */
+/*===========================================================================*/
+
+#endif /* SMCCLIENT_H */
 
 /** @} */

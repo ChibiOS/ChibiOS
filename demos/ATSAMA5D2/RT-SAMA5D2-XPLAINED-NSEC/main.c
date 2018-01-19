@@ -19,6 +19,7 @@
 #include "rt_test_root.h"
 #include "oslib_test_root.h"
 #include "chprintf.h"
+#include "smcclient.h"
 /*
  * LED blinker thread, times are in milliseconds.
  */
@@ -50,14 +51,11 @@ static const SerialConfig sdcfg = {
   UART_MR_PAR_NO
 };
 
-msg_t smcInvokeService(msg_t handle, void *data);
-
 /*
  * Application entry point.
  */
 int main(void) {
-
-  asm("bkpt #0\n\t");
+  smc_service_t smcsvc;
   /*
    * System initializations.
    * - HAL initialization, this also initializes the configured device drivers
@@ -82,16 +80,24 @@ int main(void) {
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO-1, Thread1, NULL);
 
   /*
-   * Call the null secure service
+   * Call the dummy secure service
    */
-  chprintf((BaseSequentialStream*)&SD0, "Calling the 'null' secure service\n\r");
-  //smcInvokeService(1, (void *)2);
+  chprintf((BaseSequentialStream*)&SD0, "Calling the 'dummy' secure service\n\r");
 
+  /* Retrieve the service handle by name */
+  smcsvc = (smc_service_t) smcInvokeService(
+      SMC_HND_GET, (smc_params_area_t)"DummyTrustedService",
+      sizeof "DummyTrustedService");
   /*
    * Normal main() thread activity, in this demo it does nothing except
-   * sleeping in a loop and check the button state.
+   * calling periodically the dummy service and check the button state.
    */
   while (true) {
+    msg_t r;
+
+    /* Invoke the service */
+    r = smcInvokeService(smcsvc, (smc_params_area_t)"HELO", sizeof "HELO");
+    chprintf((BaseSequentialStream*)&SD0, "Call result: %d\r\n", r);
     if(!palReadPad(PIOB, PIOB_USER_PB)) {
 #if 1
       test_execute((BaseSequentialStream *)&SD0, &rt_test_suite);
