@@ -60,6 +60,7 @@ static THD_FUNCTION(DummyTrustedService, arg) {
 
   (void)arg;
   msg_t m;
+  smc_service_t *svcp;
   chRegSetThreadName("DTS");
 
   /*
@@ -76,12 +77,13 @@ static THD_FUNCTION(DummyTrustedService, arg) {
   /*
    * Wait and process requests
    */
+  svcp = (smc_service_t *)smc_hdl->objp;
   while (true) {
-    m = smcServiceWaitRequest((smc_service_t *)smc_hdl->objp);
-    if (m == MSG_OK)
-      chThdSleepMilliseconds(500);
-    else
-      chThdSleepMilliseconds(5000);
+    m = smcServiceWaitRequest(svcp);
+    if (m == MSG_OK) {
+      chprintf((BaseSequentialStream*)&SD1, (char *)svcp->svc_data);
+    }
+    chThdSleepMilliseconds(500);
   }
 }
 
