@@ -45,8 +45,15 @@
 /*
  * Special service handles
  */
-#define SMC_HND_TRAMP             0
-#define SMC_HND_FIND              1
+#define SMC_HND_TRAMP             ((smc_service_t *)0)
+#define SMC_HND_GET               ((smc_service_t *)1)
+
+/*
+ * Non secure memory address space
+ * (to be redefined in an other place. Makefile?)
+ */
+#define NSEC_MEMORY_START         ((uint8_t *)0x20000000)
+#define NSEC_MEMORY_END           ((uint8_t *)0x20100000)
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -81,7 +88,6 @@ extern "C" {
 extern thread_reference_t _ns_thread;
 CC_NO_RETURN void _ns_trampoline(uint32_t addr);
 void smcInit(void);
-msg_t smc_entry(msg_t svc_number, void *svc_data);
 registered_object_t * smcRegisterMeAsService(const char *svc_name);
 msg_t smcServiceWaitRequest(smc_service_t *svcp);
 #ifdef __cplusplus

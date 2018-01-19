@@ -24,7 +24,6 @@
  * @addtogroup SMC
  * @{
  */
-//#include <string.h>
 
 #include "ch.h"
 #include "chsmc.h"
@@ -51,12 +50,37 @@ static memory_pool_t svcs_pool;
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-static bool isAddrspaceValid(void *addr, uint32_t len)
+static bool isAddrSpaceValid(uint8_t *addr, size_t size)
 {
-  (void) addr;
-  (void) len;
-  return TRUE;
+  return (bool)((addr - NSEC_MEMORY_START) <
+                (NSEC_MEMORY_END - NSEC_MEMORY_START)) &&
+         (bool)((addr + size - NSEC_MEMORY_START) <
+                (NSEC_MEMORY_END - NSEC_MEMORY_START));
 }
+
+static smc_service_t *smcGetService(const char *name, size_t namelen) {
+  registered_object_t *rop;
+
+  if (!isAddrSpaceValid((uint8_t *)name, namelen))
+    return NULL;
+  if (*(name + namelen) != '\0')
+    return NULL;
+  rop = chFactoryFindObject(name);
+  if (rop == NULL)
+    return NULL;
+  return (smc_service_t *)(rop->objp);
+}
+
+#if 0 /* not used yet */
+static void smcReleaseService(smc_service_t *svc_handle) {
+  registered_object_t *rop;
+
+  rop = chFactoryFindObjectByPointer(svc_handle);
+  if (rop == NULL)
+    return;
+  chFactoryReleaseObject(rop);
+}
+#endif
 
 /*===========================================================================*/
 /* Module exported functions.                                                */
@@ -70,12 +94,6 @@ static bool isAddrspaceValid(void *addr, uint32_t len)
 void smcInit(void) {
   chPoolObjectInit(&svcs_pool, sizeof (smc_service_t),
                    chCoreAllocAlignedI);
-}
-
-registered_object_t *smcFindService(const char *name, uint32_t namelen) {
-  (void) name;
-  (void) namelen;
-  return 0;
 }
 
 /**
@@ -93,13 +111,20 @@ registered_object_t *smcFindService(const char *name, uint32_t namelen) {
  *
  * @notapi
  */
-msg_t smcEntry(smc_service_t *svc_handle, smc_params_area_t svc_data, uint32_t svc_datalen) {
+msg_t smcEntry(smc_service_t *svc_handle, smc_params_area_t svc_data, size_t svc_datalen) {
   registered_object_t *rop;
+  smc_service_t *svcp;
   msg_t r;
 
   asm("bkpt #0\n\t");
-  if (!isAddrspaceValid(svc_data, svc_datalen))
+  if (!isAddrSpaceValid(svc_data, svc_datalen))
     return MSG_RESET;
+  if (svc_handle == SMC_HND_GET) {
+    svcp = smcGetService((const char *)svc_data, svc_datalen);
+    if (svcp == NULL)
+      return MSG_RESET;
+    return (msg_t)svcp;
+  }
   rop = chFactoryFindObjectByPointer(svc_handle);
   if (rop == NULL)
     return MSG_RESET;
