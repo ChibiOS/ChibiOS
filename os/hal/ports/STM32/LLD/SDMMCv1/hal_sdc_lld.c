@@ -28,14 +28,6 @@
 
 #if HAL_USE_SDC || defined(__DOXYGEN__)
 
-#if !defined(STM32_SDMMCCLK)
-#error "STM32_SDMMCCLK not defined"
-#endif
-
-#if STM32_SDMMCCLK > 48000000
-#error "STM32_SDMMCCLK exceeding 48MHz"
-#endif
-
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
@@ -56,11 +48,18 @@
 #define SDMMC_CLKDIV_HS         (2 - 2)
 #define SDMMC_CLKDIV_LS         (120 - 2)
 
-#define SDMMC_WRITE_TIMEOUT                                                 \
-  (((STM32_SDMMCCLK / (SDMMC_CLKDIV_HS + 2)) / 1000) *                      \
+#define SDMMC1_WRITE_TIMEOUT                                                \
+  (((STM32_SDMMC1CLK / (SDMMC_CLKDIV_HS + 2)) / 1000) *                     \
    STM32_SDC_SDMMC_WRITE_TIMEOUT)
-#define SDMMC_READ_TIMEOUT                                                  \
-  (((STM32_SDMMCCLK / (SDMMC_CLKDIV_HS + 2)) / 1000) *                      \
+#define SDMMC1_READ_TIMEOUT                                                 \
+  (((STM32_SDMMC1CLK / (SDMMC_CLKDIV_HS + 2)) / 1000) *                     \
+   STM32_SDC_SDMMC_READ_TIMEOUT)
+
+#define SDMMC2_WRITE_TIMEOUT                                                \
+  (((STM32_SDMMC2CLK / (SDMMC_CLKDIV_HS + 2)) / 1000) *                     \
+   STM32_SDC_SDMMC_WRITE_TIMEOUT)
+#define SDMMC2_READ_TIMEOUT                                                 \
+  (((STM32_SDMMC2CLK / (SDMMC_CLKDIV_HS + 2)) / 1000) *                     \
    STM32_SDC_SDMMC_READ_TIMEOUT)
 
 #define SDMMC1_DMA_CHANNEL                                                  \
@@ -129,7 +128,7 @@ static bool sdc_lld_prepare_read_bytes(SDCDriver *sdcp,
                                        uint8_t *buf, uint32_t bytes) {
   osalDbgCheck(bytes < 0x1000000);
 
-  sdcp->sdmmc->DTIMER = SDMMC_READ_TIMEOUT;
+  sdcp->sdmmc->DTIMER = sdcp->rtmo;
 
   /* Checks for errors and waits for the card to be ready for reading.*/
   if (_sdc_wait_for_transfer_state(sdcp))
@@ -396,6 +395,8 @@ void sdc_lld_init(void) {
 #if STM32_SDC_USE_SDMMC1
   sdcObjectInit(&SDCD1);
   SDCD1.thread = NULL;
+  SDCD1.rtmo   = SDMMC1_READ_TIMEOUT;
+  SDCD1.wtmo   = SDMMC1_WRITE_TIMEOUT;
   SDCD1.dma    = STM32_DMA_STREAM(STM32_SDC_SDMMC1_DMA_STREAM);
   SDCD1.sdmmc  = SDMMC1;
   nvicEnableVector(STM32_SDMMC1_NUMBER, STM32_SDC_SDMMC1_IRQ_PRIORITY);
@@ -404,6 +405,8 @@ void sdc_lld_init(void) {
 #if STM32_SDC_USE_SDMMC2
   sdcObjectInit(&SDCD2);
   SDCD2.thread = NULL;
+  SDCD2.rtmo   = SDMMC2_READ_TIMEOUT;
+  SDCD2.wtmo   = SDMMC2_WRITE_TIMEOUT;
   SDCD2.dma    = STM32_DMA_STREAM(STM32_SDC_SDMMC2_DMA_STREAM);
   SDCD2.sdmmc  = SDMMC2;
   nvicEnableVector(STM32_SDMMC2_NUMBER, STM32_SDC_SDMMC2_IRQ_PRIORITY);
@@ -789,7 +792,7 @@ bool sdc_lld_read_aligned(SDCDriver *sdcp, uint32_t startblk,
 
   osalDbgCheck(blocks < 0x1000000 / MMCSD_BLOCK_SIZE);
 
-  sdcp->sdmmc->DTIMER = SDMMC_READ_TIMEOUT;
+  sdcp->sdmmc->DTIMER = sdcp->rtmo;
 
   /* Checks for errors and waits for the card to be ready for reading.*/
   if (_sdc_wait_for_transfer_state(sdcp))
@@ -850,7 +853,7 @@ bool sdc_lld_write_aligned(SDCDriver *sdcp, uint32_t startblk,
 
   osalDbgCheck(blocks < 0x1000000 / MMCSD_BLOCK_SIZE);
 
-  sdcp->sdmmc->DTIMER = SDMMC_WRITE_TIMEOUT;
+  sdcp->sdmmc->DTIMER = sdcp->wtmo;
 
   /* Checks for errors and waits for the card to be ready for writing.*/
   if (_sdc_wait_for_transfer_state(sdcp))
