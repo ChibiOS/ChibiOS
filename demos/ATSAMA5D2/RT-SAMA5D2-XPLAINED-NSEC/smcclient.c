@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
@@ -28,6 +28,8 @@
 #include "ch.h"
 #include "smcclient.h"
 
+msg_t smcInvoke(smc_service_t handle, smc_params_area_t data,
+                       size_t size);
 /*===========================================================================*/
 /* Module local definitions.                                                 */
 /*===========================================================================*/
@@ -57,7 +59,7 @@ msg_t smcInvokeService(smc_service_t handle, smc_params_area_t data,
   msg_t result;
 
   do {
-    asm volatile("smc #0" : "=r" (result) : "r" (handle), "r" (data), "r" (size));
+    result = smcInvoke(handle, data, size);
   } while (result == MSG_TIMEOUT);
   return result;
 }
