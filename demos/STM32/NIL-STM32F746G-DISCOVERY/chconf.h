@@ -329,8 +329,6 @@
 /* Port-specific settings (override port settings defaulted in nilcore.h).   */
 /*===========================================================================*/
 
-#define CORTEX_VTOR_INIT                    0x00200000U
-
 #endif  /* CHCONF_H */
 
 /** @} */
