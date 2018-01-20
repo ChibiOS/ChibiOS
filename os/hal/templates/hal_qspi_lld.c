@@ -189,7 +189,7 @@ void qspi_lld_map_flash(QSPIDriver *qspip,
 }
 
 /**
- * @brief   Maps in memory space a QSPI flash device.
+ * @brief   Unmaps from memory space a QSPI flash device.
  * @post    The memory flash device must be re-initialized for normal
  *          commands exchange.
  *
