@@ -21,6 +21,7 @@
 #include "chprintf.h"
 #include "chsmc.h"
 
+static thread_reference_t main_t;
 /*
  * LED blinker thread, times are in milliseconds.
  */
@@ -56,9 +57,8 @@ static const SerialConfig sdcfg = {
  *  Dummy trust service thread.
  */
 static THD_WORKING_AREA(waDummyTrustedService, 512);
-static THD_FUNCTION(DummyTrustedService, arg) {
+static THD_FUNCTION(DummyTrustedService, eventMask) {
 
-  (void)arg;
   msg_t m;
   smc_service_t *svcp;
   chRegSetThreadName("DTS");
@@ -78,10 +78,20 @@ static THD_FUNCTION(DummyTrustedService, arg) {
    * Wait and process requests
    */
   svcp = (smc_service_t *)smc_hdl->objp;
+  svcp->svct = NULL;
   while (true) {
-    m = smcServiceWaitRequest(svcp);
+    chSysLock();
+    chEvtSignalI(main_t, (eventmask_t) eventMask);
+    m = smcServiceWaitRequestS(svcp);
+    chSysUnlock();
     if (m == MSG_OK && svcp->svc_datalen > 0) {
-      *((char *)svcp->svc_data + svcp->svc_datalen) = '\0';
+      *((char *)svcp->svc_data + svcp->svc_datalen - 1) = '\0';
+#if 0
+      chprintf((BaseSequentialStream*)&SD1,
+          "My non secure 'alter ego' has a request.\r\n");
+      chprintf((BaseSequentialStream*)&SD1,
+          "She tells: '");
+#endif
       chprintf((BaseSequentialStream*)&SD1, (char *)svcp->svc_data);
       chprintf((BaseSequentialStream*)&SD1, "\r\n");
     }
@@ -94,17 +104,22 @@ static THD_FUNCTION(DummyTrustedService, arg) {
  */
 int main(void) {
 
+  eventmask_t eventMask = 1;
+  eventmask_t eventMaskAll = 0;
+
   /*
    * System initializations.
    * - HAL initialization, this also initializes the configured device drivers
    *   and performs the board-specific initializations.
    * - Kernel initialization, the main() function becomes a thread and the
    *   RTOS is active.
+   *   The foreign interrupts are disabled up to the trampoline in the non secure world
    */
   halInit();
   chSysInit();
   smcInit();
 
+  main_t = chThdGetSelfX();
   /*
    * Activates the serial driver 0 using the driver default configuration.
    */
@@ -121,7 +136,9 @@ int main(void) {
    * Creates the dummy service thread.
    */
   chThdCreateStatic(waDummyTrustedService, sizeof(waDummyTrustedService), NORMALPRIO-32,
-      DummyTrustedService, NULL);
+      DummyTrustedService, (void *)eventMask);
+  eventMaskAll |= eventMask;
+  eventMask <<= 1;
 
   /*
    * The DDR memory is divided in 4 regions. Each region is 2MB large.
@@ -167,13 +184,16 @@ int main(void) {
       mtxRegionWrnsech(REGION_3, NOT_SECURE_WRITE));
 
   /*
+   * Wait that all services are initialized
+   */
+  chEvtWaitAll(eventMaskAll);
+  /*
    * Jump in the NON SECURE world
    * This 'main' thread become the non secure environment as view by
    * the secure world.
    */
-  chThdSleepMilliseconds(1000);
   chprintf((BaseSequentialStream*)&SD1, "Jumping in the non secure world\n\r");
-  _ns_trampoline(0x20000000);
+  _ns_trampoline(NSEC_MEMORY_START);
   /*
    * It never goes here
    */
