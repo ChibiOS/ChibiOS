@@ -66,6 +66,14 @@
 #endif
 
 /**
+ * @brief   Enable clock bypass.
+ * @note    Allow clock speed up to 50 Mhz.
+ */
+#if !defined(STM32_SDC_SDMMC_50MHZ) || defined(__DOXYGEN__)
+#define STM32_SDC_SDMMC_50MHZ               FALSE
+#endif
+
+/**
  * @brief   Write timeout in milliseconds.
  */
 #if !defined(STM32_SDC_SDMMC_WRITE_TIMEOUT) || defined(__DOXYGEN__)
@@ -188,6 +196,10 @@
 
 #if STM32_HAS_SDMMC2 && (STM32_SDMMC2CLK > 48000000)
 #error "STM32_SDMMC2CLK must not exceed 48MHz"
+#endif
+
+#if defined(STM32_SDC_SDMMC_50MHZ) && STM32_SDC_SDMMC_50MHZ && !defined(STM32F7XX)
+#error "50 Mhz clock only works for STM32F7XX"
 #endif
 
 /* SDMMC IRQ priority tests.*/

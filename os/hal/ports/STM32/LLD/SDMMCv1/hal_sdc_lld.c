@@ -537,7 +537,7 @@ void sdc_lld_start_clk(SDCDriver *sdcp) {
 }
 
 /**
- * @brief   Sets the SDIO clock to data mode (25MHz or less).
+ * @brief   Sets the SDIO clock to data mode (25/50 MHz or less).
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
  * @param[in] clk       the clock mode
@@ -545,7 +545,7 @@ void sdc_lld_start_clk(SDCDriver *sdcp) {
  * @notapi
  */
 void sdc_lld_set_data_clk(SDCDriver *sdcp, sdcbusclk_t clk) {
-#if 0
+#if STM32_SDC_SDMMC_50MHZ && defined(STM32F7XX)
   if (SDC_CLK_50MHz == clk) {
     sdcp->sdmmc->CLKCR = (sdcp->sdmmc->CLKCR & 0xFFFFFF00U) |
 #if STM32_SDC_SDMMC_PWRSAV
