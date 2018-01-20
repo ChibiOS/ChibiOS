@@ -158,7 +158,7 @@ static uint8_t sd_out_buf3[STM32_SERIAL_USART3_OUT_BUF_SIZE];
 static uint8_t sd_in_buf4[STM32_SERIAL_UART4_IN_BUF_SIZE];
 
 /** @brief Output buffer for SD4.*/
-static uint8_t sd_out_buf4[STM32_SERIAL_UART4_IN_BUF_SIZE];
+static uint8_t sd_out_buf4[STM32_SERIAL_UART4_OUT_BUF_SIZE];
 #endif
 
 #if STM32_SERIAL_USE_UART5 || defined(__DOXYGEN__)
@@ -166,7 +166,7 @@ static uint8_t sd_out_buf4[STM32_SERIAL_UART4_IN_BUF_SIZE];
 static uint8_t sd_in_buf5[STM32_SERIAL_UART5_IN_BUF_SIZE];
 
 /** @brief Output buffer for SD5.*/
-static uint8_t sd_out_buf5[STM32_SERIAL_UART5_IN_BUF_SIZE];
+static uint8_t sd_out_buf5[STM32_SERIAL_UART5_OUT_BUF_SIZE];
 #endif
 
 #if STM32_SERIAL_USE_USART6 || defined(__DOXYGEN__)
