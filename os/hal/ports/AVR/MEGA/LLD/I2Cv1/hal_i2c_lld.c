@@ -26,30 +26,30 @@
 
 #if HAL_USE_I2C || defined(__DOXYGEN__)
 
-/*===========================================================================*/
-/* Driver local definitions.                                                 */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver local definitions.                                                */
+/*==========================================================================*/
 
-/*===========================================================================*/
-/* Driver exported variables.                                                */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver exported variables.                                               */
+/*==========================================================================*/
 
-/** @brief I2C driver identifier.*/
+/** @brief I2C driver identifier. */
 #if AVR_I2C_USE_I2C1 || defined(__DOXYGEN__)
 I2CDriver I2CD1;
 #endif
 
-/*===========================================================================*/
-/* Driver local variables and types.                                         */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver local variables and types.                                        */
+/*==========================================================================*/
 
-/*===========================================================================*/
-/* Driver local functions.                                                   */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver local functions.                                                  */
+/*==========================================================================*/
 
-/*===========================================================================*/
-/* Driver interrupt handlers.                                                */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver interrupt handlers.                                               */
+/*==========================================================================*/
 
 #if AVR_I2C_USE_I2C1 || defined(__DOXYGEN__)
 /**
@@ -120,7 +120,7 @@ OSAL_IRQ_HANDLER(TWI_vect) {
     i2cp->errors |= I2C_BUS_ERROR;
     break;
   default:
-    /* FIXME: only gets here if there are other MASTERs in the bus */
+    /* FIXME: only gets here if there are other MASTERs in the bus. */
     TWCR = ((1 << TWSTO) | (1 << TWINT) | (1 << TWEN));
     _i2c_wakeup_error_isr(i2cp);
   }
@@ -134,9 +134,9 @@ OSAL_IRQ_HANDLER(TWI_vect) {
 }
 #endif /* AVR_I2C_USE_I2C1 */
 
-/*===========================================================================*/
-/* Driver exported functions.                                                */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver exported functions.                                               */
+/*==========================================================================*/
 
 /**
  * @brief   Low level I2C driver initialization.
@@ -160,15 +160,15 @@ void i2c_lld_start(I2CDriver *i2cp) {
 
   uint32_t clock_speed = 100000;
 
-  /* TODO: Test TWI without external pull-ups (use internal) */
+  /* TODO: Test TWI without external pull-ups (use internal). */
 
-  /* Configure prescaler to 1 */
+  /* Configure prescaler to 1. */
   TWSR &= 0xF8;
 
   if (i2cp->config != NULL)
     clock_speed = i2cp->config->clock_speed;
 
-  /* Configure baudrate */
+  /* Configure baudrate. */
   TWBR = ((F_CPU / clock_speed) - 16) / 2;
 }
 
@@ -182,7 +182,7 @@ void i2c_lld_start(I2CDriver *i2cp) {
 void i2c_lld_stop(I2CDriver *i2cp) {
 
   if (i2cp->state != I2C_STOP) {
-    /* Disable TWI subsystem and stop all operations */
+    /* Disable TWI subsystem and stop all operations. */
     TWCR &= ~(1 << TWEN);
   }
 }
@@ -196,7 +196,7 @@ void i2c_lld_stop(I2CDriver *i2cp) {
  * @param[in]   rxbytes   number of bytes to be received
  * @param[in]   timeout   the number of ticks before the operation timeouts,
  *                        the following special values are allowed:
- *                        - @a TIME_INFINITE no timeout.
+ *                        - @a TIME_INFINITE no timeout
  *                      
  * @return              The operation status.
  * @retval MSG_OK       if the function succeeded.
@@ -221,7 +221,7 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
   i2cp->rxbytes = rxbytes;
   i2cp->rxidx = 0;
 
-  /* Send START */
+  /* Send START. */
   TWCR = ((1 << TWSTA) | (1 << TWINT) | (1 << TWEN) | (1 << TWIE));
 
   return osalThreadSuspendTimeoutS(&i2cp->thread, TIME_INFINITE);
@@ -238,7 +238,7 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
  * @param[in]   rxbytes   number of bytes to be received
  * @param[in]   timeout   the number of ticks before the operation timeouts,
  *                        the following special values are allowed:
- *                        - @a TIME_INFINITE no timeout.
+ *                        - @a TIME_INFINITE no timeout
  *                      
  * @return              The operation status.
  * @retval MSG_OK       if the function succeeded.

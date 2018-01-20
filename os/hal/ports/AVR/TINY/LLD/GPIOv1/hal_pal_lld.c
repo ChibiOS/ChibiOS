@@ -26,25 +26,25 @@
 
 #if HAL_USE_PAL || defined(__DOXYGEN__)
 
-/*===========================================================================*/
-/* Driver exported variables.                                                */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver exported variables.                                               */
+/*==========================================================================*/
 
-/*===========================================================================*/
-/* Driver local variables and types.                                         */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver local variables and types.                                        */
+/*==========================================================================*/
 
-/*===========================================================================*/
-/* Driver local functions.                                                   */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver local functions.                                                  */
+/*==========================================================================*/
 
-/*===========================================================================*/
-/* Driver interrupt handlers.                                                */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver interrupt handlers.                                               */
+/*==========================================================================*/
 
-/*===========================================================================*/
-/* Driver exported functions.                                                */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver exported functions.                                               */
+/*==========================================================================*/
 
 /**
  * @brief   AVR GPIO ports configuration.
@@ -117,9 +117,9 @@ void _pal_lld_init(const PALConfig *config) {
  * @details This function programs a pads group belonging to the same port
  *          with the specified mode.
  *
- * @param[in] port the port identifier
- * @param[in] mask the group mask
- * @param[in] mode the mode
+ * @param[in] port  the port identifier
+ * @param[in] mask  the group mask
+ * @param[in] mode  the mode
  *
  * @note This function is not meant to be invoked directly by the application
  *       code.
@@ -129,9 +129,9 @@ void _pal_lld_init(const PALConfig *config) {
  *
  * @notapi
  */
-void _pal_lld_setgroupmode(ioportid_t port,
+void _pal_lld_setgroupmode(ioportid_t   port,
                            ioportmask_t mask,
-                           iomode_t mode) {
+                           iomode_t     mode) {
 
   switch (mode) {
   case PAL_MODE_RESET:

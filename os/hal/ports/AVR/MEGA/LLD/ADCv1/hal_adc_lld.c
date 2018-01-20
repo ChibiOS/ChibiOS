@@ -26,26 +26,36 @@
 
 #if HAL_USE_ADC || defined(__DOXYGEN__)
 
-/*===========================================================================*/
-/* Driver local definitions.                                                 */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver local definitions.                                                */
+/*==========================================================================*/
 
-/*===========================================================================*/
-/* Driver exported variables.                                                */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver exported variables.                                               */
+/*==========================================================================*/
 /** @brief ADC1 driver identifier.*/
 #if AVR_ADC_USE_ADC1 || defined(__DOXYGEN__)
 ADCDriver ADCD1;
 #endif
 
-/*===========================================================================*/
-/* Driver local variables.                                                   */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver local variables.                                                  */
+/*==========================================================================*/
 
-/*===========================================================================*/
-/* Driver local functions.                                                   */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver local functions.                                                  */
+/*==========================================================================*/
 
+/**
+ * @brief   Get the ADC channel.
+ *
+ * @param[in] mask            the mask containing the channel number
+ * @param[in] currentChannel  the current channel.
+ *
+ * @return                    the channel number.
+ * @retval                    ADC channel number
+ * @retval                    -1 in case of error.
+ */
 static size_t getAdcChannelNumberFromMask(uint8_t mask,
                                           uint8_t currentChannel) {
 
@@ -59,17 +69,22 @@ static size_t getAdcChannelNumberFromMask(uint8_t mask,
   }
 
   /* error, should never reach this line */
-  return -1; // To check
+  return -1;
 }
 
+/**
+ * @brief   Configure the ADC channel.
+ *
+ * @param[in] channelNum  the channel number to set.
+ */
 static void setAdcChannel(uint8_t channelNum) {
 
   ADMUX = (ADMUX & 0xf8) | (channelNum & 0x07);
 }
 
-/*===========================================================================*/
-/* Driver interrupt handlers.                                                */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver interrupt handlers.                                               */
+/*==========================================================================*/
 
 #include <util/delay.h>
 
@@ -101,9 +116,9 @@ OSAL_IRQ_HANDLER(ADC_vect) {
   OSAL_IRQ_EPILOGUE();
 }
 
-/*===========================================================================*/
-/* Driver exported functions.                                                */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver exported functions.                                               */
+/*==========================================================================*/
 
 /**
  * @brief   Low level ADC driver initialization.
@@ -114,10 +129,10 @@ void adc_lld_init(void) {
 
   adcObjectInit(&ADCD1);
 
-  //prescaler 128, only value possible at 20Mhz, interrupt
+  /* Prescaler 128, only value possible at 20Mhz, interrupt. */
   ADCSRA = (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0) | (1 << ADIE);
 
-  //uso aref, only valid for arduino. arduino ha aref collegato
+  /* uso aref, only valid for arduino. arduino ha aref collegato. */
   ADMUX = (0 << REFS1) | (0 << REFS0);
 }
 
@@ -131,7 +146,7 @@ void adc_lld_init(void) {
 void adc_lld_start(ADCDriver *adcp) {
 
   if (adcp->state == ADC_STOP) {
-    /* Clock activation.*/
+    /* Clock activation. */
     ADCSRA |= (1 << ADEN);
   }
 
@@ -150,7 +165,7 @@ void adc_lld_start(ADCDriver *adcp) {
 void adc_lld_stop(ADCDriver *adcp) {
 
   if (adcp->state == ADC_READY) {
-    /* Clock de-activation.*/
+    /* Clock de-activation. */
     ADCSRA &= ~(1 << ADEN);
   }
 }

@@ -26,15 +26,15 @@
 
 #if HAL_USE_SPI || defined(__DOXYGEN__)
 
-/*===========================================================================*/
-/* Driver local definitions.                                                 */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver local definitions.                                                */
+/*==========================================================================*/
 
 #define DUMMY_SPI_SEND_VALUE    0xFF
 
-/*===========================================================================*/
-/* Driver exported variables.                                                */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver exported variables.                                               */
+/*==========================================================================*/
 
 /**
  * @brief   SPI1 driver identifier.
@@ -43,17 +43,17 @@
 SPIDriver SPID1;
 #endif
 
-/*===========================================================================*/
-/* Driver local variables and types.                                         */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver local variables and types.                                        */
+/*==========================================================================*/
 
-/*===========================================================================*/
-/* Driver local functions.                                                   */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver local functions.                                                  */
+/*==========================================================================*/
 
-/*===========================================================================*/
-/* Driver interrupt handlers.                                                */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver interrupt handlers.                                               */
+/*==========================================================================*/
 
 #if AVR_SPI_USE_SPI1 || defined(__DOXYGEN__)
 /**
@@ -66,16 +66,16 @@ OSAL_IRQ_HANDLER(SPI_STC_vect) {
 
   SPIDriver *spip = &SPID1;
 
-  /* a new value has arrived, store it if we are interested in it */
+  /* A new value has arrived, store it if we are interested in it. */
   if (spip->rxbuf) spip->rxbuf[spip->exidx] = SPDR;
 
-  /* check if we are done */
+  /* Check if we are done. */
   if (++(spip->exidx) >= spip->exbytes) {
     _spi_isr_code(spip);
-  } else { /* if not done send the next byte */
-     if (spip->txbuf) { /* if there is a buffer with values to be send then use it*/
+  } else { /* If not done send the next byte. */
+     if (spip->txbuf) { /* If there is a buffer with values to be send then use it. */
        SPDR = spip->txbuf[spip->exidx];
-    } else {            /* if there isn't a buffer with values to be send then send a the dummy value*/
+    } else {            /* If there isn't a buffer with values to be send then send a the dummy value. */
       SPDR = DUMMY_SPI_SEND_VALUE;
     }
   }
@@ -95,7 +95,7 @@ OSAL_IRQ_HANDLER(SPI_STC_vect) {
 void spi_lld_init(void) {
 
 #if AVR_SPI_USE_SPI1
-  /* Driver initialization.*/
+  /* Driver initialization. */
   spiObjectInit(&SPID1);
 #endif /* AVR_SPI_USE_SPI1 */
 }
@@ -112,10 +112,10 @@ void spi_lld_start(SPIDriver *spip) {
   uint8_t dummy;
 
   if (spip->state == SPI_STOP) {
-    /* Enables the peripheral.*/
+    /* Enables the peripheral. */
 #if AVR_SPI_USE_SPI1
     if (&SPID1 == spip) {
-    /* Enable SPI clock using Power Reduction Register */
+    /* Enable SPI clock using Power Reduction Register. */
 #if defined(PRR0)
       PRR0 &= ~(1 << PRSPI);
 #elif defined(PRR)
@@ -127,20 +127,20 @@ void spi_lld_start(SPIDriver *spip) {
 
 #if AVR_SPI_USE_SPI1
   if (&SPID1 == spip) {
-    /* Configures the peripheral.*/
+    /* Configures the peripheral. */
     /* Note that some bits are forced:
 	   SPI interrupt disabled,
 	   SPI enabled,
-	   SPI master enabled */
+	   SPI master enabled. */
     SPCR = (spip->config->spcr & ~(SPI_CR_SPIE)) | SPI_CR_MSTR | SPI_CR_SPE;
     SPSR = spip->config->spsr;
 
-    /* dummy reads before enabling interrupt */
+    /* Dummy reads before enabling interrupt. */
     dummy = SPSR;
     dummy = SPDR;
-    (void) dummy; /* suppress warning about unused variable */
+    (void) dummy; /* Suppress warning about unused variable. */
 
-    /* Enable SPI interrupts */
+    /* Enable SPI interrupts. */
     SPCR |= SPI_CR_SPIE;
   }
 #endif /* AVR_SPI_USE_SPI1 */
@@ -156,14 +156,14 @@ void spi_lld_start(SPIDriver *spip) {
 void spi_lld_stop(SPIDriver *spip) {
 
   if (spip->state == SPI_READY) {
-    /* Resets the peripheral.*/
+    /* Resets the peripheral. */
 
-    /* Disables the peripheral.*/
+    /* Disables the peripheral. */
 #if AVR_SPI_USE_SPI1
     if (&SPID1 == spip) {
       SPCR &= (SPI_CR_SPIE | SPI_CR_SPE);
     }
-/* Disable SPI clock using Power Reduction Register */
+/* Disable SPI clock using Power Reduction Register. */
 #if defined(PRR0)
       PRR0 |= (1 << PRSPI);
 #elif defined(PRR)
@@ -251,7 +251,7 @@ uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame) {
   uint8_t dummy;
   (void)spip;
 
-  /* disable interrupt */
+  /* Disable interrupt. */
   SPCR &= ~(SPI_CR_SPIE);
 
   SPDR = frame >> 8;
@@ -264,7 +264,7 @@ uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame) {
 
   dummy = SPSR;
   dummy = SPDR;
-  (void) dummy; /* suppress warning about unused variable */
+  (void) dummy; /* Suppress warning about unused variable. */
   SPCR |= SPI_CR_SPIE;
 
   return spdr;
@@ -276,7 +276,7 @@ uint8_t spi_lld_polled_exchange(SPIDriver *spip, uint8_t frame) {
   uint8_t dummy;
   (void)spip;
 
-  /* disable interrupt */
+  /* Disable interrupt. */
   SPCR &= ~(SPI_CR_SPIE);
 
   SPDR = frame;
@@ -285,7 +285,7 @@ uint8_t spi_lld_polled_exchange(SPIDriver *spip, uint8_t frame) {
 
   dummy = SPSR;
   dummy = SPDR;
-  (void) dummy; /* suppress warning about unused variable */
+  (void) dummy; /* Suppress warning about unused variable. */
   SPCR |= SPI_CR_SPIE;
 
   return spdr;

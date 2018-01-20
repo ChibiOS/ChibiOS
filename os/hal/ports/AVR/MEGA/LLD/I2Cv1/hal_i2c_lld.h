@@ -27,40 +27,40 @@
 
 #if HAL_USE_I2C || defined(__DOXYGEN__)
 
-/*===========================================================================*/
-/* Driver constants.                                                         */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver constants.                                                        */
+/*==========================================================================*/
 
-/** @brief   START transmitted.*/
+/** @brief   START transmitted.                     */
 #define TWI_START                  0x08
-/** @brief   Repeated START transmitted.*/
+/** @brief   Repeated START transmitted.            */
 #define TWI_REPEAT_START           0x10
-/** @brief   Arbitration Lost.*/
+/** @brief   Arbitration Lost.                      */
 #define TWI_ARBITRATION_LOST       0x38
-/** @brief   Bus errors.*/
+/** @brief   Bus errors.                            */
 #define TWI_BUS_ERROR              0x00
 
-/** @brief   SLA+W transmitted with ACK response.*/
+/** @brief   SLA+W transmitted with ACK response.   */
 #define TWI_MASTER_TX_ADDR_ACK     0x18
-/** @brief   SLA+W transmitted with NACK response.*/
+/** @brief   SLA+W transmitted with NACK response.  */
 #define TWI_MASTER_TX_ADDR_NACK    0x20
-/** @brief   DATA transmitted with ACK response.*/
+/** @brief   DATA transmitted with ACK response.    */
 #define TWI_MASTER_TX_DATA_ACK     0x28
-/** @brief   DATA transmitted with NACK response.*/
+/** @brief   DATA transmitted with NACK response.   */
 #define TWI_MASTER_TX_DATA_NACK    0x30
 
-/** @brief   SLA+R transmitted with ACK response.*/
+/** @brief   SLA+R transmitted with ACK response.   */
 #define TWI_MASTER_RX_ADDR_ACK     0x40
-/** @brief   SLA+R transmitted with NACK response.*/
+/** @brief   SLA+R transmitted with NACK response.  */
 #define TWI_MASTER_RX_ADDR_NACK    0x48
-/** @brief   DATA received with ACK response.*/
+/** @brief   DATA received with ACK response.       */
 #define TWI_MASTER_RX_DATA_ACK     0x50
-/** @brief   DATA received with NACK response.*/
+/** @brief   DATA received with NACK response.      */
 #define TWI_MASTER_RX_DATA_NACK    0x58
 
-/*===========================================================================*/
-/* Driver pre-compile time settings.                                         */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver pre-compile time settings.                                        */
+/*==========================================================================*/
 
 /**
  * @name    Configuration options
@@ -76,13 +76,13 @@
 #endif
 /** @} */
 
-/*===========================================================================*/
-/* Derived constants and error checks.                                       */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Derived constants and error checks.                                      */
+/*==========================================================================*/
 
-/*===========================================================================*/
-/* Driver data structures and types.                                         */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver data structures and types.                                        */
+/*==========================================================================*/
 
 /**
  * @brief   Type representing I2C address.
@@ -133,7 +133,7 @@ struct I2CDriver {
 #if defined(I2C_DRIVER_EXT_FIELDS)
   I2C_DRIVER_EXT_FIELDS
 #endif
-  /* End of the mandatory fields.*/
+  /* End of the mandatory fields. */
   /**
    * @brief   Thread waiting for I/O completion.
    */
@@ -173,9 +173,9 @@ struct I2CDriver {
  */
 typedef struct I2CDriver I2CDriver;
 
-/*===========================================================================*/
-/* Driver macros.                                                            */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver macros.                                                           */
+/*==========================================================================*/
 
 /**
  * @brief   Get errors from I2C driver.
@@ -186,9 +186,9 @@ typedef struct I2CDriver I2CDriver;
  */
 #define i2c_lld_get_errors(i2cp) ((i2cp)->errors)
 
-/*===========================================================================*/
-/* External declarations.                                                    */
-/*===========================================================================*/
+/*==========================================================================*/
+/* External declarations.                                                   */
+/*==========================================================================*/
 
 #if !defined(__DOXYGEN__)
 #if AVR_I2C_USE_I2C1

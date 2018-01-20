@@ -282,7 +282,7 @@ typedef uint8_t ioeventmode_t;
 /**
  * @brief   Low level PAL subsystem initialization.
  *
- * @param[in] config the architecture-dependent ports configuration
+ * @param[in] config    the architecture-dependent ports configuration
  *
  * @notapi
  */

@@ -161,7 +161,7 @@ OSAL_IRQ_HANDLER(TIMER1_COMPA_vect) {
 
   OSAL_IRQ_PROLOGUE();
 
-  // TODO: reset status if required
+  /* TODO: reset status if required. */
 
   osalSysLockFromISR();
   osalOsTimerHandlerI();
@@ -189,15 +189,15 @@ void st_lld_init(void) {
    * Periodic mode uses Timer 1 (16 bit).
    */
 
-  /* CTC mode, no clock source */
+  /* CTC mode, no clock source. */
   TCCR1A     = 0;
   TCCR1B     = _BV(WGM12);
 
-  /* start disabled */
+  /* Start disabled. */
   TCCR1C     = 0;
   OCR1A      = 0;
   TCNT1      = 0;
-  TIFR_REG   = _BV(OCF1A);                               /* Reset pending.   */
+  TIFR_REG   = _BV(OCF1A);                              /* Reset pending.   */
   TIMSK_REG  = 0;
   TCCR1B     = PRESCALER;
 
@@ -208,38 +208,39 @@ void st_lld_init(void) {
   /*
    * Periodic mode uses Timer 0 (8 bit).
    */
-#if defined(TCCR0B) /* Timer has multiple output comparators                 */
-  TCCR0A  = (1 << WGM01) | (0 << WGM00) |                /* CTC mode.        */
-            (0 << COM0A1) | (0 << COM0A0);               /* OC0A disabled.   */
-            //(0 << COM0B1) | (0 << COM0B0);             /* OC0B disabled.   */
-  // FIXME: See if the line bellow must be delate or recoded.
-  //TCCR0B  = (0 << WGM02) | AVR_TIMER_PRESCALER_BITS;     /* CTC mode.        */
+#if defined(TCCR0B) /* Timer has multiple output comparators.               */
+  TCCR0A  = (1 << WGM01) | (0 << WGM00) |               /* CTC mode.        */
+            (0 << COM0A1) | (0 << COM0A0);              /* OC0A disabled.   */
+            //(0 << COM0B1) | (0 << COM0B0);            /* OC0B disabled.   */
+  /* FIXME: See if the line bellow must be delate or recoded.               */
+  //TCCR0B  = (0 << WGM02) | AVR_TIMER_PRESCALER_BITS;  /* CTC mode.        */
   OCR0A   = AVR_TIMER_COUNTER - 1;
-  TCNT0   = 0;                                           /* Reset counter.   */
+  TCNT0   = 0;                                          /* Reset counter.   */
 #if defined(__AVR_ATtiny85__)
-  TIFR    = (1 << OCF0A);                                /* Reset pending.   */
-  TIMSK   = (1 << OCIE0A);                               /* IRQ on compare.  */
+  TIFR    = (1 << OCF0A);                               /* Reset pending.   */
+  TIMSK   = (1 << OCIE0A);                              /* IRQ on compare.  */
 #else
-  TIFR0   = (1 << OCF0A);                                /* Reset pending.   */
-  TIMSK0  = (1 << OCIE0A);                               /* IRQ on compare.  */
+  TIFR0   = (1 << OCF0A);                               /* Reset pending.   */
+  TIMSK0  = (1 << OCIE0A);                              /* IRQ on compare.  */
 #endif
 
-#elif defined(TCCR0A) /* AT90CAN doesn't have TCCR0B and slightly different TCCR0A */
-  TCCR0A  = (1 << WGM01) | (0 << WGM00) |                /* CTC mode.        */
-            (0 << COM0A1) | (0 << COM0A0);               /* OC0A disabled.   */
+#elif defined(TCCR0A) /* AT90CAN doesn't have TCCR0B and slightly different */
+                      /* TCCR0A.                                            */
+  TCCR0A  = (1 << WGM01) | (0 << WGM00) |               /* CTC mode.        */
+            (0 << COM0A1) | (0 << COM0A0);              /* OC0A disabled.   */
   OCR0A   = AVR_TIMER_COUNTER - 1;
-  TCNT0   = 0;                                           /* Reset counter.   */
-  TIFR0   = (1 << OCF0A);                                /* Reset pending.   */
-  TIMSK0  = (1 << OCIE0A);                               /* IRQ on compare.  */
+  TCNT0   = 0;                                          /* Reset counter.   */
+  TIFR0   = (1 << OCF0A);                               /* Reset pending.   */
+  TIMSK0  = (1 << OCIE0A);                              /* IRQ on compare.  */
 
-#elif defined(TCCR0) /* Timer has single output comparator                   */
-  TCCR0   = (1 << WGM01) | (0 << WGM00) |                /* CTC mode.        */
-            (0 << COM01) | (0 << COM00) |                /* OC0A disabled.   */
+#elif defined(TCCR0) /* Timer has single output comparator                  */
+  TCCR0   = (1 << WGM01) | (0 << WGM00) |               /* CTC mode.        */
+            (0 << COM01) | (0 << COM00) |               /* OC0A disabled.   */
             AVR_TIMER_PRESCALER_BITS;
   OCR0    = AVR_TIMER_COUNTER - 1;
-  TCNT0   = 0;                                           /* Reset counter.   */
-  TIFR    = (1 << OCF0);                                 /* Reset pending.   */
-  TIMSK   = (1 << OCIE0);                                /* IRQ on compare.  */
+  TCNT0   = 0;                                          /* Reset counter.   */
+  TIFR    = (1 << OCF0);                                /* Reset pending.   */
+  TIMSK   = (1 << OCIE0);                               /* IRQ on compare.  */
 #else
   #error "Neither TCCR0A nor TCCR0 registers are defined"
 #endif
