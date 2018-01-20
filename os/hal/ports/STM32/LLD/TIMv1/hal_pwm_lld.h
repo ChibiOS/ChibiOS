@@ -195,7 +195,6 @@
 #if !defined(STM32_PWM_TIM8_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_PWM_TIM8_IRQ_PRIORITY         7
 #endif
-/** @} */
 
 /**
  * @brief   PWMD9 interrupt priority level setting.
