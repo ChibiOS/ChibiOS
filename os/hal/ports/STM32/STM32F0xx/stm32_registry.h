@@ -1498,7 +1498,7 @@
 /*===========================================================================*/
 #elif defined(STM32F071xB) || defined(STM32F072xB) ||                       \
       defined(STM32F078xx)
-      
+
 /* RCC attributes. */
 #define STM32_HAS_HSI48                     TRUE
 #define STM32_HAS_HSI_PREDIV                TRUE

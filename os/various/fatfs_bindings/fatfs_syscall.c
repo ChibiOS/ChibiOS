@@ -63,7 +63,7 @@ void ff_rel_grant(FF_SYNC_t sobj) {
 
   chSemSignal(sobj);
 }
-#endif /* _FS_REENTRANT */
+#endif /* FF_FS_REENTRANT */
 
 #if FF_USE_LFN == 3	/* LFN with a working buffer on the heap */
 /*------------------------------------------------------------------------*/
@@ -81,4 +81,4 @@ void ff_memfree(void *mblock) {
 
   chHeapFree(mblock);
 }
-#endif /* _USE_LFN == 3 */
+#endif /* FF_USE_LFN == 3 */
