@@ -2584,6 +2584,9 @@
 #define STM32_HAS_TIM21                     FALSE
 #define STM32_HAS_TIM22                     FALSE
 
+/* HRTIM attributes.*/
+#define STM32_HAS_HRTIM1                    TRUE
+
 /* USART attributes.*/
 #define STM32_HAS_USART1                    TRUE
 #define STM32_UART_USART1_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 5)

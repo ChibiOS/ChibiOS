@@ -779,6 +779,39 @@
 /** @} */
 
 /**
+ * @name    HRTIM peripheral specific RCC operations
+ * @{
+ */
+/**
+
+ * @brief   Enables the HRTIM1 peripheral clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableHRTIM1(lp) rccEnableAPB2(RCC_APB2ENR_HRTIM1EN, lp)
+
+/**
+ * @brief   Disables the HRTIM1 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableHRTIM1(lp) rccDisableAPB2(RCC_APB2ENR_HRTIM1EN, lp)
+
+/**
+ * @brief   Resets the HRTIM1 peripheral.
+ *
+ * @api
+
+ */
+#define rccResetHRTIM1() rccResetAPB2(RCC_APB2RSTR_HRTIM1RST)
+/** @} */
+
+/**
  * @name    USART/UART peripherals specific RCC operations
  * @{
  */

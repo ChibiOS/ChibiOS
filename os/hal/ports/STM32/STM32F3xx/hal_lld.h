@@ -300,6 +300,9 @@
 #define STM32_TIM8SW_MASK       (1 << 9)    /**< TIM8 clock source mask.   */
 #define STM32_TIM8SW_PCLK2      (0 << 9)    /**< TIM8 clock is PCLK2.      */
 #define STM32_TIM8SW_PLLX2      (1 << 9)    /**< TIM8 clock is PLL*2.      */
+#define STM32_HRTIM1SW_MASK     (1 << 12)   /**< HRTIM1 clock source mask. */
+#define STM32_HRTIM1SW_PCLK2    (0 << 12)   /**< HRTIM1 clock is PCLK2.    */
+#define STM32_HRTIM1SW_PLLX2    (1 << 12)   /**< HRTIM1 clock is PLL*2.    */
 #define STM32_USART2SW_MASK     (3 << 16)   /**< USART2 clock source mask. */
 #define STM32_USART2SW_PCLK     (0 << 16)   /**< USART2 clock is PCLK.     */
 #define STM32_USART2SW_SYSCLK   (1 << 16)   /**< USART2 clock is SYSCLK.   */
@@ -527,6 +530,13 @@
  */
 #if !defined(STM32_TIM8SW) || defined(__DOXYGEN__)
 #define STM32_TIM8SW                        STM32_TIM8SW_PCLK2
+#endif
+
+/**
+ * @brief   HRTIM1 clock source.
+ */
+#if !defined(STM32_HRTIM1SW) || defined(__DOXYGEN__)
+#define STM32_HRTIM1SW                      STM32_HRTIM1SW_PCLK2
 #endif
 
 /**
@@ -1088,6 +1098,28 @@
 
 #else
 #error "invalid source selected for TIM8 clock"
+#endif
+
+/**
+ * @brief   HRTIM1 frequency.
+ */
+#if STM32_HRTIM1SW == STM32_HRTIM1SW_PCLK2
+#if STM32_PPRE2 == STM32_PPRE2_DIV1
+#define STM32_HRTIM1CLK               STM32_PCLK2
+#else
+#define STM32_HRTIM1CLK               (STM32_PCLK2 * 2)
+#endif
+
+#elif STM32_HRTIM1SW == STM32_HRTIM1SW_PLLX2
+#if (STM32_SW != STM32_SW_PLL) ||                                           \
+    (STM32_HPRE != STM32_HPRE_DIV1) ||                                      \
+    (STM32_PPRE2 != STM32_PPRE2_DIV1)
+#error "double clock mode cannot be activated for HRTIM1 under the current settings"
+#endif
+#define STM32_HRTIM1CLK               (STM32_PLLCLKOUT * 2)
+
+#else
+#error "invalid source selected for HRTIM1 clock"
 #endif
 
 /**
