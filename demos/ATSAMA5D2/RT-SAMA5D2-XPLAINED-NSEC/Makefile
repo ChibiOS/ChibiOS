@@ -140,8 +140,8 @@ CSRC = $(STARTUPSRC) \
        $(BOARDSRC) \
        $(TESTSRC) \
        $(CHIBIOS)/os/hal/lib/streams/chprintf.c \
-       main.c \
-       smcclient.c
+       smcclient.c \
+       main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -168,8 +168,8 @@ TCSRC =
 TCPPSRC =
 
 # List ASM source files here
-ASMSRC =
-ASMXSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
+ASMSRC = 
+ASMXSRC = $(STARTUPASM) $(PORTASM) $(OSALASM) smc.S
 
 INCDIR = $(CHIBIOS)/os/license \
          $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
@@ -224,10 +224,10 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = -DCH_CFG_USE_MMU
+UDEFS =
 
 # Define ASM defines here
-UADEFS = -DCH_CFG_USE_MMU
+UADEFS =
 
 # List all user directories here
 UINCDIR =
