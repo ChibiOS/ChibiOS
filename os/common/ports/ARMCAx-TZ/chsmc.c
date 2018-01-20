@@ -35,7 +35,7 @@
 /*===========================================================================*/
 /* Module exported variables.                                                */
 /*===========================================================================*/
-thread_reference_t _ns_thread;
+thread_reference_t _ns_thread = NULL;
 
 /*===========================================================================*/
 /* Module local types.                                                       */
@@ -60,28 +60,19 @@ static bool isAddrSpaceValid(uint8_t *addr, size_t size)
 
 static smc_service_t *smcGetService(const char *name, size_t namelen) {
   registered_object_t *rop;
+  smc_service_t *svcp;
 
   if (!isAddrSpaceValid((uint8_t *)name, namelen))
     return NULL;
-  if (*(name + namelen) != '\0')
+  if (*(name + namelen - 1) != '\0')
     return NULL;
   rop = chFactoryFindObject(name);
   if (rop == NULL)
     return NULL;
-  return (smc_service_t *)(rop->objp);
+  svcp = (smc_service_t *)(rop->objp);
+  chFactoryReleaseObject(rop);
+  return svcp;
 }
-
-#if 0 /* not used yet */
-static void smcReleaseService(smc_service_t *svc_handle) {
-  registered_object_t *rop;
-
-  rop = chFactoryFindObjectByPointer(svc_handle);
-  if (rop == NULL)
-    return;
-  chFactoryReleaseObject(rop); /* our ref */
-  chFactoryReleaseObject(rop); /* original ref */
-}
-#endif
 
 /*===========================================================================*/
 /* Module exported functions.                                                */
@@ -118,7 +109,6 @@ msg_t smcEntry(smc_service_t *svc_handle, smc_params_area_t svc_data, size_t svc
   smc_service_t *svcp;
   msg_t r;
 
-  asm("bkpt #0\n\t");
   if (!isAddrSpaceValid(svc_data, svc_datalen))
     return MSG_RESET;
   if (svc_handle == SMC_HND_GET) {
@@ -185,11 +175,38 @@ msg_t smcServiceWaitRequest(smc_service_t *svcp)
 
   chSysLock();
   if (_ns_thread) {
-    /* Ack the previous service invocation */
+    /* Ack the previous service invocation. Not schedule. */
     chThdResumeI(&_ns_thread, MSG_OK);
   }
   r = chThdSuspendTimeoutS(&svcp->svct, TIME_INFINITE);
   chSysUnlock();
+  return r;
+}
+
+/**
+ * @brief   The calling thread is a service and wait the arrival of a request.
+ * @post    the service object is filled with the parameters of the requestor.
+ *
+ * @param[in] svcp          the service object reference.
+ *
+ * @return                  the reason of the awakening
+ * @retval MSG_OK           a success value.
+ * @retval MSG_TIMEOUT      a success value.
+ *
+ * @sclass
+ * @notapi
+ */
+msg_t smcServiceWaitRequestS(smc_service_t *svcp)
+{
+  msg_t r;
+
+  chDbgCheck(svcp != NULL);
+
+  if (_ns_thread) {
+    /* Ack the previous service invocation. Not schedule. */
+    chThdResumeI(&_ns_thread, MSG_OK);
+  }
+  r = chThdSuspendTimeoutS(&svcp->svct, TIME_INFINITE);
   return r;
 }
 

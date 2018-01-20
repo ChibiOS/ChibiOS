@@ -67,7 +67,7 @@
 /**
  * @brief   Macro defining a generic ARM architecture.
  */
-#define PORT_ARCHITECTURE_ARM
+#define PORT_ARCHITECTURE_ARM_TZ
 
 /* The following code is not processed when the file is included from an
    asm module because those intrinsic macros are not necessarily defined
@@ -153,7 +153,7 @@
 /* ARM core check.*/
 #if (ARM_CORE == ARM_CORE_CORTEX_A5) || defined(__DOXYGEN__)
 #define PORT_ARCHITECTURE_ARM_ARM7
-#define PORT_ARCHITECTURE_NAME          "ARMv7"
+#define PORT_ARCHITECTURE_NAME          "ARMv7 (TZ)"
 #define PORT_CORE_VARIANT_NAME          "ARM Cortex-A5"
 
 #elif ARM_CORE == ARM_CORE_CORTEX_A8
@@ -433,20 +433,23 @@ static inline bool port_is_isr_context(void) {
 
 /**
  * @brief   Kernel-lock action.
- * @details In this port it disables the FIQ sources and keeps IRQ state.
+ * @details In this port it disables the FIQ and IRQ sources.
  */
 static inline void port_lock(void) {
 
-  __asm volatile ("cpsid   f" : : : "memory");
+  __asm volatile ("cpsid   if" : : : "memory");
 }
 
 /**
  * @brief   Kernel-unlock action.
- * @details In this port it enables the FIQ sources and keeps IRQ state.
+ * @details In this port it enables the FIQ and IRQ sources.
  */
 static inline void port_unlock(void) {
-
-  __asm volatile ("cpsie   f" : : : "memory");
+extern thread_reference_t _ns_thread;
+  if (_ns_thread)
+    __asm volatile ("cpsie   if" : : : "memory");
+  else
+    __asm volatile ("cpsie   f" : : : "memory");
 }
 
 /**

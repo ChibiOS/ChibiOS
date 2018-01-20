@@ -86,10 +86,11 @@ typedef struct ch_smc_service {
 extern "C" {
 #endif
 extern thread_reference_t _ns_thread;
-CC_NO_RETURN void _ns_trampoline(uint32_t addr);
+CC_NO_RETURN void _ns_trampoline(uint8_t *addr);
 void smcInit(void);
 registered_object_t * smcRegisterMeAsService(const char *svc_name);
 msg_t smcServiceWaitRequest(smc_service_t *svcp);
+msg_t smcServiceWaitRequestS(smc_service_t *svcp);
 #ifdef __cplusplus
 }
 #endif
