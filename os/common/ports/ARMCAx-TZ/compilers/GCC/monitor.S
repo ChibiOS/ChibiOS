@@ -72,10 +72,8 @@
                 .set    MSG_OK,         0
                 .set    MSG_TIMEOUT,    -1
                 .set    MSG_RESET,      -2
-                .section .data
-                .balign 4
- _ns_thread:    .zero   4
 
+                .global _ns_thread
                 .section .text
                 .code   32
                 .balign 4
