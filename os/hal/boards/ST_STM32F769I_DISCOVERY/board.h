@@ -1239,8 +1239,8 @@
                                      PIN_PUPDR_PULLUP(GPIOG_EXT_SDA) |      \
                                      PIN_PUPDR_PULLUP(GPIOG_SAI1_MCLKA) |   \
                                      PIN_PUPDR_FLOATING(GPIOG_FMC_SDCLK) |  \
-                                     PIN_PUPDR_PULLUP(GPIOG_SD_D0) |        \
-                                     PIN_PUPDR_PULLUP(GPIOG_SD_D1) |        \
+                                     PIN_PUPDR_FLOATING(GPIOG_SD_D0) |      \
+                                     PIN_PUPDR_FLOATING(GPIOG_SD_D1) |      \
                                      PIN_PUPDR_FLOATING(GPIOG_RMII_TX_EN) | \
                                      PIN_PUPDR_FLOATING(GPIOG_SPDIF_RX) |   \
                                      PIN_PUPDR_FLOATING(GPIOG_RMII_TXD0) |  \
