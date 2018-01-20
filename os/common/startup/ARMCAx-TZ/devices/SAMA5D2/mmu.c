@@ -25,8 +25,6 @@
  * @{
  */
 
-#if defined(CH_CFG_USE_MMU) || defined(__DOXYGEN__)
-
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -365,7 +363,5 @@ void __core_init(void) {
     __set_SCTLR(pm | SCTLR_C_Msk);
   }
 }
-
-#endif /* CH_CFG_USE_MMU */
 
 /** @} */
