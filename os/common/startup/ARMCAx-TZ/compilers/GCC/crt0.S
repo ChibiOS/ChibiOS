@@ -126,9 +126,7 @@ bssloop:
                  * Late initialization.
                  */
 #if !defined(THUMB_NO_INTERWORKING)
-#if defined(CH_CFG_USE_MMU)
                 bl      __core_init
-#endif
                 bl      __late_init
 #else /* defined(THUMB_NO_INTERWORKING) */
                 add     r0, pc, #1
