@@ -949,6 +949,29 @@
 #define rccDisableFSMC() rccDisableAHB(RCC_AHBENR_FMCEN)
 /** @} */
 
+/**
+ * @name    CRC peripherals specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the CRC peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableCRC(lp) rccEnableAHB(RCC_AHBENR_CRCEN, lp)
+
+/**
+ * @brief   Disables the CRC peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableCRC(lp) rccDisableAHB(RCC_AHBENR_CRCEN)
+/** @} */
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
