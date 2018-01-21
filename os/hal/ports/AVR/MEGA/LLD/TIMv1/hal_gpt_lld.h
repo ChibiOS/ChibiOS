@@ -34,13 +34,13 @@
 
 #include "avr_timers.h"
 
-/*===========================================================================*/
-/* Driver constants.                                                         */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver constants.                                                        */
+/*==========================================================================*/
 
-/*===========================================================================*/
-/* Driver pre-compile time settings.                                         */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver pre-compile time settings.                                        */
+/*==========================================================================*/
 
 /**
  * @brief     GPT1 driver enable switch.
@@ -87,13 +87,13 @@
 #define AVR_GPT_USE_TIM5              FALSE
 #endif
 
-/*===========================================================================*/
-/* Derived constants and error checks.                                       */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Derived constants and error checks.                                      */
+/*==========================================================================*/
 
-/*===========================================================================*/
-/* Driver data structures and types.                                         */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver data structures and types.                                        */
+/*==========================================================================*/
 
 /**
  * @brief   GPT frequency type.
@@ -121,7 +121,7 @@ typedef struct {
    * @note    This callback is invoked on GPT counter events.
    */
   gptcallback_t             callback;
-  /* End of the mandatory fields.*/
+  /* End of the mandatory fields. */
 } GPTConfig;
 
 /**
@@ -141,13 +141,13 @@ struct GPTDriver {
   GPT_DRIVER_EXT_FIELDS
 #endif
 
-  /* End of the mandatory fields.*/
+  /* End of the mandatory fields. */
   /**
-   * @brief input clock from prescaler
+   * @brief input clock from prescaler.
    */
   uint8_t                   clock_source;
   /**
-   * @brief Lenght of the period in clock ticks
+   * @brief Lenght of the period in clock ticks.
    */
   gptcnt_t                  period;
   /**
@@ -155,14 +155,14 @@ struct GPTDriver {
    */
   gptcnt_t                  counter;
   /**
-   * @brief Function called from the interrupt service routine
+   * @brief Function called from the interrupt service routine.
    */
   gptcallback_t             callback;
 };
 
-/*===========================================================================*/
-/* Driver macros.                                                            */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver macros.                                                           */
+/*==========================================================================*/
 
 /**
  * @brief     Changes the interval of GPT peripheral.
@@ -178,12 +178,12 @@ struct GPTDriver {
  * @notapi
  */
 
-// FIXME: placeholder to enable compile, should be implemented!
+/* FIXME: placeholder to enable compile, should be implemented! */
 #define gpt_lld_change_interval(gptp, interval)
 
-/*===========================================================================*/
-/* External declarations.                                                    */
-/*===========================================================================*/
+/*==========================================================================*/
+/* External declarations.                                                   */
+/*==========================================================================*/
 
 #if AVR_GPT_USE_TIM1 || defined(__DOXYGEN__)
 extern GPTDriver GPTD1;

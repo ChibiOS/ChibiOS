@@ -29,9 +29,9 @@
 
 #include "hal_usb.h"
 
-/*===========================================================================*/
-/* Driver constants.                                                         */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver constants.                                                        */
+/*==========================================================================*/
 
 /**
  * @brief   Maximum endpoint address.
@@ -53,9 +53,9 @@
  */
 #define USB_SET_ADDRESS_ACK_HANDLING        USB_SET_ADDRESS_ACK_SW
 
-/*===========================================================================*/
-/* Driver pre-compile time settings.                                         */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver pre-compile time settings.                                        */
+/*==========================================================================*/
 
 /**
  * @name    AVR configuration options
@@ -88,13 +88,13 @@
 #define AVR_USB_TX_BUF_ADDRESS_SPACE
 #endif
 
-/*===========================================================================*/
-/* Derived constants and error checks.                                       */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Derived constants and error checks.                                      */
+/*==========================================================================*/
 
-/*===========================================================================*/
-/* Driver data structures and types.                                         */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver data structures and types.                                        */
+/*==========================================================================*/
 
 typedef const AVR_USB_TX_BUF_ADDRESS_SPACE uint8_t *usbbufptr_t;
 
@@ -120,7 +120,7 @@ typedef struct {
    */
   thread_reference_t            thread;
 #endif
-  /* End of the mandatory fields.*/
+  /* End of the mandatory fields. */
   /**
    * @brief   Number of expected bytes in the most recent transmission.
    */
@@ -207,7 +207,7 @@ typedef struct {
    * @details This structure maintains the state of the OUT endpoint.
    */
   USBOutEndpointState           *out_state;
-  /* End of the mandatory fields.*/
+  /* End of the mandatory fields. */
 } USBEndpointConfig;
 
 /**
@@ -234,7 +234,7 @@ typedef struct {
    * @brief   Start Of Frame callback.
    */
   usbcallback_t                 sof_cb;
-  /* End of the mandatory fields.*/
+  /* End of the mandatory fields. */
 } USBConfig;
 
 /**
@@ -314,12 +314,12 @@ struct USBDriver {
 #if defined(USB_DRIVER_EXT_FIELDS)
   USB_DRIVER_EXT_FIELDS
 #endif
-  /* End of the mandatory fields.*/
+  /* End of the mandatory fields. */
 };
 
-/*===========================================================================*/
-/* Driver macros.                                                            */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver macros.                                                           */
+/*==========================================================================*/
 
 /**
  * @brief   Returns the current frame number.
@@ -371,9 +371,9 @@ struct USBDriver {
   do{                                                                       \
   } while (true)
 
-/*===========================================================================*/
-/* External declarations.                                                    */
-/*===========================================================================*/
+/*==========================================================================*/
+/* External declarations.                                                   */
+/*==========================================================================*/
 
 #if (AVR_USB_USE_USB1 == TRUE) && !defined(__DOXYGEN__)
 extern USBDriver USBD1;

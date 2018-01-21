@@ -26,10 +26,13 @@
 
 #if HAL_USE_ICU || defined(__DOXYGEN__)
 
-/*===========================================================================*/
-/* Driver local definitions.                                                 */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver local definitions.                                                */
+/*==========================================================================*/
 
+/**
+ * @brief   ICU driver type.
+ */
 typedef struct {
   volatile uint8_t  *tccra;
   volatile uint8_t  *tccrb;
@@ -53,9 +56,9 @@ static icu_registers_t regs_table[]=
 #endif
 };
 
-/*===========================================================================*/
-/* Driver exported variables.                                                */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver exported variables.                                               */
+/*==========================================================================*/
 
 /**
  * @brief   ICU1 driver identifier.
@@ -82,14 +85,15 @@ ICUDriver ICUD4;
 ICUDriver ICUD5;
 #endif
 
-/*===========================================================================*/
-/* Driver local variables and types.                                         */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver local variables and types.                                        */
+/*==========================================================================*/
 
-/*===========================================================================*/
-/* Driver local functions.                                                   */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver local functions.                                                  */
+/*==========================================================================*/
 
+/* TODO: Comment. */
 static inline void handle_capture_isr(ICUDriver *icup,
                                       volatile uint16_t *icr,
                                       volatile uint8_t  *tccrb,
@@ -107,11 +111,12 @@ static inline void handle_capture_isr(ICUDriver *icup,
    icup->period = value;
    if (icup->config->period_cb != NULL)
      icup->config->period_cb(icup);
-   /* Reset counter at the end of every cycle */
+   /* Reset counter at the end of every cycle. */
    *tcnt = 0;
   }
 }
 
+/* TODO: Comment. */
 static uint8_t tmrIndex(ICUDriver *icup) {
 
   uint8_t index = 0;
@@ -134,9 +139,9 @@ static uint8_t tmrIndex(ICUDriver *icup) {
   return 255;
 }
 
-/*===========================================================================*/
-/* Driver interrupt handlers.                                                */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver interrupt handlers.                                               */
+/*==========================================================================*/
 
 #if AVR_ICU_USE_TIM1 || defined(__DOXYGEN__)
 OSAL_IRQ_HANDLER(TIMER1_CAPT_vect) {
@@ -202,9 +207,9 @@ OSAL_IRQ_HANDLER(TIMER5_OVF_vect) {
 }
 #endif
 
-/*===========================================================================*/
-/* Driver exported functions.                                                */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver exported functions.                                               */
+/*==========================================================================*/
 
 /**
  * @brief   Low level ICU driver initialization.
@@ -238,10 +243,10 @@ void icu_lld_start(ICUDriver *icup) {
 
   if (icup->state == ICU_STOP) {
     uint8_t i = tmrIndex(icup);
-    /* Normal waveform generation (counts from 0 to 0xFFFF) */
+    /* Normal waveform generation (counts from 0 to 0xFFFF). */
     *regs_table[i].tccra &= ~((1 << WGM11) | (1 << WGM10));
     *regs_table[i].tccrb &= ~((1 << WGM13) | (1 << WGM12));
-    /* Enable noise canceler, set prescale to CLK/1024 */
+    /* Enable noise canceler, set prescale to CLK/1024. */
     *regs_table[i].tccrb |= (1 << ICNC1) | (1 << CS12) | (1 << CS10);
     if (icup->config->mode == ICU_INPUT_ACTIVE_HIGH)
       *regs_table[i].tccrb |= (1 << ICES1);
@@ -260,9 +265,9 @@ void icu_lld_start(ICUDriver *icup) {
 void icu_lld_stop(ICUDriver *icup) {
 
   if (icup->state == ICU_READY) {
-    /* Resets the peripheral.*/
+    /* Resets the peripheral. */
 
-    /* Disables the peripheral.*/
+    /* Disables the peripheral. */
 #if AVR_ICU_USE_TIM1
     if (&ICUD1 == icup) {
 

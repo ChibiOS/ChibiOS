@@ -26,9 +26,9 @@
 
 #if HAL_USE_SERIAL || defined(__DOXYGEN__)
 
-/*===========================================================================*/
-/* Driver exported variables.                                                */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver exported variables.                                               */
+/*==========================================================================*/
 
 /**
  * @brief   USART0 serial driver identifier.
@@ -38,7 +38,7 @@
 #if AVR_SERIAL_USE_USART0 || defined(__DOXYGEN__)
 SerialDriver SD1;
 
-  /* USARTs are not consistently named across the AVR range */
+  /* USARTs are not consistently named across the AVR range. */
   #ifdef USART0_RX_vect
     #define AVR_SD1_RX_VECT USART0_RX_vect
     #define AVR_SD1_TX_VECT USART0_UDRE_vect
@@ -61,7 +61,7 @@ SerialDriver SD1;
 #if AVR_SERIAL_USE_USART1 || defined(__DOXYGEN__)
 SerialDriver SD2;
 
-  /* Check if USART1 exists for this MCU */
+  /* Check if USART1 exists for this MCU. */
   #ifdef USART1_RX_vect
     #define AVR_SD2_RX_VECT USART1_RX_vect
     #define AVR_SD2_TX_VECT USART1_UDRE_vect
@@ -73,9 +73,9 @@ SerialDriver SD2;
   #endif
 #endif /* AVR_SERIAL_USE_USART1 */
 
-/*===========================================================================*/
-/* Driver local variables and types.                                         */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver local variables and types.                                        */
+/*==========================================================================*/
 
 /**
  * @brief   Driver default configuration.
@@ -85,9 +85,9 @@ static const SerialConfig default_config = {
   USART_CHAR_SIZE_8
 };
 
-/*===========================================================================*/
-/* Driver local functions.                                                   */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver local functions.                                                  */
+/*==========================================================================*/
 
 static void set_error(uint8_t sra, SerialDriver *sdp) {
   eventflags_t sts = 0;
@@ -244,9 +244,9 @@ static void usart1_deinit(void) {
 }
 #endif
 
-/*===========================================================================*/
-/* Driver interrupt handlers.                                                */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver interrupt handlers.                                               */
+/*==========================================================================*/
 
 #if AVR_SERIAL_USE_USART0 || defined(__DOXYGEN__)
 /**
@@ -334,9 +334,9 @@ OSAL_IRQ_HANDLER(AVR_SD2_TX_VECT) {
 }
 #endif /* AVR_SERIAL_USE_USART1 */
 
-/*===========================================================================*/
-/* Driver exported functions.                                                */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver exported functions.                                               */
+/*==========================================================================*/
 
 /**
  * @brief   Low level serial driver initialization.

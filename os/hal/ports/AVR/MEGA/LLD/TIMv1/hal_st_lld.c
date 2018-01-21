@@ -26,30 +26,30 @@
 
 #if (OSAL_ST_MODE != OSAL_ST_MODE_NONE) || defined(__DOXYGEN__)
 
-/*===========================================================================*/
-/* Driver local definitions.                                                 */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver local definitions.                                                */
+/*==========================================================================*/
 
 /**
  * @brief  Timer maximum value
  */
 #define AVR_TIMER_COUNTER_MAX 255
 
-/*===========================================================================*/
-/* Driver exported variables.                                                */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver exported variables.                                               */
+/*==========================================================================*/
 
-/*===========================================================================*/
-/* Driver local types.                                                       */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver local types.                                                      */
+/*==========================================================================*/
 
-/*===========================================================================*/
-/* Driver local variables and types.                                         */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver local variables and types.                                        */
+/*==========================================================================*/
 
 #if (OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC) || defined(__DOXYGEN__)
 
-/* Work out what the timer interrupt is called on this MCU */
+/* Work out what the timer interrupt is called on this MCU. */
 #ifdef TIMER0_COMPA_vect
   #define AVR_TIMER_VECT TIMER0_COMPA_vect
 #elif defined(TIMER_COMPA_vect)
@@ -60,16 +60,16 @@
   #error "Cannot find interrupt vector name for timer"
 #endif
 
-/* Find the most suitable prescaler setting for the desired OSAL_ST_FREQUENCY */
+/* Find the most suitable prescaler setting for the desired OSAL_ST_FREQUENCY*/
 #if ((F_CPU / OSAL_ST_FREQUENCY) <= AVR_TIMER_COUNTER_MAX)
 
   #define AVR_TIMER_PRESCALER 1
-  #define AVR_TIMER_PRESCALER_BITS ((0<<CS02)|(0<<CS01)|(1<<CS00)) /* CLK      */
+  #define AVR_TIMER_PRESCALER_BITS ((0<<CS02)|(0<<CS01)|(1<<CS00)) /* CLK  */
 
 #elif ((F_CPU / OSAL_ST_FREQUENCY / 8) <= AVR_TIMER_COUNTER_MAX)
 
   #define AVR_TIMER_PRESCALER 8
-  #define AVR_TIMER_PRESCALER_BITS ((0<<CS02)|(1<<CS01)|(0<<CS00)) /* CLK/8    */
+  #define AVR_TIMER_PRESCALER_BITS ((0<<CS02)|(1<<CS01)|(0<<CS00)) /* CLK/8 */
 
 #elif ((F_CPU / OSAL_ST_FREQUENCY / 64) <= AVR_TIMER_COUNTER_MAX)
 
@@ -107,7 +107,7 @@
 
 #define AVR_TIMER_COUNTER (F_CPU / OSAL_ST_FREQUENCY / AVR_TIMER_PRESCALER)
 
-/* Test if OSAL_ST_FREQUENCY can be matched exactly using this timer */
+/* Test if OSAL_ST_FREQUENCY can be matched exactly using this timer. */
 #define F_CPU_ (AVR_TIMER_COUNTER * AVR_TIMER_PRESCALER * OSAL_ST_FREQUENCY)
 #if (F_CPU_ != F_CPU)
   #warning "OSAL_ST_FREQUENCY cannot be generated exactly using timer"
@@ -126,13 +126,13 @@
 
 #endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
 
-/*===========================================================================*/
-/* Driver local functions.                                                   */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver local functions.                                                  */
+/*==========================================================================*/
 
-/*===========================================================================*/
-/* Driver interrupt handlers.                                                */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver interrupt handlers.                                               */
+/*==========================================================================*/
 
 #if (OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC) || defined(__DOXYGEN__)
 
@@ -161,7 +161,7 @@ OSAL_IRQ_HANDLER(TIMER1_COMPA_vect) {
 
   OSAL_IRQ_PROLOGUE();
 
-  // TODO: reset status if required
+  /* TODO: reset status if required. */
 
   osalSysLockFromISR();
   osalOsTimerHandlerI();
@@ -172,9 +172,9 @@ OSAL_IRQ_HANDLER(TIMER1_COMPA_vect) {
 
 #endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
 
-/*===========================================================================*/
-/* Driver exported functions.                                                */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver exported functions.                                               */
+/*==========================================================================*/
 
 /**
  * @brief   Low level ST driver initialization.
@@ -189,15 +189,15 @@ void st_lld_init(void) {
    * Periodic mode uses Timer 1 (16 bit).
    */
 
-  /* CTC mode, no clock source */
+  /* CTC mode, no clock source. */
   TCCR1A     = 0;
   TCCR1B     = _BV(WGM12);
 
-  /* start disabled */
+  /* start disabled. */
   TCCR1C     = 0;
   OCR1A      = 0;
   TCNT1      = 0;
-  TIFR_REG   = _BV(OCF1A);                                  /* Reset pending.   */
+  TIFR_REG   = _BV(OCF1A);                              /* Reset pending.   */    
   TIMSK_REG  = 0;
   TCCR1B     = PRESCALER;
 
@@ -208,32 +208,33 @@ void st_lld_init(void) {
   /*
    * Periodic mode uses Timer 0 (8 bit).
    */
-#if defined(TCCR0B) /* Timer has multiple output comparators                       */
-  TCCR0A  = (1 << WGM01) | (0 << WGM00) |                /* CTC mode.        */
-            (0 << COM0A1) | (0 << COM0A0) |              /* OC0A disabled.   */
-            (0 << COM0B1) | (0 << COM0B0);               /* OC0B disabled.   */
-  TCCR0B  = (0 << WGM02) | AVR_TIMER_PRESCALER_BITS;     /* CTC mode.        */
+#if defined(TCCR0B) /* Timer has multiple output comparators.               */
+  TCCR0A  = (1 << WGM01) | (0 << WGM00) |                /* CTC mode.       */
+            (0 << COM0A1) | (0 << COM0A0) |              /* OC0A disabled.  */
+            (0 << COM0B1) | (0 << COM0B0);               /* OC0B disabled.  */
+  TCCR0B  = (0 << WGM02) | AVR_TIMER_PRESCALER_BITS;     /* CTC mode.       */
   OCR0A   = AVR_TIMER_COUNTER - 1;
-  TCNT0   = 0;                                           /* Reset counter.   */
-  TIFR0   = (1 << OCF0A);                                /* Reset pending.   */
-  TIMSK0  = (1 << OCIE0A);                               /* IRQ on compare.  */
+  TCNT0   = 0;                                           /* Reset counter.  */
+  TIFR0   = (1 << OCF0A);                                /* Reset pending.  */
+  TIMSK0  = (1 << OCIE0A);                               /* IRQ on compare. */
 
-#elif defined(TCCR0A) /* AT90CAN doesn't have TCCR0B and slightly different TCCR0A */
-  TCCR0A  = (1 << WGM01) | (0 << WGM00) |                /* CTC mode.        */
-            (0 << COM0A1) | (0 << COM0A0);               /* OC0A disabled.   */
+#elif defined(TCCR0A) /* AT90CAN doesn't have TCCR0B and slightly different */
+                      /* TCCR0A.                                            */
+  TCCR0A  = (1 << WGM01) | (0 << WGM00) |                /* CTC mode.       */
+            (0 << COM0A1) | (0 << COM0A0);               /* OC0A disabled.  */
   OCR0A   = AVR_TIMER_COUNTER - 1;
-  TCNT0   = 0;                                           /* Reset counter.   */
-  TIFR0   = (1 << OCF0A);                                /* Reset pending.   */
-  TIMSK0  = (1 << OCIE0A);                               /* IRQ on compare.  */
+  TCNT0   = 0;                                           /* Reset counter.  */
+  TIFR0   = (1 << OCF0A);                                /* Reset pending.  */
+  TIMSK0  = (1 << OCIE0A);                               /* IRQ on compare. */
 
-#elif defined(TCCR0) /* Timer has single output comparator                   */
-  TCCR0   = (1 << WGM01) | (0 << WGM00) |                /* CTC mode.        */
-            (0 << COM01) | (0 << COM00) |                /* OC0A disabled.   */
+#elif defined(TCCR0) /* Timer has single output comparator                  */
+  TCCR0   = (1 << WGM01) | (0 << WGM00) |                /* CTC mode.       */
+            (0 << COM01) | (0 << COM00) |                /* OC0A disabled.  */
             AVR_TIMER_PRESCALER_BITS;
   OCR0    = AVR_TIMER_COUNTER - 1;
-  TCNT0   = 0;                                           /* Reset counter.   */
-  TIFR    = (1 << OCF0);                                 /* Reset pending.   */
-  TIMSK   = (1 << OCIE0);                                /* IRQ on compare.  */
+  TCNT0   = 0;                                           /* Reset counter.  */
+  TIFR    = (1 << OCF0);                                 /* Reset pending.  */
+  TIMSK   = (1 << OCIE0);                                /* IRQ on compare. */
 #else
   #error "Neither TCCR0A nor TCCR0 registers are defined"
 #endif

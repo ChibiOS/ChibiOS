@@ -31,14 +31,14 @@
 
 #if HAL_USE_GPT || defined(__DOXYGEN__)
 
-/*===========================================================================*/
-/* Driver local definitions.                                                 */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver local definitions.                                                */
+/*==========================================================================*/
 
 #define PRESCALER_SIZE_BASE       5
 #define PRESCALER_SIZE_EXTENDED   7
 
-// FIXME: could use better names here!
+/* FIXME: could use better names here! */
 typedef struct {
   volatile uint8_t *tccra;
   volatile uint8_t *tccrb;
@@ -68,9 +68,9 @@ const timer_registers_t regs_table[] = {
 #endif
 };
 
-/*===========================================================================*/
-/* Driver exported variables.                                                */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver exported variables.                                               */
+/*==========================================================================*/
 
 #if AVR_GPT_USE_TIM1 || defined(__DOXYGEN__)
 GPTDriver GPTD1;
@@ -88,19 +88,27 @@ GPTDriver GPTD4;
 GPTDriver GPTD5;
 #endif
 
-/*===========================================================================*/
-/* Driver local variables.                                                   */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver local variables.                                                  */
+/*==========================================================================*/
 
 static uint16_t ratio_base[] = { 1024, 256, 64, 8, 1 };
 static uint8_t  clock_source_base[]= { 5, 4, 3, 2, 1 };
 //static uint16_t ratio_extended[] = { 1024, 256, 128, 64, 32, 8, 1 };
 //static uint8_t  clock_source_extended[] = { 7, 6, 5, 4, 3, 2, 1 };
 
-/*===========================================================================*/
-/* Driver local functions.                                                   */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver local functions.                                                  */
+/*==========================================================================*/
 
+/**
+ * @brief   TODO: Comment this function.
+ *
+ * @param[in] freq
+ * @param[in] ratio   pointer to the ratio used to calculate the prescaler
+ * @param[in] n       ....
+ * @return            ....
+ */
 static uint8_t prescaler(uint16_t freq, uint16_t *ratio, uint8_t n) {
 
   uint8_t i;
@@ -112,9 +120,14 @@ static uint8_t prescaler(uint16_t freq, uint16_t *ratio, uint8_t n) {
     if ((result * ratio[i] * freq) == F_CPU)
       return i;
   }
-  return -1; // TO check
+  return -1;
 }
 
+/**
+ * @brief   TODO: Comment this function.
+ *
+ * @param[in] gptp  pointer to the General Purpose Timer driver.
+ */
 static void gpt_lld_serve_interrupt(GPTDriver *gptp) {
 
   gptp->counter++;
@@ -128,9 +141,19 @@ static void gpt_lld_serve_interrupt(GPTDriver *gptp) {
   }
 }
 
+/**
+ * @brief   GPT low level driver dummy callback.
+ *
+ * @param[in] gptp  pointer to the General Purpose Timer driver.
+ */
 static void gpt_lld_dummy_callback(GPTDriver *gptp) {
 }
 
+/**
+ * @brief   Get the timer index.
+ *
+ * @param[in] gptp  pointer to the General Purpose Timer driver.
+ */
 static uint8_t getTimerIndex(GPTDriver *gptp) {
 
   uint8_t index = 0;
@@ -155,7 +178,7 @@ static uint8_t getTimerIndex(GPTDriver *gptp) {
   if (gptp == &GPTD5) return index;
   else index++;
 #endif
-  return -1; // To check
+  return -1;
 }
 
 /*===========================================================================*/
@@ -232,9 +255,9 @@ OSAL_IRQ_HANDLER(TIMER5_COMPA_vect) {
 }
 #endif
 
-/*===========================================================================*/
-/* Driver exported functions.                                                */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver exported functions.                                               */
+/*==========================================================================*/
 
 /**
  * @brief   Low level GPT driver initialization.

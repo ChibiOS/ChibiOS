@@ -31,9 +31,9 @@
 
 #if HAL_USE_PWM || defined(__DOXYGEN__)
 
-/*===========================================================================*/
-/* Driver local definitions.                                                 */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver local definitions.                                                */
+/*==========================================================================*/
 
 #define TIM1_CS_OFFSET CS10
 #define TIM1_WGM_OFFSET1 WGM10
@@ -82,9 +82,9 @@ static timer_registers_t regs_table[]=
 #endif
 };
 
-/*===========================================================================*/
-/* Driver exported variables.                                                */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver exported variables.                                               */
+/*==========================================================================*/
 
 /** @brief PWM driver identifiers.*/
 #if AVR_PWM_USE_TIM1 || defined(__DOXYGEN__)
@@ -103,13 +103,13 @@ PWMDriver PWMD4;
 PWMDriver PWMD5;
 #endif
 
-/*===========================================================================*/
-/* Driver local variables.                                                   */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver local variables.                                                  */
+/*==========================================================================*/
 
-/*===========================================================================*/
-/* Driver local functions.                                                   */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver local functions.                                                  */
+/*==========================================================================*/
 
 static void config_channel(volatile uint8_t *tccra,
                            uint8_t com1,
@@ -118,9 +118,9 @@ static void config_channel(volatile uint8_t *tccra,
 
   *tccra &= ~((1 << com1) | (1 << com0));
   if (mode == PWM_OUTPUT_ACTIVE_HIGH)
-    *tccra |= ((1 << com1) | (0 << com0)); /* non inverting mode */
+    *tccra |= ((1 << com1) | (0 << com0)); /* Non inverting mode. */
   else if (mode == PWM_OUTPUT_ACTIVE_LOW)
-    *tccra |= (1 << com1) | (1 << com0);   /* inverting mode */
+    *tccra |= (1 << com1) | (1 << com0);   /* Inverting mode.     */
 }
 
 static uint8_t timer_index(PWMDriver *pwmp) {
@@ -152,12 +152,12 @@ static uint8_t timer_index(PWMDriver *pwmp) {
   return index;
 }
 
-/*===========================================================================*/
-/* Driver interrupt handlers.                                                */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver interrupt handlers.                                               */
+/*==========================================================================*/
 
 /*
- * interrupt for compare1&2 and clock overflow. pwmd1 & pwmd2
+ * Interrupt for compare1&2 and clock overflow. pwmd1 & pwmd2.
  */
 #if AVR_PWM_USE_TIM1 || defined(__DOXYGEN__)
 OSAL_IRQ_HANDLER(TIMER1_OVF_vect) {
@@ -303,9 +303,9 @@ OSAL_IRQ_HANDLER(TIMER5_COMPC_vect) {
 }
 #endif
 
-/*===========================================================================*/
-/* Driver exported functions.                                                */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver exported functions.                                               */
+/*==========================================================================*/
 
 /**
  * @brief   Low level PWM driver initialization.
@@ -343,7 +343,7 @@ void pwm_lld_init(void) {
 /**
  * @brief   Configures and activates the PWM peripheral.
  * @note    We do not use the period value in Timer2 in order to
- *          be able to use both PWM channels
+ *          be able to use both PWM channels.
  *
  * @param[in] pwmp      pointer to the @p PWMDriver object
  *
@@ -356,17 +356,17 @@ void pwm_lld_start(PWMDriver *pwmp) {
 
 #if AVR_PWM_USE_TIM2 || defined(__DOXYGEN__)
     if (pwmp == &PWMD2) {
-      /* for now only fast pwm is supported */
+      /* For now only fast pwm is supported. */
       wgm_value = 0x3;
       cs_value = 1;
 
-      /* period is fixed for timer2 */
+      /* Period is fixed for timer2. */
       PWMD2.period = 0xFF;
 
       /* A prescaler value can only be a suitable power of 2 (1, 8, 32,
          64, 128 256 or 1024), so we choose the one that makes F_CPU
          divided by it equal to the given frequency (fallback value is
-         1, to keep compatibility with old code */
+         1, to keep compatibility with old code. */
       const uint8_t log_ratio_timer2[] = {0, 3, 5, 6, 7, 8, 10};
       uint8_t n;
       for (n=0; n<sizeof(log_ratio_timer2)/sizeof(uint8_t); n++) {
@@ -385,14 +385,14 @@ void pwm_lld_start(PWMDriver *pwmp) {
     }
 #endif
 
-    /* for now only fast pwm is supported */
+    /* For now only fast pwm is supported. */
     wgm_value = 0xE;
     cs_value = 0x5;
 
     /* A prescaler value can only be a suitable power of 2 (1, 8, 64,
        256 or 1024), so we choose the one that makes F_CPU divided by
        it equal to the given frequency (fallback value is 1024, to
-       keep compatibility with old code */
+       keep compatibility with old code. */
     const uint8_t log_ratio_timer1[] = {0, 3, 6, 8, 10};
     uint8_t n;
     for (n=0; n<sizeof(log_ratio_timer1)/sizeof(uint8_t); n++) {
@@ -455,7 +455,7 @@ void pwm_lld_stop(PWMDriver *pwmp) {
 void pwm_lld_change_period(PWMDriver *pwmp, pwmcnt_t period) {
 
 #if AVR_PWM_USE_TIM2 || defined(__DOXYGEN__)
-  /* Can't change period in timer2 */
+  /* Can't change period in timer2. */
   if (pwmp == &PWMD2) {
     PWMD2.period = 0xFF;
     return;
@@ -491,7 +491,7 @@ void pwm_lld_enable_channel(PWMDriver *pwmp,
                    7 - 2*channel,
                    6 - 2*channel,
                    pwmp->config->channels[channel].mode);
-    /* Timer 2 is 8 bit */
+    /* Timer 2 is 8 bit. */
     if (val > 0xFF)
       val = 0xFF;
     switch (channel) {

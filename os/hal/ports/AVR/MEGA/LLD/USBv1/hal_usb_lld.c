@@ -30,13 +30,13 @@
 #define F_USB F_CPU
 #endif
 
-/*===========================================================================*/
-/* Driver local definitions.                                                 */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver local definitions.                                                */
+/*==========================================================================*/
 
-/*===========================================================================*/
-/* Driver exported variables.                                                */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver exported variables.                                               */
+/*==========================================================================*/
 
 /**
  * @brief   USB1 driver identifier.
@@ -45,9 +45,9 @@
 USBDriver USBD1;
 #endif
 
-/*===========================================================================*/
-/* Driver local variables and types.                                         */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver local variables and types.                                        */
+/*==========================================================================*/
 
 /**
  * @brief   EP0 state.
@@ -79,13 +79,13 @@ static const USBEndpointConfig ep0config = {
   &ep0_state.out
 };
 
-/*===========================================================================*/
-/* Driver local variables and types.                                         */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver local variables and types.                                        */
+/*==========================================================================*/
 
-/*===========================================================================*/
-/* Driver local functions.                                                   */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver local functions.                                                  */
+/*==========================================================================*/
 
 #ifdef AVR_USB_PLL_OFF_IN_SUSPEND
 static __attribute__((unused)) void usb_pll_off(void)  {
@@ -125,7 +125,7 @@ static void usb_pll_on(void) {
 #endif
 
 #ifdef PLLFRQ
-  /* This initializes PLL on supported devices for USB 48MHz *only* */
+  /* This initializes PLL on supported devices for USB 48MHz *only*. */
   PLLFRQ = (0 << PDIV3) | (1 << PDIV2) | (0 << PDIV1) | (0 << PDIV0);
 #endif
 
@@ -138,9 +138,9 @@ static int usb_pll_is_locked(void) {
   return !!(PLLCSR & (1 << PLOCK));
 }
 
-/*===========================================================================*/
-/* Driver interrupt handlers and threads.                                    */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver interrupt handlers and threads.                                   */
+/*==========================================================================*/
 
 /**
  * @brief   USB general/OTG/device management event interrupt handler.
@@ -164,41 +164,41 @@ OSAL_IRQ_HANDLER(USB_GEN_vect) {
     while (!usb_pll_is_locked()) {}
 #endif  /* AVR_USB_PLL_OFF_IN_SUSPEND */
 
-    /* Attach to bus */
+    /* Attach to bus. */
     usb_lld_connect_bus(usbp);
     USBINT &= ~(1 << VBUSTI);
   }
 
-  /* USB bus SUSPEND condition handling.*/
+  /* USB bus SUSPEND condition handling. */
   if (udint & (1 << SUSPI)) {
-    /* Disable suspend interrupt, enable WAKEUP interrupt */
+    /* Disable suspend interrupt, enable WAKEUP interrupt. */
     UDIEN |= (1 << WAKEUPE);
     UDINT &= ~(1 << WAKEUPI);
     UDIEN &= ~(1 << SUSPE);
 
-    /* Freeze the clock to reduce power consumption */
+    /* Freeze the clock to reduce power consumption. */
     USBCON |= (1 << FRZCLK);
 #ifdef AVR_USB_PLL_OFF_IN_SUSPEND
     usb_pll_off();
 #endif  /* AVR_USB_PLL_OFF_IN_SUSPEND */
 
-    /* Clear the interrupt */
+    /* Clear the interrupt. */
     UDINT &= ~(1 << SUSPI);
 
     _usb_isr_invoke_event_cb(usbp, USB_EVENT_SUSPEND);
   }
 
-  /* USB bus WAKEUP condition handling.*/
+  /* USB bus WAKEUP condition handling. */
   if (udint & (1 << WAKEUPI)) {
 #ifdef AVR_USB_PLL_OFF_IN_SUSPEND
     usb_pll_on();
     while (!usb_pll_is_locked()) {}
 #endif  /* AVR_USB_PLL_OFF_IN_SUSPEND */
 
-    /* Unfreeze the clock */
+    /* Unfreeze the clock. */
     USBCON &= ~(1 << FRZCLK);
 
-    /* Clear & disable wakeup interrupt, enable suspend interrupt */
+    /* Clear & disable wakeup interrupt, enable suspend interrupt. */
     UDINT &= ~(1 << WAKEUPI);
     UDIEN &= ~(1 << WAKEUPE);
     UDIEN |= (1 << SUSPE);
@@ -206,17 +206,17 @@ OSAL_IRQ_HANDLER(USB_GEN_vect) {
     _usb_isr_invoke_event_cb(usbp, USB_EVENT_WAKEUP);
   }
 
-  /* USB bus RESUME condition handling.*/
+  /* USB bus RESUME condition handling. */
   if (udint & (1 << EORSMI)) {
     UDINT &= ~(1 << EORSMI);
     UDIEN &= ~(1 << EORSME);
   }
 
-  /* USB bus reset condition handling.*/
+  /* USB bus reset condition handling. */
   if (udint & (1 << EORSTI)) {
     UDINT &= ~(1 << EORSTI);
 
-    /* Clear & disable suspend interrupt, enable WAKEUP interrupt */
+    /* Clear & disable suspend interrupt, enable WAKEUP interrupt. */
     UDINT &= ~(1 << SUSPI);
     UDIEN &= ~(1 << SUSPE);
     UDIEN |= (1 << WAKEUPE);
@@ -228,7 +228,7 @@ OSAL_IRQ_HANDLER(USB_GEN_vect) {
     _usb_isr_invoke_event_cb(usbp, USB_EVENT_RESET);
   }
 
-  /* Start-Of-Frame handling, only if enabled */
+  /* Start-Of-Frame handling, only if enabled. */
   if ((UDIEN & (1 << SOFE)) && (udint & (1 << SOFI))) {
     _usb_isr_invoke_sof_cb(usbp);
     UDINT &= ~(1 << SOFI);
@@ -249,10 +249,10 @@ static void usb_fifo_write(USBDriver *usbp, usbep_t ep, size_t n) {
 
   if (n > epcp->in_maxsize)
     n = epcp->in_maxsize;
-  /* i is number of bytes remaining to transmit minus 1 (to handle 256b case) */
+  /* i is number of bytes remaining to transmit minus 1 (to handle 256b case). */
   uint8_t i = n - 1;
 
-  /* Must lock for entire operation to ensure nothing changes the ENUM value */
+  /* Must lock for entire operation to ensure nothing changes the ENUM value. */
   sts = osalSysGetStatusAndLockX();
   UENUM = ep & 0xf;
   do {
@@ -271,10 +271,10 @@ static void usb_fifo_read(USBDriver *usbp, usbep_t ep, size_t n) {
     return;
   if (n > epcp->out_maxsize)
     n = epcp->out_maxsize;
-  // i is number of bytes remaining to receive minus 1 (to handle 256b case)
+  /* i is number of bytes remaining to receive minus 1 (to handle 256b case). */
   uint8_t i = n - 1;
 
-  /* Must lock for entire operation to ensure nothing changes the ENUM value */
+  /* Must lock for entire operation to ensure nothing changes the ENUM value. */
   sts = osalSysGetStatusAndLockX();
   UENUM = ep & 0xf;
   do {
@@ -289,64 +289,64 @@ static void ep_isr(USBDriver *usbp, usbep_t ep) {
   size_t n;
   UENUM = ep & 0xf;
 
-  /* TODO: if stalling is needed/expected remove this check */
+  /* TODO: if stalling is needed/expected remove this check. */
   osalDbgAssert(!(UEINTX & (1 << STALLEDI)), "Endpoint stalled!");
 
   if ((UEIENX & (1 << TXINE)) && (UEINTX & (1 << TXINI))) {
-    /* Ready to accept more IN data to transmit to host */
-    /* Update transaction counts to reflect newly transmitted bytes */
+    /* Ready to accept more IN data to transmit to host. */
+    /* Update transaction counts to reflect newly transmitted bytes. */
     epcp->in_state->txcnt += epcp->in_state->last_tx_size;
     n = epcp->in_state->txsize - epcp->in_state->txcnt;
     if (n > 0) {
       /* Transfer not completed, there are more packets to send. */
       usb_fifo_write(usbp, ep, n);
 
-      /* Clear FIFOCON to send the data in the FIFO and switch bank */
+      /* Clear FIFOCON to send the data in the FIFO and switch bank. */
       UEINTX &= ~((1 << TXINI) | (1 << FIFOCON));
-      /* Enable the TX complete interrupt */
+      /* Enable the TX complete interrupt. */
       UEIENX |= (1 << TXINE);
     } else {
-      /* Disable TXIN interrupt */
+      /* Disable TXIN interrupt. */
       UEIENX &= ~(1 << TXINE);
-      /* Handshake interrupt status */
+      /* Handshake interrupt status. */
       UEINTX &= ~(1 << TXINI);
       _usb_isr_invoke_in_cb(usbp, ep);
     }
   } else if ((UEIENX & (1 << RXSTPE)) && (UEINTX & (1 << RXSTPI))) {
-    /* Received SETUP data */
-    /* Reset transaction state for endpoint */
+    /* Received SETUP data. */
+    /* Reset transaction state for endpoint. */
     epcp->in_state->txcnt = 0;
     epcp->in_state->txsize = 0;
     epcp->in_state->last_tx_size = 0;
     /* Setup packets handling, setup packets are handled using a
-       specific callback.*/
+       specific callback. */
     _usb_isr_invoke_setup_cb(usbp, ep);
   } else if ((UEIENX & (1 << RXOUTE)) && (UEINTX & (1 << RXOUTI))) {
-    /* Received OUT data from host */
+    /* Received OUT data from host. */
     if (ep == 0 && usbp->ep0state == USB_EP0_OUT_WAITING_STS) {
       /* SETUP/control transaction complete, invoke the callback. */
       UEIENX &= ~(1 << RXOUTE);
       UEINTX &= ~((1 << RXOUTI) | (1 << FIFOCON));
       _usb_isr_invoke_out_cb(usbp, ep);
     } else {
-      /* Check the FIFO byte count to see how many bytes were received */
+      /* Check the FIFO byte count to see how many bytes were received. */
       n = UEBCX;
 
       usb_fifo_read(usbp, ep, n);
 
-      /* Transaction state update */
+      /* Transaction state update. */
       epcp->out_state->rxcnt += n;
       epcp->out_state->rxsize -= n;
       epcp->out_state->rxpkts -= 1;
       if (n < epcp->out_maxsize || epcp->out_state->rxpkts == 0) {
-        /* Disable OUT interrupt */
+        /* Disable OUT interrupt. */
         UEIENX &= ~(1 << RXOUTE);
-        /* Mark OUT FIFO processed to allow more data to be received */
+        /* Mark OUT FIFO processed to allow more data to be received. */
         UEINTX &= ~((1 << RXOUTI) | (1 << FIFOCON));
-        /* Transfer complete, invokes the callback.*/
+        /* Transfer complete, invokes the callback. */
         _usb_isr_invoke_out_cb(usbp, ep);
       } else {
-        /* Mark OUT FIFO processed to allow more data to be received */
+        /* Mark OUT FIFO processed to allow more data to be received. */
         UEINTX &= ~((1 << RXOUTI) | (1 << FIFOCON));
       }
     }
@@ -366,22 +366,22 @@ OSAL_IRQ_HANDLER(USB_COM_vect) {
 
   OSAL_IRQ_PROLOGUE();
 
-  /* Figure out which endpoint(s) are interrupting */
+  /* Figure out which endpoint(s) are interrupting. */
   for (i = 0; i < USB_MAX_ENDPOINTS; ++i) {
     if (UEINT & (1 << i)) {
       ep_isr(usbp, i);
     }
   }
 
-  /* Restore endpoint selector to pre-interrupt state */
+  /* Restore endpoint selector to pre-interrupt state. */
   UENUM = epnum_orig;
 
   OSAL_IRQ_EPILOGUE();
 }
 
-/*===========================================================================*/
-/* Driver exported functions.                                                */
-/*===========================================================================*/
+/*==========================================================================*/
+/* Driver exported functions.                                               */
+/*==========================================================================*/
 
 /**
  * @brief   Low level USB driver initialization.
@@ -391,10 +391,10 @@ OSAL_IRQ_HANDLER(USB_COM_vect) {
 void usb_lld_init(void) {
 
 #if AVR_USB_USE_USB1 == TRUE
-  /* Driver initialization.*/
+  /* Driver initialization. */
   usbObjectInit(&USBD1);
 
-  /* Start and lock the USB 48MHz PLL (takes ~100ms) */
+  /* Start and lock the USB 48MHz PLL (takes ~100ms). */
   usb_pll_on();
   while (!usb_pll_is_locked()) {}
 #endif
@@ -410,7 +410,7 @@ void usb_lld_init(void) {
 void usb_lld_start(USBDriver *usbp) {
 
   if (usbp->state == USB_STOP) {
-    /* Enables the peripheral.*/
+    /* Enables the peripheral. */
 #if AVR_USB_USE_USB1 == TRUE
     if (&USBD1 == usbp) {
       uint8_t i;
@@ -420,10 +420,10 @@ void usb_lld_start(USBDriver *usbp) {
        */
       USBCON &= ~(1 << OTGPADE);
 
-      /* Enable the internal 3.3V pad regulator */
+      /* Enable the internal 3.3V pad regulator. */
       UHWCON |= (1 << UVREGE);
 
-      /* Reset and disable all endpoints */
+      /* Reset and disable all endpoints. */
       UERST = 0x7f;
       UERST = 0;
       for (i = 0; i < USB_MAX_ENDPOINTS; ++i){
@@ -435,7 +435,7 @@ void usb_lld_start(USBDriver *usbp) {
       }
     }
 #endif
-    /* Reset procedure enforced on driver start.*/
+    /* Reset procedure enforced on driver start. */
     _usb_reset(usbp);
   }
 }
@@ -450,10 +450,10 @@ void usb_lld_start(USBDriver *usbp) {
 void usb_lld_stop(USBDriver *usbp) {
 
   if (usbp->state == USB_READY) {
-    /* Disables the peripheral.*/
+    /* Disables the peripheral. */
 #if AVR_USB_USE_USB1 == TRUE
     if (&USBD1 == usbp) {
-      /* Disable and clear transition interrupts */
+      /* Disable and clear transition interrupts. */
 #if !defined(__AVR_ATmega32U4__)
       USBCON &= ~((1 << VBUSTE) | (1 << IDTE));
 #else
@@ -462,15 +462,15 @@ void usb_lld_stop(USBDriver *usbp) {
 
       USBINT = 0;
 
-      /* Disable and clear device interrupts */
+      /* Disable and clear device interrupts. */
       UDIEN &= ~((1 << UPRSME) | (1 << EORSME) | (1 << WAKEUPE) | (1 << EORSTE)
           | (1 << SOFE) | (1 << SUSPE));
       UDINT = 0;
 
-      /* Freeze clock */
+      /* Freeze clock. */
       USBCON |= (1 << FRZCLK);
 
-      /* Disable USB logic */
+      /* Disable USB logic. */
       USBCON &= ~(1 << USBE);
     }
 #endif
@@ -486,34 +486,34 @@ void usb_lld_stop(USBDriver *usbp) {
  */
 void usb_lld_reset(USBDriver *usbp) {
 
-  /* Post-reset initialization.*/
-  /* Reset and enable via toggling the USB macro logic overall enable bit */
+  /* Post-reset initialization. */
+  /* Reset and enable via toggling the USB macro logic overall enable bit. */
   USBCON &= ~(1 << USBE);
   USBCON |= (1 << USBE);
 
-  /* Unfreeze clock */
+  /* Unfreeze clock. */
   USBCON &= ~(1 << FRZCLK);
 
-  /* Set Device mode */
-  /* TODO: Support HOST/OTG mode if needed */
+  /* Set Device mode. */
+  /* TODO: Support HOST/OTG mode if needed. */
 
 #if !defined(__AVR_ATmega32U4__)
   UHWCON |= (1 << UIMOD);
 #endif
 
-  /* Set FULL 12mbps speed */
+  /* Set FULL 12mbps speed. */
   UDCON &= ~(1 << LSM);
 
-  /* Enable device pin interrupt */
+  /* Enable device pin interrupt. */
   USBCON |= (1 << VBUSTE);
 
-  /* EP0 initialization.*/
+  /* EP0 initialization. */
   UERST |= (1 << 0);
   UERST &= ~(1 << 0);
   usbp->epc[0] = &ep0config;
   usb_lld_init_endpoint(usbp, 0);
 
-  /* Enable device-level event interrupts */
+  /* Enable device-level event interrupts. */
   UDINT &= ~(1 << SUSPI);
   UDIEN = (1 << UPRSME) | (1 << EORSME) | (1 << WAKEUPE) | (1 << EORSTE)
       | (1 << SUSPE);
@@ -553,14 +553,14 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
   uint16_t size = 0;
   const USBEndpointConfig *epcp = usbp->epc[ep];
 
-  /* Select this endpoint number for subsequent commands */
+  /* Select this endpoint number for subsequent commands. */
   UENUM = ep & 0xf;
 
-  /* Enable endpoint to take out of reset */
+  /* Enable endpoint to take out of reset. */
   UECONX |= (1 << EPEN);
 
   UECFG1X = 0;
-  /* Set the endpoint type.*/
+  /* Set the endpoint type. */
   switch (epcp->ep_mode & USB_EP_MODE_TYPE) {
   case USB_EP_MODE_TYPE_ISOC:
     UECFG0X = (0 << EPTYPE1) | (1 << EPTYPE0);
@@ -575,7 +575,7 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
     UECFG0X = (0 << EPTYPE1) | (0 << EPTYPE0);
   }
   if ((epcp->ep_mode & USB_EP_MODE_TYPE) == USB_EP_MODE_TYPE_CTRL) {
-    /* CTRL endpoint */
+    /* CTRL endpoint. */
     osalDbgCheck(epcp->in_maxsize == epcp->out_maxsize);
     size = epcp->in_maxsize;
   } else {
@@ -611,7 +611,7 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
       osalDbgAssert(false, "Invalid size for USB endpoint");
   }
 
-  UEIENX |=  (1 << RXSTPE)/* | (1 << RXOUTE)*/ | (1 << STALLEDE) ;
+  UEIENX |=  (1 << RXSTPE)/* | (1 << RXOUTE) */ | (1 << STALLEDE) ;
 
   osalDbgAssert((UESTA0X & (1 << CFGOK)),
                 "Hardware reports endpoint config is INVALID");
@@ -648,7 +648,7 @@ void usb_lld_disable_endpoints(USBDriver *usbp) {
  */
 usbepstatus_t usb_lld_get_status_out(USBDriver *usbp, usbep_t ep) {
 
-  /* Select this endpoint number for subsequent commands */
+  /* Select this endpoint number for subsequent commands. */
   UENUM = ep & 0xf;
 
   if (!(UECONX & (1 << EPEN)))
@@ -692,13 +692,13 @@ usbepstatus_t usb_lld_get_status_in(USBDriver *usbp, usbep_t ep) {
 void usb_lld_read_setup(USBDriver *usbp, usbep_t ep, uint8_t *buf) {
 
   uint8_t i;
-  /* Select this endpoint number for subsequent commands */
+  /* Select this endpoint number for subsequent commands. */
   UENUM = ep & 0xf;
 
   for (i = 0; i < 8; ++i) {
     *buf++ = UEDATX;
   }
-  /* Clear FIFOCON and RXSTPI to drain the setup packet data from the FIFO */
+  /* Clear FIFOCON and RXSTPI to drain the setup packet data from the FIFO. */
   UEINTX &= ~((1 << FIFOCON) | (1 << RXSTPI));
 }
 
@@ -717,18 +717,18 @@ void usb_lld_read_setup(USBDriver *usbp, usbep_t ep, uint8_t *buf) {
  */
 void usb_lld_end_setup(USBDriver *usbp, usbep_t ep) {
 
-  /* Select this endpoint number for subsequent commands */
+  /* Select this endpoint number for subsequent commands. */
   UENUM = ep & 0xf;
 
   if ((usbp->setup[0] & USB_RTYPE_DIR_MASK) == USB_RTYPE_DIR_DEV2HOST) {
-    /* Enable interrupt and wait for OUT packet */
+    /* Enable interrupt and wait for OUT packet. */
     usbp->epc[ep]->out_state->rxsize = 0;
     usbp->epc[ep]->out_state->rxpkts = 1;
 
     UEINTX &= ~((1 << FIFOCON) | (1 << RXOUTI));
     UEIENX |= (1 << RXOUTE);
   } else {
-    /* Enable interrupt and wait for IN packet */
+    /* Enable interrupt and wait for IN packet. */
     usbp->epc[ep]->in_state->last_tx_size = 0;
     usbp->epc[ep]->in_state->txcnt = 0;
     usbp->epc[ep]->in_state->txsize = 0;
@@ -752,14 +752,14 @@ void usb_lld_start_out(USBDriver *usbp, usbep_t ep) {
   syssts_t sts;
 
   /* Initialize transfer by recording how many packets we expect to receive. */
-  if (osp->rxsize == 0)         /* Special case for zero sized packets.*/
+  if (osp->rxsize == 0)         /* Special case for zero sized packets. */
     osp->rxpkts = 1;
   else
     osp->rxpkts = (uint8_t)((osp->rxsize + usbp->epc[ep]->out_maxsize - 1) /
                              usbp->epc[ep]->out_maxsize);
 
-  /* Select this endpoint number for subsequent commands */
-  /* Must lock for entire operation to ensure nothing changes the ENUM value */
+  /* Select this endpoint number for subsequent commands. */
+  /* Must lock for entire operation to ensure nothing changes the ENUM value. */
   sts = osalSysGetStatusAndLockX();
   UENUM = ep & 0xf;
 
@@ -783,15 +783,15 @@ void usb_lld_start_in(USBDriver *usbp, usbep_t ep) {
   /* Initialize transfer by filling FIFO with passed data. */
   usb_fifo_write(usbp, ep, isp->txsize);
 
-  /* Select this endpoint number for subsequent commands */
-  /* Must lock for entire operation to ensure nothing changes the ENUM value */
+  /* Select this endpoint number for subsequent commands. */
+  /* Must lock for entire operation to ensure nothing changes the ENUM value. */
   sts = osalSysGetStatusAndLockX();
   UENUM = ep & 0xf;
 
-  /* Clear FIFOCON to send the data in the FIFO and switch bank */
+  /* Clear FIFOCON to send the data in the FIFO and switch bank. */
   UEINTX &= ~((1 << TXINI) | (1 << FIFOCON));
 
-  /* Enable the TX complete interrupt */
+  /* Enable the TX complete interrupt. */
   UEIENX |= (1 << TXINE);
 
   osalSysRestoreStatusX(sts);
@@ -810,8 +810,8 @@ void usb_lld_stall_out(USBDriver *usbp, usbep_t ep) {
   syssts_t sts;
   (void)usbp;
 
-  /* Select this endpoint number for subsequent commands */
-  /* Must lock for entire operation to ensure nothing changes the ENUM value */
+  /* Select this endpoint number for subsequent commands. */
+  /* Must lock for entire operation to ensure nothing changes the ENUM value. */
   sts = osalSysGetStatusAndLockX();
   UENUM = ep & 0xf;
 
@@ -845,8 +845,8 @@ void usb_lld_clear_out(USBDriver *usbp, usbep_t ep) {
   syssts_t sts;
   (void)usbp;
 
-  /* Select this endpoint number for subsequent commands */
-  /* Must lock for entire operation to ensure nothing changes the ENUM value */
+  /* Select this endpoint number for subsequent commands. */
+  /* Must lock for entire operation to ensure nothing changes the ENUM value. */
   sts = osalSysGetStatusAndLockX();
   UENUM = ep & 0xf;
 
