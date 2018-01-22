@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.cdt.debug.gdbjtag.launchConfigurationType">
-<stringAttribute key="bad_container_name" value="\RT-STM32F746ZE-NUCLEO144\debug"/>
+<stringAttribute key="bad_container_name" value="\RT-STM32F746ZG-NUCLEO144\debug"/>
 <intAttribute key="org.eclipse.cdt.debug.gdbjtag.core.delay" value="1"/>
 <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.doHalt" value="true"/>
 <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.doReset" value="true"/>
