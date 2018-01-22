@@ -37,7 +37,7 @@
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="RT-ARM7-GENERIC.null.1703860681" name="RT-ARM7-GENERIC"/>
+		<project id="RT-SAMA5D2-XPLAINED.null.1703860681" name="RT-SAMA5D2-XPLAINED"/>
 	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
