@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -39,16 +39,19 @@ THD_WORKING_AREA(waThread2, 128);
 THD_FUNCTION(Thread2, arg) {
 
   (void)arg;
+  bool runTestSuite = true;
 
   /*
    * Activates the serial driver 1 using the driver default configuration.
-   * PA9 and PA10 are routed to USART1.
    */
   sdStart(&SD1, NULL);
 
   while (true) {
-    chnWrite(&SD1, (const uint8_t *)"Hello World!\r\n", 14);
-    chThdSleepMilliseconds(2000);
+    if (runTestSuite) {
+      test_execute((BaseSequentialStream *)&SD1, &nil_test_suite);
+      runTestSuite = false;
+    }
+    chThdSleepMilliseconds(500);
   }
 }
 
@@ -58,7 +61,8 @@ THD_FUNCTION(Thread2, arg) {
  */
 THD_TABLE_BEGIN
   THD_TABLE_ENTRY(waThread1, "blinker", Thread1, NULL)
-  THD_TABLE_ENTRY(waThread2, "hello", Thread2, NULL)
+  THD_TABLE_ENTRY(wa_test_support, "test_support", test_support, (void *)&nil.threads[2])
+  THD_TABLE_ENTRY(waThread2, "tester", Thread2, NULL)
 THD_TABLE_END
 
 /*
@@ -75,11 +79,6 @@ int main(void) {
    */
   halInit();
   chSysInit();
-
-  /*
-   * Start the NIL test suite.
-   */
-  test_execute((BaseSequentialStream *)&SD1, &nil_test_suite);
 
   /* This is now the idle thread loop, you may perform here a low priority
      task but you must never try to sleep or wait in this loop. Note that
