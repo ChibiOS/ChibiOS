@@ -27,9 +27,11 @@
  *          - STM32_VDD (as hundredths of Volt).
  *          .
  *          One of the following macros must also be defined:
+ *          - STM32F722xx, STM32F723xx very high-performance MCUs.
+ *          - STM32F732xx, STM32F733xx very high-performance MCUs.
  *          - STM32F745xx, STM32F746xx, STM32F756xx very high-performance MCUs.
- *          - STM32F767xx, STM32F769xx, STM32F777xx, STM32F779xx very
- *            high-performance MCUs.
+ *          - STM32F765xx, STM32F767xx, STM32F769xx very high-performance MCUs.
+ *          - STM32F777xx, STM32F779xx very high-performance MCUs.
  *          .
  *
  * @addtogroup HAL
@@ -54,7 +56,19 @@
  * @name    Platform identification macros
  * @{
  */
-#if defined(STM32F745xx) || defined(__DOXYGEN__)
+#if defined(STM32F722xx) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32F745 Very High Performance with DSP and FPU"
+
+#elif defined(STM32F723xx)
+#define PLATFORM_NAME           "STM32F745 Very High Performance with DSP and FPU"
+
+#elif defined(STM32F732xx)
+#define PLATFORM_NAME           "STM32F745 Very High Performance with DSP and FPU"
+
+#elif defined(STM32F733xx)
+#define PLATFORM_NAME           "STM32F745 Very High Performance with DSP and FPU"
+
+#elif defined(STM32F745xx)
 #define PLATFORM_NAME           "STM32F745 Very High Performance with DSP and FPU"
 
 #elif defined(STM32F746xx)
@@ -62,6 +76,9 @@
 
 #elif defined(STM32F756xx)
 #define PLATFORM_NAME           "STM32F756 Very High Performance with DSP and FPU"
+
+#elif defined(STM32F765xx)
+#define PLATFORM_NAME           "STM32F767 Very High Performance with DSP and DP FPU"
 
 #elif defined(STM32F767xx)
 #define PLATFORM_NAME           "STM32F767 Very High Performance with DSP and DP FPU"
