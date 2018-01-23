@@ -119,13 +119,13 @@
 #define PIOB_PIN3                   3U
 #define PIOB_PIN4                   4U
 #define PIOB_LED_GREEN              5U
-#define PIOB_LED_RED                6U
+#define PIOB_PIN6                   6U
 #define PIOB_PIN7                   7U
 #define PIOB_PIN8                   8U
 #define PIOB_USER_PB                9U
 #define PIOB_PIN10                  10U
-#define PIOB_PIN11                  11U
-#define PIOB_PIN12                  12U
+#define PIOB_URXD3                  11U
+#define PIOB_UTXD3                  12U
 #define PIOB_PIN13                  13U
 #define PIOB_ETH_GTXCK              14U
 #define PIOB_ETH_GTXEN              15U
@@ -139,10 +139,10 @@
 #define PIOB_ETH_GMDIO              23U
 #define PIOB_PIN24                  24U
 #define PIOB_PIN25                  25U
-#define PIOB_PIN26                  26U
-#define PIOB_PIN27                  27U
-#define PIOB_PIN28                  28U
-#define PIOB_PIN29                  29U
+#define PIOB_URXD0                  26U
+#define PIOB_UTXD0                  27U
+#define PIOB_FTXD0                  28U
+#define PIOB_FRXD0                  29U
 #define PIOB_PIN30                  30U
 #define PIOB_PIN31                  31U
 
@@ -181,18 +181,18 @@
 
 #define PIOD_PIO0                   0U
 #define PIOD_PIN1                   1U
-#define PIOD_PIN2                   2U
-#define PIOD_PIN3                   3U
-#define PIOD_PIN4                   4U
-#define PIOD_PIN5                   5U
+#define PIOD_URXD1                  2U
+#define PIOD_UTXD1                  3U
+#define PIOD_URXD2                  4U
+#define PIOD_UTXD2                  5U
 #define PIOD_PIN6                   6U
 #define PIOD_PIN7                   7U
 #define PIOD_PIN8                   8U
 #define PIOD_PIN9                   9U
 #define PIOD_PIN10                  10U
-#define PIOD_PIN11                  11U
-#define PIOD_PIN12                  12U
-#define PIOD_PIN13                  13U
+#define PIOD_TIOA1                  11U
+#define PIOD_LED_RGB_RED            12U
+#define PIOD_LED_RGB_BLUE           13U
 #define PIOD_PIN14                  14U
 #define PIOD_PIN15                  15U
 #define PIOD_PIN16                  16U
@@ -200,15 +200,15 @@
 #define PIOD_PIN18                  18U
 #define PIOD_PIN19                  19U
 #define PIOD_PIN20                  20U
-#define PIOD_PIN21                  21U
-#define PIOD_PIN22                  22U
+#define PIOD_FTXD4                  21U
+#define PIOD_FRXD4                  22U
 #define PIOD_PIN23                  23U
-#define PIOD_PIN24                  24U
-#define PIOD_PIN25                  25U
-#define PIOD_PIN26                  26U
-#define PIOD_PIN27                  27U
-#define PIOD_PIN28                  28U
-#define PIOD_PIN29                  29U
+#define PIOD_FCTS4                  24U
+#define PIOD_FRTS4                  25U
+#define PIOD_FMOSI2                 26U
+#define PIOD_FMISO2                 27U
+#define PIOD_FSCLK2                 28U
+#define PIOD_FNPCS02                29U
 #define PIOD_PIN30                  30U
 #define PIOD_PIN31                  31U
 
@@ -220,8 +220,9 @@
 
 #define LINE_LED_BLUE               BOARD_LINE(PIOB, 0U)
 #define LINE_LED_GREEN              BOARD_LINE(PIOB, 5U)
-#define LINE_LED_RED                BOARD_LINE(PIOB, 6U)
 #define LINE_USER_PB                BOARD_LINE(PIOB, 9U)
+#define LINE_LED_RGB_RED            BOARD_LINE(PIOD, 12U)
+#define LINE_LED_RGB_BLUE           BOARD_LINE(PIOD, 13U)
 
 #if !defined(_FROM_ASM_)
 #ifdef __cplusplus
