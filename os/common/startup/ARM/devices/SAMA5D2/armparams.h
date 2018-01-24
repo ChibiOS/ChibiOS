@@ -87,6 +87,8 @@
 #define ARM_IRQ_VECTOR_REG      0xFC020010
 
 #endif
+
+#define ARM_ENABLE_WFI_IDLE     TRUE
 #endif /* ARMPARAMS_H */
 
 /** @} */
