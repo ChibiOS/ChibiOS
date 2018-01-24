@@ -433,7 +433,7 @@ static inline bool port_is_isr_context(void) {
 
 /**
  * @brief   Kernel-lock action.
- * @details In this port it disables the FIQ and IRQ sources.
+ * @details In this port it disables the FIQ and keep IRQ state.
  */
 static inline void port_lock(void) {
 
@@ -445,11 +445,7 @@ static inline void port_lock(void) {
  * @details In this port it enables the FIQ and IRQ sources.
  */
 static inline void port_unlock(void) {
-extern thread_reference_t _ns_thread;
-  if (_ns_thread)
-    __asm volatile ("cpsie   if" : : : "memory");
-  else
-    __asm volatile ("cpsie   f" : : : "memory");
+  __asm volatile ("cpsie   if" : : : "memory");
 }
 
 /**

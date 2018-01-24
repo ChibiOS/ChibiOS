@@ -181,9 +181,16 @@ msg_t smcEntry(smc_service_t *svc_handle, smc_params_area_t svc_data, size_t svc
   svcp->svc_data = svc_data;
   svcp->svc_datalen = svc_datalen;
 
+#if (CH_DBG_SYSTEM_STATE_CHECK == TRUE)
+  _dbg_check_lock();
+#endif
+
   chThdResumeS(&svcp->svct, MSG_OK);
   r = chThdSuspendS(&_ns_thread);
 
+#if (CH_DBG_SYSTEM_STATE_CHECK == TRUE)
+  _dbg_check_unlock();
+#endif
   return r;
 }
 

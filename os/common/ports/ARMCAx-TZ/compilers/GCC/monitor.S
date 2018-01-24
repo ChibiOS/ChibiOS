@@ -145,7 +145,7 @@ _monitor_vectors:
  * SMC entry
  */
 sm_call:
-                stmfd   sp!, {r3}
+                stmfd   sp!, {r3, r12}
                 ldr     r12, =MON_S_SCR                     // enter in the secure world
                 mcr     p15, 0, r12, c1, c1, 0
                 ands    r0, r0                              // OS special service,
@@ -162,17 +162,8 @@ sm_call:
                 sm_load_ooctx_regs r3
 
                 msr     CPSR_c, #MODE_SYS | I_BIT | F_BIT   // switch to sys mode
-                stmfd   sp!, {lr}                           // save lr
 
-#if (CH_DBG_SYSTEM_STATE_CHECK == TRUE)
-                bl      _dbg_check_lock
-#endif
                 bl      smcEntry                            // call the C smc handler
-
-#if (CH_DBG_SYSTEM_STATE_CHECK == TRUE)
-                bl      _dbg_check_unlock
-#endif
-                ldmfd   sp!, {lr}                      // restore lr
 
                 ldr     r3, =sm_secctx
                 sm_store_ooctx_regs r3
@@ -184,14 +175,14 @@ sm_call:
                 msr     CPSR_c, #MODE_MON | I_BIT | F_BIT   // switch to monitor mode
                 ldr     r12, =MON_NS_SCR                    // enter in the non-secure world
                 mcr     p15, 0, r12, c1, c1, 0
-                ldmfd   sp!, {r3}
+                ldmfd   sp!, {r3, r12}
                 subs    pc, lr, #0                          // return from smc
 1:
                 mov     lr, r1                              // use the address in r1 as return address
                                                             // in the non secure world
                 ldr     r12, =MON_NS_SCR                    // enter in the non-secure world
                 mcr     p15, 0, r12, c1, c1, 0
-                ldmfd   sp!, {r3}
+                ldmfd   sp!, {r3, r12}
                 subs    pc, lr, #0                          // return from smc
 
 /*
@@ -207,7 +198,7 @@ sm_call:
  */
 sm_fiq:
                                                             // check point: SCR.NS == 1
-                stmfd   sp!, {r0}
+                stmfd   sp!, {r0, r12}
                 ldr     r0, =MON_S_SCR                      // enter in the secure world
                 mcr     p15, 0, r0, c1, c1, 0
 
@@ -232,7 +223,7 @@ sm_fiq:
                 msr     CPSR_c, #MODE_MON | I_BIT | F_BIT   // switch to monitor mode
                 ldr     r0, =MON_NS_SCR                     // set non-secure SCR before return
                 mcr     p15, 0, r0, c1, c1, 0
-                ldmfd   sp!, {r0}
+                ldmfd   sp!, {r0, r12}
                 subs    pc, lr, #4                          // return into non-secure world
 /*
  * IRQ entry
@@ -258,11 +249,11 @@ sm_irq:
                 msr     CPSR_c, #MODE_SYS | I_BIT | F_BIT
                 stmfd   sp!, {r0, r1}                       // push R0=SPSR, R1=LR_MON.
                                                             // check point: ns_tread != 0
-                ldr     r0, =_ns_thread
-                mov     r1, #MSG_TIMEOUT
 #if (CH_DBG_SYSTEM_STATE_CHECK == TRUE)
                 bl      _dbg_check_lock
 #endif
+                ldr     r0, =_ns_thread
+                mov     r1, #MSG_TIMEOUT
                 bl      chThdResumeS                        // resume the ns_thread and serve the IRQ
                                                             // into non-secure world
 #if (CH_DBG_SYSTEM_STATE_CHECK == TRUE)
