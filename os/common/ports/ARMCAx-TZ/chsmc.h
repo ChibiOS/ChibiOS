@@ -46,7 +46,7 @@
  * Special service handles
  */
 #define SMC_HND_TRAMP             ((smc_service_t *)0)
-#define SMC_HND_GET               ((smc_service_t *)1)
+#define SMC_HND_DISCOVERY         ((smc_service_t *)1)
 
 /*
  * Non secure memory address space
@@ -54,6 +54,12 @@
  */
 #define NSEC_MEMORY_START         ((uint8_t *)0x20000000)
 #define NSEC_MEMORY_END           ((uint8_t *)0x20100000)
+
+/*
+ * Services table cardinality
+ */
+#define SMC_SVC_MAX_N             32
+#define SMC_SVC_MAX_NAME_LEN      16
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -70,8 +76,10 @@ typedef uint8_t * smc_params_area_t;
 
 typedef struct ch_smc_service {
   thread_reference_t  svct;
+  uint32_t  register_order;
   smc_params_area_t svc_data;
   uint32_t  svc_datalen;
+  char      svc_name[SMC_SVC_MAX_NAME_LEN];
 } smc_service_t;
 
 /*===========================================================================*/
@@ -86,10 +94,11 @@ typedef struct ch_smc_service {
 extern "C" {
 #endif
 extern thread_reference_t _ns_thread;
-CC_NO_RETURN void _ns_trampoline(uint8_t *addr);
+void _ns_trampoline(uint8_t *addr);
 void smcInit(void);
-registered_object_t * smcRegisterMeAsService(const char *svc_name);
-msg_t smcServiceWaitRequest(smc_service_t *svcp);
+void smcWaitServicesStarted(uint32_t n_services);
+smc_service_t *smcRegisterMeAsService(const char *svc_name);
+msg_t smcServiceWaitRequest(smc_service_t *svcp, msg_t msg);
 msg_t smcServiceWaitRequestS(smc_service_t *svcp);
 #ifdef __cplusplus
 }
