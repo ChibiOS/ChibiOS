@@ -24,6 +24,7 @@
  * @addtogroup SMC
  * @{
  */
+#include <string.h>
 
 #include "ch.h"
 #include "chsmc.h"
@@ -36,7 +37,8 @@
 /* Module exported variables.                                                */
 /*===========================================================================*/
 thread_reference_t _ns_thread = NULL;
-
+uint32_t  sm_secctx[128];
+uint32_t  sm_nsecctx[128];
 /*===========================================================================*/
 /* Module local types.                                                       */
 /*===========================================================================*/
@@ -44,7 +46,13 @@ thread_reference_t _ns_thread = NULL;
 /*===========================================================================*/
 /* Module local variables.                                                   */
 /*===========================================================================*/
-static memory_pool_t svcs_pool;
+static thread_reference_t main_t;
+
+static smc_service_t svcs_table[SMC_SVC_MAX_N];
+static mutex_t svcs_table_mtx;
+
+static uint32_t n_registered_services = 0;
+static smc_service_t *discovery_entry = NULL;
 
 /*===========================================================================*/
 /* Module local functions.                                                   */
@@ -58,20 +66,58 @@ static bool isAddrSpaceValid(uint8_t *addr, size_t size)
                 (NSEC_MEMORY_END - NSEC_MEMORY_START));
 }
 
-static smc_service_t *smcGetService(const char *name, size_t namelen) {
-  registered_object_t *rop;
+static bool isHndlValid(smc_service_t *handle)
+{
+  if ((handle < &svcs_table[0]) || (handle >= &svcs_table[SMC_SVC_MAX_N]))
+    return FALSE;
+  if (((char *)handle - (char *)&svcs_table[0]) % sizeof svcs_table[0])
+    return FALSE;
+  return TRUE;
+}
+
+static smc_service_t *getFreeSvcsEntry(void)
+{
+  int i;
+  for (i = 0; i < SMC_SVC_MAX_N; ++i) {
+    if (svcs_table[i].svct == NULL)
+      return &svcs_table[i];
+  }
+  return NULL;
+}
+
+static smc_service_t *findSvcsEntry(const char *name)
+{
+  int i;
+  for (i = 0; i < SMC_SVC_MAX_N; ++i) {
+    if (!strncmp(svcs_table[i].svc_name, name, SMC_SVC_MAX_NAME_LEN))
+      return &svcs_table[i];
+  }
+  return NULL;
+}
+
+/*
+ * Internal discovery service.
+ */
+static THD_WORKING_AREA(waDiscoveryTrustService, 512);
+static THD_FUNCTION(DiscoveryTrustService, arg) {
+  (void) arg;
+  msg_t m;
   smc_service_t *svcp;
 
-  if (!isAddrSpaceValid((uint8_t *)name, namelen))
-    return NULL;
-  if (*(name + namelen - 1) != '\0')
-    return NULL;
-  rop = chFactoryFindObject(name);
-  if (rop == NULL)
-    return NULL;
-  svcp = (smc_service_t *)(rop->objp);
-  chFactoryReleaseObject(rop);
-  return svcp;
+  discovery_entry = smcRegisterMeAsService("_discovery");
+  if (discovery_entry == NULL)
+    chSysHalt("no entry available for discovery service");
+  m = smcServiceWaitRequest(discovery_entry, MSG_OK);
+  while (true) {
+    chDbgAssert(m == MSG_OK, "");
+    if (discovery_entry->svc_datalen) {
+      *((char *)discovery_entry->svc_data + discovery_entry->svc_datalen - 1) = '\0';
+      chMtxLock(&svcs_table_mtx);
+      svcp = findSvcsEntry((char *)discovery_entry->svc_data);
+      chMtxUnlock(&svcs_table_mtx);
+      m = smcServiceWaitRequest(discovery_entry, (msg_t)svcp);
+    }
+  }
 }
 
 /*===========================================================================*/
@@ -79,13 +125,24 @@ static smc_service_t *smcGetService(const char *name, size_t namelen) {
 /*===========================================================================*/
 
 /**
- * @brief   XXX Module initialization.
+ * @brief   SMC Module initialization.
  *
  * @notapi
  */
 void smcInit(void) {
-  chPoolObjectInit(&svcs_pool, sizeof (smc_service_t),
-                   chCoreAllocAlignedI);
+  int i;
+
+  main_t = chThdGetSelfX();
+  for (i = 0; i < SMC_SVC_MAX_N; ++i) {
+    svcs_table[i].svct = NULL;
+    svcs_table[i].register_order = 0;
+  }
+  chMtxObjectInit(&svcs_table_mtx);
+  /*
+   * Creates the discovery service thread.
+   */
+  chThdCreateStatic(waDiscoveryTrustService, sizeof(waDiscoveryTrustService), NORMALPRIO-63,
+      DiscoveryTrustService, NULL);
 }
 
 /**
@@ -94,39 +151,39 @@ void smcInit(void) {
  * @post    A request is passed to the thread registered for the service.
  * @post    The service thread is resumed.
  *
- * @param[in] svc_handle  the handle of the service to be invoked
- * @param[in] svc_data    service request data, often a reference to a more complex structure
- * @param[in] svc_datalen size of the svc_data memory area
+ * @param[in]    svc_handle  the handle of the service to be invoked
+ * @param[inout] svc_data    service request data, often a reference to a more complex structure
+ * @param[in]    svc_datalen size of the svc_data memory area
  *
  * @return              a value defined by the service.
- * @retval MSG_OK       a success value.
+ * @retval > 0          the handle of requested service.
+ * @retval MSG_OK       default success value.
  * @retval MSG_RESET    if the service is unavailable.
+ * @retval MSG_TIMEOUT  call interrupted.
  *
  * @notapi
  */
 msg_t smcEntry(smc_service_t *svc_handle, smc_params_area_t svc_data, size_t svc_datalen) {
-  registered_object_t *rop;
   smc_service_t *svcp;
   msg_t r;
 
   if (!isAddrSpaceValid(svc_data, svc_datalen))
     return MSG_RESET;
-  if (svc_handle == SMC_HND_GET) {
-    svcp = smcGetService((const char *)svc_data, svc_datalen);
+  if (svc_handle == SMC_HND_DISCOVERY) {
+    svcp = discovery_entry;
     if (svcp == NULL)
       return MSG_RESET;
-    return (msg_t)svcp;
+  } else {
+    if (!isHndlValid(svc_handle))
+      return MSG_RESET;
+    svcp = svc_handle;
   }
-  rop = chFactoryFindObjectByPointer(svc_handle);
-  if (rop == NULL)
-    return MSG_RESET;
-  svc_handle->svc_data = svc_data;
-  svc_handle->svc_datalen = svc_datalen;
-  chSysLock();
-  chThdResumeS(&svc_handle->svct, MSG_OK);
+  svcp->svc_data = svc_data;
+  svcp->svc_datalen = svc_datalen;
+
+  chThdResumeS(&svcp->svct, MSG_OK);
   r = chThdSuspendS(&_ns_thread);
-  chSysUnlock();
-  chFactoryReleaseObject(rop);
+
   return r;
 }
 
@@ -142,17 +199,23 @@ msg_t smcEntry(smc_service_t *svc_handle, smc_params_area_t svc_data, size_t svc
  *
  * @notapi
  */
-registered_object_t *smcRegisterMeAsService(const char *svc_name)
+smc_service_t *smcRegisterMeAsService(const char *svc_name)
 {
-  registered_object_t *rop;
+  smc_service_t *svcp;
 
-  smc_service_t *svcp = chPoolAlloc(&svcs_pool);
-  rop = chFactoryRegisterObject(svc_name, svcp);
-  if (rop == NULL) {
-    chPoolFree(&svcs_pool, svcp);
+  if (n_registered_services == SMC_SVC_MAX_N)
+    return NULL;
+  chMtxLock(&svcs_table_mtx);
+  if (findSvcsEntry(svc_name) != NULL) {
+    chMtxUnlock(&svcs_table_mtx);
     return NULL;
   }
-  return rop;
+  svcp = getFreeSvcsEntry();
+  svcp->register_order = n_registered_services;
+  ++n_registered_services;
+  strncpy(svcp->svc_name, svc_name, SMC_SVC_MAX_NAME_LEN);
+  chMtxUnlock(&svcs_table_mtx);
+  return svcp;
 }
 
 /**
@@ -163,11 +226,10 @@ registered_object_t *smcRegisterMeAsService(const char *svc_name)
  *
  * @return                  the reason of the awakening
  * @retval MSG_OK           a success value.
- * @retval MSG_TIMEOUT      a success value.
  *
  * @notapi
  */
-msg_t smcServiceWaitRequest(smc_service_t *svcp)
+msg_t smcServiceWaitRequest(smc_service_t *svcp, msg_t msg)
 {
   msg_t r;
 
@@ -176,38 +238,21 @@ msg_t smcServiceWaitRequest(smc_service_t *svcp)
   chSysLock();
   if (_ns_thread) {
     /* Ack the previous service invocation. Not schedule. */
-    chThdResumeI(&_ns_thread, MSG_OK);
+    chThdResumeI(&_ns_thread, msg);
   }
+  chEvtSignalI(main_t, (1 << svcp->register_order));
   r = chThdSuspendTimeoutS(&svcp->svct, TIME_INFINITE);
   chSysUnlock();
   return r;
 }
 
-/**
- * @brief   The calling thread is a service and wait the arrival of a request.
- * @post    the service object is filled with the parameters of the requestor.
- *
- * @param[in] svcp          the service object reference.
- *
- * @return                  the reason of the awakening
- * @retval MSG_OK           a success value.
- * @retval MSG_TIMEOUT      a success value.
- *
- * @sclass
- * @notapi
- */
-msg_t smcServiceWaitRequestS(smc_service_t *svcp)
+void smcWaitServicesStarted(uint32_t n_services)
 {
-  msg_t r;
+  eventmask_t mask;
 
-  chDbgCheck(svcp != NULL);
-
-  if (_ns_thread) {
-    /* Ack the previous service invocation. Not schedule. */
-    chThdResumeI(&_ns_thread, MSG_OK);
-  }
-  r = chThdSuspendTimeoutS(&svcp->svct, TIME_INFINITE);
-  return r;
+  chDbgAssert(chThdGetSelfX() == main_t, "Only main thread is allowed to call this");
+  mask = (1 << (n_services + 1)) - 1;
+  chEvtWaitAll(mask);
 }
 
 /** @} */
