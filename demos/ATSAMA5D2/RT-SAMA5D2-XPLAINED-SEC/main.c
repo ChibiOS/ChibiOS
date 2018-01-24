@@ -21,7 +21,6 @@
 #include "chprintf.h"
 #include "chsmc.h"
 
-static thread_reference_t main_t;
 /*
  * LED blinker thread, times are in milliseconds.
  */
@@ -57,17 +56,18 @@ static const SerialConfig sdcfg = {
  *  Dummy trust service thread.
  */
 static THD_WORKING_AREA(waDummyTrustedService, 512);
-static THD_FUNCTION(DummyTrustedService, eventMask) {
+static THD_FUNCTION(DummyTrustedService, arg) {
+  (void) arg;
 
-  msg_t m;
+  msg_t msg;
   smc_service_t *svcp;
   chRegSetThreadName("DTS");
 
   /*
    * Register the trust service
    */
-  registered_object_t *smc_hdl = smcRegisterMeAsService("DummyTrustedService");
-  if (smc_hdl == NULL) {
+  svcp = smcRegisterMeAsService("DummyTrustedService");
+  if (svcp == NULL) {
     /*
      * Error: the service is already registered
      * or memory is exhausted.
@@ -77,23 +77,18 @@ static THD_FUNCTION(DummyTrustedService, eventMask) {
   /*
    * Wait and process requests
    */
-  svcp = (smc_service_t *)smc_hdl->objp;
-  svcp->svct = NULL;
   while (true) {
-    chSysLock();
-    chEvtSignalI(main_t, (eventmask_t) eventMask);
-    m = smcServiceWaitRequestS(svcp);
-    chSysUnlock();
-    if (m == MSG_OK && svcp->svc_datalen > 0) {
+    msg = smcServiceWaitRequest(svcp, MSG_OK);
+    if (msg == MSG_OK && svcp->svc_datalen > 0) {
       *((char *)svcp->svc_data + svcp->svc_datalen - 1) = '\0';
-#if 0
+#if 1
       chprintf((BaseSequentialStream*)&SD1,
           "My non secure 'alter ego' has a request.\r\n");
       chprintf((BaseSequentialStream*)&SD1,
           "She tells: '");
 #endif
       chprintf((BaseSequentialStream*)&SD1, (char *)svcp->svc_data);
-      chprintf((BaseSequentialStream*)&SD1, "\r\n");
+      chprintf((BaseSequentialStream*)&SD1, "'\r\n");
     }
     chThdSleepMilliseconds(500);
   }
@@ -104,8 +99,7 @@ static THD_FUNCTION(DummyTrustedService, eventMask) {
  */
 int main(void) {
 
-  eventmask_t eventMask = 1;
-  eventmask_t eventMaskAll = 0;
+  uint32_t n;
 
   /*
    * System initializations.
@@ -119,7 +113,6 @@ int main(void) {
   chSysInit();
   smcInit();
 
-  main_t = chThdGetSelfX();
   /*
    * Activates the serial driver 0 using the driver default configuration.
    */
@@ -135,10 +128,10 @@ int main(void) {
   /*
    * Creates the dummy service thread.
    */
+  n = 0;
   chThdCreateStatic(waDummyTrustedService, sizeof(waDummyTrustedService), NORMALPRIO-32,
-      DummyTrustedService, (void *)eventMask);
-  eventMaskAll |= eventMask;
-  eventMask <<= 1;
+      DummyTrustedService, (void *)n);
+  ++n;
 
   /*
    * The DDR memory is divided in 4 regions. Each region is 2MB large.
@@ -186,7 +179,7 @@ int main(void) {
   /*
    * Wait that all services are initialized
    */
-  chEvtWaitAll(eventMaskAll);
+  smcWaitServicesStarted(n);
   /*
    * Jump in the NON SECURE world
    * This 'main' thread become the non secure environment as view by

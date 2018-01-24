@@ -60,19 +60,19 @@ endif
 # Stack size to be allocated to the ARM System/User stack. This
 # stack is the stack used by the main() thread.
 ifeq ($(USE_SYSTEM_STACKSIZE),)
-  USE_SYSTEM_STACKSIZE = 0x400
+  USE_SYSTEM_STACKSIZE = 0x800
 endif
 
 # Stack size to the allocated to the ARM IRQ stack. This
 # stack is used for processing interrupts and exceptions.
 ifeq ($(USE_EXCEPTIONS_STACKSIZE),)
-  USE_IRQ_STACKSIZE = 0x400
+  USE_IRQ_STACKSIZE = 0x800
 endif
 
 # Stack size to the allocated to the ARM FIQ stack. This
 # stack is used for processing interrupts and exceptions.
 ifeq ($(USE_FIQ_STACKSIZE),)
-  USE_FIQ_STACKSIZE = 0x400
+  USE_FIQ_STACKSIZE = 0x800
 endif
 
 # Stack size to the allocated to the ARM Supervisor stack. This
