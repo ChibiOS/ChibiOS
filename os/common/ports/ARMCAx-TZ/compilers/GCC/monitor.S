@@ -73,10 +73,9 @@
                 .set    MSG_TIMEOUT,    -1
                 .set    MSG_RESET,      -2
 
-//                .comm   sm_secctx, 32*4, 4
-//                .comm   sm_nsecctx, 32*4, 4
-                .global sm_secctx
-                .global sm_nsecctx
+                .comm   sm_secctx, 32*4, 4
+                .comm   sm_nsecctx, 32*4, 4
+
                 .global _ns_thread
                 .section .text
                 .code   32
@@ -85,7 +84,7 @@
  * Helper macros
  */
 /*
- * Store out of context registers in a world area pointed by r0
+ * Store out of context registers in a world area pointed by rm
  */
                 .macro  sm_store_ooctx_regs rm
                 // cpsxx #MODE_SYS              // Assume mode SYS
@@ -107,7 +106,7 @@
                 stm     \rm!, {r12, sp, lr}
                 .endm
 /*
- * Retrieve out of context registers from a world area pointed by r0
+ * Retrieve out of context registers from a world area pointed by rm
  */
                 .macro  sm_load_ooctx_regs rm
                 // cpsxx #MODE_SYS              // Assume mode SYS
@@ -145,13 +144,17 @@ _monitor_vectors:
  * SMC entry
  */
 sm_call:
-                stmfd   sp!, {r3, r12}
+                stmfd   sp!, {r3}
                 ldr     r12, =MON_S_SCR                     // enter in the secure world
                 mcr     p15, 0, r12, c1, c1, 0
                 ands    r0, r0                              // OS special service,
                                                             // 0 == jump trampoline to non secure world
                                                             // r1 contains the address where it jumps
                 beq     1f
+
+                mrs     r3, SPSR
+                mov     r12, lr
+                stmfd   sp!, {r3, r12}                      // push r3=spsr_mon, r12=lr_mon.
 
                 cpsid   if, #MODE_SYS                       // ints disabled
                 ldr     r3, =sm_nsecctx
@@ -173,16 +176,21 @@ sm_call:
                 sm_load_ooctx_regs r3
 
                 msr     CPSR_c, #MODE_MON | I_BIT | F_BIT   // switch to monitor mode
+
+                ldmfd   sp!, {r3, r12}                      // pop r3=spsr_mon, r12=lr_mon.
+                msr     SPSR_fsxc, r3
+                mov     lr, r12
+
                 ldr     r12, =MON_NS_SCR                    // enter in the non-secure world
                 mcr     p15, 0, r12, c1, c1, 0
-                ldmfd   sp!, {r3, r12}
+                ldmfd   sp!, {r3}
                 subs    pc, lr, #0                          // return from smc
 1:
                 mov     lr, r1                              // use the address in r1 as return address
                                                             // in the non secure world
                 ldr     r12, =MON_NS_SCR                    // enter in the non-secure world
                 mcr     p15, 0, r12, c1, c1, 0
-                ldmfd   sp!, {r3, r12}
+                ldmfd   sp!, {r3}
                 subs    pc, lr, #0                          // return from smc
 
 /*
@@ -198,7 +206,7 @@ sm_call:
  */
 sm_fiq:
                                                             // check point: SCR.NS == 1
-                stmfd   sp!, {r0, r12}
+                stmfd   sp!, {r0}
                 ldr     r0, =MON_S_SCR                      // enter in the secure world
                 mcr     p15, 0, r0, c1, c1, 0
 
@@ -223,7 +231,7 @@ sm_fiq:
                 msr     CPSR_c, #MODE_MON | I_BIT | F_BIT   // switch to monitor mode
                 ldr     r0, =MON_NS_SCR                     // set non-secure SCR before return
                 mcr     p15, 0, r0, c1, c1, 0
-                ldmfd   sp!, {r0, r12}
+                ldmfd   sp!, {r0}
                 subs    pc, lr, #4                          // return into non-secure world
 /*
  * IRQ entry
