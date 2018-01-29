@@ -539,7 +539,7 @@ void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp) {
   osalSysLock();
 
   /* Unlocks the descriptor and returns it to the DMA engine.*/
-  tdp->physdesc->tdes1 = SAMA_TDES1_LAST_BUFF | (SAMA_TDES1_LENGTH_BUFF & BUFFER_SIZE);
+  tdp->physdesc->tdes1 &= ~(SAMA_TDES1_LOCKED | SAMA_TDES1_USED);
 
   /* Wait for the write to tdes1 to go through before resuming the DMA.*/
   __DSB();
@@ -727,6 +727,9 @@ size_t mac_lld_write_transmit_descriptor(MACTransmitDescriptor *tdp,
 
   if (size > tdp->size - tdp->offset)
     size = tdp->size - tdp->offset;
+
+  /* Configure lentgh of buffer */
+  tdp->physdesc->tdes1 |= (SAMA_TDES1_LENGTH_BUFF & size);
 
   if (size > 0) {
     memcpy((uint8_t *)(tdp->physdesc->tdes0) + tdp->offset, buf, size);
