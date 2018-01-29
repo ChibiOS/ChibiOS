@@ -669,7 +669,7 @@
  * LWIP_DHCP==1: Enable DHCP module.
  */
 #ifndef LWIP_DHCP
-#define LWIP_DHCP                       0
+#define LWIP_DHCP                       1
 #endif
 
 /**
@@ -862,7 +862,7 @@
  * LWIP_UDP==1: Turn on UDP.
  */
 #ifndef LWIP_UDP
-#define LWIP_UDP                        0
+#define LWIP_UDP                        1
 #endif
 
 /**
@@ -1790,7 +1790,7 @@
  * CHECKSUM_GEN_ICMP==1: Generate checksums in software for outgoing ICMP packets.
  */
 #ifndef CHECKSUM_GEN_ICMP
-#define CHECKSUM_GEN_ICMP               1
+#define CHECKSUM_GEN_ICMP               0
 #endif
 
 /**

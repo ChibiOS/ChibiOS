@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -53,6 +53,17 @@
 #define SAMA_SPI_FLEXCOM3_DMA_IRQ_PRIORITY  4
 #define SAMA_SPI_FLEXCOM4_DMA_IRQ_PRIORITY  4
 #define SAMA_SPI_DMA_ERROR_HOOK(spip)       osalSysHalt("DMA failure")
+#define SPI_SELECT_MODE                     SPI_SELECT_MODE_NONE
+
+/*
+ * SECUMOD driver system settings.
+ */
+#define HAL_USE_SECUMOD                     FALSE
+
+/*
+ * SDMMC driver system settings.
+ */
+#define HAL_USE_SDMMC                       FALSE
 
 /*
  * SERIAL driver system settings.
@@ -78,6 +89,13 @@
 #define SAMA_SERIAL_FLEXCOM2_IRQ_PRIORITY   4
 #define SAMA_SERIAL_FLEXCOM3_IRQ_PRIORITY   4
 #define SAMA_SERIAL_FLEXCOM4_IRQ_PRIORITY   4
+
+/*
+ * ST driver settings.
+ */
+#define SAMA_ST_USE_PIT                     FALSE
+#define SAMA_ST_USE_TC0                     FALSE
+#define SAMA_ST_USE_TC1                     TRUE
 
 /*
  * TC driver system settings.
