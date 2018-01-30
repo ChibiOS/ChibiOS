@@ -47,7 +47,7 @@
  * allocation and deallocation.
  */
 #ifndef SYS_LIGHTWEIGHT_PROT
-#define SYS_LIGHTWEIGHT_PROT            0
+#define SYS_LIGHTWEIGHT_PROT            1
 #endif
 
 /**
@@ -650,7 +650,7 @@
  * LWIP_RAW==1: Enable application layer to hook into the IP layer itself.
  */
 #ifndef LWIP_RAW
-#define LWIP_RAW                        1
+#define LWIP_RAW                        0
 #endif
 
 /**
@@ -1790,7 +1790,7 @@
  * CHECKSUM_GEN_ICMP==1: Generate checksums in software for outgoing ICMP packets.
  */
 #ifndef CHECKSUM_GEN_ICMP
-#define CHECKSUM_GEN_ICMP               0
+#define CHECKSUM_GEN_ICMP               1
 #endif
 
 /**
