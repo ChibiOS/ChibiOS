@@ -56,11 +56,11 @@ msg_t smcInvoke(smc_service_t handle, smc_params_area_t data,
 msg_t smcInvokeService(smc_service_t handle, smc_params_area_t data,
                        size_t size)
 {
-  msg_t result;
+  msg_t result = MSG_OK;
 
-  do {
-    result = smcInvoke(handle, data, size);
-  } while (result == MSG_TIMEOUT);
+  result = smcInvoke(handle, data, size);
+  while (result == SMC_SVC_INTR)
+    result = smcInvoke(SMC_HND_REENTER, 0, 0);
   return result;
 }
 
