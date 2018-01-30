@@ -86,7 +86,7 @@ int main(void) {
 
   /* Retrieve the service handle by name */
   smcsvc = (smc_service_t) smcInvokeService(
-      SMC_HND_GET, (smc_params_area_t)"DummyTrustedService",
+      SMC_HND_DISCOVERY, (smc_params_area_t)"DummyTrustedService",
       sizeof "DummyTrustedService");
   /*
    * Normal main() thread activity, in this demo it does nothing except
