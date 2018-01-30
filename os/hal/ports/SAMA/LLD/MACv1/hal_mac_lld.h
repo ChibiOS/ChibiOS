@@ -153,7 +153,7 @@
  * @brief   IP checksum offload.
  * @details The following modes are available:
  *          - 0 Function disabled.
- *          - 1 Only IP header checksum calculation and insertion are enabled.
+ *          - 1 IP/TCP/UDP header checksum calculation and insertion are enabled.
  */
 #if !defined(SAMA_MAC_IP_CHECKSUM_OFFLOAD) || defined(__DOXYGEN__)
 #define SAMA_MAC_IP_CHECKSUM_OFFLOAD        1

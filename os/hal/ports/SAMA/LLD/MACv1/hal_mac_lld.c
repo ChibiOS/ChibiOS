@@ -358,7 +358,7 @@ void mac_lld_start(MACDriver *macp) {
   macp->rxptr = (sama_eth_rx_descriptor_t *)__eth_rd;
 
   for (i = 0; i < SAMA_MAC_TRANSMIT_BUFFERS; i++)
-    __eth_td[i].tdes1 |= SAMA_TDES1_LAST_BUFF | SAMA_TDES1_USED;
+    __eth_td[i].tdes1 |= SAMA_TDES1_LAST_BUFF | SAMA_TDES1_USED | (SAMA_TDES1_LENGTH_BUFF & BUFFER_SIZE);
 
   macp->txptr = (sama_eth_tx_descriptor_t *)__eth_td;
 
@@ -387,14 +387,12 @@ void mac_lld_start(MACDriver *macp) {
   uint32_t ncfgr = GMAC0->GMAC_NCFGR;
 
 #if SAMA_MAC_IP_CHECKSUM_OFFLOAD
-  GMAC0->GMAC_NCFGR = GMAC_NCFGR_RXCOEN | GMAC_NCFGR_SPD |
-                      GMAC_NCFGR_FD | GMAC_NCFGR_MAXFS |
-                      GMAC_NCFGR_RFCS | ncfgr;
+  GMAC0->GMAC_NCFGR = GMAC_NCFGR_SPD | GMAC_NCFGR_FD | GMAC_NCFGR_RXCOEN |
+                      GMAC_NCFGR_MAXFS | GMAC_NCFGR_RFCS | ncfgr;
   GMAC0->GMAC_DCFGR |= GMAC_DCFGR_TXCOEN;
 #else
   GMAC0->GMAC_NCFGR = GMAC_NCFGR_SPD | GMAC_NCFGR_FD |
-                      GMAC_NCFGR_MAXFS | GMAC_NCFGR_RFCS |
-                      ncfgr;
+                      GMAC_NCFGR_MAXFS | GMAC_NCFGR_RFCS| ncfgr;
 #endif
 
   /* DMA configuration:
@@ -428,8 +426,6 @@ void mac_lld_start(MACDriver *macp) {
   /* Enable RX and TX.*/
   GMAC0->GMAC_NCR |= GMAC_NCR_RXEN | GMAC_NCR_TXEN;
 
-  /* Starts transmission */
-//  GMAC0->GMAC_NCR |= GMAC_NCR_TSTART;
 }
 
 /**
@@ -574,11 +570,7 @@ msg_t mac_lld_get_receive_descriptor(MACDriver *macp,
   /* Iterates through received frames until a valid one is found, invalid
      frames are discarded.*/
   while (rdes->rdes0 & SAMA_RDES0_OWN) {
-    if (rdes->rdes1 & (SAMA_RDES1_EOF | SAMA_RDES1_SOF)
-#if SAMA_MAC_IP_CHECKSUM_OFFLOAD
-        && (rdes->rdes1 & (SAMA_RDES1_CHECKSUM_IP_TCP | SAMA_RDES1_CHECKSUM_IP_UDP))
-#endif
-       ) {
+    if (rdes->rdes1 & (SAMA_RDES1_EOF | SAMA_RDES1_SOF)) {
       /* Found a valid one.*/
       rdp->offset   = 0;
       /* Only with RFCS set */
@@ -727,9 +719,6 @@ size_t mac_lld_write_transmit_descriptor(MACTransmitDescriptor *tdp,
 
   if (size > tdp->size - tdp->offset)
     size = tdp->size - tdp->offset;
-
-  /* Configure lentgh of buffer */
-  tdp->physdesc->tdes1 |= (SAMA_TDES1_LENGTH_BUFF & size);
 
   if (size > 0) {
     memcpy((uint8_t *)(tdp->physdesc->tdes0) + tdp->offset, buf, size);
