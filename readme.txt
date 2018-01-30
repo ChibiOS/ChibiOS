@@ -82,7 +82,7 @@
   |  +--rt/               - RT test suites.
   |  |  +--testbuild/     - RT build test and MISRA check.
   |  |  +--coverage/      - RT code coverage project.
-  +--testhal/             - HAL integration test demos. 
+  +--testhal/             - HAL integration test demos.
 
 *****************************************************************************
 *** Releases and Change Log                                               ***
