@@ -122,10 +122,8 @@ OSAL_IRQ_HANDLER(PIT_Handler) {
 
   osalSysLockFromISR();
   ivr = PIT->PIT_PIVR;    /* acknowledge PIT interrupt */
-#if 0
   osalDbgAssert((ivr & PIT_PIVR_PICNT_Msk) == (1 << PIT_PIVR_PICNT_Pos),
       "check for lost tick");
-#endif
   osalOsTimerHandlerI();
   osalSysUnlockFromISR();
   aicAckInt();
