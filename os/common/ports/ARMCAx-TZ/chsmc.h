@@ -19,7 +19,7 @@
 
 /**
  * @file    chsmc.h
- * @brief   smc Module macros and structures.
+ * @brief   smc module macros and structures.
  *
  * @addtogroup SMC
  * @{
@@ -37,16 +37,19 @@
 /*
  * Service registry errors
  */
-#define SMC_SVC_OK                MSG_RESET /* No error */
-#define SMC_SVC_MANAGED           0x01      /* The service is already managed by a thread */
-#define SMC_SVC_THREAD_EXIST      0x02      /* The thread already manages a service */
-#define SMC_SVC_THREAD_NOENT      0x03      /* The thread is not in the registry */
-
+#define SMC_SVC_OK                MSG_OK        /* No error */
+#define SMC_SVC_INTR              (msg_t)-1     /* Service interrupted */
+#define SMC_SVC_NOENT             (msg_t)-2     /* No existent service */
+#define SMC_SVC_INVALID           (msg_t)-3     /* Invalid service parameter(s) */
+#define SMC_SVC_BADH              (msg_t)-4     /* Invalid service handle */
+#define SMC_SVC_EXIST             (msg_t)-5     /* Service already exists */
+#define SMC_SVC_NHND              (msg_t)-6     /* No more services */
 /*
  * Special service handles
  */
-#define SMC_HND_TRAMP             ((smc_service_t *)0)
-#define SMC_HND_DISCOVERY         ((smc_service_t *)1)
+#define SMC_HND_TRAMP             ((smc_service_t *)0)  /* Trampoline service handle */
+#define SMC_HND_DISCOVERY         ((smc_service_t *)1)  /* Discovery service handle */
+#define SMC_HND_REENTER           ((smc_service_t *)2)  /* Reentering a service service handle */
 
 /*
  * Non secure memory address space

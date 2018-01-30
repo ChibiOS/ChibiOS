@@ -104,7 +104,7 @@ static THD_FUNCTION(DiscoveryTrustService, arg) {
   smc_service_t *svcp;
 
   discovery_entry = smcRegisterMeAsService("_discovery");
-  if (discovery_entry == NULL)
+  if ((msg_t)discovery_entry < 0)
     chSysHalt("no entry available for discovery service");
   m = smcServiceWaitRequest(discovery_entry, MSG_OK);
   while (true) {
@@ -163,28 +163,31 @@ void smcInit(void) {
  * @notapi
  */
 msg_t smcEntry(smc_service_t *svc_handle, smc_params_area_t svc_data, size_t svc_datalen) {
-  smc_service_t *svcp;
+  smc_service_t *svcp = NULL;
   msg_t r;
 
-  if (!isAddrSpaceValid(svc_data, svc_datalen))
-    return MSG_RESET;
-  if (svc_handle == SMC_HND_DISCOVERY) {
-    svcp = discovery_entry;
-    if (svcp == NULL)
-      return MSG_RESET;
-  } else {
-    if (!isHndlValid(svc_handle))
-      return MSG_RESET;
-    svcp = svc_handle;
+  if (svc_handle != SMC_HND_REENTER) {
+    if (!isAddrSpaceValid(svc_data, svc_datalen))
+      return SMC_SVC_INVALID;
+    if (svc_handle == SMC_HND_DISCOVERY) {
+      svcp = discovery_entry;
+      if (svcp == NULL)
+        return SMC_SVC_NOENT;
+    } else {
+      if (!isHndlValid(svc_handle))
+        return SMC_SVC_BADH;
+      svcp = svc_handle;
+    }
+    svcp->svc_data = svc_data;
+    svcp->svc_datalen = svc_datalen;
   }
-  svcp->svc_data = svc_data;
-  svcp->svc_datalen = svc_datalen;
 
 #if (CH_DBG_SYSTEM_STATE_CHECK == TRUE)
   _dbg_check_lock();
 #endif
 
-  chThdResumeS(&svcp->svct, MSG_OK);
+  if (svcp)
+    chThdResumeS(&svcp->svct, MSG_OK);
   r = chThdSuspendS(&_ns_thread);
 
 #if (CH_DBG_SYSTEM_STATE_CHECK == TRUE)
@@ -210,11 +213,11 @@ smc_service_t *smcRegisterMeAsService(const char *svc_name)
   smc_service_t *svcp;
 
   if (n_registered_services == SMC_SVC_MAX_N)
-    return NULL;
+    return (smc_service_t *)SMC_SVC_NHND;
   chMtxLock(&svcs_table_mtx);
   if (findSvcsEntry(svc_name) != NULL) {
     chMtxUnlock(&svcs_table_mtx);
-    return NULL;
+    return (smc_service_t *)SMC_SVC_EXIST;
   }
   svcp = getFreeSvcsEntry();
   svcp->register_order = n_registered_services;
