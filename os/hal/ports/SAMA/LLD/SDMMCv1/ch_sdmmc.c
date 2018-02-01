@@ -98,7 +98,7 @@ void SdMmcUpdateInformation(SdmmcDriver *drv, bool csd, bool extData)
 uint8_t SDMMC_Lib_SdStart(SdmmcDriver *drv, bool * retry)
 {
 	uint64_t mem_size;
-	uint32_t freq;
+	//uint32_t freq;
 	uint32_t drv_err, status;
 	uint8_t error;
 	bool flag;
