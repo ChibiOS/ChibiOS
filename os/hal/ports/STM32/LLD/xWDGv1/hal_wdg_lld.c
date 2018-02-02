@@ -115,7 +115,7 @@ void wdg_lld_start(WDGDriver *wdgp) {
  *
  * @param[in] wdgp      pointer to the @p WDGDriver object
  *
- * @api
+ * @notapi
  */
 void wdg_lld_stop(WDGDriver *wdgp) {
 
