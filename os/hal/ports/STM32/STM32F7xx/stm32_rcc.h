@@ -1527,11 +1527,9 @@
 /**
  * @brief   Disables the CRC peripheral clock.
  *
- * @param[in] lp        low power enable flag
- *
  * @api
  */
-#define rccDisableCRC(lp) rccDisableAHB1(RCC_AHB1ENR_CRCEN)
+#define rccDisableCRC() rccDisableAHB1(RCC_AHB1ENR_CRCEN)
 
 /**
  * @brief   Resets the CRC peripheral.

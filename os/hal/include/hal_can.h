@@ -162,7 +162,7 @@ typedef enum {
  */
 #define _can_wakeup_isr(canp) {                                             \
   osalSysLockFromISR();                                                     \
-  osalEventBroadcastFlagsI(&(canp)->wakeup_event, 0U);                       \
+  osalEventBroadcastFlagsI(&(canp)->wakeup_event, 0U);                      \
   osalSysUnlockFromISR();                                                   \
 }
 

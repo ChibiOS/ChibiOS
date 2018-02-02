@@ -796,11 +796,9 @@
 /**
  * @brief   Disables the HRTIM1 peripheral clock.
  *
- * @param[in] lp        low power enable flag
- *
  * @api
  */
-#define rccDisableHRTIM1(lp) rccDisableAPB2(RCC_APB2ENR_HRTIM1EN, lp)
+#define rccDisableHRTIM1(lp) rccDisableAPB2(RCC_APB2ENR_HRTIM1EN)
 
 /**
  * @brief   Resets the HRTIM1 peripheral.
@@ -998,11 +996,9 @@
 /**
  * @brief   Disables the CRC peripheral clock.
  *
- * @param[in] lp        low power enable flag
- *
  * @api
  */
-#define rccDisableCRC(lp) rccDisableAHB(RCC_AHBENR_CRCEN)
+#define rccDisableCRC() rccDisableAHB(RCC_AHBENR_CRCEN)
 /** @} */
 
 /*===========================================================================*/
