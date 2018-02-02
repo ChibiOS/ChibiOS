@@ -308,11 +308,11 @@ typedef enum {
 typedef void (*daccallback_t)(DACDriver *dacp, dacsample_t *buffer, size_t n);
 
 /**
- * @brief   ADC error callback type.
+ * @brief   DAC error callback type.
  *
  * @param[in] dacp      pointer to the @p DACDriver object triggering the
  *                      callback
- * @param[in] err       ADC error code
+ * @param[in] err       DAC error code
  */
 typedef void (*dacerrorcallback_t)(DACDriver *dacp, dacerror_t err);
 
