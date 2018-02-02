@@ -90,6 +90,7 @@
 
 *** 17.6.4 ***
 - Fixed some minor documentation issues.
+- HAL: Fixed more instances of bug #843 (bug #914).
 - HAL: Fixed STM32 SDMMCv1 driver not setting DMA channel properly for SDCD2
        instance (bug #912).
 - RT:  Fixed compile error with assertions enabled and dynamic extensions
