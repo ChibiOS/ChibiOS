@@ -36,7 +36,7 @@ received a series of important improvements, new features have been added.
 *** What's new in OS Library ***
 
 - OS library now has its own test suite.
-- Mailbox API changed by adding "Timeout" to those function that have
+- Mailbox API names changed by adding "Timeout" to those function that have
   timeout capability, for consistency with the rest of the system.
 - Added an "Objects Factory" to the OS Library, it allows to dynamically
   allocate reference-counted kernel objects/buffers or to register

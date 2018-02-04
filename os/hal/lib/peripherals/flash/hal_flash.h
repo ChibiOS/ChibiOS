@@ -178,7 +178,6 @@ struct BaseFlashVMT {
   /* Driver state.*/                                                        \
   flash_state_t         state;
 
-
 /**
  * @brief   Base flash class.
  */
@@ -196,6 +195,13 @@ typedef struct {
  * @name    Macro Functions (BaseFlash)
  * @{
  */
+/**
+ * @brief   Instance getter.
+ * @details This special method is used to get the instance of this class
+ *          object from a derived class.
+ */
+#define getBaseFlash(ip) ((BaseFlash *)&(ip)->vmt)
+
 /**
  * @brief   Sensors get axes number.
  *
