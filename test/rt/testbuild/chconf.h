@@ -353,6 +353,7 @@
  */
 #if !defined(CH_CFG_USE_MEMPOOLS) || defined(__DOXYGEN__)
 #define CH_CFG_USE_MEMPOOLS                 TRUE
+#endif
 
 /**
  * @brief  Objects FIFOs APIs.
@@ -361,6 +362,7 @@
  *
  * @note    The default is @p TRUE.
  */
+#if !defined(CH_CFG_USE_OBJ_FIFOS) || defined(__DOXYGEN__)
 #define CH_CFG_USE_OBJ_FIFOS                TRUE
 #endif
 
@@ -550,7 +552,7 @@
  * @brief   System structure extension.
  * @details User fields added to the end of the @p ch_system_t structure.
  */
-#define CH_CFG_SYSTEM_EXTRA_FIELDS                                          \r
+#define CH_CFG_SYSTEM_EXTRA_FIELDS                                          \
   /* Add threads custom fields here.*/
 
 /**
@@ -558,8 +560,8 @@
  * @details User initialization code added to the @p chSysInit() function
  *          just before interrupts are enabled globally.
  */
-#define CH_CFG_SYSTEM_INIT_HOOK(tp) {                                       \r
-  /* Add threads initialization code here.*/                                \r
+#define CH_CFG_SYSTEM_INIT_HOOK(tp) {                                       \
+  /* Add threads initialization code here.*/                                \
 }
 
 /**
