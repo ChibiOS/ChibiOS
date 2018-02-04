@@ -67,11 +67,11 @@ extern "C" {
 /*
  * Stack size of test threads.
  */
-#if defined(CH_ARCHITECTURE_AVR) || defined(CH_ARCHITECTURE_MSP430)
+#if defined(PORT_ARCHITECTURE_AVR) || defined(PORT__ARCHITECTURE_MSP430)
 #define THREADS_STACK_SIZE      48
-#elif defined(CH_ARCHITECTURE_STM8)
+#elif defined(PORT__ARCHITECTURE_STM8)
 #define THREADS_STACK_SIZE      64
-#elif defined(CH_ARCHITECTURE_SIMIA32)
+#elif defined(PORT__ARCHITECTURE_SIMIA32)
 #define THREADS_STACK_SIZE      512
 #else
 #define THREADS_STACK_SIZE      128
