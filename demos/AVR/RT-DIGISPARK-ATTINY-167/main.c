@@ -29,12 +29,14 @@ const UARTConfig uartConf = {
   38400,  /* UART baudrate.                               */
 };
 
+/*
+ * LED blinker thread, times are in milliseconds.
+ */
 static THD_WORKING_AREA(waThread1, 32);
 static THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
   chRegSetThreadName("Blinker");
-
   while (true) {
     palTogglePad(IOPORT2, PORTB_LED1);
     uartStartSend(&UARTD1, 30, (const void *) "ChibiOS PORT on ATtiny-167!.\n\r");
@@ -57,9 +59,7 @@ int main(void) {
   halInit();
   chSysInit();
 
-  //palClearPad(IOPORT2, PORTB_LED1);
-  
-    /*
+  /*
    * Initialize the UART interface.
    */
    uartInit();
@@ -79,7 +79,7 @@ int main(void) {
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
-  while(TRUE) {
+  while (TRUE) {
     chThdSleepMilliseconds(1000);
   }
 }

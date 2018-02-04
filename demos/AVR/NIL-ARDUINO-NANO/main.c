@@ -41,7 +41,7 @@ THD_FUNCTION(Thread2, arg) {
 
   /*
    * Activates the serial driver 1 using the driver default configuration.
-   * PA9 and PA10 are routed to USART1.
+   * PD0(RX) and PD1(TX) are routed to USART0.
    */
   sdStart(&SD1, NULL);
 

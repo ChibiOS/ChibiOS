@@ -18,6 +18,9 @@
 #include "hal.h"
 #include "rt_test_root.h"
 
+/*
+ * LED blinker thread, times are in milliseconds.
+ */
 static THD_WORKING_AREA(waThread1, 32);
 static THD_FUNCTION(Thread1, arg) {
 
@@ -44,8 +47,6 @@ int main(void) {
   halInit();
   chSysInit();
 
-  palClearPad(IOPORT2, PORTB_LED1);
-
   /*
    * Activates the serial driver 1 using the driver default configuration.
    */
@@ -61,7 +62,7 @@ int main(void) {
    */
   test_execute((BaseSequentialStream *)&SD1, &rt_test_suite);
 
-  while(TRUE) {
+  while (TRUE) {
     chThdSleepMilliseconds(1000);
   }
 }

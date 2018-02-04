@@ -19,6 +19,9 @@
 #include "shell.h"
 #include "usbcfg.h"
 
+/*
+ * LED blinker thread, times are in milliseconds.
+ */
 static THD_WORKING_AREA(waThread1, 128);
 static THD_FUNCTION(Thread1, arg) {
   (void)arg;

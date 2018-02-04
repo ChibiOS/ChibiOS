@@ -17,6 +17,9 @@
 #include "ch.h"
 #include "hal.h"
 
+/*
+ * LED blinker thread, times are in milliseconds.
+ */
 static THD_WORKING_AREA(waThread1, 32);
 static THD_FUNCTION(Thread1, arg) {
 
