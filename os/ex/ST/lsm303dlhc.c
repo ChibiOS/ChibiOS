@@ -604,27 +604,17 @@ static msg_t comp_set_full_scale(void *ip, lsm303dlhc_comp_fs_t fs) {
   return msg;
 }
 
-static const struct BaseSensorVMT vmt_basesensor = {
+static const struct BaseSensorVMT vmt_sensor = {
   sens_get_axes_number, sens_read_raw, sens_read_cooked
 };
 
-static const struct BaseCompassVMT vmt_basecompass = {
-  comp_get_axes_number, comp_read_raw, comp_read_cooked,
-  comp_set_bias, comp_reset_bias, comp_set_sensivity, comp_reset_sensivity
-};
-
-static const struct BaseAccelerometerVMT vmt_baseaccelerometer = {
-  acc_get_axes_number, acc_read_raw, acc_read_cooked,
-  acc_set_bias, acc_reset_bias, acc_set_sensivity, acc_reset_sensivity
-};
-
-static const struct LSM303DLHCACCVMT vmt_lsm303dlhcacc = {
+static const struct LSM303DLHCAcceleromerVMT vmt_accelerometer = {
   acc_get_axes_number, acc_read_raw, acc_read_cooked,
   acc_set_bias, acc_reset_bias, acc_set_sensivity, acc_reset_sensivity,
   acc_set_full_scale
 };
 
-static const struct LSM303DLHCCOMPVMT vmt_lsm303dlhccomp = {
+static const struct LSM303DLHCCompassVMT vmt_compass = {
   comp_get_axes_number, comp_read_raw, comp_read_cooked,
   comp_set_bias, comp_reset_bias, comp_set_sensivity, comp_reset_sensivity,
   comp_set_full_scale
@@ -643,11 +633,10 @@ static const struct LSM303DLHCCOMPVMT vmt_lsm303dlhccomp = {
  */
 void lsm303dlhcObjectInit(LSM303DLHCDriver *devp) {
   uint32_t i;
-  devp->vmt_basesensor = &vmt_basesensor;
-  devp->vmt_baseaccelerometer = &vmt_baseaccelerometer;
-  devp->vmt_basecompass = &vmt_basecompass;
-  devp->vmt_lsm303dlhcacc = &vmt_lsm303dlhcacc;
-  devp->vmt_lsm303dlhccomp = &vmt_lsm303dlhccomp;
+  devp->vmt_sensor = &vmt_sensor;
+  devp->vmt_accelerometer = &vmt_accelerometer;
+  devp->vmt_compass = &vmt_compass;
+
   devp->config = NULL;
   for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++)
     devp->accbias[i] = 0.0f;
@@ -670,7 +659,8 @@ void lsm303dlhcStart(LSM303DLHCDriver *devp, const LSM303DLHCConfig *config) {
   osalDbgCheck((devp != NULL) && (config != NULL));
 
 
-  osalDbgAssert((devp->state == LSM303DLHC_STOP) || (devp->state == LSM303DLHC_READY),
+  osalDbgAssert((devp->state == LSM303DLHC_STOP) || 
+                (devp->state == LSM303DLHC_READY),
               "lsm303dlhcStart(), invalid state");
 
   devp->config = config;

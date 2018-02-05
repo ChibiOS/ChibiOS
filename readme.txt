@@ -90,6 +90,8 @@
 
 *** 17.6.4 ***
 - Fixed some minor documentation issues.
+- EX:  Improved MEMS drivers (bug #915).
+- HAL: Improved peripheral classes (bug #915).
 - HAL: Fixed more instances of bug #843 (bug #914).
 - HAL: Fixed STM32 SDMMCv1 driver not setting DMA channel properly for SDCD2
        instance (bug #912).

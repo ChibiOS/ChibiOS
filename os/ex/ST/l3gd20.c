@@ -304,17 +304,11 @@ static msg_t set_full_scale(void *ip, l3gd20_fs_t fs) {
   return MSG_OK;
 }
 
-static const struct BaseSensorVMT vmt_basesensor = {
+static const struct BaseSensorVMT vmt_sensor = {
   get_axes_number, read_raw, read_cooked
 };
 
-static const struct BaseGyroscopeVMT vmt_basegyroscope = {
-  get_axes_number, read_raw, read_cooked,
-  sample_bias, set_bias, reset_bias,
-  set_sensivity, reset_sensivity
-};
-
-static const struct L3GD20VMT vmt_l3gd20 = {
+static const struct L3GD20GyroscopeVMT vmt_gyroscope = {
   get_axes_number, read_raw, read_cooked,
   sample_bias, set_bias, reset_bias,
   set_sensivity, reset_sensivity,
@@ -334,9 +328,8 @@ static const struct L3GD20VMT vmt_l3gd20 = {
  */
 void l3gd20ObjectInit(L3GD20Driver *devp) {
   uint32_t i;
-  devp->vmt_basesensor = &vmt_basesensor;
-  devp->vmt_basegyroscope = &vmt_basegyroscope;
-  devp->vmt_l3gd20 = &vmt_l3gd20;
+  devp->vmt_sensor = &vmt_sensor;
+  devp->vmt_gyroscope = &vmt_gyroscope;
   devp->config = NULL;
   for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++)
     devp->bias[i] = 0.0f;

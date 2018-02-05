@@ -265,16 +265,11 @@ static msg_t set_full_scale(void *ip, lis302dl_fs_t fs) {
   return MSG_OK;
 }
 
-static const struct BaseSensorVMT vmt_basesensor = {
+static const struct BaseSensorVMT vmt_sensor = {
   get_axes_number, read_raw, read_cooked
 };
 
-static const struct BaseAccelerometerVMT vmt_baseaccelerometer = {
-  get_axes_number, read_raw, read_cooked,
-  set_bias, reset_bias, set_sensivity, reset_sensivity 
-};
-
-static const struct LIS302DLVMT vmt_lis302dl = {
+static const struct LIS302DLAccelerometerVMT vmt_accelerometer = {
   get_axes_number, read_raw, read_cooked,
   set_bias, reset_bias, set_sensivity, reset_sensivity,
   set_full_scale
@@ -293,9 +288,8 @@ static const struct LIS302DLVMT vmt_lis302dl = {
  */
 void lis302dlObjectInit(LIS302DLDriver *devp) {
   uint32_t i;
-  devp->vmt_basesensor = &vmt_basesensor;
-  devp->vmt_baseaccelerometer = &vmt_baseaccelerometer;
-  devp->vmt_lis302dl = &vmt_lis302dl;
+  devp->vmt_sensor = &vmt_sensor;
+  devp->vmt_accelerometer = &vmt_accelerometer;
   devp->config = NULL;
   for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++)
     devp->bias[i] = 0.0f;
