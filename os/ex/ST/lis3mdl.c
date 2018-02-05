@@ -297,16 +297,11 @@ static msg_t set_full_scale(void *ip, lis3mdl_fs_t fs) {
   return msg;
 }
 
-static const struct BaseSensorVMT vmt_basesensor = {
+static const struct BaseSensorVMT vmt_sensor = {
   get_axes_number, read_raw, read_cooked
 };
 
-static const struct BaseCompassVMT vmt_basecompass = {
-  get_axes_number, read_raw, read_cooked,
-  set_bias, reset_bias, set_sensivity, reset_sensivity
-};
-
-static const struct LIS3MDLVMT vmt_lis3mdl = {
+static const struct LIS3MDLCompassVMT vmt_compass = {
   get_axes_number, read_raw, read_cooked,
   set_bias, reset_bias, set_sensivity, reset_sensivity,
   set_full_scale
@@ -325,9 +320,8 @@ static const struct LIS3MDLVMT vmt_lis3mdl = {
  */
 void lis3mdlObjectInit(LIS3MDLDriver *devp) {
   uint32_t i;
-  devp->vmt_basesensor = &vmt_basesensor;
-  devp->vmt_basecompass = &vmt_basecompass;
-  devp->vmt_lis3mdl = &vmt_lis3mdl;
+  devp->vmt_sensor = &vmt_sensor;
+  devp->vmt_compass = &vmt_compass;
   devp->config = NULL;
   for(i = 0; i < LIS3MDL_NUMBER_OF_AXES; i++)
     devp->bias[i] = 0.0f;

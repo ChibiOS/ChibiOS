@@ -42,22 +42,22 @@
 /**
  * @brief   LIS3MDL driver version string.
  */
-#define EX_LIS3MDL_VERSION          "1.0.4"
+#define EX_LIS3MDL_VERSION                  "1.0.5"
 
 /**
  * @brief   LIS3MDL driver version major number.
  */
-#define EX_LIS3MDL_MAJOR            1
+#define EX_LIS3MDL_MAJOR                    1
 
 /**
  * @brief   LIS3MDL driver version minor number.
  */
-#define EX_LIS3MDL_MINOR            0
+#define EX_LIS3MDL_MINOR                    0
 
 /**
  * @brief   LIS3MDL driver version patch number.
  */
-#define EX_LIS3MDL_PATCH            4
+#define EX_LIS3MDL_PATCH                    5
 /** @} */
 
 /**
@@ -65,56 +65,56 @@
  *
  * @{
  */
-#define LIS3MDL_NUMBER_OF_AXES      3U
-
-#define LIS3MDL_4GA                 4.0f
-#define LIS3MDL_8GA                 8.0f
-#define LIS3MDL_12GA                12.0f
-#define LIS3MDL_16GA                16.0f
-
-#define LIS3MDL_SENS_4GA            0.00014615f
-#define LIS3MDL_SENS_8GA            0.00029231f
-#define LIS3MDL_SENS_12GA           0.0004384f
-#define LIS3MDL_SENS_16GA           0.00058445f
+#define LIS3MDL_NUMBER_OF_AXES              3U
+                                            
+#define LIS3MDL_4GA                         4.0f
+#define LIS3MDL_8GA                         8.0f
+#define LIS3MDL_12GA                        12.0f
+#define LIS3MDL_16GA                        16.0f
+                                            
+#define LIS3MDL_SENS_4GA                    0.00014615f
+#define LIS3MDL_SENS_8GA                    0.00029231f
+#define LIS3MDL_SENS_12GA                   0.0004384f
+#define LIS3MDL_SENS_16GA                   0.00058445f
 /** @} */
 
 /**
  * @name    LIS3MDL communication interfaces related bit masks
  * @{
  */
-#define LIS3MDL_DI_MASK             0xFF        /**< Data In mask           */
-#define LIS3MDL_DI(n)               (1 << n)    /**< Data In bit n          */
-#define LIS3MDL_AD_MASK             0x3F        /**< Address Data mask      */
-#define LIS3MDL_AD(n)               (1 << n)    /**< Address Data bit n     */
-#define LIS3MDL_MS                  (1 << 6)    /**< Multiple selection     */
-#define LIS3MDL_RW                  (1 << 7)    /**< Read Write selector    */
-
-#define LIS3MDL_SUB_MS              (1 << 7)    /**< Multiple RW in I2C mode*/
+#define LIS3MDL_DI_MASK                     0xFF
+#define LIS3MDL_DI(n)                       (1 << n)
+#define LIS3MDL_AD_MASK                     0x3F
+#define LIS3MDL_AD(n)                       (1 << n)
+#define LIS3MDL_MS                          (1 << 6)
+#define LIS3MDL_RW                          (1 << 7)
+                                            
+#define LIS3MDL_SUB_MS                      (1 << 7)
 /** @} */
 
 /**
  * @name    LIS3MDL register addresses
  * @{
  */
-#define  LIS3MDL_AD_WHO_AM_I        0x0F
-#define  LIS3MDL_AD_CTRL_REG1       0x20
-#define  LIS3MDL_AD_CTRL_REG2       0x21
-#define  LIS3MDL_AD_CTRL_REG3       0x22
-#define  LIS3MDL_AD_CTRL_REG4       0x23
-#define  LIS3MDL_AD_CTRL_REG5       0x24
-#define  LIS3MDL_AD_STATUS_REG      0x27
-#define  LIS3MDL_AD_OUT_X_L         0x28
-#define  LIS3MDL_AD_OUT_X_H         0x29
-#define  LIS3MDL_AD_OUT_Y_L         0x2A
-#define  LIS3MDL_AD_OUT_Y_H         0x2B
-#define  LIS3MDL_AD_OUT_Z_L         0x2C
-#define  LIS3MDL_AD_OUT_Z_H         0x2D
-#define  LIS3MDL_AD_TEMP_OUT_L      0x2E
-#define  LIS3MDL_AD_TEMP_OUT_H      0x2F
-#define  LIS3MDL_AD_INT_CFG         0x30
-#define  LIS3MDL_AD_INT_SOURCE      0x31
-#define  LIS3MDL_AD_INT_THS_L       0x32
-#define  LIS3MDL_AD_INT_THS_H       0x33
+#define  LIS3MDL_AD_WHO_AM_I                0x0F
+#define  LIS3MDL_AD_CTRL_REG1               0x20
+#define  LIS3MDL_AD_CTRL_REG2               0x21
+#define  LIS3MDL_AD_CTRL_REG3               0x22
+#define  LIS3MDL_AD_CTRL_REG4               0x23
+#define  LIS3MDL_AD_CTRL_REG5               0x24
+#define  LIS3MDL_AD_STATUS_REG              0x27
+#define  LIS3MDL_AD_OUT_X_L                 0x28
+#define  LIS3MDL_AD_OUT_X_H                 0x29
+#define  LIS3MDL_AD_OUT_Y_L                 0x2A
+#define  LIS3MDL_AD_OUT_Y_H                 0x2B
+#define  LIS3MDL_AD_OUT_Z_L                 0x2C
+#define  LIS3MDL_AD_OUT_Z_H                 0x2D
+#define  LIS3MDL_AD_TEMP_OUT_L              0x2E
+#define  LIS3MDL_AD_TEMP_OUT_H              0x2F
+#define  LIS3MDL_AD_INT_CFG                 0x30
+#define  LIS3MDL_AD_INT_SOURCE              0x31
+#define  LIS3MDL_AD_INT_THS_L               0x32
+#define  LIS3MDL_AD_INT_THS_H               0x33
 /** @} */
 
 /**
@@ -424,25 +424,26 @@ typedef struct {
 } LIS3MDLConfig;
 
 /**
- * @brief   Structure representing a LIS3MDL driver.
+ * @brief   @p LIS3MDL compass subsystem specific methods.
  */
-typedef struct LIS3MDLDriver LIS3MDLDriver;
-
+#define _lis3msl_compass_methods_alone                                      \
+  /* Change full scale value of LIS3MDL.*/                                  \
+  msg_t (*set_full_scale)(void *instance, lis3mdl_fs_t fs);
+  
 /**
  * @brief   @p LIS3MDL specific methods.
  */
-#define _lis3mdl_methods                                                    \
+#define _lis3mdl_compass_methods                                            \
   _base_compass_methods                                                     \
-  /* Change full scale value of LIS3MDL.*/                                  \
-  msg_t (*set_full_scale)(void *instance, lis3mdl_fs_t fs);
+  _lis3msl_compass_methods_alone
 
 /**
  * @extends BaseCompassVMT
  *
- * @brief   @p LIS3MDL virtual methods table.
+ * @brief   @p LIS3MDL compass virtual methods table.
  */
-struct LIS3MDLVMT {
-  _lis3mdl_methods
+struct LIS3MDLCompassVMT {
+  _lis3mdl_compass_methods
 };
 
 /**
@@ -470,13 +471,18 @@ struct LIS3MDLVMT {
  */
 struct LIS3MDLDriver {
   /** @brief BaseSensor Virtual Methods Table. */
-  const struct BaseSensorVMT *vmt_basesensor;
-  /** @brief BaseCompass Virtual Methods Table. */
-  const struct BaseCompassVMT *vmt_basecompass;
-  /** @brief LIS3MDL Virtual Methods Table. */
-  const struct LIS3MDLVMT *vmt_lis3mdl;
+  const struct BaseSensorVMT *vmt_sensor;
+  _base_sensor_data
+  /** @brief LIS3MDL Compass Virtual Methods Table. */
+  const struct LIS3MDLCompassVMT *vmt_compass;
+_base_compass_data
   _lis3mdl_data
 };
+
+/**
+ * @brief   Structure representing a LIS3MDL driver.
+ */
+typedef struct LIS3MDLDriver LIS3MDLDriver;
 /** @} */
 
 /*===========================================================================*/
@@ -486,7 +492,7 @@ struct LIS3MDLDriver {
 /**
  * @brief   Change compass full scale value.
  *
- * @param[in] ip        pointer to a @p BaseCompass class.
+ * @param[in] ip        pointer to a @p LIS3MDLDriver class.
  * @param[in] fs        the new full scale value.
  *
  * @return              The operation status.
@@ -495,7 +501,7 @@ struct LIS3MDLDriver {
  * @api
  */
 #define compassSetFullScale(ip, fs)                                       \
-        (ip)->vmt_lis3mdl->set_full_scale(ip, fs)
+        (ip)->vmt_compass->set_full_scale(ip, fs)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
