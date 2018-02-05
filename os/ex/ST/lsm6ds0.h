@@ -43,22 +43,22 @@
 /**
  * @brief   LSM6DS0 driver version string.
  */
-#define EX_LSM6DS0_VERSION          "1.0.3"
+#define EX_LSM6DS0_VERSION                  "1.0.4"
 
 /**
  * @brief   LSM6DS0 driver version major number.
  */
-#define EX_LSM6DS0_MAJOR            1
+#define EX_LSM6DS0_MAJOR                    1
 
 /**
  * @brief   LSM6DS0 driver version minor number.
  */
-#define EX_LSM6DS0_MINOR            0
+#define EX_LSM6DS0_MINOR                    0
 
 /**
  * @brief   LSM6DS0 driver version patch number.
  */
-#define EX_LSM6DS0_PATCH            3
+#define EX_LSM6DS0_PATCH                    4
 /** @} */
 
 /**
@@ -99,11 +99,11 @@
  * @name   LSM6DS0 communication interfaces related bit masks
  * @{
  */
-#define LSM6DS0_DI_MASK             0xFF        /**< Data In mask           */
-#define LSM6DS0_DI(n)               (1 << n)    /**< Data In bit n          */
-#define LSM6DS0_AD_MASK             0x7F        /**< Address Data mask      */
-#define LSM6DS0_AD(n)               (1 << n)    /**< Address Data bit n     */
-#define LSM6DS0_MS                  (1 << 7)    /**< Multiple read write    */
+#define LSM6DS0_DI_MASK                     0xFF
+#define LSM6DS0_DI(n)                       (1 << n)
+#define LSM6DS0_AD_MASK                     0x7F
+#define LSM6DS0_AD(n)                       (1 << n)
+#define LSM6DS0_MS                          (1 << 7)
 /** @} */
 
 /**
@@ -677,33 +677,42 @@ typedef struct {
 } LSM6DS0Config;
 
 /**
- * @brief   Structure representing a LSM6DS0 driver.
+ * @brief   @p LSM6DS0 accelerometer subsystem specific methods.
  */
-typedef struct LSM6DS0Driver LSM6DS0Driver;
-
+#define _lsm6ds0_accelerometer_methods_alone                                \
+  /* Change full scale value of LSM6DS0 accelerometer subsystem .*/         \
+  msg_t (*set_full_scale)(void *instance, lsm6ds0_acc_fs_t fs);
+  
+  
 /**
  * @brief   @p LSM6DS0 accelerometer subsystem specific methods.
  */
-#define _lsm6ds0_acc_methods                                                \
+#define _lsm6ds0_accelerometer_methods                                      \
   _base_accelerometer_methods                                               \
-  /* Change full scale value of LSM6DS0 accelerometer subsystem .*/         \
-  msg_t (*set_full_scale)(void *instance, lsm6ds0_acc_fs_t fs);
+  _lsm6ds0_accelerometer_methods_alone
+
+/**
+ * @brief   @p LSM6DS0 gyroscope subsystem specific methods.
+ */
+#define _lsm6ds0_gyroscope_methods_alone                                    \
+  /* Change full scale value of LSM6DS0 gyroscope subsystem .*/             \
+  msg_t (*set_full_scale)(void *instance, lsm6ds0_gyro_fs_t fs);
+  
   
 /**
  * @brief   @p LSM6DS0 gyroscope subsystem specific methods.
  */
-#define _lsm6ds0_gyro_methods                                               \
+#define _lsm6ds0_gyroscope_methods                                          \
   _base_gyroscope_methods                                                   \
-  /* Change full scale value of LSM6DS0 gyroscope subsystem .*/             \
-  msg_t (*set_full_scale)(void *instance, lsm6ds0_gyro_fs_t fs);
+  _lsm6ds0_gyroscope_methods_alone
   
 /**
  * @extends BaseAccelerometerVMT
  *
  * @brief   @p LSM6DS0 accelerometer virtual methods table.
  */
-struct LSM6DS0ACCVMT {
-  _lsm6ds0_acc_methods
+struct LSM6DS0AccelerometerVMT {
+  _lsm6ds0_accelerometer_methods
 };
 
 /**
@@ -711,16 +720,14 @@ struct LSM6DS0ACCVMT {
  *
  * @brief   @p LSM6DS0 gyroscope virtual methods table.
  */
-struct LSM6DS0GYROVMT {
-  _lsm6ds0_gyro_methods
+struct LSM6DS0GyroscopeVMT {
+  _lsm6ds0_gyroscope_methods
 };
 
 /**
  * @brief   @p LSM6DS0Driver specific data.
  */
 #define _lsm6ds0_data                                                       \
-  _base_accelerometer_data                                                  \
-  _base_gyroscope_data                                                      \
   /* Driver state.*/                                                        \
   lsm6ds0_state_t           state;                                          \
   /* Current configuration data.*/                                          \
@@ -743,17 +750,21 @@ struct LSM6DS0GYROVMT {
  */
 struct LSM6DS0Driver {
   /** @brief BaseSensor Virtual Methods Table. */
-  const struct BaseSensorVMT *vmt_basesensor;
-  /** @brief BaseAccelerometer Virtual Methods Table. */
-  const struct BaseAccelerometerVMT *vmt_baseaccelerometer;
-  /** @brief BaseGyroscope Virtual Methods Table. */
-  const struct BaseGyroscopeVMT *vmt_basegyroscope;
+  const struct BaseSensorVMT *vmt_sensor;
+  _base_sensor_data
   /** @brief LSM6DS0 Accelerometer Virtual Methods Table. */
-  const struct LSM6DS0ACCVMT *vmt_lsm6ds0acc;
+  const struct LSM6DS0AccelerometerVMT *vmt_accelerometer;
+  _base_accelerometer_data
   /** @brief LSM6DS0 Gyroscope Virtual Methods Table. */
-  const struct LSM6DS0GYROVMT *vmt_lsm6ds0gyro;
+  const struct LSM6DS0GyroscopeVMT *vmt_gyroscope;
+  _base_gyroscope_data
   _lsm6ds0_data
 };
+
+/**
+ * @brief   Structure representing a LSM6DS0 driver.
+ */
+typedef struct LSM6DS0Driver LSM6DS0Driver;
 /** @} */
 
 /*===========================================================================*/
@@ -763,7 +774,7 @@ struct LSM6DS0Driver {
 /**
  * @brief   Change accelerometer fullscale value.
  *
- * @param[in] ip        pointer to a @p BaseAccelerometer class.
+ * @param[in] ip        pointer to a @p LSM6DS0Driver class.
  * @param[in] fs        the new full scale value.
  *
  * @return              The operation status.
@@ -772,12 +783,12 @@ struct LSM6DS0Driver {
  * @api
  */
 #define accelerometerSetFullScale(ip, fs)                                   \
-        (ip)->vmt_lsm6ds0acc->set_full_scale(ip, fs)
+        (ip)->vmt_accelerometer->set_full_scale(ip, fs)
 
 /**
  * @brief   Change compass fullscale value.
  *
- * @param[in] ip        pointer to a @p BaseGyroscope class.
+ * @param[in] ip        pointer to a @p LSM6DS0Driver class.
  * @param[in] fs        the new full scale value.
  *
  * @return              The operation status.
@@ -786,7 +797,7 @@ struct LSM6DS0Driver {
  * @api
  */
 #define gyroscopeSetFullScale(ip, fs)                                         \
-        (ip)->vmt_lsm6ds0gyro->set_full_scale(ip, fs)
+        (ip)->vmt_gyroscope->set_full_scale(ip, fs)
   
 /*===========================================================================*/
 /* External declarations.                                                    */
