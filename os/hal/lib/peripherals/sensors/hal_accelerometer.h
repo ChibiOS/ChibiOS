@@ -82,8 +82,8 @@ struct BaseAccelerometerVMT {
  */
 typedef struct {
   /** @brief Virtual Methods Table.*/
-  const struct BaseAccelerometerVMT *vmt_baseaccelerometer;
-  _base_sensor_data
+  const struct BaseAccelerometerVMT *vmt_accelerometer;
+  _base_accelerometer_data
 } BaseAccelerometer;
 
 /*===========================================================================*/
@@ -103,7 +103,7 @@ typedef struct {
  * @api
  */
 #define accelerometerGetAxesNumber(ip)                                      \
-        (ip)->vmt_baseaccelerometer->get_channels_number(ip)
+        (ip)->vmt_accelerometer->get_channels_number(ip)
 
 /**
  * @brief   Accelerometer read raw data.
@@ -118,7 +118,7 @@ typedef struct {
  * @api
  */
 #define accelerometerReadRaw(ip, dp)                                        \
-        (ip)->vmt_baseaccelerometer->read_raw(ip, dp)
+        (ip)->vmt_accelerometer->read_raw(ip, dp)
 
 /**
  * @brief   Accelerometer read cooked data.
@@ -133,7 +133,7 @@ typedef struct {
  * @api
  */
 #define accelerometerReadCooked(ip, dp)                                     \
-        (ip)->vmt_baseaccelerometer->read_cooked(ip, dp)
+        (ip)->vmt_accelerometer->read_cooked(ip, dp)
 
 /**
  * @brief   Updates accelerometer bias data from received buffer.
@@ -151,7 +151,7 @@ typedef struct {
  * @api
  */
 #define accelerometerSetBias(ip, bp)                                        \
-        (ip)->vmt_baseaccelerometer->set_bias(ip, bp)
+        (ip)->vmt_accelerometer->set_bias(ip, bp)
 
 /**
  * @brief   Reset accelerometer bias data restoring it to zero.
@@ -165,7 +165,7 @@ typedef struct {
  * @api
  */
 #define accelerometerResetBias(ip)                                          \
-        (ip)->vmt_baseaccelerometer->reset_bias(ip)
+        (ip)->vmt_accelerometer->reset_bias(ip)
 
 /**
  * @brief   Updates accelerometer sensitivity data from received buffer.
@@ -182,7 +182,7 @@ typedef struct {
  * @api
  */
 #define accelerometerSetSensitivity(ip, sp)                                 \
-        (ip)->vmt_baseaccelerometer->set_sensitivity(ip, sp)
+        (ip)->vmt_accelerometer->set_sensitivity(ip, sp)
 
 /**
  * @brief   Reset accelerometer sensitivity data restoring it to its typical
@@ -197,7 +197,7 @@ typedef struct {
  * @api
  */
 #define accelerometerResetSensitivity(ip)                                   \
-        (ip)->vmt_baseaccelerometer->reset_sensitivity(ip)
+        (ip)->vmt_accelerometer->reset_sensitivity(ip)
 /** @} */
 
 /*===========================================================================*/

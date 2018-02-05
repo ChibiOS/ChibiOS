@@ -83,7 +83,7 @@ struct BaseHygrometerVMT {
  */
 typedef struct {
   /** @brief Virtual Methods Table.*/
-  const struct BaseHygrometerVMT *vmt_basehygrometer;
+  const struct BaseHygrometerVMT *vmt_hygrometer;
   _base_hygrometer_data
 } BaseHygrometer;
 
@@ -103,7 +103,7 @@ typedef struct {
  * @api
  */
 #define hygrometerGetChannelsNumber(ip)                                     \
-        (ip)->vmt_basehygrometer->get_channels_number(ip)
+        (ip)->vmt_hygrometer->get_channels_number(ip)
 
 /**
  * @brief   Hygrometer read raw data.
@@ -118,7 +118,7 @@ typedef struct {
  * @api
  */
 #define hygrometerReadRaw(ip, dp)                                           \
-        (ip)->vmt_basehygrometer->read_raw(ip, dp)
+        (ip)->vmt_hygrometer->read_raw(ip, dp)
 
 /**
  * @brief   Hygrometer read cooked data.
@@ -133,7 +133,7 @@ typedef struct {
  * @api
  */
 #define hygrometerReadCooked(ip, dp)                                        \
-        (ip)->vmt_basehygrometer->read_cooked(ip, dp)
+        (ip)->vmt_hygrometer->read_cooked(ip, dp)
 
 /**
  * @brief   Updates hygrometer bias data from received buffer.
@@ -150,7 +150,7 @@ typedef struct {
  * @api
  */
 #define hygrometerSetBias(ip, bp)                                           \
-        (ip)->vmt_basehygrometer->set_bias(ip, bp)
+        (ip)->vmt_hygrometer->set_bias(ip, bp)
 
 /**
  * @brief   Reset hygrometer bias data restoring it to zero.
@@ -164,7 +164,7 @@ typedef struct {
  * @api
  */
 #define hygrometerResetBias(ip)                                             \
-        (ip)->vmt_basehygrometer->reset_bias(ip)
+        (ip)->vmt_hygrometer->reset_bias(ip)
 
 /**
  * @brief   Updates hygrometer sensitivity data from received buffer.
@@ -181,7 +181,7 @@ typedef struct {
  * @api
  */
 #define hygrometerSetSensitivity(ip, sp)                                    \
-        (ip)->vmt_basehygrometer->set_sensitivity(ip, sp)
+        (ip)->vmt_hygrometer->set_sensitivity(ip, sp)
 
 /**
  * @brief   Reset hygrometer sensitivity data restoring it to its typical
@@ -196,7 +196,7 @@ typedef struct {
  * @api
  */
 #define hygrometerResetSensitivity(ip)                                      \
-        (ip)->vmt_basehygrometer->reset_sensitivity(ip)
+        (ip)->vmt_hygrometer->reset_sensitivity(ip)
 /** @} */
 
 /*===========================================================================*/
