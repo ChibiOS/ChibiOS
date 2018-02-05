@@ -409,17 +409,17 @@ static msg_t thermo_reset_sensitivity(void *ip) {
   return MSG_OK;
 }
 
-static const struct BaseSensorVMT vmt_basesensor = {
+static const struct BaseSensorVMT vmt_sensor = {
   sens_get_axes_number, sens_read_raw, sens_read_cooked
 };
 
-static const struct BaseHygrometerVMT vmt_basehygrometer = {
+static const struct HTS221HygrometerVMT vmt_hygrometer = {
   hygro_get_axes_number, hygro_read_raw, hygro_read_cooked,
   hygro_set_bias, hygro_reset_bias,
   hygro_set_sensitivity, hygro_reset_sensitivity
 };
 
-static const struct BaseThermometerVMT vmt_basethermometer = {
+static const struct HTS221ThermometerVMT vmt_thermometer = {
   thermo_get_axes_number, thermo_read_raw, thermo_read_cooked,
   thermo_set_bias, thermo_reset_bias,
   thermo_set_sensitivity, thermo_reset_sensitivity
@@ -438,9 +438,9 @@ static const struct BaseThermometerVMT vmt_basethermometer = {
  */
 void hts221ObjectInit(HTS221Driver *devp) {
 
-  devp->vmt_basesensor = &vmt_basesensor;
-  devp->vmt_basehygrometer = &vmt_basehygrometer;
-  devp->vmt_basethermometer = &vmt_basethermometer;
+  devp->vmt_sensor = &vmt_sensor;
+  devp->vmt_hygrometer = &vmt_hygrometer;
+  devp->vmt_thermometer = &vmt_thermometer;
   devp->config = NULL;
   devp->state  = HTS221_STOP;
   devp->bias[0] = 0.0;

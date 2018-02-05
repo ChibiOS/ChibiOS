@@ -15,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  
+
 */
 
 /**
@@ -44,22 +44,22 @@
 /**
  * @brief   HTS221 driver version string.
  */
-#define EX_HTS221_VERSION           "1.0.0"
+#define EX_HTS221_VERSION                   "1.0.1"
 
 /**
  * @brief   HTS221 driver version major number.
  */
-#define EX_HTS221_MAJOR             1
+#define EX_HTS221_MAJOR                     1
 
 /**
  * @brief   HTS221 driver version minor number.
  */
-#define EX_HTS221_MINOR             0
+#define EX_HTS221_MINOR                     0
 
 /**
  * @brief   HTS221 driver version patch number.
  */
-#define EX_HTS221_PATCH             0
+#define EX_HTS221_PATCH                     1
 /** @} */
 
 /**
@@ -78,57 +78,57 @@
  * @name    HTS221 communication interfaces related bit masks
  * @{
  */
-#define HTS221_DI_MASK              0xFF        /**< Data In mask           */
-#define HTS221_DI(n)                (1 << n)    /**< Data In bit n          */
-#define HTS221_AD_MASK              0x3F        /**< Address Data mask      */
-#define HTS221_AD(n)                (1 << n)    /**< Address Data bit n     */
-#define HTS221_MS                   (1 << 6)    /**< Multiple read write    */
-#define HTS221_RW                   (1 << 7)    /**< Read Write selector    */
+#define HTS221_DI_MASK                      0xFF
+#define HTS221_DI(n)                        (1 << n)
+#define HTS221_AD_MASK                      0x3F
+#define HTS221_AD(n)                        (1 << n)
+#define HTS221_MS                           (1 << 6)
+#define HTS221_RW                           (1 << 7)
 
-#define HTS221_SUB_MS               (1 << 7)    /**< Multiple RW in I2C mode*/
+#define HTS221_SUB_MS                       (1 << 7)
 
-#define HTS221_SAD                  0x5F        /**< Slave Address          */
+#define HTS221_SAD                          0x5F
 /** @} */
 
 /**
  * @name    HTS221 register addresses
  * @{
  */
-#define HTS221_AD_WHO_AM_I          0x0F
-#define HTS221_AD_AV_CONF           0x10
-#define HTS221_AD_CTRL_REG1         0x20
-#define HTS221_AD_CTRL_REG2         0x21
-#define HTS221_AD_CTRL_REG3         0x22
-#define HTS221_AD_STATUS_REG        0x27
-#define HTS221_AD_HUMIDITY_OUT_L    0x28
-#define HTS221_AD_HUMIDITY_OUT_H    0x29
-#define HTS221_AD_TEMP_OUT_L        0x2A
-#define HTS221_AD_TEMP_OUT_H        0x2B
-#define HTS221_AD_CALIB_0           0x30
-#define HTS221_AD_CALIB_1           0x31
-#define HTS221_AD_CALIB_2           0x32
-#define HTS221_AD_CALIB_3           0x33
-#define HTS221_AD_CALIB_4           0x34
-#define HTS221_AD_CALIB_5           0x35
-#define HTS221_AD_CALIB_6           0x36
-#define HTS221_AD_CALIB_7           0x37
-#define HTS221_AD_CALIB_8           0x38
-#define HTS221_AD_CALIB_9           0x39
-#define HTS221_AD_CALIB_A           0x3A
-#define HTS221_AD_CALIB_B           0x3B
-#define HTS221_AD_CALIB_C           0x3C
-#define HTS221_AD_CALIB_D           0x3D
-#define HTS221_AD_CALIB_E           0x3E
-#define HTS221_AD_CALIB_F           0x3F
+#define HTS221_AD_WHO_AM_I                  0x0F
+#define HTS221_AD_AV_CONF                   0x10
+#define HTS221_AD_CTRL_REG1                 0x20
+#define HTS221_AD_CTRL_REG2                 0x21
+#define HTS221_AD_CTRL_REG3                 0x22
+#define HTS221_AD_STATUS_REG                0x27
+#define HTS221_AD_HUMIDITY_OUT_L            0x28
+#define HTS221_AD_HUMIDITY_OUT_H            0x29
+#define HTS221_AD_TEMP_OUT_L                0x2A
+#define HTS221_AD_TEMP_OUT_H                0x2B
+#define HTS221_AD_CALIB_0                   0x30
+#define HTS221_AD_CALIB_1                   0x31
+#define HTS221_AD_CALIB_2                   0x32
+#define HTS221_AD_CALIB_3                   0x33
+#define HTS221_AD_CALIB_4                   0x34
+#define HTS221_AD_CALIB_5                   0x35
+#define HTS221_AD_CALIB_6                   0x36
+#define HTS221_AD_CALIB_7                   0x37
+#define HTS221_AD_CALIB_8                   0x38
+#define HTS221_AD_CALIB_9                   0x39
+#define HTS221_AD_CALIB_A                   0x3A
+#define HTS221_AD_CALIB_B                   0x3B
+#define HTS221_AD_CALIB_C                   0x3C
+#define HTS221_AD_CALIB_D                   0x3D
+#define HTS221_AD_CALIB_E                   0x3E
+#define HTS221_AD_CALIB_F                   0x3F
 /** @} */
 
 /**
  * @name    HTS221_CTRL_REG1 register bits definitions
  * @{
  */
-#define HTS221_CTRL_REG1_MASK               0x87       
+#define HTS221_CTRL_REG1_MASK               0x87
 #define HTS221_CTRL_REG1_ODR0               (1 << 0)
-#define HTS221_CTRL_REG1_ODR1               (1 << 1) 
+#define HTS221_CTRL_REG1_ODR1               (1 << 1)
 #define HTS221_CTRL_REG1_BDU                (1 << 2)
 #define HTS221_CTRL_REG1_PD                 (1 << 7)
 /** @} */
@@ -137,9 +137,9 @@
  * @name    HTS221_CTRL_REG2 register bits definitions
  * @{
  */
-#define HTS221_CTRL_REG2_MASK               0x83       
+#define HTS221_CTRL_REG2_MASK               0x83
 #define HTS221_CTRL_REG2_ONE_SHOT           (1 << 0)
-#define HTS221_CTRL_REG2_HEATER             (1 << 1) 
+#define HTS221_CTRL_REG2_HEATER             (1 << 1)
 #define HTS221_CTRL_REG2_BOOT               (1 << 7)
 /** @} */
 
@@ -147,8 +147,8 @@
  * @name    HTS221_CTRL_REG3 register bits definitions
  * @{
  */
-#define HTS221_CTRL_REG3_MASK               0xC4       
-#define HTS221_CTRL_REG3_DRDY               (1 << 2) 
+#define HTS221_CTRL_REG3_MASK               0xC4
+#define HTS221_CTRL_REG3_DRDY               (1 << 2)
 #define HTS221_CTRL_REG3_PP_OD              (1 << 6)
 #define HTS221_CTRL_REG3_INT_H_L            (1 << 7)
 /** @} */
@@ -348,16 +348,53 @@ typedef struct {
 } HTS221Config;
 
 /**
- * @brief   Structure representing a HTS221 driver.
+ * @brief   @p HTS221 hygrometer subsystem specific methods.
+ * @note    No methods so far, just a common ancestor interface.
  */
-typedef struct HTS221Driver HTS221Driver;
+#define _hts221_hygrometer_methods_alone
+                 
+/**
+ * @brief   @p HTS221 hygrometer subsystem specific methods.
+ */
+#define _hts221_hygrometer_methods                                          \
+  _base_hygrometer_methods                                                  \
+  _hts221_hygrometer_methods_alone
+
+/**
+ * @brief   @p HTS221 thermometer subsystem specific methods.
+ * @note    No methods so far, just a common ancestor interface.
+ */
+#define _hts221_thermometer_methods_alone
+ 
+/**
+ * @brief @p HTS221 compass subsystem specific methods.
+ */
+#define _hts221_thermometer_methods                                         \
+  _base_thermometer_methods                                                 \
+  _hts221_thermometer_methods_alone
+
+/**
+ * @extends BaseHygrometerVMT
+ *
+ * @brief @p HTS221 hygrometer virtual methods table.
+ */
+struct HTS221HygrometerVMT {
+  _hts221_hygrometer_methods
+};
+
+/**
+ * @extends BaseThermometerVMT
+ *
+ * @brief @p HTS221 thermometer virtual methods table.
+ */
+struct HTS221ThermometerVMT {
+  _hts221_thermometer_methods
+};
 
 /**
  * @brief   @p HTS221Driver specific data.
  */
 #define _hts221_data                                                        \
-  _base_hygrometer_data                                                     \
-  _base_thermometer_data                                                    \
   /* Driver state.*/                                                        \
   hts221_state_t            state;                                          \
   /* Current configuration data.*/                                          \
@@ -378,19 +415,27 @@ typedef struct HTS221Driver HTS221Driver;
  */
 struct HTS221Driver {
   /** @brief BaseSensor Virtual Methods Table. */
-  const struct BaseSensorVMT *vmt_basesensor;
-  /** @brief BaseHygrometer Virtual Methods Table. */
-  const struct BaseHygrometerVMT *vmt_basehygrometer;
-    /** @brief BaseThermometer Virtual Methods Table. */
-  const struct BaseThermometerVMT *vmt_basethermometer;
+  const struct BaseSensorVMT *vmt_sensor;
+  _base_sensor_data
+  /** @brief HTS221 Hygrometer Virtual Methods Table. */
+  const struct HTS221HygrometerVMT *vmt_hygrometer;
+  _base_hygrometer_data
+  /** @brief HTS221 Thermometer Virtual Methods Table. */
+  const struct HTS221ThermometerVMT *vmt_thermometer;
+  _base_thermometer_data
   _hts221_data
 };
+
+/**
+ * @brief   Structure representing a HTS221 driver.
+ */
+typedef struct HTS221Driver HTS221Driver;
 /** @} */
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
-       
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
