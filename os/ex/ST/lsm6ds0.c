@@ -554,28 +554,17 @@ static msg_t gyro_set_full_scale(void *ip, lsm6ds0_gyro_fs_t fs) {
   return msg;
 }
 
-static const struct BaseSensorVMT vmt_basesensor = {
+static const struct BaseSensorVMT vmt_sensor = {
   sens_get_axes_number, sens_read_raw, sens_read_cooked
 };
 
-static const struct BaseGyroscopeVMT vmt_basegyroscope = {
-  gyro_get_axes_number, gyro_read_raw, gyro_read_cooked,
-  gyro_sample_bias, gyro_set_bias, gyro_reset_bias,
-  gyro_set_sensivity, gyro_reset_sensivity
-};
-
-static const struct BaseAccelerometerVMT vmt_baseaccelerometer = {
-  acc_get_axes_number, acc_read_raw, acc_read_cooked,
-  acc_set_bias, acc_reset_bias, acc_set_sensivity, acc_reset_sensivity
-};
-
-static const struct LSM6DS0ACCVMT vmt_lsm6ds0acc = {
+static const struct LSM6DS0AccelerometerVMT vmt_accelerometer = {
   acc_get_axes_number, acc_read_raw, acc_read_cooked,
   acc_set_bias, acc_reset_bias, acc_set_sensivity, acc_reset_sensivity,
   acc_set_full_scale
 };
 
-static const struct LSM6DS0GYROVMT vmt_lsm6ds0gyro = {
+static const struct LSM6DS0GyroscopeVMT vmt_gyroscope = {
   gyro_get_axes_number, gyro_read_raw, gyro_read_cooked,
   gyro_sample_bias, gyro_set_bias, gyro_reset_bias,
   gyro_set_sensivity, gyro_reset_sensivity, gyro_set_full_scale
@@ -594,11 +583,9 @@ static const struct LSM6DS0GYROVMT vmt_lsm6ds0gyro = {
  */
 void lsm6ds0ObjectInit(LSM6DS0Driver *devp) {
   uint32_t i;
-  devp->vmt_basesensor = &vmt_basesensor;
-  devp->vmt_baseaccelerometer = &vmt_baseaccelerometer;
-  devp->vmt_basegyroscope = &vmt_basegyroscope;
-  devp->vmt_lsm6ds0acc = &vmt_lsm6ds0acc;
-  devp->vmt_lsm6ds0gyro = &vmt_lsm6ds0gyro;
+  devp->vmt_sensor = &vmt_sensor;
+  devp->vmt_accelerometer = &vmt_accelerometer;
+  devp->vmt_gyroscope = &vmt_gyroscope;
   devp->config = NULL;
   for(i = 0; i < LSM6DS0_ACC_NUMBER_OF_AXES; i++)
     devp->accbias[i] = 0.0f;

@@ -83,7 +83,8 @@ msg_t lps25hI2CReadRegister(I2CDriver *i2cp, lps25h_sad_t sad, uint8_t reg,
  * @notapi
  * @return               the operation status.
  */
-msg_t lps25hI2CWriteRegister(I2CDriver *i2cp, lps25h_sad_t sad, uint8_t* txbuf,                             size_t n) {
+msg_t lps25hI2CWriteRegister(I2CDriver *i2cp, lps25h_sad_t sad, uint8_t* txbuf,
+                             size_t n) {
   if (n > 1)
     (*txbuf) |= LPS25H_SUB_MS;
   return i2cMasterTransmitTimeout(i2cp, sad, txbuf, n + 1, NULL, 0,
@@ -196,11 +197,11 @@ static msg_t reset_sensivity(void *ip) {
   return MSG_OK;
 }
 
-static const struct BaseSensorVMT vmt_basesensor = {
+static const struct BaseSensorVMT vmt_sensor = {
   get_axes_number, read_raw, read_cooked
 };
 
-static const struct BaseBarometerVMT vmt_basebarometer = {
+static const struct LPS25HBarometerVMT vmt_barometer = {
   get_axes_number, read_raw, read_cooked,
   set_bias, reset_bias, set_sensivity, reset_sensivity
 };
@@ -218,8 +219,8 @@ static const struct BaseBarometerVMT vmt_basebarometer = {
  */
 void lps25hObjectInit(LPS25HDriver *devp) {
 
-  devp->vmt_basesensor = &vmt_basesensor;
-  devp->vmt_basebarometer = &vmt_basebarometer;
+  devp->vmt_sensor = &vmt_sensor;
+  devp->vmt_barometer = &vmt_barometer;
   devp->config = NULL;
   devp->bias = 0;
   devp->state = LPS25H_STOP;

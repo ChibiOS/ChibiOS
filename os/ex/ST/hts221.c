@@ -68,7 +68,7 @@
 msg_t hts221I2CReadRegister(I2CDriver *i2cp, uint8_t reg, uint8_t* rxbuf,
                              size_t n) {
   uint8_t txbuf = reg;
-  if(n > 1)
+  if (n > 1)
     txbuf |= HTS221_SUB_MS;
 
   return i2cMasterTransmitTimeout(i2cp, HTS221_SAD, &txbuf, 1, rxbuf, n,
@@ -134,7 +134,7 @@ msg_t hts221Calibrate(HTS221Driver *devp, uint8_t flag) {
   T0_degC_x8 = calib[2];
   /* Completing T0_degC_x8 value */
   msb = (calib[5] & HTS221_SEL(0x03, 0));
-  if(msb & HTS221_SEL(0x01, 1)) {
+  if (msb & HTS221_SEL(0x01, 1)) {
     msb |= HTS221_SEL(0x3F, 2);
   }
   T0_degC_x8 += msb << 8;
@@ -142,7 +142,7 @@ msg_t hts221Calibrate(HTS221Driver *devp, uint8_t flag) {
   T1_degC_x8 = calib[3];
   /* Completing T1_degC_x8 value */
   msb = ((calib[5] & HTS221_SEL(0x03, 2)) >> 2);
-  if(msb & HTS221_SEL(0x01, 1)) {
+  if (msb & HTS221_SEL(0x01, 1)) {
     msb |= HTS221_SEL(0x3F, 2);
   }
   T1_degC_x8 += msb << 8;
@@ -155,20 +155,20 @@ msg_t hts221Calibrate(HTS221Driver *devp, uint8_t flag) {
   sens = ((float)H1_rH_x2 - (float)H0_rH_x2) /
          (2.0f * ((float)H1_T0_OUT - (float)H0_T0_OUT));
                    
-  if(flag & HTS221_FLAG_HYGRO_SENS)
+  if (flag & HTS221_FLAG_HYGRO_SENS)
       devp->sensitivity[0] = sens;
 
-  if(flag & HTS221_FLAG_HYGRO_BIAS)
+  if (flag & HTS221_FLAG_HYGRO_BIAS)
       devp->bias[0] = (sens * (float)H0_T0_OUT) -
                   ((float)H0_rH_x2 / 2.0f);
 
   sens = ((float)T1_degC_x8 - (float)T0_degC_x8) /
          (8.0f * ((float)T1_OUT - (float)T0_OUT));
          
-  if(flag & HTS221_FLAG_THERMO_SENS)
+  if (flag & HTS221_FLAG_THERMO_SENS)
   devp->sensitivity[1] = sens;
 
-  if(flag & HTS221_FLAG_THERMO_BIAS)
+  if (flag & HTS221_FLAG_THERMO_BIAS)
   devp->bias[1] = (sens * (float)T0_OUT) -
                   ((float)T0_degC_x8 / 8.0f);
                     
@@ -224,7 +224,7 @@ static msg_t hygro_read_raw(void *ip, int32_t* axis) {
 #endif /* HTS221_SHARED_I2C */
 #endif /* HTS221_USE_I2C */
 
-  if(msg == MSG_OK) {
+  if (msg == MSG_OK) {
     tmp = buff[0] + (buff[1] << 8);
     *axis = (int32_t)tmp;
   }
@@ -260,7 +260,7 @@ static msg_t thermo_read_raw(void *ip, int32_t axis[]) {
 #endif /* HTS221_SHARED_I2C */
 #endif /* HTS221_USE_I2C */
 
-  if(msg == MSG_OK) {
+  if (msg == MSG_OK) {
     tmp = buff[0] + (buff[1] << 8);
     *axis = (int32_t)tmp;
   }
@@ -319,7 +319,7 @@ static msg_t sens_read_cooked(void *ip, float axes[]) {
               "sens_read_cooked(), invalid state");
 
   msg = hygro_read_cooked(ip, dp);
-  if(msg != MSG_OK)
+  if (msg != MSG_OK)
     return msg;
   dp += HTS221_THERMO_NUMBER_OF_AXES;
   return thermo_read_cooked(ip, dp);
@@ -330,7 +330,7 @@ static msg_t hygro_set_bias(void *ip, float *bp) {
 
   osalDbgAssert((((HTS221Driver *)ip)->state == HTS221_READY) ||
                 (((HTS221Driver *)ip)->state == HTS221_STOP),
-                "thermo_set_bias(), invalid state");
+                "hygro_set_bias(), invalid state");
 
   ((HTS221Driver *)ip)->bias[0] = *bp;
   return MSG_OK;
@@ -372,7 +372,7 @@ static msg_t hygro_set_sensitivity(void *ip, float *sp) {
 
   osalDbgAssert((((HTS221Driver *)ip)->state == HTS221_READY) ||
                 (((HTS221Driver *)ip)->state == HTS221_STOP),
-                "thermo_set_sensitivity(), invalid state");
+                "hygro_set_sensitivity(), invalid state");
 
   ((HTS221Driver *)ip)->sensitivity[0] = *sp;
   return MSG_OK;
@@ -409,18 +409,17 @@ static msg_t thermo_reset_sensitivity(void *ip) {
   return MSG_OK;
 }
 
-
-static const struct BaseSensorVMT vmt_basesensor = {
+static const struct BaseSensorVMT vmt_sensor = {
   sens_get_axes_number, sens_read_raw, sens_read_cooked
 };
 
-static const struct BaseHygrometerVMT vmt_basehygrometer = {
+static const struct HTS221HygrometerVMT vmt_hygrometer = {
   hygro_get_axes_number, hygro_read_raw, hygro_read_cooked,
   hygro_set_bias, hygro_reset_bias,
   hygro_set_sensitivity, hygro_reset_sensitivity
 };
 
-static const struct BaseThermometerVMT vmt_basethermometer = {
+static const struct HTS221ThermometerVMT vmt_thermometer = {
   thermo_get_axes_number, thermo_read_raw, thermo_read_cooked,
   thermo_set_bias, thermo_reset_bias,
   thermo_set_sensitivity, thermo_reset_sensitivity
@@ -439,9 +438,9 @@ static const struct BaseThermometerVMT vmt_basethermometer = {
  */
 void hts221ObjectInit(HTS221Driver *devp) {
 
-  devp->vmt_basesensor = &vmt_basesensor;
-  devp->vmt_basehygrometer = &vmt_basehygrometer;
-  devp->vmt_basethermometer = &vmt_basethermometer;
+  devp->vmt_sensor = &vmt_sensor;
+  devp->vmt_hygrometer = &vmt_hygrometer;
+  devp->vmt_thermometer = &vmt_thermometer;
   devp->config = NULL;
   devp->state  = HTS221_STOP;
   devp->bias[0] = 0.0;
@@ -510,7 +509,7 @@ void hts221Start(HTS221Driver *devp, const HTS221Config *config) {
   }  
 #endif /* HTS221_USE_I2C */
 
-  if(devp->config->sensitivity == NULL) {
+  if (devp->config->sensitivity == NULL) {
     hts221Calibrate(devp, HTS221_FLAG_HYGRO_SENS | HTS221_FLAG_THERMO_SENS);
   }
   else{
@@ -519,7 +518,7 @@ void hts221Start(HTS221Driver *devp, const HTS221Config *config) {
     devp->sensitivity[1] = devp->config->sensitivity[1];
   }
 
-  if(devp->config->bias == NULL) {
+  if (devp->config->bias == NULL) {
     hts221Calibrate(devp, HTS221_FLAG_HYGRO_BIAS | HTS221_FLAG_THERMO_BIAS);
   }
   else {
