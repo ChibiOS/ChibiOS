@@ -42,22 +42,22 @@
 /**
  * @brief   L3GD20 driver version string.
  */
-#define EX_L3GD20_VERSION           "1.0.4"
+#define EX_L3GD20_VERSION                   "1.0.5"
 
 /**
  * @brief   L3GD20 driver version major number.
  */
-#define EX_L3GD20_MAJOR             1
+#define EX_L3GD20_MAJOR                     1
 
 /**
  * @brief   L3GD20 driver version minor number.
  */
-#define EX_L3GD20_MINOR             0
+#define EX_L3GD20_MINOR                     0
 
 /**
  * @brief   L3GD20 driver version patch number.
  */
-#define EX_L3GD20_PATCH             4
+#define EX_L3GD20_PATCH                     5
 /** @} */
 
 /**
@@ -65,59 +65,59 @@
  *
  * @{
  */
-#define L3GD20_NUMBER_OF_AXES       3U
-
-#define L3GD20_250DPS               250.0f
-#define L3GD20_500DPS               500.0f
-#define L3GD20_2000DPS              2000.0f
-
-#define L3GD20_SENS_250DPS          0.00875f
-#define L3GD20_SENS_500DPS          0.01750f
-#define L3GD20_SENS_2000DPS         0.07000f
+#define L3GD20_NUMBER_OF_AXES               3U
+                                            
+#define L3GD20_250DPS                       250.0f
+#define L3GD20_500DPS                       500.0f
+#define L3GD20_2000DPS                      2000.0f
+                                            
+#define L3GD20_SENS_250DPS                  0.00875f
+#define L3GD20_SENS_500DPS                  0.01750f
+#define L3GD20_SENS_2000DPS                 0.07000f
 /** @} */
 
 /**
  * @name    L3GD20 communication interfaces related bit masks
  * @{
  */
-#define L3GD20_DI_MASK              0xFF        /**< Data In mask           */
-#define L3GD20_DI(n)                (1 << n)    /**< Data In bit n          */
-#define L3GD20_AD_MASK              0x3F        /**< Address Data mask      */
-#define L3GD20_AD(n)                (1 << n)    /**< Address Data bit n     */
-#define L3GD20_MS                   (1 << 6)    /**< Multiple read write    */
-#define L3GD20_RW                   (1 << 7)    /**< Read Write selector    */
+#define L3GD20_DI_MASK                      0xFF
+#define L3GD20_DI(n)                        (1 << n)
+#define L3GD20_AD_MASK                      0x3F
+#define L3GD20_AD(n)                        (1 << n)
+#define L3GD20_MS                           (1 << 6)
+#define L3GD20_RW                           (1 << 7)
 /** @} */
 
 /**
  * @name    L3GD20 register addresses
  * @{
  */
-#define L3GD20_AD_WHO_AM_I          0x0F
-#define L3GD20_AD_CTRL_REG1         0x20
-#define L3GD20_AD_CTRL_REG2         0x21
-#define L3GD20_AD_CTRL_REG3         0x22
-#define L3GD20_AD_CTRL_REG4         0x23
-#define L3GD20_AD_CTRL_REG5         0x24
-#define L3GD20_AD_REFERENCE         0x25
-#define L3GD20_AD_OUT_TEMP          0x26
-#define L3GD20_AD_STATUS_REG        0x27
-#define L3GD20_AD_OUT_X_L           0x28
-#define L3GD20_AD_OUT_X_H           0x29
-#define L3GD20_AD_OUT_Y_L           0x2A
-#define L3GD20_AD_OUT_Y_H           0x2B
-#define L3GD20_AD_OUT_Z_L           0x2C
-#define L3GD20_AD_OUT_Z_H           0x2D
-#define L3GD20_AD_FIFO_CTRL_REG     0x2E
-#define L3GD20_AD_FIFO_SRC_REG      0x2F
-#define L3GD20_AD_INT1_CFG          0x30
-#define L3GD20_AD_INT1_SRC          0x31
-#define L3GD20_AD_INT1_THS_XH       0x32
-#define L3GD20_AD_INT1_THS_XL       0x33
-#define L3GD20_AD_INT1_THS_YH       0x34
-#define L3GD20_AD_INT1_THS_YL       0x35
-#define L3GD20_AD_INT1_THS_ZH       0x36
-#define L3GD20_AD_INT1_THS_ZL       0x37
-#define L3GD20_AD_INT1_DURATION     0x38
+#define L3GD20_AD_WHO_AM_I                  0x0F
+#define L3GD20_AD_CTRL_REG1                 0x20
+#define L3GD20_AD_CTRL_REG2                 0x21
+#define L3GD20_AD_CTRL_REG3                 0x22
+#define L3GD20_AD_CTRL_REG4                 0x23
+#define L3GD20_AD_CTRL_REG5                 0x24
+#define L3GD20_AD_REFERENCE                 0x25
+#define L3GD20_AD_OUT_TEMP                  0x26
+#define L3GD20_AD_STATUS_REG                0x27
+#define L3GD20_AD_OUT_X_L                   0x28
+#define L3GD20_AD_OUT_X_H                   0x29
+#define L3GD20_AD_OUT_Y_L                   0x2A
+#define L3GD20_AD_OUT_Y_H                   0x2B
+#define L3GD20_AD_OUT_Z_L                   0x2C
+#define L3GD20_AD_OUT_Z_H                   0x2D
+#define L3GD20_AD_FIFO_CTRL_REG             0x2E
+#define L3GD20_AD_FIFO_SRC_REG              0x2F
+#define L3GD20_AD_INT1_CFG                  0x30
+#define L3GD20_AD_INT1_SRC                  0x31
+#define L3GD20_AD_INT1_THS_XH               0x32
+#define L3GD20_AD_INT1_THS_XL               0x33
+#define L3GD20_AD_INT1_THS_YH               0x34
+#define L3GD20_AD_INT1_THS_YL               0x35
+#define L3GD20_AD_INT1_THS_ZH               0x36
+#define L3GD20_AD_INT1_THS_ZL               0x37
+#define L3GD20_AD_INT1_DURATION             0x38
 /** @} */
 
 /**
@@ -194,29 +194,29 @@
  * @name    L3GD20_INT1_CFG register bits definitions
  * @{
  */
-#define L3GD20_INT1_CFG_MASK       0xFF        /**< L3GD20_INT1_CFG mask   */
-#define L3GD20_INT1_CFG_XLIE       (1 << 0)    /**< Enable INT1 on X low   */
-#define L3GD20_INT1_CFG_XHIE       (1 << 1)    /**< Enable INT1 on X high  */
-#define L3GD20_INT1_CFG_YLIE       (1 << 2)    /**< Enable INT1 on Y low   */
-#define L3GD20_INT1_CFG_YHIE       (1 << 3)    /**< Enable INT1 on Y high  */
-#define L3GD20_INT1_CFG_ZLIE       (1 << 4)    /**< Enable INT1 on Z low   */
-#define L3GD20_INT1_CFG_ZHIE       (1 << 5)    /**< Enable INT1 on Z high  */
-#define L3GD20_INT1_CFG_LIR        (1 << 6)    /**< Latch INT1             */
-#define L3GD20_INT1_CFG_AND_OR     (1 << 7)    /**< AND OR combination     */
+#define L3GD20_INT1_CFG_MASK        0xFF        /**< L3GD20_INT1_CFG mask   */
+#define L3GD20_INT1_CFG_XLIE        (1 << 0)    /**< Enable INT1 on X low   */
+#define L3GD20_INT1_CFG_XHIE        (1 << 1)    /**< Enable INT1 on X high  */
+#define L3GD20_INT1_CFG_YLIE        (1 << 2)    /**< Enable INT1 on Y low   */
+#define L3GD20_INT1_CFG_YHIE        (1 << 3)    /**< Enable INT1 on Y high  */
+#define L3GD20_INT1_CFG_ZLIE        (1 << 4)    /**< Enable INT1 on Z low   */
+#define L3GD20_INT1_CFG_ZHIE        (1 << 5)    /**< Enable INT1 on Z high  */
+#define L3GD20_INT1_CFG_LIR         (1 << 6)    /**< Latch INT1             */
+#define L3GD20_INT1_CFG_AND_OR      (1 << 7)    /**< AND OR combination     */
 /** @} */
 
 /**
  * @name    L3GD20_INT1_SRC register bits definitions
  * @{
  */
-#define L3GD20_INT1_SRC_MASK       0x7F        /**< L3GD20_INT1_SRC mask   */
-#define L3GD20_INT1_SRC_XL         (1 << 0)    /**< X low event            */
-#define L3GD20_INT1_SRC_XH         (1 << 1)    /**< X high event           */
-#define L3GD20_INT1_SRC_YL         (1 << 2)    /**< Y low event            */
-#define L3GD20_INT1_SRC_YH         (1 << 3)    /**< Y high event           */
-#define L3GD20_INT1_SRC_ZL         (1 << 4)    /**< Z low event            */
-#define L3GD20_INT1_SRC_ZH         (1 << 5)    /**< Z high event           */
-#define L3GD20_INT1_SRC_IA         (1 << 6)    /**< Interrupt active       */
+#define L3GD20_INT1_SRC_MASK        0x7F        /**< L3GD20_INT1_SRC mask   */
+#define L3GD20_INT1_SRC_XL          (1 << 0)    /**< X low event            */
+#define L3GD20_INT1_SRC_XH          (1 << 1)    /**< X high event           */
+#define L3GD20_INT1_SRC_YL          (1 << 2)    /**< Y low event            */
+#define L3GD20_INT1_SRC_YH          (1 << 3)    /**< Y high event           */
+#define L3GD20_INT1_SRC_ZL          (1 << 4)    /**< Z low event            */
+#define L3GD20_INT1_SRC_ZH          (1 << 5)    /**< Z high event           */
+#define L3GD20_INT1_SRC_IA          (1 << 6)    /**< Interrupt active       */
 /** @} */
 
 /*===========================================================================*/
@@ -474,25 +474,26 @@ typedef struct {
 } L3GD20Config;
 
 /**
- * @brief   Structure representing a L3GD20 driver.
+ * @brief   @p L3GD20 gyroscope subsystem specific methods.
  */
-typedef struct L3GD20Driver L3GD20Driver;
-
-/**
- * @brief   @p L3GD20 specific methods.
- */
-#define _l3gd20_methods                                                     \
-  _base_gyroscope_methods                                                   \
+#define _l3gd20_gyroscope_methods_alone                                     \
   /* Change full scale value of L3GD20.*/                                   \
   msg_t (*set_full_scale)(void *instance, l3gd20_fs_t fs);
 
 /**
+ * @brief   @p L3GD20 specific methods.
+ */
+#define _l3gd20_gyroscope_methods                                           \
+  _base_gyroscope_methods                                                   \
+  _l3gd20_gyroscope_methods_alone
+
+/**
  * @extends BaseGyroscopeVMT
  *
- * @brief   @p L3GD20 virtual methods table.
+ * @brief   @p L3GD20 gyroscope virtual methods table.
  */
-struct L3GD20VMT {
-  _l3gd20_methods
+struct L3GD20GyroscopeVMT {
+  _l3gd20_gyroscope_methods
 };
 
 /**
@@ -520,13 +521,18 @@ struct L3GD20VMT {
  */
 struct L3GD20Driver {
   /** @brief BaseSensor Virtual Methods Table. */
-  const struct BaseSensorVMT *vmt_basesensor;
-  /** @brief BaseGyroscope Virtual Methods Table. */
-  const struct BaseGyroscopeVMT *vmt_basegyroscope;
-  /** @brief L3GD20 Virtual Methods Table. */
-  const struct L3GD20VMT *vmt_l3gd20;
+  const struct BaseSensorVMT *vmt_sensor;
+  _base_sensor_data
+  /** @brief L3GD20 Gyroscope Virtual Methods Table. */
+  const struct L3GD20GyroscopeVMT *vmt_gyroscope;
+  _base_gyroscope_data
   _l3gd20_data
 };
+
+/**
+ * @brief   Structure representing a L3GD20 driver.
+ */
+typedef struct L3GD20Driver L3GD20Driver;
 /** @} */
 
 /*===========================================================================*/
@@ -545,7 +551,7 @@ struct L3GD20Driver {
  * @api
  */
 #define gyroscopeSetFullScale(ip, fs)                                       \
-        (ip)->vmt_l3gd20->set_full_scale(ip, fs)
+        (ip)->vmt_gyroscope->set_full_scale(ip, fs)
         
 /*===========================================================================*/
 /* External declarations.                                                    */
