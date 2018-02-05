@@ -90,6 +90,7 @@
 
 *** 17.6.4 ***
 - Fixed some minor documentation issues.
+- NEW: Improved external tools launch configuration for OpenOCD.
 - EX:  Improved MEMS drivers (bug #915).
 - HAL: Improved peripheral classes (bug #915).
 - HAL: Fixed more instances of bug #843 (bug #914).
