@@ -542,7 +542,7 @@ typedef struct L3GD20Driver L3GD20Driver;
 /**
  * @brief   Change gyroscope full scale value.
  *
- * @param[in] ip        pointer to a @p BaseGyroscope class.
+ * @param[in] ip        pointer to a @p L3GD20Driver class.
  * @param[in] fs        the new full scale value.
  *
  * @return              The operation status.

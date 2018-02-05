@@ -666,7 +666,7 @@ typedef struct LSM303DLHCDriver LSM303DLHCDriver;
 /**
  * @brief   Change accelerometer fullscale value.
  *
- * @param[in] ip        pointer to a @p BaseAccelerometer class.
+ * @param[in] ip        pointer to a @p LSM303DLHCDriver class.
  * @param[in] fs        the new full scale value.
  *
  * @return              The operation status.
