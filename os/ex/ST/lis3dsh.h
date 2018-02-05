@@ -43,22 +43,22 @@
 /**
  * @brief   LIS3DSH driver version string.
  */
-#define EX_LIS3DSH_VERSION          "1.0.2"
+#define EX_LIS3DSH_VERSION                  "1.0.3"
 
 /**
  * @brief   LIS3DSH driver version major number.
  */
-#define EX_LIS3DSH_MAJOR            1
+#define EX_LIS3DSH_MAJOR                    1
 
 /**
  * @brief   LIS3DSH driver version minor number.
  */
-#define EX_LIS3DSH_MINOR            0
+#define EX_LIS3DSH_MINOR                    0
 
 /**
  * @brief   LIS3DSH driver version patch number.
  */
-#define EX_LIS3DSH_PATCH            2
+#define EX_LIS3DSH_PATCH                    3
 /** @} */
 
 /**
@@ -66,135 +66,135 @@
  *
  * @{
  */
-#define LIS3DSH_NUMBER_OF_AXES      3U
-
-#define LIS3DSH_2G                  2.0f
-#define LIS3DSH_4G                  4.0f
-#define LIS3DSH_6G                  6.0f
-#define LIS3DSH_8G                  8.0f
-#define LIS3DSH_16G                 16.0f
-
-#define LIS3DSH_SENS_2G             0.06f
-#define LIS3DSH_SENS_4G             0.12f
-#define LIS3DSH_SENS_6G             0.18f
-#define LIS3DSH_SENS_8G             0.24f
-#define LIS3DSH_SENS_16G            0.73f
+#define LIS3DSH_NUMBER_OF_AXES              3U
+                                            
+#define LIS3DSH_2G                          2.0f
+#define LIS3DSH_4G                          4.0f
+#define LIS3DSH_6G                          6.0f
+#define LIS3DSH_8G                          8.0f
+#define LIS3DSH_16G                         16.0f
+                                            
+#define LIS3DSH_SENS_2G                     0.06f
+#define LIS3DSH_SENS_4G                     0.12f
+#define LIS3DSH_SENS_6G                     0.18f
+#define LIS3DSH_SENS_8G                     0.24f
+#define LIS3DSH_SENS_16G                    0.73f
 /** @} */
 
 /**
  * @name    LIS3DSH communication interfaces related bit masks
  * @{
  */
-#define LIS3DSH_DI_MASK             0xFF        /**< Data In mask           */
-#define LIS3DSH_DI(n)               (1 << n)    /**< Data In bit n          */
-#define LIS3DSH_AD_MASK             0x3F        /**< Address Data mask      */
-#define LIS3DSH_AD(n)               (1 << n)    /**< Address Data bit n     */
-#define LIS3DSH_MS                  (1 << 6)    /**< Multiple read write    */
-#define LIS3DSH_RW                  (1 << 7)    /**< Read Write selector    */
+#define LIS3DSH_DI_MASK                     0xFF
+#define LIS3DSH_DI(n)                       (1 << n)
+#define LIS3DSH_AD_MASK                     0x3F
+#define LIS3DSH_AD(n)                       (1 << n)
+#define LIS3DSH_MS                          (1 << 6)
+#define LIS3DSH_RW                          (1 << 7)
 /** @} */
 
 /**
  * @name    LIS3DSH register addresses
  * @{
  */
-#define  LIS3DSH_AD_OUT_T           0x0C
-#define  LIS3DSH_AD_INFO1           0x0D
-#define  LIS3DSH_AD_INFO2           0x0E
-#define  LIS3DSH_AD_WHO_AM_I        0x0F
-#define  LIS3DSH_AD_OFF_X           0x10
-#define  LIS3DSH_AD_OFF_Y           0x11
-#define  LIS3DSH_AD_OFF_Z           0x12
-#define  LIS3DSH_AD_CS_X            0x13
-#define  LIS3DSH_AD_CS_Y            0x14
-#define  LIS3DSH_AD_CS_Z            0x15
-#define  LIS3DSH_AD_LC_L            0x16
-#define  LIS3DSH_AD_LC_H            0x17
-#define  LIS3DSH_AD_STAT            0x18
-#define  LIS3DSH_AD_PEAK1           0x19
-#define  LIS3DSH_AD_PEAK2           0x1A
-#define  LIS3DSH_AD_VFC_1           0x1B
-#define  LIS3DSH_AD_VFC_2           0x1C
-#define  LIS3DSH_AD_VFC_3           0x1D
-#define  LIS3DSH_AD_VFC_4           0x1E
-#define  LIS3DSH_AD_THRS3           0x1F
-#define  LIS3DSH_AD_CTRL_REG4       0x20
-#define  LIS3DSH_AD_CTRL_REG1       0x21
-#define  LIS3DSH_AD_CTRL_REG2       0x22
-#define  LIS3DSH_AD_CTRL_REG3       0x23
-#define  LIS3DSH_AD_CTRL_REG5       0x24
-#define  LIS3DSH_AD_CTRL_REG6       0x25
-#define  LIS3DSH_AD_STATUS          0x27
-#define  LIS3DSH_AD_OUT_X_L         0x28
-#define  LIS3DSH_AD_OUT_X_H         0x29
-#define  LIS3DSH_AD_OUT_Y_L         0x2A
-#define  LIS3DSH_AD_OUT_Y_H         0x2B
-#define  LIS3DSH_AD_OUT_Z_L         0x2C
-#define  LIS3DSH_AD_OUT_Z_H         0x2D
-#define  LIS3DSH_AD_FIFO_CTRL       0x2E
-#define  LIS3DSH_AD_FIFO_SRC        0x2F
-#define  LIS3DSH_AD_ST1_0           0x40
-#define  LIS3DSH_AD_ST1_1           0x41
-#define  LIS3DSH_AD_ST1_2           0x42
-#define  LIS3DSH_AD_ST1_3           0x43
-#define  LIS3DSH_AD_ST1_4           0x44
-#define  LIS3DSH_AD_ST1_5           0x45
-#define  LIS3DSH_AD_ST1_6           0x46
-#define  LIS3DSH_AD_ST1_7           0x47
-#define  LIS3DSH_AD_ST1_8           0x48
-#define  LIS3DSH_AD_ST1_9           0x49
-#define  LIS3DSH_AD_ST1_A           0x4A
-#define  LIS3DSH_AD_ST1_B           0x4B
-#define  LIS3DSH_AD_ST1_C           0x4C
-#define  LIS3DSH_AD_ST1_D           0x4D
-#define  LIS3DSH_AD_ST1_E           0x4E
-#define  LIS3DSH_AD_ST1_F           0x4F
-#define  LIS3DSH_AD_TIM4_1          0x50
-#define  LIS3DSH_AD_TIM3_1          0x51
-#define  LIS3DSH_AD_TIM2_1_L        0x52
-#define  LIS3DSH_AD_TIM2_1_H        0x53
-#define  LIS3DSH_AD_TIM1_1_L        0x54
-#define  LIS3DSH_AD_TIM1_1_H        0x55
-#define  LIS3DSH_AD_THRS2_1         0x56
-#define  LIS3DSH_AD_THRS1_1         0x57
-#define  LIS3DSH_AD_MASK1_B         0x59
-#define  LIS3DSH_AD_MASK1_A         0x5A
-#define  LIS3DSH_AD_SETT1           0x5B
-#define  LIS3DSH_AD_PR1             0x5C
-#define  LIS3DSH_AD_TC1_L           0x5D
-#define  LIS3DSH_AD_TC1_H           0x5E
-#define  LIS3DSH_AD_OUTS1           0x5F
-#define  LIS3DSH_AD_ST2_0           0x60
-#define  LIS3DSH_AD_ST2_1           0x61
-#define  LIS3DSH_AD_ST2_2           0x62
-#define  LIS3DSH_AD_ST2_3           0x63
-#define  LIS3DSH_AD_ST2_4           0x64
-#define  LIS3DSH_AD_ST2_5           0x65
-#define  LIS3DSH_AD_ST2_6           0x66
-#define  LIS3DSH_AD_ST2_7           0x67
-#define  LIS3DSH_AD_ST2_8           0x68
-#define  LIS3DSH_AD_ST2_9           0x69
-#define  LIS3DSH_AD_ST2_A           0x6A
-#define  LIS3DSH_AD_ST2_B           0x6B
-#define  LIS3DSH_AD_ST2_C           0x6C
-#define  LIS3DSH_AD_ST2_D           0x6D
-#define  LIS3DSH_AD_ST2_E           0x6E
-#define  LIS3DSH_AD_ST2_F           0x6F
-#define  LIS3DSH_AD_TIM4_2          0x70
-#define  LIS3DSH_AD_TIM3_2          0x71
-#define  LIS3DSH_AD_TIM2_2_L        0x72
-#define  LIS3DSH_AD_TIM2_2_H        0x73
-#define  LIS3DSH_AD_TIM1_2_L        0x74
-#define  LIS3DSH_AD_TIM1_2_H        0x75
-#define  LIS3DSH_AD_THRS2_2         0x76
-#define  LIS3DSH_AD_THRS1_2         0x77
-#define  LIS3DSH_AD_DES2            0x78
-#define  LIS3DSH_AD_MASK2_B         0x79
-#define  LIS3DSH_AD_MASK2_A         0x7A
-#define  LIS3DSH_AD_SETT2           0x7B
-#define  LIS3DSH_AD_PR2             0x7C
-#define  LIS3DSH_AD_TC2_L           0x7D
-#define  LIS3DSH_AD_TC2_H           0x7E
-#define  LIS3DSH_AD_OUTS2           0x7F
+#define  LIS3DSH_AD_OUT_T                   0x0C
+#define  LIS3DSH_AD_INFO1                   0x0D
+#define  LIS3DSH_AD_INFO2                   0x0E
+#define  LIS3DSH_AD_WHO_AM_I                0x0F
+#define  LIS3DSH_AD_OFF_X                   0x10
+#define  LIS3DSH_AD_OFF_Y                   0x11
+#define  LIS3DSH_AD_OFF_Z                   0x12
+#define  LIS3DSH_AD_CS_X                    0x13
+#define  LIS3DSH_AD_CS_Y                    0x14
+#define  LIS3DSH_AD_CS_Z                    0x15
+#define  LIS3DSH_AD_LC_L                    0x16
+#define  LIS3DSH_AD_LC_H                    0x17
+#define  LIS3DSH_AD_STAT                    0x18
+#define  LIS3DSH_AD_PEAK1                   0x19
+#define  LIS3DSH_AD_PEAK2                   0x1A
+#define  LIS3DSH_AD_VFC_1                   0x1B
+#define  LIS3DSH_AD_VFC_2                   0x1C
+#define  LIS3DSH_AD_VFC_3                   0x1D
+#define  LIS3DSH_AD_VFC_4                   0x1E
+#define  LIS3DSH_AD_THRS3                   0x1F
+#define  LIS3DSH_AD_CTRL_REG4               0x20
+#define  LIS3DSH_AD_CTRL_REG1               0x21
+#define  LIS3DSH_AD_CTRL_REG2               0x22
+#define  LIS3DSH_AD_CTRL_REG3               0x23
+#define  LIS3DSH_AD_CTRL_REG5               0x24
+#define  LIS3DSH_AD_CTRL_REG6               0x25
+#define  LIS3DSH_AD_STATUS                  0x27
+#define  LIS3DSH_AD_OUT_X_L                 0x28
+#define  LIS3DSH_AD_OUT_X_H                 0x29
+#define  LIS3DSH_AD_OUT_Y_L                 0x2A
+#define  LIS3DSH_AD_OUT_Y_H                 0x2B
+#define  LIS3DSH_AD_OUT_Z_L                 0x2C
+#define  LIS3DSH_AD_OUT_Z_H                 0x2D
+#define  LIS3DSH_AD_FIFO_CTRL               0x2E
+#define  LIS3DSH_AD_FIFO_SRC                0x2F
+#define  LIS3DSH_AD_ST1_0                   0x40
+#define  LIS3DSH_AD_ST1_1                   0x41
+#define  LIS3DSH_AD_ST1_2                   0x42
+#define  LIS3DSH_AD_ST1_3                   0x43
+#define  LIS3DSH_AD_ST1_4                   0x44
+#define  LIS3DSH_AD_ST1_5                   0x45
+#define  LIS3DSH_AD_ST1_6                   0x46
+#define  LIS3DSH_AD_ST1_7                   0x47
+#define  LIS3DSH_AD_ST1_8                   0x48
+#define  LIS3DSH_AD_ST1_9                   0x49
+#define  LIS3DSH_AD_ST1_A                   0x4A
+#define  LIS3DSH_AD_ST1_B                   0x4B
+#define  LIS3DSH_AD_ST1_C                   0x4C
+#define  LIS3DSH_AD_ST1_D                   0x4D
+#define  LIS3DSH_AD_ST1_E                   0x4E
+#define  LIS3DSH_AD_ST1_F                   0x4F
+#define  LIS3DSH_AD_TIM4_1                  0x50
+#define  LIS3DSH_AD_TIM3_1                  0x51
+#define  LIS3DSH_AD_TIM2_1_L                0x52
+#define  LIS3DSH_AD_TIM2_1_H                0x53
+#define  LIS3DSH_AD_TIM1_1_L                0x54
+#define  LIS3DSH_AD_TIM1_1_H                0x55
+#define  LIS3DSH_AD_THRS2_1                 0x56
+#define  LIS3DSH_AD_THRS1_1                 0x57
+#define  LIS3DSH_AD_MASK1_B                 0x59
+#define  LIS3DSH_AD_MASK1_A                 0x5A
+#define  LIS3DSH_AD_SETT1                   0x5B
+#define  LIS3DSH_AD_PR1                     0x5C
+#define  LIS3DSH_AD_TC1_L                   0x5D
+#define  LIS3DSH_AD_TC1_H                   0x5E
+#define  LIS3DSH_AD_OUTS1                   0x5F
+#define  LIS3DSH_AD_ST2_0                   0x60
+#define  LIS3DSH_AD_ST2_1                   0x61
+#define  LIS3DSH_AD_ST2_2                   0x62
+#define  LIS3DSH_AD_ST2_3                   0x63
+#define  LIS3DSH_AD_ST2_4                   0x64
+#define  LIS3DSH_AD_ST2_5                   0x65
+#define  LIS3DSH_AD_ST2_6                   0x66
+#define  LIS3DSH_AD_ST2_7                   0x67
+#define  LIS3DSH_AD_ST2_8                   0x68
+#define  LIS3DSH_AD_ST2_9                   0x69
+#define  LIS3DSH_AD_ST2_A                   0x6A
+#define  LIS3DSH_AD_ST2_B                   0x6B
+#define  LIS3DSH_AD_ST2_C                   0x6C
+#define  LIS3DSH_AD_ST2_D                   0x6D
+#define  LIS3DSH_AD_ST2_E                   0x6E
+#define  LIS3DSH_AD_ST2_F                   0x6F
+#define  LIS3DSH_AD_TIM4_2                  0x70
+#define  LIS3DSH_AD_TIM3_2                  0x71
+#define  LIS3DSH_AD_TIM2_2_L                0x72
+#define  LIS3DSH_AD_TIM2_2_H                0x73
+#define  LIS3DSH_AD_TIM1_2_L                0x74
+#define  LIS3DSH_AD_TIM1_2_H                0x75
+#define  LIS3DSH_AD_THRS2_2                 0x76
+#define  LIS3DSH_AD_THRS1_2                 0x77
+#define  LIS3DSH_AD_DES2                    0x78
+#define  LIS3DSH_AD_MASK2_B                 0x79
+#define  LIS3DSH_AD_MASK2_A                 0x7A
+#define  LIS3DSH_AD_SETT2                   0x7B
+#define  LIS3DSH_AD_PR2                     0x7C
+#define  LIS3DSH_AD_TC2_L                   0x7D
+#define  LIS3DSH_AD_TC2_H                   0x7E
+#define  LIS3DSH_AD_OUTS2                   0x7F
 /** @} */
 
 /**
@@ -463,32 +463,33 @@ typedef struct {
 } LIS3DSHConfig;
 
 /**
- * @brief   Structure representing a LIS3DSH driver.
+ * @brief   @p LIS3DSH accelerometer subsystem specific methods.
  */
-typedef struct LIS3DSHDriver LIS3DSHDriver;
-
+#define _lis3dsh_accelerometer_methods_alone                                \
+  /* Change full scale value of LIS3DSH accelerometer subsystem .*/         \
+  msg_t (*set_full_scale)(void *instance, lis3dsh_fs_t fs);
+  
+  
 /**
  * @brief   @p LIS3DSH specific methods.
  */
-#define _lis3dsh_methods                                                    \
+#define _lis3dsh_accelerometer_methods                                      \
   _base_accelerometer_methods                                               \
-  /* Change full scale value of LIS3DSH.*/                                  \
-  msg_t (*set_full_scale)(void *instance, lis3dsh_fs_t fs);
+  _lis3dsh_accelerometer_methods_alone
 
 /**
  * @extends BaseAccelerometerVMT
  *
- * @brief   @p LIS3DSH virtual methods table.
+ * @brief   @p LIS3DSH accelerometer virtual methods table.
  */
-struct LIS3DSHVMT {
-  _lis3dsh_methods
+struct LIS3DSHAccelerometerVMT {
+  _lis3dsh_accelerometer_methods
 };
 
 /**
  * @brief   @p LIS3DSHDriver specific data.
  */
 #define _lis3dsh_data                                                       \
-  _base_accelerometer_data                                                  \
   /* Driver state.*/                                                        \
   lis3dsh_state_t           state;                                          \
   /* Current configuration data.*/                                          \
@@ -509,13 +510,18 @@ struct LIS3DSHVMT {
  */
 struct LIS3DSHDriver {
   /** @brief BaseSensor Virtual Methods Table. */
-  const struct BaseSensorVMT *vmt_basesensor;
-  /** @brief BaseAccelerometer Virtual Methods Table. */
-  const struct BaseAccelerometerVMT *vmt_baseaccelerometer;
-  /** @brief LIS3DSH Virtual Methods Table. */
-  const struct LIS3DSHVMT *vmt_lis3dsh;
+  const struct BaseSensorVMT *vmt_sensor;
+  _base_sensor_data
+  /** @brief LIS3DSH Accelerometer Virtual Methods Table. */
+  const struct LIS3DSHAccelerometerVMT *vmt_accelerometer;
+  _base_accelerometer_data
   _lis3dsh_data
 };
+
+/**
+ * @brief   Structure representing a LIS3DSH driver.
+ */
+typedef struct LIS3DSHDriver LIS3DSHDriver;
 /** @} */
 
 /*===========================================================================*/
@@ -534,7 +540,7 @@ struct LIS3DSHDriver {
  * @api
  */
 #define accelerometerSetFullScale(ip, fs)                                   \
-        (ip)->vmt_lis3dsh->set_full_scale(ip, fs)
+        (ip)->vmt_accelerometer->set_full_scale(ip, fs)
 
 /*===========================================================================*/
 /* External declarations.                                                    */

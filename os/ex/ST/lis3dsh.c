@@ -287,16 +287,11 @@ static msg_t set_full_scale(void *ip, lis3dsh_fs_t fs) {
   return MSG_OK;
 }
 
-static const struct BaseSensorVMT vmt_basesensor = {
+static const struct BaseSensorVMT vmt_sensor = {
   get_axes_number, read_raw, read_cooked
 };
 
-static const struct BaseAccelerometerVMT vmt_baseaccelerometer = {
-  get_axes_number, read_raw, read_cooked,
-  set_bias, reset_bias, set_sensivity, reset_sensivity 
-};
-
-static const struct LIS3DSHVMT vmt_lis3dsh = {
+static const struct LIS3DSHVMT vmt_accelerometer = {
   get_axes_number, read_raw, read_cooked,
   set_bias, reset_bias, set_sensivity, reset_sensivity,
   set_full_scale
@@ -315,9 +310,8 @@ static const struct LIS3DSHVMT vmt_lis3dsh = {
  */
 void lis3dshObjectInit(LIS3DSHDriver *devp) {
   uint32_t i;
-  devp->vmt_basesensor = &vmt_basesensor;
-  devp->vmt_baseaccelerometer = &vmt_baseaccelerometer;
-  devp->vmt_lis3dsh = &vmt_lis3dsh;
+  devp->vmt_sensor = &vmt_sensor;
+  devp->vmt_accelerometer = &vmt_accelerometer;
   devp->config = NULL;
   for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++)
     devp->bias[i] = 0.0f;
