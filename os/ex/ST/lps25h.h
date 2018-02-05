@@ -42,22 +42,22 @@
 /**
  * @brief   LPS25H driver version string.
  */
-#define EX_LPS25H_VERSION           "1.0.3"
+#define EX_LPS25H_VERSION                   "1.0.4"
 
 /**
  * @brief   LPS25H driver version major number.
  */
-#define EX_LPS25H_MAJOR             1
+#define EX_LPS25H_MAJOR                     1
 
 /**
  * @brief   LPS25H driver version minor number.
  */
-#define EX_LPS25H_MINOR             0
+#define EX_LPS25H_MINOR                     0
 
 /**
  * @brief   LPS25H driver version patch number.
  */
-#define EX_LPS25H_PATCH             3
+#define EX_LPS25H_PATCH                     4
 /** @} */
 
 /**
@@ -65,52 +65,52 @@
  *
  * @{
  */
-#define LPS25H_NUMBER_OF_AXES       1U
-
-#define LPS25H_SENS                 0.00024414f /**< hPa/LSB                */
+#define LPS25H_NUMBER_OF_AXES               1U
+                                            
+#define LPS25H_SENS                         0.00024414f
 /** @} */
 
 /**
  * @name    LPS25H communication interfaces related bit masks
  * @{
  */
-#define LPS25H_DI_MASK              0xFF        /**< Data In mask           */
-#define LPS25H_DI(n)                (1 << n)    /**< Data In bit n          */
-#define LPS25H_AD_MASK              0x3F        /**< Address Data mask      */
-#define LPS25H_AD(n)                (1 << n)    /**< Address Data bit n     */
-#define LPS25H_MS                   (1 << 6)    /**< Multiple read write    */
-#define LPS25H_RW                   (1 << 7)    /**< Read Write selector    */
-
-#define LPS25H_SUB_MS               (1 << 7)    /**< Multiple read write in I2C mode */
+#define LPS25H_DI_MASK                      0xFF
+#define LPS25H_DI(n)                        (1 << n)
+#define LPS25H_AD_MASK                      0x3F
+#define LPS25H_AD(n)                        (1 << n)
+#define LPS25H_MS                           (1 << 6)
+#define LPS25H_RW                           (1 << 7)
+                                            
+#define LPS25H_SUB_MS                       (1 << 7)
 /** @} */
 
 /**
  * @name    LPS25H register addresses
  * @{
  */
-#define LPS25H_AD_REF_P_XL          0x08
-#define LPS25H_AD_REF_P_L           0x09
-#define LPS25H_AD_REF_P_H           0x0A
-#define LPS25H_AD_WHO_AM_I          0x0F
-#define LPS25H_AD_RES_CONF          0x10
-#define LPS25H_AD_CTRL_REG1         0x20
-#define LPS25H_AD_CTRL_REG2         0x21
-#define LPS25H_AD_CTRL_REG3         0x22
-#define LPS25H_AD_CTRL_REG4         0x23
-#define LPS25H_AD_INT_CFG           0x24
-#define LPS25H_AD_INT_SRC           0x25
-#define LPS25H_AD_STATUS_REG        0x27
-#define LPS25H_AD_PRESS_OUT_XL      0x28
-#define LPS25H_AD_PRESS_OUT_L       0x29
-#define LPS25H_AD_PRESS_OUT_H       0x2A
-#define LPS25H_AD_TEMP_OUT_L        0x2B
-#define LPS25H_AD_TEMP_OUT_H        0x2C
-#define LPS25H_AD_FIFO_CTRL         0x2E
-#define LPS25H_AD_FIFO_SRC          0x2F
-#define LPS25H_AD_THS_P_L           0x30
-#define LPS25H_AD_THS_P_H           0x31
-#define LPS25H_AD_RPDS_L            0x39
-#define LPS25H_AD_RPDS_H            0x3A
+#define LPS25H_AD_REF_P_XL                  0x08
+#define LPS25H_AD_REF_P_L                   0x09
+#define LPS25H_AD_REF_P_H                   0x0A
+#define LPS25H_AD_WHO_AM_I                  0x0F
+#define LPS25H_AD_RES_CONF                  0x10
+#define LPS25H_AD_CTRL_REG1                 0x20
+#define LPS25H_AD_CTRL_REG2                 0x21
+#define LPS25H_AD_CTRL_REG3                 0x22
+#define LPS25H_AD_CTRL_REG4                 0x23
+#define LPS25H_AD_INT_CFG                   0x24
+#define LPS25H_AD_INT_SRC                   0x25
+#define LPS25H_AD_STATUS_REG                0x27
+#define LPS25H_AD_PRESS_OUT_XL              0x28
+#define LPS25H_AD_PRESS_OUT_L               0x29
+#define LPS25H_AD_PRESS_OUT_H               0x2A
+#define LPS25H_AD_TEMP_OUT_L                0x2B
+#define LPS25H_AD_TEMP_OUT_H                0x2C
+#define LPS25H_AD_FIFO_CTRL                 0x2E
+#define LPS25H_AD_FIFO_SRC                  0x2F
+#define LPS25H_AD_THS_P_L                   0x30
+#define LPS25H_AD_THS_P_H                   0x31
+#define LPS25H_AD_RPDS_L                    0x39
+#define LPS25H_AD_RPDS_H                    0x3A
 /** @} */
 
 /**
@@ -380,15 +380,31 @@ typedef struct {
 } LPS25HConfig;
 
 /**
- * @brief   Structure representing a LPS25H driver.
+ * @brief   @p LPS25H barometer subsystem specific methods.
+ * @note    No methods so far, just a common ancestor interface.
  */
-typedef struct LPS25HDriver LPS25HDriver;
+#define _lps25h_barometer_methods_alone
 
+/**
+ * @brief @p LPS25H barometer subsystem specific methods.
+ */
+#define _lps25h_barometer_methods                                           \
+  _base_barometer_methods                                                   \
+  _lps25h_barometer_methods_alone
+
+/**
+ * @extends BaseBarometerVMT
+ *
+ * @brief @p LPS25H barometer virtual methods table.
+ */
+struct LPS25HBarometerVMT {
+  _lps25h_barometer_methods
+};
+  
 /**
  * @brief   @p LPS25HDriver specific data.
  */
 #define _lps25h_data                                                        \
-  _base_barometer_data                                                      \
   /* Driver state.*/                                                        \
   lps25h_state_t            state;                                          \
   /* Current configuration data.*/                                          \
@@ -407,13 +423,18 @@ typedef struct LPS25HDriver LPS25HDriver;
  */
 struct LPS25HDriver {
   /** @brief BaseSensor Virtual Methods Table. */
-  const struct BaseSensorVMT *vmt_basesensor;
-  /** @brief BaseBarometer Virtual Methods Table. */
-  const struct BaseBarometerVMT *vmt_basebarometer;
-  /** @brief LPS25H Virtual Methods Table. */
-  const struct LPS25HVMT *vmt_lps25h;
+  const struct BaseSensorVMT *vmt_sensor;
+  _base_sensor_data
+  /** @brief LPS25H Barometer Virtual Methods Table. */
+  const struct LPS25HBarometerVMT *vmt_barometer;
+  _base_barometer_data
   _lps25h_data
 };
+
+/**
+ * @brief   Structure representing a LPS25H driver.
+ */
+typedef struct LPS25HDriver LPS25HDriver;
 /** @} */
 
 /*===========================================================================*/
