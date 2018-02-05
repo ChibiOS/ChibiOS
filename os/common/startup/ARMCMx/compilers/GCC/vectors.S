@@ -769,7 +769,8 @@ Vector3FC:
         .thumb_func
         .weak       _unhandled_exception
 _unhandled_exception:
-         b          _unhandled_exception
+.stay:
+        b           .stay
 
 #endif /* !defined(__DOXYGEN__) */
 
