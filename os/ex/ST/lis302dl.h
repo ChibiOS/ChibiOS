@@ -43,22 +43,22 @@
 /**
  * @brief   LIS302DL driver version string.
  */
-#define EX_LIS302DL_VERSION         "1.0.3"
+#define EX_LIS302DL_VERSION                 "1.0.4"
 
 /**
  * @brief   LIS302DL driver version major number.
  */
-#define EX_LIS302DL_MAJOR           1
+#define EX_LIS302DL_MAJOR                   1
 
 /**
  * @brief   LIS302DL driver version minor number.
  */
-#define EX_LIS302DL_MINOR           0
+#define EX_LIS302DL_MINOR                   0
 
 /**
  * @brief   LIS302DL driver version patch number.
  */
-#define EX_LIS302DL_PATCH           3
+#define EX_LIS302DL_PATCH                   4
 /** @} */
 
 /**
@@ -66,25 +66,25 @@
  *
  * @{
  */
-#define LIS302DL_NUMBER_OF_AXES     3U
-
-#define LIS302DL_2G                 2.0f
-#define LIS302DL_8G                 8.0f
-
-#define LIS302DL_SENS_2G            18.0f
-#define LIS302DL_SENS_8G            72.0f
+#define LIS302DL_NUMBER_OF_AXES             3U
+                                            
+#define LIS302DL_2G                         2.0f
+#define LIS302DL_8G                         8.0f
+                                            
+#define LIS302DL_SENS_2G                    18.0f
+#define LIS302DL_SENS_8G                    72.0f
 /** @} */
 
 /**
  * @name    LIS302DL communication interfaces related bit masks
  * @{
  */
-#define LIS302DL_DI_MASK            0xFF        /**< Data In mask           */
-#define LIS302DL_DI(n)              (1 << n)    /**< Data In bit n          */
-#define LIS302DL_AD_MASK            0x3F        /**< Address Data mask      */
-#define LIS302DL_AD(n)              (1 << n)    /**< Address Data bit n     */
-#define LIS302DL_MS                 (1 << 6)    /**< Multiple read write    */
-#define LIS302DL_RW                 (1 << 7)    /**< Read Write selector    */
+#define LIS302DL_DI_MASK                    0xFF
+#define LIS302DL_DI(n)                      (1 << n)
+#define LIS302DL_AD_MASK                    0x3F
+#define LIS302DL_AD(n)                      (1 << n)
+#define LIS302DL_MS                         (1 << 6)
+#define LIS302DL_RW                         (1 << 7)
 /** @} */
 
 /**
@@ -322,33 +322,34 @@ typedef struct {
 } LIS302DLConfig;
 
 /**
- * @brief   Structure representing a LIS302DL driver.
+ * @brief   @p LIS302DL accelerometer subsystem specific methods.
  */
-typedef struct LIS302DLDriver LIS302DLDriver;
-
+#define _lis302dl_accelerometer_methods_alone                               \
+  /* Change full scale value of LIS302DL .*/                                \
+  msg_t (*set_full_scale)(void *instance, lis302dl_fs_t fs);
+   
+   
 /**
  * @brief   @p LIS302DL specific methods.
  */
-#define _lis302dl_methods                                                   \
+#define _lis302dl_accelerometer_methods                                     \
   _base_accelerometer_methods                                               \
-  /* Change full scale value of LIS302DL .*/                                \
-  msg_t (*set_full_scale)(void *instance, lis302dl_fs_t fs);
+  _lis302dl_accelerometer_methods_alone
 
 
 /**
  * @extends BaseAccelerometerVMT
  *
- * @brief   @p LIS302DL virtual methods table.
+ * @brief   @p LIS302DL accelerometer virtual methods table.
  */
-struct LIS302DLVMT {
-  _lis302dl_methods
+struct LIS302DLAccelerometerVMT {
+  _lis302dl_accelerometer_methods
 };
 
 /**
  * @brief   @p LIS302DLDriver specific data.
  */
 #define _lis302dl_data                                                      \
-  _base_accelerometer_data                                                  \
   /* Driver state.*/                                                        \
   lis302dl_state_t          state;                                          \
   /* Current configuration data.*/                                          \
@@ -369,13 +370,18 @@ struct LIS302DLVMT {
  */
 struct LIS302DLDriver {
   /** @brief BaseSensor Virtual Methods Table. */
-  const struct BaseSensorVMT *vmt_basesensor;
+  const struct BaseSensorVMT *vmt_sensor;
+  _base_sensor_data
   /** @brief BaseAccelerometer Virtual Methods Table. */
-  const struct BaseAccelerometerVMT *vmt_baseaccelerometer;
-  /** @brief LIS302DL Virtual Methods Table. */
-  const struct LIS302DLVMT *vmt_lis302dl;
+  const struct LIS302DLAccelerometerVMT *vmt_accelerometer;
+  _base_accelerometer_data
   _lis302dl_data
 };
+
+/**
+ * @brief   Structure representing a LIS302DL driver.
+ */
+typedef struct LIS302DLDriver LIS302DLDriver;
 /** @} */
 
 /*===========================================================================*/
@@ -385,7 +391,7 @@ struct LIS302DLDriver {
 /**
  * @brief   Change accelerometer fullscale value.
  *
- * @param[in] ip        pointer to a @p BaseAccelerometer class.
+ * @param[in] ip        pointer to a @p LIS302DLDriver class.
  * @param[in] fs        the new full scale value.
  *
  * @return              The operation status.
@@ -394,7 +400,7 @@ struct LIS302DLDriver {
  * @api
  */
 #define accelerometerSetFullScale(ip, fs)                                   \
-        (ip)->vmt_lis302dl->set_full_scale(ip, fs)
+        (ip)->vmt_accelerometer->set_full_scale(ip, fs)
         
 
 /*===========================================================================*/
