@@ -95,6 +95,13 @@ typedef struct {
  * @{
  */
 /**
+ * @brief   Instance getter.
+ * @details This special method is used to get the instance of this class
+ *          object from a derived class.
+ */
+#define getBaseAccelerometer(ip) ((BaseAccelerometer *)&(ip)->vmt_accelerometer)
+
+/**
  * @brief   Accelerometer get axes number.
  *
  * @param[in] ip        pointer to a @p BaseAccelerometer class.

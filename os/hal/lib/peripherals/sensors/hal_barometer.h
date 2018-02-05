@@ -95,6 +95,13 @@ typedef struct {
  * @{
  */
 /**
+ * @brief   Instance getter.
+ * @details This special method is used to get the instance of this class
+ *          object from a derived class.
+ */
+#define getBaseBarometer(ip) ((BaseBarometer *)&(ip)->vmt_barometer)
+
+/**
  * @brief   Barometer get channels number.
  *
  * @param[in] ip        pointer to a @p BaseBarometer class.

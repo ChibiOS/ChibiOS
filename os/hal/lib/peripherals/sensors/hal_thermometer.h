@@ -95,6 +95,13 @@ typedef struct {
  * @{
  */
 /**
+ * @brief   Instance getter.
+ * @details This special method is used to get the instance of this class
+ *          object from a derived class.
+ */
+#define getBaseThermometer(ip) ((BaseThermometer *)&(ip)->vmt_thermometer)
+
+/**
  * @brief   Thermometer get channels number.
  *
  * @param[in] ip        pointer to a @p BaseThermometer class.
