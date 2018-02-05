@@ -43,22 +43,22 @@
 /**
  * @brief   LSM303DLHC driver version string.
  */
-#define EX_LSM303DLHC_VERSION       "1.0.3"
+#define EX_LSM303DLHC_VERSION               "1.0.4"
 
 /**
  * @brief   LSM303DLHC driver version major number.
  */
-#define EX_LSM303DLHC_MAJOR         1
+#define EX_LSM303DLHC_MAJOR                 1
 
 /**
  * @brief   LSM303DLHC driver version minor number.
  */
-#define EX_LSM303DLHC_MINOR         0
+#define EX_LSM303DLHC_MINOR                 0
 
 /**
  * @brief   LSM303DLHC driver version patch number.
  */
-#define EX_LSM303DLHC_PATCH         3
+#define EX_LSM303DLHC_PATCH                 4
 /** @} */
 
 /**
@@ -115,11 +115,11 @@
  * @name   LSM303DLHC communication interfaces related bit masks
  * @{
  */
-#define LSM303DLHC_DI_MASK          0xFF        /**< Data In mask           */
-#define LSM303DLHC_DI(n)            (1 << n)    /**< Data In bit n          */
-#define LSM303DLHC_AD_MASK          0x7F        /**< Address Data mask      */
-#define LSM303DLHC_AD(n)            (1 << n)    /**< Address Data bit n     */
-#define LSM303DLHC_MS               (1 << 7)    /**< Multiple read write    */
+#define LSM303DLHC_DI_MASK                  0xFF
+#define LSM303DLHC_DI(n)                    (1 << n)
+#define LSM303DLHC_AD_MASK                  0x7F
+#define LSM303DLHC_AD(n)                    (1 << n)
+#define LSM303DLHC_MS                       (1 << 7)
 /** @} */
 
 /**
@@ -571,31 +571,40 @@ typedef struct {
 } LSM303DLHCConfig;
 
 /**
- * @brief Structure representing a LSM303DLHC driver.
+ * @brief   @p LSM303DLHC accelerometer subsystem specific methods.
  */
-typedef struct LSM303DLHCDriver LSM303DLHCDriver;
-
+#define _lsm303dlhc_accelerometer_methods_alone                             \
+  /* Change full scale value of LSM303DLHC accelerometer subsystem .*/      \
+  msg_t (*set_full_scale)(void *instance, lsm303dlhc_acc_fs_t fs);
+                 
 /**
  * @brief @p LSM303DLHC accelerometer subsystem specific methods.
  */
-#define _lsm303dlhc_acc_methods                                             \
-  _base_accelerometer_methods
+#define _lsm303dlhc_accelerometer_methods                                   \
+  _base_accelerometer_methods                                               \
+  _lsm303dlhc_accelerometer_methods_alone
 
+/**
+ * @brief   @p LSM303DLHC compass subsystem specific methods.
+ */
+#define _lsm303dlhc_compass_methods_alone                                   \
+  /* Change full scale value of LSM303DLHC compass subsystem .*/            \
+  msg_t (*set_full_scale)(void *instance, lsm303dlhc_comp_fs_t fs);
+ 
 /**
  * @brief @p LSM303DLHC compass subsystem specific methods.
  */
-#define _lsm303dlhc_comp_methods                                            \
-  _base_compass_methods
+#define _lsm303dlhc_compass_methods                                         \
+  _base_compass_methods                                                     \
+  _lsm303dlhc_compass_methods_alone
 
 /**
  * @extends BaseAccelerometerVMT
  *
  * @brief @p LSM303DLHC accelerometer virtual methods table.
  */
-struct LSM303DLHCACCVMT {
-  _lsm303dlhc_acc_methods                                                   \
-  /* Change full scale value of LSM303DLHC accelerometer subsystem .*/      \
-  msg_t (*set_full_scale)(void *instance, lsm303dlhc_acc_fs_t fs);          \
+struct LSM303DLHCAcceleromerVMT {
+  _lsm303dlhc_accelerometer_methods
 };
 
 /**
@@ -603,18 +612,14 @@ struct LSM303DLHCACCVMT {
  *
  * @brief @p LSM303DLHC compass virtual methods table.
  */
-struct LSM303DLHCCOMPVMT {
-  _lsm303dlhc_comp_methods                                                  \
-  /* Change full scale value of LSM303DLHC compass subsystem .*/            \
-  msg_t (*set_full_scale)(void *instance, lsm303dlhc_comp_fs_t fs);         \
+struct LSM303DLHCCompassVMT {
+  _lsm303dlhc_compass_methods
 };
 
 /**
  * @brief @p LSM303DLHCDriver specific data.
  */
 #define _lsm303dlhc_data                                                    \
-  _base_accelerometer_data                                                  \
-  _base_compass_data                                                        \
   /* Driver state.*/                                                        \
   lsm303dlhc_state_t        state;                                          \
   /* Current configuration data.*/                                          \
@@ -637,17 +642,21 @@ struct LSM303DLHCCOMPVMT {
  */
 struct LSM303DLHCDriver {
   /** @brief BaseSensor Virtual Methods Table. */
-  const struct BaseSensorVMT *vmt_basesensor;
-  /** @brief BaseAccelerometer Virtual Methods Table. */
-  const struct BaseAccelerometerVMT *vmt_baseaccelerometer;
-  /** @brief BaseCompass Virtual Methods Table. */
-  const struct BaseCompassVMT *vmt_basecompass;
+  const struct BaseSensorVMT *vmt_sensor;
+  _base_sensor_data
   /** @brief LSM303DLHC Accelerometer Virtual Methods Table. */
-  const struct LSM303DLHCACCVMT *vmt_lsm303dlhcacc;
+  const struct LSM303DLHCAcceleromerVMT *vmt_accelerometer;
+  _base_accelerometer_data
   /** @brief LSM303DLHC Compass Virtual Methods Table. */
-  const struct LSM303DLHCCOMPVMT *vmt_lsm303dlhccomp;
+  const struct LSM303DLHCCompassVMT *vmt_compass;
+  _base_compass_data
   _lsm303dlhc_data
 };
+
+/**
+ * @brief Structure representing a LSM303DLHC driver.
+ */
+typedef struct LSM303DLHCDriver LSM303DLHCDriver;
 /** @} */
 
 /*===========================================================================*/
@@ -666,7 +675,7 @@ struct LSM303DLHCDriver {
  * @api
  */
 #define accelerometerSetFullScale(ip, fs)                                   \
-        (ip)->vmt_lsm303dlhcacc->set_full_scale(ip, fs)
+        (ip)->vmt_accelerometer->set_full_scale(ip, fs)
 
 /**
  * @brief   Change compass fullscale value.
@@ -680,7 +689,7 @@ struct LSM303DLHCDriver {
  * @api
  */
 #define compassSetFullScale(ip, fs)                                         \
-        (ip)->vmt_lsm303dlhccomp->set_full_scale(ip, fs)
+        (ip)->vmt_compass->set_full_scale(ip, fs)
         
 /*===========================================================================*/
 /* External declarations.                                                    */
