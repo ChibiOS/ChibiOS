@@ -137,7 +137,6 @@
 
 /**
  * @brief   @p JESD215Flash specific methods.
- * @note    No methods so far, just a common ancestor interface.
  */
 #define _jesd216_flash_methods_alone                                        \
   /* Read SFDP.*/                                                           \
