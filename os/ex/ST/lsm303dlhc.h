@@ -578,7 +578,8 @@ typedef struct {
   msg_t (*set_full_scale)(void *instance, lsm303dlhc_acc_fs_t fs);
                  
 /**
- * @brief @p LSM303DLHC accelerometer subsystem specific methods.
+ * @brief   @p LSM303DLHC accelerometer subsystem specific methods with 
+ *          inherited ones.
  */
 #define _lsm303dlhc_accelerometer_methods                                   \
   _base_accelerometer_methods                                               \
@@ -592,7 +593,7 @@ typedef struct {
   msg_t (*set_full_scale)(void *instance, lsm303dlhc_comp_fs_t fs);
  
 /**
- * @brief @p LSM303DLHC compass subsystem specific methods.
+ * @brief @p LSM303DLHC compass subsystem specific methods with inherited ones.
  */
 #define _lsm303dlhc_compass_methods                                         \
   _base_compass_methods                                                     \

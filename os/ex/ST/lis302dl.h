@@ -330,7 +330,8 @@ typedef struct {
    
    
 /**
- * @brief   @p LIS302DL specific methods.
+ * @brief   @p LIS302DL accelerometer subsystem specific methods with inherited 
+ *          ones.
  */
 #define _lis302dl_accelerometer_methods                                     \
   _base_accelerometer_methods                                               \

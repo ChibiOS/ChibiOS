@@ -166,6 +166,8 @@
        dependencies and configuration directories. This makes possible
        to have multiple non-conflicting makefiles in the same project.
        Updated the various platform.mk implementing "smart build" mode.
+- EX:  Improved MEMS drivers (bug #915)(backported to 17.6.4).
+- HAL: Improved peripheral classes (bug #915)(backported to 17.6.4).
 - HAL: Fixed more instances of bug #843 (bug #914)(backported to 17.6.4
        and 16.1.10).
 - HAL: Fixed Clock selection for SDMMC2 missing in STM32F7 HAL (bug #913).

@@ -481,7 +481,7 @@ typedef struct {
   msg_t (*set_full_scale)(void *instance, l3gd20_fs_t fs);
 
 /**
- * @brief   @p L3GD20 specific methods.
+ * @brief   @p L3GD20 gyroscope subsystem specific methods with inherited ones.
  */
 #define _l3gd20_gyroscope_methods                                           \
   _base_gyroscope_methods                                                   \

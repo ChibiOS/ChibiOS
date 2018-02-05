@@ -471,7 +471,8 @@ typedef struct {
   
   
 /**
- * @brief   @p LIS3DSH specific methods.
+ * @brief   @p LIS3DSH accelerometer subsystems specific methods with inherited 
+ *          ones.
  */
 #define _lis3dsh_accelerometer_methods                                      \
   _base_accelerometer_methods                                               \

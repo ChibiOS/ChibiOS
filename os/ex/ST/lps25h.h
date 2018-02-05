@@ -386,7 +386,7 @@ typedef struct {
 #define _lps25h_barometer_methods_alone
 
 /**
- * @brief @p LPS25H barometer subsystem specific methods.
+ * @brief @p LPS25H barometer subsystem specific methods with inherited ones.
  */
 #define _lps25h_barometer_methods                                           \
   _base_barometer_methods                                                   \

@@ -431,7 +431,7 @@ typedef struct {
   msg_t (*set_full_scale)(void *instance, lis3mdl_fs_t fs);
   
 /**
- * @brief   @p LIS3MDL specific methods.
+ * @brief   @p LIS3MDL compass subsystem specific methods with inherited ones.
  */
 #define _lis3mdl_compass_methods                                            \
   _base_compass_methods                                                     \

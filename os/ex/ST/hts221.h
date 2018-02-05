@@ -354,7 +354,7 @@ typedef struct {
 #define _hts221_hygrometer_methods_alone
                  
 /**
- * @brief   @p HTS221 hygrometer subsystem specific methods.
+ * @brief   @p HTS221 hygrometer subsystem specific methods with inherited ones.
  */
 #define _hts221_hygrometer_methods                                          \
   _base_hygrometer_methods                                                  \
@@ -367,7 +367,7 @@ typedef struct {
 #define _hts221_thermometer_methods_alone
  
 /**
- * @brief @p HTS221 compass subsystem specific methods.
+ * @brief @p HTS221 compass subsystem specific methods with inherited ones.
  */
 #define _hts221_thermometer_methods                                         \
   _base_thermometer_methods                                                 \
@@ -407,10 +407,10 @@ struct HTS221ThermometerVMT {
                                  HTS221_THERMO_NUMBER_OF_AXES];
 
 /**
- * @extends BaseGyroscope
+ * @extends BaseHygrometer
  *
  * @brief   HTS221 3-axis barometer class.
- * @details This class extends @p BaseGyroscope by adding physical
+ * @details This class extends @p BaseHygrometer by adding physical
  *          driver implementation.
  */
 struct HTS221Driver {

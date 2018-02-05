@@ -685,7 +685,8 @@ typedef struct {
   
   
 /**
- * @brief   @p LSM6DS0 accelerometer subsystem specific methods.
+ * @brief   @p LSM6DS0 accelerometer subsystem specific methods with inherited 
+ *          ones.
  */
 #define _lsm6ds0_accelerometer_methods                                      \
   _base_accelerometer_methods                                               \
@@ -700,7 +701,7 @@ typedef struct {
   
   
 /**
- * @brief   @p LSM6DS0 gyroscope subsystem specific methods.
+ * @brief   @p LSM6DS0 gyroscope subsystem specific methods with inherited ones.
  */
 #define _lsm6ds0_gyroscope_methods                                          \
   _base_gyroscope_methods                                                   \
