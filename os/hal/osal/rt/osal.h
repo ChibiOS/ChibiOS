@@ -867,7 +867,7 @@ static inline void osalEventBroadcastFlags(event_source_t *esp,
 }
 #else
 static inline void osalEventBroadcastFlags(event_source_t *esp,
-                                            eventflags_t flags) {
+                                           eventflags_t flags) {
   osalSysLock();
   esp->flags |= flags;
   osalSysUnlock();
