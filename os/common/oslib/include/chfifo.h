@@ -63,11 +63,11 @@
 /*===========================================================================*/
 
 #if CH_CFG_USE_MEMPOOLS == FALSE
-#error "CH_CFG_USE_FIFO requires CH_CFG_USE_MEMPOOLS"
+#error "CH_CFG_USE_OBJ_FIFOS requires CH_CFG_USE_MEMPOOLS"
 #endif
 
 #if CH_CFG_USE_SEMAPHORES == FALSE
-#error "CH_CFG_USE_FIFO requires CH_CFG_USE_SEMAPHORES"
+#error "CH_CFG_USE_OBJ_FIFOS requires CH_CFG_USE_SEMAPHORES"
 #endif
 
 /*===========================================================================*/
