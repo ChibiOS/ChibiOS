@@ -59,13 +59,17 @@
  * @brief   Time intervals data size.
  * @note    Allowed values are 16, 32 or 64 bits.
  */
+#if !defined(CH_CFG_INTERVALS_SIZE) || defined(__DOXYGEN__)
 #define CH_CFG_INTERVALS_SIZE               32
+#endif
 
 /**
  * @brief   Time types data size.
  * @note    Allowed values are 16 or 32 bits.
  */
+#if !defined(CH_CFG_TIME_TYPES_SIZE) || defined(__DOXYGEN__)
 #define CH_CFG_TIME_TYPES_SIZE              32
+#endif
 
 /**
  * @brief   Time delta constant for the tick-less mode.
