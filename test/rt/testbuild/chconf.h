@@ -395,7 +395,9 @@
  *
  * @note    The default is @p FALSE.
  */
+#if !defined(CH_CFG_USE_FACTORY) || defined(__DOXYGEN__)
 #define CH_CFG_USE_FACTORY                  TRUE
+#endif
 
 /**
  * @brief   Maximum length for object names.
