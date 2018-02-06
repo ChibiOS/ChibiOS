@@ -120,7 +120,7 @@ static dyn_element_t *dyn_list_unlink(dyn_element_t *element,
   return NULL;
 }
 
-#if (CH_FACTORY_REQUIRES_HEAP == TRUE) || defined(__DOXYGEN__)
+#if CH_FACTORY_REQUIRES_HEAP || defined(__DOXYGEN__)
 static dyn_element_t *dyn_create_object_heap(const char *name,
                                              dyn_list_t *dlp,
                                              size_t size) {
@@ -142,7 +142,7 @@ static dyn_element_t *dyn_create_object_heap(const char *name,
 
   /* Initializing object list element.*/
   strncpy(dep->name, name, CH_CFG_FACTORY_MAX_NAMES_LENGTH);
-  dep->refs = 1U;
+  dep->refs = (ucnt_t)1;
   dep->next = dlp->next;
 
   /* Updating factory list.*/
@@ -155,18 +155,18 @@ static void dyn_release_object_heap(dyn_element_t *dep,
                                     dyn_list_t *dlp) {
 
   chDbgCheck(dep != NULL);
-  chDbgAssert(dep->refs > 0U, "invalid references number");
+  chDbgAssert(dep->refs > (ucnt_t)0, "invalid references number");
 
 
   dep->refs--;
-  if (dep->refs == 0U) {
+  if (dep->refs == (ucnt_t)0) {
     dep = dyn_list_unlink(dep, dlp);
     chHeapFree((void *)dep);
   }
 }
-#endif /* CH_FACTORY_REQUIRES_HEAP == TRUE */
+#endif /* CH_FACTORY_REQUIRES_HEAP */
 
-#if (CH_FACTORY_REQUIRES_POOLS == TRUE) || defined(__DOXYGEN__)
+#if CH_FACTORY_REQUIRES_POOLS || defined(__DOXYGEN__)
 static dyn_element_t *dyn_create_object_pool(const char *name,
                                              dyn_list_t *dlp,
                                              memory_pool_t *mp) {
@@ -188,7 +188,7 @@ static dyn_element_t *dyn_create_object_pool(const char *name,
 
   /* Initializing object list element.*/
   strncpy(dep->name, name, CH_CFG_FACTORY_MAX_NAMES_LENGTH);
-  dep->refs = 1U;
+  dep->refs = (ucnt_t)1;
   dep->next = dlp->next;
 
   /* Updating factory list.*/
@@ -202,15 +202,15 @@ static void dyn_release_object_pool(dyn_element_t *dep,
                                     memory_pool_t *mp) {
 
   chDbgCheck(dep != NULL);
-  chDbgAssert(dep->refs > 0U, "invalid references number");
+  chDbgAssert(dep->refs > (ucnt_t)0, "invalid references number");
 
   dep->refs--;
-  if (dep->refs == 0U) {
+  if (dep->refs == (ucnt_t)0) {
     dep = dyn_list_unlink(dep, dlp);
     chPoolFree(mp, (void *)dep);
   }
 }
-#endif /* CH_FACTORY_REQUIRES_POOLS == TRUE */
+#endif /* CH_FACTORY_REQUIRES_POOLS */
 
 static dyn_element_t *dyn_find_object(const char *name, dyn_list_t *dlp) {
   dyn_element_t *dep;

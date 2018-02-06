@@ -281,7 +281,7 @@ thread_t *chThdCreate(const thread_descriptor_t *tdp) {
   thread_t *tp;
 
 #if (CH_CFG_USE_REGISTRY == TRUE) &&                                        \
-    (CH_DBG_ENABLE_STACK_CHECK == TRUE) || (CH_CFG_USE_DYNAMIC == TRUE)
+    ((CH_DBG_ENABLE_STACK_CHECK == TRUE) || (CH_CFG_USE_DYNAMIC == TRUE))
   chDbgAssert(chRegFindThreadByWorkingArea(tdp->wbase) == NULL,
               "working area in use");
 #endif
@@ -331,7 +331,7 @@ thread_t *chThdCreateStatic(void *wsp, size_t size,
              (prio <= HIGHPRIO) && (pf != NULL));
 
 #if (CH_CFG_USE_REGISTRY == TRUE) &&                                        \
-    (CH_DBG_ENABLE_STACK_CHECK == TRUE) || (CH_CFG_USE_DYNAMIC == TRUE)
+    ((CH_DBG_ENABLE_STACK_CHECK == TRUE) || (CH_CFG_USE_DYNAMIC == TRUE))
   chDbgAssert(chRegFindThreadByWorkingArea(wsp) == NULL,
               "working area in use");
 #endif

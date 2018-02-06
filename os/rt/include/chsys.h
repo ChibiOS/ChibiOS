@@ -283,7 +283,6 @@ extern stkalign_t ch_idle_thread_wa[];
 extern "C" {
 #endif
   void chSysInit(void);
-  void chSysHalt(const char *reason);
   bool chSysIntegrityCheckI(unsigned testmask);
   void chSysTimerHandlerI(void);
   syssts_t chSysGetStatusAndLockX(void);

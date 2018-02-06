@@ -135,7 +135,9 @@ void chHeapObjectInit(memory_heap_t *heapp, void *buf, size_t size) {
 
   /* Adjusting the size in case the initial block was not correctly
      aligned.*/
+  /*lint -save -e9033 [10.8] Required cast operations.*/
   size -= (size_t)((uint8_t *)hp - (uint8_t *)buf);
+  /*lint restore*/
 
   /* Initializing the heap header.*/
   heapp->provider = NULL;

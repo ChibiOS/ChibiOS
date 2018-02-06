@@ -111,11 +111,11 @@
 #error "CH_CFG_USE_FACTORY requires CH_CFG_USE_MEMCORE"
 #endif
 
-#if (CH_FACTORY_REQUIRES_POOLS == TRUE) && (CH_CFG_USE_MEMPOOLS == FALSE)
+#if CH_FACTORY_REQUIRES_POOLS && (CH_CFG_USE_MEMPOOLS == FALSE)
 #error "CH_CFG_USE_MEMPOOLS is required"
 #endif
 
-#if (CH_FACTORY_REQUIRES_HEAP == TRUE) && (CH_CFG_USE_HEAP == FALSE)
+#if CH_FACTORY_REQUIRES_HEAP && (CH_CFG_USE_HEAP == FALSE)
 #error "CH_CFG_USE_HEAP is required"
 #endif
 
@@ -187,11 +187,13 @@ typedef struct ch_dyn_object {
    * @brief   List element of the dynamic buffer object.
    */
   dyn_element_t         element;
+  /*lint -save -e9038 [18.7] Required by design.*/
   /**
    * @brief   The buffer.
    * @note    This requires C99.
    */
   uint8_t               buffer[];
+  /*lint restore*/
 } dyn_buffer_t;
 #endif
 
@@ -224,11 +226,13 @@ typedef struct ch_dyn_mailbox {
    * @brief   The mailbox.
    */
   mailbox_t             mbx;
-  /**
+  /*lint -save -e9038 [18.7] Required by design.*/
+ /**
    * @brief   Messages buffer.
    * @note    This requires C99.
    */
   msg_t                 msgbuf[];
+  /*lint restore*/
 } dyn_mailbox_t;
 #endif
 
@@ -245,6 +249,7 @@ typedef struct ch_dyn_objects_fifo {
    * @brief   The objects FIFO.
    */
   objects_fifo_t        fifo;
+  /*lint -save -e9038 [18.7] Required by design.*/
   /**
    * @brief   Messages buffer.
    * @note    This open array is followed by another area containing the
@@ -252,6 +257,7 @@ typedef struct ch_dyn_objects_fifo {
    * @note    This requires C99.
    */
   msg_t                 msgbuf[];
+  /*lint restore*/
 } dyn_objects_fifo_t;
 #endif
 
