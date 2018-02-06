@@ -870,7 +870,7 @@ static inline void osalEventObjectInit(event_source_t *esp) {
   chEvtObjectInit(esp);
 }
 #else
-static inline void osalEventObjectInit(osal_event_source_t *esp) {
+static inline void osalEventObjectInit(event_source_t *esp) {
 
   osalDbgCheck(esp != NULL);
 
@@ -923,7 +923,7 @@ static inline void osalEventBroadcastFlags(event_source_t *esp,
 }
 #else
 static inline void osalEventBroadcastFlags(event_source_t *esp,
-                                            eventflags_t flags) {
+                                           eventflags_t flags) {
 
   osalDbgCheck(esp != NULL);
 
@@ -931,6 +931,7 @@ static inline void osalEventBroadcastFlags(event_source_t *esp,
   esp->flags |= flags;
   if (esp->cb != NULL) {
     esp->cb(esp);
+  }
   osalSysUnlock();
 }
 #endif
