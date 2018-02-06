@@ -76,7 +76,7 @@ static msg_t _get(void *ip) {
   return fgetc(stdin);
 }
 
-static msg_t _putt(void *ip, uint8_t b, systime_t time) {
+static msg_t _putt(void *ip, uint8_t b, sysinterval_t time) {
 
   (void)ip;
   (void)time;
@@ -86,7 +86,7 @@ static msg_t _putt(void *ip, uint8_t b, systime_t time) {
   return MSG_OK;
 }
 
-static msg_t _gett(void *ip, systime_t time) {
+static msg_t _gett(void *ip, sysinterval_t time) {
 
   (void)ip;
   (void)time;
@@ -94,7 +94,7 @@ static msg_t _gett(void *ip, systime_t time) {
   return fgetc(stdin);
 }
 
-static size_t _writet(void *ip, const uint8_t *bp, size_t n, systime_t time) {
+static size_t _writet(void *ip, const uint8_t *bp, size_t n, sysinterval_t time) {
   size_t ret;
 
   (void)ip;
@@ -105,7 +105,7 @@ static size_t _writet(void *ip, const uint8_t *bp, size_t n, systime_t time) {
   return ret;
 }
 
-static size_t _readt(void *ip, uint8_t *bp, size_t n, systime_t time) {
+static size_t _readt(void *ip, uint8_t *bp, size_t n, sysinterval_t time) {
 
   (void)ip;
   (void)time;
