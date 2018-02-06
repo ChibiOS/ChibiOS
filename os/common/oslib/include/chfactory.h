@@ -90,8 +90,30 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if (CH_CFG_FACTORY_SEMAPHORES == TRUE) && (CH_CFG_USE_SEMAPHORES == FALSE)
+/*lint -save -e767 [20.5] Valid because the #undef.*/
+#undef CH_CFG_FACTORY_SEMAPHORES
+#define CH_CFG_FACTORY_SEMAPHORES           FALSE
+/*lint restore*/
+#endif
+
+#if (CH_CFG_FACTORY_MAILBOXES == TRUE) && (CH_CFG_USE_MAILBOXES == FALSE)
+/*lint -save -e767 [20.5] Valid because the #undef.*/
+#undef CH_CFG_FACTORY_MAILBOXES
+#define CH_CFG_FACTORY_MAILBOXES            FALSE
+/*lint restore*/
+#endif
+
+#if (CH_CFG_FACTORY_OBJ_FIFOS == TRUE) && (CH_CFG_USE_OBJ_FIFOS == FALSE)
+/*lint -save -e767 [20.5] Valid because the #undef.*/
+#undef CH_CFG_FACTORY_OBJ_FIFOS
+#define CH_CFG_FACTORY_OBJ_FIFOS            FALSE
+/*lint restore*/
+#endif
+
 #define CH_FACTORY_REQUIRES_POOLS                                           \
-  ((CH_CFG_FACTORY_SEMAPHORES == TRUE))
+  ((CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE) ||                             \
+   (CH_CFG_FACTORY_SEMAPHORES == TRUE))
 
 #define CH_FACTORY_REQUIRES_HEAP                                            \
   ((CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE) ||                              \
@@ -117,18 +139,6 @@
 
 #if CH_FACTORY_REQUIRES_HEAP && (CH_CFG_USE_HEAP == FALSE)
 #error "CH_CFG_USE_HEAP is required"
-#endif
-
-#if (CH_CFG_FACTORY_SEMAPHORES == TRUE) && (CH_CFG_USE_SEMAPHORES == FALSE)
-#error "CH_CFG_FACTORY_SEMAPHORES requires CH_CFG_USE_SEMAPHORES"
-#endif
-
-#if (CH_CFG_FACTORY_MAILBOXES == TRUE) && (CH_CFG_USE_MAILBOXES == FALSE)
-#error "CH_CFG_FACTORY_MAILBOXES requires CH_CFG_USE_MAILBOXES"
-#endif
-
-#if (CH_CFG_FACTORY_OBJ_FIFOS == TRUE) && (CH_CFG_USE_OBJ_FIFOS == FALSE)
-#error "CH_CFG_FACTORY_OBJ_FIFOS requires CH_CFG_USE_OBJ_FIFOS"
 #endif
 
 /*===========================================================================*/

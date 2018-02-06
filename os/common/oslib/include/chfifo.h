@@ -70,6 +70,10 @@
 #error "CH_CFG_USE_OBJ_FIFOS requires CH_CFG_USE_SEMAPHORES"
 #endif
 
+#if CH_CFG_USE_MAILBOXES == FALSE
+#error "CH_CFG_USE_OBJ_FIFOS requires CH_CFG_USE_MAILBOXES"
+#endif
+
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
