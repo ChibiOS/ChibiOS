@@ -91,6 +91,7 @@
 *** 17.6.4 ***
 - Fixed some minor documentation issues.
 - NEW: Improved external tools launch configuration for OpenOCD.
+- LIB: Fixed heap allocator failing on simulators (bug #917).
 - STP: Fixed CRT0_FORCE_MSP_INIT flag not defaulted in crt0_v7m.S (bug #916).
 - EX:  Improved MEMS drivers (bug #915).
 - HAL: Improved peripheral classes (bug #915).
