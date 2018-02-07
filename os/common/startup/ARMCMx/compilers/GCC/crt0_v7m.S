@@ -53,6 +53,15 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Enforces initialization of MSP.
+ * @note    This is required if the boot process is not reliable for whatever
+ *          reason (bad ROMs, bad bootloaders, bad debuggers=.
+ */
+#if !defined(CRT0_VTOR_INIT) || defined(__DOXYGEN__)
+#define CRT0_FORCE_MSP_INIT                 TRUE
+#endif
+
+/**
  * @brief   VTOR special register initialization.
  * @details VTOR is initialized to point to the vectors table.
  */

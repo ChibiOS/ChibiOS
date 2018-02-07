@@ -167,7 +167,9 @@
        dependencies and configuration directories. This makes possible
        to have multiple non-conflicting makefiles in the same project.
        Updated the various platform.mk implementing "smart build" mode.
-- EX:  Improved MEMS drivers (bug #915)(backported to 17.6.4).
+- STP: Fixed CRT0_FORCE_MSP_INIT flag not defaulted in crt0_v7m.S (bug #916)
+       (backported to 17.6.4).
+- EX:  Improved MEMS drivers (bug #916)(backported to 17.6.4).
 - HAL: Improved peripheral classes (bug #915)(backported to 17.6.4).
 - HAL: Fixed more instances of bug #843 (bug #914)(backported to 17.6.4
        and 16.1.10).
