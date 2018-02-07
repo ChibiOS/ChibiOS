@@ -84,7 +84,6 @@ typedef union heap_header heap_header_t;
  * @brief   Memory heap block header.
  */
 union heap_header {
-  stkalign_t align;
   struct {
     heap_header_t       *next;      /**< @brief Next block in free list.    */
     size_t              pages;      /**< @brief Size of the area in pages.  */

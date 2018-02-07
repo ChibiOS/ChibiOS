@@ -167,6 +167,8 @@
        dependencies and configuration directories. This makes possible
        to have multiple non-conflicting makefiles in the same project.
        Updated the various platform.mk implementing "smart build" mode.
+- LIB: Fixed heap allocator failing on simulators (bug #917)(backported
+       to 17.6.4).
 - STP: Fixed CRT0_FORCE_MSP_INIT flag not defaulted in crt0_v7m.S (bug #916)
        (backported to 17.6.4).
 - EX:  Improved MEMS drivers (bug #916)(backported to 17.6.4).
