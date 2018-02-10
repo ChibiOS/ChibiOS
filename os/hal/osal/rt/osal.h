@@ -44,7 +44,7 @@
 #endif
 
 #if !defined(TRUE) || defined(__DOXYGEN__)
-#define TRUE                                (!FALSE)
+#define TRUE                                1
 #endif
 
 #define OSAL_SUCCESS                        false
