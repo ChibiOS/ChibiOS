@@ -117,7 +117,7 @@ void palSetBusMode(IOBus *bus, iomode_t mode) {
   palSetGroupMode(bus->portid, bus->mask, bus->offset, mode);
 }
 
-#if PAL_USE_CALLBACKS || defined(__DOXYGEN__)
+#if (PAL_USE_CALLBACKS == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Associates a callback to a port/pad.
  *
@@ -151,9 +151,9 @@ void palSetLineCallbackI(ioline_t line, palcallback_t cb, void *arg) {
   pep->cb = cb;
   pep->arg = arg;
 }
-#endif /* PAL_USE_CALLBACKS */
+#endif /* PAL_USE_CALLBACKS == TRUE */
 
-#if PAL_USE_WAIT || defined(__DOXYGEN__)
+#if (PAL_USE_WAIT == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Waits for an edge on the specified port/pad.
  *
@@ -194,7 +194,7 @@ msg_t palWaitLineTimeoutS(ioline_t line,
   palevent_t *pep = pal_lld_get_line_event(line);
   return osalThreadEnqueueTimeoutS(&pep->threads, timeout);
 }
-#endif /* PAL_USE_WAIT */
+#endif /* PAL_USE_WAIT == TRUE */
 
 #endif /* HAL_USE_PAL == TRUE */
 

@@ -135,6 +135,9 @@ static msg_t _ctl(void *ip, unsigned int operation, void *arg) {
   case CHN_CTL_NOP:
     osalDbgCheck(arg == NULL);
     break;
+  case CHN_CTL_INVALID:
+    osalDbgAssert(false, "invalid CTL operation");
+    break;
   default:
 #if defined(SDU_LLD_IMPLEMENTS_CTL)
     /* The SDU driver does not have a LLD but the application can use this
@@ -143,10 +146,9 @@ static msg_t _ctl(void *ip, unsigned int operation, void *arg) {
                                  unsigned int operation,
                                  void *arg);
     return sdu_lld_control(sdup, operation, arg);
-#endif
-  case CHN_CTL_INVALID:
-    osalDbgAssert(false, "invalid CTL operation");
+#else
     break;
+#endif
   }
   return MSG_OK;
 }

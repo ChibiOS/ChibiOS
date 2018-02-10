@@ -713,7 +713,7 @@ void i2c_lld_stop(I2CDriver *i2cp) {
  */
 msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
                                      uint8_t *rxbuf, size_t rxbytes,
-                                     systime_t timeout) {
+                                     sysinterval_t timeout) {
   I2C_TypeDef *dp = i2cp->i2c;
   systime_t start, end;
 
@@ -793,7 +793,7 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
 msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
                                       const uint8_t *txbuf, size_t txbytes,
                                       uint8_t *rxbuf, size_t rxbytes,
-                                      systime_t timeout) {
+                                      sysinterval_t timeout) {
   I2C_TypeDef *dp = i2cp->i2c;
   systime_t start, end;
 

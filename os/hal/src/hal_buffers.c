@@ -358,14 +358,14 @@ msg_t ibqGetTimeout(input_buffers_queue_t *ibqp, sysinterval_t timeout) {
 size_t ibqReadTimeout(input_buffers_queue_t *ibqp, uint8_t *bp,
                       size_t n, sysinterval_t timeout) {
   size_t r = 0;
-  sysinterval_t deadline;
+  systime_t deadline;
 
   osalDbgCheck(n > 0U);
 
   osalSysLock();
 
   /* Time window for the whole operation.*/
-  deadline = osalOsGetSystemTimeX() + timeout;
+  deadline = osalTimeAddX(osalOsGetSystemTimeX(), timeout);
 
   while (true) {
     size_t size;
@@ -380,7 +380,8 @@ size_t ibqReadTimeout(input_buffers_queue_t *ibqp, uint8_t *bp,
         msg = ibqGetFullBufferTimeoutS(ibqp, timeout);
       }
       else {
-        sysinterval_t next_timeout = deadline - osalOsGetSystemTimeX();
+        sysinterval_t next_timeout = osalTimeDiffX(osalOsGetSystemTimeX(),
+                                                   deadline);
 
         /* Handling the case where the system time went past the deadline,
            in this case next becomes a very high number because the system
@@ -740,14 +741,14 @@ msg_t obqPutTimeout(output_buffers_queue_t *obqp, uint8_t b,
 size_t obqWriteTimeout(output_buffers_queue_t *obqp, const uint8_t *bp,
                        size_t n, sysinterval_t timeout) {
   size_t w = 0;
-  sysinterval_t deadline;
+  systime_t deadline;
 
   osalDbgCheck(n > 0U);
 
   osalSysLock();
 
   /* Time window for the whole operation.*/
-  deadline = osalOsGetSystemTimeX() + timeout;
+  deadline = osalTimeAddX(osalOsGetSystemTimeX(), timeout);
 
   while (true) {
     size_t size;
@@ -762,7 +763,8 @@ size_t obqWriteTimeout(output_buffers_queue_t *obqp, const uint8_t *bp,
         msg = obqGetEmptyBufferTimeoutS(obqp, timeout);
       }
       else {
-        sysinterval_t next_timeout = deadline - osalOsGetSystemTimeX();
+        sysinterval_t next_timeout = osalTimeDiffX(osalOsGetSystemTimeX(),
+                                                   deadline);
 
         /* Handling the case where the system time went past the deadline,
            in this case next becomes a very high number because the system

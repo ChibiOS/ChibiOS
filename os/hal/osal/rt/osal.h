@@ -150,7 +150,7 @@ typedef uint32_t systime_t;
 
 #if 0
 /**
- * @brief   Type of system time counter.
+ * @brief   Type of system time interval.
  */
 typedef uint32_t sysinterval_t;
 #endif

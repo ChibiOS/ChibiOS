@@ -162,7 +162,7 @@ systime_t osalOsGetSystemTimeX(void) {
  *
  * @sclass
  */
-void osalThreadSleepS(systime_t time) {
+void osalThreadSleepS(sysinterval_t time) {
   virtual_timer_t vt;
   thread_reference_t tr;
 
@@ -183,7 +183,7 @@ void osalThreadSleepS(systime_t time) {
  *
  * @api
  */
-void osalThreadSleep(systime_t time) {
+void osalThreadSleep(sysinterval_t time) {
 
   osalSysLock();
   osalThreadSleepS(time);
@@ -236,7 +236,7 @@ msg_t osalThreadSuspendS(thread_reference_t *trp) {
  *
  * @sclass
  */
-msg_t osalThreadSuspendTimeoutS(thread_reference_t *trp, systime_t timeout) {
+msg_t osalThreadSuspendTimeoutS(thread_reference_t *trp, sysinterval_t timeout) {
   msg_t msg;
   virtual_timer_t vt;
 
@@ -316,7 +316,7 @@ void osalThreadResumeS(thread_reference_t *trp, msg_t msg) {
  *
  * @sclass
  */
-msg_t osalThreadEnqueueTimeoutS(threads_queue_t *tqp, systime_t timeout) {
+msg_t osalThreadEnqueueTimeoutS(threads_queue_t *tqp, sysinterval_t timeout) {
   msg_t msg;
   virtual_timer_t vt;
 

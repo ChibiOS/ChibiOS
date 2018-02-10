@@ -165,7 +165,7 @@ typedef int32_t msg_t;
 typedef uint32_t systime_t;
 
 /**
- * @brief   Type of system time counter.
+ * @brief   Type of system time interval.
  */
 typedef uint32_t sysinterval_t;
 
@@ -344,7 +344,7 @@ typedef struct {
  * @api
  */
 #define OSAL_S2I(secs)                                                      \
-  ((systime_t)((uint32_t)(secs) * (uint32_t)OSAL_ST_FREQUENCY))
+  ((sysinterval_t)((uint32_t)(secs) * (uint32_t)OSAL_ST_FREQUENCY))
 
 /**
  * @brief   Milliseconds to system ticks.
@@ -357,7 +357,7 @@ typedef struct {
  * @api
  */
 #define OSAL_MS2I(msecs)                                                    \
-  ((systime_t)((((((uint32_t)(msecs)) *                                     \
+  ((sysinterval_t)((((((uint32_t)(msecs)) *                                 \
                   ((uint32_t)OSAL_ST_FREQUENCY)) - 1UL) / 1000UL) + 1UL))
 
 /**
@@ -371,7 +371,7 @@ typedef struct {
  * @api
  */
 #define OSAL_US2I(usecs)                                                    \
-  ((systime_t)((((((uint32_t)(usecs)) *                                     \
+  ((sysinterval_t)((((((uint32_t)(usecs)) *                                 \
                   ((uint32_t)OSAL_ST_FREQUENCY)) - 1UL) / 1000000UL) + 1UL))
 /** @} */
 

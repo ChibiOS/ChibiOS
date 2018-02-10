@@ -68,7 +68,9 @@ static size_t iq_read(input_queue_t *iqp, uint8_t *bp, size_t n) {
   }
 
   /* Number of bytes before buffer limit.*/
-  s1 = iqp->q_top - iqp->q_rdptr;
+  /*lint -save -e9033 [10.8] Checked to be safe.*/
+  s1 = (size_t)(iqp->q_top - iqp->q_rdptr);
+  /*lint -restore*/
   if (n < s1) {
     memcpy((void *)bp, (void *)iqp->q_rdptr, n);
     iqp->q_rdptr += n;
@@ -114,20 +116,22 @@ static size_t oq_write(output_queue_t *oqp, const uint8_t *bp, size_t n) {
   }
 
   /* Number of bytes before buffer limit.*/
-  s1 = oqp->q_top - oqp->q_wrptr;
+  /*lint -save -e9033 [10.8] Checked to be safe.*/
+  s1 = (size_t)(oqp->q_top - oqp->q_wrptr);
+  /*lint -restore*/
   if (n < s1) {
-    memcpy((void *)oqp->q_wrptr, (void *)bp, n);
+    memcpy((void *)oqp->q_wrptr, (const void *)bp, n);
     oqp->q_wrptr += n;
   }
   else if (n > s1) {
-    memcpy((void *)oqp->q_wrptr, (void *)bp, s1);
+    memcpy((void *)oqp->q_wrptr, (const void *)bp, s1);
     bp += s1;
     s2 = n - s1;
-    memcpy((void *)oqp->q_buffer, (void *)bp, s2);
+    memcpy((void *)oqp->q_buffer, (const void *)bp, s2);
     oqp->q_wrptr = oqp->q_buffer + s2;
   }
   else { /* n == s1 */
-    memcpy((void *)oqp->q_wrptr, (void *)bp, n);
+    memcpy((void *)oqp->q_wrptr, (const void *)bp, n);
     oqp->q_wrptr = oqp->q_buffer;
   }
 
@@ -395,7 +399,7 @@ size_t iqReadTimeout(input_queue_t *iqp, uint8_t *bp,
     size_t done;
 
     done = iq_read(iqp, bp, n);
-    if (done == 0) {
+    if (done == (size_t)0) {
       msg_t msg = osalThreadEnqueueTimeoutS(&iqp->q_waiting, timeout);
 
       /* Anything except MSG_OK causes the operation to stop.*/
@@ -664,7 +668,7 @@ size_t oqWriteTimeout(output_queue_t *oqp, const uint8_t *bp,
     size_t done;
 
     done = oq_write(oqp, bp, n);
-    if (done == 0) {
+    if (done == (size_t)0) {
       msg_t msg = osalThreadEnqueueTimeoutS(&oqp->q_waiting, timeout);
 
       /* Anything except MSG_OK causes the operation to stop.*/
