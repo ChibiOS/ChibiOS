@@ -1,8 +1,6 @@
 
 --- Module:   ..\..\..\os\common\startup\ARMCMx\compilers\GCC\crt1.c (C)
 
---- Module:   ..\..\..\os\common\startup\ARMCMx\compilers\GCC\vectors.c (C)
-
 --- Module:   ..\..\..\os\nil\src\ch.c (C)
 
 --- Module:   ..\..\..\os\common\oslib\src\chmboxes.c (C)
@@ -12,6 +10,8 @@
 --- Module:   ..\..\..\os\common\oslib\src\chheap.c (C)
 
 --- Module:   ..\..\..\os\common\oslib\src\chmempools.c (C)
+
+--- Module:   ..\..\..\os\common\oslib\src\chfactory.c (C)
 
 --- Module:   ..\..\..\os\common\ports\ARMCMx\chcore.c (C)
 

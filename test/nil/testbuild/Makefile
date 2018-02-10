@@ -198,7 +198,7 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = -DSTM32F303xC
+UDEFS = -DSTM32F303xC -D__ARM_ARCH_7EM__=1
 
 # Define ASM defines here
 UADEFS =
