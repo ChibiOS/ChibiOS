@@ -120,7 +120,6 @@ bssloop:
                  * Late initialization.
                  */
 #if !defined(THUMB_NO_INTERWORKING)
-                bl      __core_init
                 bl      __late_init
 #else /* defined(THUMB_NO_INTERWORKING) */
                 add     r0, pc, #1
