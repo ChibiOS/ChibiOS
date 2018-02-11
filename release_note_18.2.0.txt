@@ -1,17 +1,17 @@
 ******************************************************************************
-*** ChibiOS next Release Notes.                                            ***
+*** ChibiOS 18.2.0 Release Notes.                                          ***
 ******************************************************************************
 
-ChibiOS next is composed of several independent but inter-operable
+ChibiOS 18.2.0 is composed of several independent but inter-operable
 sub-projects: RT, NIL, HAL, EX. Plus several external libraries
 integrated in our structure: WolfSSL, FatFS and lwIP.
 
-*** ChibiOS next highlights ****
+*** ChibiOS 18.2.0 highlights ****
 
 This release is focused on features and  general improvements, HAL, RT and NIL
 received a series of important improvements, new features have been added.
 
-*** ChibiOS next general improvements ***
+*** ChibiOS 18.2.0 general improvements ***
 
 - WolfSSL 1.12.2 has been integrated. HTTPS demo added.
 - FatFS 0.13 has been integrated.
