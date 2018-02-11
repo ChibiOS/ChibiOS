@@ -116,9 +116,9 @@ received a series of important improvements, new features have been added.
 - Improved HAL queues to increase performance. Added new functions: iqGetI(),
   iqReadI(), oqPutI() and oqWriteI().
 
-*** What's new in EX 1.0.0 ***
+*** What's new in EX 1.0.1 ***
 
-- No changes.
+- No changes, few bug fixes.
 
 *** What's new in AVR HAL support ***
 
