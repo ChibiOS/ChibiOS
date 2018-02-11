@@ -1118,7 +1118,7 @@ cryerror_t cryDecryptDES_CBC(CRYDriver *cryp,
 
 /**
  * @brief   Hash using SHA1.
- * @NOTE    Use of this algorithm is not recommended because proven weak.
+ * @note    Use of this algorithm is not recommended because proven weak.
  *
  * @param[in] cryp      pointer to the @p CRYDriver object
  * @param[in] size      size of input buffer

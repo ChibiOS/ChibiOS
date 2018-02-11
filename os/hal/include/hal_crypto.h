@@ -32,7 +32,7 @@
 /*===========================================================================*/
 
 /**
- * #brief   Maximum size of a key for all supported algorithms.
+ * @brief   Maximum size of a key for all supported algorithms.
  */
 #define HAL_CRY_MAX_KEY_SIZE                32
 

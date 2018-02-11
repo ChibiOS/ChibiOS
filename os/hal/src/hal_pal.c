@@ -123,7 +123,7 @@ void palSetBusMode(IOBus *bus, iomode_t mode) {
  *
  * @param[in] port      port identifier
  * @param[in] pad       pad number within the port
- * @param[in] callback  event callback function
+ * @param[in] cb        event callback function
  * @param[in] arg       callback argument
  *
  * @api
@@ -140,7 +140,7 @@ void palSetPadCallbackI(ioportid_t port, iopadid_t pad,
  * @brief   Associates a callback to a line.
  *
  * @param[in] line      line identifier
- * @param[in] callback  event callback function
+ * @param[in] cb        event callback function
  * @param[in] arg       callback argument
  *
  * @api
@@ -159,6 +159,11 @@ void palSetLineCallbackI(ioline_t line, palcallback_t cb, void *arg) {
  *
  * @param[in] port      port identifier
  * @param[in] pad       pad number within the port
+ * @param[in] timeout   the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
  * @returns             The operation state.
  * @retval MSG_OK       if an edge has been detected.
  * @retval MSG_TIMEOUT  if a timeout occurred before an edge could be detected.
