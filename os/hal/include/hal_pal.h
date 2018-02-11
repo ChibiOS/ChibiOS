@@ -920,8 +920,7 @@ typedef struct {
  *
  * @param[in] port      port identifier
  * @param[in] pad       pad number within the port
- * @param[in] mode      pad event mode
- * @param[in] callback  event callback function
+ * @param[in] cb        event callback function
  * @param[in] arg       callback argument
  *
  * @api
@@ -937,7 +936,7 @@ typedef struct {
  * @brief   Associates a callback to a line.
  *
  * @param[in] line      line identifier
- * @param[in] callback  event callback function
+ * @param[in] cb        event callback function
  * @param[in] arg       callback argument
  *
  * @iclass
@@ -956,6 +955,11 @@ typedef struct {
  *
  * @param[in] port      port identifier
  * @param[in] pad       pad number within the port
+ * @param[in] timeout   the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
  * @returns             The operation state.
  * @retval MSG_OK       if an edge has been detected.
  * @retval MSG_TIMEOUT  if a timeout occurred before an edge cound be detected.

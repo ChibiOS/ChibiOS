@@ -96,6 +96,8 @@ void cry_lld_stop(CRYDriver *cryp) {
  * @brief   Initializes the transient key for a specific algorithm.
  *
  * @param[in] cryp      pointer to the @p CRYDriver object
+ * @param[in] algorithm the algorithm identifier
+ * @param[in] size      key size in bytes
  * @param[in] keyp      pointer to the key data
  * @return              The operation status.
  * @retval CRY_NOERROR          if the operation succeeded.
@@ -857,7 +859,7 @@ cryerror_t cry_lld_decrypt_DES_CBC(CRYDriver *cryp,
 
 /**
  * @brief   Hash using SHA1.
- * @NOTE    Use of this algorithm is not recommended because proven weak.
+ * @note    Use of this algorithm is not recommended because proven weak.
  *
  * @param[in] cryp      pointer to the @p CRYDriver object
  * @param[in] size      size of input buffer
