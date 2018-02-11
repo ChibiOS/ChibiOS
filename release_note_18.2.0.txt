@@ -31,7 +31,6 @@ received a series of important improvements, new features have been added.
 *** What's new in RT/NIL ports ***
 
 - GHS compiler support added to the Power e200z port.
-- Experimental ARM Cortex-A Trust Zone support.
 
 *** What's new in OS Library ***
 
