@@ -1,7 +1,7 @@
 
 *** ChibiOS/RT Test Suite
 ***
-*** Compiled:     Dec 10 2017 - 13:15:45
+*** Compiled:     Feb 11 2018 - 14:51:13
 *** Platform:     STM32F746 Very High Performance with DSP and FPU
 *** Test Board:   STMicroelectronics STM32F746G-Discovery
 
@@ -11,7 +11,7 @@
 --- Test Case 1.1 (Port Info)
 --- Architecture:                       ARMv7E-M
 --- Core Variant:                       Cortex-M7
---- Compiler:                           GCC 5.4.1 20160919 (release) [ARM/embedded-5-branch revision 240496]
+--- Compiler:                           GCC 7.2.1 20170904 (release) [ARM/embedded-7-branch revision 255204]
 --- Port Info:                          Advanced kernel mode
 --- Natural alignment:                  4
 --- Stack alignment:                    8
@@ -186,31 +186,31 @@
 === Test Sequence 10 (Benchmarks)
 ----------------------------------------------------------------------------
 --- Test Case 10.1 (Messages performance #1)
---- Score : 931026 msgs/S, 1862052 ctxswc/S
+--- Score : 1038450 msgs/S, 2076900 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.2 (Messages performance #2)
---- Score : 818174 msgs/S, 1636348 ctxswc/S
+--- Score : 915245 msgs/S, 1830490 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.3 (Messages performance #3)
---- Score : 818174 msgs/S, 1636348 ctxswc/S
+--- Score : 915245 msgs/S, 1830490 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.4 (Context Switch performance)
---- Score : 3483848 ctxswc/S
+--- Score : 3692272 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.5 (Threads performance, full cycle)
---- Score : 606734 threads/S
+--- Score : 635287 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.6 (Threads performance, create/exit only)
---- Score : 760555 threads/S
+--- Score : 794109 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.7 (Mass reschedule performance)
---- Score : 293476 reschedules/S, 1760856 ctxswc/S
+--- Score : 308568 reschedules/S, 1851408 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.8 (Round-Robin voluntary reschedule)
@@ -218,15 +218,15 @@
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.9 (Virtual Timers set/reset performance)
---- Score : 1928654 timers/S
+--- Score : 1946174 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.10 (Semaphores wait/signal performance)
---- Score : 2918900 wait+signal/S
+--- Score : 3176444 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.11 (Mutexes lock/unlock performance)
---- Score : 2399984 lock+unlock/S
+--- Score : 2380192 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 10.12 (RAM Footprint)
@@ -246,7 +246,7 @@ Final result: SUCCESS
 
 *** ChibiOS OS Library Test Suite
 ***
-*** Compiled:     Dec 10 2017 - 13:15:45
+*** Compiled:     Feb 11 2018 - 14:51:13
 *** Platform:     STM32F746 Very High Performance with DSP and FPU
 *** Test Board:   STMicroelectronics STM32F746G-Discovery
 
