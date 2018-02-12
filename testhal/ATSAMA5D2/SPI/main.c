@@ -57,7 +57,7 @@ static void rxend(SPIDriver *spip) {
 static const SPIConfig mst_spicfg = {
   rxend,                                       /* callback if present */
   0,                                           /* cs pad number       */
-  SPI_MR_MODFDIS | SPI_MR_MSTR | SPI_MR_LLB,   /* mr register         */
+  SPI_MR_MODFDIS | SPI_MR_LLB,                 /* mr register         */
   SPI_CSR_SCBR(1)                              /* csr                 */
 };
 
