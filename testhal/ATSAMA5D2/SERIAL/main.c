@@ -74,7 +74,7 @@ static THD_FUNCTION(Thread1, arg) {
 static const SerialConfig sdcfg = {
   115200,
   0,
-  UART_MR_PAR_NO
+  US_MR_CHRL_8_BIT | US_MR_PAR_NO
 };
 
 /*
@@ -95,11 +95,12 @@ int main(void) {
   /*
    * Activates the serial driver 1 using the driver default configuration.
    */
-  sdStart(&SD1, &sdcfg);
+  sdStart(&FSD0, &sdcfg);
 
-  /* Redirecting  UART1 RX on PD2 and UART1 TX on PD3. */
-  palSetGroupMode(PIOD, PAL_PORT_BIT(2) | PAL_PORT_BIT(3), 0U,
-                  PAL_SAMA_FUNC_PERIPH_A | PAL_MODE_SECURE);
+  /* Redirecting  FLEX0 RX on PB29 and FLEX0 TX on PB28. */
+  palSetGroupMode(PIOB, PAL_PORT_BIT(28) | PAL_PORT_BIT(29), 0U,
+                  PAL_SAMA_FUNC_PERIPH_C | PAL_MODE_SECURE);
+
   /*
    * Creates the blinker thread.
    */
@@ -109,9 +110,9 @@ int main(void) {
    * Normal main() thread activity.
    */
   while (true) {
-    getInputString((BaseSequentialStream *)&SD1, lineBuffer, BUFFER_SIZE);
-    chprintf((BaseSequentialStream *)&SD1, lineBuffer);
-    chprintf((BaseSequentialStream *)&SD1, "\n\r");
+    getInputString((BaseSequentialStream *)&FSD0, lineBuffer, BUFFER_SIZE);
+    chprintf((BaseSequentialStream *)&FSD0, lineBuffer);
+    chprintf((BaseSequentialStream *)&FSD0, "\n\r");
     chThdSleepMilliseconds(500);
   }
 }
