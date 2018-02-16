@@ -38,7 +38,7 @@
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
-sama_dma_channel_t _sama_dma_channel_t[XDMAC_CHANNELS_TOT];
+sama_dma_channel_t _sama_dma_channel_t[XDMAC_CHANNELS];
 
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
@@ -51,28 +51,6 @@ sama_dma_channel_t _sama_dma_channel_t[XDMAC_CHANNELS_TOT];
 /*===========================================================================*/
 /* Driver local macros.                                                      */
 /*===========================================================================*/
-
-/**
- * @brief   Associates a controller to a DMA channel.
- *
- * @param[in]   index        index of the channel
- * @return      xdmacp       pointer to DMA controller
- *
- * @notapi
- */
-#define dmaControllerSelect(index)                             \
-  index < (XDMAC_CONTROLLERS - 1) ? XDMAC0 : XDMAC1            \
-
-/**
- * @brief   Associates ID number to controller.
- *
- * @param[in]   xdmacp       pointer to DMA controller
- * @return      ID_XDMACx    peripheral ID of DMA controller
- *
- * @notapi
- */
- #define dmaGetControllerId(xdmacp)                            \
-   (Xdmac *) xdmacp == XDMAC0 ? ID_XDMAC0 : ID_XDMAC1
 
 /**
  * @brief   Get content of Global Status register.
@@ -113,54 +91,53 @@ sama_dma_channel_t _sama_dma_channel_t[XDMAC_CHANNELS_TOT];
  * @brief XDMAC interrupt handler
  */
 OSAL_IRQ_HANDLER(dmaHandler) {
-  uint32_t cont;
 
   OSAL_IRQ_PROLOGUE();
-  for (cont = 0; cont < XDMAC_CONTROLLERS; cont++) {
-    uint32_t chan, gis, flags;
 
-    Xdmac *xdmac = dmaControllerSelect(cont);
+#if SAMA_HAL_IS_SECURE
+  Xdmac *xdmac = XDMAC0;
+  mtxConfigPeriphSecurity(MATRIX0, ID_XDMAC0, SECURE_PER);
+#else
+  Xdmac *xdmac = XDMAC1;
+#endif /* SAMA_HAL_IS_SECURE */
 
-    /* Read Global Interrupt Status Register */
-    gis = dmaGetGlobalInt(xdmac);
+  uint32_t chan, gis, flags;
 
-    if ((gis & 0xFFFF) == 0)
-    /* There is no interrupt pending for this xdmac controller */
+  /* Read Global Interrupt Status Register */
+  gis = dmaGetGlobalInt(xdmac);
+
+  for (chan = 0; chan < XDMAC_CHANNELS; chan++) {
+    sama_dma_channel_t *channel = &_sama_dma_channel_t[chan];
+    bool pendingInt = FALSE;
+
+    if (!(gis & (0x1 << chan)))
+    /* There is no pending interrupt for this channel */
       continue;
 
-    for (chan = 0; chan < XDMAC_CHANNELS; chan++) {
-      sama_dma_channel_t *channel = &_sama_dma_channel_t[(cont * XDMAC_CHANNELS) + chan];
-      bool pendingInt = FALSE;
+    if (channel->state == SAMA_DMA_FREE)
+    /* Channel is free */
+      continue;
 
-      if (!(gis & (0x1 << chan)))
-      /* There is no pending interrupt for this channel */
-        continue;
+    uint32_t cis = dmaGetChannelInt(channel);
 
-      if (channel->state == SAMA_DMA_FREE)
-      /* Channel is free */
-        continue;
-
-      uint32_t cis = dmaGetChannelInt(channel);
-
-      if (cis & XDMAC_CIS_BIS) {
-        if (!(dmaGetChannelIntMask(channel) & XDMAC_CIM_LIM)) {
-          pendingInt = TRUE;
-        }
-      }
-
-      if (cis & XDMAC_CIS_LIS) {
+    if (cis & XDMAC_CIS_BIS) {
+      if (!(dmaGetChannelIntMask(channel) & XDMAC_CIM_LIM)) {
         pendingInt = TRUE;
       }
+    }
 
-      if (cis & XDMAC_CIS_DIS) {
-        pendingInt = TRUE;
-      }
-      flags = cis;
+    if (cis & XDMAC_CIS_LIS) {
+      pendingInt = TRUE;
+    }
 
-      /* Execute callback */
-      if (pendingInt && channel->dma_func) {
-        channel->dma_func(channel->dma_param,flags);
-      }
+    if (cis & XDMAC_CIS_DIS) {
+      pendingInt = TRUE;
+    }
+    flags = cis;
+
+    /* Executes callback */
+    if (pendingInt && channel->dma_func) {
+      channel->dma_func(channel->dma_param,flags);
     }
   }
   aicAckInt();
@@ -178,34 +155,34 @@ OSAL_IRQ_HANDLER(dmaHandler) {
  */
 void dmaInit(void) {
 
-  uint8_t cont, chan;
-
 #if SAMA_HAL_IS_SECURE
+  Xdmac *xdmac = XDMAC0;
   mtxConfigPeriphSecurity(MATRIX0, ID_XDMAC0, SECURE_PER);
-  mtxConfigPeriphSecurity(MATRIX0, ID_XDMAC1, SECURE_PER);
+#else
+  Xdmac *xdmac = XDMAC1;
 #endif /* SAMA_HAL_IS_SECURE */
 
-  for (cont = 0; cont < XDMAC_CONTROLLERS; cont++) {
+  uint8_t chan;
 
-    Xdmac *xdmac = dmaControllerSelect(cont);
+  for (chan = 0; chan < XDMAC_CHANNELS; chan++) {
+    sama_dma_channel_t *channel = &_sama_dma_channel_t[chan];
 
-    for (chan = 0; chan < XDMAC_CHANNELS; chan++) {
-      sama_dma_channel_t *channel = &_sama_dma_channel_t[(cont * XDMAC_CHANNELS) + chan];
+    /* Initialization of the specific channel */
+    channel->xdmac    = xdmac;
+    channel->chid     = chan;
+    channel->state    = SAMA_DMA_FREE;
+    channel->dma_func = NULL;
 
-      /* Initialization of the specific channel */
-      channel->xdmac    = xdmac;
-      channel->chid     = chan;
-      channel->state    = SAMA_DMA_FREE;
-      channel->dma_func = NULL;
-
-      /* Clear interrupts */
-      dmaGetChannelInt(channel);
-    }
-
-    uint32_t id = dmaGetControllerId(xdmac);
-    /* set aic source handler */
-    aicSetSourceHandler(id, dmaHandler);
+    /* Clear interrupts */
+    dmaGetChannelInt(channel);
   }
+
+  /* Setting aic source handler */
+#if SAMA_HAL_IS_SECURE
+  aicSetSourceHandler(ID_XDMAC0, dmaHandler);
+#else
+  aicSetSourceHandler(ID_XDMAC1, dmaHandler);
+#endif /* SAMA_HAL_IS_SECURE */
 }
 
 /**
@@ -270,9 +247,8 @@ sama_dma_channel_t* dmaChannelAllocate(uint32_t priority,
                                        void *param) {
 
   sama_dma_channel_t *channel = NULL;
-  uint8_t id;
   uint8_t chan;
-  for (chan = 0; chan < XDMAC_CHANNELS_TOT; chan++) {
+  for (chan = 0; chan < XDMAC_CHANNELS; chan++) {
     channel = &_sama_dma_channel_t[chan];
     if (channel->state != SAMA_DMA_FREE) {
       channel = NULL;
@@ -287,22 +263,20 @@ sama_dma_channel_t* dmaChannelAllocate(uint32_t priority,
     channel->state = SAMA_DMA_NOT_FREE;
     channel->dma_func = func;
     channel->dma_param = param;
-    id = dmaGetControllerId(channel->xdmac);
 
-  /* Setting aic */
-    aicSetSourcePriority(id, priority);
-    aicEnableInt(id);
+  /* Setting AIC and enabling DMA clocks required by the current channel set.*/
+#if SAMA_HAL_IS_SECURE
+  aicSetSourcePriority(ID_XDMAC0, priority);
+  aicEnableInt(ID_XDMAC0);
+  pmcEnableXDMAC0();
+#else
+  aicSetSourcePriority(ID_XDMAC1, priority);
+  aicEnableInt(ID_XDMAC1);
+  pmcEnableXDMAC1();
+#endif /* SAMA_HAL_IS_SECURE */
 
-  /* Enabling DMA clocks required by the current channel set.*/
-    if (id == ID_XDMAC0) {
-      pmcEnableXDMAC0();
-    }
-    else {
-      pmcEnableXDMAC1();
-    }
-
-  /* Enable channel interrupt */
-    channel->xdmac->XDMAC_CHID[channel->chid].XDMAC_CIE =  XDMAC_CIE_BIE;
+  /* Enabling channel's interrupt */
+    channel->xdmac->XDMAC_CHID[channel->chid].XDMAC_CIE = XDMAC_CIE_BIE;
     channel->xdmac->XDMAC_GIE = XDMAC_GIE_IE0 << (channel->chid);
   }
   return channel;
@@ -324,20 +298,22 @@ sama_dma_channel_t* dmaChannelAllocate(uint32_t priority,
 void dmaChannelRelease(sama_dma_channel_t *dmachp) {
 
   osalDbgCheck(dmachp != NULL);
-  uint8_t id;
   /* Check if the channel is free.*/
   osalDbgAssert(dmachp->state != SAMA_DMA_FREE,
                 "not allocated");
-  id = dmaGetControllerId(dmachp->xdmac);
+
+#if SAMA_HAL_IS_SECURE
   /* Disables the associated IRQ vector.*/
-  aicDisableInt(id);
+  aicDisableInt(ID_XDMAC0);
+#else
+  aicDisableInt(ID_XDMAC1);
+#endif /* SAMA_HAL_IS_SECURE */
 
   /* Disables channel */
   dmaChannelDisable(dmachp);
 
   /* Marks the stream as not allocated.*/
   (dmachp)->state = SAMA_DMA_FREE;
-
 }
 
 #endif /* SAMA_DMA_REQUIRED */
