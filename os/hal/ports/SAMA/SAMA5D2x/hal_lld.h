@@ -64,6 +64,9 @@
 #elif defined(SAMA5D27)
 #define PLATFORM_NAME           "500Mhz processor with TrustZone, 16/32-bit DDR, CAN, Enhanced Security, BGA289"
 
+#elif defined(SAMA5D28)
+#define PLATFORM_NAME           "500Mhz processor with TrustZone, 16/32-bit DDR, CAN, Enhanced Security, BGA289, 'internal DDR"
+
 #else
 #error "SAMA5D2x device unsupported or not specified"
 #endif
