@@ -334,11 +334,12 @@ static void serve_interrupt(SerialDriver *sdp) {
   }
 
   /* Physical transmission end.*/
-  if (isr & USART_ISR_TC) {
+  if ((cr1 & USART_CR1_TCIE) && (isr & USART_ISR_TC)) {
     osalSysLockFromISR();
-    if (oqIsEmptyI(&sdp->oqueue))
+    if (oqIsEmptyI(&sdp->oqueue)) {
       chnAddFlagsI(sdp, CHN_TRANSMISSION_END);
-    u->CR1 = cr1 & ~USART_CR1_TCIE;
+      u->CR1 = cr1 & ~USART_CR1_TCIE;
+    }
     osalSysUnlockFromISR();
   }
 }
