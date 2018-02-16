@@ -130,7 +130,7 @@ static uint8_t dummyrx;
 static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t flags) {
 
   /* DMA errors handling.*/
-  #if defined(SAMA_SPI_DMA_ERROR_HOOK)
+#if defined(SAMA_SPI_DMA_ERROR_HOOK)
   if ((flags & (XDMAC_CIS_RBEIS | XDMAC_CIS_ROIS)) != 0) {
     SAMA_SPI_DMA_ERROR_HOOK(spip);
   }
@@ -473,7 +473,7 @@ void spi_lld_start(SPIDriver *spip) {
                                        (sama_dmaisr_t)spi_lld_serve_tx_interrupt,
                                        (void *)spip);
       osalDbgAssert(spip->dmatx != NULL, "no channel allocated");
-    /* Enabling USART on FLEXCOM */
+    /* Enabling SPI on FLEXCOM */
       spip->flexcom->FLEX_MR = FLEX_MR_OPMODE_SPI;
     /* Enable FLEXCOM0 clock */
       pmcEnableFLEXCOM0();
@@ -490,7 +490,7 @@ void spi_lld_start(SPIDriver *spip) {
                                        (sama_dmaisr_t)spi_lld_serve_tx_interrupt,
                                        (void *)spip);
       osalDbgAssert(spip->dmatx != NULL, "no channel allocated");
-    /* Enabling USART on FLEXCOM */
+    /* Enabling SPI on FLEXCOM */
       spip->flexcom->FLEX_MR = FLEX_MR_OPMODE_SPI;
     /* Enable FLEXCOM1 clock */
       pmcEnableFLEXCOM1();
@@ -507,7 +507,7 @@ void spi_lld_start(SPIDriver *spip) {
                                        (sama_dmaisr_t)spi_lld_serve_tx_interrupt,
                                        (void *)spip);
       osalDbgAssert(spip->dmatx != NULL, "no channel allocated");
-    /* Enabling USART on FLEXCOM */
+    /* Enabling SPI on FLEXCOM */
       spip->flexcom->FLEX_MR = FLEX_MR_OPMODE_SPI;
     /* Enable FLEXCOM2 clock */
       pmcEnableFLEXCOM2();
@@ -524,7 +524,7 @@ void spi_lld_start(SPIDriver *spip) {
                                        (sama_dmaisr_t)spi_lld_serve_tx_interrupt,
                                        (void *)spip);
       osalDbgAssert(spip->dmatx != NULL, "no channel allocated");
-    /* Enabling USART on FLEXCOM */
+    /* Enabling SPI on FLEXCOM */
       spip->flexcom->FLEX_MR = FLEX_MR_OPMODE_SPI;
     /* Enable FLEXCOM3 clock */
       pmcEnableFLEXCOM3();
@@ -541,7 +541,7 @@ void spi_lld_start(SPIDriver *spip) {
                                        (sama_dmaisr_t)spi_lld_serve_tx_interrupt,
                                        (void *)spip);
       osalDbgAssert(spip->dmatx != NULL, "no channel allocated");
-    /* Enabling USART on FLEXCOM */
+    /* Enabling SPI on FLEXCOM */
       spip->flexcom->FLEX_MR = FLEX_MR_OPMODE_SPI;
     /* Enable FLEXCOM4 clock */
       pmcEnableFLEXCOM4();
