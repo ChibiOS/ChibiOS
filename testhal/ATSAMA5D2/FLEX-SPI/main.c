@@ -23,17 +23,17 @@ static uint8_t txbuf[BUFFER_SIZE];
 static uint8_t rxbuf[BUFFER_SIZE];
 
 /*
- * SPI high speed configuration (83MHz (MCK/3/2), CPHA=0, CPOL=0, MSb first).
+ * SPI high speed configuration (peripheral clock / 3 = 27,6 Mhz, CPHA=0, CPOL=0, MSb first).
  */
 static const SPIConfig hs_spicfg = {
   NULL,                                        /* callback if present */
   0,                                           /* cs pad number       */
   SPI_MR_MODFDIS | SPI_MR_LLB,                 /* mr register         */
-  SPI_CSR_SCBR(1)                              /* csr                 */
+  SPI_CSR_SCBR(3)                              /* csr                 */
 };
 
 /*
- * SPI low speed configuration (83MHz / 166 = 500KHz, CPHA=0, CPOL=0, MSb first).
+ * SPI low speed configuration (peripheral clock / 166 = 500KHz, CPHA=0, CPOL=0, MSb first).
  */
 static const SPIConfig ls_spicfg = {
   NULL,                                        /* callback if present */
@@ -55,11 +55,9 @@ static THD_FUNCTION(spi_thread_1, p) {
     spiAcquireBus(&FSPID2);              /* Acquire ownership of the bus.    */
     palClearLine(LINE_LED_RED);          /* LED ON.                          */
     spiStart(&FSPID2, &hs_spicfg);       /* Setup transfer parameters.       */
-    spiSelect(&FSPID2);
     spiExchange(&FSPID2, BUFFER_SIZE,
                 txbuf, rxbuf);           /* Atomic transfer operations.      */
     cacheInvalidateRegion(&rxbuf, sizeof(rxbuf));
-    spiUnselect(&FSPID2);
     spiReleaseBus(&FSPID2);              /* Ownership release.               */
   }
 }
@@ -77,11 +75,9 @@ static THD_FUNCTION(spi_thread_2, p) {
     spiAcquireBus(&FSPID2);              /* Acquire ownership of the bus.    */
     palSetLine(LINE_LED_RED);            /* LED OFF.                         */
     spiStart(&FSPID2, &ls_spicfg);       /* Setup transfer parameters.       */
-    spiSelect(&FSPID2);
     spiExchange(&FSPID2, 512,
                 txbuf, rxbuf);           /* Atomic transfer operations.      */
     cacheInvalidateRegion(&rxbuf, sizeof(rxbuf));
-    spiUnselect(&FSPID2);
     spiReleaseBus(&FSPID2);              /* Ownership release.               */
   }
 }
