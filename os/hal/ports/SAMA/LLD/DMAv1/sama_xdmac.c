@@ -105,32 +105,22 @@ OSAL_IRQ_HANDLER(dmaHandler) {
   /* Read Global Interrupt Status Register */
   gis = dmaGetGlobalInt(xdmac);
 
-  for (chan = 0; chan < XDMAC_CHANNELS; chan++) {
+  for (chan = 0; gis && (chan < XDMAC_CHANNELS); chan++) {
     sama_dma_channel_t *channel = &_sama_dma_channel_t[chan];
-    bool pendingInt = FALSE;
 
     if (!(gis & (0x1 << chan)))
-    /* There is no pending interrupt for this channel */
+      /* There is no pending interrupt for this channel */
       continue;
+    gis &= ~(0x1 << chan);
 
-    if (channel->state == SAMA_DMA_FREE)
-    /* Channel is free */
-      continue;
-
-    uint32_t cis = (dmaGetChannelInt(channel)) & ~(dmaGetChannelIntMask(channel));
-
-    if (cis) {
-      pendingInt = TRUE;
-    }
-
-    if (cis & (XDMAC_CIS_LIS|XDMAC_CIS_DIS)) {
-      pendingInt = TRUE;
-    }
-
-    /* Executes callback */
-    if (pendingInt && channel->dma_func) {
-      channel->dma_func(channel->dma_param,cis);
-    }
+    /**
+     * if channel interrupt is enabled and pending, and a callback exists,
+     * execute it
+     */
+    uint32_t cis = dmaGetChannelInt(channel) &~ dmaGetChannelIntMask(channel);
+    if (cis & (XDMAC_CIS_BIS|XDMAC_CIS_LIS|XDMAC_CIS_DIS))
+      if (channel->dma_func)
+        channel->dma_func(channel->dma_param, cis);
   }
   aicAckInt();
   OSAL_IRQ_EPILOGUE();
@@ -258,13 +248,13 @@ sama_dma_channel_t* dmaChannelAllocate(uint32_t priority,
 
   /* Setting AIC and enabling DMA clocks required by the current channel set.*/
 #if SAMA_HAL_IS_SECURE
-  aicSetSourcePriority(ID_XDMAC0, priority);
-  aicEnableInt(ID_XDMAC0);
-  pmcEnableXDMAC0();
+    aicSetSourcePriority(ID_XDMAC0, priority);
+    aicEnableInt(ID_XDMAC0);
+    pmcEnableXDMAC0();
 #else
-  aicSetSourcePriority(ID_XDMAC1, priority);
-  aicEnableInt(ID_XDMAC1);
-  pmcEnableXDMAC1();
+    aicSetSourcePriority(ID_XDMAC1, priority);
+    aicEnableInt(ID_XDMAC1);
+    pmcEnableXDMAC1();
 #endif /* SAMA_HAL_IS_SECURE */
 
   /* Enabling channel's interrupt */
