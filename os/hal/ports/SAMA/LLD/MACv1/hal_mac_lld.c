@@ -73,6 +73,8 @@ static sama_eth_rx_descriptor_t __eth_rd[SAMA_MAC_RECEIVE_BUFFERS];
 /* Tx descriptor list */
 ALIGNED_VAR(8)
 static sama_eth_tx_descriptor_t __eth_td[SAMA_MAC_TRANSMIT_BUFFERS];
+static sama_eth_tx_descriptor_t __eth_td1[1];
+static sama_eth_tx_descriptor_t __eth_td2[1];
 
 static uint32_t __eth_rb[SAMA_MAC_RECEIVE_BUFFERS][BUFFER_SIZE];
 static uint32_t __eth_tb[SAMA_MAC_TRANSMIT_BUFFERS][BUFFER_SIZE];
@@ -268,13 +270,19 @@ void mac_lld_init(void) {
       __eth_rd[i].rdes0 |= SAMA_RDES0_WRAP;
     }
   }
+
+  __eth_td1[0].tdes1 = 0;
+  __eth_td2[0].tdes1 = 0;
+
   for (i = 0; i < SAMA_MAC_TRANSMIT_BUFFERS; i++) {
     __eth_td[i].tdes0 = (uint32_t)__eth_tb[i];
     /* Status reset */
     __eth_td[i].tdes1 = 0;
-    /* For last buffer wrap is set */
+      /* For last buffer wrap is set */
       if (i == (SAMA_MAC_TRANSMIT_BUFFERS - 1)){
         __eth_td[i].tdes1 |= SAMA_TDES1_WRAP;
+        __eth_td1[0].tdes1 |= SAMA_TDES1_WRAP;
+        __eth_td2[0].tdes1 |= SAMA_TDES1_WRAP;
       }
   }
 
@@ -358,7 +366,10 @@ void mac_lld_start(MACDriver *macp) {
   macp->rxptr = (sama_eth_rx_descriptor_t *)__eth_rd;
 
   for (i = 0; i < SAMA_MAC_TRANSMIT_BUFFERS; i++)
-    __eth_td[i].tdes1 |= SAMA_TDES1_LAST_BUFF | SAMA_TDES1_USED | (SAMA_TDES1_LENGTH_BUFF & BUFFER_SIZE);
+    __eth_td[i].tdes1 |= SAMA_TDES1_LAST_BUFF | SAMA_TDES1_USED;
+
+  __eth_td1[0].tdes1 |= SAMA_TDES1_LAST_BUFF | SAMA_TDES1_USED;
+  __eth_td2[0].tdes1 |= SAMA_TDES1_LAST_BUFF | SAMA_TDES1_USED;
 
   macp->txptr = (sama_eth_tx_descriptor_t *)__eth_td;
 
@@ -413,8 +424,8 @@ void mac_lld_start(MACDriver *macp) {
    * USED descriptor for alla queues including those not
    * intended for use.
    */
-  GMAC0->GMAC_TBQBAPQ[0] = (uint32_t)__eth_td;
-  GMAC0->GMAC_TBQBAPQ[1] = (uint32_t)__eth_td;
+  GMAC0->GMAC_TBQBAPQ[0] = (uint32_t)__eth_td1;
+  GMAC0->GMAC_TBQBAPQ[1] = (uint32_t)__eth_td2;
 
   /* Enabling required interrupt sources.*/
   GMAC0->GMAC_IER  = GMAC_IER_TCOMP | GMAC_IER_RCOMP;
@@ -425,7 +436,6 @@ void mac_lld_start(MACDriver *macp) {
 
   /* Enable RX and TX.*/
   GMAC0->GMAC_NCR |= GMAC_NCR_RXEN | GMAC_NCR_TXEN;
-
 }
 
 /**
@@ -503,7 +513,7 @@ msg_t mac_lld_get_transmit_descriptor(MACDriver *macp,
   tdes->tdes1 |= SAMA_TDES1_LOCKED;
 
   if (!(tdes->tdes1 & SAMA_TDES1_WRAP)) {
-    macp->txptr   += 1;
+    macp->txptr += 1;
   }
   else {
     macp->txptr = (sama_eth_tx_descriptor_t *)__eth_td;
@@ -535,7 +545,9 @@ void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp) {
   osalSysLock();
 
   /* Unlocks the descriptor and returns it to the DMA engine.*/
-  tdp->physdesc->tdes1 &= ~(SAMA_TDES1_LOCKED | SAMA_TDES1_USED);
+  tdp->physdesc->tdes1 &= ~(SAMA_TDES1_LOCKED | SAMA_TDES1_USED | SAMA_TDES1_LENGTH_BUFF);
+  /* Configure lentgh of buffer */
+  tdp->physdesc->tdes1 |= (SAMA_TDES1_LENGTH_BUFF & tdp->offset);
 
   /* Wait for the write to tdes1 to go through before resuming the DMA.*/
   __DSB();
