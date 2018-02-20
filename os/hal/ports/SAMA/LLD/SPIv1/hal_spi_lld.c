@@ -327,7 +327,7 @@ void spi_lld_init(void) {
   FSPID2.dmarx     = NULL;
   FSPID2.dmatx     = NULL;
   FSPID2.rxdmamode = XDMAC_CC_TYPE_PER_TRAN |
-                     XDMAC_CC_MBSIZE_SINGLE |
+                     XDMAC_CC_MBSIZE_SIXTEEN |
                      XDMAC_CC_DSYNC_PER2MEM |
                      XDMAC_CC_PROT_SEC |
                      XDMAC_CC_CSIZE_CHK_1 |
@@ -338,7 +338,7 @@ void spi_lld_init(void) {
                      XDMAC_CC_DAM_INCREMENTED_AM |
                      XDMAC_CC_PERID(PERID_FLEXCOM2_RX);
   FSPID2.txdmamode = XDMAC_CC_TYPE_PER_TRAN |
-                     XDMAC_CC_MBSIZE_SINGLE |
+                     XDMAC_CC_MBSIZE_SIXTEEN |
                      XDMAC_CC_DSYNC_MEM2PER |
                      XDMAC_CC_PROT_SEC |
                      XDMAC_CC_CSIZE_CHK_1 |
@@ -561,7 +561,7 @@ void spi_lld_start(SPIDriver *spip) {
   spip->spi->SPI_CR = SPI_CR_SWRST;
 
   /* SPI configuration */
-  spip->spi->SPI_MR = SPI_MR_MSTR | spip->config->mr;
+  spip->spi->SPI_MR = SPI_MR_MSTR | SPI_MR_WDRBT | spip->config->mr;
   spip->spi->SPI_MR &= ~SPI_MR_PCS_Msk;
   spip->spi->SPI_MR |=  SPI_PCS(spip->config->npcs);
   spip->spi->SPI_CSR[spip->config->npcs] = spip->config->csr;
@@ -597,6 +597,9 @@ void spi_lld_stop(SPIDriver *spip) {
     spip->spi->SPI_CR |= SPI_CR_SPIDIS;
   /* Enable write protection */
     spiEnableWP(spip->spi);
+	
+    dmaChannelRelease(spip->dmarx);
+    dmaChannelRelease(spip->dmatx);
 
 #if SAMA_SPI_USE_SPI0
     if (&SPID0 == spip)
@@ -773,3 +776,4 @@ void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
 #endif /* HAL_USE_SPI */
 
 /** @} */
+
