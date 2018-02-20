@@ -96,12 +96,11 @@ OSAL_IRQ_HANDLER(dmaHandler) {
 
 #if SAMA_HAL_IS_SECURE
   Xdmac *xdmac = XDMAC0;
-  mtxConfigPeriphSecurity(MATRIX0, ID_XDMAC0, SECURE_PER);
 #else
   Xdmac *xdmac = XDMAC1;
 #endif /* SAMA_HAL_IS_SECURE */
 
-  uint32_t chan, gis, flags;
+  uint32_t chan, gis;
 
   /* Read Global Interrupt Status Register */
   gis = dmaGetGlobalInt(xdmac);
@@ -118,26 +117,19 @@ OSAL_IRQ_HANDLER(dmaHandler) {
     /* Channel is free */
       continue;
 
-    uint32_t cis = dmaGetChannelInt(channel);
+    uint32_t cis = (dmaGetChannelInt(channel)) & ~(dmaGetChannelIntMask(channel));
 
-    if (cis & XDMAC_CIS_BIS) {
-      if (!(dmaGetChannelIntMask(channel) & XDMAC_CIM_LIM)) {
-        pendingInt = TRUE;
-      }
-    }
-
-    if (cis & XDMAC_CIS_LIS) {
+    if (cis) {
       pendingInt = TRUE;
     }
 
-    if (cis & XDMAC_CIS_DIS) {
+    if (cis & (XDMAC_CIS_LIS|XDMAC_CIS_DIS)) {
       pendingInt = TRUE;
     }
-    flags = cis;
 
     /* Executes callback */
     if (pendingInt && channel->dma_func) {
-      channel->dma_func(channel->dma_param,flags);
+      channel->dma_func(channel->dma_param,cis);
     }
   }
   aicAckInt();
