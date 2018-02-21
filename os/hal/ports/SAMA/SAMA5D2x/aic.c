@@ -84,6 +84,18 @@
 /* Driver exported functions.                                                */
 /*===========================================================================*/
 
+static OSAL_IRQ_HANDLER(aicSpuriousHandler) {
+  OSAL_IRQ_PROLOGUE();
+  (void)osalSysHalt("Spurious interrupt");
+  OSAL_IRQ_EPILOGUE();
+}
+
+static OSAL_IRQ_HANDLER(aicUnexpectedHandler) {
+  OSAL_IRQ_PROLOGUE();
+  osalSysHalt("Unexpected interrupt");
+  OSAL_IRQ_EPILOGUE();
+}
+
 /**
  * @brief   AIC Initialization.
  * @note    Better reset everything in the AIC.
@@ -99,6 +111,11 @@ void aicInit(void) {
 #endif
 
   aicDisableWP(aic);
+
+  aic->AIC_SPU = (uint32_t)aicSpuriousHandler;
+  aic->AIC_SSR = 0;
+  aic->AIC_SVR = (uint32_t)aicUnexpectedHandler;
+
   unsigned i;
   /* Disable all interrupts */
   for (i = 1; i < ID_PERIPH_COUNT; i++) {
@@ -106,16 +123,16 @@ void aicInit(void) {
     aic->AIC_IDCR = AIC_IDCR_INTD;
 
     /* Changes type */
-    aic->AIC_SSR = i;
     aic->AIC_SMR = AIC_SMR_SRCTYPE(EXT_NEGATIVE_EDGE);
 
     /* Clear pending interrupt */
-    aic->AIC_SSR = i;
     aic->AIC_ICCR = AIC_ICCR_INTCLR;
 
     /* Changes type */
-    aic->AIC_SSR = i;
     aic->AIC_SMR = AIC_SMR_SRCTYPE(INT_LEVEL_SENSITIVE);
+
+    /* Default handler */
+    aic->AIC_SVR = (uint32_t)aicUnexpectedHandler;
   }
   aicEnableWP(aic);
 }
