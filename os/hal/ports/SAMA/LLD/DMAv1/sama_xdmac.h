@@ -144,6 +144,20 @@ typedef struct {
   (dmachp)->xdmac->XDMAC_CHID[(dmachp)->chid].XDMAC_CIS
 
 /**
+ * @brief   Returns the number of transfers to be performed.
+ * @note    This function can be invoked in both ISR or thread context.
+ * @pre     The stream must have been allocated using @p dmaChannelAllocate().
+ * @post    After use the stream can be released using @p dmaChannelRelease().
+ *
+ * @param[in] dmachp       pointer to a @p sama_dma_channel_t structure
+ * @return              The number of transfers to be performed.
+ *
+ * @special
+ */
+#define dmaChannelGetTransactionSize(dmachp)                          \
+  ((size_t)((dmachp)->xdmac->XDMAC_CHID[(dmachp)->chid].XDMAC_CUBC))
+
+/**
  * @brief   Associates a source to a DMA channel.
  * @note    This function can be invoked in both ISR or thread context.
  * @pre     The channel must have been allocated using @p dmaChannelAllocate().
