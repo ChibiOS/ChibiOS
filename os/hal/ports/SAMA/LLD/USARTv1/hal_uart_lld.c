@@ -1343,6 +1343,13 @@ void uart_lld_stop(UARTDriver *uartp) {
  */
 void uart_lld_start_send(UARTDriver *uartp, size_t n, const void *txbuf) {
 
+  /* TX DMA channel preparation.*/
+  dmaChannelSetSource(uartp->dmatx, txbuf);
+  dmaChannelSetTransactionSize(uartp->dmatx, n);
+
+  /* Starting transfer.*/
+  dmaChannelEnable(uartp->dmatx);
+
   /* Only enable TC interrupt if there's a callback attached to it.
      Also we need to clear TC flag which could be set before. */
   if (uartp->config->txend2_cb != NULL) {
@@ -1355,13 +1362,6 @@ void uart_lld_start_send(UARTDriver *uartp, size_t n, const void *txbuf) {
       uartp->usart->US_IER = US_IER_TXEMPTY;
 #endif
   }
-
-  /* TX DMA channel preparation.*/
-  dmaChannelSetSource(uartp->dmatx, txbuf);
-  dmaChannelSetTransactionSize(uartp->dmatx, n);
-
-  /* Starting transfer.*/
-  dmaChannelEnable(uartp->dmatx);
 }
 
 /**
@@ -1378,8 +1378,8 @@ void uart_lld_start_send(UARTDriver *uartp, size_t n, const void *txbuf) {
 size_t uart_lld_stop_send(UARTDriver *uartp) {
 
   dmaChannelDisable(uartp->dmatx);
-  /* number of data frames not transmitted is always zero */
-  return 0;
+
+  return dmaChannelGetTransactionSize(uartp->dmatx);
 }
 
 /**
@@ -1400,7 +1400,7 @@ void uart_lld_start_receive(UARTDriver *uartp, size_t n, void *rxbuf) {
 
   /* Enabling BIE interrupt if disabled */
   if ((uartp->dmarx->xdmac->XDMAC_CHID[uartp->dmarx->chid].XDMAC_CIM & XDMAC_CIM_BIM) == 0) {
-  uartp->dmarx->xdmac->XDMAC_CHID[uartp->dmarx->chid].XDMAC_CIE =  XDMAC_CIE_BIE;
+    uartp->dmarx->xdmac->XDMAC_CHID[uartp->dmarx->chid].XDMAC_CIE =  XDMAC_CIE_BIE;
   }
 
   /* Resetting the XDMAC_CNCDAx */
@@ -1440,7 +1440,7 @@ size_t uart_lld_stop_receive(UARTDriver *uartp) {
   size_t n;
 
   dmaChannelDisable(uartp->dmarx);
-  n = 0;
+  n = dmaChannelGetTransactionSize(uartp->dmarx);
   uart_enter_rx_idle_loop(uartp);
 
   return n;
