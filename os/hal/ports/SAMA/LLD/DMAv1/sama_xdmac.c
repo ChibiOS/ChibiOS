@@ -114,13 +114,12 @@ OSAL_IRQ_HANDLER(dmaHandler) {
     gis &= ~(0x1 << chan);
 
     /**
-     * if channel interrupt is enabled and pending, and a callback exists,
+     * if a channel interrupt is enabled and pending, and a callback exists,
      * execute it
      */
     uint32_t cis = dmaGetChannelInt(channel) & dmaGetChannelIntMask(channel);
-    if (cis & (XDMAC_CIS_BIS|XDMAC_CIS_LIS|XDMAC_CIS_DIS))
-      if (channel->dma_func)
-        channel->dma_func(channel->dma_param, cis);
+    if (cis && channel->dma_func)
+      channel->dma_func(channel->dma_param, cis);
   }
   aicAckInt();
   OSAL_IRQ_EPILOGUE();
