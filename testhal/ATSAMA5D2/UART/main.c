@@ -17,11 +17,11 @@
 #include "ch.h"
 #include "hal.h"
 
-#define BUFFER_SIZE 5
+#define BUFFER 5
 
 static virtual_timer_t vt3, vt4, vt5;
-static const uint8_t message[] = "ABCDE";
-static uint8_t buffer[BUFFER_SIZE];
+static const uint8_t message[] =  {'a','b','c','d','e','f'};
+static uint8_t buffer[BUFFER];
 
 static void led3off(void *p) {
 
@@ -140,15 +140,6 @@ int main(void) {
    */
   uartStart(&FUARTD0, &uart_cfg_1);
 
-  /*
-   * Activates the serial driver 0 using the driver default configuration.
-   */
-  sdStart(&SD0, NULL);
-
-  /* Redirecting  SERIAL RX on PB26 and UART0 TX on PB27. */
-  palSetGroupMode(PIOB, PAL_PORT_BIT(26) | PAL_PORT_BIT(27), 0U,
-                  PAL_SAMA_FUNC_PERIPH_C | PAL_MODE_SECURE);
-
   /* Redirecting  UART FLEXCOM0 RX on PB28 and UART FLEXCOM0 TX on PB29. */
   palSetGroupMode(PIOB, PAL_PORT_BIT(28) | PAL_PORT_BIT(29), 0U,
                   PAL_SAMA_FUNC_PERIPH_C | PAL_MODE_SECURE);
@@ -165,9 +156,10 @@ int main(void) {
    */
       uartStopReceive(&FUARTD0);
       uartStopSend(&FUARTD0);
-      uartStartReceive(&FUARTD0, BUFFER_SIZE, buffer);
-      uartStartSend(&FUARTD0, BUFFER_SIZE, message);
+      uartStartReceive(&FUARTD0, BUFFER, buffer);
+      uartStartSend(&FUARTD0, 6, message);
     }
+
     chThdSleepMilliseconds(500);
   }
 }
