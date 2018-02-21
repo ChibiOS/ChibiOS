@@ -1,0 +1,139 @@
+******************************************************************************
+*** ChibiOS 18.2.0 Release Notes.                                          ***
+******************************************************************************
+
+ChibiOS 18.2.0 is composed of several independent but inter-operable
+sub-projects: RT, NIL, HAL, EX. Plus several external libraries
+integrated in our structure: WolfSSL, FatFS and lwIP.
+
+*** ChibiOS 18.2.0 highlights ****
+
+This release is focused on features and  general improvements, HAL, RT and NIL
+received a series of important improvements, new features have been added.
+
+*** ChibiOS 18.2.0 general improvements ***
+
+- WolfSSL 1.12.2 has been integrated. HTTPS demo added.
+- FatFS 0.13 has been integrated.
+- lwIP 2.0.3 has been integrated.
+- CMSIS 5.1.1 has been integrated.
+- Improved build system based on make.
+- Improved integration with Eclipse, launch configurations have been
+  centralized for many projects.
+- Several HAL and test applications have become "multi projects", a single
+  project is able to build for multiple targets/boards.
+- Improved test engine.
+- Added a test suite generator written in FTL, now it is possible to generate
+  test code without the need of SPC5Studio.
+- Added a board files generator written in FTL, now it is possible to generate
+  board files without the need of ChibiStudio.
+
+*** What's new in RT/NIL ports ***
+
+- GHS compiler support added to the Power e200z port.
+
+*** What's new in OS Library ***
+
+- OS library now has its own test suite.
+- Mailbox API names changed by adding "Timeout" to those function that have
+  timeout capability, for consistency with the rest of the system.
+- Added an "Objects Factory" to the OS Library, it allows to dynamically
+  allocate reference-counted kernel objects/buffers or to register
+  static objects. Allocated/registered objects can be retrieved by name.
+- Added an "Objects FIFO" object to the OS Library, it allows to
+  exchange complex objects between threads/ISRs. It is based on a
+  mailbox and a guarded memory pool.
+- Added alignment handling to memory pools.
+- Added a new chGuardedPoolAllocI() API to the guarded memory pools.
+
+*** What's new in RT 5.0.0 ***
+
+- The type systime_t has been split in systime_t and sysinterval_t, the
+  two can have different size. The system is now more rigorous in time
+  handling, an absolute time is something different from an interval,
+  sysinterval_t can be larger than the systime_t, this means that it is
+  now possible to use very long intervals when the system time uses a small
+  counter.
+- Time conversion macros have been renamed in TIME_S2I(), TIME_MS2I(),
+  TIME_US2(), TIME_I2S(), TIME_I2MS() and TIME_I2US. Conversion is now done
+  by casting all operands to a large time_conv_t type improving safety by
+  eliminating integer truncations.
+- Time conversion functions have been renamed in: chTimeS2I(), chTimeMS2I(),
+  chTimeUS2I(), chTimeI2S(), chTimeI2MS() and chTimeI2US().
+- New functions have been added for dealing with operations with time and
+  intervals: chTimeAddX() and chTimeDiffX().
+- All functions that have a timeout parameter now take a sysinterval_t type
+  instead of systime_t.
+- Improved test suite.
+- Enhanced Events API, added chEvtGetAndClearEventsI() and chEvtAddEventsI().
+- The chconf.h configuration files now are tagged with the version
+  number for safety. The system rejects obsolete files during
+  compilation. Stronger checks are performed on chconf.h, now missing
+  settings trigger an error instead of getting a default.
+
+*** What's new in NIL 3.0.0 ***
+
+- The type systime_t has been split in systime_t and sysinterval_t. The
+  system is now more rigorous in time handling, an absolute time is
+  something different from an interval.
+- Time conversion macros have been renamed in TIME_S2I(), TIME_MS2I(),
+  TIME_US2(), TIME_I2S(), TIME_I2MS() and TIME_I2US. Conversion is now done
+  by casting all operands to a large time_conv_t type improving safety by
+  eliminating integer truncations.
+- New functions have been added for dealing with operations with time and
+  intervals: chTimeAddX() and chTimeDiffX().
+- All functions that have a timeout parameter now take a sysinterval_t type
+  instead of systime_t.
+- Improved test suite.
+- The chconf.h configuration files now are tagged with the version
+  number for safety. The system rejects obsolete files during
+  compilation.
+
+*** What's new in HAL 6.0.0 ***
+
+- Added a Managed Flash Storage module to the HAL. This modules handles
+  garbage collection, storage self-repair and wear leveling.
+- Improved serial driver.
+  - Added a "control" function to the channels interface, it allows to add
+    custom features to the various implementations.
+  - Added I-class functions to the serial driver: sdGetI(), sdReadI(),
+    sdPutI() and sdWriteI().
+- Improved PAL driver.
+  - Added an user parameter to the PAL callbacks for consistency with other
+    drivers.
+  - Added blocking functions for edge synchronization: palWaitLineTimeout()
+    and palWaitLineTimeoutS().
+- Improved SPI driver.
+  - Now there are multiple modes for CS handling: by PAL pad (previous one), by
+    PAL line, by PAL port mask and LLD-specific.
+  - Added circular continuous mode to the SPI driver.
+- Improved CAN driver.
+  - Added callback capability to the CAN driver. Now it is possible to use
+    callbacks in place of classic events.
+- Improved USB driver.
+  - Added a usbWakeupHost() function for standby exit.
+- Improved HAL queues to increase performance. Added new functions: iqGetI(),
+  iqReadI(), oqPutI() and oqWriteI().
+
+*** What's new in EX 1.0.1 ***
+
+- No changes, few bug fixes.
+
+*** What's new in AVR HAL support ***
+
+- Added initial ATtiny167 support.
+- Added initial ATXmega128a4u support.
+- Improvement of SPI, EXT, PAL low level drivers.
+
+*** What's new in STM32 HAL support ***
+
+- Updated SPI drivers to implement the new circular mode of the HAL SPI
+  driver model.
+- Updated STM32F1xx headers to 1.6, STM32F3xx to 1.9, STM32L0xx to 1.10,
+  STM32L4xx to 1.9, STM32H7xx to 1.1.
+- Implemented PAL enhancements in GPIOv1, GPIOv2 and GPIOv3 implementations.
+- Modified the STM32 OTGv1 driver to work without pump thread, transfers
+  are now done in the ISR. The driver is now greatly simplified.
+- Added STM32L496xx/STM32L4A6xx support.
+- Added STM32F030x4 support.
+- Added initial STM32H7xx support.
