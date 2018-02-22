@@ -132,7 +132,7 @@ void aicInit(void) {
     aic->AIC_SMR = AIC_SMR_SRCTYPE(INT_LEVEL_SENSITIVE);
 
     /* Default handler */
-//    aic->AIC_SVR = (uint32_t)aicUnexpectedHandler;
+    aic->AIC_SVR = (uint32_t)aicUnexpectedHandler;
   }
   aicEnableWP(aic);
 }
