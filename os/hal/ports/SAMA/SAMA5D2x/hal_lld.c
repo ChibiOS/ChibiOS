@@ -84,12 +84,12 @@ void hal_lld_init(void) {
   pmcEnableWP();
 #endif
 
+  /* Advanced interrupt controller init */
+  aicInit();
+
 #if defined(SAMA_DMA_REQUIRED)
   dmaInit();
 #endif
-
-  /* Advanced interrupt controller init */
-  aicInit();
 
 }
 
