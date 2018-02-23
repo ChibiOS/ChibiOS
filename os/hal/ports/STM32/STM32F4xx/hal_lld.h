@@ -1961,8 +1961,10 @@
 #define STM32_FLASHBITS             0x00000006
 #elif STM32_HCLK <= STM32_7WS_THRESHOLD
 #define STM32_FLASHBITS             0x00000007
-#else
+#elif STM32_HCLK <= STM32_8WS_THRESHOLD
 #define STM32_FLASHBITS             0x00000008
+#else
+#error "invalid frequency at specified VDD level"
 #endif
 
 /* There are differences in vector names in the various sub-families,

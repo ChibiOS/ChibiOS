@@ -930,8 +930,9 @@
 #define STM32_4WS_THRESHOLD         150000000
 #define STM32_5WS_THRESHOLD         180000000
 #define STM32_6WS_THRESHOLD         210000000
-#define STM32_7WS_THRESHOLD         0
+#define STM32_7WS_THRESHOLD         STM32_SYSCLK_MAX
 #define STM32_8WS_THRESHOLD         0
+#define STM32_9WS_THRESHOLD         0
 
 #elif (STM32_VDD >= 240) && (STM32_VDD < 270)
 #define STM32_0WS_THRESHOLD         24000000
@@ -942,7 +943,8 @@
 #define STM32_5WS_THRESHOLD         144000000
 #define STM32_6WS_THRESHOLD         168000000
 #define STM32_7WS_THRESHOLD         192000000
-#define STM32_8WS_THRESHOLD         0
+#define STM32_8WS_THRESHOLD         STM32_SYSCLK_MAX
+#define STM32_9WS_THRESHOLD         0
 
 #elif (STM32_VDD >= 210) && (STM32_VDD < 240)
 #define STM32_0WS_THRESHOLD         22000000
@@ -954,6 +956,7 @@
 #define STM32_6WS_THRESHOLD         154000000
 #define STM32_7WS_THRESHOLD         176000000
 #define STM32_8WS_THRESHOLD         198000000
+#define STM32_9WS_THRESHOLD         STM32_SYSCLK_MAX
 
 #elif (STM32_VDD >= 180) && (STM32_VDD < 210)
 #define STM32_0WS_THRESHOLD         20000000
@@ -964,7 +967,8 @@
 #define STM32_5WS_THRESHOLD         120000000
 #define STM32_6WS_THRESHOLD         140000000
 #define STM32_7WS_THRESHOLD         160000000
-#define STM32_8WS_THRESHOLD         0
+#define STM32_8WS_THRESHOLD         180000000
+#define STM32_9WS_THRESHOLD         0
 
 #else
 #error "invalid VDD voltage specified"
@@ -2058,8 +2062,11 @@
 #elif STM32_HCLK <= STM32_8WS_THRESHOLD
 #define STM32_FLASHBITS             0x00000008
 
-#else
+#elif STM32_HCLK <= STM32_9WS_THRESHOLD
 #define STM32_FLASHBITS             0x00000009
+
+#else
+#error "invalid frequency at specified VDD level"
 #endif
 
 /*===========================================================================*/
