@@ -1163,7 +1163,7 @@
 #define STM32_I2C3_ERROR_NUMBER             73
 #define STM32_I2C3_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 1) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 2))
-#define STM32_I2C3_RX_DMA_CHN               0x00000300
+#define STM32_I2C3_RX_DMA_CHN               0x00000310
 #define STM32_I2C3_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 0) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 4))
 #define STM32_I2C3_TX_DMA_CHN               0x00030008
@@ -1173,8 +1173,10 @@
 #define STM32_I2C4_ERROR_HANDLER            Vector1C0
 #define STM32_I2C4_EVENT_NUMBER             95
 #define STM32_I2C4_ERROR_NUMBER             96
-#define STM32_I2C4_RX_DMA_MSK               STM32_DMA_STREAM_ID_MSK(1, 1)
-#define STM32_I2C4_RX_DMA_CHN               0x00000080
+#define STM32_I2C4_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 5) |\
+                                             STM32_DMA_STREAM_ID_MSK(1, 2) |\
+                                             STM32_DMA_STREAM_ID_MSK(1, 1))
+#define STM32_I2C4_RX_DMA_CHN               0x00200280
 #define STM32_I2C4_TX_DMA_MSK               STM32_DMA_STREAM_ID_MSK(1, 6)
 #define STM32_I2C4_TX_DMA_CHN               0x08000000
 

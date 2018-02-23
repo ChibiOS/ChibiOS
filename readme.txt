@@ -88,6 +88,9 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+*** 18.2.1 ***
+- HAL: Fixed wrong DMA settings for STM32F76x I2C3 and I2C4 (bug #920).
+
 *** 18.2.0 ***
 - First 18.2.x release, see release note 18.2.0.
 
