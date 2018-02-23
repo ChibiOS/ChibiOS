@@ -167,6 +167,8 @@
        dependencies and configuration directories. This makes possible
        to have multiple non-conflicting makefiles in the same project.
        Updated the various platform.mk implementing "smart build" mode.
+- HAL: Fixed wrong DMA settings for STM32F76x I2C3 and I2C4 (bug #920)
+       (backported to 18.2.1 and 17.6.4).
 - LIB: Fixed heap allocator failing on simulators (bug #917)(backported
        to 17.6.4).
 - STP: Fixed CRT0_FORCE_MSP_INIT flag not defaulted in crt0_v7m.S (bug #916)
