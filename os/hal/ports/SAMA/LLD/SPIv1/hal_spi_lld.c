@@ -192,7 +192,7 @@ void spi_lld_init(void) {
   SPID0.dmarx     = NULL;
   SPID0.dmatx     = NULL;
   SPID0.rxdmamode = XDMAC_CC_TYPE_PER_TRAN |
-                    XDMAC_CC_MBSIZE_SINGLE |
+                    XDMAC_CC_MBSIZE_SIXTEEN |
                     XDMAC_CC_DSYNC_PER2MEM |
                     XDMAC_CC_PROT_SEC |
                     XDMAC_CC_CSIZE_CHK_1 |
@@ -203,7 +203,7 @@ void spi_lld_init(void) {
                     XDMAC_CC_DAM_INCREMENTED_AM |
                     XDMAC_CC_PERID(PERID_SPI0_RX);
   SPID0.txdmamode = XDMAC_CC_TYPE_PER_TRAN |
-                    XDMAC_CC_MBSIZE_SINGLE |
+                    XDMAC_CC_MBSIZE_SIXTEEN |
                     XDMAC_CC_DSYNC_MEM2PER |
                     XDMAC_CC_PROT_SEC |
                     XDMAC_CC_CSIZE_CHK_1 |
@@ -225,7 +225,7 @@ void spi_lld_init(void) {
   SPID1.dmarx     = NULL;
   SPID1.dmatx     = NULL;
   SPID1.rxdmamode = XDMAC_CC_TYPE_PER_TRAN |
-                    XDMAC_CC_MBSIZE_SINGLE |
+                    XDMAC_CC_MBSIZE_SIXTEEN |
                     XDMAC_CC_DSYNC_PER2MEM |
                     XDMAC_CC_PROT_SEC |
                     XDMAC_CC_CSIZE_CHK_1 |
@@ -236,7 +236,7 @@ void spi_lld_init(void) {
                     XDMAC_CC_DAM_INCREMENTED_AM |
                     XDMAC_CC_PERID(PERID_SPI1_RX);
   SPID1.txdmamode = XDMAC_CC_TYPE_PER_TRAN |
-                    XDMAC_CC_MBSIZE_SINGLE |
+                    XDMAC_CC_MBSIZE_SIXTEEN |
                     XDMAC_CC_DSYNC_MEM2PER |
                     XDMAC_CC_PROT_SEC |
                     XDMAC_CC_CSIZE_CHK_1 |
@@ -259,7 +259,7 @@ void spi_lld_init(void) {
   FSPID0.dmarx     = NULL;
   FSPID0.dmatx     = NULL;
   FSPID0.rxdmamode = XDMAC_CC_TYPE_PER_TRAN |
-                     XDMAC_CC_MBSIZE_SINGLE |
+                     XDMAC_CC_MBSIZE_SIXTEEN |
                      XDMAC_CC_DSYNC_PER2MEM |
                      XDMAC_CC_PROT_SEC |
                      XDMAC_CC_CSIZE_CHK_1 |
@@ -270,7 +270,7 @@ void spi_lld_init(void) {
                      XDMAC_CC_DAM_INCREMENTED_AM |
                      XDMAC_CC_PERID(PERID_FLEXCOM0_RX);
   FSPID0.txdmamode = XDMAC_CC_TYPE_PER_TRAN |
-                     XDMAC_CC_MBSIZE_SINGLE |
+                     XDMAC_CC_MBSIZE_SIXTEEN |
                      XDMAC_CC_DSYNC_MEM2PER |
                      XDMAC_CC_PROT_SEC |
                      XDMAC_CC_CSIZE_CHK_1 |
@@ -293,7 +293,7 @@ void spi_lld_init(void) {
   FSPID1.dmarx     = NULL;
   FSPID1.dmatx     = NULL;
   FSPID1.rxdmamode = XDMAC_CC_TYPE_PER_TRAN |
-                     XDMAC_CC_MBSIZE_SINGLE |
+                     XDMAC_CC_MBSIZE_SIXTEEN |
                      XDMAC_CC_DSYNC_PER2MEM |
                      XDMAC_CC_PROT_SEC |
                      XDMAC_CC_CSIZE_CHK_1 |
@@ -304,7 +304,7 @@ void spi_lld_init(void) {
                      XDMAC_CC_DAM_INCREMENTED_AM |
                      XDMAC_CC_PERID(PERID_FLEXCOM1_RX);
   FSPID1.txdmamode = XDMAC_CC_TYPE_PER_TRAN |
-                     XDMAC_CC_MBSIZE_SINGLE |
+                     XDMAC_CC_MBSIZE_SIXTEEN |
                      XDMAC_CC_DSYNC_MEM2PER |
                      XDMAC_CC_PROT_SEC |
                      XDMAC_CC_CSIZE_CHK_1 |
@@ -361,7 +361,7 @@ void spi_lld_init(void) {
   FSPID3.dmarx     = NULL;
   FSPID3.dmatx     = NULL;
   FSPID3.rxdmamode = XDMAC_CC_TYPE_PER_TRAN |
-                     XDMAC_CC_MBSIZE_SINGLE |
+                     XDMAC_CC_MBSIZE_SIXTEEN |
                      XDMAC_CC_DSYNC_PER2MEM |
                      XDMAC_CC_PROT_SEC |
                      XDMAC_CC_CSIZE_CHK_1 |
@@ -372,7 +372,7 @@ void spi_lld_init(void) {
                      XDMAC_CC_DAM_INCREMENTED_AM |
                      XDMAC_CC_PERID(PERID_FLEXCOM3_RX);
   FSPID3.txdmamode = XDMAC_CC_TYPE_PER_TRAN |
-                     XDMAC_CC_MBSIZE_SINGLE |
+                     XDMAC_CC_MBSIZE_SIXTEEN |
                      XDMAC_CC_DSYNC_MEM2PER |
                      XDMAC_CC_PROT_SEC |
                      XDMAC_CC_CSIZE_CHK_1 |
@@ -395,7 +395,7 @@ void spi_lld_init(void) {
   FSPID4.dmarx     = NULL;
   FSPID4.dmatx     = NULL;
   FSPID4.rxdmamode = XDMAC_CC_TYPE_PER_TRAN |
-                     XDMAC_CC_MBSIZE_SINGLE |
+                     XDMAC_CC_MBSIZE_SIXTEEN |
                      XDMAC_CC_DSYNC_PER2MEM |
                      XDMAC_CC_PROT_SEC |
                      XDMAC_CC_CSIZE_CHK_1 |
@@ -406,7 +406,7 @@ void spi_lld_init(void) {
                      XDMAC_CC_DAM_INCREMENTED_AM |
                      XDMAC_CC_PERID(PERID_FLEXCOM4_RX);
   FSPID4.txdmamode = XDMAC_CC_TYPE_PER_TRAN |
-                     XDMAC_CC_MBSIZE_SINGLE |
+                     XDMAC_CC_MBSIZE_SIXTEEN |
                      XDMAC_CC_DSYNC_MEM2PER |
                      XDMAC_CC_PROT_SEC |
                      XDMAC_CC_CSIZE_CHK_1 |
