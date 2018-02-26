@@ -83,21 +83,6 @@ static uint32_t __eth_tb[SAMA_MAC_TRANSMIT_BUFFERS][BUFFER_SIZE];
 /* Driver local macros.                                                      */
 /*===========================================================================*/
 /**
- * @brief   Configures ETH pins.
- * TODO: move into board.c
- *
- * @notapi
- */
-void configurePinsETH(void) {
-  palSetGroupMode(PIOB, PAL_PORT_BIT(PIOB_ETH_GTXCK) | PAL_PORT_BIT(PIOB_ETH_GTXEN) |
-                  PAL_PORT_BIT(PIOB_ETH_GRXDV) | PAL_PORT_BIT(PIOB_ETH_GRXER) |
-                  PAL_PORT_BIT(PIOB_ETH_GRX0) | PAL_PORT_BIT(PIOB_ETH_GRX1) |
-                  PAL_PORT_BIT(PIOB_ETH_GTX0) | PAL_PORT_BIT(PIOB_ETH_GTX1) |
-                  PAL_PORT_BIT(PIOB_ETH_GMDC) | PAL_PORT_BIT(PIOB_ETH_GMDIO),
-                  0U, PAL_SAMA_FUNC_PERIPH_F  |  PAL_MODE_SECURE);
-}
-
-/**
  * @brief   Waits for phy management logic idle.
  *
  * @notapi
@@ -255,7 +240,6 @@ void mac_lld_init(void) {
   mtxConfigPeriphSecurity(MATRIX1, ID_GMAC0_Q2, SECURE_PER);
 #endif /* SAMA_HAL_IS_SECURE */
 
-  configurePinsETH();
   macObjectInit(&ETHD0);
   ETHD0.link_up = false;
 
