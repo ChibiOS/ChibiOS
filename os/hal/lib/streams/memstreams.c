@@ -84,7 +84,7 @@ static msg_t _get(void *ip) {
   return b;
 }
 
-static const struct MemStreamVMT vmt = {_writes, _reads, _put, _get};
+static const struct MemStreamVMT vmt = {(size_t)0, _writes, _reads, _put, _get};
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
