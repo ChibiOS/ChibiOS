@@ -96,6 +96,23 @@ static const sama_pio_init_t sama_inits[] = {
 void __early_init(void) {
 
   sama_clock_init();
+
+  /* Configures ETH's pins */
+#if SAMA_HAL_IS_SECURE
+  palSetGroupMode(PIOB, PAL_PORT_BIT(PIOB_ETH_GTXCK) | PAL_PORT_BIT(PIOB_ETH_GTXEN) |
+                  PAL_PORT_BIT(PIOB_ETH_GRXDV) | PAL_PORT_BIT(PIOB_ETH_GRXER) |
+                  PAL_PORT_BIT(PIOB_ETH_GRX0) | PAL_PORT_BIT(PIOB_ETH_GRX1) |
+                  PAL_PORT_BIT(PIOB_ETH_GTX0) | PAL_PORT_BIT(PIOB_ETH_GTX1) |
+                  PAL_PORT_BIT(PIOB_ETH_GMDC) | PAL_PORT_BIT(PIOB_ETH_GMDIO),
+                  0U, PAL_SAMA_FUNC_PERIPH_F  |  PAL_MODE_SECURE);
+#else
+  palSetGroupMode(PIOB, PAL_PORT_BIT(PIOB_ETH_GTXCK) | PAL_PORT_BIT(PIOB_ETH_GTXEN) |
+                  PAL_PORT_BIT(PIOB_ETH_GRXDV) | PAL_PORT_BIT(PIOB_ETH_GRXER) |
+                  PAL_PORT_BIT(PIOB_ETH_GRX0) | PAL_PORT_BIT(PIOB_ETH_GRX1) |
+                  PAL_PORT_BIT(PIOB_ETH_GTX0) | PAL_PORT_BIT(PIOB_ETH_GTX1) |
+                  PAL_PORT_BIT(PIOB_ETH_GMDC) | PAL_PORT_BIT(PIOB_ETH_GMDIO),
+                  0U, PAL_SAMA_FUNC_PERIPH_F);
+#endif
 }
 
 /**
