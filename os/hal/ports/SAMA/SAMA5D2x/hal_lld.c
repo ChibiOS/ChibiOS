@@ -76,6 +76,11 @@ void hal_lld_init(void) {
 
   /* Configures PMC and RTC as secure */
   mtxConfigPeriphSecurity(MATRIX1, ID_SYSC, SECURE_PER);
+  mtxConfigPeriphSecurity(MATRIX1, ID_SFC, SECURE_PER);
+  mtxConfigPeriphSecurity(MATRIX1, ID_SFR, SECURE_PER);
+  mtxConfigPeriphSecurity(MATRIX0, ID_L2CC, SECURE_PER);
+  mtxConfigPeriphSecurity(MATRIX1, ID_SFRBU, SECURE_PER);
+  mtxConfigPeriphSecurity(MATRIX1, ID_CHIPID, SECURE_PER);
 
   /* Enabling matrix clock */
   pmcEnableH32MX();
