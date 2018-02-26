@@ -61,6 +61,7 @@ typedef struct {
  * @brief   @p BaseBlockDevice specific methods.
  */
 #define _base_block_device_methods                                          \
+  _base_object_methods                                                      \
   /* Removable media detection.*/                                           \
   bool (*is_inserted)(void *instance);                                      \
   /* Removable write protection detection.*/                                \
@@ -84,6 +85,7 @@ typedef struct {
  * @brief   @p BaseBlockDevice specific data.
  */
 #define _base_block_device_data                                             \
+  _base_object_data                                                         \
   /* Driver state.*/                                                        \
   blkstate_t            state;
 
@@ -95,6 +97,8 @@ struct BaseBlockDeviceVMT {
 };
 
 /**
+ * @extends BaseObject
+ *
  * @brief   Base block device class.
  * @details This class represents a generic, block-accessible, device.
  */
