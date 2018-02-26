@@ -1182,7 +1182,7 @@
 /*
  * PLL enable check.
  */
-#if (STM32_CLK48SEL == STM32_CLK48SEL_PLL) ||                               \
+#if (STM32_HSI48_ENABLED && (STM32_CLK48SEL == STM32_CLK48SEL_PLL)) ||      \
     (STM32_SW == STM32_SW_PLL) ||                                           \
     (STM32_MCOSEL == STM32_MCOSEL_PLL) ||                                   \
     (STM32_SAI1SEL == STM32_SAI1SEL_PLL) ||                                 \

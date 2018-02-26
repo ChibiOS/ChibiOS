@@ -48,6 +48,7 @@
  * @brief   BaseSequentialStream specific methods.
  */
 #define _base_sequential_stream_methods                                     \
+  _base_object_methods                                                      \
   /* Stream write buffer method.*/                                          \
   size_t (*write)(void *instance, const uint8_t *bp, size_t n);             \
   /* Stream read buffer method.*/                                           \
@@ -62,7 +63,8 @@
  * @note    It is empty because @p BaseSequentialStream is only an interface
  *          without implementation.
  */
-#define _base_sequential_stream_data
+#define _base_sequential_stream_data                                        \
+  _base_object_data
 
 /**
  * @brief   @p BaseSequentialStream virtual methods table.
@@ -72,6 +74,8 @@ struct BaseSequentialStreamVMT {
 };
 
 /**
+ * @extends BaseObject
+ *
  * @brief   Base stream class.
  * @details This class represents a generic blocking unbuffered sequential
  *          data stream.

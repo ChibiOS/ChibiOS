@@ -157,7 +157,7 @@ int main(void) {
       uartStopReceive(&FUARTD0);
       uartStopSend(&FUARTD0);
       uartStartReceive(&FUARTD0, BUFFER, buffer);
-      uartStartSend(&FUARTD0, 6, message);
+      uartStartSend(&FUARTD0, BUFFER+1, message);
     }
 
     chThdSleepMilliseconds(500);

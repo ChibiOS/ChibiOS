@@ -114,6 +114,7 @@
 #include "hal_lld.h"
 
 /* Abstract interfaces.*/
+#include "hal_objects.h"
 #include "hal_streams.h"
 #include "hal_channels.h"
 #include "hal_files.h"

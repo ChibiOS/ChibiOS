@@ -95,6 +95,7 @@
 #define SAMA_TC1_IS_USED
 #endif
 #endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
@@ -128,7 +129,22 @@ extern "C" {
  */
 static inline systime_t st_lld_get_counter(void) {
 
+#if (SAMA_ST_USE_TC0 || SAMA_ST_USE_TC1)
+
+#if SAMA_ST_USE_TC0
+
+  Tc *tcp = TC0;
+#endif
+#if SAMA_ST_USE_TC1
+
+  Tc *tcp = TC1;
+#endif
+
+  return (systime_t)tcp->TC_CHANNEL[0].TC_CV;
+#else
+
   return (systime_t)0;
+#endif
 }
 
 /**
@@ -142,7 +158,26 @@ static inline systime_t st_lld_get_counter(void) {
  */
 static inline void st_lld_start_alarm(systime_t time) {
 
+#if (SAMA_ST_USE_TC0 || SAMA_ST_USE_TC1)
+
+#if SAMA_ST_USE_TC0
+
+  Tc *tcp = TC0;
+#endif
+#if SAMA_ST_USE_TC1
+
+  Tc *tcp = TC1;
+#endif
+
+  tcp->TC_WPMR = TC_WPMR_WPKEY_PASSWD;
+  tcp->TC_CHANNEL[0].TC_RC = TC_RC_RC((uint32_t)time);
+  tcp->TC_CHANNEL[0].TC_SR;
+  tcp->TC_CHANNEL[0].TC_IER = TC_IER_CPCS;
+  tcp->TC_WPMR = TC_WPMR_WPKEY_PASSWD | TC_WPMR_WPEN;
+#else
+
   (void)time;
+#endif
 }
 
 /**
@@ -152,6 +187,21 @@ static inline void st_lld_start_alarm(systime_t time) {
  */
 static inline void st_lld_stop_alarm(void) {
 
+#if (SAMA_ST_USE_TC0 || SAMA_ST_USE_TC1)
+
+#if SAMA_ST_USE_TC0
+
+  Tc *tcp = TC0;
+#endif
+#if SAMA_ST_USE_TC1
+
+  Tc *tcp = TC1;
+#endif
+
+  tcp->TC_WPMR = TC_WPMR_WPKEY_PASSWD;
+  tcp->TC_CHANNEL[0].TC_IDR = TC_IDR_CPCS;
+  tcp->TC_WPMR = TC_WPMR_WPKEY_PASSWD | TC_WPMR_WPEN;
+#endif
 }
 
 /**
@@ -163,7 +213,24 @@ static inline void st_lld_stop_alarm(void) {
  */
 static inline void st_lld_set_alarm(systime_t time) {
 
+#if (SAMA_ST_USE_TC0 || SAMA_ST_USE_TC1)
+
+#if SAMA_ST_USE_TC0
+
+  Tc *tcp = TC0;
+#endif
+#if SAMA_ST_USE_TC1
+
+  Tc *tcp = TC1;
+#endif
+
+  tcp->TC_WPMR = TC_WPMR_WPKEY_PASSWD;
+  tcp->TC_CHANNEL[0].TC_RC = TC_RC_RC((uint32_t)time);
+  tcp->TC_WPMR = TC_WPMR_WPKEY_PASSWD | TC_WPMR_WPEN;
+#else
+
   (void)time;
+#endif
 }
 
 /**
@@ -175,7 +242,22 @@ static inline void st_lld_set_alarm(systime_t time) {
  */
 static inline systime_t st_lld_get_alarm(void) {
 
+#if (SAMA_ST_USE_TC0 || SAMA_ST_USE_TC1)
+
+#if SAMA_ST_USE_TC0
+
+  Tc *tcp = TC0;
+#endif
+#if SAMA_ST_USE_TC1
+
+  Tc *tcp = TC1;
+#endif
+
+  return (systime_t)tcp->TC_CHANNEL[0].TC_RC;
+#else
+
   return (systime_t)0;
+#endif
 }
 
 /**
@@ -189,7 +271,22 @@ static inline systime_t st_lld_get_alarm(void) {
  */
 static inline bool st_lld_is_alarm_active(void) {
 
+#if (SAMA_ST_USE_TC0 || SAMA_ST_USE_TC1)
+
+#if SAMA_ST_USE_TC0
+
+  Tc *tcp = TC0;
+#endif
+#if SAMA_ST_USE_TC1
+
+  Tc *tcp = TC1;
+#endif
+
+  return (bool)((tcp->TC_CHANNEL[0].TC_IMR & TC_IMR_CPCS) != 0);
+#else
+
   return false;
+#endif
 }
 
 #endif /* HAL_ST_LLD_H */
