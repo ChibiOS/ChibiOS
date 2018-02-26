@@ -38,7 +38,7 @@
  * @notapi
  */
 #define tcEnableWP(tcp) {                                                     \
-  tcp->tim->TC_WPMR = TC_WPMR_WPKEY_PASSWD | TC_WPMR_WPEN;                    \
+  tcp->TC_WPMR = TC_WPMR_WPKEY_PASSWD | TC_WPMR_WPEN;                         \
 }
 
 /**
@@ -49,7 +49,7 @@
  * @notapi
  */
 #define tcDisableWP(tcp) {                                                    \
-  tcp->tim->TC_WPMR = TC_WPMR_WPKEY_PASSWD;                                   \
+  tcp->TC_WPMR = TC_WPMR_WPKEY_PASSWD;                                        \
 }
 
 /*===========================================================================*/
@@ -214,7 +214,7 @@ void tc_lld_start(TCDriver *tcp) {
 #endif
   }
   /* Disable Write Protection */
-  tcDisableWP(tcp);
+  tcDisableWP(tcp->tim);
   /* Output enables*/
    switch (tcp->config->channels[0].mode & TC_OUTPUT_MASK) {
    case TC_OUTPUT_ACTIVE:
@@ -224,7 +224,7 @@ void tc_lld_start(TCDriver *tcp) {
                                       TC_CMR_ACPC_CLEAR | TC_CMR_WAVSEL_UP_RC;
 
      tcp->tim->TC_CHANNEL[0].TC_RC = TC_RC_RC(rc);
-     tcp->tim->TC_CHANNEL[0].TC_SR;                       /* Clear pending IRQs.          */
+     tcp->tim->TC_CHANNEL[0].TC_SR;          /* Clear pending IRQs.          */
    default:
      ;
    }
@@ -236,7 +236,7 @@ void tc_lld_start(TCDriver *tcp) {
                                       TC_CMR_ACPC_CLEAR | TC_CMR_WAVSEL_UP_RC;
 
      tcp->tim->TC_CHANNEL[1].TC_RC = TC_RC_RC(rc);
-     tcp->tim->TC_CHANNEL[1].TC_SR;                       /* Clear pending IRQs.          */
+     tcp->tim->TC_CHANNEL[1].TC_SR;          /* Clear pending IRQs.          */
    default:
      ;
    }
@@ -253,7 +253,7 @@ void tc_lld_start(TCDriver *tcp) {
      ;
    }
    /* Enable Write Protection */
-   tcEnableWP(tcp);
+   tcEnableWP(tcp->tim);
 }
 
 /**
@@ -300,7 +300,7 @@ void tc_lld_enable_channel(TCDriver *tcp,
                            tcchannel_t channel,
                            tccnt_t width) {
   /* Disable Write Protection */
-  tcDisableWP(tcp);
+  tcDisableWP(tcp->tim);
 
   /* Changing channel duty cycle on the fly.*/
   uint32_t rc = tcp->tim->TC_CHANNEL[channel].TC_RC;
@@ -309,7 +309,7 @@ void tc_lld_enable_channel(TCDriver *tcp,
   tcp->tim->TC_CHANNEL[channel].TC_CCR = TC_CCR_SWTRG;
 
   /* Enable Write Protection */
-  tcEnableWP(tcp);
+  tcEnableWP(tcp->tim);
 }
 
 /**
@@ -377,10 +377,10 @@ void tc_lld_disable_channel_notification(TCDriver *tcp,
 
 void tcChangeChannelFrequency(TCDriver *tcp,
                               tcchannel_t channel,uint32_t frequency) {
-  tcDisableWP(tcp);
+  tcDisableWP(tcp->tim);
   uint32_t rc =(tcp->clock) / (frequency);
   tcp->tim->TC_CHANNEL[channel].TC_RC = TC_RC_RC(rc);
-  tcEnableWP(tcp);
+  tcEnableWP(tcp->tim);
 }
 /**
  * @brief   TC Driver initialization.

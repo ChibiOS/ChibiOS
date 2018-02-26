@@ -113,14 +113,14 @@ typedef void (*tccallback_t)(TCDriver *tcp);
  * @brief   TCD0 interrupt priority level setting.
  */
 #if !defined(SAMA_TC0_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define SAMA_TC0_IRQ_PRIORITY               4
+#define SAMA_TC0_IRQ_PRIORITY               2
 #endif
 
 /**
  * @brief   TCD1 interrupt priority level setting.
  */
 #if !defined(SAMA_TC1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define SAMA_TC1_IRQ_PRIORITY               4
+#define SAMA_TC1_IRQ_PRIORITY               2
 #endif
 
 /** @} */
