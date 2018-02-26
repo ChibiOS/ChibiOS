@@ -571,56 +571,35 @@ typedef struct {
 } LSM303DLHCConfig;
 
 /**
- * @brief   @p LSM303DLHC accelerometer subsystem specific methods.
+ * @brief   @p LSM303DLHC subsystem specific methods.
  */
-#define _lsm303dlhc_accelerometer_methods_alone                             \
+#define _lsm303dlhc_methods_alone                                           \
   /* Change full scale value of LSM303DLHC accelerometer subsystem .*/      \
-  msg_t (*set_full_scale)(void *instance, lsm303dlhc_acc_fs_t fs);
-                 
-/**
- * @brief   @p LSM303DLHC accelerometer subsystem specific methods with 
- *          inherited ones.
- */
-#define _lsm303dlhc_accelerometer_methods                                   \
-  _base_accelerometer_methods                                               \
-  _lsm303dlhc_accelerometer_methods_alone
-
-/**
- * @brief   @p LSM303DLHC compass subsystem specific methods.
- */
-#define _lsm303dlhc_compass_methods_alone                                   \
+  msg_t (*set_acc_full_scale)(void *instance, lsm303dlhc_acc_fs_t fs);
   /* Change full scale value of LSM303DLHC compass subsystem .*/            \
-  msg_t (*set_full_scale)(void *instance, lsm303dlhc_comp_fs_t fs);
- 
-/**
- * @brief @p LSM303DLHC compass subsystem specific methods with inherited ones.
- */
-#define _lsm303dlhc_compass_methods                                         \
-  _base_compass_methods                                                     \
-  _lsm303dlhc_compass_methods_alone
+  msg_t (*set_comp_full_scale)(void *instance, lsm303dlhc_comp_fs_t fs);
 
 /**
- * @extends BaseAccelerometerVMT
- *
- * @brief @p LSM303DLHC accelerometer virtual methods table.
+ * @brief   @p LSM303DLHC subsystem specific methods with inherited ones.
  */
-struct LSM303DLHCAcceleromerVMT {
-  _lsm303dlhc_accelerometer_methods
-};
+#define _lsm303dlhc_methods                                                 \
+  _base_object_methods                                                      \
+  _lsm303dlhc_methods_alone
 
 /**
- * @extends BaseCompassVMT
+ * @extends BaseObjectVMT
  *
- * @brief @p LSM303DLHC compass virtual methods table.
+ * @brief @p LSM303DLHC virtual methods table.
  */
-struct LSM303DLHCCompassVMT {
-  _lsm303dlhc_compass_methods
+struct LSM303DLHCVMT {
+  _lsm303dlhc_methods
 };
 
 /**
  * @brief @p LSM303DLHCDriver specific data.
  */
 #define _lsm303dlhc_data                                                    \
+  _base_sensor_data                                                         \
   /* Driver state.*/                                                        \
   lsm303dlhc_state_t        state;                                          \
   /* Current configuration data.*/                                          \
@@ -642,15 +621,12 @@ struct LSM303DLHCCompassVMT {
  * @brief LSM303DLHC 6-axis accelerometer/compass class.
  */
 struct LSM303DLHCDriver {
-  /** @brief BaseSensor Virtual Methods Table. */
-  const struct BaseSensorVMT *vmt_sensor;
-  _base_sensor_data
-  /** @brief LSM303DLHC Accelerometer Virtual Methods Table. */
-  const struct LSM303DLHCAcceleromerVMT *vmt_accelerometer;
-  _base_accelerometer_data
-  /** @brief LSM303DLHC Compass Virtual Methods Table. */
-  const struct LSM303DLHCCompassVMT *vmt_compass;
-  _base_compass_data
+  /** @brief Virtual Methods Table.*/
+  const struct LSM303DLHCVMT    *vmt;
+  /** @brief Accelerometer interface.*/
+  BaseAccelerometer             accelerometer_if;
+  /** @brief Compass interface.*/
+  BaseCompass                   compass_if;
   _lsm303dlhc_data
 };
 

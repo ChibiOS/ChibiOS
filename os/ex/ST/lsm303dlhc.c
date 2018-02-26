@@ -605,16 +605,19 @@ static msg_t comp_set_full_scale(void *ip, lsm303dlhc_comp_fs_t fs) {
 }
 
 static const struct BaseSensorVMT vmt_sensor = {
+  (size_t)0,
   sens_get_axes_number, sens_read_raw, sens_read_cooked
 };
 
 static const struct LSM303DLHCAcceleromerVMT vmt_accelerometer = {
+  (size_t)0,
   acc_get_axes_number, acc_read_raw, acc_read_cooked,
   acc_set_bias, acc_reset_bias, acc_set_sensivity, acc_reset_sensivity,
   acc_set_full_scale
 };
 
 static const struct LSM303DLHCCompassVMT vmt_compass = {
+  (size_t)0,
   comp_get_axes_number, comp_read_raw, comp_read_cooked,
   comp_set_bias, comp_reset_bias, comp_set_sensivity, comp_reset_sensivity,
   comp_set_full_scale

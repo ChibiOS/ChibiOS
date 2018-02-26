@@ -78,6 +78,8 @@ struct BaseThermometerVMT {
   _base_sensor_data
 	
 /**
+ * @extends BaseSensor
+ *
  * @brief   Base thermometer class.
  * @details This class represents a generic thermometer.
  */

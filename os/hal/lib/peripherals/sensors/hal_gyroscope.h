@@ -80,6 +80,8 @@ struct BaseGyroscopeVMT {
   _base_sensor_data
 
 /**
+ * @extends BaseSensor
+ *
  * @brief   Base gyroscope class.
  * @details This class represents a generic gyroscope.
  */

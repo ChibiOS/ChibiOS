@@ -78,6 +78,8 @@ struct BaseBarometerVMT {
   _base_sensor_data
 	
 /**
+ * @extends BaseSensor
+ *
  * @brief   Base barometer class.
  * @details This class represents a generic barometer.
  */

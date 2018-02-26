@@ -78,6 +78,8 @@ struct BaseCompassVMT {
   _base_sensor_data
 	
 /**
+ * @extends BaseSensor
+ *
  * @brief   Base compass class.
  * @details This class represents a generic compass.
  */

@@ -56,6 +56,7 @@
  * @brief   BaseSensor specific methods with inherited ones.
  */
 #define _base_sensor_methods                                                \
+  _base_object_methods                                                      \
   _base_sensor_methods_alone
 
 /**
@@ -71,8 +72,11 @@ struct BaseSensorVMT {
  *          without implementation.
  */
 #define _base_sensor_data
+  _base_object_data                                                         \
 
 /**
+ * @extends BaseObject
+ *
  * @brief   Base stream class.
  * @details This class represents a generic blocking unbuffered sequential
  *          data stream.

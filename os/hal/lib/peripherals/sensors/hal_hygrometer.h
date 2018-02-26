@@ -78,6 +78,8 @@ struct BaseHygrometerVMT {
   _base_sensor_data
 	
 /**
+ * @extends BaseSensor
+ *
  * @brief   Base hygrometer class.
  * @details This class represents a generic hygrometer.
  */

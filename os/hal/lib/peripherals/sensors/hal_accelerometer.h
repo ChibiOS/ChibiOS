@@ -77,6 +77,8 @@ struct BaseAccelerometerVMT {
   _base_sensor_data
 	
 /**
+ * @extends BaseSensor
+ *
  * @brief   Base accelerometer class.
  * @details This class represents a generic a generic accelerometer.
  */
