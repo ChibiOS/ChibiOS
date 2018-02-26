@@ -89,7 +89,11 @@
 *****************************************************************************
 
 *** 18.2.1 ***
+- HAL: Fixed problem with HSI48 on STM32L4xx (bug #922).
+- HAL: Fixed invalid implementation of palWaitPadTimeoutS() and
+       palWaitLineTimeoutS() APIs (bug #921).
 - HAL: Fixed wrong DMA settings for STM32F76x I2C3 and I2C4 (bug #920).
+- HAL: Fixed wrong flash waiting state for STM32F7xx (bug #918).
 
 *** 18.2.0 ***
 - First 18.2.x release, see release note 18.2.0.

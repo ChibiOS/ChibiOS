@@ -949,54 +949,6 @@ typedef struct {
   } while (false)
 #endif /* PAL_USE_CALLBACKS == TRUE */
 
-#if (PAL_USE_WAIT == TRUE) || defined(__DOXYGEN__)
-/**
- * @brief   Waits for an edge on the specified port/pad.
- *
- * @param[in] port      port identifier
- * @param[in] pad       pad number within the port
- * @param[in] timeout   the number of ticks before the operation timeouts,
- *                      the following special values are allowed:
- *                      - @a TIME_IMMEDIATE immediate timeout.
- *                      - @a TIME_INFINITE no timeout.
- *                      .
- * @returns             The operation state.
- * @retval MSG_OK       if an edge has been detected.
- * @retval MSG_TIMEOUT  if a timeout occurred before an edge cound be detected.
- * @retval MSG_RESET    if the event has been disabled while the thread was
- *                      waiting for an edge.
- *
- * @api
- */
-#define palWaitPadTimeout(port, pad, timeout)                               \
-  do {                                                                      \
-    osalSysLock();                                                          \
-    palWaitPadTimeoutS(port, pad, timeout);                                 \
-    osalSysUnlock();                                                        \
-  } while (false)
-
-
-/**
- * @brief   Waits for an edge on the specified line.
- *
- * @param[in] line      line identifier
- * @param[in] timeout   operation timeout
- * @returns             The operation state.
- * @retval MSG_OK       if an edge has been detected.
- * @retval MSG_TIMEOUT  if a timeout occurred before an edge cound be detected.
- * @retval MSG_RESET    if the event has been disabled while the thread was
- *                      waiting for an edge.
- *
- * @api
- */
-#define palWaitLineTimeout(line, timeout)                                   \
-  do {                                                                      \
-    osalSysLock();                                                          \
-    palWaitLineTimeoutS(line, timeout);                                     \
-    osalSysUnlock();                                                        \
-  } while (false)
-#endif /* PAL_USE_WAIT == TRUE */
-
 /** @} */
 
 /*===========================================================================*/
@@ -1017,7 +969,10 @@ extern "C" {
 #if (PAL_USE_WAIT == TRUE) || defined(__DOXYGEN__)
   msg_t palWaitPadTimeoutS(ioportid_t port, iopadid_t pad,
                            sysinterval_t timeout);
+  msg_t palWaitPadTimeout(ioportid_t port, iopadid_t pad,
+                          sysinterval_t timeout);
   msg_t palWaitLineTimeoutS(ioline_t line, sysinterval_t timeout);
+  msg_t palWaitLineTimeout(ioline_t line, sysinterval_t timeout);
 #endif /* PAL_USE_WAIT == TRUE */
 #ifdef __cplusplus
 }
