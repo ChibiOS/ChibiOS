@@ -114,9 +114,9 @@ static UARTConfig uart_cfg_1 = {
   rxerr,
   NULL,
   0,
-  38400,
-  0,
-  US_MR_CHRL_8_BIT | US_MR_PAR_NO
+  38400,                             /* Baud rate   */
+  0,                                 /* CR register */
+  US_MR_CHRL_8_BIT | US_MR_PAR_NO    /* MR register */
 };
 
 /*
@@ -136,7 +136,8 @@ int main(void) {
   chSysInit();
 
   /*
-   * Activates the flexcom uart driver 0, PB28(RX) and PB29(RX) are routed to FLEXCOM0.
+   * Activates the flexcom uart driver 0.
+   * PB28 and PB29 are routed to FLEXCOM0.
    */
   uartStart(&FUARTD0, &uart_cfg_1);
 
@@ -150,16 +151,15 @@ int main(void) {
    */
   while (true) {
     if (!palReadPad(PIOB, PIOB_USER_PB)) {
-  /*
-   * Starts both a transmission and a receive operations, both will be
-   * handled entirely in background.
-   */
+    /*
+     * Starts both a transmission and a receive operations, both will be
+     * handled entirely in background.
+     */
       uartStopReceive(&FUARTD0);
       uartStopSend(&FUARTD0);
       uartStartReceive(&FUARTD0, BUFFER, buffer);
       uartStartSend(&FUARTD0, BUFFER+1, message);
     }
-
     chThdSleepMilliseconds(500);
   }
 }
