@@ -53,6 +53,7 @@ uint32_t SdmmcGetMaxFreq(SdmmcDriver *drv)
 			rate /= 2ul;
 	}
 
+	TRACE_DEBUG_1("SdmmcGetMaxFreq rate %d\r\n",rate);
 	return rate * 1000ul;
 }
 
@@ -98,7 +99,7 @@ void SdMmcUpdateInformation(SdmmcDriver *drv, bool csd, bool extData)
 uint8_t SDMMC_Lib_SdStart(SdmmcDriver *drv, bool * retry)
 {
 	uint64_t mem_size;
-	//uint32_t freq;
+	uint32_t freq;
 	uint32_t drv_err, status;
 	uint8_t error;
 	bool flag;
@@ -260,14 +261,16 @@ uint8_t SDMMC_Lib_SdStart(SdmmcDriver *drv, bool * retry)
 		    : (uint32_t)mem_size;
 	}
 
-//TO BE DONE
-#if 0
+
 	/* Automatically select the max device clock frequency */
 	/* Calculate transfer speed */
 	freq = SdmmcGetMaxFreq(drv);
+
 #ifndef SDMMC_TRIM_SDIO
-	if (drv->card.bCardType & CARD_TYPE_bmSDIO)
+	if (drv->card.bCardType & CARD_TYPE_bmSDIO) {
 		freq = min_u32(freq, SdioGetMaxFreq(drv));
+		TRACE_INFO_1("selecting sdio freq%d\r\n",freq);
+	}
 #endif
 	error = HwSetClock(drv, &freq);
 	drv->card.dwCurrSpeed = freq;
@@ -275,7 +278,7 @@ uint8_t SDMMC_Lib_SdStart(SdmmcDriver *drv, bool * retry)
 		TRACE_ERROR_1("error clk %s\n\r", SD_StringifyRetCode(error));
 		return error;
 	}
-#endif
+
 	/* Check device status and eat past exceptions, which would otherwise
 	 * prevent upcoming data transaction routines from reliably checking
 	 * fresh exceptions. */

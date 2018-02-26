@@ -87,5 +87,10 @@
 			<type>2</type>
 			<locationURI>CHIBIOS/os</locationURI>
 		</link>
+		<link>
+			<name>reliance-edge</name>
+			<type>2</type>
+			<locationURI>$%7BPARENT-3-PROJECT_LOC%7D/ext/reliance-edge</locationURI>
+		</link>
 	</linkedResources>
 </projectDescription>

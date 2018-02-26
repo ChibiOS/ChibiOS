@@ -155,7 +155,7 @@ uint8_t MmcInit(SdmmcDriver *driver)
 	if (error)
 		return error;
 	//else
-		TRACE_1("RCA=%u\n\r", driver->card.wAddress);
+		TRACE_DEBUG_1("RCA=%u\n\r", driver->card.wAddress);
 
 	/* SEND_CSD (CMD9) to obtain the Card Specific Data (CSD register),
 	 * e.g. block length, card storage capacity, etc... */
@@ -211,9 +211,8 @@ uint8_t MmcInit(SdmmcDriver *driver)
 			sw_arg.value = 0xf;
 			error = MmcCmd6(driver, &sw_arg, &status);
 			if (error) {
-				TRACE_1("Pwr class %s\n\r",
-				    SD_StringifyRetCode(error));
-		}
+				TRACE_DEBUG_1("Pwr class %s\n\r",SD_StringifyRetCode(error));
+			}
 		}
 	}
 
@@ -274,8 +273,7 @@ uint8_t MmcInit(SdmmcDriver *driver)
 			    && tim_mode == SDMMC_TIM_MMC_HS_DDR)
 				driver->card.bSpeedMode = tim_mode;
 			else if (error) {
-				TRACE_ERROR_1("Width/DDR %s\n\r",
-				    SD_StringifyRetCode(error));
+				TRACE_ERROR_1("Width/DDR %s\n\r",SD_StringifyRetCode(error));
 				return error;
 			}
 		}

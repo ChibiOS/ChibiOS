@@ -479,6 +479,29 @@ void SdParamReset(sSdCard * pSd)
 	memset(pSd->SCR, 0, SCR_SIZE);
 }
 
+/**
+ * Query whether the card is writeprotected or not by mechanical
+ write protect switch.
+ * \param pSd Pointer to \ref sSdCard instance.
+ * \return an \ref sdmmc_rc "error code", as follows:
+ * - SDMMC_LOCKED if the device has been mechanical write protected.
+ * - SDMMC_OK if the card is not write-protected.
+ */
+uint8_t SD_GetWpStatus(SdmmcDriver *driver)
+{
+	uint32_t rc;
+
+	driver->control_param = 0;
+
+    rc = sdmmc_device_control(driver,SDMMC_IOCTL_GET_WP);
+
+	if (rc != SDMMC_OK)
+		return SDMMC_NOT_SUPPORTED;
+    if (!driver->control_param)
+		return SDMMC_LOCKED;
+	else
+		return SDMMC_OK;
+}
 
 
 /**

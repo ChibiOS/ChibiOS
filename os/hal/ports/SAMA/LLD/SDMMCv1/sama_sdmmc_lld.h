@@ -127,7 +127,7 @@ struct SamaSDMMCDriver
 
 
 };
-typedef sSdCard sdmmclib;
+
 typedef struct SamaSDMMCDriver SdmmcDriver;
 
 /*===========================================================================*/
@@ -154,8 +154,7 @@ uint8_t sdmmcSendCmd(SdmmcDriver *sdmmcp);
 bool sdmmcOpenDevice(SdmmcDriver *sdmmcp);
 bool sdmmcCloseDevice(SdmmcDriver *sdmmcp);
 bool sdmmcShowDeviceInfo(SdmmcDriver *sdmmcp);
-bool sdmmcMountVolume(SdmmcDriver *sdmmcp,CH_SDMMC_FAT *fs);
-bool sdmmcUnmountVolume(SdmmcDriver *sdmmcp);
+bool sdmmcGetInstance(uint8_t index, SdmmcDriver **sdmmcp)  ;
 
 #ifdef __cplusplus
 }

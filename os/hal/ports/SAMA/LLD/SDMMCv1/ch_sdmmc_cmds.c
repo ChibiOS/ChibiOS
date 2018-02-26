@@ -644,8 +644,8 @@ uint8_t Cmd23(SdmmcDriver *drv, uint8_t write, uint32_t blocks, uint32_t * pStat
 	pCmd->pResp = pStatus;
 
 	drv->timeout_elapsed = -1;
-			/* Send command */
-			bRc = sdmmcSendCmd(drv);
+	/* Send command */
+	bRc = sdmmcSendCmd(drv);
 	return bRc;
 }
 
@@ -680,8 +680,8 @@ uint8_t Cmd24(SdmmcDriver *drv,
 	pCmd->wNbBlocks = 1;
 	pCmd->pData = pData;
 	drv->timeout_elapsed = -1;
-			/* Send command */
-			bRc = sdmmcSendCmd(drv);
+	/* Send command */
+	bRc = sdmmcSendCmd(drv);
 	return bRc;
 }
 
@@ -719,8 +719,8 @@ uint8_t Cmd25(SdmmcDriver *drv,
 	pCmd->pData = pData;
 
 	drv->timeout_elapsed = -1;
-			/* Send command */
-			bRc = sdmmcSendCmd(drv);
+	/* Send command */
+	bRc = sdmmcSendCmd(drv);
 	if (bRc == SDMMC_CHANGED)
 		*nbBlock = pCmd->wNbBlocks;
 	return bRc;

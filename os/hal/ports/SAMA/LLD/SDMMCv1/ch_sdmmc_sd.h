@@ -112,5 +112,6 @@ extern uint8_t SD_Write(SdmmcDriver *driver,uint32_t address,const void *pData,u
 extern uint8_t SD_ReadBlocks(SdmmcDriver *driver, uint32_t address, void *pData, uint32_t nbBlocks);
 extern uint8_t SD_WriteBlocks(SdmmcDriver *driver, uint32_t address, const void *pData, uint32_t nbBlocks);
 extern uint8_t SD_ReadBlocks(SdmmcDriver *driver, uint32_t address, void *pData, uint32_t nbBlocks);
+extern uint8_t SD_GetWpStatus(SdmmcDriver *driver);
 
 #endif /* CH_SDMMC_SD_H_ */

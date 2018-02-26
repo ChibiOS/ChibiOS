@@ -41,7 +41,8 @@
 #include "hal.h"
 
 #if (HAL_USE_SDMMC == TRUE)
-
+#include "sama_sdmmc_lld.h"
+#if SDMMC_USE_FF_LIB == 1
 #include "ccportab.h"
 #include "ffconf.h"
 #include "diskio.h"
@@ -308,5 +309,6 @@ DRESULT disk_ioctl(BYTE slot, BYTE cmd, void* buff)
 	}
 	return res;
 }
+#endif
 #endif
 

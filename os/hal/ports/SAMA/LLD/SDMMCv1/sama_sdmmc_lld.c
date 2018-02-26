@@ -87,9 +87,6 @@ OSAL_IRQ_HANDLER(SAMA_SDMMCD1_HANDLER) {
 void sdmmcInit(void)
 {
 #if PLATFORM_SDMMC_USE_SDMMC1 == TRUE
-#if SAMA_HAL_IS_SECURE
-  mtxConfigPeriphSecurity(MATRIX0, ID_SDMMC1, SECURE_PER);
-#endif /* SAMA_HAL_IS_SECURE */
   /* Driver initialization.*/
 	sdmmcObjectInit(&SDMMCD1);
 #endif
@@ -109,6 +106,10 @@ void sdmmcStart(SdmmcDriver *sdmmcp, const SamaSDMMCConfig *config)
 	uint8_t rc;
 
 	sdmmcp->config = config;
+
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX0, (ID_SDMMC0 + sdmmcp->config->slot_id) , SECURE_PER);
+#endif /* SAMA_HAL_IS_SECURE */
 
 	sdmmcp->card.EXT = sdmmcp->config->bp;
 	sdmmcp->card.SSR = &sdmmcp->config->bp[EXT_SIZE];
@@ -307,37 +308,6 @@ bool sdmmcShowDeviceInfo(SdmmcDriver *sdmmcp)
 		return true;
 }
 
-bool sdmmcMountVolume(SdmmcDriver *sdmmcp, CH_SDMMC_FAT *fs)
-{
-	FRESULT res;
-	const TCHAR drive_path[] = { '0' + sdmmcp->config->slot_id, ':', '\0' };
-
-	(void)sdmmcp;
-	memset(fs, 0, sizeof(CH_SDMMC_FAT));
-	res = f_mount(fs, drive_path, 1);
-	if (res != FR_OK) {
-		TRACE_INFO_1("Failed to mount FAT file system, error %d\n\r", res);
-		return false;
-	}
-
-	return true;
-}
-
-
-
-bool sdmmcUnmountVolume(SdmmcDriver *sdmmcp)
-{
-	const TCHAR drive_path[] = { '0' + sdmmcp->config->slot_id, ':', '\0' };
-	FRESULT res;
-	bool rc = true;
-
-	res = f_mount(NULL, drive_path, 0);
-	if (res != FR_OK)
-		rc = false;
-
-	return rc;
-
-}
 
 bool CC_WEAK sdmmcGetInstance(uint8_t index, SdmmcDriver **sdmmcp)
 {

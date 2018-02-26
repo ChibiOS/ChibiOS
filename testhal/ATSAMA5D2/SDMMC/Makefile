@@ -121,15 +121,12 @@ include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/ARMCAx-TZ/compilers/GCC/mk/port_generic.mk
-# Other files (optional).
-#include $(CHIBIOS)/test/lib/test.mk
-#include $(CHIBIOS)/test/rt/rt_test.mk
-#include $(CHIBIOS)/test/oslib/oslib_test.mk
+include $(CHIBIOS)/os/various/reledge_bindings/reledge.mk
 include $(CHIBIOS)/os/various/fatfs_bindings/fatfs.mk
 include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 # Define linker script file here
-LDSCRIPT= $(STARTUPLD)/SAMA5D2.ld
-
+#LDSCRIPT= $(STARTUPLD)/SAMA5D2.ld
+LDSCRIPT= $(STARTUPLD)/SAMA5D2ddr.ld
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
 CSRC = $(STARTUPSRC) \
@@ -140,7 +137,7 @@ CSRC = $(STARTUPSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
        $(TESTSRC) $(STREAMSSRC) \
-       main.c
+       main.c fat32test.c reledgetest.c redconf.c $(RELEDGESRC)
 
 CSRC += $(CHIBIOS)/os/various/syscalls.c
 CSRC += $(CHIBIOS)/os/various/fatfs_bindings/fatfs_syscall.c
@@ -177,9 +174,8 @@ ASMXSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
 INCDIR = $(CHIBIOS)/os/license \
          $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) $(TESTINC) \
-         $(CHIBIOS)/os/various $(STREAMSINC)
+         $(CHIBIOS)/os/various $(STREAMSINC) $(FATFSINC)  $(RELEDGEINC)
 
-INCDIR +=  $(FATFSINC)
 #
 # Project, sources and paths
 ##############################################################################
@@ -228,10 +224,10 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = -DCH_CFG_USE_MMU  -DPLATFORM_SDMMC_USE_SDMMC1=1
+UDEFS = -DPLATFORM_SDMMC_USE_SDMMC1=1
 
 # Define ASM defines here
-UADEFS = -DCH_CFG_USE_MMU
+UADEFS =
 
 # List all user directories here
 UINCDIR =

@@ -379,5 +379,6 @@ extern uint8_t SdMmcSelect(SdmmcDriver *drv, uint16_t address, uint8_t statCheck
 extern uint8_t SdMmcIdentify(SdmmcDriver *drv);
 extern uint8_t SDMMC_Lib_SdStart(SdmmcDriver *drv, bool * retry);
 extern void SdMmcUpdateInformation(SdmmcDriver *drv, bool csd, bool extData);
+extern bool sdmmc_is_busy(SdmmcDriver *driver);
 
 #endif /* CH_SDMMC_DEVICE_H_ */

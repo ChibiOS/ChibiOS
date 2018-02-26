@@ -3,19 +3,19 @@
 
 #include "ch_sdmmc_sama5d2.h"
 
-#include "ff.h"
-typedef FATFS CH_SDMMC_FAT;
+
+
 
 #ifndef SAMA_SDMMC_SDMMCDRIVER_IRQ_PRIORITY
 #define SAMA_SDMMC_SDMMCDRIVER_IRQ_PRIORITY	4
 #endif
 
 #ifndef SAMA_SDMMC_TRACE
-#define SAMA_SDMMC_TRACE	0
+#define SAMA_SDMMC_TRACE		0
 #endif
 
 #ifndef SAMA_SDMMC_TRACE_LEVEL
-#define SAMA_SDMMC_TRACE_LEVEL 0
+#define SAMA_SDMMC_TRACE_LEVEL 	5
 #endif
 
 /** Default block size for SD/MMC access */
@@ -24,6 +24,13 @@ typedef FATFS CH_SDMMC_FAT;
 #endif
 
 
+#ifndef SDMMC_USE_FF_LIB
+#define SDMMC_USE_FF_LIB		1
+#endif
+
+#ifndef SDMMC_USE_RELEDGE_LIB
+#define SDMMC_USE_RELEDGE_LIB	1
+#endif
 
 #endif //SAMA_SDMMC_CONF_H
 

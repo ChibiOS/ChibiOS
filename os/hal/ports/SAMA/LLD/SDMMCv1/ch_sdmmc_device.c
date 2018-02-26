@@ -53,7 +53,7 @@ static uint8_t HwReset(SdmmcDriver *driver);
 
 
 static void sdmmc_get_response(SdmmcDriver *driver, sSdmmcCommand *cmd, bool complete, uint32_t *out);
-static bool sdmmc_is_busy(SdmmcDriver *driver);
+
 static uint8_t sdmmc_build_dma_table( SdmmcDriver *driver );
 static uint8_t unplug_device(SdmmcDriver *driver);
 static uint8_t sdmmc_set_speed_mode(SdmmcDriver *driver, uint8_t mode,bool verify);
@@ -70,12 +70,10 @@ uint8_t  sdmmc_device_lowlevelcfg(SdmmcDriver *driver)
 
 	if (driver->config->slot_id == SDMMC_SLOT0) {
 		driver->regs = SDMMC0;
-		pmcEnableSDMMC0()
-		;
+		pmcEnableSDMMC0();
 	} else if (driver->config->slot_id == SDMMC_SLOT1) {
 		driver->regs = SDMMC1;
-		pmcEnableSDMMC1()
-		;
+		pmcEnableSDMMC1();
 	}
 
 	switch (driver->config->slot_id) {
@@ -704,12 +702,14 @@ void sdmmc_device_deInit(SdmmcDriver *drv)
  	bool use_prog_mode = false;
 
  	freq = min_u32(freq, 120000000ul);
- #ifndef NDEBUG
- 	//if (!(regs->SDMMC_PCR & SDMMC_PCR_SDBPWR))
- 	//	trace_error("Bus is off\n\r");
- 	//if (regs->SDMMC_HC2R & SDMMC_HC2R_PVALEN)
- 	//	trace_error("Preset values enabled though not implemented\n\r");
- #endif
+
+ 	if (!(regs->SDMMC_PCR & SDMMC_PCR_SDBPWR)) {
+ 		TRACE_ERROR("Bus is off\n\r");
+ 	}
+ 	if (regs->SDMMC_HC2R & SDMMC_HC2R_PVALEN) {
+ 		TRACE_ERROR("Preset values enabled though not implemented\n\r");
+ 	}
+
  	/* In the Divided Clock Mode scenario, compute the divider */
  	base_freq = (regs->SDMMC_CA0R & SDMMC_CA0R_BASECLKF_Msk) >> SDMMC_CA0R_BASECLKF_Pos;
  	base_freq *= 1000000UL;
@@ -732,10 +732,10 @@ void sdmmc_device_deInit(SdmmcDriver *drv)
  	 * is 32 whereas the real value is 40.5 */
  	mult_freq = (regs->SDMMC_CA1R & SDMMC_CA1R_CLKMULT_Msk) >> SDMMC_CA1R_CLKMULT_Pos;
  	if (mult_freq != 0)
- #if 1
+ #if 0
  		mult_freq = base_freq * (mult_freq + 1);
  #else
- 		mult_freq = pmc_get_gck_clock(ID_SDMMC0+driver->config->slot_id);
+ 		mult_freq = SAMA_MCK ;// pmc_get_gck_clock(ID_SDMMC0+driver->config->slot_id);
  #endif
  	if (mult_freq != 0) {
  		/* DIV = FMULTCLK / FSDCLK - 1 */
@@ -761,6 +761,7 @@ void sdmmc_device_deInit(SdmmcDriver *drv)
  	shval = regs->SDMMC_CCR & ~SDMMC_CCR_SDCLKEN;
  	regs->SDMMC_CCR = shval;
  	driver->dev_freq = new_freq;
+ 	use_prog_mode = false; //no generated clock
  	/* Select the clock mode */
  	if (use_prog_mode)
  		shval |= SDMMC_CCR_CLKGSEL;
@@ -1220,7 +1221,7 @@ void sdmmc_device_deInit(SdmmcDriver *drv)
 
  		sdmmc_set_device_clock(driver, driver->control_param);
 
- TRACE_DEBUG_1("Clocking the device at %lu Hz\n\r", driver->dev_freq);
+ 		TRACE_DEBUG_1("Clocking the device at %lu Hz\n\r", driver->dev_freq);
  		if (driver->dev_freq > 95000000ul
  		    && (driver->tim_mode == SDMMC_TIM_MMC_HS200
  		    || driver->tim_mode == SDMMC_TIM_SD_SDR104
@@ -1495,7 +1496,7 @@ void sdmmc_device_deInit(SdmmcDriver *drv)
  	}
  }
 
-static bool sdmmc_is_busy(SdmmcDriver *driver)
+bool sdmmc_is_busy(SdmmcDriver *driver)
 {
 	//osalDbgCheck(driver->state != MCID_OFF);
 
@@ -1660,13 +1661,13 @@ static uint8_t sdmmc_set_speed_mode(SdmmcDriver *driver, uint8_t mode,bool verif
 	    && !(caps & SDMMC_CA0R_V18VSUP))
 		return SDMMC_PARAM;
 
-#ifndef NDEBUG
+#if 0
 	/* FIXME The datasheet is unclear about CCR:DIV restriction when the MMC
 	 * timing mode is High Speed DDR */
 	if ((mode == SDMMC_TIM_MMC_HS_SDR || mode == SDMMC_TIM_MMC_HS_DDR
 	    || mode == SDMMC_TIM_SD_HS) && !(regs->SDMMC_CCR
 	    & (SDMMC_CCR_USDCLKFSEL_Msk | SDMMC_CCR_SDCLKFSEL_Msk))) {
-		//trace_error("Incompatible with the current clock config\n\r");
+		TRACE_ERROR("Incompatible with the current clock config\n\r");
 		return SDMMC_STATE;
 	}
 #endif
@@ -1724,11 +1725,13 @@ static uint8_t sdmmc_set_speed_mode(SdmmcDriver *driver, uint8_t mode,bool verif
 		goto End;
 	toggle_sig_lvl = pcr_prv & SDMMC_PCR_SDBPWR
 	    && (pcr ^ pcr_prv) & SDMMC_PCR_SDBVSEL_Msk;
-	//if (!(pcr_prv & SDMMC_PCR_SDBPWR))
-	//	trace_debug("Power the device on\n\r");
-	//else if (toggle_sig_lvl)
-	//	trace_debug("Signaling level going %s\n\r",
-	//	    hc2r & SDMMC_HC2R_VS18EN ? "low" : "high");
+	if (!(pcr_prv & SDMMC_PCR_SDBPWR)) {
+		TRACE_DEBUG("Power the device on\n\r");
+	}
+	else if (toggle_sig_lvl) {
+		TRACE_DEBUG_1("Signaling level going %s\n\r",
+		    hc2r & SDMMC_HC2R_VS18EN ? "low" : "high");
+	}
 	if (verify && toggle_sig_lvl && hc2r & SDMMC_HC2R_VS18EN) {
 		/* Expect this call to follow the VOLTAGE_SWITCH command;
 		 * allow 2 device clock periods before the device pulls the CMD
@@ -1787,7 +1790,7 @@ static uint8_t sdmmc_set_speed_mode(SdmmcDriver *driver, uint8_t mode,bool verif
 		if (!dev_clk_on)
 			regs->SDMMC_CCR &= ~SDMMC_CCR_SDCLKEN;
 	}
-	//trace_debug("Using timing mode 0x%02x\n\r", mode);
+	TRACE_DEBUG_1("Using timing mode 0x%02x\n\r", mode);
 
 	regs->SDMMC_CALCR = (regs->SDMMC_CALCR & ~SDMMC_CALCR_ALWYSON)
 	    | (low_sig ? SDMMC_CALCR_ALWYSON : 0);
