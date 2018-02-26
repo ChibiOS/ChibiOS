@@ -23,7 +23,7 @@
  * HAL driver system settings.
  */
 #define SAMA_HAL_IS_SECURE                  TRUE
-#define SAMA_NO_INIT                        FALSE
+#define SAMA_NO_INIT                        TRUE
 #define SAMA_MOSCRC_ENABLED                 FALSE
 #define SAMA_MOSCXT_ENABLED                 TRUE
 #define SAMA_MOSC_SEL                       SAMA_MOSC_MOSCXT
@@ -34,6 +34,40 @@
 #define SAMA_PLLA_MUL_VALUE                 83
 #define SAMA_PLLADIV2_EN                    TRUE
 #define SAMA_H64MX_H32MX_RATIO              2
+
+/*
+ * SDMMC driver system settings.
+ */
+#define HAL_USE_SDMMC                       FALSE
+
+/*
+ * SECUMOD driver system settings.
+ */
+#define HAL_USE_SECUMOD                     FALSE
+
+/*
+ * SERIAL driver system settings.
+ */
+#define SAMA_SERIAL_USE_UART0               FALSE
+#define SAMA_SERIAL_USE_UART1               FALSE
+#define SAMA_SERIAL_USE_UART2               FALSE
+#define SAMA_SERIAL_USE_UART3               FALSE
+#define SAMA_SERIAL_USE_UART4               FALSE
+#define SAMA_SERIAL_USE_FLEXCOM0            FALSE
+#define SAMA_SERIAL_USE_FLEXCOM1            FALSE
+#define SAMA_SERIAL_USE_FLEXCOM2            FALSE
+#define SAMA_SERIAL_USE_FLEXCOM3            FALSE
+#define SAMA_SERIAL_USE_FLEXCOM4            FALSE
+#define SAMA_SERIAL_UART0_IRQ_PRIORITY      4
+#define SAMA_SERIAL_UART1_IRQ_PRIORITY      4
+#define SAMA_SERIAL_UART2_IRQ_PRIORITY      4
+#define SAMA_SERIAL_UART3_IRQ_PRIORITY      4
+#define SAMA_SERIAL_UART4_IRQ_PRIORITY      4
+#define SAMA_SERIAL_FLEXCOM0_IRQ_PRIORITY   4
+#define SAMA_SERIAL_FLEXCOM1_IRQ_PRIORITY   4
+#define SAMA_SERIAL_FLEXCOM2_IRQ_PRIORITY   4
+#define SAMA_SERIAL_FLEXCOM3_IRQ_PRIORITY   4
+#define SAMA_SERIAL_FLEXCOM4_IRQ_PRIORITY   4
 
 /*
  * SPI driver system settings.
@@ -53,31 +87,14 @@
 #define SAMA_SPI_FLEXCOM3_DMA_IRQ_PRIORITY  4
 #define SAMA_SPI_FLEXCOM4_DMA_IRQ_PRIORITY  4
 #define SAMA_SPI_DMA_ERROR_HOOK(spip)       osalSysHalt("DMA failure")
+#define SPI_SELECT_MODE                     SPI_SELECT_MODE_NONE
 
 /*
- * SERIAL driver system settings.
+ * ST driver settings.
  */
-#define SAMA_SERIAL_USE_UART0               FALSE
-#define SAMA_SERIAL_USE_UART1               FALSE
-#define SAMA_SERIAL_USE_UART2               FALSE
-#define SAMA_SERIAL_USE_UART3               FALSE
-#define SAMA_SERIAL_USE_UART4               FALSE
-#define SAMA_SERIAL_USE_UART5               FALSE
-#define SAMA_SERIAL_USE_FLEXCOM0            FALSE
-#define SAMA_SERIAL_USE_FLEXCOM1            FALSE
-#define SAMA_SERIAL_USE_FLEXCOM2            FALSE
-#define SAMA_SERIAL_USE_FLEXCOM3            FALSE
-#define SAMA_SERIAL_USE_FLEXCOM4            FALSE
-#define SAMA_SERIAL_UART0_IRQ_PRIORITY      4
-#define SAMA_SERIAL_UART1_IRQ_PRIORITY      4
-#define SAMA_SERIAL_UART2_IRQ_PRIORITY      4
-#define SAMA_SERIAL_UART3_IRQ_PRIORITY      4
-#define SAMA_SERIAL_UART4_IRQ_PRIORITY      4
-#define SAMA_SERIAL_FLEXCOM0_IRQ_PRIORITY   4
-#define SAMA_SERIAL_FLEXCOM1_IRQ_PRIORITY   4
-#define SAMA_SERIAL_FLEXCOM2_IRQ_PRIORITY   4
-#define SAMA_SERIAL_FLEXCOM3_IRQ_PRIORITY   4
-#define SAMA_SERIAL_FLEXCOM4_IRQ_PRIORITY   4
+#define SAMA_ST_USE_PIT                     FALSE
+#define SAMA_ST_USE_TC0                     FALSE
+#define SAMA_ST_USE_TC1                     TRUE
 
 /*
  * TC driver system settings.

@@ -8,8 +8,8 @@ void go2ns(void) {
   /* Configure SRAM0 as not secure Read and not secure write */
   mtxConfigSlaveSec(MATRIX0,H64MX_SLAVE_SRAM, LOWER_AREA_SECURABLE,
                       NOT_SECURE_READ, NOT_SECURE_WRITE);
-  /* Configure SRAM1 upper area as not secure Read and secure write */
-  mtxConfigSlaveSec(MATRIX0, H64MX_SLAVE_L2C_SRAM, UPPER_AREA_SECURABLE,
+  /* Configure SRAM0 upper area as not secure Read and secure write */
+  mtxConfigSlaveSec(MATRIX0, H64MX_SLAVE_SRAM, UPPER_AREA_SECURABLE,
                     NOT_SECURE_READ, SECURE_WRITE);
   asm(
     "mrc p15, 0, r0, c1, c1, 0\n\t" /* Set NS bit into SCR register */
@@ -25,13 +25,13 @@ int main(void) {
   mtxSetSlaveSplitAddr(MATRIX0, H64MX_SLAVE_L2C_SRAM, MATRIX_AREA_SIZE_64K,
                        REGION_0);
 
-  uint32_t *writeNotSecureSRAM1 = (uint32_t *)(0x220000 + 61 * 1024); /* Lower area region SRAM1 */
-  uint32_t *writeSecureSRAM1 = (uint32_t *)(0x220000 + 65 * 1024);    /* Upper area region SRAM1 */
+  uint32_t *writeNotSecureSRAM1 = (uint32_t *)(0x200000 + 61 * 1024); /* Lower area region SRAM0 */
+  uint32_t *writeSecureSRAM1 = (uint32_t *)(0x200000 + 65 * 1024);    /* Upper area region SRAM0 */
   /* Go into Not Secure Mode*/
   go2ns();
-  /* Writing in SRAM1 Lower Area */
+  /* Writing in SRAM0 Lower Area */
   *writeNotSecureSRAM1 = 0xAA55AA55; /* writing succeeded*/
-  /* Writing in SRAM1 Upper Area */
+  /* Writing in SRAM0 Upper Area */
   *writeSecureSRAM1 = 0xAA55AA55;    /* writing not succeeded*/
 
   while (true) {
