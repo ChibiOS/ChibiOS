@@ -4,7 +4,7 @@
 
 ** TARGET **
 
-The demo runs on a STM32F476-Discovery board.
+The demo runs on SAMA5D2-XPLAINED
 
 ** The Demo **
 
