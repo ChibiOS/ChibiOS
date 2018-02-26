@@ -63,7 +63,11 @@
 #endif
 
 /**@} */
-
+/*
+ * Wrapper for WOLFSSL
+ * TODO: to remove
+ */
+#define Aes wc_Aes
 /**
   * @brief SAMA5D2 Family
   * @{
