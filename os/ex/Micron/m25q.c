@@ -71,6 +71,7 @@ static flash_error_t m25q_read_sfdp(void *instance, flash_offset_t offset,
  * @brief   Virtual methods table.
  */
 static const struct M25QDriverVMT m25q_vmt = {
+  (size_t)0,
   m25q_get_descriptor, m25q_read, m25q_program,
   m25q_start_erase_all, m25q_start_erase_sector,
   m25q_query_erase, m25q_verify_erase,
