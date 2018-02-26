@@ -257,7 +257,10 @@ sama_dma_channel_t* dmaChannelAllocate(uint32_t priority,
 #endif /* SAMA_HAL_IS_SECURE */
 
   /* Enabling channel's interrupt */
-    channel->xdmac->XDMAC_CHID[channel->chid].XDMAC_CIE = XDMAC_CIE_BIE;
+    channel->xdmac->XDMAC_CHID[channel->chid].XDMAC_CIE = XDMAC_CIE_BIE |
+                                                          XDMAC_CIE_WBIE |
+                                                          XDMAC_CIE_RBIE |
+                                                          XDMAC_CIE_ROIE;
     channel->xdmac->XDMAC_GIE = XDMAC_GIE_IE0 << (channel->chid);
   }
   return channel;
@@ -265,9 +268,6 @@ sama_dma_channel_t* dmaChannelAllocate(uint32_t priority,
 
 /**
  * @brief   Releases a DMA channel.
- * @details The stream is channel and, if required, the DMA clock disabled.
- *          Trying to release a unallocated channel is an illegal operation
- *          and is trapped if assertions are enabled.
  * @pre     The channel must have been allocated using @p dmaChannelAllocate().
  * @post    The channel is again available.
  * @note    This function can be invoked in both ISR or thread context.
