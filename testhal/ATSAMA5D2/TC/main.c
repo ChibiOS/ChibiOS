@@ -19,9 +19,9 @@
 
 static TCConfig tccfg = {
   {
-   {TC_OUTPUT_ACTIVE, 440 , NULL},    /* 440 hz clock frequency.   */
-   {TC_OUTPUT_DISABLED, 0, NULL},
-   {TC_OUTPUT_DISABLED, 0, NULL}
+   {TC_OUTPUT_DISABLED, 0, NULL},    /* Channel 0.   */
+   {TC_OUTPUT_ACTIVE, 440 , NULL},   /* Channel 1, 440 hz clock frequency. */
+   {TC_OUTPUT_DISABLED, 0, NULL}     /* Channel 2.   */
   }
 };
 
@@ -35,10 +35,10 @@ static THD_FUNCTION(Thread1, arg) {
   chRegSetThreadName("buzzer");
 
   while (true) {
-    tcEnableChannel(&TCD0, 0, 50);
+    tcEnableChannel(&TCD0, 1, 50);
     palClearLine(LINE_LED_RED);
     chThdSleepMilliseconds(500);
-    tcDisableChannel(&TCD0, 0);
+    tcDisableChannel(&TCD0, 1);
     palSetLine(LINE_LED_RED);
     chThdSleepMilliseconds(500);
   }
@@ -62,10 +62,11 @@ int main(void) {
 
   /*
    * Initializes the TC0 driver.
-   * GPIOA19 is the TC0 channel 0 output.
+   * PD11 is the TC0 channel 1 output.
    */
-  palSetGroupMode(PIOA, PAL_PORT_BIT(19), 0U,
-                   PAL_SAMA_FUNC_PERIPH_D | PAL_MODE_SECURE);
+  palSetGroupMode(PIOD, PAL_PORT_BIT(11), 0U,
+                   PAL_SAMA_FUNC_PERIPH_A | PAL_MODE_SECURE);
+
   tcStart(&TCD0, &tccfg);
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
