@@ -114,7 +114,7 @@ typedef enum IRQn
 
 //The VE-A5 model implements L1 cache as architecturally defined, but does not implement L2 cache.
 //Do not enable the L2 cache if you are running RTX on a VE-A5 model as it may cause a data abort.
-#define VE_A5_MP_PL310_BASE                   (0x2C0F0000UL)                        /*!< (L2C-310   ) Base Address */
+#define VE_A5_MP_PL310_BASE                   (0x00A00000UL)                        /*!< (L2C-310   ) Base Address */
 #define L2C_310_BASE                          VE_A5_MP_PL310_BASE
 
 /* --------  Configuration of the Cortex-A5 Processor and Core Peripherals  ------- */
@@ -123,7 +123,7 @@ typedef enum IRQn
 #define __FPU_PRESENT        1U    /* FPU present                                   */
 #define __GIC_PRESENT        1U    /* GIC present                                   */
 #define __TIM_PRESENT        1U    /* TIM present                                   */
-#define __L2C_PRESENT        0U    /* L2C present                                   */
+#define __L2C_PRESENT        1U    /* L2C present                                   */
 
 #include "core_ca.h"
 #include <system_ARMCA5.h>
