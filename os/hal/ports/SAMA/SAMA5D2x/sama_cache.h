@@ -28,6 +28,7 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 #define L1_CACHE_BYTES  32u
+#define L2_CACHE_BYTES  32u
 
 #ifdef __cplusplus
 extern "C" {
