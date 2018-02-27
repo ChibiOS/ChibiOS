@@ -63,6 +63,7 @@ void relianceedge_demo(void)
 			writefiles(volnum);
 			chprintf(ts,"OK\r\n reading files ..\r\n" );
 			readfiles();
+      chprintf(ts,"OK\r\n" );
 		}
 	}
 	else
