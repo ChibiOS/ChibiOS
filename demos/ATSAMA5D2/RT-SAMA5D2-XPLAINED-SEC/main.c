@@ -52,7 +52,7 @@ static const SerialConfig sdcfg = {
   UART_MR_PAR_NO
 };
 
-/*
+/**
  *  Dummy trust service thread.
  */
 static THD_WORKING_AREA(waDummyTrustedService, 512);
@@ -63,20 +63,16 @@ static THD_FUNCTION(DummyTrustedService, arg) {
   smc_service_t *svcp;
   chRegSetThreadName("DTS");
 
-  /*
-   * Register the trust service
-   */
+  /* Register the trust service.*/
   svcp = smcRegisterMeAsService("DummyTrustedService");
   if (svcp == NULL) {
-    /*
-     * Error: the service is already registered
-     * or memory is exhausted.
-     */
+
+    /* Error: the service is already registered
+     * or memory is exhausted.*/
     return;
   }
-  /*
-   * Wait and process requests
-   */
+
+  /* Wait and process requests.*/
   while (true) {
     msg = smcServiceWaitRequest(svcp, MSG_OK);
     if (msg == MSG_OK && svcp->svc_datalen > 0) {
@@ -186,7 +182,7 @@ int main(void) {
    * the secure world.
    */
   chprintf((BaseSequentialStream*)&SD1, "Jumping in the non secure world\n\r");
-  _ns_trampoline(NSEC_MEMORY_START);
+  _ns_trampoline(NSEC_IMAGE_START_ADDR);
   /*
    * It never goes here
    */
