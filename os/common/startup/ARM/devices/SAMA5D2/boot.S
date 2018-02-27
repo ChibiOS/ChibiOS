@@ -50,18 +50,6 @@ Boot_Handler:
                 ldr     r0, =_start
                 mcr     p15, 0, r0, c12, c0, 0
 
-#if (CH_CFG_SEC_WORLD == TRUE)
-                /*
-                 * Do not redirect secure interrupts to AIC
-                 */
-				ldr     r0, =AIC_REDIR_KEY
-				ldr     r1, =SFR_SN1
-				ldr     r1, [r1]
-				eor     r0, r0, r1
-				bic     r0, r0, #0x1
-				ldr     r1, =SFR_AICREDIR
-				str     r0, [r1]
-#endif
                 /*
                  * Reset SCTLR Settings
                  */
@@ -73,20 +61,6 @@ Boot_Handler:
                 bic     r0, r0, #(0x1 << 13)        // Clear V bit 13 to disable hivecs
                 mcr     p15, 0, r0, c1, c0, 0       // Write value back to CP15 System Control register
                 isb
-#if (CH_CFG_SEC_WORLD == TRUE)
-                /*
-                 * Turn off L2Cache
-                 */
-                bic     r0, r0, #0x1
-                ldr     r1, =L2CC_CR
-                str     r0, [r1]
-                /*
-                 * Configure the L2 cache to be used as an internal SRAM
-                 */
-                bic     r0, r0, #0x1
-                ldr     r1, =SFR_L2CC_HRAMC
-                str     r0, [r1]
-#endif
                 b       Reset_Handler
 #endif /* !defined(__DOXYGEN__) */
 
