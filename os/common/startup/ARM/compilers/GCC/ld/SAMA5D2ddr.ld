@@ -41,3 +41,6 @@ REGION_ALIAS("DATA_RAM", ram0);
 REGION_ALIAS("BSS_RAM", ram0);
 
 INCLUDE rules.ld
+
+ENTRY(Boot_Handler);
+
