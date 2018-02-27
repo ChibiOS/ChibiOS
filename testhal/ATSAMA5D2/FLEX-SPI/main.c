@@ -26,26 +26,26 @@ static uint8_t rxbuf[BUFFER_SIZE];
  * SPI high speed configuration (peripheral clock / 3 = 27,6 Mhz, CPHA=0, CPOL=0, MSb first).
  */
 static const SPIConfig hs_spicfg = {
-  NULL,                                        /* callback if present */
-  0,                                           /* cs pad number       */
-  SPI_MR_MODFDIS | SPI_MR_LLB,                 /* mr register         */
-  SPI_CSR_SCBR(3)                              /* csr                 */
+  NULL,                                       /* callback if present */
+  0,                                          /* cs pad number       */
+  SPI_MR_MODFDIS | SPI_MR_LLB,                /* mr register         */
+  SPI_CSR_SCBR(1)                             /* csr                 */
 };
 
 /*
  * SPI low speed configuration (peripheral clock / 166 = 500KHz, CPHA=0, CPOL=0, MSb first).
  */
 static const SPIConfig ls_spicfg = {
-  NULL,                                        /* callback if present */
-  0,                                           /* cs pad number       */
-  SPI_MR_MODFDIS | SPI_MR_LLB,                 /* mr register         */
-  SPI_CSR_SCBR(166)                            /* csr                 */
+  NULL,                                       /* callback if present */
+  0,                                          /* cs pad number       */
+  SPI_MR_MODFDIS | SPI_MR_LLB,                /* mr register         */
+  SPI_CSR_SCBR(1)                             /* csr                 */
 };
 
 /*
  * SPI bus contender 1.
  */
-static THD_WORKING_AREA(spi_thread_1_wa, 256);
+static THD_WORKING_AREA(spi_thread_1_wa, 1024);
 static THD_FUNCTION(spi_thread_1, p) {
 
   (void)p;
@@ -65,7 +65,7 @@ static THD_FUNCTION(spi_thread_1, p) {
 /*
  * SPI bus contender 2.
  */
-static THD_WORKING_AREA(spi_thread_2_wa, 256);
+static THD_WORKING_AREA(spi_thread_2_wa, 1024);
 static THD_FUNCTION(spi_thread_2, p) {
 
   (void)p;
@@ -75,7 +75,7 @@ static THD_FUNCTION(spi_thread_2, p) {
     spiAcquireBus(&FSPID2);              /* Acquire ownership of the bus.    */
     palSetLine(LINE_LED_RED);            /* LED OFF.                         */
     spiStart(&FSPID2, &ls_spicfg);       /* Setup transfer parameters.       */
-    spiExchange(&FSPID2, 512,
+    spiExchange(&FSPID2, BUFFER_SIZE,
                 txbuf, rxbuf);           /* Atomic transfer operations.      */
     cacheInvalidateRegion(&rxbuf, sizeof(rxbuf));
     spiReleaseBus(&FSPID2);              /* Ownership release.               */

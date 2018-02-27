@@ -419,7 +419,7 @@
  *
  * @note    The default is @p FALSE.
  */
-#define CH_DBG_ENABLE_ASSERTS               FALSE
+#define CH_DBG_ENABLE_ASSERTS               TRUE
 
 /**
  * @brief   Debug option, trace buffer.
@@ -602,13 +602,6 @@
 /*===========================================================================*/
 /* Port-specific settings (override port settings defaulted in chcore.h).    */
 /*===========================================================================*/
-
-/**
- * @brief   Trust zone configuration.
- * @details If enabled the kernel is configured for the secure world
- *          and can access specific devices.
- */
-#define CH_CFG_SEC_WORLD                    TRUE
 
 #endif  /* CHCONF_H */
 
