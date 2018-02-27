@@ -89,6 +89,8 @@
 #endif
 
 #define ARM_ENABLE_WFI_IDLE     TRUE
+
+#define ARM_ENABLE_L2CC         0
 #endif /* ARMPARAMS_H */
 
 /** @} */
