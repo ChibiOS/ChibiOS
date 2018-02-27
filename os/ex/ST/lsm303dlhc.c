@@ -132,7 +132,7 @@ static msg_t acc_read_raw(void *ip, int32_t axes[]) {
   osalDbgCheck((ip != NULL) && (axes != NULL));
     
   /* Getting parent instance pointer.*/
-  devp = objGetInstance(LSM303DLHCDriver*, (BaseCompass*)ip);
+  devp = objGetInstance(LSM303DLHCDriver*, (BaseAccelerometer*)ip);
 
   osalDbgAssert((devp->state == LSM303DLHC_READY),
                 "acc_read_raw(), invalid state");
@@ -827,13 +827,13 @@ static const struct LSM303DLHCVMT vmt_device = {
 };
 
 static const struct BaseAccelerometerVMT vmt_accelerometer = {
-  sizeof(struct LSM303DLHCVMT),
+  sizeof(struct LSM303DLHCVMT*),
   acc_get_axes_number, acc_read_raw, acc_read_cooked,
   acc_set_bias, acc_reset_bias, acc_set_sensivity, acc_reset_sensivity
 };
 
 static const struct BaseCompassVMT vmt_compass = {
-  sizeof(BaseAccelerometer),
+ sizeof(struct LSM303DLHCVMT*) + sizeof(BaseAccelerometer),
   comp_get_axes_number, comp_read_raw, comp_read_cooked,
   comp_set_bias, comp_reset_bias, comp_set_sensivity, comp_reset_sensivity
 };
