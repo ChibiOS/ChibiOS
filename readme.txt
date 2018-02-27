@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** Next ***
+- HAL: Fixed I2C address not accepted (bug #923)(backported to 18.2.1
+       and 17.6.4).
 - HAL: Fixed problem with HSI48 on STM32L4xx (bug #922)(backported to 18.2.1).
 - HAL: Fixed invalid implementation of palWaitPadTimeoutS() and
        palWaitLineTimeoutS() APIs (bug #921)(backported to 18.2.1).
