@@ -87,17 +87,7 @@ Reset_Handler:
                 /*
                  * Early initialization.
                  */
-#if !defined(THUMB_NO_INTERWORKING)
                 bl      __early_init
-#else /* defined(THUMB_NO_INTERWORKING) */
-                add     r0, pc, #1
-                bx      r0
-                .code   16
-                bl      __early_init
-                mov     r0, pc
-                bx      r0
-                .code   32
-#endif /* defined(THUMB_NO_INTERWORKING) */
 
                 /*
                  * Data initialization.
@@ -125,34 +115,13 @@ bssloop:
                 /*
                  * Late initialization.
                  */
-#if !defined(THUMB_NO_INTERWORKING)
                 bl      __core_init
                 bl      __late_init
-#else /* defined(THUMB_NO_INTERWORKING) */
-                add     r0, pc, #1
-                bx      r0
-                .code   16
-                bl      __late_init
-                mov     r0, pc
-                bx      r0
-                .code   32
-#endif /* defined(THUMB_NO_INTERWORKING) */
-
                 /*
                  * Main program invocation.
                  */
-#if defined(THUMB_NO_INTERWORKING)
-                add     r0, pc, #1
-                bx      r0
-                .code   16
-                bl      main
-                ldr     r1, =__default_exit
-                bx      r1
-                .code   32
-#else /* !defined(THUMB_NO_INTERWORKING) */
                 bl      main
                 b       __default_exit
-#endif /* !defined(THUMB_NO_INTERWORKING) */
 
 #endif /* !defined(__DOXYGEN__) */
 
