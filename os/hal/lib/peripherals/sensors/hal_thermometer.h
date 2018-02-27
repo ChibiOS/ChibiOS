@@ -85,7 +85,7 @@ struct BaseThermometerVMT {
  */
 typedef struct {
   /** @brief Virtual Methods Table.*/
-  const struct BaseThermometerVMT *vmt_thermometer;
+  const struct BaseThermometerVMT *vmt;
   _base_thermometer_data
 } BaseThermometer;
 
@@ -97,13 +97,6 @@ typedef struct {
  * @{
  */
 /**
- * @brief   Instance getter.
- * @details This special method is used to get the instance of this class
- *          object from a derived class.
- */
-#define getBaseThermometer(ip) ((BaseThermometer *)&(ip)->vmt_thermometer)
-
-/**
  * @brief   Thermometer get channels number.
  *
  * @param[in] ip        pointer to a @p BaseThermometer class.
@@ -112,7 +105,7 @@ typedef struct {
  * @api
  */
 #define thermometerGetChannelsNumber(ip)                                    \
-        (ip)->vmt_thermometer->get_channels_number(ip)
+        (ip)->vmt->get_channels_number(ip)
 
 /**
  * @brief   Thermometer read raw data.
@@ -127,7 +120,7 @@ typedef struct {
  * @api
  */
 #define thermometerReadRaw(ip, dp)                                          \
-        (ip)->vmt_thermometer->read_raw(ip, dp)
+        (ip)->vmt->read_raw(ip, dp)
 
 /**
  * @brief   Thermometer read cooked data.
@@ -142,7 +135,7 @@ typedef struct {
  * @api
  */
 #define thermometerReadCooked(ip, dp)                                       \
-        (ip)->vmt_thermometer->read_cooked(ip, dp)
+        (ip)->vmt->read_cooked(ip, dp)
 
 /**
  * @brief   Updates thermometer bias data from received buffer.
@@ -159,7 +152,7 @@ typedef struct {
  * @api
  */
 #define thermometerSetBias(ip, bp)                                          \
-        (ip)->vmt_thermometer->set_bias(ip, bp)
+        (ip)->vmt->set_bias(ip, bp)
 
 /**
  * @brief   Reset thermometer bias data restoring it to zero.
@@ -173,7 +166,7 @@ typedef struct {
  * @api
  */
 #define thermometerResetBias(ip)                                            \
-        (ip)->vmt_thermometer->reset_bias(ip)
+        (ip)->vmt->reset_bias(ip)
 
 /**
  * @brief   Updates thermometer sensitivity data from received buffer.
@@ -190,7 +183,7 @@ typedef struct {
  * @api
  */
 #define thermometerSetSensitivity(ip, sp)                                   \
-        (ip)->vmt_thermometer->set_sensitivity(ip, sp)
+        (ip)->vmt->set_sensitivity(ip, sp)
 
 /**
  * @brief   Reset thermometer sensitivity data restoring it to its typical
@@ -205,7 +198,7 @@ typedef struct {
  * @api
  */
 #define thermometerResetSensitivity(ip)                                     \
-        (ip)->vmt_thermometer->reset_sensitivity(ip)
+        (ip)->vmt->reset_sensitivity(ip)
 /** @} */
 
 /*===========================================================================*/

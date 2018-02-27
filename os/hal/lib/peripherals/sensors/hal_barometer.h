@@ -85,7 +85,7 @@ struct BaseBarometerVMT {
  */
 typedef struct {
   /** @brief Virtual Methods Table.*/
-  const struct BaseBarometerVMT *vmt_barometer;
+  const struct BaseBarometerVMT *vmt;
   _base_barometer_data
 } BaseBarometer;
 
@@ -97,13 +97,6 @@ typedef struct {
  * @{
  */
 /**
- * @brief   Instance getter.
- * @details This special method is used to get the instance of this class
- *          object from a derived class.
- */
-#define getBaseBarometer(ip) ((BaseBarometer *)&(ip)->vmt_barometer)
-
-/**
  * @brief   Barometer get channels number.
  *
  * @param[in] ip        pointer to a @p BaseBarometer class.
@@ -112,7 +105,7 @@ typedef struct {
  * @api
  */
 #define barometerGetChannelsNumber(ip)                                      \
-        (ip)->vmt_barometer->get_channels_number(ip)
+        (ip)->vmt->get_channels_number(ip)
 
 /**
  * @brief   Barometer read raw data.
@@ -127,7 +120,7 @@ typedef struct {
  * @api
  */
 #define barometerReadRaw(ip, dp)                                              \
-        (ip)->vmt_barometer->read_raw(ip, dp)
+        (ip)->vmt->read_raw(ip, dp)
 
 /**
  * @brief   Barometer read cooked data.
@@ -142,7 +135,7 @@ typedef struct {
  * @api
  */
 #define barometerReadCooked(ip, dp)                                           \
-        (ip)->vmt_barometer->read_cooked(ip, dp)
+        (ip)->vmt->read_cooked(ip, dp)
 
 /**
  * @brief   Updates barometer bias data from received buffer.
@@ -159,7 +152,7 @@ typedef struct {
  * @api
  */
 #define barometerSetBias(ip, bp)                                            \
-        (ip)->vmt_barometer->set_bias(ip, bp)
+        (ip)->vmt->set_bias(ip, bp)
 
 /**
  * @brief   Reset barometer bias data restoring it to zero.
@@ -173,7 +166,7 @@ typedef struct {
  * @api
  */
 #define barometerResetBias(ip)                                               \
-        (ip)->vmt_barometer->reset_bias(ip)
+        (ip)->vmt->reset_bias(ip)
 
 /**
  * @brief   Updates barometer sensitivity data from received buffer.
@@ -190,7 +183,7 @@ typedef struct {
  * @api
  */
 #define barometerSetSensitivity(ip, sp)                                     \
-        (ip)->vmt_barometer->set_sensitivity(ip, sp)
+        (ip)->vmt->set_sensitivity(ip, sp)
 
 /**
  * @brief   Reset barometer sensitivity data restoring it to its typical
@@ -205,7 +198,7 @@ typedef struct {
  * @api
  */
 #define barometerResetSensitivity(ip)                                       \
-        (ip)->vmt_barometer->reset_sensitivity(ip)
+        (ip)->vmt->reset_sensitivity(ip)
 /** @} */
 
 /*===========================================================================*/
