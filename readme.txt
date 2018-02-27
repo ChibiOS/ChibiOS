@@ -91,6 +91,7 @@
 *** 17.6.4 ***
 - Fixed some minor documentation issues.
 - NEW: Improved external tools launch configuration for OpenOCD.
+- HAL: Fixed I2C address not accepted (bug #923).
 - HAL: Fixed wrong DMA settings for STM32F76x I2C3 and I2C4 (bug #920).
 - HAL: Fixed wrong flash waiting state for STM32F7xx (bug #918).
 - LIB: Fixed heap allocator failing on simulators (bug #917).
