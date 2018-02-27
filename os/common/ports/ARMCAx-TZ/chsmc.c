@@ -59,10 +59,10 @@ static smc_service_t *discovery_entry = NULL;
 
 static bool isAddrSpaceValid(uint8_t *addr, size_t size)
 {
-  return (bool)((addr - NSEC_MEMORY_START) <
-                (NSEC_MEMORY_END - NSEC_MEMORY_START)) &&
-         (bool)((addr + size - NSEC_MEMORY_START) <
-                (NSEC_MEMORY_END - NSEC_MEMORY_START));
+  return (bool)((addr - NSEC_IMAGE_START_ADDR) <
+                (NSEC_MEMORY_END - NSEC_IMAGE_START_ADDR)) &&
+         (bool)((addr + size - NSEC_IMAGE_START_ADDR) <
+                (NSEC_MEMORY_END - NSEC_IMAGE_START_ADDR));
 }
 
 static bool isHndlValid(smc_service_t *handle)
@@ -160,7 +160,7 @@ void smcInit(void) {
  * @retval MSG_RESET    if the service is unavailable.
  * @retval MSG_TIMEOUT  call interrupted.
  *
- * @notapi
+ * @api
  */
 msg_t smcEntry(smc_service_t *svc_handle, smc_params_area_t svc_data, size_t svc_datalen) {
   smc_service_t *svcp = NULL;
@@ -206,7 +206,7 @@ msg_t smcEntry(smc_service_t *svc_handle, smc_params_area_t svc_data, size_t svc
  * @return                a registered smc service object.
  * @retval NULL           if @p svc_name failed to be registered.
  *
- * @notapi
+ * @api
  */
 smc_service_t *smcRegisterMeAsService(const char *svc_name)
 {
@@ -236,7 +236,7 @@ smc_service_t *smcRegisterMeAsService(const char *svc_name)
  * @return                  the reason of the awakening
  * @retval MSG_OK           a success value.
  *
- * @notapi
+ * @api
  */
 msg_t smcServiceWaitRequest(smc_service_t *svcp, msg_t msg)
 {

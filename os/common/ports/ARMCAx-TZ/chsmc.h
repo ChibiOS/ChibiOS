@@ -55,7 +55,7 @@
  * Non secure memory address space
  * (to be redefined in an other place. Makefile?)
  */
-#define NSEC_MEMORY_START         ((uint8_t *)0x20000000)
+#define NSEC_IMAGE_START_ADDR         ((uint8_t *)0x20000000)
 #define NSEC_MEMORY_END           ((uint8_t *)0x20100000)
 
 /*

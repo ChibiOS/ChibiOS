@@ -79,7 +79,7 @@
  * Helper macros
  */
 /*
- * Store out of context registers in a world area pointed by rm
+ * Store banked registers in a world area pointed by rm
  */
                 .macro  sm_store_ooctx_regs rm
                 // cps  #MODE_SYS              // Assume mode SYS
@@ -101,7 +101,7 @@
                 stm     \rm!, {r12, sp, lr}
                 .endm
 /*
- * Retrieve out of context registers from a world area pointed by rm
+ * Retrieve banked registers from a world area pointed by rm
  */
                 .macro  sm_load_ooctx_regs rm
                 // cps  #MODE_SYS              // Assume mode SYS
@@ -214,7 +214,7 @@ sm_fiq:
 
                 cpsie   f, #MODE_SYS            // FIQ enabled, served via base table
 
-                cpsid   f, #MODE_SYS            // the handler returns here.
+                cpsid   f, #MODE_SYS            // the handler returns here, FIQ disabled.
                 ldr     r0, =sm_secctx
                 sm_store_ooctx_regs r0
 
@@ -236,7 +236,7 @@ sm_fiq:
  * the return address+4 is in lr_mon.
  * Because we are running in secure state, we are sure that
  * the main thread is suspended in the smc handler.
- * The main thread is then resumed with MSG_TIMEOUT
+ * The main thread is then resumed with SMC_SVC_INTR
  * The non secure world has then the responsibility to return into
  * secure state via a smc.
  *
