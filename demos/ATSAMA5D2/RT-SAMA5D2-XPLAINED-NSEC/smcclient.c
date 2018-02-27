@@ -56,7 +56,7 @@ msg_t smcInvoke(smc_service_t handle, smc_params_area_t data,
 msg_t smcInvokeService(smc_service_t handle, smc_params_area_t data,
                        size_t size)
 {
-  msg_t result = MSG_OK;
+  msg_t result;
 
   result = smcInvoke(handle, data, size);
   while (result == SMC_SVC_INTR)

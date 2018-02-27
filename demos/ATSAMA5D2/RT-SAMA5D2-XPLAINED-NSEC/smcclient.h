@@ -44,9 +44,9 @@
 /*
  * Special service handles
  */
-#define SMC_HND_TRAMP             ((smc_service_t *)0)  /* Trampoline service handle */
-#define SMC_HND_DISCOVERY         ((smc_service_t *)1)  /* Discovery service handle */
-#define SMC_HND_REENTER           ((smc_service_t *)2)  /* Reentering a service service handle */
+#define SMC_HND_TRAMP             ((smc_service_t *)0)  /* Trampoline */
+#define SMC_HND_DISCOVERY         ((smc_service_t *)1)  /* Discovery  */
+#define SMC_HND_REENTER           ((smc_service_t *)2)  /* Reentering a service */
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
