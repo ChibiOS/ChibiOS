@@ -57,17 +57,17 @@ typedef enum {
 /**
  * @brief   Reads registers value using I2C.
  * @pre     The I2C interface must be initialized and the driver started.
- * @note    IF_ADD_INC bit must be 1 in CTRL_REG8
+ * @note    IF_ADD_INC bit must be 1 in CTRL_REG8.
  *
- * @param[in] i2cp       pointer to the I2C interface
- * @param[in] sad        slave address without R bit
- * @param[in] reg        first sub-register address
- * @param[in] rxbuf      receiving buffer
- * @param[in] n          size of rxbuf
+ * @param[in] i2cp       pointer to the I2C interface.
+ * @param[in] sad        slave address without R bit.
+ * @param[in] reg        first sub-register address.
+ * @param[in] rxbuf      receiving buffer.
+ * @param[in] n          size of rxbuf.
  * @return               the operation status.
  */
-msg_t lsm303dlhcI2CReadRegister(I2CDriver *i2cp, lsm303dlhc_sad_t sad,
-                                uint8_t reg, uint8_t *rxbuf, size_t n) {
+static msg_t lsm303dlhcI2CReadRegister(I2CDriver *i2cp, lsm303dlhc_sad_t sad,
+                                       uint8_t reg, uint8_t *rxbuf, size_t n) {
 
   uint8_t txbuf = reg | LSM303DLHC_MS;
   return i2cMasterTransmitTimeout(i2cp, sad, &txbuf, 1, rxbuf, n,
@@ -78,289 +78,252 @@ msg_t lsm303dlhcI2CReadRegister(I2CDriver *i2cp, lsm303dlhc_sad_t sad,
  * @brief   Writes a value into a register using I2C.
  * @pre     The I2C interface must be initialized and the driver started.
  *
- * @param[in] i2cp       pointer to the I2C interface
- * @param[in] sad        slave address without R bit
- * @param[in] txbuf      buffer containing sub-address value in first position
- *                       and values to write
- * @param[in] n          size of txbuf less one (not considering the first
- *                       element)
- * @return               the operation status.
+ * @param[in] i2cp      pointer to the I2C interface.
+ * @param[in] sad       slave address without R bit.
+ * @param[in] txbuf     buffer containing sub-address value in first position
+ *                      and values to write.
+ * @param[in] n         size of txbuf less one (not considering the first
+ *                      element).
+ * @return              the operation status.
  */
-msg_t lsm303dlhcI2CWriteRegister(I2CDriver *i2cp, lsm303dlhc_sad_t sad,
-                                 uint8_t *txbuf, size_t n) {
+static msg_t lsm303dlhcI2CWriteRegister(I2CDriver *i2cp, lsm303dlhc_sad_t sad,
+                                        uint8_t *txbuf, size_t n) {
   if (n != 1)
     *txbuf |= LSM303DLHC_MS;
-  return i2cMasterTransmitTimeout(i2cp, sad, txbuf, n + 1, NULL, 0, TIME_INFINITE);
+  return i2cMasterTransmitTimeout(i2cp, sad, txbuf, n + 1, NULL, 0,
+                                  TIME_INFINITE);
 }
 
-/*
- * Interface implementation.
+/**
+ * @brief   Return the number of axes of the BaseAccelerometer.
+ *
+ * @param[in] ip        pointer to @p BaseAccelerometer interface
+ *
+ * @return              the number of axes.
  */
 static size_t acc_get_axes_number(void *ip) {
-
-  osalDbgCheck(ip != NULL);
+  (void)ip;
+                
   return LSM303DLHC_ACC_NUMBER_OF_AXES;
 }
 
-static size_t comp_get_axes_number(void *ip) {
-
-  osalDbgCheck(ip != NULL);
-  return LSM303DLHC_COMP_NUMBER_OF_AXES;
-}
-
-static size_t sens_get_axes_number(void *ip) {
-  size_t size = 0;
-  
-  osalDbgCheck(ip != NULL);
-  if (((LSM303DLHCDriver *)ip)->config->acccfg != NULL)
-	size += acc_get_axes_number(ip);
-  if (((LSM303DLHCDriver *)ip)->config->compcfg != NULL)
-    size += comp_get_axes_number(ip);  
-  return size;
-}
-
+/**
+ * @brief   Retrieves raw data from the BaseAccelerometer.
+ * @note    This data is retrieved from MEMS register without any algebrical
+ *          manipulation.
+ * @note    The axes array must be at least the same size of the
+ *          BaseAccelerometer axes number.
+ *
+ * @param[in] ip        pointer to @p BaseAccelerometer interface.
+ * @param[out] axes     a buffer which would be filled with raw data.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more I2C errors occurred, the errors can
+ *                      be retrieved using @p i2cGetErrors().
+ * @retval MSG_TIMEOUT  if a timeout occurred before operation end.
+ */
 static msg_t acc_read_raw(void *ip, int32_t axes[]) {
+  LSM303DLHCDriver* devp;
   uint8_t buff [LSM303DLHC_ACC_NUMBER_OF_AXES * 2], i;
   int16_t tmp;
   msg_t msg;
-  osalDbgCheck(((ip != NULL) && (axes != NULL)) &&
-              (((LSM303DLHCDriver *)ip)->config->acccfg != NULL));
-  osalDbgAssert((((LSM303DLHCDriver *)ip)->state == LSM303DLHC_READY),
-              "acc_read_raw(), invalid state");
 
-  osalDbgAssert((((LSM303DLHCDriver *)ip)->config->i2cp->state == I2C_READY),
+  osalDbgCheck((ip != NULL) && (axes != NULL));
+    
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(LSM303DLHCDriver*, (BaseCompass*)ip);
+
+  osalDbgAssert((devp->state == LSM303DLHC_READY),
+                "acc_read_raw(), invalid state");
+  osalDbgAssert((devp->config->i2cp->state == I2C_READY),
                 "acc_read_raw(), channel not ready");
 
 #if LSM303DLHC_SHARED_I2C
-  i2cAcquireBus(((LSM303DLHCDriver *)ip)->config->i2cp);
-  i2cStart(((LSM303DLHCDriver *)ip)->config->i2cp,
-           ((LSM303DLHCDriver *)ip)->config->i2ccfg);
+  i2cAcquireBus(devp->config->i2cp);
+  i2cStart(devp->config->i2cp,
+           devp->config->i2ccfg);
 #endif /* LSM303DLHC_SHARED_I2C */
 
-  msg = lsm303dlhcI2CReadRegister(((LSM303DLHCDriver *)ip)->config->i2cp,
-                                  LSM303DLHC_SAD_ACC, LSM303DLHC_AD_ACC_OUT_X_L,
-                                  buff, LSM303DLHC_ACC_NUMBER_OF_AXES * 2);
+  msg = lsm303dlhcI2CReadRegister(devp->config->i2cp, LSM303DLHC_SAD_ACC, 
+                                  LSM303DLHC_AD_ACC_OUT_X_L, buff, 
+                                  LSM303DLHC_ACC_NUMBER_OF_AXES * 2);
 
 #if LSM303DLHC_SHARED_I2C
-  i2cReleaseBus(((LSM303DLHCDriver *)ip)->config->i2cp);
+  i2cReleaseBus(devp->config->i2cp);
 #endif /* LSM303DLHC_SHARED_I2C */
 
   if(msg == MSG_OK)
     for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++) {
-      tmp = buff[2*i] + (buff[2*i+1] << 8);
+      tmp = buff[2 * i] + (buff[2 * i + 1] << 8);
       axes[i] = (int32_t)tmp;
     }
   return msg;
 }
 
-static msg_t comp_read_raw(void *ip, int32_t axes[]) {
-  uint8_t buff [LSM303DLHC_COMP_NUMBER_OF_AXES * 2], i;
-  int16_t tmp;
-  msg_t msg;
-  osalDbgCheck(((ip != NULL) && (axes != NULL)) &&
-              (((LSM303DLHCDriver *)ip)->config->compcfg != NULL));
-  osalDbgAssert((((LSM303DLHCDriver *)ip)->state == LSM303DLHC_READY),
-              "comp_read_raw(), invalid state");
-
-  osalDbgAssert((((LSM303DLHCDriver *)ip)->config->i2cp->state == I2C_READY),
-                "comp_read_raw(), channel not ready");
-
-#if LSM303DLHC_SHARED_I2C
-  i2cAcquireBus(((LSM303DLHCDriver *)ip)->config->i2cp);
-  i2cStart(((LSM303DLHCDriver *)ip)->config->i2cp,
-           ((LSM303DLHCDriver *)ip)->config->i2ccfg);
-#endif /* LSM303DLHC_SHARED_I2C */
-  msg = lsm303dlhcI2CReadRegister(((LSM303DLHCDriver *)ip)->config->i2cp,
-                                  LSM303DLHC_SAD_COMP, LSM303DLHC_AD_COMP_OUT_X_L,
-                                  buff, LSM303DLHC_COMP_NUMBER_OF_AXES * 2);
-
-#if LSM303DLHC_SHARED_I2C
-  i2cReleaseBus(((LSM303DLHCDriver *)ip)->config->i2cp);
-#endif /* LSM303DLHC_SHARED_I2C */
-
-  if(msg == MSG_OK)
-    for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
-      tmp = buff[2*i] + (buff[2*i+1] << 8);
-      axes[i] = (int32_t)tmp;
-    }
-  return msg;
-}
-
-static msg_t sens_read_raw(void *ip, int32_t axes[]) {
-  int32_t* bp = axes;
-  msg_t msg;
-  if (((LSM303DLHCDriver *)ip)->config->acccfg != NULL) {
-	msg = acc_read_raw(ip, bp);
-	if(msg != MSG_OK)
-	  return msg;
-	bp += LSM303DLHC_ACC_NUMBER_OF_AXES;
-  }
-  if (((LSM303DLHCDriver *)ip)->config->compcfg != NULL) {
-    msg = comp_read_raw(ip, bp);
-  }
-  return msg;
-}
-
+/**
+ * @brief   Retrieves cooked data from the BaseAccelerometer.
+ * @note    This data is manipulated according to the formula
+ *          cooked = (raw * sensitivity) - bias.
+ * @note    Final data is expressed as milli-G.
+ * @note    The axes array must be at least the same size of the
+ *          BaseAccelerometer axes number.
+ *
+ * @param[in] ip        pointer to @p BaseAccelerometer interface.
+ * @param[out] axes     a buffer which would be filled with cooked data.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more I2C errors occurred, the errors can
+ *                      be retrieved using @p i2cGetErrors().
+ * @retval MSG_TIMEOUT  if a timeout occurred before operation end.
+ */
 static msg_t acc_read_cooked(void *ip, float axes[]) {
+  LSM303DLHCDriver* devp;
   uint32_t i;
   int32_t raw[LSM303DLHC_ACC_NUMBER_OF_AXES];
   msg_t msg;
 
-  osalDbgCheck(((ip != NULL) && (axes != NULL)) &&
-              (((LSM303DLHCDriver *)ip)->config->acccfg != NULL));
+  osalDbgCheck((ip != NULL) && (axes != NULL));
 
-  osalDbgAssert((((LSM303DLHCDriver *)ip)->state == LSM303DLHC_READY),
-              "acc_read_cooked(), invalid state");
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(LSM303DLHCDriver*, (BaseAccelerometer*)ip);
+
+  osalDbgAssert((devp->state == LSM303DLHC_READY),
+                "acc_read_cooked(), invalid state");
+  osalDbgAssert((devp->config->i2cp->state == I2C_READY),
+                "acc_read_cooked(), channel not ready");
 
   msg = acc_read_raw(ip, raw);
   for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES ; i++) {
-    axes[i] = raw[i] * ((LSM303DLHCDriver *)ip)->accsensitivity[i];
-    axes[i] -= ((LSM303DLHCDriver *)ip)->accbias[i];
+    axes[i] = raw[i] * devp->accsensitivity[i];
+    axes[i] -= devp->accbias[i];
   }
   return msg;
 }
 
-static msg_t comp_read_cooked(void *ip, float axes[]) {
-  uint32_t i;
-  int32_t raw[LSM303DLHC_COMP_NUMBER_OF_AXES];
-  msg_t msg;
-
-  osalDbgCheck(((ip != NULL) && (axes != NULL)) &&
-              (((LSM303DLHCDriver *)ip)->config->compcfg != NULL));
-
-  osalDbgAssert((((LSM303DLHCDriver *)ip)->state == LSM303DLHC_READY),
-              "comp_read_cooked(), invalid state");
-
-  msg = comp_read_raw(ip, raw);
-  for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES ; i++) {
-    axes[i] = raw[i] * ((LSM303DLHCDriver *)ip)->compsensitivity[i];
-    axes[i] -= ((LSM303DLHCDriver *)ip)->compbias[i];
-  }
-  return msg;
-}
-
-static msg_t sens_read_cooked(void *ip, float axes[]) {
-  float* bp = axes;
-  msg_t msg;
-  if (((LSM303DLHCDriver *)ip)->config->acccfg != NULL) {
-	msg = acc_read_cooked(ip, bp);
-	if(msg != MSG_OK)
-	  return msg;
-	bp += LSM303DLHC_ACC_NUMBER_OF_AXES;
-  }
-  if (((LSM303DLHCDriver *)ip)->config->compcfg != NULL) {
-    msg = comp_read_cooked(ip, bp);
-  }
-  return msg;
-}
-
+/**
+ * @brief   Set bias values for the BaseAccelerometer.
+ * @note    Bias must be expressed as milli-G.
+ * @note    The bias buffer must be at least the same size of the
+ *          BaseAccelerometer axes number.
+ *
+ * @param[in] ip        pointer to @p BaseAccelerometer interface.
+ * @param[in] bp        a buffer which contains biases.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ */
 static msg_t acc_set_bias(void *ip, float *bp) {
+  LSM303DLHCDriver* devp;
   uint32_t i;
-  
-  osalDbgCheck((ip != NULL) && (bp !=NULL));
 
-  osalDbgAssert((((LSM303DLHCDriver *)ip)->state == LSM303DLHC_READY) ||
-                (((LSM303DLHCDriver *)ip)->state == LSM303DLHC_STOP),
+  osalDbgCheck((ip != NULL) && (bp != NULL));
+
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(LSM303DLHCDriver*, (BaseAccelerometer*)ip);
+
+  osalDbgAssert((devp->state != LSM303DLHC_UNINIT),
                 "acc_set_bias(), invalid state");
-  
+
   for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++) {
-    ((LSM303DLHCDriver *)ip)->accbias[i] = bp[i];
+    devp->accbias[i] = bp[i];
   }
   return MSG_OK;
 }
 
-static msg_t comp_set_bias(void *ip, float *bp) {
-  uint32_t i;
-  
-  osalDbgCheck((ip != NULL) && (bp !=NULL));
-
-  osalDbgAssert((((LSM303DLHCDriver *)ip)->state == LSM303DLHC_READY) ||
-                (((LSM303DLHCDriver *)ip)->state == LSM303DLHC_STOP),
-                "comp_set_bias(), invalid state");
-  
-  for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
-    ((LSM303DLHCDriver *)ip)->compbias[i] = bp[i];
-  }
-  return MSG_OK;
-}
-
+/**
+ * @brief   Reset bias values for the BaseAccelerometer.
+ * @note    Default biases value are obtained from device datasheet when
+ *          available otherwise they are considered zero.
+ *
+ * @param[in] ip        pointer to @p BaseAccelerometer interface.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ */
 static msg_t acc_reset_bias(void *ip) {
+  LSM303DLHCDriver* devp;
   uint32_t i;
 
   osalDbgCheck(ip != NULL);
+    
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(LSM303DLHCDriver*, (BaseAccelerometer*)ip);
 
-  osalDbgAssert((((LSM303DLHCDriver *)ip)->state == LSM303DLHC_READY) ||
-                (((LSM303DLHCDriver *)ip)->state == LSM303DLHC_STOP),
-              "acc_reset_bias(), invalid state");
+  osalDbgAssert((devp->state != LSM303DLHC_UNINIT),
+                "acc_reset_bias(), invalid state");
 
   for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++)
-    ((LSM303DLHCDriver *)ip)->accbias[i] = 0;
+    devp->accbias[i] = 0.0;
   return MSG_OK;
 }
 
-static msg_t comp_reset_bias(void *ip) {
-  uint32_t i;
-
-  osalDbgCheck(ip != NULL);
-
-  osalDbgAssert((((LSM303DLHCDriver *)ip)->state == LSM303DLHC_READY) ||
-                (((LSM303DLHCDriver *)ip)->state == LSM303DLHC_STOP),
-              "comp_reset_bias(), invalid state");
-
-  for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++)
-    ((LSM303DLHCDriver *)ip)->compbias[i] = 0;
-  return MSG_OK;
-}
-
+/**
+ * @brief   Set sensitivity values for the BaseAccelerometer.
+ * @note    Sensitivity must be expressed as milli-G/LSB.
+ * @note    The sensitivity buffer must be at least the same size of the
+ *          BaseAccelerometer axes number.
+ *
+ * @param[in] ip        pointer to @p BaseAccelerometer interface.
+ * @param[in] sp        a buffer which contains sensitivities.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ */
 static msg_t acc_set_sensivity(void *ip, float *sp) {
+  LSM303DLHCDriver* devp;
   uint32_t i;
-  
-  osalDbgCheck((ip != NULL) && (sp !=NULL));
 
-  osalDbgAssert((((LSM303DLHCDriver *)ip)->state == LSM303DLHC_READY),
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(LSM303DLHCDriver*, (BaseAccelerometer*)ip);
+
+  osalDbgCheck((ip != NULL) && (sp != NULL));
+
+  osalDbgAssert((devp->state != LSM303DLHC_UNINIT),
                 "acc_set_sensivity(), invalid state");
-  
+
   for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++) {
-    ((LSM303DLHCDriver *)ip)->accsensitivity[i] = sp[i];
+    devp->accsensitivity[i] = sp[i];
   }
   return MSG_OK;
 }
 
-static msg_t comp_set_sensivity(void *ip, float *sp) {
-  uint32_t i;
-  
-  osalDbgCheck((ip != NULL) && (sp !=NULL));
-
-  osalDbgAssert((((LSM303DLHCDriver *)ip)->state == LSM303DLHC_READY),
-                "comp_set_sensivity(), invalid state");
-  
-  for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
-    ((LSM303DLHCDriver *)ip)->compsensitivity[i] = sp[i];
-  }
-  return MSG_OK;
-}
-
+/**
+ * @brief   Reset sensitivity values for the BaseAccelerometer.
+ * @note    Default sensitivities value are obtained from device datasheet.
+ *
+ * @param[in] ip        pointer to @p BaseAccelerometer interface.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    otherwise.
+ */
 static msg_t acc_reset_sensivity(void *ip) {
+  LSM303DLHCDriver* devp;
   uint32_t i;
   msg_t msg = MSG_OK;
 
   osalDbgCheck(ip != NULL);
+    
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(LSM303DLHCDriver*, (BaseAccelerometer*)ip);
 
-  osalDbgAssert((((LSM303DLHCDriver *)ip)->state == LSM303DLHC_READY),
+  osalDbgAssert((devp->state != LSM303DLHC_UNINIT),
                 "acc_reset_sensivity(), invalid state");
 
-  if(((LSM303DLHCDriver *)ip)->config->acccfg->fullscale == LSM303DLHC_ACC_FS_2G)
+  if(devp->config->acccfg->fullscale == LSM303DLHC_ACC_FS_2G)
     for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++)
-      ((LSM303DLHCDriver *)ip)->accsensitivity[i] = LSM303DLHC_ACC_SENS_2G;
-  else if(((LSM303DLHCDriver *)ip)->config->acccfg->fullscale == LSM303DLHC_ACC_FS_4G)
+      devp->accsensitivity[i] = LSM303DLHC_ACC_SENS_2G;
+  else if(devp->config->acccfg->fullscale == LSM303DLHC_ACC_FS_4G)
 	for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++)
-      ((LSM303DLHCDriver *)ip)->accsensitivity[i] = LSM303DLHC_ACC_SENS_4G;
-  else if(((LSM303DLHCDriver *)ip)->config->acccfg->fullscale == LSM303DLHC_ACC_FS_8G)
+      devp->accsensitivity[i] = LSM303DLHC_ACC_SENS_4G;
+  else if(devp->config->acccfg->fullscale == LSM303DLHC_ACC_FS_8G)
 	for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++)
-      ((LSM303DLHCDriver *)ip)->accsensitivity[i] = LSM303DLHC_ACC_SENS_8G;
-  else if(((LSM303DLHCDriver *)ip)->config->acccfg->fullscale == LSM303DLHC_ACC_FS_16G)
+      devp->accsensitivity[i] = LSM303DLHC_ACC_SENS_8G;
+  else if(devp->config->acccfg->fullscale == LSM303DLHC_ACC_FS_16G)
 	for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++)
-      ((LSM303DLHCDriver *)ip)->accsensitivity[i] = LSM303DLHC_ACC_SENS_16G;
+      devp->accsensitivity[i] = LSM303DLHC_ACC_SENS_16G;
   else {
     osalDbgAssert(FALSE, "reset_sensivity(), accelerometer full scale issue");
     msg = MSG_RESET;
@@ -368,90 +331,33 @@ static msg_t acc_reset_sensivity(void *ip) {
   return msg;
 }
 
-static msg_t comp_reset_sensivity(void *ip) {
-  uint32_t i;
-  msg_t msg = MSG_OK;
-
-  osalDbgCheck(ip != NULL);
-
-  osalDbgAssert((((LSM303DLHCDriver *)ip)->state == LSM303DLHC_READY),
-                "comp_reset_sensivity(), invalid state");
-
-  if(((LSM303DLHCDriver *)ip)->config->compcfg->fullscale == LSM303DLHC_COMP_FS_1P3GA)
-    for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
-      if(i != 2) {
-        ((LSM303DLHCDriver *)ip)->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_1P3GA;
-      }
-      else {
-        ((LSM303DLHCDriver *)ip)->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_1P3GA;
-      }
-    }
-  else if(((LSM303DLHCDriver *)ip)->config->compcfg->fullscale == LSM303DLHC_COMP_FS_1P9GA)
-    for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
-      if(i != 2) {
-        ((LSM303DLHCDriver *)ip)->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_1P9GA;
-      }
-      else {
-        ((LSM303DLHCDriver *)ip)->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_1P9GA;
-      }
-    }
-  else if(((LSM303DLHCDriver *)ip)->config->compcfg->fullscale == LSM303DLHC_COMP_FS_2P5GA)
-    for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
-      if(i != 2) {
-        ((LSM303DLHCDriver *)ip)->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_2P5GA;
-      }
-      else {
-        ((LSM303DLHCDriver *)ip)->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_2P5GA;
-      }
-    }
-  else if(((LSM303DLHCDriver *)ip)->config->compcfg->fullscale == LSM303DLHC_COMP_FS_4P0GA)
-    for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
-      if(i != 2) {
-        ((LSM303DLHCDriver *)ip)->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_4P0GA;
-      }
-      else {
-        ((LSM303DLHCDriver *)ip)->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_4P0GA;
-      }
-    }
-  else if(((LSM303DLHCDriver *)ip)->config->compcfg->fullscale == LSM303DLHC_COMP_FS_4P7GA)
-    for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
-      if(i != 2) {
-        ((LSM303DLHCDriver *)ip)->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_4P7GA;
-      }
-      else {
-        ((LSM303DLHCDriver *)ip)->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_4P7GA;
-      }
-    }
-  else if(((LSM303DLHCDriver *)ip)->config->compcfg->fullscale == LSM303DLHC_COMP_FS_5P6GA)
-    for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
-      if(i != 2) {
-        ((LSM303DLHCDriver *)ip)->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_5P6GA;
-      }
-      else {
-        ((LSM303DLHCDriver *)ip)->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_5P6GA;
-      }
-    }
-  else if(((LSM303DLHCDriver *)ip)->config->compcfg->fullscale == LSM303DLHC_COMP_FS_8P1GA)
-    for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
-      if(i != 2) {
-        ((LSM303DLHCDriver *)ip)->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_8P1GA;
-      }
-      else {
-        ((LSM303DLHCDriver *)ip)->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_8P1GA;
-      }
-    }
-  else {
-    osalDbgAssert(FALSE, "reset_sensivity(), compass full scale issue");
-    msg = MSG_RESET;
-  }
-  return msg;
-}
-
-static msg_t acc_set_full_scale(void *ip, lsm303dlhc_acc_fs_t fs) {
+/**
+ * @brief   Changes the LSM303DLHCDriver accelerometer fullscale value.
+ * @note    This function also rescale sensitivities and biases based on 
+ *          previous and next fullscale value.
+ * @note    A recalibration is highly suggested after calling this function.
+ *
+ * @param[in] ip        pointer to @p LSM303DLHCDriver interface.
+ * @param[in] fs        new fullscale value.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    otherwise.
+ */
+static msg_t acc_set_full_scale(LSM303DLHCDriver *devp,
+                                lsm303dlhc_acc_fs_t fs) {
   float newfs, scale;
   uint8_t i, buff[2];
   msg_t msg;
 
+  osalDbgCheck(devp != NULL);
+
+  osalDbgAssert((devp->state != LSM303DLHC_UNINIT),
+                "acc_set_full_scale(), invalid state");
+  osalDbgAssert((devp->config->i2cp->state == I2C_READY),
+                "acc_set_full_scale(), channel not ready");
+
+  /* Computing new fullscale value.*/
   if(fs == LSM303DLHC_ACC_FS_2G) {
     newfs = LSM303DLHC_ACC_2G;
   }
@@ -469,24 +375,25 @@ static msg_t acc_set_full_scale(void *ip, lsm303dlhc_acc_fs_t fs) {
     return msg;
   }
 
-  if(newfs != ((LSM303DLHCDriver *)ip)->accfullscale) {
-    scale = newfs / ((LSM303DLHCDriver *)ip)->accfullscale;
-    ((LSM303DLHCDriver *)ip)->accfullscale = newfs;
+  if(newfs != devp->accfullscale) {
+    /* Computing scale value.*/
+    scale = newfs / devp->accfullscale;
+    devp->accfullscale = newfs;
 
 #if LSM303DLHC_SHARED_I2C
-		i2cAcquireBus(((LSM303DLHCDriver *)ip)->config->i2cp);
-		i2cStart(((LSM303DLHCDriver *)ip)->config->i2cp,
-						 ((LSM303DLHCDriver *)ip)->config->i2ccfg);
+		i2cAcquireBus(devp->config->i2cp);
+		i2cStart(devp->config->i2cp,
+						 devp->config->i2ccfg);
 #endif /* LSM303DLHC_SHARED_I2C */
 
     /* Updating register.*/
-    msg = lsm303dlhcI2CReadRegister(((LSM303DLHCDriver *)ip)->config->i2cp,
+    msg = lsm303dlhcI2CReadRegister(devp->config->i2cp,
                                    LSM303DLHC_SAD_ACC,
                                    LSM303DLHC_AD_ACC_CTRL_REG4,
                                    &buff[1], 1);
 
 #if LSM303DLHC_SHARED_I2C
-        i2cReleaseBus(((LSM303DLHCDriver *)ip)->config->i2cp);
+        i2cReleaseBus(devp->config->i2cp);
 #endif /* LSM303DLHC_SHARED_I2C */
 
     if(msg != MSG_OK)
@@ -497,35 +404,345 @@ static msg_t acc_set_full_scale(void *ip, lsm303dlhc_acc_fs_t fs) {
     buff[0] = LSM303DLHC_AD_ACC_CTRL_REG4;
 
 #if LSM303DLHC_SHARED_I2C
-    i2cAcquireBus(((LSM303DLHCDriver *)ip)->config->i2cp);
-    i2cStart(((LSM303DLHCDriver *)ip)->config->i2cp,
-                     ((LSM303DLHCDriver *)ip)->config->i2ccfg);
+    i2cAcquireBus(devp->config->i2cp);
+    i2cStart(devp->config->i2cp,
+                     devp->config->i2ccfg);
 #endif /* LSM303DLHC_SHARED_I2C */
 
-    msg = lsm303dlhcI2CWriteRegister(((LSM303DLHCDriver *)ip)->config->i2cp,
+    msg = lsm303dlhcI2CWriteRegister(devp->config->i2cp,
                                     LSM303DLHC_SAD_ACC, buff, 1);
 
 #if LSM303DLHC_SHARED_I2C
-		i2cReleaseBus(((LSM303DLHCDriver *)ip)->config->i2cp);
+		i2cReleaseBus(devp->config->i2cp);
 #endif /* LSM303DLHC_SHARED_I2C */
 
     if(msg != MSG_OK)
       return msg;
 
-    /* Scaling sensitivity and bias. Re-calibration is suggested anyway. */
+    /* Scaling sensitivity and bias. Re-calibration is suggested anyway.*/
     for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++) {
-      ((LSM303DLHCDriver *)ip)->accsensitivity[i] *= scale;
-      ((LSM303DLHCDriver *)ip)->accbias[i] *= scale;
+      devp->accsensitivity[i] *= scale;
+      devp->accbias[i] *= scale;
     }
   }
   return msg;
 }
 
-static msg_t comp_set_full_scale(void *ip, lsm303dlhc_comp_fs_t fs) {
+/**
+ * @brief   Return the number of axes of the BaseCompass.
+ *
+ * @param[in] ip        pointer to @p BaseCompass interface
+ *
+ * @return              the number of axes.
+ */
+static size_t comp_get_axes_number(void *ip) {
+
+  osalDbgCheck(ip != NULL);
+  return LSM303DLHC_COMP_NUMBER_OF_AXES;
+}
+
+/**
+ * @brief   Retrieves raw data from the BaseCompass.
+ * @note    This data is retrieved from MEMS register without any algebrical
+ *          manipulation.
+ * @note    The axes array must be at least the same size of the
+ *          BaseCompass axes number.
+ *
+ * @param[in] ip        pointer to @p BaseCompass interface.
+ * @param[out] axes     a buffer which would be filled with raw data.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more I2C errors occurred, the errors can
+ *                      be retrieved using @p i2cGetErrors().
+ * @retval MSG_TIMEOUT  if a timeout occurred before operation end.
+ */
+static msg_t comp_read_raw(void *ip, int32_t axes[]) {
+  LSM303DLHCDriver* devp;
+  uint8_t buff [LSM303DLHC_COMP_NUMBER_OF_AXES * 2], i;
+  int16_t tmp;
+  msg_t msg;
+
+  osalDbgCheck((ip != NULL) && (axes != NULL));
+    
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(LSM303DLHCDriver*, (BaseCompass*)ip);
+
+  osalDbgAssert((devp->state == LSM303DLHC_READY),
+                "comp_read_raw(), invalid state");
+  osalDbgAssert((devp->config->i2cp->state == I2C_READY),
+                "comp_read_raw(), channel not ready");
+
+#if LSM303DLHC_SHARED_I2C
+  i2cAcquireBus(devp->config->i2cp);
+  i2cStart(devp->config->i2cp,
+           devp->config->i2ccfg);
+#endif /* LSM303DLHC_SHARED_I2C */
+  msg = lsm303dlhcI2CReadRegister(devp->config->i2cp, LSM303DLHC_SAD_COMP, 
+                                  LSM303DLHC_AD_COMP_OUT_X_L, buff, 
+                                  LSM303DLHC_COMP_NUMBER_OF_AXES * 2);
+
+#if LSM303DLHC_SHARED_I2C
+  i2cReleaseBus(devp->config->i2cp);
+#endif /* LSM303DLHC_SHARED_I2C */
+
+  if(msg == MSG_OK)
+    for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
+      tmp = buff[2 * i] + (buff[2 * i + 1] << 8);
+      axes[i] = (int32_t)tmp;
+    }
+  return msg;
+}
+
+/**
+ * @brief   Retrieves cooked data from the BaseCompass.
+ * @note    This data is manipulated according to the formula
+ *          cooked = (raw * sensitivity) - bias.
+ * @note    Final data is expressed as Ga.
+ * @note    The axes array must be at least the same size of the
+ *          BaseCompass axes number.
+ *
+ * @param[in] ip        pointer to @p BaseCompass interface.
+ * @param[out] axes     a buffer which would be filled with cooked data.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more I2C errors occurred, the errors can
+ *                      be retrieved using @p i2cGetErrors().
+ * @retval MSG_TIMEOUT  if a timeout occurred before operation end.
+ */
+static msg_t comp_read_cooked(void *ip, float axes[]) {
+  LSM303DLHCDriver* devp;
+  uint32_t i;
+  int32_t raw[LSM303DLHC_COMP_NUMBER_OF_AXES];
+  msg_t msg;
+
+  osalDbgCheck((ip != NULL) && (axes != NULL));
+
+    
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(LSM303DLHCDriver*, (BaseCompass*)ip);
+  
+  osalDbgAssert((devp->state == LSM303DLHC_READY),
+                "comp_read_cooked(), invalid state");
+  osalDbgAssert((devp->config->i2cp->state == I2C_READY),
+                "comp_read_cooked(), channel not ready");
+                
+  msg = comp_read_raw(ip, raw);
+  for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES ; i++) {
+    axes[i] = raw[i] * devp->compsensitivity[i];
+    axes[i] -= devp->compbias[i];
+  }
+  return msg;
+}
+
+/**
+ * @brief   Set bias values for the BaseCompass.
+ * @note    Bias must be expressed as Ga.
+ * @note    The bias buffer must be at least the same size of the
+ *          BaseCompass axes number.
+ *
+ * @param[in] ip        pointer to @p BaseCompass interface.
+ * @param[in] bp        a buffer which contains biases.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ */
+static msg_t comp_set_bias(void *ip, float *bp) {
+  LSM303DLHCDriver* devp;
+  uint32_t i;
+
+  osalDbgCheck((ip != NULL) && (bp != NULL));
+    
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(LSM303DLHCDriver*, (BaseCompass*)ip);
+
+  osalDbgAssert((devp->state != LSM303DLHC_UNINIT),
+                "comp_set_bias(), invalid state");
+
+  for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
+    devp->compbias[i] = bp[i];
+  }
+  return MSG_OK;
+}
+
+/**
+ * @brief   Reset bias values for the BaseCompass.
+ * @note    Default biases value are obtained from device datasheet when
+ *          available otherwise they are considered zero.
+ *
+ * @param[in] ip        pointer to @p BaseCompass interface.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ */
+static msg_t comp_reset_bias(void *ip) {
+  LSM303DLHCDriver* devp;
+  uint32_t i;
+
+  osalDbgCheck(ip != NULL);
+    
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(LSM303DLHCDriver*, (BaseCompass*)ip);
+
+  osalDbgAssert((devp->state != LSM303DLHC_UNINIT),
+                "comp_reset_bias(), invalid state");
+
+  for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++)
+    devp->compbias[i] = 0.0;
+  return MSG_OK;
+}
+
+/**
+ * @brief   Set sensitivity values for the BaseCompass.
+ * @note    Sensitivity must be expressed as Ga/LSB.
+ * @note    The sensitivity buffer must be at least the same size of the
+ *          BaseCompass axes number.
+ *
+ * @param[in] ip        pointer to @p BaseCompass interface.
+ * @param[in] sp        a buffer which contains sensitivities.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ */
+static msg_t comp_set_sensivity(void *ip, float *sp) {
+  LSM303DLHCDriver* devp;
+  uint32_t i;
+
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(LSM303DLHCDriver*, (BaseCompass*)ip);
+
+  osalDbgCheck((ip != NULL) && (sp != NULL));
+
+  osalDbgAssert((devp->state != LSM303DLHC_UNINIT),
+                "comp_set_sensivity(), invalid state");
+
+  for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
+    devp->compsensitivity[i] = sp[i];
+  }
+  return MSG_OK;
+}
+
+/**
+ * @brief   Reset sensitivity values for the BaseCompass.
+ * @note    Default sensitivities value are obtained from device datasheet.
+ *
+ * @param[in] ip        pointer to @p BaseCompass interface.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    otherwise.
+ */
+static msg_t comp_reset_sensivity(void *ip) {
+  LSM303DLHCDriver* devp;
+  uint32_t i;
+  msg_t msg = MSG_OK;
+
+  osalDbgCheck(ip != NULL);
+    
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(LSM303DLHCDriver*, (BaseCompass*)ip);
+
+  osalDbgAssert((devp->state != LSM303DLHC_UNINIT),
+                "comp_reset_sensivity(), invalid state");
+
+  if(devp->config->compcfg->fullscale == LSM303DLHC_COMP_FS_1P3GA)
+    for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
+      if(i != 2) {
+        devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_1P3GA;
+      }
+      else {
+        devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_1P3GA;
+      }
+    }
+  else if(devp->config->compcfg->fullscale == LSM303DLHC_COMP_FS_1P9GA)
+    for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
+      if(i != 2) {
+        devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_1P9GA;
+      }
+      else {
+        devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_1P9GA;
+      }
+    }
+  else if(devp->config->compcfg->fullscale == LSM303DLHC_COMP_FS_2P5GA)
+    for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
+      if(i != 2) {
+        devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_2P5GA;
+      }
+      else {
+        devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_2P5GA;
+      }
+    }
+  else if(devp->config->compcfg->fullscale == LSM303DLHC_COMP_FS_4P0GA)
+    for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
+      if(i != 2) {
+        devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_4P0GA;
+      }
+      else {
+        devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_4P0GA;
+      }
+    }
+  else if(devp->config->compcfg->fullscale == LSM303DLHC_COMP_FS_4P7GA)
+    for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
+      if(i != 2) {
+        devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_4P7GA;
+      }
+      else {
+        devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_4P7GA;
+      }
+    }
+  else if(devp->config->compcfg->fullscale == LSM303DLHC_COMP_FS_5P6GA)
+    for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
+      if(i != 2) {
+        devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_5P6GA;
+      }
+      else {
+        devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_5P6GA;
+      }
+    }
+  else if(devp->config->compcfg->fullscale == LSM303DLHC_COMP_FS_8P1GA)
+    for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
+      if(i != 2) {
+        devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_8P1GA;
+      }
+      else {
+        devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_8P1GA;
+      }
+    }
+  else {
+    osalDbgAssert(FALSE, "reset_sensivity(), compass full scale issue");
+    msg = MSG_RESET;
+  }
+  return msg;
+}
+
+/**
+ * @brief   Changes the LSM303DLHCDriver compass fullscale value.
+ * @note    This function also rescale sensitivities and biases based on
+ *          previous and next fullscale value.
+ * @note    A recalibration is highly suggested after calling this function.
+ *
+ * @param[in] ip        pointer to @p LSM303DLHCDriver interface.
+ * @param[in] fs        new fullscale value.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    otherwise.
+ */
+static msg_t comp_set_full_scale(LSM303DLHCDriver *devp,
+                                 lsm303dlhc_comp_fs_t fs) {
   float newfs, scale;
   uint8_t i, buff[2];
   msg_t msg;
+  
+  osalDbgCheck(devp != NULL);
 
+  osalDbgAssert((devp->state != LSM303DLHC_UNINIT),
+                "comp_set_full_scale(), invalid state");
+  osalDbgAssert((devp->config->i2cp->state == I2C_READY),
+                "comp_set_full_scale(), channel not ready");
+
+  /* Computing new fullscale value.*/
   if(fs == LSM303DLHC_COMP_FS_1P3GA) {
     newfs = LSM303DLHC_COMP_1P3GA;
   }
@@ -552,24 +769,25 @@ static msg_t comp_set_full_scale(void *ip, lsm303dlhc_comp_fs_t fs) {
     return msg;
   }
 
-  if(newfs != ((LSM303DLHCDriver *)ip)->compfullscale) {
-    scale = newfs / ((LSM303DLHCDriver *)ip)->compfullscale;
-    ((LSM303DLHCDriver *)ip)->compfullscale = newfs;
+  if(newfs != devp->compfullscale) {
+    /* Computing scale value.*/
+    scale = newfs / devp->compfullscale;
+    devp->compfullscale = newfs;
 
 #if LSM303DLHC_SHARED_I2C
-    i2cAcquireBus(((LSM303DLHCDriver *)ip)->config->i2cp);
-    i2cStart(((LSM303DLHCDriver *)ip)->config->i2cp,
-                     ((LSM303DLHCDriver *)ip)->config->i2ccfg);
+    i2cAcquireBus(devp->config->i2cp);
+    i2cStart(devp->config->i2cp,
+                     devp->config->i2ccfg);
 #endif /* LSM303DLHC_SHARED_I2C */
 
     /* Updating register.*/
-    msg = lsm303dlhcI2CReadRegister(((LSM303DLHCDriver *)ip)->config->i2cp,
+    msg = lsm303dlhcI2CReadRegister(devp->config->i2cp,
                                    LSM303DLHC_SAD_COMP,
                                    LSM303DLHC_AD_COMP_CRB_REG,
                                    &buff[1], 1);
 
 #if LSM303DLHC_SHARED_I2C
-        i2cReleaseBus(((LSM303DLHCDriver *)ip)->config->i2cp);
+        i2cReleaseBus(devp->config->i2cp);
 #endif /* LSM303DLHC_SHARED_I2C */
 
     if(msg != MSG_OK)
@@ -578,49 +796,46 @@ static msg_t comp_set_full_scale(void *ip, lsm303dlhc_comp_fs_t fs) {
     buff[1] |= fs;
     buff[0] = LSM303DLHC_AD_COMP_CRB_REG;
 
-
 #if LSM303DLHC_SHARED_I2C
-    i2cAcquireBus(((LSM303DLHCDriver *)ip)->config->i2cp);
-    i2cStart(((LSM303DLHCDriver *)ip)->config->i2cp,
-                     ((LSM303DLHCDriver *)ip)->config->i2ccfg);
+    i2cAcquireBus(devp->config->i2cp);
+    i2cStart(devp->config->i2cp,
+                     devp->config->i2ccfg);
 #endif /* LSM303DLHC_SHARED_I2C */
 
-    msg = lsm303dlhcI2CWriteRegister(((LSM303DLHCDriver *)ip)->config->i2cp,
+    msg = lsm303dlhcI2CWriteRegister(devp->config->i2cp,
                                      LSM303DLHC_SAD_COMP, buff, 1);
 
 #if LSM303DLHC_SHARED_I2C
-        i2cReleaseBus(((LSM303DLHCDriver *)ip)->config->i2cp);
+        i2cReleaseBus(devp->config->i2cp);
 #endif /* LSM303DLHC_SHARED_I2C */
 
     if(msg != MSG_OK)
       return msg;
 
-    /* Scaling sensitivity and bias. Re-calibration is suggested anyway. */
+    /* Scaling sensitivity and bias. Re-calibration is suggested anyway.*/
     for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
-      ((LSM303DLHCDriver *)ip)->compsensitivity[i] *= scale;
-      ((LSM303DLHCDriver *)ip)->compbias[i] *= scale;
+      devp->compsensitivity[i] *= scale;
+      devp->compbias[i] *= scale;
     }
   }
   return msg;
 }
 
-static const struct BaseSensorVMT vmt_sensor = {
+static const struct LSM303DLHCVMT vmt_device = {
   (size_t)0,
-  sens_get_axes_number, sens_read_raw, sens_read_cooked
+  acc_set_full_scale, comp_set_full_scale
 };
 
-static const struct LSM303DLHCAcceleromerVMT vmt_accelerometer = {
-  (size_t)0,
+static const struct BaseAccelerometerVMT vmt_accelerometer = {
+  sizeof(struct LSM303DLHCVMT),
   acc_get_axes_number, acc_read_raw, acc_read_cooked,
-  acc_set_bias, acc_reset_bias, acc_set_sensivity, acc_reset_sensivity,
-  acc_set_full_scale
+  acc_set_bias, acc_reset_bias, acc_set_sensivity, acc_reset_sensivity
 };
 
-static const struct LSM303DLHCCompassVMT vmt_compass = {
-  (size_t)0,
+static const struct BaseCompassVMT vmt_compass = {
+  sizeof(BaseAccelerometer),
   comp_get_axes_number, comp_read_raw, comp_read_cooked,
-  comp_set_bias, comp_reset_bias, comp_set_sensivity, comp_reset_sensivity,
-  comp_set_full_scale
+  comp_set_bias, comp_reset_bias, comp_set_sensivity, comp_reset_sensivity
 };
 
 /*===========================================================================*/
@@ -636,11 +851,16 @@ static const struct LSM303DLHCCompassVMT vmt_compass = {
  */
 void lsm303dlhcObjectInit(LSM303DLHCDriver *devp) {
   uint32_t i;
-  devp->vmt_sensor = &vmt_sensor;
-  devp->vmt_accelerometer = &vmt_accelerometer;
-  devp->vmt_compass = &vmt_compass;
 
+  devp->vmt = &vmt_device;
+  devp->accelerometer_if.vmt = &vmt_accelerometer;
+  devp->compass_if.vmt = &vmt_compass;
+  
   devp->config = NULL;
+  
+  devp->accaxes = LSM303DLHC_ACC_NUMBER_OF_AXES;
+  devp->compaxes = LSM303DLHC_COMP_NUMBER_OF_AXES;
+    
   for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++)
     devp->accbias[i] = 0.0f;
   for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++)
@@ -661,8 +881,7 @@ void lsm303dlhcStart(LSM303DLHCDriver *devp, const LSM303DLHCConfig *config) {
   uint8_t cr[6];
   osalDbgCheck((devp != NULL) && (config != NULL));
 
-
-  osalDbgAssert((devp->state == LSM303DLHC_STOP) || 
+  osalDbgAssert((devp->state == LSM303DLHC_STOP) ||
                 (devp->state == LSM303DLHC_READY),
               "lsm303dlhcStart(), invalid state");
 
@@ -910,7 +1129,7 @@ void lsm303dlhcStart(LSM303DLHCDriver *devp, const LSM303DLHCConfig *config) {
 #if LSM303DLHC_SHARED_I2C
   i2cReleaseBus((devp)->config->i2cp);
 #endif /* LSM303DLHC_SHARED_I2C */
-} 
+}
 
 /**
  * @brief   Deactivates the LSM303DLHC Complex Driver peripheral.
@@ -948,8 +1167,8 @@ void lsm303dlhcStop(LSM303DLHCDriver *devp) {
     i2cStop((devp)->config->i2cp);
 #if	LSM303DLHC_SHARED_I2C
     i2cReleaseBus((devp)->config->i2cp);
-#endif /* LSM303DLHC_SHARED_I2C */    
-  }			  
+#endif /* LSM303DLHC_SHARED_I2C */
+  }			
   devp->state = LSM303DLHC_STOP;
 }
 /** @} */

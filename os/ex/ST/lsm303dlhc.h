@@ -43,7 +43,7 @@
 /**
  * @brief   LSM303DLHC driver version string.
  */
-#define EX_LSM303DLHC_VERSION               "1.0.4"
+#define EX_LSM303DLHC_VERSION               "1.0.5"
 
 /**
  * @brief   LSM303DLHC driver version major number.
@@ -58,11 +58,12 @@
 /**
  * @brief   LSM303DLHC driver version patch number.
  */
-#define EX_LSM303DLHC_PATCH                 4
+#define EX_LSM303DLHC_PATCH                 5
 /** @} */
 
 /**
  * @brief   LSM303DLHC accelerometer subsystem characteristics.
+ * @note    Sensitivity is expressed as mG/LSB whereas 1 mG = 0.00980665 m/s^2.
  *
  * @{
  */
@@ -349,6 +350,10 @@
  * @name    LSM303DLHC accelerometer subsystem data structures and types.
  * @{
  */
+/**
+ * @brief Structure representing a LSM303DLHC driver.
+ */
+typedef struct LSM303DLHCDriver LSM303DLHCDriver;
 
 /**
  * @brief LSM303DLHC accelerometer subsystem full scale.
@@ -575,9 +580,11 @@ typedef struct {
  */
 #define _lsm303dlhc_methods_alone                                           \
   /* Change full scale value of LSM303DLHC accelerometer subsystem .*/      \
-  msg_t (*set_acc_full_scale)(void *instance, lsm303dlhc_acc_fs_t fs);
+  msg_t (*acc_set_full_scale)(LSM303DLHCDriver *instance,                   \
+                              lsm303dlhc_acc_fs_t fs);                      \
   /* Change full scale value of LSM303DLHC compass subsystem .*/            \
-  msg_t (*set_comp_full_scale)(void *instance, lsm303dlhc_comp_fs_t fs);
+  msg_t (*comp_set_full_scale)(LSM303DLHCDriver *instance,                  \
+                              lsm303dlhc_comp_fs_t fs);                     \
 
 /**
  * @brief   @p LSM303DLHC subsystem specific methods with inherited ones.
@@ -604,6 +611,10 @@ struct LSM303DLHCVMT {
   lsm303dlhc_state_t        state;                                          \
   /* Current configuration data.*/                                          \
   const LSM303DLHCConfig    *config;                                        \
+  /* Axes number of the accelerometer subsystem.*/                          \
+  size_t                    accaxes;                                        \
+  /* Axes number of the compass subsystem.*/                                \
+  size_t                    compaxes;                                       \
   /* Current accelerometer sensitivity.*/                                   \
   float                     accsensitivity[LSM303DLHC_ACC_NUMBER_OF_AXES];  \
   /* Accelerometer bias data.*/                                             \
@@ -629,44 +640,11 @@ struct LSM303DLHCDriver {
   BaseCompass                   compass_if;
   _lsm303dlhc_data
 };
-
-/**
- * @brief Structure representing a LSM303DLHC driver.
- */
-typedef struct LSM303DLHCDriver LSM303DLHCDriver;
 /** @} */
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
-
-/**
- * @brief   Change accelerometer fullscale value.
- *
- * @param[in] ip        pointer to a @p LSM303DLHCDriver class.
- * @param[in] fs        the new full scale value.
- *
- * @return              The operation status.
- * @retval MSG_OK       if the function succeeded.
- * @retval MSG_RESET    if one or more errors occurred.
- * @api
- */
-#define accelerometerSetFullScale(ip, fs)                                   \
-        (ip)->vmt_accelerometer->set_full_scale(ip, fs)
-
-/**
- * @brief   Change compass fullscale value.
- *
- * @param[in] ip        pointer to a @p BaseCompass class.
- * @param[in] fs        the new full scale value.
- *
- * @return              The operation status.
- * @retval MSG_OK       if the function succeeded.
- * @retval MSG_RESET    if one or more errors occurred.
- * @api
- */
-#define compassSetFullScale(ip, fs)                                         \
-        (ip)->vmt_compass->set_full_scale(ip, fs)
         
 /*===========================================================================*/
 /* External declarations.                                                    */
