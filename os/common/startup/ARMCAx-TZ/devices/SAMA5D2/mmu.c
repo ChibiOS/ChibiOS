@@ -362,6 +362,19 @@ void __core_init(void) {
   if ((pm & SCTLR_C_Msk) == 0) {
     __set_SCTLR(pm | SCTLR_C_Msk);
   }
+
+#if defined(ARM_ENABLE_L2CC)
+#if ARM_ENABLE_L2CC
+  /* High SRAM to L2CC.*/
+  SFR->SFR_L2CC_HRAMC = 0x1;
+
+  /* Invalidate and enable L2 cache.*/
+  L2C_InvAllByWay();
+  L2C_Enable();
+  __DSB();
+  __ISB();
+#endif
+#endif
 }
 
 /** @} */
