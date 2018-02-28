@@ -12,7 +12,7 @@
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-*/
+ */
 #include <stdio.h>
 #include <string.h>
 #include "ch.h"
@@ -63,7 +63,7 @@ void relianceedge_demo(void)
 			writefiles(volnum);
 			chprintf(ts,"OK\r\n reading files ..\r\n" );
 			readfiles();
-      chprintf(ts,"OK\r\n" );
+			chprintf(ts,"OK\r\n" );
 		}
 	}
 	else
@@ -85,97 +85,97 @@ static void writefiles(uint8_t volnum)
 	int iByte;
 
 	const char *pszVolume = gaRedVolConf[volnum].pszPathPrefix;
-		/* Save the current transaction point settings. */
-		status = red_gettransmask( pszVolume, &ulEventMask );
-		osalDbgCheck( status == 0 );
+	/* Save the current transaction point settings. */
+	status = red_gettransmask( pszVolume, &ulEventMask );
+	osalDbgCheck( status == 0 );
 
-		/* Disable automatic transaction points so that all of the files can be
+	/* Disable automatic transaction points so that all of the files can be
 		created in one atomic operation. */
-		status = red_settransmask( pszVolume, RED_TRANSACT_MANUAL );
-		osalDbgCheck( status == 0 );
+	status = red_settransmask( pszVolume, RED_TRANSACT_MANUAL );
+	osalDbgCheck( status == 0 );
 
-		/* Create filen files.  Each created file will be
+	/* Create filen files.  Each created file will be
 		( i * fsRAM_BUFFER_SIZE ) bytes in length, and filled
 		with a different repeating character. */
-		for( i = 1; i <= filen; i++ )
-		{
-			/* Generate a file name. */
-			sprintf( path, "/root%03d.txt", (int)i );
+	for( i = 1; i <= filen; i++ )
+	{
+		/* Generate a file name. */
+		sprintf( path, "/root%03d.txt", (int)i );
 
-			/* Print out the file name and the directory into which the file is
+		/* Print out the file name and the directory into which the file is
 			being written. */
-			chprintf(ts,"Creating file %s\r\n", path );
+		chprintf(ts,"Creating file %s\r\n", path );
 
-			/* Open the file, creating the file if it does not already exist. */
-			filedescr = red_open( path, RED_O_CREAT|RED_O_TRUNC|RED_O_WRONLY );
-			osalDbgCheck( filedescr != -1 );
+		/* Open the file, creating the file if it does not already exist. */
+		filedescr = red_open( path, RED_O_CREAT|RED_O_TRUNC|RED_O_WRONLY );
+		osalDbgCheck( filedescr != -1 );
 
-			/* Fill the RAM buffer with data that will be written to the file.  This
+		/* Fill the RAM buffer with data that will be written to the file.  This
 			is just a repeating ascii character that indicates the file number. */
-			memset( cRAMBuffer, ( int ) ( '0' + i ), fsRAM_BUFFER_SIZE );
+		memset( cRAMBuffer, ( int ) ( '0' + i ), fsRAM_BUFFER_SIZE );
 
-			/* Write the RAM buffer to the opened file a number of times.  The
+		/* Write the RAM buffer to the opened file a number of times.  The
 			number of times the RAM buffer is written to the file depends on the
 			file number, so the length of each created file will be different. */
-			for( j = 0; j < i; j++ )
-			{
-				written = red_write( filedescr, cRAMBuffer, fsRAM_BUFFER_SIZE );
-				osalDbgCheck( written == fsRAM_BUFFER_SIZE );
-			}
-
-			/* Close the file so another file can be created. */
-			status = red_close( filedescr );
-			osalDbgCheck( status == 0 );
-		}
-
-		/* Commit a transaction point, atomically adding the set of files to the
-		transacted state. */
-		status = red_transact( pszVolume );
-		osalDbgCheck( status == 0 );
-
-		/* Create a sub directory. */
-		chprintf(ts,"Creating directory %s\r\n", pcDirectory1 );
-
-		status = red_mkdir( pcDirectory1 );
-		osalDbgCheck( status == 0 );
-
-		/* Create a subdirectory in the new directory. */
-		chprintf(ts, "Creating directory %s\r\n", pcDirectory2 );
-
-		status = red_mkdir( pcDirectory2 );
-		osalDbgCheck( status == 0 );
-
-		/* Generate the file name. */
-		sprintf( path, "%s/file.txt", pcDirectory2 );
-
-		/* Print out the file name and the directory into which the file is being
-		written. */
-		chprintf(ts, "Writing file %s\r\n", path );
-
-		filedescr = red_open( path, RED_O_CREAT|RED_O_TRUNC|RED_O_WRONLY );
-
-		/* Write the file.  It is filled with incrementing ascii characters starting
-		from '0'. */
-		for( iByte = 0; iByte < fsRAM_BUFFER_SIZE; iByte++ )
+		for( j = 0; j < i; j++ )
 		{
-			cRAMBuffer[ iByte ] = ( char ) ( ( int ) '0' + iByte );
+			written = red_write( filedescr, cRAMBuffer, fsRAM_BUFFER_SIZE );
+			osalDbgCheck( written == fsRAM_BUFFER_SIZE );
 		}
 
-		written = red_write( filedescr, cRAMBuffer, fsRAM_BUFFER_SIZE );
-		osalDbgCheck( written == fsRAM_BUFFER_SIZE );
-
-		/* Finished so close the file. */
+		/* Close the file so another file can be created. */
 		status = red_close( filedescr );
 		osalDbgCheck( status == 0 );
+	}
 
-		/* Commit a transaction point, atomically adding the set of files and
+	/* Commit a transaction point, atomically adding the set of files to the
+		transacted state. */
+	status = red_transact( pszVolume );
+	osalDbgCheck( status == 0 );
+
+	/* Create a sub directory. */
+	chprintf(ts,"Creating directory %s\r\n", pcDirectory1 );
+
+	status = red_mkdir( pcDirectory1 );
+	osalDbgCheck( status == 0 );
+
+	/* Create a subdirectory in the new directory. */
+	chprintf(ts, "Creating directory %s\r\n", pcDirectory2 );
+
+	status = red_mkdir( pcDirectory2 );
+	osalDbgCheck( status == 0 );
+
+	/* Generate the file name. */
+	sprintf( path, "%s/file.txt", pcDirectory2 );
+
+	/* Print out the file name and the directory into which the file is being
+		written. */
+	chprintf(ts, "Writing file %s\r\n", path );
+
+	filedescr = red_open( path, RED_O_CREAT|RED_O_TRUNC|RED_O_WRONLY );
+
+	/* Write the file.  It is filled with incrementing ascii characters starting
+		from '0'. */
+	for( iByte = 0; iByte < fsRAM_BUFFER_SIZE; iByte++ )
+	{
+		cRAMBuffer[ iByte ] = ( char ) ( ( int ) '0' + iByte );
+	}
+
+	written = red_write( filedescr, cRAMBuffer, fsRAM_BUFFER_SIZE );
+	osalDbgCheck( written == fsRAM_BUFFER_SIZE );
+
+	/* Finished so close the file. */
+	status = red_close( filedescr );
+	osalDbgCheck( status == 0 );
+
+	/* Commit a transaction point, atomically adding the set of files and
 		directories to the transacted state. */
-		status = red_transact( pszVolume );
-		osalDbgCheck( status == 0 );
+	status = red_transact( pszVolume );
+	osalDbgCheck( status == 0 );
 
-		/* Restore previous transaction point settings. */
-		status = red_settransmask( pszVolume, ulEventMask );
-		osalDbgCheck( status == 0 );
+	/* Restore previous transaction point settings. */
+	status = red_settransmask( pszVolume, ulEventMask );
+	osalDbgCheck( status == 0 );
 }
 
 static void readfiles(void)
@@ -188,68 +188,68 @@ static void readfiles(void)
 	int iByte;
 
 
-		/* Read back the files that were created by prvCreateDemoFiles(). */
-		for( i = 1; i <= filen; i++ )
-		{
-			/* Generate the file name. */
-			sprintf( path, "/root%03d.txt",(int) i );
-
-			/* Print out the file name and the directory from which the file is
-			being read. */
-			chprintf(ts,"Reading file %s\r\n", path );
-
-			/* Open the file for reading. */
-			filedescr = red_open( path, RED_O_RDONLY );
-			osalDbgCheck( filedescr != -1 );
-
-			/* Read the file into the RAM buffer, checking the file contents are as
-			expected.  The size of the file depends on the file number. */
-			for( j = 0; j < i; j++ )
-			{
-				/* Start with the RAM buffer clear. */
-				memset( cRAMBuffer, 0x00, fsRAM_BUFFER_SIZE );
-
-				lBytesRead = red_read( filedescr, cRAMBuffer, fsRAM_BUFFER_SIZE );
-				osalDbgCheck( lBytesRead == fsRAM_BUFFER_SIZE );
-
-				/* Check the RAM buffer is filled with the expected data.  Each
-				file contains a different repeating ascii character that indicates
-				the number of the file. */
-				for( lChar = 0; lChar < fsRAM_BUFFER_SIZE; lChar++ )
-				{
-					osalDbgCheck( cRAMBuffer[ lChar ] == ( '0' + ( char ) i ) );
-				}
-			}
-
-			/* Close the file. */
-			status = red_close( filedescr );
-			osalDbgCheck( status == 0 );
-		}
-
+	/* Read back the files that were created by prvCreateDemoFiles(). */
+	for( i = 1; i <= filen; i++ )
+	{
 		/* Generate the file name. */
-		sprintf( path, "%s/file.txt", pcDirectory2 );
+		sprintf( path, "/root%03d.txt",(int) i );
 
-		/* Print out the file name and the directory from which the file is being
-		read. */
-		chprintf(ts, "Reading file %s\r\n", path );
+		/* Print out the file name and the directory from which the file is
+			being read. */
+		chprintf(ts,"Reading file %s\r\n", path );
 
-		/* This time the file is opened for reading. */
+		/* Open the file for reading. */
 		filedescr = red_open( path, RED_O_RDONLY );
 		osalDbgCheck( filedescr != -1 );
 
-		/* Read the file. */
-		lBytesRead = red_read( filedescr, cRAMBuffer, fsRAM_BUFFER_SIZE );
-		osalDbgCheck( lBytesRead == fsRAM_BUFFER_SIZE );
-
-		/* Verify the file 1 byte at a time. */
-		for( iByte = 0; iByte < fsRAM_BUFFER_SIZE; iByte++ )
+		/* Read the file into the RAM buffer, checking the file contents are as
+			expected.  The size of the file depends on the file number. */
+		for( j = 0; j < i; j++ )
 		{
-			osalDbgCheck( cRAMBuffer[ iByte ] == ( char ) ( ( int ) '0' + iByte ) );
+			/* Start with the RAM buffer clear. */
+			memset( cRAMBuffer, 0x00, fsRAM_BUFFER_SIZE );
+
+			lBytesRead = red_read( filedescr, cRAMBuffer, fsRAM_BUFFER_SIZE );
+			osalDbgCheck( lBytesRead == fsRAM_BUFFER_SIZE );
+
+			/* Check the RAM buffer is filled with the expected data.  Each
+				file contains a different repeating ascii character that indicates
+				the number of the file. */
+			for( lChar = 0; lChar < fsRAM_BUFFER_SIZE; lChar++ )
+			{
+				osalDbgCheck( cRAMBuffer[ lChar ] == ( '0' + ( char ) i ) );
+			}
 		}
 
-		/* Finished so close the file. */
+		/* Close the file. */
 		status = red_close( filedescr );
 		osalDbgCheck( status == 0 );
+	}
+
+	/* Generate the file name. */
+	sprintf( path, "%s/file.txt", pcDirectory2 );
+
+	/* Print out the file name and the directory from which the file is being
+		read. */
+	chprintf(ts, "Reading file %s\r\n", path );
+
+	/* This time the file is opened for reading. */
+	filedescr = red_open( path, RED_O_RDONLY );
+	osalDbgCheck( filedescr != -1 );
+
+	/* Read the file. */
+	lBytesRead = red_read( filedescr, cRAMBuffer, fsRAM_BUFFER_SIZE );
+	osalDbgCheck( lBytesRead == fsRAM_BUFFER_SIZE );
+
+	/* Verify the file 1 byte at a time. */
+	for( iByte = 0; iByte < fsRAM_BUFFER_SIZE; iByte++ )
+	{
+		osalDbgCheck( cRAMBuffer[ iByte ] == ( char ) ( ( int ) '0' + iByte ) );
+	}
+
+	/* Finished so close the file. */
+	status = red_close( filedescr );
+	osalDbgCheck( status == 0 );
 
 }
 
@@ -259,10 +259,10 @@ static int32_t format(uint8_t volnum)
 	int32_t ret=-1;
 #if REDCONF_API_POSIX_FORMAT == 1
 	const char *pszVolume = gaRedVolConf[volnum].pszPathPrefix;
-            ret = red_format(pszVolume);
+	ret = red_format(pszVolume);
 
 #endif
-            return ret;
+	return ret;
 }
 
 #endif

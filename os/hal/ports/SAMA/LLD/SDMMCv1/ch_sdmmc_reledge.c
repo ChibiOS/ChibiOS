@@ -29,7 +29,7 @@ eSDMMC_RC sd_mmc_test_unit_ready( SdmmcDriver *sdmmcp)
 
 
 	if ( !(sdmmcp->card.bCardType == CARD_UNKNOWN) ) {
-				return SDMMC_OK;
+		return SDMMC_OK;
 	}
 	// It is not a memory card
 	return SDMMC_ERR;

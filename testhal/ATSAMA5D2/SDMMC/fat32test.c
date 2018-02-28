@@ -12,7 +12,7 @@
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-*/
+ */
 #include <string.h>
 #include "ch.h"
 #include "hal.h"
@@ -30,8 +30,8 @@ extern BaseSequentialStream * ts;
 #define	DEMO_VOLUMES	2
 
 PARTITION VolToPart[] = {
-        {1, 1},    /* "0:" ==> Physical drive 1, 1st partition */
-        {1, 2},    /* "1:" ==> Physical drive 1, 2nd partition */
+		{1, 1},    /* "0:" ==> Physical drive 1, 1st partition */
+		{1, 2},    /* "1:" ==> Physical drive 1, 2nd partition */
 };
 
 const TCHAR volume_paths[DEMO_VOLUMES][3] =
@@ -73,10 +73,11 @@ static FIL f_header;
 const char test_file_path[] = "test.txt";
 
 //Welcome to Chibios!
-const uint8_t buffer[19]={	0x57,0x65,0x6C,0x63,0x6F,
-							0x6D,0x65,0x20,0x74,0x6F,
-							0x20,0x43,0x68,0x69,0x62,
-							0x69,0x4F,0x53,0x21
+const uint8_t buffer[19]={
+		0x57,0x65,0x6C,0x63,0x6F,
+		0x6D,0x65,0x20,0x74,0x6F,
+		0x20,0x43,0x68,0x69,0x62,
+		0x69,0x4F,0x53,0x21
 };
 
 static void getdir(uint8_t vi);
@@ -91,17 +92,17 @@ extern CACHE_ALIGNED uint8_t data_buf[];
 void fat32test_demo(void)
 {
 	uint8_t i;
-	 chprintf(ts,"Init FAT32 FS\r\n" );
+	chprintf(ts,"Init FAT32 FS\r\n" );
 	if ( format() ) {
 
 		for (i=0;i<DEMO_VOLUMES;i++) {
 			if ( mountVolume(i,&fs_header) ) {
-						writefile(i);
-						chprintf(ts,"reading dir:\n\r");
-						getdir(i);
-						readfile(i);
+				writefile(i);
+				chprintf(ts,"reading dir:\n\r");
+				getdir(i);
+				readfile(i);
 
-						unmountVolume(i);
+				unmountVolume(i);
 
 			}
 		}
