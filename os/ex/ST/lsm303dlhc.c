@@ -312,16 +312,16 @@ static msg_t acc_reset_sensivity(void *ip) {
   osalDbgAssert((devp->state != LSM303DLHC_UNINIT),
                 "acc_reset_sensivity(), invalid state");
 
-  if(devp->config->acccfg->fullscale == LSM303DLHC_ACC_FS_2G)
+  if(devp->config->accfullscale == LSM303DLHC_ACC_FS_2G)
     for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++)
       devp->accsensitivity[i] = LSM303DLHC_ACC_SENS_2G;
-  else if(devp->config->acccfg->fullscale == LSM303DLHC_ACC_FS_4G)
+  else if(devp->config->accfullscale == LSM303DLHC_ACC_FS_4G)
 	for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++)
       devp->accsensitivity[i] = LSM303DLHC_ACC_SENS_4G;
-  else if(devp->config->acccfg->fullscale == LSM303DLHC_ACC_FS_8G)
+  else if(devp->config->accfullscale == LSM303DLHC_ACC_FS_8G)
 	for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++)
       devp->accsensitivity[i] = LSM303DLHC_ACC_SENS_8G;
-  else if(devp->config->acccfg->fullscale == LSM303DLHC_ACC_FS_16G)
+  else if(devp->config->accfullscale == LSM303DLHC_ACC_FS_16G)
 	for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++)
       devp->accsensitivity[i] = LSM303DLHC_ACC_SENS_16G;
   else {
@@ -646,7 +646,7 @@ static msg_t comp_reset_sensivity(void *ip) {
   osalDbgAssert((devp->state != LSM303DLHC_UNINIT),
                 "comp_reset_sensivity(), invalid state");
 
-  if(devp->config->compcfg->fullscale == LSM303DLHC_COMP_FS_1P3GA)
+  if(devp->config->compfullscale == LSM303DLHC_COMP_FS_1P3GA)
     for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
       if(i != 2) {
         devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_1P3GA;
@@ -655,7 +655,7 @@ static msg_t comp_reset_sensivity(void *ip) {
         devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_1P3GA;
       }
     }
-  else if(devp->config->compcfg->fullscale == LSM303DLHC_COMP_FS_1P9GA)
+  else if(devp->config->compfullscale == LSM303DLHC_COMP_FS_1P9GA)
     for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
       if(i != 2) {
         devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_1P9GA;
@@ -664,7 +664,7 @@ static msg_t comp_reset_sensivity(void *ip) {
         devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_1P9GA;
       }
     }
-  else if(devp->config->compcfg->fullscale == LSM303DLHC_COMP_FS_2P5GA)
+  else if(devp->config->compfullscale == LSM303DLHC_COMP_FS_2P5GA)
     for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
       if(i != 2) {
         devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_2P5GA;
@@ -673,7 +673,7 @@ static msg_t comp_reset_sensivity(void *ip) {
         devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_2P5GA;
       }
     }
-  else if(devp->config->compcfg->fullscale == LSM303DLHC_COMP_FS_4P0GA)
+  else if(devp->config->compfullscale == LSM303DLHC_COMP_FS_4P0GA)
     for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
       if(i != 2) {
         devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_4P0GA;
@@ -682,7 +682,7 @@ static msg_t comp_reset_sensivity(void *ip) {
         devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_4P0GA;
       }
     }
-  else if(devp->config->compcfg->fullscale == LSM303DLHC_COMP_FS_4P7GA)
+  else if(devp->config->compfullscale == LSM303DLHC_COMP_FS_4P7GA)
     for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
       if(i != 2) {
         devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_4P7GA;
@@ -691,7 +691,7 @@ static msg_t comp_reset_sensivity(void *ip) {
         devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_4P7GA;
       }
     }
-  else if(devp->config->compcfg->fullscale == LSM303DLHC_COMP_FS_5P6GA)
+  else if(devp->config->compfullscale == LSM303DLHC_COMP_FS_5P6GA)
     for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
       if(i != 2) {
         devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_5P6GA;
@@ -700,7 +700,7 @@ static msg_t comp_reset_sensivity(void *ip) {
         devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_5P6GA;
       }
     }
-  else if(devp->config->compcfg->fullscale == LSM303DLHC_COMP_FS_8P1GA)
+  else if(devp->config->compfullscale == LSM303DLHC_COMP_FS_8P1GA)
     for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
       if(i != 2) {
         devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_8P1GA;
@@ -853,8 +853,8 @@ void lsm303dlhcObjectInit(LSM303DLHCDriver *devp) {
   uint32_t i;
 
   devp->vmt = &vmt_device;
-  devp->accelerometer_if.vmt = &vmt_accelerometer;
-  devp->compass_if.vmt = &vmt_compass;
+  devp->acc_if.vmt = &vmt_accelerometer;
+  devp->comp_if.vmt = &vmt_compass;
   
   devp->config = NULL;
   
@@ -893,234 +893,230 @@ void lsm303dlhcStart(LSM303DLHCDriver *devp, const LSM303DLHCConfig *config) {
   i2cStart((devp)->config->i2cp, (devp)->config->i2ccfg);
 
   /* Configuring Accelerometer subsystem */
-  if((devp)->config->acccfg != NULL) {
-    /* Multiple write starting address.*/
-    cr[0] = LSM303DLHC_AD_ACC_CTRL_REG1;
 
-    /* Control register 1 configuration block.*/
-    {
-      cr[1] = LSM303DLHC_CTRL_REG1_A_XEN | LSM303DLHC_CTRL_REG1_A_YEN |
-              LSM303DLHC_CTRL_REG1_A_ZEN | devp->config->acccfg->outdatarate;
+  /* Multiple write starting address.*/
+  cr[0] = LSM303DLHC_AD_ACC_CTRL_REG1;
+
+  /* Control register 1 configuration block.*/
+  {
+    cr[1] = LSM303DLHC_CTRL_REG1_A_XEN | LSM303DLHC_CTRL_REG1_A_YEN |
+            LSM303DLHC_CTRL_REG1_A_ZEN | devp->config->accoutdatarate;
 #if LSM303DLHC_ACC_USE_ADVANCED || defined(__DOXYGEN__)
-      cr[1] |= devp->config->acccfg->lowpower;
+    cr[1] |= devp->config->acclowpower;
 #endif
-    }
-
-    /* Control register 2 configuration block.*/
-    {
-      cr[2] = 0;
-    }
-
-    /* Control register 3 configuration block.*/
-    {
-      cr[3] = 0;
-    }
-
-    /* Control register 4 configuration block.*/
-    {
-      cr[4] = devp->config->acccfg->fullscale;
-#if LSM303DLHC_ACC_USE_ADVANCED || defined(__DOXYGEN__)
-      cr[4] |= devp->config->acccfg->endianess |
-               devp->config->acccfg->blockdataupdate |
-               devp->config->acccfg->highresmode;
-#endif
-    }
-    lsm303dlhcI2CWriteRegister(devp->config->i2cp, LSM303DLHC_SAD_ACC, cr, 4);
-
-    /* Storing sensitivity according to user settings */
-    if(devp->config->acccfg->fullscale == LSM303DLHC_ACC_FS_2G) {
-      devp->accfullscale = LSM303DLHC_ACC_2G;
-      for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++) {
-        if(devp->config->acccfg->sensitivity == NULL)
-          devp->accsensitivity[i] = LSM303DLHC_ACC_SENS_2G;
-        else
-          devp->accsensitivity[i] = devp->config->acccfg->sensitivity[i];
-      }
-    }
-    else if(devp->config->acccfg->fullscale == LSM303DLHC_ACC_FS_4G) {
-      devp->accfullscale = LSM303DLHC_ACC_4G;
-      for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++) {
-        if(devp->config->acccfg->sensitivity == NULL)
-          devp->accsensitivity[i] = LSM303DLHC_ACC_SENS_4G;
-        else
-          devp->accsensitivity[i] = devp->config->acccfg->sensitivity[i];
-      }
-    }
-    else if(devp->config->acccfg->fullscale == LSM303DLHC_ACC_FS_8G) {
-      devp->accfullscale = LSM303DLHC_ACC_8G;
-      for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++) {
-        if(devp->config->acccfg->sensitivity == NULL)
-          devp->accsensitivity[i] = LSM303DLHC_ACC_SENS_8G;
-        else
-          devp->accsensitivity[i] = devp->config->acccfg->sensitivity[i];
-      }
-    }
-    else if(devp->config->acccfg->fullscale == LSM303DLHC_ACC_FS_16G) {
-      devp->accfullscale = LSM303DLHC_ACC_16G;
-      for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++) {
-        if(devp->config->acccfg->sensitivity == NULL)
-          devp->accsensitivity[i] = LSM303DLHC_ACC_SENS_16G;
-        else
-          devp->accsensitivity[i] = devp->config->acccfg->sensitivity[i];
-      }
-    }
-    else
-      osalDbgAssert(FALSE, "lsm303dlhcStart(), accelerometer full scale issue");
-
-    /* Storing bias information */
-    if(devp->config->acccfg->bias != NULL)
-      for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++)
-        devp->accbias[i] = devp->config->acccfg->bias[i];
-
   }
+
+  /* Control register 2 configuration block.*/
+  {
+    cr[2] = 0;
+  }
+
+  /* Control register 3 configuration block.*/
+  {
+    cr[3] = 0;
+  }
+
+  /* Control register 4 configuration block.*/
+  {
+    cr[4] = devp->config->accfullscale;
+#if LSM303DLHC_ACC_USE_ADVANCED || defined(__DOXYGEN__)
+    cr[4] |= devp->config->accendianess |
+             devp->config->accblockdataupdate |
+             devp->config->acchighresmode;
+#endif
+  }
+  lsm303dlhcI2CWriteRegister(devp->config->i2cp, LSM303DLHC_SAD_ACC, cr, 4);
+
+  /* Storing sensitivity according to user settings */
+  if(devp->config->accfullscale == LSM303DLHC_ACC_FS_2G) {
+    devp->accfullscale = LSM303DLHC_ACC_2G;
+    for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++) {
+      if(devp->config->accsensitivity == NULL)
+        devp->accsensitivity[i] = LSM303DLHC_ACC_SENS_2G;
+      else
+        devp->accsensitivity[i] = devp->config->accsensitivity[i];
+    }
+  }
+  else if(devp->config->accfullscale == LSM303DLHC_ACC_FS_4G) {
+    devp->accfullscale = LSM303DLHC_ACC_4G;
+    for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++) {
+      if(devp->config->accsensitivity == NULL)
+        devp->accsensitivity[i] = LSM303DLHC_ACC_SENS_4G;
+      else
+        devp->accsensitivity[i] = devp->config->accsensitivity[i];
+    }
+  }
+  else if(devp->config->accfullscale == LSM303DLHC_ACC_FS_8G) {
+    devp->accfullscale = LSM303DLHC_ACC_8G;
+    for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++) {
+      if(devp->config->accsensitivity == NULL)
+        devp->accsensitivity[i] = LSM303DLHC_ACC_SENS_8G;
+      else
+        devp->accsensitivity[i] = devp->config->accsensitivity[i];
+    }
+  }
+  else if(devp->config->accfullscale == LSM303DLHC_ACC_FS_16G) {
+    devp->accfullscale = LSM303DLHC_ACC_16G;
+    for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++) {
+      if(devp->config->accsensitivity == NULL)
+        devp->accsensitivity[i] = LSM303DLHC_ACC_SENS_16G;
+      else
+        devp->accsensitivity[i] = devp->config->accsensitivity[i];
+    }
+  }
+  else
+    osalDbgAssert(FALSE, "lsm303dlhcStart(), accelerometer full scale issue");
+
+  /* Storing bias information */
+  if(devp->config->accbias != NULL)
+    for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++)
+      devp->accbias[i] = devp->config->accbias[i];
+
 
   /* Configuring Compass subsystem */
-  if((devp)->config->compcfg != NULL) {
+  /* Multiple write starting address.*/
+  cr[0] = LSM303DLHC_AD_COMP_CRA_REG;
 
-    /* Multiple write starting address.*/
-    cr[0] = LSM303DLHC_AD_COMP_CRA_REG;
-
-    /* Control register A configuration block.*/
-    {
-      cr[1] = devp->config->compcfg->outputdatarate;
-    }
-
-    /* Control register B configuration block.*/
-    {
-      cr[2] = devp->config->compcfg->fullscale;
-    }
-
-    /* Mode register configuration block.*/
-    {
-      cr[3] = 0;
-#if LSM303DLHC_COMP_USE_ADVANCED || defined(__DOXYGEN__)
-      cr[3] |= devp->config->compcfg->mode;
-#endif
-    }
-
-    lsm303dlhcI2CWriteRegister(devp->config->i2cp, LSM303DLHC_SAD_COMP,
-                               cr, 3);
-
-    if(devp->config->compcfg->fullscale == LSM303DLHC_COMP_FS_1P3GA) {
-      devp->compfullscale = LSM303DLHC_COMP_1P3GA;
-      for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
-        if(devp->config->compcfg->sensitivity == NULL) {
-          if(i != 2) {
-            devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_1P3GA;
-          }
-          else {
-            devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_1P3GA;
-          }
-        }
-        else {
-          devp->compsensitivity[i] = devp->config->compcfg->sensitivity[i];
-        }
-      }
-    }
-    else if(devp->config->compcfg->fullscale == LSM303DLHC_COMP_FS_1P9GA) {
-      devp->compfullscale = LSM303DLHC_COMP_1P9GA;
-      for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
-        if(devp->config->compcfg->sensitivity == NULL) {
-          if(i != 2) {
-            devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_1P9GA;
-          }
-          else {
-            devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_1P9GA;
-          }
-        }
-        else {
-          devp->compsensitivity[i] = devp->config->compcfg->sensitivity[i];
-        }
-      }
-    }
-    else if(devp->config->compcfg->fullscale == LSM303DLHC_COMP_FS_2P5GA) {
-      devp->compfullscale = LSM303DLHC_COMP_2P5GA;
-      for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
-        if(devp->config->compcfg->sensitivity == NULL) {
-          if(i != 2) {
-            devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_2P5GA;
-          }
-          else {
-            devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_2P5GA;
-          }
-        }
-        else {
-          devp->compsensitivity[i] = devp->config->compcfg->sensitivity[i];
-        }
-      }
-    }
-    else if(devp->config->compcfg->fullscale == LSM303DLHC_COMP_FS_4P0GA) {
-      devp->compfullscale = LSM303DLHC_COMP_4P0GA;
-      for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
-        if(devp->config->compcfg->sensitivity == NULL) {
-          if(i != 2) {
-            devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_4P0GA;
-          }
-          else {
-            devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_4P0GA;
-          }
-        }
-        else {
-          devp->compsensitivity[i] = devp->config->compcfg->sensitivity[i];
-        }
-      }
-    }
-    else if(devp->config->compcfg->fullscale == LSM303DLHC_COMP_FS_4P7GA) {
-      devp->compfullscale = LSM303DLHC_COMP_4P7GA;
-      for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
-        if(devp->config->compcfg->sensitivity == NULL) {
-          if(i != 2) {
-            devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_4P7GA;
-          }
-          else {
-            devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_4P7GA;
-          }
-        }
-        else {
-          devp->compsensitivity[i] = devp->config->compcfg->sensitivity[i];
-        }
-      }
-    }
-    else if(devp->config->compcfg->fullscale == LSM303DLHC_COMP_FS_5P6GA) {
-      devp->compfullscale = LSM303DLHC_COMP_5P6GA;
-      for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
-        if(devp->config->compcfg->sensitivity == NULL) {
-          if(i != 2) {
-            devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_5P6GA;
-          }
-          else {
-            devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_5P6GA;
-          }
-        }
-        else {
-          devp->compsensitivity[i] = devp->config->compcfg->sensitivity[i];
-        }
-      }
-    }
-    else if(devp->config->compcfg->fullscale == LSM303DLHC_COMP_FS_8P1GA) {
-      devp->compfullscale = LSM303DLHC_COMP_8P1GA;
-      for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
-        if(devp->config->compcfg->sensitivity == NULL) {
-          if(i != 2) {
-            devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_8P1GA;
-          }
-          else {
-            devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_8P1GA;
-          }
-        }
-        else {
-          devp->compsensitivity[i] = devp->config->compcfg->sensitivity[i];
-        }
-      }
-    }
-    else
-      osalDbgAssert(FALSE, "lsm303dlhcStart(), compass full scale issue");
-
-    /* Storing bias information */
-    if(devp->config->compcfg->bias != NULL)
-      for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++)
-        devp->compbias[i] = devp->config->compcfg->bias[i];
+  /* Control register A configuration block.*/
+  {
+    cr[1] = devp->config->compoutputdatarate;
   }
+
+  /* Control register B configuration block.*/
+  {
+    cr[2] = devp->config->compfullscale;
+  }
+
+  /* Mode register configuration block.*/
+  {
+    cr[3] = 0;
+#if LSM303DLHC_COMP_USE_ADVANCED || defined(__DOXYGEN__)
+    cr[3] |= devp->config->compmode;
+#endif
+  }
+
+  lsm303dlhcI2CWriteRegister(devp->config->i2cp, LSM303DLHC_SAD_COMP,
+                             cr, 3);
+
+  if(devp->config->compfullscale == LSM303DLHC_COMP_FS_1P3GA) {
+    devp->compfullscale = LSM303DLHC_COMP_1P3GA;
+    for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
+      if(devp->config->compsensitivity == NULL) {
+        if(i != 2) {
+          devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_1P3GA;
+        }
+        else {
+          devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_1P3GA;
+        }
+      }
+      else {
+        devp->compsensitivity[i] = devp->config->compsensitivity[i];
+      }
+    }
+  }
+  else if(devp->config->compfullscale == LSM303DLHC_COMP_FS_1P9GA) {
+    devp->compfullscale = LSM303DLHC_COMP_1P9GA;
+    for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
+      if(devp->config->compsensitivity == NULL) {
+        if(i != 2) {
+          devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_1P9GA;
+        }
+        else {
+          devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_1P9GA;
+        }
+      }
+      else {
+        devp->compsensitivity[i] = devp->config->compsensitivity[i];
+      }
+    }
+  }
+  else if(devp->config->compfullscale == LSM303DLHC_COMP_FS_2P5GA) {
+    devp->compfullscale = LSM303DLHC_COMP_2P5GA;
+    for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
+      if(devp->config->compsensitivity == NULL) {
+        if(i != 2) {
+          devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_2P5GA;
+        }
+        else {
+          devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_2P5GA;
+        }
+      }
+      else {
+        devp->compsensitivity[i] = devp->config->compsensitivity[i];
+      }
+    }
+  }
+  else if(devp->config->compfullscale == LSM303DLHC_COMP_FS_4P0GA) {
+    devp->compfullscale = LSM303DLHC_COMP_4P0GA;
+    for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
+      if(devp->config->compsensitivity == NULL) {
+        if(i != 2) {
+          devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_4P0GA;
+        }
+        else {
+          devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_4P0GA;
+        }
+      }
+      else {
+        devp->compsensitivity[i] = devp->config->compsensitivity[i];
+      }
+    }
+  }
+  else if(devp->config->compfullscale == LSM303DLHC_COMP_FS_4P7GA) {
+    devp->compfullscale = LSM303DLHC_COMP_4P7GA;
+    for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
+      if(devp->config->compsensitivity == NULL) {
+        if(i != 2) {
+          devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_4P7GA;
+        }
+        else {
+          devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_4P7GA;
+        }
+      }
+      else {
+        devp->compsensitivity[i] = devp->config->compsensitivity[i];
+      }
+    }
+  }
+  else if(devp->config->compfullscale == LSM303DLHC_COMP_FS_5P6GA) {
+    devp->compfullscale = LSM303DLHC_COMP_5P6GA;
+    for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
+      if(devp->config->compsensitivity == NULL) {
+        if(i != 2) {
+          devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_5P6GA;
+        }
+        else {
+          devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_5P6GA;
+        }
+      }
+      else {
+        devp->compsensitivity[i] = devp->config->compsensitivity[i];
+      }
+    }
+  }
+  else if(devp->config->compfullscale == LSM303DLHC_COMP_FS_8P1GA) {
+    devp->compfullscale = LSM303DLHC_COMP_8P1GA;
+    for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
+      if(devp->config->compsensitivity == NULL) {
+        if(i != 2) {
+          devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_XY_8P1GA;
+        }
+        else {
+          devp->compsensitivity[i] = LSM303DLHC_COMP_SENS_Z_8P1GA;
+        }
+      }
+      else {
+        devp->compsensitivity[i] = devp->config->compsensitivity[i];
+      }
+    }
+  }
+  else
+    osalDbgAssert(FALSE, "lsm303dlhcStart(), compass full scale issue");
+
+  /* Storing bias information */
+  if(devp->config->compbias != NULL)
+    for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++)
+      devp->compbias[i] = devp->config->compbias[i];
 
   /* This is the MEMS transient recovery time */
   osalThreadSleepMilliseconds(5);
@@ -1150,20 +1146,21 @@ void lsm303dlhcStop(LSM303DLHCDriver *devp) {
     i2cAcquireBus((devp)->config->i2cp);
     i2cStart((devp)->config->i2cp, (devp)->config->i2ccfg);
 #endif /* LSM303DLHC_SHARED_I2C */
-    if((devp)->config->acccfg != NULL) {
-      cr[0] = LSM303DLHC_AD_ACC_CTRL_REG1;
-      cr[1] = LSM303DLHC_ACC_AE_DISABLED | LSM303DLHC_ACC_ODR_PD;
-      lsm303dlhcI2CWriteRegister(devp->config->i2cp, LSM303DLHC_SAD_ACC,
-                                 cr, 1);
-    }
-    if((devp)->config->compcfg != NULL) {
-      cr[0] = LSM303DLHC_AD_COMP_MR_REG;
-      cr[1] = LSM303DLHC_COMP_MD_SLEEP;
-      lsm303dlhcI2CWriteRegister(devp->config->i2cp, LSM303DLHC_SAD_ACC,
-                                 cr, 1);
-      lsm303dlhcI2CWriteRegister(devp->config->i2cp, LSM303DLHC_SAD_COMP,
-                                 cr, 1);
-    }
+
+    /* Disabling accelerometer. */
+    cr[0] = LSM303DLHC_AD_ACC_CTRL_REG1;
+    cr[1] = LSM303DLHC_ACC_AE_DISABLED | LSM303DLHC_ACC_ODR_PD;
+    lsm303dlhcI2CWriteRegister(devp->config->i2cp, LSM303DLHC_SAD_ACC,
+                               cr, 1);
+
+    /* Disabling compass. */
+    cr[0] = LSM303DLHC_AD_COMP_MR_REG;
+    cr[1] = LSM303DLHC_COMP_MD_SLEEP;
+    lsm303dlhcI2CWriteRegister(devp->config->i2cp, LSM303DLHC_SAD_ACC,
+                               cr, 1);
+    lsm303dlhcI2CWriteRegister(devp->config->i2cp, LSM303DLHC_SAD_COMP,
+                               cr, 1);
+
     i2cStop((devp)->config->i2cp);
 #if	LSM303DLHC_SHARED_I2C
     i2cReleaseBus((devp)->config->i2cp);
