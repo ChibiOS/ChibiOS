@@ -636,7 +636,7 @@ struct LSM303DLHCDriver {
 
 /**
  * @brief   Retrieves raw data from the BaseAccelerometer.
- * @note    This data is retrieved from MEMS register without any algebrical
+ * @note    This data is retrieved from MEMS register without any algebraical
  *          manipulation.
  * @note    The axes array must be at least the same size of the
  *          BaseAccelerometer axes number.
@@ -773,7 +773,7 @@ struct LSM303DLHCDriver {
 
 /**
  * @brief   Retrieves raw data from the BaseCompass.
- * @note    This data is retrieved from MEMS register without any algebrical
+ * @note    This data is retrieved from MEMS register without any algebraical
  *          manipulation.
  * @note    The axes array must be at least the same size of the
  *          BaseCompass axes number.

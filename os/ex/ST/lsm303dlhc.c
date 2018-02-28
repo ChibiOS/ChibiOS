@@ -109,7 +109,7 @@ static size_t acc_get_axes_number(void *ip) {
 
 /**
  * @brief   Retrieves raw data from the BaseAccelerometer.
- * @note    This data is retrieved from MEMS register without any algebrical
+ * @note    This data is retrieved from MEMS register without any algebraical
  *          manipulation.
  * @note    The axes array must be at least the same size of the
  *          BaseAccelerometer axes number.
@@ -443,7 +443,7 @@ static size_t comp_get_axes_number(void *ip) {
 
 /**
  * @brief   Retrieves raw data from the BaseCompass.
- * @note    This data is retrieved from MEMS register without any algebrical
+ * @note    This data is retrieved from MEMS register without any algebraical
  *          manipulation.
  * @note    The axes array must be at least the same size of the
  *          BaseCompass axes number.
