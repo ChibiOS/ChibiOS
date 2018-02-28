@@ -18,7 +18,6 @@
 #include "hal.h"
 
 #include "chprintf.h"
-
 #include "lsm303dlhc.h"
 
 #define cls(chp)  chprintf(chp, "\033[2J\033[1;1H")
@@ -47,7 +46,9 @@ static const I2CConfig i2ccfg = {
   0
 };
 
-static const LSM303DLHCAccConfig lsm303dlhcacccfg = {
+static const LSM303DLHCConfig lsm303dlhccfg = {
+  &I2CD1,
+  &i2ccfg,
   NULL,
   NULL,
   LSM303DLHC_ACC_FS_4G,
@@ -58,9 +59,6 @@ static const LSM303DLHCAccConfig lsm303dlhcacccfg = {
   LSM303DLHC_ACC_BDU_BLOCK,
   LSM303DLHC_ACC_END_LITTLE,
 #endif
-};
-
-static const LSM303DLHCCompConfig lsm303dlhccompcfg = {
   NULL,
   NULL,
   LSM303DLHC_COMP_FS_1P3GA,
@@ -68,13 +66,6 @@ static const LSM303DLHCCompConfig lsm303dlhccompcfg = {
 #if LSM303DLHC_COMP_USE_ADVANCED
   LSM303DLHC_COMP_MD_BLOCK
 #endif
-};
-
-static const LSM303DLHCConfig lsm303dlhccfg = {
-  &I2CD1,
-  &i2ccfg,
-  &lsm303dlhcacccfg,
-  &lsm303dlhccompcfg
 };
 
 /*===========================================================================*/
@@ -132,28 +123,28 @@ int main(void) {
   lsm303dlhcStart(&LSM303DLHCD1, &lsm303dlhccfg);
 
   /*
-   * Normal main() thread activity, spawning shells.
+   * Normal main() thread activity, printing MEMS data on the serial driver 1.
    */
   while (true) {
-    accelerometerReadRaw(&(LSM303DLHCD1.accelerometer_if), accraw);
+    lsm303dlhcAccelerometerReadRaw(&LSM303DLHCD1, accraw);
     chprintf(chp, "LSM303DLHC Accelerometer raw data...\r\n");
     for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++) {
       chprintf(chp, "%c-axis: %d\r\n", axisID[i], accraw[i]);
     }
 
-    compassReadRaw(&(LSM303DLHCD1.compass_if), compraw);
+    lsm303dlhcCompassReadRaw(&LSM303DLHCD1, compraw);
     chprintf(chp, "LSM303DLHC Compass raw data...\r\n");
     for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
       chprintf(chp, "%c-axis: %d\r\n", axisID[i], compraw[i]);
     }
 
-    accelerometerReadCooked(&(LSM303DLHCD1.accelerometer_if), acccooked);
+    lsm303dlhcAccelerometerReadCooked(&LSM303DLHCD1, acccooked);
     chprintf(chp, "LSM303DLHC Accelerometer cooked data...\r\n");
     for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++) {
       chprintf(chp, "%c-axis: %.3f\r\n", axisID[i], acccooked[i]);
     }
 
-    compassReadCooked(&(LSM303DLHCD1.compass_if), compcooked);
+    lsm303dlhcCompassReadCooked(&LSM303DLHCD1, compcooked);
     chprintf(chp, "LSM303DLHC Compass cooked data...\r\n");
     for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
       chprintf(chp, "%c-axis: %.3f\r\n", axisID[i], compcooked[i]);

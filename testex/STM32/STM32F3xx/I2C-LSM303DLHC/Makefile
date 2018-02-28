@@ -5,7 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -O0 -ggdb -fomit-frame-pointer -falign-functions=16
+  USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16
 endif
 
 # C specific options here (added to USE_OPT).
@@ -87,6 +87,9 @@ PROJECT = ch
 
 # Imported source files and paths
 CHIBIOS = ../../../..
+
+# Licensing files.
+include $(CHIBIOS)/os/license/license.mk
 # Startup files.
 include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32f3xx.mk
 # HAL-OSAL files (optional).
@@ -97,8 +100,9 @@ include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
-# Other files (optional).
+# EX files (optional).
 include $(CHIBIOS)/os/ex/ST/lsm303dlhc.mk
+# Other files (optional).
 include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 
 # Define linker script file here
@@ -106,20 +110,13 @@ LDSCRIPT= $(STARTUPLD)/STM32F303xC.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
-CSRC = $(STARTUPSRC) \
-       $(KERNSRC) \
-       $(PORTSRC) \
-       $(OSALSRC) \
-       $(HALSRC) \
-       $(PLATFORMSRC) \
-       $(BOARDSRC) \
-       $(LSM303DLHCSRC) \
-       $(STREAMSSRC) \
+CSRC = $(ALLCSRC) \
+       $(TESTSRC) \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
-CPPSRC =
+CPPSRC = $(AllCPPSRC)
 
 # C sources to be compiled in ARM mode regardless of the global setting.
 # NOTE: Mixing ARM and THUMB mode enables the -mthumb-interwork compiler
@@ -145,10 +142,11 @@ TCPPSRC =
 ASMSRC =
 ASMXSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
 
-INCDIR = $(CHIBIOS)/os/license \
-         $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
-         $(HALINC) $(PLATFORMINC) $(BOARDINC) $(LSM303DLHCINC) \
-         $(STREAMSINC) $(SHELLINC)
+# List ASM source files here
+ASMSRC = $(ALLASMSRC)
+ASMXSRC = $(ALLXASMSRC)
+
+INCDIR = $(ALLINC) $(TESTINC)
 
 #
 # Project, sources and paths
