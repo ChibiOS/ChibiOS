@@ -4,3 +4,7 @@ LIS3DSHSRC := $(CHIBIOS)/os/ex/ST/lis3dsh.c
 # Required include directories
 LIS3DSHINC := $(CHIBIOS)/os/hal/lib/peripherals/sensors \
              $(CHIBIOS)/os/ex/ST
+
+# Shared variables
+ALLCSRC += $(LIS3DSHSRC)
+ALLINC  += $(LIS3DSHINC)
