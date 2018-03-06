@@ -53,6 +53,8 @@
   |  |  +--dox/           - HAL documentation resources.
   |  |  +--include/       - HAL high level headers.
   |  |  +--lib/           - HAL libraries.
+  |  |  |  +--complex/    - HAL collection of complex drivers.
+  |  |  |  |  +--mfs/     - HAL managed flash storage driver.
   |  |  |  +--fallback/   - HAL fall back software drivers.
   |  |  |  +--peripherals/- HAL peripherals interfaces.
   |  |  |  +--streams/    - HAL streams.
