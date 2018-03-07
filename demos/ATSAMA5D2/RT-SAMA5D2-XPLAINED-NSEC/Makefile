@@ -116,7 +116,7 @@ include $(CHIBIOS)/os/common/startup/ARM/compilers/GCC/mk/startup_sama5d2.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/ports/SAMA/SAMA5D2x/platform.mk
-include $(CHIBIOS)/os/hal/boards/ATSAMA5D2_XULT/board.mk
+include $(CHIBIOS)/os/hal/boards/ATSAMA5D2_XULT_NSEC/board.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
@@ -140,7 +140,7 @@ CSRC = $(STARTUPSRC) \
        $(BOARDSRC) \
        $(TESTSRC) \
        $(CHIBIOS)/os/hal/lib/streams/chprintf.c \
-       smcclient.c \
+       tsclient.c \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -169,7 +169,7 @@ TCPPSRC =
 
 # List ASM source files here
 ASMSRC = 
-ASMXSRC = $(STARTUPASM) $(PORTASM) $(OSALASM) smc.S
+ASMXSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
 
 INCDIR = $(CHIBIOS)/os/license \
          $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
