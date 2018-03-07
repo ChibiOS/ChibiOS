@@ -186,6 +186,8 @@ void boardInit(void) {
 
   /* Enabling write protection.  */
   pmcEnableWP();
+
+  _PIOA->PIO_WPMR = 0x50494F00;
 #endif /* SAMA_HAL_IS_SECURE */
 
   /* Configuring all PIO A pads with default configuration.  */
@@ -253,4 +255,7 @@ void boardInit(void) {
 #endif /* SAMA_HAL_IS_SECURE */
     i++;
   }
+#if SAMA_HAL_IS_SECURE
+  _PIOA->PIO_WPMR = 0x50494F01;
+#endif /* SAMA_HAL_IS_SECURE */
 }
