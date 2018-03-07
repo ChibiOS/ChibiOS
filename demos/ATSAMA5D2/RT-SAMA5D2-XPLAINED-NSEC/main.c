@@ -16,10 +16,10 @@
 
 #include "ch.h"
 #include "hal.h"
+#include "tsclient.h"
 #include "rt_test_root.h"
 #include "oslib_test_root.h"
 #include "chprintf.h"
-#include "smcclient.h"
 /*
  * LED blinker thread, times are in milliseconds.
  */
@@ -55,7 +55,7 @@ static const SerialConfig sdcfg = {
  * Application entry point.
  */
 int main(void) {
-  smc_service_t smcsvc;
+  ts_service_t tssvc;
   /*
    * System initializations.
    * - HAL initialization, this also initializes the configured device drivers
@@ -82,12 +82,16 @@ int main(void) {
   /*
    * Call the dummy secure service
    */
-  chprintf((BaseSequentialStream*)&SD0, "Calling the 'dummy' secure service\n\r");
+  chprintf((BaseSequentialStream*)&SD0, "Calling the secure service\n\r");
 
   /* Retrieve the service handle by name */
-  smcsvc = (smc_service_t) smcInvokeService(
-      SMC_HND_DISCOVERY, (smc_params_area_t)"DummyTrustedService",
-      sizeof "DummyTrustedService");
+  tssvc = (ts_service_t) tsInvokeService(
+      TS_HND_DISCOVERY, (ts_params_area_t)"TsSimpleService",
+      sizeof "TsSimpleService", 0);
+  if ((int32_t)tssvc < 0) {
+    chprintf((BaseSequentialStream*)&SD0, "Cannot get the handle of '%s': %d\r\n",
+        "TsSimpleService", tssvc);
+  }
   /*
    * Normal main() thread activity, in this demo it does nothing except
    * calling periodically the dummy service and check the button state.
@@ -96,10 +100,10 @@ int main(void) {
     msg_t r;
 
     /* Invoke the service */
-    r = smcInvokeService(smcsvc, (smc_params_area_t)"HELO", sizeof "HELO");
+    r = tsInvokeService(tssvc, (ts_params_area_t)"HELO", sizeof "HELO", TS_GRANTED_TIMESLICE);
     chprintf((BaseSequentialStream*)&SD0, "Call result: %d\r\n", r);
     if(!palReadPad(PIOB, PIOB_USER_PB)) {
-#if 1
+#if 0
       test_execute((BaseSequentialStream *)&SD0, &rt_test_suite);
       test_execute((BaseSequentialStream *)&SD0, &oslib_test_suite);
 #endif
