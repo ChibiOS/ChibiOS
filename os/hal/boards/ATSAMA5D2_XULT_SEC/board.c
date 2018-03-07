@@ -177,7 +177,6 @@ void __early_init(void) {
 void boardInit(void) {
   unsigned i;
 
-#if SAMA_HAL_IS_SECURE
   /* Disabling PMC write protection. */
   pmcDisableWP();
 
@@ -187,47 +186,36 @@ void boardInit(void) {
   /* Enabling write protection.  */
   pmcEnableWP();
 
-  /* Disabling write protection */
-  _PIOA->PIO_WPMR = PIO_WPMR_WPKEY_PASSWD;
-
-#endif /* SAMA_HAL_IS_SECURE */
+  _PIOA->S_PIO_WPMR = PIO_WPMR_WPKEY_PASSWD;
 
   /* Configuring all PIO A pads with default configuration.  */
 #if SAMA_HAS_PIOA
-#if SAMA_HAL_IS_SECURE
   _PIOA->PIO_PIO_[SAMA_PIOA].S_PIO_SIOSR = SAMA_DEFAULT_SIOSR;
   _PIOA->PIO_PIO_[SAMA_PIOA].S_PIO_SIONR = SAMA_DEFAULT_SIONR;
-#endif /* SAMA_HAL_IS_SECURE */
   _PIOA->PIO_PIO_[SAMA_PIOA].S_PIO_MSKR = SAMA_DEFAULT_MSKR;
   _PIOA->PIO_PIO_[SAMA_PIOA].S_PIO_CFGR = SAMA_DEFAULT_CFGR;
 #endif /* SAMA_HAS_PIOA */
 
   /* Configuring all PIO B pads with default configuration.  */
 #if SAMA_HAS_PIOB
-#if SAMA_HAL_IS_SECURE
   _PIOA->PIO_PIO_[SAMA_PIOB].S_PIO_SIOSR = SAMA_DEFAULT_SIOSR;
   _PIOA->PIO_PIO_[SAMA_PIOB].S_PIO_SIONR = SAMA_DEFAULT_SIONR;
-#endif /* SAMA_HAL_IS_SECURE */
   _PIOA->PIO_PIO_[SAMA_PIOB].S_PIO_MSKR = SAMA_DEFAULT_MSKR;
   _PIOA->PIO_PIO_[SAMA_PIOB].S_PIO_CFGR = SAMA_DEFAULT_CFGR;
 #endif /* SAMA_HAS_PIOB */
 
   /* Configuring all PIO C pads with default configuration.  */
 #if SAMA_HAS_PIOC
-#if SAMA_HAL_IS_SECURE
   _PIOA->PIO_PIO_[SAMA_PIOC].S_PIO_SIOSR = SAMA_DEFAULT_SIOSR;
   _PIOA->PIO_PIO_[SAMA_PIOC].S_PIO_SIONR = SAMA_DEFAULT_SIONR;
-#endif /* SAMA_HAL_IS_SECURE */
   _PIOA->PIO_PIO_[SAMA_PIOC].S_PIO_MSKR = SAMA_DEFAULT_MSKR;
   _PIOA->PIO_PIO_[SAMA_PIOC].S_PIO_CFGR = SAMA_DEFAULT_CFGR;
 #endif /* SAMA_HAS_PIOC */
 
   /* Configuring all PIO D pads with default configuration.  */
 #if SAMA_HAS_PIOD
-#if SAMA_HAL_IS_SECURE
   _PIOA->PIO_PIO_[SAMA_PIOD].S_PIO_SIOSR = SAMA_DEFAULT_SIOSR;
   _PIOA->PIO_PIO_[SAMA_PIOD].S_PIO_SIONR = SAMA_DEFAULT_SIONR;
-#endif /* SAMA_HAL_IS_SECURE */
   _PIOA->PIO_PIO_[SAMA_PIOD].S_PIO_MSKR = SAMA_DEFAULT_MSKR;
   _PIOA->PIO_PIO_[SAMA_PIOD].S_PIO_CFGR = SAMA_DEFAULT_CFGR;
 #endif /* SAMA_HAS_PIOD */
@@ -235,7 +223,6 @@ void boardInit(void) {
   /* Initialize PIO registers for defined pads.*/
   i = 0;
   while (sama_inits[i].pio_id != -1) {
-#if SAMA_HAL_IS_SECURE
     _PIOA->PIO_PIO_[sama_inits[i].pio_id].S_PIO_SIOSR = sama_inits[i].pio_msk;
     _PIOA->PIO_PIO_[sama_inits[i].pio_id].S_PIO_MSKR = sama_inits[i].pio_msk;
     _PIOA->PIO_PIO_[sama_inits[i].pio_id].S_PIO_CFGR = sama_inits[i].pio_cfg;
@@ -245,16 +232,6 @@ void boardInit(void) {
     else {
       _PIOA->PIO_PIO_[sama_inits[i].pio_id].S_PIO_CODR = sama_inits[i].pio_msk;
     }
-#else
-    _PIOA->PIO_IO_GROUP[sama_inits[i].pio_id].PIO_MSKR = sama_inits[i].pio_msk;
-    _PIOA->PIO_IO_GROUP[sama_inits[i].pio_id].PIO_CFGR = sama_inits[i].pio_cfg;
-    if(sama_inits[i].pio_ods == SAMA_PIO_HIGH) {
-      _PIOA->PIO_IO_GROUP[sama_inits[i].pio_id].PIO_SODR = sama_inits[i].pio_msk;
-    }
-    else {
-      _PIOA->PIO_IO_GROUP[sama_inits[i].pio_id].PIO_CODR = sama_inits[i].pio_msk;
-    }
-#endif /* SAMA_HAL_IS_SECURE */
     i++;
   }
 }
