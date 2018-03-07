@@ -506,7 +506,7 @@ void usb_lld_start(USBDriver *usbp) {
 void usb_lld_stop(USBDriver *usbp) {
 
   /* If in ready state then disables the USB clock.*/
-  if (usbp->state == USB_STOP) {
+  if (usbp->state != USB_STOP) {
 #if STM32_USB_USE_USB1
     if (&USBD1 == usbp) {
 #if STM32_USB1_HP_NUMBER != STM32_USB1_LP_NUMBER
