@@ -116,7 +116,7 @@ include $(CHIBIOS)/os/common/startup/ARMCAx-TZ/compilers/GCC/mk/startup_sama5d2.
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/ports/SAMA/SAMA5D2x/platform.mk
-include $(CHIBIOS)/os/hal/boards/ATSAMA5D2_XULT/board.mk
+include $(CHIBIOS)/os/hal/boards/ATSAMA5D2_XULT_SEC/board.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
@@ -140,6 +140,7 @@ CSRC = $(STARTUPSRC) \
        $(BOARDSRC) \
        $(TESTSRC) \
        $(CHIBIOS)/os/hal/lib/streams/chprintf.c \
+       tservices.c \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
