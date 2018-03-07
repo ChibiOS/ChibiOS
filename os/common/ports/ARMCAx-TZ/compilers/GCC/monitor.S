@@ -139,7 +139,7 @@ _monitor_vectors:
  * SMC entry
  */
 sm_call:
-                stmfd   sp!, {r3, r12}
+                stmfd   sp!, {r4, r12}
                 ldr     r12, =MON_S_SCR         // enter in the secure world
                 mcr     p15, 0, r12, c1, c1, 0
                 ands    r0, r0                  // OS special service,
@@ -147,44 +147,44 @@ sm_call:
                                                 // r1 contains the address where it jumps
                 beq     1f
 
-                mrs     r3, SPSR
+                mrs     r4, SPSR
                 mov     r12, lr
-                stmfd   sp!, {r3, r12}          // push r3=spsr_mon, r12=lr_mon.
+                stmfd   sp!, {r4, r12}          // push r4=spsr_mon, r12=lr_mon.
 
                 cps     #MODE_SYS               // switch to sys mode, ints disabled
-                ldr     r3, =sm_nsecctx
-                sm_store_ooctx_regs r3
+                ldr     r4, =sm_nsecctx
+                sm_store_ooctx_regs r4
 
                 cps     #MODE_SYS
-                ldr     r3, =sm_secctx
-                sm_load_ooctx_regs r3
+                ldr     r4, =sm_secctx
+                sm_load_ooctx_regs r4
 
                 cps     #MODE_SYS
                 bl      smcEntry                // call the C smc handler
 
-                ldr     r3, =sm_secctx
-                sm_store_ooctx_regs r3
+                ldr     r4, =sm_secctx
+                sm_store_ooctx_regs r4
 
                 cps     #MODE_SYS
-                ldr     r3, =sm_nsecctx
-                sm_load_ooctx_regs r3
+                ldr     r4, =sm_nsecctx
+                sm_load_ooctx_regs r4
 
                 cps     #MODE_MON           // switch to monitor mode
 
-                ldmfd   sp!, {r3, r12}          // pop r3=spsr_mon, r12=lr_mon.
-                msr     SPSR_fsxc, r3
+                ldmfd   sp!, {r4, r12}          // pop r4=spsr_mon, r12=lr_mon.
+                msr     SPSR_fsxc, r4
                 mov     lr, r12
 
                 ldr     r12, =MON_NS_SCR        // enter in the non-secure world
                 mcr     p15, 0, r12, c1, c1, 0
-                ldmfd   sp!, {r3, r12}
+                ldmfd   sp!, {r4, r12}
                 subs    pc, lr, #0              // return from smc
 1:
                 mov     lr, r1                  // use the address in r1 as return address
                                                 // in the non secure world
                 ldr     r12, =MON_NS_SCR        // enter in the non-secure world
                 mcr     p15, 0, r12, c1, c1, 0
-                ldmfd   sp!, {r3, r12}
+                ldmfd   sp!, {r4, r12}
                 subs    pc, lr, #0              // return from smc
 
 /*
