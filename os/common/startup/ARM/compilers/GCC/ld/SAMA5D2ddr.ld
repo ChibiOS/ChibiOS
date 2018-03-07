@@ -19,8 +19,8 @@
  */
 MEMORY
 {
-    flash : org = 0x20000000, len = 512k
-    ram0  : org = 0x20080000, len = 512k
+    flash : org = 0x20000000, len = 16M
+    ram0  : org = 0x21000000, len = 96M
     ram1  : org = 0x00000000, len = 0
     ram2  : org = 0x00000000, len = 0
     ram3  : org = 0x00000000, len = 0
