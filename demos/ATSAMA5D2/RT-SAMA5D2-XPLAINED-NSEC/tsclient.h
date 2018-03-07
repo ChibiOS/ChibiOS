@@ -34,7 +34,7 @@
 
 /* Service registry errors as returned by smc.*/
 #define SMC_SVC_OK            MSG_OK        /* No error.*/
-#define SMC_SVC_INTR          (msg_t)-1     /* Service interrupted ( == MSG_TIMEOUT).*/
+#define SMC_SVC_INTR          (msg_t)-1     /* Service interrupted.*/
 #define SMC_SVC_NOENT         (msg_t)-2     /* No existent service.*/
 #define SMC_SVC_INVALID       (msg_t)-3     /* Invalid service parameter(s).*/
 #define SMC_SVC_BADH          (msg_t)-4     /* Invalid service handle.*/
@@ -110,9 +110,9 @@ static inline int64_t tsInvoke0(ts_service_t handle, ts_params_area_t data,
  * @param[in] svc_datalen   Size of the svc_data memory area.
  * @param[in] yieldtime     The time yield to SEC service to run, in microsec.
  *
- * @return                  A 64bit value. It is the OR of the 32bit service
- *                          status combined with a 32bit event mask (in the
- *                          hi-word).
+ * @return                  A 64bit value. It is composed by the 32bit service
+ *                          status in the lo-word with the 32bit event mask in
+ *                          the hi-word.
  *                          The retval values are returned in the lower word
  *                          as 32bit int.
  * @retval SMC_SVC_OK       generic success value.

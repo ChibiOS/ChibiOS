@@ -71,9 +71,6 @@ int main(void) {
    */
   sdStart(&SD0, &sdcfg);
 
-  /* Redirecting  UART0 RX on PD2 and UART0 TX on PD3. */
-  palSetGroupMode(PIOB, PAL_PORT_BIT(26) | PAL_PORT_BIT(27), 0U,
-                  PAL_SAMA_FUNC_PERIPH_C);
   /*
    * Creates the blinker thread.
    */

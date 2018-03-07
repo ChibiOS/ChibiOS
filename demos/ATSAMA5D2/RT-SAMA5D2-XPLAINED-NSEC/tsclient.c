@@ -97,7 +97,7 @@ msg_t tsInvokeService(ts_service_t handle, ts_params_area_t data,
   while ((msg_t)result == SMC_SVC_INTR) {
     if (svc_nsec_time != 0)
       chThdSleepMicroseconds(svc_nsec_time);
-    result = tsInvoke1(handle, data, size, TS_GRANTED_TIMESLICE);
+    result = tsInvoke1(TS_HND_STQRY, handle, 0, TS_GRANTED_TIMESLICE);
   }
   return (msg_t)result;
 }
