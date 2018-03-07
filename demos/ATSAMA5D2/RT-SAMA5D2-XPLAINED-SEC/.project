@@ -79,7 +79,7 @@
 		<link>
 			<name>board</name>
 			<type>2</type>
-			<locationURI>CHIBIOS/os/hal/boards/ATSAMA5D2_XULT</locationURI>
+			<locationURI>CHIBIOS/os/hal/boards/ATSAMA5D2_XULT_SEC</locationURI>
 		</link>
 		<link>
 			<name>os</name>
