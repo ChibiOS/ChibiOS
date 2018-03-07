@@ -152,30 +152,6 @@ void __early_init(void) {
 void boardInit(void) {
   unsigned i;
 
-  /* Configuring all PIO A pads with default configuration.  */
-#if SAMA_HAS_PIOA
-  _PIOA->PIO_PIO_[SAMA_PIOA].S_PIO_MSKR = SAMA_DEFAULT_MSKR;
-  _PIOA->PIO_PIO_[SAMA_PIOA].S_PIO_CFGR = SAMA_DEFAULT_CFGR;
-#endif /* SAMA_HAS_PIOA */
-
-  /* Configuring all PIO B pads with default configuration.  */
-#if SAMA_HAS_PIOB
-  _PIOA->PIO_PIO_[SAMA_PIOB].S_PIO_MSKR = SAMA_DEFAULT_MSKR;
-  _PIOA->PIO_PIO_[SAMA_PIOB].S_PIO_CFGR = SAMA_DEFAULT_CFGR;
-#endif /* SAMA_HAS_PIOB */
-
-  /* Configuring all PIO C pads with default configuration.  */
-#if SAMA_HAS_PIOC
-  _PIOA->PIO_PIO_[SAMA_PIOC].S_PIO_MSKR = SAMA_DEFAULT_MSKR;
-  _PIOA->PIO_PIO_[SAMA_PIOC].S_PIO_CFGR = SAMA_DEFAULT_CFGR;
-#endif /* SAMA_HAS_PIOC */
-
-  /* Configuring all PIO D pads with default configuration.  */
-#if SAMA_HAS_PIOD
-  _PIOA->PIO_PIO_[SAMA_PIOD].S_PIO_MSKR = SAMA_DEFAULT_MSKR;
-  _PIOA->PIO_PIO_[SAMA_PIOD].S_PIO_CFGR = SAMA_DEFAULT_CFGR;
-#endif /* SAMA_HAS_PIOD */
-
   /* Initialize PIO registers for defined pads.*/
   i = 0;
   while (sama_inits[i].pio_id != -1) {
