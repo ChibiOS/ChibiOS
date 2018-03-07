@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 18.2.1 ***
+- HAL: Fixed UART driver stop functions confusing returned value (bug #925).
 - HAL: Fixed I2C address not accepted (bug #923).
 - HAL: Fixed problem with HSI48 on STM32L4xx (bug #922).
 - HAL: Fixed invalid implementation of palWaitPadTimeoutS() and

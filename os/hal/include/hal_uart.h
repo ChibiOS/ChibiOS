@@ -43,6 +43,13 @@
 #define UART_BREAK_DETECTED     64  /**< @brief Break detected.             */
 /** @} */
 
+/**
+ * @name    UART error conditions
+ * @{
+ */
+#define UART_ERR_NOT_ACTIVE     (size_t)-1
+/** @} */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
