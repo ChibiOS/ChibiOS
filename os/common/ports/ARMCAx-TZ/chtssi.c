@@ -37,6 +37,11 @@
 /* Module exported variables.                                                */
 /*===========================================================================*/
 
+/* */
+
+CC_WEAK ts_state_t ts_state[TS_MAX_SVCS];
+CC_WEAK const thread_descriptor_t ts_configs[TS_MAX_SVCS];
+
 /* The reference to the suspended nsec main thread.*/
 thread_reference_t _ns_thread = NULL;
 
