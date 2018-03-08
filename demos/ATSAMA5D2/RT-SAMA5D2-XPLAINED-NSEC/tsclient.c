@@ -68,7 +68,7 @@ void tsIdle(void) {
  * @param[in] handle        The handle of the service to invoke.
  *                          The handle is obtained by an invoke to discovery
  *                          service.
- * @param[inout] svc_data   Service request data, often a reference to a more
+ * @param[in,out] svc_data  Service request data, often a reference to a more
  *                          complex structure.
  * @param[in] svc_datalen   Size of the svc_data memory area.
  * @param[in] svc_nsec_time The time slice that will be yielded to the lower
