@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2016 Rocco Marco Guglielmi
+    ChibiOS - Copyright (C) 2016-2018 Rocco Marco Guglielmi
 
     This file is part of ChibiOS.
 
@@ -86,165 +86,310 @@ static void l3gd20SPIWriteRegister(SPIDriver *spip, uint8_t reg, size_t n,
 }
 #endif /* L3GD20_USE_SPI */
 
-/*
- * Interface implementation.
+/**
+ * @brief   Return the number of axes of the BaseGyroscope.
+ *
+ * @param[in] ip        pointer to @p BaseGyroscope interface.
+ *
+ * @return              the number of axes.
  */
-static size_t get_axes_number(void *ip) {
-
-  osalDbgCheck(ip != NULL);
-  return L3GD20_NUMBER_OF_AXES;
+static size_t gyro_get_axes_number(void *ip) {
+  (void)ip;
+  
+  return L3GD20_GYRO_NUMBER_OF_AXES;
 }
 
-static msg_t read_raw(void *ip, int32_t axes[L3GD20_NUMBER_OF_AXES]) {
+/**
+ * @brief   Retrieves raw data from the BaseGyroscope.
+ * @note    This data is retrieved from MEMS register without any algebraical
+ *          manipulation.
+ * @note    The axes array must be at least the same size of the
+ *          BaseGyroscope axes number.
+ *
+ * @param[in] ip        pointer to @p BaseGyroscope interface.
+ * @param[out] axes     a buffer which would be filled with raw data.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ */
+static msg_t gyro_read_raw(void *ip, int32_t axes[L3GD20_GYRO_NUMBER_OF_AXES]) {
+  L3GD20Driver* devp;
   int16_t tmp;
-  uint8_t i, buff [2 * L3GD20_NUMBER_OF_AXES];
+  uint8_t i, buff [2 * L3GD20_GYRO_NUMBER_OF_AXES];
   msg_t msg = MSG_OK;
   
   osalDbgCheck((ip != NULL) && (axes != NULL));
-  osalDbgAssert((((L3GD20Driver *)ip)->state == L3GD20_READY),
-              "read_raw(), invalid state");
 
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(L3GD20Driver*, (BaseGyroscope*)ip);
+  
+  osalDbgAssert((devp->state == L3GD20_READY),
+                "gyro_read_raw(), invalid state");
 #if L3GD20_USE_SPI
-  osalDbgAssert((((L3GD20Driver *)ip)->config->spip->state == SPI_READY),
-                "read_raw(), channel not ready");
+  osalDbgAssert((devp->config->spip->state == SPI_READY),
+                "gyro_read_raw(), channel not ready");
                 
 #if	L3GD20_SHARED_SPI
-  spiAcquireBus(((L3GD20Driver *)ip)->config->spip);
-  spiStart(((L3GD20Driver *)ip)->config->spip,
-           ((L3GD20Driver *)ip)->config->spicfg);
+  spiAcquireBus(devp->config->spip);
+  spiStart(devp->config->spip,
+           devp->config->spicfg);
 #endif /* L3GD20_SHARED_SPI */
 
-    l3gd20SPIReadRegister(((L3GD20Driver *)ip)->config->spip, L3GD20_AD_OUT_X_L,
-                          L3GD20_NUMBER_OF_AXES * 2, buff);
+  l3gd20SPIReadRegister(devp->config->spip, L3GD20_AD_OUT_X_L,
+                        L3GD20_GYRO_NUMBER_OF_AXES * 2, buff);
 
 #if	L3GD20_SHARED_SPI
-  spiReleaseBus(((L3GD20Driver *)ip)->config->spip);
+  spiReleaseBus(devp->config->spip);
 #endif /* L3GD20_SHARED_SPI */   
 #endif /* L3GD20_USE_SPI */ 
 
-    for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++) {
-      tmp = buff[2*i] + (buff[2*i+1] << 8);
+    for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++) {
+      tmp = buff[2 * i] + (buff[2 * i + 1] << 8);
       axes[i] = (int32_t)tmp;
     }
   return msg;
 }
 
-static msg_t read_cooked(void *ip, float axes[]) {
+/**
+ * @brief   Retrieves cooked data from the BaseGyroscope.
+ * @note    This data is manipulated according to the formula
+ *          cooked = (raw * sensitivity) - bias.
+ * @note    Final data is expressed as DPS.
+ * @note    The axes array must be at least the same size of the
+ *          BaseGyroscope axes number.
+ *
+ * @param[in] ip        pointer to @p BaseGyroscope interface.
+ * @param[out] axes     a buffer which would be filled with cooked data.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ */
+static msg_t gyro_read_cooked(void *ip, float axes[]) {
+  L3GD20Driver* devp;
   uint32_t i;
-  int32_t raw[L3GD20_NUMBER_OF_AXES];
+  int32_t raw[L3GD20_GYRO_NUMBER_OF_AXES];
   msg_t msg;
 
   osalDbgCheck((ip != NULL) && (axes != NULL));
 
-  osalDbgAssert((((L3GD20Driver *)ip)->state == L3GD20_READY),
-              "read_cooked(), invalid state");
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(L3GD20Driver*, (BaseGyroscope*)ip);
+  
+  osalDbgAssert((devp->state == L3GD20_READY),
+                "gyro_read_cooked(), invalid state");
+#if L3GD20_USE_SPI
+  osalDbgAssert((devp->config->spip->state == SPI_READY),
+                "gyro_read_cooked(), channel not ready");
+#endif
 
-  msg = read_raw(ip, raw);
-  for(i = 0; i < L3GD20_NUMBER_OF_AXES ; i++){
-    axes[i] = raw[i] * ((L3GD20Driver *)ip)->sensitivity[i];
-    axes[i] -= ((L3GD20Driver *)ip)->bias[i];
+  msg = gyro_read_raw(ip, raw);
+  for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++){
+    axes[i] = raw[i] * devp->gyrosensitivity[i];
+    axes[i] -= devp->gyrobias[i];
   }
   return msg;
 }
 
-static msg_t sample_bias(void *ip) {
+/**
+ * @brief   Samples bias values for the BaseGyroscope.
+ * @note    The L3GD20 shall not be moved during the whole procedure.
+ * @note    After this function internal bias is automatically updated.
+ * @note    The behavior of this function depends on @P L3GD20_BIAS_ACQ_TIMES
+ *          and @p L3GD20_BIAS_SETTLING_US.
+ *
+ * @param[in] ip        pointer to @p BaseGyroscope interface.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ */
+static msg_t gyro_sample_bias(void *ip) {
+  L3GD20Driver* devp;
   uint32_t i, j;
-  int32_t raw[L3GD20_NUMBER_OF_AXES];
-  int32_t buff[L3GD20_NUMBER_OF_AXES] = {0, 0, 0};
+  int32_t raw[L3GD20_GYRO_NUMBER_OF_AXES];
+  int32_t buff[L3GD20_GYRO_NUMBER_OF_AXES] = {0, 0, 0};
   msg_t msg;
 	
   osalDbgCheck(ip != NULL);
 
-  osalDbgAssert((((L3GD20Driver *)ip)->state == L3GD20_READY),
-                "sample_bias(), invalid state");
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(L3GD20Driver*, (BaseGyroscope*)ip);
+  
+  osalDbgAssert((devp->state == L3GD20_READY),
+                "gyro_sample_bias(), invalid state");
+#if L3GD20_USE_SPI
+  osalDbgAssert((devp->config->spip->state == SPI_READY),
+                "gyro_sample_bias(), channel not ready");
+#endif
 
   for(i = 0; i < L3GD20_BIAS_ACQ_TIMES; i++){
-    msg = read_raw(ip, raw);
+    msg = gyro_read_raw(ip, raw);
 		if(msg != MSG_OK)
 			return msg;
-    for(j = 0; j < L3GD20_NUMBER_OF_AXES; j++){
+    for(j = 0; j < L3GD20_GYRO_NUMBER_OF_AXES; j++){
       buff[j] += raw[j];
     }
-    osalThreadSleepMicroseconds(L3GD20_BIAS_SETTLING_uS);
+    osalThreadSleepMicroseconds(L3GD20_BIAS_SETTLING_US);
   }
 
-  for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++){
-    ((L3GD20Driver *)ip)->bias[i] = (buff[i] / L3GD20_BIAS_ACQ_TIMES);
-    ((L3GD20Driver *)ip)->bias[i] *= ((L3GD20Driver *)ip)->sensitivity[i];
+  for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++){
+    devp->gyrobias[i] = (buff[i] / L3GD20_BIAS_ACQ_TIMES);
+    devp->gyrobias[i] *= devp->gyrosensitivity[i];
   }
   return msg;
 }
 
-static msg_t set_bias(void *ip, float *bp) {
+/**
+ * @brief   Set bias values for the BaseGyroscope.
+ * @note    Bias must be expressed as DPS.
+ * @note    The bias buffer must be at least the same size of the BaseGyroscope 
+ *          axes number.
+ *
+ * @param[in] ip        pointer to @p BaseGyroscope interface.
+ * @param[in] bp        a buffer which contains biases.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ */
+static msg_t gyro_set_bias(void *ip, float *bp) {
+  L3GD20Driver* devp;
   uint32_t i;
   
-  osalDbgCheck((ip != NULL) && (bp !=NULL));
-
-  osalDbgAssert((((L3GD20Driver *)ip)->state == L3GD20_READY) ||
-                (((L3GD20Driver *)ip)->state == L3GD20_STOP),
-                "set_bias(), invalid state");
+  osalDbgCheck((ip != NULL) && (bp != NULL));
   
-  for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++) {
-    ((L3GD20Driver *)ip)->bias[i] = bp[i];
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(L3GD20Driver*, (BaseGyroscope*)ip);
+  
+  osalDbgAssert((devp->state != L3GD20_UNINIT),
+                "gyro_set_bias(), invalid state");
+  
+  for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++) {
+    devp->gyrobias[i] = bp[i];
   }
   return MSG_OK;
 }
 
-static msg_t reset_bias(void *ip) {
+/**
+ * @brief   Reset bias values for the BaseGyroscope.
+ * @note    Default biases value are obtained from device datasheet when
+ *          available otherwise they are considered zero.
+ *
+ * @param[in] ip        pointer to @p BaseGyroscope interface.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ */
+static msg_t gyro_reset_bias(void *ip) {
+  L3GD20Driver* devp;
   uint32_t i;
 
   osalDbgCheck(ip != NULL);
+  
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(L3GD20Driver*, (BaseGyroscope*)ip);
+  
+  osalDbgAssert((devp->state != L3GD20_UNINIT),
+                "gyro_reset_bias(), invalid state");
 
-  osalDbgAssert((((L3GD20Driver *)ip)->state == L3GD20_READY) ||
-                (((L3GD20Driver *)ip)->state == L3GD20_STOP),
-              "reset_bias(), invalid state");
-
-  for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++)
-    ((L3GD20Driver *)ip)->bias[i] = 0;
+  for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++)
+    devp->gyrobias[i] = 0.0;
   return MSG_OK;
 }
 
-static msg_t set_sensivity(void *ip, float *sp) {
+/**
+ * @brief   Set sensitivity values for the BaseGyroscope.
+ * @note    Sensitivity must be expressed as DPS/LSB.
+ * @note    The sensitivity buffer must be at least the same size of the
+ *          BaseGyroscope axes number.
+ *
+ * @param[in] ip        pointer to @p BaseGyroscope interface.
+ * @param[in] sp        a buffer which contains sensitivities.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ */
+static msg_t gyro_set_sensivity(void *ip, float *sp) {
+  L3GD20Driver* devp;
   uint32_t i;
   
   osalDbgCheck((ip != NULL) && (sp !=NULL));
 
-  osalDbgAssert((((L3GD20Driver *)ip)->state == L3GD20_READY),
-                "set_sensivity(), invalid state");
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(L3GD20Driver*, (BaseGyroscope*)ip);
   
-  for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++) {
-    ((L3GD20Driver *)ip)->sensitivity[i] = sp[i];
+  osalDbgAssert((devp->state != L3GD20_UNINIT),
+                "gyro_set_sensivity(), invalid state");
+  
+  for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++) {
+    devp->gyrosensitivity[i] = sp[i];
   }
   return MSG_OK;
 }
 
-static msg_t reset_sensivity(void *ip) {
+/**
+ * @brief   Reset sensitivity values for the BaseGyroscope.
+ * @note    Default sensitivities value are obtained from device datasheet.
+ *
+ * @param[in] ip        pointer to @p BaseGyroscope interface.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    otherwise.
+ */
+static msg_t gyro_reset_sensivity(void *ip) {
+  L3GD20Driver* devp;
   uint32_t i;
-
+  msg_t msg = MSG_OK;
+  
   osalDbgCheck(ip != NULL);
 
-  osalDbgAssert((((L3GD20Driver *)ip)->state == L3GD20_READY),
-                "reset_sensivity(), invalid state");
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(L3GD20Driver*, (BaseGyroscope*)ip);
+  
+  osalDbgAssert((devp->state != L3GD20_UNINIT),
+                "gyro_reset_sensivity(), invalid state");
 
-  if(((L3GD20Driver *)ip)->config->fullscale == L3GD20_FS_250DPS)
-    for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++)
-      ((L3GD20Driver *)ip)->sensitivity[i] = L3GD20_SENS_250DPS;
-  else if(((L3GD20Driver *)ip)->config->fullscale == L3GD20_FS_500DPS)
-	for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++)
-      ((L3GD20Driver *)ip)->sensitivity[i] = L3GD20_SENS_500DPS;
-  else if(((L3GD20Driver *)ip)->config->fullscale == L3GD20_FS_2000DPS)
-	for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++)
-      ((L3GD20Driver *)ip)->sensitivity[i] = L3GD20_SENS_2000DPS;
+  if(devp->config->gyrofullscale == L3GD20_FS_250DPS)
+    for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++)
+      devp->gyrosensitivity[i] = L3GD20_SENS_250DPS;
+  else if(devp->config->gyrofullscale == L3GD20_FS_500DPS)
+	for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++)
+      devp->gyrosensitivity[i] = L3GD20_SENS_500DPS;
+  else if(devp->config->gyrofullscale == L3GD20_FS_2000DPS)
+	for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++)
+      devp->gyrosensitivity[i] = L3GD20_SENS_2000DPS;
   else {
-    osalDbgAssert(FALSE, "reset_sensivity(), full scale issue");
+    osalDbgAssert(FALSE, "gyro_reset_sensivity(), full scale issue");
     return MSG_RESET;
   }
-  return MSG_OK;
+  return msg;
 }
 
-static msg_t set_full_scale(void *ip, l3gd20_fs_t fs) {
+/**
+ * @brief   Changes the L3GD20Driver gyroscope fullscale value.
+ * @note    This function also rescale sensitivities and biases based on
+ *          previous and next fullscale value.
+ * @note    A recalibration is highly suggested after calling this function.
+ *
+ * @param[in] ip        pointer to @p BaseGyroscope interface.
+ * @param[in] fs        new fullscale value.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    otherwise.
+ */
+static msg_t gyro_set_full_scale(L3GD20Driver *devp, l3gd20_fs_t fs) {
   float newfs, scale;
   uint8_t i, cr;
+  msg_t msg = MSG_OK;
+
+  osalDbgCheck(devp != NULL);
+
+  osalDbgAssert((devp->state != L3GD20_UNINIT),
+                "gyro_set_full_scale(), invalid state");
+#if L3GD20_USE_SPI
+  osalDbgAssert((devp->config->spip->state == SPI_READY),
+                "gyro_set_full_scale(), channel not ready");
+#endif
 
   if(fs == L3GD20_FS_250DPS) {
     newfs = L3GD20_250DPS;
@@ -259,23 +404,23 @@ static msg_t set_full_scale(void *ip, l3gd20_fs_t fs) {
     return MSG_RESET;
   }
 
-  if(newfs != ((L3GD20Driver *)ip)->fullscale) {
-    scale = newfs / ((L3GD20Driver *)ip)->fullscale;
-    ((L3GD20Driver *)ip)->fullscale = newfs;
+  if(newfs != devp->gyrofullscale) {
+    scale = newfs / devp->gyrofullscale;
+    devp->gyrofullscale = newfs;
 
 #if L3GD20_USE_SPI
 #if	L3GD20_SHARED_SPI
-		spiAcquireBus(((L3GD20Driver *)ip)->config->spip);
-		spiStart(((L3GD20Driver *)ip)->config->spip,
-						 ((L3GD20Driver *)ip)->config->spicfg);
+		spiAcquireBus(devp->config->spip);
+		spiStart(devp->config->spip,
+						 devp->config->spicfg);
 #endif /* L3GD20_SHARED_SPI */ 
 
     /* Updating register.*/
-    l3gd20SPIReadRegister(((L3GD20Driver *)ip)->config->spip,
+    l3gd20SPIReadRegister(devp->config->spip,
                           L3GD20_AD_CTRL_REG4, 1, &cr);
 
 #if	L3GD20_SHARED_SPI
-		spiReleaseBus(((L3GD20Driver *)ip)->config->spip);
+		spiReleaseBus(devp->config->spip);
 #endif /* L3GD20_SHARED_SPI */ 
 #endif /* L3GD20_USE_SPI */
     cr &= ~(L3GD20_CTRL_REG4_FS_MASK);
@@ -283,36 +428,37 @@ static msg_t set_full_scale(void *ip, l3gd20_fs_t fs) {
  
 #if L3GD20_USE_SPI 
 #if	L3GD20_SHARED_SPI
-		spiAcquireBus(((L3GD20Driver *)ip)->config->spip);
-		spiStart(((L3GD20Driver *)ip)->config->spip,
-						 ((L3GD20Driver *)ip)->config->spicfg);
+		spiAcquireBus(devp->config->spip);
+		spiStart(devp->config->spip,
+						 devp->config->spicfg);
 #endif /* L3GD20_SHARED_SPI */ 
 
-    l3gd20SPIWriteRegister(((L3GD20Driver *)ip)->config->spip,
+    l3gd20SPIWriteRegister(devp->config->spip,
                            L3GD20_AD_CTRL_REG4, 1, &cr);
 #if	L3GD20_SHARED_SPI
-		spiReleaseBus(((L3GD20Driver *)ip)->config->spip);
+		spiReleaseBus(devp->config->spip);
 #endif /* L3GD20_SHARED_SPI */ 
 #endif /* L3GD20_USE_SPI */
 
     /* Scaling sensitivity and bias. Re-calibration is suggested anyway. */
-    for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++) {
-      ((L3GD20Driver *)ip)->sensitivity[i] *= scale;
-      ((L3GD20Driver *)ip)->bias[i] *= scale;
+    for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++) {
+      devp->gyrosensitivity[i] *= scale;
+      devp->gyrobias[i] *= scale;
     }
   }
-  return MSG_OK;
+  return msg;
 }
 
-static const struct BaseSensorVMT vmt_sensor = {
-  get_axes_number, read_raw, read_cooked
+static const struct L3GD20VMT vmt_device = {
+  (size_t)0,
+  gyro_set_full_scale
 };
 
-static const struct L3GD20GyroscopeVMT vmt_gyroscope = {
-  get_axes_number, read_raw, read_cooked,
-  sample_bias, set_bias, reset_bias,
-  set_sensivity, reset_sensivity,
-  set_full_scale
+static const struct BaseGyroscopeVMT vmt_gyroscope = {
+  sizeof(struct L3GD20VMT*),
+  gyro_get_axes_number, gyro_read_raw, gyro_read_cooked,
+  gyro_sample_bias, gyro_set_bias, gyro_reset_bias,
+  gyro_set_sensivity, gyro_reset_sensivity
 };
 
 /*===========================================================================*/
@@ -328,11 +474,13 @@ static const struct L3GD20GyroscopeVMT vmt_gyroscope = {
  */
 void l3gd20ObjectInit(L3GD20Driver *devp) {
   uint32_t i;
-  devp->vmt_sensor = &vmt_sensor;
-  devp->vmt_gyroscope = &vmt_gyroscope;
+  
+  devp->vmt = &vmt_device;
+  devp->gyro_if.vmt = &vmt_gyroscope;
+  
   devp->config = NULL;
-  for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++)
-    devp->bias[i] = 0.0f;
+  for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++)
+    devp->gyrobias[i] = 0.0f;
   devp->state  = L3GD20_STOP;
 }
 
@@ -358,36 +506,35 @@ void l3gd20Start(L3GD20Driver *devp, const L3GD20Config *config) {
   {
     cr[0] = L3GD20_CTRL_REG1_XEN | L3GD20_CTRL_REG1_YEN | 
           L3GD20_CTRL_REG1_ZEN | L3GD20_CTRL_REG1_PD |
-          devp->config->outputdatarate;
+          devp->config->gyrooutputdatarate;
 #if L3GD20_USE_ADVANCED || defined(__DOXYGEN__)
-    cr[0] |= devp->config->bandwidth;
+    cr[0] |= devp->config->gyrobandwidth;
 #endif
   }
   
   /* Control register 2 configuration block.*/
   {
 #if L3GD20_USE_ADVANCED || defined(__DOXYGEN__)
-  if(devp->config->hpmode != L3GD20_HPM_BYPASSED)
-    cr[1] = devp->config->hpmode | devp->config->hpconfiguration;
+  if(devp->config->gyrohpmode != L3GD20_HPM_BYPASSED)
+    cr[1] = devp->config->gyrohpmode | devp->config->gyrohpconfiguration;
 #endif
   }
   
   /* Control register 4 configuration block.*/
   {
-    cr[3] = devp->config->fullscale;
+    cr[3] = devp->config->gyrofullscale;
 #if L3GD20_USE_ADVANCED || defined(__DOXYGEN__)
-    cr[3] |= devp->config->blockdataupdate |
-             devp->config->endianness;
+    cr[3] |= devp->config->gyroblockdataupdate |
+             devp->config->gyroendianness;
 #endif
   }
   
   /* Control register 5 configuration block.*/
-  {
-    
+  {    
 #if L3GD20_USE_ADVANCED || defined(__DOXYGEN__)
-  if((devp->config->hpmode != L3GD20_HPM_BYPASSED)) {
+  if((devp->config->gyrohpmode != L3GD20_HPM_BYPASSED)) {
     cr[4] = L3GD20_CTRL_REG5_HPEN;
-    if(devp->config->lp2mode != L3GD20_LP2M_BYPASSED) {
+    if(devp->config->gyrolp2mode != L3GD20_LP2M_BYPASSED) {
       cr[4] |= L3GD20_CTRL_REG5_INT1_SEL1 |
                L3GD20_CTRL_REG5_OUT_SEL1;
     }
@@ -401,52 +548,52 @@ void l3gd20Start(L3GD20Driver *devp, const L3GD20Config *config) {
 
 #if L3GD20_USE_SPI
 #if	L3GD20_SHARED_SPI
-  spiAcquireBus((devp)->config->spip);
+  spiAcquireBus(devp->config->spip);
 #endif /* L3GD20_SHARED_SPI */
-  spiStart((devp)->config->spip,
-           (devp)->config->spicfg);
+  spiStart(devp->config->spip,
+           devp->config->spicfg);
            
   l3gd20SPIWriteRegister(devp->config->spip, L3GD20_AD_CTRL_REG1, 
                          5, cr);
 #if	L3GD20_SHARED_SPI
-  spiReleaseBus((devp)->config->spip);
+  spiReleaseBus(devp->config->spip);
 #endif /* L3GD20_SHARED_SPI */
 #endif /* L3GD20_USE_SPI */
   
   /* Storing sensitivity information according to full scale.*/
-  if(devp->config->fullscale == L3GD20_FS_250DPS) {
-    devp->fullscale = L3GD20_250DPS;
-    for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++) {
-      if (devp->config->sensitivity == NULL)
-        devp->sensitivity[i] = L3GD20_SENS_250DPS;
+  if(devp->config->gyrofullscale == L3GD20_FS_250DPS) {
+    devp->gyrofullscale = L3GD20_250DPS;
+    for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++) {
+      if (devp->config->gyrosensitivity == NULL)
+        devp->gyrosensitivity[i] = L3GD20_SENS_250DPS;
       else
-        devp->sensitivity[i] = devp->config->sensitivity[i];
+        devp->gyrosensitivity[i] = devp->config->gyrosensitivity[i];
     }
   }
-  else if(devp->config->fullscale == L3GD20_FS_500DPS) {
-    devp->fullscale = L3GD20_500DPS;
-    for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++) {
-      if (devp->config->sensitivity == NULL)
-        devp->sensitivity[i] = L3GD20_SENS_500DPS;
+  else if(devp->config->gyrofullscale == L3GD20_FS_500DPS) {
+    devp->gyrofullscale = L3GD20_500DPS;
+    for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++) {
+      if (devp->config->gyrosensitivity == NULL)
+        devp->gyrosensitivity[i] = L3GD20_SENS_500DPS;
       else
-        devp->sensitivity[i] = devp->config->sensitivity[i];
+        devp->gyrosensitivity[i] = devp->config->gyrosensitivity[i];
     }
   }
-  else if(devp->config->fullscale == L3GD20_FS_2000DPS) {
-    devp->fullscale = L3GD20_2000DPS;
-    for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++) {
-      if (devp->config->sensitivity == NULL)
-        devp->sensitivity[i] = L3GD20_SENS_2000DPS;
+  else if(devp->config->gyrofullscale == L3GD20_FS_2000DPS) {
+    devp->gyrofullscale = L3GD20_2000DPS;
+    for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++) {
+      if (devp->config->gyrosensitivity == NULL)
+        devp->gyrosensitivity[i] = L3GD20_SENS_2000DPS;
       else
-        devp->sensitivity[i] = devp->config->sensitivity[i];
+        devp->gyrosensitivity[i] = devp->config->gyrosensitivity[i];
     }
   }
   else
     osalDbgAssert(FALSE, "l3gd20Start(), full scale issue");
   
-  if(devp->config->bias != NULL) {
-    for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++) {
-      devp->bias[i] = devp->config->bias[i];
+  if(devp->config->gyrobias != NULL) {
+    for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++) {
+      devp->gyrobias[i] = devp->config->gyrobias[i];
     }
   }
   
@@ -476,17 +623,17 @@ void l3gd20Stop(L3GD20Driver *devp) {
     
 #if L3GD20_USE_SPI
 #if	L3GD20_SHARED_SPI
-    spiAcquireBus((devp)->config->spip);
-    spiStart((devp)->config->spip,
-             (devp)->config->spicfg);
+    spiAcquireBus(devp->config->spip);
+    spiStart(devp->config->spip,
+             devp->config->spicfg);
 #endif /* L3GD20_SHARED_SPI */
 
     l3gd20SPIWriteRegister(devp->config->spip, L3GD20_AD_CTRL_REG1, 
                            1, &cr1);
-    spiStop((devp)->config->spip);
+    spiStop(devp->config->spip);
     
 #if	L3GD20_SHARED_SPI
-    spiReleaseBus((devp)->config->spip);
+    spiReleaseBus(devp->config->spip);
 #endif /* L3GD20_SHARED_SPI */ 
 #endif /* L3GD20_USE_SPI */
   }			 
