@@ -51,8 +51,8 @@ static THD_WORKING_AREA(waTsSimpleService, 1024);
 static THD_FUNCTION(TsSimpleService, tsstate) {
 
   /* WARNING: do not put blocking call out of the cycle,
-   *          i.e. no calls that suspend
-   *          the current thread!.*/
+              i.e. no calls that suspend
+              the current thread!.*/
 
   ts_state_t *svcp = tsstate;
 
