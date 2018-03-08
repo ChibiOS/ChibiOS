@@ -68,13 +68,13 @@
  * +---------+--+-+--+-+-----+--------+-------+-+------+--+-+-+-+---+
  * | section |NS|0|nG|S|AP[2]|TEX[2:0]|AP[1:0]| |domain|XN|C|B|1|PXN|
  * +---------+--+-+--+-+-----+--------+-------+-+------+--+-+-+-+---+
- * |         |0 |0|0 |1|0    |111     |11     |0|1111  |0 |1|1|1|0  | == normal, cacheable
- * |         |0 |0|0 |1|0    |100     |11     |0|1111  |0 |0|0|1|0  | == normal, no-cacheable
- * |         |0 |0|0 |1|0    |000     |11     |0|1111  |0 |0|1|1|0  | == device
- * |         |0 |0|0 |1|0    |000     |11     |0|1111  |0 |0|0|1|0  | == strongly-ordered
+ * |         |0 |0|0 |1|0    |111     |11     |0|0000  |0 |1|1|1|0  | == normal, cacheable
+ * |         |0 |0|0 |1|0    |100     |11     |0|0000  |0 |0|0|1|0  | == normal, no-cacheable
+ * |         |0 |0|0 |1|0    |000     |11     |0|0000  |0 |0|1|1|0  | == device
+ * |         |0 |0|0 |1|0    |000     |11     |0|0000  |0 |0|0|1|0  | == strongly-ordered
  * |         |0 |0|0 |0|0    |000     |00     |0|0000  |0 |0|0|0|0  | == undefined
  *
- * Domains are 'manager'. Accesses are not checked against the permission bits in tlb.
+ * Domains are 'client'. Accesses are checked against the permission bits in tlb.
  */
 static uint32_t mmuTable[4096] CC_ALIGN(16384);
 
@@ -116,7 +116,7 @@ void __core_init(void) {
   mmuTable[0]   = TTE_SECT_SECTION(0x00000000) |
                   TTE_SECT_MEM_NO_CACHEABLE |
                   TTE_SECT_RO_ACCESS |
-                  TTE_SECT_DOM(0x0F) |
+                  TTE_SECT_DOM(0x00) |
                   TTE_SECT_S | TTE_TYPE_SECT;
   /*
    * NFC SRAM region
@@ -126,7 +126,7 @@ void __core_init(void) {
   mmuTable[1]   = TTE_SECT_SECTION(0x00100000) |
                   TTE_SECT_DEVICE |
                   TTE_SECT_RW_ACCESS |
-                  TTE_SECT_DOM(0x0F) |
+                  TTE_SECT_DOM(0x00) |
                   TTE_SECT_S | TTE_TYPE_SECT;
   /*
    * SRAM region
@@ -136,7 +136,7 @@ void __core_init(void) {
   mmuTable[2]   = TTE_SECT_SECTION(0x00200000) |
                   TTE_SECT_MEM_CACHEABLE |
                   TTE_SECT_RW_ACCESS |
-                  TTE_SECT_DOM(0x0F) |
+                  TTE_SECT_DOM(0x00) |
                   TTE_SECT_S | TTE_TYPE_SECT;
   /*
    * UDPHS RAM region
@@ -146,7 +146,7 @@ void __core_init(void) {
   mmuTable[3]   = TTE_SECT_SECTION(0x00300000) |
                   TTE_SECT_DEVICE |
                   TTE_SECT_RW_ACCESS |
-                  TTE_SECT_DOM(0x0F) |
+                  TTE_SECT_DOM(0x00) |
                   TTE_SECT_EXE_NEVER |
                   TTE_SECT_S | TTE_TYPE_SECT;
   /*
@@ -157,7 +157,7 @@ void __core_init(void) {
   mmuTable[4]   = TTE_SECT_SECTION(0x00400000) |
                   TTE_SECT_DEVICE |
                   TTE_SECT_RW_ACCESS |
-                  TTE_SECT_DOM(0x0F) |
+                  TTE_SECT_DOM(0x00) |
                   TTE_SECT_EXE_NEVER |
                   TTE_SECT_S | TTE_TYPE_SECT;
   /*
@@ -168,7 +168,7 @@ void __core_init(void) {
   mmuTable[5]   = TTE_SECT_SECTION(0x00500000) |
                   TTE_SECT_DEVICE |
                   TTE_SECT_RW_ACCESS |
-                  TTE_SECT_DOM(0x0F) |
+                  TTE_SECT_DOM(0x00) |
                   TTE_SECT_EXE_NEVER |
                   TTE_SECT_S | TTE_TYPE_SECT;
   /*
@@ -179,7 +179,7 @@ void __core_init(void) {
   mmuTable[6]   = TTE_SECT_SECTION(0x00600000) |
                   TTE_SECT_DEVICE |
                   TTE_SECT_RW_ACCESS |
-                  TTE_SECT_DOM(0x0F) |
+                  TTE_SECT_DOM(0x00) |
                   TTE_SECT_EXE_NEVER |
                   TTE_SECT_S | TTE_TYPE_SECT;
   /*
@@ -190,7 +190,7 @@ void __core_init(void) {
   mmuTable[7]   = TTE_SECT_SECTION(0x00700000) |
                   TTE_SECT_DEVICE |
                   TTE_SECT_RW_ACCESS |
-                  TTE_SECT_DOM(0x0F) |
+                  TTE_SECT_DOM(0x00) |
                   TTE_SECT_EXE_NEVER |
                   TTE_SECT_S | TTE_TYPE_SECT;
   /*
@@ -201,7 +201,7 @@ void __core_init(void) {
   mmuTable[0xa] = TTE_SECT_SECTION(0x00a00000) |
                   TTE_SECT_DEVICE |
                   TTE_SECT_RW_ACCESS |
-                  TTE_SECT_DOM(0x0F) |
+                  TTE_SECT_DOM(0x00) |
                   TTE_SECT_EXE_NEVER |
                   TTE_SECT_S | TTE_TYPE_SECT;
   /*
@@ -212,7 +212,7 @@ void __core_init(void) {
   mmuTable[0xb] = TTE_SECT_SECTION(0x00b00000) |
                   TTE_SECT_DEVICE |
                   TTE_SECT_RW_ACCESS |
-                  TTE_SECT_DOM(0x0F) |
+                  TTE_SECT_DOM(0x00) |
                   TTE_SECT_EXE_NEVER |
                   TTE_SECT_S | TTE_TYPE_SECT;
   /*
@@ -224,7 +224,7 @@ void __core_init(void) {
     mmuTable[pm] =  TTE_SECT_SECTION(pm << 20) |
                     TTE_SECT_MEM_STRONGLY_ORD |
                     TTE_SECT_RW_ACCESS |
-                    TTE_SECT_DOM(0x0F) |
+                    TTE_SECT_DOM(0x00) |
                     TTE_SECT_EXE_NEVER |
                     TTE_SECT_S | TTE_TYPE_SECT;
   /*
@@ -236,7 +236,7 @@ void __core_init(void) {
     mmuTable[pm] =  TTE_SECT_SECTION(pm << 20) |
                     TTE_SECT_MEM_CACHEABLE |
                     TTE_SECT_RW_ACCESS |
-                    TTE_SECT_DOM(0x0F) |
+                    TTE_SECT_DOM(0x00) |
                     TTE_SECT_S | TTE_TYPE_SECT;
   /*
    * DDR AESB regions
@@ -247,7 +247,7 @@ void __core_init(void) {
     mmuTable[pm] =  TTE_SECT_SECTION(pm << 20) |
                     TTE_SECT_MEM_CACHEABLE |
                     TTE_SECT_RW_ACCESS |
-                    TTE_SECT_DOM(0x0F) |
+                    TTE_SECT_DOM(0x00) |
                     TTE_SECT_S | TTE_TYPE_SECT;
   /*
    * EBI 1, 2 and 3 regions
@@ -258,7 +258,7 @@ void __core_init(void) {
     mmuTable[pm] =  TTE_SECT_SECTION(pm << 20) |
                     TTE_SECT_MEM_STRONGLY_ORD |
                     TTE_SECT_RW_ACCESS |
-                    TTE_SECT_DOM(0x0F) |
+                    TTE_SECT_DOM(0x00) |
                     TTE_SECT_S | TTE_TYPE_SECT;
   /*
    * QSPI0/1 AESB MEM regions
@@ -269,7 +269,7 @@ void __core_init(void) {
     mmuTable[pm] =  TTE_SECT_SECTION(pm << 20) |
                     TTE_SECT_MEM_STRONGLY_ORD |
                     TTE_SECT_RW_ACCESS |
-                    TTE_SECT_DOM(0x0F) |
+                    TTE_SECT_DOM(0x00) |
                     TTE_SECT_S | TTE_TYPE_SECT;
   /*
    * SDMMC0/1 regions
@@ -280,7 +280,7 @@ void __core_init(void) {
     mmuTable[pm] =  TTE_SECT_SECTION(pm << 20) |
                     TTE_SECT_MEM_STRONGLY_ORD |
                     TTE_SECT_RW_ACCESS |
-                    TTE_SECT_DOM(0x0F) |
+                    TTE_SECT_DOM(0x00) |
                     TTE_SECT_EXE_NEVER |
                     TTE_SECT_S | TTE_TYPE_SECT;
   /*
@@ -292,7 +292,7 @@ void __core_init(void) {
     mmuTable[pm] =  TTE_SECT_SECTION(pm << 20) |
                     TTE_SECT_MEM_STRONGLY_ORD |
                     TTE_SECT_RW_ACCESS |
-                    TTE_SECT_DOM(0x0F) |
+                    TTE_SECT_DOM(0x00) |
                     TTE_SECT_EXE_NEVER |
                     TTE_SECT_S | TTE_TYPE_SECT;
   /*
@@ -304,7 +304,7 @@ void __core_init(void) {
     mmuTable[pm] =  TTE_SECT_SECTION(pm << 20) |
                     TTE_SECT_MEM_STRONGLY_ORD |
                     TTE_SECT_RW_ACCESS |
-                    TTE_SECT_DOM(0x0F) |
+                    TTE_SECT_DOM(0x00) |
                     TTE_SECT_S | TTE_TYPE_SECT;
   /*
    * Internal peripherals regions
@@ -316,19 +316,19 @@ void __core_init(void) {
   mmuTable[0xf00] = TTE_SECT_SECTION(0xf0000000) |
                   TTE_SECT_DEVICE |
                   TTE_SECT_RW_ACCESS |
-                  TTE_SECT_DOM(0x0F) |
+                  TTE_SECT_DOM(0x00) |
                   TTE_SECT_EXE_NEVER |
                   TTE_SECT_S | TTE_TYPE_SECT;
   mmuTable[0xf80] = TTE_SECT_SECTION(0xf8000000) |
                   TTE_SECT_DEVICE |
                   TTE_SECT_RW_ACCESS |
-                  TTE_SECT_DOM(0x0F) |
+                  TTE_SECT_DOM(0x00) |
                   TTE_SECT_EXE_NEVER |
                   TTE_SECT_S | TTE_TYPE_SECT;
   mmuTable[0xfc0] = TTE_SECT_SECTION(0xfc000000) |
                   TTE_SECT_DEVICE |
                   TTE_SECT_RW_ACCESS |
-                  TTE_SECT_DOM(0x0F) |
+                  TTE_SECT_DOM(0x00) |
                   TTE_SECT_EXE_NEVER |
                   TTE_SECT_S | TTE_TYPE_SECT;
   /*
@@ -337,7 +337,7 @@ void __core_init(void) {
    */
   MMU_InvalidateTLB();
   __set_TTBR0((uint32_t)mmuTable|0x5B);
-  __set_DACR(0xC0000000);
+  __set_DACR(0x00000001);
   __DSB();
   __ISB();
 
