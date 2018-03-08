@@ -37,12 +37,11 @@
 /* Module exported variables.                                                */
 /*===========================================================================*/
 
-/* */
-
+/* If a services file is missing in the user application.*/
 CC_WEAK ts_state_t ts_state[TS_MAX_SVCS];
 CC_WEAK const thread_descriptor_t ts_configs[TS_MAX_SVCS];
 
-/* The reference to the suspended nsec main thread.*/
+/* The reference to the suspended NSEC main thread.*/
 thread_reference_t _ns_thread = NULL;
 
 /* The services may broadcast and listen event flags via this object.*/
@@ -104,7 +103,7 @@ static ts_state_t *findSvcsEntry(const char *name)
  * @post    The service thread is resumed.
  *
  * @param[in] svc_handle    the handle of the service to be invoked.
- * @param[inout] svc_data   service request data, often a reference to a more
+ * @param[in,out] svc_data  service request data, often a reference to a more
  *                          complex structure.
  * @param[in] svc_datalen   size of the svc_data memory area.
  * @param[in] svc_timeout   after this time interval, the service execution
@@ -166,6 +165,8 @@ int64_t smcEntry(ts_state_t *svc_handle, ts_params_area_t svc_data,
         return LOWORD(SMC_SVC_BADH);
       tssp = svc_handle;
     }
+
+    /* If the service is not waiting requests, it's busy.*/
     if (tssp->ts_thdp == NULL)
       return LOWORD(SMC_SVC_BUSY);
     tssp->ts_datap = svc_data;
@@ -176,7 +177,7 @@ int64_t smcEntry(ts_state_t *svc_handle, ts_params_area_t svc_data,
   _dbg_check_lock();
 #endif
 
-  /* limit the max timeout interval.*/
+  /* Limit the max timeout interval.*/
   if (svc_timeout > TS_MAX_TMO)
     svc_timeout = TS_MAX_TMO;
 
@@ -233,7 +234,6 @@ CC_NO_RETURN void tssiInit(void)
   uint32_t d;
   uint32_t *tt;
 
-
   /*
    * The DDR memory is divided in 4 region, each 32MB large.
    * The last region is split in two areas, each 16MB large.
@@ -284,6 +284,7 @@ CC_NO_RETURN void tssiInit(void)
        d < ((uint32_t)NSEC_MEMORY_END_ADDR >> 20); d += 1) {
     MMU_XNSection(tt + d, NON_EXECUTE);
   }
+  MMU_InvalidateTLB();
 
   /* Make sure that prio is NORMALPRIO.*/
   chThdSetPriority(NORMALPRIO);
