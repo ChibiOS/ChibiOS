@@ -4,16 +4,15 @@
 
 ** TARGET **
 
-The demo runs on an STM32F3 Discovery board.
+The demo runs on an ST STM32F3-Discovery board.
 
 ** The Demo **
 
-The demo uses the ChibiOS Shell in order to test L3GD20 APIs.
-Shell is used on the SDU1 BaseSequentialStream.
+The demo prints L3GD20 data on the SD1 BaseSequentialStream.
 
 ** Build Procedure **
 
-The demo has been tested by using the free Codesourcery GCC-based toolchain
+The demo has been tested using the free Codesourcery GCC-based toolchain
 and YAGARTO.
 Just modify the TRGT line in the makefile in order to use different GCC ports.
 

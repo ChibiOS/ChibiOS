@@ -17,12 +17,10 @@
 #include "ch.h"
 #include "hal.h"
 
-#include "usbcfg.h"
-#include "string.h"
-#include "shell.h"
 #include "chprintf.h"
-
 #include "l3gd20.h"
+
+#define cls(chp)  chprintf(chp, "\033[2J\033[1;1H")
 
 /*===========================================================================*/
 /* L3GD20 related.                                                           */
@@ -31,10 +29,10 @@
 /* L3GD20 Driver: This object represent an L3GD20 instance.*/
 static L3GD20Driver L3GD20D1;
 
-static int32_t rawdata[L3GD20_NUMBER_OF_AXES];
-static float cookeddata[L3GD20_NUMBER_OF_AXES];
+static int32_t gyroraw[L3GD20_GYRO_NUMBER_OF_AXES];
+static float gyrocooked[L3GD20_GYRO_NUMBER_OF_AXES];
 
-static char axisID[L3GD20_NUMBER_OF_AXES] = {'X', 'Y', 'Z'};
+static char axisID[L3GD20_GYRO_NUMBER_OF_AXES] = {'X', 'Y', 'Z'};
 static uint32_t i;
 
 static const SPIConfig spicfg = {
@@ -64,136 +62,12 @@ static L3GD20Config l3gd20cfg = {
 };
 
 /*===========================================================================*/
-/* Command line related.                                                     */
+/* Generic code.                                                             */
 /*===========================================================================*/
 
+static BaseSequentialStream* chp = (BaseSequentialStream*)&SD1;
 /*
- * DP resistor control is not possible on the STM32F3-Discovery, using stubs
- * for the connection macros.
- */
-#define usb_lld_connect_bus(usbp)
-#define usb_lld_disconnect_bus(usbp)
-
-/* Enable use of special ANSI escape sequences.*/
-#define CHPRINTF_USE_ANSI_CODE      TRUE
-#define SHELL_WA_SIZE               THD_WORKING_AREA_SIZE(2048)
-
-static void cmd_read(BaseSequentialStream *chp, int argc, char *argv[]) {
-  (void)argv;
-  if (argc != 1) {
-    chprintf(chp, "Usage: read [raw|cooked]\r\n");
-    return;
-  }
-
-  while (chnGetTimeout((BaseChannel *)chp, 150) == Q_TIMEOUT) {
-    if (!strcmp (argv[0], "raw")) {
-#if CHPRINTF_USE_ANSI_CODE
-      chprintf(chp, "\033[2J\033[1;1H");
-#endif
-      gyroscopeReadRaw(&L3GD20D1, rawdata);
-      chprintf(chp, "L3GD20 Gyroscope raw data...\r\n");
-      for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++) {
-        chprintf(chp, "%c-axis: %d\r\n", axisID[i], rawdata[i]);
-      }
-    }
-    else if (!strcmp (argv[0], "cooked")) {
-#if CHPRINTF_USE_ANSI_CODE
-      chprintf(chp, "\033[2J\033[1;1H");
-#endif
-      gyroscopeReadCooked(&L3GD20D1, cookeddata);
-      chprintf(chp, "L3GD20 Gyroscope cooked data...\r\n");
-      for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++) {
-        chprintf(chp, "%c-axis: %.4f DPS\r\n", axisID[i], cookeddata[i]);
-      }
-    }
-    else {
-      chprintf(chp, "Usage: read [raw|cooked]\r\n");
-      return;
-    }
-  }
-  chprintf(chp, "Stopped\r\n");
-}
-
-static void cmd_fullscale(BaseSequentialStream *chp, int argc, char *argv[]) {
-  (void)argv;
-  if (argc != 1) {
-    chprintf(chp, "Usage: fullscale [250|500|2000]\r\n");
-    return;
-  }
-#if CHPRINTF_USE_ANSI_CODE
-    chprintf(chp, "\033[2J\033[1;1H");
-#endif
-  if(!strcmp (argv[0], "250")) {
-    gyroscopeSetFullScale(&L3GD20D1, L3GD20_FS_250DPS);
-    chprintf(chp, "L3GD20 Gyroscope full scale set to 250 dps...\r\n");
-  }
-  else if(!strcmp (argv[0], "500")) {
-    gyroscopeSetFullScale(&L3GD20D1, L3GD20_FS_500DPS);
-    chprintf(chp, "L3GD20 Gyroscope full scale set to 500 dps...\r\n");
-  }
-  else if(!strcmp (argv[0], "2000")) {
-    gyroscopeSetFullScale(&L3GD20D1, L3GD20_FS_2000DPS);
-    chprintf(chp, "L3GD20 Gyroscope full scale set to 2000 dps...\r\n");
-  }
-  else {
-    chprintf(chp, "Usage: fullscale [250|500|2000]\r\n");
-    return;
-  }
-}
-
-static void cmd_bias(BaseSequentialStream *chp, int argc, char *argv[]) {
-  (void)argv;
-  if (argc != 1) {
-    chprintf(chp, "Usage: bias [sample|reset]\r\n");
-    return;
-  }
-  if(!strcmp (argv[0], "sample")) {
-#if CHPRINTF_USE_ANSI_CODE
-    chprintf(chp, "\033[2J\033[1;1H");
-#endif
-    chprintf(chp, "Please don't move the device while Green LEDs are on!\r\n");
-    chprintf(chp, "Press a key to start...\r\n");
-    while (chnGetTimeout((BaseChannel *)chp, 500) == Q_TIMEOUT)
-      ;
-    palSetLine(LINE_LED6_GREEN);
-    palSetLine(LINE_LED7_GREEN);
-    chThdSleepMilliseconds(1000);
-    gyroscopeSampleBias(&L3GD20D1);
-    palClearLine(LINE_LED6_GREEN);
-    palClearLine(LINE_LED7_GREEN);
-    chprintf(chp, "Procedure completed!\r\n");
-  }
-  else if(!strcmp (argv[0], "reset")) {
-#if CHPRINTF_USE_ANSI_CODE
-    chprintf(chp, "\033[2J\033[1;1H");
-#endif
-    gyroscopeResetBias(&L3GD20D1);
-    chprintf(chp, "Bias correction removed!\r\n");
-  }
-  else {
-    chprintf(chp, "Usage: bias [sample|reset]\r\n");
-    return;
-  }
-}
-
-static const ShellCommand commands[] = {
-  {"read", cmd_read},
-  {"fullscale", cmd_fullscale},
-  {"bias", cmd_bias},
-  {NULL, NULL}
-};
-
-static const ShellConfig shell_cfg1 = {
-  (BaseSequentialStream *)&SDU1,
-  commands
-};
-
-/*===========================================================================*/
-/* Main code.                                                                */
-/*===========================================================================*/
-
-/*
- * LED blinker thread, times are in milliseconds.
+ * Red LED blinker thread, times are in milliseconds.
  */
 static THD_WORKING_AREA(waThread1, 128);
 static THD_FUNCTION(Thread1, arg) {
@@ -201,13 +75,8 @@ static THD_FUNCTION(Thread1, arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (true) {
-    systime_t time;
-
-    time = serusbcfg.usbp->state == USB_ACTIVE ? 250 : 500;
-    palClearLine(LINE_LED3_RED);
-    chThdSleepMilliseconds(time);
-    palSetLine(LINE_LED3_RED);
-    chThdSleepMilliseconds(time);
+    palToggleLine(LINE_LED3_RED);
+    chThdSleepMilliseconds(250);
   }
 }
 
@@ -226,41 +95,44 @@ int main(void) {
   halInit();
   chSysInit();
 
-  /* Initializes a serial-over-USB CDC driver.*/
-  sduObjectInit(&SDU1);
-  sduStart(&SDU1, &serusbcfg);
+  /*
+   * Activates the serial driver 1 using the driver default configuration.
+   */
+  sdStart(&SD1, NULL);
 
   /*
-   * Activates the USB driver and then the USB bus pull-up on D+.
-   * Note, a delay is inserted in order to not have to disconnect the cable
-   * after a reset.
+   * Creates the blinker thread.
    */
-  usbDisconnectBus(serusbcfg.usbp);
-  chThdSleepMilliseconds(1500);
-  usbStart(serusbcfg.usbp, &usbcfg);
-  usbConnectBus(serusbcfg.usbp);
+  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
-  /* Creates the blinker thread.*/
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO + 1, Thread1, NULL);
-
-  /* L3GD20 Object Initialization.*/
+  /*
+   * L3GD20 Object Initialization
+   */
   l3gd20ObjectInit(&L3GD20D1);
 
-  /* Activates the L3GD20 driver.*/
+  /*
+   * Activates the L3GD20 driver.
+   */
   l3gd20Start(&L3GD20D1, &l3gd20cfg);
 
-  /* Shell manager initialization.*/
-  shellInit();
-
-  while(TRUE) {
-    if (SDU1.config->usbp->state == USB_ACTIVE) {
-      thread_t *shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
-                                              "shell", NORMALPRIO + 1,
-                                              shellThread, (void *)&shell_cfg1);
-      chThdWait(shelltp);               /* Waiting termination.             */
+  /*
+   * Normal main() thread activity, printing MEMS data on the serial driver 1.
+   */
+  while (true) {
+    l3gd20GyroscopeReadRaw(&L3GD20D1, gyroraw);
+    chprintf(chp, "L3GD20 Gyroscope raw data...\r\n");
+    for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++) {
+      chprintf(chp, "%c-axis: %d\r\n", axisID[i], gyroraw[i]);
     }
-    chThdSleepMilliseconds(1000);
+
+    l3gd20GyroscopeReadCooked(&L3GD20D1, gyrocooked);
+    chprintf(chp, "L3GD20 Gyroscope cooked data...\r\n");
+    for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++) {
+      chprintf(chp, "%c-axis: %.3f\r\n", axisID[i], gyrocooked[i]);
+    }
+
+    chThdSleepMilliseconds(100);
+    cls(chp);
   }
   l3gd20Stop(&L3GD20D1);
-  return 0;
 }
