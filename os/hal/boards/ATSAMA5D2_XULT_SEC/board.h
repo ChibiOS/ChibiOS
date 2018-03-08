@@ -124,8 +124,8 @@
 #define PIOB_PIN8                   8U
 #define PIOB_TE                     9U
 #define PIOB_EN_LCD_BIAS            10U
-#define PIOB_URXD3                  11U
-#define PIOB_UTXD3                  12U
+#define PIOB_PIN11                  11U
+#define PIOB_PIN12                  12U
 #define PIOB_PIN13                  13U
 #define PIOB_PIN14                  14U
 #define PIOB_PIN15                  15U
@@ -181,8 +181,8 @@
 
 #define PIOD_PIO0                   0U
 #define PIOD_PIN1                   1U
-#define PIOD_PIN2                   2U
-#define PIOD_PIN3                   3U
+#define PIOD_URXD1                  2U
+#define PIOD_UTXD1                  3U
 #define PIOD_PIN4                   4U
 #define PIOD_PIN5                   5U
 #define PIOD_PIN6                   6U
