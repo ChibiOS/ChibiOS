@@ -82,6 +82,7 @@
 
 /**
  * @brief   LSM303DLHC compass subsystem characteristics.
+ * @note    Sensitivity is expressed as GA/LSB whereas GA stands for Gauss.
  *
  * @{
  */
