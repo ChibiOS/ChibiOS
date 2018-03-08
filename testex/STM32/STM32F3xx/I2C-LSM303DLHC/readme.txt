@@ -1,5 +1,5 @@
 *****************************************************************************
-** ChibiOS/HAL - USB-CDC driver demo for STM32F3xx.                        **
+** ChibiOS/HAL + ChibiOS/EX - I2C + LSM303DLHC demo for STM32F3xx.         **
 *****************************************************************************
 
 ** TARGET **
@@ -8,7 +8,7 @@ The demo runs on an ST STM32F3-Discovery board.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32F3xx USB driver.
+The demo prints LSM303DLHC data on the SD1 BaseSequentialStream.
 
 ** Build Procedure **
 
