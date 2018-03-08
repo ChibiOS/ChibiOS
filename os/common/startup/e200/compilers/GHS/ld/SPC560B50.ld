@@ -114,17 +114,22 @@ SECTIONS
 
     .data ALIGN(4) : AT(__romdata_start__)
     {
-        . = ALIGN(4);
         __data_start__ = .;
         *(.data)
         "*(.data.*)"
-        __sdata_start__ = . + 0x8000;
-        *(.sdata)
-        "*(.sdata.*)"
         . = ALIGN(4);
         *(.ramtext)
         . = ALIGN(4);
         __data_end__ = .;
+    } > ram
+
+    __romsdata_start__ = (__data_end__ - __data_start__) + __romdata_start__;
+
+    .sdata ALIGN(4) : AT(__romsdata_start__)
+    {
+         __sdata_start__ = . + 0x8000;
+        *(.sdata)
+        "*(.sdata.*)"
     } > ram
 
     .sbss ALIGN(4) :
