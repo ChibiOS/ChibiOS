@@ -89,6 +89,11 @@ static const sama_pio_init_t sama_inits[] = {
    SAMA_PIN_N(PIOB_URXD0) | SAMA_PIN_N(PIOB_UTXD0),
    SAMA_PIO_FUNC_PERIPH_C,
    SAMA_PIO_HIGH},
+  /* UART1 */
+  {SAMA_PIOD,
+   SAMA_PIN_N(PIOD_URXD1) | SAMA_PIN_N(PIOD_UTXD1),
+   SAMA_PIO_FUNC_PERIPH_A,
+   SAMA_PIO_HIGH},
   /* UART2 */
   {SAMA_PIOD,
    SAMA_PIN_N(PIOD_URXD2) | SAMA_PIN_N(PIOD_UTXD2),
@@ -146,6 +151,8 @@ void __early_init(void) {
  */
 void boardInit(void) {
   unsigned i;
+
+  _PIOA->PIO_WPMR = PIO_WPMR_WPKEY_PASSWD;
 
   /* Initialize PIO registers for defined pads.*/
   i = 0;
