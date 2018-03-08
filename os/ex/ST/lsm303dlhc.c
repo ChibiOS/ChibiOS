@@ -97,7 +97,7 @@ static msg_t lsm303dlhcI2CWriteRegister(I2CDriver *i2cp, lsm303dlhc_sad_t sad,
 /**
  * @brief   Return the number of axes of the BaseAccelerometer.
  *
- * @param[in] ip        pointer to @p BaseAccelerometer interface
+ * @param[in] ip        pointer to @p BaseAccelerometer interface.
  *
  * @return              the number of axes.
  */
@@ -195,7 +195,7 @@ static msg_t acc_read_cooked(void *ip, float axes[]) {
                 "acc_read_cooked(), channel not ready");
 
   msg = acc_read_raw(ip, raw);
-  for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES ; i++) {
+  for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++) {
     axes[i] = raw[i] * devp->accsensitivity[i];
     axes[i] -= devp->accbias[i];
   }
@@ -217,6 +217,7 @@ static msg_t acc_read_cooked(void *ip, float axes[]) {
 static msg_t acc_set_bias(void *ip, float *bp) {
   LSM303DLHCDriver* devp;
   uint32_t i;
+  msg_t msg = MSG_OK;
 
   osalDbgCheck((ip != NULL) && (bp != NULL));
 
@@ -229,7 +230,7 @@ static msg_t acc_set_bias(void *ip, float *bp) {
   for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++) {
     devp->accbias[i] = bp[i];
   }
-  return MSG_OK;
+  return msg;
 }
 
 /**
@@ -245,6 +246,7 @@ static msg_t acc_set_bias(void *ip, float *bp) {
 static msg_t acc_reset_bias(void *ip) {
   LSM303DLHCDriver* devp;
   uint32_t i;
+  msg_t msg = MSG_OK;
 
   osalDbgCheck(ip != NULL);
     
@@ -256,7 +258,7 @@ static msg_t acc_reset_bias(void *ip) {
 
   for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++)
     devp->accbias[i] = 0.0;
-  return MSG_OK;
+  return msg;
 }
 
 /**
@@ -274,6 +276,7 @@ static msg_t acc_reset_bias(void *ip) {
 static msg_t acc_set_sensivity(void *ip, float *sp) {
   LSM303DLHCDriver* devp;
   uint32_t i;
+  msg_t msg = MSG_OK;
 
   /* Getting parent instance pointer.*/
   devp = objGetInstance(LSM303DLHCDriver*, (BaseAccelerometer*)ip);
@@ -286,7 +289,7 @@ static msg_t acc_set_sensivity(void *ip, float *sp) {
   for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++) {
     devp->accsensitivity[i] = sp[i];
   }
-  return MSG_OK;
+  return msg;
 }
 
 /**
@@ -551,7 +554,8 @@ static msg_t comp_read_cooked(void *ip, float axes[]) {
 static msg_t comp_set_bias(void *ip, float *bp) {
   LSM303DLHCDriver* devp;
   uint32_t i;
-
+  msg_t msg = MSG_OK;
+  
   osalDbgCheck((ip != NULL) && (bp != NULL));
     
   /* Getting parent instance pointer.*/
@@ -563,7 +567,7 @@ static msg_t comp_set_bias(void *ip, float *bp) {
   for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
     devp->compbias[i] = bp[i];
   }
-  return MSG_OK;
+  return msg;
 }
 
 /**
@@ -579,6 +583,7 @@ static msg_t comp_set_bias(void *ip, float *bp) {
 static msg_t comp_reset_bias(void *ip) {
   LSM303DLHCDriver* devp;
   uint32_t i;
+  msg_t msg = MSG_OK;
 
   osalDbgCheck(ip != NULL);
     
@@ -590,7 +595,7 @@ static msg_t comp_reset_bias(void *ip) {
 
   for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++)
     devp->compbias[i] = 0.0;
-  return MSG_OK;
+  return msg;
 }
 
 /**
@@ -608,7 +613,8 @@ static msg_t comp_reset_bias(void *ip) {
 static msg_t comp_set_sensivity(void *ip, float *sp) {
   LSM303DLHCDriver* devp;
   uint32_t i;
-
+  msg_t msg = MSG_OK;
+  
   /* Getting parent instance pointer.*/
   devp = objGetInstance(LSM303DLHCDriver*, (BaseCompass*)ip);
 
@@ -620,7 +626,7 @@ static msg_t comp_set_sensivity(void *ip, float *sp) {
   for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++) {
     devp->compsensitivity[i] = sp[i];
   }
-  return MSG_OK;
+  return msg;
 }
 
 /**
@@ -1138,7 +1144,8 @@ void lsm303dlhcStop(LSM303DLHCDriver *devp) {
   uint8_t cr[2];
   osalDbgCheck(devp != NULL);
 
-  osalDbgAssert((devp->state == LSM303DLHC_STOP) || (devp->state == LSM303DLHC_READY),
+  osalDbgAssert((devp->state == LSM303DLHC_STOP) || 
+                (devp->state == LSM303DLHC_READY),
                 "lsm303dlhcStop(), invalid state");
 
   if (devp->state == LSM303DLHC_READY) {

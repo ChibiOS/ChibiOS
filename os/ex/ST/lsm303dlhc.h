@@ -287,10 +287,7 @@
 #define LSM303DLHC_MR_REG_M_MASK            0x03
 #define LSM303DLHC_MR_REG_M_MD0             (1 << 0)
 #define LSM303DLHC_MR_REG_M_MD1             (1 << 1)
-
 /** @} */
-
-//TODO: ADD more LSM303DLHC register bits definitions
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -500,7 +497,7 @@ typedef struct {
    */
   float                     *accsensitivity;
   /**
-   * @brief LSM303DLHC initial bias.
+   * @brief LSM303DLHC accelerometer subsystem initial bias.
    */
   float                     *accbias;
   /**
@@ -554,7 +551,7 @@ typedef struct {
 } LSM303DLHCConfig;
 
 /**
- * @brief   @p LSM303DLHC subsystem specific methods.
+ * @brief   @p LSM303DLHC specific methods.
  */
 #define _lsm303dlhc_methods_alone                                           \
   /* Change full scale value of LSM303DLHC accelerometer subsystem .*/      \
@@ -565,7 +562,7 @@ typedef struct {
                               lsm303dlhc_comp_fs_t fs);                     \
 
 /**
- * @brief   @p LSM303DLHC subsystem specific methods with inherited ones.
+ * @brief   @p LSM303DLHC specific methods with inherited ones.
  */
 #define _lsm303dlhc_methods                                                 \
   _base_object_methods                                                      \
@@ -589,21 +586,21 @@ struct LSM303DLHCVMT {
   lsm303dlhc_state_t        state;                                          \
   /* Current configuration data.*/                                          \
   const LSM303DLHCConfig    *config;                                        \
-  /* Axes number of the accelerometer subsystem.*/                          \
+  /* Accelerometer subsystem axes number.*/                                 \
   size_t                    accaxes;                                        \
-  /* Axes number of the compass subsystem.*/                                \
-  size_t                    compaxes;                                       \
-  /* Current accelerometer sensitivity.*/                                   \
+  /* Accelerometer subsystem current sensitivity.*/                         \
   float                     accsensitivity[LSM303DLHC_ACC_NUMBER_OF_AXES];  \
-  /* Accelerometer bias data.*/                                             \
+  /* Accelerometer subsystem current bias .*/                               \
   float                     accbias[LSM303DLHC_ACC_NUMBER_OF_AXES];         \
-  /* Current accelerometer full scale value.*/                              \
+  /* Accelerometer subsystem current full scale value.*/                    \
   float                     accfullscale;                                   \
-  /* Current compass sensitivity.*/                                         \
+  /* Compass subsystem axes number.*/                                       \
+  size_t                    compaxes;                                       \
+  /* Compass subsystem current sensitivity.*/                               \
   float                     compsensitivity[LSM303DLHC_COMP_NUMBER_OF_AXES];\
-  /* Compass bias data.*/                                                   \
+  /* Compass subsystem current bias.*/                                      \
   float                     compbias[LSM303DLHC_COMP_NUMBER_OF_AXES];       \
-  /* Current compass full scale value.*/                                    \
+  /* Compass subsystem current full scale value.*/                          \
   float                     compfullscale;
   
 /**
@@ -612,9 +609,9 @@ struct LSM303DLHCVMT {
 struct LSM303DLHCDriver {
   /** @brief Virtual Methods Table.*/
   const struct LSM303DLHCVMT    *vmt;
-  /** @brief Accelerometer interface.*/
+  /** @brief Base accelerometer interface.*/
   BaseAccelerometer             acc_if;
-  /** @brief Compass interface.*/
+  /** @brief Base compass interface.*/
   BaseCompass                   comp_if;
   _lsm303dlhc_data
 };
@@ -623,10 +620,11 @@ struct LSM303DLHCDriver {
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
 /**
  * @brief   Return the number of axes of the BaseAccelerometer.
  *
- * @param[in] ip        pointer to @p BaseAccelerometer interface
+ * @param[in] devp      pointer to @p LSM303DLHCDriver.
  *
  * @return              the number of axes.
  *
@@ -642,7 +640,7 @@ struct LSM303DLHCDriver {
  * @note    The axes array must be at least the same size of the
  *          BaseAccelerometer axes number.
  *
- * @param[in] ip        pointer to @p BaseAccelerometer interface.
+ * @param[in] devp      pointer to @p LSM303DLHCDriver.
  * @param[out] axes     a buffer which would be filled with raw data.
  *
  * @return              The operation status.
@@ -664,7 +662,7 @@ struct LSM303DLHCDriver {
  * @note    The axes array must be at least the same size of the
  *          BaseAccelerometer axes number.
  *
- * @param[in] ip        pointer to @p BaseAccelerometer interface.
+ * @param[in] devp      pointer to @p LSM303DLHCDriver.
  * @param[out] axes     a buffer which would be filled with cooked data.
  *
  * @return              The operation status.
@@ -684,7 +682,7 @@ struct LSM303DLHCDriver {
  * @note    The bias buffer must be at least the same size of the
  *          BaseAccelerometer axes number.
  *
- * @param[in] ip        pointer to @p BaseAccelerometer interface.
+ * @param[in] devp      pointer to @p LSM303DLHCDriver.
  * @param[in] bp        a buffer which contains biases.
  *
  * @return              The operation status.
@@ -700,7 +698,7 @@ struct LSM303DLHCDriver {
  * @note    Default biases value are obtained from device datasheet when
  *          available otherwise they are considered zero.
  *
- * @param[in] ip        pointer to @p BaseAccelerometer interface.
+ * @param[in] devp      pointer to @p LSM303DLHCDriver.
  *
  * @return              The operation status.
  * @retval MSG_OK       if the function succeeded.
@@ -716,7 +714,7 @@ struct LSM303DLHCDriver {
  * @note    The sensitivity buffer must be at least the same size of the
  *          BaseAccelerometer axes number.
  *
- * @param[in] ip        pointer to @p BaseAccelerometer interface.
+ * @param[in] devp      pointer to @p LSM303DLHCDriver.
  * @param[in] sp        a buffer which contains sensitivities.
  *
  * @return              The operation status.
@@ -731,7 +729,7 @@ struct LSM303DLHCDriver {
  * @brief   Reset sensitivity values for the BaseAccelerometer.
  * @note    Default sensitivities value are obtained from device datasheet.
  *
- * @param[in] ip        pointer to @p BaseAccelerometer interface.
+ * @param[in] devp      pointer to @p LSM303DLHCDriver.
  *
  * @return              The operation status.
  * @retval MSG_OK       if the function succeeded.
@@ -748,7 +746,7 @@ struct LSM303DLHCDriver {
  *          previous and next fullscale value.
  * @note    A recalibration is highly suggested after calling this function.
  *
- * @param[in] ip        pointer to @p LSM303DLHCDriver interface.
+ * @param[in] devp      pointer to @p LSM303DLHCDriver.
  * @param[in] fs        new fullscale value.
  *
  * @return              The operation status.
@@ -763,7 +761,7 @@ struct LSM303DLHCDriver {
 /**
  * @brief   Return the number of axes of the BaseCompass.
  *
- * @param[in] ip        pointer to @p BaseCompass interface
+ * @param[in] devp      pointer to @p LSM303DLHCDriver.
  *
  * @return              the number of axes.
  *
@@ -837,7 +835,7 @@ struct LSM303DLHCDriver {
  * @note    Default biases value are obtained from device datasheet when
  *          available otherwise they are considered zero.
  *
- * @param[in] ip        pointer to @p BaseCompass interface.
+ * @param[in] devp      pointer to @p LSM303DLHCDriver.
  *
  * @return              The operation status.
  * @retval MSG_OK       if the function succeeded.
@@ -853,7 +851,7 @@ struct LSM303DLHCDriver {
  * @note    The sensitivity buffer must be at least the same size of the
  *          BaseCompass axes number.
  *
- * @param[in] ip        pointer to @p BaseCompass interface.
+ * @param[in] devp      pointer to @p LSM303DLHCDriver.
  * @param[in] sp        a buffer which contains sensitivities.
  *
  * @return              The operation status.
@@ -868,7 +866,7 @@ struct LSM303DLHCDriver {
  * @brief   Reset sensitivity values for the BaseCompass.
  * @note    Default sensitivities value are obtained from device datasheet.
  *
- * @param[in] ip        pointer to @p BaseCompass interface.
+ * @param[in] devp      pointer to @p LSM303DLHCDriver.
  *
  * @return              The operation status.
  * @retval MSG_OK       if the function succeeded.
@@ -885,7 +883,7 @@ struct LSM303DLHCDriver {
  *          previous and next fullscale value.
  * @note    A recalibration is highly suggested after calling this function.
  *
- * @param[in] ip        pointer to @p LSM303DLHCDriver interface.
+ * @param[in] devp      pointer to @p LSM303DLHCDriver.
  * @param[in] fs        new fullscale value.
  *
  * @return              The operation status.
@@ -896,6 +894,7 @@ struct LSM303DLHCDriver {
  */
 #define lsm303dlhcCompassSetFullScale(devp, fs)                             \
         (devp)->vmt->comp_set_full_scale(devp, fs)
+        
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
