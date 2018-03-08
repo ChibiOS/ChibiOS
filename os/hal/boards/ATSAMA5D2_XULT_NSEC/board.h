@@ -181,8 +181,8 @@
 
 #define PIOD_PIO0                   0U
 #define PIOD_PIN1                   1U
-#define PIOD_URXD1                  2U
-#define PIOD_UTXD1                  3U
+#define PIOD_PIN2                   2U
+#define PIOD_PIN3                   3U
 #define PIOD_URXD2                  4U
 #define PIOD_UTXD2                  5U
 #define PIOD_PIN6                   6U
