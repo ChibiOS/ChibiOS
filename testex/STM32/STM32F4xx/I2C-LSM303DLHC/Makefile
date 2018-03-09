@@ -102,7 +102,6 @@ include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
 # EX files (optional).
 include $(CHIBIOS)/os/ex/ST/lsm303dlhc.mk
-
 # Other files (optional).
 include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 
