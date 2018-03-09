@@ -104,9 +104,7 @@ int main(void) {
   halInit();
   chSysInit();
 
-  /*
-   * Initializes a serial-over-USB CDC driver.
-   */
+  /* Initializes a serial-over-USB CDC driver.*/
   sduObjectInit(&SDU1);
   sduStart(&SDU1, &serusbcfg);
 
@@ -120,24 +118,16 @@ int main(void) {
   usbStart(serusbcfg.usbp, &usbcfg);
   usbConnectBus(serusbcfg.usbp);
 
-  /*
-   * Creates the blinker thread.
-   */
+  /* Creates the blinker thread.*/
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO + 1, Thread1, NULL);
 
-  /*
-   * LSM303DLHC Object Initialization
-   */
+  /* LSM303DLHC Object Initialization.*/
   lsm303dlhcObjectInit(&LSM303DLHCD1);
 
-  /*
-   * Activates the LSM303DLHC driver.
-   */
+  /* Activates the LSM303DLHC driver.*/
   lsm303dlhcStart(&LSM303DLHCD1, &lsm303dlhccfg);
 
-  /*
-   * Normal main() thread activity, printing MEMS data on the serial driver 1.
-   */
+  /* Normal main() thread activity, printing MEMS data on the SDU1. */
   while (true) {
     lsm303dlhcAccelerometerReadRaw(&LSM303DLHCD1, accraw);
     chprintf(chp, "LSM303DLHC Accelerometer raw data...\r\n");
