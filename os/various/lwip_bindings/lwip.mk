@@ -1,5 +1,5 @@
 # List of the required lwIP files.
-LWIPDIR = 	$(CHIBIOS)/ext/lwip/src
+LWIPDIR = $(CHIBIOS)/ext/lwip/src
 
 # The various blocks of files are outlined in Filelists.mk.
 include $(LWIPDIR)/Filelists.mk
@@ -17,5 +17,6 @@ LWINC = \
         $(LWIPDIR)/include
 
 # Shared variables
-ALLCSRC += $(LWIPSRC)
-ALLINC  += $(LWIPINC)
+ALLCSRC += $(LWSRC)
+ALLINC  += $(LWINC) \
+           $(CHIBIOS)/os/various 
