@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** 18.2.1 ***
+- NEW: Updated make mechanisms in demos/STM32 and testhal/STM32: now makefile 
+       are more shorter and inclusion are easier to do.
 - HAL: Fixed UART driver stop functions confusing returned value (bug #925).
 - HAL: Fixed USB driver not stopped (bug #924).
 - HAL: Fixed I2C address not accepted (bug #923).

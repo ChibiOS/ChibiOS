@@ -5,6 +5,7 @@
   xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/boards/stm32f3xx_board.xsd">
   <configuration_settings>
   	<templates_path>resources/gencfg/processors/boards/stm32f3xx/templates</templates_path>
+    <board_files_path>$(CHIBIOS)/os/hal/boards/</board_files_path>
   	<output_path>..</output_path>
   	<hal_version>5.0.x</hal_version>
   </configuration_settings>
@@ -309,21 +310,21 @@
         Mode="Input"
         Alternate="0" />
       <pin4
-        ID=""
+        ID="VCP_RX"
         Type="PushPull"
         Speed="Minimum"
         Resistor="PullUp"
         Level="High"
-        Mode="Input"
-        Alternate="0" />
+        Mode="Alternate"
+        Alternate="7" />
       <pin5
-        ID=""
+        ID="VCP_TX"
         Type="PushPull"
         Speed="Minimum"
         Resistor="PullUp"
         Level="High"
-        Mode="Input"
-        Alternate="0" />
+        Mode="Alternate"
+        Alternate="7" />
       <pin6
         ID=""
         Type="PushPull"
