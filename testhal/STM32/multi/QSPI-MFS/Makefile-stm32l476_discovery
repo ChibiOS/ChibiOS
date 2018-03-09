@@ -114,6 +114,7 @@ include $(CHIBIOS)/tools/mk/autobuild.mk
 include $(CHIBIOS)/test/lib/test.mk
 include $(CHIBIOS)/test/mfs/mfs_test.mk
 include $(CHIBIOS)/os/ex/Micron/m25q.mk
+#include $(CHIBIOS)/os/hal/lib/complex/m25q/devices/micron_n25q/micron_n25q.mk
 include $(CHIBIOS)/os/hal/lib/complex/mfs/mfs.mk
 include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 
@@ -129,7 +130,7 @@ CSRC = $(ALLCSRC) \
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
-CPPSRC = $(AllCPPSRC)
+CPPSRC = $(ALLCPPSRC)
 
 # C sources to be compiled in ARM mode regardless of the global setting.
 # NOTE: Mixing ARM and THUMB mode enables the -mthumb-interwork compiler
