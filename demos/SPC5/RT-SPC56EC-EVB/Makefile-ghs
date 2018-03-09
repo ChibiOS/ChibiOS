@@ -114,7 +114,7 @@ CSRC = $(ALLCSRC) \
        main.c
 
 # C++ sources here.
-CPPSRC = $(AllCPPSRC)
+CPPSRC = $(ALLCPPSRC)
 
 # List ASM source files here
 ASMSRC = $(ALLASMSRC)
