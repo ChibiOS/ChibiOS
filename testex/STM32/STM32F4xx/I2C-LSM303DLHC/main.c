@@ -127,7 +127,7 @@ int main(void) {
   /* Activates the LSM303DLHC driver.*/
   lsm303dlhcStart(&LSM303DLHCD1, &lsm303dlhccfg);
 
-  /* Normal main() thread activity, printing MEMS data on the SDU1. */
+  /* Normal main() thread activity, printing MEMS data on the SDU1.*/
   while (true) {
     lsm303dlhcAccelerometerReadRaw(&LSM303DLHCD1, accraw);
     chprintf(chp, "LSM303DLHC Accelerometer raw data...\r\n");

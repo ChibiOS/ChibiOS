@@ -102,12 +102,11 @@ int main(void) {
   halInit();
   chSysInit();
 
-  /* Activates the serial driver 1 using the driver default configuration. */
+  /* Activates the serial driver 1 using the driver default configuration.*/
   sdStart(&SD1, NULL);
 
   /* Creates the blinker thread.*/
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
-
 
   /* LSM303DLHC Object Initialization.*/
   lsm303dlhcObjectInit(&LSM303DLHCD1);
