@@ -95,29 +95,19 @@ int main(void) {
   halInit();
   chSysInit();
 
-  /*
-   * Activates the serial driver 1 using the driver default configuration.
-   */
+  /* Activates the serial driver 1 using the driver default configuration.*/
   sdStart(&SD1, NULL);
 
-  /*
-   * Creates the blinker thread.
-   */
+  /* Creates the blinker thread.*/
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
-  /*
-   * L3GD20 Object Initialization
-   */
+  /* L3GD20 Object Initialization.*/
   l3gd20ObjectInit(&L3GD20D1);
 
-  /*
-   * Activates the L3GD20 driver.
-   */
+  /* Activates the L3GD20 driver.*/
   l3gd20Start(&L3GD20D1, &l3gd20cfg);
 
-  /*
-   * Normal main() thread activity, printing MEMS data on the serial driver 1.
-   */
+  /* Normal main() thread activity, printing MEMS data on the SD1.*/
   while (true) {
     l3gd20GyroscopeReadRaw(&L3GD20D1, gyroraw);
     chprintf(chp, "L3GD20 Gyroscope raw data...\r\n");
