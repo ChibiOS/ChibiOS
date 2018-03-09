@@ -87,6 +87,7 @@ HALSRC = $(CHIBIOS)/os/hal/src/hal.c \
          $(CHIBIOS)/os/hal/src/hal_mmcsd.c \
          $(CHIBIOS)/os/hal/src/hal_adc.c \
          $(CHIBIOS)/os/hal/src/hal_can.c \
+         $(CHIBIOS)/os/hal/src/hal_crypto.c \
          $(CHIBIOS)/os/hal/src/hal_dac.c \
          $(CHIBIOS)/os/hal/src/hal_ext.c \
          $(CHIBIOS)/os/hal/src/hal_gpt.c \

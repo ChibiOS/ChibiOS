@@ -100,9 +100,6 @@ void dac_lld_stop(DACDriver *dacp) {
   /* If in ready state then disables the DAC clock.*/
   if (dacp->state == DAC_READY) {
 
-    /* Disabling DAC.*/
-    dacp->params->dac->CR &= dacp->params->regmask;
-
 #if PLATFORM_DAC_USE_DAC1 == TRUE
     if (&DACD1 == dacp) {
 
