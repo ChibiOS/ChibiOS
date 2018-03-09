@@ -177,15 +177,10 @@ static msg_t gyro_read_cooked(void *ip, float axes[]) {
   
   osalDbgAssert((devp->state == L3GD20_READY),
                 "gyro_read_cooked(), invalid state");
-#if L3GD20_USE_SPI
-  osalDbgAssert((devp->config->spip->state == SPI_READY),
-                "gyro_read_cooked(), channel not ready");
-#endif
 
   msg = gyro_read_raw(ip, raw);
   for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++){
-    axes[i] = raw[i] * devp->gyrosensitivity[i];
-    axes[i] -= devp->gyrobias[i];
+    axes[i] = (raw[i] * devp->gyrosensitivity[i]) - devp->gyrobias[i];
   }
   return msg;
 }
@@ -259,7 +254,7 @@ static msg_t gyro_set_bias(void *ip, float *bp) {
   /* Getting parent instance pointer.*/
   devp = objGetInstance(L3GD20Driver*, (BaseGyroscope*)ip);
   
-  osalDbgAssert((devp->state != L3GD20_UNINIT),
+  osalDbgAssert((devp->state == L3GD20_READY),
                 "gyro_set_bias(), invalid state");
   
   for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++) {
@@ -287,7 +282,7 @@ static msg_t gyro_reset_bias(void *ip) {
   /* Getting parent instance pointer.*/
   devp = objGetInstance(L3GD20Driver*, (BaseGyroscope*)ip);
   
-  osalDbgAssert((devp->state != L3GD20_UNINIT),
+  osalDbgAssert((devp->state == L3GD20_READY),
                 "gyro_reset_bias(), invalid state");
 
   for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++)
@@ -316,7 +311,7 @@ static msg_t gyro_set_sensivity(void *ip, float *sp) {
   /* Getting parent instance pointer.*/
   devp = objGetInstance(L3GD20Driver*, (BaseGyroscope*)ip);
   
-  osalDbgAssert((devp->state != L3GD20_UNINIT),
+  osalDbgAssert((devp->state == L3GD20_READY),
                 "gyro_set_sensivity(), invalid state");
   
   for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++) {
@@ -345,7 +340,7 @@ static msg_t gyro_reset_sensivity(void *ip) {
   /* Getting parent instance pointer.*/
   devp = objGetInstance(L3GD20Driver*, (BaseGyroscope*)ip);
   
-  osalDbgAssert((devp->state != L3GD20_UNINIT),
+  osalDbgAssert((devp->state == L3GD20_READY),
                 "gyro_reset_sensivity(), invalid state");
 
   if(devp->config->gyrofullscale == L3GD20_FS_250DPS)
@@ -384,7 +379,7 @@ static msg_t gyro_set_full_scale(L3GD20Driver *devp, l3gd20_fs_t fs) {
 
   osalDbgCheck(devp != NULL);
 
-  osalDbgAssert((devp->state != L3GD20_UNINIT),
+  osalDbgAssert((devp->state == L3GD20_READY),
                 "gyro_set_full_scale(), invalid state");
 #if L3GD20_USE_SPI
   osalDbgAssert((devp->config->spip->state == SPI_READY),
