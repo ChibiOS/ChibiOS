@@ -53,6 +53,7 @@
 
 /**
  * @brief   Makes the driver forcibly use the fall-back implementations.
+ * @note    If enabled then the LLD driver is not included at all.
  */
 #if !defined(HAL_CRY_ENFORCE_FALLBACK) || defined(__DOXYGEN__)
 #define HAL_CRY_ENFORCE_FALLBACK            FALSE
@@ -111,7 +112,24 @@ typedef enum {
 #if HAL_CRY_ENFORCE_FALLBACK == FALSE
 /* Use the defined low level driver.*/
 #include "hal_crypto_lld.h"
-#else
+
+#if !defined(CRY_LLD_SUPPORTS_AES) ||                                       \
+    !defined(CRY_LLD_SUPPORTS_AES_ECB) ||                                   \
+    !defined(CRY_LLD_SUPPORTS_AES_CBC) ||                                   \
+    !defined(CRY_LLD_SUPPORTS_AES_CFB) ||                                   \
+    !defined(CRY_LLD_SUPPORTS_AES_CTR) ||                                   \
+    !defined(CRY_LLD_SUPPORTS_AES_GCM) ||                                   \
+    !defined(CRY_LLD_SUPPORTS_DES) ||                                       \
+    !defined(CRY_LLD_SUPPORTS_DES_ECB) ||                                   \
+    !defined(CRY_LLD_SUPPORTS_DES_CBC) ||                                   \
+    !defined(CRY_LLD_SUPPORTS_SHA1) ||                                      \
+    !defined(CRY_LLD_SUPPORTS_SHA256) ||                                    \
+    !defined(CRY_LLD_SUPPORTS_SHA512) ||                                    \
+    !defined(CRY_LLD_SUPPORTS_TRNG)
+#error "CRYPTO LLD does not export the required switches"
+#endif
+
+#else /* HAL_CRY_ENFORCE_FALLBACK == TRUE */
 /* No LLD at all, using the standalone mode.*/
 
 #define CRY_LLD_SUPPORTS_AES                FALSE
@@ -123,6 +141,10 @@ typedef enum {
 #define CRY_LLD_SUPPORTS_DES                FALSE
 #define CRY_LLD_SUPPORTS_DES_ECB            FALSE
 #define CRY_LLD_SUPPORTS_DES_CBC            FALSE
+#define CRY_LLD_SUPPORTS_SHA1               FALSE
+#define CRY_LLD_SUPPORTS_SHA256             FALSE
+#define CRY_LLD_SUPPORTS_SHA512             FALSE
+#define CRY_LLD_SUPPORTS_TRNG               FALSE
 
 typedef uint_fast8_t crykey_t;
 
@@ -139,18 +161,35 @@ struct CRYDriver {
   size_t                    key0_size;
   uint8_t                   key0_buffer[HAL_CRY_MAX_KEY_SIZE];
 };
+#endif /* HAL_CRY_ENFORCE_FALLBACK == TRUE */
+
+/* The fallback header is included only if required by settings.*/
+#if HAL_CRY_USE_FALLBACK == TRUE
+#include "hal_crypto_fallback.h"
 #endif
 
-#if !defined(CRY_LLD_SUPPORTS_AES) ||                                       \
-    !defined(CRY_LLD_SUPPORTS_AES_ECB) ||                                   \
-    !defined(CRY_LLD_SUPPORTS_AES_CBC) ||                                   \
-    !defined(CRY_LLD_SUPPORTS_AES_CFB) ||                                   \
-    !defined(CRY_LLD_SUPPORTS_AES_CTR) ||                                   \
-    !defined(CRY_LLD_SUPPORTS_AES_GCM) ||                                   \
-    !defined(CRY_LLD_SUPPORTS_DES) ||                                       \
-    !defined(CRY_LLD_SUPPORTS_DES_ECB) ||                                   \
-    !defined(CRY_LLD_SUPPORTS_DES_CBC)
-#error "CRYPTO LLD does not export the required switches"
+#if (HAL_CRY_USE_FALLBACK == FALSE) && (CRY_LLD_SUPPORTS_SHA1 == FALSE)
+/* Stub @p SHA1Context structure type declaration. It is not provided by the
+   LLD and the fallback is not enabled.*/
+typedef struct {
+  uint32_t dummy;
+} SHA1Context;
+#endif
+
+#if (HAL_CRY_USE_FALLBACK == FALSE) && (CRY_LLD_SUPPORTS_SHA256 == FALSE)
+/* Stub @p SHA256Context structure type declaration. It is not provided by the
+   LLD and the fallback is not enabled.*/
+typedef struct {
+  uint32_t dummy;
+} SHA256Context;
+#endif
+
+#if (HAL_CRY_USE_FALLBACK == FALSE) && (CRY_LLD_SUPPORTS_SHA512 == FALSE)
+/* Stub @p SHA512Context structure type declaration. It is not provided by the
+   LLD and the fallback is not enabled.*/
+typedef struct {
+  uint32_t dummy;
+} SHA512Context;
 #endif
 
 /*===========================================================================*/
@@ -280,12 +319,21 @@ extern "C" {
                                const uint8_t *in,
                                uint8_t *out,
                                const uint8_t *iv);
-  cryerror_t crySHA1(CRYDriver *cryp, size_t size,
-                     const uint8_t *in, uint8_t *out);
-  cryerror_t crySHA256(CRYDriver *cryp, size_t size,
-                       const uint8_t *in, uint8_t *out);
-  cryerror_t crySHA512(CRYDriver *cryp, size_t size,
-                       const uint8_t *in, uint8_t *out);
+  cryerror_t crySHA1Init(CRYDriver *cryp, SHA1Context *sha1ctxp);
+  cryerror_t crySHA1Update(CRYDriver *cryp, SHA1Context *sha1ctxp,
+                           size_t size, const uint8_t *in);
+  cryerror_t crySHA1Final(CRYDriver *cryp, SHA1Context *sha1ctxp,
+                          uint8_t *out);
+  cryerror_t crySHA256Init(CRYDriver *cryp, SHA256Context *sha256ctxp);
+  cryerror_t crySHA256Update(CRYDriver *cryp, SHA256Context *sha256ctxp,
+                             size_t size, const uint8_t *in);
+  cryerror_t crySHA256Final(CRYDriver *cryp, SHA256Context *sha256ctxp,
+                            uint8_t *out);
+  cryerror_t crySHA512Init(CRYDriver *cryp, SHA512Context *sha512ctxp);
+  cryerror_t crySHA512Update(CRYDriver *cryp, SHA512Context *sha512ctxp,
+                             size_t size, const uint8_t *in);
+  cryerror_t crySHA512Final(CRYDriver *cryp, SHA512Context *sha512ctxp,
+                            uint8_t *out);
   cryerror_t cryTRNG(CRYDriver *cryp, uint8_t *out);
 #ifdef __cplusplus
 }
