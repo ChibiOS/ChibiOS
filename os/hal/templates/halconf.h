@@ -58,14 +58,14 @@
  * @brief   Enables the cryptographic subsystem.
  */
 #if !defined(HAL_USE_CRY) || defined(__DOXYGEN__)
-#define HAL_USE_CRY                 FALSE
+#define HAL_USE_CRY                 TRUE
 #endif
 
 /**
  * @brief   Enables the DAC subsystem.
  */
 #if !defined(HAL_USE_DAC) || defined(__DOXYGEN__)
-#define HAL_USE_DAC                 FALSE
+#define HAL_USE_DAC                 TRUE
 #endif
 
 /**

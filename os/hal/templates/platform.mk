@@ -17,7 +17,7 @@ ifneq ($(findstring HAL_USE_CAN TRUE,$(HALCONF)),)
 PLATFORMSRC += ${CHIBIOS}/os/hal/templates/hal_can_lld.c
 endif
 ifneq ($(findstring HAL_USE_CRY TRUE,$(HALCONF)),)
-PLATFORMSRC += ${CHIBIOS}/os/hal/templates/hal_cry_lld.c
+PLATFORMSRC += ${CHIBIOS}/os/hal/templates/hal_crypto_lld.c
 endif
 ifneq ($(findstring HAL_USE_DAC TRUE,$(HALCONF)),)
 PLATFORMSRC += ${CHIBIOS}/os/hal/templates/hal_dac_lld.c
@@ -74,6 +74,7 @@ else
 PLATFORMSRC = ${CHIBIOS}/os/hal/templates/hal_lld.c \
               ${CHIBIOS}/os/hal/templates/hal_adc_lld.c \
               ${CHIBIOS}/os/hal/templates/hal_can_lld.c \
+              ${CHIBIOS}/os/hal/templates/hal_crypto_lld.c \
               ${CHIBIOS}/os/hal/templates/hal_dac_lld.c \
               ${CHIBIOS}/os/hal/templates/hal_ext_lld.c \
               ${CHIBIOS}/os/hal/templates/hal_gpt_lld.c \
