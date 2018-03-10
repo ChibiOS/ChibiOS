@@ -66,23 +66,26 @@
  * @brief   HTS221 hygrometer subsystem characteristics.
  * @note    Sensitivity is expressed as %rH/LSB whereas %rH stand for percentage
  *          of relative humidity.
- *
+ * @note    Bias is expressed as %rH.
  * @{
  */
 #define HTS221_HYGRO_NUMBER_OF_AXES         1U
 
 #define HTS221_HYGRO_SENS                   0.00390625f
+#define HTS221_HYGRO_BIAS                   0.0f
 /** @} */
 
 /**
  * @brief   HTS221 thermometer subsystem characteristics.
  * @note    Sensitivity is expressed as °C/LSB.
+ * @note    Bias is expressed as °C.
  *
  * @{
  */
 #define HTS221_THERMO_NUMBER_OF_AXES        1U
 
 #define HTS221_THERMO_SENS                  0.0015625f
+#define HTS221_THERMO_BIAS                  0.0f
 /** @} */
  
 /**

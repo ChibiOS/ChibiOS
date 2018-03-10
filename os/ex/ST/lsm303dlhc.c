@@ -254,7 +254,7 @@ static msg_t acc_reset_bias(void *ip) {
                 "acc_reset_bias(), invalid state");
 
   for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++)
-    devp->accbias[i] = 0.0;
+    devp->accbias[i] = LSM303DLHC_ACC_BIAS;
   return msg;
 }
 
@@ -498,7 +498,7 @@ static msg_t comp_read_raw(void *ip, int32_t axes[]) {
  * @brief   Retrieves cooked data from the BaseCompass.
  * @note    This data is manipulated according to the formula
  *          cooked = (raw * sensitivity) - bias.
- * @note    Final data is expressed as Ga.
+ * @note    Final data is expressed as G.
  * @note    The axes array must be at least the same size of the
  *          BaseCompass axes number.
  *
@@ -535,7 +535,7 @@ static msg_t comp_read_cooked(void *ip, float axes[]) {
 
 /**
  * @brief   Set bias values for the BaseCompass.
- * @note    Bias must be expressed as Ga.
+ * @note    Bias must be expressed as G.
  * @note    The bias buffer must be at least the same size of the
  *          BaseCompass axes number.
  *
@@ -588,13 +588,13 @@ static msg_t comp_reset_bias(void *ip) {
                 "comp_reset_bias(), invalid state");
 
   for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++)
-    devp->compbias[i] = 0.0;
+    devp->compbias[i] = LSM303DLHC_COMP_BIAS;
   return msg;
 }
 
 /**
  * @brief   Set sensitivity values for the BaseCompass.
- * @note    Sensitivity must be expressed as Ga/LSB.
+ * @note    Sensitivity must be expressed as G/LSB.
  * @note    The sensitivity buffer must be at least the same size of the
  *          BaseCompass axes number.
  *
@@ -860,11 +860,8 @@ void lsm303dlhcObjectInit(LSM303DLHCDriver *devp) {
   
   devp->accaxes = LSM303DLHC_ACC_NUMBER_OF_AXES;
   devp->compaxes = LSM303DLHC_COMP_NUMBER_OF_AXES;
-    
-  for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++)
-    devp->accbias[i] = 0.0f;
-  for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++)
-    devp->compbias[i] = 0.0f;
+
+
   devp->state  = LSM303DLHC_STOP;
 }
 
@@ -976,6 +973,9 @@ void lsm303dlhcStart(LSM303DLHCDriver *devp, const LSM303DLHCConfig *config) {
   if(devp->config->accbias != NULL)
     for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++)
       devp->accbias[i] = devp->config->accbias[i];
+  else      
+    for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++)
+      devp->accbias[i] = LSM303DLHC_ACC_BIAS;
 
 
   /* Configuring Compass subsystem */
@@ -1131,7 +1131,10 @@ void lsm303dlhcStart(LSM303DLHCDriver *devp, const LSM303DLHCConfig *config) {
   if(devp->config->compbias != NULL)
     for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++)
       devp->compbias[i] = devp->config->compbias[i];
-
+  else      
+    for(i = 0; i < LSM303DLHC_COMP_NUMBER_OF_AXES; i++)
+      devp->compbias[i] = LSM303DLHC_COMP_BIAS;
+    
   /* This is the MEMS transient recovery time */
   osalThreadSleepMilliseconds(5);
 

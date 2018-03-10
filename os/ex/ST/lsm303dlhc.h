@@ -63,7 +63,9 @@
 
 /**
  * @brief   LSM303DLHC accelerometer subsystem characteristics.
- * @note    Sensitivity is expressed as mG/LSB whereas 1 mG = 0.00980665 m/s^2.
+ * @note    Sensitivity is expressed as milli-G/LSB whereas 
+ *          1 milli-G = 0.00980665 m/s^2.
+ * @note    Bias is expressed as milli-G.
  *
  * @{
  */
@@ -78,11 +80,14 @@
 #define LSM303DLHC_ACC_SENS_4G              0.1221f
 #define LSM303DLHC_ACC_SENS_8G              0.2442f
 #define LSM303DLHC_ACC_SENS_16G             0.4884f
+
+#define LSM303DLHC_ACC_BIAS                 0.0f
 /** @} */
 
 /**
  * @brief   LSM303DLHC compass subsystem characteristics.
- * @note    Sensitivity is expressed as GA/LSB whereas GA stands for Gauss.
+ * @note    Sensitivity is expressed as G/LSB whereas G stands for Gauss.
+ * @note    Bias is expressed as G.
  *
  * @{
  */
@@ -111,6 +116,8 @@
 #define LSM303DLHC_COMP_SENS_Z_4P7GA        0.0028169f
 #define LSM303DLHC_COMP_SENS_Z_5P6GA        0.0033898f
 #define LSM303DLHC_COMP_SENS_Z_8P1GA        0.0048780f
+
+#define LSM303DLHC_COMP_BIAS                0.0f
 /** @} */
 
 /**
@@ -795,7 +802,7 @@ struct LSM303DLHCDriver {
  * @brief   Retrieves cooked data from the BaseCompass.
  * @note    This data is manipulated according to the formula
  *          cooked = (raw * sensitivity) - bias.
- * @note    Final data is expressed as Ga.
+ * @note    Final data is expressed as G.
  * @note    The axes array must be at least the same size of the
  *          BaseCompass axes number.
  *
@@ -815,7 +822,7 @@ struct LSM303DLHCDriver {
 
 /**
  * @brief   Set bias values for the BaseCompass.
- * @note    Bias must be expressed as Ga.
+ * @note    Bias must be expressed as G.
  * @note    The bias buffer must be at least the same size of the
  *          BaseCompass axes number.
  *
@@ -847,7 +854,7 @@ struct LSM303DLHCDriver {
 
 /**
  * @brief   Set sensitivity values for the BaseCompass.
- * @note    Sensitivity must be expressed as Ga/LSB.
+ * @note    Sensitivity must be expressed as G/LSB.
  * @note    The sensitivity buffer must be at least the same size of the
  *          BaseCompass axes number.
  *

@@ -286,7 +286,7 @@ static msg_t gyro_reset_bias(void *ip) {
                 "gyro_reset_bias(), invalid state");
 
   for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++)
-    devp->gyrobias[i] = 0.0;
+    devp->gyrobias[i] = L3GD20_GYRO_BIAS;
   return MSG_OK;
 }
 
@@ -345,13 +345,13 @@ static msg_t gyro_reset_sensivity(void *ip) {
 
   if(devp->config->gyrofullscale == L3GD20_FS_250DPS)
     for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++)
-      devp->gyrosensitivity[i] = L3GD20_SENS_250DPS;
+      devp->gyrosensitivity[i] = L3GD20_GYRO_SENS_250DPS;
   else if(devp->config->gyrofullscale == L3GD20_FS_500DPS)
 	for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++)
-      devp->gyrosensitivity[i] = L3GD20_SENS_500DPS;
+      devp->gyrosensitivity[i] = L3GD20_GYRO_SENS_500DPS;
   else if(devp->config->gyrofullscale == L3GD20_FS_2000DPS)
 	for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++)
-      devp->gyrosensitivity[i] = L3GD20_SENS_2000DPS;
+      devp->gyrosensitivity[i] = L3GD20_GYRO_SENS_2000DPS;
   else {
     osalDbgAssert(FALSE, "gyro_reset_sensivity(), full scale issue");
     return MSG_RESET;
@@ -468,14 +468,11 @@ static const struct BaseGyroscopeVMT vmt_gyroscope = {
  * @init
  */
 void l3gd20ObjectInit(L3GD20Driver *devp) {
-  uint32_t i;
-  
   devp->vmt = &vmt_device;
   devp->gyro_if.vmt = &vmt_gyroscope;
   
   devp->config = NULL;
-  for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++)
-    devp->gyrobias[i] = 0.0f;
+
   devp->state  = L3GD20_STOP;
 }
 
@@ -560,7 +557,7 @@ void l3gd20Start(L3GD20Driver *devp, const L3GD20Config *config) {
     devp->gyrofullscale = L3GD20_250DPS;
     for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++) {
       if (devp->config->gyrosensitivity == NULL)
-        devp->gyrosensitivity[i] = L3GD20_SENS_250DPS;
+        devp->gyrosensitivity[i] = L3GD20_GYRO_SENS_250DPS;
       else
         devp->gyrosensitivity[i] = devp->config->gyrosensitivity[i];
     }
@@ -569,7 +566,7 @@ void l3gd20Start(L3GD20Driver *devp, const L3GD20Config *config) {
     devp->gyrofullscale = L3GD20_500DPS;
     for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++) {
       if (devp->config->gyrosensitivity == NULL)
-        devp->gyrosensitivity[i] = L3GD20_SENS_500DPS;
+        devp->gyrosensitivity[i] = L3GD20_GYRO_SENS_500DPS;
       else
         devp->gyrosensitivity[i] = devp->config->gyrosensitivity[i];
     }
@@ -578,18 +575,23 @@ void l3gd20Start(L3GD20Driver *devp, const L3GD20Config *config) {
     devp->gyrofullscale = L3GD20_2000DPS;
     for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++) {
       if (devp->config->gyrosensitivity == NULL)
-        devp->gyrosensitivity[i] = L3GD20_SENS_2000DPS;
+        devp->gyrosensitivity[i] = L3GD20_GYRO_SENS_2000DPS;
       else
         devp->gyrosensitivity[i] = devp->config->gyrosensitivity[i];
     }
   }
   else
     osalDbgAssert(FALSE, "l3gd20Start(), full scale issue");
-  
+
+  /* Storing bias information.*/  
   if(devp->config->gyrobias != NULL) {
     for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++) {
       devp->gyrobias[i] = devp->config->gyrobias[i];
     }
+  }
+  else {
+    for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++)
+      devp->gyrobias[i] = L3GD20_GYRO_BIAS;
   }
   
   /* This is the Gyroscope transient recovery time.*/

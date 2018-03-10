@@ -64,6 +64,7 @@
  * @brief   L3GD20 gyroscope system characteristics.
  * @note    Sensitivity is expressed as DPS/LSB whereas DPS stand for Degree 
  *          per second [°/s].
+ * @note    Bias is expressed as DPS.
  *
  * @{
  */
@@ -73,9 +74,11 @@
 #define L3GD20_500DPS                       500.0f
 #define L3GD20_2000DPS                      2000.0f
                                             
-#define L3GD20_SENS_250DPS                  0.00875f
-#define L3GD20_SENS_500DPS                  0.01750f
-#define L3GD20_SENS_2000DPS                 0.07000f
+#define L3GD20_GYRO_SENS_250DPS             0.00875f
+#define L3GD20_GYRO_SENS_500DPS             0.01750f
+#define L3GD20_GYRO_SENS_2000DPS            0.07000f
+
+#define L3GD20_GYRO_BIAS                    0.0f
 /** @} */
 
 /**
