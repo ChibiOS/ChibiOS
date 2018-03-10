@@ -17,11 +17,10 @@
 #include "ch.h"
 #include "hal.h"
 
-#include "string.h"
-#include "shell.h"
 #include "chprintf.h"
-
 #include "lps25h.h"
+
+#define cls(chp)  chprintf(chp, "\033[2J\033[1;1H")
 
 /*===========================================================================*/
 /* LPS25H related.                                                           */
@@ -30,8 +29,11 @@
 /* LPS25H Driver: This object represent an LPS25H instance */
 static  LPS25HDriver LPS25HD1;
 
-static int32_t rawdata;
-static float cookeddata;
+static int32_t baroraw;
+static int32_t thermoraw;
+
+static float barocooked;
+static float thermocooked;
 
 static const I2CConfig i2ccfg = {
   OPMODE_I2C,
@@ -42,9 +44,11 @@ static const I2CConfig i2ccfg = {
 static const LPS25HConfig lps25hcfg = {
   &I2CD1,
   &i2ccfg,
-  NULL,
-  NULL,
   LPS25H_SAD_VCC,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
   LPS25H_ODR_7HZ,
 #if LPS25H_USE_ADVANCED
   LPS25H_BDU_CONTINUOUS,
@@ -54,59 +58,10 @@ static const LPS25HConfig lps25hcfg = {
 };
 
 /*===========================================================================*/
-/* Command line related.                                                     */
+/* Generic code.                                                             */
 /*===========================================================================*/
 
-/* Enable use of special ANSI escape sequences */
-#define CHPRINTF_USE_ANSI_CODE      TRUE
-#define SHELL_WA_SIZE               THD_WORKING_AREA_SIZE(2048)
-
-static void cmd_read(BaseSequentialStream *chp, int argc, char *argv[]) {
-
-  if (argc != 1) {
-    chprintf(chp, "Usage: read [raw|cooked]\r\n");
-    return;
-  }
-
-  while (chnGetTimeout((BaseChannel *)chp, 150) == Q_TIMEOUT) {
-    if (!strcmp (argv[0], "raw")) {
-#if CHPRINTF_USE_ANSI_CODE
-      chprintf(chp, "\033[2J\033[1;1H");
-#endif
-      barometerReadRaw(&LPS25HD1, &rawdata);
-      chprintf(chp, "LPS25H Barometer raw data...\r\n");
-      chprintf(chp, "RAW: %d\r\n", rawdata);
-    }
-    else if (!strcmp (argv[0], "cooked")) {
-#if CHPRINTF_USE_ANSI_CODE
-      chprintf(chp, "\033[2J\033[1;1H");
-#endif
-      barometerReadCooked(&LPS25HD1, &cookeddata);
-      chprintf(chp, "LPS25H Barometer cooked data...\r\n");
-      chprintf(chp, "COOCKED: %.4f hPa\r\n", cookeddata);
-    }
-    else {
-      chprintf(chp, "Usage: read [raw|cooked]\r\n");
-      return;
-    }
-  }
-  chprintf(chp, "Stopped\r\n");
-}
-
-static const ShellCommand commands[] = {
-  {"read", cmd_read},
-  {NULL, NULL}
-};
-
-static const ShellConfig shell_cfg1 = {
-  (BaseSequentialStream *)&SD2,
-  commands
-};
-
-/*===========================================================================*/
-/* Main code.                                                                */
-/*===========================================================================*/
-
+static BaseSequentialStream* chp = (BaseSequentialStream*)&SD2;
 /*
  * LED blinker thread, times are in milliseconds.
  */
@@ -116,9 +71,7 @@ static THD_FUNCTION(Thread1, arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (true) {
-    palClearPad(GPIOA, GPIOA_LED_GREEN);
-    chThdSleepMilliseconds(500);
-    palSetPad(GPIOA, GPIOA_LED_GREEN);
+    palToggleLine(LINE_LED_GREEN);
     chThdSleepMilliseconds(500);
   }
 }
@@ -138,43 +91,44 @@ int main(void) {
   halInit();
   chSysInit();
 
+  /* Configuring I2C SCK and I2C SDA related GPIOs .*/
   palSetLineMode(LINE_ARD_D15, PAL_MODE_ALTERNATE(4) |
                  PAL_STM32_OSPEED_HIGHEST | PAL_STM32_OTYPE_OPENDRAIN);
   palSetLineMode(LINE_ARD_D14, PAL_MODE_ALTERNATE(4) |
                  PAL_STM32_OSPEED_HIGHEST | PAL_STM32_OTYPE_OPENDRAIN);
 
-  /*
-   * Activates the serial driver 2 using the driver default configuration.
-   */
+  /* Activates the serial driver 1 using the driver default configuration.*/
   sdStart(&SD2, NULL);
 
-  /*
-   * Creates the blinker thread.
-   */
+  /* Creates the blinker thread.*/
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
-  /*
-   * LPS25H Object Initialization
-   */
+  /* LPS25H Object Initialization.*/
   lps25hObjectInit(&LPS25HD1);
 
-  /*
-   * Activates the LPS25H driver.
-   */
+  /* Activates the LPS25H driver.*/
   lps25hStart(&LPS25HD1, &lps25hcfg);
 
-  /*
-   * Shell manager initialization.
-   */
-  shellInit();
+  /* Normal main() thread activity, printing MEMS data on the SD2. */
+  while (true) {
+    lps25hBarometerReadRaw(&LPS25HD1, &baroraw);
+    chprintf(chp, "LPS25HD1 Barometer raw data...\r\n");
+    chprintf(chp, "Pres: %d\r\n", baroraw);
 
-  while(TRUE) {
+    lps25hThermometerReadRaw(&LPS25HD1, &thermoraw);
+    chprintf(chp, "LPS25HD1 Thermometer raw data...\r\n");
+    chprintf(chp, "Temp: %d\r\n", &thermoraw);
 
-    thread_t *shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
-                                            "shell", NORMALPRIO + 1,
-                                            shellThread, (void *)&shell_cfg1);
-    chThdWait(shelltp);                  /* Waiting termination.             */
-    chThdSleepMilliseconds(1000);
+    lps25hBarometerReadCooked(&LPS25HD1, &barocooked);
+    chprintf(chp, "LPS25HD1 Barometer cooked data...\r\n");
+    chprintf(chp, "Pres: %.2f\r\n", barocooked);
+
+    lps25hThermometerReadCooked(&LPS25HD1, &thermocooked);
+    chprintf(chp, "LPS25HD1 Thermometer cooked data...\r\n");
+    chprintf(chp, "Temp: %.2f\r\n", thermocooked);
+
+    chThdSleepMilliseconds(100);
+    cls(chp);
   }
   lps25hStop(&LPS25HD1);
 }
