@@ -419,11 +419,11 @@ struct HTS221VMT {
  */
 struct HTS221Driver {
   /** @brief Virtual Methods Table.*/
-  const struct HTS221VMT        *vmt;
+  const struct HTS221VMT    *vmt;
   /** @brief Base hygrometer interface.*/
-  BaseHygrometer                hygro_if;
+  BaseHygrometer            hygro_if;
   /** @brief Base thermometer interface.*/
-  BaseThermometer               thermo_if;
+  BaseThermometer           thermo_if;
   _hts221_data
 };
 /** @} */

@@ -608,11 +608,11 @@ struct LSM303DLHCVMT {
  */
 struct LSM303DLHCDriver {
   /** @brief Virtual Methods Table.*/
-  const struct LSM303DLHCVMT    *vmt;
+  const struct LSM303DLHCVMT  *vmt;
   /** @brief Base accelerometer interface.*/
-  BaseAccelerometer             acc_if;
+  BaseAccelerometer           acc_if;
   /** @brief Base compass interface.*/
-  BaseCompass                   comp_if;
+  BaseCompass                 comp_if;
   _lsm303dlhc_data
 };
 /** @} */

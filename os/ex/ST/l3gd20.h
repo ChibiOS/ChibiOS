@@ -526,9 +526,9 @@ struct L3GD20VMT {
  */
 struct L3GD20Driver {
   /** @brief Virtual Methods Table. */
-  const struct L3GD20VMT        *vmt;
+  const struct L3GD20VMT    *vmt;
   /** @brief Base gyroscope interface.*/
-  BaseGyroscope                 gyro_if;
+  BaseGyroscope             gyro_if;
   _l3gd20_data
 };
 /** @} */
