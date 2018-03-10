@@ -833,7 +833,7 @@ static const struct BaseAccelerometerVMT vmt_accelerometer = {
 };
 
 static const struct BaseCompassVMT vmt_compass = {
- sizeof(struct LSM303DLHCVMT*) + sizeof(BaseAccelerometer),
+  sizeof(struct LSM303DLHCVMT*) + sizeof(BaseAccelerometer),
   comp_get_axes_number, comp_read_raw, comp_read_cooked,
   comp_set_bias, comp_reset_bias, comp_set_sensivity, comp_reset_sensivity
 };
@@ -850,8 +850,6 @@ static const struct BaseCompassVMT vmt_compass = {
  * @init
  */
 void lsm303dlhcObjectInit(LSM303DLHCDriver *devp) {
-  uint32_t i;
-
   devp->vmt = &vmt_device;
   devp->acc_if.vmt = &vmt_accelerometer;
   devp->comp_if.vmt = &vmt_compass;
@@ -860,7 +858,6 @@ void lsm303dlhcObjectInit(LSM303DLHCDriver *devp) {
   
   devp->accaxes = LSM303DLHC_ACC_NUMBER_OF_AXES;
   devp->compaxes = LSM303DLHC_COMP_NUMBER_OF_AXES;
-
 
   devp->state  = LSM303DLHC_STOP;
 }
@@ -880,7 +877,7 @@ void lsm303dlhcStart(LSM303DLHCDriver *devp, const LSM303DLHCConfig *config) {
 
   osalDbgAssert((devp->state == LSM303DLHC_STOP) ||
                 (devp->state == LSM303DLHC_READY),
-              "lsm303dlhcStart(), invalid state");
+                "lsm303dlhcStart(), invalid state");
 
   devp->config = config;
 
@@ -976,7 +973,6 @@ void lsm303dlhcStart(LSM303DLHCDriver *devp, const LSM303DLHCConfig *config) {
   else      
     for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++)
       devp->accbias[i] = LSM303DLHC_ACC_BIAS;
-
 
   /* Configuring Compass subsystem */
   /* Multiple write starting address.*/

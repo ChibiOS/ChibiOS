@@ -311,7 +311,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(LSM303DLHC_ACC_USE_ADVANCED) || defined(__DOXYGEN__)
-#define LSM303DLHC_ACC_USE_ADVANCED            FALSE
+#define LSM303DLHC_ACC_USE_ADVANCED         FALSE
 #endif
 
 /**
@@ -321,7 +321,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(LSM303DLHC_COMP_USE_ADVANCED) || defined(__DOXYGEN__)
-#define LSM303DLHC_COMP_USE_ADVANCED           FALSE
+#define LSM303DLHC_COMP_USE_ADVANCED        FALSE
 #endif
 
 /**
@@ -331,7 +331,7 @@
  * @note    The default is @p FALSE. Requires I2C_USE_MUTUAL_EXCLUSION.
  */
 #if !defined(LSM303DLHC_SHARED_I2C) || defined(__DOXYGEN__)
-#define LSM303DLHC_SHARED_I2C                  FALSE
+#define LSM303DLHC_SHARED_I2C               FALSE
 #endif
 /** @} */
 
@@ -364,9 +364,9 @@ typedef struct LSM303DLHCDriver LSM303DLHCDriver;
  * @brief LSM303DLHC accelerometer subsystem full scale.
  */
 typedef enum {
-  LSM303DLHC_ACC_FS_2G   = 0x00,    /**< Full scale ±2g.                    */
-  LSM303DLHC_ACC_FS_4G   = 0x10,    /**< Full scale ±4g.                    */
-  LSM303DLHC_ACC_FS_8G   = 0x20,    /**< Full scale ±8g.                    */
+  LSM303DLHC_ACC_FS_2G = 0x00,      /**< Full scale ±2g.                    */
+  LSM303DLHC_ACC_FS_4G = 0x10,      /**< Full scale ±4g.                    */
+  LSM303DLHC_ACC_FS_8G = 0x20,      /**< Full scale ±8g.                    */
   LSM303DLHC_ACC_FS_16G  = 0x30     /**< Full scale ±16g.                   */
 } lsm303dlhc_acc_fs_t;
 
@@ -495,12 +495,11 @@ typedef struct {
    */
   I2CDriver                 *i2cp;
   /**
-   * @brief I2C configuration associated to this LSM303DLHC accelerometer
-   *        subsystem.
+   * @brief I2C configuration associated to this LSM303DLHC.
    */
   const I2CConfig           *i2ccfg;
   /**
-   * @brief LSM303DLHC initial sensitivity.
+   * @brief LSM303DLHC accelerometer subsystem initial sensitivity.
    */
   float                     *accsensitivity;
   /**
@@ -561,10 +560,10 @@ typedef struct {
  * @brief   @p LSM303DLHC specific methods.
  */
 #define _lsm303dlhc_methods_alone                                           \
-  /* Change full scale value of LSM303DLHC accelerometer subsystem .*/      \
+  /* Change full scale value of LSM303DLHC accelerometer subsystem.*/       \
   msg_t (*acc_set_full_scale)(LSM303DLHCDriver *instance,                   \
                               lsm303dlhc_acc_fs_t fs);                      \
-  /* Change full scale value of LSM303DLHC compass subsystem .*/            \
+  /* Change full scale value of LSM303DLHC compass subsystem.*/             \
   msg_t (*comp_set_full_scale)(LSM303DLHCDriver *instance,                  \
                               lsm303dlhc_comp_fs_t fs);                     \
 
