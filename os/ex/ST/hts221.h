@@ -82,7 +82,7 @@
  */
 #define HTS221_THERMO_NUMBER_OF_AXES        1U
 
-#define HTS221_THERMO_SENS                  00015625f
+#define HTS221_THERMO_SENS                  0.0015625f
 /** @} */
  
 /**
@@ -165,7 +165,7 @@
 /** @} */
 
 /*===========================================================================*/
-/* Driver pre-thermoile time settings.                                         */
+/* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
 /**
