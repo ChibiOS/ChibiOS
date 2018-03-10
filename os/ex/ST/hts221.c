@@ -46,6 +46,7 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+#if (HTS221_USE_I2C) || defined(__DOXYGEN__)
 /**
  * @brief   Reads registers value using I2C.
  * @pre     The I2C interface must be initialized and the driver started.
@@ -88,6 +89,7 @@ static msg_t hts221I2CWriteRegister(I2CDriver *i2cp, uint8_t* txbuf, size_t n) {
   return i2cMasterTransmitTimeout(i2cp, HTS221_SAD, txbuf, n + 1, NULL, 0,
                                   TIME_INFINITE);
 }
+#endif /* HTS221_USE_I2C */
 
 /**
  * @brief   Computes biases and sensitivities starting from data stored in
