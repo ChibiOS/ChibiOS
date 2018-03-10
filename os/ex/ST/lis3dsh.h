@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2016 Rocco Marco Guglielmi
+    ChibiOS - Copyright (C) 2016-2018 Rocco Marco Guglielmi
 
     This file is part of ChibiOS.
 
@@ -43,7 +43,7 @@
 /**
  * @brief   LIS3DSH driver version string.
  */
-#define EX_LIS3DSH_VERSION                  "1.0.3"
+#define EX_LIS3DSH_VERSION                  "1.0.4"
 
 /**
  * @brief   LIS3DSH driver version major number.
@@ -58,27 +58,32 @@
 /**
  * @brief   LIS3DSH driver version patch number.
  */
-#define EX_LIS3DSH_PATCH                    3
+#define EX_LIS3DSH_PATCH                    4
 /** @} */
 
 /**
- * @brief   LIS3DSH characteristics.
+ * @brief   LIS3DSH accelerometer subsystem characteristics.
+ * @note    Sensitivity is expressed as milli-G/LSB whereas 
+ *          1 milli-G = 0.00980665 m/s^2.
+ * @note    Bias is expressed as milli-G.
  *
  * @{
  */
-#define LIS3DSH_NUMBER_OF_AXES              3U
+#define LIS3DSH_ACC_NUMBER_OF_AXES          3U
                                             
-#define LIS3DSH_2G                          2.0f
-#define LIS3DSH_4G                          4.0f
-#define LIS3DSH_6G                          6.0f
-#define LIS3DSH_8G                          8.0f
-#define LIS3DSH_16G                         16.0f
+#define LIS3DSH_ACC_2G                      2.0f
+#define LIS3DSH_ACC_4G                      4.0f
+#define LIS3DSH_ACC_6G                      6.0f
+#define LIS3DSH_ACC_8G                      8.0f
+#define LIS3DSH_ACC_16G                     16.0f
                                             
-#define LIS3DSH_SENS_2G                     0.06f
-#define LIS3DSH_SENS_4G                     0.12f
-#define LIS3DSH_SENS_6G                     0.18f
-#define LIS3DSH_SENS_8G                     0.24f
-#define LIS3DSH_SENS_16G                    0.73f
+#define LIS3DSH_ACC_SENS_2G                 0.06f
+#define LIS3DSH_ACC_SENS_4G                 0.12f
+#define LIS3DSH_ACC_SENS_6G                 0.18f
+#define LIS3DSH_ACC_SENS_8G                 0.24f
+#define LIS3DSH_ACC_SENS_16G                0.73f
+
+#define LIS3DSH_ACC_BIAS                    0.0f
 /** @} */
 
 /**
@@ -201,84 +206,84 @@
  * @name    LIS3DSH_CTRL_REG1 register bits definitions
  * @{
  */
-#define LIS3DSH_CTRL_REG1_MASK     0xE9        /**< LIS3DSH_CTRL_REG1 mask   */
-#define LIS3DSH_CTRL_REG1_SM1_EN   (1 << 0)    /**< SM1 enabled              */
-#define LIS3DSH_CTRL_REG1_SM1_PIN  (1 << 3)    /**< SM1 pin                  */
-#define LIS3DSH_CTRL_REG1_HYST0_1  (1 << 5)    /**< Hysteresis 1 bit 0       */
-#define LIS3DSH_CTRL_REG1_HYST1_1  (1 << 6)    /**< Hysteresis 1 bit 1       */
-#define LIS3DSH_CTRL_REG1_HYST2_1  (1 << 7)    /**< Hysteresis 1 bit 2       */
+#define LIS3DSH_CTRL_REG1_MASK              0xE9    
+#define LIS3DSH_CTRL_REG1_SM1_EN            (1 << 0)
+#define LIS3DSH_CTRL_REG1_SM1_PIN           (1 << 3)
+#define LIS3DSH_CTRL_REG1_HYST0_1           (1 << 5)
+#define LIS3DSH_CTRL_REG1_HYST1_1           (1 << 6)
+#define LIS3DSH_CTRL_REG1_HYST2_1           (1 << 7)
 /** @} */
 
 /**
  * @name    LIS3DSH_CTRL_REG2 register bits definitions
  * @{
  */
-#define LIS3DSH_CTRL_REG2_MASK     0xE9        /**< LIS3DSH_CTRL_REG2 mask   */
-#define LIS3DSH_CTRL_REG2_SM2_EN   (1 << 0)    /**< SM2 enabled              */
-#define LIS3DSH_CTRL_REG2_SM2_PIN  (1 << 3)    /**< SM2 pin                  */
-#define LIS3DSH_CTRL_REG2_HYST0_2  (1 << 5)    /**< Hysteresis 2 bit 0       */
-#define LIS3DSH_CTRL_REG2_HYST1_2  (1 << 6)    /**< Hysteresis 2 bit 1       */
-#define LIS3DSH_CTRL_REG2_HYST2_2  (1 << 7)    /**< Hysteresis 2 bit 2       */
+#define LIS3DSH_CTRL_REG2_MASK              0xE9    
+#define LIS3DSH_CTRL_REG2_SM2_EN            (1 << 0)
+#define LIS3DSH_CTRL_REG2_SM2_PIN           (1 << 3)
+#define LIS3DSH_CTRL_REG2_HYST0_2           (1 << 5)
+#define LIS3DSH_CTRL_REG2_HYST1_2           (1 << 6)
+#define LIS3DSH_CTRL_REG2_HYST2_2           (1 << 7)
 /** @} */
 
 /**
  * @name    LIS3DSH_CTRL_REG3 register bits definitions
  * @{
  */
-#define LIS3DSH_CTRL_REG3_MASK     0xFF        /**< LIS3DSH_CTRL_REG3 mask   */
-#define LIS3DSH_CTRL_REG3_STRT     (1 << 0)    /**< Soft reset bit           */
-#define LIS3DSH_CTRL_REG3_VFILT    (1 << 2)    /**< Vector filter            */
-#define LIS3DSH_CTRL_REG3_INT1_EN  (1 << 3)    /**< Interrupt 1 enable       */
-#define LIS3DSH_CTRL_REG3_INT2_EN  (1 << 4)    /**< Interrupt 2 enable       */
-#define LIS3DSH_CTRL_REG3_IEL      (1 << 5)    /**< Interrupt latching       */
-#define LIS3DSH_CTRL_REG3_IEA      (1 << 6)    /**< Interurpt polarity       */
-#define LIS3DSH_CTRL_REG3_DR_EN    (1 << 7)    /**< Data ready signal        */
+#define LIS3DSH_CTRL_REG3_MASK              0xFF    
+#define LIS3DSH_CTRL_REG3_STRT              (1 << 0)
+#define LIS3DSH_CTRL_REG3_VFILT             (1 << 2)
+#define LIS3DSH_CTRL_REG3_INT1_EN           (1 << 3)
+#define LIS3DSH_CTRL_REG3_INT2_EN           (1 << 4)
+#define LIS3DSH_CTRL_REG3_IEL               (1 << 5)
+#define LIS3DSH_CTRL_REG3_IEA               (1 << 6)
+#define LIS3DSH_CTRL_REG3_DR_EN             (1 << 7)
 /** @} */
 
 /**
  * @name    LIS3DSH_CTRL_REG4 register bits definitions
  * @{
  */
-#define LIS3DSH_CTRL_REG4_MASK     0xFF        /**< LIS3DSH_CTRL_REG4 mask   */
-#define LIS3DSH_CTRL_REG4_XEN      (1 << 0)    /**< X axis enable            */
-#define LIS3DSH_CTRL_REG4_YEN      (1 << 1)    /**< Y axis enable            */
-#define LIS3DSH_CTRL_REG4_ZEN      (1 << 2)    /**< Z axis enable            */
-#define LIS3DSH_CTRL_REG4_BDU      (1 << 3)    /**< Block data update        */
-#define LIS3DSH_CTRL_REG4_ODR_0    (1 << 4)    /**< Output data rate bit 0   */
-#define LIS3DSH_CTRL_REG4_ODR_1    (1 << 5)    /**< Output data rate bit 1   */
-#define LIS3DSH_CTRL_REG4_ODR_2    (1 << 6)    /**< Output data rate bit 2   */
-#define LIS3DSH_CTRL_REG4_ODR_3    (1 << 7)    /**< Output data rate bit 3   */
+#define LIS3DSH_CTRL_REG4_MASK              0xFF    
+#define LIS3DSH_CTRL_REG4_XEN               (1 << 0)
+#define LIS3DSH_CTRL_REG4_YEN               (1 << 1)
+#define LIS3DSH_CTRL_REG4_ZEN               (1 << 2)
+#define LIS3DSH_CTRL_REG4_BDU               (1 << 3)
+#define LIS3DSH_CTRL_REG4_ODR_0             (1 << 4)
+#define LIS3DSH_CTRL_REG4_ODR_1             (1 << 5)
+#define LIS3DSH_CTRL_REG4_ODR_2             (1 << 6)
+#define LIS3DSH_CTRL_REG4_ODR_3             (1 << 7)
 /** @} */
 
 /**
  * @name    LIS3DSH_CTRL_REG5 register bits definitions
  * @{
  */ 
-#define LIS3DSH_CTRL_REG5_MASK     0xFF        /**< LIS3DSH_CTRL_REG5 mask   */
-#define LIS3DSH_CTRL_REG5_SIM      (1 << 0)    /**< SPI interface mode       */
-#define LIS3DSH_CTRL_REG5_ST1      (1 << 1)    /**< Self test bit 1          */
-#define LIS3DSH_CTRL_REG5_ST2      (1 << 2)    /**< Self test bit 2          */
-#define LIS3DSH_CTRL_REG5_FS_MASK  0x38        /**< Full scale field mask    */
-#define LIS3DSH_CTRL_REG5_FS0      (1 << 3)    /**< Full scale bit 0         */
-#define LIS3DSH_CTRL_REG5_FS1      (1 << 4)    /**< Full scale bit 1         */
-#define LIS3DSH_CTRL_REG5_FS2      (1 << 5)    /**< Full scale bit 2         */
-#define LIS3DSH_CTRL_REG5_BW1      (1 << 6)    /**< Bandwidth bit 1          */
-#define LIS3DSH_CTRL_REG5_BW2      (1 << 7)    /**< Bandwidth bit 2          */
+#define LIS3DSH_CTRL_REG5_MASK              0xFF    
+#define LIS3DSH_CTRL_REG5_SIM               (1 << 0)
+#define LIS3DSH_CTRL_REG5_ST1               (1 << 1)
+#define LIS3DSH_CTRL_REG5_ST2               (1 << 2)
+#define LIS3DSH_CTRL_REG5_FS_MASK           0x38    
+#define LIS3DSH_CTRL_REG5_FS0               (1 << 3)
+#define LIS3DSH_CTRL_REG5_FS1               (1 << 4)
+#define LIS3DSH_CTRL_REG5_FS2               (1 << 5)
+#define LIS3DSH_CTRL_REG5_BW1               (1 << 6)
+#define LIS3DSH_CTRL_REG5_BW2               (1 << 7)
 /** @} */
 
 /**
  * @name    LIS3DSH_CTRL_REG6 register bits definitions
  * @{
  */
-#define LIS3DSH_CTRL_REG6_MASK     0xFF        /**< LIS3DSH_CTRL_REG6 mask   */
-#define LIS3DSH_CTRL_REG6_P2_BOOT  (1 << 0)    /**< Boot on Interrupt 2      */
-#define LIS3DSH_CTRL_REG6_P1_OVRUN (1 << 1)    /**< FIFO overrun on Int 1    */
-#define LIS3DSH_CTRL_REG6_P1_WTM   (1 << 2)    /**< FIFO watermark on Int 1  */
-#define LIS3DSH_CTRL_REG6_P1_EMPTY (1 << 3)    /**< FIFO empty on Int 1      */
-#define LIS3DSH_CTRL_REG6_ADD_INC  (1 << 4)    /**< Register address incr.   */
-#define LIS3DSH_CTRL_REG6_WTM_EN   (1 << 5)    /**< Enable FIFO watermark    */
-#define LIS3DSH_CTRL_REG6_FIFO_EN  (1 << 6)    /**< Enable FIFO              */
-#define LIS3DSH_CTRL_REG6_BOOT     (1 << 7)    /**< Force reboot             */
+#define LIS3DSH_CTRL_REG6_MASK              0xFF    
+#define LIS3DSH_CTRL_REG6_P2_BOOT           (1 << 0)
+#define LIS3DSH_CTRL_REG6_P1_OVRUN          (1 << 1)
+#define LIS3DSH_CTRL_REG6_P1_WTM            (1 << 2)
+#define LIS3DSH_CTRL_REG6_P1_EMPTY          (1 << 3)
+#define LIS3DSH_CTRL_REG6_ADD_INC           (1 << 4)
+#define LIS3DSH_CTRL_REG6_WTM_EN            (1 << 5)
+#define LIS3DSH_CTRL_REG6_FIFO_EN           (1 << 6)
+#define LIS3DSH_CTRL_REG6_BOOT              (1 << 7)
 /** @} */
 
 /*===========================================================================*/
@@ -308,12 +313,12 @@
 #endif
 
 /**
- * @brief   LIS3DSH advanced configurations switch.
+ * @brief   LIS3DSH accelerometer subsystem advanced configurations switch.
  * @details If set to @p TRUE more configurations are available.
  * @note    The default is @p FALSE.
  */
-#if !defined(LIS3DSH_USE_ADVANCED) || defined(__DOXYGEN__)
-#define LIS3DSH_USE_ADVANCED                FALSE
+#if !defined(LIS3DSH_ACC_USE_ADVANCED) || defined(__DOXYGEN__)
+#define LIS3DSH_ACC_USE_ADVANCED            FALSE
 #endif
 
 /**
@@ -347,6 +352,10 @@
 #error "LIS3DSH_SHARED_SPI requires SPI_USE_MUTUAL_EXCLUSION"
 #endif
 
+#if LIS3DSH_USE_I2C
+#error "LIS3DSH's I2C support is not supported."
+#endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
@@ -356,49 +365,54 @@
  * @{
  */
 /**
+ * @brief   Structure representing a LIS3DSH driver.
+ */
+typedef struct LIS3DSHDriver LIS3DSHDriver;
+
+/**
  * @brief   LIS3DSH full scale.
  */
 typedef enum {
-  LIS3DSH_FS_2G = 0x00,             /**< Full scale ±2g.                    */
-  LIS3DSH_FS_4G = 0x08,             /**< Full scale ±4g.                    */
-  LIS3DSH_FS_6G = 0x10,             /**< Full scale ±6g.                    */
-  LIS3DSH_FS_8G = 0x18,             /**< Full scale ±8g.                    */
-  LIS3DSH_FS_16G = 0x20             /**< Full scale ±16g.                   */
-}lis3dsh_fs_t;
+  LIS3DSH_ACC_FS_2G = 0x00,         /**< Full scale ±2g.                    */
+  LIS3DSH_ACC_FS_4G = 0x08,         /**< Full scale ±4g.                    */
+  LIS3DSH_ACC_FS_6G = 0x10,         /**< Full scale ±6g.                    */
+  LIS3DSH_ACC_FS_8G = 0x18,         /**< Full scale ±8g.                    */
+  LIS3DSH_ACC_FS_16G = 0x20         /**< Full scale ±16g.                   */
+}lis3dsh_acc_fs_t;
 
 /**
  * @brief   LIS3DSH output data rate.
  */
 typedef enum {
-  LIS3DSH_ODR_PD = 0x00,            /**< ODR 100 Hz.                        */
-  LIS3DSH_ODR_3_125HZ = 0x10,       /**< ODR 3.125 Hz.                      */
-  LIS3DSH_ODR_6_25HZ = 0x20,        /**< ODR 6.25 Hz.                       */
-  LIS3DSH_ODR_12_5HZ = 0x30,        /**< ODR 12.5 Hz.                       */
-  LIS3DSH_ODR_25HZ = 0x40,          /**< ODR 25 Hz.                         */
-  LIS3DSH_ODR_50HZ = 0x50,          /**< ODR 50 Hz.                         */
-  LIS3DSH_ODR_100HZ = 0x60,         /**< ODR 100 Hz.                        */
-  LIS3DSH_ODR_400HZ = 0x70,         /**< ODR 400 Hz.                        */
-  LIS3DSH_ODR_800HZ = 0x80,         /**< ODR 800 Hz.                        */
-  LIS3DSH_ODR_1600HZ = 0x90         /**< ODR 1600 Hz.                       */
-}lis3dsh_odr_t;
+  LIS3DSH_ACC_ODR_PD = 0x00,        /**< ODR 100 Hz.                        */
+  LIS3DSH_ACC_ODR_3_125HZ = 0x10,   /**< ODR 3.125 Hz.                      */
+  LIS3DSH_ACC_ODR_6_25HZ = 0x20,    /**< ODR 6.25 Hz.                       */
+  LIS3DSH_ACC_ODR_12_5HZ = 0x30,    /**< ODR 12.5 Hz.                       */
+  LIS3DSH_ACC_ODR_25HZ = 0x40,      /**< ODR 25 Hz.                         */
+  LIS3DSH_ACC_ODR_50HZ = 0x50,      /**< ODR 50 Hz.                         */
+  LIS3DSH_ACC_ODR_100HZ = 0x60,     /**< ODR 100 Hz.                        */
+  LIS3DSH_ACC_ODR_400HZ = 0x70,     /**< ODR 400 Hz.                        */
+  LIS3DSH_ACC_ODR_800HZ = 0x80,     /**< ODR 800 Hz.                        */
+  LIS3DSH_ACC_ODR_1600HZ = 0x90     /**< ODR 1600 Hz.                       */
+}lis3dsh_acc_odr_t;
 
 /**
  * @brief   LIS3DSH anti-aliasing bandwidth.
  */
 typedef enum {
-  LIS3DSH_BW_800HZ = 0x00,          /**< AA filter BW 800Hz.                */
-  LIS3DSH_BW_200HZ = 0x40,          /**< AA filter BW 200Hz.                */
-  LIS3DSH_BW_400HZ = 0x80,          /**< AA filter BW 400Hz.                */
-  LIS3DSH_BW_50HZ = 0xC0            /**< AA filter BW 50Hz.                 */
-}lis3dsh_bw_t;
+  LIS3DSH_ACC_BW_800HZ = 0x00,      /**< AA filter BW 800Hz.                */
+  LIS3DSH_ACC_BW_200HZ = 0x40,      /**< AA filter BW 200Hz.                */
+  LIS3DSH_ACC_BW_400HZ = 0x80,      /**< AA filter BW 400Hz.                */
+  LIS3DSH_ACC_BW_50HZ = 0xC0        /**< AA filter BW 50Hz.                 */
+}lis3dsh_acc_bw_t;
 
 /**
  * @brief   LIS3DSH block data update.
  */
 typedef enum {
-  LIS3DSH_BDU_CONTINUOUS = 0x00,    /**< Block data continuously updated.   */
-  LIS3DSH_BDU_BLOCKED = 0x80        /**< Block data updated after reading.  */
-} lis3dsh_bdu_t;
+  LIS3DSH_ACC_BDU_CONTINUOUS = 0x00,/**< Block data continuously updated.   */
+  LIS3DSH_ACC_BDU_BLOCKED = 0x80    /**< Block data updated after reading.  */
+} lis3dsh_acc_bdu_t;
 
 /**
  * @brief   Driver state machine possible states.
@@ -435,94 +449,86 @@ typedef struct {
   const I2CConfig           *i2ccfg;
 #endif /* LIS3DSH_USE_I2C */
   /**
-   * @brief LIS3DSH initial sensitivity.
+   * @brief LIS3DSH accelerometer subsystem initial sensitivity.
    */
-  float                     *sensitivity;
+  float                     *accsensitivity;
   /**
-   * @brief LIS3DSH initial bias.
+   * @brief LIS3DSH accelerometer subsystem initial bias.
    */
-  float                     *bias;
+  float                     *accbias;
   /**
-   * @brief LIS3DSH full scale value.
+   * @brief LIS3DSH accelerometer subsystem initial full scale.
    */
-  lis3dsh_fs_t              fullscale;
+  lis3dsh_acc_fs_t          accfullscale;
   /**
    * @brief LIS3DSH output data rate selection.
    */
-  lis3dsh_odr_t             outputdatarate;
-#if LIS3DSH_USE_ADVANCED || defined(__DOXYGEN__)
+  lis3dsh_acc_odr_t         accoutputdatarate;
+#if LIS3DSH_ACC_USE_ADVANCED || defined(__DOXYGEN__)
   /**
    * @brief   LIS3DSH anti-aliasing bandwidth.
    */
-  lis3dsh_bw_t              antialiasing;
+  lis3dsh_acc_bw_t          accantialiasing;
   /**
    * @brief   LIS3DSH block data update.
    */  
-  lis3dsh_bdu_t             blockdataupdate;
+  lis3dsh_acc_bdu_t         accblockdataupdate;
 #endif
 } LIS3DSHConfig;
 
 /**
- * @brief   @p LIS3DSH accelerometer subsystem specific methods.
+ * @brief   @p LIS3DSH specific methods.
  */
-#define _lis3dsh_accelerometer_methods_alone                                \
-  /* Change full scale value of LIS3DSH accelerometer subsystem .*/         \
-  msg_t (*set_full_scale)(void *instance, lis3dsh_fs_t fs);
+#define _lis3dsh_methods_alone                                              \
+  /* Change full scale value of LIS3DSH accelerometer subsystem.*/          \
+  msg_t (*acc_set_full_scale)(LIS3DSHDriver *instance, lis3dsh_acc_fs_t fs);
   
   
 /**
- * @brief   @p LIS3DSH accelerometer subsystems specific methods with inherited 
+ * @brief   @p LIS3DSH specific methods with inherited 
  *          ones.
  */
-#define _lis3dsh_accelerometer_methods                                      \
-  _base_accelerometer_methods                                               \
-  _lis3dsh_accelerometer_methods_alone
+#define _lis3dsh_methods                                                    \
+  _base_object_methods                                                      \
+  _lis3dsh_methods_alone
 
 /**
- * @extends BaseAccelerometerVMT
+ * @extends BaseObjectVMT
  *
- * @brief   @p LIS3DSH accelerometer virtual methods table.
+ * @brief   @p LIS3DSH virtual methods table.
  */
-struct LIS3DSHAccelerometerVMT {
-  _lis3dsh_accelerometer_methods
+struct LIS3DSHVMT {
+  _lis3dsh_methods
 };
 
 /**
  * @brief   @p LIS3DSHDriver specific data.
  */
 #define _lis3dsh_data                                                       \
+  _base_sensor_data                                                         \
   /* Driver state.*/                                                        \
   lis3dsh_state_t           state;                                          \
   /* Current configuration data.*/                                          \
-  const LIS3DSHConfig       *config;                                        \
-  /* Current sensitivity.*/                                                 \
-  float                     sensitivity[LIS3DSH_NUMBER_OF_AXES];            \
-  /* Bias data.*/                                                           \
-  int32_t                   bias[LIS3DSH_NUMBER_OF_AXES];                   \
-  /* Current full scale value.*/                                            \
-  float                     fullscale;
+  const LIS3DSHConfig    *config;                                           \
+  /* Accelerometer subsystem axes number.*/                                 \
+  size_t                    accaxes;                                        \
+  /* Accelerometer subsystem current sensitivity.*/                         \
+  float                     accsensitivity[LIS3DSH_ACC_NUMBER_OF_AXES];     \
+  /* Accelerometer subsystem current bias .*/                               \
+  float                     accbias[LIS3DSH_ACC_NUMBER_OF_AXES];            \
+  /* Accelerometer subsystem current full scale value.*/                    \
+  float                     accfullscale;
 
 /**
- * @extends BaseAccelerometer
- *
  * @brief   LIS3DSH 3-axis accelerometer class.
- * @details This class extends @p BaseAccelerometer by adding physical
- *          driver implementation.
  */
 struct LIS3DSHDriver {
-  /** @brief BaseSensor Virtual Methods Table. */
-  const struct BaseSensorVMT *vmt_sensor;
-  _base_sensor_data
-  /** @brief LIS3DSH Accelerometer Virtual Methods Table. */
-  const struct LIS3DSHAccelerometerVMT *vmt_accelerometer;
-  _base_accelerometer_data
+  /** @brief Virtual Methods Table.*/
+  const struct LIS3DSHVMT     *vmt;
+  /** @brief Base accelerometer interface.*/
+  BaseAccelerometer           acc_if;
   _lis3dsh_data
 };
-
-/**
- * @brief   Structure representing a LIS3DSH driver.
- */
-typedef struct LIS3DSHDriver LIS3DSHDriver;
 /** @} */
 
 /*===========================================================================*/
@@ -530,18 +536,141 @@ typedef struct LIS3DSHDriver LIS3DSHDriver;
 /*===========================================================================*/
 
 /**
- * @brief   Change accelerometer fullscale value.
+ * @brief   Return the number of axes of the BaseAccelerometer.
  *
- * @param[in] ip        pointer to a @p LIS3DSHDriver class.
- * @param[in] fs        the new full scale value.
+ * @param[in] devp      pointer to @p LIS3DSHDriver.
+ *
+ * @return              the number of axes.
+ *
+ * @api
+ */
+#define lis3dshAccelerometerGetAxesNumber(devp)                             \
+        accelerometerGetAxesNumber(&((devp)->acc_if))
+
+/**
+ * @brief   Retrieves raw data from the BaseAccelerometer.
+ * @note    This data is retrieved from MEMS register without any algebraical
+ *          manipulation.
+ * @note    The axes array must be at least the same size of the
+ *          BaseAccelerometer axes number.
+ *
+ * @param[in] devp      pointer to @p LIS3DSHDriver.
+ * @param[out] axes     a buffer which would be filled with raw data.
  *
  * @return              The operation status.
  * @retval MSG_OK       if the function succeeded.
- * @retval MSG_RESET    if one or more errors occurred.
+ * @retval MSG_RESET    if one or more I2C errors occurred, the errors can
+ *                      be retrieved using @p i2cGetErrors().
+ * @retval MSG_TIMEOUT  if a timeout occurred before operation end.
+ *
  * @api
  */
-#define accelerometerSetFullScale(ip, fs)                                   \
-        (ip)->vmt_accelerometer->set_full_scale(ip, fs)
+#define lis3dshAccelerometerReadRaw(devp, axes)                             \
+        accelerometerReadRaw(&((devp)->acc_if), axes)
+
+/**
+ * @brief   Retrieves cooked data from the BaseAccelerometer.
+ * @note    This data is manipulated according to the formula
+ *          cooked = (raw * sensitivity) - bias.
+ * @note    Final data is expressed as milli-G.
+ * @note    The axes array must be at least the same size of the
+ *          BaseAccelerometer axes number.
+ *
+ * @param[in] devp      pointer to @p LIS3DSHDriver.
+ * @param[out] axes     a buffer which would be filled with cooked data.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more I2C errors occurred, the errors can
+ *                      be retrieved using @p i2cGetErrors().
+ * @retval MSG_TIMEOUT  if a timeout occurred before operation end.
+ *
+ * @api
+ */
+#define lis3dshAccelerometerReadCooked(devp, axes)                          \
+        accelerometerReadCooked(&((devp)->acc_if), axes)
+
+/**
+ * @brief   Set bias values for the BaseAccelerometer.
+ * @note    Bias must be expressed as milli-G.
+ * @note    The bias buffer must be at least the same size of the
+ *          BaseAccelerometer axes number.
+ *
+ * @param[in] devp      pointer to @p LIS3DSHDriver.
+ * @param[in] bp        a buffer which contains biases.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ *
+ * @api
+ */
+#define lis3dshAccelerometerSetBias(devp, bp)                               \
+        accelerometerSetBias(&((devp)->acc_if), bp)
+
+/**
+ * @brief   Reset bias values for the BaseAccelerometer.
+ * @note    Default biases value are obtained from device datasheet when
+ *          available otherwise they are considered zero.
+ *
+ * @param[in] devp      pointer to @p LIS3DSHDriver.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ *
+ * @api
+ */
+#define lis3dshAccelerometerResetBias(devp)                                 \
+        accelerometerResetBias(&((devp)->acc_if))
+
+/**
+ * @brief   Set sensitivity values for the BaseAccelerometer.
+ * @note    Sensitivity must be expressed as milli-G/LSB.
+ * @note    The sensitivity buffer must be at least the same size of the
+ *          BaseAccelerometer axes number.
+ *
+ * @param[in] devp      pointer to @p LIS3DSHDriver.
+ * @param[in] sp        a buffer which contains sensitivities.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ *
+ * @api
+ */
+#define lis3dshAccelerometerSetSensitivity(devp, sp)                        \
+        accelerometerSetSensitivity(&((devp)->acc_if), sp)
+
+/**
+ * @brief   Reset sensitivity values for the BaseAccelerometer.
+ * @note    Default sensitivities value are obtained from device datasheet.
+ *
+ * @param[in] devp      pointer to @p LIS3DSHDriver.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    otherwise.
+ *
+ * @api
+ */
+#define lis3dshAccelerometerResetSensitivity(devp)                          \
+        accelerometerResetSensitivity(&((devp)->acc_if))
+
+/**
+ * @brief   Changes the LIS3DSHDriver accelerometer fullscale value.
+ * @note    This function also rescale sensitivities and biases based on
+ *          previous and next fullscale value.
+ * @note    A recalibration is highly suggested after calling this function.
+ *
+ * @param[in] devp      pointer to @p LIS3DSHDriver.
+ * @param[in] fs        new fullscale value.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    otherwise.
+ *
+ * @api
+ */
+#define lis3dshAccelerometerSetFullScale(devp, fs)                          \
+        (devp)->vmt->acc_set_full_scale(devp, fs)
 
 /*===========================================================================*/
 /* External declarations.                                                    */

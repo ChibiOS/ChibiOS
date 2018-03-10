@@ -18,11 +18,10 @@
 #include "hal.h"
 
 #include "usbcfg.h"
-#include "string.h"
-#include "shell.h"
 #include "chprintf.h"
-
 #include "lis3dsh.h"
+
+#define cls(chp)  chprintf(chp, "\033[2J\033[1;1H")
 
 /*===========================================================================*/
 /* LIS3DSH related.                                                          */
@@ -31,10 +30,11 @@
 /* LIS3DSH Driver: This object represent an LIS3DSH instance */
 static LIS3DSHDriver LIS3DSHD1;
 
-static int32_t rawdata[LIS3DSH_NUMBER_OF_AXES];
-static float cookeddata[LIS3DSH_NUMBER_OF_AXES];
+static int32_t accraw[LIS3DSH_ACC_NUMBER_OF_AXES];
 
-static char axisID[LIS3DSH_NUMBER_OF_AXES] = {'X', 'Y', 'Z'};
+static float acccooked[LIS3DSH_ACC_NUMBER_OF_AXES];
+
+static char axisID[LIS3DSH_ACC_NUMBER_OF_AXES] = {'X', 'Y', 'Z'};
 static uint32_t i;
 
 static const SPIConfig spicfg = {
@@ -51,108 +51,19 @@ static LIS3DSHConfig lis3dshcfg = {
   &spicfg,
   NULL,
   NULL,
-  LIS3DSH_FS_2G,
-  LIS3DSH_ODR_100HZ,
+  LIS3DSH_ACC_FS_2G,
+  LIS3DSH_ACC_ODR_100HZ,
 #if LIS3DSH_USE_ADVANCED
-  LIS3DSH_BW_400HZ,
-  LIS3DSH_BDU_CONTINUOUS,
+  LIS3DSH_ACC_BW_400HZ,
+  LIS3DSH_ACC_BDU_CONTINUOUS,
 #endif
 };
 
 /*===========================================================================*/
-/* Command line related.                                                     */
+/* Generic code.                                                             */
 /*===========================================================================*/
 
-/* Enable use of special ANSI escape sequences.*/
-#define CHPRINTF_USE_ANSI_CODE      TRUE
-#define SHELL_WA_SIZE               THD_WORKING_AREA_SIZE(2048)
-
-static void cmd_read(BaseSequentialStream *chp, int argc, char *argv[]) {
-  (void)argv;
-  if (argc != 1) {
-    chprintf(chp, "Usage: read [raw|cooked]\r\n");
-    return;
-  }
-
-  while (chnGetTimeout((BaseChannel *)chp, 150) == Q_TIMEOUT) {
-    if (!strcmp (argv[0], "raw")) {
-#if CHPRINTF_USE_ANSI_CODE
-      chprintf(chp, "\033[2J\033[1;1H");
-#endif
-      accelerometerReadRaw(&LIS3DSHD1, rawdata);
-      chprintf(chp, "LIS3DSH Accelerometer raw data...\r\n");
-      for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++) {
-        chprintf(chp, "%c-axis: %d\r\n", axisID[i], rawdata[i]);
-      }
-    }
-    else if (!strcmp (argv[0], "cooked")) {
-#if CHPRINTF_USE_ANSI_CODE
-      chprintf(chp, "\033[2J\033[1;1H");
-#endif
-      accelerometerReadCooked(&LIS3DSHD1, cookeddata);
-      chprintf(chp, "LIS3DSH Accelerometer cooked data...\r\n");
-      for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++) {
-        chprintf(chp, "%c-axis: %.4f mg\r\n", axisID[i], cookeddata[i]);
-      }
-    }
-    else {
-      chprintf(chp, "Usage: read [raw|cooked]\r\n");
-      return;
-    }
-  }
-  chprintf(chp, "Stopped\r\n");
-}
-
-static void cmd_fullscale(BaseSequentialStream *chp, int argc, char *argv[]) {
-  (void)argv;
-  if (argc != 1) {
-    chprintf(chp, "Usage: fullscale [2G|4G|6G|8G|16G]\r\n");
-    return;
-  }
-#if CHPRINTF_USE_ANSI_CODE
-    chprintf(chp, "\033[2J\033[1;1H");
-#endif
-  if(!strcmp (argv[0], "2G")) {
-    accelerometerSetFullScale(&LIS3DSHD1, LIS3DSH_FS_2G);
-    chprintf(chp, "LIS3DSH Accelerometer full scale set to 2G...\r\n");
-  }
-  else if(!strcmp (argv[0], "4G")) {
-    accelerometerSetFullScale(&LIS3DSHD1, LIS3DSH_FS_4G);
-    chprintf(chp, "LIS3DSH Accelerometer full scale set to 4G...\r\n");
-  }
-  else if(!strcmp (argv[0], "6G")) {
-    accelerometerSetFullScale(&LIS3DSHD1, LIS3DSH_FS_6G);
-    chprintf(chp, "LIS3DSH Accelerometer full scale set to 6G...\r\n");
-  }
-  else if(!strcmp (argv[0], "8G")) {
-    accelerometerSetFullScale(&LIS3DSHD1, LIS3DSH_FS_8G);
-    chprintf(chp, "LIS3DSH Accelerometer full scale set to 8G...\r\n");
-  }
-  else if(!strcmp (argv[0], "16G")) {
-    accelerometerSetFullScale(&LIS3DSHD1, LIS3DSH_FS_16G);
-    chprintf(chp, "LIS3DSH Accelerometer full scale set to 16G...\r\n");
-  }
-  else {
-    chprintf(chp, "Usage: fullscale [2G|4G|6G|8G|16G]\r\n");
-    return;
-  }
-}
-
-static const ShellCommand commands[] = {
-  {"read", cmd_read},
-  {"fullscale", cmd_fullscale},
-  {NULL, NULL}
-};
-
-static const ShellConfig shell_cfg1 = {
-  (BaseSequentialStream *)&SDU1,
-  commands
-};
-
-/*===========================================================================*/
-/* Main code.                                                                */
-/*===========================================================================*/
-
+static BaseSequentialStream* chp = (BaseSequentialStream*)&SDU1;
 /*
  * LED blinker thread, times are in milliseconds.
  */
@@ -165,9 +76,7 @@ static THD_FUNCTION(Thread1, arg) {
     systime_t time;
 
     time = serusbcfg.usbp->state == USB_ACTIVE ? 250 : 500;
-    palClearLine(LINE_LED6);
-    chThdSleepMilliseconds(time);
-    palSetLine(LINE_LED6);
+    palToggleLine(LINE_LED6);
     chThdSleepMilliseconds(time);
   }
 }
@@ -210,18 +119,21 @@ int main(void) {
   /* Activates the LIS3DSH driver.*/
   lis3dshStart(&LIS3DSHD1, &lis3dshcfg);
 
-  /* Shell manager initialization.*/
-  shellInit();
-
-  while(TRUE) {
-    if (SDU1.config->usbp->state == USB_ACTIVE) {
-      thread_t *shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
-                                              "shell", NORMALPRIO + 1,
-                                              shellThread, (void *)&shell_cfg1);
-      chThdWait(shelltp);               /* Waiting termination.             */
+  /* Normal main() thread activity, printing MEMS data on the SDU1.*/
+  while (true) {
+    lis3dshAccelerometerReadRaw(&LIS3DSHD1, accraw);
+    chprintf(chp, "LIS3DSH Accelerometer raw data...\r\n");
+    for(i = 0; i < LIS3DSH_ACC_NUMBER_OF_AXES; i++) {
+      chprintf(chp, "%c-axis: %d\r\n", axisID[i], accraw[i]);
     }
-    chThdSleepMilliseconds(1000);
+
+    lis3dshAccelerometerReadCooked(&LIS3DSHD1, acccooked);
+    chprintf(chp, "LIS3DSH Accelerometer cooked data...\r\n");
+    for(i = 0; i < LIS3DSH_ACC_NUMBER_OF_AXES; i++) {
+      chprintf(chp, "%c-axis: %.3f\r\n", axisID[i], acccooked[i]);
+    }
+    chThdSleepMilliseconds(100);
+    cls(chp);
   }
   lis3dshStop(&LIS3DSHD1);
-  return 0;
 }
