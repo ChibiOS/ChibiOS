@@ -34,13 +34,6 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-#define HTS221_SEL(mask, offset)    (int16_t)(mask << offset)
-
-#define HTS221_FLAG_HYGRO_BIAS      0x01
-#define HTS221_FLAG_HYGRO_SENS      0x02         
-#define HTS221_FLAG_THERMO_BIAS     0x04
-#define HTS221_FLAG_THERMO_SENS     0x08
-
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
