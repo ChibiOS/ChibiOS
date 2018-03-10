@@ -108,7 +108,7 @@ int main(void) {
   /* Activates the HTS221 driver.*/
   hts221Start(&HTS221D1, &hts221cfg);
 
-  /* Normal main() thread activity, printing MEMS data on the SD1. */
+  /* Normal main() thread activity, printing MEMS data on the SD2. */
   while (true) {
     hts221HygrometerReadRaw(&HTS221D1, &hygroraw);
     chprintf(chp, "HTS221D1 Hygrometer raw data...\r\n");
