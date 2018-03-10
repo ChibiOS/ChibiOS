@@ -386,7 +386,6 @@ typedef enum {
   LSM303DLHC_ACC_ODR_1344Hz = 0x90  /**< ODR 1344 Hz or 5376 Hz in LP       */
 } lsm303dlhc_acc_odr_t;
 
-
 /**
  * @brief LSM303DLHC accelerometer subsystem axes enabling.
  */

@@ -194,7 +194,6 @@ static msg_t baro_read_cooked(void *ip, float axes[]) {
   return msg;
 }
 
-
 /**
  * @brief   Set bias values for the BaseBarometer.
  * @note    Bias must be expressed as hPa.

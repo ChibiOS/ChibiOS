@@ -269,7 +269,6 @@ static msg_t set_full_scale(void *ip, lis3mdl_fs_t fs) {
     if(msg != MSG_OK)
       return msg;
 
-
     cr[0] = LIS3MDL_AD_CTRL_REG2;
     cr[1] &= ~(LIS3MDL_CTRL_REG2_FS_MASK);
     cr[1] |= fs;
