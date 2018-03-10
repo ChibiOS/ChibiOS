@@ -76,7 +76,7 @@
 
 /**
  * @brief   HTS221 thermometer subsystem characteristics.
- * @note    Sensitivity is expressed as °C/LSB whereas.
+ * @note    Sensitivity is expressed as °C/LSB.
  *
  * @{
  */
@@ -353,11 +353,11 @@ typedef struct {
    */
   hts221_bdu_t              blockdataupdate;
   /**
-   * @brief   HTS221 hygrometer subsystem resolution.
+   * @brief HTS221 hygrometer subsystem resolution.
    */
   hts221_avgh_t             hygroresolution;
   /**
-   * @brief   HTS221 thermometer subsystem resolution.
+   * @brief HTS221 thermometer subsystem resolution.
    */
   hts221_avgt_t             thermoresolution;
 #endif
