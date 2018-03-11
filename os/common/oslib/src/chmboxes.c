@@ -103,7 +103,7 @@ void chMBObjectInit(mailbox_t *mbp, msg_t *buf, size_t n) {
  * @details All the waiting threads are resumed with status @p MSG_RESET and
  *          the queued messages are lost.
  * @post    The mailbox is in reset state, all operations will fail and
- *          return @p MSG reset until the mailbox is enabled again using
+ *          return @p MSG_RESET until the mailbox is enabled again using
  *          @p chMBResumeX().
  *
  * @param[in] mbp       the pointer to an initialized @p mailbox_t object
@@ -123,7 +123,7 @@ void chMBReset(mailbox_t *mbp) {
  * @details All the waiting threads are resumed with status @p MSG_RESET and
  *          the queued messages are lost.
  * @post    The mailbox is in reset state, all operations will fail and
- *          return @p MSG reset until the mailbox is enabled again using
+ *          return @p MSG_RESET until the mailbox is enabled again using
  *          @p chMBResumeX().
  *
  * @param[in] mbp       the pointer to an initialized @p mailbox_t object
