@@ -197,7 +197,7 @@ CPPWARN = -Wall -Wextra -Wundef
 
 # List all user C define here, like -D_DEBUG=1
 UDEFS = -DCHPRINTF_USE_FLOAT=1 \
-        -DL3GD20_USE_ADVANCED=0 -DL3GD20_SHARED_SPI=0
+        -DL3GD20_GYRO_USE_ADVANCED=0 -DL3GD20_SHARED_SPI=0
 
 # Define ASM defines here
 UADEFS =

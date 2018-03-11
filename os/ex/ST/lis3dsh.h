@@ -291,34 +291,16 @@
 /*===========================================================================*/
 
 /**
- * @name    Configuration options.
+ * @name    Configuration options
  * @{
  */
 /**
  * @brief   LIS3DSH SPI interface switch.
  * @details If set to @p TRUE the support for SPI is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(LIS3DSH_USE_SPI) || defined(__DOXYGEN__)
-#define LIS3DSH_USE_SPI                     TRUE
-#endif
-
-/**
- * @brief   LIS3DSH I2C interface switch.
- * @details If set to @p TRUE the support for I2C is included.
- * @note    The default is @p FALSE.
- */
-#if !defined(LIS3DSH_USE_I2C) || defined(__DOXYGEN__)
-#define LIS3DSH_USE_I2C                     FALSE
-#endif
-
-/**
- * @brief   LIS3DSH accelerometer subsystem advanced configurations switch.
- * @details If set to @p TRUE more configurations are available.
- * @note    The default is @p FALSE.
- */
-#if !defined(LIS3DSH_ACC_USE_ADVANCED) || defined(__DOXYGEN__)
-#define LIS3DSH_ACC_USE_ADVANCED            FALSE
+#define LIS3DSH_USE_SPI                     FALSE
 #endif
 
 /**
@@ -329,6 +311,35 @@
  */
 #if !defined(LIS3DSH_SHARED_SPI) || defined(__DOXYGEN__)
 #define LIS3DSH_SHARED_SPI                  FALSE
+#endif
+
+/**
+ * @brief   LIS3DSH I2C interface switch.
+ * @details If set to @p TRUE the support for I2C is included.
+ * @note    The default is @p TRUE.
+ */
+#if !defined(LIS3DSH_USE_I2C) || defined(__DOXYGEN__)
+#define LIS3DSH_USE_I2C                     TRUE
+#endif
+
+/**
+ * @brief   LIS3DSH shared I2C switch.
+ * @details If set to @p TRUE the device acquires I2C bus ownership
+ *          on each transaction.
+ * @note    The default is @p FALSE. Requires I2C_USE_MUTUAL_EXCLUSION.
+ */
+#if !defined(LIS3DSH_SHARED_I2C) || defined(__DOXYGEN__)
+#define LIS3DSH_SHARED_I2C                  FALSE
+#endif
+
+/**
+ * @brief   LIS3DSH accelerometer subsystem advanced configurations 
+ *          switch.
+ * @details If set to @p TRUE more configurations are available.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(LIS3DSH_ACC_USE_ADVANCED) || defined(__DOXYGEN__)
+#define LIS3DSH_ACC_USE_ADVANCED            FALSE
 #endif
 /** @} */
 
@@ -344,16 +355,23 @@
 #error "LIS3DSH_USE_SPI requires HAL_USE_SPI"
 #endif
 
-#if LIS3DSH_USE_I2C && !HAL_USE_I2C
-#error "LIS3DSH_USE_I2C requires HAL_USE_I2C"
-#endif
-
 #if LIS3DSH_SHARED_SPI && !SPI_USE_MUTUAL_EXCLUSION
 #error "LIS3DSH_SHARED_SPI requires SPI_USE_MUTUAL_EXCLUSION"
 #endif
 
-#if LIS3DSH_USE_I2C
-#error "LIS3DSH's I2C support is not supported."
+#if LIS3DSH_USE_I2C && !HAL_USE_I2C
+#error "LIS3DSH_USE_I2C requires HAL_USE_I2C"
+#endif
+
+#if LIS3DSH_SHARED_I2C && !I2C_USE_MUTUAL_EXCLUSION
+#error "LIS3DSH_SHARED_I2C requires I2C_USE_MUTUAL_EXCLUSION"
+#endif
+
+/**
+ * @todo    Add support for LIS3DSH over SPI.
+ */
+#if LIS3DSH_USE_SPI
+#error "LIS3DSH over SPI still not supported"
 #endif
 
 /*===========================================================================*/

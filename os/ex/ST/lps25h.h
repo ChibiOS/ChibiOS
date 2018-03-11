@@ -220,6 +220,16 @@
 #endif
 
 /**
+ * @brief   LPS25H shared SPI switch.
+ * @details If set to @p TRUE the device acquires SPI bus ownership
+ *          on each transaction.
+ * @note    The default is @p FALSE. Requires SPI_USE_MUTUAL_EXCLUSION.
+ */
+#if !defined(LPS25H_SHARED_SPI) || defined(__DOXYGEN__)
+#define LPS25H_SHARED_SPI                   FALSE
+#endif
+
+/**
  * @brief   LPS25H I2C interface switch.
  * @details If set to @p TRUE the support for I2C is included.
  * @note    The default is @p TRUE.
@@ -229,22 +239,23 @@
 #endif
 
 /**
- * @brief   LPS25H advanced configurations switch.
+ * @brief   LPS25H shared I2C switch.
+ * @details If set to @p TRUE the device acquires I2C bus ownership
+ *          on each transaction.
+ * @note    The default is @p FALSE. Requires I2C_USE_MUTUAL_EXCLUSION.
+ */
+#if !defined(LPS25H_SHARED_I2C) || defined(__DOXYGEN__)
+#define LPS25H_SHARED_I2C                   FALSE
+#endif
+
+/**
+ * @brief   LPS25H accelerometer subsystem advanced configurations 
+ *          switch.
  * @details If set to @p TRUE more configurations are available.
  * @note    The default is @p FALSE.
  */
 #if !defined(LPS25H_USE_ADVANCED) || defined(__DOXYGEN__)
 #define LPS25H_USE_ADVANCED                 FALSE
-#endif
-
-/**
- * @brief   LPS25H shared I2C switch.
- * @details If set to @p TRUE the device acquires I2C bus ownership
- *          on each transaction.
- * @note    The default is @p FALSE. Requires I2C_USE_MUTUAL_EXCLUSION
- */
-#if !defined(LPS25H_SHARED_I2C) || defined(__DOXYGEN__)
-#define LPS25H_SHARED_I2C                   FALSE
 #endif
 /** @} */
 
@@ -260,8 +271,8 @@
 #error "LPS25H_USE_SPI requires HAL_USE_SPI"
 #endif
 
-#if LPS25H_USE_SPI
-#error "LPS25H over SPI still not supported"
+#if LPS25H_SHARED_SPI && !SPI_USE_MUTUAL_EXCLUSION
+#error "LPS25H_SHARED_SPI requires SPI_USE_MUTUAL_EXCLUSION"
 #endif
 
 #if LPS25H_USE_I2C && !HAL_USE_I2C
@@ -270,6 +281,13 @@
 
 #if LPS25H_SHARED_I2C && !I2C_USE_MUTUAL_EXCLUSION
 #error "LPS25H_SHARED_I2C requires I2C_USE_MUTUAL_EXCLUSION"
+#endif
+
+/**
+ * @todo    Add support for LPS25H over SPI.
+ */
+#if LPS25H_USE_SPI
+#error "LPS25H over SPI still not supported"
 #endif
 
 /*===========================================================================*/

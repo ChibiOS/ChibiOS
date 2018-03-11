@@ -185,21 +185,22 @@
 #endif
 
 /**
+ * @brief   HTS221 shared SPI switch.
+ * @details If set to @p TRUE the device acquires SPI bus ownership
+ *          on each transaction.
+ * @note    The default is @p FALSE. Requires SPI_USE_MUTUAL_EXCLUSION
+ */
+#if !defined(HTS221_SHARED_SPI) || defined(__DOXYGEN__)
+#define HTS221_SHARED_SPI                   FALSE
+#endif
+
+/**
  * @brief   HTS221 I2C interface switch.
  * @details If set to @p TRUE the support for I2C is included.
  * @note    The default is @p TRUE.
  */
 #if !defined(HTS221_USE_I2C) || defined(__DOXYGEN__)
 #define HTS221_USE_I2C                      TRUE
-#endif
-
-/**
- * @brief   HTS221 advanced configurations switch.
- * @details If set to @p TRUE more configurations are available.
- * @note    The default is @p FALSE.
- */
-#if !defined(HTS221_USE_ADVANCED) || defined(__DOXYGEN__)
-#define HTS221_USE_ADVANCED                 FALSE
 #endif
 
 /**
@@ -210,6 +211,15 @@
  */
 #if !defined(HTS221_SHARED_I2C) || defined(__DOXYGEN__)
 #define HTS221_SHARED_I2C                   FALSE
+#endif
+
+/**
+ * @brief   HTS221 advanced configurations switch.
+ * @details If set to @p TRUE more configurations are available.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(HTS221_USE_ADVANCED) || defined(__DOXYGEN__)
+#define HTS221_USE_ADVANCED                 FALSE
 #endif
 /** @} */
 
@@ -225,8 +235,8 @@
 #error "HTS221_USE_SPI requires HAL_USE_SPI"
 #endif
 
-#if HTS221_USE_SPI
-#error "HTS221 over SPI still not supported"
+#if HTS221_SHARED_SPI && !SPI_USE_MUTUAL_EXCLUSION
+#error "HTS221_SHARED_SPI requires SPI_USE_MUTUAL_EXCLUSION"
 #endif
 
 #if HTS221_USE_I2C && !HAL_USE_I2C
@@ -235,6 +245,13 @@
 
 #if HTS221_SHARED_I2C && !I2C_USE_MUTUAL_EXCLUSION
 #error "HTS221_SHARED_I2C requires I2C_USE_MUTUAL_EXCLUSION"
+#endif
+
+/**
+ * @todo    Add support for HTS221 over SPI.
+ */
+#if HTS221_USE_SPI
+#error "HTS221 over SPI still not supported."
 #endif
 
 /*===========================================================================*/

@@ -305,6 +305,44 @@
  * @{
  */
 /**
+ * @brief   LSM303DLHC SPI interface switch.
+ * @details If set to @p TRUE the support for SPI is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(LSM303DLHC_USE_SPI) || defined(__DOXYGEN__)
+#define LSM303DLHC_USE_SPI                  FALSE
+#endif
+
+/**
+ * @brief   LSM303DLHC shared SPI switch.
+ * @details If set to @p TRUE the device acquires SPI bus ownership
+ *          on each transaction.
+ * @note    The default is @p FALSE. Requires SPI_USE_MUTUAL_EXCLUSION.
+ */
+#if !defined(LSM303DLHC_SHARED_SPI) || defined(__DOXYGEN__)
+#define LSM303DLHC_SHARED_SPI               FALSE
+#endif
+
+/**
+ * @brief   LSM303DLHC I2C interface switch.
+ * @details If set to @p TRUE the support for I2C is included.
+ * @note    The default is @p TRUE.
+ */
+#if !defined(LSM303DLHC_USE_I2C) || defined(__DOXYGEN__)
+#define LSM303DLHC_USE_I2C                  TRUE
+#endif
+
+/**
+ * @brief   LSM303DLHC shared I2C switch.
+ * @details If set to @p TRUE the device acquires I2C bus ownership
+ *          on each transaction.
+ * @note    The default is @p FALSE. Requires I2C_USE_MUTUAL_EXCLUSION.
+ */
+#if !defined(LSM303DLHC_SHARED_I2C) || defined(__DOXYGEN__)
+#define LSM303DLHC_SHARED_I2C               FALSE
+#endif
+
+/**
  * @brief   LSM303DLHC accelerometer subsystem advanced configurations 
  *          switch.
  * @details If set to @p TRUE more configurations are available.
@@ -323,28 +361,37 @@
 #if !defined(LSM303DLHC_COMP_USE_ADVANCED) || defined(__DOXYGEN__)
 #define LSM303DLHC_COMP_USE_ADVANCED        FALSE
 #endif
-
-/**
- * @brief   LSM303DLHC shared I2C switch.
- * @details If set to @p TRUE the device acquires I2C bus ownership
- *          on each transaction.
- * @note    The default is @p FALSE. Requires I2C_USE_MUTUAL_EXCLUSION.
- */
-#if !defined(LSM303DLHC_SHARED_I2C) || defined(__DOXYGEN__)
-#define LSM303DLHC_SHARED_I2C               FALSE
-#endif
 /** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !HAL_USE_I2C
-#error "LSM303DLHC requires HAL_USE_I2C"
+#if !(LSM303DLHC_USE_SPI ^ LSM303DLHC_USE_I2C)
+#error "LSM303DLHC_USE_SPI and LSM303DLHC_USE_I2C cannot be both true or both false"
+#endif
+
+#if LSM303DLHC_USE_SPI && !HAL_USE_SPI
+#error "LSM303DLHC_USE_SPI requires HAL_USE_SPI"
+#endif
+
+#if LSM303DLHC_SHARED_SPI && !SPI_USE_MUTUAL_EXCLUSION
+#error "LSM303DLHC_SHARED_SPI requires SPI_USE_MUTUAL_EXCLUSION"
+#endif
+
+#if LSM303DLHC_USE_I2C && !HAL_USE_I2C
+#error "LSM303DLHC_USE_I2C requires HAL_USE_I2C"
 #endif
 
 #if LSM303DLHC_SHARED_I2C && !I2C_USE_MUTUAL_EXCLUSION
 #error "LSM303DLHC_SHARED_I2C requires I2C_USE_MUTUAL_EXCLUSION"
+#endif
+
+/**
+ * @todo    Add support for LSM303DLHC over SPI.
+ */
+#if LSM303DLHC_USE_SPI
+#error "LSM303DLHC over SPI still not supported"
 #endif
 
 /*===========================================================================*/
