@@ -405,8 +405,7 @@ static msg_t acc_set_full_scale(LSM303DLHCDriver *devp,
 
 #if LSM303DLHC_SHARED_I2C
     i2cAcquireBus(devp->config->i2cp);
-    i2cStart(devp->config->i2cp,
-                     devp->config->i2ccfg);
+    i2cStart(devp->config->i2cp, devp->config->i2ccfg);
 #endif /* LSM303DLHC_SHARED_I2C */
 
     msg = lsm303dlhcI2CWriteRegister(devp->config->i2cp,
@@ -710,7 +709,7 @@ static msg_t comp_reset_sensivity(void *ip) {
       }
     }
   else {
-    osalDbgAssert(FALSE, "reset_sensivity(), compass full scale issue");
+    osalDbgAssert(FALSE, "comp_reset_sensivity(), compass full scale issue");
     msg = MSG_RESET;
   }
   return msg;
@@ -776,15 +775,12 @@ static msg_t comp_set_full_scale(LSM303DLHCDriver *devp,
 
 #if LSM303DLHC_SHARED_I2C
     i2cAcquireBus(devp->config->i2cp);
-    i2cStart(devp->config->i2cp,
-                     devp->config->i2ccfg);
+    i2cStart(devp->config->i2cp, devp->config->i2ccfg);
 #endif /* LSM303DLHC_SHARED_I2C */
 
     /* Updating register.*/
-    msg = lsm303dlhcI2CReadRegister(devp->config->i2cp,
-                                   LSM303DLHC_SAD_COMP,
-                                   LSM303DLHC_AD_COMP_CRB_REG,
-                                   &buff[1], 1);
+    msg = lsm303dlhcI2CReadRegister(devp->config->i2cp, LSM303DLHC_SAD_COMP,
+                                    LSM303DLHC_AD_COMP_CRB_REG, &buff[1], 1);
 
 #if LSM303DLHC_SHARED_I2C
         i2cReleaseBus(devp->config->i2cp);
@@ -798,12 +794,11 @@ static msg_t comp_set_full_scale(LSM303DLHCDriver *devp,
 
 #if LSM303DLHC_SHARED_I2C
     i2cAcquireBus(devp->config->i2cp);
-    i2cStart(devp->config->i2cp,
-                     devp->config->i2ccfg);
+    i2cStart(devp->config->i2cp, devp->config->i2ccfg);
 #endif /* LSM303DLHC_SHARED_I2C */
 
-    msg = lsm303dlhcI2CWriteRegister(devp->config->i2cp,
-                                     LSM303DLHC_SAD_COMP, buff, 1);
+    msg = lsm303dlhcI2CWriteRegister(devp->config->i2cp, LSM303DLHC_SAD_COMP, 
+                                     buff, 1);
 
 #if LSM303DLHC_SHARED_I2C
         i2cReleaseBus(devp->config->i2cp);
