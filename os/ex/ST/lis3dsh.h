@@ -499,7 +499,7 @@ typedef struct {
  */
 #define _lis3dsh_methods_alone                                              \
   /* Change full scale value of LIS3DSH accelerometer subsystem.*/          \
-  msg_t (*acc_set_full_scale)(LIS3DSHDriver *instance, lis3dsh_acc_fs_t fs);
+  msg_t (*acc_set_full_scale)(LIS3DSHDriver *devp, lis3dsh_acc_fs_t fs);
   
   
 /**
@@ -527,7 +527,7 @@ struct LIS3DSHVMT {
   /* Driver state.*/                                                        \
   lis3dsh_state_t           state;                                          \
   /* Current configuration data.*/                                          \
-  const LIS3DSHConfig    *config;                                           \
+  const LIS3DSHConfig       *config;                                        \
   /* Accelerometer subsystem axes number.*/                                 \
   size_t                    accaxes;                                        \
   /* Accelerometer subsystem current sensitivity.*/                         \
