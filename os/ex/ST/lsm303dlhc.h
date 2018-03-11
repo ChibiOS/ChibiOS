@@ -487,13 +487,13 @@ typedef enum {
  * @brief LSM303DLHC compass subsystem full scale.
  */
 typedef enum {
-  LSM303DLHC_COMP_FS_1P3GA = 0x20, /**< Full scale ±1.3 Gauss              */
-  LSM303DLHC_COMP_FS_1P9GA = 0x40, /**< Full scale ±1.9 Gauss              */
-  LSM303DLHC_COMP_FS_2P5GA = 0x60, /**< Full scale ±2.5 Gauss              */
-  LSM303DLHC_COMP_FS_4P0GA = 0x80, /**< Full scale ±4.0 Gauss              */
-  LSM303DLHC_COMP_FS_4P7GA = 0xA0, /**< Full scale ±4.7 Gauss              */
-  LSM303DLHC_COMP_FS_5P6GA = 0xC0, /**< Full scale ±5.6 Gauss              */
-  LSM303DLHC_COMP_FS_8P1GA = 0xE0  /**< Full scale ±8.1 Gauss              */
+  LSM303DLHC_COMP_FS_1P3GA = 0x20,  /**< Full scale ±1.3 Gauss              */
+  LSM303DLHC_COMP_FS_1P9GA = 0x40,  /**< Full scale ±1.9 Gauss              */
+  LSM303DLHC_COMP_FS_2P5GA = 0x60,  /**< Full scale ±2.5 Gauss              */
+  LSM303DLHC_COMP_FS_4P0GA = 0x80,  /**< Full scale ±4.0 Gauss              */
+  LSM303DLHC_COMP_FS_4P7GA = 0xA0,  /**< Full scale ±4.7 Gauss              */
+  LSM303DLHC_COMP_FS_5P6GA = 0xC0,  /**< Full scale ±5.6 Gauss              */
+  LSM303DLHC_COMP_FS_8P1GA = 0xE0   /**< Full scale ±8.1 Gauss              */
 } lsm303dlhc_comp_fs_t;
 
 /**
