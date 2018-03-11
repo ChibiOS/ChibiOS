@@ -503,8 +503,7 @@ typedef struct {
   
   
 /**
- * @brief   @p LIS3DSH specific methods with inherited 
- *          ones.
+ * @brief   @p LIS3DSH specific methods with inherited ones.
  */
 #define _lis3dsh_methods                                                    \
   _base_object_methods                                                      \
