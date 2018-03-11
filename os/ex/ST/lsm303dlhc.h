@@ -607,10 +607,10 @@ typedef struct {
  */
 #define _lsm303dlhc_methods_alone                                           \
   /* Change full scale value of LSM303DLHC accelerometer subsystem.*/       \
-  msg_t (*acc_set_full_scale)(LSM303DLHCDriver *instance,                   \
+  msg_t (*acc_set_full_scale)(LSM303DLHCDriver *devp,                       \
                               lsm303dlhc_acc_fs_t fs);                      \
   /* Change full scale value of LSM303DLHC compass subsystem.*/             \
-  msg_t (*comp_set_full_scale)(LSM303DLHCDriver *instance,                  \
+  msg_t (*comp_set_full_scale)(LSM303DLHCDriver *devp,                      \
                               lsm303dlhc_comp_fs_t fs);                     \
 
 /**

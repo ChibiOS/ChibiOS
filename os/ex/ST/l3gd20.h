@@ -506,7 +506,7 @@ typedef struct {
  */
 #define _l3gd20_methods_alone                                               \
   /* Change full scale value of L3GD20.*/                                   \
-  msg_t (*gyro_set_full_scale)(L3GD20Driver *instance, l3gd20_fs_t fs);
+  msg_t (*gyro_set_full_scale)(L3GD20Driver *devp, l3gd20_fs_t fs);
 
 /**
  * @brief   @p L3GD20 specific methods with inherited ones.
