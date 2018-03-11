@@ -49,7 +49,7 @@
 /**
  * @brief   ChibiOS version string.
  */
-#define CH_VERSION              "17.6.3"
+#define CH_VERSION              "17.6.4"
 
 /**
  * @brief   ChibiOS version release year.
@@ -64,12 +64,12 @@
 /**
  * @brief   ChibiOS version patch number.
  */
-#define CH_VERSION_PATCH        3
+#define CH_VERSION_PATCH        4
 
 /**
  * @brief   ChibiOS version nickname.
  */
-#define CH_VERSION_NICKNAME     "Vivace"
+#define CH_VERSION_NICKNAME     "Quartetto"
 /** @} */
 
 /*===========================================================================*/
