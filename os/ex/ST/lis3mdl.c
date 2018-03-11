@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2016 Rocco Marco Guglielmi
+    ChibiOS - Copyright (C) 2016-2018 Rocco Marco Guglielmi
 
     This file is part of ChibiOS.
 
@@ -92,218 +92,345 @@ msg_t lis3mdlI2CWriteRegister(I2CDriver *i2cp, lis3mdl_sad_t sad, uint8_t* txbuf
 }
 #endif /* LIS3MDL_USE_I2C */
 
-/*
- * Interface implementation.
+/**
+ * @brief   Return the number of axes of the BaseCompass.
+ *
+ * @param[in] ip        pointer to @p BaseCompass interface
+ *
+ * @return              the number of axes.
  */
-static size_t get_axes_number(void *ip) {
+static size_t comp_get_axes_number(void *ip) {
 
   osalDbgCheck(ip != NULL);
-  return LIS3MDL_NUMBER_OF_AXES;
+  return LIS3MDL_COMP_NUMBER_OF_AXES;
 }
 
-static msg_t read_raw(void *ip, int32_t axes[LIS3MDL_NUMBER_OF_AXES]) {
+/**
+ * @brief   Retrieves raw data from the BaseCompass.
+ * @note    This data is retrieved from MEMS register without any algebraical
+ *          manipulation.
+ * @note    The axes array must be at least the same size of the
+ *          BaseCompass axes number.
+ *
+ * @param[in] ip        pointer to @p BaseCompass interface.
+ * @param[out] axes     a buffer which would be filled with raw data.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more I2C errors occurred, the errors can
+ *                      be retrieved using @p i2cGetErrors().
+ * @retval MSG_TIMEOUT  if a timeout occurred before operation end.
+ */
+static msg_t comp_read_raw(void *ip, int32_t axes[]) {
+  LIS3MDLDriver* devp;
+  uint8_t buff [LIS3MDL_COMP_NUMBER_OF_AXES * 2], i;
   int16_t tmp;
-  uint8_t i, buff[2 * LIS3MDL_NUMBER_OF_AXES];
-  msg_t msg = MSG_OK;
-  
+  msg_t msg;
+
   osalDbgCheck((ip != NULL) && (axes != NULL));
-  osalDbgAssert((((LIS3MDLDriver *)ip)->state == LIS3MDL_READY),
-                "read_raw(), invalid state");
-#if LIS3MDL_USE_I2C
-  osalDbgAssert((((LIS3MDLDriver *)ip)->config->i2cp->state == I2C_READY),
-                "read_raw(), channel not ready");
-                
-#if LIS3MDL_SHARED_I2C
-  i2cAcquireBus(((LIS3MDLDriver *)ip)->config->i2cp);
-  i2cStart(((LIS3MDLDriver *)ip)->config->i2cp,
-           ((LIS3MDLDriver *)ip)->config->i2ccfg);
-#endif /* LIS3MDL_SHARED_I2C */
+    
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(LIS3MDLDriver*, (BaseCompass*)ip);
 
-  msg = lis3mdlI2CReadRegister(((LIS3MDLDriver *)ip)->config->i2cp,
-                              ((LIS3MDLDriver *)ip)->config->slaveaddress,
-                              LIS3MDL_AD_OUT_X_L, buff, 2 * LIS3MDL_NUMBER_OF_AXES);
+  osalDbgAssert((devp->state == LIS3MDL_READY),
+                "comp_read_raw(), invalid state");
+  osalDbgAssert((devp->config->i2cp->state == I2C_READY),
+                "comp_read_raw(), channel not ready");
 
 #if LIS3MDL_SHARED_I2C
-  i2cReleaseBus(((LIS3MDLDriver *)ip)->config->i2cp);
+  i2cAcquireBus(devp->config->i2cp);
+  i2cStart(devp->config->i2cp,
+           devp->config->i2ccfg);
 #endif /* LIS3MDL_SHARED_I2C */
-#endif /* LIS3MDL_USE_I2C */
-                              
-  for(i = 0; i < LIS3MDL_NUMBER_OF_AXES; i++) {
-    if(msg == MSG_OK) { 
-      tmp = buff[2*i] + (buff[2*i+1] << 8);
+  msg = lis3mdlI2CReadRegister(devp->config->i2cp, devp->config->slaveaddress, 
+                               LIS3MDL_AD_OUT_X_L, buff, 
+                               LIS3MDL_COMP_NUMBER_OF_AXES * 2);
+
+#if LIS3MDL_SHARED_I2C
+  i2cReleaseBus(devp->config->i2cp);
+#endif /* LIS3MDL_SHARED_I2C */
+
+  if(msg == MSG_OK)
+    for(i = 0; i < LIS3MDL_COMP_NUMBER_OF_AXES; i++) {
+      tmp = buff[2 * i] + (buff[2 * i + 1] << 8);
       axes[i] = (int32_t)tmp;
     }
-    else{
-      axes[i] = 0;
-    }
-  }
   return msg;
 }
 
-static msg_t read_cooked(void *ip, float axes[]) {
+/**
+ * @brief   Retrieves cooked data from the BaseCompass.
+ * @note    This data is manipulated according to the formula
+ *          cooked = (raw * sensitivity) - bias.
+ * @note    Final data is expressed as G.
+ * @note    The axes array must be at least the same size of the
+ *          BaseCompass axes number.
+ *
+ * @param[in] ip        pointer to @p BaseCompass interface.
+ * @param[out] axes     a buffer which would be filled with cooked data.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more I2C errors occurred, the errors can
+ *                      be retrieved using @p i2cGetErrors().
+ * @retval MSG_TIMEOUT  if a timeout occurred before operation end.
+ */
+static msg_t comp_read_cooked(void *ip, float axes[]) {
+  LIS3MDLDriver* devp;
   uint32_t i;
-  int32_t raw[LIS3MDL_NUMBER_OF_AXES];
+  int32_t raw[LIS3MDL_COMP_NUMBER_OF_AXES];
   msg_t msg;
 
   osalDbgCheck((ip != NULL) && (axes != NULL));
 
-  osalDbgAssert((((LIS3MDLDriver *)ip)->state == LIS3MDL_READY),
-               "read_cooked(), invalid state");
-
-  msg = read_raw(ip, raw);
-  for(i = 0; i < LIS3MDL_NUMBER_OF_AXES ; i++){
-    axes[i] = raw[i] * ((LIS3MDLDriver *)ip)->sensitivity[i];
-    axes[i] -= ((LIS3MDLDriver *)ip)->bias[i];
+    
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(LIS3MDLDriver*, (BaseCompass*)ip);
+  
+  osalDbgAssert((devp->state == LIS3MDL_READY),
+                "comp_read_cooked(), invalid state");
+                
+  msg = comp_read_raw(ip, raw);
+  for(i = 0; i < LIS3MDL_COMP_NUMBER_OF_AXES ; i++) {
+    axes[i] = (raw[i] * devp->compsensitivity[i]) - devp->compbias[i];
   }
   return msg;
 }
 
-static msg_t set_bias(void *ip, float *bp) {
+/**
+ * @brief   Set bias values for the BaseCompass.
+ * @note    Bias must be expressed as G.
+ * @note    The bias buffer must be at least the same size of the
+ *          BaseCompass axes number.
+ *
+ * @param[in] ip        pointer to @p BaseCompass interface.
+ * @param[in] bp        a buffer which contains biases.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ */
+static msg_t comp_set_bias(void *ip, float *bp) {
+  LIS3MDLDriver* devp;
   uint32_t i;
+  msg_t msg = MSG_OK;
   
-  osalDbgCheck((ip != NULL) && (bp !=NULL));
-
-  osalDbgAssert((((LIS3MDLDriver *)ip)->state == LIS3MDL_READY) ||
-                (((LIS3MDLDriver *)ip)->state == LIS3MDL_STOP),
-                "set_bias(), invalid state");
-  
-  for(i = 0; i < LIS3MDL_NUMBER_OF_AXES; i++) {
-    ((LIS3MDLDriver *)ip)->bias[i] = bp[i];
-  }
-  return MSG_OK;
-}
-
-static msg_t reset_bias(void *ip) {
-  uint32_t i;
-
-  osalDbgCheck(ip != NULL);
-
-  osalDbgAssert((((LIS3MDLDriver *)ip)->state == LIS3MDL_READY) ||
-                (((LIS3MDLDriver *)ip)->state == LIS3MDL_STOP),
-              "reset_bias(), invalid state");
-
-  for(i = 0; i < LIS3MDL_NUMBER_OF_AXES; i++)
-    ((LIS3MDLDriver *)ip)->bias[i] = 0;
-  return MSG_OK;
-}
-
-static msg_t set_sensivity(void *ip, float *sp) {
-  uint32_t i;
-  
-  osalDbgCheck((ip != NULL) && (sp !=NULL));
-
-  osalDbgAssert((((LIS3MDLDriver *)ip)->state == LIS3MDL_READY),
-                "set_sensivity(), invalid state");
-  
-  for(i = 0; i < LIS3MDL_NUMBER_OF_AXES; i++) {
-    ((LIS3MDLDriver *)ip)->sensitivity[i] = sp[i];
-  }
-  return MSG_OK;
-}
-
-static msg_t reset_sensivity(void *ip) {
-  uint32_t i;
-
-  osalDbgCheck(ip != NULL);
-
-  osalDbgAssert((((LIS3MDLDriver *)ip)->state == LIS3MDL_READY),
-                "reset_sensivity(), invalid state");
-
-  if(((LIS3MDLDriver *)ip)->config->fullscale == LIS3MDL_FS_4GA)
-    for(i = 0; i < LIS3MDL_NUMBER_OF_AXES; i++)
-      ((LIS3MDLDriver *)ip)->sensitivity[i] = LIS3MDL_SENS_4GA;
-  else if(((LIS3MDLDriver *)ip)->config->fullscale == LIS3MDL_FS_8GA)
-    for(i = 0; i < LIS3MDL_NUMBER_OF_AXES; i++)
-      ((LIS3MDLDriver *)ip)->sensitivity[i] = LIS3MDL_SENS_8GA;
-  else if(((LIS3MDLDriver *)ip)->config->fullscale == LIS3MDL_FS_12GA)
-    for(i = 0; i < LIS3MDL_NUMBER_OF_AXES; i++)
-      ((LIS3MDLDriver *)ip)->sensitivity[i] = LIS3MDL_SENS_12GA;
-  else if(((LIS3MDLDriver *)ip)->config->fullscale == LIS3MDL_FS_16GA)
-    for(i = 0; i < LIS3MDL_NUMBER_OF_AXES; i++)
-      ((LIS3MDLDriver *)ip)->sensitivity[i] = LIS3MDL_SENS_16GA;
-  else {
-    osalDbgAssert(FALSE, "reset_sensivity(), compass full scale issue");
-    return MSG_RESET;
-  }
-  return MSG_OK;
-}
-
-static msg_t set_full_scale(void *ip, lis3mdl_fs_t fs) {
-  float newfs, scale;
-  uint8_t i, cr[2];
-  msg_t msg;
-
-  if(fs == LIS3MDL_FS_4GA) {
-    newfs = LIS3MDL_4GA;
-  }
-  else if(fs == LIS3MDL_FS_8GA) {
-    newfs = LIS3MDL_8GA;
-  }
-  else if(fs == LIS3MDL_FS_12GA) {
-    newfs = LIS3MDL_12GA;
-  }
-  else if(fs == LIS3MDL_FS_16GA) {
-    newfs = LIS3MDL_16GA;
-  }
-  else {
-    return MSG_RESET;
-  }
-
-  if(newfs != ((LIS3MDLDriver *)ip)->fullscale) {
-    scale = newfs / ((LIS3MDLDriver *)ip)->fullscale;
-    ((LIS3MDLDriver *)ip)->fullscale = newfs;
+  osalDbgCheck((ip != NULL) && (bp != NULL));
     
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(LIS3MDLDriver*, (BaseCompass*)ip);
+
+  osalDbgAssert((devp->state == LIS3MDL_READY),
+                "comp_set_bias(), invalid state");
+
+  for(i = 0; i < LIS3MDL_COMP_NUMBER_OF_AXES; i++) {
+    devp->compbias[i] = bp[i];
+  }
+  return msg;
+}
+
+/**
+ * @brief   Reset bias values for the BaseCompass.
+ * @note    Default biases value are obtained from device datasheet when
+ *          available otherwise they are considered zero.
+ *
+ * @param[in] ip        pointer to @p BaseCompass interface.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ */
+static msg_t comp_reset_bias(void *ip) {
+  LIS3MDLDriver* devp;
+  uint32_t i;
+  msg_t msg = MSG_OK;
+
+  osalDbgCheck(ip != NULL);
+    
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(LIS3MDLDriver*, (BaseCompass*)ip);
+
+  osalDbgAssert((devp->state == LIS3MDL_READY),
+                "comp_reset_bias(), invalid state");
+
+  for(i = 0; i < LIS3MDL_COMP_NUMBER_OF_AXES; i++)
+    devp->compbias[i] = LIS3MDL_COMP_BIAS;
+  return msg;
+}
+
+/**
+ * @brief   Set sensitivity values for the BaseCompass.
+ * @note    Sensitivity must be expressed as G/LSB.
+ * @note    The sensitivity buffer must be at least the same size of the
+ *          BaseCompass axes number.
+ *
+ * @param[in] ip        pointer to @p BaseCompass interface.
+ * @param[in] sp        a buffer which contains sensitivities.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ */
+static msg_t comp_set_sensivity(void *ip, float *sp) {
+  LIS3MDLDriver* devp;
+  uint32_t i;
+  msg_t msg = MSG_OK;
+  
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(LIS3MDLDriver*, (BaseCompass*)ip);
+
+  osalDbgCheck((ip != NULL) && (sp != NULL));
+
+  osalDbgAssert((devp->state == LIS3MDL_READY),
+                "comp_set_sensivity(), invalid state");
+
+  for(i = 0; i < LIS3MDL_COMP_NUMBER_OF_AXES; i++) {
+    devp->compsensitivity[i] = sp[i];
+  }
+  return msg;
+}
+
+/**
+ * @brief   Reset sensitivity values for the BaseCompass.
+ * @note    Default sensitivities value are obtained from device datasheet.
+ *
+ * @param[in] ip        pointer to @p BaseCompass interface.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    otherwise.
+ */
+static msg_t comp_reset_sensivity(void *ip) {
+  LIS3MDLDriver* devp;
+  uint32_t i;
+  msg_t msg = MSG_OK;
+
+  osalDbgCheck(ip != NULL);
+    
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(LIS3MDLDriver*, (BaseCompass*)ip);
+
+  osalDbgAssert((devp->state == LIS3MDL_READY),
+                "comp_reset_sensivity(), invalid state");
+
+  if(devp->config->compfullscale == LIS3MDL_COMP_FS_4GA)
+    for(i = 0; i < LIS3MDL_COMP_NUMBER_OF_AXES; i++)
+      devp->compsensitivity[i] = LIS3MDL_COMP_SENS_4GA;
+  else if(devp->config->compfullscale == LIS3MDL_COMP_FS_8GA)
+    for(i = 0; i < LIS3MDL_COMP_NUMBER_OF_AXES; i++)
+      devp->compsensitivity[i] = LIS3MDL_COMP_SENS_8GA;
+  else if(devp->config->compfullscale == LIS3MDL_COMP_FS_12GA)
+    for(i = 0; i < LIS3MDL_COMP_NUMBER_OF_AXES; i++)
+      devp->compsensitivity[i] = LIS3MDL_COMP_SENS_12GA;
+  else if(devp->config->compfullscale == LIS3MDL_COMP_FS_16GA)
+    for(i = 0; i < LIS3MDL_COMP_NUMBER_OF_AXES; i++)
+      devp->compsensitivity[i] = LIS3MDL_COMP_SENS_16GA;
+  else {
+    osalDbgAssert(FALSE, "comp_reset_sensivity(), compass full scale issue");
+    msg = MSG_RESET;
+  }
+  return msg;
+}
+
+/**
+ * @brief   Changes the LIS3MDLDriver compass fullscale value.
+ * @note    This function also rescale sensitivities and biases based on
+ *          previous and next fullscale value.
+ * @note    A recalibration is highly suggested after calling this function.
+ *
+ * @param[in] ip        pointer to @p LIS3MDLDriver interface.
+ * @param[in] fs        new fullscale value.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    otherwise.
+ */
+static msg_t comp_set_full_scale(LIS3MDLDriver *devp,
+                                 lis3mdl_comp_fs_t fs) {
+  float newfs, scale;
+  uint8_t i, buff[2];
+  msg_t msg;
+  
+  osalDbgCheck(devp != NULL);
+
+  osalDbgAssert((devp->state == LIS3MDL_READY),
+                "comp_set_full_scale(), invalid state");
+  osalDbgAssert((devp->config->i2cp->state == I2C_READY),
+                "comp_set_full_scale(), channel not ready");
+
+  /* Computing new fullscale value.*/
+  if(fs == LIS3MDL_COMP_FS_4GA) {
+    newfs = LIS3MDL_COMP_4GA;
+  }
+  else if(fs == LIS3MDL_COMP_FS_8GA) {
+    newfs = LIS3MDL_COMP_8GA;
+  }
+  else if(fs == LIS3MDL_COMP_FS_12GA) {
+    newfs = LIS3MDL_COMP_12GA;
+  }
+  else if(fs == LIS3MDL_COMP_FS_16GA) {
+    newfs = LIS3MDL_COMP_16GA;
+  }
+  else {
+    msg = MSG_RESET;
+    return msg;
+  }
+
+  if(newfs != devp->compfullscale) {
+    /* Computing scale value.*/
+    scale = newfs / devp->compfullscale;
+    devp->compfullscale = newfs;
+
 #if LIS3MDL_SHARED_I2C
-    i2cAcquireBus(((LIS3MDLDriver *)ip)->config->i2cp);
-    i2cStart(((LIS3MDLDriver *)ip)->config->i2cp,
-            ((LIS3MDLDriver *)ip)->config->i2ccfg);
+    i2cAcquireBus(devp->config->i2cp);
+    i2cStart(devp->config->i2cp, devp->config->i2ccfg);
 #endif /* LIS3MDL_SHARED_I2C */
 
     /* Updating register.*/
-    msg = lis3mdlI2CReadRegister(((LIS3MDLDriver *)ip)->config->i2cp,
-                                ((LIS3MDLDriver *)ip)->config->slaveaddress,
-                                LIS3MDL_AD_CTRL_REG2, &cr[1], 1);
+    msg = lis3mdlI2CReadRegister(devp->config->i2cp, devp->config->slaveaddress,
+                                 LIS3MDL_AD_CTRL_REG2, &buff[1], 1);
+
 #if LIS3MDL_SHARED_I2C
-    i2cReleaseBus(((LIS3MDLDriver *)ip)->config->i2cp);
-#endif /* LIS3MDL_SHARED_I2C */                              
+        i2cReleaseBus(devp->config->i2cp);
+#endif /* LIS3MDL_SHARED_I2C */
+
+    if(msg != MSG_OK)
+      return msg;
+    buff[1] &= ~(LIS3MDL_CTRL_REG2_FS_MASK);
+    buff[1] |= fs;
+    buff[0] = LIS3MDL_AD_CTRL_REG2;
+
+#if LIS3MDL_SHARED_I2C
+    i2cAcquireBus(devp->config->i2cp);
+    i2cStart(devp->config->i2cp, devp->config->i2ccfg);
+#endif /* LIS3MDL_SHARED_I2C */
+
+    msg = lis3mdlI2CWriteRegister(devp->config->i2cp, 
+                                  devp->config->slaveaddress,
+                                  buff, 1);
+
+#if LIS3MDL_SHARED_I2C
+        i2cReleaseBus(devp->config->i2cp);
+#endif /* LIS3MDL_SHARED_I2C */
+
     if(msg != MSG_OK)
       return msg;
 
-    cr[0] = LIS3MDL_AD_CTRL_REG2;
-    cr[1] &= ~(LIS3MDL_CTRL_REG2_FS_MASK);
-    cr[1] |= fs;
-
-#if LIS3MDL_SHARED_I2C
-    i2cAcquireBus(((LIS3MDLDriver *)ip)->config->i2cp);
-    i2cStart(((LIS3MDLDriver *)ip)->config->i2cp,
-            ((LIS3MDLDriver *)ip)->config->i2ccfg);
-#endif /* LIS3MDL_SHARED_I2C */
-    
-    msg = lis3mdlI2CWriteRegister(((LIS3MDLDriver *)ip)->config->i2cp,
-                                 ((LIS3MDLDriver *)ip)->config->slaveaddress, cr, 1);
-#if LIS3MDL_SHARED_I2C
-  i2cReleaseBus(((LIS3MDLDriver *)ip)->config->i2cp);
-#endif /* LIS3MDL_SHARED_I2C */
-    if(msg != MSG_OK)
-      return msg;
-
-    /* Scaling sensitivity and bias. Re-calibration is suggested anyway. */
-    for(i = 0; i < LIS3MDL_NUMBER_OF_AXES; i++) {
-      ((LIS3MDLDriver *)ip)->sensitivity[i] *= scale;
-      ((LIS3MDLDriver *)ip)->bias[i] *= scale;
+    /* Scaling sensitivity and bias. Re-calibration is suggested anyway.*/
+    for(i = 0; i < LIS3MDL_COMP_NUMBER_OF_AXES; i++) {
+      devp->compsensitivity[i] *= scale;
+      devp->compbias[i] *= scale;
     }
   }
   return msg;
 }
 
-static const struct BaseSensorVMT vmt_sensor = {
-  get_axes_number, read_raw, read_cooked
+static const struct LIS3MDLVMT vmt_device = {
+  (size_t)0,
+  comp_set_full_scale
 };
 
-static const struct LIS3MDLCompassVMT vmt_compass = {
-  get_axes_number, read_raw, read_cooked,
-  set_bias, reset_bias, set_sensivity, reset_sensivity,
-  set_full_scale
+static const struct BaseCompassVMT vmt_compass = {
+  sizeof(struct LIS3MDLVMT*),
+  comp_get_axes_number, comp_read_raw, comp_read_cooked,
+  comp_set_bias, comp_reset_bias, comp_set_sensivity, comp_reset_sensivity
 };
 
 /*===========================================================================*/
@@ -318,12 +445,13 @@ static const struct LIS3MDLCompassVMT vmt_compass = {
  * @init
  */
 void lis3mdlObjectInit(LIS3MDLDriver *devp) {
-  uint32_t i;
-  devp->vmt_sensor = &vmt_sensor;
-  devp->vmt_compass = &vmt_compass;
+  devp->vmt = &vmt_device;
+  devp->comp_if.vmt = &vmt_compass;
+  
   devp->config = NULL;
-  for(i = 0; i < LIS3MDL_NUMBER_OF_AXES; i++)
-    devp->bias[i] = 0.0f;
+  
+  devp->compaxes = LIS3MDL_COMP_NUMBER_OF_AXES;
+
   devp->state  = LIS3MDL_STOP;
 }
 
@@ -348,9 +476,9 @@ void lis3mdlStart(LIS3MDLDriver *devp, const LIS3MDLConfig *config) {
   /* Control register 1 configuration block.*/
   {
     cr[0] = LIS3MDL_AD_CTRL_REG1;
-    cr[1] = devp->config->outputdatarate;
-#if LIS3MDL_USE_ADVANCED || defined(__DOXYGEN__)
-    cr[1] |= devp->config->operationmodexy;
+    cr[1] = devp->config->compoutputdatarate;
+#if LIS3MDL_COMP_USE_ADVANCED || defined(__DOXYGEN__)
+    cr[1] |= devp->config->compoperationmodexy;
 #else
     cr[1] |= LIS3MDL_CTRL_REG1_OM0 | LIS3MDL_CTRL_REG1_OM1;
 #endif
@@ -358,29 +486,29 @@ void lis3mdlStart(LIS3MDLDriver *devp, const LIS3MDLConfig *config) {
 
   /* Control register 2 configuration block.*/
   {
-    cr[2] = devp->config->fullscale;
+    cr[2] = devp->config->compfullscale;
   }
 
   /* Control register 3 configuration block.*/
   {
     cr[3] = 0;
-#if LIS3MDL_USE_ADVANCED || defined(__DOXYGEN__)
-    cr[3] = devp->config->conversionmode;
+#if LIS3MDL_COMP_USE_ADVANCED || defined(__DOXYGEN__)
+    cr[3] = devp->config->compconversionmode;
 #endif
   }
 
   /* Control register 4 configuration block.*/
   {
     cr[4] = 0;
-#if LIS3MDL_USE_ADVANCED || defined(__DOXYGEN__)
-    cr[4] = devp->config->operationmodez | devp->config->endianness;
+#if LIS3MDL_COMP_USE_ADVANCED || defined(__DOXYGEN__)
+    cr[4] = devp->config->compoperationmodez | devp->config->endianness;
 #endif
   }
 
   /* Control register 5 configuration block.*/
   {
     cr[5] = 0;
-#if LIS3MDL_USE_ADVANCED || defined(__DOXYGEN__)
+#if LIS3MDL_COMP_USE_ADVANCED || defined(__DOXYGEN__)
     cr[5] = devp->config->blockdataupdate;
 #endif
   }
@@ -391,6 +519,7 @@ void lis3mdlStart(LIS3MDLDriver *devp, const LIS3MDLConfig *config) {
 #endif /* LIS3MDL_SHARED_I2C */
   i2cStart((devp)->config->i2cp,
            (devp)->config->i2ccfg);
+           
   lis3mdlI2CWriteRegister(devp->config->i2cp, devp->config->slaveaddress,
                           cr, 5);
                               
@@ -399,44 +528,64 @@ void lis3mdlStart(LIS3MDLDriver *devp, const LIS3MDLConfig *config) {
 #endif /* LIS3MDL_SHARED_I2C */
 #endif /* LIS3MDL_USE_I2C */
 
-  if(devp->config->sensitivity == NULL) {
-    /* Storing sensitivity information according to full scale value */
-    if(devp->config->fullscale == LIS3MDL_FS_4GA) {
-      devp->fullscale = LIS3MDL_4GA;
-      for(i = 0; i < LIS3MDL_NUMBER_OF_AXES; i++)
-        devp->sensitivity[i] = LIS3MDL_SENS_4GA;
+  if(devp->config->compfullscale == LIS3MDL_COMP_FS_4GA) {
+    devp->compfullscale = LIS3MDL_COMP_4GA;
+    for(i = 0; i < LIS3MDL_COMP_NUMBER_OF_AXES; i++) {
+      if(devp->config->compsensitivity == NULL) {
+        devp->compsensitivity[i] = LIS3MDL_COMP_SENS_4GA;
+      }
+      else {
+        devp->compsensitivity[i] = devp->config->compsensitivity[i];
+      }
     }
-    else if(devp->config->fullscale == LIS3MDL_FS_8GA) {
-      devp->fullscale = LIS3MDL_8GA;
-      for(i = 0; i < LIS3MDL_NUMBER_OF_AXES; i++)
-        devp->sensitivity[i] = LIS3MDL_SENS_8GA;
-    }
-    else if(devp->config->fullscale == LIS3MDL_FS_12GA) {
-      devp->fullscale = LIS3MDL_12GA;
-      for(i = 0; i < LIS3MDL_NUMBER_OF_AXES; i++)
-        devp->sensitivity[i] = LIS3MDL_SENS_12GA;
-    }
-    else if(devp->config->fullscale == LIS3MDL_FS_16GA) {
-      devp->fullscale = LIS3MDL_16GA;
-      for(i = 0; i < LIS3MDL_NUMBER_OF_AXES; i++)
-        devp->sensitivity[i] = LIS3MDL_SENS_16GA;
-    }
-    else
-      osalDbgAssert(FALSE, "lis3mdlStart(), compass full scale issue");
   }
-  else{
-    for(i = 0; i < LIS3MDL_NUMBER_OF_AXES; i++)
-      devp->sensitivity[i] = devp->config->sensitivity[i];
+  else if(devp->config->compfullscale == LIS3MDL_COMP_FS_8GA) {
+    devp->compfullscale = LIS3MDL_COMP_8GA;
+    for(i = 0; i < LIS3MDL_COMP_NUMBER_OF_AXES; i++) {
+      if(devp->config->compsensitivity == NULL) {
+        devp->compsensitivity[i] = LIS3MDL_COMP_SENS_8GA;
+      }
+      else {
+        devp->compsensitivity[i] = devp->config->compsensitivity[i];
+      }
+    }
   }
+  else if(devp->config->compfullscale == LIS3MDL_COMP_FS_12GA) {
+    devp->compfullscale = LIS3MDL_COMP_12GA;
+    for(i = 0; i < LIS3MDL_COMP_NUMBER_OF_AXES; i++) {
+      if(devp->config->compsensitivity == NULL) {
+        devp->compsensitivity[i] = LIS3MDL_COMP_SENS_12GA;
+      }
+      else {
+        devp->compsensitivity[i] = devp->config->compsensitivity[i];
+      }
+    }
+  }
+  else if(devp->config->compfullscale == LIS3MDL_COMP_FS_16GA) {
+    devp->compfullscale = LIS3MDL_COMP_16GA;
+    for(i = 0; i < LIS3MDL_COMP_NUMBER_OF_AXES; i++) {
+      if(devp->config->compsensitivity == NULL) {
+        devp->compsensitivity[i] = LIS3MDL_COMP_SENS_16GA;
+      }
+      else {
+        devp->compsensitivity[i] = devp->config->compsensitivity[i];
+      }
+    }
+  }
+  else
+    osalDbgAssert(FALSE, "lis3mdlStart(), compass full scale issue");
 
-  if(devp->config->bias == NULL) {
-    for(i = 0; i < LIS3MDL_NUMBER_OF_AXES; i++)
-      devp->bias[i] = 0.0f;
-  }
-  else {
-    for(i = 0; i < LIS3MDL_NUMBER_OF_AXES; i++)
-      devp->bias[i] = devp->config->bias[i];
-  }
+  /* Storing bias information */
+  if(devp->config->compbias != NULL)
+    for(i = 0; i < LIS3MDL_COMP_NUMBER_OF_AXES; i++)
+      devp->compbias[i] = devp->config->compbias[i];
+  else      
+    for(i = 0; i < LIS3MDL_COMP_NUMBER_OF_AXES; i++)
+      devp->compbias[i] = LIS3MDL_COMP_BIAS;
+    
+  /* This is the MEMS transient recovery time */
+  osalThreadSleepMilliseconds(5);
+
   devp->state = LIS3MDL_READY;
 } 
 
@@ -461,10 +610,13 @@ void lis3mdlStop(LIS3MDLDriver *devp) {
     i2cStart((devp)->config->i2cp,
              (devp)->config->i2ccfg);
 #endif /* LIS3MDL_SHARED_I2C */
+
+    /* Disabling compass. */
     cr[0] = LIS3MDL_AD_CTRL_REG3;
     cr[1] = LIS3MDL_CTRL_REG3_MD0 | LIS3MDL_CTRL_REG3_MD1;
     lis3mdlI2CWriteRegister(devp->config->i2cp, devp->config->slaveaddress,
                             cr, 1);
+
     i2cStop((devp)->config->i2cp);
 #if LIS3MDL_SHARED_I2C
     i2cReleaseBus((devp)->config->i2cp);

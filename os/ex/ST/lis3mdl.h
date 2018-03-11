@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2016 Rocco Marco Guglielmi
+    ChibiOS - Copyright (C) 2016-2018 Rocco Marco Guglielmi
 
     This file is part of ChibiOS.
 
@@ -42,7 +42,7 @@
 /**
  * @brief   LIS3MDL driver version string.
  */
-#define EX_LIS3MDL_VERSION                  "1.0.5"
+#define EX_LIS3MDL_VERSION                  "1.0.6"
 
 /**
  * @brief   LIS3MDL driver version major number.
@@ -57,25 +57,29 @@
 /**
  * @brief   LIS3MDL driver version patch number.
  */
-#define EX_LIS3MDL_PATCH                    5
+#define EX_LIS3MDL_PATCH                    6
 /** @} */
 
 /**
- * @brief   LIS3MDL characteristics.
+ * @brief   LIS3MDL compass subsystem characteristics.
+ * @note    Sensitivity is expressed as G/LSB whereas G stands for Gauss.
+ * @note    Bias is expressed as G.
  *
  * @{
  */
-#define LIS3MDL_NUMBER_OF_AXES              3U
-                                            
-#define LIS3MDL_4GA                         4.0f
-#define LIS3MDL_8GA                         8.0f
-#define LIS3MDL_12GA                        12.0f
-#define LIS3MDL_16GA                        16.0f
-                                            
-#define LIS3MDL_SENS_4GA                    0.00014615f
-#define LIS3MDL_SENS_8GA                    0.00029231f
-#define LIS3MDL_SENS_12GA                   0.0004384f
-#define LIS3MDL_SENS_16GA                   0.00058445f
+#define LIS3MDL_COMP_NUMBER_OF_AXES         3U
+                          
+#define LIS3MDL_COMP_4GA                    4.0f
+#define LIS3MDL_COMP_8GA                    8.0f
+#define LIS3MDL_COMP_12GA                   12.0f
+#define LIS3MDL_COMP_16GA                   16.0f
+                            
+#define LIS3MDL_COMP_SENS_4GA               0.00014615f
+#define LIS3MDL_COMP_SENS_8GA               0.00029231f
+#define LIS3MDL_COMP_SENS_12GA              0.0004384f
+#define LIS3MDL_COMP_SENS_16GA              0.00058445f
+
+#define LIS3MDL_COMP_BIAS                   0.0f
 /** @} */
 
 /**
@@ -121,57 +125,57 @@
  * @name    LIS3MDL_CTRL_REG1 register bits definitions
  * @{
  */
-#define LIS3MDL_CTRL_REG1_MASK      0xFF        /**< LIS3MDL_CTRL_REG1 mask  */
-#define LIS3MDL_CTRL_REG1_ST        (1 << 0)    /**< Self test enable        */
-#define LIS3MDL_CTRL_REG1_FAST_ODR  (1 << 1)    /**< Fast data rate          */
-#define LIS3MDL_CTRL_REG1_DO0       (1 << 2)    /**< Output data rate bit 0  */
-#define LIS3MDL_CTRL_REG1_DO1       (1 << 3)    /**< Output data rate bit 1  */
-#define LIS3MDL_CTRL_REG1_DO2       (1 << 4)    /**< Output data rate bit 2  */
-#define LIS3MDL_CTRL_REG1_OM0       (1 << 5)    /**< X-Y mode bit 0          */
-#define LIS3MDL_CTRL_REG1_OM1       (1 << 6)    /**< X-Y mode bit 1          */
-#define LIS3MDL_CTRL_REG1_TEMP_EN   (1 << 7)    /**< Temperature sensor      */
+#define LIS3MDL_CTRL_REG1_MASK              0xFF    
+#define LIS3MDL_CTRL_REG1_ST                (1 << 0)
+#define LIS3MDL_CTRL_REG1_FAST_ODR          (1 << 1)
+#define LIS3MDL_CTRL_REG1_DO0               (1 << 2)
+#define LIS3MDL_CTRL_REG1_DO1               (1 << 3)
+#define LIS3MDL_CTRL_REG1_DO2               (1 << 4)
+#define LIS3MDL_CTRL_REG1_OM0               (1 << 5)
+#define LIS3MDL_CTRL_REG1_OM1               (1 << 6)
+#define LIS3MDL_CTRL_REG1_TEMP_EN           (1 << 7)
 /** @} */
 
 /**
  * @name    LIS3MDL_CTRL_REG2 register bits definitions
  * @{
  */
-#define LIS3MDL_CTRL_REG2_MASK      0x6C        /**< LIS3MDL_CTRL_REG2 mask  */
-#define LIS3MDL_CTRL_REG2_SOFT_RST  (1 << 2)    /**< Soft reset              */
-#define LIS3MDL_CTRL_REG2_REBOOT    (1 << 3)    /**< Reboot memory           */
-#define LIS3MDL_CTRL_REG2_FS_MASK   0x60        /**< Full scale mask         */
-#define LIS3MDL_CTRL_REG2_FS0       (1 << 5)    /**< Full scale bit 0        */
-#define LIS3MDL_CTRL_REG2_FS1       (1 << 6)    /**< Full scale bit 1        */
+#define LIS3MDL_CTRL_REG2_MASK              0x6C    
+#define LIS3MDL_CTRL_REG2_SOFT_RST          (1 << 2)
+#define LIS3MDL_CTRL_REG2_REBOOT            (1 << 3)
+#define LIS3MDL_CTRL_REG2_FS_MASK           0x60    
+#define LIS3MDL_CTRL_REG2_FS0               (1 << 5)
+#define LIS3MDL_CTRL_REG2_FS1               (1 << 6)
 /** @} */
 
 /**
  * @name    LIS3MDL_CTRL_REG3 register bits definitions
  * @{
  */
-#define LIS3MDL_CTRL_REG3_MASK      0x27        /**< LIS3MDL_CTRL_REG3 mask  */
-#define LIS3MDL_CTRL_REG3_MD0       (1 << 0)    /**< Operating mode bit 0    */
-#define LIS3MDL_CTRL_REG3_MD1       (1 << 1)    /**< Operating mode bit 1    */
-#define LIS3MDL_CTRL_REG3_SIM       (1 << 2)    /**< SPI interface mode      */
-#define LIS3MDL_CTRL_REG3_LP        (1 << 5)    /**< Low power               */
+#define LIS3MDL_CTRL_REG3_MASK              0x27    
+#define LIS3MDL_CTRL_REG3_MD0               (1 << 0)
+#define LIS3MDL_CTRL_REG3_MD1               (1 << 1)
+#define LIS3MDL_CTRL_REG3_SIM               (1 << 2)
+#define LIS3MDL_CTRL_REG3_LP                (1 << 5)
 /** @} */
 
 /**
  * @name    LIS3MDL_CTRL_REG4 register bits definitions
  * @{
  */
-#define LIS3MDL_CTRL_REG4_MASK      0x0E        /**< LIS3MDL_CTRL_REG4 mask  */
-#define LIS3MDL_CTRL_REG4_BLE       (1 << 1)    /**< Endianess               */
-#define LIS3MDL_CTRL_REG4_OMZ0      (1 << 2)    /**< Z mode bit 0            */
-#define LIS3MDL_CTRL_REG4_OMZ1      (1 << 3)    /**< Z mode bit 1            */
+#define LIS3MDL_CTRL_REG4_MASK              0x0E    
+#define LIS3MDL_CTRL_REG4_BLE               (1 << 1)
+#define LIS3MDL_CTRL_REG4_OMZ0              (1 << 2)
+#define LIS3MDL_CTRL_REG4_OMZ1              (1 << 3)
 /** @} */
 
 /**
  * @name    LIS3MDL_CTRL_REG5 register bits definitions
  * @{
  */
-#define LIS3MDL_CTRL_REG5_MASK      0xC0        /**< LIS3MDL_CTRL_REG5 mask  */
-#define LIS3MDL_CTRL_REG5_BDU       (1 << 6)    /**< Block data update       */
-#define LIS3MDL_CTRL_REG5_FAST_READ (1 << 7)    /**< Fast read mode          */
+#define LIS3MDL_CTRL_REG5_MASK              0xC0    
+#define LIS3MDL_CTRL_REG5_BDU               (1 << 6)
+#define LIS3MDL_CTRL_REG5_FAST_READ         (1 << 7)
 /** @} */
 
 /*===========================================================================*/
@@ -192,21 +196,22 @@
 #endif
 
 /**
+ * @brief   LIS3MDL shared SPI switch.
+ * @details If set to @p TRUE the device acquires SPI bus ownership
+ *          on each transaction.
+ * @note    The default is @p FALSE. Requires SPI_USE_MUTUAL_EXCLUSION.
+ */
+#if !defined(LIS3MDL_SHARED_SPI) || defined(__DOXYGEN__)
+#define LIS3MDL_SHARED_SPI                  FALSE
+#endif
+
+/**
  * @brief   LIS3MDL I2C interface switch.
  * @details If set to @p TRUE the support for I2C is included.
  * @note    The default is @p TRUE.
  */
 #if !defined(LIS3MDL_USE_I2C) || defined(__DOXYGEN__)
 #define LIS3MDL_USE_I2C                     TRUE
-#endif
-
-/**
- * @brief   LIS3MDL advanced configurations switch.
- * @details If set to @p TRUE more configurations are available.
- * @note    The default is @p FALSE.
- */
-#if !defined(LIS3MDL_USE_ADVANCED) || defined(__DOXYGEN__)
-#define LIS3MDL_USE_ADVANCED                FALSE
 #endif
 
 /**
@@ -217,6 +222,15 @@
  */
 #if !defined(LIS3MDL_SHARED_I2C) || defined(__DOXYGEN__)
 #define LIS3MDL_SHARED_I2C                  FALSE
+#endif
+
+/**
+ * @brief   LIS3MDL advanced configurations switch.
+ * @details If set to @p TRUE more configurations are available.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(LIS3MDL_COMP_USE_ADVANCED) || defined(__DOXYGEN__)
+#define LIS3MDL_COMP_USE_ADVANCED           FALSE
 #endif
 /** @} */
 
@@ -232,12 +246,23 @@
 #error "LIS3MDL_USE_SPI requires HAL_USE_SPI"
 #endif
 
+#if LIS3MDL_SHARED_SPI && !SPI_USE_MUTUAL_EXCLUSION
+#error "LIS3MDL_SHARED_SPI requires SPI_USE_MUTUAL_EXCLUSION"
+#endif
+
 #if LIS3MDL_USE_I2C && !HAL_USE_I2C
 #error "LIS3MDL_USE_I2C requires HAL_USE_I2C"
 #endif
 
 #if LIS3MDL_SHARED_I2C && !I2C_USE_MUTUAL_EXCLUSION
 #error "LIS3MDL_SHARED_I2C requires I2C_USE_MUTUAL_EXCLUSION"
+#endif
+
+/**
+ * @todo    Add support for LIS3MDL over SPI.
+ */
+#if LIS3MDL_USE_SPI
+#error "LIS3MDL over SPI still not supported"
 #endif
 
 /*===========================================================================*/
@@ -252,6 +277,11 @@
 /**
  * @brief  LIS3MDL slave address
  */
+/**
+ * @brief   Structure representing a LIS3MDL driver.
+ */
+typedef struct LIS3MDLDriver LIS3MDLDriver;
+
 typedef enum {
   LIS3MDL_SAD_GND = 0x1C,           /**< Slave Address when SA1 is to GND   */
   LIS3MDL_SAD_VCC = 0x1E            /**< Slave Address when SA1 is to VCC   */
@@ -261,62 +291,62 @@ typedef enum {
  * @brief   LIS3MDL full scale
  */
 typedef enum {
-  LIS3MDL_FS_4GA = 0x00,            /**< ±4 Gauss                           */
-  LIS3MDL_FS_8GA = 0x20,            /**< ±8 Gauss                           */
-  LIS3MDL_FS_12GA = 0x40,           /**< ±12 Gauss                          */
-  LIS3MDL_FS_16GA = 0x60            /**< ±16 Gauss                          */
-}lis3mdl_fs_t;
+  LIS3MDL_COMP_FS_4GA = 0x00,       /**< ±4 Gauss                           */
+  LIS3MDL_COMP_FS_8GA = 0x20,       /**< ±8 Gauss                           */
+  LIS3MDL_COMP_FS_12GA = 0x40,      /**< ±12 Gauss                          */
+  LIS3MDL_COMP_FS_16GA = 0x60       /**< ±16 Gauss                          */
+}lis3mdl_comp_fs_t;
 
 /**
  * @brief   LIS3MDL output data rate
  */
 typedef enum {
-  LIS3MDL_ODR_0_625HZ = 0x00,       /**< Output Data Rate = 0.625 Hz        */
-  LIS3MDL_ODR_1_25HZ = 0x04,        /**< Output Data Rate = 1.25 Hz         */
-  LIS3MDL_ODR_2_5HZ = 0x08,         /**< Output Data Rate = 2.5 Hz          */
-  LIS3MDL_ODR_5HZ = 0x0C,           /**< Output Data Rate = 5 Hz            */
-  LIS3MDL_ODR_10HZ = 0x10,          /**< Output Data Rate = 10 Hz           */
-  LIS3MDL_ODR_20HZ = 0x14,          /**< Output Data Rate = 20 Hz           */
-  LIS3MDL_ODR_40HZ = 0x18,          /**< Output Data Rate = 40 Hz           */
-  LIS3MDL_ODR_80HZ = 0x1C           /**< Output Data Rate = 80 Hz           */
-}lis3mdl_odr_t;
+  LIS3MDL_COMP_ODR_0_625HZ = 0x00,  /**< Output Data Rate = 0.625 Hz        */
+  LIS3MDL_COMP_ODR_1_25HZ = 0x04,   /**< Output Data Rate = 1.25 Hz         */
+  LIS3MDL_COMP_ODR_2_5HZ = 0x08,    /**< Output Data Rate = 2.5 Hz          */
+  LIS3MDL_COMP_ODR_5HZ = 0x0C,      /**< Output Data Rate = 5 Hz            */
+  LIS3MDL_COMP_ODR_10HZ = 0x10,     /**< Output Data Rate = 10 Hz           */
+  LIS3MDL_COMP_ODR_20HZ = 0x14,     /**< Output Data Rate = 20 Hz           */
+  LIS3MDL_COMP_ODR_40HZ = 0x18,     /**< Output Data Rate = 40 Hz           */
+  LIS3MDL_COMP_ODR_80HZ = 0x1C      /**< Output Data Rate = 80 Hz           */
+}lis3mdl_comp_odr_t;
 
 /**
  * @brief  LIS3MDL low power mode configuration
  */
 typedef enum {
-  LIS3MDL_LP_DISABLED = 0x00,       /**< Low Power mode disabled            */
-  LIS3MDL_LP_ENABLED = 0x20         /**< Low Power mode enabled             */
-}lis3mdl_lp_t;
+  LIS3MDL_COMP_LP_DISABLED = 0x00,  /**< Low Power mode disabled            */
+  LIS3MDL_COMP_LP_ENABLED = 0x20    /**< Low Power mode enabled             */
+}lis3mdl_comp_lp_t;
 
 /**
  * @brief  LIS3MDL conversion mode
  */
 typedef enum {
-  LIS3MDL_MD_CONTINUOUS = 0x00,     /**< Continuous conversion mode         */
-  LIS3MDL_MD_SINGLE = 0x01,         /**< Single conversion mode             */
-  LIS3MDL_MD_POWER_DOWN = 0x02      /**< Power down mode                    */
-}lis3mdl_md_t;
+  LIS3MDL_COMP_MD_CONTINUOUS = 0x00,/**< Continuous conversion mode         */
+  LIS3MDL_COMP_MD_SINGLE = 0x01,    /**< Single conversion mode             */
+  LIS3MDL_COMP_MD_POWER_DOWN = 0x02 /**< Power down mode                    */
+}lis3mdl_comp_md_t;
 
 /**
  * @brief  LIS3MDL operation mode for X and Y axes
  */
 typedef enum {
-  LIS3MDL_OMXY_LOW_POWER  = 0x00,   /**< X-Y axes low power mode            */
-  LIS3MDL_OMXY_MEDIUM = 0x20,       /**< X-Y axes medium performance mode   */
-  LIS3MDL_OMXY_HIGH = 0x40,         /**< X-Y axes high performance mode     */
-  LIS3MDL_OMXY_ULTRA = 0x60         /**< X-Y axes ultra performance mode    */
-}lis3mdl_omxy_t;
+  LIS3MDL_COMP_OMXY_LP  = 0x00,     /**< X-Y axes low power mode            */
+  LIS3MDL_COMP_OMXY_MEDIUM = 0x20,  /**< X-Y axes medium performance mode   */
+  LIS3MDL_COMP_OMXY_HIGH = 0x40,    /**< X-Y axes high performance mode     */
+  LIS3MDL_COMP_OMXY_ULTRA = 0x60    /**< X-Y axes ultra performance mode    */
+}lis3mdl_comp_omxy_t;
 
 /**
  * @brief  LIS3MDL operation mode for Z axis
  */
 typedef enum {
-  LIS3MDL_OMZ_LOW_POWER  = 0x00,    /**< Z axis low power mode              */
-  LIS3MDL_OMZ_MEDIUM = 0x04,        /**< Z axis medium performance mode     */
-  LIS3MDL_OMZ_HIGH = 0x08,          /**< Z axis high performance mode       */
-  LIS3MDL_OMZ_ULTRA = 0x0C          /**< Z axis ultra performance mode      */
-}lis3mdl_omz_t;
+  LIS3MDL_COMP_OMZ_LP = 0x00,       /**< Z axis low power mode              */
+  LIS3MDL_COMP_OMZ_MEDIUM = 0x04,   /**< Z axis medium performance mode     */
+  LIS3MDL_COMP_OMZ_HIGH = 0x08,     /**< Z axis high performance mode       */
+  LIS3MDL_COMP_OMZ_ULTRA = 0x0C     /**< Z axis ultra performance mode      */
+}lis3mdl_comp_omz_t;
 
 /**
  * @brief   LIS3MDL temperature sensor enabling
@@ -374,76 +404,76 @@ typedef struct {
    * @brief I2C configuration associated to this LIS3MDL.
    */
   const I2CConfig           *i2ccfg;
-#endif /* LIS3MDL_USE_I2C */
   /**
-   * @brief LIS3MDL initial sensitivity.
-   */
-  float                     *sensitivity;
-  /**
-   * @brief LIS3MDL initial bias.
-   */
-  float                     *bias;
-  /**
-   * @brief  LIS3MDL slave address
+   * @brief LIS3MDL slave address
    */
   lis3mdl_sad_t             slaveaddress;
+#endif /* LIS3MDL_USE_I2C */
   /**
-   * @brief   LIS3MDL full scale
+   * @brief LIS3MDL compass subsystem initial sensitivity.
    */
-  lis3mdl_fs_t              fullscale;
+  float                     *compsensitivity;
   /**
-   * @brief   LIS3MDL output data rate
+   * @brief LIS3MDL compass subsystem initial bias.
    */
-  lis3mdl_odr_t             outputdatarate;
-#if LIS3MDL_USE_ADVANCED || defined(__DOXYGEN__)
+  float                     *compbias;
   /**
-   * @brief  LIS3MDL low power mode configuration
+   * @brief LIS3MDL compass subsystem full scale.
    */
-  lis3mdl_lp_t              lowpowermode;
+  lis3mdl_comp_fs_t         compfullscale;
   /**
-   * @brief  LIS3MDL conversion mode
+   * @brief LIS3MDL compass subsystem output data rate.
    */
-  lis3mdl_md_t              conversionmode;
+  lis3mdl_comp_odr_t        compoutputdatarate;
+#if LIS3MDL_COMP_USE_ADVANCED || defined(__DOXYGEN__)
   /**
-   * @brief  LIS3MDL operation mode for X and Y axes
+   * @brief LIS3MDL compass subsystem low power mode configuration.
    */
-  lis3mdl_omxy_t            operationmodexy;
+  lis3mdl_comp_lp_t         complowpowermode;
   /**
-   * @brief  LIS3MDL operation mode for Z axis
+   * @brief LIS3MDL compass subsystem conversion mode.
    */
-  lis3mdl_omz_t             operationmodez;
+  lis3mdl_comp_md_t         compconversionmode;
   /**
-   * @brief  LIS3MDL block data update
+   * @brief LIS3MDL compass subsystem operation mode for X and Y axes.
+   */
+  lis3mdl_comp_omxy_t       compoperationmodexy;
+  /**
+   * @brief LIS3MDL compass subsystem operation mode for Z axis.
+   */
+  lis3mdl_comp_omz_t        compoperationmodez;
+  /**
+   * @brief LIS3MDL block data update.
    */
   lis3mdl_bdu_t             blockdataupdate;
   /**
-   * @brief   LIS3MDL endianness
+   * @brief LIS3MDL endianness.
    */
   lis3mdl_end_t             endianness;
 #endif
 } LIS3MDLConfig;
 
 /**
- * @brief   @p LIS3MDL compass subsystem specific methods.
+ * @brief   @p LIS3MDL specific methods.
  */
-#define _lis3msl_compass_methods_alone                                      \
-  /* Change full scale value of LIS3MDL.*/                                  \
-  msg_t (*set_full_scale)(void *instance, lis3mdl_fs_t fs);
+#define _lis3msl_methods_alone                                              \
+  /* Change full scale value of LIS3MDL compass subsystem.*/                \
+  msg_t (*comp_set_full_scale)(LIS3MDLDriver *devp, lis3mdl_comp_fs_t fs);
   
 /**
- * @brief   @p LIS3MDL compass subsystem specific methods with inherited ones.
+ * @brief   @p LIS3MDL specific methods with inherited ones.
  */
-#define _lis3mdl_compass_methods                                            \
-  _base_compass_methods                                                     \
-  _lis3msl_compass_methods_alone
+#define _lis3mdl_methods                                                    \
+  _base_object_methods                                                      \
+  _lis3msl_methods_alone
 
 /**
  * @extends BaseCompassVMT
  *
- * @brief   @p LIS3MDL compass virtual methods table.
+ * @brief   @p LIS3MDL virtual methods table.
  */
-struct LIS3MDLCompassVMT {
-  _lis3mdl_compass_methods
+struct LIS3MDLVMT {
+  _lis3mdl_methods
 };
 
 /**
@@ -455,34 +485,25 @@ struct LIS3MDLCompassVMT {
   lis3mdl_state_t           state;                                          \
   /* Current configuration data.*/                                          \
   const LIS3MDLConfig       *config;                                        \
-  /* Current sensitivity.*/                                                 \
-  float                     sensitivity[LIS3MDL_NUMBER_OF_AXES];            \
-  /* Bias data.*/                                                           \
-  float                     bias[LIS3MDL_NUMBER_OF_AXES];                   \
-  /* Current full scale value.*/                                            \
-  float                     fullscale;
+  /* Compass subsystem axes number.*/                                       \
+  size_t                    compaxes;                                       \
+  /* Compass subsystem current sensitivity.*/                               \
+  float                     compsensitivity[LIS3MDL_COMP_NUMBER_OF_AXES];   \
+  /* Compass subsystem current bias.*/                                      \
+  float                     compbias[LIS3MDL_COMP_NUMBER_OF_AXES];          \
+  /* Compass subsystem current full scale value.*/                          \
+  float                     compfullscale;
 
 /**
- * @extends BaseCompass
- *
- * @brief   LIS3MDL 3-axis compass class.
- * @details This class extends @p BaseCompass by adding physical
- *          driver implementation.
+ * @brief LIS3MDL 3-axis compass class.
  */
 struct LIS3MDLDriver {
-  /** @brief BaseSensor Virtual Methods Table. */
-  const struct BaseSensorVMT *vmt_sensor;
-  _base_sensor_data
-  /** @brief LIS3MDL Compass Virtual Methods Table. */
-  const struct LIS3MDLCompassVMT *vmt_compass;
-_base_compass_data
+  /** @brief Virtual Methods Table.*/
+  const struct LIS3MDLVMT     *vmt;
+  /** @brief Base compass interface.*/
+  BaseCompass                 comp_if;
   _lis3mdl_data
 };
-
-/**
- * @brief   Structure representing a LIS3MDL driver.
- */
-typedef struct LIS3MDLDriver LIS3MDLDriver;
 /** @} */
 
 /*===========================================================================*/
@@ -490,18 +511,141 @@ typedef struct LIS3MDLDriver LIS3MDLDriver;
 /*===========================================================================*/
 
 /**
- * @brief   Change compass full scale value.
+ * @brief   Return the number of axes of the BaseCompass.
  *
- * @param[in] ip        pointer to a @p LIS3MDLDriver class.
- * @param[in] fs        the new full scale value.
+ * @param[in] devp      pointer to @p LIS3MDLDriver.
+ *
+ * @return              the number of axes.
+ *
+ * @api
+ */
+#define lis3mdlCompassGetAxesNumber(devp)                                   \
+        compassGetAxesNumber(&((devp)->comp_if))
+
+/**
+ * @brief   Retrieves raw data from the BaseCompass.
+ * @note    This data is retrieved from MEMS register without any algebraical
+ *          manipulation.
+ * @note    The axes array must be at least the same size of the
+ *          BaseCompass axes number.
+ *
+ * @param[in] ip        pointer to @p BaseCompass interface.
+ * @param[out] axes     a buffer which would be filled with raw data.
  *
  * @return              The operation status.
  * @retval MSG_OK       if the function succeeded.
- * @retval MSG_RESET    if one or more errors occurred.
+ * @retval MSG_RESET    if one or more I2C errors occurred, the errors can
+ *                      be retrieved using @p i2cGetErrors().
+ * @retval MSG_TIMEOUT  if a timeout occurred before operation end.
+ *
  * @api
  */
-#define compassSetFullScale(ip, fs)                                       \
-        (ip)->vmt_compass->set_full_scale(ip, fs)
+#define lis3mdlCompassReadRaw(devp, axes)                                   \
+        compassReadRaw(&((devp)->comp_if), axes)
+
+/**
+ * @brief   Retrieves cooked data from the BaseCompass.
+ * @note    This data is manipulated according to the formula
+ *          cooked = (raw * sensitivity) - bias.
+ * @note    Final data is expressed as G.
+ * @note    The axes array must be at least the same size of the
+ *          BaseCompass axes number.
+ *
+ * @param[in] ip        pointer to @p BaseCompass interface.
+ * @param[out] axes     a buffer which would be filled with cooked data.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more I2C errors occurred, the errors can
+ *                      be retrieved using @p i2cGetErrors().
+ * @retval MSG_TIMEOUT  if a timeout occurred before operation end.
+ *
+ * @api
+ */
+#define lis3mdlCompassReadCooked(devp, axes)                                \
+        compassReadCooked(&((devp)->comp_if), axes)
+
+/**
+ * @brief   Set bias values for the BaseCompass.
+ * @note    Bias must be expressed as G.
+ * @note    The bias buffer must be at least the same size of the
+ *          BaseCompass axes number.
+ *
+ * @param[in] ip        pointer to @p BaseCompass interface.
+ * @param[in] bp        a buffer which contains biases.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ *
+ * @api
+ */
+#define lis3mdlCompassSetBias(devp, bp)                                     \
+        compassSetBias(&((devp)->comp_if), bp)
+
+/**
+ * @brief   Reset bias values for the BaseCompass.
+ * @note    Default biases value are obtained from device datasheet when
+ *          available otherwise they are considered zero.
+ *
+ * @param[in] devp      pointer to @p LIS3MDLDriver.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ *
+ * @api
+ */
+#define lis3mdlCompassResetBias(devp)                                       \
+        compassResetBias(&((devp)->comp_if))
+
+/**
+ * @brief   Set sensitivity values for the BaseCompass.
+ * @note    Sensitivity must be expressed as G/LSB.
+ * @note    The sensitivity buffer must be at least the same size of the
+ *          BaseCompass axes number.
+ *
+ * @param[in] devp      pointer to @p LIS3MDLDriver.
+ * @param[in] sp        a buffer which contains sensitivities.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ *
+ * @api
+ */
+#define lis3mdlCompassSetSensitivity(devp, sp)                              \
+        compassSetSensitivity(&((devp)->comp_if), sp)
+
+/**
+ * @brief   Reset sensitivity values for the BaseCompass.
+ * @note    Default sensitivities value are obtained from device datasheet.
+ *
+ * @param[in] devp      pointer to @p LIS3MDLDriver.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    otherwise.
+ *
+ * @api
+ */
+#define lis3mdlCompassResetSensitivity(devp)                                \
+        compassResetSensitivity(&((devp)->comp_if))
+
+/**
+ * @brief   Changes the LIS3MDLDriver compass fullscale value.
+ * @note    This function also rescale sensitivities and biases based on
+ *          previous and next fullscale value.
+ * @note    A recalibration is highly suggested after calling this function.
+ *
+ * @param[in] devp      pointer to @p LIS3MDLDriver.
+ * @param[in] fs        new fullscale value.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    otherwise.
+ *
+ * @api
+ */
+#define lis3mdlCompassSetFullScale(devp, fs)                                \
+        (devp)->vmt->comp_set_full_scale(devp, fs)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
