@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2016 Rocco Marco Guglielmi
+    ChibiOS - Copyright (C) 2016-2018 Rocco Marco Guglielmi
 
     This file is part of ChibiOS.
 
@@ -43,7 +43,7 @@
 /**
  * @brief   LIS302DL driver version string.
  */
-#define EX_LIS302DL_VERSION                 "1.0.4"
+#define EX_LIS302DL_VERSION                 "1.0.5"
 
 /**
  * @brief   LIS302DL driver version major number.
@@ -58,21 +58,26 @@
 /**
  * @brief   LIS302DL driver version patch number.
  */
-#define EX_LIS302DL_PATCH                   4
+#define EX_LIS302DL_PATCH                   5
 /** @} */
 
 /**
- * @brief   LIS302DL characteristics.
+ * @brief   LIS302DL accelerometer subsystem characteristics.
+ * @note    Sensitivity is expressed as milli-G/LSB whereas 
+ *          1 milli-G = 0.00980665 m/s^2.
+ * @note    Bias is expressed as milli-G.
  *
  * @{
  */
-#define LIS302DL_NUMBER_OF_AXES             3U
+#define LIS302DL_ACC_NUMBER_OF_AXES         3U
                                             
-#define LIS302DL_2G                         2.0f
-#define LIS302DL_8G                         8.0f
+#define LIS302DL_ACC_2G                     2.0f
+#define LIS302DL_ACC_8G                     8.0f
                                             
-#define LIS302DL_SENS_2G                    18.0f
-#define LIS302DL_SENS_8G                    72.0f
+#define LIS302DL_ACC_SENS_2G                18.0f
+#define LIS302DL_ACC_SENS_8G                72.0f
+
+#define LIS302DL_ACC_BIAS                   0.0f
 /** @} */
 
 /**
@@ -121,45 +126,45 @@
  * @name    LIS302DL_CTRL_REG1 register bits definitions
  * @{
  */
-#define LIS302DL_CTRL_REG1_MASK     0xFF        /**< LIS302DL_CTRL_REG1 mask  */
-#define LIS302DL_CTRL_REG1_XEN      (1 << 0)    /**< X axis enable            */
-#define LIS302DL_CTRL_REG1_YEN      (1 << 1)    /**< Y axis enable            */
-#define LIS302DL_CTRL_REG1_ZEN      (1 << 2)    /**< Z axis enable            */
-#define LIS302DL_CTRL_REG1_STM      (1 << 3)    /**< Self test P-M            */
-#define LIS302DL_CTRL_REG1_STP      (1 << 4)    /**< Self test P-M            */
-#define LIS302DL_CTRL_REG1_FS_MASK  0x20        /**< Full scale field mask    */
-#define LIS302DL_CTRL_REG1_FS       (1 << 5)    /**< Full scale               */
-#define LIS302DL_CTRL_REG1_PD       (1 << 6)    /**< Power-down mode enable   */
-#define LIS302DL_CTRL_REG1_DR       (1 << 7)    /**< Output data rate         */
+#define LIS302DL_CTRL_REG1_MASK             0xFF    
+#define LIS302DL_CTRL_REG1_XEN              (1 << 0)
+#define LIS302DL_CTRL_REG1_YEN              (1 << 1)
+#define LIS302DL_CTRL_REG1_ZEN              (1 << 2)
+#define LIS302DL_CTRL_REG1_STM              (1 << 3)
+#define LIS302DL_CTRL_REG1_STP              (1 << 4)
+#define LIS302DL_CTRL_REG1_FS_MASK          0x20    
+#define LIS302DL_CTRL_REG1_FS               (1 << 5)
+#define LIS302DL_CTRL_REG1_PD               (1 << 6)
+#define LIS302DL_CTRL_REG1_DR               (1 << 7)
 /** @} */
 
 /**
  * @name    LIS302DL_CTRL_REG2 register bits definitions
  * @{
  */                                              
-#define LIS302DL_CTRL_REG2_MASK     0xDF        /**< LIS302DL_CTRL_REG2 mask  */
-#define LIS302DL_CTRL_REG2_HPCF1    (1 << 0)    /**< HP filter cutoff bit 0   */
-#define LIS302DL_CTRL_REG2_HPCF2    (1 << 1)    /**< HP filter cutoff bit 1   */
-#define LIS302DL_CTRL_REG2_HPFFWU1  (1 << 2)    /**< HP filter cutoff bit 2   */
-#define LIS302DL_CTRL_REG2_HPFFWU2  (1 << 3)    /**< HP filter cutoff bit 3   */
-#define LIS302DL_CTRL_REG2_FDS      (1 << 4)    /**< HP filter mode bit 0     */
-#define LIS302DL_CTRL_REG2_BOOT     (1 << 6)    /**< HP filter mode bit 1     */
-#define LIS302DL_CTRL_REG2_SIM      (1 << 7)    /**< HP filter mode bit 1     */
+#define LIS302DL_CTRL_REG2_MASK             0xDF    
+#define LIS302DL_CTRL_REG2_HPCF1            (1 << 0)
+#define LIS302DL_CTRL_REG2_HPCF2            (1 << 1)
+#define LIS302DL_CTRL_REG2_HPFFWU1          (1 << 2)
+#define LIS302DL_CTRL_REG2_HPFFWU2          (1 << 3)
+#define LIS302DL_CTRL_REG2_FDS              (1 << 4)
+#define LIS302DL_CTRL_REG2_BOOT             (1 << 6)
+#define LIS302DL_CTRL_REG2_SIM              (1 << 7)
 /** @} */
 
 /**
  * @name    LIS302DL_CTRL_REG3 register bits definitions
  * @{
  */                                               
-#define LIS302DL_CTRL_REG3_MASK     0xFF        /**< LIS302DL_CTRL_REG3 mask  */
-#define LIS302DL_CTRL_REG3_I1CFG0   (1 << 0)    /**< Interrupt 1 config bit 0 */
-#define LIS302DL_CTRL_REG3_I1CFG1   (1 << 1)    /**< Interrupt 1 config bit 1 */
-#define LIS302DL_CTRL_REG3_I1CFG2   (1 << 2)    /**< Interrupt 1 config bit 2 */
-#define LIS302DL_CTRL_REG3_I2CFG0   (1 << 3)    /**< Interrupt 2 config bit 0 */
-#define LIS302DL_CTRL_REG3_I2CFG1   (1 << 4)    /**< Interrupt 2 config bit 1 */
-#define LIS302DL_CTRL_REG3_I2CFG2   (1 << 5)    /**< Interrupt 2 config bit 2 */
-#define LIS302DL_CTRL_REG3_PP_OD    (1 << 6)    /**< Push-pull open-drain     */
-#define LIS302DL_CTRL_REG3_IHL      (1 << 7)    /**< Int active high low      */
+#define LIS302DL_CTRL_REG3_MASK             0xFF    
+#define LIS302DL_CTRL_REG3_I1CFG0           (1 << 0)
+#define LIS302DL_CTRL_REG3_I1CFG1           (1 << 1)
+#define LIS302DL_CTRL_REG3_I1CFG2           (1 << 2)
+#define LIS302DL_CTRL_REG3_I2CFG0           (1 << 3)
+#define LIS302DL_CTRL_REG3_I2CFG1           (1 << 4)
+#define LIS302DL_CTRL_REG3_I2CFG2           (1 << 5)
+#define LIS302DL_CTRL_REG3_PP_OD            (1 << 6)
+#define LIS302DL_CTRL_REG3_IHL              (1 << 7)
 /** @} */
 
 /*===========================================================================*/
@@ -180,6 +185,16 @@
 #endif
 
 /**
+ * @brief   LIS302DL shared SPI switch.
+ * @details If set to @p TRUE the device acquires SPI bus ownership
+ *          on each transaction.
+ * @note    The default is @p FALSE. Requires SPI_USE_MUTUAL_EXCLUSION.
+ */
+#if !defined(LIS302DL_SHARED_SPI) || defined(__DOXYGEN__)
+#define LIS302DL_SHARED_SPI                 FALSE
+#endif
+
+/**
  * @brief   LIS302DL I2C interface switch.
  * @details If set to @p TRUE the support for I2C is included.
  * @note    The default is @p FALSE.
@@ -189,22 +204,23 @@
 #endif
 
 /**
- * @brief   LIS302DL advanced configurations switch.
- * @details If set to @p TRUE more configurations are available.
- * @note    The default is @p FALSE.
+ * @brief   LIS302DL shared I2C switch.
+ * @details If set to @p TRUE the device acquires I2C bus ownership
+ *          on each transaction.
+ * @note    The default is @p FALSE. Requires I2C_USE_MUTUAL_EXCLUSION.
  */
-#if !defined(LIS302DL_USE_ADVANCED) || defined(__DOXYGEN__)
-#define LIS302DL_USE_ADVANCED               FALSE
+#if !defined(LIS302DL_SHARED_I2C) || defined(__DOXYGEN__)
+#define LIS302DL_SHARED_I2C                 FALSE
 #endif
 
 /**
- * @brief   LIS302DL shared SPI switch.
- * @details If set to @p TRUE the device acquires SPI bus ownership
- *          on each transaction.
- * @note    The default is @p FALSE. Requires SPI_USE_MUTUAL_EXCLUSION.
+ * @brief   LIS302DL accelerometer subsystem advanced configurations 
+ *          switch.
+ * @details If set to @p TRUE more configurations are available.
+ * @note    The default is @p FALSE.
  */
-#if !defined(LIS302DL_SHARED_SPI) || defined(__DOXYGEN__)
-#define LIS302DL_SHARED_SPI                 FALSE
+#if !defined(LIS302DL_ACC_USE_ADVANCED) || defined(__DOXYGEN__)
+#define LIS302DL_ACC_USE_ADVANCED           FALSE
 #endif
 /** @} */
 
@@ -220,12 +236,23 @@
 #error "LIS302DL_USE_SPI requires HAL_USE_SPI"
 #endif
 
+#if LIS302DL_SHARED_SPI && !SPI_USE_MUTUAL_EXCLUSION
+#error "LIS302DL_SHARED_SPI requires SPI_USE_MUTUAL_EXCLUSION"
+#endif
+
 #if LIS302DL_USE_I2C && !HAL_USE_I2C
 #error "LIS302DL_USE_I2C requires HAL_USE_I2C"
 #endif
 
-#if LIS302DL_SHARED_SPI && !SPI_USE_MUTUAL_EXCLUSION
-#error "LIS302DL_SHARED_SPI requires SPI_USE_MUTUAL_EXCLUSION"
+#if LIS302DL_SHARED_I2C && !I2C_USE_MUTUAL_EXCLUSION
+#error "LIS302DL_SHARED_I2C requires I2C_USE_MUTUAL_EXCLUSION"
+#endif
+
+/**
+ * @todo    Add support for LIS302DL over I2C.
+ */
+#if LIS302DL_USE_I2C
+#error "LIS302DL over I2C still not supported"
 #endif
 
 /*===========================================================================*/
@@ -237,31 +264,36 @@
  * @{
  */
 /**
+ * @brief   Structure representing a LIS302DL driver.
+ */
+typedef struct LIS302DLDriver LIS302DLDriver;
+
+/**
  * @brief   LIS302DL full scale.
  */
 typedef enum {
-  LIS302DL_FS_2G = 0x00,            /**< Full scale ±2g.                    */
-  LIS302DL_FS_8G = 0x20             /**< Full scale ±8g.                    */
-}lis302dl_fs_t;
+  LIS302DL_ACC_FS_2G = 0x00,        /**< Full scale ±2g.                    */
+  LIS302DL_ACC_FS_8G = 0x20         /**< Full scale ±8g.                    */
+}lis302dl_acc_fs_t;
 
 /**
  * @brief   LIS302DL output data rate and bandwidth.
  */
 typedef enum {
-  LIS302DL_ODR_100HZ = 0x00,        /**< ODR 100 Hz.                        */
-  LIS302DL_ODR_400HZ = 0x80         /**< ODR 400 Hz.                        */
-}lis302dl_odr_t;
+  LIS302DL_ACC_ODR_100HZ = 0x00,    /**< ODR 100 Hz.                        */
+  LIS302DL_ACC_ODR_400HZ = 0x80     /**< ODR 400 Hz.                        */
+}lis302dl_acc_odr_t;
 
 /**
  * @brief   LIS302DL high pass filtering.
  */
 typedef enum {
-  LIS302DL_HP_DISABLED = 0x00,      /**< HP bypassed.                       */
-  LIS302DL_HP_0 = 0x10,             /**< HP cutoff 2Hz (ODR 100Hz) or 8Hz   */
-  LIS302DL_HP_1 = 0x11,             /**< HP cutoff 1Hz or 4Hz               */
-  LIS302DL_HP_2 = 0x12,             /**< HP cutoff 0.5Hz or 2Hz             */
-  LIS302DL_HP_3 = 0x13              /**< HP cutoff 0.25Hz or 1Hz            */
-}lis302dl_hp_t;
+  LIS302DL_ACC_HP_DISABLED = 0x00,  /**< HP bypassed.                       */
+  LIS302DL_ACC_HP_0 = 0x10,         /**< HP cutoff 2Hz (ODR 100Hz) or 8Hz   */
+  LIS302DL_ACC_HP_1 = 0x11,         /**< HP cutoff 1Hz or 4Hz               */
+  LIS302DL_ACC_HP_2 = 0x12,         /**< HP cutoff 0.5Hz or 2Hz             */
+  LIS302DL_ACC_HP_3 = 0x13          /**< HP cutoff 0.25Hz or 1Hz            */
+}lis302dl_acc_hp_t;
 
 /**
  * @brief   Driver state machine possible states.
@@ -298,52 +330,51 @@ typedef struct {
   const I2CConfig           *i2ccfg;
 #endif /* LIS302DL_USE_I2C */
   /**
-   * @brief LIS302DL initial sensitivity.
+   * @brief LIS302DL accelerometer subsystem initial sensitivity.
    */
-  float                     *sensitivity;
+  float                     *accsensitivity;
   /**
-   * @brief LIS302DL initial bias.
+   * @brief LIS302DL accelerometer subsystem initial bias.
    */
-  float                     *bias;
+  float                     *accbias;
   /**
-   * @brief LIS302DL full scale value.
+   * @brief LIS302DL accelerometer subsystem initial full scale.
    */
-  lis302dl_fs_t             fullscale;
+  lis302dl_acc_fs_t         accfullscale;
   /**
    * @brief LIS302DL output data rate selection.
    */
-  lis302dl_odr_t            outputdatarate;
+  lis302dl_acc_odr_t        accoutputdatarate;
 #if LIS302DL_USE_ADVANCED || defined(__DOXYGEN__)
   /**
    * @brief LIS302DL high pass filtering.
    */
-  lis302dl_hp_t             highpass;
+  lis302dl_acc_hp_t         acchighpass;
 #endif
 } LIS302DLConfig;
 
 /**
- * @brief   @p LIS302DL accelerometer subsystem specific methods.
+ * @brief   @p LIS302DL specific methods.
  */
-#define _lis302dl_accelerometer_methods_alone                               \
+#define _lis302dl_methods_alone                                             \
   /* Change full scale value of LIS302DL .*/                                \
-  msg_t (*set_full_scale)(void *instance, lis302dl_fs_t fs);
+  msg_t (*set_full_scale)(LIS302DLDriver *devp, lis302dl_acc_fs_t fs);
    
    
 /**
- * @brief   @p LIS302DL accelerometer subsystem specific methods with inherited 
- *          ones.
+ * @brief   @p LIS302DL specific methods with inherited ones.
  */
-#define _lis302dl_accelerometer_methods                                     \
-  _base_accelerometer_methods                                               \
-  _lis302dl_accelerometer_methods_alone
+#define _lis302dl_methods                                                   \
+  _base_object_methods                                                      \
+  _lis302dl_methods_alone
 
 /**
- * @extends BaseAccelerometerVMT
+ * @extends BaseObjectVMT
  *
  * @brief   @p LIS302DL accelerometer virtual methods table.
  */
-struct LIS302DLAccelerometerVMT {
-  _lis302dl_accelerometer_methods
+struct LIS302DLVMT {
+  _lis302dl_methods
 };
 
 /**
@@ -354,34 +385,25 @@ struct LIS302DLAccelerometerVMT {
   lis302dl_state_t          state;                                          \
   /* Current configuration data.*/                                          \
   const LIS302DLConfig      *config;                                        \
+  /* Accelerometer subsystem axes number.*/                                 \
+  size_t                    accaxes;                                        \
   /* Current sensitivity.*/                                                 \
-  float                     sensitivity[LIS302DL_NUMBER_OF_AXES];           \
+  float                     accsensitivity[LIS302DL_ACC_NUMBER_OF_AXES];    \
   /* Bias data.*/                                                           \
-  int32_t                   bias[LIS302DL_NUMBER_OF_AXES];                  \
+  int32_t                   accbias[LIS302DL_ACC_NUMBER_OF_AXES];           \
   /* Current full scale value.*/                                            \
-  float                     fullscale;
+  float                     accfullscale;
 
 /**
- * @extends BaseAccelerometer
- *
  * @brief   LIS302DL 3-axis accelerometer class.
- * @details This class extends @p BaseAccelerometer by adding physical
- *          driver implementation.
  */
 struct LIS302DLDriver {
-  /** @brief BaseSensor Virtual Methods Table. */
-  const struct BaseSensorVMT *vmt_sensor;
-  _base_sensor_data
-  /** @brief BaseAccelerometer Virtual Methods Table. */
-  const struct LIS302DLAccelerometerVMT *vmt_accelerometer;
-  _base_accelerometer_data
+  /** @brief Virtual Methods Table.*/
+  const struct LIS302DLVMT     *vmt;
+  /** @brief Base accelerometer interface.*/
+  BaseAccelerometer           acc_if;
   _lis302dl_data
 };
-
-/**
- * @brief   Structure representing a LIS302DL driver.
- */
-typedef struct LIS302DLDriver LIS302DLDriver;
 /** @} */
 
 /*===========================================================================*/
@@ -389,19 +411,141 @@ typedef struct LIS302DLDriver LIS302DLDriver;
 /*===========================================================================*/
 
 /**
- * @brief   Change accelerometer fullscale value.
+ * @brief   Return the number of axes of the BaseAccelerometer.
  *
- * @param[in] ip        pointer to a @p LIS302DLDriver class.
- * @param[in] fs        the new full scale value.
+ * @param[in] devp      pointer to @p LIS302DLDriver.
+ *
+ * @return              the number of axes.
+ *
+ * @api
+ */
+#define lis302dlAccelerometerGetAxesNumber(devp)                            \
+        accelerometerGetAxesNumber(&((devp)->acc_if))
+
+/**
+ * @brief   Retrieves raw data from the BaseAccelerometer.
+ * @note    This data is retrieved from MEMS register without any algebraical
+ *          manipulation.
+ * @note    The axes array must be at least the same size of the
+ *          BaseAccelerometer axes number.
+ *
+ * @param[in] devp      pointer to @p LIS302DLDriver.
+ * @param[out] axes     a buffer which would be filled with raw data.
  *
  * @return              The operation status.
  * @retval MSG_OK       if the function succeeded.
- * @retval MSG_RESET    if one or more errors occurred.
+ * @retval MSG_RESET    if one or more I2C errors occurred, the errors can
+ *                      be retrieved using @p i2cGetErrors().
+ * @retval MSG_TIMEOUT  if a timeout occurred before operation end.
+ *
  * @api
  */
-#define accelerometerSetFullScale(ip, fs)                                   \
-        (ip)->vmt_accelerometer->set_full_scale(ip, fs)
-        
+#define lis302dlAccelerometerReadRaw(devp, axes)                            \
+        accelerometerReadRaw(&((devp)->acc_if), axes)
+
+/**
+ * @brief   Retrieves cooked data from the BaseAccelerometer.
+ * @note    This data is manipulated according to the formula
+ *          cooked = (raw * sensitivity) - bias.
+ * @note    Final data is expressed as milli-G.
+ * @note    The axes array must be at least the same size of the
+ *          BaseAccelerometer axes number.
+ *
+ * @param[in] devp      pointer to @p LIS302DLDriver.
+ * @param[out] axes     a buffer which would be filled with cooked data.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more I2C errors occurred, the errors can
+ *                      be retrieved using @p i2cGetErrors().
+ * @retval MSG_TIMEOUT  if a timeout occurred before operation end.
+ *
+ * @api
+ */
+#define lis302dlAccelerometerReadCooked(devp, axes)                         \
+        accelerometerReadCooked(&((devp)->acc_if), axes)
+
+/**
+ * @brief   Set bias values for the BaseAccelerometer.
+ * @note    Bias must be expressed as milli-G.
+ * @note    The bias buffer must be at least the same size of the
+ *          BaseAccelerometer axes number.
+ *
+ * @param[in] devp      pointer to @p LIS302DLDriver.
+ * @param[in] bp        a buffer which contains biases.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ *
+ * @api
+ */
+#define lis302dlAccelerometerSetBias(devp, bp)                              \
+        accelerometerSetBias(&((devp)->acc_if), bp)
+
+/**
+ * @brief   Reset bias values for the BaseAccelerometer.
+ * @note    Default biases value are obtained from device datasheet when
+ *          available otherwise they are considered zero.
+ *
+ * @param[in] devp      pointer to @p LIS302DLDriver.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ *
+ * @api
+ */
+#define lis302dlAccelerometerResetBias(devp)                                \
+        accelerometerResetBias(&((devp)->acc_if))
+
+/**
+ * @brief   Set sensitivity values for the BaseAccelerometer.
+ * @note    Sensitivity must be expressed as milli-G/LSB.
+ * @note    The sensitivity buffer must be at least the same size of the
+ *          BaseAccelerometer axes number.
+ *
+ * @param[in] devp      pointer to @p LIS302DLDriver.
+ * @param[in] sp        a buffer which contains sensitivities.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ *
+ * @api
+ */
+#define lis302dlAccelerometerSetSensitivity(devp, sp)                       \
+        accelerometerSetSensitivity(&((devp)->acc_if), sp)
+
+/**
+ * @brief   Reset sensitivity values for the BaseAccelerometer.
+ * @note    Default sensitivities value are obtained from device datasheet.
+ *
+ * @param[in] devp      pointer to @p LIS302DLDriver.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    otherwise.
+ *
+ * @api
+ */
+#define lis302dlAccelerometerResetSensitivity(devp)                         \
+        accelerometerResetSensitivity(&((devp)->acc_if))
+
+/**
+ * @brief   Changes the LIS302DLDriver accelerometer fullscale value.
+ * @note    This function also rescale sensitivities and biases based on
+ *          previous and next fullscale value.
+ * @note    A recalibration is highly suggested after calling this function.
+ *
+ * @param[in] devp      pointer to @p LIS302DLDriver.
+ * @param[in] fs        new fullscale value.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    otherwise.
+ *
+ * @api
+ */
+#define lis302dlAccelerometerSetFullScale(devp, fs)                         \
+        (devp)->vmt->acc_set_full_scale(devp, fs)
 
 /*===========================================================================*/
 /* External declarations.                                                    */

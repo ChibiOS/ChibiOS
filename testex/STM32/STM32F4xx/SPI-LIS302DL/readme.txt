@@ -4,12 +4,16 @@
 
 ** TARGET **
 
-The demo runs on an STM32F407 Discovery board rev MB997B.
+The demo runs on an STM32F407 Discovery board REV B or previous.
 
 ** The Demo **
 
-The demo flashes the board LED using a thread, read data from LIS302DL printing
-it on a BaseSequentialStream (SDU1, mapped on USB virtual COM port).
+The application demonstrates the use of the STM32F4xx SPI driver in order
+to acquire data from LIS302L using ChibiOS/EX.
+
+** Board Setup **
+
+None required.
 
 ** Build Procedure **
 

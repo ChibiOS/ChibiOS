@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2016 Rocco Marco Guglielmi
+    ChibiOS - Copyright (C) 2016-2018 Rocco Marco Guglielmi
 
     This file is part of ChibiOS.
 
@@ -86,157 +86,291 @@ static void lis302dlSPIWriteRegister(SPIDriver *spip, uint8_t reg, size_t n,
 }
 #endif /* LIS302DL_USE_SPI */
 
-/*
- * Interface implementation.
+/**
+ * @brief   Return the number of axes of the BaseAccelerometer.
+ *
+ * @param[in] ip        pointer to @p BaseAccelerometer interface.
+ *
+ * @return              the number of axes.
  */
-static size_t get_axes_number(void *ip) {
-
-  osalDbgCheck(ip != NULL);
-  return LIS302DL_NUMBER_OF_AXES;
+static size_t acc_get_axes_number(void *ip) {
+  (void)ip;
+                
+  return LIS302DL_ACC_NUMBER_OF_AXES;
 }
 
-static msg_t read_raw(void *ip, int32_t axes[LIS302DL_NUMBER_OF_AXES]) {
+/**
+ * @brief   Retrieves raw data from the BaseAccelerometer.
+ * @note    This data is retrieved from MEMS register without any algebraical
+ *          manipulation.
+ * @note    The axes array must be at least the same size of the
+ *          BaseAccelerometer axes number.
+ *
+ * @param[in] ip        pointer to @p BaseAccelerometer interface.
+ * @param[out] axes     a buffer which would be filled with raw data.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more I2C errors occurred, the errors can
+ *                      be retrieved using @p i2cGetErrors().
+ * @retval MSG_TIMEOUT  if a timeout occurred before operation end.
+ */
+static msg_t acc_read_raw(void *ip, int32_t axes[]) {
+  LIS302DLDriver* devp;
   uint8_t i, tmp;
+  msg_t msg = MSG_OK;
 
   osalDbgCheck((ip != NULL) && (axes != NULL));
+    
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(LIS302DLDriver*, (BaseAccelerometer*)ip);
 
-  osalDbgAssert((((LIS302DLDriver *)ip)->state == LIS302DL_READY),
-              "read_raw(), invalid state");
+  osalDbgAssert((devp->state == LIS302DL_READY),
+                "acc_read_raw(), invalid state");
 
 #if LIS302DL_USE_SPI
-  osalDbgAssert((((LIS302DLDriver *)ip)->config->spip->state == SPI_READY),
-                "read_raw(), channel not ready");
-
 #if	LIS302DL_SHARED_SPI
-  spiAcquireBus(((LIS302DLDriver *)ip)->config->spip);
-  spiStart(((LIS302DLDriver *)ip)->config->spip,
-          ((LIS302DLDriver *)ip)->config->spicfg);
+  osalDbgAssert((devp->config->spip->state == SPI_READY),
+                "acc_read_raw(), channel not ready");
+                
+  spiAcquireBus(devp->config->spip);
+  spiStart(devp->config->spip,
+           devp->config->spicfg);
 #endif /* LIS302DL_SHARED_SPI */
 
-    for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++) {
-      lis302dlSPIReadRegister(((LIS302DLDriver *)ip)->config->spip,
+    for(i = 0; i < LIS302DL_ACC_NUMBER_OF_AXES; i++) {
+      lis302dlSPIReadRegister(devp->config->spip,
                               LIS302DL_AD_OUT_X + (i * 2), 1, &tmp);
       axes[i] = (int32_t)((int8_t)tmp);
     }
 
 #if	LIS302DL_SHARED_SPI
-  spiReleaseBus(((LIS302DLDriver *)ip)->config->spip);
-#endif /* LIS302DL_SHARED_SPI */
-
-#endif /* LIS302DL_USE_SPI */ 
-  return MSG_OK;
+  spiReleaseBus(devp->config->spip);
+#endif /* LIS302DL_SHARED_SPI */   
+#endif /* LIS302DL_USE_SPI */
+  return msg;
 }
 
-static msg_t read_cooked(void *ip, float axes[]) {
+/**
+ * @brief   Retrieves cooked data from the BaseAccelerometer.
+ * @note    This data is manipulated according to the formula
+ *          cooked = (raw * sensitivity) - bias.
+ * @note    Final data is expressed as milli-G.
+ * @note    The axes array must be at least the same size of the
+ *          BaseAccelerometer axes number.
+ *
+ * @param[in] ip        pointer to @p BaseAccelerometer interface.
+ * @param[out] axes     a buffer which would be filled with cooked data.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more I2C errors occurred, the errors can
+ *                      be retrieved using @p i2cGetErrors().
+ * @retval MSG_TIMEOUT  if a timeout occurred before operation end.
+ */
+static msg_t acc_read_cooked(void *ip, float axes[]) {
+  LIS302DLDriver* devp;
   uint32_t i;
-  int32_t raw[LIS302DL_NUMBER_OF_AXES];
+  int32_t raw[LIS302DL_ACC_NUMBER_OF_AXES];
   msg_t msg;
 
   osalDbgCheck((ip != NULL) && (axes != NULL));
 
-  osalDbgAssert((((LIS302DLDriver *)ip)->state == LIS302DL_READY),
-                "read_cooked(), invalid state");
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(LIS302DLDriver*, (BaseAccelerometer*)ip);
 
-  msg = read_raw(ip, raw);
-  for(i = 0; i < LIS302DL_NUMBER_OF_AXES ; i++){
-    axes[i] = (raw[i] * ((LIS302DLDriver *)ip)->sensitivity[i]);
-    axes[i] -= ((LIS302DLDriver *)ip)->bias[i];
+  osalDbgAssert((devp->state == LIS302DL_READY),
+                "acc_read_cooked(), invalid state");
+
+  msg = acc_read_raw(ip, raw);
+  for(i = 0; i < LIS302DL_ACC_NUMBER_OF_AXES; i++) {
+    axes[i] = (raw[i] * devp->accsensitivity[i]) - devp->accbias[i];
   }
   return msg;
 }
 
-static msg_t set_bias(void *ip, float *bp) {
+/**
+ * @brief   Set bias values for the BaseAccelerometer.
+ * @note    Bias must be expressed as milli-G.
+ * @note    The bias buffer must be at least the same size of the
+ *          BaseAccelerometer axes number.
+ *
+ * @param[in] ip        pointer to @p BaseAccelerometer interface.
+ * @param[in] bp        a buffer which contains biases.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ */
+static msg_t acc_set_bias(void *ip, float *bp) {
+  LIS302DLDriver* devp;
   uint32_t i;
-  
-  osalDbgCheck((ip != NULL) && (bp !=NULL));
+  msg_t msg = MSG_OK;
 
-  osalDbgAssert((((LIS302DLDriver *)ip)->state == LIS302DL_READY) ||
-                (((LIS302DLDriver *)ip)->state == LIS302DL_STOP),
-                "set_bias(), invalid state");
-  
-  for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++) {
-    ((LIS302DLDriver *)ip)->bias[i] = bp[i];
+  osalDbgCheck((ip != NULL) && (bp != NULL));
+
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(LIS302DLDriver*, (BaseAccelerometer*)ip);
+
+  osalDbgAssert((devp->state == LIS302DL_READY),
+                "acc_set_bias(), invalid state");
+
+  for(i = 0; i < LIS302DL_ACC_NUMBER_OF_AXES; i++) {
+    devp->accbias[i] = bp[i];
   }
-  return MSG_OK;
+  return msg;
 }
 
-static msg_t reset_bias(void *ip) {
+/**
+ * @brief   Reset bias values for the BaseAccelerometer.
+ * @note    Default biases value are obtained from device datasheet when
+ *          available otherwise they are considered zero.
+ *
+ * @param[in] ip        pointer to @p BaseAccelerometer interface.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ */
+static msg_t acc_reset_bias(void *ip) {
+  LIS302DLDriver* devp;
   uint32_t i;
+  msg_t msg = MSG_OK;
 
   osalDbgCheck(ip != NULL);
+    
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(LIS302DLDriver*, (BaseAccelerometer*)ip);
 
-  osalDbgAssert((((LIS302DLDriver *)ip)->state == LIS302DL_READY) ||
-                (((LIS302DLDriver *)ip)->state == LIS302DL_STOP),
-              "reset_bias(), invalid state");
+  osalDbgAssert((devp->state == LIS302DL_READY),
+                "acc_reset_bias(), invalid state");
 
-  for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++)
-    ((LIS302DLDriver *)ip)->bias[i] = 0;
-  return MSG_OK;
+  for(i = 0; i < LIS302DL_ACC_NUMBER_OF_AXES; i++)
+    devp->accbias[i] = LIS302DL_ACC_BIAS;
+  return msg;
 }
 
-static msg_t set_sensivity(void *ip, float *sp) {
+/**
+ * @brief   Set sensitivity values for the BaseAccelerometer.
+ * @note    Sensitivity must be expressed as milli-G/LSB.
+ * @note    The sensitivity buffer must be at least the same size of the
+ *          BaseAccelerometer axes number.
+ *
+ * @param[in] ip        pointer to @p BaseAccelerometer interface.
+ * @param[in] sp        a buffer which contains sensitivities.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ */
+static msg_t acc_set_sensivity(void *ip, float *sp) {
+  LIS302DLDriver* devp;
   uint32_t i;
-  
-  osalDbgCheck((ip != NULL) && (sp !=NULL));
+  msg_t msg = MSG_OK;
 
-  osalDbgAssert((((LIS302DLDriver *)ip)->state == LIS302DL_READY),
-                "set_sensivity(), invalid state");
-  
-  for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++) {
-    ((LIS302DLDriver *)ip)->sensitivity[i] = sp[i];
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(LIS302DLDriver*, (BaseAccelerometer*)ip);
+
+  osalDbgCheck((ip != NULL) && (sp != NULL));
+
+  osalDbgAssert((devp->state == LIS302DL_READY),
+                "acc_set_sensivity(), invalid state");
+
+  for(i = 0; i < LIS302DL_ACC_NUMBER_OF_AXES; i++) {
+    devp->accsensitivity[i] = sp[i];
   }
-  return MSG_OK;
+  return msg;
 }
 
-static msg_t reset_sensivity(void *ip) {
+/**
+ * @brief   Reset sensitivity values for the BaseAccelerometer.
+ * @note    Default sensitivities value are obtained from device datasheet.
+ *
+ * @param[in] ip        pointer to @p BaseAccelerometer interface.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    otherwise.
+ */
+static msg_t acc_reset_sensivity(void *ip) {
+  LIS302DLDriver* devp;
   uint32_t i;
+  msg_t msg = MSG_OK;
 
   osalDbgCheck(ip != NULL);
+    
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(LIS302DLDriver*, (BaseAccelerometer*)ip);
 
-  osalDbgAssert((((LIS302DLDriver *)ip)->state == LIS302DL_READY),
-                "reset_sensivity(), invalid state");
+  osalDbgAssert((devp->state == LIS302DL_READY),
+                "acc_reset_sensivity(), invalid state");
 
-  if(((LIS302DLDriver *)ip)->config->fullscale == LIS302DL_FS_2G)
-    for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++)
-      ((LIS302DLDriver *)ip)->sensitivity[i] = LIS302DL_SENS_2G;
-  else if(((LIS302DLDriver *)ip)->config->fullscale == LIS302DL_FS_8G)
-	for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++)
-      ((LIS302DLDriver *)ip)->sensitivity[i] = LIS302DL_SENS_8G;
+  if(devp->config->accfullscale == LIS302DL_ACC_FS_2G)
+    for(i = 0; i < LIS302DL_ACC_NUMBER_OF_AXES; i++)
+      devp->accsensitivity[i] = LIS302DL_ACC_SENS_2G;
+  else if(devp->config->accfullscale == LIS302DL_ACC_FS_8G)
+    for(i = 0; i < LIS302DL_ACC_NUMBER_OF_AXES; i++)
+      devp->accsensitivity[i] = LIS302DL_ACC_SENS_8G;
   else {
-    osalDbgAssert(FALSE, "reset_sensivity(), full scale issue");
+    osalDbgAssert(FALSE, 
+                  "acc_reset_sensivity(), accelerometer full scale issue");
     return MSG_RESET;
   }
-  return MSG_OK;
+  return msg;
 }
 
-static msg_t set_full_scale(void *ip, lis302dl_fs_t fs) {
+/**
+ * @brief   Changes the LIS302DLDriver accelerometer fullscale value.
+ * @note    This function also rescale sensitivities and biases based on 
+ *          previous and next fullscale value.
+ * @note    A recalibration is highly suggested after calling this function.
+ *
+ * @param[in] ip        pointer to @p LIS302DLDriver interface.
+ * @param[in] fs        new fullscale value.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    otherwise.
+ */
+static msg_t acc_set_full_scale(LIS302DLDriver *devp,
+                                lis302dl_acc_fs_t fs) {
   float newfs, scale;
   uint8_t i, cr;
+  msg_t msg;
 
-  if(fs == LIS302DL_FS_2G) {
-    newfs = LIS302DL_2G;
+  osalDbgCheck(devp != NULL);
+
+  osalDbgAssert((devp->state == LIS302DL_READY),
+                "acc_set_full_scale(), invalid state");
+  osalDbgAssert((devp->config->spip->state == SPI_READY),
+                "acc_set_full_scale(), channel not ready");
+
+  /* Computing new fullscale value.*/
+  if(fs == LIS302DL_ACC_FS_2G) {
+    newfs = LIS302DL_ACC_2G;
   }
-  else if(fs == LIS302DL_FS_8G) {
-    newfs = LIS302DL_8G;
+  else if(fs == LIS302DL_ACC_FS_8G) {
+    newfs = LIS302DL_ACC_8G;
   }
   else {
-    return MSG_RESET;
+    msg = MSG_RESET;
+    return msg;
   }
 
-  if(newfs != ((LIS302DLDriver *)ip)->fullscale) {
-    scale = newfs / ((LIS302DLDriver *)ip)->fullscale;
-    ((LIS302DLDriver *)ip)->fullscale = newfs;
+  if(newfs != devp->accfullscale) {
+    /* Computing scale value.*/
+    scale = newfs / devp->accfullscale;
+    devp->accfullscale = newfs;
 
 #if LIS302DL_USE_SPI
 #if LIS302DL_SHARED_SPI
-  spiAcquireBus(((LIS302DLDriver *)ip)->config->spip);
-  spiStart(((LIS302DLDriver *)ip)->config->spip,
-          ((LIS302DLDriver *)ip)->config->spicfg);
+    spiAcquireBus(devp->config->spip);
+    spiStart(devp->config->spip,
+             devp->config->spicfg);
 #endif /* LIS302DL_SHARED_SPI */
-    lis302dlSPIReadRegister(((LIS302DLDriver *)ip)->config->spip,
-                            LIS302DL_AD_CTRL_REG1, 1, &cr);
+
+    /* Getting data from register.*/
+    lis302dlSPIReadRegister(devp->config->spip, LIS302DL_AD_CTRL_REG1, 1, &cr);
+    
 #if LIS302DL_SHARED_SPI
-  spiReleaseBus(((LIS302DLDriver *)ip)->config->spip);
+    spiReleaseBus(devp->config->spip);
 #endif /* LIS302DL_SHARED_SPI */
 #endif /* LIS302DL_USE_SPI */
 
@@ -245,34 +379,37 @@ static msg_t set_full_scale(void *ip, lis302dl_fs_t fs) {
 
 #if LIS302DL_USE_SPI
 #if LIS302DL_SHARED_SPI
-  spiAcquireBus(((LIS302DLDriver *)ip)->config->spip);
-  spiStart(((LIS302DLDriver *)ip)->config->spip,
-          ((LIS302DLDriver *)ip)->config->spicfg);
+    spiAcquireBus(devp->config->spip);
+    spiStart(devp->config->spip,
+             devp->config->spicfg);
 #endif /* LIS302DL_SHARED_SPI */
-    lis302dlSPIWriteRegister(((LIS302DLDriver *)ip)->config->spip,
-                             LIS302DL_AD_CTRL_REG1, 1, &cr);
+
+    /* Getting data from register.*/
+    lis302dlSPIWriteRegister(devp->config->spip, LIS302DL_AD_CTRL_REG1, 1, &cr);
+                           
 #if LIS302DL_SHARED_SPI
-  spiReleaseBus(((LIS302DLDriver *)ip)->config->spip);
+    spiReleaseBus(devp->config->spip);
 #endif /* LIS302DL_SHARED_SPI */
 #endif /* LIS302DL_USE_SPI */
 
     /* Scaling sensitivity and bias. Re-calibration is suggested anyway. */
-    for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++) {
-      ((LIS302DLDriver *)ip)->sensitivity[i] *= scale;
-      ((LIS302DLDriver *)ip)->bias[i] *= scale;
+    for(i = 0; i < LIS302DL_ACC_NUMBER_OF_AXES; i++) {
+      devp->accsensitivity[i] *= scale;
+      devp->accbias[i] *= scale;
     }
   }
-  return MSG_OK;
+  return msg;
 }
 
-static const struct BaseSensorVMT vmt_sensor = {
-  get_axes_number, read_raw, read_cooked
+static const struct LIS302DLVMT vmt_device = {
+  (size_t)0,
+  acc_set_full_scale
 };
 
-static const struct LIS302DLAccelerometerVMT vmt_accelerometer = {
-  get_axes_number, read_raw, read_cooked,
-  set_bias, reset_bias, set_sensivity, reset_sensivity,
-  set_full_scale
+static const struct BaseAccelerometerVMT vmt_accelerometer = {
+  sizeof(struct LIS302DLVMT*),
+  acc_get_axes_number, acc_read_raw, acc_read_cooked,
+  acc_set_bias, acc_reset_bias, acc_set_sensivity, acc_reset_sensivity
 };
 
 /*===========================================================================*/
@@ -287,13 +424,14 @@ static const struct LIS302DLAccelerometerVMT vmt_accelerometer = {
  * @init
  */
 void lis302dlObjectInit(LIS302DLDriver *devp) {
-  uint32_t i;
-  devp->vmt_sensor = &vmt_sensor;
-  devp->vmt_accelerometer = &vmt_accelerometer;
+  devp->vmt = &vmt_device;
+  devp->acc_if.vmt = &vmt_accelerometer;
+  
   devp->config = NULL;
-  for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++)
-    devp->bias[i] = 0.0f;
-  devp->state  = LIS302DL_STOP;
+  
+  devp->accaxes = LIS302DL_ACC_NUMBER_OF_AXES;
+
+  devp->state = LIS302DL_STOP;
 }
 
 /**
@@ -318,15 +456,15 @@ void lis302dlStart(LIS302DLDriver *devp, const LIS302DLConfig *config) {
   {
     cr[0] = LIS302DL_CTRL_REG1_XEN | LIS302DL_CTRL_REG1_YEN | 
             LIS302DL_CTRL_REG1_ZEN | LIS302DL_CTRL_REG1_PD |
-            devp->config->outputdatarate |
-            devp->config->fullscale;
+            devp->config->accoutputdatarate |
+            devp->config->accfullscale;
   }
   
   /* Control register 2 configuration block.*/
   {
 #if LIS302DL_USE_ADVANCED || defined(__DOXYGEN__)
   if(devp->config->hpmode != LIS302DL_HPM_BYPASSED)
-    cr[1] = devp->config->highpass;
+    cr[1] = devp->config->acchighpass;
 #endif
   }
 
@@ -345,31 +483,35 @@ void lis302dlStart(LIS302DLDriver *devp, const LIS302DLConfig *config) {
 #endif /* LIS302DL_USE_SPI */
   
   /* Storing sensitivity information according to full scale value */
-  if(devp->config->fullscale == LIS302DL_FS_2G) {
-    devp->fullscale = LIS302DL_2G;
-    if(devp->config->sensitivity == NULL)
-      for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++)
-        devp->sensitivity[i] = LIS302DL_SENS_2G;
+  if(devp->config->accfullscale == LIS302DL_ACC_FS_2G) {
+    devp->accfullscale = LIS302DL_ACC_2G;
+    if(devp->config->accsensitivity == NULL)
+      for(i = 0; i < LIS302DL_ACC_NUMBER_OF_AXES; i++)
+        devp->accsensitivity[i] = LIS302DL_ACC_SENS_2G;
     else
-      for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++)
-        devp->sensitivity[i] = devp->config->sensitivity[i];
+      for(i = 0; i < LIS302DL_ACC_NUMBER_OF_AXES; i++)
+        devp->accsensitivity[i] = devp->config->accsensitivity[i];
   }
-  else if(devp->config->fullscale == LIS302DL_FS_8G) {
-    devp->fullscale = LIS302DL_8G;
-    if(devp->config->sensitivity == NULL)
-      for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++)
-        devp->sensitivity[i] = LIS302DL_SENS_8G;
+  else if(devp->config->accfullscale == LIS302DL_ACC_FS_8G) {
+    devp->accfullscale = LIS302DL_ACC_8G;
+    if(devp->config->accsensitivity == NULL)
+      for(i = 0; i < LIS302DL_ACC_NUMBER_OF_AXES; i++)
+        devp->accsensitivity[i] = LIS302DL_ACC_SENS_8G;
     else
-      for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++)
-        devp->sensitivity[i] = devp->config->sensitivity[i];
+      for(i = 0; i < LIS302DL_ACC_NUMBER_OF_AXES; i++)
+        devp->accsensitivity[i] = devp->config->accsensitivity[i];
   }
   else {
     osalDbgAssert(FALSE, "lis302dlStart(), accelerometer full scale issue");
   }
 
-  if(devp->config->bias != NULL)
-    for(i = 0; i < LIS302DL_NUMBER_OF_AXES; i++)
-      devp->bias[i] = devp->config->bias[i];
+  /* Storing bias information according to user setting */
+  if(devp->config->accbias != NULL)
+    for(i = 0; i < LIS302DL_ACC_NUMBER_OF_AXES; i++)
+      devp->accbias[i] = devp->config->accbias[i];
+  else      
+    for(i = 0; i < LIS302DL_ACC_NUMBER_OF_AXES; i++)
+      devp->accbias[i] = LIS302DL_ACC_BIAS;
 
   /* This is the Accelerometer transient recovery time */
   osalThreadSleepMilliseconds(10);
@@ -388,7 +530,8 @@ void lis302dlStop(LIS302DLDriver *devp) {
   uint8_t cr1;
   osalDbgCheck(devp != NULL);
 
-  osalDbgAssert((devp->state == LIS302DL_STOP) || (devp->state == LIS302DL_READY),
+  osalDbgAssert((devp->state == LIS302DL_STOP) || 
+                (devp->state == LIS302DL_READY),
                 "lis302dlStop(), invalid state");
 
   if (devp->state == LIS302DL_READY) {
@@ -398,6 +541,7 @@ void lis302dlStop(LIS302DLDriver *devp) {
     spiStart((devp)->config->spip,
              (devp)->config->spicfg);
 #endif /* LIS302DL_SHARED_SPI */
+    /* Disabling all axes and enabling power down mode.*/
     cr1 = 0;
     lis302dlSPIWriteRegister(devp->config->spip, LIS302DL_AD_CTRL_REG1, 1, &cr1);
     spiStop((devp)->config->spip);
