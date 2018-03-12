@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2016 Rocco Marco Guglielmi
+    ChibiOS - Copyright (C) 2016-2018 Rocco Marco Guglielmi
 
     This file is part of ChibiOS.
 
@@ -57,7 +57,7 @@
  * @param[in] n         number of adjacent registers to write
  * @param[in] b         pointer to a buffer.
  */
-static void lis3dshSPIReadRegister(SPIDriver *spip, uint8_t reg,  size_t n,
+static void lis3dshSPIReadRegister(SPIDriver *spip, uint8_t reg, size_t n,
                                    uint8_t* b) {
   uint8_t cmd;
   cmd = reg | LIS3DSH_RW;
@@ -88,177 +88,313 @@ static void lis3dshSPIWriteRegister(SPIDriver *spip, uint8_t reg, size_t n,
 }
 #endif /* LIS3DSH_USE_SPI */
 
-/*
- * Interface implementation.
+/**
+ * @brief   Return the number of axes of the BaseAccelerometer.
+ *
+ * @param[in] ip        pointer to @p BaseAccelerometer interface.
+ *
+ * @return              the number of axes.
  */
-static size_t get_axes_number(void *ip) {
-
-  osalDbgCheck(ip != NULL);
-  return LIS3DSH_NUMBER_OF_AXES;
+static size_t acc_get_axes_number(void *ip) {
+  (void)ip;
+                
+  return LIS3DSH_ACC_NUMBER_OF_AXES;
 }
 
-static msg_t read_raw(void *ip, int32_t axes[LIS3DSH_NUMBER_OF_AXES]) {
-  uint8_t buff [LIS3DSH_NUMBER_OF_AXES * 2], i;
+/**
+ * @brief   Retrieves raw data from the BaseAccelerometer.
+ * @note    This data is retrieved from MEMS register without any algebraical
+ *          manipulation.
+ * @note    The axes array must be at least the same size of the
+ *          BaseAccelerometer axes number.
+ *
+ * @param[in] ip        pointer to @p BaseAccelerometer interface.
+ * @param[out] axes     a buffer which would be filled with raw data.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more I2C errors occurred, the errors can
+ *                      be retrieved using @p i2cGetErrors().
+ * @retval MSG_TIMEOUT  if a timeout occurred before operation end.
+ */
+static msg_t acc_read_raw(void *ip, int32_t axes[]) {
+  LIS3DSHDriver* devp;
+  uint8_t buff [LIS3DSH_ACC_NUMBER_OF_AXES * 2], i;
   int16_t tmp;
-  osalDbgCheck((ip != NULL) && (axes != NULL));
+  msg_t msg = MSG_OK;
 
-  osalDbgAssert((((LIS3DSHDriver *)ip)->state == LIS3DSH_READY),
-              "read_raw(), invalid state");
+  osalDbgCheck((ip != NULL) && (axes != NULL));
+    
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(LIS3DSHDriver*, (BaseAccelerometer*)ip);
+
+  osalDbgAssert((devp->state == LIS3DSH_READY),
+                "acc_read_raw(), invalid state");
 
 #if LIS3DSH_USE_SPI
-  osalDbgAssert((((LIS3DSHDriver *)ip)->config->spip->state == SPI_READY),
-                "read_raw(), channel not ready");
-
 #if	LIS3DSH_SHARED_SPI
-  spiAcquireBus(((LIS3DSHDriver *)ip)->config->spip);
-  spiStart(((LIS3DSHDriver *)ip)->config->spip,
-           ((LIS3DSHDriver *)ip)->config->spicfg);
+  osalDbgAssert((devp->config->spip->state == SPI_READY),
+                "acc_read_raw(), channel not ready");
+                
+  spiAcquireBus(devp->config->spip);
+  spiStart(devp->config->spip,
+           devp->config->spicfg);
 #endif /* LIS3DSH_SHARED_SPI */
 
-    lis3dshSPIReadRegister(((LIS3DSHDriver *)ip)->config->spip, LIS3DSH_AD_OUT_X_L,
-                          LIS3DSH_NUMBER_OF_AXES * 2, buff);
+  lis3dshSPIReadRegister(devp->config->spip, LIS3DSH_AD_OUT_X_L,
+                         LIS3DSH_ACC_NUMBER_OF_AXES * 2, buff);
 
 #if	LIS3DSH_SHARED_SPI
-  spiReleaseBus(((LIS3DSHDriver *)ip)->config->spip);
+  spiReleaseBus(devp->config->spip);
 #endif /* LIS3DSH_SHARED_SPI */   
 #endif /* LIS3DSH_USE_SPI */
 
-  for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++) {
-    tmp = buff[2*i] + (buff[2*i+1] << 8);
+
+  for(i = 0; i < LIS3DSH_ACC_NUMBER_OF_AXES; i++) {
+    tmp = buff[2 * i] + (buff[2 * i + 1] << 8);
     axes[i] = (int32_t)tmp;
-  }
-  return MSG_OK;
-}
-
-
-static msg_t read_cooked(void *ip, float axes[]) {
-  uint32_t i;
-  int32_t raw[LIS3DSH_NUMBER_OF_AXES];
-  msg_t msg;
-
-  osalDbgCheck((ip != NULL) && (axes != NULL));
-
-  osalDbgAssert((((LIS3DSHDriver *)ip)->state == LIS3DSH_READY),
-                "read_cooked(), invalid state");
-
-  msg = read_raw(ip, raw);
-  for(i = 0; i < LIS3DSH_NUMBER_OF_AXES ; i++){
-    axes[i] = (raw[i] * ((LIS3DSHDriver *)ip)->sensitivity[i]);
-    axes[i] -= ((LIS3DSHDriver *)ip)->bias[i];
   }
   return msg;
 }
 
-static msg_t set_bias(void *ip, float *bp) {
+/**
+ * @brief   Retrieves cooked data from the BaseAccelerometer.
+ * @note    This data is manipulated according to the formula
+ *          cooked = (raw * sensitivity) - bias.
+ * @note    Final data is expressed as milli-G.
+ * @note    The axes array must be at least the same size of the
+ *          BaseAccelerometer axes number.
+ *
+ * @param[in] ip        pointer to @p BaseAccelerometer interface.
+ * @param[out] axes     a buffer which would be filled with cooked data.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more I2C errors occurred, the errors can
+ *                      be retrieved using @p i2cGetErrors().
+ * @retval MSG_TIMEOUT  if a timeout occurred before operation end.
+ */
+static msg_t acc_read_cooked(void *ip, float axes[]) {
+  LIS3DSHDriver* devp;
   uint32_t i;
-  
-  osalDbgCheck((ip != NULL) && (bp !=NULL));
+  int32_t raw[LIS3DSH_ACC_NUMBER_OF_AXES];
+  msg_t msg;
 
-  osalDbgAssert((((LIS3DSHDriver *)ip)->state == LIS3DSH_READY) ||
-                (((LIS3DSHDriver *)ip)->state == LIS3DSH_STOP),
-                "set_bias(), invalid state");
-  
-  for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++) {
-    ((LIS3DSHDriver *)ip)->bias[i] = bp[i];
+  osalDbgCheck((ip != NULL) && (axes != NULL));
+
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(LIS3DSHDriver*, (BaseAccelerometer*)ip);
+
+  osalDbgAssert((devp->state == LIS3DSH_READY),
+                "acc_read_cooked(), invalid state");
+
+  msg = acc_read_raw(ip, raw);
+  for(i = 0; i < LIS3DSH_ACC_NUMBER_OF_AXES; i++) {
+    axes[i] = (raw[i] * devp->accsensitivity[i]) - devp->accbias[i];
   }
-  return MSG_OK;
+  return msg;
 }
 
-static msg_t reset_bias(void *ip) {
+/**
+ * @brief   Set bias values for the BaseAccelerometer.
+ * @note    Bias must be expressed as milli-G.
+ * @note    The bias buffer must be at least the same size of the
+ *          BaseAccelerometer axes number.
+ *
+ * @param[in] ip        pointer to @p BaseAccelerometer interface.
+ * @param[in] bp        a buffer which contains biases.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ */
+static msg_t acc_set_bias(void *ip, float *bp) {
+  LIS3DSHDriver* devp;
   uint32_t i;
+  msg_t msg = MSG_OK;
+
+  osalDbgCheck((ip != NULL) && (bp != NULL));
+
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(LIS3DSHDriver*, (BaseAccelerometer*)ip);
+
+  osalDbgAssert((devp->state == LIS3DSH_READY),
+                "acc_set_bias(), invalid state");
+
+  for(i = 0; i < LIS3DSH_ACC_NUMBER_OF_AXES; i++) {
+    devp->accbias[i] = bp[i];
+  }
+  return msg;
+}
+
+/**
+ * @brief   Reset bias values for the BaseAccelerometer.
+ * @note    Default biases value are obtained from device datasheet when
+ *          available otherwise they are considered zero.
+ *
+ * @param[in] ip        pointer to @p BaseAccelerometer interface.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ */
+static msg_t acc_reset_bias(void *ip) {
+  LIS3DSHDriver* devp;
+  uint32_t i;
+  msg_t msg = MSG_OK;
 
   osalDbgCheck(ip != NULL);
+    
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(LIS3DSHDriver*, (BaseAccelerometer*)ip);
 
-  osalDbgAssert((((LIS3DSHDriver *)ip)->state == LIS3DSH_READY) ||
-                (((LIS3DSHDriver *)ip)->state == LIS3DSH_STOP),
-              "reset_bias(), invalid state");
+  osalDbgAssert((devp->state == LIS3DSH_READY),
+                "acc_reset_bias(), invalid state");
 
-  for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++)
-    ((LIS3DSHDriver *)ip)->bias[i] = 0;
-  return MSG_OK;
+  for(i = 0; i < LIS3DSH_ACC_NUMBER_OF_AXES; i++)
+    devp->accbias[i] = LIS3DSH_ACC_BIAS;
+  return msg;
 }
 
-static msg_t set_sensivity(void *ip, float *sp) {
+/**
+ * @brief   Set sensitivity values for the BaseAccelerometer.
+ * @note    Sensitivity must be expressed as milli-G/LSB.
+ * @note    The sensitivity buffer must be at least the same size of the
+ *          BaseAccelerometer axes number.
+ *
+ * @param[in] ip        pointer to @p BaseAccelerometer interface.
+ * @param[in] sp        a buffer which contains sensitivities.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ */
+static msg_t acc_set_sensivity(void *ip, float *sp) {
+  LIS3DSHDriver* devp;
   uint32_t i;
-  
-  osalDbgCheck((ip != NULL) && (sp !=NULL));
+  msg_t msg = MSG_OK;
 
-  osalDbgAssert((((LIS3DSHDriver *)ip)->state == LIS3DSH_READY),
-                "set_sensivity(), invalid state");
-  
-  for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++) {
-    ((LIS3DSHDriver *)ip)->sensitivity[i] = sp[i];
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(LIS3DSHDriver*, (BaseAccelerometer*)ip);
+
+  osalDbgCheck((ip != NULL) && (sp != NULL));
+
+  osalDbgAssert((devp->state == LIS3DSH_READY),
+                "acc_set_sensivity(), invalid state");
+
+  for(i = 0; i < LIS3DSH_ACC_NUMBER_OF_AXES; i++) {
+    devp->accsensitivity[i] = sp[i];
   }
-  return MSG_OK;
+  return msg;
 }
 
-static msg_t reset_sensivity(void *ip) {
+/**
+ * @brief   Reset sensitivity values for the BaseAccelerometer.
+ * @note    Default sensitivities value are obtained from device datasheet.
+ *
+ * @param[in] ip        pointer to @p BaseAccelerometer interface.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    otherwise.
+ */
+static msg_t acc_reset_sensivity(void *ip) {
+  LIS3DSHDriver* devp;
   uint32_t i;
+  msg_t msg = MSG_OK;
 
   osalDbgCheck(ip != NULL);
+    
+  /* Getting parent instance pointer.*/
+  devp = objGetInstance(LIS3DSHDriver*, (BaseAccelerometer*)ip);
 
-  osalDbgAssert((((LIS3DSHDriver *)ip)->state == LIS3DSH_READY),
-                "reset_sensivity(), invalid state");
+  osalDbgAssert((devp->state == LIS3DSH_READY),
+                "acc_reset_sensivity(), invalid state");
 
-  if(((LIS3DSHDriver *)ip)->config->fullscale == LIS3DSH_FS_2G)
-    for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++)
-      ((LIS3DSHDriver *)ip)->sensitivity[i] = LIS3DSH_SENS_2G;
-  else if(((LIS3DSHDriver *)ip)->config->fullscale == LIS3DSH_FS_4G)
-    for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++)
-      ((LIS3DSHDriver *)ip)->sensitivity[i] = LIS3DSH_SENS_4G;
-  else if(((LIS3DSHDriver *)ip)->config->fullscale == LIS3DSH_FS_6G)
-    for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++)
-      ((LIS3DSHDriver *)ip)->sensitivity[i] = LIS3DSH_SENS_6G;
-  else if(((LIS3DSHDriver *)ip)->config->fullscale == LIS3DSH_FS_8G)
-    for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++)
-      ((LIS3DSHDriver *)ip)->sensitivity[i] = LIS3DSH_SENS_8G;
-  else if(((LIS3DSHDriver *)ip)->config->fullscale == LIS3DSH_FS_16G)
-    for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++)
-      ((LIS3DSHDriver *)ip)->sensitivity[i] = LIS3DSH_SENS_16G;
+  if(devp->config->accfullscale == LIS3DSH_ACC_FS_2G)
+    for(i = 0; i < LIS3DSH_ACC_NUMBER_OF_AXES; i++)
+      devp->accsensitivity[i] = LIS3DSH_ACC_SENS_2G;
+  else if(devp->config->accfullscale == LIS3DSH_ACC_FS_4G)
+    for(i = 0; i < LIS3DSH_ACC_NUMBER_OF_AXES; i++)
+      devp->accsensitivity[i] = LIS3DSH_ACC_SENS_4G;
+  else if(devp->config->accfullscale == LIS3DSH_ACC_FS_6G)
+    for(i = 0; i < LIS3DSH_ACC_NUMBER_OF_AXES; i++)
+      devp->accsensitivity[i] = LIS3DSH_ACC_SENS_6G;
+  else if(devp->config->accfullscale == LIS3DSH_ACC_FS_8G)
+    for(i = 0; i < LIS3DSH_ACC_NUMBER_OF_AXES; i++)
+      devp->accsensitivity[i] = LIS3DSH_ACC_SENS_8G;
+  else if(devp->config->accfullscale == LIS3DSH_ACC_FS_16G)
+    for(i = 0; i < LIS3DSH_ACC_NUMBER_OF_AXES; i++)
+      devp->accsensitivity[i] = LIS3DSH_ACC_SENS_16G;
   else {
-    osalDbgAssert(FALSE, "reset_sensivity(), accelerometer full scale issue");
+    osalDbgAssert(FALSE, 
+                  "acc_reset_sensivity(), accelerometer full scale issue");
     return MSG_RESET;
   }
-  return MSG_OK;
+  return msg;
 }
 
-static msg_t set_full_scale(void *ip, lis3dsh_fs_t fs) {
+/**
+ * @brief   Changes the LIS3DSHDriver accelerometer fullscale value.
+ * @note    This function also rescale sensitivities and biases based on 
+ *          previous and next fullscale value.
+ * @note    A recalibration is highly suggested after calling this function.
+ *
+ * @param[in] ip        pointer to @p LIS3DSHDriver interface.
+ * @param[in] fs        new fullscale value.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    otherwise.
+ */
+static msg_t acc_set_full_scale(LIS3DSHDriver *devp,
+                                lis3dsh_acc_fs_t fs) {
   float newfs, scale;
   uint8_t i, cr;
+  msg_t msg;
 
-  if(fs == LIS3DSH_FS_2G) {
-    newfs = LIS3DSH_2G;
+  osalDbgCheck(devp != NULL);
+
+  osalDbgAssert((devp->state == LIS3DSH_READY),
+                "acc_set_full_scale(), invalid state");
+  osalDbgAssert((devp->config->spip->state == SPI_READY),
+                "acc_set_full_scale(), channel not ready");
+
+  /* Computing new fullscale value.*/
+  if(fs == LIS3DSH_ACC_FS_2G) {
+    newfs = LIS3DSH_ACC_2G;
   }
-  else if(fs == LIS3DSH_FS_4G) {
-    newfs = LIS3DSH_4G;
+  else if(fs == LIS3DSH_ACC_FS_4G) {
+    newfs = LIS3DSH_ACC_4G;
   }
-  else if(fs == LIS3DSH_FS_6G) {
-    newfs = LIS3DSH_6G;
+  else if(fs == LIS3DSH_ACC_FS_6G) {
+    newfs = LIS3DSH_ACC_6G;
   }
-  else if(fs == LIS3DSH_FS_8G) {
-    newfs = LIS3DSH_8G;
+  else if(fs == LIS3DSH_ACC_FS_8G) {
+    newfs = LIS3DSH_ACC_8G;
   }
-  else if(fs == LIS3DSH_FS_16G) {
-    newfs = LIS3DSH_16G;
+  else if(fs == LIS3DSH_ACC_FS_16G) {
+    newfs = LIS3DSH_ACC_16G;
   }
   else {
-    return MSG_RESET;
+    msg = MSG_RESET;
+    return msg;
   }
 
-  if(newfs != ((LIS3DSHDriver *)ip)->fullscale) {
-    scale = newfs / ((LIS3DSHDriver *)ip)->fullscale;
-    ((LIS3DSHDriver *)ip)->fullscale = newfs;
+  if(newfs != devp->accfullscale) {
+    /* Computing scale value.*/
+    scale = newfs / devp->accfullscale;
+    devp->accfullscale = newfs;
 
 #if LIS3DSH_USE_SPI
 #if LIS3DSH_SHARED_SPI
-  spiAcquireBus(((LIS3DSHDriver *)ip)->config->spip);
-  spiStart(((LIS3DSHDriver *)ip)->config->spip,
-           ((LIS3DSHDriver *)ip)->config->spicfg);
+    spiAcquireBus(devp->config->spip);
+    spiStart(devp->config->spip,
+             devp->config->spicfg);
 #endif /* LIS3DSH_SHARED_SPI */
-    lis3dshSPIReadRegister(((LIS3DSHDriver *)ip)->config->spip,
-                          LIS3DSH_AD_CTRL_REG5, 1, &cr);
+
+    /* Getting data from register.*/
+    lis3dshSPIReadRegister(devp->config->spip, LIS3DSH_AD_CTRL_REG5, 1, &cr);
+    
 #if LIS3DSH_SHARED_SPI
-  spiReleaseBus(((LIS3DSHDriver *)ip)->config->spip);
+    spiReleaseBus(devp->config->spip);
 #endif /* LIS3DSH_SHARED_SPI */
 #endif /* LIS3DSH_USE_SPI */
 
@@ -267,34 +403,37 @@ static msg_t set_full_scale(void *ip, lis3dsh_fs_t fs) {
 
 #if LIS3DSH_USE_SPI
 #if LIS3DSH_SHARED_SPI
-  spiAcquireBus(((LIS3DSHDriver *)ip)->config->spip);
-  spiStart(((LIS3DSHDriver *)ip)->config->spip,
-           ((LIS3DSHDriver *)ip)->config->spicfg);
+    spiAcquireBus(devp->config->spip);
+    spiStart(devp->config->spip,
+             devp->config->spicfg);
 #endif /* LIS3DSH_SHARED_SPI */
-    lis3dshSPIWriteRegister(((LIS3DSHDriver *)ip)->config->spip,
-                           LIS3DSH_AD_CTRL_REG5, 1, &cr);
+
+    /* Getting data from register.*/
+    lis3dshSPIWriteRegister(devp->config->spip, LIS3DSH_AD_CTRL_REG5, 1, &cr);
+                           
 #if LIS3DSH_SHARED_SPI
-  spiReleaseBus(((LIS3DSHDriver *)ip)->config->spip);
+    spiReleaseBus(devp->config->spip);
 #endif /* LIS3DSH_SHARED_SPI */
 #endif /* LIS3DSH_USE_SPI */
 
     /* Scaling sensitivity and bias. Re-calibration is suggested anyway. */
-    for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++) {
-      ((LIS3DSHDriver *)ip)->sensitivity[i] *= scale;
-      ((LIS3DSHDriver *)ip)->bias[i] *= scale;
+    for(i = 0; i < LIS3DSH_ACC_NUMBER_OF_AXES; i++) {
+      devp->accsensitivity[i] *= scale;
+      devp->accbias[i] *= scale;
     }
   }
-  return MSG_OK;
+  return msg;
 }
 
-static const struct BaseSensorVMT vmt_sensor = {
-  get_axes_number, read_raw, read_cooked
+static const struct LIS3DSHVMT vmt_device = {
+  (size_t)0,
+  acc_set_full_scale
 };
 
-static const struct LIS3DSHVMT vmt_accelerometer = {
-  get_axes_number, read_raw, read_cooked,
-  set_bias, reset_bias, set_sensivity, reset_sensivity,
-  set_full_scale
+static const struct BaseAccelerometerVMT vmt_accelerometer = {
+  sizeof(struct LIS3DSHVMT*),
+  acc_get_axes_number, acc_read_raw, acc_read_cooked,
+  acc_set_bias, acc_reset_bias, acc_set_sensivity, acc_reset_sensivity
 };
 
 /*===========================================================================*/
@@ -309,13 +448,14 @@ static const struct LIS3DSHVMT vmt_accelerometer = {
  * @init
  */
 void lis3dshObjectInit(LIS3DSHDriver *devp) {
-  uint32_t i;
-  devp->vmt_sensor = &vmt_sensor;
-  devp->vmt_accelerometer = &vmt_accelerometer;
+  devp->vmt = &vmt_device;
+  devp->acc_if.vmt = &vmt_accelerometer;
+  
   devp->config = NULL;
-  for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++)
-    devp->bias[i] = 0.0f;
-  devp->state  = LIS3DSH_STOP;
+  
+  devp->accaxes = LIS3DSH_ACC_NUMBER_OF_AXES;
+
+  devp->state = LIS3DSH_STOP;
 }
 
 /**
@@ -328,55 +468,55 @@ void lis3dshObjectInit(LIS3DSHDriver *devp) {
  */
 void lis3dshStart(LIS3DSHDriver *devp, const LIS3DSHConfig *config) {
   uint32_t i;
-  osalDbgCheck((devp != NULL) && (config != NULL));
   uint8_t cr;
-  osalDbgAssert((devp->state == LIS3DSH_STOP) || (devp->state == LIS3DSH_READY),
-              "lis3dshStart(), invalid state");			  
+  osalDbgCheck((devp != NULL) && (config != NULL));
+
+  osalDbgAssert((devp->state == LIS3DSH_STOP) ||
+                (devp->state == LIS3DSH_READY),
+                "lis3dshStart(), invalid state");		  
 
   devp->config = config;
   
   /* Control register 4 configuration block.*/
   {
     cr = LIS3DSH_CTRL_REG4_XEN | LIS3DSH_CTRL_REG4_YEN | LIS3DSH_CTRL_REG4_ZEN |
-         devp->config->outputdatarate;
+         devp->config->accoutputdatarate;
 #if LIS3DSH_USE_ADVANCED || defined(__DOXYGEN__)
-    cr |= devp->config->blockdataupdate;
+    cr |= devp->config->accblockdataupdate;
 #endif
   }
 
 #if LIS3DSH_USE_SPI
 #if LIS3DSH_SHARED_SPI
-  spiAcquireBus((devp)->config->spip);
+  spiAcquireBus(devp->config->spip);
 #endif /* LIS3DSH_SHARED_SPI */
-  spiStart((devp)->config->spip, (devp)->config->spicfg);
+  spiStart(devp->config->spip, devp->config->spicfg);
 
-  lis3dshSPIWriteRegister(devp->config->spip, LIS3DSH_AD_CTRL_REG4,
-                          1, &cr);
+  lis3dshSPIWriteRegister(devp->config->spip, LIS3DSH_AD_CTRL_REG4, 1, &cr);
   
 #if LIS3DSH_SHARED_SPI
-  spiReleaseBus((devp)->config->spip);
+  spiReleaseBus(devp->config->spip);
 #endif /* LIS3DSH_SHARED_SPI */
 #endif /* LIS3DSH_USE_SPI */
 
   /* Control register 5 configuration block.*/
   {
-    cr = devp->config->fullscale;
+    cr = devp->config->accfullscale;
 #if LIS3DSH_USE_ADVANCED || defined(__DOXYGEN__)
-    cr |= devp->config->antialiasing;
+    cr |= devp->config->accantialiasing;
 #endif
   }
 
 #if LIS3DSH_USE_SPI
 #if LIS3DSH_SHARED_SPI
-  spiAcquireBus((devp)->config->spip);
-  spiStart((devp)->config->spip, (devp)->config->spicfg);
+  spiAcquireBus(devp->config->spip);
+  spiStart(devp->config->spip, devp->config->spicfg);
 #endif /* LIS3DSH_SHARED_SPI */
 
-  lis3dshSPIWriteRegister(devp->config->spip, LIS3DSH_AD_CTRL_REG5,
-                          1, &cr);
+  lis3dshSPIWriteRegister(devp->config->spip, LIS3DSH_AD_CTRL_REG5, 1, &cr);
 
 #if LIS3DSH_SHARED_SPI
-  spiReleaseBus((devp)->config->spip);
+  spiReleaseBus(devp->config->spip);
 #endif /* LIS3DSH_SHARED_SPI */
 #endif /* LIS3DSH_USE_SPI */
 
@@ -384,79 +524,81 @@ void lis3dshStart(LIS3DSHDriver *devp, const LIS3DSHConfig *config) {
   {
     cr = LIS3DSH_CTRL_REG6_ADD_INC;
 #if LIS3DSH_USE_ADVANCED || defined(__DOXYGEN__)
-    cr |= devp->config->blockdataupdate;
+    cr |= devp->config->accblockdataupdate;
 #endif
   }
 
 #if LIS3DSH_USE_SPI
 #if LIS3DSH_SHARED_SPI
-  spiAcquireBus((devp)->config->spip);
-  spiStart((devp)->config->spip, (devp)->config->spicfg);
+  spiAcquireBus(devp->config->spip);
+  spiStart(devp->config->spip, devp->config->spicfg);
 #endif /* LIS3DSH_SHARED_SPI */
 
-  lis3dshSPIWriteRegister(devp->config->spip, LIS3DSH_AD_CTRL_REG6,
-                          1, &cr);
+  lis3dshSPIWriteRegister(devp->config->spip, LIS3DSH_AD_CTRL_REG6, 1, &cr);
 
 #if	LIS3DSH_SHARED_SPI
-  spiReleaseBus((devp)->config->spip);
+  spiReleaseBus(devp->config->spip);
 #endif /* LIS3DSH_SHARED_SPI */  
 #endif /* LIS3DSH_USE_SPI */
   
   /* Storing sensitivity information according to user setting */
-  if(devp->config->fullscale == LIS3DSH_FS_2G) {
-    devp->fullscale = LIS3DSH_2G;
-    if(devp->config->sensitivity == NULL)
-      for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++)
-        devp->sensitivity[i] = LIS3DSH_SENS_2G;
+  if(devp->config->accfullscale == LIS3DSH_ACC_FS_2G) {
+    devp->accfullscale = LIS3DSH_ACC_2G;
+    if(devp->config->accsensitivity == NULL)
+      for(i = 0; i < LIS3DSH_ACC_NUMBER_OF_AXES; i++)
+        devp->accsensitivity[i] = LIS3DSH_ACC_SENS_2G;
     else
-      for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++)
-        devp->sensitivity[i] = devp->config->sensitivity[i];
+      for(i = 0; i < LIS3DSH_ACC_NUMBER_OF_AXES; i++)
+        devp->accsensitivity[i] = devp->config->accsensitivity[i];
   }
-  else if(devp->config->fullscale == LIS3DSH_FS_4G) {
-    devp->fullscale = LIS3DSH_4G;
-    if(devp->config->sensitivity == NULL)
-      for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++)
-        devp->sensitivity[i] = LIS3DSH_SENS_4G;
+  else if(devp->config->accfullscale == LIS3DSH_ACC_FS_4G) {
+    devp->accfullscale = LIS3DSH_ACC_4G;
+    if(devp->config->accsensitivity == NULL)
+      for(i = 0; i < LIS3DSH_ACC_NUMBER_OF_AXES; i++)
+        devp->accsensitivity[i] = LIS3DSH_ACC_SENS_4G;
     else
-      for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++)
-        devp->sensitivity[i] = devp->config->sensitivity[i];
+      for(i = 0; i < LIS3DSH_ACC_NUMBER_OF_AXES; i++)
+        devp->accsensitivity[i] = devp->config->accsensitivity[i];
   }
-  else if(devp->config->fullscale == LIS3DSH_FS_6G) {
-    devp->fullscale = LIS3DSH_6G;
-    if(devp->config->sensitivity == NULL)
-      for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++)
-        devp->sensitivity[i] = LIS3DSH_SENS_6G;
+  else if(devp->config->accfullscale == LIS3DSH_ACC_FS_6G) {
+    devp->accfullscale = LIS3DSH_ACC_6G;
+    if(devp->config->accsensitivity == NULL)
+      for(i = 0; i < LIS3DSH_ACC_NUMBER_OF_AXES; i++)
+        devp->accsensitivity[i] = LIS3DSH_ACC_SENS_6G;
     else
-      for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++)
-        devp->sensitivity[i] = devp->config->sensitivity[i];
+      for(i = 0; i < LIS3DSH_ACC_NUMBER_OF_AXES; i++)
+        devp->accsensitivity[i] = devp->config->accsensitivity[i];
   }
-  else if(devp->config->fullscale == LIS3DSH_FS_8G) {
-    devp->fullscale = LIS3DSH_8G;
-    if(devp->config->sensitivity == NULL)
-      for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++)
-        devp->sensitivity[i] = LIS3DSH_SENS_8G;
+  else if(devp->config->accfullscale == LIS3DSH_ACC_FS_8G) {
+    devp->accfullscale = LIS3DSH_ACC_8G;
+    if(devp->config->accsensitivity == NULL)
+      for(i = 0; i < LIS3DSH_ACC_NUMBER_OF_AXES; i++)
+        devp->accsensitivity[i] = LIS3DSH_ACC_SENS_8G;
     else
-      for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++)
-        devp->sensitivity[i] = devp->config->sensitivity[i];
+      for(i = 0; i < LIS3DSH_ACC_NUMBER_OF_AXES; i++)
+        devp->accsensitivity[i] = devp->config->accsensitivity[i];
   }
-  else if(devp->config->fullscale == LIS3DSH_FS_16G) {
-    devp->fullscale = LIS3DSH_16G;
-    if(devp->config->sensitivity == NULL)
-      for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++)
-        devp->sensitivity[i] = LIS3DSH_SENS_16G;
+  else if(devp->config->accfullscale == LIS3DSH_ACC_FS_16G) {
+    devp->accfullscale = LIS3DSH_ACC_16G;
+    if(devp->config->accsensitivity == NULL)
+      for(i = 0; i < LIS3DSH_ACC_NUMBER_OF_AXES; i++)
+        devp->accsensitivity[i] = LIS3DSH_ACC_SENS_16G;
     else
-      for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++)
-        devp->sensitivity[i] = devp->config->sensitivity[i];
+      for(i = 0; i < LIS3DSH_ACC_NUMBER_OF_AXES; i++)
+        devp->accsensitivity[i] = devp->config->accsensitivity[i];
   }
   else {
     osalDbgAssert(FALSE, "lis3dshStart(), accelerometer full scale issue");
   }
 
   /* Storing bias information according to user setting */
-  if(devp->config->bias != NULL)
-    for(i = 0; i < LIS3DSH_NUMBER_OF_AXES; i++)
-      devp->bias[i] = devp->config->bias[i];
-
+  if(devp->config->accbias != NULL)
+    for(i = 0; i < LIS3DSH_ACC_NUMBER_OF_AXES; i++)
+      devp->accbias[i] = devp->config->accbias[i];
+  else      
+    for(i = 0; i < LIS3DSH_ACC_NUMBER_OF_AXES; i++)
+      devp->accbias[i] = LIS3DSH_ACC_BIAS;
+    
   /* This is the Accelerometer transient recovery time */
   osalThreadSleepMilliseconds(10);
 
@@ -474,23 +616,25 @@ void lis3dshStop(LIS3DSHDriver *devp) {
   uint8_t cr4;
   osalDbgCheck(devp != NULL);
 
-  osalDbgAssert((devp->state == LIS3DSH_STOP) || (devp->state == LIS3DSH_READY),
+  osalDbgAssert((devp->state == LIS3DSH_STOP) || 
+                (devp->state == LIS3DSH_READY),
                 "lis3dshStop(), invalid state");
 
   if (devp->state == LIS3DSH_READY) {
 #if (LIS3DSH_USE_SPI)
 #if	LIS3DSH_SHARED_SPI
-    spiAcquireBus((devp)->config->spip);
-    spiStart((devp)->config->spip,
-             (devp)->config->spicfg);
+    spiAcquireBus(devp->config->spip);
+    spiStart(devp->config->spip,
+             devp->config->spicfg);
 #endif /* LIS3DSH_SHARED_SPI */
     /* Disabling all axes and enabling power down mode.*/
     cr4 = 0;
     lis3dshSPIWriteRegister(devp->config->spip, LIS3DSH_AD_CTRL_REG4, 
                            1, &cr4);
-    spiStop((devp)->config->spip);
+                           
+    spiStop(devp->config->spip);
 #if	LIS3DSH_SHARED_SPI
-    spiReleaseBus((devp)->config->spip);
+    spiReleaseBus(devp->config->spip);
 #endif /* LIS3DSH_SHARED_SPI */    		  
 #endif /* LIS3DSH_USE_SPI */
   }	

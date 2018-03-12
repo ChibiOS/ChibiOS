@@ -87,6 +87,9 @@ PROJECT = ch
 
 # Imported source files and paths
 CHIBIOS = ../../../..
+
+# Licensing files.
+include $(CHIBIOS)/os/license/license.mk
 # Startup files.
 include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32f4xx.mk
 # HAL-OSAL files (optional).
@@ -97,31 +100,23 @@ include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
-# Other files (optional).
+# EX files (optional).
 include $(CHIBIOS)/os/ex/ST/lsm303dlhc.mk
+# Other files (optional).
 include $(CHIBIOS)/os/hal/lib/streams/streams.mk
-include $(CHIBIOS)/os/various/shell/shell.mk
 
 # Define linker script file here
 LDSCRIPT= $(STARTUPLD)/STM32F401xC.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
-CSRC = $(STARTUPSRC) \
-       $(KERNSRC) \
-       $(PORTSRC) \
-       $(OSALSRC) \
-       $(HALSRC) \
-       $(PLATFORMSRC) \
-       $(BOARDSRC) \
-	   $(LSM303DLHCSRC) \
-       $(STREAMSSRC) \
-       $(SHELLSRC) \
+CSRC = $(ALLCSRC) \
+       $(TESTSRC) \
        usbcfg.c main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
-CPPSRC =
+CPPSRC = $(ALLCPPSRC)
 
 # C sources to be compiled in ARM mode regardless of the global setting.
 # NOTE: Mixing ARM and THUMB mode enables the -mthumb-interwork compiler
@@ -147,10 +142,7 @@ TCPPSRC =
 ASMSRC =
 ASMXSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
 
-INCDIR = $(CHIBIOS)/os/license \
-         $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
-         $(HALINC) $(PLATFORMINC) $(BOARDINC) $(LSM303DLHCINC) \
-         $(STREAMSINC) $(SHELLINC)
+INCDIR = $(ALLINC) $(TESTINC)
 
 #
 # Project, sources and paths
@@ -200,7 +192,7 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = -DCHPRINTF_USE_FLOAT=1 -DSHELL_CMD_TEST_ENABLED=0 \
+UDEFS = -DCHPRINTF_USE_FLOAT=1 \
         -DLSM303DLHC_ACC_USE_ADVANCED=0 -DLSM303DLHC_COMP_USE_ADVANCED=0 \
         -DLSM303DLHC_SHARED_I2C=0
 # Define ASM defines here

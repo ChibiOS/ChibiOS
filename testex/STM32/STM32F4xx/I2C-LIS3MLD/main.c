@@ -16,11 +16,10 @@
 #include "ch.h"
 #include "hal.h"
 
-#include "string.h"
-#include "shell.h"
 #include "chprintf.h"
-
 #include "lis3mdl.h"
+
+#define cls(chp)  chprintf(chp, "\033[2J\033[1;1H")
 
 /*===========================================================================*/
 /* LIS3MDL related.                                                           */
@@ -29,10 +28,11 @@
 /* LIS3MDL Driver: This object represent an LIS3MDL instance.*/
 static LIS3MDLDriver LIS3MDLD1;
 
-static int32_t rawdata[LIS3MDL_NUMBER_OF_AXES];
-static float cookeddata[LIS3MDL_NUMBER_OF_AXES];
+static int32_t compraw[LIS3MDL_COMP_NUMBER_OF_AXES];
 
-static char axisID[LIS3MDL_NUMBER_OF_AXES] = {'X', 'Y', 'Z'};
+static float compcooked[LIS3MDL_COMP_NUMBER_OF_AXES];
+
+static char axisID[LIS3MDL_COMP_NUMBER_OF_AXES] = {'X', 'Y', 'Z'};
 static uint32_t i;
 
 static const I2CConfig i2ccfg = {
@@ -41,114 +41,29 @@ static const I2CConfig i2ccfg = {
   FAST_DUTY_CYCLE_2,
 };
 
-static LIS3MDLConfig LIS3MDLcfg = {
+static LIS3MDLConfig lis3mdlcfg = {
   &I2CD1,
   &i2ccfg,
-  NULL,
-  NULL,
   LIS3MDL_SAD_VCC,
-  LIS3MDL_FS_4GA,
-  LIS3MDL_ODR_40HZ,
-#if LIS3MDL_USE_ADVANCED
-  LIS3MDL_LP_ENABLED,
-  LIS3MDL_MD_CONTINUOUS,
-  LIS3MDL_OMXY_LOW_POWER,
-  LIS3MDL_OMZ_LOW_POWER,
+  NULL,
+  NULL,
+  LIS3MDL_COMP_FS_4GA,
+  LIS3MDL_COMP_ODR_40HZ,
+#if LIS3MDL_COMP_USE_ADVANCED
+  LIS3MDL_COMP_LP_ENABLED,
+  LIS3MDL_COMP_MD_CONTINUOUS,
+  LIS3MDL_COMP_OMXY_LP,
+  LIS3MDL_COMP_OMZ_LP,
   LIS3MDL_BDU_CONTINUOUS,
   LIS3MDL_END_LITTLE
 #endif
 };
 
 /*===========================================================================*/
-/* Command line related.                                                     */
+/* Generic code.                                                             */
 /*===========================================================================*/
 
-/* Enable use of special ANSI escape sequences.*/
-#define CHPRINTF_USE_ANSI_CODE      TRUE
-#define SHELL_WA_SIZE               THD_WORKING_AREA_SIZE(2048)
-
-static void cmd_read(BaseSequentialStream *chp, int argc, char *argv[]) {
-  (void)argv;
-  if (argc != 1) {
-    chprintf(chp, "Usage: read [raw|cooked]\r\n");
-    return;
-  }
-
-  while (chnGetTimeout((BaseChannel *)chp, 150) == Q_TIMEOUT) {
-    if (!strcmp (argv[0], "raw")) {
-#if CHPRINTF_USE_ANSI_CODE
-      chprintf(chp, "\033[2J\033[1;1H");
-#endif
-      compassReadRaw(&LIS3MDLD1, rawdata);
-      chprintf(chp, "LIS3MDL compass raw data...\r\n");
-      for(i = 0; i < LIS3MDL_NUMBER_OF_AXES; i++) {
-        chprintf(chp, "%c-axis: %d\r\n", axisID[i], rawdata[i]);
-      }
-    }
-    else if (!strcmp (argv[0], "cooked")) {
-#if CHPRINTF_USE_ANSI_CODE
-      chprintf(chp, "\033[2J\033[1;1H");
-#endif
-      compassReadCooked(&LIS3MDLD1, cookeddata);
-      chprintf(chp, "LIS3MDL compass cooked data...\r\n");
-      for(i = 0; i < LIS3MDL_NUMBER_OF_AXES; i++) {
-        chprintf(chp, "%c-axis: %.3f Gauss\r\n", axisID[i], cookeddata[i]);
-      }
-    }
-    else {
-      chprintf(chp, "Usage: read [raw|cooked]\r\n");
-      return;
-    }
-  }
-  chprintf(chp, "Stopped\r\n");
-}
-
-static void cmd_fullscale(BaseSequentialStream *chp, int argc, char *argv[]) {
-  (void)argv;
-  if (argc != 1) {
-    chprintf(chp, "Usage: fullscale [4|8|12|16]\r\n");
-    return;
-  }
-#if CHPRINTF_USE_ANSI_CODE
-    chprintf(chp, "\033[2J\033[1;1H");
-#endif
-  if(!strcmp (argv[0], "4")) {
-    compassSetFullScale(&LIS3MDLD1, LIS3MDL_FS_4GA);
-    chprintf(chp, "LIS3MDL compass full scale set to 4 Gauss...\r\n");
-  }
-  else if(!strcmp (argv[0], "8")) {
-    compassSetFullScale(&LIS3MDLD1, LIS3MDL_FS_8GA);
-    chprintf(chp, "LIS3MDL compass full scale set to 8 Gauss...\r\n");
-  }
-  else if(!strcmp (argv[0], "12")) {
-    compassSetFullScale(&LIS3MDLD1, LIS3MDL_FS_12GA);
-    chprintf(chp, "LIS3MDL compass full scale set to 12 Gauss...\r\n");
-  }
-  else if(!strcmp (argv[0], "16")) {
-    compassSetFullScale(&LIS3MDLD1, LIS3MDL_FS_16GA);
-    chprintf(chp, "LIS3MDL compass full scale set to 16 Gauss...\r\n");
-  }
-  else {
-    chprintf(chp, "Usage: fullscale [4|8|12|16]\r\n");
-    return;
-  }
-}
-
-static const ShellCommand commands[] = {
-  {"read", cmd_read},
-  {"fullscale", cmd_fullscale},
-  {NULL, NULL}
-};
-
-static const ShellConfig shell_cfg1 = {
-  (BaseSequentialStream *)&SD2,
-  commands
-};
-
-/*===========================================================================*/
-/* Main code.                                                                */
-/*===========================================================================*/
-
+static BaseSequentialStream* chp = (BaseSequentialStream*)&SD2;
 /*
  * LED blinker thread, times are in milliseconds.
  */
@@ -158,10 +73,8 @@ static THD_FUNCTION(Thread1, arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (true) {
-    palClearLine(LINE_LED_GREEN);
-    chThdSleepMilliseconds(250);
-    palSetLine(LINE_LED_GREEN);
-    chThdSleepMilliseconds(250);
+    palToggleLine(LINE_LED_GREEN);
+    chThdSleepMilliseconds(500);
   }
 }
 
@@ -180,35 +93,39 @@ int main(void) {
   halInit();
   chSysInit();
 
+  /* Configuring I2C SCK and I2C SDA related GPIOs .*/
   palSetLineMode(LINE_ARD_D15, PAL_MODE_ALTERNATE(4) |
                  PAL_STM32_OSPEED_HIGHEST | PAL_STM32_OTYPE_OPENDRAIN);
   palSetLineMode(LINE_ARD_D14, PAL_MODE_ALTERNATE(4) |
                  PAL_STM32_OSPEED_HIGHEST | PAL_STM32_OTYPE_OPENDRAIN);
 
-  /*
-   * Activates the serial driver 2 using the driver default configuration.
-   */
+  /* Activates the serial driver 1 using the driver default configuration.*/
   sdStart(&SD2, NULL);
 
-
   /* Creates the blinker thread.*/
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO + 1, Thread1, NULL);
+  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   /* LIS3MDL Object Initialization.*/
   lis3mdlObjectInit(&LIS3MDLD1);
 
   /* Activates the LIS3MDL driver.*/
-  lis3mdlStart(&LIS3MDLD1, &LIS3MDLcfg);
+  lis3mdlStart(&LIS3MDLD1, &lis3mdlcfg);
 
-  /* Shell manager initialization.*/
-  shellInit();
+  /* Normal main() thread activity, printing MEMS data on the SD2. */
+  while (true) {
+    lis3mdlCompassReadRaw(&LIS3MDLD1, compraw);
+    chprintf(chp, "LIS3MDL Compass raw data...\r\n");
+    for(i = 0; i < LIS3MDL_COMP_NUMBER_OF_AXES; i++) {
+      chprintf(chp, "%c-axis: %d\r\n", axisID[i], compraw[i]);
+    }
 
-  while(TRUE) {
-    thread_t *shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
-                                            "shell", NORMALPRIO + 1,
-                                            shellThread, (void *)&shell_cfg1);
-    chThdWait(shelltp);                    /* Waiting termination.        */
+    lis3mdlCompassReadCooked(&LIS3MDLD1, compcooked);
+    chprintf(chp, "LIS3MDL Compass cooked data...\r\n");
+    for(i = 0; i < LIS3MDL_COMP_NUMBER_OF_AXES; i++) {
+      chprintf(chp, "%c-axis: %.3f\r\n", axisID[i], compcooked[i]);
+    }
+    chThdSleepMilliseconds(100);
+    cls(chp);
   }
   lis3mdlStop(&LIS3MDLD1);
-  return 0;
 }

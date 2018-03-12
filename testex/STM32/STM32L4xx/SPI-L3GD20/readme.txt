@@ -8,8 +8,7 @@ The demo runs on an STM32L4 Discovery board.
 
 ** The Demo **
 
-The demo uses the ChibiOS Shell in order to test L3GD20 APIs.
-Shell is used on the SDU1 BaseSequentialStream.
+The demo prints L3GD20 data on the SD2 BaseSequentialStream.
 
 ** Build Procedure **
 
