@@ -62,7 +62,7 @@
 /** @} */
 
 /**
- * @brief   LPS25H baromether subsystem characteristics.
+ * @brief   LPS25H barometer subsystem characteristics.
  * @note    Sensitivity is expressed as hPa/LSB whereas hPa stand for 
  *          hectopascal.
  * @note    Bias is expressed as hPa.
