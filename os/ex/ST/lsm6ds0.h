@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2016 Rocco Marco Guglielmi
+    ChibiOS - Copyright (C) 2016-2018 Rocco Marco Guglielmi
 
     This file is part of ChibiOS.
 
@@ -43,7 +43,7 @@
 /**
  * @brief   LSM6DS0 driver version string.
  */
-#define EX_LSM6DS0_VERSION                  "1.0.4"
+#define EX_LSM6DS0_VERSION                  "1.0.5"
 
 /**
  * @brief   LSM6DS0 driver version major number.
@@ -58,11 +58,14 @@
 /**
  * @brief   LSM6DS0 driver version patch number.
  */
-#define EX_LSM6DS0_PATCH                    4
+#define EX_LSM6DS0_PATCH                    5
 /** @} */
 
 /**
  * @brief   LSM6DS0 accelerometer subsystem characteristics.
+ * @note    Sensitivity is expressed as milli-G/LSB whereas 
+ *          1 milli-G = 0.00980665 m/s^2.
+ * @note    Bias is expressed as milli-G.
  *
  * @{
  */
@@ -77,10 +80,15 @@
 #define LSM6DS0_ACC_SENS_4G                 0.122f
 #define LSM6DS0_ACC_SENS_8G                 0.244f
 #define LSM6DS0_ACC_SENS_16G                0.732f
+
+#define LSM6DS0_ACC_BIAS                    0.0f
 /** @} */
 
 /**
- * @brief   LSM6DS0 gyroscope subsystem characteristics.
+ * @brief   L3GD20 gyroscope system characteristics.
+ * @note    Sensitivity is expressed as DPS/LSB whereas DPS stand for Degree 
+ *          per second [°/s].
+ * @note    Bias is expressed as DPS.
  *
  * @{
  */
@@ -93,6 +101,8 @@
 #define LSM6DS0_GYRO_SENS_245DPS            0.00875f
 #define LSM6DS0_GYRO_SENS_500DPS            0.01750f
 #define LSM6DS0_GYRO_SENS_2000DPS           0.07000f
+
+#define LSM6DS0_GYRO_BIAS                   0.0f
 /** @} */
 
 /**
@@ -287,10 +297,7 @@
 #define LSM6DS0_CTRL_REG10                  0x05
 #define LSM6DS0_CTRL_REG10_ST_XL            (1 << 0)
 #define LSM6DS0_CTRL_REG10_ST_G             (1 << 2)
-
 /** @} */
-
-//TODO: ADD more LSM6DS0 register bits definitions
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -301,7 +308,7 @@
  * @{
  */
 /**
- * @brief   LSM6DS0 SPI interface selector.
+ * @brief   LSM6DS0 SPI interface switch.
  * @details If set to @p TRUE the support for SPI is included.
  * @note    The default is @p FALSE.
  */
@@ -310,7 +317,17 @@
 #endif
 
 /**
- * @brief   LSM6DS0 I2C interface selector.
+ * @brief   LSM6DS0 shared SPI switch.
+ * @details If set to @p TRUE the device acquires SPI bus ownership
+ *          on each transaction.
+ * @note    The default is @p FALSE. Requires SPI_USE_MUTUAL_EXCLUSION.
+ */
+#if !defined(LSM6DS0_SHARED_SPI) || defined(__DOXYGEN__)
+#define LSM6DS0_SHARED_SPI                  FALSE
+#endif
+
+/**
+ * @brief   LSM6DS0 I2C interface switch.
  * @details If set to @p TRUE the support for I2C is included.
  * @note    The default is @p TRUE.
  */
@@ -329,7 +346,7 @@
 #endif
 
 /**
- * @brief   LSM6DS0 subsystem advanced configurations switch.
+ * @brief   LSM6DS0 advanced configurations switch.
  * @details If set to @p TRUE more configurations are available.
  * @note    The default is @p FALSE.
  */
@@ -370,8 +387,8 @@
  * @brief   Settling time for gyroscope bias removal.
  * @details This is the time between each bias acquisition.
  */
-#if !defined(LSM6DS0_GYRO_BIAS_SETTLING_uS) || defined(__DOXYGEN__)
-#define LSM6DS0_GYRO_BIAS_SETTLING_uS       5000
+#if !defined(LSM6DS0_GYRO_BIAS_SETTLING_US) || defined(__DOXYGEN__)
+#define LSM6DS0_GYRO_BIAS_SETTLING_US       5000
 #endif
 /** @} */
 
@@ -379,12 +396,16 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if LSM6DS0_USE_SPI && LSM6DS0_USE_I2C
-#error "LSM6DS0_USE_SPI and LSM6DS0_USE_I2C cannot be both true"
+#if !(LSM6DS0_USE_SPI ^ LSM6DS0_USE_I2C)
+#error "LSM6DS0_USE_SPI and LSM6DS0_USE_I2C cannot be both true or both false"
 #endif
 
 #if LSM6DS0_USE_SPI && !HAL_USE_SPI
 #error "LSM6DS0_USE_SPI requires HAL_USE_SPI"
+#endif
+
+#if LSM6DS0_SHARED_SPI && !SPI_USE_MUTUAL_EXCLUSION
+#error "LSM6DS0_SHARED_SPI requires SPI_USE_MUTUAL_EXCLUSION"
 #endif
 
 #if LSM6DS0_USE_I2C && !HAL_USE_I2C
@@ -392,7 +413,14 @@
 #endif
 
 #if LSM6DS0_SHARED_I2C && !I2C_USE_MUTUAL_EXCLUSION
-#error "LSM6DS0_SHARED_SPI requires I2C_USE_MUTUAL_EXCLUSION"
+#error "LSM6DS0_SHARED_I2C requires I2C_USE_MUTUAL_EXCLUSION"
+#endif
+
+/**
+ * @todo    Add support for LSM6DS0 over SPI.
+ */
+#if LSM6DS0_USE_SPI
+#error "LSM6DS0 over SPI still not supported"
 #endif
 
 /*===========================================================================*/
@@ -400,9 +428,22 @@
 /*===========================================================================*/
 
 /**
- * @name    LSM6DS0 accelerometer subsystem data structures and types.
+ * @name    LSM6DS0 data structures and types.
  * @{
  */
+/**
+ * @brief   Structure representing a LSM6DS0 driver.
+ */
+typedef struct LSM6DS0Driver LSM6DS0Driver;
+
+/**
+ * @brief  Accelerometer and Gyroscope Slave Address.
+ */
+typedef enum {
+  LSM6DS0_SAD_GND = 0x6A,           /**< SAD pin connected to GND.          */
+  LSM6DS0_SAD_VCC = 0x6B            /**< SAD pin connected to VCC.          */
+} lsm6ds0_sad_t;
+
 /**
  * @brief   LSM6DS0 accelerometer subsystem full scale.
  */
@@ -436,39 +477,6 @@ typedef enum {
   LSM6DS0_ACC_DEC_X8 = 0xC0         /**< Output updated every 8 samples.    */
 } lsm6ds0_acc_dec_t;
 
-/**
- * @brief   LSM6DS0 accelerometer subsystem configuration structure.
- */
-typedef struct {
-  /**
-   * @brief LSM6DS0 accelerometer initial sensitivity.
-   */
-  float*                       sensitivity;
-  /**
-   * @brief LSM6DS0 accelerometer initial bias.
-   */
-  float*                       bias;
-  /**
-   * @brief LSM6DS0 accelerometer subsystem full scale.
-   */
-  lsm6ds0_acc_fs_t             fullscale;
-  /**
-   * @brief LSM6DS0 accelerometer subsystem output data rate.
-   */
-  lsm6ds0_acc_odr_t            outdatarate;
-#if LSM6DS0_ACC_USE_ADVANCED || defined(__DOXYGEN__)
-  /**
-   * @brief LSM6DS0 accelerometer subsystem decimation mode.
-   */
-  lsm6ds0_acc_dec_t            decmode;
-#endif /* LSM6DS0_ACC_USE_ADVANCED */
-} LSM6DS0AccConfig;
-/** @} */
-
-/**
- * @name  LSM6DS0 gyroscope subsystem data structures and types.
- * @{
- */
 /**
  * @brief LSM6DS0 gyroscope subsystem full scale.
  */
@@ -544,59 +552,6 @@ typedef enum {
 } lsm6ds0_gyro_hpcf_t;
 
 /**
- * @brief LSM6DS0 gyroscope subsystem configuration structure.
- */
-typedef struct {
-  /**
-   * @brief LSM6DS0 gyroscope initial sensitivity.
-   */
-  float*                       sensitivity;
-  /**
-   * @brief LSM6DS0 gyroscope initial bias.
-   */
-  float*                       bias;
-  /**
-   * @brief LSM6DS0 gyroscope subsystem full scale.
-   */
-  lsm6ds0_gyro_fs_t            fullscale;
-  /**
-   * @brief LSM6DS0 gyroscope subsystem output data rate.
-   */
-  lsm6ds0_gyro_odr_t           outdatarate;
-#if LSM6DS0_GYRO_USE_ADVANCED || defined(__DOXYGEN__)
-  /**
-   * @brief LSM6DS0 gyroscope subsystem low mode configuration.
-   */
-  lsm6ds0_gyro_lp_t            lowmodecfg;
-  /**
-   * @brief LSM6DS0 gyroscope subsystem output selection.
-   */
-  lsm6ds0_gyro_out_sel_t       outsel;
-  /**
-   * @brief LSM6DS0 gyroscope subsystem high pass filter.
-   */
-  lsm6ds0_gyro_hp_t            hpfenable;
-  /**
-   * @brief LSM6DS0 gyroscope subsystem high pass filter configuration.
-   */
-  lsm6ds0_gyro_hpcf_t          hpcfg;
-  #endif /* LSM6DS0_GYRO_USE_ADVANCED */
-} LSM6DS0GyroConfig;
-/** @} */
-
-/**
- * @name  LSM6DS0 main system data structures and types.
- * @{
- */
-/**
- * @brief  Accelerometer and Gyroscope Slave Address.
- */
-typedef enum {
-  LSM6DS0_SAD_GND = 0x6A,           /**< SAD pin connected to GND.          */
-  LSM6DS0_SAD_VCC = 0x6B            /**< SAD pin connected to VCC.          */
-} lsm6ds0_sad_t;
-
-/**
  * @brief LSM6DS0 block data update.
  */
 typedef enum {
@@ -635,11 +590,6 @@ typedef struct {
    *        subsystem.
    */
   const SPIConfig           *accspicfg;
-  /**
-   * @brief SPI configuration associated to this LSM6DS0 compass
-   *        subsystem.
-   */
-  const SPIConfig           *gyrospicfg;
 #endif /* LSM6DS0_USE_SPI */
 #if (LSM6DS0_USE_I2C) || defined(__DOXYGEN__)
   /**
@@ -651,19 +601,67 @@ typedef struct {
    *        subsystem.
    */
   const I2CConfig           *i2ccfg;
-#endif /* LSM6DS0_USE_I2C */
   /**
-   * @brief LSM6DS0 accelerometer subsystem configuration structure
-   */
-  const LSM6DS0AccConfig    *acccfg;
-  /**
-   * @brief LSM6DS0 gyroscope subsystem configuration structure
-   */
-  const LSM6DS0GyroConfig   *gyrocfg;
-  /**
-   * @brief  Accelerometer and Gyroscope Slave Address
+   * @brief LSM6DS0 Slave Address
    */
   lsm6ds0_sad_t             slaveaddress;
+#endif /* LSM6DS0_USE_I2C */
+  /**
+   * @brief LSM6DS0 accelerometer subsystem initial sensitivity.
+   */
+  float                     *accsensitivity;
+  /**
+   * @brief LSM6DS0 accelerometer subsystem initial bias.
+   */
+  float                     *accbias;
+  /**
+   * @brief LSM6DS0 accelerometer subsystem full scale.
+   */
+  lsm6ds0_acc_fs_t          accfullscale;
+  /**
+   * @brief LSM6DS0 accelerometer subsystem output data rate.
+   */
+  lsm6ds0_acc_odr_t         accoutdatarate;
+#if LSM6DS0_ACC_USE_ADVANCED || defined(__DOXYGEN__)
+  /**
+   * @brief LSM6DS0 accelerometer subsystem decimation mode.
+   */
+  lsm6ds0_acc_dec_t         accdecmode;
+#endif /* LSM6DS0_ACC_USE_ADVANCED */
+  /**
+   * @brief LSM6DS0 gyroscope subsystem initial sensitivity.
+   */
+  float                     *gyrosensitivity;
+  /**
+   * @brief LSM6DS0 gyroscope subsystem initial bias.
+   */
+  float                     *gyrobias;
+  /**
+   * @brief LSM6DS0 gyroscope subsystem full scale.
+   */
+  lsm6ds0_gyro_fs_t         gyrofullscale;
+  /**
+   * @brief LSM6DS0 gyroscope subsystem output data rate.
+   */
+  lsm6ds0_gyro_odr_t        gyrooutdatarate;
+#if LSM6DS0_GYRO_USE_ADVANCED || defined(__DOXYGEN__)
+  /**
+   * @brief LSM6DS0 gyroscope subsystem low mode configuration.
+   */
+  lsm6ds0_gyro_lp_t         gyrolowmodecfg;
+  /**
+   * @brief LSM6DS0 gyroscope subsystem output selection.
+   */
+  lsm6ds0_gyro_out_sel_t    gyrooutsel;
+  /**
+   * @brief LSM6DS0 gyroscope subsystem high pass filter.
+   */
+  lsm6ds0_gyro_hp_t         gyrohpfenable;
+  /**
+   * @brief LSM6DS0 gyroscope subsystem high pass filter configuration.
+   */
+  lsm6ds0_gyro_hpcf_t       gyrohpcfg;
+  #endif /* LSM6DS0_GYRO_USE_ADVANCED */
 #if (LSM6DS0_USE_ADVANCED) || defined(__DOXYGEN__)
   /**
    * @brief LSM6DS0 block data update
@@ -677,95 +675,68 @@ typedef struct {
 } LSM6DS0Config;
 
 /**
- * @brief   @p LSM6DS0 accelerometer subsystem specific methods.
+ * @brief   @p LSM6DS0 specific methods.
  */
-#define _lsm6ds0_accelerometer_methods_alone                                \
+#define _lsm6ds0_methods_alone                                              \
   /* Change full scale value of LSM6DS0 accelerometer subsystem .*/         \
-  msg_t (*set_full_scale)(void *instance, lsm6ds0_acc_fs_t fs);
-  
-  
-/**
- * @brief   @p LSM6DS0 accelerometer subsystem specific methods with inherited 
- *          ones.
- */
-#define _lsm6ds0_accelerometer_methods                                      \
-  _base_accelerometer_methods                                               \
-  _lsm6ds0_accelerometer_methods_alone
-
-/**
- * @brief   @p LSM6DS0 gyroscope subsystem specific methods.
- */
-#define _lsm6ds0_gyroscope_methods_alone                                    \
+  msg_t (*acc_set_full_scale)(LSM6DS0Driver *devp, lsm6ds0_acc_fs_t fs);    \
   /* Change full scale value of LSM6DS0 gyroscope subsystem .*/             \
-  msg_t (*set_full_scale)(void *instance, lsm6ds0_gyro_fs_t fs);
-  
-  
-/**
- * @brief   @p LSM6DS0 gyroscope subsystem specific methods with inherited ones.
- */
-#define _lsm6ds0_gyroscope_methods                                          \
-  _base_gyroscope_methods                                                   \
-  _lsm6ds0_gyroscope_methods_alone
+  msg_t (*gyro_set_full_scale)(LSM6DS0Driver *devp, lsm6ds0_gyro_fs_t fs);  
   
 /**
- * @extends BaseAccelerometerVMT
- *
- * @brief   @p LSM6DS0 accelerometer virtual methods table.
+ * @brief   @p LSM6DS0 specific methods with inherited ones.
  */
-struct LSM6DS0AccelerometerVMT {
-  _lsm6ds0_accelerometer_methods
-};
+#define _lsm6ds0_methods                                                    \
+  _base_object_methods                                                      \
+  _lsm6ds0_methods_alone
 
 /**
- * @extends BaseCompassVMT
+ * @extends BaseObjectVMT
  *
- * @brief   @p LSM6DS0 gyroscope virtual methods table.
+ * @brief @p LSM6DS0 virtual methods table.
  */
-struct LSM6DS0GyroscopeVMT {
-  _lsm6ds0_gyroscope_methods
+struct LSM6DS0VMT {
+  _lsm6ds0_methods
 };
 
 /**
  * @brief   @p LSM6DS0Driver specific data.
  */
 #define _lsm6ds0_data                                                       \
+  _base_sensor_data                                                         \
   /* Driver state.*/                                                        \
   lsm6ds0_state_t           state;                                          \
   /* Current configuration data.*/                                          \
   const LSM6DS0Config       *config;                                        \
-  /* Current accelerometer sensitivity.*/                                   \
+  /* Accelerometer subsystem axes number.*/                                 \
+  size_t                    accaxes;                                        \
+  /* Accelerometer subsystem current sensitivity.*/                         \
   float                     accsensitivity[LSM6DS0_ACC_NUMBER_OF_AXES];     \
-  /* Accelerometer bias data.*/                                             \
+  /* Accelerometer subsystem current bias .*/                               \
   float                     accbias[LSM6DS0_ACC_NUMBER_OF_AXES];            \
-  /* Current accelerometer full scale value.*/                              \
+  /* Accelerometer subsystem current full scale value.*/                    \
   float                     accfullscale;                                   \
-  /* Current gyroscope sensitivity.*/                                       \
+  /* Gyroscope subsystem axes number.*/                                     \
+  size_t                    gyroaxes;                                       \
+  /* Gyroscope subsystem current sensitivity.*/                             \
   float                     gyrosensitivity[LSM6DS0_GYRO_NUMBER_OF_AXES];   \
-  /* Bias data.*/                                                           \
+  /* Gyroscope subsystem current Bias.*/                                    \
   float                     gyrobias[LSM6DS0_GYRO_NUMBER_OF_AXES];          \
-  /* Current gyroscope full scale value.*/                                  \
+  /* Gyroscope subsystem current full scale value.*/                        \
   float                     gyrofullscale;
   
 /**
  * @brief LSM6DS0 6-axis accelerometer/gyroscope class.
  */
 struct LSM6DS0Driver {
-  /** @brief BaseSensor Virtual Methods Table. */
-  const struct BaseSensorVMT *vmt_sensor;
-  _base_sensor_data
-  /** @brief LSM6DS0 Accelerometer Virtual Methods Table. */
-  const struct LSM6DS0AccelerometerVMT *vmt_accelerometer;
-  _base_accelerometer_data
-  /** @brief LSM6DS0 Gyroscope Virtual Methods Table. */
-  const struct LSM6DS0GyroscopeVMT *vmt_gyroscope;
-  _base_gyroscope_data
+  /** @brief Virtual Methods Table.*/
+  const struct LSM6DS0VMT     *vmt;
+  /** @brief Base accelerometer interface.*/
+  BaseAccelerometer           acc_if;
+  /** @brief Base gyroscope interface.*/
+  BaseGyroscope               gyro_if;
   _lsm6ds0_data
 };
-
-/**
- * @brief   Structure representing a LSM6DS0 driver.
- */
-typedef struct LSM6DS0Driver LSM6DS0Driver;
 /** @} */
 
 /*===========================================================================*/
@@ -773,32 +744,298 @@ typedef struct LSM6DS0Driver LSM6DS0Driver;
 /*===========================================================================*/
 
 /**
- * @brief   Change accelerometer fullscale value.
+ * @brief   Return the number of axes of the BaseAccelerometer.
  *
- * @param[in] ip        pointer to a @p LSM6DS0Driver class.
- * @param[in] fs        the new full scale value.
+ * @param[in] devp      pointer to @p LSM6DS0Driver.
  *
- * @return              The operation status.
- * @retval MSG_OK       if the function succeeded.
- * @retval MSG_RESET    if one or more errors occurred.
+ * @return              the number of axes.
+ *
  * @api
  */
-#define accelerometerSetFullScale(ip, fs)                                   \
-        (ip)->vmt_accelerometer->set_full_scale(ip, fs)
+#define lsm6ds0AccelerometerGetAxesNumber(devp)                             \
+        accelerometerGetAxesNumber(&((devp)->acc_if))
 
 /**
- * @brief   Change compass fullscale value.
+ * @brief   Retrieves raw data from the BaseAccelerometer.
+ * @note    This data is retrieved from MEMS register without any algebraical
+ *          manipulation.
+ * @note    The axes array must be at least the same size of the
+ *          BaseAccelerometer axes number.
  *
- * @param[in] ip        pointer to a @p LSM6DS0Driver class.
- * @param[in] fs        the new full scale value.
+ * @param[in] devp      pointer to @p LSM6DS0Driver.
+ * @param[out] axes     a buffer which would be filled with raw data.
  *
  * @return              The operation status.
  * @retval MSG_OK       if the function succeeded.
- * @retval MSG_RESET    if one or more errors occurred.
+ * @retval MSG_RESET    if one or more I2C errors occurred, the errors can
+ *                      be retrieved using @p i2cGetErrors().
+ * @retval MSG_TIMEOUT  if a timeout occurred before operation end.
+ *
  * @api
  */
-#define gyroscopeSetFullScale(ip, fs)                                         \
-        (ip)->vmt_gyroscope->set_full_scale(ip, fs)
+#define lsm6ds0AccelerometerReadRaw(devp, axes)                             \
+        accelerometerReadRaw(&((devp)->acc_if), axes)
+
+/**
+ * @brief   Retrieves cooked data from the BaseAccelerometer.
+ * @note    This data is manipulated according to the formula
+ *          cooked = (raw * sensitivity) - bias.
+ * @note    Final data is expressed as milli-G.
+ * @note    The axes array must be at least the same size of the
+ *          BaseAccelerometer axes number.
+ *
+ * @param[in] devp      pointer to @p LSM6DS0Driver.
+ * @param[out] axes     a buffer which would be filled with cooked data.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more I2C errors occurred, the errors can
+ *                      be retrieved using @p i2cGetErrors().
+ * @retval MSG_TIMEOUT  if a timeout occurred before operation end.
+ *
+ * @api
+ */
+#define lsm6ds0AccelerometerReadCooked(devp, axes)                          \
+        accelerometerReadCooked(&((devp)->acc_if), axes)
+
+/**
+ * @brief   Set bias values for the BaseAccelerometer.
+ * @note    Bias must be expressed as milli-G.
+ * @note    The bias buffer must be at least the same size of the
+ *          BaseAccelerometer axes number.
+ *
+ * @param[in] devp      pointer to @p LSM6DS0Driver.
+ * @param[in] bp        a buffer which contains biases.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ *
+ * @api
+ */
+#define lsm6ds0AccelerometerSetBias(devp, bp)                               \
+        accelerometerSetBias(&((devp)->acc_if), bp)
+
+/**
+ * @brief   Reset bias values for the BaseAccelerometer.
+ * @note    Default biases value are obtained from device datasheet when
+ *          available otherwise they are considered zero.
+ *
+ * @param[in] devp      pointer to @p LSM6DS0Driver.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ *
+ * @api
+ */
+#define lsm6ds0AccelerometerResetBias(devp)                                 \
+        accelerometerResetBias(&((devp)->acc_if))
+
+/**
+ * @brief   Set sensitivity values for the BaseAccelerometer.
+ * @note    Sensitivity must be expressed as milli-G/LSB.
+ * @note    The sensitivity buffer must be at least the same size of the
+ *          BaseAccelerometer axes number.
+ *
+ * @param[in] devp      pointer to @p LSM6DS0Driver.
+ * @param[in] sp        a buffer which contains sensitivities.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ *
+ * @api
+ */
+#define lsm6ds0AccelerometerSetSensitivity(devp, sp)                        \
+        accelerometerSetSensitivity(&((devp)->acc_if), sp)
+
+/**
+ * @brief   Reset sensitivity values for the BaseAccelerometer.
+ * @note    Default sensitivities value are obtained from device datasheet.
+ *
+ * @param[in] devp      pointer to @p LSM6DS0Driver.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    otherwise.
+ *
+ * @api
+ */
+#define lsm6ds0AccelerometerResetSensitivity(devp)                          \
+        accelerometerResetSensitivity(&((devp)->acc_if))
+
+/**
+ * @brief   Changes the LSM6DS0Driver accelerometer fullscale value.
+ * @note    This function also rescale sensitivities and biases based on
+ *          previous and next fullscale value.
+ * @note    A recalibration is highly suggested after calling this function.
+ *
+ * @param[in] devp      pointer to @p LSM6DS0Driver.
+ * @param[in] fs        new fullscale value.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    otherwise.
+ *
+ * @api
+ */
+#define lsm6ds0AccelerometerSetFullScale(devp, fs)                          \
+        (devp)->vmt->acc_set_full_scale(devp, fs)
+        
+/**
+ * @brief   Return the number of axes of the BaseGyroscope.
+ *
+ * @param[in] devp      pointer to @p LSM6DS0Driver.
+ *
+ * @return              the number of axes.
+ *
+ * @api
+ */
+#define lsm6ds0GyroscopeGetAxesNumber(devp)                                 \
+        gyroscopeGetAxesNumber(&((devp)->gyro_if))
+        
+/**
+ * @brief   Retrieves raw data from the BaseGyroscope.
+ * @note    This data is retrieved from MEMS register without any algebraical
+ *          manipulation.
+ * @note    The axes array must be at least the same size of the
+ *          BaseGyroscope axes number.
+ *
+ * @param[in] devp      pointer to @p LSM6DS0Driver.
+ * @param[out] axes     a buffer which would be filled with raw data.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more I2C errors occurred, the errors can
+ *                      be retrieved using @p i2cGetErrors().
+ * @retval MSG_TIMEOUT  if a timeout occurred before operation end.
+ *
+ * @api
+ */
+#define lsm6ds0GyroscopeReadRaw(devp, axes)                                 \
+        gyroscopeReadRaw(&((devp)->gyro_if), axes)
+
+/**
+ * @brief   Retrieves cooked data from the BaseGyroscope.
+ * @note    This data is manipulated according to the formula
+ *          cooked = (raw * sensitivity) - bias.
+ * @note    Final data is expressed as DPS.
+ * @note    The axes array must be at least the same size of the
+ *          BaseGyroscope axes number.
+ *
+ * @param[in] devp      pointer to @p LSM6DS0Driver.
+ * @param[out] axes     a buffer which would be filled with cooked data.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more I2C errors occurred, the errors can
+ *                      be retrieved using @p i2cGetErrors().
+ * @retval MSG_TIMEOUT  if a timeout occurred before operation end.
+ *
+ * @api
+ */
+#define lsm6ds0GyroscopeReadCooked(devp, axes)                              \
+        gyroscopeReadCooked(&((devp)->gyro_if), axes)
+
+/**
+ * @brief   Samples bias values for the BaseGyroscope.
+ * @note    The LSM6DS0 shall not be moved during the whole procedure.
+ * @note    After this function internal bias is automatically updated.
+ * @note    The behavior of this function depends on @P LSM6DS0_BIAS_ACQ_TIMES
+ *          and @p LSM6DS0_BIAS_SETTLING_US.
+ *
+ * @param[in] devp      pointer to @p LSM6DS0Driver.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more I2C errors occurred, the errors can
+ *                      be retrieved using @p i2cGetErrors().
+ * @retval MSG_TIMEOUT  if a timeout occurred before operation end.
+ *
+ * @api
+ */
+#define lsm6ds0GyroscopeSampleBias(devp)                                    \
+        gyroscopeSampleBias(&((devp)->gyro_if))
+        
+/**
+ * @brief   Set bias values for the BaseGyroscope.
+ * @note    Bias must be expressed as DPS.
+ * @note    The bias buffer must be at least the same size of the BaseGyroscope 
+ *          axes number.
+ *
+ * @param[in] devp      pointer to @p LSM6DS0Driver.
+ * @param[in] bp        a buffer which contains biases.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ *
+ * @api
+ */
+#define lsm6ds0GyroscopeSetBias(devp, bp)                                   \
+        gyroscopeSetBias(&((devp)->gyro_if), bp)
+
+/**
+ * @brief   Reset bias values for the BaseGyroscope.
+ * @note    Default biases value are obtained from device datasheet when
+ *          available otherwise they are considered zero.
+ *
+ * @param[in] devp      pointer to @p LSM6DS0Driver.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ *
+ * @api
+ */
+#define lsm6ds0GyroscopeResetBias(devp)                                     \
+        gyroscopeResetBias(&((devp)->gyro_if))
+
+/**
+ * @brief   Set sensitivity values for the BaseGyroscope.
+ * @note    Sensitivity must be expressed as DPS/LSB.
+ * @note    The sensitivity buffer must be at least the same size of the
+ *          BaseGyroscope axes number.
+ *
+ * @param[in] devp      pointer to @p LSM6DS0Driver.
+ * @param[in] sp        a buffer which contains sensitivities.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ *
+ * @api
+ */
+#define lsm6ds0GyroscopeSetSensitivity(devp, sp)                            \
+        gyroscopeSetSensitivity(&((devp)->gyro_if), sp)
+
+/**
+ * @brief   Reset sensitivity values for the BaseGyroscope.
+ * @note    Default sensitivities value are obtained from device datasheet.
+ *
+ * @param[in] devp      pointer to @p LSM6DS0Driver.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    otherwise.
+ *
+ * @api
+ */
+#define lsm6ds0GyroscopeResetSensitivity(devp)                              \
+        gyroscopeResetSensitivity(&((devp)->gyro_if))
+
+/**
+ * @brief   Changes the LSM6DS0Driver gyroscope fullscale value.
+ * @note    This function also rescale sensitivities and biases based on
+ *          previous and next fullscale value.
+ * @note    A recalibration is highly suggested after calling this function.
+ *
+ * @param[in] devp      pointer to @p LSM6DS0Driver.
+ * @param[in] fs        new fullscale value.
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    otherwise.
+ *
+ * @api
+ */
+#define lsm6ds0GyroscopeSetFullScale(devp, fs)                              \
+        (devp)->vmt->acc_set_full_scale(devp, fs)
   
 /*===========================================================================*/
 /* External declarations.                                                    */

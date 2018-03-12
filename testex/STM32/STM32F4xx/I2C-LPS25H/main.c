@@ -97,7 +97,7 @@ int main(void) {
   palSetLineMode(LINE_ARD_D14, PAL_MODE_ALTERNATE(4) |
                  PAL_STM32_OSPEED_HIGHEST | PAL_STM32_OTYPE_OPENDRAIN);
 
-  /* Activates the serial driver 1 using the driver default configuration.*/
+  /* Activates the serial driver 2 using the driver default configuration.*/
   sdStart(&SD2, NULL);
 
   /* Creates the blinker thread.*/
