@@ -27,7 +27,7 @@ const VOLCONF gaRedVolConf[REDCONF_VOLUME_COUNT] =
 				false,				//fAtomicSectorWrite
 				1024U,				//ulInodeCount
 				2U,					//bBlockIoRetries
-				"CHIBIVOL"
+				""
 		}
 };
 
