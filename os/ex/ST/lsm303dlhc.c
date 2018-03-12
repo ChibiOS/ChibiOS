@@ -854,7 +854,7 @@ void lsm303dlhcObjectInit(LSM303DLHCDriver *devp) {
   devp->accaxes = LSM303DLHC_ACC_NUMBER_OF_AXES;
   devp->compaxes = LSM303DLHC_COMP_NUMBER_OF_AXES;
 
-  devp->state  = LSM303DLHC_STOP;
+  devp->state = LSM303DLHC_STOP;
 }
 
 /**
@@ -876,7 +876,7 @@ void lsm303dlhcStart(LSM303DLHCDriver *devp, const LSM303DLHCConfig *config) {
 
   devp->config = config;
 
-  /* Configuring Accelerometer subsystem */
+  /* Configuring Accelerometer subsystem.*/
 
   /* Multiple write starting address.*/
   cr[0] = LSM303DLHC_AD_ACC_CTRL_REG1;

@@ -248,6 +248,7 @@ static msg_t gyro_sample_bias(void *ip) {
 static msg_t gyro_set_bias(void *ip, float *bp) {
   L3GD20Driver* devp;
   uint32_t i;
+  msg_t msg = MSG_OK;
   
   osalDbgCheck((ip != NULL) && (bp != NULL));
   
@@ -260,7 +261,7 @@ static msg_t gyro_set_bias(void *ip, float *bp) {
   for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++) {
     devp->gyrobias[i] = bp[i];
   }
-  return MSG_OK;
+  return msg;
 }
 
 /**
@@ -276,6 +277,7 @@ static msg_t gyro_set_bias(void *ip, float *bp) {
 static msg_t gyro_reset_bias(void *ip) {
   L3GD20Driver* devp;
   uint32_t i;
+  msg_t msg = MSG_OK;
 
   osalDbgCheck(ip != NULL);
   
@@ -287,7 +289,7 @@ static msg_t gyro_reset_bias(void *ip) {
 
   for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++)
     devp->gyrobias[i] = L3GD20_GYRO_BIAS;
-  return MSG_OK;
+  return msg;
 }
 
 /**
@@ -305,6 +307,7 @@ static msg_t gyro_reset_bias(void *ip) {
 static msg_t gyro_set_sensivity(void *ip, float *sp) {
   L3GD20Driver* devp;
   uint32_t i;
+  msg_t msg = MSG_OK;
   
   osalDbgCheck((ip != NULL) && (sp !=NULL));
 
@@ -317,7 +320,7 @@ static msg_t gyro_set_sensivity(void *ip, float *sp) {
   for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++) {
     devp->gyrosensitivity[i] = sp[i];
   }
-  return MSG_OK;
+  return msg;
 }
 
 /**
