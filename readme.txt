@@ -91,6 +91,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added support for LPS22HB 2 axis Barometer\Thermometer MEMS.
 - HAL: Fixed I2C address not accepted (bug #923)(backported to 18.2.1
        and 17.6.4).
 - HAL: Fixed problem with HSI48 on STM32L4xx (bug #922)(backported to 18.2.1).
