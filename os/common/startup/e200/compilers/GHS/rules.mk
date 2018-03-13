@@ -232,7 +232,8 @@ $(BUILDDIR)/lib$(PROJECT).a: $(OBJS)
 
 clean: CLEAN_RULE_HOOK
 	@echo Cleaning
-	-rm -fR $(BUILDDIR)
+	-rm -fR $(BUILDDIR)/* 2>/dev/null
+	-rmdir -p --ignore-fail-on-non-empty $(subst ./,,$(BUILDDIR)) 2>/dev/null
 	@echo
 	@echo Done
 

@@ -84,7 +84,7 @@ PROJECT = ch
 CHIBIOS  := ../../../..
 CONFDIR  := ./cfg/stm32f103_olimex
 BUILDDIR := ./build/stm32f103_olimex
-DEPDIR   := ./.dep-stm32f103_olimex
+DEPDIR   := ./.dep/stm32f103_olimex
 
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk

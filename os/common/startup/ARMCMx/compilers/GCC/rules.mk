@@ -315,7 +315,8 @@ $(BUILDDIR)/lib$(PROJECT).a: $(OBJS)
 
 clean: CLEAN_RULE_HOOK
 	@echo Cleaning
-	-rm -fR $(DEPDIR) $(BUILDDIR)
+	-rm -fR $(DEPDIR)/* $(BUILDDIR)/* 2>/dev/null
+	-rmdir -p --ignore-fail-on-non-empty $(subst ./,,$(DEPDIR)) $(subst ./,,$(BUILDDIR)) 2>/dev/null
 	@echo
 	@echo Done
 
@@ -324,6 +325,6 @@ CLEAN_RULE_HOOK:
 #
 # Include the dependency files, should be the last of the makefile
 #
--include $(shell mkdir $(DEPDIR) 2>/dev/null) $(wildcard $(DEPDIR)/*)
+-include $(shell mkdir -p $(DEPDIR) 2>/dev/null)
 
 # *** EOF ***

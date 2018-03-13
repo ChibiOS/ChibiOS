@@ -84,7 +84,7 @@ PROJECT = ch
 CHIBIOS  := ../../../..
 CONFDIR  := ./cfg/stm32f051_discovery
 BUILDDIR := ./build/stm32f051_discovery
-DEPDIR   := ./.dep-stm32f051_discovery
+DEPDIR   := ./.dep/stm32f051_discovery
 
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
