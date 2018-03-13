@@ -315,48 +315,48 @@ typedef enum {
  * @brief   LPS25H output data rate and bandwidth.
  */
 typedef enum {
-  LPS25H_ODR_ONE_SHOT = 0x00,        /**< One shot.                          */
-  LPS25H_ODR_1HZ = 0x10,             /**< Output data rate 1 Hz.             */
-  LPS25H_ODR_7HZ = 0x20,             /**< Output data rate 7 Hz.             */
-  LPS25H_ODR_12P5HZ = 0x30,          /**< Output data rate 12.5 Hz.          */
-  LPS25H_ODR_25HZ = 0x40             /**< Output data rate 25 Hz.            */
+  LPS25H_ODR_ONE_SHOT = 0x00,       /**< One shot.                          */
+  LPS25H_ODR_1HZ = 0x10,            /**< Output data rate 1 Hz.             */
+  LPS25H_ODR_7HZ = 0x20,            /**< Output data rate 7 Hz.             */
+  LPS25H_ODR_12P5HZ = 0x30,         /**< Output data rate 12.5 Hz.          */
+  LPS25H_ODR_25HZ = 0x40            /**< Output data rate 25 Hz.            */
 }lps25h_odr_t;
 
 /**
  * @brief   LPS25H pressure resolution.
  */
 typedef enum {
-  LPS25H_AVGP_8 = 0x00,              /**< Number of internal average is 8.   */
-  LPS25H_AVGP_32 = 0x01,             /**< Number of internal average is 32.  */
-  LPS25H_AVGP_128 = 0x02,            /**< Number of internal average is 128. */
-  LPS25H_AVGP_512 = 0x03,            /**< Number of internal average is 512. */
+  LPS25H_AVGP_8 = 0x00,             /**< Number of internal average is 8.   */
+  LPS25H_AVGP_32 = 0x01,            /**< Number of internal average is 32.  */
+  LPS25H_AVGP_128 = 0x02,           /**< Number of internal average is 128. */
+  LPS25H_AVGP_512 = 0x03,           /**< Number of internal average is 512. */
 }lps25h_avgp_t;
 
 /**
  * @brief   LPS25H temperature resolution.
  */
 typedef enum {
-  LPS25H_AVGT_8 = 0x00,              /**< Number of internal average is 8.   */
-  LPS25H_AVGT_32 = 0x04,             /**< Number of internal average is 32.  */
-  LPS25H_AVGT_128 = 0x08,            /**< Number of internal average is 128. */
-  LPS25H_AVGT_512 = 0x0C,            /**< Number of internal average is 512. */
+  LPS25H_AVGT_8 = 0x00,             /**< Number of internal average is 8.   */
+  LPS25H_AVGT_32 = 0x04,            /**< Number of internal average is 32.  */
+  LPS25H_AVGT_128 = 0x08,           /**< Number of internal average is 128. */
+  LPS25H_AVGT_512 = 0x0C,           /**< Number of internal average is 512. */
 }lps25h_avgt_t;
 
 /**
  * @brief   LPS25H block data update.
  */
 typedef enum {
-  LPS25H_BDU_CONTINUOUS = 0x00,      /**< Block data continuously updated.   */
-  LPS25H_BDU_BLOCKED = 0x40          /**< Block data updated after reading.  */
+  LPS25H_BDU_CONTINUOUS = 0x00,     /**< Block data continuously updated.   */
+  LPS25H_BDU_BLOCKED = 0x40         /**< Block data updated after reading.  */
 }lps25h_bdu_t;
 
 /**
  * @brief   Driver state machine possible states.
  */
 typedef enum {
-  LPS25H_UNINIT = 0,                 /**< Not initialized.                   */
-  LPS25H_STOP = 1,                   /**< Stopped.                           */
-  LPS25H_READY = 2,                  /**< Ready.                             */
+  LPS25H_UNINIT = 0,                /**< Not initialized.                   */
+  LPS25H_STOP = 1,                  /**< Stopped.                           */
+  LPS25H_READY = 2,                 /**< Ready.                             */
 } lps25h_state_t;
 
 /**
