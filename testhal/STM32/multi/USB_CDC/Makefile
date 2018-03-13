@@ -5,31 +5,31 @@
 all:
 	@echo
 	@echo === Building for STM32L476-Discovery ===============================
-	@make --no-print-directory -f Makefile-stm32l476_discovery all
+	@make --no-print-directory -f ./make/stm32l476_discovery.make all
 	@echo ====================================================================
 	@echo
 	@echo === Building for STM32F303-Discovery ===============================
-	@make --no-print-directory -f Makefile-stm32f303_discovery all
+	@make --no-print-directory -f ./make/stm32f303_discovery.make all
 	@echo ====================================================================
 	@echo
 	@echo === Building for STM32F407-Discovery ===============================
-	@make --no-print-directory -f Makefile-stm32f407_discovery all
+	@make --no-print-directory -f ./make/stm32f407_discovery.make all
 	@echo ====================================================================
 	@echo
 	@echo === Building for STM32F746-Discovery ===============================
-	@make --no-print-directory -f Makefile-stm32f746_discovery all
+	@make --no-print-directory -f ./make/stm32f746_discovery.make all
 	@echo ====================================================================
 	@echo
 
 clean:
 	@echo
-	-@make --no-print-directory -f Makefile-stm32l476_discovery clean
+	-@make --no-print-directory -f ./make/stm32l476_discovery.make clean
 	@echo
-	-@make --no-print-directory -f Makefile-stm32f303_discovery clean
+	-@make --no-print-directory -f ./make/stm32f303_discovery.make clean
 	@echo
-	-@make --no-print-directory -f Makefile-stm32f407_discovery clean
+	-@make --no-print-directory -f ./make/stm32f407_discovery.make clean
 	@echo
-	-@make --no-print-directory -f Makefile-stm32f746_discovery clean
+	-@make --no-print-directory -f ./make/stm32f746_discovery.make clean
 	@echo
 
 #
