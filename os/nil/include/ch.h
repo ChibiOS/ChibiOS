@@ -1556,13 +1556,8 @@ extern "C" {
 }
 #endif
 
-/* Optional subsystems.*/
-#include "chmboxes.h"
-#include "chmemcore.h"
-#include "chheap.h"
-#include "chmempools.h"
-#include "chfifo.h"
-#include "chfactory.h"
+/* OSLIB.*/
+#include "chlib.h"
 
 #endif /* CH_H */
 

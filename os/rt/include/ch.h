@@ -119,19 +119,15 @@ extern "C" {
 /* Optional subsystems headers.*/
 #include "chregistry.h"
 #include "chsem.h"
-#include "chbsem.h"
 #include "chmtx.h"
 #include "chcond.h"
 #include "chevents.h"
 #include "chmsg.h"
 
-/* OSLIB headers.*/
-#include "chmboxes.h"
-#include "chmemcore.h"
-#include "chheap.h"
-#include "chmempools.h"
-#include "chfifo.h"
-#include "chfactory.h"
+/* OSLIB.*/
+#include "chlib.h"
+
+/* Headers dependent on the OSLIB.*/
 #include "chdynamic.h"
 
 #endif /* CH_H */
