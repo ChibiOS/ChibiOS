@@ -39,7 +39,6 @@
   |  |  |  +--cmsis_os/   - CMSIS OS emulation layer for RT (ARMCMx port only).
   |  |  |  +--nasa_osal/  - NASA Operating System Abstraction Layer for RT.
   |  |  +--ext/           - Vendor files used by the OS.
-  |  |  +--oslib/         - RTOS modules usable by both RT and NIL.
   |  |  +--ports/         - RTOS ports usable by both RT and NIL.
   |  |  +--startup/       - Startup support for all compilers and platforms.
   |  +--ex/               - EX component.
@@ -64,6 +63,10 @@
   |  |  +--ports/         - HAL ports.
   |  |  +--templates/     - HAL driver template files.
   |  |     +--osal/       - HAL OSAL templates.
+  |  +--lib/              - RTOS modules usable by both RT and NIL (OSLIB).
+  |  |  +--include/       - OSLIB high level headers.
+  |  |  +--src/           - OSLIB high level source.
+  |  |  +--templates/     - OSLIB configuration template files.
   |  +--nil/              - NIL RTOS component.
   |  |  +--dox/           - NIL documentation resources.
   |  |  +--include/       - NIL high level headers.
@@ -92,6 +95,9 @@
 
 *** Next ***
 - NEW: Added support for LPS22HB 2 axis Barometer\Thermometer MEMS.
+- NEW: Separated OSLIB from RT and NIL, now it is a separate "product" with
+       its own version, configuration file and licensing. The library will
+       grow to include more functionalities.
 - HAL: Fixed I2C address not accepted (bug #923)(backported to 18.2.1
        and 17.6.4).
 - HAL: Fixed problem with HSI48 on STM32L4xx (bug #922)(backported to 18.2.1).
