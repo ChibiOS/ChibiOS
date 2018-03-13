@@ -98,6 +98,8 @@
 - NEW: Separated OSLIB from RT and NIL, now it is a separate "product" with
        its own version, configuration file and licensing. The library will
        grow to include more functionalities.
+       RT and NIL will contain only the core functionalities, everything else
+       is shared library code.
 - HAL: Fixed I2C address not accepted (bug #923)(backported to 18.2.1
        and 17.6.4).
 - HAL: Fixed problem with HSI48 on STM32L4xx (bug #922)(backported to 18.2.1).
