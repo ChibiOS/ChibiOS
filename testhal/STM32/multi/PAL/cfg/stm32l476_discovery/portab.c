@@ -22,7 +22,7 @@
  * @{
  */
 
-#include <cfg-stm32l151_discovery/portab.h>
+#include "portab.h"
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */

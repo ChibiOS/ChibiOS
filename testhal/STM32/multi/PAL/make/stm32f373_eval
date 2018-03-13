@@ -76,7 +76,7 @@ endif
 
 # FPU-related options.
 ifeq ($(USE_FPU_OPT),)
-  USE_FPU_OPT = -mfloat-abi=$(USE_FPU) -mfpu=fpv5-sp-d16 -fsingle-precision-constant
+  USE_FPU_OPT = -mfloat-abi=$(USE_FPU) -mfpu=fpv4-sp-d16 -fsingle-precision-constant
 endif
 
 #
@@ -92,18 +92,18 @@ PROJECT = ch
 
 # Imported source files and paths
 CHIBIOS  := ../../../..
-CONFDIR  := ./cfg-stm32f746_discovery
-BUILDDIR := ./build-stm32f746_discovery
-DEPDIR   := ./.dep-stm32f746_discovery
+CONFDIR  := ./cfg/stm32f373_eval
+BUILDDIR := ./build/stm32f373_eval
+DEPDIR   := ./.dep-stm32f373_eval
 
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
 # Startup files.
-include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32f7xx.mk
+include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32f3xx.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/ports/STM32/STM32F7xx/platform.mk
-include $(CHIBIOS)/os/hal/boards/ST_STM32F746G_DISCOVERY/board.mk
+include $(CHIBIOS)/os/hal/ports/STM32/STM32F37x/platform.mk
+include $(CHIBIOS)/os/hal/boards/ST_STM32373C_EVAL/board.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
@@ -116,7 +116,7 @@ include $(CHIBIOS)/tools/mk/autobuild.mk
 #include $(CHIBIOS)/test/oslib/oslib_test.mk
 
 # Define linker script file here
-LDSCRIPT= $(STARTUPLD)/STM32F746xG.ld
+LDSCRIPT= $(STARTUPLD)/STM32F373xC.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -186,7 +186,7 @@ ULIBS =
 # Compiler settings
 #
 
-MCU  = cortex-m7
+MCU  = cortex-m4
 
 #TRGT = arm-elf-
 TRGT = arm-none-eabi-

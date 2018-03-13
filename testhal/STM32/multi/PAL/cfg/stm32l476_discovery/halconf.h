@@ -28,7 +28,7 @@
 #ifndef HALCONF_H
 #define HALCONF_H
 
-#include <cfg-stm32l151_discovery/mcuconf.h>
+#include "mcuconf.h"
 
 /**
  * @brief   Enables the PAL subsystem.

@@ -92,18 +92,18 @@ PROJECT = ch
 
 # Imported source files and paths
 CHIBIOS  := ../../../..
-CONFDIR  := ./cfg-stm32f373_eval
-BUILDDIR := ./build-stm32f373_eval
-DEPDIR   := ./.dep-stm32f373_eval
+CONFDIR  := ./cfg/stm32f429_discovery
+BUILDDIR := ./build/stm32f429_discovery
+DEPDIR   := ./.dep-stm32f429_discovery
 
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
 # Startup files.
-include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32f3xx.mk
+include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32f4xx.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/ports/STM32/STM32F37x/platform.mk
-include $(CHIBIOS)/os/hal/boards/ST_STM32373C_EVAL/board.mk
+include $(CHIBIOS)/os/hal/ports/STM32/STM32F4xx/platform.mk
+include $(CHIBIOS)/os/hal/boards/ST_STM32F429I_DISCOVERY/board.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
@@ -116,7 +116,7 @@ include $(CHIBIOS)/tools/mk/autobuild.mk
 #include $(CHIBIOS)/test/oslib/oslib_test.mk
 
 # Define linker script file here
-LDSCRIPT= $(STARTUPLD)/STM32F373xC.ld
+LDSCRIPT= $(STARTUPLD)/STM32F429xI.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
