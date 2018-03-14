@@ -138,7 +138,7 @@ static msg_t acc_read_raw(void *ip, int32_t axes[]) {
 #endif /* LSM6DSL_SHARED_I2C */
 
   msg = lsm6dslI2CReadRegister(devp->config->i2cp, devp->config->slaveaddress, 
-                               LSM6DSL_AD_OUT_X_L_XL, buff, 
+                               LSM6DSL_AD_OUTX_L_XL, buff, 
                                LSM6DSL_ACC_NUMBER_OF_AXES * 2);
 
 #if LSM6DSL_SHARED_I2C
@@ -381,7 +381,7 @@ static msg_t acc_set_full_scale(LSM6DSLDriver *devp,
     /* Updating register.*/
     msg = lsm6dslI2CReadRegister(devp->config->i2cp,
                                  devp->config->slaveaddress,
-                                 LSM6DSL_AD_CTRL_REG6_XL, &buff[1], 1);
+                                 LSM6DSL_AD_CTRL1_XL, &buff[1], 1);
 
 #if LSM6DSL_SHARED_I2C
         i2cReleaseBus(devp->config->i2cp);
@@ -390,9 +390,9 @@ static msg_t acc_set_full_scale(LSM6DSLDriver *devp,
     if(msg != MSG_OK)
       return msg;
 
-    buff[1] &= ~(LSM6DSL_CTRL_REG6_XL_FS_MASK);
+    buff[1] &= ~(LSMDSL_CTRL1_XL_FS_MASK);
     buff[1] |= fs;
-    buff[0] = LSM6DSL_AD_CTRL_REG6_XL;
+    buff[0] = LSM6DSL_AD_CTRL1_XL;
 
 #if LSM6DSL_SHARED_I2C
     i2cAcquireBus(devp->config->i2cp);
@@ -471,7 +471,7 @@ static msg_t gyro_read_raw(void *ip, int32_t axes[LSM6DSL_GYRO_NUMBER_OF_AXES]) 
 #endif /* LSM6DSL_SHARED_I2C */
 
   msg = lsm6dslI2CReadRegister(devp->config->i2cp, devp->config->slaveaddress, 
-                               LSM6DSL_AD_OUT_X_L_G, buff, 
+                               LSM6DSL_AD_OUTX_L_G, buff,
                                LSM6DSL_GYRO_NUMBER_OF_AXES * 2);
 
 #if	LSM6DSL_SHARED_I2C
@@ -684,13 +684,18 @@ static msg_t gyro_reset_sensivity(void *ip) {
   
   osalDbgAssert((devp->state == LSM6DSL_READY),
                 "gyro_reset_sensivity(), invalid state");
-
-  if(devp->config->gyrofullscale == LSM6DSL_GYRO_FS_245DPS)
+  if(devp->config->gyrofullscale == LSM6DSL_GYRO_FS_125DPS)
     for(i = 0; i < LSM6DSL_GYRO_NUMBER_OF_AXES; i++)
-      devp->gyrosensitivity[i] = LSM6DSL_GYRO_SENS_245DPS;
+      devp->gyrosensitivity[i] = LSM6DSL_GYRO_SENS_125DPS;
+  else if(devp->config->gyrofullscale == LSM6DSL_GYRO_FS_250DPS)
+    for(i = 0; i < LSM6DSL_GYRO_NUMBER_OF_AXES; i++)
+      devp->gyrosensitivity[i] = LSM6DSL_GYRO_SENS_250DPS;
   else if(devp->config->gyrofullscale == LSM6DSL_GYRO_FS_500DPS)
 	for(i = 0; i < LSM6DSL_GYRO_NUMBER_OF_AXES; i++)
       devp->gyrosensitivity[i] = LSM6DSL_GYRO_SENS_500DPS;
+  else if(devp->config->gyrofullscale == LSM6DSL_GYRO_FS_1000DPS)
+	for(i = 0; i < LSM6DSL_GYRO_NUMBER_OF_AXES; i++)
+      devp->gyrosensitivity[i] = LSM6DSL_GYRO_SENS_1000DPS;
   else if(devp->config->gyrofullscale == LSM6DSL_GYRO_FS_2000DPS)
 	for(i = 0; i < LSM6DSL_GYRO_NUMBER_OF_AXES; i++)
       devp->gyrosensitivity[i] = LSM6DSL_GYRO_SENS_2000DPS;
@@ -728,11 +733,17 @@ static msg_t gyro_set_full_scale(LSM6DSLDriver *devp, lsm6dsl_gyro_fs_t fs) {
                 "gyro_set_full_scale(), channel not ready");
 #endif
 
-  if(fs == LSM6DSL_GYRO_FS_245DPS) {
-    newfs = LSM6DSL_GYRO_245DPS;
+  if(fs == LSM6DSL_GYRO_FS_125DPS) {
+    newfs = LSM6DSL_GYRO_125DPS;
+  }
+  else if(fs == LSM6DSL_GYRO_FS_250DPS) {
+    newfs = LSM6DSL_GYRO_250DPS;
   }
   else if(fs == LSM6DSL_GYRO_FS_500DPS) {
     newfs = LSM6DSL_GYRO_500DPS;
+  }
+  else if(fs == LSM6DSL_GYRO_FS_1000DPS) {
+    newfs = LSM6DSL_GYRO_1000DPS;
   }
   else if(fs == LSM6DSL_GYRO_FS_2000DPS) {
     newfs = LSM6DSL_GYRO_2000DPS;
@@ -755,16 +766,16 @@ static msg_t gyro_set_full_scale(LSM6DSLDriver *devp, lsm6dsl_gyro_fs_t fs) {
     /* Updating register.*/
     msg = lsm6dslI2CReadRegister(devp->config->i2cp,
                                  devp->config->slaveaddress,
-                                 LSM6DSL_AD_CTRL_REG1_G, &buff[1], 1);
+                                 LSM6DSL_AD_CTRL2_G, &buff[1], 1);
 
 #if	LSM6DSL_SHARED_I2C
 		i2cReleaseBus(devp->config->i2cp);
 #endif /* LSM6DSL_SHARED_I2C */ 
 #endif /* LSM6DSL_USE_I2C */
 
-    buff[1] &= ~(LSM6DSL_CTRL_REG1_G_FS_MASK);
+    buff[1] &= ~(LSMDSL_CTRL2_G_FS_MASK);
     buff[1] |= fs;
-    buff[0] = LSM6DSL_AD_CTRL_REG1_G;
+    buff[0] = LSM6DSL_AD_CTRL2_G;
  
 #if LSM6DSL_USE_I2C 
 #if	LSM6DSL_SHARED_I2C
@@ -842,7 +853,7 @@ void lsm6dslObjectInit(LSM6DSLDriver *devp) {
  */
 void lsm6dslStart(LSM6DSLDriver *devp, const LSM6DSLConfig *config) {
   uint32_t i;
-  uint8_t cr[5];
+  uint8_t cr[11];
   osalDbgCheck((devp != NULL) && (config != NULL));
 
   osalDbgAssert((devp->state == LSM6DSL_STOP) || 
@@ -851,15 +862,10 @@ void lsm6dslStart(LSM6DSLDriver *devp, const LSM6DSLConfig *config) {
 
   devp->config = config;
 
-  /* Configuring common registers.*/
-    
-  /* Control register 8 configuration block.*/
+  /* Enforcing multiple write configuration.*/
   {
-    cr[0] = LSM6DSL_AD_CTRL_REG8;
-    cr[1] = LSM6DSL_CTRL_REG8_IF_ADD_INC;
-#if LSM6DSL_USE_ADVANCED || defined(__DOXYGEN__)
-    cr[1] |= devp->config->endianness | devp->config->blockdataupdate;
-#endif
+    cr[0] = LSM6DSL_AD_CTRL3_C;
+    cr[1] = LSMDSL_CTRL3_C_IF_INC;
   }
 #if LSM6DSL_USE_I2C
 #if LSM6DSL_SHARED_I2C
@@ -875,22 +881,77 @@ void lsm6dslStart(LSM6DSLDriver *devp, const LSM6DSLConfig *config) {
 #endif /* LSM6DSL_SHARED_I2C */
 #endif /* LSM6DSL_USE_I2C */
 
-  /* Configuring Accelerometer subsystem.*/
+  /* Configuring all the control registers.*/
   /* Multiple write starting address.*/
-  cr[0] = LSM6DSL_AD_CTRL_REG5_XL;
-  /* Control register 5 configuration block.*/
+  cr[0] = LSM6DSL_AD_CTRL1_XL;
+  /* Control register 1 configuration block.*/
   {
-      cr[1] = LSM6DSL_CTRL_REG5_XL_XEN_XL | LSM6DSL_CTRL_REG5_XL_YEN_XL |
-              LSM6DSL_CTRL_REG5_XL_ZEN_XL;
-#if LSM6DSL_ACC_USE_ADVANCED || defined(__DOXYGEN__)
-      cr[1] |= devp->config->accdecmode;
+      cr[1] = devp->config->accoutdatarate |
+              devp->config->accfullscale;
+  }
+  /* Control register 2 configuration block.*/
+  {
+      cr[2] = devp->config->gyrooutdatarate |
+              devp->config->gyrofullscale;
+  }
+  /* Control register 3 configuration block.*/
+  {
+      cr[3] = LSMDSL_CTRL3_C_IF_INC;
+#if LSM6DSL_USE_ADVANCED || defined(__DOXYGEN__)
+      cr[3] |= devp->config->endianness | devp->config->blockdataupdate;
 #endif
   }
-
+  /* Control register 4 configuration block.*/
+  {
+      cr[4] = 0;
+#if LSM6DSL_GYRO_USE_ADVANCED || defined(__DOXYGEN__)
+      if(devp->config->gyrolowpassfilter != LSM6DSL_GYRO_LPF_DISABLED) {
+        cr[4] |= LSMDSL_CTRL4_C_LPF1_SEL_G;
+      }
+      else {
+        /* Nothing to do. */
+      }
+#endif
+  }
+  /* Control register 5 configuration block.*/
+  {
+      cr[5] = 0;
+  }
   /* Control register 6 configuration block.*/
   {
-    cr[2] = devp->config->accoutdatarate |
-            devp->config->accfullscale;
+      cr[6] = 0;
+#if LSM6DSL_ACC_USE_ADVANCED || defined(__DOXYGEN__)
+      cr[6] |= devp->config->acclpmode;
+
+#endif
+#if LSM6DSL_GYRO_USE_ADVANCED || defined(__DOXYGEN__)
+      if(devp->config->gyrolowpassfilter != LSM6DSL_GYRO_LPF_DISABLED) {
+        cr[6] |= devp->config->gyrolowpassfilter;
+      }
+      else {
+        /* Nothing to do. */
+      }
+#endif
+  }
+  /* Control register 7 configuration block.*/
+  {
+      cr[7] = 0;
+#if LSM6DSL_GYRO_USE_ADVANCED || defined(__DOXYGEN__)
+      cr[7] |= devp->config->gyrolpmode;
+
+#endif
+  }
+  /* Control register 8 configuration block.*/
+  {
+      cr[8] = 0;
+  }
+  /* Control register 9 configuration block.*/
+  {
+      cr[9] = 0;
+  }
+  /* Control register 10 configuration block.*/
+  {
+      cr[10] = 0;
   }
   
 #if LSM6DSL_USE_I2C
@@ -900,7 +961,7 @@ void lsm6dslStart(LSM6DSLDriver *devp, const LSM6DSLConfig *config) {
 #endif /* LSM6DSL_SHARED_I2C */
 
   lsm6dslI2CWriteRegister(devp->config->i2cp, devp->config->slaveaddress,
-                          cr, 2);
+                          cr, 10);
 
 #if LSM6DSL_SHARED_I2C
   i2cReleaseBus(devp->config->i2cp);
@@ -954,84 +1015,24 @@ void lsm6dslStart(LSM6DSLDriver *devp, const LSM6DSLConfig *config) {
   else      
     for(i = 0; i < LSM6DSL_ACC_NUMBER_OF_AXES; i++)
       devp->accbias[i] = LSM6DSL_ACC_BIAS;
-    
-  /* Configuring Gyroscope subsystem.*/
-  /* Multiple write starting address.*/
-  cr[0] = LSM6DSL_AD_CTRL_REG1_G;
 
-  /* Control register 1 configuration block.*/
-  {
-    cr[1] = devp->config->gyrofullscale |
-            devp->config->gyrooutdatarate;
-#if LSM6DSL_GYRO_USE_ADVANCED || defined(__DOXYGEN__)
-    cr[1] |= devp->config->gyrodecmode;
-#endif
-  }
-
-  /* Control register 2 configuration block.*/
-  {
-    cr[2] = 0;
-#if LSM6DSL_GYRO_USE_ADVANCED || defined(__DOXYGEN__)
-    cr[2] |= devp->config->gyrooutsel;
-#endif
-  }
-
-  /* Control register 3 configuration block.*/
-  {
-    cr[3] = 0;
-#if LSM6DSL_GYRO_USE_ADVANCED || defined(__DOXYGEN__)
-    cr[3] |= devp->config->gyrohpfenable |
-             devp->config->gyrolowmodecfg |
-             devp->config->gyrohpcfg;
-#endif
-  }
-
-  /* Control register 4 configuration block.*/
-  {
-    cr[4] = LSM6DSL_CTRL_REG4_XEN_G | LSM6DSL_CTRL_REG4_YEN_G |
-            LSM6DSL_CTRL_REG4_ZEN_G;
-  }
-#if LSM6DSL_USE_I2C
-#if LSM6DSL_SHARED_I2C
-  i2cAcquireBus(devp->config->i2cp);
-  i2cStart(devp->config->i2cp, devp->config->i2ccfg);
-#endif /* LSM6DSL_SHARED_I2C */
-
-  lsm6dslI2CWriteRegister(devp->config->i2cp, devp->config->slaveaddress,
-                          cr, 4);
-
-#if LSM6DSL_SHARED_I2C
-  i2cReleaseBus(devp->config->i2cp);
-#endif /* LSM6DSL_SHARED_I2C */
-#endif /* LSM6DSL_USE_I2C */
-
-  cr[0] = LSM6DSL_AD_CTRL_REG9;
-  /* Control register 9 configuration block.*/
-  {
-      cr[1] = 0;
-  }
-#if LSM6DSL_USE_I2C
-#if LSM6DSL_SHARED_I2C
-  i2cAcquireBus(devp->config->i2cp);
-  i2cStart(devp->config->i2cp, devp->config->i2ccfg);
-#endif /* LSM6DSL_SHARED_I2C */
-
-  lsm6dslI2CWriteRegister(devp->config->i2cp, devp->config->slaveaddress,
-                          cr, 1);
-
-#if LSM6DSL_SHARED_I2C
-  i2cReleaseBus(devp->config->i2cp);
-#endif /* LSM6DSL_SHARED_I2C */
-#endif /* LSM6DSL_USE_I2C */
-
-  if(devp->config->gyrofullscale == LSM6DSL_GYRO_FS_245DPS) {
+  if(devp->config->gyrofullscale == LSM6DSL_GYRO_FS_125DPS) {
     for(i = 0; i < LSM6DSL_GYRO_NUMBER_OF_AXES; i++) {
       if(devp->config->gyrosensitivity == NULL)
-        devp->gyrosensitivity[i] = LSM6DSL_GYRO_SENS_245DPS;
+        devp->gyrosensitivity[i] = LSM6DSL_GYRO_SENS_125DPS;
       else
         devp->gyrosensitivity[i] = devp->config->gyrosensitivity[i];
     }
-    devp->gyrofullscale = LSM6DSL_GYRO_245DPS;
+    devp->gyrofullscale = LSM6DSL_GYRO_125DPS;
+  }
+  else if(devp->config->gyrofullscale == LSM6DSL_GYRO_FS_250DPS) {
+    for(i = 0; i < LSM6DSL_GYRO_NUMBER_OF_AXES; i++) {
+      if(devp->config->gyrosensitivity == NULL)
+        devp->gyrosensitivity[i] = LSM6DSL_GYRO_SENS_250DPS;
+      else
+        devp->gyrosensitivity[i] = devp->config->gyrosensitivity[i];
+    }
+    devp->gyrofullscale = LSM6DSL_GYRO_250DPS;
   }
   else if(devp->config->gyrofullscale == LSM6DSL_GYRO_FS_500DPS) {
     for(i = 0; i < LSM6DSL_GYRO_NUMBER_OF_AXES; i++) {
@@ -1041,6 +1042,15 @@ void lsm6dslStart(LSM6DSLDriver *devp, const LSM6DSLConfig *config) {
         devp->gyrosensitivity[i] = devp->config->gyrosensitivity[i];
     }
     devp->gyrofullscale = LSM6DSL_GYRO_500DPS;
+  }
+  else if(devp->config->gyrofullscale == LSM6DSL_GYRO_FS_1000DPS) {
+    for(i = 0; i < LSM6DSL_GYRO_NUMBER_OF_AXES; i++) {
+      if(devp->config->gyrosensitivity == NULL)
+        devp->gyrosensitivity[i] = LSM6DSL_GYRO_SENS_1000DPS;
+      else
+        devp->gyrosensitivity[i] = devp->config->gyrosensitivity[i];
+    }
+    devp->gyrofullscale = LSM6DSL_GYRO_1000DPS;
   }
   else if(devp->config->gyrofullscale == LSM6DSL_GYRO_FS_2000DPS) {
     for(i = 0; i < LSM6DSL_GYRO_NUMBER_OF_AXES; i++) {
@@ -1090,17 +1100,14 @@ void lsm6dslStop(LSM6DSLDriver *devp) {
     i2cStart(devp->config->i2cp, devp->config->i2ccfg);
 #endif /* LSM6DSL_SHARED_I2C */
     
-    /* Disabling accelerometer.*/
-    cr[0] = LSM6DSL_AD_CTRL_REG6_XL;
-    cr[1] = 0;
-    lsm6dslI2CWriteRegister(devp->config->i2cp, devp->config->slaveaddress,
-                            cr, 1);
 
+    cr[0] = LSM6DSL_AD_CTRL1_XL;
+    /* Disabling accelerometer.*/
+    cr[1] = LSM6DSL_ACC_ODR_PD;
     /* Disabling gyroscope.*/
-    cr[0] = LSM6DSL_AD_CTRL_REG9;
-    cr[1] = LSM6DSL_CTRL_REG9_SLEEP_G;
+    cr[2] = LSM6DSL_GYRO_ODR_PD;
     lsm6dslI2CWriteRegister(devp->config->i2cp, devp->config->slaveaddress,
-                            cr, 1);
+                            cr, 2);
 
     i2cStop(devp->config->i2cp);
 #if LSM6DSL_SHARED_I2C

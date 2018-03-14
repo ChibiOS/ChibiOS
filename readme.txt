@@ -94,6 +94,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added support for LSM6DSL 6 axis Accelerometer\Gyroscope MEMS.
 - NEW: Added support for LPS22HB 2 axis Barometer\Thermometer MEMS.
 - NEW: Separated OSLIB from RT and NIL, now it is a separate "product" with
        its own version, configuration file and licensing. The library will
