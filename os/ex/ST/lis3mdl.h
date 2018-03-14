@@ -42,7 +42,7 @@
 /**
  * @brief   LIS3MDL driver version string.
  */
-#define EX_LIS3MDL_VERSION                  "1.0.6"
+#define EX_LIS3MDL_VERSION                  "1.1.0"
 
 /**
  * @brief   LIS3MDL driver version major number.
@@ -52,12 +52,12 @@
 /**
  * @brief   LIS3MDL driver version minor number.
  */
-#define EX_LIS3MDL_MINOR                    0
+#define EX_LIS3MDL_MINOR                    1
 
 /**
  * @brief   LIS3MDL driver version patch number.
  */
-#define EX_LIS3MDL_PATCH                    6
+#define EX_LIS3MDL_PATCH                    0
 /** @} */
 
 /**

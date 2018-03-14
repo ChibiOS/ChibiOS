@@ -43,7 +43,7 @@
 /**
  * @brief   LSM303DLHC driver version string.
  */
-#define EX_LSM303DLHC_VERSION               "1.0.5"
+#define EX_LSM303DLHC_VERSION               "1.1.0"
 
 /**
  * @brief   LSM303DLHC driver version major number.
@@ -53,12 +53,12 @@
 /**
  * @brief   LSM303DLHC driver version minor number.
  */
-#define EX_LSM303DLHC_MINOR                 0
+#define EX_LSM303DLHC_MINOR                 1
 
 /**
  * @brief   LSM303DLHC driver version patch number.
  */
-#define EX_LSM303DLHC_PATCH                 5
+#define EX_LSM303DLHC_PATCH                 0
 /** @} */
 
 /**

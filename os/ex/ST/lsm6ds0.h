@@ -43,7 +43,7 @@
 /**
  * @brief   LSM6DS0 driver version string.
  */
-#define EX_LSM6DS0_VERSION                  "1.0.5"
+#define EX_LSM6DS0_VERSION                  "1.1.0"
 
 /**
  * @brief   LSM6DS0 driver version major number.
@@ -53,12 +53,12 @@
 /**
  * @brief   LSM6DS0 driver version minor number.
  */
-#define EX_LSM6DS0_MINOR                    0
+#define EX_LSM6DS0_MINOR                    1
 
 /**
  * @brief   LSM6DS0 driver version patch number.
  */
-#define EX_LSM6DS0_PATCH                    5
+#define EX_LSM6DS0_PATCH                    0
 /** @} */
 
 /**

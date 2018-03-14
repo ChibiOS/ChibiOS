@@ -43,7 +43,7 @@
 /**
  * @brief   LIS302DL driver version string.
  */
-#define EX_LIS302DL_VERSION                 "1.0.5"
+#define EX_LIS302DL_VERSION                 "1.1.0"
 
 /**
  * @brief   LIS302DL driver version major number.
@@ -53,12 +53,12 @@
 /**
  * @brief   LIS302DL driver version minor number.
  */
-#define EX_LIS302DL_MINOR                   0
+#define EX_LIS302DL_MINOR                   1
 
 /**
  * @brief   LIS302DL driver version patch number.
  */
-#define EX_LIS302DL_PATCH                   5
+#define EX_LIS302DL_PATCH                   0
 /** @} */
 
 /**

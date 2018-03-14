@@ -43,7 +43,7 @@
 /**
  * @brief   LPS25H driver version string.
  */
-#define EX_LPS25H_VERSION                   "1.0.5"
+#define EX_LPS25H_VERSION                   "1.1.0"
 
 /**
  * @brief   LPS25H driver version major number.
@@ -53,12 +53,12 @@
 /**
  * @brief   LPS25H driver version minor number.
  */
-#define EX_LPS25H_MINOR                     0
+#define EX_LPS25H_MINOR                     1
 
 /**
  * @brief   LPS25H driver version patch number.
  */
-#define EX_LPS25H_PATCH                     5
+#define EX_LPS25H_PATCH                     0
 /** @} */
 
 /**

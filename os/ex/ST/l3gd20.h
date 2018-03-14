@@ -42,7 +42,7 @@
 /**
  * @brief   L3GD20 driver version string.
  */
-#define EX_L3GD20_VERSION                   "1.0.6"
+#define EX_L3GD20_VERSION                   "1.1.0"
 
 /**
  * @brief   L3GD20 driver version major number.
@@ -52,12 +52,12 @@
 /**
  * @brief   L3GD20 driver version minor number.
  */
-#define EX_L3GD20_MINOR                     0
+#define EX_L3GD20_MINOR                     1
 
 /**
  * @brief   L3GD20 driver version patch number.
  */
-#define EX_L3GD20_PATCH                     65
+#define EX_L3GD20_PATCH                     0
 /** @} */
 
 /**

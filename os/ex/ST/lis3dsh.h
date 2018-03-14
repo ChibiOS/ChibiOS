@@ -43,7 +43,7 @@
 /**
  * @brief   LIS3DSH driver version string.
  */
-#define EX_LIS3DSH_VERSION                  "1.0.4"
+#define EX_LIS3DSH_VERSION                  "1.1.0"
 
 /**
  * @brief   LIS3DSH driver version major number.
@@ -53,12 +53,12 @@
 /**
  * @brief   LIS3DSH driver version minor number.
  */
-#define EX_LIS3DSH_MINOR                    0
+#define EX_LIS3DSH_MINOR                    1
 
 /**
  * @brief   LIS3DSH driver version patch number.
  */
-#define EX_LIS3DSH_PATCH                    4
+#define EX_LIS3DSH_PATCH                    0
 /** @} */
 
 /**
