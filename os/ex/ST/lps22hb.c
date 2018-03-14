@@ -60,7 +60,7 @@
  *
  * @notapi
  */
-static msg_t lps22hbI2CReadRegister(I2CDriver *i2cp, lps22hb_sad_t sad, 
+static msg_t lps22hbI2CReadRegister(I2CDriver *i2cp, lps22hb_sad_t sad,
                                     uint8_t reg, uint8_t* rxbuf, size_t n) {
 
   return i2cMasterTransmitTimeout(i2cp, sad, &reg, 1, rxbuf, n,
@@ -119,18 +119,18 @@ static msg_t baro_read_raw(void *ip, int32_t axes[]) {
   LPS22HBDriver* devp;
   uint8_t buff[3];
   msg_t msg;
-      
+
   osalDbgCheck((ip != NULL) && (axes != NULL));
 
   /* Getting parent instance pointer.*/
   devp = objGetInstance(LPS22HBDriver*, (BaseBarometer*)ip);
-  
+
   osalDbgAssert((devp->state == LPS22HB_READY),
                 "baro_read_raw(), invalid state");
 
   osalDbgAssert((devp->config->i2cp->state == I2C_READY),
                 "baro_read_raw(), channel not ready");
-                
+
 #if LPS22HB_SHARED_I2C
   i2cAcquireBus(devp->config->i2cp);
   i2cStart(devp->config->i2cp,
@@ -149,7 +149,7 @@ static msg_t baro_read_raw(void *ip, int32_t axes[]) {
   }
   return msg;
 }
-  
+
 /**
  * @brief   Retrieves cooked data from the BaseBarometer.
  * @note    This data is manipulated according to the formula
@@ -176,14 +176,14 @@ static msg_t baro_read_cooked(void *ip, float axes[]) {
 
   /* Getting parent instance pointer.*/
   devp = objGetInstance(LPS22HBDriver*, (BaseBarometer*)ip);
-  
+
   osalDbgAssert((devp->state == LPS22HB_READY),
                 "baro_read_cooked(), invalid state");
 
   msg = baro_read_raw(ip, &raw);
 
   *axes = (raw * devp->barosensitivity) - devp->barobias;
-  
+
   return msg;
 }
 
@@ -205,12 +205,12 @@ static msg_t baro_read_cooked(void *ip, float axes[]) {
 static msg_t baro_set_bias(void *ip, float *bp) {
   LPS22HBDriver* devp;
   msg_t msg = MSG_OK;
-    
+
   osalDbgCheck((ip != NULL) && (bp != NULL));
 
   /* Getting parent instance pointer.*/
   devp = objGetInstance(LPS22HBDriver*, (BaseBarometer*)ip);
-  
+
   osalDbgAssert((devp->state == LPS22HB_READY),
                 "baro_set_bias(), invalid state");
 
@@ -231,15 +231,15 @@ static msg_t baro_set_bias(void *ip, float *bp) {
 static msg_t baro_reset_bias(void *ip) {
   LPS22HBDriver* devp;
   msg_t msg = MSG_OK;
-  
+
   osalDbgCheck(ip != NULL);
 
   /* Getting parent instance pointer.*/
   devp = objGetInstance(LPS22HBDriver*, (BaseBarometer*)ip);
-  
+
   osalDbgAssert((devp->state == LPS22HB_READY),
                 "baro_reset_bias(), invalid state");
-                
+
   devp->barobias = LPS22HB_BARO_SENS;
   return msg;
 }
@@ -259,12 +259,12 @@ static msg_t baro_reset_bias(void *ip) {
 static msg_t baro_set_sensitivity(void *ip, float *sp) {
   LPS22HBDriver* devp;
   msg_t msg = MSG_OK;
-  
+
   osalDbgCheck((ip != NULL) && (sp != NULL));
 
   /* Getting parent instance pointer.*/
   devp = objGetInstance(LPS22HBDriver*, (BaseBarometer*)ip);
-  
+
   osalDbgAssert((devp->state == LPS22HB_READY),
                 "baro_set_sensitivity(), invalid state");
 
@@ -284,12 +284,12 @@ static msg_t baro_set_sensitivity(void *ip, float *sp) {
 static msg_t baro_reset_sensitivity(void *ip) {
   LPS22HBDriver* devp;
   msg_t msg = MSG_OK;
-  
+
   osalDbgCheck(ip != NULL);
 
     /* Getting parent instance pointer.*/
   devp = objGetInstance(LPS22HBDriver*, (BaseBarometer*)ip);
-  
+
   osalDbgAssert((devp->state == LPS22HB_READY),
                 "baro_reset_sensitivity(), invalid state");
 
@@ -306,7 +306,7 @@ static msg_t baro_reset_sensitivity(void *ip) {
  */
 static size_t thermo_get_axes_number(void *ip) {
   (void)ip;
-  
+
   return LPS22HB_THERMO_NUMBER_OF_AXES;
 }
 
@@ -331,18 +331,18 @@ static msg_t thermo_read_raw(void *ip, int32_t axes[]) {
   int16_t tmp;
   uint8_t buff[2];
   msg_t msg;
-  
+
   osalDbgCheck((ip != NULL) && (axes != NULL));
 
   /* Getting parent instance pointer.*/
   devp = objGetInstance(LPS22HBDriver*, (BaseThermometer*)ip);
-  
+
   osalDbgAssert((devp->state == LPS22HB_READY),
-                "thermo_read_raw(), invalid state");  
-  
+                "thermo_read_raw(), invalid state");
+
   osalDbgAssert((devp->config->i2cp->state == I2C_READY),
                 "thermo_read_raw(), channel not ready");
-                
+
 #if LPS22HB_SHARED_I2C
   i2cAcquireBus(devp->config->i2cp);
   i2cStart(devp->config->i2cp,
@@ -351,7 +351,7 @@ static msg_t thermo_read_raw(void *ip, int32_t axes[]) {
 
   msg = lps22hbI2CReadRegister(devp->config->i2cp, devp->config->slaveaddress,
                                LPS22HB_AD_TEMP_OUT_L, buff, 2);
-                                  
+
 #if LPS22HB_SHARED_I2C
   i2cReleaseBus(devp->config->i2cp);
 #endif /* LPS22HB_SHARED_I2C */
@@ -389,7 +389,7 @@ static msg_t thermo_read_cooked(void *ip, float* axis) {
 
   /* Getting parent instance pointer.*/
   devp = objGetInstance(LPS22HBDriver*, (BaseThermometer*)ip);
-  
+
   osalDbgAssert((devp->state == LPS22HB_READY),
                 "thermo_read_cooked(), invalid state");
 
@@ -415,17 +415,17 @@ static msg_t thermo_read_cooked(void *ip, float* axis) {
 static msg_t thermo_set_bias(void *ip, float *bp) {
   LPS22HBDriver* devp;
   msg_t msg = MSG_OK;
-  
+
   osalDbgCheck((ip != NULL) && (bp != NULL));
 
   /* Getting parent instance pointer.*/
   devp = objGetInstance(LPS22HBDriver*, (BaseThermometer*)ip);
-  
+
   osalDbgAssert((devp->state == LPS22HB_READY),
                 "thermo_set_bias(), invalid state");
-                
+
   devp->thermobias = *bp;
-  
+
   return msg;
 }
 
@@ -441,18 +441,18 @@ static msg_t thermo_set_bias(void *ip, float *bp) {
  */
 static msg_t thermo_reset_bias(void *ip) {
   LPS22HBDriver* devp;
-  msg_t msg = MSG_OK; 
-  
+  msg_t msg = MSG_OK;
+
   osalDbgCheck(ip != NULL);
 
   /* Getting parent instance pointer.*/
   devp = objGetInstance(LPS22HBDriver*, (BaseThermometer*)ip);
-  
+
   osalDbgAssert((devp->state == LPS22HB_READY),
                 "thermo_reset_bias(), invalid state");
 
   devp->thermobias = LPS22HB_THERMO_BIAS;
-  
+
   return msg;
 }
 
@@ -471,17 +471,17 @@ static msg_t thermo_reset_bias(void *ip) {
 static msg_t thermo_set_sensitivity(void *ip, float *sp) {
   LPS22HBDriver* devp;
   msg_t msg = MSG_OK;
-  
+
   osalDbgCheck((ip != NULL) && (sp != NULL));
 
   /* Getting parent instance pointer.*/
   devp = objGetInstance(LPS22HBDriver*, (BaseThermometer*)ip);
-  
+
   osalDbgAssert((devp->state == LPS22HB_READY),
                 "thermo_set_sensitivity(), invalid state");
-                
+
   devp->thermosensitivity = *sp;
-  
+
   return msg;
 }
 
@@ -496,18 +496,18 @@ static msg_t thermo_set_sensitivity(void *ip, float *sp) {
  */
 static msg_t thermo_reset_sensitivity(void *ip) {
   LPS22HBDriver* devp;
-  msg_t msg = MSG_OK; 
-  
+  msg_t msg = MSG_OK;
+
   osalDbgCheck(ip != NULL);
 
   /* Getting parent instance pointer.*/
   devp = objGetInstance(LPS22HBDriver*, (BaseThermometer*)ip);
-  
+
   osalDbgAssert((devp->state == LPS22HB_READY),
                 "thermo_reset_sensitivity(), invalid state");
 
   devp->thermosensitivity = LPS22HB_THERMO_SENS;
-  
+
   return msg;
 }
 
@@ -545,12 +545,12 @@ void lps22hbObjectInit(LPS22HBDriver *devp) {
   devp->vmt = &vmt_device;
   devp->baro_if.vmt = &vmt_barometer;
   devp->thermo_if.vmt = &vmt_thermometer;
-  
+
   devp->config = NULL;
 
   devp->baroaxes = LPS22HB_BARO_NUMBER_OF_AXES;
   devp->thermoaxes = LPS22HB_THERMO_NUMBER_OF_AXES;
-  
+
   devp->state = LPS22HB_STOP;
 }
 
@@ -570,7 +570,7 @@ void lps22hbStart(LPS22HBDriver *devp, const LPS22HBConfig *config) {
                 "lps22hbStart(), invalid state");
 
   devp->config = config;
-    
+
   /* Enabling register auto-increment.*/
   /* Control register 1 configuration block.*/
   {
@@ -584,7 +584,7 @@ void lps22hbStart(LPS22HBDriver *devp, const LPS22HBConfig *config) {
   i2cStart(devp->config->i2cp, devp->config->i2ccfg);
   lps22hbI2CWriteRegister(devp->config->i2cp, devp->config->slaveaddress,
                           cr, 1);
-                          
+
   /* Control register 1 configuration block.*/
   {
     cr[0] = LPS22HB_AD_CTRL_REG1;
@@ -594,15 +594,15 @@ void lps22hbStart(LPS22HBDriver *devp, const LPS22HBConfig *config) {
     cr[1] |= devp->config->lowpass_filter;
 #endif
   }
-  
+
 #if  LPS22HB_SHARED_I2C
   i2cAcquireBus((devp)->config->i2cp);
 #endif /* LPS22HB_SHARED_I2C */
   i2cStart((devp)->config->i2cp,
            (devp)->config->i2ccfg);
-           
+
   lps22hbI2CWriteRegister(devp->config->i2cp, devp->config->slaveaddress, cr, 1);
-                           
+
 #if  LPS22HB_SHARED_I2C
   i2cReleaseBus((devp)->config->i2cp);
 #endif /* LPS22HB_SHARED_I2C */
@@ -643,7 +643,7 @@ void lps22hbStart(LPS22HBDriver *devp, const LPS22HBConfig *config) {
   osalThreadSleepMilliseconds(5);
 
   devp->state = LPS22HB_READY;
-} 
+}
 
 /**
  * @brief   Deactivates the LPS22HB Complex Driver peripheral.
@@ -671,7 +671,7 @@ void lps22hbStop(LPS22HBDriver *devp) {
     cr[1] = 0;
     lps22hbI2CWriteRegister(devp->config->i2cp, devp->config->slaveaddress,
                             cr, 1);
-                           
+
     i2cStop((devp)->config->i2cp);
 #if  LPS22HB_SHARED_I2C
     i2cReleaseBus((devp)->config->i2cp);

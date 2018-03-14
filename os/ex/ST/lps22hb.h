@@ -15,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  
+
 */
 
 /**
@@ -63,7 +63,7 @@
 
 /**
  * @brief   LPS22HB barometer subsystem characteristics.
- * @note    Sensitivity is expressed as hPa/LSB whereas hPa stand for 
+ * @note    Sensitivity is expressed as hPa/LSB whereas hPa stand for
  *          hectopascal.
  * @note    Bias is expressed as hPa.
  *
@@ -247,7 +247,7 @@
 #endif
 
 /**
- * @brief   LPS22HB accelerometer subsystem advanced configurations 
+ * @brief   LPS22HB accelerometer subsystem advanced configurations
  *          switch.
  * @details If set to @p TRUE more configurations are available.
  * @note    The default is @p FALSE.
@@ -307,7 +307,7 @@ typedef struct LPS22HBDriver LPS22HBDriver;
 typedef enum {
   LPS22HB_SAD_GND = 0x5C,           /**< Slave Address when SA0 is to GND   */
   LPS22HB_SAD_VCC = 0x5D            /**< Slave Address when SA0 is to VCC   */
-}lps22hb_sad_t; 
+}lps22hb_sad_t;
  
 /**
  * @brief   LPS22HB output data rate and bandwidth.
@@ -468,7 +468,7 @@ struct LPS22HBDriver {
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
- 
+
 /**
  * @brief   Return the number of axes of the BaseBarometer.
  *

@@ -15,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  
+
 */
 
 /**
@@ -63,7 +63,7 @@
 
 /**
  * @brief   LSM6DSL accelerometer subsystem characteristics.
- * @note    Sensitivity is expressed as milli-G/LSB whereas 
+ * @note    Sensitivity is expressed as milli-G/LSB whereas
  *          1 milli-G = 0.00980665 m/s^2.
  * @note    Bias is expressed as milli-G.
  *
@@ -86,7 +86,7 @@
 
 /**
  * @brief   L3GD20 gyroscope system characteristics.
- * @note    Sensitivity is expressed as DPS/LSB whereas DPS stand for Degree 
+ * @note    Sensitivity is expressed as DPS/LSB whereas DPS stand for Degree
  *          per second [°/s].
  * @note    Bias is expressed as DPS.
  *
@@ -408,7 +408,7 @@
 #endif
 
 /**
- * @brief   LSM6DSL accelerometer subsystem advanced configurations 
+ * @brief   LSM6DSL accelerometer subsystem advanced configurations
  *          switch.
  * @details If set to @p TRUE more configurations are available.
  * @note    The default is @p FALSE.
@@ -418,7 +418,7 @@
 #endif
 
 /**
- * @brief   LSM6DSL gyroscope subsystem advanced configurations 
+ * @brief   LSM6DSL gyroscope subsystem advanced configurations
  *          switch.
  * @details If set to @p TRUE more configurations are available.
  * @note    The default is @p FALSE.
@@ -522,7 +522,7 @@ typedef enum {
   LSM6DSL_ACC_ODR_833Hz = 0x70,     /**< ODR 833 Hz                         */
   LSM6DSL_ACC_ODR_1P66Hz = 0x80,    /**< ODR 1.66 kHz                       */
   LSM6DSL_ACC_ODR_3P33Hz = 0x90,    /**< ODR 3.33 kHz                       */
-  LSM6DSL_ACC_ODR_6P66Hz = 0xA0     /**< ODR 6.66 kHz                       */  
+  LSM6DSL_ACC_ODR_6P66Hz = 0xA0     /**< ODR 6.66 kHz                       */
 } lsm6dsl_acc_odr_t;
 
 /**
@@ -558,7 +558,7 @@ typedef enum {
   LSM6DSL_GYRO_ODR_833Hz = 0x70,    /**< ODR 833 Hz                         */
   LSM6DSL_GYRO_ODR_1P66Hz = 0x80,   /**< ODR 1.66 kHz                       */
   LSM6DSL_GYRO_ODR_3P33Hz = 0x90,   /**< ODR 3.33 kHz                       */
-  LSM6DSL_GYRO_ODR_6P66Hz = 0xA0    /**< ODR 6.66 kHz                       */  
+  LSM6DSL_GYRO_ODR_6P66Hz = 0xA0    /**< ODR 6.66 kHz                       */
 } lsm6dsl_gyro_odr_t;
 
 /**
@@ -575,7 +575,7 @@ typedef enum {
 typedef enum {
   LSM6DSL_GYRO_LPF_DISABLED = -1,   /**< Low pass filter disabled.          */
   LSM6DSL_GYRO_LPF_FTYPE0 = 0x00,   /**< Refer to table 68 of Datasheet.    */
-  LSM6DSL_GYRO_LPF_FTYPE1 = 0x01,   /**< Refer to table 68 of Datasheet.    */  
+  LSM6DSL_GYRO_LPF_FTYPE1 = 0x01,   /**< Refer to table 68 of Datasheet.    */
   LSM6DSL_GYRO_LPF_FTYPE2 = 0x10,   /**< Refer to table 68 of Datasheet.    */
   LSM6DSL_GYRO_LPF_FTYPE3 = 0x11    /**< Refer to table 68 of Datasheet.    */
 } lsm6dsl_gyro_lpf_t;
@@ -702,8 +702,8 @@ typedef struct {
   /* Change full scale value of LSM6DSL accelerometer subsystem .*/         \
   msg_t (*acc_set_full_scale)(LSM6DSLDriver *devp, lsm6dsl_acc_fs_t fs);    \
   /* Change full scale value of LSM6DSL gyroscope subsystem .*/             \
-  msg_t (*gyro_set_full_scale)(LSM6DSLDriver *devp, lsm6dsl_gyro_fs_t fs);  
-  
+  msg_t (*gyro_set_full_scale)(LSM6DSLDriver *devp, lsm6dsl_gyro_fs_t fs);
+
 /**
  * @brief   @p LSM6DSL specific methods with inherited ones.
  */
@@ -745,7 +745,7 @@ struct LSM6DSLVMT {
   float                     gyrobias[LSM6DSL_GYRO_NUMBER_OF_AXES];          \
   /* Gyroscope subsystem current full scale value.*/                        \
   float                     gyrofullscale;
-  
+
 /**
  * @brief LSM6DSL 6-axis accelerometer/gyroscope class.
  */
@@ -900,7 +900,7 @@ struct LSM6DSLDriver {
  */
 #define lsm6dslAccelerometerSetFullScale(devp, fs)                          \
         (devp)->vmt->acc_set_full_scale(devp, fs)
-        
+
 /**
  * @brief   Return the number of axes of the BaseGyroscope.
  *
@@ -912,7 +912,7 @@ struct LSM6DSLDriver {
  */
 #define lsm6dslGyroscopeGetAxesNumber(devp)                                 \
         gyroscopeGetAxesNumber(&((devp)->gyro_if))
-        
+
 /**
  * @brief   Retrieves raw data from the BaseGyroscope.
  * @note    This data is retrieved from MEMS register without any algebraical
@@ -975,11 +975,11 @@ struct LSM6DSLDriver {
  */
 #define lsm6dslGyroscopeSampleBias(devp)                                    \
         gyroscopeSampleBias(&((devp)->gyro_if))
-        
+
 /**
  * @brief   Set bias values for the BaseGyroscope.
  * @note    Bias must be expressed as DPS.
- * @note    The bias buffer must be at least the same size of the BaseGyroscope 
+ * @note    The bias buffer must be at least the same size of the BaseGyroscope
  *          axes number.
  *
  * @param[in] devp      pointer to @p LSM6DSLDriver.
@@ -1057,7 +1057,7 @@ struct LSM6DSLDriver {
  */
 #define lsm6dslGyroscopeSetFullScale(devp, fs)                              \
         (devp)->vmt->acc_set_full_scale(devp, fs)
-  
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/

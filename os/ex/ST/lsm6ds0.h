@@ -15,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  
+
 */
 
 /**
@@ -63,7 +63,7 @@
 
 /**
  * @brief   LSM6DS0 accelerometer subsystem characteristics.
- * @note    Sensitivity is expressed as milli-G/LSB whereas 
+ * @note    Sensitivity is expressed as milli-G/LSB whereas
  *          1 milli-G = 0.00980665 m/s^2.
  * @note    Bias is expressed as milli-G.
  *
@@ -86,7 +86,7 @@
 
 /**
  * @brief   L3GD20 gyroscope system characteristics.
- * @note    Sensitivity is expressed as DPS/LSB whereas DPS stand for Degree 
+ * @note    Sensitivity is expressed as DPS/LSB whereas DPS stand for Degree
  *          per second [°/s].
  * @note    Bias is expressed as DPS.
  *
@@ -355,7 +355,7 @@
 #endif
 
 /**
- * @brief   LSM6DS0 accelerometer subsystem advanced configurations 
+ * @brief   LSM6DS0 accelerometer subsystem advanced configurations
  *          switch.
  * @details If set to @p TRUE more configurations are available.
  * @note    The default is @p FALSE.
@@ -365,7 +365,7 @@
 #endif
 
 /**
- * @brief   LSM6DS0 gyroscope subsystem advanced configurations 
+ * @brief   LSM6DS0 gyroscope subsystem advanced configurations
  *          switch.
  * @details If set to @p TRUE more configurations are available.
  * @note    The default is @p FALSE.
@@ -540,15 +540,15 @@ typedef enum {
  */
 typedef enum {
   LSM6DS0_GYRO_HPCF_0 = 0x00,       /**< Refer to table 48 of RM            */
-  LSM6DS0_GYRO_HPCF_1 = 0x01, 
-  LSM6DS0_GYRO_HPCF_2 = 0x02, 
-  LSM6DS0_GYRO_HPCF_3 = 0x03, 
-  LSM6DS0_GYRO_HPCF_4 = 0x04, 
-  LSM6DS0_GYRO_HPCF_5 = 0x05, 
-  LSM6DS0_GYRO_HPCF_6 = 0x06, 
-  LSM6DS0_GYRO_HPCF_7 = 0x07, 
-  LSM6DS0_GYRO_HPCF_8 = 0x08, 
-  LSM6DS0_GYRO_HPCF_9 = 0x09 
+  LSM6DS0_GYRO_HPCF_1 = 0x01,
+  LSM6DS0_GYRO_HPCF_2 = 0x02,
+  LSM6DS0_GYRO_HPCF_3 = 0x03,
+  LSM6DS0_GYRO_HPCF_4 = 0x04,
+  LSM6DS0_GYRO_HPCF_5 = 0x05,
+  LSM6DS0_GYRO_HPCF_6 = 0x06,
+  LSM6DS0_GYRO_HPCF_7 = 0x07,
+  LSM6DS0_GYRO_HPCF_8 = 0x08,
+  LSM6DS0_GYRO_HPCF_9 = 0x09
 } lsm6ds0_gyro_hpcf_t;
 
 /**
@@ -681,8 +681,8 @@ typedef struct {
   /* Change full scale value of LSM6DS0 accelerometer subsystem .*/         \
   msg_t (*acc_set_full_scale)(LSM6DS0Driver *devp, lsm6ds0_acc_fs_t fs);    \
   /* Change full scale value of LSM6DS0 gyroscope subsystem .*/             \
-  msg_t (*gyro_set_full_scale)(LSM6DS0Driver *devp, lsm6ds0_gyro_fs_t fs);  
-  
+  msg_t (*gyro_set_full_scale)(LSM6DS0Driver *devp, lsm6ds0_gyro_fs_t fs);
+
 /**
  * @brief   @p LSM6DS0 specific methods with inherited ones.
  */
@@ -724,7 +724,7 @@ struct LSM6DS0VMT {
   float                     gyrobias[LSM6DS0_GYRO_NUMBER_OF_AXES];          \
   /* Gyroscope subsystem current full scale value.*/                        \
   float                     gyrofullscale;
-  
+
 /**
  * @brief LSM6DS0 6-axis accelerometer/gyroscope class.
  */
@@ -879,7 +879,7 @@ struct LSM6DS0Driver {
  */
 #define lsm6ds0AccelerometerSetFullScale(devp, fs)                          \
         (devp)->vmt->acc_set_full_scale(devp, fs)
-        
+
 /**
  * @brief   Return the number of axes of the BaseGyroscope.
  *
@@ -891,7 +891,7 @@ struct LSM6DS0Driver {
  */
 #define lsm6ds0GyroscopeGetAxesNumber(devp)                                 \
         gyroscopeGetAxesNumber(&((devp)->gyro_if))
-        
+
 /**
  * @brief   Retrieves raw data from the BaseGyroscope.
  * @note    This data is retrieved from MEMS register without any algebraical
@@ -954,11 +954,11 @@ struct LSM6DS0Driver {
  */
 #define lsm6ds0GyroscopeSampleBias(devp)                                    \
         gyroscopeSampleBias(&((devp)->gyro_if))
-        
+
 /**
  * @brief   Set bias values for the BaseGyroscope.
  * @note    Bias must be expressed as DPS.
- * @note    The bias buffer must be at least the same size of the BaseGyroscope 
+ * @note    The bias buffer must be at least the same size of the BaseGyroscope
  *          axes number.
  *
  * @param[in] devp      pointer to @p LSM6DS0Driver.
@@ -1036,7 +1036,7 @@ struct LSM6DS0Driver {
  */
 #define lsm6ds0GyroscopeSetFullScale(devp, fs)                              \
         (devp)->vmt->acc_set_full_scale(devp, fs)
-  
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/

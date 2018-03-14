@@ -63,20 +63,20 @@
 
 /**
  * @brief   LIS3DSH accelerometer subsystem characteristics.
- * @note    Sensitivity is expressed as milli-G/LSB whereas 
+ * @note    Sensitivity is expressed as milli-G/LSB whereas
  *          1 milli-G = 0.00980665 m/s^2.
  * @note    Bias is expressed as milli-G.
  *
  * @{
  */
 #define LIS3DSH_ACC_NUMBER_OF_AXES          3U
-                                            
+
 #define LIS3DSH_ACC_2G                      2.0f
 #define LIS3DSH_ACC_4G                      4.0f
 #define LIS3DSH_ACC_6G                      6.0f
 #define LIS3DSH_ACC_8G                      8.0f
 #define LIS3DSH_ACC_16G                     16.0f
-                                            
+
 #define LIS3DSH_ACC_SENS_2G                 0.06f
 #define LIS3DSH_ACC_SENS_4G                 0.12f
 #define LIS3DSH_ACC_SENS_6G                 0.18f
@@ -206,7 +206,7 @@
  * @name    LIS3DSH_CTRL_REG1 register bits definitions
  * @{
  */
-#define LIS3DSH_CTRL_REG1_MASK              0xE9    
+#define LIS3DSH_CTRL_REG1_MASK              0xE9
 #define LIS3DSH_CTRL_REG1_SM1_EN            (1 << 0)
 #define LIS3DSH_CTRL_REG1_SM1_PIN           (1 << 3)
 #define LIS3DSH_CTRL_REG1_HYST0_1           (1 << 5)
@@ -218,7 +218,7 @@
  * @name    LIS3DSH_CTRL_REG2 register bits definitions
  * @{
  */
-#define LIS3DSH_CTRL_REG2_MASK              0xE9    
+#define LIS3DSH_CTRL_REG2_MASK              0xE9
 #define LIS3DSH_CTRL_REG2_SM2_EN            (1 << 0)
 #define LIS3DSH_CTRL_REG2_SM2_PIN           (1 << 3)
 #define LIS3DSH_CTRL_REG2_HYST0_2           (1 << 5)
@@ -230,7 +230,7 @@
  * @name    LIS3DSH_CTRL_REG3 register bits definitions
  * @{
  */
-#define LIS3DSH_CTRL_REG3_MASK              0xFF    
+#define LIS3DSH_CTRL_REG3_MASK              0xFF
 #define LIS3DSH_CTRL_REG3_STRT              (1 << 0)
 #define LIS3DSH_CTRL_REG3_VFILT             (1 << 2)
 #define LIS3DSH_CTRL_REG3_INT1_EN           (1 << 3)
@@ -244,7 +244,7 @@
  * @name    LIS3DSH_CTRL_REG4 register bits definitions
  * @{
  */
-#define LIS3DSH_CTRL_REG4_MASK              0xFF    
+#define LIS3DSH_CTRL_REG4_MASK              0xFF
 #define LIS3DSH_CTRL_REG4_XEN               (1 << 0)
 #define LIS3DSH_CTRL_REG4_YEN               (1 << 1)
 #define LIS3DSH_CTRL_REG4_ZEN               (1 << 2)
@@ -258,12 +258,12 @@
 /**
  * @name    LIS3DSH_CTRL_REG5 register bits definitions
  * @{
- */ 
-#define LIS3DSH_CTRL_REG5_MASK              0xFF    
+ */
+#define LIS3DSH_CTRL_REG5_MASK              0xFF
 #define LIS3DSH_CTRL_REG5_SIM               (1 << 0)
 #define LIS3DSH_CTRL_REG5_ST1               (1 << 1)
 #define LIS3DSH_CTRL_REG5_ST2               (1 << 2)
-#define LIS3DSH_CTRL_REG5_FS_MASK           0x38    
+#define LIS3DSH_CTRL_REG5_FS_MASK           0x38
 #define LIS3DSH_CTRL_REG5_FS0               (1 << 3)
 #define LIS3DSH_CTRL_REG5_FS1               (1 << 4)
 #define LIS3DSH_CTRL_REG5_FS2               (1 << 5)
@@ -275,7 +275,7 @@
  * @name    LIS3DSH_CTRL_REG6 register bits definitions
  * @{
  */
-#define LIS3DSH_CTRL_REG6_MASK              0xFF    
+#define LIS3DSH_CTRL_REG6_MASK              0xFF
 #define LIS3DSH_CTRL_REG6_P2_BOOT           (1 << 0)
 #define LIS3DSH_CTRL_REG6_P1_OVRUN          (1 << 1)
 #define LIS3DSH_CTRL_REG6_P1_WTM            (1 << 2)
@@ -333,7 +333,7 @@
 #endif
 
 /**
- * @brief   LIS3DSH accelerometer subsystem advanced configurations 
+ * @brief   LIS3DSH accelerometer subsystem advanced configurations
  *          switch.
  * @details If set to @p TRUE more configurations are available.
  * @note    The default is @p FALSE.
@@ -489,7 +489,7 @@ typedef struct {
   lis3dsh_acc_bw_t          accantialiasing;
   /**
    * @brief   LIS3DSH block data update.
-   */  
+   */
   lis3dsh_acc_bdu_t         accblockdataupdate;
 #endif
 } LIS3DSHConfig;
@@ -500,8 +500,8 @@ typedef struct {
 #define _lis3dsh_methods_alone                                              \
   /* Change full scale value of LIS3DSH accelerometer subsystem.*/          \
   msg_t (*acc_set_full_scale)(LIS3DSHDriver *devp, lis3dsh_acc_fs_t fs);
-  
-  
+
+
 /**
  * @brief   @p LIS3DSH specific methods with inherited ones.
  */

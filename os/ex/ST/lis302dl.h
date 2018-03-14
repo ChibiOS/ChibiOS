@@ -63,17 +63,17 @@
 
 /**
  * @brief   LIS302DL accelerometer subsystem characteristics.
- * @note    Sensitivity is expressed as milli-G/LSB whereas 
+ * @note    Sensitivity is expressed as milli-G/LSB whereas
  *          1 milli-G = 0.00980665 m/s^2.
  * @note    Bias is expressed as milli-G.
  *
  * @{
  */
 #define LIS302DL_ACC_NUMBER_OF_AXES         3U
-                                            
+
 #define LIS302DL_ACC_2G                     2.0f
 #define LIS302DL_ACC_8G                     8.0f
-                                            
+
 #define LIS302DL_ACC_SENS_2G                18.0f
 #define LIS302DL_ACC_SENS_8G                72.0f
 
@@ -126,13 +126,13 @@
  * @name    LIS302DL_CTRL_REG1 register bits definitions
  * @{
  */
-#define LIS302DL_CTRL_REG1_MASK             0xFF    
+#define LIS302DL_CTRL_REG1_MASK             0xFF
 #define LIS302DL_CTRL_REG1_XEN              (1 << 0)
 #define LIS302DL_CTRL_REG1_YEN              (1 << 1)
 #define LIS302DL_CTRL_REG1_ZEN              (1 << 2)
 #define LIS302DL_CTRL_REG1_STM              (1 << 3)
 #define LIS302DL_CTRL_REG1_STP              (1 << 4)
-#define LIS302DL_CTRL_REG1_FS_MASK          0x20    
+#define LIS302DL_CTRL_REG1_FS_MASK          0x20
 #define LIS302DL_CTRL_REG1_FS               (1 << 5)
 #define LIS302DL_CTRL_REG1_PD               (1 << 6)
 #define LIS302DL_CTRL_REG1_DR               (1 << 7)
@@ -141,8 +141,8 @@
 /**
  * @name    LIS302DL_CTRL_REG2 register bits definitions
  * @{
- */                                              
-#define LIS302DL_CTRL_REG2_MASK             0xDF    
+ */
+#define LIS302DL_CTRL_REG2_MASK             0xDF
 #define LIS302DL_CTRL_REG2_HPCF1            (1 << 0)
 #define LIS302DL_CTRL_REG2_HPCF2            (1 << 1)
 #define LIS302DL_CTRL_REG2_HPFFWU1          (1 << 2)
@@ -155,8 +155,8 @@
 /**
  * @name    LIS302DL_CTRL_REG3 register bits definitions
  * @{
- */                                               
-#define LIS302DL_CTRL_REG3_MASK             0xFF    
+ */
+#define LIS302DL_CTRL_REG3_MASK             0xFF
 #define LIS302DL_CTRL_REG3_I1CFG0           (1 << 0)
 #define LIS302DL_CTRL_REG3_I1CFG1           (1 << 1)
 #define LIS302DL_CTRL_REG3_I1CFG2           (1 << 2)
@@ -214,7 +214,7 @@
 #endif
 
 /**
- * @brief   LIS302DL accelerometer subsystem advanced configurations 
+ * @brief   LIS302DL accelerometer subsystem advanced configurations
  *          switch.
  * @details If set to @p TRUE more configurations are available.
  * @note    The default is @p FALSE.
@@ -359,8 +359,8 @@ typedef struct {
 #define _lis302dl_methods_alone                                             \
   /* Change full scale value of LIS302DL .*/                                \
   msg_t (*set_full_scale)(LIS302DLDriver *devp, lis302dl_acc_fs_t fs);
-   
-   
+
+
 /**
  * @brief   @p LIS302DL specific methods with inherited ones.
  */

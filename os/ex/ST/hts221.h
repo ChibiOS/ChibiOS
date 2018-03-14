@@ -87,7 +87,7 @@
 #define HTS221_THERMO_SENS                  0.0015625f
 #define HTS221_THERMO_BIAS                  0.0f
 /** @} */
- 
+
 /**
  * @name    HTS221 communication interfaces related bit masks
  * @{
@@ -388,7 +388,7 @@ typedef struct {
  * @note    No methods so far, just a common ancestor interface.
  */
 #define _hts221_methods_alone
-                 
+
 /**
  * @brief   @p HTS221 specific methods with inherited ones.
  */

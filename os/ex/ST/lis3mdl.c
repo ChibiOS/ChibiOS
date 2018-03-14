@@ -128,7 +128,7 @@ static msg_t comp_read_raw(void *ip, int32_t axes[]) {
   msg_t msg;
 
   osalDbgCheck((ip != NULL) && (axes != NULL));
-    
+
   /* Getting parent instance pointer.*/
   devp = objGetInstance(LIS3MDLDriver*, (BaseCompass*)ip);
 
@@ -142,8 +142,8 @@ static msg_t comp_read_raw(void *ip, int32_t axes[]) {
   i2cStart(devp->config->i2cp,
            devp->config->i2ccfg);
 #endif /* LIS3MDL_SHARED_I2C */
-  msg = lis3mdlI2CReadRegister(devp->config->i2cp, devp->config->slaveaddress, 
-                               LIS3MDL_AD_OUT_X_L, buff, 
+  msg = lis3mdlI2CReadRegister(devp->config->i2cp, devp->config->slaveaddress,
+                               LIS3MDL_AD_OUT_X_L, buff,
                                LIS3MDL_COMP_NUMBER_OF_AXES * 2);
 
 #if LIS3MDL_SHARED_I2C
@@ -183,13 +183,13 @@ static msg_t comp_read_cooked(void *ip, float axes[]) {
 
   osalDbgCheck((ip != NULL) && (axes != NULL));
 
-    
+
   /* Getting parent instance pointer.*/
   devp = objGetInstance(LIS3MDLDriver*, (BaseCompass*)ip);
-  
+
   osalDbgAssert((devp->state == LIS3MDL_READY),
                 "comp_read_cooked(), invalid state");
-                
+
   msg = comp_read_raw(ip, raw);
   for(i = 0; i < LIS3MDL_COMP_NUMBER_OF_AXES ; i++) {
     axes[i] = (raw[i] * devp->compsensitivity[i]) - devp->compbias[i];
@@ -213,9 +213,9 @@ static msg_t comp_set_bias(void *ip, float *bp) {
   LIS3MDLDriver* devp;
   uint32_t i;
   msg_t msg = MSG_OK;
-  
+
   osalDbgCheck((ip != NULL) && (bp != NULL));
-    
+
   /* Getting parent instance pointer.*/
   devp = objGetInstance(LIS3MDLDriver*, (BaseCompass*)ip);
 
@@ -244,7 +244,7 @@ static msg_t comp_reset_bias(void *ip) {
   msg_t msg = MSG_OK;
 
   osalDbgCheck(ip != NULL);
-    
+
   /* Getting parent instance pointer.*/
   devp = objGetInstance(LIS3MDLDriver*, (BaseCompass*)ip);
 
@@ -272,7 +272,7 @@ static msg_t comp_set_sensivity(void *ip, float *sp) {
   LIS3MDLDriver* devp;
   uint32_t i;
   msg_t msg = MSG_OK;
-  
+
   /* Getting parent instance pointer.*/
   devp = objGetInstance(LIS3MDLDriver*, (BaseCompass*)ip);
 
@@ -303,7 +303,7 @@ static msg_t comp_reset_sensivity(void *ip) {
   msg_t msg = MSG_OK;
 
   osalDbgCheck(ip != NULL);
-    
+
   /* Getting parent instance pointer.*/
   devp = objGetInstance(LIS3MDLDriver*, (BaseCompass*)ip);
 
@@ -347,7 +347,7 @@ static msg_t comp_set_full_scale(LIS3MDLDriver *devp,
   float newfs, scale;
   uint8_t i, buff[2];
   msg_t msg;
-  
+
   osalDbgCheck(devp != NULL);
 
   osalDbgAssert((devp->state == LIS3MDL_READY),
@@ -402,7 +402,7 @@ static msg_t comp_set_full_scale(LIS3MDLDriver *devp,
     i2cStart(devp->config->i2cp, devp->config->i2ccfg);
 #endif /* LIS3MDL_SHARED_I2C */
 
-    msg = lis3mdlI2CWriteRegister(devp->config->i2cp, 
+    msg = lis3mdlI2CWriteRegister(devp->config->i2cp,
                                   devp->config->slaveaddress,
                                   buff, 1);
 
@@ -447,9 +447,9 @@ static const struct BaseCompassVMT vmt_compass = {
 void lis3mdlObjectInit(LIS3MDLDriver *devp) {
   devp->vmt = &vmt_device;
   devp->comp_if.vmt = &vmt_compass;
-  
+
   devp->config = NULL;
-  
+
   devp->compaxes = LIS3MDL_COMP_NUMBER_OF_AXES;
 
   devp->state  = LIS3MDL_STOP;
@@ -472,7 +472,7 @@ void lis3mdlStart(LIS3MDLDriver *devp, const LIS3MDLConfig *config) {
               "lis3mdlStart(), invalid state");
 
   devp->config = config;
-         
+
   /* Control register 1 configuration block.*/
   {
     cr[0] = LIS3MDL_AD_CTRL_REG1;
@@ -512,17 +512,17 @@ void lis3mdlStart(LIS3MDLDriver *devp, const LIS3MDLConfig *config) {
     cr[5] = devp->config->blockdataupdate;
 #endif
   }
-  
+
 #if LIS3MDL_USE_I2C
 #if LIS3MDL_SHARED_I2C
   i2cAcquireBus((devp)->config->i2cp);
 #endif /* LIS3MDL_SHARED_I2C */
   i2cStart((devp)->config->i2cp,
            (devp)->config->i2ccfg);
-           
+
   lis3mdlI2CWriteRegister(devp->config->i2cp, devp->config->slaveaddress,
                           cr, 5);
-                              
+
 #if LIS3MDL_SHARED_I2C
   i2cReleaseBus((devp)->config->i2cp);
 #endif /* LIS3MDL_SHARED_I2C */
@@ -579,15 +579,15 @@ void lis3mdlStart(LIS3MDLDriver *devp, const LIS3MDLConfig *config) {
   if(devp->config->compbias != NULL)
     for(i = 0; i < LIS3MDL_COMP_NUMBER_OF_AXES; i++)
       devp->compbias[i] = devp->config->compbias[i];
-  else      
+  else
     for(i = 0; i < LIS3MDL_COMP_NUMBER_OF_AXES; i++)
       devp->compbias[i] = LIS3MDL_COMP_BIAS;
-    
+
   /* This is the MEMS transient recovery time */
   osalThreadSleepMilliseconds(5);
 
   devp->state = LIS3MDL_READY;
-} 
+}
 
 /**
  * @brief   Deactivates the LIS3MDL Complex Driver peripheral.
@@ -602,7 +602,7 @@ void lis3mdlStop(LIS3MDLDriver *devp) {
 
   osalDbgAssert((devp->state == LIS3MDL_STOP) || (devp->state == LIS3MDL_READY),
                 "lis3mdlStop(), invalid state");
-                
+
   if (devp->state == LIS3MDL_READY) {
 #if (LIS3MDL_USE_I2C)
 #if LIS3MDL_SHARED_I2C

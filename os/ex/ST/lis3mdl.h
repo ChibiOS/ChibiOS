@@ -68,12 +68,12 @@
  * @{
  */
 #define LIS3MDL_COMP_NUMBER_OF_AXES         3U
-                          
+
 #define LIS3MDL_COMP_4GA                    4.0f
 #define LIS3MDL_COMP_8GA                    8.0f
 #define LIS3MDL_COMP_12GA                   12.0f
 #define LIS3MDL_COMP_16GA                   16.0f
-                            
+
 #define LIS3MDL_COMP_SENS_4GA               0.00014615f
 #define LIS3MDL_COMP_SENS_8GA               0.00029231f
 #define LIS3MDL_COMP_SENS_12GA              0.0004384f
@@ -92,7 +92,7 @@
 #define LIS3MDL_AD(n)                       (1 << n)
 #define LIS3MDL_MS                          (1 << 6)
 #define LIS3MDL_RW                          (1 << 7)
-                                            
+
 #define LIS3MDL_SUB_MS                      (1 << 7)
 /** @} */
 
@@ -125,7 +125,7 @@
  * @name    LIS3MDL_CTRL_REG1 register bits definitions
  * @{
  */
-#define LIS3MDL_CTRL_REG1_MASK              0xFF    
+#define LIS3MDL_CTRL_REG1_MASK              0xFF
 #define LIS3MDL_CTRL_REG1_ST                (1 << 0)
 #define LIS3MDL_CTRL_REG1_FAST_ODR          (1 << 1)
 #define LIS3MDL_CTRL_REG1_DO0               (1 << 2)
@@ -140,10 +140,10 @@
  * @name    LIS3MDL_CTRL_REG2 register bits definitions
  * @{
  */
-#define LIS3MDL_CTRL_REG2_MASK              0x6C    
+#define LIS3MDL_CTRL_REG2_MASK              0x6C
 #define LIS3MDL_CTRL_REG2_SOFT_RST          (1 << 2)
 #define LIS3MDL_CTRL_REG2_REBOOT            (1 << 3)
-#define LIS3MDL_CTRL_REG2_FS_MASK           0x60    
+#define LIS3MDL_CTRL_REG2_FS_MASK           0x60
 #define LIS3MDL_CTRL_REG2_FS0               (1 << 5)
 #define LIS3MDL_CTRL_REG2_FS1               (1 << 6)
 /** @} */
@@ -152,7 +152,7 @@
  * @name    LIS3MDL_CTRL_REG3 register bits definitions
  * @{
  */
-#define LIS3MDL_CTRL_REG3_MASK              0x27    
+#define LIS3MDL_CTRL_REG3_MASK              0x27
 #define LIS3MDL_CTRL_REG3_MD0               (1 << 0)
 #define LIS3MDL_CTRL_REG3_MD1               (1 << 1)
 #define LIS3MDL_CTRL_REG3_SIM               (1 << 2)
@@ -163,7 +163,7 @@
  * @name    LIS3MDL_CTRL_REG4 register bits definitions
  * @{
  */
-#define LIS3MDL_CTRL_REG4_MASK              0x0E    
+#define LIS3MDL_CTRL_REG4_MASK              0x0E
 #define LIS3MDL_CTRL_REG4_BLE               (1 << 1)
 #define LIS3MDL_CTRL_REG4_OMZ0              (1 << 2)
 #define LIS3MDL_CTRL_REG4_OMZ1              (1 << 3)
@@ -173,7 +173,7 @@
  * @name    LIS3MDL_CTRL_REG5 register bits definitions
  * @{
  */
-#define LIS3MDL_CTRL_REG5_MASK              0xC0    
+#define LIS3MDL_CTRL_REG5_MASK              0xC0
 #define LIS3MDL_CTRL_REG5_BDU               (1 << 6)
 #define LIS3MDL_CTRL_REG5_FAST_READ         (1 << 7)
 /** @} */
@@ -368,7 +368,7 @@ typedef enum {
  * @brief   LIS3MDL endianness
  */
 typedef enum {
-  LIS3MDL_END_LITTLE = 0x00,        /**< Little endian.                     */ 
+  LIS3MDL_END_LITTLE = 0x00,        /**< Little endian.                     */
   LIS3MDL_END_BIG = 0x02            /**< Big endian.                        */
 }lis3mdl_end_t;
 
@@ -459,7 +459,7 @@ typedef struct {
 #define _lis3msl_methods_alone                                              \
   /* Change full scale value of LIS3MDL compass subsystem.*/                \
   msg_t (*comp_set_full_scale)(LIS3MDLDriver *devp, lis3mdl_comp_fs_t fs);
-  
+
 /**
  * @brief   @p LIS3MDL specific methods with inherited ones.
  */
