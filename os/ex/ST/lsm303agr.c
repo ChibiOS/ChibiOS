@@ -314,78 +314,22 @@ static msg_t acc_reset_sensivity(void *ip) {
 
   if(devp->config->accfullscale == LSM303AGR_ACC_FS_2G) {
     for(i = 0; i < LSM303AGR_ACC_NUMBER_OF_AXES; i++) {
-#if LSM303AGR_ACC_USE_ADVANCED
-      if(devp->config->accmode == LSM303AGR_ACC_MODE_NORM)
-        devp->accsensitivity[i] = LSM303AGR_ACC_SENS_NORM_2G;
-      else if(devp->config->accmode == LSM303AGR_ACC_MODE_LPOW)
-        devp->accsensitivity[i] = LSM303AGR_ACC_SENS_LPOW_2G;
-      else if(devp->config->accmode == LSM303AGR_ACC_MODE_HRES)
-        devp->accsensitivity[i] = LSM303AGR_ACC_SENS_HRES_2G;
-      else {
-        osalDbgAssert(FALSE, "acc_reset_sensivity(), accelerometer mode issue");
-        msg = MSG_RESET;
-        return msg;
-      }
-#else
-      devp->accsensitivity[i] = LSM303AGR_ACC_SENS_NORM_2G;
-#endif
+      devp->accsensitivity[i] = LSM303AGR_ACC_SENS_2G;
     }
   }
   else if(devp->config->accfullscale == LSM303AGR_ACC_FS_4G) {
     for(i = 0; i < LSM303AGR_ACC_NUMBER_OF_AXES; i++) {
-#if LSM303AGR_ACC_USE_ADVANCED
-      if(devp->config->accmode == LSM303AGR_ACC_MODE_NORM)
-        devp->accsensitivity[i] = LSM303AGR_ACC_SENS_NORM_4G;
-      else if(devp->config->accmode == LSM303AGR_ACC_MODE_LPOW)
-        devp->accsensitivity[i] = LSM303AGR_ACC_SENS_LPOW_4G;
-      else if(devp->config->accmode == LSM303AGR_ACC_MODE_HRES)
-        devp->accsensitivity[i] = LSM303AGR_ACC_SENS_HRES_4G;
-      else {
-        osalDbgAssert(FALSE, "acc_reset_sensivity(), accelerometer mode issue");
-        msg = MSG_RESET;
-        return msg;
-      }
-#else
-      devp->accsensitivity[i] = LSM303AGR_ACC_SENS_NORM_4G;
-#endif
+      devp->accsensitivity[i] = LSM303AGR_ACC_SENS_4G;
     }
   }
   else if(devp->config->accfullscale == LSM303AGR_ACC_FS_8G) {
     for(i = 0; i < LSM303AGR_ACC_NUMBER_OF_AXES; i++) {
-#if LSM303AGR_ACC_USE_ADVANCED
-      if(devp->config->accmode == LSM303AGR_ACC_MODE_NORM)
-        devp->accsensitivity[i] = LSM303AGR_ACC_SENS_NORM_8G;
-      else if(devp->config->accmode == LSM303AGR_ACC_MODE_LPOW)
-        devp->accsensitivity[i] = LSM303AGR_ACC_SENS_LPOW_8G;
-      else if(devp->config->accmode == LSM303AGR_ACC_MODE_HRES)
-        devp->accsensitivity[i] = LSM303AGR_ACC_SENS_HRES_8G;
-      else {
-        osalDbgAssert(FALSE, "acc_reset_sensivity(), accelerometer mode issue");
-        msg = MSG_RESET;
-        return msg;
-      }
-#else
-      devp->accsensitivity[i] = LSM303AGR_ACC_SENS_NORM_8G;
-#endif
+      devp->accsensitivity[i] = LSM303AGR_ACC_SENS_8G;
     }
   }
   else if(devp->config->accfullscale == LSM303AGR_ACC_FS_16G) {
     for(i = 0; i < LSM303AGR_ACC_NUMBER_OF_AXES; i++) {
-#if LSM303AGR_ACC_USE_ADVANCED
-      if(devp->config->accmode == LSM303AGR_ACC_MODE_NORM)
-        devp->accsensitivity[i] = LSM303AGR_ACC_SENS_NORM_16G;
-      else if(devp->config->accmode == LSM303AGR_ACC_MODE_LPOW)
-        devp->accsensitivity[i] = LSM303AGR_ACC_SENS_LPOW_16G;
-      else if(devp->config->accmode == LSM303AGR_ACC_MODE_HRES)
-        devp->accsensitivity[i] = LSM303AGR_ACC_SENS_HRES_16G;
-      else {
-        osalDbgAssert(FALSE, "acc_reset_sensivity(), accelerometer mode issue");
-        msg = MSG_RESET;
-        return msg;
-      }
-#else
-      devp->accsensitivity[i] = LSM303AGR_ACC_SENS_NORM_16G;
-#endif
+      devp->accsensitivity[i] = LSM303AGR_ACC_SENS_16G;
     }
   }
   else {
@@ -803,8 +747,7 @@ void lsm303agrStart(LSM303AGRDriver *devp, const LSM303AGRConfig *config) {
     cr[4] = devp->config->accfullscale;
 #if LSM303AGR_ACC_USE_ADVANCED || defined(__DOXYGEN__)
     cr[4] |= devp->config->accendianess |
-             devp->config->accblockdataupdate |
-             devp->config->acchighresmode;
+             devp->config->accblockdataupdate;
     if(devp->config->accmode == LSM303AGR_ACC_MODE_HRES)
       cr[4] |= LSM303AGR_CTRL_REG4_A_HR;
 #endif

@@ -76,20 +76,10 @@
 #define LSM303AGR_ACC_8G                    8.0f
 #define LSM303AGR_ACC_16G                   16.0f
 
-#define LSM303AGR_ACC_SENS_HRES_2G          1.02f
-#define LSM303AGR_ACC_SENS_HRES_4G          0.5128f
-#define LSM303AGR_ACC_SENS_HRES_8G          0.25641f
-#define LSM303AGR_ACC_SENS_HRES_16G         0.08532f
-
-#define LSM303AGR_ACC_SENS_NORM_2G          0.25641f
-#define LSM303AGR_ACC_SENS_NORM_4G          0.12787f
-#define LSM303AGR_ACC_SENS_NORM_8G          0.06397f
-#define LSM303AGR_ACC_SENS_NORM_16G         0.02132f
-
-#define LSM303AGR_ACC_SENS_LPOW_2G          0.06398f
-#define LSM303AGR_ACC_SENS_LPOW_4G          0.03199f
-#define LSM303AGR_ACC_SENS_LPOW_8G          0.01599f
-#define LSM303AGR_ACC_SENS_LPOW_16G         0.00533f
+#define LSM303AGR_ACC_SENS_2G               0.060f
+#define LSM303AGR_ACC_SENS_4G               0.120f
+#define LSM303AGR_ACC_SENS_8G               0.240f
+#define LSM303AGR_ACC_SENS_16G              0.750f
 
 #define LSM303AGR_ACC_BIAS                  0.0f
 /** @} */
