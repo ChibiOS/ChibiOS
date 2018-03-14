@@ -777,7 +777,7 @@ void lsm303agrStart(LSM303AGRDriver *devp, const LSM303AGRConfig *config) {
   /* Configuring Accelerometer subsystem.*/
 
   /* Multiple write starting address.*/
-  cr[0] = LSM303AGR_AD_CFG_REG_A_M;
+  cr[0] = LSM303AGR_AD_CTRL_REG1_A;
 
   /* Control register 1 configuration block.*/
   {
