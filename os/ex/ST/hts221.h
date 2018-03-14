@@ -44,7 +44,7 @@
 /**
  * @brief   HTS221 driver version string.
  */
-#define EX_HTS221_VERSION                   "1.0.2"
+#define EX_HTS221_VERSION                   "1.1.0"
 
 /**
  * @brief   HTS221 driver version major number.
@@ -54,12 +54,12 @@
 /**
  * @brief   HTS221 driver version minor number.
  */
-#define EX_HTS221_MINOR                     0
+#define EX_HTS221_MINOR                     1
 
 /**
  * @brief   HTS221 driver version patch number.
  */
-#define EX_HTS221_PATCH                     2
+#define EX_HTS221_PATCH                     0
 /** @} */
 
 /**
@@ -87,7 +87,7 @@
 #define HTS221_THERMO_SENS                  0.0015625f
 #define HTS221_THERMO_BIAS                  0.0f
 /** @} */
- 
+
 /**
  * @name    HTS221 communication interfaces related bit masks
  * @{
@@ -388,7 +388,7 @@ typedef struct {
  * @note    No methods so far, just a common ancestor interface.
  */
 #define _hts221_methods_alone
-                 
+
 /**
  * @brief   @p HTS221 specific methods with inherited ones.
  */

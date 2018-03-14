@@ -43,7 +43,7 @@
 /**
  * @brief   LSM303DLHC driver version string.
  */
-#define EX_LSM303DLHC_VERSION               "1.0.5"
+#define EX_LSM303DLHC_VERSION               "1.1.0"
 
 /**
  * @brief   LSM303DLHC driver version major number.
@@ -53,17 +53,17 @@
 /**
  * @brief   LSM303DLHC driver version minor number.
  */
-#define EX_LSM303DLHC_MINOR                 0
+#define EX_LSM303DLHC_MINOR                 1
 
 /**
  * @brief   LSM303DLHC driver version patch number.
  */
-#define EX_LSM303DLHC_PATCH                 5
+#define EX_LSM303DLHC_PATCH                 0
 /** @} */
 
 /**
  * @brief   LSM303DLHC accelerometer subsystem characteristics.
- * @note    Sensitivity is expressed as milli-G/LSB whereas 
+ * @note    Sensitivity is expressed as milli-G/LSB whereas
  *          1 milli-G = 0.00980665 m/s^2.
  * @note    Bias is expressed as milli-G.
  *
@@ -343,7 +343,7 @@
 #endif
 
 /**
- * @brief   LSM303DLHC accelerometer subsystem advanced configurations 
+ * @brief   LSM303DLHC accelerometer subsystem advanced configurations
  *          switch.
  * @details If set to @p TRUE more configurations are available.
  * @note    The default is @p FALSE.
@@ -353,7 +353,7 @@
 #endif
 
 /**
- * @brief   LSM303DLHC compass subsystem advanced configurations 
+ * @brief   LSM303DLHC compass subsystem advanced configurations
  *          switch.
  * @details If set to @p TRUE more configurations are available.
  * @note    The default is @p FALSE.
@@ -654,7 +654,7 @@ struct LSM303DLHCVMT {
   float                     compbias[LSM303DLHC_COMP_NUMBER_OF_AXES];       \
   /* Compass subsystem current full scale value.*/                          \
   float                     compfullscale;
-  
+
 /**
  * @brief LSM303DLHC 6-axis accelerometer/compass class.
  */
@@ -946,7 +946,7 @@ struct LSM303DLHCDriver {
  */
 #define lsm303dlhcCompassSetFullScale(devp, fs)                             \
         (devp)->vmt->comp_set_full_scale(devp, fs)
-        
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/

@@ -15,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  
+
 */
 
 /**
@@ -122,20 +122,20 @@ static msg_t hts221Calibrate(HTS221Driver *devp) {
   /* Retrieving rH values from Calibration registers */
   msg = hts221I2CReadRegister(devp->config->i2cp,
                                HTS221_AD_CALIB_0, calib, 16);
-                               
+
 #if HTS221_SHARED_I2C
     i2cReleaseBus(devp->config->i2cp);
 #endif /* HTS221_SHARED_I2C */
-                              
+
   H0_rH_x2 = calib[0];
   H1_rH_x2 = calib[1];
   H0_T0_OUT = calib[6];
   H0_T0_OUT += calib[7] << 8;
   H1_T0_OUT = calib[10];
   H1_T0_OUT += calib[11] << 8;
-  
+
   T0_degC_x8 = calib[2];
-  
+
   /* Completing T0_degC_x8 value */
   msb = (calib[5] & HTS221_SEL(0x03, 0));
   if (msb & HTS221_SEL(0x01, 1)) {
@@ -155,20 +155,20 @@ static msg_t hts221Calibrate(HTS221Driver *devp) {
   T0_OUT += calib[13] << 8;
   T1_OUT = calib[14];
   T1_OUT += calib[15] << 8;
-  
+
   devp->hygrofactorysensitivity = ((float)H1_rH_x2 - (float)H0_rH_x2) /
                                   (((float)H1_T0_OUT - (float)H0_T0_OUT) * 2.0f);
-               
+
 
   devp->hygrofactorybias = (devp->hygrofactorysensitivity * (float)H0_T0_OUT) -
                            ((float)H0_rH_x2 / 2.0f);
 
   devp->thermofactorysensitivity = ((float)T1_degC_x8 - (float)T0_degC_x8) /
                                    (((float)T1_OUT - (float)T0_OUT) * 8.0f);
-        
+
   devp->thermofactorybias = (devp->thermofactorysensitivity * (float)T0_OUT) -
                             ((float)T0_degC_x8 / 8.0f);
-                    
+
   return msg;
 }
 
@@ -181,7 +181,7 @@ static msg_t hts221Calibrate(HTS221Driver *devp) {
  */
 static size_t hygro_get_axes_number(void *ip) {
   (void)ip;
-  
+
   return HTS221_HYGRO_NUMBER_OF_AXES;
 }
 
@@ -203,30 +203,30 @@ static size_t hygro_get_axes_number(void *ip) {
  */
 static msg_t hygro_read_raw(void *ip, int32_t axes[]) {
   HTS221Driver* devp;
-  uint8_t buff[2];  
+  uint8_t buff[2];
   int16_t tmp;
   msg_t msg;
 
   osalDbgCheck((ip != NULL) && (axes != NULL));
-  
+
   /* Getting parent instance pointer.*/
   devp = objGetInstance(HTS221Driver*, (BaseHygrometer*)ip);
-  
+
   osalDbgAssert((devp->state == HTS221_READY),
-              "hygro_read_raw(), invalid state");              
+              "hygro_read_raw(), invalid state");
 
   osalDbgAssert((devp->config->i2cp->state == I2C_READY),
                 "hygro_read_raw(), channel not ready");
-                
+
 #if HTS221_SHARED_I2C
   i2cAcquireBus(devp->config->i2cp);
   i2cStart(devp->config->i2cp,
            devp->config->i2ccfg);
 #endif /* HTS221_SHARED_I2C */
 
-  msg = hts221I2CReadRegister(devp->config->i2cp, HTS221_AD_HUMIDITY_OUT_L, 
+  msg = hts221I2CReadRegister(devp->config->i2cp, HTS221_AD_HUMIDITY_OUT_L,
                               buff, 2);
-                              
+
 #if HTS221_SHARED_I2C
   i2cReleaseBus(devp->config->i2cp);
 #endif /* HTS221_SHARED_I2C */
@@ -261,17 +261,17 @@ static msg_t hygro_read_cooked(void *ip, float axes[]) {
   msg_t msg;
 
   osalDbgCheck((ip != NULL) && (axes != NULL));
-  
+
   /* Getting parent instance pointer.*/
   devp = objGetInstance(HTS221Driver*, (BaseHygrometer*)ip);
-  
+
   osalDbgAssert((devp->state == HTS221_READY),
                 "hygro_read_cooked(), invalid state");
 
   msg = hygro_read_raw(ip, &raw);
 
   *axes = (raw * devp->hygrosensitivity) - devp->hygrobias;
-  
+
   return msg;
 }
 
@@ -293,12 +293,12 @@ static msg_t hygro_read_cooked(void *ip, float axes[]) {
 static msg_t hygro_set_bias(void *ip, float *bp) {
   HTS221Driver* devp;
   msg_t msg = MSG_OK;
-    
+
   osalDbgCheck((ip != NULL) && (bp != NULL));
 
   /* Getting parent instance pointer.*/
   devp = objGetInstance(HTS221Driver*, (BaseHygrometer*)ip);
-  
+
   osalDbgAssert((devp->state == HTS221_READY),
                 "hygro_set_bias(), invalid state");
 
@@ -319,15 +319,15 @@ static msg_t hygro_set_bias(void *ip, float *bp) {
 static msg_t hygro_reset_bias(void *ip) {
   HTS221Driver* devp;
   msg_t msg = MSG_OK;
-  
+
   osalDbgCheck(ip != NULL);
 
   /* Getting parent instance pointer.*/
   devp = objGetInstance(HTS221Driver*, (BaseHygrometer*)ip);
-  
+
   osalDbgAssert((devp->state == HTS221_READY),
                 "hygro_reset_bias(), invalid state");
-                
+
   devp->hygrobias = devp->hygrofactorybias;
   return msg;
 }
@@ -347,12 +347,12 @@ static msg_t hygro_reset_bias(void *ip) {
 static msg_t hygro_set_sensitivity(void *ip, float *sp) {
   HTS221Driver* devp;
   msg_t msg = MSG_OK;
-  
+
   osalDbgCheck((ip != NULL) && (sp != NULL));
 
   /* Getting parent instance pointer.*/
   devp = objGetInstance(HTS221Driver*, (BaseHygrometer*)ip);
-  
+
   osalDbgAssert((devp->state == HTS221_READY),
                 "hygro_set_sensitivity(), invalid state");
 
@@ -372,12 +372,12 @@ static msg_t hygro_set_sensitivity(void *ip, float *sp) {
 static msg_t hygro_reset_sensitivity(void *ip) {
   HTS221Driver* devp;
   msg_t msg = MSG_OK;
-  
+
   osalDbgCheck(ip != NULL);
 
     /* Getting parent instance pointer.*/
   devp = objGetInstance(HTS221Driver*, (BaseHygrometer*)ip);
-  
+
   osalDbgAssert((devp->state == HTS221_READY),
                 "hygro_reset_sensitivity(), invalid state");
 
@@ -394,7 +394,7 @@ static msg_t hygro_reset_sensitivity(void *ip) {
  */
 static size_t thermo_get_axes_number(void *ip) {
   (void)ip;
-  
+
   return HTS221_THERMO_NUMBER_OF_AXES;
 }
 
@@ -419,27 +419,27 @@ static msg_t thermo_read_raw(void *ip, int32_t axes[]) {
   int16_t tmp;
   uint8_t buff[2];
   msg_t msg;
-  
+
   osalDbgCheck((ip != NULL) && (axes != NULL));
 
   /* Getting parent instance pointer.*/
   devp = objGetInstance(HTS221Driver*, (BaseThermometer*)ip);
-  
+
   osalDbgAssert((devp->state == HTS221_READY),
-                "thermo_read_raw(), invalid state");  
-  
+                "thermo_read_raw(), invalid state");
+
   osalDbgAssert((devp->config->i2cp->state == I2C_READY),
                 "thermo_read_raw(), channel not ready");
-                
+
 #if HTS221_SHARED_I2C
   i2cAcquireBus(devp->config->i2cp);
   i2cStart(devp->config->i2cp,
            devp->config->i2ccfg);
 #endif /* HTS221_SHARED_I2C */
 
-  msg = hts221I2CReadRegister(devp->config->i2cp, HTS221_AD_TEMP_OUT_L, 
+  msg = hts221I2CReadRegister(devp->config->i2cp, HTS221_AD_TEMP_OUT_L,
                               buff, 2);
-                                  
+
 #if HTS221_SHARED_I2C
   i2cReleaseBus(devp->config->i2cp);
 #endif /* HTS221_SHARED_I2C */
@@ -477,7 +477,7 @@ static msg_t thermo_read_cooked(void *ip, float* axis) {
 
   /* Getting parent instance pointer.*/
   devp = objGetInstance(HTS221Driver*, (BaseThermometer*)ip);
-  
+
   osalDbgAssert((devp->state == HTS221_READY),
                 "thermo_read_cooked(), invalid state");
 
@@ -503,17 +503,17 @@ static msg_t thermo_read_cooked(void *ip, float* axis) {
 static msg_t thermo_set_bias(void *ip, float *bp) {
   HTS221Driver* devp;
   msg_t msg = MSG_OK;
-  
+
   osalDbgCheck((ip != NULL) && (bp != NULL));
 
   /* Getting parent instance pointer.*/
   devp = objGetInstance(HTS221Driver*, (BaseThermometer*)ip);
-  
+
   osalDbgAssert((devp->state == HTS221_READY),
                 "thermo_set_bias(), invalid state");
-                
+
   devp->thermobias = *bp;
-  
+
   return msg;
 }
 
@@ -529,18 +529,18 @@ static msg_t thermo_set_bias(void *ip, float *bp) {
  */
 static msg_t thermo_reset_bias(void *ip) {
   HTS221Driver* devp;
-  msg_t msg = MSG_OK; 
-  
+  msg_t msg = MSG_OK;
+
   osalDbgCheck(ip != NULL);
 
   /* Getting parent instance pointer.*/
   devp = objGetInstance(HTS221Driver*, (BaseThermometer*)ip);
-  
+
   osalDbgAssert((devp->state == HTS221_READY),
                 "thermo_reset_bias(), invalid state");
 
   devp->thermobias = devp->thermofactorybias;
-  
+
   return msg;
 }
 
@@ -559,17 +559,17 @@ static msg_t thermo_reset_bias(void *ip) {
 static msg_t thermo_set_sensitivity(void *ip, float *sp) {
   HTS221Driver* devp;
   msg_t msg = MSG_OK;
-  
+
   osalDbgCheck((ip != NULL) && (sp != NULL));
 
   /* Getting parent instance pointer.*/
   devp = objGetInstance(HTS221Driver*, (BaseThermometer*)ip);
-  
+
   osalDbgAssert((devp->state == HTS221_READY),
                 "thermo_set_sensitivity(), invalid state");
-                
+
   devp->thermosensitivity = *sp;
-  
+
   return msg;
 }
 
@@ -584,18 +584,18 @@ static msg_t thermo_set_sensitivity(void *ip, float *sp) {
  */
 static msg_t thermo_reset_sensitivity(void *ip) {
   HTS221Driver* devp;
-  msg_t msg = MSG_OK; 
-  
+  msg_t msg = MSG_OK;
+
   osalDbgCheck(ip != NULL);
 
   /* Getting parent instance pointer.*/
   devp = objGetInstance(HTS221Driver*, (BaseThermometer*)ip);
-  
+
   osalDbgAssert((devp->state == HTS221_READY),
                 "thermo_reset_sensitivity(), invalid state");
 
   devp->thermosensitivity = devp->thermofactorysensitivity;
-  
+
   return msg;
 }
 
@@ -633,15 +633,15 @@ void hts221ObjectInit(HTS221Driver *devp) {
   devp->vmt = &vmt_device;
   devp->hygro_if.vmt = &vmt_hygrometer;
   devp->thermo_if.vmt = &vmt_thermometer;
-  
+
   devp->config = NULL;
 
   devp->hygroaxes = HTS221_HYGRO_NUMBER_OF_AXES;
   devp->thermoaxes = HTS221_THERMO_NUMBER_OF_AXES;
-  
+
   devp->hygrobias = 0.0f;
   devp->thermobias = 0.0f;
-  
+
   devp->state = HTS221_STOP;
 }
 
@@ -658,8 +658,8 @@ void hts221Start(HTS221Driver *devp, const HTS221Config *config) {
   osalDbgCheck((devp != NULL) && (config != NULL));
 
   osalDbgAssert((devp->state == HTS221_STOP) || (devp->state == HTS221_READY),
-                 "hts221Start(), invalid state"); 
-                 
+                 "hts221Start(), invalid state");
+
   devp->config = config;
 
 #if HTS221_SHARED_I2C
@@ -688,7 +688,7 @@ void hts221Start(HTS221Driver *devp, const HTS221Config *config) {
     /* Taking hygrometer bias from user configurations */
     devp->hygrobias = *(devp->config->hygrobias);
   }
-  
+
   if(devp->config->thermosensitivity == NULL) {
     devp->thermosensitivity = devp->thermofactorysensitivity;
   }
@@ -704,7 +704,7 @@ void hts221Start(HTS221Driver *devp, const HTS221Config *config) {
     /* Taking thermometer bias from user configurations */
     devp->thermobias = *(devp->config->thermobias);
   }
-  
+
   /* Control register 1 configuration block.*/
   {
     cr[0] = HTS221_AD_CTRL_REG1;
@@ -717,9 +717,9 @@ void hts221Start(HTS221Driver *devp, const HTS221Config *config) {
   i2cAcquireBus(devp->config->i2cp);
   i2cStart(devp->config->i2cp, devp->config->i2ccfg);
 #endif /* HTS221_SHARED_I2C */
-           
+
   hts221I2CWriteRegister(devp->config->i2cp, cr, 1);
-  
+
 #if HTS221_SHARED_I2C
   i2cReleaseBus(devp->config->i2cp);
 #endif /* HTS221_SHARED_I2C */
@@ -737,19 +737,19 @@ void hts221Start(HTS221Driver *devp, const HTS221Config *config) {
     i2cAcquireBus(devp->config->i2cp);
     i2cStart(devp->config->i2cp, devp->config->i2ccfg);
 #endif /* HTS221_SHARED_I2C */
-           
+
     hts221I2CWriteRegister(devp->config->i2cp, cr, 1);
-  
+
 #if HTS221_SHARED_I2C
     i2cReleaseBus(devp->config->i2cp);
 #endif /* HTS221_SHARED_I2C */
-  }  
+  }
 
   /* This is the MEMS transient recovery time */
   osalThreadSleepMilliseconds(5);
 
   devp->state = HTS221_READY;
-} 
+}
 
 /**
  * @brief   Deactivates the HTS221 Complex Driver peripheral.
@@ -765,9 +765,9 @@ void hts221Stop(HTS221Driver *devp) {
 
   osalDbgAssert((devp->state == HTS221_STOP) || (devp->state == HTS221_READY),
                 "hts221Stop(), invalid state");
-                
+
   if (devp->state == HTS221_READY) {
-    
+
 #if HTS221_SHARED_I2C
   i2cAcquireBus(devp->config->i2cp);
   i2cStart(devp->config->i2cp, devp->config->i2ccfg);
@@ -776,12 +776,12 @@ void hts221Stop(HTS221Driver *devp) {
   cr[0] = HTS221_AD_CTRL_REG1;
   cr[1] = 0;
   hts221I2CWriteRegister(devp->config->i2cp, cr, 1);
-  
+
   i2cStop(devp->config->i2cp);
 #if HTS221_SHARED_I2C
   i2cReleaseBus(devp->config->i2cp);
-#endif /* HTS221_SHARED_I2C */           
-  } 
+#endif /* HTS221_SHARED_I2C */
+  }
   devp->state = HTS221_STOP;
 }
 /** @} */

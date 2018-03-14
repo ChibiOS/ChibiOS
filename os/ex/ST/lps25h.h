@@ -15,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  
+
 */
 
 /**
@@ -43,7 +43,7 @@
 /**
  * @brief   LPS25H driver version string.
  */
-#define EX_LPS25H_VERSION                   "1.0.5"
+#define EX_LPS25H_VERSION                   "1.1.0"
 
 /**
  * @brief   LPS25H driver version major number.
@@ -53,24 +53,24 @@
 /**
  * @brief   LPS25H driver version minor number.
  */
-#define EX_LPS25H_MINOR                     0
+#define EX_LPS25H_MINOR                     1
 
 /**
  * @brief   LPS25H driver version patch number.
  */
-#define EX_LPS25H_PATCH                     5
+#define EX_LPS25H_PATCH                     0
 /** @} */
 
 /**
  * @brief   LPS25H barometer subsystem characteristics.
- * @note    Sensitivity is expressed as hPa/LSB whereas hPa stand for 
+ * @note    Sensitivity is expressed as hPa/LSB whereas hPa stand for
  *          hectopascal.
  * @note    Bias is expressed as hPa.
  *
  * @{
  */
 #define LPS25H_BARO_NUMBER_OF_AXES          1U
-                                            
+
 #define LPS25H_BARO_SENS                    0.00024414f
 #define LPS25H_BARO_BIAS                    0.0f
 /** @} */
@@ -83,7 +83,7 @@
  * @{
  */
 #define LPS25H_THERMO_NUMBER_OF_AXES        1U
-                                            
+
 #define LPS25H_THERMO_SENS                  0.00208333f
 #define LPS25H_THERMO_BIAS                  -42.5f
 /** @} */
@@ -98,7 +98,7 @@
 #define LPS25H_AD(n)                        (1 << n)
 #define LPS25H_MS                           (1 << 6)
 #define LPS25H_RW                           (1 << 7)
-                                            
+
 #define LPS25H_SUB_MS                       (1 << 7)
 /** @} */
 
@@ -249,7 +249,7 @@
 #endif
 
 /**
- * @brief   LPS25H accelerometer subsystem advanced configurations 
+ * @brief   LPS25H accelerometer subsystem advanced configurations
  *          switch.
  * @details If set to @p TRUE more configurations are available.
  * @note    The default is @p FALSE.
@@ -309,7 +309,7 @@ typedef struct LPS25HDriver LPS25HDriver;
 typedef enum {
   LPS25H_SAD_GND = 0x5C,            /**< Slave Address when SA0 is to GND   */
   LPS25H_SAD_VCC = 0x5D             /**< Slave Address when SA0 is to VCC   */
-}lps25h_sad_t; 
+}lps25h_sad_t;
  
 /**
  * @brief   LPS25H output data rate and bandwidth.
@@ -484,7 +484,7 @@ struct LPS25HDriver {
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
- 
+
 /**
  * @brief   Return the number of axes of the BaseBarometer.
  *

@@ -42,7 +42,7 @@
 /**
  * @brief   L3GD20 driver version string.
  */
-#define EX_L3GD20_VERSION                   "1.0.6"
+#define EX_L3GD20_VERSION                   "1.1.0"
 
 /**
  * @brief   L3GD20 driver version major number.
@@ -52,17 +52,17 @@
 /**
  * @brief   L3GD20 driver version minor number.
  */
-#define EX_L3GD20_MINOR                     0
+#define EX_L3GD20_MINOR                     1
 
 /**
  * @brief   L3GD20 driver version patch number.
  */
-#define EX_L3GD20_PATCH                     65
+#define EX_L3GD20_PATCH                     0
 /** @} */
 
 /**
  * @brief   L3GD20 gyroscope system characteristics.
- * @note    Sensitivity is expressed as DPS/LSB whereas DPS stand for Degree 
+ * @note    Sensitivity is expressed as DPS/LSB whereas DPS stand for Degree
  *          per second [°/s].
  * @note    Bias is expressed as DPS.
  *
@@ -199,7 +199,7 @@
  * @name    L3GD20_INT1_CFG register bits definitions
  * @{
  */
-#define L3GD20_INT1_CFG_MASK                0xFF    
+#define L3GD20_INT1_CFG_MASK                0xFF
 #define L3GD20_INT1_CFG_XLIE                (1 << 0)
 #define L3GD20_INT1_CFG_XHIE                (1 << 1)
 #define L3GD20_INT1_CFG_YLIE                (1 << 2)
@@ -271,7 +271,7 @@
 #endif
 
 /**
- * @brief   L3GD20 accelerometer subsystem advanced configurations 
+ * @brief   L3GD20 accelerometer subsystem advanced configurations
  *          switch.
  * @details If set to @p TRUE more configurations are available.
  * @note    The default is @p FALSE.
@@ -623,11 +623,11 @@ struct L3GD20Driver {
  */
 #define l3gd20GyroscopeSampleBias(devp)                                      \
         gyroscopeSampleBias(&((devp)->gyro_if))
-        
+
 /**
  * @brief   Set bias values for the BaseGyroscope.
  * @note    Bias must be expressed as DPS.
- * @note    The bias buffer must be at least the same size of the BaseGyroscope 
+ * @note    The bias buffer must be at least the same size of the BaseGyroscope
  *          axes number.
  *
  * @param[in] devp      pointer to @p L3GD20Driver.
