@@ -963,9 +963,6 @@ void lsm6ds0Start(LSM6DS0Driver *devp, const LSM6DS0Config *config) {
   {
     cr[1] = devp->config->gyrofullscale |
             devp->config->gyrooutdatarate;
-#if LSM6DS0_GYRO_USE_ADVANCED || defined(__DOXYGEN__)
-    cr[1] |= devp->config->gyrodecmode;
-#endif
   }
 
   /* Control register 2 configuration block.*/
