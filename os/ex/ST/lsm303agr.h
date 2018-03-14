@@ -219,7 +219,7 @@
 #define LSM303AGR_CTRL_REG2_A_HPCF1         (1 << 4)
 #define LSM303AGR_CTRL_REG2_A_HPCF2         (1 << 5)
 #define LSM303AGR_CTRL_REG2_A_HPM0          (1 << 6)
-#define LSM303AGR_CTRL_REG2_A_HPM0          (1 << 7)
+#define LSM303AGR_CTRL_REG2_A_HPM1          (1 << 7)
 /** @} */
 
 /**
@@ -325,7 +325,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(LSM303AGR_USE_SPI) || defined(__DOXYGEN__)
-#define LSM303AGR_USE_SPI                  FALSE
+#define LSM303AGR_USE_SPI                   FALSE
 #endif
 
 /**
@@ -335,7 +335,7 @@
  * @note    The default is @p FALSE. Requires SPI_USE_MUTUAL_EXCLUSION.
  */
 #if !defined(LSM303AGR_SHARED_SPI) || defined(__DOXYGEN__)
-#define LSM303AGR_SHARED_SPI               FALSE
+#define LSM303AGR_SHARED_SPI                FALSE
 #endif
 
 /**
@@ -344,7 +344,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(LSM303AGR_USE_I2C) || defined(__DOXYGEN__)
-#define LSM303AGR_USE_I2C                  TRUE
+#define LSM303AGR_USE_I2C                   TRUE
 #endif
 
 /**
@@ -354,7 +354,7 @@
  * @note    The default is @p FALSE. Requires I2C_USE_MUTUAL_EXCLUSION.
  */
 #if !defined(LSM303AGR_SHARED_I2C) || defined(__DOXYGEN__)
-#define LSM303AGR_SHARED_I2C               FALSE
+#define LSM303AGR_SHARED_I2C                FALSE
 #endif
 
 /**
@@ -364,7 +364,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(LSM303AGR_ACC_USE_ADVANCED) || defined(__DOXYGEN__)
-#define LSM303AGR_ACC_USE_ADVANCED         FALSE
+#define LSM303AGR_ACC_USE_ADVANCED          FALSE
 #endif
 
 /**
@@ -374,7 +374,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(LSM303AGR_COMP_USE_ADVANCED) || defined(__DOXYGEN__)
-#define LSM303AGR_COMP_USE_ADVANCED        FALSE
+#define LSM303AGR_COMP_USE_ADVANCED         FALSE
 #endif
 /** @} */
 
@@ -463,20 +463,13 @@ typedef enum {
 } lsm303agr_acc_ae_t;
 
 /**
- * @brief LSM303AGR accelerometer subsystem low power mode.
+ * @brief LSM303AGR accelerometer subsystem operation mode.
  */
 typedef enum {
-  LSM303AGR_ACC_LP_DISABLED = 0x00,/**< Low power mode disabled.           */
-  LSM303AGR_ACC_LP_ENABLED = 0x40  /**< Low power mode enabled.            */
-} lsm303agr_acc_lp_t;
-
-/**
- * @brief LSM303AGR accelerometer subsystem high resolution mode.
- */
-typedef enum {
-  LSM303AGR_ACC_HR_DISABLED = 0x00,/**< High resolution mode disabled.     */
-  LSM303AGR_ACC_HR_ENABLED = 0x08  /**< High resolution mode enabled.      */
-} lsm303agr_acc_hr_t;
+  LSM303AGR_ACC_MODE_NORM = 0,     /**< Normal mode.                       */
+  LSM303AGR_ACC_MODE_LPOW = 1,     /**< Low power mode.                    */
+  LSM303AGR_ACC_MODE_HRES = 2      /**< High resolution mode.              */
+} lsm303agr_acc_mode_t;
 
 /**
  * @brief LSM303AGR accelerometer subsystem block data update.
@@ -499,40 +492,31 @@ typedef enum {
  * @{
  */
 /**
- * @brief LSM303AGR compass subsystem full scale.
- */
-typedef enum {
-  LSM303AGR_COMP_FS_1P3GA = 0x20,  /**< Full scale ±1.3 Gauss              */
-  LSM303AGR_COMP_FS_1P9GA = 0x40,  /**< Full scale ±1.9 Gauss              */
-  LSM303AGR_COMP_FS_2P5GA = 0x60,  /**< Full scale ±2.5 Gauss              */
-  LSM303AGR_COMP_FS_4P0GA = 0x80,  /**< Full scale ±4.0 Gauss              */
-  LSM303AGR_COMP_FS_4P7GA = 0xA0,  /**< Full scale ±4.7 Gauss              */
-  LSM303AGR_COMP_FS_5P6GA = 0xC0,  /**< Full scale ±5.6 Gauss              */
-  LSM303AGR_COMP_FS_8P1GA = 0xE0   /**< Full scale ±8.1 Gauss              */
-} lsm303agr_comp_fs_t;
-
-/**
  * @brief LSM303AGR compass subsystem output data rate.
  */
 typedef enum {
-  LSM303AGR_COMP_ODR_0P75HZ = 0x00,/**< ODR 0.75 Hz                        */
-  LSM303AGR_COMP_ODR_1P5HZ = 0x04, /**< ODR 1.5 Hz                         */
-  LSM303AGR_COMP_ODR_3P0HZ = 0x08, /**< ODR 3 Hz                           */
-  LSM303AGR_COMP_ODR_7P5HZ = 0x0C, /**< ODR 7.5 Hz                         */
-  LSM303AGR_COMP_ODR_15HZ = 0x10,  /**< ODR 15 Hz                          */
-  LSM303AGR_COMP_ODR_30HZ = 0x14,  /**< ODR 30 Hz                          */
-  LSM303AGR_COMP_ODR_75HZ = 0x18,  /**< ODR 75 Hz                          */
-  LSM303AGR_COMP_ODR_220HZ = 0x1C  /**< ODR 220 Hz                         */
+  LSM303AGR_COMP_ODR_10HZ = 0x00,  /**< ODR 10 Hz                          */
+  LSM303AGR_COMP_ODR_20HZ = 0x04,  /**< ODR 20 Hz                          */
+  LSM303AGR_COMP_ODR_50HZ = 0x08,  /**< ODR 50 Hz                          */
+  LSM303AGR_COMP_ODR_100HZ = 0x0C  /**< ODR 100 Hz                         */
 } lsm303agr_comp_odr_t;
 
 /**
  * @brief LSM303AGR compass subsystem working mode.
  */
 typedef enum {
-  LSM303AGR_COMP_MD_CONT = 0x00,   /**< Continuous-Conversion Mode         */
-  LSM303AGR_COMP_MD_BLOCK = 0x01,  /**< Single-Conversion Mode             */
-  LSM303AGR_COMP_MD_SLEEP = 0x02   /**< Sleep Mode                         */
-} lsm303agr_comp_md_t;
+  LSM303AGR_COMP_MODE_NORM = 0x00,  /**< Continuous-Conversion Mode         */
+  LSM303AGR_COMP_MODE_SINGLE = 0x01,/**< Single-Conversion Mode             */
+  LSM303AGR_COMP_MODE_IDLE = 0x02   /**< Sleep Mode                         */
+} lsm303agr_comp_mode_t;
+
+/**
+ * @brief LSM303AGR compass subsystem working mode.
+ */
+typedef enum {
+  LSM303AGR_COMP_LPOW_DIS = 0x00,   /**< High Resolution Mode               */
+  LSM303AGR_COMP_LPOW_EN = 0x10     /**< Low Power Mode                     */
+} lsm303agr_comp_lpow_t;
 
 /**
  * @name    LSM303AGR main system data structures and types.
@@ -570,28 +554,24 @@ typedef struct {
   /**
    * @brief LSM303AGR accelerometer subsystem initial full scale.
    */
-  lsm303agr_acc_fs_t       accfullscale;
+  lsm303agr_acc_fs_t        accfullscale;
   /**
    * @brief LSM303AGR accelerometer subsystem output data rate.
    */
-  lsm303agr_acc_odr_t      accoutdatarate;
+  lsm303agr_acc_odr_t       accoutdatarate;
 #if LSM303AGR_ACC_USE_ADVANCED || defined(__DOXYGEN__)
   /**
-   * @brief LSM303AGR accelerometer subsystem low power mode.
+   * @brief LSM303AGR accelerometer subsystem mode.
    */
-  lsm303agr_acc_lp_t       acclowpower;
-  /**
-   * @brief LSM303AGR accelerometer subsystem high resolution mode.
-   */
-  lsm303agr_acc_hr_t       acchighresmode;
+  lsm303agr_acc_mode_t      accmode;
   /**
    * @brief LSM303AGR accelerometer subsystem block data update.
    */
-  lsm303agr_acc_bdu_t      accblockdataupdate;
+  lsm303agr_acc_bdu_t       accblockdataupdate;
   /**
    * @brief  LSM303AGR accelerometer endianness.
    */
-  lsm303agr_acc_end_t      accendianess;
+  lsm303agr_acc_end_t       accendianess;
 #endif
   /**
    * @brief LSM303AGR compass initial sensitivity.
@@ -602,36 +582,33 @@ typedef struct {
    */
   float                     *compbias;
   /**
-   * @brief LSM303AGR compass subsystem initial full scale.
-   */
-  lsm303agr_comp_fs_t      compfullscale;
-  /**
    * @brief LSM303AGR compass subsystem output data rate.
    */
-  lsm303agr_comp_odr_t     compoutputdatarate;
+  lsm303agr_comp_odr_t      compoutputdatarate;
 #if LSM303AGR_COMP_USE_ADVANCED || defined(__DOXYGEN__)
   /**
    * @brief LSM303AGR compass subsystem working mode.
    */
-  lsm303agr_comp_md_t      compmode;
+  lsm303agr_comp_mode_t     compmode;
+  /**
+   * @brief LSM303AGR compass subsystem lowpower mode.
+   */  
+  lsm303agr_comp_lpow_t     complp;
 #endif
 } LSM303AGRConfig;
 
 /**
  * @brief   @p LSM303AGR specific methods.
  */
-#define _lsm303agr_methods_alone                                           \
-  /* Change full scale value of LSM303AGR accelerometer subsystem.*/       \
-  msg_t (*acc_set_full_scale)(LSM303AGRDriver *devp,                       \
-                              lsm303agr_acc_fs_t fs);                      \
-  /* Change full scale value of LSM303AGR compass subsystem.*/             \
-  msg_t (*comp_set_full_scale)(LSM303AGRDriver *devp,                      \
-                              lsm303agr_comp_fs_t fs);                     \
+#define _lsm303agr_methods_alone                                            \
+  /* Change full scale value of LSM303AGR accelerometer subsystem.*/        \
+  msg_t (*acc_set_full_scale)(LSM303AGRDriver *devp,                        \
+                              lsm303agr_acc_fs_t fs);
 
 /**
  * @brief   @p LSM303AGR specific methods with inherited ones.
  */
-#define _lsm303agr_methods                                                 \
+#define _lsm303agr_methods                                                  \
   _base_object_methods                                                      \
   _lsm303agr_methods_alone
 
@@ -647,26 +624,26 @@ struct LSM303AGRVMT {
 /**
  * @brief @p LSM303AGRDriver specific data.
  */
-#define _lsm303agr_data                                                    \
+#define _lsm303agr_data                                                     \
   _base_sensor_data                                                         \
   /* Driver state.*/                                                        \
-  lsm303agr_state_t        state;                                          \
+  lsm303agr_state_t        state;                                           \
   /* Current configuration data.*/                                          \
-  const LSM303AGRConfig    *config;                                        \
+  const LSM303AGRConfig    *config;                                         \
   /* Accelerometer subsystem axes number.*/                                 \
   size_t                    accaxes;                                        \
   /* Accelerometer subsystem current sensitivity.*/                         \
-  float                     accsensitivity[LSM303AGR_ACC_NUMBER_OF_AXES];  \
+  float                     accsensitivity[LSM303AGR_ACC_NUMBER_OF_AXES];   \
   /* Accelerometer subsystem current bias .*/                               \
-  float                     accbias[LSM303AGR_ACC_NUMBER_OF_AXES];         \
+  float                     accbias[LSM303AGR_ACC_NUMBER_OF_AXES];          \
   /* Accelerometer subsystem current full scale value.*/                    \
   float                     accfullscale;                                   \
   /* Compass subsystem axes number.*/                                       \
   size_t                    compaxes;                                       \
   /* Compass subsystem current sensitivity.*/                               \
-  float                     compsensitivity[LSM303AGR_COMP_NUMBER_OF_AXES];\
+  float                     compsensitivity[LSM303AGR_COMP_NUMBER_OF_AXES]; \
   /* Compass subsystem current bias.*/                                      \
-  float                     compbias[LSM303AGR_COMP_NUMBER_OF_AXES];       \
+  float                     compbias[LSM303AGR_COMP_NUMBER_OF_AXES];        \
   /* Compass subsystem current full scale value.*/                          \
   float                     compfullscale;
 
@@ -697,7 +674,7 @@ struct LSM303AGRDriver {
  *
  * @api
  */
-#define lsm303agrAccelerometerGetAxesNumber(devp)                          \
+#define lsm303agrAccelerometerGetAxesNumber(devp)                           \
         accelerometerGetAxesNumber(&((devp)->acc_if))
 
 /**
@@ -718,7 +695,7 @@ struct LSM303AGRDriver {
  *
  * @api
  */
-#define lsm303agrAccelerometerReadRaw(devp, axes)                          \
+#define lsm303agrAccelerometerReadRaw(devp, axes)                           \
         accelerometerReadRaw(&((devp)->acc_if), axes)
 
 /**
@@ -740,7 +717,7 @@ struct LSM303AGRDriver {
  *
  * @api
  */
-#define lsm303agrAccelerometerReadCooked(devp, axes)                       \
+#define lsm303agrAccelerometerReadCooked(devp, axes)                        \
         accelerometerReadCooked(&((devp)->acc_if), axes)
 
 /**
@@ -757,7 +734,7 @@ struct LSM303AGRDriver {
  *
  * @api
  */
-#define lsm303agrAccelerometerSetBias(devp, bp)                            \
+#define lsm303agrAccelerometerSetBias(devp, bp)                             \
         accelerometerSetBias(&((devp)->acc_if), bp)
 
 /**
@@ -772,7 +749,7 @@ struct LSM303AGRDriver {
  *
  * @api
  */
-#define lsm303agrAccelerometerResetBias(devp)                              \
+#define lsm303agrAccelerometerResetBias(devp)                               \
         accelerometerResetBias(&((devp)->acc_if))
 
 /**
@@ -789,7 +766,7 @@ struct LSM303AGRDriver {
  *
  * @api
  */
-#define lsm303agrAccelerometerSetSensitivity(devp, sp)                     \
+#define lsm303agrAccelerometerSetSensitivity(devp, sp)                      \
         accelerometerSetSensitivity(&((devp)->acc_if), sp)
 
 /**
@@ -804,7 +781,7 @@ struct LSM303AGRDriver {
  *
  * @api
  */
-#define lsm303agrAccelerometerResetSensitivity(devp)                       \
+#define lsm303agrAccelerometerResetSensitivity(devp)                        \
         accelerometerResetSensitivity(&((devp)->acc_if))
 
 /**
@@ -822,7 +799,7 @@ struct LSM303AGRDriver {
  *
  * @api
  */
-#define lsm303agrAccelerometerSetFullScale(devp, fs)                       \
+#define lsm303agrAccelerometerSetFullScale(devp, fs)                        \
         (devp)->vmt->acc_set_full_scale(devp, fs)
 
 /**
@@ -834,7 +811,7 @@ struct LSM303AGRDriver {
  *
  * @api
  */
-#define lsm303agrCompassGetAxesNumber(devp)                                \
+#define lsm303agrCompassGetAxesNumber(devp)                                 \
         compassGetAxesNumber(&((devp)->comp_if))
 
 /**
@@ -855,7 +832,7 @@ struct LSM303AGRDriver {
  *
  * @api
  */
-#define lsm303agrCompassReadRaw(devp, axes)                                \
+#define lsm303agrCompassReadRaw(devp, axes)                                 \
         compassReadRaw(&((devp)->comp_if), axes)
 
 /**
@@ -877,7 +854,7 @@ struct LSM303AGRDriver {
  *
  * @api
  */
-#define lsm303agrCompassReadCooked(devp, axes)                             \
+#define lsm303agrCompassReadCooked(devp, axes)                              \
         compassReadCooked(&((devp)->comp_if), axes)
 
 /**
@@ -894,7 +871,7 @@ struct LSM303AGRDriver {
  *
  * @api
  */
-#define lsm303agrCompassSetBias(devp, bp)                                  \
+#define lsm303agrCompassSetBias(devp, bp)                                   \
         compassSetBias(&((devp)->comp_if), bp)
 
 /**
@@ -909,7 +886,7 @@ struct LSM303AGRDriver {
  *
  * @api
  */
-#define lsm303agrCompassResetBias(devp)                                    \
+#define lsm303agrCompassResetBias(devp)                                     \
         compassResetBias(&((devp)->comp_if))
 
 /**
@@ -926,7 +903,7 @@ struct LSM303AGRDriver {
  *
  * @api
  */
-#define lsm303agrCompassSetSensitivity(devp, sp)                           \
+#define lsm303agrCompassSetSensitivity(devp, sp)                            \
         compassSetSensitivity(&((devp)->comp_if), sp)
 
 /**
@@ -941,26 +918,8 @@ struct LSM303AGRDriver {
  *
  * @api
  */
-#define lsm303agrCompassResetSensitivity(devp)                             \
+#define lsm303agrCompassResetSensitivity(devp)                              \
         compassResetSensitivity(&((devp)->comp_if))
-
-/**
- * @brief   Changes the LSM303AGRDriver compass fullscale value.
- * @note    This function also rescale sensitivities and biases based on
- *          previous and next fullscale value.
- * @note    A recalibration is highly suggested after calling this function.
- *
- * @param[in] devp      pointer to @p LSM303AGRDriver.
- * @param[in] fs        new fullscale value.
- *
- * @return              The operation status.
- * @retval MSG_OK       if the function succeeded.
- * @retval MSG_RESET    otherwise.
- *
- * @api
- */
-#define lsm303agrCompassSetFullScale(devp, fs)                             \
-        (devp)->vmt->comp_set_full_scale(devp, fs)
 
 /*===========================================================================*/
 /* External declarations.                                                    */

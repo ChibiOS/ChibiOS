@@ -67,7 +67,7 @@ typedef enum {
  * @return               the operation status.
  */
 static msg_t lsm303agrI2CReadRegister(I2CDriver *i2cp, lsm303agr_sad_t sad,
-                                       uint8_t reg, uint8_t *rxbuf, size_t n) {
+                                      uint8_t reg, uint8_t *rxbuf, size_t n) {
 
   uint8_t txbuf = reg | LSM303AGR_MS;
   return i2cMasterTransmitTimeout(i2cp, sad, &txbuf, 1, rxbuf, n,
@@ -87,7 +87,7 @@ static msg_t lsm303agrI2CReadRegister(I2CDriver *i2cp, lsm303agr_sad_t sad,
  * @return              the operation status.
  */
 static msg_t lsm303agrI2CWriteRegister(I2CDriver *i2cp, lsm303agr_sad_t sad,
-                                        uint8_t *txbuf, size_t n) {
+                                       uint8_t *txbuf, size_t n) {
   if (n != 1)
     *txbuf |= LSM303AGR_MS;
   return i2cMasterTransmitTimeout(i2cp, sad, txbuf, n + 1, NULL, 0,
@@ -146,7 +146,7 @@ static msg_t acc_read_raw(void *ip, int32_t axes[]) {
 #endif /* LSM303AGR_SHARED_I2C */
 
   msg = lsm303agrI2CReadRegister(devp->config->i2cp, LSM303AGR_SAD_ACC,
-                                  LSM303AGR_AD_ACC_OUT_X_L, buff,
+                                  LSM303AGR_AD_OUT_X_L_A, buff,
                                   LSM303AGR_ACC_NUMBER_OF_AXES * 2);
 
 #if LSM303AGR_SHARED_I2C
@@ -312,18 +312,82 @@ static msg_t acc_reset_sensivity(void *ip) {
   osalDbgAssert((devp->state == LSM303AGR_READY),
                 "acc_reset_sensivity(), invalid state");
 
-  if(devp->config->accfullscale == LSM303AGR_ACC_FS_2G)
-    for(i = 0; i < LSM303AGR_ACC_NUMBER_OF_AXES; i++)
-      devp->accsensitivity[i] = LSM303AGR_ACC_SENS_2G;
-  else if(devp->config->accfullscale == LSM303AGR_ACC_FS_4G)
-	for(i = 0; i < LSM303AGR_ACC_NUMBER_OF_AXES; i++)
-      devp->accsensitivity[i] = LSM303AGR_ACC_SENS_4G;
-  else if(devp->config->accfullscale == LSM303AGR_ACC_FS_8G)
-	for(i = 0; i < LSM303AGR_ACC_NUMBER_OF_AXES; i++)
-      devp->accsensitivity[i] = LSM303AGR_ACC_SENS_8G;
-  else if(devp->config->accfullscale == LSM303AGR_ACC_FS_16G)
-	for(i = 0; i < LSM303AGR_ACC_NUMBER_OF_AXES; i++)
-      devp->accsensitivity[i] = LSM303AGR_ACC_SENS_16G;
+  if(devp->config->accfullscale == LSM303AGR_ACC_FS_2G) {
+    for(i = 0; i < LSM303AGR_ACC_NUMBER_OF_AXES; i++) {
+#if LSM303AGR_ACC_USE_ADVANCED
+      if(devp->config->accmode == LSM303AGR_ACC_MODE_NORM)
+        devp->accsensitivity[i] = LSM303AGR_ACC_SENS_NORM_2G;
+      else if(devp->config->accmode == LSM303AGR_ACC_MODE_LPOW)
+        devp->accsensitivity[i] = LSM303AGR_ACC_SENS_LPOW_2G;
+      else if(devp->config->accmode == LSM303AGR_ACC_MODE_HRES)
+        devp->accsensitivity[i] = LSM303AGR_ACC_SENS_HRES_2G;
+      else {
+        osalDbgAssert(FALSE, "acc_reset_sensivity(), accelerometer mode issue");
+        msg = MSG_RESET;
+        return msg;
+      }
+#else
+      devp->accsensitivity[i] = LSM303AGR_ACC_SENS_NORM_2G;
+#endif
+    }
+  }
+  else if(devp->config->accfullscale == LSM303AGR_ACC_FS_4G) {
+    for(i = 0; i < LSM303AGR_ACC_NUMBER_OF_AXES; i++) {
+#if LSM303AGR_ACC_USE_ADVANCED
+      if(devp->config->accmode == LSM303AGR_ACC_MODE_NORM)
+        devp->accsensitivity[i] = LSM303AGR_ACC_SENS_NORM_4G;
+      else if(devp->config->accmode == LSM303AGR_ACC_MODE_LPOW)
+        devp->accsensitivity[i] = LSM303AGR_ACC_SENS_LPOW_4G;
+      else if(devp->config->accmode == LSM303AGR_ACC_MODE_HRES)
+        devp->accsensitivity[i] = LSM303AGR_ACC_SENS_HRES_4G;
+      else {
+        osalDbgAssert(FALSE, "acc_reset_sensivity(), accelerometer mode issue");
+        msg = MSG_RESET;
+        return msg;
+      }
+#else
+      devp->accsensitivity[i] = LSM303AGR_ACC_SENS_NORM_4G;
+#endif
+    }
+  }
+  else if(devp->config->accfullscale == LSM303AGR_ACC_FS_8G) {
+    for(i = 0; i < LSM303AGR_ACC_NUMBER_OF_AXES; i++) {
+#if LSM303AGR_ACC_USE_ADVANCED
+      if(devp->config->accmode == LSM303AGR_ACC_MODE_NORM)
+        devp->accsensitivity[i] = LSM303AGR_ACC_SENS_NORM_8G;
+      else if(devp->config->accmode == LSM303AGR_ACC_MODE_LPOW)
+        devp->accsensitivity[i] = LSM303AGR_ACC_SENS_LPOW_8G;
+      else if(devp->config->accmode == LSM303AGR_ACC_MODE_HRES)
+        devp->accsensitivity[i] = LSM303AGR_ACC_SENS_HRES_8G;
+      else {
+        osalDbgAssert(FALSE, "acc_reset_sensivity(), accelerometer mode issue");
+        msg = MSG_RESET;
+        return msg;
+      }
+#else
+      devp->accsensitivity[i] = LSM303AGR_ACC_SENS_NORM_8G;
+#endif
+    }
+  }
+  else if(devp->config->accfullscale == LSM303AGR_ACC_FS_16G) {
+    for(i = 0; i < LSM303AGR_ACC_NUMBER_OF_AXES; i++) {
+#if LSM303AGR_ACC_USE_ADVANCED
+      if(devp->config->accmode == LSM303AGR_ACC_MODE_NORM)
+        devp->accsensitivity[i] = LSM303AGR_ACC_SENS_NORM_16G;
+      else if(devp->config->accmode == LSM303AGR_ACC_MODE_LPOW)
+        devp->accsensitivity[i] = LSM303AGR_ACC_SENS_LPOW_16G;
+      else if(devp->config->accmode == LSM303AGR_ACC_MODE_HRES)
+        devp->accsensitivity[i] = LSM303AGR_ACC_SENS_HRES_16G;
+      else {
+        osalDbgAssert(FALSE, "acc_reset_sensivity(), accelerometer mode issue");
+        msg = MSG_RESET;
+        return msg;
+      }
+#else
+      devp->accsensitivity[i] = LSM303AGR_ACC_SENS_NORM_16G;
+#endif
+    }
+  }
   else {
     osalDbgAssert(FALSE, "reset_sensivity(), accelerometer full scale issue");
     msg = MSG_RESET;
@@ -389,7 +453,7 @@ static msg_t acc_set_full_scale(LSM303AGRDriver *devp,
     /* Updating register.*/
     msg = lsm303agrI2CReadRegister(devp->config->i2cp,
                                    LSM303AGR_SAD_ACC,
-                                   LSM303AGR_AD_ACC_CTRL_REG4,
+                                   LSM303AGR_AD_CTRL_REG4_A,
                                    &buff[1], 1);
 
 #if LSM303AGR_SHARED_I2C
@@ -401,7 +465,7 @@ static msg_t acc_set_full_scale(LSM303AGRDriver *devp,
 
     buff[1] &= ~(LSM303AGR_CTRL_REG4_A_FS_MASK);
     buff[1] |= fs;
-    buff[0] = LSM303AGR_AD_ACC_CTRL_REG4;
+    buff[0] = LSM303AGR_AD_CTRL_REG4_A;
 
 #if LSM303AGR_SHARED_I2C
     i2cAcquireBus(devp->config->i2cp);
@@ -478,7 +542,7 @@ static msg_t comp_read_raw(void *ip, int32_t axes[]) {
            devp->config->i2ccfg);
 #endif /* LSM303AGR_SHARED_I2C */
   msg = lsm303agrI2CReadRegister(devp->config->i2cp, LSM303AGR_SAD_COMP,
-                                  LSM303AGR_AD_COMP_OUT_X_L, buff,
+                                  LSM303AGR_AD_OUTX_L_REG_M, buff,
                                   LSM303AGR_COMP_NUMBER_OF_AXES * 2);
 
 #if LSM303AGR_SHARED_I2C
@@ -645,180 +709,15 @@ static msg_t comp_reset_sensivity(void *ip) {
   osalDbgAssert((devp->state == LSM303AGR_READY),
                 "comp_reset_sensivity(), invalid state");
 
-  if(devp->config->compfullscale == LSM303AGR_COMP_FS_1P3GA)
-    for(i = 0; i < LSM303AGR_COMP_NUMBER_OF_AXES; i++) {
-      if(i != 2) {
-        devp->compsensitivity[i] = LSM303AGR_COMP_SENS_XY_1P3GA;
-      }
-      else {
-        devp->compsensitivity[i] = LSM303AGR_COMP_SENS_Z_1P3GA;
-      }
-    }
-  else if(devp->config->compfullscale == LSM303AGR_COMP_FS_1P9GA)
-    for(i = 0; i < LSM303AGR_COMP_NUMBER_OF_AXES; i++) {
-      if(i != 2) {
-        devp->compsensitivity[i] = LSM303AGR_COMP_SENS_XY_1P9GA;
-      }
-      else {
-        devp->compsensitivity[i] = LSM303AGR_COMP_SENS_Z_1P9GA;
-      }
-    }
-  else if(devp->config->compfullscale == LSM303AGR_COMP_FS_2P5GA)
-    for(i = 0; i < LSM303AGR_COMP_NUMBER_OF_AXES; i++) {
-      if(i != 2) {
-        devp->compsensitivity[i] = LSM303AGR_COMP_SENS_XY_2P5GA;
-      }
-      else {
-        devp->compsensitivity[i] = LSM303AGR_COMP_SENS_Z_2P5GA;
-      }
-    }
-  else if(devp->config->compfullscale == LSM303AGR_COMP_FS_4P0GA)
-    for(i = 0; i < LSM303AGR_COMP_NUMBER_OF_AXES; i++) {
-      if(i != 2) {
-        devp->compsensitivity[i] = LSM303AGR_COMP_SENS_XY_4P0GA;
-      }
-      else {
-        devp->compsensitivity[i] = LSM303AGR_COMP_SENS_Z_4P0GA;
-      }
-    }
-  else if(devp->config->compfullscale == LSM303AGR_COMP_FS_4P7GA)
-    for(i = 0; i < LSM303AGR_COMP_NUMBER_OF_AXES; i++) {
-      if(i != 2) {
-        devp->compsensitivity[i] = LSM303AGR_COMP_SENS_XY_4P7GA;
-      }
-      else {
-        devp->compsensitivity[i] = LSM303AGR_COMP_SENS_Z_4P7GA;
-      }
-    }
-  else if(devp->config->compfullscale == LSM303AGR_COMP_FS_5P6GA)
-    for(i = 0; i < LSM303AGR_COMP_NUMBER_OF_AXES; i++) {
-      if(i != 2) {
-        devp->compsensitivity[i] = LSM303AGR_COMP_SENS_XY_5P6GA;
-      }
-      else {
-        devp->compsensitivity[i] = LSM303AGR_COMP_SENS_Z_5P6GA;
-      }
-    }
-  else if(devp->config->compfullscale == LSM303AGR_COMP_FS_8P1GA)
-    for(i = 0; i < LSM303AGR_COMP_NUMBER_OF_AXES; i++) {
-      if(i != 2) {
-        devp->compsensitivity[i] = LSM303AGR_COMP_SENS_XY_8P1GA;
-      }
-      else {
-        devp->compsensitivity[i] = LSM303AGR_COMP_SENS_Z_8P1GA;
-      }
-    }
-  else {
-    osalDbgAssert(FALSE, "comp_reset_sensivity(), compass full scale issue");
-    msg = MSG_RESET;
-  }
-  return msg;
-}
-
-/**
- * @brief   Changes the LSM303AGRDriver compass fullscale value.
- * @note    This function also rescale sensitivities and biases based on
- *          previous and next fullscale value.
- * @note    A recalibration is highly suggested after calling this function.
- *
- * @param[in] ip        pointer to @p LSM303AGRDriver interface.
- * @param[in] fs        new fullscale value.
- *
- * @return              The operation status.
- * @retval MSG_OK       if the function succeeded.
- * @retval MSG_RESET    otherwise.
- */
-static msg_t comp_set_full_scale(LSM303AGRDriver *devp,
-                                 lsm303agr_comp_fs_t fs) {
-  float newfs, scale;
-  uint8_t i, buff[2];
-  msg_t msg;
-
-  osalDbgCheck(devp != NULL);
-
-  osalDbgAssert((devp->state == LSM303AGR_READY),
-                "comp_set_full_scale(), invalid state");
-  osalDbgAssert((devp->config->i2cp->state == I2C_READY),
-                "comp_set_full_scale(), channel not ready");
-
-  /* Computing new fullscale value.*/
-  if(fs == LSM303AGR_COMP_FS_1P3GA) {
-    newfs = LSM303AGR_COMP_1P3GA;
-  }
-  else if(fs == LSM303AGR_COMP_FS_1P9GA) {
-    newfs = LSM303AGR_COMP_1P9GA;
-  }
-  else if(fs == LSM303AGR_COMP_FS_2P5GA) {
-    newfs = LSM303AGR_COMP_2P5GA;
-  }
-  else if(fs == LSM303AGR_COMP_FS_4P0GA) {
-    newfs = LSM303AGR_COMP_4P0GA;
-  }
-  else if(fs == LSM303AGR_COMP_FS_4P7GA) {
-    newfs = LSM303AGR_COMP_4P7GA;
-  }
-  else if(fs == LSM303AGR_COMP_FS_5P6GA) {
-    newfs = LSM303AGR_COMP_5P6GA;
-  }
-  else if(fs == LSM303AGR_COMP_FS_8P1GA) {
-    newfs = LSM303AGR_COMP_8P1GA;
-  }
-  else {
-    msg = MSG_RESET;
-    return msg;
-  }
-
-  if(newfs != devp->compfullscale) {
-    /* Computing scale value.*/
-    scale = newfs / devp->compfullscale;
-    devp->compfullscale = newfs;
-
-#if LSM303AGR_SHARED_I2C
-    i2cAcquireBus(devp->config->i2cp);
-    i2cStart(devp->config->i2cp, devp->config->i2ccfg);
-#endif /* LSM303AGR_SHARED_I2C */
-
-    /* Updating register.*/
-    msg = lsm303agrI2CReadRegister(devp->config->i2cp, LSM303AGR_SAD_COMP,
-                                    LSM303AGR_AD_COMP_CRB_REG, &buff[1], 1);
-
-#if LSM303AGR_SHARED_I2C
-        i2cReleaseBus(devp->config->i2cp);
-#endif /* LSM303AGR_SHARED_I2C */
-
-    if(msg != MSG_OK)
-      return msg;
-    buff[1] &= ~(LSM303AGR_CRB_REG_M_GN_MASK);
-    buff[1] |= fs;
-    buff[0] = LSM303AGR_AD_COMP_CRB_REG;
-
-#if LSM303AGR_SHARED_I2C
-    i2cAcquireBus(devp->config->i2cp);
-    i2cStart(devp->config->i2cp, devp->config->i2ccfg);
-#endif /* LSM303AGR_SHARED_I2C */
-
-    msg = lsm303agrI2CWriteRegister(devp->config->i2cp, LSM303AGR_SAD_COMP,
-                                     buff, 1);
-
-#if LSM303AGR_SHARED_I2C
-        i2cReleaseBus(devp->config->i2cp);
-#endif /* LSM303AGR_SHARED_I2C */
-
-    if(msg != MSG_OK)
-      return msg;
-
-    /* Scaling sensitivity and bias. Re-calibration is suggested anyway.*/
-    for(i = 0; i < LSM303AGR_COMP_NUMBER_OF_AXES; i++) {
-      devp->compsensitivity[i] *= scale;
-      devp->compbias[i] *= scale;
-    }
-  }
+  for(i = 0; i < LSM303AGR_COMP_NUMBER_OF_AXES; i++)
+    devp->compsensitivity[i] = LSM303AGR_COMP_SENS_50GA;
+  
   return msg;
 }
 
 static const struct LSM303AGRVMT vmt_device = {
   (size_t)0,
-  acc_set_full_scale, comp_set_full_scale
+  acc_set_full_scale
 };
 
 static const struct BaseAccelerometerVMT vmt_accelerometer = {
@@ -866,7 +765,6 @@ void lsm303agrObjectInit(LSM303AGRDriver *devp) {
  * @api
  */
 void lsm303agrStart(LSM303AGRDriver *devp, const LSM303AGRConfig *config) {
-  uint32_t i;
   uint8_t cr[6];
   osalDbgCheck((devp != NULL) && (config != NULL));
 
@@ -879,14 +777,14 @@ void lsm303agrStart(LSM303AGRDriver *devp, const LSM303AGRConfig *config) {
   /* Configuring Accelerometer subsystem.*/
 
   /* Multiple write starting address.*/
-  cr[0] = LSM303AGR_AD_ACC_CTRL_REG1;
+  cr[0] = LSM303AGR_AD_CFG_REG_A_M;
 
   /* Control register 1 configuration block.*/
   {
-    cr[1] = LSM303AGR_CTRL_REG1_A_XEN | LSM303AGR_CTRL_REG1_A_YEN |
-            LSM303AGR_CTRL_REG1_A_ZEN | devp->config->accoutdatarate;
+    cr[1] = LSM303AGR_ACC_AE_XYZ | devp->config->accoutdatarate;
 #if LSM303AGR_ACC_USE_ADVANCED || defined(__DOXYGEN__)
-    cr[1] |= devp->config->acclowpower;
+    if(devp->config->accmode == LSM303AGR_ACC_MODE_LPOW)
+      cr[1] |= LSM303AGR_CTRL_REG1_A_LPEN;
 #endif
   }
 
@@ -907,6 +805,8 @@ void lsm303agrStart(LSM303AGRDriver *devp, const LSM303AGRConfig *config) {
     cr[4] |= devp->config->accendianess |
              devp->config->accblockdataupdate |
              devp->config->acchighresmode;
+    if(devp->config->accmode == LSM303AGR_ACC_MODE_HRES)
+      cr[4] |= LSM303AGR_CTRL_REG4_A_HR;
 #endif
   }
 
@@ -920,75 +820,27 @@ void lsm303agrStart(LSM303AGRDriver *devp, const LSM303AGRConfig *config) {
 #if LSM303AGR_SHARED_I2C
   i2cReleaseBus((devp)->config->i2cp);
 #endif /* LSM303AGR_SHARED_I2C */
-
-  /* Storing sensitivity according to user settings */
-  if(devp->config->accfullscale == LSM303AGR_ACC_FS_2G) {
-    devp->accfullscale = LSM303AGR_ACC_2G;
-    for(i = 0; i < LSM303AGR_ACC_NUMBER_OF_AXES; i++) {
-      if(devp->config->accsensitivity == NULL)
-        devp->accsensitivity[i] = LSM303AGR_ACC_SENS_2G;
-      else
-        devp->accsensitivity[i] = devp->config->accsensitivity[i];
-    }
-  }
-  else if(devp->config->accfullscale == LSM303AGR_ACC_FS_4G) {
-    devp->accfullscale = LSM303AGR_ACC_4G;
-    for(i = 0; i < LSM303AGR_ACC_NUMBER_OF_AXES; i++) {
-      if(devp->config->accsensitivity == NULL)
-        devp->accsensitivity[i] = LSM303AGR_ACC_SENS_4G;
-      else
-        devp->accsensitivity[i] = devp->config->accsensitivity[i];
-    }
-  }
-  else if(devp->config->accfullscale == LSM303AGR_ACC_FS_8G) {
-    devp->accfullscale = LSM303AGR_ACC_8G;
-    for(i = 0; i < LSM303AGR_ACC_NUMBER_OF_AXES; i++) {
-      if(devp->config->accsensitivity == NULL)
-        devp->accsensitivity[i] = LSM303AGR_ACC_SENS_8G;
-      else
-        devp->accsensitivity[i] = devp->config->accsensitivity[i];
-    }
-  }
-  else if(devp->config->accfullscale == LSM303AGR_ACC_FS_16G) {
-    devp->accfullscale = LSM303AGR_ACC_16G;
-    for(i = 0; i < LSM303AGR_ACC_NUMBER_OF_AXES; i++) {
-      if(devp->config->accsensitivity == NULL)
-        devp->accsensitivity[i] = LSM303AGR_ACC_SENS_16G;
-      else
-        devp->accsensitivity[i] = devp->config->accsensitivity[i];
-    }
-  }
-  else
-    osalDbgAssert(FALSE, "lsm303agrStart(), accelerometer full scale issue");
-
-  /* Storing bias information */
-  if(devp->config->accbias != NULL)
-    for(i = 0; i < LSM303AGR_ACC_NUMBER_OF_AXES; i++)
-      devp->accbias[i] = devp->config->accbias[i];
-  else
-    for(i = 0; i < LSM303AGR_ACC_NUMBER_OF_AXES; i++)
-      devp->accbias[i] = LSM303AGR_ACC_BIAS;
-
+  
   /* Configuring Compass subsystem */
   /* Multiple write starting address.*/
-  cr[0] = LSM303AGR_AD_COMP_CRA_REG;
+  cr[0] = LSM303AGR_AD_CFG_REG_A_M;
 
   /* Control register A configuration block.*/
   {
     cr[1] = devp->config->compoutputdatarate;
+#if LSM303AGR_COMP_USE_ADVANCED || defined(__DOXYGEN__)
+    cr[1] |= devp->config->compmode | devp->config->complp;
+#endif
   }
 
   /* Control register B configuration block.*/
   {
-    cr[2] = devp->config->compfullscale;
+    cr[2] = 0;
   }
 
-  /* Mode register configuration block.*/
+  /* Control register C configuration block.*/
   {
     cr[3] = 0;
-#if LSM303AGR_COMP_USE_ADVANCED || defined(__DOXYGEN__)
-    cr[3] |= devp->config->compmode;
-#endif
   }
 
 #if LSM303AGR_SHARED_I2C
@@ -997,139 +849,23 @@ void lsm303agrStart(LSM303AGRDriver *devp, const LSM303AGRConfig *config) {
 #endif /* LSM303AGR_SHARED_I2C */
 
   lsm303agrI2CWriteRegister(devp->config->i2cp, LSM303AGR_SAD_COMP,
-                             cr, 3);
+                            cr, 3);
 
 #if LSM303AGR_SHARED_I2C
   i2cReleaseBus((devp)->config->i2cp);
 #endif /* LSM303AGR_SHARED_I2C */
 
-  if(devp->config->compfullscale == LSM303AGR_COMP_FS_1P3GA) {
-    devp->compfullscale = LSM303AGR_COMP_1P3GA;
-    for(i = 0; i < LSM303AGR_COMP_NUMBER_OF_AXES; i++) {
-      if(devp->config->compsensitivity == NULL) {
-        if(i != 2) {
-          devp->compsensitivity[i] = LSM303AGR_COMP_SENS_XY_1P3GA;
-        }
-        else {
-          devp->compsensitivity[i] = LSM303AGR_COMP_SENS_Z_1P3GA;
-        }
-      }
-      else {
-        devp->compsensitivity[i] = devp->config->compsensitivity[i];
-      }
-    }
-  }
-  else if(devp->config->compfullscale == LSM303AGR_COMP_FS_1P9GA) {
-    devp->compfullscale = LSM303AGR_COMP_1P9GA;
-    for(i = 0; i < LSM303AGR_COMP_NUMBER_OF_AXES; i++) {
-      if(devp->config->compsensitivity == NULL) {
-        if(i != 2) {
-          devp->compsensitivity[i] = LSM303AGR_COMP_SENS_XY_1P9GA;
-        }
-        else {
-          devp->compsensitivity[i] = LSM303AGR_COMP_SENS_Z_1P9GA;
-        }
-      }
-      else {
-        devp->compsensitivity[i] = devp->config->compsensitivity[i];
-      }
-    }
-  }
-  else if(devp->config->compfullscale == LSM303AGR_COMP_FS_2P5GA) {
-    devp->compfullscale = LSM303AGR_COMP_2P5GA;
-    for(i = 0; i < LSM303AGR_COMP_NUMBER_OF_AXES; i++) {
-      if(devp->config->compsensitivity == NULL) {
-        if(i != 2) {
-          devp->compsensitivity[i] = LSM303AGR_COMP_SENS_XY_2P5GA;
-        }
-        else {
-          devp->compsensitivity[i] = LSM303AGR_COMP_SENS_Z_2P5GA;
-        }
-      }
-      else {
-        devp->compsensitivity[i] = devp->config->compsensitivity[i];
-      }
-    }
-  }
-  else if(devp->config->compfullscale == LSM303AGR_COMP_FS_4P0GA) {
-    devp->compfullscale = LSM303AGR_COMP_4P0GA;
-    for(i = 0; i < LSM303AGR_COMP_NUMBER_OF_AXES; i++) {
-      if(devp->config->compsensitivity == NULL) {
-        if(i != 2) {
-          devp->compsensitivity[i] = LSM303AGR_COMP_SENS_XY_4P0GA;
-        }
-        else {
-          devp->compsensitivity[i] = LSM303AGR_COMP_SENS_Z_4P0GA;
-        }
-      }
-      else {
-        devp->compsensitivity[i] = devp->config->compsensitivity[i];
-      }
-    }
-  }
-  else if(devp->config->compfullscale == LSM303AGR_COMP_FS_4P7GA) {
-    devp->compfullscale = LSM303AGR_COMP_4P7GA;
-    for(i = 0; i < LSM303AGR_COMP_NUMBER_OF_AXES; i++) {
-      if(devp->config->compsensitivity == NULL) {
-        if(i != 2) {
-          devp->compsensitivity[i] = LSM303AGR_COMP_SENS_XY_4P7GA;
-        }
-        else {
-          devp->compsensitivity[i] = LSM303AGR_COMP_SENS_Z_4P7GA;
-        }
-      }
-      else {
-        devp->compsensitivity[i] = devp->config->compsensitivity[i];
-      }
-    }
-  }
-  else if(devp->config->compfullscale == LSM303AGR_COMP_FS_5P6GA) {
-    devp->compfullscale = LSM303AGR_COMP_5P6GA;
-    for(i = 0; i < LSM303AGR_COMP_NUMBER_OF_AXES; i++) {
-      if(devp->config->compsensitivity == NULL) {
-        if(i != 2) {
-          devp->compsensitivity[i] = LSM303AGR_COMP_SENS_XY_5P6GA;
-        }
-        else {
-          devp->compsensitivity[i] = LSM303AGR_COMP_SENS_Z_5P6GA;
-        }
-      }
-      else {
-        devp->compsensitivity[i] = devp->config->compsensitivity[i];
-      }
-    }
-  }
-  else if(devp->config->compfullscale == LSM303AGR_COMP_FS_8P1GA) {
-    devp->compfullscale = LSM303AGR_COMP_8P1GA;
-    for(i = 0; i < LSM303AGR_COMP_NUMBER_OF_AXES; i++) {
-      if(devp->config->compsensitivity == NULL) {
-        if(i != 2) {
-          devp->compsensitivity[i] = LSM303AGR_COMP_SENS_XY_8P1GA;
-        }
-        else {
-          devp->compsensitivity[i] = LSM303AGR_COMP_SENS_Z_8P1GA;
-        }
-      }
-      else {
-        devp->compsensitivity[i] = devp->config->compsensitivity[i];
-      }
-    }
-  }
-  else
-    osalDbgAssert(FALSE, "lsm303agrStart(), compass full scale issue");
-
-  /* Storing bias information */
-  if(devp->config->compbias != NULL)
-    for(i = 0; i < LSM303AGR_COMP_NUMBER_OF_AXES; i++)
-      devp->compbias[i] = devp->config->compbias[i];
-  else
-    for(i = 0; i < LSM303AGR_COMP_NUMBER_OF_AXES; i++)
-      devp->compbias[i] = LSM303AGR_COMP_BIAS;
-
   /* This is the MEMS transient recovery time */
   osalThreadSleepMilliseconds(5);
 
   devp->state = LSM303AGR_READY;
+  
+  /* Configuring sensitivity and bias of accelerometer.*/
+  acc_reset_sensivity(&(devp->acc_if));
+  acc_reset_bias(&(devp->acc_if));
+  /* Configuring sensitivity and bias of compass.*/ 
+  comp_reset_sensivity(&(devp->comp_if));
+  comp_reset_bias(&(devp->comp_if));
 }
 
 /**
@@ -1154,16 +890,14 @@ void lsm303agrStop(LSM303AGRDriver *devp) {
 #endif /* LSM303AGR_SHARED_I2C */
 
     /* Disabling accelerometer. */
-    cr[0] = LSM303AGR_AD_ACC_CTRL_REG1;
+    cr[0] = LSM303AGR_AD_CTRL_REG1_A;
     cr[1] = LSM303AGR_ACC_AE_DISABLED | LSM303AGR_ACC_ODR_PD;
     lsm303agrI2CWriteRegister(devp->config->i2cp, LSM303AGR_SAD_ACC,
                                cr, 1);
 
     /* Disabling compass. */
-    cr[0] = LSM303AGR_AD_COMP_MR_REG;
-    cr[1] = LSM303AGR_COMP_MD_SLEEP;
-    lsm303agrI2CWriteRegister(devp->config->i2cp, LSM303AGR_SAD_ACC,
-                               cr, 1);
+    cr[0] = LSM303AGR_AD_CFG_REG_A_M;
+    cr[1] = LSM303AGR_COMP_MODE_IDLE;
     lsm303agrI2CWriteRegister(devp->config->i2cp, LSM303AGR_SAD_COMP,
                                cr, 1);
 
