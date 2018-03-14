@@ -1,17 +1,28 @@
+[#ftl]
+[#--
+    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+
+    This file is part of ChibiOS.
+
+    ChibiOS is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  --]
+[@pp.dropOutputFile /]
+[#import "/@lib/libutils.ftl" as utils /]
+[#import "/@lib/liblicense.ftl" as license /]
+[@pp.changeOutputFile name="chconf.h" /]
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
+[@license.EmitLicenseAsText /]
 */
 
 /**
@@ -43,7 +54,7 @@
  * @note    This number is not inclusive of the idle thread which is
  *          Implicitly handled.
  */
-#define CH_CFG_NUM_THREADS                  3
+#define CH_CFG_NUM_THREADS                  ${doc.CH_CFG_NUM_THREADS!"1"}
 
 /** @} */
 
@@ -58,7 +69,7 @@
  * @brief   System time counter resolution.
  * @note    Allowed values are 16 or 32 bits.
  */
-#define CH_CFG_ST_RESOLUTION                16
+#define CH_CFG_ST_RESOLUTION                ${doc.CH_CFG_ST_RESOLUTION!"32"}
 
 /**
  * @brief   System tick frequency.
@@ -66,7 +77,7 @@
  *          option defines the maximum amount of time allowed for
  *          timeouts.
  */
-#define CH_CFG_ST_FREQUENCY                 1000
+#define CH_CFG_ST_FREQUENCY                 ${doc.CH_CFG_ST_FREQUENCY!"1000"}
 
 /**
  * @brief   Time delta constant for the tick-less mode.
@@ -76,7 +87,7 @@
  *          The value one is not valid, timeouts are rounded up to
  *          this value.
  */
-#define CH_CFG_ST_TIMEDELTA                 0
+#define CH_CFG_ST_TIMEDELTA                 ${doc.CH_CFG_ST_TIMEDELTA!"2"}
 
 /** @} */
 
@@ -93,7 +104,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#define CH_CFG_USE_SEMAPHORES               TRUE
+#define CH_CFG_USE_SEMAPHORES               ${doc.CH_CFG_USE_SEMAPHORES!"TRUE"}
 
 /**
  * @brief   Mutexes APIs.
@@ -102,7 +113,7 @@
  * @note    Feature not currently implemented.
  * @note    The default is @p FALSE.
  */
-#define CH_CFG_USE_MUTEXES                  FALSE
+#define CH_CFG_USE_MUTEXES                  ${doc.CH_CFG_USE_MUTEXES!"FALSE"}
 
 /**
  * @brief   Events Flags APIs.
@@ -110,7 +121,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#define CH_CFG_USE_EVENTS                   TRUE
+#define CH_CFG_USE_EVENTS                   ${doc.CH_CFG_USE_EVENTS!"TRUE"}
 
 /**
  * @brief   Mailboxes APIs.
@@ -120,7 +131,7 @@
  * @note    The default is @p TRUE.
  * @note    Requires @p CH_CFG_USE_SEMAPHORES.
  */
-#define CH_CFG_USE_MAILBOXES                TRUE
+#define CH_CFG_USE_MAILBOXES                ${doc.CH_CFG_USE_MAILBOXES!"TRUE"}
 
 /**
  * @brief   Core Memory Manager APIs.
@@ -129,7 +140,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#define CH_CFG_USE_MEMCORE                  TRUE
+#define CH_CFG_USE_MEMCORE                  ${doc.CH_CFG_USE_MEMCORE!"TRUE"}
 
 /**
  * @brief   Heap Allocator APIs.
@@ -138,7 +149,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#define CH_CFG_USE_HEAP                     TRUE
+#define CH_CFG_USE_HEAP                     ${doc.CH_CFG_USE_HEAP!"TRUE"}
 
 /**
  * @brief   Memory Pools Allocator APIs.
@@ -147,7 +158,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#define CH_CFG_USE_MEMPOOLS                 TRUE
+#define CH_CFG_USE_MEMPOOLS                 ${doc.CH_CFG_USE_MEMPOOLS!"TRUE"}
 
 /**
  * @brief  Objects FIFOs APIs.
@@ -156,7 +167,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#define CH_CFG_USE_OBJ_FIFOS                TRUE
+#define CH_CFG_USE_OBJ_FIFOS                ${doc.CH_CFG_USE_OBJ_FIFOS!"TRUE"}
 
 /**
  * @brief   Managed RAM size.
@@ -169,7 +180,7 @@
  *          provide the @p __heap_base__ and @p __heap_end__ symbols.
  * @note    Requires @p CH_CFG_USE_MEMCORE.
  */
-#define CH_CFG_MEMCORE_SIZE                 128
+#define CH_CFG_MEMCORE_SIZE                 ${doc.CH_CFG_MEMCORE_SIZE!"0"}
 
 /** @} */
 
@@ -187,39 +198,39 @@
  *
  * @note    The default is @p FALSE.
  */
-#define CH_CFG_USE_FACTORY                  TRUE
+#define CH_CFG_USE_FACTORY                  ${doc.CH_CFG_USE_FACTORY!"TRUE"}
 
 /**
  * @brief   Maximum length for object names.
  * @details If the specified length is zero then the name is stored by
  *          pointer but this could have unintended side effects.
  */
-#define CH_CFG_FACTORY_MAX_NAMES_LENGTH     8
+#define CH_CFG_FACTORY_MAX_NAMES_LENGTH     ${doc.CH_CFG_FACTORY_MAX_NAMES_LENGTH!"8"}
 
 /**
  * @brief   Enables the registry of generic objects.
  */
-#define CH_CFG_FACTORY_OBJECTS_REGISTRY     TRUE
+#define CH_CFG_FACTORY_OBJECTS_REGISTRY     ${doc.CH_CFG_FACTORY_OBJECTS_REGISTRY!"TRUE"}
 
 /**
  * @brief   Enables factory for generic buffers.
  */
-#define CH_CFG_FACTORY_GENERIC_BUFFERS      TRUE
+#define CH_CFG_FACTORY_GENERIC_BUFFERS      ${doc.CH_CFG_FACTORY_GENERIC_BUFFERS!"TRUE"}
 
 /**
  * @brief   Enables factory for semaphores.
  */
-#define CH_CFG_FACTORY_SEMAPHORES           TRUE
+#define CH_CFG_FACTORY_SEMAPHORES           ${doc.CH_CFG_FACTORY_SEMAPHORES!"TRUE"}
 
 /**
  * @brief   Enables factory for mailboxes.
  */
-#define CH_CFG_FACTORY_MAILBOXES            TRUE
+#define CH_CFG_FACTORY_MAILBOXES            ${doc.CH_CFG_FACTORY_MAILBOXES!"TRUE"}
 
 /**
  * @brief   Enables factory for objects FIFOs.
  */
-#define CH_CFG_FACTORY_OBJ_FIFOS            TRUE
+#define CH_CFG_FACTORY_OBJ_FIFOS            ${doc.CH_CFG_FACTORY_OBJ_FIFOS!"TRUE"}
 
 /** @} */
 
@@ -236,35 +247,35 @@
  * @note    Feature not currently implemented.
  * @note    The default is @p FALSE.
  */
-#define CH_DBG_STATISTICS                   FALSE
+#define CH_DBG_STATISTICS                   ${doc.CH_DBG_STATISTICS!"FALSE"}
 
 /**
  * @brief   Debug option, system state check.
  *
  * @note    The default is @p FALSE.
  */
-#define CH_DBG_SYSTEM_STATE_CHECK           FALSE
+#define CH_DBG_SYSTEM_STATE_CHECK           ${doc.CH_DBG_SYSTEM_STATE_CHECK!"FALSE"}
 
 /**
  * @brief   Debug option, parameters checks.
  *
  * @note    The default is @p FALSE.
  */
-#define CH_DBG_ENABLE_CHECKS                FALSE
+#define CH_DBG_ENABLE_CHECKS                ${doc.CH_DBG_ENABLE_CHECKS!"FALSE"}
 
 /**
  * @brief   System assertions.
  *
  * @note    The default is @p FALSE.
  */
-#define CH_DBG_ENABLE_ASSERTS               FALSE
+#define CH_DBG_ENABLE_ASSERTS               ${doc.CH_DBG_ENABLE_ASSERTS!"FALSE"}
 
 /**
  * @brief   Stack check.
  *
  * @note    The default is @p FALSE.
  */
-#define CH_DBG_ENABLE_STACK_CHECK           FALSE
+#define CH_DBG_ENABLE_STACK_CHECK           ${doc.CH_DBG_ENABLE_STACK_CHECK!"FALSE"}
 
 /** @} */
 
