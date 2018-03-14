@@ -84,30 +84,29 @@ PROJECT = ch
 
 # Imported source files and paths
 CHIBIOS = ../../..
+
+# Licensing files.
+include $(CHIBIOS)/os/license/license.mk
+
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/boards/ARDUINO_UNO/board.mk
 include $(CHIBIOS)/os/hal/ports/AVR/MEGA/ATMEGAxx/platform.mk
 include $(CHIBIOS)/os/hal/osal/nil/osal.mk
+
 # RTOS files (optional).
 include $(CHIBIOS)/os/nil/nil.mk
 include $(CHIBIOS)/os/common/ports/AVR/compilers/GCC/mk/port.mk
 
 # List C source files here. (C dependencies are automatically generated.)
-CSRC =  $(KERNSRC)                      \
-        $(PORTSRC)                      \
-        $(OSALSRC)                      \
-        $(HALSRC)                       \
-        $(PLATFORMSRC)                  \
-        $(BOARDSRC)                     \
+CSRC =  $(ALLCSRC) \
         main.c
 
 # List C++ sources file here.
-CPPSRC =
+CPPSRC = $(ALLCPPSRC)
 
-INCDIR =  $(CHIBIOS)/os/license $(PORTINC) $(KERNINC) \
-          $(HALINC) $(OSALINC) $(PLATFORMINC)         \
-          $(BOARDINC)
+# Header files here.
+INCDIR =  $(ALLINC)
 
 #
 # Project, sources and paths.
