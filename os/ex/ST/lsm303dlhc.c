@@ -325,7 +325,7 @@ static msg_t acc_reset_sensivity(void *ip) {
 	for(i = 0; i < LSM303DLHC_ACC_NUMBER_OF_AXES; i++)
       devp->accsensitivity[i] = LSM303DLHC_ACC_SENS_16G;
   else {
-    osalDbgAssert(FALSE, "reset_sensivity(), accelerometer full scale issue");
+    osalDbgAssert(FALSE, "acc_reset_sensivity(), accelerometer full scale issue");
     msg = MSG_RESET;
   }
   return msg;
@@ -1162,8 +1162,6 @@ void lsm303dlhcStop(LSM303DLHCDriver *devp) {
     /* Disabling compass. */
     cr[0] = LSM303DLHC_AD_COMP_MR_REG;
     cr[1] = LSM303DLHC_COMP_MD_SLEEP;
-    lsm303dlhcI2CWriteRegister(devp->config->i2cp, LSM303DLHC_SAD_ACC,
-                               cr, 1);
     lsm303dlhcI2CWriteRegister(devp->config->i2cp, LSM303DLHC_SAD_COMP,
                                cr, 1);
 

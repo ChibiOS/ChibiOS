@@ -86,7 +86,7 @@ typedef struct MACDriver MACDriver;
  * @{
  */
 /**
- * @brief   Returns the received frames event source.
+ * @brief   Enables the zero-copy API.
  *
  * @param[in] macp      pointer to the @p MACDriver object
  * @return              The pointer to the @p EventSource structure.
