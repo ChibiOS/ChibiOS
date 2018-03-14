@@ -49,8 +49,7 @@
  * @details Frequency of the system timer that drives the system ticks. This
  *          setting also defines the system tick time unit.
  */
-//#define CH_CFG_ST_FREQUENCY                 1000          /* periodic tick.*/
-#define CH_CFG_ST_FREQUENCY                 (83000000 / 32) /* tick-less.*/
+#define CH_CFG_ST_FREQUENCY                 10000
 
 /**
  * @brief   Time intervals data size.
@@ -603,13 +602,6 @@
 /*===========================================================================*/
 /* Port-specific settings (override port settings defaulted in chcore.h).    */
 /*===========================================================================*/
-
-/**
- * @brief   Trust zone configuration.
- * @details If enabled the kernel is configured for the secure world
- *          and can access specific devices.
- */
-#define CH_CFG_SEC_WORLD                    TRUE
 
 #endif  /* CHCONF_H */
 

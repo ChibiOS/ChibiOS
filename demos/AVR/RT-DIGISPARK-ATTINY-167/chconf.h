@@ -89,9 +89,10 @@
  *          disables the preemption for threads with equal priority and the
  *          round robin becomes cooperative. Note that higher priority
  *          threads can still preempt, the kernel is always preemptive.
- *
  * @note    Disabling the round robin preemption makes the kernel more compact
  *          and generally faster.
+ * @note    The round robin preemption is not supported in tickless mode and
+ *          must be set to zero in that case.
  */
 #define CH_CFG_TIME_QUANTUM                 0
 
@@ -111,15 +112,9 @@
 /**
  * @brief   Idle thread automatic spawn suppression.
  * @details When this option is activated the function @p chSysInit()
- *          does not spawn the idle thread automatically. The application has
- *          then the responsibility to do one of the following:
- *          - Spawn a custom idle thread at priority @p IDLEPRIO.
- *          - Change the main() thread priority to @p IDLEPRIO then enter
- *            an endless loop. In this scenario the @p main() thread acts as
- *            the idle thread.
- *          .
- * @note    Unless an idle thread is spawned the @p main() thread must not
- *          enter a sleep state.
+ *          does not spawn the idle thread. The application @p main()
+ *          function becomes the idle thread and must implement an
+ *          infinite loop.
  */
 #define CH_CFG_NO_IDLE_THREAD               FALSE
 
@@ -190,7 +185,8 @@
  * @details If enabled then the threads are enqueued on semaphores by
  *          priority rather than in FIFO order.
  *
- * @note    The default is @p FALSE. Enable this if you have special requirements.
+ * @note    The default is @p FALSE. Enable this if you have special
+ *          requirements.
  * @note    Requires @p CH_CFG_USE_SEMAPHORES.
  */
 #define CH_CFG_USE_SEMAPHORES_PRIORITY      FALSE
@@ -265,7 +261,8 @@
  * @details If enabled then messages are served by priority rather than in
  *          FIFO order.
  *
- * @note    The default is @p FALSE. Enable this if you have special requirements.
+ * @note    The default is @p FALSE. Enable this if you have special
+ *          requirements.
  * @note    Requires @p CH_CFG_USE_MESSAGES.
  */
 #define CH_CFG_USE_MESSAGES_PRIORITY        FALSE
@@ -433,14 +430,6 @@
 #define CH_DBG_TRACE_MASK                   CH_DBG_TRACE_MASK_DISABLED
 
 /**
- * @brief   Debug option, trace buffer.
- * @details If enabled then the trace buffer is activated.
- *
- * @note    The default is @p FALSE.
- */
-#define CH_DBG_ENABLE_TRACE                 CH_DBG_TRACE_MASK_DISABLED
-
-/**
  * @brief   Trace buffer entries.
  * @note    The trace buffer is only allocated if @p CH_DBG_TRACE_MASK is
  *          different from @p CH_DBG_TRACE_MASK_DISABLED.
@@ -471,12 +460,12 @@
 
 /**
  * @brief   Debug option, threads profiling.
- * @details If enabled then a field is added to the @p Thread structure that
+ * @details If enabled then a field is added to the @p thread_t structure that
  *          counts the system ticks occurred while executing the thread.
  *
- * @note    The default is @p TRUE.
- * @note    This debug option is defaulted to TRUE because it is required by
- *          some test cases into the test suite.
+ * @note    The default is @p FALSE.
+ * @note    This debug option is not currently compatible with the
+ *          tickless mode.
  */
 #define CH_DBG_THREADS_PROFILING            FALSE
 
@@ -514,9 +503,9 @@
 
 /**
  * @brief   Threads initialization hook.
- * @details User initialization code added to the @p chThdInit() API.
+ * @details User initialization code added to the @p _thread_init() function.
  *
- * @note    It is invoked from within @p chThdInit() and implicitly from all
+ * @note    It is invoked from within @p _thread_init() and implicitly from all
  *          the threads creation APIs.
  */
 #define CH_CFG_THREAD_INIT_HOOK(tp) {                                       \
