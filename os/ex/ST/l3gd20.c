@@ -350,11 +350,11 @@ static msg_t gyro_reset_sensivity(void *ip) {
     for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++)
       devp->gyrosensitivity[i] = L3GD20_GYRO_SENS_250DPS;
   else if(devp->config->gyrofullscale == L3GD20_FS_500DPS)
-	for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++)
-      devp->gyrosensitivity[i] = L3GD20_GYRO_SENS_500DPS;
+    for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++)
+        devp->gyrosensitivity[i] = L3GD20_GYRO_SENS_500DPS;
   else if(devp->config->gyrofullscale == L3GD20_FS_2000DPS)
-	for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++)
-      devp->gyrosensitivity[i] = L3GD20_GYRO_SENS_2000DPS;
+    for(i = 0; i < L3GD20_GYRO_NUMBER_OF_AXES; i++)
+        devp->gyrosensitivity[i] = L3GD20_GYRO_SENS_2000DPS;
   else {
     osalDbgAssert(FALSE, "gyro_reset_sensivity(), full scale issue");
     return MSG_RESET;
