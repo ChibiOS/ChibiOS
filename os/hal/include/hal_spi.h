@@ -77,7 +77,7 @@
 #endif
 
 /**
- * @brief   Enables the use of the .
+ * @brief   Handling method for SPI CS line.
  * @note    Disabling this option saves both code and data space.
  */
 #if !defined(SPI_SELECT_MODE) || defined(__DOXYGEN__)
