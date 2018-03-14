@@ -1,7 +1,7 @@
 #!/bin/bash
 if [ $# -eq 0 ]
 then
-  find ../.. -name "chconf.h" -exec bash update_chconf.sh "{}" \;
+  find ../.. -name "chconf.h" -exec bash update_chconf_rt.sh "{}" \;
 elif [ $# -eq 1 ]
 then
   if egrep -q "_CHIBIOS_RT_CONF_" $1
