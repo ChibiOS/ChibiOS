@@ -141,6 +141,7 @@ CSRC = $(STARTUPSRC) \
        $(TESTSRC) \
        $(CHIBIOS)/os/hal/lib/streams/chprintf.c \
        tservices.c \
+       proxies/tssockstub.c \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global

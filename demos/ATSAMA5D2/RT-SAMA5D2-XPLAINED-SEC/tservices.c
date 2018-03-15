@@ -24,7 +24,8 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "chtssi.h"
+#include "tservices.h"
+#include "proxies/tssockstub.h"
 #include "chprintf.h"
 
 /*===========================================================================*/
@@ -50,28 +51,35 @@
 static THD_WORKING_AREA(waTsSimpleService, 1024);
 static THD_FUNCTION(TsSimpleService, tsstate) {
 
-  /* WARNING: do not put blocking call out of the cycle,
-              i.e. no calls that suspend
-              the current thread!.*/
-
+  BaseSequentialStream *ssp = (BaseSequentialStream*)&SD1;
   ts_state_t *svcp = tsstate;
 
-  /* Start the request/process/response cycle.*/
-  while (tssiWaitRequest(tsstate) == SMC_SVC_OK) {
+  /* Start the 'wait request / process / response' cycle.*/
+  for (;/* ever */;) {
     int i;
-    chprintf((BaseSequentialStream*)&SD1,
-        "TsSimpleService received a new request.\r\n");
+
+    /* Wait a service request.*/
+    msg_t r = tssiWaitRequest(tsstate);
+
+    /* Check if status is ko. It could not happen.*/
+    if (r != SMC_SVC_OK) {
+      chprintf(ssp, "Unexpected wait request error.\r\n");
+      continue;
+    }
+
+    /* Process the request.*/
+    chprintf(ssp, "r = %d, TsSimpleService received a new request.\r\n", r);
     if (svcp->ts_datalen > 0) {
       *(TS_GET_DATA(svcp) + TS_GET_DATALEN(svcp) - 1) = '\0';
-      chprintf((BaseSequentialStream*)&SD1,
-          "My non secure 'alter ego' has a request.\r\n");
-      chprintf((BaseSequentialStream*)&SD1,
-          "She tells: '");
-      chprintf((BaseSequentialStream*)&SD1, TS_GET_DATA(svcp));
-      chprintf((BaseSequentialStream*)&SD1, "'\r\n");
+      chprintf(ssp, "My non secure 'alter ego' has a request.\r\n");
+      chprintf(ssp, "She tells: '");
+      chprintf(ssp, TS_GET_DATA(svcp));
+      chprintf(ssp, "'\r\n");
     }
     for (i = 0; i < 100000; ++i)
       ;
+
+    /* Set the response.*/
     TS_SET_STATUS(svcp, i);
   }
 
@@ -89,6 +97,7 @@ static THD_FUNCTION(TsSimpleService, tsstate) {
 TS_STATE_TABLE
 TS_CONF_TABLE_BEGIN
   TS_CONF_TABLE_ENTRY("TsSimpleService", waTsSimpleService, TS_BASE_PRIO, TsSimpleService, TS_STATE(0))
+  TS_CONF_TABLE_ENTRY("TsStubsService", waTsStubsService, TS_BASE_PRIO+10, TsStubsService, TS_STATE(1))
 TS_CONF_TABLE_END
 
 /** @} */
