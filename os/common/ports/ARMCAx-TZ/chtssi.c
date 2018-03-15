@@ -64,7 +64,8 @@ static event_listener_t tsEventListener;
 
 static bool isAddrSpaceValid(uint8_t *addr, size_t size)
 {
-  //chEvtBroadcastFlags();
+  if (size == 0)
+    return TRUE;
   return (bool)((addr - NSEC_MEMORY_START_ADDR) <
                 (NSEC_MEMORY_END_ADDR - NSEC_MEMORY_START_ADDR)) &&
          (bool)((addr + size - NSEC_MEMORY_START_ADDR) <
@@ -151,8 +152,14 @@ int64_t smcEntry(ts_state_t *svc_handle, ts_params_area_t svc_data,
     if (!isAddrSpaceValid(svc_data, svc_datalen))
       return LOWORD(SMC_SVC_INVALID);
 
-    /* Internal discovery service.*/
-    if (svc_handle == TS_HND_DISCOVERY) {
+    if (svc_handle == TS_HND_VERSION) {
+
+      /* Internal get version service.*/
+      return LOWORD(TSSI_VERSION);
+    }
+    else if (svc_handle == TS_HND_DISCOVERY) {
+
+      /* Internal discovery service.*/
       if (svc_datalen) {
         *((char *)svc_data + svc_datalen - 1) = '\0';
         tssp = findSvcsEntry((char *)svc_data);
@@ -160,7 +167,10 @@ int64_t smcEntry(ts_state_t *svc_handle, ts_params_area_t svc_data,
       if (tssp == NULL)
         return LOWORD(SMC_SVC_NOENT);
       return LOWORD((int32_t)tssp);
-    } else {
+    }
+    else {
+
+      /* User service.*/
       if (!isHndlValid(svc_handle))
         return LOWORD(SMC_SVC_BADH);
       tssp = svc_handle;
@@ -224,6 +234,22 @@ msg_t tssiWaitRequest(ts_state_t *svcp)
 }
 
 /**
+ * @brief   Check that the specified memory space is a subspace of
+ *          the non secure memory space.
+ *
+ * @param[in] addr    start address of the memory space.
+ * @param[in] size    size of the memory space.
+ *
+ * @return            TRUE, if the space is valid.
+ *
+ * @api
+ */
+bool tsIsAddrSpaceValid(void *addr, size_t size)
+{
+    return isAddrSpaceValid((uint8_t *)addr, size);
+}
+
+/**
  * @brief   Initializes the trusted services and jumps in the NSEC world.
  *
  * @init
@@ -278,7 +304,7 @@ CC_NO_RETURN void tssiInit(void)
       mtxRegionWrnsech(REGION_2, NOT_SECURE_WRITE));
 
   /* Mark the whole non secure memory region as non executable
-     by the secure code.*/
+     by the secure side.*/
   tt = (uint32_t *)(__get_TTBR0() & 0xFFFFC000);
   for (d = ((uint32_t)NSEC_MEMORY_START_ADDR >> 20);
        d < ((uint32_t)NSEC_MEMORY_END_ADDR >> 20); d += 1) {

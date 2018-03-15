@@ -35,6 +35,10 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
+/* TSSI interface version. This code is returned also at run time by
+   calling the internal service TS_HND_VERSION.*/
+#define TSSI_VERSION          0x01000000    /* 00 major, 000 minor, 000 build.*/
+
 /* Service registry errors as returned by smc.*/
 #define SMC_SVC_OK            MSG_OK        /* No error.*/
 #define SMC_SVC_INTR          (msg_t)-1     /* Service interrupted ( == MSG_TIMEOUT).*/
@@ -42,7 +46,8 @@
 #define SMC_SVC_INVALID       (msg_t)-3     /* Invalid service parameter(s).*/
 #define SMC_SVC_BADH          (msg_t)-4     /* Invalid service handle.*/
 #define SMC_SVC_EXIST         (msg_t)-5     /* Service already exists.*/
-#define SMC_SVC_NHND          (msg_t)-6     /* No more services.*/
+#define SMC_SVC_NHND          (msg_t)-6     /* No more services or
+                                               service resources.*/
 #define SMC_SVC_BUSY          (msg_t)-7     /* Service busy.*/
 
 /* Special trusted service handles.*/
@@ -50,17 +55,10 @@
 #define TS_HND_DISCOVERY      ((ts_state_t *)1)  /* Discovery service handle.*/
 #define TS_HND_STQRY          ((ts_state_t *)2)  /* Query status service handle.*/
 #define TS_HND_IDLE           ((ts_state_t *)3)  /* Idle service handle.*/
-
-/* Service states.*/
-#define TS_STATE_READY        0
-#define TS_STATE_PROCESSING   1
-#define TS_STATE_DONE         2
+#define TS_HND_VERSION        ((ts_state_t *)4)  /* Get version service handle.*/
 
 /* Services events event mask.*/
 #define EVT_DAEMON_REQ_ATN    EVENT_MASK(0)
-
-/* Service events flags.*/
-#define EVT_DRA_SOCK_PROXY    1
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -71,24 +69,25 @@
  * @{
  */
 
-/*
+/**
  * @brief   Max number of services.
  */
 #define TS_MAX_SVCS           64
 
-/*
+/**
  * @brief   Max smc call timeout, in microseconds.
  */
 #define TS_MAX_TMO            10000
 
-/*
+/**
  * @brief   Secure and non secure memory address spaces.
  */
 #define NSEC_MEMORY_START_ADDR    ((uint8_t *)0x20000000)
 #define NSEC_MEMORY_END_ADDR      ((uint8_t *)0x27000000)
 #define SEC_MEMORY_START_ADDR     ((uint8_t *)0x27000000)
-#define SEC_MEMORY_END_ADDR       ((size_t)0x1000000)
+#define SEC_MEMORY_SIZE           ((size_t)0x1000000)
 
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -145,22 +144,17 @@ typedef struct tssi_service_state {
 #define TS_CONF_TABLE_END                                                   \
 };
 
-/*
+/**
  * @brief   Accessor to the service table entry i.
  */
 #define TS_CONF_TABLE(i) (&ts_configs[i])
 
-/*
+/**
  * @brief   Trusted services base prio.
  */
 #define TS_BASE_PRIO    (NORMALPRIO+1)
 
-/*
- * @brief   Check if service is busy.
- */
-#define TS_IS_BUSY(state)       (state != TS_STATE_READY)
-
-/*
+/**
  * @brief   Set the service status.
  * @note    The service sets the status at a value representing the status
  *          of the completion of the request. This value is
@@ -168,15 +162,15 @@ typedef struct tssi_service_state {
  */
 #define TS_SET_STATUS(svcp, newst)  (((ts_state_t *)svcp)->ts_status = newst)
 
-/*
- * @brief   Get the client shared memory start address.
+/**
+ * @brief   Get the pointer to the client shared memory.
  * @note    The client sets the data field at the start address
  *          of a shared memory allocated from the non secure memory space.
  */
 #define TS_GET_DATA(svcp)  ((char *)((ts_state_t *)svcp)->ts_datap)
 
-/*
- * @brief   Get the client shared memory size.
+/**
+ * @brief   Get the size of the client shared memory.
  * @note    The client sets the datalen field to the size
  *          of a shared memory allocated from the non secure memory space.
  */
@@ -198,6 +192,7 @@ extern "C" {
   CC_NO_RETURN void _ns_trampoline(uint8_t *addr);
   CC_NO_RETURN void tssiInit(void);
   msg_t tssiWaitRequest(ts_state_t *svcp);
+  bool tsIsAddrSpaceValid(void *addr, size_t size);
 #ifdef __cplusplus
 }
 #endif
