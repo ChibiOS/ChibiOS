@@ -20,9 +20,6 @@
 /**
  * @file    tsclient.c
  * @brief   TSSI client module code.
- *
- * @addtogroup TSSI
- * @{
  */
 
 #include "ch.h"
@@ -35,6 +32,7 @@
 /*===========================================================================*/
 /* Module exported variables.                                                */
 /*===========================================================================*/
+EVENTSOURCE_DECL(stubsEventSource);
 
 /*===========================================================================*/
 /* Module local types.                                                       */
@@ -63,7 +61,11 @@ void tsIdle(void) {
 }
 
 /**
- * @brief   Call a service via smc instruction.
+ * @brief   Call a service via smc instruction with yield times.
+ * @details a time slice will be yielded also to the lower prio NSEC threads,
+ *          whenever the service call is interrupted.
+ *          This avoids the starvation of NSEC threads that run to lower prio,
+ *          due to continue polling of the called service status.
  *
  * @param[in] handle        The handle of the service to invoke.
  *                          The handle is obtained by an invoke to discovery
@@ -74,8 +76,9 @@ void tsIdle(void) {
  * @param[in] svc_nsec_time The time slice that will be yielded to the lower
  *                          prio NSEC threads, whenever the service call is
  *                          interrupted, in microseconds.
- *                          This avoids the starvation of lower NSEC thread due
- *                          to continue polling of the called service status.
+ *                          This avoids the starvation of NSEC threads that run
+ *                          to lower prio, due to continue polling of the
+ *                          called service status.
  *                          0 means no time slice is yielded.
  *
  * @return                  The service status. The value depends on the service.
@@ -89,17 +92,46 @@ void tsIdle(void) {
  * @api
  */
 msg_t tsInvokeService(ts_service_t handle, ts_params_area_t data,
-                       size_t size, sysinterval_t svc_nsec_time)
+                       size_t size)
 {
-  int64_t result;
+  msg_t result;
 
   result = tsInvoke1(handle, data, size, TS_GRANTED_TIMESLICE);
-  while ((msg_t)result == SMC_SVC_INTR) {
-    if (svc_nsec_time != 0)
-      chThdSleepMicroseconds(svc_nsec_time);
+  while (result == SMC_SVC_INTR) {
+    chThdSleepMicroseconds(TS_GRANTED_TIMESLICE);
     result = tsInvoke1(TS_HND_STQRY, handle, 0, TS_GRANTED_TIMESLICE);
   }
-  return (msg_t)result;
+  return result;
 }
 
-/** @} */
+/**
+ * @brief   Call a service via smc instruction without yield time to NSEC.
+ *
+ * @param[in] handle        The handle of the service to invoke.
+ *                          The handle is obtained by an invoke to discovery
+ *                          service.
+ * @param[in,out] svc_data  Service request data, often a reference to a more
+ *                          complex structure.
+ * @param[in] svc_datalen   Size of the svc_data memory area.
+ *
+ * @return                  The service status. The value depends on the service.
+ *
+ * @retval SMC_SVC_OK       generic success value.
+ * @retval SMC_SVC_BUSY     the service has a pending request.
+ * @retval SMC_SVC_INVALID  bad parameters.
+ * @retval SMC_SVC_NOENT    no such service.
+ * @retval SMC_SVC_BADH     bad handle.
+ *
+ * @api
+ */
+msg_t tsInvokeServiceNoYield(ts_service_t handle, ts_params_area_t data,
+                       size_t size)
+{
+  msg_t result;
+
+  result = tsInvoke1(handle, data, size, TS_GRANTED_TIMESLICE);
+  while (result == SMC_SVC_INTR) {
+    result = tsInvoke1(TS_HND_STQRY, handle, 0, TS_GRANTED_TIMESLICE);
+  }
+  return result;
+}

@@ -20,9 +20,6 @@
 /**
  * @file    tsclient.h
  * @brief   TSSI client module macros and structures.
- *
- * @addtogroup TSSI
- * @{
  */
 
 #ifndef TSCLIENT_H
@@ -53,9 +50,13 @@
 
 #define TS_GRANTED_TIMESLICE  1000                 /* Microseconds.*/
 
+#if !defined(TS_CHECK_EVENT_HOOK)
 #define TS_CHECK_EVENT_HOOK(f) {                                             \
-  (void)f;                                                                   \
+  extern event_source_t stubsEventSource;                                    \
+  if (f)                                                                     \
+    chEvtBroadcastFlags(&stubsEventSource, f);                               \
 }
+#endif
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -78,7 +79,27 @@ typedef void * ts_service_t;
 
 /**
  * @brief   Call a service via smc instruction.
- * @note    see tsInvoke1()
+ * @details call a given service via smc.
+ *
+ * @param[in] handle        The handle of the service to invoke.
+ *                          The handle is obtained by an invoke to discovery
+ *                          service.
+ * @param[in,out] svc_data  Service request data, often a reference to a more
+ *                          complex structure.
+ * @param[in] svc_datalen   Size of the svc_data memory area.
+ * @param[in] yieldtime     The time yield to SEC service to run, in microsec.
+ *
+ * @return                  A 64bit value. It is composed by the 32bit service
+ *                          status in the lo-word with the 32bit event mask in
+ *                          the hi-word.
+ *                          The retval values are returned in the lower word
+ *                          as 32bit int.
+ * @retval SMC_SVC_OK       generic success value.
+ * @retval SMC_SVC_INTR     call interrupted.
+ * @retval SMC_SVC_BUSY     the service has a pending request.
+ * @retval SMC_SVC_INVALID  bad parameters.
+ * @retval SMC_SVC_NOENT    no such service.
+ * @retval SMC_SVC_BADH     bad handle.
  *
  * @notapi
  */
@@ -110,11 +131,8 @@ static inline int64_t tsInvoke0(ts_service_t handle, ts_params_area_t data,
  * @param[in] svc_datalen   Size of the svc_data memory area.
  * @param[in] yieldtime     The time yield to SEC service to run, in microsec.
  *
- * @return                  A 64bit value. It is composed by the 32bit service
- *                          status in the lo-word with the 32bit event mask in
- *                          the hi-word.
- *                          The retval values are returned in the lower word
- *                          as 32bit int.
+ * @return                  The service status. The value depends on the service.
+ *
  * @retval SMC_SVC_OK       generic success value.
  * @retval SMC_SVC_INTR     call interrupted.
  * @retval SMC_SVC_BUSY     the service has a pending request.
@@ -124,15 +142,15 @@ static inline int64_t tsInvoke0(ts_service_t handle, ts_params_area_t data,
  *
  * @api
  */
-static inline int64_t tsInvoke1(ts_service_t handle, ts_params_area_t data,
-    size_t size, sysinterval_t timeslice) {
+static inline msg_t tsInvoke1(ts_service_t handle, ts_params_area_t data,
+    size_t size, sysinterval_t yieldtime) {
   int64_t result;
   eventflags_t f;
 
-  result = tsInvoke0(handle, data, size, timeslice);
+  result = tsInvoke0(handle, data, size, yieldtime);
   f = (eventflags_t)(result >> 32);
   TS_CHECK_EVENT_HOOK(f);
-  return result;
+  return (msg_t)result;
 }
 
 /*===========================================================================*/
@@ -142,8 +160,11 @@ static inline int64_t tsInvoke1(ts_service_t handle, ts_params_area_t data,
 #ifdef __cplusplus
 extern "C" {
 #endif
-msg_t tsInvokeService(ts_service_t handle, ts_params_area_t data,
-                       size_t size, sysinterval_t svc_nsec_time);
+  msg_t tsInvokeService(ts_service_t handle, ts_params_area_t data,
+                          size_t size);
+  msg_t tsInvokeServiceNoYield(ts_service_t handle, ts_params_area_t data,
+                                 size_t size);
+  extern event_source_t stubsEventSource;
 #ifdef __cplusplus
 }
 #endif
@@ -153,5 +174,3 @@ msg_t tsInvokeService(ts_service_t handle, ts_params_area_t data,
 /*===========================================================================*/
 
 #endif /* TSCLIENT_H */
-
-/** @} */
