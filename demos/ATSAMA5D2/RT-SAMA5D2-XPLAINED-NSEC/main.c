@@ -17,9 +17,12 @@
 #include "ch.h"
 #include "hal.h"
 #include "tsclient.h"
+#include "daemons/tssockskel.h"
 #include "rt_test_root.h"
 #include "oslib_test_root.h"
 #include "chprintf.h"
+#include "lwipthread.h"
+
 /*
  * LED blinker thread, times are in milliseconds.
  */
@@ -65,6 +68,7 @@ int main(void) {
    */
   halInit();
   chSysInit();
+  lwipInit(NULL);
 
   /*
    * Activates the serial driver 0 using the driver default configuration.
@@ -74,7 +78,10 @@ int main(void) {
   /*
    * Creates the blinker thread.
    */
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO-1, Thread1, NULL);
+  chThdCreateStatic(waThread1, sizeof waThread1, NORMALPRIO-1, Thread1, NULL);
+
+  chThdCreateStatic(waTsSockSkelDaemon, sizeof waTsSockSkelDaemon, NORMALPRIO,
+      TsSockSkelDaemon, NULL);
 
   /*
    * Call the dummy secure service
@@ -82,9 +89,8 @@ int main(void) {
   chprintf((BaseSequentialStream*)&SD0, "Calling the secure service\n\r");
 
   /* Retrieve the service handle by name */
-  tssvc = (ts_service_t) tsInvokeService(
-      TS_HND_DISCOVERY, (ts_params_area_t)"TsSimpleService",
-      sizeof "TsSimpleService", 0);
+  tssvc = (ts_service_t) tsInvokeServiceNoYield(TS_HND_DISCOVERY,
+      (ts_params_area_t)"TsSimpleService", sizeof "TsSimpleService");
   if ((int32_t)tssvc < 0) {
     chprintf((BaseSequentialStream*)&SD0, "Cannot get the handle of '%s': %d\r\n",
         "TsSimpleService", tssvc);
@@ -97,14 +103,14 @@ int main(void) {
     msg_t r;
 
     /* Invoke the service */
-    r = tsInvokeService(tssvc, (ts_params_area_t)"HELO", sizeof "HELO", TS_GRANTED_TIMESLICE);
+    r = tsInvokeServiceNoYield(tssvc, (ts_params_area_t)"HELO", sizeof "HELO");
     chprintf((BaseSequentialStream*)&SD0, "Call result: %d\r\n", r);
-    if(!palReadPad(PIOB, PIOB_USER_PB)) {
 #if 0
+    if(!palReadPad(PIOB, PIOB_USER_PB)) {
       test_execute((BaseSequentialStream *)&SD0, &rt_test_suite);
       test_execute((BaseSequentialStream *)&SD0, &oslib_test_suite);
-#endif
     }
+#endif
     chThdSleepMilliseconds(500);
   }
 }

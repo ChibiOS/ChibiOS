@@ -125,6 +125,7 @@ include $(CHIBIOS)/os/common/ports/ARM/compilers/GCC/mk/port_generic.mk
 include $(CHIBIOS)/test/lib/test.mk
 include $(CHIBIOS)/test/rt/rt_test.mk
 include $(CHIBIOS)/test/oslib/oslib_test.mk
+include lwip.mk
 
 # Define linker script file here
 LDSCRIPT= $(STARTUPLD)/SAMA5D2ddr.ld
@@ -138,9 +139,13 @@ CSRC = $(STARTUPSRC) \
        $(HALSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
+       $(LWSRC) \
        $(TESTSRC) \
+       $(CHIBIOS)/os/various/evtimer.c \
        $(CHIBIOS)/os/hal/lib/streams/chprintf.c \
+	   daemons/tssockskel.c \
        tsclient.c \
+       lwipthread.c \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -174,6 +179,7 @@ ASMXSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
 INCDIR = $(CHIBIOS)/os/license \
          $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) $(TESTINC) \
+         $(LWINC) \
          $(CHIBIOS)/os/hal/lib/streams $(CHIBIOS)/os/various
 
 #
