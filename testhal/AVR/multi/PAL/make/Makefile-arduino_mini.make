@@ -69,35 +69,33 @@ PROJECT = ch
 
 # Imported source files and paths
 CHIBIOS = ../../../..
-CONFDIR  := ./cfg-arduino_mega
-BUILDDIR := ./build-arduino_mega
-DEPDIR   := ./.dep-arduino_mega
+CONFDIR  := ./cfg/arduino_mini
+BUILDDIR := ./build/arduino_mini
+DEPDIR   := ./.dep/arduino_mini
+
+# Licensing files.
+include $(CHIBIOS)/os/license/license.mk
 
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/boards/ARDUINO_MEGA/board.mk
+include $(CHIBIOS)/os/hal/boards/ARDUINO_MINI/board.mk
 include $(CHIBIOS)/os/hal/ports/AVR/MEGA/ATMEGAxx/platform.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
+
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/AVR/compilers/GCC/mk/port.mk
 
 # List C source files here. (C dependencies are automatically generated.)
-CSRC =  $(KERNSRC)                      \
-        $(PORTSRC)                      \
-        $(OSALSRC)                      \
-        $(HALSRC)                       \
-        $(PLATFORMSRC)                  \
-        $(BOARDSRC)                     \
-        $(CHIBIOS)/os/various/evtimer.c \
+CSRC =  $(ALLCSRC)          \
+       $(CONFDIR)/portab.c  \
         main.c
 
 # List C++ sources file here.
-CPPSRC =
+CPPSRC = $(ALLCPPSRC)
 
-INCDIR =  $(CHIBIOS)/os/license $(PORTINC) $(KERNINC) \
-          $(HALINC) $(OSALINC) $(PLATFORMINC)         \
-          $(BOARDINC) $(CHIBIOS)/os/various $(CONFDIR)
+# Header files here.
+INCDIR = $(ALLINC) $(CONFDIR)
 
 #
 # Project, sources and paths.
@@ -108,7 +106,7 @@ INCDIR =  $(CHIBIOS)/os/license $(PORTINC) $(KERNINC) \
 #
 
 # Micro-Controller Unit.
-MCU  = atmega2560
+MCU  = atmega328p
 
 # MCU frequency (Hz).
 F_CPU = 16000000
@@ -181,7 +179,7 @@ ULIBS =
 
 # TODO: Add the programmer for ATtiny, and for ATXmega.
 # AVR programmer.
-AVRDUDE_PROGRAMMER = wiring
+AVRDUDE_PROGRAMMER = arduino
 
 # AVR serial port.
 AVRDUDE_PORT = /dev/ttyUSB0
@@ -207,7 +205,7 @@ endif
 # AVR programmer flags.
 AVRDUDE_FLAGS = -p $(MCU)
 AVRDUDE_FLAGS += -P $(AVRDUDE_PORT)
-AVRDUDE_FLAGS += -b 115200
+AVRDUDE_FLAGS += -b 57600
 AVRDUDE_FLAGS += -c $(AVRDUDE_PROGRAMMER)
 AVRDUDE_FLAGS += $(AVRDUDE_NO_VERIFY)
 AVRDUDE_FLAGS += $(AVRDUDE_VERBOSE)

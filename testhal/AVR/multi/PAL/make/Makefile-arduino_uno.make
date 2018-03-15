@@ -69,35 +69,33 @@ PROJECT = ch
 
 # Imported source files and paths
 CHIBIOS = ../../../..
-CONFDIR  := ./cfg-arduino_uno
-BUILDDIR := ./build-arduino_uno
-DEPDIR   := ./.dep-arduino_uno
+CONFDIR  := ./cfg/arduino_uno
+BUILDDIR := ./build/arduino_uno
+DEPDIR   := ./.dep/arduino_uno
+
+# Licensing files.
+include $(CHIBIOS)/os/license/license.mk
 
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/boards/ARDUINO_UNO/board.mk
 include $(CHIBIOS)/os/hal/ports/AVR/MEGA/ATMEGAxx/platform.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
+
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/AVR/compilers/GCC/mk/port.mk
 
 # List C source files here. (C dependencies are automatically generated.)
-CSRC =  $(KERNSRC)                      \
-        $(PORTSRC)                      \
-        $(OSALSRC)                      \
-        $(HALSRC)                       \
-        $(PLATFORMSRC)                  \
-        $(BOARDSRC)                     \
-        $(CHIBIOS)/os/various/evtimer.c \
+CSRC =  $(ALLCSRC)          \
+       $(CONFDIR)/portab.c  \
         main.c
 
 # List C++ sources file here.
-CPPSRC =
+CPPSRC = $(ALLCPPSRC)
 
-INCDIR =  $(CHIBIOS)/os/license $(PORTINC) $(KERNINC)  \
-          $(HALINC) $(OSALINC) $(PLATFORMINC)          \
-          $(BOARDINC) $(CHIBIOS)/os/various $(CONFDIR)
+# Header files here.
+INCDIR = $(ALLINC) $(CONFDIR)
 
 #
 # Project, sources and paths.
