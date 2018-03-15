@@ -82,6 +82,21 @@ static bool isOpValid(stub_op_t *op)
   return TRUE;
 }
 
+/**
+ * @brief   Simulate an a call to a NSEC function.
+ * @details It activates the channel between the stubs service and
+ *          the skels daemon running in the nsec world.
+ *          To do it, it uses an event to signal the skels
+ *          daemon that a new op request is ready to be executed.
+ *          The skels daemon will then, behind the scenes, gets the op calling,
+ *          via smc, the stubs service. The skel executes it and then calls the
+ *          stubs service again to post the result and to wake up the
+ *          calling thread of this function.
+ *
+ * @param[in] op    the 'remote' method description.
+ *
+ * @return          the return value of 'remote' method.
+ */
 static uint32_t callRemote(stub_op_t *op) {
   uint32_t r;
 
@@ -131,6 +146,8 @@ THD_FUNCTION(TsStubsService, tsstate) {
 
     switch (skrp->req) {
     case SKEL_REQ_GETOP:
+
+      /* The nsec skel calls us to get a new op ready to be executed.*/
       if (chFifoReceiveObjectTimeout(&ops_fifo, (void **)&op, TIME_IMMEDIATE) ==
             MSG_TIMEOUT) {
         r = SMC_SVC_NHND;
@@ -138,6 +155,8 @@ THD_FUNCTION(TsStubsService, tsstate) {
       }
       skrp->stub_op = (uint32_t)op;
       skrp->stub_op_code = op->op_code;
+
+      /* Pass all the 'by value' arguments.*/
       for (i = 0; i < METHOD_MAX_PARAMS; ++i) {
         if (op->op_p[i].dir == OP_PRMDIR_NONE)
           skrp->stub_op_p[i] = op->op_p[i].val;
@@ -146,12 +165,23 @@ THD_FUNCTION(TsStubsService, tsstate) {
       break;
 
     case SKEL_REQ_CPYPRMS:
+
+      /* The nsec skel calls us to get a copy of the 'in' parameters of
+         the specified op.
+         An 'in' parameter is an indirect argument, that is an argument
+         the value of which is a pointer to a memory buffer, that
+         must be copied in a non secure memory buffer.
+         It represents data to be consumed by the callee.*/
       op = (stub_op_t *)skrp->stub_op;
       if (!isOpValid(op) || op->op_state != PENDING ||
             op->op_code != skrp->stub_op_code) {
         r = SMC_SVC_INVALID;
         break;
       }
+
+      /* Copy all 'in' parameters.
+         For each parameter check that the destination memory area
+         is in the non secure memory arena.*/
       for (i = 0; i < METHOD_MAX_PARAMS; ++i) {
         if ((op->op_p[i].dir & OP_PRMDIR_IN) == 0)
           continue;
@@ -165,12 +195,23 @@ THD_FUNCTION(TsStubsService, tsstate) {
       break;
 
     case SKEL_REQ_PUTRES:
+
+      /* The nsec skel calls us to put a copy of the 'out' parameters of
+         the specified op.
+         An 'out' parameter is an indirect argument, that is an argument
+         the value of which is a pointer to a memory buffer, that
+         must be copied in a secure memory buffer.
+         It represents data produced by the callee.*/
       op = (stub_op_t *)skrp->stub_op;
       if (!isOpValid(op) || op->op_state != PENDING ||
             op->op_code != skrp->stub_op_code) {
         r = SMC_SVC_INVALID;
         break;
       }
+
+      /* Copy all 'out' parameters.
+         For each parameter check that the source memory area
+         is in the non secure memory arena.*/
       for (i = 0; i < METHOD_MAX_PARAMS; ++i) {
         if ((op->op_p[i].dir & OP_PRMDIR_OUT) == 0)
           continue;
@@ -183,6 +224,9 @@ THD_FUNCTION(TsStubsService, tsstate) {
       }
       if (r != SMC_SVC_OK)
         break;
+
+      /* Set the return value of the 'remote' callee method,
+         and wake up the secure caller.*/
       op->op_code = skrp->stub_op_result;
       chThdResume(&op->op_wthdp, MSG_OK);
       break;
