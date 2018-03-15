@@ -1,13 +1,19 @@
 #!/bin/bash
-if [ $# -eq 0 ]
-then
-  find ../.. -name "halconf.h" -exec bash update_halconf.sh "{}" \;
+if [ $# -eq 2 ]
+  then
+  if [ $1 = "rootpath" ]
+  then
+    find $2 -name "halconf.h" -exec bash update_halconf.sh "{}" \;
+  else
+    echo "Usage: update_halconf.sh [rootpath <path>]"
+  fi
 elif [ $# -eq 1 ]
 then
-#  if egrep -q "" $1
+  declare conffile=$(<$1)
+#  if egrep -q "" <<< "$conffile"
 #  then
     echo Processing: $1
-    cat $1 | egrep -e "\#define\s+[a-zA-Z0-9_]*\s+[a-zA-Z0-9_]" | cut --bytes=9- - | sed 's/  */=/g' > ./values.txt
+    egrep -e "\#define\s+[a-zA-Z0-9_]*\s+[a-zA-Z0-9_]" <<< "$conffile" | sed 's/\#define //g; s/  */=/g' > ./values.txt
     if ! fmpp -q -C halconf.fmpp
     then
       echo
@@ -18,5 +24,6 @@ then
     rm ./halconf.h ./values.txt
 #  fi
 else
-  echo "illegal number of arguments"
+ echo "Usage: update_halconf.sh [rootpath <root path>]"
+ echo "       update_halconf.sh <configuration file>]"
 fi

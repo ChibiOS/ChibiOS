@@ -1,13 +1,19 @@
 #!/bin/bash
-if [ $# -eq 0 ]
-then
-  find ../.. -name "chconf.h" -exec bash update_chconf_nil.sh "{}" \;
+if [ $# -eq 2 ]
+  then
+  if [ $1 = "rootpath" ]
+  then
+    find $2 -name "chconf.h" -exec bash update_chconf_nil.sh "{}" \;
+  else
+    echo "Usage: update_chconf_nil.sh [rootpath <root path>]"
+  fi
 elif [ $# -eq 1 ]
 then
-  if egrep -q "_CHIBIOS_NIL_CONF_" $1
+  declare conffile=$(<$1)
+  if egrep -q "_CHIBIOS_NIL_CONF_" <<< "$conffile"
   then
     echo Processing: $1
-    cat $1 | egrep -e "\#define\s+[a-zA-Z0-9_]*\s+[a-zA-Z0-9_]" | cut --bytes=9- - | sed 's/  */=/g' > ./values.txt
+    egrep -e "\#define\s+[a-zA-Z0-9_]*\s+[a-zA-Z0-9_]" <<< "$conffile" | sed 's/\#define //g; s/  */=/g' > ./values.txt
     if ! fmpp -q -C chconf_nil.fmpp
     then
       echo
@@ -18,5 +24,6 @@ then
     rm ./chconf.h ./values.txt
   fi
 else
-  echo "illegal number of arguments"
+ echo "Usage: update_chconf_nil.sh [rootpath <root path>]"
+ echo "       update_chconf_nil.sh <configuration file>]"
 fi
