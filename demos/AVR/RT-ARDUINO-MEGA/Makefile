@@ -84,6 +84,8 @@ PROJECT = ch
 
 # Imported source files and paths
 CHIBIOS = ../../..
+
+# Licensing files.
 include $(CHIBIOS)/os/license/license.mk
 
 # HAL-OSAL files (optional).
