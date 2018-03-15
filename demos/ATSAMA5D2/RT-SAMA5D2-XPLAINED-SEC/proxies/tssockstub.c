@@ -121,6 +121,10 @@ static stub_op_t *getNewOp(void) {
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
+/**
+ * @brief     The stubs service.
+ * @details   And this is where the magic happens.
+ */
 THD_WORKING_AREA(waTsStubsService, 1024);
 THD_FUNCTION(TsStubsService, tsstate) {
   ts_state_t *svcp = tsstate;
