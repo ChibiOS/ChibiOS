@@ -99,10 +99,10 @@
 typedef uint8_t * ts_params_area_t;
 
 typedef struct tssi_service_state {
-  uint32_t  ts_status;
-  thread_reference_t ts_thdp;
-  ts_params_area_t ts_datap;
-  uint32_t  ts_datalen;
+  uint32_t            ts_status;
+  thread_reference_t  ts_thdp;
+  ts_params_area_t    ts_datap;
+  uint32_t            ts_datalen;
 } ts_state_t;
 
 /*===========================================================================*/
@@ -124,6 +124,7 @@ typedef struct tssi_service_state {
  * @brief    Accessor to the runtime state of service i.
  */
 #define TS_STATE(i) (&ts_state[i])
+
 
 /**
  * @brief   Start of user service table.
