@@ -41,7 +41,7 @@
 /* Module local variables.                                                   */
 /*===========================================================================*/
 
-static ts_service_t tsStubsService;
+static ts_service_t tsStubsService = NULL;
 
 /*===========================================================================*/
 /* Module local functions.                                                   */
@@ -159,6 +159,7 @@ static void l_recv(skel_req_t *skreqp) {
     /* call the api exposed by the TCP/IP stack.*/
     result = recv((int)skreqp->stub_op_p[0], mem, len,
         (int)skreqp->stub_op_p[3]);
+    skreqp->stub_op_p[1] = (uint32_t)mem;
   }
 
   /* report the result and copy 'out' parameter mem.*/
@@ -254,16 +255,18 @@ static void l_bind(skel_req_t *skreqp) {
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
-THD_WORKING_AREA(waTsSockSkelDaemon, 2048);
+THD_WORKING_AREA(waTsSockSkelDaemon0, 2048);
+THD_WORKING_AREA(waTsSockSkelDaemon1, 2048);
+THD_WORKING_AREA(waTsSockSkelDaemon2, 2048);
 THD_FUNCTION(TsSockSkelDaemon, arg) {
-  (void)arg;
 
   event_listener_t  el;
   skel_req_t        skel_req;
   msg_t             r;
 
-  tsStubsService = (ts_service_t)tsInvokeServiceNoYield(TS_HND_DISCOVERY,
-      (ts_params_area_t)"TsStubsService", sizeof "TsStubsService");
+  if (arg != NULL)
+    tsStubsService = (ts_service_t)tsInvokeServiceNoYield(TS_HND_DISCOVERY,
+        (ts_params_area_t)"TsStubsService", sizeof "TsStubsService");
   chEvtRegisterMaskWithFlags(&stubsEventSource, &el, ALL_EVENTS, EVT_F_SOCK_NEW_OP);
   for (;/* ever */;) {
     chEvtWaitAny(ALL_EVENTS);

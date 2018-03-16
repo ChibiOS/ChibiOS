@@ -72,14 +72,14 @@
  *  @brief  IP Address.
  */
 #if !defined(LWIP_IPADDR) || defined(__DOXYGEN__)
-#define LWIP_IPADDR(p)                      IP4_ADDR(p, 192, 168, 0, 5)
+#define LWIP_IPADDR(p)                      IP4_ADDR(p, 192, 168, 21, 11)
 #endif
 
 /**
  * @brief   IP Gateway.
  */
 #if !defined(LWIP_GATEWAY) || defined(__DOXYGEN__)
-#define LWIP_GATEWAY(p)                     IP4_ADDR(p, 192, 168, 0, 1)
+#define LWIP_GATEWAY(p)                     IP4_ADDR(p, 192, 168, 21, 1)
 #endif
 
 /**

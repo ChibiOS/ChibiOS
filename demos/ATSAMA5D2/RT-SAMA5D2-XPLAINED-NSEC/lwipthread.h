@@ -58,7 +58,7 @@
  * @brief  lwIP thread stack size.
  */
 #if !defined(LWIP_THREAD_STACK_SIZE) || defined(__DOXYGEN__)
-#define LWIP_THREAD_STACK_SIZE              1400
+#define LWIP_THREAD_STACK_SIZE              4096
 #endif
 
 /**
@@ -72,14 +72,14 @@
  *  @brief  IP Address.
  */
 #if !defined(LWIP_IPADDR) || defined(__DOXYGEN__)
-#define LWIP_IPADDR(p)                      IP4_ADDR(p, 192, 168, 21, 11)
+#define LWIP_IPADDR(p)                      IP4_ADDR(p, 192, 168, 1, 113)
 #endif
 
 /**
  * @brief   IP Gateway.
  */
 #if !defined(LWIP_GATEWAY) || defined(__DOXYGEN__)
-#define LWIP_GATEWAY(p)                     IP4_ADDR(p, 192, 168, 21, 1)
+#define LWIP_GATEWAY(p)                     IP4_ADDR(p, 192, 168, 1, 254)
 #endif
 
 /**

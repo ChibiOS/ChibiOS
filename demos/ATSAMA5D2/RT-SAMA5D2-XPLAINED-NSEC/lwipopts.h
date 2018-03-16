@@ -2113,10 +2113,10 @@
 
 /* Use ChibiOS specific priorities. */
 #if !defined(TCPIP_THREAD_PRIO)
-#define TCPIP_THREAD_PRIO               (LOWPRIO + 1)
+#define TCPIP_THREAD_PRIO               (NORMALPRIO - 1)
 #endif
 #if !defined(LWIP_THREAD_PRIORITY)
-#define LWIP_THREAD_PRIORITY            (LOWPRIO)
+#define LWIP_THREAD_PRIORITY            (NORMALPRIO - 2)
 #endif
 
 #endif /* LWIP_HDR_LWIPOPTS_H__ */

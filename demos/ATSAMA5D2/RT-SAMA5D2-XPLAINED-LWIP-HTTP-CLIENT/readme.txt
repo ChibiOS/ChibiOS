@@ -8,8 +8,8 @@ The demo runs on an SAMA5D2-XPLAINED board.
 
 ** The Demo **
 
-The demo currently just flashes a LED using a thread and serves HTTP requests
-at address 192.168.21.11 on port 80.
+The demo currently just flashes a LED using a thread and send HTTP GET
+at host defined in web.h on port 80.
 
 ** Build Procedure **
 

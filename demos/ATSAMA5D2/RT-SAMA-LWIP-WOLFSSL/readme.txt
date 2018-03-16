@@ -11,10 +11,10 @@ The demo runs on SAMA5D2-XPLAINED
 The demo flashes a LED to indicate that is running properly.
 
 An example HTTPS server is implemented to serve "GET /" requests at address 
-192.168.0.5 on port 443.
+192.168.21.11 on port 443.
 
 Use curl command line to verify DEMO
->>curl -k https://192.168.0.5
+>>curl -k https://192.168.21.11
 
 SSL certificate and server key that are compiled in are the example keys 
 taken from the wolfSSL repository. To use different keys, regenerate cert.c 

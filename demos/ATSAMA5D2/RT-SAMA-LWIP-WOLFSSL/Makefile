@@ -113,6 +113,8 @@ CONFDIR  := ./cfg
 # Imported source files and paths
 CHIBIOS = ../../..
 
+# Licensing files.
+include $(CHIBIOS)/os/license/license.mk
 # Startup files.
 include $(CHIBIOS)/os/common/startup/ARMCAx-TZ/compilers/GCC/mk/startup_sama5d2.mk
 # HAL-OSAL files (optional).
@@ -128,7 +130,6 @@ include $(CHIBIOS)/os/common/ports/ARMCAx-TZ/compilers/GCC/mk/port_generic.mk
 #include $(CHIBIOS)/test/rt/rt_test.mk
 #include $(CHIBIOS)/test/oslib/oslib_test.mk
 include $(CHIBIOS)/os/hal/lib/streams/streams.mk
-include $(CHIBIOS)/os/various/fatfs_bindings/fatfs.mk
 include cfg/lwip.mk
 include cfg/wolfssl.mk
 
@@ -138,21 +139,14 @@ LDSCRIPT= $(STARTUPLD)/SAMA5D2ddr.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
-CSRC = $(STARTUPSRC) \
-       $(KERNSRC) \
-       $(PORTSRC) \
-       $(OSALSRC) \
-       $(HALSRC) \
-       $(PLATFORMSRC) \
-       $(BOARDSRC) \
-       $(LWSRC) \
-       $(WOLFSRC) \
+CSRC = $(ALLCSRC) \
+       $(LWSRC)   \
        $(CHIBIOS)/os/various/evtimer.c \
        web/web.c web/cert.c lwipthread.c wolfssl_chibios.c main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
-CPPSRC =
+CPPSRC = $(ALLCPPSRC)
 
 # C sources to be compiled in ARM mode regardless of the global setting.
 # NOTE: Mixing ARM and THUMB mode enables the -mthumb-interwork compiler
@@ -175,14 +169,14 @@ TCSRC =
 TCPPSRC =
 
 # List ASM source files here
-ASMSRC =
-ASMXSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
+ASMSRC = $(ALLASMSRC)
+ASMXSRC = $(ALLXASMSRC)
 
-INCDIR = $(CHIBIOS)/os/license \
-         $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
-         $(HALINC) $(PLATFORMINC) $(BOARDINC) \
-         $(LWINC) $(STREAMSINC)  \
-         $(CHIBIOS)/os/various $(WOLFINC) $(CONFDIR)
+INCDIR = $(ALLINC) \
+         $(CHIBIOS)/os/various \
+         $(WOLFINC) \
+         $(LWINC)   \
+         $(CONFDIR) \
 
 #
 # Project, sources and paths

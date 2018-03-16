@@ -87,7 +87,7 @@ static bool isOpValid(stub_op_t *op)
  * @details It activates the channel between the stubs service and
  *          the skels daemon running in the nsec world.
  *          To do it, it uses an event to signal the skels
- *          daemon that a new op request is ready to be executed.
+ *          daemons that a new op request is ready to be executed.
  *          The skels daemon will then, behind the scenes, gets the op calling,
  *          via smc, the stubs service. The skel executes it and then calls the
  *          stubs service again to post the result and to wake up the
@@ -151,7 +151,7 @@ THD_FUNCTION(TsStubsService, tsstate) {
     switch (skrp->req) {
     case SKEL_REQ_GETOP:
 
-      /* The nsec skel calls us to get a new op ready to be executed.*/
+      /* The nsec skeleton calls us to get a new op ready to be executed.*/
       if (chFifoReceiveObjectTimeout(&ops_fifo, (void **)&op, TIME_IMMEDIATE) ==
             MSG_TIMEOUT) {
         r = SMC_SVC_NHND;

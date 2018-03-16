@@ -24,17 +24,19 @@
 #include <string.h>
 
 #define SERVER_PORT_NUM 8080
-#define SERVER_IP_ADDRESS "192.136.23.21"
+#define SERVER_IP_ADDRESS "192.168.1.76"
 
 void tcpexample(void) {
   int socket_fd;
   struct sockaddr_in ra;
 
   int recv_data; char data_buffer[80];
+  struct fd_set rset;
+  struct timeval tm = {5, 0};
 
   /*
-   * Creates an TCP socket (SOCK_STREAM) with Internet Protocol Family
-   * (PF_INET). Protocol family and Address family related. For example
+   * Creates an TCP socket, i.e. a SOCK_STREAM, with Internet Protocol Family,
+   * i.e. PF_INET. Protocol family and Address family are related. For example
    * PF_INET Protocol Family and AF_INET family are coupled.
    */
   socket_fd = socket(PF_INET, SOCK_STREAM, 0);
@@ -44,7 +46,9 @@ void tcpexample(void) {
     return;
   }
 
-  /* Connects to server ip-address. */
+  FD_ZERO(&rset);
+
+  /* Connects to server ip-address.*/
   memset(&ra, 0, sizeof(struct sockaddr_in));
   ra.sin_family = AF_INET;
   ra.sin_addr.s_addr = inet_addr(SERVER_IP_ADDRESS);
@@ -57,11 +61,21 @@ void tcpexample(void) {
     close(socket_fd);
     return;
   }
-  if (send(socket_fd, "Baba", sizeof "Baba", 0) < 0) {
+  if (send(socket_fd, "A' sfugliatella e o' babà.\r\n",
+        sizeof "A' sfugliatella e o' babà.\r\n", 0) < 0) {
     chprintf((BaseSequentialStream *)&SD1, "send failed \n");
     close(socket_fd);
     return;
   }
+  do {
+    FD_SET(socket_fd, &rset);
+    recv_data = select(socket_fd+1, &rset, 0, 0, &tm);
+    if (recv_data < 0) {
+      chprintf((BaseSequentialStream *)&SD1, "select failed \n");
+      close(socket_fd);
+      return;
+    }
+  } while (recv_data == 0);
   recv_data = recv(socket_fd, data_buffer, sizeof data_buffer, 0);
   if (recv_data < 0) {
     chprintf((BaseSequentialStream *)&SD1, "recv failed \n");

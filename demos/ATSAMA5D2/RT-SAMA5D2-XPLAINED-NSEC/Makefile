@@ -108,9 +108,14 @@ endif
 
 # Define project name here
 PROJECT = ch
+BUILDDIR := ./build
+DEPDIR   := ./.dep
 
 # Imported source files and paths
 CHIBIOS = ../../..
+
+# Licensing files.
+include $(CHIBIOS)/os/license/license.mk
 # Startup files.
 include $(CHIBIOS)/os/common/startup/ARM/compilers/GCC/mk/startup_sama5d2.mk
 # HAL-OSAL files (optional).
@@ -125,6 +130,7 @@ include $(CHIBIOS)/os/common/ports/ARM/compilers/GCC/mk/port_generic.mk
 include $(CHIBIOS)/test/lib/test.mk
 include $(CHIBIOS)/test/rt/rt_test.mk
 include $(CHIBIOS)/test/oslib/oslib_test.mk
+include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 include lwip.mk
 
 # Define linker script file here
@@ -132,17 +138,9 @@ LDSCRIPT= $(STARTUPLD)/SAMA5D2ddr.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
-CSRC = $(STARTUPSRC) \
-       $(KERNSRC) \
-       $(PORTSRC) \
-       $(OSALSRC) \
-       $(HALSRC) \
-       $(PLATFORMSRC) \
-       $(BOARDSRC) \
-       $(LWSRC) \
+CSRC = $(ALLCSRC) \
        $(TESTSRC) \
        $(CHIBIOS)/os/various/evtimer.c \
-       $(CHIBIOS)/os/hal/lib/streams/chprintf.c \
 	   daemons/tssockskel.c \
        tsclient.c \
        lwipthread.c \
@@ -150,7 +148,7 @@ CSRC = $(STARTUPSRC) \
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
-CPPSRC =
+CPPSRC = $(ALLCPPSRC)
 
 # C sources to be compiled in ARM mode regardless of the global setting.
 # NOTE: Mixing ARM and THUMB mode enables the -mthumb-interwork compiler
@@ -173,14 +171,12 @@ TCSRC =
 TCPPSRC =
 
 # List ASM source files here
-ASMSRC = 
-ASMXSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
+ASMSRC = $(ALLASMSRC)
+ASMXSRC = $(ALLXASMSRC)
 
-INCDIR = $(CHIBIOS)/os/license \
-         $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
-         $(HALINC) $(PLATFORMINC) $(BOARDINC) $(TESTINC) \
+INCDIR = $(ALLINC) $(TESTINC) \
          $(LWINC) \
-         $(CHIBIOS)/os/hal/lib/streams $(CHIBIOS)/os/various
+         $(CHIBIOS)/os/various
 
 #
 # Project, sources and paths

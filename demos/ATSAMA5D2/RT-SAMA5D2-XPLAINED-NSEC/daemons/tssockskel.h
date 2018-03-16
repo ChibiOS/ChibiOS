@@ -65,7 +65,9 @@
 extern "C" {
 #endif
   THD_FUNCTION(TsSockSkelDaemon, tsstate);
-  extern THD_WORKING_AREA(waTsSockSkelDaemon, 2048);
+  extern THD_WORKING_AREA(waTsSockSkelDaemon0, 2048);
+  extern THD_WORKING_AREA(waTsSockSkelDaemon1, 2048);
+  extern THD_WORKING_AREA(waTsSockSkelDaemon2, 2048);
 #ifdef __cplusplus
 }
 #endif
