@@ -133,6 +133,7 @@ include $(CHIBIOS)/os/common/ports/ARMCAx-TZ/compilers/GCC/mk/port_generic.mk
 
 # Define linker script file here
 #LDSCRIPT= $(STARTUPLD)/SAMA5D2.ld
+# Only if SAMA_NO_INIT is TRUE 
 LDSCRIPT= $(STARTUPLD)/SAMA5D2ddr.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
@@ -218,10 +219,10 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS =
+UDEFS = 
 
 # Define ASM defines here
-UADEFS =
+UADEFS = 
 
 # List all user directories here
 UINCDIR =
