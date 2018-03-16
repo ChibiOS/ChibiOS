@@ -140,12 +140,8 @@ LDSCRIPT= $(STARTUPLD)/SAMA5D2ddr.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
-CSRC = $(ALLCSRC) main.c fat32test.c reledgetest.c redconf.c 
-
-#CSRC += $(CHIBIOS)/os/various/syscalls.c
-#CSRC += $(CHIBIOS)/os/various/fatfs_bindings/fatfs_syscall.c
-#CSRC += $(CHIBIOS)/ext/fatfs/src/ff.c
-#CSRC += $(CHIBIOS)/ext/fatfs/src/ffunicode.c
+CSRC = $(ALLCSRC) /os/various/syscalls.c \
+       main.c fat32test.c reledgetest.c redconf.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -176,7 +172,7 @@ ASMSRC = $(ALLASMSRC)
 ASMXSRC = $(ALLXASMSRC)
 
 INCDIR = $(ALLINC) \
-         $(FATFSINC)  $(RELEDGEINC)
+         $(CHIBIOS)/os/various $(FATFSINC)  $(RELEDGEINC)
 
 #
 # Project, sources and paths

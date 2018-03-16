@@ -77,10 +77,6 @@ int main(void) {
    */
   sdStart(&SD1, &sdcfg);
 
-  /* Redirecting  UART1 RX on PD2 and UART1 TX on PD3. */
-  palSetGroupMode(PIOD, PAL_PORT_BIT(2) | PAL_PORT_BIT(3), 0U,
-                  PAL_SAMA_FUNC_PERIPH_A | PAL_MODE_SECURE);
-
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO , Thread1, NULL);
 
   /*
