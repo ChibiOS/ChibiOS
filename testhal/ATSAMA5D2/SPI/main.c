@@ -92,14 +92,11 @@ int main(void) {
   chSysInit();
 
   /*
-   * Activates the serial driver 0 using the driver default configuration.
+   * Activates the serial driver 1 using the driver default configuration.
    */
   sdStart(&SD1, &sdcfg);
   spiStart(&SPID1, &mst_spicfg);       /* Setup transfer parameters.       */
 
-  /* Redirecting  UART1 RX on PD2 and UART1 TX on PD3. */
-  palSetGroupMode(PIOD, PAL_PORT_BIT(2) | PAL_PORT_BIT(3), 0U,
-                  PAL_SAMA_FUNC_PERIPH_A | PAL_MODE_SECURE);
 
   /* Redirecting  SPI1 pins. */
   palSetGroupMode(PIOD, PAL_PORT_BIT(25) | PAL_PORT_BIT(26) |
@@ -111,7 +108,7 @@ int main(void) {
   while (true) {
     if(!palReadPad(PIOB, PIOB_USER_PB)) {
       /* SPI operation in loopback*/
-      spiStartExchange(&SPID1, BUFFER_SIZE, &txbuf, &rxbuf);
+      spiExchange(&SPID1, BUFFER_SIZE, &txbuf, &rxbuf);
 
       /* D-Cache L1 is enabled */
       cacheInvalidateRegion(&rxbuf, sizeof(rxbuf));

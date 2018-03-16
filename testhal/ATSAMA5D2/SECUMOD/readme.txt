@@ -4,7 +4,7 @@
 
 ** TARGET **
 
-The demo targets a generic ARM Cortex-A5 device without HAL support.
+The demo runs on an SAMA5D2-XPLAINED board.
 
 ** The Demo **
 Demo configures Secumod according to SECConfig secumod_cfg.
