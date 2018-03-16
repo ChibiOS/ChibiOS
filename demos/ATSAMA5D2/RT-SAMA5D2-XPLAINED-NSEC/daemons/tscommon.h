@@ -36,6 +36,7 @@
 #define SKEL_REQ_GETOP    1
 #define SKEL_REQ_CPYPRMS  2
 #define SKEL_REQ_PUTRES   3
+#define SKEL_REQ_READY    4
 
 #define STUB_OP_SOCKET    0
 #define STUB_OP_CLOSE     1

@@ -38,6 +38,7 @@
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
+#define N_SOCKSKEL_THD  4
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -64,10 +65,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  THD_FUNCTION(TsSockSkelDaemon, tsstate);
-  extern THD_WORKING_AREA(waTsSockSkelDaemon0, 2048);
-  extern THD_WORKING_AREA(waTsSockSkelDaemon1, 2048);
-  extern THD_WORKING_AREA(waTsSockSkelDaemon2, 2048);
+  void tsSkelsDaemonInit(void);
 #ifdef __cplusplus
 }
 #endif

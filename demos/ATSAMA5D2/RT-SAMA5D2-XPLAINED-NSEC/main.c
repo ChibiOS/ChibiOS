@@ -23,6 +23,8 @@
 #include "chprintf.h"
 #include "lwipthread.h"
 
+#define DEMONS_READY  1
+
 /*
  * LED blinker thread, times are in milliseconds.
  */
@@ -80,14 +82,7 @@ int main(void) {
    */
   chThdCreateStatic(waThread1, sizeof waThread1, NORMALPRIO-1, Thread1, NULL);
 
-  /* Creates three sockets skeleton daemon threads to serve up to three
-     sockets calls simultaneously.*/
-  chThdCreateStatic(waTsSockSkelDaemon0, sizeof waTsSockSkelDaemon0, NORMALPRIO,
-      TsSockSkelDaemon, (void *)1);
-  chThdCreateStatic(waTsSockSkelDaemon1, sizeof waTsSockSkelDaemon1, NORMALPRIO,
-      TsSockSkelDaemon, NULL);
-  chThdCreateStatic(waTsSockSkelDaemon2, sizeof waTsSockSkelDaemon2, NORMALPRIO,
-      TsSockSkelDaemon, NULL);
+  tsSkelsDaemonInit();
 
   /*
    * Call the dummy secure service
