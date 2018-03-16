@@ -68,6 +68,7 @@ typedef struct stub_op {
 static objects_fifo_t ops_fifo;
 static msg_t ops_msgs[STUB_MAX_OPS];
 static struct stub_op ops[STUB_MAX_OPS] = {0};
+static bool tsSkelIsReady = false;
 
 /*===========================================================================*/
 /* Module local functions.                                                   */
@@ -149,6 +150,9 @@ THD_FUNCTION(TsStubsService, tsstate) {
     }
 
     switch (skrp->req) {
+    case SKEL_REQ_READY:
+      tsSkelIsReady = true;
+      break;
     case SKEL_REQ_GETOP:
 
       /* The nsec skeleton calls us to get a new op ready to be executed.*/
@@ -242,6 +246,12 @@ THD_FUNCTION(TsStubsService, tsstate) {
 
     /* Set the response.*/
     TS_SET_STATUS(svcp, r);
+  }
+}
+
+void tsWaitStubSkelReady(void) {
+  while (!tsSkelIsReady) {
+    chThdSleepMilliseconds(100);
   }
 }
 

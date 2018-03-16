@@ -375,6 +375,7 @@ extern "C" {
   int bind(int s, const struct sockaddr *name, socklen_t namelen);
   in_addr_t inet_addr(const char *cp);
   int inet_aton(const char *cp, struct in_addr *addr);
+  void tsWaitStubSkelReady(void);
   THD_FUNCTION(TsStubsService, tsstate);
   extern THD_WORKING_AREA(waTsStubsService, 1024);
 #ifdef __cplusplus
