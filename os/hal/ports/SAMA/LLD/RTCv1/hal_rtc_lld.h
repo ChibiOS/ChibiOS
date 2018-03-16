@@ -68,7 +68,7 @@
 /*
  * RTC driver system settings.
  */
-#define SAMA_RTC_IRQ_PRIORITY      7
+#define SAMA_RTC_IRQ_PRIORITY       7
 /** @} */
 
 /*===========================================================================*/

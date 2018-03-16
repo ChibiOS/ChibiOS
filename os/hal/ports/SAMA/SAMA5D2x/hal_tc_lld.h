@@ -353,3 +353,5 @@ extern "C" {
 #endif /* HAL_USE_TC */
 
 #endif /* HAL_TC_LLD_H */
+
+/** @} */

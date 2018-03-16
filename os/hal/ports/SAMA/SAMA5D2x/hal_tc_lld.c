@@ -16,7 +16,7 @@
 
 /**
  * @file    SAMA5D2x/hal_tc_lld.c
- * @brief   SAMA TC subsystem low level driver header.
+ * @brief   SAMA TC support code.
  *
  * @addtogroup TC
  * @{
@@ -384,8 +384,6 @@ void tcChangeChannelFrequency(TCDriver *tcp,
 }
 /**
  * @brief   TC Driver initialization.
- * @note    This function is implicitly invoked by @p halInit(), there is
- *          no need to explicitly initialize the driver.
  *
  * @init
  */

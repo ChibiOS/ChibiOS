@@ -84,6 +84,11 @@ static const sama_pio_init_t sama_inits[] = {
    SAMA_PIN_N(PIOB_USER_PB),
    SAMA_PIO_FUNC_GPIO | SAMA_PIO_DIR_INPUT | SAMA_PIO_PUEN | SAMA_PIO_SCHMITT,
    SAMA_PIO_HIGH},
+  /* UART1 */
+  {SAMA_PIOD,
+   SAMA_PIN_N(PIOD_URXD1) | SAMA_PIN_N(PIOD_UTXD1),
+   SAMA_PIO_FUNC_PERIPH_A,
+   SAMA_PIO_HIGH},
   /* list terminated*/
   {-1, 0, 0, 0}
 };
