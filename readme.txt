@@ -103,12 +103,13 @@
        RT and NIL will contain only the core functionalities, everything else
        is shared library code.
 - EX:  Updated HTS221 to 1.1.0 (backported to 18.2.1).
-- EX:  Updated L3GD20 to 1.1.0 (backported to 18.2.1). 
-- EX:  Updated LIS3DSH to 1.1.0 (backported to 18.2.1). 
-- EX:  Updated LIS3MDL to 1.1.0 (backported to 18.2.1). 
+- EX:  Updated L3GD20 to 1.1.0 (backported to 18.2.1).
+- EX:  Updated LIS3DSH to 1.1.0 (backported to 18.2.1).
+- EX:  Updated LIS3MDL to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LIS302DL to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LPS25H to 1.1.0 (backported to 18.2.1).
-- EX:  Updated LSM303DLHC to 1.1.0 (backported to 18.2.1). 
+- EX:  Updated LSM303DLHC to 1.1.0 (backported to 18.2.1).
+- HAL: Fixed typo in hal_pal.h (bug #926)(backported to 18.2.1).
 - HAL: Fixed I2C address not accepted (bug #923)(backported to 18.2.1
        and 17.6.4).
 - HAL: Fixed problem with HSI48 on STM32L4xx (bug #922)(backported to 18.2.1).
