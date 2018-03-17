@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 18.2.1 ***
+- NEW: Added HAL support for STM32L443.
 - NEW: Improved some EX drivers and related test applications.
 - NEW: Improved VMT mechanisms to allow multiple interfaces.
 - NEW: Updated make mechanisms in demos/STM32, testhal/STM32 and testex/STM32:
