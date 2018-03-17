@@ -70,19 +70,17 @@ void hal_lld_init(void) {
  */
 void _sim_check_for_interrupts(void) {
   struct timeval tv;
+  bool int_occurred = false;
 
 #if HAL_USE_SERIAL
   if (sd_lld_interrupt_pending()) {
-    _dbg_check_lock();
-    if (chSchIsPreemptionRequired())
-      chSchDoReschedule();
-    _dbg_check_unlock();
-    return;
+    int_occured = true;
   }
 #endif
 
   gettimeofday(&tv, NULL);
   if (timercmp(&tv, &nextcnt, >=)) {
+    int_occurred = true;
     timeradd(&nextcnt, &tick, &nextcnt);
 
     CH_IRQ_PROLOGUE();
@@ -92,7 +90,9 @@ void _sim_check_for_interrupts(void) {
     chSysUnlockFromISR();
 
     CH_IRQ_EPILOGUE();
+  }
 
+  if (int_occurred) {
     _dbg_check_lock();
     if (chSchIsPreemptionRequired())
       chSchDoReschedule();
