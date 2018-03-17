@@ -845,7 +845,7 @@ typedef struct {
 #define palDisablePadEvent(port, pad)                                       \
   do {                                                                      \
     osalSysLock();                                                          \
-    palDisablePadDEventI(port, pad);                                         \
+    palDisablePadEventI(port, pad);                                         \
     osalSysUnlock();                                                        \
   } while (false)
 

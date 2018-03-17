@@ -94,12 +94,13 @@
 - NEW: Updated make mechanisms in demos/STM32, testhal/STM32 and testex/STM32:
        now makefile are more shorter and inclusion are easier to do.
 - EX:  Updated HTS221 to 1.1.0.
-- EX:  Updated L3GD20 to 1.1.0. 
-- EX:  Updated LIS3DSH to 1.1.0. 
-- EX:  Updated LIS3MDL to 1.1.0. 
+- EX:  Updated L3GD20 to 1.1.0.
+- EX:  Updated LIS3DSH to 1.1.0.
+- EX:  Updated LIS3MDL to 1.1.0.
 - EX:  Updated LIS302DL to 1.1.0.
 - EX:  Updated LPS25H to 1.1.0.
 - EX:  Updated LSM303DLHC to 1.1.0.
+- HAL: Fixed typo in hal_pal.h (bug #926).
 - HAL: Fixed UART driver stop functions confusing returned value (bug #925).
 - HAL: Fixed USB driver not stopped (bug #924).
 - HAL: Fixed I2C address not accepted (bug #923).
