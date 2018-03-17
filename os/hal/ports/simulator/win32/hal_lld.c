@@ -87,7 +87,7 @@ void _sim_check_for_interrupts(void) {
   /* Interrupt Timer simulation (10ms interval).*/
   QueryPerformanceCounter(&n);
   if (n.QuadPart > nextcnt.QuadPart) {
-    int_occured = true;
+    int_occurred = true;
     nextcnt.QuadPart += slice.QuadPart;
 
     CH_IRQ_PROLOGUE();
