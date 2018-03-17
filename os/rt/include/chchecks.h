@@ -115,11 +115,7 @@
 #endif
 
 #if !defined(CH_CFG_USE_CONDVARS_TIMEOUT)
-#error " not defined in chconf.h"
-#endif
-
-#if !defined(CH_CFG_USE_CONDVARS_TIMEOUT)
-#error " not defined in chconf.h"
+#error "CH_CFG_USE_CONDVARS_TIMEOUT not defined in chconf.h"
 #endif
 
 #if !defined(CH_CFG_USE_EVENTS)
