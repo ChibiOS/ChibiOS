@@ -146,7 +146,6 @@ static inline cnt_t chMBGetSizeI(const mailbox_t *mbp) {
  *
  * @param[in] mbp       the pointer to an initialized mailbox_t object
  * @return              The number of queued messages.
- * @retval QUEUE_RESET  if the queue is in reset state.
  *
  * @iclass
  */
