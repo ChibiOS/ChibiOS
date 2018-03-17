@@ -121,11 +121,13 @@
 #undef CH_CFG_USE_HEAP
 #undef CH_CFG_USE_MEMPOOLS
 #undef CH_CFG_USE_OBJ_FIFOS
+#undef CH_CFG_USE_PIPES
 
 #define CH_CFG_USE_MEMCORE                  FALSE
 #define CH_CFG_USE_HEAP                     FALSE
 #define CH_CFG_USE_MEMPOOLS                 FALSE
 #define CH_CFG_USE_OBJ_FIFOS                FALSE
+#define CH_CFG_USE_PIPES                    FALSE
 
 #endif /* (CH_CUSTOMER_LIC_LIB == FALSE) ||                                 \
           (CH_LICENSE_FEATURES == CH_FEATURES_BASIC) */
@@ -154,6 +156,10 @@
 #if !defined(CH_CFG_USE_OBJ_FIFOS)
 #error "CH_CFG_USE_OBJ_FIFOS not defined in chlibconf.h"
 #endif
+
+//#if !defined(CH_CFG_USE_PIPES)
+//#error "CH_CFG_USE_PIPES not defined in chlibconf.h"
+//#endif
 
 /* Objects factory options checks.*/
 #if !defined(CH_CFG_USE_FACTORY)
@@ -207,6 +213,7 @@
 #include "chheap.h"
 #include "chmempools.h"
 #include "chfifo.h"
+//#include "chpipes.h"
 #include "chfactory.h"
 
 #endif /* CHLIB_H */
