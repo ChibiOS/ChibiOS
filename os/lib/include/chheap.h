@@ -28,10 +28,6 @@
 #ifndef CHHEAP_H
 #define CHHEAP_H
 
-#if !defined(CH_CFG_USE_HEAP)
-#define CH_CFG_USE_HEAP                     FALSE
-#endif
-
 #if (CH_CFG_USE_HEAP == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/

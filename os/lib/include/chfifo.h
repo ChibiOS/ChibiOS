@@ -44,10 +44,6 @@
 #ifndef CHFIFO_H
 #define CHFIFO_H
 
-#if !defined(CH_CFG_USE_OBJ_FIFOS)
-#define CH_CFG_USE_OBJ_FIFOS                TRUE
-#endif
-
 #if (CH_CFG_USE_OBJ_FIFOS == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/

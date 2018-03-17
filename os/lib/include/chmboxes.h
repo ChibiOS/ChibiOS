@@ -28,10 +28,6 @@
 #ifndef CHMBOXES_H
 #define CHMBOXES_H
 
-#if !defined(CH_CFG_USE_MAILBOXES)
-#define CH_CFG_USE_MAILBOXES                FALSE
-#endif
-
 #if (CH_CFG_USE_MAILBOXES == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
@@ -150,7 +146,6 @@ static inline size_t chMBGetSizeI(const mailbox_t *mbp) {
  *
  * @param[in] mbp       the pointer to an initialized mailbox_t object
  * @return              The number of queued messages.
- * @retval QUEUE_RESET  if the queue is in reset state.
  *
  * @iclass
  */
