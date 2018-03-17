@@ -210,9 +210,9 @@
 #include "chbsem.h"
 #include "chmboxes.h"
 #include "chmemcore.h"
-#include "chheap.h"
+#include "chmemheaps.h"
 #include "chmempools.h"
-#include "chfifo.h"
+#include "chobjfifos.h"
 //#include "chpipes.h"
 #include "chfactory.h"
 

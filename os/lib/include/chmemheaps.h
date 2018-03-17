@@ -18,15 +18,15 @@
 */
 
 /**
- * @file    chheap.h
- * @brief   Heaps macros and structures.
+ * @file    chmemheaps.h
+ * @brief   Memory heaps macros and structures.
  *
  * @addtogroup heaps
  * @{
  */
 
-#ifndef CHHEAP_H
-#define CHHEAP_H
+#ifndef CHMEMHEAPS_H
+#define CHMEMHEAPS_H
 
 #if (CH_CFG_USE_HEAP == TRUE) || defined(__DOXYGEN__)
 
@@ -173,6 +173,6 @@ static inline size_t chHeapGetSize(const void *p) {
 
 #endif /* CH_CFG_USE_HEAP == TRUE */
 
-#endif /* CHHEAP_H */
+#endif /* CHMEMHEAPS_H */
 
 /** @} */

@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    chheap.c
- * @brief   Heaps code.
+ * @file    chmemheaps.c
+ * @brief   Memory heaps code.
  *
- * @addtogroup heaps
+ * @addtogroup memheaps
  * @details Heap Allocator related APIs.
  *          <h2>Operation mode</h2>
  *          The heap allocator implements a first-fit strategy and its APIs

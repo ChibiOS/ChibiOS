@@ -17,7 +17,7 @@ ifneq ($(findstring CH_CFG_USE_MEMCORE TRUE,$(CHLIBCONF)),)
 LIBSRC += $(CHIBIOS)/os/lib/src/chmemcore.c
 endif
 ifneq ($(findstring CH_CFG_USE_HEAP TRUE,$(CHLIBCONF)),)
-LIBSRC += $(CHIBIOS)/os/lib/src/chheap.c
+LIBSRC += $(CHIBIOS)/os/lib/src/chmemheaps.c
 endif
 ifneq ($(findstring CH_CFG_USE_MEMPOOLS TRUE,$(CHLIBCONF)),)
 LIBSRC += $(CHIBIOS)/os/lib/src/chmempools.c
@@ -28,7 +28,7 @@ endif
 else
 LIBSRC := $(CHIBIOS)/os/lib/src/chmboxes.c \
           $(CHIBIOS)/os/lib/src/chmemcore.c \
-          $(CHIBIOS)/os/lib/src/chheap.c \
+          $(CHIBIOS)/os/lib/src/chmemheaps.c \
           $(CHIBIOS)/os/lib/src/chmempools.c \
           $(CHIBIOS)/os/lib/src/chfactory.c
 endif
