@@ -18,7 +18,7 @@ ifeq ($(USE_CPPOPT),)
   USE_CPPOPT = -fno-rtti
 endif
 
-# Enable this if you want the linker to remove unused code and data
+# Enable this if you want the linker to remove unused code and data.
 ifeq ($(USE_LINK_GC),)
   USE_LINK_GC = yes
 endif
@@ -28,7 +28,7 @@ ifeq ($(USE_LDOPT),)
   USE_LDOPT = 
 endif
 
-# Enable this if you want link time optimizations (LTO)
+# Enable this if you want link time optimizations (LTO).
 ifeq ($(USE_LTO),)
   USE_LTO = yes
 endif
@@ -141,7 +141,7 @@ TCSRC =
 #       option that results in lower performance and larger code size.
 TCPPSRC =
 
-# List ASM source files here
+# List ASM source files here.
 ASMSRC = $(ALLASMSRC)
 ASMXSRC = $(ALLXASMSRC)
 
