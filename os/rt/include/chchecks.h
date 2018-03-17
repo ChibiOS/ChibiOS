@@ -115,11 +115,7 @@
 #endif
 
 #if !defined(CH_CFG_USE_CONDVARS_TIMEOUT)
-#error " not defined in chconf.h"
-#endif
-
-#if !defined(CH_CFG_USE_CONDVARS_TIMEOUT)
-#error " not defined in chconf.h"
+#error "CH_CFG_USE_CONDVARS_TIMEOUT not defined in chconf.h"
 #endif
 
 #if !defined(CH_CFG_USE_EVENTS)
@@ -138,57 +134,8 @@
 #error "CH_CFG_USE_MESSAGES_PRIORITY not defined in chconf.h"
 #endif
 
-#if !defined(CH_CFG_USE_MAILBOXES)
-#error "CH_CFG_USE_MAILBOXES not defined in chconf.h"
-#endif
-
-#if !defined(CH_CFG_USE_MEMCORE)
-#error "CH_CFG_USE_MEMCORE not defined in chconf.h"
-#endif
-
-#if !defined(CH_CFG_USE_HEAP)
-#error "CH_CFG_USE_HEAP not defined in chconf.h"
-#endif
-
-#if !defined(CH_CFG_USE_MEMPOOLS)
-#error "CH_CFG_USE_MEMPOOLS not defined in chconf.h"
-#endif
-
-#if !defined(CH_CFG_USE_OBJ_FIFOS)
-#error "CH_CFG_USE_OBJ_FIFOS not defined in chconf.h"
-#endif
-
 #if !defined(CH_CFG_USE_DYNAMIC)
 #error "CH_CFG_USE_DYNAMIC not defined in chconf.h"
-#endif
-
-/* Objects factory options checks.*/
-#if !defined(CH_CFG_USE_FACTORY)
-#error "CH_CFG_USE_FACTORY not defined in chconf.h"
-#endif
-
-#if !defined(CH_CFG_FACTORY_MAX_NAMES_LENGTH)
-#error "CH_CFG_FACTORY_MAX_NAMES_LENGTH not defined in chconf.h"
-#endif
-
-#if !defined(CH_CFG_FACTORY_OBJECTS_REGISTRY)
-#error "CH_CFG_FACTORY_OBJECTS_REGISTRY not defined in chconf.h"
-#endif
-
-#if !defined(CH_CFG_FACTORY_GENERIC_BUFFERS)
-#error "CH_CFG_FACTORY_GENERIC_BUFFERS not defined in chconf.h"
-#endif
-
-#if !defined(CH_CFG_FACTORY_SEMAPHORES)
-#error "CH_CFG_FACTORY_SEMAPHORES not defined in chconf.h"
-#endif
-
-#if !defined(CH_CFG_FACTORY_MAILBOXES)
-#error "CH_CFG_FACTORY_MAILBOXES not defined in chconf.h"
-#endif
-
-#if !defined(CH_CFG_FACTORY_OBJ_FIFOS)
-#error "CH_CFG_FACTORY_OBJ_FIFOS not defined in chconf.h"
 #endif
 
 /* Debug options checks.*/

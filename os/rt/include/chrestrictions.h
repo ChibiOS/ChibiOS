@@ -37,6 +37,11 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+/* License checks.*/
+#if !defined(CH_CUSTOMER_LIC_RT) || !defined(CH_LICENSE_FEATURES)
+#error "malformed chlicense.h"
+#endif
+
 #if CH_CUSTOMER_LIC_RT == FALSE
 #error "ChibiOS/RT not licensed"
 #endif

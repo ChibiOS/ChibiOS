@@ -31,14 +31,6 @@
 #ifndef CHLIB_H
 #define CHLIB_H
 
-/* Tmeporary hack.*/
-#if !defined(_CHIBIOS_RT_CONF_VER_5_0_) && !defined(_CHIBIOS_NIL_CONF_VER_3_0_)
-#include "chlibconf.h"
-#else
-#define _CHIBIOS_LIB_CONF_
-#define _CHIBIOS_LIB_CONF_VER_1_0_
-#endif
-
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
@@ -96,6 +88,10 @@
 #error "malformed chlicense.h"
 #endif
 
+#if CH_CUSTOMER_LIC_LIB== FALSE
+#error "ChibiOS/LIB not licensed"
+#endif
+
 #if (CH_LICENSE_FEATURES != CH_FEATURES_FULL) &&                            \
     (CH_LICENSE_FEATURES != CH_FEATURES_INTERMEDIATE) &&                    \
     (CH_LICENSE_FEATURES != CH_FEATURES_BASIC)
@@ -135,14 +131,6 @@
           (CH_LICENSE_FEATURES == CH_FEATURES_BASIC) */
 
 /* Configuration file checks.*/
-#if !defined(_CHIBIOS_LIB_CONF_)
-#error "invalid configuration file"
-#endif
-
-#if !defined(_CHIBIOS_LIB_CONF_VER_1_0_)
-#error "obsolete or unknown configuration file"
-#endif
-
 #if !defined(CH_CFG_USE_SEMAPHORES)
 #error "CH_CFG_USE_SEMAPHORES not defined in chconf.h"
 #endif

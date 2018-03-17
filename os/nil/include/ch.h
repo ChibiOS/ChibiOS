@@ -418,6 +418,11 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+/* License checks.*/
+#if !defined(CH_CUSTOMER_LIC_NIL) || !defined(CH_LICENSE_FEATURES)
+#error "malformed chlicense.h"
+#endif
+
 #if CH_CUSTOMER_LIC_NIL == FALSE
 #error "ChibiOS/NIL not licensed"
 #endif
