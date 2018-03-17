@@ -94,6 +94,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added HAL support for STM32L443.
 - NEW: Added support for LDM303AGR 6 axis Accelerometer\Magnetometer MEMS.
 - NEW: Added support for LSM6DSL 6 axis Accelerometer\Gyroscope MEMS.
 - NEW: Added support for LPS22HB 2 axis Barometer\Thermometer MEMS.
