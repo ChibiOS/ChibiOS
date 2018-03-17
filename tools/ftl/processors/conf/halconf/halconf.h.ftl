@@ -249,6 +249,13 @@
 #define CAN_USE_SLEEP_MODE                  ${doc.CAN_USE_SLEEP_MODE!"TRUE"}
 #endif
 
+/**
+ * @brief   Enforces the driver to use direct callbacks rather than OSAL events.
+ */
+#if !defined(CAN_ENFORCE_USE_CALLBACKS) || defined(__DOXYGEN__)
+#define CAN_ENFORCE_USE_CALLBACKS           ${doc.CAN_ENFORCE_USE_CALLBACKS!"FALSE"}
+#endif
+
 /*===========================================================================*/
 /* CRY driver related settings.                                              */
 /*===========================================================================*/

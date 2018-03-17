@@ -79,6 +79,13 @@
 #if !defined(CAN_USE_SLEEP_MODE) || defined(__DOXYGEN__)
 #define CAN_USE_SLEEP_MODE          TRUE
 #endif
+
+/**
+ * @brief   Enforces the driver to use direct callbacks rather than OSAL events.
+ */
+#if !defined(CAN_ENFORCE_USE_CALLBACKS) || defined(__DOXYGEN__)
+#define CAN_ENFORCE_USE_CALLBACKS   FALSE
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -136,7 +143,7 @@ typedef enum {
  * @name    Low level driver helper macros
  * @{
  */
-#if !defined(CAN_ENFORCE_USE_CALLBACKS)
+#if CAN_ENFORCE_USE_CALLBACKS == FALSE
 /**
  * @brief   TX mailbox empty event.
  */
@@ -174,7 +181,7 @@ typedef enum {
   osalEventBroadcastFlagsI(&(canp)->error_event, flags);                    \
   osalSysUnlockFromISR();                                                   \
 }
-#else /* defined(CAN_ENFORCE_USE_CALLBACKS) */
+#else /* CAN_ENFORCE_USE_CALLBACKS == TRUE */
 #define _can_tx_empty_isr(canp, flags) {                                    \
   if ((canp)->txempty_cb != NULL) {                                         \
     (canp)->txempty_cb(canp, flags);                                        \
@@ -204,7 +211,7 @@ typedef enum {
     (canp)->error_cb(canp, flags);                                          \
   }                                                                         \
 }
-#endif /* defined(CAN_ENFORCE_USE_CALLBACKS) */
+#endif /* CAN_ENFORCE_USE_CALLBACKS == TRUE */
 /** @} */
 
 /*===========================================================================*/
