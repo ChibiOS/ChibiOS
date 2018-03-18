@@ -131,17 +131,23 @@ include $(CHIBIOS)/os/common/ports/ARMCAx-TZ/compilers/GCC/mk/port_generic.mk
 #include $(CHIBIOS)/test/rt/rt_test.mk
 #include $(CHIBIOS)/test/oslib/oslib_test.mk
 include $(CHIBIOS)/os/various/reledge_bindings/reledge.mk
-include $(CHIBIOS)/os/various/fatfs_bindings/fatfs.mk
+#include $(CHIBIOS)/os/various/fatfs_bindings/fatfs.mk
 include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 
 # Define linker script file here
 #LDSCRIPT= $(STARTUPLD)/SAMA5D2.ld
 LDSCRIPT= $(STARTUPLD)/SAMA5D2ddr.ld
+FATFSINC = $(CHIBIOS)/ext/fatfs/src
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
-CSRC = $(ALLCSRC) /os/various/syscalls.c \
+CSRC = $(ALLCSRC) \
        main.c fat32test.c reledgetest.c redconf.c
+
+CSRC += $(CHIBIOS)/os/various/syscalls.c
+CSRC += $(CHIBIOS)/os/various/fatfs_bindings/fatfs_syscall.c
+CSRC += $(CHIBIOS)/ext/fatfs/src/ff.c
+CSRC += $(CHIBIOS)/ext/fatfs/src/ffunicode.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.

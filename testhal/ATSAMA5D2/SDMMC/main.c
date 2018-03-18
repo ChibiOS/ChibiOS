@@ -25,7 +25,7 @@
 //0 (SLOT0) or 1 (SLOT1)
 #define DEMO_SLOT					0
 //1 for FFLib, 0 for Reliance
-#define DEMO_FAT					1
+#define DEMO_FAT					0
 //----------------------------------------------------------
 
 #define BLOCK_CNT_MAX               32u
@@ -157,6 +157,7 @@ bool sdmmcGetInstance(uint8_t index, SdmmcDriver **sdmmcp)
 	(void)index;
 
 	*sdmmcp = &SDMMCD1;
+	read();
 
 	return true;
 }
