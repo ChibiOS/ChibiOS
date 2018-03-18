@@ -110,6 +110,8 @@
 - EX:  Updated LIS302DL to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LPS25H to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LSM303DLHC to 1.1.0 (backported to 18.2.1).
+- HAL: Fixed useless writes in read-only CFGR_SWS field on all STM32Fxx
+       (bug #927)(backported to 18.2.1 and 17.6.4).
 - HAL: Fixed typo in hal_pal.h (bug #926)(backported to 18.2.1).
 - HAL: Fixed I2C address not accepted (bug #923)(backported to 18.2.1
        and 17.6.4).
