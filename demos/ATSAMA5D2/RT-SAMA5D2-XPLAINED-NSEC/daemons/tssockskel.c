@@ -21,7 +21,7 @@
  */
 
 #include "ch.h"
-#include "chfifo.h"
+#include "chobjfifos.h"
 #include "tsclient.h"
 #include "tssockskel.h"
 #include <string.h>
@@ -162,6 +162,7 @@ static void l_recv(skel_req_t *skreqp) {
     /* call the api exposed by the TCP/IP stack.*/
     result = recv((int)skreqp->stub_op_p[0], mem, len,
         (int)skreqp->stub_op_p[3]);
+    skreqp->stub_op_p_sz[1] = result;
     skreqp->stub_op_p[1] = (uint32_t)mem;
   }
 
@@ -215,6 +216,9 @@ static void l_select(skel_req_t *skreqp) {
 
   maxfdpl = skreqp->stub_op_p[0];
 
+  skreqp->stub_op_p_sz[1] = sizeof (fd_set);
+  skreqp->stub_op_p_sz[2] = sizeof (fd_set);
+  skreqp->stub_op_p_sz[3] = sizeof (fd_set);
   skreqp->stub_op_p[1] = (uint32_t)&readset;
   skreqp->stub_op_p[2] = (uint32_t)&writeset;
   skreqp->stub_op_p[3] = (uint32_t)&exceptset;
@@ -321,7 +325,7 @@ static THD_FUNCTION(TsSkelsDaemon, arg) {
       sizeof *skreqp);
   chFifoReturnObject(&skel_req_fifo, skreqp);
 
-  /* Start to receive ops.*/
+  /* Start to receive ops from stubs.*/
   for (;/* ever */;) {
     chEvtWaitAny(ALL_EVENTS);
     (void)chEvtGetAndClearFlags(&el);
