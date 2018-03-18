@@ -1,4 +1,4 @@
-# List of all the Win32 platform files.
+# List of all the Posix platform files.
 PLATFORMSRC = ${CHIBIOS}/os/hal/ports/simulator/posix/hal_lld.c \
               ${CHIBIOS}/os/hal/ports/simulator/posix/hal_serial_lld.c \
               ${CHIBIOS}/os/hal/ports/simulator/console.c \
