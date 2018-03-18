@@ -88,6 +88,10 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+*** 17.6.5 ***
+- HAL: Fixed useless writes in read-only CFGR_SWS field on all STM32Fxx
+       (bug #927).
+
 *** 17.6.4 ***
 - Fixed some minor documentation issues.
 - NEW: Improved external tools launch configuration for OpenOCD.
