@@ -101,6 +101,8 @@
 - EX:  Updated LIS302DL to 1.1.0.
 - EX:  Updated LPS25H to 1.1.0.
 - EX:  Updated LSM303DLHC to 1.1.0.
+- HAL: Fixed useless writes in read-only CFGR_SWS field on all STM32Fxx
+       (bug #927).
 - HAL: Fixed typo in hal_pal.h (bug #926).
 - HAL: Fixed UART driver stop functions confusing returned value (bug #925).
 - HAL: Fixed USB driver not stopped (bug #924).
