@@ -162,6 +162,8 @@ static void mii_find_phy(MACDriver *macp) {
     n--;
   } while (n > 0U);
 #endif
+  macp->phyaddr = 0;
+  return;
   /* Wrong or defective board.*/
   osalSysHalt("MAC failure");
 }
