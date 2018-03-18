@@ -67,6 +67,7 @@ typedef struct skel_req {
   uint32_t  stub_op;
   uint32_t  stub_op_code;
   uint32_t  stub_op_result;
+  uint32_t  stub_op_p_sz[METHOD_MAX_PARAMS];
   uint32_t  stub_op_p[METHOD_MAX_PARAMS];
 } skel_req_t;
 

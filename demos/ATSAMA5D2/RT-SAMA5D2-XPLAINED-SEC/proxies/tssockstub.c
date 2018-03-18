@@ -21,7 +21,7 @@
  */
 
 #include "ch.h"
-#include "chfifo.h"
+#include "chobjfifos.h"
 #include "chtssi.h"
 #include "tssockstub.h"
 #include <string.h>
@@ -55,7 +55,7 @@ typedef struct stub_param {
 } stub_parm_t;
 
 typedef struct stub_op {
-  uint32_t            op_code;  /* connect, recv, sendv, close, etc.*/
+  uint32_t            op_code;  /* e.g. connect, recv, sendv, close, etc.*/
   op_state_t          op_state; /* calling, pending, free.*/
   stub_parm_t         op_p[METHOD_MAX_PARAMS];
   thread_reference_t  op_wthdp; /* TS internal client thread (the caller).*/
@@ -84,14 +84,14 @@ static bool isOpValid(stub_op_t *op)
 }
 
 /**
- * @brief   Simulate an a call to a NSEC function.
+ * @brief   Implement an a call to a NSEC function.
  * @details It activates the channel between the stubs service and
  *          the skels daemon running in the nsec world.
  *          To do it, it uses an event to signal the skels
- *          daemons that a new op request is ready to be executed.
- *          The skels daemon will then, behind the scenes, gets the op calling,
- *          via smc, the stubs service. The skel executes it and then calls the
- *          stubs service again to post the result and to wake up the
+ *          daemon that a new op request is ready to be executed.
+ *          Behind the scenes, the skels daemon will then gets the op, calling
+ *          the stubs service via smc. The daemon executes it and then calls
+ *          the stubs service again to post the result and to wake up the
  *          calling thread of this function.
  *
  * @param[in] op    the 'remote' method description.
@@ -153,18 +153,21 @@ THD_FUNCTION(TsStubsService, tsstate) {
     case SKEL_REQ_READY:
       tsSkelIsReady = true;
       break;
+
     case SKEL_REQ_GETOP:
 
       /* The nsec skeleton calls us to get a new op ready to be executed.*/
       if (chFifoReceiveObjectTimeout(&ops_fifo, (void **)&op, TIME_IMMEDIATE) ==
             MSG_TIMEOUT) {
+
+        /* no op ready to be executed.*/
         r = SMC_SVC_NHND;
         break;
       }
       skrp->stub_op = (uint32_t)op;
       skrp->stub_op_code = op->op_code;
 
-      /* Pass all the 'by value' arguments.*/
+      /* Pass all the 'by value' arguments from stub to skel.*/
       for (i = 0; i < METHOD_MAX_PARAMS; ++i) {
         if (op->op_p[i].dir == OP_PRMDIR_NONE)
           skrp->stub_op_p[i] = op->op_p[i].val;
@@ -219,22 +222,24 @@ THD_FUNCTION(TsStubsService, tsstate) {
 
       /* Copy all 'out' parameters.
          For each parameter check that the source memory area
-         is in the non secure memory arena.*/
+         is in the non secure memory arena, and that the size returned
+         fits in the caller buffer size.*/
       for (i = 0; i < METHOD_MAX_PARAMS; ++i) {
         if ((op->op_p[i].dir & OP_PRMDIR_OUT) == 0)
           continue;
-        if (!tsIsAddrSpaceValid((void *)skrp->stub_op_p[i], op->op_p[i].size)) {
+        if (!tsIsAddrSpaceValid((void *)skrp->stub_op_p[i], skrp->stub_op_p_sz[i])
+              || (skrp->stub_op_p_sz[i] > op->op_p[i].size)) {
           r = SMC_SVC_INVALID;
           break;
         }
         memcpy((void *)op->op_p[i].val, (void *)skrp->stub_op_p[i],
-            op->op_p[i].size);
+            skrp->stub_op_p_sz[i]);
       }
       if (r != SMC_SVC_OK)
         break;
 
       /* Set the return value of the 'remote' callee method,
-         and wake up the secure caller.*/
+         and wake up the caller.*/
       op->op_code = skrp->stub_op_result;
       chThdResume(&op->op_wthdp, MSG_OK);
       break;
@@ -248,13 +253,20 @@ THD_FUNCTION(TsStubsService, tsstate) {
     TS_SET_STATUS(svcp, r);
   }
 }
-
+/**
+ * @brief     Is the skeletons daemon ready to operate?
+ * @details   It is used at the startup to synchronize the
+ *            stub service with the skeleton daemon.
+ */
 void tsWaitStubSkelReady(void) {
   while (!tsSkelIsReady) {
     chThdSleepMilliseconds(100);
   }
 }
 
+/**
+ * @brief The sockets API.
+ */
 int socket(int domain, int type, int protocol) {
   stub_op_t *op = getNewOp();
   op->op_code = STUB_OP_SOCKET;
@@ -399,7 +411,7 @@ int inet_aton(const char *cp, struct in_addr *addr) {
 
   for (;;) {
     /*
-     * Collect number up to ``.''.
+     * Collect number up to '.'.
      * Values are specified as for C:
      * 0x=hex, 0=octal, other=decimal.
      */
@@ -443,7 +455,7 @@ int inet_aton(const char *cp, struct in_addr *addr) {
   if (*cp && (!isascii(*cp) || !isspace(*cp)))
     return 0;
   /*
-   * Concoct the address according to
+   * Make the address according to
    * the number of parts specified.
    */
   n = pp - parts + 1;
