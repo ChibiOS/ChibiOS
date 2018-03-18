@@ -23,8 +23,6 @@
 #include "chprintf.h"
 #include "lwipthread.h"
 
-#define DEMONS_READY  1
-
 /*
  * LED blinker thread, times are in milliseconds.
  */
