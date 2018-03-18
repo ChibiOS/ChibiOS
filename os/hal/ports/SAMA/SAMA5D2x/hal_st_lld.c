@@ -70,7 +70,7 @@
 #endif
 
 #if SAMA_ST_USE_TC1
-#if ((SAMA_TC1CLK) / (OSAL_ST_FREQUENCY) != 32)
+#if (((SAMA_TC1CLK) / (OSAL_ST_FREQUENCY) != 32) || ((SAMA_TC1CLK) % (OSAL_ST_FREQUENCY)) != 0)
 #error "Bad OSAL_ST_FREQUENCY value in configuration. It must be set to TC1_periph_clk / 32"
 #endif
 #endif
