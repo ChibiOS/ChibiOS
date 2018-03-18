@@ -97,7 +97,7 @@ static THD_FUNCTION(TsSimpleService, tsstate) {
 TS_STATE_TABLE
 TS_CONF_TABLE_BEGIN
   TS_CONF_TABLE_ENTRY("TsSimpleService", waTsSimpleService, TS_BASE_PRIO, TsSimpleService, TS_STATE(0))
-  TS_CONF_TABLE_ENTRY("TsStubsService", waTsStubsService, TS_BASE_PRIO+10, TsStubsService, TS_STATE(1))
+  TS_CONF_TABLE_ENTRY("TsStubsService", waTsStubsService, TS_BASE_PRIO+1, TsStubsService, TS_STATE(1))
 TS_CONF_TABLE_END
 
 /** @} */

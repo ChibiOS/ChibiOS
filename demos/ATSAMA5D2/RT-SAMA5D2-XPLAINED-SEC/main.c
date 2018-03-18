@@ -163,8 +163,8 @@ int main(void) {
    * Creates the blinker thread (and any other ancillary thread).
    */
   chThdCreateStatic(waThread1, sizeof waThread1, NORMALPRIO, Thread1, NULL);
-  chThdCreateStatic(waThreadTcp1, sizeof waThreadTcp1, NORMALPRIO+10, ThreadTcp, (void *)8080);
-  chThdCreateStatic(waThreadTcp2, sizeof waThreadTcp2, NORMALPRIO+10, ThreadTcp, (void *)8081);
+  chThdCreateStatic(waThreadTcp1, sizeof waThreadTcp1, NORMALPRIO+1, ThreadTcp, (void *)8080);
+  chThdCreateStatic(waThreadTcp2, sizeof waThreadTcp2, NORMALPRIO+1, ThreadTcp, (void *)8081);
 
   /*
    * System initializations.
