@@ -198,7 +198,7 @@ typedef struct CANDriver CANDriver;
  */
 typedef uint32_t canmbx_t;
 
-#if defined(CAN_ENFORCE_USE_CALLBACKS) || defined(__DOXYGEN__)
+#if (CAN_ENFORCE_USE_CALLBACKS == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Type of a CAN notification callback.
  *
@@ -342,7 +342,7 @@ struct CANDriver {
    * @brief   Receive threads queue.
    */
   threads_queue_t           rxqueue;
-#if !defined(CAN_ENFORCE_USE_CALLBACKS)
+#if (CAN_ENFORCE_USE_CALLBACKS == FALSE) || defined(__DOXYGEN__)
   /**
    * @brief   One or more frames become available.
    * @note    After broadcasting this event it will not be broadcasted again
@@ -382,7 +382,7 @@ struct CANDriver {
    */
   event_source_t            wakeup_event;
 #endif /* CAN_USE_SLEEP_MODE */
-#else /* defined(CAN_ENFORCE_USE_CALLBACKS) */
+#else /* CAN_ENFORCE_USE_CALLBACKS == TRUE */
   /**
    * @brief   One or more frames become available.
    * @note    After calling this function it will not be called again

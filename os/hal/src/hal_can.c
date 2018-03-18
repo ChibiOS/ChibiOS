@@ -71,7 +71,7 @@ void canObjectInit(CANDriver *canp) {
   canp->config      = NULL;
   osalThreadQueueObjectInit(&canp->txqueue);
   osalThreadQueueObjectInit(&canp->rxqueue);
-#if !defined(CAN_ENFORCE_USE_CALLBACKS)
+#if CAN_ENFORCE_USE_CALLBACKS == FALSE
   osalEventObjectInit(&canp->rxfull_event);
   osalEventObjectInit(&canp->txempty_event);
   osalEventObjectInit(&canp->error_event);
@@ -79,14 +79,14 @@ void canObjectInit(CANDriver *canp) {
   osalEventObjectInit(&canp->sleep_event);
   osalEventObjectInit(&canp->wakeup_event);
 #endif
-#else /* defined(CAN_ENFORCE_USE_CALLBACKS) */
+#else /* CAN_ENFORCE_USE_CALLBACKS == TRUE */
   canp->rxfull_cb   = NULL;
   canp->txempty_cb  = NULL;
   canp->error_cb    = NULL;
 #if CAN_USE_SLEEP_MODE == TRUE
   canp->wakeup_cb   = NULL;
 #endif
-#endif /* defined(CAN_ENFORCE_USE_CALLBACKS) */
+#endif /* CAN_ENFORCE_USE_CALLBACKS == TRUE */
 }
 
 /**
@@ -336,7 +336,7 @@ void canSleep(CANDriver *canp) {
   if (canp->state == CAN_READY) {
     can_lld_sleep(canp);
     canp->state = CAN_SLEEP;
-#if !defined(CAN_ENFORCE_USE_CALLBACKS)
+#if CAN_ENFORCE_USE_CALLBACKS == FALSE
     osalEventBroadcastFlagsI(&canp->sleep_event, (eventflags_t)0);
     osalOsRescheduleS();
 #endif
@@ -361,7 +361,7 @@ void canWakeup(CANDriver *canp) {
   if (canp->state == CAN_SLEEP) {
     can_lld_wakeup(canp);
     canp->state = CAN_READY;
-#if !defined(CAN_ENFORCE_USE_CALLBACKS)
+#if CAN_ENFORCE_USE_CALLBACKS == FALSE
     osalEventBroadcastFlagsI(&canp->wakeup_event, (eventflags_t)0);
     osalOsRescheduleS();
 #endif

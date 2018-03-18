@@ -143,7 +143,7 @@ typedef enum {
  * @name    Low level driver helper macros
  * @{
  */
-#if CAN_ENFORCE_USE_CALLBACKS == FALSE
+#if (CAN_ENFORCE_USE_CALLBACKS == FALSE) || defined(__DOXYGEN__)
 /**
  * @brief   TX mailbox empty event.
  */
