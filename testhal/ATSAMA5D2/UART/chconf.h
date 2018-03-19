@@ -49,7 +49,8 @@
  * @details Frequency of the system timer that drives the system ticks. This
  *          setting also defines the system tick time unit.
  */
-#define CH_CFG_ST_FREQUENCY                 10000
+//#define CH_CFG_ST_FREQUENCY                 1000          /* periodic tick.*/
+#define CH_CFG_ST_FREQUENCY                 (84000000 / 32) /* tick-less.*/
 
 /**
  * @brief   Time intervals data size.
@@ -71,7 +72,7 @@
  *          The value one is not valid, timeouts are rounded up to
  *          this value.
  */
-#define CH_CFG_ST_TIMEDELTA                 0
+#define CH_CFG_ST_TIMEDELTA                 2
 
 /** @} */
 
