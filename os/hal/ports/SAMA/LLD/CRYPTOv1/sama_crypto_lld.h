@@ -42,6 +42,21 @@ extern void 		samaCryptoDriverDisable(CRYDriver *cryp);
 
 #define DMA_DATA_WIDTH_TO_BYTE(w)   (1 << w)
 
+#ifndef SAMA_CRY_CRYD1_DMA_IRQ_PRIORITY
+#define SAMA_CRY_CRYD1_DMA_IRQ_PRIORITY	4
+#endif
+
+#ifndef SAMA_CRY_CRYD1_IRQ_PRIORITY
+#define SAMA_CRY_CRYD1_IRQ_PRIORITY	4
+#endif
+
+#ifndef SAMA_CRY_DMA_ERROR_HOOK
+#define SAMA_CRY_DMA_ERROR_HOOK(cryp)		osalSysHalt("DMA failure")
+#endif
+
+#ifndef SAMA_CRY_SHA_UPDATE_LEN_MAX
+#define SAMA_CRY_SHA_UPDATE_LEN_MAX 128*1024
+#endif
 
 
 #include "sama_aes_lld.h"

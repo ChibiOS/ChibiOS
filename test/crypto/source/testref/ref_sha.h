@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2017 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -16,10 +16,17 @@
 #ifndef TEST_REF_SHA_H_
 #define TEST_REF_SHA_H_
 
+extern const uint8_t refSHA_SHA1_EMPTY[];
 extern const uint8_t refSHA_SHA1_3[];
 extern const uint8_t refSHA_SHA1_56[];
+extern const uint8_t refSHA_SHA1_64[];
+extern const uint8_t refSHA_SHA1_128[];
 extern const uint8_t refSHA_SHA256_3[];
 extern const uint8_t refSHA_SHA256_56[];
+extern const uint8_t refSHA_SHA256_64[];
+extern const uint8_t refSHA_SHA256_128[];
 extern const uint8_t refSHA_SHA512_3[];
 extern const uint8_t refSHA_SHA512_56[];
+extern const uint8_t refSHA_SHA512_64[];
+extern const uint8_t refSHA_SHA512_128[];
 #endif //TEST_REF_SHA_H_

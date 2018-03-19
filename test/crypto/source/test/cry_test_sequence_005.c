@@ -42,7 +42,6 @@
 static const CRYConfig configTRNG_Polling=
 {
     TRANSFER_POLLING,
-    0,
     0
 };
 

@@ -14,7 +14,7 @@
           </brief>
           <copyright>
             <value><![CDATA[/*
-    ChibiOS - Copyright (C) 2006..2017 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -60,6 +60,8 @@ extern void cryptoTest_printArray32(bool isLE,const uint32_t *a,size_t len);
 
 #define SHA_LEN_0    3
 #define SHA_LEN_1    56
+#define SHA_LEN_2    64
+#define SHA_LEN_3    128
 
 extern const char test_plain_data[TEST_DATA_BYTE_LEN];
 extern uint32_t msg_clear[TEST_MSG_DATA_WORD_LEN];
@@ -69,7 +71,8 @@ extern const uint32_t test_keys[8];
 extern const uint32_t test_vectors[4];
 extern const uint8_t sha_msg0[SHA_LEN_0];
 extern const uint8_t sha_msg1[SHA_LEN_1];
-
+extern const uint8_t sha_msg2[SHA_LEN_2];
+extern const uint8_t sha_msg3[SHA_LEN_3];
 ]]></value>
           </global_definitions>
           <global_code>
@@ -117,10 +120,13 @@ isque dui faucibus, vitae malesuada dui fermentum. Proin ultrici\
 es sit amet justo at ornare. Suspendisse efficitur purus nullam.";
 
 
-const uint8_t sha_msg0[SHA_LEN_0] = "hi!";
+const uint8_t sha_msg0[SHA_LEN_0] = "abc";
 
 const uint8_t sha_msg1[SHA_LEN_1] = "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq";
 
+const uint8_t sha_msg2[SHA_LEN_2] = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+
+const uint8_t sha_msg3[SHA_LEN_3] = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 
 ALIGNED_VAR(4) uint32_t msg_clear[TEST_MSG_DATA_WORD_LEN];
 ALIGNED_VAR(4) uint32_t msg_encrypted[TEST_MSG_DATA_WORD_LEN];
@@ -203,14 +209,12 @@ void cryptoTest_printArray32(bool isLE,const uint32_t *a,size_t len)
 #include "ref_aes.h"
 static const CRYConfig config_Polling = {
     TRANSFER_POLLING,
-    AES_CFBS_128,       //cfbs
-    0
+    AES_CFBS_128       //cfbs
 };
 
 static const CRYConfig config_DMA = {
     TRANSFER_DMA,
-    AES_CFBS_128,       //cfbs
-    0
+    AES_CFBS_128       //cfbs
 };
                 ]]></value>
             </shared_code>
@@ -656,14 +660,12 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 #include "ref_aes.h"
 static const CRYConfig config_Polling = {
     TRANSFER_POLLING,
-    AES_CFBS_128,       //cfbs
-    0
+    AES_CFBS_128       //cfbs
 };
 
 static const CRYConfig config_DMA = {
     TRANSFER_DMA,
-    AES_CFBS_128,       //cfbs
-    0
+    AES_CFBS_128       //cfbs
 };
                 ]]></value>
             </shared_code>
@@ -1109,14 +1111,12 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 #include "ref_aes.h"
 static const CRYConfig config_Polling = {
     TRANSFER_POLLING,
-    AES_CFBS_128,       //cfbs
-    0
+    AES_CFBS_128       //cfbs
 };
 
 static const CRYConfig config_DMA = {
     TRANSFER_DMA,
-    AES_CFBS_128,       //cfbs
-    0
+    AES_CFBS_128       //cfbs
 };
                 ]]></value>
             </shared_code>
@@ -1563,21 +1563,13 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 static const CRYConfig configDES_Polling=
 {
 		TRANSFER_POLLING,
-		0,
-		TDES_ALGO_SINGLE
-};
-static const CRYConfig configTDES_Polling=
-{
-		TRANSFER_POLLING,
-		0,
-		TDES_ALGO_TRIPLE
+		0
 };
 
-static const CRYConfig configTDES_DMA=
+static const CRYConfig configDES_DMA=
 {
 		TRANSFER_DMA,
-		0,
-		TDES_ALGO_TRIPLE
+		0
 };
 
                 ]]></value>
@@ -1696,7 +1688,7 @@ for (int i = 0; i < 2; i++) {
 memcpy((char*) msg_clear, test_plain_data, TEST_DATA_BYTE_LEN);
 memset(msg_encrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
 memset(msg_decrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
-cryStart(&CRYD1, &configTDES_Polling);
+cryStart(&CRYD1, &configDES_Polling);
 
                       ]]></value>
                   </setup_code>
@@ -1849,7 +1841,7 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 memcpy((char*) msg_clear, test_plain_data, TEST_DATA_BYTE_LEN);
 memset(msg_encrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
 memset(msg_decrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
-cryStart(&CRYD1, &configTDES_Polling);
+cryStart(&CRYD1, &configDES_Polling);
 
                       ]]></value>
                   </setup_code>
@@ -2005,7 +1997,7 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 memcpy((char*) msg_clear, test_plain_data, TEST_DATA_BYTE_LEN);
 memset(msg_encrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
 memset(msg_decrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
-cryStart(&CRYD1, &configTDES_DMA);
+cryStart(&CRYD1, &configDES_DMA);
 
                       ]]></value>
                   </setup_code>
@@ -2158,7 +2150,7 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 memcpy((char*) msg_clear, test_plain_data, TEST_DATA_BYTE_LEN);
 memset(msg_encrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
 memset(msg_decrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
-cryStart(&CRYD1, &configTDES_DMA);
+cryStart(&CRYD1, &configDES_DMA);
 
                       ]]></value>
                   </setup_code>
@@ -2320,7 +2312,6 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 static const CRYConfig configTRNG_Polling=
 {
     TRANSFER_POLLING,
-    0,
     0
 };
 
@@ -2416,16 +2407,83 @@ uint32_t random[10];
 #include <string.h>
 #include "ref_sha.h"
 
-#define MAX_DIGEST_SIZE_INBYTE  64
+/* Buffer size for each SHA transfer, size should be multiple of block size
+   (block size: 64 for SHA_1/SHA_256/SHA_224, 128 for SHA_384/SHA_512) */
+#define MAX_SHA_BLOCK_SIZE			TEST_MSG_DATA_BYTE_LEN
+#define MAX_SHA_BLOCK_SIZE_INWORD  (MAX_SHA_BLOCK_SIZE/4)
+
+#define shabuffer	msg_decrypted
+
+
+#define MAX_DIGEST_SIZE_INBYTE  TEST_MSG_DATA_BYTE_LEN
 #define MAX_DIGEST_SIZE_INWORD  (MAX_DIGEST_SIZE_INBYTE/4)
-static uint32_t digest[MAX_DIGEST_SIZE_INWORD];
+
+#define digest		msg_encrypted
+
 
 static const CRYConfig configSHA_Polling=
 {
     TRANSFER_POLLING,
-    0,
     0
 };
+
+
+static cryerror_t crySHA1(CRYDriver *cryp, size_t size,const uint8_t *in, uint8_t *out) {
+
+	cryerror_t ret;
+	SHA1Context shactxp;
+    
+    shactxp.sha.sha_buffer = (uint8_t*)&shabuffer[0];
+	shactxp.sha.sha_buffer_size = MAX_SHA_BLOCK_SIZE;
+
+
+	ret = crySHA1Init(cryp,&shactxp);
+
+	ret = crySHA1Update(cryp,&shactxp,size,in);
+
+	ret = crySHA1Final(cryp,&shactxp,out);
+
+
+	return ret;
+}
+
+static cryerror_t crySHA256(CRYDriver *cryp, size_t size,const uint8_t *in, uint8_t *out) {
+
+	cryerror_t ret;
+	SHA256Context shactxp;
+    
+    shactxp.sha.sha_buffer = (uint8_t*)&shabuffer[0];
+	shactxp.sha.sha_buffer_size = MAX_SHA_BLOCK_SIZE;
+
+
+	ret = crySHA256Init(cryp,&shactxp);
+
+	ret = crySHA256Update(cryp,&shactxp,size,in);
+
+	ret = crySHA256Final(cryp,&shactxp,out);
+
+
+	return ret;
+}
+
+static cryerror_t crySHA512(CRYDriver *cryp, size_t size,const uint8_t *in, uint8_t *out) {
+
+	cryerror_t ret;
+	SHA512Context shactxp;
+
+    shactxp.sha.sha_buffer = (uint8_t*)&shabuffer[0];
+	shactxp.sha.sha_buffer_size = MAX_SHA_BLOCK_SIZE;
+
+    
+	ret = crySHA512Init(cryp,&shactxp);
+
+	ret = crySHA512Update(cryp,&shactxp,size,in);
+
+	ret = crySHA512Final(cryp,&shactxp,out);
+
+
+	return ret;
+}
 
                 ]]></value>
             </shared_code>
@@ -2471,6 +2529,18 @@ cryStart(&CRYD1, &configSHA_Polling);
                     </tags>
                     <code>
                       <value><![CDATA[
+//---- Empty Block Test   
+ret = crySHA1(&CRYD1,0,(uint8_t*)msg_clear,(uint8_t*)digest);    
+
+test_assert(ret == CRY_NOERROR, "sha1 failed");
+ 
+SHOW_DATA(digest,5);
+
+
+ref = (uint32_t*)refSHA_SHA1_EMPTY;
+for (int i = 0; i < 5; i++) {
+  test_assert(digest[i] == ref[i], "sha1 digest mismatch");
+}
 //---- One Block Test
 ret = crySHA1(&CRYD1,SHA_LEN_0,(uint8_t*)msg_clear,(uint8_t*)digest);
 
@@ -2485,7 +2555,7 @@ for (int i = 0; i < 5; i++) {
   test_assert(digest[i] == ref[i], "sha1 digest mismatch");
 }
 
-//---- Multi Block Test
+//---- Multi Block Test 56 Byte
 memset(msg_clear, 0, TEST_MSG_DATA_BYTE_LEN);
 memcpy((char*) msg_clear, sha_msg1, SHA_LEN_1);
 
@@ -2499,6 +2569,38 @@ test_assert(ret == CRY_NOERROR, "sha1 failed");
 ref = (uint32_t*)refSHA_SHA1_56;
 for (int i = 0; i < 5; i++) {
   test_assert(digest[i] == ref[i], "sha1 digest mismatch");
+}
+//---- Multi Block Test 64 Byte
+memset(msg_clear, 0, TEST_MSG_DATA_BYTE_LEN);
+memcpy((char*) msg_clear, sha_msg2, SHA_LEN_2);
+
+ret = crySHA1(&CRYD1,SHA_LEN_2,(uint8_t*)msg_clear,(uint8_t*)digest);
+
+test_assert(ret == CRY_NOERROR, "sha1 failed");
+
+ SHOW_DATA(digest,5);
+
+
+ref = (uint32_t*)refSHA_SHA1_64;
+for (int i = 0; i < 5; i++) {
+  test_assert(digest[i] == ref[i], "sha1 digest mismatch");
+}
+
+//---- Multi Block Test 128 Byte
+
+memset(msg_clear, 0, TEST_MSG_DATA_BYTE_LEN);
+memcpy((char*) msg_clear, sha_msg3, SHA_LEN_3);
+
+ret = crySHA1(&CRYD1,SHA_LEN_3,(uint8_t*)msg_clear,(uint8_t*)digest);
+
+test_assert(ret == CRY_NOERROR, "sha1 failed");
+
+SHOW_DATA(digest,5);
+
+
+ref = (uint32_t*)refSHA_SHA1_128;
+for (int i = 0; i < 5; i++) {
+    test_assert(digest[i] == ref[i], "sha1 digest mismatch");
 }
 
 
@@ -2567,20 +2669,51 @@ for (int i = 0; i < 8; i++) {
   test_assert(digest[i] == ref[i], "sha256 digest mismatch");
 }
 
-//---- Multi Block Test
+//---- Multi Block Test 56 Byte
 memset(msg_clear, 0, TEST_MSG_DATA_BYTE_LEN);
 memcpy((char*) msg_clear, sha_msg1, SHA_LEN_1);
 
 ret = crySHA256(&CRYD1,SHA_LEN_1,(uint8_t*)msg_clear,(uint8_t*)digest);
 
-test_assert(ret == CRY_NOERROR, "sha256 failed");
-
+test_assert(ret == CRY_NOERROR, "sha256 56 byte failed");
 
  SHOW_DATA(digest,8);
 
+
 ref = (uint32_t*)refSHA_SHA256_56;
 for (int i = 0; i < 8; i++) {
-  test_assert(digest[i] == ref[i], "sha256 digest mismatch");
+  test_assert(digest[i] == ref[i], "sha256 56 byte digest mismatch");
+}
+//---- Multi Block Test 64 Byte
+memset(msg_clear, 0, TEST_MSG_DATA_BYTE_LEN);
+memcpy((char*) msg_clear, sha_msg2, SHA_LEN_2);
+
+ret = crySHA256(&CRYD1,SHA_LEN_2,(uint8_t*)msg_clear,(uint8_t*)digest);
+
+test_assert(ret == CRY_NOERROR, "sha256 64 byte failed");
+
+ SHOW_DATA(digest,8);
+
+
+ref = (uint32_t*)refSHA_SHA256_64;
+for (int i = 0; i < 8; i++) {
+  test_assert(digest[i] == ref[i], "sha256 64 byte digest mismatch");
+}
+
+//---- Multi Block Test 128 Byte
+memset(msg_clear, 0, TEST_MSG_DATA_BYTE_LEN);
+memcpy((char*) msg_clear, sha_msg3, SHA_LEN_3);
+
+ret = crySHA256(&CRYD1,SHA_LEN_3,(uint8_t*)msg_clear,(uint8_t*)digest);
+
+test_assert(ret == CRY_NOERROR, "sha256 128 byte failed");
+
+SHOW_DATA(digest,8);
+
+
+ref = (uint32_t*)refSHA_SHA256_128;
+for (int i = 0; i < 8; i++) {
+    test_assert(digest[i] == ref[i], "sha256 128 byte digest mismatch");
 }
 
 
@@ -2647,20 +2780,52 @@ for (int i = 0; i < 16; i++) {
   test_assert(digest[i] == ref[i], "sha512 digest mismatch");
 }
 
-//---- Multi Block Test
+
+//---- Multi Block Test 56 Byte
 memset(msg_clear, 0, TEST_MSG_DATA_BYTE_LEN);
 memcpy((char*) msg_clear, sha_msg1, SHA_LEN_1);
 
 ret = crySHA512(&CRYD1,SHA_LEN_1,(uint8_t*)msg_clear,(uint8_t*)digest);
 
-test_assert(ret == CRY_NOERROR, "sha512 failed");
-
+test_assert(ret == CRY_NOERROR, "sha512 56 byte failed");
 
  SHOW_DATA(digest,16);
 
+
 ref = (uint32_t*)refSHA_SHA512_56;
 for (int i = 0; i < 16; i++) {
-  test_assert(digest[i] == ref[i], "sha512 digest mismatch");
+  test_assert(digest[i] == ref[i], "sha512 56 byte digest mismatch");
+}
+//---- Multi Block Test 64 Byte
+memset(msg_clear, 0, TEST_MSG_DATA_BYTE_LEN);
+memcpy((char*) msg_clear, sha_msg2, SHA_LEN_2);
+
+ret = crySHA512(&CRYD1,SHA_LEN_2,(uint8_t*)msg_clear,(uint8_t*)digest);
+
+test_assert(ret == CRY_NOERROR, "sha512 64 byte failed");
+
+ SHOW_DATA(digest,16);
+
+
+ref = (uint32_t*)refSHA_SHA512_64;
+for (int i = 0; i < 16; i++) {
+  test_assert(digest[i] == ref[i], "sha512 64 byte digest mismatch");
+}
+
+//---- Multi Block Test 128 Byte
+memset(msg_clear, 0, TEST_MSG_DATA_BYTE_LEN);
+memcpy((char*) msg_clear, sha_msg3, SHA_LEN_3);
+
+ret = crySHA512(&CRYD1,SHA_LEN_3,(uint8_t*)msg_clear,(uint8_t*)digest);
+
+test_assert(ret == CRY_NOERROR, "sha512 128 byte failed");
+
+SHOW_DATA(digest,16);
+
+
+ref = (uint32_t*)refSHA_SHA512_128;
+for (int i = 0; i < 16; i++) {
+    test_assert(digest[i] == ref[i], "sha512 128 byte digest mismatch");
 }
 
 
@@ -2696,16 +2861,78 @@ for (int i = 0; i < 16; i++) {
 #include <string.h>
 #include "ref_sha.h"
 
-#define MAX_DIGEST_SIZE_INBYTE  64
-#define MAX_DIGEST_SIZE_INWORD  (MAX_DIGEST_SIZE_INBYTE/4)
-static uint32_t digest[MAX_DIGEST_SIZE_INWORD];
+/* Buffer size for each SHA transfer, size should be multiple of block size
+   (block size: 64 for SHA_1/SHA_256/SHA_224, 128 for SHA_384/SHA_512) */
+#define MAX_SHA_BLOCK_SIZE			TEST_MSG_DATA_BYTE_LEN
+#define MAX_SHA_BLOCK_SIZE_INWORD  (MAX_SHA_BLOCK_SIZE/4)
 
+#define shabuffer	msg_decrypted
+
+
+#define MAX_DIGEST_SIZE_INBYTE  TEST_MSG_DATA_BYTE_LEN
+#define MAX_DIGEST_SIZE_INWORD  (MAX_DIGEST_SIZE_INBYTE/4)
+
+#define digest		msg_encrypted
 static const CRYConfig configSHA_DMA=
 {
     TRANSFER_DMA,
-    0,
     0
 };
+
+static cryerror_t crySHA1(CRYDriver *cryp, size_t size,const uint8_t *in, uint8_t *out) {
+
+	cryerror_t ret;
+	SHA1Context shactxp;
+    
+    shactxp.sha.sha_buffer = (uint8_t*)&shabuffer[0];
+	shactxp.sha.sha_buffer_size = MAX_SHA_BLOCK_SIZE;
+
+	ret = crySHA1Init(cryp,&shactxp);
+
+	ret = crySHA1Update(cryp,&shactxp,size,in);
+
+	ret = crySHA1Final(cryp,&shactxp,out);
+
+
+	return ret;
+}
+
+static cryerror_t crySHA256(CRYDriver *cryp, size_t size,const uint8_t *in, uint8_t *out) {
+
+	cryerror_t ret;
+	SHA256Context shactxp;
+    
+    shactxp.sha.sha_buffer = (uint8_t*)&shabuffer[0];
+	shactxp.sha.sha_buffer_size = MAX_SHA_BLOCK_SIZE;
+    
+
+	ret = crySHA256Init(cryp,&shactxp);
+
+	ret = crySHA256Update(cryp,&shactxp,size,in);
+
+	ret = crySHA256Final(cryp,&shactxp,out);
+
+
+	return ret;
+}
+
+static cryerror_t crySHA512(CRYDriver *cryp, size_t size,const uint8_t *in, uint8_t *out) {
+
+	cryerror_t ret;
+	SHA512Context shactxp;
+    
+    shactxp.sha.sha_buffer = (uint8_t*)&shabuffer[0];
+	shactxp.sha.sha_buffer_size = MAX_SHA_BLOCK_SIZE;
+
+	ret = crySHA512Init(cryp,&shactxp);
+
+	ret = crySHA512Update(cryp,&shactxp,size,in);
+
+	ret = crySHA512Final(cryp,&shactxp,out);
+
+
+	return ret;
+}
 
                 ]]></value>
             </shared_code>
@@ -2751,6 +2978,18 @@ cryStart(&CRYD1, &configSHA_DMA);
                     </tags>
                     <code>
                       <value><![CDATA[
+//---- Empty Block Test   
+ret = crySHA1(&CRYD1,0,(uint8_t*)msg_clear,(uint8_t*)digest);    
+
+test_assert(ret == CRY_NOERROR, "sha1 failed");
+ 
+SHOW_DATA(digest,5);
+
+
+ref = (uint32_t*)refSHA_SHA1_EMPTY;
+for (int i = 0; i < 5; i++) {
+  test_assert(digest[i] == ref[i], "sha1 digest mismatch");
+}
 //---- One Block Test
 ret = crySHA1(&CRYD1,SHA_LEN_0,(uint8_t*)msg_clear,(uint8_t*)digest);
 
@@ -2765,7 +3004,7 @@ for (int i = 0; i < 5; i++) {
   test_assert(digest[i] == ref[i], "sha1 digest mismatch");
 }
 
-//---- Multi Block Test
+//---- Multi Block Test 56 Byte
 memset(msg_clear, 0, TEST_MSG_DATA_BYTE_LEN);
 memcpy((char*) msg_clear, sha_msg1, SHA_LEN_1);
 
@@ -2780,7 +3019,38 @@ ref = (uint32_t*)refSHA_SHA1_56;
 for (int i = 0; i < 5; i++) {
   test_assert(digest[i] == ref[i], "sha1 digest mismatch");
 }
+//---- Multi Block Test 64 Byte
+memset(msg_clear, 0, TEST_MSG_DATA_BYTE_LEN);
+memcpy((char*) msg_clear, sha_msg2, SHA_LEN_2);
 
+ret = crySHA1(&CRYD1,SHA_LEN_2,(uint8_t*)msg_clear,(uint8_t*)digest);
+
+test_assert(ret == CRY_NOERROR, "sha1 failed");
+
+ SHOW_DATA(digest,5);
+
+
+ref = (uint32_t*)refSHA_SHA1_64;
+for (int i = 0; i < 5; i++) {
+  test_assert(digest[i] == ref[i], "sha1 digest mismatch");
+}
+
+//---- Multi Block Test 128 Byte
+
+memset(msg_clear, 0, TEST_MSG_DATA_BYTE_LEN);
+memcpy((char*) msg_clear, sha_msg3, SHA_LEN_3);
+
+ret = crySHA1(&CRYD1,SHA_LEN_3,(uint8_t*)msg_clear,(uint8_t*)digest);
+
+test_assert(ret == CRY_NOERROR, "sha1 failed");
+
+SHOW_DATA(digest,5);
+
+
+ref = (uint32_t*)refSHA_SHA1_128;
+for (int i = 0; i < 5; i++) {
+    test_assert(digest[i] == ref[i], "sha1 digest mismatch");
+}
 
 ]]></value>
                     </code>
@@ -2847,20 +3117,51 @@ for (int i = 0; i < 8; i++) {
   test_assert(digest[i] == ref[i], "sha256 digest mismatch");
 }
 
-//---- Multi Block Test
+//---- Multi Block Test 56 Byte
 memset(msg_clear, 0, TEST_MSG_DATA_BYTE_LEN);
 memcpy((char*) msg_clear, sha_msg1, SHA_LEN_1);
 
 ret = crySHA256(&CRYD1,SHA_LEN_1,(uint8_t*)msg_clear,(uint8_t*)digest);
 
-test_assert(ret == CRY_NOERROR, "sha256 failed");
-
+test_assert(ret == CRY_NOERROR, "sha256 56 byte failed");
 
  SHOW_DATA(digest,8);
 
+
 ref = (uint32_t*)refSHA_SHA256_56;
 for (int i = 0; i < 8; i++) {
-  test_assert(digest[i] == ref[i], "sha256 digest mismatch");
+  test_assert(digest[i] == ref[i], "sha256 56 byte digest mismatch");
+}
+//---- Multi Block Test 64 Byte
+memset(msg_clear, 0, TEST_MSG_DATA_BYTE_LEN);
+memcpy((char*) msg_clear, sha_msg2, SHA_LEN_2);
+
+ret = crySHA256(&CRYD1,SHA_LEN_2,(uint8_t*)msg_clear,(uint8_t*)digest);
+
+test_assert(ret == CRY_NOERROR, "sha256 64 byte failed");
+
+ SHOW_DATA(digest,8);
+
+
+ref = (uint32_t*)refSHA_SHA256_64;
+for (int i = 0; i < 8; i++) {
+  test_assert(digest[i] == ref[i], "sha256 64 byte digest mismatch");
+}
+
+//---- Multi Block Test 128 Byte
+memset(msg_clear, 0, TEST_MSG_DATA_BYTE_LEN);
+memcpy((char*) msg_clear, sha_msg3, SHA_LEN_3);
+
+ret = crySHA256(&CRYD1,SHA_LEN_3,(uint8_t*)msg_clear,(uint8_t*)digest);
+
+test_assert(ret == CRY_NOERROR, "sha256 128 byte failed");
+
+SHOW_DATA(digest,8);
+
+
+ref = (uint32_t*)refSHA_SHA256_128;
+for (int i = 0; i < 8; i++) {
+    test_assert(digest[i] == ref[i], "sha256 128 byte digest mismatch");
 }
 
 
@@ -2927,22 +3228,53 @@ for (int i = 0; i < 16; i++) {
   test_assert(digest[i] == ref[i], "sha512 digest mismatch");
 }
 
-//---- Multi Block Test
+
+//---- Multi Block Test 56 Byte
 memset(msg_clear, 0, TEST_MSG_DATA_BYTE_LEN);
 memcpy((char*) msg_clear, sha_msg1, SHA_LEN_1);
 
 ret = crySHA512(&CRYD1,SHA_LEN_1,(uint8_t*)msg_clear,(uint8_t*)digest);
 
-test_assert(ret == CRY_NOERROR, "sha512 failed");
-
+test_assert(ret == CRY_NOERROR, "sha512 56 byte failed");
 
  SHOW_DATA(digest,16);
 
+
 ref = (uint32_t*)refSHA_SHA512_56;
 for (int i = 0; i < 16; i++) {
-  test_assert(digest[i] == ref[i], "sha512 digest mismatch");
+  test_assert(digest[i] == ref[i], "sha512 56 byte digest mismatch");
+}
+//---- Multi Block Test 64 Byte
+memset(msg_clear, 0, TEST_MSG_DATA_BYTE_LEN);
+memcpy((char*) msg_clear, sha_msg2, SHA_LEN_2);
+
+ret = crySHA512(&CRYD1,SHA_LEN_2,(uint8_t*)msg_clear,(uint8_t*)digest);
+
+test_assert(ret == CRY_NOERROR, "sha512 64 byte failed");
+
+ SHOW_DATA(digest,16);
+
+
+ref = (uint32_t*)refSHA_SHA512_64;
+for (int i = 0; i < 16; i++) {
+  test_assert(digest[i] == ref[i], "sha512 64 byte digest mismatch");
 }
 
+//---- Multi Block Test 128 Byte
+memset(msg_clear, 0, TEST_MSG_DATA_BYTE_LEN);
+memcpy((char*) msg_clear, sha_msg3, SHA_LEN_3);
+
+ret = crySHA512(&CRYD1,SHA_LEN_3,(uint8_t*)msg_clear,(uint8_t*)digest);
+
+test_assert(ret == CRY_NOERROR, "sha512 128 byte failed");
+
+SHOW_DATA(digest,16);
+
+
+ref = (uint32_t*)refSHA_SHA512_128;
+for (int i = 0; i < 16; i++) {
+    test_assert(digest[i] == ref[i], "sha512 128 byte digest mismatch");
+}
 
 ]]></value>
                     </code>

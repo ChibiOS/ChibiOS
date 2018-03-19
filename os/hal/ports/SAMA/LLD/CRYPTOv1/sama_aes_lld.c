@@ -12,7 +12,7 @@
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-*/
+ */
 #include "hal.h"
 
 #if (HAL_USE_CRY == TRUE) || defined(__DOXYGEN__)
@@ -83,11 +83,9 @@ void sama_aes_lld_set_input(uint32_t* data) {
 	uint8_t size = 4;
 
 	if ((AES->AES_MR & AES_MR_OPMOD_Msk) == AES_MR_OPMOD_CFB) {
-		if ((AES->AES_MR & AES_MR_CFBS_Msk) ==
-		AES_MR_CFBS_SIZE_128BIT)
+		if ((AES->AES_MR & AES_MR_CFBS_Msk) == AES_MR_CFBS_SIZE_128BIT)
 			size = 4;
-		else if ((AES->AES_MR & AES_MR_CFBS_Msk) ==
-		AES_MR_CFBS_SIZE_64BIT)
+		else if ((AES->AES_MR & AES_MR_CFBS_Msk) == AES_MR_CFBS_SIZE_64BIT)
 			size = 2;
 		else
 			size = 1;
@@ -113,13 +111,13 @@ cryerror_t sama_aes_lld_process_polling(CRYDriver *cryp, aesparams *params,
 	cryerror_t ret;
 
 	osalMutexLock(&cryp->mutex);
-//AES soft reset
+	//AES soft reset
 	AES->AES_CR = AES_CR_SWRST;
 
-//AES set op mode
+	//AES set op mode
 	AES->AES_MR |= ((AES_MR_OPMOD_Msk & (params->mode)) | AES_MR_CKEY_PASSWD);
 
-//AES set key size
+	//AES set key size
 	ret = sama_aes_lld_set_key_size(cryp->key0_size);
 
 	if (ret == CRY_NOERROR) {
@@ -137,10 +135,9 @@ cryerror_t sama_aes_lld_process_polling(CRYDriver *cryp, aesparams *params,
 		else
 			AES->AES_MR &= ~AES_MR_CIPHER;
 
-		AES->AES_MR |= (((AES_MR_SMOD_Msk & (AES_MR_SMOD_MANUAL_START)))
-				| AES_MR_CKEY_PASSWD);
+		AES->AES_MR |= (((AES_MR_SMOD_Msk & (AES_MR_SMOD_MANUAL_START))) | AES_MR_CKEY_PASSWD);
 
-//Enable aes interrupt
+		//Enable aes interrupt
 		AES->AES_IER = AES_IER_DATRDY;
 
 		for (i = 0; i < indata_len; i += params->block_size) {
@@ -149,8 +146,7 @@ cryerror_t sama_aes_lld_process_polling(CRYDriver *cryp, aesparams *params,
 
 			AES->AES_CR = AES_CR_START;
 
-			while ((AES->AES_ISR & AES_ISR_DATRDY) != AES_ISR_DATRDY)
-				;
+			while ((AES->AES_ISR & AES_ISR_DATRDY) != AES_ISR_DATRDY);
 
 			sama_aes_lld_get_output((uint32_t *) ((out) + i));
 		}
@@ -165,7 +161,7 @@ cryerror_t sama_aes_lld_process_polling(CRYDriver *cryp, aesparams *params,
 
 cryerror_t sama_aes_lld_process_dma(CRYDriver *cryp,  aesparams *params,
 		const uint8_t *in, uint8_t *out, size_t indata_len) {
-
+#if defined(SAMA_DMA_REQUIRED)
 	cryerror_t ret;
 
 	osalDbgAssert(cryp->thread == NULL, "already waiting");
@@ -187,26 +183,26 @@ cryerror_t sama_aes_lld_process_dma(CRYDriver *cryp,  aesparams *params,
 		cryp->dmawith = DMA_DATA_WIDTH_BYTE;
 
 	cryp->rxdmamode = XDMAC_CC_TYPE_PER_TRAN |
-	XDMAC_CC_PROT_SEC |
-	XDMAC_CC_MBSIZE_SINGLE |
-	XDMAC_CC_DSYNC_PER2MEM | XDMAC_CC_CSIZE(cryp->dmachunksize) |
-	XDMAC_CC_DWIDTH(cryp->dmawith) |
-	XDMAC_CC_SIF_AHB_IF1 |
-	XDMAC_CC_DIF_AHB_IF0 |
-	XDMAC_CC_SAM_FIXED_AM |
-	XDMAC_CC_DAM_INCREMENTED_AM |
-	XDMAC_CC_PERID(PERID_AES_RX);
+			XDMAC_CC_PROT_SEC |
+			XDMAC_CC_MBSIZE_SINGLE |
+			XDMAC_CC_DSYNC_PER2MEM | XDMAC_CC_CSIZE(cryp->dmachunksize) |
+			XDMAC_CC_DWIDTH(cryp->dmawith) |
+			XDMAC_CC_SIF_AHB_IF1 |
+			XDMAC_CC_DIF_AHB_IF0 |
+			XDMAC_CC_SAM_FIXED_AM |
+			XDMAC_CC_DAM_INCREMENTED_AM |
+			XDMAC_CC_PERID(PERID_AES_RX);
 
 	cryp->txdmamode = XDMAC_CC_TYPE_PER_TRAN |
-	XDMAC_CC_PROT_SEC |
-	XDMAC_CC_MBSIZE_SINGLE |
-	XDMAC_CC_DSYNC_MEM2PER | XDMAC_CC_CSIZE(cryp->dmachunksize) |
-	XDMAC_CC_DWIDTH(cryp->dmawith) |
-	XDMAC_CC_SIF_AHB_IF0 |
-	XDMAC_CC_DIF_AHB_IF1 |
-	XDMAC_CC_SAM_INCREMENTED_AM |
-	XDMAC_CC_DAM_FIXED_AM |
-	XDMAC_CC_PERID(PERID_AES_TX);
+			XDMAC_CC_PROT_SEC |
+			XDMAC_CC_MBSIZE_SINGLE |
+			XDMAC_CC_DSYNC_MEM2PER | XDMAC_CC_CSIZE(cryp->dmachunksize) |
+			XDMAC_CC_DWIDTH(cryp->dmawith) |
+			XDMAC_CC_SIF_AHB_IF0 |
+			XDMAC_CC_DIF_AHB_IF1 |
+			XDMAC_CC_SAM_INCREMENTED_AM |
+			XDMAC_CC_DAM_FIXED_AM |
+			XDMAC_CC_PERID(PERID_AES_TX);
 
 	dmaChannelSetMode(cryp->dmarx, cryp->rxdmamode);
 	dmaChannelSetMode(cryp->dmatx, cryp->txdmamode);
@@ -223,10 +219,10 @@ cryerror_t sama_aes_lld_process_dma(CRYDriver *cryp,  aesparams *params,
 	dmaChannelSetTransactionSize(cryp->dmarx,  ( indata_len / DMA_DATA_WIDTH_TO_BYTE(cryp->dmawith)));
 
 	//AES soft reset
-		AES->AES_CR = AES_CR_SWRST;
+	AES->AES_CR = AES_CR_SWRST;
 
 	//AES set op mode
-		AES->AES_MR |= ((AES_MR_OPMOD_Msk & (params->mode)) | AES_MR_CKEY_PASSWD);
+	AES->AES_MR |= ((AES_MR_OPMOD_Msk & (params->mode)) | AES_MR_CKEY_PASSWD);
 
 	//AES set key size
 	ret = sama_aes_lld_set_key_size(cryp->key0_size);
@@ -260,7 +256,7 @@ cryerror_t sama_aes_lld_process_dma(CRYDriver *cryp,  aesparams *params,
 	osalSysUnlock();
 
 	osalMutexUnlock(&cryp->mutex);
-
+#endif //#if defined(SAMA_DMA_REQUIRED)
 	return CRY_NOERROR;
 
 }

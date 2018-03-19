@@ -2,4 +2,4 @@
 
 %PYTHON%\python genfile.py -f des_ecb_8,tdes_ecb_16,tdes_ecb_24,tdes_cbc_16,tdes_cbc_24 -o ref_des -p ../source/testref
 
-%PYTHON%\python genfile.py -f sha_sha1_3,sha_sha1_56,sha_sha256_3,sha_sha256_56,sha_sha512_3,sha_sha512_56 -o ref_sha -p ../source/testref
+%PYTHON%\python genfile.py -f sha_sha1_empty,sha_sha1_3,sha_sha1_56,sha_sha1_64,sha_sha1_128,sha_sha256_3,sha_sha256_56,sha_sha256_64,sha_sha256_128,sha_sha512_3,sha_sha512_56,sha_sha512_64,sha_sha512_128 -o ref_sha -p ../source/testref

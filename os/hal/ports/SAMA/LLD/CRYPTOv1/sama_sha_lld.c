@@ -12,7 +12,7 @@
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-*/
+ */
 #include "hal.h"
 #include <string.h>
 #if (HAL_USE_CRY == TRUE) || defined(__DOXYGEN__)
@@ -24,14 +24,7 @@ static inline uint32_t min_u32(uint32_t a, uint32_t b)
 {
 	return a < b ? a : b;
 }
-struct sha_data {
-	uint32_t remaining;
-	uint32_t processed;
-	uint32_t block_size;
-	uint32_t output_size;
-	shadalgo_t algo;
-	uint8_t hmac;
-};
+
 
 
 static uint32_t shaOutputSize(shadalgo_t algo);
@@ -39,11 +32,11 @@ static uint32_t shadPaddedMessSize(uint8_t mode, uint32_t len);
 uint8_t shaBlockSize(shadalgo_t algo);
 static void loadData(const uint8_t* data, int len);
 static void readData(const uint8_t* data, int len);
-static uint32_t processBlockPolling(CRYDriver *cryp, uint32_t len, uint32_t block_size);
-static uint32_t processBlockDMA(CRYDriver *cryp, uint32_t len, uint32_t block_size);
+static uint32_t processBlockPolling(const uint8_t *data,uint32_t len, uint32_t block_size);
+static uint32_t processBlockDMA(CRYDriver *cryp,const uint8_t *data, uint32_t len, uint32_t block_size);
 static void update(CRYDriver *cryp,struct sha_data *shadata,const uint8_t* data, uint32_t data_size);
 
-static uint32_t fillPadding(struct sha_data *shadata, uint32_t len, uint8_t* buffer);
+static uint32_t fillPadding(struct sha_data *shadata, uint32_t len, uint8_t* buffer,size_t buffer_size);
 
 
 
@@ -53,62 +46,99 @@ uint8_t shaDigestSize(shadalgo_t algo)
 {
 	switch(algo)
 	{
-		case CRY_SHA_1:
-			return 20;
-			break;
-		case CRY_SHA_224:
-			return 28;
-			break;
-		case CRY_SHA_256:
-			return 32;
-			break;
-		case CRY_SHA_384:
-			return 48;
-			break;
-		case CRY_SHA_512:
-					return 64;
-					break;
-		default:
-			return 0;
+	case CRY_SHA_1:
+		return 20;
+		break;
+	case CRY_SHA_224:
+		return 28;
+		break;
+	case CRY_SHA_256:
+		return 32;
+		break;
+	case CRY_SHA_384:
+		return 48;
+		break;
+	case CRY_SHA_512:
+		return 64;
+		break;
+	default:
+		return 0;
 	}
 }
 
 
 
 
-int sha_finish(CRYDriver *cryp,struct sha_data *shadata,const uint8_t* buffer,uint32_t buffer_size)
+static cryerror_t sha_finish(CRYDriver *cryp,struct sha_data *shadata,const uint8_t* buffer,uint32_t buffer_size)
 {
 
 	uint32_t padding_len=0;
 
+
 	if (buffer_size < shadata->output_size)
-		return -1;
+		return CRY_ERR_INV_ALGO;
 
 	//pad data for the end of the buffer
-	padding_len = fillPadding(shadata,
-									shadata->processed + shadata->remaining,
-									&cryp->sha_buffer[shadata->remaining]
-									);
+	padding_len = fillPadding(shadata,shadata->processed + shadata->remaining,&shadata->sha_buffer[shadata->remaining],shadata->sha_buffer_size - shadata->remaining);
 
 	if (cryp->config->transfer_mode == TRANSFER_POLLING)
-		processBlockPolling(cryp, shadata->remaining + padding_len, shadata->block_size);
+		processBlockPolling(shadata->sha_buffer,shadata->remaining + padding_len, shadata->block_size);
 	else
-		processBlockDMA(cryp, shadata->remaining + padding_len, shadata->block_size);
+		processBlockDMA(cryp,shadata->sha_buffer,shadata->remaining + padding_len, shadata->block_size);
 
 	readData(buffer, buffer_size);
+	return CRY_NOERROR;
 
-	return 0;
 }
 
-cryerror_t sama_sha_lld_process(CRYDriver *cryp,
-										shaparams_t *params,
-										const uint8_t *in,
-										uint8_t *out,
-										size_t indata_len
-										)
+cryerror_t sama_sha_lld_update(CRYDriver *cryp, struct sha_data *sha)
+{
+	uint32_t buf_in_size;
+	uint8_t* p;
+	osalMutexLock(&cryp->mutex);
+
+	p = (uint8_t*)sha->in;
+
+	while (sha->indata_len) {
+		buf_in_size = min_u32(sha->indata_len, SAMA_CRY_SHA_UPDATE_LEN_MAX);
+
+		//First block
+		if (!sha->processed) {
+			SHA->SHA_CR = SHA_CR_FIRST;
+		}
+
+		update(cryp, sha, p, buf_in_size);
+
+		sha->indata_len -= buf_in_size;
+		p += buf_in_size;
+	}
+	osalMutexUnlock(&cryp->mutex);
+
+	return CRY_NOERROR;
+}
+
+cryerror_t sama_sha_lld_final(CRYDriver *cryp, struct sha_data *sha)
+{
+	cryerror_t err = CRY_NOERROR;
+	osalMutexLock(&cryp->mutex);
+
+	if (!sha->processed) {
+		SHA->SHA_CR = SHA_CR_FIRST;
+	}
+
+	err = sha_finish(cryp, sha, sha->out, sha->output_size);
+
+	osalMutexUnlock(&cryp->mutex);
+
+	return err;
+}
+
+
+
+cryerror_t sama_sha_lld_init(CRYDriver *cryp, struct sha_data *sha)
 {
 	uint32_t algoregval;
-	struct sha_data shadata;
+	cryerror_t	cryerr = CRY_NOERROR;
 
 	if (!(cryp->enabledPer & SHA_PER)) {
 		cryp->enabledPer |= SHA_PER;
@@ -117,17 +147,19 @@ cryerror_t sama_sha_lld_process(CRYDriver *cryp,
 
 	osalMutexLock(&cryp->mutex);
 
-	shadata.processed = 0;
-	shadata.remaining = 0;
-	shadata.output_size = shaOutputSize(params->algo);
-	shadata.block_size = shaBlockSize(params->algo);
-	shadata.algo = params->algo;
 
-	if (shadata.output_size == 0) {
+	sha->processed = 0;
+	sha->remaining = 0;
+	sha->output_size = shaOutputSize(sha->algo);
+	sha->block_size = shaBlockSize(sha->algo);
+
+
+	if (sha->output_size == 0) {
+		osalMutexUnlock(&cryp->mutex);
 		return CRY_ERR_INV_ALGO;
 	}
 
-	switch (params->algo) {
+	switch (sha->algo) {
 	case CRY_SHA_1:
 		algoregval = SHA_MR_ALGO_SHA1;
 		break;
@@ -148,11 +180,14 @@ cryerror_t sama_sha_lld_process(CRYDriver *cryp,
 		break;
 #endif
 	default:
+		osalMutexUnlock(&cryp->mutex);
 		return CRY_ERR_INV_ALGO;
 	}
 
+
 	//soft reset
 	SHA->SHA_CR = SHA_CR_SWRST;
+
 
 	if (cryp->config->transfer_mode == TRANSFER_POLLING) {
 		algoregval |= SHA_MR_SMOD_MANUAL_START;
@@ -163,15 +198,15 @@ cryerror_t sama_sha_lld_process(CRYDriver *cryp,
 		cryp->dmachunksize = DMA_CHUNK_SIZE_16;
 
 		cryp->txdmamode = XDMAC_CC_TYPE_PER_TRAN |
-		XDMAC_CC_PROT_SEC |
-		XDMAC_CC_MBSIZE_SINGLE |
-		XDMAC_CC_DSYNC_MEM2PER | XDMAC_CC_CSIZE(cryp->dmachunksize) |
-		XDMAC_CC_DWIDTH(cryp->dmawith) |
-		XDMAC_CC_SIF_AHB_IF0 |
-		XDMAC_CC_DIF_AHB_IF1 |
-		XDMAC_CC_SAM_INCREMENTED_AM |
-		XDMAC_CC_DAM_FIXED_AM |
-		XDMAC_CC_PERID(PERID_SHA_TX);
+				XDMAC_CC_PROT_SEC |
+				XDMAC_CC_MBSIZE_SINGLE |
+				XDMAC_CC_DSYNC_MEM2PER | XDMAC_CC_CSIZE(cryp->dmachunksize) |
+				XDMAC_CC_DWIDTH(cryp->dmawith) |
+				XDMAC_CC_SIF_AHB_IF0 |
+				XDMAC_CC_DIF_AHB_IF1 |
+				XDMAC_CC_SAM_INCREMENTED_AM |
+				XDMAC_CC_DAM_FIXED_AM |
+				XDMAC_CC_PERID(PERID_SHA_TX);
 
 		cryp->rxdmamode = 0xFFFFFFFF;
 
@@ -184,29 +219,13 @@ cryerror_t sama_sha_lld_process(CRYDriver *cryp,
 	//enable interrupt
 	SHA->SHA_IER = SHA_IER_DATRDY;
 
-	uint32_t buf_in_size;
-	const uint8_t *p = in;
 
-	while (indata_len) {
-		buf_in_size = min_u32(indata_len, SHA_UPDATE_LEN);
-
-		//First block
-		if (!shadata.processed) {
-			SHA->SHA_CR = SHA_CR_FIRST;
-		}
-
-		update(cryp, &shadata, in, buf_in_size);
-
-		p += buf_in_size;
-		indata_len -= buf_in_size;
-	}
-
-	sha_finish(cryp, &shadata, out, shadata.output_size);
 
 	osalMutexUnlock(&cryp->mutex);
 
-	return CRY_NOERROR;
+	return cryerr;
 }
+
 
 
 static uint32_t shaOutputSize(shadalgo_t algo)
@@ -253,7 +272,7 @@ uint8_t shaBlockSize(shadalgo_t algo)
 		return 128;
 	}
 
-		return 64;
+	return 64;
 }
 
 
@@ -270,6 +289,7 @@ static void loadData(const uint8_t* data, int len)
 			SHA->SHA_IODATAR[i - 16] = value;
 	}
 }
+
 static void readData(const uint8_t* data, int len)
 {
 	int i;
@@ -277,19 +297,20 @@ static void readData(const uint8_t* data, int len)
 
 	for (i = 0; i < (len / 4) && i < 16; i++) {
 		value = SHA->SHA_IODATAR[i];
-		memcpy(&data[i * 4], &value, 4);
+		memcpy((uint8_t*)&data[i * 4], &value, 4);
 	}
 }
 
 
-static uint32_t processBlockPolling(CRYDriver *cryp,uint32_t len, uint32_t block_size)
+static uint32_t processBlockPolling(const uint8_t *data,uint32_t len, uint32_t block_size)
 {
 	uint32_t processed = 0;
+
 
 	while ((len - processed) >= block_size) {
 
 		// load data in the sha input registers
-		loadData(&cryp->sha_buffer[processed], block_size);
+		loadData(&data[processed], block_size);
 
 		SHA->SHA_CR = SHA_CR_START;
 
@@ -302,7 +323,7 @@ static uint32_t processBlockPolling(CRYDriver *cryp,uint32_t len, uint32_t block
 	return processed;
 }
 
-static uint32_t processBlockDMA(CRYDriver *cryp, uint32_t len, uint32_t block_size)
+static uint32_t processBlockDMA(CRYDriver *cryp, const uint8_t *data,uint32_t len, uint32_t block_size)
 {
 	uint32_t processed = 0;
 
@@ -310,7 +331,7 @@ static uint32_t processBlockDMA(CRYDriver *cryp, uint32_t len, uint32_t block_si
 
 		// load data in the sha input registers
 		// Writing channel
-		dmaChannelSetSource(cryp->dmatx, &cryp->sha_buffer[processed]);
+		dmaChannelSetSource(cryp->dmatx, &data[processed]);
 		dmaChannelSetDestination(cryp->dmatx, SHA->SHA_IDATAR);
 		dmaChannelSetTransactionSize(cryp->dmatx,
 				(block_size / DMA_DATA_WIDTH_TO_BYTE(cryp->dmawith)));
@@ -338,7 +359,7 @@ static void update(CRYDriver *cryp,struct sha_data *shadata,const uint8_t* data,
 	if (shadata->remaining) {
 		//complete previous data
 		uint32_t complement = min_u32(data_size, shadata->block_size - shadata->remaining);
-		memcpy(&cryp->sha_buffer[shadata->remaining], data, complement);
+		memcpy(&shadata->sha_buffer[shadata->remaining], data, complement);
 		shadata->remaining += complement;
 		data += complement;
 		data_size -= complement;
@@ -346,9 +367,9 @@ static void update(CRYDriver *cryp,struct sha_data *shadata,const uint8_t* data,
 		//if data is complete process the block
 		if (shadata->remaining == shadata->block_size) {
 			if (cryp->config->transfer_mode == TRANSFER_POLLING )
-				processBlockPolling(cryp,shadata->remaining, shadata->block_size);
+				processBlockPolling(shadata->sha_buffer,shadata->remaining, shadata->block_size);
 			else
-				processBlockDMA(cryp, shadata->remaining, shadata->block_size);
+				processBlockDMA(cryp, shadata->sha_buffer,shadata->remaining, shadata->block_size);
 
 			shadata->processed += shadata->block_size;
 			shadata->remaining = 0;
@@ -360,9 +381,9 @@ static void update(CRYDriver *cryp,struct sha_data *shadata,const uint8_t* data,
 
 	// Process blocks
 	if (cryp->config->transfer_mode == TRANSFER_POLLING )
-		processed = processBlockPolling(cryp, data_size, shadata->block_size);
+		processed = processBlockPolling(data,data_size, shadata->block_size);
 	else
-		processed = processBlockDMA(cryp, data_size, shadata->block_size);
+		processed = processBlockDMA(cryp, data,data_size, shadata->block_size);
 
 	shadata->processed += processed;
 
@@ -371,17 +392,20 @@ static void update(CRYDriver *cryp,struct sha_data *shadata,const uint8_t* data,
 	if (shadata->remaining)
 	{
 		for (i=0;i<shadata->remaining;i++)
-			cryp->sha_buffer[i] = data[processed+i];
+			shadata->sha_buffer[i] = data[processed+i];
 	}
 }
 
-static uint32_t fillPadding(struct sha_data *shadata, uint32_t len, uint8_t* buffer)
+static uint32_t fillPadding(struct sha_data *shadata, uint32_t len, uint8_t* buffer,size_t buffer_size)
 {
-	uint32_t padding_len = shadPaddedMessSize(shadata->algo, len) - len;
-	uint32_t k = padding_len - 9;
+	uint32_t padding_len,k;
 
-	 osalDbgAssert( padding_len <= (SHA_MAX_PADDING_LEN - shadata->remaining),
-	                "invalid buffer size");
+
+	padding_len  =  shadPaddedMessSize(shadata->algo, len);
+	padding_len  -= len;
+	k = padding_len - 9;
+
+	osalDbgAssert( padding_len <= buffer_size,"invalid buffer size");
 
 
 	// Append "1" bit and seven "0" bits to the end of the message

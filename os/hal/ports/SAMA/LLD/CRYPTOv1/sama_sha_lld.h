@@ -17,13 +17,9 @@
 #define CRYPTOLIB_LLD_SAMA_SHA_H_
 
 
-
-cryerror_t sama_sha_lld_process(CRYDriver *cryp,
-										shaparams_t *params,
-										const uint8_t *in,
-										uint8_t *out,
-										size_t indata_len
-										);
+cryerror_t sama_sha_lld_init(CRYDriver *cryp, struct sha_data *sha);
+cryerror_t sama_sha_lld_update(CRYDriver *cryp, struct sha_data *sha);
+cryerror_t sama_sha_lld_final(CRYDriver *cryp, struct sha_data *sha);
 
 
 

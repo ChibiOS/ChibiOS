@@ -72,6 +72,8 @@ extern void cryptoTest_printArray32(bool isLE,const uint32_t *a,size_t len);
 
 #define SHA_LEN_0    3
 #define SHA_LEN_1    56
+#define SHA_LEN_2    64
+#define SHA_LEN_3    128
 
 extern const char test_plain_data[TEST_DATA_BYTE_LEN];
 extern uint32_t msg_clear[TEST_MSG_DATA_WORD_LEN];
@@ -81,7 +83,8 @@ extern const uint32_t test_keys[8];
 extern const uint32_t test_vectors[4];
 extern const uint8_t sha_msg0[SHA_LEN_0];
 extern const uint8_t sha_msg1[SHA_LEN_1];
-
+extern const uint8_t sha_msg2[SHA_LEN_2];
+extern const uint8_t sha_msg3[SHA_LEN_3];
 
 #endif /* !defined(__DOXYGEN__) */
 

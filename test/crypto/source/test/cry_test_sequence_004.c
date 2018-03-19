@@ -46,21 +46,13 @@
 static const CRYConfig configDES_Polling=
 {
 		TRANSFER_POLLING,
-		0,
-		TDES_ALGO_SINGLE
-};
-static const CRYConfig configTDES_Polling=
-{
-		TRANSFER_POLLING,
-		0,
-		TDES_ALGO_TRIPLE
+		0
 };
 
-static const CRYConfig configTDES_DMA=
+static const CRYConfig configDES_DMA=
 {
 		TRANSFER_DMA,
-		0,
-		TDES_ALGO_TRIPLE
+		0
 };
 
 
@@ -164,7 +156,7 @@ static void cry_test_004_002_setup(void) {
   memcpy((char*) msg_clear, test_plain_data, TEST_DATA_BYTE_LEN);
   memset(msg_encrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
   memset(msg_decrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
-  cryStart(&CRYD1, &configTDES_Polling);
+  cryStart(&CRYD1, &configDES_Polling);
 
 
 }
@@ -280,7 +272,7 @@ static void cry_test_004_003_setup(void) {
   memcpy((char*) msg_clear, test_plain_data, TEST_DATA_BYTE_LEN);
   memset(msg_encrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
   memset(msg_decrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
-  cryStart(&CRYD1, &configTDES_Polling);
+  cryStart(&CRYD1, &configDES_Polling);
 
 
 }
@@ -396,7 +388,7 @@ static void cry_test_004_004_setup(void) {
   memcpy((char*) msg_clear, test_plain_data, TEST_DATA_BYTE_LEN);
   memset(msg_encrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
   memset(msg_decrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
-  cryStart(&CRYD1, &configTDES_DMA);
+  cryStart(&CRYD1, &configDES_DMA);
 
 
 }
@@ -512,7 +504,7 @@ static void cry_test_004_005_setup(void) {
   memcpy((char*) msg_clear, test_plain_data, TEST_DATA_BYTE_LEN);
   memset(msg_encrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
   memset(msg_decrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
-  cryStart(&CRYD1, &configTDES_DMA);
+  cryStart(&CRYD1, &configDES_DMA);
 
 
 }

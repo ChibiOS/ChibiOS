@@ -134,17 +134,28 @@ typedef enum  {
 	TDES_ALGO_XTEA
 }tdes_algo_t;
 
+struct sha_data {
+	uint32_t remaining;
+	uint32_t processed;
+	uint32_t block_size;
+	uint32_t output_size;
+	uint32_t sha_buffer_size;
+	const uint8_t *in;
+	uint8_t *out;
+	size_t indata_len;
+	uint8_t *sha_buffer;
+
+	shadalgo_t algo;
+};
+
 typedef struct {
 
 	crytransfermode_t				transfer_mode;
 	uint32_t                 		cfbs;
-	tdes_algo_t						tdes_algo;
-
 } CRYConfig;
 
 #define KEY0_BUFFER_SIZE_W	HAL_CRY_MAX_KEY_SIZE/4
-#define SHA_MAX_PADDING_LEN (2 * 128)
-#define SHA_UPDATE_LEN 		(128 * 1024)
+
 
 #define CRY_DRIVER_EXT_FIELDS	thread_reference_t        thread;		\
 								sama_dma_channel_t       *dmarx;		\
@@ -155,8 +166,7 @@ typedef struct {
 								uint8_t				 dmachunksize;		\
 								uint8_t 				enabledPer;		\
 								mutex_t                   mutex;		\
-								uint32_t key0_buffer[KEY0_BUFFER_SIZE_W];	\
-								uint8_t sha_buffer[SHA_MAX_PADDING_LEN];
+								uint32_t key0_buffer[KEY0_BUFFER_SIZE_W];
 
 /**
  * @brief   Structure representing an CRY driver.
@@ -189,6 +199,33 @@ struct CRYDriver {
 #endif
   /* End of the mandatory fields.*/
 };
+
+#if (CRY_LLD_SUPPORTS_SHA1 == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Type of a SHA1 context.
+ */
+typedef struct {
+  struct sha_data sha;
+} SHA1Context;
+#endif
+
+#if (CRY_LLD_SUPPORTS_SHA256 == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Type of a SHA256 context.
+ */
+typedef struct {
+	 struct sha_data sha;
+} SHA256Context;
+#endif
+
+#if (CRY_LLD_SUPPORTS_SHA512 == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Type of a SHA512 context.
+ */
+typedef struct {
+	 struct sha_data sha;
+} SHA512Context;
+#endif
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -314,12 +351,21 @@ extern "C" {
                                      const uint8_t *in,
                                      uint8_t *out,
                                      const uint8_t *iv);
-  cryerror_t cry_lld_SHA1(CRYDriver *cryp, size_t size,
-                          const uint8_t *in, uint8_t *out);
-  cryerror_t cry_lld_SHA256(CRYDriver *cryp, size_t size,
-                            const uint8_t *in, uint8_t *out);
-  cryerror_t cry_lld_SHA512(CRYDriver *cryp, size_t size,
-                            const uint8_t *in, uint8_t *out);
+  cryerror_t cry_lld_SHA1_init(CRYDriver *cryp, SHA1Context *sha1ctxp);
+  cryerror_t cry_lld_SHA1_update(CRYDriver *cryp, SHA1Context *sha1ctxp,
+                                 size_t size, const uint8_t *in);
+  cryerror_t cry_lld_SHA1_final(CRYDriver *cryp, SHA1Context *sha1ctxp,
+                                uint8_t *out);
+  cryerror_t cry_lld_SHA256_init(CRYDriver *cryp, SHA256Context *sha256ctxp);
+  cryerror_t cry_lld_SHA256_update(CRYDriver *cryp, SHA256Context *sha256ctxp,
+                                   size_t size, const uint8_t *in);
+  cryerror_t cry_lld_SHA256_final(CRYDriver *cryp, SHA256Context *sha256ctxp,
+                                  uint8_t *out);
+  cryerror_t cry_lld_SHA512_init(CRYDriver *cryp, SHA512Context *sha512ctxp);
+  cryerror_t cry_lld_SHA512_update(CRYDriver *cryp, SHA512Context *sha512ctxp,
+                                   size_t size, const uint8_t *in);
+  cryerror_t cry_lld_SHA512_final(CRYDriver *cryp, SHA512Context *sha512ctxp,
+                                  uint8_t *out);
   cryerror_t cry_lld_TRNG(CRYDriver *cryp, uint8_t *out);
 #ifdef __cplusplus
 }
