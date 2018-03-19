@@ -8,7 +8,7 @@ The demo runs on an SAMA5D2-XPLAINED board.
 
 ** The Demo **
 Demo configures security zone on SRAM0. Zones are tested with two writing 
-tentatives.
+attempts.
 ** Build Procedure **
 
 ** Notes **
