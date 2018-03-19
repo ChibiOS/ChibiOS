@@ -73,7 +73,7 @@ static msg_t get(void *ip) {
   return 4;
 }
 
-static const struct NullStreamVMT vmt = {writes, reads, put, get};
+static const struct NullStreamVMT vmt = {(size_t)0, writes, reads, put, get};
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */

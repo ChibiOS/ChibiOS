@@ -162,6 +162,7 @@ typedef struct {
  * @brief   @p BaseFlash specific methods with inherited ones.
  */
 #define _base_flash_methods                                                 \
+  _base_object_methods                                                      \
   _base_flash_methods_alone
 
 /**
@@ -175,10 +176,13 @@ struct BaseFlashVMT {
  * @brief   @p BaseFlash specific data.
  */
 #define _base_flash_data                                                    \
+  _base_object_data                                                         \
   /* Driver state.*/                                                        \
   flash_state_t         state;
 
 /**
+ * @extends BaseObject
+ *
  * @brief   Base flash class.
  */
 typedef struct {

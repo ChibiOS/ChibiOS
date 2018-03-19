@@ -72,6 +72,7 @@ typedef enum {
  * @brief   Virtual methods table.
  */
 static const struct SDCDriverVMT sdc_vmt = {
+  (size_t)0,
   (bool (*)(void *))sdc_lld_is_card_inserted,
   (bool (*)(void *))sdc_lld_is_write_protected,
   (bool (*)(void *))sdcConnect,

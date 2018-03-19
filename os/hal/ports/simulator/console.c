@@ -123,6 +123,7 @@ static msg_t _ctl(void *ip, unsigned int operation, void *arg) {
 }
 
 static const struct BaseChannelVMT vmt = {
+  (size_t)0,
   _write, _read, _put, _get,
   _putt, _gett, _writet, _readt,
   _ctl
