@@ -113,6 +113,7 @@ OSAL_IRQ_HANDLER(SAMA_SECUMOD_HANDLER) {
 
   /* Read alarm status */
   sr = SECUMOD->SECUMOD_SR;
+  nimpr = SECUMOD->SECUMOD_NIMPR;
 
   if ((sr & SECUMOD_SR_SHLDM) && (nimpr & SECUMOD_NIMPR_SHLDM)) {
     SECD0.secumod_callback(&SECD0, SEC_EVENT_SHLDM);
