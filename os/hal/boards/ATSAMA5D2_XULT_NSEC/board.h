@@ -80,20 +80,20 @@
 /*
  * IO pins assignments.
  */
-#define PIOA_PIO0                   0U
-#define PIOA_PIN1                   1U
-#define PIOA_PIN2                   2U
-#define PIOA_PIN3                   3U
-#define PIOA_PIN4                   4U
-#define PIOA_PIN5                   5U
-#define PIOA_PIN6                   6U
-#define PIOA_PIN7                   7U
-#define PIOA_PIN8                   8U
-#define PIOA_PIN9                   9U
-#define PIOA_PIN10                  10U
+#define PIOA_SDMMC0_CK              0U
+#define PIOA_SDMMC0_CMD             1U
+#define PIOA_SDMMC0_DAT0            2U
+#define PIOA_SDMMC0_DAT1            3U
+#define PIOA_SDMMC0_DAT2            4U
+#define PIOA_SDMMC0_DAT3            5U
+#define PIOA_SDMMC0_DAT4            6U
+#define PIOA_SDMMC0_DAT5            7U
+#define PIOA_SDMMC0_DAT6            8U
+#define PIOA_SDMMC0_DAT7            9U
+#define PIOA_SDMMC0_RSTN            10U
 #define PIOA_PIN11                  11U
 #define PIOA_PIN12                  12U
-#define PIOA_PIN13                  13U
+#define PIOA_SDMMC0_CD              13U
 #define PIOA_PIN14                  14U
 #define PIOA_PIN15                  15U
 #define PIOA_PIN16                  16U
@@ -147,9 +147,9 @@
 #define PIOB_PIN31                  31U
 
 #define PIOC_PIO0                   0U
-#define PIOC_PIO1                   1U
-#define PIOC_PIO2                   2U
-#define PIOC_PIO3                   3U
+#define PIOC_PIN1                   1U
+#define PIOC_PIN2                   2U
+#define PIOC_PIN3                   3U
 #define PIOC_PIN4                   4U
 #define PIOC_PIN5                   5U
 #define PIOC_PIN6                   6U
@@ -191,15 +191,15 @@
 #define PIOD_PIN9                   9U
 #define PIOD_PIN10                  10U
 #define PIOD_PIN11                  11U
-#define PIOD_KEYBACK_LED_RED        12U
+#define PIOD_PIN12                  12U
 #define PIOD_PIN13                  13U
 #define PIOD_PIN14                  14U
 #define PIOD_PIN15                  15U
 #define PIOD_PIN16                  16U
 #define PIOD_PIN17                  17U
-#define PIOD_KEYBACK_LED_GREEN      18U
+#define PIOD_PIN18                  18U
 #define PIOD_PIN19                  19U
-#define PIOD_KEYBACK_LED_BLUE       20U
+#define PIOD_PIN20                  20U
 #define PIOD_UART_FLEXCOM4_IO0      21U
 #define PIOD_UART_FLEXCOM4_IO1      22U
 #define PIOD_PIN23                  23U
@@ -220,9 +220,6 @@
 
 #define LINE_LED_RED                BOARD_LINE(PIOB, 6U)
 #define LINE_USER_PB                BOARD_LINE(PIOB, 9U)
-#define LINE_KEYBACK_LED_RED        BOARD_LINE(PIOD, 12U)
-#define LINE_KEYBACK_LED_GREEN      BOARD_LINE(PIOD, 18U)
-#define LINE_KEYBACK_LED_BLUE       BOARD_LINE(PIOD, 20U)
 
 #if !defined(_FROM_ASM_)
 #ifdef __cplusplus
