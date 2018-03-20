@@ -86,7 +86,7 @@ uint8_t  sdmmc_device_lowlevelcfg(SdmmcDriver *driver)
 		sdmmc_set_capabilities((Sdmmc*) SDMMC0, caps0, CAPS0_MASK, 0, 0);
 
 		/* Configure SDMMC0 pins */
-
+#if 0
 		/** SDMMC0 pin Card Detect (CD) */
 		palSetGroupMode(PIOA, (1u << PIOA_PIN13), 0U,
 				PAL_SAMA_FUNC_PERIPH_A | PAL_MODE_INPUT_PULLUP);
@@ -109,7 +109,7 @@ uint8_t  sdmmc_device_lowlevelcfg(SdmmcDriver *driver)
 		/** SDMMC0 pin 8-bit Data (DA0-7) */
 		palSetGroupMode(PIOA, 0x000003fc, 0U,
 				PAL_SAMA_FUNC_PERIPH_A | PAL_MODE_INPUT_PULLUP);
-
+#endif
 		res = 1;
 
 	}
@@ -122,6 +122,7 @@ uint8_t  sdmmc_device_lowlevelcfg(SdmmcDriver *driver)
 		sdmmc_set_capabilities(SDMMC1, caps0, CAPS0_MASK, 0, 0);
 
 		/* Configure SDMMC1 pins */
+#if 0
 		/** SDMMC1 pin Card Detect (CD) */
 		palSetGroupMode(PIOA, (1u << PIOA_PIN30), 0U,
 				PAL_SAMA_FUNC_PERIPH_E | PAL_MODE_INPUT_PULLUP);
@@ -136,7 +137,7 @@ uint8_t  sdmmc_device_lowlevelcfg(SdmmcDriver *driver)
 		/** SDMMC1 pin 4-bit Data (DA0-3) */
 		palSetGroupMode(PIOA, 0x003c0000, 0U,
 				PAL_SAMA_FUNC_PERIPH_E | PAL_MODE_INPUT_PULLUP);
-
+#endif
 		res = 1;
 	}
 	break;
@@ -144,7 +145,6 @@ uint8_t  sdmmc_device_lowlevelcfg(SdmmcDriver *driver)
 		res = 0;
 		break;
 	}
-
 
 	if (res) {
 		//check res
