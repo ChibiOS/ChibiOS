@@ -257,6 +257,22 @@ static void l_bind(skel_req_t *skreqp) {
   returnToRemote(skreqp, result);
 }
 
+/**
+ * @brief listen(int s, int backlog);
+ */
+static void l_listen(skel_req_t *skreqp) {
+  int s, result, backlog;
+
+  s = (int)skreqp->stub_op_p[0];
+  backlog = (int)skreqp->stub_op_p[1];
+
+  /* Call the api exposed by the TCP/IP stack.*/
+  result = listen(s, backlog);
+
+  /* Report the result.*/
+  returnToRemote(skreqp, result);
+}
+
 /** @} */
 
 /*===========================================================================*/
@@ -294,6 +310,9 @@ static THD_FUNCTION(TsSockSkelDaemon, arg) {
       l_select(skreqp);
       break;
     case STUB_OP_BIND:
+      l_bind(skreqp);
+      break;
+    case STUB_OP_LISTEN:
       l_bind(skreqp);
       break;
     default:

@@ -45,6 +45,7 @@
 #define STUB_OP_SEND      4
 #define STUB_OP_SELECT    5
 #define STUB_OP_BIND      6
+#define STUB_OP_LISTEN    7
 
 #define EVT_F_SOCK_NEW_OP 1
 

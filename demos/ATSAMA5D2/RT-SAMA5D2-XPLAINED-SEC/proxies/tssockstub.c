@@ -364,6 +364,16 @@ int bind(int s, const struct sockaddr *name, socklen_t namelen) {
   return (int)callRemote(op);
 }
 
+int listen(int s, int backlog) {
+  stub_op_t *op = getNewOp();
+  op->op_code = STUB_OP_LISTEN;
+  op->op_p[0].dir = OP_PRMDIR_NONE;
+  op->op_p[0].val = (uint32_t)s;
+  op->op_p[1].dir = OP_PRMDIR_NONE;
+  op->op_p[1].val = (uint32_t)backlog;
+  return (int)callRemote(op);
+}
+
 #if 0
 int accept(int s, struct sockaddr *addr, socklen_t *addrlen);
 int shutdown(int s, int how);
@@ -371,7 +381,6 @@ int getpeername (int s, struct sockaddr *name, socklen_t *namelen);
 int getsockname (int s, struct sockaddr *name, socklen_t *namelen);
 int getsockopt (int s, int level, int optname, void *optval, socklen_t *optlen);
 int setsockopt (int s, int level, int optname, const void *optval, socklen_t optlen);
-int listen(int s, int backlog);
 int read(int s, void *mem, size_t len);
 int recvfrom(int s, void *mem, size_t len, int flags,
       struct sockaddr *from, socklen_t *fromlen);

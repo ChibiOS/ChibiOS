@@ -373,6 +373,7 @@ extern "C" {
   int select(int maxfdp1, fd_set *readset, fd_set *writeset, fd_set *exceptset,
                 struct timeval *timeout);
   int bind(int s, const struct sockaddr *name, socklen_t namelen);
+  int listen(int s, int backlog);
   in_addr_t inet_addr(const char *cp);
   int inet_aton(const char *cp, struct in_addr *addr);
   void tsWaitStubSkelReady(void);
