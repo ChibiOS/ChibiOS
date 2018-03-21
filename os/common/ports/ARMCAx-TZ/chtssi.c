@@ -24,6 +24,7 @@
 
 #include "ch.h"
 #include "hal.h"
+#include "tsconf.h"
 #include "chtssi.h"
 #include <string.h>
 
@@ -345,7 +346,7 @@ CC_NO_RETURN void tssiInit(void)
   /* Jump in the NON SECURE world.
    * This thread becomes the non secure environment as view by
    * the secure world.*/
-  _ns_trampoline(NSEC_MEMORY_START_ADDR);
+  _ns_trampoline(NSEC_MEMORY_START_ADDR + NSEC_MEMORY_EXE_OFFSET);
 
   /* It never goes here.*/
 }

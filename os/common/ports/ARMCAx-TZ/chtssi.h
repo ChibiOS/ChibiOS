@@ -82,10 +82,21 @@
 /**
  * @brief   Secure and non secure memory address spaces.
  */
+#if !defined(NSEC_MEMORY_START_ADDR)
 #define NSEC_MEMORY_START_ADDR    ((uint8_t *)0x20000000)
+#endif
+#if !defined(NSEC_MEMORY_EXE_OFFSET)
+#define NSEC_MEMORY_EXE_OFFSET    ((uint32_t) 0x00000000)
+#endif
+#if !defined(NSEC_MEMORY_END_ADDR)
 #define NSEC_MEMORY_END_ADDR      ((uint8_t *)0x27000000)
+#endif
+#if !defined(SEC_MEMORY_START_ADDR)
 #define SEC_MEMORY_START_ADDR     ((uint8_t *)0x27000000)
+#endif
+#if !defined(SEC_MEMORY_SIZE)
 #define SEC_MEMORY_SIZE           ((size_t)0x1000000)
+#endif
 
 /** @} */
 

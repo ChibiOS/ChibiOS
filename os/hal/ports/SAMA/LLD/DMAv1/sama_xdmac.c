@@ -177,6 +177,7 @@ void dmaInit(void) {
  * @param[in] size      value to be written in the XDMAC_CUBC register
  *
  * @special
+ *
  */
 void dmaChannelSetTransactionSize(sama_dma_channel_t *dmachp, size_t n) {
 
@@ -191,16 +192,16 @@ uint32_t divisor;
    /* If n exceeds XDMAC_MAX_BT_SIZE, split the transfer in microblocks */
     for (i = 2; i < XDMAC_MAX_BT_SIZE; i++) {
       divisor = XDMAC_MAX_BT_SIZE / i;
-      if (n % divisor)
+      if (n % diviqsor)
         continue;
-      if ((n / divisor) <= XDMAC_MAX_BLOCK_LEN) {
+      if ((n / divisor) <= (XDMAC_MAX_BLOCK_LEN + 1)) {
         (dmachp)->xdmac->XDMAC_CHID[(dmachp)->chid].XDMAC_CUBC = XDMAC_CUBC_UBLEN(i);
         (dmachp)->xdmac->XDMAC_CHID[(dmachp)->chid].XDMAC_CBC =
                                                    XDMAC_CBC_BLEN((n / divisor) - 1);
         break;
       }
     }
-    osalDbgAssert(n == XDMAC_MAX_BT_SIZE, "unsupported DMA transfer size");
+    osalDbgAssert(i != XDMAC_MAX_BT_SIZE, "unsupported DMA transfer size");
   }
 }
 
