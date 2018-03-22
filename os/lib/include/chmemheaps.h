@@ -97,7 +97,7 @@ struct memory_heap {
   memgetfunc2_t         provider;   /**< @brief Memory blocks provider for
                                                 this heap.                  */
   heap_header_t         header;     /**< @brief Free blocks list header.    */
-#if CH_CFG_USE_MUTEXES == TRUE
+#if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
   mutex_t               mtx;        /**< @brief Heap access mutex.          */
 #else
   semaphore_t           sem;        /**< @brief Heap access semaphore.      */

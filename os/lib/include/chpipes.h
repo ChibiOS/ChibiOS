@@ -60,6 +60,11 @@ typedef struct {
   bool                  reset;          /**< @brief True if in reset state. */
   threads_queue_t       qw;             /**< @brief Queued writers.         */
   threads_queue_t       qr;             /**< @brief Queued readers.         */
+#if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
+  mutex_t               mtx;        /**< @brief Heap access mutex.          */
+#else
+  semaphore_t           sem;        /**< @brief Heap access semaphore.      */
+#endif
 } pipe_t;
 
 /*===========================================================================*/
@@ -75,6 +80,7 @@ typedef struct {
  * @param[in] buffer    pointer to the pipe buffer array of @p uint8_t
  * @param[in] size      number of @p uint8_t elements in the buffer array
  */
+#if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
 #define _PIPE_DATA(name, buffer, size) {                                    \
   (uint8_t *)(buffer),                                                      \
   (uint8_t *)(buffer) + size,                                               \
@@ -84,7 +90,21 @@ typedef struct {
   false,                                                                    \
   _THREADS_QUEUE_DATA(name.qw),                                             \
   _THREADS_QUEUE_DATA(name.qr),                                             \
+  _MUTEX_DATA(name.mtx),                                                    \
 }
+#else /* CH_CFG_USE_MUTEXES == FALSE */
+#define _PIPE_DATA(name, buffer, size) {                                    \
+  (uint8_t *)(buffer),                                                      \
+  (uint8_t *)(buffer) + size,                                               \
+  (uint8_t *)(buffer),                                                      \
+  (uint8_t *)(buffer),                                                      \
+  (size_t)0,                                                                \
+  false,                                                                    \
+  _THREADS_QUEUE_DATA(name.qw),                                             \
+  _THREADS_QUEUE_DATA(name.qr),                                             \
+  _SEMAPHORE_DATA(name.sem, (cnt_t)1),                                      \
+}
+#endif /* CH_CFG_USE_MUTEXES == FALSE */
 
 /**
  * @brief   Static pipe initializer.
@@ -107,17 +127,10 @@ extern "C" {
 #endif
   void chPipeObjectInit(pipe_t *pp, uint8_t *buf, size_t n);
   void chPipeReset(pipe_t *pp);
-  void chPipeResetI(pipe_t *pp);
-  size_t chPipeReadI(pipe_t *pp, uint8_t *bp, size_t n);
-  size_t chPipeReadTimeoutS(pipe_t *pp, uint8_t *bp,
+  size_t chPipeWriteTimeout(pipe_t *pp, const uint8_t *bp,
                             size_t n, sysinterval_t timeout);
   size_t chPipeReadTimeout(pipe_t *pp, uint8_t *bp,
                            size_t n, sysinterval_t timeout);
-  size_t chPipeWriteI(pipe_t *pp, const uint8_t *bp, size_t n);
-  size_t chPipeWriteTimeoutS(pipe_t *pp, const uint8_t *bp,
-                             size_t n, sysinterval_t timeout);
-  size_t chPipeWriteTimeout(pipe_t *pp, const uint8_t *bp,
-                            size_t n, sysinterval_t timeout);
 #ifdef __cplusplus
 }
 #endif
