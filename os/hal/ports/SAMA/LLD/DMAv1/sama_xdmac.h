@@ -278,8 +278,8 @@ typedef struct {
  * @param[in] dmachp    pointer to a sama_dma_channel_t structure
  */
 #define dmaWaitCompletion(dmachp) {                                               \
-  (dmachp)->xdmac->XDMAC_GID |= XDMAC_GID_ID0 << ((dmachp)->chid));               \
-  while ((dmachp)->xdmac->XDMAC_GS & (XDMAC_GS_ST0 << ((dmachp)->chid))))         \
+  (dmachp)->xdmac->XDMAC_GID |= XDMAC_GID_ID0 << ((dmachp)->chid);                \
+  while ((dmachp)->xdmac->XDMAC_GS & (XDMAC_GS_ST0 << ((dmachp)->chid)))          \
     ;                                                                             \
   dmaGetChannelInt(dmachp);                                                       \
 }
