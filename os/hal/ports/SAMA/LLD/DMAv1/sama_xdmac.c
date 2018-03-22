@@ -192,7 +192,7 @@ uint32_t divisor;
    /* If n exceeds XDMAC_MAX_BT_SIZE, split the transfer in microblocks */
     for (i = 2; i < XDMAC_MAX_BT_SIZE; i++) {
       divisor = XDMAC_MAX_BT_SIZE / i;
-      if (n % diviqsor)
+      if (n % divisor)
         continue;
       if ((n / divisor) <= (XDMAC_MAX_BLOCK_LEN + 1)) {
         (dmachp)->xdmac->XDMAC_CHID[(dmachp)->chid].XDMAC_CUBC = XDMAC_CUBC_UBLEN(i);
