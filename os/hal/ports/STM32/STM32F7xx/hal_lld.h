@@ -1997,7 +1997,7 @@
  */
 #if (STM32_SDMMC1SEL == STM32_SDMMC1SEL_PLL48CLK) || defined(__DOXYGEN__)
 #define STM32_SDMMC1CLK              STM32_PLL48CLK
-#elif STM32_SDMMC1SEL == STM32_SDMMCSEL_SYSCLK
+#elif STM32_SDMMC1SEL == STM32_SDMMC1SEL_SYSCLK
 #define STM32_SDMMC1CLK              STM32_SYSCLK
 #else
 #error "invalid source selected for SDMMC1 clock"
@@ -2006,9 +2006,9 @@
 /**
  * @brief   SDMMC2 frequency.
  */
-#if (STM32_SDMMC2SEL == STM32_SDMMC1SEL_PLL48CLK) || defined(__DOXYGEN__)
+#if (STM32_SDMMC2SEL == STM32_SDMMC2SEL_PLL48CLK) || defined(__DOXYGEN__)
 #define STM32_SDMMC2CLK              STM32_PLL48CLK
-#elif STM32_SDMMC2SEL == STM32_SDMMCSEL_SYSCLK
+#elif STM32_SDMMC2SEL == STM32_SDMMC2SEL_SYSCLK
 #define STM32_SDMMC2CLK              STM32_SYSCLK
 #else
 #error "invalid source selected for SDMMC2 clock"
