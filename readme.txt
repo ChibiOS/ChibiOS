@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 17.6.5 ***
+- HAL: Fixed invalid SAI1 clock selection on STM32F7xx (bug #929).
 - HAL: Fixed useless writes in read-only CFGR_SWS field on all STM32Fxx
        (bug #927).
 
