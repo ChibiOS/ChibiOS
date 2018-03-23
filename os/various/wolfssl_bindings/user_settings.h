@@ -13,7 +13,7 @@
 #define USER_TICKS 
 #define WOLFSSL_USER_CURRTIME 
 #define XMALLOC_OVERRIDE 
-#define USE_WOLF_TIME_T
+//#define USE_WOLF_TIME_T
 #define XTIME(tl)       (LowResTimer())
 
 
