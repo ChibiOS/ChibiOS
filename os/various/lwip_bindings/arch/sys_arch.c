@@ -104,15 +104,15 @@ u32_t sys_arch_sem_wait(sys_sem_t *sem, u32_t timeout) {
   systime_t start;
   sysinterval_t tmo, remaining;
 
-  osalSysLock();
+  chSysLock();
   tmo = timeout > 0 ? TIME_MS2I((time_msecs_t)timeout) : TIME_INFINITE;
-  start = osalOsGetSystemTimeX();
+  start = chVTGetSystemTimeX();
   if (chSemWaitTimeoutS(*sem, tmo) != MSG_OK) {
-    osalSysUnlock();
+    chSysUnlock();
     return SYS_ARCH_TIMEOUT;
   }
-  remaining = chTimeDiffX(start, osalOsGetSystemTimeX());
-  osalSysUnlock();
+  remaining = chTimeDiffX(start, chVTGetSystemTimeX());
+  chSysUnlock();
   return (u32_t)TIME_I2MS(remaining);
 }
 
@@ -127,7 +127,7 @@ void sys_sem_set_invalid(sys_sem_t *sem) {
 }
 
 err_t sys_mbox_new(sys_mbox_t *mbox, int size) {
-  
+
   *mbox = chHeapAlloc(NULL, sizeof(mailbox_t) + sizeof(msg_t) * size);
   if (*mbox == 0) {
     SYS_STATS_INC(mbox.err);
@@ -143,9 +143,9 @@ err_t sys_mbox_new(sys_mbox_t *mbox, int size) {
 void sys_mbox_free(sys_mbox_t *mbox) {
   cnt_t tmpcnt;
 
-  osalSysLock();
+  chSysLock();
   tmpcnt = chMBGetUsedCountI(*mbox);
-  osalSysUnlock();
+  chSysUnlock();
 
   if (tmpcnt != 0) {
     // If there are messages still present in the mailbox when the mailbox
@@ -177,15 +177,15 @@ u32_t sys_arch_mbox_fetch(sys_mbox_t *mbox, void **msg, u32_t timeout) {
   systime_t start;
   sysinterval_t tmo, remaining;
 
-  osalSysLock();
+  chSysLock();
   tmo = timeout > 0 ? TIME_MS2I((time_msecs_t)timeout) : TIME_INFINITE;
-  start = osalOsGetSystemTimeX();
+  start = chVTGetSystemTimeX();
   if (chMBFetchTimeoutS(*mbox, (msg_t *)msg, tmo) != MSG_OK) {
-    osalSysUnlock();
+    chSysUnlock();
     return SYS_ARCH_TIMEOUT;
   }
-  remaining = chTimeDiffX(start, osalOsGetSystemTimeX());
-  osalSysUnlock();
+  remaining = chTimeDiffX(start, chVTGetSystemTimeX());
+  chSysUnlock();
   return (u32_t)TIME_I2MS(remaining);
 }
 
@@ -222,18 +222,18 @@ sys_prot_t sys_arch_protect(void) {
 
 void sys_arch_unprotect(sys_prot_t pval) {
 
-  osalSysRestoreStatusX((syssts_t)pval);
+  chSysRestoreStatusX((syssts_t)pval);
 }
 
 u32_t sys_now(void) {
 
 #if OSAL_ST_FREQUENCY == 1000
-  return (u32_t)osalOsGetSystemTimeX();
+  return (u32_t)chVTGetSystemTimeX();
 #elif (OSAL_ST_FREQUENCY / 1000) >= 1 && (OSAL_ST_FREQUENCY % 1000) == 0
-  return ((u32_t)osalOsGetSystemTimeX() - 1) / (OSAL_ST_FREQUENCY / 1000) + 1;
+  return ((u32_t)chVTGetSystemTimeX() - 1) / (OSAL_ST_FREQUENCY / 1000) + 1;
 #elif (1000 / OSAL_ST_FREQUENCY) >= 1 && (1000 % OSAL_ST_FREQUENCY) == 0
-  return ((u32_t)osalOsGetSystemTimeX() - 1) * (1000 / OSAL_ST_FREQUENCY) + 1;
+  return ((u32_t)chVTGetSystemTimeX() - 1) * (1000 / OSAL_ST_FREQUENCY) + 1;
 #else
-  return (u32_t)(((u64_t)(osalOsGetSystemTimeX() - 1) * 1000) / OSAL_ST_FREQUENCY) + 1;
+  return (u32_t)(((u64_t)(chVTGetSystemTimeX() - 1) * 1000) / OSAL_ST_FREQUENCY) + 1;
 #endif
 }
