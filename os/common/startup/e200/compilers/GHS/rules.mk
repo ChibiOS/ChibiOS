@@ -126,7 +126,7 @@ PRE_MAKE_ALL_RULE_HOOK:
 
 POST_MAKE_ALL_RULE_HOOK:
 
-$(OBJS): | $(BUILDDIR) $(OBJDIR) $(LSTDIR)
+$(OBJS): | $(BUILDDIR) $(OBJDIR) $(LSTDIR) $(DEPDIR)
 
 $(BUILDDIR):
 ifneq ($(USE_VERBOSE_COMPILE),yes)
@@ -141,6 +141,9 @@ $(OBJDIR):
 
 $(LSTDIR):
 	@mkdir -p $(LSTDIR)
+
+$(DEPDIR):
+	@mkdir -p $(DEPDIR)
 
 $(CPPOBJS) : $(OBJDIR)/%.o : %.cpp $(MAKEFILE_LIST)
 ifeq ($(USE_VERBOSE_COMPILE),yes)
@@ -232,8 +235,11 @@ $(BUILDDIR)/lib$(PROJECT).a: $(OBJS)
 
 clean: CLEAN_RULE_HOOK
 	@echo Cleaning
-	-rm -fR $(BUILDDIR)/* 2>/dev/null
-	-rmdir -p --ignore-fail-on-non-empty $(subst ./,,$(BUILDDIR)) 2>/dev/null
+	@echo - $(DEPDIR)
+	@-rm -fR $(DEPDIR)/* $(BUILDDIR)/* 2>/dev/null
+	@-if [ -d "$(DEPDIR)" ]; then rmdir -p --ignore-fail-on-non-empty $(subst ./,,$(DEPDIR)) 2>/dev/null; fi
+	@echo - $(BUILDDIR)
+	@-if [ -d "$(BUILDDIR)" ]; then rmdir -p --ignore-fail-on-non-empty $(subst ./,,$(BUILDDIR)) 2>/dev/null; fi
 	@echo
 	@echo Done
 
@@ -242,6 +248,6 @@ CLEAN_RULE_HOOK:
 #
 # Include the dependency files, should be the last of the makefile
 #
--include $(wildcard $(OBJDIR)/*.d)
+-include $(wildcard $(DEPDIR)/*)
 
 # *** EOF ***
