@@ -102,7 +102,8 @@ typedef void (*icucallback_t)(ICUDriver *icup);
 
 /**
  * @brief   Enables notifications.
- * @pre     The ICU unit must have been activated using @p icuStart().
+ * @pre     The ICU unit must have been activated using @p icuStart() and the
+ *          capture started using @p icuStartCapture().
  * @note    If the notification is already enabled then the call has no effect.
  *
  * @param[in] icup      pointer to the @p ICUDriver object
@@ -113,7 +114,8 @@ typedef void (*icucallback_t)(ICUDriver *icup);
 
 /**
  * @brief   Disables notifications.
- * @pre     The ICU unit must have been activated using @p icuStart().
+ * @pre     The ICU unit must have been activated using @p icuStart() and the
+ *          capture started using @p icuStartCapture().
  * @note    If the notification is already disabled then the call has no effect.
  *
  * @param[in] icup      pointer to the @p ICUDriver object
