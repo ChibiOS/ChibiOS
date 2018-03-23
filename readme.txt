@@ -101,6 +101,8 @@
 - EX:  Updated LIS302DL to 1.1.0.
 - EX:  Updated LPS25H to 1.1.0.
 - EX:  Updated LSM303DLHC to 1.1.0.
+- HAL: Fixed invalid clock checks for SDMMC1 and SDMMC2 on STM32F7xx
+       (bug #928).
 - HAL: Fixed useless writes in read-only CFGR_SWS field on all STM32Fxx
        (bug #927).
 - HAL: Fixed typo in hal_pal.h (bug #926).
