@@ -677,13 +677,13 @@ cryerror_t cry_lld_encrypt_AES_CTR(CRYDriver *cryp,
 
 	cryerror_t ret = CRY_NOERROR;
 	aesparams params;
+
 	if(key_id != 0 )
 		return CRY_ERR_INV_KEY_ID;
 
 	if (!(cryp->enabledPer & AES_PER)) {
 		cryp->enabledPer |= AES_PER;
-		pmcEnableAES()
-		;
+		pmcEnableAES();
 	}
 
 	params.encrypt = 1;
@@ -740,8 +740,7 @@ cryerror_t cry_lld_decrypt_AES_CTR(CRYDriver *cryp,
 
 	if (!(cryp->enabledPer & AES_PER)) {
 		cryp->enabledPer |= AES_PER;
-		pmcEnableAES()
-		;
+		pmcEnableAES();
 	}
 
 	params.encrypt = 0;
@@ -787,6 +786,9 @@ cryerror_t cry_lld_decrypt_AES_CTR(CRYDriver *cryp,
  *
  * @notapi
  */
+
+uint8_t gcmbuff[32*2];
+
 cryerror_t cry_lld_encrypt_AES_GCM(CRYDriver *cryp,
                                    crykey_t key_id,
                                    size_t size,
@@ -797,17 +799,36 @@ cryerror_t cry_lld_encrypt_AES_GCM(CRYDriver *cryp,
                                    const uint8_t *aad,
                                    uint8_t *authtag) {
 
-	(void)cryp;
-	(void)key_id;
-	(void)size;
-	(void)in;
-	(void)out;
-	(void)iv;
-	(void)aadsize;
-	(void)aad;
-	(void)authtag;
+	cryerror_t ret = CRY_NOERROR;
+	cgmcontext ctx;
 
-	return CRY_ERR_INV_ALGO;
+	if (key_id != 0)
+		return CRY_ERR_INV_KEY_ID;
+
+	if (!(cryp->enabledPer & AES_PER)) {
+		cryp->enabledPer |= AES_PER;
+		pmcEnableAES();
+	}
+
+	ctx.params.encrypt = 1;
+	ctx.params.block_size = 16;
+	ctx.params.mode = AES_MR_OPMOD_GCM;
+	ctx.params.iv = iv;
+
+	ctx.in = (uint8_t *)in;
+	ctx.out = out;
+	ctx.c_size = size;
+	ctx.aadsize = aadsize;
+	ctx.aad = (uint8_t *)aad;
+	ctx.authtag = authtag;
+
+
+
+	ret = sama_gcm_lld_process(cryp, &ctx);
+
+
+	return ret;
+
 }
 
 /**
@@ -851,17 +872,35 @@ cryerror_t cry_lld_decrypt_AES_GCM(CRYDriver *cryp,
                                    const uint8_t *aad,
                                    uint8_t *authtag) {
 
-	(void)cryp;
-	(void)key_id;
-	(void)size;
-	(void)in;
-	(void)out;
-	(void)iv;
-	(void)aadsize;
-	(void)aad;
-	(void)authtag;
+	cryerror_t ret = CRY_NOERROR;
+	cgmcontext ctx;
 
-	return CRY_ERR_INV_ALGO;
+	if (key_id != 0)
+		return CRY_ERR_INV_KEY_ID;
+
+	if (!(cryp->enabledPer & AES_PER)) {
+		cryp->enabledPer |= AES_PER;
+		pmcEnableAES();
+	}
+
+	ctx.params.encrypt = 0;
+	ctx.params.block_size = 16;
+	ctx.params.mode = AES_MR_OPMOD_GCM;
+	ctx.params.iv = iv;
+
+	ctx.in =(uint8_t *) in;
+	ctx.out = out;
+	ctx.c_size = size;
+	ctx.aadsize = aadsize;
+	ctx.aad = (uint8_t *)aad;
+	ctx.authtag = authtag;
+
+
+
+	ret = sama_gcm_lld_process(cryp, &ctx);
+
+	return ret;
+
 }
 
 

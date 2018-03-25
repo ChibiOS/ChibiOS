@@ -62,6 +62,7 @@ extern void 		samaCryptoDriverDisable(CRYDriver *cryp);
 #include "sama_aes_lld.h"
 #include "sama_tdes_lld.h"
 #include "sama_sha_lld.h"
+#include "sama_gcm_lld.h"
 
 #endif /* HAL_USE_CRY */
 

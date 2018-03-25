@@ -28,6 +28,7 @@
  * - @subpage cry_test_sequence_005
  * - @subpage cry_test_sequence_006
  * - @subpage cry_test_sequence_007
+ * - @subpage cry_test_sequence_008
  * .
  */
 
@@ -56,6 +57,7 @@ const testsequence_t * const cry_test_suite_array[] = {
   &cry_test_sequence_005,
   &cry_test_sequence_006,
   &cry_test_sequence_007,
+  &cry_test_sequence_008,
   NULL
 };
 
@@ -121,6 +123,7 @@ const uint8_t sha_msg1[SHA_LEN_1] = "abcdbcdecdefdefgefghfghighijhijkijkljklmklm
 const uint8_t sha_msg2[SHA_LEN_2] = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 
 const uint8_t sha_msg3[SHA_LEN_3] = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+
 
 ALIGNED_VAR(4) uint32_t msg_clear[TEST_MSG_DATA_WORD_LEN];
 ALIGNED_VAR(4) uint32_t msg_encrypted[TEST_MSG_DATA_WORD_LEN];

@@ -40,7 +40,7 @@
 #define CRY_LLD_SUPPORTS_AES_CBC            TRUE
 #define CRY_LLD_SUPPORTS_AES_CFB            TRUE
 #define CRY_LLD_SUPPORTS_AES_CTR            TRUE
-#define CRY_LLD_SUPPORTS_AES_GCM            FALSE
+#define CRY_LLD_SUPPORTS_AES_GCM            TRUE
 #define CRY_LLD_SUPPORTS_DES                TRUE
 #define CRY_LLD_SUPPORTS_DES_ECB            TRUE
 #define CRY_LLD_SUPPORTS_DES_CBC            TRUE
@@ -83,6 +83,21 @@ typedef struct
 	uint32_t mode;
 	const uint8_t *iv;
 }aesparams;
+
+typedef struct
+{
+	aesparams params;
+
+
+	size_t aadsize;
+	size_t c_size;
+	uint8_t *in;
+	uint8_t *out;
+
+	uint8_t * aad;
+	uint8_t *authtag;
+
+}cgmcontext;
 
 typedef enum  {
 	TRANSFER_DMA = 0,

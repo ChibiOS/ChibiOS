@@ -31,6 +31,7 @@
 #include "cry_test_sequence_005.h"
 #include "cry_test_sequence_006.h"
 #include "cry_test_sequence_007.h"
+#include "cry_test_sequence_008.h"
 
 #if !defined(__DOXYGEN__)
 
@@ -75,6 +76,13 @@ extern void cryptoTest_printArray32(bool isLE,const uint32_t *a,size_t len);
 #define SHA_LEN_2    64
 #define SHA_LEN_3    128
 
+#define TEST_GCM_KEY1_LEN   32
+#define TEST_P_LEN      60
+#define TEST_A_LEN      20
+#define TEST_IV1_LEN    12   
+#define TEST_CL_LEN     60
+#define TEST_TL_LEN     16  
+
 extern const char test_plain_data[TEST_DATA_BYTE_LEN];
 extern uint32_t msg_clear[TEST_MSG_DATA_WORD_LEN];
 extern uint32_t msg_encrypted[TEST_MSG_DATA_WORD_LEN];
@@ -85,6 +93,9 @@ extern const uint8_t sha_msg0[SHA_LEN_0];
 extern const uint8_t sha_msg1[SHA_LEN_1];
 extern const uint8_t sha_msg2[SHA_LEN_2];
 extern const uint8_t sha_msg3[SHA_LEN_3];
+
+
+
 
 #endif /* !defined(__DOXYGEN__) */
 
