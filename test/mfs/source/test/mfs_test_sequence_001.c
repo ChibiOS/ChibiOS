@@ -222,9 +222,9 @@ static const testcase_t mfs_test_001_002 = {
  * <h2>Test Steps</h2>
  * - [1.3.1] The record must not already exists, MFS_ERR_NOT_FOUND is
  *   expected.
- * - [1.3.2] Creating the record then retrieving it again,
- *   MFS_ERR_NOT_FOUND is expected, record content and size are
- *   compared with the original.
+ * - [1.3.2] Creating the record then retrieving it again, MFS_NO_ERROR
+ *   is expected, record content and size are compared with the
+ *   original.
  * - [1.3.3] Updating the record then retrieving it again, MFS_NO_ERROR
  *   is expected, record content and size are compared with the
  *   original.
@@ -254,9 +254,9 @@ static void mfs_test_001_003_execute(void) {
     test_assert(err == MFS_ERR_NOT_FOUND , "record was already present");
   }
 
-  /* [1.3.2] Creating the record then retrieving it again,
-     MFS_ERR_NOT_FOUND is expected, record content and size are
-     compared with the original.*/
+  /* [1.3.2] Creating the record then retrieving it again, MFS_NO_ERROR
+     is expected, record content and size are compared with the
+     original.*/
   test_set_step(2);
   {
     mfs_error_t err;

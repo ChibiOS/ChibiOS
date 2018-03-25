@@ -950,7 +950,7 @@ mfs_error_t mfsReadRecord(MFSDriver *mfsp, mfs_id_t id,
   /* Header read from flash.*/
   RET_ON_ERROR(mfs_flash_read(mfsp,
                               mfsp->descriptors[id - 1U].offset,
-                              *np,
+                              sizeof (mfs_data_header_t),
                               mfsp->buffer.data8));
 
   /* Data read from flash.*/
