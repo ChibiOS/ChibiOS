@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 17.6.5 ***
+- HAL: Fixed silence GCC 7.3.0 warning (bug #930).
 - HAL: Fixed invalid SAI1 clock selection on STM32F7xx (bug #929).
 - HAL: Fixed useless writes in read-only CFGR_SWS field on all STM32Fxx
        (bug #927).

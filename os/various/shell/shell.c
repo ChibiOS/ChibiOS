@@ -353,7 +353,7 @@ THD_FUNCTION(shellThread, p) {
 #endif
 
   chprintf(chp, SHELL_NEWLINE_STR);
-  chprintf(chp, "ChibiOS/RT Shell"SHELL_NEWLINE_STR);
+  chprintf(chp, "ChibiOS/RT Shell" SHELL_NEWLINE_STR);
   while (true) {
     chprintf(chp, SHELL_PROMPT_STR);
     if (shellGetLine(scfg, line, sizeof(line), shp)) {
@@ -372,7 +372,7 @@ THD_FUNCTION(shellThread, p) {
     n = 0;
     while ((lp = parse_arguments(NULL, &tokp)) != NULL) {
       if (n >= SHELL_MAX_ARGUMENTS) {
-        chprintf(chp, "too many arguments"SHELL_NEWLINE_STR);
+        chprintf(chp, "too many arguments" SHELL_NEWLINE_STR);
         cmd = NULL;
         break;
       }
@@ -394,7 +394,7 @@ THD_FUNCTION(shellThread, p) {
       else if (cmdexec(shell_local_commands, chp, cmd, n, args) &&
           ((scp == NULL) || cmdexec(scp, chp, cmd, n, args))) {
         chprintf(chp, "%s", cmd);
-        chprintf(chp, " ?"SHELL_NEWLINE_STR);
+        chprintf(chp, " ?" SHELL_NEWLINE_STR);
       }
     }
   }

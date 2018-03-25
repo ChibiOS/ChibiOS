@@ -174,10 +174,10 @@ typedef struct {
  *
  * @notapi
  */
-#define _shell_reset_cur(stream)  chprintf(stream, "\033[%dD\033[%dC",        \
-                                           SHELL_MAX_LINE_LENGTH +            \
-                                           strlen(SHELL_PROMPT_STR) + 2,      \
-                                           strlen(SHELL_PROMPT_STR))
+#define _shell_reset_cur(stream) chprintf(stream, "\033[%dD\033[%dC",       \
+                                          SHELL_MAX_LINE_LENGTH +           \
+                                          strlen(SHELL_PROMPT_STR) + 2,     \
+                                          strlen(SHELL_PROMPT_STR))
 
 /**
  * @brief   Send escape codes to clear the rest of the line
@@ -196,8 +196,8 @@ typedef struct {
  *
  * @api
  */
-#define shellUsage(stream, message)                                           \
-  chprintf(stream, "Usage: %s"SHELL_NEWLINE_STR, message)
+#define shellUsage(stream, message)                                         \
+  chprintf(stream, "Usage: %s" SHELL_NEWLINE_STR, message)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -213,7 +213,8 @@ extern "C" {
   void shellInit(void);
   THD_FUNCTION(shellThread, p);
   void shellExit(msg_t msg);
-  bool shellGetLine(ShellConfig *scfg, char *line, unsigned size, ShellHistory *shp);
+  bool shellGetLine(ShellConfig *scfg, char *line,
+                    unsigned size, ShellHistory *shp);
 #ifdef __cplusplus
 }
 #endif
