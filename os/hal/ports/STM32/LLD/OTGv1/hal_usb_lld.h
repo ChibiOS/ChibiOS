@@ -616,7 +616,6 @@ extern "C" {
   void usb_lld_stall_in(USBDriver *usbp, usbep_t ep);
   void usb_lld_clear_out(USBDriver *usbp, usbep_t ep);
   void usb_lld_clear_in(USBDriver *usbp, usbep_t ep);
-  void usb_lld_pump(void *p);
 #ifdef __cplusplus
 }
 #endif
