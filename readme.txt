@@ -110,6 +110,8 @@
 - EX:  Updated LIS302DL to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LPS25H to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LSM303DLHC to 1.1.0 (backported to 18.2.1).
+- HAL: Fixed function mfsReadRecord() causes memory corruption because a
+       buffer overflow (bug #931)(backported to 18.2.1).
 - HAL: Fixed invalid SAI1 clock selection on STM32F7xx (bug #929)(backported
        to 18.2.1 and 17.6.4).
 - HAL: Fixed invalid clock checks for SDMMC1 and SDMMC2 on STM32F7xx

@@ -328,7 +328,7 @@ test_assert(err == MFS_ERR_NOT_FOUND , "record was already present");]]></value>
                   </step>
                   <step>
                     <description>
-                      <value>Creating the record then retrieving it again, MFS_ERR_NOT_FOUND is expected, record content and size are compared with the original.</value>
+                      <value>Creating the record then retrieving it again, MFS_NO_ERROR is expected, record content and size are compared with the original.</value>
                     </description>
                     <tags>
                       <value />
