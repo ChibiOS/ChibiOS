@@ -392,7 +392,7 @@ void secSetCallback(SECDriver *secp, uint32_t sources, secumod_callback_t callba
     /* IRQ sources enabled only after setting up the callback.*/
     secp->secumod_callback = callback;
     secp->sec->SECUMOD_NIEPR = sources;
-    if (SECUMOD->SECUMOD_NMPR != sources) {
+    if (SECUMOD->SECUMOD_NIMPR != sources) {
       secumodToggleProtectionReg();
       secp->sec->SECUMOD_NIEPR = sources;
     }
@@ -510,6 +510,8 @@ uint32_t secumodReadInternalMemory(uint8_t *data, uint32_t addr, uint32_t size) 
   if (addr >= ((uint32_t)SECURAM))
     addr -= ((uint32_t)SECURAM);
 
+  secumodMemReady();
+
   for (i = 0; i < size; i += count) {
     region = (addr + i) >> 10;
     if ((SECUMOD_RAMACC_RWx_NO_ACCESS(region) ==
@@ -546,6 +548,8 @@ uint32_t secumodWriteInternalMemory(uint8_t *data, uint32_t addr, uint32_t size)
 
   if (addr >= ((uint32_t)SECURAM))
     addr -= ((uint32_t)SECURAM);
+
+  secumodMemReady();
 
   for (i = 0; i < size; i += count) {
     region = (addr + i) >> 10;

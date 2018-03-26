@@ -484,6 +484,10 @@ struct SECDriver {
  */
 #define secumodSetBackupModeProtections(sources) {                             \
   SECUMOD->SECUMOD_BMPR = sources;                                             \
+  if (SECUMOD->SECUMOD_BMPR != sources) {                                      \
+    secumodToggleProtectionReg();                                              \
+    SECUMOD->SECUMOD_BMPR = sources;                                           \
+  }                                                                            \
 }
 
 /**
