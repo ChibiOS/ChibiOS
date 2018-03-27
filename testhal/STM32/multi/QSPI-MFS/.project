@@ -84,7 +84,17 @@
 		<link>
 			<name>test</name>
 			<type>2</type>
-			<locationURI>CHIBIOS/test</locationURI>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>test/lib</name>
+			<type>2</type>
+			<locationURI>CHIBIOS/test/lib</locationURI>
+		</link>
+		<link>
+			<name>test/mfs</name>
+			<type>2</type>
+			<locationURI>CHIBIOS/test/mfs</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
