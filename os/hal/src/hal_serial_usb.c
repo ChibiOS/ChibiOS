@@ -484,20 +484,25 @@ void sduDataTransmitted(USBDriver *usbp, usbep_t ep) {
  * @param[in] ep        OUT endpoint number
  */
 void sduDataReceived(USBDriver *usbp, usbep_t ep) {
+  size_t size;
   SerialUSBDriver *sdup = usbp->out_params[ep - 1U];
+
   if (sdup == NULL) {
     return;
   }
 
   osalSysLockFromISR();
 
-  /* Signaling that data is available in the input queue.*/
-  chnAddFlagsI(sdup, CHN_INPUT_AVAILABLE);
+  /* Checking for zero-size transactions.*/
+  size = usbGetReceiveTransactionSizeX(sdup->config->usbp,
+                                       sdup->config->bulk_out);
+  if (size > (size_t)0) {
+    /* Signaling that data is available in the input queue.*/
+    chnAddFlagsI(sdup, CHN_INPUT_AVAILABLE);
 
-  /* Posting the filled buffer in the queue.*/
-  ibqPostFullBufferI(&sdup->ibqueue,
-                     usbGetReceiveTransactionSizeX(sdup->config->usbp,
-                                                   sdup->config->bulk_out));
+    /* Posting the filled buffer in the queue.*/
+    ibqPostFullBufferI(&sdup->ibqueue, size);
+  }
 
   /* The endpoint cannot be busy, we are in the context of the callback,
      so a packet is in the buffer for sure. Trying to get a free buffer

@@ -101,6 +101,8 @@
 - EX:  Updated LIS302DL to 1.1.0.
 - EX:  Updated LPS25H to 1.1.0.
 - EX:  Updated LSM303DLHC to 1.1.0.
+- HAL: Fixed USB Serial driver problem with zero-size OUT transactions
+       (bug #933).
 - HAL: Fixed function mfsReadRecord() causes memory corruption because a
        buffer overflow (bug #931).
 - HAL: Fixed silence GCC 7.3.0 warning (bug #930).
