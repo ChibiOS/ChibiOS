@@ -112,6 +112,8 @@
 - EX:  Updated LSM303DLHC to 1.1.0 (backported to 18.2.1).
 - HAL: Fixed USB Serial driver problem with zero-size OUT transactions
        (bug #933)(backported to 18.2.1 and 17.6.5).
+- HAL: Fixed race condition in STM32 QSPI driver (bug #932)(backported to
+       18.2.1 and 17.6.5).
 - HAL: Fixed function mfsReadRecord() causes memory corruption because a
        buffer overflow (bug #931)(backported to 18.2.1).
 - HAL: Fixed silence GCC 7.3.0 warning (bug #930)(backported to 18.2.1
