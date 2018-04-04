@@ -48,7 +48,9 @@
  * @note    This number does not include the 16 system vectors and must be
  *          rounded to a multiple of 8.
  */
-#if defined(STM32L496xx) || defined(STM32L4A6xx)
+#if defined(STM32L496xx) || defined(STM32L4A6xx) || defined(STM32L4R5xx) || \
+    defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || \
+    defined(STM32L4S7xx) || defined(STM32L4S9xx)
 #define CORTEX_NUM_VECTORS      96
 #else
 #define CORTEX_NUM_VECTORS      88
@@ -61,10 +63,17 @@
 /* If the device type is not externally defined, for example from the Makefile,
    then a file named board.h is included. This file must contain a device
    definition compatible with the vendor include file.*/
-#if !defined(STM32L471xx) && !defined(STM32L475xx) &&                       \
+#if !defined(STM32L431xx) && !defined(STM32L432xx) &&                       \
+    !defined(STM32L433xx) && !defined(STM32L442xx) &&                       \
+    !defined(STM32L443xx) && !defined(STM32L451xx) &&                       \
+    !defined(STM32L452xx) && !defined(STM32L462xx) &&                       \
+    !defined(STM32L471xx) && !defined(STM32L475xx) &&                       \
     !defined(STM32L476xx) && !defined(STM32L485xx) &&                       \
     !defined(STM32L486xx) && !defined(STM32L496xx) &&                       \
-    !defined(STM32L4A6xx)
+    !defined(STM32L4A6xx) &&                                                \
+    !defined(STM32L4R5xx) && !defined(STM32L4R7xx) &&                       \
+    !defined(STM32L4R9xx) && !defined(STM32L4S5xx) &&                       \
+    !defined(STM32L4S7xx) && !defined(STM32L4S9xx) &&                       \
 #include "board.h"
 #endif
 
