@@ -217,6 +217,12 @@
 #define STM32_UART4SEL_HSI16    (2 << 6)    /**< UART4 source is HSI16.     */
 #define STM32_UART4SEL_LSE      (3 << 6)    /**< UART4 source is LSE.       */
 
+#define STM32_UART5SEL_MASK     (3 << 8)    /**< UART5 mask.                */
+#define STM32_UART5SEL_PCLK1    (0 << 8)    /**< UART5 source is PCLK1.     */
+#define STM32_UART5SEL_SYSCLK   (1 << 8)    /**< UART5 source is SYSCLK.    */
+#define STM32_UART5SEL_HSI16    (2 << 8)    /**< UART5 source is HSI16.     */
+#define STM32_UART5SEL_LSE      (3 << 8)    /**< UART5 source is LSE.       */
+
 #define STM32_LPUART1SEL_MASK   (3 << 10)   /**< LPUART1 mask.              */
 #define STM32_LPUART1SEL_PCLK1  (0 << 10)   /**< LPUART1 source is PCLK1.   */
 #define STM32_LPUART1SEL_SYSCLK (1 << 10)   /**< LPUART1 source is SYSCLK.  */
@@ -257,6 +263,13 @@
 #define STM32_SAI1SEL_EXTCLK    (3 << 22)   /**< SAI1 source is external.   */
 #define STM32_SAI1SEL_OFF       0xFFFFFFFFU /**< SAI1 clock is not required.*/
 
+#define STM32_SAI2SEL_MASK      (3 << 24)   /**< SAI2SEL mask.              */
+#define STM32_SAI2SEL_PLLSAI1   (0 << 24)   /**< SAI2 source is PLLSAI1-P.  */
+#define STM32_SAI2SEL_PLLSAI2   (1 << 24)   /**< SAI2 source is PLLSAI2-P.  */
+#define STM32_SAI2SEL_PLL       (2 << 24)   /**< SAI2 source is PLL-P.      */
+#define STM32_SAI2SEL_EXTCLK    (3 << 24)   /**< SAI2 source is external.   */
+#define STM32_SAI2SEL_OFF       0xFFFFFFFFU /**< SAI2 clock is not required.*/
+
 #define STM32_CLK48SEL_MASK     (3 << 26)   /**< CLK48SEL mask.             */
 #if !STM32_CLOCK_HAS_HSI48
 #define STM32_CLK48SEL_NOCLK    (0 << 26)   /**< CLK48 disabled.            */
@@ -270,21 +283,16 @@
 #define STM32_ADCSEL_MASK       (3 << 28)   /**< ADCSEL mask.               */
 #define STM32_ADCSEL_NOCLK      (0 << 28)   /**< ADC clock disabled.        */
 #define STM32_ADCSEL_PLLSAI1    (1 << 28)   /**< ADC source is PLLSAI1-R.   */
+#define STM32_ADCSEL_PLLSAI2    (2 << 28)   /**< ADC source is PLLSAI2-R.   */
 #define STM32_ADCSEL_SYSCLK     (3 << 28)   /**< ADC source is SYSCLK.      */
 
 #define STM32_SWPMI1SEL_MASK    (1 << 30)   /**< SWPMI1SEL mask.            */
 #define STM32_SWPMI1SEL_PCLK1   (0 << 30)   /**< SWPMI1 source is PCLK1.    */
 #define STM32_SWPMI1SEL_HSI16   (1 << 30)   /**< SWPMI1 source is HSI16.    */
-/** @} */
 
-/**
- * @name    RCC_CCIPR2 register bits definitions
- * @{
- */
-#define STM32_I2C4SEL_MASK      (3 << 0)    /**< I2C1SEL mask.              */
-#define STM32_I2C4SEL_PCLK1     (0 << 0)    /**< I2C1 source is PCLK1.      */
-#define STM32_I2C4SEL_SYSCLK    (1 << 0)    /**< I2C1 source is SYSCLK.     */
-#define STM32_I2C4SEL_HSI16     (2 << 0)    /**< I2C1 source is HSI16.      */
+#define STM32_DFSDMSEL_MASK     (1 << 31)   /**< DFSDMSEL mask.             */
+#define STM32_DFSDMSEL_PCLK1    (0 << 31)   /**< DFSDM source is PCLK1.     */
+#define STM32_DFSDMSEL_SYSCLK   (1 << 31)   /**< DFSDM source is SYSCLK.    */
 /** @} */
 
 /**
