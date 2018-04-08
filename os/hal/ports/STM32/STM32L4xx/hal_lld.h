@@ -488,6 +488,14 @@
 #endif
 
 /**
+ * @brief   STM32_PLLPDIV_VALUE divider value or zero if disabled.
+ * @note    The allowed values are 0, 2..31.
+ */
+#if !defined(STM32_PLLPDIV_VALUE) || defined(__DOXYGEN__)
+#define STM32_PLLPDIV_VALUE                 0
+#endif
+
+/**
  * @brief   PLLP divider value.
  * @note    The allowed values are 7, 17.
  * @note    The default value is calculated for a 80MHz system clock from
@@ -1267,7 +1275,8 @@
 /**
  * @brief   STM32_PLLPDIV field. (Only for STM32L496xx/4A6xx)
  */
-#if ((STM32_PLLPDIV_VALUE != 1) && (STM32_PLLPDIV_VALUE <= 31)) ||          \
+#if (STM32_PLLPDIV_VALUE == 0) ||                                           \
+    ((STM32_PLLPDIV_VALUE >= 2) && (STM32_PLLPDIV_VALUE <= 31)) ||          \
     defined(__DOXYGEN__)
 #define STM32_PLLPDIV               (STM32_PLLPDIV_VALUE << 27)
 #else
