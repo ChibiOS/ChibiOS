@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    STM32L4xx/hal_lld.h
- * @brief   STM32L4xx HAL subsystem low level driver header.
+ * @file    STM32L4xx+/hal_lld.h
+ * @brief   STM32L4xx+ HAL subsystem low level driver header.
  * @pre     This module requires the following macros to be defined in the
  *          @p board.h file:
  *          - STM32_LSECLK.
@@ -26,9 +26,8 @@
  *          - STM32_HSE_BYPASS (optionally).
  *          .
  *          One of the following macros must also be defined:
- *          - STM32L432xx, STM32L443xx.
- *          - STM32L471xx, STM32L475xx, STM32L476xx, STM32L496xx.
- *          - STM32L485xx, STM32L486xx, STM32L4A6xx.
+ *          - STM32L4R5xx, STM32L4R7xx, STM32L4R9xx.
+ *          - STM32L4S5xx, STM32L4S7xx, STM32L4S9xx.
  *          .
  *
  * @addtogroup HAL
@@ -48,23 +47,22 @@
  * @name    Platform identification
  * @{
  */
-#if defined(STM32L432xx) || defined(STM32L443xx) ||                         \
-    defined(STM32L471xx) || defined(STM32L475xx) ||                         \
-    defined(STM32L476xx) || defined(STM32L496xx) || defined(__DOXYGEN__)
-#define PLATFORM_NAME           "STM32L4xx Ultra Low Power"
+#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || \
+    defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32L4+ Ultra Low Power"
 
-#elif defined(STM32L485xx) || defined(STM32L486xx) || defined(STM32L4A6xx)
-#define PLATFORM_NAME           "STM32L4xx Ultra Low Power with Crypto"
+#elif defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#define PLATFORM_NAME           "STM32L4+ Ultra Low Power with Crypto"
 
 #else
-#error "STM32L4xx device not specified"
+#error "STM32L4+ device not specified"
 #endif
 
 /**
  * @brief   Sub-family identifier.
  */
-#if !defined(STM32L4XX) || defined(__DOXYGEN__)
-#define STM32L4XX
+#if !defined(STM32L4XXP) || defined(__DOXYGEN__)
+#define STM32L4XXP
 #endif
 /** @} */
 
@@ -256,26 +254,8 @@
 #define STM32_LPTIM2SEL_HSI16   (2 << 20)   /**< LPTIM2 source is HSI16.    */
 #define STM32_LPTIM2SEL_LSE     (3 << 20)   /**< LPTIM2 source is LSE.      */
 
-#define STM32_SAI1SEL_MASK      (3 << 22)   /**< SAI1SEL mask.              */
-#define STM32_SAI1SEL_PLLSAI1   (0 << 22)   /**< SAI1 source is PLLSAI1-P.  */
-#define STM32_SAI1SEL_PLLSAI2   (1 << 22)   /**< SAI1 source is PLLSAI2-P.  */
-#define STM32_SAI1SEL_PLL       (2 << 22)   /**< SAI1 source is PLL-P.      */
-#define STM32_SAI1SEL_EXTCLK    (3 << 22)   /**< SAI1 source is external.   */
-#define STM32_SAI1SEL_OFF       0xFFFFFFFFU /**< SAI1 clock is not required.*/
-
-#define STM32_SAI2SEL_MASK      (3 << 24)   /**< SAI2SEL mask.              */
-#define STM32_SAI2SEL_PLLSAI1   (0 << 24)   /**< SAI2 source is PLLSAI1-P.  */
-#define STM32_SAI2SEL_PLLSAI2   (1 << 24)   /**< SAI2 source is PLLSAI2-P.  */
-#define STM32_SAI2SEL_PLL       (2 << 24)   /**< SAI2 source is PLL-P.      */
-#define STM32_SAI2SEL_EXTCLK    (3 << 24)   /**< SAI2 source is external.   */
-#define STM32_SAI2SEL_OFF       0xFFFFFFFFU /**< SAI2 clock is not required.*/
-
 #define STM32_CLK48SEL_MASK     (3 << 26)   /**< CLK48SEL mask.             */
-#if !STM32_CLOCK_HAS_HSI48
-#define STM32_CLK48SEL_NOCLK    (0 << 26)   /**< CLK48 disabled.            */
-#else
 #define STM32_CLK48SEL_HSI48    (0 << 26)   /**< CLK48 source is HSI48.     */
-#endif
 #define STM32_CLK48SEL_PLLSAI1  (1 << 26)   /**< CLK48 source is PLLSAI1-Q. */
 #define STM32_CLK48SEL_PLL      (2 << 26)   /**< CLK48 source is PLL-Q.     */
 #define STM32_CLK48SEL_MSI      (3 << 26)   /**< CLK48 source is MSI.       */
@@ -283,16 +263,63 @@
 #define STM32_ADCSEL_MASK       (3 << 28)   /**< ADCSEL mask.               */
 #define STM32_ADCSEL_NOCLK      (0 << 28)   /**< ADC clock disabled.        */
 #define STM32_ADCSEL_PLLSAI1    (1 << 28)   /**< ADC source is PLLSAI1-R.   */
-#define STM32_ADCSEL_PLLSAI2    (2 << 28)   /**< ADC source is PLLSAI2-R.   */
 #define STM32_ADCSEL_SYSCLK     (3 << 28)   /**< ADC source is SYSCLK.      */
+/** @} */
 
-#define STM32_SWPMI1SEL_MASK    (1 << 30)   /**< SWPMI1SEL mask.            */
-#define STM32_SWPMI1SEL_PCLK1   (0 << 30)   /**< SWPMI1 source is PCLK1.    */
-#define STM32_SWPMI1SEL_HSI16   (1 << 30)   /**< SWPMI1 source is HSI16.    */
+/**
+ * @name    RCC_CCIPR2 register bits definitions
+ * @{
+ */
+#define STM32_I2C4SEL_MASK      (3 << 0)    /**< I2C1SEL mask.              */
+#define STM32_I2C4SEL_PCLK1     (0 << 0)    /**< I2C1 source is PCLK1.      */
+#define STM32_I2C4SEL_SYSCLK    (1 << 0)    /**< I2C1 source is SYSCLK.     */
+#define STM32_I2C4SEL_HSI16     (2 << 0)    /**< I2C1 source is HSI16.      */
 
-#define STM32_DFSDMSEL_MASK     (1 << 31)   /**< DFSDMSEL mask.             */
-#define STM32_DFSDMSEL_PCLK1    (0 << 31)   /**< DFSDM source is PCLK1.     */
-#define STM32_DFSDMSEL_SYSCLK   (1 << 31)   /**< DFSDM source is SYSCLK.    */
+#define STM32_DFSDMSEL_MASK     (1 << 2)    /**< DFSDMSEL mask.             */
+#define STM32_DFSDMSEL_PCLK2    (0 << 2)    /**< DFSDMSEL source is PCLK2.  */
+#define STM32_DFSDMSEL_SYSCLK   (1 << 2)    /**< DFSDMSEL source is SYSCLK. */
+
+#define STM32_ADFSDMSEL_MASK    (3 << 3)    /**< ADFSDMSEL mask.            */
+#define STM32_ADFSDMSEL_SAI1CLK (0 << 3)    /**< ADFSDMSEL source is
+                                                 SAI1CLK.                   */
+#define STM32_ADFSDMSEL_HSI16   (1 << 3)    /**< ADFSDMSEL source is HSI16. */
+#define STM32_ADFSDMSEL_MSI     (2 << 3)    /**< ADFSDMSEL source is MSI.   */
+
+#define STM32_SAI1SEL_MASK      (7 << 5)    /**< SAI1SEL mask.              */
+#define STM32_SAI1SEL_PLLSAI1CLK (0 << 5)   /**< SAI1 source is PLLSAI1CLK. */
+#define STM32_SAI1SEL_PLLSAI2CLK (1 << 5)   /**< SAI1 source is PLLSAI2CLK. */
+#define STM32_SAI1SEL_PLLSAI3CLK (2 << 5)   /**< SAI1 source is PLLSAI3CLK  */
+#define STM32_SAI1SEL_EXTCLK    (3 << 5)    /**< SAI1 source is external.   */
+#define STM32_SAI1SEL_HSI16     (4 << 5)    /**< SAI1 source is HSI16.      */
+#define STM32_SAI1SEL_OFF       0xFFFFFFFFU /**< SAI1 clock is not required.*/
+
+#define STM32_SAI2SEL_MASK      (7 << 8)    /**< SAI2SEL mask.              */
+#define STM32_SAI2SEL_PLLSAI1CLK (0 << 8)   /**< SAI2 source is PLLSAI1CLK. */
+#define STM32_SAI2SEL_PLLSAI2CLK (1 << 8)   /**< SAI2 source is PLLSAI2CLK. */
+#define STM32_SAI2SEL_PLLSAI3CLK (2 << 8)   /**< SAI2 source is PLLSAI3CLK  */
+#define STM32_SAI2SEL_EXTCLK    (3 << 8)    /**< SAI2 source is external.   */
+#define STM32_SAI2SEL_HSI16     (4 << 8)    /**< SAI2 source is HSI16.      */
+#define STM32_SAI2SEL_OFF       0xFFFFFFFFU /**< SAI2 clock is not required.*/
+
+#define STM32_DSISEL_MASK       (1 << 12)   /**< DSISE mask.                */
+#define STM32_DSISEL_DSIPHY     (0 << 12)   /**< DSISE source is DSIPHY.    */
+#define STM32_DSISEL_PLLDSICLK  (1 << 12)   /**< DSISE source is PLLDSICLK. */
+
+#define STM32_SDMMCSEL_MASK     (1 << 14)   /**< SDMMCSEL mask.             */
+#define STM32_SDMMCSEL_48CLK    (0 << 14)   /**< SDMMCSEL source is 48CLK.  */
+#define STM32_SDMMCSEL_PLLSAI3CLK (1 << 14) /**< SDMMCSEL source is
+                                                 PLLSAI3CLK.                */
+
+#define STM32_PLLSAI2DIVR_MASK  (3 << 16)   /**< PLLSAI2DIVR mask.          */
+#define STM32_PLLSAI2DIVR_DIV2  (0 << 16)   /**< PLLSAI2_R divided by 2.    */
+#define STM32_PLLSAI2DIVR_DIV4  (1 << 16)   /**< PLLSAI2_R divided by 4.    */
+#define STM32_PLLSAI2DIVR_DIV8  (2 << 16)   /**< PLLSAI2_R divided by 8.    */
+#define STM32_PLLSAI2DIVR_DIV16 (3 << 16)   /**< PLLSAI2_R divided by 16.   */
+
+#define STM32_OSPISEL_MASK      (3 << 20)    /**< OSPISEL mask.             */
+#define STM32_OSPISEL_SYSCLK    (0 << 20)    /**< OSPI source is SYSCLK.    */
+#define STM32_OSPISEL_MSI       (1 << 20)    /**< OSPI source is MSI.       */
+#define STM32_OSPISEL_48CLK     (2 << 20)    /**< OSPI source is 48CLK.     */
 /** @} */
 
 /**
@@ -449,7 +476,7 @@
  * @brief   Main clock source selection.
  * @note    If the selected clock source is not the PLL then the PLL is not
  *          initialized and started.
- * @note    The default value is calculated for a 80MHz system clock from
+ * @note    The default value is calculated for a 120MHz system clock from
  *          the internal 4MHz MSI clock.
  */
 #if !defined(STM32_SW) || defined(__DOXYGEN__)
@@ -460,7 +487,7 @@
  * @brief   Clock source for the PLL.
  * @note    This setting has only effect if the PLL is selected as the
  *          system clock source.
- * @note    The default value is calculated for a 80MHz system clock from
+ * @note    The default value is calculated for a 120MHz system clock from
  *          the internal 4MHz MSI clock.
  */
 #if !defined(STM32_PLLSRC) || defined(__DOXYGEN__)
@@ -470,7 +497,7 @@
 /**
  * @brief   PLLM divider value.
  * @note    The allowed values are 1..8.
- * @note    The default value is calculated for a 80MHz system clock from
+ * @note    The default value is calculated for a 120MHz system clock from
  *          the internal 4MHz MSI clock.
  */
 #if !defined(STM32_PLLM_VALUE) || defined(__DOXYGEN__)
@@ -479,12 +506,12 @@
 
 /**
  * @brief   PLLN multiplier value.
- * @note    The allowed values are 8..86.
- * @note    The default value is calculated for a 80MHz system clock from
+ * @note    The allowed values are 8..127.
+ * @note    The default value is calculated for a 120MHz system clock from
  *          the internal 4MHz MSI clock.
  */
 #if !defined(STM32_PLLN_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLN_VALUE                    80
+#define STM32_PLLN_VALUE                    120
 #endif
 
 /**
@@ -498,8 +525,6 @@
 /**
  * @brief   PLLP divider value.
  * @note    The allowed values are 7, 17.
- * @note    The default value is calculated for a 80MHz system clock from
- *          the internal 4MHz MSI clock.
  */
 #if !defined(STM32_PLLP_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLLP_VALUE                    7
@@ -508,8 +533,6 @@
 /**
  * @brief   PLLQ divider value.
  * @note    The allowed values are 2, 4, 6, 8.
- * @note    The default value is calculated for a 80MHz system clock from
- *          the internal 4MHz MSI clock.
  */
 #if !defined(STM32_PLLQ_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLLQ_VALUE                    6
@@ -518,7 +541,7 @@
 /**
  * @brief   PLLR divider value.
  * @note    The allowed values are 2, 4, 6, 8.
- * @note    The default value is calculated for a 80MHz system clock from
+ * @note    The default value is calculated for a 120MHz system clock from
  *          the internal 4MHz MSI clock.
  */
 #if !defined(STM32_PLLR_VALUE) || defined(__DOXYGEN__)
@@ -527,7 +550,7 @@
 
 /**
  * @brief   AHB prescaler value.
- * @note    The default value is calculated for a 80MHz system clock from
+ * @note    The default value is calculated for a 120MHz system clock from
  *          the internal 4MHz MSI clock.
  */
 #if !defined(STM32_HPRE) || defined(__DOXYGEN__)
@@ -578,7 +601,7 @@
 
 /**
  * @brief   PLLSAI1N multiplier value.
- * @note    The allowed values are 8..86.
+ * @note    The allowed values are 8..127.
  */
 #if !defined(STM32_PLLSAI1N_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLLSAI1N_VALUE                80
@@ -610,7 +633,7 @@
 
 /**
  * @brief   PLLSAI2N multiplier value.
- * @note    The allowed values are 8..86.
+ * @note    The allowed values are 8..127.
  */
 #if !defined(STM32_PLLSAI2N_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLLSAI2N_VALUE                80
@@ -696,6 +719,13 @@
 #endif
 
 /**
+ * @brief   I2C4 clock source.
+ */
+#if !defined(STM32_I2C4SEL) || defined(__DOXYGEN__)
+#define STM32_I2C4SEL                       STM32_I2C4SEL_SYSCLK
+#endif
+
+/**
  * @brief   LPTIM1 clock source.
  */
 #if !defined(STM32_LPTIM1SEL) || defined(__DOXYGEN__)
@@ -707,20 +737,6 @@
  */
 #if !defined(STM32_LPTIM2SEL) || defined(__DOXYGEN__)
 #define STM32_LPTIM2SEL                     STM32_LPTIM2SEL_PCLK1
-#endif
-
-/**
- * @brief   SAI1SEL value (SAI1 clock source).
- */
-#if !defined(STM32_SAI1SEL) || defined(__DOXYGEN__)
-#define STM32_SAI1SEL                       STM32_SAI1SEL_OFF
-#endif
-
-/**
- * @brief   SAI2SEL value (SAI2 clock source).
- */
-#if !defined(STM32_SAI2SEL) || defined(__DOXYGEN__)
-#define STM32_SAI2SEL                       STM32_SAI2SEL_OFF
 #endif
 
 /**
@@ -749,6 +765,48 @@
  */
 #if !defined(STM32_DFSDMSEL) || defined(__DOXYGEN__)
 #define STM32_DFSDMSEL                      STM32_DFSDMSEL_PCLK1
+#endif
+
+/**
+ * @brief   ADFSDMSEL value (DFSDM clock source).
+ */
+#if !defined(STM32_ADFSDMSEL) || defined(__DOXYGEN__)
+#define STM32_ADFSDMSEL                     STM32_ADFSDMSEL_SAI1CLK
+#endif
+
+/**
+ * @brief   SAI1SEL value (SAI1 clock source).
+ */
+#if !defined(STM32_SAI1SEL) || defined(__DOXYGEN__)
+#define STM32_SAI1SEL                       STM32_SAI1SEL_OFF
+#endif
+
+/**
+ * @brief   SAI2SEL value (SAI2 clock source).
+ */
+#if !defined(STM32_SAI2SEL) || defined(__DOXYGEN__)
+#define STM32_SAI2SEL                       STM32_SAI2SEL_OFF
+#endif
+
+/**
+ * @brief   DSISEL value (DSI clock source).
+ */
+#if !defined(STM32_DSISEL) || defined(__DOXYGEN__)
+#define STM32_DSISEL                        STM32_DSISEL_DSIPHY
+#endif
+
+/**
+ * @brief   SDMMC value (SDMMC clock source).
+ */
+#if !defined(STM32_SDMMC) || defined(__DOXYGEN__)
+#define STM32_SDMMC                         STM32_SDMMCSEL_48CLK
+#endif
+
+/**
+ * @brief   OSPISEL value (OSPISEL clock source).
+ */
+#if !defined(STM32_OSPISEL) || defined(__DOXYGEN__)
+#define STM32_OSPISEL                       STM32_OSPISEL_SYSCLK
 #endif
 
 /**
@@ -1276,7 +1334,7 @@
  * @brief   STM32_PLLPDIV field. (Only for STM32L496xx/4A6xx)
  */
 #if (STM32_PLLPDIV_VALUE == 0) ||                                           \
-    ((STM32_PLLPDIV_VALUE >= 2) && (STM32_PLLPDIV_VALUE <= 31)) ||          \
+    ((STM32_PLLPDIV_VALUE != 1) && (STM32_PLLPDIV_VALUE <= 31)) ||          \
     defined(__DOXYGEN__)
 #define STM32_PLLPDIV               (STM32_PLLPDIV_VALUE << 27)
 #else
