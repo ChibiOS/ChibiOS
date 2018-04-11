@@ -313,7 +313,7 @@ static THD_FUNCTION(TsSockSkelDaemon, arg) {
       l_bind(skreqp);
       break;
     case STUB_OP_LISTEN:
-      l_bind(skreqp);
+      l_listen(skreqp);
       break;
     default:
       break;
