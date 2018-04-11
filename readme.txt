@@ -111,6 +111,8 @@
 - EX:  Updated LIS302DL to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LPS25H to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LSM303DLHC to 1.1.0 (backported to 18.2.1).
+- HAL: Fixed problem clearing UIF timer flag in STM32 PWM driver (bug #934)
+       (backported to 18.2.1 and 17.6.5).
 - HAL: Fixed USB Serial driver problem with zero-size OUT transactions
        (bug #933)(backported to 18.2.1 and 17.6.5).
 - HAL: Fixed race condition in STM32 QSPI driver (bug #932)(backported to
