@@ -202,6 +202,11 @@ extern "C" {
                          rtcalarm_t alarm,
                          RTCAlarm *alarmspec);
   void rtc_lld_set_callback(RTCDriver *rtcp, rtccb_t callback);
+  /* Driver specific */
+  void rtcGetTamperTime(RTCDriver *rtcp, uint8_t reg, RTCDateTime *timespec);
+  uint32_t rtcGetTamperSource(RTCDriver *rtcp, uint8_t reg);
+  uint32_t rtcGetTamperEventCounter(RTCDriver *rtcp);
+  uint8_t rtcGetTamperMode(RTCDriver *rtcp, uint8_t reg);
 #ifdef __cplusplus
 }
 #endif

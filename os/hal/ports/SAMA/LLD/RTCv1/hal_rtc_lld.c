@@ -337,6 +337,8 @@ void rtc_lld_init(void) {
   /* Disable write protection */
 //  syscDisableWP();
 
+  RTCD0.rtc->RTC_IDR = RTC_IDR_ALRDIS | RTC_IDR_SECDIS;
+
   /* Clear all status flag.*/
   RTCD0.rtc->RTC_SCCR = 0x3F;
 
@@ -373,6 +375,7 @@ void rtc_lld_set_time(RTCDriver *rtcp, const RTCDateTime *timespec) {
 
   timr = rtc_encode_time(timespec);
   calr = rtc_encode_date(timespec);
+  ver = rtcp->rtc->RTC_VER;
 
   /* Disable write protection */
 //  syscDisableWP();
@@ -442,6 +445,85 @@ void rtc_lld_get_time(RTCDriver *rtcp, RTCDateTime *timespec) {
 
   /* Retrieving the DST bit.*/
   timespec->dstflag = 0;
+}
+
+/**
+ * @brief   Get tamper time.
+ * @note    The function can be called from any context.
+ *
+ * @param[in] rtcp      pointer to RTC driver structure
+ * @param[in] reg       number of register to return
+ * @param[out] timespec pointer to a @p RTCDateTime structure
+ *
+ * @note RTC_TSSR0 and RTC_TSDR cannot be overwritten, so once it has been written
+ *       all data are stored until the registers are reset: these register are
+ *       storing the first tamper occurrence after a read.
+ *       RTC_TSSR0 and RTC_TSDR are overwritten each time a tamper event is detected.
+ *
+ */
+void rtcGetTamperTime(RTCDriver *rtcp, uint8_t reg, RTCDateTime *timespec) {
+  uint32_t calr, timr;
+  uint32_t subs = 0;
+
+  timr  = rtcp->rtc->RTC_TS[reg].RTC_TSTR;
+  calr  = rtcp->rtc->RTC_TS[reg].RTC_TSDR;
+
+  rtc_decode_time(timr, timespec);
+  timespec->millisecond += subs;
+
+  /* Decoding date, this concludes the atomic read sequence.*/
+  rtc_decode_date(calr, timespec);
+
+  /* Retrieving the DST bit.*/
+  timespec->dstflag = 0;
+}
+
+/**
+ * @brief   Returns source of tamper register.
+ *
+ * @param[in] rtcp        pointer to RTC driver structure
+ * @param[in] reg         number of register source to return
+ *
+ * return content of RTC_SSRx register
+ *
+ * @note RTC_TSSR0  cannot be overwritten, so once it has been written
+ *       all data are stored until the registers are reset: that register is
+ *       storing the first tamper occurrence after a read.
+ *       RTC_TSSR1 is overwritten each time a tamper event is detected.
+ *
+ */
+uint32_t rtcGetTamperSource(RTCDriver *rtcp, uint8_t reg) {
+  return ((rtcp)->rtc->RTC_TS[reg].RTC_TSSR);
+}
+
+/**
+ * @brief   Returns numbers of total tamper events.
+ *
+ * @param[in] rtcp        pointer to RTC driver structure
+ *
+ * return numbers of total tamper events.
+ */
+uint32_t rtcGetTamperEventCounter(RTCDriver *rtcp) {
+  return ((rtcp)->rtc->RTC_TS[0].RTC_TSTR & RTC_TSTR_TEVCNT_Msk) >> RTC_TSTR_TEVCNT_Pos;
+}
+
+/**
+ * @brief   Returns backup or normal mode of tamper event.
+ *
+ * @param[in] rtcp        pointer to RTC driver structure
+ * @param[in] reg         number of register source to return
+ *
+ * @return 0x1 if system is in backup mode when tamper events occurs
+ *         0x0 if system is not in backup mode when tamper events occurs
+ *
+ * @note RTC_TSTR0  cannot be overwritten, so once it has been written
+ *       all data are stored until the registers are reset: that register is
+ *       storing the first tamper occurrence after a read.
+ *       RTC_TSTR1 is overwritten each time a tamper event is detected.
+ *
+ */
+uint8_t rtcGetTamperMode(RTCDriver *rtcp, uint8_t reg) {
+    return (rtcp)->rtc->RTC_TS[reg].RTC_TSTR & RTC_TSTR_BACKUP ? 0x1u : 0x0u;
 }
 
 /**
@@ -535,8 +617,8 @@ void rtc_lld_set_callback(RTCDriver *rtcp, rtccb_t callback) {
     /* IRQ sources enabled only after setting up the callback.*/
     rtcp->callback = callback;
 
-    rtcp->rtc->RTC_SCCR &= ~(RTC_SCCR_ALRCLR | RTC_SCCR_SECCLR | RTC_SCCR_TIMCLR |
-                             RTC_SCCR_CALCLR | RTC_SCCR_TDERRCLR);
+    rtcp->rtc->RTC_SCCR = RTC_SCCR_ALRCLR | RTC_SCCR_SECCLR | RTC_SCCR_TIMCLR |
+                          RTC_SCCR_CALCLR | RTC_SCCR_TDERRCLR;
     rtcp->rtc->RTC_IER = RTC_IER_ALREN | RTC_IER_SECEN;
   }
   else {
