@@ -30,7 +30,6 @@
 #include "lwip/netdb.h"
 #include "lwip/sockets.h"
 
-#include <stdio.h>
 #include <string.h>
 
 #include "web.h"
@@ -102,9 +101,6 @@ int http_client(void) {
   do {
     memset(recv_buf, 0, sizeof(recv_buf));
     r = read(s, recv_buf, sizeof(recv_buf) - 1);
-    for(int i = 0; i < r; i++) {
-      putchar(recv_buf[i]);
-    }
     chprintf((BaseSequentialStream *)&SD1,"%s\n\r",recv_buf);
   } while(r > 0);
   chprintf((BaseSequentialStream *)&SD1, "--------------------------------------------------------------------------------\n\r");
