@@ -39,7 +39,6 @@
 #if !defined  (SAMA5D2)
 #define SAMA5D2
 #endif /* SAMA5D2 */
-
 /** 
   * @addtogroup Device_Included
   * @{
@@ -62,6 +61,12 @@
  #error "Please select first the target SAMA5D2x device used in your application (in sama5d2x.h file)"
 #endif
 
+/**@} */
+/*
+ * Wrapper for WOLFSSL
+ * TODO: to remove
+ */
+#define Aes wc_Aes
 /**
   * @brief SAMA5D2 Family
   * @{
