@@ -20,21 +20,53 @@
 #include "string.h"
 #include <time.h>
 
+/* This macro converts from decimal to BCD */
+#define decimal2BCD(nt, nu)          ((nt << 4) | (nu))
+
 #define SIZE 30
 
 RTCDateTime cfg_time = {
   38,
-  2,
+  4,
   0,
   1,
-  26,
-  46824000
+  9,
+  66840000
 };
 
 RTCDateTime now_DateTime;
 struct tm now_tm;
 
 char buffer[SIZE];
+
+/*
+ * Alarm configuration.
+ * Fields are in BCD format
+ */
+RTCAlarm alarmspec = {
+  RTC_TIMALR_HOUREN | RTC_TIMALR_HOUR(decimal2BCD(1,8)) |
+  RTC_TIMALR_MINEN | RTC_TIMALR_MIN(decimal2BCD(3,5)) ,   /* timalarm */
+  0                                                       /* calalarm */
+};
+
+/*
+ * Alarm callback.
+ */
+static void alarm_cb(RTCDriver *rtcp, rtcevent_t event) {
+
+  (void)rtcp;
+
+  switch (event) {
+  case RTC_EVENT_SECOND:
+    /* Toggle Led green very second */
+    palToggleLine(LINE_LED_GREEN);
+    break;
+  case RTC_EVENT_ALARM:
+    /* Led red on alarm */
+    palClearLine(LINE_LED_RED);
+    break;
+  }
+}
 
 static const SerialConfig sdcfg = {
   115200,
@@ -83,6 +115,8 @@ int main(void) {
    * Configures date
    */
   rtcSetTime(&RTCD0, &cfg_time);
+  rtcSetAlarm(&RTCD0, 0, &alarmspec);
+  rtcSetCallback(&RTCD0, alarm_cb);
 
   while (true) {
     if(!palReadPad(PIOB, PIOB_USER_PB)) {
