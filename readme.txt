@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 17.6.5 ***
+- HAL: Fixed problem clearing UIF timer flag in STM32 PWM driver (bug #934).
 - HAL: Fixed USB Serial driver problem with zero-size OUT transactions
        (bug #933).
 - HAL: Fixed race condition in STM32 QSPI driver (bug #932).
