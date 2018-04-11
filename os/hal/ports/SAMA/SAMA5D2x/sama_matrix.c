@@ -91,12 +91,8 @@
 bool mtxConfigPeriphSecurity(Matrix *mtxp, uint32_t id, bool mode) {
 
   uint32_t mask;
-  if (id < 74) {
-    mask = id & 0x1F;
-  }
-  else {
-    mask = (id & 0x1F) - 1;
-  }
+  mask = id & 0x1F;
+
   mtxDisableWP(mtxp);
   if (mode) {
     mtxp->MATRIX_SPSELR[id / 32] |= (MATRIX_SPSELR_NSECP0 << mask);

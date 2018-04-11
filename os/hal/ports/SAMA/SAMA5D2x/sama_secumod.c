@@ -148,8 +148,32 @@ OSAL_IRQ_HANDLER(SAMA_SECUMOD_HANDLER) {
   else if ((sr & SECUMOD_SR_VDDCOREH) && (nimpr & SECUMOD_NIMPR_VDDCOREH)) {
     SECD0.secumod_callback(&SECD0, SEC_EVENT_VDDCOREH);
   }
+  else if ((sr & SECUMOD_SR_DET0) && (nimpr & SECUMOD_NIMPR_DET0)) {
+	    SECD0.secumod_callback(&SECD0, SEC_EVENT_PIOBU0);
+  }
+  else if ((sr & SECUMOD_SR_DET1) && (nimpr & SECUMOD_NIMPR_DET1)) {
+	    SECD0.secumod_callback(&SECD0, SEC_EVENT_PIOBU1);
+  }
+  else if ((sr & SECUMOD_SR_DET2) && (nimpr & SECUMOD_NIMPR_DET2)) {
+	    SECD0.secumod_callback(&SECD0, SEC_EVENT_PIOBU2);
+  }
+  else if ((sr & SECUMOD_SR_DET3) && (nimpr & SECUMOD_NIMPR_DET3)) {
+	    SECD0.secumod_callback(&SECD0, SEC_EVENT_PIOBU3);
+  }
+  else if ((sr & SECUMOD_SR_DET4) && (nimpr & SECUMOD_NIMPR_DET4)) {
+	    SECD0.secumod_callback(&SECD0, SEC_EVENT_PIOBU4);
+  }
+  else if ((sr & SECUMOD_SR_DET5) && (nimpr & SECUMOD_NIMPR_DET5)) {
+	    SECD0.secumod_callback(&SECD0, SEC_EVENT_PIOBU5);
+  }
+  else if ((sr & SECUMOD_SR_DET6) && (nimpr & SECUMOD_NIMPR_DET6)) {
+	    SECD0.secumod_callback(&SECD0, SEC_EVENT_PIOBU6);
+  }
+  else if ((sr & SECUMOD_SR_DET7) && (nimpr & SECUMOD_NIMPR_DET7)) {
+	    SECD0.secumod_callback(&SECD0, SEC_EVENT_PIOBU7);
+  }
   else {
-    SECD0.secumod_callback(&SECD0, SEC_EVENT_PIOBU);
+	  (void) 0;
   }
 
   /* wait at least one slow clock */

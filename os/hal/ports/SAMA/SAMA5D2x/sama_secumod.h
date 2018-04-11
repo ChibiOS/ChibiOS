@@ -226,7 +226,14 @@ typedef enum {
   SEC_EVENT_VDDBUH   = 8,           /* Triggered on High VDDBU Voltage Monitor.   */
   SEC_EVENT_VDDCOREL = 9,           /* Triggered on Low VDDCORE Voltage Monitor.  */
   SEC_EVENT_VDDCOREH = 10,          /* Triggered on High VDDCORE Voltage Monitor. */
-  SEC_EVENT_PIOBU    = 11           /* Triggered on PIOBU intrusion.              */
+  SEC_EVENT_PIOBU0   = 11,          /* Triggered on PIOBUx intrusion.             */
+  SEC_EVENT_PIOBU1   = 12,          /* Triggered on PIOBUx intrusion.             */
+  SEC_EVENT_PIOBU2   = 13,          /* Triggered on PIOBUx intrusion.             */
+  SEC_EVENT_PIOBU3   = 14,          /* Triggered on PIOBUx intrusion.             */
+  SEC_EVENT_PIOBU4   = 15,          /* Triggered on PIOBUx intrusion.             */
+  SEC_EVENT_PIOBU5   = 16,          /* Triggered on PIOBUx intrusion.             */
+  SEC_EVENT_PIOBU6   = 17,          /* Triggered on PIOBUx intrusion.             */
+  SEC_EVENT_PIOBU7   = 18           /* Triggered on PIOBUx intrusion.             */
 } secevent_t;
 
 /**
