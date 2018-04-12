@@ -29,7 +29,7 @@ static const SPIConfig hs_spicfg = {
   NULL,                                       /* callback if present */
   0,                                          /* cs pad number       */
   SPI_MR_MODFDIS | SPI_MR_LLB,                /* mr register         */
-  SPI_CSR_SCBR(1)                             /* csr                 */
+  SPI_CSR_SCBR(3)                             /* csr                 */
 };
 
 /*
@@ -39,7 +39,7 @@ static const SPIConfig ls_spicfg = {
   NULL,                                       /* callback if present */
   0,                                          /* cs pad number       */
   SPI_MR_MODFDIS | SPI_MR_LLB,                /* mr register         */
-  SPI_CSR_SCBR(1)                             /* csr                 */
+  SPI_CSR_SCBR(166)                           /* csr                 */
 };
 
 /*
