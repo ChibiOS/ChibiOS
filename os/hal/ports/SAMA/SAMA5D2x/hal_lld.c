@@ -75,8 +75,8 @@ void hal_lld_init(void) {
   MATRIX1->MATRIX_SPSELR[2] = 0xFFFFFFFF;
 
   /* Configures PMC and RTC as secure */
-  /* TODO temporary disable configuration of ID_SYSC */
-//  mtxConfigPeriphSecurity(MATRIX1, ID_SYSC, SECURE_PER);
+  //mtxConfigPeriphSecurity(MATRIX1, ID_SYSC, SECURE_PER);
+  //mtxConfigPeriphSecurity(MATRIX0, ID_PMC, SECURE_PER);
   mtxConfigPeriphSecurity(MATRIX1, ID_SFC, SECURE_PER);
   mtxConfigPeriphSecurity(MATRIX1, ID_SFR, SECURE_PER);
   mtxConfigPeriphSecurity(MATRIX0, ID_L2CC, SECURE_PER);
