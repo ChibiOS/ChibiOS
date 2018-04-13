@@ -49,15 +49,16 @@ Boot_Handler:
                  */
                 ldr     r0, =_start
                 mcr     p15, 0, r0, c12, c0, 0
-
                 /*
                  * Reset SCTLR Settings
                  */
                 mrc     p15, 0, r0, c1, c0, 0       // Read CP15 System Control register
+#if defined(ARM_RESET_SYS_CTRL)
                 bic     r0, r0, #(0x1 << 12)        // Clear I bit 12 to disable I Cache
                 bic     r0, r0, #(0x1 <<  2)        // Clear C bit  2 to disable D Cache
                 bic     r0, r0, #0x1                // Clear M bit  0 to disable MMU
                 bic     r0, r0, #(0x1 << 11)        // Clear Z bit 11 to disable branch prediction
+#endif
                 bic     r0, r0, #(0x1 << 13)        // Clear V bit 13 to disable hivecs
                 mcr     p15, 0, r0, c1, c0, 0       // Write value back to CP15 System Control register
                 isb

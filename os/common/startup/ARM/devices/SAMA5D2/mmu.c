@@ -31,6 +31,7 @@
 
 #include "mmu.h"
 #include "armparams.h"
+#include "mcuconf.h"
 #include "ARMCA5.h"
 #if defined(__GNUC__) || defined(__DOXYGEN__)
 #include "cmsis_gcc.h"
@@ -38,6 +39,14 @@
 #include "cmsis_armcc.h"
 #endif
 #include "ccportab.h"
+
+#if !defined(SAMA_L2CC_ASSUME_ENABLED)
+#define SAMA_L2CC_ASSUME_ENABLED 0
+#endif
+
+#if !defined(SAMA_L2CC_ENABLE)
+#define SAMA_L2CC_ENABLE 0
+#endif
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
@@ -96,13 +105,31 @@ static uint32_t mmuTable[4096] CC_ALIGN(16384);
 void __core_init(void) {
   uint32_t pm;
 
-  /*
-   * Invalidate L1 D Cache if it was disabled
-   */
-  pm = __get_SCTLR();
-  if ((pm & SCTLR_C_Msk) == 0) {
-    __L1C_CleanInvalidateCache(DCISW_INVALIDATE);
+#if ARM_SUPPORTS_L2CC
+#if !SAMA_L2CC_ASSUME_ENABLED
+
+  /* Flush and disable an enabled L2 Cache
+     invalidate a disabled L2 Cache.*/
+  if ((L2C_310->CONTROL & L2CC_CR_L2CEN) != 0) {
+    L2C_Disable();
+    L2C_CleanInvAllByWay();
   }
+#endif
+#endif
+
+  /* Flush and disable an enabled L1 D Cache
+     Invalidate a disabled L1 D Cache.*/
+  pm = __get_SCTLR();
+  if ((pm & SCTLR_C_Msk)) {
+    L1C_CleanInvalidateCache(DCISW_CLEAN);
+    L1C_DisableCaches();
+  }
+
+  /* Disable the MMU and invalidate TLB.*/
+  MMU_Disable();
+  L1C_InvalidateBTAC();
+  MMU_InvalidateTLB();
+
   /*
    * Default, undefined regions
    */
@@ -271,6 +298,7 @@ void __core_init(void) {
                     TTE_SECT_RW_ACCESS |
                     TTE_SECT_DOM(0x00) |
                     TTE_SECT_S | TTE_TYPE_SECT;
+
   /*
    * SDMMC0/1 regions
    *
@@ -282,7 +310,7 @@ void __core_init(void) {
                     TTE_SECT_RW_ACCESS |
                     TTE_SECT_DOM(0x00) |
                     TTE_SECT_EXE_NEVER |
-                    TTE_SECT_S | TTE_TYPE_SECT;
+                    TTE_TYPE_SECT;
   /*
    * NFC regions
    *
@@ -331,48 +359,46 @@ void __core_init(void) {
                   TTE_SECT_DOM(0x00) |
                   TTE_SECT_EXE_NEVER |
                   TTE_SECT_S | TTE_TYPE_SECT;
-  /*
-   * Invalidate TLB and L1 I cache
-   * Enable caches and MMU
-   */
+
+  /* Invalidate TLB and L1 I cache
+     Enable caches and MMU.*/
   MMU_InvalidateTLB();
   __set_TTBR0((uint32_t)mmuTable|0x5B);
   __set_DACR(0x00000001);
   __DSB();
   __ISB();
 
-  /*
-   * L1 I cache invalidate and enable
-   */
+  /* L1 I cache invalidate and enable.*/
   pm = __get_SCTLR();
   if ((pm & SCTLR_I_Msk) == 0) {
     __set_ICIALLU(0);
     __set_SCTLR(pm | SCTLR_I_Msk);
   }
-  /*
-   * MMU enable
-   */
+
+  /* MMU enable.*/
   pm = __get_SCTLR();
   if ((pm & SCTLR_M_Msk) == 0)
     __set_SCTLR(pm | SCTLR_M_Msk);
-  /*
-   * L1 D cache enable
-   */
+
+  /* L1 D cache enable.*/
   pm = __get_SCTLR();
   if ((pm & SCTLR_C_Msk) == 0) {
+    L1C_CleanInvalidateCache(DCISW_INVALIDATE);
     __set_SCTLR(pm | SCTLR_C_Msk);
   }
 
-#if defined(ARM_ENABLE_L2CC)
-#if ARM_ENABLE_L2CC
-  /* High SRAM to L2CC.*/
-  SFR->SFR_L2CC_HRAMC = 0x1;
+#if ARM_SUPPORTS_L2CC
+#if !(SAMA_L2CC_ASSUME_ENABLED) && (SAMA_L2CC_ENABLE)
+  if (!(L2C_310->CONTROL & L2CC_CR_L2CEN)) {
+    /* High SRAM to L2CC.*/
+    SFR->SFR_L2CC_HRAMC = 0x1;
 
-  /* Invalidate and enable L2 cache.*/
-  L2C_InvAllByWay();
-  L2C_Enable();
-  __DSB();
-  __ISB();
+    /* Invalidate and enable L2 cache.*/
+    L2C_InvAllByWay();
+    L2C_Enable();
+    __DSB();
+    __ISB();
+  }
 #endif
 #endif
 }
