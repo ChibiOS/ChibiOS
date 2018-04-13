@@ -446,6 +446,29 @@
  * @api
  */
 #define rccResetCAN1() rccResetAPB1R1(RCC_APB1RSTR1_CAN1RST)
+
+/**
+ * @brief   Enables the CAN2 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableCAN2(lp) rccEnableAPB1R1(RCC_APB1ENR1_CAN2EN, lp)
+
+/**
+ * @brief   Disables the CAN2 peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableCAN2() rccDisableAPB1R1(RCC_APB1ENR1_CAN2EN)
+
+/**
+ * @brief   Resets the CAN2 peripheral.
+ *
+ * @api
+ */
+#define rccResetCAN2() rccResetAPB1R1(RCC_APB1RSTR1_CAN2RST)
 /** @} */
 
 /**
