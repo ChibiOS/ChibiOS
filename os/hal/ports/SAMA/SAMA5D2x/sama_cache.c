@@ -24,6 +24,14 @@
 
 #include "hal.h"
 
+#if !defined(SAMA_L2CC_ASSUME_ENABLED)
+#define SAMA_L2CC_ASSUME_ENABLED 0
+#endif
+
+#if !defined(SAMA_L2CC_ENABLE)
+#define SAMA_L2CC_ENABLE 0
+#endif
+
 /**
  * @brief   Invalidate D-Cache Region
  *
@@ -40,8 +48,8 @@ void cacheInvalidateRegion(void *start, uint32_t length) {
   for (mva = start_addr & ~L1_CACHE_BYTES; mva < end_addr; mva += L1_CACHE_BYTES) {
     L1C_InvalidateDCacheMVA((uint32_t *)mva);
   }
-#if defined(ARM_ENABLE_L2CC)
-#if ARM_ENABLE_L2CC
+#if ARM_SUPPORTS_L2CC
+#if SAMA_L2CC_ASSUME_ENABLED || SAMA_L2CC_ENABLE
   /* Invalidate L2 Cache */
   for (mva = start_addr & ~L2_CACHE_BYTES; mva < end_addr; mva += L2_CACHE_BYTES) {
     L2C_InvPa((uint32_t *)mva);
@@ -66,8 +74,8 @@ void cacheCleanRegion(void *start, uint32_t length) {
   for (mva = start_addr & ~L1_CACHE_BYTES; mva < end_addr; mva += L1_CACHE_BYTES) {
     L1C_CleanDCacheMVA((uint32_t *)mva);
   }
-#if defined(ARM_ENABLE_L2CC)
-#if ARM_ENABLE_L2CC
+#if ARM_SUPPORTS_L2CC
+#if SAMA_L2CC_ASSUME_ENABLED || SAMA_L2CC_ENABLE
   /* Invalidate L2 Cache */
   for (mva = start_addr & ~L2_CACHE_BYTES; mva < end_addr; mva += L2_CACHE_BYTES) {
     L2C_CleanPa((uint32_t *)mva);
