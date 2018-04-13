@@ -328,6 +328,10 @@ struct RTCDriverVMT _rtc_lld_vmt = {
  */
 void rtc_lld_init(void) {
 
+#if SAMA_HAL_IS_SECURE
+  mtxConfigPeriphSecurity(MATRIX1, ID_SYSC, SECURE_PER);
+#endif
+
   /* RTC object initialization.*/
   rtcObjectInit(&RTCD0);
 
