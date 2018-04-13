@@ -111,6 +111,8 @@
 - EX:  Updated LIS302DL to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LPS25H to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LSM303DLHC to 1.1.0 (backported to 18.2.1).
+- HAL: Fixed macro expansion problem in SPI high level driver (bug #937)
+       (backported to 18.2.1).
 - HAL: Fixed missing CAN2 macros from STM32L4xx stm32_rcc.h file (bug #936)
        (backported to 18.2.1).
 - OTH: Fixed inclusion order problem in STM32L4 cmparams.h file (bug #935)
