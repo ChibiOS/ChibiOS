@@ -101,6 +101,7 @@
 - EX:  Updated LIS302DL to 1.1.0.
 - EX:  Updated LPS25H to 1.1.0.
 - EX:  Updated LSM303DLHC to 1.1.0.
+- OTH: Fixed inclusion order problem in STM32L4 cmparams.h file (bug #935).
 - HAL: Fixed problem clearing UIF timer flag in STM32 PWM driver (bug #934).
 - HAL: Fixed USB Serial driver problem with zero-size OUT transactions
        (bug #933).

@@ -43,17 +43,6 @@
  */
 #define CORTEX_PRIORITY_BITS    2
 
-/**
- * @brief   Number of interrupt vectors.
- * @note    This number does not include the 16 system vectors and must be
- *          rounded to a multiple of 8.
- */
-#define CORTEX_NUM_VECTORS      32
-
-/* The following code is not processed when the file is included from an
-   asm module.*/
-#if !defined(_FROM_ASM_)
-
 /* If the device type is not externally defined, for example from the Makefile,
    then a file named board.h is included. This file must contain a device
    definition compatible with the vendor include file.*/
@@ -64,6 +53,17 @@
     !defined(STM32L073xx)
 #include "board.h"
 #endif
+
+/**
+ * @brief   Number of interrupt vectors.
+ * @note    This number does not include the 16 system vectors and must be
+ *          rounded to a multiple of 8.
+ */
+#define CORTEX_NUM_VECTORS      32
+
+/* The following code is not processed when the file is included from an
+   asm module.*/
+#if !defined(_FROM_ASM_)
 
 /* Including the device CMSIS header. Note, we are not using the definitions
    from this header because we need this file to be usable also from
