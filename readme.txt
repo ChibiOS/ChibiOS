@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 17.6.5 ***
+- OTH: Fixed inclusion order problem in STM32L4 cmparams.h file (bug #935).
 - HAL: Fixed problem clearing UIF timer flag in STM32 PWM driver (bug #934).
 - HAL: Fixed USB Serial driver problem with zero-size OUT transactions
        (bug #933).
