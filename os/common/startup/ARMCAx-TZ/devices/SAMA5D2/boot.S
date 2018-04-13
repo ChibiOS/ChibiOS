@@ -62,6 +62,8 @@ Boot_Handler:
                 bic     r0, r0, #0x1
                 ldr     r1, =SFR_AICREDIR
                 str     r0, [r1]
+
+#if defined(ARM_RESET_SYS_CTRL)
                 /*
                  * Reset SCTLR Settings
                  */
@@ -85,6 +87,7 @@ Boot_Handler:
                 bic     r0, r0, #0x1
                 ldr     r1, =SFR_L2CC_HRAMC
                 str     r0, [r1]
+#endif
                 /*
                  * Enabling Cycle counter
                  */
@@ -97,7 +100,7 @@ Boot_Handler:
                 /*
                  * Configure the intial catching of the interrupts
                  */
-                ldr     r0, =SCR_RESET_VAL          // IRQ and ABT to monitor in secure mode
+                ldr     r0, =SCR_RESET_VAL          // IRQ and external ABT to monitor in secure mode
                 mcr     p15, 0, r0, c1, c1, 0
                 b       Reset_Handler
 #endif /* !defined(__DOXYGEN__) */
