@@ -43,6 +43,23 @@
  */
 #define CORTEX_PRIORITY_BITS    4
 
+/* If the device type is not externally defined, for example from the Makefile,
+   then a file named board.h is included. This file must contain a device
+   definition compatible with the vendor include file.*/
+#if !defined(STM32L431xx) && !defined(STM32L432xx) &&                       \
+    !defined(STM32L433xx) && !defined(STM32L442xx) &&                       \
+    !defined(STM32L443xx) && !defined(STM32L451xx) &&                       \
+    !defined(STM32L452xx) && !defined(STM32L462xx) &&                       \
+    !defined(STM32L471xx) && !defined(STM32L475xx) &&                       \
+    !defined(STM32L476xx) && !defined(STM32L485xx) &&                       \
+    !defined(STM32L486xx) && !defined(STM32L496xx) &&                       \
+    !defined(STM32L4A6xx) &&                                                \
+    !defined(STM32L4R5xx) && !defined(STM32L4R7xx) &&                       \
+    !defined(STM32L4R9xx) && !defined(STM32L4S5xx) &&                       \
+    !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
+#include "board.h"
+#endif
+
 /**
  * @brief   Number of interrupt vectors.
  * @note    This number does not include the 16 system vectors and must be
@@ -59,23 +76,6 @@
 /* The following code is not processed when the file is included from an
    asm module.*/
 #if !defined(_FROM_ASM_)
-
-/* If the device type is not externally defined, for example from the Makefile,
-   then a file named board.h is included. This file must contain a device
-   definition compatible with the vendor include file.*/
-#if !defined(STM32L431xx) && !defined(STM32L432xx) &&                       \
-    !defined(STM32L433xx) && !defined(STM32L442xx) &&                       \
-    !defined(STM32L443xx) && !defined(STM32L451xx) &&                       \
-    !defined(STM32L452xx) && !defined(STM32L462xx) &&                       \
-    !defined(STM32L471xx) && !defined(STM32L475xx) &&                       \
-    !defined(STM32L476xx) && !defined(STM32L485xx) &&                       \
-    !defined(STM32L486xx) && !defined(STM32L496xx) &&                       \
-    !defined(STM32L4A6xx) &&                                                \
-    !defined(STM32L4R5xx) && !defined(STM32L4R7xx) &&                       \
-    !defined(STM32L4R9xx) && !defined(STM32L4S5xx) &&                       \
-    !defined(STM32L4S7xx) && !defined(STM32L4S9xx) &&                       \
-#include "board.h"
-#endif
 
 /* Including the device CMSIS header. Note, we are not using the definitions
    from this header because we need this file to be usable also from
