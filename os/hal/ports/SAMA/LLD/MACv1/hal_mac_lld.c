@@ -52,6 +52,13 @@
 #error "MCK too high, cannot configure MDC clock"
 #endif
 
+/*
+ * BV1000GT boards use phy address 0
+ */
+#if defined(BOARD_ATSAM5D28_XULT)
+#define BOARD_PHY_ADDRESS    0
+#endif
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
