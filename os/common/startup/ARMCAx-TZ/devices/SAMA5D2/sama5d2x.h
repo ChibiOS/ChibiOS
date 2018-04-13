@@ -64,6 +64,9 @@
 
 /**@} */
 
+/* TODO: to delete */
+#define Aes wc_Aes
+
 /**
   * @brief SAMA5D2 Family
   * @{
