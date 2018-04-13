@@ -39,6 +39,7 @@
 #if !defined  (SAMA5D2)
 #define SAMA5D2
 #endif /* SAMA5D2 */
+
 /** 
   * @addtogroup Device_Included
   * @{
@@ -62,11 +63,7 @@
 #endif
 
 /**@} */
-/*
- * Wrapper for WOLFSSL
- * TODO: to remove
- */
-#define Aes wc_Aes
+
 /**
   * @brief SAMA5D2 Family
   * @{
@@ -160,12 +157,12 @@
 #define ID_SYSC         (74) /**< \brief System Controller Interrupt, RTC, RSTC, PMC (SYSC) */
 #define ID_ACC          (75) /**< \brief Analog Comparator (ACC) */
 #define ID_RXLP         (76) /**< \brief Uart Low Power (RXLP) */
-#define ID_SFRBU        (77) /**< \brief Special Function Register Backup (SFRBU) */
 #define ID_CHIPID       (78) /**< \brief Chip ID (CHIPID) */
 
 #define ID_PERIPH_COUNT (79) /**< \brief Number of peripheral IDs */
 
 /* XDMA Peripheral Interface Number */
+
 #define PERID_TWIHS0_TX    0
 #define PERID_TWIHS0_RX    1
 #define PERID_TWIHS1_TX    2
@@ -312,7 +309,6 @@
 #define ID_SYSC_MSK           (1 << (ID_SYSC & 0x1F))
 #define ID_ACC_MSK            (1 << (ID_ACC & 0x1F))
 #define ID_RXLP_MSK           (1 << (ID_RXLP & 0x1F))
-#define ID_SFRBU_MSK          (1 << (ID_SFRBU & 0x1F))
 #define ID_CHIPID_MSK         (1 << (ID_CHIPID & 0x1F))
 
 /* MASTER MATRIX ID DEFINITION FOR SAMA5D2x */
