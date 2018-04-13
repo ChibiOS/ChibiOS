@@ -518,6 +518,20 @@
  */
 #define pmcDisableSDMMC1() pmcDisablePidHigh(ID_SDMMC1_MSK)
 
+/**
+ * @brief   Enables the TRNG peripheral clock.
+ *
+ * @api
+ */
+#define pmcEnableTRNG0()   pmcEnablePidHigh(ID_TRNG_MSK)
+
+/**
+ * @brief   Disables the TRNG peripheral clock.
+ *
+ * @api
+ */
+#define pmcDisableTRNG0() pmcDisablePidHigh(ID_TRNG_MSK)
+
 /** @} */
 
 

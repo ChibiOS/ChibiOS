@@ -505,6 +505,7 @@
 #include "sama_cache.h"
 #include "hal_tc_lld.h"
 #include "sama_secumod.h"
+#include "sama_trng.h"
 
 #ifdef __cplusplus
 extern "C" {
