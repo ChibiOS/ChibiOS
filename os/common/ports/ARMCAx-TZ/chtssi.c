@@ -24,8 +24,14 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "tsconf.h"
 #include "chtssi.h"
+#include "ARMCA5.h"
+#if defined(__GNUC__) || defined(__DOXYGEN__)
+#include "cmsis_gcc.h"
+#else
+#include "cmsis_armcc.h"
+#endif
+#include "ccportab.h"
 #include <string.h>
 
 /*===========================================================================*/
@@ -262,10 +268,11 @@ CC_NO_RETURN void tssiInit(void)
   uint32_t *tt;
 
   /*
-   * The DDR memory is divided in 4 region, each 32MB large.
+   * The main DDR memory, PORT0, is divided in 4 region, each 32MB large.
    * The last region is split in two areas, each 16MB large.
    * The first 3 region and the lower area of this last region is non secure.
    * All the rest of the regions space is secured.
+   * The same applies to AESB view of the DDR, PORT1
    *
    * Those settings depend on the designed memory mapping.
    */
@@ -303,6 +310,19 @@ CC_NO_RETURN void tssiInit(void)
       mtxRegionWrnsech(REGION_0, NOT_SECURE_WRITE) |
       mtxRegionWrnsech(REGION_1, NOT_SECURE_WRITE) |
       mtxRegionWrnsech(REGION_2, NOT_SECURE_WRITE));
+
+#if !HAL_USE_SDMMC
+
+  /* Configure the SDMMCx regions as non secure.*/
+  mtxSetSlaveSplitAddr(MATRIX0, H64MX_SLAVE_SDMMC, MATRIX_AREA_SIZE_128M, REGION_1_MSK|REGION_2_MSK);
+  mtxConfigSlaveSec(MATRIX0, H64MX_SLAVE_SDMMC,
+      mtxRegionLansech(REGION_1, UPPER_AREA_SECURABLE) |
+      mtxRegionLansech(REGION_2, UPPER_AREA_SECURABLE),
+      mtxRegionRdnsech(REGION_1, NOT_SECURE_READ) |
+      mtxRegionRdnsech(REGION_2, NOT_SECURE_READ),
+      mtxRegionWrnsech(REGION_1, NOT_SECURE_WRITE) |
+      mtxRegionWrnsech(REGION_2, NOT_SECURE_WRITE));
+#endif
 
   /* Mark the whole non secure memory region as non executable
      by the secure side.*/
@@ -343,9 +363,19 @@ CC_NO_RETURN void tssiInit(void)
   /* Now set the priority to the max.*/
   chThdSetPriority(HIGHPRIO);
 
+  /* Remove write protection on PMC registers.*/
+  pmcDisableWP();
+
+  /* Allow non secure access to CP10 and CP11.*/
+  asm volatile (
+    "MRC p15, 0, r0, c1, c1, 2    \n"
+    "ORR r0, r0, #0b11<<10        \n"
+    "MCR p15, 0, r0, c1, c1, 2    \n"
+  );
+
   /* Jump in the NON SECURE world.
-   * This thread becomes the non secure environment as view by
-   * the secure world.*/
+     This thread becomes the non secure environment as view by
+     the secure world.*/
   _ns_trampoline(NSEC_MEMORY_START_ADDR + NSEC_MEMORY_EXE_OFFSET);
 
   /* It never goes here.*/
