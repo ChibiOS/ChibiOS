@@ -64,6 +64,9 @@
 
 /**@} */
 
+/* TODO: to delete */
+#define Aes wc_Aes
+
 /**
   * @brief SAMA5D2 Family
   * @{
@@ -157,6 +160,7 @@
 #define ID_SYSC         (74) /**< \brief System Controller Interrupt, RTC, RSTC, PMC (SYSC) */
 #define ID_ACC          (75) /**< \brief Analog Comparator (ACC) */
 #define ID_RXLP         (76) /**< \brief Uart Low Power (RXLP) */
+#define ID_SFRBU        (77) /**< \brief Special Function Register Backup (SFRBU) */
 #define ID_CHIPID       (78) /**< \brief Chip ID (CHIPID) */
 
 #define ID_PERIPH_COUNT (79) /**< \brief Number of peripheral IDs */
@@ -223,6 +227,7 @@
 #define PERID_PDMIC_RX     50
 
 #define ID_SAIC_FIQ_MSK       (1 << (ID_SAIC_FIQ & 0x1F))
+#define ID_PMC_MSK            (1 << (ID_PMC & 0x1F))
 #define ID_ARM_PMU_MSK        (1 << (ID_ARM_PMU & 0x1F))
 #define ID_PIT_MSK            (1 << (ID_PIT & 0x1F))
 #define ID_WDT_MSK            (1 << (ID_WDT & 0x1F))
@@ -306,9 +311,11 @@
 #define ID_PIOD_MSK           (1 << (ID_PIOD & 0x1F))
 #define ID_SDMMC0_TIMER_MSK   (1 << (ID_SDMMC0_TIMER & 0x1F))
 #define ID_SDMMC1_TIMER_MSK   (1 << (ID_SDMMC1_TIMER & 0x1F))
+#define ID_RSTC_MSK           (1 << (ID_RSTC & 0x1F)
 #define ID_SYSC_MSK           (1 << (ID_SYSC & 0x1F))
 #define ID_ACC_MSK            (1 << (ID_ACC & 0x1F))
 #define ID_RXLP_MSK           (1 << (ID_RXLP & 0x1F))
+#define ID_SFRBU_MSK          (1 << (ID_SFRBU & 0x1F))
 #define ID_CHIPID_MSK         (1 << (ID_CHIPID & 0x1F))
 
 /* MASTER MATRIX ID DEFINITION FOR SAMA5D2x */
