@@ -157,34 +157,34 @@ do {                                                                        \
 #elif SPI_SELECT_MODE == SPI_SELECT_MODE_LINE
 #define spiSelectI(spip)                                                    \
 do {                                                                        \
-  palClearLine(spip->config->ssline);                                       \
+  palClearLine((spip)->config->ssline);                                     \
 } while (false)
 
 #define spiUnselectI(spip)                                                  \
 do {                                                                        \
-  palSetLine(spip->config->ssline);                                         \
+  palSetLine((spip)->config->ssline);                                       \
 } while (false)
 
 #elif SPI_SELECT_MODE == SPI_SELECT_MODE_PORT
 #define spiSelectI(spip)                                                    \
 do {                                                                        \
-  palClearPort(spip->config->ssport, spip->config->ssmask);                 \
+  palClearPort((spip)->config->ssport, (spip)->config->ssmask);             \
 } while (false)
 
 #define spiUnselectI(spip)                                                  \
 do {                                                                        \
-  palSetPort(spip->config->ssport, spip->config->ssmask);                   \
+  palSetPort((spip)->config->ssport, (spip)->config->ssmask);               \
 } while (false)
 
 #elif SPI_SELECT_MODE == SPI_SELECT_MODE_PAD
 #define spiSelectI(spip)                                                    \
 do {                                                                        \
-  palClearPad(spip->config->ssport, spip->config->sspad);                   \
+  palClearPad((spip)->config->ssport, (spip)->config->sspad);               \
 } while (false)
 
 #define spiUnselectI(spip)                                                  \
 do {                                                                        \
-  palSetPad(spip->config->ssport, spip->config->sspad);                     \
+  palSetPad((spip)->config->ssport, (spip)->config->sspad);                 \
 } while (false)
 
 #elif SPI_SELECT_MODE == SPI_SELECT_MODE_NONE
