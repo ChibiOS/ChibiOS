@@ -1,6 +1,6 @@
 # List of the ChibiOS generic SAMA5D2 file.
 STARTUPSRC = $(CHIBIOS)/os/common/startup/ARM/compilers/GCC/crt1.c \
-			 $(CHIBIOS)/os/common/startup/ARMCAx-TZ/devices/SAMA5D2/mmu.c
+			 $(CHIBIOS)/os/common/startup/ARM/devices/SAMA5D2/mmu.c
 
 STARTUPASM = $(CHIBIOS)/os/common/startup/ARM/devices/SAMA5D2/boot.S \
              $(CHIBIOS)/os/common/startup/ARM/compilers/GCC/vectors.S \
