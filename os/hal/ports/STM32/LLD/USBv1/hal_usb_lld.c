@@ -647,6 +647,15 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
 #endif
   }
 
+  /* Resetting the data toggling bits for this endpoint.*/
+  if (STM32_USB->EPR[ep] & EPR_DTOG_RX) {
+    epr |= EPR_DTOG_RX;
+  }
+
+  if (STM32_USB->EPR[ep] & EPR_DTOG_TX) {
+    epr |= EPR_DTOG_TX;
+  }
+
   /* EPxR register setup.*/
   EPR_SET(ep, epr | ep);
   EPR_TOGGLE(ep, epr);
