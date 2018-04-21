@@ -94,6 +94,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: RT C++ wrapper reworked, now it is mostly inline code, added some new
+       wrappers and methods.
 - NEW: Updated STM32L4xx headers to version 1.11.0.
 - NEW: Added HAL support for STM32L443.
 - NEW: Added support for LDM303AGR 6 axis Accelerometer\Magnetometer MEMS.
