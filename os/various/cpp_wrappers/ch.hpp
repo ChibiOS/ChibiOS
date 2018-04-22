@@ -32,17 +32,17 @@
  */
 namespace chibios_rt {
 
-  /* Forward declarations */
-  class Mutex;
-
   /*------------------------------------------------------------------------*
    * chibios_rt::System                                                     *
    *------------------------------------------------------------------------*/
   /**
    * @brief Class encapsulating the base system functionalities.
    */
-  class System {
-  public:
+  namespace System {
+
+    /* Forward declaration of some classes.*/
+    class ThreadReference;
+
     /**
      * @brief   ChibiOS/RT initialization.
      * @details After executing this function the current instructions stream
@@ -55,7 +55,7 @@ namespace chibios_rt {
      *
      * @special
      */
-    static void init(void) {
+    static inline void init(void) {
 
       chSysInit();
     }
@@ -72,7 +72,7 @@ namespace chibios_rt {
      *
      * @special
      */
-    static void halt(const char *reason) {
+    static inline void halt(const char *reason) {
 
       chSysHalt(reason);
     }
@@ -101,9 +101,52 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    static bool integrityCheckI(unsigned int testmask) {
+    static inline bool integrityCheckI(unsigned int testmask) {
 
       return chSysIntegrityCheckI(testmask);
+    }
+
+    /**
+     * @brief   Raises the system interrupt priority mask to the maximum level.
+     * @details All the maskable interrupt sources are disabled regardless their
+     *          hardware priority.
+     * @note    Do not invoke this API from within a kernel lock.
+     *
+     * @special
+     */
+    static inline void disable(void) {
+
+      chSysDisable();
+    }
+
+    /**
+     * @brief   Raises the system interrupt priority mask to system level.
+     * @details The interrupt sources that should not be able to preempt the kernel
+     *          are disabled, interrupt sources with higher priority are still
+     *          enabled.
+     * @note    Do not invoke this API from within a kernel lock.
+     * @note    This API is no replacement for @p chSysLock(), the @p chSysLock()
+     *          could do more than just disable the interrupts.
+     *
+     * @special
+     */
+    static inline void suspend(void) {
+
+      chSysSuspend();
+    }
+
+    /**
+     * @brief   Lowers the system interrupt priority mask to user level.
+     * @details All the interrupt sources are enabled.
+     * @note    Do not invoke this API from within a kernel lock.
+     * @note    This API is no replacement for @p chSysUnlock(), the
+     *          @p chSysUnlock() could do more than just enable the interrupts.
+     *
+     * @special
+     */
+    static inline void enable(void) {
+
+      chSysEnable();
     }
 
     /**
@@ -111,7 +154,7 @@ namespace chibios_rt {
      *
      * @special
      */
-    static void lock(void) {
+    static inline void lock(void) {
 
       chSysLock();
     }
@@ -121,7 +164,7 @@ namespace chibios_rt {
      *
      * @special
      */
-    static void unlock(void) {
+    static inline void unlock(void) {
 
       chSysUnlock();
     }
@@ -138,7 +181,7 @@ namespace chibios_rt {
      *
      * @special
      */
-    static void lockFromIsr(void) {
+    static inline void lockFromIsr(void) {
 
       chSysLockFromISR();
     }
@@ -156,10 +199,124 @@ namespace chibios_rt {
      *
      * @special
      */
-    static void unlockFromIsr(void) {
+    static inline void unlockFromIsr(void) {
 
       chSysUnlockFromISR();
     }
+
+    /**
+     * @brief   Unconditionally enters the kernel lock state.
+     * @note    Can be called without previous knowledge of the current lock state.
+     *          The final state is "s-locked".
+     *
+     * @special
+     */
+    static inline void unconditionalLock(void) {
+
+      chSysUnconditionalLock();
+    }
+
+    /**
+     * @brief   Unconditionally leaves the kernel lock state.
+     * @note    Can be called without previous knowledge of the current lock state.
+     *          The final state is "normal".
+     *
+     * @special
+     */
+    static inline void unconditionalUnlock(void) {
+
+      chSysUnconditionalUnlock();
+    }
+
+    /**
+     * @brief   Returns the execution status and enters a critical zone.
+     * @details This functions enters into a critical zone and can be called
+     *          from any context. Because its flexibility it is less efficient
+     *          than @p chSysLock() which is preferable when the calling context
+     *          is known.
+     * @post    The system is in a critical zone.
+     *
+     * @return              The previous system status, the encoding of this
+     *                      status word is architecture-dependent and opaque.
+     *
+     * @xclass
+     */
+    static inline syssts_t getStatusAndLockX(void) {
+
+      return chSysGetStatusAndLockX();
+    }
+
+    /**
+     * @brief   Restores the specified execution status and leaves a critical zone.
+     * @note    A call to @p chSchRescheduleS() is automatically performed
+     *          if exiting the critical zone and if not in ISR context.
+     *
+     * @param[in] sts       the system status to be restored.
+     *
+     * @xclass
+     */
+    static inline void restoreStatusX(syssts_t sts) {
+
+      chSysRestoreStatusX(sts);
+    }
+
+#if (PORT_SUPPORTS_RT == TRUE) || defined(__DOXYGEN__)
+    /**
+     * @brief   Returns the current value of the system real time counter.
+     * @note    This function is only available if the port layer supports the
+     *          option @p PORT_SUPPORTS_RT.
+     *
+     * @return              The value of the system realtime counter of
+     *                      type rtcnt_t.
+     *
+     * @xclass
+     */
+    static inline rtcnt_t getRealtimeCounterX(void) {
+
+      return chSysGetRealtimeCounterX();
+    }
+
+    /**
+     * @brief   Realtime window test.
+     * @details This function verifies if the current realtime counter value
+     *          lies within the specified range or not. The test takes care
+     *          of the realtime counter wrapping to zero on overflow.
+     * @note    When start==end then the function returns always true because the
+     *          whole time range is specified.
+     * @note    This function is only available if the port layer supports the
+     *          option @p PORT_SUPPORTS_RT.
+     *
+     * @param[in] cnt       the counter value to be tested
+     * @param[in] start     the start of the time window (inclusive)
+     * @param[in] end       the end of the time window (non inclusive)
+     * @retval true         current time within the specified time window.
+     * @retval false        current time not within the specified time window.
+     *
+     * @xclass
+     */
+    static inline bool isCounterWithinX(rtcnt_t cnt,
+                                       rtcnt_t start,
+                                       rtcnt_t end) {
+
+      return chSysIsCounterWithinX(cnt, start, end);
+    }
+
+   /**
+    * @brief   Polled delay.
+    * @note    The real delay is always few cycles in excess of the specified
+    *          value.
+    * @note    This function is only available if the port layer supports the
+    *          option @p PORT_SUPPORTS_RT.
+    *
+    * @param[in] cycles    number of cycles
+    *
+    * @xclass
+    */
+    static inline void polledDelayX(rtcnt_t cycles) {
+
+      chSysPolledDelayX(cycles);
+    }
+#endif /* PORT_SUPPORTS_RT == TRUE */
 
     /**
      * @brief   Returns the system time as system ticks.
@@ -169,7 +326,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    static systime_t getTime(void) {
+    static inline systime_t getTime(void) {
 
       return chVTGetSystemTime();
     }
@@ -182,7 +339,7 @@ namespace chibios_rt {
      *
      * @xclass
      */
-    static systime_t getTimeX(void) {
+    static inline systime_t getTimeX(void) {
 
       return chVTGetSystemTimeX();
     }
@@ -200,10 +357,35 @@ namespace chibios_rt {
      *
      * @api
      */
-    static bool isSystemTimeWithin(systime_t start, systime_t end) {
+    static inline bool isSystemTimeWithin(systime_t start, systime_t end) {
 
       return chVTIsSystemTimeWithin(start, end);
     }
+
+    /**
+     * @brief   Returns a reference to the current thread.
+     *
+     * @return             A reference to the current thread.
+     *
+     * @xclass
+     */
+    inline ThreadReference getCurrentThreadX(void);
+
+#if (CH_CFG_NO_IDLE_THREAD == FALSE) || defined(__DOXYGEN__)
+    /**
+     * @brief   Returns a reference to the idle thread.
+     * @pre     In order to use this function the option @p CH_CFG_NO_IDLE_THREAD
+     *          must be disabled.
+     * @note    The reference counter of the idle thread is not incremented but
+     *          it is not strictly required being the idle thread a static
+     *          object.
+     *
+     * @return              Reference to the idle thread.
+     *
+     * @xclass
+     */
+    inline ThreadReference getIdleThreadX(void);
+#endif /* CH_CFG_NO_IDLE_THREAD == FALSE */
   };
 
 #if CH_CFG_USE_MEMCORE || defined(__DOXYGEN__)
@@ -579,8 +761,23 @@ namespace chibios_rt {
     }
 #endif /* CH_CFG_USE_EVENTS */
 
-#if CH_CFG_USE_DYNAMIC || defined(__DOXYGEN__)
-#endif /* CH_CFG_USE_DYNAMIC */
+
+    /**
+     * @brief   Returns the number of ticks consumed by the specified thread.
+     * @note    This function is only available when the
+     *          @p CH_DBG_THREADS_PROFILING configuration option is enabled.
+     *
+     * @param[in] tp        pointer to the thread
+     * @return              The number of consumed system ticks.
+     *
+     * @xclass
+     */
+#if (CH_DBG_THREADS_PROFILING == TRUE) || defined(__DOXYGEN__)
+    systime_t getTicksX(void) {
+
+      return chThdGetTicksX(thread_ref);
+    }
+#endif
   };
 
   /*------------------------------------------------------------------------*
@@ -657,6 +854,19 @@ namespace chibios_rt {
     static tprio_t setPriority(tprio_t newprio) {
 
       return chThdSetPriority(newprio);
+    }
+
+    /**
+     * @brief   Returns the current thread priority.
+     * @note    Can be invoked in any context.
+     *
+     * @return              The current thread priority.
+     *
+     * @xclass
+     */
+    static tprio_t getPriorityX(void) {
+
+      return chThdGetPriorityX();
     }
 
     /**
@@ -740,6 +950,25 @@ namespace chibios_rt {
     static void sleepUntil(systime_t time) {
 
       chThdSleepUntil(time);
+    }
+
+    /**
+     * @brief   Suspends the invoking thread until the system time arrives to the
+     *          specified value.
+     * @note    The system time is assumed to be between @p prev and @p time
+     *          else the call is assumed to have been called outside the
+     *          allowed time interval, in this case no sleep is performed.
+     * @see     chThdSleepUntil()
+     *
+     * @param[in] prev      absolute system time of the previous deadline
+     * @param[in] next      absolute system time of the next deadline
+     * @return              the @p next parameter
+     *
+     * @api
+     */
+    static systime_t sleepUntilWindowed(systime_t prev, systime_t next) {
+
+      return chThdSleepUntilWindowed(prev, next);
     }
 
     /**
@@ -1915,6 +2144,16 @@ namespace chibios_rt {
     }
 
     /**
+     * @brief   Terminates the reset state.
+     *
+     * @xclass
+     */
+    void resumeX(void) {
+
+      chMBResumeX(&mb);
+    }
+
+    /**
      * @brief   Posts a message into a mailbox.
      * @details The invoking thread waits until a empty slot in the mailbox
      *          becomes available or the specified time runs out.
@@ -2150,6 +2389,10 @@ namespace chibios_rt {
    */
   template <typename T, int N>
   class Mailbox : public MailboxBase<T> {
+
+    static_assert(sizeof(T) <= sizeof(msg_t),
+                  "Mailbox type does not fit in msg_t");
+
   private:
     msg_t   mb_buf[N];
 
@@ -2350,7 +2593,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    virtual size_t write(const uint8_t *bp, size_t n) = 0;
+    virtual size_t write(const uint8_t *bp, const size_t n) = 0;
 
     /**
      * @brief   Sequential Stream read.
@@ -2364,7 +2607,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    virtual size_t read(uint8_t *bp, size_t n) = 0;
+    virtual size_t read(uint8_t *bp, const size_t n) = 0;
 
     /**
      * @brief   Sequential Stream blocking byte write.
@@ -2380,7 +2623,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    virtual msg_t put(uint8_t b) = 0;
+    virtual msg_t put(const uint8_t b) = 0;
 
     /**
      * @brief   Sequential Stream blocking byte read.

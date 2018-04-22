@@ -26,6 +26,23 @@
 namespace chibios_rt {
 
   /*------------------------------------------------------------------------*
+   * chibios_rt::system                                                     *
+   *------------------------------------------------------------------------*/
+  namespace system {
+    inline ThreadReference getCurrentThreadX(void) {
+
+      return ThreadReference(chThdGetSelfX());
+    }
+
+#if (CH_CFG_NO_IDLE_THREAD == FALSE) || defined(__DOXYGEN__)
+    inline ThreadReference getIdleThreadX(void) {
+
+      return ThreadReference(chSysGetIdleThreadX());
+    }
+#endif /* CH_CFG_NO_IDLE_THREAD == FALSE */
+  }
+
+  /*------------------------------------------------------------------------*
    * chibios_rt::BaseStaticThread                                           *
    *------------------------------------------------------------------------*/
 
