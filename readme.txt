@@ -114,9 +114,9 @@
 - EX:  Updated LPS25H to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LSM303DLHC to 1.1.0 (backported to 18.2.1).
 - HAL: Fixed STM32 USBv1 driver does not reset data toggling bits on endpoint
-       initialization (bug #939)(TO BE backported to 18.2.1 and 17.6.5).
--- HAL: Fixed incorrect behavior of USB driver on SET CONFIGURATION (bug #938)
-       (TO BE backported to 18.2.1 and 17.6.5).
+       initialization (bug #939)(backported to 18.2.1 and 17.6.5).
+- HAL: Fixed incorrect behavior of USB driver on SET CONFIGURATION (bug #938)
+       (backported to 18.2.1 and 17.6.5).
 - HAL: Fixed macro expansion problem in SPI high level driver (bug #937)
        (backported to 18.2.1).
 - HAL: Fixed missing CAN2 macros from STM32L4xx stm32_rcc.h file (bug #936)
