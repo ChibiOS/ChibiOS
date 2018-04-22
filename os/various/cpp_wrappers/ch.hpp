@@ -55,7 +55,7 @@ namespace chibios_rt {
      *
      * @special
      */
-    static inline void init(void) {
+    static void init(void) {
 
       chSysInit();
     }
@@ -72,7 +72,7 @@ namespace chibios_rt {
      *
      * @special
      */
-    static inline void halt(const char *reason) {
+    static void halt(const char *reason) {
 
       chSysHalt(reason);
     }
@@ -101,7 +101,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    static inline bool integrityCheckI(unsigned int testmask) {
+    static bool integrityCheckI(unsigned int testmask) {
 
       return chSysIntegrityCheckI(testmask);
     }
@@ -111,7 +111,7 @@ namespace chibios_rt {
      *
      * @special
      */
-    static inline void lock(void) {
+    static void lock(void) {
 
       chSysLock();
     }
@@ -121,7 +121,7 @@ namespace chibios_rt {
      *
      * @special
      */
-    static inline void unlock(void) {
+    static void unlock(void) {
 
       chSysUnlock();
     }
@@ -138,7 +138,7 @@ namespace chibios_rt {
      *
      * @special
      */
-    static inline void lockFromIsr(void) {
+    static void lockFromIsr(void) {
 
       chSysLockFromISR();
     }
@@ -156,7 +156,7 @@ namespace chibios_rt {
      *
      * @special
      */
-    static inline void unlockFromIsr(void) {
+    static void unlockFromIsr(void) {
 
       chSysUnlockFromISR();
     }
@@ -169,7 +169,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    static inline systime_t getTime(void) {
+    static systime_t getTime(void) {
 
       return chVTGetSystemTime();
     }
@@ -182,7 +182,7 @@ namespace chibios_rt {
      *
      * @xclass
      */
-    static inline systime_t getTimeX(void) {
+    static systime_t getTimeX(void) {
 
       return chVTGetSystemTimeX();
     }
@@ -200,7 +200,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    static inline bool isSystemTimeWithin(systime_t start, systime_t end) {
+    static bool isSystemTimeWithin(systime_t start, systime_t end) {
 
       return chVTIsSystemTimeWithin(start, end);
     }
@@ -228,7 +228,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    static inline void *alloc(size_t size) {
+    static void *alloc(size_t size) {
 
       return chCoreAlloc(size);
     }
@@ -245,7 +245,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    static inline void *allocI(size_t size) {
+    static void *allocI(size_t size) {
 
       return chCoreAllocI(size);
     }
@@ -257,7 +257,7 @@ namespace chibios_rt {
      *
      * @xclass
      */
-    static inline size_t getStatusX(void) {
+    static size_t getStatusX(void) {
 
       return chCoreGetStatusX();
     }
@@ -295,7 +295,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    inline void setI(sysinterval_t timeout, vtfunc_t vtfunc, void *par) {
+    void setI(sysinterval_t timeout, vtfunc_t vtfunc, void *par) {
 
       chVTSetI(&timer_ref, timeout, vtfunc, par);
     }
@@ -305,7 +305,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    inline void resetI() {
+    void resetI() {
 
       chVTDoResetI(&timer_ref);
     }
@@ -318,7 +318,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    inline bool isArmedI(void) {
+    bool isArmedI(void) {
 
       return chVTIsArmedI(&timer_ref);
     }
@@ -348,7 +348,7 @@ namespace chibios_rt {
      *
      * @sclass
      */
-    inline msg_t suspendS(void) {
+    msg_t suspendS(void) {
 
       return chThdSuspendS(&thread_ref);
     }
@@ -376,7 +376,7 @@ namespace chibios_rt {
      *
      * @sclass
      */
-    inline msg_t suspendS(sysinterval_t timeout) {
+    msg_t suspendS(sysinterval_t timeout) {
 
       return chThdSuspendTimeoutS(&thread_ref, timeout);
     }
@@ -388,7 +388,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    inline void resumeI(msg_t msg) {
+    void resumeI(msg_t msg) {
 
       chThdResumeI(&thread_ref, msg);
     }
@@ -400,7 +400,7 @@ namespace chibios_rt {
      *
      * @sclass
      */
-    inline void resumeS(msg_t msg) {
+    void resumeS(msg_t msg) {
 
       chThdResumeS(&thread_ref, msg);
     }
@@ -455,7 +455,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline void requestTerminate(void) {
+    void requestTerminate(void) {
 
       chThdTerminate(thread_ref);
     }
@@ -510,7 +510,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline msg_t sendMessage(msg_t msg){
+    msg_t sendMessage(msg_t msg){
 
       return chMsgSend(thread_ref, msg);
     }
@@ -523,7 +523,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline bool isPendingMessage(void) {
+    bool isPendingMessage(void) {
 
       return chMsgIsPendingI(thread_ref);
     }
@@ -535,7 +535,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline msg_t getMessage(void) {
+    msg_t getMessage(void) {
 
       return chMsgGet(thread_ref);
     }
@@ -547,7 +547,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline void releaseMessage(msg_t msg) {
+    void releaseMessage(msg_t msg) {
 
       chMsgRelease(thread_ref, msg);
     }
@@ -561,7 +561,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline void signalEvents(eventmask_t mask) {
+    void signalEvents(eventmask_t mask) {
 
       chEvtSignal(thread_ref, mask);
     }
@@ -573,7 +573,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    inline void signalEventsI(eventmask_t mask) {
+    void signalEventsI(eventmask_t mask) {
 
       chEvtSignalI(thread_ref, mask);
     }
@@ -637,7 +637,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    static inline void setName(const char *tname) {
+    static void setName(const char *tname) {
 
       chRegSetThreadName(tname);
     }
@@ -654,7 +654,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    static inline tprio_t setPriority(tprio_t newprio) {
+    static tprio_t setPriority(tprio_t newprio) {
 
       return chThdSetPriority(newprio);
     }
@@ -673,7 +673,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    static inline void exit(msg_t msg) {
+    static void exit(msg_t msg) {
 
       chThdExit(msg);
     }
@@ -692,7 +692,7 @@ namespace chibios_rt {
      *
      * @sclass
      */
-    static inline void exitS(msg_t msg) {
+    static void exitS(msg_t msg) {
 
       chThdExitS(msg);
     }
@@ -707,7 +707,7 @@ namespace chibios_rt {
      *
      * @special
      */
-    static inline bool shouldTerminate(void) {
+    static bool shouldTerminate(void) {
 
       return chThdShouldTerminateX();
     }
@@ -724,7 +724,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    static inline void sleep(sysinterval_t interval) {
+    static void sleep(sysinterval_t interval) {
 
       chThdSleep(interval);
     }
@@ -737,7 +737,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    static inline void sleepUntil(systime_t time) {
+    static void sleepUntil(systime_t time) {
 
       chThdSleepUntil(time);
     }
@@ -749,7 +749,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    static inline void yield(void) {
+    static void yield(void) {
 
       chThdYield();
     }
@@ -762,7 +762,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    static inline ThreadReference waitMessage(void) {
+    static ThreadReference waitMessage(void) {
 
       ThreadReference tr(chMsgWait());
       return tr;
@@ -778,7 +778,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    static inline eventmask_t getAndClearEvents(eventmask_t mask) {
+    static eventmask_t getAndClearEvents(eventmask_t mask) {
 
       return chEvtGetAndClearEvents(mask);
     }
@@ -793,7 +793,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    static inline eventmask_t addEvents(eventmask_t mask) {
+    static eventmask_t addEvents(eventmask_t mask) {
 
       return chEvtAddEvents(mask);
     }
@@ -815,7 +815,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    static inline eventmask_t waitOneEvent(eventmask_t ewmask) {
+    static eventmask_t waitOneEvent(eventmask_t ewmask) {
 
       return chEvtWaitOne(ewmask);
     }
@@ -832,7 +832,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    static inline eventmask_t waitAnyEvent(eventmask_t ewmask) {
+    static eventmask_t waitAnyEvent(eventmask_t ewmask) {
 
       return chEvtWaitAny(ewmask);
     }
@@ -848,7 +848,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    static inline eventmask_t waitAllEvents(eventmask_t ewmask) {
+    static eventmask_t waitAllEvents(eventmask_t ewmask) {
 
       return chEvtWaitAll(ewmask);
     }
@@ -875,8 +875,8 @@ namespace chibios_rt {
      *
      * @api
      */
-    static inline eventmask_t waitOneEventTimeout(eventmask_t ewmask,
-                                                  sysinterval_t timeout) {
+    static eventmask_t waitOneEventTimeout(eventmask_t ewmask,
+                                           sysinterval_t timeout) {
 
       return chEvtWaitOneTimeout(ewmask, timeout);
     }
@@ -896,8 +896,8 @@ namespace chibios_rt {
      *
      * @api
      */
-    static inline eventmask_t waitAnyEventTimeout(eventmask_t ewmask,
-                                                  sysinterval_t timeout) {
+    static eventmask_t waitAnyEventTimeout(eventmask_t ewmask,
+                                           sysinterval_t timeout) {
 
       return chEvtWaitAnyTimeout(ewmask, timeout);
     }
@@ -916,8 +916,8 @@ namespace chibios_rt {
      *
      * @api
      */
-    static inline eventmask_t waitAllEventsTimeout(eventmask_t ewmask,
-                                                   sysinterval_t timeout) {
+    static eventmask_t waitAllEventsTimeout(eventmask_t ewmask,
+                                            sysinterval_t timeout) {
 
       return chEvtWaitAllTimeout(ewmask, timeout);
     }
@@ -932,8 +932,8 @@ namespace chibios_rt {
      *
      * @api
      */
-    static inline void dispatchEvents(const evhandler_t handlers[],
-                                      eventmask_t mask) {
+    static void dispatchEvents(const evhandler_t handlers[],
+                               eventmask_t mask) {
 
       chEvtDispatch(handlers, mask);
     }
@@ -951,7 +951,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    static inline void unlockAllMutexes(void) {
+    static void unlockAllMutexes(void) {
 
       chMtxUnlockAll();
     }
@@ -1043,7 +1043,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline void reset(cnt_t n) {
+    void reset(cnt_t n) {
 
       chSemReset(&sem, n);
     }
@@ -1066,7 +1066,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    inline void resetI(cnt_t n) {
+    void resetI(cnt_t n) {
 
       chSemResetI(&sem, n);
     }
@@ -1083,7 +1083,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline msg_t wait(void) {
+    msg_t wait(void) {
 
       return chSemWait(&sem);
     }
@@ -1100,7 +1100,7 @@ namespace chibios_rt {
      *
      * @sclass
      */
-    inline msg_t waitS(void) {
+    msg_t waitS(void) {
 
       return chSemWaitS(&sem);
     }
@@ -1125,7 +1125,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline msg_t wait(sysinterval_t timeout) {
+    msg_t wait(sysinterval_t timeout) {
 
       return chSemWaitTimeout(&sem, timeout);
     }
@@ -1150,7 +1150,7 @@ namespace chibios_rt {
      *
      * @sclass
      */
-    inline msg_t waitS(sysinterval_t timeout) {
+    msg_t waitS(sysinterval_t timeout) {
 
       return chSemWaitTimeoutS(&sem, timeout);
     }
@@ -1160,7 +1160,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline void signal(void) {
+    void signal(void) {
 
       chSemSignal(&sem);
     }
@@ -1174,7 +1174,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    inline void signalI(void) {
+    void signalI(void) {
 
       chSemSignalI(&sem);
     }
@@ -1191,7 +1191,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    inline void addCounterI(cnt_t n) {
+    void addCounterI(cnt_t n) {
 
       chSemAddCounterI(&sem, n);
     }
@@ -1203,7 +1203,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    inline cnt_t getCounterI(void) {
+    cnt_t getCounterI(void) {
 
       return chSemGetCounterI(&sem);
     }
@@ -1222,8 +1222,8 @@ namespace chibios_rt {
      *
      * @api
      */
-    static inline msg_t signalWait(CounterSemaphore *ssem,
-                                   CounterSemaphore *wsem) {
+    static msg_t signalWait(CounterSemaphore *ssem,
+                            CounterSemaphore *wsem) {
 
       return chSemSignalWait(&ssem->sem, &wsem->sem);
     }
@@ -1269,7 +1269,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline msg_t wait(void) {
+    msg_t wait(void) {
 
       return chBSemWait(&bsem);
     }
@@ -1286,7 +1286,7 @@ namespace chibios_rt {
      *
      * @sclass
      */
-    inline msg_t waitS(void) {
+    msg_t waitS(void) {
 
       return chBSemWaitS(&bsem);
     }
@@ -1310,7 +1310,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline msg_t wait(sysinterval_t timeout) {
+    msg_t wait(sysinterval_t timeout) {
 
       return chBSemWaitTimeout(&bsem, timeout);
     }
@@ -1334,7 +1334,7 @@ namespace chibios_rt {
      *
      * @sclass
      */
-    inline msg_t waitS(sysinterval_t timeout) {
+    msg_t waitS(sysinterval_t timeout) {
 
       return chBSemWaitTimeoutS(&bsem, timeout);
     }
@@ -1352,7 +1352,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline void reset(bool taken) {
+    void reset(bool taken) {
 
       chBSemReset(&bsem, taken);
     }
@@ -1371,7 +1371,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    inline void resetI(bool taken) {
+    void resetI(bool taken) {
 
       chBSemResetI(&bsem, taken);
     }
@@ -1381,7 +1381,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline void signal(void) {
+    void signal(void) {
 
       chBSemSignal(&bsem);
     }
@@ -1392,7 +1392,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    inline void signalI(void) {
+    void signalI(void) {
 
       chBSemSignalI(&bsem);
     }
@@ -1406,7 +1406,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    inline bool getStateI(void) {
+    bool getStateI(void) {
 
       return (bool)chBSemGetStateI(&bsem);
     }
@@ -1455,7 +1455,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline bool tryLock(void) {
+    bool tryLock(void) {
 
       return chMtxTryLock(&mutex);
     }
@@ -1477,7 +1477,7 @@ namespace chibios_rt {
      *
      * @sclass
      */
-    inline bool tryLockS(void) {
+    bool tryLockS(void) {
 
       return chMtxTryLockS(&mutex);
     }
@@ -1489,7 +1489,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline void lock(void) {
+    void lock(void) {
 
       chMtxLock(&mutex);
     }
@@ -1501,7 +1501,7 @@ namespace chibios_rt {
      *
      * @sclass
      */
-    inline void lockS(void) {
+    void lockS(void) {
 
       chMtxLockS(&mutex);
     }
@@ -1514,7 +1514,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline void unlock(void) {
+    void unlock(void) {
 
       chMtxUnlock(&mutex);
     }
@@ -1529,7 +1529,7 @@ namespace chibios_rt {
      *
      * @sclass
      */
-    inline void unlockS(void) {
+    void unlockS(void) {
 
       chMtxUnlockS(&mutex);
     }
@@ -1544,7 +1544,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline void unlockMutex(void) {
+    void unlockMutex(void) {
 
       chMtxUnlock(&mutex);
     }
@@ -1561,7 +1561,7 @@ namespace chibios_rt {
      *
      * @sclass
      */
-    inline void unlockMutexS(void) {
+    void unlockMutexS(void) {
 
       chMtxUnlockS(&mutex);
     }
@@ -1597,7 +1597,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline void signal(void) {
+    void signal(void) {
 
       chCondSignal(&condvar);
     }
@@ -1611,7 +1611,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    inline void signalI(void) {
+    void signalI(void) {
 
       chCondSignalI(&condvar);
     }
@@ -1621,7 +1621,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline void broadcast(void) {
+    void broadcast(void) {
 
       chCondBroadcast(&condvar);
     }
@@ -1635,7 +1635,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    inline void broadcastI(void) {
+    void broadcastI(void) {
 
       chCondBroadcastI(&condvar);
     }
@@ -1656,7 +1656,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline msg_t wait(void) {
+    msg_t wait(void) {
 
       return chCondWait(&condvar);
     }
@@ -1677,7 +1677,7 @@ namespace chibios_rt {
      *
      * @sclass
      */
-    inline msg_t waitS(void) {
+    msg_t waitS(void) {
 
       return chCondWaitS(&condvar);
     }
@@ -1697,7 +1697,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline msg_t wait(sysinterval_t timeout) {
+    msg_t wait(sysinterval_t timeout) {
 
       return chCondWaitTimeout(&condvar, timeout);
     }
@@ -1716,7 +1716,7 @@ namespace chibios_rt {
      *
      * @sclass
      */
-    inline msg_t waitS(sysinterval_t timeout) {
+    msg_t waitS(sysinterval_t timeout) {
 
       return chCondWaitTimeoutS(&condvar, timeout);
     }
@@ -1747,7 +1747,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline eventflags_t getAndClearFlags(void) {
+    eventflags_t getAndClearFlags(void) {
 
       return chEvtGetAndClearFlags(&ev_listener);
     }
@@ -1762,7 +1762,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    inline eventflags_t getAndClearFlagsI(void) {
+    eventflags_t getAndClearFlagsI(void) {
 
       return chEvtGetAndClearFlagsI(&ev_listener);
     }
@@ -1801,7 +1801,8 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline void registerOne(chibios_rt::EvtListener *elp, eventid_t eid) {
+    void registerOne(chibios_rt::EvtListener *elp,
+                     eventid_t eid) {
 
       chEvtRegister(&ev_source, &elp->ev_listener, eid);
     }
@@ -1816,8 +1817,8 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline void registerMask(chibios_rt::EvtListener *elp,
-                             eventmask_t emask) {
+    void registerMask(chibios_rt::EvtListener *elp,
+                      eventmask_t emask) {
 
       chEvtRegisterMask(&ev_source, &elp->ev_listener, emask);
     }
@@ -1831,7 +1832,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline void unregister(chibios_rt::EvtListener *elp) {
+    void unregister(chibios_rt::EvtListener *elp) {
 
       chEvtUnregister(&ev_source, &elp->ev_listener);
     }
@@ -1846,7 +1847,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline void broadcastFlags(eventflags_t flags) {
+    void broadcastFlags(eventflags_t flags) {
 
       chEvtBroadcastFlags(&ev_source, flags);
     }
@@ -1861,7 +1862,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    inline void broadcastFlagsI(eventflags_t flags) {
+    void broadcastFlagsI(eventflags_t flags) {
 
       chEvtBroadcastFlagsI(&ev_source, flags);
     }
@@ -1908,7 +1909,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline void reset(void) {
+    void reset(void) {
 
       chMBReset(&mb);
     }
@@ -1931,7 +1932,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline msg_t post(T msg, sysinterval_t timeout) {
+    msg_t post(T msg, sysinterval_t timeout) {
 
       return chMBPostTimeout(&mb, reinterpret_cast<msg_t>(msg), timeout);
     }
@@ -1954,7 +1955,7 @@ namespace chibios_rt {
      *
      * @sclass
      */
-    inline msg_t postS(T msg, sysinterval_t timeout) {
+    msg_t postS(T msg, sysinterval_t timeout) {
 
       return chMBPostTimeoutS(&mb, reinterpret_cast<msg_t>(msg), timeout);
     }
@@ -1972,7 +1973,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    inline msg_t postI(T msg) {
+    msg_t postI(T msg) {
 
       return chMBPostI(&mb, reinterpret_cast<msg_t>(msg));
     }
@@ -1995,7 +1996,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline msg_t postAhead(T msg, sysinterval_t timeout) {
+    msg_t postAhead(T msg, sysinterval_t timeout) {
 
       return chMBPostAheadTimeout(&mb, reinterpret_cast<msg_t>(msg), timeout);
     }
@@ -2018,7 +2019,7 @@ namespace chibios_rt {
      *
      * @sclass
      */
-    inline msg_t postAheadS(T msg, sysinterval_t timeout) {
+    msg_t postAheadS(T msg, sysinterval_t timeout) {
 
       return chMBPostAheadTimeoutS(&mb, reinterpret_cast<msg_t>(msg), timeout);
     }
@@ -2036,7 +2037,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    inline msg_t postAheadI(T msg) {
+    msg_t postAheadI(T msg) {
 
       return chMBPostAheadI(&mb, reinterpret_cast<msg_t>(msg));
     }
@@ -2059,7 +2060,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline msg_t fetch(T *msgp, sysinterval_t timeout) {
+    msg_t fetch(T *msgp, sysinterval_t timeout) {
 
       return chMBFetchTimeout(&mb, reinterpret_cast<msg_t*>(msgp), timeout);
     }
@@ -2082,7 +2083,7 @@ namespace chibios_rt {
      *
      * @sclass
      */
-    inline msg_t fetchS(T *msgp, sysinterval_t timeout) {
+    msg_t fetchS(T *msgp, sysinterval_t timeout) {
 
       return chMBFetchTimeoutS(&mb, reinterpret_cast<msg_t*>(msgp), timeout);
     }
@@ -2101,7 +2102,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    inline msg_t fetchI(T *msgp) {
+    msg_t fetchI(T *msgp) {
 
       return chMBFetchI(&mb, reinterpret_cast<msg_t*>(msgp));
     }
@@ -2117,7 +2118,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    inline cnt_t getFreeCountI(void) {
+    cnt_t getFreeCountI(void) {
 
       return chMBGetFreeCountI(&mb);
     }
@@ -2133,7 +2134,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    inline cnt_t getUsedCountI(void) {
+    cnt_t getUsedCountI(void) {
 
       return chMBGetUsedCountI(&mb);
     }
@@ -2227,7 +2228,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline void loadArray(void *p, size_t n) {
+    void loadArray(void *p, size_t n) {
 
       chPoolLoadArray(&pool, p, n);
     }
@@ -2241,7 +2242,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    inline void *allocI(void) {
+    void *allocI(void) {
 
       return chPoolAllocI(&pool);
     }
@@ -2255,7 +2256,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline void *alloc(void) {
+    void *alloc(void) {
 
       return chPoolAlloc(&pool);
     }
@@ -2272,7 +2273,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    inline void free(void *objp) {
+    void free(void *objp) {
 
       chPoolFree(&pool, objp);
     }
@@ -2291,7 +2292,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    inline void freeI(void *objp) {
+    void freeI(void *objp) {
 
       chPoolFreeI(&pool, objp);
     }
