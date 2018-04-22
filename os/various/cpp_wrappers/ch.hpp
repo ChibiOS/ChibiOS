@@ -388,7 +388,7 @@ namespace chibios_rt {
 #endif /* CH_CFG_NO_IDLE_THREAD == FALSE */
   };
 
-#if CH_CFG_USE_MEMCORE || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MEMCORE == TRUE) || defined(__DOXYGEN__)
   /*------------------------------------------------------------------------*
    * chibios_rt::Core                                                       *
    *------------------------------------------------------------------------*/
@@ -443,7 +443,7 @@ namespace chibios_rt {
       return chCoreGetStatusX();
     }
   };
-#endif /* CH_CFG_USE_MEMCORE */
+#endif /* CH_CFG_USE_MEMCORE == TRUE */
 
   /*------------------------------------------------------------------------*
    * chibios_rt::Timer                                                      *
@@ -687,7 +687,7 @@ namespace chibios_rt {
       chThdTerminate(thread_ref);
     }
 
-#if CH_CFG_USE_WAITEXIT || defined(__DOXYGEN__)
+#if (CH_CFG_USE_WAITEXIT == TRUE) || defined(__DOXYGEN__)
     /**
      * @brief   Blocks the execution of the invoking thread until the specified
      *          thread terminates then the exit code is returned.
@@ -726,9 +726,9 @@ namespace chibios_rt {
       thread_ref = NULL;
       return msg;
     }
-#endif /* CH_CFG_USE_WAITEXIT */
+#endif /* CH_CFG_USE_WAITEXIT == TRUE */
 
-#if CH_CFG_USE_MESSAGES || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
     /**
      * @brief   Sends a message to the thread and returns the answer.
      *
@@ -778,9 +778,9 @@ namespace chibios_rt {
 
       chMsgRelease(thread_ref, msg);
     }
-#endif /* CH_CFG_USE_MESSAGES */
+#endif /* CH_CFG_USE_MESSAGES == TRUE */
 
-#if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
+#if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
     /**
      * @brief   Adds a set of event flags directly to specified @p Thread.
      *
@@ -804,9 +804,44 @@ namespace chibios_rt {
 
       chEvtSignalI(thread_ref, mask);
     }
-#endif /* CH_CFG_USE_EVENTS */
+#endif /* CH_CFG_USE_EVENTS == TRUE */
 
+#if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   Adds a reference to a thread object.
+   * @pre     The configuration option @p CH_CFG_USE_REGISTRY must be enabled
+   *          in order to use this function.
+   *
+   * @return              A new thread reference.
+   *
+   * @api
+   */
+  ThreadReference addRef(void) {
 
+    return ThreadReference(chThdAddRef(thread_ref));
+  }
+
+  /**
+   * @brief   Releases a reference to a thread object.
+   * @details If the references counter reaches zero <b>and</b> the thread
+   *          is in the @p CH_STATE_FINAL state then the thread's memory is
+   *          returned to the proper allocator and the thread is removed
+   *          from the registry.<br>
+   *          Threads whose counter reaches zero and are still active become
+   *          "detached" and will be removed from registry on termination.
+   * @pre     The configuration option @p CH_CFG_USE_REGISTRY must be enabled in
+   *          order to use this function.
+   * @note    Static threads are not affected.
+   *
+   * @api
+   */
+  void release(void) {
+
+    chThdRelease(thread_ref);
+  }
+#endif /* CH_CFG_USE_REGISTRY == TRUE */
+
+#if (CH_DBG_THREADS_PROFILING == TRUE) || defined(__DOXYGEN__)
     /**
      * @brief   Returns the number of ticks consumed by the specified thread.
      * @note    This function is only available when the
@@ -817,12 +852,11 @@ namespace chibios_rt {
      *
      * @xclass
      */
-#if (CH_DBG_THREADS_PROFILING == TRUE) || defined(__DOXYGEN__)
     systime_t getTicksX(void) {
 
       return chThdGetTicksX(thread_ref);
     }
-#endif
+#endif /* CH_DBG_THREADS_PROFILING == TRUE */
   };
 
   /*------------------------------------------------------------------------*
@@ -832,14 +866,14 @@ namespace chibios_rt {
    * @brief   Abstract base class for a ChibiOS/RT thread.
    * @details The thread body is the virtual function @p Main().
    */
-  class BaseThread : public ThreadReference {
+  class BaseThread {
   public:
     /**
      * @brief   BaseThread constructor.
      *
      * @init
      */
-    BaseThread(void) : ThreadReference(NULL) {
+    BaseThread(void) {
 
     }
 
@@ -867,7 +901,7 @@ namespace chibios_rt {
 
       (void)prio;
 
-      return *this;
+      return ThreadReference(chThdGetSelfX());
     }
 
     /**
@@ -1041,7 +1075,7 @@ namespace chibios_rt {
       ThreadReference tr(chMsgWait());
       return tr;
     }
-#endif /* CH_CFG_USE_MESSAGES */
+#endif /* CH_CFG_USE_MESSAGES == TRUE */
 
 #if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
     /**
@@ -1195,7 +1229,7 @@ namespace chibios_rt {
 
       return chEvtWaitAllTimeout(ewmask, timeout);
     }
-#endif /* CH_CFG_USE_EVENTS_TIMEOUT */
+#endif /* CH_CFG_USE_EVENTS_TIMEOUT == TRUE */
 
     /**
      * @brief   Invokes the event handlers associated to an event flags mask.
@@ -1211,7 +1245,7 @@ namespace chibios_rt {
 
       chEvtDispatch(handlers, mask);
     }
-#endif /* CH_CFG_USE_EVENTS */
+#endif /* CH_CFG_USE_EVENTS == TRUE */
 
 #if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
     /**
@@ -1229,7 +1263,7 @@ namespace chibios_rt {
 
       chMtxUnlockAll();
     }
-#endif /* CH_CFG_USE_MUTEXES */
+#endif /* CH_CFG_USE_MUTEXES == TRUE */
   };
 
   /*------------------------------------------------------------------------*
@@ -1270,12 +1304,12 @@ namespace chibios_rt {
     virtual ThreadReference start(tprio_t prio) {
       void _thd_start(void *arg);
 
-      thread_ref = chThdCreateStatic(wa, sizeof(wa), prio, _thd_start, this);
-      return *this;
+      return ThreadReference(chThdCreateStatic(wa, sizeof(wa), prio,
+                                               _thd_start, this));
     }
   };
 
-#if CH_CFG_USE_SEMAPHORES || defined(__DOXYGEN__)
+#if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
   /*------------------------------------------------------------------------*
    * chibios_rt::CounterSemaphore                                           *
    *------------------------------------------------------------------------*/
@@ -1685,9 +1719,9 @@ namespace chibios_rt {
       return (bool)chBSemGetStateI(&bsem);
     }
 };
-#endif /* CH_CFG_USE_SEMAPHORES */
+#endif /* CH_CFG_USE_SEMAPHORES == TRUE */
 
-#if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
   /*------------------------------------------------------------------------*
    * chibios_rt::Mutex                                                      *
    *------------------------------------------------------------------------*/
@@ -1841,7 +1875,7 @@ namespace chibios_rt {
     }
   };
 
-#if CH_CFG_USE_CONDVARS || defined(__DOXYGEN__)
+#if (CH_CFG_USE_CONDVARS == TRUE) || defined(__DOXYGEN__)
   /*------------------------------------------------------------------------*
    * chibios_rt::CondVar                                                    *
    *------------------------------------------------------------------------*/
@@ -1956,7 +1990,7 @@ namespace chibios_rt {
       return chCondWaitS(&condvar);
     }
 
-#if CH_CFG_USE_CONDVARS_TIMEOUT || defined(__DOXYGEN__)
+#if (CH_CFG_USE_CONDVARS_TIMEOUT == TRUE) || defined(__DOXYGEN__)
     /**
      * @brief   Waits on the CondVar while releasing the controlling mutex.
      *
@@ -1994,12 +2028,12 @@ namespace chibios_rt {
 
       return chCondWaitTimeoutS(&condvar, timeout);
     }
-#endif /* CH_CFG_USE_CONDVARS_TIMEOUT */
+#endif /* CH_CFG_USE_CONDVARS_TIMEOUT == TRUE */
   };
-#endif /* CH_CFG_USE_CONDVARS */
-#endif /* CH_CFG_USE_MUTEXES */
+#endif /* CH_CFG_USE_CONDVARS == TRUE */
+#endif /* CH_CFG_USE_MUTEXES == TRUE */
 
-#if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
+#if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
   /*------------------------------------------------------------------------*
    * chibios_rt::EvtListener                                                *
    *------------------------------------------------------------------------*/
@@ -2141,9 +2175,9 @@ namespace chibios_rt {
       chEvtBroadcastFlagsI(&ev_source, flags);
     }
   };
-#endif /* CH_CFG_USE_EVENTS */
+#endif /* CH_CFG_USE_EVENTS == TRUE */
 
-#if CH_CFG_USE_MAILBOXES || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MAILBOXES == TRUE) || defined(__DOXYGEN__)
   /*------------------------------------------------------------------------*
    * chibios_rt::Mailbox                                                    *
    *------------------------------------------------------------------------*/
@@ -2451,9 +2485,9 @@ namespace chibios_rt {
       MailboxBase<T>(mb_buf, (cnt_t)(sizeof mb_buf / sizeof (msg_t))) {
     }
   };
-#endif /* CH_CFG_USE_MAILBOXES */
+#endif /* CH_CFG_USE_MAILBOXES == TRUE */
 
-#if CH_CFG_USE_MEMPOOLS || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MEMPOOLS == TRUE) || defined(__DOXYGEN__)
   /*------------------------------------------------------------------------*
    * chibios_rt::MemoryPool                                                 *
    *------------------------------------------------------------------------*/
@@ -2621,9 +2655,9 @@ namespace chibios_rt {
       loadArray(pool_buf, N);
     }
   };
-#endif /* CH_CFG_USE_MEMPOOLS */
+#endif /* CH_CFG_USE_MEMPOOLS == TRUE */
 
-#if CH_CFG_USE_HEAP || defined(__DOXYGEN__)
+#if (CH_CFG_USE_HEAP == TRUE) || defined(__DOXYGEN__)
   /*------------------------------------------------------------------------*
    * chibios_rt::Heap                                                       *
    *------------------------------------------------------------------------*/
@@ -2699,7 +2733,7 @@ namespace chibios_rt {
       return chHeapStatus(&heap, &frag, largestp);
     }
   };
-#endif /* CH_CFG_USE_MEMPOOLS */
+#endif /* CH_CFG_USE_MEMPOOLS == TRUE */
 
   /*------------------------------------------------------------------------*
    * chibios_rt::BaseSequentialStreamInterface                              *

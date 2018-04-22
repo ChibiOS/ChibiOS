@@ -389,7 +389,7 @@ thread_t *chThdStart(thread_t *tp) {
 #if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Adds a reference to a thread object.
- * @pre     The configuration option @p CH_CFG_USE_DYNAMIC must be enabled in
+ * @pre     The configuration option @p CH_CFG_USE_REGISTRY must be enabled in
  *          order to use this function.
  *
  * @param[in] tp        pointer to the thread
@@ -416,7 +416,7 @@ thread_t *chThdAddRef(thread_t *tp) {
  *          from the registry.<br>
  *          Threads whose counter reaches zero and are still active become
  *          "detached" and will be removed from registry on termination.
- * @pre     The configuration option @p CH_CFG_USE_DYNAMIC must be enabled in
+ * @pre     The configuration option @p CH_CFG_USE_REGISTRY must be enabled in
  *          order to use this function.
  * @note    Static threads are not affected.
  *

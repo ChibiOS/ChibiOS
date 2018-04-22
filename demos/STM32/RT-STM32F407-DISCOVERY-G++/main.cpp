@@ -184,8 +184,8 @@ int main(void) {
    */
   while (true) {
     if (palReadPad(GPIOA, GPIOA_BUTTON)) {
-      tester.start(NORMALPRIO);
-      tester.wait();
+      ThreadReference tref = tester.start(NORMALPRIO);
+      tref.wait();
     };
     BaseThread::sleep(TIME_MS2I(500));
   }
