@@ -673,6 +673,18 @@ namespace chibios_rt {
     }
 
     /**
+     * @brief   Returns the reference state.
+     *
+     * @return          The reference state.
+     * @retval false    if the reference is still valid.
+     * @retval true     if the reference is set to @p NULL.
+     */
+    bool isNull(void) {
+
+      return (bool)(thread_ref == NULL);
+    }
+
+    /**
      * @brief   Requests a thread termination.
      * @pre     The target thread must be written to invoke periodically
      *          @p chThdShouldTerminate() and terminate cleanly if it returns
@@ -686,6 +698,43 @@ namespace chibios_rt {
 
       chThdTerminate(thread_ref);
     }
+
+#if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
+    /**
+     * @brief   Adds a reference to a thread object.
+     * @pre     The configuration option @p CH_CFG_USE_REGISTRY must be enabled
+     *          in order to use this function.
+     *
+     * @return              A new thread reference.
+     *
+     * @api
+     */
+    ThreadReference addRef(void) {
+
+      return ThreadReference(chThdAddRef(thread_ref));
+    }
+
+    /**
+     * @brief   Releases a reference to a thread object.
+     * @details If the references counter reaches zero <b>and</b> the thread
+     *          is in the @p CH_STATE_FINAL state then the thread's memory is
+     *          returned to the proper allocator and the thread is removed
+     *          from the registry.<br>
+     *          Threads whose counter reaches zero and are still active become
+     *          "detached" and will be removed from registry on termination.
+     * @pre     The configuration option @p CH_CFG_USE_REGISTRY must be enabled in
+     *          order to use this function.
+     * @post    The reference is set to @p NULL.
+     * @note    Static threads are not affected.
+     *
+     * @api
+     */
+    void release(void) {
+
+      chThdRelease(thread_ref);
+      thread_ref = NULL;
+    }
+#endif /* CH_CFG_USE_REGISTRY == TRUE */
 
 #if (CH_CFG_USE_WAITEXIT == TRUE) || defined(__DOXYGEN__)
     /**
@@ -710,9 +759,7 @@ namespace chibios_rt {
      *          order to use this function.
      * @post    Enabling @p chThdWait() requires 2-4 (depending on the
      *          architecture) extra bytes in the @p Thread structure.
-     * @post    After invoking @p chThdWait() the thread pointer becomes
-     *          invalid and must not be used as parameter for further system
-     *          calls.
+     * @post    The reference is set to @p NULL.
      * @note    If @p CH_USE_DYNAMIC is not specified this function just waits
      *          for the thread termination, no memory allocators are involved.
      *
@@ -806,41 +853,6 @@ namespace chibios_rt {
     }
 #endif /* CH_CFG_USE_EVENTS == TRUE */
 
-#if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
-  /**
-   * @brief   Adds a reference to a thread object.
-   * @pre     The configuration option @p CH_CFG_USE_REGISTRY must be enabled
-   *          in order to use this function.
-   *
-   * @return              A new thread reference.
-   *
-   * @api
-   */
-  ThreadReference addRef(void) {
-
-    return ThreadReference(chThdAddRef(thread_ref));
-  }
-
-  /**
-   * @brief   Releases a reference to a thread object.
-   * @details If the references counter reaches zero <b>and</b> the thread
-   *          is in the @p CH_STATE_FINAL state then the thread's memory is
-   *          returned to the proper allocator and the thread is removed
-   *          from the registry.<br>
-   *          Threads whose counter reaches zero and are still active become
-   *          "detached" and will be removed from registry on termination.
-   * @pre     The configuration option @p CH_CFG_USE_REGISTRY must be enabled in
-   *          order to use this function.
-   * @note    Static threads are not affected.
-   *
-   * @api
-   */
-  void release(void) {
-
-    chThdRelease(thread_ref);
-  }
-#endif /* CH_CFG_USE_REGISTRY == TRUE */
-
 #if (CH_DBG_THREADS_PROFILING == TRUE) || defined(__DOXYGEN__)
     /**
      * @brief   Returns the number of ticks consumed by the specified thread.
@@ -858,6 +870,66 @@ namespace chibios_rt {
     }
 #endif /* CH_DBG_THREADS_PROFILING == TRUE */
   };
+
+#if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
+  /*------------------------------------------------------------------------*
+   * chibios_rt::Registry                                                   *
+   *------------------------------------------------------------------------*/
+  namespace Registry {
+
+    /**
+     * @brief   Returns the first thread in the system.
+     * @details Returns the most ancient thread in the system, usually this is
+     *          the main thread unless it terminated. A reference is added to the
+     *          returned thread in order to make sure its status is not lost.
+     * @note    This function cannot return @p NULL because there is always at
+     *          least one thread in the system.
+     *
+     * @return              A reference to the most ancient thread.
+     *
+     * @api
+     */
+    static inline ThreadReference firstThread(void) {
+
+      return ThreadReference(chRegFirstThread());
+    }
+
+    /**
+     * @brief   Returns the thread next to the specified one.
+     * @details The reference counter of the specified thread is decremented and
+     *          the reference counter of the returned thread is incremented.
+     *
+     * @param[in] tref      reference to the thread
+     * @return              A reference to the next thread. The reference is
+     *                      set to @p NULL if there is no next thread.
+     *
+     * @api
+     */
+    static inline ThreadReference nextThread(ThreadReference tref) {
+
+      return ThreadReference(chRegNextThread(tref.thread_ref));
+    }
+
+    /**
+     * @brief   Retrieves a thread reference by name.
+     * @note    The reference counter of the found thread is increased by one so
+     *          it cannot be disposed incidentally after the pointer has been
+     *          returned.
+     *
+     * @param[in] name      the thread name
+     * @return              A pointer to the found thread.
+     * @return              A reference to the found thread. The reference is
+     *                      set to @p NULL if no next thread is found.
+     *
+     * @api
+     */
+    static inline ThreadReference findThreadByName(const char *name) {
+
+
+      return ThreadReference(chRegFindThreadByName(name));
+    }
+  }
+#endif /* CH_CFG_USE_REGISTRY == TRUE */
 
   /*------------------------------------------------------------------------*
    * chibios_rt::BaseThread                                                 *
@@ -1536,6 +1608,7 @@ namespace chibios_rt {
       return chSemSignalWait(&ssem->sem, &wsem->sem);
     }
   };
+
   /*------------------------------------------------------------------------*
    * chibios_rt::BinarySemaphore                                            *
    *------------------------------------------------------------------------*/
