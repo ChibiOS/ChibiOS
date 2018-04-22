@@ -142,9 +142,12 @@ static bool default_handler(USBDriver *usbp) {
     usbSetupTransfer(usbp, &usbp->configuration, 1, NULL);
     return true;
   case (uint32_t)USB_RTYPE_RECIPIENT_DEVICE | ((uint32_t)USB_REQ_SET_CONFIGURATION << 8):
+#if defined(USB_SET_CONFIGURATION_OLD_BEHAVIOR)
     /* Handling configuration selection from the host only if it is different
        from the current configuration.*/
-    if (usbp->configuration != usbp->setup[2]) {
+    if (usbp->configuration != usbp->setup[2])
+#endif
+    {
       /* If the USB device is already active then we have to perform the clear
          procedure on the current configuration.*/
       if (usbp->state == USB_ACTIVE) {
