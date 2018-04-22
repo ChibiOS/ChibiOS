@@ -395,8 +395,7 @@ namespace chibios_rt {
   /**
    * @brief Class encapsulating the base system functionalities.
    */
-  class Core {
-  public:
+  namespace Core {
 
     /**
      * @brief   Allocates a memory block.
@@ -410,7 +409,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    static void *alloc(size_t size) {
+    inline void *alloc(size_t size) {
 
       return chCoreAlloc(size);
     }
@@ -427,7 +426,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    static void *allocI(size_t size) {
+    inline void *allocI(size_t size) {
 
       return chCoreAllocI(size);
     }
@@ -439,7 +438,7 @@ namespace chibios_rt {
      *
      * @xclass
      */
-    static size_t getStatusX(void) {
+    inline size_t getStatusX(void) {
 
       return chCoreGetStatusX();
     }
@@ -453,11 +452,46 @@ namespace chibios_rt {
    * @brief   Timer class.
    */
   class Timer {
-  public:
     /**
      * @brief   Embedded @p VirtualTimer structure.
      */
-    ::virtual_timer_t timer_ref;
+    virtual_timer_t vt;
+
+  public:
+    /**
+     * @brief  Construct a virtual timer.
+     */
+    Timer() : vt() {
+
+      chVTObjectInit(&vt);
+    }
+
+    /* Prohibit copy construction and assignment.*/
+    Timer(const Timer &) = delete;
+    Timer &operator=(const Timer &) = delete;
+
+    /**
+     * @brief   Enables a virtual timer.
+     * @note    The associated function is invoked from interrupt context.
+     *
+     * @param[in] timeout   the number of ticks before the operation timeouts,
+     *                      the special values are handled as follow:
+     *                      - @a TIME_INFINITE is allowed but interpreted as a
+     *                        normal time specification.
+     *                      - @a TIME_IMMEDIATE this value is not allowed.
+     *                      .
+     * @param[in] vtfunc    the timer callback function. After invoking the
+     *                      callback the timer is disabled and the structure
+     *                      can be disposed or reused.
+     * @param[in] par       a parameter that will be passed to the callback
+     *                      function
+     *
+     * @api
+     */
+    void set(sysinterval_t timeout, vtfunc_t vtfunc, void *par) {
+
+      chVTSet(&vt, timeout, vtfunc, par);
+    }
 
     /**
      * @brief   Enables a virtual timer.
@@ -479,7 +513,17 @@ namespace chibios_rt {
      */
     void setI(sysinterval_t timeout, vtfunc_t vtfunc, void *par) {
 
-      chVTSetI(&timer_ref, timeout, vtfunc, par);
+      chVTSetI(&vt, timeout, vtfunc, par);
+    }
+
+    /**
+     * @brief   Resets the timer, if armed.
+     *
+     * @api
+     */
+    void reset() {
+
+      chVTReset(&vt);
     }
 
     /**
@@ -489,20 +533,21 @@ namespace chibios_rt {
      */
     void resetI() {
 
-      chVTDoResetI(&timer_ref);
+      chVTResetI(&vt);
     }
 
     /**
      * @brief   Returns the timer status.
      *
-     * @retval TRUE         The timer is armed.
-     * @retval FALSE        The timer already fired its callback.
+     * @return              The timer status.
+     * @retval true         If the timer is armed.
+     * @retval false        If the timer already fired its callback.
      *
      * @iclass
      */
     bool isArmedI(void) {
 
-      return chVTIsArmedI(&timer_ref);
+      return chVTIsArmedI(&vt);
     }
   };
 
@@ -514,12 +559,12 @@ namespace chibios_rt {
    * @details   This class encapsulates a reference to a suspended thread.
    */
   class ThreadStayPoint {
-  public:
     /**
      * @brief   Pointer to the system thread.
      */
-    ::thread_reference_t thread_ref;
+    thread_reference_t thread_ref;
 
+  public:
     /**
      * @brief   Suspends the current thread on the reference.
      * @details The suspended thread becomes the referenced thread. It is
@@ -602,7 +647,7 @@ namespace chibios_rt {
     /**
      * @brief   Pointer to the system thread.
      */
-    ::thread_t *thread_ref;
+    thread_t *thread_ref;
 
     /**
      * @brief   Thread reference constructor.
@@ -1238,12 +1283,12 @@ namespace chibios_rt {
    * @brief   Class encapsulating a semaphore.
    */
   class CounterSemaphore {
-  public:
     /**
      * @brief   Embedded @p ::Semaphore structure.
      */
-    ::semaphore_t sem;
+    semaphore_t sem;
 
+  public:
     /**
      * @brief   CounterSemaphore constructor.
      * @details The embedded @p ::Semaphore structure is initialized.
@@ -1464,12 +1509,12 @@ namespace chibios_rt {
    * @brief   Class encapsulating a binary semaphore.
    */
   class BinarySemaphore {
-  public:
     /**
      * @brief   Embedded @p ::Semaphore structure.
      */
-    ::binary_semaphore_t bsem;
+    binary_semaphore_t bsem;
 
+  public:
     /**
      * @brief   BinarySemaphore constructor.
      * @details The embedded @p ::BinarySemaphore structure is initialized.
@@ -1650,12 +1695,12 @@ namespace chibios_rt {
    * @brief   Class encapsulating a mutex.
    */
   class Mutex {
-  public:
     /**
      * @brief   Embedded @p ::Mutex structure.
      */
-    ::mutex_t mutex;
+    mutex_t mutex;
 
+  public:
     /**
      * @brief   Mutex object constructor.
      * @details The embedded @p ::Mutex structure is initialized.
@@ -1804,12 +1849,12 @@ namespace chibios_rt {
    * @brief   Class encapsulating a conditional variable.
    */
   class CondVar {
-  public:
     /**
      * @brief   Embedded @p ::CondVar structure.
      */
-    ::condition_variable_t condvar;
+    condition_variable_t condvar;
 
+  public:
     /**
      * @brief   CondVar object constructor.
      * @details The embedded @p ::CondVar structure is initialized.
@@ -1966,7 +2011,7 @@ namespace chibios_rt {
     /**
      * @brief   Embedded @p ::EventListener structure.
      */
-    ::event_listener_t ev_listener;
+    event_listener_t ev_listener;
 
     /**
      * @brief   Returns the pending flags from the listener and clears them.
@@ -2004,13 +2049,13 @@ namespace chibios_rt {
    * @brief   Class encapsulating an event source.
    */
   class EvtSource {
-  public:
     /**
      * @brief   Embedded @p ::EventSource structure.
      */
-    ::event_source_t ev_source;
+    event_source_t ev_source;
 
-    /**
+   public:
+   /**
      * @brief   EvtSource object constructor.
      * @details The embedded @p ::EventSource structure is initialized.
      *
@@ -2109,14 +2154,14 @@ namespace chibios_rt {
    */
   template <typename T>
   class MailboxBase {
-  public:
 
     /**
      * @brief   Embedded @p ::Mailbox structure.
      */
-    ::mailbox_t mb;
+    mailbox_t mb;
 
-    /**
+   public:
+   /**
      * @brief   Mailbox constructor.
      * @details The embedded @p ::Mailbox structure is initialized.
      *
@@ -2416,12 +2461,12 @@ namespace chibios_rt {
    * @brief   Class encapsulating a mailbox.
    */
   class MemoryPool {
-  public:
     /**
      * @brief   Embedded @p ::MemoryPool structure.
      */
-    ::memory_pool_t pool;
+    memory_pool_t pool;
 
+  public:
     /**
      * @brief   MemoryPool constructor.
      *
@@ -2434,7 +2479,7 @@ namespace chibios_rt {
      *
      * @init
      */
-    MemoryPool(size_t size, memgetfunc_t provider) {
+    MemoryPool(size_t size, memgetfunc_t provider=0) : pool() {
 
       chPoolObjectInit(&pool, size, provider);
     }
@@ -2453,11 +2498,18 @@ namespace chibios_rt {
      *
      * @init
      */
-    MemoryPool(size_t size, memgetfunc_t provider, void* p, size_t n) {
+    MemoryPool(size_t size, void* p, size_t n,
+               memgetfunc_t provider=0) : pool() {
 
       chPoolObjectInit(&pool, size, provider);
       chPoolLoadArray(&pool, p, n);
     }
+
+    /* Prohibit copy construction and assignment, but allow move.*/
+    MemoryPool(const MemoryPool &) = delete;
+    MemoryPool &operator=(const MemoryPool &) = delete;
+    MemoryPool(MemoryPool &&) = default;
+    MemoryPool &operator=(MemoryPool &&) = default;
 
     /**
      * @brief   Loads a memory pool with an array of static objects.
@@ -2567,6 +2619,84 @@ namespace chibios_rt {
     ObjectsPool(void) : MemoryPool(sizeof (T), NULL) {
 
       loadArray(pool_buf, N);
+    }
+  };
+#endif /* CH_CFG_USE_MEMPOOLS */
+
+#if CH_CFG_USE_HEAP || defined(__DOXYGEN__)
+  /*------------------------------------------------------------------------*
+   * chibios_rt::Heap                                                       *
+   *------------------------------------------------------------------------*/
+  /**
+   * @brief   Class encapsulating a heap.
+   */
+  class Heap {
+    /**
+     * @brief   Embedded @p ::Heap structure.
+     */
+    memory_heap_t heap;
+
+  public:
+    /**
+     * @brief   Heap constructor.
+     * @pre     Both the heap buffer base and the heap size must be aligned to
+     *          the @p stkalign_t type size.
+     *
+     * @param[in] buffer    heap buffer base
+     * @param[in] size      the size of the memory area located at \e buffer
+     * @init
+     */
+    Heap(void *buffer, const size_t size) : heap() {
+
+      chHeapObjectInit(&heap, buffer, size);
+    }
+
+    /* Prohibit copy construction and assignment, but allow move.*/
+    Heap(const Heap &) = delete;
+    Heap &operator=(const Heap &) = delete;
+    Heap(Heap &&) = default;
+    Heap &operator=(Heap &&) = default;
+
+
+    /**
+     * @brief   Allocates an object from a heap.
+     * @pre     The heap must be already been initialized.
+     *
+     * @return              The pointer to the allocated object.
+     * @retval NULL         if pool is empty.
+     *
+     * @api
+     */
+    inline void *alloc(const size_t size) {
+
+      return chHeapAlloc(&heap, size);
+    }
+
+    /**
+     * @brief   Releases an object into the heap.
+     *
+     * @param[in] objp      the pointer to the object to be released
+     *
+     * @api
+     */
+    inline void free(void *objp) {
+
+      chHeapFree(objp);
+    }
+
+    /**
+     * @brief   Reports the heap status.
+     *
+     * @param[out] frag     the size of total fragmented free space
+     * @param[in] largestp  pointer to a variable that will receive the largest
+     *                      free free block found space or @ NULL
+     * @return              the number of fragments in the heap
+     *
+     * @api
+     */
+    inline size_t status(size_t &frag, size_t *largestp=0) {
+
+      return chHeapStatus(&heap, &frag, largestp);
     }
   };
 #endif /* CH_CFG_USE_MEMPOOLS */
