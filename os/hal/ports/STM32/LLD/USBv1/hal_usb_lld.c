@@ -588,6 +588,7 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
 #else
     osalDbgAssert(false, "isochronous support disabled");
 #endif
+    /* Falls through.*/
   case USB_EP_MODE_TYPE_BULK:
     epr = EPR_EP_TYPE_BULK;
     break;
@@ -644,6 +645,15 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
 #else
     epr |= EPR_STAT_RX_NAK;
 #endif
+  }
+
+  /* Resetting the data toggling bits for this endpoint.*/
+  if (STM32_USB->EPR[ep] & EPR_DTOG_RX) {
+    epr |= EPR_DTOG_RX;
+  }
+
+  if (STM32_USB->EPR[ep] & EPR_DTOG_TX) {
+    epr |= EPR_DTOG_TX;
   }
 
   /* EPxR register setup.*/

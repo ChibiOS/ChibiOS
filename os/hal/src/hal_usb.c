@@ -142,9 +142,12 @@ static bool default_handler(USBDriver *usbp) {
     usbSetupTransfer(usbp, &usbp->configuration, 1, NULL);
     return true;
   case (uint32_t)USB_RTYPE_RECIPIENT_DEVICE | ((uint32_t)USB_REQ_SET_CONFIGURATION << 8):
+#if defined(USB_SET_CONFIGURATION_OLD_BEHAVIOR)
     /* Handling configuration selection from the host only if it is different
        from the current configuration.*/
-    if (usbp->configuration != usbp->setup[2]) {
+    if (usbp->configuration != usbp->setup[2])
+#endif
+    {
       /* If the USB device is already active then we have to perform the clear
          procedure on the current configuration.*/
       if (usbp->state == USB_ACTIVE) {
@@ -846,7 +849,7 @@ void _usb_ep0setup(USBDriver *usbp, usbep_t ep) {
       /* Starts the receive phase.*/
       usbp->ep0state = USB_EP0_OUT_RX;
       osalSysLockFromISR();
-      usbStartReceiveI(usbp, 0, usbp->ep0next, usbp->ep0n);
+      usbStartReceiveI(usbp, 0, (uint8_t *)usbp->ep0next, usbp->ep0n);
       osalSysUnlockFromISR();
     }
     else {
@@ -892,7 +895,7 @@ void _usb_ep0in(USBDriver *usbp, usbep_t ep) {
       usbp->ep0state = USB_EP0_IN_WAITING_TX0;
       return;
     }
-    /* Falls into, it is intentional.*/
+    /* Falls through.*/
   case USB_EP0_IN_WAITING_TX0:
     /* Transmit phase over, receiving the zero sized status packet.*/
     usbp->ep0state = USB_EP0_OUT_WAITING_STS;
@@ -916,7 +919,7 @@ void _usb_ep0in(USBDriver *usbp, usbep_t ep) {
   case USB_EP0_OUT_RX:
     /* All the above are invalid states in the IN phase.*/
     osalDbgAssert(false, "EP0 state machine error");
-    /* Falling through is intentional.*/
+    /* Falls through.*/
   case USB_EP0_ERROR:
     /* Error response, the state machine goes into an error state, the low
        level layer will have to reset it to USB_EP0_WAITING_SETUP after
@@ -975,7 +978,7 @@ void _usb_ep0out(USBDriver *usbp, usbep_t ep) {
   case USB_EP0_IN_SENDING_STS:
     /* All the above are invalid states in the IN phase.*/
     osalDbgAssert(false, "EP0 state machine error");
-    /* Falling through is intentional.*/
+    /* Falls through.*/
   case USB_EP0_ERROR:
     /* Error response, the state machine goes into an error state, the low
        level layer will have to reset it to USB_EP0_WAITING_SETUP after
