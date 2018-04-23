@@ -32,17 +32,17 @@
  */
 namespace chibios_rt {
 
+  /* Forward declaration of some classes.*/
+  class ThreadReference;
+
   /*------------------------------------------------------------------------*
    * chibios_rt::System                                                     *
    *------------------------------------------------------------------------*/
   /**
    * @brief Class encapsulating the base system functionalities.
    */
-  namespace System {
-
-    /* Forward declaration of some classes.*/
-    class ThreadReference;
-
+  class System {
+  public:
     /**
      * @brief   ChibiOS/RT initialization.
      * @details After executing this function the current instructions stream
@@ -55,7 +55,7 @@ namespace chibios_rt {
      *
      * @special
      */
-    static inline void init(void) {
+    static void init(void) {
 
       chSysInit();
     }
@@ -72,7 +72,7 @@ namespace chibios_rt {
      *
      * @special
      */
-    static inline void halt(const char *reason) {
+    static void halt(const char *reason) {
 
       chSysHalt(reason);
     }
@@ -101,7 +101,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    static inline bool integrityCheckI(unsigned int testmask) {
+    static bool integrityCheckI(unsigned int testmask) {
 
       return chSysIntegrityCheckI(testmask);
     }
@@ -114,7 +114,7 @@ namespace chibios_rt {
      *
      * @special
      */
-    static inline void disable(void) {
+    static void disable(void) {
 
       chSysDisable();
     }
@@ -130,7 +130,7 @@ namespace chibios_rt {
      *
      * @special
      */
-    static inline void suspend(void) {
+    static void suspend(void) {
 
       chSysSuspend();
     }
@@ -144,7 +144,7 @@ namespace chibios_rt {
      *
      * @special
      */
-    static inline void enable(void) {
+    static void enable(void) {
 
       chSysEnable();
     }
@@ -154,7 +154,7 @@ namespace chibios_rt {
      *
      * @special
      */
-    static inline void lock(void) {
+    static void lock(void) {
 
       chSysLock();
     }
@@ -164,7 +164,7 @@ namespace chibios_rt {
      *
      * @special
      */
-    static inline void unlock(void) {
+    static void unlock(void) {
 
       chSysUnlock();
     }
@@ -181,7 +181,7 @@ namespace chibios_rt {
      *
      * @special
      */
-    static inline void lockFromIsr(void) {
+    static void lockFromIsr(void) {
 
       chSysLockFromISR();
     }
@@ -199,7 +199,7 @@ namespace chibios_rt {
      *
      * @special
      */
-    static inline void unlockFromIsr(void) {
+    static void unlockFromIsr(void) {
 
       chSysUnlockFromISR();
     }
@@ -211,7 +211,7 @@ namespace chibios_rt {
      *
      * @special
      */
-    static inline void unconditionalLock(void) {
+    static void unconditionalLock(void) {
 
       chSysUnconditionalLock();
     }
@@ -223,7 +223,7 @@ namespace chibios_rt {
      *
      * @special
      */
-    static inline void unconditionalUnlock(void) {
+    static void unconditionalUnlock(void) {
 
       chSysUnconditionalUnlock();
     }
@@ -241,7 +241,7 @@ namespace chibios_rt {
      *
      * @xclass
      */
-    static inline syssts_t getStatusAndLockX(void) {
+    static syssts_t getStatusAndLockX(void) {
 
       return chSysGetStatusAndLockX();
     }
@@ -255,7 +255,7 @@ namespace chibios_rt {
      *
      * @xclass
      */
-    static inline void restoreStatusX(syssts_t sts) {
+    static void restoreStatusX(syssts_t sts) {
 
       chSysRestoreStatusX(sts);
     }
@@ -271,7 +271,7 @@ namespace chibios_rt {
      *
      * @xclass
      */
-    static inline rtcnt_t getRealtimeCounterX(void) {
+    static rtcnt_t getRealtimeCounterX(void) {
 
       return chSysGetRealtimeCounterX();
     }
@@ -294,7 +294,7 @@ namespace chibios_rt {
      *
      * @xclass
      */
-    static inline bool isCounterWithinX(rtcnt_t cnt,
+    static bool isCounterWithinX(rtcnt_t cnt,
                                        rtcnt_t start,
                                        rtcnt_t end) {
 
@@ -312,7 +312,7 @@ namespace chibios_rt {
     *
     * @xclass
     */
-    static inline void polledDelayX(rtcnt_t cycles) {
+    static void polledDelayX(rtcnt_t cycles) {
 
       chSysPolledDelayX(cycles);
     }
@@ -326,7 +326,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    static inline systime_t getTime(void) {
+    static systime_t getTime(void) {
 
       return chVTGetSystemTime();
     }
@@ -339,7 +339,7 @@ namespace chibios_rt {
      *
      * @xclass
      */
-    static inline systime_t getTimeX(void) {
+    static systime_t getTimeX(void) {
 
       return chVTGetSystemTimeX();
     }
@@ -357,19 +357,10 @@ namespace chibios_rt {
      *
      * @api
      */
-    static inline bool isSystemTimeWithin(systime_t start, systime_t end) {
+    static bool isSystemTimeWithin(systime_t start, systime_t end) {
 
       return chVTIsSystemTimeWithin(start, end);
     }
-
-    /**
-     * @brief   Returns a reference to the current thread.
-     *
-     * @return             A reference to the current thread.
-     *
-     * @xclass
-     */
-    inline ThreadReference getCurrentThreadX(void);
 
 #if (CH_CFG_NO_IDLE_THREAD == FALSE) || defined(__DOXYGEN__)
     /**
@@ -384,7 +375,7 @@ namespace chibios_rt {
      *
      * @xclass
      */
-    inline ThreadReference getIdleThreadX(void);
+    static ThreadReference getIdleThreadX(void);
 #endif /* CH_CFG_NO_IDLE_THREAD == FALSE */
   };
 
@@ -395,8 +386,8 @@ namespace chibios_rt {
   /**
    * @brief Class encapsulating the base system functionalities.
    */
-  namespace Core {
-
+  class Core {
+  public:
     /**
      * @brief   Allocates a memory block.
      * @details The size of the returned block is aligned to the alignment
@@ -409,7 +400,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline void *alloc(size_t size) {
+    static void *alloc(size_t size) {
 
       return chCoreAlloc(size);
     }
@@ -426,7 +417,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    inline void *allocI(size_t size) {
+    static void *allocI(size_t size) {
 
       return chCoreAllocI(size);
     }
@@ -438,7 +429,7 @@ namespace chibios_rt {
      *
      * @xclass
      */
-    inline size_t getStatusX(void) {
+    static size_t getStatusX(void) {
 
       return chCoreGetStatusX();
     }
@@ -566,7 +557,17 @@ namespace chibios_rt {
 
   public:
     /**
-     * @brief   Suspends the current thread on the reference.
+     * @brief   Thread stay point constructor.
+     *
+     * @init
+     */
+    ThreadStayPoint() {
+
+      thread_ref = NULL;
+    }
+
+    /**
+     * @brief   Suspends the current thread on the stay point.
      * @details The suspended thread becomes the referenced thread. It is
      *          possible to use this method only if the thread reference
      *          was set to @p NULL.
@@ -581,7 +582,7 @@ namespace chibios_rt {
     }
 
     /**
-     * @brief   Suspends the current thread on the reference with timeout.
+     * @brief   Suspends the current thread on the stay point with timeout.
      * @details The suspended thread becomes the referenced thread. It is
      *          possible to use this method only if the thread reference
      *          was set to @p NULL.
@@ -660,7 +661,7 @@ namespace chibios_rt {
      */
     ThreadReference(thread_t *tp) : thread_ref(tp) {
 
-    };
+    }
 
     /**
      * @brief   Stops the thread.
@@ -875,8 +876,8 @@ namespace chibios_rt {
   /*------------------------------------------------------------------------*
    * chibios_rt::Registry                                                   *
    *------------------------------------------------------------------------*/
-  namespace Registry {
-
+  class Registry {
+  public:
     /**
      * @brief   Returns the first thread in the system.
      * @details Returns the most ancient thread in the system, usually this is
@@ -889,7 +890,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    static inline ThreadReference firstThread(void) {
+    static ThreadReference firstThread(void) {
 
       return ThreadReference(chRegFirstThread());
     }
@@ -905,7 +906,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    static inline ThreadReference nextThread(ThreadReference tref) {
+    static ThreadReference nextThread(ThreadReference tref) {
 
       return ThreadReference(chRegNextThread(tref.thread_ref));
     }
@@ -923,12 +924,11 @@ namespace chibios_rt {
      *
      * @api
      */
-    static inline ThreadReference findThreadByName(const char *name) {
-
+    static ThreadReference findThreadByName(const char *name) {
 
       return ThreadReference(chRegFindThreadByName(name));
     }
-  }
+  };
 #endif /* CH_CFG_USE_REGISTRY == TRUE */
 
   /*------------------------------------------------------------------------*
@@ -956,9 +956,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    virtual void main(void) {
-
-    }
+    virtual void main(void) = 0;
 
     /**
      * @brief   Creates and starts a system thread.
@@ -972,6 +970,19 @@ namespace chibios_rt {
     virtual ThreadReference start(tprio_t prio) {
 
       (void)prio;
+
+      return ThreadReference(chThdGetSelfX());
+    }
+
+
+    /**
+     * @brief   Returns a reference to the current thread.
+     *
+     * @return             A reference to the current thread.
+     *
+     * @xclass
+     */
+    static ThreadReference getSelfX(void) {
 
       return ThreadReference(chThdGetSelfX());
     }
@@ -1373,7 +1384,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    virtual ThreadReference start(tprio_t prio) {
+    ThreadReference start(tprio_t prio) override {
       void _thd_start(void *arg);
 
       return ThreadReference(chThdCreateStatic(wa, sizeof(wa), prio,
