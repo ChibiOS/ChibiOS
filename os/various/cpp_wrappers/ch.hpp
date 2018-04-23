@@ -379,6 +379,27 @@ namespace chibios_rt {
 #endif /* CH_CFG_NO_IDLE_THREAD == FALSE */
   };
 
+  /*------------------------------------------------------------------------*
+   * chibios_rt::Scheduler                                                  *
+   *------------------------------------------------------------------------*/
+  /**
+   * @brief Class encapsulating thelow level scheduler functionalities.
+   */
+  class Scheduler {
+  public:
+    /**
+     * @brief   Performs a reschedule if a higher priority thread is runnable.
+     * @details If a thread with a higher priority than the current thread is in
+     *          the ready list then make the higher priority thread running.
+     *
+     * @sclass
+     */
+    static void rescheduleS(void) {
+
+      void chSchRescheduleS();
+    }
+  };
+
 #if (CH_CFG_USE_MEMCORE == TRUE) || defined(__DOXYGEN__)
   /*------------------------------------------------------------------------*
    * chibios_rt::Core                                                       *
@@ -543,98 +564,6 @@ namespace chibios_rt {
   };
 
   /*------------------------------------------------------------------------*
-   * chibios_rt::ThreadStayPoint                                            *
-   *------------------------------------------------------------------------*/
-  /**
-   * @brief     Thread suspension point class.
-   * @details   This class encapsulates a reference to a suspended thread.
-   */
-  class ThreadStayPoint {
-    /**
-     * @brief   Pointer to the system thread.
-     */
-    thread_reference_t thread_ref;
-
-  public:
-    /**
-     * @brief   Thread stay point constructor.
-     *
-     * @init
-     */
-    ThreadStayPoint() {
-
-      thread_ref = NULL;
-    }
-
-    /**
-     * @brief   Suspends the current thread on the stay point.
-     * @details The suspended thread becomes the referenced thread. It is
-     *          possible to use this method only if the thread reference
-     *          was set to @p NULL.
-     *
-     * @return                  The incoming message.
-     *
-     * @sclass
-     */
-    msg_t suspendS(void) {
-
-      return chThdSuspendS(&thread_ref);
-    }
-
-    /**
-     * @brief   Suspends the current thread on the stay point with timeout.
-     * @details The suspended thread becomes the referenced thread. It is
-     *          possible to use this method only if the thread reference
-     *          was set to @p NULL.
-     *
-     *
-     * @param[in] timeout   the number of ticks before the operation timeouts,
-     *                      the following special values are allowed:
-     *                      - @a TIME_IMMEDIATE immediate timeout.
-     *                      - @a TIME_INFINITE no timeout.
-     *                      .
-     * @return              A message specifying how the invoking thread has
-     *                      been released from the semaphore.
-     * @retval MSG_OK       if the binary semaphore has been successfully
-     *                      taken.
-     * @retval MSG_RESET    if the binary semaphore has been reset using
-     *                      @p bsemReset().
-     * @retval MSG_TIMEOUT  if the binary semaphore has not been signaled
-     *                      or reset within the specified timeout.
-     *
-     * @sclass
-     */
-    msg_t suspendS(sysinterval_t timeout) {
-
-      return chThdSuspendTimeoutS(&thread_ref, timeout);
-    }
-
-    /**
-     * @brief   Resumes the currently referenced thread, if any.
-     *
-     * @param[in] msg       the wakeup message
-     *
-     * @iclass
-     */
-    void resumeI(msg_t msg) {
-
-      chThdResumeI(&thread_ref, msg);
-    }
-
-    /**
-     * @brief   Resumes the currently referenced thread, if any.
-     *
-     * @param[in] msg       the wakeup message
-     *
-     * @sclass
-     */
-    void resumeS(msg_t msg) {
-
-      chThdResumeS(&thread_ref, msg);
-    }
-  };
-
-  /*------------------------------------------------------------------------*
    * chibios_rt::ThreadReference                                            *
    *------------------------------------------------------------------------*/
   /**
@@ -661,16 +590,6 @@ namespace chibios_rt {
      */
     ThreadReference(thread_t *tp) : thread_ref(tp) {
 
-    }
-
-    /**
-     * @brief   Stops the thread.
-     * @note    The implementation is left to descendant classes and is
-     *          optional.
-     */
-    virtual void stop(void) {
-
-      chSysHalt("invoked unimplemented method stop()");
     }
 
     /**
@@ -731,9 +650,10 @@ namespace chibios_rt {
      * @api
      */
     void release(void) {
-
-      chThdRelease(thread_ref);
+      thread_t *tp = thread_ref;
       thread_ref = NULL;
+
+      chThdRelease(tp);
     }
 #endif /* CH_CFG_USE_REGISTRY == TRUE */
 
@@ -769,9 +689,10 @@ namespace chibios_rt {
      * @api
      */
     msg_t wait(void) {
-
-      msg_t msg = chThdWait(thread_ref);
+      thread_t *tp = thread_ref;
       thread_ref = NULL;
+
+      msg_t msg = chThdWait(tp);
       return msg;
     }
 #endif /* CH_CFG_USE_WAITEXIT == TRUE */
@@ -817,14 +738,17 @@ namespace chibios_rt {
 
     /**
      * @brief   Releases the next message in queue with a reply.
+     * @post    The reference is set to @p NULL.
      *
      * @param[in] msg           the answer message
      *
      * @api
      */
     void releaseMessage(msg_t msg) {
+      thread_t *tp = thread_ref;
+      thread_ref = NULL;
 
-      chMsgRelease(thread_ref, msg);
+      chMsgRelease(tp, msg);
     }
 #endif /* CH_CFG_USE_MESSAGES == TRUE */
 
@@ -1148,15 +1072,17 @@ namespace chibios_rt {
 #if CH_CFG_USE_MESSAGES || defined(__DOXYGEN__)
     /**
      * @brief   Waits for a message.
+     * @post    On the returned reference it is mandatory to call
+     *          @p releaseMessage() or the sender thread would be waiting
+     *          undefinitely.
      *
-     * @return                  The sender thread.
+     * @return                  The sender thread reference.
      *
      * @api
      */
     static ThreadReference waitMessage(void) {
 
-      ThreadReference tr(chMsgWait());
-      return tr;
+      return ThreadReference(chMsgWait());
     }
 #endif /* CH_CFG_USE_MESSAGES == TRUE */
 
@@ -1391,6 +1317,183 @@ namespace chibios_rt {
                                                _thd_start, this));
     }
   };
+
+  /*------------------------------------------------------------------------*
+   * chibios_rt::ThreadStayPoint                                            *
+   *------------------------------------------------------------------------*/
+  /**
+   * @brief     Thread suspension point class.
+   * @details   This class encapsulates a reference to a suspended thread.
+   */
+  class ThreadStayPoint {
+    /**
+     * @brief   Pointer to the suspended thread.
+     */
+    thread_reference_t thread_ref;
+
+  public:
+    /**
+     * @brief   Thread stay point constructor.
+     *
+     * @init
+     */
+    ThreadStayPoint() {
+
+      thread_ref = NULL;
+    }
+
+    /* Prohibit copy construction and assignment.*/
+    ThreadStayPoint(const ThreadStayPoint &) = delete;
+    ThreadStayPoint &operator=(const ThreadStayPoint &) = delete;
+
+    /**
+     * @brief   Suspends the current thread on the stay point.
+     * @details The suspended thread becomes the referenced thread. It is
+     *          possible to use this method only if the thread reference
+     *          was set to @p NULL.
+     *
+     * @return                  The incoming message.
+     *
+     * @sclass
+     */
+    msg_t suspendS(void) {
+
+      return chThdSuspendS(&thread_ref);
+    }
+
+    /**
+     * @brief   Suspends the current thread on the stay point with timeout.
+     * @details The suspended thread becomes the referenced thread. It is
+     *          possible to use this method only if the thread reference
+     *          was set to @p NULL.
+     *
+     *
+     * @param[in] timeout   the number of ticks before the operation timeouts,
+     *                      the following special values are allowed:
+     *                      - @a TIME_IMMEDIATE immediate timeout.
+     *                      - @a TIME_INFINITE no timeout.
+     *                      .
+     * @return              A message specifying how the invoking thread has
+     *                      been released from the semaphore.
+     * @retval MSG_OK       if the binary semaphore has been successfully
+     *                      taken.
+     * @retval MSG_RESET    if the binary semaphore has been reset using
+     *                      @p bsemReset().
+     * @retval MSG_TIMEOUT  if the binary semaphore has not been signaled
+     *                      or reset within the specified timeout.
+     *
+     * @sclass
+     */
+    msg_t suspendS(sysinterval_t timeout) {
+
+      return chThdSuspendTimeoutS(&thread_ref, timeout);
+    }
+
+    /**
+     * @brief   Resumes the currently referenced thread, if any.
+     *
+     * @param[in] msg       the wakeup message
+     *
+     * @iclass
+     */
+    void resumeI(msg_t msg) {
+
+      chThdResumeI(&thread_ref, msg);
+    }
+
+    /**
+     * @brief   Resumes the currently referenced thread, if any.
+     *
+     * @param[in] msg       the wakeup message
+     *
+     * @sclass
+     */
+    void resumeS(msg_t msg) {
+
+      chThdResumeS(&thread_ref, msg);
+    }
+  };
+
+  /*------------------------------------------------------------------------*
+   * chibios_rt::ThreadsQueue                                               *
+   *------------------------------------------------------------------------*/
+  /**
+   * @brief     Threads queue class.
+   * @details   This class encapsulates a queue of threads.
+   */
+  class ThreadsQueue {
+    /**
+     * @brief   Pointer to the system thread.
+     */
+    threads_queue_t threads_queue;
+
+  public:
+    /**
+     * @brief   Threads queue constructor.
+     *
+     * @init
+     */
+    ThreadsQueue() {
+
+      chThdQueueObjectInit(&threads_queue);
+    }
+
+    /* Prohibit copy construction and assignment.*/
+    ThreadsQueue(const ThreadsQueue &) = delete;
+    ThreadsQueue &operator=(const ThreadsQueue &) = delete;
+
+    /**
+     * @brief   Enqueues the caller thread on a threads queue object.
+     * @details The caller thread is enqueued and put to sleep until it is
+     *          dequeued or the specified timeouts expires.
+     *
+     * @param[in] timeout   the timeout in system ticks, the special values are
+     *                      handled as follow:
+     *                      - @a TIME_INFINITE the thread enters an infinite sleep
+     *                        state.
+     *                      - @a TIME_IMMEDIATE the thread is not enqueued and
+     *                        the function returns @p MSG_TIMEOUT as if a timeout
+     *                        occurred.
+     *                      .
+     * @return              The message from @p osalQueueWakeupOneI() or
+     *                      @p osalQueueWakeupAllI() functions.
+     * @retval MSG_TIMEOUT  if the thread has not been dequeued within the
+     *                      specified timeout or if the function has been
+     *                      invoked with @p TIME_IMMEDIATE as timeout
+     *                      specification.
+     *
+     * @sclass
+     */
+    msg_t enqueueSelfS(sysinterval_t timeout) {
+
+      return chThdEnqueueTimeoutS(&threads_queue, timeout);
+    }
+
+    /**
+     * @brief   Dequeues and wakes up one thread from the threads queue object,
+     *          if any.
+     *
+     * @param[in] msg       the message code
+     *
+     * @iclass
+     */
+    void dequeueNextI(msg_t msg) {
+
+      chThdDequeueNextI(&threads_queue, msg);
+    }
+
+    /**
+     * @brief   Dequeues and wakes up all threads from the threads queue object.
+     *
+     * @param[in] msg       the message code
+     *
+     * @iclass
+     */
+    void chdequeueAllI(msg_t msg) {
+
+      chThdDequeueAllI(&threads_queue, msg);
+    }
+};
 
 #if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
   /*------------------------------------------------------------------------*
