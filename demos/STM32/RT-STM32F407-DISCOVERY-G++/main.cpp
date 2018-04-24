@@ -22,6 +22,33 @@
 using namespace chibios_rt;
 
 /*
+ * Message server thread class. It receives messages and does nothing except
+ * reply after the specified time.
+ */
+class MessageServerThread : public BaseStaticThread<256> {
+
+protected:
+  void main(void) override {
+
+    setName("server");
+
+    while (true) {
+      ThreadReference sender = waitMessage();
+      time_msecs_t msecs = (time_msecs_t)sender.getMessage();
+      sleep(TIME_MS2I(msecs));
+      sender.releaseMessage(0);
+    }
+  }
+
+public:
+  MessageServerThread(void) : BaseStaticThread<256>() {
+  }
+};
+
+/* Reference to the server thread.*/
+static ThreadReference sref;
+
+/*
  * LED blink sequences.
  * NOTE: Sequences must always be terminated by a GOTO instruction.
  * NOTE: The sequencer language could be easily improved but this is outside
@@ -32,50 +59,63 @@ using namespace chibios_rt;
 #define STOP            2
 #define BITCLEAR        3
 #define BITSET          4
+#define MESSAGE         5
 
 typedef struct {
   uint8_t       action;
-  uint32_t      value;
+  union {
+    msg_t       msg;
+    uint32_t    value;
+    ioline_t    line;
+  };
 } seqop_t;
 
 // Flashing sequence for LED3.
 static const seqop_t LED3_sequence[] =
 {
-  {BITSET, PAL_PORT_BIT(GPIOD_LED3)},
-  {SLEEP,    800},
-  {BITCLEAR,   PAL_PORT_BIT(GPIOD_LED3)},
-  {SLEEP,    200},
-  {GOTO,     0}
+  {BITSET,      LINE_LED3},
+  {SLEEP,       800},
+  {BITCLEAR,    LINE_LED3},
+  {SLEEP,       200},
+  {GOTO,        0}
 };
 
 // Flashing sequence for LED4.
 static const seqop_t LED4_sequence[] =
 {
-  {BITSET, PAL_PORT_BIT(GPIOD_LED4)},
-  {SLEEP,    600},
-  {BITCLEAR,   PAL_PORT_BIT(GPIOD_LED4)},
-  {SLEEP,    400},
-  {GOTO,     0}
+  {BITSET,      LINE_LED4},
+  {SLEEP,       600},
+  {BITCLEAR,    LINE_LED4},
+  {SLEEP,       400},
+  {GOTO,        0}
 };
 
 // Flashing sequence for LED5.
 static const seqop_t LED5_sequence[] =
 {
-  {BITSET, PAL_PORT_BIT(GPIOD_LED5)},
-  {SLEEP,    400},
-  {BITCLEAR,   PAL_PORT_BIT(GPIOD_LED5)},
-  {SLEEP,    600},
-  {GOTO,     0}
+  {BITSET,      LINE_LED5},
+  {SLEEP,       400},
+  {BITCLEAR,    LINE_LED5},
+  {SLEEP,       600},
+  {GOTO,        0}
 };
 
 // Flashing sequence for LED6.
 static const seqop_t LED6_sequence[] =
 {
-  {BITSET, PAL_PORT_BIT(GPIOD_LED6)},
-  {SLEEP,    200},
-  {BITCLEAR,   PAL_PORT_BIT(GPIOD_LED6)},
-  {SLEEP,    800},
-  {GOTO,     0}
+  {BITSET,      LINE_LED6},
+  {SLEEP,       200},
+  {BITCLEAR,    LINE_LED6},
+  {SLEEP,       800},
+  {GOTO,        0}
+};
+
+// Message sequence.
+static const seqop_t msg_sequence[] =
+{
+  {MESSAGE,     50},
+  {SLEEP,       1000},
+  {GOTO,        0}
 };
 
 /*
@@ -88,7 +128,7 @@ private:
   const seqop_t *base, *curr;                   // Thread local variables.
 
 protected:
-  virtual void main(void) {
+  void main(void) override {
 
     setName("sequencer");
 
@@ -103,10 +143,13 @@ protected:
       case STOP:
         return;
       case BITCLEAR:
-        palClearPort(GPIOD, curr->value);
+        palClearLine(curr->line);
         break;
       case BITSET:
-        palSetPort(GPIOD, curr->value);
+        palSetLine(curr->line);
+        break;
+      case MESSAGE:
+        sref.sendMessage(curr->msg);
         break;
       }
       curr++;
@@ -126,7 +169,7 @@ public:
 class TesterThread : public BaseStaticThread<256> {
 
 protected:
-  virtual void main(void) {
+  void main(void) override {
 
     setName("tester");
 
@@ -142,10 +185,12 @@ public:
 
 /* Static threads instances.*/
 static TesterThread tester;
+static MessageServerThread server_thread;
 static SequencerThread blinker1(LED3_sequence);
 static SequencerThread blinker2(LED4_sequence);
 static SequencerThread blinker3(LED5_sequence);
 static SequencerThread blinker4(LED6_sequence);
+static SequencerThread sender1(msg_sequence);
 
 /*
  * Application entry point.
@@ -171,13 +216,19 @@ int main(void) {
   palSetPadMode(GPIOA, 3, PAL_MODE_ALTERNATE(7));
 
   /*
+   * Starting the message server thread, storing the returned reference.
+   */
+  sref = server_thread.start(NORMALPRIO + 20);
+
+  /*
    * Starts several instances of the SequencerThread class, each one operating
-   * on a different LED.
+   * on a different sequence.
    */
   blinker1.start(NORMALPRIO + 10);
   blinker2.start(NORMALPRIO + 10);
   blinker3.start(NORMALPRIO + 10);
   blinker4.start(NORMALPRIO + 10);
+  sender1.start(NORMALPRIO + 10);
 
   /*
    * Serves timer events.

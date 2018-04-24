@@ -588,7 +588,7 @@ namespace chibios_rt {
      *
      * @init
      */
-    ThreadReference(thread_t *tp) : thread_ref(tp) {
+    ThreadReference(thread_t *tp = NULL) : thread_ref(tp) {
 
     }
 
