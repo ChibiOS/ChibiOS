@@ -764,7 +764,7 @@ Vector3F4:
 Vector3F8:
 Vector3FC:
 #endif
-         b          _unhandled_exception
+        bl          _unhandled_exception
 
         .thumb_func
         .weak       _unhandled_exception
