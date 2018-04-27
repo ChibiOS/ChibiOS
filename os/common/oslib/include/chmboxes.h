@@ -132,7 +132,7 @@ extern "C" {
 /**
  * @brief   Returns the mailbox buffer size as number of messages.
  *
- * @param[in] mbp       the pointer to an initialized mailbox_t object
+ * @param[in] mbp       the pointer to an initialized @p mailbox_t object
  * @return              The size of the mailbox.
  *
  * @iclass
@@ -148,7 +148,7 @@ static inline size_t chMBGetSizeI(const mailbox_t *mbp) {
 /**
  * @brief   Returns the number of used message slots into a mailbox.
  *
- * @param[in] mbp       the pointer to an initialized mailbox_t object
+ * @param[in] mbp       the pointer to an initialized @p mailbox_t object
  * @return              The number of queued messages.
  *
  * @iclass
@@ -163,7 +163,7 @@ static inline size_t chMBGetUsedCountI(const mailbox_t *mbp) {
 /**
  * @brief   Returns the number of free message slots into a mailbox.
  *
- * @param[in] mbp       the pointer to an initialized mailbox_t object
+ * @param[in] mbp       the pointer to an initialized @p mailbox_t object
  * @return              The number of empty message slots.
  *
  * @iclass
@@ -179,10 +179,10 @@ static inline size_t chMBGetFreeCountI(const mailbox_t *mbp) {
  * @brief   Returns the next message in the queue without removing it.
  * @pre     A message must be waiting in the queue for this function to work
  *          or it would return garbage. The correct way to use this macro is
- *          to use @p chMBGetFullCountI() and then use this macro, all within
+ *          to use @p chMBGetUsedCountI() and then use this macro, all within
  *          a lock state.
  *
- * @param[in] mbp       the pointer to an initialized mailbox_t object
+ * @param[in] mbp       the pointer to an initialized @p mailbox_t object
  * @return              The next message in queue.
  *
  * @iclass
@@ -197,7 +197,7 @@ static inline msg_t chMBPeekI(const mailbox_t *mbp) {
 /**
  * @brief   Terminates the reset state.
  *
- * @param[in] mbp       the pointer to an initialized mailbox_t object
+ * @param[in] mbp       the pointer to an initialized @p mailbox_t object
  *
  * @xclass
  */

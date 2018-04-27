@@ -297,7 +297,7 @@ static inline void chBSemSignal(binary_semaphore_t *bsp) {
  *
  * @iclass
  */
-static inline bool chBSemGetStateI(binary_semaphore_t *bsp) {
+static inline bool chBSemGetStateI(const binary_semaphore_t *bsp) {
 
   chDbgCheckClassI();
 
