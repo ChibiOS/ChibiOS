@@ -84,8 +84,9 @@ namespace chibios_rt {
      * @note    The appropriate action in case of failure is to halt the system
      *          before releasing the critical zone.
      * @note    If the system is corrupted then one possible outcome of this
-     *          function is an exception caused by @p NULL or corrupted pointers
-     *          in list elements. Exception vectors must be monitored as well.
+     *          function is an exception caused by @p nullptr or corrupted
+     *          pointers in list elements. Exception vectors must be monitored
+     *          as well.
      * @note    This function is not used internally, it is up to the
      *          application to define if and where to perform system
      *          checking.
@@ -417,7 +418,7 @@ namespace chibios_rt {
      *
      * @param[in] size      the size of the block to be allocated
      * @return              A pointer to the allocated memory block.
-     * @retval NULL         allocation failed, core memory exhausted.
+     * @retval nullptr      allocation failed, core memory exhausted.
      *
      * @api
      */
@@ -434,7 +435,7 @@ namespace chibios_rt {
      *
      * @param[in] size      the size of the block to be allocated.
      * @return              A pointer to the allocated memory block.
-     * @retval NULL         allocation failed, core memory exhausted.
+     * @retval nullptr      allocation failed, core memory exhausted.
      *
      * @iclass
      */
@@ -557,7 +558,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    bool isArmedI(void) {
+    bool isArmedI(void) const {
 
       return chVTIsArmedI(&vt);
     }
@@ -572,7 +573,7 @@ namespace chibios_rt {
    *            operations involving another thread are performed through
    *            an object of this type.
    */
-  class ThreadReference {
+  class ThreadReference final {
   public:
     /**
      * @brief   Pointer to the system thread.
@@ -583,12 +584,12 @@ namespace chibios_rt {
      * @brief   Thread reference constructor.
      *
      * @param[in] tp            the target thread. This parameter can be
-     *                          @p NULL if the thread is not known at
+     *                          @p nullptr if the thread is not known at
      *                          creation time.
      *
      * @init
      */
-    ThreadReference(thread_t *tp = NULL) : thread_ref(tp) {
+    ThreadReference(thread_t *tp = nullptr) : thread_ref(tp) {
 
     }
 
@@ -597,11 +598,11 @@ namespace chibios_rt {
      *
      * @return          The reference state.
      * @retval false    if the reference is still valid.
-     * @retval true     if the reference is set to @p NULL.
+     * @retval true     if the reference is set to @p nullptr.
      */
-    bool isNull(void) {
+    bool isNull(void) const {
 
-      return (bool)(thread_ref == NULL);
+      return (bool)(thread_ref == nullptr);
     }
 
     /**
@@ -614,7 +615,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    void requestTerminate(void) {
+    void requestTerminate(void) const {
 
       chThdTerminate(thread_ref);
     }
@@ -629,7 +630,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    ThreadReference addRef(void) {
+    ThreadReference addRef(void) const {
 
       return ThreadReference(chThdAddRef(thread_ref));
     }
@@ -644,14 +645,14 @@ namespace chibios_rt {
      *          "detached" and will be removed from registry on termination.
      * @pre     The configuration option @p CH_CFG_USE_REGISTRY must be enabled in
      *          order to use this function.
-     * @post    The reference is set to @p NULL.
+     * @post    The reference is set to @p nullptr.
      * @note    Static threads are not affected.
      *
      * @api
      */
     void release(void) {
       thread_t *tp = thread_ref;
-      thread_ref = NULL;
+      thread_ref = nullptr;
 
       chThdRelease(tp);
     }
@@ -680,7 +681,7 @@ namespace chibios_rt {
      *          order to use this function.
      * @post    Enabling @p chThdWait() requires 2-4 (depending on the
      *          architecture) extra bytes in the @p Thread structure.
-     * @post    The reference is set to @p NULL.
+     * @post    The reference is set to @p nullptr.
      * @note    If @p CH_USE_DYNAMIC is not specified this function just waits
      *          for the thread termination, no memory allocators are involved.
      *
@@ -690,7 +691,7 @@ namespace chibios_rt {
      */
     msg_t wait(void) {
       thread_t *tp = thread_ref;
-      thread_ref = NULL;
+      thread_ref = nullptr;
 
       msg_t msg = chThdWait(tp);
       return msg;
@@ -706,7 +707,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    msg_t sendMessage(msg_t msg){
+    msg_t sendMessage(msg_t msg) const {
 
       return chMsgSend(thread_ref, msg);
     }
@@ -719,26 +720,26 @@ namespace chibios_rt {
      *
      * @api
      */
-    bool isPendingMessage(void) {
+    bool isPendingMessage(void) const {
 
       return chMsgIsPendingI(thread_ref);
     }
 
     /**
-     * @brief   Returns an enqueued message or @p NULL.
+     * @brief   Returns an enqueued message or @p nullptr.
      *
      * @return                  The incoming message.
      *
      * @api
      */
-    msg_t getMessage(void) {
+    msg_t getMessage(void) const {
 
       return chMsgGet(thread_ref);
     }
 
     /**
      * @brief   Releases the next message in queue with a reply.
-     * @post    The reference is set to @p NULL.
+     * @post    The reference is set to @p nullptr.
      *
      * @param[in] msg           the answer message
      *
@@ -746,7 +747,7 @@ namespace chibios_rt {
      */
     void releaseMessage(msg_t msg) {
       thread_t *tp = thread_ref;
-      thread_ref = NULL;
+      thread_ref = nullptr;
 
       chMsgRelease(tp, msg);
     }
@@ -760,7 +761,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    void signalEvents(eventmask_t mask) {
+    void signalEvents(eventmask_t mask) const {
 
       chEvtSignal(thread_ref, mask);
     }
@@ -772,7 +773,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    void signalEventsI(eventmask_t mask) {
+    void signalEventsI(eventmask_t mask) const {
 
       chEvtSignalI(thread_ref, mask);
     }
@@ -789,7 +790,7 @@ namespace chibios_rt {
      *
      * @xclass
      */
-    systime_t getTicksX(void) {
+    systime_t getTicksX(void) const {
 
       return chThdGetTicksX(thread_ref);
     }
@@ -807,7 +808,7 @@ namespace chibios_rt {
      * @details Returns the most ancient thread in the system, usually this is
      *          the main thread unless it terminated. A reference is added to the
      *          returned thread in order to make sure its status is not lost.
-     * @note    This function cannot return @p NULL because there is always at
+     * @note    This function cannot return @p nullptr because there is always at
      *          least one thread in the system.
      *
      * @return              A reference to the most ancient thread.
@@ -826,7 +827,7 @@ namespace chibios_rt {
      *
      * @param[in] tref      reference to the thread
      * @return              A reference to the next thread. The reference is
-     *                      set to @p NULL if there is no next thread.
+     *                      set to @p nullptr if there is no next thread.
      *
      * @api
      */
@@ -844,7 +845,7 @@ namespace chibios_rt {
      * @param[in] name      the thread name
      * @return              A pointer to the found thread.
      * @return              A reference to the found thread. The reference is
-     *                      set to @p NULL if no next thread is found.
+     *                      set to @p nullptr if no next thread is found.
      *
      * @api
      */
@@ -891,13 +892,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    virtual ThreadReference start(tprio_t prio) {
-
-      (void)prio;
-
-      return ThreadReference(chThdGetSelfX());
-    }
-
+    virtual ThreadReference start(tprio_t prio) = 0;
 
     /**
      * @brief   Returns a reference to the current thread.
@@ -1339,7 +1334,7 @@ namespace chibios_rt {
      */
     ThreadStayPoint() {
 
-      thread_ref = NULL;
+      thread_ref = nullptr;
     }
 
     /* Prohibit copy construction and assignment.*/
@@ -1350,7 +1345,7 @@ namespace chibios_rt {
      * @brief   Suspends the current thread on the stay point.
      * @details The suspended thread becomes the referenced thread. It is
      *          possible to use this method only if the thread reference
-     *          was set to @p NULL.
+     *          was set to @p nullptr.
      *
      * @return                  The incoming message.
      *
@@ -1365,7 +1360,7 @@ namespace chibios_rt {
      * @brief   Suspends the current thread on the stay point with timeout.
      * @details The suspended thread becomes the referenced thread. It is
      *          possible to use this method only if the thread reference
-     *          was set to @p NULL.
+     *          was set to @p nullptr.
      *
      *
      * @param[in] timeout   the number of ticks before the operation timeouts,
@@ -1697,7 +1692,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    cnt_t getCounterI(void) {
+    cnt_t getCounterI(void) const {
 
       return chSemGetCounterI(&sem);
     }
@@ -1901,7 +1896,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    bool getStateI(void) {
+    bool getStateI(void) const {
 
       return (bool)chBSemGetStateI(&bsem);
     }
@@ -2613,6 +2608,22 @@ namespace chibios_rt {
     }
 
     /**
+     * @brief   Returns the next message in the queue without removing it.
+     * @pre     A message must be waiting in the queue for this function to work
+     *          or it would return garbage. The correct way to use this macro is
+     *          to use @p getUsedCountI() and then use this macro, all within
+     *          a lock state.
+     *
+     * @return              The next message in queue.
+     *
+     * @iclass
+     */
+    T peekI(const mailbox_t *mbp) const {
+
+      return chMBPeekI(&mb);
+    }
+
+    /**
      * @brief   Returns the number of free message slots into a mailbox.
      * @note    Can be invoked in any system state but if invoked out of a
      *          locked state then the returned value may change after reading.
@@ -2623,7 +2634,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    cnt_t getFreeCountI(void) {
+    cnt_t getFreeCountI(void) const {
 
       return chMBGetFreeCountI(&mb);
     }
@@ -2639,7 +2650,7 @@ namespace chibios_rt {
      *
      * @iclass
      */
-    cnt_t getUsedCountI(void) {
+    cnt_t getUsedCountI(void) const {
 
       return chMBGetUsedCountI(&mb);
     }
@@ -2695,7 +2706,7 @@ namespace chibios_rt {
      *                      pool, the minimum accepted size is the size of
      *                      a pointer to void.
      * @param[in] provider  memory provider function for the memory pool or
-     *                      @p NULL if the pool is not allowed to grow
+     *                      @p nullptr if the pool is not allowed to grow
      *                      automatically
      *
      * @init
@@ -2712,7 +2723,7 @@ namespace chibios_rt {
      *                      pool, the minimum accepted size is the size of
      *                      a pointer to void.
      * @param[in] provider  memory provider function for the memory pool or
-     *                      @p NULL if the pool is not allowed to grow
+     *                      @p nullptr if the pool is not allowed to grow
      *                      automatically
      * @param[in] p         pointer to the array first element
      * @param[in] n         number of elements in the array
@@ -2754,7 +2765,7 @@ namespace chibios_rt {
      * @pre     The memory pool must be already been initialized.
      *
      * @return              The pointer to the allocated object.
-     * @retval NULL         if pool is empty.
+     * @retval nullptr      if pool is empty.
      *
      * @iclass
      */
@@ -2768,7 +2779,7 @@ namespace chibios_rt {
      * @pre     The memory pool must be already been initialized.
      *
      * @return              The pointer to the allocated object.
-     * @retval NULL         if pool is empty.
+     * @retval nullptr      if pool is empty.
      *
      * @api
      */
@@ -2837,7 +2848,7 @@ namespace chibios_rt {
      *
      * @init
      */
-    ObjectsPool(void) : MemoryPool(sizeof (T), NULL) {
+    ObjectsPool(void) : MemoryPool(sizeof (T), nullptr) {
 
       loadArray(pool_buf, N);
     }
@@ -2884,11 +2895,11 @@ namespace chibios_rt {
      * @pre     The heap must be already been initialized.
      *
      * @return              The pointer to the allocated object.
-     * @retval NULL         if pool is empty.
+     * @retval nullptr      if pool is empty.
      *
      * @api
      */
-    inline void *alloc(const size_t size) {
+    void *alloc(const size_t size) {
 
       return chHeapAlloc(&heap, size);
     }
@@ -2900,7 +2911,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline void free(void *objp) {
+    void free(void *objp) {
 
       chHeapFree(objp);
     }
@@ -2910,7 +2921,7 @@ namespace chibios_rt {
      *
      * @param[out] frag     the size of total fragmented free space
      * @param[in] largestp  pointer to a variable that will receive the largest
-     *                      free free block found space or @ NULL
+     *                      free free block found space or @p nullptr
      * @return              the number of fragments in the heap
      *
      * @api

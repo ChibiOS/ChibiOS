@@ -175,7 +175,7 @@ static inline size_t chMBGetFreeCountI(const mailbox_t *mbp) {
  * @brief   Returns the next message in the queue without removing it.
  * @pre     A message must be waiting in the queue for this function to work
  *          or it would return garbage. The correct way to use this macro is
- *          to use @p chMBGetFullCountI() and then use this macro, all within
+ *          to use @p chMBGetUsedCountI() and then use this macro, all within
  *          a lock state.
  *
  * @param[in] mbp       the pointer to an initialized @p mailbox_t object

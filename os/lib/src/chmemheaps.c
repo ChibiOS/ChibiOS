@@ -347,9 +347,9 @@ void chHeapFree(void *p) {
  * @param[in] heapp     pointer to a heap descriptor or @p NULL in order to
  *                      access the default heap.
  * @param[in] totalp    pointer to a variable that will receive the total
- *                      fragmented free space or @ NULL
+ *                      fragmented free space or @p NULL
  * @param[in] largestp  pointer to a variable that will receive the largest
- *                      free free block found space or @ NULL
+ *                      free free block found space or @p NULL
  * @return              The number of fragments in the heap.
  *
  * @api

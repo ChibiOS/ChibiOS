@@ -238,7 +238,7 @@ static inline bool chVTGetTimersStateI(sysinterval_t *timep) {
  *
  * @iclass
  */
-static inline bool chVTIsArmedI(virtual_timer_t *vtp) {
+static inline bool chVTIsArmedI(const virtual_timer_t *vtp) {
 
   chDbgCheckClassI();
 
@@ -255,7 +255,7 @@ static inline bool chVTIsArmedI(virtual_timer_t *vtp) {
  *
  * @api
  */
-static inline bool chVTIsArmed(virtual_timer_t *vtp) {
+static inline bool chVTIsArmed(const virtual_timer_t *vtp) {
   bool b;
 
   chSysLock();
