@@ -958,9 +958,9 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  ioportmask_t palReadBus(IOBus *bus);
-  void palWriteBus(IOBus *bus, ioportmask_t bits);
-  void palSetBusMode(IOBus *bus, iomode_t mode);
+  ioportmask_t palReadBus(const IOBus *bus);
+  void palWriteBus(const IOBus *bus, ioportmask_t bits);
+  void palSetBusMode(const IOBus *bus, iomode_t mode);
 #if (PAL_USE_CALLBACKS == TRUE) || defined(__DOXYGEN__)
   void palSetPadCallbackI(ioportid_t port, iopadid_t pad,
                           palcallback_t cb, void *arg);
