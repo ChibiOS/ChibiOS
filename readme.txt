@@ -101,6 +101,7 @@
 - EX:  Updated LIS302DL to 1.1.0.
 - EX:  Updated LPS25H to 1.1.0.
 - EX:  Updated LSM303DLHC to 1.1.0.
+- HAL: Fixed IOBus PAL functions missing the const qualifier (bug #940).
 - HAL: Fixed STM32 USBv1 driver does not reset data toggling bits on endpoint
        initialization (bug #939).
 - HAL: Fixed incorrect behavior of USB driver on SET CONFIGURATION (bug #938).
