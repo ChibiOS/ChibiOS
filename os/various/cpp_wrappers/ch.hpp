@@ -381,10 +381,26 @@ namespace chibios_rt {
   };
 
   /*------------------------------------------------------------------------*
+   * chibios_rt::CriticalSectionLocker                                      *
+   *------------------------------------------------------------------------*/
+  /**
+   * @brief   RAII helper for reentrant critical sections.
+   */
+  class CriticalSectionLocker {
+    volatile const ::syssts_t syssts = chSysGetStatusAndLockX();
+
+  public:
+    ~CriticalSectionLocker() {
+
+      chSysRestoreStatusX(syssts);
+    }
+  };
+
+  /*------------------------------------------------------------------------*
    * chibios_rt::Scheduler                                                  *
    *------------------------------------------------------------------------*/
   /**
-   * @brief Class encapsulating thelow level scheduler functionalities.
+   * @brief Class encapsulating the low level scheduler functionalities.
    */
   class Scheduler {
   public:
@@ -2057,6 +2073,28 @@ namespace chibios_rt {
     }
   };
 
+  /*------------------------------------------------------------------------*
+   * chibios_rt::MutexLocker                                                *
+   *------------------------------------------------------------------------*/
+  /**
+   * @brief   RAII helper for mutexes.
+   */
+  class MutexLocker
+  {
+    chibios_rt::Mutex& mutex;
+
+  public:
+      MutexLocker(Mutex& m) : mutex(m) {
+
+        mutex.lock();
+      }
+
+      ~MutexLocker() {
+
+        mutex.unlock();
+      }
+  };
+
 #if (CH_CFG_USE_CONDVARS == TRUE) || defined(__DOXYGEN__)
   /*------------------------------------------------------------------------*
    * chibios_rt::CondVar                                                    *
@@ -2926,7 +2964,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    inline size_t status(size_t &frag, size_t *largestp=0) {
+    size_t status(size_t &frag, size_t *largestp=0) {
 
       return chHeapStatus(&heap, &frag, largestp);
     }
