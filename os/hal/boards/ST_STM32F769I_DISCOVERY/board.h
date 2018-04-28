@@ -1173,7 +1173,7 @@
  * PG5  - FMC_BA1                   (alternate 12).
  * PG6  - EXT_SDA                   (input pullup).
  * PG7  - SAI1_MCLKA                (alternate 6).
- * PG8  - FMC_SDCLK                 (input floating).
+ * PG8  - FMC_SDCLK                 (alternate 12).
  * PG9  - SD_D0                     (alternate 11).
  * PG10 - SD_D1                     (alternate 11).
  * PG11 - RMII_TX_EN                (alternate 11).
@@ -1190,7 +1190,7 @@
                                      PIN_MODE_ALTERNATE(GPIOG_FMC_BA1) |    \
                                      PIN_MODE_INPUT(GPIOG_EXT_SDA) |        \
                                      PIN_MODE_ALTERNATE(GPIOG_SAI1_MCLKA) | \
-                                     PIN_MODE_INPUT(GPIOG_FMC_SDCLK) |      \
+                                     PIN_MODE_ALTERNATE(GPIOG_FMC_SDCLK) |  \
                                      PIN_MODE_ALTERNATE(GPIOG_SD_D0) |      \
                                      PIN_MODE_ALTERNATE(GPIOG_SD_D1) |      \
                                      PIN_MODE_ALTERNATE(GPIOG_RMII_TX_EN) | \
@@ -1270,7 +1270,7 @@
                                      PIN_AFIO_AF(GPIOG_FMC_BA1, 12U) |      \
                                      PIN_AFIO_AF(GPIOG_EXT_SDA, 0U) |       \
                                      PIN_AFIO_AF(GPIOG_SAI1_MCLKA, 6U))
-#define VAL_GPIOG_AFRH              (PIN_AFIO_AF(GPIOG_FMC_SDCLK, 0U) |     \
+#define VAL_GPIOG_AFRH              (PIN_AFIO_AF(GPIOG_FMC_SDCLK, 12U) |    \
                                      PIN_AFIO_AF(GPIOG_SD_D0, 11U) |        \
                                      PIN_AFIO_AF(GPIOG_SD_D1, 11U) |        \
                                      PIN_AFIO_AF(GPIOG_RMII_TX_EN, 11U) |   \

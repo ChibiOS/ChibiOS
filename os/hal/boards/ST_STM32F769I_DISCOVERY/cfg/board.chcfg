@@ -884,8 +884,8 @@
         Level="High"
         Speed="Maximum"
         Resistor="Floating"
-        Mode="Input"
-        Alternate="0" />
+        Mode="Alternate"
+        Alternate="12" />
       <pin9
         ID="SD_D0"
         Type="PushPull"

@@ -115,6 +115,8 @@
 - EX:  Updated LIS302DL to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LPS25H to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LSM303DLHC to 1.1.0 (backported to 18.2.1).
+- HAL: Fixed invalid settings in STM32F769I-Discovery board files (bug #942)
+       (backported to 18.2.1 and 17.6.5).
 - OTH: Fixed short branch to _unhandled_exception in vectors.S (bug #941)
        (backported to 18.2.1).
 - HAL: Fixed IOBus PAL functions missing the const qualifier (bug #940)
