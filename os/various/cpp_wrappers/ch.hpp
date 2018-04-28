@@ -2946,7 +2946,7 @@ namespace chibios_rt {
   /**
    * @brief   Template class encapsulating a pool of threads.
    */
-  template<size_t S, size_t N>
+  template<size_t S, size_t N, const char *C>
   class ThreadsPool : public BaseDynamicThread {
     THD_WORKING_AREA(working_areas, S)[N];
     MemoryPool threads_pool;
@@ -2975,7 +2975,7 @@ namespace chibios_rt {
       void _thd_start(void *arg);
 
       return ThreadReference(chThdCreateFromMemoryPool(&threads_pool.pool,
-                                                       "",
+                                                       C,
                                                        prio,
                                                        _thd_start,
                                                        this));
@@ -3016,7 +3016,6 @@ namespace chibios_rt {
     Heap &operator=(const Heap &) = delete;
     Heap(Heap &&) = default;
     Heap &operator=(Heap &&) = default;
-
 
     /**
      * @brief   Allocates an object from a heap.
