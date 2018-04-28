@@ -1312,8 +1312,8 @@ namespace chibios_rt {
    * chibios_rt::BaseStaticThread                                           *
    *------------------------------------------------------------------------*/
   /**
-   * @brief   Static threads template class.
-   * @details This class introduces static working area allocation.
+   * @brief   Static threads template base class.
+   * @details This class introduces static working area instantiation.
    *
    * @param N               the working area size for the thread class
    */
@@ -1324,18 +1324,7 @@ namespace chibios_rt {
 
   public:
     /**
-     * @brief   Thread constructor.
-     * @details The thread object is initialized but the thread is not
-     *          started here.
-     *
-     * @init
-     */
-    BaseStaticThread(void) : BaseThread() {
-
-    }
-
-    /**
-     * @brief   Creates and starts a system thread.
+     * @brief   Starts a static thread.
      *
      * @param[in] prio          thread priority
      * @return                  A reference to the created thread with
@@ -1349,6 +1338,15 @@ namespace chibios_rt {
       return ThreadReference(chThdCreateStatic(wa, sizeof(wa), prio,
                                                _thd_start, this));
     }
+  };
+
+  /*------------------------------------------------------------------------*
+   * chibios_rt::BaseDynamicThread                                          *
+   *------------------------------------------------------------------------*/
+  /**
+   * @brief   Dynamic threads base class.
+   */
+  class BaseDynamicThread : public BaseThread {
   };
 
   /*------------------------------------------------------------------------*
@@ -1463,7 +1461,7 @@ namespace chibios_rt {
    * @brief     Threads queue class.
    * @details   This class encapsulates a queue of threads.
    */
-  class ThreadsQueue : SynchronizationObject {
+  class ThreadsQueue : public SynchronizationObject {
     /**
      * @brief   Pointer to the system thread.
      */
@@ -1544,7 +1542,7 @@ namespace chibios_rt {
   /**
    * @brief   Class encapsulating a semaphore.
    */
-  class CounterSemaphore : SynchronizationObject {
+  class CounterSemaphore : public SynchronizationObject {
     /**
      * @brief   Embedded @p semaphore_t structure.
      */
@@ -1771,7 +1769,7 @@ namespace chibios_rt {
   /**
    * @brief   Class encapsulating a binary semaphore.
    */
-  class BinarySemaphore : SynchronizationObject {
+  class BinarySemaphore : public SynchronizationObject {
     /**
      * @brief   Embedded @p binary_semaphore_t structure.
      */
@@ -1957,7 +1955,7 @@ namespace chibios_rt {
   /**
    * @brief   Class encapsulating a mutex.
    */
-  class Mutex : SynchronizationObject {
+  class Mutex : public SynchronizationObject {
     /**
      * @brief   Embedded @p mutex_t structure.
      */
@@ -2134,7 +2132,7 @@ namespace chibios_rt {
    * @brief   Template class to be used for implementing a monitor.
    */
   template <unsigned N>
-  class Monitor: Mutex {
+  class Monitor: protected Mutex {
     condition_variable_t condvars[N];
 
   protected:
@@ -2780,7 +2778,7 @@ namespace chibios_rt {
    * chibios_rt::MemoryPool                                                 *
    *------------------------------------------------------------------------*/
   /**
-   * @brief   Class encapsulating a mailbox.
+   * @brief   Class encapsulating a memory pool.
    */
   class MemoryPool {
     /**
@@ -2923,13 +2921,11 @@ namespace chibios_rt {
    */
   template<class T, size_t N>
   class ObjectsPool : public MemoryPool {
-  private:
     /* The buffer is declared as an array of pointers to void for two
        reasons:
        1) The objects must be properly aligned to hold a pointer as
           first field.
-       2) There is no need to invoke constructors for object that are
-          into the pool.*/
+       2) Objects are dirtied when loaded in the pool.*/
     void *pool_buf[(N * sizeof (T)) / sizeof (void *)];
 
   public:
@@ -2943,6 +2939,48 @@ namespace chibios_rt {
       loadArray(pool_buf, N);
     }
   };
+
+  /*------------------------------------------------------------------------*
+   * chibios_rt::ThreadsPool                                                *
+   *------------------------------------------------------------------------*/
+  /**
+   * @brief   Template class encapsulating a pool of threads.
+   */
+  template<size_t S, size_t N>
+  class ThreadsPool : public BaseDynamicThread {
+    THD_WORKING_AREA(working_areas, S)[N];
+    MemoryPool threads_pool;
+
+  public:
+    /**
+     * @brief   ThreadsPool constructor.
+     *
+     * @init
+     */
+    ThreadsPool(void) : threads_pool(THD_WORKING_AREA_SIZE(S)) {
+
+      threads_pool.loadArray(working_areas, N);
+    }
+
+    /**
+     * @brief   Starts a dynamic thread from the pool.
+     *
+     * @param[in] prio          thread priority
+     * @return                  A reference to the created thread with
+     *                          reference counter set to one.
+     *
+     * @api
+     */
+    ThreadReference start(tprio_t prio) override {
+      void _thd_start(void *arg);
+
+      return ThreadReference(chThdCreateFromMemoryPool(&threads_pool.pool,
+                                                       "",
+                                                       prio,
+                                                       _thd_start,
+                                                       this));
+     }
+   };
 #endif /* CH_CFG_USE_MEMPOOLS == TRUE */
 
 #if (CH_CFG_USE_HEAP == TRUE) || defined(__DOXYGEN__)
