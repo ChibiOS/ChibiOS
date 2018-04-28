@@ -94,6 +94,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Change, chMtxGetNextMutexS() renamed to chMtxGetNextMutexX().
 - NEW: RT C++ wrapper reworked, now it is mostly inline code, added some new
        wrappers and methods. Added wrappers for more API functions. BaseThreads
        are no more descendants of ThreadReference.
