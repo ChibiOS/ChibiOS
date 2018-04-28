@@ -387,7 +387,7 @@ namespace chibios_rt {
    * @brief   RAII helper for reentrant critical sections.
    */
   class CriticalSectionLocker {
-    volatile const ::syssts_t syssts = chSysGetStatusAndLockX();
+    volatile const syssts_t syssts = chSysGetStatusAndLockX();
 
   public:
     ~CriticalSectionLocker() {
@@ -482,7 +482,7 @@ namespace chibios_rt {
    */
   class Timer {
     /**
-     * @brief   Embedded @p VirtualTimer structure.
+     * @brief   Embedded @p virtual_timer_t structure.
      */
     virtual_timer_t vt;
 
@@ -590,18 +590,16 @@ namespace chibios_rt {
    *            an object of this type.
    */
   class ThreadReference final {
-  public:
     /**
      * @brief   Pointer to the system thread.
      */
     thread_t *thread_ref;
 
+  public:
     /**
      * @brief   Thread reference constructor.
      *
-     * @param[in] tp            the target thread. This parameter can be
-     *                          @p nullptr if the thread is not known at
-     *                          creation time.
+     * @param[in] tp            the target thread
      *
      * @init
      */
@@ -619,6 +617,14 @@ namespace chibios_rt {
     bool isNull(void) const {
 
       return (bool)(thread_ref == nullptr);
+    }
+
+    /**
+     * @brief   Returns the low level pointer to the referenced thread.
+     */
+    thread_t *getInner(void) {
+
+      return thread_ref;
     }
 
     /**
@@ -849,7 +855,7 @@ namespace chibios_rt {
      */
     static ThreadReference nextThread(ThreadReference tref) {
 
-      return ThreadReference(chRegNextThread(tref.thread_ref));
+      return ThreadReference(chRegNextThread(tref.getInner()));
     }
 
     /**
@@ -1340,7 +1346,7 @@ namespace chibios_rt {
     /**
      * @brief   Pointer to the suspended thread.
      */
-    thread_reference_t thread_ref;
+    thread_reference_t thread_ref = nullptr;
 
   public:
     /**
@@ -1350,7 +1356,6 @@ namespace chibios_rt {
      */
     ThreadStayPoint() {
 
-      thread_ref = nullptr;
     }
 
     /* Prohibit copy construction and assignment.*/
@@ -1426,13 +1431,23 @@ namespace chibios_rt {
   };
 
   /*------------------------------------------------------------------------*
+   * chibios_rt::SynchronizationObject                                      *
+   *------------------------------------------------------------------------*/
+  /**
+   * @brief     Base class for all synchronization objects.
+   * @note      No other uses.
+   */
+  class SynchronizationObject {
+  };
+
+  /*------------------------------------------------------------------------*
    * chibios_rt::ThreadsQueue                                               *
    *------------------------------------------------------------------------*/
   /**
    * @brief     Threads queue class.
    * @details   This class encapsulates a queue of threads.
    */
-  class ThreadsQueue {
+  class ThreadsQueue : SynchronizationObject {
     /**
      * @brief   Pointer to the system thread.
      */
@@ -1513,16 +1528,16 @@ namespace chibios_rt {
   /**
    * @brief   Class encapsulating a semaphore.
    */
-  class CounterSemaphore {
+  class CounterSemaphore : SynchronizationObject {
     /**
-     * @brief   Embedded @p ::Semaphore structure.
+     * @brief   Embedded @p semaphore_t structure.
      */
     semaphore_t sem;
 
   public:
     /**
      * @brief   CounterSemaphore constructor.
-     * @details The embedded @p ::Semaphore structure is initialized.
+     * @details The embedded @p Semaphore structure is initialized.
      *
      * @param[in] n             the semaphore counter value, must be greater
      *                          or equal to zero
@@ -1740,9 +1755,9 @@ namespace chibios_rt {
   /**
    * @brief   Class encapsulating a binary semaphore.
    */
-  class BinarySemaphore {
+  class BinarySemaphore : SynchronizationObject {
     /**
-     * @brief   Embedded @p ::Semaphore structure.
+     * @brief   Embedded @p binary_semaphore_t structure.
      */
     binary_semaphore_t bsem;
 
@@ -1926,16 +1941,16 @@ namespace chibios_rt {
   /**
    * @brief   Class encapsulating a mutex.
    */
-  class Mutex {
+  class Mutex : SynchronizationObject {
     /**
-     * @brief   Embedded @p ::Mutex structure.
+     * @brief   Embedded @p mutex_t structure.
      */
     mutex_t mutex;
 
   public:
     /**
      * @brief   Mutex object constructor.
-     * @details The embedded @p ::Mutex structure is initialized.
+     * @details The embedded @p mutex_t structure is initialized.
      *
      * @init
      */
@@ -2081,7 +2096,7 @@ namespace chibios_rt {
    */
   class MutexLocker
   {
-    chibios_rt::Mutex& mutex;
+    Mutex& mutex;
 
   public:
       MutexLocker(Mutex& m) : mutex(m) {
@@ -2097,159 +2112,180 @@ namespace chibios_rt {
 
 #if (CH_CFG_USE_CONDVARS == TRUE) || defined(__DOXYGEN__)
   /*------------------------------------------------------------------------*
-   * chibios_rt::CondVar                                                    *
+   * chibios_rt::Monitor                                                    *
    *------------------------------------------------------------------------*/
   /**
-   * @brief   Class encapsulating a conditional variable.
+   * @brief   Template class to be used for implementing a monitor.
    */
-  class CondVar {
-    /**
-     * @brief   Embedded @p ::CondVar structure.
-     */
-    condition_variable_t condvar;
+  template <unsigned N>
+  class Monitor: Mutex {
+    condition_variable_t condvars[N];
 
-  public:
+  protected:
     /**
-     * @brief   CondVar object constructor.
-     * @details The embedded @p ::CondVar structure is initialized.
+     * @brief   Waits on the condition variable releasing the mutex lock.
      *
-     * @init
-     */
-    CondVar(void) {
-
-      chCondObjectInit(&condvar);
-    }
-
-    /**
-     * @brief   Signals one thread that is waiting on the condition variable.
+     * @param[in] var       the condition variable index
+     * @return              A message specifying how the invoking thread has
+     *                      been released from the condition variable.
+     * @retval MSG_OK       if the condition variable has been signaled using
+     *                      @p signal().
+     * @retval MSG_RESET    if the condition variable has been signaled using
+     *                      @p broadcast().
      *
      * @api
      */
-    void signal(void) {
+    msg_t wait(unsigned var) {
 
-      chCondSignal(&condvar);
-    }
+      chDbgCheck(var < N);
 
-    /**
-     * @brief   Signals one thread that is waiting on the condition variable.
-     * @post    This function does not reschedule so a call to a rescheduling
-     *          function must be performed before unlocking the kernel. Note
-     *          that interrupt handlers always reschedule on exit so an
-     *          explicit reschedule must not be performed in ISRs.
-     *
-     * @iclass
-     */
-    void signalI(void) {
-
-      chCondSignalI(&condvar);
-    }
-
-    /**
-     * @brief   Signals all threads that are waiting on the condition variable.
-     *
-     * @api
-     */
-    void broadcast(void) {
-
-      chCondBroadcast(&condvar);
-    }
-
-    /**
-     * @brief   Signals all threads that are waiting on the condition variable.
-     * @post    This function does not reschedule so a call to a rescheduling
-     *          function must be performed before unlocking the kernel. Note
-     *          that interrupt handlers always reschedule on exit so an
-     *          explicit reschedule must not be performed in ISRs.
-     *
-     * @iclass
-     */
-    void broadcastI(void) {
-
-      chCondBroadcastI(&condvar);
+      return chCondWait(&condvars[var]);
     }
 
     /**
      * @brief   Waits on the condition variable releasing the mutex lock.
-     * @details Releases the currently owned mutex, waits on the condition
-     *          variable, and finally acquires the mutex again. All the
-     *          sequence is performed atomically.
-     * @pre     The invoking thread <b>must</b> have at least one owned mutex.
      *
+     * @param[in] var       the condition variable index
      * @return              A message specifying how the invoking thread has
      *                      been released from the condition variable.
-     * @retval MSG_OK       if the condvar has been signaled using
-     *                      @p chCondSignal().
-     * @retval MSG_RESET    if the condvar has been signaled using
-     *                      @p chCondBroadcast().
-     *
-     * @api
-     */
-    msg_t wait(void) {
-
-      return chCondWait(&condvar);
-    }
-
-    /**
-     * @brief   Waits on the condition variable releasing the mutex lock.
-     * @details Releases the currently owned mutex, waits on the condition
-     *          variable, and finally acquires the mutex again. All the
-     *          sequence is performed atomically.
-     * @pre     The invoking thread <b>must</b> have at least one owned mutex.
-     *
-     * @return              A message specifying how the invoking thread has
-     *                      been released from the condition variable.
-     * @retval MSG_OK       if the condvar has been signaled using
-     *                      @p chCondSignal().
-     * @retval MSG_RESET    if the condvar has been signaled using
-     *                      @p chCondBroadcast().
+     * @retval MSG_OK       if the condition variable has been signaled using
+     *                      @p signal().
+     * @retval MSG_RESET    if the condition variable has been signaled using
+     *                      @p broadcast().
      *
      * @sclass
      */
-    msg_t waitS(void) {
+    msg_t waitS(unsigned var) {
 
-      return chCondWaitS(&condvar);
+      chDbgCheck(var < N);
+
+      return chCondWaitS(&condvars[var]);
     }
 
 #if (CH_CFG_USE_CONDVARS_TIMEOUT == TRUE) || defined(__DOXYGEN__)
     /**
      * @brief   Waits on the CondVar while releasing the controlling mutex.
      *
-     * @param[in] timeout       the number of ticks before the operation fails
-     * @return                  The wakep mode.
-     * @retval MSG_OK if        the condvar was signaled using
-     *                          @p chCondSignal().
-     * @retval MSG_RESET        if the condvar was signaled using
-     *                          @p chCondBroadcast().
-     * @retval MSG_TIMEOUT      if the condvar was not signaled within the
-     *                          specified timeout.
+     * @param[in] var       the condition variable index
+     * @param[in] timeout   the number of ticks before the operation fails
+     * @return              The wakep mode.
+     * @retval MSG_OK       if the condition variable was signaled using
+     *                      @p signal().
+     * @retval MSG_RESET    if the condition variable was signaled using
+     *                      @p broadcast().
+     * @retval MSG_TIMEOUT  if the condition variable was not signaled
+     *                      within the specified timeout.
      *
      * @api
      */
-    msg_t wait(sysinterval_t timeout) {
+    msg_t wait(unsigned var, sysinterval_t timeout) {
 
-      return chCondWaitTimeout(&condvar, timeout);
+      chDbgCheck(var < N);
+
+      return chCondWaitTimeout(&condvars[var], timeout);
     }
 
     /**
      * @brief   Waits on the CondVar while releasing the controlling mutex.
      *
-     * @param[in] timeout       the number of ticks before the operation fails
-     * @return                  The wakep mode.
-     * @retval MSG_OK if        the condvar was signaled using
-     *                          @p chCondSignal().
-     * @retval MSG_RESET        if the condvar was signaled using
-     *                          @p chCondBroadcast().
-     * @retval MSG_TIMEOUT      if the condvar was not signaled within the
-     *                          specified timeout.
+     * @param[in] var       the condition variable index
+     * @param[in] timeout   the number of ticks before the operation fails
+     * @return              The wakep mode.
+     * @retval MSG_OK       if the condition variable was signaled using
+     *                      @p signal().
+     * @retval MSG_RESET    if the condition variable was signaled using
+     *                      @p broadcast().
+     * @retval MSG_TIMEOUT  if the condition variable was not signaled
+     *                      within the specified timeout.
      *
      * @sclass
      */
-    msg_t waitS(sysinterval_t timeout) {
+    msg_t waitS(unsigned var, sysinterval_t timeout) {
 
-      return chCondWaitTimeoutS(&condvar, timeout);
+      chDbgCheck(var < N);
+
+      return chCondWaitTimeoutS(&condvars[var], timeout);
     }
 #endif /* CH_CFG_USE_CONDVARS_TIMEOUT == TRUE */
+
+  public:
+    /**
+     * @brief   Monitor object constructor.
+     *
+     * @init
+     */
+    Monitor(void) : Mutex() {
+
+      for (unsigned i = 0; i < N; i++) {
+        chCondObjectInit(&condvars[i]);
+      }
+    }
+
+    /**
+     * @brief   Signals one thread that is waiting on the condition variable.
+     *
+     * @param[in] var       the condition variable index
+     *
+     * @api
+     */
+    void signal(unsigned var) {
+
+      chDbgCheck(var < N);
+
+      chCondSignal(&condvars[var]);
+    }
+
+    /**
+     * @brief   Signals one thread that is waiting on the condition variable.
+     * @post    This function does not reschedule so a call to a rescheduling
+     *          function must be performed before unlocking the kernel. Note
+     *          that interrupt handlers always reschedule on exit so an
+     *          explicit reschedule must not be performed in ISRs.
+     *
+     * @param[in] var       the condition variable index
+     *
+     * @iclass
+     */
+    void signalI(unsigned var) {
+
+      chDbgCheck(var < N);
+
+      chCondSignalI(&condvars[var]);
+    }
+
+    /**
+     * @brief   Signals all threads that are waiting on the condition variable.
+     *
+     * @param[in] var       the condition variable index
+     *
+     * @api
+     */
+    void broadcast(unsigned var) {
+
+      chDbgCheck(var < N);
+
+      chCondBroadcast(&condvars[var]);
+    }
+
+    /**
+     * @brief   Signals all threads that are waiting on the condition variable.
+     * @post    This function does not reschedule so a call to a rescheduling
+     *          function must be performed before unlocking the kernel. Note
+     *          that interrupt handlers always reschedule on exit so an
+     *          explicit reschedule must not be performed in ISRs.
+     *
+     * @param[in] var       the condition variable index
+     *
+     * @iclass
+     */
+    void broadcastI(unsigned var) {
+
+      chDbgCheck(var < N);
+
+      chCondBroadcastI(&condvars[var]);
+    }
   };
+
 #endif /* CH_CFG_USE_CONDVARS == TRUE */
 #endif /* CH_CFG_USE_MUTEXES == TRUE */
 
@@ -2260,18 +2296,18 @@ namespace chibios_rt {
   /**
    * @brief   Class encapsulating an event listener.
    */
-  class EvtListener {
+  class EventListener {
   public:
     /**
-     * @brief   Embedded @p ::EventListener structure.
+     * @brief   Embedded @p event_listener_t structure.
      */
     event_listener_t ev_listener;
 
     /**
      * @brief   Returns the pending flags from the listener and clears them.
      *
-     * @return                  The flags added to the listener by the
-     *                          associated event source.
+     * @return              The flags added to the listener by the
+     *                      associated event source.
      *
      * @api
      */
@@ -2281,8 +2317,8 @@ namespace chibios_rt {
     }
 
     /**
-     * @brief   Returns the flags associated to an @p EventListener.
-     * @details The flags are returned and the @p EventListener flags mask is
+     * @brief   Returns the flags associated to an @p event_listener_t.
+     * @details The flags are returned and the @p event_listener_t flags mask is
      *          cleared.
      *
      * @return              The flags added to the listener by the associated
@@ -2302,20 +2338,20 @@ namespace chibios_rt {
   /**
    * @brief   Class encapsulating an event source.
    */
-  class EvtSource {
+  class EventSource {
     /**
-     * @brief   Embedded @p ::EventSource structure.
+     * @brief   Embedded @p event_source_t structure.
      */
     event_source_t ev_source;
 
    public:
    /**
      * @brief   EvtSource object constructor.
-     * @details The embedded @p ::EventSource structure is initialized.
+     * @details The embedded @p event_source_t structure is initialized.
      *
      * @init
      */
-    EvtSource(void) {
+    EventSource(void) {
 
       chEvtObjectInit(&ev_source);
     }
@@ -2323,13 +2359,13 @@ namespace chibios_rt {
     /**
      * @brief   Registers a listener on the event source.
      *
-     * @param[in] elp           pointer to the @p EvtListener object
-     * @param[in] eid           numeric identifier assigned to the Event
-     *                          Listener
+     * @param[in] elp       pointer to the @p EvtListener object
+     * @param[in] eid       numeric identifier assigned to the Event
+     *                      Listener
      *
      * @api
      */
-    void registerOne(chibios_rt::EvtListener *elp,
+    void registerOne(EventListener *elp,
                      eventid_t eid) {
 
       chEvtRegister(&ev_source, &elp->ev_listener, eid);
@@ -2339,13 +2375,13 @@ namespace chibios_rt {
      * @brief   Registers an Event Listener on an Event Source.
      * @note    Multiple Event Listeners can specify the same bits to be added.
      *
-     * @param[in] elp           pointer to the @p EvtListener object
-     * @param[in] emask         the mask of event flags to be pended to the
-     *                          thread when the event source is broadcasted
+     * @param[in] elp       pointer to the @p EvtListener object
+     * @param[in] emask     the mask of event flags to be pended to the
+     *                      thread when the event source is broadcasted
      *
      * @api
      */
-    void registerMask(chibios_rt::EvtListener *elp,
+    void registerMask(EventListener *elp,
                       eventmask_t emask) {
 
       chEvtRegisterMask(&ev_source, &elp->ev_listener, emask);
@@ -2356,11 +2392,11 @@ namespace chibios_rt {
      * @details The specified listeners is no more signaled by the event
      *          source.
      *
-     * @param[in] elp           the listener to be unregistered
+     * @param[in] elp       the listener to be unregistered
      *
      * @api
      */
-    void unregister(chibios_rt::EvtListener *elp) {
+    void unregister(EventListener *elp) {
 
       chEvtUnregister(&ev_source, &elp->ev_listener);
     }
@@ -2370,8 +2406,8 @@ namespace chibios_rt {
      * @details All the listeners registered on the event source are signaled
      *          and the flags are added to the listener's flags mask.
      *
-     * @param[in] flags         the flags set to be added to the listener
-     *                          flags mask
+     * @param[in] flags     the flags set to be added to the listener
+     *                      flags mask
      *
      * @api
      */
@@ -2385,8 +2421,8 @@ namespace chibios_rt {
      * @details All the listeners registered on the event source are signaled
      *          and the flags are added to the listener's flags mask.
      *
-     * @param[in] flags         the flags set to be added to the listener
-     *                          flags mask
+     * @param[in] flags     the flags set to be added to the listener
+     *                      flags mask
      *
      * @iclass
      */
@@ -2410,18 +2446,18 @@ namespace chibios_rt {
   class MailboxBase {
 
     /**
-     * @brief   Embedded @p ::Mailbox structure.
+     * @brief   Embedded @p mailbox_t structure.
      */
     mailbox_t mb;
 
    public:
    /**
      * @brief   Mailbox constructor.
-     * @details The embedded @p ::Mailbox structure is initialized.
+     * @details The embedded @p mailbox_t structure is initialized.
      *
-     * @param[in] buf           pointer to the messages buffer as an array of
-     *                          @p msg_t
-     * @param[in] n             number of elements in the buffer array
+     * @param[in] buf       pointer to the messages buffer as an array of
+     *                      @p msg_t
+     * @param[in] n         number of elements in the buffer array
      *
      * @init
      */
@@ -2732,7 +2768,7 @@ namespace chibios_rt {
    */
   class MemoryPool {
     /**
-     * @brief   Embedded @p ::MemoryPool structure.
+     * @brief   Embedded @p memory_pool_t structure.
      */
     memory_pool_t pool;
 
@@ -2902,7 +2938,7 @@ namespace chibios_rt {
    */
   class Heap {
     /**
-     * @brief   Embedded @p ::Heap structure.
+     * @brief   Embedded @p memory_heap_t structure.
      */
     memory_heap_t heap;
 
@@ -2975,8 +3011,8 @@ namespace chibios_rt {
    * chibios_rt::BaseSequentialStreamInterface                              *
    *------------------------------------------------------------------------*/
   /**
-   * @brief   Interface of a ::BaseSequentialStream.
-   * @note    You can cast a ::BaseSequentialStream to this interface and use
+   * @brief   Interface of a BaseSequentialStream.
+   * @note    You can cast a BaseSequentialStream to this interface and use
    *          it, the memory layout is the same.
    */
   class BaseSequentialStreamInterface {
