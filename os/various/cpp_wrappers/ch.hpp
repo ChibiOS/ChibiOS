@@ -598,12 +598,28 @@ namespace chibios_rt {
   public:
     /**
      * @brief   Thread reference constructor.
+     * @note    Do not call this version directly, this constructor is empty
+     *          and is here only to do nothing when an object of this kind
+     *          is declared then assigned.
+     * @note    Automatic instances of this object are not initialized
+     *          because this constructor, this is intentional.
      *
      * @param[in] tp            the target thread
      *
      * @init
      */
-    ThreadReference(thread_t *tp = nullptr) : thread_ref(tp) {
+    ThreadReference(void) {
+
+    }
+
+    /**
+     * @brief   Thread reference constructor.
+     *
+     * @param[in] tp            the target thread
+     *
+     * @init
+     */
+    ThreadReference(thread_t *tp) : thread_ref(tp) {
 
     }
 
