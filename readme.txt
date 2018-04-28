@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 17.6.5 ***
+- HAL: Fixed invalid settings in STM32F769I-Discovery board files (bug #942).
 - HAL: Fixed IOBus PAL functions missing the const qualifier (bug #940).
 - HAL: Fixed STM32 USBv1 driver does not reset data toggling bits on endpoint
        initialization (bug #939).
