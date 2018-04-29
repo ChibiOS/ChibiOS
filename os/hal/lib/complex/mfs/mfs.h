@@ -21,6 +21,7 @@
  * @file    mfs.h
  * @brief   Managed Flash Storage module header.
  *
+ * @addtogroup MFS
  * @{
  */
 
