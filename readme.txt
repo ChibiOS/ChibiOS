@@ -12,7 +12,6 @@
   |  +--hal/              - Builders for HAL.
   |  |  +--Doxyfile_*     - Doxygen project files (required for rebuild).
   |  |  +--html/          - Local HTML documentation (after rebuild).
-  |  |  +--reports/       - Test reports.
   |  |  +--rsc/           - Documentation resource files (required for rebuild).
   |  |  +--src/           - Documentation source files (required for rebuild).
   |  |  +--Doxyfile_*     - Doxygen project files (required for rebuild).
@@ -20,14 +19,12 @@
   |  +--nil/              - Builders for NIL.
   |  |  +--Doxyfile_*     - Doxygen project files (required for rebuild).
   |  |  +--html/          - Local HTML documentation (after rebuild).
-  |  |  +--reports/       - Test reports.
   |  |  +--rsc/           - Documentation resource files (required for rebuild).
   |  |  +--src/           - Documentation source files (required for rebuild).
   |  |  +--Doxyfile_*     - Doxygen project files (required for rebuild).
   |  |  +--index.html     - Local documentation access (after rebuild).
   |  +--rt/               - Builders for RT.
   |  |  +--html/          - Local HTML documentation (after rebuild).
-  |  |  +--reports/       - Test reports.
   |  |  +--rsc/           - Documentation resource files (required for rebuild).
   |  |  +--src/           - Documentation source files (required for rebuild).
   |  |  +--Doxyfile_*     - Doxygen project files (required for rebuild).
