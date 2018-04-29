@@ -49,7 +49,7 @@
 /**
  * @brief   ChibiOS version string.
  */
-#define CH_VERSION              "18.2.0"
+#define CH_VERSION              "18.2.1"
 
 /**
  * @brief   ChibiOS version release year.
@@ -64,12 +64,12 @@
 /**
  * @brief   ChibiOS version patch number.
  */
-#define CH_VERSION_PATCH        0
+#define CH_VERSION_PATCH        1
 
 /**
  * @brief   ChibiOS version nickname.
  */
-#define CH_VERSION_NICKNAME     "Amalfi"
+#define CH_VERSION_NICKNAME     "Ravello"
 /** @} */
 
 /*===========================================================================*/
