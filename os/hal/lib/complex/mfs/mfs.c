@@ -30,7 +30,7 @@
  *          banks (where possible) caused by power loss during operations.
  *          Both operations are transparent to the user.
  *
- * @addtogroup mfs
+ * @addtogroup MFS
  * @{
  */
 
@@ -422,9 +422,6 @@ static mfs_error_t mfs_bank_write_header(MFSDriver *mfsp,
  *                      - MFS_BANK_OK
  *                      .
  *
- * @param[in] foundcb   callback to be called for each found record or @p NULL
- * @param[in] endcb     callback to be called after scanning or @p NULL
- *
  * @return              The operation status.
  *
  * @notapi
@@ -777,7 +774,6 @@ static mfs_error_t mfs_try_mount(MFSDriver *mfsp) {
  * @brief   Configures and activates a MFS driver.
  *
  * @param[in] mfsp      pointer to the @p MFSDriver object
- * @param[in] config    pointer to the configuration
  * @return              The operation status.
  * @retval MFS_NO_ERROR if the operation has been successfully completed.
  * @retval MFS_WARN_GC  if the operation triggered a garbage collection.
