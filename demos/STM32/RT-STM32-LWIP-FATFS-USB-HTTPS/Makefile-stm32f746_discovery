@@ -127,7 +127,7 @@ CSRC = $(ALLCSRC) \
        $(TESTSRC) \
        $(CHIBIOS)/os/various/evtimer.c \
        $(CONFDIR)/portab.c \
-       src/usbcfg.c main.c
+       usbcfg.c main.c web/web.c web/cert.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
