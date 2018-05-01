@@ -1,0 +1,12 @@
+STM32 DMAv3 driver.
+
+Driver capability:
+
+- The driver supports the STM32 enhanced DMA controller found on H7 sub-family.
+- Support for cache flushing and invalidation.
+
+The file registry must export:
+
+STM32_HAS_DMAx              - Support for DMA unit "x" (1..2).
+STM32_DMAx_CHn_HANDLER      - Vector name for channel "n" (0..7).
+STM32_DMAx_CHn_NUMBER       - Vector number for channel "n" (0..7).
