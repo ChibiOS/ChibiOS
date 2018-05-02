@@ -105,7 +105,7 @@
        grow to include more functionalities.
        RT and NIL will contain only the core functionalities, everything else
        is shared library code.
-- EX.  Global version number moved to 1.2.0.
+- EX.  Global version number moved to 1.1.0.
 - EX:  Updated HTS221 to 1.1.1 (backported to 18.2.2).
 - EX:  Updated L3GD20 to 1.1.1 (backported to 18.2.2).
 - EX:  Updated LIS3DSH to 1.1.1 (backported to 18.2.2).
