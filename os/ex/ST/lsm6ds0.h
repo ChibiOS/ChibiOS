@@ -43,7 +43,7 @@
 /**
  * @brief   LSM6DS0 driver version string.
  */
-#define EX_LSM6DS0_VERSION                  "1.1.0"
+#define EX_LSM6DS0_VERSION                  "1.1.1"
 
 /**
  * @brief   LSM6DS0 driver version major number.
@@ -58,7 +58,7 @@
 /**
  * @brief   LSM6DS0 driver version patch number.
  */
-#define EX_LSM6DS0_PATCH                    0
+#define EX_LSM6DS0_PATCH                    1
 /** @} */
 
 /**
@@ -939,7 +939,7 @@ struct LSM6DS0Driver {
  * @brief   Samples bias values for the BaseGyroscope.
  * @note    The LSM6DS0 shall not be moved during the whole procedure.
  * @note    After this function internal bias is automatically updated.
- * @note    The behavior of this function depends on @P LSM6DS0_BIAS_ACQ_TIMES
+ * @note    The behavior of this function depends on @p LSM6DS0_BIAS_ACQ_TIMES
  *          and @p LSM6DS0_BIAS_SETTLING_US.
  *
  * @param[in] devp      pointer to @p LSM6DS0Driver.

@@ -42,7 +42,7 @@
 /**
  * @brief   LIS3MDL driver version string.
  */
-#define EX_LIS3MDL_VERSION                  "1.1.0"
+#define EX_LIS3MDL_VERSION                  "1.1.1"
 
 /**
  * @brief   LIS3MDL driver version major number.
@@ -57,7 +57,7 @@
 /**
  * @brief   LIS3MDL driver version patch number.
  */
-#define EX_LIS3MDL_PATCH                    0
+#define EX_LIS3MDL_PATCH                    1
 /** @} */
 
 /**
@@ -282,6 +282,9 @@
  */
 typedef struct LIS3MDLDriver LIS3MDLDriver;
 
+/**
+ * @brief   LIS3MDL slave address
+ */
 typedef enum {
   LIS3MDL_SAD_GND = 0x1C,           /**< Slave Address when SA1 is to GND   */
   LIS3MDL_SAD_VCC = 0x1E            /**< Slave Address when SA1 is to VCC   */
@@ -529,7 +532,7 @@ struct LIS3MDLDriver {
  * @note    The axes array must be at least the same size of the
  *          BaseCompass axes number.
  *
- * @param[in] ip        pointer to @p BaseCompass interface.
+ * @param[in] devp      pointer to @p BaseCompass interface.
  * @param[out] axes     a buffer which would be filled with raw data.
  *
  * @return              The operation status.
@@ -551,7 +554,7 @@ struct LIS3MDLDriver {
  * @note    The axes array must be at least the same size of the
  *          BaseCompass axes number.
  *
- * @param[in] ip        pointer to @p BaseCompass interface.
+ * @param[in] devp      pointer to @p BaseCompass interface.
  * @param[out] axes     a buffer which would be filled with cooked data.
  *
  * @return              The operation status.
@@ -571,7 +574,7 @@ struct LIS3MDLDriver {
  * @note    The bias buffer must be at least the same size of the
  *          BaseCompass axes number.
  *
- * @param[in] ip        pointer to @p BaseCompass interface.
+ * @param[in] devp      pointer to @p BaseCompass interface.
  * @param[in] bp        a buffer which contains biases.
  *
  * @return              The operation status.

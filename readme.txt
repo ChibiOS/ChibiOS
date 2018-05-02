@@ -85,6 +85,20 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+*** 18.2.2 ***
+- NEW: Added support for LDM303AGR 6 axis Accelerometer\Magnetometer MEMS.
+- NEW: Added support for LSM6DSL 6 axis Accelerometer\Gyroscope MEMS.
+- NEW: Added support for LPS22HB 2 axis Barometer\Thermometer MEMS.
+- EX.  Global version number moved to 1.1.0.
+- EX:  Updated HTS221 to 1.1.1.
+- EX:  Updated L3GD20 to 1.1.1.
+- EX:  Updated LIS3DSH to 1.1.1.
+- EX:  Updated LIS3MDL to 1.1.1.
+- EX:  Updated LPS25H to 1.1.1.
+- EX:  Updated LSM303DLHC to 1.1.1.
+- EX:  Updated LSM6DS0 to 1.1.1.
+- EX:  Fixed ChibiOS/EX documentation misalignments (bug #943).
+ 
 *** 18.2.1 ***
 - NEW: Added HAL support for STM32L443.
 - NEW: Improved some EX drivers and related test applications.

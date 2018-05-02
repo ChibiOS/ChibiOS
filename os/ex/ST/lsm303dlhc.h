@@ -43,7 +43,7 @@
 /**
  * @brief   LSM303DLHC driver version string.
  */
-#define EX_LSM303DLHC_VERSION               "1.1.0"
+#define EX_LSM303DLHC_VERSION               "1.1.1"
 
 /**
  * @brief   LSM303DLHC driver version major number.
@@ -58,7 +58,7 @@
 /**
  * @brief   LSM303DLHC driver version patch number.
  */
-#define EX_LSM303DLHC_PATCH                 0
+#define EX_LSM303DLHC_PATCH                 1
 /** @} */
 
 /**
@@ -829,7 +829,7 @@ struct LSM303DLHCDriver {
  * @note    The axes array must be at least the same size of the
  *          BaseCompass axes number.
  *
- * @param[in] ip        pointer to @p BaseCompass interface.
+ * @param[in] devp      pointer to @p BaseCompass interface.
  * @param[out] axes     a buffer which would be filled with raw data.
  *
  * @return              The operation status.
@@ -851,7 +851,7 @@ struct LSM303DLHCDriver {
  * @note    The axes array must be at least the same size of the
  *          BaseCompass axes number.
  *
- * @param[in] ip        pointer to @p BaseCompass interface.
+ * @param[in] devp      pointer to @p BaseCompass interface.
  * @param[out] axes     a buffer which would be filled with cooked data.
  *
  * @return              The operation status.
@@ -871,7 +871,7 @@ struct LSM303DLHCDriver {
  * @note    The bias buffer must be at least the same size of the
  *          BaseCompass axes number.
  *
- * @param[in] ip        pointer to @p BaseCompass interface.
+ * @param[in] devp      pointer to @p BaseCompass interface.
  * @param[in] bp        a buffer which contains biases.
  *
  * @return              The operation status.

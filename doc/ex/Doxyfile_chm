@@ -38,7 +38,7 @@ PROJECT_NAME           = ChibiOS/EX
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = 1.0.0
+PROJECT_NUMBER         = 1.1.0
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -238,14 +238,30 @@ TAB_SIZE               = 2
 # "Side Effects:". You can put \n's in the value part of an alias to insert
 # newlines.
 
-ALIASES                = "iclass=@par Function Class:\n This is an                           <b>I-Class</b> API, this function can be                           invoked from within a system lock zone by both                           threads and interrupt handlers." \
-                         "sclass=@par Function Class:\n This is an                           <b>S-Class</b> API, this function can be                           invoked from within a system lock zone by threads                           only." \
-                         "xclass=@par Function Class:\n This is an                           <b>X-Class</b> API, this function can be                           invoked from any context." \
-                         "api=@par Function Class:\n Normal API, this                           function can be invoked by regular system threads                           but not from within a lock zone." \
-                         "notapi=@par Function Class:\n Not an API, this                           function is for internal use only." \
-                         "isr=@par Function Class:\n Interrupt handler,                           this function should not be directly invoked." \
-                         "init=@par Function Class:\n Initializer, this                           function just initializes an object and can be                           invoked before the kernel is initialized." \
-                         "special=@par Function Class:\n Special function,                           this function has special requirements see the                           notes."
+ALIASES                = "iclass=@par Function Class:<br> This is an \
+                          <b>I-Class</b> API, this function can be \
+                          invoked from within a system lock zone by both \
+                          threads and interrupt handlers." \
+                         "sclass=@par Function Class:<br> This is an \
+                          <b>S-Class</b> API, this function can be \
+                          invoked from within a system lock zone by threads \
+                          only." \
+                         "xclass=@par Function Class:<br> This is an \
+                          <b>X-Class</b> API, this function can be \
+                          invoked from any context." \
+                         "api=@par Function Class:<br> Normal API, this \
+                          function can be invoked by regular system threads \
+                          but not from within a lock zone." \
+                         "notapi=@par Function Class:<br> Not an API, this \
+                          function is for internal use only." \
+                         "isr=@par Function Class:<br> Interrupt handler, \
+                          this function should not be directly invoked." \
+                         "init=@par Function Class:<br> Initializer, this \
+                          function just initializes an object and can be \
+                          invoked before the kernel is initialized." \
+                         "special=@par Function Class:<br> Special function, \
+                          this function has special requirements see the \
+                          notes."
 
 # This tag can be used to specify a number of word-keyword mappings (TCL only).
 # A mapping has the form "name=value". For example adding "class=itcl::class"

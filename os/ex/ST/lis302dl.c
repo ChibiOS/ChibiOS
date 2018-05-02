@@ -322,15 +322,14 @@ static msg_t acc_reset_sensivity(void *ip) {
  *          previous and next fullscale value.
  * @note    A recalibration is highly suggested after calling this function.
  *
- * @param[in] ip        pointer to @p LIS302DLDriver interface.
+ * @param[in] devp      pointer to @p LIS302DLDriver interface.
  * @param[in] fs        new fullscale value.
  *
  * @return              The operation status.
  * @retval MSG_OK       if the function succeeded.
  * @retval MSG_RESET    otherwise.
  */
-static msg_t acc_set_full_scale(LIS302DLDriver *devp,
-                                lis302dl_acc_fs_t fs) {
+static msg_t acc_set_full_scale(LIS302DLDriver *devp, lis302dl_acc_fs_t fs) {
   float newfs, scale;
   uint8_t i, cr;
   msg_t msg;
@@ -448,7 +447,7 @@ void lis302dlStart(LIS302DLDriver *devp, const LIS302DLConfig *config) {
   osalDbgCheck((devp != NULL) && (config != NULL));
 
   osalDbgAssert((devp->state == LIS302DL_STOP) || (devp->state == LIS302DL_READY),
-              "lis302dlStart(), invalid state");			
+              "lis302dlStart(), invalid state");
 
   devp->config = config;
 

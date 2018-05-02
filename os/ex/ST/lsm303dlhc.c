@@ -337,7 +337,7 @@ static msg_t acc_reset_sensivity(void *ip) {
  *          previous and next fullscale value.
  * @note    A recalibration is highly suggested after calling this function.
  *
- * @param[in] ip        pointer to @p LSM303DLHCDriver interface.
+ * @param[in] devp      pointer to @p LSM303DLHCDriver interface.
  * @param[in] fs        new fullscale value.
  *
  * @return              The operation status.
@@ -721,7 +721,7 @@ static msg_t comp_reset_sensivity(void *ip) {
  *          previous and next fullscale value.
  * @note    A recalibration is highly suggested after calling this function.
  *
- * @param[in] ip        pointer to @p LSM303DLHCDriver interface.
+ * @param[in] devp      pointer to @p LSM303DLHCDriver interface.
  * @param[in] fs        new fullscale value.
  *
  * @return              The operation status.

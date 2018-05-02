@@ -42,7 +42,7 @@
 /**
  * @brief   L3GD20 driver version string.
  */
-#define EX_L3GD20_VERSION                   "1.1.0"
+#define EX_L3GD20_VERSION                   "1.1.1"
 
 /**
  * @brief   L3GD20 driver version major number.
@@ -57,7 +57,7 @@
 /**
  * @brief   L3GD20 driver version patch number.
  */
-#define EX_L3GD20_PATCH                     0
+#define EX_L3GD20_PATCH                     1
 /** @} */
 
 /**
@@ -611,7 +611,7 @@ struct L3GD20Driver {
  * @brief   Samples bias values for the BaseGyroscope.
  * @note    The L3GD20 shall not be moved during the whole procedure.
  * @note    After this function internal bias is automatically updated.
- * @note    The behavior of this function depends on @P L3GD20_BIAS_ACQ_TIMES
+ * @note    The behavior of this function depends on @p L3GD20_BIAS_ACQ_TIMES
  *          and @p L3GD20_BIAS_SETTLING_US.
  *
  * @param[in] devp      pointer to @p L3GD20Driver.

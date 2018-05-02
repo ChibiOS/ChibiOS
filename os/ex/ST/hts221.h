@@ -44,7 +44,7 @@
 /**
  * @brief   HTS221 driver version string.
  */
-#define EX_HTS221_VERSION                   "1.1.0"
+#define EX_HTS221_VERSION                   "1.1.1"
 
 /**
  * @brief   HTS221 driver version major number.
@@ -59,7 +59,7 @@
 /**
  * @brief   HTS221 driver version patch number.
  */
-#define EX_HTS221_PATCH                     0
+#define EX_HTS221_PATCH                     1
 /** @} */
 
 /**
