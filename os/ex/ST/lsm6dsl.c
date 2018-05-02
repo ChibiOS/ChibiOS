@@ -329,15 +329,14 @@ static msg_t acc_reset_sensivity(void *ip) {
  *          previous and next fullscale value.
  * @note    A recalibration is highly suggested after calling this function.
  *
- * @param[in] ip        pointer to @p LSM6DSLDriver interface.
+ * @param[in] devp      pointer to @p LSM6DSLDriver interface.
  * @param[in] fs        new fullscale value.
  *
  * @return              The operation status.
  * @retval MSG_OK       if the function succeeded.
  * @retval MSG_RESET    otherwise.
  */
-static msg_t acc_set_full_scale(LSM6DSLDriver *devp,
-                                lsm6dsl_acc_fs_t fs) {
+static msg_t acc_set_full_scale(LSM6DSLDriver *devp, lsm6dsl_acc_fs_t fs) {
   float newfs, scale;
   uint8_t i, buff[2];
   msg_t msg;
@@ -528,7 +527,7 @@ static msg_t gyro_read_cooked(void *ip, float axes[]) {
  * @brief   Samples bias values for the BaseGyroscope.
  * @note    The LSM6DSL shall not be moved during the whole procedure.
  * @note    After this function internal bias is automatically updated.
- * @note    The behavior of this function depends on @P LSM6DSL_BIAS_ACQ_TIMES
+ * @note    The behavior of this function depends on @p LSM6DSL_BIAS_ACQ_TIMES
  *          and @p LSM6DSL_BIAS_SETTLING_US.
  *
  * @param[in] ip        pointer to @p BaseGyroscope interface.
@@ -712,7 +711,7 @@ static msg_t gyro_reset_sensivity(void *ip) {
  *          previous and next fullscale value.
  * @note    A recalibration is highly suggested after calling this function.
  *
- * @param[in] ip        pointer to @p BaseGyroscope interface.
+ * @param[in] devp      pointer to @p BaseGyroscope interface.
  * @param[in] fs        new fullscale value.
  *
  * @return              The operation status.

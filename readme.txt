@@ -105,6 +105,14 @@
        grow to include more functionalities.
        RT and NIL will contain only the core functionalities, everything else
        is shared library code.
+- EX.  Global version number moved to 1.2.0.
+- EX:  Updated HTS221 to 1.1.1 (backported to 18.2.2).
+- EX:  Updated L3GD20 to 1.1.1 (backported to 18.2.2).
+- EX:  Updated LIS3DSH to 1.1.1 (backported to 18.2.2).
+- EX:  Updated LIS3MDL to 1.1.1 (backported to 18.2.2).
+- EX:  Updated LPS25H to 1.1.1 (backported to 18.2.2).
+- EX:  Updated LSM303DLHC to 1.1.1 (backported to 18.2.2).
+- EX:  Updated LSM6DS0 to 1.1.1 (backported to 18.2.2).
 - EX:  Updated HTS221 to 1.1.0 (backported to 18.2.1).
 - EX:  Updated L3GD20 to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LIS3DSH to 1.1.0 (backported to 18.2.1).
@@ -112,6 +120,7 @@
 - EX:  Updated LIS302DL to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LPS25H to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LSM303DLHC to 1.1.0 (backported to 18.2.1).
+- EX:  Fixed ChibiOS/EX documentation misalignments (bug #943).
 - HAL: Fixed invalid settings in STM32F769I-Discovery board files (bug #942)
        (backported to 18.2.1 and 17.6.5).
 - OTH: Fixed short branch to _unhandled_exception in vectors.S (bug #941)

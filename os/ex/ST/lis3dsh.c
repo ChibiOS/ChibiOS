@@ -336,15 +336,14 @@ static msg_t acc_reset_sensivity(void *ip) {
  *          previous and next fullscale value.
  * @note    A recalibration is highly suggested after calling this function.
  *
- * @param[in] ip        pointer to @p LIS3DSHDriver interface.
+ * @param[in] devp      pointer to @p LIS3DSHDriver interface.
  * @param[in] fs        new fullscale value.
  *
  * @return              The operation status.
  * @retval MSG_OK       if the function succeeded.
  * @retval MSG_RESET    otherwise.
  */
-static msg_t acc_set_full_scale(LIS3DSHDriver *devp,
-                                lis3dsh_acc_fs_t fs) {
+static msg_t acc_set_full_scale(LIS3DSHDriver *devp, lis3dsh_acc_fs_t fs) {
   float newfs, scale;
   uint8_t i, cr;
   msg_t msg;

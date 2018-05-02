@@ -960,7 +960,7 @@ struct LSM6DSLDriver {
  * @brief   Samples bias values for the BaseGyroscope.
  * @note    The LSM6DSL shall not be moved during the whole procedure.
  * @note    After this function internal bias is automatically updated.
- * @note    The behavior of this function depends on @P LSM6DSL_BIAS_ACQ_TIMES
+ * @note    The behavior of this function depends on @p LSM6DSL_BIAS_ACQ_TIMES
  *          and @p LSM6DSL_BIAS_SETTLING_US.
  *
  * @param[in] devp      pointer to @p LSM6DSLDriver.

@@ -189,7 +189,7 @@ static msg_t gyro_read_cooked(void *ip, float axes[]) {
  * @brief   Samples bias values for the BaseGyroscope.
  * @note    The L3GD20 shall not be moved during the whole procedure.
  * @note    After this function internal bias is automatically updated.
- * @note    The behavior of this function depends on @P L3GD20_BIAS_ACQ_TIMES
+ * @note    The behavior of this function depends on @p L3GD20_BIAS_ACQ_TIMES
  *          and @p L3GD20_BIAS_SETTLING_US.
  *
  * @param[in] ip        pointer to @p BaseGyroscope interface.
@@ -368,7 +368,7 @@ static msg_t gyro_reset_sensivity(void *ip) {
  *          previous and next fullscale value.
  * @note    A recalibration is highly suggested after calling this function.
  *
- * @param[in] ip        pointer to @p BaseGyroscope interface.
+ * @param[in] devp      pointer to @p BaseGyroscope interface.
  * @param[in] fs        new fullscale value.
  *
  * @return              The operation status.

@@ -811,7 +811,7 @@ struct LSM303AGRDriver {
  * @note    The axes array must be at least the same size of the
  *          BaseCompass axes number.
  *
- * @param[in] ip        pointer to @p BaseCompass interface.
+ * @param[in] devp      pointer to @p BaseCompass interface.
  * @param[out] axes     a buffer which would be filled with raw data.
  *
  * @return              The operation status.
@@ -833,7 +833,7 @@ struct LSM303AGRDriver {
  * @note    The axes array must be at least the same size of the
  *          BaseCompass axes number.
  *
- * @param[in] ip        pointer to @p BaseCompass interface.
+ * @param[in] devp      pointer to @p BaseCompass interface.
  * @param[out] axes     a buffer which would be filled with cooked data.
  *
  * @return              The operation status.
@@ -853,7 +853,7 @@ struct LSM303AGRDriver {
  * @note    The bias buffer must be at least the same size of the
  *          BaseCompass axes number.
  *
- * @param[in] ip        pointer to @p BaseCompass interface.
+ * @param[in] devp      pointer to @p BaseCompass interface.
  * @param[in] bp        a buffer which contains biases.
  *
  * @return              The operation status.

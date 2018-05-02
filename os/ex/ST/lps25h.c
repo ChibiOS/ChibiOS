@@ -379,7 +379,7 @@ static msg_t thermo_read_raw(void *ip, int32_t axes[]) {
  *          BaseThermometer axes number.
  *
  * @param[in] ip        pointer to @p BaseThermometer interface.
- * @param[out] axes     a buffer which would be filled with cooked data.
+ * @param[out] axis     a buffer which would be filled with cooked data.
  *
  * @return              The operation status.
  * @retval MSG_OK       if the function succeeded.

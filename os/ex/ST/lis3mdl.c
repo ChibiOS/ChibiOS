@@ -335,15 +335,14 @@ static msg_t comp_reset_sensivity(void *ip) {
  *          previous and next fullscale value.
  * @note    A recalibration is highly suggested after calling this function.
  *
- * @param[in] ip        pointer to @p LIS3MDLDriver interface.
+ * @param[in] devp      pointer to @p LIS3MDLDriver interface.
  * @param[in] fs        new fullscale value.
  *
  * @return              The operation status.
  * @retval MSG_OK       if the function succeeded.
  * @retval MSG_RESET    otherwise.
  */
-static msg_t comp_set_full_scale(LIS3MDLDriver *devp,
-                                 lis3mdl_comp_fs_t fs) {
+static msg_t comp_set_full_scale(LIS3MDLDriver *devp, lis3mdl_comp_fs_t fs) {
   float newfs, scale;
   uint8_t i, buff[2];
   msg_t msg;
