@@ -21,7 +21,10 @@
  * @file    chcustomer.h
  * @brief   Customer-related info.
  *
- * @addtogroup customer
+ * @addtogroup chibios_customer
+ * @details This module incapsulates licensee information, this is only
+ *          meaningful for commercial licenses. It is a stub for public
+ *          releases.
  * @{
  */
 

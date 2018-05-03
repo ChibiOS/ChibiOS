@@ -21,7 +21,9 @@
  * @file    chversion.h
  * @brief   Version Module macros and structures.
  *
- * @addtogroup version
+ * @addtogroup chibios_version
+ * @details This module contains information about the ChibiOS release, it
+ *          is common to all subsystems.
  * @{
  */
 

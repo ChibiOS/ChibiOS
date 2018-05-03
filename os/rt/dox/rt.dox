@@ -22,6 +22,7 @@
  * @details The kernel is the portable part of ChibiOS/RT, this section
  *          documents the various kernel subsystems.
  */
+ */
 
 /**
  * @defgroup kernel_info Version Numbers and Identification
@@ -44,8 +45,8 @@
  */
 
 /**
- * @defgroup checks License Checks
- * @ingroup kernel
+ * @defgroup rt_restrictions Restrictions
+ * @ingroup config_category
  */
 
 /**

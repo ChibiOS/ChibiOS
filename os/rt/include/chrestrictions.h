@@ -20,6 +20,11 @@
 /**
  * @file    chrestrictions.h
  * @brief   Licensing restrictions header.
+ *
+ * @addtogroup rt_restrictions
+ * @details This module is responsible for applying license-related
+ *          restrictions to the configuration options.
+ * @{
  */
 
 #ifndef CHRESTRICTIONS_H
@@ -109,3 +114,5 @@
 /*===========================================================================*/
 
 #endif /* CHRESTRICTIONS_H */
+
+/** @} */
