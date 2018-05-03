@@ -21,7 +21,7 @@
  * @file    chmboxes.c
  * @brief   Mailboxes code.
  *
- * @addtogroup mailboxes
+ * @addtogroup oslib_mailboxes
  * @details Asynchronous messages.
  *          <h2>Operation mode</h2>
  *          A mailbox is an asynchronous communication mechanism.<br>

@@ -21,7 +21,7 @@
  * @file    chmemheaps.c
  * @brief   Memory heaps code.
  *
- * @addtogroup memheaps
+ * @addtogroup oslib_memheaps
  * @details Heap Allocator related APIs.
  *          <h2>Operation mode</h2>
  *          The heap allocator implements a first-fit strategy and its APIs

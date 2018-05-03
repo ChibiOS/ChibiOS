@@ -23,7 +23,7 @@
  * @details This header includes all the required library headers. This file
  *          is meant do be included by @p ch.h not directly by user.
  *
- * @addtogroup library_info
+ * @addtogroup oslib_info
  * @details OS Library related info.
  * @{
  */

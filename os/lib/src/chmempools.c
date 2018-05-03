@@ -21,7 +21,7 @@
  * @file    chmempools.c
  * @brief   Memory Pools code.
  *
- * @addtogroup pools
+ * @addtogroup oslib_mempools
  * @details Memory Pools related APIs and services.
  *          <h2>Operation mode</h2>
  *          The Memory Pools APIs allow to allocate/free fixed size objects in

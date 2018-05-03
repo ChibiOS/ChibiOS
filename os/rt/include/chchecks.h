@@ -20,6 +20,12 @@
 /**
  * @file    chchecks.h
  * @brief   Configuration file checks header.
+ *
+ * @addtogroup conf_checks
+ * @details This module performs a series of checks on configuration data,
+ *          it is able to detect and reject obsolete or incomplete
+ *          @p chconf.h files.
+ * @{
  */
 
 #ifndef CHCHECKS_H
@@ -253,3 +259,5 @@
 /*===========================================================================*/
 
 #endif /* CHCHECKS_H */
+
+/** @} */

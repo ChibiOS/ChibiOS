@@ -21,7 +21,7 @@
  * @file    chfactory.c
  * @brief   ChibiOS objects factory and registry code.
  *
- * @addtogroup objects_factory
+ * @addtogroup oslib_objects_factory
  * @details The object factory is a subsystem that allows to:
  *          - Register static objects by name.
  *          - Dynamically create objects and assign them a name.

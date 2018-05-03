@@ -37,7 +37,7 @@
  *            can be blocking.
  *          .
  *
- * @addtogroup objects_fifo
+ * @addtogroup oslib_objects_fifos
  * @{
  */
 

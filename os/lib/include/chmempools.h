@@ -21,7 +21,7 @@
  * @file    chmempools.h
  * @brief   Memory Pools macros and structures.
  *
- * @addtogroup pools
+ * @addtogroup oslib_mempools
  * @{
  */
 

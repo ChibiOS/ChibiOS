@@ -22,6 +22,8 @@
  * @brief   Time and intervals macros and structures.
  *
  * @addtogroup time_intervals
+ * @details This module is responsible for handling of system time and time
+ *          intervals.
  * @{
  */
 
@@ -66,39 +68,6 @@
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
-
-/**
- * @brief   System time counter resolution.
- * @note    Allowed values are 16, 32 or 64 bits.
- */
-#if !defined(CH_CFG_ST_RESOLUTION) || defined(__DOXYGEN__)
-#define CH_CFG_ST_RESOLUTION                32
-#endif
-
-/**
- * @brief   System tick frequency.
- * @details Frequency of the system timer that drives the system ticks. This
- *          setting also defines the system tick time unit.
- */
-#if !defined(CH_CFG_ST_FREQUENCY) || defined(__DOXYGEN__)
-#define CH_CFG_ST_FREQUENCY                 1000
-#endif
-
-/**
- * @brief   Time intervals data size.
- * @note    Allowed values are 16, 32 or 64 bits.
- */
-#if !defined(CH_CFG_INTERVALS_SIZE) || defined(__DOXYGEN__)
-#define CH_CFG_INTERVALS_SIZE               32
-#endif
-
-/**
- * @brief   Time types data size.
- * @note    Allowed values are 16 or 32 bits.
- */
-#if !defined(CH_CFG_TIME_TYPES_SIZE) || defined(__DOXYGEN__)
-#define CH_CFG_TIME_TYPES_SIZE              32
-#endif
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */

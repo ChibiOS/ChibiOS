@@ -21,7 +21,7 @@
  * @file    chpipes.h
  * @brief   Pipes macros and structures.
  *
- * @addtogroup pipes
+ * @addtogroup oslib_pipes
  * @{
  */
 

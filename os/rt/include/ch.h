@@ -20,10 +20,10 @@
 /**
  * @file    ch.h
  * @brief   ChibiOS/RT main include file.
- * @details This header includes all the required kernel headers so it is the
- *          only kernel header you usually want to include in your application.
  *
  * @addtogroup kernel_info
+ * @details This header includes all the required kernel headers so it is the
+ *          only kernel header you usually want to include in your application.
  * @details Kernel related info.
  * @{
  */

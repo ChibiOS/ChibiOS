@@ -21,7 +21,7 @@
  * @file    chmemcore.h
  * @brief   Core memory manager macros and structures.
  *
- * @addtogroup memcore
+ * @addtogroup oslib_memcore
  * @{
  */
 

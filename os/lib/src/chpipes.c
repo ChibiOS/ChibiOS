@@ -20,8 +20,6 @@
 /**
  * @file    chpipes.c
  * @brief   Pipes code.
- *
- * @addtogroup pipes
  * @details Byte pipes.
  *          <h2>Operation mode</h2>
  *          A pipe is an asynchronous communication mechanism.<br>
@@ -34,6 +32,8 @@
  * @pre     In order to use the pipes APIs the @p CH_CFG_USE_PIPES
  *          option must be enabled in @p chconf.h.
  * @note    Compatible with RT and NIL.
+ *
+ * @addtogroup oslib_pipes
  * @{
  */
 

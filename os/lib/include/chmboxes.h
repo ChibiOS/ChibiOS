@@ -21,7 +21,7 @@
  * @file    chmboxes.h
  * @brief   Mailboxes macros and structures.
  *
- * @addtogroup mailboxes
+ * @addtogroup oslib_mailboxes
  * @{
  */
 

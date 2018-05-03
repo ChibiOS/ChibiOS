@@ -21,7 +21,7 @@
  * @file    chmemcore.c
  * @brief   Core memory manager code.
  *
- * @addtogroup memcore
+ * @addtogroup oslib_memcore
  * @details Core Memory Manager related APIs and services.
  *          <h2>Operation mode</h2>
  *          The core memory manager is a simplified allocator that only
@@ -30,8 +30,8 @@
  *          This allocator is meant as a memory blocks provider for the
  *          other allocators such as:
  *          - C-Runtime allocator (through a compiler specific adapter module).
- *          - Heap allocator (see @ref heaps).
- *          - Memory pools allocator (see @ref pools).
+ *          - Heap allocator (see @ref oslib_memheaps).
+ *          - Memory pools allocator (see @ref oslib_mempools).
  *          .
  *          By having a centralized memory provider the various allocators
  *          can coexist and share the main memory.<br>

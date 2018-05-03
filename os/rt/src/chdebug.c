@@ -21,7 +21,7 @@
  * @file    chdebug.c
  * @brief   Debug support code.
  *
- * @addtogroup debug
+ * @addtogroup checks_assertions
  * @details Debug APIs and services:
  *          - Runtime system state and call protocol check. The following
  *            panic messages can be generated:
@@ -69,10 +69,8 @@
  *              - S-class function not called from within a critical zone.
  *              - Called from an ISR.
  *            .
- *          - Trace buffer.
  *          - Parameters check.
  *          - Kernel assertions.
- *          - Kernel panics.
  *          .
  * @note    Stack checks are not implemented in this module but in the port
  *          layer in an architecture-dependent way.
