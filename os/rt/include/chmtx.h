@@ -123,7 +123,6 @@ extern "C" {
  * @param[out] mp       pointer to a @p mutex_t structure
  * @return              The mutex queue status.
  *
- * @deprecated
  * @sclass
  */
 static inline bool chMtxQueueNotEmptyS(mutex_t *mp) {
