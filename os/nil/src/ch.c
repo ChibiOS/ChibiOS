@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    ch.c
+ * @file    nil/src/ch.c
  * @brief   Nil RTOS main source file.
  *
  * @addtogroup NIL_KERNEL

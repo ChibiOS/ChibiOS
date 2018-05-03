@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    ch.h
+ * @file    rt/include/ch.h
  * @brief   ChibiOS/RT main include file.
  *
  * @addtogroup kernel_info
