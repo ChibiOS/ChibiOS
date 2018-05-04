@@ -22,7 +22,6 @@
  * @details The kernel is the portable part of ChibiOS/RT, this section
  *          documents the various kernel subsystems.
  */
- */
 
 /**
  * @defgroup kernel_info Version Numbers and Identification
