@@ -29,13 +29,23 @@
  */
 
 /**
- * @defgroup config Configuration
+ * @defgroup config_category Configuration
  * @ingroup kernel
  */
 
 /**
- * @defgroup checks License Checks
- * @ingroup kernel
+ * @defgroup config Options
+ * @ingroup config_category
+ */
+
+/**
+ * @defgroup conf_checks Checks
+ * @ingroup config_category
+ */
+
+/**
+ * @defgroup rt_restrictions Restrictions
+ * @ingroup config_category
  */
 
 /**
@@ -43,6 +53,11 @@
  * @details Base kernel services, the base subsystems are always included in
  *          the OS builds.
  * @ingroup kernel
+ */
+
+/**
+ * @defgroup mem Memory Alignment
+ * @ingroup base
  */
 
 /**
@@ -56,12 +71,22 @@
  */
 
 /**
+ * @defgroup time_intervals Time and Intervals
+ * @ingroup base
+ */
+
+/**
+ * @defgroup time Virtual Timers
+ * @ingroup base
+ */
+
+/**
  * @defgroup threads Threads
  * @ingroup base
  */
 
 /**
- * @defgroup time Time and Virtual Timers
+ * @defgroup time_measurement Time Measurement
  * @ingroup base
  */
 
@@ -73,11 +98,6 @@
 
 /**
  * @defgroup semaphores Counting Semaphores
- * @ingroup synchronization
- */
-
-/**
- * @defgroup binary_semaphores Binary Semaphores
  * @ingroup synchronization
  */
 
@@ -102,40 +122,8 @@
  */
 
 /**
- * @defgroup mailboxes Mailboxes
- * @ingroup synchronization
- */
-
-/**
- * @defgroup mem Memory Alignment
- * @details Memory Alignment services.
- * @ingroup kernel
- */
-
-/**
- * @defgroup memory Memory Management
- * @details Memory Management services.
- * @ingroup kernel
- */
-
-/**
- * @defgroup memcore Core Memory Manager
- * @ingroup memory
- */
-
-/**
- * @defgroup heaps Heaps
- * @ingroup memory
- */
-
-/**
- * @defgroup pools Memory Pools
- * @ingroup memory
- */
-
-/**
  * @defgroup dynamic_threads Dynamic Threads
- * @ingroup memory
+ * @ingroup kernel
  */
 
 /**
@@ -149,18 +137,18 @@
  */
 
 /**
- * @defgroup trace Trace
- * @ingroup kernel
+ * @defgroup checks_assertions Checks and Assertions
+ * @ingroup debug
  */
 
 /**
- * @defgroup time_measurement Time Measurement
- * @ingroup kernel
+ * @defgroup trace Tracing
+ * @ingroup debug
  */
 
 /**
  * @defgroup statistics Statistics
- * @ingroup kernel
+ * @ingroup debug
  */
 
 /**
