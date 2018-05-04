@@ -20,12 +20,8 @@
 /**
  * @file    templates/chcore.c
  * @brief   Port related template code.
- * @details This file is a template of the system driver functions provided by
- *          a port. Some of the following functions may be implemented as
- *          macros in chcore.h if the implementer decides that there is an
- *          advantage in doing so, for example because performance concerns.
  *
- * @addtogroup core
+ * @addtogroup port_core
  * @details Non portable code templates.
  * @{
  */

@@ -20,12 +20,12 @@
 /**
  * @file    templates/chtypes.h
  * @brief   System types template.
+ *
+ * @addtogroup port_types
  * @details The types defined in this file may change depending on the target
  *          architecture. You may also try to optimize the size of the various
  *          types in order to privilege size or performance, be careful in
  *          doing so.
- *
- * @addtogroup types
  * @{
  */
 
@@ -35,24 +35,6 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
-
-/**
- * @name    Common constants
- */
-/**
- * @brief   Generic 'false' boolean constant.
- */
-#if !defined(FALSE) || defined(__DOXYGEN__)
-#define FALSE               0
-#endif
-
-/**
- * @brief   Generic 'true' boolean constant.
- */
-#if !defined(TRUE) || defined(__DOXYGEN__)
-#define TRUE                (!FALSE)
-#endif
-/** @} */
 
 /**
  * @name    Kernel types

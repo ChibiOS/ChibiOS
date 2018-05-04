@@ -799,6 +799,7 @@ INPUT                  = ./src \
                          ../../os/lib/dox \
                          ../../os/lib/src \
                          ../../os/lib/include \
+                         ../../os/common/ports/templates \
                          ../../os/hal/dox \
                          ../../os/hal/src \
                          ../../os/hal/include \

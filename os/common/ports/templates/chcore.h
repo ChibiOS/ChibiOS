@@ -23,7 +23,7 @@
  * @details This file is a template of the system driver macros provided by
  *          a port.
  *
- * @addtogroup core
+ * @addtogroup port_core
  * @{
  */
 
