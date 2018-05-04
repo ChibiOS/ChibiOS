@@ -787,10 +787,12 @@ WARN_LOGFILE           =
 # Note: If this tag is empty the current directory is searched.
 
 INPUT                  = ./src \
+                         ../../os/license \
                          ../../os/rt/dox \
                          ../../os/rt/src \
                          ../../os/rt/include \
                          ../../os/rt/templates \
+                         ../../os/common/oslib/dox \
                          ../../os/common/oslib/src \
                          ../../os/common/oslib/include
 

@@ -20,8 +20,6 @@
 /**
  * @file    chbsem.h
  * @brief   Binary semaphores structures and macros.
- *
- * @addtogroup binary_semaphores
  * @details Binary semaphores related APIs and services.
  *          <h2>Operation mode</h2>
  *          Binary semaphores are implemented as a set of inline functions
@@ -43,6 +41,8 @@
  *          implement the priority inheritance protocol.<br>
  *          In order to use the binary semaphores APIs the
  *          @p CH_CFG_USE_SEMAPHORES option must be enabled in @p chconf.h.
+ *
+ * @addtogroup binary_semaphores
  * @{
  */
 
