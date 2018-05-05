@@ -64,7 +64,7 @@
 #define CH_STATE_CURRENT    (tstate_t)1      /**< @brief Currently running. */
 #define CH_STATE_WTSTART    (tstate_t)2      /**< @brief Just created.      */
 #define CH_STATE_SUSPENDED  (tstate_t)3      /**< @brief Suspended state.   */
-#define CH_STATE_QUEUED     (tstate_t)4      /**< @brief On an I/O queue.   */
+#define CH_STATE_QUEUED     (tstate_t)4      /**< @brief On a queue.        */
 #define CH_STATE_WTSEM      (tstate_t)5      /**< @brief On a semaphore.    */
 #define CH_STATE_WTMTX      (tstate_t)6      /**< @brief On a mutex.        */
 #define CH_STATE_WTCOND     (tstate_t)7      /**< @brief On a cond.variable.*/
