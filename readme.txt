@@ -91,6 +91,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added optional support for character match callback in the UART
+       high level driver.
 - NEW: Change, chMtxGetNextMutexS() renamed to chMtxGetNextMutexX().
 - NEW: RT C++ wrapper reworked, now it is mostly inline code, added some new
        wrappers and methods. Added wrappers for more API functions. BaseThreads

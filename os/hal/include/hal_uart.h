@@ -187,6 +187,23 @@ typedef enum {
 
 #if (UART_USE_WAIT == TRUE) || defined(__DOXYGEN__)
 /**
+ * @brief   Wakes up the waiting thread in case of RX character match.
+ *
+ * @param[in] uartp     pointer to the @p UARTDriver object
+ *
+ * @notapi
+ */
+#define _uart_wakeup_rx_cm_isr(uartp) {                                     \
+  osalSysLockFromISR();                                                     \
+  osalThreadResumeI(&(uartp)->threadrx, MSG_TIMEOUT);                       \
+  osalSysUnlockFromISR();                                                   \
+}
+#else /* !UART_USE_WAIT */
+#define _uart_wakeup_rx_cm_isr(uartp)
+#endif /* !UART_USE_WAIT */
+
+#if (UART_USE_WAIT == TRUE) || defined(__DOXYGEN__)
+/**
  * @brief   Wakes up the waiting thread in case of RX timeout.
  *
  * @param[in] uartp     pointer to the @p UARTDriver object
@@ -334,6 +351,27 @@ typedef enum {
     (uartp)->config->timeout_cb(uartp);                                     \
   }                                                                         \
   _uart_wakeup_rx_timeout_isr(uartp);                                       \
+}
+
+/**
+ * @brief   Character match ISR code for receiver.
+ * @details This code handles the portable part of the ISR code:
+ *          - Callback invocation.
+ *          - Waiting thread wakeup, if any.
+ *          - Driver state transitions.
+ *          .
+ * @note    This macro is meant to be used in the low level drivers
+ *          implementation only.
+ *
+ * @param[in] uartp     pointer to the @p UARTDriver object
+ *
+ * @notapi
+ */
+#define _uart_rx_char_match_isr_code(uartp) {                               \
+  if ((uartp)->config->rx_cm_cb != NULL) {                                  \
+    (uartp)->config->rx_cm_cb(uartp);                                       \
+  }                                                                         \
+  _uart_wakeup_rx_cm_isr(uartp);                                            \
 }
 
 /** @} */
