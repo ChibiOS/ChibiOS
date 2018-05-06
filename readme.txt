@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 17.6.5 ***
+- HAL: Fixed Mikroe clicker 2 misaligned board file (bug #945).
 - VAR: Fixed shell broken in 17.6.4 (bug #944).
 - HAL: Fixed invalid settings in STM32F769I-Discovery board files (bug #942).
 - HAL: Fixed IOBus PAL functions missing the const qualifier (bug #940).
