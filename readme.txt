@@ -86,6 +86,8 @@
 *****************************************************************************
 
 *** 18.2.2 ***
+- NEW: Added optional support for character match callback in the UART
+       high level driver.
 - NEW: Added support for LDM303AGR 6 axis Accelerometer\Magnetometer MEMS.
 - NEW: Added support for LSM6DSL 6 axis Accelerometer\Gyroscope MEMS.
 - NEW: Added support for LPS22HB 2 axis Barometer\Thermometer MEMS.
