@@ -97,6 +97,7 @@
 - EX:  Updated LPS25H to 1.1.1.
 - EX:  Updated LSM303DLHC to 1.1.1.
 - EX:  Updated LSM6DS0 to 1.1.1.
+- HAL: Fixed Mikroe clicker 2 misaligned board file (bug #945).
 - EX:  Fixed ChibiOS/EX documentation misalignments (bug #943).
  
 *** 18.2.1 ***

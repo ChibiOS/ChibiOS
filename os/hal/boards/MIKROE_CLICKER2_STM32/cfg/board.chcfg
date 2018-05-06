@@ -9,7 +9,7 @@
     <hal_version>5.0.x</hal_version>
   </configuration_settings>
   <board_name>Mikroe Clicker 2 for STM32</board_name>
-  <board_id>MIKROE_CLICKER_2_FOR_STM32</board_id>
+  <board_id>MIKROE_CLICKER2_STM32</board_id>
   <board_functions></board_functions>
   <subtype>STM32F407xx</subtype>
   <clocks 
