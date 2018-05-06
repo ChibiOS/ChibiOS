@@ -24,7 +24,7 @@
 #include <string.h>
 
 #define SERVER_PORT_NUM 8080
-#define SERVER_IP_ADDRESS "192.168.1.76"
+#define SERVER_IP_ADDRESS "192.168.1.104"
 
 void tcpexample(int port) {
   int socket_fd;
