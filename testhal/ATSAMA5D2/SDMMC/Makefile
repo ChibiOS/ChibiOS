@@ -127,27 +127,20 @@ include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/ARMCAx-TZ/compilers/GCC/mk/port_generic.mk
 # Other files (optional).
-#include $(CHIBIOS)/test/lib/test.mk
-#include $(CHIBIOS)/test/rt/rt_test.mk
-#include $(CHIBIOS)/test/oslib/oslib_test.mk
-include $(CHIBIOS)/os/various/reledge_bindings/reledge.mk
-#include $(CHIBIOS)/os/various/fatfs_bindings/fatfs.mk
+include $(CHIBIOS)/os/various/reledge_bindings/SAMA5D2x/reledge.mk
+include $(CHIBIOS)/os/various/fatfs_bindings/SAMA5D2x/fatfs.mk
 include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 
 # Define linker script file here
 #LDSCRIPT= $(STARTUPLD)/SAMA5D2.ld
 LDSCRIPT= $(STARTUPLD)/SAMA5D2ddr.ld
-FATFSINC = $(CHIBIOS)/ext/fatfs/src
+
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
 CSRC = $(ALLCSRC) \
        main.c fat32test.c reledgetest.c redconf.c
 
-CSRC += $(CHIBIOS)/os/various/syscalls.c
-CSRC += $(CHIBIOS)/os/various/fatfs_bindings/fatfs_syscall.c
-CSRC += $(CHIBIOS)/ext/fatfs/src/ff.c
-CSRC += $(CHIBIOS)/ext/fatfs/src/ffunicode.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -228,7 +221,7 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = -DPLATFORM_SDMMC_USE_SDMMC1=1
+UDEFS = -DPLATFORM_SDMMC_USE_SDMMC1=1 -DHAL_USE_TRNG=FALSE -DSDMMC_USE_RELEDGE_LIB=1 -DSDMMC_USE_FF_LIB=1
 
 # Define ASM defines here
 UADEFS =

@@ -24,13 +24,5 @@
 #endif
 
 
-#ifndef SDMMC_USE_FF_LIB
-#define SDMMC_USE_FF_LIB		1
-#endif
-
-#ifndef SDMMC_USE_RELEDGE_LIB
-#define SDMMC_USE_RELEDGE_LIB	1
-#endif
-
 #endif //SAMA_SDMMC_CONF_H
 

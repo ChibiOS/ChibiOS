@@ -18,14 +18,20 @@
 #include "hal.h"
 #include "sama_sdmmc_lld.h"
 #include "chprintf.h"
+
+#if SDMMC_USE_FF_LIB == 1
 #include "fat32test.h"
+#endif
+
+#if SDMMC_USE_RELEDGE_LIB == 1
 #include "reledgetest.h"
+#endif
 
 //-----------	DEMO CONFIGURATION	------------------------
 //0 (SLOT0) or 1 (SLOT1)
 #define DEMO_SLOT					0
 //1 for FFLib, 0 for Reliance
-#define DEMO_FAT					0
+#define DEMO_FAT					1
 //----------------------------------------------------------
 
 #define BLOCK_CNT_MAX               32u
@@ -118,9 +124,13 @@ int main(void) {
 		if (sdmmcOpenDevice(&SDMMCD1)) {
 
 #if DEMO_FAT	== 1
+#if SDMMC_USE_FF_LIB == 1
 			fat32test_demo();
+#endif
 #else
+#if SDMMC_USE_RELEDGE_LIB == 1
 			relianceedge_demo();
+#endif
 #endif
 
 			if (SDMMCD1.config->slot_id == SDMMC_SLOT1)
@@ -157,7 +167,8 @@ bool sdmmcGetInstance(uint8_t index, SdmmcDriver **sdmmcp)
 	(void)index;
 
 	*sdmmcp = &SDMMCD1;
-	read();
+
+	//read();
 
 	return true;
 }
