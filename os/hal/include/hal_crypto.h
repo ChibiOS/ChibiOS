@@ -33,6 +33,8 @@
 
 /**
  * @brief   Maximum size of a key for all supported algorithms.
+ * @note    It could be redefined by the LLD or the crypto fallback
+ *          implementations.
  */
 #define HAL_CRY_MAX_KEY_SIZE                32
 
@@ -106,7 +108,8 @@ typedef enum {
 typedef enum {
   cry_algo_none = 0,
   cry_algo_aes,                             /**< AES 128, 192, 256 bits.    */
-  cry_algo_des                              /**< DES 56, TDES 112, 168 bits.*/
+  cry_algo_des,                             /**< DES 56, TDES 112, 168 bits.*/
+  cry_algo_hmac                             /**< HMAC variable size.        */
 } cryalgorithm_t;
 
 #if HAL_CRY_ENFORCE_FALLBACK == FALSE
@@ -125,6 +128,8 @@ typedef enum {
     !defined(CRY_LLD_SUPPORTS_SHA1) ||                                      \
     !defined(CRY_LLD_SUPPORTS_SHA256) ||                                    \
     !defined(CRY_LLD_SUPPORTS_SHA512) ||                                    \
+    !defined(CRY_LLD_SUPPORTS_HMAC_SHA256) ||                               \
+    !defined(CRY_LLD_SUPPORTS_HMAC_SHA512) ||                               \
     !defined(CRY_LLD_SUPPORTS_TRNG)
 #error "CRYPTO LLD does not export the required switches"
 #endif
@@ -144,6 +149,8 @@ typedef enum {
 #define CRY_LLD_SUPPORTS_SHA1               FALSE
 #define CRY_LLD_SUPPORTS_SHA256             FALSE
 #define CRY_LLD_SUPPORTS_SHA512             FALSE
+#define CRY_LLD_SUPPORTS_HMAC_SHA256        FALSE
+#define CRY_LLD_SUPPORTS_HMAC_SHA512        FALSE
 #define CRY_LLD_SUPPORTS_TRNG               FALSE
 
 typedef uint_fast8_t crykey_t;
@@ -334,6 +341,24 @@ extern "C" {
                              size_t size, const uint8_t *in);
   cryerror_t crySHA512Final(CRYDriver *cryp, SHA512Context *sha512ctxp,
                             uint8_t *out);
+  cryerror_t cryHMACSHA256Init(CRYDriver *cryp,
+                               HMACSHA256Context *hmacsha256ctxp);
+  cryerror_t cryHMACSHA256Update(CRYDriver *cryp,
+                                 HMACSHA256Context *hmacsha256ctxp,
+                                 size_t size,
+                                 const uint8_t *in);
+  cryerror_t cryHMACSHA256Final(CRYDriver *cryp,
+                                HMACSHA256Context *hmacsha256ctxp,
+                                uint8_t *out);
+  cryerror_t cryHMACSHA512Init(CRYDriver *cryp,
+                               HMACSHA512Context *hmacsha512ctxp);
+  cryerror_t cryHMACSHA512Update(CRYDriver *cryp,
+                                 HMACSHA512Context *hmacsha512ctxp,
+                                 size_t size,
+                                 const uint8_t *in);
+  cryerror_t cryHMACSHA512Final(CRYDriver *cryp,
+                                HMACSHA512Context *hmacsha512ctxp,
+                                uint8_t *out);
   cryerror_t cryTRNG(CRYDriver *cryp, uint8_t *out);
 #ifdef __cplusplus
 }

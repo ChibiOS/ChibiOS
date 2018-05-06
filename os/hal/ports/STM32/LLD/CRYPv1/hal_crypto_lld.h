@@ -47,6 +47,8 @@
 #define CRY_LLD_SUPPORTS_SHA1               TRUE
 #define CRY_LLD_SUPPORTS_SHA256             TRUE
 #define CRY_LLD_SUPPORTS_SHA512             TRUE
+#define CRY_LLD_SUPPORTS_HMAC_SHA256        TRUE
+#define CRY_LLD_SUPPORTS_HMAC_SHA512        TRUE
 #define CRY_LLD_SUPPORTS_TRNG               TRUE
 /** @{ */
 
@@ -151,6 +153,24 @@ typedef struct {
 typedef struct {
   uint32_t dummy;
 } SHA512Context;
+#endif
+
+#if (CRY_LLD_SUPPORTS_HMAC_SHA256 == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Type of a HMAC_SHA256 context.
+ */
+typedef struct {
+  uint32_t dummy;
+} HMACSHA256Context;
+#endif
+
+#if (CRY_LLD_SUPPORTS_HMAC_SHA512 == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Type of a HMAC_SHA512 context.
+ */
+typedef struct {
+  uint32_t dummy;
+} HMACSHA512Context;
 #endif
 
 /*===========================================================================*/
@@ -292,6 +312,22 @@ extern "C" {
                                    size_t size, const uint8_t *in);
   cryerror_t cry_lld_SHA512_final(CRYDriver *cryp, SHA512Context *sha512ctxp,
                                   uint8_t *out);
+  cryerror_t cry_lld_HMACSHA256_init(CRYDriver *cryp,
+                                     HMACSHA256Context *hmacsha256ctxp);
+  cryerror_t cry_lld_HMACSHA256_update(CRYDriver *cryp,
+                                       HMACSHA256Context *hmacsha256ctxp,
+                                       size_t size, const uint8_t *in);
+  cryerror_t cry_lld_HMACSHA256_final(CRYDriver *cryp,
+                                      HMACSHA256Context *hmacsha256ctxp,
+                                      uint8_t *out);
+  cryerror_t cry_lld_HMACSHA512_init(CRYDriver *cryp,
+                                     HMACSHA512Context *hmacsha512ctxp);
+  cryerror_t cry_lld_HMACSHA512_update(CRYDriver *cryp,
+                                       HMACSHA512Context *hmacsha512ctxp,
+                                       size_t size, const uint8_t *in);
+  cryerror_t cry_lld_HMACSHA512_final(CRYDriver *cryp,
+                                      HMACSHA512Context *hmacsha512ctxp,
+                                      uint8_t *out);
   cryerror_t cry_lld_TRNG(CRYDriver *cryp, uint8_t *out);
 #ifdef __cplusplus
 }

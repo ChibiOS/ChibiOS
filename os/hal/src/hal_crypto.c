@@ -1237,7 +1237,7 @@ cryerror_t crySHA256Init(CRYDriver *cryp, SHA256Context *sha256ctxp) {
 
   osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
-#if CRY_LLD_SUPPORTS_SHA1 == TRUE
+#if CRY_LLD_SUPPORTS_SHA256 == TRUE
   return cry_lld_SHA256_init(cryp, sha256ctxp);
 #elif HAL_CRY_USE_FALLBACK == TRUE
   return cry_fallback_SHA256_init(cryp, sha256ctxp);
@@ -1271,7 +1271,7 @@ cryerror_t crySHA256Update(CRYDriver *cryp, SHA256Context *sha256ctxp,
 
   osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
-#if CRY_LLD_SUPPORTS_SHA1 == TRUE
+#if CRY_LLD_SUPPORTS_SHA256 == TRUE
   return cry_lld_SHA256_update(cryp, sha256ctxp, size, in);
 #elif HAL_CRY_USE_FALLBACK == TRUE
   return cry_fallback_SHA256_update(cryp, sha256ctxp, size, in);
@@ -1306,7 +1306,7 @@ cryerror_t crySHA256Final(CRYDriver *cryp, SHA256Context *sha256ctxp,
 
   osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
-#if CRY_LLD_SUPPORTS_SHA1 == TRUE
+#if CRY_LLD_SUPPORTS_SHA256 == TRUE
   return cry_lld_SHA256_final(cryp, sha256ctxp, out);
 #elif HAL_CRY_USE_FALLBACK == TRUE
   return cry_fallback_SHA256_final(cryp, sha256ctxp, out);
@@ -1338,7 +1338,7 @@ cryerror_t crySHA512Init(CRYDriver *cryp, SHA512Context *sha512ctxp) {
 
   osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
-#if CRY_LLD_SUPPORTS_SHA1 == TRUE
+#if CRY_LLD_SUPPORTS_SHA512 == TRUE
   return cry_lld_SHA512_init(cryp, sha512ctxp);
 #elif HAL_CRY_USE_FALLBACK == TRUE
   return cry_fallback_SHA512_init(cryp, sha512ctxp);
@@ -1372,7 +1372,7 @@ cryerror_t crySHA512Update(CRYDriver *cryp, SHA512Context *sha512ctxp,
 
   osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
-#if CRY_LLD_SUPPORTS_SHA1 == TRUE
+#if CRY_LLD_SUPPORTS_SHA512 == TRUE
   return cry_lld_SHA512_update(cryp, sha512ctxp, size, in);
 #elif HAL_CRY_USE_FALLBACK == TRUE
   return cry_fallback_SHA512_update(cryp, sha512ctxp, size, in);
@@ -1407,13 +1407,225 @@ cryerror_t crySHA512Final(CRYDriver *cryp, SHA512Context *sha512ctxp,
 
   osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
-#if CRY_LLD_SUPPORTS_SHA1 == TRUE
+#if CRY_LLD_SUPPORTS_SHA512 == TRUE
   return cry_lld_SHA512_final(cryp, sha512ctxp, out);
 #elif HAL_CRY_USE_FALLBACK == TRUE
   return cry_fallback_SHA512_final(cryp, sha512ctxp, out);
 #else
   (void)cryp;
   (void)sha512ctxp;
+  (void)out;
+
+  return CRY_ERR_INV_ALGO;
+#endif
+}
+
+/**
+ * @brief   Hash initialization using HMAC_SHA256.
+ * @note    Use of this algorithm is not recommended because proven weak.
+ *
+ * @param[in] cryp              pointer to the @p CRYDriver object
+ * @param[out] hmacsha256ctxp   pointer to a HMAC_SHA256 context to be
+ *                              initialized
+ * @return                      The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
+ *                              device instance.
+ *
+ * @api
+ */
+cryerror_t cryHMACSHA256Init(CRYDriver *cryp,
+                             HMACSHA256Context *hmacsha256ctxp) {
+
+  osalDbgCheck((cryp != NULL) && (hmacsha256ctxp != NULL));
+
+  osalDbgAssert(cryp->state == CRY_READY, "not ready");
+
+#if CRY_LLD_SUPPORTS_HMAC_SHA256 == TRUE
+  return cry_lld_HMACSHA256_init(cryp, hmacsha256ctxp);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_HMACSHA256_init(cryp, hmacsha256ctxp);
+#else
+  (void)cryp;
+  (void)hmacsha256ctxp;
+
+  return CRY_ERR_INV_ALGO;
+#endif
+}
+
+/**
+ * @brief   Hash update using HMAC.
+ * @note    Use of this algorithm is not recommended because proven weak.
+ *
+ * @param[in] cryp              pointer to the @p CRYDriver object
+ * @param[in] hmacsha256ctxp    pointer to a HMAC_SHA256 context
+ * @param[in] size              size of input buffer
+ * @param[in] in                buffer containing the input text
+ * @return                      The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
+ *                              device instance.
+ *
+ * @api
+ */
+cryerror_t cryHMACSHA256Update(CRYDriver *cryp,
+                               HMACSHA256Context *hmacsha256ctxp,
+                               size_t size,
+                               const uint8_t *in) {
+
+  osalDbgCheck((cryp != NULL) && (hmacsha256ctxp != NULL) && (in != NULL));
+
+  osalDbgAssert(cryp->state == CRY_READY, "not ready");
+
+#if CRY_LLD_SUPPORTS_HMAC_SHA256 == TRUE
+  return cry_lld_HMACSHA256_update(cryp, hmacsha256ctxp, size, in);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_HMACSHA256_update(cryp, hmacsha256ctxp, size, in);
+#else
+  (void)cryp;
+  (void)hmacsha256ctxp;
+  (void)size;
+  (void)in;
+
+  return CRY_ERR_INV_ALGO;
+#endif
+}
+
+/**
+ * @brief   Hash finalization using HMAC.
+ * @note    Use of this algorithm is not recommended because proven weak.
+ *
+ * @param[in] cryp              pointer to the @p CRYDriver object
+ * @param[in] hmacsha256ctxp    pointer to a HMAC_SHA256 context
+ * @param[out] out              256 bits output buffer
+ * @return                      The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
+ *                              device instance.
+ *
+ * @api
+ */
+cryerror_t cryHMACSHA256Final(CRYDriver *cryp,
+                              HMACSHA256Context *hmacsha256ctxp,
+                              uint8_t *out) {
+
+  osalDbgCheck((cryp != NULL) && (hmacsha256ctxp != NULL) && (out != NULL));
+
+  osalDbgAssert(cryp->state == CRY_READY, "not ready");
+
+#if CRY_LLD_SUPPORTS_HMAC_SHA256 == TRUE
+  return cry_lld_HMACSHA256_final(cryp, hmacsha256ctxp, out);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_HMACSHA256_final(cryp, hmacsha256ctxp, out);
+#else
+  (void)cryp;
+  (void)hmacsha256ctxp;
+  (void)out;
+
+  return CRY_ERR_INV_ALGO;
+#endif
+}
+
+/**
+ * @brief   Hash initialization using HMAC_SHA512.
+ * @note    Use of this algorithm is not recommended because proven weak.
+ *
+ * @param[in] cryp              pointer to the @p CRYDriver object
+ * @param[out] hmacsha512ctxp   pointer to a HMAC_SHA512 context to be
+ *                              initialized
+ * @return                      The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
+ *                              device instance.
+ *
+ * @api
+ */
+cryerror_t cryHMACSHA512Init(CRYDriver *cryp,
+                             HMACSHA512Context *hmacsha512ctxp) {
+
+  osalDbgCheck((cryp != NULL) && (hmacsha512ctxp != NULL));
+
+  osalDbgAssert(cryp->state == CRY_READY, "not ready");
+
+#if CRY_LLD_SUPPORTS_HMAC_SHA512 == TRUE
+  return cry_lld_HMACSHA512_init(cryp, hmacsha512ctxp);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_HMACSHA512_init(cryp, hmacsha512ctxp);
+#else
+  (void)cryp;
+  (void)hmacsha512ctxp;
+
+  return CRY_ERR_INV_ALGO;
+#endif
+}
+
+/**
+ * @brief   Hash update using HMAC.
+ * @note    Use of this algorithm is not recommended because proven weak.
+ *
+ * @param[in] cryp              pointer to the @p CRYDriver object
+ * @param[in] hmacsha512ctxp    pointer to a HMAC_SHA512 context
+ * @param[in] size              size of input buffer
+ * @param[in] in                buffer containing the input text
+ * @return                      The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
+ *                              device instance.
+ *
+ * @api
+ */
+cryerror_t cryHMACSHA512Update(CRYDriver *cryp,
+                               HMACSHA512Context *hmacsha512ctxp,
+                               size_t size,
+                               const uint8_t *in) {
+
+  osalDbgCheck((cryp != NULL) && (hmacsha512ctxp != NULL) && (in != NULL));
+
+  osalDbgAssert(cryp->state == CRY_READY, "not ready");
+
+#if CRY_LLD_SUPPORTS_HMAC_SHA512 == TRUE
+  return cry_lld_HMACSHA512_update(cryp, hmacsha512ctxp, size, in);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_HMACSHA512_update(cryp, hmacsha512ctxp, size, in);
+#else
+  (void)cryp;
+  (void)hmacsha512ctxp;
+  (void)size;
+  (void)in;
+
+  return CRY_ERR_INV_ALGO;
+#endif
+}
+
+/**
+ * @brief   Hash finalization using HMAC.
+ * @note    Use of this algorithm is not recommended because proven weak.
+ *
+ * @param[in] cryp              pointer to the @p CRYDriver object
+ * @param[in] hmacsha512ctxp    pointer to a HMAC_SHA512 context
+ * @param[out] out              512 bits output buffer
+ * @return                      The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
+ *                              device instance.
+ *
+ * @api
+ */
+cryerror_t cryHMACSHA512Final(CRYDriver *cryp,
+                              HMACSHA512Context *hmacsha512ctxp,
+                              uint8_t *out) {
+
+  osalDbgCheck((cryp != NULL) && (hmacsha512ctxp != NULL) && (out != NULL));
+
+  osalDbgAssert(cryp->state == CRY_READY, "not ready");
+
+#if CRY_LLD_SUPPORTS_HMAC_SHA512 == TRUE
+  return cry_lld_HMACSHA512_final(cryp, hmacsha512ctxp, out);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_HMACSHA512_final(cryp, hmacsha512ctxp, out);
+#else
+  (void)cryp;
+  (void)hmacsha512ctxp;
   (void)out;
 
   return CRY_ERR_INV_ALGO;

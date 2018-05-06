@@ -1064,6 +1064,158 @@ cryerror_t cry_lld_SHA512_final(CRYDriver *cryp, SHA512Context *sha512ctxp,
 }
 
 /**
+ * @brief   Hash initialization using HMAC_SHA256.
+ * @note    Use of this algorithm is not recommended because proven weak.
+ *
+ * @param[in] cryp              pointer to the @p CRYDriver object
+ * @param[out] hmacsha256ctxp   pointer to a HMAC_SHA256 context to be
+ *                              initialized
+ * @return                      The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
+ *                              device instance.
+ *
+ * @notapi
+ */
+cryerror_t cry_lld_HMACSHA256_init(CRYDriver *cryp,
+                                   HMACSHA256Context *hmacsha256ctxp) {
+
+  (void)cryp;
+  (void)hmacsha256ctxp;
+
+  return CRY_ERR_INV_ALGO;
+}
+
+/**
+ * @brief   Hash update using HMAC.
+ * @note    Use of this algorithm is not recommended because proven weak.
+ *
+ * @param[in] cryp              pointer to the @p CRYDriver object
+ * @param[in] hmacsha256ctxp    pointer to a HMAC_SHA256 context
+ * @param[in] size              size of input buffer
+ * @param[in] in                buffer containing the input text
+ * @return                      The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
+ *                              device instance.
+ *
+ * @notapi
+ */
+cryerror_t cry_lld_HMACSHA256_update(CRYDriver *cryp,
+                                     HMACSHA256Context *hmacsha256ctxp,
+                                     size_t size,
+                                     const uint8_t *in) {
+
+  (void)cryp;
+  (void)hmacsha256ctxp;
+  (void)size;
+  (void)in;
+
+  return CRY_ERR_INV_ALGO;
+}
+
+/**
+ * @brief   Hash finalization using HMAC.
+ * @note    Use of this algorithm is not recommended because proven weak.
+ *
+ * @param[in] cryp              pointer to the @p CRYDriver object
+ * @param[in] hmacsha256ctxp    pointer to a HMAC_SHA256 context
+ * @param[out] out              256 bits output buffer
+ * @return                      The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
+ *                              device instance.
+ *
+ * @notapi
+ */
+cryerror_t cry_lld_HMACSHA256_final(CRYDriver *cryp,
+                                    HMACSHA256Context *hmacsha256ctxp,
+                                    uint8_t *out) {
+
+  (void)cryp;
+  (void)hmacsha256ctxp;
+  (void)out;
+
+  return CRY_ERR_INV_ALGO;
+}
+
+/**
+ * @brief   Hash initialization using HMAC_SHA512.
+ * @note    Use of this algorithm is not recommended because proven weak.
+ *
+ * @param[in] cryp              pointer to the @p CRYDriver object
+ * @param[out] hmacsha512ctxp   pointer to a HMAC_SHA512 context to be
+ *                              initialized
+ * @return                      The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
+ *                              device instance.
+ *
+ * @notapi
+ */
+cryerror_t cry_lld_HMACSHA512_init(CRYDriver *cryp,
+                                   HMACSHA512Context *hmacsha512ctxp) {
+
+  (void)cryp;
+  (void)hmacsha512ctxp;
+
+  return CRY_ERR_INV_ALGO;
+}
+
+/**
+ * @brief   Hash update using HMAC.
+ * @note    Use of this algorithm is not recommended because proven weak.
+ *
+ * @param[in] cryp              pointer to the @p CRYDriver object
+ * @param[in] hmacsha512ctxp    pointer to a HMAC_SHA512 context
+ * @param[in] size              size of input buffer
+ * @param[in] in                buffer containing the input text
+ * @return                      The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
+ *                              device instance.
+ *
+ * @notapi
+ */
+cryerror_t cry_lld_HMACSHA512_update(CRYDriver *cryp,
+                                     HMACSHA512Context *hmacsha512ctxp,
+                                     size_t size,
+                                     const uint8_t *in) {
+
+  (void)cryp;
+  (void)hmacsha512ctxp;
+  (void)size;
+  (void)in;
+
+  return CRY_ERR_INV_ALGO;
+}
+
+/**
+ * @brief   Hash finalization using HMAC.
+ * @note    Use of this algorithm is not recommended because proven weak.
+ *
+ * @param[in] cryp              pointer to the @p CRYDriver object
+ * @param[in] hmacsha512ctxp    pointer to a HMAC_SHA512 context
+ * @param[out] out              512 bits output buffer
+ * @return                      The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
+ *                              device instance.
+ *
+ * @notapi
+ */
+cryerror_t cry_lld_HMACSHA512_final(CRYDriver *cryp,
+                                    HMACSHA512Context *hmacsha512ctxp,
+                                    uint8_t *out) {
+
+  (void)cryp;
+  (void)hmacsha512ctxp;
+  (void)out;
+
+  return CRY_ERR_INV_ALGO;
+}
+
+/**
  * @brief   True random numbers generator.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
