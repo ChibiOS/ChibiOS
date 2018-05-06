@@ -120,6 +120,8 @@
 - EX:  Updated LIS302DL to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LPS25H to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LSM303DLHC to 1.1.0 (backported to 18.2.1).
+- HAL: Fixed Mikroe clicker 2 misaligned board file (bug #945)
+       (backported to 18.2.2 and 17.6.5).
 - EX:  Fixed ChibiOS/EX documentation misalignments (bug #943).
 - HAL: Fixed invalid settings in STM32F769I-Discovery board files (bug #942)
        (backported to 18.2.1 and 17.6.5).
