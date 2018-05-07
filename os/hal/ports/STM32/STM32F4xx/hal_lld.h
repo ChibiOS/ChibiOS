@@ -914,6 +914,13 @@
 #endif
 
 /**
+ * @brief   TIM prescaler clock source.
+ */
+#if !defined(STM32_TIMPRE) || defined(__DOXYGEN__)
+#define STM32_TIMPRE                STM32_TIMPRE_PCLK
+#endif
+
+/**
  * @brief   PLL48CLK clock source.
  */
 #if !defined(STM32_CK48MSEL) || defined(__DOXYGEN__)
