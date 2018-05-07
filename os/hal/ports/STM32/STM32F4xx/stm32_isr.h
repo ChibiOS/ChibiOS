@@ -130,6 +130,12 @@
 #define STM32_TIM14_NUMBER          45
 
 /*
+ * LPTIM units.
+ */
+#define STM32_LPTIM1_HANDLER        Vector1C4
+
+#define STM32_LPTIM1_NUMBER         97
+/*
  * USART units.
  */
 #define STM32_USART1_HANDLER        VectorD4

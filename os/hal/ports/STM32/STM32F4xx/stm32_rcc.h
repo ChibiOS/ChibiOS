@@ -605,6 +605,30 @@
 /** @} */
 
 /**
+ * @brief   Enables the I2C4 peripheral clock.
+ *
+ * @api
+ */
+#define rccEnableI2C4() rccEnableAPB1(RCC_APB1ENR_FMPI2C1EN, lp)
+
+/**
+ * @brief   Disables the I2C4 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableI2C4(lp) rccDisableAPB1(RCC_APB1ENR_FMPI2C1EN, lp)
+
+/**
+ * @brief   Resets the I2C4 peripheral.
+ *
+ * @api
+ */
+#define rccResetI2C4() rccResetAPB1(RCC_APB1RSTR_FMPI2C1RST)
+/** @} */
+
+/**
  * @name    OTG peripherals specific RCC operations
  * @{
  */
@@ -1198,6 +1222,31 @@
 /** @} */
 
 /**
+ * @brief   Enables the LPTIM1 peripheral clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableLPTIM1(lp) rccEnableAPB1(RCC_APB1ENR_LPTIM1EN, lp)
+
+/**
+ * @brief   Disables the LPTIM1 peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableLPTIM1() rccDisableAPB1(RCC_APB1ENR_LPTIM1EN, lp)
+
+/**
+ * @brief   Resets the LPTIM1 peripheral.
+ *
+ * @api
+ */
+#define rccResetLPTIM1() rccResetAPB1(RCC_APB1RSTR_LPTIM1RST)
+/** @} */
+
+/**
  * @name    USART/UART peripherals specific RCC operations
  * @{
  */
@@ -1384,6 +1433,56 @@
  * @api
  */
 #define rccResetUART8() rccResetAPB1(RCC_APB1RSTR_UART8RST)
+/** @} */
+
+/**
+ * @brief   Enables the UART9 peripheral clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableUART9(lp) rccEnableAPB2(RCC_APB2ENR_UART9EN, lp)
+
+/**
+ * @brief   Disables the UART9 peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableUART9() rccDisableAPB2(RCC_APB2ENR_UART9EN, lp)
+
+/**
+ * @brief   Resets the UART9 peripheral.
+ *
+ * @api
+ */
+#define rccResetUART9() rccResetAPB2(RCC_APB2RSTR_UART9RST)
+/** @} */
+
+/**
+ * @brief   Enables the UART10 peripheral clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableUART10(lp) rccEnableAPB2(RCC_APB2ENR_UART10EN, lp)
+
+/**
+ * @brief   Disables the UART10 peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableUART10(lp) rccDisableAPB2(RCC_APB2ENR_UART10EN, lp)
+
+/**
+ * @brief   Resets the UART10 peripheral.
+ *
+ * @api
+ */
+#define rccResetUART10() rccResetAPB2(RCC_APB2RSTR_UART10RST)
 /** @} */
 
 /**

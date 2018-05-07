@@ -91,6 +91,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added support for STM32F413, added ability to handle the TIMPRE bit
+       in the RCC_CFGR register.
 - NEW: Added optional support for character match callback in the UART
        high level driver.
 - NEW: Change, chMtxGetNextMutexS() renamed to chMtxGetNextMutexX().
