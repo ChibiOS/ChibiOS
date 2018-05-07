@@ -1665,7 +1665,7 @@
 /*
  * PLLSAI enable check.
  */
-#if (STM32_CLOCK48_REQUIRED && (STM32_CK48MSEL == STM32_CK48MSEL_PLLSAI)) | \
+#if (STM32_CLOCK48_REQUIRED && (STM32_CK48MSEL == STM32_CK48MSEL_PLLSAI)) ||\
     (STM32_PLLSAIDIVR != STM32_PLLSAIDIVR_OFF) ||                           \
     (STM32_SAI1SEL == STM32_SAI1SEL_PLLSAI) ||                              \
     (STM32_SAI2SEL == STM32_SAI2SEL_PLLSAI) ||                              \
