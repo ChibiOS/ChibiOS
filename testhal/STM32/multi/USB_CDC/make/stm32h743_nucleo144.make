@@ -5,7 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16
+  USE_OPT = -O0 -ggdb -fomit-frame-pointer -falign-functions=16
 endif
 
 # C specific options here (added to USE_OPT).
@@ -91,10 +91,10 @@ endif
 PROJECT = ch
 
 # Imported source files and paths
-CHIBIOS  := ../../..
-CONFDIR  := .
-BUILDDIR := ./build
-DEPDIR   := ./.dep
+CHIBIOS  := ../../../..
+CONFDIR  := ./cfg/stm32h743_nucleo144
+BUILDDIR := ./build/stm32h743_nucleo144
+DEPDIR   := ./.dep/stm32h743_nucleo144
 
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
@@ -114,6 +114,8 @@ include $(CHIBIOS)/tools/mk/autobuild.mk
 include $(CHIBIOS)/test/lib/test.mk
 include $(CHIBIOS)/test/rt/rt_test.mk
 include $(CHIBIOS)/test/oslib/oslib_test.mk
+include $(CHIBIOS)/os/hal/lib/streams/streams.mk
+include $(CHIBIOS)/os/various/shell/shell.mk
 
 # Define linker script file here
 LDSCRIPT= $(STARTUPLD)/STM32H743xI.ld
@@ -122,6 +124,7 @@ LDSCRIPT= $(STARTUPLD)/STM32H743xI.ld
 # setting.
 CSRC = $(ALLCSRC) \
        $(TESTSRC) \
+       $(CONFDIR)/portab.c \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -149,10 +152,10 @@ TCSRC =
 TCPPSRC =
 
 # List ASM source files here
-ASMSRC = $(ALLASMSRC) $(ALLASMSRC)
+ASMSRC = $(ALLASMSRC)
 ASMXSRC = $(ALLXASMSRC)
 
-INCDIR = $(ALLINC) $(TESTINC)
+INCDIR = $(ALLINC) $(TESTINC) $(CONFDIR)
 
 #
 # Project, sources and paths

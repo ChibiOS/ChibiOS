@@ -860,7 +860,7 @@
  * @note    The allowed values are 4..512.
  */
 #if !defined(STM32_PLL3_DIVN_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLL3_DIVN_VALUE               400
+#define STM32_PLL3_DIVN_VALUE               240
 #endif
 
 /**
@@ -876,7 +876,7 @@
  * @note    The allowed values are 2..128, odd values not allowed.
  */
 #if !defined(STM32_PLL3_DIVP_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLL3_DIVP_VALUE               8
+#define STM32_PLL3_DIVP_VALUE               10
 #endif
 
 /**
@@ -884,7 +884,7 @@
  * @note    The allowed values are 1..128.
  */
 #if !defined(STM32_PLL3_DIVQ_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLL3_DIVQ_VALUE               8
+#define STM32_PLL3_DIVQ_VALUE               10
 #endif
 
 /**
@@ -892,7 +892,7 @@
  * @note    The allowed values are 1..128.
  */
 #if !defined(STM32_PLL3_DIVR_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLL3_DIVR_VALUE               8
+#define STM32_PLL3_DIVR_VALUE               10
 #endif
 
 /**
@@ -1125,7 +1125,7 @@
  * @brief   USB clock source.
  */
 #if !defined(STM32_USBSEL) || defined(__DOXYGEN__)
-#define STM32_USBSEL                        STM32_USBSEL_PLL1_Q_CK
+#define STM32_USBSEL                        STM32_USBSEL_PLL3_Q_CK
 #endif
 
 /**
