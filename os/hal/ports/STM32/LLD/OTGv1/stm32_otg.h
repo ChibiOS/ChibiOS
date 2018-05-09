@@ -897,15 +897,20 @@ typedef struct {
 #define PCGCCTL_STPPCLK         (1U<<0)     /**< Stop PCLK.                 */
 /** @} */
 
+#if defined(STM32H7XX) || defined(__DOXYGEN__)
 /**
  * @brief   OTG_FS registers block memory address.
  */
-#define OTG_FS_ADDR                 0x50000000
+#define OTG_FS_ADDR                 0x40080000
 
 /**
  * @brief   OTG_HS registers block memory address.
  */
 #define OTG_HS_ADDR                 0x40040000
+#else
+#define OTG_FS_ADDR                 0x50000000
+#define OTG_HS_ADDR                 0x40040000
+#endif
 
 /**
  * @brief   Accesses to the OTG_FS registers block.
