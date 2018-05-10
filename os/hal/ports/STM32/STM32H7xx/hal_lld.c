@@ -102,7 +102,7 @@ static inline void init_pwr(void) {
   PWR->CR3   = STM32_PWR_CR3;
   PWR->CPUCR = STM32_PWR_CPUCR;
   PWR->D3CR  = STM32_VOS;
-  while ((PWR->CSR1 & PWR_CSR1_ACTVOS) == 0)
+  while ((PWR->D3CR & PWR_D3CR_VOSRDY) == 0)
     ;
 #if STM32_PWR_CR2 & PWR_CR2_BREN
 //  while ((PWR->CR2 & PWR_CR2_BRRDY) == 0)

@@ -85,8 +85,8 @@
 #define STM32_PLL1_DIVN_VALUE               400
 #define STM32_PLL1_FRACN_VALUE              0
 #define STM32_PLL1_DIVP_VALUE               2
-#define STM32_PLL1_DIVQ_VALUE               8
-#define STM32_PLL1_DIVR_VALUE               8
+#define STM32_PLL1_DIVQ_VALUE               4
+#define STM32_PLL1_DIVR_VALUE               2
 #define STM32_PLL2_ENABLED                  TRUE
 #define STM32_PLL2_P_ENABLED                TRUE
 #define STM32_PLL2_Q_ENABLED                TRUE
@@ -101,12 +101,12 @@
 #define STM32_PLL3_P_ENABLED                TRUE
 #define STM32_PLL3_Q_ENABLED                TRUE
 #define STM32_PLL3_R_ENABLED                TRUE
-#define STM32_PLL3_DIVM_VALUE               4
-#define STM32_PLL3_DIVN_VALUE               240
+#define STM32_PLL3_DIVM_VALUE               8
+#define STM32_PLL3_DIVN_VALUE               336
 #define STM32_PLL3_FRACN_VALUE              0
-#define STM32_PLL3_DIVP_VALUE               10
-#define STM32_PLL3_DIVQ_VALUE               10
-#define STM32_PLL3_DIVR_VALUE               10
+#define STM32_PLL3_DIVP_VALUE               2
+#define STM32_PLL3_DIVQ_VALUE               7
+#define STM32_PLL3_DIVR_VALUE               2
 
 /*
  * Core clocks dynamic settings (can be changed at runtime).
@@ -115,11 +115,11 @@
 #define STM32_SW                            STM32_SW_PLL1_P_CK
 #define STM32_RTCSEL                        STM32_RTCSEL_LSE_CK
 #define STM32_D1CPRE                        STM32_D1CPRE_DIV1
-#define STM32_D1HPRE                        STM32_D1HPRE_DIV4
-#define STM32_D1PPRE3                       STM32_D1PPRE3_DIV1
-#define STM32_D2PPRE1                       STM32_D2PPRE1_DIV1
-#define STM32_D2PPRE2                       STM32_D2PPRE2_DIV1
-#define STM32_D3PPRE4                       STM32_D3PPRE4_DIV1
+#define STM32_D1HPRE                        STM32_D1HPRE_DIV2
+#define STM32_D1PPRE3                       STM32_D1PPRE3_DIV2
+#define STM32_D2PPRE1                       STM32_D2PPRE1_DIV2
+#define STM32_D2PPRE2                       STM32_D2PPRE2_DIV2
+#define STM32_D3PPRE4                       STM32_D3PPRE4_DIV2
 
 /*
  * Peripherals clocks static settings.
