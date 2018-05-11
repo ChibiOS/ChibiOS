@@ -5,7 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -O0 -ggdb -fomit-frame-pointer -falign-functions=16
+  USE_OPT = -Og -ggdb -fomit-frame-pointer -falign-functions=16
 endif
 
 # C specific options here (added to USE_OPT).
@@ -121,7 +121,7 @@ include $(CHIBIOS)/os/common/startup/ARM/compilers/GCC/mk/startup_sama5d2.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/ports/SAMA/SAMA5D2x/platform.mk
-include $(CHIBIOS)/os/hal/boards/ATSAMA5D2_XULT_NSEC/board.mk
+include $(CHIBIOS)/os/hal/boards/BV1000GT_NSEC/board.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
@@ -134,14 +134,17 @@ include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 include lwip.mk
 
 # Define linker script file here
-LDSCRIPT= $(STARTUPLD)/SAMA5D2ddr.ld
+LDSCRIPT= $(STARTUPLD)/SAMA5D2bvddr.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
 CSRC = $(ALLCSRC) \
        $(TESTSRC) \
        $(CHIBIOS)/os/various/evtimer.c \
+       $(CHIBIOS)/os/various/reledge_bindings/SAMA5D2x/ch_sdmmc_reledge.c \
 	   daemons/tssockskel.c \
+	   daemons/tsdaemonskels.c \
+	   daemons/tsioblksskel.c \
        tsclient.c \
        lwipthread.c \
        main.c
@@ -176,6 +179,9 @@ ASMXSRC = $(ALLXASMSRC)
 
 INCDIR = $(ALLINC) $(TESTINC) \
          $(LWINC) \
+         $(CHIBIOS)/os/various/reledge_bindings/SAMA5D2x \
+         $(CHIBIOS)/ext/reliance-edge/include \
+         $(CHIBIOS)/ext/reliance-edge/os/chibios/include \
          $(CHIBIOS)/os/various
 
 #
@@ -206,7 +212,7 @@ HEX  = $(CP) -O ihex
 BIN  = $(CP) -O binary
 
 # ARM-specific options here
-AOPT =
+AOPT = 
 
 # THUMB-specific options here
 TOPT = -mthumb -DTHUMB
@@ -226,10 +232,10 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS =
+UDEFS = 
 
 # Define ASM defines here
-UADEFS =
+UADEFS = 
 
 # List all user directories here
 UINCDIR =

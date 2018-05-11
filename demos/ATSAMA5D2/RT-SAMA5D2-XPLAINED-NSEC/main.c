@@ -18,10 +18,12 @@
 #include "hal.h"
 #include "tsclient.h"
 #include "daemons/tssockskel.h"
+#include "daemons/tsioblksskel.h"
 #include "rt_test_root.h"
 #include "oslib_test_root.h"
 #include "chprintf.h"
 #include "lwipthread.h"
+#include "sama_sdmmc_lld.h"
 
 /*
  * LED blinker thread, times are in milliseconds.
@@ -33,17 +35,17 @@ static THD_FUNCTION(Thread1, arg) {
   chRegSetThreadName("blinker");
 
   while (true) {
-    palToggleLine(LINE_LED_RED);
+    palToggleLine(LINE_KEYBACK_LED_RED);
     chThdSleepMilliseconds(80);
-    palToggleLine(LINE_LED_RED);
+    palToggleLine(LINE_KEYBACK_LED_RED);
     chThdSleepMilliseconds(120);
-    palToggleLine(LINE_LED_RED);
+    palToggleLine(LINE_KEYBACK_LED_RED);
     chThdSleepMilliseconds(120);
-    palToggleLine(LINE_LED_RED);
+    palToggleLine(LINE_KEYBACK_LED_RED);
     chThdSleepMilliseconds(120);
-    palToggleLine(LINE_LED_RED);
+    palToggleLine(LINE_KEYBACK_LED_RED);
     chThdSleepMilliseconds(160);
-    palToggleLine(LINE_LED_RED);
+    palToggleLine(LINE_KEYBACK_LED_RED);
     chThdSleepMilliseconds(600);
   }
 }
@@ -53,6 +55,31 @@ static const SerialConfig sdcfg = {
   0,
   UART_MR_PAR_NO
 };
+
+#define BLOCK_CNT_MAX               32u
+#define DMADL_CNT_MAX               64u
+#define BLOCK_CNT                   3u
+
+CACHE_ALIGNED uint8_t data_buf[BLOCK_CNT_MAX * 512ul];
+CACHE_ALIGNED static uint32_t dma_table[DMADL_CNT_MAX * SDMMC_DMADL_SIZE];
+CACHE_ALIGNED uint8_t sdmmcbuffer[ROUND_UP_MULT(SDMMC_BUFFER_SIZE, L1_CACHE_BYTES)];
+
+static const SamaSDMMCConfig sdmmc_cfg = {
+    SDMMC_SLOT0,
+    sdmmcbuffer,
+    data_buf,
+    sizeof data_buf,
+    dma_table,
+    DMADL_CNT_MAX
+};
+
+bool sdmmcGetInstance(uint8_t index, SdmmcDriver **sdmmcp)
+{
+  (void)index;
+
+  *sdmmcp = &SDMMCD1;
+  return true;
+}
 
 /*
  * Application entry point.
@@ -73,25 +100,38 @@ int main(void) {
   /*
    * Activates the serial driver 0 using the driver default configuration.
    */
-  sdStart(&SD0, &sdcfg);
+  sdStart(&SD1, &sdcfg);
 
   /*
    * Creates the blinker thread.
    */
   chThdCreateStatic(waThread1, sizeof waThread1, NORMALPRIO-1, Thread1, NULL);
 
-  tsSkelsDaemonInit();
+  /*
+   * Init and open the sdmmc device.
+   */
+  sdmmcInit();
+  sdmmcStart(&SDMMCD1, &sdmmc_cfg);
+  if (SDMMCD1.state != MCID_INIT_ERROR) {
+    sdmmcOpenDevice(&SDMMCD1);
+  } else {
+    chprintf((BaseSequentialStream *)&SD1, "Cannot start sdmmc device.\r\n");
+    sdmmcStop(&SDMMCD1);
+  }
+
+  tsSocksSkelInit();
+  tsIOBlksSkelInit();
 
   /*
    * Call the dummy secure service
    */
-  chprintf((BaseSequentialStream*)&SD0, "Calling the secure service\n\r");
+  chprintf((BaseSequentialStream*)&SD1, "Calling the secure service\n\r");
 
   /* Retrieve the service handle by name */
   tssvc = (ts_service_t) tsInvokeServiceNoYield(TS_HND_DISCOVERY,
       (ts_params_area_t)"TsSimpleService", sizeof "TsSimpleService");
   if ((int32_t)tssvc < 0) {
-    chprintf((BaseSequentialStream*)&SD0, "Cannot get the handle of '%s': %d\r\n",
+    chprintf((BaseSequentialStream*)&SD1, "Cannot get the handle of '%s': %d\r\n",
         "TsSimpleService", tssvc);
   }
   /*
@@ -103,11 +143,11 @@ int main(void) {
 
     /* Invoke the service */
     r = tsInvokeServiceNoYield(tssvc, (ts_params_area_t)"HELO", sizeof "HELO");
-    chprintf((BaseSequentialStream*)&SD0, "Call result: %d\r\n", r);
+    chprintf((BaseSequentialStream*)&SD1, "Call result: %d\r\n", r);
 #if 0
     if(!palReadPad(PIOB, PIOB_USER_PB)) {
-      test_execute((BaseSequentialStream *)&SD0, &rt_test_suite);
-      test_execute((BaseSequentialStream *)&SD0, &oslib_test_suite);
+      test_execute((BaseSequentialStream *)&SD1, &rt_test_suite);
+      test_execute((BaseSequentialStream *)&SD1, &oslib_test_suite);
     }
 #endif
     chThdSleepMilliseconds(500);

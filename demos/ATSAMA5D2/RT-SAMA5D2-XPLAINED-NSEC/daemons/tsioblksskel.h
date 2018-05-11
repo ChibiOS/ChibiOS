@@ -18,17 +18,16 @@
 */
 
 /**
- * @file    tssockskel.h
- * @brief   Sockets skeleton module macros and structures.
+ * @file    tsioblksskel.h
+ * @brief   IOBlocks skeleton module macros and structures.
  *
  */
 
-#ifndef TSSOCKSKEL_H
-#define TSSOCKSKEL_H
+#ifndef TSIOBLKSSKEL_H
+#define TSIOBLKSSKEL_H
 
 #include "ch.h"
 #include "ccportab.h"
-#include "lwip/sockets.h"
 #include "tscommon.h"
 
 /*===========================================================================*/
@@ -38,17 +37,11 @@
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
-#define N_SOCKSKEL_THD  4
+#define N_IOBLKSKEL_THD 4
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
-#if (L_FD_SETSIZE) != (FD_SETSIZE)
-#error "Configuration error of L_FD_SETSIZE, it must be set to FD_SETSIZE "
-#define VALUE(x) #x
-#define VAR_NAME_VALUE(var) #var "="  VALUE(var)
-#pragma message(VAR_NAME_VALUE(FD_SETSIZE))
-#endif
 
 /*===========================================================================*/
 /* Module data structures and types.                                         */
@@ -65,7 +58,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void tsSocksSkelInit(void);
+  void tsIOBlksSkelInit(void);
 #ifdef __cplusplus
 }
 #endif
@@ -74,4 +67,4 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* TSSOCKSKEL_H */
+#endif /* TSIOBLKSSKEL_H */

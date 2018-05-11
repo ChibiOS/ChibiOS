@@ -23,6 +23,7 @@
 #include "ch.h"
 #include "chobjfifos.h"
 #include "tsclient.h"
+#include "tsdaemonskels.h"
 #include "tssockskel.h"
 #include <string.h>
 
@@ -41,51 +42,11 @@
 /*===========================================================================*/
 /* Module local variables.                                                   */
 /*===========================================================================*/
-
-static ts_service_t tsStubsService = NULL;
-static MUTEX_DECL(tsStubsServiceMtx);
-
-static objects_fifo_t skel_req_fifo;
-static msg_t skel_req_msgs[N_SOCKSKEL_THD];
-static skel_req_t skel_reqs[N_SOCKSKEL_THD] = {0};
+static skel_ctx_t skel_ctx;
 
 /*===========================================================================*/
 /* Module local functions.                                                   */
 /*===========================================================================*/
-
-/**
- * @brief Invoke the stubs service in order to copy the 'in'
- *        parameters in the non secure memory space.
- */
-static void paramsInFromRemote(skel_req_t *skreqp) {
-  msg_t r;
-
-  skreqp->req = SKEL_REQ_CPYPRMS;
-  chMtxLock(&tsStubsServiceMtx);
-  r = tsInvokeServiceNoYield(tsStubsService,
-          (ts_params_area_t)skreqp, sizeof *skreqp);
-  chDbgAssert(r != SMC_SVC_BUSY, "Unexpected SMC_SVC_BUSY");
-  chMtxUnlock(&tsStubsServiceMtx);
-}
-
-/**
- * @brief Invoke the stubs service in order to copy the 'out'
- *        parameters in the secure memory space and set the
- *        remote call result.
- */
-static void returnToRemote(skel_req_t *skreqp, uint32_t res) {
-  msg_t r;
-
-  skreqp->stub_op_result = res;
-  skreqp->req = SKEL_REQ_PUTRES;
-
-  chMtxLock(&tsStubsServiceMtx);
-  r = tsInvokeServiceNoYield(tsStubsService,
-          (ts_params_area_t)skreqp, sizeof *skreqp);
-  chDbgAssert(r != SMC_SVC_BUSY, "Unexpected SMC_SVC_BUSY");
-  chMtxUnlock(&tsStubsServiceMtx);
-  chFifoReturnObject(&skel_req_fifo, skreqp);
-}
 
 /**
  * @name    Sockets API skeletons.
@@ -273,46 +234,39 @@ static void l_listen(skel_req_t *skreqp) {
   returnToRemote(skreqp, result);
 }
 
-/** @} */
-
-/*===========================================================================*/
-/* Module exported functions.                                                */
-/*===========================================================================*/
-
 /**
- * @brief   Dispatch a request to a local method.
+ * @brief   Socket Daemon. Dispatch a request to a local method.
  */
 static THD_FUNCTION(TsSockSkelDaemon, arg) {
-  (void)arg;
-
+  objects_fifo_t *ofp = arg;
   skel_req_t *skreqp;
 
   for (;/* ever */;) {
-    chFifoReceiveObjectTimeout(&skel_req_fifo, (void **)&skreqp,
+    chFifoReceiveObjectTimeout(ofp, (void **)&skreqp,
         TIME_INFINITE);
     switch (skreqp->stub_op_code) {
-    case STUB_OP_SOCKET:
+    case SOCK_OP_SOCKET:
       l_socket(skreqp);
       break;
-    case STUB_OP_CONNECT:
+    case SOCK_OP_CONNECT:
       l_connect(skreqp);
       break;
-    case STUB_OP_CLOSE:
+    case SOCK_OP_CLOSE:
       l_close(skreqp);
       break;
-    case STUB_OP_RECV:
+    case SOCK_OP_RECV:
       l_recv(skreqp);
       break;
-    case STUB_OP_SEND:
+    case SOCK_OP_SEND:
       l_send(skreqp);
       break;
-    case STUB_OP_SELECT:
+    case SOCK_OP_SELECT:
       l_select(skreqp);
       break;
-    case STUB_OP_BIND:
+    case SOCK_OP_BIND:
       l_bind(skreqp);
       break;
-    case STUB_OP_LISTEN:
+    case SOCK_OP_LISTEN:
       l_listen(skreqp);
       break;
     default:
@@ -321,62 +275,29 @@ static THD_FUNCTION(TsSockSkelDaemon, arg) {
   }
 }
 
-/**
- * @brief   Dispatch a request to a skeleton worker thread.
- */
-static THD_WORKING_AREA(waTsSkelsDaemon, 512);
-static THD_FUNCTION(TsSkelsDaemon, arg) {
-  (void)arg;
-
-  event_listener_t  el;
-  skel_req_t        *skreqp;
-  msg_t             r;
-
-  chEvtRegisterMaskWithFlags(&stubsEventSource, &el, ALL_EVENTS,
-      EVT_F_SOCK_NEW_OP);
-  tsStubsService = (ts_service_t)tsInvokeServiceNoYield(TS_HND_DISCOVERY,
-        (ts_params_area_t)"TsStubsService", sizeof "TsStubsService");
-
-  /* Tell to stubs service that we are ready.*/
-  skreqp = chFifoTakeObjectTimeout(&skel_req_fifo, TIME_INFINITE);
-  skreqp->req = SKEL_REQ_READY;
-  tsInvokeServiceNoYield(tsStubsService, (ts_params_area_t)skreqp,
-      sizeof *skreqp);
-  chFifoReturnObject(&skel_req_fifo, skreqp);
-
-  /* Start to receive ops from stubs.*/
-  for (;/* ever */;) {
-    chEvtWaitAny(ALL_EVENTS);
-    (void)chEvtGetAndClearFlags(&el);
-    while (true) {
-      skreqp = chFifoTakeObjectTimeout(&skel_req_fifo, TIME_INFINITE);
-      skreqp->req = SKEL_REQ_GETOP;
-      chMtxLock(&tsStubsServiceMtx);
-      r = tsInvokeServiceNoYield(tsStubsService, (ts_params_area_t)skreqp,
-            sizeof *skreqp);
-      chDbgAssert(r != SMC_SVC_BUSY, "Unexpected SMC_SVC_BUSY");
-      chMtxUnlock(&tsStubsServiceMtx);
-      if (r == SMC_SVC_NHND)
-        break;
-      chFifoSendObject(&skel_req_fifo, skreqp);
-    }
-    chFifoReturnObject(&skel_req_fifo, skreqp);
-  }
-}
+/*===========================================================================*/
+/* Module exported functions.                                                */
+/*===========================================================================*/
 
 /**
- * @brief   Init the skeletons daemon objects and create the
+ * @brief   Init the socket skeletons daemon objects and create the
  *          corresponding threads.
  */
-void tsSkelsDaemonInit(void) {
+void tsSocksSkelInit(void) {
   int i;
+  skel_ctx_t *scp;
 
-  chFifoObjectInit(&skel_req_fifo, sizeof (skel_req_t), N_SOCKSKEL_THD,
-      sizeof (uint8_t), skel_reqs, skel_req_msgs);
+  scp = &skel_ctx;
+  chFifoObjectInit(&scp->skel_req_fifo, sizeof (skel_req_t), N_MAX_SKEL_REQS,
+      sizeof (uint8_t), scp->skel_reqs, scp->skel_req_msgs);
+  scp->skel_eventflag = EVT_F_SOCK_NEW_OP;
+  scp->stub_svc_name = SOCKS_SVC_NAME;
 
   for (i = 0; i < N_SOCKSKEL_THD; ++i)
-    chThdCreateFromHeap(NULL, 2048, "TsSkelDaemonWrk", NORMALPRIO,
-        TsSockSkelDaemon, NULL);
-  chThdCreateStatic(waTsSkelsDaemon, sizeof waTsSkelsDaemon, NORMALPRIO,
-      TsSkelsDaemon, NULL);
+    chThdCreateFromHeap(NULL, 2048, "TsSockSkelDaemonWrk", NORMALPRIO,
+        TsSockSkelDaemon, &scp->skel_req_fifo);
+  chThdCreateFromHeap(NULL, 2048, "TsSocksSkelDaemon", NORMALPRIO,
+      TsSkelsDaemon, scp);
 }
+
+/** @} */

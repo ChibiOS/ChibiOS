@@ -18,41 +18,44 @@
 */
 
 /**
- * @file    tssockskel.h
- * @brief   Sockets skeleton module macros and structures.
+ * @file    tsdaemonskels.h
+ * @brief   Common skeletons daemon macros and structures.
  *
  */
 
-#ifndef TSSOCKSKEL_H
-#define TSSOCKSKEL_H
+#ifndef TSDAEMONSKELS_H
+#define TSDAEMONSKELS_H
 
 #include "ch.h"
 #include "ccportab.h"
-#include "lwip/sockets.h"
 #include "tscommon.h"
 
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
+#define N_MAX_SKEL_REQS   4
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
-#define N_SOCKSKEL_THD  4
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
-#if (L_FD_SETSIZE) != (FD_SETSIZE)
-#error "Configuration error of L_FD_SETSIZE, it must be set to FD_SETSIZE "
-#define VALUE(x) #x
-#define VAR_NAME_VALUE(var) #var "="  VALUE(var)
-#pragma message(VAR_NAME_VALUE(FD_SETSIZE))
-#endif
 
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
+
+typedef struct skel_ctx {
+  objects_fifo_t  skel_req_fifo;
+  msg_t           skel_req_msgs[N_MAX_SKEL_REQS];
+  skel_req_t      skel_reqs[N_MAX_SKEL_REQS];
+  eventflags_t    skel_eventflag;
+  ts_service_t    stub_svc;
+  mutex_t         stub_svc_mtx;
+  const char     *stub_svc_name;
+} skel_ctx_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -65,7 +68,9 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void tsSocksSkelInit(void);
+  void paramsInFromRemote(skel_req_t *skreqp);
+  void returnToRemote(skel_req_t *skreqp, uint32_t res);
+  THD_FUNCTION(TsSkelsDaemon, arg);
 #ifdef __cplusplus
 }
 #endif
@@ -74,4 +79,4 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* TSSOCKSKEL_H */
+#endif /* TSDAEMONSKELS_H */

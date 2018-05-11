@@ -31,7 +31,7 @@
 #define SAMA_MCK_SEL                        SAMA_MCK_PLLA_CLK
 #define SAMA_MCK_PRES_VALUE                 1
 #define SAMA_MCK_MDIV_VALUE                 3
-#define SAMA_PLLA_MUL_VALUE                 83
+#define SAMA_PLLA_MUL_VALUE                 41
 #define SAMA_PLLADIV2_EN                    TRUE
 #define SAMA_H64MX_H32MX_RATIO              2
 
@@ -57,8 +57,8 @@
 /*
  * SERIAL driver system settings.
  */
-#define SAMA_SERIAL_USE_UART0               TRUE
-#define SAMA_SERIAL_USE_UART1               FALSE
+#define SAMA_SERIAL_USE_UART0               FALSE
+#define SAMA_SERIAL_USE_UART1               TRUE
 #define SAMA_SERIAL_USE_UART2               FALSE
 #define SAMA_SERIAL_USE_UART3               FALSE
 #define SAMA_SERIAL_USE_UART4               FALSE
@@ -96,6 +96,11 @@
 #define SAMA_TC1_IRQ_PRIORITY               2
 
 /*
+ * TRNG driver system settings.
+ */
+#define HAL_USE_TRNG                        FALSE
+
+/*
  * SECUMOD driver settings.
  */
 #define HAL_USE_SECUMOD                     FALSE
@@ -103,8 +108,8 @@
 /*
  * SDMMC driver settings.
  */
-#define HAL_USE_SDMMC                       FALSE
-
+#define HAL_USE_SDMMC                       TRUE
+#define PLATFORM_SDMMC_USE_SDMMC1           TRUE
 /*
  * UART driver system settings.
  */
@@ -139,5 +144,11 @@
 #define SAMA_UART_FLEXCOM3_DMA_IRQ_PRIORITY 4
 #define SAMA_UART_FLEXCOM4_DMA_IRQ_PRIORITY 4
 #define SAMA_UART_DMA_ERROR_HOOK(uartp)     osalSysHalt("DMA failure")
+
+/*
+ * L2CC related defines.
+ */
+#define SAMA_L2CC_ASSUME_ENABLED            1
+#define SAMA_L2CC_ENABLE                    0
 
 #endif /* MCUCONF_H */
