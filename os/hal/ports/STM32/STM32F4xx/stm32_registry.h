@@ -90,9 +90,12 @@
 #if defined(STM32F469_479xx) || defined(__DOXYGEN__)
 
 /* Clock tree attributes.*/
-#define STM32_HAS_RCC_SAIPLL                TRUE
-#define STM32_HAS_RCC_I2CPLL                TRUE
+#define STM32_HAS_RCC_PLLSAI                TRUE
+#define STM32_HAS_RCC_PLLI2S                TRUE
+#define STM32_HAS_RCC_I2SSRC                TRUE
+#define STM32_HAS_RCC_I2SPLLSRC             FALSE
 #define STM32_HAS_RCC_CK48MSEL              TRUE
+#define STM32_RCC_CK48MSEL_USES_I2S         FALSE
 
 /* ADC attributes.*/
 #define STM32_ADC_HANDLER                   Vector88
@@ -466,9 +469,12 @@
 #if defined(STM32F446xx)
 
 /* Clock tree attributes.*/
-#define STM32_HAS_RCC_SAIPLL                TRUE
-#define STM32_HAS_RCC_I2CPLL                TRUE
+#define STM32_HAS_RCC_PLLSAI                TRUE
+#define STM32_HAS_RCC_PLLI2S                TRUE
+#define STM32_HAS_RCC_I2SSRC                FALSE
+#define STM32_HAS_RCC_I2SPLLSRC             FALSE
 #define STM32_HAS_RCC_CK48MSEL              TRUE
+#define STM32_RCC_CK48MSEL_USES_I2S         FALSE
 
 /* ADC attributes.*/
 #define STM32_ADC_HANDLER                   Vector88
@@ -817,9 +823,14 @@
 #if defined(STM32F429_439xx) || defined(STM32F427_437xx)
 
 /* Clock tree attributes.*/
-#define STM32_HAS_RCC_SAIPLL                TRUE
-#define STM32_HAS_RCC_I2CPLL                TRUE
+#define STM32_HAS_RCC_PLLSAI                TRUE
+#define STM32_HAS_RCC_PLLI2S                TRUE
+#define STM32_HAS_RCC_CK48MSEL_I2S          FALSE
+#define STM32_HAS_RCC_CK48MSEL_SAI          FALSE
+#define STM32_HAS_RCC_I2SSRC                TRUE
+#define STM32_HAS_RCC_I2SPLLSRC             FALSE
 #define STM32_HAS_RCC_CK48MSEL              FALSE
+#define STM32_RCC_CK48MSEL_USES_I2S         FALSE
 
 /* ADC attributes.*/
 #define STM32_ADC_HANDLER                   Vector88
@@ -1183,15 +1194,18 @@
 #endif /* defined(STM32F429_439xx) || defined(STM32F427_437xx) */
 
 /*===========================================================================*/
-/* STM32F413xx, STM32F413Mx, STM32F413Rx, STM32F413Vx, STM32F413Zx           */
+/* STM32F413xx.                                                              */
 /*===========================================================================*/
 
 #if defined(STM32F413xx)
 
 /* Clock tree attributes.*/
-#define STM32_HAS_RCC_SAIPLL                FALSE
-#define STM32_HAS_RCC_I2CPLL                TRUE
+#define STM32_HAS_RCC_PLLSAI                FALSE
+#define STM32_HAS_RCC_PLLI2S                TRUE
+#define STM32_HAS_RCC_I2SSRC                FALSE
+#define STM32_HAS_RCC_I2SPLLSRC             TRUE
 #define STM32_HAS_RCC_CK48MSEL              TRUE
+#define STM32_RCC_CK48MSEL_USES_I2S         TRUE
 
 /* ADC attributes.*/
 #define STM32_ADC_HANDLER                   Vector88
@@ -1561,15 +1575,18 @@
 #endif /* defined(STM32F413xx) */
 
 /*===========================================================================*/
-/* STM32F412Cx, STM32F412Rx, STM32F412Vx, STM32F412Zx                        */
+/* STM32F412xx.                                                              */
 /*===========================================================================*/
 
 #if defined(STM32F412xx)
 
 /* Clock tree attributes.*/
-#define STM32_HAS_RCC_SAIPLL                FALSE
-#define STM32_HAS_RCC_I2CPLL                TRUE
+#define STM32_HAS_RCC_PLLSAI                FALSE
+#define STM32_HAS_RCC_PLLI2S                TRUE
+#define STM32_HAS_RCC_I2SSRC                FALSE
+#define STM32_HAS_RCC_I2SPLLSRC             TRUE
 #define STM32_HAS_RCC_CK48MSEL              TRUE
+#define STM32_RCC_CK48MSEL_USES_I2S         TRUE
 
 /* ADC attributes.*/
 #define STM32_ADC_HANDLER                   Vector88
@@ -1890,15 +1907,18 @@
 #endif /* defined(STM32F412xx) */
 
 /*===========================================================================*/
-/* STM32F411xC, STM32F411xE                                                  */
+/* STM32F411xx.                                                              */
 /*===========================================================================*/
 
 #if defined(STM32F411xx)
 
 /* Clock tree attributes.*/
-#define STM32_HAS_RCC_SAIPLL                FALSE
-#define STM32_HAS_RCC_I2CPLL                TRUE
+#define STM32_HAS_RCC_PLLSAI                FALSE
+#define STM32_HAS_RCC_PLLI2S                TRUE
+#define STM32_HAS_RCC_I2SSRC                TRUE
+#define STM32_HAS_RCC_I2SPLLSRC             FALSE
 #define STM32_HAS_RCC_CK48MSEL              FALSE
+#define STM32_RCC_CK48MSEL_USES_I2S         FALSE
 
 /* ADC attributes.*/
 #define STM32_ADC_HANDLER                   Vector88
@@ -2193,15 +2213,20 @@
 #endif /* defined(STM32F411xx) */
 
 /*===========================================================================*/
-/* STM32F410Cx, STM32F410Rx.                                                 */
+/* STM32F410xx.                                                              */
 /*===========================================================================*/
 
 #if defined(STM32F410xx)
 
 /* Clock tree attributes.*/
-#define STM32_HAS_RCC_SAIPLL                FALSE
-#define STM32_HAS_RCC_I2CPLL                FALSE
+#define STM32_HAS_RCC_PLLSAI                FALSE
+#define STM32_HAS_RCC_PLLI2S                FALSE
+#define STM32_HAS_RCC_CK48MSEL_I2S          FALSE
+#define STM32_HAS_RCC_CK48MSEL_SAI          FALSE
+#define STM32_HAS_RCC_I2SSRC                FALSE
+#define STM32_HAS_RCC_I2SPLLSRC             FALSE
 #define STM32_HAS_RCC_CK48MSEL              FALSE
+#define STM32_RCC_CK48MSEL_USES_I2S         FALSE
 
 /* ADC attributes.*/
 #define STM32_ADC_HANDLER                   Vector88
@@ -2465,16 +2490,21 @@
 #endif /* defined(STM32F410xx) */
 
 /*===========================================================================*/
-/* STM32F405xx, STM32F415xx, STM32F407xx, STM32F417xx, STM32F205xx           */
+/* STM32F405xx, STM32F415xx, STM32F407xx, STM32F417xx, STM32F205xx,          */
 /* STM32F215xx, STM32F207xx, STM32F217xx.                                    */
 /*===========================================================================*/
 
 #if defined(STM32F40_41xxx) || defined(STM32F2XX)
 
 /* Clock tree attributes.*/
-#define STM32_HAS_RCC_SAIPLL                FALSE
-#define STM32_HAS_RCC_I2CPLL                TRUE
+#define STM32_HAS_RCC_PLLSAI                FALSE
+#define STM32_HAS_RCC_PLLI2S                TRUE
+#define STM32_HAS_RCC_CK48MSEL_I2S          FALSE
+#define STM32_HAS_RCC_CK48MSEL_SAI          FALSE
+#define STM32_HAS_RCC_I2SSRC                TRUE
+#define STM32_HAS_RCC_I2SPLLSRC             FALSE
 #define STM32_HAS_RCC_CK48MSEL              FALSE
+#define STM32_RCC_CK48MSEL_USES_I2S         FALSE
 
 /* ADC attributes.*/
 #define STM32_ADC_HANDLER                   Vector88
@@ -2820,9 +2850,12 @@
 #if defined(STM32F401xx)
 
 /* Clock tree attributes.*/
-#define STM32_HAS_RCC_SAIPLL                FALSE
-#define STM32_HAS_RCC_I2CPLL                FALSE
+#define STM32_HAS_RCC_PLLSAI                FALSE
+#define STM32_HAS_RCC_PLLI2S                FALSE
+#define STM32_HAS_RCC_I2SSRC                FALSE
+#define STM32_HAS_RCC_I2SPLLSRC             FALSE
 #define STM32_HAS_RCC_CK48MSEL              FALSE
+#define STM32_RCC_CK48MSEL_USES_I2S         FALSE
 
 /* ADC attributes.*/
 #define STM32_ADC_HANDLER                   Vector88

@@ -30,7 +30,7 @@
  *          - STM32F405xx, STM32F415xx, STM32F407xx, STM32F417xx,
  *            STM32F446xx for High-performance STM32F4 devices of
  *            Foundation line.
- *          - STM32F401xC, STM32F401xE, STM32F410Cx, STM32F410Rx, STM32F411xE
+ *          - STM32F401xx, STM32F410xx, STM32F411xx, STM32F412xx, STM32F413xx
  *            for High-performance STM32F4 devices of Access line.
  *          - STM32F427xx, STM32F437xx, STM32F429xx, STM32F439xx, STM32F469xx, 
  *            STM32F479xx for High-performance STM32F4 devices of Advanced line.
@@ -447,13 +447,11 @@
 #define STM32_PLLI2SP_DIV4      (1 << 16)   /**< PLLI2S clock divided by 4. */
 #define STM32_PLLI2SP_DIV6      (2 << 16)   /**< PLLI2S clock divided by 6. */
 #define STM32_PLLI2SP_DIV8      (3 << 16)   /**< PLLI2S clock divided by 8. */
-#define STM32_PLLI2SQ_MASK      (15 << 24)  /**< PLLI2SQ mask.              */
-#define STM32_PLLI2SR_MASK      (7 << 28)   /**< PLLI2SR mask.              */
-#if defined(STM32F413xx)
 #define STM32_PLLI2SSRC_MASK    (1 << 22)   /**< PLLI2SSRC mask.            */
 #define STM32_PLLI2SSRC_CKIN    (0 << 22)   /**< PLLI2SSRC is CK_IN.        */
 #define STM32_PLLI2SSRC_I2SCKIN (1 << 22)   /**< PLLI2SSRC is I2S_CKIN.     */
-#endif
+#define STM32_PLLI2SQ_MASK      (15 << 24)  /**< PLLI2SQ mask.              */
+#define STM32_PLLI2SR_MASK      (7 << 28)   /**< PLLI2SR mask.              */
 /** @} */
 
 /**
@@ -535,23 +533,9 @@
  * @{
  */
 #define STM32_I2C1SEL_MASK      (3 << 22)   /**< I2C1SEL mask.              */
-#define STM32_I2C1SEL_PCLK1     (0 << 22)   /**< I2C1 source is PCLK1.      */
+#define STM32_I2C1SEL_PCLK1     (0 << 22)   /**< I2C1 source is APB/PCLK1.  */
 #define STM32_I2C1SEL_SYSCLK    (1 << 22)   /**< I2C1 source is SYSCLK.     */
 #define STM32_I2C1SEL_HSI       (2 << 22)   /**< I2C1 source is HSI.        */
-
-#if defined(STM32F413xx)
-/* TODO: Chibios definition could be set from CMSIS stm32f413xx.h.          */
-#define STM32_I2CFMP1SEL_MASK   (3 << 22)   /**< I2C1SEL mask.              */
-#define STM32_I2CFMP1SEL_APB    (0 << 22)   /**< I2C1 source is APB.        */
-#define STM32_I2CFMP1SEL_SYSCLK (1 << 22)   /**< I2C1 source is SYSCLK.     */
-#define STM32_I2CFMP1SEL_HSI    (2 << 22)   /**< I2C1 source is HSI.        */
-
-#define STM32_LPTIM1SEL_MASK    (3 << 30)   /**< LPTIM1 mask.               */
-#define STM32_LPTIM1SEL_APB     (0 << 30)   /**< LPTIM1 source is APB.      */
-#define STM32_LPTIM1SEL_HSI     (1 << 30)   /**< LPTIM1 source is HSI.      */
-#define STM32_LPTIM1SEL_LSI     (2 << 30)   /**< LPTIM1 source is LSI.      */
-#define STM32_LPTIM1SEL_LSE     (3 << 30)   /**< LPTIM1 source is LSE.      */
-#endif
 
 #define STM32_CECSEL_MASK       (1 << 26)   /**< CECSEL mask.               */
 #define STM32_CECSEL_LSE        (0 << 26)   /**< CEC source is LSE.         */
@@ -559,10 +543,9 @@
 
 #define STM32_CK48MSEL_MASK     (1 << 27)   /**< CK48MSEL mask.             */
 #define STM32_CK48MSEL_PLL      (0 << 27)   /**< PLL48CLK source is PLL.    */
-#define STM32_CK48MSEL_PLLSAI   (1 << 27)   /**< PLL48CLK source is PLLSAI. */
-#if defined(STM32F413xx)
-#define STM32_CK48MSEL_PLLI2S   (1 << 27)   /**< PLL48CLK source is PLLI2S. */
-#endif
+#define STM32_CK48MSEL_PLLALT   (1 << 27)   /**< PLL48CLK source is PLLSAI
+                                                 or PLLI2S depending on
+                                                 device.                    */
 
 #define STM32_SDMMCSEL_MASK     (1 << 28)   /**< SDMMCSEL mask.             */
 #define STM32_SDMMCSEL_PLL48CLK (0 << 28)   /**< SDMMC source is PLL48CLK.  */
@@ -571,6 +554,12 @@
 #define STM32_SPDIFSEL_MASK     (1 << 29)   /**< SPDIFSEL mask.             */
 #define STM32_SPDIFSEL_PLLI2S   (0 << 29)   /**< SPDIF source is PLLI2S.    */
 #define STM32_SPDIFSEL_PLL      (1 << 29)   /**< SPDIF source is PLL.       */
+
+#define STM32_LPTIM1SEL_MASK    (3 << 30)   /**< LPTIM1 mask.               */
+#define STM32_LPTIM1SEL_APB     (0 << 30)   /**< LPTIM1 source is APB.      */
+#define STM32_LPTIM1SEL_HSI     (1 << 30)   /**< LPTIM1 source is HSI.      */
+#define STM32_LPTIM1SEL_LSI     (2 << 30)   /**< LPTIM1 source is LSI.      */
+#define STM32_LPTIM1SEL_LSE     (3 << 30)   /**< LPTIM1 source is LSE.      */
 /** @} */
 
 /*===========================================================================*/
@@ -1447,7 +1436,9 @@
 /*
  * PLL enable check.
  */
-#if STM32_CLOCK48_REQUIRED ||                                               \
+#if (STM32_CLOCK48_REQUIRED &&                                              \
+     STM32_HAS_RCC_CK48MSEL &&                                              \
+     (STM32_CK48MSEL == STM32_CK48MSEL_PLL)) ||                             \
     (STM32_SW == STM32_SW_PLL) ||                                           \
     (STM32_MCO1SEL == STM32_MCO1SEL_PLL) ||                                 \
     (STM32_MCO2SEL == STM32_MCO2SEL_PLL) ||                                 \
@@ -1681,11 +1672,14 @@
 /*
  * PLLI2S enable check.
  */
-#if (STM32_CLOCK48_REQUIRED && (STM32_CK48MSEL == STM32_CK48MSEL_PLLI2S)    \
-    && defined(STM32F413xx)) ||                                             \
-    (STM32_I2SSRC == STM32_I2SSRC_PLLI2S) ||                                \
-    (STM32_SAI1SEL == STM32_SAI1SEL_PLLI2S) ||                              \
-    (STM32_SAI2SEL == STM32_SAI2SEL_PLLI2S) ||                              \
+#if (STM32_HAS_RCC_PLLI2S &&                                                \
+     STM32_CLOCK48_REQUIRED &&                                              \
+     (STM32_HAS_RCC_CK48MSEL &&                                             \
+      STM32_RCC_CK48MSEL_USES_I2S &&                                        \
+      (STM32_CK48MSEL == STM32_CK48MSEL_PLLALT)) ||                         \
+     (STM32_I2SSRC == STM32_I2SSRC_PLLI2S) ||                               \
+     (STM32_SAI1SEL == STM32_SAI1SEL_PLLI2S) ||                             \
+     (STM32_SAI2SEL == STM32_SAI2SEL_PLLI2S)) ||                            \
     defined(__DOXYGEN__)
 
 /**
@@ -1812,11 +1806,14 @@
 /*
  * PLLSAI enable check.
  */
-#if (STM32_CLOCK48_REQUIRED && (STM32_CK48MSEL == STM32_CK48MSEL_PLLSAI)    \
-    && defined(STM32F446xx)) ||                                             \
-    (STM32_PLLSAIDIVR != STM32_PLLSAIDIVR_OFF) ||                           \
-    (STM32_SAI1SEL == STM32_SAI1SEL_PLLSAI) ||                              \
-    (STM32_SAI2SEL == STM32_SAI2SEL_PLLSAI) ||                              \
+#if (STM32_HAS_RCC_PLLSAI &&                                                \
+     STM32_CLOCK48_REQUIRED &&                                              \
+     (STM32_HAS_RCC_CK48MSEL &&                                             \
+      !STM32_RCC_CK48MSEL_USES_I2S &&                                       \
+      (STM32_CK48MSEL == STM32_CK48MSEL_PLLALT)) ||                         \
+     (STM32_I2SSRC == STM32_I2SSRC_PLLI2S) ||                               \
+     (STM32_SAI1SEL == STM32_SAI1SEL_PLLSAI) ||                             \
+     (STM32_SAI2SEL == STM32_SAI2SEL_PLLSAI)) ||                            \
     defined(__DOXYGEN__)
 /**
  * @brief   PLLSAI activation flag.
@@ -2060,15 +2057,21 @@
  * @brief   48MHz frequency.
  */
 #if STM32_CLOCK48_REQUIRED || defined(__DOXYGEN__)
+#if STM32_HAS_RCC_CK48MSEL || defined(__DOXYGEN__)
 #if (STM32_CK48MSEL == STM32_CK48MSEL_PLL) || defined(__DOXYGEN__)
 #define STM32_PLL48CLK              (STM32_PLLVCO / STM32_PLLQ_VALUE)
-#elif (STM32_CK48MSEL == STM32_CK48MSEL_PLLSAI) && defined(STM32F446xx)
-#define STM32_PLL48CLK              (STM32_PLLSAIVCO / STM32_PLLSAIP_VALUE)
-#elif (STM32_CK48MSEL == STM32_CK48MSEL_PLLI2S) && defined(STM32F413xx)
+#elif STM32_CK48MSEL == STM32_CK48MSEL_PLLALT
+#if STM32_RCC_CK48MSEL_USES_I2S
 #define STM32_PLL48CLK              STM32_PLLI2S_Q_CLKOUT
+#else
+#define STM32_PLL48CLK              STM32_PLLSAI_Q_CLKOUT
+#endif
 #else
 #error "invalid source selected for PLL48CLK clock"
 #endif
+#else /* !STM32_HAS_RCC_CK48MSEL */
+#define STM32_PLL48CLK              (STM32_PLLVCO / STM32_PLLQ_VALUE)
+#endif /* !STM32_HAS_RCC_CK48MSEL */
 #else /* !STM32_CLOCK48_REQUIRED */
 #define STM32_PLL48CLK              0
 #endif /* STM32_CLOCK48_REQUIRED */
