@@ -28,7 +28,7 @@
 
 #include "ch.h"
 #include "ccportab.h"
-#include "tscommon.h"
+
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
@@ -376,9 +376,8 @@ extern "C" {
   int listen(int s, int backlog);
   in_addr_t inet_addr(const char *cp);
   int inet_aton(const char *cp, struct in_addr *addr);
-  void tsWaitStubSkelReady(void);
-  THD_FUNCTION(TsStubsService, tsstate);
-  extern THD_WORKING_AREA(waTsStubsService, 1024);
+  THD_FUNCTION(TsSocksStubsService, tsstatep);
+  extern THD_WORKING_AREA(waTsSocksStubsService, 1024);
 #ifdef __cplusplus
 }
 #endif

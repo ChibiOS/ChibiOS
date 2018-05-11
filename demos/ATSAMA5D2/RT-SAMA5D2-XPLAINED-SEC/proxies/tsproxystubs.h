@@ -18,70 +18,31 @@
 */
 
 /**
- * @file    tscommon.h
- * @brief   Common, shared defines and macros between secure and non secure
- *          environment.
+ * @file    tsproxystubs.h
+ * @brief   Proxy stubs module macros and structures.
  *
  */
 
-#ifndef TSCOMMON_H
-#define TSCOMMON_H
+#ifndef TSPROXYSTUBS_H
+#define TSPROXYSTUBS_H
 
 #include "ch.h"
 #include "ccportab.h"
+#include "tscommon.h"
 
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
-#define SKEL_REQ_GETOP    1
-#define SKEL_REQ_CPYPRMS  2
-#define SKEL_REQ_PUTRES   3
-#define SKEL_REQ_READY    4
+#define METHOD_MAX_PARAMS   6
+#define STUB_MAX_OPS        32
 
-/* Sockets stub defines.*/
-#define SOCK_OP_SOCKET    0
-#define SOCK_OP_CLOSE     1
-#define SOCK_OP_CONNECT   2
-#define SOCK_OP_RECV      3
-#define SOCK_OP_SEND      4
-#define SOCK_OP_SELECT    5
-#define SOCK_OP_BIND      6
-#define SOCK_OP_LISTEN    7
-
-/* Socket new op event.*/
-#define EVT_F_SOCK_NEW_OP   1
-
-/* Sockets stub service name.*/
-#define SOCKS_SVC_NAME    "TsSocksStubService"
-
-/* IOBlocks stub defines.*/
-#define IOBLKS_OP_OPEN    0
-#define IOBLKS_OP_CLOSE   1
-#define IOBLKS_OP_READ    2
-#define IOBLKS_OP_WRITE   3
-#define IOBLKS_OP_FLUSH   4
-
-/* IOBlock new op event.*/
-#define EVT_F_IOBLK_NEW_OP  2
-
-/* IOBlock stub service name.*/
-#define IOBLKS_SVC_NAME   "TsIOBlksStubService"
-
-/* Sector size.*/
-#define IOBLKS_SECT_SIZE  512U
-
-/* Remote Partition size, in sectors.*/
-#define IOBLKS_PART_SIZE  96256U
-
-/* Remote partition offset, in sectors.*/
-#define IOBLKS_PART_OFFS  952320U
+#define OP_PRMDIR_NONE      0
+#define OP_PRMDIR_IN        1
+#define OP_PRMDIR_OUT       2
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
-#define METHOD_MAX_PARAMS   6
-
-#define L_FD_SETSIZE  64
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -90,17 +51,30 @@
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
-typedef struct skel_ctx skel_ctx_t;
 
-typedef struct skel_req {
-  uint32_t    req;        /* getop, cpyprms, putres */
-  uint32_t    stub_op;
-  uint32_t    stub_op_code;
-  uint32_t    stub_op_result;
-  uint32_t    stub_op_p_sz[METHOD_MAX_PARAMS];
-  uint32_t    stub_op_p[METHOD_MAX_PARAMS];
-  skel_ctx_t *scp;  /* the skeleton context this req come from.*/
-} skel_req_t;
+typedef enum {FREE=0, CALLING, PENDING} op_state_t;
+typedef struct  stub_ctx stub_ctx_t;
+
+typedef struct stub_param {
+  uint32_t  dir;
+  uint32_t  val;
+  uint32_t  size;
+} stub_parm_t;
+
+typedef struct stub_op {
+  uint32_t            op_code;  /* the stub method op code.*/
+  op_state_t          op_state; /* calling, pending, free.*/
+  stub_parm_t         op_p[METHOD_MAX_PARAMS];
+  thread_reference_t  op_wthdp; /* TS internal client thread (the caller).*/
+  stub_ctx_t         *scp;      /* the stub ctx this stub_op relates to.*/
+} stub_op_t;
+
+typedef struct stub_ctx {
+  eventflags_t    event_flag;
+  objects_fifo_t  ops_fifo;
+  msg_t           ops_msgs[STUB_MAX_OPS];
+  stub_op_t       ops[STUB_MAX_OPS];
+} stub_ctx_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -110,8 +84,19 @@ typedef struct skel_req {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void tsWaitStubSkelReady(eventflags_t mask);
+  void TsStubService(ts_state_t *svcp, stub_ctx_t *scp);
+  uint32_t callRemote(stub_op_t *op);
+  stub_op_t *getNewOp(stub_ctx_t *scp);
+#ifdef __cplusplus
+}
+#endif
+
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* TSCOMMON_H */
+#endif /* TSPROXYSTUBS_H */
