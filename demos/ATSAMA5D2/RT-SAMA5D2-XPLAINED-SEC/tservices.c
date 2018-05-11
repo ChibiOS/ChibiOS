@@ -25,7 +25,9 @@
 #include "ch.h"
 #include "hal.h"
 #include "tservices.h"
+#include "proxies/tscommon.h"
 #include "proxies/tssockstub.h"
+#include "proxies/tsioblksstub.h"
 #include "chprintf.h"
 
 /*===========================================================================*/
@@ -49,17 +51,17 @@
 /*===========================================================================*/
 
 static THD_WORKING_AREA(waTsSimpleService, 1024);
-static THD_FUNCTION(TsSimpleService, tsstate) {
+static THD_FUNCTION(TsSimpleService, tsstatep) {
 
   BaseSequentialStream *ssp = (BaseSequentialStream*)&SD1;
-  ts_state_t *svcp = tsstate;
+  ts_state_t *svcp = tsstatep;
 
   /* Start the 'wait request / process / response' cycle.*/
   for (;/* ever */;) {
     int i;
 
     /* Wait a service request.*/
-    msg_t r = tssiWaitRequest(tsstate);
+    msg_t r = tssiWaitRequest(svcp);
 
     /* Check if status is ko. It could not happen.*/
     if (r != SMC_SVC_OK) {
@@ -97,7 +99,8 @@ static THD_FUNCTION(TsSimpleService, tsstate) {
 TS_STATE_TABLE
 TS_CONF_TABLE_BEGIN
   TS_CONF_TABLE_ENTRY("TsSimpleService", waTsSimpleService, TS_BASE_PRIO, TsSimpleService, TS_STATE(0))
-  TS_CONF_TABLE_ENTRY("TsStubsService", waTsStubsService, TS_BASE_PRIO+1, TsStubsService, TS_STATE(1))
+  TS_CONF_TABLE_ENTRY(SOCKS_SVC_NAME, waTsSocksStubsService, TS_BASE_PRIO+1, TsSocksStubsService, TS_STATE(1))
+  TS_CONF_TABLE_ENTRY(IOBLKS_SVC_NAME, waTsIOBlksStubsService, TS_BASE_PRIO+1, TsIOBlksStubsService, TS_STATE(2))
 TS_CONF_TABLE_END
 
 /** @} */

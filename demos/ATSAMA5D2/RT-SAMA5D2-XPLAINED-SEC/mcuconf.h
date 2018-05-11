@@ -106,6 +106,11 @@
 #define SAMA_TC1_IRQ_PRIORITY               2
 
 /*
+ * TRNG driver system settings
+ */
+#define HAL_USE_TRNG                        FALSE
+
+/*
  * UART driver system settings.
  */
 #define SAMA_UART_USE_UART0                 FALSE
@@ -139,5 +144,11 @@
 #define SAMA_UART_FLEXCOM3_DMA_IRQ_PRIORITY 4
 #define SAMA_UART_FLEXCOM4_DMA_IRQ_PRIORITY 4
 #define SAMA_UART_DMA_ERROR_HOOK(uartp)     osalSysHalt("DMA failure")
+
+/*
+ * L2CC related defines.
+ */
+#define SAMA_L2CC_ASSUME_ENABLED            0
+#define SAMA_L2CC_ENABLE                    0
 
 #endif /* MCUCONF_H */

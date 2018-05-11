@@ -17,14 +17,20 @@
 #include "ch.h"
 #include "hal.h"
 #include "chtssi.h"
+#include "proxies/tsproxystubs.h"
 #include "proxies/tssockstub.h"
 #include "rt_test_root.h"
 #include "oslib_test_root.h"
 #include "chprintf.h"
-#include <string.h>
+#include "redfs.h"
+#include "redposix.h"
+#include "redfse.h"
+#include "redconf.h"
+#include "string.h"
 
-#define SERVER_PORT_NUM 8080
 #define SERVER_IP_ADDRESS "192.168.1.104"
+
+#define BSS ((BaseSequentialStream *)&SD1)
 
 void tcpexample(int port) {
   int socket_fd;
@@ -42,7 +48,7 @@ void tcpexample(int port) {
   socket_fd = socket(PF_INET, SOCK_STREAM, 0);
 
   if ( socket_fd < 0 ) {
-    chprintf((BaseSequentialStream *)&SD1, "socket call failed.\r\n");
+    chprintf(BSS, "socket call failed.\r\n");
     return;
   }
 
@@ -57,7 +63,7 @@ void tcpexample(int port) {
 
   if (connect(socket_fd, (struct sockaddr *)&ra,
       sizeof (struct sockaddr_in)) < 0) {
-    chprintf((BaseSequentialStream *)&SD1, "Connect failed.\r\n");
+    chprintf(BSS, "Connect failed.\r\n");
     close(socket_fd);
     return;
   }
@@ -65,7 +71,7 @@ void tcpexample(int port) {
     chsnprintf(data_buffer, sizeof data_buffer,
         "Sending this message on port %d.\r\n", port);
     if (send(socket_fd, data_buffer, strlen(data_buffer), 0) < 0) {
-      chprintf((BaseSequentialStream *)&SD1, "Send failed.\r\n");
+      chprintf(BSS, "Send failed.\r\n");
       close(socket_fd);
       return;
     }
@@ -73,19 +79,19 @@ void tcpexample(int port) {
       FD_SET(socket_fd, &rset);
       recv_data = select(socket_fd+1, &rset, 0, 0, &tm);
       if (recv_data < 0) {
-        chprintf((BaseSequentialStream *)&SD1, "Select failed.\r\n");
+        chprintf(BSS, "Select failed.\r\n");
         close(socket_fd);
         return;
       }
     } while (recv_data == 0);
     recv_data = recv(socket_fd, data_buffer, sizeof data_buffer, 0);
     if (recv_data < 0) {
-      chprintf((BaseSequentialStream *)&SD1, "Recv failed.\r\n");
+      chprintf(BSS, "Recv failed.\r\n");
       close(socket_fd);
       return;
     }
     data_buffer[recv_data] = '\0';
-    chprintf((BaseSequentialStream *)&SD1, "Received data: %s.\r\n", data_buffer);
+    chprintf(BSS, "Received data: %s\r\n", data_buffer);
   }
   close(socket_fd);
 }
@@ -94,13 +100,71 @@ void tcpexample(int port) {
  * Two threads that run the same tcp example on two
  * different ports.
  */
-static THD_WORKING_AREA(waThreadTcp1, 512);
-static THD_WORKING_AREA(waThreadTcp2, 512);
+static THD_WORKING_AREA(waThreadTcp1, 8192);
+static THD_WORKING_AREA(waThreadTcp2, 8192);
 static THD_FUNCTION(ThreadTcp, arg) {
   int port  = (int)arg;
+  static int once = 0;
+  static const char wb[] = "Baba', dolce baba'.\r\n";
 
-  tsWaitStubSkelReady();
+  tsWaitStubSkelReady(EVT_F_SOCK_NEW_OP|EVT_F_IOBLK_NEW_OP);
   chThdSleepMilliseconds(5000);
+
+  /* one among the threads runs Reliance Edge test on remote partition.*/
+  if (!once) {
+    int32_t fd, n;
+    static char buf[128];
+    static const char *filename = "Test.txt";
+
+    once = 1;
+    red_init();
+    if (red_mount("") == -1) {
+      chprintf(BSS, "Formatting the partition.\r\n");
+      red_format("");
+      red_mount("");
+    }
+    if ((fd = red_open(filename, RED_O_RDWR)) == -1) {
+      int i;
+      chprintf(BSS, "Creating a file.\r\n");
+      fd = red_open(filename, RED_O_RDWR|RED_O_CREAT);
+      if (fd == -1) {
+        chprintf(BSS, "Cannot create the file. Aborting.\r\n");
+        goto re_abort;
+      }
+      chprintf(BSS, "Writing it.\r\n");
+      for (i = 0; i < 10; ++i)
+        if (red_write(fd, wb, sizeof wb - 1) == -1) {
+          chprintf(BSS, "Cannot write into the file. Aborting.\r\n");
+          goto re_abort;
+        }
+      chprintf(BSS, "Closing it.\r\n");
+      red_close(fd);
+      chprintf(BSS, "Reopening it.\r\n");
+      fd = red_open(filename, RED_O_RDWR);
+      if (fd == -1) {
+        chprintf(BSS, "Cannot open the file. Aborting.\r\n");
+        goto re_abort;
+      }
+    }
+    chprintf(BSS, "Reading:\r\n");
+    do {
+      n = red_read(fd, buf, sizeof buf - 1);
+      if (n == -1) {
+        chprintf(BSS, "Cannot read the file. Aborting.\r\n");
+        goto re_abort;
+      }
+      buf[n] = '\0';
+      if (n)
+        chprintf(BSS, "%s", buf);
+    } while (n);
+    chprintf(BSS, "\r\nClosing.\r\n");
+    red_close(fd);
+    chprintf(BSS, "\r\nDeleting the file.\r\n");
+    red_unlink(filename);
+re_abort:
+    red_uninit();
+  }
+
   while (true) {
     tcpexample(port);
     chThdSleepMilliseconds(250);

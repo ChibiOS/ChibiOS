@@ -5,7 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -O0 -ggdb -fomit-frame-pointer -falign-functions=16
+  USE_OPT = -Og -ggdb -fomit-frame-pointer -falign-functions=16
 endif
 
 # C specific options here (added to USE_OPT).
@@ -131,6 +131,7 @@ include $(CHIBIOS)/test/lib/test.mk
 include $(CHIBIOS)/test/rt/rt_test.mk
 include $(CHIBIOS)/test/oslib/oslib_test.mk
 include $(CHIBIOS)/os/hal/lib/streams/streams.mk
+include reliance.mk
 
 # Define linker script file here
 LDSCRIPT= $(STARTUPLD)/SAMA5D2ddr.ld
@@ -140,7 +141,9 @@ LDSCRIPT= $(STARTUPLD)/SAMA5D2ddr.ld
 CSRC = $(ALLCSRC) \
        $(TESTSRC) \
        tservices.c \
+       proxies/tsproxystubs.c \
        proxies/tssockstub.c \
+       proxies/tsioblksstub.c \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
