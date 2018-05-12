@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 17.6.5 ***
+- OTH: Fixed wrong macro check in GCC Cortex-M startup files (bug #947).
 - HAL: Fixed binary instead of logic operator in STM32F4 HAL (bug #946).
 - HAL: Fixed Mikroe clicker 2 misaligned board file (bug #945).
 - VAR: Fixed shell broken in 17.6.4 (bug #944).
