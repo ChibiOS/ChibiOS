@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    STM32F4xx/hal_lld.h
+ * @file    STM32F4xx/hal_lld_type1.h
  * @brief   STM32F4xx/STM32F2xx HAL subsystem low level driver header.
  * @pre     This module requires the following macros to be defined in the
  *          @p board.h file:
@@ -30,7 +30,7 @@
  *          - STM32F405xx, STM32F415xx, STM32F407xx, STM32F417xx,
  *            STM32F446xx for High-performance STM32F4 devices of
  *            Foundation line.
- *          - STM32F401xx, STM32F410xx, STM32F411xx, STM32F412xx, STM32F413xx
+ *          - STM32F401xx, STM32F410xx, STM32F411xx, STM32F412xx
  *            for High-performance STM32F4 devices of Access line.
  *          - STM32F427xx, STM32F437xx, STM32F429xx, STM32F439xx, STM32F469xx, 
  *            STM32F479xx for High-performance STM32F4 devices of Advanced line.
@@ -40,8 +40,8 @@
  * @{
  */
 
-#ifndef HAL_LLD_H
-#define HAL_LLD_H
+#ifndef HAL_LLD_TYPE1_H
+#define HAL_LLD_TYPE1_H
 
 #include "stm32_registry.h"
 
@@ -87,9 +87,6 @@
 
 #elif defined(STM32F412xx)
 #define PLATFORM_NAME           "STM32F412 High Performance with DSP and FPU"
-
-#elif defined(STM32F413xx)
-#define PLATFORM_NAME           "STM32F413 High Performance with DSP and FPU"
 
 #elif defined(STM32F415xx)
 #define PLATFORM_NAME           "STM32F415 High Performance with DSP and FPU"
@@ -267,7 +264,7 @@
 #endif
 
 #if defined(STM32F410xx) || defined(STM32F411xx) ||                         \
-    defined(STM32F412xx) || defined(STM32F413xx)
+    defined(STM32F412xx)
 #define STM32_SYSCLK_MAX        100000000
 #define STM32_HSECLK_MAX        26000000
 #define STM32_HSECLK_BYP_MAX    50000000
@@ -485,13 +482,8 @@
  * @name    RCC_DCKCFGR register bits definitions
  * @{
  */
-#if !defined(STM32F413xx) || defined(_DOXYGEN__)
 #define STM32_PLLI2SDIVQ_MASK   (31 << 0)   /**< PLLI2SDIVQ mask.           */
 #define STM32_PLLSAIDIVQ_MASK   (31 << 8)   /**< PLLSAIDIVQ mask.           */
-#else
-#define STM32_PLLI2SDIVR_MASK   (31 << 0)
-#define STM32_PLLSAIDIVR_MASK   (31 << 8)
-#endif
 
 #define STM32_PLLSAIDIVR_MASK   (3 << 16)   /**< PLLSAIDIVR mask.           */
 #define STM32_PLLSAIDIVR_DIV2   (0 << 16)   /**< LCD_CLK is R divided by 2. */
@@ -1084,51 +1076,6 @@
 #error "invalid VDD voltage specified"
 #endif
 
-#elif defined(STM32F413xx)
-#if (STM32_VDD >= 270) && (STM32_VDD <= 360)
-#define STM32_0WS_THRESHOLD         25000000
-#define STM32_1WS_THRESHOLD         50000000
-#define STM32_2WS_THRESHOLD         75000000
-#define STM32_3WS_THRESHOLD         100000000
-#define STM32_4WS_THRESHOLD         0
-#define STM32_5WS_THRESHOLD         0
-#define STM32_6WS_THRESHOLD         0
-#define STM32_7WS_THRESHOLD         0
-#define STM32_8WS_THRESHOLD         0
-#elif (STM32_VDD >= 240) && (STM32_VDD < 270)
-#define STM32_0WS_THRESHOLD         20000000
-#define STM32_1WS_THRESHOLD         40000000
-#define STM32_2WS_THRESHOLD         60000000
-#define STM32_3WS_THRESHOLD         80000000
-#define STM32_4WS_THRESHOLD         100000000
-#define STM32_5WS_THRESHOLD         0
-#define STM32_6WS_THRESHOLD         0
-#define STM32_7WS_THRESHOLD         0
-#define STM32_8WS_THRESHOLD         0
-#elif (STM32_VDD >= 210) && (STM32_VDD < 240)
-#define STM32_0WS_THRESHOLD         18000000
-#define STM32_1WS_THRESHOLD         36000000
-#define STM32_2WS_THRESHOLD         54000000
-#define STM32_3WS_THRESHOLD         72000000
-#define STM32_4WS_THRESHOLD         90000000
-#define STM32_5WS_THRESHOLD         100000000
-#define STM32_6WS_THRESHOLD         0
-#define STM32_7WS_THRESHOLD         0
-#define STM32_8WS_THRESHOLD         0
-#elif (STM32_VDD >= 170) && (STM32_VDD < 210)
-#define STM32_0WS_THRESHOLD         16000000
-#define STM32_1WS_THRESHOLD         32000000
-#define STM32_2WS_THRESHOLD         48000000
-#define STM32_3WS_THRESHOLD         64000000
-#define STM32_4WS_THRESHOLD         80000000
-#define STM32_5WS_THRESHOLD         96000000
-#define STM32_6WS_THRESHOLD         100000000
-#define STM32_7WS_THRESHOLD         0
-#define STM32_8WS_THRESHOLD         0
-#else
-#error "invalid VDD voltage specified"
-#endif
-
 #elif defined(STM32F412xx)
 #if (STM32_VDD >= 270) && (STM32_VDD <= 360)
 #define STM32_0WS_THRESHOLD         30000000
@@ -1608,7 +1555,7 @@
 #define STM32_OVERDRIVE_REQUIRED    FALSE
 
 #elif defined(STM32F410xx) || defined(STM32F411xx) ||                       \
-      defined(STM32F412xx) || defined(STM32F413xx)
+      defined(STM32F412xx)
 #if STM32_SYSCLK <= 64000000
 #define STM32_VOS                   STM32_VOS_SCALE3
 #elif STM32_SYSCLK <= 84000000
@@ -2115,7 +2062,7 @@
 #define STM32_PLL48CLK              0
 #endif /* STM32_CLOCK48_REQUIRED */
 
-#if defined(STM32F413xx) || defined(STM32F446xx)
+#if defined(STM32F446xx)
 #if STM32_TIMPRE == STM32_TIMPRE_HCLK
 /**
  * @brief   Clock of timers connected to APB1
@@ -2157,7 +2104,7 @@
 #endif
 #endif /* STM32_TIMPRE != STM32_TIMPRE_HCLK */
 
-#else /* !(defined(STM32F413xx) || defined(STM32F446xx)) */
+#else /* !defined(STM32F446xx) */
 
 /**
  * @brief   Clock of timers connected to APB1
@@ -2177,7 +2124,7 @@
 #else
 #define STM32_TIMCLK2               (STM32_PCLK2 * 2)
 #endif
-#endif /*  defined(STM32F413) */
+#endif /* !defined(STM32F446xx) */
 
 /**
  * @brief   Flash settings.
@@ -2227,14 +2174,6 @@
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-/* Various helpers.*/
-#include "nvic.h"
-#include "cache.h"
-#include "mpu_v7m.h"
-#include "stm32_isr.h"
-#include "stm32_dma.h"
-#include "stm32_rcc.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -2244,6 +2183,6 @@ extern "C" {
 }
 #endif
 
-#endif /* HAL_LLD_H */
+#endif /* HAL_LLD_TYPE1_H */
 
 /** @} */
