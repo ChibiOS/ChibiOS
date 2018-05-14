@@ -91,8 +91,10 @@
 *****************************************************************************
 
 *** Next ***
-- NEW: Added support for STM32F413, added ability to handle the TIMPRE bit
-       in the RCC_DKCFGR register.
+- NEW: Restructured the STM32F4xx HAL support, added support for STM32F413,
+       added ability to handle the TIMPRE bit, separated the clock tree in
+       two distinct implementation to reduce the proliferation of compiler
+       time conditionals, added more checks to the input parameters.
 - NEW: Added optional support for character match callback in the UART
        high level driver.
 - NEW: Change, chMtxGetNextMutexS() renamed to chMtxGetNextMutexX().
