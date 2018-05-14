@@ -43,8 +43,6 @@
 #ifndef HAL_LLD_TYPE1_H
 #define HAL_LLD_TYPE1_H
 
-#include "stm32_registry.h"
-
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -1026,8 +1024,8 @@
 #endif /* !defined(STM32F4XX) */
 
 /**
- * @brief   Maximum frequency thresholds and wait states for flash access.
- * @note    The values are valid for 2.7V to 3.6V supply range.
+ * @name    Maximum frequency thresholds and wait states for flash access.
+ * @{
  */
 #if defined(STM32F429_439xx) || defined(STM32F427_437xx) ||                 \
     defined(STM32F40_41xxx)  || defined(STM32F446xx)     ||                 \
@@ -1253,6 +1251,7 @@
 #error "invalid VDD voltage specified"
 #endif
 #endif /* STM32F2XX */
+/** @} */
 
 /*
  * HSI related checks.
@@ -1279,6 +1278,11 @@
 #endif
 
 #if (STM32_I2SSRC == STM32_I2SSRC_PLLI2S) &&                                \
+    (STM32_PLLSRC == STM32_PLLSRC_HSI)
+#error "HSI not enabled, required by STM32_I2SSRC"
+#endif
+
+#if (STM32_PLLI2SSRC == STM32_PLLI2SSRC_PLLI2S) &&                          \
     (STM32_PLLSRC == STM32_PLLSRC_HSI)
 #error "HSI not enabled, required by STM32_I2SSRC"
 #endif
@@ -1339,6 +1343,11 @@
 #if (STM32_I2SSRC == STM32_I2SSRC_PLLI2S) &&                                \
     (STM32_PLLSRC == STM32_PLLSRC_HSE)
 #error "HSE not enabled, required by STM32_I2SSRC"
+#endif
+
+#if (STM32_PLLI2SSRC == STM32_PLLI2SSRC_PLLSRC) &&                          \
+    (STM32_PLLSRC == STM32_PLLSRC_HSE)
+#error "HSE not enabled, required by STM32_PLLI2SSRC"
 #endif
 
 #if STM32_RTCSEL == STM32_RTCSEL_HSEDIV
@@ -1741,7 +1750,7 @@
 #if STM32_HAS_RCC_I2SPLLSRC || defined(__DOXYGEN__)
 #if (STM32_PLLI2SSRC == STM32_PLLI2SSRC_PLLSRC) || defined(__DOXYGEN__)
 #define STM32_PLLI2SCLKIN           (STM32_PLLSRCCLK / STM32_PLLI2SM_VALUE)
-#elif STM32_PLLI2SSRC == STM32_PLLI2SSRC_I2SCKIN
+#elif STM32_PLLI2SSRC == STM32_PLLI2SSRC_CKIN
 #define STM32_PLLI2SCLKIN           (STM32_I2SCKIN_VALUE / STM32_PLLI2SM_VALUE)
 #else
 #error "invalid STM32_PLLI2SSRC value specified"
