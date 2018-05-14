@@ -67,6 +67,9 @@ int main(void) {
   SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_ENABLE_Msk |
                   SysTick_CTRL_TICKINT_Msk;
 
+  /* IRQ enabled.*/
+  NVIC_SetPriority(SysTick_IRQn, 8);
+
   /*
    * System initializations.
    * - Kernel initialization, the main() function becomes a thread and the
