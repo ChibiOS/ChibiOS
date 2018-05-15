@@ -145,8 +145,8 @@
 /**
  * @brief   Host wake-up procedure duration.
  */
-#if !defined(USB_HOST_WAKEUP_DURATION) || defined(__DOXYGEN__)
-#define USB_HOST_WAKEUP_DURATION            2
+#if !defined(STM32_USB_HOST_WAKEUP_DURATION) || defined(__DOXYGEN__)
+#define STM32_USB_HOST_WAKEUP_DURATION      2
 #endif
 
 /*===========================================================================*/
@@ -259,8 +259,8 @@
 #error "the USB OTG driver requires a 48MHz clock"
 #endif
 
-#if (USB_HOST_WAKEUP_DURATION < 2) || (USB_HOST_WAKEUP_DURATION > 15)
-#error "invalid USB_HOST_WAKEUP_DURATION setting, it must be between 2 and 15"
+#if (STM32_USB_HOST_WAKEUP_DURATION < 2) || (STM32_USB_HOST_WAKEUP_DURATION > 15)
+#error "invalid STM32_USB_HOST_WAKEUP_DURATION setting, it must be between 2 and 15"
 #endif
 
 /*===========================================================================*/
@@ -591,7 +591,7 @@ struct USBDriver {
 #define usb_lld_wakeup_host(usbp)                                           \
   do{                                                                       \
     (usbp)->otg->DCTL |= DCTL_RWUSIG;                                       \
-    osalThreadSleepMilliseconds(USB_HOST_WAKEUP_DURATION);                  \
+    osalThreadSleepMilliseconds(STM32_USB_HOST_WAKEUP_DURATION);            \
     (usbp)->otg->DCTL &= ~DCTL_RWUSIG;                                      \
   } while (false)
 
