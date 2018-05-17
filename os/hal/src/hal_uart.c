@@ -188,7 +188,7 @@ void uartStartSendI(UARTDriver *uartp, size_t n, const void *txbuf) {
  *
  * @return              The number of data frames not transmitted by the
  *                      stopped transmit operation.
- * @retval 0            There was no transmit operation in progress.
+ * @retval UART_ERR_NOT_ACTIVE if there was no transmit operation in progress.
  *
  * @api
  */
@@ -205,7 +205,7 @@ size_t uartStopSend(UARTDriver *uartp) {
     uartp->txstate = UART_TX_IDLE;
   }
   else {
-    n = 0;
+    n = UART_ERR_NOT_ACTIVE;
   }
   osalSysUnlock();
 
@@ -221,7 +221,7 @@ size_t uartStopSend(UARTDriver *uartp) {
  *
  * @return              The number of data frames not transmitted by the
  *                      stopped transmit operation.
- * @retval 0            There was no transmit operation in progress.
+ * @retval UART_ERR_NOT_ACTIVE if there was no transmit operation in progress.
  *
  * @iclass
  */
@@ -236,7 +236,7 @@ size_t uartStopSendI(UARTDriver *uartp) {
     uartp->txstate = UART_TX_IDLE;
     return n;
   }
-  return 0;
+  return UART_ERR_NOT_ACTIVE;
 }
 
 /**
@@ -294,7 +294,7 @@ void uartStartReceiveI(UARTDriver *uartp, size_t n, void *rxbuf) {
  *
  * @return              The number of data frames not received by the
  *                      stopped receive operation.
- * @retval 0            There was no receive operation in progress.
+ * @retval UART_ERR_NOT_ACTIVE if there was no receive operation in progress.
  *
  * @api
  */
@@ -311,7 +311,7 @@ size_t uartStopReceive(UARTDriver *uartp) {
     uartp->rxstate = UART_RX_IDLE;
   }
   else {
-    n = 0;
+    n = UART_ERR_NOT_ACTIVE;
   }
   osalSysUnlock();
 
@@ -327,7 +327,7 @@ size_t uartStopReceive(UARTDriver *uartp) {
  *
  * @return              The number of data frames not received by the
  *                      stopped receive operation.
- * @retval 0            There was no receive operation in progress.
+ * @retval UART_ERR_NOT_ACTIVE if there was no receive operation in progress.
  *
  * @iclass
  */
@@ -342,7 +342,7 @@ size_t uartStopReceiveI(UARTDriver *uartp) {
     uartp->rxstate = UART_RX_IDLE;
     return n;
   }
-  return 0;
+  return UART_ERR_NOT_ACTIVE;
 }
 
 #if (UART_USE_WAIT == TRUE) || defined(__DOXYGEN__)

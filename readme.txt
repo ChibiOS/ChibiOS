@@ -126,6 +126,8 @@
 - EX:  Updated LIS302DL to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LPS25H to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LSM303DLHC to 1.1.0 (backported to 18.2.1).
+- HAL: Fixed missing definition in UART driver (bug #948)(backported
+       to 18.2.2).
 - OTH: Fixed wrong macro check in GCC Cortex-M startup files (bug #947)
        (backported to 18.2.2 and 17.6.5).
 - HAL: Fixed binary instead of logic operator in STM32F4 HAL (bug #946)
