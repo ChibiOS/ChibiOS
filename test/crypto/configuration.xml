@@ -2369,23 +2369,23 @@ cryStart(&CRYD1, &configTRNG_Polling);
                     </tags>
                     <code>
                       <value><![CDATA[
-uint32_t random[10];
-  int i,j;
-  for (i=0;i<10;i++)
-  {
-    ret = cryTRNG(&CRYD1,(uint8_t*)&random[i]);
+uint32_t random[4];
+int i;
 
-    test_assert(ret == CRY_NOERROR , "failed random");
+ret = cryTRNG(&CRYD1,(uint8_t*)&random);
 
-    SHOW_DATA(&random[i],1);
+test_assert(ret == CRY_NOERROR , "failed random");
 
-    test_assert(random[i]  != 0 , "failed random generation (zero)");
+SHOW_DATA(&random[0],4);
 
-    for (j=0;j<i;j++)
-    {
-        test_assert(random[i]  != random[j] , "failed random generation");
-    }
-  }
+for (i=0;i<4;i++) {
+	test_assert(random[i]  != 0 , "failed random generation (zero)");
+}
+for (i=1;i<4;i++)
+{
+	test_assert(random[i-1]  != random[i] , "failed random generation");
+}
+
 
 ]]></value>
                     </code>
@@ -3640,6 +3640,278 @@ for (i = 0;i<TEST_GCM_LEN;i++) {
 
 			</cases>
           </sequence>
+
+		       
+<sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
+              <value>HMAC</value>
+            </brief>
+            <description>
+              <value>HMAC testing</value>
+            </description>
+            <condition>
+              <value />
+            </condition>
+            <shared_code>
+              <value><![CDATA[
+#include <string.h>
+#include "ref_hmac.h"
+#define plaintext msg_clear
+#define HMACOUT	  msg_encrypted
+#define shabuffer msg_decrypted
+
+#define MAX_SHA_BLOCK_SIZE			TEST_MSG_DATA_BYTE_LEN
+#define MAX_SHA_BLOCK_SIZE_INWORD  (MAX_SHA_BLOCK_SIZE/4)
+
+static const CRYConfig config_Polling=
+{
+		TRANSFER_POLLING,
+		0
+};
+
+static const CRYConfig config_DMA=
+{
+		TRANSFER_DMA,
+		0
+};
+
+
+static const int hmackeys_size[]=
+{
+ 20,
+ 4,
+ 20
+};
+
+static const uint8_t hmackey_1[]=
+{
+     0x0B,0x0B,0x0B,0x0B,0x0B,0x0B,0x0B,0x0B,0x0B,0x0B,
+     0x0B,0x0B,0x0B,0x0B,0x0B,0x0B,0x0B,0x0B,0x0B,0x0B,
+
+};
+
+//   "Hi There",
+static const uint8_t hmacmsg1[8]= "Hi There";
+static const size_t hmacmsg_size[]=
+{
+   8,
+};
+static void cryHMAC256(CRYDriver *cryp) {
+
+    cryerror_t ret;
+    HMACSHA256Context hmacshactxp;
+    uint8_t *keyp;
+
+
+    hmacshactxp.shacontext.sha.sha_buffer = (uint8_t*)&shabuffer[0];
+    hmacshactxp.shacontext.sha.sha_buffer_size = MAX_SHA_BLOCK_SIZE;
+
+    keyp =(uint8_t *)hmackey_1;
+    ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_hmac,hmackeys_size[0], keyp);
+
+    test_assert(ret == CRY_NOERROR, "failed load transient key");
+
+    ret = cryHMACSHA256Init(cryp,&hmacshactxp);
+	
+	test_assert(ret == CRY_NOERROR, "failed init HMACSHA256");
+
+    ret = cryHMACSHA256Update(cryp,&hmacshactxp,hmacmsg_size[0],(const uint8_t *)&hmacmsg1);
+	
+	test_assert(ret == CRY_NOERROR, "failed update HMACSHA256");
+
+    ret = cryHMACSHA256Final(cryp,&hmacshactxp,(uint8_t *)HMACOUT);
+	
+	test_assert(ret == CRY_NOERROR, "failed final HMACSHA256");
+
+
+    SHOW_DATA(HMACOUT,8);
+
+}
+
+static void cryHMAC512(CRYDriver *cryp) {
+
+    cryerror_t ret;
+    HMACSHA512Context hmacshactxp;
+    uint8_t *keyp;
+
+
+    hmacshactxp.shacontext.sha.sha_buffer = (uint8_t*)&shabuffer[0];
+    hmacshactxp.shacontext.sha.sha_buffer_size = MAX_SHA_BLOCK_SIZE;
+
+    keyp =(uint8_t *)hmackey_1;
+    ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_hmac,hmackeys_size[0], keyp);
+
+    test_assert(ret == CRY_NOERROR, "failed load transient key");
+
+    ret = cryHMACSHA512Init(cryp,&hmacshactxp);
+	
+	test_assert(ret == CRY_NOERROR, "failed init HMACSHA512");
+
+    ret = cryHMACSHA512Update(cryp,&hmacshactxp,hmacmsg_size[0],(const uint8_t *)&hmacmsg1);
+	
+	test_assert(ret == CRY_NOERROR, "failed update HMACSHA512");
+
+    ret = cryHMACSHA512Final(cryp,&hmacshactxp,(uint8_t *)HMACOUT);
+	
+	test_assert(ret == CRY_NOERROR, "failed final HMACSHA512");
+
+
+    SHOW_DATA(HMACOUT,16);
+
+}
+
+                ]]></value>
+            </shared_code>
+            <cases>
+			 <case>
+                <brief>
+                  <value>HMAC Polling</value>
+                </brief>
+                <description>
+                  <value>testing HMAC in polled mode</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[
+memset(HMACOUT, 0xff, TEST_MSG_DATA_BYTE_LEN);
+cryStart(&CRYD1, &config_Polling);
+
+                      ]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value><![CDATA[cryStop(&CRYD1);]]></value>
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[
+]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>hmac 256</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[
+cryHMAC256(&CRYD1);    
+
+for (int i = 0; i < 8; i++) {
+   test_assert(HMACOUT[i] == ((uint32_t*) refHMAC_HMAC256_1)[i], "hmac mismatch");
+}
+]]></value>
+                    </code>
+                  </step>
+                                   <step>
+                    <description>
+                      <value>hmac 512</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[
+cryHMAC512(&CRYD1);    
+
+for (int i = 0; i < 16; i++) {
+   test_assert(HMACOUT[i] == ((uint32_t*) refHMAC_HMAC512_1)[i], "hmac mismatch");
+}
+]]></value>
+                    </code>
+                  </step> 
+                
+
+                 
+ 
+                </steps>
+              </case>
+              
+
+   <case>
+                <brief>
+                  <value>HMAC DMA</value>
+                </brief>
+                <description>
+                  <value>testing HMAC in DMA mode</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[
+memset(HMACOUT, 0xff, TEST_MSG_DATA_BYTE_LEN);
+cryStart(&CRYD1, &config_DMA);
+
+                      ]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value><![CDATA[cryStop(&CRYD1);]]></value>
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[
+]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>hmac 256</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[
+cryHMAC256(&CRYD1);    
+
+
+for (int i = 0; i < 8; i++) {
+   test_assert(HMACOUT[i] == ((uint32_t*) refHMAC_HMAC256_1)[i], "hmac mismatch");
+}
+]]></value>
+                    </code>
+                  </step>
+				  
+				    <step>
+                    <description>
+                      <value>hmac 512</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[
+cryHMAC512(&CRYD1);    
+
+for (int i = 0; i < 16; i++) {
+   test_assert(HMACOUT[i] == ((uint32_t*) refHMAC_HMAC512_1)[i], "hmac mismatch");
+}
+]]></value>
+                    </code>
+                  </step> 
+
+
+                  
+                
+
+                 
+ 
+                </steps>
+              </case>
+              
+
+			</cases>
+          </sequence>
+
 
        </sequences>
       </instance>

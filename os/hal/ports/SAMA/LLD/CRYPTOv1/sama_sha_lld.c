@@ -179,6 +179,21 @@ cryerror_t sama_sha_lld_init(CRYDriver *cryp, struct sha_data *sha)
 		algoregval = SHA_MR_ALGO_SHA512;
 		break;
 #endif
+	case CRY_HMACSHA_1:
+	  algoregval = SHA_MR_ALGO_HMAC_SHA1;
+	  break;
+	case CRY_HMACSHA_224:
+	  algoregval = SHA_MR_ALGO_HMAC_SHA224;
+	  break;
+	case CRY_HMACSHA_256:
+	  algoregval = SHA_MR_ALGO_HMAC_SHA256;
+	  break;
+	case CRY_HMACSHA_384:
+	  algoregval = SHA_MR_ALGO_HMAC_SHA384;
+	  break;
+	case CRY_HMACSHA_512:
+	  algoregval = SHA_MR_ALGO_HMAC_SHA512;
+	  break;
 	default:
 		osalMutexUnlock(&cryp->mutex);
 		return CRY_ERR_INV_ALGO;
@@ -232,14 +247,19 @@ static uint32_t shaOutputSize(shadalgo_t algo)
 {
 	switch (algo) {
 	case CRY_SHA_1:
+	case CRY_HMACSHA_1:
 		return 20;
 	case CRY_SHA_224:
+	case CRY_HMACSHA_224:
 		return 28;
 	case CRY_SHA_256:
+	case CRY_HMACSHA_256:
 		return 32;
 	case CRY_SHA_384:
+	case CRY_HMACSHA_384:
 		return 48;
 	case CRY_SHA_512:
+	case CRY_HMACSHA_512:
 		return 64;
 	default:
 		return 0;
@@ -248,28 +268,42 @@ static uint32_t shaOutputSize(shadalgo_t algo)
 
 static uint32_t shadPaddedMessSize(uint8_t mode, uint32_t len)
 {
-	uint32_t k;
+  uint32_t k;
 
-	switch (mode) {
-	case CRY_SHA_1:
-	case CRY_SHA_224:
-	case CRY_SHA_256:
-		k = (512 + 448 - (((len * 8) % 512) + 1)) % 512;
-		len += (k - 7) / 8 + 9;
-		break;
-	case CRY_SHA_384:
-	case CRY_SHA_512:
-		k = (1024 + 896 - (((len * 8) % 1024) + 1)) % 1024;
-		len += (k - 7) / 8 + 17;
-		break;
-	}
-	return len;
+  switch (mode) {
+  case CRY_SHA_1:
+  case CRY_SHA_224:
+  case CRY_SHA_256:
+  case CRY_HMACSHA_1:
+  case CRY_HMACSHA_224:
+  case CRY_HMACSHA_256:
+    k = (512 + 448 - (((len * 8) % 512) + 1)) % 512;
+    len += (k - 7) / 8 + 9;
+    break;
+  case CRY_SHA_384:
+  case CRY_SHA_512:
+  case CRY_HMACSHA_384:
+  case CRY_HMACSHA_512:
+    k = (1024 + 896 - (((len * 8) % 1024) + 1)) % 1024;
+    len += (k - 7) / 8 + 17;
+    break;
+  }
+  return len;
 }
 
 uint8_t shaBlockSize(shadalgo_t algo)
 {
-	if ( (algo == CRY_SHA_384) || (algo == CRY_SHA_512) ) {
-		return 128;
+
+	switch(algo)
+	{
+	  case CRY_SHA_384:
+	  case CRY_HMACSHA_384:
+	  case CRY_SHA_512:
+	  case CRY_HMACSHA_512:
+	    return 128;
+
+	  default:
+	    break;
 	}
 
 	return 64;

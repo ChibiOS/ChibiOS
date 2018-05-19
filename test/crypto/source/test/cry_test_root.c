@@ -29,6 +29,7 @@
  * - @subpage cry_test_sequence_006
  * - @subpage cry_test_sequence_007
  * - @subpage cry_test_sequence_008
+ * - @subpage cry_test_sequence_009
  * .
  */
 
@@ -58,6 +59,7 @@ const testsequence_t * const cry_test_suite_array[] = {
   &cry_test_sequence_006,
   &cry_test_sequence_007,
   &cry_test_sequence_008,
+  &cry_test_sequence_009,
   NULL
 };
 

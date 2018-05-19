@@ -78,23 +78,23 @@ static void cry_test_005_001_execute(void) {
   /* [5.1.1] Random generation and test.*/
   test_set_step(1);
   {
-    uint32_t random[10];
-      int i,j;
-      for (i=0;i<10;i++)
-      {
-        ret = cryTRNG(&CRYD1,(uint8_t*)&random[i]);
+    uint32_t random[4];
+    int i;
 
-        test_assert(ret == CRY_NOERROR , "failed random");
+    ret = cryTRNG(&CRYD1,(uint8_t*)&random);
 
-        SHOW_DATA(&random[i],1);
+    test_assert(ret == CRY_NOERROR , "failed random");
 
-        test_assert(random[i]  != 0 , "failed random generation (zero)");
+    SHOW_DATA(&random[0],4);
 
-        for (j=0;j<i;j++)
-        {
-            test_assert(random[i]  != random[j] , "failed random generation");
-        }
-      }
+    for (i=0;i<4;i++) {
+    	test_assert(random[i]  != 0 , "failed random generation (zero)");
+    }
+    for (i=1;i<4;i++)
+    {
+    	test_assert(random[i-1]  != random[i] , "failed random generation");
+    }
+
 
   }
 }

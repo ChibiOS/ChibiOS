@@ -14,8 +14,12 @@ echo|set /p="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" >
 
 echo|set /p="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" > plaintext_5
 
+echo|set /p="Hi There" > plaintext_6
+
+echo|set /p="what do ya want for nothing?" > plaintext_7
+
 call aes_ref.bat
 call des_ref.bat
 call sha_ref.bat
-
+call hmac_ref.bat
 call gen_cfiles.bat
