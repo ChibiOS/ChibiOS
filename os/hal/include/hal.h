@@ -110,6 +110,10 @@
 #define HAL_USE_WDG                         FALSE
 #endif
 
+#if !defined(HAL_USE_WSPI)
+#define HAL_USE_WSPI                        FALSE
+#endif
+
 /* Low Level HAL support.*/
 #include "hal_lld.h"
 
@@ -146,6 +150,7 @@
 #include "hal_uart.h"
 #include "hal_usb.h"
 #include "hal_wdg.h"
+#include "hal_wspi.h"
 
 /*
  *  The ST driver is a special case, it is only included if the OSAL is

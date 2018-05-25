@@ -131,6 +131,9 @@ void halInit(void) {
 #if (HAL_USE_WDG == TRUE) || defined(__DOXYGEN__)
   wdgInit();
 #endif
+#if (HAL_USE_WSPI == TRUE) || defined(__DOXYGEN__)
+  wspiInit();
+#endif
 
   /* Community driver overlay initialization.*/
 #if defined(HAL_USE_COMMUNITY) || defined(__DOXYGEN__)
