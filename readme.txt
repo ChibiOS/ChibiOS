@@ -86,6 +86,8 @@
 *****************************************************************************
 
 *** 18.2.2 ***
+- HAL: Fixed Invalid divider settings in Serial and UART STM32 drivers
+       when USART_CR1_OVER8 is specified (bug #951).
 - NIL: Fixed missing extern declaration in IAR Cortex-M port (bug #950).
 - HAL: Fixed ASCR register invalid handling in STM32 GPIOv3 driver (bug #949).
 - HAL: Fixed missing definition in UART driver (bug #948).
