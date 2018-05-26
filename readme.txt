@@ -126,7 +126,9 @@
 - EX:  Updated LIS302DL to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LPS25H to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LSM303DLHC to 1.1.0 (backported to 18.2.1).
-- HAL: Fixed ASCR register invalid handling in STM32 GPIOv3 driver (bug #948)
+- NIL: Fixed missing extern declaration in IAR Cortex-M port (bug #950)
+       (backported to 18.2.2 and 17.6.5).
+- HAL: Fixed ASCR register invalid handling in STM32 GPIOv3 driver (bug #949)
        (backported to 18.2.2 and 17.6.5).
 - HAL: Fixed missing definition in UART driver (bug #948)(backported
        to 18.2.2).

@@ -62,6 +62,7 @@ ICSR_PENDSVSET  SET 0x10000000
                 SECTION .text:CODE:NOROOT(2)
 
                 EXTERN  chThdExit
+                EXTERN  chSysHalt
                 EXTERN  chSchDoReschedule
 #if CH_DBG_STATISTICS
                 EXTERN   _stats_start_measure_crit_thd
