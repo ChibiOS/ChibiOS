@@ -126,6 +126,9 @@
 - EX:  Updated LIS302DL to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LPS25H to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LSM303DLHC to 1.1.0 (backported to 18.2.1).
+- HAL: Fixed Invalid divider settings in Serial and UART STM32 drivers
+       when USART_CR1_OVER8 is specified (bug #951)(backported to 18.2.2
+       and 17.6.5).
 - NIL: Fixed missing extern declaration in IAR Cortex-M port (bug #950)
        (backported to 18.2.2 and 17.6.5).
 - HAL: Fixed ASCR register invalid handling in STM32 GPIOv3 driver (bug #949)
