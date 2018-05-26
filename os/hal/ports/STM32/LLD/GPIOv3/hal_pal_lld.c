@@ -141,6 +141,7 @@ void _pal_lld_setgroupmode(ioportid_t port,
     if (!mask)
       return;
     otyper <<= 1;
+    ascr <<= 1;
     ospeedr <<= 2;
     pupdr <<= 2;
     moder <<= 2;

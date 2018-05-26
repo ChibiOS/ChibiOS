@@ -86,6 +86,7 @@
 *****************************************************************************
 
 *** 18.2.2 ***
+- HAL: Fixed ASCR register invalid handling in STM32 GPIOv3 driver (bug #948).
 - HAL: Fixed missing definition in UART driver (bug #948).
 - OTH: Fixed wrong macro check in GCC Cortex-M startup files (bug #947).
 - NEW: Added optional support for character match callback in the UART
