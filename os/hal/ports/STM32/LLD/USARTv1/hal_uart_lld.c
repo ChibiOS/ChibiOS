@@ -196,6 +196,7 @@ static void usart_stop(UARTDriver *uartp) {
  * @param[in] uartp     pointer to the @p UARTDriver object
  */
 static void usart_start(UARTDriver *uartp) {
+  uint32_t fck;
   uint16_t cr1;
   USART_TypeDef *u = uartp->usart;
 
@@ -208,9 +209,16 @@ static void usart_start(UARTDriver *uartp) {
 #else
   if (uartp->usart == USART1)
 #endif
-    u->BRR = STM32_PCLK2 / uartp->config->speed;
+    fck = STM32_PCLK2 / uartp->config->speed;
   else
-    u->BRR = STM32_PCLK1 / uartp->config->speed;
+    fck = STM32_PCLK1 / uartp->config->speed;
+
+  /* Correcting USARTDIV when oversampling by 8 instead of 16.
+     Fraction is still 4 bits wide, but only lower 3 bits used.
+     Mantissa is doubled, but Fraction is left the same.*/
+  if (uartp->config->cr1 & USART_CR1_OVER8)
+    fck = ((fck & ~7) * 2) | (fck & 7);
+  u->BRR = fck;
 
   /* Resetting eventual pending status flags.*/
   (void)u->SR;  /* SR reset step 1.*/

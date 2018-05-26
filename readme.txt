@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** 17.6.5 ***
+- HAL: Fixed Invalid divider settings in Serial and UART STM32 drivers
+       when USART_CR1_OVER8 is specified (bug #951).
 - NIL: Fixed missing extern declaration in IAR Cortex-M port (bug #950).
 - HAL: Fixed ASCR register invalid handling in STM32 GPIOv3 driver (bug #949).
 - OTH: Fixed wrong macro check in GCC Cortex-M startup files (bug #947).
