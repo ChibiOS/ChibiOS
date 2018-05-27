@@ -126,6 +126,8 @@
 - EX:  Updated LIS302DL to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LPS25H to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LSM303DLHC to 1.1.0 (backported to 18.2.1).
+- HAL: Fixed wrong registry entries for STM32F030x4 (bug #952)(backported
+       to 18.2.2).
 - HAL: Fixed Invalid divider settings in Serial and UART STM32 drivers
        when USART_CR1_OVER8 is specified (bug #951)(backported to 18.2.2
        and 17.6.5).
