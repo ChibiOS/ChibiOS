@@ -26,8 +26,8 @@
  *          - STM32_HSE_BYPASS (optionally).
  *          .
  *          One of the following macros must also be defined:
- *          - STM32F030x6, STM32F030x8, STM32F030xC, STM32F070x6,
- *            STM32F070xB for Value Line devices.
+ *          - STM32F030x4, STM32F030x6, STM32F030x8, STM32F030xC,
+ *            STM32F070x6, STM32F070xB for Value Line devices.
  *          - STM32F031x6, STM32F051x8, STM32F071xB, STM32F091xC
  *            for Access Line devices.
  *          - STM32F042x6, STM32F072xB for USB Line devices.
@@ -55,7 +55,10 @@
  * @name    Platform identification macros
  * @{
  */
-#if defined(STM32F030x6) || defined(__DOXYGEN__)
+#if defined(STM32F030x4) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32F030x4 Entry Level Value Line devices"
+
+#elif defined(STM32F030x6)
 #define PLATFORM_NAME           "STM32F030x6 Entry Level Value Line devices"
 
 #elif defined(STM32F030x8)
