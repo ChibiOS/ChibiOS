@@ -221,8 +221,8 @@
 #else /* STM32_HAS_RCC_DCKCFGR && (STM32_TIMPRE == STM32_TIMPRE_HCLK) */
 #if (STM32_PPRE1 == STM32_PPRE1_DIV1) ||                                    \
     (STM32_PPRE1 == STM32_PPRE1_DIV2) ||                                    \
-    (STM32_PPRE1 == STM32_PPRE1_DIV4) ||                                    \
-    defined(__DOXYGEN__)
+    ((STM32_PPRE1 == STM32_PPRE1_DIV4) &&                                   \
+     (STM32_TIMPRE_PRESCALE4 == TRUE)) || defined(__DOXYGEN__)
 #define STM32_TIMCLK1               STM32_HCLK
 #else
 #define STM32_TIMCLK1               (STM32_PCLK1 * 4)
@@ -230,8 +230,8 @@
 
 #if (STM32_PPRE2 == STM32_PPRE2_DIV1) ||                                    \
     (STM32_PPRE2 == STM32_PPRE2_DIV2) ||                                    \
-    (STM32_PPRE2 == STM32_PPRE2_DIV4) ||                                    \
-    defined(__DOXYGEN__)
+    ((STM32_PPRE2 == STM32_PPRE2_DIV4) &&                                   \
+     (STM32_TIMPRE_PRESCALE4 == TRUE)) || defined(__DOXYGEN__)
 #define STM32_TIMCLK2               STM32_HCLK
 #else
 #define STM32_TIMCLK2               (STM32_PCLK2 * 4)
