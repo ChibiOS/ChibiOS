@@ -273,7 +273,7 @@ typedef struct {
  */
 typedef struct {
   /**
-   * @brief   Number of the filter to be programmed.
+   * @brief   Number of the filter bank to be programmed.
    */
   uint32_t                  filter:16;
   /**
