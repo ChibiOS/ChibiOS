@@ -61,7 +61,7 @@ endif
 #
 
 # Define project name here
-PROJECT = ch
+PROJECT = ch.exe
 
 # Imported source files and paths
 CHIBIOS = ../../..
@@ -122,7 +122,7 @@ UINCDIR =
 ULIBDIR =
 
 # List all user libraries here
-ULIBS =
+ULIBS = -lws2_32
 
 #
 # End of user defines
