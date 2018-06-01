@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 17.6.5 ***
+- HAL: Fixed race condition in STM32 ADCv3 driver (bug #953).
 - HAL: Fixed Invalid divider settings in Serial and UART STM32 drivers
        when USART_CR1_OVER8 is specified (bug #951).
 - NIL: Fixed missing extern declaration in IAR Cortex-M port (bug #950).
