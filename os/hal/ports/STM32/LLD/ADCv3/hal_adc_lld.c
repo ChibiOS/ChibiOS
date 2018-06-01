@@ -553,6 +553,7 @@ void adc_lld_init(void) {
 #if STM32_ADC_USE_ADC3 || STM32_ADC_USE_ADC4
   rccEnableADC34(true);
   rccResetADC34();
+  osalSysPolledDelayX(10);
   ADC3_4_COMMON->CCR = STM32_ADC_ADC34_CLOCK_MODE | ADC_DMA_MDMA;
   rccDisableADC34();
 #endif
