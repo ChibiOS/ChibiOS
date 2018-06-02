@@ -863,6 +863,9 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 
   /* ADC configuration.*/
   adcp->adcm->CFGR  = cfgr;
+#if (STM32_ADCV3_OVERSAMPLING == TRUE) || defined(__DOXYGEN__)
+  adcp->adcm->CFGR2 = grpp->cfgr2;
+#endif
 
   /* Starting conversion.*/
   adcp->adcm->CR   |= ADC_CR_ADSTART;

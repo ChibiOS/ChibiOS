@@ -91,6 +91,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added support for oversampling in STM32 ADCv3 driver.
 - NEW: Restructured the STM32F4xx HAL support, added support for STM32F413,
        added ability to handle the TIMPRE bit, separated the clock tree in
        two distinct implementation to reduce the proliferation of compiler
