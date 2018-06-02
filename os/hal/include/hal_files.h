@@ -82,7 +82,8 @@ typedef uint32_t fileoffset_t;
  *          without implementation.
  */
 #define _file_stream_data                                                   \
-  _base_sequential_stream_data
+  _base_sequential_stream_data                                              \
+  fileoffset_t offset
 
 /**
  * @extends BaseSequentialStreamVMT
