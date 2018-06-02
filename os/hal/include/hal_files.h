@@ -73,8 +73,8 @@ typedef uint32_t fileoffset_t;
   msg_t (*getsize)(void *instance);                                         \
   /* File get current position method.*/                                    \
   msg_t (*getposition)(void *instance, fileoffset_t *offset);               \
-  /* File seek method.*/                                                    \
-  msg_t (*lseek)(void *instance, fileoffset_t offset);
+  /* File set current position method.*/                                    \
+  msg_t (*setposition)(void *instance, fileoffset_t offset);
 
 /**
  * @brief   @p FileStream specific data.
@@ -231,7 +231,7 @@ typedef struct {
  *
  * @api
  */
-#define fileStreamSeek(ip, offset) ((ip)->vmt->lseek(ip, offset))
+#define fileStreamSetPosition(ip, offset) ((ip)->vmt->setposition(ip, offset))
 /** @} */
 
 #endif /* HAL_FILES_H */
