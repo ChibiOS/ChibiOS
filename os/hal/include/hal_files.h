@@ -72,7 +72,7 @@ typedef uint32_t fileoffset_t;
   /* File get size method.*/                                                \
   msg_t (*getsize)(void *instance);                                         \
   /* File get current position method.*/                                    \
-  msg_t (*getposition)(void *instance);                                     \
+  msg_t (*getposition)(void *instance, fileoffset_t *offset);               \
   /* File seek method.*/                                                    \
   msg_t (*lseek)(void *instance, fileoffset_t offset);
 
@@ -82,8 +82,7 @@ typedef uint32_t fileoffset_t;
  *          without implementation.
  */
 #define _file_stream_data                                                   \
-  _base_sequential_stream_data                                              \
-  fileoffset_t offset
+  _base_sequential_stream_data
 
 /**
  * @extends BaseSequentialStreamVMT
@@ -213,12 +212,13 @@ typedef struct {
  * @brief   Returns the current file pointer position.
  *
  * @param[in] ip        pointer to a @p FileStream or derived class
+ * @param[out] offset   current position in the file
  * @return              The current position inside the file.
  * @retval FILE_ERROR   operation failed.
  *
  * @api
  */
-#define fileStreamGetPosition(ip) ((ip)->vmt->getposition(ip))
+#define fileStreamGetPosition(ip, offset) ((ip)->vmt->getposition(ip, offset))
 
 /**
  * @brief   Moves the file current pointer to an absolute position.
