@@ -70,7 +70,7 @@ typedef uint32_t fileoffset_t;
   /* Get last error code method.*/                                          \
   msg_t (*geterror)(void *instance);                                        \
   /* File get size method.*/                                                \
-  msg_t (*getsize)(void *instance);                                         \
+  msg_t (*getsize)(void *instance, fileoffset_t *offset);                   \
   /* File get current position method.*/                                    \
   msg_t (*getposition)(void *instance, fileoffset_t *offset);               \
   /* File set current position method.*/                                    \
@@ -201,12 +201,13 @@ typedef struct {
  * @brief   Returns the current file size.
  *
  * @param[in] ip        pointer to a @p FileStream or derived class
+ * @param[out] offset   current size of the file
  * @return              The file size.
  * @retval FILE_ERROR   operation failed.
  *
  * @api
  */
-#define fileStreamGetSize(ip) ((ip)->vmt->getsize(ip))
+#define fileStreamGetSize(ip, offset) ((ip)->vmt->getsize(ip), offset)
 
 /**
  * @brief   Returns the current file pointer position.
