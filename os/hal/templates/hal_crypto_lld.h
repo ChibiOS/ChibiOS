@@ -50,7 +50,7 @@
 #define CRY_LLD_SUPPORTS_HMAC_SHA256        TRUE
 #define CRY_LLD_SUPPORTS_HMAC_SHA512        TRUE
 #define CRY_LLD_SUPPORTS_TRNG               TRUE
-/** @{ */
+/** @} */
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
