@@ -623,8 +623,7 @@ cryerror_t cryEncryptAES_CTR(CRYDriver *cryp,
   (void)size;
   (void)in;
   (void)out;
-  (void)nonce;
-  (void)cnt;
+  (void)iv;
 
   return CRY_ERR_INV_ALGO;
 #endif
@@ -678,8 +677,7 @@ cryerror_t cryDecryptAES_CTR(CRYDriver *cryp,
   (void)size;
   (void)in;
   (void)out;
-  (void)nonce;
-  (void)cnt;
+  (void)iv;
 
   return CRY_ERR_INV_ALGO;
 #endif
