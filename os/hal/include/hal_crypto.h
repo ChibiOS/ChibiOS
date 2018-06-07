@@ -98,7 +98,7 @@ typedef enum {
   CRY_ERR_INV_ALGO = 1,                     /**< Invalid cypher/mode.       */
   CRY_ERR_INV_KEY_SIZE = 2,                 /**< Invalid key size.          */
   CRY_ERR_INV_KEY_TYPE = 3,                 /**< Invalid key type.          */
-  CRY_ERR_INV_KEY_ID = 4                    /**< Invalid key type.          */
+  CRY_ERR_INV_KEY_ID = 4                    /**< Invalid key identifier.    */
 } cryerror_t;
 
 /**
