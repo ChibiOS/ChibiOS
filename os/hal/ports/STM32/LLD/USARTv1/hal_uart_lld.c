@@ -216,8 +216,10 @@ static void usart_start(UARTDriver *uartp) {
   /* Correcting USARTDIV when oversampling by 8 instead of 16.
      Fraction is still 4 bits wide, but only lower 3 bits used.
      Mantissa is doubled, but Fraction is left the same.*/
-  if (uartp->config->cr1 & USART_CR1_OVER8)
+#if defined(USART_CR1_OVER8)
+  if (config->cr1 & USART_CR1_OVER8)
     fck = ((fck & ~7) * 2) | (fck & 7);
+#endif
   u->BRR = fck;
 
   /* Resetting eventual pending status flags.*/
