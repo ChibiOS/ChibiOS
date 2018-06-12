@@ -1418,6 +1418,7 @@ cryerror_t crySHA512Final(CRYDriver *cryp, SHA512Context *sha512ctxp,
 #endif
 }
 
+#if (CRY_LLD_SUPPORTS_HMAC_SHA256 == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Hash initialization using HMAC_SHA256.
  * @note    Use of this algorithm is not recommended because proven weak.
@@ -1523,7 +1524,9 @@ cryerror_t cryHMACSHA256Final(CRYDriver *cryp,
   return CRY_ERR_INV_ALGO;
 #endif
 }
+#endif /* CRY_LLD_SUPPORTS_HMAC_SHA256 */
 
+#if (CRY_LLD_SUPPORTS_HMAC_SHA256 == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Hash initialization using HMAC_SHA512.
  * @note    Use of this algorithm is not recommended because proven weak.
@@ -1629,6 +1632,7 @@ cryerror_t cryHMACSHA512Final(CRYDriver *cryp,
   return CRY_ERR_INV_ALGO;
 #endif
 }
+#endif /* CRY_LLD_SUPPORTS_HMAC_SHA256 */
 
 /**
  * @brief   True random numbers generator.

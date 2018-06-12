@@ -341,6 +341,7 @@ extern "C" {
                              size_t size, const uint8_t *in);
   cryerror_t crySHA512Final(CRYDriver *cryp, SHA512Context *sha512ctxp,
                             uint8_t *out);
+#if (CRY_LLD_SUPPORTS_HMAC_SHA256 == TRUE) || defined(__DOXYGEN__)
   cryerror_t cryHMACSHA256Init(CRYDriver *cryp,
                                HMACSHA256Context *hmacsha256ctxp);
   cryerror_t cryHMACSHA256Update(CRYDriver *cryp,
@@ -350,6 +351,8 @@ extern "C" {
   cryerror_t cryHMACSHA256Final(CRYDriver *cryp,
                                 HMACSHA256Context *hmacsha256ctxp,
                                 uint8_t *out);
+#endif /* CRY_LLD_SUPPORTS_HMAC_SHA256 */
+#if (CRY_LLD_SUPPORTS_HMAC_SHA512 == TRUE) || defined(__DOXYGEN__)
   cryerror_t cryHMACSHA512Init(CRYDriver *cryp,
                                HMACSHA512Context *hmacsha512ctxp);
   cryerror_t cryHMACSHA512Update(CRYDriver *cryp,
@@ -359,6 +362,7 @@ extern "C" {
   cryerror_t cryHMACSHA512Final(CRYDriver *cryp,
                                 HMACSHA512Context *hmacsha512ctxp,
                                 uint8_t *out);
+#endif /* CRY_LLD_SUPPORTS_HMAC_SHA512 */
   cryerror_t cryTRNG(CRYDriver *cryp, uint8_t *out);
 #ifdef __cplusplus
 }
