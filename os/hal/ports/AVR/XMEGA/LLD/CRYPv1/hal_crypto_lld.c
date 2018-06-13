@@ -270,7 +270,7 @@ cryerror_t cry_lld_encrypt_AES(CRYDriver *cryp,
     }
 	}
 	else {
-		return CRY_ERR_ENCRYP;
+		return CRY_ERR_OP_FAILURE;
   }
 
   return CRY_NOERROR;
@@ -331,7 +331,7 @@ cryerror_t cry_lld_decrypt_AES(CRYDriver *cryp,
     }
 	}
   else {
-		return CRY_ERR_DECRYP;
+		return CRY_ERR_OP_FAILURE;
   }
 
   return CRY_NOERROR;
