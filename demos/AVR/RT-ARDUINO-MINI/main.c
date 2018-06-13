@@ -57,7 +57,8 @@ int main(void) {
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   chnWrite(&SD1, (const uint8_t *)"Hello World!\r\n", 14);
-  while(TRUE) {
+  
+  while (true) {
     chThdSleepMilliseconds(1000);
   }
 }

@@ -73,7 +73,7 @@ int main(void) {
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
-  while (TRUE) {
+  while (true) {
     if (SDU1.config->usbp->state == USB_ACTIVE) {
       chnWrite(&SDU1, (const uint8_t *)"Hello World!\r\n", 14);
     }

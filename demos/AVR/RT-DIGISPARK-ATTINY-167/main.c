@@ -79,7 +79,7 @@ int main(void) {
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
-  while (TRUE) {
+  while (true) {
     chThdSleepMilliseconds(1000);
   }
 }
