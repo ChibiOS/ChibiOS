@@ -195,6 +195,7 @@ extern "C" {
                              cryalgorithm_t algorithm,
                              size_t size,
                              const uint8_t *keyp);
+#if (CRY_LLD_SUPPORTS_AES == TRUE) || defined(__DOXYGEN__)
   cryerror_t cry_lld_encrypt_AES(CRYDriver *cryp,
                                  crykey_t key_id,
                                  const uint8_t *in,
@@ -203,6 +204,8 @@ extern "C" {
                                  crykey_t key_id,
                                  const uint8_t *in,
                                  uint8_t *out);
+#endif
+#if (CRY_LLD_SUPPORTS_AES_ECB == TRUE) || defined(__DOXYGEN__)
   cryerror_t cry_lld_encrypt_AES_ECB(CRYDriver *cryp,
                                      crykey_t key_id,
                                      size_t size,
@@ -213,6 +216,8 @@ extern "C" {
                                      size_t size,
                                      const uint8_t *in,
                                      uint8_t *out);
+#endif
+#if (CRY_LLD_SUPPORTS_AES_CBC == TRUE) || defined(__DOXYGEN__)
   cryerror_t cry_lld_encrypt_AES_CBC(CRYDriver *cryp,
                                      crykey_t key_id,
                                      size_t size,
@@ -225,6 +230,8 @@ extern "C" {
                                      const uint8_t *in,
                                      uint8_t *out,
                                      const uint8_t *iv);
+#endif
+#if (CRY_LLD_SUPPORTS_AES_CFB == TRUE) || defined(__DOXYGEN__)
   cryerror_t cry_lld_encrypt_AES_CFB(CRYDriver *cryp,
                                      crykey_t key_id,
                                      size_t size,
@@ -237,6 +244,8 @@ extern "C" {
                                      const uint8_t *in,
                                      uint8_t *out,
                                      const uint8_t *iv);
+#endif
+#if (CRY_LLD_SUPPORTS_AES_CTR == TRUE) || defined(__DOXYGEN__)
   cryerror_t cry_lld_encrypt_AES_CTR(CRYDriver *cryp,
                                      crykey_t key_id,
                                      size_t size,
@@ -249,6 +258,8 @@ extern "C" {
                                      const uint8_t *in,
                                      uint8_t *out,
                                      const uint8_t *iv);
+#endif
+#if (CRY_LLD_SUPPORTS_AES_GCM == TRUE) || defined(__DOXYGEN__)
   cryerror_t cry_lld_encrypt_AES_GCM(CRYDriver *cryp,
                                      crykey_t key_id,
                                      size_t size,
@@ -267,6 +278,8 @@ extern "C" {
                                      size_t aadsize,
                                      const uint8_t *aad,
                                      uint8_t *authtag);
+#endif
+#if (CRY_LLD_SUPPORTS_DES == TRUE) || defined(__DOXYGEN__)
   cryerror_t cry_lld_encrypt_DES(CRYDriver *cryp,
                                  crykey_t key_id,
                                  const uint8_t *in,
@@ -275,6 +288,8 @@ extern "C" {
                                  crykey_t key_id,
                                  const uint8_t *in,
                                  uint8_t *out);
+#endif
+#if (CRY_LLD_SUPPORTS_DES_ECB == TRUE) || defined(__DOXYGEN__)
   cryerror_t cry_lld_encrypt_DES_ECB(CRYDriver *cryp,
                                     crykey_t key_id,
                                     size_t size,
@@ -285,6 +300,8 @@ extern "C" {
                                      size_t size,
                                      const uint8_t *in,
                                      uint8_t *out);
+#endif
+#if (CRY_LLD_SUPPORTS_DES_CBC == TRUE) || defined(__DOXYGEN__)
   cryerror_t cry_lld_encrypt_DES_CBC(CRYDriver *cryp,
                                      crykey_t key_id,
                                      size_t size,
@@ -297,21 +314,29 @@ extern "C" {
                                      const uint8_t *in,
                                      uint8_t *out,
                                      const uint8_t *iv);
+#endif
+#if (CRY_LLD_SUPPORTS_SHA1 == TRUE) || defined(__DOXYGEN__)
   cryerror_t cry_lld_SHA1_init(CRYDriver *cryp, SHA1Context *sha1ctxp);
   cryerror_t cry_lld_SHA1_update(CRYDriver *cryp, SHA1Context *sha1ctxp,
                                  size_t size, const uint8_t *in);
   cryerror_t cry_lld_SHA1_final(CRYDriver *cryp, SHA1Context *sha1ctxp,
                                 uint8_t *out);
+#endif
+#if (CRY_LLD_SUPPORTS_SHA256 == TRUE) || defined(__DOXYGEN__)
   cryerror_t cry_lld_SHA256_init(CRYDriver *cryp, SHA256Context *sha256ctxp);
   cryerror_t cry_lld_SHA256_update(CRYDriver *cryp, SHA256Context *sha256ctxp,
                                    size_t size, const uint8_t *in);
   cryerror_t cry_lld_SHA256_final(CRYDriver *cryp, SHA256Context *sha256ctxp,
                                   uint8_t *out);
+#endif
+#if (CRY_LLD_SUPPORTS_SHA512 == TRUE) || defined(__DOXYGEN__)
   cryerror_t cry_lld_SHA512_init(CRYDriver *cryp, SHA512Context *sha512ctxp);
   cryerror_t cry_lld_SHA512_update(CRYDriver *cryp, SHA512Context *sha512ctxp,
                                    size_t size, const uint8_t *in);
   cryerror_t cry_lld_SHA512_final(CRYDriver *cryp, SHA512Context *sha512ctxp,
                                   uint8_t *out);
+#endif
+#if (CRY_LLD_SUPPORTS_HMAC_SHA256 == TRUE) || defined(__DOXYGEN__)
   cryerror_t cry_lld_HMACSHA256_init(CRYDriver *cryp,
                                      HMACSHA256Context *hmacsha256ctxp);
   cryerror_t cry_lld_HMACSHA256_update(CRYDriver *cryp,
@@ -320,6 +345,8 @@ extern "C" {
   cryerror_t cry_lld_HMACSHA256_final(CRYDriver *cryp,
                                       HMACSHA256Context *hmacsha256ctxp,
                                       uint8_t *out);
+#endif
+#if (CRY_LLD_SUPPORTS_HMAC_SHA512 == TRUE) || defined(__DOXYGEN__)
   cryerror_t cry_lld_HMACSHA512_init(CRYDriver *cryp,
                                      HMACSHA512Context *hmacsha512ctxp);
   cryerror_t cry_lld_HMACSHA512_update(CRYDriver *cryp,
@@ -328,7 +355,10 @@ extern "C" {
   cryerror_t cry_lld_HMACSHA512_final(CRYDriver *cryp,
                                       HMACSHA512Context *hmacsha512ctxp,
                                       uint8_t *out);
+#endif
+#if (CRY_LLD_SUPPORTS_TRNG == TRUE) || defined(__DOXYGEN__)
   cryerror_t cry_lld_TRNG(CRYDriver *cryp, uint8_t *out);
+#endif
 #ifdef __cplusplus
 }
 #endif
