@@ -99,8 +99,7 @@ typedef enum {
   CRY_ERR_INV_KEY_SIZE = 2,                 /**< Invalid key size.          */
   CRY_ERR_INV_KEY_TYPE = 3,                 /**< Invalid key type.          */
   CRY_ERR_INV_KEY_ID = 4,                   /**< Invalid key identifier.    */
-  CRY_ERR_ENCRYP = 5,                       /**< Encryption error.          */
-  CRY_ERR_DECRYP = 6                        /**< Decryption error.          */
+  CRY_ERR_OPERATION_FAILURE = 5             /**< Requested operation failed.*/
 } cryerror_t;
 
 /**
