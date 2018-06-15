@@ -217,7 +217,7 @@ static void usart_start(UARTDriver *uartp) {
      Fraction is still 4 bits wide, but only lower 3 bits used.
      Mantissa is doubled, but Fraction is left the same.*/
 #if defined(USART_CR1_OVER8)
-  if (config->cr1 & USART_CR1_OVER8)
+  if (uartp->config->cr1 & USART_CR1_OVER8)
     fck = ((fck & ~7) * 2) | (fck & 7);
 #endif
   u->BRR = fck;
