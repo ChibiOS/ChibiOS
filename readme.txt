@@ -91,6 +91,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added new functions to I/O queues: qSetLink().
 - NEW: Added new functions to objects fifos: chFifoReturnObjectS(),
        chFifoSendObjectAheadI(), chFifoSendObjectAheadS() and
        chFifoSendObjectAhead().

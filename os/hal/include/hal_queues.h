@@ -153,6 +153,17 @@ typedef io_queue_t output_queue_t;
 #define qGetLink(qp) ((qp)->q_link)
 
 /**
+ * @brief   Sets the queue application-defined link.
+ * @note    This function can be called in any context.
+ *
+ * @param[in] qp        pointer to a @p io_queue_t structure
+ * @param[in] lk        The application-defined link.
+ *
+ * @special
+ */
+#define qSetLink(qp, lk) ((qp)->q_link = lk)
+
+/**
  * @brief   Returns the filled space into an input queue.
  *
  * @param[in] iqp       pointer to an @p input_queue_t structure
