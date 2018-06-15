@@ -315,24 +315,6 @@ void *chGuardedPoolAllocTimeout(guarded_memory_pool_t *gmp,
  * @param[in] gmp       pointer to a @p guarded_memory_pool_t structure
  * @param[in] objp      the pointer to the object to be released
  *
- * @iclass
- */
-void chGuardedPoolFreeI(guarded_memory_pool_t *gmp, void *objp) {
-
-  chPoolFreeI(&gmp->pool, objp);
-  chSemSignalI(&gmp->sem);
-}
-
-/**
- * @brief   Releases an object into a guarded memory pool.
- * @pre     The guarded memory pool must already be initialized.
- * @pre     The freed object must be of the right size for the specified
- *          guarded memory pool.
- * @pre     The added object must be properly aligned.
- *
- * @param[in] gmp       pointer to a @p guarded_memory_pool_t structure
- * @param[in] objp      the pointer to the object to be released
- *
  * @api
  */
 void chGuardedPoolFree(guarded_memory_pool_t *gmp, void *objp) {

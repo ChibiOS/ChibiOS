@@ -91,6 +91,11 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added new functions to objects fifos: chFifoReturnObjectS(),
+       chFifoSendObjectAheadI(), chFifoSendObjectAheadS() and
+       chFifoSendObjectAhead().
+- NEW: Added new functions to guarded pools: chGuardedPoolFreeS() and
+       chGuardedPoolAddS().
 - NEW: Added initializer sections for flash0...flash7 memory areas in
        GCC Cortex-M linker scripts.
 - NEW: Added support for oversampling in STM32 ADCv3 driver.
