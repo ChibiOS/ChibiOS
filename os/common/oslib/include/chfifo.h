@@ -214,6 +214,20 @@ static inline void chFifoReturnObjectI(objects_fifo_t *ofp,
  * @param[in] ofp       pointer to a @p objects_fifo_t structure
  * @param[in] objp      pointer to the object to be released
  *
+ * @sclass
+ */
+static inline void chFifoReturnObjectS(objects_fifo_t *ofp,
+                                       void *objp) {
+
+  chGuardedPoolFreeS(&ofp->free, objp);
+}
+
+/**
+ * @brief   Releases a fetched object.
+ *
+ * @param[in] ofp       pointer to a @p objects_fifo_t structure
+ * @param[in] objp      pointer to the object to be released
+ *
  * @api
  */
 static inline void chFifoReturnObject(objects_fifo_t *ofp,
@@ -270,6 +284,57 @@ static inline void chFifoSendObject(objects_fifo_t *ofp, void *objp) {
   msg_t msg;
 
   msg = chMBPostTimeout(&ofp->mbx, (msg_t)objp, TIME_IMMEDIATE);
+  chDbgAssert(msg == MSG_OK, "post failed");
+}
+
+/**
+ * @brief   Posts an high priority object.
+ * @note    By design the object can be always immediately posted.
+ *
+ * @param[in] ofp       pointer to a @p objects_fifo_t structure
+ * @param[in] objp      pointer to the object to be posted
+ *
+ * @iclass
+ */
+static inline void chFifoSendObjectAheadI(objects_fifo_t *ofp,
+                                          void *objp) {
+  msg_t msg;
+
+  msg = chMBPostAheadI(&ofp->mbx, (msg_t)objp);
+  chDbgAssert(msg == MSG_OK, "post failed");
+}
+
+/**
+ * @brief   Posts an high priority object.
+ * @note    By design the object can be always immediately posted.
+ *
+ * @param[in] ofp       pointer to a @p objects_fifo_t structure
+ * @param[in] objp      pointer to the object to be posted
+ *
+ * @sclass
+ */
+static inline void chFifoSendObjectAheadS(objects_fifo_t *ofp,
+                                          void *objp) {
+  msg_t msg;
+
+  msg = chMBPostAheadTimeoutS(&ofp->mbx, (msg_t)objp, TIME_IMMEDIATE);
+  chDbgAssert(msg == MSG_OK, "post failed");
+}
+
+/**
+ * @brief   Posts an high priority object.
+ * @note    By design the object can be always immediately posted.
+ *
+ * @param[in] ofp       pointer to a @p objects_fifo_t structure
+ * @param[in] objp      pointer to the object to be released
+ *
+ * @api
+ */
+static inline void chFifoSendObjectAhead(objects_fifo_t *ofp, void *objp) {
+
+  msg_t msg;
+
+  msg = chMBPostAheadTimeout(&ofp->mbx, (msg_t)objp, TIME_IMMEDIATE);
   chDbgAssert(msg == MSG_OK, "post failed");
 }
 
