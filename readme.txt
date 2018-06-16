@@ -91,6 +91,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Now chconf.h files have preprocessor checks around each definition,
+       this allows to override settings from makefiles.
 - NEW: Added new functions to I/O queues: qSetLink().
 - NEW: Added new functions to objects fifos: chFifoReturnObjectS(),
        chFifoSendObjectAheadI(), chFifoSendObjectAheadS() and
