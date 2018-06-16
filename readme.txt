@@ -86,6 +86,8 @@
 *****************************************************************************
 
 *** 18.2.2 ***
+- NEW: Now chconf.h files have preprocessor checks around each definition,
+       this allows to override settings from makefiles.
 - HAL: Fixed win32 simulator HAL broken because a typo (bug #954).
 - HAL: Fixed race condition in STM32 ADCv3 driver (bug #953).
 - HAL: Fixed wrong registry entries for STM32F030x4 (bug #952).
