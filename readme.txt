@@ -93,10 +93,11 @@
 *** Next ***
 - NEW: Now chconf.h files have preprocessor checks around each definition,
        this allows to override settings from makefiles.
-- NEW: Added new functions to I/O queues: qSetLink().
-- NEW: Added new functions to objects fifos: chFifoReturnObjectS(),
+- NEW: Added new functions to I/O queues: qSetLink()(backported to 18.2.2).
+- NEW: Added new functions to objects fifos: chFifoReturnObjectS()(backported
+       to 18.2.2),
        chFifoSendObjectAheadI(), chFifoSendObjectAheadS() and
-       chFifoSendObjectAhead().
+       chFifoSendObjectAhead()(backported to 18.2.2).
 - NEW: Added new functions to guarded pools: chGuardedPoolFreeS() and
        chGuardedPoolAddS().
 - NEW: Added initializer sections for flash0...flash7 memory areas in
