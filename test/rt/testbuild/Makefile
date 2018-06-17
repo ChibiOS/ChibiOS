@@ -101,6 +101,9 @@ ASMXSRC = $(ALLXASMSRC)
 
 INCDIR = $(CONFDIR) $(ALLINC) $(TESTINC)
 
+# GCOV files.
+GCOVSRC = $(KERNSRC)
+
 #
 # Project, sources and paths
 ##############################################################################
@@ -161,3 +164,6 @@ CPPWARN = -Wall -Wextra -Wundef
 
 RULESPATH = $(CHIBIOS)/os/common/startup/SIMIA32/compilers/GCC
 include $(RULESPATH)/rules.mk
+
+misra:
+	@wine lint-nt -v -w3 $(DEFS) pclint/co-gcc.lnt pclint/au-misra3.lnt pclint/waivers.lnt $(IINCDIR) $(KERNSRC)
