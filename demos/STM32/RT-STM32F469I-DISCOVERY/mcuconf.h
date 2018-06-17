@@ -67,7 +67,7 @@
 #define STM32_I2SSRC                        STM32_I2SSRC_PLLI2S
 #define STM32_SAI1SEL                       STM32_SAI2SEL_PLLR
 #define STM32_SAI2SEL                       STM32_SAI2SEL_PLLR
-#define STM32_CK48MSEL                      STM32_CK48MSEL_PLLSAI
+#define STM32_CK48MSEL                      STM32_CK48MSEL_PLLALT
 #define STM32_PVD_ENABLE                    FALSE
 #define STM32_PLS                           STM32_PLS_LEV0
 #define STM32_BKPRAM_ENABLE                 FALSE
