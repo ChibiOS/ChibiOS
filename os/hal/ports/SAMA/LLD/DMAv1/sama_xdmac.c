@@ -284,15 +284,11 @@ void dmaChannelRelease(sama_dma_channel_t *dmachp) {
   osalDbgAssert(dmachp->state != SAMA_DMA_FREE,
                 "not allocated");
 
-#if SAMA_HAL_IS_SECURE
-  /* Disables the associated IRQ vector.*/
-  aicDisableInt(ID_XDMAC0);
-#else
-  aicDisableInt(ID_XDMAC1);
-#endif /* SAMA_HAL_IS_SECURE */
-
   /* Disables channel */
   dmaChannelDisable(dmachp);
+
+  /* Disables interrupt */
+  (dmachp)->xdmac->XDMAC_GID = XDMAC_GID_ID0 << ((dmachp)->chid);
 
   /* Marks the stream as not allocated.*/
   (dmachp)->state = SAMA_DMA_FREE;
