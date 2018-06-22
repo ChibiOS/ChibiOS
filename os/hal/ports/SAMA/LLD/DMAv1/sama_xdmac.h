@@ -146,11 +146,11 @@ typedef struct {
 /**
  * @brief   Returns the number of transfers to be performed.
  * @note    This function can be invoked in both ISR or thread context.
- * @pre     The stream must have been allocated using @p dmaChannelAllocate().
- * @post    After use the stream can be released using @p dmaChannelRelease().
+ * @pre     The channel must have been allocated using @p dmaChannelAllocate().
+ * @post    After use the channel can be released using @p dmaChannelRelease().
  *
- * @param[in] dmachp       pointer to a @p sama_dma_channel_t structure
- * @return              The number of transfers to be performed.
+ * @param[in] dmachp     pointer to a @p sama_dma_channel_t structure
+ * @return               The number of transfers to be performed.
  *
  * @special
  */
