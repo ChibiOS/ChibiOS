@@ -259,7 +259,7 @@ Reset_Handler:
          b          _crt0_entry
 
         .thumb_func
-        .weak       NMI_Handler,
+        .weak       NMI_Handler
         .weak       HardFault_Handler
         .weak       MemManage_Handler
         .weak       BusFault_Handler
