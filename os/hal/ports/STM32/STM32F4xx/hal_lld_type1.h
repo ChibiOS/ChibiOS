@@ -1282,7 +1282,7 @@
 #error "HSI not enabled, required by STM32_I2SSRC"
 #endif
 
-#if (STM32_PLLI2SSRC == STM32_PLLI2SSRC_PLLI2S) &&                          \
+#if (STM32_PLLI2SSRC == STM32_PLLI2SSRC_PLLSRC) &&                          \
     (STM32_PLLSRC == STM32_PLLSRC_HSI)
 #error "HSI not enabled, required by STM32_I2SSRC"
 #endif
