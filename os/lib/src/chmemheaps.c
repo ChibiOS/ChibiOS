@@ -266,7 +266,7 @@ void *chHeapAllocAligned(memory_heap_t *heapp, size_t size, unsigned align) {
   /* More memory is required, tries to get it from the associated provider
      else fails.*/
   if (heapp->provider != NULL) {
-    ahp = heapp->provider((pages + 1U) * CH_HEAP_ALIGNMENT,
+    ahp = heapp->provider(pages * CH_HEAP_ALIGNMENT,
                           align,
                           sizeof (heap_header_t));
     if (ahp != NULL) {

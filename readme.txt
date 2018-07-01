@@ -138,6 +138,7 @@
 - EX:  Updated LIS302DL to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LPS25H to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LSM303DLHC to 1.1.0 (backported to 18.2.1).
+- LIB: Fixed heap allocation issue (bug #955)(backported to 18.2.2 and 17.6.5).
 - HAL: Fixed win32 simulator HAL broken because a typo (bug #954)(backported
        to 18.2.2).
 - HAL: Fixed race condition in STM32 ADCv3 driver (bug #953)(backported to
