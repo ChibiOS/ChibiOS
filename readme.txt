@@ -92,6 +92,8 @@
 - NEW: Added new functions to objects fifos: chFifoReturnObjectS(),
        chFifoSendObjectAheadI(), chFifoSendObjectAheadS() and
        chFifoSendObjectAhead().
+- HAL: Fixed missing USART7/8 definitions in STM32F0 HAL (bug #956).
+- LIB: Fixed heap allocation issue (bug #955).
 - HAL: Fixed win32 simulator HAL broken because a typo (bug #954).
 - HAL: Fixed race condition in STM32 ADCv3 driver (bug #953).
 - HAL: Fixed wrong registry entries for STM32F030x4 (bug #952).
@@ -114,7 +116,6 @@
 - EX:  Updated LPS25H to 1.1.1.
 - EX:  Updated LSM303DLHC to 1.1.1.
 - EX:  Updated LSM6DS0 to 1.1.1.
-- LIB: Fixed heap allocation issue (bug #955).
 - HAL: Fixed binary instead of logic operator in STM32F4 HAL (bug #946).
 - HAL: Fixed Mikroe clicker 2 misaligned board file (bug #945).
 - EX:  Fixed ChibiOS/EX documentation misalignments (bug #943).

@@ -685,8 +685,8 @@ void uart_lld_init(void) {
 #endif
 #endif
 
-#if STM32_UART_USE_USART3 || STM32_UART_USE_UART4  ||                   \
-    STM32_UART_USE_UART5  || STM32_UART_USE_USART6 ||                   \
+#if STM32_UART_USE_USART3 || STM32_UART_USE_UART4  ||                       \
+    STM32_UART_USE_UART5  || STM32_UART_USE_USART6 ||                       \
     STM32_UART_USE_UART7  || STM32_UART_USE_UART8
 #if defined(STM32_USART3_8_HANDLER)
   nvicEnableVector(STM32_USART3_8_NUMBER, STM32_UART_USART3_8_IRQ_PRIORITY);
