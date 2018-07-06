@@ -23,12 +23,12 @@ ENTRY(_reset_address)
 SECTIONS
 {
     . = ORIGIN(flash);
-    .boot0 : ALIGN(16) SUBALIGN(16)
+    .boot0 : ALIGN(16)
     {
         KEEP(*(.boot))
     } > flash
 
-    .boot1 : ALIGN(16) SUBALIGN(16)
+    .boot1 : ALIGN(16)
     {
         KEEP(*(.handlers))
         KEEP(*(.crt0))
@@ -41,7 +41,7 @@ SECTIONS
         KEEP(*(.ivors))
     } > flash
 
-    constructors : ALIGN(4) SUBALIGN(4)
+    constructors : ALIGN(4)
     {
         PROVIDE(__init_array_start = .);
         KEEP(*(SORT(.init_array.*)))
@@ -49,7 +49,7 @@ SECTIONS
         PROVIDE(__init_array_end = .);
     } > flash
 
-    destructors : ALIGN(4) SUBALIGN(4)
+    destructors : ALIGN(4)
     {
         PROVIDE(__fini_array_start = .);
         KEEP(*(.fini_array))
@@ -57,21 +57,21 @@ SECTIONS
         PROVIDE(__fini_array_end = .);
     } > flash
 
-    .text_vle : ALIGN(16) SUBALIGN(16)
+    .text_vle : ALIGN(16)
     {
         *(.text_vle)
         *(.text_vle.*)
         *(.gnu.linkonce.t_vle.*)
     } > flash
 
-    .text : ALIGN(16) SUBALIGN(16)
+    .text : ALIGN(16)
     {
         *(.text)
         *(.text.*)
         *(.gnu.linkonce.t.*)
     } > flash
 
-    .rodata : ALIGN(16) SUBALIGN(16)
+    .rodata : ALIGN(16)
     {
         *(.glue_7t)
         *(.glue_7)
@@ -81,7 +81,7 @@ SECTIONS
         *(.rodata1)
     } > flash
 
-    .sdata2 : ALIGN(16) SUBALIGN(16)
+    .sdata2 : ALIGN(16)
     {
         __sdata2_start__ = . + 0x8000;
         *(.sdata2)
@@ -102,12 +102,12 @@ SECTIONS
         *(.eh_frame)
     } > flash
 
-    .romdata : ALIGN(16) SUBALIGN(16)
+    .romdata : ALIGN(16)
     {
         __romdata_start__ = .;
     } > flash
 
-    .stacks : ALIGN(16) SUBALIGN(16)
+    .stacks (NOLOAD) : ALIGN(16)
     {
         . = ALIGN(8);
         __irq_stack_base__ = .;
@@ -136,7 +136,7 @@ SECTIONS
         __data_end__ = .;
     } > ram
 
-    .sbss :
+    .sbss (NOLOAD) :
     {
         __bss_start__ = .;
         *(.sbss)
@@ -145,7 +145,7 @@ SECTIONS
         *(.scommon)
     } > ram
 
-    .bss :
+    .bss (NOLOAD) :
     {
         *(.bss)
         *(.bss.*)

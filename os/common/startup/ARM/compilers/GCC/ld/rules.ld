@@ -111,7 +111,7 @@ SECTIONS
     _etext = .;
     _textdata = _etext;
 
-    .stacks :
+    .stacks (NOLOAD) :
     {
         . = ALIGN(8);
         __stacks_base__ = .;
@@ -132,7 +132,7 @@ SECTIONS
         PROVIDE(_edata = .);
     } > DATA_RAM AT > flash
 
-    .bss : ALIGN(4)
+    .bss (NOLOAD) : ALIGN(4)
     {
         . = ALIGN(4);
         PROVIDE(_bss_start = .);

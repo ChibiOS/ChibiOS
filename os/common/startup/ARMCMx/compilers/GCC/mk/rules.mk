@@ -86,24 +86,16 @@ ifdef SREC
 endif
 
 # Source files groups and paths
-ifeq ($(USE_THUMB),yes)
-  TCSRC   += $(CSRC)
-  TCPPSRC += $(CPPSRC)
-else
-  ACSRC   += $(CSRC)
-  ACPPSRC += $(CPPSRC)
-endif
-ASRC      := $(ACSRC) $(ACPPSRC)
+TCSRC   += $(CSRC)
+TCPPSRC += $(CPPSRC)
 TSRC      := $(TCSRC) $(TCPPSRC)
-SRCPATHS  := $(sort $(dir $(ASMXSRC)) $(dir $(ASMSRC)) $(dir $(ASRC)) $(dir $(TSRC)))
+SRCPATHS  := $(sort $(dir $(ASMXSRC)) $(dir $(ASMSRC)) $(dir $(TSRC)))
 
 # Various directories
 OBJDIR    := $(BUILDDIR)/obj
 LSTDIR    := $(BUILDDIR)/lst
 
 # Object files groups
-ACOBJS    := $(addprefix $(OBJDIR)/, $(notdir $(ACSRC:.c=.o)))
-ACPPOBJS  := $(addprefix $(OBJDIR)/, $(notdir $(ACPPSRC:.cpp=.o)))
 TCOBJS    := $(addprefix $(OBJDIR)/, $(notdir $(TCSRC:.c=.o)))
 TCPPOBJS  := $(addprefix $(OBJDIR)/, $(notdir $(TCPPSRC:.cpp=.o)))
 ASMOBJS   := $(addprefix $(OBJDIR)/, $(notdir $(ASMSRC:.s=.o)))
@@ -130,36 +122,6 @@ ASXFLAGS  = $(MCFLAGS) $(OPT) -Wa,-amhls=$(LSTDIR)/$(notdir $(<:.S=.lst)) $(ADEF
 CFLAGS    = $(MCFLAGS) $(OPT) $(COPT) $(CWARN) -Wa,-alms=$(LSTDIR)/$(notdir $(<:.c=.lst)) $(DEFS)
 CPPFLAGS  = $(MCFLAGS) $(OPT) $(CPPOPT) $(CPPWARN) -Wa,-alms=$(LSTDIR)/$(notdir $(<:.cpp=.lst)) $(DEFS)
 LDFLAGS   = $(MCFLAGS) $(OPT) -nostartfiles $(LLIBDIR) -Wl,-Map=$(BUILDDIR)/$(PROJECT).map,--cref,--no-warn-mismatch,--library-path=$(RULESPATH)/ld,--script=$(LDSCRIPT)$(LDOPT)
-
-# Thumb interwork enabled only if needed because it kills performance.
-ifneq ($(strip $(TSRC)),)
-  CFLAGS   += -DTHUMB_PRESENT
-  CPPFLAGS += -DTHUMB_PRESENT
-  ASFLAGS  += -DTHUMB_PRESENT
-  ASXFLAGS += -DTHUMB_PRESENT
-  ifneq ($(strip $(ASRC)),)
-    # Mixed ARM and THUMB mode.
-    CFLAGS   += -mthumb-interwork
-    CPPFLAGS += -mthumb-interwork
-    ASFLAGS  += -mthumb-interwork
-    ASXFLAGS += -mthumb-interwork
-    LDFLAGS  += -mthumb-interwork
-  else
-    # Pure THUMB mode, THUMB C code cannot be called by ARM asm code directly.
-    CFLAGS   += -mno-thumb-interwork -DTHUMB_NO_INTERWORKING
-    CPPFLAGS += -mno-thumb-interwork -DTHUMB_NO_INTERWORKING
-    ASFLAGS  += -mno-thumb-interwork -DTHUMB_NO_INTERWORKING -mthumb
-    ASXFLAGS += -mno-thumb-interwork -DTHUMB_NO_INTERWORKING -mthumb
-    LDFLAGS  += -mno-thumb-interwork -mthumb
-  endif
-else
-  # Pure ARM mode
-  CFLAGS   += -mno-thumb-interwork
-  CPPFLAGS += -mno-thumb-interwork
-  ASFLAGS  += -mno-thumb-interwork
-  ASXFLAGS += -mno-thumb-interwork
-  LDFLAGS  += -mno-thumb-interwork
-endif
 
 # Generate dependency information
 ASFLAGS  += -MD -MP -MF $(DEPDIR)/$(@F).d
@@ -199,40 +161,22 @@ $(LSTDIR):
 $(DEPDIR):
 	@mkdir -p $(DEPDIR)
 
-$(ACPPOBJS) : $(OBJDIR)/%.o : %.cpp $(MAKEFILE_LIST)
-ifeq ($(USE_VERBOSE_COMPILE),yes)
-	@echo
-	$(CPPC) -c $(CPPFLAGS) $(AOPT) -I. $(IINCDIR) $< -o $@
-else
-	@echo Compiling $(<F)
-	@$(CPPC) -c $(CPPFLAGS) $(AOPT) -I. $(IINCDIR) $< -o $@
-endif
-
 $(TCPPOBJS) : $(OBJDIR)/%.o : %.cpp $(MAKEFILE_LIST)
 ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
-	$(CPPC) -c $(CPPFLAGS) $(TOPT) -I. $(IINCDIR) $< -o $@
+	$(CPPC) -c $(CPPFLAGS) -I. $(IINCDIR) $< -o $@
 else
 	@echo Compiling $(<F)
-	@$(CPPC) -c $(CPPFLAGS) $(TOPT) -I. $(IINCDIR) $< -o $@
-endif
-
-$(ACOBJS) : $(OBJDIR)/%.o : %.c $(MAKEFILE_LIST)
-ifeq ($(USE_VERBOSE_COMPILE),yes)
-	@echo
-	$(CC) -c $(CFLAGS) $(AOPT) -I. $(IINCDIR) $< -o $@
-else
-	@echo Compiling $(<F)
-	@$(CC) -c $(CFLAGS) $(AOPT) -I. $(IINCDIR) $< -o $@
+	@$(CPPC) -c $(CPPFLAGS) -I. $(IINCDIR) $< -o $@
 endif
 
 $(TCOBJS) : $(OBJDIR)/%.o : %.c $(MAKEFILE_LIST)
 ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
-	$(CC) -c $(CFLAGS) $(TOPT) -I. $(IINCDIR) $< -o $@
+	$(CC) -c $(CFLAGS) -I. $(IINCDIR) $< -o $@
 else
 	@echo Compiling $(<F)
-	@$(CC) -c $(CFLAGS) $(TOPT) -I. $(IINCDIR) $< -o $@
+	@$(CC) -c $(CFLAGS) -I. $(IINCDIR) $< -o $@
 endif
 
 $(ASMOBJS) : $(OBJDIR)/%.o : %.s $(MAKEFILE_LIST)
