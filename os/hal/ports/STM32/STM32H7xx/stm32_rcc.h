@@ -322,7 +322,7 @@
     RCC->AHB2LPENR |= (mask);                                               \
   else                                                                      \
     RCC->AHB2LPENR &= ~(mask);                                              \
-  (void)RCC->AHB2LPENR                                                      \
+  (void)RCC->AHB2LPENR;                                                     \
 }
 
 /**
