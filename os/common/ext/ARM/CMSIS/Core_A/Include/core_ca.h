@@ -22,8 +22,10 @@
  * limitations under the License.
  */
 
-#if defined ( __ICCARM__ )
- #pragma system_include  /* treat file as system include file for MISRA check */
+#if   defined ( __ICCARM__ )
+  #pragma system_include         /* treat file as system include file for MISRA check */
+#elif defined (__clang__)
+  #pragma clang system_header   /* treat file as system include file */
 #endif
 
 #ifdef __cplusplus
@@ -40,13 +42,25 @@
 
 /*  CMSIS CA definitions */
 #define __CA_CMSIS_VERSION_MAIN  (1U)                                      /*!< \brief [31:16] CMSIS-Core(A) main version   */
-#define __CA_CMSIS_VERSION_SUB   (0U)                                      /*!< \brief [15:0]  CMSIS-Core(A) sub version    */
+#define __CA_CMSIS_VERSION_SUB   (1U)                                      /*!< \brief [15:0]  CMSIS-Core(A) sub version    */
 #define __CA_CMSIS_VERSION       ((__CA_CMSIS_VERSION_MAIN << 16U) | \
                                    __CA_CMSIS_VERSION_SUB          )       /*!< \brief CMSIS-Core(A) version number         */
 
 #if defined ( __CC_ARM )
   #if defined __TARGET_FPU_VFP
     #if (__FPU_PRESENT == 1)
+      #define __FPU_USED       1U
+    #else
+      #warning "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
+      #define __FPU_USED       0U
+    #endif
+  #else
+    #define __FPU_USED         0U
+  #endif
+
+#elif defined (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
+  #if defined __ARM_PCS_VFP
+    #if defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)
       #define __FPU_USED       1U
     #else
       #warning "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
@@ -493,9 +507,9 @@ typedef union
     uint32_t CP9:2;                      /*!< \brief bit:18..19  Access rights for coprocessor 9 */
     uint32_t CP10:2;                     /*!< \brief bit:20..21  Access rights for coprocessor 10 */
     uint32_t CP11:2;                     /*!< \brief bit:22..23  Access rights for coprocessor 11 */
-	uint32_t CP12:2;                     /*!< \brief bit:24..25  Access rights for coprocessor 11 */
-	uint32_t CP13:2;                     /*!< \brief bit:26..27  Access rights for coprocessor 11 */
-	uint32_t TRCDIS:1;                   /*!< \brief bit:    28  Disable CP14 access to trace registers */
+    uint32_t CP12:2;                     /*!< \brief bit:24..25  Access rights for coprocessor 11 */
+    uint32_t CP13:2;                     /*!< \brief bit:26..27  Access rights for coprocessor 11 */
+    uint32_t TRCDIS:1;                   /*!< \brief bit:    28  Disable CP14 access to trace registers */
     RESERVED(0:1, uint32_t)              
     uint32_t D32DIS:1;                   /*!< \brief bit:    30  Disable use of registers D16-D31 of the VFP register file */
     uint32_t ASEDIS:1;                   /*!< \brief bit:    31  Disable Advanced SIMD Functionality */
@@ -527,7 +541,7 @@ typedef union
     uint32_t FS0:4;                      /*!< \brief bit: 0.. 3  Fault Status bits bit 0-3 */
     uint32_t Domain:4;                   /*!< \brief bit: 4.. 7  Fault on which domain */
     RESERVED(0:1, uint32_t)              
-	uint32_t LPAE:1;                     /*!< \brief bit:     9  Large Physical Address Extension */
+    uint32_t LPAE:1;                     /*!< \brief bit:     9  Large Physical Address Extension */
     uint32_t FS1:1;                      /*!< \brief bit:    10  Fault Status bits bit 4 */
     uint32_t WnR:1;                      /*!< \brief bit:    11  Write not Read bit */
     uint32_t ExT:1;                      /*!< \brief bit:    12  External abort type */
@@ -538,7 +552,7 @@ typedef union
   {
     uint32_t STATUS:5;                   /*!< \brief bit: 0.. 5  Fault Status bits */
     RESERVED(0:3, uint32_t)              
-	uint32_t LPAE:1;                     /*!< \brief bit:     9  Large Physical Address Extension */
+    uint32_t LPAE:1;                     /*!< \brief bit:     9  Large Physical Address Extension */
     RESERVED(1:1, uint32_t)              
     uint32_t WnR:1;                      /*!< \brief bit:    11  Write not Read bit */
     uint32_t ExT:1;                      /*!< \brief bit:    12  External abort type */
@@ -636,7 +650,7 @@ typedef union
 #define ISR_F_Msk                        (1UL << ISR_F_Pos)                     /*!< \brief ISR: F Mask */
 
 /* DACR Register */
-#define DACR_D_Pos_(n)                   (2u*n)                                 /*!< \brief DACR: Dn Position */
+#define DACR_D_Pos_(n)                   (2U*n)                                 /*!< \brief DACR: Dn Position */
 #define DACR_D_Msk_(n)                   (3UL << DACR_D_Pos_(n))                /*!< \brief DACR: Dn Mask */
 #define DACR_Dn_NOACCESS                 0U                                     /*!< \brief DACR Dn field: No access */
 #define DACR_Dn_CLIENT                   1U                                     /*!< \brief DACR Dn field: Client */
@@ -834,35 +848,35 @@ typedef struct
 
 /** \brief Enable Caches by setting I and C bits in SCTLR register.
 */
-__STATIC_INLINE void L1C_EnableCaches(void) {
-  __set_SCTLR( __get_SCTLR() | (1u << SCTLR_I_Pos) | (1u << SCTLR_C_Pos));
+__STATIC_FORCEINLINE void L1C_EnableCaches(void) {
+  __set_SCTLR( __get_SCTLR() | SCTLR_I_Msk | SCTLR_C_Msk);
   __ISB();
 }
 
 /** \brief Disable Caches by clearing I and C bits in SCTLR register.
 */
-__STATIC_INLINE void L1C_DisableCaches(void) {
-  __set_SCTLR( __get_SCTLR() & ~(1u << SCTLR_I_Pos) & ~(1u << SCTLR_C_Pos));
+__STATIC_FORCEINLINE void L1C_DisableCaches(void) {
+  __set_SCTLR( __get_SCTLR() & (~SCTLR_I_Msk) & (~SCTLR_C_Msk));
   __ISB();
 }
 
 /** \brief  Enable Branch Prediction by setting Z bit in SCTLR register.
 */
-__STATIC_INLINE void L1C_EnableBTAC(void) {
-  __set_SCTLR( __get_SCTLR() | (1u << SCTLR_Z_Pos));
+__STATIC_FORCEINLINE void L1C_EnableBTAC(void) {
+  __set_SCTLR( __get_SCTLR() | SCTLR_Z_Msk);
   __ISB();
 }
 
 /** \brief  Disable Branch Prediction by clearing Z bit in SCTLR register.
 */
-__STATIC_INLINE void L1C_DisableBTAC(void) {
-  __set_SCTLR( __get_SCTLR() & ~(1u << SCTLR_Z_Pos));
+__STATIC_FORCEINLINE void L1C_DisableBTAC(void) {
+  __set_SCTLR( __get_SCTLR() & (~SCTLR_Z_Msk));
   __ISB();
 }
 
 /** \brief  Invalidate entire branch predictor array
 */
-__STATIC_INLINE void L1C_InvalidateBTAC(void) {
+__STATIC_FORCEINLINE void L1C_InvalidateBTAC(void) {
   __set_BPIALL(0);
   __DSB();     //ensure completion of the invalidation
   __ISB();     //ensure instruction fetch path sees new state
@@ -870,7 +884,7 @@ __STATIC_INLINE void L1C_InvalidateBTAC(void) {
 
 /** \brief  Invalidate the whole instruction cache
 */
-__STATIC_INLINE void L1C_InvalidateICacheAll(void) {
+__STATIC_FORCEINLINE void L1C_InvalidateICacheAll(void) {
   __set_ICIALLU(0);
   __DSB();     //ensure completion of the invalidation
   __ISB();     //ensure instruction fetch path sees new I cache state
@@ -879,7 +893,7 @@ __STATIC_INLINE void L1C_InvalidateICacheAll(void) {
 /** \brief  Clean data cache line by address.
 * \param [in] va Pointer to data to clear the cache for.
 */
-__STATIC_INLINE void L1C_CleanDCacheMVA(void *va) {
+__STATIC_FORCEINLINE void L1C_CleanDCacheMVA(void *va) {
   __set_DCCMVAC((uint32_t)va);
   __DMB();     //ensure the ordering of data cache maintenance operations and their effects
 }
@@ -887,7 +901,7 @@ __STATIC_INLINE void L1C_CleanDCacheMVA(void *va) {
 /** \brief  Invalidate data cache line by address.
 * \param [in] va Pointer to data to invalidate the cache for.
 */
-__STATIC_INLINE void L1C_InvalidateDCacheMVA(void *va) {
+__STATIC_FORCEINLINE void L1C_InvalidateDCacheMVA(void *va) {
   __set_DCIMVAC((uint32_t)va);
   __DMB();     //ensure the ordering of data cache maintenance operations and their effects
 }
@@ -895,37 +909,129 @@ __STATIC_INLINE void L1C_InvalidateDCacheMVA(void *va) {
 /** \brief  Clean and Invalidate data cache by address.
 * \param [in] va Pointer to data to invalidate the cache for.
 */
-__STATIC_INLINE void L1C_CleanInvalidateDCacheMVA(void *va) {
+__STATIC_FORCEINLINE void L1C_CleanInvalidateDCacheMVA(void *va) {
   __set_DCCIMVAC((uint32_t)va);
   __DMB();     //ensure the ordering of data cache maintenance operations and their effects
 }
 
-/** \brief  Clean and Invalidate the entire data or unified cache
-* \param [in] op 0 - invalidate, 1 - clean, otherwise - invalidate and clean
-* \see __L1C_CleanInvalidateCache
+/** \brief Calculate log2 rounded up
+*  - log(0)  => 0
+*  - log(1)  => 0
+*  - log(2)  => 1
+*  - log(3)  => 2
+*  - log(4)  => 2
+*  - log(5)  => 3
+*        :      :
+*  - log(16) => 4
+*  - log(32) => 5
+*        :      :
+* \param [in] n input value parameter 
+* \return log2(n)
 */
-__STATIC_INLINE void L1C_CleanInvalidateCache(uint32_t op) {
-  __L1C_CleanInvalidateCache(op);
+__STATIC_FORCEINLINE uint8_t __log2_up(uint32_t n)
+{
+  if (n < 2U) {
+    return 0U;
+  }
+  uint8_t log = 0U;
+  uint32_t t = n;
+  while(t > 1U)
+  {
+    log++;
+    t >>= 1U;
+  }
+  if (n & 1U) { log++; }
+  return log;
+}
+
+/** \brief  Apply cache maintenance to given cache level.
+* \param [in] level cache level to be maintained
+* \param [in] maint 0 - invalidate, 1 - clean, otherwise - invalidate and clean
+*/
+__STATIC_FORCEINLINE void __L1C_MaintainDCacheSetWay(uint32_t level, uint32_t maint)
+{
+  uint32_t Dummy;
+  uint32_t ccsidr;
+  uint32_t num_sets;
+  uint32_t num_ways;
+  uint32_t shift_way;
+  uint32_t log2_linesize;
+   int32_t log2_num_ways;
+
+  Dummy = level << 1U;
+  /* set csselr, select ccsidr register */
+  __set_CSSELR(Dummy);
+  /* get current ccsidr register */
+  ccsidr = __get_CCSIDR();
+  num_sets = ((ccsidr & 0x0FFFE000U) >> 13U) + 1U;
+  num_ways = ((ccsidr & 0x00001FF8U) >> 3U) + 1U;
+  log2_linesize = (ccsidr & 0x00000007U) + 2U + 2U;
+  log2_num_ways = __log2_up(num_ways);
+  if ((log2_num_ways < 0) || (log2_num_ways > 32)) {
+    return; // FATAL ERROR
+  }
+  shift_way = 32U - (uint32_t)log2_num_ways;
+  for(int32_t way = num_ways-1; way >= 0; way--)
+  {
+    for(int32_t set = num_sets-1; set >= 0; set--)
+    {
+      Dummy = (level << 1U) | (((uint32_t)set) << log2_linesize) | (((uint32_t)way) << shift_way);
+      switch (maint)
+      {
+        case 0U: __set_DCISW(Dummy);  break;
+        case 1U: __set_DCCSW(Dummy);  break;
+        default: __set_DCCISW(Dummy); break;
+      }
+    }
+  }
+  __DMB();
+}
+
+/** \brief  Clean and Invalidate the entire data or unified cache
+* Generic mechanism for cleaning/invalidating the entire data or unified cache to the point of coherency
+* \param [in] op 0 - invalidate, 1 - clean, otherwise - invalidate and clean
+*/
+__STATIC_FORCEINLINE void L1C_CleanInvalidateCache(uint32_t op) {
+  uint32_t clidr;
+  uint32_t cache_type;
+  clidr =  __get_CLIDR();
+  for(uint32_t i = 0U; i<7U; i++)
+  {
+    cache_type = (clidr >> i*3U) & 0x7UL;
+    if ((cache_type >= 2U) && (cache_type <= 4U))
+    {
+      __L1C_MaintainDCacheSetWay(i, op);
+    }
+  }
+}
+
+/** \brief  Clean and Invalidate the entire data or unified cache
+* Generic mechanism for cleaning/invalidating the entire data or unified cache to the point of coherency
+* \param [in] op 0 - invalidate, 1 - clean, otherwise - invalidate and clean
+* \deprecated Use generic L1C_CleanInvalidateCache instead.
+*/
+CMSIS_DEPRECATED
+__STATIC_FORCEINLINE void __L1C_CleanInvalidateCache(uint32_t op) {
+  L1C_CleanInvalidateCache(op);
 }
 
 /** \brief  Invalidate the whole data cache.
 */
-__STATIC_INLINE void L1C_InvalidateDCacheAll(void) {
+__STATIC_FORCEINLINE void L1C_InvalidateDCacheAll(void) {
   L1C_CleanInvalidateCache(0);
 }
 
 /** \brief  Clean the whole data cache.
  */
-__STATIC_INLINE void L1C_CleanDCacheAll(void) {
+__STATIC_FORCEINLINE void L1C_CleanDCacheAll(void) {
   L1C_CleanInvalidateCache(1);
 }
 
 /** \brief  Clean and invalidate the whole data cache.
  */
-__STATIC_INLINE void L1C_CleanInvalidateDCacheAll(void) {
+__STATIC_FORCEINLINE void L1C_CleanInvalidateDCacheAll(void) {
   L1C_CleanInvalidateCache(2);
 }
-
 
 /* ##########################  L2 Cache functions  ################################# */
 #if (__L2C_PRESENT == 1U) || defined(DOXYGEN)
@@ -958,14 +1064,14 @@ __STATIC_INLINE void L2C_InvAllByWay (void)
 {
   unsigned int assoc;
 
-  if (L2C_310->AUX_CNT & (1u << 16u)) {
-    assoc = 16u;
+  if (L2C_310->AUX_CNT & (1U << 16U)) {
+    assoc = 16U;
   } else {
-    assoc =  8u;
+    assoc =  8U;
   }
   
-  L2C_310->INV_WAY = (1u << assoc) - 1u;
-  while(L2C_310->INV_WAY & ((1u << assoc) - 1u)); //poll invalidate
+  L2C_310->INV_WAY = (1U << assoc) - 1U;
+  while(L2C_310->INV_WAY & ((1U << assoc) - 1U)); //poll invalidate
 
   L2C_Sync();
 }
@@ -976,14 +1082,14 @@ __STATIC_INLINE void L2C_CleanInvAllByWay (void)
 {
   unsigned int assoc;
 
-  if (L2C_310->AUX_CNT & (1u << 16u)) {
-    assoc = 16u;
+  if (L2C_310->AUX_CNT & (1U << 16U)) {
+    assoc = 16U;
   } else {
-    assoc =  8u;
+    assoc =  8U;
   }
 
-  L2C_310->CLEAN_INV_WAY = (1u << assoc) - 1u;
-  while(L2C_310->CLEAN_INV_WAY & ((1u << assoc) - 1u)); //poll invalidate
+  L2C_310->CLEAN_INV_WAY = (1U << assoc) - 1U;
+  while(L2C_310->CLEAN_INV_WAY & ((1U << assoc) - 1U)); //poll invalidate
 
   L2C_Sync();
 }
@@ -1342,8 +1448,8 @@ __STATIC_INLINE uint32_t GIC_GetGroup(IRQn_Type IRQn)
 */
 __STATIC_INLINE void GIC_DistInit(void)
 {
-  IRQn_Type i;
-  uint32_t num_irq = 0;
+  uint32_t i;
+  uint32_t num_irq = 0U;
   uint32_t priority_field;
 
   //A reset sets all bits in the IGROUPRs corresponding to the SPIs to 0,
@@ -1352,26 +1458,24 @@ __STATIC_INLINE void GIC_DistInit(void)
   //Disable interrupt forwarding
   GIC_DisableDistributor();
   //Get the maximum number of interrupts that the GIC supports
-  num_irq = 32 * ((GIC_DistributorInfo() & 0x1f) + 1);
+  num_irq = 32U * ((GIC_DistributorInfo() & 0x1FU) + 1U);
 
   /* Priority level is implementation defined.
    To determine the number of priority bits implemented write 0xFF to an IPRIORITYR
    priority field and read back the value stored.*/
-  GIC_SetPriority((IRQn_Type)0, 0xff);
-  priority_field = GIC_GetPriority((IRQn_Type)0);
+  GIC_SetPriority((IRQn_Type)0U, 0xFFU);
+  priority_field = GIC_GetPriority((IRQn_Type)0U);
 
-  for (i = (IRQn_Type)32; i < num_irq; i++)
+  for (i = 32U; i < num_irq; i++)
   {
       //Disable the SPI interrupt
-      GIC_DisableIRQ(i);
-      if (i > 15) {
-        //Set level-sensitive (and N-N model)
-        GIC_SetConfiguration(i, 0);
-      }
+      GIC_DisableIRQ((IRQn_Type)i);
+      //Set level-sensitive (and N-N model)
+      GIC_SetConfiguration((IRQn_Type)i, 0U);
       //Set priority
-      GIC_SetPriority(i, priority_field/2);
+      GIC_SetPriority((IRQn_Type)i, priority_field/2U);
       //Set target list to CPU0
-      GIC_SetTarget(i, 1);
+      GIC_SetTarget((IRQn_Type)i, 1U);
   }
   //Enable distributor
   GIC_EnableDistributor();
@@ -1381,7 +1485,7 @@ __STATIC_INLINE void GIC_DistInit(void)
 */
 __STATIC_INLINE void GIC_CPUInterfaceInit(void)
 {
-  IRQn_Type i;
+  uint32_t i;
   uint32_t priority_field;
 
   //A reset sets all bits in the IGROUPRs corresponding to the SPIs to 0,
@@ -1393,27 +1497,27 @@ __STATIC_INLINE void GIC_CPUInterfaceInit(void)
   /* Priority level is implementation defined.
    To determine the number of priority bits implemented write 0xFF to an IPRIORITYR
    priority field and read back the value stored.*/
-  GIC_SetPriority((IRQn_Type)0, 0xff);
-  priority_field = GIC_GetPriority((IRQn_Type)0);
+  GIC_SetPriority((IRQn_Type)0U, 0xFFU);
+  priority_field = GIC_GetPriority((IRQn_Type)0U);
 
   //SGI and PPI
-  for (i = (IRQn_Type)0; i < 32; i++)
+  for (i = 0U; i < 32U; i++)
   {
-    if(i > 15) {
+    if(i > 15U) {
       //Set level-sensitive (and N-N model) for PPI
-      GIC_SetConfiguration(i, 0U);
+      GIC_SetConfiguration((IRQn_Type)i, 0U);
     }
     //Disable SGI and PPI interrupts
-    GIC_DisableIRQ(i);
+    GIC_DisableIRQ((IRQn_Type)i);
     //Set priority
-    GIC_SetPriority(i, priority_field/2);
+    GIC_SetPriority((IRQn_Type)i, priority_field/2U);
   }
   //Enable interface
   GIC_EnableInterface();
   //Set binary point to 0
-  GIC_SetBinaryPoint(0);
+  GIC_SetBinaryPoint(0U);
   //Set priority mask
-  GIC_SetInterfacePriorityMask(0xff);
+  GIC_SetInterfacePriorityMask(0xFFU);
 }
 
 /** \brief Initialize and enable the GIC
@@ -1447,7 +1551,8 @@ typedef union
 /** \brief Configures the frequency the timer shall run at.
 * \param [in] value The timer frequency in Hz.
 */
-__STATIC_INLINE void PL1_SetCounterFrequency(uint32_t value) {
+__STATIC_INLINE void PL1_SetCounterFrequency(uint32_t value)
+{
   __set_CNTFRQ(value);
   __ISB();
 }
@@ -1455,7 +1560,8 @@ __STATIC_INLINE void PL1_SetCounterFrequency(uint32_t value) {
 /** \brief Sets the reset value of the timer.
 * \param [in] value The value the timer is loaded with.
 */
-__STATIC_INLINE void PL1_SetLoadValue(uint32_t value) {
+__STATIC_INLINE void PL1_SetLoadValue(uint32_t value)
+{
   __set_CNTP_TVAL(value);
   __ISB();
 }
@@ -1463,14 +1569,41 @@ __STATIC_INLINE void PL1_SetLoadValue(uint32_t value) {
 /** \brief Get the current counter value.
 * \return Current counter value.
 */
-__STATIC_INLINE uint32_t PL1_GetCurrentValue() {
+__STATIC_INLINE uint32_t PL1_GetCurrentValue(void)
+{
   return(__get_CNTP_TVAL());
+}
+
+/** \brief Get the current physical counter value.
+* \return Current physical counter value.
+*/
+__STATIC_INLINE uint64_t PL1_GetCurrentPhysicalValue(void)
+{
+  return(__get_CNTPCT());
+}
+
+/** \brief Set the physical compare value.
+* \param [in] value New physical timer compare value.
+*/
+__STATIC_INLINE void PL1_SetPhysicalCompareValue(uint64_t value)
+{
+  __set_CNTP_CVAL(value);
+  __ISB();
+}
+
+/** \brief Get the physical compare value.
+* \return Physical compare value.
+*/
+__STATIC_INLINE uint64_t PL1_GetPhysicalCompareValue(void)
+{
+  return(__get_CNTP_CVAL());
 }
 
 /** \brief Configure the timer by setting the control value.
 * \param [in] value New timer control value.
 */
-__STATIC_INLINE void PL1_SetControl(uint32_t value) {
+__STATIC_INLINE void PL1_SetControl(uint32_t value)
+{
   __set_CNTP_CTL(value);
   __ISB();
 }
@@ -1478,7 +1611,8 @@ __STATIC_INLINE void PL1_SetControl(uint32_t value) {
 /** \brief Get the control value.
 * \return Control value.
 */
-__STATIC_INLINE uint32_t PL1_GetControl() {
+__STATIC_INLINE uint32_t PL1_GetControl(void)
+{
   return(__get_CNTP_CTL());
 }
 #endif
@@ -1488,58 +1622,62 @@ __STATIC_INLINE uint32_t PL1_GetControl() {
 /** \brief Set the load value to timers LOAD register.
 * \param [in] value The load value to be set.
 */
-__STATIC_INLINE void PTIM_SetLoadValue(uint32_t value) {
+__STATIC_INLINE void PTIM_SetLoadValue(uint32_t value)
+{
   PTIM->LOAD = value;
 }
 
 /** \brief Get the load value from timers LOAD register.
 * \return Timer_Type::LOAD
 */
-/* CHIBIOS FIX */
-//__STATIC_INLINE uint32_t PTIM_GetLoadValue() {
-__STATIC_INLINE uint32_t PTIM_GetLoadValue(void) {
+__STATIC_INLINE uint32_t PTIM_GetLoadValue(void)
+{
   return(PTIM->LOAD);
 }
 
 /** \brief Set current counter value from its COUNTER register.
 */
-__STATIC_INLINE void PTIM_SetCurrentValue(uint32_t value) {
+__STATIC_INLINE void PTIM_SetCurrentValue(uint32_t value)
+{
   PTIM->COUNTER = value;
 }
 
 /** \brief Get current counter value from timers COUNTER register.
 * \result Timer_Type::COUNTER
 */
-/* CHIBIOS FIX */
-//__STATIC_INLINE uint32_t PTIM_GetCurrentValue() {
-__STATIC_INLINE uint32_t PTIM_GetCurrentValue(void) {
+__STATIC_INLINE uint32_t PTIM_GetCurrentValue(void)
+{
   return(PTIM->COUNTER);
 }
 
 /** \brief Configure the timer using its CONTROL register.
 * \param [in] value The new configuration value to be set.
 */
-__STATIC_INLINE void PTIM_SetControl(uint32_t value) {
+__STATIC_INLINE void PTIM_SetControl(uint32_t value)
+{
   PTIM->CONTROL = value;
 }
 
 /** ref Timer_Type::CONTROL Get the current timer configuration from its CONTROL register.
 * \return Timer_Type::CONTROL
 */
-__STATIC_INLINE uint32_t PTIM_GetControl(void) {
+__STATIC_INLINE uint32_t PTIM_GetControl(void)
+{
   return(PTIM->CONTROL);
 }
 
 /** ref Timer_Type::CONTROL Get the event flag in timers ISR register.
 * \return 0 - flag is not set, 1- flag is set
 */
-__STATIC_INLINE uint32_t PTIM_GetEventFlag(void) {
+__STATIC_INLINE uint32_t PTIM_GetEventFlag(void)
+{
   return (PTIM->ISR & 1UL);
 }
 
 /** ref Timer_Type::CONTROL Clears the event flag in timers ISR register.
 */
-__STATIC_INLINE void PTIM_ClearEventFlag(void) {
+__STATIC_INLINE void PTIM_ClearEventFlag(void)
+{
   PTIM->ISR = 1;
 }
 #endif
@@ -1734,6 +1872,21 @@ typedef struct RegionStruct {
                                    region.g_t = GLOBAL; \
                                    region.inner_norm_t = WB_WA; \
                                    region.outer_norm_t = WB_WA; \
+                                   region.mem_t = NORMAL; \
+                                   region.sec_t = SECURE; \
+                                   region.xn_t = EXECUTE; \
+                                   region.priv_t = RW; \
+                                   region.user_t = RW; \
+                                   region.sh_t = NON_SHARED; \
+                                   MMU_GetSectionDescriptor(&descriptor_l1, region);
+
+//Sect_Normal_NC. Outer & inner non-cacheable, non-shareable, executable, rw, domain 0
+#define section_normal_nc(descriptor_l1, region)     region.rg_t = SECTION; \
+                                   region.domain = 0x0; \
+                                   region.e_t = ECC_DISABLED; \
+                                   region.g_t = GLOBAL; \
+                                   region.inner_norm_t = NON_CACHEABLE; \
+                                   region.outer_norm_t = NON_CACHEABLE; \
                                    region.mem_t = NORMAL; \
                                    region.sec_t = SECURE; \
                                    region.xn_t = EXECUTE; \
@@ -2425,7 +2578,8 @@ __STATIC_INLINE void MMU_TTPage64k(uint32_t *ttb, uint32_t base_address, uint32_
 
 /** \brief  Enable MMU
 */
-__STATIC_INLINE void MMU_Enable(void) {
+__STATIC_INLINE void MMU_Enable(void)
+{
   // Set M bit 0 to enable the MMU
   // Set AFE bit to enable simplified access permissions model
   // Clear TRE bit to disable TEX remap and A bit to disable strict alignment fault checking
@@ -2435,7 +2589,8 @@ __STATIC_INLINE void MMU_Enable(void) {
 
 /** \brief  Disable MMU
 */
-__STATIC_INLINE void MMU_Disable(void) {
+__STATIC_INLINE void MMU_Disable(void)
+{
   // Clear M bit 0 to disable the MMU
   __set_SCTLR( __get_SCTLR() & ~1);
   __ISB();
@@ -2444,7 +2599,8 @@ __STATIC_INLINE void MMU_Disable(void) {
 /** \brief  Invalidate entire unified TLB
 */
 
-__STATIC_INLINE void MMU_InvalidateTLB(void) {
+__STATIC_INLINE void MMU_InvalidateTLB(void)
+{
   __set_TLBIALL(0);
   __DSB();     //ensure completion of the invalidation
   __ISB();     //ensure instruction fetch path sees new state
