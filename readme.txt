@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 17.6.5 ***
+- HAL: Fixed invalid period calculation in STM32 GPT driver (bug #957).
 - LIB: Fixed heap allocation issue (bug #955).
 - HAL: Fixed race condition in STM32 ADCv3 driver (bug #953).
 - HAL: Fixed Invalid divider settings in Serial and UART STM32 drivers

@@ -542,7 +542,7 @@ struct GPTDriver {
  * @notapi
  */
 #define gpt_lld_change_interval(gptp, interval)                             \
-  ((gptp)->tim->ARR = (uint32_t)(interval))
+  ((gptp)->tim->ARR = (uint32_t)((interval) - 1U))
 
 /**
  * @brief   Returns the interval of GPT peripheral.
@@ -553,7 +553,7 @@ struct GPTDriver {
  *
  * @notapi
  */
-#define gpt_lld_get_interval(gptp) ((gptcnt_t)(gptp)->tim->ARR)
+#define gpt_lld_get_interval(gptp) ((gptcnt_t)((gptp)->tim->ARR + 1U))
 
 /**
  * @brief   Returns the counter value of GPT peripheral.
