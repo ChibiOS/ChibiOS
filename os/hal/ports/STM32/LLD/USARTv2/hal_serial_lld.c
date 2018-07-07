@@ -335,7 +335,7 @@ static void serve_interrupt(SerialDriver *sdp) {
     b = oqGetI(&sdp->oqueue);
     if (b < MSG_OK) {
       chnAddFlagsI(sdp, CHN_OUTPUT_EMPTY);
-      u->CR1 = (cr1 & ~USART_CR1_TXEIE) | USART_CR1_TCIE;
+      u->CR1 = cr1 & ~USART_CR1_TXEIE;
     }
     else
       u->TDR = b;
@@ -357,7 +357,7 @@ static void serve_interrupt(SerialDriver *sdp) {
 static void notify1(io_queue_t *qp) {
 
   (void)qp;
-  USART1->CR1 |= USART_CR1_TXEIE;
+  USART1->CR1 |= USART_CR1_TXEIE | USART_CR1_TCIE;
 }
 #endif
 
@@ -365,7 +365,7 @@ static void notify1(io_queue_t *qp) {
 static void notify2(io_queue_t *qp) {
 
   (void)qp;
-  USART2->CR1 |= USART_CR1_TXEIE;
+  USART2->CR1 |= USART_CR1_TXEIE | USART_CR1_TCIE;
 }
 #endif
 
@@ -373,7 +373,7 @@ static void notify2(io_queue_t *qp) {
 static void notify3(io_queue_t *qp) {
 
   (void)qp;
-  USART3->CR1 |= USART_CR1_TXEIE;
+  USART3->CR1 |= USART_CR1_TXEIE | USART_CR1_TCIE;
 }
 #endif
 
@@ -381,7 +381,7 @@ static void notify3(io_queue_t *qp) {
 static void notify4(io_queue_t *qp) {
 
   (void)qp;
-  UART4->CR1 |= USART_CR1_TXEIE;
+  UART4->CR1 |= USART_CR1_TXEIE | USART_CR1_TCIE;
 }
 #endif
 
@@ -389,7 +389,7 @@ static void notify4(io_queue_t *qp) {
 static void notify5(io_queue_t *qp) {
 
   (void)qp;
-  UART5->CR1 |= USART_CR1_TXEIE;
+  UART5->CR1 |= USART_CR1_TXEIE | USART_CR1_TCIE;
 }
 #endif
 
@@ -397,7 +397,7 @@ static void notify5(io_queue_t *qp) {
 static void notify6(io_queue_t *qp) {
 
   (void)qp;
-  USART6->CR1 |= USART_CR1_TXEIE;
+  USART6->CR1 |= USART_CR1_TXEIE | USART_CR1_TCIE;
 }
 #endif
 
@@ -405,7 +405,7 @@ static void notify6(io_queue_t *qp) {
 static void notify7(io_queue_t *qp) {
 
   (void)qp;
-  UART7->CR1 |= USART_CR1_TXEIE;
+  UART7->CR1 |= USART_CR1_TXEIE | USART_CR1_TCIE;
 }
 #endif
 
@@ -413,7 +413,7 @@ static void notify7(io_queue_t *qp) {
 static void notify8(io_queue_t *qp) {
 
   (void)qp;
-  UART8->CR1 |= USART_CR1_TXEIE;
+  UART8->CR1 |= USART_CR1_TXEIE | USART_CR1_TCIE;
 }
 #endif
 
@@ -421,7 +421,7 @@ static void notify8(io_queue_t *qp) {
 static void notifylp1(io_queue_t *qp) {
 
   (void)qp;
-  LPUART1->CR1 |= USART_CR1_TXEIE;
+  LPUART1->CR1 |= USART_CR1_TXEIE | USART_CR1_TCIE;
 }
 #endif
 

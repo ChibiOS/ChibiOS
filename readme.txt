@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 17.6.5 ***
+- HAL: Fixed incorrect TCIE handling in STM32 serial drivers (bug #958).
 - HAL: Fixed invalid period calculation in STM32 GPT driver (bug #957).
 - LIB: Fixed heap allocation issue (bug #955).
 - HAL: Fixed race condition in STM32 ADCv3 driver (bug #953).
