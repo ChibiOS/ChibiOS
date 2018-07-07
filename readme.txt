@@ -92,6 +92,7 @@
 - NEW: Added new functions to objects fifos: chFifoReturnObjectS(),
        chFifoSendObjectAheadI(), chFifoSendObjectAheadS() and
        chFifoSendObjectAhead().
+- HAL: Fixed incorrect TCIE handling in STM32 serial drivers (bug #958).
 - HAL: Fixed invalid period calculation in STM32 GPT driver (bug #957).
 - HAL: Fixed missing USART7/8 definitions in STM32F0 HAL (bug #956).
 - LIB: Fixed heap allocation issue (bug #955).
