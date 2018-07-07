@@ -64,6 +64,7 @@
     RCC->APB1LPENR |= (mask);                                               \
   else                                                                      \
     RCC->APB1LPENR &= ~(mask);                                              \
+  (void)RCC->APB1LPENR;                                                     \
 }
 
 /**
@@ -75,6 +76,8 @@
  */
 #define rccDisableAPB1(mask) {                                              \
   RCC->APB1ENR &= ~(mask);                                                  \
+  RCC->APB1LPENR &= ~(mask);                                                \
+  (void)RCC->APB1LPENR;                                                     \
 }
 
 /**
@@ -86,7 +89,8 @@
  */
 #define rccResetAPB1(mask) {                                                \
   RCC->APB1RSTR |= (mask);                                                  \
-  RCC->APB1RSTR = 0;                                                        \
+  RCC->APB1RSTR &= ~(mask);                                                 \
+  (void)RCC->APB1RSTR;                                                      \
 }
 
 /**
@@ -102,6 +106,7 @@
     RCC->APB2LPENR |= (mask);                                               \
   else                                                                      \
     RCC->APB2LPENR &= ~(mask);                                              \
+  (void)RCC->APB2LPENR;                                                     \
 }
 
 /**
@@ -113,6 +118,8 @@
  */
 #define rccDisableAPB2(mask) {                                              \
   RCC->APB2ENR &= ~(mask);                                                  \
+  RCC->APB2LPENR &= ~(mask);                                                \
+  (void)RCC->APB2LPENR;                                                     \
 }
 
 /**
@@ -124,7 +131,8 @@
  */
 #define rccResetAPB2(mask) {                                                \
   RCC->APB2RSTR |= (mask);                                                  \
-  RCC->APB2RSTR = 0;                                                        \
+  RCC->APB2RSTR &= ~(mask);                                                 \
+  (void)RCC->APB2RSTR;                                                      \
 }
 
 /**
@@ -141,6 +149,7 @@
     RCC->AHB1LPENR |= (mask);                                               \
   else                                                                      \
     RCC->AHB1LPENR &= ~(mask);                                              \
+  (void)RCC->AHB1LPENR;                                                     \
 }
 
 /**
@@ -152,6 +161,8 @@
  */
 #define rccDisableAHB1(mask) {                                              \
   RCC->AHB1ENR &= ~(mask);                                                  \
+  RCC->AHB1LPENR &= ~(mask);                                                \
+  (void)RCC->AHB1LPENR;                                                     \
 }
 
 /**
@@ -163,7 +174,8 @@
  */
 #define rccResetAHB1(mask) {                                                \
   RCC->AHB1RSTR |= (mask);                                                  \
-  RCC->AHB1RSTR = 0;                                                        \
+  RCC->AHB1RSTR &= ~(mask);                                                 \
+  (void)RCC->AHB1RSTR;                                                      \
 }
 
 /**
@@ -180,6 +192,7 @@
     RCC->AHB2LPENR |= (mask);                                               \
   else                                                                      \
     RCC->AHB2LPENR &= ~(mask);                                              \
+  (void)RCC->AHB2LPENR;                                                     \
 }
 
 /**
@@ -191,6 +204,8 @@
  */
 #define rccDisableAHB2(mask) {                                              \
   RCC->AHB2ENR &= ~(mask);                                                  \
+  RCC->AHB2LPENR &= ~(mask);                                                \
+  (void)RCC->AHB2LPENR;                                                     \
 }
 
 /**
@@ -202,7 +217,8 @@
  */
 #define rccResetAHB2(mask) {                                                \
   RCC->AHB2RSTR |= (mask);                                                  \
-  RCC->AHB2RSTR = 0;                                                        \
+  RCC->AHB2RSTR &= ~(mask);                                                 \
+  (void)RCC->AHB2RSTR;                                                      \
 }
 
 /**
@@ -219,6 +235,7 @@
     RCC->AHB3LPENR |= (mask);                                               \
   else                                                                      \
     RCC->AHB3LPENR &= ~(mask);                                              \
+  (void)RCC->AHB3LPENR;                                                     \
 }
 
 /**
@@ -230,6 +247,8 @@
  */
 #define rccDisableAHB3(mask) {                                              \
   RCC->AHB3ENR &= ~(mask);                                                  \
+  RCC->AHB3LPENR &= ~(mask);                                                \
+  (void)RCC->AHB3LPENR;                                                     \
 }
 
 /**
@@ -241,7 +260,8 @@
  */
 #define rccResetAHB3(mask) {                                                \
   RCC->AHB3RSTR |= (mask);                                                  \
-  RCC->AHB3RSTR = 0;                                                        \
+  RCC->AHB3RSTR &= ~(mask);                                                 \
+  (void)RCC->AHB3RSTR;                                                      \
 }
 /** @} */
 
@@ -602,6 +622,30 @@
  * @api
  */
 #define rccResetI2C3() rccResetAPB1(RCC_APB1RSTR_I2C3RST)
+/** @} */
+
+/**
+ * @brief   Enables the I2C4 peripheral clock.
+ *
+ * @api
+ */
+#define rccEnableI2C4() rccEnableAPB1(RCC_APB1ENR_FMPI2C1EN, lp)
+
+/**
+ * @brief   Disables the I2C4 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableI2C4(lp) rccDisableAPB1(RCC_APB1ENR_FMPI2C1EN, lp)
+
+/**
+ * @brief   Resets the I2C4 peripheral.
+ *
+ * @api
+ */
+#define rccResetI2C4() rccResetAPB1(RCC_APB1RSTR_FMPI2C1RST)
 /** @} */
 
 /**
@@ -1198,6 +1242,31 @@
 /** @} */
 
 /**
+ * @brief   Enables the LPTIM1 peripheral clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableLPTIM1(lp) rccEnableAPB1(RCC_APB1ENR_LPTIM1EN, lp)
+
+/**
+ * @brief   Disables the LPTIM1 peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableLPTIM1() rccDisableAPB1(RCC_APB1ENR_LPTIM1EN, lp)
+
+/**
+ * @brief   Resets the LPTIM1 peripheral.
+ *
+ * @api
+ */
+#define rccResetLPTIM1() rccResetAPB1(RCC_APB1RSTR_LPTIM1RST)
+/** @} */
+
+/**
  * @name    USART/UART peripherals specific RCC operations
  * @{
  */
@@ -1384,6 +1453,56 @@
  * @api
  */
 #define rccResetUART8() rccResetAPB1(RCC_APB1RSTR_UART8RST)
+/** @} */
+
+/**
+ * @brief   Enables the UART9 peripheral clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableUART9(lp) rccEnableAPB2(RCC_APB2ENR_UART9EN, lp)
+
+/**
+ * @brief   Disables the UART9 peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableUART9() rccDisableAPB2(RCC_APB2ENR_UART9EN, lp)
+
+/**
+ * @brief   Resets the UART9 peripheral.
+ *
+ * @api
+ */
+#define rccResetUART9() rccResetAPB2(RCC_APB2RSTR_UART9RST)
+/** @} */
+
+/**
+ * @brief   Enables the UART10 peripheral clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableUART10(lp) rccEnableAPB2(RCC_APB2ENR_UART10EN, lp)
+
+/**
+ * @brief   Disables the UART10 peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableUART10(lp) rccDisableAPB2(RCC_APB2ENR_UART10EN, lp)
+
+/**
+ * @brief   Resets the UART10 peripheral.
+ *
+ * @api
+ */
+#define rccResetUART10() rccResetAPB2(RCC_APB2RSTR_UART10RST)
 /** @} */
 
 /**

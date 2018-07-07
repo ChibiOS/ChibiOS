@@ -65,6 +65,7 @@
     RCC->APB1LPENR |= (mask);                                               \
   else                                                                      \
     RCC->APB1LPENR &= ~(mask);                                              \
+  (void)RCC->APB1LPENR;                                                     \
 }
 
 /**
@@ -76,6 +77,8 @@
  */
 #define rccDisableAPB1(mask) {                                              \
   RCC->APB1ENR &= ~(mask);                                                  \
+  RCC->APB1LPENR &= ~(mask);                                                \
+  (void)RCC->APB1LPENR;                                                     \
 }
 
 /**
@@ -87,7 +90,8 @@
  */
 #define rccResetAPB1(mask) {                                                \
   RCC->APB1RSTR |= (mask);                                                  \
-  RCC->APB1RSTR = 0;                                                        \
+  RCC->APB1RSTR &= ~(mask);                                                 \
+  (void)RCC->APB1RSTR;                                                      \
 }
 
 /**
@@ -104,6 +108,7 @@
     RCC->APB2LPENR |= (mask);                                               \
   else                                                                      \
     RCC->APB2LPENR &= ~(mask);                                              \
+  (void)RCC->APB2LPENR;                                                     \
 }
 
 /**
@@ -115,6 +120,8 @@
  */
 #define rccDisableAPB2(mask) {                                              \
   RCC->APB2ENR &= ~(mask);                                                  \
+  RCC->APB2LPENR &= ~(mask);                                                \
+  (void)RCC->APB2LPENR;                                                     \
 }
 
 /**
@@ -126,7 +133,8 @@
  */
 #define rccResetAPB2(mask) {                                                \
   RCC->APB2RSTR |= (mask);                                                  \
-  RCC->APB2RSTR = 0;                                                        \
+  RCC->APB2RSTR &= ~(mask);                                                 \
+  (void)RCC->APB2RSTR;                                                      \
 }
 
 /**
@@ -143,6 +151,7 @@
     RCC->AHBLPENR |= (mask);                                                \
   else                                                                      \
     RCC->AHBLPENR &= ~(mask);                                               \
+  (void)RCC->AHBLPENR;                                                      \
 }
 
 /**
@@ -154,6 +163,8 @@
  */
 #define rccDisableAHB(mask) {                                               \
   RCC->AHBENR &= ~(mask);                                                   \
+  RCC->AHBLPENR &= ~(mask);                                                 \
+  (void)RCC->AHBLPENR;                                                      \
 }
 
 /**
@@ -165,7 +176,8 @@
  */
 #define rccResetAHB(mask) {                                                 \
   RCC->AHBRSTR |= (mask);                                                   \
-  RCC->AHBRSTR = 0;                                                         \
+  RCC->AHBRSTR &= ~(mask);                                                  \
+  (void)RCC->AHBRSTR;                                                       \
 }
 /** @} */
 
