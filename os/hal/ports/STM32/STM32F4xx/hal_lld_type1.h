@@ -1475,6 +1475,7 @@
 #error "invalid STM32_PLLQ_VALUE value specified"
 #endif
 
+#if defined(STM32F4XX) || defined(__DOXYGEN__)
 /**
  * @brief   STM32_PLLR field.
  */
@@ -1484,6 +1485,9 @@
 #else
 #error "invalid STM32_PLLR_VALUE value specified"
 #endif
+#else /* !defined(STM32F4XX) */
+#define STM32_PLLR                  0
+#endif /* !defined(STM32F4XX) */
 
 /**
  * @brief   PLL VCO frequency.
