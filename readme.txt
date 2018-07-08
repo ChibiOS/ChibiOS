@@ -86,6 +86,7 @@
 *****************************************************************************
 
 *** 18.2.2 ***
+- NEW: Added a termination check to the shell.
 - NEW: Updated CMSIS to version 5.3.0.
 - NEW: Now chconf.h files have preprocessor checks around each definition,
        this allows to override settings from makefiles.

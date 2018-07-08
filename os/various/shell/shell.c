@@ -354,7 +354,7 @@ THD_FUNCTION(shellThread, p) {
 
   chprintf(chp, SHELL_NEWLINE_STR);
   chprintf(chp, "ChibiOS/RT Shell" SHELL_NEWLINE_STR);
-  while (true) {
+  while (!chThdShouldTerminateX()) {
     chprintf(chp, SHELL_PROMPT_STR);
     if (shellGetLine(scfg, line, sizeof(line), shp)) {
 #if (SHELL_CMD_EXIT_ENABLED == TRUE) && !defined(_CHIBIOS_NIL_)
