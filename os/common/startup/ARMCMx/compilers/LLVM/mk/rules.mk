@@ -114,7 +114,7 @@ ADEFS     := $(DADEFS) $(UADEFS)
 LIBS      := $(DLIBS) $(ULIBS)
 
 # Various settings
-MCFLAGS   := -mcpu=$(MCU)
+MCFLAGS   := -mcpu=$(MCU) -mthumb
 ODFLAGS   = -x --syms
 ASFLAGS   = $(MCFLAGS) $(OPT) $(ADEFS)
 ASXFLAGS  = $(MCFLAGS) $(OPT) $(ADEFS)
@@ -125,12 +125,6 @@ CPPFLAGS  = $(MCFLAGS) $(OPT) $(CPPOPT) $(CPPWARN) $(DEFS)
 #CFLAGS    = $(MCFLAGS) $(OPT) $(COPT) $(CWARN) -Wa,-alms=$(LSTDIR)/$(notdir $(<:.c=.lst)) $(DEFS)
 #CPPFLAGS  = $(MCFLAGS) $(OPT) $(CPPOPT) $(CPPWARN) -Wa,-alms=$(LSTDIR)/$(notdir $(<:.cpp=.lst)) $(DEFS)
 LDFLAGS   = $(MCFLAGS) $(OPT) -nostartfiles $(LLIBDIR) -Wl,-Map=$(BUILDDIR)/$(PROJECT).map,--cref,--no-warn-mismatch,--library-path=$(STARTUPLD),--script=$(LDSCRIPT)$(LDOPT)
-
-# Always thumb mode
-CFLAGS   += -mthumb
-CPPFLAGS += -mthumb
-ASFLAGS  += -mthumb
-ASXFLAGS += -mthumb
 
 # Generate dependency information
 ASFLAGS  += -MD -MP -MF $(DEPDIR)/$(@F).d
