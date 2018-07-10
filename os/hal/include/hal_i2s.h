@@ -129,17 +129,16 @@ typedef enum {
  *
  * @notapi
  */
-#define _i2s_isr_full_code(i2sp) {                                               \
+#define _i2s_isr_full_code(i2sp) {                                          \
   if ((i2sp)->config->end_cb) {                                             \
     (i2sp)->state = I2S_COMPLETE;                                           \
     (i2sp)->config->end_cb(i2sp,                                            \
                            (i2sp)->config->size / 2,                        \
                            (i2sp)->config->size / 2);                       \
-    if ((i2sp)->state == I2S_COMPLETE)                                      \
-      (i2sp)->state = I2S_READY;                                            \
+    if ((i2sp)->state == I2S_COMPLETE) {                                    \
+      (i2sp)->state = I2S_ACTIVE;                                           \
+    }                                                                       \
   }                                                                         \
-  else                                                                      \
-    (i2sp)->state = I2S_READY;                                              \
 }
 /** @} */
 
