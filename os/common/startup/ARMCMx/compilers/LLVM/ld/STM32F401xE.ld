@@ -149,21 +149,6 @@ SECTIONS
         __rodata_end__ = .;
     } > flash0
 
-    .data : ALIGN(4)
-    {
-        . = ALIGN(4);
-        PROVIDE(_textdata = LOADADDR(.data));
-        PROVIDE(_data = .);
-        _textdata_start = LOADADDR(.data);
-        _data_start = .;
-        *(.data)
-        *(.data.*)
-        *(.ramtext)
-        . = ALIGN(4);
-        PROVIDE(_edata = .);
-        _data_end = .;
-    } > ram0 AT > flash0
-
     .ARM.extab :
     {
         *(.ARM.extab* .gnu.linkonce.armextab.*)
@@ -185,6 +170,28 @@ SECTIONS
     {
         *(.eh_frame)
     } > flash0
+
+    .data : ALIGN(4)
+    {
+        . = ALIGN(4);
+        PROVIDE(_textdata = LOADADDR(.data));
+        PROVIDE(_data = .);
+        _textdata_start = LOADADDR(.data);
+        _data_start = .;
+        *(.data)
+        *(.data.*)
+        *(.ramtext)
+        . = ALIGN(4);
+        PROVIDE(_edata = .);
+        _data_end = .;
+    } > ram0 AT > flash0
+
+    .dummy :
+    {
+        __dummy_start = .;
+        LONG(0)
+        __dummy_end = .;
+    } > flash0 AT> flash0
 
     .bss (NOLOAD) : ALIGN(4)
     {
