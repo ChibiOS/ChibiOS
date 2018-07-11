@@ -18,7 +18,6 @@ SECTIONS
 {
     .data : ALIGN(4)
     {
-        . = ALIGN(4);
         PROVIDE(_textdata = LOADADDR(.data));
         PROVIDE(_data = .);
         _textdata_start = LOADADDR(.data);
@@ -33,7 +32,6 @@ SECTIONS
 
     .bss (NOLOAD) : ALIGN(4)
     {
-        . = ALIGN(4);
         _bss_start = .;
         *(.bss)
         *(.bss.*)

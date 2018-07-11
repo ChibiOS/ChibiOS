@@ -29,6 +29,7 @@ SECTIONS
     /* Special section for process stack.*/
     .pstack (NOLOAD) :
     {
+        . = ALIGN(8);
         __process_stack_base__ = .;
         __main_thread_stack_base__ = .;
         . += __process_stack_size__;

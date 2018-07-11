@@ -68,7 +68,6 @@ SECTIONS
 {
     .ram0_init : ALIGN(4)
     {
-        . = ALIGN(4);
         __ram0_init_text__ = LOADADDR(.ram0_init);
         __ram0_init__ = .;
         KEEP(*(.ram0_init))
@@ -78,7 +77,6 @@ SECTIONS
 
     .ram0 (NOLOAD) : ALIGN(4)
     {
-        . = ALIGN(4);
         __ram0_clear__ = .;
         *(.ram0_clear)
         *(.ram0_clear.*)
@@ -92,7 +90,6 @@ SECTIONS
 
     .ram1_init : ALIGN(4)
     {
-        . = ALIGN(4);
         __ram1_init_text__ = LOADADDR(.ram1_init);
         __ram1_init__ = .;
         KEEP(*(.ram1_init))
@@ -102,7 +99,6 @@ SECTIONS
 
     .ram1 (NOLOAD) : ALIGN(4)
     {
-        . = ALIGN(4);
         __ram1_clear__ = .;
         *(.ram1_clear)
         *(.ram1_clear.*)
@@ -116,7 +112,6 @@ SECTIONS
 
     .ram2_init : ALIGN(4)
     {
-        . = ALIGN(4);
         __ram2_init_text__ = LOADADDR(.ram2_init);
         __ram2_init__ = .;
         KEEP(*(.ram2_init))
@@ -126,7 +121,6 @@ SECTIONS
 
     .ram2 (NOLOAD) : ALIGN(4)
     {
-        . = ALIGN(4);
         __ram2_clear__ = .;
         *(.ram2_clear)
         *(.ram2_clear.*)
@@ -140,7 +134,6 @@ SECTIONS
 
     .ram3_init : ALIGN(4)
     {
-        . = ALIGN(4);
         __ram3_init_text__ = LOADADDR(.ram3_init);
         __ram3_init__ = .;
         KEEP(*(.ram3_init))
@@ -150,7 +143,6 @@ SECTIONS
 
     .ram3 (NOLOAD) : ALIGN(4)
     {
-        . = ALIGN(4);
         __ram3_clear__ = .;
         *(.ram3_clear)
         *(.ram3_clear.*)
@@ -164,7 +156,6 @@ SECTIONS
 
     .ram4_init : ALIGN(4)
     {
-        . = ALIGN(4);
         __ram4_init_text__ = LOADADDR(.ram4_init);
         __ram4_init__ = .;
         KEEP(*(.ram4_init))
@@ -174,7 +165,6 @@ SECTIONS
 
     .ram4 (NOLOAD) : ALIGN(4)
     {
-        . = ALIGN(4);
         __ram4_clear__ = .;
         *(.ram4_clear)
         *(.ram4_clear.*)
@@ -188,7 +178,6 @@ SECTIONS
 
     .ram5_init : ALIGN(4)
     {
-        . = ALIGN(4);
         __ram5_init_text__ = LOADADDR(.ram5_init);
         __ram5_init__ = .;
         KEEP(*(.ram5_init))
@@ -198,7 +187,6 @@ SECTIONS
 
     .ram5 (NOLOAD) : ALIGN(4)
     {
-        . = ALIGN(4);
         __ram5_clear__ = .;
         *(.ram5_clear)
         *(.ram5_clear.*)
@@ -212,7 +200,6 @@ SECTIONS
 
     .ram6_init : ALIGN(4)
     {
-        . = ALIGN(4);
         __ram6_init_text__ = LOADADDR(.ram6_init);
         __ram6_init__ = .;
         KEEP(*(.ram6_init))
@@ -222,7 +209,6 @@ SECTIONS
 
     .ram6 (NOLOAD) : ALIGN(4)
     {
-        . = ALIGN(4);
         __ram6_clear__ = .;
         *(.ram6_clear)
         *(.ram6_clear.*)
@@ -236,7 +222,6 @@ SECTIONS
 
     .ram7_init : ALIGN(4)
     {
-        . = ALIGN(4);
         __ram7_init_text__ = LOADADDR(.ram7_init);
         __ram7_init__ = .;
         KEEP(*(.ram7_init))
@@ -246,7 +231,6 @@ SECTIONS
 
     .ram7 (NOLOAD) : ALIGN(4)
     {
-        . = ALIGN(4);
         __ram7_clear__ = .;
         *(.ram7_clear)
         *(.ram7_clear.*)
