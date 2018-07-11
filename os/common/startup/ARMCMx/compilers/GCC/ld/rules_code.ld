@@ -48,7 +48,6 @@ SECTIONS
 
     .rodata : ALIGN(4)
     {
-        . = ALIGN(4);
         __rodata_base__ = .;
         *(.rodata)
         *(.rodata.*)
