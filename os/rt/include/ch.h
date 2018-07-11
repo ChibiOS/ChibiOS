@@ -53,7 +53,7 @@
 /**
  * @brief   Kernel version major number.
  */
-#define CH_KERNEL_MAJOR         5
+#define CH_KERNEL_MAJOR         6
 
 /**
  * @brief   Kernel version minor number.
@@ -74,7 +74,7 @@
  * @note    It is meant to be used in configuration files as switch.
  */
 #if !defined(FALSE) || defined(__DOXYGEN__)
-#define FALSE               0
+#define FALSE                   0
 #endif
 
 /**
@@ -82,7 +82,7 @@
  * @note    It is meant to be used in configuration files as switch.
  */
 #if !defined(TRUE) || defined(__DOXYGEN__)
-#define TRUE                1
+#define TRUE                    1
 #endif
 /** @} */
 

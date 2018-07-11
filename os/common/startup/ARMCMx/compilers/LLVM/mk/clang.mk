@@ -10,7 +10,7 @@ CPPC = clang++
 #       runtime support makes code size explode.
 LD   = clang
 CP   = $(TRGT)objcopy
-AS   = clang -x assembler-with-cpp
+AS   = $(TRGT)as -x assembler-with-cpp
 AR   = $(TRGT)ar
 OD   = $(TRGT)objdump
 SZ   = $(TRGT)size
