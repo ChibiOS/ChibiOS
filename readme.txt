@@ -141,6 +141,7 @@
 - EX:  Updated LIS302DL to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LPS25H to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LSM303DLHC to 1.1.0 (backported to 18.2.1).
+- HAL: Fixed issue in hal_queues (bug #960)(backported to 18.2.2).
 - HAL: Fixed incorrect state change in I2S driver (bug #959)(backported
        to 18.2.2 and 17.6.5).
 - HAL: Fixed incorrect TCIE handling in STM32 serial drivers (bug #958)
