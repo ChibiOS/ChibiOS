@@ -358,14 +358,10 @@ msg_t ibqGetTimeout(input_buffers_queue_t *ibqp, sysinterval_t timeout) {
 size_t ibqReadTimeout(input_buffers_queue_t *ibqp, uint8_t *bp,
                       size_t n, sysinterval_t timeout) {
   size_t r = 0;
-  systime_t deadline;
 
   osalDbgCheck(n > 0U);
 
   osalSysLock();
-
-  /* Time window for the whole operation.*/
-  deadline = osalTimeAddX(osalOsGetSystemTimeX(), timeout);
 
   while (true) {
     size_t size;
@@ -374,24 +370,8 @@ size_t ibqReadTimeout(input_buffers_queue_t *ibqp, uint8_t *bp,
     if (ibqp->ptr == NULL) {
       msg_t msg;
 
-      /* TIME_INFINITE and TIME_IMMEDIATE are handled differently, no
-         deadline.*/
-      if ((timeout == TIME_INFINITE) || (timeout == TIME_IMMEDIATE)) {
-        msg = ibqGetFullBufferTimeoutS(ibqp, timeout);
-      }
-      else {
-        sysinterval_t next_timeout = osalTimeDiffX(osalOsGetSystemTimeX(),
-                                                   deadline);
-
-        /* Handling the case where the system time went past the deadline,
-           in this case next becomes a very high number because the system
-           time is an unsigned type.*/
-        if (next_timeout > timeout) {
-          osalSysUnlock();
-          return r;
-        }
-        msg = ibqGetFullBufferTimeoutS(ibqp, next_timeout);
-      }
+      /* Getting a data buffer using the specified timeout.*/
+      msg = ibqGetFullBufferTimeoutS(ibqp, timeout);
 
       /* Anything except MSG_OK interrupts the operation.*/
       if (msg != MSG_OK) {
@@ -563,7 +543,7 @@ void obqReleaseEmptyBufferI(output_buffers_queue_t *obqp) {
  * @api
  */
 msg_t obqGetEmptyBufferTimeout(output_buffers_queue_t *obqp,
-                                sysinterval_t timeout) {
+                               sysinterval_t timeout) {
   msg_t msg;
 
   osalSysLock();
@@ -741,14 +721,10 @@ msg_t obqPutTimeout(output_buffers_queue_t *obqp, uint8_t b,
 size_t obqWriteTimeout(output_buffers_queue_t *obqp, const uint8_t *bp,
                        size_t n, sysinterval_t timeout) {
   size_t w = 0;
-  systime_t deadline;
 
   osalDbgCheck(n > 0U);
 
   osalSysLock();
-
-  /* Time window for the whole operation.*/
-  deadline = osalTimeAddX(osalOsGetSystemTimeX(), timeout);
 
   while (true) {
     size_t size;
@@ -757,24 +733,8 @@ size_t obqWriteTimeout(output_buffers_queue_t *obqp, const uint8_t *bp,
     if (obqp->ptr == NULL) {
       msg_t msg;
 
-      /* TIME_INFINITE and TIME_IMMEDIATE are handled differently, no
-         deadline.*/
-      if ((timeout == TIME_INFINITE) || (timeout == TIME_IMMEDIATE)) {
-        msg = obqGetEmptyBufferTimeoutS(obqp, timeout);
-      }
-      else {
-        sysinterval_t next_timeout = osalTimeDiffX(osalOsGetSystemTimeX(),
-                                                   deadline);
-
-        /* Handling the case where the system time went past the deadline,
-           in this case next becomes a very high number because the system
-           time is an unsigned type.*/
-        if (next_timeout > timeout) {
-          osalSysUnlock();
-          return w;
-        }
-        msg = obqGetEmptyBufferTimeoutS(obqp, next_timeout);
-      }
+      /* Getting an empty buffer using the specified timeout.*/
+      msg = obqGetEmptyBufferTimeoutS(obqp, timeout);
 
       /* Anything except MSG_OK interrupts the operation.*/
       if (msg != MSG_OK) {

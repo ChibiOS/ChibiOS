@@ -141,6 +141,8 @@
 - EX:  Updated LIS302DL to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LPS25H to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LSM303DLHC to 1.1.0 (backported to 18.2.1).
+- HAL: Fixed invalid timeout calculation in hal_buffers (bug #963)(backported
+       to 18.2.2 and 17.6.5).
 - RT:  Fixed invalid parameter in CH_CFG_SYSTEM_INIT_HOOK hook macro
        (bug #962)(backported to 18.2.2).
 - OTH: Fixed demos failing to compile (bug #961)(backported to 18.2.2).
@@ -160,7 +162,7 @@
        18.2.2 and 17.6.5).
 - HAL: Fixed wrong registry entries for STM32F030x4 (bug #952)(backported
        to 18.2.2).
-- HAL: Fixed Invalid divider settings in Serial and UART STM32 drivers
+- HAL: Fixed invalid divider settings in Serial and UART STM32 drivers
        when USART_CR1_OVER8 is specified (bug #951)(backported to 18.2.2
        and 17.6.5).
 - NIL: Fixed missing extern declaration in IAR Cortex-M port (bug #950)
