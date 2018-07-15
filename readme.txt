@@ -95,6 +95,7 @@
 - NEW: Added new functions to objects fifos: chFifoReturnObjectS(),
        chFifoSendObjectAheadI(), chFifoSendObjectAheadS() and
        chFifoSendObjectAhead().
+- HAL: Fixed invalid timeout calculation in hal_buffers (bug #963).
 - RT:  Fixed invalid parameter in CH_CFG_SYSTEM_INIT_HOOK hook macro
        (bug #962).
 - OTH: Fixed demos failing to compile (bug #961).
