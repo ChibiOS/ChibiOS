@@ -109,7 +109,7 @@
 - HAL: Fixed win32 simulator HAL broken because a typo (bug #954).
 - HAL: Fixed race condition in STM32 ADCv3 driver (bug #953).
 - HAL: Fixed wrong registry entries for STM32F030x4 (bug #952).
-- HAL: Fixed Invalid divider settings in Serial and UART STM32 drivers
+- HAL: Fixed invalid divider settings in Serial and UART STM32 drivers
        when USART_CR1_OVER8 is specified (bug #951).
 - NIL: Fixed missing extern declaration in IAR Cortex-M port (bug #950).
 - HAL: Fixed ASCR register invalid handling in STM32 GPIOv3 driver (bug #949).
