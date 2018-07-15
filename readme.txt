@@ -95,6 +95,8 @@
 - NEW: Added new functions to objects fifos: chFifoReturnObjectS(),
        chFifoSendObjectAheadI(), chFifoSendObjectAheadS() and
        chFifoSendObjectAhead().
+- RT:  Fixed invalid parameter in CH_CFG_SYSTEM_INIT_HOOK hook macro
+       (bug #962).
 - OTH: Fixed demos failing to compile (bug #961).
 - HAL: Fixed issue in hal_queues (bug #960).
 - HAL: Fixed incorrect state change in I2S driver (bug #959).
