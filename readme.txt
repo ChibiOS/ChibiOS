@@ -141,6 +141,8 @@
 - EX:  Updated LIS302DL to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LPS25H to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LSM303DLHC to 1.1.0 (backported to 18.2.1).
+- RT:  Fixed invalid parameter in CH_CFG_SYSTEM_INIT_HOOK hook macro
+       (bug #962)(backported to 18.2.2).
 - OTH: Fixed demos failing to compile (bug #961)(backported to 18.2.2).
 - HAL: Fixed issue in hal_queues (bug #960)(backported to 18.2.2).
 - HAL: Fixed incorrect state change in I2S driver (bug #959)(backported

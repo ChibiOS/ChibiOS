@@ -572,12 +572,13 @@
  */
 #define CH_CFG_SYSTEM_EXTRA_FIELDS                                          \
   /* Add threads custom fields here.*/
+
 /**
  * @brief   System initialization hook.
  * @details User initialization code added to the @p chSysInit() function
  *          just before interrupts are enabled globally.
  */
-#define CH_CFG_SYSTEM_INIT_HOOK(tp) {                                       \
+#define CH_CFG_SYSTEM_INIT_HOOK() {                                         \
   /* Add threads initialization code here.*/                                \
 }
 

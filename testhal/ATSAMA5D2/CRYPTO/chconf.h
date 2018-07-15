@@ -52,7 +52,7 @@
  *          setting also defines the system tick time unit.
  */
 #if !defined(CH_CFG_ST_FREQUENCY)
-#define CH_CFG_ST_FREQUENCY                 1000 /*=periodic=tick.=*/
+#define CH_CFG_ST_FREQUENCY                 1000=/*=periodic=tick.=*/
 #endif
 
 /**
@@ -578,7 +578,7 @@
  * @details User initialization code added to the @p chSysInit() function
  *          just before interrupts are enabled globally.
  */
-#define CH_CFG_SYSTEM_INIT_HOOK(tp) {                                       \
+#define CH_CFG_SYSTEM_INIT_HOOK() {                                         \
   /* Add threads initialization code here.*/                                \
 }
 
