@@ -130,14 +130,15 @@ static void rtc_decode(uint32_t tv_sec,
                        RTCDateTime *timespec) {
   struct tm tim;
   struct tm *t;
+  const time_t time = tv_sec;	/* Copy with implicit type conversion.*/
 
   /* If the conversion is successful the function returns a pointer
      to the object the result was written into.*/
 #if defined(__GNUC__) || defined(__CC_ARM)
-  t = localtime_r((time_t *)&(tv_sec), &tim);
+  t = localtime_r(&time, &tim);
   osalDbgAssert(t != NULL, "conversion failed");
 #else
-  t = localtime(&tv_sec);
+  t = localtime(&time);
   memcpy(&tim, t, sizeof(struct tm));
 #endif
 
