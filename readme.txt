@@ -95,6 +95,7 @@
 - NEW: Added new functions to objects fifos: chFifoReturnObjectS(),
        chFifoSendObjectAheadI(), chFifoSendObjectAheadS() and
        chFifoSendObjectAhead().
+- OTH: Fixed demos failing to compile (bug #961).
 - HAL: Fixed issue in hal_queues (bug #960).
 - HAL: Fixed incorrect state change in I2S driver (bug #959).
 - HAL: Fixed incorrect TCIE handling in STM32 serial drivers (bug #958).
