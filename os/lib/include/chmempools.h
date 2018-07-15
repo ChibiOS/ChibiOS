@@ -198,8 +198,7 @@ static inline void chPoolObjectInit(memory_pool_t *mp,
  * @pre     The memory pool must be already been initialized.
  * @pre     The added object must be of the right size for the specified
  *          memory pool.
- * @pre     The added object must be memory aligned to the size of
- *          @p stkalign_t type.
+ * @pre     The added object must be properly aligned.
  * @note    This function is just an alias for @p chPoolFree() and has been
  *          added for clarity.
  *
@@ -218,8 +217,7 @@ static inline void chPoolAdd(memory_pool_t *mp, void *objp) {
  * @pre     The memory pool must be already been initialized.
  * @pre     The added object must be of the right size for the specified
  *          memory pool.
- * @pre     The added object must be memory aligned to the size of
- *          @p stkalign_t type.
+ * @pre     The added object must be properly aligned.
  * @note    This function is just an alias for @p chPoolFreeI() and has been
  *          added for clarity.
  *
