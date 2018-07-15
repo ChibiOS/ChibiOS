@@ -572,7 +572,6 @@
  */
 #define CH_CFG_SYSTEM_EXTRA_FIELDS                                          \
   /* Add threads custom fields here.*/
-
 /**
  * @brief   System initialization hook.
  * @details User initialization code added to the @p chSysInit() function
@@ -587,7 +586,9 @@
  * @details User fields added to the end of the @p thread_t structure.
  */
 #define CH_CFG_THREAD_EXTRA_FIELDS                                          \
-  /* Add threads custom fields here.*/
+  /* Add threads custom fields here.*/                                      \
+  void *osal_delete_handler;
+
 
 /**
  * @brief   Threads initialization hook.
@@ -598,6 +599,7 @@
  */
 #define CH_CFG_THREAD_INIT_HOOK(tp) {                                       \
   /* Add threads initialization code here.*/                                \
+  tp->osal_delete_handler = NULL;                                           \
 }
 
 /**
