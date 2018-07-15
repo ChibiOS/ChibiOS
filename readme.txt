@@ -96,7 +96,7 @@
 - HAL: Fixed invalid period calculation in STM32 GPT driver (bug #957).
 - LIB: Fixed heap allocation issue (bug #955).
 - HAL: Fixed race condition in STM32 ADCv3 driver (bug #953).
-- HAL: Fixed Invalid divider settings in Serial and UART STM32 drivers
+- HAL: Fixed invalid divider settings in Serial and UART STM32 drivers
        when USART_CR1_OVER8 is specified (bug #951).
 - NIL: Fixed missing extern declaration in IAR Cortex-M port (bug #950).
 - HAL: Fixed ASCR register invalid handling in STM32 GPIOv3 driver (bug #949).
