@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 17.6.5 ***
+- HAL: Fixed invalid timeout calculation in hal_buffers (bug #963).
 - HAL: Fixed incorrect state change in I2S driver (bug #959).
 - HAL: Fixed incorrect TCIE handling in STM32 serial drivers (bug #958).
 - HAL: Fixed invalid period calculation in STM32 GPT driver (bug #957).
