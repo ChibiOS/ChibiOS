@@ -141,6 +141,8 @@
 - EX:  Updated LIS302DL to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LPS25H to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LSM303DLHC to 1.1.0 (backported to 18.2.1).
+- HAL: Fixed documentation error in spiStop() (bug #966)(backported
+       to 18.2.2 and 17.6.5).
 - HAL: Fixed missing parenthesis in STM32L073 registry entry (bug #965)
        (backported to 18.2.2 and 17.6.5).
 - HAL: Fixed problem with STM32 RTCv1 and GCC7 compiler (bug #964)(backported
