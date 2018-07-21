@@ -95,6 +95,7 @@
 - NEW: Added new functions to objects fifos: chFifoReturnObjectS(),
        chFifoSendObjectAheadI(), chFifoSendObjectAheadS() and
        chFifoSendObjectAhead().
+- HAL: Fixed missing parenthesis in STM32L073 registry entry (bug #965).
 - HAL: Fixed problem with STM32 RTCv1 and GCC7 compiler (bug #964).
 - HAL: Fixed invalid timeout calculation in hal_buffers (bug #963).
 - RT:  Fixed invalid parameter in CH_CFG_SYSTEM_INIT_HOOK hook macro
