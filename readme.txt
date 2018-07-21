@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 17.6.5 ***
+- HAL: Fixed documentation error in spiStop() (bug #966).
 - HAL: Fixed missing parenthesis in STM32L073 registry entry (bug #965).
 - HAL: Fixed problem with STM32 RTCv1 and GCC7 compiler (bug #964).
 - HAL: Fixed invalid timeout calculation in hal_buffers (bug #963).
