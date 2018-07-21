@@ -98,7 +98,7 @@
 #define STM32_HAS_RCC_I2SPLLSRC             FALSE
 #define STM32_HAS_RCC_CK48MSEL              TRUE
 #define STM32_RCC_CK48MSEL_USES_I2S         FALSE
-#define STM32_TIMPRE_PRESCALE4              FALSE
+#define STM32_TIMPRE_PRESCALE4              TRUE
 
 /* ADC attributes.*/
 #define STM32_ADC_HANDLER                   Vector88
@@ -480,7 +480,7 @@
 #define STM32_HAS_RCC_I2SPLLSRC             FALSE
 #define STM32_HAS_RCC_CK48MSEL              TRUE
 #define STM32_RCC_CK48MSEL_USES_I2S         FALSE
-#define STM32_TIMPRE_PRESCALE4              FALSE
+#define STM32_TIMPRE_PRESCALE4              TRUE
 
 /* ADC attributes.*/
 #define STM32_ADC_HANDLER                   Vector88
@@ -839,7 +839,7 @@
 #define STM32_HAS_RCC_I2SPLLSRC             FALSE
 #define STM32_HAS_RCC_CK48MSEL              FALSE
 #define STM32_RCC_CK48MSEL_USES_I2S         FALSE
-#define STM32_TIMPRE_PRESCALE4              FALSE
+#define STM32_TIMPRE_PRESCALE4              TRUE
 
 /* ADC attributes.*/
 #define STM32_ADC_HANDLER                   Vector88
@@ -1217,7 +1217,7 @@
 #define STM32_HAS_RCC_I2SPLLSRC             TRUE
 #define STM32_HAS_RCC_CK48MSEL              TRUE
 #define STM32_RCC_CK48MSEL_USES_I2S         TRUE
-#define STM32_TIMPRE_PRESCALE4              TRUE
+#define STM32_TIMPRE_PRESCALE4              FALSE
 
 /* ADC attributes.*/
 #define STM32_ADC_HANDLER                   Vector88
@@ -1607,7 +1607,7 @@
 #define STM32_HAS_RCC_I2SPLLSRC             TRUE
 #define STM32_HAS_RCC_CK48MSEL              TRUE
 #define STM32_RCC_CK48MSEL_USES_I2S         TRUE
-#define STM32_TIMPRE_PRESCALE4              TRUE
+#define STM32_TIMPRE_PRESCALE4              FALSE
 
 /* ADC attributes.*/
 #define STM32_ADC_HANDLER                   Vector88
@@ -1942,7 +1942,7 @@
 #define STM32_HAS_RCC_I2SPLLSRC             FALSE
 #define STM32_HAS_RCC_CK48MSEL              FALSE
 #define STM32_RCC_CK48MSEL_USES_I2S         FALSE
-#define STM32_TIMPRE_PRESCALE4              TRUE
+#define STM32_TIMPRE_PRESCALE4              FALSE
 
 /* ADC attributes.*/
 #define STM32_ADC_HANDLER                   Vector88
@@ -2253,7 +2253,7 @@
 #define STM32_HAS_RCC_I2SPLLSRC             FALSE
 #define STM32_HAS_RCC_CK48MSEL              FALSE
 #define STM32_RCC_CK48MSEL_USES_I2S         FALSE
-#define STM32_TIMPRE_PRESCALE4              TRUE
+#define STM32_TIMPRE_PRESCALE4              FALSE
 
 /* ADC attributes.*/
 #define STM32_ADC_HANDLER                   Vector88
@@ -2534,7 +2534,7 @@
 #define STM32_HAS_RCC_I2SPLLSRC             FALSE
 #define STM32_HAS_RCC_CK48MSEL              FALSE
 #define STM32_RCC_CK48MSEL_USES_I2S         FALSE
-#define STM32_TIMPRE_PRESCALE4              FALSE
+#define STM32_TIMPRE_PRESCALE4              TRUE
 
 /* ADC attributes.*/
 #define STM32_ADC_HANDLER                   Vector88
@@ -2888,7 +2888,7 @@
 #define STM32_HAS_RCC_I2SPLLSRC             FALSE
 #define STM32_HAS_RCC_CK48MSEL              FALSE
 #define STM32_RCC_CK48MSEL_USES_I2S         FALSE
-#define STM32_TIMPRE_PRESCALE4              TRUE
+#define STM32_TIMPRE_PRESCALE4              FALSE
 
 /* ADC attributes.*/
 #define STM32_ADC_HANDLER                   Vector88
