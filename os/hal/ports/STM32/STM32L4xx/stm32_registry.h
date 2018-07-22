@@ -25,16 +25,6 @@
 #ifndef STM32_REGISTRY_H
 #define STM32_REGISTRY_H
 
-#if defined(STM32L432xx)
-#define STM32L432xx
-
-#elif defined(STM32L476xx)
-#define STM32L476xx
-
-#else
-#error "STM32L4xx device not specified"
-#endif
-
 /*===========================================================================*/
 /* Platform capabilities.                                                    */
 /*===========================================================================*/
