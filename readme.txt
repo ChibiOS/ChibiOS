@@ -95,6 +95,7 @@
 - NEW: Added new functions to objects fifos: chFifoReturnObjectS(),
        chFifoSendObjectAheadI(), chFifoSendObjectAheadS() and
        chFifoSendObjectAhead().
+- HAL: Fixed incorrect handling of PDIV dividers in STM32L4 HAL (bug #967).
 - HAL: Fixed documentation error in spiStop() (bug #966).
 - HAL: Fixed missing parenthesis in STM32L073 registry entry (bug #965).
 - HAL: Fixed problem with STM32 RTCv1 and GCC7 compiler (bug #964).
