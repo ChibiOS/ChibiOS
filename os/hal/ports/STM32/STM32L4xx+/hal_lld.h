@@ -286,17 +286,17 @@
 #define STM32_ADFSDMSEL_MSI     (2 << 3)    /**< ADFSDMSEL source is MSI.   */
 
 #define STM32_SAI1SEL_MASK      (7 << 5)    /**< SAI1SEL mask.              */
-#define STM32_SAI1SEL_PLLSAI1CLK (0 << 5)   /**< SAI1 source is PLLSAI1CLK. */
-#define STM32_SAI1SEL_PLLSAI2CLK (1 << 5)   /**< SAI1 source is PLLSAI2CLK. */
-#define STM32_SAI1SEL_PLLSAI3CLK (2 << 5)   /**< SAI1 source is PLLSAI3CLK  */
+#define STM32_SAI1SEL_PLLSAI1   (0 << 5)    /**< SAI1 source is PLLSAI1CLK. */
+#define STM32_SAI1SEL_PLLSAI2   (1 << 5)    /**< SAI1 source is PLLSAI2CLK. */
+#define STM32_SAI1SEL_PLL       (2 << 5)    /**< SAI1 source is PLLSAI3CLK  */
 #define STM32_SAI1SEL_EXTCLK    (3 << 5)    /**< SAI1 source is external.   */
 #define STM32_SAI1SEL_HSI16     (4 << 5)    /**< SAI1 source is HSI16.      */
 #define STM32_SAI1SEL_OFF       0xFFFFFFFFU /**< SAI1 clock is not required.*/
 
 #define STM32_SAI2SEL_MASK      (7 << 8)    /**< SAI2SEL mask.              */
-#define STM32_SAI2SEL_PLLSAI1CLK (0 << 8)   /**< SAI2 source is PLLSAI1CLK. */
-#define STM32_SAI2SEL_PLLSAI2CLK (1 << 8)   /**< SAI2 source is PLLSAI2CLK. */
-#define STM32_SAI2SEL_PLLSAI3CLK (2 << 8)   /**< SAI2 source is PLLSAI3CLK  */
+#define STM32_SAI2SEL_PLLSAI1   (0 << 8)    /**< SAI2 source is PLLSAI1CLK. */
+#define STM32_SAI2SEL_PLLSAI2   (1 << 8)    /**< SAI2 source is PLLSAI2CLK. */
+#define STM32_SAI2SEL_PLL       (2 << 8)    /**< SAI2 source is PLLSAI3CLK  */
 #define STM32_SAI2SEL_EXTCLK    (3 << 8)    /**< SAI2 source is external.   */
 #define STM32_SAI2SEL_HSI16     (4 << 8)    /**< SAI2 source is HSI16.      */
 #define STM32_SAI2SEL_OFF       0xFFFFFFFFU /**< SAI2 clock is not required.*/
@@ -511,7 +511,7 @@
  *          the internal 4MHz MSI clock.
  */
 #if !defined(STM32_PLLN_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLN_VALUE                    120
+#define STM32_PLLN_VALUE                    60
 #endif
 
 /**
@@ -545,7 +545,7 @@
  *          the internal 4MHz MSI clock.
  */
 #if !defined(STM32_PLLR_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLR_VALUE                    4
+#define STM32_PLLR_VALUE                    2
 #endif
 
 /**
@@ -770,17 +770,10 @@
 #endif
 
 /**
- * @brief   SWPMI1SEL value (SWPMI clock source).
- */
-#if !defined(STM32_SWPMI1SEL) || defined(__DOXYGEN__)
-#define STM32_SWPMI1SEL                     STM32_SWPMI1SEL_PCLK1
-#endif
-
-/**
  * @brief   DFSDMSEL value (DFSDM clock source).
  */
 #if !defined(STM32_DFSDMSEL) || defined(__DOXYGEN__)
-#define STM32_DFSDMSEL                      STM32_DFSDMSEL_PCLK1
+#define STM32_DFSDMSEL                      STM32_DFSDMSEL_PCLK2
 #endif
 
 /**
@@ -1125,7 +1118,6 @@
 #endif
 #endif /* !STM32_HSI16_ENABLED */
 
-#if STM32_CLOCK_HAS_HSI48
 #if STM32_HSI48_ENABLED
 #else /* !STM32_HSI48_ENABLED */
 
@@ -1137,7 +1129,6 @@
 #error "HSI48 not enabled, required by STM32_CLK48SEL"
 #endif
 #endif /* !STM32_HSI48_ENABLED */
-#endif /* STM32_CLOCK_HAS_HSI48 */
 
 /*
  * HSE related checks.
@@ -1314,7 +1305,7 @@
 /**
  * @brief   STM32_PLLN field.
  */
-#if ((STM32_PLLN_VALUE >= 8) && (STM32_PLLN_VALUE <= 86)) ||                \
+#if ((STM32_PLLN_VALUE >= 8) && (STM32_PLLN_VALUE <= 127)) ||                \
     defined(__DOXYGEN__)
 #define STM32_PLLN                  (STM32_PLLN_VALUE << 8)
 #else
@@ -1620,7 +1611,7 @@
 /**
  * @brief   STM32_PLLSAI1N field.
  */
-#if ((STM32_PLLSAI1N_VALUE >= 8) && (STM32_PLLSAI1N_VALUE <= 86)) ||        \
+#if ((STM32_PLLSAI1N_VALUE >= 8) && (STM32_PLLSAI1N_VALUE <= 127)) ||        \
     defined(__DOXYGEN__)
 #define STM32_PLLSAI1N               (STM32_PLLSAI1N_VALUE << 8)
 #else
@@ -1778,7 +1769,7 @@
  */
 #if (STM32_SAI1SEL == STM32_SAI1SEL_PLLSAI2) ||                             \
     (STM32_SAI2SEL == STM32_SAI2SEL_PLLSAI2) ||                             \
-    (STM32_ADCSEL == STM32_ADCSEL_PLLSAI2) ||                               \
+    (STM32_ADCSEL == STM32_ADCSEL_PLLSAI1) ||                               \
     defined(__DOXYGEN__)
 
 #if STM32_PLLCLKIN == 0
@@ -1796,7 +1787,7 @@
 /**
  * @brief   STM32_PLLSAI2N field.
  */
-#if ((STM32_PLLSAI2N_VALUE >= 8) && (STM32_PLLSAI2N_VALUE <= 86)) ||        \
+#if ((STM32_PLLSAI2N_VALUE >= 8) && (STM32_PLLSAI2N_VALUE <= 127)) ||        \
     defined(__DOXYGEN__)
 #define STM32_PLLSAI2N               (STM32_PLLSAI2N_VALUE << 8)
 #else
@@ -2193,17 +2184,6 @@
 #define STM32_ADCCLK                STM32_SYSCLK
 #else
 #error "invalid source selected for ADC clock"
-#endif
-
-/**
- * @brief   SWPMI1 clock frequency.
- */
-#if (STM32_SWPMI1SEL == STM32_SWPMI1SEL_PCLK1) || defined(__DOXYGEN__)
-#define STM32_SWPMI1CLK             STM32_PCLK1
-#elif STM32_SWPMI1SEL == STM32_SWPMI1SEL_HSI16
-#define STM32_SWPMI1CLK             STM32_HSI16CLK
-#else
-#error "invalid source selected for SWPMI1 clock"
 #endif
 
 /**
