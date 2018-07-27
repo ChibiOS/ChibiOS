@@ -995,8 +995,8 @@
 #error "HSI16 not enabled, required by STM32_SAI1SEL"
 #endif
 
-#if ((STM32_SAI2SEL == STM32_SAI1SEL_PLLSAI1) ||                            \
-     (STM32_SAI2SEL == STM32_SAI1SEL_PLLSAI2)) &&                           \
+#if ((STM32_SAI2SEL == STM32_SAI2SEL_PLLSAI1) ||                            \
+     (STM32_SAI2SEL == STM32_SAI2SEL_PLLSAI2)) &&                           \
     (STM32_PLLSRC == STM32_PLLSRC_HSI16)
 #error "HSI16 not enabled, required by STM32_SAI2SEL"
 #endif
@@ -1044,8 +1044,8 @@
       #error "HSE not enabled, required by STM32_SAI1SEL"
     #endif
 
-    #if ((STM32_SAI2SEL == STM32_SAI1SEL_PLLSAI1) |                         \
-         (STM32_SAI2SEL == STM32_SAI1SEL_PLLSAI2)) &&                       \
+    #if ((STM32_SAI2SEL == STM32_SAI2SEL_PLLSAI1) |                         \
+         (STM32_SAI2SEL == STM32_SAI2SEL_PLLSAI2)) &&                       \
         (STM32_PLLSRC == STM32_PLLSRC_HSE)
       #error "HSE not enabled, required by STM32_SAI2SEL"
     #endif

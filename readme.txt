@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** 17.6.5 ***
+- HAL: Fixed incorrect checks on STM32_SAI2SEL option in STM32L4 HAL
+       (bug #968).
 - HAL: Fixed documentation error in spiStop() (bug #966).
 - HAL: Fixed missing parenthesis in STM32L073 registry entry (bug #965).
 - HAL: Fixed problem with STM32 RTCv1 and GCC7 compiler (bug #964).
