@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    STM32L4xx/hal_lld.c
- * @brief   STM32L4xx HAL subsystem low level driver source.
+ * @file    STM32L4xx+/hal_lld.c
+ * @brief   STM32L4xx+ HAL subsystem low level driver source.
  *
  * @addtogroup HAL
  * @{
@@ -186,6 +186,9 @@ void stm32_clock_init(void) {
   PWR->CR1 = STM32_VOS;
   while ((PWR->SR2 & PWR_SR2_VOSF) != 0)    /* Wait until regulator is      */
     ;                                       /* stable.                      */
+
+  /* Boost mode setting.*/
+  PWR->CR5 = STM32_R1MODE;
 
 #if STM32_HSI16_ENABLED
   /* HSI activation.*/

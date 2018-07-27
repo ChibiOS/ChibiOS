@@ -879,9 +879,14 @@
  * @{
  */
 /**
- * @brief   Maximum SYSCLK clock frequency at current voltage setting.
+ * @brief   Maximum SYSCLK clock frequency in boost mode.
  */
 #define STM32_SYSCLK_MAX            120000000
+
+/**
+ * @brief   Maximum SYSCLK clock frequency in normal mode.
+ */
+#define STM32_SYSCLK_NOBOOST_MAX    80000000
 
 /**
  * @brief   Maximum HSE clock frequency at current voltage setting.
@@ -1003,6 +1008,7 @@
 
 #elif STM32_VOS == STM32_VOS_RANGE2
 #define STM32_SYSCLK_MAX            26000000
+#define STM32_SYSCLK_NOBOOST_MAX    26000000
 #define STM32_HSECLK_MAX            26000000
 #define STM32_HSECLK_BYP_MAX        26000000
 #define STM32_HSECLK_MIN            8000000
@@ -2218,6 +2224,15 @@
 #define STM32_TIMCLK2               (STM32_PCLK2 * 1)
 #else
 #define STM32_TIMCLK2               (STM32_PCLK2 * 2)
+#endif
+
+/**
+ * @brief   Voltage boost settings.
+ */
+#if (STM32_SYSCLK <= STM32_SYSCLK_NOBOOST_MAX) || defined(__DOXYGEN__)
+#define STM32_R1MODE                PWR_R1MODE
+#else
+#define STM32_R1MODE                0
 #endif
 
 /**
