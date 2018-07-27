@@ -95,6 +95,8 @@
 - NEW: Added new functions to objects fifos: chFifoReturnObjectS(),
        chFifoSendObjectAheadI(), chFifoSendObjectAheadS() and
        chFifoSendObjectAhead().
+- HAL: Fixed incorrect checks on STM32_SAI2SEL option in STM32L4 HAL
+       (bug #968).
 - HAL: Fixed incorrect handling of PDIV dividers in STM32L4 HAL (bug #967).
 - HAL: Fixed documentation error in spiStop() (bug #966).
 - HAL: Fixed missing parenthesis in STM32L073 registry entry (bug #965).
