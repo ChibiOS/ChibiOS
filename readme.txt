@@ -141,6 +141,8 @@
 - EX:  Updated LIS302DL to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LPS25H to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LSM303DLHC to 1.1.0 (backported to 18.2.1).
+- HAL: Fixed incorrect checks on STM32_SAI2SEL option in STM32L4 HAL
+       (bug #968)(backported to 18.2.2 and 17.6.5).
 - HAL: Fixed incorrect handling of PDIV dividers in STM32L4 HAL (bug #967)
        (backported to 18.2.2).
 - HAL: Fixed documentation error in spiStop() (bug #966)(backported
