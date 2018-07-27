@@ -2230,7 +2230,7 @@
  * @brief   Voltage boost settings.
  */
 #if (STM32_SYSCLK <= STM32_SYSCLK_NOBOOST_MAX) || defined(__DOXYGEN__)
-#define STM32_R1MODE                PWR_R1MODE
+#define STM32_R1MODE                PWR_CR5_R1MODE
 #else
 #define STM32_R1MODE                0
 #endif
