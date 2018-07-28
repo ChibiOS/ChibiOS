@@ -39,6 +39,23 @@
 #define USART_CR2_LBDIE                     0
 #endif
 
+/* Differences in L4+ headers.*/
+#if defined(USART_CR1_TXEIE_TXFNFIE)
+#define USART_CR1_TXEIE                     USART_CR1_TXEIE_TXFNFIE
+#endif
+
+#if defined(USART_CR1_RXNEIE_RXFNEIE)
+#define USART_CR1_RXNEIE                    USART_CR1_RXNEIE_RXFNEIE
+#endif
+
+#if defined(USART_ISR_TXE_TXFNF)
+#define USART_ISR_TXE                       USART_ISR_TXE_TXFNF
+#endif
+
+#if defined(USART_ISR_RXNE_RXFNE)
+#define USART_ISR_RXNE                      USART_ISR_RXNE_RXFNE
+#endif
+
 /* STM32L0xx/STM32F7xx ST headers difference.*/
 #if !defined(USART_ISR_LBDF)
 #define USART_ISR_LBDF                      USART_ISR_LBD

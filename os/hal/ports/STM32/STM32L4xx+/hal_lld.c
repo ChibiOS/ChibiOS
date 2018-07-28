@@ -200,13 +200,11 @@ void stm32_clock_init(void) {
     ;                                       /* Wait until HSI16 is stable.  */
 #endif
 
-#if STM32_CLOCK_HAS_HSI48
 #if STM32_HSI48_ENABLED
   /* HSI activation.*/
   RCC->CRRCR |= RCC_CRRCR_HSI48ON;
   while ((RCC->CRRCR & RCC_CRRCR_HSI48RDY) == 0)
     ;                                       /* Wait until HSI48 is stable.  */
-#endif
 #endif
 
 #if STM32_HSE_ENABLED
@@ -339,7 +337,7 @@ void stm32_clock_init(void) {
   /* CCIPR register initialization, note, must take care of the _OFF
      pseudo settings.*/
   {
-    uint32_t ccipr = STM32_DFSDMSEL  | STM32_SWPMI1SEL | STM32_ADCSEL    |
+    uint32_t ccipr = STM32_DFSDMSEL  |                   STM32_ADCSEL    |
                      STM32_CLK48SEL  | STM32_LPTIM2SEL | STM32_LPTIM1SEL |
                      STM32_I2C3SEL   | STM32_I2C2SEL   | STM32_I2C1SEL   |
                      STM32_UART5SEL  | STM32_UART4SEL  | STM32_USART3SEL |
