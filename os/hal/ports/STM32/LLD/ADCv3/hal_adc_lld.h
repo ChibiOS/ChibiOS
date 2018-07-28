@@ -335,8 +335,14 @@
 /*===========================================================================*/
 
 /* Supported devices checks.*/
-#if !defined(STM32F3XX) && !defined(STM32L4XX)
-#error "ADCv3 only supports F3 and L4 STM32 devices"
+#if !defined(STM32F3XX) && !defined(STM32L4XX) && !defined(STM32L4XXP)
+#error "ADCv3 only supports F3, L4 and L4+ STM32 devices"
+#endif
+
+#if defined(STM32L4XX) || defined(STM32L4XXP) || defined(__DOXYGEN__)
+#define STM32_ADCV3_OVERSAMPLING            TRUE
+#else
+#define STM32_ADCV3_OVERSAMPLING            FALSE
 #endif
 
 /* Registry checks.*/
@@ -668,6 +674,17 @@ typedef struct {
    *          greater than one.
    */
   uint32_t                  cfgr;
+#if (STM32_ADCV3_OVERSAMPLING == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   ADC CFGR2 register initialization data.
+   * @note    The bits DMAEN and DMACFG are enforced internally
+   *          to the driver, keep them to zero.
+   * @note    The bits @p ADC_CFGR_CONT or @p ADC_CFGR_DISCEN must be
+   *          specified in continuous mode or if the buffer depth is
+   *          greater than one.
+   */
+  uint32_t                  cfgr2;
+#endif
   /**
    * @brief   ADC TR1 register initialization data.
    */
@@ -675,9 +692,7 @@ typedef struct {
 #if STM32_ADC_DUAL_MODE || defined(__DOXYGEN__)
   /**
    * @brief   ADC CCR register initialization data.
-   * @note    The bits CKMODE, MDMA, DMACFG are enforced internally to the
-   *          driver, keep them to zero.
-   * @note    This field is only present in dual mode.
+   * @note    Put this field to zero if not using oversampling.
    */
   uint32_t                  ccr;
 #endif
