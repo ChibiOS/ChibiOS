@@ -92,6 +92,9 @@ static void hal_lld_backup_domain_init(void) {
     RCC->BDCR |= RCC_BDCR_RTCEN;
   }
 #endif /* HAL_USE_RTC */
+
+  /* Low speed output mode.*/
+  RCC->BDCR |= STM32_LSCOSEL;
 }
 
 /*===========================================================================*/

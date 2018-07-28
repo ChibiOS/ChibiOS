@@ -291,7 +291,7 @@
 #define STM32_SWPMI1SEL_HSI16   (1 << 30)   /**< SWPMI1 source is HSI16.    */
 
 #define STM32_DFSDMSEL_MASK     (1 << 31)   /**< DFSDMSEL mask.             */
-#define STM32_DFSDMSEL_PCLK1    (0 << 31)   /**< DFSDM source is PCLK1.     */
+#define STM32_DFSDMSEL_PCLK2    (0 << 31)   /**< DFSDM source is PCLK2.     */
 #define STM32_DFSDMSEL_SYSCLK   (1 << 31)   /**< DFSDM source is SYSCLK.    */
 /** @} */
 
@@ -2130,8 +2130,8 @@
 /**
  * @brief   DFSDM clock frequency.
  */
-#if (STM32_DFSDMSEL == STM32_DFSDMSEL_PCLK1) || defined(__DOXYGEN__)
-#define STM32_DFSDMCLK              STM32_PCLK1
+#if (STM32_DFSDMSEL == STM32_DFSDMSEL_PCLK2) || defined(__DOXYGEN__)
+#define STM32_DFSDMCLK              STM32_PCLK2
 #elif STM32_DFSDMSEL == STM32_DFSDMSEL_SYSCLK
 #define STM32_DFSDMCLK              STM32_SYSCLK
 #else
