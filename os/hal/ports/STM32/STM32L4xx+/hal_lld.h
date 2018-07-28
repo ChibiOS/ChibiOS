@@ -535,7 +535,7 @@
  * @note    The allowed values are 2, 4, 6, 8.
  */
 #if !defined(STM32_PLLQ_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLQ_VALUE                    6
+#define STM32_PLLQ_VALUE                    4
 #endif
 
 /**
@@ -604,7 +604,7 @@
  * @note    The allowed values are 8..127.
  */
 #if !defined(STM32_PLLSAI1N_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLSAI1N_VALUE                80
+#define STM32_PLLSAI1N_VALUE                72
 #endif
 
 /**
@@ -612,7 +612,7 @@
  * @note    The allowed values are 0, 2..31.
  */
 #if !defined(STM32_PLLSAI1PDIV_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLSAI1PDIV_VALUE             0
+#define STM32_PLLSAI1PDIV_VALUE             6
 #endif
 
 /**
@@ -636,7 +636,7 @@
  * @note    The allowed values are 2, 4, 6, 8.
  */
 #if !defined(STM32_PLLSAI1R_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLSAI1R_VALUE                4
+#define STM32_PLLSAI1R_VALUE                6
 #endif
 
 /**
@@ -644,7 +644,7 @@
  * @note    The allowed values are 8..127.
  */
 #if !defined(STM32_PLLSAI2N_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLSAI2N_VALUE                80
+#define STM32_PLLSAI2N_VALUE                72
 #endif
 
 /**
@@ -652,7 +652,7 @@
  * @note    The allowed values are 0, 2..31.
  */
 #if !defined(STM32_PLLSAI2PDIV_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLSAI2PDIV_VALUE             0
+#define STM32_PLLSAI2PDIV_VALUE             6
 #endif
 
 /**
@@ -664,11 +664,19 @@
 #endif
 
 /**
+ * @brief   PLLSAI2Q divider value.
+ * @note    The allowed values are 2, 4, 6, 8.
+ */
+#if !defined(STM32_PLLSAI2Q_VALUE) || defined(__DOXYGEN__)
+#define STM32_PLLSAI2Q_VALUE                6
+#endif
+
+/**
  * @brief   PLLSAI2R divider value.
  * @note    The allowed values are 2, 4, 6, 8.
  */
 #if !defined(STM32_PLLSAI2R_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLSAI2R_VALUE                4
+#define STM32_PLLSAI2R_VALUE                6
 #endif
 
 /**
@@ -1855,12 +1863,10 @@
 
 /**
  * @brief   STM32_PLLSAI2REN field.
+ * @note    Always enabled.
+ * @todo    It should depend on some condition.
  */
-#if (STM32_ADCSEL == STM32_ADCSEL_PLLSAI2) || defined(__DOXYGEN__)
 #define STM32_PLLSAI2REN            (1 << 24)
-#else
-#define STM32_PLLSAI2REN            (0 << 24)
-#endif
 
 /**
  * @brief   PLLSAI2 VCO frequency.
@@ -2142,22 +2148,6 @@
 /**
  * @brief   48MHz clock frequency.
  */
-#if !STM32_CLOCK_HAS_HSI48 || defined(__DOXYGEN__)
-
-#if (STM32_CLK48SEL == STM32_CLK48SEL_NOCLK) || defined(__DOXYGEN__)
-#define STM32_48CLK                 0
-#elif STM32_CLK48SEL == STM32_CLK48SEL_PLLSAI1
-#define STM32_48CLK                 (STM32_PLLSAI1VCO / STM32_PLLSAI1Q_VALUE)
-#elif STM32_CLK48SEL == STM32_CLK48SEL_PLL
-#define STM32_48CLK                 (STM32_PLLVCO / STM32_PLLQ_VALUE)
-#elif STM32_CLK48SEL == STM32_CLK48SEL_MSI
-#define STM32_48CLK                 STM32_MSICLK
-#else
-#error "invalid source selected for 48CLK clock"
-#endif
-
-#else /* STM32_CLOCK_HAS_HSI48 */
-
 #if (STM32_CLK48SEL == STM32_CLK48SEL_HSI48) || defined(__DOXYGEN__)
 #define STM32_48CLK                 STM32_HSI48CLK
 #elif STM32_CLK48SEL == STM32_CLK48SEL_PLLSAI1
@@ -2169,8 +2159,6 @@
 #else
 #error "invalid source selected for 48CLK clock"
 #endif
-
-#endif /* STM32_CLOCK_HAS_HSI48 */
 
 /**
  * @brief   USB clock point.
@@ -2184,8 +2172,6 @@
 #define STM32_ADCCLK                0
 #elif STM32_ADCSEL == STM32_ADCSEL_PLLSAI1
 #define STM32_ADCCLK                STM32_PLLSAI1_R_CLKOUT
-#elif STM32_ADCSEL == STM32_ADCSEL_PLLSAI2
-#define STM32_ADCCLK                STM32_PLLSAI2_R_CLKOUT
 #elif STM32_ADCSEL == STM32_ADCSEL_SYSCLK
 #define STM32_ADCCLK                STM32_SYSCLK
 #else
@@ -2195,8 +2181,8 @@
 /**
  * @brief   DFSDM clock frequency.
  */
-#if (STM32_DFSDMSEL == STM32_DFSDMSEL_PCLK1) || defined(__DOXYGEN__)
-#define STM32_DFSDMCLK              STM32_PCLK1
+#if (STM32_DFSDMSEL == STM32_DFSDMSEL_PCLK2) || defined(__DOXYGEN__)
+#define STM32_DFSDMCLK              STM32_PCLK2
 #elif STM32_DFSDMSEL == STM32_DFSDMSEL_SYSCLK
 #define STM32_DFSDMCLK              STM32_SYSCLK
 #else
@@ -2290,7 +2276,7 @@
 #include "cache.h"
 #include "mpu_v7m.h"
 #include "stm32_isr.h"
-#include "stm32_dma.h"
+//#include "stm32_dma.h"
 #include "stm32_rcc.h"
 
 #ifdef __cplusplus
