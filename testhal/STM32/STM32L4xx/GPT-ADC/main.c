@@ -78,6 +78,7 @@ static const ADCConversionGroup adcgrpcfg1 = {
   adccallback,
   adcerrorcallback,
   ADC_CFGR_EXTEN_RISING | ADC_CFGR_EXTSEL_SRC(12),                 /* CFGR   */
+  0,                                                                /* CFGR2   */
   ADC_TR(0, 4095),                                                 /* TR1    */
   {                                                                /* SMPR[2]*/
     ADC_SMPR1_SMP_AN0(ADC_SMPR_SMP_247P5) |
