@@ -95,6 +95,8 @@
 - NEW: Added new functions to objects fifos: chFifoReturnObjectS(),
        chFifoSendObjectAheadI(), chFifoSendObjectAheadS() and
        chFifoSendObjectAhead().
+- HAL: Fixed option STM32_LSCOSEL not written in STM32L4 HAL (bug #970).
+- HAL: Fixed invalid DFSDM1SEL option in STM32L4 HAL (bug #969).
 - HAL: Fixed incorrect checks on STM32_SAI2SEL option in STM32L4 HAL
        (bug #968).
 - HAL: Fixed incorrect handling of PDIV dividers in STM32L4 HAL (bug #967).
