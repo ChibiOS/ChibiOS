@@ -18,7 +18,7 @@
  * @file    STM32H7xx/stm32_isr.h
  * @brief   STM32H7xx DMAMUX handler header.
  *
- * @addtogroup STM32H7xx_ISR
+ * @addtogroup STM32H7xx_DMAMUX
  * @{
  */
 
