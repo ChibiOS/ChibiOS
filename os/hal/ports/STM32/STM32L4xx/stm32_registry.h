@@ -86,6 +86,7 @@
 
 /* DMA attributes.*/
 #define STM32_ADVANCED_DMA                  TRUE
+#define STM32_DMA_SUPPORTS_DMAMUX           FALSE
 #define STM32_DMA_SUPPORTS_CSELR            TRUE
 #define STM32_DMA1_NUM_CHANNELS             7
 #define STM32_DMA1_CH1_HANDLER              Vector6C
@@ -422,6 +423,7 @@
 
 /* DMA attributes.*/
 #define STM32_ADVANCED_DMA                  TRUE
+#define STM32_DMA_SUPPORTS_DMAMUX           FALSE
 #define STM32_DMA_SUPPORTS_CSELR            TRUE
 #define STM32_DMA1_NUM_CHANNELS             7
 #define STM32_DMA1_CH1_HANDLER              Vector6C
@@ -779,6 +781,7 @@
 
 /* DMA attributes.*/
 #define STM32_ADVANCED_DMA                  TRUE
+#define STM32_DMA_SUPPORTS_DMAMUX           FALSE
 #define STM32_DMA_SUPPORTS_CSELR            TRUE
 #define STM32_DMA1_NUM_CHANNELS             7
 #define STM32_DMA1_CH1_HANDLER              Vector6C
@@ -1195,6 +1198,7 @@
 
 /* DMA attributes.*/
 #define STM32_ADVANCED_DMA                  TRUE
+#define STM32_DMA_SUPPORTS_DMAMUX           FALSE
 #define STM32_DMA_SUPPORTS_CSELR            TRUE
 #define STM32_DMA1_NUM_CHANNELS             7
 #define STM32_DMA1_CH1_HANDLER              Vector6C

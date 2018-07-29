@@ -32,6 +32,13 @@
 /*===========================================================================*/
 
 /**
+ * @brief   DMA capability.
+ * @details if @p TRUE then the DMA is able of burst transfers, FIFOs,
+ *          scatter gather and other advanced features.
+ */
+#define STM32_DMA_ADVANCED          TRUE
+
+/**
  * @brief   Total number of DMA streams.
  * @details This is the total number of streams among all the DMA units.
  */
@@ -319,7 +326,7 @@ typedef struct {
   volatile uint32_t         *ifcr;      /**< @brief Associated IFCR reg.    */
   uint8_t                   ishift;     /**< @brief Bits offset in xIFCR
                                              register.                      */
-  DMAMUX_Channel_TypeDef    *mux;       /**< @brief Associated DMA stream.  */
+  DMAMUX_Channel_TypeDef    *mux;       /**< @brief Associated DMA mux.     */
   uint8_t                   selfindex;  /**< @brief Index to self in array. */
   uint8_t                   vector;     /**< @brief Associated IRQ vector.  */
 } stm32_dma_stream_t;

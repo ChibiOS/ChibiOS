@@ -206,8 +206,16 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if !defined(STM32_DMA_SUPPORTS_DMAMUX)
+#error "STM32_DMA_SUPPORTS_DMAMUX not defined in registry"
+#endif
+
 #if !defined(STM32_DMA_SUPPORTS_CSELR)
 #error "STM32_DMA_SUPPORTS_CSELR not defined in registry"
+#endif
+
+#if STM32_DMA_SUPPORTS_DMAMUX && STM32_DMA_SUPPORTS_CSELR
+#error "STM32_DMA_SUPPORTS_DMAMUX and STM32_DMA_SUPPORTS_CSELR both TRUE"
 #endif
 
 #if !defined(STM32_DMA1_NUM_CHANNELS)
@@ -216,6 +224,10 @@
 
 #if !defined(STM32_DMA2_NUM_CHANNELS)
 #error "STM32_DMA2_NUM_CHANNELS not defined in registry"
+#endif
+
+#if (STM32_DMA_SUPPORTS_DMAMUX == TRUE) || defined(__DOXYGEN__)
+#include "stm32_dmamux.h"
 #endif
 
 /*===========================================================================*/
@@ -230,7 +242,13 @@ typedef struct {
   DMA_Channel_TypeDef   *channel;       /**< @brief Associated DMA channel. */
   uint32_t              cmask;          /**< @brief Mask of streams sharing
                                              the same ISR.                  */
+#if (STM32_DMA_SUPPORTS_CSELR == TRUE) || defined(__DOXYGEN__)
   volatile uint32_t     *cselr;         /**< @brief Associated CSELR reg.   */
+#elif STM32_DMA_SUPPORTS_DMAMUX == TRUE
+  DMAMUX_Channel_TypeDef *mux;          /**< @brief Associated DMA mux.     */
+#else
+  uint8_t               dummy;          /**< @brief Filler.                 */
+#endif
   uint8_t               shift;          /**< @brief Bit offset in ISR, IFCR
                                              and CSELR registers.           */
   uint8_t               selfindex;      /**< @brief Index to self in array. */
@@ -471,6 +489,9 @@ extern "C" {
                          stm32_dmaisr_t func,
                          void *param);
   void dmaStreamRelease(const stm32_dma_stream_t *dmastp);
+#if STM32_DMA_SUPPORTS_DMAMUX == TRUE
+  void dmaSetRequestSource(const stm32_dma_stream_t *dmastp, uint32_t per);
+#endif
 #ifdef __cplusplus
 }
 #endif

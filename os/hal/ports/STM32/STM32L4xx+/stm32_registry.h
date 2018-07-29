@@ -74,6 +74,7 @@
 
 /* DMA attributes.*/
 #define STM32_ADVANCED_DMA                  TRUE
+#define STM32_DMA_SUPPORTS_DMAMUX           TRUE
 #define STM32_DMA_SUPPORTS_CSELR            FALSE
 
 #define STM32_DMA1_NUM_CHANNELS             7

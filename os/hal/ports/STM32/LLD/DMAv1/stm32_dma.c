@@ -58,21 +58,65 @@
 #if STM32_DMA_SUPPORTS_CSELR == TRUE
 
 #if defined(DMA1_CSELR)
-#define ADDR_DMA1_CSELR             &DMA1_CSELR->CSELR
+#define DMA1_VARIANT                &DMA1_CSELR->CSELR
 #else
-#define ADDR_DMA1_CSELR             &DMA1->CSELR
+#define DMA1_VARIANT                &DMA1->CSELR
 #endif
 
 #if defined(DMA2_CSELR)
-#define ADDR_DMA2_CSELR             &DMA2_CSELR->CSELR
+#define DMA2_VARIANT                &DMA2_CSELR->CSELR
 #else
-#define ADDR_DMA2_CSELR             &DMA2->CSELR
+#define DMA2_VARIANT                &DMA2->CSELR
 #endif
 
-#else /* !defined(DMA1_CSELR) */
+#define DMA1_CH1_VARIANT            DMA1_VARIANT
+#define DMA1_CH2_VARIANT            DMA1_VARIANT
+#define DMA1_CH3_VARIANT            DMA1_VARIANT
+#define DMA1_CH4_VARIANT            DMA1_VARIANT
+#define DMA1_CH5_VARIANT            DMA1_VARIANT
+#define DMA1_CH6_VARIANT            DMA1_VARIANT
+#define DMA1_CH7_VARIANT            DMA1_VARIANT
+#define DMA2_CH1_VARIANT            DMA2_VARIANT
+#define DMA2_CH2_VARIANT            DMA2_VARIANT
+#define DMA2_CH3_VARIANT            DMA2_VARIANT
+#define DMA2_CH4_VARIANT            DMA2_VARIANT
+#define DMA2_CH5_VARIANT            DMA2_VARIANT
+#define DMA2_CH6_VARIANT            DMA2_VARIANT
+#define DMA2_CH7_VARIANT            DMA2_VARIANT
 
-#define ADDR_DMA1_CSELR             NULL
-#define ADDR_DMA2_CSELR             NULL
+#elif STM32_DMA_SUPPORTS_DMAMUX == TRUE
+
+#define DMA1_CH1_VARIANT            DMAMUX1_Channel0
+#define DMA1_CH2_VARIANT            DMAMUX1_Channel1
+#define DMA1_CH3_VARIANT            DMAMUX1_Channel2
+#define DMA1_CH4_VARIANT            DMAMUX1_Channel3
+#define DMA1_CH5_VARIANT            DMAMUX1_Channel4
+#define DMA1_CH6_VARIANT            DMAMUX1_Channel5
+#define DMA1_CH7_VARIANT            DMAMUX1_Channel6
+#define DMA2_CH1_VARIANT            DMAMUX1_Channel7
+#define DMA2_CH2_VARIANT            DMAMUX1_Channel8
+#define DMA2_CH3_VARIANT            DMAMUX1_Channel9
+#define DMA2_CH4_VARIANT            DMAMUX1_Channel10
+#define DMA2_CH5_VARIANT            DMAMUX1_Channel11
+#define DMA2_CH6_VARIANT            DMAMUX1_Channel12
+#define DMA2_CH7_VARIANT            DMAMUX1_Channel13
+
+#else /* !(STM32_DMA_SUPPORTS_DMAMUX == TRUE) */
+
+#define DMA1_CH1_VARIANT            0
+#define DMA1_CH2_VARIANT            0
+#define DMA1_CH3_VARIANT            0
+#define DMA1_CH4_VARIANT            0
+#define DMA1_CH5_VARIANT            0
+#define DMA1_CH6_VARIANT            0
+#define DMA1_CH7_VARIANT            0
+#define DMA2_CH1_VARIANT            0
+#define DMA2_CH2_VARIANT            0
+#define DMA2_CH3_VARIANT            0
+#define DMA2_CH4_VARIANT            0
+#define DMA2_CH5_VARIANT            0
+#define DMA2_CH6_VARIANT            0
+#define DMA2_CH7_VARIANT            0
 
 #endif /* !defined(DMA1_CSELR) */
 
@@ -147,25 +191,25 @@
  *          instead: @p STM32_DMA1_STREAM1, @p STM32_DMA1_STREAM2 etc.
  */
 const stm32_dma_stream_t _stm32_dma_streams[STM32_DMA_STREAMS] = {
-  {DMA1, DMA1_Channel1, DMA1_CH1_CMASK, ADDR_DMA1_CSELR,  0,  0, STM32_DMA1_CH1_NUMBER},
-  {DMA1, DMA1_Channel2, DMA1_CH2_CMASK, ADDR_DMA1_CSELR,  4,  1, STM32_DMA1_CH2_NUMBER},
-  {DMA1, DMA1_Channel3, DMA1_CH3_CMASK, ADDR_DMA1_CSELR,  8,  2, STM32_DMA1_CH3_NUMBER},
-  {DMA1, DMA1_Channel4, DMA1_CH4_CMASK, ADDR_DMA1_CSELR, 12,  3, STM32_DMA1_CH4_NUMBER},
-  {DMA1, DMA1_Channel5, DMA1_CH5_CMASK, ADDR_DMA1_CSELR, 16,  4, STM32_DMA1_CH5_NUMBER},
+  {DMA1, DMA1_Channel1, DMA1_CH1_CMASK, DMA1_CH1_VARIANT,  0,  0, STM32_DMA1_CH1_NUMBER},
+  {DMA1, DMA1_Channel2, DMA1_CH2_CMASK, DMA1_CH2_VARIANT,  4,  1, STM32_DMA1_CH2_NUMBER},
+  {DMA1, DMA1_Channel3, DMA1_CH3_CMASK, DMA1_CH3_VARIANT,  8,  2, STM32_DMA1_CH3_NUMBER},
+  {DMA1, DMA1_Channel4, DMA1_CH4_CMASK, DMA1_CH4_VARIANT, 12,  3, STM32_DMA1_CH4_NUMBER},
+  {DMA1, DMA1_Channel5, DMA1_CH5_CMASK, DMA1_CH5_VARIANT, 16,  4, STM32_DMA1_CH5_NUMBER},
 #if STM32_DMA1_NUM_CHANNELS > 5
-  {DMA1, DMA1_Channel6, DMA1_CH6_CMASK, ADDR_DMA1_CSELR, 20,  5, STM32_DMA1_CH6_NUMBER},
+  {DMA1, DMA1_Channel6, DMA1_CH6_CMASK, DMA1_CH6_VARIANT, 20,  5, STM32_DMA1_CH6_NUMBER},
 #if STM32_DMA1_NUM_CHANNELS > 6
-  {DMA1, DMA1_Channel7, DMA1_CH7_CMASK, ADDR_DMA1_CSELR, 24,  6, STM32_DMA1_CH7_NUMBER},
+  {DMA1, DMA1_Channel7, DMA1_CH7_CMASK, DMA1_CH7_VARIANT, 24,  6, STM32_DMA1_CH7_NUMBER},
 #if STM32_DMA2_NUM_CHANNELS > 0
-  {DMA2, DMA2_Channel1, DMA2_CH1_CMASK, ADDR_DMA2_CSELR,  0,  7, STM32_DMA2_CH1_NUMBER},
-  {DMA2, DMA2_Channel2, DMA2_CH2_CMASK, ADDR_DMA2_CSELR,  4,  8, STM32_DMA2_CH2_NUMBER},
-  {DMA2, DMA2_Channel3, DMA2_CH3_CMASK, ADDR_DMA2_CSELR,  8,  9, STM32_DMA2_CH3_NUMBER},
-  {DMA2, DMA2_Channel4, DMA2_CH4_CMASK, ADDR_DMA2_CSELR, 12, 10, STM32_DMA2_CH4_NUMBER},
-  {DMA2, DMA2_Channel5, DMA2_CH5_CMASK, ADDR_DMA2_CSELR, 16, 11, STM32_DMA2_CH5_NUMBER},
+  {DMA2, DMA2_Channel1, DMA2_CH1_CMASK, DMA2_CH1_VARIANT,  0,  7, STM32_DMA2_CH1_NUMBER},
+  {DMA2, DMA2_Channel2, DMA2_CH2_CMASK, DMA2_CH2_VARIANT,  4,  8, STM32_DMA2_CH2_NUMBER},
+  {DMA2, DMA2_Channel3, DMA2_CH3_CMASK, DMA2_CH3_VARIANT,  8,  9, STM32_DMA2_CH3_NUMBER},
+  {DMA2, DMA2_Channel4, DMA2_CH4_CMASK, DMA2_CH4_VARIANT, 12, 10, STM32_DMA2_CH4_NUMBER},
+  {DMA2, DMA2_Channel5, DMA2_CH5_CMASK, DMA2_CH5_VARIANT, 16, 11, STM32_DMA2_CH5_NUMBER},
 #if STM32_DMA2_NUM_CHANNELS > 5
-  {DMA2, DMA2_Channel6, DMA2_CH6_CMASK, ADDR_DMA2_CSELR, 20, 12, STM32_DMA2_CH6_NUMBER},
+  {DMA2, DMA2_Channel6, DMA2_CH6_CMASK, DMA2_CH6_VARIANT, 20, 12, STM32_DMA2_CH6_NUMBER},
 #if STM32_DMA2_NUM_CHANNELS > 6
-  {DMA2, DMA2_Channel7, DMA2_CH7_CMASK, ADDR_DMA2_CSELR, 24, 13, STM32_DMA2_CH7_NUMBER},
+  {DMA2, DMA2_Channel7, DMA2_CH7_CMASK, DMA2_CH7_VARIANT, 24, 13, STM32_DMA2_CH7_NUMBER},
 #endif
 #endif
 #endif
@@ -564,6 +608,24 @@ void dmaStreamRelease(const stm32_dma_stream_t *dmastp) {
   }
 #endif
 }
+
+#if (STM32_DMA_SUPPORTS_DMAMUX == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Associates a peripheral request to a DMA stream.
+ * @note    This function can be invoked in both ISR or thread context.
+ *
+ * @param[in] dmastp    pointer to a @p stm32_dma_stream_t structure
+ * @param[in] per       peripheral identifier
+ *
+ * @special
+ */
+void dmaSetRequestSource(const stm32_dma_stream_t *dmastp, uint32_t per) {
+
+  osalDbgCheck(per < 256U);
+
+  dmastp->mux->CCR = per;
+}
+#endif
 
 #endif /* STM32_DMA_REQUIRED */
 
