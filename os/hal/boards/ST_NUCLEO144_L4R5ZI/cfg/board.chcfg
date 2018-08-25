@@ -89,7 +89,7 @@
   			PinLock="Disabled" Alternate="0" ID="" Resistor="Floating"
   			Mode="Analog" Level="Low" />
   		<pin7 Type="PushPull" Speed="Maximum" AnalogSwitch="Disabled"
-  			PinLock="Disabled" Alternate="0" ID="LD2 LED_BLUE" Resistor="Floating"
+  			PinLock="Disabled" Alternate="0" ID="LED2 LED_BLUE" Resistor="Floating"
   			Mode="Output" Level="Low" />
   		<pin8 Type="PushPull" Speed="Minimum" AnalogSwitch="Disabled"
   			PinLock="Disabled" Alternate="0" ID="" Resistor="Floating"
@@ -110,7 +110,7 @@
   			PinLock="Disabled" Alternate="0" ID="" Resistor="Floating"
   			Mode="Analog" Level="Low" />
   		<pin14 Type="PushPull" Speed="Maximum" AnalogSwitch="Disabled"
-  			PinLock="Disabled" Alternate="0" ID="LD3 LED_RED" Resistor="Floating"
+  			PinLock="Disabled" Alternate="0" ID="LED3 LED_RED" Resistor="Floating"
   			Mode="Output" Level="Low" />
   		<pin15 Type="PushPull" Speed="Minimum" AnalogSwitch="Disabled"
   			PinLock="Disabled" Alternate="0" ID="" Resistor="Floating"
@@ -139,7 +139,7 @@
   			PinLock="Disabled" Alternate="0" ID="" Resistor="Floating"
   			Mode="Analog" Level="Low" />
   		<pin7 Type="PushPull" Speed="Maximum" AnalogSwitch="Disabled"
-  			PinLock="Disabled" Alternate="0" ID="LD1 LED_GREEN" Resistor="Floating"
+  			PinLock="Disabled" Alternate="0" ID="LED1 LED_GREEN" Resistor="Floating"
   			Mode="Output" Level="Low" />
   		<pin8 Type="PushPull" Speed="Minimum" AnalogSwitch="Disabled"
   			PinLock="Disabled" Alternate="0" ID="" Resistor="Floating"
@@ -157,8 +157,8 @@
   			PinLock="Disabled" Alternate="0" ID="" Resistor="Floating"
   			Mode="Analog" Level="Low" />
   		<pin13 Type="PushPull" Speed="Minimum" AnalogSwitch="Disabled"
-  			PinLock="Disabled" Alternate="0" ID="" Resistor="Floating"
-  			Mode="Analog" Level="Low" />
+  			PinLock="Disabled" Alternate="0" ID="BUTTON" Resistor="Floating"
+  			Mode="Input" Level="Low" />
   		<pin14 Type="PushPull" Speed="Minimum" AnalogSwitch="Disabled"
   			PinLock="Disabled" Alternate="0" ID="" Resistor="Floating"
   			Mode="Analog" Level="Low" />
