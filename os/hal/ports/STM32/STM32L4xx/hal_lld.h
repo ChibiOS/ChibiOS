@@ -764,7 +764,7 @@
  * @brief   DFSDMSEL value (DFSDM clock source).
  */
 #if !defined(STM32_DFSDMSEL) || defined(__DOXYGEN__)
-#define STM32_DFSDMSEL                      STM32_DFSDMSEL_PCLK1
+#define STM32_DFSDMSEL                      STM32_DFSDMSEL_PCLK2
 #endif
 
 /**
