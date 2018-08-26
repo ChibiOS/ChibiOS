@@ -736,7 +736,7 @@ void can_lld_stop(CANDriver *canp) {
       CAN1->MCR = 0x00010002;                   /* Register reset value.    */
       CAN1->IER = 0x00000000;                   /* All sources disabled.    */
 #if STM32_CAN_USE_CAN2
-      /* If CAND2 is not stopped then CAN1 clock is not stopped here.*/
+      /* If CAND2 is stopped then CAN1 clock is stopped here.*/
       if (CAND2.state == CAN_STOP)
 #endif
       {
@@ -749,6 +749,13 @@ void can_lld_stop(CANDriver *canp) {
     if (&CAND2 == canp) {
       CAN2->MCR = 0x00010002;                   /* Register reset value.    */
       CAN2->IER = 0x00000000;                   /* All sources disabled.    */
+#if STM32_CAN_USE_CAN1
+      /* If CAND1 is stopped then CAN1 clock is stopped here.*/
+      if (CAND1.state == CAN_STOP)
+#endif
+      {
+        rccDisableCAN1();
+      }
       rccDisableCAN2();
     }
 #endif
