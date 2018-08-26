@@ -688,9 +688,7 @@ void can_lld_start(CANDriver *canp) {
 
 #if STM32_CAN_USE_CAN2
   if (&CAND2 == canp) {
-
-    osalDbgAssert(CAND1.state != CAN_STOP, "CAN1 must be started");
-
+    rccEnableCAN1(true);    /* CAN 2 requires CAN1, so enabling it first.*/
     rccEnableCAN2(true);
   }
 #endif
@@ -735,14 +733,15 @@ void can_lld_stop(CANDriver *canp) {
   if (canp->state == CAN_READY) {
 #if STM32_CAN_USE_CAN1
     if (&CAND1 == canp) {
-
-#if STM32_CAN_USE_CAN2
-      osalDbgAssert(CAND2.state == CAN_STOP, "CAN2 must be stopped");
-#endif
-
       CAN1->MCR = 0x00010002;                   /* Register reset value.    */
       CAN1->IER = 0x00000000;                   /* All sources disabled.    */
-      rccDisableCAN1();
+#if STM32_CAN_USE_CAN2
+      /* If CAND2 is not stopped then CAN1 clock is not stopped here.*/
+      if (CAND2.state == CAN_STOP)
+#endif
+      {
+        rccDisableCAN1();
+      }
     }
 #endif
 
