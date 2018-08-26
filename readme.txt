@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 17.6.5 ***
+- HAL: Fixed mii_find_phy excludes PHY address 31 (bug #971).
 - HAL: Fixed invalid checks in STM32F37x HAL related to SDADC (bug #974).
 - HAL: Fixed option STM32_LSCOSEL not written in STM32L4 HAL (bug #970).
 - HAL: Fixed invalid DFSDM1SEL option in STM32L4 HAL (bug #969).
