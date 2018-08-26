@@ -143,6 +143,8 @@
 - EX:  Updated LSM303DLHC to 1.1.0 (backported to 18.2.1).
 - HAL: Fixed invalid checks in STM32F37x HAL related to SDADC (bug #974)
        (backported to 18.2.2 and 17.6.5).
+- HAL: Fixed mii_find_phy excludes PHY address 31 (bug #971)
+       (backported to 18.2.2 and 17.6.5).
 - HAL: Fixed option STM32_LSCOSEL not written in STM32L4 HAL (bug #970)
        (backported to 18.2.2 and 17.6.5).
 - HAL: Fixed invalid DFSDM1SEL option in STM32L4 HAL (bug #969)(backported
