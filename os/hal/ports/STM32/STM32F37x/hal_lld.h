@@ -804,12 +804,12 @@
 #endif
 
 /* ADC maximum frequency check.*/
-#if STM32_ADCCLK > STM32_ADCCLK_MAX
+#if STM32_ADC_USE_ADC1 && (STM32_ADCCLK > STM32_ADCCLK_MAX)
 #error "STM32_ADCCLK exceeding maximum frequency (STM32_ADCCLK_MAX)"
 #endif
 
 /* ADC minimum frequency check.*/
-#if STM32_ADCCLK < STM32_ADCCLK_MIN
+#if STM32_ADC_USE_ADC1 && (STM32_ADCCLK < STM32_ADCCLK_MIN)
 #error "STM32_ADCCLK exceeding minimum frequency (STM32_ADCCLK_MIN)"
 #endif
 
@@ -853,12 +853,17 @@
 #endif
 
 /* SDADC maximum frequency check.*/
-#if STM32_SDADCCLK > STM32_SDADCCLK_FAST_MAX
+#if (STM32_ADC_USE_SDADC1 ||                                                \
+     STM32_ADC_USE_SDADC2 ||                                                \
+     STM32_ADC_USE_SDADC3) &&  (STM32_SDADCCLK > STM32_SDADCCLK_FAST_MAX)
 #error "STM32_SDADCCLK exceeding maximum frequency (STM32_SDADCCLK_FAST_MAX)"
 #endif
 
 /* SDADC minimum frequency check.*/
-#if STM32_SDADCCLK < STM32_SDADCCLK_MIN
+#if (STM32_ADC_USE_SDADC1 ||                                                \
+     STM32_ADC_USE_SDADC2 ||                                                \
+     STM32_ADC_USE_SDADC3) && \
+    (STM32_SDADCCLK < STM32_SDADCCLK_MIN)
 #error "STM32_SDADCCLK exceeding maximum frequency (STM32_SDADCCLK_MIN)"
 #endif
 
