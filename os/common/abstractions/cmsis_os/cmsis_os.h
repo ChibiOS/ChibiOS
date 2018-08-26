@@ -71,7 +71,7 @@
 /**
  * @brief   Wait forever specification for timeouts.
  */
-#define osWaitForever               TIME_INFINITE
+#define osWaitForever               ((uint32_t)-1)
 
 /**
  * @brief   System tick frequency.
