@@ -141,6 +141,8 @@
 - EX:  Updated LIS302DL to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LPS25H to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LSM303DLHC to 1.1.0 (backported to 18.2.1).
+- OTH: Fixed wrong timeout handling in CMSIS OS layer (bug #975)
+       (backported to 18.2.2 and 17.6.5).
 - HAL: Fixed invalid checks in STM32F37x HAL related to SDADC (bug #974)
        (backported to 18.2.2 and 17.6.5).
 - HAL: Fixed mii_find_phy excludes PHY address 31 (bug #971)
