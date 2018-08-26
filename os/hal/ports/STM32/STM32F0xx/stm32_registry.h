@@ -1328,7 +1328,11 @@
 #define STM32_HAS_GPIOA                     TRUE
 #define STM32_HAS_GPIOB                     TRUE
 #define STM32_HAS_GPIOC                     TRUE
+#if defined(STM32F070x6)
+#define STM32_HAS_GPIOD                     FALSE
+#else
 #define STM32_HAS_GPIOD                     TRUE
+#endif
 #define STM32_HAS_GPIOE                     FALSE
 #define STM32_HAS_GPIOF                     TRUE
 #define STM32_HAS_GPIOG                     FALSE
