@@ -230,11 +230,11 @@ static void usart_cfg_chsize(SerialDriver *sdp, const SerialConfig *config) {
  */
 static void usart_cfg_baudrate(SerialDriver *sdp, const SerialConfig *config) {
 
-	/* BSCALE = 0. */
-	#define BSCALE 0
-	uint16_t br = get_bsel(config->speed);
-	sdp->usart->BAUDCTRLA =(uint8_t)br;
-	sdp->usart->BAUDCTRLB =(BSCALE << USART_BSCALE0_bp) | (br >> 8);
+  /* BSCALE = 0. */
+  #define BSCALE 0
+  uint16_t br = get_bsel(config->speed);
+  sdp->usart->BAUDCTRLA =(uint8_t)br;
+  sdp->usart->BAUDCTRLB =(BSCALE << USART_BSCALE0_bp) | (br >> 8);
 }
 
 /**

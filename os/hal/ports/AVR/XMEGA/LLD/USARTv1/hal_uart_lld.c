@@ -216,11 +216,11 @@ static void usart_cfg_chsize(UARTDriver *uartp) {
  */
 static void usart_cfg_baudrate(UARTDriver *uartp) {
 
-	/* BSCALE = 0. */
-	#define BSCALE 0
-	uint16_t br = get_bsel(uartp->config->speed);
-	uartp->usart->BAUDCTRLA =(uint8_t)br;
-	uartp->usart->BAUDCTRLB =(BSCALE << USART_BSCALE0_bp) | (br >> 8);
+  /* BSCALE = 0. */
+  #define BSCALE 0
+  uint16_t br = get_bsel(uartp->config->speed);
+  uartp->usart->BAUDCTRLA =(uint8_t)br;
+  uartp->usart->BAUDCTRLB =(BSCALE << USART_BSCALE0_bp) | (br >> 8);
 }
 
 /**
@@ -417,10 +417,10 @@ void uart_lld_start_send(UARTDriver *uartp, size_t n, const uint8_t *txbuf) {
 
   /* TODO: Add support of DMA. */
   while (n--) {
-	  while (!((uartp->usart->STATUS & USART_DREIF_bm) != 0));
+    while (!((uartp->usart->STATUS & USART_DREIF_bm) != 0));
     uartp->usart->DATA = *txbuf;
     txbuf++;
-	}
+  }
 }
 
 /**

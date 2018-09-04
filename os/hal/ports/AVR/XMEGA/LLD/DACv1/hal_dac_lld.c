@@ -70,8 +70,9 @@ DACDriver DACD1;
  */
 static bool dac_is_channel_data_empty(DACDriver *dacp) {
 
-	bool dacStatus = (dacp->dacblock->STATUS & 
+  bool dacStatus = (dacp->dacblock->STATUS & 
   (dacp->config->ch ? DAC_CH1DRE_bm : DAC_CH0DRE_bm));
+
 	return dacStatus;
 }
 
@@ -122,7 +123,7 @@ static void dac_set_operation_mode(DACDriver *dacp) {
  */
 static void dac_set_ajusted_mode(DACDriver *dacp) {
 
-	dacp->dacblock->CTRLC = (dacp->dacblock->CTRLC & ~(DAC_LEFTADJ_bm)) | 
+  dacp->dacblock->CTRLC = (dacp->dacblock->CTRLC & ~(DAC_LEFTADJ_bm)) | 
   (dacp->config->da ? DAC_LEFTADJ_bm : 0x00);
 }
 
@@ -134,7 +135,7 @@ static void dac_set_ajusted_mode(DACDriver *dacp) {
  */
 static void dac_set_voltage_ref(DACDriver *dacp) {
 
-	dacp->dacblock->CTRLC = (dacp->dacblock->CTRLC & ~(DAC_REFSEL_gm)) |
+  dacp->dacblock->CTRLC = (dacp->dacblock->CTRLC & ~(DAC_REFSEL_gm)) |
   dacp->config->vr;
 }
 
@@ -205,16 +206,16 @@ void dac_lld_stop(DACDriver *dacp) {
  *
  * @api
  */
-void dac_lld_put_channel(DACDriver *dacp,
-                           dacchannel_t channel,
-                           dacsample_t sample) {
+void dac_lld_put_channel(DACDriver        *dacp,
+                           dacchannel_t   channel,
+                           dacsample_t    sample) {
 
   if (channel == DAC_CHANNEL0) {
-		dacp->dacblock->CH0DATA = sample;
-	}
+    dacp->dacblock->CH0DATA = sample;
+  }
   else {
-		dacp->dacblock->CH1DATA = sample;
-	}
+    dacp->dacblock->CH1DATA = sample;
+  }
 }
 
 /**

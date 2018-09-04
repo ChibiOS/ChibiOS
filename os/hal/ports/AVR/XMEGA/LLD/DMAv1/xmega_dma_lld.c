@@ -139,9 +139,9 @@ void dmaControllerDisable(DMA_t *dmacp) {
  */
 void damReset(void) {
 
-  DMA.CTRL &= ~DMA_ENABLE_bm;    /* Disable the DMA before a reset.      */
-  DMA.CTRL |= DMA_RESET_bm;      /* Perform the reset of the DMA module. */
-  while(DMA.CTRL & DMA_RESET_bm);   /* Wait until reset is complated.       */
+  DMA.CTRL &= ~DMA_ENABLE_bm;     /* Disable the DMA before a reset.      */
+  DMA.CTRL |= DMA_RESET_bm;       /* Perform the reset of the DMA module. */
+  while(DMA.CTRL & DMA_RESET_bm); /* Wait until reset is complated.       */
 }
 
 /**
@@ -176,25 +176,23 @@ void dmaChannelReset(DMA_CH_t *dmacp) {
 
 void dmaEnableSingleShot(DMA_CH_t * dmacp ) {
 
-	dmacp->CTRLA |= DMA_CH_SINGLE_bm;
+  dmacp->CTRLA |= DMA_CH_SINGLE_bm;
 }
 
 void dmaDisableSingleShot(DMA_CH_t * dmacp ) {
 
-	dmacp->CTRLA &= ~DMA_CH_SINGLE_bm;
+  dmacp->CTRLA &= ~DMA_CH_SINGLE_bm;
 }
 
 void dmaSetTriggerSource(DMA_CH_t * dmacp, uint8_t trigger) {
 
-	dmacp->TRIGSRC = trigger;
+  dmacp->TRIGSRC = trigger;
 }
 
 void dmaStartTransfer(DMA_CH_t * dmacp) {
 
-	dmacp->CTRLA |= DMA_CH_TRFREQ_bm;
+  dmacp->CTRLA |= DMA_CH_TRFREQ_bm;
 }
-
-//#endif /* HAL_USE_DMA */
 
 /** @} */
 

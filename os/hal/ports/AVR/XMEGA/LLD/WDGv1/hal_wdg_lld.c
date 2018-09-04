@@ -69,11 +69,11 @@ static bool wdg_get_sync_busy_flag(WDGDriver *wdgp) {
  */
 static void wdg_enable(WDGDriver *wdgp) {
 
-	uint8_t cfg = wdgp->wdg->CTRL | WDT_ENABLE_bm | WDT_CEN_bm;
-	CCP = CCP_IOREG_gc;
-	wdgp->wdg->CTRL = cfg;
-
-	while (wdg_get_sync_busy_flag(wdgp));
+  uint8_t cfg = wdgp->wdg->CTRL | WDT_ENABLE_bm | WDT_CEN_bm;
+  CCP = CCP_IOREG_gc;
+  wdgp->wdg->CTRL = cfg;
+  
+  while (wdg_get_sync_busy_flag(wdgp));
 }
 
 /**
@@ -83,11 +83,11 @@ static void wdg_enable(WDGDriver *wdgp) {
  */
 static void wdg_set_period(WDGDriver *wdgp) {
 
-	uint8_t cfg = WDT_ENABLE_bm | WDT_CEN_bm | wdgp->config->ntp;
-	CCP = CCP_IOREG_gc;
-	wdgp->wdg->CTRL = cfg;
+  uint8_t cfg = WDT_ENABLE_bm | WDT_CEN_bm | wdgp->config->ntp;
+  CCP = CCP_IOREG_gc;
+  wdgp->wdg->CTRL = cfg;
 
-	while (wdg_get_sync_busy_flag(wdgp));
+  while (wdg_get_sync_busy_flag(wdgp));
 }
 
 /**
@@ -97,9 +97,9 @@ static void wdg_set_period(WDGDriver *wdgp) {
  */
 static void wdg_disable(WDGDriver *wdgp) {
 
-	uint8_t cfg = (wdgp->wdg->CTRL & ~WDT_ENABLE_bm) | WDT_CEN_bm;
-	CCP = CCP_IOREG_gc;
-	wdgp->wdg->CTRL = cfg;
+  uint8_t cfg = (wdgp->wdg->CTRL & ~WDT_ENABLE_bm) | WDT_CEN_bm;
+  CCP = CCP_IOREG_gc;
+  wdgp->wdg->CTRL = cfg;
 }
 
 /**
@@ -129,15 +129,15 @@ static void wdg_disable(WDGDriver *wdgp) {
  */
 static bool wdg_enable_window_mode(WDGDriver *wdgp) {
 
-	uint8_t wdStatus = wdgp->wdg->CTRL & WDT_ENABLE_bm;
-	uint8_t cfg = wdgp->wdg->WINCTRL | WDT_WEN_bm | WDT_WCEN_bm;
+  uint8_t wdStatus = wdgp->wdg->CTRL & WDT_ENABLE_bm;
+  uint8_t cfg = wdgp->wdg->WINCTRL | WDT_WEN_bm | WDT_WCEN_bm;
 
   CCP = CCP_IOREG_gc;
-	wdgp->wdg->WINCTRL = cfg;
+  wdgp->wdg->WINCTRL = cfg;
 
-	while (wdg_get_sync_busy_flag(wdgp));
+  while (wdg_get_sync_busy_flag(wdgp));
 
-	return wdStatus;
+  return wdStatus;
 }
 
 /**
@@ -150,15 +150,15 @@ static bool wdg_enable_window_mode(WDGDriver *wdgp) {
  */
 static bool wdg_set_window_period(WDGDriver *wdgp) {
 
-	uint8_t wdStatus = wdgp->wdg->CTRL & WDT_ENABLE_bm;
-	uint8_t cfg = WDT_WEN_bm | WDT_WCEN_bm | wdgp->config->ntp;
+  uint8_t wdStatus = wdgp->wdg->CTRL & WDT_ENABLE_bm;
+  uint8_t cfg = WDT_WEN_bm | WDT_WCEN_bm | wdgp->config->ntp;
 
-	CCP = CCP_IOREG_gc;
-	wdgp->wdg->WINCTRL = cfg;
+  CCP = CCP_IOREG_gc;
+  wdgp->wdg->WINCTRL = cfg;
 
-	while (wdg_get_sync_busy_flag(wdgp));
+  while (wdg_get_sync_busy_flag(wdgp));
 
-	return wdStatus;
+  return wdStatus;
 }
 
 /**
@@ -168,9 +168,9 @@ static bool wdg_set_window_period(WDGDriver *wdgp) {
  */
 static void wdg_disable_window_mode(WDGDriver *wdgp) {
 
-	uint8_t cfg = (wdgp->wdg->WINCTRL & ~WDT_WEN_bm) | WDT_WCEN_bm;
+  uint8_t cfg = (wdgp->wdg->WINCTRL & ~WDT_WEN_bm) | WDT_WCEN_bm;
 
-	CCP = CCP_IOREG_gc;
+  CCP = CCP_IOREG_gc;
   wdgp->wdg->WINCTRL = cfg;
 }
 
@@ -231,7 +231,7 @@ void wdg_lld_start(WDGDriver *wdgp) {
     wdg_enable(wdgp);
   }
 
-	while (wdg_get_sync_busy_flag(wdgp));
+  while (wdg_get_sync_busy_flag(wdgp));
 }
 
 /**
