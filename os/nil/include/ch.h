@@ -143,11 +143,11 @@
 #define NIL_STATE_SUSP          (tstate_t)2 /**< @brief Thread suspended.   */
 #define NIL_STATE_WTQUEUE       (tstate_t)3 /**< @brief On queue or semaph. */
 #define NIL_STATE_WTOREVT       (tstate_t)4 /**< @brief Waiting for events. */
-#define NIL_THD_IS_READY(tr)    ((tr)->state == NIL_STATE_READY)
-#define NIL_THD_IS_SLEEPING(tr) ((tr)->state == NIL_STATE_SLEEPING)
-#define NIL_THD_IS_SUSP(tr)     ((tr)->state == NIL_STATE_SUSP)
-#define NIL_THD_IS_WTQUEUE(tr)  ((tr)->state == NIL_STATE_WTQUEUE)
-#define NIL_THD_IS_WTOREVT(tr)  ((tr)->state == NIL_STATE_WTOREVT)
+#define NIL_THD_IS_READY(tp)    ((tp)->state == NIL_STATE_READY)
+#define NIL_THD_IS_SLEEPING(tp) ((tp)->state == NIL_STATE_SLEEPING)
+#define NIL_THD_IS_SUSP(tp)     ((tp)->state == NIL_STATE_SUSP)
+#define NIL_THD_IS_WTQUEUE(tp)  ((tp)->state == NIL_STATE_WTQUEUE)
+#define NIL_THD_IS_WTOREVT(tp)  ((tp)->state == NIL_STATE_WTOREVT)
 /** @} */
 
 /**
@@ -404,7 +404,7 @@
  * @brief   Threads initialization hook.
  */
 #if !defined(CH_CFG_THREAD_EXT_INIT_HOOK) || defined(__DOXYGEN__)
-#define CH_CFG_THREAD_EXT_INIT_HOOK(tr) {}
+#define CH_CFG_THREAD_EXT_INIT_HOOK(tp) {}
 #endif
 
 /*-*
