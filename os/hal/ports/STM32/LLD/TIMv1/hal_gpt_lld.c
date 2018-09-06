@@ -704,7 +704,7 @@ void gpt_lld_stop(GPTDriver *gptp) {
 #if !defined(STM32_TIM1_SUPPRESS_ISR)
       nvicDisableVector(STM32_TIM1_UP_NUMBER);
 #endif
-      rccDisableTIM1();
+      rccDisableTIM1(FALSE);
     }
 #endif
 
@@ -713,7 +713,7 @@ void gpt_lld_stop(GPTDriver *gptp) {
 #if !defined(STM32_TIM2_SUPPRESS_ISR)
       nvicDisableVector(STM32_TIM2_NUMBER);
 #endif
-      rccDisableTIM2();
+      rccDisableTIM2(FALSE);
     }
 #endif
 
@@ -722,7 +722,7 @@ void gpt_lld_stop(GPTDriver *gptp) {
 #if !defined(STM32_TIM3_SUPPRESS_ISR)
       nvicDisableVector(STM32_TIM3_NUMBER);
 #endif
-      rccDisableTIM3();
+      rccDisableTIM3(FALSE);
     }
 #endif
 
@@ -731,7 +731,7 @@ void gpt_lld_stop(GPTDriver *gptp) {
 #if !defined(STM32_TIM4_SUPPRESS_ISR)
       nvicDisableVector(STM32_TIM4_NUMBER);
 #endif
-      rccDisableTIM4();
+      rccDisableTIM4(FALSE);
     }
 #endif
 
