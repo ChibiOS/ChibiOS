@@ -25,6 +25,13 @@
 #ifndef SAMA_TRNG_LLD_H
 #define SAMA_TRNG_LLD_H
 
+/**
+ * @brief   Using the TRNG driver.
+ */
+#if !defined(HAL_USE_TRNG) || defined(__DOXYGEN__)
+#define HAL_USE_TRNG                           FALSE
+#endif
+
 #if (HAL_USE_TRNG) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
