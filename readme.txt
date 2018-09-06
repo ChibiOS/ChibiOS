@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 17.6.5 ***
+- RT:  Fixed chEvtGetAndClearFlags(...) does not mask events (bug #977).
 - OTH: Fixed wrong timeout handling in CMSIS OS layer (bug #975).
 - HAL: Fixed mii_find_phy excludes PHY address 31 (bug #971).
 - HAL: Fixed invalid checks in STM32F37x HAL related to SDADC (bug #974).
