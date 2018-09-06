@@ -220,7 +220,7 @@ typedef struct {
  *
  * @api
  */
-#define chnControl(ip, operation, arg) ((ip)->vmt->ctl(ip, operation, arg)
+#define chnControl(ip, operation, arg) ((ip)->vmt->ctl(ip, operation, arg))
 /** @} */
 
 /**
