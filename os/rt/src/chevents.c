@@ -333,7 +333,7 @@ void chEvtBroadcastFlags(event_source_t *esp, eventflags_t flags) {
 }
 
 /**
- * @brief   Returns the flags associated to an @p event_listener_t.
+ * @brief   Returns the unmasked flags associated to an @p event_listener_t.
  * @details The flags are returned and the @p event_listener_t flags mask is
  *          cleared.
  *
@@ -349,7 +349,7 @@ eventflags_t chEvtGetAndClearFlagsI(event_listener_t *elp) {
   flags = elp->flags;
   elp->flags = (eventflags_t)0;
 
-  return flags;
+  return flags & elp->wflags;
 }
 
 /**
