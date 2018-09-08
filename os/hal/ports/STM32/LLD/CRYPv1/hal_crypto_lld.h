@@ -357,7 +357,7 @@ extern "C" {
                                       uint8_t *out);
 #endif
 #if (CRY_LLD_SUPPORTS_TRNG == TRUE) || defined(__DOXYGEN__)
-  cryerror_t cry_lld_TRNG(CRYDriver *cryp, uint8_t *out);
+  cryerror_t cry_lld_TRNG(CRYDriver *cryp, size_t size, uint8_t *out);
 #endif
 #ifdef __cplusplus
 }

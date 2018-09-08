@@ -91,6 +91,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: TRNG API now takes a new "size" parameter, the API can now generate
+       random numbers of variable size.
 - NEW: Added analog watchdog functionality to STM32 ADCv2 driver.
 - NEW: Added a termination check to the shell.
 - NEW: Updated CMSIS to version 5.4.0.

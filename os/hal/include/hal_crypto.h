@@ -376,7 +376,7 @@ extern "C" {
   cryerror_t cryHMACSHA512Final(CRYDriver *cryp,
                                 HMACSHA512Context *hmacsha512ctxp,
                                 uint8_t *out);
-  cryerror_t cryTRNG(CRYDriver *cryp, uint8_t *out);
+  cryerror_t cryTRNG(CRYDriver *cryp, size_t size, uint8_t *out);
 #ifdef __cplusplus
 }
 #endif

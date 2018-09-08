@@ -1314,7 +1314,8 @@ cryerror_t cry_lld_HMACSHA512_final(CRYDriver *cryp,
  * @brief   True random numbers generator.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
- * @param[out] out              128 bits output buffer
+ * @param[in] size              size of output buffer
+ * @param[out] out              output buffer
  * @return                      The operation status.
  * @retval CRY_NOERROR          if the operation succeeded.
  * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
@@ -1324,9 +1325,10 @@ cryerror_t cry_lld_HMACSHA512_final(CRYDriver *cryp,
  *
  * @notapi
  */
-cryerror_t cry_lld_TRNG(CRYDriver *cryp, uint8_t *out) {
+cryerror_t cry_lld_TRNG(CRYDriver *cryp, size_t size, uint8_t *out) {
 
   (void)cryp;
+  (void)size;
   (void)out;
 
   return CRY_ERR_INV_ALGO;
