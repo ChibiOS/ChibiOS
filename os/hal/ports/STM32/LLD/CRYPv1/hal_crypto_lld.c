@@ -62,6 +62,18 @@ CRYDriver CRYD1;
  */
 void cry_lld_init(void) {
 
+#if STM32_CRY_ENABLED1
+  cryObjectInit(&CRYD1);
+#if STM32_CRY_USE_CRYP1
+  CRYD1.cryp = CRYP;
+#endif
+#if STM32_CRY_USE_HASH1
+  CRYD1.hash = HASH;
+#endif
+#if STM32_CRY_USE_RNG1
+  CRYD1.rng  = RNG;
+#endif
+#endif
 }
 
 /**
@@ -74,8 +86,30 @@ void cry_lld_init(void) {
 void cry_lld_start(CRYDriver *cryp) {
 
   if (cryp->state == CRY_STOP) {
-
+#if STM32_CRY_ENABLED1
+    if (&CRYD1 == cryp) {
+#if STM32_CRY_USE_CRYP1
+      rccEnableCRYP(true);
+#endif
+#if STM32_CRY_USE_HASH1
+      rccEnableHASH(true);
+#endif
+#if STM32_CRY_USE_RNG1
+      rccEnableRNG(true);
+#endif
+    }
+#endif
   }
+
+#if STM32_CRY_USE_CRYP1
+    /* CRYP setup and enable.*/
+#endif
+#if STM32_CRY_USE_HASH1
+    /* HASH setup and enable.*/
+#endif
+#if STM32_CRY_USE_RNG1
+    /* RNG setup and enable.*/
+#endif
 }
 
 /**
@@ -89,6 +123,29 @@ void cry_lld_stop(CRYDriver *cryp) {
 
   if (cryp->state == CRY_READY) {
 
+#if STM32_CRY_USE_CRYP1
+    /* CRYP disable.*/
+#endif
+#if STM32_CRY_USE_HASH1
+    /* HASH disable.*/
+#endif
+#if STM32_CRY_USE_RNG1
+    /* RNG disable.*/
+#endif
+
+#if STM32_CRY_ENABLED1
+    if (&CRYD1 == cryp) {
+#if STM32_CRY_USE_CRYP1
+      rccDisableCRYP();
+#endif
+#if STM32_CRY_USE_HASH1
+      rccDisableHASH();
+#endif
+#if STM32_CRY_USE_RNG1
+      rccDisableRNG();
+#endif
+    }
+#endif
   }
 }
 

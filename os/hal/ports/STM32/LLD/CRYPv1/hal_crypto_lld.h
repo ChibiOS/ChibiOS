@@ -185,20 +185,6 @@ struct CRYDriver {
    * @brief   Current configuration data.
    */
   const CRYConfig           *config;
-  /**
-   * @brief   Algorithm type of transient key.
-   */
-  cryalgorithm_t            key0_type;
-  /**
-   * @brief   Size of transient key.
-   */
-  size_t                    key0_size;
-#if (HAL_CRY_USE_FALLBACK == TRUE) || defined(__DOXYGEN__)
-  /**
-   * @brief   Key buffer for the fall-back implementation.
-   */
-  uint8_t                   key0_buffer[HAL_CRY_MAX_KEY_SIZE];
-#endif
 #if defined(CRY_DRIVER_EXT_FIELDS)
   CRY_DRIVER_EXT_FIELDS
 #endif

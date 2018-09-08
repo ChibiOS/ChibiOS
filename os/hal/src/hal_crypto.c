@@ -149,8 +149,7 @@ cryerror_t cryLoadTransientKey(CRYDriver *cryp,
                                const uint8_t *keyp) {
   cryerror_t err;
 
-  osalDbgCheck((cryp != NULL) && (size <= HAL_CRY_MAX_KEY_SIZE) &&
-               (keyp != NULL));
+  osalDbgCheck((cryp != NULL) &&  (keyp != NULL));
 
 
 #if HAL_CRY_ENFORCE_FALLBACK == FALSE
@@ -165,12 +164,6 @@ cryerror_t cryLoadTransientKey(CRYDriver *cryp,
     err = cry_fallback_loadkey(cryp, algorithm, size, keyp);
   }
 #endif
-
-  if (err == CRY_NOERROR) {
-    /* Storing the transient key info.*/
-    cryp->key0_type = algorithm;
-    cryp->key0_size = size;
-  }
 
   return err;
 }

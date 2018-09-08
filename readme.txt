@@ -92,7 +92,9 @@
 
 *** Next ***
 - NEW: TRNG API now takes a new "size" parameter, the API can now generate
-       random numbers of variable size.
+       random numbers of variable size. The crypto driver now does not store
+       a copy of the transient key inside, the low level can do that if
+       required.
 - NEW: Added analog watchdog functionality to STM32 ADCv2 driver.
 - NEW: Added a termination check to the shell.
 - NEW: Updated CMSIS to version 5.4.0.

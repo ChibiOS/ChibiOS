@@ -31,13 +31,6 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
-/**
- * @brief   Maximum size of a key for all supported algorithms.
- * @note    It could be redefined by the LLD or the crypto fallback
- *          implementations.
- */
-#define HAL_CRY_MAX_KEY_SIZE                32
-
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -165,9 +158,6 @@ typedef struct {
 struct CRYDriver {
   crystate_t                state;
   const CRYConfig           *config;
-  cryalgorithm_t            key0_type;
-  size_t                    key0_size;
-  uint8_t                   key0_buffer[HAL_CRY_MAX_KEY_SIZE];
 };
 #endif /* HAL_CRY_ENFORCE_FALLBACK == TRUE */
 
