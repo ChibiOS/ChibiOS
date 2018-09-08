@@ -31,27 +31,6 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
-/**
- * @name    Driver capability switches
- * @{
- */
-#define CRY_LLD_SUPPORTS_AES                TRUE
-#define CRY_LLD_SUPPORTS_AES_ECB            TRUE
-#define CRY_LLD_SUPPORTS_AES_CBC            TRUE
-#define CRY_LLD_SUPPORTS_AES_CFB            TRUE
-#define CRY_LLD_SUPPORTS_AES_CTR            TRUE
-#define CRY_LLD_SUPPORTS_AES_GCM            TRUE
-#define CRY_LLD_SUPPORTS_DES                TRUE
-#define CRY_LLD_SUPPORTS_DES_ECB            TRUE
-#define CRY_LLD_SUPPORTS_DES_CBC            TRUE
-#define CRY_LLD_SUPPORTS_SHA1               TRUE
-#define CRY_LLD_SUPPORTS_SHA256             TRUE
-#define CRY_LLD_SUPPORTS_SHA512             TRUE
-#define CRY_LLD_SUPPORTS_HMAC_SHA256        TRUE
-#define CRY_LLD_SUPPORTS_HMAC_SHA512        TRUE
-#define CRY_LLD_SUPPORTS_TRNG               TRUE
-/** @} */
-
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -73,6 +52,64 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+/* Handling cleanly incomplete registry files.*/
+#if !defined (STM32_HAS_CRYP)
+#define STM32_HAS_CRYP                      FALSE
+#endif
+
+#if !defined (STM32_HAS_HASH)
+#define STM32_HAS_HASH                      FALSE
+#endif
+
+#if !defined (STM32_HAS_RNG)
+#define STM32_HAS_RNG                       FALSE
+#endif
+
+/**
+ * @name    Driver capability switches
+ * @{
+ */
+#if STM32_HAS_CRYP || defined (__DOXYGEN__)
+#define CRY_LLD_SUPPORTS_AES                TRUE
+#define CRY_LLD_SUPPORTS_AES_ECB            TRUE
+#define CRY_LLD_SUPPORTS_AES_CBC            TRUE
+#define CRY_LLD_SUPPORTS_AES_CFB            TRUE
+#define CRY_LLD_SUPPORTS_AES_CTR            TRUE
+#define CRY_LLD_SUPPORTS_AES_GCM            TRUE
+#define CRY_LLD_SUPPORTS_DES                TRUE
+#define CRY_LLD_SUPPORTS_DES_ECB            TRUE
+#define CRY_LLD_SUPPORTS_DES_CBC            TRUE
+#else
+#define CRY_LLD_SUPPORTS_AES                FALSE
+#define CRY_LLD_SUPPORTS_AES_ECB            FALSE
+#define CRY_LLD_SUPPORTS_AES_CBC            FALSE
+#define CRY_LLD_SUPPORTS_AES_CFB            FALSE
+#define CRY_LLD_SUPPORTS_AES_CTR            FALSE
+#define CRY_LLD_SUPPORTS_AES_GCM            FALSE
+#define CRY_LLD_SUPPORTS_DES                FALSE
+#define CRY_LLD_SUPPORTS_DES_ECB            FALSE
+#define CRY_LLD_SUPPORTS_DES_CBC            FALSE
+#endif
+#if STM32_HAS_HASH || defined (__DOXYGEN__)
+#define CRY_LLD_SUPPORTS_SHA1               TRUE
+#define CRY_LLD_SUPPORTS_SHA256             TRUE
+#define CRY_LLD_SUPPORTS_SHA512             TRUE
+#define CRY_LLD_SUPPORTS_HMAC_SHA256        TRUE
+#define CRY_LLD_SUPPORTS_HMAC_SHA512        TRUE
+#else
+#define CRY_LLD_SUPPORTS_SHA1               FALSE
+#define CRY_LLD_SUPPORTS_SHA256             FALSE
+#define CRY_LLD_SUPPORTS_SHA512             FALSE
+#define CRY_LLD_SUPPORTS_HMAC_SHA256        FALSE
+#define CRY_LLD_SUPPORTS_HMAC_SHA512        FALSE
+#endif
+#if STM32_HAS_RNG || defined (__DOXYGEN__)
+#define CRY_LLD_SUPPORTS_TRNG               TRUE
+#else
+#define CRY_LLD_SUPPORTS_TRNG               FALSE
+#endif
+/** @} */
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -126,6 +163,24 @@ struct CRYDriver {
   CRY_DRIVER_EXT_FIELDS
 #endif
   /* End of the mandatory fields.*/
+#if STM32_HAS_CRYP || defined (__DOXYGEN__)
+  /**
+   * @brief   Pointer to the CRYP registers block.
+   */
+  CRYP_TypeDef              *cryp;
+#endif
+#if STM32_HAS_HASH || defined (__DOXYGEN__)
+  /**
+   * @brief   Pointer to the HASH registers block.
+   */
+  HASH_TypeDef              *hash;
+#endif
+#if STM32_HAS_RNG || defined (__DOXYGEN__)
+  /**
+   * @brief   Pointer to the RNG registers block.
+   */
+  RNG_TypeDef               *rng;
+#endif
 };
 
 #if (CRY_LLD_SUPPORTS_SHA1 == TRUE) || defined(__DOXYGEN__)

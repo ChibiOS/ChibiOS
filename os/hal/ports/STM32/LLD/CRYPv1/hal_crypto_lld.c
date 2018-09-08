@@ -1328,6 +1328,7 @@ cryerror_t cry_lld_HMACSHA512_final(CRYDriver *cryp,
 cryerror_t cry_lld_TRNG(CRYDriver *cryp, size_t size, uint8_t *out) {
 
   (void)cryp;
+  (void)size;
   (void)out;
 
   return CRY_ERR_INV_ALGO;
