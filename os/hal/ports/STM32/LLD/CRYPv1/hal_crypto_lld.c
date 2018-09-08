@@ -35,7 +35,7 @@
 /*===========================================================================*/
 
 /** @brief CRY1 driver identifier.*/
-#if STM32_CRY_USE_CRYP1 || defined(__DOXYGEN__)
+#if (STM32_CRY_ENABLED1 == TRUE) || defined(__DOXYGEN__)
 CRYDriver CRYD1;
 #endif
 
