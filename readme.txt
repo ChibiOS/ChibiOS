@@ -91,6 +91,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Independent TRNG driver model added to HAL.
 - NEW: TRNG API now takes a new "size" parameter, the API can now generate
        random numbers of variable size. The crypto driver now does not store
        a copy of the transient key inside, the low level can do that if

@@ -98,6 +98,10 @@
 #define HAL_USE_SPI                         FALSE
 #endif
 
+#if !defined(HAL_USE_TRNG)
+#define HAL_USE_TRNG                        FALSE
+#endif
+
 #if !defined(HAL_USE_UART)
 #define HAL_USE_UART                        FALSE
 #endif
@@ -147,6 +151,7 @@
 #include "hal_serial.h"
 #include "hal_sdc.h"
 #include "hal_spi.h"
+#include "hal_trng.h"
 #include "hal_uart.h"
 #include "hal_usb.h"
 #include "hal_wdg.h"

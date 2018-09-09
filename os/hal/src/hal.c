@@ -113,6 +113,9 @@ void halInit(void) {
 #if (HAL_USE_SPI == TRUE) || defined(__DOXYGEN__)
   spiInit();
 #endif
+#if (HAL_USE_TRNG == TRUE) || defined(__DOXYGEN__)
+  trngInit();
+#endif
 #if (HAL_USE_UART == TRUE) || defined(__DOXYGEN__)
   uartInit();
 #endif
