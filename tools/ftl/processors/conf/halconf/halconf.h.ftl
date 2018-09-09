@@ -178,6 +178,13 @@
 #endif
 
 /**
+ * @brief   Enables the TRNG subsystem.
+ */
+#if !defined(HAL_USE_TRNG) || defined(__DOXYGEN__)
+#define HAL_USE_TRNG                        ${doc.HAL_USE_TRNG!"FALSE"}
+#endif
+
+/**
  * @brief   Enables the UART subsystem.
  */
 #if !defined(HAL_USE_UART) || defined(__DOXYGEN__)
