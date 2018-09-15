@@ -1,4 +1,3 @@
-sourceRoot: ../ftl/processors/conf/halconf
 outputRoot: .
 dataRoot: .
 
