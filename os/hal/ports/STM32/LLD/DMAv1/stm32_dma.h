@@ -78,6 +78,17 @@
 #define STM32_DMA_IS_VALID_PRIORITY(prio) (((prio) >= 0U) && ((prio) <= 3U))
 
 /**
+ * @brief   Checks if a DMA channel is within the valid range.
+ *
+ * @param[in] ch        DMA channel
+ * @retval              The check result.
+ * @retval FALSE        invalid DMA channel.
+ * @retval TRUE         correct DMA channel.
+ */
+#define STM32_DMA_IS_VALID_CHANNEL(ch) (((ch) >= 0U) &&                     \
+                                        ((ch) < STM32_DMA_STREAMS))
+
+/**
  * @brief   Returns an unique numeric identifier for a DMA stream.
  *
  * @param[in] dma       the DMA unit number
