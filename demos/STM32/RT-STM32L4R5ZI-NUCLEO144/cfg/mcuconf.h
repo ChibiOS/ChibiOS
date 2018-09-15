@@ -14,9 +14,6 @@
     limitations under the License.
 */
 
-#ifndef MCUCONF_H
-#define MCUCONF_H
-
 /*
  * STM32L4xx drivers configuration.
  * The following settings override the default settings present in
@@ -30,22 +27,6 @@
  * DMA priorities:
  * 0...3        Lowest...Highest.
  */
-
-/*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-*/
 
 #ifndef MCUCONF_H
 #define MCUCONF_H
@@ -138,7 +119,7 @@
 #define STM32_IRQ_EXTI18_PRIORITY           6
 #define STM32_IRQ_EXTI19_PRIORITY           6
 #define STM32_IRQ_EXTI20_PRIORITY           6
-#define STM32_IRQ_EXTI21_22_PRIORITY        15
+#define STM32_IRQ_EXTI21_22_PRIORITY        6
 
 /*
  * ADC driver system settings.
