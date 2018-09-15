@@ -62,7 +62,7 @@ int main(void) {
   /*
    * Activates the serial driver 3 using the driver default configuration.
    */
-  sdStart(&SD3, NULL);
+  sdStart(&LPSD1, NULL);
 
   /*
    * Creates the example thread.
@@ -75,8 +75,8 @@ int main(void) {
    */
   while (true) {
     if (palReadLine(LINE_BUTTON)) {
-      test_execute((BaseSequentialStream *)&SD3, &rt_test_suite);
-      test_execute((BaseSequentialStream *)&SD3, &oslib_test_suite);
+      test_execute((BaseSequentialStream *)&LPSD1, &rt_test_suite);
+      test_execute((BaseSequentialStream *)&LPSD1, &oslib_test_suite);
     }
     chThdSleepMilliseconds(500);
   }
