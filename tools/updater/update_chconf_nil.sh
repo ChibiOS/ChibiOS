@@ -14,7 +14,7 @@ then
   then
     echo Processing: $1
     egrep -e "\#define\s+[a-zA-Z0-9_]*\s+[a-zA-Z0-9_]" <<< "$conffile" | sed 's/\#define //g; s/  */=/g' > ./values.txt
-    if ! fmpp -q -C chconf_nil.fmpp
+    if ! fmpp -q -C conf.fmpp -S ../ftl/processors/conf/chconf_nil
     then
       echo
       echo "aborted"

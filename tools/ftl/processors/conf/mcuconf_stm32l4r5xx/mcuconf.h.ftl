@@ -67,22 +67,89 @@
 /*
  * HAL driver system settings.
  */
+#define STM32_NO_INIT                       ${doc.STM32_NO_INIT!"FALSE"}
+#define STM32_VOS                           ${doc.STM32_VOS!"STM32_VOS_RANGE1"}
+#define STM32_PVD_ENABLE                    ${doc.STM32_PVD_ENABLE!"FALSE"}
+#define STM32_PLS                           ${doc.STM32_PLS!"STM32_PLS_LEV0"}
+#define STM32_HSI16_ENABLED                 ${doc.STM32_HSI16_ENABLED!"FALSE"}
+#define STM32_HSI48_ENABLED                 ${doc.STM32_HSI48_ENABLED!"FALSE"}
+#define STM32_LSI_ENABLED                   ${doc.STM32_LSI_ENABLED!"TRUE"}
+#define STM32_HSE_ENABLED                   ${doc.STM32_HSE_ENABLED!"FALSE"}
+#define STM32_LSE_ENABLED                   ${doc.STM32_LSE_ENABLED!"FALSE"}
+#define STM32_MSIPLL_ENABLED                ${doc.STM32_MSIPLL_ENABLED!"FALSE"}
+#define STM32_ADC_CLOCK_ENABLED             ${doc.STM32_ADC_CLOCK_ENABLED!"TRUE"}
+#define STM32_USB_CLOCK_ENABLED             ${doc.STM32_USB_CLOCK_ENABLED!"TRUE"}
+#define STM32_SAI1_CLOCK_ENABLED            ${doc.STM32_SAI1_CLOCK_ENABLED!"TRUE"}
+#define STM32_SAI2_CLOCK_ENABLED            ${doc.STM32_SAI2_CLOCK_ENABLED!"TRUE"}
+#define STM32_MSIRANGE                      ${doc.STM32_MSIRANGE!"STM32_MSIRANGE_4M"}
+#define STM32_MSISRANGE                     ${doc.STM32_MSISRANGE!"STM32_MSISRANGE_4M"}
+#define STM32_SW                            ${doc.STM32_SW!"STM32_SW_PLL"}
+#define STM32_PLLSRC                        ${doc.STM32_PLLSRC!"STM32_PLLSRC_MSI"}
+#define STM32_PLLM_VALUE                    ${doc.STM32_PLLM_VALUE!"1"}
+#define STM32_PLLN_VALUE                    ${doc.STM32_PLLN_VALUE!"60"}
+#define STM32_PLLPDIV_VALUE                 ${doc.STM32_PLLPDIV_VALUE!"0"}
+#define STM32_PLLP_VALUE                    ${doc.STM32_PLLP_VALUE!"7"}
+#define STM32_PLLQ_VALUE                    ${doc.STM32_PLLQ_VALUE!"4"}
+#define STM32_PLLR_VALUE                    ${doc.STM32_PLLR_VALUE!"2"}
+#define STM32_HPRE                          ${doc.STM32_HPRE!"STM32_HPRE_DIV1"}
+#define STM32_PPRE1                         ${doc.STM32_PPRE1!"STM32_PPRE1_DIV1"}
+#define STM32_PPRE2                         ${doc.STM32_PPRE2!"STM32_PPRE2_DIV1"}
+#define STM32_STOPWUCK                      ${doc.STM32_STOPWUCK!"STM32_STOPWUCK_MSI"}
+#define STM32_MCOSEL                        ${doc.STM32_MCOSEL!"STM32_MCOSEL_NOCLOCK"}
+#define STM32_MCOPRE                        ${doc.STM32_MCOPRE!"STM32_MCOPRE_DIV1"}
+#define STM32_LSCOSEL                       ${doc.STM32_LSCOSEL!"STM32_LSCOSEL_NOCLOCK"}
+#define STM32_PLLSAI1N_VALUE                ${doc.STM32_PLLSAI1N_VALUE!"72"}
+#define STM32_PLLSAI1PDIV_VALUE             ${doc.STM32_PLLSAI1PDIV_VALUE!"6"}
+#define STM32_PLLSAI1P_VALUE                ${doc.STM32_PLLSAI1P_VALUE!"7"}
+#define STM32_PLLSAI1Q_VALUE                ${doc.STM32_PLLSAI1Q_VALUE!"6"}
+#define STM32_PLLSAI1R_VALUE                ${doc.STM32_PLLSAI1R_VALUE!"6"}
+#define STM32_PLLSAI2N_VALUE                ${doc.STM32_PLLSAI2N_VALUE!"72"}
+#define STM32_PLLSAI2PDIV_VALUE             ${doc.STM32_PLLSAI2PDIV_VALUE!"6"}
+#define STM32_PLLSAI2P_VALUE                ${doc.STM32_PLLSAI2P_VALUE!"7"}
+#define STM32_PLLSAI2Q_VALUE                ${doc.STM32_PLLSAI2Q_VALUE!"6"}
+#define STM32_PLLSAI2R_VALUE                ${doc.STM32_PLLSAI2R_VALUE!"6"}
+
+/*
+ * Peripherals clock sources.
+ */
+#define STM32_USART1SEL                     ${doc.STM32_USART1SEL!"STM32_USART1SEL_SYSCLK"}
+#define STM32_USART2SEL                     ${doc.STM32_USART2SEL!"STM32_USART2SEL_SYSCLK"}
+#define STM32_USART3SEL                     ${doc.STM32_USART3SEL!"STM32_USART3SEL_SYSCLK"}
+#define STM32_UART4SEL                      ${doc.STM32_UART4SEL!"STM32_UART4SEL_SYSCLK"}
+#define STM32_UART5SEL                      ${doc.STM32_UART5SEL!"STM32_UART5SEL_SYSCLK"}
+#define STM32_LPUART1SEL                    ${doc.STM32_LPUART1SEL!"STM32_LPUART1SEL_SYSCLK"}
+#define STM32_I2C1SEL                       ${doc.STM32_I2C1SEL!"STM32_I2C1SEL_SYSCLK"}
+#define STM32_I2C2SEL                       ${doc.STM32_I2C2SEL!"STM32_I2C2SEL_SYSCLK"}
+#define STM32_I2C3SEL                       ${doc.STM32_I2C3SEL!"STM32_I2C3SEL_SYSCLK"}
+#define STM32_I2C4SEL                       ${doc.STM32_I2C4SEL!"STM32_I2C4SEL_SYSCLK"}
+#define STM32_LPTIM1SEL                     ${doc.STM32_LPTIM1SEL!"STM32_LPTIM1SEL_PCLK1"}
+#define STM32_LPTIM2SEL                     ${doc.STM32_LPTIM2SEL!"STM32_LPTIM2SEL_PCLK1"}
+#define STM32_CLK48SEL                      ${doc.STM32_CLK48SEL!"STM32_CLK48SEL_PLL"}
+#define STM32_ADCSEL                        ${doc.STM32_ADCSEL!"STM32_ADCSEL_SYSCLK"}
+#define STM32_DFSDMSEL                      ${doc.STM32_DFSDMSEL!"STM32_DFSDMSEL_PCLK2"}
+#define STM32_ADFSDMSEL                     ${doc.STM32_ADFSDMSEL!"STM32_ADFSDMSEL_SAI1CLK"}
+#define STM32_SAI1SEL                       ${doc.STM32_SAI1SEL!"STM32_SAI1SEL_OFF"}
+#define STM32_SAI2SEL                       ${doc.STM32_SAI2SEL!"STM32_SAI2SEL_OFF"}
+#define STM32_DSISEL                        ${doc.STM32_DSISEL!"STM32_DSISEL_DSIPHY"}
+#define STM32_SDMMC                         ${doc.STM32_SDMMC!"STM32_SDMMCSEL_48CLK"}
+#define STM32_OSPISEL                       ${doc.STM32_OSPISEL!"STM32_OSPISEL_SYSCLK"}
+#define STM32_RTCSEL                        ${doc.STM32_RTCSEL!"STM32_RTCSEL_LSI"}
 
 /*
  * IRQ system settings.
  */
-#define STM32_IRQ_EXTI0_PRIORITY            6
-#define STM32_IRQ_EXTI1_PRIORITY            6
-#define STM32_IRQ_EXTI2_PRIORITY            6
-#define STM32_IRQ_EXTI3_PRIORITY            6
-#define STM32_IRQ_EXTI4_PRIORITY            6
-#define STM32_IRQ_EXTI5_9_PRIORITY          6
-#define STM32_IRQ_EXTI10_15_PRIORITY        6
-#define STM32_IRQ_EXTI1635_38_PRIORITY      6
-#define STM32_IRQ_EXTI18_PRIORITY           6
-#define STM32_IRQ_EXTI19_PRIORITY           6
-#define STM32_IRQ_EXTI20_PRIORITY           6
-#define STM32_IRQ_EXTI21_22_PRIORITY        15
+#define STM32_IRQ_EXTI0_PRIORITY            ${doc.STM32_IRQ_EXTI0_PRIORITY!"6"}
+#define STM32_IRQ_EXTI1_PRIORITY            ${doc.STM32_IRQ_EXTI1_PRIORITY!"6"}
+#define STM32_IRQ_EXTI2_PRIORITY            ${doc.STM32_IRQ_EXTI2_PRIORITY!"6"}
+#define STM32_IRQ_EXTI3_PRIORITY            ${doc.STM32_IRQ_EXTI3_PRIORITY!"6"}
+#define STM32_IRQ_EXTI4_PRIORITY            ${doc.STM32_IRQ_EXTI4_PRIORITY!"6"}
+#define STM32_IRQ_EXTI5_9_PRIORITY          ${doc.STM32_IRQ_EXTI5_9_PRIORITY!"6"}
+#define STM32_IRQ_EXTI10_15_PRIORITY        ${doc.STM32_IRQ_EXTI10_15_PRIORITY!"6"}
+#define STM32_IRQ_EXTI1635_38_PRIORITY      ${doc.STM32_IRQ_EXTI1635_38_PRIORITY!"6"}
+#define STM32_IRQ_EXTI18_PRIORITY           ${doc.STM32_IRQ_EXTI18_PRIORITY!"6"}
+#define STM32_IRQ_EXTI19_PRIORITY           ${doc.STM32_IRQ_EXTI19_PRIORITY!"6"}
+#define STM32_IRQ_EXTI20_PRIORITY           ${doc.STM32_IRQ_EXTI20_PRIORITY!"6"}
+#define STM32_IRQ_EXTI21_22_PRIORITY        ${doc.STM32_IRQ_EXTI21_22_PRIORITY!"6"}
 
 /*
  * ADC driver system settings.
@@ -122,10 +189,14 @@
 #define STM32_SERIAL_USE_USART1             ${doc.STM32_SERIAL_USE_USART1!"FALSE"}
 #define STM32_SERIAL_USE_USART2             ${doc.STM32_SERIAL_USE_USART2!"FALSE"}
 #define STM32_SERIAL_USE_USART3             ${doc.STM32_SERIAL_USE_USART3!"FALSE"}
+#define STM32_SERIAL_USE_UART4              ${doc.STM32_SERIAL_USE_UART4!"FALSE"}
+#define STM32_SERIAL_USE_UART5              ${doc.STM32_SERIAL_USE_UART5!"FALSE"}
 #define STM32_SERIAL_USE_LPUART1            ${doc.STM32_SERIAL_USE_LPUART1!"FALSE"}
 #define STM32_SERIAL_USART1_PRIORITY        ${doc.STM32_SERIAL_USART1_PRIORITY!"12"}
 #define STM32_SERIAL_USART2_PRIORITY        ${doc.STM32_SERIAL_USART2_PRIORITY!"12"}
 #define STM32_SERIAL_USART3_PRIORITY        ${doc.STM32_SERIAL_USART3_PRIORITY!"12"}
+#define STM32_SERIAL_UART4_PRIORITY         ${doc.STM32_SERIAL_UART4_PRIORITY!"12"}
+#define STM32_SERIAL_UART5_PRIORITY         ${doc.STM32_SERIAL_UART5_PRIORITY!"12"}
 #define STM32_SERIAL_LPUART1_PRIORITY       ${doc.STM32_SERIAL_LPUART1_PRIORITY!"12"}
 
 /*

@@ -14,7 +14,7 @@ then
   then
     echo Processing: $1
     egrep -e "\#define\s+[a-zA-Z0-9_()]*\s+[a-zA-Z0-9_]" <<< "$conffile" | sed -r 's/\#define\s+([a-zA-Z0-9_]*)(\([^)]*\))?\s+/\1=/g' > ./values.txt
-    if ! fmpp -q -C mcuconf_stm32h743xx.fmpp
+    if ! fmpp -q -C conf.fmpp -S ../ftl/processors/conf/mcuconf_stm32h743xx
     then
       echo
       echo "aborted"
