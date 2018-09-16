@@ -158,6 +158,23 @@
 /*
  * I2C driver system settings.
  */
+#define STM32_I2C_USE_I2C1                  FALSE
+#define STM32_I2C_USE_I2C2                  FALSE
+#define STM32_I2C_USE_I2C3                  FALSE
+#define STM32_I2C_BUSY_TIMEOUT              50
+#define STM32_I2C_I2C1_RX_DMA_CHANNEL       6
+#define STM32_I2C_I2C1_TX_DMA_CHANNEL       7
+#define STM32_I2C_I2C2_RX_DMA_CHANNEL       8
+#define STM32_I2C_I2C2_TX_DMA_CHANNEL       9
+#define STM32_I2C_I2C3_RX_DMA_CHANNEL       8
+#define STM32_I2C_I2C3_TX_DMA_CHANNEL       9
+#define STM32_I2C_I2C1_IRQ_PRIORITY         5
+#define STM32_I2C_I2C2_IRQ_PRIORITY         5
+#define STM32_I2C_I2C3_IRQ_PRIORITY         5
+#define STM32_I2C_I2C1_DMA_PRIORITY         3
+#define STM32_I2C_I2C2_DMA_PRIORITY         3
+#define STM32_I2C_I2C3_DMA_PRIORITY         3
+#define STM32_I2C_DMA_ERROR_HOOK(i2cp)      osalSysHalt("DMA failure")
 
 /*
  * ICU driver system settings.
@@ -215,9 +232,9 @@
 /*
  * SPI driver system settings.
  */
-#define STM32_SPI_USE_SPI1                  TRUE
-#define STM32_SPI_USE_SPI2                  TRUE
-#define STM32_SPI_USE_SPI3                  TRUE
+#define STM32_SPI_USE_SPI1                  FALSE
+#define STM32_SPI_USE_SPI2                  FALSE
+#define STM32_SPI_USE_SPI3                  FALSE
 #define STM32_SPI_SPI1_RX_DMA_CHANNEL       0
 #define STM32_SPI_SPI1_TX_DMA_CHANNEL       1
 #define STM32_SPI_SPI2_RX_DMA_CHANNEL       2

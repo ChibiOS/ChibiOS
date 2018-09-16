@@ -291,64 +291,60 @@
 
 #if STM32_I2C_USE_DMA == TRUE
 
-#if STM32_I2C_USE_I2C1 &&                                                   \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_I2C_I2C1_RX_DMA_CHANNEL)
+#if STM32_I2C_USE_I2C1
+#if !STM32_DMA_IS_VALID_CHANNEL(STM32_I2C_I2C1_RX_DMA_CHANNEL)
 #error "Invalid DMA channel assigned to I2C1 RX"
 #endif
 
-#if STM32_I2C_USE_I2C1 &&                                                   \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_I2C_I2C1_TX_DMA_CHANNEL)
+#if !STM32_DMA_IS_VALID_CHANNEL(STM32_I2C_I2C1_TX_DMA_CHANNEL)
 #error "Invalid DMA channel assigned to I2C1 TX"
 #endif
 
-#if STM32_I2C_USE_I2C2 &&                                                   \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_I2C_I2C2_RX_DMA_CHANNEL)
+#if !STM32_DMA_IS_VALID_PRIORITY(STM32_I2C_I2C1_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to I2C1"
+#endif
+#endif
+
+#if STM32_I2C_USE_I2C2
+#if !STM32_DMA_IS_VALID_CHANNEL(STM32_I2C_I2C2_RX_DMA_CHANNEL)
 #error "Invalid DMA channel assigned to I2C2 RX"
 #endif
 
-#if STM32_I2C_USE_I2C2 &&                                                   \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_I2C_I2C2_TX_DMA_CHANNEL)
+#if !STM32_DMA_IS_VALID_CHANNEL(STM32_I2C_I2C2_TX_DMA_CHANNEL)
 #error "Invalid DMA channel assigned to I2C2 TX"
 #endif
 
-#if STM32_I2C_USE_I2C3 &&                                                   \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_I2C_I2C3_RX_DMA_CHANNEL)
+#if !STM32_DMA_IS_VALID_PRIORITY(STM32_I2C_I2C2_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to I2C2"
+#endif
+#endif
+
+#if STM32_I2C_USE_I2C3
+#if !STM32_DMA_IS_VALID_CHANNEL(STM32_I2C_I2C3_RX_DMA_CHANNEL)
 #error "Invalid DMA channel assigned to I2C3 RX"
 #endif
 
-#if STM32_I2C_USE_I2C3 &&                                                   \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_I2C_I2C3_TX_DMA_CHANNEL)
+#if !STM32_DMA_IS_VALID_CHANNEL(STM32_I2C_I2C3_TX_DMA_CHANNEL)
 #error "Invalid DMA channel assigned to I2C3 TX"
 #endif
 
-#if STM32_I2C_USE_I2C4 &&                                                   \
-    !STM32_BDMA_IS_VALID_CHANNEL(STM32_I2C_I2C4_RX_BDMA_CHANNEL)
+#if !STM32_DMA_IS_VALID_PRIORITY(STM32_I2C_I2C3_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to I2C3"
+#endif
+#endif
+
+#if STM32_I2C_USE_I2C4
+#if !STM32_BDMA_IS_VALID_CHANNEL(STM32_I2C_I2C4_RX_BDMA_CHANNEL)
 #error "Invalid BDMA channel assigned to I2C4 RX"
 #endif
 
-#if STM32_I2C_USE_I2C4 &&                                                   \
-    !STM32_BDMA_IS_VALID_CHANNEL(STM32_I2C_I2C4_TX_BDMA_CHANNEL)
+#if !STM32_BDMA_IS_VALID_CHANNEL(STM32_I2C_I2C4_TX_BDMA_CHANNEL)
 #error "Invalid BDMA channel assigned to I2C4 TX"
 #endif
 
-#if STM32_I2C_USE_I2C1 &&                                                   \
-    !STM32_DMA_IS_VALID_PRIORITY(STM32_I2C_I2C1_DMA_PRIORITY)
-#error "Invalid DMA priority assigned to I2C1"
-#endif
-
-#if STM32_I2C_USE_I2C2 &&                                                   \
-    !STM32_DMA_IS_VALID_PRIORITY(STM32_I2C_I2C2_DMA_PRIORITY)
-#error "Invalid DMA priority assigned to I2C2"
-#endif
-
-#if STM32_I2C_USE_I2C3 &&                                                   \
-    !STM32_DMA_IS_VALID_PRIORITY(STM32_I2C_I2C3_DMA_PRIORITY)
-#error "Invalid DMA priority assigned to I2C3"
-#endif
-
-#if STM32_I2C_USE_I2C4 &&                                                   \
-    !STM32_DMA_IS_VALID_PRIORITY(STM32_I2C_I2C4_DMA_PRIORITY)
+#if !STM32_BDMA_IS_VALID_PRIORITY(STM32_I2C_I2C4_DMA_PRIORITY)
 #error "Invalid DMA priority assigned to I2C4"
+#endif
 #endif
 
 #if STM32_I2C_USE_I2C1 || STM32_I2C_USE_I2C2 || STM32_I2C_USE_I2C3

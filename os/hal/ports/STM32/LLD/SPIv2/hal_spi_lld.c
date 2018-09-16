@@ -199,8 +199,13 @@ void spi_lld_init(void) {
 #if STM32_SPI_USE_SPI1
   spiObjectInit(&SPID1);
   SPID1.spi       = SPI1;
+#if STM32_DMA_SUPPORTS_DMAMUX
+  SPID1.dmarx     = STM32_DMA_STREAM(STM32_SPI_SPI1_RX_DMA_CHANNEL);
+  SPID1.dmatx     = STM32_DMA_STREAM(STM32_SPI_SPI1_TX_DMA_CHANNEL);
+#else
   SPID1.dmarx     = STM32_DMA_STREAM(STM32_SPI_SPI1_RX_DMA_STREAM);
   SPID1.dmatx     = STM32_DMA_STREAM(STM32_SPI_SPI1_TX_DMA_STREAM);
+#endif
   SPID1.rxdmamode = STM32_DMA_CR_CHSEL(SPI1_RX_DMA_CHANNEL) |
                     STM32_DMA_CR_PL(STM32_SPI_SPI1_DMA_PRIORITY) |
                     STM32_DMA_CR_DIR_P2M |
@@ -217,8 +222,13 @@ void spi_lld_init(void) {
 #if STM32_SPI_USE_SPI2
   spiObjectInit(&SPID2);
   SPID2.spi       = SPI2;
+#if STM32_DMA_SUPPORTS_DMAMUX
+  SPID1.dmarx     = STM32_DMA_STREAM(STM32_SPI_SPI1_RX_DMA_CHANNEL);
+  SPID1.dmatx     = STM32_DMA_STREAM(STM32_SPI_SPI1_TX_DMA_CHANNEL);
+#else
   SPID2.dmarx     = STM32_DMA_STREAM(STM32_SPI_SPI2_RX_DMA_STREAM);
   SPID2.dmatx     = STM32_DMA_STREAM(STM32_SPI_SPI2_TX_DMA_STREAM);
+#endif
   SPID2.rxdmamode = STM32_DMA_CR_CHSEL(SPI2_RX_DMA_CHANNEL) |
                     STM32_DMA_CR_PL(STM32_SPI_SPI2_DMA_PRIORITY) |
                     STM32_DMA_CR_DIR_P2M |
@@ -235,8 +245,13 @@ void spi_lld_init(void) {
 #if STM32_SPI_USE_SPI3
   spiObjectInit(&SPID3);
   SPID3.spi       = SPI3;
+#if STM32_DMA_SUPPORTS_DMAMUX
+  SPID3.dmarx     = STM32_DMA_STREAM(STM32_SPI_SPI3_RX_DMA_CHANNEL);
+  SPID3.dmatx     = STM32_DMA_STREAM(STM32_SPI_SPI3_TX_DMA_CHANNEL);
+#else
   SPID3.dmarx     = STM32_DMA_STREAM(STM32_SPI_SPI3_RX_DMA_STREAM);
   SPID3.dmatx     = STM32_DMA_STREAM(STM32_SPI_SPI3_TX_DMA_STREAM);
+#endif
   SPID3.rxdmamode = STM32_DMA_CR_CHSEL(SPI3_RX_DMA_CHANNEL) |
                     STM32_DMA_CR_PL(STM32_SPI_SPI3_DMA_PRIORITY) |
                     STM32_DMA_CR_DIR_P2M |
@@ -253,8 +268,13 @@ void spi_lld_init(void) {
 #if STM32_SPI_USE_SPI4
   spiObjectInit(&SPID4);
   SPID4.spi       = SPI4;
+#if STM32_DMA_SUPPORTS_DMAMUX
+  SPID4.dmarx     = STM32_DMA_STREAM(STM32_SPI_SPI4_RX_DMA_CHANNEL);
+  SPID4.dmatx     = STM32_DMA_STREAM(STM32_SPI_SPI4_TX_DMA_CHANNEL);
+#else
   SPID4.dmarx     = STM32_DMA_STREAM(STM32_SPI_SPI4_RX_DMA_STREAM);
   SPID4.dmatx     = STM32_DMA_STREAM(STM32_SPI_SPI4_TX_DMA_STREAM);
+#endif
   SPID4.rxdmamode = STM32_DMA_CR_CHSEL(SPI4_RX_DMA_CHANNEL) |
                     STM32_DMA_CR_PL(STM32_SPI_SPI4_DMA_PRIORITY) |
                     STM32_DMA_CR_DIR_P2M |
@@ -271,8 +291,13 @@ void spi_lld_init(void) {
 #if STM32_SPI_USE_SPI5
   spiObjectInit(&SPID5);
   SPID5.spi       = SPI5;
+#if STM32_DMA_SUPPORTS_DMAMUX
+  SPID5.dmarx     = STM32_DMA_STREAM(STM32_SPI_SPI5_RX_DMA_CHANNEL);
+  SPID5.dmatx     = STM32_DMA_STREAM(STM32_SPI_SPI5_TX_DMA_CHANNEL);
+#else
   SPID5.dmarx     = STM32_DMA_STREAM(STM32_SPI_SPI5_RX_DMA_STREAM);
   SPID5.dmatx     = STM32_DMA_STREAM(STM32_SPI_SPI5_TX_DMA_STREAM);
+#endif
   SPID5.rxdmamode = STM32_DMA_CR_CHSEL(SPI5_RX_DMA_CHANNEL) |
                     STM32_DMA_CR_PL(STM32_SPI_SPI5_DMA_PRIORITY) |
                     STM32_DMA_CR_DIR_P2M |
@@ -289,8 +314,13 @@ void spi_lld_init(void) {
 #if STM32_SPI_USE_SPI6
   spiObjectInit(&SPID6);
   SPID6.spi       = SPI6;
+#if STM32_DMA_SUPPORTS_DMAMUX
+  SPID6.dmarx     = STM32_DMA_STREAM(STM32_SPI_SPI6_RX_DMA_CHANNEL);
+  SPID6.dmatx     = STM32_DMA_STREAM(STM32_SPI_SPI6_TX_DMA_CHANNEL);
+#else
   SPID6.dmarx     = STM32_DMA_STREAM(STM32_SPI_SPI6_RX_DMA_STREAM);
   SPID6.dmatx     = STM32_DMA_STREAM(STM32_SPI_SPI6_TX_DMA_STREAM);
+#endif
   SPID6.rxdmamode = STM32_DMA_CR_CHSEL(SPI6_RX_DMA_CHANNEL) |
                     STM32_DMA_CR_PL(STM32_SPI_SPI6_DMA_PRIORITY) |
                     STM32_DMA_CR_DIR_P2M |
@@ -331,6 +361,10 @@ void spi_lld_start(SPIDriver *spip) {
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
       rccEnableSPI1(true);
+#if STM32_DMA_SUPPORTS_DMAMUX
+      dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI1_RX);
+      dmaSetRequestSource(spip->dmatx, STM32_DMAMUX1_SPI1_TX);
+#endif
     }
 #endif
 #if STM32_SPI_USE_SPI2
@@ -347,6 +381,10 @@ void spi_lld_start(SPIDriver *spip) {
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
       rccEnableSPI2(true);
+#if STM32_DMA_SUPPORTS_DMAMUX
+      dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI2_RX);
+      dmaSetRequestSource(spip->dmatx, STM32_DMAMUX1_SPI2_TX);
+#endif
     }
 #endif
 #if STM32_SPI_USE_SPI3
@@ -363,6 +401,10 @@ void spi_lld_start(SPIDriver *spip) {
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
       rccEnableSPI3(true);
+#if STM32_DMA_SUPPORTS_DMAMUX
+      dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI3_RX);
+      dmaSetRequestSource(spip->dmatx, STM32_DMAMUX1_SPI3_TX);
+#endif
     }
 #endif
 #if STM32_SPI_USE_SPI4
@@ -379,6 +421,10 @@ void spi_lld_start(SPIDriver *spip) {
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
       rccEnableSPI4(true);
+#if STM32_DMA_SUPPORTS_DMAMUX
+      dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI4_RX);
+      dmaSetRequestSource(spip->dmatx, STM32_DMAMUX1_SPI4_TX);
+#endif
     }
 #endif
 #if STM32_SPI_USE_SPI5
@@ -395,6 +441,10 @@ void spi_lld_start(SPIDriver *spip) {
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
       rccEnableSPI5(true);
+#if STM32_DMA_SUPPORTS_DMAMUX
+      dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI5_RX);
+      dmaSetRequestSource(spip->dmatx, STM32_DMAMUX1_SPI5_TX);
+#endif
     }
 #endif
 #if STM32_SPI_USE_SPI6
@@ -411,6 +461,10 @@ void spi_lld_start(SPIDriver *spip) {
                             (void *)spip);
       osalDbgAssert(!b, "stream already allocated");
       rccEnableSPI6(true);
+#if STM32_DMA_SUPPORTS_DMAMUX
+      dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI6_RX);
+      dmaSetRequestSource(spip->dmatx, STM32_DMAMUX1_SPI6_TX);
+#endif
     }
 #endif
 
