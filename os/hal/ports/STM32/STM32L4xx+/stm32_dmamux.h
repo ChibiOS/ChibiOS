@@ -38,8 +38,8 @@
 #define STM32_DMAMUX1_REQ_GEN2      3
 #define STM32_DMAMUX1_REQ_GEN3      4
 #define STM32_DMAMUX1_ADC1          5
-#define STM32_DMAMUX1_DAC1          6
-#define STM32_DMAMUX1_DAC2          7
+#define STM32_DMAMUX1_DAC1_CH1      6
+#define STM32_DMAMUX1_DAC1_CH2      7
 #define STM32_DMAMUX1_TIM6_UP       8
 #define STM32_DMAMUX1_TIM7_UP       9
 #define STM32_DMAMUX1_SPI1_RX       10

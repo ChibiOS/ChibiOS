@@ -87,7 +87,11 @@ static const dacparams_t dma1_ch1_params = {
   .dataoffset   = 0U,
   .regshift     = 0U,
   .regmask      = 0xFFFF0000U,
+#if STM32_DMA_SUPPORTS_DMAMUX
+  .dma          = STM32_DMA_STREAM(STM32_DAC_DAC1_CH1_DMA_CHANNEL),
+#else
   .dma          = STM32_DMA_STREAM(STM32_DAC_DAC1_CH1_DMA_STREAM),
+#endif
   .dmamode      = STM32_DMA_CR_CHSEL(DAC1_CH1_DMA_CHANNEL) |
                   STM32_DMA_CR_PL(STM32_DAC_DAC1_CH1_DMA_PRIORITY) |
                   STM32_DMA_CR_MINC | STM32_DMA_CR_CIRC | STM32_DMA_CR_DIR_M2P |
@@ -103,7 +107,11 @@ static const dacparams_t dma1_ch2_params = {
   .dataoffset   = CHANNEL_DATA_OFFSET,
   .regshift     = 16U,
   .regmask      = 0x0000FFFFU,
+#if STM32_DMA_SUPPORTS_DMAMUX
+  .dma          = STM32_DMA_STREAM(STM32_DAC_DAC1_CH2_DMA_CHANNEL),
+#else
   .dma          = STM32_DMA_STREAM(STM32_DAC_DAC1_CH2_DMA_STREAM),
+#endif
   .dmamode      = STM32_DMA_CR_CHSEL(DAC1_CH2_DMA_CHANNEL) |
                   STM32_DMA_CR_PL(STM32_DAC_DAC1_CH2_DMA_PRIORITY) |
                   STM32_DMA_CR_MINC | STM32_DMA_CR_CIRC | STM32_DMA_CR_DIR_M2P |
@@ -119,7 +127,11 @@ static const dacparams_t dma2_ch1_params = {
   .dataoffset   = 0U,
   .regshift     = 0U,
   .regmask      = 0xFFFF0000U,
+#if STM32_DMA_SUPPORTS_DMAMUX
+  .dma          = STM32_DMA_STREAM(STM32_DAC_DAC2_CH1_DMA_CHANNEL),
+#else
   .dma          = STM32_DMA_STREAM(STM32_DAC_DAC2_CH1_DMA_STREAM),
+#endif
   .dmamode      = STM32_DMA_CR_CHSEL(DAC2_CH1_DMA_CHANNEL) |
                   STM32_DMA_CR_PL(STM32_DAC_DAC2_CH1_DMA_PRIORITY) |
                   STM32_DMA_CR_MINC | STM32_DMA_CR_CIRC | STM32_DMA_CR_DIR_M2P |
@@ -135,7 +147,11 @@ static const dacparams_t dma1_ch2_params = {
   .dataoffset   = CHANNEL_DATA_OFFSET,
   .regshift     = 16U,
   .regmask      = 0x0000FFFFU,
+#if STM32_DMA_SUPPORTS_DMAMUX
+  .dma          = STM32_DMA_STREAM(STM32_DAC_DAC2_CH2_DMA_CHANNEL),
+#else
   .dma          = STM32_DMA_STREAM(STM32_DAC_DAC2_CH2_DMA_STREAM),
+#endif
   .dmamode      = STM32_DMA_CR_CHSEL(DAC2_CH2_DMA_CHANNEL) |
                   STM32_DMA_CR_PL(STM32_DAC_DAC2_CH2_DMA_PRIORITY) |
                   STM32_DMA_CR_MINC | STM32_DMA_CR_CIRC | STM32_DMA_CR_DIR_M2P |
@@ -227,12 +243,18 @@ void dac_lld_start(DACDriver *dacp) {
 #if STM32_DAC_USE_DAC1_CH1
     if (&DACD1 == dacp) {
       rccEnableDAC1(true);
+#if STM32_DMA_SUPPORTS_DMAMUX
+      dmaSetRequestSource(dacp->params->dma, STM32_DMAMUX1_DAC1_CH1);
+#endif
     }
 #endif
 
 #if STM32_DAC_USE_DAC1_CH2
     if (&DACD2 == dacp) {
       rccEnableDAC1(true);
+#if STM32_DMA_SUPPORTS_DMAMUX
+      dmaSetRequestSource(dacp->params->dma, STM32_DMAMUX1_DAC1_CH2);
+#endif
       channel = 1;
     }
 #endif
@@ -240,12 +262,18 @@ void dac_lld_start(DACDriver *dacp) {
 #if STM32_DAC_USE_DAC2_CH1
     if (&DACD3 == dacp) {
       rccEnableDAC2(true);
+#if STM32_DMA_SUPPORTS_DMAMUX
+      dmaSetRequestSource(dacp->params->dma, STM32_DMAMUX1_DAC2_CH1);
+#endif
     }
 #endif
 
 #if STM32_DAC_USE_DAC2_CH2
     if (&DACD4 == dacp) {
       rccEnableDAC2(true);
+#if STM32_DMA_SUPPORTS_DMAMUX
+      dmaSetRequestSource(dacp->params->dma, STM32_DMAMUX1_DAC2_CH2);
+#endif
       channel = 1;
     }
 #endif

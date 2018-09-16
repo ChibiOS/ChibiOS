@@ -494,7 +494,6 @@
 /* Check on the presence of the DMA streams settings in mcuconf.h.*/
 #if STM32_DMA_SUPPORTS_DMAMUX
 
-
 #if STM32_ADC_USE_ADC1 && !defined(STM32_ADC_ADC1_DMA_CHANNEL)
 #error "ADC1 DMA channel not defined"
 #endif
@@ -551,6 +550,26 @@
 #endif
 
 #endif /* !STM32_DMA_SUPPORTS_DMAMUX */
+
+#if STM32_ADC_USE_ADC1 &&                                                   \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC1_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to ADC1"
+#endif
+
+#if STM32_ADC_USE_ADC2 &&                                                   \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC2_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to ADC2"
+#endif
+
+#if STM32_ADC_USE_ADC3 &&                                                   \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC3_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to ADC3"
+#endif
+
+#if STM32_ADC_USE_ADC4 &&                                                   \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC4_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to ADC4"
+#endif
 
 /* ADC clock source checks.*/
 #if defined(STM32F3XX)

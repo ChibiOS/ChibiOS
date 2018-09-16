@@ -91,7 +91,7 @@
 *****************************************************************************
 
 *** Next ***
-- NEW: STM32 DMAv1, ADCv3, I2Cv2 and SPIv2 are now DMAMUX-aware.
+- NEW: STM32 DMAv1, ADCv3, DACv1, I2Cv2 and SPIv2 are now DMAMUX-aware.
 - NEW: Introduced support for STM32L4+ devices.
 - NEW: Independent TRNG driver model added to HAL.
 - NEW: TRNG API now takes a new "size" parameter, the API can now generate

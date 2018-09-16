@@ -182,6 +182,28 @@
 /* The following checks are only required when there is a DMA able to
    reassign streams to different channels.*/
 #if STM32_ADVANCED_DMA
+
+#if STM32_DMA_SUPPORTS_DMAMUX
+
+/* Check on the presence of the DMA channel settings in mcuconf.h.*/
+#if STM32_DAC_USE_DAC1_CH1 && !defined(STM32_DAC_DAC1_CH1_DMA_CHANNEL)
+#error "DAC1 CH1 DMA channel not defined"
+#endif
+
+#if STM32_DAC_USE_DAC1_CH2 && !defined(STM32_DAC_DAC1_CH2_DMA_CHANNEL)
+#error "DAC1 CH2 DMA channel not defined"
+#endif
+
+#if STM32_DAC_USE_DAC2_CH1 && !defined(STM32_DAC_DAC2_CH1_DMA_CHANNEL)
+#error "DAC2 CH1 DMA channel not defined"
+#endif
+
+#if STM32_DAC_USE_DAC2_CH2 && !defined(STM32_DAC_DAC2_CH2_DMA_CHANNEL)
+#error "DAC2 CH2 DMA channel not defined"
+#endif
+
+#else /* !STM32_DMA_SUPPORTS_DMAMUX */
+
 /* Check on the presence of the DMA streams settings in mcuconf.h.*/
 #if STM32_DAC_USE_DAC1_CH1 && !defined(STM32_DAC_DAC1_CH1_DMA_STREAM)
 #error "DAC1 CH1 DMA stream not defined"
@@ -219,7 +241,30 @@
     !STM32_DMA_IS_VALID_ID(STM32_DAC_DAC2_CH2_DMA_STREAM, STM32_DAC2_CH2_DMA_MSK)
 #error "invalid DMA stream associated to DAC2 CH2"
 #endif
+
+#endif /* !STM32_DMA_SUPPORTS_DMAMUX */
+
 #endif /* STM32_ADVANCED_DMA */
+
+#if STM32_DAC_USE_DAC1_CH1 &&                                               \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_DAC_DAC1_CH1_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to DAC1 CH1"
+#endif
+
+#if STM32_DAC_USE_DAC1_CH2 &&                                               \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_DAC_DAC1_CH2_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to DAC1 CH2"
+#endif
+
+#if STM32_DAC_USE_DAC2_CH1 &&                                               \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_DAC_DAC2_CH1_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to DAC2 CH1"
+#endif
+
+#if STM32_DAC_USE_DAC2_CH2 &&                                               \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_DAC_DAC2_CH2_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to DAC2 CH2"
+#endif
 
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED
