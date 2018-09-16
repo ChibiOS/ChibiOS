@@ -135,6 +135,12 @@
 /*
  * ADC driver system settings.
  */
+#define STM32_ADC_COMPACT_SAMPLES           ${doc.STM32_ADC_COMPACT_SAMPLES!"FALSE"}
+#define STM32_ADC_USE_ADC1                  ${doc.STM32_ADC_USE_ADC1!"FALSE"}
+#define STM32_ADC_ADC1_DMA_CHANNEL          ${doc.STM32_ADC_ADC1_DMA_CHANNEL!"10"}
+#define STM32_ADC_ADC1_DMA_PRIORITY         ${doc.STM32_ADC_ADC1_DMA_PRIORITY!"2"}
+#define STM32_ADC_ADC1_DMA_IRQ_PRIORITY     ${doc.STM32_ADC_ADC1_DMA_IRQ_PRIORITY!"5"}
+#define STM32_ADC_ADC123_CLOCK_MODE         ${doc.STM32_ADC_ADC123_CLOCK_MODE!"ADC_CCR_CKMODE_AHB_DIV2"}
 
 /*
  * CAN driver system settings.

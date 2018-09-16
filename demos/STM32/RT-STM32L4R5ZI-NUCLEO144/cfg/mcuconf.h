@@ -124,6 +124,12 @@
 /*
  * ADC driver system settings.
  */
+#define STM32_ADC_COMPACT_SAMPLES           FALSE
+#define STM32_ADC_USE_ADC1                  FALSE
+#define STM32_ADC_ADC1_DMA_CHANNEL          10
+#define STM32_ADC_ADC1_DMA_PRIORITY         2
+#define STM32_ADC_ADC1_DMA_IRQ_PRIORITY     5
+#define STM32_ADC_ADC123_CLOCK_MODE         ADC_CCR_CKMODE_AHB_DIV2
 
 /*
  * CAN driver system settings.
@@ -158,9 +164,9 @@
 /*
  * I2C driver system settings.
  */
-#define STM32_I2C_USE_I2C1                  TRUE
-#define STM32_I2C_USE_I2C2                  TRUE
-#define STM32_I2C_USE_I2C3                  TRUE
+#define STM32_I2C_USE_I2C1                  FALSE
+#define STM32_I2C_USE_I2C2                  FALSE
+#define STM32_I2C_USE_I2C3                  FALSE
 #define STM32_I2C_BUSY_TIMEOUT              50
 #define STM32_I2C_I2C1_RX_DMA_CHANNEL       6
 #define STM32_I2C_I2C1_TX_DMA_CHANNEL       7

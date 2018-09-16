@@ -60,7 +60,7 @@
  * @name    Sampling rates
  * @{
  */
-#if defined(STM32F3XX)
+#if defined(STM32F3XX) || defined(__DOXYGEN__)
 #define ADC_SMPR_SMP_1P5        0   /**< @brief 14 cycles conversion time   */
 #define ADC_SMPR_SMP_2P5        1   /**< @brief 15 cycles conversion time.  */
 #define ADC_SMPR_SMP_4P5        2   /**< @brief 17 cycles conversion time.  */
@@ -70,7 +70,7 @@
 #define ADC_SMPR_SMP_181P5      6   /**< @brief 194 cycles conversion time. */
 #define ADC_SMPR_SMP_601P5      7   /**< @brief 614 cycles conversion time. */
 #endif
-#if defined(STM32L4XX)
+#if defined(STM32L4XX) || defined(STM32L4XXP)
 #define ADC_SMPR_SMP_2P5        0   /**< @brief 15 cycles conversion time   */
 #define ADC_SMPR_SMP_6P5        1   /**< @brief 19 cycles conversion time.  */
 #define ADC_SMPR_SMP_12P5       2   /**< @brief 25 cycles conversion time.  */
@@ -319,14 +319,14 @@
 #endif
 #endif /* defined(STM32F3XX) */
 
-#if defined(STM32L4XX) || defined(__DOXYGEN__)
+#if defined(STM32L4XX) || defined(STM32L4XXP) || defined(__DOXYGEN__)
 /**
  * @brief   ADC1/ADC2/ADC3 clock source and mode.
  */
 #if !defined(STM32_ADC_ADC123_CLOCK_MODE) || defined(__DOXYGEN__)
 #define STM32_ADC_ADC123_CLOCK_MODE         ADC_CCR_CKMODE_AHB_DIV1
 #endif
-#endif /* defined(STM32L4XX) */
+#endif /* defined(STM32L4XX) || defined(STM32L4XXP)  */
 
 /** @} */
 
@@ -365,6 +365,7 @@
 #error "STM32_ADCx_NUMBER not defined in registry"
 #endif
 
+#if !STM32_DMA_SUPPORTS_DMAMUX
 #if (STM32_ADC_USE_ADC1 && !defined(STM32_ADC1_DMA_MSK)) ||                 \
     (STM32_ADC_USE_ADC2 && !defined(STM32_ADC2_DMA_MSK)) ||                 \
     (STM32_ADC_USE_ADC3 && !defined(STM32_ADC3_DMA_MSK)) ||                 \
@@ -378,6 +379,7 @@
     (STM32_ADC_USE_ADC4 && !defined(STM32_ADC4_DMA_CHN))
 #error "STM32_ADCx_DMA_CHN not defined in registry"
 #endif
+#endif /* !STM32_DMA_SUPPORTS_DMAMUX */
 
 /* Units checks.*/
 #if STM32_ADC_USE_ADC1 && !STM32_HAS_ADC1
@@ -490,6 +492,27 @@
 #endif
 
 /* Check on the presence of the DMA streams settings in mcuconf.h.*/
+#if STM32_DMA_SUPPORTS_DMAMUX
+
+
+#if STM32_ADC_USE_ADC1 && !defined(STM32_ADC_ADC1_DMA_CHANNEL)
+#error "ADC1 DMA channel not defined"
+#endif
+
+#if STM32_ADC_USE_ADC2 && !defined(STM32_ADC_ADC2_DMA_CHANNEL)
+#error "ADC2 DMA channel not defined"
+#endif
+
+#if STM32_ADC_USE_ADC3 && !defined(STM32_ADC_ADC3_DMA_CHANNEL)
+#error "ADC3 DMA channel not defined"
+#endif
+
+#if STM32_ADC_USE_ADC4 && !defined(STM32_ADC_ADC4_DMA_CHANNEL)
+#error "ADC4 DMA channel not defined"
+#endif
+
+#else /* !STM32_DMA_SUPPORTS_DMAMUX */
+
 #if STM32_ADC_USE_ADC1 && !defined(STM32_ADC_ADC1_DMA_STREAM)
 #error "ADC1 DMA stream not defined"
 #endif
@@ -527,6 +550,8 @@
 #error "invalid DMA stream associated to ADC4"
 #endif
 
+#endif /* !STM32_DMA_SUPPORTS_DMAMUX */
+
 /* ADC clock source checks.*/
 #if defined(STM32F3XX)
 #if STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
@@ -562,7 +587,7 @@
 #endif
 #endif /* defined(STM32F3XX) */
 
-#if defined(STM32L4XX)
+#if defined(STM32L4XX) || defined(STM32L4XXP)
 #if STM32_ADC_ADC123_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
 #define STM32_ADC123_CLOCK              STM32_ADC12CLK
 #elif STM32_ADC_ADC123_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
@@ -578,7 +603,7 @@
 #if STM32_ADC123_CLOCK > STM32_ADCCLK_MAX
 #error "STM32_ADC123_CLOCK exceeding maximum frequency (STM32_ADCCLK_MAX)"
 #endif
-#endif /* defined(STM32L4XX) */
+#endif /* defined(STM32L4XX) || defined(STM32L4XXP) */
 
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED
