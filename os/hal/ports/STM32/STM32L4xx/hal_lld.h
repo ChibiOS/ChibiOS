@@ -786,6 +786,16 @@
 #error "Using a wrong mcuconf.h file, STM32L4xx_MCUCONF not defined"
 #endif
 
+/* Only some devices have strongly checked mcuconf.h files. Others will be
+   added gradually.*/
+#if defined(STM32L496xx) && !defined(STM32L496_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32L496_MCUCONF not defined"
+
+#elif defined(STM32L4A6xx) && !defined(STM32L4A6_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32L4A6_MCUCONF not defined"
+
+#endif
+
 /*
  * Board files sanity checks.
  */
