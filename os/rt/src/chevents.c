@@ -262,7 +262,7 @@ eventflags_t chEvtGetAndClearFlags(event_listener_t *elp) {
   elp->flags = (eventflags_t)0;
   chSysUnlock();
 
-  return flags;
+  return flags & elp->wflags;
 }
 
 /**
