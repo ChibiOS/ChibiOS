@@ -86,6 +86,7 @@
 *****************************************************************************
 
 *** 18.2.2 ***
+- HAL: Fixed wrong number of endpoints fot STM32F412/413 (bug #978).
 - RT:  Fixed chEvtGetAndClearFlags(...) does not mask events (bug #977).
 - NEW: Added analog watchdog functionality to STM32 ADCv2 driver.
 - NEW: Added a termination check to the shell.
