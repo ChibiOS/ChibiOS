@@ -315,7 +315,7 @@ static void usb_event(USBDriver *usbp, usbevent_t event) {
   case USB_EVENT_WAKEUP:
     chSysLockFromISR();
 
-    /* Disconnection event on suspend.*/
+    /* Connection event on wakeup.*/
     sduWakeupHookI(&SDU1);
 
     chSysUnlockFromISR();
