@@ -47,10 +47,6 @@
 #define STM32_HSE_ENABLED                   FALSE
 #define STM32_LSE_ENABLED                   FALSE
 #define STM32_MSIPLL_ENABLED                FALSE
-#define STM32_ADC_CLOCK_ENABLED             TRUE
-#define STM32_USB_CLOCK_ENABLED             TRUE
-#define STM32_SAI1_CLOCK_ENABLED            TRUE
-#define STM32_SAI2_CLOCK_ENABLED            TRUE
 #define STM32_MSIRANGE                      STM32_MSIRANGE_4M
 #define STM32_MSISRANGE                     STM32_MSISRANGE_4M
 #define STM32_SW                            STM32_SW_PLL
