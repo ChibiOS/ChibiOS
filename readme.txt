@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 17.6.5 ***
+- HAL: Fixed invalid STM32 ADCv3 clock selection for L4 and L4+ (bug #979).
 - HAL: Fixed wrong number of endpoints for STM32F412/413 (bug #978).
 - RT:  Fixed chEvtGetAndClearFlags(...) does not mask events (bug #977).
 - OTH: Fixed wrong timeout handling in CMSIS OS layer (bug #975).
