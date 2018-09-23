@@ -86,8 +86,6 @@
 *****************************************************************************
 
 *** 18.2.2 ***
-- HAL: Fixed wrong number of endpoints for STM32F412/413 (bug #978).
-- RT:  Fixed chEvtGetAndClearFlags(...) does not mask events (bug #977).
 - NEW: Added analog watchdog functionality to STM32 ADCv2 driver.
 - NEW: Added a termination check to the shell.
 - NEW: Updated CMSIS to version 5.3.0.
@@ -97,6 +95,9 @@
 - NEW: Added new functions to objects fifos: chFifoReturnObjectS(),
        chFifoSendObjectAheadI(), chFifoSendObjectAheadS() and
        chFifoSendObjectAhead().
+- HAL: Fixed invalid STM32 ADCv3 clock selection for L4 and L4+ (bug #979).
+- HAL: Fixed wrong number of endpoints for STM32F412/413 (bug #978).
+- RT:  Fixed chEvtGetAndClearFlags(...) does not mask events (bug #977).
 - HAL: Fixed HAL channels chnControl() macro broken (bug #976).
 - OTH: Fixed wrong timeout handling in CMSIS OS layer (bug #975).
 - HAL: Fixed mii_find_phy excludes PHY address 31 (bug #971).
