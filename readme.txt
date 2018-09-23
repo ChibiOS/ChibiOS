@@ -151,6 +151,8 @@
 - EX:  Updated LIS302DL to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LPS25H to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LSM303DLHC to 1.1.0 (backported to 18.2.1).
+- HAL: Fixed invalid STM32 ADCv3 clock selection for L4 and L4+ (bug #979)
+       (backported to 18.2.2 and 17.6.5).
 - HAL: Fixed wrong number of endpoints fot STM32F412/413 (bug #978)
        (backported to 18.2.2 and 17.6.5).
 - RT:  Fixed chEvtGetAndClearFlags(...) does not mask events (bug #977)

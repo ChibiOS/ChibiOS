@@ -431,34 +431,6 @@
 #endif
 
 /**
- * @brief   ADC clock setting.
- */
-#if !defined(STM32_ADC_CLOCK_ENABLED) || defined(__DOXYGEN__)
-#define STM32_ADC_CLOCK_ENABLED             TRUE
-#endif
-
-/**
- * @brief   USB clock setting.
- */
-#if !defined(STM32_USB_CLOCK_ENABLED) || defined(__DOXYGEN__)
-#define STM32_USB_CLOCK_ENABLED             TRUE
-#endif
-
-/**
- * @brief   SAI1 clock setting.
- */
-#if !defined(STM32_SAI1_CLOCK_ENABLED) || defined(__DOXYGEN__)
-#define STM32_SAI1_CLOCK_ENABLED            TRUE
-#endif
-
-/**
- * @brief   SAI2 clock setting.
- */
-#if !defined(STM32_SAI2_CLOCK_ENABLED) || defined(__DOXYGEN__)
-#define STM32_SAI2_CLOCK_ENABLED            TRUE
-#endif
-
-/**
  * @brief   MSI frequency setting.
  */
 #if !defined(STM32_MSIRANGE) || defined(__DOXYGEN__)
