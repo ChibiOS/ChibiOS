@@ -428,7 +428,7 @@
 
 #endif /* !defined(STM32_USART3_8_HANDLER) */
 
-#if STM32_SERIAL_USE_LPUART1 &&                                               \
+#if STM32_SERIAL_USE_LPUART1 &&                                             \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SERIAL_LPUART1_PRIORITY)
 #error "Invalid IRQ priority assigned to LPUART1"
 #endif

@@ -94,6 +94,7 @@
 - NEW: Added mcuconf.h generators for STM32L476xx, STM32L496xx and STM32L4R5xx
        devices.
 - NEW: Added demo for STM32L496ZG-Nucleo144 and STM32L4R5ZI-Nucleo144 boards.
+- NEW: Modified USARTv2 to support HW FIFOs where present.
 - NEW: STM32 DMAv1, ADCv3, DACv1, I2Cv2, SPIv2 and USARTv2 are now
        DMAMUX-aware.
 - NEW: Introduced support for STM32L4+ devices.
