@@ -366,6 +366,7 @@ static void serve_interrupt(SerialDriver *sdp) {
       if (b < MSG_OK) {
         chnAddFlagsI(sdp, CHN_OUTPUT_EMPTY);
         u->CR1 = cr1 & ~USART_CR1_TXEIE;
+        osalSysUnlockFromISR();
         break;
       }
       u->TDR = b;
