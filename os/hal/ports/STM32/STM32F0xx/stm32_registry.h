@@ -38,17 +38,17 @@
  * @{
  */
 /*===========================================================================*/
-/* STM32F030x6, STM32F030x8, STM32F030xC.                                    */
+/* STM32F030x4, STM32F030x6, STM32F030x8, STM32F030xC.                                    */
 /*===========================================================================*/
-#if defined(STM32F030x6) || defined(STM32F030x8) ||                         \
-    defined(STM32F030xC) || defined(__DOXYGEN__)
+#if defined(STM32F030x4) || defined(STM32F030x6) ||                         \
+    defined(STM32F030x8) || defined(STM32F030xC) || defined(__DOXYGEN__)
 
 /* Common identifier of all STM32F030 devices.*/
 #define STM32F030
 
 /* RCC attributes. */
 #define STM32_HAS_HSI48                     FALSE
-#if defined(STM32F030xC)
+#if defined(STM32F030xC) || defined(__DOXYGEN__)
 #define STM32_HAS_HSI_PREDIV                TRUE
 #else
 #define STM32_HAS_HSI_PREDIV                FALSE
@@ -121,10 +121,11 @@
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
 #define STM32_HAS_GPIOB                     TRUE
+#if !defined(STM32F030x4)
 #define STM32_HAS_GPIOC                     TRUE
-#if defined(STM32F030x8)
 #define STM32_HAS_GPIOD                     TRUE
 #else
+#define STM32_HAS_GPIOC                     FALSE
 #define STM32_HAS_GPIOD                     FALSE
 #endif
 #define STM32_HAS_GPIOE                     FALSE
@@ -134,18 +135,11 @@
 #define STM32_HAS_GPIOI                     FALSE
 #define STM32_HAS_GPIOJ                     FALSE
 #define STM32_HAS_GPIOK                     FALSE
-#if defined(STM32F030x8)
 #define STM32_GPIO_EN_MASK                  (RCC_AHBENR_GPIOAEN |           \
                                              RCC_AHBENR_GPIOBEN |           \
                                              RCC_AHBENR_GPIOCEN |           \
                                              RCC_AHBENR_GPIODEN |           \
                                              RCC_AHBENR_GPIOFEN)
-#else
-#define STM32_GPIO_EN_MASK                  (RCC_AHBENR_GPIOAEN |           \
-                                             RCC_AHBENR_GPIOBEN |           \
-                                             RCC_AHBENR_GPIOCEN |           \
-                                             RCC_AHBENR_GPIOFEN)
-#endif
 
 /* I2C attributes.*/
 #define STM32_HAS_I2C1                      TRUE
@@ -154,11 +148,15 @@
 #define STM32_I2C1_TX_DMA_MSK               STM32_DMA_STREAM_ID_MSK(1, 2)
 #define STM32_I2C1_TX_DMA_CHN               0x00000020
 
+#if defined(STM32F030x8) || defined(STM32F030xC) || defined(__DOXYGEN__)
 #define STM32_HAS_I2C2                      TRUE
 #define STM32_I2C2_RX_DMA_MSK               STM32_DMA_STREAM_ID_MSK(1, 5)
 #define STM32_I2C2_RX_DMA_CHN               0x00020000
 #define STM32_I2C2_TX_DMA_MSK               STM32_DMA_STREAM_ID_MSK(1, 4)
 #define STM32_I2C2_TX_DMA_CHN               0x00002000
+#else
+#define STM32_HAS_I2C2                      FALSE
+#endif
 
 #define STM32_HAS_I2C3                      FALSE
 #define STM32_HAS_I2C4                      FALSE
@@ -188,12 +186,16 @@
 #define STM32_SPI1_TX_DMA_MSK               STM32_DMA_STREAM_ID_MSK(1, 3)
 #define STM32_SPI1_TX_DMA_CHN               0x00000300
 
+#if defined(STM32F030x8) || defined(STM32F030xC) || defined(__DOXYGEN__)
 #define STM32_HAS_SPI2                      TRUE
 #define STM32_SPI2_SUPPORTS_I2S             FALSE
 #define STM32_SPI2_RX_DMA_MSK               STM32_DMA_STREAM_ID_MSK(1, 4)
 #define STM32_SPI2_RX_DMA_CHN               0x00003000
 #define STM32_SPI2_TX_DMA_MSK               STM32_DMA_STREAM_ID_MSK(1, 5)
 #define STM32_SPI2_TX_DMA_CHN               0x00030000
+#else
+#define STM32_HAS_SPI2                      FALSE
+#endif
 
 #define STM32_HAS_SPI3                      FALSE
 #define STM32_HAS_SPI4                      FALSE
@@ -211,7 +213,7 @@
 #define STM32_TIM3_IS_32BITS                FALSE
 #define STM32_TIM3_CHANNELS                 4
 
-#if defined(STM32F030x8) || defined(STM32F030xC)
+#if defined(STM32F030x8) || defined(STM32F030xC) || defined(__DOXYGEN__)
 #define STM32_HAS_TIM6                      TRUE
 #define STM32_TIM6_IS_32BITS                FALSE
 #define STM32_TIM6_CHANNELS                 0
@@ -231,7 +233,7 @@
 #define STM32_TIM14_IS_32BITS               FALSE
 #define STM32_TIM14_CHANNELS                1
 
-#if defined(STM32F030x8) || defined(STM32F030xC)
+#if defined(STM32F030x8) || defined(STM32F030xC) || defined(__DOXYGEN__)
 #define STM32_HAS_TIM15                     TRUE
 #define STM32_TIM15_IS_32BITS               FALSE
 #define STM32_TIM15_CHANNELS                2
@@ -272,6 +274,7 @@
                                              STM32_DMA_STREAM_ID_MSK(1, 4))
 #define STM32_USART1_TX_DMA_CHN             0x00008080
 
+#if defined(STM32F030x8) || defined(STM32F030xC) || defined(__DOXYGEN__)
 #define STM32_HAS_USART2                    TRUE
 #define STM32_USART2_RX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 1) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 3) |\
@@ -280,8 +283,11 @@
 #define STM32_USART2_TX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 2) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 4))
 #define STM32_USART2_TX_DMA_CHN             0x00009090
+#else
+#define STM32_HAS_USART2                    FALSE
+#endif
 
-#if defined(STM32F030xC)
+#if defined(STM32F030xC) || defined(__DOXYGEN__)
 #define STM32_HAS_USART3                    TRUE
 #define STM32_USART3_RX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 1) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 3) |\
@@ -1316,7 +1322,11 @@
 #define STM32_HAS_GPIOA                     TRUE
 #define STM32_HAS_GPIOB                     TRUE
 #define STM32_HAS_GPIOC                     TRUE
+#if defined(STM32F070x6)
+#define STM32_HAS_GPIOD                     FALSE
+#else
 #define STM32_HAS_GPIOD                     TRUE
+#endif
 #define STM32_HAS_GPIOE                     FALSE
 #define STM32_HAS_GPIOF                     TRUE
 #define STM32_HAS_GPIOG                     FALSE
@@ -1497,7 +1507,7 @@
 /*===========================================================================*/
 #elif defined(STM32F071xB) || defined(STM32F072xB) ||                       \
       defined(STM32F078xx)
-      
+
 /* RCC attributes. */
 #define STM32_HAS_HSI48                     TRUE
 #define STM32_HAS_HSI_PREDIV                TRUE
@@ -1715,9 +1725,11 @@
 #define STM32_USART2_TX_DMA_CHN             0x00000000
 
 #define STM32_HAS_USART3                    TRUE
-#define STM32_USART3_RX_DMA_MSK             STM32_DMA_STREAM_ID_MSK(1, 6)
+#define STM32_USART3_RX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 6) |\
+                                             STM32_DMA_STREAM_ID_MSK(1, 3))
 #define STM32_USART3_RX_DMA_CHN             0x00000000
-#define STM32_USART3_TX_DMA_MSK             STM32_DMA_STREAM_ID_MSK(1, 7)
+#define STM32_USART3_TX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 7) |\
+                                             STM32_DMA_STREAM_ID_MSK(1, 2))
 #define STM32_USART3_TX_DMA_CHN             0x00000000
 
 #define STM32_HAS_UART4                     TRUE
