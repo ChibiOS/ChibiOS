@@ -37,6 +37,8 @@
  * @{
  */
 
+#include <string.h>
+
 #include "ch.h"
 
 #if (CH_CFG_USE_PIPES == TRUE) || defined(__DOXYGEN__)
@@ -71,6 +73,98 @@
 /*===========================================================================*/
 /* Module local functions.                                                   */
 /*===========================================================================*/
+
+/**
+ * @brief   Non-blocking pipe write.
+ * @details The function writes data from a buffer to a pipe. The
+ *          operation completes when the specified amount of data has been
+ *          transferred or when the pipe buffer has been filled.
+ *
+ * @param[in] pp        the pointer to an initialized @p pipe_t object
+ * @param[in] bp        pointer to the data buffer
+ * @param[in] n         the maximum amount of data to be transferred, the
+ *                      value 0 is reserved
+ * @return              The number of bytes effectively transferred.
+ *
+ * @notapi
+ */
+static size_t pipe_write(pipe_t *pp, const uint8_t *bp, size_t n) {
+  size_t s1, s2;
+
+  /* Number of bytes that can be written in a single atomic operation.*/
+  if (n > chPipeGetFreeCount(pp)) {
+    n = chPipeGetFreeCount(pp);
+  }
+
+  /* Number of bytes before buffer limit.*/
+  /*lint -save -e9033 [10.8] Checked to be safe.*/
+  s1 = (size_t)(pp->top - pp->wrptr);
+  /*lint -restore*/
+  if (n < s1) {
+    memcpy((void *)pp->wrptr, (const void *)bp, n);
+    pp->wrptr += n;
+  }
+  else if (n > s1) {
+    memcpy((void *)pp->wrptr, (const void *)bp, s1);
+    bp += s1;
+    s2 = n - s1;
+    memcpy((void *)pp->buffer, (const void *)bp, s2);
+    pp->wrptr = pp->buffer + s2;
+  }
+  else { /* n == s1 */
+    memcpy((void *)pp->wrptr, (const void *)bp, n);
+    pp->wrptr = pp->buffer;
+  }
+
+  pp->cnt += n;
+  return n;
+}
+
+/**
+ * @brief   Non-blocking pipe read.
+ * @details The function reads data from a pipe into a buffer. The
+ *          operation completes when the specified amount of data has been
+ *          transferred or when the pipe buffer has been emptied.
+ *
+ * @param[in] pp        the pointer to an initialized @p pipe_t object
+ * @param[out] bp       pointer to the data buffer
+ * @param[in] n         the maximum amount of data to be transferred, the
+ *                      value 0 is reserved
+ * @return              The number of bytes effectively transferred.
+ *
+ * @notapi
+ */
+static size_t pipe_read(pipe_t *pp, uint8_t *bp, size_t n) {
+  size_t s1, s2;
+
+  /* Number of bytes that can be read in a single atomic operation.*/
+  if (n > chPipeGetFreeCount(pp)) {
+    n = chPipeGetFreeCount(pp);
+  }
+
+  /* Number of bytes before buffer limit.*/
+  /*lint -save -e9033 [10.8] Checked to be safe.*/
+  s1 = (size_t)(pp->top - pp->rdptr);
+  /*lint -restore*/
+  if (n < s1) {
+    memcpy((void *)bp, (void *)pp->rdptr, n);
+    pp->rdptr += n;
+  }
+  else if (n > s1) {
+    memcpy((void *)bp, (void *)pp->rdptr, s1);
+    bp += s1;
+    s2 = n - s1;
+    memcpy((void *)bp, (void *)pp->buffer, s2);
+    pp->rdptr = pp->buffer + s2;
+  }
+  else { /* n == s1 */
+    memcpy((void *)bp, (void *)pp->rdptr, n);
+    pp->rdptr = pp->buffer;
+  }
+
+  pp->cnt -= n;
+  return n;
+}
 
 /*===========================================================================*/
 /* Module exported functions.                                                */
@@ -118,15 +212,15 @@ void chPipeReset(pipe_t *pp) {
 
   P_LOCK(pp);
   chSysLock();
-  pipe_t->wrptr = pipe_t->buffer;
-  pipe_t->rdptr = pipe_t->buffer;
-  pipe_t->cnt   = (size_t)0;
-  pipe_t->reset = true;
-  chThdDequeueAllI(&pipe_t->qw, MSG_RESET);
-  chThdDequeueAllI(&pipe_t->qr, MSG_RESET);
+  pp->wrptr = pp->buffer;
+  pp->rdptr = pp->buffer;
+  pp->cnt   = (size_t)0;
+  pp->reset = true;
+  chThdDequeueAllI(&pp->qw, MSG_RESET);
+  chThdDequeueAllI(&pp->qr, MSG_RESET);
   chSchRescheduleS();
   chSysUnlock();
-  P_UNLOCK();
+  P_UNLOCK(pp);
 }
 
 /**
@@ -153,7 +247,37 @@ void chPipeReset(pipe_t *pp) {
  */
 size_t chPipeWriteTimeout(pipe_t *pp, const uint8_t *bp,
                           size_t n, sysinterval_t timeout) {
+  size_t max = n;
 
+  chDbgCheck(n > 0U);
+
+  P_LOCK(pp);
+
+  while (n > 0U) {
+    size_t done;
+
+    done = pipe_write(pp, bp, n);
+    if (done == (size_t)0) {
+      msg_t msg;
+
+      chSysLock();
+      msg = chThdEnqueueTimeoutS(&pp->qw, timeout);
+      chSysUnlock();
+
+      /* Anything except MSG_OK causes the operation to stop.*/
+      if (msg != MSG_OK) {
+        break;
+      }
+    }
+    else {
+      n  -= done;
+      bp += done;
+    }
+  }
+
+  P_UNLOCK(pp);
+
+  return max - n;
 }
 
 /**
@@ -180,7 +304,37 @@ size_t chPipeWriteTimeout(pipe_t *pp, const uint8_t *bp,
  */
 size_t chPipeReadTimeout(pipe_t *pp, uint8_t *bp,
                          size_t n, sysinterval_t timeout) {
+  size_t max = n;
 
+  chDbgCheck(n > 0U);
+
+  P_LOCK(pp);
+
+  while (n > 0U) {
+    size_t done;
+
+    done = pipe_read(pp, bp, n);
+    if (done == (size_t)0) {
+      msg_t msg;
+
+      chSysLock();
+      msg = chThdEnqueueTimeoutS(&pp->qr, timeout);
+      chSysUnlock();
+
+      /* Anything except MSG_OK causes the operation to stop.*/
+      if (msg != MSG_OK) {
+        break;
+      }
+    }
+    else {
+      n  -= done;
+      bp += done;
+    }
+  }
+
+  P_UNLOCK(pp);
+
+  return max - n;
 }
 
 #endif /* CH_CFG_USE_MAILBOXES == TRUE */

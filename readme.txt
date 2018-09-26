@@ -91,6 +91,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added a new "pipes" subsystem to the OS library.
 - NEW: Added mcuconf.h generators for STM32L432xx, STM32L476xx, STM32L496xx
        and STM32L4R5xx devices.
 - NEW: Added demo for STM32L496ZG-Nucleo144 and STM32L4R5ZI-Nucleo144 boards.

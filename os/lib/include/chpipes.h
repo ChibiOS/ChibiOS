@@ -56,7 +56,7 @@ typedef struct {
                                                     after the buffer.       */
   uint8_t               *wrptr;         /**< @brief Write pointer.          */
   uint8_t               *rdptr;         /**< @brief Read pointer.           */
-  size_t                cnt;            /**< @brief Messages in queue.      */
+  size_t                cnt;            /**< @brief Bytes in the pipe.      */
   bool                  reset;          /**< @brief True if in reset state. */
   threads_queue_t       qw;             /**< @brief Queued writers.         */
   threads_queue_t       qr;             /**< @brief Queued readers.         */
@@ -145,9 +145,9 @@ extern "C" {
  * @param[in] pp        the pointer to an initialized @p pipe_t object
  * @return              The size of the pipe.
  *
- * @iclass
+ * @api
  */
-static inline size_t chPipeGetSizeI(const pipe_t *pp) {
+static inline size_t chPipeGetSize(const pipe_t *pp) {
 
   /*lint -save -e9033 [10.8] Perfectly safe pointers
     arithmetic.*/
@@ -161,11 +161,9 @@ static inline size_t chPipeGetSizeI(const pipe_t *pp) {
  * @param[in] pp        the pointer to an initialized @p pipe_t object
  * @return              The number of queued bytes.
  *
- * @iclass
+ * @api
  */
-static inline size_t chPipeGetUsedCountI(const pipe_t *pp) {
-
-  chDbgCheckClassI();
+static inline size_t chPipeGetUsedCount(const pipe_t *pp) {
 
   return pp->cnt;
 }
@@ -176,13 +174,11 @@ static inline size_t chPipeGetUsedCountI(const pipe_t *pp) {
  * @param[in] pp        the pointer to an initialized @p pipe_t object
  * @return              The number of empty byte slots.
  *
- * @iclass
+ * @api
  */
-static inline size_t chPipeGetFreeCountI(const pipe_t *pp) {
+static inline size_t chPipeGetFreeCount(const pipe_t *pp) {
 
-  chDbgCheckClassI();
-
-  return chPipeGetSizeI(pp) - chPipeGetUsedCountI(pp);
+  return chPipeGetSize(pp) - chPipeGetUsedCount(pp);
 }
 
 /**
@@ -195,11 +191,9 @@ static inline size_t chPipeGetFreeCountI(const pipe_t *pp) {
  * @param[in] pp        the pointer to an initialized @p pipe_t object
  * @return              The next byte in queue.
  *
- * @iclass
+ * @api
  */
-static inline uint8_t chPipePeekI(const pipe_t *pp) {
-
-  chDbgCheckClassI();
+static inline uint8_t chPipePeek(const pipe_t *pp) {
 
   return *pp->rdptr;
 }
@@ -209,9 +203,9 @@ static inline uint8_t chPipePeekI(const pipe_t *pp) {
  *
  * @param[in] pp        the pointer to an initialized @p pipe_t object
  *
- * @xclass
+ * @api
  */
-static inline void chPipeResumeX(pipe_t *pp) {
+static inline void chPipeResume(pipe_t *pp) {
 
   pp->reset = false;
 }

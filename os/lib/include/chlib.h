@@ -83,6 +83,61 @@
 #error "OS check failed, must be included after ch.h"
 #endif
 
+/* Configuration file checks.*/
+#if !defined(CH_CFG_USE_MAILBOXES)
+#error "CH_CFG_USE_MAILBOXES not defined in chconf.h"
+#endif
+
+#if !defined(CH_CFG_USE_MEMCORE)
+#error "CH_CFG_USE_MEMCORE not defined in chconf.h"
+#endif
+
+#if !defined(CH_CFG_USE_HEAP)
+#error "CH_CFG_USE_HEAP not defined in chconf.h"
+#endif
+
+#if !defined(CH_CFG_USE_MEMPOOLS)
+#error "CH_CFG_USE_MEMPOOLS not defined in chconf.h"
+#endif
+
+#if !defined(CH_CFG_USE_OBJ_FIFOS)
+#error "CH_CFG_USE_OBJ_FIFOS not defined in chconf.h"
+#endif
+
+#if !defined(CH_CFG_USE_PIPES)
+//#error "CH_CFG_USE_PIPES not defined in chconf.h"
+#define CH_CFG_USE_PIPES FALSE /* temporary */
+#endif
+
+/* Objects factory options checks.*/
+#if !defined(CH_CFG_USE_FACTORY)
+#error "CH_CFG_USE_FACTORY not defined in chconf.h"
+#endif
+
+#if !defined(CH_CFG_FACTORY_MAX_NAMES_LENGTH)
+#error "CH_CFG_FACTORY_MAX_NAMES_LENGTH not defined in chconf.h"
+#endif
+
+#if !defined(CH_CFG_FACTORY_OBJECTS_REGISTRY)
+#error "CH_CFG_FACTORY_OBJECTS_REGISTRY not defined in chconf.h"
+#endif
+
+#if !defined(CH_CFG_FACTORY_GENERIC_BUFFERS)
+#error "CH_CFG_FACTORY_GENERIC_BUFFERS not defined in chconf.h"
+#endif
+
+#if !defined(CH_CFG_FACTORY_SEMAPHORES)
+#error "CH_CFG_FACTORY_SEMAPHORES not defined in chconf.h"
+#endif
+
+#if !defined(CH_CFG_FACTORY_MAILBOXES)
+#error "CH_CFG_FACTORY_MAILBOXES not defined in chconf.h"
+#endif
+
+#if !defined(CH_CFG_FACTORY_OBJ_FIFOS)
+#error "CH_CFG_FACTORY_OBJ_FIFOS not defined in chconf.h"
+#endif
+
 /* License checks.*/
 #if !defined(CH_CUSTOMER_LIC_LIB) || !defined(CH_LICENSE_FEATURES)
 #error "malformed chlicense.h"
@@ -108,7 +163,7 @@
 
 #define CH_CFG_USE_FACTORY                  FALSE
 
-#endif /* (CH_CUSTOMER_LIC_LIB == FALSE) ||                                 \
+#endif /* (CH_CUSTOMER_LIC_LIB == FALSE) ||
           (CH_LICENSE_FEATURES == CH_FEATURES_INTERMEDIATE) ||
           (CH_LICENSE_FEATURES == CH_FEATURES_BASIC) */
 
@@ -129,66 +184,8 @@
 #define CH_CFG_USE_OBJ_FIFOS                FALSE
 #define CH_CFG_USE_PIPES                    FALSE
 
-#endif /* (CH_CUSTOMER_LIC_LIB == FALSE) ||                                 \
+#endif /* (CH_CUSTOMER_LIC_LIB == FALSE) ||
           (CH_LICENSE_FEATURES == CH_FEATURES_BASIC) */
-
-/* Configuration file checks.*/
-#if !defined(CH_CFG_USE_SEMAPHORES)
-#error "CH_CFG_USE_SEMAPHORES not defined in chconf.h"
-#endif
-
-#if !defined(CH_CFG_USE_MAILBOXES)
-#error "CH_CFG_USE_MAILBOXES not defined in chlibconf.h"
-#endif
-
-#if !defined(CH_CFG_USE_MEMCORE)
-#error "CH_CFG_USE_MEMCORE not defined in chlibconf.h"
-#endif
-
-#if !defined(CH_CFG_USE_HEAP)
-#error "CH_CFG_USE_HEAP not defined in chlibconf.h"
-#endif
-
-#if !defined(CH_CFG_USE_MEMPOOLS)
-#error "CH_CFG_USE_MEMPOOLS not defined in chlibconf.h"
-#endif
-
-#if !defined(CH_CFG_USE_OBJ_FIFOS)
-#error "CH_CFG_USE_OBJ_FIFOS not defined in chlibconf.h"
-#endif
-
-//#if !defined(CH_CFG_USE_PIPES)
-//#error "CH_CFG_USE_PIPES not defined in chlibconf.h"
-//#endif
-
-/* Objects factory options checks.*/
-#if !defined(CH_CFG_USE_FACTORY)
-#error "CH_CFG_USE_FACTORY not defined in chlibconf.h"
-#endif
-
-#if !defined(CH_CFG_FACTORY_MAX_NAMES_LENGTH)
-#error "CH_CFG_FACTORY_MAX_NAMES_LENGTH not defined in chlibconf.h"
-#endif
-
-#if !defined(CH_CFG_FACTORY_OBJECTS_REGISTRY)
-#error "CH_CFG_FACTORY_OBJECTS_REGISTRY not defined in chlibconf.h"
-#endif
-
-#if !defined(CH_CFG_FACTORY_GENERIC_BUFFERS)
-#error "CH_CFG_FACTORY_GENERIC_BUFFERS not defined in chlibconf.h"
-#endif
-
-#if !defined(CH_CFG_FACTORY_SEMAPHORES)
-#error "CH_CFG_FACTORY_SEMAPHORES not defined in chlibconf.h"
-#endif
-
-#if !defined(CH_CFG_FACTORY_MAILBOXES)
-#error "CH_CFG_FACTORY_MAILBOXES not defined in chlibconf.h"
-#endif
-
-#if !defined(CH_CFG_FACTORY_OBJ_FIFOS)
-#error "CH_CFG_FACTORY_OBJ_FIFOS not defined in chlibconf.h"
-#endif
 
 /*===========================================================================*/
 /* Module data structures and types.                                         */
@@ -213,7 +210,7 @@
 #include "chmemheaps.h"
 #include "chmempools.h"
 #include "chobjfifos.h"
-//#include "chpipes.h"
+#include "chpipes.h"
 #include "chfactory.h"
 
 #endif /* CHLIB_H */
