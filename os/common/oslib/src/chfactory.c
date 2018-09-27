@@ -718,7 +718,7 @@ void chFactoryReleaseObjectsFIFO(dyn_objects_fifo_t *dofp) {
 
   F_UNLOCK();
 }
-#endif /* CH_CFG_FACTORY_MAILBOXES = TRUE */
+#endif /* CH_CFG_FACTORY_OBJ_FIFOS = TRUE */
 
 #endif /* CH_CFG_USE_FACTORY == TRUE */
 
