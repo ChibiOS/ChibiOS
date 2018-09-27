@@ -82,6 +82,20 @@
 #define CH_CFG_FACTORY_OBJ_FIFOS            TRUE
 #endif
 
+/**
+ * @brief   Enables factory for objects FIFOs.
+ */
+#if !defined(CH_CFG_FACTORY_OBJ_FIFOS) || defined(__DOXYGEN__)
+#define CH_CFG_FACTORY_OBJ_FIFOS            TRUE
+#endif
+
+/**
+ * @brief   Enables factory for Pipes.
+ */
+#if !defined(CH_CFG_FACTORY_PIPES) || defined(__DOXYGEN__)
+#define CH_CFG_FACTORY_PIPES                TRUE
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -107,6 +121,13 @@
 /*lint restore*/
 #endif
 
+#if (CH_CFG_FACTORY_PIPES == TRUE) && (CH_CFG_USE_PIPES == FALSE)
+/*lint -save -e767 [20.5] Valid because the #undef.*/
+#undef CH_CFG_FACTORY_PIPES
+#define CH_CFG_FACTORY_PIPES                FALSE
+/*lint restore*/
+#endif
+
 #define CH_FACTORY_REQUIRES_POOLS                                           \
   ((CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE) ||                             \
    (CH_CFG_FACTORY_SEMAPHORES == TRUE))
@@ -114,7 +135,8 @@
 #define CH_FACTORY_REQUIRES_HEAP                                            \
   ((CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE) ||                              \
    (CH_CFG_FACTORY_MAILBOXES == TRUE) ||                                    \
-   (CH_CFG_FACTORY_OBJ_FIFOS == TRUE))
+   (CH_CFG_FACTORY_OBJ_FIFOS == TRUE) ||                                    \
+   (CH_CFG_FACTORY_PIPES == TRUE))
 
 #if (CH_CFG_FACTORY_MAX_NAMES_LENGTH < 0) ||                                \
     (CH_CFG_FACTORY_MAX_NAMES_LENGTH > 32)
@@ -267,6 +289,29 @@ typedef struct ch_dyn_objects_fifo {
 } dyn_objects_fifo_t;
 #endif
 
+#if (CH_CFG_FACTORY_PIPES == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Type of a dynamic pipe object.
+ */
+typedef struct ch_dyn_pipe {
+  /**
+   * @brief   List element of the dynamic pipe object.
+   */
+  dyn_element_t         element;
+  /**
+   * @brief   The pipe.
+   */
+  pipe_t                pipe;
+  /*lint -save -e9038 [18.7] Required by design.*/
+  /**
+   * @brief   Messages buffer.
+   * @note    This requires C99.
+   */
+  uint8_t               buffer[];
+  /*lint restore*/
+} dyn_pipe_t;
+#endif
+
 /**
  * @brief   Type of the factory main object.
  */
@@ -315,6 +360,12 @@ typedef struct ch_objects_factory {
    */
   dyn_list_t            fifo_list;
 #endif /* CH_CFG_FACTORY_OBJ_FIFOS = TRUE */
+#if (CH_CFG_FACTORY_PIPES == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   List of the allocated pipe objects.
+   */
+  dyn_list_t            pipe_list;
+#endif /* CH_CFG_FACTORY_PIPES = TRUE */
 } objects_factory_t;
 
 /*===========================================================================*/
@@ -362,6 +413,11 @@ extern "C" {
                                                  unsigned objalign);
   dyn_objects_fifo_t *chFactoryFindObjectsFIFO(const char *name);
   void chFactoryReleaseObjectsFIFO(dyn_objects_fifo_t *dofp);
+#endif
+#if (CH_CFG_FACTORY_PIPES == TRUE) || defined(__DOXYGEN__)
+  dyn_pipe_t *chFactoryCreatePipe(const char *name, size_t size);
+  dyn_pipe_t *chFactoryFindPipe(const char *name);
+  void chFactoryReleasePipe(dyn_pipe_t *dpp);
 #endif
 #ifdef __cplusplus
 }
@@ -474,6 +530,21 @@ static inline objects_fifo_t *chFactoryGetObjectsFIFO(dyn_objects_fifo_t *dofp) 
   return &dofp->fifo;
 }
 #endif /* CH_CFG_FACTORY_OBJ_FIFOS == TRUE */
+
+#if (CH_CFG_FACTORY_PIPES == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Returns the pointer to the inner pipe.
+ *
+ * @param[in] dpp       dynamic pipe object reference
+ * @return              The pointer to the pipe.
+ *
+ * @api
+ */
+static inline pipe_t *chFactoryGetPipe(dyn_pipe_t *dpp) {
+
+  return &dpp->pipe;
+}
+#endif /* CH_CFG_FACTORY_PIPES == TRUE */
 
 #endif /* CH_CFG_USE_FACTORY == TRUE */
 

@@ -720,6 +720,88 @@ void chFactoryReleaseObjectsFIFO(dyn_objects_fifo_t *dofp) {
 }
 #endif /* CH_CFG_FACTORY_OBJ_FIFOS = TRUE */
 
+#if (CH_CFG_FACTORY_PIPES == TRUE) || defined(__DOXIGEN__)
+/**
+ * @brief   Creates a dynamic pipe object.
+ * @post    A reference to the dynamic pipe object is returned and
+ *          the reference counter is initialized to one.
+ * @post    The dynamic pipe object is initialized and ready to use.
+ *
+ * @param[in] name      name to be assigned to the new dynamic pipe
+ *                      object
+ * @param[in] size      pipe buffer size
+ * @return              The reference to the created dynamic pipe
+ *                      object.
+ * @retval NULL         if the dynamic pipe object cannot be
+ *                      allocated or a dynamic pipe object with
+ *                      the same name exists.
+ *
+ * @api
+ */
+dyn_pipe_t *chFactoryCreatePipe(const char *name, size_t size) {
+  dyn_pipe_t *dpp;
+
+  F_LOCK();
+
+  dpp = (dyn_pipe_t *)dyn_create_object_heap(name,
+                                             &ch_factory.pipe_list,
+                                             sizeof (dyn_pipe_t) + size);
+  if (dpp != NULL) {
+    /* Initializing mailbox object data.*/
+    chPipeObjectInit(&dpp->pipe, dpp->buffer, size);
+  }
+
+  F_UNLOCK();
+
+  return dpp;
+}
+
+/**
+ * @brief   Retrieves a dynamic pipe object.
+ * @post    A reference to the dynamic pipe object is returned with
+ *          the reference counter increased by one.
+ *
+ * @param[in] dpp       dynamic pipe object reference
+ *
+ * @return              The reference to the found dynamic pipe
+ *                      object.
+ * @retval NULL         if a dynamic pipe object with the specified
+ *                      name does not exist.
+ *
+ * @api
+ */
+dyn_pipe_t *chFactoryFindPipe(const char *name) {
+  dyn_pipe_t *dpp;
+
+  F_LOCK();
+
+  dpp = (dyn_pipe_t *)dyn_find_object(name, &ch_factory.fifo_list);
+
+  F_UNLOCK();
+
+  return dpp;
+}
+
+/**
+ * @brief   Releases a dynamic pipe object.
+ * @details The reference counter of the dynamic pipe object is
+ *          decreased by one, if reaches zero then the dynamic pipe
+ *          object memory is freed.
+ *
+ * @param[in] dpp       dynamic pipe object reference
+ *
+ * @api
+ */
+void chFactoryReleasePipe(dyn_pipe_t *dpp) {
+
+  F_LOCK();
+
+  dyn_release_object_heap(&dpp->element, &ch_factory.pipe_list);
+
+  F_UNLOCK();
+}
+#endif /* CH_CFG_FACTORY_PIPES = TRUE */
+
 #endif /* CH_CFG_USE_FACTORY == TRUE */
 
 /** @} */
