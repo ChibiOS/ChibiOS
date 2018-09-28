@@ -81,21 +81,16 @@ typedef enum {
   SIO_READY = 2                     /**< Ready.                             */
 } siostate_t;
 
-/**
- * @brief   Type of a function writing a frame received by SIO.
- */
-typedef msg_t (*sioput_t)(void *p, uint8_t b);
-
-/**
- * @brief   Type of a function reading a frame to be transmitted by SIO.
- */
-typedef msg_t (*sioget_t)(void *p);
-
 #include "hal_sio_lld.h"
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Returns the current set of flags and clears it.
+ */
+#define sioGetFlagsX(siop) sio_lld_get_flags(siop)
 
 /**
  * @brief   Determines the state of the RX FIFO.

@@ -86,20 +86,24 @@ typedef void (*sioecb_t)(SIODriver *siop, sioflags_t e);
 struct hal_sio_config {
   /**
    * @brief   Receive buffer filled callback.
+   * @note    Can be @p NULL.
    */
-  siocb_t                  rxne_cb;
+  siocb_t                   rxne_cb;
   /**
    * @brief   End of transmission buffer callback.
+   * @note    Can be @p NULL.
    */
-  siocb_t                  txnf_cb;
+  siocb_t                   txnf_cb;
   /**
    * @brief   Physical end of transmission callback.
+   * @note    Can be @p NULL.
    */
-  siocb_t                  txend_cb;
+  siocb_t                   txend_cb;
   /**
    * @brief   Receive event callback.
+   * @note    Can be @p NULL.
    */
-  sioecb_t                 rxevt_cb;
+  siocb_t                   rxevt_cb;
   /* End of the mandatory fields.*/
 };
 
