@@ -112,53 +112,6 @@ void sio_lld_stop(SIODriver *siop) {
   }
 }
 
-
-/**
- * @brief   Reads data from the RX FIFO.
- * @details This function is non-blocking, data is read if present and the
- *          effective amount is returned.
- * @note    This function can be called from any context but it is meant to
- *          be called from the @p rxne_cb callback handler.
- *
- * @param[in] siop      pointer to the @p SIODriver object
- * @param[in] buffer    buffer for the received data
- * @param[in] size      maximum number of bytes to read
- * @return              The number of received bytes.
- *
- * @notapi
- */
-size_t sio_lld_read(SIODriver *siop, uint8_t *buffer, size_t size) {
-
-  (void)siop;
-  (void)buffer;
-  (void)size;
-
-  return (size_t)0;
-}
-
-/**
- * @brief   Writes data into the TX FIFO.
- * @details This function is non-blocking, data is written if there is space
- *          in the FIFO and the effective amount is returned.
- * @note    This function can be called from any context but it is meant to
- *          be called from the @p rxne_cb callback handler.
- *
- * @param[in] siop      pointer to the @p SIODriver object
- * @param[out] buffer   buffer containing the data to be transmitted
- * @param[in] size      maximum number of bytes to read
- * @return              The number of transmitted bytes.
- *
- * @notapi
- */
-size_t sio_lld_write(SIODriver *siop, const uint8_t *buffer, size_t size) {
-
-  (void)siop;
-  (void)buffer;
-  (void)size;
-
-  return (size_t)0;
-}
-
 /**
  * @brief   Control operation on a serial port.
  *

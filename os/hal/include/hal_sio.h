@@ -63,6 +63,16 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Type of structure representing a SIO driver.
+ */
+typedef struct hal_sio_driver SIODriver;
+
+/**
+ * @brief   Type of structure representing a SIO configuration.
+ */
+typedef struct hal_sio_config SIOConfig;
+
+/**
  * @brief   Driver state machine possible states.
  */
 typedef enum {
@@ -71,11 +81,66 @@ typedef enum {
   SIO_READY = 2                     /**< Ready.                             */
 } siostate_t;
 
+/**
+ * @brief   Type of a function writing a frame received by SIO.
+ */
+typedef msg_t (*sioput_t)(void *p, uint8_t b);
+
+/**
+ * @brief   Type of a function reading a frame to be transmitted by SIO.
+ */
+typedef msg_t (*sioget_t)(void *p);
+
 #include "hal_sio_lld.h"
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Determines the state of the RX FIFO.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @return              The RX FIFO state.
+ * @retval false        if RX FIFO is not empty
+ * @retval true         if RX FIFO is empty
+ *
+ * @xclass
+ */
+#define sioRXIsEmptyX(siop) sio_lld_rx_is_empty(siop)
+
+/**
+ * @brief   Determines the state of the TX FIFO.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @return              The TX FIFO state.
+ * @retval false        if TX FIFO is not full
+ * @retval true         if TX FIFO is full
+ *
+ * @xclass
+ */
+#define sioTXIsFullX(siop) sio_lld_tx_is_full(siop)
+
+/**
+ * @brief   Returns one frame from the RX FIFO.
+ * @note    If the FIFO is empty then the returned value is unpredictable.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @return              The frame from RX FIFO.
+ *
+ * @xclass
+ */
+#define sioRXGetX(siop) sio_lld_rx_get(siop)
+
+/**
+ * @brief   Pushes one frame into the TX FIFO.
+ * @note    If the FIFO is full then the behavior is unpredictable.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ *
+ * @xclass
+ */
+#define sioTXPutX(siop, data) sio_lld_tx_put(siop, data)
 
 /**
  * @brief   Reads data from the RX FIFO.
@@ -86,8 +151,8 @@ typedef enum {
  *
  * @param[in] siop      pointer to the @p SIODriver object
  * @param[in] buffer    buffer for the received data
- * @param[in] size      maximum number of bytes to read
- * @return              The number of received bytes.
+ * @param[in] size      maximum number of frames to read
+ * @return              The number of received frames.
  *
  * @xclass
  */
@@ -101,9 +166,9 @@ typedef enum {
  *          be called from the @p txnf_cb callback handler.
  *
  * @param[in] siop      pointer to the @p SIODriver object
- * @param[out] buffer    buffer containing the data to be transmitted
- * @param[in] size      maximum number of bytes to read
- * @return              The number of transmitted bytes.
+ * @param[out] buffer   buffer containing the data to be transmitted
+ * @param[in] size      maximum number of frames to read
+ * @return              The number of transmitted frames.
  *
  * @xclass
  */
@@ -136,7 +201,6 @@ extern "C" {
   void sioObjectInit(SIODriver *siop);
   void sioStart(SIODriver *siop, const SIOConfig *config);
   void sioStop(SIODriver *siop);
-  msg_t sioControl(SIODriver *siop, unsigned int operation, void *arg);
 #ifdef __cplusplus
 }
 #endif
