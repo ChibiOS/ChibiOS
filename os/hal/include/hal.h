@@ -94,6 +94,10 @@
 #define HAL_USE_SDC                         FALSE
 #endif
 
+#if !defined(HAL_USE_SIO)
+#define HAL_USE_SPI                         FALSE
+#endif
+
 #if !defined(HAL_USE_SPI)
 #define HAL_USE_SPI                         FALSE
 #endif
@@ -150,6 +154,7 @@
 #include "hal_rtc.h"
 #include "hal_serial.h"
 #include "hal_sdc.h"
+#include "hal_sio.h"
 #include "hal_spi.h"
 #include "hal_trng.h"
 #include "hal_uart.h"
@@ -197,12 +202,12 @@
 /**
  * @brief   HAL version string.
  */
-#define HAL_VERSION             "6.0.0"
+#define HAL_VERSION             "7.0.0"
 
 /**
  * @brief   HAL version major number.
  */
-#define CH_HAL_MAJOR            6
+#define CH_HAL_MAJOR            7
 
 /**
  * @brief   HAL version minor number.

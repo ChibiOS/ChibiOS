@@ -15,67 +15,103 @@
 */
 
 /**
- * @file    hal_sio.h
- * @brief   SIO Driver macros and structures.
+ * @file    hal_sio_lld.c
+ * @brief   PLATFORM SIO subsystem low level driver source.
  *
  * @addtogroup SIO
  * @{
  */
 
-#ifndef HAL_SIO_H
-#define HAL_SIO_H
+#include "hal.h"
 
 #if (HAL_USE_SIO == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
-/* Driver constants.                                                         */
+/* Driver local definitions.                                                 */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver exported variables.                                                */
 /*===========================================================================*/
 
 /**
- * @name    SIO status flags
- * @{
+ * @brief   SIO1 driver identifier.
  */
-#define SIO_NO_ERROR           0    /**< @brief No pending conditions.      */
-#define SIO_PARITY_ERROR       4    /**< @brief Parity error happened.      */
-#define SIO_FRAMING_ERROR      8    /**< @brief Framing error happened.     */
-#define SIO_OVERRUN_ERROR      16   /**< @brief Overflow happened.          */
-#define SIO_NOISE_ERROR        32   /**< @brief Noise on the line.          */
-#define SIO_BREAK_DETECTED     64   /**< @brief Break detected.             */
-/** @} */
+#if (PLATFORM_SIO_USE_SIO1 == TRUE) || defined(__DOXYGEN__)
+SIODriver SIOD1;
+#endif
 
 /*===========================================================================*/
-/* Driver pre-compile time settings.                                         */
+/* Driver local variables and types.                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver local functions.                                                   */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver interrupt handlers.                                                */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver exported functions.                                                */
 /*===========================================================================*/
 
 /**
- * @name    SIO configuration options
- * @{
+ * @brief   Low level SIO driver initialization.
+ *
+ * @notapi
  */
+void sio_lld_init(void) {
 
-/** @} */
-
-/*===========================================================================*/
-/* Derived constants and error checks.                                       */
-/*===========================================================================*/
-
-/*===========================================================================*/
-/* Driver data structures and types.                                         */
-/*===========================================================================*/
+#if PLATFORM_SIO_USE_SIO1 == TRUE
+  /* Driver initialization.*/
+  sioObjectInit(&SIOD1);
+#endif
+}
 
 /**
- * @brief   Driver state machine possible states.
+ * @brief   Configures and activates the SIO peripheral.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ *
+ * @notapi
  */
-typedef enum {
-  SIO_UNINIT = 0,                   /**< Not initialized.                   */
-  SIO_STOP = 1,                     /**< Stopped.                           */
-  SIO_READY = 2                     /**< Ready.                             */
-} siostate_t;
+void sio_lld_start(SIODriver *siop) {
 
-#include "hal_sio_lld.h"
+  if (siop->state == SIO_STOP) {
+    /* Enables the peripheral.*/
+#if PLATFORM_SIO_USE_SIO1 == TRUE
+    if (&SIOD1 == siop) {
 
-/*===========================================================================*/
-/* Driver macros.                                                            */
-/*===========================================================================*/
+    }
+#endif
+  }
+  /* Configures the peripheral.*/
+
+}
+
+/**
+ * @brief   Deactivates the SIO peripheral.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ *
+ * @notapi
+ */
+void sio_lld_stop(SIODriver *siop) {
+
+  if (siop->state == SIO_READY) {
+    /* Resets the peripheral.*/
+
+    /* Disables the peripheral.*/
+#if PLATFORM_SIO_USE_SIO1 == TRUE
+    if (&SIOD1 == siop) {
+
+    }
+#endif
+  }
+}
+
 
 /**
  * @brief   Reads data from the RX FIFO.
@@ -89,25 +125,39 @@ typedef enum {
  * @param[in] size      maximum number of bytes to read
  * @return              The number of received bytes.
  *
- * @xclass
+ * @notapi
  */
-#define sioReadX(siop, buffer, size) sio_lld_read(siop, buffer, size)
+size_t sio_lld_read(SIODriver *siop, uint8_t *buffer, size_t size) {
+
+  (void)siop;
+  (void)buffer;
+  (void)size;
+
+  return (size_t)0;
+}
 
 /**
  * @brief   Writes data into the TX FIFO.
  * @details This function is non-blocking, data is written if there is space
  *          in the FIFO and the effective amount is returned.
  * @note    This function can be called from any context but it is meant to
- *          be called from the @p txnf_cb callback handler.
+ *          be called from the @p rxne_cb callback handler.
  *
  * @param[in] siop      pointer to the @p SIODriver object
- * @param[out] buffer    buffer containing the data to be transmitted
+ * @param[out] buffer   buffer containing the data to be transmitted
  * @param[in] size      maximum number of bytes to read
  * @return              The number of transmitted bytes.
  *
- * @xclass
+ * @notapi
  */
-#define sioWriteX(siop, buffer, size) sio_lld_write(siop, buffer, size)
+size_t sio_lld_write(SIODriver *siop, const uint8_t *buffer, size_t size) {
+
+  (void)siop;
+  (void)buffer;
+  (void)size;
+
+  return (size_t)0;
+}
 
 /**
  * @brief   Control operation on a serial port.
@@ -121,28 +171,17 @@ typedef enum {
  * @retval MSG_TIMEOUT  in case of operation timeout.
  * @retval MSG_RESET    in case of operation reset.
  *
- * @xclass
+ * @notapi
  */
-#define sioControlX(siop, operation, arg) sio_lld_control(siop, operation, arg)
+msg_t sio_lld_control(SIODriver *siop, unsigned int operation, void *arg) {
 
-/*===========================================================================*/
-/* External declarations.                                                    */
-/*===========================================================================*/
+  (void)siop;
+  (void)operation;
+  (void)arg;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-  void sioInit(void);
-  void sioObjectInit(SIODriver *siop);
-  void sioStart(SIODriver *siop, const SIOConfig *config);
-  void sioStop(SIODriver *siop);
-  msg_t sioControl(SIODriver *siop, unsigned int operation, void *arg);
-#ifdef __cplusplus
+  return MSG_OK;
 }
-#endif
 
 #endif /* HAL_USE_SIO == TRUE */
-
-#endif /* HAL_SIO_H */
 
 /** @} */

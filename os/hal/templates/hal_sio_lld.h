@@ -58,6 +58,11 @@
 /*===========================================================================*/
 
 /**
+ * @brief   SIO driver condition flags type.
+ */
+typedef uint32_t sioflags_t;
+
+/**
  * @brief   Type of structure representing an SIO driver.
  */
 typedef struct SIODriver SIODriver;
@@ -141,8 +146,9 @@ extern "C" {
   void sio_lld_init(void);
   void sio_lld_start(SIODriver *siop);
   void sio_lld_stop(SIODriver *siop);
-  void sio_lld_read(SIODriver *siop, uint8_t *buffer, size_t size);
-  void sio_lld_write(SIODriver *siop, const uint8_t *buffer, size_t size);
+  size_t sio_lld_read(SIODriver *siop, uint8_t *buffer, size_t size);
+  size_t sio_lld_write(SIODriver *siop, const uint8_t *buffer, size_t size);
+  msg_t sio_lld_control(SIODriver *siop, unsigned int operation, void *arg);
 #ifdef __cplusplus
 }
 #endif
