@@ -1561,6 +1561,124 @@ test_assert(dofp == NULL, "found");]]></value>
                   </step>
                 </steps>
               </case>
+              <case>
+                <brief>
+                  <value>Dynamic Pipes Factory.</value>
+                </brief>
+                <description>
+                  <value>This test case verifies the dynamic pipes factory.</value>
+                </description>
+                <condition>
+                  <value>CH_CFG_FACTORY_PIPES == TRUE</value>
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value><![CDATA[dyn_pipe_t *dpp;
+
+dpp = chFactoryFindPipe("mypipe");
+if (dpp != NULL) {
+  while (dpp->element.refs > 0U) {
+    chFactoryReleasePipe(dpp);
+  }
+}]]></value>
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[dyn_pipe_t *dpp;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Retrieving a dynamic pipe by name, must not exist.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[dpp = chFactoryFindPipe("mypipe");
+test_assert(dpp == NULL, "found");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Creating a dynamic pipe it must not exists, must succeed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[dpp = chFactoryCreatePipe("mypipe", 16U);
+test_assert(dpp != NULL, "cannot create");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Creating a dynamic pipe with the same name, must fail.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[dyn_pipe_t *dpp1;
+
+dpp1 = chFactoryCreatePipe("mypipe", 16U);
+test_assert(dpp1 == NULL, "can create");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Retrieving the dynamic pipe by name, must exist, then increasing the reference counter, finally releasing both references.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[dyn_pipe_t *dpp1, *dpp2;
+
+dpp1 = chFactoryFindPipe("mypipe");
+test_assert(dpp1 != NULL, "not found");
+test_assert(dpp == dpp1, "object reference mismatch");
+test_assert(dpp1->element.refs == 2, "object reference mismatch");
+
+dpp2 = (dyn_pipe_t *)chFactoryDuplicateReference(&dpp1->element);
+test_assert(dpp1 == dpp2, "object reference mismatch");
+test_assert(dpp2->element.refs == 3, "object reference mismatch");
+
+chFactoryReleasePipe(dpp2);
+test_assert(dpp1->element.refs == 2, "references mismatch");
+
+chFactoryReleasePipe(dpp1);
+test_assert(dpp->element.refs == 1, "references mismatch");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Releasing the first reference to the dynamic pipe must not trigger an assertion.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chFactoryReleasePipe(dpp);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Retrieving the dynamic pipe by name again, must not exist.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[dpp = chFactoryFindPipe("mypipe");
+test_assert(dpp == NULL, "found");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
             </cases>
           </sequence>
         </sequences>

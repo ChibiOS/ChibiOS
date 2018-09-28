@@ -95,7 +95,7 @@
 #endif
 
 #if !defined(HAL_USE_SIO)
-#define HAL_USE_SPI                         FALSE
+#define HAL_USE_SIO                         FALSE
 #endif
 
 #if !defined(HAL_USE_SPI)

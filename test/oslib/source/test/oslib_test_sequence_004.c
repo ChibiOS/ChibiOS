@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2017 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@
  * - @subpage oslib_test_004_003
  * - @subpage oslib_test_004_004
  * - @subpage oslib_test_004_005
+ * - @subpage oslib_test_004_006
  * .
  */
 
@@ -629,6 +630,117 @@ static const testcase_t oslib_test_004_005 = {
 };
 #endif /* CH_CFG_FACTORY_OBJ_FIFOS == TRUE */
 
+#if (CH_CFG_FACTORY_PIPES == TRUE) || defined(__DOXYGEN__)
+/**
+ * @page oslib_test_004_006 [4.6] Dynamic Pipes Factory
+ *
+ * <h2>Description</h2>
+ * This test case verifies the dynamic pipes factory.
+ *
+ * <h2>Conditions</h2>
+ * This test is only executed if the following preprocessor condition
+ * evaluates to true:
+ * - CH_CFG_FACTORY_PIPES == TRUE
+ * .
+ *
+ * <h2>Test Steps</h2>
+ * - [4.6.1] Retrieving a dynamic pipe by name, must not exist.
+ * - [4.6.2] Creating a dynamic pipe it must not exists, must succeed.
+ * - [4.6.3] Creating a dynamic pipe with the same name, must fail.
+ * - [4.6.4] Retrieving the dynamic pipe by name, must exist, then
+ *   increasing the reference counter, finally releasing both
+ *   references.
+ * - [4.6.5] Releasing the first reference to the dynamic pipe must not
+ *   trigger an assertion.
+ * - [4.6.6] Retrieving the dynamic pipe by name again, must not exist.
+ * .
+ */
+
+static void oslib_test_004_006_teardown(void) {
+  dyn_pipe_t *dpp;
+
+  dpp = chFactoryFindPipe("mypipe");
+  if (dpp != NULL) {
+    while (dpp->element.refs > 0U) {
+      chFactoryReleasePipe(dpp);
+    }
+  }
+}
+
+static void oslib_test_004_006_execute(void) {
+  dyn_pipe_t *dpp;
+
+  /* [4.6.1] Retrieving a dynamic pipe by name, must not exist.*/
+  test_set_step(1);
+  {
+    dpp = chFactoryFindPipe("mypipe");
+    test_assert(dpp == NULL, "found");
+  }
+
+  /* [4.6.2] Creating a dynamic pipe it must not exists, must
+     succeed.*/
+  test_set_step(2);
+  {
+    dpp = chFactoryCreatePipe("mypipe", 16U);
+    test_assert(dpp != NULL, "cannot create");
+  }
+
+  /* [4.6.3] Creating a dynamic pipe with the same name, must fail.*/
+  test_set_step(3);
+  {
+    dyn_pipe_t *dpp1;
+
+    dpp1 = chFactoryCreatePipe("mypipe", 16U);
+    test_assert(dpp1 == NULL, "can create");
+  }
+
+  /* [4.6.4] Retrieving the dynamic pipe by name, must exist, then
+     increasing the reference counter, finally releasing both
+     references.*/
+  test_set_step(4);
+  {
+    dyn_pipe_t *dpp1, *dpp2;
+
+    dpp1 = chFactoryFindPipe("mypipe");
+    test_assert(dpp1 != NULL, "not found");
+    test_assert(dpp == dpp1, "object reference mismatch");
+    test_assert(dpp1->element.refs == 2, "object reference mismatch");
+
+    dpp2 = (dyn_pipe_t *)chFactoryDuplicateReference(&dpp1->element);
+    test_assert(dpp1 == dpp2, "object reference mismatch");
+    test_assert(dpp2->element.refs == 3, "object reference mismatch");
+
+    chFactoryReleasePipe(dpp2);
+    test_assert(dpp1->element.refs == 2, "references mismatch");
+
+    chFactoryReleasePipe(dpp1);
+    test_assert(dpp->element.refs == 1, "references mismatch");
+  }
+
+  /* [4.6.5] Releasing the first reference to the dynamic pipe must not
+     trigger an assertion.*/
+  test_set_step(5);
+  {
+    chFactoryReleasePipe(dpp);
+  }
+
+  /* [4.6.6] Retrieving the dynamic pipe by name again, must not
+     exist.*/
+  test_set_step(6);
+  {
+    dpp = chFactoryFindPipe("mypipe");
+    test_assert(dpp == NULL, "found");
+  }
+}
+
+static const testcase_t oslib_test_004_006 = {
+  "Dynamic Pipes Factory",
+  NULL,
+  oslib_test_004_006_teardown,
+  oslib_test_004_006_execute
+};
+#endif /* CH_CFG_FACTORY_PIPES == TRUE */
+
 /****************************************************************************
  * Exported data.
  ****************************************************************************/
@@ -651,6 +763,9 @@ const testcase_t * const oslib_test_sequence_004_array[] = {
 #endif
 #if (CH_CFG_FACTORY_OBJ_FIFOS == TRUE) || defined(__DOXYGEN__)
   &oslib_test_004_005,
+#endif
+#if (CH_CFG_FACTORY_PIPES == TRUE) || defined(__DOXYGEN__)
+  &oslib_test_004_006,
 #endif
   NULL
 };
