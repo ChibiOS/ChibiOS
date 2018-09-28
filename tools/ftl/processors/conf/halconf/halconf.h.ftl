@@ -171,6 +171,13 @@
 #endif
 
 /**
+ * @brief   Enables the SIO subsystem.
+ */
+#if !defined(HAL_USE_SIO) || defined(__DOXYGEN__)
+#define HAL_USE_SIO                         ${doc.HAL_USE_SIO!"FALSE"}
+#endif
+
+/**
  * @brief   Enables the SPI subsystem.
  */
 #if !defined(HAL_USE_SPI) || defined(__DOXYGEN__)
