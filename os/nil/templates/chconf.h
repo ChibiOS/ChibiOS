@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    nil/templates/chconf.h
+ * @file    templates/chconf.h
  * @brief   Configuration file template.
  * @details A copy of this file must be placed in each project directory, it
  *          contains the application specific kernel settings.
@@ -159,6 +159,15 @@
 #define CH_CFG_USE_OBJ_FIFOS                TRUE
 
 /**
+ * @brief   Pipes APIs.
+ * @details If enabled then the pipes APIs are included
+ *          in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#define CH_CFG_USE_PIPES                    TRUE
+
+/**
  * @brief   Managed RAM size.
  * @details Size of the RAM area to be managed by the OS. If set to zero
  *          then the whole available RAM is used. The core memory is made
@@ -220,6 +229,11 @@
  * @brief   Enables factory for objects FIFOs.
  */
 #define CH_CFG_FACTORY_OBJ_FIFOS            TRUE
+
+/**
+ * @brief   Enables factory for Pipes.
+ */
+#define CH_CFG_FACTORY_PIPES                TRUE
 
 /** @} */
 

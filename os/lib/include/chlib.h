@@ -105,8 +105,7 @@
 #endif
 
 #if !defined(CH_CFG_USE_PIPES)
-//#error "CH_CFG_USE_PIPES not defined in chconf.h"
-#define CH_CFG_USE_PIPES FALSE /* temporary */
+#error "CH_CFG_USE_PIPES not defined in chconf.h"
 #endif
 
 /* Objects factory options checks.*/
