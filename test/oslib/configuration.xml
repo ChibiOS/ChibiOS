@@ -444,7 +444,9 @@ test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");]]></value>
               <value>CH_CFG_USE_PIPES</value>
             </condition>
             <shared_code>
-              <value><![CDATA[#define PIPE_SIZE 16
+              <value><![CDATA[#include <string.h>
+
+#define PIPE_SIZE 16
 
 static uint8_t buffer[PIPE_SIZE];
 static PIPE_DECL(pipe1, buffer, PIPE_SIZE);
@@ -508,56 +510,161 @@ msg = chPipeReadTimeout(&pipe1, buf, PIPE_SIZE, TIME_IMMEDIATE);
 test_assert(msg == PIPE_SIZE, "wrong size");
 test_assert((pipe1.rdptr == pipe1.buffer) &&
             (pipe1.wrptr == pipe1.buffer) &&
+            (pipe1.cnt == 0),
+            "invalid pipe state");
+test_assert(memcmp(pipe_pattern, buf, PIPE_SIZE) == 0, "content mismatch");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Small write.</value>
+                    </description>
+                    <tags>
+                      <value></value>
+                    </tags>
+                    <code>
+                      <value><![CDATA[msg_t msg;
+
+msg = chPipeWriteTimeout(&pipe1, pipe_pattern, 4, TIME_IMMEDIATE);
+test_assert(msg == 4, "wrong size");
+test_assert((pipe1.rdptr != pipe1.wrptr) &&
+            (pipe1.rdptr == pipe1.buffer) &&
+            (pipe1.cnt == 4),
+            "invalid pipe state");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Filling remaining space.</value>
+                    </description>
+                    <tags>
+                      <value></value>
+                    </tags>
+                    <code>
+                      <value><![CDATA[msg_t msg;
+
+msg = chPipeWriteTimeout(&pipe1, pipe_pattern, PIPE_SIZE - 4, TIME_IMMEDIATE);
+test_assert(msg == PIPE_SIZE - 4, "wrong size");
+test_assert((pipe1.rdptr == pipe1.buffer) &&
+            (pipe1.wrptr == pipe1.buffer) &&
             (pipe1.cnt == PIPE_SIZE),
             "invalid pipe state");]]></value>
                     </code>
                   </step>
                   <step>
                     <description>
-                      <value>
-                      </value>
+                      <value>Small Read.</value>
                     </description>
                     <tags>
                       <value></value>
                     </tags>
                     <code>
-                      <value><![CDATA[]]></value>
+                      <value><![CDATA[msg_t msg;
+uint8_t buf[PIPE_SIZE];
+
+msg = chPipeReadTimeout(&pipe1, buf, 4, TIME_IMMEDIATE);
+test_assert(msg == 4, "wrong size");
+test_assert((pipe1.rdptr != pipe1.buffer) &&
+            (pipe1.wrptr == pipe1.buffer) &&
+            (pipe1.cnt == PIPE_SIZE - 4),
+            "invalid pipe state");
+test_assert(memcmp(pipe_pattern, buf, 4) == 0, "content mismatch");]]></value>
                     </code>
                   </step>
                   <step>
                     <description>
-                      <value>
-                      </value>
+                      <value>Reading remaining data.</value>
                     </description>
                     <tags>
                       <value></value>
                     </tags>
                     <code>
-                      <value><![CDATA[]]></value>
+                      <value><![CDATA[msg_t msg;
+uint8_t buf[PIPE_SIZE];
+
+msg = chPipeReadTimeout(&pipe1, buf, PIPE_SIZE - 4, TIME_IMMEDIATE);
+test_assert(msg == PIPE_SIZE - 4, "wrong size");
+test_assert((pipe1.rdptr == pipe1.buffer) &&
+            (pipe1.wrptr == pipe1.buffer) &&
+            (pipe1.cnt == 0),
+            "invalid pipe state");
+test_assert(memcmp(pipe_pattern, buf, PIPE_SIZE - 4) == 0, "content mismatch");]]></value>
                     </code>
                   </step>
                   <step>
                     <description>
-                      <value>
-                      </value>
+                      <value>Small Write.</value>
                     </description>
                     <tags>
                       <value></value>
                     </tags>
                     <code>
-                      <value><![CDATA[]]></value>
+                      <value><![CDATA[msg_t msg;
+
+msg = chPipeWriteTimeout(&pipe1, pipe_pattern, 5, TIME_IMMEDIATE);
+test_assert(msg == 5, "wrong size");
+test_assert((pipe1.rdptr != pipe1.wrptr) &&
+            (pipe1.rdptr == pipe1.buffer) &&
+            (pipe1.cnt == 5),
+            "invalid pipe state");]]></value>
                     </code>
                   </step>
                   <step>
                     <description>
-                      <value>
-                      </value>
+                      <value>Small Read.</value>
                     </description>
                     <tags>
                       <value></value>
                     </tags>
                     <code>
-                      <value><![CDATA[]]></value>
+                      <value><![CDATA[msg_t msg;
+uint8_t buf[PIPE_SIZE];
+
+msg = chPipeReadTimeout(&pipe1, buf, 5, TIME_IMMEDIATE);
+test_assert(msg == 5, "wrong size");
+test_assert((pipe1.rdptr == pipe1.wrptr) &&
+            (pipe1.wrptr != pipe1.buffer) &&
+            (pipe1.cnt == 0),
+            "invalid pipe state");
+test_assert(memcmp(pipe_pattern, buf, 5) == 0, "content mismatch");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Write wrapping buffer boundary.</value>
+                    </description>
+                    <tags>
+                      <value></value>
+                    </tags>
+                    <code>
+                      <value><![CDATA[msg_t msg;
+
+msg = chPipeWriteTimeout(&pipe1, pipe_pattern, PIPE_SIZE, TIME_IMMEDIATE);
+test_assert(msg == PIPE_SIZE, "wrong size");
+test_assert((pipe1.rdptr == pipe1.wrptr) &&
+            (pipe1.wrptr != pipe1.buffer) &&
+            (pipe1.cnt == PIPE_SIZE),
+            "invalid pipe state");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Read wrapping buffer boundary.</value>
+                    </description>
+                    <tags>
+                      <value></value>
+                    </tags>
+                    <code>
+                      <value><![CDATA[msg_t msg;
+uint8_t buf[PIPE_SIZE];
+
+msg = chPipeReadTimeout(&pipe1, buf, PIPE_SIZE, TIME_IMMEDIATE);
+test_assert(msg == PIPE_SIZE, "wrong size");
+test_assert((pipe1.rdptr == pipe1.wrptr) &&
+            (pipe1.wrptr != pipe1.buffer) &&
+            (pipe1.cnt == 0),
+            "invalid pipe state");
+test_assert(memcmp(pipe_pattern, buf, PIPE_SIZE) == 0, "content mismatch");]]></value>
                     </code>
                   </step>
                 </steps>

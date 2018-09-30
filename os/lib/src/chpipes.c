@@ -251,6 +251,11 @@ size_t chPipeWriteTimeout(pipe_t *pp, const uint8_t *bp,
 
   chDbgCheck(n > 0U);
 
+  /* If the pipe is in reset state then returns immediately.*/
+  if (pp->reset) {
+    return MSG_RESET;
+  }
+
   P_LOCK(pp);
 
   while (n > 0U) {
@@ -307,6 +312,11 @@ size_t chPipeReadTimeout(pipe_t *pp, uint8_t *bp,
   size_t max = n;
 
   chDbgCheck(n > 0U);
+
+  /* If the pipe is in reset state then returns immediately.*/
+  if (pp->reset) {
+    return MSG_RESET;
+  }
 
   P_LOCK(pp);
 
