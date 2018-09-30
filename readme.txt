@@ -91,6 +91,11 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added a new WSPI driver model to HAL, it is a redesign of the
+       existing QSPI for generic "Wide SPI" interfaces.
+- NEW: Added a new SIO driver model to HAL, it is a low level abstraction of
+       an UART.
+- NEW: Independent TRNG driver model added to HAL.
 - NEW: Added a new "pipes" subsystem to the OS library.
 - NEW: Added mcuconf.h generators for STM32L432xx, STM32L476xx, STM32L496xx
        and STM32L4R5xx devices.
@@ -99,7 +104,6 @@
 - NEW: STM32 DMAv1, ADCv3, DACv1, I2Cv2, SPIv2 and USARTv2 are now
        DMAMUX-aware.
 - NEW: Introduced support for STM32L4+ devices.
-- NEW: Independent TRNG driver model added to HAL.
 - NEW: TRNG API now takes a new "size" parameter, the API can now generate
        random numbers of variable size. The crypto driver now does not store
        a copy of the transient key inside, the low level can do that if
