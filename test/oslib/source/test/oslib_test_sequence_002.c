@@ -37,6 +37,7 @@
  *
  * <h2>Test Cases</h2>
  * - @subpage oslib_test_002_001
+ * - @subpage oslib_test_002_002
  * .
  */
 
@@ -60,23 +61,28 @@ static const uint8_t pipe_pattern[] = "0123456789ABCDEF";
  ****************************************************************************/
 
 /**
- * @page oslib_test_002_001 [2.1] Filling and emptying a pipe, non blocking
+ * @page oslib_test_002_001 [2.1] Pipes normal API, non-blocking tests
  *
  * <h2>Description</h2>
  * The pipe functionality is tested by loading and emptying it, all
  * conditions are tested.
  *
  * <h2>Test Steps</h2>
- * - [2.1.1] Filling whole pipe.
- * - [2.1.2] Emptying pipe.
- * - [2.1.3] Small write.
- * - [2.1.4] Filling remaining space.
- * - [2.1.5] Small Read.
- * - [2.1.6] Reading remaining data.
- * - [2.1.7] Small Write.
- * - [2.1.8] Small Read.
- * - [2.1.9] Write wrapping buffer boundary.
- * - [2.1.10] Read wrapping buffer boundary.
+ * - [2.1.1].
+ * - [2.1.2] Resetting pipe.
+ * - [2.1.3] Writing data, must fail.
+ * - [2.1.4] Reading data, must fail.
+ * - [2.1.5] Reactivating pipe.
+ * - [2.1.6] Filling whole pipe.
+ * - [2.1.7] Emptying pipe.
+ * - [2.1.8] Small write.
+ * - [2.1.9] Filling remaining space.
+ * - [2.1.10] Small Read.
+ * - [2.1.11] Reading remaining data.
+ * - [2.1.12] Small Write.
+ * - [2.1.13] Small Read.
+ * - [2.1.14] Write wrapping buffer boundary.
+ * - [2.1.15] Read wrapping buffer boundary.
  * .
  */
 
@@ -85,10 +91,62 @@ static void oslib_test_002_001_setup(void) {
 }
 
 static void oslib_test_002_001_execute(void) {
-  unsigned i;
 
-  /* [2.1.1] Filling whole pipe.*/
+  /* [2.1.1].*/
   test_set_step(1);
+  {
+  }
+
+  /* [2.1.2] Resetting pipe.*/
+  test_set_step(2);
+  {
+    chPipeReset(&pipe1);
+
+    test_assert((pipe1.rdptr == pipe1.buffer) &&
+                (pipe1.wrptr == pipe1.buffer) &&
+                (pipe1.cnt == 0),
+                "invalid pipe state");
+  }
+
+  /* [2.1.3] Writing data, must fail.*/
+  test_set_step(3);
+  {
+    msg_t msg;
+
+    msg = chPipeWriteTimeout(&pipe1, pipe_pattern, PIPE_SIZE, TIME_IMMEDIATE);
+    test_assert(msg == MSG_RESET, "not reset");
+    test_assert((pipe1.rdptr == pipe1.buffer) &&
+                (pipe1.wrptr == pipe1.buffer) &&
+                (pipe1.cnt == 0),
+                "invalid pipe state");
+  }
+
+  /* [2.1.4] Reading data, must fail.*/
+  test_set_step(4);
+  {
+    msg_t msg;
+    uint8_t buf[PIPE_SIZE];
+
+    msg = chPipeReadTimeout(&pipe1, buf, PIPE_SIZE, TIME_IMMEDIATE);
+    test_assert(msg == MSG_RESET, "not reset");
+    test_assert((pipe1.rdptr == pipe1.buffer) &&
+                (pipe1.wrptr == pipe1.buffer) &&
+                (pipe1.cnt == 0),
+                "invalid pipe state");
+  }
+
+  /* [2.1.5] Reactivating pipe.*/
+  test_set_step(5);
+  {
+    chPipeResume(&pipe1);
+    test_assert((pipe1.rdptr == pipe1.buffer) &&
+                (pipe1.wrptr == pipe1.buffer) &&
+                (pipe1.cnt == 0),
+                "invalid pipe state");
+  }
+
+  /* [2.1.6] Filling whole pipe.*/
+  test_set_step(6);
   {
     msg_t msg;
 
@@ -100,8 +158,8 @@ static void oslib_test_002_001_execute(void) {
                 "invalid pipe state");
   }
 
-  /* [2.1.2] Emptying pipe.*/
-  test_set_step(2);
+  /* [2.1.7] Emptying pipe.*/
+  test_set_step(7);
   {
     msg_t msg;
     uint8_t buf[PIPE_SIZE];
@@ -115,8 +173,8 @@ static void oslib_test_002_001_execute(void) {
     test_assert(memcmp(pipe_pattern, buf, PIPE_SIZE) == 0, "content mismatch");
   }
 
-  /* [2.1.3] Small write.*/
-  test_set_step(3);
+  /* [2.1.8] Small write.*/
+  test_set_step(8);
   {
     msg_t msg;
 
@@ -128,8 +186,8 @@ static void oslib_test_002_001_execute(void) {
                 "invalid pipe state");
   }
 
-  /* [2.1.4] Filling remaining space.*/
-  test_set_step(4);
+  /* [2.1.9] Filling remaining space.*/
+  test_set_step(9);
   {
     msg_t msg;
 
@@ -141,8 +199,8 @@ static void oslib_test_002_001_execute(void) {
                 "invalid pipe state");
   }
 
-  /* [2.1.5] Small Read.*/
-  test_set_step(5);
+  /* [2.1.10] Small Read.*/
+  test_set_step(10);
   {
     msg_t msg;
     uint8_t buf[PIPE_SIZE];
@@ -156,8 +214,8 @@ static void oslib_test_002_001_execute(void) {
     test_assert(memcmp(pipe_pattern, buf, 4) == 0, "content mismatch");
   }
 
-  /* [2.1.6] Reading remaining data.*/
-  test_set_step(6);
+  /* [2.1.11] Reading remaining data.*/
+  test_set_step(11);
   {
     msg_t msg;
     uint8_t buf[PIPE_SIZE];
@@ -171,8 +229,8 @@ static void oslib_test_002_001_execute(void) {
     test_assert(memcmp(pipe_pattern, buf, PIPE_SIZE - 4) == 0, "content mismatch");
   }
 
-  /* [2.1.7] Small Write.*/
-  test_set_step(7);
+  /* [2.1.12] Small Write.*/
+  test_set_step(12);
   {
     msg_t msg;
 
@@ -184,8 +242,8 @@ static void oslib_test_002_001_execute(void) {
                 "invalid pipe state");
   }
 
-  /* [2.1.8] Small Read.*/
-  test_set_step(8);
+  /* [2.1.13] Small Read.*/
+  test_set_step(13);
   {
     msg_t msg;
     uint8_t buf[PIPE_SIZE];
@@ -199,8 +257,8 @@ static void oslib_test_002_001_execute(void) {
     test_assert(memcmp(pipe_pattern, buf, 5) == 0, "content mismatch");
   }
 
-  /* [2.1.9] Write wrapping buffer boundary.*/
-  test_set_step(9);
+  /* [2.1.14] Write wrapping buffer boundary.*/
+  test_set_step(14);
   {
     msg_t msg;
 
@@ -212,8 +270,8 @@ static void oslib_test_002_001_execute(void) {
                 "invalid pipe state");
   }
 
-  /* [2.1.10] Read wrapping buffer boundary.*/
-  test_set_step(10);
+  /* [2.1.15] Read wrapping buffer boundary.*/
+  test_set_step(15);
   {
     msg_t msg;
     uint8_t buf[PIPE_SIZE];
@@ -229,10 +287,63 @@ static void oslib_test_002_001_execute(void) {
 }
 
 static const testcase_t oslib_test_002_001 = {
-  "Filling and emptying a pipe, non blocking",
+  "Pipes normal API, non-blocking tests",
   oslib_test_002_001_setup,
   NULL,
   oslib_test_002_001_execute
+};
+
+/**
+ * @page oslib_test_002_002 [2.2] Pipe timeouts
+ *
+ * <h2>Description</h2>
+ * The pipe API is tested for timeouts.
+ *
+ * <h2>Test Steps</h2>
+ * - [2.2.1] Reading while pipe is empty.
+ * - [2.2.2] Writing a string larger than pipe buffer.
+ * .
+ */
+
+static void oslib_test_002_002_setup(void) {
+  chPipeObjectInit(&pipe1, buffer, PIPE_SIZE / 2);
+}
+
+static void oslib_test_002_002_execute(void) {
+
+  /* [2.2.1] Reading while pipe is empty.*/
+  test_set_step(1);
+  {
+    msg_t msg;
+    uint8_t buf[PIPE_SIZE];
+
+    msg = chPipeReadTimeout(&pipe1, buf, PIPE_SIZE, TIME_IMMEDIATE);
+    test_assert(msg == 0, "wrong size");
+    test_assert((pipe1.rdptr == pipe1.buffer) &&
+                (pipe1.wrptr == pipe1.buffer) &&
+                (pipe1.cnt == 0),
+                "invalid pipe state");
+  }
+
+  /* [2.2.2] Writing a string larger than pipe buffer.*/
+  test_set_step(2);
+  {
+    msg_t msg;
+
+    msg = chPipeWriteTimeout(&pipe1, pipe_pattern, PIPE_SIZE, TIME_IMMEDIATE);
+    test_assert(msg == PIPE_SIZE / 2, "wrong size");
+    test_assert((pipe1.rdptr == pipe1.wrptr) &&
+                (pipe1.wrptr == pipe1.buffer) &&
+                (pipe1.cnt == PIPE_SIZE / 2),
+                "invalid pipe state");
+  }
+}
+
+static const testcase_t oslib_test_002_002 = {
+  "Pipe timeouts",
+  oslib_test_002_002_setup,
+  NULL,
+  oslib_test_002_002_execute
 };
 
 /****************************************************************************
@@ -244,6 +355,7 @@ static const testcase_t oslib_test_002_001 = {
  */
 const testcase_t * const oslib_test_sequence_002_array[] = {
   &oslib_test_002_001,
+  &oslib_test_002_002,
   NULL
 };
 
