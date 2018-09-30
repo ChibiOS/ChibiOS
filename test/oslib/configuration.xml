@@ -53,7 +53,7 @@
               <value>Mailboxes.</value>
             </brief>
             <description>
-              <value>This sequence tests the ChibiOS libraryfunctionalities related to mailboxes.</value>
+              <value>This sequence tests the ChibiOS library functionalities related to mailboxes.</value>
             </description>
             <condition>
               <value>CH_CFG_USE_MAILBOXES</value>
@@ -435,10 +435,144 @@ test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");]]></value>
               <value>Internal Tests</value>
             </type>
             <brief>
+              <value>Pipes</value>
+            </brief>
+            <description>
+              <value>This sequence tests the ChibiOS library functionalities related to pipes.</value>
+            </description>
+            <condition>
+              <value>CH_CFG_USE_PIPES</value>
+            </condition>
+            <shared_code>
+              <value><![CDATA[#define PIPE_SIZE 16
+
+static uint8_t buffer[PIPE_SIZE];
+static PIPE_DECL(pipe1, buffer, PIPE_SIZE);
+
+static const uint8_t pipe_pattern[] = "0123456789ABCDEF";]]></value>
+            </shared_code>
+            <cases>
+              <case>
+                <brief>
+                  <value>Filling and emptying a pipe, non blocking.</value>
+                </brief>
+                <description>
+                  <value>The pipe functionality is tested by loading and emptying it, all conditions are tested.</value>
+                </description>
+                <condition>
+                  <value>
+                  </value>
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chPipeObjectInit(&pipe1, buffer, PIPE_SIZE);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value/>
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[unsigned i;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Filling whole pipe.</value>
+                    </description>
+                    <tags>
+                      <value></value>
+                    </tags>
+                    <code>
+                      <value><![CDATA[msg_t msg;
+
+msg = chPipeWriteTimeout(&pipe1, pipe_pattern, PIPE_SIZE, TIME_IMMEDIATE);
+test_assert(msg == PIPE_SIZE, "wrong size");
+test_assert((pipe1.rdptr == pipe1.buffer) &&
+            (pipe1.wrptr == pipe1.buffer) &&
+            (pipe1.cnt == PIPE_SIZE),
+            "invalid pipe state");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Emptying pipe.</value>
+                    </description>
+                    <tags>
+                      <value></value>
+                    </tags>
+                    <code>
+                      <value><![CDATA[msg_t msg;
+uint8_t buf[PIPE_SIZE];
+
+msg = chPipeReadTimeout(&pipe1, buf, PIPE_SIZE, TIME_IMMEDIATE);
+test_assert(msg == PIPE_SIZE, "wrong size");
+test_assert((pipe1.rdptr == pipe1.buffer) &&
+            (pipe1.wrptr == pipe1.buffer) &&
+            (pipe1.cnt == PIPE_SIZE),
+            "invalid pipe state");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>
+                      </value>
+                    </description>
+                    <tags>
+                      <value></value>
+                    </tags>
+                    <code>
+                      <value><![CDATA[]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>
+                      </value>
+                    </description>
+                    <tags>
+                      <value></value>
+                    </tags>
+                    <code>
+                      <value><![CDATA[]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>
+                      </value>
+                    </description>
+                    <tags>
+                      <value></value>
+                    </tags>
+                    <code>
+                      <value><![CDATA[]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>
+                      </value>
+                    </description>
+                    <tags>
+                      <value></value>
+                    </tags>
+                    <code>
+                      <value><![CDATA[]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+            </cases>
+          </sequence>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
               <value>Memory Pools.</value>
             </brief>
             <description>
-              <value>This sequence tests the ChibiOS  library functionalities related to memory pools.</value>
+              <value>This sequence tests the ChibiOS library functionalities related to memory pools.</value>
             </description>
             <condition>
               <value>CH_CFG_USE_MEMPOOLS</value>
@@ -1681,6 +1815,7 @@ test_assert(dpp == NULL, "found");]]></value>
               </case>
             </cases>
           </sequence>
+          
         </sequences>
       </instance>
     </instances>

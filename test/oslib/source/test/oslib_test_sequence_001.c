@@ -26,7 +26,7 @@
  * File: @ref oslib_test_sequence_001.c
  *
  * <h2>Description</h2>
- * This sequence tests the ChibiOS libraryfunctionalities related to
+ * This sequence tests the ChibiOS library functionalities related to
  * mailboxes.
  *
  * <h2>Conditions</h2>

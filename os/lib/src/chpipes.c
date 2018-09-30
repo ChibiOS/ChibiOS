@@ -138,8 +138,8 @@ static size_t pipe_read(pipe_t *pp, uint8_t *bp, size_t n) {
   size_t s1, s2;
 
   /* Number of bytes that can be read in a single atomic operation.*/
-  if (n > chPipeGetFreeCount(pp)) {
-    n = chPipeGetFreeCount(pp);
+  if (n > chPipeGetUsedCount(pp)) {
+    n = chPipeGetUsedCount(pp);
   }
 
   /* Number of bytes before buffer limit.*/

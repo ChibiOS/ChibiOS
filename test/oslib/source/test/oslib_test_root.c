@@ -25,6 +25,7 @@
  * - @subpage oslib_test_sequence_002
  * - @subpage oslib_test_sequence_003
  * - @subpage oslib_test_sequence_004
+ * - @subpage oslib_test_sequence_005
  * .
  */
 
@@ -49,14 +50,17 @@ const testsequence_t * const oslib_test_suite_array[] = {
 #if (CH_CFG_USE_MAILBOXES) || defined(__DOXYGEN__)
   &oslib_test_sequence_001,
 #endif
-#if (CH_CFG_USE_MEMPOOLS) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_PIPES) || defined(__DOXYGEN__)
   &oslib_test_sequence_002,
 #endif
-#if (CH_CFG_USE_HEAP) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MEMPOOLS) || defined(__DOXYGEN__)
   &oslib_test_sequence_003,
 #endif
-#if ((CH_CFG_USE_FACTORY == TRUE) && (CH_CFG_USE_MEMPOOLS == TRUE) && (CH_CFG_USE_HEAP == TRUE)) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_HEAP) || defined(__DOXYGEN__)
   &oslib_test_sequence_004,
+#endif
+#if ((CH_CFG_USE_FACTORY == TRUE) && (CH_CFG_USE_MEMPOOLS == TRUE) && (CH_CFG_USE_HEAP == TRUE)) || defined(__DOXYGEN__)
+  &oslib_test_sequence_005,
 #endif
   NULL
 };

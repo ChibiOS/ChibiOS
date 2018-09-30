@@ -271,6 +271,9 @@ void _factory_init(void) {
 #if CH_CFG_FACTORY_OBJ_FIFOS == TRUE
   dyn_list_init(&ch_factory.fifo_list);
 #endif
+#if CH_CFG_FACTORY_PIPES == TRUE
+  dyn_list_init(&ch_factory.pipe_list);
+#endif
 }
 
 #if (CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE) || defined(__DOXIGEN__)
@@ -775,7 +778,7 @@ dyn_pipe_t *chFactoryFindPipe(const char *name) {
 
   F_LOCK();
 
-  dpp = (dyn_pipe_t *)dyn_find_object(name, &ch_factory.fifo_list);
+  dpp = (dyn_pipe_t *)dyn_find_object(name, &ch_factory.pipe_list);
 
   F_UNLOCK();
 
