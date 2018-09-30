@@ -76,6 +76,9 @@ endif
 ifneq ($(findstring HAL_USE_WDG TRUE,$(HALCONF)),)
 PLATFORMSRC += ${CHIBIOS}/os/hal/templates/hal_wdg_lld.c
 endif
+ifneq ($(findstring HAL_USE_WSPI TRUE,$(HALCONF)),)
+PLATFORMSRC += ${CHIBIOS}/os/hal/templates/hal_wspi_lld.c
+endif
 else
 PLATFORMSRC = ${CHIBIOS}/os/hal/templates/hal_lld.c \
               ${CHIBIOS}/os/hal/templates/hal_adc_lld.c \
@@ -100,7 +103,8 @@ PLATFORMSRC = ${CHIBIOS}/os/hal/templates/hal_lld.c \
               ${CHIBIOS}/os/hal/templates/hal_trng_lld.c \
               ${CHIBIOS}/os/hal/templates/hal_uart_lld.c \
               ${CHIBIOS}/os/hal/templates/hal_usb_lld.c \
-              ${CHIBIOS}/os/hal/templates/hal_wdg_lld.c
+              ${CHIBIOS}/os/hal/templates/hal_wdg_lld.c \
+              ${CHIBIOS}/os/hal/templates/hal_wspi_lld.c
 endif
 
 # Required include directories

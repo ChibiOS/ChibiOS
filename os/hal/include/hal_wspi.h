@@ -37,7 +37,7 @@
  *          supported. The LLD can also define additional modes or reorder
  *          the bit masks in a more convenient way for the underlying
  *          implementation. It is important however to maintain the same
- *          same for the same functionality.
+ *          name for the same functionality.
  * @{
  */
 #define WSPI_CFG_INSTRUCTION_MODE_MASK          (7LU << 0LU)
@@ -141,6 +141,24 @@ typedef enum {
   WSPI_COMPLETE = 4,                /**< Asynchronous operation complete.   */
   WSPI_MEMMAP = 5                   /**< In memory mapped mode.             */
 } wspistate_t;
+
+/**
+ * @brief   Type of a structure representing an WSPI driver.
+ */
+typedef struct hal_wspi_driver WSPIDriver;
+
+/**
+ * @brief   Type of a structure representing an WSPI driver configuration.
+ */
+typedef struct hal_wspi_config WSPIConfig;
+
+/**
+ * @brief   Type of a WSPI notification callback.
+ *
+ * @param[in] wspip     pointer to the @p WSPIDriver object triggering the
+ *                      callback
+ */
+typedef void (*wspicallback_t)(WSPIDriver *wspip);
 
 /**
  * @brief   Type of a WSPI command descriptor.
