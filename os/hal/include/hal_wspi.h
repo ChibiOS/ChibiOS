@@ -31,72 +31,6 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
-/**
- * @name    Transfer options
- * @note    The Low Level Driver should undef those modes that are not
- *          supported. The LLD can also define additional modes or reorder
- *          the bit masks in a more convenient way for the underlying
- *          implementation. It is important however to maintain the same
- *          name for the same functionality.
- * @{
- */
-#define WSPI_CFG_INSTRUCTION_MODE_MASK          (7LU << 0LU)
-#define WSPI_CFG_INSTRUCTION_MODE_NONE          (0LU << 0LU)
-#define WSPI_CFG_INSTRUCTION_MODE_ONE_LINES     (1LU << 0LU)
-#define WSPI_CFG_INSTRUCTION_MODE_TWO_LINES     (2LU << 0LU)
-#define WSPI_CFG_INSTRUCTION_MODE_FOUR_LINES    (3LU << 0LU)
-#define WSPI_CFG_INSTRUCTION_MODE_EIGHT_LINES   (4LU << 0LU)
-
-#define WSPI_CFG_INSTRUCTION_DDR                (1LU << 3LU)
-
-#define WSPI_CFG_INSTRUCTION_SIZE_MASK          (3LU << 4LU)
-#define WSPI_CFG_INSTRUCTION_SIZE_8             (0LU << 4LU)
-#define WSPI_CFG_INSTRUCTION_SIZE_16            (1LU << 4LU)
-#define WSPI_CFG_INSTRUCTION_SIZE_24            (2LU << 4LU)
-#define WSPI_CFG_INSTRUCTION_SIZE_32            (3LU << 4LU)
-
-#define WSPI_CFG_ADDR_MODE_MASK                 (7LU << 8LU)
-#define WSPI_CFG_ADDR_MODE_NONE                 (0LU << 8LU)
-#define WSPI_CFG_ADDR_MODE_ONE_LINE             (1LU << 8LU)
-#define WSPI_CFG_ADDR_MODE_TWO_LINES            (2LU << 8LU)
-#define WSPI_CFG_ADDR_MODE_FOUR_LINES           (3LU << 8LU)
-#define WSPI_CFG_ADDR_MODE_EIGHT_LINES          (4LU << 8LU)
-
-#define WSPI_CFG_ADDR_DDR                       (1LU << 11LU)
-
-#define WSPI_CFG_ADDR_SIZE_MASK                 (3LU << 12LU)
-#define WSPI_CFG_ADDR_SIZE_8                    (0LU << 12LU)
-#define WSPI_CFG_ADDR_SIZE_16                   (1LU << 12LU)
-#define WSPI_CFG_ADDR_SIZE_24                   (2LU << 12LU)
-#define WSPI_CFG_ADDR_SIZE_32                   (3LU << 12LU)
-
-#define WSPI_CFG_ALT_MODE_MASK                  (7LU << 16LU)
-#define WSPI_CFG_ALT_MODE_NONE                  (0LU << 16LU)
-#define WSPI_CFG_ALT_MODE_ONE_LINE              (1LU << 16LU)
-#define WSPI_CFG_ALT_MODE_TWO_LINES             (2LU << 16LU)
-#define WSPI_CFG_ALT_MODE_FOUR_LINES            (3LU << 16LU)
-#define WSPI_CFG_ALT_MODE_EIGHT_LINES           (4LU << 16LU)
-
-#define WSPI_CFG_ALT_DDR                        (1LU << 19LU)
-
-#define WSPI_CFG_ALT_SIZE_MASK                  (3LU << 20LU)
-#define WSPI_CFG_ALT_SIZE_8                     (0LU << 20LU)
-#define WSPI_CFG_ALT_SIZE_16                    (1LU << 20LU)
-#define WSPI_CFG_ALT_SIZE_24                    (2LU << 20LU)
-#define WSPI_CFG_ALT_SIZE_32                    (3LU << 20LU)
-
-#define WSPI_CFG_DATA_MODE_MASK                 (7LU << 24LU)
-#define WSPI_CFG_DATA_MODE_NONE                 (0LU << 24LU)
-#define WSPI_CFG_DATA_MODE_ONE_LINE             (1LU << 24LU)
-#define WSPI_CFG_DATA_MODE_TWO_LINES            (2LU << 24LU)
-#define WSPI_CFG_DATA_MODE_FOUR_LINES           (3LU << 24LU)
-#define WSPI_CFG_DATA_MODE_EIGHT_LINES          (4LU << 24LU)
-
-#define WSPI_CFG_DATA_DDR                       (1LU << 27LU)
-
-#define WSPI_CFG_SIOO                           (1LU << 31LU)
-/** @} */
-
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -192,9 +126,80 @@ typedef struct {
 #error "low level does not define WSPI_SUPPORTS_MEMMAP"
 #endif
 
+#if !defined(WSPI_DEFAULT_CFG_MASKS)
+#error "low level does not define WSPI_DEFAULT_CFG_MASKS"
+#endif
+
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+#if (WSPI_DEFAULT_CFG_MASKS == TRUE) || defined(__DOXYGEN__)
+/**
+ * @name    Transfer options
+ * @note    The low level driver has the option to override the following
+ *          definitions and use its own ones. In must take care to use
+ *          the same name for the same function or compatibility is not
+ *          ensured.
+ * @{
+ */
+#define WSPI_CFG_INSTRUCTION_MODE_MASK          (7LU << 0LU)
+#define WSPI_CFG_INSTRUCTION_MODE_NONE          (0LU << 0LU)
+#define WSPI_CFG_INSTRUCTION_MODE_ONE_LINES     (1LU << 0LU)
+#define WSPI_CFG_INSTRUCTION_MODE_TWO_LINES     (2LU << 0LU)
+#define WSPI_CFG_INSTRUCTION_MODE_FOUR_LINES    (3LU << 0LU)
+#define WSPI_CFG_INSTRUCTION_MODE_EIGHT_LINES   (4LU << 0LU)
+
+#define WSPI_CFG_INSTRUCTION_DDR                (1LU << 3LU)
+
+#define WSPI_CFG_INSTRUCTION_SIZE_MASK          (3LU << 4LU)
+#define WSPI_CFG_INSTRUCTION_SIZE_8             (0LU << 4LU)
+#define WSPI_CFG_INSTRUCTION_SIZE_16            (1LU << 4LU)
+#define WSPI_CFG_INSTRUCTION_SIZE_24            (2LU << 4LU)
+#define WSPI_CFG_INSTRUCTION_SIZE_32            (3LU << 4LU)
+
+#define WSPI_CFG_ADDR_MODE_MASK                 (7LU << 8LU)
+#define WSPI_CFG_ADDR_MODE_NONE                 (0LU << 8LU)
+#define WSPI_CFG_ADDR_MODE_ONE_LINE             (1LU << 8LU)
+#define WSPI_CFG_ADDR_MODE_TWO_LINES            (2LU << 8LU)
+#define WSPI_CFG_ADDR_MODE_FOUR_LINES           (3LU << 8LU)
+#define WSPI_CFG_ADDR_MODE_EIGHT_LINES          (4LU << 8LU)
+
+#define WSPI_CFG_ADDR_DDR                       (1LU << 11LU)
+
+#define WSPI_CFG_ADDR_SIZE_MASK                 (3LU << 12LU)
+#define WSPI_CFG_ADDR_SIZE_8                    (0LU << 12LU)
+#define WSPI_CFG_ADDR_SIZE_16                   (1LU << 12LU)
+#define WSPI_CFG_ADDR_SIZE_24                   (2LU << 12LU)
+#define WSPI_CFG_ADDR_SIZE_32                   (3LU << 12LU)
+
+#define WSPI_CFG_ALT_MODE_MASK                  (7LU << 16LU)
+#define WSPI_CFG_ALT_MODE_NONE                  (0LU << 16LU)
+#define WSPI_CFG_ALT_MODE_ONE_LINE              (1LU << 16LU)
+#define WSPI_CFG_ALT_MODE_TWO_LINES             (2LU << 16LU)
+#define WSPI_CFG_ALT_MODE_FOUR_LINES            (3LU << 16LU)
+#define WSPI_CFG_ALT_MODE_EIGHT_LINES           (4LU << 16LU)
+
+#define WSPI_CFG_ALT_DDR                        (1LU << 19LU)
+
+#define WSPI_CFG_ALT_SIZE_MASK                  (3LU << 20LU)
+#define WSPI_CFG_ALT_SIZE_8                     (0LU << 20LU)
+#define WSPI_CFG_ALT_SIZE_16                    (1LU << 20LU)
+#define WSPI_CFG_ALT_SIZE_24                    (2LU << 20LU)
+#define WSPI_CFG_ALT_SIZE_32                    (3LU << 20LU)
+
+#define WSPI_CFG_DATA_MODE_MASK                 (7LU << 24LU)
+#define WSPI_CFG_DATA_MODE_NONE                 (0LU << 24LU)
+#define WSPI_CFG_DATA_MODE_ONE_LINE             (1LU << 24LU)
+#define WSPI_CFG_DATA_MODE_TWO_LINES            (2LU << 24LU)
+#define WSPI_CFG_DATA_MODE_FOUR_LINES           (3LU << 24LU)
+#define WSPI_CFG_DATA_MODE_EIGHT_LINES          (4LU << 24LU)
+
+#define WSPI_CFG_DATA_DDR                       (1LU << 27LU)
+
+#define WSPI_CFG_SIOO                           (1LU << 31LU)
+/** @} */
+#endif /* WSPI_USE_DEFAULT_CFG_MASKS == TRUE */
 
 /**
  * @name    Macro Functions

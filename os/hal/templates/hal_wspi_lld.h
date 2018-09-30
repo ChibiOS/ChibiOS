@@ -32,10 +32,11 @@
 /*===========================================================================*/
 
 /**
- * @name    WSPI capabilities
+ * @name    WSPI implementation capabilities
  * @{
  */
 #define WSPI_SUPPORTS_MEMMAP                TRUE
+#define WSPI_DEFAULT_CFG_MASKS              TRUE
 /** @} */
 
 /*===========================================================================*/
