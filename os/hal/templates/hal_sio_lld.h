@@ -103,7 +103,7 @@ struct hal_sio_config {
    * @brief   Receive event callback.
    * @note    Can be @p NULL.
    */
-  siocb_t                   rxevt_cb;
+  sioecb_t                  rxevt_cb;
   /* End of the mandatory fields.*/
 };
 
