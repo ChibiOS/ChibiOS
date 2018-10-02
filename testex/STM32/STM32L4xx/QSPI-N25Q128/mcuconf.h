@@ -324,4 +324,10 @@
  */
 #define STM32_WDG_USE_IWDG                  FALSE
 
+/*
+ * WSPI driver system settings.
+ */
+#define STM32_WSPI_USE_QUADSPI1             TRUE
+#define STM32_WSPI_QUADSPI1_DMA_STREAM      STM32_DMA_STREAM_ID(2, 7)
+
 #endif /* MCUCONF_H */
