@@ -58,12 +58,16 @@ typedef struct {
   uint8_t               *rdptr;         /**< @brief Read pointer.           */
   size_t                cnt;            /**< @brief Bytes in the pipe.      */
   bool                  reset;          /**< @brief True if in reset state. */
-  threads_queue_t       qw;             /**< @brief Queued writers.         */
-  threads_queue_t       qr;             /**< @brief Queued readers.         */
+  thread_reference_t    wtr;            /**< @brief Waiting writer.         */
+  thread_reference_t    rtr;            /**< @brief Waiting reader.         */
 #if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
-  mutex_t               mtx;        /**< @brief Heap access mutex.          */
+  mutex_t               cmtx;           /**< @brief Common access mutex.    */
+  mutex_t               wmtx;           /**< @brief Write access mutex.     */
+  mutex_t               rmtx;           /**< @brief Read access mutex.      */
 #else
-  semaphore_t           sem;        /**< @brief Heap access semaphore.      */
+  semaphore_t           csem;           /**< @brief Common access semaphore.*/
+  semaphore_t           wsem;           /**< @brief Write access semaphore. */
+  semaphore_t           rsem;           /**< @brief Read access semaphore.  */
 #endif
 } pipe_t;
 
@@ -88,9 +92,11 @@ typedef struct {
   (uint8_t *)(buffer),                                                      \
   (size_t)0,                                                                \
   false,                                                                    \
-  _THREADS_QUEUE_DATA(name.qw),                                             \
-  _THREADS_QUEUE_DATA(name.qr),                                             \
-  _MUTEX_DATA(name.mtx),                                                    \
+  NULL,                                                                     \
+  NULL,                                                                     \
+  _MUTEX_DATA(name.cmtx),                                                   \
+  _MUTEX_DATA(name.wmtx),                                                   \
+  _MUTEX_DATA(name.rmtx),                                                   \
 }
 #else /* CH_CFG_USE_MUTEXES == FALSE */
 #define _PIPE_DATA(name, buffer, size) {                                    \
@@ -100,9 +106,11 @@ typedef struct {
   (uint8_t *)(buffer),                                                      \
   (size_t)0,                                                                \
   false,                                                                    \
-  _THREADS_QUEUE_DATA(name.qw),                                             \
-  _THREADS_QUEUE_DATA(name.qr),                                             \
-  _SEMAPHORE_DATA(name.sem, (cnt_t)1),                                      \
+  NULL,                                                                     \
+  NULL,                                                                     \
+  _SEMAPHORE_DATA(name.csem, (cnt_t)1),                                     \
+  _SEMAPHORE_DATA(name.wsem, (cnt_t)1),                                     \
+  _SEMAPHORE_DATA(name.rsem, (cnt_t)1),                                     \
 }
 #endif /* CH_CFG_USE_MUTEXES == FALSE */
 
@@ -179,23 +187,6 @@ static inline size_t chPipeGetUsedCount(const pipe_t *pp) {
 static inline size_t chPipeGetFreeCount(const pipe_t *pp) {
 
   return chPipeGetSize(pp) - chPipeGetUsedCount(pp);
-}
-
-/**
- * @brief   Returns the next byte in the queue without removing it.
- * @pre     A byte must be present in the queue for this function to work
- *          or it would return garbage. The correct way to use this macro is
- *          to use @p chPipeGetFullCountI() and then use this macro, all within
- *          a lock state.
- *
- * @param[in] pp        the pointer to an initialized @p pipe_t object
- * @return              The next byte in queue.
- *
- * @api
- */
-static inline uint8_t chPipePeek(const pipe_t *pp) {
-
-  return *pp->rdptr;
 }
 
 /**

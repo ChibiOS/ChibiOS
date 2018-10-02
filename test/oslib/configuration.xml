@@ -479,17 +479,6 @@ static const uint8_t pipe_pattern[] = "0123456789ABCDEF";]]></value>
                 <steps>
                   <step>
                     <description>
-                      <value></value>
-                    </description>
-                    <tags>
-                      <value></value>
-                    </tags>
-                    <code>
-                      <value><![CDATA[]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
                       <value>Resetting pipe.</value>
                     </description>
                     <tags>
@@ -512,10 +501,10 @@ test_assert((pipe1.rdptr == pipe1.buffer) &&
                       <value></value>
                     </tags>
                     <code>
-                      <value><![CDATA[msg_t msg;
+                      <value><![CDATA[size_t n;
 
-msg = chPipeWriteTimeout(&pipe1, pipe_pattern, PIPE_SIZE, TIME_IMMEDIATE);
-test_assert(msg == MSG_RESET, "not reset");
+n = chPipeWriteTimeout(&pipe1, pipe_pattern, PIPE_SIZE, TIME_IMMEDIATE);
+test_assert(n == 0, "not reset");
 test_assert((pipe1.rdptr == pipe1.buffer) &&
             (pipe1.wrptr == pipe1.buffer) &&
             (pipe1.cnt == 0),
@@ -530,11 +519,11 @@ test_assert((pipe1.rdptr == pipe1.buffer) &&
                       <value></value>
                     </tags>
                     <code>
-                      <value><![CDATA[msg_t msg;
+                      <value><![CDATA[size_t n;
 uint8_t buf[PIPE_SIZE];
 
-msg = chPipeReadTimeout(&pipe1, buf, PIPE_SIZE, TIME_IMMEDIATE);
-test_assert(msg == MSG_RESET, "not reset");
+n = chPipeReadTimeout(&pipe1, buf, PIPE_SIZE, TIME_IMMEDIATE);
+test_assert(n == 0, "not reset");
 test_assert((pipe1.rdptr == pipe1.buffer) &&
             (pipe1.wrptr == pipe1.buffer) &&
             (pipe1.cnt == 0),
@@ -564,10 +553,10 @@ test_assert((pipe1.rdptr == pipe1.buffer) &&
                       <value></value>
                     </tags>
                     <code>
-                      <value><![CDATA[msg_t msg;
+                      <value><![CDATA[size_t n;
 
-msg = chPipeWriteTimeout(&pipe1, pipe_pattern, PIPE_SIZE, TIME_IMMEDIATE);
-test_assert(msg == PIPE_SIZE, "wrong size");
+n = chPipeWriteTimeout(&pipe1, pipe_pattern, PIPE_SIZE, TIME_IMMEDIATE);
+test_assert(n == PIPE_SIZE, "wrong size");
 test_assert((pipe1.rdptr == pipe1.buffer) &&
             (pipe1.wrptr == pipe1.buffer) &&
             (pipe1.cnt == PIPE_SIZE),
@@ -582,11 +571,11 @@ test_assert((pipe1.rdptr == pipe1.buffer) &&
                       <value></value>
                     </tags>
                     <code>
-                      <value><![CDATA[msg_t msg;
+                      <value><![CDATA[size_t n;
 uint8_t buf[PIPE_SIZE];
 
-msg = chPipeReadTimeout(&pipe1, buf, PIPE_SIZE, TIME_IMMEDIATE);
-test_assert(msg == PIPE_SIZE, "wrong size");
+n = chPipeReadTimeout(&pipe1, buf, PIPE_SIZE, TIME_IMMEDIATE);
+test_assert(n == PIPE_SIZE, "wrong size");
 test_assert((pipe1.rdptr == pipe1.buffer) &&
             (pipe1.wrptr == pipe1.buffer) &&
             (pipe1.cnt == 0),
@@ -602,10 +591,10 @@ test_assert(memcmp(pipe_pattern, buf, PIPE_SIZE) == 0, "content mismatch");]]></
                       <value></value>
                     </tags>
                     <code>
-                      <value><![CDATA[msg_t msg;
+                      <value><![CDATA[size_t n;
 
-msg = chPipeWriteTimeout(&pipe1, pipe_pattern, 4, TIME_IMMEDIATE);
-test_assert(msg == 4, "wrong size");
+n = chPipeWriteTimeout(&pipe1, pipe_pattern, 4, TIME_IMMEDIATE);
+test_assert(n == 4, "wrong size");
 test_assert((pipe1.rdptr != pipe1.wrptr) &&
             (pipe1.rdptr == pipe1.buffer) &&
             (pipe1.cnt == 4),
@@ -620,10 +609,10 @@ test_assert((pipe1.rdptr != pipe1.wrptr) &&
                       <value></value>
                     </tags>
                     <code>
-                      <value><![CDATA[msg_t msg;
+                      <value><![CDATA[size_t n;
 
-msg = chPipeWriteTimeout(&pipe1, pipe_pattern, PIPE_SIZE - 4, TIME_IMMEDIATE);
-test_assert(msg == PIPE_SIZE - 4, "wrong size");
+n = chPipeWriteTimeout(&pipe1, pipe_pattern, PIPE_SIZE - 4, TIME_IMMEDIATE);
+test_assert(n == PIPE_SIZE - 4, "wrong size");
 test_assert((pipe1.rdptr == pipe1.buffer) &&
             (pipe1.wrptr == pipe1.buffer) &&
             (pipe1.cnt == PIPE_SIZE),
@@ -638,11 +627,11 @@ test_assert((pipe1.rdptr == pipe1.buffer) &&
                       <value></value>
                     </tags>
                     <code>
-                      <value><![CDATA[msg_t msg;
+                      <value><![CDATA[size_t n;
 uint8_t buf[PIPE_SIZE];
 
-msg = chPipeReadTimeout(&pipe1, buf, 4, TIME_IMMEDIATE);
-test_assert(msg == 4, "wrong size");
+n = chPipeReadTimeout(&pipe1, buf, 4, TIME_IMMEDIATE);
+test_assert(n == 4, "wrong size");
 test_assert((pipe1.rdptr != pipe1.buffer) &&
             (pipe1.wrptr == pipe1.buffer) &&
             (pipe1.cnt == PIPE_SIZE - 4),
@@ -658,11 +647,11 @@ test_assert(memcmp(pipe_pattern, buf, 4) == 0, "content mismatch");]]></value>
                       <value></value>
                     </tags>
                     <code>
-                      <value><![CDATA[msg_t msg;
+                      <value><![CDATA[size_t n;
 uint8_t buf[PIPE_SIZE];
 
-msg = chPipeReadTimeout(&pipe1, buf, PIPE_SIZE - 4, TIME_IMMEDIATE);
-test_assert(msg == PIPE_SIZE - 4, "wrong size");
+n = chPipeReadTimeout(&pipe1, buf, PIPE_SIZE - 4, TIME_IMMEDIATE);
+test_assert(n == PIPE_SIZE - 4, "wrong size");
 test_assert((pipe1.rdptr == pipe1.buffer) &&
             (pipe1.wrptr == pipe1.buffer) &&
             (pipe1.cnt == 0),
@@ -678,10 +667,10 @@ test_assert(memcmp(pipe_pattern, buf, PIPE_SIZE - 4) == 0, "content mismatch");]
                       <value></value>
                     </tags>
                     <code>
-                      <value><![CDATA[msg_t msg;
+                      <value><![CDATA[size_t n;
 
-msg = chPipeWriteTimeout(&pipe1, pipe_pattern, 5, TIME_IMMEDIATE);
-test_assert(msg == 5, "wrong size");
+n = chPipeWriteTimeout(&pipe1, pipe_pattern, 5, TIME_IMMEDIATE);
+test_assert(n == 5, "wrong size");
 test_assert((pipe1.rdptr != pipe1.wrptr) &&
             (pipe1.rdptr == pipe1.buffer) &&
             (pipe1.cnt == 5),
@@ -696,11 +685,11 @@ test_assert((pipe1.rdptr != pipe1.wrptr) &&
                       <value></value>
                     </tags>
                     <code>
-                      <value><![CDATA[msg_t msg;
+                      <value><![CDATA[size_t n;
 uint8_t buf[PIPE_SIZE];
 
-msg = chPipeReadTimeout(&pipe1, buf, 5, TIME_IMMEDIATE);
-test_assert(msg == 5, "wrong size");
+n = chPipeReadTimeout(&pipe1, buf, 5, TIME_IMMEDIATE);
+test_assert(n == 5, "wrong size");
 test_assert((pipe1.rdptr == pipe1.wrptr) &&
             (pipe1.wrptr != pipe1.buffer) &&
             (pipe1.cnt == 0),
@@ -716,10 +705,10 @@ test_assert(memcmp(pipe_pattern, buf, 5) == 0, "content mismatch");]]></value>
                       <value></value>
                     </tags>
                     <code>
-                      <value><![CDATA[msg_t msg;
+                      <value><![CDATA[size_t n;
 
-msg = chPipeWriteTimeout(&pipe1, pipe_pattern, PIPE_SIZE, TIME_IMMEDIATE);
-test_assert(msg == PIPE_SIZE, "wrong size");
+n = chPipeWriteTimeout(&pipe1, pipe_pattern, PIPE_SIZE, TIME_IMMEDIATE);
+test_assert(n == PIPE_SIZE, "wrong size");
 test_assert((pipe1.rdptr == pipe1.wrptr) &&
             (pipe1.wrptr != pipe1.buffer) &&
             (pipe1.cnt == PIPE_SIZE),
@@ -734,11 +723,11 @@ test_assert((pipe1.rdptr == pipe1.wrptr) &&
                       <value></value>
                     </tags>
                     <code>
-                      <value><![CDATA[msg_t msg;
+                      <value><![CDATA[size_t n;
 uint8_t buf[PIPE_SIZE];
 
-msg = chPipeReadTimeout(&pipe1, buf, PIPE_SIZE, TIME_IMMEDIATE);
-test_assert(msg == PIPE_SIZE, "wrong size");
+n = chPipeReadTimeout(&pipe1, buf, PIPE_SIZE, TIME_IMMEDIATE);
+test_assert(n == PIPE_SIZE, "wrong size");
 test_assert((pipe1.rdptr == pipe1.wrptr) &&
             (pipe1.wrptr != pipe1.buffer) &&
             (pipe1.cnt == 0),
@@ -779,11 +768,11 @@ test_assert(memcmp(pipe_pattern, buf, PIPE_SIZE) == 0, "content mismatch");]]></
                       <value></value>
                     </tags>
                     <code>
-                      <value><![CDATA[msg_t msg;
+                      <value><![CDATA[size_t n;
 uint8_t buf[PIPE_SIZE];
 
-msg = chPipeReadTimeout(&pipe1, buf, PIPE_SIZE, TIME_IMMEDIATE);
-test_assert(msg == 0, "wrong size");
+n = chPipeReadTimeout(&pipe1, buf, PIPE_SIZE, TIME_IMMEDIATE);
+test_assert(n == 0, "wrong size");
 test_assert((pipe1.rdptr == pipe1.buffer) &&
             (pipe1.wrptr == pipe1.buffer) &&
             (pipe1.cnt == 0),
@@ -798,10 +787,10 @@ test_assert((pipe1.rdptr == pipe1.buffer) &&
                       <value></value>
                     </tags>
                     <code>
-                      <value><![CDATA[msg_t msg;
+                      <value><![CDATA[size_t n;
 
-msg = chPipeWriteTimeout(&pipe1, pipe_pattern, PIPE_SIZE, TIME_IMMEDIATE);
-test_assert(msg == PIPE_SIZE / 2, "wrong size");
+n = chPipeWriteTimeout(&pipe1, pipe_pattern, PIPE_SIZE, TIME_IMMEDIATE);
+test_assert(n == PIPE_SIZE / 2, "wrong size");
 test_assert((pipe1.rdptr == pipe1.wrptr) &&
             (pipe1.wrptr == pipe1.buffer) &&
             (pipe1.cnt == PIPE_SIZE / 2),

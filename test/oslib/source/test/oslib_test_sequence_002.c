@@ -68,21 +68,20 @@ static const uint8_t pipe_pattern[] = "0123456789ABCDEF";
  * conditions are tested.
  *
  * <h2>Test Steps</h2>
- * - [2.1.1].
- * - [2.1.2] Resetting pipe.
- * - [2.1.3] Writing data, must fail.
- * - [2.1.4] Reading data, must fail.
- * - [2.1.5] Reactivating pipe.
- * - [2.1.6] Filling whole pipe.
- * - [2.1.7] Emptying pipe.
- * - [2.1.8] Small write.
- * - [2.1.9] Filling remaining space.
- * - [2.1.10] Small Read.
- * - [2.1.11] Reading remaining data.
- * - [2.1.12] Small Write.
- * - [2.1.13] Small Read.
- * - [2.1.14] Write wrapping buffer boundary.
- * - [2.1.15] Read wrapping buffer boundary.
+ * - [2.1.1] Resetting pipe.
+ * - [2.1.2] Writing data, must fail.
+ * - [2.1.3] Reading data, must fail.
+ * - [2.1.4] Reactivating pipe.
+ * - [2.1.5] Filling whole pipe.
+ * - [2.1.6] Emptying pipe.
+ * - [2.1.7] Small write.
+ * - [2.1.8] Filling remaining space.
+ * - [2.1.9] Small Read.
+ * - [2.1.10] Reading remaining data.
+ * - [2.1.11] Small Write.
+ * - [2.1.12] Small Read.
+ * - [2.1.13] Write wrapping buffer boundary.
+ * - [2.1.14] Read wrapping buffer boundary.
  * .
  */
 
@@ -92,13 +91,8 @@ static void oslib_test_002_001_setup(void) {
 
 static void oslib_test_002_001_execute(void) {
 
-  /* [2.1.1].*/
+  /* [2.1.1] Resetting pipe.*/
   test_set_step(1);
-  {
-  }
-
-  /* [2.1.2] Resetting pipe.*/
-  test_set_step(2);
   {
     chPipeReset(&pipe1);
 
@@ -108,35 +102,35 @@ static void oslib_test_002_001_execute(void) {
                 "invalid pipe state");
   }
 
-  /* [2.1.3] Writing data, must fail.*/
+  /* [2.1.2] Writing data, must fail.*/
+  test_set_step(2);
+  {
+    size_t n;
+
+    n = chPipeWriteTimeout(&pipe1, pipe_pattern, PIPE_SIZE, TIME_IMMEDIATE);
+    test_assert(n == 0, "not reset");
+    test_assert((pipe1.rdptr == pipe1.buffer) &&
+                (pipe1.wrptr == pipe1.buffer) &&
+                (pipe1.cnt == 0),
+                "invalid pipe state");
+  }
+
+  /* [2.1.3] Reading data, must fail.*/
   test_set_step(3);
   {
-    msg_t msg;
-
-    msg = chPipeWriteTimeout(&pipe1, pipe_pattern, PIPE_SIZE, TIME_IMMEDIATE);
-    test_assert(msg == MSG_RESET, "not reset");
-    test_assert((pipe1.rdptr == pipe1.buffer) &&
-                (pipe1.wrptr == pipe1.buffer) &&
-                (pipe1.cnt == 0),
-                "invalid pipe state");
-  }
-
-  /* [2.1.4] Reading data, must fail.*/
-  test_set_step(4);
-  {
-    msg_t msg;
+    size_t n;
     uint8_t buf[PIPE_SIZE];
 
-    msg = chPipeReadTimeout(&pipe1, buf, PIPE_SIZE, TIME_IMMEDIATE);
-    test_assert(msg == MSG_RESET, "not reset");
+    n = chPipeReadTimeout(&pipe1, buf, PIPE_SIZE, TIME_IMMEDIATE);
+    test_assert(n == 0, "not reset");
     test_assert((pipe1.rdptr == pipe1.buffer) &&
                 (pipe1.wrptr == pipe1.buffer) &&
                 (pipe1.cnt == 0),
                 "invalid pipe state");
   }
 
-  /* [2.1.5] Reactivating pipe.*/
-  test_set_step(5);
+  /* [2.1.4] Reactivating pipe.*/
+  test_set_step(4);
   {
     chPipeResume(&pipe1);
     test_assert((pipe1.rdptr == pipe1.buffer) &&
@@ -145,27 +139,27 @@ static void oslib_test_002_001_execute(void) {
                 "invalid pipe state");
   }
 
-  /* [2.1.6] Filling whole pipe.*/
-  test_set_step(6);
+  /* [2.1.5] Filling whole pipe.*/
+  test_set_step(5);
   {
-    msg_t msg;
+    size_t n;
 
-    msg = chPipeWriteTimeout(&pipe1, pipe_pattern, PIPE_SIZE, TIME_IMMEDIATE);
-    test_assert(msg == PIPE_SIZE, "wrong size");
+    n = chPipeWriteTimeout(&pipe1, pipe_pattern, PIPE_SIZE, TIME_IMMEDIATE);
+    test_assert(n == PIPE_SIZE, "wrong size");
     test_assert((pipe1.rdptr == pipe1.buffer) &&
                 (pipe1.wrptr == pipe1.buffer) &&
                 (pipe1.cnt == PIPE_SIZE),
                 "invalid pipe state");
   }
 
-  /* [2.1.7] Emptying pipe.*/
-  test_set_step(7);
+  /* [2.1.6] Emptying pipe.*/
+  test_set_step(6);
   {
-    msg_t msg;
+    size_t n;
     uint8_t buf[PIPE_SIZE];
 
-    msg = chPipeReadTimeout(&pipe1, buf, PIPE_SIZE, TIME_IMMEDIATE);
-    test_assert(msg == PIPE_SIZE, "wrong size");
+    n = chPipeReadTimeout(&pipe1, buf, PIPE_SIZE, TIME_IMMEDIATE);
+    test_assert(n == PIPE_SIZE, "wrong size");
     test_assert((pipe1.rdptr == pipe1.buffer) &&
                 (pipe1.wrptr == pipe1.buffer) &&
                 (pipe1.cnt == 0),
@@ -173,40 +167,40 @@ static void oslib_test_002_001_execute(void) {
     test_assert(memcmp(pipe_pattern, buf, PIPE_SIZE) == 0, "content mismatch");
   }
 
-  /* [2.1.8] Small write.*/
-  test_set_step(8);
+  /* [2.1.7] Small write.*/
+  test_set_step(7);
   {
-    msg_t msg;
+    size_t n;
 
-    msg = chPipeWriteTimeout(&pipe1, pipe_pattern, 4, TIME_IMMEDIATE);
-    test_assert(msg == 4, "wrong size");
+    n = chPipeWriteTimeout(&pipe1, pipe_pattern, 4, TIME_IMMEDIATE);
+    test_assert(n == 4, "wrong size");
     test_assert((pipe1.rdptr != pipe1.wrptr) &&
                 (pipe1.rdptr == pipe1.buffer) &&
                 (pipe1.cnt == 4),
                 "invalid pipe state");
   }
 
-  /* [2.1.9] Filling remaining space.*/
-  test_set_step(9);
+  /* [2.1.8] Filling remaining space.*/
+  test_set_step(8);
   {
-    msg_t msg;
+    size_t n;
 
-    msg = chPipeWriteTimeout(&pipe1, pipe_pattern, PIPE_SIZE - 4, TIME_IMMEDIATE);
-    test_assert(msg == PIPE_SIZE - 4, "wrong size");
+    n = chPipeWriteTimeout(&pipe1, pipe_pattern, PIPE_SIZE - 4, TIME_IMMEDIATE);
+    test_assert(n == PIPE_SIZE - 4, "wrong size");
     test_assert((pipe1.rdptr == pipe1.buffer) &&
                 (pipe1.wrptr == pipe1.buffer) &&
                 (pipe1.cnt == PIPE_SIZE),
                 "invalid pipe state");
   }
 
-  /* [2.1.10] Small Read.*/
-  test_set_step(10);
+  /* [2.1.9] Small Read.*/
+  test_set_step(9);
   {
-    msg_t msg;
+    size_t n;
     uint8_t buf[PIPE_SIZE];
 
-    msg = chPipeReadTimeout(&pipe1, buf, 4, TIME_IMMEDIATE);
-    test_assert(msg == 4, "wrong size");
+    n = chPipeReadTimeout(&pipe1, buf, 4, TIME_IMMEDIATE);
+    test_assert(n == 4, "wrong size");
     test_assert((pipe1.rdptr != pipe1.buffer) &&
                 (pipe1.wrptr == pipe1.buffer) &&
                 (pipe1.cnt == PIPE_SIZE - 4),
@@ -214,14 +208,14 @@ static void oslib_test_002_001_execute(void) {
     test_assert(memcmp(pipe_pattern, buf, 4) == 0, "content mismatch");
   }
 
-  /* [2.1.11] Reading remaining data.*/
-  test_set_step(11);
+  /* [2.1.10] Reading remaining data.*/
+  test_set_step(10);
   {
-    msg_t msg;
+    size_t n;
     uint8_t buf[PIPE_SIZE];
 
-    msg = chPipeReadTimeout(&pipe1, buf, PIPE_SIZE - 4, TIME_IMMEDIATE);
-    test_assert(msg == PIPE_SIZE - 4, "wrong size");
+    n = chPipeReadTimeout(&pipe1, buf, PIPE_SIZE - 4, TIME_IMMEDIATE);
+    test_assert(n == PIPE_SIZE - 4, "wrong size");
     test_assert((pipe1.rdptr == pipe1.buffer) &&
                 (pipe1.wrptr == pipe1.buffer) &&
                 (pipe1.cnt == 0),
@@ -229,27 +223,27 @@ static void oslib_test_002_001_execute(void) {
     test_assert(memcmp(pipe_pattern, buf, PIPE_SIZE - 4) == 0, "content mismatch");
   }
 
-  /* [2.1.12] Small Write.*/
-  test_set_step(12);
+  /* [2.1.11] Small Write.*/
+  test_set_step(11);
   {
-    msg_t msg;
+    size_t n;
 
-    msg = chPipeWriteTimeout(&pipe1, pipe_pattern, 5, TIME_IMMEDIATE);
-    test_assert(msg == 5, "wrong size");
+    n = chPipeWriteTimeout(&pipe1, pipe_pattern, 5, TIME_IMMEDIATE);
+    test_assert(n == 5, "wrong size");
     test_assert((pipe1.rdptr != pipe1.wrptr) &&
                 (pipe1.rdptr == pipe1.buffer) &&
                 (pipe1.cnt == 5),
                 "invalid pipe state");
   }
 
-  /* [2.1.13] Small Read.*/
-  test_set_step(13);
+  /* [2.1.12] Small Read.*/
+  test_set_step(12);
   {
-    msg_t msg;
+    size_t n;
     uint8_t buf[PIPE_SIZE];
 
-    msg = chPipeReadTimeout(&pipe1, buf, 5, TIME_IMMEDIATE);
-    test_assert(msg == 5, "wrong size");
+    n = chPipeReadTimeout(&pipe1, buf, 5, TIME_IMMEDIATE);
+    test_assert(n == 5, "wrong size");
     test_assert((pipe1.rdptr == pipe1.wrptr) &&
                 (pipe1.wrptr != pipe1.buffer) &&
                 (pipe1.cnt == 0),
@@ -257,27 +251,27 @@ static void oslib_test_002_001_execute(void) {
     test_assert(memcmp(pipe_pattern, buf, 5) == 0, "content mismatch");
   }
 
-  /* [2.1.14] Write wrapping buffer boundary.*/
-  test_set_step(14);
+  /* [2.1.13] Write wrapping buffer boundary.*/
+  test_set_step(13);
   {
-    msg_t msg;
+    size_t n;
 
-    msg = chPipeWriteTimeout(&pipe1, pipe_pattern, PIPE_SIZE, TIME_IMMEDIATE);
-    test_assert(msg == PIPE_SIZE, "wrong size");
+    n = chPipeWriteTimeout(&pipe1, pipe_pattern, PIPE_SIZE, TIME_IMMEDIATE);
+    test_assert(n == PIPE_SIZE, "wrong size");
     test_assert((pipe1.rdptr == pipe1.wrptr) &&
                 (pipe1.wrptr != pipe1.buffer) &&
                 (pipe1.cnt == PIPE_SIZE),
                 "invalid pipe state");
   }
 
-  /* [2.1.15] Read wrapping buffer boundary.*/
-  test_set_step(15);
+  /* [2.1.14] Read wrapping buffer boundary.*/
+  test_set_step(14);
   {
-    msg_t msg;
+    size_t n;
     uint8_t buf[PIPE_SIZE];
 
-    msg = chPipeReadTimeout(&pipe1, buf, PIPE_SIZE, TIME_IMMEDIATE);
-    test_assert(msg == PIPE_SIZE, "wrong size");
+    n = chPipeReadTimeout(&pipe1, buf, PIPE_SIZE, TIME_IMMEDIATE);
+    test_assert(n == PIPE_SIZE, "wrong size");
     test_assert((pipe1.rdptr == pipe1.wrptr) &&
                 (pipe1.wrptr != pipe1.buffer) &&
                 (pipe1.cnt == 0),
@@ -314,11 +308,11 @@ static void oslib_test_002_002_execute(void) {
   /* [2.2.1] Reading while pipe is empty.*/
   test_set_step(1);
   {
-    msg_t msg;
+    size_t n;
     uint8_t buf[PIPE_SIZE];
 
-    msg = chPipeReadTimeout(&pipe1, buf, PIPE_SIZE, TIME_IMMEDIATE);
-    test_assert(msg == 0, "wrong size");
+    n = chPipeReadTimeout(&pipe1, buf, PIPE_SIZE, TIME_IMMEDIATE);
+    test_assert(n == 0, "wrong size");
     test_assert((pipe1.rdptr == pipe1.buffer) &&
                 (pipe1.wrptr == pipe1.buffer) &&
                 (pipe1.cnt == 0),
@@ -328,10 +322,10 @@ static void oslib_test_002_002_execute(void) {
   /* [2.2.2] Writing a string larger than pipe buffer.*/
   test_set_step(2);
   {
-    msg_t msg;
+    size_t n;
 
-    msg = chPipeWriteTimeout(&pipe1, pipe_pattern, PIPE_SIZE, TIME_IMMEDIATE);
-    test_assert(msg == PIPE_SIZE / 2, "wrong size");
+    n = chPipeWriteTimeout(&pipe1, pipe_pattern, PIPE_SIZE, TIME_IMMEDIATE);
+    test_assert(n == PIPE_SIZE / 2, "wrong size");
     test_assert((pipe1.rdptr == pipe1.wrptr) &&
                 (pipe1.wrptr == pipe1.buffer) &&
                 (pipe1.cnt == PIPE_SIZE / 2),
