@@ -45,8 +45,8 @@
  * @details This is the number of dummy cycles to be used for fast read
  *          operations.
  */
-#if !defined(M25Q_READ_DUMMY_CYCLES) || defined(__DOXYGEN__)
-#define M25Q_READ_DUMMY_CYCLES              8
+#if !defined(SNOR_READ_DUMMY_CYCLES) || defined(__DOXYGEN__)
+#define SNOR_READ_DUMMY_CYCLES              8
 #endif
 
 /**
@@ -57,8 +57,8 @@
  *          Register then this option is not required.
  * @note    This option is only valid in QSPI bus modes.
  */
-#if !defined(M25Q_SWITCH_WIDTH) || defined(__DOXYGEN__)
-#define M25Q_SWITCH_WIDTH                   TRUE
+#if !defined(SNOR_SWITCH_WIDTH) || defined(__DOXYGEN__)
+#define SNOR_SWITCH_WIDTH                   TRUE
 #endif
 
 /**
@@ -67,15 +67,15 @@
  *          routines releasing some extra CPU time for threads with lower
  *          priority, this may slow down the driver a bit however.
  */
-#if !defined(M25Q_NICE_WAITING) || defined(__DOXYGEN__)
-#define M25Q_NICE_WAITING                   TRUE
+#if !defined(SNOR_NICE_WAITING) || defined(__DOXYGEN__)
+#define SNOR_NICE_WAITING                   TRUE
 #endif
 
 /**
  * @brief   Uses 4kB sub-sectors rather than 64kB sectors.
  */
-#if !defined(M25Q_USE_SUB_SECTORS) || defined(__DOXYGEN__)
-#define M25Q_USE_SUB_SECTORS                FALSE
+#if !defined(SNOR_USE_SUB_SECTORS) || defined(__DOXYGEN__)
+#define SNOR_USE_SUB_SECTORS                FALSE
 #endif
 
 /**
@@ -85,8 +85,8 @@
  *          Larger buffers lead to better verify performance but increase
  *          stack usage for that function.
  */
-#if !defined(M25Q_COMPARE_BUFFER_SIZE) || defined(__DOXYGEN__)
-#define M25Q_COMPARE_BUFFER_SIZE            32
+#if !defined(SNOR_COMPARE_BUFFER_SIZE) || defined(__DOXYGEN__)
+#define SNOR_COMPARE_BUFFER_SIZE            32
 #endif
 /** @} */
 
@@ -94,12 +94,12 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if (M25Q_READ_DUMMY_CYCLES < 1) || (M25Q_READ_DUMMY_CYCLES > 15)
-#error "invalid M25Q_READ_DUMMY_CYCLES value (1..15)"
+#if (SNOR_READ_DUMMY_CYCLES < 1) || (SNOR_READ_DUMMY_CYCLES > 15)
+#error "invalid SNOR_READ_DUMMY_CYCLES value (1..15)"
 #endif
 
-#if (M25Q_COMPARE_BUFFER_SIZE & (M25Q_COMPARE_BUFFER_SIZE - 1)) != 0
-#error "invalid M25Q_COMPARE_BUFFER_SIZE value"
+#if (SNOR_COMPARE_BUFFER_SIZE & (SNOR_COMPARE_BUFFER_SIZE - 1)) != 0
+#error "invalid SNOR_COMPARE_BUFFER_SIZE value"
 #endif
 
 /*===========================================================================*/
@@ -111,43 +111,43 @@
  */
 typedef struct {
   _jesd216_config
-} M25QConfig;
+} SNORConfig;
 
 /**
- * @brief   @p M25Q specific methods.
+ * @brief   @p SNOR specific methods.
  */
-#define _m25q_methods                                                       \
+#define _snor_methods                                                       \
   _jesd216_flash_methods
 
 /**
  * @extends JESD216FlashVMT
  *
- * @brief   @p M25Q virtual methods table.
+ * @brief   @p SNOR virtual methods table.
  */
-struct M25QDriverVMT {
-  _m25q_methods
+struct SNORDriverVMT {
+  _snor_methods
 };
   
 /**
  * @extends JESD216Flash
  *
- * @brief   Type of M25Q flash class.
+ * @brief   Type of SNOR flash class.
  */
 typedef struct {
   /**
-   * @brief   M25QDriver Virtual Methods Table.
+   * @brief   SNORDriver Virtual Methods Table.
    */
-  const struct M25QDriverVMT    *vmt;
+  const struct SNORDriverVMT    *vmt;
   _jesd216_flash_data
   /**
    * @brief   Current configuration data.
    */
-  const M25QConfig              *config;
+  const SNORConfig              *config;
   /**
    * @brief   Device ID and unique ID.
    */
   uint8_t                       device_id[20];
-} M25QDriver;
+} SNORDriver;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -160,13 +160,13 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void m25qObjectInit(M25QDriver *devp);
-  void m25qStart(M25QDriver *devp, const M25QConfig *config);
-  void m25qStop(M25QDriver *devp);
+  void m25qObjectInit(SNORDriver *devp);
+  void m25qStart(SNORDriver *devp, const SNORConfig *config);
+  void m25qStop(SNORDriver *devp);
 #if (JESD216_BUS_MODE != JESD216_BUS_MODE_SPI) || defined(__DOXYGEN__)
-#if (QSPI_SUPPORTS_MEMMAP == TRUE) || defined(__DOXYGEN__)
-  void m25qMemoryMap(M25QDriver *devp, uint8_t ** addrp);
-  void m25qMemoryUnmap(M25QDriver *devp);
+#if (WSPI_SUPPORTS_MEMMAP == TRUE) || defined(__DOXYGEN__)
+  void m25qMemoryMap(SNORDriver *devp, uint8_t ** addrp);
+  void m25qMemoryUnmap(SNORDriver *devp);
 #endif /* QSPI_SUPPORTS_MEMMAP == TRUE */
 #endif /* JESD216_BUS_MODE != JESD216_BUS_MODE_SPI */
 #ifdef __cplusplus
@@ -174,7 +174,7 @@ extern "C" {
 #endif
 
 /* Device-specific implementations.*/
-#include "m25q_flash.h"
+#include "flash_device.h"
 
 #endif /* M25Q_H */
 

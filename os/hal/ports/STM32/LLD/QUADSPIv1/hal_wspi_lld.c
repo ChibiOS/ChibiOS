@@ -129,7 +129,7 @@ void wspi_lld_init(void) {
 
 #if STM32_WSPI_USE_QUADSPI1
   wspiObjectInit(&WSPID1);
-  WSPID1.wspi       = QUADSPI;
+  WSPID1.qspi       = QUADSPI;
   WSPID1.dma        = STM32_DMA_STREAM(STM32_WSPI_QUADSPI1_DMA_STREAM);
   WSPID1.dmamode    = STM32_DMA_CR_CHSEL(QUADSPI1_DMA_CHANNEL) |
                       STM32_DMA_CR_PL(STM32_WSPI_QUADSPI1_DMA_PRIORITY) |
@@ -165,14 +165,14 @@ void wspi_lld_start(WSPIDriver *wspip) {
 #endif
 
     /* Common initializations.*/
-    dmaStreamSetPeripheral(wspip->dma, &wspip->wspi->DR);
+    dmaStreamSetPeripheral(wspip->dma, &wspip->qspi->DR);
   }
 
   /* WSPI setup and enable.*/
-  wspip->wspi->DCR = wspip->config->dcr;
-  wspip->wspi->CR  = ((STM32_WSPI_QUADSPI1_PRESCALER_VALUE - 1U) << 24U) |
+  wspip->qspi->DCR = wspip->config->dcr;
+  wspip->qspi->CR  = ((STM32_WSPI_QUADSPI1_PRESCALER_VALUE - 1U) << 24U) |
                       QUADSPI_CR_TCIE | QUADSPI_CR_DMAEN | QUADSPI_CR_EN;
-  wspip->wspi->FCR = QUADSPI_FCR_CTEF | QUADSPI_FCR_CTCF |
+  wspip->qspi->FCR = QUADSPI_FCR_CTEF | QUADSPI_FCR_CTCF |
                      QUADSPI_FCR_CSMF | QUADSPI_FCR_CTOF;
 }
 
@@ -189,7 +189,7 @@ void wspi_lld_stop(WSPIDriver *wspip) {
   if (wspip->state == WSPI_READY) {
 
     /* WSPI disable.*/
-    wspip->wspi->CR = 0U;
+    wspip->qspi->CR = 0U;
 
     /* Releasing the DMA.*/
     dmaStreamRelease(wspip->dma);
@@ -218,23 +218,19 @@ void wspi_lld_command(WSPIDriver *wspip, const wspi_command_t *cmdp) {
   /* If it is a command without address and alternate phases then the command
      is sent as an alternate byte, the command phase is suppressed.*/
   if ((cmdp->cfg & (WSPI_CFG_ADDR_MODE_MASK | WSPI_CFG_ALT_MODE_MASK)) == 0U) {
-    uint32_t cfg;
-
     /* The command mode field is copied in the alternate mode field. All
        other fields are not used in this scenario.*/
-    cfg = (cmdp->cfg  & WSPI_CFG_CMD_MODE_MASK) << 6U;
-
-    wspip->wspi->DLR = 0U;
-    wspip->wspi->ABR = cmdp->cfg & WSPI_CFG_CMD_MASK;
-    wspip->wspi->CCR = cfg;
+    wspip->qspi->DLR = 0U;
+    wspip->qspi->ABR = cmdp->cmd;
+    wspip->qspi->CCR = (cmdp->cfg  & WSPI_CFG_CMD_MODE_MASK) << 6U;
     return;
   }
 #endif
-  wspip->wspi->DLR = 0U;
-  wspip->wspi->ABR = cmdp->alt;
-  wspip->wspi->CCR = cmdp->cfg;
+  wspip->qspi->DLR = 0U;
+  wspip->qspi->ABR = cmdp->alt;
+  wspip->qspi->CCR = cmdp->cmd | cmdp->cfg;
   if ((cmdp->cfg & WSPI_CFG_ADDR_MODE_MASK) != WSPI_CFG_ADDR_MODE_NONE) {
-    wspip->wspi->AR  = cmdp->addr;
+    wspip->qspi->AR  = cmdp->addr;
   }
 }
 
@@ -256,11 +252,11 @@ void wspi_lld_send(WSPIDriver *wspip, const wspi_command_t *cmdp,
   dmaStreamSetTransactionSize(wspip->dma, n);
   dmaStreamSetMode(wspip->dma, wspip->dmamode | STM32_DMA_CR_DIR_M2P);
 
-  wspip->wspi->DLR = n - 1;
-  wspip->wspi->ABR = cmdp->alt;
-  wspip->wspi->CCR = cmdp->cfg;
+  wspip->qspi->DLR = n - 1;
+  wspip->qspi->ABR = cmdp->alt;
+  wspip->qspi->CCR = cmdp->cmd | cmdp->cfg;
   if ((cmdp->cfg & WSPI_CFG_ADDR_MODE_MASK) != WSPI_CFG_ADDR_MODE_NONE) {
-    wspip->wspi->AR  = cmdp->addr;
+    wspip->qspi->AR  = cmdp->addr;
   }
 
   dmaStreamEnable(wspip->dma);
@@ -284,11 +280,13 @@ void wspi_lld_receive(WSPIDriver *wspip, const wspi_command_t *cmdp,
   dmaStreamSetTransactionSize(wspip->dma, n);
   dmaStreamSetMode(wspip->dma, wspip->dmamode | STM32_DMA_CR_DIR_P2M);
 
-  wspip->wspi->DLR = n - 1;
-  wspip->wspi->ABR = cmdp->alt;
-  wspip->wspi->CCR = cmdp->cfg | QUADSPI_CCR_FMODE_0;
+  wspip->qspi->DLR = n - 1;
+  wspip->qspi->ABR = cmdp->alt;
+  wspip->qspi->CCR = cmdp->cmd | cmdp->cfg |
+                     QUADSPI_CCR_DUMMY_CYCLES(cmdp->dummy) |
+                     QUADSPI_CCR_FMODE_0;
   if ((cmdp->cfg & WSPI_CFG_ADDR_MODE_MASK) != WSPI_CFG_ADDR_MODE_NONE) {
-    wspip->wspi->AR  = cmdp->addr;
+    wspip->qspi->AR  = cmdp->addr;
   }
 
   dmaStreamEnable(wspip->dma);
@@ -312,13 +310,14 @@ void wspi_lld_map_flash(WSPIDriver *wspip,
                         uint8_t **addrp) {
 
   /* Disabling the DMA request while in memory mapped mode.*/
-  wspip->wspi->CR &= ~QUADSPI_CR_DMAEN;
+  wspip->qspi->CR &= ~QUADSPI_CR_DMAEN;
 
   /* Starting memory mapped mode using the passed parameters.*/
-  wspip->wspi->DLR = 0;
-  wspip->wspi->ABR = 0;
-  wspip->wspi->AR  = 0;
-  wspip->wspi->CCR = cmdp->cfg | QUADSPI_CCR_FMODE_1 | QUADSPI_CCR_FMODE_0;
+  wspip->qspi->DLR = 0;
+  wspip->qspi->ABR = 0;
+  wspip->qspi->AR  = 0;
+  wspip->qspi->CCR = cmdp->cmd | cmdp->cfg |
+                     QUADSPI_CCR_FMODE_1 | QUADSPI_CCR_FMODE_0;
 
   /* Mapped flash absolute base address.*/
   if (addrp != NULL) {
@@ -338,12 +337,12 @@ void wspi_lld_map_flash(WSPIDriver *wspip,
 void wspi_lld_unmap_flash(WSPIDriver *wspip) {
 
   /* Aborting memory mapped mode.*/
-  wspip->wspi->CR |= QUADSPI_CR_ABORT;
-  while ((wspip->wspi->CR & QUADSPI_CR_ABORT) != 0U) {
+  wspip->qspi->CR |= QUADSPI_CR_ABORT;
+  while ((wspip->qspi->CR & QUADSPI_CR_ABORT) != 0U) {
   }
 
   /* Re-enabling DMA request, we are going back to indirect mode.*/
-  wspip->wspi->CR |= QUADSPI_CR_DMAEN;
+  wspip->qspi->CR |= QUADSPI_CR_DMAEN;
 }
 #endif /* WSPI_SUPPORTS_MEMMAP == TRUE */
 

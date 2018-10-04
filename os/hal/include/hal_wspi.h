@@ -143,20 +143,20 @@ typedef struct {
  *          ensured.
  * @{
  */
-#define WSPI_CFG_INSTRUCTION_MODE_MASK          (7LU << 0LU)
-#define WSPI_CFG_INSTRUCTION_MODE_NONE          (0LU << 0LU)
-#define WSPI_CFG_INSTRUCTION_MODE_ONE_LINES     (1LU << 0LU)
-#define WSPI_CFG_INSTRUCTION_MODE_TWO_LINES     (2LU << 0LU)
-#define WSPI_CFG_INSTRUCTION_MODE_FOUR_LINES    (3LU << 0LU)
-#define WSPI_CFG_INSTRUCTION_MODE_EIGHT_LINES   (4LU << 0LU)
+#define WSPI_CFG_CMD_MODE_MASK                  (7LU << 0LU)
+#define WSPI_CFG_CMD_MODE_NONE                  (0LU << 0LU)
+#define WSPI_CFG_CMD_MODE_ONE_LINE              (1LU << 0LU)
+#define WSPI_CFG_CMD_MODE_TWO_LINES             (2LU << 0LU)
+#define WSPI_CFG_CMD_MODE_FOUR_LINES            (3LU << 0LU)
+#define WSPI_CFG_CMD_MODE_EIGHT_LINES           (4LU << 0LU)
 
-#define WSPI_CFG_INSTRUCTION_DDR                (1LU << 3LU)
+#define WSPI_CFG_CMD_DDR                        (1LU << 3LU)
 
-#define WSPI_CFG_INSTRUCTION_SIZE_MASK          (3LU << 4LU)
-#define WSPI_CFG_INSTRUCTION_SIZE_8             (0LU << 4LU)
-#define WSPI_CFG_INSTRUCTION_SIZE_16            (1LU << 4LU)
-#define WSPI_CFG_INSTRUCTION_SIZE_24            (2LU << 4LU)
-#define WSPI_CFG_INSTRUCTION_SIZE_32            (3LU << 4LU)
+#define WSPI_CFG_CMD_SIZE_MASK                  (3LU << 4LU)
+#define WSPI_CFG_CMD_SIZE_8                     (0LU << 4LU)
+#define WSPI_CFG_CMD_SIZE_16                    (1LU << 4LU)
+#define WSPI_CFG_CMD_SIZE_24                    (2LU << 4LU)
+#define WSPI_CFG_CMD_SIZE_32                    (3LU << 4LU)
 
 #define WSPI_CFG_ADDR_MODE_MASK                 (7LU << 8LU)
 #define WSPI_CFG_ADDR_MODE_NONE                 (0LU << 8LU)
