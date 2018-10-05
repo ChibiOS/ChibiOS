@@ -139,7 +139,6 @@
  * @brief   Number of dummy cycles for fast read (1..15).
  * @details This is the number of dummy cycles to be used for fast read
  *          operations.
- * TODO: Should be handled in LLD.
  */
 #if !defined(N25Q_READ_DUMMY_CYCLES) || defined(__DOXYGEN__)
 #define N25Q_READ_DUMMY_CYCLES              8
@@ -173,25 +172,27 @@
 extern flash_descriptor_t snor_descriptor;
 #endif
 
+#if (SNOR_BUS_MODE != SNOR_BUS_MODE_SPI) && (WSPI_SUPPORTS_MEMMAP == TRUE)
 extern const wspi_command_t snor_memmap_read;
+#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-void snor_device_init(SNORDriver *devp);
-const flash_descriptor_t *snor_get_descriptor(void *instance);
-flash_error_t snor_device_read(SNORDriver *devp, flash_offset_t offset,
-                               size_t n, uint8_t *rp);
-flash_error_t snor_device_program(SNORDriver *devp, flash_offset_t offset,
-                                  size_t n, const uint8_t *pp);
-flash_error_t snor_device_start_erase_all(SNORDriver *devp);
-flash_error_t snor_device_start_erase_sector(SNORDriver *devp,
-                                             flash_sector_t sector);
-flash_error_t snor_device_verify_erase(SNORDriver *devp,
-                                       flash_sector_t sector);
-flash_error_t snor_device_query_erase(SNORDriver *devp, uint32_t *msec);
-flash_error_t snor_device_read_sfdp(SNORDriver *devp, flash_offset_t offset,
-                                    size_t n, uint8_t *rp);
+  void snor_device_init(SNORDriver *devp);
+  const flash_descriptor_t *snor_get_descriptor(void *instance);
+  flash_error_t snor_device_read(SNORDriver *devp, flash_offset_t offset,
+                                 size_t n, uint8_t *rp);
+  flash_error_t snor_device_program(SNORDriver *devp, flash_offset_t offset,
+                                    size_t n, const uint8_t *pp);
+  flash_error_t snor_device_start_erase_all(SNORDriver *devp);
+  flash_error_t snor_device_start_erase_sector(SNORDriver *devp,
+                                               flash_sector_t sector);
+  flash_error_t snor_device_verify_erase(SNORDriver *devp,
+                                         flash_sector_t sector);
+  flash_error_t snor_device_query_erase(SNORDriver *devp, uint32_t *msec);
+  flash_error_t snor_device_read_sfdp(SNORDriver *devp, flash_offset_t offset,
+                                      size_t n, uint8_t *rp);
 #if SNOR_BUS_MODE != SNOR_BUS_MODE_SPI
   void snor_activate_xip(SNORDriver *devp);
   void snor_reset_xip(SNORDriver *devp);
