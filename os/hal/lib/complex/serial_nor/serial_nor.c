@@ -296,7 +296,7 @@ static flash_error_t snor_read_sfdp(void *instance, flash_offset_t offset,
  *
  * @init
  */
-void m25qObjectInit(SNORDriver *devp) {
+void snorObjectInit(SNORDriver *devp) {
 
   osalDbgCheck(devp != NULL);
 
@@ -313,7 +313,7 @@ void m25qObjectInit(SNORDriver *devp) {
  *
  * @api
  */
-void m25qStart(SNORDriver *devp, const SNORConfig *config) {
+void snorStart(SNORDriver *devp, const SNORConfig *config) {
 
   osalDbgCheck((devp != NULL) && (config != NULL));
   osalDbgAssert(devp->state != FLASH_UNINIT, "invalid state");
@@ -343,7 +343,7 @@ void m25qStart(SNORDriver *devp, const SNORConfig *config) {
  *
  * @api
  */
-void m25qStop(SNORDriver *devp) {
+void snorStop(SNORDriver *devp) {
 
   osalDbgCheck(devp != NULL);
   osalDbgAssert(devp->state != FLASH_UNINIT, "invalid state");
@@ -381,7 +381,7 @@ void m25qStop(SNORDriver *devp) {
  *
  * @api
  */
-void m25qMemoryMap(SNORDriver *devp, uint8_t **addrp) {
+void snorMemoryMap(SNORDriver *devp, uint8_t **addrp) {
   wspi_command_t cmd;
 
   /* Bus acquisition.*/
@@ -426,7 +426,7 @@ void m25qMemoryMap(SNORDriver *devp, uint8_t **addrp) {
  *
  * @api
  */
-void m25qMemoryUnmap(SNORDriver *devp) {
+void snorMemoryUnmap(SNORDriver *devp) {
 
   /* Bus acquisition.*/
   jesd216_bus_acquire(devp->config->busp, devp->config->buscfg);

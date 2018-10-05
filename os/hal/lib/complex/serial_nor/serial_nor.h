@@ -160,13 +160,13 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void m25qObjectInit(SNORDriver *devp);
-  void m25qStart(SNORDriver *devp, const SNORConfig *config);
-  void m25qStop(SNORDriver *devp);
+  void snorObjectInit(SNORDriver *devp);
+  void snorStart(SNORDriver *devp, const SNORConfig *config);
+  void snorStop(SNORDriver *devp);
 #if (JESD216_BUS_MODE != JESD216_BUS_MODE_SPI) || defined(__DOXYGEN__)
 #if (WSPI_SUPPORTS_MEMMAP == TRUE) || defined(__DOXYGEN__)
-  void m25qMemoryMap(SNORDriver *devp, uint8_t ** addrp);
-  void m25qMemoryUnmap(SNORDriver *devp);
+  void snorMemoryMap(SNORDriver *devp, uint8_t ** addrp);
+  void snorMemoryUnmap(SNORDriver *devp);
 #endif /* QSPI_SUPPORTS_MEMMAP == TRUE */
 #endif /* JESD216_BUS_MODE != JESD216_BUS_MODE_SPI */
 #ifdef __cplusplus

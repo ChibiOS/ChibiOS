@@ -54,9 +54,9 @@ const uint8_t pattern[128] = {
   16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31
 };
 
-SNORDriver m25q;
+SNORDriver snor1;
 
-const SNORConfig m25qcfg1 = {
+const SNORConfig snorcfg1 = {
   &WSPID1,
   &wspicfg1
 };
@@ -107,56 +107,56 @@ int main(void) {
   /*
    * Initializing and starting SNOR driver.
    */
-  m25qObjectInit(&m25q);
-  m25qStart(&m25q, &m25qcfg1);
+  snorObjectInit(&snor1);
+  snorStart(&snor1, &snorcfg1);
 
   /* Reading.*/
-  err = flashRead(&m25q, 0, 128, buffer);
+  err = flashRead(&snor1, 0, 128, buffer);
   if (err != FLASH_NO_ERROR)
     chSysHalt("read error");
 
   /* Erasing the first sector and waiting for completion.*/
-  (void) flashStartEraseSector(&m25q, 0);
-  err = flashWaitErase((BaseFlash *)&m25q);
+  (void) flashStartEraseSector(&snor1, 0);
+  err = flashWaitErase((BaseFlash *)&snor1);
   if (err != FLASH_NO_ERROR)
     chSysHalt("erase error");
 
   /* Verifying the erase operation.*/
-  err = flashVerifyErase(&m25q, 0);
+  err = flashVerifyErase(&snor1, 0);
   if (err != FLASH_NO_ERROR)
     chSysHalt("verify erase error");
 
   /* Programming a pattern.*/
-  err = flashProgram(&m25q, 0, 128, pattern);
+  err = flashProgram(&snor1, 0, 128, pattern);
   if (err != FLASH_NO_ERROR)
     chSysHalt("program error");
 
   /* Verifying the erase operation.*/
-  err = flashVerifyErase(&m25q, 0);
+  err = flashVerifyErase(&snor1, 0);
   if (err != FLASH_ERROR_VERIFY)
     chSysHalt("verify non-erase error");
 
   /* Memory mapping the device.*/
-  m25qMemoryMap(&m25q, &addr);
+  snorMemoryMap(&snor1, &addr);
 
   /* Unmapping the device.*/
-  m25qMemoryUnmap(&m25q);
+  snorMemoryUnmap(&snor1);
 
   /* Reading it back.*/
   memset(buffer, 0, 128);
-  err = flashRead(&m25q, 16, 128, buffer);
+  err = flashRead(&snor1, 16, 128, buffer);
   if (err != FLASH_NO_ERROR)
     chSysHalt("read error");
 
   /* Reading it back.*/
   memset(buffer, 0, 128);
-  err = flashRead(&m25q, 0, 128, buffer);
+  err = flashRead(&snor1, 0, 128, buffer);
   if (err != FLASH_NO_ERROR)
     chSysHalt("read error");
 
   /* Erasing again.*/
-  (void) flashStartEraseSector(&m25q, 0);
-  err = flashWaitErase((BaseFlash *)&m25q);
+  (void) flashStartEraseSector(&snor1, 0);
+  err = flashWaitErase((BaseFlash *)&snor1);
   if (err != FLASH_NO_ERROR)
     chSysHalt("erase error");
 
