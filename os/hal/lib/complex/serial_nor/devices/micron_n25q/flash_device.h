@@ -95,9 +95,67 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Switch QSPI bus width on initialization.
+ * @details A bus width initialization is performed by writing the
+ *          Enhanced Volatile Configuration Register. If the flash
+ *          device is configured using the Non Volatile Configuration
+ *          Register then this option is not required.
+ * @note    This option is only valid in QSPI bus modes.
+ */
+#if !defined(N25Q_SWITCH_WIDTH) || defined(__DOXYGEN__)
+#define N25Q_SWITCH_WIDTH                   TRUE
+#endif
+
+/**
+ * @brief   Delays insertions.
+ * @details If enabled this options inserts delays into the flash waiting
+ *          routines releasing some extra CPU time for threads with lower
+ *          priority, this may slow down the driver a bit however.
+ */
+#if !defined(N25Q_NICE_WAITING) || defined(__DOXYGEN__)
+#define N25Q_NICE_WAITING                   TRUE
+#endif
+
+/**
+ * @brief   Uses 4kB sub-sectors rather than 64kB sectors.
+ */
+#if !defined(N25Q_USE_SUB_SECTORS) || defined(__DOXYGEN__)
+#define N25Q_USE_SUB_SECTORS                FALSE
+#endif
+
+/**
+ * @brief   Size of the compare buffer.
+ * @details This buffer is allocated in the stack frame of the function
+ *          @p flashVerifyErase() and its size must be a power of two.
+ *          Larger buffers lead to better verify performance but increase
+ *          stack usage for that function.
+ */
+#if !defined(N25Q_COMPARE_BUFFER_SIZE) || defined(__DOXYGEN__)
+#define N25Q_COMPARE_BUFFER_SIZE            32
+#endif
+
+/**
+ * @brief   Number of dummy cycles for fast read (1..15).
+ * @details This is the number of dummy cycles to be used for fast read
+ *          operations.
+ * TODO: Should be handled in LLD.
+ */
+#if !defined(N25Q_READ_DUMMY_CYCLES) || defined(__DOXYGEN__)
+#define N25Q_READ_DUMMY_CYCLES              8
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+#if (N25Q_COMPARE_BUFFER_SIZE & (N25Q_COMPARE_BUFFER_SIZE - 1)) != 0
+#error "invalid N25Q_COMPARE_BUFFER_SIZE value"
+#endif
+
+#if (N25Q_READ_DUMMY_CYCLES < 1) || (N25Q_READ_DUMMY_CYCLES > 15)
+#error "invalid N25Q_READ_DUMMY_CYCLES value (1..15)"
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -114,6 +172,8 @@
 #if !defined(__DOXYGEN__)
 extern flash_descriptor_t snor_descriptor;
 #endif
+
+extern const wspi_command_t snor_memmap_read;
 
 #ifdef __cplusplus
 extern "C" {

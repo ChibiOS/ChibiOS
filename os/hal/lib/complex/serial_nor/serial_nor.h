@@ -71,60 +71,6 @@
 #if !defined(SNOR_SHARED_BUS) || defined(__DOXYGEN__)
 #define SNOR_SHARED_BUS                     TRUE
 #endif
-
-/**
- * @brief   Number of dummy cycles for fast read (1..15).
- * @details This is the number of dummy cycles to be used for fast read
- *          operations.
- * TODO: Should be handled in LLD.
- */
-#if !defined(SNOR_READ_DUMMY_CYCLES) || defined(__DOXYGEN__)
-#define SNOR_READ_DUMMY_CYCLES              8
-#endif
-
-/**
- * @brief   Switch QSPI bus width on initialization.
- * @details A bus width initialization is performed by writing the
- *          Enhanced Volatile Configuration Register. If the flash
- *          device is configured using the Non Volatile Configuration
- *          Register then this option is not required.
- * @note    This option is only valid in QSPI bus modes.
- * TODO: Should go in LLD.
- */
-#if !defined(SNOR_SWITCH_WIDTH) || defined(__DOXYGEN__)
-#define SNOR_SWITCH_WIDTH                   TRUE
-#endif
-
-/**
- * @brief   Delays insertions.
- * @details If enabled this options inserts delays into the flash waiting
- *          routines releasing some extra CPU time for threads with lower
- *          priority, this may slow down the driver a bit however.
- * TODO: Should go in LLD.
- */
-#if !defined(SNOR_NICE_WAITING) || defined(__DOXYGEN__)
-#define SNOR_NICE_WAITING                   TRUE
-#endif
-
-/**
- * @brief   Uses 4kB sub-sectors rather than 64kB sectors.
- * TODO: Should go in LLD.
- */
-#if !defined(SNOR_USE_SUB_SECTORS) || defined(__DOXYGEN__)
-#define SNOR_USE_SUB_SECTORS                FALSE
-#endif
-
-/**
- * @brief   Size of the compare buffer.
- * @details This buffer is allocated in the stack frame of the function
- *          @p flashVerifyErase() and its size must be a power of two.
- *          Larger buffers lead to better verify performance but increase
- *          stack usage for that function.
- * TODO: Should go in LLD.
- */
-#if !defined(SNOR_COMPARE_BUFFER_SIZE) || defined(__DOXYGEN__)
-#define SNOR_COMPARE_BUFFER_SIZE            32
-#endif
 /** @} */
 
 /*===========================================================================*/
@@ -137,14 +83,6 @@
 #else
 #define BUSConfig SPIConfig
 #define BUSDriver SPIDriver
-#endif
-
-#if (SNOR_READ_DUMMY_CYCLES < 1) || (SNOR_READ_DUMMY_CYCLES > 15)
-#error "invalid SNOR_READ_DUMMY_CYCLES value (1..15)"
-#endif
-
-#if (SNOR_COMPARE_BUFFER_SIZE & (SNOR_COMPARE_BUFFER_SIZE - 1)) != 0
-#error "invalid SNOR_COMPARE_BUFFER_SIZE value"
 #endif
 
 /*===========================================================================*/

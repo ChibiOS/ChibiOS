@@ -751,7 +751,7 @@ void snorObjectInit(SNORDriver *devp) {
 }
 
 /**
- * @brief   Configures and activates N25Q128 driver.
+ * @brief   Configures and activates SNOR driver.
  *
  * @param[in] devp      pointer to the @p SNORDriver object
  * @param[in] config    pointer to the configuration
@@ -782,7 +782,7 @@ void snorStart(SNORDriver *devp, const SNORConfig *config) {
 } 
 
 /**
- * @brief   Deactivates the N25Q128 driver.
+ * @brief   Deactivates the SNOR driver.
  *
  * @param[in] devp      pointer to the @p SNORDriver object
  *
@@ -801,14 +801,14 @@ void snorStop(SNORDriver *devp) {
     /* Stopping bus device.*/
     bus_stop(devp->config->busp);
 
-    /* Deleting current configuration.*/
-    devp->config = NULL;
-
     /* Driver stopped.*/
     devp->state = FLASH_STOP;
 
     /* Bus release.*/
     bus_release(devp->config->busp);
+
+    /* Deleting current configuration.*/
+    devp->config = NULL;
   }
 }
 
@@ -827,7 +827,6 @@ void snorStop(SNORDriver *devp) {
  * @api
  */
 void snorMemoryMap(SNORDriver *devp, uint8_t **addrp) {
-  wspi_command_t cmd;
 
   /* Bus acquisition.*/
   bus_acquire(devp->config->busp, devp->config->buscfg);
@@ -835,30 +834,8 @@ void snorMemoryMap(SNORDriver *devp, uint8_t **addrp) {
   /* Activating XIP mode in the device.*/
   snor_activate_xip(devp);
 
-  /* Putting the WSPI driver in memory mapped mode.
-     TODO: Put this in the device code.*/
-  cmd.cmd   = N25Q_CMD_FAST_READ;
-  cmd.dummy = SNOR_READ_DUMMY_CYCLES - 2;
-  cmd.cfg   = WSPI_CFG_ADDR_SIZE_24 |
-#if SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI1L
-              WSPI_CFG_CMD_MODE_ONE_LINE |
-              WSPI_CFG_ADDR_MODE_ONE_LINE |
-              WSPI_CFG_DATA_MODE_ONE_LINE |
-#elif SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI2L
-              WSPI_CFG_CMD_MODE_TWO_LINES |
-              WSPI_CFG_ADDR_MODE_TWO_LINES |
-              WSPI_CFG_DATA_MODE_TWO_LINES |
-#else
-              WSPI_CFG_CMD_MODE_FOUR_LINES |
-              WSPI_CFG_ADDR_MODE_FOUR_LINES |
-              WSPI_CFG_DATA_MODE_FOUR_LINES |
-#endif
-              WSPI_CFG_ALT_MODE_FOUR_LINES |  /* Always 4 lines, note.*/
-              WSPI_CFG_ALT_SIZE_8 |
-              WSPI_CFG_SIOO;
-
   /* Starting WSPI memory mapped mode.*/
-  wspiMapFlash(devp->config->busp, &cmd, addrp);
+  wspiMapFlash(devp->config->busp, &snor_memmap_read, addrp);
 
   /* Bus release.*/
   bus_release(devp->config->busp);

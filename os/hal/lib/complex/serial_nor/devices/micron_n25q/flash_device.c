@@ -35,7 +35,7 @@
 #define PAGE_SIZE                           256U
 #define PAGE_MASK                           (PAGE_SIZE - 1U)
 
-#if SNOR_USE_SUB_SECTORS == TRUE
+#if N25Q_USE_SUB_SECTORS == TRUE
 #define SECTOR_SIZE                         0x00001000U
 #define CMD_SECTOR_ERASE                    N25Q_CMD_SUBSECTOR_ERASE
 #else
@@ -60,6 +60,36 @@ flash_descriptor_t snor_descriptor = {
   .address          = 0U
 };
 
+#if (SNOR_BUS_MODE != SNOR_BUS_MODE_SPI) || defined(__DOXYGEN__)
+#if (WSPI_SUPPORTS_MEMMAP == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Fast read command for memory mapped mode.
+ */
+const wspi_command_t snor_memmap_read = {
+  .cmd              = N25Q_CMD_FAST_READ,
+  .addr             = 0,
+  .dummy            = N25Q_READ_DUMMY_CYCLES - 2,
+  .cfg              = WSPI_CFG_ADDR_SIZE_24 |
+#if SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI1L
+                      WSPI_CFG_CMD_MODE_ONE_LINE |
+                      WSPI_CFG_ADDR_MODE_ONE_LINE |
+                      WSPI_CFG_DATA_MODE_ONE_LINE |
+#elif SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI2L
+                      WSPI_CFG_CMD_MODE_TWO_LINES |
+                      WSPI_CFG_ADDR_MODE_TWO_LINES |
+                      WSPI_CFG_DATA_MODE_TWO_LINES |
+#else
+                      WSPI_CFG_CMD_MODE_FOUR_LINES |
+                      WSPI_CFG_ADDR_MODE_FOUR_LINES |
+                      WSPI_CFG_DATA_MODE_FOUR_LINES |
+#endif
+                      WSPI_CFG_ALT_MODE_FOUR_LINES |  /* Always 4 lines, note.*/
+                      WSPI_CFG_ALT_SIZE_8 |
+                      WSPI_CFG_SIOO
+};
+#endif
+#endif
+
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
@@ -69,7 +99,7 @@ flash_descriptor_t snor_descriptor = {
 static const wspi_command_t n25q_cmd_read_id = {
   .cmd              = N25Q_CMD_READ_ID,
   .cfg              = 0U |
-#if SNOR_SWITCH_WIDTH == TRUE
+#if N25Q_SWITCH_WIDTH == TRUE
                       WSPI_CFG_CMD_MODE_ONE_LINE |
                       WSPI_CFG_DATA_MODE_ONE_LINE,
 #else
@@ -96,7 +126,7 @@ static const wspi_command_t n25q_cmd_read_id = {
 static const wspi_command_t n25q_cmd_write_evconf = {
   .cmd              = N25Q_CMD_WRITE_ENHANCED_V_CONF_REGISTER,
   .cfg              = 0U |
-#if SNOR_SWITCH_WIDTH == TRUE
+#if N25Q_SWITCH_WIDTH == TRUE
                       WSPI_CFG_CMD_MODE_ONE_LINE |
                       WSPI_CFG_DATA_MODE_ONE_LINE,
 #else
@@ -123,7 +153,7 @@ static const wspi_command_t n25q_cmd_write_evconf = {
 static const wspi_command_t n25q_cmd_write_enable = {
   .cmd              = N25Q_CMD_WRITE_ENABLE,
   .cfg              = 0U |
-#if SNOR_SWITCH_WIDTH == TRUE
+#if N25Q_SWITCH_WIDTH == TRUE
                       WSPI_CFG_CMD_MODE_ONE_LINE,
 #else
 #if SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI1L
@@ -170,7 +200,7 @@ static flash_error_t n25q_poll_status(SNORDriver *devp) {
   uint8_t sts;
 
   do {
-#if SNOR_NICE_WAITING == TRUE
+#if N25Q_NICE_WAITING == TRUE
     osalThreadSleepMilliseconds(1);
 #endif
     /* Read status command.*/
@@ -304,7 +334,7 @@ void snor_device_init(SNORDriver *devp) {
                              devp->device_id[1]),
                 "invalid memory type id");
 
-#if (SNOR_BUS_MODE != SNOR_BUS_MODE_SPI) && (SNOR_SWITCH_WIDTH == TRUE)
+#if (SNOR_BUS_MODE != SNOR_BUS_MODE_SPI) && (N25Q_SWITCH_WIDTH == TRUE)
   /* Setting up final bus width.*/
   wspiCommand(devp->config->busp, &n25q_cmd_write_enable);
   wspiSend(devp->config->busp, &n25q_cmd_write_evconf, 1, n25q_evconf_value);
@@ -328,7 +358,7 @@ void snor_device_init(SNORDriver *devp) {
 #if (SNOR_BUS_MODE != SNOR_BUS_MODE_SPI)
   {
     static const uint8_t flash_conf[1] = {
-      (SNOR_READ_DUMMY_CYCLES << 4U) | 0x0FU
+      (N25Q_READ_DUMMY_CYCLES << 4U) | 0x0FU
     };
 
     /* Setting up the dummy cycles to be used for fast read operations.*/
@@ -355,7 +385,7 @@ flash_error_t snor_device_read(SNORDriver *devp, flash_offset_t offset,
 #if SNOR_BUS_MODE != SNOR_BUS_MODE_SPI
   /* Fast read command in WSPI mode.*/
   bus_cmd_addr_dummy_receive(devp->config->busp, N25Q_CMD_FAST_READ,
-                             offset, SNOR_READ_DUMMY_CYCLES, n, rp);
+                             offset, N25Q_READ_DUMMY_CYCLES, n, rp);
 #else
   /* Normal read command in SPI mode.*/
   bus_cmd_addr_receive(devp->config->busp, N25Q_CMD_READ,
@@ -427,7 +457,7 @@ flash_error_t snor_device_start_erase_sector(SNORDriver *devp,
 
 flash_error_t snor_device_verify_erase(SNORDriver *devp,
                                        flash_sector_t sector) {
-  uint8_t cmpbuf[SNOR_COMPARE_BUFFER_SIZE];
+  uint8_t cmpbuf[N25Q_COMPARE_BUFFER_SIZE];
   flash_offset_t offset;
   size_t n;
 
@@ -439,7 +469,7 @@ flash_error_t snor_device_verify_erase(SNORDriver *devp,
 
 #if SNOR_BUS_MODE != SNOR_BUS_MODE_SPI
    bus_cmd_addr_dummy_receive(devp->config->busp, N25Q_CMD_FAST_READ,
-                              offset, SNOR_READ_DUMMY_CYCLES,
+                              offset, N25Q_READ_DUMMY_CYCLES,
                               sizeof cmpbuf, cmpbuf);
 #else
    /* Normal read command in SPI mode.*/
@@ -448,7 +478,7 @@ flash_error_t snor_device_verify_erase(SNORDriver *devp,
 #endif
 
     /* Checking for erased state of current buffer.*/
-    for (p = cmpbuf; p < &cmpbuf[SNOR_COMPARE_BUFFER_SIZE]; p++) {
+    for (p = cmpbuf; p < &cmpbuf[N25Q_COMPARE_BUFFER_SIZE]; p++) {
       if (*p != 0xFFU) {
         /* Ready state again.*/
         devp->state = FLASH_READY;
@@ -512,7 +542,7 @@ flash_error_t snor_device_read_sfdp(SNORDriver *devp, flash_offset_t offset,
 #if (SNOR_BUS_MODE != SNOR_BUS_MODE_SPI) || defined(__DOXYGEN__)
 void snor_activate_xip(SNORDriver *devp) {
   static const uint8_t flash_status_xip[1] = {
-    (SNOR_READ_DUMMY_CYCLES << 4U) | 0x07U
+    (N25Q_READ_DUMMY_CYCLES << 4U) | 0x07U
   };
 
   /* Activating XIP mode in the device.*/
@@ -523,7 +553,7 @@ void snor_activate_xip(SNORDriver *devp) {
 
 void snor_reset_xip(SNORDriver *devp) {
   static const uint8_t flash_conf[1] = {
-    (SNOR_READ_DUMMY_CYCLES << 4U) | 0x0FU
+    (N25Q_READ_DUMMY_CYCLES << 4U) | 0x0FU
   };
   wspi_command_t cmd;
   uint8_t buf[1];
@@ -531,7 +561,7 @@ void snor_reset_xip(SNORDriver *devp) {
   /* Resetting XIP mode by reading one byte without XIP confirmation bit.*/
   cmd.alt   = 0xFF;
   cmd.addr  = 0;
-  cmd.dummy = SNOR_READ_DUMMY_CYCLES - 2;
+  cmd.dummy = N25Q_READ_DUMMY_CYCLES - 2;
   cmd.cfg   = WSPI_CFG_CMD_MODE_NONE |
               WSPI_CFG_ADDR_SIZE_24 |
 #if SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI1L
