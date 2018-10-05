@@ -96,7 +96,7 @@
 /*===========================================================================*/
 
 /**
- * @brief   Switch QSPI bus width on initialization.
+ * @brief   Switch WSPI bus width on initialization.
  * @details A bus width initialization is performed by writing the
  *          Enhanced Volatile Configuration Register. If the flash
  *          device is configured using the Non Volatile Configuration

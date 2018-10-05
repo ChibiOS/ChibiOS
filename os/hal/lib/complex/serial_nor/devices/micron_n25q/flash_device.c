@@ -315,7 +315,7 @@ void snor_device_init(SNORDriver *devp) {
      because a CPU reset does not reset the memory too.*/
   snor_reset_xip(devp);
 
-  /* Attempting a eeset of the device, it could be in an unexpected state
+  /* Attempting a reset of the device, it could be in an unexpected state
      because a CPU reset does not reset the memory too.*/
   n25q_reset_memory(devp);
 
