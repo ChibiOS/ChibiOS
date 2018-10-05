@@ -66,6 +66,56 @@ static const struct SNORDriverVMT snor_vmt = {
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+#if ((SNOR_BUS_MODE != SNOR_BUS_MODE_SPI) &&                                \
+     (SNOR_SHARED_BUS == TRUE)) || defined(__DOXYGEN__)
+/**
+ * @brief   Bus acquisition and lock.
+ *
+ * @param[in] busp      pointer to the bus driver
+ * @param[in] config    bus configuration
+ *
+ * @notapi
+ */
+static void bus_acquire(BUSDriver *busp, const BUSConfig *config) {
+
+  (void)config;
+
+  wspiAcquireBus(busp);
+  if (busp->config != config) {
+    wspiStart(busp, config);
+  }
+}
+
+/**
+ * @brief   Bus release.
+ *
+ * @param[in] busp      pointer to the bus driver
+ *
+ * @notapi
+ */
+static void bus_release(BUSDriver *busp) {
+
+  wspiReleaseBus(busp);
+}
+#elif (SNOR_BUS_MODE == SNOR_BUS_MODE_SPI) &&                               \
+      (SNOR_SHARED_BUS == TRUE)
+void bus_acquire(BUSDriver *busp, const BUSConfig *config) {
+
+  spiAcquireBus(busp);
+  if (busp->config != config) {
+    spiStart(busp, config);
+  }
+}
+
+void bus_release(BUSDriver *busp) {
+
+  spiReleaseBus(busp);
+}
+#else
+#define bus_acquire(busp)
+#define bus_release(busp)
+#endif
+
 static flash_error_t snor_read(void *instance, flash_offset_t offset,
                                size_t n, uint8_t *rp) {
   SNORDriver *devp = (SNORDriver *)instance;
@@ -82,7 +132,7 @@ static flash_error_t snor_read(void *instance, flash_offset_t offset,
   }
 
   /* Bus acquired.*/
-  jesd216_bus_acquire(devp->config->busp, devp->config->buscfg);
+  bus_acquire(devp->config->busp, devp->config->buscfg);
 
   /* FLASH_READY state while the operation is performed.*/
   devp->state = FLASH_READ;
@@ -94,7 +144,7 @@ static flash_error_t snor_read(void *instance, flash_offset_t offset,
   devp->state = FLASH_READY;
 
   /* Bus released.*/
-  jesd216_bus_release(devp->config->busp);
+  bus_release(devp->config->busp);
 
   return err;
 }
@@ -115,7 +165,7 @@ static flash_error_t snor_program(void *instance, flash_offset_t offset,
   }
 
   /* Bus acquired.*/
-  jesd216_bus_acquire(devp->config->busp, devp->config->buscfg);
+  bus_acquire(devp->config->busp, devp->config->buscfg);
 
   /* FLASH_PGM state while the operation is performed.*/
   devp->state = FLASH_PGM;
@@ -127,7 +177,7 @@ static flash_error_t snor_program(void *instance, flash_offset_t offset,
   devp->state = FLASH_READY;
 
   /* Bus released.*/
-  jesd216_bus_release(devp->config->busp);
+  bus_release(devp->config->busp);
 
   return err;
 }
@@ -145,7 +195,7 @@ static flash_error_t snor_start_erase_all(void *instance) {
   }
 
   /* Bus acquired.*/
-  jesd216_bus_acquire(devp->config->busp, devp->config->buscfg);
+  bus_acquire(devp->config->busp, devp->config->buscfg);
 
   /* FLASH_ERASE state while the operation is performed.*/
   devp->state = FLASH_ERASE;
@@ -157,7 +207,7 @@ static flash_error_t snor_start_erase_all(void *instance) {
   devp->state = FLASH_READY;
 
   /* Bus released.*/
-  jesd216_bus_release(devp->config->busp);
+  bus_release(devp->config->busp);
 
   return err;
 }
@@ -177,7 +227,7 @@ static flash_error_t snor_start_erase_sector(void *instance,
   }
 
   /* Bus acquired.*/
-  jesd216_bus_acquire(devp->config->busp, devp->config->buscfg);
+  bus_acquire(devp->config->busp, devp->config->buscfg);
 
   /* FLASH_ERASE state while the operation is performed.*/
   devp->state = FLASH_ERASE;
@@ -186,7 +236,7 @@ static flash_error_t snor_start_erase_sector(void *instance,
   err = snor_device_start_erase_sector(devp, sector);
 
   /* Bus released.*/
-  jesd216_bus_release(devp->config->busp);
+  bus_release(devp->config->busp);
 
   return err;
 }
@@ -206,7 +256,7 @@ static flash_error_t snor_verify_erase(void *instance,
   }
 
   /* Bus acquired.*/
-  jesd216_bus_acquire(devp->config->busp, devp->config->buscfg);
+  bus_acquire(devp->config->busp, devp->config->buscfg);
 
   /* FLASH_READY state while the operation is performed.*/
   devp->state = FLASH_READ;
@@ -218,7 +268,7 @@ static flash_error_t snor_verify_erase(void *instance,
   devp->state = FLASH_READY;
 
   /* Bus released.*/
-  jesd216_bus_release(devp->config->busp);
+  bus_release(devp->config->busp);
 
   return err;
 }
@@ -235,7 +285,7 @@ static flash_error_t snor_query_erase(void *instance, uint32_t *msec) {
   if (devp->state == FLASH_ERASE) {
 
     /* Bus acquired.*/
-    jesd216_bus_acquire(devp->config->busp, devp->config->buscfg);
+    bus_acquire(devp->config->busp, devp->config->buscfg);
 
     /* Actual query erase implementation.*/
     err = snor_device_query_erase(devp, msec);
@@ -246,7 +296,7 @@ static flash_error_t snor_query_erase(void *instance, uint32_t *msec) {
     }
 
     /* Bus released.*/
-    jesd216_bus_release(devp->config->busp);
+    bus_release(devp->config->busp);
   }
   else {
     err = FLASH_NO_ERROR;
@@ -269,7 +319,7 @@ static flash_error_t snor_read_sfdp(void *instance, flash_offset_t offset,
   }
 
   /* Bus acquired.*/
-  jesd216_bus_acquire(devp->config->busp, devp->config->buscfg);
+  bus_acquire(devp->config->busp, devp->config->buscfg);
 
   /* Actual read SFDP implementation.*/
   err = snor_device_read_sfdp(devp, offset, n, rp);
@@ -280,7 +330,7 @@ static flash_error_t snor_read_sfdp(void *instance, flash_offset_t offset,
   }
 
   /* Bus released.*/
-  jesd216_bus_release(devp->config->busp);
+  bus_release(devp->config->busp);
 
   return err;
 }
@@ -288,6 +338,401 @@ static flash_error_t snor_read_sfdp(void *instance, flash_offset_t offset,
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
+
+/**
+ * @brief   Stops the underlying bus driver.
+ *
+ * @param[in] busp      pointer to the bus driver
+ *
+ * @notapi
+ */
+void bus_stop(BUSDriver *busp) {
+
+#if SNOR_BUS_MODE == SNOR_BUS_MODE_SPI
+  spiStop(busp);
+#else
+  wspiStop(busp);
+#endif
+}
+
+/**
+ * @brief   Sends a naked command.
+ *
+ * @param[in] busp      pointer to the bus driver
+ * @param[in] cmd       instruction code
+ *
+ * @notapi
+ */
+void bus_cmd(BUSDriver *busp, uint32_t cmd) {
+#if SNOR_BUS_MODE != SNOR_BUS_MODE_SPI
+  wspi_command_t mode;
+
+  mode.cmd   = cmd;
+  mode.dummy = 0U;
+  mode.cfg   = 0U |
+#if SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI1L
+               WSPI_CFG_CMD_MODE_ONE_LINE;
+#elif SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI2L
+               WSPI_CFG_CMD_MODE_TWO_LINES;
+#elif SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI4L
+               WSPI_CFG_CMD_MODE_FOUR_LINES;
+#else
+               WSPI_CFG_CMD_MODE_EIGHT_LINES;
+#endif
+  mode.addr = 0U;
+  mode.alt  = 0U;
+  wspiCommand(busp, &mode);
+#else
+  uint8_t buf[1];
+
+  spiSelect(busp);
+  buf[0] = cmd;
+  spiSend(busp, 1, buf);
+  spiUnselect(busp);
+#endif
+}
+
+/**
+ * @brief   Sends a command followed by a data transmit phase.
+ *
+ * @param[in] busp      pointer to the bus driver
+ * @param[in] cmd       instruction code
+ * @param[in] n         number of bytes to receive
+ * @param[in] p         data buffer
+ *
+ * @notapi
+ */
+void bus_cmd_send(BUSDriver *busp, uint32_t cmd, size_t n, const uint8_t *p) {
+#if SNOR_BUS_MODE != SNOR_BUS_MODE_SPI
+  wspi_command_t mode;
+
+  mode.cmd   = cmd;
+  mode.dummy = 0U;
+  mode.cfg   = 0U |
+#if SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI1L
+               WSPI_CFG_CMD_MODE_ONE_LINE |
+               WSPI_CFG_DATA_MODE_ONE_LINE;
+#elif SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI2L
+               WSPI_CFG_CMD_MODE_TWO_LINES |
+               WSPI_CFG_DATA_MODE_TWO_LINES;
+#elif SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI4L
+               WSPI_CFG_CMD_MODE_FOUR_LINES |
+               WSPI_CFG_DATA_MODE_FOUR_LINES;
+#else
+               WSPI_CFG_CMD_MODE_EIGHT_LINES |
+               WSPI_CFG_DATA_MODE_EIGHT_LINES;
+#endif
+  mode.addr = 0U;
+  mode.alt  = 0U;
+  wspiSend(busp, &mode, n, p);
+#else
+  uint8_t buf[1];
+
+  spiSelect(busp);
+  buf[0] = cmd;
+  spiSend(busp, 1, buf);
+  spiSend(busp, n, p);
+  spiUnselect(busp);
+#endif
+}
+
+/**
+ * @brief   Sends a command followed by a data receive phase.
+ *
+ * @param[in] busp      pointer to the bus driver
+ * @param[in] cmd       instruction code
+ * @param[in] n         number of bytes to receive
+ * @param[out] p        data buffer
+ *
+ * @notapi
+ */
+void bus_cmd_receive(BUSDriver *busp,
+                     uint32_t cmd,
+                     size_t n,
+                     uint8_t *p) {
+#if SNOR_BUS_MODE != SNOR_BUS_MODE_SPI
+  wspi_command_t mode;
+
+  mode.cmd   = cmd;
+  mode.dummy = 0U;
+  mode.cfg   = 0U |
+#if SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI1L
+               WSPI_CFG_CMD_MODE_ONE_LINE |
+               WSPI_CFG_DATA_MODE_ONE_LINE;
+#elif SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI2L
+               WSPI_CFG_CMD_MODE_TWO_LINES |
+               WSPI_CFG_DATA_MODE_TWO_LINES;
+#elif SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI4L
+               WSPI_CFG_CMD_MODE_FOUR_LINES |
+               WSPI_CFG_DATA_MODE_FOUR_LINES;
+#else
+               WSPI_CFG_CMD_MODE_EIGHT_LINES |
+               WSPI_CFG_DATA_MODE_EIGHT_LINES;
+#endif
+  mode.addr = 0U;
+  mode.alt  = 0U;
+  wspiReceive(busp, &mode, n, p);
+#else
+  uint8_t buf[1];
+
+  spiSelect(busp);
+  buf[0] = cmd;
+  spiSend(busp, 1, buf);
+  spiReceive(busp, n, p);
+  spiUnselect(busp);
+#endif
+}
+
+/**
+ * @brief   Sends a command followed by a flash address.
+ *
+ * @param[in] busp      pointer to the bus driver
+ * @param[in] cmd       instruction code
+ * @param[in] offset    flash offset
+ *
+ * @notapi
+ */
+void bus_cmd_addr(BUSDriver *busp, uint32_t cmd, flash_offset_t offset) {
+#if SNOR_BUS_MODE != SNOR_BUS_MODE_SPI
+  wspi_command_t mode;
+
+  mode.cmd   = cmd;
+  mode.dummy = 0U;
+  mode.cfg   = 0U |
+#if SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI1L
+               WSPI_CFG_CMD_MODE_ONE_LINE |
+               WSPI_CFG_ADDR_MODE_ONE_LINE |
+               WSPI_CFG_ADDR_SIZE_24;
+#elif SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI2L
+               WSPI_CFG_CMD_MODE_TWO_LINES |
+               WSPI_CFG_ADDR_MODE_TWO_LINES |
+               WSPI_CFG_ADDR_SIZE_24;
+#elif SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI4L
+               WSPI_CFG_CMD_MODE_FOUR_LINES |
+               WSPI_CFG_ADDR_MODE_FOUR_LINES |
+               WSPI_CFG_ADDR_SIZE_24;
+#else
+               WSPI_CFG_CMD_MODE_EIGHT_LINES |
+               WSPI_CFG_ADDR_MODE_EIGHT_LINES |
+               WSPI_CFG_ADDR_SIZE_24;
+#endif
+
+  /* Handling 32 bits addressing.
+     TODO: Address size should come from upper levels.*/
+  if ((cmd & SNOR_BUS_CMD_EXTENDED_ADDRESSING) == 0) {
+    mode.cfg |= WSPI_CFG_ADDR_SIZE_24;
+  }
+  else {
+    mode.cfg |= WSPI_CFG_ADDR_SIZE_32;
+  }
+
+  mode.addr = offset;
+  mode.alt  = 0U;
+  wspiCommand(busp, &mode);
+#else
+  uint8_t buf[4];
+
+  spiSelect(busp);
+  buf[0] = cmd;
+  buf[1] = (uint8_t)(offset >> 16);
+  buf[2] = (uint8_t)(offset >> 8);
+  buf[3] = (uint8_t)(offset >> 0);
+  spiSend(busp, 4, buf);
+  spiUnselect(busp);
+#endif
+}
+
+/**
+ * @brief   Sends a command followed by a flash address and a data transmit
+ *          phase.
+ *
+ * @param[in] busp      pointer to the bus driver
+ * @param[in] cmd       instruction code
+ * @param[in] offset    flash offset
+ * @param[in] n         number of bytes to receive
+ * @param[in] p         data buffer
+ *
+ * @notapi
+ */
+void bus_cmd_addr_send(BUSDriver *busp,
+                       uint32_t cmd,
+                       flash_offset_t offset,
+                       size_t n,
+                       const uint8_t *p) {
+#if SNOR_BUS_MODE != SNOR_BUS_MODE_SPI
+  wspi_command_t mode;
+
+  mode.cmd   = cmd;
+  mode.dummy = 0U;
+  mode.cfg   = 0U |
+#if SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI1L
+               WSPI_CFG_CMD_MODE_ONE_LINE |
+               WSPI_CFG_ADDR_MODE_ONE_LINE |
+               WSPI_CFG_DATA_MODE_ONE_LINE;
+#elif SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI2L
+               WSPI_CFG_CMD_MODE_TWO_LINES |
+               WSPI_CFG_ADDR_MODE_TWO_LINES |
+               WSPI_CFG_DATA_MODE_TWO_LINES;
+#elif SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI4L
+               WSPI_CFG_CMD_MODE_FOUR_LINES |
+               WSPI_CFG_ADDR_MODE_FOUR_LINES |
+               WSPI_CFG_DATA_MODE_FOUR_LINES;
+#else
+               WSPI_CFG_CMD_MODE_EIGHT_LINES |
+               WSPI_CFG_ADDR_MODE_EIGHT_LINES |
+               WSPI_CFG_DATA_MODE_EIGHT_LINES;
+#endif
+
+  /* Handling 32 bits addressing.
+     TODO: Address size should come from upper levels.*/
+  if ((cmd & SNOR_BUS_CMD_EXTENDED_ADDRESSING) == 0) {
+    mode.cfg |= WSPI_CFG_ADDR_SIZE_24;
+  }
+  else {
+    mode.cfg |= WSPI_CFG_ADDR_SIZE_32;
+  }
+
+  mode.addr = offset;
+  mode.alt  = 0U;
+  wspiSend(busp, &mode, n, p);
+#else
+  uint8_t buf[4];
+
+  spiSelect(busp);
+  buf[0] = cmd;
+  buf[1] = (uint8_t)(offset >> 16);
+  buf[2] = (uint8_t)(offset >> 8);
+  buf[3] = (uint8_t)(offset >> 0);
+  spiSend(busp, 4, buf);
+  spiSend(busp, n, p);
+  spiUnselect(busp);
+#endif
+}
+
+/**
+ * @brief   Sends a command followed by a flash address and a data receive
+ *          phase.
+ *
+ * @param[in] busp      pointer to the bus driver
+ * @param[in] cmd       instruction code
+ * @param[in] offset    flash offset
+ * @param[in] n         number of bytes to receive
+ * @param[out] p        data buffer
+ *
+ * @notapi
+ */
+void bus_cmd_addr_receive(BUSDriver *busp,
+                          uint32_t cmd,
+                          flash_offset_t offset,
+                          size_t n,
+                          uint8_t *p) {
+#if SNOR_BUS_MODE != SNOR_BUS_MODE_SPI
+  wspi_command_t mode;
+
+  mode.cmd   = cmd;
+  mode.dummy = 0U;
+  mode.cfg   = 0U |
+#if SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI1L
+               WSPI_CFG_CMD_MODE_ONE_LINE |
+               WSPI_CFG_ADDR_MODE_ONE_LINE |
+               WSPI_CFG_DATA_MODE_ONE_LINE;
+#elif SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI2L
+               WSPI_CFG_CMD_MODE_TWO_LINES |
+               WSPI_CFG_ADDR_MODE_TWO_LINES |
+               WSPI_CFG_DATA_MODE_TWO_LINES;
+#elif SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI4L
+               WSPI_CFG_CMD_MODE_TWO_LINES |
+               WSPI_CFG_ADDR_MODE_TWO_LINES |
+               WSPI_CFG_DATA_MODE_TWO_LINES;
+#else
+               WSPI_CFG_CMD_MODE_EIGHT_LINES |
+               WSPI_CFG_ADDR_MODE_EIGHT_LINES |
+               WSPI_CFG_DATA_MODE_EIGHT_LINES;
+#endif
+
+  /* Handling 32 bits addressing.
+     TODO: Address size should come from upper levels.*/
+  if ((cmd & SNOR_BUS_CMD_EXTENDED_ADDRESSING) == 0) {
+    mode .cfg |= WSPI_CFG_ADDR_SIZE_24;
+  }
+  else {
+    mode .cfg |= WSPI_CFG_ADDR_SIZE_32;
+  }
+
+  mode.addr = offset;
+  mode.alt  = 0U;
+  wspiReceive(busp, &mode, n, p);
+#else
+  uint8_t buf[4];
+
+  spiSelect(busp);
+  buf[0] = cmd;
+  buf[1] = (uint8_t)(offset >> 16);
+  buf[2] = (uint8_t)(offset >> 8);
+  buf[3] = (uint8_t)(offset >> 0);
+  spiSend(busp, 4, buf);
+  spiReceive(busp, n, p);
+  spiUnselect(busp);
+#endif
+}
+
+#if (SNOR_BUS_MODE != SNOR_BUS_MODE_SPI) || defined(__DOXYGEN__)
+/**
+ * @brief   Sends a command followed by a flash address, dummy cycles and a
+ *          data receive phase.
+ *
+ * @param[in] busp      pointer to the bus driver
+ * @param[in] cmd       instruction code
+ * @param[in] offset    flash offset
+ * @param[in] dummy     number of dummy cycles
+ * @param[in] n         number of bytes to receive
+ * @param[out] p        data buffer
+ *
+ * @notapi
+ */
+void bus_cmd_addr_dummy_receive(BUSDriver *busp,
+                                uint32_t cmd,
+                                flash_offset_t offset,
+                                uint32_t dummy,
+                                size_t n,
+                                uint8_t *p) {
+  wspi_command_t mode;
+
+  mode.cmd   = cmd;
+  mode.dummy = dummy;
+  mode.cfg   = 0U |
+#if SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI1L
+               WSPI_CFG_CMD_MODE_ONE_LINE |
+               WSPI_CFG_ADDR_MODE_ONE_LINE |
+               WSPI_CFG_DATA_MODE_ONE_LINE;
+#elif SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI2L
+               WSPI_CFG_CMD_MODE_TWO_LINES |
+               WSPI_CFG_ADDR_MODE_TWO_LINES |
+               WSPI_CFG_DATA_MODE_TWO_LINES;
+#elif SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI4L
+               WSPI_CFG_CMD_MODE_FOUR_LINES |
+               WSPI_CFG_ADDR_MODE_FOUR_LINES |
+               WSPI_CFG_DATA_MODE_FOUR_LINES;
+#else
+               WSPI_CFG_CMD_MODE_EIGHT_LINES |
+               WSPI_CFG_ADDR_MODE_EIGHT_LINES |
+               WSPI_CFG_DATA_MODE_EIGHT_LINES;
+#endif
+
+  /* Handling 32 bits addressing.
+     TODO: Address size should come from upper levels.*/
+  if ((cmd & SNOR_BUS_CMD_EXTENDED_ADDRESSING) == 0) {
+    mode .cfg |= WSPI_CFG_ADDR_SIZE_24;
+  }
+  else {
+    mode .cfg |= WSPI_CFG_ADDR_SIZE_32;
+  }
+
+  mode.addr = offset;
+  mode.alt  = 0U;
+  wspiReceive(busp, &mode, n, p);
+}
+#endif /* SNOR_BUS_MODE != SNOR_BUS_MODE_SPI */
 
 /**
  * @brief   Initializes an instance.
@@ -323,7 +768,7 @@ void snorStart(SNORDriver *devp, const SNORConfig *config) {
   if (devp->state == FLASH_STOP) {
 
     /* Bus acquisition.*/
-    jesd216_bus_acquire(devp->config->busp, devp->config->buscfg);
+    bus_acquire(devp->config->busp, devp->config->buscfg);
 
     /* Device identification and initialization.*/
     snor_device_init(devp);
@@ -332,7 +777,7 @@ void snorStart(SNORDriver *devp, const SNORConfig *config) {
     devp->state = FLASH_READY;
 
     /* Bus release.*/
-    jesd216_bus_release(devp->config->busp);
+    bus_release(devp->config->busp);
   }
 } 
 
@@ -351,7 +796,7 @@ void snorStop(SNORDriver *devp) {
   if (devp->state != FLASH_STOP) {
 
     /* Bus acquisition.*/
-    jesd216_bus_acquire(devp->config->busp, devp->config->buscfg);
+    bus_acquire(devp->config->busp, devp->config->buscfg);
 
     /* Stopping bus device.*/
     jesd216_stop(devp->config->busp);
@@ -363,11 +808,11 @@ void snorStop(SNORDriver *devp) {
     devp->state = FLASH_STOP;
 
     /* Bus release.*/
-    jesd216_bus_release(devp->config->busp);
+    bus_release(devp->config->busp);
   }
 }
 
-#if (JESD216_BUS_MODE != JESD216_BUS_MODE_SPI) || defined(__DOXYGEN__)
+#if (SNOR_BUS_MODE != SNOR_BUS_MODE_SPI) || defined(__DOXYGEN__)
 #if (WSPI_SUPPORTS_MEMMAP == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Enters the memory Mapping mode.
@@ -385,7 +830,7 @@ void snorMemoryMap(SNORDriver *devp, uint8_t **addrp) {
   wspi_command_t cmd;
 
   /* Bus acquisition.*/
-  jesd216_bus_acquire(devp->config->busp, devp->config->buscfg);
+  bus_acquire(devp->config->busp, devp->config->buscfg);
 
   /* Activating XIP mode in the device.*/
   snor_activate_xip(devp);
@@ -395,11 +840,11 @@ void snorMemoryMap(SNORDriver *devp, uint8_t **addrp) {
   cmd.cmd   = N25Q_CMD_FAST_READ;
   cmd.dummy = SNOR_READ_DUMMY_CYCLES - 2;
   cmd.cfg   = WSPI_CFG_ADDR_SIZE_24 |
-#if JESD216_BUS_MODE == JESD216_BUS_MODE_WSPI1L
+#if SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI1L
               WSPI_CFG_CMD_MODE_ONE_LINE |
               WSPI_CFG_ADDR_MODE_ONE_LINE |
               WSPI_CFG_DATA_MODE_ONE_LINE |
-#elif JESD216_BUS_MODE == JESD216_BUS_MODE_WSPI2L
+#elif SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI2L
               WSPI_CFG_CMD_MODE_TWO_LINES |
               WSPI_CFG_ADDR_MODE_TWO_LINES |
               WSPI_CFG_DATA_MODE_TWO_LINES |
@@ -416,7 +861,7 @@ void snorMemoryMap(SNORDriver *devp, uint8_t **addrp) {
   wspiMapFlash(devp->config->busp, &cmd, addrp);
 
   /* Bus release.*/
-  jesd216_bus_release(devp->config->busp);
+  bus_release(devp->config->busp);
 }
 
 /**
@@ -429,7 +874,7 @@ void snorMemoryMap(SNORDriver *devp, uint8_t **addrp) {
 void snorMemoryUnmap(SNORDriver *devp) {
 
   /* Bus acquisition.*/
-  jesd216_bus_acquire(devp->config->busp, devp->config->buscfg);
+  bus_acquire(devp->config->busp, devp->config->buscfg);
 
   /* Stopping WSPI memory mapped mode.*/
   wspiUnmapFlash(devp->config->busp);
@@ -437,9 +882,9 @@ void snorMemoryUnmap(SNORDriver *devp) {
   snor_reset_xip(devp);
 
   /* Bus release.*/
-  jesd216_bus_release(devp->config->busp);
+  bus_release(devp->config->busp);
 }
 #endif /* WSPI_SUPPORTS_MEMMAP == TRUE */
-#endif /* JESD216_BUS_MODE != JESD216_BUS_MODE_SPI */
+#endif /* SNOR_BUS_MODE != SNOR_BUS_MODE_SPI */
 
 /** @} */
