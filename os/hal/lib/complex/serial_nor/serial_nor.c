@@ -799,7 +799,7 @@ void snorStop(SNORDriver *devp) {
     bus_acquire(devp->config->busp, devp->config->buscfg);
 
     /* Stopping bus device.*/
-    jesd216_stop(devp->config->busp);
+    bus_stop(devp->config->busp);
 
     /* Deleting current configuration.*/
     devp->config = NULL;

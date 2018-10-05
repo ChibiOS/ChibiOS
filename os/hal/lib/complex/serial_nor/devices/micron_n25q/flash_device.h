@@ -26,8 +26,6 @@
 #ifndef FLASH_DEVICE_H
 #define FLASH_DEVICE_H
 
-#include "hal_jesd216_flash.h"
-
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -134,7 +132,7 @@ flash_error_t snor_device_verify_erase(SNORDriver *devp,
 flash_error_t snor_device_query_erase(SNORDriver *devp, uint32_t *msec);
 flash_error_t snor_device_read_sfdp(SNORDriver *devp, flash_offset_t offset,
                                     size_t n, uint8_t *rp);
-#if JESD216_BUS_MODE != JESD216_BUS_MODE_SPI
+#if SNOR_BUS_MODE != SNOR_BUS_MODE_SPI
   void snor_activate_xip(SNORDriver *devp);
   void snor_reset_xip(SNORDriver *devp);
 #endif
