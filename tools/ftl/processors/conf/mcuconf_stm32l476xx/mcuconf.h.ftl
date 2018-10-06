@@ -234,12 +234,6 @@
 #define STM32_PWM_TIM8_IRQ_PRIORITY         ${doc.STM32_PWM_TIM8_IRQ_PRIORITY!"7"}
 
 /*
- * QSPI driver system settings.
- */
-#define STM32_QSPI_USE_QUADSPI1             ${doc.STM32_QSPI_USE_QUADSPI1!"FALSE"}
-#define STM32_QSPI_QUADSPI1_DMA_STREAM      ${doc.STM32_QSPI_QUADSPI1_DMA_STREAM!"STM32_DMA_STREAM_ID(2, 7)"}
-
-/*
  * SDC driver system settings.
  */
 #define STM32_SDC_USE_SDMMC1                ${doc.STM32_SDC_USE_SDMMC1!"FALSE"}
@@ -334,5 +328,11 @@
  * WDG driver system settings.
  */
 #define STM32_WDG_USE_IWDG                  ${doc.STM32_WDG_USE_IWDG!"FALSE"}
+
+/*
+ * WSPI driver system settings.
+ */
+#define STM32_WSPI_USE_QUADSPI1             ${doc.STM32_WSPI_USE_QUADSPI1!"FALSE"}
+#define STM32_WSPI_QUADSPI1_DMA_STREAM      ${doc.STM32_WSPI_QUADSPI1_DMA_STREAM!"STM32_DMA_STREAM_ID(2, 7)"}
 
 #endif /* MCUCONF_H */
