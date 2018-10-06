@@ -902,6 +902,14 @@
 #error "Using a wrong mcuconf.h file, STM32F7xx_MCUCONF not defined"
 #endif
 
+#if defined(STM32F746xx) && !defined(STM32F746_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32F746_MCUCONF not defined"
+#endif
+
+#if defined(STM32F756xx) && !defined(STM32F756_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32F756_MCUCONF not defined"
+#endif
+
 /*
  * Board file checks.
  */

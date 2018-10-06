@@ -87,8 +87,8 @@
        an UART.
 - NEW: Independent TRNG driver model added to HAL.
 - NEW: Added a new "pipes" subsystem to the OS library.
-- NEW: Added mcuconf.h generators for STM32L432xx, STM32L476xx, STM32L496xx
-       and STM32L4R5xx devices.
+- NEW: Added mcuconf.h generators for STM32L432xx, STM32L476xx, STM32L496xx,
+       STM32L4R5xx and STM32F746/756 devices.
 - NEW: Added demo for STM32L496ZG-Nucleo144 and STM32L4R5ZI-Nucleo144 boards.
 - NEW: Modified USARTv2 to support HW FIFOs where present.
 - NEW: STM32 DMAv1, ADCv3, DACv1, I2Cv2, SPIv2 and USARTv2 are now
