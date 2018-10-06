@@ -902,6 +902,22 @@
 #error "Using a wrong mcuconf.h file, STM32F7xx_MCUCONF not defined"
 #endif
 
+#if defined(STM32F722xx) && !defined(STM32F722_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32F722_MCUCONF not defined"
+#endif
+
+#if defined(STM32F732xx) && !defined(STM32F732_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32F732_MCUCONF not defined"
+#endif
+
+#if defined(STM32F723xx) && !defined(STM32F723_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32F723_MCUCONF not defined"
+#endif
+
+#if defined(STM32F733xx) && !defined(STM32F733_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32F733_MCUCONF not defined"
+#endif
+
 #if defined(STM32F746xx) && !defined(STM32F746_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32F746_MCUCONF not defined"
 #endif
