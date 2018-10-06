@@ -32,6 +32,11 @@
  */
 
 #define STM32F7xx_MCUCONF
+#define STM32F765_MCUCONF
+#define STM32F767_MCUCONF
+#define STM32F777_MCUCONF
+#define STM32F769_MCUCONF
+#define STM32F779_MCUCONF
 
 /*
  * HAL driver system settings.
@@ -365,6 +370,8 @@
 #define STM32_UART_UART4_IRQ_PRIORITY       12
 #define STM32_UART_UART5_IRQ_PRIORITY       12
 #define STM32_UART_USART6_IRQ_PRIORITY      12
+#define STM32_UART_UART7_IRQ_PRIORITY       12
+#define STM32_UART_UART8_IRQ_PRIORITY       12
 #define STM32_UART_USART1_DMA_PRIORITY      0
 #define STM32_UART_USART2_DMA_PRIORITY      0
 #define STM32_UART_USART3_DMA_PRIORITY      0
@@ -384,13 +391,16 @@
 #define STM32_USB_OTG2_IRQ_PRIORITY         14
 #define STM32_USB_OTG1_RX_FIFO_SIZE         512
 #define STM32_USB_OTG2_RX_FIFO_SIZE         1024
-#define STM32_USB_OTG_THREAD_PRIO           LOWPRIO
-#define STM32_USB_OTG_THREAD_STACK_SIZE     128
-#define STM32_USB_OTGFIFO_FILL_BASEPRI      0
 
 /*
  * WDG driver system settings.
  */
 #define STM32_WDG_USE_IWDG                  FALSE
+
+/*
+ * WSPI driver system settings.
+ */
+#define STM32_WSPI_USE_QUADSPI1             FALSE
+#define STM32_WSPI_QUADSPI1_DMA_STREAM      STM32_DMA_STREAM_ID(2, 7)
 
 #endif /* MCUCONF_H */
