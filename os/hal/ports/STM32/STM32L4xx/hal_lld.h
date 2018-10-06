@@ -762,16 +762,22 @@
    added gradually.*/
 #if defined(STM32L432xx) && !defined(STM32L432_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32L432_MCUCONF not defined"
+#endif
 
-#elif defined(STM32L476xx) && !defined(STM32L476_MCUCONF)
+#if defined(STM32L476xx) && !defined(STM32L476_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32L476_MCUCONF not defined"
+#endif
 
-#elif defined(STM32L496xx) && !defined(STM32L496_MCUCONF)
+#if defined(STM32L486xx) && !defined(STM32L486_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32L486_MCUCONF not defined"
+#endif
+
+#if defined(STM32L496xx) && !defined(STM32L496_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32L496_MCUCONF not defined"
+#endif
 
-#elif defined(STM32L4A6xx) && !defined(STM32L4A6_MCUCONF)
+#if defined(STM32L4A6xx) && !defined(STM32L4A6_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32L4A6_MCUCONF not defined"
-
 #endif
 
 /*

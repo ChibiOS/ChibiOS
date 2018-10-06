@@ -718,10 +718,10 @@
 #endif /* defined(STM32L443xx) */
 
 /*===========================================================================*/
-/* STM32L476xx.                                                              */
+/* STM32L476xx, STM32L486xx.                                                 */
 /*===========================================================================*/
 
-#if defined(STM32L476xx)
+#if defined(STM32L476xx) || defined(STM32L486xx)
 
 /* Clock attributes.*/
 #define STM32_CLOCK_HAS_HSI48               FALSE
@@ -1125,10 +1125,10 @@
 #endif /* defined(STM32L476xx) */
 
 /*===========================================================================*/
-/* STM32L496xx.                                                              */
+/* STM32L496xx, STM32L4A6xx.                                                 */
 /*===========================================================================*/
 
-#if defined(STM32L496xx)
+#if defined(STM32L496xx) || defined(STM32L4A6xx)
 
 /* Clock attributes.*/
 #define STM32_CLOCK_HAS_HSI48               FALSE
