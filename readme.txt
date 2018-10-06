@@ -75,9 +75,9 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added demos regarding WSPI, serial nor driver and MFS.
 - NEW: Modified the serial nor driver to work with WSPI instead of QSPI,
-       improved it in several way, simplicity mainly. Added a demo for
-       WSPI with serial nor driver.
+       improved it in several way, simplicity mainly.
 - NEW: Added an STM32 QUADSPIv1 implementation for WSPI.
 - NEW: Added a new WSPI driver model to HAL, it is a redesign of the
        existing QSPI for generic "Wide SPI" interfaces. It now supports up
