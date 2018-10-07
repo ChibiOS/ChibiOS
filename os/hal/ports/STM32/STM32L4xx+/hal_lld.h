@@ -2138,6 +2138,11 @@
 #define STM32_USBCLK                STM32_48CLK
 
 /**
+ * @brief   RNG clock point.
+ */
+#define STM32_RNGCLK                STM32_48CLK
+
+/**
  * @brief   ADC clock frequency.
  */
 #if (STM32_ADCSEL == STM32_ADCSEL_NOCLK) || defined(__DOXYGEN__)

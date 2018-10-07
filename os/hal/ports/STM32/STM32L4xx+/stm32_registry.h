@@ -194,6 +194,9 @@
 /* QUADSPI attributes.*/
 #define STM32_HAS_QUADSPI1                  FALSE
 
+/* RNG attributes.*/
+#define STM32_HAS_RNG1                      TRUE
+
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
 #define STM32_RTC_HAS_SUBSECONDS            TRUE

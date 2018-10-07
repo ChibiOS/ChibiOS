@@ -105,7 +105,7 @@
 #define STM32_I2C3SEL                       ${doc.STM32_I2C3SEL!"STM32_I2C3SEL_SYSCLK"}
 #define STM32_LPTIM1SEL                     ${doc.STM32_LPTIM1SEL!"STM32_LPTIM1SEL_PCLK1"}
 #define STM32_LPTIM2SEL                     ${doc.STM32_LPTIM2SEL!"STM32_LPTIM2SEL_PCLK1"}
-#define STM32_CLK48SEL                      ${doc.STM32_CLK48SEL!"STM32_CLK48SEL_PLL"}
+#define STM32_CLK48SEL                      ${doc.STM32_CLK48SEL!"STM32_CLK48SEL_PLLSAI1"}
 #define STM32_ADCSEL                        ${doc.STM32_ADCSEL!"STM32_ADCSEL_SYSCLK"}
 #define STM32_DFSDMSEL                      ${doc.STM32_DFSDMSEL!"STM32_DFSDMSEL_PCLK2"}
 #define STM32_ADFSDMSEL                     ${doc.STM32_ADFSDMSEL!"STM32_ADFSDMSEL_SAI1CLK"}
@@ -281,6 +281,11 @@
  */
 #define STM32_ST_IRQ_PRIORITY               ${doc.STM32_ST_IRQ_PRIORITY!"8"}
 #define STM32_ST_USE_TIMER                  ${doc.STM32_ST_USE_TIMER!"2"}
+
+/*
+ * TRNG driver system settings.
+ */
+#define STM32_TRNG_USE_RNG1                 ${doc.STM32_TRNG_USE_RNG1!"FALSE"}
 
 /*
  * UART driver system settings.
