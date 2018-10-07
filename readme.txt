@@ -85,7 +85,8 @@
        to eight data lines so "quad" was no more appropriate.
 - NEW: Added a new SIO driver model to HAL, it is a low level abstraction of
        an UART.
-- NEW: Independent TRNG driver model added to HAL.
+- NEW: Independent TRNG driver model added to HAL. Implemented a RNGv1 driver
+       for STM32, added test application.
 - NEW: Added a new "pipes" subsystem to the OS library.
 - NEW: Added mcuconf.h generators for STM32L432xx, STM32L476xx, STM32L496xx,
        STM32L4R5xx, STM32F72x/73x, STM32F746/756 and STM32F76x/77x devices.

@@ -152,7 +152,7 @@ bool trng_lld_generate(TRNGDriver *trngp, size_t size, uint8_t *out) {
 
     /* Waiting for a random number in data register.*/
     tmo = STM32_DATA_FETCH_ATTEMPTS;
-    while ((tmo > 0) && ((trngp->rng->SR & RNG_SR_DRDY) != 0)) {
+    while ((tmo > 0) && ((trngp->rng->SR & RNG_SR_DRDY) == 0)) {
       tmo--;
       if (tmo == 0) {
         return true;

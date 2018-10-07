@@ -16,6 +16,7 @@
 
 #include "ch.h"
 #include "hal.h"
+#include "chprintf.h"
 
 #include "portab.h"
 
@@ -61,6 +62,53 @@ int main(void) {
 
   /* Normal main() thread activity, in this demo it does nothing.*/
   while (true) {
+    if (palReadLine(PORTAB_LINE_BUTTON) == PORTAB_BUTTON_PRESSED) {
+      bool err;
+      uint8_t rand[32];
+
+      trngStart(&TRNGD1, NULL);
+
+      err = trngGenerate(&TRNGD1, 32, rand);
+      if (err) {
+        chprintf((BaseSequentialStream *)&PORTAB_SD1, "Error!\r\n");
+      }
+      else {
+        unsigned i;
+
+        for (i = 0; i < 32; i++) {
+          chprintf((BaseSequentialStream *)&PORTAB_SD1, "%02x", rand[i]);
+        }
+        chprintf((BaseSequentialStream *)&PORTAB_SD1, "\r\n");
+      }
+
+      err = trngGenerate(&TRNGD1, 15, rand);
+      if (err) {
+        chprintf((BaseSequentialStream *)&PORTAB_SD1, "Error!\r\n");
+      }
+      else {
+        unsigned i;
+
+        for (i = 0; i < 15; i++) {
+          chprintf((BaseSequentialStream *)&PORTAB_SD1, "%02x", rand[i]);
+        }
+        chprintf((BaseSequentialStream *)&PORTAB_SD1, "\r\n");
+      }
+
+      err = trngGenerate(&TRNGD1, 2, rand);
+      if (err) {
+        chprintf((BaseSequentialStream *)&PORTAB_SD1, "Error!\r\n");
+      }
+      else {
+        unsigned i;
+
+        for (i = 0; i < 2; i++) {
+          chprintf((BaseSequentialStream *)&PORTAB_SD1, "%02x", rand[i]);
+        }
+        chprintf((BaseSequentialStream *)&PORTAB_SD1, "\r\n");
+      }
+
+      trngStop(&TRNGD1);
+    }
     chThdSleepMilliseconds(500);
   }
   return 0;
