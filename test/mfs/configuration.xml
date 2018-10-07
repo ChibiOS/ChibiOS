@@ -38,7 +38,7 @@
             <value>mfs_</value>
           </code_prefix>
           <global_definitions>
-            <value><![CDATA[#include "mfs.h"
+            <value><![CDATA[#include "hal_mfs.h"
 
 #define TEST_SUITE_NAME "ChibiOS/HAL MFS Test Suite"
 
@@ -53,7 +53,7 @@ flash_error_t bank_verify_erased(mfs_bank_t bank);
 void test_print_mfs_info(void);]]></value>
           </global_definitions>
           <global_code>
-            <value><![CDATA[#include "mfs.h"
+            <value><![CDATA[#include "hal_mfs.h"
 
 MFSDriver mfs1;
 uint8_t mfs_buffer[512];
@@ -128,7 +128,7 @@ flash_error_t bank_verify_erased(mfs_bank_t bank) {
             </condition>
             <shared_code>
               <value><![CDATA[#include <string.h>
-#include "mfs.h"
+#include "hal_mfs.h"
 
 static const uint8_t pattern1[] = {
   0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
@@ -879,7 +879,7 @@ test_assert(bank_verify_erased(MFS_BANK_0) == FLASH_NO_ERROR, "bank 0 not erased
               <value />
             </condition>
             <shared_code>
-              <value><![CDATA[#include "mfs.h"]]></value>
+              <value><![CDATA[#include "hal_mfs.h"]]></value>
             </shared_code>
             <cases>
               <case>

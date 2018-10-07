@@ -15,11 +15,11 @@
 */
 
 /**
- * @file    m25q.c
- * @brief   M25Q serial flash driver code.
+ * @file    hal_serial_nor.c
+ * @brief   Serial NOR serial flash driver code.
  *
- * @addtogroup M25Q
- * @ingroup M25Q
+ * @addtogroup HAL_SERIAL_NOR
+ * @ingroup HAL_SERIAL_NOR
  * @{
  */
 

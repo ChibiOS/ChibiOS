@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    flash_device.h
+ * @file    hal_flash_device.h
  * @brief   Micron N25Q serial flash driver header.
  *
  * @addtogroup MICRON_N25Q

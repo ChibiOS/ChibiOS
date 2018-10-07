@@ -18,15 +18,15 @@
 */
 
 /**
- * @file    mfs.h
+ * @file    hal_mfs.h
  * @brief   Managed Flash Storage module header.
  *
- * @addtogroup MFS
+ * @addtogroup HAL_MFS
  * @{
  */
 
-#ifndef MFS_H
-#define MFS_H
+#ifndef HAL_MFS_H
+#define HAL_MFS_H
 
 #include "hal_flash.h"
 
@@ -364,7 +364,7 @@ extern "C" {
 }
 #endif
 
-#endif /* MFS_H */
+#endif /* HAL_MFS_H */
 
 /** @} */
 

@@ -46,7 +46,7 @@ extern "C" {
 /* Shared definitions.                                                       */
 /*===========================================================================*/
 
-#include "mfs.h"
+#include "hal_mfs.h"
 
 #define TEST_SUITE_NAME "ChibiOS/HAL MFS Test Suite"
 

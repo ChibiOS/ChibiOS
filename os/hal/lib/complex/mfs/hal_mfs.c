@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    mfs.c
+ * @file    hal_mfs.c
  * @brief   Managed Flash Storage module code.
  * @details This module manages a flash partition as a generic storage where
  *          arbitrary data records can be created, updated, deleted and
@@ -30,7 +30,7 @@
  *          banks (where possible) caused by power loss during operations.
  *          Both operations are transparent to the user.
  *
- * @addtogroup MFS
+ * @addtogroup HAL_MFS
  * @{
  */
 
@@ -38,7 +38,7 @@
 
 #include "hal.h"
 
-#include "mfs.h"
+#include "hal_mfs.h"
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */

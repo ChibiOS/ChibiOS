@@ -114,7 +114,7 @@ include $(CHIBIOS)/tools/mk/autobuild.mk
 include $(CHIBIOS)/test/lib/test.mk
 include $(CHIBIOS)/test/mfs/mfs_test.mk
 include $(CHIBIOS)/os/hal/lib/complex/serial_nor/devices/micron_n25q/hal_flash_device.mk
-include $(CHIBIOS)/os/hal/lib/complex/mfs/mfs.mk
+include $(CHIBIOS)/os/hal/lib/complex/mfs/hal_mfs.mk
 include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 
 # Define linker script file here
