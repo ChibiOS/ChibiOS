@@ -14,40 +14,10 @@
     limitations under the License.
 */
 
-#include <string.h>
-
 #include "ch.h"
 #include "hal.h"
 
-#include "serial_nor.h"
-#include "mfs.h"
-
-#include "mfs_test_root.h"
-
 #include "portab.h"
-
-/* 16MB device, 2 cycles delay after NCS.*/
-const WSPIConfig WSPIcfg1 = {
-  .end_cb           = NULL,
-  .dcr              = STM32_DCR_FSIZE(24) | STM32_DCR_CSHT(1)
-};
-
-const SNORConfig snorcfg1 = {
-  .busp             = &WSPID1,
-  .buscfg           = &WSPIcfg1
-};
-
-SNORDriver snor1;
-
-const MFSConfig mfscfg1 = {
-  .flashp           = (BaseFlash *)&snor1,
-  .erased           = 0xFFFFFFFFU,
-  .bank_size        = 4096U,
-  .bank0_start      = 0U,
-  .bank0_sectors    = 1U,
-  .bank1_start      = 1U,
-  .bank1_sectors    = 1U
-};
 
 /*
  * LED blinker thread, times are in milliseconds.
@@ -86,18 +56,11 @@ int main(void) {
   /* Starting a serial port for test report output.*/
   sdStart(&PORTAB_SD1, NULL);
 
-  /* Initializing and starting snor1 driver.*/
-  snorObjectInit(&snor1);
-  snorStart(&snor1, &snorcfg1);
-
   /* Creates the blinker thread.*/
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   /* Normal main() thread activity, in this demo it does nothing.*/
   while (true) {
-    if (palReadLine(PORTAB_LINE_BUTTON) == PORTAB_BUTTON_PRESSED) {
-      test_execute((BaseSequentialStream *)&PORTAB_SD1, &mfs_test_suite);
-    }
     chThdSleepMilliseconds(500);
   }
   return 0;

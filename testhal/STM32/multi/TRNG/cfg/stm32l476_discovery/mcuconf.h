@@ -278,6 +278,11 @@
 #define STM32_ST_USE_TIMER                  2
 
 /*
+ * TRNG driver system settings.
+ */
+#define STM32_TRNG_USE_RNG1                 TRUE
+
+/*
  * UART driver system settings.
  */
 #define STM32_UART_USE_USART1               FALSE
@@ -322,7 +327,7 @@
 /*
  * WSPI driver system settings.
  */
-#define STM32_WSPI_USE_QUADSPI1             TRUE
+#define STM32_WSPI_USE_QUADSPI1             FALSE
 #define STM32_WSPI_QUADSPI1_DMA_STREAM      STM32_DMA_STREAM_ID(2, 7)
 
 #endif /* MCUCONF_H */

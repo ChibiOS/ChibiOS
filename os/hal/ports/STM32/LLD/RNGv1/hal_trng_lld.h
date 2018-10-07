@@ -16,7 +16,7 @@
 
 /**
  * @file    hal_trng_lld.h
- * @brief   PLATFORM TRNG subsystem low level driver header.
+ * @brief   STM32 TRNG subsystem low level driver header.
  *
  * @addtogroup TRNG
  * @{
@@ -36,7 +36,7 @@
 /*===========================================================================*/
 
 /**
- * @name    PLATFORM configuration options
+ * @name    STM32 configuration options
  * @{
  */
 /**
@@ -44,14 +44,50 @@
  * @details If set to @p TRUE the support for TRNGD1 is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(PLATFORM_TRNG_USE_TRNG1) || defined(__DOXYGEN__)
-#define PLATFORM_TRNG_USE_TRNG1               FALSE
+#if !defined(STM32_TRNG_USE_RNG1) || defined(__DOXYGEN__)
+#define STM32_TRNG_USE_RNG1                 FALSE
+#endif
+
+/**
+ * @brief   TRNGD1 error clear timeout counter.
+ * @details Number of status register fetches before failing.
+ */
+#if !defined(STM32_TRNG_ERROR_CLEAR_ATTEMPTS) || defined(__DOXYGEN__)
+#define STM32_TRNG_ERROR_CLEAR_ATTEMPTS     1000
+#endif
+
+/**
+ * @brief   TRNGD1 data available timeout counter.
+ * @details Number of status register fetches before failing.
+ */
+#if !defined(STM32_DATA_FETCH_ATTEMPTS) || defined(__DOXYGEN__)
+#define STM32_DATA_FETCH_ATTEMPTS           1000
 #endif
 /** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+#if !defined(STM32_HAS_RNG1)
+#define STM32_HAS_RNG1                      FALSE
+#endif
+
+#if STM32_TRNG_USE_RNG1 && !STM32_HAS_RNG1
+#error "RNG1 not present in the selected device"
+#endif
+
+#if !STM32_TRNG_USE_RNG1
+#error "TRNG driver activated but no RNG peripheral assigned"
+#endif
+
+#if !defined(STM32_RNGCLK)
+#error "STM32_RNGCLK not defined in this HAL"
+#endif
+
+#if STM32_RNGCLK != 48000000
+#error "STM32_RNGCLK is not exactly 48000000"
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -64,7 +100,7 @@
 typedef struct {
   /* End of the mandatory fields.*/
   /**
-   * @brief   Dummy configuration, it is not needed..
+   * @brief   Dummy configuration, it is not needed.
    */
   uint32_t                   dummy;
 } TRNGConfig;
@@ -85,6 +121,10 @@ struct TRNGDriver {
   TRNG_DRIVER_EXT_FIELDS
 #endif
   /* End of the mandatory fields.*/
+  /**
+    * @brief Pointer to the RNG registers block.
+    */
+  RNG_TypeDef                *rng;
 };
 
 /*===========================================================================*/
@@ -95,7 +135,7 @@ struct TRNGDriver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if (PLATFORM_TRNG_USE_TRNG1 == TRUE) && !defined(__DOXYGEN__)
+#if (STM32_TRNG_USE_RNG1 == TRUE) && !defined(__DOXYGEN__)
 extern TRNGDriver TRNGD1;
 #endif
 

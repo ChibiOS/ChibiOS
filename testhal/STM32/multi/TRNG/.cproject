@@ -78,13 +78,14 @@
 		<configuration configurationName="Default">
 			<resource resourceType="PROJECT" workspacePath="/STM32-TRNG"/>
 		</configuration>
+		<configuration configurationName="Build for STM32L476-Discovery"/>
 	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		<scannerConfigBuildInfo instanceId="0.365230168.523175374">
+		<scannerConfigBuildInfo instanceId="0.365230168">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile"/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="0.365230168">
+		<scannerConfigBuildInfo instanceId="0.365230168.523175374">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile"/>
 		</scannerConfigBuildInfo>
 	</storageModule>

@@ -204,6 +204,9 @@
                                              STM32_DMA_STREAM_ID_MSK(2, 7))
 #define STM32_QUADSPI1_DMA_CHN              0x03050000
 
+/* RNG attributes.*/
+#define STM32_HAS_RNG1                      TRUE
+
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
 #define STM32_RTC_HAS_SUBSECONDS            TRUE
@@ -550,6 +553,9 @@
 #define STM32_QUADSPI1_DMA_MSK              (STM32_DMA_STREAM_ID_MSK(1, 5) |\
                                              STM32_DMA_STREAM_ID_MSK(2, 7))
 #define STM32_QUADSPI1_DMA_CHN              0x03050000
+
+/* RNG attributes.*/
+#define STM32_HAS_RNG1                      TRUE
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
@@ -912,6 +918,9 @@
 #define STM32_QUADSPI1_DMA_MSK              (STM32_DMA_STREAM_ID_MSK(1, 5) |\
                                              STM32_DMA_STREAM_ID_MSK(2, 7))
 #define STM32_QUADSPI1_DMA_CHN              0x03050000
+
+/* RNG attributes.*/
+#define STM32_HAS_RNG1                      TRUE
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
@@ -1337,6 +1346,9 @@
 #define STM32_QUADSPI1_DMA_MSK              (STM32_DMA_STREAM_ID_MSK(1, 5) |\
                                              STM32_DMA_STREAM_ID_MSK(2, 7))
 #define STM32_QUADSPI1_DMA_CHN              0x03050000
+
+/* RNG attributes.*/
+#define STM32_HAS_RNG1                      TRUE
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
