@@ -19,7 +19,7 @@
 #include "ch.h"
 #include "hal.h"
 
-#include "serial_nor.h"
+#include "hal_serial_nor.h"
 #include "mfs.h"
 
 #include "mfs_test_root.h"

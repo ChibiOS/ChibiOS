@@ -23,8 +23,8 @@
  * @{
  */
 
-#ifndef SERIAL_NOR_H
-#define SERIAL_NOR_H
+#ifndef HAL_SERIAL_NOR_H
+#define HAL_SERIAL_NOR_H
 
 #include "hal_flash.h"
 
@@ -192,9 +192,9 @@ extern "C" {
 #endif
 
 /* Device-specific implementations.*/
-#include "flash_device.h"
+#include "hal_flash_device.h"
 
-#endif /* SERIAL_NOR_H */
+#endif /* HAL_SERIAL_NOR_H */
 
 /** @} */
 

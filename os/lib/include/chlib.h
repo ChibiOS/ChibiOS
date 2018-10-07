@@ -38,7 +38,7 @@
 /**
  * @brief   ChibiOS/LIB identification macro.
  */
-#define _CHIBIOS_LIB_
+#define _CHIBIOS_OSLIB_
 
 /**
  * @brief   Stable release flag.
@@ -138,11 +138,11 @@
 #endif
 
 /* License checks.*/
-#if !defined(CH_CUSTOMER_LIC_LIB) || !defined(CH_LICENSE_FEATURES)
+#if !defined(CH_CUSTOMER_LIC_OSLIB) || !defined(CH_LICENSE_FEATURES)
 #error "malformed chlicense.h"
 #endif
 
-#if CH_CUSTOMER_LIC_LIB== FALSE
+#if CH_CUSTOMER_LIC_OSLIB== FALSE
 #error "ChibiOS/LIB not licensed"
 #endif
 
@@ -153,7 +153,7 @@
 #endif
 
 /* Restrictions in basic and intermediate modes.*/
-#if (CH_CUSTOMER_LIC_LIB == FALSE) ||                                       \
+#if (CH_CUSTOMER_LIC_OSLIB == FALSE) ||                                     \
     (CH_LICENSE_FEATURES == CH_FEATURES_INTERMEDIATE) ||                    \
     (CH_LICENSE_FEATURES == CH_FEATURES_BASIC)
 
@@ -162,12 +162,12 @@
 
 #define CH_CFG_USE_FACTORY                  FALSE
 
-#endif /* (CH_CUSTOMER_LIC_LIB == FALSE) ||
+#endif /* (CH_CUSTOMER_LIC_OSLIB == FALSE) ||
           (CH_LICENSE_FEATURES == CH_FEATURES_INTERMEDIATE) ||
           (CH_LICENSE_FEATURES == CH_FEATURES_BASIC) */
 
 /* Restrictions in basic mode.*/
-#if (CH_CUSTOMER_LIC_LIB == FALSE) ||                                       \
+#if (CH_CUSTOMER_LIC_OSLIB == FALSE) ||                                     \
     (CH_LICENSE_FEATURES == CH_FEATURES_BASIC)
 
 /* Restricted subsystems.*/
@@ -183,7 +183,7 @@
 #define CH_CFG_USE_OBJ_FIFOS                FALSE
 #define CH_CFG_USE_PIPES                    FALSE
 
-#endif /* (CH_CUSTOMER_LIC_LIB == FALSE) ||
+#endif /* (CH_CUSTOMER_LIC_OSLIB == FALSE) ||
           (CH_LICENSE_FEATURES == CH_FEATURES_BASIC) */
 
 /*===========================================================================*/

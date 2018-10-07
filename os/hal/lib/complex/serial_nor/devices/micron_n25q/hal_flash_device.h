@@ -23,8 +23,8 @@
  * @{
  */
 
-#ifndef FLASH_DEVICE_H
-#define FLASH_DEVICE_H
+#ifndef HAL_FLASH_DEVICE_H
+#define HAL_FLASH_DEVICE_H
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -201,7 +201,7 @@ extern "C" {
 }
 #endif
 
-#endif /* FLASH_DEVICE_H */
+#endif /* HAL_FLASH_DEVICE_H */
 
 /** @} */
 

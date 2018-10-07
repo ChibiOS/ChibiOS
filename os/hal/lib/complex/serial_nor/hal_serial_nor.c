@@ -24,7 +24,7 @@
  */
 
 #include "hal.h"
-#include "serial_nor.h"
+#include "hal_serial_nor.h"
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */

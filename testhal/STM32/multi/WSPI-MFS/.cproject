@@ -78,6 +78,7 @@
 		<configuration configurationName="Default">
 			<resource resourceType="PROJECT" workspacePath="/STM32-WSPI-MFS"/>
 		</configuration>
+		<configuration configurationName="Build for STM32L476-Discovery"/>
 	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
