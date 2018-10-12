@@ -61,13 +61,13 @@
 #define PR_LOCK(p)       chMtxLock(&(p)->rmtx)
 #define PR_UNLOCK(p)     chMtxUnlock(&(p)->rmtx)
 #else
-#define PC_INIT(p)       chMtxObjectInit(&(p)->csem, (cnt_t)1)
+#define PC_INIT(p)       chSemObjectInit(&(p)->csem, (cnt_t)1)
 #define PC_LOCK(p)       (void) chSemWait(&(p)->csem)
 #define PC_UNLOCK(p)     chSemSignal(&(p)->csem)
-#define PW_INIT(p)       chMtxObjectInit(&(p)->wsem, (cnt_t)1)
+#define PW_INIT(p)       chSemObjectInit(&(p)->wsem, (cnt_t)1)
 #define PW_LOCK(p)       (void) chSemWait(&(p)->wsem)
 #define PW_UNLOCK(p)     chSemSignal(&(p)->wsem)
-#define PR_INIT(p)       chMtxObjectInit(&(p)->rsem, (cnt_t)1)
+#define PR_INIT(p)       chSemObjectInit(&(p)->rsem, (cnt_t)1)
 #define PR_LOCK(p)       (void) chSemWait(&(p)->rsem)
 #define PR_UNLOCK(p)     chSemSignal(&(p)->rsem)
 #endif
