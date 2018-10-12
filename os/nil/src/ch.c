@@ -740,6 +740,24 @@ void chThdResumeI(thread_reference_t *trp, msg_t msg) {
 }
 
 /**
+ * @brief   Wakes up a thread waiting on a thread reference object.
+ * @note    This function must reschedule, it can only be called from thread
+ *          context.
+ *
+ * @param[in] trp       a pointer to a thread reference object
+ * @param[in] msg       the message code
+ *
+ * @api
+ */
+void chThdResume(thread_reference_t *trp, msg_t msg) {
+
+  chSysLock();
+  chThdResumeI(trp, msg);
+  chSchRescheduleS();
+  chSysUnlock();
+}
+
+/**
  * @brief   Suspends the invoking thread for the specified time.
  *
  * @param[in] timeout   the delay in system ticks

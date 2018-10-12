@@ -55,7 +55,7 @@
 /**
  * @brief   Kernel version string.
  */
-#define CH_KERNEL_VERSION       "3.0.0"
+#define CH_KERNEL_VERSION       "3.1.0"
 
 /**
  * @brief   Kernel version major number.
@@ -65,7 +65,7 @@
 /**
  * @brief   Kernel version minor number.
  */
-#define CH_KERNEL_MINOR         0
+#define CH_KERNEL_MINOR         1
 
 /**
  * @brief   Kernel version patch number.
@@ -463,11 +463,6 @@
 #define CH_CFG_ST_FREQUENCY                 1000
 #endif
 
-/* Restricted subsystems.*/
-#undef CH_CFG_USE_MAILBOXES
-
-#define CH_CFG_USE_MAILBOXES                FALSE
-
 #endif /* (CH_LICENSE_FEATURES == CH_FEATURES_INTERMEDIATE) ||
           (CH_LICENSE_FEATURES == CH_FEATURES_BASIC) */
 
@@ -477,15 +472,6 @@
 /* Tick-Less mode restricted.*/
 #undef CH_CFG_ST_TIMEDELTA
 #define CH_CFG_ST_TIMEDELTA                 0
-
-/* Restricted subsystems.*/
-#undef CH_CFG_USE_MEMCORE
-#undef CH_CFG_USE_MEMPOOLS
-#undef CH_CFG_USE_HEAP
-
-#define CH_CFG_USE_MEMCORE                  FALSE
-#define CH_CFG_USE_MEMPOOLS                 FALSE
-#define CH_CFG_USE_HEAP                     FALSE
 
 #endif /* CH_LICENSE_FEATURES == CH_FEATURES_BASIC */
 
@@ -1545,6 +1531,7 @@ extern "C" {
   msg_t chSchGoSleepTimeoutS(tstate_t newstate, sysinterval_t timeout);
   msg_t chThdSuspendTimeoutS(thread_reference_t *trp, sysinterval_t timeout);
   void chThdResumeI(thread_reference_t *trp, msg_t msg);
+  void chThdResume(thread_reference_t *trp, msg_t msg);
   void chThdSleep(sysinterval_t timeout);
   void chThdSleepUntil(systime_t abstime);
   msg_t chThdEnqueueTimeoutS(threads_queue_t *tqp, sysinterval_t timeout);

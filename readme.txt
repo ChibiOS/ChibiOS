@@ -75,6 +75,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added chThdResume() function to NIL.
 - NEW: Removed QSPI driver model, entirely replaced by WSPI.
 - NEW: Added demos regarding WSPI, serial nor driver and MFS.
 - NEW: Modified the serial nor driver to work with WSPI instead of QSPI,
