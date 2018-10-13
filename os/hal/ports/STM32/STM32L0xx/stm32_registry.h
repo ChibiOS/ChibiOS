@@ -34,7 +34,7 @@
  * @{
  */
 /*===========================================================================*/
-/* STM32L011xx                                                               */
+/* STM32L011xx.                                                              */
 /*===========================================================================*/
 #if defined(STM32L011xx) || defined(__DOXYGEN__)
 
@@ -252,9 +252,9 @@
 #define STM32_CRC_PROGRAMMABLE              TRUE
 
 /*===========================================================================*/
-/* STM32L031xx                                                               */
+/* STM32L031xx.                                                              */
 /*===========================================================================*/
-#elif defined(STM32L031xx) || defined(__DOXYGEN__)
+#elif defined(STM32L031xx)
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
@@ -473,10 +473,9 @@
 #define STM32_CRC_PROGRAMMABLE              TRUE
 
 /*===========================================================================*/
-/* STM32L051xx, STM32L061xx                                                  */
+/* STM32L051xx, STM32L061xx.                                                 */
 /*===========================================================================*/
-#elif defined(STM32L051xx) || defined(STM32L061xx) ||                       \
-    defined(__DOXYGEN__)
+#elif defined(STM32L051xx) || defined(STM32L061xx)
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
@@ -728,8 +727,7 @@
 /*===========================================================================*/
 /* STM32L052xx, STM32L062xx.                                                 */
 /*===========================================================================*/
-#elif defined(STM32L052xx) || defined(STM32L062xx) ||                       \
-    defined(__DOXYGEN__)
+#elif defined(STM32L052xx) || defined(STM32L062xx)
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
@@ -988,8 +986,7 @@
 /*===========================================================================*/
 /* STM32L053xx, STM32L063xx.                                                 */
 /*===========================================================================*/
-#elif defined(STM32L053xx) || defined(STM32L063xx) ||                       \
-    defined(__DOXYGEN__)
+#elif defined(STM32L053xx) || defined(STM32L063xx)
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
@@ -1246,9 +1243,9 @@
 #define STM32_CRC_PROGRAMMABLE              TRUE
 
 /*===========================================================================*/
-/* STM32L071xx                                                               */
+/* STM32L071xx.                                                              */
 /*===========================================================================*/
-#elif defined(STM32L071xx) || defined(__DOXYGEN__)
+#elif defined(STM32L071xx)
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
@@ -1543,9 +1540,9 @@
 #define STM32_CRC_PROGRAMMABLE              TRUE
 
 /*===========================================================================*/
-/* STM32L072xx/STM32L073xx                                                               */
+/* STM32L072xx, STM32L073xx.                                                 */
 /*===========================================================================*/
-#elif defined(STM32L072xx) || defined(STM32L073xx) || defined(__DOXYGEN__)
+#elif defined(STM32L072xx) || defined(STM32L073xx)
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
