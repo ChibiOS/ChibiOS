@@ -75,6 +75,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added support or STM32L072 and STM32L073.
 - NEW: Added chThdResume() function to NIL.
 - NEW: Removed QSPI driver model, entirely replaced by WSPI.
 - NEW: Added demos regarding WSPI, serial nor driver and MFS.
