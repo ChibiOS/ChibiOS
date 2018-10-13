@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** 17.6.5 ***
+- HAL: Fixed mTM32L071/72 entries in registry (bug #981).
+- HAL: Fixed TIM3 missing from STM32L0xx RCC macros (bug #980)
 - HAL: Fixed invalid STM32 ADCv3 clock selection for L4 and L4+ (bug #979).
 - HAL: Fixed wrong number of endpoints for STM32F412/413 (bug #978).
 - RT:  Fixed chEvtGetAndClearFlags(...) does not mask events (bug #977).

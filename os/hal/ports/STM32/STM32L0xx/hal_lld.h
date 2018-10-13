@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@
  *          - STM32L011xx, STM32L031xx, 
  *            STM32L051xx, STM32L052xx, STM32L053xx,
  *            STM32L061xx, STM32L062xx, STM32L063xx,
- *            STM32L073xx for ultra-low-power MCUs.
+ *            STM32L071xx, STM32L072xx, STM32L073xx for ultra-low-power MCUs.
  *          .
  *
  * @addtogroup HAL
@@ -75,6 +75,12 @@
 
 #elif defined(STM32L063xx)
 #define PLATFORM_NAME           "STM32L063xx ultra-low-power MCU"
+
+#elif defined(STM32L071xx)
+#define PLATFORM_NAME           "STM32L071xx ultra-low-power MCU"
+
+#elif defined(STM32L072xx)
+#define PLATFORM_NAME           "STM32L073xx ultra-low-power MCU"
 
 #elif defined(STM32L073xx)
 #define PLATFORM_NAME           "STM32L073xx ultra-low-power MCU"
@@ -1188,6 +1194,8 @@
 
 /* Various helpers.*/
 #include "nvic.h"
+#include "cache.h"
+#include "stm32_isr.h"
 #include "stm32_dma.h"
 #include "stm32_rcc.h"
 
