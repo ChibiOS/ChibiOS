@@ -108,6 +108,10 @@
 #define STM32_GPT_TIM2_IRQ_PRIORITY         2
 #define STM32_GPT_USE_TIM3                  FALSE
 #define STM32_GPT_TIM3_IRQ_PRIORITY         2
+#define STM32_GPT_USE_TIM6                  FALSE
+#define STM32_GPT_TIM6_IRQ_PRIORITY         2
+#define STM32_GPT_USE_TIM7                  FALSE
+#define STM32_GPT_TIM7_IRQ_PRIORITY         2
 #define STM32_GPT_USE_TIM21                 FALSE
 #define STM32_GPT_TIM21_IRQ_PRIORITY        2
 #define STM32_GPT_USE_TIM22                 FALSE

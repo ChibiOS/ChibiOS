@@ -158,6 +158,34 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if !defined(STM32_HAS_TIM1)
+#define STM32_HAS_TIM1                      FALSE
+#endif
+
+#if !defined(STM32_HAS_TIM2)
+#define STM32_HAS_TIM2                      FALSE
+#endif
+
+#if !defined(STM32_HAS_TIM3)
+#define STM32_HAS_TIM3                      FALSE
+#endif
+
+#if !defined(STM32_HAS_TIM4)
+#define STM32_HAS_TIM4                      FALSE
+#endif
+
+#if !defined(STM32_HAS_TIM5)
+#define STM32_HAS_TIM5                      FALSE
+#endif
+
+#if !defined(STM32_HAS_TIM8)
+#define STM32_HAS_TIM8                      FALSE
+#endif
+
+#if !defined(STM32_HAS_TIM9)
+#define STM32_HAS_TIM9                      FALSE
+#endif
+
 #if STM32_ICU_USE_TIM1 && !STM32_HAS_TIM1
 #error "TIM1 not present in the selected device"
 #endif

@@ -65,6 +65,30 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if !defined(STM32_HAS_TIM2)
+#define STM32_HAS_TIM2                      FALSE
+#endif
+
+#if !defined(STM32_HAS_TIM3)
+#define STM32_HAS_TIM3                      FALSE
+#endif
+
+#if !defined(STM32_HAS_TIM4)
+#define STM32_HAS_TIM4                      FALSE
+#endif
+
+#if !defined(STM32_HAS_TIM5)
+#define STM32_HAS_TIM5                      FALSE
+#endif
+
+#if !defined(STM32_HAS_TIM21)
+#define STM32_HAS_TIM21                     FALSE
+#endif
+
+#if !defined(STM32_HAS_TIM22)
+#define STM32_HAS_TIM22                     FALSE
+#endif
+
 #if STM32_ST_USE_TIMER == 2
 #if !STM32_HAS_TIM2
 #error "TIM2 not present"
