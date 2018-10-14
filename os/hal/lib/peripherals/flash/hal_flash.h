@@ -207,8 +207,8 @@ typedef struct {
 #define getBaseFlash(ip) ((BaseFlash *)&(ip)->vmt)
 
 /**
- * @brief   Sensors get axes number.
- *
+ * @brief   Gets the flash descriptor structure.
+  *
  * @param[in] ip        pointer to a @p BaseFlash or derived class
  * @return              A flash device descriptor.
  *
