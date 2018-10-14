@@ -75,6 +75,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added a new "persistent storage" base class to HAL.
 - NEW: Added support for TIM21 and TIM22 in STM32 GPT driver.
 - NEW: Reinforced checks in TIM-related drivers.
 - NEW: Added support for STM32L072 and STM32L073.

@@ -138,7 +138,6 @@ typedef struct {
 
 /**
  * @brief   @p BaseFlash specific methods.
- * @note    No methods so far, just a common ancestor interface.
  */
 #define _base_flash_methods_alone                                           \
   /* Get flash device attributes.*/                                         \
@@ -207,7 +206,7 @@ typedef struct {
 #define getBaseFlash(ip) ((BaseFlash *)&(ip)->vmt)
 
 /**
- * @brief   Sensors get axes number.
+ * @brief   Gets the flash descriptor structure.
  *
  * @param[in] ip        pointer to a @p BaseFlash or derived class
  * @return              A flash device descriptor.
