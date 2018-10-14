@@ -88,6 +88,11 @@
 typedef struct RTCDriver RTCDriver;
 
 /**
+ * @brief   Type of an RTC alarm number.
+ */
+typedef unsigned int rtcalarm_t;
+
+/**
  * @brief   Type of a structure representing an RTC date/time stamp.
  */
 typedef struct {
@@ -101,7 +106,55 @@ typedef struct {
   /*lint -restore*/
 } RTCDateTime;
 
+/**
+ * @brief   BasePersistentStorage specific methods.
+ */
+#define _rtc_driver_methods                                                 \
+  _base_persistent_storage_methods
+
 #include "hal_rtc_lld.h"
+
+/* Some more checks, must happen after inclusion of the LLD header, this is
+   why are placed here.*/
+#if !defined(RTC_SUPPORTS_CALLBACKS)
+#error "RTC LLD does not define the required RTC_SUPPORTS_CALLBACKS macro"
+#endif
+
+#if !defined(RTC_ALARMS)
+#error "RTC LLD does not define the required RTC_ALARMS macro"
+#endif
+
+#if !defined(RTC_HAS_STORAGE)
+#error "RTC LLD does not define the required RTC_HAS_STORAGE macro"
+#endif
+
+#if RTC_HAS_STORAGE || defined(__DOXYGEN__)
+/**
+ * @extends FileStream
+ *
+ * @brief   @p RTCDriver virtual methods table.
+ */
+struct RTCDriverVMT {
+  _rtc_driver_methods
+};
+#endif
+
+/**
+ * @brief   Structure representing an RTC driver.
+ */
+struct RTCDriver {
+#if RTC_HAS_STORAGE || defined(__DOXYGEN__)
+  /**
+   * @brief Virtual Methods Table.
+   */
+  const struct RTCDriverVMT *vmt;
+#endif
+#if defined(RTC_DRIVER_EXT_FIELDS)
+  RTC_DRIVER_EXT_FIELDS
+#endif
+  /* End of the mandatory fields.*/
+  _rtc_lld_driver_fields
+};
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -110,6 +163,13 @@ typedef struct {
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
+
+#if !defined(__DOXYGEN__)
+extern RTCDriver RTCD1;
+#if RTC_HAS_STORAGE == TRUE
+extern struct RTCDriverVMT _rtc_lld_vmt;
+#endif
+#endif
 
 #ifdef __cplusplus
 extern "C" {

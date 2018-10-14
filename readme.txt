@@ -75,6 +75,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW_ Modified the RTC driver to implement the persistent storage interface
+       instead of files interface.
 - NEW: Added a new "persistent storage" base class to HAL.
 - NEW: Added support for TIM21 and TIM22 in STM32 GPT driver.
 - NEW: Reinforced checks in TIM-related drivers.

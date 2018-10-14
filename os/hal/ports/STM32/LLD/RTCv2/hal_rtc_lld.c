@@ -199,86 +199,37 @@ static uint32_t rtc_encode_date(const RTCDateTime *timespec) {
   return dr;
 }
 
-#if RTC_HAS_STORAGE
+#if RTC_HAS_STORAGE == TRUE
 /* TODO: Map on the backup SRAM on devices that have it.*/
-static size_t _write(void *instance, const uint8_t *bp, size_t n) {
-
-  (void)instance;
-  (void)bp;
-  (void)n;
-
-  return 0;
-}
-
-static size_t _read(void *instance, uint8_t *bp, size_t n) {
-
-  (void)instance;
-  (void)bp;
-  (void)n;
-
-  return 0;
-}
-
-static msg_t _put(void *instance, uint8_t b) {
-
-  (void)instance;
-  (void)b;
-
-  return FILE_OK;
-}
-
-static msg_t _get(void *instance) {
-
-  (void)instance;
-
-  return FILE_OK;
-}
-
-static msg_t _close(void *instance) {
-
-  /* Close is not supported.*/
-  (void)instance;
-
-  return FILE_OK;
-}
-
-static msg_t _geterror(void *instance) {
-
-  (void)instance;
-
-  return (msg_t)0;
-}
-
-static msg_t _getsize(void *instance) {
-
-  (void)instance;
-
-  return 0;
-}
-
-static msg_t _getposition(void *instance) {
-
-  (void)instance;
-
-  return 0;
-}
-
-static msg_t _lseek(void *instance, fileoffset_t offset) {
+static size_t _read(void *instance, ps_offset_t offset,
+                    size_t n, uint8_t *rp) {
 
   (void)instance;
   (void)offset;
+  (void)n;
+  (void)rp;
 
-  return FILE_OK;
+  return 0;
+}
+
+static ps_error_t _write(void *instance, ps_offset_t offset,
+                         size_t n, const uint8_t *wp) {
+
+  (void)instance;
+  (void)offset;
+  (void)n;
+  (void)wp;
+
+  return 0;
 }
 
 /**
  * @brief   VMT for the RTC storage file interface.
  */
 struct RTCDriverVMT _rtc_lld_vmt = {
-  _write, _read, _put, _get,
-  _close, _geterror, _getsize, _getposition, _lseek
+  _getsize, _read, _write
 };
-#endif /* RTC_HAS_STORAGE */
+#endif /* RTC_HAS_STORAGE == TRUE */
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */

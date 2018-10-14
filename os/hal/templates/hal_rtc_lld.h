@@ -80,17 +80,6 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
-/**
- * @brief   FileStream specific methods.
- */
-#define _rtc_driver_methods                                                 \
-  _file_stream_methods
-
-/**
- * @brief   Type of an RTC alarm number.
- */
-typedef uint32_t rtcalarm_t;
-
 #if (RTC_SUPPORTS_CALLBACKS == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Type of an RTC event.
@@ -113,30 +102,11 @@ typedef struct {
   uint32_t                  dummy;
 } RTCAlarm;
 
-#if (RTC_HAS_STORAGE == TRUE) || defined(__DOXYGEN__)
 /**
- * @extends FileStream
- *
- * @brief   @p RTCDriver virtual methods table.
+ * @brief   Implementation-specific @p RTCDriver fields.
  */
-struct RTCDriverVMT {
-  _rtc_driver_methods
-};
-#endif
-
-/**
- * @brief   Structure representing an RTC driver.
- */
-struct RTCDriver {
-#if (RTC_HAS_STORAGE == TRUE) || defined(__DOXYGEN__)
-  /**
-   * @brief Virtual Methods Table.
-   */
-  const struct RTCDriverVMT *vmt;
-#endif
-  /* End of the mandatory fields.*/
+#define _rtc_lld_driver_fields                                              \
   uint32_t                  dummy;
-};
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -148,10 +118,6 @@ struct RTCDriver {
 
 #if (PLATFORM_RTC_USE_RTC1 == TRUE) && !defined(__DOXYGEN__)
 extern RTCDriver RTCD1;
-#endif
-
-#if (RTC_HAS_STORAGE == TRUE) && !defined(__DOXYGEN__)
-extern struct RTCDriverVMT _rtc_lld_vmt;
 #endif
 
 #ifdef __cplusplus
