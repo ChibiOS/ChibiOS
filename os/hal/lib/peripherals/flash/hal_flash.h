@@ -138,7 +138,6 @@ typedef struct {
 
 /**
  * @brief   @p BaseFlash specific methods.
- * @note    No methods so far, just a common ancestor interface.
  */
 #define _base_flash_methods_alone                                           \
   /* Get flash device attributes.*/                                         \
