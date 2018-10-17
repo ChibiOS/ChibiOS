@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    hal_wspi_lld.h
- * @brief   PLATFORM WSPI subsystem low level driver header.
+ * @file    QUADSPIv1/hal_wspi_lld.h
+ * @brief   STM32 WSPI subsystem low level driver header.
  *
  * @addtogroup WSPI
  * @{
@@ -192,6 +192,10 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+#if !defined(STM32_HAS_QUADSPI1)
+#define STM32_HAS_QUADSPI1                  FALSE
+#endif
 
 #if STM32_WSPI_USE_QUADSPI1 && !STM32_HAS_QUADSPI1
 #error "QUADSPI1 not present in the selected device"
