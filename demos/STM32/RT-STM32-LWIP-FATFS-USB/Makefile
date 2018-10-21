@@ -5,25 +5,25 @@
 all:
 	@echo
 	@echo === Building for STM32F407-Olimex ==================================
-	+@make --no-print-directory -f Makefile-stm32f407_olimex all
+	+@make --no-print-directory -f make/stm32f407_olimex.make all
 	@echo ====================================================================
 	@echo
 	@echo === Building for STM32F746-Discovery ===============================
-	+@make --no-print-directory -f Makefile-stm32f746_discovery all
+	+@make --no-print-directory -f make/stm32f746_discovery.make all
 	@echo ====================================================================
 	@echo
 	@echo === Building for STM32F107-GoldBull ================================
-	+@make --no-print-directory -f Makefile-stm32f107_goldbull all
+	+@make --no-print-directory -f make/stm32f107_goldbull.make all
 	@echo ====================================================================
 	@echo
 
 clean:
 	@echo
-	+@make --no-print-directory -f Makefile-stm32f407_olimex clean
+	+@make --no-print-directory -f make/stm32f407_olimex.make clean
 	@echo
-	+@make --no-print-directory -f Makefile-stm32f746_discovery clean
+	+@make --no-print-directory -f make/stm32f746_discovery.make clean
 	@echo
-	+@make --no-print-directory -f Makefile-stm32f107_goldbull clean
+	+@make --no-print-directory -f make/stm32f107_goldbull.make clean
 	@echo
 #
 ##############################################################################
