@@ -55,7 +55,7 @@
 /**
  * @brief   Kernel version string.
  */
-#define CH_KERNEL_VERSION       "3.0.0"
+#define CH_KERNEL_VERSION       "3.0.1"
 
 /**
  * @brief   Kernel version major number.
@@ -70,7 +70,7 @@
 /**
  * @brief   Kernel version patch number.
  */
-#define CH_KERNEL_PATCH         0
+#define CH_KERNEL_PATCH         1
 /** @} */
 
 /**
@@ -1520,6 +1520,7 @@ extern "C" {
   msg_t chSchGoSleepTimeoutS(tstate_t newstate, sysinterval_t timeout);
   msg_t chThdSuspendTimeoutS(thread_reference_t *trp, sysinterval_t timeout);
   void chThdResumeI(thread_reference_t *trp, msg_t msg);
+  void chThdResume(thread_reference_t *trp, msg_t msg);
   void chThdSleep(sysinterval_t timeout);
   void chThdSleepUntil(systime_t abstime);
   msg_t chThdEnqueueTimeoutS(threads_queue_t *tqp, sysinterval_t timeout);
