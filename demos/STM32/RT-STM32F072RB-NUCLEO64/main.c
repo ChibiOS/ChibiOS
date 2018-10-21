@@ -16,7 +16,6 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "chprintf.h"
 #include "rt_test_root.h"
 #include "oslib_test_root.h"
 
@@ -55,7 +54,6 @@ int main(void) {
    * Activates the serial driver 2 using the driver default configuration.
    */
   sdStart(&SD2, NULL);
-  chprintf((BaseSequentialStream *)&SD2, "SYSCLK=%u\r\n", STM32_SYSCLK);
 
   /*
    * Creates the blinker thread.
