@@ -55,7 +55,7 @@
 /**
  * @brief   Kernel version string.
  */
-#define CH_KERNEL_VERSION       "3.1.0"
+#define CH_KERNEL_VERSION       "3.1.1"
 
 /**
  * @brief   Kernel version major number.
@@ -70,7 +70,7 @@
 /**
  * @brief   Kernel version patch number.
  */
-#define CH_KERNEL_PATCH         0
+#define CH_KERNEL_PATCH         1
 /** @} */
 
 /**
@@ -81,7 +81,7 @@
  * @note    It is meant to be used in configuration files as switch.
  */
 #if !defined(FALSE) || defined(__DOXYGEN__)
-#define FALSE               0
+#define FALSE                   0
 #endif
 
 /**
@@ -89,7 +89,7 @@
  * @note    It is meant to be used in configuration files as switch.
  */
 #if !defined(TRUE) || defined(__DOXYGEN__)
-#define TRUE                1
+#define TRUE                    1
 #endif
 /** @} */
 
