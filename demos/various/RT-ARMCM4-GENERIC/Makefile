@@ -33,11 +33,6 @@ ifeq ($(USE_LTO),)
   USE_LTO = yes
 endif
 
-# If enabled, this option allows to compile the application in THUMB mode.
-ifeq ($(USE_THUMB),)
-  USE_THUMB = yes
-endif
-
 # Enable this if you want to see the full log while compiling.
 ifeq ($(USE_VERBOSE_COMPILE),)
   USE_VERBOSE_COMPILE = no
@@ -76,7 +71,7 @@ endif
 
 # FPU-related options.
 ifeq ($(USE_FPU_OPT),)
-  USE_FPU_OPT = -mfloat-abi=$(USE_FPU) -mfpu=fpv4-sp-d16 -fsingle-precision-constant
+  USE_FPU_OPT = -mfloat-abi=$(USE_FPU) -mfpu=fpv4-sp-d16
 endif
 
 #
@@ -84,14 +79,17 @@ endif
 ##############################################################################
 
 ##############################################################################
-# Project, sources and paths
+# Project, target, sources and paths
 #
 
 # Define project name here
 PROJECT = ch
 
-# Imported source files and paths
-CHIBIOS = ../../..
+# Target settings.
+MCU  = cortex-m4
+
+# Imported source files and paths.
+CHIBIOS  := ../../..
 CONFDIR  := ./cfg
 BUILDDIR := ./build
 DEPDIR   := ./.dep
@@ -128,34 +126,23 @@ CSRC = $(ALLCSRC) \
 # setting.
 CPPSRC = $(ALLCPPSRC)
 
-# C sources to be compiled in ARM mode regardless of the global setting.
-# NOTE: Mixing ARM and THUMB mode enables the -mthumb-interwork compiler
-#       option that results in lower performance and larger code size.
-ACSRC =
-
-# C++ sources to be compiled in ARM mode regardless of the global setting.
-# NOTE: Mixing ARM and THUMB mode enables the -mthumb-interwork compiler
-#       option that results in lower performance and larger code size.
-ACPPSRC =
-
-# C sources to be compiled in THUMB mode regardless of the global setting.
-# NOTE: Mixing ARM and THUMB mode enables the -mthumb-interwork compiler
-#       option that results in lower performance and larger code size.
-TCSRC =
-
-# C sources to be compiled in THUMB mode regardless of the global setting.
-# NOTE: Mixing ARM and THUMB mode enables the -mthumb-interwork compiler
-#       option that results in lower performance and larger code size.
-TCPPSRC =
-
 # List ASM source files here.
 ASMSRC = $(ALLASMSRC)
+
+# List ASM with preprocessor source files here.
 ASMXSRC = $(ALLXASMSRC)
 
+# Inclusion directories.
 INCDIR = $(CONFDIR) $(ALLINC) $(TESTINC)
 
+# Define C warning options here.
+CWARN = -Wall -Wextra -Wundef -Wstrict-prototypes
+
+# Define C++ warning options here.
+CPPWARN = -Wall -Wextra -Wundef
+
 #
-# Project, sources and paths
+# Project, target, sources and paths
 ##############################################################################
 
 ##############################################################################
@@ -182,49 +169,21 @@ ULIBS =
 ##############################################################################
 
 ##############################################################################
-# Compiler settings
+# Common rules
 #
-
-MCU  = cortex-m4
-
-#TRGT = arm-elf-
-TRGT = arm-none-eabi-
-CC   = $(TRGT)gcc
-CPPC = $(TRGT)g++
-# Enable loading with g++ only if you need C++ runtime support.
-# NOTE: You can use C++ even without C++ support if you are careful. C++
-#       runtime support makes code size explode.
-LD   = $(TRGT)gcc
-#LD   = $(TRGT)g++
-CP   = $(TRGT)objcopy
-AS   = $(TRGT)gcc -x assembler-with-cpp
-AR   = $(TRGT)ar
-OD   = $(TRGT)objdump
-SZ   = $(TRGT)size
-HEX  = $(CP) -O ihex
-BIN  = $(CP) -O binary
-
-# ARM-specific options here
-AOPT =
-
-# THUMB-specific options here
-TOPT = -mthumb -DTHUMB
-
-# Define C warning options here
-CWARN = -Wall -Wextra -Wundef -Wstrict-prototypes
-
-# Define C++ warning options here
-CPPWARN = -Wall -Wextra -Wundef
-
-#
-# Compiler settings
-##############################################################################
 
 RULESPATH = $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk
+include $(RULESPATH)/arm-none-eabi.mk
 include $(RULESPATH)/rules.mk
 
-##############################################################################
-# MISRA check rule, requires PCLint and the setup files, not provided.
 #
-misra:
-	@lint-nt -v -w3 $(DEFS) pclint/co-gcc.lnt pclint/au-misra3.lnt pclint/waivers.lnt $(IINCDIR) $(CSRC) &> misra.txt
+# Common rules
+##############################################################################
+
+##############################################################################
+# Custom rules
+#
+
+#
+# Custom rules
+##############################################################################

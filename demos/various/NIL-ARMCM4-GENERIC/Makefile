@@ -69,6 +69,11 @@ ifeq ($(USE_FPU),)
   USE_FPU = no
 endif
 
+# FPU-related options.
+ifeq ($(USE_FPU_OPT),)
+  USE_FPU_OPT = -mfloat-abi=$(USE_FPU) -mfpu=fpv4-sp-d16
+endif
+
 #
 # Architecture or project specific options
 ##############################################################################
@@ -84,8 +89,8 @@ PROJECT = ch
 MCU  = cortex-m4
 
 # Imported source files and paths.
-CHIBIOS = ../../..
-CONFDIR  := .
+CHIBIOS  := ../../..
+CONFDIR  := ./cfg
 BUILDDIR := ./build
 DEPDIR   := ./.dep
 
