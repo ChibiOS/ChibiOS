@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2017 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -516,15 +516,15 @@
                                      PIN_OSPEED_HIGH(GPIOA_RMII_REF_CLK) |  \
                                      PIN_OSPEED_HIGH(GPIOA_RMII_MDIO) |     \
                                      PIN_OSPEED_HIGH(GPIOA_ULPI_D0) |       \
-                                     PIN_OSPEED_HIGH(GPIOA_ARD_A1) |        \
+                                     PIN_OSPEED_VERYLOW(GPIOA_ARD_A1) |     \
                                      PIN_OSPEED_HIGH(GPIOA_ULPI_CK) |       \
-                                     PIN_OSPEED_HIGH(GPIOA_ARD_A0) |        \
-                                     PIN_OSPEED_VERYLOW(GPIOA_RMII_CRS_DV) |\
+                                     PIN_OSPEED_VERYLOW(GPIOA_ARD_A0) |     \
+                                     PIN_OSPEED_HIGH(GPIOA_RMII_CRS_DV) |   \
                                      PIN_OSPEED_HIGH(GPIOA_CEC_CLK) |       \
                                      PIN_OSPEED_HIGH(GPIOA_VCP_TX) |        \
                                      PIN_OSPEED_HIGH(GPIOA_VCP_RX) |        \
-                                     PIN_OSPEED_HIGH(GPIOA_ARD_D10) |       \
-                                     PIN_OSPEED_HIGH(GPIOA_ARD_D13) |       \
+                                     PIN_OSPEED_VERYLOW(GPIOA_ARD_D10) |    \
+                                     PIN_OSPEED_VERYLOW(GPIOA_ARD_D13) |    \
                                      PIN_OSPEED_HIGH(GPIOA_SWDIO) |         \
                                      PIN_OSPEED_HIGH(GPIOA_SWCLK) |         \
                                      PIN_OSPEED_HIGH(GPIOA_CEC))
@@ -637,14 +637,14 @@
                                      PIN_OSPEED_HIGH(GPIOB_ULPI_D7) |       \
                                      PIN_OSPEED_HIGH(GPIOB_QSPI_NCS) |      \
                                      PIN_OSPEED_HIGH(GPIOB_AUDIO_SDA) |     \
-                                     PIN_OSPEED_HIGH(GPIOB_ARD_D15) |       \
-                                     PIN_OSPEED_HIGH(GPIOB_ARD_D14) |       \
+                                     PIN_OSPEED_VERYLOW(GPIOB_ARD_D15) |    \
+                                     PIN_OSPEED_VERYLOW(GPIOB_ARD_D14) |    \
                                      PIN_OSPEED_HIGH(GPIOB_ULPI_D3) |       \
                                      PIN_OSPEED_HIGH(GPIOB_ULPI_D4) |       \
                                      PIN_OSPEED_HIGH(GPIOB_ULPI_D5) |       \
                                      PIN_OSPEED_HIGH(GPIOB_ULPI_D6) |       \
-                                     PIN_OSPEED_HIGH(GPIOB_ARD_D12) |       \
-                                     PIN_OSPEED_HIGH(GPIOB_ARD_D11))
+                                     PIN_OSPEED_VERYLOW(GPIOB_ARD_D12) |    \
+                                     PIN_OSPEED_VERYLOW(GPIOB_ARD_D11))
 #define VAL_GPIOB_PUPDR             (PIN_PUPDR_PULLUP(GPIOB_ULPI_D1) |      \
                                      PIN_PUPDR_FLOATING(GPIOB_ULPI_D2) |    \
                                      PIN_PUPDR_PULLUP(GPIOB_QSPI_CLK) |     \
@@ -748,13 +748,13 @@
                                      PIN_OTYPE_PUSHPULL(GPIOC_OSC32_OUT))
 #define VAL_GPIOC_OSPEEDR           (PIN_OSPEED_HIGH(GPIOC_ULPI_STP) |      \
                                      PIN_OSPEED_HIGH(GPIOC_RMII_MDC) |      \
-                                     PIN_OSPEED_HIGH(GPIOC_ARD_A2) |        \
+                                     PIN_OSPEED_VERYLOW(GPIOC_ARD_A2) |     \
                                      PIN_OSPEED_HIGH(GPIOC_DFSDM_DATIN1) |  \
                                      PIN_OSPEED_HIGH(GPIOC_RMII_RXD0) |     \
                                      PIN_OSPEED_HIGH(GPIOC_RMII_RXD1) |     \
-                                     PIN_OSPEED_HIGH(GPIOC_ARD_D1) |        \
-                                     PIN_OSPEED_HIGH(GPIOC_ARD_D0) |        \
-                                     PIN_OSPEED_HIGH(GPIOC_ARD_D5) |        \
+                                     PIN_OSPEED_VERYLOW(GPIOC_ARD_D1) |     \
+                                     PIN_OSPEED_VERYLOW(GPIOC_ARD_D0) |     \
+                                     PIN_OSPEED_VERYLOW(GPIOC_ARD_D5) |     \
                                      PIN_OSPEED_HIGH(GPIOC_QSPI_D0) |       \
                                      PIN_OSPEED_HIGH(GPIOC_QSPI_D1) |       \
                                      PIN_OSPEED_HIGH(GPIOC_DFSDM_DATIN5) |  \
@@ -1103,11 +1103,11 @@
                                      PIN_OSPEED_HIGH(GPIOF_FMC_A3) |        \
                                      PIN_OSPEED_HIGH(GPIOF_FMC_A4) |        \
                                      PIN_OSPEED_HIGH(GPIOF_FMC_A5) |        \
-                                     PIN_OSPEED_HIGH(GPIOF_ARD_D3) |        \
-                                     PIN_OSPEED_HIGH(GPIOF_ARD_D6) |        \
-                                     PIN_OSPEED_HIGH(GPIOF_ARD_A4) |        \
-                                     PIN_OSPEED_HIGH(GPIOF_ARD_A5) |        \
-                                     PIN_OSPEED_HIGH(GPIOF_ARD_A3) |        \
+                                     PIN_OSPEED_VERYLOW(GPIOF_ARD_D3) |     \
+                                     PIN_OSPEED_VERYLOW(GPIOF_ARD_D6) |     \
+                                     PIN_OSPEED_VERYLOW(GPIOF_ARD_A4) |     \
+                                     PIN_OSPEED_VERYLOW(GPIOF_ARD_A5) |     \
+                                     PIN_OSPEED_VERYLOW(GPIOF_ARD_A3) |     \
                                      PIN_OSPEED_HIGH(GPIOF_FMC_SDNRAS) |    \
                                      PIN_OSPEED_HIGH(GPIOF_FMC_A6) |        \
                                      PIN_OSPEED_HIGH(GPIOF_FMC_A7) |        \
@@ -1337,7 +1337,7 @@
                                      PIN_OSPEED_HIGH(GPIOH_FMC_SDNE0) |     \
                                      PIN_OSPEED_HIGH(GPIOH_ULPI_NXT) |      \
                                      PIN_OSPEED_HIGH(GPIOH_FMC_SDNWE) |     \
-                                     PIN_OSPEED_HIGH(GPIOH_ARD_D9) |        \
+                                     PIN_OSPEED_VERYLOW(GPIOH_ARD_D9) |     \
                                      PIN_OSPEED_HIGH(GPIOH_EXT_RST) |       \
                                      PIN_OSPEED_HIGH(GPIOH_FMC_D16) |       \
                                      PIN_OSPEED_HIGH(GPIOH_FMC_D17) |       \
@@ -1567,7 +1567,7 @@
                                      PIN_OTYPE_PUSHPULL(GPIOJ_DSI_RESET))
 #define VAL_GPIOJ_OSPEEDR           (PIN_OSPEED_VERYLOW(GPIOJ_ARD_D4) |     \
                                      PIN_OSPEED_VERYLOW(GPIOJ_ARD_D2) |     \
-                                     PIN_OSPEED_VERYLOW(GPIOJ_DSI_TE) |     \
+                                     PIN_OSPEED_HIGH(GPIOJ_DSI_TE) |        \
                                      PIN_OSPEED_VERYLOW(GPIOJ_ARD_D7) |     \
                                      PIN_OSPEED_VERYLOW(GPIOJ_ARD_D8) |     \
                                      PIN_OSPEED_HIGH(GPIOJ_LED2_GREEN) |    \

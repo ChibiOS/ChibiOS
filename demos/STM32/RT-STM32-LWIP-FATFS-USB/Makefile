@@ -12,6 +12,10 @@ all:
 	+@make --no-print-directory -f make/stm32f746_discovery.make all
 	@echo ====================================================================
 	@echo
+	@echo === Building for STM32F796-Discovery ===============================
+	+@make --no-print-directory -f make/stm32f769_discovery.make all
+	@echo ====================================================================
+	@echo
 	@echo === Building for STM32F107-GoldBull ================================
 	+@make --no-print-directory -f make/stm32f107_goldbull.make all
 	@echo ====================================================================
@@ -22,6 +26,8 @@ clean:
 	+@make --no-print-directory -f make/stm32f407_olimex.make clean
 	@echo
 	+@make --no-print-directory -f make/stm32f746_discovery.make clean
+	@echo
+	+@make --no-print-directory -f make/stm32f769_discovery.make clean
 	@echo
 	+@make --no-print-directory -f make/stm32f107_goldbull.make clean
 	@echo

@@ -70,7 +70,7 @@
         ID="ARD_A1"
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
@@ -86,7 +86,7 @@
         ID="ARD_A0"
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
@@ -94,7 +94,7 @@
         ID="RMII_CRS_DV"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Alternate"
         Alternate="11" />
@@ -126,7 +126,7 @@
         ID="ARD_D10"
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
@@ -134,7 +134,7 @@
         ID="ARD_D13"
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
@@ -232,7 +232,7 @@
         ID="ARD_D15"
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
@@ -240,7 +240,7 @@
         ID="ARD_D14"
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
@@ -280,7 +280,7 @@
         ID="ARD_D12"
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
@@ -288,7 +288,7 @@
         ID="ARD_D11"
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
@@ -314,7 +314,7 @@
         ID="ARD_A2"
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
@@ -346,7 +346,7 @@
         ID="ARD_D1"
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
@@ -354,7 +354,7 @@
         ID="ARD_D0"
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -362,7 +362,7 @@
         ID="ARD_D5"
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -736,7 +736,7 @@
         ID="ARD_D3"
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
@@ -744,7 +744,7 @@
         ID="ARD_D6"
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
@@ -752,7 +752,7 @@
         ID="ARD_A4"
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
@@ -760,7 +760,7 @@
         ID="ARD_A5"
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
@@ -768,7 +768,7 @@
         ID="ARD_A3"
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
@@ -996,7 +996,7 @@
         ID="ARD_D9"
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
@@ -1223,7 +1223,7 @@
       <pin2
         ID="DSI_TE"
         Type="PushPull"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Level="High"
         Mode="Alternate"
