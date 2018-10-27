@@ -28,7 +28,7 @@
  *          - <b>Input queue</b>, unidirectional queue where the writer is the
  *            ISR side and the reader is the thread side.
  *          - <b>Output queue</b>, unidirectional queue where the writer is the
- *            ISR side and the reader is the thread side.
+ *            thread side and the reader is the ISR side.
  *          - <b>Full duplex queue</b>, bidirectional queue. Full duplex queues
  *            are implemented by pairing an input queue and an output queue
  *            together.

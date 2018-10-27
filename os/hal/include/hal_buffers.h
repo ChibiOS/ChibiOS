@@ -175,6 +175,16 @@ typedef io_buffers_queue_t output_buffers_queue_t;
 #define bqGetLinkX(bqp) ((bqp)->link)
 
 /**
+ * @brief   Sets the queue application-defined link.
+ *
+ * @param[in] bqp       pointer to an @p io_buffers_queue_t structure
+ * @param[in] lk        The application-defined link.
+ *
+ * @special
+ */
+#define bqSetLinkX(bqp, lk) ((bqp)->link = lk)
+
+/**
  * @brief   Return the suspended state of the queue.
  *
  * @param[in] bqp       pointer to an @p io_buffers_queue_t structure
