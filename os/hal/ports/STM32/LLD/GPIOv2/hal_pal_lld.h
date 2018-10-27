@@ -328,7 +328,7 @@ typedef uint32_t iopadid_t;
  *
  * @notapi
  */
-#define pal_lld_readport(port) ((port)->IDR)
+#define pal_lld_readport(port) ((ioportmask_t)((port)->IDR))
 
 /**
  * @brief   Reads the output latch.
@@ -342,7 +342,7 @@ typedef uint32_t iopadid_t;
  *
  * @notapi
  */
-#define pal_lld_readlatch(port) ((port)->ODR)
+#define pal_lld_readlatch(port) ((ioportmask_t)((port)->ODR))
 
 /**
  * @brief   Writes on a I/O port.
@@ -354,7 +354,7 @@ typedef uint32_t iopadid_t;
  *
  * @notapi
  */
-#define pal_lld_writeport(port, bits) ((port)->ODR = (bits))
+#define pal_lld_writeport(port, bits) ((port)->ODR = (uint32_t)(bits))
 
 /**
  * @brief   Sets a bits mask on a I/O port.
@@ -393,9 +393,11 @@ typedef uint32_t iopadid_t;
  *
  * @notapi
  */
-#define pal_lld_writegroup(port, mask, offset, bits)                        \
-  ((port)->BSRR.W = ((~(bits) & (mask)) << (16U + (offset))) |              \
-                     (((bits) & (mask)) << (offset)))
+#define pal_lld_writegroup(port, mask, offset, bits) {                      \
+  uint32_t w = ((~(uint32_t)(bits) & (uint32_t)(mask)) << (16U + (offset))) | \
+               ((uint32_t)(bits) & (uint32_t)(mask)) << (offset);           \
+  (port)->BSRR.W = w;                                                       \
+}
 
 /**
  * @brief   Pads group mode setup.
