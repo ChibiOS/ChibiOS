@@ -268,19 +268,11 @@ void stm32_clock_init(void) {
 
 #if STM32_ACTIVATE_PLL || STM32_ACTIVATE_PLLSAI1 || STM32_ACTIVATE_PLLSAI2
   /* PLLM and PLLSRC are common to all PLLs.*/
-#if defined(STM32L496xx) || defined(STM32L4A6xx)
   RCC->PLLCFGR = STM32_PLLPDIV | STM32_PLLR  |
                  STM32_PLLREN  | STM32_PLLQ  |
                  STM32_PLLQEN  | STM32_PLLP  |
                  STM32_PLLPEN  | STM32_PLLN  |
                  STM32_PLLM    | STM32_PLLSRC;
-#else
-  RCC->PLLCFGR = STM32_PLLR   | STM32_PLLREN |
-                 STM32_PLLQ   | STM32_PLLQEN |
-                 STM32_PLLP   | STM32_PLLPEN |
-                 STM32_PLLN   | STM32_PLLM   |
-                 STM32_PLLSRC;
-#endif
 #endif
 
 #if STM32_ACTIVATE_PLL
@@ -294,17 +286,11 @@ void stm32_clock_init(void) {
 
 #if STM32_ACTIVATE_PLLSAI1
   /* PLLSAI1 activation.*/
-#if defined(STM32L496xx) || defined(STM32L4A6xx)
   RCC->PLLSAI1CFGR = STM32_PLLSAI1PDIV | STM32_PLLSAI1R |
                      STM32_PLLSAI1REN  | STM32_PLLSAI1Q |
                      STM32_PLLSAI1QEN  | STM32_PLLSAI1P |
-                     STM32_PLLSAI1PEN  | STM32_PLLSAI1N;
-#else
-  RCC->PLLSAI1CFGR = STM32_PLLSAI1R | STM32_PLLSAI1REN |
-                     STM32_PLLSAI1Q | STM32_PLLSAI1QEN |
-                     STM32_PLLSAI1P | STM32_PLLSAI1PEN |
-                     STM32_PLLSAI1N;
-#endif
+                     STM32_PLLSAI1PEN  | STM32_PLLSAI1N |
+                     STM32_PLLSAI1M;
   RCC->CR |= RCC_CR_PLLSAI1ON;
 
   /* Waiting for PLL lock.*/
@@ -314,15 +300,10 @@ void stm32_clock_init(void) {
 
 #if STM32_ACTIVATE_PLLSAI2
   /* PLLSAI2 activation.*/
-#if defined(STM32L496xx) || defined(STM32L4A6xx)
   RCC->PLLSAI2CFGR = STM32_PLLSAI2PDIV | STM32_PLLSAI2R |
                      STM32_PLLSAI2REN  | STM32_PLLSAI2P |
-                     STM32_PLLSAI2PEN  | STM32_PLLSAI2N;
-#else
-  RCC->PLLSAI2CFGR = STM32_PLLSAI2R | STM32_PLLSAI2REN |
-                     STM32_PLLSAI2P | STM32_PLLSAI2PEN |
-                     STM32_PLLSAI2N;
-#endif
+                     STM32_PLLSAI2PEN  | STM32_PLLSAI2N |
+                     STM32_PLLSAI2M;
   RCC->CR |= RCC_CR_PLLSAI2ON;
 
   /* Waiting for PLL lock.*/

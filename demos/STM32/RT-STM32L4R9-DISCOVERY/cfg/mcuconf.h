@@ -69,11 +69,13 @@
 #define STM32_MCOSEL                        STM32_MCOSEL_NOCLOCK
 #define STM32_MCOPRE                        STM32_MCOPRE_DIV1
 #define STM32_LSCOSEL                       STM32_LSCOSEL_NOCLOCK
+#define STM32_PLLSAI1M_VALUE                4
 #define STM32_PLLSAI1N_VALUE                72
 #define STM32_PLLSAI1PDIV_VALUE             6
 #define STM32_PLLSAI1P_VALUE                7
 #define STM32_PLLSAI1Q_VALUE                6
 #define STM32_PLLSAI1R_VALUE                6
+#define STM32_PLLSAI2M_VALUE                4
 #define STM32_PLLSAI2N_VALUE                72
 #define STM32_PLLSAI2PDIV_VALUE             6
 #define STM32_PLLSAI2P_VALUE                7
@@ -321,5 +323,18 @@
 /*
  * WSPI driver system settings.
  */
+#define STM32_WSPI_USE_OCTOSPI1             TRUE
+#define STM32_WSPI_USE_OCTOSPI2             TRUE
+#define STM32_WSPI_OCTOSPI1_PRESCALER_VALUE 1
+#define STM32_WSPI_OCTOSPI2_PRESCALER_VALUE 1
+#define STM32_WSPI_OCTOSPI1_IRQ_PRIORITY    10
+#define STM32_WSPI_OCTOSPI2_IRQ_PRIORITY    10
+#define STM32_WSPI_OCTOSPI1_DMA_CHANNEL     9
+#define STM32_WSPI_OCTOSPI2_DMA_CHANNEL     10
+#define STM32_WSPI_OCTOSPI1_DMA_PRIORITY    1
+#define STM32_WSPI_OCTOSPI2_DMA_PRIORITY    1
+#define STM32_WSPI_OCTOSPI1_DMA_IRQ_PRIORITY 10
+#define STM32_WSPI_OCTOSPI2_DMA_IRQ_PRIORITY 10
+#define STM32_WSPI_DMA_ERROR_HOOK(qspip)    osalSysHalt("DMA failure")
 
 #endif /* MCUCONF_H */

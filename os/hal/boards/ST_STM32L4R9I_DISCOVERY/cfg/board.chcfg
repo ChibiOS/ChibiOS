@@ -1162,7 +1162,7 @@
 				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
-				ID=""
+				ID="OSC_IN"
 				Resistor="Floating"
 				Mode="Analog"
 				Level="Low" />
@@ -1172,7 +1172,7 @@
 				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
-				ID=""
+				ID="OSC_OUT"
 				Resistor="Floating"
 				Mode="Analog"
 				Level="Low" />
@@ -1192,10 +1192,10 @@
 				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
-				ID=""
+				ID="BOOT0"
 				Resistor="Floating"
 				Mode="Input"
-				Level="Low" />
+				Level="Low" ></pin3>
 			<pin4
 				Type="PushPull"
 				Speed="Minimum"
