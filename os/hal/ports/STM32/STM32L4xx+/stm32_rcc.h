@@ -598,31 +598,54 @@
 /** @} */
 
 /**
- * @name    QUADSPI peripherals specific RCC operations
+ * @name    OCTOSPI peripherals specific RCC operations
  * @{
  */
 /**
- * @brief   Enables the QUADSPI1 peripheral clock.
+ * @brief   Enables the OCTOSPI1 peripheral clock.
  *
  * @param[in] lp        low power enable flag
  *
  * @api
  */
-#define rccEnableQUADSPI1(lp) rccEnableAHB3(RCC_AHB3ENR_QSPIEN, lp)
+#define rccEnableOCTOSPI1(lp) rccEnableAHB3(RCC_AHB3ENR_OSPI1EN, lp)
 
 /**
- * @brief   Disables the QUADSPI1 peripheral clock.
+ * @brief   Disables the OCTOSPI1 peripheral clock.
  *
  * @api
  */
-#define rccDisableQUADSPI1() rccDisableAHB3(RCC_AHB3ENR_QSPIEN)
+#define rccDisableOCTOSPI1() rccDisableAHB3(RCC_AHB3ENR_OSPI1EN)
 
 /**
- * @brief   Resets the QUADSPI1 peripheral.
+ * @brief   Resets the OCTOSPI1 peripheral.
  *
  * @api
  */
-#define rccResetQUADSPI1() rccResetAHB3(RCC_AHB3RSTR_QSPIRST)
+#define rccResetOCTOSPI1() rccResetAHB3(RCC_AHB3RSTR_OSPI1RST)
+
+/**
+ * @brief   Enables the OCTOSPI2 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableOCTOSPI2(lp) rccEnableAHB3(RCC_AHB3ENR_OSPI2EN, lp)
+
+/**
+ * @brief   Disables the OCTOSPI2 peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableOCTOSPI2() rccDisableAHB3(RCC_AHB3ENR_OSPI2EN)
+
+/**
+ * @brief   Resets the OCTOSPI1 peripheral.
+ *
+ * @api
+ */
+#define rccResetOCTOSPI2() rccResetAHB3(RCC_AHB3RSTR_OSPI2RST)
 /** @} */
 
 /**

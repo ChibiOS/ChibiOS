@@ -189,7 +189,11 @@
 /* OCTOSPI attributes.*/
 #define STM32_HAS_OCTOSPI1                  TRUE
 #define STM32_OCTOSPI1_HANDLER              Vector15C
-#define STM32_QUADSPI1_NUMBER               71
+#define STM32_OCTOSPI1_NUMBER               71
+
+#define STM32_HAS_OCTOSPI2                  TRUE
+#define STM32_OCTOSPI2_HANDLER              Vector170
+#define STM32_OCTOSPI2_NUMBER               76
 
 /* QUADSPI attributes.*/
 #define STM32_HAS_QUADSPI1                  FALSE

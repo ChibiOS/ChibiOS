@@ -26,11 +26,22 @@
 
 #include "portab.h"
 
+#if defined(STM32_WSPI_USE_OCTOSPI1)
 /* 16MB device, 2 cycles delay after NCS.*/
 const WSPIConfig WSPIcfg1 = {
   .end_cb           = NULL,
-  .dcr              = STM32_DCR_FSIZE(24) | STM32_DCR_CSHT(1)
+  .dcr1             = STM32_DCR1_DEVSIZE(24U) | STM32_DCR1_CSHT(1U),
+  .dcr2             = 0U,
+  .dcr3             = 0U,
+  .dcr4             = 0U
 };
+#else /* It is a quad SPI.*/
+/* 16MB device, 2 cycles delay after NCS.*/
+const WSPIConfig WSPIcfg1 = {
+  .end_cb           = NULL,
+  .dcr              = STM32_DCR_FSIZE(24U) | STM32_DCR_CSHT(1U)
+};
+#endif
 
 const SNORConfig snorcfg1 = {
   .busp             = &WSPID1,
