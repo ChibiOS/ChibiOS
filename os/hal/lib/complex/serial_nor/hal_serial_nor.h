@@ -36,14 +36,9 @@
  * @name    Bus interface modes.
  * @{
  */
-#define SNOR_BUS_MODE_SPI                   0U
-#define SNOR_BUS_MODE_WSPI1L                1U
-#define SNOR_BUS_MODE_WSPI2L                2U
-#define SNOR_BUS_MODE_WSPI4L                4U
-#define SNOR_BUS_MODE_WSPI8L                8U
+#define SNOR_BUS_DRIVER_SPI                 0U
+#define SNOR_BUS_DRIVER_WSPI                1U
 /** @} */
-
-#define SNOR_BUS_CMD_EXTENDED_ADDRESSING    0x80000000U
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -56,8 +51,8 @@
 /**
  * @brief   Physical transport interface.
  */
-#if !defined(SNOR_BUS_MODE) || defined(__DOXYGEN__)
-#define SNOR_BUS_MODE                       SNOR_BUS_MODE_WSPI4L
+#if !defined(SNOR_BUS_DRIVER) || defined(__DOXYGEN__)
+#define SNOR_BUS_DRIVER                     SNOR_BUS_DRIVER_WSPI
 #endif
 
 /**
@@ -77,12 +72,14 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if (SNOR_BUS_MODE != SNOR_BUS_MODE_SPI) || defined(__DOXYGEN__)
+#if (SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_SPI) || defined(__DOXYGEN__)
+#define BUSConfig SPIConfig
+#define BUSDriver SPIDriver
+#elif SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI
 #define BUSConfig WSPIConfig
 #define BUSDriver WSPIDriver
 #else
-#define BUSConfig SPIConfig
-#define BUSDriver SPIDriver
+#error "invalid SNOR_BUS_DRIVER setting"
 #endif
 
 /*===========================================================================*/
@@ -181,7 +178,7 @@ extern "C" {
   void snorObjectInit(SNORDriver *devp);
   void snorStart(SNORDriver *devp, const SNORConfig *config);
   void snorStop(SNORDriver *devp);
-#if (SNOR_BUS_MODE != SNOR_BUS_MODE_SPI) || defined(__DOXYGEN__)
+#if (SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI) || defined(__DOXYGEN__)
 #if (WSPI_SUPPORTS_MEMMAP == TRUE) || defined(__DOXYGEN__)
   void snorMemoryMap(SNORDriver *devp, uint8_t ** addrp);
   void snorMemoryUnmap(SNORDriver *devp);

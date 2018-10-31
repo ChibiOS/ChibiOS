@@ -60,7 +60,7 @@ flash_descriptor_t snor_descriptor = {
   .address          = 0U
 };
 
-#if (SNOR_BUS_MODE != SNOR_BUS_MODE_SPI) || defined(__DOXYGEN__)
+#if (SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI) || defined(__DOXYGEN__)
 #if (WSPI_SUPPORTS_MEMMAP == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Fast read command for memory mapped mode.
@@ -70,11 +70,11 @@ const wspi_command_t snor_memmap_read = {
   .addr             = 0,
   .dummy            = N25Q_READ_DUMMY_CYCLES - 2,
   .cfg              = WSPI_CFG_ADDR_SIZE_24 |
-#if SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI1L
+#if N25Q_BUS_MODE == N25Q_BUS_MODE_WSPI1L
                       WSPI_CFG_CMD_MODE_ONE_LINE |
                       WSPI_CFG_ADDR_MODE_ONE_LINE |
                       WSPI_CFG_DATA_MODE_ONE_LINE |
-#elif SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI2L
+#elif N25Q_BUS_MODE == N25Q_BUS_MODE_WSPI2L
                       WSPI_CFG_CMD_MODE_TWO_LINES |
                       WSPI_CFG_ADDR_MODE_TWO_LINES |
                       WSPI_CFG_DATA_MODE_TWO_LINES |
@@ -94,7 +94,7 @@ const wspi_command_t snor_memmap_read = {
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
-#if SNOR_BUS_MODE != SNOR_BUS_MODE_SPI
+#if SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI
 /* Initial N25Q_CMD_READ_ID command.*/
 static const wspi_command_t n25q_cmd_read_id = {
   .cmd              = N25Q_CMD_READ_ID,
@@ -103,13 +103,13 @@ static const wspi_command_t n25q_cmd_read_id = {
                       WSPI_CFG_CMD_MODE_ONE_LINE |
                       WSPI_CFG_DATA_MODE_ONE_LINE,
 #else
-#if SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI1L
+#if N25Q_BUS_MODE == N25Q_BUS_MODE_WSPI1L
                       WSPI_CFG_CMD_MODE_ONE_LINE |
                       WSPI_CFG_DATA_MODE_ONE_LINE,
-#elif SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI2L
+#elif N25Q_BUS_MODE == N25Q_BUS_MODE_WSPI2L
                       WSPI_CFG_CMD_MODE_TWO_LINES |
                       WSPI_CFG_DATA_MODE_TWO_LINES,
-#elif SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI4L
+#elif N25Q_BUS_MODE == N25Q_BUS_MODE_WSPI4L
                       WSPI_CFG_CMD_MODE_FOUR_LINES |
                       WSPI_CFG_DATA_MODE_FOUR_LINES,
 #else
@@ -130,13 +130,13 @@ static const wspi_command_t n25q_cmd_write_evconf = {
                       WSPI_CFG_CMD_MODE_ONE_LINE |
                       WSPI_CFG_DATA_MODE_ONE_LINE,
 #else
-#if SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI1L
+#if N25Q_BUS_MODE == N25Q_BUS_MODE_WSPI1L
                       WSPI_CFG_CMD_MODE_ONE_LINE |
                       WSPI_CFG_DATA_MODE_ONE_LINE,
-#elif SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI2L
+#elif N25Q_BUS_MODE == N25Q_BUS_MODE_WSPI2L
                       WSPI_CFG_CMD_MODE_TWO_LINES |
                       WSPI_CFG_DATA_MODE_TWO_LINES,
-#elif SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI4L
+#elif N25Q_BUS_MODE == N25Q_BUS_MODE_WSPI4L
                       WSPI_CFG_CMD_MODE_FOUR_LINES |
                       WSPI_CFG_DATA_MODE_FOUR_LINES,
 #else
@@ -156,11 +156,11 @@ static const wspi_command_t n25q_cmd_write_enable = {
 #if N25Q_SWITCH_WIDTH == TRUE
                       WSPI_CFG_CMD_MODE_ONE_LINE,
 #else
-#if SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI1L
+#if N25Q_BUS_MODE == N25Q_BUS_MODE_WSPI1L
                       WSPI_CFG_CMD_MODE_ONE_LINE,
-#elif SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI2L
+#elif N25Q_BUS_MODE == N25Q_BUS_MODE_WSPI2L
                       WSPI_CFG_CMD_MODE_TWO_LINES,
-#elif SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI4L
+#elif N25Q_BUS_MODE == N25Q_BUS_MODE_WSPI4L
                       WSPI_CFG_CMD_MODE_FOUR_LINES,
 #else
                       WSPI_CFG_CMD_MODE_EIGHT_LINES,
@@ -172,14 +172,14 @@ static const wspi_command_t n25q_cmd_write_enable = {
 };
 
 /* Bus width initialization.*/
-#if SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI1L
+#if N25Q_BUS_MODE == N25Q_BUS_MODE_WSPI1L
 static const uint8_t n25q_evconf_value[1] = {0xCF};
-#elif SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI2L
+#elif N25Q_BUS_MODE == N25Q_BUS_MODE_WSPI2L
 static const uint8_t n25q_evconf_value[1] = {0x8F};
 #else
 static const uint8_t n25q_evconf_value[1] = {0x4F};
 #endif
-#endif /* SNOR_BUS_MODE != SNOR_BUS_MODE_SPI */
+#endif /* SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI */
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
@@ -220,7 +220,7 @@ static flash_error_t n25q_poll_status(SNORDriver *devp) {
   return FLASH_NO_ERROR;
 }
 
-#if (SNOR_BUS_MODE != SNOR_BUS_MODE_SPI) || defined(__DOXYGEN__)
+#if (SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI) || defined(__DOXYGEN__)
 static void n25q_reset_memory(SNORDriver *devp) {
 
   /* 1x N25Q_CMD_RESET_ENABLE command.*/
@@ -245,7 +245,7 @@ static void n25q_reset_memory(SNORDriver *devp) {
      rejected because shorter than 8 bits. If the device is in multiple
      bits mode then the commands are accepted and the device is reset to
      one bit mode.*/
-#if SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI4L
+#if N25Q_BUS_MODE == N25Q_BUS_MODE_WSPI4L
   /* 4x N25Q_CMD_RESET_ENABLE command.*/
   static const wspi_command_t cmd_reset_enable_4 = {
     .cmd              = N25Q_CMD_RESET_ENABLE,
@@ -294,7 +294,7 @@ static void n25q_reset_memory(SNORDriver *devp) {
   wspiCommand(devp->config->busp, &cmd_reset_enable_1);
   wspiCommand(devp->config->busp, &cmd_reset_memory_1);
 }
-#endif /* #if SNOR_BUS_MODE != SNOR_BUS_MODE_SPI */
+#endif /* SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI */
 
 static const uint8_t n25q_manufacturer_ids[] = N25Q_SUPPORTED_MANUFACTURE_IDS;
 static const uint8_t n25q_memory_type_ids[] = N25Q_SUPPORTED_MEMORY_TYPE_IDS;
@@ -305,12 +305,12 @@ static const uint8_t n25q_memory_type_ids[] = N25Q_SUPPORTED_MEMORY_TYPE_IDS;
 
 void snor_device_init(SNORDriver *devp) {
 
-#if SNOR_BUS_MODE == SNOR_BUS_MODE_SPI
+#if SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_SPI
   /* Reading device ID.*/
   bus_cmd_receive(devp->config->busp, N25Q_CMD_READ_ID,
                   sizeof devp->device_id, devp->device_id);
 
-#else /* SNOR_BUS_MODE != SNOR_BUS_MODE_SPI */
+#else /* SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI */
   /* Attempting a reset of the XIP mode, it could be in an unexpected state
      because a CPU reset does not reset the memory too.*/
   snor_reset_xip(devp);
@@ -322,7 +322,7 @@ void snor_device_init(SNORDriver *devp) {
   /* Reading device ID and unique ID.*/
   wspiReceive(devp->config->busp, &n25q_cmd_read_id,
               sizeof devp->device_id, devp->device_id);
-#endif /* SNOR_BUS_MODE != SNOR_BUS_MODE_SPI */
+#endif /* SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI */
 
   /* Checking if the device is white listed.*/
   osalDbgAssert(n25q_find_id(n25q_manufacturer_ids,
@@ -334,7 +334,7 @@ void snor_device_init(SNORDriver *devp) {
                              devp->device_id[1]),
                 "invalid memory type id");
 
-#if (SNOR_BUS_MODE != SNOR_BUS_MODE_SPI) && (N25Q_SWITCH_WIDTH == TRUE)
+#if (SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI) && (N25Q_SWITCH_WIDTH == TRUE)
   /* Setting up final bus width.*/
   wspiCommand(devp->config->busp, &n25q_cmd_write_enable);
   wspiSend(devp->config->busp, &n25q_cmd_write_evconf, 1, n25q_evconf_value);
@@ -355,7 +355,7 @@ void snor_device_init(SNORDriver *devp) {
   snor_descriptor.sectors_count = (1U << (size_t)devp->device_id[2]) /
                                   SECTOR_SIZE;
 
-#if (SNOR_BUS_MODE != SNOR_BUS_MODE_SPI)
+#if SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI
   {
     static const uint8_t flash_conf[1] = {
       (N25Q_READ_DUMMY_CYCLES << 4U) | 0x0FU
@@ -382,7 +382,7 @@ const flash_descriptor_t *snor_get_descriptor(void *instance) {
 flash_error_t snor_device_read(SNORDriver *devp, flash_offset_t offset,
                                size_t n, uint8_t *rp) {
 
-#if SNOR_BUS_MODE != SNOR_BUS_MODE_SPI
+#if SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI
   /* Fast read command in WSPI mode.*/
   bus_cmd_addr_dummy_receive(devp->config->busp, N25Q_CMD_FAST_READ,
                              offset, N25Q_READ_DUMMY_CYCLES, n, rp);
@@ -467,7 +467,7 @@ flash_error_t snor_device_verify_erase(SNORDriver *devp,
   while (n > 0U) {
     uint8_t *p;
 
-#if SNOR_BUS_MODE != SNOR_BUS_MODE_SPI
+#if SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI
    bus_cmd_addr_dummy_receive(devp->config->busp, N25Q_CMD_FAST_READ,
                               offset, N25Q_READ_DUMMY_CYCLES,
                               sizeof cmpbuf, cmpbuf);
@@ -539,7 +539,7 @@ flash_error_t snor_device_read_sfdp(SNORDriver *devp, flash_offset_t offset,
   return FLASH_NO_ERROR;
 }
 
-#if (SNOR_BUS_MODE != SNOR_BUS_MODE_SPI) || defined(__DOXYGEN__)
+#if (SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI) || defined(__DOXYGEN__)
 void snor_activate_xip(SNORDriver *devp) {
   static const uint8_t flash_status_xip[1] = {
     (N25Q_READ_DUMMY_CYCLES << 4U) | 0x07U
@@ -564,13 +564,13 @@ void snor_reset_xip(SNORDriver *devp) {
   cmd.dummy = N25Q_READ_DUMMY_CYCLES - 2;
   cmd.cfg   = WSPI_CFG_CMD_MODE_NONE |
               WSPI_CFG_ADDR_SIZE_24 |
-#if SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI1L
+#if N25Q_BUS_MODE == N25Q_BUS_MODE_WSPI1L
               WSPI_CFG_ADDR_MODE_ONE_LINE |
               WSPI_CFG_DATA_MODE_ONE_LINE |
-#elif SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI2L
+#elif N25Q_BUS_MODE == N25Q_BUS_MODE_WSPI2L
               WSPI_CFG_ADDR_MODE_TWO_LINES |
               WSPI_CFG_DATA_MODE_TWO_LINES |
-#elif SNOR_BUS_MODE == SNOR_BUS_MODE_WSPI4L
+#elif N25Q_BUS_MODE == N25Q_BUS_MODE_WSPI4L
               WSPI_CFG_ADDR_MODE_FOUR_LINES |
               WSPI_CFG_DATA_MODE_FOUR_LINES |
 #else
@@ -588,6 +588,6 @@ void snor_reset_xip(SNORDriver *devp) {
   bus_cmd_send(devp->config->busp, N25Q_CMD_WRITE_V_CONF_REGISTER,
                1, flash_conf);
 }
-#endif /* SNOR_BUS_MODE != SNOR_BUS_MODE_SPI */
+#endif /* SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI */
 
 /** @} */
