@@ -367,26 +367,30 @@ void snor_device_init(SNORDriver *devp) {
 
 #if (SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI) && (MX25_SWITCH_WIDTH == TRUE)
   {
-    /* Bus width initialization.*/
-#if MX25_BUS_MODE == MX25_BUS_MODE_OPI_STR
-    static const uint8_t regval[1] = {0x01};
-#else
-    static const uint8_t regval[1] = {0x02};
-#endif
     uint8_t id[8];
+#if MX25_BUS_MODE == MX25_BUS_MODE_SPI
+    const uint8_t regval[1] = {0x00};
+#elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_STR
+    const uint8_t regval[1] = {0x01};
+#elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_DTR
+    const uint8_t regval[1] = {0x02};
+#endif
 
     /* Setting up final bus width.*/
     mx25_write_cr2(devp, 0x00000000U, regval);
 
     /* Reading ID again for confirmation, in DTR mode bytes are read twice,
        it needs adjusting.*/
-#if MX25_BUS_MODE == MX25_BUS_MODE_OPI_DTR
-    bus_cmd_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDID, 6U, id);
+#if MX25_BUS_MODE == MX25_BUS_MODE_SPI
+    bus_cmd_receive(devp->config->busp, MX25_CMD_SPI_RDID, 3U, id);
+#elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_STR
+    bus_cmd_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDID,
+                          MX25_READ_DUMMY_CYCLES, 3U, id);
+#elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_DTR
+    bus_cmd_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDID,
+                          MX25_READ_DUMMY_CYCLES, 6U, id);
     id[1] = id[2];
     id[2] = id[4];
-#else
-    bus_cmd_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDID,
-                          MX25_READ_DUMMY_CYCLES, 3, id);
 #endif
 
     /* Checking if the device is white listed.*/
@@ -396,7 +400,7 @@ void snor_device_init(SNORDriver *devp) {
 #endif
 
   /* Setting up the device size.*/
-  snor_descriptor.sectors_count = (1U << ((size_t)devp->device_id[2]) & 0x1FU) /
+  snor_descriptor.sectors_count = (1U << ((uint32_t)devp->device_id[2] & 0x1FU)) /
                                   SECTOR_SIZE;
 
 #if SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI
