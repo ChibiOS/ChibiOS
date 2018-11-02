@@ -352,8 +352,7 @@ void snor_device_init(SNORDriver *devp) {
   n25q_reset_memory(devp);
 
   /* Reading device ID and unique ID.*/
-  wspiReceive(devp->config->busp, &mx25_cmd_read_id,
-              sizeof devp->device_id, devp->device_id);
+  wspiReceive(devp->config->busp, &mx25_cmd_read_id, 3U, devp->device_id);
 #endif /* SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI */
 
   /* Checking if the device is white listed.*/
@@ -382,7 +381,7 @@ void snor_device_init(SNORDriver *devp) {
     /* Reading ID again for confirmation, in DTR mode bytes are read twice,
        it needs adjusting.*/
 #if MX25_BUS_MODE == MX25_BUS_MODE_OPI_DTR
-    bus_cmd_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDID, 6, id);
+    bus_cmd_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDID, 6U, id);
     id[1] = id[2];
     id[2] = id[4];
 #else

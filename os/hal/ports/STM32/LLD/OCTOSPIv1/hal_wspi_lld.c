@@ -205,6 +205,7 @@ void wspi_lld_start(WSPIDriver *wspip) {
                                  (void *)wspip);
       osalDbgAssert(!b, "stream already allocated");
       rccEnableOCTOSPI1(true);
+      dmaSetRequestSource(wspip->dma, STM32_DMAMUX1_OCTOSPI1);
     }
 #endif
 
@@ -216,6 +217,7 @@ void wspi_lld_start(WSPIDriver *wspip) {
                                  (void *)wspip);
       osalDbgAssert(!b, "stream already allocated");
       rccEnableOCTOSPI2(true);
+      dmaSetRequestSource(wspip->dma, STM32_DMAMUX1_OCTOSPI2);
     }
 #endif
 
@@ -285,10 +287,10 @@ void wspi_lld_command(WSPIDriver *wspip, const wspi_command_t *cmdp) {
 #endif
   wspip->ospi->CR &= ~OCTOSPI_CR_FMODE;
   wspip->ospi->DLR = 0U;
-  wspip->ospi->IR  = cmdp->cmd;
-  wspip->ospi->ABR = cmdp->alt;
   wspip->ospi->TCR = cmdp->dummy;
   wspip->ospi->CCR = cmdp->cfg;
+  wspip->ospi->ABR = cmdp->alt;
+  wspip->ospi->IR  = cmdp->cmd;
   if ((cmdp->cfg & WSPI_CFG_ADDR_MODE_MASK) != WSPI_CFG_ADDR_MODE_NONE) {
     wspip->ospi->AR  = cmdp->addr;
   }
@@ -314,10 +316,10 @@ void wspi_lld_send(WSPIDriver *wspip, const wspi_command_t *cmdp,
 
   wspip->ospi->CR &= ~OCTOSPI_CR_FMODE;
   wspip->ospi->DLR = n - 1;
-  wspip->ospi->IR  = cmdp->cmd;
-  wspip->ospi->ABR = cmdp->alt;
   wspip->ospi->TCR = cmdp->dummy;
   wspip->ospi->CCR = cmdp->cfg;
+  wspip->ospi->ABR = cmdp->alt;
+  wspip->ospi->IR  = cmdp->cmd;
   if ((cmdp->cfg & WSPI_CFG_ADDR_MODE_MASK) != WSPI_CFG_ADDR_MODE_NONE) {
     wspip->ospi->AR  = cmdp->addr;
   }
@@ -345,10 +347,10 @@ void wspi_lld_receive(WSPIDriver *wspip, const wspi_command_t *cmdp,
 
   wspip->ospi->CR  = (wspip->ospi->CR & ~OCTOSPI_CR_FMODE) | OCTOSPI_CR_FMODE_0;
   wspip->ospi->DLR = n - 1;
-  wspip->ospi->IR  = cmdp->cmd;
-  wspip->ospi->ABR = cmdp->alt;
   wspip->ospi->TCR = cmdp->dummy;
   wspip->ospi->CCR = cmdp->cfg;
+  wspip->ospi->ABR = cmdp->alt;
+  wspip->ospi->IR  = cmdp->cmd;
   if ((cmdp->cfg & WSPI_CFG_ADDR_MODE_MASK) != WSPI_CFG_ADDR_MODE_NONE) {
     wspip->ospi->AR  = cmdp->addr;
   }
@@ -380,11 +382,11 @@ void wspi_lld_map_flash(WSPIDriver *wspip,
   wspip->ospi->CR  = (wspip->ospi->CR & ~OCTOSPI_CR_FMODE) |
                      (OCTOSPI_CR_FMODE_1 | OCTOSPI_CR_FMODE_0);
   wspip->ospi->DLR = 0;
-  wspip->ospi->IR  = cmdp->cmd;
-  wspip->ospi->ABR = 0;
   wspip->ospi->TCR = cmdp->dummy;
-  wspip->ospi->AR  = 0;
   wspip->ospi->CCR = cmdp->cfg;
+  wspip->ospi->ABR = 0;
+  wspip->ospi->IR  = cmdp->cmd;
+  wspip->ospi->AR  = 0;
 
   /* Mapped flash absolute base address.*/
   if (addrp != NULL) {

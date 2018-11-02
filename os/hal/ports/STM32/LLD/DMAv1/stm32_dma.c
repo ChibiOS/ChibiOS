@@ -545,6 +545,13 @@ bool dmaStreamAllocate(const stm32_dma_stream_t *dmastp,
   }
 #endif
 
+#if STM32_DMA_SUPPORTS_DMAMUX == TRUE
+  /* Enabling DMAMUX if present.*/
+  if (dma.streams_mask == 0U) {
+    rccEnableDMAMUX(true);
+  }
+#endif
+
   /* Putting the stream in a safe state.*/
   dmaStreamDisable(dmastp);
   dmastp->channel->CCR = STM32_DMA_CCR_RESET_VALUE;
@@ -605,6 +612,13 @@ void dmaStreamRelease(const stm32_dma_stream_t *dmastp) {
 #if STM32_DMA2_NUM_CHANNELS > 0
   if ((dma.streams_mask & STM32_DMA2_STREAMS_MASK) == 0U) {
     rccDisableDMA2();
+  }
+#endif
+
+#if STM32_DMA_SUPPORTS_DMAMUX == TRUE
+  /* Shutting down DMAMUX if present.*/
+  if (dma.streams_mask == 0U) {
+    rccDisableDMAMUX();
   }
 #endif
 }
