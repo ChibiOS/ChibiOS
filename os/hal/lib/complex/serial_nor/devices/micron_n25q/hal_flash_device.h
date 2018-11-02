@@ -19,7 +19,6 @@
  * @brief   Micron N25Q serial flash driver header.
  *
  * @addtogroup MICRON_N25Q
- * @ingroup MICRON_N25Q
  * @{
  */
 
@@ -29,6 +28,13 @@
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
+
+/**
+ * @name    Device capabilities
+ * @{
+ */
+#define SNOR_DEVICE_SUPPORTS_XIP            TRUE
+/** @} */
 
 /**
  * @name    Device identification
@@ -181,100 +187,100 @@
 /**
  * @brief   WSPI settings for command only.
  */
-#define SNOR_WSPI_CFG_CMD                   (WSPI_CFG_CMD_MODE_FOUR_LINES | \
-                                             WSPI_CFG_ADDR_MODE_NONE      | \
-                                             WSPI_CFG_ALT_MODE_NONE       | \
-                                             WSPI_CFG_DATA_MODE_NONE      | \
-                                             WSPI_CFG_CMD_SIZE_8          | \
-                                             WSPI_CFG_ADDR_SIZE_24)
+#define SNOR_WSPI_CFG_CMD               (WSPI_CFG_CMD_MODE_FOUR_LINES     | \
+                                         WSPI_CFG_ADDR_MODE_NONE          | \
+                                         WSPI_CFG_ALT_MODE_NONE           | \
+                                         WSPI_CFG_DATA_MODE_NONE          | \
+                                         WSPI_CFG_CMD_SIZE_8              | \
+                                         WSPI_CFG_ADDR_SIZE_24)
 
 /**
  * @brief   WSPI settings for command and address.
  */
-#define SNOR_WSPI_CFG_CMD_ADDR              (WSPI_CFG_CMD_MODE_FOUR_LINES | \
-                                             WSPI_CFG_ADDR_MODE_FOUR_LINES| \
-                                             WSPI_CFG_ALT_MODE_NONE       | \
-                                             WSPI_CFG_DATA_MODE_NONE      | \
-                                             WSPI_CFG_CMD_SIZE_8          | \
-                                             WSPI_CFG_ADDR_SIZE_24)
+#define SNOR_WSPI_CFG_CMD_ADDR          (WSPI_CFG_CMD_MODE_FOUR_LINES     | \
+                                         WSPI_CFG_ADDR_MODE_FOUR_LINES    | \
+                                         WSPI_CFG_ALT_MODE_NONE           | \
+                                         WSPI_CFG_DATA_MODE_NONE          | \
+                                         WSPI_CFG_CMD_SIZE_8              | \
+                                         WSPI_CFG_ADDR_SIZE_24)
 
 /**
  * @brief   WSPI settings for command and data.
  */
-#define SNOR_WSPI_CFG_CMD_DATA              (WSPI_CFG_CMD_MODE_FOUR_LINES | \
-                                             WSPI_CFG_ADDR_MODE_NONE      | \
-                                             WSPI_CFG_ALT_MODE_NONE       | \
-                                             WSPI_CFG_DATA_MODE_FOUR_LINES| \
-                                             WSPI_CFG_CMD_SIZE_8          | \
-                                             WSPI_CFG_ADDR_SIZE_24)
+#define SNOR_WSPI_CFG_CMD_DATA          (WSPI_CFG_CMD_MODE_FOUR_LINES     | \
+                                         WSPI_CFG_ADDR_MODE_NONE          | \
+                                         WSPI_CFG_ALT_MODE_NONE           | \
+                                         WSPI_CFG_DATA_MODE_FOUR_LINES    | \
+                                         WSPI_CFG_CMD_SIZE_8              | \
+                                         WSPI_CFG_ADDR_SIZE_24)
 
 /**
  * @brief   WSPI settings for command, address and data.
  */
-#define SNOR_WSPI_CFG_CMD_ADDR_DATA         (WSPI_CFG_CMD_MODE_FOUR_LINES | \
-                                             WSPI_CFG_ADDR_MODE_FOUR_LINES| \
-                                             WSPI_CFG_ALT_MODE_NONE       | \
-                                             WSPI_CFG_DATA_MODE_FOUR_LINES| \
-                                             WSPI_CFG_CMD_SIZE_8          | \
-                                             WSPI_CFG_ADDR_SIZE_24)
+#define SNOR_WSPI_CFG_CMD_ADDR_DATA     (WSPI_CFG_CMD_MODE_FOUR_LINES     | \
+                                         WSPI_CFG_ADDR_MODE_FOUR_LINES    | \
+                                         WSPI_CFG_ALT_MODE_NONE           | \
+                                         WSPI_CFG_DATA_MODE_FOUR_LINES    | \
+                                         WSPI_CFG_CMD_SIZE_8              | \
+                                         WSPI_CFG_ADDR_SIZE_24)
 
 #elif N25Q_BUS_MODE == N25Q_BUS_MODE_WSPI2L
-#define SNOR_WSPI_CFG_CMD                   (WSPI_CFG_CMD_MODE_TWO_LINES  | \
-                                             WSPI_CFG_ADDR_MODE_NONE      | \
-                                             WSPI_CFG_ALT_MODE_NONE       | \
-                                             WSPI_CFG_DATA_MODE_NONE      | \
-                                             WSPI_CFG_CMD_SIZE_8          | \
-                                             WSPI_CFG_ADDR_SIZE_24)
+#define SNOR_WSPI_CFG_CMD               (WSPI_CFG_CMD_MODE_TWO_LINES      | \
+                                         WSPI_CFG_ADDR_MODE_NONE          | \
+                                         WSPI_CFG_ALT_MODE_NONE           | \
+                                         WSPI_CFG_DATA_MODE_NONE          | \
+                                         WSPI_CFG_CMD_SIZE_8              | \
+                                         WSPI_CFG_ADDR_SIZE_24)
 
-#define SNOR_WSPI_CFG_CMD_ADDR              (WSPI_CFG_CMD_MODE_TWO_LINES  | \
-                                             WSPI_CFG_ADDR_MODE_TWO_LINES | \
-                                             WSPI_CFG_ALT_MODE_NONE       | \
-                                             WSPI_CFG_DATA_MODE_NONE      | \
-                                             WSPI_CFG_CMD_SIZE_8          | \
-                                             WSPI_CFG_ADDR_SIZE_24)
+#define SNOR_WSPI_CFG_CMD_ADDR          (WSPI_CFG_CMD_MODE_TWO_LINES      | \
+                                         WSPI_CFG_ADDR_MODE_TWO_LINES     | \
+                                         WSPI_CFG_ALT_MODE_NONE           | \
+                                         WSPI_CFG_DATA_MODE_NONE          | \
+                                         WSPI_CFG_CMD_SIZE_8              | \
+                                         WSPI_CFG_ADDR_SIZE_24)
 
-#define SNOR_WSPI_CFG_CMD_DATA              (WSPI_CFG_CMD_MODE_TWO_LINES  | \
-                                             WSPI_CFG_ADDR_MODE_NONE      | \
-                                             WSPI_CFG_ALT_MODE_NONE       | \
-                                             WSPI_CFG_DATA_MODE_TWO_LINES | \
-                                             WSPI_CFG_CMD_SIZE_8          | \
-                                             WSPI_CFG_ADDR_SIZE_24)
+#define SNOR_WSPI_CFG_CMD_DATA          (WSPI_CFG_CMD_MODE_TWO_LINES      | \
+                                         WSPI_CFG_ADDR_MODE_NONE          | \
+                                         WSPI_CFG_ALT_MODE_NONE           | \
+                                         WSPI_CFG_DATA_MODE_TWO_LINES     | \
+                                         WSPI_CFG_CMD_SIZE_8              | \
+                                         WSPI_CFG_ADDR_SIZE_24)
 
-#define SNOR_WSPI_CFG_CMD_ADDR_DATA         (WSPI_CFG_CMD_MODE_ONE_LINE   | \
-                                             WSPI_CFG_ADDR_MODE_ONE_LINE  | \
-                                             WSPI_CFG_ALT_MODE_NONE       | \
-                                             WSPI_CFG_DATA_MODE_ONE_LINE  | \
-                                             WSPI_CFG_CMD_SIZE_8          | \
-                                             WSPI_CFG_ADDR_SIZE_24)
+#define SNOR_WSPI_CFG_CMD_ADDR_DATA     (WSPI_CFG_CMD_MODE_ONE_LINE       | \
+                                         WSPI_CFG_ADDR_MODE_ONE_LINE      | \
+                                         WSPI_CFG_ALT_MODE_NONE           | \
+                                         WSPI_CFG_DATA_MODE_ONE_LINE      | \
+                                         WSPI_CFG_CMD_SIZE_8              | \
+                                         WSPI_CFG_ADDR_SIZE_24)
 
 #elif N25Q_BUS_MODE == N25Q_BUS_MODE_WSPI1L
-#define SNOR_WSPI_CFG_CMD                   (WSPI_CFG_CMD_MODE_ONE_LINE   | \
-                                             WSPI_CFG_ADDR_MODE_NONE      | \
-                                             WSPI_CFG_ALT_MODE_NONE       | \
-                                             WSPI_CFG_DATA_MODE_NONE      | \
-                                             WSPI_CFG_CMD_SIZE_8          | \
-                                             WSPI_CFG_ADDR_SIZE_24)
+#define SNOR_WSPI_CFG_CMD               (WSPI_CFG_CMD_MODE_ONE_LINE       | \
+                                         WSPI_CFG_ADDR_MODE_NONE          | \
+                                         WSPI_CFG_ALT_MODE_NONE           | \
+                                         WSPI_CFG_DATA_MODE_NONE          | \
+                                         WSPI_CFG_CMD_SIZE_8              | \
+                                         WSPI_CFG_ADDR_SIZE_24)
 
-#define SNOR_WSPI_CFG_CMD_ADDR              (WSPI_CFG_CMD_MODE_ONE_LINE   | \
-                                             WSPI_CFG_ADDR_MODE_ONE_LINE  | \
-                                             WSPI_CFG_ALT_MODE_NONE       | \
-                                             WSPI_CFG_DATA_MODE_NONE      | \
-                                             WSPI_CFG_CMD_SIZE_8          | \
-                                             WSPI_CFG_ADDR_SIZE_24)
+#define SNOR_WSPI_CFG_CMD_ADDR          (WSPI_CFG_CMD_MODE_ONE_LINE       | \
+                                         WSPI_CFG_ADDR_MODE_ONE_LINE      | \
+                                         WSPI_CFG_ALT_MODE_NONE           | \
+                                         WSPI_CFG_DATA_MODE_NONE          | \
+                                         WSPI_CFG_CMD_SIZE_8              | \
+                                         WSPI_CFG_ADDR_SIZE_24)
 
-#define SNOR_WSPI_CFG_CMD_DATA              (WSPI_CFG_CMD_MODE_ONE_LINE   | \
-                                             WSPI_CFG_ADDR_MODE_NONE      | \
-                                             WSPI_CFG_ALT_MODE_NONE       | \
-                                             WSPI_CFG_DATA_MODE_ONE_LINE  | \
-                                             WSPI_CFG_CMD_SIZE_8          | \
-                                             WSPI_CFG_ADDR_SIZE_24)
+#define SNOR_WSPI_CFG_CMD_DATA          (WSPI_CFG_CMD_MODE_ONE_LINE       | \
+                                         WSPI_CFG_ADDR_MODE_NONE          | \
+                                         WSPI_CFG_ALT_MODE_NONE           | \
+                                         WSPI_CFG_DATA_MODE_ONE_LINE      | \
+                                         WSPI_CFG_CMD_SIZE_8              | \
+                                         WSPI_CFG_ADDR_SIZE_24)
 
-#define SNOR_WSPI_CFG_CMD_ADDR_DATA         (WSPI_CFG_CMD_MODE_ONE_LINE   | \
-                                             WSPI_CFG_ADDR_MODE_ONE_LINE  | \
-                                             WSPI_CFG_ALT_MODE_NONE       | \
-                                             WSPI_CFG_DATA_MODE_ONE_LINE  | \
-                                             WSPI_CFG_CMD_SIZE_8          | \
-                                             WSPI_CFG_ADDR_SIZE_24)
+#define SNOR_WSPI_CFG_CMD_ADDR_DATA     (WSPI_CFG_CMD_MODE_ONE_LINE       | \
+                                         WSPI_CFG_ADDR_MODE_ONE_LINE      | \
+                                         WSPI_CFG_ALT_MODE_NONE           | \
+                                         WSPI_CFG_DATA_MODE_ONE_LINE      | \
+                                         WSPI_CFG_CMD_SIZE_8              | \
+                                         WSPI_CFG_ADDR_SIZE_24)
 
 #else
 #error "invalid N25Q_BUS_MODE setting"
@@ -317,7 +323,8 @@ extern "C" {
   flash_error_t snor_device_query_erase(SNORDriver *devp, uint32_t *msec);
   flash_error_t snor_device_read_sfdp(SNORDriver *devp, flash_offset_t offset,
                                       size_t n, uint8_t *rp);
-#if SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI
+#if (SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI) &&                            \
+    (SNOR_DEVICE_SUPPORTS_XIP == TRUE)
   void snor_activate_xip(SNORDriver *devp);
   void snor_reset_xip(SNORDriver *devp);
 #endif

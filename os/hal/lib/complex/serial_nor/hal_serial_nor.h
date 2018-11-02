@@ -19,7 +19,6 @@
  * @brief   Serial NOR driver header.
  *
  * @addtogroup SERIAL_NOR
- * @ingroup SERIAL_NOR
  * @{
  */
 
@@ -169,12 +168,19 @@ extern "C" {
                             flash_offset_t offset,
                             size_t n,
                             uint8_t *p);
+#if (SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI) || defined(__DOXYGEN__)
+  void bus_cmd_dummy_receive(BUSDriver *busp,
+                             uint32_t cmd,
+                             uint32_t dummy,
+                             size_t n,
+                             uint8_t *p);
   void bus_cmd_addr_dummy_receive(BUSDriver *busp,
                                   uint32_t cmd,
                                   flash_offset_t offset,
                                   uint32_t dummy,
                                   size_t n,
                                   uint8_t *p);
+#endif
   void snorObjectInit(SNORDriver *devp);
   void snorStart(SNORDriver *devp, const SNORConfig *config);
   void snorStop(SNORDriver *devp);

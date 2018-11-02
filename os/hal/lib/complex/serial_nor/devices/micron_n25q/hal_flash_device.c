@@ -19,7 +19,6 @@
  * @brief   Micron N25Q serial flash driver code.
  *
  * @addtogroup MICRON_N25Q
- * @ingroup MICRON_N25Q
  * @{
  */
 

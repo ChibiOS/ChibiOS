@@ -19,7 +19,6 @@
  * @brief   Serial NOR serial flash driver code.
  *
  * @addtogroup HAL_SERIAL_NOR
- * @ingroup HAL_SERIAL_NOR
  * @{
  */
 
@@ -565,6 +564,33 @@ void bus_cmd_addr_receive(BUSDriver *busp,
 
 #if (SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI) || defined(__DOXYGEN__)
 /**
+ * @brief   Sends a command followed by dummy cycles and a
+ *          data receive phase.
+ *
+ * @param[in] busp      pointer to the bus driver
+ * @param[in] cmd       instruction code
+ * @param[in] dummy     number of dummy cycles
+ * @param[in] n         number of bytes to receive
+ * @param[out] p        data buffer
+ *
+ * @notapi
+ */
+void bus_cmd_dummy_receive(BUSDriver *busp,
+                           uint32_t cmd,
+                           uint32_t dummy,
+                           size_t n,
+                           uint8_t *p) {
+  wspi_command_t mode;
+
+  mode.cmd   = cmd;
+  mode.cfg   = SNOR_WSPI_CFG_CMD_ADDR_DATA;
+  mode.addr  = 0U;
+  mode.alt   = 0U;
+  mode.dummy = dummy;
+  wspiReceive(busp, &mode, n, p);
+}
+
+/**
  * @brief   Sends a command followed by a flash address, dummy cycles and a
  *          data receive phase.
  *
@@ -691,8 +717,10 @@ void snorMemoryMap(SNORDriver *devp, uint8_t **addrp) {
   /* Bus acquisition.*/
   bus_acquire(devp->config->busp, devp->config->buscfg);
 
+#if SNOR_DEVICE_SUPPORTS_XIP == TRUE
   /* Activating XIP mode in the device.*/
   snor_activate_xip(devp);
+#endif
 
   /* Starting WSPI memory mapped mode.*/
   wspiMapFlash(devp->config->busp, &snor_memmap_read, addrp);
@@ -716,7 +744,9 @@ void snorMemoryUnmap(SNORDriver *devp) {
   /* Stopping WSPI memory mapped mode.*/
   wspiUnmapFlash(devp->config->busp);
 
+#if SNOR_DEVICE_SUPPORTS_XIP == TRUE
   snor_reset_xip(devp);
+#endif
 
   /* Bus release.*/
   bus_release(devp->config->busp);
