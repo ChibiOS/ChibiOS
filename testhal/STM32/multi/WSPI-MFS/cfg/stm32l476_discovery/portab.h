@@ -38,6 +38,7 @@
 #define PORTAB_BUTTON_PRESSED       PAL_HIGH
 
 #define PORTAB_SD1                  SD2
+#define PORTAB_WSPI1                WSPID1
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -58,6 +59,8 @@
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
+
+extern const WSPIConfig WSPIcfg1;
 
 #ifdef __cplusplus
 extern "C" {

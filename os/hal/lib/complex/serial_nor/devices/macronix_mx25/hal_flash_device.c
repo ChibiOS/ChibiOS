@@ -168,7 +168,8 @@ static flash_error_t n25q_poll_status(SNORDriver *devp) {
 #if MX25_BUS_MODE == MX25_BUS_MODE_SPI
     bus_cmd_receive(devp->config->busp, MX25_CMD_SPI_RDSR, 1, &sts);
 #else
-    bus_cmd_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDSR, 1, &sts);
+    bus_cmd_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDSR,
+                          MX25_READ_DUMMY_CYCLES, 1U, &sts);
 #endif
   } while ((sts & 1U) != 0U);
 
@@ -176,7 +177,8 @@ static flash_error_t n25q_poll_status(SNORDriver *devp) {
 #if MX25_BUS_MODE == MX25_BUS_MODE_SPI
   bus_cmd_receive(devp->config->busp, MX25_CMD_SPI_RDSCUR, 1, &sts);
 #else
-  bus_cmd_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDSCUR, 1, &sts);
+  bus_cmd_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDSCUR,
+                        MX25_READ_DUMMY_CYCLES, 1U, &sts);
 #endif
   if ((sts & MX25_FLAGS_ALL_ERRORS) != 0U) {
 
@@ -475,7 +477,7 @@ flash_error_t snor_device_program(SNORDriver *devp, flash_offset_t offset,
     bus_cmd(devp->config->busp, MX25_CMD_OPI_WREN);
 
     /* Page program command.*/
-    bus_cmd_addr_send(devp->config->busp, MX25_CMD_OPI_PP4B, offset,
+    bus_cmd_addr_send(devp->config->busp, MX25_CMD_OPI_PP, offset,
                       chunk, pp);
 #endif
 
@@ -535,10 +537,10 @@ flash_error_t snor_device_start_erase_sector(SNORDriver *devp,
 
 #if MX25_USE_SUB_SECTORS == FALSE
   /* Block erase command.*/
-  bus_cmd_addr(devp->config->busp, MX25_CMD_OPI_BE4B, offset);
+  bus_cmd_addr(devp->config->busp, MX25_CMD_OPI_BE, offset);
 #else
   /* Sector erase command.*/
-  bus_cmd_addr(devp->config->busp, MX25_CMD_OPI_SE4B, offset);
+  bus_cmd_addr(devp->config->busp, MX25_CMD_OPI_SE, offset);
 #endif
 #endif
 
@@ -599,16 +601,18 @@ flash_error_t snor_device_query_erase(SNORDriver *devp, uint32_t *msec) {
 
   /* Read status register.*/
 #if MX25_BUS_MODE == MX25_BUS_MODE_SPI
-  bus_cmd_receive(devp->config->busp, MX25_CMD_SPI_RDSR, 1, &sts);
+  bus_cmd_receive(devp->config->busp, MX25_CMD_SPI_RDSR, 1U, &sts);
 #else
-  bus_cmd_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDSR, 1, &sts);
+  bus_cmd_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDSR,
+                        MX25_READ_DUMMY_CYCLES, 1U, &sts);
 #endif
 
   /* Read security register.*/
 #if MX25_BUS_MODE == MX25_BUS_MODE_SPI
-  bus_cmd_receive(devp->config->busp, MX25_CMD_SPI_RDSCUR, 1, &sec);
+  bus_cmd_receive(devp->config->busp, MX25_CMD_SPI_RDSCUR, 1U, &sec);
 #else
-  bus_cmd_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDSCUR, 1, &sec);
+  bus_cmd_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDSCUR,
+                        MX25_READ_DUMMY_CYCLES, 1U, &sec);
 #endif
 
   /* If the WIP bit is one (busy) or the flash in a suspended state then

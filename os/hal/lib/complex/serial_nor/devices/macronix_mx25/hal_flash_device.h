@@ -195,7 +195,7 @@
  * @note    This option is only valid in WSPI bus mode.
  */
 #if !defined(MX25_BUS_MODE) || defined(__DOXYGEN__)
-#define MX25_BUS_MODE                       MX25_BUS_MODE_SPI
+#define MX25_BUS_MODE                       MX25_BUS_MODE_OPI_STR
 #endif
 
 /**

@@ -26,25 +26,8 @@
 
 #include "portab.h"
 
-#if defined(STM32_WSPI_USE_OCTOSPI1)
-/* 16MB device, 2 cycles delay after NCS.*/
-const WSPIConfig WSPIcfg1 = {
-  .end_cb           = NULL,
-  .dcr1             = STM32_DCR1_DEVSIZE(24U) | STM32_DCR1_CSHT(1U),
-  .dcr2             = 0U,
-  .dcr3             = 0U,
-  .dcr4             = 0U
-};
-#else /* It is a quad SPI.*/
-/* 16MB device, 2 cycles delay after NCS.*/
-const WSPIConfig WSPIcfg1 = {
-  .end_cb           = NULL,
-  .dcr              = STM32_DCR_FSIZE(24U) | STM32_DCR_CSHT(1U)
-};
-#endif
-
 const SNORConfig snorcfg1 = {
-  .busp             = &WSPID1,
+  .busp             = &PORTAB_WSPI1,
   .buscfg           = &WSPIcfg1
 };
 
@@ -107,7 +90,7 @@ int main(void) {
   /* Normal main() thread activity, in this demo it does nothing.*/
   while (true) {
     if (palReadLine(PORTAB_LINE_BUTTON) == PORTAB_BUTTON_PRESSED) {
-      test_execute((BaseSequentialStream *)&PORTAB_SD1, &mfs_test_suite);
+       test_execute((BaseSequentialStream *)&PORTAB_SD1, &mfs_test_suite);
     }
     chThdSleepMilliseconds(500);
   }
