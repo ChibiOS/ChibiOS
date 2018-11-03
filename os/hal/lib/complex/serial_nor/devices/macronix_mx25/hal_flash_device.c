@@ -122,16 +122,21 @@ static const wspi_command_t mx25_cmd_read_id = {
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_STR
   .cmd              = MX25_CMD_OPI_RDID,
   .cfg              = WSPI_CFG_CMD_MODE_EIGHT_LINES |
+                      WSPI_CFG_ADDR_MODE_EIGHT_LINES |
                       WSPI_CFG_DATA_MODE_EIGHT_LINES |
+                      WSPI_CFG_ADDR_SIZE_32,
                       WSPI_CFG_CMD_SIZE_16,
-  .dummy            = MX25_READ_DUMMY_CYCLES,
+  .dummy            = 4U,                       /*Note: always 4 dummies.   */
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_DTR
   .cmd              = MX25_CMD_OPI_RDID,
   .cfg              = WSPI_CFG_CMD_MODE_EIGHT_LINES |
+                      WSPI_CFG_ADDR_MODE_EIGHT_LINES |
                       WSPI_CFG_DATA_MODE_EIGHT_LINES |
                       WSPI_CFG_CMD_SIZE_16 |
-                      WSPI_CFG_CMD_DDR,
-  .dummy            = MX25_READ_DUMMY_CYCLES,
+                      WSPI_CFG_ADDR_SIZE_32 |
+                      WSPI_CFG_CMD_DDR |
+                      WSPI_CFG_ADDR_DDR,
+  .dummy            = 4U,                       /*Note: always 4 dummies.   */
 #endif
 #endif
   .addr             = 0,
@@ -168,8 +173,8 @@ static flash_error_t n25q_poll_status(SNORDriver *devp) {
 #if MX25_BUS_MODE == MX25_BUS_MODE_SPI
     bus_cmd_receive(devp->config->busp, MX25_CMD_SPI_RDSR, 1, &sts);
 #else
-    bus_cmd_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDSR,
-                          MX25_READ_DUMMY_CYCLES, 1U, &sts);
+    bus_cmd_addr_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDSR,
+                               0U, 4U, 1U, &sts);   /*Note: always 4 dummies.*/
 #endif
   } while ((sts & 1U) != 0U);
 
@@ -177,8 +182,8 @@ static flash_error_t n25q_poll_status(SNORDriver *devp) {
 #if MX25_BUS_MODE == MX25_BUS_MODE_SPI
   bus_cmd_receive(devp->config->busp, MX25_CMD_SPI_RDSCUR, 1, &sts);
 #else
-  bus_cmd_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDSCUR,
-                        MX25_READ_DUMMY_CYCLES, 1U, &sts);
+  bus_cmd_addr_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDSCUR,
+                             0U, 4U, 1U, &sts);     /*Note: always 4 dummies.*/
 #endif
   if ((sts & MX25_FLAGS_ALL_ERRORS) != 0U) {
 
@@ -271,10 +276,36 @@ static void n25q_reset_memory(SNORDriver *devp) {
 
 static void mx25_write_cr2(SNORDriver *devp, uint32_t addr, const uint8_t *value) {
 
+  static const wspi_command_t cmd_write_enable = {
+#if MX25_SWITCH_WIDTH == TRUE
+    .cmd              = MX25_CMD_SPI_WREN,
+    .cfg              = WSPI_CFG_CMD_MODE_ONE_LINE |
+                        WSPI_CFG_CMD_SIZE_8,
+#else
+#if MX25_BUS_MODE == MX25_BUS_MODE_SPI
+    .cmd              = MX25_CMD_SPI_WREN,
+    .cfg              = WSPI_CFG_CMD_MODE_ONE_LINE |
+                        WSPI_CFG_CMD_SIZE_8,
+#elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_STR
+    .cmd              = MX25_CMD_OPI_WREN,
+    .cfg              = WSPI_CFG_CMD_MODE_EIGHT_LINES |
+                        WSPI_CFG_CMD_SIZE_16,
+#elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_DTR
+    .cmd              = MX25_CMD_OPI_WREN,
+    .cfg              = WSPI_CFG_CMD_MODE_EIGHT_LINES |
+                        WSPI_CFG_CMD_SIZE_16 |
+                        WSPI_CFG_CMD_DDR,
+#endif
+#endif
+    .addr             = 0,
+    .alt              = 0,
+    .dummy            = 0
+  };
+
   const wspi_command_t cmd_write_cr2 = {
 
 #if MX25_SWITCH_WIDTH == TRUE
-    .cmd              = MX25_CMD_SPI_RDID,
+    .cmd              = MX25_CMD_SPI_WRCR2,
     .cfg              = WSPI_CFG_CMD_MODE_ONE_LINE |
                         WSPI_CFG_ADDR_MODE_ONE_LINE |
                         WSPI_CFG_DATA_MODE_ONE_LINE |
@@ -282,21 +313,21 @@ static void mx25_write_cr2(SNORDriver *devp, uint32_t addr, const uint8_t *value
                         WSPI_CFG_ADDR_SIZE_32,
 #else
 #if MX25_BUS_MODE == MX25_BUS_MODE_SPI
-    .cmd              = MX25_CMD_SPI_RDID,
+    .cmd              = MX25_CMD_SPI_WRCR2,
     .cfg              = WSPI_CFG_CMD_MODE_ONE_LINE |
                         WSPI_CFG_ADDR_MODE_ONE_LINE |
                         WSPI_CFG_DATA_MODE_ONE_LINE |
                         WSPI_CFG_CMD_SIZE_8 |
                         WSPI_CFG_ADDR_SIZE_32,
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_STR
-    .cmd              = MX25_CMD_OPI_RDID,
+    .cmd              = MX25_CMD_OPI_WRCR2,
     .cfg              = WSPI_CFG_CMD_MODE_EIGHT_LINES |
                         WSPI_CFG_ADDR_MODE_EIGHT_LINES |
                         WSPI_CFG_DATA_MODE_EIGHT_LINES |
                         WSPI_CFG_CMD_SIZE_16 |
                         WSPI_CFG_ADDR_SIZE_32,
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_DTR
-    .cmd              = MX25_CMD_OPI_RDID,
+    .cmd              = MX25_CMD_OPI_WRCR2,
     .cfg              = WSPI_CFG_CMD_MODE_EIGHT_LINES |
                         WSPI_CFG_ADDR_MODE_EIGHT_LINES |
                         WSPI_CFG_DATA_MODE_EIGHT_LINES |
@@ -306,27 +337,6 @@ static void mx25_write_cr2(SNORDriver *devp, uint32_t addr, const uint8_t *value
 #endif
 #endif
     .addr             = addr,
-    .alt              = 0,
-    .dummy            = 0
-  };
-
-  static const wspi_command_t cmd_write_enable = {
-#if MX25_SWITCH_WIDTH == TRUE
-    .cmd              = MX25_CMD_SPI_WREN,
-    .cfg              = WSPI_CFG_CMD_MODE_ONE_LINE,
-#else
-#if MX25_BUS_MODE == MX25_BUS_MODE_SPI
-    .cfg              = WSPI_CFG_CMD_MODE_ONE_LINE,
-#elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_STR
-    .cfg              = WSPI_CFG_CMD_MODE_EIGHT_LINES |
-                        WSPI_CFG_CMD_SIZE_16,
-#elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_DTR
-    .cfg              = WSPI_CFG_CMD_MODE_EIGHT_LINES |
-                        WSPI_CFG_CMD_SIZE_16 |
-                        WSPI_CFG_CMD_DDR,
-#endif
-#endif
-    .addr             = 0,
     .alt              = 0,
     .dummy            = 0
   };
@@ -367,15 +377,27 @@ void snor_device_init(SNORDriver *devp) {
                              devp->device_id[1]),
                 "invalid memory type id");
 
+
+#if SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI
+  /* Setting up the dummy cycles to be used for fast read operations.*/
+  {
+    static const uint8_t regval[1] = {
+      ~((MX25_READ_DUMMY_CYCLES - 6U) / 2U) & 7U
+    };
+
+    mx25_write_cr2(devp, 0x00000300U, regval);
+  }
+#endif
+
 #if (SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI) && (MX25_SWITCH_WIDTH == TRUE)
   {
     uint8_t id[8];
 #if MX25_BUS_MODE == MX25_BUS_MODE_SPI
-    const uint8_t regval[1] = {0x00};
+    static const uint8_t regval[1] = {0x00};
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_STR
-    const uint8_t regval[1] = {0x01};
+    static const uint8_t regval[1] = {0x01};
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_DTR
-    const uint8_t regval[1] = {0x02};
+    static const uint8_t regval[1] = {0x02};
 #endif
 
     /* Setting up final bus width.*/
@@ -386,11 +408,11 @@ void snor_device_init(SNORDriver *devp) {
 #if MX25_BUS_MODE == MX25_BUS_MODE_SPI
     bus_cmd_receive(devp->config->busp, MX25_CMD_SPI_RDID, 3U, id);
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_STR
-    bus_cmd_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDID,
-                          MX25_READ_DUMMY_CYCLES, 3U, id);
+    bus_cmd_addr_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDID,
+                               0U, 4U, 3U, id); /*Note: always 4 dummies.   */
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_DTR
-    bus_cmd_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDID,
-                          MX25_READ_DUMMY_CYCLES, 6U, id);
+    bus_cmd_addr_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDID,
+                               0U, 4U, 6U, id); /*Note: always 4 dummies.   */
     id[1] = id[2];
     id[2] = id[4];
 #endif
@@ -404,17 +426,6 @@ void snor_device_init(SNORDriver *devp) {
   /* Setting up the device size.*/
   snor_descriptor.sectors_count = (1U << ((uint32_t)devp->device_id[2] & 0x1FU)) /
                                   SECTOR_SIZE;
-
-#if SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI
-  {
-    static const uint8_t regval[1] = {
-      ~((MX25_READ_DUMMY_CYCLES - 6U) / 2U) & 7U
-    };
-
-    /* Setting up the dummy cycles to be used for fast read operations.*/
-    mx25_write_cr2(devp, 0x00000300U, regval);
-  }
-#endif
 }
 
 const flash_descriptor_t *snor_get_descriptor(void *instance) {
@@ -603,16 +614,16 @@ flash_error_t snor_device_query_erase(SNORDriver *devp, uint32_t *msec) {
 #if MX25_BUS_MODE == MX25_BUS_MODE_SPI
   bus_cmd_receive(devp->config->busp, MX25_CMD_SPI_RDSR, 1U, &sts);
 #else
-  bus_cmd_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDSR,
-                        MX25_READ_DUMMY_CYCLES, 1U, &sts);
+  bus_cmd_addr_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDSR,
+                             0U, 4U, 1U, &sts); /*Note: always 4 dummies.   */
 #endif
 
   /* Read security register.*/
 #if MX25_BUS_MODE == MX25_BUS_MODE_SPI
   bus_cmd_receive(devp->config->busp, MX25_CMD_SPI_RDSCUR, 1U, &sec);
 #else
-  bus_cmd_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDSCUR,
-                        MX25_READ_DUMMY_CYCLES, 1U, &sec);
+  bus_cmd_addr_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDSCUR,
+                             0U, 4U, 1U, &sec); /*Note: always 4 dummies.   */
 #endif
 
   /* If the WIP bit is one (busy) or the flash in a suspended state then

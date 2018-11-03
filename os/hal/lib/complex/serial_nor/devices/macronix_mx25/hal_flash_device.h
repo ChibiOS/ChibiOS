@@ -262,7 +262,6 @@
                                          WSPI_CFG_ALT_MODE_NONE           | \
                                          WSPI_CFG_DATA_MODE_NONE          | \
                                          WSPI_CFG_CMD_SIZE_16             | \
-                                         WSPI_CFG_ADDR_SIZE_32            | \
                                          WSPI_CFG_CMD_DDR)
 
 /**
@@ -285,7 +284,6 @@
                                          WSPI_CFG_ALT_MODE_NONE           | \
                                          WSPI_CFG_DATA_MODE_EIGHT_LINES   | \
                                          WSPI_CFG_CMD_SIZE_16             | \
-                                         WSPI_CFG_ADDR_SIZE_32            | \
                                          WSPI_CFG_CMD_DDR                 | \
                                          WSPI_CFG_DATA_DDR)
 
@@ -307,8 +305,7 @@
                                          WSPI_CFG_ADDR_MODE_NONE          | \
                                          WSPI_CFG_ALT_MODE_NONE           | \
                                          WSPI_CFG_DATA_MODE_NONE          | \
-                                         WSPI_CFG_CMD_SIZE_16             | \
-                                         WSPI_CFG_ADDR_SIZE_32)
+                                         WSPI_CFG_CMD_SIZE_16)
 
 #define SNOR_WSPI_CFG_CMD_ADDR          (WSPI_CFG_CMD_MODE_EIGHT_LINES    | \
                                          WSPI_CFG_ADDR_MODE_EIGHT_LINES   | \
@@ -321,8 +318,7 @@
                                          WSPI_CFG_ADDR_MODE_NONE          | \
                                          WSPI_CFG_ALT_MODE_NONE           | \
                                          WSPI_CFG_DATA_MODE_EIGHT_LINES   | \
-                                         WSPI_CFG_CMD_SIZE_16             | \
-                                         WSPI_CFG_ADDR_SIZE_32)
+                                         WSPI_CFG_CMD_SIZE_16)
 
 #define SNOR_WSPI_CFG_CMD_ADDR_DATA     (WSPI_CFG_CMD_MODE_EIGHT_LINES    | \
                                          WSPI_CFG_ADDR_MODE_EIGHT_LINES   | \
@@ -336,8 +332,7 @@
                                          WSPI_CFG_ADDR_MODE_NONE          | \
                                          WSPI_CFG_ALT_MODE_NONE           | \
                                          WSPI_CFG_DATA_MODE_NONE          | \
-                                         WSPI_CFG_CMD_SIZE_8              | \
-                                         WSPI_CFG_ADDR_SIZE_32)
+                                         WSPI_CFG_CMD_SIZE_8)
 
 #define SNOR_WSPI_CFG_CMD_ADDR          (WSPI_CFG_CMD_MODE_ONE_LINE       | \
                                          WSPI_CFG_ADDR_MODE_ONE_LINE      | \
@@ -350,8 +345,7 @@
                                          WSPI_CFG_ADDR_MODE_NONE          | \
                                          WSPI_CFG_ALT_MODE_NONE           | \
                                          WSPI_CFG_DATA_MODE_ONE_LINE      | \
-                                         WSPI_CFG_CMD_SIZE_8              | \
-                                         WSPI_CFG_ADDR_SIZE_32)
+                                         WSPI_CFG_CMD_SIZE_8)
 
 #define SNOR_WSPI_CFG_CMD_ADDR_DATA     (WSPI_CFG_CMD_MODE_ONE_LINE       | \
                                          WSPI_CFG_ADDR_MODE_ONE_LINE      | \

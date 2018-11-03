@@ -583,7 +583,7 @@ void bus_cmd_dummy_receive(BUSDriver *busp,
   wspi_command_t mode;
 
   mode.cmd   = cmd;
-  mode.cfg   = SNOR_WSPI_CFG_CMD_ADDR_DATA;
+  mode.cfg   = SNOR_WSPI_CFG_CMD_DATA;
   mode.addr  = 0U;
   mode.alt   = 0U;
   mode.dummy = dummy;
