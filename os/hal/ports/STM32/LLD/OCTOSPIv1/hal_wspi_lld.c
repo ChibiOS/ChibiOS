@@ -299,6 +299,15 @@ void wspi_lld_command(WSPIDriver *wspip, const wspi_command_t *cmdp) {
 /**
  * @brief   Sends a command with data over the WSPI bus.
  * @post    At the end of the operation the configured callback is invoked.
+ * @note    If using DTR in 8 lines mode then the following restrictions
+ *          apply:
+ *          - Command size must be 0, 2 or 4 bytes.
+ *          - Address must be even.
+ *          - Alternate bytes size must be 0, 2 or 4 bytes.
+ *          - Data size must be a multiple of two.
+ *          .
+ *          There is no check on the above conditions in order to keep the
+ *          code efficient.
  *
  * @param[in] wspip     pointer to the @p WSPIDriver object
  * @param[in] cmdp      pointer to the command descriptor
@@ -315,7 +324,7 @@ void wspi_lld_send(WSPIDriver *wspip, const wspi_command_t *cmdp,
   dmaStreamSetMode(wspip->dma, wspip->dmamode | STM32_DMA_CR_DIR_M2P);
 
   wspip->ospi->CR &= ~OCTOSPI_CR_FMODE;
-  wspip->ospi->DLR = n - 1;
+  wspip->ospi->DLR = n - 1U;
   wspip->ospi->TCR = cmdp->dummy;
   wspip->ospi->CCR = cmdp->cfg;
   wspip->ospi->ABR = cmdp->alt;
@@ -330,6 +339,15 @@ void wspi_lld_send(WSPIDriver *wspip, const wspi_command_t *cmdp,
 /**
  * @brief   Sends a command then receives data over the WSPI bus.
  * @post    At the end of the operation the configured callback is invoked.
+ * @note    If using DTR in 8 lines mode then the following restrictions
+ *          apply:
+ *          - Command size must be 0, 2 or 4 bytes.
+ *          - Address must be even.
+ *          - Alternate bytes size must be 0, 2 or 4 bytes.
+ *          - Data size must be a multiple of two.
+ *          .
+ *          There is no check on the above conditions in order to keep the
+ *          code efficient.
  *
  * @param[in] wspip     pointer to the @p WSPIDriver object
  * @param[in] cmdp      pointer to the command descriptor
@@ -346,7 +364,7 @@ void wspi_lld_receive(WSPIDriver *wspip, const wspi_command_t *cmdp,
   dmaStreamSetMode(wspip->dma, wspip->dmamode | STM32_DMA_CR_DIR_P2M);
 
   wspip->ospi->CR  = (wspip->ospi->CR & ~OCTOSPI_CR_FMODE) | OCTOSPI_CR_FMODE_0;
-  wspip->ospi->DLR = n - 1;
+  wspip->ospi->DLR = n - 1U;
   wspip->ospi->TCR = cmdp->dummy;
   wspip->ospi->CCR = cmdp->cfg;
   wspip->ospi->ABR = cmdp->alt;
