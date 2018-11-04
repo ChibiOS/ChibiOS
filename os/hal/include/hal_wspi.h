@@ -150,7 +150,7 @@ typedef struct {
 #define WSPI_CFG_CMD_MODE_FOUR_LINES            (3LU << 0LU)
 #define WSPI_CFG_CMD_MODE_EIGHT_LINES           (4LU << 0LU)
 
-#define WSPI_CFG_CMD_DDR                        (1LU << 3LU)
+#define WSPI_CFG_CMD_DTR                        (1LU << 3LU)
 
 #define WSPI_CFG_CMD_SIZE_MASK                  (3LU << 4LU)
 #define WSPI_CFG_CMD_SIZE_8                     (0LU << 4LU)
@@ -165,7 +165,7 @@ typedef struct {
 #define WSPI_CFG_ADDR_MODE_FOUR_LINES           (3LU << 8LU)
 #define WSPI_CFG_ADDR_MODE_EIGHT_LINES          (4LU << 8LU)
 
-#define WSPI_CFG_ADDR_DDR                       (1LU << 11LU)
+#define WSPI_CFG_ADDR_DTR                       (1LU << 11LU)
 
 #define WSPI_CFG_ADDR_SIZE_MASK                 (3LU << 12LU)
 #define WSPI_CFG_ADDR_SIZE_8                    (0LU << 12LU)
@@ -180,7 +180,7 @@ typedef struct {
 #define WSPI_CFG_ALT_MODE_FOUR_LINES            (3LU << 16LU)
 #define WSPI_CFG_ALT_MODE_EIGHT_LINES           (4LU << 16LU)
 
-#define WSPI_CFG_ALT_DDR                        (1LU << 19LU)
+#define WSPI_CFG_ALT_DTR                        (1LU << 19LU)
 
 #define WSPI_CFG_ALT_SIZE_MASK                  (3LU << 20LU)
 #define WSPI_CFG_ALT_SIZE_8                     (0LU << 20LU)
@@ -195,7 +195,9 @@ typedef struct {
 #define WSPI_CFG_DATA_MODE_FOUR_LINES           (3LU << 24LU)
 #define WSPI_CFG_DATA_MODE_EIGHT_LINES          (4LU << 24LU)
 
-#define WSPI_CFG_DATA_DDR                       (1LU << 27LU)
+#define WSPI_CFG_DATA_DTR                       (1LU << 27LU)
+
+#define WSPI_CFG_DQS_ENABLE                     (1LU << 29LU)
 
 #define WSPI_CFG_SIOO                           (1LU << 31LU)
 /** @} */

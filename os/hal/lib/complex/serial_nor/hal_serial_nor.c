@@ -37,6 +37,7 @@
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
+static const flash_descriptor_t *snor_get_descriptor(void *instance);
 static flash_error_t snor_read(void *instance, flash_offset_t offset,
                                size_t n, uint8_t *rp);
 static flash_error_t snor_program(void *instance, flash_offset_t offset,
@@ -117,6 +118,21 @@ void bus_release(BUSDriver *busp) {
 #define bus_acquire(busp)
 #define bus_release(busp)
 #endif
+
+/**
+ * @brief   Returns a pointer to the device descriptor.
+ *
+ * @param[in] instance  instance pointer
+ */
+static const flash_descriptor_t *snor_get_descriptor(void *instance) {
+  SNORDriver *devp = (SNORDriver *)instance;
+
+  osalDbgCheck(instance != NULL);
+  osalDbgAssert((devp->state != FLASH_UNINIT) && (devp->state != FLASH_STOP),
+                "invalid state");
+
+  return &snor_descriptor;
+}
 
 static flash_error_t snor_read(void *instance, flash_offset_t offset,
                                size_t n, uint8_t *rp) {

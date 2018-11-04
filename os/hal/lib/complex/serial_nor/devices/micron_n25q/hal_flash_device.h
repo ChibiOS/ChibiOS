@@ -310,7 +310,6 @@ extern const wspi_command_t snor_memmap_read;
 extern "C" {
 #endif
   void snor_device_init(SNORDriver *devp);
-  const flash_descriptor_t *snor_get_descriptor(void *instance);
   flash_error_t snor_device_read(SNORDriver *devp, flash_offset_t offset,
                                  size_t n, uint8_t *rp);
   flash_error_t snor_device_program(SNORDriver *devp, flash_offset_t offset,

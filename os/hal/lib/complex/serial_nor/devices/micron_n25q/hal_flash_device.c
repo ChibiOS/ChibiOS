@@ -368,16 +368,6 @@ void snor_device_init(SNORDriver *devp) {
 #endif
 }
 
-const flash_descriptor_t *snor_get_descriptor(void *instance) {
-  SNORDriver *devp = (SNORDriver *)instance;
-
-  osalDbgCheck(instance != NULL);
-  osalDbgAssert((devp->state != FLASH_UNINIT) && (devp->state != FLASH_STOP),
-                "invalid state");
-
-  return &snor_descriptor;
-}
-
 flash_error_t snor_device_read(SNORDriver *devp, flash_offset_t offset,
                                size_t n, uint8_t *rp) {
 

@@ -195,7 +195,7 @@
  * @note    This option is only valid in WSPI bus mode.
  */
 #if !defined(MX25_BUS_MODE) || defined(__DOXYGEN__)
-#define MX25_BUS_MODE                       MX25_BUS_MODE_OPI_STR
+#define MX25_BUS_MODE                       MX25_BUS_MODE_OPI_DTR
 #endif
 
 /**
@@ -262,7 +262,7 @@
                                          WSPI_CFG_ALT_MODE_NONE           | \
                                          WSPI_CFG_DATA_MODE_NONE          | \
                                          WSPI_CFG_CMD_SIZE_16             | \
-                                         WSPI_CFG_CMD_DDR)
+                                         WSPI_CFG_CMD_DTR)
 
 /**
  * @brief   WSPI settings for command and address.
@@ -273,8 +273,8 @@
                                          WSPI_CFG_DATA_MODE_NONE          | \
                                          WSPI_CFG_CMD_SIZE_16             | \
                                          WSPI_CFG_ADDR_SIZE_32            | \
-                                         WSPI_CFG_CMD_DDR                 | \
-                                         WSPI_CFG_ADDR_DDR)
+                                         WSPI_CFG_CMD_DTR                 | \
+                                         WSPI_CFG_ADDR_DTR)
 
 /**
  * @brief   WSPI settings for command and data.
@@ -284,8 +284,9 @@
                                          WSPI_CFG_ALT_MODE_NONE           | \
                                          WSPI_CFG_DATA_MODE_EIGHT_LINES   | \
                                          WSPI_CFG_CMD_SIZE_16             | \
-                                         WSPI_CFG_CMD_DDR                 | \
-                                         WSPI_CFG_DATA_DDR)
+                                         WSPI_CFG_CMD_DTR                 | \
+                                         WSPI_CFG_DATA_DTR                | \
+                                         WSPI_CFG_DQS_ENABLE)
 
 /**
  * @brief   WSPI settings for command, address and data.
@@ -296,9 +297,10 @@
                                          WSPI_CFG_DATA_MODE_EIGHT_LINES   | \
                                          WSPI_CFG_CMD_SIZE_16             | \
                                          WSPI_CFG_ADDR_SIZE_32            | \
-                                         WSPI_CFG_CMD_DDR                 | \
-                                         WSPI_CFG_ADDR_DDR                | \
-                                         WSPI_CFG_DATA_DDR)
+                                         WSPI_CFG_CMD_DTR                 | \
+                                         WSPI_CFG_ADDR_DTR                | \
+                                         WSPI_CFG_DATA_DTR                | \
+                                         WSPI_CFG_DQS_ENABLE)
 
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_STR
 #define SNOR_WSPI_CFG_CMD               (WSPI_CFG_CMD_MODE_EIGHT_LINES    | \
@@ -382,7 +384,6 @@ extern const wspi_command_t snor_memmap_read;
 extern "C" {
 #endif
   void snor_device_init(SNORDriver *devp);
-  const flash_descriptor_t *snor_get_descriptor(void *instance);
   flash_error_t snor_device_read(SNORDriver *devp, flash_offset_t offset,
                                  size_t n, uint8_t *rp);
   flash_error_t snor_device_program(SNORDriver *devp, flash_offset_t offset,
