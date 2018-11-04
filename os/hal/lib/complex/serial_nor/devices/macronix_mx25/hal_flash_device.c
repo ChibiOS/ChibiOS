@@ -172,7 +172,7 @@ static flash_error_t mx25_poll_status(SNORDriver *devp) {
 #endif
     /* Read status command.*/
 #if MX25_BUS_MODE == MX25_BUS_MODE_SPI
-    bus_cmd_receive(devp->config->busp, MX25_CMD_SPI_RDSR, 1U, &sts);
+    bus_cmd_receive(devp->config->busp, MX25_CMD_SPI_RDSR, 1U, sts);
 #else
     bus_cmd_addr_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDSR,
                                0U, 4U, 2U, sts);   /*Note: always 4 dummies.*/
@@ -181,7 +181,7 @@ static flash_error_t mx25_poll_status(SNORDriver *devp) {
 
   /* Reading security register and checking for errors.*/
 #if MX25_BUS_MODE == MX25_BUS_MODE_SPI
-  bus_cmd_receive(devp->config->busp, MX25_CMD_SPI_RDSCUR, 1U, &sts);
+  bus_cmd_receive(devp->config->busp, MX25_CMD_SPI_RDSCUR, 1U, sec);
 #else
   bus_cmd_addr_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDSCUR,
                              0U, 4U, 2U, sec);     /*Note: always 4 dummies.*/
