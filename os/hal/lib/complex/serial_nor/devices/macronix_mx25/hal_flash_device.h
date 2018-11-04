@@ -175,6 +175,17 @@
 /*===========================================================================*/
 
 /**
+ * @brief   SW reset on initialization.
+ * @details Enforces a reset on initialization, this could be required if
+ *          the device is not reset in HW or during debugging.
+ * @note    It is only effective if the WSPI driver is in use, it does
+ *          nothing when SPI driver is used.
+ */
+#if !defined(MX25_RESET_ON_INIT) || defined(__DOXYGEN__)
+#define MX25_RESET_ON_INIT                  TRUE
+#endif
+
+/**
  * @brief   Switch WSPI bus width on initialization.
  * @details A bus width initialization is performed by writing the
  *          Enhanced Volatile Configuration Register. If the flash

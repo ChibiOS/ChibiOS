@@ -381,9 +381,17 @@ void snor_device_init(SNORDriver *devp) {
 
 #else /* SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI */
 
-  /* Attempting a reset of the device, it could be in an unexpected state
-     because a CPU reset does not reset the memory too.*/
-  mx25_reset(devp);
+#if MX25_RESET_ON_INIT == TRUE
+  {
+    /* Attempting a reset of the device, it could be in an unexpected state
+       because a CPU reset does not reset the memory too.*/
+    mx25_reset(devp);
+
+    /* The device requires at least 10uS to recover after a reset, it could
+       need up to 100mS in cause a reset occurred during a chip erase.*/
+    osalThreadSleepMicroseconds(40);
+  }
+#endif
 
   /* Reading device ID and unique ID.*/
   wspiReceive(devp->config->busp, &mx25_cmd_read_id, 3U, devp->device_id);
