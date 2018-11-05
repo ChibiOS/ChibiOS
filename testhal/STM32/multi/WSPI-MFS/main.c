@@ -83,7 +83,16 @@ int main(void) {
   /* Initializing and starting snor1 driver.*/
   snorObjectInit(&snor1);
   snorStart(&snor1, &snorcfg1);
+#if 1
+  /* Testing memory mapped mode.*/
+  {
+    uint8_t *addr;
 
+    snorMemoryMap(&snor1, &addr);
+    chThdSleepMilliseconds(50);
+    snorMemoryUnmap(&snor1);
+  }
+#endif
   /* Creates the blinker thread.*/
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 

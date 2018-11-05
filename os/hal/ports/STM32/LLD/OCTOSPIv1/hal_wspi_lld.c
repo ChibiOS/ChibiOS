@@ -399,19 +399,31 @@ void wspi_lld_map_flash(WSPIDriver *wspip,
   /* Starting memory mapped mode using the passed parameters.*/
   wspip->ospi->CR   = (wspip->ospi->CR & ~OCTOSPI_CR_FMODE) |
                       (OCTOSPI_CR_FMODE_1 | OCTOSPI_CR_FMODE_0);
-  wspip->ospi->DLR  = 0U;
   wspip->ospi->TCR  = cmdp->dummy;
   wspip->ospi->CCR  = cmdp->cfg;
-  wspip->ospi->ABR  = 0U;
   wspip->ospi->IR   = cmdp->cmd;
+  wspip->ospi->ABR  = 0U;
   wspip->ospi->AR   = 0U;
+  wspip->ospi->WTCR = 0U;
   wspip->ospi->WCCR = 0U;
   wspip->ospi->WIR  = 0U;
+  wspip->ospi->WABR = 0U;
 
   /* Mapped flash absolute base address.*/
-  if (addrp != NULL) {
-    *addrp = (uint8_t *)0x90000000;
+#if STM32_WSPI_USE_OCTOSPI1
+  if (&WSPID1 == wspip) {
+    if (addrp != NULL) {
+      *addrp = (uint8_t *)0x90000000U;
+    }
   }
+#endif
+#if STM32_WSPI_USE_OCTOSPI2
+  if (&WSPID2 == wspip) {
+    if (addrp != NULL) {
+      *addrp = (uint8_t *)0x70000000U;
+    }
+  }
+#endif
 }
 
 /**

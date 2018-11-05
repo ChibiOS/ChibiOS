@@ -71,23 +71,26 @@ const wspi_command_t snor_memmap_read = {
   .dummy            = 8,                /* Note, always 8 for this command. */
   .cfg              = WSPI_CFG_CMD_MODE_ONE_LINE |
                       WSPI_CFG_ADDR_MODE_ONE_LINE |
+                      WSPI_CFG_ALT_MODE_NONE |
                       WSPI_CFG_DATA_MODE_ONE_LINE |
                       WSPI_CFG_CMD_SIZE_8 |
                       WSPI_CFG_ADDR_SIZE_32
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_STR
   .cmd              = MX25_CMD_OPI_8READ,
   .dummy            = MX25_READ_DUMMY_CYCLES,
-  .cfg              = WSPI_CFG_CMD_MODE_TWO_LINES |
-                      WSPI_CFG_ADDR_MODE_TWO_LINES |
-                      WSPI_CFG_DATA_MODE_TWO_LINES |
+  .cfg              = WSPI_CFG_CMD_MODE_EIGHT_LINES |
+                      WSPI_CFG_ADDR_MODE_EIGHT_LINES |
+                      WSPI_CFG_ALT_MODE_NONE |
+                      WSPI_CFG_DATA_MODE_EIGHT_LINES |
                       WSPI_CFG_CMD_SIZE_16 |
                       WSPI_CFG_ADDR_SIZE_32
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_DTR
   .cmd              = MX25_CMD_OPI_8DTRD,
   .dummy            = MX25_READ_DUMMY_CYCLES,
-  .cfg              = WSPI_CFG_CMD_MODE_FOUR_LINES |
-                      WSPI_CFG_ADDR_MODE_FOUR_LINES |
-                      WSPI_CFG_DATA_MODE_FOUR_LINES |
+  .cfg              = WSPI_CFG_CMD_MODE_EIGHT_LINES |
+                      WSPI_CFG_ADDR_MODE_EIGHT_LINES |
+                      WSPI_CFG_ALT_MODE_NONE |
+                      WSPI_CFG_DATA_MODE_EIGHT_LINES |
                       WSPI_CFG_CMD_SIZE_16 |
                       WSPI_CFG_ADDR_SIZE_32 |
                       WSPI_CFG_CMD_DTR |
