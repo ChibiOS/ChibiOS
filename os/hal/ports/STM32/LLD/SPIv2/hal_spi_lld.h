@@ -301,6 +301,10 @@
 #error "Invalid DMA priority assigned to SPI6"
 #endif
 
+/* The following checks are only required when there is a DMA able to
+   reassign streams to different channels.*/
+#if STM32_ADVANCED_DMA
+
 /* Devices with DMAMUX require a different kind of check.*/
 #if STM32_DMA_SUPPORTS_DMAMUX
 
@@ -486,6 +490,8 @@
 #endif
 
 #endif /* !STM32_DMA_SUPPORTS_DMAMUX */
+
+#endif /* STM32_ADVANCED_DMA */
 
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED

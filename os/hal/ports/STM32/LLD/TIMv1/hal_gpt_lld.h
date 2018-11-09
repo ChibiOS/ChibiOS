@@ -150,6 +150,24 @@
 #endif
 
 /**
+ * @brief   GPTD21 driver enable switch.
+ * @details If set to @p TRUE the support for GPTD21 is included.
+ * @note    The default is @p TRUE.
+ */
+#if !defined(STM32_GPT_USE_TIM21) || defined(__DOXYGEN__)
+#define STM32_GPT_USE_TIM21                 FALSE
+#endif
+
+/**
+ * @brief   GPTD22 driver enable switch.
+ * @details If set to @p TRUE the support for GPTD22 is included.
+ * @note    The default is @p TRUE.
+ */
+#if !defined(STM32_GPT_USE_TIM22) || defined(__DOXYGEN__)
+#define STM32_GPT_USE_TIM22                 FALSE
+#endif
+
+/**
  * @brief   GPTD1 interrupt priority level setting.
  */
 #if !defined(STM32_GPT_TIM1_IRQ_PRIORITY) || defined(__DOXYGEN__)

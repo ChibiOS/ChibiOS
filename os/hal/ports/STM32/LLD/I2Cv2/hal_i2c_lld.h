@@ -257,6 +257,7 @@
 /* The following checks are only required when there is a DMA able to
    reassign streams to different channels.*/
 #if STM32_ADVANCED_DMA
+
 /* Check on the presence of the DMA streams settings in mcuconf.h.*/
 #if STM32_I2C_USE_I2C1 && (!defined(STM32_I2C_I2C1_RX_DMA_STREAM) ||        \
                            !defined(STM32_I2C_I2C1_TX_DMA_STREAM))
@@ -326,6 +327,7 @@
                            STM32_I2C4_TX_DMA_MSK)
 #error "invalid DMA stream associated to I2C4 TX"
 #endif
+
 #endif /* STM32_ADVANCED_DMA */
 
 #if !defined(STM32_DMA_REQUIRED)
