@@ -75,6 +75,10 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added demo for STM32L4R9I-Discovery board.
+- NEW: Support for new serial NOR device MX25LM51245G. Other Macronix devices
+       should work but not tested.
+- NEW: Serial NOR flash infrastructure reworked and made simpler.
 - NEW_ Modified the RTC driver to implement the persistent storage interface
        instead of files interface.
 - NEW: Added a new "persistent storage" base class to HAL.

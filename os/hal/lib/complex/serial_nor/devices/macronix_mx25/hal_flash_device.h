@@ -170,6 +170,95 @@
 #define MX25_BUS_MODE_OPI_DTR               2U
 /** @} */
 
+/**
+ * @name    MX25-required transfer modes
+ * @{
+ */
+#define MX25_CFG_C8_SPI                 (WSPI_CFG_CMD_SIZE_8            |   \
+                                         WSPI_CFG_CMD_MODE_ONE_LINE     |   \
+                                         WSPI_CFG_ADDR_MODE_NONE        |   \
+                                         WSPI_CFG_ALT_MODE_NONE         |   \
+                                         WSPI_CFG_DATA_MODE_NONE)
+
+#define MX25_CFG_C16_8STR               (WSPI_CFG_CMD_SIZE_16           |   \
+                                         WSPI_CFG_CMD_MODE_EIGHT_LINES  |   \
+                                         WSPI_CFG_ADDR_MODE_NONE        |   \
+                                         WSPI_CFG_ALT_MODE_NONE         |   \
+                                         WSPI_CFG_DATA_MODE_NONE)
+
+#define MX25_CFG_C16_8DTR               (WSPI_CFG_CMD_SIZE_16           |   \
+                                         WSPI_CFG_CMD_MODE_EIGHT_LINES  |   \
+                                         WSPI_CFG_ADDR_MODE_NONE        |   \
+                                         WSPI_CFG_ALT_MODE_NONE         |   \
+                                         WSPI_CFG_DATA_MODE_NONE        |   \
+                                         WSPI_CFG_ALL_DTR)
+
+#define MX25_CFG_C8_A32_SPI             (WSPI_CFG_CMD_SIZE_8            |   \
+                                         WSPI_CFG_CMD_MODE_ONE_LINE     |   \
+                                         WSPI_CFG_ADDR_MODE_ONE_LINE    |   \
+                                         WSPI_CFG_ADDR_SIZE_32          |   \
+                                         WSPI_CFG_ALT_MODE_NONE         |   \
+                                         WSPI_CFG_DATA_MODE_NONE
+
+#define MX25_CFG_C16_A32_8STR           (WSPI_CFG_CMD_SIZE_16           |   \
+                                         WSPI_CFG_CMD_MODE_EIGHT_LINES  |   \
+                                         WSPI_CFG_ADDR_MODE_EIGHT_LINES |   \
+                                         WSPI_CFG_ADDR_SIZE_32          |   \
+                                         WSPI_CFG_ALT_MODE_NONE         |   \
+                                         WSPI_CFG_DATA_MODE_NONE)
+
+#define MX25_CFG_C16_A32_8DTR           (WSPI_CFG_CMD_SIZE_16           |   \
+                                         WSPI_CFG_CMD_MODE_EIGHT_LINES  |   \
+                                         WSPI_CFG_ADDR_MODE_EIGHT_LINES |   \
+                                         WSPI_CFG_ADDR_SIZE_32          |   \
+                                         WSPI_CFG_ALT_MODE_NONE         |   \
+                                         WSPI_CFG_DATA_MODE_NONE        |   \
+                                         WSPI_CFG_ALL_DTR)
+
+#define MX25_CFG_C8_DATA_SPI            (WSPI_CFG_CMD_SIZE_8            |   \
+                                         WSPI_CFG_CMD_MODE_ONE_LINE     |   \
+                                         WSPI_CFG_ADDR_MODE_NONE        |   \
+                                         WSPI_CFG_ALT_MODE_NONE         |   \
+                                         WSPI_CFG_DATA_MODE_ONE_LINE)
+
+#define MX25_CFG_C16_DATA_8STR          (WSPI_CFG_CMD_SIZE_16           |   \
+                                         WSPI_CFG_CMD_MODE_EIGHT_LINES  |   \
+                                         WSPI_CFG_ADDR_MODE_NONE        |   \
+                                         WSPI_CFG_ALT_MODE_NONE         |   \
+                                         WSPI_CFG_DATA_MODE_EIGHT_LINES)
+
+#define MX25_CFG_C16_DATA_8DTR          (WSPI_CFG_CMD_SIZE_16           |   \
+                                         WSPI_CFG_CMD_MODE_EIGHT_LINES  |   \
+                                         WSPI_CFG_ADDR_MODE_NONE        |   \
+                                         WSPI_CFG_ALT_MODE_NONE         |   \
+                                         WSPI_CFG_DATA_MODE_EIGHT_LINES |   \
+                                         WSPI_CFG_ALL_DTR               |   \
+                                         WSPI_CFG_DQS_ENABLE)
+
+#define MX25_CFG_C8_A32_DATA_SPI        (WSPI_CFG_CMD_SIZE_8            |   \
+                                         WSPI_CFG_CMD_MODE_ONE_LINE     |   \
+                                         WSPI_CFG_ADDR_MODE_ONE_LINE    |   \
+                                         WSPI_CFG_ADDR_SIZE_32          |   \
+                                         WSPI_CFG_ALT_MODE_NONE         |   \
+                                         WSPI_CFG_DATA_MODE_ONE_LINE)
+
+#define MX25_CFG_C16_A32_DATA_8STR      (WSPI_CFG_CMD_SIZE_16           |   \
+                                         WSPI_CFG_CMD_MODE_EIGHT_LINES  |   \
+                                         WSPI_CFG_ADDR_MODE_EIGHT_LINES |   \
+                                         WSPI_CFG_ADDR_SIZE_32          |   \
+                                         WSPI_CFG_ALT_MODE_NONE         |   \
+                                         WSPI_CFG_DATA_MODE_EIGHT_LINES)
+
+#define MX25_CFG_C16_A32_DATA_8DTR      (WSPI_CFG_CMD_SIZE_16           |   \
+                                         WSPI_CFG_CMD_MODE_EIGHT_LINES  |   \
+                                         WSPI_CFG_ADDR_MODE_EIGHT_LINES |   \
+                                         WSPI_CFG_ADDR_SIZE_32          |   \
+                                         WSPI_CFG_ALT_MODE_NONE         |   \
+                                         WSPI_CFG_DATA_MODE_EIGHT_LINES |   \
+                                         WSPI_CFG_ALL_DTR               |   \
+                                         WSPI_CFG_DQS_ENABLE)
+/** @} */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -268,104 +357,34 @@
 /**
  * @brief   WSPI settings for command only.
  */
-#define SNOR_WSPI_CFG_CMD               (WSPI_CFG_CMD_MODE_EIGHT_LINES    | \
-                                         WSPI_CFG_ADDR_MODE_NONE          | \
-                                         WSPI_CFG_ALT_MODE_NONE           | \
-                                         WSPI_CFG_DATA_MODE_NONE          | \
-                                         WSPI_CFG_CMD_SIZE_16             | \
-                                         WSPI_CFG_CMD_DTR)
+#define SNOR_WSPI_CFG_CMD               MX25_CFG_C16_8DTR
 
 /**
  * @brief   WSPI settings for command and address.
  */
-#define SNOR_WSPI_CFG_CMD_ADDR          (WSPI_CFG_CMD_MODE_EIGHT_LINES    | \
-                                         WSPI_CFG_ADDR_MODE_EIGHT_LINES   | \
-                                         WSPI_CFG_ALT_MODE_NONE           | \
-                                         WSPI_CFG_DATA_MODE_NONE          | \
-                                         WSPI_CFG_CMD_SIZE_16             | \
-                                         WSPI_CFG_ADDR_SIZE_32            | \
-                                         WSPI_CFG_CMD_DTR                 | \
-                                         WSPI_CFG_ADDR_DTR)
+#define SNOR_WSPI_CFG_CMD_ADDR          MX25_CFG_C16_A32_8DTR
 
 /**
  * @brief   WSPI settings for command and data.
  */
-#define SNOR_WSPI_CFG_CMD_DATA          (WSPI_CFG_CMD_MODE_EIGHT_LINES    | \
-                                         WSPI_CFG_ADDR_MODE_NONE          | \
-                                         WSPI_CFG_ALT_MODE_NONE           | \
-                                         WSPI_CFG_DATA_MODE_EIGHT_LINES   | \
-                                         WSPI_CFG_CMD_SIZE_16             | \
-                                         WSPI_CFG_CMD_DTR                 | \
-                                         WSPI_CFG_DATA_DTR                | \
-                                         WSPI_CFG_DQS_ENABLE)
+#define SNOR_WSPI_CFG_CMD_DATA          MX25_CFG_C16_DATA_8DTR
 
 /**
  * @brief   WSPI settings for command, address and data.
  */
-#define SNOR_WSPI_CFG_CMD_ADDR_DATA     (WSPI_CFG_CMD_MODE_EIGHT_LINES    | \
-                                         WSPI_CFG_ADDR_MODE_EIGHT_LINES   | \
-                                         WSPI_CFG_ALT_MODE_NONE           | \
-                                         WSPI_CFG_DATA_MODE_EIGHT_LINES   | \
-                                         WSPI_CFG_CMD_SIZE_16             | \
-                                         WSPI_CFG_ADDR_SIZE_32            | \
-                                         WSPI_CFG_CMD_DTR                 | \
-                                         WSPI_CFG_ADDR_DTR                | \
-                                         WSPI_CFG_DATA_DTR                | \
-                                         WSPI_CFG_DQS_ENABLE)
+#define SNOR_WSPI_CFG_CMD_ADDR_DATA     MX25_CFG_C16_A32_DATA_8DTR
 
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_STR
-#define SNOR_WSPI_CFG_CMD               (WSPI_CFG_CMD_MODE_EIGHT_LINES    | \
-                                         WSPI_CFG_ADDR_MODE_NONE          | \
-                                         WSPI_CFG_ALT_MODE_NONE           | \
-                                         WSPI_CFG_DATA_MODE_NONE          | \
-                                         WSPI_CFG_CMD_SIZE_16)
-
-#define SNOR_WSPI_CFG_CMD_ADDR          (WSPI_CFG_CMD_MODE_EIGHT_LINES    | \
-                                         WSPI_CFG_ADDR_MODE_EIGHT_LINES   | \
-                                         WSPI_CFG_ALT_MODE_NONE           | \
-                                         WSPI_CFG_DATA_MODE_NONE          | \
-                                         WSPI_CFG_CMD_SIZE_16             | \
-                                         WSPI_CFG_ADDR_SIZE_32)
-
-#define SNOR_WSPI_CFG_CMD_DATA          (WSPI_CFG_CMD_MODE_EIGHT_LINES    | \
-                                         WSPI_CFG_ADDR_MODE_NONE          | \
-                                         WSPI_CFG_ALT_MODE_NONE           | \
-                                         WSPI_CFG_DATA_MODE_EIGHT_LINES   | \
-                                         WSPI_CFG_CMD_SIZE_16)
-
-#define SNOR_WSPI_CFG_CMD_ADDR_DATA     (WSPI_CFG_CMD_MODE_EIGHT_LINES    | \
-                                         WSPI_CFG_ADDR_MODE_EIGHT_LINES   | \
-                                         WSPI_CFG_ALT_MODE_NONE           | \
-                                         WSPI_CFG_DATA_MODE_EIGHT_LINES   | \
-                                         WSPI_CFG_CMD_SIZE_16             | \
-                                         WSPI_CFG_ADDR_SIZE_32)
+#define SNOR_WSPI_CFG_CMD               MX25_CFG_C16_8STR
+#define SNOR_WSPI_CFG_CMD_ADDR          MX25_CFG_C16_A32_8STR
+#define SNOR_WSPI_CFG_CMD_DATA          MX25_CFG_C16_DATA_8STR
+#define SNOR_WSPI_CFG_CMD_ADDR_DATA     MX25_CFG_C16_A32_DATA_8STR
 
 #elif MX25_BUS_MODE == MX25_BUS_MODE_SPI
-#define SNOR_WSPI_CFG_CMD               (WSPI_CFG_CMD_MODE_ONE_LINE       | \
-                                         WSPI_CFG_ADDR_MODE_NONE          | \
-                                         WSPI_CFG_ALT_MODE_NONE           | \
-                                         WSPI_CFG_DATA_MODE_NONE          | \
-                                         WSPI_CFG_CMD_SIZE_8)
-
-#define SNOR_WSPI_CFG_CMD_ADDR          (WSPI_CFG_CMD_MODE_ONE_LINE       | \
-                                         WSPI_CFG_ADDR_MODE_ONE_LINE      | \
-                                         WSPI_CFG_ALT_MODE_NONE           | \
-                                         WSPI_CFG_DATA_MODE_NONE          | \
-                                         WSPI_CFG_CMD_SIZE_8              | \
-                                         WSPI_CFG_ADDR_SIZE_32)
-
-#define SNOR_WSPI_CFG_CMD_DATA          (WSPI_CFG_CMD_MODE_ONE_LINE       | \
-                                         WSPI_CFG_ADDR_MODE_NONE          | \
-                                         WSPI_CFG_ALT_MODE_NONE           | \
-                                         WSPI_CFG_DATA_MODE_ONE_LINE      | \
-                                         WSPI_CFG_CMD_SIZE_8)
-
-#define SNOR_WSPI_CFG_CMD_ADDR_DATA     (WSPI_CFG_CMD_MODE_ONE_LINE       | \
-                                         WSPI_CFG_ADDR_MODE_ONE_LINE      | \
-                                         WSPI_CFG_ALT_MODE_NONE           | \
-                                         WSPI_CFG_DATA_MODE_ONE_LINE      | \
-                                         WSPI_CFG_CMD_SIZE_8              | \
-                                         WSPI_CFG_ADDR_SIZE_32)
+#define SNOR_WSPI_CFG_CMD               MX25_CFG_C8_SPI
+#define SNOR_WSPI_CFG_CMD_ADDR          MX25_CFG_C8_A32_SPI
+#define SNOR_WSPI_CFG_CMD_DATA          MX25_CFG_C8_DATA_SPI
+#define SNOR_WSPI_CFG_CMD_ADDR_DATA     MX25_CFG_C8_A32_DATA_SPI
 
 #else
 #error "invalid MX25_BUS_MODE setting"

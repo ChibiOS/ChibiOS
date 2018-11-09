@@ -58,6 +58,15 @@ WSPIDriver WSPID2;
 /*===========================================================================*/
 
 /**
+ * @brief   Waits for completion of previous operation.
+ */
+static inline void wspi_lld_sync(WSPIDriver *wspip) {
+
+  while ((wspip->ospi->SR & OCTOSPI_SR_BUSY) != 0U) {
+  }
+}
+
+/**
  * @brief   Shared service routine.
  *
  * @param[in] wspip     pointer to the @p WSPIDriver object
@@ -244,6 +253,9 @@ void wspi_lld_start(WSPIDriver *wspip) {
  */
 void wspi_lld_stop(WSPIDriver *wspip) {
 
+  /* Waiting for the previous operation to complete, if any.*/
+  wspi_lld_sync(wspip);
+
   /* If in ready state then disables the OCTOSPI clock.*/
   if (wspip->state == WSPI_READY) {
 
@@ -272,6 +284,9 @@ void wspi_lld_stop(WSPIDriver *wspip) {
  * @notapi
  */
 void wspi_lld_command(WSPIDriver *wspip, const wspi_command_t *cmdp) {
+
+  /* Waiting for the previous operation to complete, if any.*/
+  wspi_lld_sync(wspip);
 
 #if 0 //STM32_USE_STM32_D1_WORKAROUND == TRUE
   /* If it is a command without address and alternate phases then the command
@@ -323,6 +338,9 @@ void wspi_lld_send(WSPIDriver *wspip, const wspi_command_t *cmdp,
   dmaStreamSetTransactionSize(wspip->dma, n);
   dmaStreamSetMode(wspip->dma, wspip->dmamode | STM32_DMA_CR_DIR_M2P);
 
+  /* Waiting for the previous operation to complete, if any.*/
+  wspi_lld_sync(wspip);
+
   wspip->ospi->CR &= ~OCTOSPI_CR_FMODE;
   wspip->ospi->DLR = n - 1U;
   wspip->ospi->TCR = cmdp->dummy;
@@ -363,6 +381,9 @@ void wspi_lld_receive(WSPIDriver *wspip, const wspi_command_t *cmdp,
   dmaStreamSetTransactionSize(wspip->dma, n);
   dmaStreamSetMode(wspip->dma, wspip->dmamode | STM32_DMA_CR_DIR_P2M);
 
+  /* Waiting for the previous operation to complete, if any.*/
+  wspi_lld_sync(wspip);
+
   wspip->ospi->CR  = (wspip->ospi->CR & ~OCTOSPI_CR_FMODE) | OCTOSPI_CR_FMODE_0;
   wspip->ospi->DLR = n - 1U;
   wspip->ospi->TCR = cmdp->dummy;
@@ -393,8 +414,8 @@ void wspi_lld_map_flash(WSPIDriver *wspip,
                         const wspi_command_t *cmdp,
                         uint8_t **addrp) {
 
-  /* Disabling the DMA request while in memory mapped mode.*/
-  wspip->ospi->CR &= ~OCTOSPI_CR_DMAEN;
+  /* Waiting for the previous operation to complete, if any.*/
+  wspi_lld_sync(wspip);
 
   /* Starting memory mapped mode using the passed parameters.*/
   wspip->ospi->CR   = (wspip->ospi->CR & ~OCTOSPI_CR_FMODE) |

@@ -200,6 +200,11 @@ typedef struct {
 #define WSPI_CFG_DQS_ENABLE                     (1LU << 29LU)
 
 #define WSPI_CFG_SIOO                           (1LU << 31LU)
+
+#define WSPI_CFG_ALL_DTR                        (WSPI_CFG_CMD_DTR   |       \
+                                                 WSPI_CFG_ADDR_DTR  |       \
+                                                 WSPI_CFG_ALT_DTR   |       \
+                                                 WSPI_CFG_DATA_DTR)
 /** @} */
 #endif /* WSPI_USE_DEFAULT_CFG_MASKS == TRUE */
 

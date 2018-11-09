@@ -69,38 +69,19 @@ const wspi_command_t snor_memmap_read = {
 #if MX25_BUS_MODE == MX25_BUS_MODE_SPI
   .cmd              = MX25_CMD_SPI_FAST_READ4B,
   .dummy            = 8,                /* Note, always 8 for this command. */
-  .cfg              = WSPI_CFG_CMD_MODE_ONE_LINE |
-                      WSPI_CFG_ADDR_MODE_ONE_LINE |
-                      WSPI_CFG_ALT_MODE_NONE |
-                      WSPI_CFG_DATA_MODE_ONE_LINE |
-                      WSPI_CFG_CMD_SIZE_8 |
-                      WSPI_CFG_ADDR_SIZE_32
+  .cfg              = MX25_CFG_C8_A32_DATA_SPI
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_STR
   .cmd              = MX25_CMD_OPI_8READ,
   .dummy            = MX25_READ_DUMMY_CYCLES,
-  .cfg              = WSPI_CFG_CMD_MODE_EIGHT_LINES |
-                      WSPI_CFG_ADDR_MODE_EIGHT_LINES |
-                      WSPI_CFG_ALT_MODE_NONE |
-                      WSPI_CFG_DATA_MODE_EIGHT_LINES |
-                      WSPI_CFG_CMD_SIZE_16 |
-                      WSPI_CFG_ADDR_SIZE_32
+  .cfg              = MX25_CFG_C16_A32_DATA_8STR
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_DTR
   .cmd              = MX25_CMD_OPI_8DTRD,
   .dummy            = MX25_READ_DUMMY_CYCLES,
-  .cfg              = WSPI_CFG_CMD_MODE_EIGHT_LINES |
-                      WSPI_CFG_ADDR_MODE_EIGHT_LINES |
-                      WSPI_CFG_ALT_MODE_NONE |
-                      WSPI_CFG_DATA_MODE_EIGHT_LINES |
-                      WSPI_CFG_CMD_SIZE_16 |
-                      WSPI_CFG_ADDR_SIZE_32 |
-                      WSPI_CFG_CMD_DTR |
-                      WSPI_CFG_ADDR_DTR |
-                      WSPI_CFG_DATA_DTR |
-                      WSPI_CFG_DQS_ENABLE
+  .cfg              = MX25_CFG_C16_A32_DATA_8DTR
 #endif
 };
-#endif
-#endif
+#endif /* WSPI_SUPPORTS_MEMMAP == TRUE */
+#endif /* SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI */
 
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
@@ -112,34 +93,20 @@ static const wspi_command_t mx25_cmd_read_id = {
 
 #if MX25_SWITCH_WIDTH == TRUE
   .cmd              = MX25_CMD_SPI_RDID,
-  .cfg              = WSPI_CFG_CMD_MODE_ONE_LINE |
-                      WSPI_CFG_DATA_MODE_ONE_LINE |
-                      WSPI_CFG_CMD_SIZE_8,
+  .cfg              = MX25_CFG_C8_DATA_SPI,
   .dummy            = 0,
 #else
 #if MX25_BUS_MODE == MX25_BUS_MODE_SPI
   .cmd              = MX25_CMD_SPI_RDID,
-  .cfg              = WSPI_CFG_CMD_MODE_ONE_LINE |
-                      WSPI_CFG_DATA_MODE_ONE_LINE |
-                      WSPI_CFG_CMD_SIZE_8,
+  .cfg              = MX25_CFG_C8_DATA_SPI,
   .dummy            = 0,
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_STR
   .cmd              = MX25_CMD_OPI_RDID,
-  .cfg              = WSPI_CFG_CMD_MODE_EIGHT_LINES |
-                      WSPI_CFG_ADDR_MODE_EIGHT_LINES |
-                      WSPI_CFG_DATA_MODE_EIGHT_LINES |
-                      WSPI_CFG_ADDR_SIZE_32,
-                      WSPI_CFG_CMD_SIZE_16,
+  .cfg              = MX25_CFG_C16_A32_DATA_8STR,
   .dummy            = 4U,                       /*Note: always 4 dummies.   */
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_DTR
   .cmd              = MX25_CMD_OPI_RDID,
-  .cfg              = WSPI_CFG_CMD_MODE_EIGHT_LINES |
-                      WSPI_CFG_ADDR_MODE_EIGHT_LINES |
-                      WSPI_CFG_DATA_MODE_EIGHT_LINES |
-                      WSPI_CFG_CMD_SIZE_16 |
-                      WSPI_CFG_ADDR_SIZE_32 |
-                      WSPI_CFG_CMD_DTR |
-                      WSPI_CFG_ADDR_DTR,
+  .cfg              = MX25_CFG_C16_A32_DATA_8DTR
   .dummy            = 4U,                       /*Note: always 4 dummies.   */
 #endif
 #endif
@@ -210,7 +177,7 @@ static void mx25_reset(SNORDriver *devp) {
   /* 1x MX25_CMD_SPI_RSTEN command.*/
   static const wspi_command_t cmd_reset_enable_1 = {
     .cmd              = MX25_CMD_SPI_RSTEN,
-    .cfg              = WSPI_CFG_CMD_MODE_ONE_LINE | WSPI_CFG_CMD_SIZE_8,
+    .cfg              = MX25_CFG_C8_SPI,
     .addr             = 0,
     .alt              = 0,
     .dummy            = 0
@@ -219,7 +186,7 @@ static void mx25_reset(SNORDriver *devp) {
   /* 1x MX25_CMD_SPI_RST command.*/
   static const wspi_command_t cmd_reset_memory_1 = {
     .cmd              = MX25_CMD_SPI_RST,
-    .cfg              = WSPI_CFG_CMD_MODE_ONE_LINE | WSPI_CFG_CMD_SIZE_8,
+    .cfg              = MX25_CFG_C8_SPI,
     .addr             = 0,
     .alt              = 0,
     .dummy            = 0
@@ -233,9 +200,7 @@ static void mx25_reset(SNORDriver *devp) {
   /* 8xDTR MX25_CMD_OPI_RSTEN command.*/
   static const wspi_command_t cmd_reset_enable_8dtr = {
     .cmd              = MX25_CMD_OPI_RSTEN,
-    .cfg              = WSPI_CFG_CMD_MODE_EIGHT_LINES |
-                        WSPI_CFG_CMD_SIZE_16 |
-                        WSPI_CFG_CMD_DTR,
+    .cfg              = MX25_CFG_C16_8DTR,
     .addr             = 0,
     .alt              = 0,
     .dummy            = 0
@@ -244,9 +209,7 @@ static void mx25_reset(SNORDriver *devp) {
   /* 8xDTR MX25_CMD_OPI_RST command.*/
   static const wspi_command_t cmd_reset_memory_8dtr = {
     .cmd              = MX25_CMD_OPI_RST,
-    .cfg              = WSPI_CFG_CMD_MODE_EIGHT_LINES |
-                        WSPI_CFG_CMD_SIZE_16 |
-                        WSPI_CFG_CMD_DTR,
+    .cfg              = MX25_CFG_C16_8DTR,
     .addr             = 0,
     .alt              = 0,
     .dummy            = 0
@@ -258,8 +221,7 @@ static void mx25_reset(SNORDriver *devp) {
   /* 8xSTR MX25_CMD_OPI_RSTEN command.*/
   static const wspi_command_t cmd_reset_enable_8str = {
     .cmd              = MX25_CMD_OPI_RSTEN,
-    .cfg              = WSPI_CFG_CMD_MODE_EIGHT_LINES |
-                        WSPI_CFG_CMD_SIZE_16,
+    .cfg              = MX25_CFG_C16_8STR,
     .addr             = 0,
     .alt              = 0,
     .dummy            = 0
@@ -268,8 +230,7 @@ static void mx25_reset(SNORDriver *devp) {
   /* 8xSTR MX25_CMD_OPI_RST command.*/
   static const wspi_command_t cmd_reset_memory_8str = {
     .cmd              = MX25_CMD_OPI_RST,
-    .cfg              = WSPI_CFG_CMD_MODE_EIGHT_LINES |
-                        WSPI_CFG_CMD_SIZE_16,
+    .cfg              = MX25_CFG_C16_8STR,
     .addr             = 0,
     .alt              = 0,
     .dummy            = 0
@@ -299,22 +260,17 @@ static void mx25_write_cr2(SNORDriver *devp, uint32_t addr, const uint8_t *value
   static const wspi_command_t cmd_write_enable = {
 #if MX25_SWITCH_WIDTH == TRUE
     .cmd              = MX25_CMD_SPI_WREN,
-    .cfg              = WSPI_CFG_CMD_MODE_ONE_LINE |
-                        WSPI_CFG_CMD_SIZE_8,
+    .cfg              = MX25_CFG_C8_SPI,
 #else
 #if MX25_BUS_MODE == MX25_BUS_MODE_SPI
     .cmd              = MX25_CMD_SPI_WREN,
-    .cfg              = WSPI_CFG_CMD_MODE_ONE_LINE |
-                        WSPI_CFG_CMD_SIZE_8,
+    .cfg              = MX25_CFG_C8_SPI,
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_STR
     .cmd              = MX25_CMD_OPI_WREN,
-    .cfg              = WSPI_CFG_CMD_MODE_EIGHT_LINES |
-                        WSPI_CFG_CMD_SIZE_16,
+    .cfg              = MX25_CFG_C16_8STR,
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_DTR
     .cmd              = MX25_CMD_OPI_WREN,
-    .cfg              = WSPI_CFG_CMD_MODE_EIGHT_LINES |
-                        WSPI_CFG_CMD_SIZE_16 |
-                        WSPI_CFG_CMD_DTR,
+    .cfg              = MX25_CFG_C16_8DTR,
 #endif
 #endif
     .addr             = 0,
@@ -326,34 +282,17 @@ static void mx25_write_cr2(SNORDriver *devp, uint32_t addr, const uint8_t *value
 
 #if MX25_SWITCH_WIDTH == TRUE
     .cmd              = MX25_CMD_SPI_WRCR2,
-    .cfg              = WSPI_CFG_CMD_MODE_ONE_LINE |
-                        WSPI_CFG_ADDR_MODE_ONE_LINE |
-                        WSPI_CFG_DATA_MODE_ONE_LINE |
-                        WSPI_CFG_CMD_SIZE_8 |
-                        WSPI_CFG_ADDR_SIZE_32,
+    .cfg              = MX25_CFG_C8_A32_DATA_SPI,
 #else
 #if MX25_BUS_MODE == MX25_BUS_MODE_SPI
     .cmd              = MX25_CMD_SPI_WRCR2,
-    .cfg              = WSPI_CFG_CMD_MODE_ONE_LINE |
-                        WSPI_CFG_ADDR_MODE_ONE_LINE |
-                        WSPI_CFG_DATA_MODE_ONE_LINE |
-                        WSPI_CFG_CMD_SIZE_8 |
-                        WSPI_CFG_ADDR_SIZE_32,
+    .cfg              = MX25_CFG_C8_A32_DATA_SPI,
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_STR
     .cmd              = MX25_CMD_OPI_WRCR2,
-    .cfg              = WSPI_CFG_CMD_MODE_EIGHT_LINES |
-                        WSPI_CFG_ADDR_MODE_EIGHT_LINES |
-                        WSPI_CFG_DATA_MODE_EIGHT_LINES |
-                        WSPI_CFG_CMD_SIZE_16 |
-                        WSPI_CFG_ADDR_SIZE_32,
+    .cfg              = MX25_CFG_C16_A32_DATA_8STR,
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_DTR
     .cmd              = MX25_CMD_OPI_WRCR2,
-    .cfg              = WSPI_CFG_CMD_MODE_EIGHT_LINES |
-                        WSPI_CFG_ADDR_MODE_EIGHT_LINES |
-                        WSPI_CFG_DATA_MODE_EIGHT_LINES |
-                        WSPI_CFG_CMD_SIZE_16 |
-                        WSPI_CFG_ADDR_SIZE_32 |
-                        WSPI_CFG_CMD_DTR,
+    .cfg              = MX25_CFG_C16_A32_DATA_8DTR,
 #endif
 #endif
     .addr             = addr,
@@ -391,8 +330,9 @@ void snor_device_init(SNORDriver *devp) {
     mx25_reset(devp);
 
     /* The device requires at least 10uS to recover after a reset, it could
-       need up to 100mS in cause a reset occurred during a chip erase.*/
-    osalThreadSleepMicroseconds(40);
+       need up to 100mS in cause a reset occurred during a chip erase, 50uS
+       covers most cases.*/
+    osalThreadSleepMicroseconds(50);
   }
 #endif
 
@@ -410,15 +350,11 @@ void snor_device_init(SNORDriver *devp) {
                              devp->device_id[1]),
                 "invalid memory type id");
 
-
 #if SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI
   /* Setting up the dummy cycles to be used for fast read operations.*/
   {
-    static const uint8_t regval[1] = {
-      ~((MX25_READ_DUMMY_CYCLES - 6U) / 2U) & 7U
-    };
-
-    mx25_write_cr2(devp, 0x00000300U, regval);
+    static const uint8_t v[1] = {~((MX25_READ_DUMMY_CYCLES - 6U) / 2U) & 7U};
+    mx25_write_cr2(devp, 0x00000300U, v);
   }
 #endif
 
@@ -426,15 +362,15 @@ void snor_device_init(SNORDriver *devp) {
   {
     uint8_t id[8];
 #if MX25_BUS_MODE == MX25_BUS_MODE_SPI
-    static const uint8_t regval[1] = {0x00};
+    static const uint8_t v[1] = {0x00};
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_STR
-    static const uint8_t regval[1] = {0x01};
+    static const uint8_t v[1] = {0x01};
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_DTR
-    static const uint8_t regval[1] = {0x02};
+    static const uint8_t v[1] = {0x02};
 #endif
 
     /* Setting up final bus width.*/
-    mx25_write_cr2(devp, 0x00000000U, regval);
+    mx25_write_cr2(devp, 0x00000000U, v);
 
     /* Reading ID again for confirmation, in DTR mode bytes are read twice,
        it needs adjusting.*/
