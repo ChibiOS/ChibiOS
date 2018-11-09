@@ -89,6 +89,7 @@
 
 /* DMA attributes.*/
 #define STM32_ADVANCED_DMA                  TRUE
+#define STM32_DMA_SUPPORTS_DMAMUX           TRUE
 
 #define STM32_HAS_DMA1                      TRUE
 #define STM32_DMA1_CH0_HANDLER              Vector6C

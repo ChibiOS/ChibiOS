@@ -76,7 +76,7 @@ endif
 
 # FPU-related options.
 ifeq ($(USE_FPU_OPT),)
-  USE_FPU_OPT = -mfloat-abi=$(USE_FPU) -mfpu=fpv5-sp-d16 -fsingle-precision-constant
+  USE_FPU_OPT = -mfloat-abi=$(USE_FPU) -mfpu=fpv4-sp-d16 -fsingle-precision-constant
 endif
 
 #
@@ -92,9 +92,9 @@ PROJECT = ch
 
 # Imported source files and paths
 CHIBIOS  := ../../../..
-CONFDIR  := ./cfg/stm32l476_discovery
-BUILDDIR := ./build/stm32l76_discovery
-DEPDIR   := ./.dep/stm32l476_discovery
+CONFDIR  := ./cfg/stm32l4r9_discovery
+BUILDDIR := ./build/stm32l4r9_discovery
+DEPDIR   := ./.dep/stm32l4r9_discovery
 
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
@@ -102,8 +102,8 @@ include $(CHIBIOS)/os/license/license.mk
 include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32l4xx.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/ports/STM32/STM32L4xx/platform.mk
-include $(CHIBIOS)/os/hal/boards/ST_STM32L476_DISCOVERY/board.mk
+include $(CHIBIOS)/os/hal/ports/STM32/STM32L4xx+/platform.mk
+include $(CHIBIOS)/os/hal/boards/ST_STM32L4R9I_DISCOVERY/board.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
@@ -115,8 +115,8 @@ include $(CHIBIOS)/tools/mk/autobuild.mk
 #include $(CHIBIOS)/test/rt/rt_test.mk
 #include $(CHIBIOS)/test/oslib/oslib_test.mk
 
-# Define linker script file here.
-LDSCRIPT= $(STARTUPLD)/STM32L476xG.ld
+# Define linker script file here
+LDSCRIPT= $(STARTUPLD)/STM32L4R9xI.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -186,7 +186,7 @@ ULIBS =
 # Compiler settings
 #
 
-MCU  = cortex-m7
+MCU  = cortex-m4
 
 #TRGT = arm-elf-
 TRGT = arm-none-eabi-

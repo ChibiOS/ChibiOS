@@ -178,6 +178,10 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if !defined(STM32_DMA_SUPPORTS_DMAMUX)
+#error "STM32_DMA_SUPPORTS_DMAMUX not defined in registry"
+#endif
+
 #if !defined(STM32_HAS_DMA1)
 #error "STM32_HAS_DMA1 missing in registry"
 #endif
