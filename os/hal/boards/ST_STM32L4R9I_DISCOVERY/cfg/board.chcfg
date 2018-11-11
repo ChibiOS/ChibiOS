@@ -1198,14 +1198,14 @@
 				Level="Low" ></pin3>
 			<pin4
 				Type="PushPull"
-				Speed="Minimum"
+				Speed="Maximum"
 				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID="LED LED_GREEN"
 				Resistor="Floating"
 				Mode="Output"
-				Level="Low" />
+				Level="High" />
 			<pin5
 				Type="PushPull"
 				Speed="Minimum"

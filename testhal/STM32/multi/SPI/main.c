@@ -144,7 +144,7 @@ int main(void) {
 
 #if SPI_SUPPORTS_CIRCULAR == TRUE
   /*
-   * Starting a continous operation for test.
+   * Starting a continuous operation for test.
    */
   spiStart(&PORTAB_SPI1, &c_spicfg);  /* Setup transfer parameters.       */
   spiSelect(&PORTAB_SPI1);            /* Slave Select assertion.          */

@@ -1347,7 +1347,7 @@
  * PH1  - OSC_OUT                   (analog).
  * PH2  - PIN2                      (analog).
  * PH3  - BOOT0                     (input floating).
- * PH4  - LED LED_GREEN             (output pushpull minimum).
+ * PH4  - LED LED_GREEN             (output pushpull maximum).
  * PH5  - PIN5                      (analog).
  * PH6  - PIN6                      (analog).
  * PH7  - PIN7                      (analog).
@@ -1396,7 +1396,7 @@
                                      PIN_OSPEED_VERYLOW(GPIOH_OSC_OUT) |    \
                                      PIN_OSPEED_VERYLOW(GPIOH_PIN2) |       \
                                      PIN_OSPEED_VERYLOW(GPIOH_BOOT0) |      \
-                                     PIN_OSPEED_VERYLOW(GPIOH_LED) |        \
+                                     PIN_OSPEED_HIGH(GPIOH_LED) |           \
                                      PIN_OSPEED_VERYLOW(GPIOH_PIN5) |       \
                                      PIN_OSPEED_VERYLOW(GPIOH_PIN6) |       \
                                      PIN_OSPEED_VERYLOW(GPIOH_PIN7) |       \
@@ -1428,7 +1428,7 @@
                                      PIN_ODR_LOW(GPIOH_OSC_OUT) |           \
                                      PIN_ODR_LOW(GPIOH_PIN2) |              \
                                      PIN_ODR_LOW(GPIOH_BOOT0) |             \
-                                     PIN_ODR_LOW(GPIOH_LED) |               \
+                                     PIN_ODR_HIGH(GPIOH_LED) |              \
                                      PIN_ODR_LOW(GPIOH_PIN5) |              \
                                      PIN_ODR_LOW(GPIOH_PIN6) |              \
                                      PIN_ODR_LOW(GPIOH_PIN7) |              \
