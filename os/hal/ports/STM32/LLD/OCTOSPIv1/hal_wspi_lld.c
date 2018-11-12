@@ -418,8 +418,7 @@ void wspi_lld_map_flash(WSPIDriver *wspip,
   wspi_lld_sync(wspip);
 
   /* Starting memory mapped mode using the passed parameters.*/
-  wspip->ospi->CR   = (wspip->ospi->CR & ~OCTOSPI_CR_FMODE) |
-                      (OCTOSPI_CR_FMODE_1 | OCTOSPI_CR_FMODE_0);
+  wspip->ospi->CR   = OCTOSPI_CR_FMODE_1 | OCTOSPI_CR_FMODE_0 | OCTOSPI_CR_EN;
   wspip->ospi->TCR  = cmdp->dummy;
   wspip->ospi->CCR  = cmdp->cfg;
   wspip->ospi->IR   = cmdp->cmd;
@@ -463,8 +462,8 @@ void wspi_lld_unmap_flash(WSPIDriver *wspip) {
   while ((wspip->ospi->CR & OCTOSPI_CR_ABORT) != 0U) {
   }
 
-  /* Re-enabling DMA request, we are going back to indirect mode.*/
-  wspip->ospi->CR |= OCTOSPI_CR_DMAEN;
+  /* Disabling memory mapped mode and re-enabling DMA and IRQs.*/
+  wspip->ospi->CR = OCTOSPI_CR_TCIE | OCTOSPI_CR_DMAEN | OCTOSPI_CR_EN;
 }
 #endif /* WSPI_SUPPORTS_MEMMAP == TRUE */
 
