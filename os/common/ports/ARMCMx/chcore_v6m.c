@@ -104,8 +104,6 @@ void PendSV_Handler(void) {
 
 /**
  * @brief   IRQ epilogue code.
- *
- * @param[in] lr        value of the @p LR register on ISR entry
  */
 void _port_irq_epilogue(void) {
   struct port_extctx *ctxp;
