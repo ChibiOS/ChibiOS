@@ -160,6 +160,7 @@
 - EX:  Updated LIS302DL to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LPS25H to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LSM303DLHC to 1.1.0 (backported to 18.2.1).
+- RT:  Fixed GCC6 problem breaks Cortex-M0 port (bug #985).
 - NIL: Fixed scheduler misbehaving in rare cases (bug #983)
        (backported to 18.2.2 and 17.6.5).
 - NIL: Fixed function chThdSuspendTimeoutS() ignoring TIME_IMMEDIATE (bug #982)
