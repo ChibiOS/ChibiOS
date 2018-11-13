@@ -88,6 +88,23 @@
 #if !defined(MFS_CFG_BUFFER_SIZE) || defined(__DOXYGEN__)
 #define MFS_CFG_BUFFER_SIZE                 32
 #endif
+
+/**
+ * @brief   Enforced memory alignment.
+ * @details This value must be a power of two, it enforces a memory alignment
+ *          for records in the flash array. This is required when alignment
+ *          constraints exist, for example when using a DTR mode on OSPI
+ *          devices.
+ * @note    When enforcing an alignment you need to use buffers with size
+ *          aligned to the specified value. For example, if you need to
+ *          write a 5 bytes object with alignment of 4 then you need to
+ *          use a 8 bytes data buffer, the last 3 bytes are used as filler
+ *          so ==initialize== those to zero (buffer->DDDDD000) or garbage
+ *          will be written after data.
+ */
+#if !defined(MFS_CFG_MEMORY_ALIGNMENT) || defined(__DOXYGEN__)
+#define MFS_CFG_MEMORY_ALIGNMENT            1
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -102,12 +119,20 @@
 #error "invalid MFS_MAX_REPAIR_ATTEMPTS value"
 #endif
 
-#if MFS_CFG_BUFFER_SIZE <= 16
+#if MFS_CFG_BUFFER_SIZE < 16
 #error "invalid MFS_CFG_BUFFER_SIZE value"
 #endif
 
 #if (MFS_CFG_BUFFER_SIZE & (MFS_CFG_BUFFER_SIZE - 1)) != 0
 #error "MFS_CFG_BUFFER_SIZE is not a power of two"
+#endif
+
+#if MFS_CFG_MEMORY_ALIGNMENT < 1
+#error "invalid MFS_CFG_MEMORY_ALIGNMENT value"
+#endif
+
+#if (MFS_CFG_MEMORY_ALIGNMENT & (MFS_CFG_MEMORY_ALIGNMENT - 1)) != 0
+#error "MFS_CFG_MEMORY_ALIGNMENT is not a power of two"
 #endif
 
 /*===========================================================================*/
@@ -228,6 +253,7 @@ typedef union {
     uint16_t                crc;
     /**
      * @brief   Data size.
+     * @note    The next record is located at @p MFS_ALIGN_NEXT(size).
      */
     uint32_t                size;
   } fields;
@@ -341,6 +367,16 @@ typedef struct {
  */
 #define MFS_IS_ERROR(err) ((err) < MFS_NO_ERROR)
 #define MFS_IS_WARNING(err) ((err) > MFS_NO_ERROR)
+/** @} */
+
+/**
+ * @name   Alignment macros
+ * @{
+ */
+#define MFS_ALIGN_MASK      ((uint32_t)MFS_CFG_MEMORY_ALIGNMENT - 1U)
+#define MFS_IS_ALIGNED(v)   (((uint32_t)(v) & MFS_ALIGN_MASK) == 0U)
+#define MFS_ALIGN_PREV(v)   ((uint32_t)(v) & ~MFS_ALIGN_MASK)
+#define MFS_ALIGN_NEXT(v)   MFS_ALIGN_PREV((size_t)(v) + MFS_ALIGN_MASK)
 /** @} */
 
 /*===========================================================================*/

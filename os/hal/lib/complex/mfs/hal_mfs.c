@@ -276,11 +276,12 @@ static mfs_error_t mfs_record_check(MFSDriver *mfsp,
 #if MFS_CFG_STRONG_CHECKING == TRUE
       {
         /* TODO: Checking the CRC while reading the record data.*/
-        (void)mfsp;
+/*        *sts = MFS_RECORD_CRC;
+        return MFS_NO_ERROR;*/
       }
-#else
-      (void)mfsp;
 #endif
+      *sts = MFS_RECORD_OK;
+      return MFS_NO_ERROR;
     }
   }
 
@@ -439,6 +440,8 @@ static mfs_error_t mfs_bank_scan_records(MFSDriver *mfsp,
   /* Scanning records.*/
   hdr_offset = start_offset + (flash_offset_t)sizeof(mfs_bank_header_t);
   while (hdr_offset < end_offset) {
+    uint32_t size;
+
     /* Reading the current record header.*/
     RET_ON_ERROR(mfs_flash_read(mfsp, hdr_offset,
                                 sizeof (mfs_data_header_t),
@@ -453,7 +456,7 @@ static mfs_error_t mfs_bank_scan_records(MFSDriver *mfsp,
     }
     else if (sts == MFS_RECORD_OK) {
       /* Record OK.*/
-      uint32_t size = mfsp->buffer.dhdr.fields.size;
+      size = mfsp->buffer.dhdr.fields.size;
 
       /* Zero-sized records are erase markers.*/
       if (size == 0U) {
@@ -468,6 +471,7 @@ static mfs_error_t mfs_bank_scan_records(MFSDriver *mfsp,
     else if (sts == MFS_RECORD_CRC) {
       /* Record payload corrupted, scan can continue because the header
          is OK.*/
+      size = mfsp->buffer.dhdr.fields.size;
       warning = true;
     }
     else {
@@ -475,6 +479,9 @@ static mfs_error_t mfs_bank_scan_records(MFSDriver *mfsp,
       warning = true;
       break;
     }
+    hdr_offset = hdr_offset +
+                 (flash_offset_t)sizeof(mfs_data_header_t) +
+                 (flash_offset_t)size;
   }
 
   if (hdr_offset > end_offset) {
@@ -926,7 +933,7 @@ mfs_error_t mfsReadRecord(MFSDriver *mfsp, mfs_id_t id,
   uint16_t crc;
 
   osalDbgCheck((mfsp != NULL) &&
-               (id >= 1) && (id <= (mfs_id_t)MFS_CFG_MAX_RECORDS) &&
+               (id >= 1U) && (id <= (mfs_id_t)MFS_CFG_MAX_RECORDS) &&
                (np != NULL) && (buffer != NULL));
 
   if (mfsp->state != MFS_READY) {
@@ -992,7 +999,7 @@ mfs_error_t mfsWriteRecord(MFSDriver *mfsp, mfs_id_t id,
   bool warning = false;
 
   osalDbgCheck((mfsp != NULL) &&
-               (id >= 1) && (id <= (mfs_id_t)MFS_CFG_MAX_RECORDS) &&
+               (id >= 1U) && (id <= (mfs_id_t)MFS_CFG_MAX_RECORDS) &&
                (n > 0U) && (buffer != NULL));
 
   if (mfsp->state != MFS_READY) {
