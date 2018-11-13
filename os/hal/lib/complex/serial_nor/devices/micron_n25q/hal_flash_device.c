@@ -548,9 +548,10 @@ void snor_reset_xip(SNORDriver *devp) {
   uint8_t buf[1];
 
   /* Resetting XIP mode by reading one byte without XIP confirmation bit.*/
-  cmd.alt   = 0xFF;
-  cmd.addr  = 0;
-  cmd.dummy = N25Q_READ_DUMMY_CYCLES - 2;
+  cmd.cmd   = 0U;
+  cmd.alt   = 0xFFU;
+  cmd.addr  = 0U;
+  cmd.dummy = N25Q_READ_DUMMY_CYCLES - 2U;
   cmd.cfg   = WSPI_CFG_CMD_MODE_NONE |
               WSPI_CFG_ADDR_SIZE_24 |
 #if N25Q_BUS_MODE == N25Q_BUS_MODE_WSPI1L
