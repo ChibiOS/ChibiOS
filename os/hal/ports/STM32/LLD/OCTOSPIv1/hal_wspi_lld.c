@@ -285,9 +285,6 @@ void wspi_lld_stop(WSPIDriver *wspip) {
  */
 void wspi_lld_command(WSPIDriver *wspip, const wspi_command_t *cmdp) {
 
-  /* Waiting for the previous operation to complete, if any.*/
-  wspi_lld_sync(wspip);
-
 #if 0 //STM32_USE_STM32_D1_WORKAROUND == TRUE
   /* If it is a command without address and alternate phases then the command
      is sent as an alternate byte, the command phase is suppressed.*/
@@ -309,6 +306,9 @@ void wspi_lld_command(WSPIDriver *wspip, const wspi_command_t *cmdp) {
   if ((cmdp->cfg & WSPI_CFG_ADDR_MODE_MASK) != WSPI_CFG_ADDR_MODE_NONE) {
     wspip->ospi->AR  = cmdp->addr;
   }
+
+  /* Waiting for the previous operation to complete.*/
+  wspi_lld_sync(wspip);
 }
 
 /**
@@ -337,9 +337,6 @@ void wspi_lld_send(WSPIDriver *wspip, const wspi_command_t *cmdp,
   dmaStreamSetMemory0(wspip->dma, txbuf);
   dmaStreamSetTransactionSize(wspip->dma, n);
   dmaStreamSetMode(wspip->dma, wspip->dmamode | STM32_DMA_CR_DIR_M2P);
-
-  /* Waiting for the previous operation to complete, if any.*/
-  wspi_lld_sync(wspip);
 
   wspip->ospi->CR &= ~OCTOSPI_CR_FMODE;
   wspip->ospi->DLR = n - 1U;
@@ -381,9 +378,6 @@ void wspi_lld_receive(WSPIDriver *wspip, const wspi_command_t *cmdp,
   dmaStreamSetTransactionSize(wspip->dma, n);
   dmaStreamSetMode(wspip->dma, wspip->dmamode | STM32_DMA_CR_DIR_P2M);
 
-  /* Waiting for the previous operation to complete, if any.*/
-  wspi_lld_sync(wspip);
-
   wspip->ospi->CR  = (wspip->ospi->CR & ~OCTOSPI_CR_FMODE) | OCTOSPI_CR_FMODE_0;
   wspip->ospi->DLR = n - 1U;
   wspip->ospi->TCR = cmdp->dummy;
@@ -413,9 +407,6 @@ void wspi_lld_receive(WSPIDriver *wspip, const wspi_command_t *cmdp,
 void wspi_lld_map_flash(WSPIDriver *wspip,
                         const wspi_command_t *cmdp,
                         uint8_t **addrp) {
-
-  /* Waiting for the previous operation to complete, if any.*/
-  wspi_lld_sync(wspip);
 
   /* Starting memory mapped mode using the passed parameters.*/
   wspip->ospi->CR   = OCTOSPI_CR_FMODE_1 | OCTOSPI_CR_FMODE_0 | OCTOSPI_CR_EN;

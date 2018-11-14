@@ -52,6 +52,15 @@ WSPIDriver WSPID1;
 /*===========================================================================*/
 
 /**
+ * @brief   Waits for completion of previous operation.
+ */
+static inline void wspi_lld_sync(WSPIDriver *wspip) {
+
+  while ((wspip->qspi->SR & QUADSPI_SR_BUSY) != 0U) {
+  }
+}
+
+/**
  * @brief   Shared service routine.
  *
  * @param[in] wspip     pointer to the @p WSPIDriver object
@@ -232,6 +241,9 @@ void wspi_lld_command(WSPIDriver *wspip, const wspi_command_t *cmdp) {
   if ((cmdp->cfg & WSPI_CFG_ADDR_MODE_MASK) != WSPI_CFG_ADDR_MODE_NONE) {
     wspip->qspi->AR  = cmdp->addr;
   }
+
+  /* Waiting for the previous operation to complete.*/
+  wspi_lld_sync(wspip);
 }
 
 /**
