@@ -246,14 +246,23 @@ struct port_intctx {
  * @details This macro must be inserted at the start of all IRQ handlers
  *          enabled to invoke system APIs.
  */
-#define PORT_IRQ_PROLOGUE()
+#if defined(__GNUC__) || defined(__DOXYGEN__)
+#define PORT_IRQ_PROLOGUE()                                                 \
+  regarm_t _saved_lr = (regarm_t)__builtin_return_address(0)
+#elif defined(__ICCARM__)
+#define PORT_IRQ_PROLOGUE()                                                 \
+  regarm_t _saved_lr = (regarm_t)__get_LR()
+#elif defined(__CC_ARM)
+#define PORT_IRQ_PROLOGUE()                                                 \
+  regarm_t _saved_lr = (regarm_t)__return_address()
+#endif
 
 /**
  * @brief   IRQ epilogue code.
  * @details This macro must be inserted at the end of all IRQ handlers
  *          enabled to invoke system APIs.
  */
-#define PORT_IRQ_EPILOGUE() _port_irq_epilogue()
+#define PORT_IRQ_EPILOGUE() _port_irq_epilogue(_saved_lr)
 
 /**
  * @brief   IRQ handler function declaration.
@@ -298,10 +307,11 @@ struct port_intctx {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void _port_irq_epilogue(void);
+  void _port_irq_epilogue(regarm_t lr);
   void _port_switch(thread_t *ntp, thread_t *otp);
   void _port_thread_start(void);
   void _port_switch_from_isr(void);
+  void _port_exit_from_isr(void);
 #ifdef __cplusplus
 }
 #endif

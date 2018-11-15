@@ -104,17 +104,18 @@ void PendSV_Handler(void) {
 
 /**
  * @brief   IRQ epilogue code.
+ *
+ * @param[in] lr        value of the @p LR register on ISR entry
  */
-void _port_irq_epilogue(void) {
-  struct port_extctx *ctxp;
+void _port_irq_epilogue(regarm_t lr) {
 
-  port_lock_from_isr();
+  if (lr != (regarm_t)0xFFFFFFF1U) {
+    struct port_extctx *ctxp;
 
-  /* Checking if the artificial exception return context has already been
-     added.*/
-  ctxp = (struct port_extctx *)__get_PSP();
-  if ((ctxp->pc != (regarm_t)_port_switch_from_isr) &&
-      chSchIsPreemptionRequired()) {
+    port_lock_from_isr();
+
+    /* The extctx structure is pointed by the PSP register.*/
+    ctxp = (struct port_extctx *)__get_PSP();
 
     /* Adding an artificial exception return context, there is no need to
        populate it fully.*/
@@ -126,16 +127,21 @@ void _port_irq_epilogue(void) {
     /* Setting up a fake XPSR register value.*/
     ctxp->xpsr = (regarm_t)0x01000000;
 
-    /* Return address set to OS code, there context switch will be
-       performed.*/
-    ctxp->pc = (regarm_t)_port_switch_from_isr;
+    /* The exit sequence is different depending on if a preemption is
+       required or not.*/
+    if (chSchIsPreemptionRequired()) {
+      /* Preemption is required we need to enforce a context switch.*/
+      ctxp->pc = (regarm_t)_port_switch_from_isr;
+    }
+    else {
+      /* Preemption not required, we just need to exit the exception
+         atomically.*/
+      ctxp->pc = (regarm_t)_port_exit_from_isr;
+    }
 
     /* Note, returning without unlocking is intentional, this is done in
        order to keep the rest of the context switch atomic.*/
-    return;
   }
-
-  port_unlock_from_isr();
 }
 
 /** @} */
