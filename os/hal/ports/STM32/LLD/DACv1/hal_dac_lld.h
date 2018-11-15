@@ -318,6 +318,12 @@ typedef struct {
    * @brief   DMA channel IRQ priority.
    */
   uint32_t                  dmairqprio;
+#if (STM32_DMA_SUPPORTS_DMAMUX == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   DMAMUX peripheral selector.
+   */
+  uint32_t                  peripheral;
+#endif
 } dacparams_t;
 
 /**
