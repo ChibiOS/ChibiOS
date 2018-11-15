@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 17.6.5 ***
+- HAL: Fixed NULL pointer dereferenced in N25Q driver (bug #988).
 - NIL: Fixed scheduler misbehaving in rare cases (bug #983).
 - NIL: Fixed function chThdSuspendTimeoutS() ignoring TIME_IMMEDIATE (bug #982).
 - HAL: Fixed STM32L071/72 entries in registry (bug #981).
