@@ -95,6 +95,7 @@
 - NEW: Added new functions to objects fifos: chFifoReturnObjectS(),
        chFifoSendObjectAheadI(), chFifoSendObjectAheadS() and
        chFifoSendObjectAhead().
+- HAL: Fixed OS-Less Cortex-M HAL functionality broken (bug #987).
 - NIL: Fixed scheduler misbehaving in rare cases (bug #983).
 - NIL: Fixed function chThdSuspendTimeoutS() ignoring TIME_IMMEDIATE (bug #982).
 - HAL: Fixed STM32L071/72 entries in registry (bug #981).

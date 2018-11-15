@@ -598,6 +598,11 @@ static inline void osalSysLockFromISR(void) {
  */
 static inline void osalSysUnlockFromISR(void) {
 
+#if CORTEX_MODEL == 0
+  __enable_irq();
+#else
+  __set_BASEPRI(0);
+#endif
 }
 
 /**
