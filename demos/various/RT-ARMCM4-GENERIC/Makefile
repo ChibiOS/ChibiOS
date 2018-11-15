@@ -201,7 +201,7 @@ CPPWARN = -Wall -Wextra -Wundef
 UDEFS = -DSTM32F407xx
 
 # Define ASM defines here
-UADEFS =
+UADEFS = -DSTM32F407xx
 
 # List all user directories here
 UINCDIR =
