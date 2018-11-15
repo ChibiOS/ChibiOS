@@ -385,10 +385,10 @@ test_assert(err == MFS_ERR_NOT_FOUND, "record not erased");]]></value>
               </case>
               <case>
                 <brief>
-                  <value>Erasing the whole storage.</value>
+                  <value>Erasing the whole storage and re-initialization.</value>
                 </brief>
                 <description>
-                  <value>The managed storage is erased and re-initialized.</value>
+                  <value>The managed storage is erased, initialized and re-mounted.</value>
                 </description>
                 <condition>
                   <value />
@@ -423,6 +423,52 @@ err = mfsWriteRecord(&mfs1, 2, sizeof pattern2, pattern2);
 test_assert(err == MFS_NO_ERROR, "error creating record 2");
 err = mfsWriteRecord(&mfs1, 3, sizeof pattern3, pattern3);
 test_assert(err == MFS_NO_ERROR, "error creating record 3");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Records must exist.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[mfs_error_t err;
+size_t size;
+
+size = sizeof mfs_buffer;
+err = mfsReadRecord(&mfs1, 1, &size, mfs_buffer);
+test_assert(err == MFS_NO_ERROR, "record 0 not present");
+size = sizeof mfs_buffer;
+err = mfsReadRecord(&mfs1, 2, &size, mfs_buffer);
+test_assert(err == MFS_NO_ERROR, "record 1 not present");
+size = sizeof mfs_buffer;
+err = mfsReadRecord(&mfs1, 3, &size, mfs_buffer);
+test_assert(err == MFS_NO_ERROR, "record 2 not present");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Re-mounting, records must still exist.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[mfs_error_t err;
+size_t size;
+
+err = mfsStart(&mfs1, &mfscfg1);
+test_assert(err == MFS_NO_ERROR, "re-mount failed");
+size = sizeof mfs_buffer;
+err = mfsReadRecord(&mfs1, 1, &size, mfs_buffer);
+test_assert(err == MFS_NO_ERROR, "record 0 not present");
+size = sizeof mfs_buffer;
+err = mfsReadRecord(&mfs1, 2, &size, mfs_buffer);
+test_assert(err == MFS_NO_ERROR, "record 1 not present");
+size = sizeof mfs_buffer;
+err = mfsReadRecord(&mfs1, 3, &size, mfs_buffer);
+test_assert(err == MFS_NO_ERROR, "record 2 not present");]]></value>
                     </code>
                   </step>
                   <step>
@@ -879,7 +925,7 @@ test_assert(bank_verify_erased(MFS_BANK_0) == FLASH_NO_ERROR, "bank 0 not erased
               <value />
             </condition>
             <shared_code>
-              <value><![CDATA[#include "mfs.h"]]></value>
+              <value><![CDATA[#include "hal_mfs.h"]]></value>
             </shared_code>
             <cases>
               <case>

@@ -102,7 +102,7 @@
 #error "invalid MFS_MAX_REPAIR_ATTEMPTS value"
 #endif
 
-#if MFS_CFG_BUFFER_SIZE <= 16
+#if MFS_CFG_BUFFER_SIZE < 16
 #error "invalid MFS_CFG_BUFFER_SIZE value"
 #endif
 

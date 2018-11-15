@@ -97,6 +97,7 @@
        chFifoSendObjectAhead().
 - HAL: Fixed NULL pointer dereferenced in N25Q driver (bug #988).
 - HAL: Fixed OS-Less Cortex-M HAL functionality broken (bug #987).
+- HAL: Fixed broken functionality of MFS module (bug #986).
 - NIL: Fixed scheduler misbehaving in rare cases (bug #983).
 - NIL: Fixed function chThdSuspendTimeoutS() ignoring TIME_IMMEDIATE (bug #982).
 - HAL: Fixed STM32L071/72 entries in registry (bug #981).

@@ -309,14 +309,16 @@ static const testcase_t mfs_test_001_003 = {
 };
 
 /**
- * @page mfs_test_001_004 [1.4] Erasing the whole storage
+ * @page mfs_test_001_004 [1.4] Erasing the whole storage and re-initialization
  *
  * <h2>Description</h2>
- * The managed storage is erased and re-initialized.
+ * The managed storage is erased, initialized and re-mounted.
  *
  * <h2>Test Steps</h2>
  * - [1.4.1] Creating records 1, 2 and 3, MFS_NO_ERROR is expected.
- * - [1.4.2] Erasing storage and verify that the records have been
+ * - [1.4.2] Records must exist.
+ * - [1.4.3] Re-mounting, records must still exist.
+ * - [1.4.4] Erasing storage and verify that the records have been
  *   removed, MFS_NO_ERROR is expected on erase, MFS_ERR_NOT_FOUND is
  *   expected on retrieve.
  * .
@@ -347,10 +349,46 @@ static void mfs_test_001_004_execute(void) {
     test_assert(err == MFS_NO_ERROR, "error creating record 3");
   }
 
-  /* [1.4.2] Erasing storage and verify that the records have been
+  /* [1.4.2] Records must exist.*/
+  test_set_step(2);
+  {
+    mfs_error_t err;
+    size_t size;
+
+    size = sizeof mfs_buffer;
+    err = mfsReadRecord(&mfs1, 1, &size, mfs_buffer);
+    test_assert(err == MFS_NO_ERROR, "record 0 not present");
+    size = sizeof mfs_buffer;
+    err = mfsReadRecord(&mfs1, 2, &size, mfs_buffer);
+    test_assert(err == MFS_NO_ERROR, "record 1 not present");
+    size = sizeof mfs_buffer;
+    err = mfsReadRecord(&mfs1, 3, &size, mfs_buffer);
+    test_assert(err == MFS_NO_ERROR, "record 2 not present");
+  }
+
+  /* [1.4.3] Re-mounting, records must still exist.*/
+  test_set_step(3);
+  {
+    mfs_error_t err;
+    size_t size;
+
+    err = mfsStart(&mfs1, &mfscfg1);
+    test_assert(err == MFS_NO_ERROR, "re-mount failed");
+    size = sizeof mfs_buffer;
+    err = mfsReadRecord(&mfs1, 1, &size, mfs_buffer);
+    test_assert(err == MFS_NO_ERROR, "record 0 not present");
+    size = sizeof mfs_buffer;
+    err = mfsReadRecord(&mfs1, 2, &size, mfs_buffer);
+    test_assert(err == MFS_NO_ERROR, "record 1 not present");
+    size = sizeof mfs_buffer;
+    err = mfsReadRecord(&mfs1, 3, &size, mfs_buffer);
+    test_assert(err == MFS_NO_ERROR, "record 2 not present");
+  }
+
+  /* [1.4.4] Erasing storage and verify that the records have been
      removed, MFS_NO_ERROR is expected on erase, MFS_ERR_NOT_FOUND is
      expected on retrieve.*/
-  test_set_step(2);
+  test_set_step(4);
   {
     mfs_error_t err;
     size_t size;
@@ -370,7 +408,7 @@ static void mfs_test_001_004_execute(void) {
 }
 
 static const testcase_t mfs_test_001_004 = {
-  "Erasing the whole storage",
+  "Erasing the whole storage and re-initialization",
   mfs_test_001_004_setup,
   mfs_test_001_004_teardown,
   mfs_test_001_004_execute
