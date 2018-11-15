@@ -95,6 +95,7 @@
 - NEW: Added new functions to objects fifos: chFifoReturnObjectS(),
        chFifoSendObjectAheadI(), chFifoSendObjectAheadS() and
        chFifoSendObjectAhead().
+- HAL: Fixed NULL pointer dereferenced in N25Q driver (bug #988).
 - HAL: Fixed OS-Less Cortex-M HAL functionality broken (bug #987).
 - NIL: Fixed scheduler misbehaving in rare cases (bug #983).
 - NIL: Fixed function chThdSuspendTimeoutS() ignoring TIME_IMMEDIATE (bug #982).

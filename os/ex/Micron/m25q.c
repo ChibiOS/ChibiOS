@@ -745,14 +745,14 @@ void m25qStop(M25QDriver *devp) {
     /* Stopping bus device.*/
     jesd216_stop(devp->config->busp);
 
-    /* Deleting current configuration.*/
-    devp->config = NULL;
-
     /* Driver stopped.*/
     devp->state = FLASH_STOP;
 
     /* Bus release.*/
     jesd216_bus_release(devp->config->busp);
+
+    /* Deleting current configuration.*/
+    devp->config = NULL;
   }
 }
 
