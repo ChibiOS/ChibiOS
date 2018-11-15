@@ -1122,6 +1122,47 @@
     (STM32_PLLSRC == STM32_PLLSRC_HSI16)
 #error "HSI16 not enabled, required by STM32_SAI2SEL"
 #endif
+
+#if (STM32_USART1SEL == STM32_USART1SEL_HSI16)
+#error "HSI16 not enabled, required by STM32_USART1SEL"
+#endif
+#if (STM32_USART2SEL == STM32_USART2SEL_HSI16)
+#error "HSI16 not enabled, required by STM32_USART2SEL"
+#endif
+#if (STM32_USART3SEL == STM32_USART3SEL_HSI16)
+#error "HSI16 not enabled, required by STM32_USART3SEL"
+#endif
+#if (STM32_UART4SEL == STM32_UART4SEL_HSI16)
+#error "HSI16 not enabled, required by STM32_UART4SEL"
+#endif
+#if (STM32_UART5SEL == STM32_UART5SEL_HSI16)
+#error "HSI16 not enabled, required by STM32_UART5SEL"
+#endif
+#if (STM32_LPUART1SEL == STM32_LPUART1SEL_HSI16)
+#error "HSI16 not enabled, required by STM32_LPUART1SEL"
+#endif
+
+#if (STM32_I2C1SEL == STM32_I2C1SEL_HSI16)
+#error "HSI16 not enabled, required by I2C1SEL"
+#endif
+#if (STM32_I2C2SEL == STM32_I2C2SEL_HSI16)
+#error "HSI16 not enabled, required by I2C2SEL"
+#endif
+#if (STM32_I2C3SEL == STM32_I2C3SEL_HSI16)
+#error "HSI16 not enabled, required by I2C3SEL"
+#endif
+
+#if (STM32_LPTIM1SEL == STM32_LPTIM1SEL_HSI16)
+#error "HSI16 not enabled, required by LPTIM1SEL"
+#endif
+#if (STM32_LPTIM2SEL == STM32_LPTIM2SEL_HSI16)
+#error "HSI16 not enabled, required by LPTIM2SEL"
+#endif
+
+#if (STM32_STOPWUCK == STM32_STOPWUCK_HSI16)
+#error "HSI16 not enabled, required by STM32_STOPWUCK"
+#endif
+
 #endif /* !STM32_HSI16_ENABLED */
 
 #if STM32_HSI48_ENABLED
