@@ -517,13 +517,13 @@ void dac_lld_start_conversion(DACDriver *dacp) {
 
   /* DAC configuration.*/
 #if STM32_DAC_DUAL_MODE == FALSE
-  cr = DAC_CR_DMAEN1 | (dacp->grpp->trigger << 3) | DAC_CR_TEN1 | DAC_CR_EN1 | dacp->config->cr;
+  cr = DAC_CR_DMAEN1 | (dacp->grpp->trigger << DAC_CR_TSEL1_Pos) | DAC_CR_TEN1 | DAC_CR_EN1 | dacp->config->cr;
   dacp->params->dac->CR &= dacp->params->regmask;
   dacp->params->dac->CR |= cr << dacp->params->regshift;
 #else
   dacp->params->dac->CR = 0;
-  cr = DAC_CR_DMAEN1 | (dacp->grpp->trigger << 3)  | DAC_CR_TEN1 | DAC_CR_EN1 | dacp->config->cr
-                     | (dacp->grpp->trigger << 19) | DAC_CR_TEN2 | DAC_CR_EN2 | (dacp->config->cr << 16);
+  cr = DAC_CR_DMAEN1 | (dacp->grpp->trigger << DAC_CR_TSEL1_Pos) | DAC_CR_TEN1 | DAC_CR_EN1 | dacp->config->cr
+                     | (dacp->grpp->trigger << DAC_CR_TSEL2_Pos) | DAC_CR_TEN2 | DAC_CR_EN2 | (dacp->config->cr << 16);
   dacp->params->dac->CR = cr;
 #endif
 }

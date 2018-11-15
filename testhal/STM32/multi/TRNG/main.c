@@ -51,7 +51,7 @@ int main(void) {
   halInit();
   chSysInit();
 
-  /*Board-dependent GPIO setup code.*/
+  /* Board-dependent GPIO setup code.*/
   portab_setup();
 
   /* Starting a serial port for test report output.*/

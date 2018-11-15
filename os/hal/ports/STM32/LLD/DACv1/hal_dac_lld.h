@@ -37,8 +37,6 @@
  */
 #define DAC_TRG_MASK                    7U
 #define DAC_TRG(n)                      (n)
-#define DAC_TRG_EXT                     6U
-#define DAC_TRG_SW                      7U
 /** @} */
 
 /*===========================================================================*/

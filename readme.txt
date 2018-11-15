@@ -162,7 +162,8 @@
 - EX:  Updated LSM303DLHC to 1.1.0 (backported to 18.2.1).
 - HAL: Fixed OS-Less Cortex-M HAL functionality broken (bug #987)
        (backported to 18.2.2).
-- HAL: Fixed broken functionality of MFS module (bug #986).
+- HAL: Fixed broken functionality of MFS module (bug #986)
+       (backported to 18.2.2).
 - NIL: Fixed scheduler misbehaving in rare cases (bug #983)
        (backported to 18.2.2 and 17.6.5).
 - NIL: Fixed function chThdSuspendTimeoutS() ignoring TIME_IMMEDIATE (bug #982)
