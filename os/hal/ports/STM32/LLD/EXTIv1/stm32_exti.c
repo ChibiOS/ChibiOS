@@ -33,15 +33,6 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-/* Handling differences in ST headers.*/
-#if !defined(STM32L4XX) && !defined(STM32L4XXP)
-#define EMR1    EMR
-#define IMR1    IMR
-#define PR1     PR
-#define RTSR1   RTSR
-#define FTSR1   FTSR
-#endif
-
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -185,38 +176,6 @@ void extiEnableLine(extiline_t line, extimode_t mode) {
   }
 #endif
 }
-
-/**
- * @brief   STM32 EXTI group 1 IRQ status clearing.
- *
- * @param[in] mask      mask of group 1 lines to be initialized
- *
- * @api
- */
-void extiClearGroup1(uint32_t mask) {
-
-  /* Masked out lines must not be touched by this driver.*/
-  osalDbgAssert((mask & STM32_EXTI_IMR1_MASK) == 0U, "fixed line");
-
-  EXTI->PR1 =  mask;
-}
-
-#if (STM32_EXTI_NUM_LINES > 32) || defined(__DOXYGEN__)
-/**
- * @brief   STM32 EXTI group 2 IRQ status clearing.
- *
- * @param[in] mask      mask of group 2 lines to be initialized
- *
- * @api
- */
-void extiClearGroup2(uint32_t mask) {
-
-  /* Masked out lines must not be touched by this driver.*/
-  osalDbgAssert((mask & STM32_EXTI_IMR2_MASK) == 0U, "fixed line");
-
-  EXTI->PR2 =  mask;
-}
-#endif /* STM32_EXTI_NUM_LINES > 32 */
 
 /**
  * @brief   STM32 EXTI line IRQ status clearing.

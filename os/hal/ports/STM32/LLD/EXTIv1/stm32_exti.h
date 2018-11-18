@@ -44,6 +44,15 @@
 #define EXTI_MODE_ACTION_EVENT      4U  /**< @brief Event mode.             */
 /** @} */
 
+/* Handling differences in ST headers.*/
+#if !defined(STM32L4XX) && !defined(STM32L4XXP)
+#define EMR1    EMR
+#define IMR1    IMR
+#define PR1     PR
+#define RTSR1   RTSR
+#define FTSR1   FTSR
+#endif
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -102,6 +111,32 @@ typedef uint32_t extimode_t;
  */
 #define EXTI_MASK2(line) (uint32_t)(1U << ((line) - 32U))
 
+/**
+ * @brief   STM32 EXTI group 1 IRQ status clearing.
+ *
+ * @param[in] mask      mask of group 1 lines to be initialized
+ *
+ * @api
+ */
+#define extiClearGroup1(mask) do {                                          \
+  osalDbgAssert(((mask) & STM32_EXTI_IMR1_MASK) == 0U, "fixed lines");      \
+  EXTI->PR1 = (uint32_t)(mask);                                             \
+} while (false)
+
+#if (STM32_EXTI_NUM_LINES > 32) || defined(__DOXYGEN__)
+/**
+ * @brief   STM32 EXTI group 2 IRQ status clearing.
+ *
+ * @param[in] mask      mask of group 2 lines to be initialized
+ *
+ * @api
+ */
+#define extiClearGroup2(mask) do {                                          \
+  osalDbgAssert(((mask) & STM32_EXTI_IMR2_MASK) == 0U, "fixed lines");      \
+  EXTI->PR2 = (uint32_t)(mask);                                             \
+} while (false)
+#endif /* STM32_EXTI_NUM_LINES > 32 */
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -110,10 +145,8 @@ typedef uint32_t extimode_t;
 extern "C" {
 #endif
   void extiEnableGroup1(uint32_t mask, extimode_t mode);
-  void extiClearGroup1(uint32_t mask);
 #if (STM32_EXTI_NUM_LINES > 32) || defined(__DOXYGEN__)
   void extiEnableGroup2(uint32_t mask, extimode_t mode);
-  void extiClearGroup2(uint32_t mask);
 #endif /* STM32_EXTI_NUM_LINES > 32 */
   void extiEnableLine(extiline_t line, extimode_t mode);
   void extiClearLine(extiline_t line);
