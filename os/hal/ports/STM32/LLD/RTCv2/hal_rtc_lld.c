@@ -250,6 +250,10 @@ OSAL_IRQ_HANDLER(STM32_RTC_COMMON_HANDLER) {
   isr = RTCD1.rtc->ISR;
   RTCD1.rtc->ISR = 0U;
 
+  extiClearGroup1(EXTI_MASK1(STM32_RTC_ALARM_EXTI) |
+                  EXTI_MASK1(STM32_RTC_TAMP_STAMP_EXTI) |
+                  EXTI_MASK1(STM32_RTC_WKUP_EXTI));
+
   if (RTCD1.callback != NULL) {
     uint32_t cr = RTCD1-rtc->CR;
     uint32_t tampcr = RTCD1.rtc->TAMPCR;
@@ -332,6 +336,8 @@ OSAL_IRQ_HANDLER(STM32_RTC_TAMP_STAMP_HANDLER) {
   isr = RTCD1.rtc->ISR;
   RTCD1.rtc->ISR = clear;
 
+  extiClearGroup1(EXTI_MASK1(STM32_RTC_TAMP_STAMP_EXTI));
+
   if (RTCD1.callback != NULL) {
     uint32_t cr, tampcr;
 
@@ -381,6 +387,8 @@ OSAL_IRQ_HANDLER(STM32_RTC_WKUP_HANDLER) {
   isr = RTCD1.rtc->ISR;
   RTCD1.rtc->ISR = ~RTC_ISR_WUTF;
 
+  extiClearGroup1(EXTI_MASK1(STM32_RTC_WKUP_EXTI));
+
   if (RTCD1.callback != NULL) {
     uint32_t cr = RTCD1.rtc->CR;
 
@@ -413,6 +421,8 @@ OSAL_IRQ_HANDLER(STM32_RTC_ALARM_HANDLER) {
 
   isr = RTCD1.rtc->ISR;
   RTCD1.rtc->ISR = clear;
+
+  extiClearGroup1(EXTI_MASK1(STM32_RTC_ALARM_EXTI));
 
   if (RTCD1.callback != NULL) {
     uint32_t cr = RTCD1.rtc->CR;
