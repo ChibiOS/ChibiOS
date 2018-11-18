@@ -88,6 +88,20 @@ typedef uint32_t extimode_t;
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
+/**
+ * @brief   From group 1 line number to mask.
+ *
+ * @param[in] line      line number in range 0..31
+ */
+#define EXTI_MASK1(line) (uint32_t)(1U << (line))
+
+/**
+ * @brief   From group 2 line number to mask.
+ *
+ * @param[in] line      line number in range 32..63
+ */
+#define EXTI_MASK2(line) (uint32_t)(1U << ((line) - 32U))
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/

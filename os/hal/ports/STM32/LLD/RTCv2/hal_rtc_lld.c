@@ -235,6 +235,207 @@ struct RTCDriverVMT _rtc_lld_vmt = {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
+#if defined(STM32_RTC_COMMON_HANDLER)
+#if !defined(STM32_RTC_SUPPRESS_COMMON_ISR)
+/**
+ * @brief   RTC common interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_RTC_COMMON_HANDLER) {
+  uint32_t isr;
+
+  OSAL_IRQ_PROLOGUE();
+
+  isr = RTCD1.rtc->ISR;
+  RTCD1.rtc->ISR = 0U;
+
+  if (RTCD1.callback != NULL) {
+    if ((isr & RTC_ISR_WUTF) != 0U) {
+      RTCD1.callback(&RTCD1, RTC_EVENT_WAKEUP);
+    }
+#if defined(RTC_ISR_ALRAF)
+    if ((isr & RTC_ISR_ALRAF) != 0U) {
+      RTCD1.callback(&RTCD1, RTC_EVENT_ALARM_A);
+    }
+#endif
+#if defined(RTC_ISR_ALRBF)
+    if ((isr & RTC_ISR_ALRBF) != 0U) {
+      RTCD1.callback(&RTCD1, RTC_EVENT_ALARM_B);
+    }
+#endif
+#if defined(RTC_ISR_ITSF)
+    if ((isr & RTC_ISR_ITSF) != 0U) {
+      RTCD1.callback(&RTCD1, RTC_EVENT_ITS);
+    }
+#endif
+#if defined(RTC_ISR_TSF)
+    if ((isr & RTC_ISR_TSF) != 0U) {
+      RTCD1.callback(&RTCD1, RTC_EVENT_TS);
+    }
+#endif
+#if defined(RTC_ISR_TSOVF)
+    if ((isr & RTC_ISR_TSOVF) != 0U) {
+      RTCD1.callback(&RTCD1, RTC_EVENT_TS_OVF);
+    }
+#endif
+#if defined(RTC_ISR_TAMP1F)
+    if ((isr & RTC_ISR_TAMP1F) != 0U) {
+      RTCD1.callback(&RTCD1, RTC_EVENT_TAMP1);
+    }
+#endif
+#if defined(RTC_ISR_TAMP2F)
+    if ((isr & RTC_ISR_TAMP2F) != 0U) {
+      RTCD1.callback(&RTCD1, RTC_EVENT_TAMP2);
+    }
+#endif
+#if defined(RTC_ISR_TAMP3F)
+    if ((isr & RTC_ISR_TAMP3F) != 0U) {
+      RTCD1.callback(&RTCD1, RTC_EVENT_TAMP3);
+    }
+#endif
+  }
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif /* !defined(STM32_RTC_SUPPRESS_COMMON_ISR) */
+
+#elif defined(STM32_RTC_TAMP_STAMP_HANDLER) &&                              \
+      defined(STM32_RTC_WKUP_HANDLER) &&                                    \
+      defined(STM32_RTC_ALARM_HANDLER)
+/**
+ * @brief   RTC TAMP/STAMP interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_RTC_TAMP_STAMP_HANDLER) {
+  uint32_t isr, clear;
+
+  OSAL_IRQ_PROLOGUE();
+
+  clear = ~(0U
+#if defined(RTC_ISR_ITSF)
+            | RTC_ISR_ITSF
+#endif
+#if defined(RTC_ISR_TSF)
+            | RTC_ISR_TSF
+#endif
+#if defined(RTC_ISR_TSOVF)
+            | RTC_ISR_TSOVF
+#endif
+#if defined(RTC_ISR_TAMP1F)
+            | RTC_ISR_TAMP1F
+#endif
+#if defined(RTC_ISR_TAMP2F)
+            | RTC_ISR_TAMP2F
+#endif
+#if defined(RTC_ISR_TAMP3F)
+            | RTC_ISR_TAMP3F
+#endif
+          );
+
+  isr = RTCD1.rtc->ISR;
+  RTCD1.rtc->ISR = clear;
+
+  if (RTCD1.callback != NULL) {
+#if defined(RTC_ISR_ITSF)
+    if ((isr & RTC_ISR_ITSF) != 0U) {
+      RTCD1.callback(&RTCD1, RTC_EVENT_ITS);
+    }
+#endif
+#if defined(RTC_ISR_TSF)
+    if ((isr & RTC_ISR_TSF) != 0U) {
+      RTCD1.callback(&RTCD1, RTC_EVENT_TS);
+    }
+#endif
+#if defined(RTC_ISR_TSOVF)
+    if ((isr & RTC_ISR_TSOVF) != 0U) {
+      RTCD1.callback(&RTCD1, RTC_EVENT_TS_OVF);
+    }
+#endif
+#if defined(RTC_ISR_TAMP1F)
+    if ((isr & RTC_ISR_TAMP1F) != 0U) {
+      RTCD1.callback(&RTCD1, RTC_EVENT_TAMP1);
+    }
+#endif
+#if defined(RTC_ISR_TAMP2F)
+    if ((isr & RTC_ISR_TAMP2F) != 0U) {
+      RTCD1.callback(&RTCD1, RTC_EVENT_TAMP2);
+    }
+#endif
+#if defined(RTC_ISR_TAMP3F)
+    if ((isr & RTC_ISR_TAMP3F) != 0U) {
+      RTCD1.callback(&RTCD1, RTC_EVENT_TAMP3);
+    }
+#endif
+  }
+
+  OSAL_IRQ_EPILOGUE();
+}
+/**
+ * @brief   RTC wakeup interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_RTC_WKUP_HANDLER) {
+  uint32_t isr;
+
+  OSAL_IRQ_PROLOGUE();
+
+  isr = RTCD1.rtc->ISR;
+  RTCD1.rtc->ISR = ~RTC_ISR_WUTF;
+
+  if (RTCD1.callback != NULL) {
+    if ((isr & RTC_ISR_WUTF) != 0U) {
+      RTCD1.callback(&RTCD1, RTC_EVENT_WAKEUP);
+    }
+  }
+
+  OSAL_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   RTC alarm interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_RTC_ALARM_HANDLER) {
+  uint32_t isr, clear;
+
+  OSAL_IRQ_PROLOGUE();
+
+  clear = ~(0U
+#if defined(RTC_ISR_ALRAF)
+            | RTC_ISR_ALRAF
+#endif
+#if defined(RTC_ISR_ALRBF)
+            | RTC_ISR_ALRBF
+#endif
+          );
+
+  isr = RTCD1.rtc->ISR;
+  RTCD1.rtc->ISR = clear;
+
+  if (RTCD1.callback != NULL) {
+#if defined(RTC_ISR_ALRAF)
+    if ((isr & RTC_ISR_ALRAF) != 0U) {
+      RTCD1.callback(&RTCD1, RTC_EVENT_ALARM_A);
+    }
+#endif
+#if defined(RTC_ISR_ALRBF)
+    if ((isr & RTC_ISR_ALRBF) != 0U) {
+      RTCD1.callback(&RTCD1, RTC_EVENT_ALARM_B);
+    }
+#endif
+  }
+
+  OSAL_IRQ_EPILOGUE();
+}
+
+#else
+#error "missing required RTC handlers definitions in registry"
+#endif
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -262,15 +463,28 @@ void rtc_lld_init(void) {
 
     rtc_enter_init();
 
-    RTCD1.rtc->CR   = 0;
+    RTCD1.rtc->CR   = STM32_RTC_CR_INIT;
     RTCD1.rtc->ISR  = RTC_ISR_INIT;     /* Clearing all but RTC_ISR_INIT.   */
     RTCD1.rtc->PRER = STM32_RTC_PRER_BITS;
     RTCD1.rtc->PRER = STM32_RTC_PRER_BITS;
 
     rtc_exit_init();
   }
-  else
+  else {
     RTCD1.rtc->ISR &= ~RTC_ISR_RSF;
+  }
+
+  /* Callback initially disabled.*/
+  RTCD1.callback = NULL;
+
+  /* Enabling RTC-related EXTI lines.*/
+  extiEnableGroup1(EXTI_MASK1(STM32_RTC_ALARM_EXTI) |
+                   EXTI_MASK1(STM32_RTC_TAMP_STAMP_EXTI) |
+                   EXTI_MASK1(STM32_RTC_WKUP_EXTI),
+                   EXTI_MODE_RISING_EDGE | EXTI_MODE_ACTION_INTERRUPT);
+
+  /* IRQ vectors permanently assigned to this driver.*/
+  STM32_RTC_IRQ_ENABLE();
 }
 
 /**
@@ -439,6 +653,22 @@ void rtc_lld_get_alarm(RTCDriver *rtcp,
 #endif /* RTC_ALARMS > 1 */
 }
 #endif /* RTC_ALARMS > 0 */
+
+/**
+ * @brief   Enables or disables RTC callbacks.
+ * @details This function enables or disables callbacks, use a @p NULL pointer
+ *          in order to disable a callback.
+ * @note    The function can be called from any context.
+ *
+ * @param[in] rtcp      pointer to RTC driver structure
+ * @param[in] callback  callback function pointer or @p NULL
+ *
+ * @notapi
+ */
+void rtc_lld_set_callback(RTCDriver *rtcp, rtccb_t callback) {
+
+  rtcp->callback = callback;
+}
 
 #if STM32_RTC_HAS_PERIODIC_WAKEUPS || defined(__DOXYGEN__)
 /**

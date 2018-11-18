@@ -85,11 +85,6 @@
 /*===========================================================================*/
 
 /**
- * @brief   Type of a structure representing an RTC alarm time stamp.
- */
-typedef struct RTCAlarm RTCAlarm;
-
-/**
  * @brief   Type of an RTC event.
  */
 typedef enum {
@@ -104,9 +99,9 @@ typedef enum {
 typedef void (*rtccb_t)(RTCDriver *rtcp, rtcevent_t event);
 
 /**
- * @brief   Structure representing an RTC alarm time stamp.
+ * @brief   Type of a structure representing an RTC alarm time stamp.
  */
-struct RTCAlarm {
+typedef struct hsl_rtc_alarm {
   /**
    * @brief Seconds since UNIX epoch.
    */
