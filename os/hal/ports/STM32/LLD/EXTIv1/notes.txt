@@ -1,0 +1,14 @@
+STM32 EXTIv1 driver.
+
+Driver capability:
+
+- Support for the EXTI peripheral.
+
+The file registry must export:
+
+STM32_EXTI_NUM_LINES        - Number of EXTI lines, it can be between 0 and 63.
+STM32_EXTI_IMR1_MASK        - Mask of the fixed lines that must not be
+                              handled by the driver (0..31).
+STM32_EXTI_IMR2_MASK        - Mask of the fixed lines that must not be
+                              handled by the driver (32..63).
+                              
