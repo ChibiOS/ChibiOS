@@ -158,9 +158,8 @@ typedef enum {
   RTC_EVENT_TAMP1       = 4,            /** Tamper 1.                       */
   RTC_EVENT_TAMP2       = 5,            /** Tamper 2-                       */
   RTC_EVENT_TAMP3       = 6,            /** Tamper 3.                       */
-  RTC_EVENT_WAKEUP      = 7,            /** Wakeup.                         */
-  RTC_EVENT_ITS         = 8             /** Internal time stamp.            */
-} rtcevent_t;
+  RTC_EVENT_WAKEUP      = 7             /** Wakeup.                         */
+ } rtcevent_t;
 
 /**
  * @brief   Type of a generic RTC callback.
