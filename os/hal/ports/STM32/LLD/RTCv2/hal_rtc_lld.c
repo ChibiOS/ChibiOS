@@ -384,7 +384,7 @@ OSAL_IRQ_HANDLER(STM32_RTC_TAMP_STAMP_HANDLER) {
   extiClearGroup1(EXTI_MASK1(STM32_RTC_TAMP_STAMP_EXTI));
 
   if (RTCD1.callback != NULL) {
-    uint32_t cr, tampcr;
+    uint32_t cr, tcr;
 
     cr = RTCD1.rtc->CR;
     if ((cr & RTC_CR_TSIE) != 0U) {
@@ -396,25 +396,44 @@ OSAL_IRQ_HANDLER(STM32_RTC_TAMP_STAMP_HANDLER) {
       }
     }
 
-    tampcr = RTCD1.rtc->TAMPCR;
+    /* This part is different depending on if the RTC has a TAMPCR or TAFCR
+       register.*/
+#if defined(RTC_TAFCR_TAMP1E)
+    tcr = RTCD1.rtc->TAFCR;
+    if ((tcr & RTC_TAFCR_TAMPIE) != 0U) {
 #if defined(RTC_ISR_TAMP1F)
-    if (((tampcr & RTC_TAMPCR_TAMP1IE) != 0U) &&
+      if ((isr & RTC_ISR_TAMP1F) != 0U) {
+        RTCD1.callback(&RTCD1, RTC_EVENT_TAMP1);
+      }
+#endif
+#if defined(RTC_ISR_TAMP2F)
+      if ((isr & RTC_ISR_TAMP2F) != 0U) {
+        RTCD1.callback(&RTCD1, RTC_EVENT_TAMP2);
+      }
+#endif
+    }
+
+#else /* !defined(RTC_TAFCR_TAMP1E) */
+    tcr = RTCD1.rtc->TAMPCR;
+#if defined(RTC_ISR_TAMP1F)
+    if (((tcr & RTC_TAMPCR_TAMP1IE) != 0U) &&
         ((isr & RTC_ISR_TAMP1F) != 0U)) {
       RTCD1.callback(&RTCD1, RTC_EVENT_TAMP1);
     }
 #endif
 #if defined(RTC_ISR_TAMP2F)
-    if (((tampcr & RTC_TAMPCR_TAMP2IE) != 0U) &&
+    if (((tcr & RTC_TAMPCR_TAMP2IE) != 0U) &&
         ((isr & RTC_ISR_TAMP2F) != 0U)) {
       RTCD1.callback(&RTCD1, RTC_EVENT_TAMP2);
     }
 #endif
 #if defined(RTC_ISR_TAMP3F)
-    if (((tampcr & RTC_TAMPCR_TAMP3IE) != 0U) &&
+    if (((tcr & RTC_TAMPCR_TAMP3IE) != 0U) &&
         ((isr & RTC_ISR_TAMP3F) != 0U)) {
       RTCD1.callback(&RTCD1, RTC_EVENT_TAMP3);
     }
 #endif
+#endif /* !defined(RTC_TAFCR_TAMP1E) */
   }
 
   OSAL_IRQ_EPILOGUE();
