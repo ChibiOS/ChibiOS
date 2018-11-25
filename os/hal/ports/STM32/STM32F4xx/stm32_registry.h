@@ -84,6 +84,39 @@
  */
 
 /*===========================================================================*/
+/* Common.                                                                   */
+/*===========================================================================*/
+
+/* RNG attributes.*/
+#define STM32_HAS_RNG1                      TRUE
+
+/* RTC attributes.*/
+#define STM32_HAS_RTC                       TRUE
+#if !defined(STM32F2XX)
+#define STM32_RTC_HAS_SUBSECONDS            TRUE
+#else
+#define STM32_RTC_HAS_SUBSECONDS            FALSE
+#endif
+#define STM32_RTC_HAS_PERIODIC_WAKEUPS      TRUE
+#define STM32_RTC_NUM_ALARMS                2
+#define STM32_RTC_STORAGE_SIZE              80
+#define STM32_RTC_TAMP_STAMP_HANDLER        Vector48
+#define STM32_RTC_WKUP_HANDLER              Vector4C
+#define STM32_RTC_ALARM_HANDLER             VectorE4
+#define STM32_RTC_TAMP_STAMP_NUMBER         2
+#define STM32_RTC_WKUP_NUMBER               3
+#define STM32_RTC_ALARM_NUMBER              41
+#define STM32_RTC_ALARM_EXTI                17
+#define STM32_RTC_TAMP_STAMP_EXTI           21
+#define STM32_RTC_WKUP_EXTI                 22
+#define STM32_RTC_IRQ_ENABLE() do {                                         \
+  nvicEnableVector(STM32_RTC_TAMP_STAMP_NUMBER, STM32_IRQ_EXTI21_PRIORITY); \
+  nvicEnableVector(STM32_RTC_WKUP_NUMBER, STM32_IRQ_EXTI22_PRIORITY);       \
+  nvicEnableVector(STM32_RTC_ALARM_NUMBER, STM32_IRQ_EXTI17_PRIORITY);      \
+} while (false)
+
+
+/*===========================================================================*/
 /* STM32F469xx, STM32F479xx.                                                 */
 /*===========================================================================*/
 
@@ -246,13 +279,6 @@
 #define STM32_QUADSPI1_NUMBER               91
 #define STM32_QUADSPI1_DMA_MSK              STM32_DMA_STREAM_ID_MSK(2, 7)
 #define STM32_QUADSPI1_DMA_CHN              0x30000000
-
-/* RTC attributes.*/
-#define STM32_HAS_RTC                       TRUE
-#define STM32_RTC_HAS_SUBSECONDS            TRUE
-#define STM32_RTC_HAS_PERIODIC_WAKEUPS      TRUE
-#define STM32_RTC_NUM_ALARMS                2
-#define STM32_RTC_HAS_INTERRUPTS            FALSE
 
 /* SDIO attributes.*/
 #define STM32_HAS_SDIO                      TRUE
@@ -627,13 +653,6 @@
 #define STM32_QUADSPI1_DMA_MSK              STM32_DMA_STREAM_ID_MSK(2, 7)
 #define STM32_QUADSPI1_DMA_CHN              0x30000000
 
-/* RTC attributes.*/
-#define STM32_HAS_RTC                       TRUE
-#define STM32_RTC_HAS_SUBSECONDS            TRUE
-#define STM32_RTC_HAS_PERIODIC_WAKEUPS      TRUE
-#define STM32_RTC_NUM_ALARMS                2
-#define STM32_RTC_HAS_INTERRUPTS            FALSE
-
 /* SDIO attributes.*/
 #define STM32_HAS_SDIO                      TRUE
 #define STM32_SDC_SDIO_DMA_MSK              (STM32_DMA_STREAM_ID_MSK(2, 3) |\
@@ -984,13 +1003,6 @@
 
 /* QUADSPI attributes.*/
 #define STM32_HAS_QUADSPI1                  FALSE
-
-/* RTC attributes.*/
-#define STM32_HAS_RTC                       TRUE
-#define STM32_RTC_HAS_SUBSECONDS            TRUE
-#define STM32_RTC_HAS_PERIODIC_WAKEUPS      TRUE
-#define STM32_RTC_NUM_ALARMS                2
-#define STM32_RTC_HAS_INTERRUPTS            FALSE
 
 /* SDIO attributes.*/
 #define STM32_HAS_SDIO                      TRUE
@@ -1365,13 +1377,6 @@
 #define STM32_QUADSPI1_DMA_MSK              STM32_DMA_STREAM_ID_MSK(2, 7)
 #define STM32_QUADSPI1_DMA_CHN              0x30000000
 
-/* RTC attributes.*/
-#define STM32_HAS_RTC                       TRUE
-#define STM32_RTC_HAS_SUBSECONDS            TRUE
-#define STM32_RTC_HAS_PERIODIC_WAKEUPS      TRUE
-#define STM32_RTC_NUM_ALARMS                2
-#define STM32_RTC_HAS_INTERRUPTS            FALSE
-
 /* SDIO attributes.*/
 #define STM32_HAS_SDIO                      TRUE
 #define STM32_SDC_SDIO_DMA_MSK              (STM32_DMA_STREAM_ID_MSK(2, 3) |\
@@ -1742,13 +1747,6 @@
 #define STM32_QUADSPI1_DMA_MSK              STM32_DMA_STREAM_ID_MSK(2, 7)
 #define STM32_QUADSPI1_DMA_CHN              0x30000000
 
-/* RTC attributes.*/
-#define STM32_HAS_RTC                       TRUE
-#define STM32_RTC_HAS_SUBSECONDS            TRUE
-#define STM32_RTC_HAS_PERIODIC_WAKEUPS      TRUE
-#define STM32_RTC_NUM_ALARMS                2
-#define STM32_RTC_HAS_INTERRUPTS            FALSE
-
 /* SDIO attributes.*/
 #define STM32_HAS_SDIO                      TRUE
 #define STM32_SDC_SDIO_DMA_MSK              (STM32_DMA_STREAM_ID_MSK(2, 3) |\
@@ -2074,13 +2072,6 @@
 /* QUADSPI attributes.*/
 #define STM32_HAS_QUADSPI1                  FALSE
 
-/* RTC attributes.*/
-#define STM32_HAS_RTC                       TRUE
-#define STM32_RTC_HAS_SUBSECONDS            TRUE
-#define STM32_RTC_HAS_PERIODIC_WAKEUPS      TRUE
-#define STM32_RTC_NUM_ALARMS                2
-#define STM32_RTC_HAS_INTERRUPTS            FALSE
-
 /* SDIO attributes.*/
 #define STM32_HAS_SDIO                      TRUE
 #define STM32_SDC_SDIO_DMA_MSK              (STM32_DMA_STREAM_ID_MSK(2, 3) |\
@@ -2386,13 +2377,6 @@
 /* QUADSPI attributes.*/
 #define STM32_HAS_QUADSPI1                  FALSE
 
-/* RTC attributes.*/
-#define STM32_HAS_RTC                       TRUE
-#define STM32_RTC_HAS_SUBSECONDS            TRUE
-#define STM32_RTC_HAS_PERIODIC_WAKEUPS      TRUE
-#define STM32_RTC_NUM_ALARMS                2
-#define STM32_RTC_HAS_INTERRUPTS            FALSE
-
 /* SDIO attributes.*/
 #define STM32_HAS_SDIO                      FALSE
 
@@ -2689,30 +2673,6 @@
 
 /* QUADSPI attributes.*/
 #define STM32_HAS_QUADSPI1                  FALSE
-
-/* RTC attributes.*/
-#define STM32_HAS_RTC                       TRUE
-#if !defined(STM32F2XX)
-#define STM32_RTC_HAS_SUBSECONDS            TRUE
-#else
-#define STM32_RTC_HAS_SUBSECONDS            FALSE
-#endif
-#define STM32_RTC_HAS_PERIODIC_WAKEUPS      TRUE
-#define STM32_RTC_NUM_ALARMS                2
-#define STM32_RTC_TAMP_STAMP_HANDLER        Vector48
-#define STM32_RTC_WKUP_HANDLER              Vector49
-#define STM32_RTC_ALARM_HANDLER             VectorE4
-#define STM32_RTC_TAMP_STAMP_NUMBER         2
-#define STM32_RTC_WKUP_NUMBER               3
-#define STM32_RTC_ALARM_NUMBER              41
-#define STM32_RTC_ALARM_EXTI                17
-#define STM32_RTC_TAMP_STAMP_EXTI           21
-#define STM32_RTC_WKUP_EXTI                 22
-#define STM32_RTC_IRQ_ENABLE() do {                                         \
-  nvicEnableVector(STM32_RTC_TAMP_STAMP_NUMBER, STM32_IRQ_EXTI21_PRIORITY); \
-  nvicEnableVector(STM32_RTC_WKUP_NUMBER, STM32_IRQ_EXTI22_PRIORITY);       \
-  nvicEnableVector(STM32_RTC_ALARM_NUMBER, STM32_IRQ_EXTI17_PRIORITY);      \
-} while (false)
 
 /* SDIO attributes.*/
 #define STM32_HAS_SDIO                      TRUE
@@ -3040,13 +3000,6 @@
 
 /* QUADSPI attributes.*/
 #define STM32_HAS_QUADSPI1                  FALSE
-
-/* RTC attributes.*/
-#define STM32_HAS_RTC                       TRUE
-#define STM32_RTC_HAS_SUBSECONDS            TRUE
-#define STM32_RTC_HAS_PERIODIC_WAKEUPS      TRUE
-#define STM32_RTC_NUM_ALARMS                2
-#define STM32_RTC_HAS_INTERRUPTS            FALSE
 
 /* SDIO attributes.*/
 #define STM32_HAS_SDIO                      TRUE
