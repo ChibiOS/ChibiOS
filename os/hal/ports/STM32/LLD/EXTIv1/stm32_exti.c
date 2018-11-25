@@ -64,7 +64,7 @@
 void extiEnableGroup1(uint32_t mask, extimode_t mode) {
 
   /* Masked out lines must not be touched by this driver.*/
-  osalDbgAssert((mask & STM32_EXTI_IMR1_MASK) == 0U, "fixed line");
+  osalDbgAssert((mask & STM32_EXTI_IMR1_MASK) == 0U, "fixed lines");
 
   if ((mode & EXTI_MODE_EDGES_MASK) == 0U) {
     /* Disabling channels.*/
@@ -113,7 +113,7 @@ void extiEnableGroup1(uint32_t mask, extimode_t mode) {
 void extiEnableGroup2(uint32_t mask, extimode_t mode) {
 
   /* Masked out lines must not be touched by this driver.*/
-  osalDbgAssert((mask & STM32_EXTI_IMR2_MASK) == 0U, "fixed line");
+  osalDbgAssert((mask & STM32_EXTI_IMR2_MASK) == 0U, "fixed lines");
 
   if ((mode & EXTI_MODE_EDGES_MASK) == 0U) {
     /* Disabling channels.*/

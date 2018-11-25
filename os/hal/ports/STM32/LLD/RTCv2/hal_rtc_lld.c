@@ -243,12 +243,33 @@ struct RTCDriverVMT _rtc_lld_vmt = {
  * @isr
  */
 OSAL_IRQ_HANDLER(STM32_RTC_COMMON_HANDLER) {
-  uint32_t isr;
+  uint32_t isr, clear;
 
   OSAL_IRQ_PROLOGUE();
 
+  clear = (0U
+           | RTC_ISR_TSF
+           | RTC_ISR_TSOVF
+#if defined(RTC_ISR_TAMP1F)
+           | RTC_ISR_TAMP1F
+#endif
+#if defined(RTC_ISR_TAMP2F)
+           | RTC_ISR_TAMP2F
+#endif
+#if defined(RTC_ISR_TAMP3F)
+           | RTC_ISR_TAMP3F
+#endif
+           | RTC_ISR_WUTF
+#if defined(RTC_ISR_ALRAF)
+           | RTC_ISR_ALRAF
+#endif
+#if defined(RTC_ISR_ALRBF)
+           | RTC_ISR_ALRBF
+#endif
+          );
+
   isr = RTCD1.rtc->ISR;
-  RTCD1.rtc->ISR = 0U;
+  RTCD1.rtc->ISR = isr & ~clear;
 
   extiClearGroup1(EXTI_MASK1(STM32_RTC_ALARM_EXTI) |
                   EXTI_MASK1(STM32_RTC_TAMP_STAMP_EXTI) |
@@ -319,22 +340,22 @@ OSAL_IRQ_HANDLER(STM32_RTC_TAMP_STAMP_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  clear = ~(0U
-            | RTC_ISR_TSF
-            | RTC_ISR_TSOVF
+  clear = (0U
+           | RTC_ISR_TSF
+           | RTC_ISR_TSOVF
 #if defined(RTC_ISR_TAMP1F)
-            | RTC_ISR_TAMP1F
+           | RTC_ISR_TAMP1F
 #endif
 #if defined(RTC_ISR_TAMP2F)
-            | RTC_ISR_TAMP2F
+           | RTC_ISR_TAMP2F
 #endif
 #if defined(RTC_ISR_TAMP3F)
-            | RTC_ISR_TAMP3F
+           | RTC_ISR_TAMP3F
 #endif
           );
 
   isr = RTCD1.rtc->ISR;
-  RTCD1.rtc->ISR = clear;
+  RTCD1.rtc->ISR = isr & ~clear;
 
   extiClearGroup1(EXTI_MASK1(STM32_RTC_TAMP_STAMP_EXTI));
 
@@ -385,7 +406,7 @@ OSAL_IRQ_HANDLER(STM32_RTC_WKUP_HANDLER) {
   OSAL_IRQ_PROLOGUE();
 
   isr = RTCD1.rtc->ISR;
-  RTCD1.rtc->ISR = ~RTC_ISR_WUTF;
+  RTCD1.rtc->ISR = isr & ~RTC_ISR_WUTF;
 
   extiClearGroup1(EXTI_MASK1(STM32_RTC_WKUP_EXTI));
 
@@ -410,17 +431,17 @@ OSAL_IRQ_HANDLER(STM32_RTC_ALARM_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  clear = ~(0U
+  clear = (0U
 #if defined(RTC_ISR_ALRAF)
-            | RTC_ISR_ALRAF
+           | RTC_ISR_ALRAF
 #endif
 #if defined(RTC_ISR_ALRBF)
-            | RTC_ISR_ALRBF
+           | RTC_ISR_ALRBF
 #endif
           );
 
   isr = RTCD1.rtc->ISR;
-  RTCD1.rtc->ISR = clear;
+  RTCD1.rtc->ISR = isr & ~clear;
 
   extiClearGroup1(EXTI_MASK1(STM32_RTC_ALARM_EXTI));
 

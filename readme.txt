@@ -75,6 +75,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: STM32 RTCv2 driver now supports callbacks on events.
 - NEW: Added an EXTI helper driver for STM32.
 - NEW: Added demo for STM32L4R9I-Discovery board.
 - NEW: Support for new serial NOR device MX25LM51245G. Other Macronix devices

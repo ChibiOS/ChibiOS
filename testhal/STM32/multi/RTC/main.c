@@ -29,6 +29,7 @@
 #define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
 
 static void cmd_date(BaseSequentialStream *chp, int argc, char *argv[]) {
+  RTCDateTime timespec;
 
   (void)argv;
 
@@ -36,6 +37,16 @@ static void cmd_date(BaseSequentialStream *chp, int argc, char *argv[]) {
     chprintf(chp, "Usage: date\r\n");
     return;
   }
+
+  rtcGetTime(&RTCD1, &timespec);
+  chprintf(chp, "%02d:%02d:%02d (%02d) - %02d-%02d-%04d\r\n",
+           timespec.millisecond / 3600000U,
+           (timespec.millisecond % 3600000U) / 60000U,
+           (timespec.millisecond % 60000U) / 1000U,
+           timespec.millisecond % 1000U,
+           timespec.month,
+           timespec.day,
+           timespec.year + 1980U);
 }
 
 static const ShellCommand commands[] = {
@@ -52,6 +63,8 @@ static const ShellConfig shell_cfg1 = {
 /* Generic code.                                                             */
 /*===========================================================================*/
 
+static sysinterval_t interval = TIME_MS2I(500);
+
 /*
  * LED blinker thread, times are in milliseconds.
  */
@@ -62,9 +75,24 @@ static THD_FUNCTION(Thread1, arg) {
   chRegSetThreadName("blinker");
   while (true) {
     palToggleLine(PORTAB_LINE_LED1);
-    chThdSleepMilliseconds(500);
+    chThdSleep(interval);
     palToggleLine(PORTAB_LINE_LED1);
-    chThdSleepMilliseconds(500);
+    chThdSleep(interval);
+  }
+}
+
+/*
+ * RTC callback.
+ */
+static void alarmcb(RTCDriver *rtcp, rtcevent_t event) {
+
+  (void)rtcp;
+
+  if (event == RTC_EVENT_ALARM_A) {
+    interval = TIME_MS2I(500);
+  }
+  else if (event == RTC_EVENT_ALARM_B) {
+    interval = TIME_MS2I(50);
   }
 }
 
@@ -72,6 +100,20 @@ static THD_FUNCTION(Thread1, arg) {
  * Application entry point.
  */
 int main(void) {
+  static const RTCAlarm alarm1 = {
+    RTC_ALRM_MSK4  |    /* No month/week day match. */
+    RTC_ALRM_MSK3  |    /* No hour match.           */
+    RTC_ALRM_MSK2  |    /* No minutes match.        */
+    RTC_ALRM_ST(0) |
+    RTC_ALRM_SU(0)      /* Match minute start.      */
+  };
+  static const RTCAlarm alarm2 = {
+    RTC_ALRM_MSK4  |    /* No month/week day match. */
+    RTC_ALRM_MSK3  |    /* No hour match.           */
+    RTC_ALRM_MSK2  |    /* No minutes match.        */
+    RTC_ALRM_ST(3) |
+    RTC_ALRM_SU(0)      /* Match minute half.       */
+  };
 
   /*
    * System initializations.
@@ -94,6 +136,10 @@ int main(void) {
 
   /* Creates the blinker thread.*/
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+
+  rtcSetAlarm(&RTCD1, 0, &alarm1);
+  rtcSetAlarm(&RTCD1, 1, &alarm2);
+  rtcSetCallback(&RTCD1, alarmcb);
 
   /* Normal main() thread activity, spawning shells.*/
   while (true) {
