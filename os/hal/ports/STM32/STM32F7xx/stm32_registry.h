@@ -33,6 +33,35 @@
  * @name    STM32F7xx capabilities
  * @{
  */
+
+/*===========================================================================*/
+/* Common.                                                                   */
+/*===========================================================================*/
+
+/* RNG attributes.*/
+#define STM32_HAS_RNG1                      TRUE
+
+/* RTC attributes.*/
+#define STM32_HAS_RTC                       TRUE
+#define STM32_RTC_HAS_SUBSECONDS            TRUE
+#define STM32_RTC_HAS_PERIODIC_WAKEUPS      TRUE
+#define STM32_RTC_NUM_ALARMS                2
+#define STM32_RTC_STORAGE_SIZE              128
+#define STM32_RTC_TAMP_STAMP_HANDLER        Vector48
+#define STM32_RTC_WKUP_HANDLER              Vector4C
+#define STM32_RTC_ALARM_HANDLER             VectorE4
+#define STM32_RTC_TAMP_STAMP_NUMBER         2
+#define STM32_RTC_WKUP_NUMBER               3
+#define STM32_RTC_ALARM_NUMBER              41
+#define STM32_RTC_ALARM_EXTI                17
+#define STM32_RTC_TAMP_STAMP_EXTI           21
+#define STM32_RTC_WKUP_EXTI                 22
+#define STM32_RTC_IRQ_ENABLE() do {                                         \
+  nvicEnableVector(STM32_RTC_TAMP_STAMP_NUMBER, STM32_IRQ_EXTI21_PRIORITY); \
+  nvicEnableVector(STM32_RTC_WKUP_NUMBER, STM32_IRQ_EXTI22_PRIORITY);       \
+  nvicEnableVector(STM32_RTC_ALARM_NUMBER, STM32_IRQ_EXTI17_PRIORITY);      \
+} while (false)
+
 /*===========================================================================*/
 /* STM32F722xx, STM32F723xx, STM32F732xx, STM32F733xx.                       */
 /*===========================================================================*/
@@ -137,7 +166,7 @@
 
 /* EXTI attributes.*/
 #define STM32_EXTI_NUM_LINES                24
-#define STM32_EXTI_IMR_MASK                 0xFF000000
+#define STM32_EXTI_IMR1_MASK                0xFF000000
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
@@ -615,7 +644,7 @@
 
 /* EXTI attributes.*/
 #define STM32_EXTI_NUM_LINES                24
-#define STM32_EXTI_IMR_MASK                 0xFF000000
+#define STM32_EXTI_IMR1_MASK                0xFF000000
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
@@ -1108,7 +1137,7 @@
 
 /* EXTI attributes.*/
 #define STM32_EXTI_NUM_LINES                24
-#define STM32_EXTI_IMR_MASK                 0xFF000000
+#define STM32_EXTI_IMR1_MASK                0xFF000000
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE

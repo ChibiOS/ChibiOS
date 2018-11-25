@@ -90,18 +90,18 @@ MCU  = cortex-m4
 
 # Imported source files and paths.
 CHIBIOS  := ../../../..
-CONFDIR  := ./cfg/stm32l4r5zi_nucleo144
-BUILDDIR := ./build/stm32l4r5zi_nucleo144
-DEPDIR   := ./.dep/stm32l4r5zi_nucleo144
+CONFDIR  := ./cfg/stm32f303_discovery
+BUILDDIR := ./build/stm32f303_discovery
+DEPDIR   := ./.dep/stm32f303_discovery
 
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
 # Startup files.
-include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32l4xx.mk
+include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32f3xx.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/ports/STM32/STM32L4xx+/platform.mk
-include $(CHIBIOS)/os/hal/boards/ST_NUCLEO144_L4R5ZI/board.mk
+include $(CHIBIOS)/os/hal/ports/STM32/STM32F3xx/platform.mk
+include $(CHIBIOS)/os/hal/boards/ST_STM32F3_DISCOVERY/board.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
@@ -116,7 +116,7 @@ include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 include $(CHIBIOS)/os/various/shell/shell.mk
 
 # Define linker script file here.
-LDSCRIPT= $(STARTUPLD)/STM32L4R5xI.ld
+LDSCRIPT= $(STARTUPLD)/STM32F303xC.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
