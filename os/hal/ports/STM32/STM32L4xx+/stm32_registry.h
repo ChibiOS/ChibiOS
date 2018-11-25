@@ -46,6 +46,7 @@
 #define STM32_RTC_HAS_SUBSECONDS            TRUE
 #define STM32_RTC_HAS_PERIODIC_WAKEUPS      TRUE
 #define STM32_RTC_NUM_ALARMS                2
+#define STM32_RTC_STORAGE_SIZE              128
 #define STM32_RTC_TAMP_STAMP_HANDLER        Vector48
 #define STM32_RTC_WKUP_HANDLER              Vector49
 #define STM32_RTC_ALARM_HANDLER             VectorE4

@@ -200,33 +200,59 @@ static uint32_t rtc_encode_date(const RTCDateTime *timespec) {
 }
 
 #if RTC_HAS_STORAGE == TRUE
-/* TODO: Map on the backup SRAM on devices that have it.*/
-static size_t _read(void *instance, ps_offset_t offset,
-                    size_t n, uint8_t *rp) {
+static size_t _getsize(void *instance) {
 
   (void)instance;
-  (void)offset;
-  (void)n;
-  (void)rp;
 
-  return 0;
+  return (size_t)STM32_RTC_STORAGE_SIZE;
+}
+
+static ps_error_t _read(void *instance, ps_offset_t offset,
+                        size_t n, uint8_t *rp) {
+  volatile uint32_t *bkpr = &((RTCDriver *)instance)->rtc->BKP0R;
+  unsigned i;
+
+  chDbgCheck((instance != NULL) && (rp != NULL));
+  chDbgCheck((n > 0U) && (n <= STM32_RTC_STORAGE_SIZE));
+  chDbgCheck((offset < STM32_RTC_STORAGE_SIZE) &&
+             (offset + n <= STM32_RTC_STORAGE_SIZE));
+
+  for (i = 0; i < (unsigned)n; i++) {
+    unsigned index = ((unsigned)offset + i) / sizeof (uint32_t);
+    unsigned shift = ((unsigned)offset + i) % sizeof (uint32_t);
+    *rp++ = (uint8_t)(bkpr[index] >> (shift * 8U));
+  }
+
+  return PS_NO_ERROR;
 }
 
 static ps_error_t _write(void *instance, ps_offset_t offset,
                          size_t n, const uint8_t *wp) {
+  volatile uint32_t *bkpr = &((RTCDriver *)instance)->rtc->BKP0R;
+  unsigned i;
 
-  (void)instance;
-  (void)offset;
-  (void)n;
-  (void)wp;
+  chDbgCheck((instance != NULL) && (wp != NULL));
+  chDbgCheck((n > 0U) && (n <= STM32_RTC_STORAGE_SIZE));
+  chDbgCheck((offset < STM32_RTC_STORAGE_SIZE) &&
+             (offset + n <= STM32_RTC_STORAGE_SIZE));
 
-  return 0;
+  for (i = 0; i < (unsigned)n; i++) {
+    unsigned index = ((unsigned)offset + i) / sizeof (uint32_t);
+    unsigned shift = ((unsigned)offset + i) % sizeof (uint32_t);
+    uint32_t regval = bkpr[index];
+    regval &= ~(0xFFU << (shift * 8U));
+    regval |= (uint32_t)*wp++ << (shift * 8U);
+    bkpr[index] = regval;
+  }
+
+  return PS_NO_ERROR;
 }
 
 /**
  * @brief   VMT for the RTC storage file interface.
  */
 struct RTCDriverVMT _rtc_lld_vmt = {
+  (size_t)0,
   _getsize, _read, _write
 };
 #endif /* RTC_HAS_STORAGE == TRUE */
@@ -493,10 +519,11 @@ void rtc_lld_init(void) {
 
     rtc_enter_init();
 
-    RTCD1.rtc->CR   = STM32_RTC_CR_INIT;
-    RTCD1.rtc->ISR  = RTC_ISR_INIT;     /* Clearing all but RTC_ISR_INIT.   */
-    RTCD1.rtc->PRER = STM32_RTC_PRER_BITS;
-    RTCD1.rtc->PRER = STM32_RTC_PRER_BITS;
+    RTCD1.rtc->CR       = STM32_RTC_CR_INIT;
+    RTCD1.rtc->TAMPCR   = STM32_RTC_TAMPCR_INIT;
+    RTCD1.rtc->ISR      = RTC_ISR_INIT; /* Clearing all but RTC_ISR_INIT.   */
+    RTCD1.rtc->PRER     = STM32_RTC_PRER_BITS;
+    RTCD1.rtc->PRER     = STM32_RTC_PRER_BITS;
 
     rtc_exit_init();
   }

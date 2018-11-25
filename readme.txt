@@ -75,6 +75,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added persistent storage interface to the STM32 RTCv2 driver.
 - NEW: STM32 RTCv2 driver now supports callbacks on events.
 - NEW: Added an EXTI helper driver for STM32.
 - NEW: Added demo for STM32L4R9I-Discovery board.

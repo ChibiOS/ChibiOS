@@ -39,7 +39,7 @@ static void cmd_date(BaseSequentialStream *chp, int argc, char *argv[]) {
   }
 
   rtcGetTime(&RTCD1, &timespec);
-  chprintf(chp, "%02d:%02d:%02d (%02d) - %02d-%02d-%04d\r\n",
+  chprintf(chp, "%02d:%02d:%02d:%03d - %02d-%02d-%04d\r\n",
            timespec.millisecond / 3600000U,
            (timespec.millisecond % 3600000U) / 60000U,
            (timespec.millisecond % 60000U) / 1000U,
@@ -49,8 +49,30 @@ static void cmd_date(BaseSequentialStream *chp, int argc, char *argv[]) {
            timespec.year + 1980U);
 }
 
+static void cmd_storage(BaseSequentialStream *chp, int argc, char *argv[]) {
+  size_t storage_size = psGetStorageSize(&RTCD1);
+  ps_offset_t i;
+
+  (void)argv;
+
+  if (argc > 0) {
+    chprintf(chp, "Usage: storage\r\n");
+    return;
+  }
+
+  for (i = 0U; i < (ps_offset_t)storage_size; i++) {
+    uint8_t val;
+    psRead(&RTCD1, i, 1U, &val);
+    chprintf(chp, "%02x ", val);
+    if (((i + 1) & 15) == 0U) {
+      chprintf(chp, "\r\n");
+    }
+  }
+}
+
 static const ShellCommand commands[] = {
   {"date", cmd_date},
+  {"storage", cmd_storage},
   {NULL, NULL}
 };
 
@@ -140,6 +162,7 @@ int main(void) {
   rtcSetAlarm(&RTCD1, 0, &alarm1);
   rtcSetAlarm(&RTCD1, 1, &alarm2);
   rtcSetCallback(&RTCD1, alarmcb);
+  psWrite(&RTCD1, 0U, 12U, (const uint8_t *)"Hello World!");
 
   /* Normal main() thread activity, spawning shells.*/
   while (true) {

@@ -119,6 +119,17 @@ typedef struct {
 #define getBasePersistentStorage(ip) ((BasePersistentStorage *)&(ip)->vmt)
 
 /**
+ * @brief   Get storage size.
+ *
+ * @param[in] ip        pointer to a @p BasePersistentStorage or derived class
+ * @return              The storage size in bytes.
+ *
+ * @api
+ */
+#define psGetStorageSize(ip)                                                \
+  (ip)->vmt->getsize(ip)
+
+/**
  * @brief   Read operation.
  *
  * @param[in] ip        pointer to a @p BasePersistentStorage or derived class
@@ -140,7 +151,7 @@ typedef struct {
  *
  * @param[in] ip        pointer to a @p BasePersistentStorage or derived class
  * @param[in] offset    persistent storage offset
- * @param[in] n         number of bytes to be programmed
+ * @param[in] n         number of bytes to be written
  * @param[in] wp        pointer to the data buffer
  * @return              An error code.
  * @retval PS_NO_ERROR  if there is no erase operation in progress.

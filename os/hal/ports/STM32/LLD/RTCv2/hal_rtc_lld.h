@@ -51,7 +51,7 @@
 /**
  * @brief   Presence of a local persistent storage.
  */
-#define RTC_HAS_STORAGE             FALSE
+#define RTC_HAS_STORAGE             TRUE
 /** @} */
 
 /**
@@ -114,6 +114,15 @@
  */
 #if !defined(STM32_RTC_CR_INIT) || defined(__DOXYGEN__)
 #define STM32_RTC_CR_INIT                   0
+#endif
+
+/**
+ * @brief   RTC TAMPCR register initialization value.
+ * @note    Use this value to initialize features not directly handled by
+ *          the RTC driver.
+ */
+#if !defined(STM32_RTC_TAMPCR_INIT) || defined(__DOXYGEN__)
+#define STM32_RTC_TAMPCR_INIT               0
 #endif
 /** @} */
 
