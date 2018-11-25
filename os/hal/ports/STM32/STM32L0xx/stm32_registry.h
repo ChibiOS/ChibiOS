@@ -33,6 +33,28 @@
  * @name    STM32L0xx capabilities
  * @{
  */
+
+/*===========================================================================*/
+/* Common.                                                                   */
+/*===========================================================================*/
+
+/* RNG attributes.*/
+#define STM32_HAS_RNG1                      TRUE
+
+/* RTC attributes.*/
+#define STM32_HAS_RTC                       TRUE
+#define STM32_RTC_HAS_SUBSECONDS            TRUE
+#define STM32_RTC_HAS_PERIODIC_WAKEUPS      TRUE
+#define STM32_RTC_NUM_ALARMS                2
+#define STM32_RTC_STORAGE_SIZE              20
+#define STM32_RTC_COMMON_HANDLER            Vector48
+#define STM32_RTC_COMMON_NUMBER             2
+#define STM32_RTC_ALARM_EXTI                17
+#define STM32_RTC_TAMP_STAMP_EXTI           19
+#define STM32_RTC_WKUP_EXTI                 20
+#define STM32_RTC_IRQ_ENABLE()                                              \
+  nvicEnableVector(STM32_RTC_COMMON_NUMBER, STM32_IRQ_EXTI17_20_PRIORITY)
+
 /*===========================================================================*/
 /* STM32L011xx.                                                              */
 /*===========================================================================*/
@@ -96,7 +118,7 @@
 
 /* EXTI attributes.*/
 #define STM32_EXTI_NUM_LINES                23
-#define STM32_EXTI_IMR_MASK                 0xFF840000U
+#define STM32_EXTI_IMR1_MASK                0xFF840000U
 
 #define STM32_EXTI_LINE01_HANDLER           Vector54
 #define STM32_EXTI_LINE23_HANDLER           Vector58
@@ -145,13 +167,6 @@
 
 /* QUADSPI attributes.*/
 #define STM32_HAS_QUADSPI1                  FALSE
-
-/* RTC attributes.*/
-#define STM32_HAS_RTC                       TRUE
-#define STM32_RTC_HAS_SUBSECONDS            TRUE
-#define STM32_RTC_HAS_PERIODIC_WAKEUPS      TRUE
-#define STM32_RTC_NUM_ALARMS                2
-#define STM32_RTC_HAS_INTERRUPTS            FALSE
 
 /* SDIO attributes.*/
 #define STM32_HAS_SDIO                      FALSE
@@ -314,7 +329,7 @@
 
 /* EXTI attributes.*/
 #define STM32_EXTI_NUM_LINES                23
-#define STM32_EXTI_IMR_MASK                 0xFF840000U
+#define STM32_EXTI_IMR1_MASK                0xFF840000U
 
 #define STM32_EXTI_LINE01_HANDLER           Vector54
 #define STM32_EXTI_LINE23_HANDLER           Vector58
@@ -361,13 +376,6 @@
 #define STM32_HAS_I2C2                      FALSE
 #define STM32_HAS_I2C3                      FALSE
 #define STM32_HAS_I2C4                      FALSE
-
-/* RTC attributes.*/
-#define STM32_HAS_RTC                       TRUE
-#define STM32_RTC_HAS_SUBSECONDS            TRUE
-#define STM32_RTC_HAS_PERIODIC_WAKEUPS      TRUE
-#define STM32_RTC_NUM_ALARMS                2
-#define STM32_RTC_HAS_INTERRUPTS            FALSE
 
 /* SDIO attributes.*/
 #define STM32_HAS_SDIO                      FALSE
@@ -535,7 +543,7 @@
 
 /* EXTI attributes.*/
 #define STM32_EXTI_NUM_LINES                23
-#define STM32_EXTI_IMR_MASK                 0xFF840000U
+#define STM32_EXTI_IMR1_MASK                0xFF840000U
 
 #define STM32_EXTI_LINE01_HANDLER           Vector54
 #define STM32_EXTI_LINE23_HANDLER           Vector58
@@ -590,13 +598,6 @@
 
 #define STM32_HAS_I2C3                      FALSE
 #define STM32_HAS_I2C4                      FALSE
-
-/* RTC attributes.*/
-#define STM32_HAS_RTC                       TRUE
-#define STM32_RTC_HAS_SUBSECONDS            TRUE
-#define STM32_RTC_HAS_PERIODIC_WAKEUPS      TRUE
-#define STM32_RTC_NUM_ALARMS                2
-#define STM32_RTC_HAS_INTERRUPTS            FALSE
 
 /* SDIO attributes.*/
 #define STM32_HAS_SDIO                      FALSE
@@ -790,7 +791,7 @@
 
 /* EXTI attributes.*/
 #define STM32_EXTI_NUM_LINES                23
-#define STM32_EXTI_IMR_MASK                 0xFF840000U
+#define STM32_EXTI_IMR1_MASK                0xFF840000U
 
 #define STM32_EXTI_LINE01_HANDLER           Vector54
 #define STM32_EXTI_LINE23_HANDLER           Vector58
@@ -844,13 +845,6 @@
 #define STM32_I2C2_TX_DMA_CHN               0x00007000
 
 #define STM32_HAS_I2C3                      FALSE
-
-/* RTC attributes.*/
-#define STM32_HAS_RTC                       TRUE
-#define STM32_RTC_HAS_SUBSECONDS            TRUE
-#define STM32_RTC_HAS_PERIODIC_WAKEUPS      TRUE
-#define STM32_RTC_NUM_ALARMS                2
-#define STM32_RTC_HAS_INTERRUPTS            FALSE
 
 /* SDIO attributes.*/
 #define STM32_HAS_SDIO                      FALSE
@@ -1049,7 +1043,7 @@
 
 /* EXTI attributes.*/
 #define STM32_EXTI_NUM_LINES                23
-#define STM32_EXTI_IMR_MASK                 0xFF840000U
+#define STM32_EXTI_IMR1_MASK                0xFF840000U
 
 #define STM32_EXTI_LINE01_HANDLER           Vector54
 #define STM32_EXTI_LINE23_HANDLER           Vector58
@@ -1103,13 +1097,6 @@
 #define STM32_I2C2_TX_DMA_CHN               0x00007000
 
 #define STM32_HAS_I2C3                      FALSE
-
-/* RTC attributes.*/
-#define STM32_HAS_RTC                       TRUE
-#define STM32_RTC_HAS_SUBSECONDS            TRUE
-#define STM32_RTC_HAS_PERIODIC_WAKEUPS      TRUE
-#define STM32_RTC_NUM_ALARMS                2
-#define STM32_RTC_HAS_INTERRUPTS            FALSE
 
 /* SDIO attributes.*/
 #define STM32_HAS_SDIO                      FALSE
@@ -1310,7 +1297,7 @@
 
 /* EXTI attributes.*/
 #define STM32_EXTI_NUM_LINES                23
-#define STM32_EXTI_IMR_MASK                 0xFF840000U
+#define STM32_EXTI_IMR1_MASK                0xFF840000U
 
 #define STM32_EXTI_LINE01_HANDLER           Vector54
 #define STM32_EXTI_LINE23_HANDLER           Vector58
@@ -1373,13 +1360,6 @@
 #define STM32_I2C3_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 4) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 6))
 #define STM32_I2C3_TX_DMA_CHN               0x0E0E0000
-
-/* RTC attributes.*/
-#define STM32_HAS_RTC                       TRUE
-#define STM32_RTC_HAS_SUBSECONDS            TRUE
-#define STM32_RTC_HAS_PERIODIC_WAKEUPS      TRUE
-#define STM32_RTC_NUM_ALARMS                2
-#define STM32_RTC_HAS_INTERRUPTS            FALSE
 
 /* SDIO attributes.*/
 #define STM32_HAS_SDIO                      FALSE
@@ -1607,7 +1587,7 @@
 
 /* EXTI attributes.*/
 #define STM32_EXTI_NUM_LINES                23
-#define STM32_EXTI_IMR_MASK                 0xFF840000U
+#define STM32_EXTI_IMR1_MASK                0xFF840000U
 
 #define STM32_EXTI_LINE01_HANDLER           Vector54
 #define STM32_EXTI_LINE23_HANDLER           Vector58
@@ -1670,13 +1650,6 @@
 #define STM32_I2C3_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 4) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 6))
 #define STM32_I2C3_TX_DMA_CHN               0x0E0E0000
-
-/* RTC attributes.*/
-#define STM32_HAS_RTC                       TRUE
-#define STM32_RTC_HAS_SUBSECONDS            TRUE
-#define STM32_RTC_HAS_PERIODIC_WAKEUPS      TRUE
-#define STM32_RTC_NUM_ALARMS                2
-#define STM32_RTC_HAS_INTERRUPTS            FALSE
 
 /* SDIO attributes.*/
 #define STM32_HAS_SDIO                      FALSE
