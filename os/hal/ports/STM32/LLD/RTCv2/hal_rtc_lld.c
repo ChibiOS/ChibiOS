@@ -285,7 +285,9 @@ OSAL_IRQ_HANDLER(STM32_RTC_COMMON_HANDLER) {
 #if defined(RTC_ISR_TAMP3F)
            | RTC_ISR_TAMP3F
 #endif
+#if defined(RTC_ISR_WUTF)
            | RTC_ISR_WUTF
+#endif
 #if defined(RTC_ISR_ALRAF)
            | RTC_ISR_ALRAF
 #endif
@@ -302,12 +304,14 @@ OSAL_IRQ_HANDLER(STM32_RTC_COMMON_HANDLER) {
                   EXTI_MASK1(STM32_RTC_WKUP_EXTI));
 
   if (RTCD1.callback != NULL) {
-    uint32_t cr = RTCD1-rtc->CR;
-    uint32_t tampcr = RTCD1.rtc->TAMPCR;
+    uint32_t cr = RTCD1.rtc->CR;
+    uint32_t tafcr = RTCD1.rtc->TAFCR;
 
+#if defined(RTC_ISR_WUTF)
     if (((cr & RTC_CR_WUTIE) != 0U) && ((isr & RTC_ISR_WUTF) != 0U)) {
       RTCD1.callback(&RTCD1, RTC_EVENT_WAKEUP);
     }
+#endif
 
 #if defined(RTC_ISR_ALRAF)
     if (((cr & RTC_CR_ALRAIE) != 0U) && ((isr & RTC_ISR_ALRAF) != 0U)) {
@@ -329,24 +333,18 @@ OSAL_IRQ_HANDLER(STM32_RTC_COMMON_HANDLER) {
       }
     }
 
+    if ((tafcr & RTC_TAFCR_TAMPIE) != 0U) {
 #if defined(RTC_ISR_TAMP1F)
-    if (((tampcr & RTC_TAMPCR_TAMP1IE) != 0U) &&
-        ((isr & RTC_ISR_TAMP1F) != 0U)) {
-      RTCD1.callback(&RTCD1, RTC_EVENT_TAMP1);
-    }
+      if ((isr & RTC_ISR_TAMP1F) != 0U) {
+        RTCD1.callback(&RTCD1, RTC_EVENT_TAMP1);
+      }
 #endif
 #if defined(RTC_ISR_TAMP2F)
-    if (((tampcr & RTC_TAMPCR_TAMP2IE) != 0U) &&
-        ((isr & RTC_ISR_TAMP2F) != 0U)) {
-      RTCD1.callback(&RTCD1, RTC_EVENT_TAMP2);
-    }
+      if ((isr & RTC_ISR_TAMP2F) != 0U) {
+        RTCD1.callback(&RTCD1, RTC_EVENT_TAMP2);
+      }
 #endif
-#if defined(RTC_ISR_TAMP3F)
-    if (((tampcr & RTC_TAMPCR_TAMP3IE) != 0U) &&
-        ((isr & RTC_ISR_TAMP3F) != 0U)) {
-      RTCD1.callback(&RTCD1, RTC_EVENT_TAMP3);
     }
-#endif
   }
 
   OSAL_IRQ_EPILOGUE();
@@ -520,7 +518,11 @@ void rtc_lld_init(void) {
     rtc_enter_init();
 
     RTCD1.rtc->CR       = STM32_RTC_CR_INIT;
+#if defined(RTC_TAFCR_TAMP1E)
+    RTCD1.rtc->TAFCR    = STM32_RTC_TAMPCR_INIT;
+#else
     RTCD1.rtc->TAMPCR   = STM32_RTC_TAMPCR_INIT;
+#endif
     RTCD1.rtc->ISR      = RTC_ISR_INIT; /* Clearing all but RTC_ISR_INIT.   */
     RTCD1.rtc->PRER     = STM32_RTC_PRER_BITS;
     RTCD1.rtc->PRER     = STM32_RTC_PRER_BITS;

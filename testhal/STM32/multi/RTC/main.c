@@ -49,6 +49,7 @@ static void cmd_date(BaseSequentialStream *chp, int argc, char *argv[]) {
            timespec.year + 1980U);
 }
 
+#if RTC_HAS_STORAGE
 static void cmd_storage(BaseSequentialStream *chp, int argc, char *argv[]) {
   size_t storage_size = psGetStorageSize(&RTCD1);
   ps_offset_t i;
@@ -69,10 +70,13 @@ static void cmd_storage(BaseSequentialStream *chp, int argc, char *argv[]) {
     }
   }
 }
+#endif
 
 static const ShellCommand commands[] = {
   {"date", cmd_date},
+#if RTC_HAS_STORAGE
   {"storage", cmd_storage},
+#endif
   {NULL, NULL}
 };
 
@@ -162,7 +166,9 @@ int main(void) {
   rtcSetAlarm(&RTCD1, 0, &alarm1);
   rtcSetAlarm(&RTCD1, 1, &alarm2);
   rtcSetCallback(&RTCD1, alarmcb);
+#if RTC_HAS_STORAGE
   psWrite(&RTCD1, 0U, 12U, (const uint8_t *)"Hello World!");
+#endif
 
   /* Normal main() thread activity, spawning shells.*/
   while (true) {
