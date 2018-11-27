@@ -137,7 +137,7 @@
 
                 .cpu    cortex-m0
                 .fpu    softvfp
-
+                .syntax unified
                 .thumb
                 .text
 
@@ -191,7 +191,7 @@ msloop:
                 cmp     r1, r2
                 bge     endmsloop
                 str     r0, [r1]
-                add     r1, r1, #4
+                adds    r1, #4
                 b       msloop
 endmsloop:
                 /* Process Stack initialization. Note, it assumes that the
@@ -203,7 +203,7 @@ psloop:
                 cmp     r1, r2
                 bge     endpsloop
                 str     r0, [r1]
-                add     r1, r1, #4
+                adds    r1, #4
                 b       psloop
 endpsloop:
 #endif
@@ -219,8 +219,8 @@ dloop:
                 bge     enddloop
                 ldr     r0, [r1]
                 str     r0, [r2]
-                add     r1, r1, #4
-                add     r2, r2, #4
+                adds    r1, #4
+                adds    r2, #4
                 b       dloop
 enddloop:
 #endif
@@ -235,7 +235,7 @@ bloop:
                 cmp     r1, r2
                 bge     endbloop
                 str     r0, [r1]
-                add     r1, r1, #4
+                adds    r1, #4
                 b       bloop
 endbloop:
 #endif
@@ -257,7 +257,7 @@ initloop:
                 bge     endinitloop
                 ldr     r1, [r4]
                 blx     r1
-                add     r4, r4, #4
+                adds    r4, #4
                 b       initloop
 endinitloop:
 #endif
@@ -274,7 +274,7 @@ finiloop:
                 bge     endfiniloop
                 ldr     r1, [r4]
                 blx     r1
-                add     r4, r4, #4
+                adds    r4, #4
                 b       finiloop
 endfiniloop:
 #endif

@@ -41,6 +41,7 @@ ifneq ($(USE_FPU),no)
   DDEFS  += -DCORTEX_USE_FPU=TRUE
   DADEFS += -DCORTEX_USE_FPU=TRUE
 else
+  OPT    += -mfloat-abi=soft
   DDEFS  += -DCORTEX_USE_FPU=FALSE
   DADEFS += -DCORTEX_USE_FPU=FALSE
 endif
