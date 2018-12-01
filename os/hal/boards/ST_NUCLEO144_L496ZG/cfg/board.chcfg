@@ -45,8 +45,8 @@
   			PinLock="Disabled" Alternate="10" ID="USB_SOF" Resistor="Floating"
   			Mode="Alternate" Level="Low" />
   		<pin9 Type="PushPull" Speed="Minimum" AnalogSwitch="Disabled"
-  			PinLock="Disabled" Alternate="0" ID="USB_VBUS" Resistor="PullUp"
-  			Mode="Input" Level="Low" />
+  			PinLock="Disabled" Alternate="0" ID="USB_VBUS" Resistor="Floating"
+  			Mode="Analog" Level="Low" />
   		<pin10 Type="PushPull" Speed="Maximum" AnalogSwitch="Disabled"
   			PinLock="Disabled" Alternate="10" ID="USB_ID" Resistor="Floating"
   			Mode="Alternate" Level="Low" />

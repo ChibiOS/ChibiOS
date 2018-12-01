@@ -239,7 +239,7 @@
 #define STM32_USBCLK                        STM32_PLL48CLK
 #elif defined(STM32F10X_CL)
 #define STM32_USBCLK                        STM32_OTGFSCLK
-#elif defined(STM32L4XX)
+#elif defined(STM32L4XX) || defined(STM32L4XXP)
 #define STM32_USBCLK                        STM32_48CLK
 #elif  defined(STM32H7XX)
 /* Defines directly STM32_USBCLK.*/

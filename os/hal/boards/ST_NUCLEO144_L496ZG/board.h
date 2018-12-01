@@ -298,7 +298,7 @@
  * PA6  - PIN6                      (analog).
  * PA7  - PIN7                      (analog).
  * PA8  - USB_SOF                   (alternate 10).
- * PA9  - USB_VBUS                  (input pullup).
+ * PA9  - USB_VBUS                  (analog).
  * PA10 - USB_ID                    (alternate 10).
  * PA11 - USB_DM                    (alternate 10).
  * PA12 - USB_DP                    (alternate 10).
@@ -315,7 +315,7 @@
                                      PIN_MODE_ANALOG(GPIOA_PIN6) |          \
                                      PIN_MODE_ANALOG(GPIOA_PIN7) |          \
                                      PIN_MODE_ALTERNATE(GPIOA_USB_SOF) |    \
-                                     PIN_MODE_INPUT(GPIOA_USB_VBUS) |       \
+                                     PIN_MODE_ANALOG(GPIOA_USB_VBUS) |      \
                                      PIN_MODE_ALTERNATE(GPIOA_USB_ID) |     \
                                      PIN_MODE_ALTERNATE(GPIOA_USB_DM) |     \
                                      PIN_MODE_ALTERNATE(GPIOA_USB_DP) |     \
@@ -363,7 +363,7 @@
                                      PIN_PUPDR_FLOATING(GPIOA_PIN6) |       \
                                      PIN_PUPDR_FLOATING(GPIOA_PIN7) |       \
                                      PIN_PUPDR_FLOATING(GPIOA_USB_SOF) |    \
-                                     PIN_PUPDR_PULLUP(GPIOA_USB_VBUS) |     \
+                                     PIN_PUPDR_FLOATING(GPIOA_USB_VBUS) |   \
                                      PIN_PUPDR_FLOATING(GPIOA_USB_ID) |     \
                                      PIN_PUPDR_FLOATING(GPIOA_USB_DM) |     \
                                      PIN_PUPDR_FLOATING(GPIOA_USB_DP) |     \

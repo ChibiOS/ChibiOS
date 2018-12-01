@@ -119,8 +119,8 @@
 				PinLock="Disabled"
 				Alternate="0"
 				ID="USB_VBUS"
-				Resistor="PullUp"
-				Mode="Input"
+				Resistor="Floating"
+				Mode="Analog"
 				Level="Low" />
 			<pin10
 				Type="PushPull"
@@ -141,7 +141,7 @@
 				ID="USB_DM"
 				Resistor="Floating"
 				Mode="Alternate"
-				Level="Low" />
+				Level="Low" ></pin11>
 			<pin12
 				Type="PushPull"
 				Speed="Maximum"

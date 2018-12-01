@@ -22,9 +22,9 @@
  * @{
  */
 
+#include <cfg/stm32l4r5_nucleo144/portab.h>
 #include "hal.h"
 
-#include "portab.h"
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
