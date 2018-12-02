@@ -65,7 +65,7 @@
 #define STM32_VOS                           ${doc.STM32_VOS!"STM32_VOS_SCALE1"}
 #define STM32_PWR_CR1                       ${doc.STM32_PWR_CR1!"(PWR_CR1_SVOS_1 | PWR_CR1_SVOS_0)"}
 #define STM32_PWR_CR2                       ${doc.STM32_PWR_CR2!"(PWR_CR2_BREN)"}
-#define STM32_PWR_CR3                       ${doc.STM32_PWR_CR3!"(PWR_CR3_LDOEN | PWR_CR3_USBREGEN | PWR_CR3_USB33DEN)"}
+#define STM32_PWR_CR3                       ${doc.STM32_PWR_CR3!"(PWR_CR3_LDOEN | PWR_CR3_USB33DEN)"}
 #define STM32_PWR_CPUCR                     ${doc.STM32_PWR_CPUCR!"0"}
 
 /*
@@ -329,6 +329,14 @@
 #define STM32_PWM_TIM5_IRQ_PRIORITY         ${doc.STM32_PWM_TIM5_IRQ_PRIORITY!"7"}
 #define STM32_PWM_TIM8_IRQ_PRIORITY         ${doc.STM32_PWM_TIM8_IRQ_PRIORITY!"7"}
 #define STM32_PWM_TIM9_IRQ_PRIORITY         ${doc.STM32_PWM_TIM9_IRQ_PRIORITY!"7"}
+
+/*
+ * RTC driver system settings.
+ */
+#define STM32_RTC_PRESA_VALUE               32
+#define STM32_RTC_PRESS_VALUE               1024
+#define STM32_RTC_CR_INIT                   0
+#define STM32_RTC_TAMPCR_INIT               0
 
 /*
  * SDC driver system settings.
