@@ -217,7 +217,9 @@
 #define STM32_DMA2_CH7_NUMBER               70
 
 /* ETH attributes.*/
-#define STM32_HAS_ETH                       FALSE
+#define STM32_HAS_ETH                       TRUE
+#define STM32_ETH_HANDLER                   Vector134
+#define STM32_ETH_NUMBER                    61
 
 /* EXTI attributes.*/
 #define STM32_EXTI_NUM_LINES                23
