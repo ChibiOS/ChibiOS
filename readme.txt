@@ -165,6 +165,8 @@
 - EX:  Updated LSM303DLHC to 1.1.0 (backported to 18.2.1).
 - HAL: Fixed ethernet registry error for STM32F469/479 (bug #990)
        (backported to 18.2.2 and 17.6.5).
+- RT:  Fixed bug in chEvtBroadcastFlagsI (bug #989)
+       (backported to 18.2.2 and 17.6.5).
 - HAL: Fixed OS-Less Cortex-M HAL functionality broken (bug #987)
        (backported to 18.2.2).
 - HAL: Fixed broken functionality of MFS module (bug #986)

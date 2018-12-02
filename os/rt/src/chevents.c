@@ -236,7 +236,7 @@ void chEvtBroadcastFlagsI(event_source_t *esp, eventflags_t flags) {
     /* When flags == 0 the thread will always be signaled because the
        source does not emit any flag.*/
     if ((flags == (eventflags_t)0) ||
-        ((elp->flags & elp->wflags) != (eventflags_t)0)) {
+        ((flags & elp->wflags) != (eventflags_t)0)) {
       chEvtSignalI(elp->listener, elp->events);
     }
     elp = elp->next;
