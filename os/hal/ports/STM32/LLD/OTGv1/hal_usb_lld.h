@@ -110,20 +110,6 @@
 #endif
 
 /**
- * @brief   Dedicated data pump threads priority.
- */
-#if !defined(STM32_USB_OTG_THREAD_PRIO) || defined(__DOXYGEN__)
-#define STM32_USB_OTG_THREAD_PRIO           LOWPRIO
-#endif
-
-/**
- * @brief   Dedicated data pump threads stack size.
- */
-#if !defined(STM32_USB_OTG_THREAD_STACK_SIZE) || defined(__DOXYGEN__)
-#define STM32_USB_OTG_THREAD_STACK_SIZE     128
-#endif
-
-/**
  * @brief   Exception priority level during TXFIFOs operations.
  * @note    Because an undocumented silicon behavior the operation of
  *          copying a packet into a TXFIFO must not be interrupted by
@@ -518,26 +504,6 @@ struct USBDriver {
    * @brief   Pointer to the next address in the packet memory.
    */
   uint32_t                      pmnext;
-#if 0
-  /**
-   * @brief   Mask of TXFIFOs to be filled by the pump thread.
-   */
-  uint32_t                      txpending;
-  /**
-   * @brief   Pointer to the thread when it is sleeping or @p NULL.
-   */
-  thread_reference_t            wait;
-#if defined(_CHIBIOS_RT_)
-  /**
-   * @brief   Pointer to the thread.
-   */
-  thread_reference_t            tr;
-  /**
-   * @brief   Working area for the dedicated data pump thread;
-   */
-  THD_WORKING_AREA(wa_pump, STM32_USB_OTG_THREAD_STACK_SIZE);
-#endif
-#endif
 };
 
 /*===========================================================================*/

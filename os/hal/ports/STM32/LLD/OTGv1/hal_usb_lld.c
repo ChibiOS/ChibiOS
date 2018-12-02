@@ -394,17 +394,8 @@ static void otg_epin_handler(USBDriver *usbp, usbep_t ep) {
   }
   if ((epint & DIEPINT_TXFE) &&
       (otgp->DIEPEMPMSK & DIEPEMPMSK_INEPTXFEM(ep))) {
-#if 0
-    /* The thread is made ready, it will be scheduled on ISR exit.*/
-    osalSysLockFromISR();
-    usbp->txpending |= (1 << ep);
-    otgp->DIEPEMPMSK &= ~(1 << ep);
-    osalThreadResumeI(&usbp->wait, MSG_OK);
-    osalSysUnlockFromISR();
-#else
     /* TX FIFO empty or emptying.*/
     otg_txfifo_handler(usbp, ep);
-#endif
   }
 }
 
@@ -492,17 +483,8 @@ static void otg_isoc_in_failed_handler(USBDriver *usbp) {
       /* Prepare data for next frame */
       _usb_isr_invoke_in_cb(usbp, ep);
 
-#if 0
-      /* Pump out data for next frame */
-      osalSysLockFromISR();
-      otgp->DIEPEMPMSK &= ~(1 << ep);
-      usbp->txpending |= (1 << ep);
-      osalThreadResumeI(&usbp->wait, MSG_OK);
-      osalSysUnlockFromISR();
-#else
-    /* TX FIFO empty or emptying.*/
-    otg_txfifo_handler(usbp, ep);
-#endif
+      /* TX FIFO empty or emptying.*/
+      otg_txfifo_handler(usbp, ep);
     }
   }
 }
@@ -550,10 +532,6 @@ static void usb_lld_serve_interrupt(USBDriver *usbp) {
 
   /* Reset interrupt handling.*/
   if (sts & GINTSTS_USBRST) {
-#if 0
-    /* Resetting pending operations.*/
-    usbp->txpending = 0;
-#endif
     /* Default reset action.*/
     _usb_reset(usbp);
 
@@ -578,10 +556,6 @@ static void usb_lld_serve_interrupt(USBDriver *usbp) {
 
   /* Suspend handling.*/
   if (sts & GINTSTS_USBSUSP) {
-#if 0
-    /* Resetting pending operations.*/
-    usbp->txpending = 0;
-#endif
     /* Default suspend action.*/
     _usb_suspend(usbp);
   }
@@ -614,23 +588,11 @@ static void usb_lld_serve_interrupt(USBDriver *usbp) {
     otg_isoc_out_failed_handler(usbp);
   }
 
-  /* RX FIFO not empty handling.*/
-#if 0
-  if (sts & GINTSTS_RXFLVL) {
-    /* The interrupt is masked while the thread has control or it would
-       be triggered again.*/
-    osalSysLockFromISR();
-    otgp->GINTMSK &= ~GINTMSK_RXFLVLM;
-    osalThreadResumeI(&usbp->wait, MSG_OK);
-    osalSysUnlockFromISR();
-  }
-#else
   /* Performing the whole FIFO emptying in the ISR, it is advised to keep
      this IRQ at a very low priority level.*/
   if ((sts & GINTSTS_RXFLVL) != 0U) {
     otg_rxfifo_handler(usbp);
   }
-#endif
 
   /* IN/OUT endpoints event handling.*/
   src = otgp->DAINT;
@@ -746,52 +708,15 @@ void usb_lld_init(void) {
   /* Driver initialization.*/
 #if STM32_USB_USE_OTG1
   usbObjectInit(&USBD1);
-#if 0
-  USBD1.wait      = NULL;
-#endif
   USBD1.otg       = OTG_FS;
   USBD1.otgparams = &fsparams;
 
-#if 0
-#if defined(_CHIBIOS_RT_)
-  USBD1.tr = NULL;
-  /* Filling the thread working area here because the function
-     @p chThdCreateI() does not do it.*/
-#if CH_DBG_FILL_THREADS
-  {
-    void *wsp = USBD1.wa_pump;
-    _thread_memfill((uint8_t *)wsp,
-                    (uint8_t *)wsp + sizeof (USBD1.wa_pump),
-                    CH_DBG_STACK_FILL_VALUE);
-  }
-#endif /* CH_DBG_FILL_THREADS */
-#endif /* defined(_CHIBIOS_RT_) */
-#endif
 #endif
 
 #if STM32_USB_USE_OTG2
   usbObjectInit(&USBD2);
-#if 0
-  USBD2.wait      = NULL;
-#endif
   USBD2.otg       = OTG_HS;
   USBD2.otgparams = &hsparams;
-
-#if 0
-#if defined(_CHIBIOS_RT_)
-  USBD2.tr = NULL;
-  /* Filling the thread working area here because the function
-     @p chThdCreateI() does not do it.*/
-#if CH_DBG_FILL_THREADS
-  {
-    void *wsp = USBD2.wa_pump;
-    _thread_memfill((uint8_t *)wsp,
-                    (uint8_t *)wsp + sizeof (USBD2.wa_pump),
-                    CH_DBG_STACK_FILL_VALUE);
-  }
-#endif /* CH_DBG_FILL_THREADS */
-#endif /* defined(_CHIBIOS_RT_) */
-#endif
 #endif
 }
 
@@ -876,10 +801,6 @@ void usb_lld_start(USBDriver *usbp) {
     }
 #endif
 
-#if 0
-    /* Clearing mask of TXFIFOs to be filled.*/
-    usbp->txpending = 0;
-#endif
     /* PHY enabled.*/
     otgp->PCGCCTL = 0;
 
@@ -929,24 +850,6 @@ void usb_lld_start(USBDriver *usbp) {
     /* Clears all pending IRQs, if any. */
     otgp->GINTSTS  = 0xFFFFFFFF;
 
-#if 0
-#if defined(_CHIBIOS_RT_)
-    /* Creates the data pump thread. Note, it is created only once.*/
-    if (usbp->tr == NULL) {
-      thread_descriptor_t usbpump_descriptor = {
-        "usb_pump",
-        THD_WORKING_AREA_BASE(usbp->wa_pump),
-        THD_WORKING_AREA_END(usbp->wa_pump),
-        STM32_USB_OTG_THREAD_PRIO,
-        usb_lld_pump,
-        (void *)usbp
-      };
-
-      usbp->tr = chThdCreateI(&usbpump_descriptor);
-      chSchRescheduleS();
-  }
-#endif
-#endif
     /* Global interrupts enable.*/
     otgp->GAHBCFG |= GAHBCFG_GINTMSK;
   }
@@ -969,9 +872,6 @@ void usb_lld_stop(USBDriver *usbp) {
        active.*/
     otg_disable_ep(usbp);
 
-#if 0
-    usbp->txpending = 0;
-#endif
     otgp->DAINTMSK   = 0;
     otgp->GAHBCFG    = 0;
     otgp->GCCFG      = 0;
@@ -1349,73 +1249,6 @@ void usb_lld_clear_in(USBDriver *usbp, usbep_t ep) {
 
   usbp->otg->ie[ep].DIEPCTL &= ~DIEPCTL_STALL;
 }
-
-#if 0
-/**
- * @brief   USB data transfer loop.
- * @details This function must be executed by a system thread in order to
- *          make the USB driver work.
- * @note    The data copy part of the driver is implemented in this thread
- *          in order to not perform heavy tasks within interrupt handlers.
- *
- * @param[in] p         pointer to the @p USBDriver object
- *
- * @special
- */
-void usb_lld_pump(void *p) {
-  USBDriver *usbp = (USBDriver *)p;
-  stm32_otg_t *otgp = usbp->otg;
-
-  osalSysLock();
-  while (true) {
-    usbep_t ep;
-    uint32_t epmask;
-
-    /* Nothing to do, going to sleep.*/
-    if ((usbp->state == USB_STOP) ||
-        ((usbp->txpending == 0) && !(otgp->GINTSTS & GINTSTS_RXFLVL))) {
-      otgp->GINTMSK |= GINTMSK_RXFLVLM;
-      osalThreadSuspendS(&usbp->wait);
-    }
-    osalSysUnlock();
-
-    /* Checks if there are TXFIFOs to be filled.*/
-    for (ep = 0; ep <= usbp->otgparams->num_endpoints; ep++) {
-
-      /* Empties the RX FIFO.*/
-      while (otgp->GINTSTS & GINTSTS_RXFLVL) {
-        otg_rxfifo_handler(usbp);
-      }
-
-      epmask = (1 << ep);
-      if (usbp->txpending & epmask) {
-        bool done;
-
-        osalSysLock();
-        /* USB interrupts are globally *suspended* because the peripheral
-           does not allow any interference during the TX FIFO filling
-           operation.
-           Synopsys document: DesignWare Cores USB 2.0 Hi-Speed On-The-Go (OTG)
-             "The application has to finish writing one complete packet before
-              switching to a different channel/endpoint FIFO. Violating this
-              rule results in an error.".*/
-        otgp->GAHBCFG &= ~GAHBCFG_GINTMSK;
-        usbp->txpending &= ~epmask;
-        osalSysUnlock();
-
-        done = otg_txfifo_handler(usbp, ep);
-
-        osalSysLock();
-        otgp->GAHBCFG |= GAHBCFG_GINTMSK;
-        if (!done)
-          otgp->DIEPEMPMSK |= epmask;
-        osalSysUnlock();
-      }
-    }
-    osalSysLock();
-  }
-}
-#endif
 
 #endif /* HAL_USE_USB */
 
