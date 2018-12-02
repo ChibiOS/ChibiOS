@@ -78,6 +78,22 @@
   STM32_DMA_GETCHANNEL(STM32_UART_USART6_TX_DMA_STREAM,                     \
                        STM32_USART6_TX_DMA_CHN)
 
+#define UART7_RX_DMA_CHANNEL                                                \
+  STM32_DMA_GETCHANNEL(STM32_UART_UART7_RX_DMA_STREAM,                      \
+                       STM32_UART7_RX_DMA_CHN)
+
+#define UART7_TX_DMA_CHANNEL                                                \
+  STM32_DMA_GETCHANNEL(STM32_UART_UART7_TX_DMA_STREAM,                      \
+                       STM32_UART7_TX_DMA_CHN)
+
+#define UART8_RX_DMA_CHANNEL                                                \
+  STM32_DMA_GETCHANNEL(STM32_UART_UART8_RX_DMA_STREAM,                      \
+                       STM32_UART8_RX_DMA_CHN)
+
+#define UART8_TX_DMA_CHANNEL                                                \
+  STM32_DMA_GETCHANNEL(STM32_UART_UART8_TX_DMA_STREAM,                      \
+                       STM32_UART8_TX_DMA_CHN)
+
 #define STM32_UART45_CR2_CHECK_MASK                                         \
   (USART_CR2_STOP_0 | USART_CR2_CLKEN | USART_CR2_CPOL | USART_CR2_CPHA |   \
    USART_CR2_LBCL)
@@ -118,6 +134,16 @@ UARTDriver UARTD5;
 /** @brief USART6 UART driver identifier.*/
 #if STM32_UART_USE_USART6 || defined(__DOXYGEN__)
 UARTDriver UARTD6;
+#endif
+
+/** @brief UART7 UART driver identifier.*/
+#if STM32_UART_USE_UART7 || defined(__DOXYGEN__)
+UARTDriver UARTD7;
+#endif
+
+/** @brief UART8 UART driver identifier.*/
+#if STM32_UART_USE_UART8 || defined(__DOXYGEN__)
+UARTDriver UARTD8;
 #endif
 
 /*===========================================================================*/
@@ -442,6 +468,44 @@ OSAL_IRQ_HANDLER(STM32_USART6_HANDLER) {
 }
 #endif /* STM32_UART_USE_USART6 */
 
+#if STM32_UART_USE_UART7 || defined(__DOXYGEN__)
+#if !defined(STM32_UART7_HANDLER)
+#error "STM32_UART7_HANDLER not defined"
+#endif
+/**
+ * @brief   UART7 IRQ handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_UART7_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  serve_usart_irq(&UARTD7);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif /* STM32_UART_USE_UART7 */
+
+#if STM32_UART_USE_UART8 || defined(__DOXYGEN__)
+#if !defined(STM32_UART8_HANDLER)
+#error "STM32_UART8_HANDLER not defined"
+#endif
+/**
+ * @brief   UART8 IRQ handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_UART8_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  serve_usart_irq(&UARTD8);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif /* STM32_UART_USE_UART8 */
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -498,6 +562,22 @@ void uart_lld_init(void) {
   UARTD6.usart   = USART6;
   UARTD6.dmarx   = STM32_DMA_STREAM(STM32_UART_USART6_RX_DMA_STREAM);
   UARTD6.dmatx   = STM32_DMA_STREAM(STM32_UART_USART6_TX_DMA_STREAM);
+#endif
+
+#if STM32_UART_USE_UART7
+  uartObjectInit(&UARTD7);
+  UARTD7.usart   = UART7;
+  UARTD7.dmamode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
+  UARTD7.dmarx   = STM32_DMA_STREAM(STM32_UART_UART7_RX_DMA_STREAM);
+  UARTD7.dmatx   = STM32_DMA_STREAM(STM32_UART_UART7_TX_DMA_STREAM);
+#endif
+
+#if STM32_UART_USE_UART8
+  uartObjectInit(&UARTD8);
+  UARTD8.usart   = UART8;
+  UARTD8.dmamode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
+  UARTD8.dmarx   = STM32_DMA_STREAM(STM32_UART_UART8_RX_DMA_STREAM);
+  UARTD8.dmatx   = STM32_DMA_STREAM(STM32_UART_UART8_TX_DMA_STREAM);
 #endif
 }
 
@@ -643,6 +723,58 @@ void uart_lld_start(UARTDriver *uartp) {
     }
 #endif
 
+#if STM32_UART_USE_UART7
+    if (&UARTD7 == uartp) {
+      bool b;
+
+      osalDbgAssert((uartp->config->cr2 & STM32_UART45_CR2_CHECK_MASK) == 0,
+                    "specified invalid bits in UART7 CR2 register settings");
+      osalDbgAssert((uartp->config->cr3 & STM32_UART45_CR3_CHECK_MASK) == 0,
+                    "specified invalid bits in UART7 CR3 register settings");
+
+      b = dmaStreamAllocate(uartp->dmarx,
+                            STM32_UART_UART7_IRQ_PRIORITY,
+                            (stm32_dmaisr_t)uart_lld_serve_rx_end_irq,
+                            (void *)uartp);
+      osalDbgAssert(!b, "stream already allocated");
+      b = dmaStreamAllocate(uartp->dmatx,
+                            STM32_UART_UART7_IRQ_PRIORITY,
+                            (stm32_dmaisr_t)uart_lld_serve_tx_end_irq,
+                            (void *)uartp);
+      osalDbgAssert(!b, "stream already allocated");
+      rccEnableUART7(true);
+      nvicEnableVector(STM32_UART7_NUMBER, STM32_UART_UART7_IRQ_PRIORITY);
+      uartp->dmamode |= STM32_DMA_CR_CHSEL(UART7_RX_DMA_CHANNEL) |
+                        STM32_DMA_CR_PL(STM32_UART_UART7_DMA_PRIORITY);
+    }
+#endif
+
+#if STM32_UART_USE_UART8
+    if (&UARTD8 == uartp) {
+      bool b;
+
+      osalDbgAssert((uartp->config->cr2 & STM32_UART45_CR2_CHECK_MASK) == 0,
+                    "specified invalid bits in UART8 CR2 register settings");
+      osalDbgAssert((uartp->config->cr3 & STM32_UART45_CR3_CHECK_MASK) == 0,
+                    "specified invalid bits in UART8 CR3 register settings");
+
+      b = dmaStreamAllocate(uartp->dmarx,
+                            STM32_UART_UART8_IRQ_PRIORITY,
+                            (stm32_dmaisr_t)uart_lld_serve_rx_end_irq,
+                            (void *)uartp);
+      osalDbgAssert(!b, "stream already allocated");
+      b = dmaStreamAllocate(uartp->dmatx,
+                            STM32_UART_UART8_IRQ_PRIORITY,
+                            (stm32_dmaisr_t)uart_lld_serve_tx_end_irq,
+                            (void *)uartp);
+      osalDbgAssert(!b, "stream already allocated");
+      rccEnableUART8(true);
+      nvicEnableVector(STM32_UART8_NUMBER, STM32_UART_UART8_IRQ_PRIORITY);
+      uartp->dmamode |= STM32_DMA_CR_CHSEL(UART8_RX_DMA_CHANNEL) |
+                        STM32_DMA_CR_PL(STM32_UART_UART8_DMA_PRIORITY);
+    }
+#endif
+
     /* Static DMA setup, the transfer size depends on the USART settings,
        it is 16 bits if M=1 and PCE=0 else it is 8 bits.*/
     if ((uartp->config->cr1 & (USART_CR1_M | USART_CR1_PCE)) == USART_CR1_M)
@@ -715,6 +847,22 @@ void uart_lld_stop(UARTDriver *uartp) {
     if (&UARTD6 == uartp) {
       nvicDisableVector(STM32_USART6_NUMBER);
       rccDisableUSART6();
+      return;
+    }
+#endif
+
+#if STM32_UART_USE_UART7
+    if (&UARTD7 == uartp) {
+      nvicDisableVector(STM32_UART7_NUMBER);
+      rccDisableUART7();
+      return;
+    }
+#endif
+
+#if STM32_UART_USE_UART8
+    if (&UARTD8 == uartp) {
+      nvicDisableVector(STM32_UART8_NUMBER);
+      rccDisableUART8();
       return;
     }
 #endif

@@ -75,6 +75,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added UART7/8 support to STM32 UART USARTv1 driver.
 - NEW: Added persistent storage interface to the STM32 RTCv2 driver.
 - NEW: STM32 RTCv2 driver now supports callbacks on events.
 - NEW: Added an EXTI helper driver for STM32.
