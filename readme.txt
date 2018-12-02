@@ -95,6 +95,7 @@
 - NEW: Added new functions to objects fifos: chFifoReturnObjectS(),
        chFifoSendObjectAheadI(), chFifoSendObjectAheadS() and
        chFifoSendObjectAhead().
+- HAL: Fixed ethernet registry error for STM32F469/479 (bug #990).
 - HAL: Fixed NULL pointer dereferenced in N25Q driver (bug #988).
 - HAL: Fixed OS-Less Cortex-M HAL functionality broken (bug #987).
 - HAL: Fixed broken functionality of MFS module (bug #986).
