@@ -572,6 +572,13 @@
 #error "Using a wrong mcuconf.h file, STM32F3xx_MCUCONF not defined"
 #endif
 
+/* Only some devices have strongly checked mcuconf.h files. Others will be
+   added gradually.*/
+#if (defined(STM32F303xC) || defined(STM32F303xE)) &&                       \
+    !defined(STM32F303_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32F303_MCUCONF not defined"
+#endif
+
 /*
  * HSI related checks.
  */
