@@ -388,12 +388,12 @@ size_t ibqReadTimeout(input_buffers_queue_t *ibqp, uint8_t *bp,
 
     /* Smaller chunks in order to not make the critical zone too long,
        this impacts throughput however.*/
-    if (size > 64U) {
+    if (size > (size_t)BUFFERS_CHUNKS_SIZE) {
       /* Giving the compiler a chance to optimize for a fixed size move.*/
-      memcpy(bp, ibqp->ptr, 64U);
-      bp        += 64U;
-      ibqp->ptr += 64U;
-      r         += 64U;
+      memcpy(bp, ibqp->ptr, BUFFERS_CHUNKS_SIZE);
+      bp        += (size_t)BUFFERS_CHUNKS_SIZE;
+      ibqp->ptr += (size_t)BUFFERS_CHUNKS_SIZE;
+      r         += (size_t)BUFFERS_CHUNKS_SIZE;
     }
     else {
       memcpy(bp, ibqp->ptr, size);
@@ -751,12 +751,12 @@ size_t obqWriteTimeout(output_buffers_queue_t *obqp, const uint8_t *bp,
 
     /* Smaller chunks in order to not make the critical zone too long,
        this impacts throughput however.*/
-    if (size > 64U) {
+    if (size > (size_t)BUFFERS_CHUNKS_SIZE) {
       /* Giving the compiler a chance to optimize for a fixed size move.*/
-      memcpy(obqp->ptr, bp, 64U);
-      bp        += 64U;
-      obqp->ptr += 64U;
-      w         += 64U;
+      memcpy(obqp->ptr, bp, (size_t)BUFFERS_CHUNKS_SIZE);
+      bp        += (size_t)BUFFERS_CHUNKS_SIZE;
+      obqp->ptr += (size_t)BUFFERS_CHUNKS_SIZE;
+      w         += (size_t)BUFFERS_CHUNKS_SIZE;
     }
     else {
       memcpy(obqp->ptr, bp, size);
