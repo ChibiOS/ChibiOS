@@ -143,37 +143,6 @@ typedef void (*spicallback_t)(SPIDriver *spip);
 #include "hal_spi_lld.h"
 
 /**
- * @brief   Structure representing an SPI driver.
- */
-struct hal_spi_driver {
-  /**
-   * @brief Driver state.
-   */
-  spistate_t                state;
-  /**
-   * @brief Current configuration data.
-   */
-  const SPIConfig           *config;
-#if SPI_USE_WAIT || defined(__DOXYGEN__)
-  /**
-   * @brief   Waiting thread.
-   */
-  thread_reference_t        thread;
-#endif /* SPI_USE_WAIT */
-#if SPI_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
-  /**
-   * @brief   Mutex protecting the peripheral.
-   */
-  mutex_t                   mutex;
-#endif /* SPI_USE_MUTUAL_EXCLUSION */
-#if defined(SPI_DRIVER_EXT_FIELDS)
-  SPI_DRIVER_EXT_FIELDS
-#endif
-  /* End of the mandatory fields.*/
-  spi_lld_driver_fields;
-};
-
-/**
  * @brief   Driver configuration structure.
  */
 struct hal_spi_config {
@@ -215,6 +184,37 @@ struct hal_spi_config {
 #endif
   /* End of the mandatory fields.*/
   spi_lld_config_fields;
+};
+
+/**
+ * @brief   Structure representing an SPI driver.
+ */
+struct hal_spi_driver {
+  /**
+   * @brief Driver state.
+   */
+  spistate_t                state;
+  /**
+   * @brief Current configuration data.
+   */
+  const SPIConfig           *config;
+#if SPI_USE_WAIT || defined(__DOXYGEN__)
+  /**
+   * @brief   Waiting thread.
+   */
+  thread_reference_t        thread;
+#endif /* SPI_USE_WAIT */
+#if SPI_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
+  /**
+   * @brief   Mutex protecting the peripheral.
+   */
+  mutex_t                   mutex;
+#endif /* SPI_USE_MUTUAL_EXCLUSION */
+#if defined(SPI_DRIVER_EXT_FIELDS)
+  SPI_DRIVER_EXT_FIELDS
+#endif
+  /* End of the mandatory fields.*/
+  spi_lld_driver_fields;
 };
 
 /*===========================================================================*/

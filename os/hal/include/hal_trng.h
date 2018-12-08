@@ -56,9 +56,45 @@ typedef enum {
 /**
  * @brief   Type of a structure representing a TRNG driver.
  */
-typedef struct TRNGDriver TRNGDriver;
+typedef struct hal_trng_driver TRNGDriver;
 
+/**
+ * @brief   Driver configuration structure.
+ * @note    It could be empty on some architectures.
+ */
+typedef struct hal_trng_config TRNGConfig;
+
+
+/* Including the low level driver header, it exports information required
+   for completing types.*/
 #include "hal_trng_lld.h"
+
+/**
+ * @brief   Driver configuration structure.
+ */
+struct hal_trng_config {
+  /* End of the mandatory fields.*/
+  trng_lld_config_fields;
+};
+
+/**
+ * @brief   Structure representing a TRNG driver.
+ */
+struct hal_trng_driver {
+  /**
+   * @brief Driver state.
+   */
+  trngstate_t                state;
+  /**
+   * @brief Current configuration data.
+   */
+  const TRNGConfig           *config;
+#if defined(TRNG_DRIVER_EXT_FIELDS)
+  TRNG_DRIVER_EXT_FIELDS
+#endif
+  /* End of the mandatory fields.*/
+  trng_lld_driver_fields;
+};
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

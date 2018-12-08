@@ -57,39 +57,21 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
-/**
- * @brief   Driver configuration structure.
- * @note    It could be empty on some architectures.
- */
-typedef struct {
-  /* End of the mandatory fields.*/
-  /**
-   * @brief   Dummy configuration, it is not needed..
-   */
-  uint32_t                   dummy;
-} TRNGConfig;
-
-/**
- * @brief   Structure representing a TRNG driver.
- */
-struct TRNGDriver {
-  /**
-   * @brief Driver state.
-   */
-  trngstate_t                state;
-  /**
-   * @brief Current configuration data.
-   */
-  const TRNGConfig           *config;
-#if defined(TRNG_DRIVER_EXT_FIELDS)
-  TRNG_DRIVER_EXT_FIELDS
-#endif
-  /* End of the mandatory fields.*/
-};
-
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Low level fields of the TRNG configuration structure.
+ */
+#define trng_lld_config_fields                                              \
+  /* Dummy configuration, it is not needed.*/                               \
+  uint32_t                   dummy
+
+/**
+ * @brief   Low level fields of the TRNG driver structure.
+ */
+#define trng_lld_driver_fields
 
 /*===========================================================================*/
 /* External declarations.                                                    */
