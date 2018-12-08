@@ -25,6 +25,18 @@
 #include <stdbool.h>
 
 /**
+ * @brief   Architecture-dependent core initialization.
+ * @details This hook is invoked immediately after the stack initialization
+ *          and before the DATA and BSS segments initialization.
+ * @note    This function is a weak symbol.
+ */
+#if !defined(__DOXYGEN__)
+__attribute__((weak))
+#endif
+/*lint -save -e9075 [8.4] All symbols are invoked from asm context.*/
+void __core_init(void) {}
+
+/**
  * @brief   Early initialization.
  * @details This hook is invoked immediately after the stack initialization
  *          and before the DATA and BSS segments initialization. The

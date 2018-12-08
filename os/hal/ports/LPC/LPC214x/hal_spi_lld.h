@@ -32,6 +32,11 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Circular mode support flag.
+ */
+#define SPI_SUPPORTS_CIRCULAR           FALSE
+
+/**
  * @brief   Hardware FIFO depth.
  */
 #define LPC214x_SSP_FIFO_DEPTH          8
@@ -61,7 +66,7 @@
  * @details The default action is to stop the system.
  */
 #if !defined(LPC214x_SPI_SSP_ERROR_HOOK) || defined(__DOXYGEN__)
-#define LPC214x_SPI_SSP_ERROR_HOOK()    osalSysHalt()
+#define LPC214x_SPI_SSP_ERROR_HOOK()    osalSysHalt("overflow")
 #endif
 
 /*===========================================================================*/
@@ -76,121 +81,33 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
-/**
- * @brief   Type of a structure representing an SPI driver.
- */
-typedef struct SPIDriver SPIDriver;
-
-/**
- * @brief   SPI notification callback type.
- *
- * @param[in] spip      pointer to the @p SPIDriver object triggering the
- *                      callback
- */
-typedef void (*spicallback_t)(SPIDriver *spip);
-
-/**
- * @brief   Driver configuration structure.
- */
-typedef struct {
-  /**
-   * @brief Operation complete callback or @p NULL.
-   */
-  spicallback_t             end_cb;
-#if (SPI_SELECT_MODE == SPI_SELECT_MODE_LINE) || defined(__DOXYGEN__)
-  /**
-   * @brief The chip select line.
-   */
-  ioline_t                  ssline;
-#endif
-#if (SPI_SELECT_MODE == SPI_SELECT_MODE_PORT) || defined(__DOXYGEN__)
-  /**
-   * @brief The chip select port.
-   */
-  ioportid_t                ssport;
-  /**
-   * @brief The chip select port mask.
-   */
-  ioportmask_t              ssmask;
-#endif
-#if (SPI_SELECT_MODE == SPI_SELECT_MODE_PAD) || defined(__DOXYGEN__)
-  /**
-   * @brief The chip select port.
-   */
-  ioportid_t                ssport;
-  /**
-   * @brief The chip select pad number.
-   */
-  uint_fast8_t              sspad;
-#endif
-  /* End of the mandatory fields.*/
-  /**
-   * @brief SSP CR0 initialization data.
-   */
-  uint16_t                  cr0;
-  /**
-   * @brief SSP CPSR initialization data.
-   */
-  uint32_t                  cpsr;
-} SPIConfig;
-
-/**
- * @brief   Structure representing a SPI driver.
- */
-struct SPIDriver {
-  /**
-   * @brief Driver state.
-   */
-  spistate_t            state;
-  /**
-   * @brief Current configuration data.
-   */
-  const SPIConfig       *config;
-#if SPI_USE_WAIT || defined(__DOXYGEN__)
-  /**
-   * @brief Waiting thread.
-   */
-  Thread                *thread;
-#endif /* SPI_USE_WAIT */
-#if SPI_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
-#if CH_USE_MUTEXES || defined(__DOXYGEN__)
-  /**
-   * @brief Mutex protecting the bus.
-   */
-  Mutex                 mutex;
-#elif CH_USE_SEMAPHORES
-  Semaphore             semaphore;
-#endif
-#endif /* SPI_USE_MUTUAL_EXCLUSION */
-#if defined(SPI_DRIVER_EXT_FIELDS)
-  SPI_DRIVER_EXT_FIELDS
-#endif
-  /* End of the mandatory fields.*/
-  /**
-   * @brief Pointer to the SSP registers block.
-   */
-  SSP                   *ssp;
-  /**
-   * @brief Number of bytes yet to be received.
-   */
-  uint32_t              rxcnt;
-  /**
-   * @brief Receive pointer or @p NULL.
-   */
-  void                  *rxptr;
-  /**
-   * @brief Number of bytes yet to be transmitted.
-   */
-  uint32_t              txcnt;
-  /**
-   * @brief Transmit pointer or @p NULL.
-   */
-  const void            *txptr;
-};
-
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Low level fields of the SPI driver structure.
+ */
+#define spi_lld_driver_fields                                               \
+  /* Pointer to the SSP registers block.*/                                  \
+  SSP                   *ssp;                                               \
+  /* Number of bytes yet to be received.*/                                  \
+  uint32_t              rxcnt;                                              \
+  /* Receive pointer or @p NULL.*/                                          \
+  void                  *rxptr;                                             \
+  /* Number of bytes yet to be transmitted.*/                               \
+  uint32_t              txcnt;                                              \
+  /* Transmit pointer or @p NULL.*/                                         \
+  const void            *txptr
+
+/**
+ * @brief   Low level fields of the SPI configuration structure.
+ */
+#define spi_lld_config_fields                                               \
+  /* SSP CR0 initialization data.*/                                         \
+  uint16_t                  cr0;                                            \
+  /* SSP CPSR initialization data.*/                                        \
+  uint32_t                  cpsr
 
 /*===========================================================================*/
 /* External declarations.                                                    */
