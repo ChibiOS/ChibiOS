@@ -95,6 +95,7 @@
 - NEW: Added new functions to objects fifos: chFifoReturnObjectS(),
        chFifoSendObjectAheadI(), chFifoSendObjectAheadS() and
        chFifoSendObjectAhead().
+- HAL: Fixed STM32F7xx I2SPLL not fully initialized (bug #992).
 - HAL: Fixed ethernet registry error for STM32F469/479 (bug #990).
 - RT:  Fixed bug in chEvtBroadcastFlagsI (bug #989).
 - HAL: Fixed NULL pointer dereferenced in N25Q driver (bug #988).
