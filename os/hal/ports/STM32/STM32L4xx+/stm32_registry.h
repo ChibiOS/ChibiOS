@@ -380,10 +380,12 @@
 #define STM32_IWDG_IS_WINDOWED              TRUE
 
 /* LTDC attributes.*/
-#define STM32_HAS_LTDC                      FALSE
+#define STM32_HAS_LTDC                      TRUE
 
 /* DMA2D attributes.*/
-#define STM32_HAS_DMA2D                     FALSE
+#define STM32_HAS_DMA2D                     TRUE
+#define STM32_DMA2D_NUMBER                  90
+#define STM32_DMA2D_HANDLER                 Vector1A8
 
 /* FSMC attributes.*/
 #define STM32_HAS_FSMC                      TRUE
@@ -391,6 +393,11 @@
 /* CRC attributes.*/
 #define STM32_HAS_CRC                       TRUE
 #define STM32_CRC_PROGRAMMABLE              TRUE
+
+/* DCMI attributes.*/
+#define STM32_HAS_DCMI                      TRUE
+#define STM32_DCMI_NUMBER                   85
+#define STM32_DCMI_HANDLER                  Vector14C
 
 #endif /* defined(STM32L4R5xx) || defined(STM32L4R7xx) ||
           defined(STM32L4R9xx) || defined(STM32L4S5xx) ||
