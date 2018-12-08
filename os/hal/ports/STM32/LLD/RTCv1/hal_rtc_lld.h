@@ -111,11 +111,11 @@ typedef struct hsl_rtc_alarm {
 /**
  * @brief   Implementation-specific @p RTCDriver fields.
  */
-#define _rtc_lld_driver_fields                                              \
+#define rtc_lld_driver_fields                                               \
   /* Pointer to the RTC registers block.*/                                  \
   RTC_TypeDef               *rtc;                                           \
   /* Callback pointer.*/                                                    \
-  rtccb_t           callback;
+  rtccb_t           callback
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
