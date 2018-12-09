@@ -76,7 +76,128 @@ typedef enum {
   ADC_ERROR = 5                             /**< Conversion error.          */
 } adcstate_t;
 
+/**
+ * @brief   Type of a structure representing an ADC driver.
+ */
+typedef struct hal_adc_driver ADCDriver;
+
+/**
+ * @brief   Type of a structure representing an ADC driver configuration.
+ */
+typedef struct hal_adc_config ADCConfig;
+
+/**
+ * @brief   Conversion group configuration structure.
+ * @details This implementation-dependent structure describes a conversion
+ *          operation.
+ * @note    The use of this configuration structure requires knowledge of
+ *          STM32 ADC cell registers interface, please refer to the STM32
+ *          reference manual for details.
+ */
+typedef struct hal_adc_configuration_group ADCConversionGroup;
+
+/* Including the low level driver header, it exports information required
+   for completing types.*/
 #include "hal_adc_lld.h"
+
+/**
+ * @brief   Type of an ADC notification callback.
+ *
+ * @param[in] adcp      pointer to the @p ADCDriver object triggering the
+ *                      callback
+ * @param[in] buffer    pointer to the most recent samples data
+ * @param[in] n         number of buffer rows available starting from @p buffer
+ */
+typedef void (*adccallback_t)(ADCDriver *adcp, adcsample_t *buffer, size_t n);
+
+/**
+ * @brief   Type of an ADC error callback.
+ *
+ * @param[in] adcp      pointer to the @p ADCDriver object triggering the
+ *                      callback
+ * @param[in] err       ADC error code
+ */
+typedef void (*adcerrorcallback_t)(ADCDriver *adcp, adcerror_t err);
+
+/**
+ * @brief   Conversion group configuration structure.
+ * @details This implementation-dependent structure describes a conversion
+ *          operation.
+ * @note    The use of this configuration structure requires knowledge of
+ *          STM32 ADC cell registers interface, please refer to the STM32
+ *          reference manual for details.
+ */
+struct hal_adc_configuration_group {
+  /**
+   * @brief   Enables the circular buffer mode for the group.
+   */
+  bool                      circular;
+  /**
+   * @brief   Number of the analog channels belonging to the conversion group.
+   */
+  adc_channels_num_t        num_channels;
+  /**
+   * @brief   Callback function associated to the group or @p NULL.
+   */
+  adccallback_t             end_cb;
+  /**
+   * @brief   Error callback or @p NULL.
+   */
+  adcerrorcallback_t        error_cb;
+  /* End of the mandatory fields.*/
+  adc_lld_configuration_group_fields;
+};
+
+/**
+ * @brief   Driver configuration structure.
+ */
+struct hal_adc_config {
+  /* End of the mandatory fields.*/
+  adc_lld_config_fields;
+};
+
+/**
+ * @brief   Structure representing an ADC driver.
+ */
+struct hal_adc_driver {
+  /**
+   * @brief Driver state.
+   */
+  adcstate_t                state;
+  /**
+   * @brief Current configuration data.
+   */
+  const ADCConfig           *config;
+  /**
+   * @brief Current samples buffer pointer or @p NULL.
+   */
+  adcsample_t               *samples;
+  /**
+   * @brief Current samples buffer depth or @p 0.
+   */
+  size_t                    depth;
+  /**
+   * @brief Current conversion group pointer or @p NULL.
+   */
+  const ADCConversionGroup  *grpp;
+#if ADC_USE_WAIT || defined(__DOXYGEN__)
+  /**
+   * @brief Waiting thread.
+   */
+  thread_reference_t        thread;
+#endif
+#if ADC_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
+  /**
+   * @brief Mutex protecting the peripheral.
+   */
+  mutex_t                   mutex;
+#endif /* ADC_USE_MUTUAL_EXCLUSION */
+#if defined(ADC_DRIVER_EXT_FIELDS)
+  ADC_DRIVER_EXT_FIELDS
+#endif
+  /* End of the mandatory fields.*/
+  adc_lld_driver_fields;
+};
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

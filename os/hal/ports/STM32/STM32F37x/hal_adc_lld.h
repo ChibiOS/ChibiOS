@@ -361,202 +361,135 @@ typedef enum {
   ADC_ERR_AWD1 = 2                          /**< Watchdog 1 triggered.      */
 } adcerror_t;
 
-/**
- * @brief   Type of a structure representing an ADC driver.
- */
-typedef struct ADCDriver ADCDriver;
-
-/**
- * @brief   ADC notification callback type.
- *
- * @param[in] adcp      pointer to the @p ADCDriver object triggering the
- *                      callback
- * @param[in] buffer    pointer to the most recent samples data
- * @param[in] n         number of buffer rows available starting from @p buffer
- */
-typedef void (*adccallback_t)(ADCDriver *adcp, adcsample_t *buffer, size_t n);
-
-/**
- * @brief   ADC error callback type.
- *
- * @param[in] adcp      pointer to the @p ADCDriver object triggering the
- *                      callback
- * @param[in] err       ADC error code
- */
-typedef void (*adcerrorcallback_t)(ADCDriver *adcp, adcerror_t err);
-
-/**
- * @brief   Conversion group configuration structure.
- * @details This implementation-dependent structure describes a conversion
- *          operation.
- * @note    The use of this configuration structure requires knowledge of
- *          STM32 ADC cell registers interface, please refer to the STM32
- *          reference manual for details.
- */
-typedef struct {
-  /**
-   * @brief   Enables the circular buffer mode for the group.
-   */
-  bool                      circular;
-  /**
-   * @brief   Number of the analog channels belonging to the conversion group.
-   */
-  adc_channels_num_t        num_channels;
-  /**
-   * @brief   Callback function associated to the group or @p NULL.
-   */
-  adccallback_t             end_cb;
-  /**
-   * @brief   Error callback or @p NULL.
-   */
-  adcerrorcallback_t        error_cb;
-  /* End of the mandatory fields.*/
-
-  /**
-   * @brief  Union of ADC and SDADC config parms.  The decision of which struct 
-   *         union to use is determined by the ADCDriver.  If the ADCDriver adc parm
-   *         is not NULL, then use the adc struct, otherwise if the ADCDriver sdadc parm
-   *         is not NULL, then use the sdadc struct.
-   */
-  union { 
-#if STM32_ADC_USE_ADC || defined(__DOXYGEN__)
-    struct {
-      /**
-       * @brief   ADC CR1 register initialization data.
-       * @note    All the required bits must be defined into this field except
-       *          @p ADC_CR1_SCAN that is enforced inside the driver.
-       */
-      uint32_t                  cr1;
-      /**
-       * @brief   ADC CR2 register initialization data.
-       * @note    All the required bits must be defined into this field except
-       *          @p ADC_CR2_DMA, @p ADC_CR2_CONT and @p ADC_CR2_ADON that are
-       *          enforced inside the driver.
-       */
-      uint32_t                  cr2;
-      /**
-       * @brief   ADC LTR register initialization data.
-       */
-      uint32_t                  ltr;
-      /**
-       * @brief   ADC HTR register initialization data.
-       */
-      uint32_t                  htr;
-      /**
-       * @brief   ADC SMPRx registers initialization data.
-       */
-      uint32_t                  smpr[2];
-      /**
-       * @brief   ADC SQRx register initialization data.
-       */
-      uint32_t                  sqr[3];
-    } adc;
-#endif /* STM32_ADC_USE_ADC */
-#if STM32_ADC_USE_SDADC || defined(__DOXYGEN__)
-    struct {
-      /**
-       * @brief   SDADC CR2 register initialization data.
-       * @note    Only the @p SDADC_CR2_JSWSTART, @p SDADC_CR2_JEXTSEL
-       *          and @p SDADC_CR2_JEXTEN can be specified in this field.
-       */
-      uint32_t                  cr2;
-      /**
-       * @brief   SDADC JCHGR register initialization data.
-       */
-      uint32_t                  jchgr;
-      /**
-       * @brief   SDADC CONFCHxR registers initialization data.
-       */
-      uint32_t                  confchr[2];
-    } sdadc;
-#endif /* STM32_ADC_USE_SDADC */
-  } u;
-} ADCConversionGroup;
-
-/**
- * @brief   Driver configuration structure.
- * @note    It could be empty on some architectures.
- */
-typedef struct {
-#if STM32_ADC_USE_SDADC
-  /**
-   * @brief   SDADC CR1 register initialization data.
-   */
-  uint32_t                  cr1;
-  /**
-   * @brief   SDADC CONFxR registers initialization data.
-   */
-  uint32_t                  confxr[3];
-#else /* !STM32_ADC_USE_SDADC */
-  uint32_t                  dummy;
-#endif /* !STM32_ADC_USE_SDADC */
-} ADCConfig;
-
-/**
- * @brief   Structure representing an ADC driver.
- */
-struct ADCDriver {
-  /**
-   * @brief Driver state.
-   */
-  adcstate_t                state;
-  /**
-   * @brief Current configuration data.
-   */
-  const ADCConfig           *config;
-  /**
-   * @brief Current samples buffer pointer or @p NULL.
-   */
-  adcsample_t               *samples;
-  /**
-   * @brief Current samples buffer depth or @p 0.
-   */
-  size_t                    depth;
-  /**
-   * @brief Current conversion group pointer or @p NULL.
-   */
-  const ADCConversionGroup  *grpp;
-#if ADC_USE_WAIT || defined(__DOXYGEN__)
-  /**
-   * @brief Waiting thread.
-   */
-  thread_reference_t        thread;
-#endif
-#if ADC_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
-  /**
-   * @brief Mutex protecting the peripheral.
-   */
-  mutex_t                   mutex;
-#endif /* ADC_USE_MUTUAL_EXCLUSION */
-#if defined(ADC_DRIVER_EXT_FIELDS)
-  ADC_DRIVER_EXT_FIELDS
-#endif
-  /* End of the mandatory fields.*/
-#if STM32_ADC_USE_ADC || defined(__DOXYGEN__)
-  /**
-   * @brief   Pointer to the ADCx registers block.
-   */
-  ADC_TypeDef               *adc;
-#endif
-#if STM32_ADC_USE_SDADC || defined(__DOXYGEN__)
-  /**
-   * @brief   Pointer to the SDADCx registers block.
-   */
-  SDADC_TypeDef             *sdadc;
-#endif
-  /**
-   * @brief   Pointer to associated DMA channel.
-   */
-  const stm32_dma_stream_t  *dmastp;
-  /**
-   * @brief   DMA mode bit mask.
-   */
-  uint32_t                  dmamode;
-};
-
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+#if (STM32_ADC_USE_ADC && STM32_ADC_USE_SDADC) || defined(__DOXYGEN__)
+/**
+ * @brief   Low level fields of the ADC driver structure.
+ */
+#define adc_lld_driver_fields                                               \
+  /* Pointer to the ADCx registers block.*/                                 \
+  ADC_TypeDef               *adc;                                           \
+  /* Pointer to the SDADCx registers block.*/                               \
+  SDADC_TypeDef             *sdadc;                                         \
+  /* Pointer to associated DMA channel.*/                                   \
+  const stm32_dma_stream_t  *dmastp;                                        \
+  /* DMA mode bit mask.*/                                                   \
+  uint32_t                  dmamode
+
+/**
+ * @brief   Low level fields of the ADC configuration structure.
+ */
+#define adc_lld_config_fields                                               \
+  /* SDADC CR1 register initialization data.*/                              \
+  uint32_t                  cr1;                                            \
+  /* SDADC CONFxR registers initialization data.*/                          \
+  uint32_t                  confxr[3]
+
+/**
+ * @brief   Low level fields of the ADC configuration structure.
+ */
+#define adc_lld_configuration_group_fields                                  \
+  union {                                                                   \
+    struct {                                                                \
+      /* ADC CR1 register initialization data.                              \
+         NOTE: All the required bits must be defined into this field except \
+               @p ADC_CR1_SCAN that is enforced inside the driver.*/        \
+      uint32_t                  cr1;                                        \
+      /* ADC CR2 register initialization data.                              \
+         NOTE: All the required bits must be defined into this field except \
+               @p ADC_CR2_DMA, @p ADC_CR2_CONT and @p ADC_CR2_ADON that are \
+               enforced inside the driver.*/                                \
+      uint32_t                  cr2;                                        \
+      /* ADC LTR register initialization data.*/                            \
+      uint32_t                  ltr;                                        \
+      /* ADC HTR register initialization data.*/                            \
+      uint32_t                  htr;                                        \
+      /* ADC SMPRx registers initialization data.*/                         \
+      uint32_t                  smpr[2];                                    \
+      /* ADC SQRx register initialization data.*/                           \
+      uint32_t                  sqr[3];                                     \
+    } adc;                                                                  \
+    struct {                                                                \
+      /* SDADC CR2 register initialization data.                            \
+         NOTE: Only the @p SDADC_CR2_JSWSTART, @p SDADC_CR2_JEXTSEL         \
+               and @p SDADC_CR2_JEXTEN can be specified in this field.*/    \
+      uint32_t                  cr2;                                        \
+      /* SDADC JCHGR register initialization data.*/                        \
+      uint32_t                  jchgr;                                      \
+      /* SDADC CONFCHxR registers initialization data.*/                    \
+      uint32_t                  confchr[2];                                 \
+    } sdadc;                                                                \
+  } u
+
+#elif STM32_ADC_USE_ADC
+#define adc_lld_driver_fields                                               \
+  /* Pointer to the ADCx registers block.*/                                 \
+  ADC_TypeDef               *adc;                                           \
+  /* Pointer to associated DMA channel.*/                                   \
+  const stm32_dma_stream_t  *dmastp;                                        \
+  /* DMA mode bit mask.*/                                                   \
+  uint32_t                  dmamode
+
+#define adc_lld_config_fields                                               \
+  /* Dummy configuration, it is not needed.*/                               \
+  uint32_t                  dummy
+
+#define adc_lld_configuration_group_fields                                  \
+  union {                                                                   \
+    struct {                                                                \
+      /* ADC CR1 register initialization data.                              \
+         NOTE: All the required bits must be defined into this field except \
+               @p ADC_CR1_SCAN that is enforced inside the driver.*/        \
+      uint32_t                  cr1;                                        \
+      /* ADC CR2 register initialization data.                              \
+         NOTE: All the required bits must be defined into this field except \
+               @p ADC_CR2_DMA, @p ADC_CR2_CONT and @p ADC_CR2_ADON that are \
+               enforced inside the driver.*/                                \
+      uint32_t                  cr2;                                        \
+      /* ADC LTR register initialization data.*/                            \
+      uint32_t                  ltr;                                        \
+      /* ADC HTR register initialization data.*/                            \
+      uint32_t                  htr;                                        \
+      /* ADC SMPRx registers initialization data.*/                         \
+      uint32_t                  smpr[2];                                    \
+      /* ADC SQRx register initialization data.*/                           \
+      uint32_t                  sqr[3];                                     \
+    } adc;                                                                  \
+  } u
+
+#elif STM32_ADC_USE_SDADC
+#define adc_lld_driver_fields                                               \
+  /* Pointer to the SDADCx registers block.*/                               \
+  SDADC_TypeDef             *sdadc;                                         \
+  /* Pointer to associated DMA channel.*/                                   \
+  const stm32_dma_stream_t  *dmastp;                                        \
+  /* DMA mode bit mask.*/                                                   \
+  uint32_t                  dmamode
+
+#define adc_lld_config_fields                                               \
+  /* SDADC CR1 register initialization data.*/                              \
+  uint32_t                  cr1;                                            \
+  /* SDADC CONFxR registers initialization data.*/                          \
+  uint32_t                  confxr[3]
+
+#define adc_lld_configuration_group_fields                                  \
+  union {                                                                   \
+    struct {                                                                \
+      /* SDADC CR2 register initialization data.                            \
+         NOTE: Only the @p SDADC_CR2_JSWSTART, @p SDADC_CR2_JEXTSEL         \
+               and @p SDADC_CR2_JEXTEN can be specified in this field.*/    \
+      uint32_t                  cr2;                                        \
+      /* SDADC JCHGR register initialization data.*/                        \
+      uint32_t                  jchgr;                                      \
+      /* SDADC CONFCHxR registers initialization data.*/                    \
+      uint32_t                  confchr[2];                                 \
+    } sdadc;                                                                \
+  } u
+
+#endif
 
 /**
  * @name    Sequences building helper macros for ADC

@@ -148,163 +148,58 @@ typedef enum {
   ADC_ERR_DMAFAILURE = 0                    /**< DMA operations failure.    */
 } adcerror_t;
 
-/**
- * @brief   Type of a structure representing an ADC driver.
- */
-typedef struct ADCDriver ADCDriver;
-
-/**
- * @brief   ADC notification callback type.
- *
- * @param[in] adcp      pointer to the @p ADCDriver object triggering the
- *                      callback
- * @param[in] buffer    pointer to the most recent samples data
- * @param[in] n         number of buffer rows available starting from @p buffer
- */
-typedef void (*adccallback_t)(ADCDriver *adcp, adcsample_t *buffer, size_t n);
-
-/**
- * @brief   ADC error callback type.
- *
- * @param[in] adcp      pointer to the @p ADCDriver object triggering the
- *                      callback
- * @param[in] err       ADC error code
- */
-typedef void (*adcerrorcallback_t)(ADCDriver *adcp, adcerror_t err);
-
-/**
- * @brief   Conversion group configuration structure.
- * @details This implementation-dependent structure describes a conversion
- *          operation.
- * @note    The use of this configuration structure requires knowledge of
- *          STM32 ADC cell registers interface, please refer to the STM32
- *          reference manual for details.
- */
-typedef struct {
-  /**
-   * @brief   Enables the circular buffer mode for the group.
-   */
-  bool                      circular;
-  /**
-   * @brief   Number of the analog channels belonging to the conversion group.
-   */
-  adc_channels_num_t        num_channels;
-  /**
-   * @brief   Callback function associated to the group or @p NULL.
-   */
-  adccallback_t             end_cb;
-  /**
-   * @brief   Error callback or @p NULL.
-   */
-  adcerrorcallback_t        error_cb;
-  /* End of the mandatory fields.*/
-  /**
-   * @brief   ADC CR1 register initialization data.
-   * @note    All the required bits must be defined into this field except
-   *          @p ADC_CR1_SCAN that is enforced inside the driver.
-   */
-  uint32_t                  cr1;
-  /**
-   * @brief   ADC CR2 register initialization data.
-   * @note    All the required bits must be defined into this field except
-   *          @p ADC_CR2_DMA, @p ADC_CR2_CONT and @p ADC_CR2_ADON that are
-   *          enforced inside the driver.
-   */
-  uint32_t                  cr2;
-  /**
-   * @brief   ADC SMPR1 register initialization data.
-   * @details In this field must be specified the sample times for channels
-   *          10...17.
-   */
-  uint32_t                  smpr1;
-  /**
-   * @brief   ADC SMPR2 register initialization data.
-   * @details In this field must be specified the sample times for channels
-   *          0...9.
-   */
-  uint32_t                  smpr2;
-  /**
-   * @brief   ADC SQR1 register initialization data.
-   * @details Conversion group sequence 13...16 + sequence length.
-   */
-  uint32_t                  sqr1;
-  /**
-   * @brief   ADC SQR2 register initialization data.
-   * @details Conversion group sequence 7...12.
-   */
-  uint32_t                  sqr2;
-  /**
-   * @brief   ADC SQR3 register initialization data.
-   * @details Conversion group sequence 1...6.
-   */
-  uint32_t                  sqr3;
-} ADCConversionGroup;
-
-/**
- * @brief   Driver configuration structure.
- * @note    It could be empty on some architectures.
- */
-typedef struct {
-  uint32_t                  dummy;
-} ADCConfig;
-
-/**
- * @brief   Structure representing an ADC driver.
- */
-struct ADCDriver {
-  /**
-   * @brief Driver state.
-   */
-  adcstate_t                state;
-  /**
-   * @brief Current configuration data.
-   */
-  const ADCConfig           *config;
-  /**
-   * @brief Current samples buffer pointer or @p NULL.
-   */
-  adcsample_t               *samples;
-  /**
-   * @brief Current samples buffer depth or @p 0.
-   */
-  size_t                    depth;
-  /**
-   * @brief Current conversion group pointer or @p NULL.
-   */
-  const ADCConversionGroup  *grpp;
-#if ADC_USE_WAIT || defined(__DOXYGEN__)
-  /**
-   * @brief Waiting thread.
-   */
-  thread_reference_t        thread;
-#endif
-#if ADC_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
-  /**
-   * @brief Mutex protecting the peripheral.
-   */
-  mutex_t                   mutex;
-#endif /* ADC_USE_MUTUAL_EXCLUSION */
-#if defined(ADC_DRIVER_EXT_FIELDS)
-  ADC_DRIVER_EXT_FIELDS
-#endif
-  /* End of the mandatory fields.*/
-  /**
-   * @brief Pointer to the ADCx registers block.
-   */
-  ADC_TypeDef               *adc;
-  /**
-   * @brief Pointer to associated DMA channel.
-   */
-  const stm32_dma_stream_t  *dmastp;
-  /**
-   * @brief DMA mode bit mask.
-   */
-  uint32_t                  dmamode;
-};
-
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Low level fields of the ADC driver structure.
+ */
+#define adc_lld_driver_fields                                               \
+  /* Pointer to the ADCx registers block.*/                                 \
+  ADC_TypeDef               *adc;                                           \
+  /* Pointer to associated DMA channel.*/                                   \
+  const stm32_dma_stream_t  *dmastp;                                        \
+  /* DMA mode bit mask.*/                                                   \
+  uint32_t                  dmamode
+
+/**
+ * @brief   Low level fields of the ADC configuration structure.
+ */
+#define adc_lld_config_fields                                               \
+  /* Dummy configuration, it is not needed.*/                               \
+  uint32_t                  dummy
+
+/**
+ * @brief   Low level fields of the ADC configuration structure.
+ */
+#define adc_lld_configuration_group_fields                                  \
+  /* ADC CR1 register initialization data.                                  \
+     NOTE: All the required bits must be defined into this field except     \
+           @p ADC_CR1_SCAN that is enforced inside the driver.*/            \
+  uint32_t                  cr1;                                            \
+  /* ADC CR2 register initialization data.                                  \
+     NOTE: All the required bits must be defined into this field except     \
+           @p ADC_CR2_DMA, @p ADC_CR2_CONT and @p ADC_CR2_ADON that are     \
+           enforced inside the driver.*/                                    \
+  uint32_t                  cr2;                                            \
+  /* ADC SMPR1 register initialization data.                                \
+     NOTE: In this field must be specified the sample times for channels    \
+           10...17.*/                                                       \
+  uint32_t                  smpr1;                                          \
+  /* ADC SMPR2 register initialization data.                                \
+     NOTE: In this field must be specified the sample times for channels    \
+           0...9.*/                                                         \
+  uint32_t                  smpr2;                                          \
+  /* ADC SQR1 register initialization data.                                 \
+     NOTE: Conversion group sequence 13...16 + sequence length.*/           \
+  uint32_t                  sqr1;                                           \
+  /* ADC SQR2 register initialization data.                                 \
+     NOTE: Conversion group sequence 7...12.*/                              \
+  uint32_t                  sqr2;                                           \
+  /* ADC SQR3 register initialization data.                                 \
+     NOTE: Conversion group sequence 1...6.*/                               \
+  uint32_t                  sqr3
 
 /**
  * @name    Sequences building helper macros
