@@ -78,7 +78,7 @@
 - NEW: Low level drivers simplification. There is a new template of LLD, now
        driver and configuration types are defined in the HLD, LLD just exports
        macros with the fields to be added to the structures.
-       So far the drivers updated are: RTC, SPI, TRNG.
+       So far the drivers updated are: DAC, RTC, SPI, TRNG, WSPI.
 - NEW: Added UART7/8 support to STM32 UART USARTv1 driver.
 - NEW: Added persistent storage interface to the STM32 RTCv2 driver.
 - NEW: STM32 RTCv2 driver now supports callbacks on events.

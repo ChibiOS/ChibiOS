@@ -287,6 +287,11 @@
 typedef uint32_t dacchannel_t;
 
 /**
+ * @brief   Type representing a DAC sample.
+ */
+typedef uint16_t dacsample_t;
+
+/**
  * @brief   DAC channel parameters type.
  */
 typedef struct {
@@ -327,16 +332,6 @@ typedef struct {
 } dacparams_t;
 
 /**
- * @brief   Type of a structure representing an DAC driver.
- */
-typedef struct DACDriver DACDriver;
-
-/**
- * @brief   Type representing a DAC sample.
- */
-typedef uint16_t dacsample_t;
-
-/**
  * @brief   Possible DAC failure causes.
  * @note    Error codes are architecture dependent and should not relied
  *          upon.
@@ -345,25 +340,6 @@ typedef enum {
   DAC_ERR_DMAFAILURE = 0,                   /**< DMA operations failure.    */
   DAC_ERR_UNDERFLOW = 1                     /**< DAC overflow condition.    */
 } dacerror_t;
-
-/**
- * @brief   DAC notification callback type.
- *
- * @param[in] dacp      pointer to the @p DACDriver object triggering the
- * @param[in] buffer    pointer to the next semi-buffer to be filled
- * @param[in] n         number of buffer rows available starting from @p buffer
- *                      callback
- */
-typedef void (*daccallback_t)(DACDriver *dacp, dacsample_t *buffer, size_t n);
-
-/**
- * @brief   DAC error callback type.
- *
- * @param[in] dacp      pointer to the @p DACDriver object triggering the
- *                      callback
- * @param[in] err       DAC error code
- */
-typedef void (*dacerrorcallback_t)(DACDriver *dacp, dacerror_t err);
 
 /**
  * @brief   Samples alignment and size mode.
@@ -379,100 +355,36 @@ typedef enum {
 #endif
 } dacdhrmode_t;
 
-/**
- * @brief   DAC Conversion group structure.
- */
-typedef struct {
-  /**
-   * @brief   Number of DAC channels.
-   */
-  uint32_t                  num_channels;
-  /**
-   * @brief   Operation complete callback or @p NULL.
-   */
-  daccallback_t             end_cb;
-  /**
-   * @brief   Error handling callback or @p NULL.
-   */
-  dacerrorcallback_t        error_cb;
-  /* End of the mandatory fields.*/
-  /**
-   * @brief   DAC initialization data.
-   * @note    This field contains the (not shifted) value to be put into the
-   *          TSEL field of the DAC CR register during initialization. All
-   *          other fields are handled internally.
-   */
-  uint32_t                  trigger;
-} DACConversionGroup;
-
-/**
- * @brief   Driver configuration structure.
- */
-typedef struct {
-  /* End of the mandatory fields.*/
-  /**
-   * @brief   Initial output on DAC channels.
-   */
-  dacsample_t               init;
-  /**
-   * @brief   DAC data holding register mode.
-   */
-  dacdhrmode_t              datamode;
-  /**
-   * @brief   DAC control register.
-   */
-  uint16_t                  cr;
-} DACConfig;
-
-/**
- * @brief   Structure representing a DAC driver.
- */
-struct DACDriver {
-  /**
-   * @brief   Driver state.
-   */
-  dacstate_t                state;
-  /**
-   * @brief   Conversion group.
-   */
-  const DACConversionGroup  *grpp;
-  /**
-   * @brief   Samples buffer pointer.
-   */
-  dacsample_t               *samples;
-  /**
-   * @brief   Samples buffer size.
-   */
-  uint16_t                  depth;
-  /**
-   * @brief   Current configuration data.
-   */
-  const DACConfig           *config;
-#if DAC_USE_WAIT || defined(__DOXYGEN__)
-  /**
-   * @brief   Waiting thread.
-   */
-  thread_reference_t        thread;
-#endif /* DAC_USE_WAIT */
-#if DAC_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
-  /**
-   * @brief   Mutex protecting the bus.
-   */
-  mutex_t                   mutex;
-#endif /* DAC_USE_MUTUAL_EXCLUSION */
-#if defined(DAC_DRIVER_EXT_FIELDS)
-  DAC_DRIVER_EXT_FIELDS
-#endif
-  /* End of the mandatory fields.*/
-  /**
-   * @brief   DAC channel parameters.
-   */
-  const dacparams_t         *params;
-};
-
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Low level fields of the DAC driver structure.
+ */
+#define dac_lld_driver_fields                                               \
+  /* DAC channel parameters.*/                                              \
+  const dacparams_t         *params
+
+/**
+ * @brief   Low level fields of the DAC configuration structure.
+ */
+#define dac_lld_config_fields                                               \
+  /* Initial output on DAC channels.*/                                      \
+  dacsample_t               init;                                           \
+  /* DAC data holding register mode.*/                                      \
+  dacdhrmode_t              datamode;                                       \
+  /* DAC control register.*/                                                \
+  uint16_t                  cr
+
+/**
+ * @brief   Low level fields of the DAC group configuration structure.
+ */
+#define dac_lld_conversion_group_fields                                     \
+  /* DAC initialization data. This field contains the (not shifted) value   \
+     to be put into the TSEL field of the DAC CR register during            \
+     initialization. All other fields are handled internally.*/             \
+  uint32_t                  trigger
 
 /*===========================================================================*/
 /* External declarations.                                                    */

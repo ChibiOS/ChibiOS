@@ -76,7 +76,114 @@ typedef enum {
   DAC_ERROR = 5                     /**< Error.                             */
 } dacstate_t;
 
+/**
+ * @brief   Type of a structure representing an DAC driver.
+ */
+typedef struct hal_dac_driver DACDriver;
+
+/**
+ * @brief   Type of a structure representing an DAC driver configuration.
+ */
+typedef struct hal_dac_config DACConfig;
+
+/**
+ * @brief   Type of a DAC conversion group.
+ */
+typedef struct hal_dac_conversion_group DACConversionGroup;
+
+/* Including the low level driver header, it exports information required
+   for completing types.*/
 #include "hal_dac_lld.h"
+
+/**
+ * @brief   DAC notification callback type.
+ *
+ * @param[in] dacp      pointer to the @p DACDriver object triggering the
+ * @param[in] buffer    pointer to the next semi-buffer to be filled
+ * @param[in] n         number of buffer rows available starting from @p buffer
+ *                      callback
+ */
+typedef void (*daccallback_t)(DACDriver *dacp, dacsample_t *buffer, size_t n);
+
+/**
+ * @brief   DAC error callback type.
+ *
+ * @param[in] dacp      pointer to the @p DACDriver object triggering the
+ *                      callback
+ * @param[in] err       DAC error code
+ */
+typedef void (*dacerrorcallback_t)(DACDriver *dacp, dacerror_t err);
+
+/**
+ * @brief   DAC Conversion group structure.
+ */
+struct hal_dac_conversion_group {
+  /**
+   * @brief   Number of DAC channels.
+   */
+  uint32_t                  num_channels;
+  /**
+   * @brief   Operation complete callback or @p NULL.
+   */
+  daccallback_t             end_cb;
+  /**
+   * @brief   Error handling callback or @p NULL.
+   */
+  dacerrorcallback_t        error_cb;
+  /* End of the mandatory fields.*/
+  dac_lld_conversion_group_fields;
+};
+
+/**
+ * @brief   Driver configuration structure.
+ */
+struct hal_dac_config {
+  /* End of the mandatory fields.*/
+  dac_lld_config_fields;
+};
+
+/**
+ * @brief   Structure representing a DAC driver.
+ */
+struct hal_dac_driver {
+  /**
+   * @brief   Driver state.
+   */
+  dacstate_t                state;
+  /**
+   * @brief   Conversion group.
+   */
+  const DACConversionGroup  *grpp;
+  /**
+   * @brief   Samples buffer pointer.
+   */
+  dacsample_t               *samples;
+  /**
+   * @brief   Samples buffer size.
+   */
+  uint16_t                  depth;
+  /**
+   * @brief   Current configuration data.
+   */
+  const DACConfig           *config;
+#if DAC_USE_WAIT || defined(__DOXYGEN__)
+  /**
+   * @brief   Waiting thread.
+   */
+  thread_reference_t        thread;
+#endif /* DAC_USE_WAIT */
+#if DAC_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
+  /**
+   * @brief   Mutex protecting the bus.
+   */
+  mutex_t                   mutex;
+#endif /* DAC_USE_MUTUAL_EXCLUSION */
+#if defined(DAC_DRIVER_EXT_FIELDS)
+  DAC_DRIVER_EXT_FIELDS
+#endif
+  /* End of the mandatory fields.*/
+  dac_lld_driver_fields;
+};
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

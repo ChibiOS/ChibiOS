@@ -244,66 +244,27 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
-/**
- * @brief   Driver configuration structure.
- */
-struct hal_wspi_config {
-  /**
-   * @brief   Operation complete callback or @p NULL.
-   */
-  wspicallback_t            end_cb;
-  /* End of the mandatory fields.*/
-  /**
-   * @brief   DCR register initialization data.
-   */
-  uint32_t                  dcr;
-};
-
-/**
- * @brief   Structure representing an WSPI driver.
- */
-struct hal_wspi_driver {
-  /**
-   * @brief   Driver state.
-   */
-  wspistate_t               state;
-  /**
-   * @brief   Current configuration data.
-   */
-  const WSPIConfig          *config;
-#if (WSPI_USE_WAIT == TRUE) || defined(__DOXYGEN__)
-  /**
-   * @brief   Waiting thread.
-   */
-  thread_reference_t        thread;
-#endif /* WSPI_USE_WAIT */
-#if (WSPI_USE_MUTUAL_EXCLUSION == TRUE) || defined(__DOXYGEN__)
-  /**
-   * @brief   Mutex protecting the peripheral.
-   */
-  mutex_t                   mutex;
-#endif /* WSPI_USE_MUTUAL_EXCLUSION */
-#if defined(WSPI_DRIVER_EXT_FIELDS)
-  WSPI_DRIVER_EXT_FIELDS
-#endif
-  /* End of the mandatory fields.*/
-  /**
-   * @brief   Pointer to the QUADSPIx registers block.
-   */
-  QUADSPI_TypeDef           *qspi;
-  /**
-   * @brief   QUADSPI DMA stream.
-   */
-  const stm32_dma_stream_t  *dma;
-  /**
-   * @brief   QUADSPI DMA mode bit mask.
-   */
-  uint32_t                  dmamode;
-};
-
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Low level fields of the WSPI configuration structure.
+ */
+#define wspi_lld_config_fields                                              \
+  /* DCR register initialization data.*/                                    \
+  uint32_t                  dcr
+
+/**
+ * @brief   Low level fields of the WSPI driver structure.
+ */
+#define wspi_lld_driver_fields                                              \
+  /* Pointer to the QUADSPIx registers block.*/                             \
+  QUADSPI_TypeDef           *qspi;                                          \
+  /* QUADSPI DMA stream.*/                                                  \
+  const stm32_dma_stream_t  *dma;                                           \
+  /* QUADSPI DMA mode bit mask.*/                                           \
+  uint32_t                  dmamode
 
 /*===========================================================================*/
 /* External declarations.                                                    */

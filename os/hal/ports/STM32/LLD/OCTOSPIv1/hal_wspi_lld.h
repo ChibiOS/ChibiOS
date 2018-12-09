@@ -265,80 +265,34 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
-/**
- * @brief   Driver configuration structure.
- */
-struct hal_wspi_config {
-  /**
-   * @brief   Operation complete callback or @p NULL.
-   */
-  wspicallback_t            end_cb;
-  /* End of the mandatory fields.*/
-  /**
-   * @brief   DCR1 register initialization data.
-   */
-  uint32_t                  dcr1;
-  /**
-   * @brief   DCR2 register initialization data.
-   * @note    Prescaler field is internally ORed to this field, leave it
-   *          to zero.
-   */
-  uint32_t                  dcr2;
-  /**
-   * @brief   DCR3 register initialization data.
-   */
-  uint32_t                  dcr3;
-  /**
-   * @brief   DCR4 register initialization data.
-   */
-  uint32_t                  dcr4;
-};
-
-/**
- * @brief   Structure representing an WSPI driver.
- */
-struct hal_wspi_driver {
-  /**
-   * @brief   Driver state.
-   */
-  wspistate_t               state;
-  /**
-   * @brief   Current configuration data.
-   */
-  const WSPIConfig          *config;
-#if (WSPI_USE_WAIT == TRUE) || defined(__DOXYGEN__)
-  /**
-   * @brief   Waiting thread.
-   */
-  thread_reference_t        thread;
-#endif /* WSPI_USE_WAIT */
-#if (WSPI_USE_MUTUAL_EXCLUSION == TRUE) || defined(__DOXYGEN__)
-  /**
-   * @brief   Mutex protecting the peripheral.
-   */
-  mutex_t                   mutex;
-#endif /* WSPI_USE_MUTUAL_EXCLUSION */
-#if defined(WSPI_DRIVER_EXT_FIELDS)
-  WSPI_DRIVER_EXT_FIELDS
-#endif
-  /* End of the mandatory fields.*/
-  /**
-   * @brief   Pointer to the OCTOSPIx registers block.
-   */
-  OCTOSPI_TypeDef           *ospi;
-  /**
-   * @brief   OCTOSPI DMA stream.
-   */
-  const stm32_dma_stream_t  *dma;
-  /**
-   * @brief   OCTOSPI DMA mode bit mask.
-   */
-  uint32_t                  dmamode;
-};
-
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Low level fields of the WSPI configuration structure.
+ */
+#define wspi_lld_config_fields                                              \
+  /* DCR1 register initialization data.*/                                   \
+  uint32_t                  dcr1;                                           \
+  /* DCR2 register initialization data. The prescaler field is internally   \
+     ORed to this field, leave it to zero.*/                                \
+  uint32_t                  dcr2;                                           \
+  /* DCR3 register initialization data.*/                                   \
+  uint32_t                  dcr3;                                           \
+  /* DCR4 register initialization data.*/                                   \
+  uint32_t                  dcr4
+
+/**
+ * @brief   Low level fields of the WSPI driver structure.
+ */
+#define wspi_lld_driver_fields                                              \
+  /* Pointer to the OCTOSPIx registers block.*/                             \
+  OCTOSPI_TypeDef           *ospi;                                          \
+  /* OCTOSPI DMA stream.*/                                                  \
+  const stm32_dma_stream_t  *dma;                                           \
+  /* OCTOSPI DMA mode bit mask.*/                                           \
+  uint32_t                  dmamode
 
 /*===========================================================================*/
 /* External declarations.                                                    */

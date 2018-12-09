@@ -68,11 +68,6 @@
 typedef uint32_t dacchannel_t;
 
 /**
- * @brief   Type of a structure representing an DAC driver.
- */
-typedef struct DACDriver DACDriver;
-
-/**
  * @brief   Type representing a DAC sample.
  */
 typedef uint16_t dacsample_t;
@@ -87,97 +82,26 @@ typedef enum {
   DAC_ERR_UNDERFLOW = 1                     /**< DAC overflow condition.    */
 } dacerror_t;
 
-/**
- * @brief   DAC notification callback type.
- *
- * @param[in] dacp      pointer to the @p DACDriver object triggering the
- * @param[in] buffer    pointer to the next semi-buffer to be filled
- * @param[in] n         number of buffer rows available starting from @p buffer
- *                      callback
- */
-typedef void (*daccallback_t)(DACDriver *dacp, dacsample_t *buffer, size_t n);
-
-/**
- * @brief   DAC error callback type.
- *
- * @param[in] dacp      pointer to the @p DACDriver object triggering the
- *                      callback
- * @param[in] err       DAC error code
- */
-typedef void (*dacerrorcallback_t)(DACDriver *dacp, dacerror_t err);
-
-/**
- * @brief   DAC Conversion group structure.
- */
-typedef struct {
-  /**
-   * @brief   Number of DAC channels.
-   */
-  uint32_t                  num_channels;
-  /**
-   * @brief   Operation complete callback or @p NULL.
-   */
-  daccallback_t             end_cb;
-  /**
-   * @brief   Error handling callback or @p NULL.
-   */
-  dacerrorcallback_t        error_cb;
-  /* End of the mandatory fields.*/
-} DACConversionGroup;
-
-/**
- * @brief   Driver configuration structure.
- */
-typedef struct {
-  /* End of the mandatory fields.*/
-  uint32_t                  dummy;
-} DACConfig;
-
-/**
- * @brief   Structure representing a DAC driver.
- */
-struct DACDriver {
-  /**
-   * @brief   Driver state.
-   */
-  dacstate_t                state;
-  /**
-   * @brief   Conversion group.
-   */
-  const DACConversionGroup  *grpp;
-  /**
-   * @brief   Samples buffer pointer.
-   */
-  dacsample_t               *samples;
-  /**
-   * @brief   Samples buffer size.
-   */
-  uint16_t                  depth;
-  /**
-   * @brief   Current configuration data.
-   */
-  const DACConfig           *config;
-#if DAC_USE_WAIT || defined(__DOXYGEN__)
-  /**
-   * @brief   Waiting thread.
-   */
-  thread_reference_t        thread;
-#endif /* DAC_USE_WAIT */
-#if DAC_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
-  /**
-   * @brief   Mutex protecting the bus.
-   */
-  mutex_t                   mutex;
-#endif /* DAC_USE_MUTUAL_EXCLUSION */
-#if defined(DAC_DRIVER_EXT_FIELDS)
-  DAC_DRIVER_EXT_FIELDS
-#endif
-  /* End of the mandatory fields.*/
-};
-
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Low level fields of the DAC driver structure.
+ */
+#define dac_lld_driver_fields
+
+/**
+ * @brief   Low level fields of the DAC configuration structure.
+ */
+#define dac_lld_config_fields                                               \
+  /* Dummy configuration, it is not needed.*/                               \
+  uint32_t                  dummy
+
+/**
+ * @brief   Low level fields of the DAC group configuration structure.
+ */
+#define dac_lld_conversion_group_fields
 
 /*===========================================================================*/
 /* External declarations.                                                    */
