@@ -62,7 +62,70 @@ typedef enum {
   I2S_COMPLETE = 4                  /**< Transmission complete.             */
 } i2sstate_t;
 
+/**
+ * @brief   Type of a structure representing an I2S driver.
+ */
+typedef struct hal_i2s_driver I2SDriver;
+
+/**
+ * @brief   Type of a structure representing an I2S driver configuration.
+ */
+typedef struct hal_i2s_config I2SConfig;
+
+/**
+ * @brief   I2S notification callback type.
+ *
+ * @param[in] i2sp      pointer to the @p I2SDriver object
+ * @param[in] offset    offset in buffers of the data to read/write
+ * @param[in] n         number of samples to read/write
+ */
+typedef void (*i2scallback_t)(I2SDriver *i2sp, size_t offset, size_t n);
+
+/* Including the low level driver header, it exports information required
+   for completing types.*/
 #include "hal_i2s_lld.h"
+
+/**
+ * @brief   Structure representing an I2S driver.
+ */
+struct hal_i2s_driver {
+  /**
+   * @brief   Driver state.
+   */
+  i2sstate_t                state;
+  /**
+   * @brief   Current configuration data.
+   */
+  const I2SConfig           *config;
+  /* End of the mandatory fields.*/
+  i2s_lld_driver_fields;
+};
+
+/**
+ * @brief   Driver configuration structure.
+ */
+struct hal_i2s_config {
+  /**
+   * @brief   Transmission buffer pointer.
+   * @note    Can be @p NULL if TX is not required.
+   */
+  const void                *tx_buffer;
+  /**
+   * @brief   Receive buffer pointer.
+   * @note    Can be @p NULL if RX is not required.
+   */
+  void                      *rx_buffer;
+  /**
+   * @brief   TX and RX buffers size as number of samples.
+   */
+  size_t                    size;
+  /**
+   * @brief   Callback function called during streaming.
+   */
+  i2scallback_t             end_cb;
+  /* End of the mandatory fields.*/
+  i2s_lld_config_fields;
+};
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

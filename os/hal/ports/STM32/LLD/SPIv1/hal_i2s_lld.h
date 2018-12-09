@@ -297,105 +297,44 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
-/**
- * @brief   Type of a structure representing an I2S driver.
- */
-typedef struct I2SDriver I2SDriver;
-
-/**
- * @brief   I2S notification callback type.
- *
- * @param[in] i2sp      pointer to the @p I2SDriver object
- * @param[in] offset    offset in buffers of the data to read/write
- * @param[in] n         number of samples to read/write
- */
-typedef void (*i2scallback_t)(I2SDriver *i2sp, size_t offset, size_t n);
-
-/**
- * @brief   Driver configuration structure.
- * @note    It could be empty on some architectures.
- */
-typedef struct {
-  /**
-   * @brief   Transmission buffer pointer.
-   * @note    Can be @p NULL if TX is not required.
-   */
-  const void                *tx_buffer;
-  /**
-   * @brief   Receive buffer pointer.
-   * @note    Can be @p NULL if RX is not required.
-   */
-  void                      *rx_buffer;
-  /**
-   * @brief   TX and RX buffers size as number of samples.
-   */
-  size_t                    size;
-  /**
-   * @brief   Callback function called during streaming.
-   */
-  i2scallback_t             end_cb;
-  /* End of the mandatory fields.*/
-  /**
-   * @brief   Configuration of the I2SCFGR register.
-   * @details See the STM32 reference manual, this register is used for
-   *          the I2S configuration, the following bits must not be
-   *          specified because handled directly by the driver:
-   *          - I2SMOD
-   *          - I2SE
-   *          - I2SCFG
-   *          .
-   */
-  int16_t                   i2scfgr;
-  /**
-   * @brief   Configuration of the I2SPR register.
-   * @details See the STM32 reference manual, this register is used for
-   *          the I2S clock setup.
-   */
-  int16_t                   i2spr;
-} I2SConfig;
-
-/**
- * @brief   Structure representing an I2S driver.
- */
-struct I2SDriver {
-  /**
-   * @brief   Driver state.
-   */
-  i2sstate_t                state;
-  /**
-   * @brief   Current configuration data.
-   */
-  const I2SConfig           *config;
-  /* End of the mandatory fields.*/
-  /**
-   * @brief   Pointer to the SPIx registers block.
-   */
-  SPI_TypeDef               *spi;
-  /**
-   * @brief   Calculated part of the I2SCFGR register.
-   */
-  uint16_t                  cfg;
-  /**
-   * @brief   Receive DMA stream or @p NULL.
-   */
-  const stm32_dma_stream_t  *dmarx;
-  /**
-   * @brief   Transmit DMA stream or @p NULL.
-   */
-  const stm32_dma_stream_t  *dmatx;
-  /**
-   * @brief   RX DMA mode bit mask.
-   */
-  uint32_t                  rxdmamode;
-  /**
-   * @brief   TX DMA mode bit mask.
-   */
-  uint32_t                  txdmamode;
-};
-
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Low level fields of the I2S driver structure.
+ */
+#define i2s_lld_driver_fields                                               \
+  /* Pointer to the SPIx registers block.*/                                 \
+  SPI_TypeDef               *spi;                                           \
+  /* Calculated part of the I2SCFGR register.*/                             \
+  uint16_t                  cfg;                                            \
+  /* Receive DMA stream or @p NULL.*/                                       \
+  const stm32_dma_stream_t  *dmarx;                                         \
+  /* Transmit DMA stream or @p NULL.*/                                      \
+  const stm32_dma_stream_t  *dmatx;                                         \
+  /* RX DMA mode bit mask.*/                                                \
+  uint32_t                  rxdmamode;                                      \
+  /* TX DMA mode bit mask.*/                                                \
+  uint32_t                  txdmamode
+
+/**
+ * @brief   Low level fields of the I2S configuration structure.
+ */
+#define i2s_lld_config_fields                                               \
+  /* Configuration of the I2SCFGR register.                                 \
+     NOTE: See the STM32 reference manual, this register is used for        \
+           the I2S configuration, the following bits must not be            \
+           specified because handled directly by the driver:                \
+           - I2SMOD                                                         \
+           - I2SE                                                           \
+           - I2SCFG                                                         \
+   */                                                                       \
+  int16_t                   i2scfgr;                                        \
+  /* Configuration of the I2SPR register.                                   \
+     NOTE: See the STM32 reference manual, this register is used for        \
+           the I2S clock setup.*/                                           \
+  int16_t                   i2spr
 
 /*===========================================================================*/
 /* External declarations.                                                    */

@@ -57,64 +57,19 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
-/**
- * @brief   Type of a structure representing an I2S driver.
- */
-typedef struct I2SDriver I2SDriver;
-
-/**
- * @brief   I2S notification callback type.
- *
- * @param[in] i2sp      pointer to the @p I2SDriver object
- * @param[in] offset    offset in buffers of the data to read/write
- * @param[in] n         number of samples to read/write
- */
-typedef void (*i2scallback_t)(I2SDriver *i2sp, size_t offset, size_t n);
-
-/**
- * @brief   Driver configuration structure.
- * @note    It could be empty on some architectures.
- */
-typedef struct {
-  /**
-   * @brief   Transmission buffer pointer.
-   * @note    Can be @p NULL if TX is not required.
-   */
-  const void                *tx_buffer;
-  /**
-   * @brief   Receive buffer pointer.
-   * @note    Can be @p NULL if RX is not required.
-   */
-  void                      *rx_buffer;
-  /**
-   * @brief   TX and RX buffers size as number of samples.
-   */
-  size_t                    size;
-  /**
-   * @brief   Callback function called during streaming.
-   */
-  i2scallback_t             end_cb;
-  /* End of the mandatory fields.*/
-} I2SConfig;
-
-/**
- * @brief   Structure representing an I2S driver.
- */
-struct I2SDriver {
-  /**
-   * @brief   Driver state.
-   */
-  i2sstate_t                state;
-  /**
-   * @brief   Current configuration data.
-   */
-  const I2SConfig           *config;
-  /* End of the mandatory fields.*/
-};
-
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Low level fields of the I2S driver structure.
+ */
+#define i2s_lld_driver_fields
+
+/**
+ * @brief   Low level fields of the I2S configuration structure.
+ */
+#define i2s_lld_config_fields
 
 /*===========================================================================*/
 /* External declarations.                                                    */
