@@ -96,11 +96,11 @@ static void spi_lld_serve_bdma_rx_interrupt(SPIDriver *spip, uint32_t flags) {
   if (spip->config->circular) {
     if ((flags & STM32_BDMA_ISR_HTIF) != 0U) {
       /* Half buffer interrupt.*/
-      _spi_isr_code_half1(spip);
+      _spi_isr_half_code(spip);
     }
-    else {
+    if ((flags & STM32_BDMA_ISR_TCIF) != 0U) {
       /* End buffer interrupt.*/
-      _spi_isr_code_half2(spip);
+      _spi_isr_full_code(spip);
     }
   }
   else {
@@ -159,11 +159,11 @@ static void spi_lld_serve_dma_rx_interrupt(SPIDriver *spip, uint32_t flags) {
   if (spip->config->circular) {
     if ((flags & STM32_DMA_ISR_HTIF) != 0U) {
       /* Half buffer interrupt.*/
-      _spi_isr_code_half1(spip);
+      _spi_isr_half_code(spip);
     }
-    else {
+    if ((flags & STM32_DMA_ISR_TCIF) != 0U) {
       /* End buffer interrupt.*/
-      _spi_isr_code_half2(spip);
+      _spi_isr_full_code(spip);
     }
   }
   else {

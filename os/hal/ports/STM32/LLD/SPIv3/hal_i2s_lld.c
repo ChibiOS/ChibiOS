@@ -198,11 +198,11 @@ static void i2s_lld_serve_tx_interrupt(I2SDriver *i2sp, uint32_t flags) {
      level driver.*/
   if ((flags & STM32_DMA_ISR_TCIF) != 0) {
     /* Transfer complete processing.*/
-    _i2s_isr_full_code(i2sp);
+    _i2s_isr_code_half2(i2sp);
   }
   else if ((flags & STM32_DMA_ISR_HTIF) != 0) {
     /* Half transfer processing.*/
-    _i2s_isr_half_code(i2sp);
+    _i2s_isr_code_half1(i2sp);
   }
 }
 #endif

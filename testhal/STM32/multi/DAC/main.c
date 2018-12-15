@@ -61,16 +61,14 @@ static const dacsample_t dac_buffer[DAC_BUFFER_SIZE] = {
  * DAC streaming callback.
  */
 size_t nx = 0, ny = 0, nz = 0;
-static void end_cb1(DACDriver *dacp, dacsample_t *buffer, size_t n) {
-
-  (void)dacp;
+static void end_cb1(DACDriver *dacp) {
 
   nz++;
-  if (dac_buffer == buffer) {
-    nx += n;
+  if (dacIsBufferComplete(dacp)) {
+    nx += DAC_BUFFER_SIZE / 2;
   }
   else {
-    ny += n;
+    ny += DAC_BUFFER_SIZE / 2;
   }
 
   if ((nz % 1000) == 0) {

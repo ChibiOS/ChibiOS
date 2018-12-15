@@ -225,6 +225,21 @@ struct hal_spi_driver {
  * @name    Macro Functions
  * @{
  */
+/**
+ * @brief   Buffer state.
+ * @note    This function is meant to be called from the SPI callback only.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @return              The buffer state.
+ * @retval              false if the driver filled/sent the first half of the
+ *                      buffer.
+ * @retval              true if the driver filled/sent the second half of the
+ *                      buffer.
+ *
+ * @special
+ */
+#define spiIsBufferComplete(spip) ((bool)((spip)->state == SPI_COMPLETE))
+
 #if (SPI_SELECT_MODE == SPI_SELECT_MODE_LLD) || defined(__DOXYGEN__)
 /**
  * @brief   Asserts the slave select signal and prepares for transfers.
@@ -408,7 +423,7 @@ do {                                                                        \
 #endif /* !SPI_USE_WAIT */
 
 /**
- * @brief   Common ISR code.
+ * @brief   Common ISR code when circular mode is not supported.
  * @details This code handles the portable part of the ISR code:
  *          - Callback invocation.
  *          - Waiting thread wakeup, if any.
@@ -434,7 +449,7 @@ do {                                                                        \
 }
 
 /**
- * @brief   Common ISR code in circular mode.
+ * @brief   Half buffer filled ISR code in circular mode.
  * @details This code handles the portable part of the ISR code:
  *          - Callback invocation.
  *          .
@@ -445,14 +460,14 @@ do {                                                                        \
  *
  * @notapi
  */
-#define _spi_isr_code_half1(spip) {                                         \
+#define _spi_isr_half_code(spip) {                                          \
   if ((spip)->config->end_cb) {                                             \
     (spip)->config->end_cb(spip);                                           \
   }                                                                         \
 }
 
 /**
- * @brief   Common ISR code in circular mode.
+ * @brief   Full buffer filled ISR code in circular mode.
  * @details This code handles the portable part of the ISR code:
  *          - Callback invocation.
  *          - Driver state transitions.
@@ -464,7 +479,7 @@ do {                                                                        \
  *
  * @notapi
  */
-#define _spi_isr_code_half2(spip) {                                         \
+#define _spi_isr_full_code(spip) {                                          \
   if ((spip)->config->end_cb) {                                             \
     (spip)->state = SPI_COMPLETE;                                           \
     (spip)->config->end_cb(spip);                                           \

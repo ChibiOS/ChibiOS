@@ -32,7 +32,7 @@ CC_ALIGN(32) static uint8_t rxbuf[512];
  */
 void spi_circular_cb(SPIDriver *spip) {
 
-  if(spip->state == SPI_COMPLETE) {
+  if (spiIsBufferComplete(spip)) {
     /* 2nd half.*/
     palWriteLine(PORTAB_LINE_LED1, PORTAB_LED_OFF);
   }

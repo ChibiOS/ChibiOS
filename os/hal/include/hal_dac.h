@@ -99,11 +99,8 @@ typedef struct hal_dac_conversion_group DACConversionGroup;
  * @brief   DAC notification callback type.
  *
  * @param[in] dacp      pointer to the @p DACDriver object triggering the
- * @param[in] buffer    pointer to the next semi-buffer to be filled
- * @param[in] n         number of buffer rows available starting from @p buffer
- *                      callback
  */
-typedef void (*daccallback_t)(DACDriver *dacp, dacsample_t *buffer, size_t n);
+typedef void (*daccallback_t)(DACDriver *dacp);
 
 /**
  * @brief   DAC error callback type.
@@ -193,6 +190,21 @@ struct hal_dac_driver {
  * @name    Low level driver helper macros
  * @{
  */
+/**
+ * @brief   Buffer state.
+ * @note    This function is meant to be called from the DAC callback only.
+ *
+ * @param[in] dacp      pointer to the @p DACDriver object
+ * @return              The buffer state.
+ * @retval              false if the driver filled/sent the first half of the
+ *                      buffer.
+ * @retval              true if the driver filled/sent the second half of the
+ *                      buffer.
+ *
+ * @special
+ */
+#define dacIsBufferComplete(dacp) ((bool)((dacp)->state == DAC_COMPLETE))
+
 #if (DAC_USE_WAIT == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Waits for operation completion.
@@ -274,7 +286,7 @@ struct hal_dac_driver {
  */
 #define _dac_isr_half_code(dacp) {                                          \
   if ((dacp)->grpp->end_cb != NULL) {                                       \
-    (dacp)->grpp->end_cb(dacp, (dacp)->samples, (dacp)->depth / 2);         \
+    (dacp)->grpp->end_cb(dacp);                                             \
   }                                                                         \
 }
 
@@ -282,7 +294,6 @@ struct hal_dac_driver {
  * @brief   Common ISR code, full buffer event.
  * @details This code handles the portable part of the ISR code:
  *          - Callback invocation.
- *          - Waiting thread wakeup, if any.
  *          - Driver state transitions.
  *          .
  * @note    This macro is meant to be used in the low level drivers
@@ -293,17 +304,11 @@ struct hal_dac_driver {
  * @notapi
  */
 #define _dac_isr_full_code(dacp) {                                          \
-  if ((dacp)->grpp->end_cb != NULL) {                                       \
-    if ((dacp)->depth > 1) {                                                \
-      /* Invokes the callback passing the 2nd half of the buffer.*/         \
-      size_t half = (dacp)->depth / 2;                                      \
-      size_t half_index = half * (dacp)->grpp->num_channels;                \
-      (dacp)->grpp->end_cb(dacp, (dacp)->samples + half_index, half);       \
-    }                                                                       \
-    else {                                                                  \
-      /* Invokes the callback passing the whole buffer.*/                   \
-      (dacp)->grpp->end_cb(dacp, (dacp)->samples, (dacp)->depth);           \
-    }                                                                       \
+  if ((dacp)->grpp->end_cb) {                                               \
+    (dacp)->state = DAC_COMPLETE;                                           \
+    (dacp)->grpp->end_cb(dacp);                                             \
+    if ((dacp)->state == DAC_COMPLETE)                                      \
+      (dacp)->state = DAC_ACTIVE;                                           \
   }                                                                         \
 }
 

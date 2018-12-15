@@ -30,14 +30,13 @@ static adcsample_t samples2[ADC_GRP2_NUM_CHANNELS * ADC_GRP2_BUF_DEPTH];
  * ADC streaming callback.
  */
 size_t nx = 0, ny = 0;
-static void adccallback(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
+static void adccallback(ADCDriver *adcp) {
 
-  (void)adcp;
-  if (samples2 == buffer) {
-    nx += n;
+  if (adcIsBufferComplete(adcp)) {
+    nx += 1;
   }
   else {
-    ny += n;
+    ny += 1;
   }
 }
 
@@ -161,7 +160,7 @@ int main(void) {
    * Normal main() thread activity, in this demo it does nothing.
    */
   while (true) {
-    if (palReadPad(GPIOC, GPIOC_BUTTON)) {
+    if (!palReadPad(GPIOC, GPIOC_BUTTON)) {
       adcStopConversion(&ADCD1);
     }
     chThdSleepMilliseconds(500);

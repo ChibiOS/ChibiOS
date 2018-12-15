@@ -57,7 +57,7 @@ static adcsample_t samples1[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
  * ADC streaming callback.
  */
 size_t nx = 0, ny = 0;
-static void adccallback(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
+static void adccallback(ADCDriver *adcp) {
 
 #if !DMA_BUFFERS_COHERENCE
   /* DMA buffer invalidation because data cache, only invalidating the
@@ -65,16 +65,14 @@ static void adccallback(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
      Only required if the ADC buffer is placed in a cache-able area.*/
   dmaBufferInvalidate(buffer,
                       n * adcp->grpp->num_channels * sizeof (adcsample_t));
-#else
-  (void)adcp;
 #endif
 
   /* Updating counters.*/
-  if (samples1 == buffer) {
-    nx += n;
+  if (adcIsBufferComplete(adcp)) {
+    nx += 1;
   }
   else {
-    ny += n;
+    ny += 1;
   }
 }
 

@@ -104,11 +104,8 @@ typedef struct hal_adc_configuration_group ADCConversionGroup;
  * @brief   Type of an ADC notification callback.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object triggering the
- *                      callback
- * @param[in] buffer    pointer to the most recent samples data
- * @param[in] n         number of buffer rows available starting from @p buffer
  */
-typedef void (*adccallback_t)(ADCDriver *adcp, adcsample_t *buffer, size_t n);
+typedef void (*adccallback_t)(ADCDriver *adcp);
 
 /**
  * @brief   Type of an ADC error callback.
@@ -204,6 +201,26 @@ struct hal_adc_driver {
 /*===========================================================================*/
 
 /**
+ * @name    Macro Functions
+ * @{
+ */
+/**
+ * @brief   Buffer state.
+ * @note    This function is meant to be called from the SPI callback only.
+ *
+ * @param[in] adcp      pointer to the @p ADCDriver object
+ * @return              The buffer state.
+ * @retval              false if the driver filled/sent the first half of the
+ *                      buffer.
+ * @retval              true if the driver filled/sent the second half of the
+ *                      buffer.
+ *
+ * @special
+ */
+#define adcIsBufferComplete(adcp) ((bool)((adcp)->state == ADC_COMPLETE))
+/** @} */
+
+/**
  * @name    Low level driver helper macros
  * @{
  */
@@ -275,7 +292,7 @@ struct hal_adc_driver {
  */
 #define _adc_isr_half_code(adcp) {                                          \
   if ((adcp)->grpp->end_cb != NULL) {                                       \
-    (adcp)->grpp->end_cb(adcp, (adcp)->samples, (adcp)->depth / 2);         \
+    (adcp)->grpp->end_cb(adcp);                                             \
   }                                                                         \
 }
 
@@ -297,15 +314,10 @@ struct hal_adc_driver {
   if ((adcp)->grpp->circular) {                                             \
     /* Callback handling.*/                                                 \
     if ((adcp)->grpp->end_cb != NULL) {                                     \
-      if ((adcp)->depth > 1) {                                              \
-        /* Invokes the callback passing the 2nd half of the buffer.*/       \
-        size_t half = (adcp)->depth / 2;                                    \
-        size_t half_index = half * (adcp)->grpp->num_channels;              \
-        (adcp)->grpp->end_cb(adcp, (adcp)->samples + half_index, half);     \
-      }                                                                     \
-      else {                                                                \
-        /* Invokes the callback passing the whole buffer.*/                 \
-        (adcp)->grpp->end_cb(adcp, (adcp)->samples, (adcp)->depth);         \
+      (adcp)->state = ADC_COMPLETE;                                         \
+      (adcp)->grpp->end_cb(adcp);                                           \
+      if ((adcp)->state == ADC_COMPLETE) {                                  \
+        (adcp)->state = ADC_ACTIVE;                                         \
       }                                                                     \
     }                                                                       \
   }                                                                         \
@@ -314,8 +326,7 @@ struct hal_adc_driver {
     adc_lld_stop_conversion(adcp);                                          \
     if ((adcp)->grpp->end_cb != NULL) {                                     \
       (adcp)->state = ADC_COMPLETE;                                         \
-      /* Invoke the callback passing the whole buffer.*/                    \
-      (adcp)->grpp->end_cb(adcp, (adcp)->samples, (adcp)->depth);           \
+      (adcp)->grpp->end_cb(adcp);                                           \
       if ((adcp)->state == ADC_COMPLETE) {                                  \
         (adcp)->state = ADC_READY;                                          \
         (adcp)->grpp = NULL;                                                \
