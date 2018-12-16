@@ -176,6 +176,8 @@
 - EX:  Updated LIS302DL to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LPS25H to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LSM303DLHC to 1.1.0 (backported to 18.2.1).
+- OTH: Fixed ARM CMx vectors table without thumb bit set for unused vectors
+       (bug #993)(backported to 18.2.2).
 - HAL: Fixed STM32F7xx I2SPLL not fully initialized (bug #992)
        (backported to 18.2.2 and 17.6.5).
 - HAL: Fixed ethernet registry error for STM32F469/479 (bug #990)
