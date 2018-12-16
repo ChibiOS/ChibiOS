@@ -983,9 +983,24 @@ void i2c_lld_stop(I2CDriver *i2cp) {
 
     /* I2C disable.*/
     i2c_lld_abort_operation(i2cp);
-#if STM32_I2C_USE_DMA == TRUE
-    i2c_lld_stop_tx_dma(i2cp);
-    i2c_lld_stop_rx_dma(i2cp);
+
+#if defined(STM32_I2C_DMA_REQUIRED) && defined(STM32_I2C_BDMA_REQUIRED)
+    if(i2cp->is_bdma)
+#endif
+#if defined(STM32_I2C_BDMA_REQUIRED)
+    {
+      bdmaStreamRelease(i2cp->rx.bdma);
+      bdmaStreamRelease(i2cp->tx.bdma);
+    }
+#endif
+#if defined(STM32_I2C_DMA_REQUIRED) && defined(STM32_I2C_BDMA_REQUIRED)
+    else
+#endif
+#if defined(STM32_I2C_DMA_REQUIRED)
+    {
+      dmaStreamRelease(i2cp->rx.dma);
+      dmaStreamRelease(i2cp->tx.dma);
+    }
 #endif
 
 #if STM32_I2C_USE_I2C1
