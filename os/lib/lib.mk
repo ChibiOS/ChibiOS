@@ -33,7 +33,7 @@ LIBSRC := $(CHIBIOS)/os/lib/src/chmboxes.c \
           $(CHIBIOS)/os/lib/src/chmemcore.c \
           $(CHIBIOS)/os/lib/src/chmemheaps.c \
           $(CHIBIOS)/os/lib/src/chmempools.c \
-          $(CHIBIOS)/os/lib/src/chmpipes.c \
+          $(CHIBIOS)/os/lib/src/chpipes.c \
           $(CHIBIOS)/os/lib/src/chfactory.c
 endif
 
