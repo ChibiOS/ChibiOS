@@ -123,8 +123,7 @@ typedef enum {
     !defined(CRY_LLD_SUPPORTS_SHA256) ||                                    \
     !defined(CRY_LLD_SUPPORTS_SHA512) ||                                    \
     !defined(CRY_LLD_SUPPORTS_HMAC_SHA256) ||                               \
-    !defined(CRY_LLD_SUPPORTS_HMAC_SHA512) ||                               \
-    !defined(CRY_LLD_SUPPORTS_TRNG)
+    !defined(CRY_LLD_SUPPORTS_HMAC_SHA512)
 #error "CRYPTO LLD does not export the required switches"
 #endif
 
@@ -145,7 +144,6 @@ typedef enum {
 #define CRY_LLD_SUPPORTS_SHA512             FALSE
 #define CRY_LLD_SUPPORTS_HMAC_SHA256        FALSE
 #define CRY_LLD_SUPPORTS_HMAC_SHA512        FALSE
-#define CRY_LLD_SUPPORTS_TRNG               FALSE
 
 typedef uint_fast8_t crykey_t;
 
@@ -227,10 +225,9 @@ extern "C" {
   void cryObjectInit(CRYDriver *cryp);
   void cryStart(CRYDriver *cryp, const CRYConfig *config);
   void cryStop(CRYDriver *cryp);
-  cryerror_t cryLoadTransientKey(CRYDriver *cryp,
-                                 cryalgorithm_t algorithm,
-                                 size_t size,
-                                 const uint8_t *keyp);
+  cryerror_t cryLoadAESTransientKey(CRYDriver *cryp,
+                                    size_t size,
+                                    const uint8_t *keyp);
   cryerror_t cryEncryptAES(CRYDriver *cryp,
                                crykey_t key_id,
                                const uint8_t *in,
@@ -303,6 +300,9 @@ extern "C" {
                                size_t aadsize,
                                const uint8_t *aad,
                                uint8_t *authtag);
+  cryerror_t cryLoadDESTransientKey(CRYDriver *cryp,
+                                    size_t size,
+                                    const uint8_t *keyp);
   cryerror_t cryEncryptDES(CRYDriver *cryp,
                            crykey_t key_id,
                            const uint8_t *in,
@@ -348,6 +348,9 @@ extern "C" {
                              size_t size, const uint8_t *in);
   cryerror_t crySHA512Final(CRYDriver *cryp, SHA512Context *sha512ctxp,
                             uint8_t *out);
+  cryerror_t cryLoadHMACTransientKey(CRYDriver *cryp,
+                                     size_t size,
+                                     const uint8_t *keyp);
   cryerror_t cryHMACSHA256Init(CRYDriver *cryp,
                                HMACSHA256Context *hmacsha256ctxp);
   cryerror_t cryHMACSHA256Update(CRYDriver *cryp,
@@ -366,7 +369,6 @@ extern "C" {
   cryerror_t cryHMACSHA512Final(CRYDriver *cryp,
                                 HMACSHA512Context *hmacsha512ctxp,
                                 uint8_t *out);
-  cryerror_t cryTRNG(CRYDriver *cryp, size_t size, uint8_t *out);
 #ifdef __cplusplus
 }
 #endif

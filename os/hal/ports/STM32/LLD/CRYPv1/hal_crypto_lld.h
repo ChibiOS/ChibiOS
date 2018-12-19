@@ -56,15 +56,6 @@
 #if !defined(STM32_CRY_USE_HASH1) || defined(__DOXYGEN__)
 #define STM32_CRY_USE_HASH1                 FALSE
 #endif
-
-/**
- * @brief   RNG1 driver enable switch.
- * @details If set to @p TRUE the support for CRYP1 is included.
- * @note    The default is @p FALSE.
- */
-#if !defined(STM32_CRY_USE_RNG1) || defined(__DOXYGEN__)
-#define STM32_CRY_USE_RNG1                  FALSE
-#endif
 /** @} */
 
 /*===========================================================================*/
@@ -144,10 +135,6 @@
 #define CRY_LLD_SUPPORTS_HMAC_SHA256        FALSE
 #define CRY_LLD_SUPPORTS_HMAC_SHA512        FALSE
 #endif
-#if STM32_CRY_USE_RNG1 || defined (__DOXYGEN__)
-#define CRY_LLD_SUPPORTS_TRNG               TRUE
-#else
-#define CRY_LLD_SUPPORTS_TRNG               FALSE
 #endif
 /** @} */
 
@@ -200,12 +187,6 @@ struct CRYDriver {
    * @brief   Pointer to the HASH registers block.
    */
   HASH_TypeDef              *hash;
-#endif
-#if STM32_CRY_USE_RNG1 || defined (__DOXYGEN__)
-  /**
-   * @brief   Pointer to the RNG registers block.
-   */
-  RNG_TypeDef               *rng;
 #endif
 };
 
@@ -272,10 +253,17 @@ extern "C" {
   void cry_lld_init(void);
   void cry_lld_start(CRYDriver *cryp);
   void cry_lld_stop(CRYDriver *cryp);
-  cryerror_t cry_lld_loadkey(CRYDriver *cryp,
-                             cryalgorithm_t algorithm,
-                             size_t size,
-                             const uint8_t *keyp);
+#if (CRY_LLD_SUPPORTS_AES == TRUE) ||                                       \
+    (CRY_LLD_SUPPORTS_AES_ECB == TRUE) ||                                   \
+    (CRY_LLD_SUPPORTS_AES_CBC == TRUE) ||                                   \
+    (CRY_LLD_SUPPORTS_AES_CFB == TRUE) ||                                   \
+    (CRY_LLD_SUPPORTS_AES_CTR == TRUE) ||                                   \
+    (CRY_LLD_SUPPORTS_AES_GCM == TRUE) ||                                   \
+    defined(__DOXYGEN__)
+  cryerror_t cry_lld_aes_loadkey(CRYDriver *cryp,
+                                 size_t size,
+                                 const uint8_t *keyp);
+#endif
 #if (CRY_LLD_SUPPORTS_AES == TRUE) || defined(__DOXYGEN__)
   cryerror_t cry_lld_encrypt_AES(CRYDriver *cryp,
                                  crykey_t key_id,
@@ -360,6 +348,14 @@ extern "C" {
                                      const uint8_t *aad,
                                      uint8_t *authtag);
 #endif
+#if (CRY_LLD_SUPPORTS_DES == TRUE) ||                                       \
+    (CRY_LLD_SUPPORTS_DES_ECB == TRUE) ||                                   \
+    (CRY_LLD_SUPPORTS_DES_CBC == TRUE) ||                                   \
+    defined(__DOXYGEN__)
+  cryerror_t cry_lld_des_loadkey(CRYDriver *cryp,
+                                 size_t size,
+                                 const uint8_t *keyp);
+#endif
 #if (CRY_LLD_SUPPORTS_DES == TRUE) || defined(__DOXYGEN__)
   cryerror_t cry_lld_encrypt_DES(CRYDriver *cryp,
                                  crykey_t key_id,
@@ -417,6 +413,13 @@ extern "C" {
   cryerror_t cry_lld_SHA512_final(CRYDriver *cryp, SHA512Context *sha512ctxp,
                                   uint8_t *out);
 #endif
+#if (CRY_LLD_SUPPORTS_HMAC_SHA256 == TRUE) ||                               \
+    (CRY_LLD_SUPPORTS_HMAC_SHA512 == TRUE) ||                               \
+    defined(__DOXYGEN__)
+  cryerror_t cry_lld_hmac_loadkey(CRYDriver *cryp,
+                                  size_t size,
+                                  const uint8_t *keyp);
+#endif
 #if (CRY_LLD_SUPPORTS_HMAC_SHA256 == TRUE) || defined(__DOXYGEN__)
   cryerror_t cry_lld_HMACSHA256_init(CRYDriver *cryp,
                                      HMACSHA256Context *hmacsha256ctxp);
@@ -436,9 +439,6 @@ extern "C" {
   cryerror_t cry_lld_HMACSHA512_final(CRYDriver *cryp,
                                       HMACSHA512Context *hmacsha512ctxp,
                                       uint8_t *out);
-#endif
-#if (CRY_LLD_SUPPORTS_TRNG == TRUE) || defined(__DOXYGEN__)
-  cryerror_t cry_lld_TRNG(CRYDriver *cryp, size_t size, uint8_t *out);
 #endif
 #ifdef __cplusplus
 }

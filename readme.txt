@@ -111,6 +111,9 @@
        to eight data lines so "quad" was no more appropriate.
 - NEW: Added a new SIO driver model to HAL, it is a low level abstraction of
        an UART.
+- NEW: Added separate "load key" functions for each algorithm in the CRY
+       driver. Each "engine" is supposed to have its own transient key.
+- NEW: Removed TRNG functionality from CRY driver, it is a separate thing now.
 - NEW: Independent TRNG driver model added to HAL. Implemented a RNGv1 driver
        for STM32, added test application.
 - NEW: Added a new "pipes" subsystem to the OS library.

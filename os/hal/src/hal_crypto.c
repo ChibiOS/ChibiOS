@@ -126,46 +126,39 @@ void cryStop(CRYDriver *cryp) {
 }
 
 /**
- * @brief   Initializes the transient key for a specific algorithm.
- * @note    It is the underlying implementation to decide which combinations
- *          of algorithm and key size are allowable.
+ * @brief   Initializes the AES transient key.
+ * @note    It is the underlying implementation to decide which key sizes are
+ *          allowable.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
- * @param[in] algorithm         the algorithm identifier
  * @param[in] size              key size in bytes
  * @param[in] keyp              pointer to the key data
  * @return                      The operation status.
  * @retval CRY_NOERROR          if the operation succeeded.
- * @retval CRY_ERR_INV_ALGO     if the specified algorithm is unknown or
- *                              unsupported.
+ * @retval CRY_ERR_INV_ALGO     if the algorithm is unsupported.
  * @retval CRY_ERR_INV_KEY_SIZE if the specified key size is invalid for
  *                              the specified algorithm.
  *
  * @api
  */
-cryerror_t cryLoadTransientKey(CRYDriver *cryp,
-                               cryalgorithm_t algorithm,
-                               size_t size,
-                               const uint8_t *keyp) {
-  cryerror_t err;
+cryerror_t cryLoadAESTransientKey(CRYDriver *cryp,
+                                  size_t size,
+                                  const uint8_t *keyp) {
 
   osalDbgCheck((cryp != NULL) &&  (keyp != NULL));
 
 
-#if HAL_CRY_ENFORCE_FALLBACK == FALSE
-  /* Key setup in the low level driver.*/
-  err = cry_lld_loadkey(cryp, algorithm, size, keyp);
+#if CRY_LLD_SUPPORTS_AES == TRUE
+  return cry_lld_aes_loadkey(cryp, size, keyp);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_aes_loadkey(cryp, size, keyp);
 #else
-  err = CRY_ERR_INV_ALGO;
-#endif
+  (void)cryp;
+  (void)size;
+  (void)keyp;
 
-#if HAL_CRY_USE_FALLBACK == TRUE
-  if (err == CRY_ERR_INV_ALGO) {
-    err = cry_fallback_loadkey(cryp, algorithm, size, keyp);
-  }
+  return CRY_ERR_INV_ALGO;
 #endif
-
-  return err;
 }
 
 /**
@@ -839,6 +832,42 @@ cryerror_t cryDecryptAES_GCM(CRYDriver *cryp,
 }
 
 /**
+ * @brief   Initializes the DES transient key.
+ * @note    It is the underlying implementation to decide which key sizes are
+ *          allowable.
+ *
+ * @param[in] cryp              pointer to the @p CRYDriver object
+ * @param[in] size              key size in bytes
+ * @param[in] keyp              pointer to the key data
+ * @return                      The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the algorithm is unsupported.
+ * @retval CRY_ERR_INV_KEY_SIZE if the specified key size is invalid for
+ *                              the specified algorithm.
+ *
+ * @api
+ */
+cryerror_t cryLoadDESTransientKey(CRYDriver *cryp,
+                                  size_t size,
+                                  const uint8_t *keyp) {
+
+  osalDbgCheck((cryp != NULL) &&  (keyp != NULL));
+
+
+#if CRY_LLD_SUPPORTS_DES == TRUE
+  return cry_lld_des_loadkey(cryp, size, keyp);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_des_loadkey(cryp, size, keyp);
+#else
+  (void)cryp;
+  (void)size;
+  (void)keyp;
+
+  return CRY_ERR_INV_ALGO;
+#endif
+}
+
+/**
  * @brief   Encryption of a single block using (T)DES.
  * @note    The implementation of this function must guarantee that it can
  *          be called from any context.
@@ -1253,7 +1282,6 @@ cryerror_t crySHA1Final(CRYDriver *cryp, SHA1Context *sha1ctxp, uint8_t *out) {
 
 /**
  * @brief   Hash initialization using SHA256.
- * @note    Use of this algorithm is not recommended because proven weak.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[out] sha256ctxp       pointer to a SHA256 context to be initialized
@@ -1286,7 +1314,6 @@ cryerror_t crySHA256Init(CRYDriver *cryp, SHA256Context *sha256ctxp) {
 
 /**
  * @brief   Hash update using SHA256.
- * @note    Use of this algorithm is not recommended because proven weak.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] sha256ctxp        pointer to a SHA256 context
@@ -1324,7 +1351,6 @@ cryerror_t crySHA256Update(CRYDriver *cryp, SHA256Context *sha256ctxp,
 
 /**
  * @brief   Hash finalization using SHA256.
- * @note    Use of this algorithm is not recommended because proven weak.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] sha256ctxp        pointer to a SHA256 context
@@ -1360,7 +1386,6 @@ cryerror_t crySHA256Final(CRYDriver *cryp, SHA256Context *sha256ctxp,
 
 /**
  * @brief   Hash initialization using SHA512.
- * @note    Use of this algorithm is not recommended because proven weak.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[out] sha512ctxp       pointer to a SHA512 context to be initialized
@@ -1393,7 +1418,6 @@ cryerror_t crySHA512Init(CRYDriver *cryp, SHA512Context *sha512ctxp) {
 
 /**
  * @brief   Hash update using SHA512.
- * @note    Use of this algorithm is not recommended because proven weak.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] sha512ctxp        pointer to a SHA512 context
@@ -1431,7 +1455,6 @@ cryerror_t crySHA512Update(CRYDriver *cryp, SHA512Context *sha512ctxp,
 
 /**
  * @brief   Hash finalization using SHA512.
- * @note    Use of this algorithm is not recommended because proven weak.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] sha512ctxp        pointer to a SHA512 context
@@ -1466,8 +1489,43 @@ cryerror_t crySHA512Final(CRYDriver *cryp, SHA512Context *sha512ctxp,
 }
 
 /**
+ * @brief   Initializes the HMAC transient key.
+ * @note    It is the underlying implementation to decide which key sizes are
+ *          allowable.
+ *
+ * @param[in] cryp              pointer to the @p CRYDriver object
+ * @param[in] size              key size in bytes
+ * @param[in] keyp              pointer to the key data
+ * @return                      The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the algorithm is unsupported.
+ * @retval CRY_ERR_INV_KEY_SIZE if the specified key size is invalid for
+ *                              the specified algorithm.
+ *
+ * @api
+ */
+cryerror_t cryLoadHMACTransientKey(CRYDriver *cryp,
+                                   size_t size,
+                                   const uint8_t *keyp) {
+
+  osalDbgCheck((cryp != NULL) &&  (keyp != NULL));
+
+#if (CRY_LLD_SUPPORTS_HMAC_SHA256 == TRUE) ||                               \
+    (CRY_LLD_SUPPORTS_HMAC_SHA512 == TRUE)
+  return cry_lld_hmac_loadkey(cryp, size, keyp);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_hmac_loadkey(cryp, size, keyp);
+#else
+  (void)cryp;
+  (void)size;
+  (void)keyp;
+
+  return CRY_ERR_INV_ALGO;
+#endif
+}
+
+/**
  * @brief   Hash initialization using HMAC_SHA256.
- * @note    Use of this algorithm is not recommended because proven weak.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[out] hmacsha256ctxp   pointer to a HMAC_SHA256 context to be
@@ -1502,7 +1560,6 @@ cryerror_t cryHMACSHA256Init(CRYDriver *cryp,
 
 /**
  * @brief   Hash update using HMAC.
- * @note    Use of this algorithm is not recommended because proven weak.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] hmacsha256ctxp    pointer to a HMAC_SHA256 context
@@ -1542,7 +1599,6 @@ cryerror_t cryHMACSHA256Update(CRYDriver *cryp,
 
 /**
  * @brief   Hash finalization using HMAC.
- * @note    Use of this algorithm is not recommended because proven weak.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] hmacsha256ctxp    pointer to a HMAC_SHA256 context
@@ -1579,7 +1635,6 @@ cryerror_t cryHMACSHA256Final(CRYDriver *cryp,
 
 /**
  * @brief   Hash initialization using HMAC_SHA512.
- * @note    Use of this algorithm is not recommended because proven weak.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[out] hmacsha512ctxp   pointer to a HMAC_SHA512 context to be
@@ -1614,7 +1669,6 @@ cryerror_t cryHMACSHA512Init(CRYDriver *cryp,
 
 /**
  * @brief   Hash update using HMAC.
- * @note    Use of this algorithm is not recommended because proven weak.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] hmacsha512ctxp    pointer to a HMAC_SHA512 context
@@ -1654,7 +1708,6 @@ cryerror_t cryHMACSHA512Update(CRYDriver *cryp,
 
 /**
  * @brief   Hash finalization using HMAC.
- * @note    Use of this algorithm is not recommended because proven weak.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] hmacsha512ctxp    pointer to a HMAC_SHA512 context
@@ -1683,40 +1736,6 @@ cryerror_t cryHMACSHA512Final(CRYDriver *cryp,
 #else
   (void)cryp;
   (void)hmacsha512ctxp;
-  (void)out;
-
-  return CRY_ERR_INV_ALGO;
-#endif
-}
-
-/**
- * @brief   True random numbers generator.
- *
- * @param[in] cryp              pointer to the @p CRYDriver object
- * @param[in] size              size of output buffer
- * @param[out] out              output buffer
- * @return                      The operation status.
- * @retval CRY_NOERROR          if the operation succeeded.
- * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
- *                              device instance.
- * @retval CRY_ERR_OP_FAILURE   if the operation failed, implementation
- *                              dependent.
- *
- * @api
- */
-cryerror_t cryTRNG(CRYDriver *cryp, size_t size, uint8_t *out) {
-
-  osalDbgCheck((cryp != NULL) && (out != NULL));
-
-  osalDbgAssert(cryp->state == CRY_READY, "not ready");
-
-#if CRY_LLD_SUPPORTS_TRNG == TRUE
-  return cry_lld_TRNG(cryp, size, out);
-#elif HAL_CRY_USE_FALLBACK == TRUE
-  return cry_fallback_TRNG(cryp, size, out);
-#else
-  (void)cryp;
-  (void)size;
   (void)out;
 
   return CRY_ERR_INV_ALGO;

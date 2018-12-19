@@ -70,9 +70,6 @@ void cry_lld_init(void) {
 #if STM32_CRY_USE_HASH1
   CRYD1.hash = HASH;
 #endif
-#if STM32_CRY_USE_RNG1
-  CRYD1.rng  = RNG;
-#endif
 #endif
 }
 
@@ -94,9 +91,6 @@ void cry_lld_start(CRYDriver *cryp) {
 #if STM32_CRY_USE_HASH1
       rccEnableHASH(true);
 #endif
-#if STM32_CRY_USE_RNG1
-      rccEnableRNG(true);
-#endif
     }
 #endif
   }
@@ -106,9 +100,6 @@ void cry_lld_start(CRYDriver *cryp) {
 #endif
 #if STM32_CRY_USE_HASH1
     /* HASH setup and enable.*/
-#endif
-#if STM32_CRY_USE_RNG1
-    /* RNG setup and enable.*/
 #endif
 }
 
@@ -123,29 +114,6 @@ void cry_lld_stop(CRYDriver *cryp) {
 
   if (cryp->state == CRY_READY) {
 
-#if STM32_CRY_USE_CRYP1
-    /* CRYP disable.*/
-#endif
-#if STM32_CRY_USE_HASH1
-    /* HASH disable.*/
-#endif
-#if STM32_CRY_USE_RNG1
-    /* RNG disable.*/
-#endif
-
-#if STM32_CRY_ENABLED1
-    if (&CRYD1 == cryp) {
-#if STM32_CRY_USE_CRYP1
-      rccDisableCRYP();
-#endif
-#if STM32_CRY_USE_HASH1
-      rccDisableHASH();
-#endif
-#if STM32_CRY_USE_RNG1
-      rccDisableRNG();
-#endif
-    }
-#endif
   }
 }
 
@@ -1201,7 +1169,6 @@ cryerror_t cry_lld_SHA512_final(CRYDriver *cryp, SHA512Context *sha512ctxp,
 #if (CRY_LLD_SUPPORTS_HMAC_SHA256 == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Hash initialization using HMAC_SHA256.
- * @note    Use of this algorithm is not recommended because proven weak.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[out] hmacsha256ctxp   pointer to a HMAC_SHA256 context to be
@@ -1226,7 +1193,6 @@ cryerror_t cry_lld_HMACSHA256_init(CRYDriver *cryp,
 
 /**
  * @brief   Hash update using HMAC.
- * @note    Use of this algorithm is not recommended because proven weak.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] hmacsha256ctxp    pointer to a HMAC_SHA256 context
@@ -1256,7 +1222,6 @@ cryerror_t cry_lld_HMACSHA256_update(CRYDriver *cryp,
 
 /**
  * @brief   Hash finalization using HMAC.
- * @note    Use of this algorithm is not recommended because proven weak.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] hmacsha256ctxp    pointer to a HMAC_SHA256 context
@@ -1285,7 +1250,6 @@ cryerror_t cry_lld_HMACSHA256_final(CRYDriver *cryp,
 #if (CRY_LLD_SUPPORTS_HMAC_SHA512 == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Hash initialization using HMAC_SHA512.
- * @note    Use of this algorithm is not recommended because proven weak.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[out] hmacsha512ctxp   pointer to a HMAC_SHA512 context to be
@@ -1310,7 +1274,6 @@ cryerror_t cry_lld_HMACSHA512_init(CRYDriver *cryp,
 
 /**
  * @brief   Hash update using HMAC.
- * @note    Use of this algorithm is not recommended because proven weak.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] hmacsha512ctxp    pointer to a HMAC_SHA512 context
@@ -1340,7 +1303,6 @@ cryerror_t cry_lld_HMACSHA512_update(CRYDriver *cryp,
 
 /**
  * @brief   Hash finalization using HMAC.
- * @note    Use of this algorithm is not recommended because proven weak.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] hmacsha512ctxp    pointer to a HMAC_SHA512 context
@@ -1360,32 +1322,6 @@ cryerror_t cry_lld_HMACSHA512_final(CRYDriver *cryp,
 
   (void)cryp;
   (void)hmacsha512ctxp;
-  (void)out;
-
-  return CRY_ERR_INV_ALGO;
-}
-#endif
-
-#if (CRY_LLD_SUPPORTS_TRNG == TRUE) || defined(__DOXYGEN__)
-/**
- * @brief   True random numbers generator.
- *
- * @param[in] cryp              pointer to the @p CRYDriver object
- * @param[in] size              size of output buffer
- * @param[out] out              output buffer
- * @return                      The operation status.
- * @retval CRY_NOERROR          if the operation succeeded.
- * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
- *                              device instance.
- * @retval CRY_ERR_OP_FAILURE   if the operation failed, implementation
- *                              dependent.
- *
- * @notapi
- */
-cryerror_t cry_lld_TRNG(CRYDriver *cryp, size_t size, uint8_t *out) {
-
-  (void)cryp;
-  (void)size;
   (void)out;
 
   return CRY_ERR_INV_ALGO;
