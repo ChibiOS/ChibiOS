@@ -62,6 +62,15 @@
   nvicEnableVector(STM32_RTC_ALARM_NUMBER, STM32_IRQ_EXTI18_PRIORITY);      \
 } while (false)
 
+#if defined(STM32L486xx) || defined(STM32L4A6xx) ||                         \
+    defined(__DOXYGEN__)
+#define STM32_HAS_HASH1                     TRUE
+#define STM32_HAS_AES1                      TRUE
+#else
+#define STM32_HAS_HASH1                     FALSE
+#define STM32_HAS_AES1                      FALSE
+#endif
+
 /*===========================================================================*/
 /* STM32L432xx.                                                              */
 /*===========================================================================*/

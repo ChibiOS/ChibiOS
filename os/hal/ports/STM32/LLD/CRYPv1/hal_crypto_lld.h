@@ -54,7 +54,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(STM32_CRY_USE_HASH1) || defined(__DOXYGEN__)
-#define STM32_CRY_USE_HASH1                 FALSE
+#define STM32_CRY_USE_HASH1                 TRUE
 #endif
 /** @} */
 
@@ -63,7 +63,7 @@
 /*===========================================================================*/
 
 #if (STM32_CRY_USE_CRYP1 == TRUE) || (STM32_CRY_USE_HASH1 == TRUE) ||       \
-    (STM32_CRY_USE_RNG1 == TRUE)  || defined (__DOXYGEN__)
+    defined (__DOXYGEN__)
 #define STM32_CRY_ENABLED1                  TRUE
 #else
 #define STM32_CRY_ENABLED1                  FALSE
@@ -77,10 +77,6 @@
 #define STM32_HAS_HASH1                     FALSE
 #endif
 
-#if !defined (STM32_HAS_RNG1)
-#define STM32_HAS_RNG1                      FALSE
-#endif
-
 #if STM32_CRY_USE_CRYP1 && !STM32_HAS_CRYP1
 #error "CRYP1 not present in the selected device"
 #endif
@@ -89,12 +85,8 @@
 #error "HASH1 not present in the selected device"
 #endif
 
-#if STM32_CRY_USE_RNG1 && !STM32_HAS_RNG1
-#error "RNG1 not present in the selected device"
-#endif
-
 #if !STM32_CRY_ENABLED1
-#error "CRY driver activated but no CRYP or HASH or RNG peripheral assigned"
+#error "CRY driver activated but no CRYP or HASH peripheral assigned"
 #endif
 
 /**
@@ -134,7 +126,6 @@
 #define CRY_LLD_SUPPORTS_SHA512             FALSE
 #define CRY_LLD_SUPPORTS_HMAC_SHA256        FALSE
 #define CRY_LLD_SUPPORTS_HMAC_SHA512        FALSE
-#endif
 #endif
 /** @} */
 
