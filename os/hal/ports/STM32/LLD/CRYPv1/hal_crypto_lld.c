@@ -71,14 +71,57 @@ static void cry_lld_serve_hash_interrupt(CRYDriver *cryp, uint32_t flags) {
   if ((flags & STM32_DMA_ISR_TCIF) != 0U) {
     /* End buffer interrupt.*/
 
-    /* Halting processing via DMA.*/
-//    HASH->CR &= ~HASH_CR_DMAE;
-
     /* Resuming waiting thread.*/
     osalSysLockFromISR();
     osalThreadResumeI(&cryp->hash_tr, MSG_OK);
     osalSysUnlockFromISR();
   }
+}
+
+/**
+ * @brief   Pushes a series of words into the hash engine.
+ *
+ * @param[in] cryp      pointer to the @p CRYDriver object
+ * @param[in] n         the number of words to be pushed
+ * @param[in] p         pointer to the words buffer
+ */
+static void cry_lld_hash_push(CRYDriver *cryp, uint32_t n, const uint32_t *p) {
+
+  /* Data is processed in 32kB blocks because DMA size limitations.*/
+  while (n > 0U) {
+    uint32_t chunk = n > 0x8000U ? 0x8000U : n;
+    n -= chunk;
+
+#if STM32_CRY_HASH_SIZE_THRESHOLD > 0
+    if (chunk >= STM32_CRY_HASH_SIZE_THRESHOLD)
+#endif
+    {
+      /* Setting up transfer.*/
+      dmaStreamSetTransactionSize(cryp->dma_hash, chunk);
+      dmaStreamSetPeripheral(cryp->dma_hash, p);
+      p += chunk;
+
+      osalSysLock();
+
+      /* Enabling DMA channel then HASH engine.*/
+      dmaStreamEnable(cryp->dma_hash);
+
+      /* Waiting for DMA operation completion.*/
+      osalThreadSuspendS(&cryp->hash_tr);
+
+      osalSysUnlock();
+    }
+#if STM32_CRY_HASH_SIZE_THRESHOLD > 0
+    else {
+      /* Small chunk, just pushing data without touching DMA.*/
+      do {
+        HASH->DIN = *p++;
+        chunk--;
+      } while (chunk > 0U);
+    }
+#endif
+  }
+
 }
 
 /*===========================================================================*/
@@ -143,14 +186,12 @@ void cry_lld_start(CRYDriver *cryp) {
       dmaStreamSetMode(cryp->dma_hash,
                        STM32_DMA_CR_CHSEL(HASH1_DMA_CHANNEL) |
                        STM32_DMA_CR_PL(STM32_CRY_HASH1_DMA_PRIORITY) |
-                       STM32_DMA_CR_MINC | STM32_DMA_CR_DIR_M2P |
-//                       STM32_DMA_CR_PINC | STM32_DMA_CR_DIR_M2M |
+                       STM32_DMA_CR_PINC | STM32_DMA_CR_DIR_M2M |
                        STM32_DMA_CR_MSIZE_WORD | STM32_DMA_CR_PSIZE_WORD |
                        STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE |
                        STM32_DMA_CR_TCIE);
-      dmaStreamSetPeripheral(cryp->dma_hash, &HASH->DIN);
-//      dmaStreamSetMemory0(cryp->dma_hash, &HASH->DIN);
-//      dmaStreamSetFIFO(cryp->dma_hash, STM32_DMA_FCR_DMDIS);
+      dmaStreamSetMemory0(cryp->dma_hash, &HASH->DIN);
+      dmaStreamSetFIFO(cryp->dma_hash, STM32_DMA_FCR_DMDIS);
 #if STM32_DMA_SUPPORTS_DMAMUX
       dmaSetRequestSource(cryp->dma_hash, STM32_DMAMUX1_HASH);
 #endif
@@ -1160,7 +1201,7 @@ cryerror_t cry_lld_SHA256_init(CRYDriver *cryp, SHA256Context *sha256ctxp) {
   sha256ctxp->last_size = 0U;
 
   /* Initializing operation.*/
-  HASH->CR = HASH_CR_MDMAT | HASH_CR_ALGO_1 | HASH_CR_ALGO_0 |
+  HASH->CR = /*HASH_CR_MDMAT |*/ HASH_CR_ALGO_1 | HASH_CR_ALGO_0 |
              HASH_CR_DATATYPE_1 | HASH_CR_INIT;
 
   return CRY_NOERROR;
@@ -1184,6 +1225,7 @@ cryerror_t cry_lld_SHA256_init(CRYDriver *cryp, SHA256Context *sha256ctxp) {
  */
 cryerror_t cry_lld_SHA256_update(CRYDriver *cryp, SHA256Context *sha256ctxp,
                                  size_t size, const uint8_t *in) {
+  const uint32_t *wp = (const uint32_t *)(const void *)in;
 
   /* This HW is unable to hash blocks that are not a multiple of 4 bytes
      except for the last block in the stream which is handled in the
@@ -1195,43 +1237,11 @@ cryerror_t cry_lld_SHA256_update(CRYDriver *cryp, SHA256Context *sha256ctxp,
   /* Any unaligned data is deferred to the "final" function.*/
   sha256ctxp->last_size = 8U * (size % sizeof (uint32_t));
   if (sha256ctxp->last_size > 0U) {
-    const uint32_t *wp = (const uint32_t *)(const void *)in;
     sha256ctxp->last_data = wp[size / sizeof (uint32_t)];
   }
 
-  /* Removing the unaligned part from the total size.*/
-  size = size & ~(sizeof (uint32_t) - 1U);
-
-  /* Data is processed in 32kB blocks because DMA size limitations.*/
-  while (size > 0U) {
-    size_t chunk = size > 0x8000U ? 0x8000U : size;
-
-#if 1
-    osalSysLock();
-
-    /* Setting up transfer.*/
-    dmaStreamSetMemory0(cryp->dma_hash, in);
-//    dmaStreamSetPeripheral(cryp->dma_hash, in);
-    dmaStreamSetTransactionSize(cryp->dma_hash, chunk / sizeof (uint32_t));
-
-    /* Enabling DMA channel then HASH engine.*/
-    dmaStreamEnable(cryp->dma_hash);
-    HASH->CR |= HASH_CR_DMAE;
-
-    /* Waiting for DMA operation completion.*/
-    osalThreadSuspendS(&cryp->hash_tr);
-
-    osalSysUnlock();
-#else
-    const uint32_t *wp = (const uint32_t *)(const void *)in;
-    for (size_t i = 0; i < chunk / sizeof (uint32_t); i++) {
-      HASH->DIN = wp[i];
-    }
-#endif
-
-    size -= chunk;
-    in += chunk;
-  }
+  /* Pushing data.*/
+  cry_lld_hash_push(cryp, (uint32_t)(size / sizeof (uint32_t)), wp);
 
   return CRY_NOERROR;
 }

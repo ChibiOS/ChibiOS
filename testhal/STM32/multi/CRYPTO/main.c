@@ -69,7 +69,7 @@ int main(void) {
 
     if (palReadLine(PORTAB_LINE_BUTTON) == PORTAB_BUTTON_PRESSED) {
       SHA256Context ctx256;
-#if 0
+
       crySHA256Init(&CRYD1, &ctx256);
       crySHA256Update(&CRYD1, &ctx256, 0U, (const uint8_t *)"");
       crySHA256Final(&CRYD1, &ctx256, digest);
@@ -77,7 +77,7 @@ int main(void) {
       crySHA256Init(&CRYD1, &ctx256);
       crySHA256Update(&CRYD1, &ctx256, 3U, (const uint8_t *)"abc");
       crySHA256Final(&CRYD1, &ctx256, digest);
-#endif
+
       crySHA256Init(&CRYD1, &ctx256);
       crySHA256Update(&CRYD1, &ctx256, 56U, (const uint8_t *)"abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq");
       crySHA256Final(&CRYD1, &ctx256, digest);

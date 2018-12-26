@@ -77,6 +77,23 @@
 #if !defined(STM32_CRY_HASH1_DMA_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_CRY_HASH1_DMA_PRIORITY        0
 #endif
+
+/**
+ * @brief   Minimum message size (in words) for DMA use.
+ * @note    If set to zero then DMA is always used.
+ */
+#if !defined(STM32_CRY_HASH_SIZE_THRESHOLD) || defined(__DOXYGEN__)
+#define STM32_CRY_HASH_SIZE_THRESHOLD       1024
+#endif
+
+/**
+ * @brief   Hash DMA error hook.
+ * @note    The default action for DMA errors is a system halt because DMA
+ *          error can only happen because programming errors.
+ */
+#if !defined(STM32_CRY_HASH_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
+#define STM32_CRY_HASH_DMA_ERROR_HOOK(cryp) osalSysHalt("DMA failure")
+#endif
 /** @} */
 
 /*===========================================================================*/
