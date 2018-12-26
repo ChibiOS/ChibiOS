@@ -92,35 +92,43 @@ void cry_lld_stop(CRYDriver *cryp) {
   }
 }
 
+#if (CRY_LLD_SUPPORTS_AES == TRUE) || defined(__DOXYGEN__)
 /**
- * @brief   Initializes the transient key for a specific algorithm.
+ * @brief   Initializes the AES transient key.
+ * @note    It is the underlying implementation to decide which key sizes are
+ *          allowable.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
- * @param[in] algorithm         the algorithm identifier
  * @param[in] size              key size in bytes
  * @param[in] keyp              pointer to the key data
  * @return                      The operation status.
  * @retval CRY_NOERROR          if the operation succeeded.
- * @retval CRY_ERR_INV_ALGO     if the specified algorithm is unknown or
- *                              unsupported.
- * @retval CRY_ERR_INV_KEY_SIZE if the specified key size is invalid.
+ * @retval CRY_ERR_INV_ALGO     if the algorithm is unsupported.
+ * @retval CRY_ERR_INV_KEY_SIZE if the specified key size is invalid for
+ *                              the specified algorithm.
  *
  * @notapi
  */
-cryerror_t cry_lld_loadkey(CRYDriver *cryp,
-                           cryalgorithm_t algorithm,
-                           size_t size,
-                           const uint8_t *keyp) {
+cryerror_t cry_lld_aes_loadkey(CRYDriver *cryp,
+                               size_t size,
+                               const uint8_t *keyp) {
 
+  osalDbgCheck((cryp != NULL) &&  (keyp != NULL));
+
+
+#if CRY_LLD_SUPPORTS_AES == TRUE
+  return cry_lld_aes_loadkey(cryp, size, keyp);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_aes_loadkey(cryp, size, keyp);
+#else
   (void)cryp;
-  (void)algorithm;
   (void)size;
   (void)keyp;
 
-  return CRY_NOERROR;
+  return CRY_ERR_INV_ALGO;
+#endif
 }
 
-#if (CRY_LLD_SUPPORTS_AES == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Encryption of a single block using AES.
  * @note    The implementation of this function must guarantee that it can
@@ -666,6 +674,42 @@ cryerror_t cry_lld_decrypt_AES_GCM(CRYDriver *cryp,
 
 #if (CRY_LLD_SUPPORTS_DES == TRUE) || defined(__DOXYGEN__)
 /**
+ * @brief   Initializes the DES transient key.
+ * @note    It is the underlying implementation to decide which key sizes are
+ *          allowable.
+ *
+ * @param[in] cryp              pointer to the @p CRYDriver object
+ * @param[in] size              key size in bytes
+ * @param[in] keyp              pointer to the key data
+ * @return                      The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the algorithm is unsupported.
+ * @retval CRY_ERR_INV_KEY_SIZE if the specified key size is invalid for
+ *                              the specified algorithm.
+ *
+ * @notapi
+ */
+cryerror_t cry_lld_des_loadkey(CRYDriver *cryp,
+                               size_t size,
+                               const uint8_t *keyp) {
+
+  osalDbgCheck((cryp != NULL) &&  (keyp != NULL));
+
+
+#if CRY_LLD_SUPPORTS_DES == TRUE
+  return cry_lld_des_loadkey(cryp, size, keyp);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_des_loadkey(cryp, size, keyp);
+#else
+  (void)cryp;
+  (void)size;
+  (void)keyp;
+
+  return CRY_ERR_INV_ALGO;
+#endif
+}
+
+/**
  * @brief   Encryption of a single block using (T)DES.
  * @note    The implementation of this function must guarantee that it can
  *          be called from any context.
@@ -1142,6 +1186,42 @@ cryerror_t cry_lld_SHA512_final(CRYDriver *cryp, SHA512Context *sha512ctxp,
 #endif
 
 #if (CRY_LLD_SUPPORTS_HMAC_SHA256 == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Initializes the HMAC transient key.
+ * @note    It is the underlying implementation to decide which key sizes are
+ *          allowable.
+ *
+ * @param[in] cryp              pointer to the @p CRYDriver object
+ * @param[in] size              key size in bytes
+ * @param[in] keyp              pointer to the key data
+ * @return                      The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the algorithm is unsupported.
+ * @retval CRY_ERR_INV_KEY_SIZE if the specified key size is invalid for
+ *                              the specified algorithm.
+ *
+ * @notapi
+ */
+cryerror_t cry_lld_hmac_loadkey(CRYDriver *cryp,
+                                size_t size,
+                                const uint8_t *keyp) {
+
+  osalDbgCheck((cryp != NULL) &&  (keyp != NULL));
+
+#if (CRY_LLD_SUPPORTS_HMAC_SHA256 == TRUE) ||                               \
+    (CRY_LLD_SUPPORTS_HMAC_SHA512 == TRUE)
+  return cry_lld_hmac_loadkey(cryp, size, keyp);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_hmac_loadkey(cryp, size, keyp);
+#else
+  (void)cryp;
+  (void)size;
+  (void)keyp;
+
+  return CRY_ERR_INV_ALGO;
+#endif
+}
+
 /**
  * @brief   Hash initialization using HMAC_SHA256.
  *

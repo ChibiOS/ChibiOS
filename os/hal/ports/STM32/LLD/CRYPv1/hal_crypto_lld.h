@@ -54,7 +54,28 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(STM32_CRY_USE_HASH1) || defined(__DOXYGEN__)
-#define STM32_CRY_USE_HASH1                 TRUE
+#define STM32_CRY_USE_HASH1                 FALSE
+#endif
+
+/**
+ * @brief   CRYP1 interrupt priority level setting.
+ */
+#if !defined(STM32_CRY_CRYP1_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_CRY_CRYP1_IRQ_PRIORITY        9
+#endif
+
+/**
+ * @brief   HASH1 interrupt priority level setting.
+ */
+#if !defined(STM32_CRY_HASH1_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_CRY_HASH1_IRQ_PRIORITY        9
+#endif
+
+/**
+ * @brief   HASH1 DMA priority (0..3|lowest..highest).
+ */
+#if !defined(STM32_CRY_HASH1_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_CRY_HASH1_DMA_PRIORITY        0
 #endif
 /** @} */
 
@@ -86,7 +107,53 @@
 #endif
 
 #if !STM32_CRY_ENABLED1
-#error "CRY driver activated but no CRYP or HASH peripheral assigned"
+#error "CRY driver activated but no CRYP nor HASH peripheral assigned"
+#endif
+
+#if STM32_CRY_USE_HASH1 &&                                                  \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_CRY_HASH1_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to HASH1"
+#endif
+
+#if STM32_CRY_USE_CRYP1 &&                                                  \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_CRY_CRYP1_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to CRYP1"
+#endif
+
+/* Devices with DMAMUX require a different kind of check.*/
+#if STM32_DMA_SUPPORTS_DMAMUX
+
+#if STM32_CRY_USE_HASH1
+#if !defined(STM32_CRY_HASH1_DMA_CHANNEL)
+#error "HASH1 DMA channel not defined"
+#endif
+#if !STM32_DMA_IS_VALID_CHANNEL(STM32_CRY_HASH1_DMA_CHANNEL)
+#error "Invalid DMA channel assigned to HASH1"
+#endif
+#if !STM32_DMA_IS_VALID_PRIORITY(STM32_CRY_HASH1_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to HASH1"
+#endif
+#endif /* !STM32_CRY_USE_HASH1 */
+
+#else /* !STM32_DMA_SUPPORTS_DMAMUX */
+
+/* Sanity checks on DMA streams settings in mcuconf.h.*/
+#if STM32_CRY_USE_HASH1
+#if !defined(STM32_CRY_HASH1_DMA_STREAM)
+#error "HASH1 DMA streams not defined"
+#endif
+#if !STM32_DMA_IS_VALID_ID(STM32_CRY_HASH1_DMA_STREAM, STM32_HASH1_DMA_MSK)
+#error "invalid DMA stream associated to HASH1"
+#endif
+#if !STM32_DMA_IS_VALID_PRIORITY(STM32_CRY_HASH1_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to HASH1"
+#endif
+#endif /* !STM32_CRY_USE_HASH1 */
+
+#endif /* !STM32_DMA_SUPPORTS_DMAMUX */
+
+#if !defined(STM32_DMA_REQUIRED)
+#define STM32_DMA_REQUIRED
 #endif
 
 /**
@@ -115,11 +182,11 @@
 #define CRY_LLD_SUPPORTS_DES_CBC            FALSE
 #endif
 #if STM32_CRY_USE_HASH1 || defined (__DOXYGEN__)
-#define CRY_LLD_SUPPORTS_SHA1               TRUE
+#define CRY_LLD_SUPPORTS_SHA1               FALSE
 #define CRY_LLD_SUPPORTS_SHA256             TRUE
-#define CRY_LLD_SUPPORTS_SHA512             TRUE
+#define CRY_LLD_SUPPORTS_SHA512             FALSE
 #define CRY_LLD_SUPPORTS_HMAC_SHA256        TRUE
-#define CRY_LLD_SUPPORTS_HMAC_SHA512        TRUE
+#define CRY_LLD_SUPPORTS_HMAC_SHA512        FALSE
 #else
 #define CRY_LLD_SUPPORTS_SHA1               FALSE
 #define CRY_LLD_SUPPORTS_SHA256             FALSE
@@ -168,16 +235,16 @@ struct CRYDriver {
 #endif
   /* End of the mandatory fields.*/
 #if STM32_CRY_USE_CRYP1 || defined (__DOXYGEN__)
-  /**
-   * @brief   Pointer to the CRYP registers block.
-   */
-  CRYP_TypeDef              *cryp;
 #endif
 #if STM32_CRY_USE_HASH1 || defined (__DOXYGEN__)
   /**
-   * @brief   Pointer to the HASH registers block.
+   * @brief   Thread reference for hash operations.
    */
-  HASH_TypeDef              *hash;
+  thread_reference_t        hash_tr;
+  /**
+   * @brief   Hash DMA stream.
+   */
+  const stm32_dma_stream_t  *dma_hash;
 #endif
 };
 
@@ -195,7 +262,14 @@ typedef struct {
  * @brief   Type of a SHA256 context.
  */
 typedef struct {
-  uint32_t dummy;
+  /**
+   * @brief   Last data to be hashed on finalization.
+   */
+  uint32_t      last_data;
+  /**
+   * @brief   Size, in bits, of the last data.
+   */
+  uint32_t      last_size;
 } SHA256Context;
 #endif
 

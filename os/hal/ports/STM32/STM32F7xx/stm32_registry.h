@@ -62,6 +62,18 @@
   nvicEnableVector(STM32_RTC_ALARM_NUMBER, STM32_IRQ_EXTI17_PRIORITY);      \
 } while (false)
 
+#if defined(STM32F732xx) || defined(STM32F733xx) || defined(STM32F756xx) || \
+    defined(STM32F777xx) || defined(STM32F779xx) || defined(__DOXYGEN__)
+#define STM32_HAS_HASH1                     TRUE
+#define STM32_HAS_AES1                      TRUE
+#define STM32_HASH1_DMA_MSK                 STM32_DMA_STREAM_ID_MSK(2, 7)
+#define STM32_HASH1_DMA_CHN                 0x20000000
+
+#else /* Devices without cryp nor hash.*/
+#define STM32_HAS_HASH1                     FALSE
+#define STM32_HAS_AES1                      FALSE
+#endif
+
 /*===========================================================================*/
 /* STM32F722xx, STM32F723xx, STM32F732xx, STM32F733xx.                       */
 /*===========================================================================*/

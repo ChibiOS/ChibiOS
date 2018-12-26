@@ -22,6 +22,8 @@
  * @{
  */
 
+#include <string.h>
+
 #include "hal.h"
 
 #if (HAL_USE_CRY == TRUE) || defined(__DOXYGEN__)
@@ -29,6 +31,10 @@
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
+
+#define HASH1_DMA_CHANNEL                                                   \
+  STM32_DMA_GETCHANNEL(STM32_CRY_HASH1_DMA_STREAM,                          \
+                       STM32_HASH1_DMA_CHN)
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -47,6 +53,34 @@ CRYDriver CRYD1;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+/**
+ * @brief   Shared end-of-rx service routine.
+ *
+ * @param[in] cryp      pointer to the @p CRYDriver object
+ * @param[in] flags     pre-shifted content of the ISR register
+ */
+static void cry_lld_serve_hash_interrupt(CRYDriver *cryp, uint32_t flags) {
+
+  /* DMA errors handling.*/
+#if defined(STM32_HASH_DMA_ERROR_HOOK)
+  if ((flags & (STM32_DMA_ISR_TEIF | STM32_DMA_ISR_DMEIF)) != 0U) {
+    STM32_CRY_HASH_DMA_ERROR_HOOK(cryp);
+  }
+#endif
+
+  if ((flags & STM32_DMA_ISR_TCIF) != 0U) {
+    /* End buffer interrupt.*/
+
+    /* Halting processing via DMA.*/
+//    HASH->CR &= ~HASH_CR_DMAE;
+
+    /* Resuming waiting thread.*/
+    osalSysLockFromISR();
+    osalThreadResumeI(&cryp->hash_tr, MSG_OK);
+    osalSysUnlockFromISR();
+  }
+}
+
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
@@ -64,13 +98,20 @@ void cry_lld_init(void) {
 
 #if STM32_CRY_ENABLED1
   cryObjectInit(&CRYD1);
+
 #if STM32_CRY_USE_CRYP1
-  CRYD1.cryp = CRYP;
 #endif
+
 #if STM32_CRY_USE_HASH1
-  CRYD1.hash = HASH;
+  CRYD1.hash_tr     = NULL;
+#if STM32_DMA_SUPPORTS_DMAMUX
+  CRYD1.dma_hash    = STM32_DMA_STREAM(STM32_CRY_HASH1_DMA_CHANNEL);
+#else
+  CRYD1.dma_hash    = STM32_DMA_STREAM(STM32_CRY_HASH1_DMA_STREAM);
 #endif
-#endif
+#endif /* STM32_CRY_USE_HASH1 */
+
+#endif /* STM32_CRY_ENABLED1 */
 }
 
 /**
@@ -83,12 +124,36 @@ void cry_lld_init(void) {
 void cry_lld_start(CRYDriver *cryp) {
 
   if (cryp->state == CRY_STOP) {
+
 #if STM32_CRY_ENABLED1
     if (&CRYD1 == cryp) {
 #if STM32_CRY_USE_CRYP1
       rccEnableCRYP(true);
 #endif
+
 #if STM32_CRY_USE_HASH1
+      bool b;
+      b = dmaStreamAllocate(cryp->dma_hash,
+                            STM32_CRY_HASH1_IRQ_PRIORITY,
+                            (stm32_dmaisr_t)cry_lld_serve_hash_interrupt,
+                            (void *)cryp);
+      osalDbgAssert(!b, "stream already allocated");
+
+      /* Preparing the DMA channel.*/
+      dmaStreamSetMode(cryp->dma_hash,
+                       STM32_DMA_CR_CHSEL(HASH1_DMA_CHANNEL) |
+                       STM32_DMA_CR_PL(STM32_CRY_HASH1_DMA_PRIORITY) |
+                       STM32_DMA_CR_MINC | STM32_DMA_CR_DIR_M2P |
+//                       STM32_DMA_CR_PINC | STM32_DMA_CR_DIR_M2M |
+                       STM32_DMA_CR_MSIZE_WORD | STM32_DMA_CR_PSIZE_WORD |
+                       STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE |
+                       STM32_DMA_CR_TCIE);
+      dmaStreamSetPeripheral(cryp->dma_hash, &HASH->DIN);
+//      dmaStreamSetMemory0(cryp->dma_hash, &HASH->DIN);
+//      dmaStreamSetFIFO(cryp->dma_hash, STM32_DMA_FCR_DMDIS);
+#if STM32_DMA_SUPPORTS_DMAMUX
+      dmaSetRequestSource(cryp->dma_hash, STM32_DMAMUX1_HASH);
+#endif
       rccEnableHASH(true);
 #endif
     }
@@ -114,38 +179,58 @@ void cry_lld_stop(CRYDriver *cryp) {
 
   if (cryp->state == CRY_READY) {
 
+#if STM32_CRY_ENABLED1
+    if (&CRYD1 == cryp) {
+#if STM32_CRY_USE_CRYP1
+      rccDisableCRYP();
+#endif
+
+#if STM32_CRY_USE_HASH1
+      dmaStreamRelease(cryp->dma_hash);
+      rccDisableHASH();
+#endif
+    }
+#endif
   }
 }
 
+#if (CRY_LLD_SUPPORTS_AES == TRUE) || defined(__DOXYGEN__)
 /**
- * @brief   Initializes the transient key for a specific algorithm.
+ * @brief   Initializes the AES transient key.
+ * @note    It is the underlying implementation to decide which key sizes are
+ *          allowable.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
- * @param[in] algorithm         the algorithm identifier
  * @param[in] size              key size in bytes
  * @param[in] keyp              pointer to the key data
  * @return                      The operation status.
  * @retval CRY_NOERROR          if the operation succeeded.
- * @retval CRY_ERR_INV_ALGO     if the specified algorithm is unknown or
- *                              unsupported.
- * @retval CRY_ERR_INV_KEY_SIZE if the specified key size is invalid.
+ * @retval CRY_ERR_INV_ALGO     if the algorithm is unsupported.
+ * @retval CRY_ERR_INV_KEY_SIZE if the specified key size is invalid for
+ *                              the specified algorithm.
  *
  * @notapi
  */
-cryerror_t cry_lld_loadkey(CRYDriver *cryp,
-                           cryalgorithm_t algorithm,
-                           size_t size,
-                           const uint8_t *keyp) {
+cryerror_t cry_lld_aes_loadkey(CRYDriver *cryp,
+                               size_t size,
+                               const uint8_t *keyp) {
 
+  osalDbgCheck((cryp != NULL) &&  (keyp != NULL));
+
+
+#if CRY_LLD_SUPPORTS_AES == TRUE
+  return cry_lld_aes_loadkey(cryp, size, keyp);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_aes_loadkey(cryp, size, keyp);
+#else
   (void)cryp;
-  (void)algorithm;
   (void)size;
   (void)keyp;
 
-  return CRY_NOERROR;
+  return CRY_ERR_INV_ALGO;
+#endif
 }
 
-#if (CRY_LLD_SUPPORTS_AES == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Encryption of a single block using AES.
  * @note    The implementation of this function must guarantee that it can
@@ -691,6 +776,42 @@ cryerror_t cry_lld_decrypt_AES_GCM(CRYDriver *cryp,
 
 #if (CRY_LLD_SUPPORTS_DES == TRUE) || defined(__DOXYGEN__)
 /**
+ * @brief   Initializes the DES transient key.
+ * @note    It is the underlying implementation to decide which key sizes are
+ *          allowable.
+ *
+ * @param[in] cryp              pointer to the @p CRYDriver object
+ * @param[in] size              key size in bytes
+ * @param[in] keyp              pointer to the key data
+ * @return                      The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the algorithm is unsupported.
+ * @retval CRY_ERR_INV_KEY_SIZE if the specified key size is invalid for
+ *                              the specified algorithm.
+ *
+ * @notapi
+ */
+cryerror_t cry_lld_des_loadkey(CRYDriver *cryp,
+                               size_t size,
+                               const uint8_t *keyp) {
+
+  osalDbgCheck((cryp != NULL) &&  (keyp != NULL));
+
+
+#if CRY_LLD_SUPPORTS_DES == TRUE
+  return cry_lld_des_loadkey(cryp, size, keyp);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_des_loadkey(cryp, size, keyp);
+#else
+  (void)cryp;
+  (void)size;
+  (void)keyp;
+
+  return CRY_ERR_INV_ALGO;
+#endif
+}
+
+/**
  * @brief   Encryption of a single block using (T)DES.
  * @note    The implementation of this function must guarantee that it can
  *          be called from any context.
@@ -1033,9 +1154,16 @@ cryerror_t cry_lld_SHA1_final(CRYDriver *cryp, SHA1Context *sha1ctxp,
 cryerror_t cry_lld_SHA256_init(CRYDriver *cryp, SHA256Context *sha256ctxp) {
 
   (void)cryp;
-  (void)sha256ctxp;
 
-  return CRY_ERR_INV_ALGO;
+  /* Initializing context structure.*/
+  sha256ctxp->last_data = 0U;
+  sha256ctxp->last_size = 0U;
+
+  /* Initializing operation.*/
+  HASH->CR = HASH_CR_MDMAT | HASH_CR_ALGO_1 | HASH_CR_ALGO_0 |
+             HASH_CR_DATATYPE_1 | HASH_CR_INIT;
+
+  return CRY_NOERROR;
 }
 
 /**
@@ -1057,12 +1185,55 @@ cryerror_t cry_lld_SHA256_init(CRYDriver *cryp, SHA256Context *sha256ctxp) {
 cryerror_t cry_lld_SHA256_update(CRYDriver *cryp, SHA256Context *sha256ctxp,
                                  size_t size, const uint8_t *in) {
 
-  (void)cryp;
-  (void)sha256ctxp;
-  (void)size;
-  (void)in;
+  /* This HW is unable to hash blocks that are not a multiple of 4 bytes
+     except for the last block in the stream which is handled in the
+     "final" function.*/
+  if (sha256ctxp->last_size != 0U) {
+    return CRY_ERR_OP_FAILURE;
+  }
 
-  return CRY_ERR_INV_ALGO;
+  /* Any unaligned data is deferred to the "final" function.*/
+  sha256ctxp->last_size = 8U * (size % sizeof (uint32_t));
+  if (sha256ctxp->last_size > 0U) {
+    const uint32_t *wp = (const uint32_t *)(const void *)in;
+    sha256ctxp->last_data = wp[size / sizeof (uint32_t)];
+  }
+
+  /* Removing the unaligned part from the total size.*/
+  size = size & ~(sizeof (uint32_t) - 1U);
+
+  /* Data is processed in 32kB blocks because DMA size limitations.*/
+  while (size > 0U) {
+    size_t chunk = size > 0x8000U ? 0x8000U : size;
+
+#if 1
+    osalSysLock();
+
+    /* Setting up transfer.*/
+    dmaStreamSetMemory0(cryp->dma_hash, in);
+//    dmaStreamSetPeripheral(cryp->dma_hash, in);
+    dmaStreamSetTransactionSize(cryp->dma_hash, chunk / sizeof (uint32_t));
+
+    /* Enabling DMA channel then HASH engine.*/
+    dmaStreamEnable(cryp->dma_hash);
+    HASH->CR |= HASH_CR_DMAE;
+
+    /* Waiting for DMA operation completion.*/
+    osalThreadSuspendS(&cryp->hash_tr);
+
+    osalSysUnlock();
+#else
+    const uint32_t *wp = (const uint32_t *)(const void *)in;
+    for (size_t i = 0; i < chunk / sizeof (uint32_t); i++) {
+      HASH->DIN = wp[i];
+    }
+#endif
+
+    size -= chunk;
+    in += chunk;
+  }
+
+  return CRY_NOERROR;
 }
 
 /**
@@ -1082,12 +1253,33 @@ cryerror_t cry_lld_SHA256_update(CRYDriver *cryp, SHA256Context *sha256ctxp,
  */
 cryerror_t cry_lld_SHA256_final(CRYDriver *cryp, SHA256Context *sha256ctxp,
                                 uint8_t *out) {
+  uint32_t digest[8];
 
   (void)cryp;
-  (void)sha256ctxp;
-  (void)out;
 
-  return CRY_ERR_INV_ALGO;
+  if (sha256ctxp->last_size > 0U) {
+    HASH->DIN = sha256ctxp->last_data;
+  }
+
+  /* Triggering final calculation and wait for result.*/
+  HASH->SR  = 0U;
+  HASH->STR = sha256ctxp->last_size;
+  HASH->STR = sha256ctxp->last_size | HASH_STR_DCAL;
+  while ((HASH->SR & HASH_SR_DCIS) == 0U) {
+  }
+
+  /* Reading digest.*/
+  digest[0] = HASH_DIGEST->HR[0];
+  digest[1] = HASH_DIGEST->HR[1];
+  digest[2] = HASH_DIGEST->HR[2];
+  digest[3] = HASH_DIGEST->HR[3];
+  digest[4] = HASH_DIGEST->HR[4];
+  digest[5] = HASH_DIGEST->HR[5];
+  digest[6] = HASH_DIGEST->HR[6];
+  digest[7] = HASH_DIGEST->HR[7];
+  memcpy((void *)out, (const void *)digest, sizeof digest);
+
+  return CRY_NOERROR;
 }
 #endif
 
@@ -1167,6 +1359,42 @@ cryerror_t cry_lld_SHA512_final(CRYDriver *cryp, SHA512Context *sha512ctxp,
 #endif
 
 #if (CRY_LLD_SUPPORTS_HMAC_SHA256 == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Initializes the HMAC transient key.
+ * @note    It is the underlying implementation to decide which key sizes are
+ *          allowable.
+ *
+ * @param[in] cryp              pointer to the @p CRYDriver object
+ * @param[in] size              key size in bytes
+ * @param[in] keyp              pointer to the key data
+ * @return                      The operation status.
+ * @retval CRY_NOERROR          if the operation succeeded.
+ * @retval CRY_ERR_INV_ALGO     if the algorithm is unsupported.
+ * @retval CRY_ERR_INV_KEY_SIZE if the specified key size is invalid for
+ *                              the specified algorithm.
+ *
+ * @notapi
+ */
+cryerror_t cry_lld_hmac_loadkey(CRYDriver *cryp,
+                                size_t size,
+                                const uint8_t *keyp) {
+
+  osalDbgCheck((cryp != NULL) &&  (keyp != NULL));
+
+#if (CRY_LLD_SUPPORTS_HMAC_SHA256 == TRUE) ||                               \
+    (CRY_LLD_SUPPORTS_HMAC_SHA512 == TRUE)
+  return cry_lld_hmac_loadkey(cryp, size, keyp);
+#elif HAL_CRY_USE_FALLBACK == TRUE
+  return cry_fallback_hmac_loadkey(cryp, size, keyp);
+#else
+  (void)cryp;
+  (void)size;
+  (void)keyp;
+
+  return CRY_ERR_INV_ALGO;
+#endif
+}
+
 /**
  * @brief   Hash initialization using HMAC_SHA256.
  *
