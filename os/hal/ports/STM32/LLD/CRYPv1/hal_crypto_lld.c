@@ -53,6 +53,7 @@ CRYDriver CRYD1;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+#if (STM32_CRY_HASH_SIZE_THRESHOLD != 0) || defined (__DOXYGEN__)
 /**
  * @brief   Shared end-of-rx service routine.
  *
@@ -77,6 +78,7 @@ static void cry_lld_serve_hash_interrupt(CRYDriver *cryp, uint32_t flags) {
     osalSysUnlockFromISR();
   }
 }
+#endif
 
 /**
  * @brief   Pushes a series of words into the hash engine.
@@ -87,14 +89,17 @@ static void cry_lld_serve_hash_interrupt(CRYDriver *cryp, uint32_t flags) {
  */
 static void cry_lld_hash_push(CRYDriver *cryp, uint32_t n, const uint32_t *p) {
 
+  (void)cryp; /* Not touched in some cases, needs this.*/
+
   /* Data is processed in 32kB blocks because DMA size limitations.*/
   while (n > 0U) {
     uint32_t chunk = n > 0x8000U ? 0x8000U : n;
     n -= chunk;
 
-#if STM32_CRY_HASH_SIZE_THRESHOLD > 0
+#if STM32_CRY_HASH_SIZE_THRESHOLD > 1
     if (chunk >= STM32_CRY_HASH_SIZE_THRESHOLD)
 #endif
+#if STM32_CRY_HASH_SIZE_THRESHOLD != 0
     {
       /* Setting up transfer.*/
       dmaStreamSetTransactionSize(cryp->dma_hash, chunk);
@@ -111,8 +116,12 @@ static void cry_lld_hash_push(CRYDriver *cryp, uint32_t n, const uint32_t *p) {
 
       osalSysUnlock();
     }
-#if STM32_CRY_HASH_SIZE_THRESHOLD > 0
-    else {
+#endif
+#if STM32_CRY_HASH_SIZE_THRESHOLD > 1
+    else
+#endif
+#if STM32_CRY_HASH_SIZE_THRESHOLD != 1
+    {
       /* Small chunk, just pushing data without touching DMA.*/
       do {
         HASH->DIN = *p++;
@@ -146,12 +155,14 @@ void cry_lld_init(void) {
 #endif
 
 #if STM32_CRY_USE_HASH1
+#if STM32_CRY_HASH_SIZE_THRESHOLD != 0
   CRYD1.hash_tr     = NULL;
 #if STM32_DMA_SUPPORTS_DMAMUX
   CRYD1.dma_hash    = STM32_DMA_STREAM(STM32_CRY_HASH1_DMA_CHANNEL);
 #else
   CRYD1.dma_hash    = STM32_DMA_STREAM(STM32_CRY_HASH1_DMA_STREAM);
 #endif
+#endif /* STM32_CRY_HASH_SIZE_THRESHOLD != 0 */
 #endif /* STM32_CRY_USE_HASH1 */
 
 #endif /* STM32_CRY_ENABLED1 */
@@ -175,6 +186,7 @@ void cry_lld_start(CRYDriver *cryp) {
 #endif
 
 #if STM32_CRY_USE_HASH1
+#if STM32_CRY_HASH_SIZE_THRESHOLD != 0
       bool b;
       b = dmaStreamAllocate(cryp->dma_hash,
                             STM32_CRY_HASH1_IRQ_PRIORITY,
@@ -195,6 +207,7 @@ void cry_lld_start(CRYDriver *cryp) {
 #if STM32_DMA_SUPPORTS_DMAMUX
       dmaSetRequestSource(cryp->dma_hash, STM32_DMAMUX1_HASH);
 #endif
+#endif /* STM32_CRY_HASH_SIZE_THRESHOLD != 0 */
       rccEnableHASH(true);
 #endif
     }
@@ -227,7 +240,9 @@ void cry_lld_stop(CRYDriver *cryp) {
 #endif
 
 #if STM32_CRY_USE_HASH1
+#if STM32_CRY_HASH_SIZE_THRESHOLD != 0
       dmaStreamRelease(cryp->dma_hash);
+#endif
       rccDisableHASH();
 #endif
     }

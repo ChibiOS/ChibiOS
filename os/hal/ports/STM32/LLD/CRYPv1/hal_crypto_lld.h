@@ -80,7 +80,8 @@
 
 /**
  * @brief   Minimum message size (in words) for DMA use.
- * @note    If set to zero then DMA is always used.
+ * @note    If set to zero then DMA is never used.
+ * @note    If set to one then DMA is always used.
  */
 #if !defined(STM32_CRY_HASH_SIZE_THRESHOLD) || defined(__DOXYGEN__)
 #define STM32_CRY_HASH_SIZE_THRESHOLD       1024
@@ -173,6 +174,10 @@
 #define STM32_DMA_REQUIRED
 #endif
 
+#if STM32_CRY_HASH_SIZE_THRESHOLD < 0
+#error "invalid STM32_CRY_HASH_SIZE_THRESHOLD value"
+#endif
+
 /**
  * @name    Driver capability switches
  * @{
@@ -254,6 +259,7 @@ struct CRYDriver {
 #if STM32_CRY_USE_CRYP1 || defined (__DOXYGEN__)
 #endif
 #if STM32_CRY_USE_HASH1 || defined (__DOXYGEN__)
+#if (STM32_CRY_HASH_SIZE_THRESHOLD != 0) || defined (__DOXYGEN__)
   /**
    * @brief   Thread reference for hash operations.
    */
@@ -262,6 +268,7 @@ struct CRYDriver {
    * @brief   Hash DMA stream.
    */
   const stm32_dma_stream_t  *dma_hash;
+#endif
 #endif
 };
 
