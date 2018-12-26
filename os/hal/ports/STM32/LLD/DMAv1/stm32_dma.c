@@ -217,27 +217,35 @@ const stm32_dma_stream_t _stm32_dma_streams[STM32_DMA_STREAMS] = {
 #endif
 };
 
-/**
- * @brief   DMA IRQ redirectors.
- */
-dma_isr_redir_t _stm32_dma_isr_redir[STM32_DMA_STREAMS];
-
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
 /**
- * @brief   Masks regarding the allocated streams.
+ * @brief   Global DMA-related data structures.
  */
 static struct {
   /**
-   * @brief   Mask of the enabled streams.
+   * @brief   Mask of the allocated streams.
    */
-  uint32_t      streams_mask;
+  uint32_t          allocated_mask;
   /**
-   * @brief   Mask of the enabled stream ISRs.
+   * @brief   Mask of the enabled streams ISRs.
    */
-  uint32_t      isr_mask;
+  uint32_t          isr_mask;
+  /**
+   * @brief   DMA IRQ redirectors.
+   */
+  struct {
+    /**
+     * @brief   DMA callback function.
+     */
+    stm32_dmaisr_t    func;
+    /**
+     * @brief   DMA callback parameter.
+     */
+    void              *param;
+  } streams[STM32_DMA_STREAMS];
 } dma;
 
 /*===========================================================================*/
@@ -484,16 +492,125 @@ OSAL_IRQ_HANDLER(STM32_DMA2_CH7_HANDLER) {
 void dmaInit(void) {
   int i;
 
-  dma.streams_mask = 0U;
-  dma.isr_mask = 0U;
+  dma.allocated_mask = 0U;
+  dma.isr_mask       = 0U;
   for (i = 0; i < STM32_DMA_STREAMS; i++) {
     _stm32_dma_streams[i].channel->CCR = 0U;
-    _stm32_dma_isr_redir[i].dma_func = NULL;
+    dma.streams[i].func = NULL;
   }
   DMA1->IFCR = 0xFFFFFFFFU;
 #if STM32_DMA2_NUM_CHANNELS > 0
   DMA2->IFCR = 0xFFFFFFFFU;
 #endif
+}
+
+/**
+ * @brief   Allocates a DMA stream.
+ * @details The stream is allocated and, if required, the DMA clock enabled.
+ *          The function also enables the IRQ vector associated to the stream
+ *          and initializes its priority.
+ * @pre     The stream must not be already in use or an error is returned.
+ * @post    The stream is allocated and the default ISR handler redirected
+ *          to the specified function.
+ * @post    The stream ISR vector is enabled and its priority configured.
+ * @post    The stream must be freed using @p dmaStreamRelease() before it can
+ *          be reused with another peripheral.
+ * @post    The stream is in its post-reset state.
+ *
+ * @param[in] id        numeric identifiers of a specific stream or:
+ *                      - @p STM32_DMA_STREAM_ID_ANY for any stream.
+ *                      - @p STM32_DMA_STREAM_ID_ANY_DMA1 for any stream
+ *                        on DMA1.
+ *                      - @p STM32_DMA_STREAM_ID_ANY_DMA2 for any stream
+ *                        on DMA2.
+ *                      .
+ * @param[in] priority  IRQ priority for the DMA stream
+ * @param[in] func      handling function pointer, can be @p NULL
+ * @param[in] param     a parameter to be passed to the handling function
+ * @return              Pointer to the allocated @p stm32_dma_stream_t
+ *                      structure.
+ * @retval NULL         if a/the stream is not available.
+ *
+ * @iclass
+ */
+const stm32_dma_stream_t *dmaStreamAllocI(uint32_t id,
+                                          uint32_t priority,
+                                          stm32_dmaisr_t func,
+                                          void *param) {
+  uint32_t i, startid, endid;
+
+  osalDbgCheckClassI();
+
+  if (id < STM32_DMA_STREAMS) {
+    startid = id;
+    endid   = id;
+  }
+  else if (id == STM32_DMA_STREAM_ID_ANY) {
+    startid = 0U;
+    endid   = STM32_DMA1_NUM_CHANNELS + STM32_DMA2_NUM_CHANNELS - 1U;
+  }
+  else if (id == STM32_DMA_STREAM_ID_ANY_DMA1) {
+    startid = 0U;
+    endid   = STM32_DMA1_NUM_CHANNELS - 1U;
+  }
+#if STM32_DMA2_NUM_CHANNELS > 0
+  else if (id == STM32_DMA_STREAM_ID_ANY_DMA2) {
+    startid = 7U;
+    endid   = STM32_DMA1_NUM_CHANNELS + STM32_DMA2_NUM_CHANNELS - 1U;
+  }
+#endif
+  else {
+    osalDbgCheck(false);
+  }
+
+  for (i = startid; i <= endid; i++) {
+    uint32_t mask = (1U << i);
+    if ((dma.allocated_mask & mask) == 0U) {
+      const stm32_dma_stream_t *dmastp = STM32_DMA_STREAM(i);
+
+      /* Installs the DMA handler.*/
+      dma.streams[i].func  = func;
+      dma.streams[i].param = param;
+
+      /* Enabling DMA clocks required by the current streams set.*/
+      if (((STM32_DMA1_STREAMS_MASK & dma.allocated_mask) == 0U) &&
+          ((STM32_DMA1_STREAMS_MASK & mask) != 0U)){
+        rccEnableDMA1(true);
+      }
+#if STM32_DMA2_NUM_CHANNELS > 0
+      if (((STM32_DMA2_STREAMS_MASK & dma.allocated_mask) == 0U) &&
+          ((STM32_DMA2_STREAMS_MASK & mask) != 0U)){
+        rccEnableDMA2(true);
+      }
+#endif
+
+#if STM32_DMA_SUPPORTS_DMAMUX == TRUE
+      /* Enabling DMAMUX if present.*/
+      if (dma.allocated_mask == 0U) {
+        rccEnableDMAMUX(true);
+      }
+#endif
+
+      /* Enables the associated IRQ vector if not already enabled and if a
+         callback is defined.*/
+      if (func != NULL) {
+        if ((dma.isr_mask & dmastp->cmask) == 0U) {
+          nvicEnableVector(dmastp->vector, priority);
+        }
+        dma.isr_mask |= mask;
+      }
+
+      /* Marks the stream as allocated.*/
+      dma.allocated_mask |= mask;
+
+      /* Putting the stream in a known state.*/
+      dmastp->channel->CCR = STM32_DMA_CCR_RESET_VALUE;
+
+      return dmastp;
+    }
+  }
+
+  return NULL;
 }
 
 /**
@@ -518,57 +635,15 @@ void dmaInit(void) {
  * @retval false        no error, stream taken.
  * @retval true         error, stream already taken.
  *
- * @special
+ * @iclass
+ * @deprecated
  */
 bool dmaStreamAllocate(const stm32_dma_stream_t *dmastp,
                        uint32_t priority,
                        stm32_dmaisr_t func,
                        void *param) {
 
-  osalDbgCheck(dmastp != NULL);
-
-  /* Checks if the stream is already taken.*/
-  if ((dma.streams_mask & (1U << dmastp->selfindex)) != 0U)
-    return true;
-
-  /* Installs the DMA handler.*/
-  _stm32_dma_isr_redir[dmastp->selfindex].dma_func  = func;
-  _stm32_dma_isr_redir[dmastp->selfindex].dma_param = param;
-
-  /* Enabling DMA clocks required by the current streams set.*/
-  if ((dma.streams_mask & STM32_DMA1_STREAMS_MASK) == 0U) {
-    rccEnableDMA1(true);
-  }
-#if STM32_DMA2_NUM_CHANNELS > 0
-  if ((dma.streams_mask & STM32_DMA2_STREAMS_MASK) == 0U) {
-    rccEnableDMA2(true);
-  }
-#endif
-
-#if STM32_DMA_SUPPORTS_DMAMUX == TRUE
-  /* Enabling DMAMUX if present.*/
-  if (dma.streams_mask == 0U) {
-    rccEnableDMAMUX(true);
-  }
-#endif
-
-  /* Putting the stream in a safe state.*/
-  dmaStreamDisable(dmastp);
-  dmastp->channel->CCR = STM32_DMA_CCR_RESET_VALUE;
-
-  /* Enables the associated IRQ vector if not already enabled and if a
-     callback is defined.*/
-  if (func != NULL) {
-    if ((dma.isr_mask & dmastp->cmask) == 0U) {
-      nvicEnableVector(dmastp->vector, priority);
-    }
-    dma.isr_mask |= (1U << dmastp->selfindex);
-  }
-
-  /* Marks the stream as allocated.*/
-  dma.streams_mask |= (1U << dmastp->selfindex);
-
-  return false;
+  return dmaStreamAllocI(dmastp->selfindex, priority, func, param) == NULL;
 }
 
 /**
@@ -589,38 +664,58 @@ void dmaStreamRelease(const stm32_dma_stream_t *dmastp) {
   osalDbgCheck(dmastp != NULL);
 
   /* Check if the streams is not taken.*/
-  osalDbgAssert((dma.streams_mask & (1 << dmastp->selfindex)) != 0U,
+  osalDbgAssert((dma.allocated_mask & (1 << dmastp->selfindex)) != 0U,
                 "not allocated");
 
   /* Marks the stream as not allocated.*/
-  dma.streams_mask &= ~(1U << dmastp->selfindex);
+  dma.allocated_mask &= ~(1U << dmastp->selfindex);
   dma.isr_mask &= ~(1U << dmastp->selfindex);
 
   /* Disables the associated IRQ vector if it is no more in use.*/
-  if ((dma.streams_mask & dmastp->cmask) == 0U) {
+  if ((dma.allocated_mask & dmastp->cmask) == 0U) {
     nvicDisableVector(dmastp->vector);
   }
 
   /* Removes the DMA handler.*/
-  _stm32_dma_isr_redir[dmastp->selfindex].dma_func  = NULL;
-  _stm32_dma_isr_redir[dmastp->selfindex].dma_param = NULL;
+  dma.streams[dmastp->selfindex].func  = NULL;
+  dma.streams[dmastp->selfindex].param = NULL;
 
   /* Shutting down clocks that are no more required, if any.*/
-  if ((dma.streams_mask & STM32_DMA1_STREAMS_MASK) == 0U) {
+  if ((dma.allocated_mask & STM32_DMA1_STREAMS_MASK) == 0U) {
     rccDisableDMA1();
   }
 #if STM32_DMA2_NUM_CHANNELS > 0
-  if ((dma.streams_mask & STM32_DMA2_STREAMS_MASK) == 0U) {
+  if ((dma.allocated_mask & STM32_DMA2_STREAMS_MASK) == 0U) {
     rccDisableDMA2();
   }
 #endif
 
 #if STM32_DMA_SUPPORTS_DMAMUX == TRUE
   /* Shutting down DMAMUX if present.*/
-  if (dma.streams_mask == 0U) {
+  if (dma.allocated_mask == 0U) {
     rccDisableDMAMUX();
   }
 #endif
+}
+
+/**
+ * @brief   Serves a DMA IRQ.
+ *
+ * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
+ *
+ * @special
+ */
+void dmaServeInterrupt(const stm32_dma_stream_t *dmastp) {
+  uint32_t flags;
+  uint32_t idx = (dmastp)->selfindex;
+
+  flags = (dmastp->dma->ISR >> dmastp->shift) & STM32_DMA_ISR_MASK;
+  if (flags & dmastp->channel->CCR) {
+    dmastp->dma->IFCR = flags << dmastp->shift;
+    if (dma.streams[idx].func) {
+      dma.streams[idx].func(dma.streams[idx].param, flags);
+    }
+  }
 }
 
 #if (STM32_DMA_SUPPORTS_DMAMUX == TRUE) || defined(__DOXYGEN__)

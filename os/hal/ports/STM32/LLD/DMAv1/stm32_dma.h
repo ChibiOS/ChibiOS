@@ -121,6 +121,15 @@
 #define STM32_DMA_IS_VALID_ID(id, mask) (((1U << (id)) & (mask)))
 
 /**
+ * @name    Special stream identifiers
+ * @{
+ */
+#define STM32_DMA_STREAM_ID_ANY         16
+#define STM32_DMA_STREAM_ID_ANY_DMA1    17
+#define STM32_DMA_STREAM_ID_ANY_DMA2    18
+/** @} */
+
+/**
  * @name    DMA streams identifiers
  * @{
  */
@@ -237,6 +246,10 @@
 #error "STM32_DMA2_NUM_CHANNELS not defined in registry"
 #endif
 
+#if (STM32_DMA1_NUM_CHANNELS < 7) && (STM32_DMA2_NUM_CHANNELS > 0)
+#error "unsupported channels configuration"
+#endif
+
 #if (STM32_DMA_SUPPORTS_DMAMUX == TRUE) || defined(__DOXYGEN__)
 #include "stm32_dmamux.h"
 #endif
@@ -244,6 +257,15 @@
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   Type of a DMA callback.
+ *
+ * @param[in] p         parameter for the registered function
+ * @param[in] flags     pre-shifted content of the ISR register, the bits
+ *                      are aligned to bit zero
+ */
+typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
 
 /**
  * @brief   STM32 DMA stream descriptor structure.
@@ -265,23 +287,6 @@ typedef struct {
   uint8_t               selfindex;      /**< @brief Index to self in array. */
   uint8_t               vector;         /**< @brief Associated IRQ vector.  */
 } stm32_dma_stream_t;
-
-/**
- * @brief   STM32 DMA ISR function type.
- *
- * @param[in] p         parameter for the registered function
- * @param[in] flags     pre-shifted content of the ISR register, the bits
- *                      are aligned to bit zero
- */
-typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
-
-/**
- * @brief   DMA ISR redirector type.
- */
-typedef struct {
-  stm32_dmaisr_t        dma_func;       /**< @brief DMA callback function.  */
-  void                  *dma_param;     /**< @brief DMA callback parameter. */
-} dma_isr_redir_t;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -462,24 +467,6 @@ typedef struct {
     ;                                                                       \
   dmaStreamDisable(dmastp);                                                 \
 }
-
-/**
- * @brief   Serves a DMA IRQ.
- *
- * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
- */
-#define dmaServeInterrupt(dmastp) {                                         \
-  uint32_t flags;                                                           \
-  uint32_t idx = (dmastp)->selfindex;                                       \
-                                                                            \
-  flags = ((dmastp)->dma->ISR >> (dmastp)->shift) & STM32_DMA_ISR_MASK;     \
-  if (flags & (dmastp)->channel->CCR) {                                     \
-    (dmastp)->dma->IFCR = flags << (dmastp)->shift;                         \
-    if (_stm32_dma_isr_redir[idx].dma_func) {                               \
-      _stm32_dma_isr_redir[idx].dma_func(_stm32_dma_isr_redir[idx].dma_param, flags); \
-    }                                                                       \
-  }                                                                         \
-}
 /** @} */
 
 /*===========================================================================*/
@@ -488,18 +475,22 @@ typedef struct {
 
 #if !defined(__DOXYGEN__)
 extern const stm32_dma_stream_t _stm32_dma_streams[STM32_DMA_STREAMS];
-extern dma_isr_redir_t _stm32_dma_isr_redir[STM32_DMA_STREAMS];
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
   void dmaInit(void);
+  const stm32_dma_stream_t *dmaStreamAllocI(uint32_t id,
+                                            uint32_t priority,
+                                            stm32_dmaisr_t func,
+                                            void *param);
   bool dmaStreamAllocate(const stm32_dma_stream_t *dmastp,
                          uint32_t priority,
                          stm32_dmaisr_t func,
                          void *param);
   void dmaStreamRelease(const stm32_dma_stream_t *dmastp);
+  void dmaServeInterrupt(const stm32_dma_stream_t *dmastp);
 #if STM32_DMA_SUPPORTS_DMAMUX == TRUE
   void dmaSetRequestSource(const stm32_dma_stream_t *dmastp, uint32_t per);
 #endif
