@@ -540,6 +540,7 @@ const stm32_dma_stream_t *dmaStreamAllocI(uint32_t id,
     startid = id;
     endid   = id;
   }
+#if STM32_DMA_SUPPORTS_DMAMUX == TRUE
   else if (id == STM32_DMA_STREAM_ID_ANY) {
     startid = 0U;
     endid   = STM32_DMA_STREAMS - 1U;
@@ -554,6 +555,7 @@ const stm32_dma_stream_t *dmaStreamAllocI(uint32_t id,
     endid   = STM32_DMA_STREAMS - 1U;
   }
 #endif
+#endif
   else {
     osalDbgCheck(false);
   }
@@ -566,7 +568,7 @@ const stm32_dma_stream_t *dmaStreamAllocI(uint32_t id,
       /* Installs the DMA handler.*/
       dma.streams[i].func  = func;
       dma.streams[i].param = param;
-      dma.allocated_mask |= mask;
+      dma.allocated_mask  |= mask;
 
       /* Enabling DMA clocks required by the current streams set.*/
       if ((STM32_DMA1_STREAMS_MASK & mask) != 0U) {
@@ -595,6 +597,7 @@ const stm32_dma_stream_t *dmaStreamAllocI(uint32_t id,
       }
 
       /* Putting the stream in a known state.*/
+      dmaStreamDisable(dmastp);
       dmastp->channel->CCR = STM32_DMA_CCR_RESET_VALUE;
 
       return dmastp;

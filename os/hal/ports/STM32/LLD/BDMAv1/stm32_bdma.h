@@ -35,12 +35,12 @@
  * @brief   Total number of BDMA streams.
  * @details This is the total number of streams among all the BDMA units.
  */
-#define STM32_BDMA_STREAMS          8U
+#define STM32_BDMA_STREAMS                  8U
 
 /**
  * @brief   Mask of the ISR bits passed to the BDMA callback functions.
  */
-#define STM32_BDMA_ISR_MASK         0x0EU
+#define STM32_BDMA_ISR_MASK                 0x0EU
 
 /**
  * @brief   Checks if a BDMA priority is within the valid range.
@@ -50,7 +50,7 @@
  * @retval false        invalid BDMA priority.
  * @retval true         correct BDMA priority.
  */
-#define STM32_BDMA_IS_VALID_PRIORITY(prio) (((prio) >= 0U) && ((prio) <= 3U))
+#define STM32_BDMA_IS_VALID_PRIORITY(prio)  (((prio) >= 0U) && ((prio) <= 3U))
 
 /**
  * @brief   Checks if a BDMA channel is within the valid range.
@@ -60,7 +60,15 @@
  * @retval FALSE        invalid DMA channel.
  * @retval TRUE         correct DMA channel.
  */
-#define STM32_BDMA_IS_VALID_CHANNEL(ch) (((ch) >= 0U) && ((ch) <= 7U))
+#define STM32_BDMA_IS_VALID_CHANNEL(ch)     (((ch) >= 0U) &&                \
+                                             ((ch) <= STM32_BDMA_STREAMS))
+
+/**
+ * @name    Special stream identifiers
+ * @{
+ */
+#define STM32_BDMA_STREAM_ID_ANY            STM32_BDMA_STREAMS
+/** @} */
 
 /**
  * @name    BDMA streams identifiers
@@ -73,55 +81,55 @@
  * @return              A pointer to the stm32_bdma_stream_t constant structure
  *                      associated to the BDMA stream.
  */
-#define STM32_BDMA_STREAM(id)       (&_stm32_bdma_streams[id])
+#define STM32_BDMA_STREAM(id)               (&_stm32_bdma_streams[id])
 
-#define STM32_BDMA1_STREAM0         STM32_BDMA_STREAM(0)
-#define STM32_BDMA1_STREAM1         STM32_BDMA_STREAM(1)
-#define STM32_BDMA1_STREAM2         STM32_BDMA_STREAM(2)
-#define STM32_BDMA1_STREAM3         STM32_BDMA_STREAM(3)
-#define STM32_BDMA1_STREAM4         STM32_BDMA_STREAM(4)
-#define STM32_BDMA1_STREAM5         STM32_BDMA_STREAM(5)
-#define STM32_BDMA1_STREAM6         STM32_BDMA_STREAM(6)
-#define STM32_BDMA1_STREAM7         STM32_BDMA_STREAM(7)
+#define STM32_BDMA1_STREAM0                 STM32_BDMA_STREAM(0)
+#define STM32_BDMA1_STREAM1                 STM32_BDMA_STREAM(1)
+#define STM32_BDMA1_STREAM2                 STM32_BDMA_STREAM(2)
+#define STM32_BDMA1_STREAM3                 STM32_BDMA_STREAM(3)
+#define STM32_BDMA1_STREAM4                 STM32_BDMA_STREAM(4)
+#define STM32_BDMA1_STREAM5                 STM32_BDMA_STREAM(5)
+#define STM32_BDMA1_STREAM6                 STM32_BDMA_STREAM(6)
+#define STM32_BDMA1_STREAM7                 STM32_BDMA_STREAM(7)
 /** @} */
 
 /**
  * @name    CR register constants
  * @{
  */
-#define STM32_BDMA_CR_RESET_VALUE   0x00000000U
-#define STM32_BDMA_CR_EN            BDMA_CCR_EN_Msk
-#define STM32_BDMA_CR_TCIE          BDMA_CCR_TCIE
-#define STM32_BDMA_CR_HTIE          BDMA_CCR_HTIE
-#define STM32_BDMA_CR_TEIE          BDMA_CCR_TEIE
-#define STM32_BDMA_CR_DIR_MASK      (BDMA_CCR_DIR | BDMA_CCR_MEM2MEM)
-#define STM32_BDMA_CR_DIR_P2M       0U
-#define STM32_BDMA_CR_DIR_M2P       BDMA_CCR_DIR
-#define STM32_BDMA_CR_DIR_M2M       BDMA_CCR_MEM2MEM
-#define STM32_BDMA_CR_CIRC          BDMA_CCR_CIRC
-#define STM32_BDMA_CR_PINC          BDMA_CCR_PINC
-#define STM32_BDMA_CR_MINC          BDMA_CCR_MINC
-#define STM32_BDMA_CR_PSIZE_MASK    BDMA_CCR_PSIZE_Msk
-#define STM32_BDMA_CR_PSIZE_BYTE    0U
-#define STM32_BDMA_CR_PSIZE_HWORD   BDMA_CCR_PSIZE_0
-#define STM32_BDMA_CR_PSIZE_WORD    BDMA_CCR_PSIZE_1
-#define STM32_BDMA_CR_MSIZE_MASK    BDMA_CCR_MSIZE_Msk
-#define STM32_BDMA_CR_MSIZE_BYTE    0U
-#define STM32_BDMA_CR_MSIZE_HWORD   BDMA_CCR_MSIZE_0
-#define STM32_BDMA_CR_MSIZE_WORD    BDMA_CCR_MSIZE_1
-#define STM32_BDMA_CR_SIZE_MASK     (STM32_BDMA_CR_PSIZE_MASK |             \
-                                     STM32_BDMA_CR_MSIZE_MASK)
-#define STM32_BDMA_CR_PL_MASK       BDMA_CCR_PL_Msk
-#define STM32_BDMA_CR_PL(n)         ((n) << 12U)
+#define STM32_BDMA_CR_RESET_VALUE           0x00000000U
+#define STM32_BDMA_CR_EN                    BDMA_CCR_EN_Msk
+#define STM32_BDMA_CR_TCIE                  BDMA_CCR_TCIE
+#define STM32_BDMA_CR_HTIE                  BDMA_CCR_HTIE
+#define STM32_BDMA_CR_TEIE                  BDMA_CCR_TEIE
+#define STM32_BDMA_CR_DIR_MASK              (BDMA_CCR_DIR | BDMA_CCR_MEM2MEM)
+#define STM32_BDMA_CR_DIR_P2M               0U
+#define STM32_BDMA_CR_DIR_M2P               BDMA_CCR_DIR
+#define STM32_BDMA_CR_DIR_M2M               BDMA_CCR_MEM2MEM
+#define STM32_BDMA_CR_CIRC                  BDMA_CCR_CIRC
+#define STM32_BDMA_CR_PINC                  BDMA_CCR_PINC
+#define STM32_BDMA_CR_MINC                  BDMA_CCR_MINC
+#define STM32_BDMA_CR_PSIZE_MASK            BDMA_CCR_PSIZE_Msk
+#define STM32_BDMA_CR_PSIZE_BYTE            0U
+#define STM32_BDMA_CR_PSIZE_HWORD           BDMA_CCR_PSIZE_0
+#define STM32_BDMA_CR_PSIZE_WORD            BDMA_CCR_PSIZE_1
+#define STM32_BDMA_CR_MSIZE_MASK            BDMA_CCR_MSIZE_Msk
+#define STM32_BDMA_CR_MSIZE_BYTE            0U
+#define STM32_BDMA_CR_MSIZE_HWORD           BDMA_CCR_MSIZE_0
+#define STM32_BDMA_CR_MSIZE_WORD            BDMA_CCR_MSIZE_1
+#define STM32_BDMA_CR_SIZE_MASK             (STM32_BDMA_CR_PSIZE_MASK |     \
+                                             STM32_BDMA_CR_MSIZE_MASK)
+#define STM32_BDMA_CR_PL_MASK               BDMA_CCR_PL_Msk
+#define STM32_BDMA_CR_PL(n)                 ((n) << 12U)
 /** @} */
 
 /**
  * @name    Status flags passed to the ISR callbacks
  * @{
  */
-#define STM32_BDMA_ISR_TEIF         BDMA_ISR_TEIF1
-#define STM32_BDMA_ISR_HTIF         BDMA_ISR_HTIF1
-#define STM32_BDMA_ISR_TCIF         BDMA_ISR_TCIF1
+#define STM32_BDMA_ISR_TEIF                 BDMA_ISR_TEIF1
+#define STM32_BDMA_ISR_HTIF                 BDMA_ISR_HTIF1
+#define STM32_BDMA_ISR_TCIF                 BDMA_ISR_TCIF1
 /** @} */
 
 /*===========================================================================*/
@@ -205,19 +213,6 @@
 /*===========================================================================*/
 
 /**
- * @brief   STM32 BDMA stream descriptor structure.
- */
-typedef struct {
-  BDMA_TypeDef              *bdma ;     /**< @brief Associated BDMA.        */
-  BDMA_Channel_TypeDef      *channel;   /**< @brief Associated BDMA channel.*/
-  uint8_t                   ishift;      /**< @brief Bit offset in ISR and
-                                             IFCR registers.                */
-  DMAMUX_Channel_TypeDef    *mux;       /**< @brief Associated BDMA stream. */
-  uint8_t                   selfindex;  /**< @brief Index to self in array. */
-  uint8_t                   vector;     /**< @brief Associated IRQ vector.  */
-} stm32_bdma_stream_t;
-
-/**
  * @brief   STM32 BDMA ISR function type.
  *
  * @param[in] p         parameter for the registered function
@@ -225,6 +220,19 @@ typedef struct {
  *                      are aligned to bit zero
  */
 typedef void (*stm32_bdmaisr_t)(void *p, uint32_t flags);
+
+/**
+ * @brief   STM32 BDMA stream descriptor structure.
+ */
+typedef struct {
+  BDMA_TypeDef              *bdma ;     /**< @brief Associated BDMA.        */
+  BDMA_Channel_TypeDef      *channel;   /**< @brief Associated BDMA channel.*/
+  uint8_t                   shift;      /**< @brief Bit offset in ISR and
+                                             IFCR registers.                */
+  DMAMUX_Channel_TypeDef    *mux;       /**< @brief Associated BDMA stream. */
+  uint8_t                   selfindex;  /**< @brief Index to self in array. */
+  uint8_t                   vector;     /**< @brief Associated IRQ vector.  */
+} stm32_bdma_stream_t;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -352,7 +360,7 @@ typedef void (*stm32_bdmaisr_t)(void *p, uint32_t flags);
  * @special
  */
 #define bdmaStreamClearInterrupt(stp) {                                     \
-  (stp)->bdma->IFCR = STM32_BDMA_ISR_MASK << (stp)->ishift;                 \
+  (stp)->bdma->IFCR = STM32_BDMA_ISR_MASK << (stp)->shift;                  \
 }
 
 /**
@@ -409,12 +417,16 @@ extern const stm32_bdma_stream_t _stm32_bdma_streams[STM32_BDMA_STREAMS];
 extern "C" {
 #endif
   void bdmaInit(void);
+  const stm32_bdma_stream_t *bdmaStreamAllocI(uint32_t id,
+                                              uint32_t priority,
+                                              stm32_bdmaisr_t func,
+                                              void *param);
   bool bdmaStreamAllocate(const stm32_bdma_stream_t *stp,
                           uint32_t priority,
                           stm32_bdmaisr_t func,
                           void *param);
-  void bdmaSetRequestSource(const stm32_bdma_stream_t *stp, uint32_t per);
   void bdmaStreamRelease(const stm32_bdma_stream_t *stp);
+  void bdmaSetRequestSource(const stm32_bdma_stream_t *stp, uint32_t per);
 #ifdef __cplusplus
 }
 #endif

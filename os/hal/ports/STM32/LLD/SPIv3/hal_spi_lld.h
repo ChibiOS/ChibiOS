@@ -180,77 +180,77 @@
  * @brief   SPI1 RX DMA channel setting.
  */
 #if !defined(STM32_SPI_SPI1_RX_DMA_CHANNEL) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI1_RX_DMA_CHANNEL       10
+#define STM32_SPI_SPI1_RX_DMA_CHANNEL       STM32_DMA_STREAM_ID_ANY
 #endif
 
 /**
  * @brief   SPI1 TX DMA channel setting.
  */
 #if !defined(STM32_SPI_SPI1_TX_DMA_CHANNEL) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI1_TX_DMA_CHANNEL       11
+#define STM32_SPI_SPI1_TX_DMA_CHANNEL       STM32_DMA_STREAM_ID_ANY
 #endif
 
 /**
  * @brief   SPI2 RX DMA channel setting.
  */
 #if !defined(STM32_SPI_SPI2_RX_DMA_CHANNEL) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI2_RX_DMA_CHANNEL       12
+#define STM32_SPI_SPI2_RX_DMA_CHANNEL       STM32_DMA_STREAM_ID_ANY
 #endif
 
 /**
  * @brief   SPI2 TX DMA channel setting.
  */
 #if !defined(STM32_SPI_SPI2_TX_DMA_CHANNEL) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI2_TX_DMA_CHANNEL       13
+#define STM32_SPI_SPI2_TX_DMA_CHANNEL       STM32_DMA_STREAM_ID_ANY
 #endif
 
 /**
  * @brief   SPI3 RX DMA channel setting.
  */
 #if !defined(STM32_SPI_SPI3_RX_DMA_CHANNEL) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI3_RX_DMA_CHANNEL       10
+#define STM32_SPI_SPI3_RX_DMA_CHANNEL       STM32_DMA_STREAM_ID_ANY
 #endif
 
 /**
  * @brief   SPI3 TX DMA channel setting.
  */
 #if !defined(STM32_SPI_SPI3_TX_DMA_CHANNEL) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI3_TX_DMA_CHANNEL       11
+#define STM32_SPI_SPI3_TX_DMA_CHANNEL       STM32_DMA_STREAM_ID_ANY
 #endif
 
 /**
  * @brief   SPI4 RX DMA channel setting.
  */
 #if !defined(STM32_SPI_SPI4_RX_DMA_CHANNEL) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI4_RX_DMA_CHANNEL       12
+#define STM32_SPI_SPI4_RX_DMA_CHANNEL       STM32_DMA_STREAM_ID_ANY
 #endif
 
 /**
  * @brief   SPI4 TX DMA channel setting.
  */
 #if !defined(STM32_SPI_SPI4_TX_DMA_CHANNEL) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI4_TX_DMA_CHANNEL       13
+#define STM32_SPI_SPI4_TX_DMA_CHANNEL       STM32_DMA_STREAM_ID_ANY
 #endif
 
 /**
  * @brief   SPI5 RX DMA channel setting.
  */
 #if !defined(STM32_SPI_SPI5_RX_DMA_CHANNEL) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI5_RX_DMA_CHANNEL       12
+#define STM32_SPI_SPI5_RX_DMA_CHANNEL       STM32_DMA_STREAM_ID_ANY
 #endif
 
 /**
  * @brief   SPI5 TX DMA channel setting.
  */
 #if !defined(STM32_SPI_SPI5_TX_DMA_CHANNEL) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI5_TX_DMA_CHANNEL       13
+#define STM32_SPI_SPI5_TX_DMA_CHANNEL       STM32_DMA_STREAM_ID_ANY
 #endif
 
 /**
  * @brief   SPI6 RX BDMA channel setting.
  */
 #if !defined(STM32_SPI_SPI6_RX_BDMA_CHANNEL) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI6_RX_BDMA_CHANNEL      2
+#define STM32_SPI_SPI6_RX_BDMA_CHANNEL      STM32_BDMA_STREAM_ID_ANY
 #endif
 
 /**

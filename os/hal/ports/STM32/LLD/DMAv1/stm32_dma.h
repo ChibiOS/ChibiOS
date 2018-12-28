@@ -77,6 +77,7 @@
  */
 #define STM32_DMA_IS_VALID_PRIORITY(prio) (((prio) >= 0U) && ((prio) <= 3U))
 
+#if (STM32_DMA_SUPPORTS_DMAMUX == FALSE) || defined(_DOXYGEN__)
 /**
  * @brief   Checks if a DMA channel is within the valid range.
  *
@@ -87,6 +88,15 @@
  */
 #define STM32_DMA_IS_VALID_CHANNEL(ch) (((ch) >= 0U) &&                     \
                                         ((ch) < STM32_DMA_STREAMS))
+#else /* STM32_DMA_SUPPORTS_DMAMUX == FALSE */
+#if STM32_DMA2_NUM_CHANNELS > 0
+#define STM32_DMA_IS_VALID_CHANNEL(ch) (((ch) >= 0U) &&                     \
+                                        ((ch) <= (STM32_DMA_STREAMS + 2)))
+#else
+#define STM32_DMA_IS_VALID_CHANNEL(ch) (((ch) >= 0U) &&                     \
+                                        ((ch) <= (STM32_DMA_STREAMS + 1)))
+#endif
+#endif /* STM32_DMA_SUPPORTS_DMAMUX == FALSE */
 
 /**
  * @brief   Returns an unique numeric identifier for a DMA stream.
@@ -120,14 +130,18 @@
  */
 #define STM32_DMA_IS_VALID_ID(id, mask) (((1U << (id)) & (mask)))
 
+#if (STM32_DMA_SUPPORTS_DMAMUX == TRUE) || defined(_DOXYGEN__)
 /**
  * @name    Special stream identifiers
  * @{
  */
 #define STM32_DMA_STREAM_ID_ANY         STM32_DMA_STREAMS
 #define STM32_DMA_STREAM_ID_ANY_DMA1    (STM32_DMA_STREAM_ID_ANY + 1)
+#if STM32_DMA2_NUM_CHANNELS > 0
 #define STM32_DMA_STREAM_ID_ANY_DMA2    (STM32_DMA_STREAM_ID_ANY_DMA1 + 1)
+#endif
 /** @} */
+#endif
 
 /**
  * @name    DMA streams identifiers

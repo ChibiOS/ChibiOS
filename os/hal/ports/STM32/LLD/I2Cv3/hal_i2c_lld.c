@@ -701,8 +701,8 @@ void i2c_lld_init(void) {
 #if defined(STM32_I2C_DMA_REQUIRED) && defined(STM32_I2C_BDMA_REQUIRED)
   I2CD1.is_bdma = false;
 #endif
-  I2CD1.rx.dma  = STM32_DMA_STREAM(STM32_I2C_I2C1_RX_DMA_CHANNEL);
-  I2CD1.tx.dma  = STM32_DMA_STREAM(STM32_I2C_I2C1_TX_DMA_CHANNEL);
+  I2CD1.rx.dma  = NULL;
+  I2CD1.tx.dma  = NULL;
 #endif
 #if defined(STM32_I2C1_GLOBAL_NUMBER) || defined(__DOXYGEN__)
       nvicEnableVector(STM32_I2C1_GLOBAL_NUMBER, STM32_I2C_I2C1_IRQ_PRIORITY);
@@ -722,8 +722,8 @@ void i2c_lld_init(void) {
 #if defined(STM32_I2C_DMA_REQUIRED) && defined(STM32_I2C_BDMA_REQUIRED)
   I2CD2.is_bdma = false;
 #endif
-  I2CD2.rx.dma  = STM32_DMA_STREAM(STM32_I2C_I2C2_RX_DMA_CHANNEL);
-  I2CD2.tx.dma  = STM32_DMA_STREAM(STM32_I2C_I2C2_TX_DMA_CHANNEL);
+  I2CD2.rx.dma  = NULL;
+  I2CD2.tx.dma  = NULL;
 #endif
 #if defined(STM32_I2C2_GLOBAL_NUMBER) || defined(__DOXYGEN__)
       nvicEnableVector(STM32_I2C2_GLOBAL_NUMBER, STM32_I2C_I2C2_IRQ_PRIORITY);
@@ -743,8 +743,8 @@ void i2c_lld_init(void) {
 #if defined(STM32_I2C_DMA_REQUIRED) && defined(STM32_I2C_BDMA_REQUIRED)
   I2CD3.is_bdma = false;
 #endif
-  I2CD3.rx.dma  = STM32_DMA_STREAM(STM32_I2C_I2C3_RX_DMA_CHANNEL);
-  I2CD3.tx.dma  = STM32_DMA_STREAM(STM32_I2C_I2C3_TX_DMA_CHANNEL);
+  I2CD3.rx.dma  = NULL;
+  I2CD3.tx.dma  = NULL;
 #endif
 #if defined(STM32_I2C3_GLOBAL_NUMBER) || defined(__DOXYGEN__)
       nvicEnableVector(STM32_I2C3_GLOBAL_NUMBER, STM32_I2C_I2C3_IRQ_PRIORITY);
@@ -762,10 +762,10 @@ void i2c_lld_init(void) {
   I2CD4.i2c     = I2C4;
 #if STM32_I2C_USE_DMA == TRUE
 #if defined(STM32_I2C_DMA_REQUIRED) && defined(STM32_I2C_BDMA_REQUIRED)
-  I2CD1.is_bdma = true;
+  I2CD4.is_bdma = true;
 #endif
-  I2CD4.rx.bdma = STM32_BDMA_STREAM(STM32_I2C_I2C4_RX_BDMA_CHANNEL);
-  I2CD4.tx.bdma = STM32_BDMA_STREAM(STM32_I2C_I2C4_TX_BDMA_CHANNEL);
+  I2CD4.rx.bdma = NULL;
+  I2CD4.tx.bdma = NULL;
 #endif
 #if defined(STM32_I2C4_GLOBAL_NUMBER) || defined(__DOXYGEN__)
       nvicEnableVector(STM32_I2C4_GLOBAL_NUMBER, STM32_I2C_I2C4_IRQ_PRIORITY);
@@ -823,18 +823,16 @@ void i2c_lld_start(I2CDriver *i2cp) {
       rccEnableI2C1(true);
 #if STM32_I2C_USE_DMA == TRUE
       {
-        bool b;
-
-        b = dmaStreamAllocate(i2cp->rx.dma,
-                              STM32_I2C_I2C1_IRQ_PRIORITY,
-                              NULL,
-                              (void *)i2cp);
-        osalDbgAssert(!b, "stream already allocated");
-        b = dmaStreamAllocate(i2cp->tx.dma,
-                              STM32_I2C_I2C1_IRQ_PRIORITY,
-                              NULL,
-                              (void *)i2cp);
-        osalDbgAssert(!b, "stream already allocated");
+        i2cp->rx.dma = dmaStreamAllocI(STM32_I2C_I2C1_RX_DMA_CHANNEL,
+                                       STM32_I2C_I2C1_IRQ_PRIORITY,
+                                       NULL,
+                                       NULL);
+        osalDbgAssert(i2cp->rx.dma != NULL, "unable to allocate stream");
+        i2cp->tx.dma = dmaStreamAllocI(STM32_I2C_I2C1_TX_DMA_CHANNEL,
+                                       STM32_I2C_I2C1_IRQ_PRIORITY,
+                                       NULL,
+                                       NULL);
+        osalDbgAssert(i2cp->tx.dma != NULL, "unable to allocate stream");
 
         i2cp->rxdmamode |= STM32_DMA_CR_PL(STM32_I2C_I2C1_DMA_PRIORITY);
         i2cp->txdmamode |= STM32_DMA_CR_PL(STM32_I2C_I2C1_DMA_PRIORITY);
@@ -852,18 +850,16 @@ void i2c_lld_start(I2CDriver *i2cp) {
       rccEnableI2C2(true);
 #if STM32_I2C_USE_DMA == TRUE
       {
-        bool b;
-
-        b = dmaStreamAllocate(i2cp->rx.dma,
-                              STM32_I2C_I2C2_IRQ_PRIORITY,
-                              NULL,
-                              (void *)i2cp);
-        osalDbgAssert(!b, "stream already allocated");
-        b = dmaStreamAllocate(i2cp->tx.dma,
-                              STM32_I2C_I2C2_IRQ_PRIORITY,
-                              NULL,
-                              (void *)i2cp);
-        osalDbgAssert(!b, "stream already allocated");
+        i2cp->rx.dma = dmaStreamAllocI(STM32_I2C_I2C2_RX_DMA_CHANNEL,
+                                       STM32_I2C_I2C2_IRQ_PRIORITY,
+                                       NULL,
+                                       NULL);
+        osalDbgAssert(i2cp->rx.dma != NULL, "unable to allocate stream");
+        i2cp->tx.dma = dmaStreamAllocI(STM32_I2C_I2C2_TX_DMA_CHANNEL,
+                                       STM32_I2C_I2C2_IRQ_PRIORITY,
+                                       NULL,
+                                       NULL);
+        osalDbgAssert(i2cp->tx.dma != NULL, "unable to allocate stream");
 
         i2cp->rxdmamode |= STM32_DMA_CR_PL(STM32_I2C_I2C2_DMA_PRIORITY);
         i2cp->txdmamode |= STM32_DMA_CR_PL(STM32_I2C_I2C2_DMA_PRIORITY);
@@ -881,18 +877,16 @@ void i2c_lld_start(I2CDriver *i2cp) {
       rccEnableI2C3(true);
 #if STM32_I2C_USE_DMA == TRUE
       {
-        bool b;
-
-        b = dmaStreamAllocate(i2cp->rx.dma,
-                              STM32_I2C_I2C3_IRQ_PRIORITY,
-                              NULL,
-                              (void *)i2cp);
-        osalDbgAssert(!b, "stream already allocated");
-        b = dmaStreamAllocate(i2cp->tx.dma,
-                              STM32_I2C_I2C3_IRQ_PRIORITY,
-                              NULL,
-                              (void *)i2cp);
-        osalDbgAssert(!b, "stream already allocated");
+        i2cp->rx.dma = dmaStreamAllocI(STM32_I2C_I2C3_RX_DMA_CHANNEL,
+                                       STM32_I2C_I2C3_IRQ_PRIORITY,
+                                       NULL,
+                                       NULL);
+        osalDbgAssert(i2cp->rx.dma != NULL, "unable to allocate stream");
+        i2cp->tx.dma = dmaStreamAllocI(STM32_I2C_I2C3_TX_DMA_CHANNEL,
+                                       STM32_I2C_I2C3_IRQ_PRIORITY,
+                                       NULL,
+                                       NULL);
+        osalDbgAssert(i2cp->tx.dma != NULL, "unable to allocate stream");
 
         i2cp->rxdmamode |= STM32_DMA_CR_PL(STM32_I2C_I2C3_DMA_PRIORITY);
         i2cp->txdmamode |= STM32_DMA_CR_PL(STM32_I2C_I2C3_DMA_PRIORITY);
@@ -910,18 +904,16 @@ void i2c_lld_start(I2CDriver *i2cp) {
       rccEnableI2C4(true);
 #if STM32_I2C_USE_DMA == TRUE
       {
-        bool b;
-
-        b = dmaStreamAllocate(i2cp->rx.dma,
-                              STM32_I2C_I2C4_IRQ_PRIORITY,
-                              NULL,
-                              (void *)i2cp);
-        osalDbgAssert(!b, "stream already allocated");
-        b = dmaStreamAllocate(i2cp->tx.dma,
-                              STM32_I2C_I2C4_IRQ_PRIORITY,
-                              NULL,
-                              (void *)i2cp);
-        osalDbgAssert(!b, "stream already allocated");
+        i2cp->rx.bdma = bdmaStreamAllocI(STM32_I2C_I2C4_RX_BDMA_CHANNEL,
+                                         STM32_I2C_I2C4_IRQ_PRIORITY,
+                                         NULL,
+                                         NULL);
+        osalDbgAssert(i2cp->rx.bdma != NULL, "unable to allocate stream");
+        i2cp->tx.bdma = bdmaStreamAllocI(STM32_I2C_I2C4_TX_BDMA_CHANNEL,
+                                         STM32_I2C_I2C4_IRQ_PRIORITY,
+                                         NULL,
+                                         NULL);
+        osalDbgAssert(i2cp->tx.bdma != NULL, "unable to allocate stream");
 
         i2cp->rxdmamode |= STM32_BDMA_CR_PL(STM32_I2C_I2C4_DMA_PRIORITY);
         i2cp->txdmamode |= STM32_BDMA_CR_PL(STM32_I2C_I2C4_DMA_PRIORITY);

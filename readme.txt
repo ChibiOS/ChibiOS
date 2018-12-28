@@ -75,6 +75,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: STM32H7xx port reworked to support dynamic DMA allocation for SPIv3
+       and I2Cv3.
 - NEW: Both DMAv1 and DMAv2 have been reworked to support DMAMUX, DMAv3 has
        been removed. In addition, both drivers are now able to support dynamic
        channel allocation.
