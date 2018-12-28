@@ -124,9 +124,9 @@
  * @name    Special stream identifiers
  * @{
  */
-#define STM32_DMA_STREAM_ID_ANY         16
-#define STM32_DMA_STREAM_ID_ANY_DMA1    17
-#define STM32_DMA_STREAM_ID_ANY_DMA2    18
+#define STM32_DMA_STREAM_ID_ANY         STM32_DMA_STREAMS
+#define STM32_DMA_STREAM_ID_ANY_DMA1    (STM32_DMA_STREAM_ID_ANY + 1)
+#define STM32_DMA_STREAM_ID_ANY_DMA2    (STM32_DMA_STREAM_ID_ANY_DMA1 + 1)
 /** @} */
 
 /**
@@ -162,6 +162,7 @@
  * @name    CR register constants common to all DMA types
  * @{
  */
+#define STM32_DMA_CCR_RESET_VALUE   0x00000000U
 #define STM32_DMA_CR_EN             DMA_CCR_EN
 #define STM32_DMA_CR_TEIE           DMA_CCR_TEIE
 #define STM32_DMA_CR_HTIE           DMA_CCR_HTIE

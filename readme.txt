@@ -75,6 +75,9 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Both DMAv1 and DMAv2 have been reworked to support DMAMUX, DMAv3 has
+       been removed. In addition, both drivers are now able to support dynamic
+       channel allocation.
 - NEW: The callback of drivers with circular buffers (ADC, DAC, I2S, SPI) has
        been simplified, no parameters. A driver function xxxIsBufferComplete()
        has been added to determine if it is the half buffer callback or the

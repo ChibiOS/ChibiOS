@@ -50,11 +50,6 @@
 #define STM32_DMA2_STREAMS_MASK     (((1U << STM32_DMA2_NUM_CHANNELS) -     \
                                      1U) << STM32_DMA1_NUM_CHANNELS)
 
-/**
- * @brief   Post-reset value of the stream CCR register.
- */
-#define STM32_DMA_CCR_RESET_VALUE   0x00000000U
-
 #if STM32_DMA_SUPPORTS_CSELR == TRUE
 
 #if defined(DMA1_CSELR)
@@ -118,7 +113,7 @@
 #define DMA2_CH6_VARIANT            0
 #define DMA2_CH7_VARIANT            0
 
-#endif /* !defined(DMA1_CSELR) */
+#endif /* !(STM32_DMA_SUPPORTS_DMAMUX == TRUE) */
 
 /*
  * Default ISR collision masks.
@@ -495,7 +490,7 @@ void dmaInit(void) {
   dma.allocated_mask = 0U;
   dma.isr_mask       = 0U;
   for (i = 0; i < STM32_DMA_STREAMS; i++) {
-    _stm32_dma_streams[i].channel->CCR = 0U;
+    _stm32_dma_streams[i].channel->CCR = STM32_DMA_CCR_RESET_VALUE;
     dma.streams[i].func = NULL;
   }
   DMA1->IFCR = 0xFFFFFFFFU;
@@ -547,7 +542,7 @@ const stm32_dma_stream_t *dmaStreamAllocI(uint32_t id,
   }
   else if (id == STM32_DMA_STREAM_ID_ANY) {
     startid = 0U;
-    endid   = STM32_DMA1_NUM_CHANNELS + STM32_DMA2_NUM_CHANNELS - 1U;
+    endid   = STM32_DMA_STREAMS - 1U;
   }
   else if (id == STM32_DMA_STREAM_ID_ANY_DMA1) {
     startid = 0U;
@@ -556,7 +551,7 @@ const stm32_dma_stream_t *dmaStreamAllocI(uint32_t id,
 #if STM32_DMA2_NUM_CHANNELS > 0
   else if (id == STM32_DMA_STREAM_ID_ANY_DMA2) {
     startid = 7U;
-    endid   = STM32_DMA1_NUM_CHANNELS + STM32_DMA2_NUM_CHANNELS - 1U;
+    endid   = STM32_DMA_STREAMS - 1U;
   }
 #endif
   else {
@@ -571,22 +566,21 @@ const stm32_dma_stream_t *dmaStreamAllocI(uint32_t id,
       /* Installs the DMA handler.*/
       dma.streams[i].func  = func;
       dma.streams[i].param = param;
+      dma.allocated_mask |= mask;
 
       /* Enabling DMA clocks required by the current streams set.*/
-      if (((STM32_DMA1_STREAMS_MASK & dma.allocated_mask) == 0U) &&
-          ((STM32_DMA1_STREAMS_MASK & mask) != 0U)){
+      if ((STM32_DMA1_STREAMS_MASK & mask) != 0U) {
         rccEnableDMA1(true);
       }
 #if STM32_DMA2_NUM_CHANNELS > 0
-      if (((STM32_DMA2_STREAMS_MASK & dma.allocated_mask) == 0U) &&
-          ((STM32_DMA2_STREAMS_MASK & mask) != 0U)){
+      if ((STM32_DMA2_STREAMS_MASK & mask) != 0U) {
         rccEnableDMA2(true);
       }
 #endif
 
-#if STM32_DMA_SUPPORTS_DMAMUX == TRUE
+#if (STM32_DMA_SUPPORTS_DMAMUX == TRUE) && defined(rccEnableDMAMUX)
       /* Enabling DMAMUX if present.*/
-      if (dma.allocated_mask == 0U) {
+      if (dma.allocated_mask != 0U) {
         rccEnableDMAMUX(true);
       }
 #endif
@@ -599,9 +593,6 @@ const stm32_dma_stream_t *dmaStreamAllocI(uint32_t id,
         }
         dma.isr_mask |= mask;
       }
-
-      /* Marks the stream as allocated.*/
-      dma.allocated_mask |= mask;
 
       /* Putting the stream in a known state.*/
       dmastp->channel->CCR = STM32_DMA_CCR_RESET_VALUE;
@@ -690,7 +681,7 @@ void dmaStreamRelease(const stm32_dma_stream_t *dmastp) {
   }
 #endif
 
-#if STM32_DMA_SUPPORTS_DMAMUX == TRUE
+#if (STM32_DMA_SUPPORTS_DMAMUX == TRUE) && defined(rccDisableDMAMUX)
   /* Shutting down DMAMUX if present.*/
   if (dma.allocated_mask == 0U) {
     rccDisableDMAMUX();
