@@ -142,6 +142,18 @@
 #define STM32_CAN_CAN3_IRQ_PRIORITY         11
 
 /*
+ * CRY driver system settings.
+ */
+#define STM32_CRY_USE_CRYP1                 FALSE
+#define STM32_CRY_USE_HASH1                 FALSE
+#define STM32_CRY_CRYP1_IRQ_PRIORITY        9
+#define STM32_CRY_HASH1_IRQ_PRIORITY        9
+#define STM32_CRY_HASH1_DMA_STREAM          STM32_DMA_STREAM_ID(2, 7)
+#define STM32_CRY_HASH1_DMA_PRIORITY        0
+#define STM32_CRY_HASH_SIZE_THRESHOLD       1024
+#define STM32_CRY_HASH_DMA_ERROR_HOOK(cryp) osalSysHalt("DMA failure")
+
+/*
  * DAC driver system settings.
  */
 #define STM32_DAC_DUAL_MODE                 FALSE
