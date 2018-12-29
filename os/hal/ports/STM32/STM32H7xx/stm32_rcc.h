@@ -500,21 +500,21 @@
  *
  * @api
  */
-#define rccEnableDAC1(lp) rccEnableAPB1L(RCC_APB1LENR_DACEN, lp)
+#define rccEnableDAC1(lp) rccEnableAPB1L(RCC_APB1LENR_DAC12EN, lp)
 
 /**
  * @brief   Disables the DAC1 peripheral clock.
  *
  * @api
  */
-#define rccDisableDAC1() rccDisableAPB1L(RCC_APB1LENR_DACEN)
+#define rccDisableDAC1() rccDisableAPB1L(RCC_APB1LENR_DAC12EN)
 
 /**
  * @brief   Resets the DAC1 peripheral.
  *
  * @api
  */
-#define rccResetDAC1() rccResetAPB1L(RCC_APB1LRSTR_DACRST)
+#define rccResetDAC1() rccResetAPB1L(RCC_APB1LRSTR_DAC12RST)
 /** @} */
 
 /**

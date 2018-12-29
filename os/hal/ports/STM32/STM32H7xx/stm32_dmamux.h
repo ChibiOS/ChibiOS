@@ -99,8 +99,8 @@
 #define STM32_DMAMUX1_UART4_TX      64
 #define STM32_DMAMUX1_UART5_RX      65
 #define STM32_DMAMUX1_UART5_TX      66
-#define STM32_DMAMUX1_DAC1          67
-#define STM32_DMAMUX1_DAC2          68
+#define STM32_DMAMUX1_DAC1_CH1      67  /* Renamed to L4 name.*/
+#define STM32_DMAMUX1_DAC1_CH2      68  /* Renamed to L4 name.*/
 #define STM32_DMAMUX1_TIM6_UP       69
 #define STM32_DMAMUX1_TIM7_UP       70
 #define STM32_DMAMUX1_USART6_RX     71

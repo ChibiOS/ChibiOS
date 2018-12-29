@@ -177,6 +177,26 @@
 #error "DAC driver activated but no DAC peripheral assigned"
 #endif
 
+#if STM32_DAC_USE_DAC1_CH1 &&                                               \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_DAC_DAC1_CH1_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to DAC1 CH1"
+#endif
+
+#if STM32_DAC_USE_DAC1_CH2 &&                                               \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_DAC_DAC1_CH2_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to DAC1 CH2"
+#endif
+
+#if STM32_DAC_USE_DAC2_CH1 &&                                               \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_DAC_DAC2_CH1_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to DAC2 CH1"
+#endif
+
+#if STM32_DAC_USE_DAC2_CH2 &&                                               \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_DAC_DAC2_CH2_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to DAC2 CH2"
+#endif
+
 /* The following checks are only required when there is a DMA able to
    reassign streams to different channels.*/
 #if STM32_ADVANCED_DMA
@@ -312,9 +332,9 @@ typedef struct {
    */
   uint32_t                  regmask;
   /**
-   * @brief   Associated DMA.
+   * @brief   Associated DMA channel.
    */
-  const stm32_dma_stream_t  *dma;
+  uint32_t                  dmachannel;
   /**
    * @brief   Mode bits for the DMA.
    */
@@ -364,7 +384,10 @@ typedef enum {
  */
 #define dac_lld_driver_fields                                               \
   /* DAC channel parameters.*/                                              \
-  const dacparams_t         *params
+  const dacparams_t         *params;                                        \
+  /* Associated DMA.*/                                                      \
+  const stm32_dma_stream_t  *dma
+
 
 /**
  * @brief   Low level fields of the DAC configuration structure.
@@ -376,7 +399,6 @@ typedef enum {
   dacdhrmode_t              datamode;                                       \
   /* DAC control register.*/                                                \
   uint16_t                  cr
-
 /**
  * @brief   Low level fields of the DAC group configuration structure.
  */
