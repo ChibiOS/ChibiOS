@@ -710,12 +710,7 @@ typedef enum {
            specified in continuous mode or if the buffer depth is           \
            greater than one.*/                                              \
   uint32_t                  cfgr;                                           \
-  /* ADC CFGR2 register initialization data.                                \
-     NOTE: The bits DMAEN and DMACFG are enforced internally                \
-           to the driver, keep them to zero.                                \
-     NOTE: The bits @p ADC_CFGR_CONT or @p ADC_CFGR_DISCEN must be          \
-           specified in continuous mode or if the buffer depth is           \
-           greater than one.*/                                              \
+  /* ADC CFGR2 register initialization data.*/                                              \
   uint32_t                  cfgr2;                                          \
   /* ADC TR1 register initialization data.*/                                \
   uint32_t                  tr1;                                            \
