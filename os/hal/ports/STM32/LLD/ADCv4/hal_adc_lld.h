@@ -482,7 +482,9 @@ typedef union {
  */
 #define adc_lld_config_fields                                               \
   /* ADC DIFSEL register initialization data.*/                             \
-  uint32_t                  difsel
+  uint32_t                  difsel;                                         \
+  /* Calibration mode, specify ADCCALIN and/or ADCCALDIF bits in here.*/    \
+  uint32_t                  calibration
 
 #if (STM32_ADC_DUAL_MODE == TRUE) || defined(__DOXYGEN__)
 #define adc_lld_configuration_group_fields                                  \

@@ -20,6 +20,44 @@
 #include "portab.h"
 
 /*===========================================================================*/
+/* ADC driver related.                                                       */
+/*===========================================================================*/
+
+#define ADC_GRP1_BUF_DEPTH      1
+#define ADC_GRP2_BUF_DEPTH      64
+
+adcsample_t samples1[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
+adcsample_t samples2[ADC_GRP2_NUM_CHANNELS * ADC_GRP2_BUF_DEPTH];
+
+/*
+ * ADC streaming callback.
+ */
+size_t nx = 0, ny = 0;
+void adccallback(ADCDriver *adcp) {
+
+  (void)adcp;
+
+  /* Updating counters.*/
+  if (adcIsBufferComplete(adcp)) {
+    nx += 1;
+  }
+  else {
+    ny += 1;
+  }
+}
+
+/*
+ * ADC errors callback, should never happen.
+ */
+void adcerrorcallback(ADCDriver *adcp, adcerror_t err) {
+
+  (void)adcp;
+  (void)err;
+
+  chSysHalt("it happened");
+}
+
+/*===========================================================================*/
 /* Application code.                                                         */
 /*===========================================================================*/
 
@@ -32,11 +70,10 @@ static THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
   chRegSetThreadName("blinker");
-  palSetLineMode(LINE_ARD_D13, PAL_MODE_OUTPUT_PUSHPULL);
   while (true) {
-    palSetLine(LINE_ARD_D13);
+    palSetLine(LINE_LED1);
     chThdSleepMilliseconds(500);
-    palClearLine(LINE_ARD_D13);
+    palClearLine(LINE_LED1);
     chThdSleepMilliseconds(500);
   }
 }
@@ -63,6 +100,16 @@ int main(void) {
    * Creates the example thread.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+
+  /*
+   * Activates the PORTAB_ADC1 driver and the temperature sensor.
+   */
+  adcStart(&PORTAB_ADC1, &portab_adccfg1);
+  adcSTM32EnableVREF(&PORTAB_ADC1);
+  adcSTM32EnableTS(&PORTAB_ADC1);
+
+  /* Performing a one-shot conversion on two channels.*/
+  adcConvert(&PORTAB_ADC1, &portab_adcgrpcfg1, samples1, ADC_GRP1_BUF_DEPTH);
 
   /*
    * Normal main() thread activity, if the button is pressed then the

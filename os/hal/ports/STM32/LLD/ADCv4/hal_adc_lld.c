@@ -151,12 +151,18 @@ static void adc_lld_analog_off(ADCDriver *adcp) {
  */
 static void adc_lld_calibrate(ADCDriver *adcp) {
 
- osalDbgAssert(adcp->adcm->CR == ADC_CR_ADVREGEN, "invalid register state");
+  osalDbgAssert(adcp->adcm->CR == ADC_CR_ADVREGEN, "invalid register state");
+
+  adcp->adcm->CR = adcp->config->calibration & (ADC_CR_ADCALDIF |
+                                                ADC_CR_ADCALLIN);
   adcp->adcm->CR |= ADC_CR_ADCAL;
   while ((adcp->adcm->CR & ADC_CR_ADCAL) != 0U)
     ;
 #if STM32_ADC_DUAL_MODE
   osalDbgAssert(adcp->adcs->CR == ADC_CR_ADVREGEN, "invalid register state");
+
+  adcp->adcs->CR = adcp->config->calibration & (ADC_CR_ADCALDIF |
+                                                ADC_CR_ADCALLIN);
   adcp->adcs->CR |= ADC_CR_ADCAL;
   while ((adcp->adcs->CR & ADC_CR_ADCAL) != 0U)
     ;
@@ -175,6 +181,7 @@ static void adc_lld_stop_adc(ADCDriver *adcp) {
     while (adcp->adcm->CR & ADC_CR_ADSTP)
       ;
   }
+  adcp->adcm->PCSEL = 0U;
 }
 
 /**
@@ -407,6 +414,7 @@ void adc_lld_start(ADCDriver *adcp) {
                                        (void *)adcp);
       osalDbgAssert(adcp->data.dma != NULL, "unable to allocate stream");
       rccEnableADC12(true);
+      dmaSetRequestSource(adcp->data.dma, STM32_DMAMUX1_ADC1);
     }
 #endif /* STM32_ADC_USE_ADC12 == TRUE */
 
@@ -418,6 +426,7 @@ void adc_lld_start(ADCDriver *adcp) {
                                          (void *)adcp);
       osalDbgAssert(adcp->data.bdma != NULL, "unable to allocate stream");
       rccEnableADC3(true);
+      bdmaSetRequestSource(adcp->data.bdma, STM32_DMAMUX2_ADC3_REQ);
     }
 #endif /* STM32_ADC_USE_ADC3 == TRUE */
 

@@ -38,9 +38,11 @@
 
 #define PORTAB_SD1                  SD2
 
-#define PORTAB_DAC_TRIG             5
+#define PORTAB_GPT1                 GPTD4
+#define PORTAB_ADC1                 ADCD1
 
 #define ADC_GRP1_NUM_CHANNELS       2
+#define ADC_GRP2_NUM_CHANNELS       2
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
