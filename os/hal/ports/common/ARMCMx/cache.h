@@ -29,6 +29,15 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+#if defined(__DCACHE_PRESENT) || defined(__DOXYGEN__)
+/**
+ * @brief   Data cache line size, zero if there is no data cache.
+ */
+#define CACHE_LINE_SIZE                     32U
+#else
+#define CACHE_LINE_SIZE                     0U
+#endif
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -47,6 +56,17 @@
 
 #if defined(__DCACHE_PRESENT) || defined(__DOXYGEN__)
 #if (__DCACHE_PRESENT != 0) || defined(__DOXYGEN__)
+/**
+ * @brief   Aligns the specified size to a multiple of cache line size.
+ * @note    This macros assumes that the size of the type @p t is a power of
+ *          two and not greater than @p CACHE_LINE_SIZE.
+ *
+ * @param[in] t         type of the buffer element
+ * @param[in] n         number of buffer elements
+ */
+#define CACHE_SIZE_ALIGN(t, n)                                              \
+  ((((((n) * sizeof (t)) - 1U) | (CACHE_LINE_SIZE - 1U)) + 1U) / sizeof (t))
+
 /**
  * @brief   Invalidates the data cache lines overlapping a memory buffer.
  * @details This function is meant to make sure that data written in
@@ -67,7 +87,7 @@
   __DSB();                                                                  \
   while (start < end) {                                                     \
     SCB->DCIMVAC = (uint32_t)start;                                         \
-    start += 32U;                                                           \
+    start += CACHE_LINE_SIZE;                                               \
   }                                                                         \
   __DSB();                                                                  \
   __ISB();                                                                  \
@@ -93,7 +113,7 @@
   __DSB();                                                                  \
   while (start < end) {                                                     \
     SCB->DCCIMVAC = (uint32_t)start;                                        \
-    start += 32U;                                                           \
+    start += CACHE_LINE_SIZE;                                               \
   }                                                                         \
   __DSB();                                                                  \
   __ISB();                                                                  \
@@ -111,6 +131,8 @@
 #endif
 
 #else /* !defined(__DCACHE_PRESENT) */
+#define CACHE_SIZE_ALIGN(t, n) (n)
+
 #define cacheBufferInvalidate(addr, size) {                                 \
   (void)(addr);                                                             \
   (void)(size);                                                             \

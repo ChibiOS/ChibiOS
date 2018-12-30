@@ -16,6 +16,7 @@
 
 #include "ch.h"
 #include "hal.h"
+#include "ccportab.h"
 
 #include "portab.h"
 
@@ -26,8 +27,17 @@
 #define ADC_GRP1_BUF_DEPTH      1
 #define ADC_GRP2_BUF_DEPTH      64
 
-adcsample_t samples1[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
-adcsample_t samples2[ADC_GRP2_NUM_CHANNELS * ADC_GRP2_BUF_DEPTH];
+/* Buffers are allocated with size and address aligned to the cache
+   line size.*/
+#if CACHE_LINE_SIZE > 0
+CC_ALIGN(CACHE_LINE_SIZE)
+#endif
+adcsample_t samples1[CACHE_SIZE_ALIGN(adcsample_t, ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH)];
+
+#if CACHE_LINE_SIZE > 0
+CC_ALIGN(CACHE_LINE_SIZE)
+#endif
+adcsample_t samples2[CACHE_SIZE_ALIGN(adcsample_t, ADC_GRP2_NUM_CHANNELS * ADC_GRP2_BUF_DEPTH)];
 
 /*
  * ADC streaming callback.
@@ -110,6 +120,7 @@ int main(void) {
 
   /* Performing a one-shot conversion on two channels.*/
   adcConvert(&PORTAB_ADC1, &portab_adcgrpcfg1, samples1, ADC_GRP1_BUF_DEPTH);
+  cacheBufferInvalidate(samples1, sizeof (samples1) / sizeof (adcsample_t));
 
   /*
    * Normal main() thread activity, if the button is pressed then the
