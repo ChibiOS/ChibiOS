@@ -67,6 +67,7 @@
 extern const GPTConfig portab_gptcfg1;
 extern const ADCConfig portab_adccfg1;
 extern const ADCConversionGroup portab_adcgrpcfg1;
+extern const ADCConversionGroup portab_adcgrpcfg2;
 
 #ifdef __cplusplus
 extern "C" {

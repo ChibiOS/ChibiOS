@@ -42,17 +42,22 @@ adcsample_t samples2[CACHE_SIZE_ALIGN(adcsample_t, ADC_GRP2_NUM_CHANNELS * ADC_G
 /*
  * ADC streaming callback.
  */
-size_t nx = 0, ny = 0;
+size_t n= 0, nx = 0, ny = 0;
 void adccallback(ADCDriver *adcp) {
 
   (void)adcp;
 
   /* Updating counters.*/
+  n++;
   if (adcIsBufferComplete(adcp)) {
     nx += 1;
   }
   else {
     ny += 1;
+  }
+
+  if ((n % 200) == 0U) {
+    palToggleLine(LINE_LED2);
   }
 }
 
@@ -112,7 +117,7 @@ int main(void) {
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   /*
-   * Activates the PORTAB_ADC1 driver and the temperature sensor.
+   * Starting PORTAB_ADC1 driver and the temperature sensor.
    */
   adcStart(&PORTAB_ADC1, &portab_adccfg1);
   adcSTM32EnableVREF(&PORTAB_ADC1);
@@ -123,11 +128,26 @@ int main(void) {
   cacheBufferInvalidate(samples1, sizeof (samples1) / sizeof (adcsample_t));
 
   /*
+   * Starting PORTAB_GPT1 driver, it is used for triggering the ADC.
+   */
+  gptStart(&PORTAB_GPT1, &portab_gptcfg1);
+
+  /*
+   * Starting an ADC continuous conversion triggered with a period of
+   * 1/10000 second.
+   */
+  adcStartConversion(&PORTAB_ADC1, &portab_adcgrpcfg2,
+                     samples2, ADC_GRP2_BUF_DEPTH);
+  gptStartContinuous(&PORTAB_GPT1, 100U);
+
+  /*
    * Normal main() thread activity, if the button is pressed then the
    * conversion is stopped.
    */
   while (true) {
     if (palReadLine(PORTAB_LINE_BUTTON) == PORTAB_BUTTON_PRESSED) {
+      gptStopTimer(&PORTAB_GPT1);
+      adcStopConversion(&PORTAB_ADC1);
     }
     chThdSleepMilliseconds(500);
   }
