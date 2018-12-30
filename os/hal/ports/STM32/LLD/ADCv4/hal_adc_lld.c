@@ -347,10 +347,10 @@ void adc_lld_init(void) {
 #if STM32_ADC_USE_ADC12 == TRUE
   /* Driver initialization.*/
   adcObjectInit(&ADCD1);
-  ADCD1.adcc     = ADC12_COMMON;
-  ADCD1.adcm     = ADC1;
+  ADCD1.adcc        = ADC12_COMMON;
+  ADCD1.adcm        = ADC1;
 #if STM32_ADC_DUAL_MODE
-  ADCD1.adcs     = ADC2;
+  ADCD1.adcs        = ADC2;
 #endif
   ADCD1.data.dma    = NULL;
   ADCD1.dmamode     = ADC_DMA_SIZE |
@@ -364,8 +364,8 @@ void adc_lld_init(void) {
 #if STM32_ADC_USE_ADC3 == TRUE
   /* Driver initialization.*/
   adcObjectInit(&ADCD3);
-  ADCD3.adcc = ADC3_COMMON;
-  ADCD3.adcm     = ADC3;
+  ADCD3.adcc        = ADC3_COMMON;
+  ADCD3.adcm        = ADC3;
   ADCD3.data.bdma   = NULL;
   ADCD3.dmamode     = ADC_DMA_SIZE |
                       STM32_DMA_CR_PL(STM32_ADC_ADC3_DMA_PRIORITY)  |

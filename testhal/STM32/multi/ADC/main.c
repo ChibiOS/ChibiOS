@@ -57,7 +57,7 @@ void adccallback(ADCDriver *adcp) {
   }
 
   if ((n % 200) == 0U) {
-    palToggleLine(LINE_LED2);
+    palToggleLine(PORTAB_LINE_LED2);
   }
 }
 
@@ -86,9 +86,9 @@ static THD_FUNCTION(Thread1, arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (true) {
-    palSetLine(LINE_LED1);
+    palSetLine(PORTAB_LINE_LED1);
     chThdSleepMilliseconds(500);
-    palClearLine(LINE_LED1);
+    palClearLine(PORTAB_LINE_LED1);
     chThdSleepMilliseconds(500);
   }
 }
