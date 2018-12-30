@@ -153,16 +153,18 @@ static void adc_lld_calibrate(ADCDriver *adcp) {
 
   osalDbgAssert(adcp->adcm->CR == ADC_CR_ADVREGEN, "invalid register state");
 
-  adcp->adcm->CR = adcp->config->calibration & (ADC_CR_ADCALDIF |
-                                                ADC_CR_ADCALLIN);
+  adcp->adcm->CR &= ~(ADC_CR_ADCALDIF | ADC_CR_ADCALLIN);
+  adcp->adcm->CR |= adcp->config->calibration & (ADC_CR_ADCALDIF |
+                                                 ADC_CR_ADCALLIN);
   adcp->adcm->CR |= ADC_CR_ADCAL;
   while ((adcp->adcm->CR & ADC_CR_ADCAL) != 0U)
     ;
 #if STM32_ADC_DUAL_MODE
   osalDbgAssert(adcp->adcs->CR == ADC_CR_ADVREGEN, "invalid register state");
 
-  adcp->adcs->CR = adcp->config->calibration & (ADC_CR_ADCALDIF |
-                                                ADC_CR_ADCALLIN);
+  adcp->adcs->CR &= ~(ADC_CR_ADCALDIF | ADC_CR_ADCALLIN);
+  adcp->adcs->CR |= adcp->config->calibration & (ADC_CR_ADCALDIF |
+                                                 ADC_CR_ADCALLIN);
   adcp->adcs->CR |= ADC_CR_ADCAL;
   while ((adcp->adcs->CR & ADC_CR_ADCAL) != 0U)
     ;
