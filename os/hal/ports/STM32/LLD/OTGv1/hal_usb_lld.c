@@ -140,6 +140,7 @@ static void otg_core_reset(USBDriver *usbp) {
 
   /* Core reset and delay of at least 3 PHY cycles.*/
   otgp->GRSTCTL = GRSTCTL_CSRST;
+  osalSysPolledDelayX(12);
   while ((otgp->GRSTCTL & GRSTCTL_CSRST) != 0)
     ;
 

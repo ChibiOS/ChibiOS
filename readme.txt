@@ -184,6 +184,8 @@
 - EX:  Updated LIS302DL to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LPS25H to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LSM303DLHC to 1.1.0 (backported to 18.2.1).
+- HAL: Fixed timing problem in STM32 OTGv1 driver (bug #996)
+       (backported to 18.2.2 and 17.6.5).
 - HAL: Fixed restrictive check in MMC-SPI driver (bug #995)
        (backported to 18.2.2 and 17.6.5).
 - HAL: Fixed misplaced check in STM32 ST driver (bug #994)
