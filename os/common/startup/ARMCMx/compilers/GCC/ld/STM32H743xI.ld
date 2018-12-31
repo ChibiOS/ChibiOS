@@ -49,15 +49,15 @@ MEMORY
    and a load region (_LMA suffix).*/
 
 /* Flash region to be used for exception vectors.*/
-REGION_ALIAS("VECTORS_FLASH", flash1);
+REGION_ALIAS("VECTORS_FLASH", flash0);
 REGION_ALIAS("VECTORS_FLASH_LMA", flash0);
 
 /* Flash region to be used for constructors and destructors.*/
-REGION_ALIAS("XTORS_FLASH", flash1);
+REGION_ALIAS("XTORS_FLASH", flash0);
 REGION_ALIAS("XTORS_FLASH_LMA", flash0);
 
 /* Flash region to be used for code text.*/
-REGION_ALIAS("TEXT_FLASH", flash1);
+REGION_ALIAS("TEXT_FLASH", flash0);
 REGION_ALIAS("TEXT_FLASH_LMA", flash0);
 
 /* Flash region to be used for read only data.*/
@@ -65,7 +65,7 @@ REGION_ALIAS("RODATA_FLASH", flash0);
 REGION_ALIAS("RODATA_FLASH_LMA", flash0);
 
 /* Flash region to be used for various.*/
-REGION_ALIAS("VARIOUS_FLASH", flash1);
+REGION_ALIAS("VARIOUS_FLASH", flash0);
 REGION_ALIAS("VARIOUS_FLASH_LMA", flash0);
 
 /* Flash region to be used for RAM(n) initialization data.*/
