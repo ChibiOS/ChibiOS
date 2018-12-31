@@ -41,6 +41,7 @@
 #define STM32F4XX
 
 #elif defined(STM32F413xx)
+#define STM32F413xx
 #define STM32F4XX
 
 #elif defined(STM32F412Cx) || defined(STM32F412Rx) ||                       \
