@@ -95,6 +95,7 @@
 - NEW: Added new functions to objects fifos: chFifoReturnObjectS(),
        chFifoSendObjectAheadI(), chFifoSendObjectAheadS() and
        chFifoSendObjectAhead().
+- HAL: Fixed extra parenthesis in STM32F4 registry (bug #997).
 - HAL: Fixed timing problem in STM32 OTGv1 driver (bug #996).
 - HAL: Fixed restrictive check in MMC-SPI driver (bug #995).
 - HAL: Fixed misplaced check in STM32 ST driver (bug #994).
