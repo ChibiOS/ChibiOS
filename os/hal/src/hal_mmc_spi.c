@@ -53,6 +53,7 @@ static bool mmc_write(void *instance, uint32_t startblk,
  * @brief   Virtual methods table.
  */
 static const struct MMCDriverVMT mmc_vmt = {
+  (size_t)0,
   (bool (*)(void *))mmc_lld_is_card_inserted,
   (bool (*)(void *))mmc_lld_is_write_protected,
   (bool (*)(void *))mmcConnect,
@@ -491,7 +492,7 @@ bool mmcConnect(MMCDriver *mmcp) {
     i = 0;
     while (true) {
       /*lint -save -e9007 [13.5] Side effect unimportant.*/
-      if ((send_command_R1(mmcp, MMCSD_CMD_APP_CMD, 0) == 0x01U) &&
+      if ((send_command_R1(mmcp, MMCSD_CMD_APP_CMD, 0) <= 0x01U) &&
           (send_command_R3(mmcp, MMCSD_CMD_APP_OP_COND, 0x400001AAU, r3) == 0x00U)) {
       /*lint -restore*/
         break;

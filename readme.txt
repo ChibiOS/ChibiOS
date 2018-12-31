@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** 17.6.5 ***
+- HAL: Fixed timing problem in STM32 OTGv1 driver (bug #996).
+- HAL: Fixed restrictive check in MMC-SPI driver (bug #995).
 - HAL: Fixed misplaced check in STM32 ST driver (bug #994).
 - HAL: Fixed STM32F7xx I2SPLL not fully initialized (bug #992).
 - HAL: Fixed ethernet registry error for STM32F469/479 (bug #990).
