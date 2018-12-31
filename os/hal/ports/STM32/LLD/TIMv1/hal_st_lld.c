@@ -43,12 +43,6 @@
 #error "TIM2 is not a 32bits timer"
 #endif
 
-#if defined(STM32_TIM2_IS_USED)
-#error "ST requires TIM2 but the timer is already used"
-#else
-#define STM32_TIM2_IS_USED
-#endif
-
 #define ST_HANDLER                          STM32_TIM2_HANDLER
 #define ST_NUMBER                           STM32_TIM2_NUMBER
 #define ST_CLOCK_SRC                        STM32_TIMCLK1
@@ -66,12 +60,6 @@
 #elif STM32_ST_USE_TIMER == 3
 #if (OSAL_ST_RESOLUTION == 32) && !STM32_TIM3_IS_32BITS
 #error "TIM3 is not a 32bits timer"
-#endif
-
-#if defined(STM32_TIM3_IS_USED)
-#error "ST requires TIM3 but the timer is already used"
-#else
-#define STM32_TIM3_IS_USED
 #endif
 
 #define ST_HANDLER                          STM32_TIM3_HANDLER
@@ -93,12 +81,6 @@
 #error "TIM4 is not a 32bits timer"
 #endif
 
-#if defined(STM32_TIM4_IS_USED)
-#error "ST requires TIM4 but the timer is already used"
-#else
-#define STM32_TIM4_IS_USED
-#endif
-
 #define ST_HANDLER                          STM32_TIM4_HANDLER
 #define ST_NUMBER                           STM32_TIM4_NUMBER
 #define ST_CLOCK_SRC                        STM32_TIMCLK1
@@ -116,12 +98,6 @@
 #elif STM32_ST_USE_TIMER == 5
 #if (OSAL_ST_RESOLUTION == 32) && !STM32_TIM5_IS_32BITS
 #error "TIM5 is not a 32bits timer"
-#endif
-
-#if defined(STM32_TIM5_IS_USED)
-#error "ST requires TIM5 but the timer is already used"
-#else
-#define STM32_TIM5_IS_USED
 #endif
 
 #define ST_HANDLER                          STM32_TIM5_HANDLER
@@ -143,12 +119,6 @@
 #error "TIM21 is not a 32bits timer"
 #endif
 
-#if defined(STM32_TIM21_IS_USED)
-#error "ST requires TIM21 but the timer is already used"
-#else
-#define STM32_TIM21_IS_USED
-#endif
-
 #define ST_HANDLER                          STM32_TIM21_HANDLER
 #define ST_NUMBER                           STM32_TIM21_NUMBER
 #define ST_CLOCK_SRC                        STM32_TIMCLK2
@@ -158,12 +128,6 @@
 #elif STM32_ST_USE_TIMER == 22
 #if (OSAL_ST_RESOLUTION == 32) && !STM32_TIM22_IS_32BITS
 #error "TIM21 is not a 32bits timer"
-#endif
-
-#if defined(STM32_TIM22_IS_USED)
-#error "ST requires TIM22 but the timer is already used"
-#else
-#define STM32_TIM22_IS_USED
 #endif
 
 #define ST_HANDLER                          STM32_TIM22_HANDLER
