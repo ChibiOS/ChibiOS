@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 17.6.5 ***
+- HAL: Fixed misplaced check in STM32 ST driver (bug #994).
 - HAL: Fixed STM32F7xx I2SPLL not fully initialized (bug #992).
 - HAL: Fixed ethernet registry error for STM32F469/479 (bug #990).
 - RT:  Fixed bug in chEvtBroadcastFlagsI (bug #989).
