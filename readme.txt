@@ -95,6 +95,9 @@
 - NEW: Added new functions to objects fifos: chFifoReturnObjectS(),
        chFifoSendObjectAheadI(), chFifoSendObjectAheadS() and
        chFifoSendObjectAhead().
+- HAL: Fixed misplaced check in STM32 ST driver (bug #994).
+- OTH: Fixed ARM CMx vectors table without thumb bit set for unused vectors
+       (bug #993).
 - HAL: Fixed STM32F7xx I2SPLL not fully initialized (bug #992).
 - HAL: Fixed ethernet registry error for STM32F469/479 (bug #990).
 - RT:  Fixed bug in chEvtBroadcastFlagsI (bug #989).
