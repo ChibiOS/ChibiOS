@@ -492,7 +492,7 @@ bool mmcConnect(MMCDriver *mmcp) {
     i = 0;
     while (true) {
       /*lint -save -e9007 [13.5] Side effect unimportant.*/
-      if ((send_command_R1(mmcp, MMCSD_CMD_APP_CMD, 0) == 0x01U) &&
+      if ((send_command_R1(mmcp, MMCSD_CMD_APP_CMD, 0) <= 0x01U) &&
           (send_command_R3(mmcp, MMCSD_CMD_APP_OP_COND, 0x400001AAU, r3) == 0x00U)) {
       /*lint -restore*/
         break;

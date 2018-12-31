@@ -95,6 +95,7 @@
 - NEW: Added new functions to objects fifos: chFifoReturnObjectS(),
        chFifoSendObjectAheadI(), chFifoSendObjectAheadS() and
        chFifoSendObjectAhead().
+- HAL: Fixed restrictive check in MMC-SPI driver (bug #995).
 - HAL: Fixed misplaced check in STM32 ST driver (bug #994).
 - OTH: Fixed ARM CMx vectors table without thumb bit set for unused vectors
        (bug #993).
