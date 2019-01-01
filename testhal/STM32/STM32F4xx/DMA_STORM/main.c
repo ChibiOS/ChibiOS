@@ -38,11 +38,9 @@ static virtual_timer_t adcvt;
 
 static adcsample_t samples2[ADC_GRP2_NUM_CHANNELS * ADC_GRP2_BUF_DEPTH];
 
-static void adccallback(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
+static void adccallback(ADCDriver *adcp) {
 
   (void)adcp;
-  (void)buffer;
-  (void)n;
 
   chSysLockFromISR();
   chVTSetI(&adcvt, TIME_MS2I(10), tmo, (void *)"ADC timeout");
@@ -62,7 +60,7 @@ static void adcerrorcallback(ADCDriver *adcp, adcerror_t err) {
  * Channels:    IN11, IN12, IN11, IN12, IN11, IN12, Sensor, VRef.
  */
 static const ADCConversionGroup adcgrpcfg2 = {
-  TRUE,
+  true,
   ADC_GRP2_NUM_CHANNELS,
   adccallback,
   adcerrorcallback,
@@ -71,7 +69,9 @@ static const ADCConversionGroup adcgrpcfg2 = {
   ADC_SMPR1_SMP_AN12(ADC_SAMPLE_56) | ADC_SMPR1_SMP_AN11(ADC_SAMPLE_56) |
   ADC_SMPR1_SMP_SENSOR(ADC_SAMPLE_144) | ADC_SMPR1_SMP_VREF(ADC_SAMPLE_144),
   0,                        /* SMPR2 */
-  ADC_SQR1_NUM_CH(ADC_GRP2_NUM_CHANNELS),
+  0,                        /* HTR */
+  0,                        /* LTR */
+  0,                        /* SQR1 */
   ADC_SQR2_SQ8_N(ADC_CHANNEL_SENSOR) | ADC_SQR2_SQ7_N(ADC_CHANNEL_VREFINT),
   ADC_SQR3_SQ6_N(ADC_CHANNEL_IN12)   | ADC_SQR3_SQ5_N(ADC_CHANNEL_IN11) |
   ADC_SQR3_SQ4_N(ADC_CHANNEL_IN12)   | ADC_SQR3_SQ3_N(ADC_CHANNEL_IN11) |

@@ -9,7 +9,7 @@ all:
 	@echo ====================================================================
 	@echo
 	@echo === Building for STM32L4R5-Nucleo144 ===============================
-	@make --no-print-directory -f ./make/stm32l4r5zi_nucleo144.make all
+	@make --no-print-directory -f ./make/stm32l4r5_nucleo144.make all
 	@echo ====================================================================
 	@echo
 	@echo === Building for STM32F303-Discovery ===============================
@@ -33,7 +33,7 @@ clean:
 	@echo
 	-@make --no-print-directory -f ./make/stm32l476_discovery.make clean
 	@echo
-	-@make --no-print-directory -f ./make/stm32l4r5zi_nucleo144.make clean
+	-@make --no-print-directory -f ./make/stm32l4r5_nucleo144.make clean
 	@echo
 	-@make --no-print-directory -f ./make/stm32f303_discovery.make clean
 	@echo
