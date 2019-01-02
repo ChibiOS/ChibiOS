@@ -139,7 +139,7 @@ void wspi_lld_init(void) {
 #if STM32_WSPI_USE_QUADSPI1
   wspiObjectInit(&WSPID1);
   WSPID1.qspi       = QUADSPI;
-  WSPID1.dma        = STM32_DMA_STREAM(STM32_WSPI_QUADSPI1_DMA_STREAM);
+  WSPID1.dma        = NULL;
   WSPID1.dmamode    = STM32_DMA_CR_CHSEL(QUADSPI1_DMA_CHANNEL) |
                       STM32_DMA_CR_PL(STM32_WSPI_QUADSPI1_DMA_PRIORITY) |
                       STM32_DMA_CR_PSIZE_BYTE |
@@ -164,11 +164,11 @@ void wspi_lld_start(WSPIDriver *wspip) {
   if (wspip->state == WSPI_STOP) {
 #if STM32_WSPI_USE_QUADSPI1
     if (&WSPID1 == wspip) {
-      bool b = dmaStreamAllocate(wspip->dma,
-                                 STM32_WSPI_QUADSPI1_DMA_IRQ_PRIORITY,
-                                 (stm32_dmaisr_t)wspi_lld_serve_dma_interrupt,
-                                 (void *)wspip);
-      osalDbgAssert(!b, "stream already allocated");
+      wspip->dma = dmaStreamAllocI(STM32_WSPI_QUADSPI1_DMA_STREAM,
+                                   STM32_WSPI_QUADSPI1_DMA_IRQ_PRIORITY,
+                                   (stm32_dmaisr_t)wspi_lld_serve_dma_interrupt,
+                                   (void *)wspip);
+      osalDbgAssert(wspip->dma != NULL, "unable to allocate stream");
       rccEnableQUADSPI1(true);
     }
 #endif
@@ -201,7 +201,8 @@ void wspi_lld_stop(WSPIDriver *wspip) {
     wspip->qspi->CR = 0U;
 
     /* Releasing the DMA.*/
-    dmaStreamRelease(wspip->dma);
+    dmaStreamFreeI(wspip->dma);
+    wspip->dma = NULL;
 
     /* Stopping involved clocks.*/
 #if STM32_WSPI_USE_QUADSPI1

@@ -397,7 +397,7 @@ void sdc_lld_init(void) {
   SDCD1.thread = NULL;
   SDCD1.rtmo   = SDMMC1_READ_TIMEOUT;
   SDCD1.wtmo   = SDMMC1_WRITE_TIMEOUT;
-  SDCD1.dma    = STM32_DMA_STREAM(STM32_SDC_SDMMC1_DMA_STREAM);
+  SDCD1.dma    = NULL;
   SDCD1.sdmmc  = SDMMC1;
   nvicEnableVector(STM32_SDMMC1_NUMBER, STM32_SDC_SDMMC1_IRQ_PRIORITY);
 #endif
@@ -407,7 +407,7 @@ void sdc_lld_init(void) {
   SDCD2.thread = NULL;
   SDCD2.rtmo   = SDMMC2_READ_TIMEOUT;
   SDCD2.wtmo   = SDMMC2_WRITE_TIMEOUT;
-  SDCD2.dma    = STM32_DMA_STREAM(STM32_SDC_SDMMC2_DMA_STREAM);
+  SDCD2.dma    = NULL;
   SDCD2.sdmmc  = SDMMC2;
   nvicEnableVector(STM32_SDMMC2_NUMBER, STM32_SDC_SDMMC2_IRQ_PRIORITY);
 #endif
@@ -441,10 +441,11 @@ void sdc_lld_start(SDCDriver *sdcp) {
   if (sdcp->state == BLK_STOP) {
 #if STM32_SDC_USE_SDMMC1
     if (&SDCD1 == sdcp) {
-      bool b = dmaStreamAllocate(sdcp->dma, STM32_SDC_SDMMC1_IRQ_PRIORITY,
-                                 NULL, NULL);
-
-      osalDbgAssert(!b, "stream already allocated");
+      sdcp->dma = dmaStreamAllocI(STM32_SDC_SDMMC1_DMA_STREAM,
+                                  STM32_SDC_SDMMC1_IRQ_PRIORITY,
+                                  NULL,
+                                  NULL);
+      osalDbgAssert(sdcp->dma != NULL, "unable to allocate stream");
 
       sdcp->dmamode |= STM32_DMA_CR_CHSEL(SDMMC1_DMA_CHANNEL) |
                        STM32_DMA_CR_PL(STM32_SDC_SDMMC1_DMA_PRIORITY);
@@ -459,10 +460,11 @@ void sdc_lld_start(SDCDriver *sdcp) {
 
 #if STM32_SDC_USE_SDMMC2
     if (&SDCD2 == sdcp) {
-      bool b = dmaStreamAllocate(sdcp->dma, STM32_SDC_SDMMC2_IRQ_PRIORITY,
-                                 NULL, NULL);
-
-      osalDbgAssert(!b, "stream already allocated");
+      sdcp->dma = dmaStreamAllocI(STM32_SDC_SDMMC2_DMA_STREAM,
+                                  STM32_SDC_SDMMC2_IRQ_PRIORITY,
+                                  NULL,
+                                  NULL);
+      osalDbgAssert(sdcp->dma != NULL, "unable to allocate stream");
 
       sdcp->dmamode |= STM32_DMA_CR_CHSEL(SDMMC2_DMA_CHANNEL) |
                        STM32_DMA_CR_PL(STM32_SDC_SDMMC2_DMA_PRIORITY);
@@ -502,6 +504,7 @@ void sdc_lld_stop(SDCDriver *sdcp) {
 
     /* DMA stream released.*/
     dmaStreamRelease(sdcp->dma);
+    sdcp->dma = NULL;
 
     /* Clock deactivation.*/
 #if STM32_SDC_USE_SDMMC1

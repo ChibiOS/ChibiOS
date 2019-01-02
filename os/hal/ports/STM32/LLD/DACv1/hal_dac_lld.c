@@ -87,11 +87,9 @@ static const dacparams_t dma1_ch1_params = {
   .dataoffset   = 0U,
   .regshift     = 0U,
   .regmask      = 0xFFFF0000U,
+  .dmastream    = STM32_DAC_DAC1_CH1_DMA_STREAM,
 #if STM32_DMA_SUPPORTS_DMAMUX
-  .dmachannel   = STM32_DAC_DAC1_CH1_DMA_CHANNEL,
   .peripheral   = STM32_DMAMUX1_DAC1_CH1,
-#else
-  .dmachannel   = STM32_DAC_DAC1_CH1_DMA_STREAM,
 #endif
   .dmamode      = STM32_DMA_CR_CHSEL(DAC1_CH1_DMA_CHANNEL) |
                   STM32_DMA_CR_PL(STM32_DAC_DAC1_CH1_DMA_PRIORITY) |
@@ -108,11 +106,9 @@ static const dacparams_t dma1_ch2_params = {
   .dataoffset   = CHANNEL_DATA_OFFSET,
   .regshift     = 16U,
   .regmask      = 0x0000FFFFU,
+  .dmastream    = STM32_DAC_DAC1_CH2_DMA_STREAM,
 #if STM32_DMA_SUPPORTS_DMAMUX
-  .dmachannel   = STM32_DAC_DAC1_CH2_DMA_CHANNEL,
   .peripheral   = STM32_DMAMUX1_DAC1_CH2,
-#else
-  .dmachannel   = STM32_DAC_DAC1_CH2_DMA_STREAM,
 #endif
   .dmamode      = STM32_DMA_CR_CHSEL(DAC1_CH2_DMA_CHANNEL) |
                   STM32_DMA_CR_PL(STM32_DAC_DAC1_CH2_DMA_PRIORITY) |
@@ -129,11 +125,9 @@ static const dacparams_t dma2_ch1_params = {
   .dataoffset   = 0U,
   .regshift     = 0U,
   .regmask      = 0xFFFF0000U,
+  .dmastream    = STM32_DAC_DAC2_CH1_DMA_STREAM,
 #if STM32_DMA_SUPPORTS_DMAMUX
-  .dmachannel   = STM32_DAC_DAC2_CH1_DMA_CHANNEL,
   .peripheral   = STM32_DMAMUX1_DAC2_CH1,
-#else
-  .dmachannel   = STM32_DAC_DAC2_CH1_DMA_STREAM,
 #endif
   .dmamode      = STM32_DMA_CR_CHSEL(DAC2_CH1_DMA_CHANNEL) |
                   STM32_DMA_CR_PL(STM32_DAC_DAC2_CH1_DMA_PRIORITY) |
@@ -150,11 +144,9 @@ static const dacparams_t dma1_ch2_params = {
   .dataoffset   = CHANNEL_DATA_OFFSET,
   .regshift     = 16U,
   .regmask      = 0x0000FFFFU,
+  .dmastream    = STM32_DAC_DAC2_CH2_DMA_STREAM,
 #if STM32_DMA_SUPPORTS_DMAMUX
-  .dmachannel   = STM32_DAC_DAC2_CH2_DMA_CHANNEL,
   .peripheral   = STM32_DMAMUX1_DAC2_CH2,
-#else
-  .dmachannel   = STM32_DAC_DAC2_CH2_DMA_STREAM,
 #endif
   .dmamode      = STM32_DMA_CR_CHSEL(DAC2_CH2_DMA_CHANNEL) |
                   STM32_DMA_CR_PL(STM32_DAC_DAC2_CH2_DMA_PRIORITY) |
@@ -437,7 +429,7 @@ void dac_lld_start_conversion(DACDriver *dacp) {
   n = dacp->depth * dacp->grpp->num_channels;
 
   /* Allocating the DMA channel.*/
-  dacp->dma = dmaStreamAllocI(dacp->params->dmachannel,
+  dacp->dma = dmaStreamAllocI(dacp->params->dmastream,
                               dacp->params->dmairqprio,
                               (stm32_dmaisr_t)dac_lld_serve_tx_interrupt,
                               (void *)dacp);
@@ -542,7 +534,7 @@ void dac_lld_stop_conversion(DACDriver *dacp) {
 
   /* DMA channel disabled and released.*/
   dmaStreamDisable(dacp->dma);
-  dmaStreamRelease(dacp->dma);
+  dmaStreamFreeI(dacp->dma);
   dacp->dma = NULL;
 
 #if STM32_DAC_DUAL_MODE == FALSE

@@ -471,13 +471,6 @@ void dmaInit(void) {
  * @details The stream is allocated and, if required, the DMA clock enabled.
  *          The function also enables the IRQ vector associated to the stream
  *          and initializes its priority.
- * @pre     The stream must not be already in use or an error is returned.
- * @post    The stream is allocated and the default ISR handler redirected
- *          to the specified function.
- * @post    The stream ISR vector is enabled and its priority configured.
- * @post    The stream must be freed using @p dmaStreamRelease() before it can
- *          be reused with another peripheral.
- * @post    The stream is in its post-reset state.
  *
  * @param[in] id        numeric identifiers of a specific stream or:
  *                      - @p STM32_DMA_STREAM_ID_ANY for any stream.
@@ -572,32 +565,34 @@ const stm32_dma_stream_t *dmaStreamAllocI(uint32_t id,
  * @details The stream is allocated and, if required, the DMA clock enabled.
  *          The function also enables the IRQ vector associated to the stream
  *          and initializes its priority.
- * @pre     The stream must not be already in use or an error is returned.
- * @post    The stream is allocated and the default ISR handler redirected
- *          to the specified function.
- * @post    The stream ISR vector is enabled and its priority configured.
- * @post    The stream must be freed using @p dmaStreamRelease() before it can
- *          be reused with another peripheral.
- * @post    The stream is in its post-reset state.
- * @note    This function can be invoked in both ISR or thread context.
  *
- * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
+ * @param[in] id        numeric identifiers of a specific stream or:
+ *                      - @p STM32_DMA_STREAM_ID_ANY for any stream.
+ *                      - @p STM32_DMA_STREAM_ID_ANY_DMA1 for any stream
+ *                        on DMA1.
+ *                      - @p STM32_DMA_STREAM_ID_ANY_DMA2 for any stream
+ *                        on DMA2.
+ *                      .
  * @param[in] priority  IRQ priority for the DMA stream
  * @param[in] func      handling function pointer, can be @p NULL
  * @param[in] param     a parameter to be passed to the handling function
- * @return              The operation status.
- * @retval false        no error, stream taken.
- * @retval true         error, stream already taken.
+ * @return              Pointer to the allocated @p stm32_dma_stream_t
+ *                      structure.
+ * @retval NULL         if a/the stream is not available.
  *
- * @special
- * @deprecated
+ * @api
  */
-bool dmaStreamAllocate(const stm32_dma_stream_t *dmastp,
-                       uint32_t priority,
-                       stm32_dmaisr_t func,
-                       void *param) {
+const stm32_dma_stream_t *dmaStreamAlloc(uint32_t id,
+                                         uint32_t priority,
+                                         stm32_dmaisr_t func,
+                                         void *param) {
+  const stm32_dma_stream_t *dmastp;
 
-  return dmaStreamAllocI(dmastp->selfindex, priority, func, param) == NULL;
+  osalSysLock();
+  dmastp = dmaStreamAllocI(id, priority, func, param);
+  osalSysUnlock();
+
+  return dmastp;
 }
 
 /**
@@ -605,15 +600,12 @@ bool dmaStreamAllocate(const stm32_dma_stream_t *dmastp,
  * @details The stream is freed and, if required, the DMA clock disabled.
  *          Trying to release a unallocated stream is an illegal operation
  *          and is trapped if assertions are enabled.
- * @pre     The stream must have been allocated using @p dmaStreamAllocate().
- * @post    The stream is again available.
- * @note    This function can be invoked in both ISR or thread context.
  *
  * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
  *
- * @special
+ * @iclass
  */
-void dmaStreamRelease(const stm32_dma_stream_t *dmastp) {
+void dmaStreamFreeI(const stm32_dma_stream_t *dmastp) {
 
   osalDbgCheck(dmastp != NULL);
 
@@ -641,6 +633,23 @@ void dmaStreamRelease(const stm32_dma_stream_t *dmastp) {
     rccDisableDMAMUX();
   }
 #endif
+}
+
+/**
+ * @brief   Releases a DMA stream.
+ * @details The stream is freed and, if required, the DMA clock disabled.
+ *          Trying to release a unallocated stream is an illegal operation
+ *          and is trapped if assertions are enabled.
+ *
+ * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
+ *
+ * @api
+ */
+void dmaStreamFree(const stm32_dma_stream_t *dmastp) {
+
+  osalSysLock();
+  dmaStreamFreeI(dmastp);
+  osalSysUnlock();
 }
 
 #if (STM32_DMA_SUPPORTS_DMAMUX == TRUE) || defined(__DOXYGEN__)

@@ -1,5 +1,5 @@
 chibios_c.xml           - ChibiOS C formatting rules for Eclipse. Import
-                           thestyle in Eclipse if you plan to use the ChibiOS
+                          thestyle in Eclipse if you plan to use the ChibiOS
                           formatting rules.
 chibios_java.xml        - ChibiOS Java formatting rules for Eclipse. Import
                           the style in Eclipse if you plan to use the ChibiOS

@@ -53,15 +53,15 @@
 #define STM32_BDMA_IS_VALID_PRIORITY(prio)  (((prio) >= 0U) && ((prio) <= 3U))
 
 /**
- * @brief   Checks if a BDMA channel is within the valid range.
+ * @brief   Checks if a BDMA stream id is within the valid range.
  *
- * @param[in] ch        BDMA channel
+ * @param[in] id        BDMA stream id
  * @retval              The check result.
- * @retval FALSE        invalid DMA channel.
- * @retval TRUE         correct DMA channel.
+ * @retval false        invalid DMA stream.
+ * @retval true         correct DMA stream.
  */
-#define STM32_BDMA_IS_VALID_CHANNEL(ch)     (((ch) >= 0U) &&                \
-                                             ((ch) <= STM32_BDMA_STREAMS))
+#define STM32_BDMA_IS_VALID_STREAM(id)      (((id) >= 0U) &&                \
+                                             ((id) <= STM32_BDMA_STREAMS))
 
 /**
  * @name    Special stream identifiers
@@ -421,11 +421,12 @@ extern "C" {
                                               uint32_t priority,
                                               stm32_bdmaisr_t func,
                                               void *param);
-  bool bdmaStreamAllocate(const stm32_bdma_stream_t *stp,
-                          uint32_t priority,
-                          stm32_bdmaisr_t func,
-                          void *param);
-  void bdmaStreamRelease(const stm32_bdma_stream_t *stp);
+  const stm32_bdma_stream_t *bdmaStreamAlloc(uint32_t id,
+                                             uint32_t priority,
+                                             stm32_bdmaisr_t func,
+                                             void *param);
+  void bdmaStreamFreeI(const stm32_bdma_stream_t *stp);
+  void bdmaStreamFree(const stm32_bdma_stream_t *stp);
   void bdmaSetRequestSource(const stm32_bdma_stream_t *stp, uint32_t per);
 #ifdef __cplusplus
 }

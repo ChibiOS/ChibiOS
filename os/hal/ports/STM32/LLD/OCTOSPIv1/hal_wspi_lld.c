@@ -169,8 +169,8 @@ void wspi_lld_init(void) {
 #if STM32_WSPI_USE_OCTOSPI1
   wspiObjectInit(&WSPID1);
   WSPID1.ospi       = OCTOSPI1;
-  WSPID1.dma        = STM32_DMA_STREAM(STM32_WSPI_OCTOSPI1_DMA_CHANNEL);
-  WSPID1.dmamode    = STM32_DMA_CR_CHSEL(OCTOSPI1_DMA_CHANNEL) |
+  WSPID1.dma        = NULL;
+  WSPID1.dmamode    = STM32_DMA_CR_CHSEL(OCTOSPI1_DMA_STREAM) |
                       STM32_DMA_CR_PL(STM32_WSPI_OCTOSPI1_DMA_PRIORITY) |
                       STM32_DMA_CR_PSIZE_BYTE |
                       STM32_DMA_CR_MSIZE_BYTE |
@@ -183,8 +183,8 @@ void wspi_lld_init(void) {
 #if STM32_WSPI_USE_OCTOSPI2
   wspiObjectInit(&WSPID2);
   WSPID2.ospi       = OCTOSPI2;
-  WSPID2.dma        = STM32_DMA_STREAM(STM32_WSPI_OCTOSPI2_DMA_CHANNEL);
-  WSPID2.dmamode    = STM32_DMA_CR_CHSEL(OCTOSPI2_DMA_CHANNEL) |
+  WSPID2.dma        = NULL;
+  WSPID2.dmamode    = STM32_DMA_CR_CHSEL(OCTOSPI2_DMA_STREAM) |
                       STM32_DMA_CR_PL(STM32_WSPI_OCTOSPI2_DMA_PRIORITY) |
                       STM32_DMA_CR_PSIZE_BYTE |
                       STM32_DMA_CR_MSIZE_BYTE |
@@ -208,11 +208,11 @@ void wspi_lld_start(WSPIDriver *wspip) {
   if (wspip->state == WSPI_STOP) {
 #if STM32_WSPI_USE_OCTOSPI1
     if (&WSPID1 == wspip) {
-      bool b = dmaStreamAllocate(wspip->dma,
-                                 STM32_WSPI_OCTOSPI1_DMA_IRQ_PRIORITY,
-                                 (stm32_dmaisr_t)wspi_lld_serve_dma_interrupt,
-                                 (void *)wspip);
-      osalDbgAssert(!b, "stream already allocated");
+      wspip->dma = dmaStreamAllocI(STM32_WSPI_OCTOSPI1_DMA_STREAM,
+                                   STM32_WSPI_OCTOSPI1_DMA_IRQ_PRIORITY,
+                                   (stm32_dmaisr_t)wspi_lld_serve_dma_interrupt,
+                                   (void *)wspip);
+      osalDbgAssert(wspip->dma != NULL, "unable to allocate stream");
       rccEnableOCTOSPI1(true);
       dmaSetRequestSource(wspip->dma, STM32_DMAMUX1_OCTOSPI1);
     }
@@ -220,11 +220,11 @@ void wspi_lld_start(WSPIDriver *wspip) {
 
 #if STM32_WSPI_USE_OCTOSPI2
     if (&WSPID2 == wspip) {
-      bool b = dmaStreamAllocate(wspip->dma,
-                                 STM32_WSPI_OCTOSPI2_DMA_IRQ_PRIORITY,
-                                 (stm32_dmaisr_t)wspi_lld_serve_dma_interrupt,
-                                 (void *)wspip);
-      osalDbgAssert(!b, "stream already allocated");
+      wspip->dma = dmaStreamAllocI(STM32_WSPI_OCTOSPI2_DMA_STREAM,
+                                   STM32_WSPI_OCTOSPI2_DMA_IRQ_PRIORITY,
+                                   (stm32_dmaisr_t)wspi_lld_serve_dma_interrupt,
+                                   (void *)wspip);
+      osalDbgAssert(wspip->dma != NULL, "unable to allocate stream");
       rccEnableOCTOSPI2(true);
       dmaSetRequestSource(wspip->dma, STM32_DMAMUX1_OCTOSPI2);
     }
@@ -263,7 +263,8 @@ void wspi_lld_stop(WSPIDriver *wspip) {
     wspip->ospi->CR = 0U;
 
     /* Releasing the DMA.*/
-    dmaStreamRelease(wspip->dma);
+    dmaStreamFreeI(wspip->dma);
+    wspip->dma = NULL;
 
     /* Stopping involved clocks.*/
 #if STM32_WSPI_USE_OCTOSPI1

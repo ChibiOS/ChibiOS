@@ -92,7 +92,7 @@ void adc_lld_init(void) {
   /* Driver initialization.*/
   adcObjectInit(&ADCD1);
   ADCD1.adc = ADC1;
-  ADCD1.dmastp  = STM32_DMA1_STREAM1;
+  ADCD1.dmastp  = NULL;
   ADCD1.dmamode = STM32_DMA_CR_PL(STM32_ADC_ADC1_DMA_PRIORITY) |
                   STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD |
                   STM32_DMA_CR_MINC        | STM32_DMA_CR_TCIE        |
@@ -132,12 +132,11 @@ void adc_lld_start(ADCDriver *adcp) {
   if (adcp->state == ADC_STOP) {
 #if STM32_ADC_USE_ADC1
     if (&ADCD1 == adcp) {
-      bool b;
-      b = dmaStreamAllocate(adcp->dmastp,
-                            STM32_ADC_ADC1_IRQ_PRIORITY,
-                            (stm32_dmaisr_t)adc_lld_serve_rx_interrupt,
-                            (void *)adcp);
-      osalDbgAssert(!b, "stream already allocated");
+      adcp->dmastp = dmaStreamAllocI(STM32_DMA_STREAM_ID(1, 1),
+                                     STM32_ADC_ADC1_IRQ_PRIORITY,
+                                     (stm32_dmaisr_t)adc_lld_serve_rx_interrupt,
+                                     (void *)adcp);
+      osalDbgAssert(adcp->dmastp != NULL, "unable to allocate stream");
       dmaStreamSetPeripheral(adcp->dmastp, &ADC1->DR);
       rccEnableADC1(true);
     }
@@ -165,7 +164,10 @@ void adc_lld_stop(ADCDriver *adcp) {
     if (&ADCD1 == adcp) {
       ADC1->CR1 = 0;
       ADC1->CR2 = 0;
-      dmaStreamRelease(adcp->dmastp);
+
+      dmaStreamFreeI(adcp->dmastp);
+      adcp->dmastp = NULL;
+
       rccDisableADC1();
     }
 #endif

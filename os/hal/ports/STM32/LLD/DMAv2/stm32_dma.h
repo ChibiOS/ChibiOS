@@ -62,29 +62,29 @@
  * @param[in] prio      DMA priority
  *
  * @retval              The check result.
- * @retval FALSE        invalid DMA priority.
- * @retval TRUE         correct DMA priority.
+ * @retval false        invalid DMA priority.
+ * @retval true         correct DMA priority.
  */
 #define STM32_DMA_IS_VALID_PRIORITY(prio) (((prio) >= 0U) && ((prio) <= 3U))
 
 #if (STM32_DMA_SUPPORTS_DMAMUX == FALSE) || defined(_DOXYGEN__)
 /**
- * @brief   Checks if a DMA channel is within the valid range.
+ * @brief   Checks if a DMA stream id is within the valid range.
  *
- * @param[in] ch        DMA channel
+ * @param[in] id        DMA stream id
  * @retval              The check result.
- * @retval FALSE        invalid DMA channel.
- * @retval TRUE         correct DMA channel.
+ * @retval false        invalid DMA stream.
+ * @retval true         correct DMA stream.
  */
-#define STM32_DMA_IS_VALID_CHANNEL(ch) (((ch) >= 0U) &&                     \
-                                        ((ch) <= STM32_DMA_STREAMS))
+#define STM32_DMA_IS_VALID_STREAM(id) (((id) >= 0U) &&                      \
+                                       ((id) <= STM32_DMA_STREAMS))
 #else /* STM32_DMA_SUPPORTS_DMAMUX == FALSE */
 #if STM32_HAS_DMA2 == TRUE
-#define STM32_DMA_IS_VALID_CHANNEL(ch) (((ch) >= 0U) &&                     \
-                                        ((ch) <= (STM32_DMA_STREAMS + 2)))
+#define STM32_DMA_IS_VALID_STREAM(id) (((id) >= 0U) &&                      \
+                                       ((id) <= (STM32_DMA_STREAMS + 2)))
 #else
-#define STM32_DMA_IS_VALID_CHANNEL(ch) (((ch) >= 0U) &&                     \
-                                        ((ch) <= (STM32_DMA_STREAMS + 1)))
+#define STM32_DMA_IS_VALID_STREAM(id) (((id) >= 0U) &&                      \
+                                       ((id) <= (STM32_DMA_STREAMS + 1)))
 #endif
 #endif /* STM32_DMA_SUPPORTS_DMAMUX == FALSE */
 
@@ -114,8 +114,8 @@
  * @param[in] mask      the stream numeric identifiers mask
  *
  * @retval              The check result.
- * @retval FALSE        id does not belong to the mask.
- * @retval TRUE         id belongs to the mask.
+ * @retval false        id does not belong to the mask.
+ * @retval true         id belongs to the mask.
  */
 #define STM32_DMA_IS_VALID_ID(id, mask) (((1U << (id)) & (mask)))
 
@@ -664,11 +664,12 @@ extern "C" {
                                             uint32_t priority,
                                             stm32_dmaisr_t func,
                                             void *param);
-  bool dmaStreamAllocate(const stm32_dma_stream_t *dmastp,
-                         uint32_t priority,
-                         stm32_dmaisr_t func,
-                         void *param);
-  void dmaStreamRelease(const stm32_dma_stream_t *dmastp);
+  const stm32_dma_stream_t *dmaStreamAlloc(uint32_t id,
+                                           uint32_t priority,
+                                           stm32_dmaisr_t func,
+                                           void *param);
+  void dmaStreamFreeI(const stm32_dma_stream_t *dmastp);
+  void dmaStreamFree(const stm32_dma_stream_t *dmastp);
 #if STM32_DMA_SUPPORTS_DMAMUX == TRUE
   void dmaSetRequestSource(const stm32_dma_stream_t *dmastp, uint32_t per);
 #endif

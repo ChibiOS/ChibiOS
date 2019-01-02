@@ -227,22 +227,22 @@
 #endif
 
 /* Check on the presence of the DMA channels settings in mcuconf.h.*/
-#if STM32_WSPI_USE_OCTOSPI1 && !defined(STM32_WSPI_OCTOSPI1_DMA_CHANNEL)
-#error "OCTOSPI1 DMA channel not defined"
+#if STM32_WSPI_USE_OCTOSPI1 && !defined(STM32_WSPI_OCTOSPI1_DMA_STREAM)
+#error "OCTOSPI1 DMA stream not defined"
 #endif
 
-#if STM32_WSPI_USE_OCTOSPI2 && !defined(STM32_WSPI_OCTOSPI2_DMA_CHANNEL)
-#error "OCTOSPI2 DMA channel not defined"
+#if STM32_WSPI_USE_OCTOSPI2 && !defined(STM32_WSPI_OCTOSPI2_DMA_STREAM)
+#error "OCTOSPI2 DMA stream not defined"
 #endif
 
 /* Check on the validity of the assigned DMA channels.*/
 #if STM32_WSPI_USE_OCTOSPI1 &&                                              \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_WSPI_OCTOSPI1_DMA_CHANNEL)
+    !STM32_DMA_IS_VALID_STREAM(STM32_WSPI_OCTOSPI1_DMA_STREAM)
 #error "invalid DMA stream associated to OCTOSPI1"
 #endif
 
 #if STM32_WSPI_USE_OCTOSPI2 &&                                              \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_WSPI_OCTOSPI2_DMA_CHANNEL)
+    !STM32_DMA_IS_VALID_STREAM(STM32_WSPI_OCTOSPI2_DMA_STREAM)
 #error "invalid DMA stream associated to OCTOSPI2"
 #endif
 

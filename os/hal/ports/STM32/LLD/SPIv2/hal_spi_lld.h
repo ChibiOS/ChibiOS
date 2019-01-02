@@ -301,102 +301,6 @@
 #error "Invalid DMA priority assigned to SPI6"
 #endif
 
-/* The following checks are only required when there is a DMA able to
-   reassign streams to different channels.*/
-#if STM32_ADVANCED_DMA
-
-/* Devices with DMAMUX require a different kind of check.*/
-#if STM32_DMA_SUPPORTS_DMAMUX
-
-/* Check on the presence of the DMA channel settings in mcuconf.h.*/
-#if STM32_SPI_USE_SPI1 && (!defined(STM32_SPI_SPI1_RX_DMA_CHANNEL) ||       \
-                           !defined(STM32_SPI_SPI1_TX_DMA_CHANNEL))
-#error "SPI1 DMA channels not defined"
-#endif
-
-#if STM32_SPI_USE_SPI2 && (!defined(STM32_SPI_SPI2_RX_DMA_CHANNEL) ||       \
-                           !defined(STM32_SPI_SPI2_TX_DMA_CHANNEL))
-#error "SPI2 DMA streams not defined"
-#endif
-
-#if STM32_SPI_USE_SPI3 && (!defined(STM32_SPI_SPI3_RX_DMA_CHANNEL) ||       \
-                           !defined(STM32_SPI_SPI3_TX_DMA_CHANNEL))
-#error "SPI3 DMA streams not defined"
-#endif
-
-#if STM32_SPI_USE_SPI4 && (!defined(STM32_SPI_SPI4_RX_DMA_CHANNEL) ||       \
-                           !defined(STM32_SPI_SPI4_TX_DMA_CHANNEL))
-#error "SPI4 DMA streams not defined"
-#endif
-
-#if STM32_SPI_USE_SPI5 && (!defined(STM32_SPI_SPI5_RX_DMA_CHANNEL) ||       \
-                           !defined(STM32_SPI_SPI5_TX_DMA_CHANNEL))
-#error "SPI5 DMA streams not defined"
-#endif
-
-#if STM32_SPI_USE_SPI6 && (!defined(STM32_SPI_SPI6_RX_DMA_CHANNEL) ||       \
-                           !defined(STM32_SPI_SPI6_TX_DMA_CHANNEL))
-#error "SPI6 DMA streams not defined"
-#endif
-
-/* Check on the validity of the assigned DMA channels.*/
-#if STM32_SPI_USE_SPI1 &&                                                   \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_SPI_SPI1_TX_DMA_CHANNEL)
-#error "Invalid DMA channel assigned to SPI1 TX"
-#endif
-
-#if STM32_SPI_USE_SPI2 &&                                                   \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_SPI_SPI2_RX_DMA_CHANNEL)
-#error "Invalid DMA channel assigned to SPI2 RX"
-#endif
-
-#if STM32_SPI_USE_SPI2 &&                                                   \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_SPI_SPI2_TX_DMA_CHANNEL)
-#error "Invalid DMA channel assigned to SPI2 TX"
-#endif
-
-#if STM32_SPI_USE_SPI3 &&                                                   \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_SPI_SPI3_RX_DMA_CHANNEL)
-#error "Invalid DMA channel assigned to SPI3 RX"
-#endif
-
-#if STM32_SPI_USE_SPI3 &&                                                   \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_SPI_SPI3_TX_DMA_CHANNEL)
-#error "Invalid DMA channel assigned to SPI3 TX"
-#endif
-
-#if STM32_SPI_USE_SPI4 &&                                                   \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_SPI_SPI4_RX_DMA_CHANNEL)
-#error "Invalid DMA channel assigned to SPI4 RX"
-#endif
-
-#if STM32_SPI_USE_SPI4 &&                                                   \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_SPI_SPI4_TX_DMA_CHANNEL)
-#error "Invalid DMA channel assigned to SPI4 TX"
-#endif
-
-#if STM32_SPI_USE_SPI5 &&                                                   \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_SPI_SPI5_RX_DMA_CHANNEL)
-#error "Invalid DMA channel assigned to SPI5 RX"
-#endif
-
-#if STM32_SPI_USE_SPI5 &&                                                   \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_SPI_SPI5_TX_DMA_CHANNEL)
-#error "Invalid DMA channel assigned to SPI5 TX"
-#endif
-
-#if STM32_SPI_USE_SPI6 &&                                                   \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_SPI_SPI6_RX_DMA_CHANNEL)
-#error "Invalid DMA channel assigned to SPI6 RX"
-#endif
-
-#if STM32_SPI_USE_SPI6 &&                                                   \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_SPI_SPI6_TX_DMA_CHANNEL)
-#error "Invalid DMA channel assigned to SPI6 TX"
-#endif
-
-#else /* !STM32_DMA_SUPPORTS_DMAMUX */
-
 /* Check on the presence of the DMA streams settings in mcuconf.h.*/
 #if STM32_SPI_USE_SPI1 && (!defined(STM32_SPI_SPI1_RX_DMA_STREAM) ||        \
                            !defined(STM32_SPI_SPI1_TX_DMA_STREAM))
@@ -427,6 +331,65 @@
                            !defined(STM32_SPI_SPI6_TX_DMA_STREAM))
 #error "SPI6 DMA streams not defined"
 #endif
+
+/* Check on the validity of the assigned DMA channels.*/
+#if STM32_SPI_USE_SPI1 &&                                                   \
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI1_TX_DMA_STREAM)
+#error "Invalid DMA channel assigned to SPI1 TX"
+#endif
+
+#if STM32_SPI_USE_SPI2 &&                                                   \
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI2_RX_DMA_STREAM)
+#error "Invalid DMA channel assigned to SPI2 RX"
+#endif
+
+#if STM32_SPI_USE_SPI2 &&                                                   \
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI2_TX_DMA_STREAM)
+#error "Invalid DMA channel assigned to SPI2 TX"
+#endif
+
+#if STM32_SPI_USE_SPI3 &&                                                   \
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI3_RX_DMA_STREAM)
+#error "Invalid DMA channel assigned to SPI3 RX"
+#endif
+
+#if STM32_SPI_USE_SPI3 &&                                                   \
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI3_TX_DMA_STREAM)
+#error "Invalid DMA channel assigned to SPI3 TX"
+#endif
+
+#if STM32_SPI_USE_SPI4 &&                                                   \
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI4_RX_DMA_STREAM)
+#error "Invalid DMA channel assigned to SPI4 RX"
+#endif
+
+#if STM32_SPI_USE_SPI4 &&                                                   \
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI4_TX_DMA_STREAM)
+#error "Invalid DMA channel assigned to SPI4 TX"
+#endif
+
+#if STM32_SPI_USE_SPI5 &&                                                   \
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI5_RX_DMA_STREAM)
+#error "Invalid DMA channel assigned to SPI5 RX"
+#endif
+
+#if STM32_SPI_USE_SPI5 &&                                                   \
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI5_TX_DMA_STREAM)
+#error "Invalid DMA channel assigned to SPI5 TX"
+#endif
+
+#if STM32_SPI_USE_SPI6 &&                                                   \
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI6_RX_DMA_STREAM)
+#error "Invalid DMA channel assigned to SPI6 RX"
+#endif
+
+#if STM32_SPI_USE_SPI6 &&                                                   \
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI6_TX_DMA_STREAM)
+#error "Invalid DMA channel assigned to SPI6 TX"
+#endif
+
+/* Devices without DMAMUX require an additional check.*/
+#if STM32_ADVANCED_DMA && !STM32_DMA_SUPPORTS_DMAMUX
 
 /* Check on the validity of the assigned DMA channels.*/
 #if STM32_SPI_USE_SPI1 &&                                                   \
@@ -489,9 +452,7 @@
 #error "invalid DMA stream associated to SPI6 TX"
 #endif
 
-#endif /* !STM32_DMA_SUPPORTS_DMAMUX */
-
-#endif /* STM32_ADVANCED_DMA */
+#endif /* STM32_ADVANCED_DMA && !STM32_DMA_SUPPORTS_DMAMUX */
 
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED

@@ -79,22 +79,22 @@
 
 #if (STM32_DMA_SUPPORTS_DMAMUX == FALSE) || defined(_DOXYGEN__)
 /**
- * @brief   Checks if a DMA channel is within the valid range.
+ * @brief   Checks if a DMA stream id is within the valid range.
  *
- * @param[in] ch        DMA channel
+ * @param[in] id        DMA stream id
  * @retval              The check result.
- * @retval FALSE        invalid DMA channel.
- * @retval TRUE         correct DMA channel.
+ * @retval false        invalid DMA channel.
+ * @retval true         correct DMA channel.
  */
-#define STM32_DMA_IS_VALID_CHANNEL(ch) (((ch) >= 0U) &&                     \
-                                        ((ch) < STM32_DMA_STREAMS))
+#define STM32_DMA_IS_VALID_STREAM(id) (((id) >= 0U) &&                      \
+                                       ((id) < STM32_DMA_STREAMS))
 #else /* STM32_DMA_SUPPORTS_DMAMUX == FALSE */
 #if STM32_DMA2_NUM_CHANNELS > 0
-#define STM32_DMA_IS_VALID_CHANNEL(ch) (((ch) >= 0U) &&                     \
-                                        ((ch) <= (STM32_DMA_STREAMS + 2)))
+#define STM32_DMA_IS_VALID_STREAM(id) (((id) >= 0U) &&                      \
+                                       ((id) <= (STM32_DMA_STREAMS + 2)))
 #else
-#define STM32_DMA_IS_VALID_CHANNEL(ch) (((ch) >= 0U) &&                     \
-                                        ((ch) <= (STM32_DMA_STREAMS + 1)))
+#define STM32_DMA_IS_VALID_STREAM(id) (((id) >= 0U) &&                      \
+                                       ((id) <= (STM32_DMA_STREAMS + 1)))
 #endif
 #endif /* STM32_DMA_SUPPORTS_DMAMUX == FALSE */
 
@@ -500,11 +500,12 @@ extern "C" {
                                             uint32_t priority,
                                             stm32_dmaisr_t func,
                                             void *param);
-  bool dmaStreamAllocate(const stm32_dma_stream_t *dmastp,
-                         uint32_t priority,
-                         stm32_dmaisr_t func,
-                         void *param);
-  void dmaStreamRelease(const stm32_dma_stream_t *dmastp);
+  const stm32_dma_stream_t *dmaStreamAlloc(uint32_t id,
+                                           uint32_t priority,
+                                           stm32_dmaisr_t func,
+                                           void *param);
+  void dmaStreamFreeI(const stm32_dma_stream_t *dmastp);
+  void dmaStreamFree(const stm32_dma_stream_t *dmastp);
   void dmaServeInterrupt(const stm32_dma_stream_t *dmastp);
 #if STM32_DMA_SUPPORTS_DMAMUX == TRUE
   void dmaSetRequestSource(const stm32_dma_stream_t *dmastp, uint32_t per);

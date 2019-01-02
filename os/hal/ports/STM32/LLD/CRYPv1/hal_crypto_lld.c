@@ -157,11 +157,7 @@ void cry_lld_init(void) {
 #if STM32_CRY_USE_HASH1
 #if STM32_CRY_HASH_SIZE_THRESHOLD != 0
   CRYD1.hash_tr     = NULL;
-#if STM32_DMA_SUPPORTS_DMAMUX
-  CRYD1.dma_hash    = STM32_DMA_STREAM(STM32_CRY_HASH1_DMA_CHANNEL);
-#else
-  CRYD1.dma_hash    = STM32_DMA_STREAM(STM32_CRY_HASH1_DMA_STREAM);
-#endif
+  CRYD1.dma_hash    = NULL;
 #endif /* STM32_CRY_HASH_SIZE_THRESHOLD != 0 */
 #endif /* STM32_CRY_USE_HASH1 */
 
@@ -187,12 +183,11 @@ void cry_lld_start(CRYDriver *cryp) {
 
 #if STM32_CRY_USE_HASH1
 #if STM32_CRY_HASH_SIZE_THRESHOLD != 0
-      bool b;
-      b = dmaStreamAllocate(cryp->dma_hash,
-                            STM32_CRY_HASH1_IRQ_PRIORITY,
-                            (stm32_dmaisr_t)cry_lld_serve_hash_interrupt,
-                            (void *)cryp);
-      osalDbgAssert(!b, "stream already allocated");
+      cryp->dma_hash = dmaStreamAllocI(STM32_CRY_HASH1_DMA_STREAM,
+                                       STM32_CRY_HASH1_IRQ_PRIORITY,
+                                       (stm32_dmaisr_t)cry_lld_serve_hash_interrupt,
+                                       (void *)cryp);
+      osalDbgAssert(cryp->dma_hash != NULL, "unable to allocate stream");
 
       /* Preparing the DMA channel.*/
       dmaStreamSetMode(cryp->dma_hash,
@@ -241,7 +236,8 @@ void cry_lld_stop(CRYDriver *cryp) {
 
 #if STM32_CRY_USE_HASH1
 #if STM32_CRY_HASH_SIZE_THRESHOLD != 0
-      dmaStreamRelease(cryp->dma_hash);
+      dmaStreamFreeI(cryp->dma_hash);
+      cryp->dma_hash = NULL;
 #endif
       rccDisableHASH();
 #endif

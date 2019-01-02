@@ -279,13 +279,6 @@ void bdmaInit(void) {
  * @details The stream is allocated and, if required, the BDMA clock enabled.
  *          The function also enables the IRQ vector associated to the stream
  *          and initializes its priority.
- * @pre     The stream must not be already in use or an error is returned.
- * @post    The stream is allocated and the default ISR handler redirected
- *          to the specified function.
- * @post    The stream ISR vector is enabled and its priority configured.
- * @post    The stream must be freed using @p dmaStreamRelease() before it can
- *          be reused with another peripheral.
- * @post    The stream is in its post-reset state.
  *
  * @param[in] id        numeric identifiers of a specific stream or:
  *                      - @p STM32_BDMA_STREAM_ID_ANY for any stream.
@@ -363,31 +356,30 @@ const stm32_bdma_stream_t *bdmaStreamAllocI(uint32_t id,
  * @details The stream is allocated and, if required, the BDMA clock enabled.
  *          The function also enables the IRQ vector associated to the stream
  *          and initializes its priority.
- * @pre     The stream must not be already in use or an error is returned.
- * @post    The stream is allocated and the default ISR handler redirected
- *          to the specified function.
- * @post    The stream ISR vector is enabled and its priority configured.
- * @post    The stream must be freed using @p bdmaStreamRelease() before it can
- *          be reused with another peripheral.
- * @post    The stream is in its post-reset state.
- * @note    This function can be invoked in both ISR or thread context.
  *
- * @param[in] stp       pointer to an @p stm32_bdma_stream_t structure
+ * @param[in] id        numeric identifiers of a specific stream or:
+ *                      - @p STM32_BDMA_STREAM_ID_ANY for any stream.
+ *                      .
  * @param[in] priority  IRQ priority for the BDMA stream
  * @param[in] func      handling function pointer, can be @p NULL
  * @param[in] param     a parameter to be passed to the handling function
- * @return              The operation status.
- * @retval false        no error, stream taken.
- * @retval true         error, stream already taken.
+ * @return              Pointer to the allocated @p stm32_bdma_stream_t
+ *                      structure.
+ * @retval NULL         if a/the stream is not available.
  *
- * @special
+ * @api
  */
-bool bdmaStreamAllocate(const stm32_bdma_stream_t *stp,
-                        uint32_t priority,
-                        stm32_bdmaisr_t func,
-                        void *param) {
+const stm32_bdma_stream_t *bdmaStreamAlloc(uint32_t id,
+                                           uint32_t priority,
+                                           stm32_bdmaisr_t func,
+                                           void *param) {
+  const stm32_bdma_stream_t *stp;
 
-  return bdmaStreamAllocI(stp->selfindex, priority, func, param) == NULL;
+  osalSysLock();
+  stp = bdmaStreamAllocI(id, priority, func, param);
+  osalSysUnlock();
+
+  return stp;
 }
 
 /**
@@ -395,15 +387,12 @@ bool bdmaStreamAllocate(const stm32_bdma_stream_t *stp,
  * @details The stream is freed and, if required, the BDMA clock disabled.
  *          Trying to release a unallocated stream is an illegal operation
  *          and is trapped if assertions are enabled.
- * @pre     The stream must have been allocated using @p bdmaStreamAllocate().
- * @post    The stream is again available.
- * @note    This function can be invoked in both ISR or thread context.
  *
  * @param[in] stp       pointer to an @p stm32_bdma_stream_t structure
  *
- * @special
+ * @iclass
  */
-void bdmaStreamRelease(const stm32_bdma_stream_t *stp) {
+void bdmaStreamFreeI(const stm32_bdma_stream_t *stp) {
 
   osalDbgCheck(stp != NULL);
 
@@ -425,6 +414,23 @@ void bdmaStreamRelease(const stm32_bdma_stream_t *stp) {
   if ((bdma.allocated_mask & STM32_BDMA_STREAMS_MASK) == 0U) {
     rccDisableBDMA1();
   }
+}
+
+/**
+ * @brief   Releases a BDMA stream.
+ * @details The stream is freed and, if required, the BDMA clock disabled.
+ *          Trying to release a unallocated stream is an illegal operation
+ *          and is trapped if assertions are enabled.
+ *
+ * @param[in] stp       pointer to an @p stm32_bdma_stream_t structure
+ *
+ * @api
+ */
+void bdmaStreamFree(const stm32_bdma_stream_t *stp) {
+
+  osalSysLock();
+  bdmaStreamFreeI(stp);
+  osalSysUnlock();
 }
 
 /**

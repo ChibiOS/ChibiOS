@@ -187,9 +187,9 @@ int main(void) {
   chThdCreateStatic(waSPI3, sizeof(waSPI3), NORMALPRIO + 1, spi_thread, &SPID3);
 
   /* Allocating two DMA2 streams for memory copy operations.*/
-  if (dmaStreamAllocate(STM32_DMA2_STREAM6, 0, NULL, NULL))
+  if (dmaStreamAlloc(STM32_DMA_STREAM_ID(2, 6), 0, NULL, NULL) == NULL)
     chSysHalt("DMA already in use");
-  if (dmaStreamAllocate(STM32_DMA2_STREAM7, 0, NULL, NULL))
+  if (dmaStreamAlloc(STM32_DMA_STREAM_ID(2, 7), 0, NULL, NULL) == NULL)
     chSysHalt("DMA already in use");
   for (i = 0; i < sizeof (patterns1); i++)
     patterns1[i] = (uint8_t)i;

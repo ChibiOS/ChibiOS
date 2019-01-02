@@ -193,20 +193,6 @@
 #endif
 
 /**
- * @brief   ADC1/ADC2 DMA channel.
- */
-#if !defined(STM32_ADC_ADC12_DMA_CHANNEL) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC12_DMA_CHANNEL         0
-#endif
-
-/**
- * @brief   ADC3 DMA channel.
- */
-#if !defined(STM32_ADC_ADC3_BDMA_CHANNEL) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC3_BDMA_CHANNEL          1
-#endif
-
-/**
  * @brief   ADC1/ADC2 DMA priority (0..3|lowest..highest).
  */
 #if !defined(STM32_ADC_ADC12_DMA_PRIORITY) || defined(__DOXYGEN__)
@@ -313,14 +299,23 @@
 #error "ADC driver activated but no ADC peripheral assigned"
 #endif
 
+/* Check on the presence of the DMA streams settings in mcuconf.h.*/
+#if STM32_ADC_USE_ADC12 && !defined(STM32_ADC_ADC12_DMA_STREAM)
+#error "STM32_ADC_ADC12_DMA_STREAM not defined"
+#endif
+
+#if STM32_ADC_USE_ADC3 && !defined(STM32_ADC_ADC3_BDMA_STREAM)
+#error "STM32_ADC_ADC3_BDMA_STREAM not defined"
+#endif
+
 /* DMA channel range tests.*/
 #if STM32_ADC_USE_ADC12 &&                                                  \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_ADC_ADC12_DMA_CHANNEL)
+    !STM32_DMA_IS_VALID_STREAM(STM32_ADC_ADC12_DMA_STREAM)
 #error "Invalid DMA channel assigned to ADC12"
 #endif
 
 #if STM32_ADC_USE_ADC3 &&                                                   \
-    !STM32_BDMA_IS_VALID_CHANNEL(STM32_ADC_ADC3_BDMA_CHANNEL)
+    !STM32_BDMA_IS_VALID_STREAM(STM32_ADC_ADC3_BDMA_STREAM)
 #error "Invalid DMA channel assigned to ADC3"
 #endif
 

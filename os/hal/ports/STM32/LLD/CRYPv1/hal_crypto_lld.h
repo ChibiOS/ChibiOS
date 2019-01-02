@@ -138,37 +138,29 @@
 #error "Invalid IRQ priority assigned to CRYP1"
 #endif
 
-/* Devices with DMAMUX require a different kind of check.*/
-#if STM32_DMA_SUPPORTS_DMAMUX
-
-#if STM32_CRY_USE_HASH1
-#if !defined(STM32_CRY_HASH1_DMA_CHANNEL)
-#error "HASH1 DMA channel not defined"
-#endif
-#if !STM32_DMA_IS_VALID_CHANNEL(STM32_CRY_HASH1_DMA_CHANNEL)
-#error "Invalid DMA channel assigned to HASH1"
-#endif
-#if !STM32_DMA_IS_VALID_PRIORITY(STM32_CRY_HASH1_DMA_PRIORITY)
-#error "Invalid DMA priority assigned to HASH1"
-#endif
-#endif /* !STM32_CRY_USE_HASH1 */
-
-#else /* !STM32_DMA_SUPPORTS_DMAMUX */
-
-/* Sanity checks on DMA streams settings in mcuconf.h.*/
-#if STM32_CRY_USE_HASH1
+/* Check on the presence of the DMA streams settings in mcuconf.h.*/
 #if !defined(STM32_CRY_HASH1_DMA_STREAM)
 #error "HASH1 DMA streams not defined"
 #endif
-#if !STM32_DMA_IS_VALID_ID(STM32_CRY_HASH1_DMA_STREAM, STM32_HASH1_DMA_MSK)
+
+/* Sanity checks on DMA streams settings in mcuconf.h.*/
+#if STM32_CRY_USE_HASH1 &&                                                  \
+    !STM32_DMA_IS_VALID_STREAM(STM32_CRY_HASH1_DMA_STREAM)
+#error "Invalid DMA stream assigned to HASH1"
+#endif
+
+/* Devices without DMAMUX require an additional check.*/
+#if !STM32_DMA_SUPPORTS_DMAMUX
+#if STM32_CRY_USE_HASH1 &&                                                  \
+    !STM32_DMA_IS_VALID_ID(STM32_CRY_HASH1_DMA_STREAM, STM32_HASH1_DMA_MSK)
 #error "invalid DMA stream associated to HASH1"
 #endif
+#endif /* !STM32_DMA_SUPPORTS_DMAMUX */
+
+/* DMA priority check.*/
 #if !STM32_DMA_IS_VALID_PRIORITY(STM32_CRY_HASH1_DMA_PRIORITY)
 #error "Invalid DMA priority assigned to HASH1"
 #endif
-#endif /* !STM32_CRY_USE_HASH1 */
-
-#endif /* !STM32_DMA_SUPPORTS_DMAMUX */
 
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED

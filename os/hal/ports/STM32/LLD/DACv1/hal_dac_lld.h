@@ -201,27 +201,6 @@
    reassign streams to different channels.*/
 #if STM32_ADVANCED_DMA
 
-#if STM32_DMA_SUPPORTS_DMAMUX
-
-/* Check on the presence of the DMA channel settings in mcuconf.h.*/
-#if STM32_DAC_USE_DAC1_CH1 && !defined(STM32_DAC_DAC1_CH1_DMA_CHANNEL)
-#error "DAC1 CH1 DMA channel not defined"
-#endif
-
-#if STM32_DAC_USE_DAC1_CH2 && !defined(STM32_DAC_DAC1_CH2_DMA_CHANNEL)
-#error "DAC1 CH2 DMA channel not defined"
-#endif
-
-#if STM32_DAC_USE_DAC2_CH1 && !defined(STM32_DAC_DAC2_CH1_DMA_CHANNEL)
-#error "DAC2 CH1 DMA channel not defined"
-#endif
-
-#if STM32_DAC_USE_DAC2_CH2 && !defined(STM32_DAC_DAC2_CH2_DMA_CHANNEL)
-#error "DAC2 CH2 DMA channel not defined"
-#endif
-
-#else /* !STM32_DMA_SUPPORTS_DMAMUX */
-
 /* Check on the presence of the DMA streams settings in mcuconf.h.*/
 #if STM32_DAC_USE_DAC1_CH1 && !defined(STM32_DAC_DAC1_CH1_DMA_STREAM)
 #error "DAC1 CH1 DMA stream not defined"
@@ -239,7 +218,11 @@
 #error "DAC2 CH2 DMA stream not defined"
 #endif
 
-/* Check on the validity of the assigned DMA channels.*/
+#if STM32_DMA_SUPPORTS_DMAMUX
+
+#else /* !STM32_DMA_SUPPORTS_DMAMUX */
+
+/* Check on the validity of the assigned DMA streams.*/
 #if STM32_DAC_USE_DAC1_CH1 &&                                               \
     !STM32_DMA_IS_VALID_ID(STM32_DAC_DAC1_CH1_DMA_STREAM, STM32_DAC1_CH1_DMA_MSK)
 #error "invalid DMA stream associated to DAC1 CH1"
@@ -332,9 +315,9 @@ typedef struct {
    */
   uint32_t                  regmask;
   /**
-   * @brief   Associated DMA channel.
+   * @brief   Associated DMA stream.
    */
-  uint32_t                  dmachannel;
+  uint32_t                  dmastream;
   /**
    * @brief   Mode bits for the DMA.
    */

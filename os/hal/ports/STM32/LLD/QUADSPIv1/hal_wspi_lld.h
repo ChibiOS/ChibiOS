@@ -231,6 +231,12 @@
 #endif
 
 /* Check on the validity of the assigned DMA channels.*/
+#if STM32_WSPI_USE_QUADSPI1 &&                                              \
+    !STM32_DMA_IS_VALID_STREAM(STM32_WSPI_QUADSPI1_DMA_STREAM)
+#error "invalid DMA stream associated to QUADSPI1"
+#endif
+
+/* Check on the validity of the assigned DMA channels.*/
 #if STM32_WSPI_USE_QUADSPI1 &&                                                   \
     !STM32_DMA_IS_VALID_ID(STM32_WSPI_QUADSPI1_DMA_STREAM, STM32_QUADSPI1_DMA_MSK)
 #error "invalid DMA stream associated to QUADSPI1"

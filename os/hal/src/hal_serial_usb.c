@@ -310,6 +310,10 @@ void sduStop(SerialUSBDriver *sdup) {
  */
 void sduSuspendHookI(SerialUSBDriver *sdup) {
 
+  /* Avoiding events spam.*/
+  if(bqIsSuspendedX(&sdup->ibqueue) && bqIsSuspendedX(&sdup->obqueue)) {
+    return;
+  }
   chnAddFlagsI(sdup, CHN_DISCONNECTED);
   bqSuspendI(&sdup->ibqueue);
   bqSuspendI(&sdup->obqueue);

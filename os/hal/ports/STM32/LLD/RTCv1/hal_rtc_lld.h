@@ -101,12 +101,12 @@ typedef void (*rtccb_t)(RTCDriver *rtcp, rtcevent_t event);
 /**
  * @brief   Type of a structure representing an RTC alarm time stamp.
  */
-typedef struct hsl_rtc_alarm {
+typedef struct hal_rtc_alarm {
   /**
    * @brief Seconds since UNIX epoch.
    */
   uint32_t          tv_sec;
-};
+} RTCAlarm;
 
 /**
  * @brief   Implementation-specific @p RTCDriver fields.

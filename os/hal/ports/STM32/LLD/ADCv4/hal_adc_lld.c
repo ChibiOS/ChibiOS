@@ -410,7 +410,7 @@ void adc_lld_start(ADCDriver *adcp) {
   if (adcp->state == ADC_STOP) {
 #if STM32_ADC_USE_ADC12 == TRUE
     if (&ADCD1 == adcp) {
-      adcp->data.dma = dmaStreamAllocI(STM32_ADC_ADC12_DMA_CHANNEL,
+      adcp->data.dma = dmaStreamAllocI(STM32_ADC_ADC12_DMA_STREAM,
                                        STM32_ADC_ADC12_IRQ_PRIORITY,
                                        (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
                                        (void *)adcp);
@@ -422,7 +422,7 @@ void adc_lld_start(ADCDriver *adcp) {
 
 #if STM32_ADC_USE_ADC3 == TRUE
     if (&ADCD3 == adcp) {
-      adcp->data.bdma = bdmaStreamAllocI(STM32_ADC_ADC3_BDMA_CHANNEL,
+      adcp->data.bdma = bdmaStreamAllocI(STM32_ADC_ADC3_BDMA_STREAM,
                                          STM32_ADC_ADC3_IRQ_PRIORITY,
                                          (stm32_dmaisr_t)adc_lld_serve_bdma_interrupt,
                                          (void *)adcp);
@@ -479,7 +479,7 @@ void adc_lld_stop(ADCDriver *adcp) {
     if (&ADCD1 == adcp) {
 
       /* Releasing the associated DMA channel.*/
-      dmaStreamRelease(adcp->data.dma);
+      dmaStreamFreeI(adcp->data.dma);
       adcp->data.dma = NULL;
 
       /* Resetting CCR options except default ones.*/
@@ -492,7 +492,7 @@ void adc_lld_stop(ADCDriver *adcp) {
     if (&ADCD3 == adcp) {
 
       /* Releasing the associated BDMA channel.*/
-      bdmaStreamRelease(adcp->data.bdma);
+      bdmaStreamFreeI(adcp->data.bdma);
       adcp->data.bdma = NULL;
 
       /* Resetting CCR options except default ones.*/

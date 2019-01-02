@@ -177,90 +177,6 @@
 #endif
 
 /**
- * @brief   SPI1 RX DMA channel setting.
- */
-#if !defined(STM32_SPI_SPI1_RX_DMA_CHANNEL) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI1_RX_DMA_CHANNEL       STM32_DMA_STREAM_ID_ANY
-#endif
-
-/**
- * @brief   SPI1 TX DMA channel setting.
- */
-#if !defined(STM32_SPI_SPI1_TX_DMA_CHANNEL) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI1_TX_DMA_CHANNEL       STM32_DMA_STREAM_ID_ANY
-#endif
-
-/**
- * @brief   SPI2 RX DMA channel setting.
- */
-#if !defined(STM32_SPI_SPI2_RX_DMA_CHANNEL) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI2_RX_DMA_CHANNEL       STM32_DMA_STREAM_ID_ANY
-#endif
-
-/**
- * @brief   SPI2 TX DMA channel setting.
- */
-#if !defined(STM32_SPI_SPI2_TX_DMA_CHANNEL) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI2_TX_DMA_CHANNEL       STM32_DMA_STREAM_ID_ANY
-#endif
-
-/**
- * @brief   SPI3 RX DMA channel setting.
- */
-#if !defined(STM32_SPI_SPI3_RX_DMA_CHANNEL) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI3_RX_DMA_CHANNEL       STM32_DMA_STREAM_ID_ANY
-#endif
-
-/**
- * @brief   SPI3 TX DMA channel setting.
- */
-#if !defined(STM32_SPI_SPI3_TX_DMA_CHANNEL) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI3_TX_DMA_CHANNEL       STM32_DMA_STREAM_ID_ANY
-#endif
-
-/**
- * @brief   SPI4 RX DMA channel setting.
- */
-#if !defined(STM32_SPI_SPI4_RX_DMA_CHANNEL) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI4_RX_DMA_CHANNEL       STM32_DMA_STREAM_ID_ANY
-#endif
-
-/**
- * @brief   SPI4 TX DMA channel setting.
- */
-#if !defined(STM32_SPI_SPI4_TX_DMA_CHANNEL) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI4_TX_DMA_CHANNEL       STM32_DMA_STREAM_ID_ANY
-#endif
-
-/**
- * @brief   SPI5 RX DMA channel setting.
- */
-#if !defined(STM32_SPI_SPI5_RX_DMA_CHANNEL) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI5_RX_DMA_CHANNEL       STM32_DMA_STREAM_ID_ANY
-#endif
-
-/**
- * @brief   SPI5 TX DMA channel setting.
- */
-#if !defined(STM32_SPI_SPI5_TX_DMA_CHANNEL) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI5_TX_DMA_CHANNEL       STM32_DMA_STREAM_ID_ANY
-#endif
-
-/**
- * @brief   SPI6 RX BDMA channel setting.
- */
-#if !defined(STM32_SPI_SPI6_RX_BDMA_CHANNEL) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI6_RX_BDMA_CHANNEL      STM32_BDMA_STREAM_ID_ANY
-#endif
-
-/**
- * @brief   SPI6 TX BDMA channel setting.
- */
-#if !defined(STM32_SPI_SPI6_TX_BDMA_CHANNEL) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI6_TX_BDMA_CHANNEL      3
-#endif
-
-/**
  * @brief   SPI1 DMA priority (0..3|lowest..highest).
  * @note    The priority level is used for both the TX and RX DMA streams but
  *          because of the streams ordering the RX stream has always priority
@@ -391,64 +307,96 @@
 #error "Invalid IRQ priority assigned to SPI6"
 #endif
 
+/* Check on the presence of the DMA streams settings in mcuconf.h.*/
+#if STM32_SPI_USE_SPI1 && (!defined(STM32_SPI_SPI1_RX_DMA_STREAM) ||        \
+                           !defined(STM32_SPI_SPI1_TX_DMA_STREAM))
+#error "SPI1 DMA streams not defined"
+#endif
+
+#if STM32_SPI_USE_SPI2 && (!defined(STM32_SPI_SPI2_RX_DMA_STREAM) ||        \
+                           !defined(STM32_SPI_SPI2_TX_DMA_STREAM))
+#error "SPI2 DMA streams not defined"
+#endif
+
+#if STM32_SPI_USE_SPI3 && (!defined(STM32_SPI_SPI3_RX_DMA_STREAM) ||        \
+                           !defined(STM32_SPI_SPI3_TX_DMA_STREAM))
+#error "SPI3 DMA streams not defined"
+#endif
+
+#if STM32_SPI_USE_SPI4 && (!defined(STM32_SPI_SPI4_RX_DMA_STREAM) ||        \
+                           !defined(STM32_SPI_SPI4_TX_DMA_STREAM))
+#error "SPI4 DMA streams not defined"
+#endif
+
+#if STM32_SPI_USE_SPI5 && (!defined(STM32_SPI_SPI5_RX_DMA_STREAM) ||        \
+                           !defined(STM32_SPI_SPI5_TX_DMA_STREAM))
+#error "SPI5 DMA streams not defined"
+#endif
+
+#if STM32_SPI_USE_SPI6 && (!defined(STM32_SPI_SPI6_RX_BDMA_STREAM) ||       \
+                           !defined(STM32_SPI_SPI6_TX_BDMA_STREAM))
+#error "SPI6 BDMA streams not defined"
+#endif
+
+/* Check on the validity of the assigned DMA streams.*/
 #if STM32_SPI_USE_SPI1 &&                                                   \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_SPI_SPI1_RX_DMA_CHANNEL)
-#error "Invalid DMA channel assigned to SPI1 RX"
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI1_RX_DMA_STREAM)
+#error "Invalid DMA stream assigned to SPI1 RX"
 #endif
 
 #if STM32_SPI_USE_SPI1 &&                                                   \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_SPI_SPI1_TX_DMA_CHANNEL)
-#error "Invalid DMA channel assigned to SPI1 TX"
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI1_TX_DMA_STREAM)
+#error "Invalid DMA stream assigned to SPI1 TX"
 #endif
 
 #if STM32_SPI_USE_SPI2 &&                                                   \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_SPI_SPI2_RX_DMA_CHANNEL)
-#error "Invalid DMA channel assigned to SPI2 RX"
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI2_RX_DMA_STREAM)
+#error "Invalid DMA stream assigned to SPI2 RX"
 #endif
 
 #if STM32_SPI_USE_SPI2 &&                                                   \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_SPI_SPI2_TX_DMA_CHANNEL)
-#error "Invalid DMA channel assigned to SPI2 TX"
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI2_TX_DMA_STREAM)
+#error "Invalid DMA stream assigned to SPI2 TX"
 #endif
 
 #if STM32_SPI_USE_SPI3 &&                                                   \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_SPI_SPI3_RX_DMA_CHANNEL)
-#error "Invalid DMA channel assigned to SPI3 RX"
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI3_RX_DMA_STREAM)
+#error "Invalid DMA stream assigned to SPI3 RX"
 #endif
 
 #if STM32_SPI_USE_SPI3 &&                                                   \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_SPI_SPI3_TX_DMA_CHANNEL)
-#error "Invalid DMA channel assigned to SPI3 TX"
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI3_TX_DMA_STREAM)
+#error "Invalid DMA stream assigned to SPI3 TX"
 #endif
 
 #if STM32_SPI_USE_SPI4 &&                                                   \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_SPI_SPI4_RX_DMA_CHANNEL)
-#error "Invalid DMA channel assigned to SPI4 RX"
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI4_RX_DMA_STREAM)
+#error "Invalid DMA stream assigned to SPI4 RX"
 #endif
 
 #if STM32_SPI_USE_SPI4 &&                                                   \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_SPI_SPI4_TX_DMA_CHANNEL)
-#error "Invalid DMA channel assigned to SPI4 TX"
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI4_TX_DMA_STREAM)
+#error "Invalid DMA stream assigned to SPI4 TX"
 #endif
 
 #if STM32_SPI_USE_SPI5 &&                                                   \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_SPI_SPI5_RX_DMA_CHANNEL)
-#error "Invalid DMA channel assigned to SPI5 RX"
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI5_RX_DMA_STREAM)
+#error "Invalid DMA stream assigned to SPI5 RX"
 #endif
 
 #if STM32_SPI_USE_SPI5 &&                                                   \
-    !STM32_DMA_IS_VALID_CHANNEL(STM32_SPI_SPI5_TX_DMA_CHANNEL)
-#error "Invalid DMA channel assigned to SPI5 TX"
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI5_TX_DMA_STREAM)
+#error "Invalid DMA stream assigned to SPI5 TX"
 #endif
 
 #if STM32_SPI_USE_SPI6 &&                                                   \
-    !STM32_BDMA_IS_VALID_CHANNEL(STM32_SPI_SPI6_RX_BDMA_CHANNEL)
-#error "Invalid BDMA channel assigned to SPI6 RX"
+    !STM32_BDMA_IS_VALID_STREAM(STM32_SPI_SPI6_RX_BDMA_STREAM)
+#error "Invalid BDMA stream assigned to SPI6 RX"
 #endif
 
 #if STM32_SPI_USE_SPI6 &&                                                   \
-    !STM32_BDMA_IS_VALID_CHANNEL(STM32_SPI_SPI6_TX_BDMA_CHANNEL)
-#error "Invalid BDMA channel assigned to SPI6 TX"
+    !STM32_BDMA_IS_VALID_STREAM(STM32_SPI_SPI6_TX_BDMA_STREAM)
+#error "Invalid BDMA stream assigned to SPI6 TX"
 #endif
 
 #if STM32_SPI_USE_SPI1 &&                                                   \

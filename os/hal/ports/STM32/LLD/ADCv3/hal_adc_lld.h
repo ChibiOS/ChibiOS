@@ -492,26 +492,6 @@
 #endif
 
 /* Check on the presence of the DMA streams settings in mcuconf.h.*/
-#if STM32_DMA_SUPPORTS_DMAMUX
-
-#if STM32_ADC_USE_ADC1 && !defined(STM32_ADC_ADC1_DMA_CHANNEL)
-#error "ADC1 DMA channel not defined"
-#endif
-
-#if STM32_ADC_USE_ADC2 && !defined(STM32_ADC_ADC2_DMA_CHANNEL)
-#error "ADC2 DMA channel not defined"
-#endif
-
-#if STM32_ADC_USE_ADC3 && !defined(STM32_ADC_ADC3_DMA_CHANNEL)
-#error "ADC3 DMA channel not defined"
-#endif
-
-#if STM32_ADC_USE_ADC4 && !defined(STM32_ADC_ADC4_DMA_CHANNEL)
-#error "ADC4 DMA channel not defined"
-#endif
-
-#else /* !STM32_DMA_SUPPORTS_DMAMUX */
-
 #if STM32_ADC_USE_ADC1 && !defined(STM32_ADC_ADC1_DMA_STREAM)
 #error "ADC1 DMA stream not defined"
 #endif
@@ -527,6 +507,10 @@
 #if STM32_ADC_USE_ADC4 && !defined(STM32_ADC_ADC4_DMA_STREAM)
 #error "ADC4 DMA stream not defined"
 #endif
+
+#if STM32_DMA_SUPPORTS_DMAMUX
+
+#else /* !STM32_DMA_SUPPORTS_DMAMUX */
 
 /* Check on the validity of the assigned DMA channels.*/
 #if STM32_ADC_USE_ADC1 &&                                                   \
