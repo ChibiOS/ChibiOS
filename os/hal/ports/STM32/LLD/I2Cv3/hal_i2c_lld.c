@@ -762,7 +762,7 @@ void i2c_lld_init(void) {
   I2CD4.i2c     = I2C4;
 #if STM32_I2C_USE_DMA == TRUE
 #if defined(STM32_I2C_DMA_REQUIRED) && defined(STM32_I2C_BDMA_REQUIRED)
-  I2CD1.is_bdma = true;
+  I2CD4.is_bdma = true;
 #endif
   I2CD4.rx.bdma = STM32_BDMA_STREAM(STM32_I2C_I2C4_RX_BDMA_CHANNEL);
   I2CD4.tx.bdma = STM32_BDMA_STREAM(STM32_I2C_I2C4_TX_BDMA_CHANNEL);

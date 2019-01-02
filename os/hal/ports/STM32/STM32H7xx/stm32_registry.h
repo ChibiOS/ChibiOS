@@ -223,7 +223,7 @@
 
 #define STM32_HAS_SPI5                      TRUE
 #define STM32_SPI5_SUPPORTS_I2S             FALSE
-#define STM32_SPI5_HANDLER                  Vector164
+#define STM32_SPI5_HANDLER                  Vector194
 #define STM32_SPI5_NUMBER                   85
 
 #define STM32_HAS_SPI6                      TRUE
