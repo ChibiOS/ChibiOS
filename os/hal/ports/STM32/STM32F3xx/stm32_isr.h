@@ -30,6 +30,16 @@
 /*===========================================================================*/
 
 /**
+ * @name    ISRs suppressed in standard drivers
+ * @{
+ */
+#define STM32_TIM1_SUPPRESS_ISR
+#define STM32_TIM15_SUPPRESS_ISR
+#define STM32_TIM16_SUPPRESS_ISR
+#define STM32_TIM17_SUPPRESS_ISR
+/** @} */
+
+/**
  * @name    ISR names and numbers remapping
  * @{
  */
@@ -252,6 +262,34 @@
  */
 #if !defined(STM32_IRQ_EXTI33_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_IRQ_EXTI33_PRIORITY           6
+#endif
+
+/**
+ * @brief   TIM1-BRK, TIM15 interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_TIM1_BRK_TIM15_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_TIM1_BRK_TIM15_PRIORITY   7
+#endif
+
+/**
+ * @brief   TIM1-UP, TIM16 interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_TIM1_UP_TIM16_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_TIM1_UP_TIM16_PRIORITY    7
+#endif
+
+/**
+ * @brief   TIM1-TRG-COM, TIM17 interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_TIM1_TRGCO_TIM17_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_TIM1_TRGCO_TIM17_PRIORITY 7
+#endif
+
+/**
+ * @brief   TIM1-CC interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_TIM1_CC_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_TIM1_CC_PRIORITY          7
 #endif
 /** @} */
 

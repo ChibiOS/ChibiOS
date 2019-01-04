@@ -131,6 +131,30 @@ GPTDriver GPTD14;
 #endif
 
 /**
+ * @brief   GPTD15 driver identifier.
+ * @note    The driver GPTD14 allocates the timer TIM14 when enabled.
+ */
+#if STM32_GPT_USE_TIM15 || defined(__DOXYGEN__)
+GPTDriver GPTD15;
+#endif
+
+/**
+ * @brief   GPTD16 driver identifier.
+ * @note    The driver GPTD14 allocates the timer TIM14 when enabled.
+ */
+#if STM32_GPT_USE_TIM16 || defined(__DOXYGEN__)
+GPTDriver GPTD16;
+#endif
+
+/**
+ * @brief   GPTD17 driver identifier.
+ * @note    The driver GPTD14 allocates the timer TIM14 when enabled.
+ */
+#if STM32_GPT_USE_TIM17 || defined(__DOXYGEN__)
+GPTDriver GPTD17;
+#endif
+
+/**
  * @brief   GPTD21 driver identifier.
  * @note    The driver GPTD21 allocates the timer TIM21 when enabled.
  */
@@ -164,7 +188,7 @@ GPTDriver GPTD22;
 #error "STM32_TIM1_UP_HANDLER not defined"
 #endif
 /**
- * @brief   TIM2 interrupt handler.
+ * @brief   TIM1 interrupt handler.
  *
  * @isr
  */
@@ -410,6 +434,24 @@ OSAL_IRQ_HANDLER(STM32_TIM14_HANDLER) {
 #endif /* !defined(STM32_TIM14_SUPPRESS_ISR) */
 #endif /* STM32_GPT_USE_TIM14 */
 
+#if STM32_GPT_USE_TIM15 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM15_SUPPRESS_ISR)
+#error "TIM15 ISR not defined by platform"
+#endif /* !defined(STM32_TIM15_SUPPRESS_ISR) */
+#endif /* STM32_GPT_USE_TIM15 */
+
+#if STM32_GPT_USE_TIM16 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM16_SUPPRESS_ISR)
+#error "TIM16 ISR not defined by platform"
+#endif /* !defined(STM32_TIM16_SUPPRESS_ISR) */
+#endif /* STM32_GPT_USE_TIM16 */
+
+#if STM32_GPT_USE_TIM17 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM17_SUPPRESS_ISR)
+#error "TIM17 ISR not defined by platform"
+#endif /* !defined(STM32_TIM17_SUPPRESS_ISR) */
+#endif /* STM32_GPT_USE_TIM17 */
+
 #if STM32_GPT_USE_TIM21 || defined(__DOXYGEN__)
 #if !defined(STM32_TIM21_SUPPRESS_ISR)
 #if !defined(STM32_TIM21_HANDLER)
@@ -533,6 +575,24 @@ void gpt_lld_init(void) {
   /* Driver initialization.*/
   GPTD14.tim = STM32_TIM14;
   gptObjectInit(&GPTD14);
+#endif
+
+#if STM32_GPT_USE_TIM15
+  /* Driver initialization.*/
+  GPTD15.tim = STM32_TIM15;
+  gptObjectInit(&GPTD15);
+#endif
+
+#if STM32_GPT_USE_TIM16
+  /* Driver initialization.*/
+  GPTD16.tim = STM32_TIM16;
+  gptObjectInit(&GPTD16);
+#endif
+
+#if STM32_GPT_USE_TIM17
+  /* Driver initialization.*/
+  GPTD17.tim = STM32_TIM17;
+  gptObjectInit(&GPTD17);
 #endif
 
 #if STM32_GPT_USE_TIM21
@@ -740,6 +800,54 @@ void gpt_lld_start(GPTDriver *gptp) {
     }
 #endif
 
+#if STM32_GPT_USE_TIM15
+    if (&GPTD15 == gptp) {
+      rccEnableTIM15(true);
+      rccResetTIM15();
+#if defined(STM32_TIM15CLK)
+      gptp->clock = STM32_TIM15CLK;
+#else
+      gptp->clock = STM32_TIMCLK2;
+#endif
+    }
+#endif
+
+#if STM32_GPT_USE_TIM15
+    if (&GPTD15 == gptp) {
+      rccEnableTIM15(true);
+      rccResetTIM15();
+#if defined(STM32_TIM15CLK)
+      gptp->clock = STM32_TIM15CLK;
+#else
+      gptp->clock = STM32_TIMCLK2;
+#endif
+    }
+#endif
+
+#if STM32_GPT_USE_TIM16
+    if (&GPTD16 == gptp) {
+      rccEnableTIM16(true);
+      rccResetTIM16();
+#if defined(STM32_TIM16CLK)
+      gptp->clock = STM32_TIM16CLK;
+#else
+      gptp->clock = STM32_TIMCLK2;
+#endif
+    }
+#endif
+
+#if STM32_GPT_USE_TIM17
+    if (&GPTD17 == gptp) {
+      rccEnableTIM17(true);
+      rccResetTIM17();
+#if defined(STM32_TIM17CLK)
+      gptp->clock = STM32_TIM17CLK;
+#else
+      gptp->clock = STM32_TIMCLK2;
+#endif
+    }
+#endif
+
 #if STM32_GPT_USE_TIM21
     if (&GPTD21 == gptp) {
       rccEnableTIM21(true);
@@ -904,6 +1012,24 @@ void gpt_lld_stop(GPTDriver *gptp) {
       nvicDisableVector(STM32_TIM14_NUMBER);
 #endif
       rccDisableTIM14();
+    }
+#endif
+
+#if STM32_GPT_USE_TIM15
+    if (&GPTD15 == gptp) {
+      rccDisableTIM15();
+    }
+#endif
+
+#if STM32_GPT_USE_TIM16
+    if (&GPTD16 == gptp) {
+      rccDisableTIM16();
+    }
+#endif
+
+#if STM32_GPT_USE_TIM17
+    if (&GPTD17 == gptp) {
+      rccDisableTIM17();
     }
 #endif
 
