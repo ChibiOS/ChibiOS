@@ -75,6 +75,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Now it is possible to define separate directories for each
+       configuration file.
 - NEW: Added option to enable bypass on SDIOv1 driver allowing to use a
        50MHz clock.
 - NEW: Added TIM15, TIM16 and TIM17 support on GPT, ICU and PWM drivers,

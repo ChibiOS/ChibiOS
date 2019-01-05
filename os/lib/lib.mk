@@ -3,11 +3,15 @@
 ifeq ($(USE_SMART_BUILD),yes)
 
 # Configuration files directory
-ifeq ($(CONFDIR),)
-  CONFDIR = .
+ifeq ($(CHCONFDIR),)
+  ifeq ($(CONFDIR),)
+    CHCONFDIR = .
+  else
+    CHCONFDIR := $(CONFDIR)
+  endif
 endif
 
-CHLIBCONF := $(strip $(shell cat $(CONFDIR)/chconf.h | egrep -e "\#define"))
+CHLIBCONF := $(strip $(shell cat $(CHCONFDIR)/chconf.h | egrep -e "\#define"))
 
 LIBSRC :=
 ifneq ($(findstring CH_CFG_USE_MAILBOXES TRUE,$(CHLIBCONF)),)

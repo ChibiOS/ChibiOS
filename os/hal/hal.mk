@@ -3,11 +3,15 @@
 ifeq ($(USE_SMART_BUILD),yes)
 
 # Configuration files directory
-ifeq ($(CONFDIR),)
-  CONFDIR = .
+ifeq ($(HALCONFDIR),)
+  ifeq ($(CONFDIR),)
+    HALCONFDIR = .
+  else
+    HALCONFDIR := $(CONFDIR)
+  endif
 endif
 
-HALCONF := $(strip $(shell cat $(CONFDIR)/halconf.h | egrep -e "\#define"))
+HALCONF := $(strip $(shell cat $(HALCONFDIR)/halconf.h | egrep -e "\#define"))
 
 HALSRC := $(CHIBIOS)/os/hal/src/hal.c \
           $(CHIBIOS)/os/hal/src/hal_st.c \
