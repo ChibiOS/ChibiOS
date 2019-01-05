@@ -414,6 +414,20 @@ typedef uint32_t iopadid_t;
 #define pal_lld_get_line_event(line)                                        \
   &_pal_events[PAL_PAD(line)]
 
+/**
+ * @brief   Pad event enable check.
+ *
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
+ * @return              Pad event status.
+ * @retval false        if the pad event is disabled.
+ * @retval true         if the pad event is enabled.
+ *
+ * @notapi
+ */
+#define pal_lld_ispadeventenabled(port, pad)                                \
+  (bool)((EXTI->IMR & (1U << (uint32_t)pad)) != 0U)
+
 #if !defined(__DOXYGEN__)
 extern const PALConfig pal_default_config;
 extern palevent_t _pal_events[16];
