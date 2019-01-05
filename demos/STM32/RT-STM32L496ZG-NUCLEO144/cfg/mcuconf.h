@@ -112,6 +112,10 @@
 #define STM32_IRQ_EXTI19_PRIORITY           6
 #define STM32_IRQ_EXTI20_PRIORITY           6
 #define STM32_IRQ_EXTI21_22_PRIORITY        6
+#define STM32_IRQ_TIM1_BRK_TIM15_PRIORITY   7
+#define STM32_IRQ_TIM1_UP_TIM16_PRIORITY    7
+#define STM32_IRQ_TIM1_TRGCO_TIM17_PRIORITY 7
+#define STM32_IRQ_TIM1_CC_PRIORITY          7
 
 /*
  * ADC driver system settings.
@@ -165,6 +169,9 @@
 #define STM32_GPT_USE_TIM6                  FALSE
 #define STM32_GPT_USE_TIM7                  FALSE
 #define STM32_GPT_USE_TIM8                  FALSE
+#define STM32_GPT_USE_TIM15                 FALSE
+#define STM32_GPT_USE_TIM16                 FALSE
+#define STM32_GPT_USE_TIM17                 FALSE
 #define STM32_GPT_TIM1_IRQ_PRIORITY         7
 #define STM32_GPT_TIM2_IRQ_PRIORITY         7
 #define STM32_GPT_TIM3_IRQ_PRIORITY         7
@@ -204,6 +211,7 @@
 #define STM32_ICU_USE_TIM4                  FALSE
 #define STM32_ICU_USE_TIM5                  FALSE
 #define STM32_ICU_USE_TIM8                  FALSE
+#define STM32_ICU_USE_TIM15                 FALSE
 #define STM32_ICU_TIM1_IRQ_PRIORITY         7
 #define STM32_ICU_TIM2_IRQ_PRIORITY         7
 #define STM32_ICU_TIM3_IRQ_PRIORITY         7
@@ -221,6 +229,9 @@
 #define STM32_PWM_USE_TIM4                  FALSE
 #define STM32_PWM_USE_TIM5                  FALSE
 #define STM32_PWM_USE_TIM8                  FALSE
+#define STM32_PWM_USE_TIM15                 FALSE
+#define STM32_PWM_USE_TIM16                 FALSE
+#define STM32_PWM_USE_TIM17                 FALSE
 #define STM32_PWM_TIM1_IRQ_PRIORITY         7
 #define STM32_PWM_TIM2_IRQ_PRIORITY         7
 #define STM32_PWM_TIM3_IRQ_PRIORITY         7

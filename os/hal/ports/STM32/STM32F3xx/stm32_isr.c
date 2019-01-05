@@ -325,7 +325,7 @@ OSAL_IRQ_HANDLER(VectorAC) {
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif /* HAL_USE_GPT */
+#endif /* HAL_USE_GPT || HAL_USE_ICU || HAL_USE_PWM */
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */

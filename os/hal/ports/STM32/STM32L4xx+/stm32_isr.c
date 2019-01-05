@@ -212,6 +212,122 @@ OSAL_IRQ_HANDLER(VectorE0) {
 
 #endif /* HAL_USE_PAL && (PAL_USE_WAIT || PAL_USE_CALLBACKS) */
 
+#if HAL_USE_GPT || HAL_USE_ICU || HAL_USE_PWM || defined(__DOXYGEN__)
+/**
+ * @brief   TIM1-BRK, TIM15 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(VectorA0) {
+
+  OSAL_IRQ_PROLOGUE();
+
+#if HAL_USE_GPT
+#if STM32_GPT_USE_TIM15
+  gpt_lld_serve_interrupt(&GPTD15);
+#endif
+#endif
+#if HAL_USE_ICU
+#if STM32_ICU_USE_TIM15
+  icu_lld_serve_interrupt(&ICUD15);
+#endif
+#endif
+#if HAL_USE_PWM
+#if STM32_PWM_USE_TIM15
+  pwm_lld_serve_interrupt(&PWMD15);
+#endif
+#endif
+
+  OSAL_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   TIM1-UP, TIM16 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(VectorA4) {
+
+  OSAL_IRQ_PROLOGUE();
+
+#if HAL_USE_GPT
+#if STM32_GPT_USE_TIM1
+  gpt_lld_serve_interrupt(&GPTD1);
+#endif
+#if STM32_GPT_USE_TIM16
+  gpt_lld_serve_interrupt(&GPTD16);
+#endif
+#endif
+#if HAL_USE_ICU
+#if STM32_ICU_USE_TIM1
+  icu_lld_serve_interrupt(&ICUD1);
+#endif
+#endif
+#if HAL_USE_PWM
+#if STM32_PWM_USE_TIM1
+  pwm_lld_serve_interrupt(&PWMD1);
+#endif
+#if STM32_PWM_USE_TIM16
+  pwm_lld_serve_interrupt(&PWMD16);
+#endif
+#endif
+
+  OSAL_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   TIM1-TRG-COM, TIM17 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(VectorA8) {
+
+  OSAL_IRQ_PROLOGUE();
+
+#if HAL_USE_GPT
+#if STM32_GPT_USE_TIM17
+  gpt_lld_serve_interrupt(&GPTD17);
+#endif
+#endif
+#if HAL_USE_ICU
+  /* Not used by ICU.*/
+#endif
+#if HAL_USE_PWM
+#if STM32_PWM_USE_TIM17
+  pwm_lld_serve_interrupt(&PWMD17);
+#endif
+#endif
+
+  OSAL_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   TIM1-CC interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(VectorAC) {
+
+  OSAL_IRQ_PROLOGUE();
+
+#if HAL_USE_GPT
+  /* Not used by GPT.*/
+#endif
+#if HAL_USE_ICU
+#if STM32_ICU_USE_TIM1
+  icu_lld_serve_interrupt(&ICUD1);
+#endif
+#endif
+#if HAL_USE_PWM
+#if STM32_PWM_USE_TIM1
+  pwm_lld_serve_interrupt(&PWMD1);
+#endif
+#endif
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif /* HAL_USE_GPT || HAL_USE_ICU || HAL_USE_PWM */
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -224,13 +340,19 @@ OSAL_IRQ_HANDLER(VectorE0) {
 void irqInit(void) {
 
 #if HAL_USE_PAL
-  nvicEnableVector(EXTI0_IRQn, STM32_IRQ_EXTI0_PRIORITY);
-  nvicEnableVector(EXTI1_IRQn, STM32_IRQ_EXTI1_PRIORITY);
-  nvicEnableVector(EXTI2_IRQn, STM32_IRQ_EXTI2_PRIORITY);
-  nvicEnableVector(EXTI3_IRQn, STM32_IRQ_EXTI3_PRIORITY);
-  nvicEnableVector(EXTI4_IRQn, STM32_IRQ_EXTI4_PRIORITY);
-  nvicEnableVector(EXTI9_5_IRQn, STM32_IRQ_EXTI5_9_PRIORITY);
-  nvicEnableVector(EXTI15_10_IRQn, STM32_IRQ_EXTI10_15_PRIORITY);
+  nvicEnableVector(EXTI0_IRQn,              STM32_IRQ_EXTI0_PRIORITY);
+  nvicEnableVector(EXTI1_IRQn,              STM32_IRQ_EXTI1_PRIORITY);
+  nvicEnableVector(EXTI2_IRQn,              STM32_IRQ_EXTI2_PRIORITY);
+  nvicEnableVector(EXTI3_IRQn,              STM32_IRQ_EXTI3_PRIORITY);
+  nvicEnableVector(EXTI4_IRQn,              STM32_IRQ_EXTI4_PRIORITY);
+  nvicEnableVector(EXTI9_5_IRQn,            STM32_IRQ_EXTI5_9_PRIORITY);
+  nvicEnableVector(EXTI15_10_IRQn,          STM32_IRQ_EXTI10_15_PRIORITY);
+#endif
+#if HAL_USE_GPT || HAL_USE_ICU || HAL_USE_PWM || defined(__DOXYGEN__)
+  nvicEnableVector(TIM1_BRK_TIM15_IRQn,     STM32_IRQ_TIM1_BRK_TIM15_PRIORITY);
+  nvicEnableVector(TIM1_UP_TIM16_IRQn,      STM32_IRQ_TIM1_UP_TIM16_PRIORITY);
+  nvicEnableVector(TIM1_TRG_COM_TIM17_IRQn, STM32_IRQ_TIM1_TRGCO_TIM17_PRIORITY);
+  nvicEnableVector(TIM1_CC_IRQn,            STM32_IRQ_TIM1_CC_PRIORITY);
 #endif
 }
 
@@ -249,6 +371,12 @@ void irqDeinit(void) {
   nvicDisableVector(EXTI4_IRQn);
   nvicDisableVector(EXTI9_5_IRQn);
   nvicDisableVector(EXTI15_10_IRQn);
+#endif
+#if HAL_USE_GPT || HAL_USE_ICU || HAL_USE_PWM || defined(__DOXYGEN__)
+  nvicDisableVector(TIM1_BRK_TIM15_IRQn);
+  nvicDisableVector(TIM1_UP_TIM16_IRQn);
+  nvicDisableVector(TIM1_TRG_COM_TIM17_IRQn);
+  nvicDisableVector(TIM1_CC_IRQn);
 #endif
 }
 

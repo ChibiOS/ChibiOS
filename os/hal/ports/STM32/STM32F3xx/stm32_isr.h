@@ -297,6 +297,83 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+/* IRQ priority checks.*/
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI0_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI0_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI1_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI1_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI2_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI2_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI3_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI3_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI4_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI4_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI5_9_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI5_9_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI10_15_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI10_15_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI16_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI16_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI17_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI17_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI18_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI18_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI19_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI19_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI20_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI20_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI21_22_29_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI21_22_29_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI30_32_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI30_32_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI33_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI33_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_TIM1_BRK_TIM15_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_TIM1_BRK_TIM15_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_TIM1_UP_TIM16_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_TIM1_UP_TIM16_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_TIM1_TRGCO_TIM17_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_TIM1_TRGCO_TIM17_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_TIM1_CC_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_TIM1_CC_PRIORITY"
+#endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
