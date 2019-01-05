@@ -188,12 +188,11 @@ static void obnotify(io_buffers_queue_t *bqp) {
 
   /* Checking if there is already a transaction ongoing on the endpoint.*/
   if (!usbGetTransmitStatusI(sdup->config->usbp, sdup->config->bulk_in)) {
-    /* Trying to get a full buffer.*/
+    /* Getting a full buffer, a buffer is available for sure because this
+       callback is invoked when one has been inserted.*/
     uint8_t *buf = obqGetFullBufferI(&sdup->obqueue, &n);
-    if (buf != NULL) {
-      /* Buffer found, starting a new transaction.*/
-      usbStartTransmitI(sdup->config->usbp, sdup->config->bulk_in, buf, n);
-    }
+    osalDbgAssert(buf != NULL, "buffer not found");
+    usbStartTransmitI(sdup->config->usbp, sdup->config->bulk_in, buf, n);
   }
 }
 
