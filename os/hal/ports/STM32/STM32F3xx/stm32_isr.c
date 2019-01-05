@@ -261,9 +261,6 @@ OSAL_IRQ_HANDLER(VectorA4) {
 #if STM32_ICU_USE_TIM1
   icu_lld_serve_interrupt(&ICUD1);
 #endif
-#if STM32_ICU_USE_TIM16
-  icu_lld_serve_interrupt(&ICUD16);
-#endif
 #endif
 #if HAL_USE_PWM
 #if STM32_PWM_USE_TIM1
@@ -292,9 +289,7 @@ OSAL_IRQ_HANDLER(VectorA8) {
 #endif
 #endif
 #if HAL_USE_ICU
-#if STM32_ICU_USE_TIM17
-  icu_lld_serve_interrupt(&ICUD17);
-#endif
+  /* Not used by ICU.*/
 #endif
 #if HAL_USE_PWM
 #if STM32_PWM_USE_TIM17

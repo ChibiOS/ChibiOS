@@ -94,6 +94,14 @@ ICUDriver ICUD8;
 ICUDriver ICUD9;
 #endif
 
+/**
+ * @brief   ICUD15 driver identifier.
+ * @note    The driver ICUD15 allocates the timer TIM15 when enabled.
+ */
+#if STM32_ICU_USE_TIM15 || defined(__DOXYGEN__)
+ICUDriver ICUD15;
+#endif
+
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
@@ -323,6 +331,12 @@ OSAL_IRQ_HANDLER(STM32_TIM9_HANDLER) {
 #endif /* !defined(STM32_TIM9_SUPPRESS_ISR) */
 #endif /* STM32_ICU_USE_TIM9 */
 
+#if STM32_ICU_USE_TIM15 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM15_SUPPRESS_ISR)
+#error "TIM15 ISR not defined by platform"
+#endif /* !defined(STM32_TIM15_SUPPRESS_ISR) */
+#endif /* STM32_ICU_USE_TIM15 */
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -374,6 +388,12 @@ void icu_lld_init(void) {
   /* Driver initialization.*/
   icuObjectInit(&ICUD9);
   ICUD9.tim = STM32_TIM9;
+#endif
+
+#if STM32_ICU_USE_TIM15
+  /* Driver initialization.*/
+  icuObjectInit(&ICUD15);
+  ICUD15.tim = STM32_TIM15;
 #endif
 }
 
@@ -494,6 +514,18 @@ void icu_lld_start(ICUDriver *icup) {
 #endif
 #if defined(STM32_TIM9CLK)
       icup->clock = STM32_TIM9CLK;
+#else
+      icup->clock = STM32_TIMCLK2;
+#endif
+    }
+#endif
+
+#if STM32_ICU_USE_TIM15
+    if (&ICUD15 == icup) {
+      rccEnableTIM15(true);
+      rccResetTIM15();
+#if defined(STM32_TIM15CLK)
+      icup->clock = STM32_TIM15CLK;
 #else
       icup->clock = STM32_TIMCLK2;
 #endif
@@ -648,6 +680,12 @@ void icu_lld_stop(ICUDriver *icup) {
       nvicDisableVector(STM32_TIM9_NUMBER);
 #endif
       rccDisableTIM9();
+    }
+#endif
+
+#if STM32_ICU_USE_TIM15
+    if (&ICUD15 == icup) {
+      rccDisableTIM15();
     }
 #endif
   }
