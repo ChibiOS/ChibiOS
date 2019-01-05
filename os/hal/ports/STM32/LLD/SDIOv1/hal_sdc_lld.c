@@ -451,7 +451,8 @@ void sdc_lld_start_clk(SDCDriver *sdcp) {
  * @notapi
  */
 void sdc_lld_set_data_clk(SDCDriver *sdcp, sdcbusclk_t clk) {
-#if 0
+
+#if STM32_SDC_SDIO_50MHZ
   if (SDC_CLK_50MHz == clk) {
     sdcp->sdio->CLKCR = (sdcp->sdio->CLKCR & 0xFFFFFF00U) | STM32_SDIO_DIV_HS
                                                           | SDIO_CLKCR_BYPASS;

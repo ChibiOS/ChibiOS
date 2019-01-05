@@ -75,6 +75,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added option to enable bypass on SDIOv1 driver allowing to use a
+       50MHz clock.
 - NEW: Added TIM15, TIM16 and TIM17 support on GPT, ICU and PWM drivers,
        limited to STM32F3, L4 and L4+ platforms.
 - NEW: STM32H7xx and STM32L4+ ports reworked to support dynamic DMA

@@ -92,6 +92,14 @@
 #endif
 
 /**
+ * @brief   Enable clock bypass.
+ * @note    Allow clock speed up to 50 Mhz.
+ */
+#if !defined(STM32_SDC_SDIO_50MHZ) || defined(__DOXYGEN__)
+#define STM32_SDC_SDIO_50MHZ                FALSE
+#endif
+
+/**
  * @brief   Write timeout in milliseconds.
  */
 #if !defined(STM32_SDC_WRITE_TIMEOUT_MS) || defined(__DOXYGEN__)
