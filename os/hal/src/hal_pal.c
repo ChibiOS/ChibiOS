@@ -126,7 +126,7 @@ void palSetBusMode(const IOBus *bus, iomode_t mode) {
  * @param[in] cb        event callback function
  * @param[in] arg       callback argument
  *
- * @api
+ * @iclass
  */
 void palSetPadCallbackI(ioportid_t port, iopadid_t pad,
                         palcallback_t cb, void *arg) {
@@ -143,7 +143,7 @@ void palSetPadCallbackI(ioportid_t port, iopadid_t pad,
  * @param[in] cb        event callback function
  * @param[in] arg       callback argument
  *
- * @api
+ * @iclass
  */
 void palSetLineCallbackI(ioline_t line, palcallback_t cb, void *arg) {
 

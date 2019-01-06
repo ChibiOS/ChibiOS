@@ -975,7 +975,7 @@ typedef struct {
  * @param[in] cb        event callback function
  * @param[in] arg       callback argument
  *
- * @iclass
+ * @api
  */
 #define palSetLineCallback(line, cb, arg)                                   \
   do {                                                                      \
