@@ -72,10 +72,10 @@
 #endif
 
 /*===========================================================================*/
-/* STM32L432xx.                                                              */
+/* STM32L432xx, STM32L433xx.                                                 */
 /*===========================================================================*/
 
-#if defined(STM32L432xx) || defined(__DOXYGEN__)
+#if defined(STM32L432xx) || defined(STM32L433xx) || defined(__DOXYGEN__)
 
 /* Clock attributes.*/
 #define STM32_CLOCK_HAS_HSI48               TRUE

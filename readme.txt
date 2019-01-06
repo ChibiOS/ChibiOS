@@ -75,6 +75,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: STM32L433 added to STM32L4xx HAL.
 - CHG: chFifoObjectInit() renamed to chFifoObjectInitAligned(). Added a new
        chFifoObjectInit() without the alignment parameter.
 - NEW: Stricter alignment checks in memory pools.
