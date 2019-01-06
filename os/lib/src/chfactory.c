@@ -668,8 +668,8 @@ dyn_objects_fifo_t *chFactoryCreateObjectsFIFO(const char *name,
                                                       (objn * objsize));
   if (dofp != NULL) {
     /* Initializing mailbox object data.*/
-    chFifoObjectInit(&dofp->fifo, objsize, objn, objalign,
-                     (void *)&dofp->msgbuf[objn], dofp->msgbuf);
+    chFifoObjectInitAligned(&dofp->fifo, objsize, objn, objalign,
+                            (void *)&dofp->msgbuf[objn], dofp->msgbuf);
   }
 
   F_UNLOCK();

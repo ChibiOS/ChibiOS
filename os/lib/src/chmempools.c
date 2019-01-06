@@ -77,7 +77,10 @@
 void chPoolObjectInitAligned(memory_pool_t *mp, size_t size,
                              unsigned align, memgetfunc_t provider) {
 
-  chDbgCheck((mp != NULL) && (size >= sizeof(void *)));
+  chDbgCheck((mp != NULL) &&
+             (size >= sizeof(void *)) &&
+             (align >= PORT_NATURAL_ALIGN) &&
+             MEM_IS_VALID_ALIGNMENT(align));
 
   mp->next = NULL;
   mp->object_size = size;
@@ -136,6 +139,9 @@ void *chPoolAllocI(memory_pool_t *mp) {
   }
   else if (mp->provider != NULL) {
     objp = mp->provider(mp->object_size, mp->align);
+
+    chDbgAssert(MEM_IS_ALIGNED(objp, mp->align),
+                "returned object not aligned");
   }
   /*lint -restore*/
 
@@ -178,10 +184,9 @@ void chPoolFreeI(memory_pool_t *mp, void *objp) {
   struct pool_header *php = objp;
 
   chDbgCheckClassI();
-  chDbgCheck((mp != NULL) && (objp != NULL));
-
-  chDbgAssert(((size_t)objp & MEM_ALIGN_MASK(mp->align)) == 0U,
-              "unaligned object");
+  chDbgCheck((mp != NULL) &&
+             (objp != NULL) &&
+             MEM_IS_ALIGNED(objp, mp->align));
 
   php->next = mp->next;
   mp->next = php;

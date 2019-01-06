@@ -75,6 +75,9 @@
 *****************************************************************************
 
 *** Next ***
+- CHG: chFifoObjectInit() renamed to chFifoObjectInitAligned(). Added a new
+       chFifoObjectInit() without the alignment parameter.
+- NEW: Stricter alignment checks in memory pools.
 - NEW: Added chvsnprintf().
 - NEW: Event enable check API added to PAL driver.
 - NEW: Now it is possible to define separate directories for each
