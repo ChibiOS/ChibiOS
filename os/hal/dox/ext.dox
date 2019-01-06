@@ -18,6 +18,8 @@
  * @defgroup EXT EXT Driver
  * @brief   Generic EXT Driver.
  * @details This module implements a generic EXT (EXTernal) driver.
+ * @note    This driver is obsolete. Use the Event and Callback functions of
+ *          the @ref PAL driver instead.
  * @pre     In order to use the EXT driver the @p HAL_USE_EXT option
  *          must be enabled in @p halconf.h.
  *
