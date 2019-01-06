@@ -75,6 +75,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added chvsnprintf().
 - NEW: Event enable check API added to PAL driver.
 - NEW: Now it is possible to define separate directories for each
        configuration file.
