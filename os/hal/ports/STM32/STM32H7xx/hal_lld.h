@@ -800,7 +800,7 @@
  * @note    The allowed values are 2..128, odd values not allowed.
  */
 #if !defined(STM32_PLL2_DIVP_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLL2_DIVP_VALUE               8
+#define STM32_PLL2_DIVP_VALUE               40
 #endif
 
 /**
@@ -860,7 +860,7 @@
  * @note    The allowed values are 4..512.
  */
 #if !defined(STM32_PLL3_DIVN_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLL3_DIVN_VALUE               240
+#define STM32_PLL3_DIVN_VALUE               400
 #endif
 
 /**
@@ -876,7 +876,7 @@
  * @note    The allowed values are 2..128, odd values not allowed.
  */
 #if !defined(STM32_PLL3_DIVP_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLL3_DIVP_VALUE               10
+#define STM32_PLL3_DIVP_VALUE               8
 #endif
 
 /**
@@ -884,7 +884,7 @@
  * @note    The allowed values are 1..128.
  */
 #if !defined(STM32_PLL3_DIVQ_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLL3_DIVQ_VALUE               10
+#define STM32_PLL3_DIVQ_VALUE               8
 #endif
 
 /**
@@ -892,7 +892,7 @@
  * @note    The allowed values are 1..128.
  */
 #if !defined(STM32_PLL3_DIVR_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLL3_DIVR_VALUE               10
+#define STM32_PLL3_DIVR_VALUE               8
 #endif
 
 /**
@@ -2399,7 +2399,7 @@
  */
 #define STM32_USART6CLK             STM32_PCLK2
 
-#elif STM32_USART1SEL == STM32_USART16SEL_PLL2_Q_CK
+#elif STM32_USART16SEL == STM32_USART16SEL_PLL2_Q_CK
 #define STM32_USART1CLK             STM32_PLL2_Q_CK
 #define STM32_USART6CLK             STM32_PLL2_Q_CK
 #elif STM32_USART16SEL == STM32_USART16SEL_PLL3_Q_CK
@@ -2579,8 +2579,8 @@
  */
 #define STM32_SPI6CLK               STM32_PCLK4
 
-#elif STM32_SPI6SEL == STM32_SPI6SEL_PLL2_P_CK
-#define STM32_SPI6CLK               STM32_PLL2_P_CK
+#elif STM32_SPI6SEL == STM32_SPI6SEL_PLL2_Q_CK
+#define STM32_SPI6CLK               STM32_PLL2_Q_CK
 #elif STM32_SPI6SEL == STM32_SPI6SEL_PLL3_Q_CK
 #define STM32_SPI6CLK               STM32_PLL3_Q_CK
 #elif STM32_SPI6SEL == STM32_SPI6SEL_HSI_KER_CK
