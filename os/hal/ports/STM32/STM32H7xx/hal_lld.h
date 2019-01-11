@@ -800,7 +800,7 @@
  * @note    The allowed values are 2..128, odd values not allowed.
  */
 #if !defined(STM32_PLL2_DIVP_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLL2_DIVP_VALUE               8
+#define STM32_PLL2_DIVP_VALUE               40
 #endif
 
 /**
@@ -1125,7 +1125,7 @@
  * @brief   USB clock source.
  */
 #if !defined(STM32_USBSEL) || defined(__DOXYGEN__)
-#define STM32_USBSEL                        STM32_USBSEL_PLL1_Q_CK
+#define STM32_USBSEL                        STM32_USBSEL_PLL3_Q_CK
 #endif
 
 /**
@@ -2394,7 +2394,7 @@
  */
 #define STM32_USART6CLK             STM32_PCLK2
 
-#elif STM32_USART1SEL == STM32_USART16SEL_PLL2_Q_CK
+#elif STM32_USART16SEL == STM32_USART16SEL_PLL2_Q_CK
 #define STM32_USART1CLK             STM32_PLL2_Q_CK
 #define STM32_USART6CLK             STM32_PLL2_Q_CK
 #elif STM32_USART16SEL == STM32_USART16SEL_PLL3_Q_CK
@@ -2574,8 +2574,8 @@
  */
 #define STM32_SPI6CLK               STM32_PCLK4
 
-#elif STM32_SPI6SEL == STM32_SPI6SEL_PLL2_P_CK
-#define STM32_SPI6CLK               STM32_PLL2_P_CK
+#elif STM32_SPI6SEL == STM32_SPI6SEL_PLL2_Q_CK
+#define STM32_SPI6CLK               STM32_PLL2_Q_CK
 #elif STM32_SPI6SEL == STM32_SPI6SEL_PLL3_Q_CK
 #define STM32_SPI6CLK               STM32_PLL3_Q_CK
 #elif STM32_SPI6SEL == STM32_SPI6SEL_HSI_KER_CK
