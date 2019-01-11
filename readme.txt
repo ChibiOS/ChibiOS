@@ -212,6 +212,8 @@
        (bug #993)(backported to 18.2.2).
 - HAL: Fixed STM32F7xx I2SPLL not fully initialized (bug #992)
        (backported to 18.2.2 and 17.6.5).
+- BLD: Fixed PRE_MAKE_ALL_RULE_HOOK is not executed before creating object
+       file when using multible jobs (bug #991).
 - HAL: Fixed ethernet registry error for STM32F469/479 (bug #990)
        (backported to 18.2.2 and 17.6.5).
 - RT:  Fixed bug in chEvtBroadcastFlagsI (bug #989)
