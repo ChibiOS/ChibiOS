@@ -50,7 +50,7 @@
 /*
  * I2C driver system settings.
  */
-#define SAMA_I2C_USE_TWIHS0                 TRUE
+#define SAMA_I2C_USE_TWIHS0                 FALSE
 #define SAMA_I2C_USE_TWIHS1                 FALSE
 #define SAMA_I2C_BUSY_TIMEOUT               50
 #define SAMA_I2C_TWIHS0_IRQ_PRIORITY        6
@@ -113,7 +113,7 @@
 /*
  * SPI driver system settings.
  */
-#define SAMA_SPI_USE_SPI0                   TRUE
+#define SAMA_SPI_USE_SPI0                   FALSE
 #define SAMA_SPI0_USE_GCLK                  FALSE
 #define SAMA_SPI0_GCLK_SOURCE               SAMA_GCLK_MCK_CLK
 #define SAMA_SPI0_GCLK_DIV                  21
@@ -170,7 +170,7 @@
 /*
  * TRNG driver system settings.
  */
-#define SAMA_TRNG_USE_TRNG0                 TRUE
+#define SAMA_TRNG_USE_TRNG0                 FALSE
 
 /*
  * UART driver system settings.
@@ -207,11 +207,6 @@
 #define SAMA_UART_FLEXCOM4_DMA_IRQ_PRIORITY 4
 #define SAMA_UART_DMA_ERROR_HOOK(uartp)     osalSysHalt("DMA failure")
 #define SAMA_UART_CACHE_USER_MANAGED        FALSE
-
-/*
- * WDG driver system settings.
- */
-#define SAMA_WDG_USE_WDT                    FALSE
 
 /*
  * WSPI driver system settings.
