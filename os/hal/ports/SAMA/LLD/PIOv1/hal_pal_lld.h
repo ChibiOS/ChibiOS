@@ -30,6 +30,9 @@
 /*===========================================================================*/
 /* Unsupported modes and specific modes                                      */
 /*===========================================================================*/
+/* Specifies palInit() without parameter, required until all platforms will
+   be updated to the new style.*/
+#define PAL_NEW_INIT
 
 #undef PAL_MODE_RESET
 #undef PAL_MODE_UNCONNECTED
@@ -102,7 +105,8 @@
                                        PAL_SAMA_IFSCEN_MASK |               \
                                        PAL_SAMA_OPD_MASK |                  \
                                        PAL_SAMA_SCHMITT_MASK |              \
-                                       PAL_SAMA_DRVSTR_MASK
+                                       PAL_SAMA_DRVSTR_MASK |               \
+                                       PAL_SAMA_EVTSEL_MASK
 
 #if SAMA_HAL_IS_SECURE
 #define PAL_SAMA_SECURE_MASK           (1U << 31U)
@@ -146,7 +150,7 @@
  */
 #define PAL_MODE_INPUT_PULLDOWN         (PAL_SAMA_DIR_INPUT |               \
                                          PAL_SAMA_SCHMITT |                 \
-                                         PAL_SAMA_PUEN_PULLDOWN)
+                                         PAL_SAMA_PDEN_PULLDOWN)
 
 /**
  * @brief   Analog input mode.
@@ -365,13 +369,12 @@ typedef uint32_t iopadid_t;
 /* Implementation, some of the following macros could be implemented as      */
 /* functions, if so please put them in pal_lld.c.                            */
 /*===========================================================================*/
-
 /**
- * @brief   PIO ports subsystem initialization.
+ * @brief   GPIO ports subsystem initialization.
  *
  * @notapi
  */
-#define pal_lld_init(config)
+#define pal_lld_init() _pal_lld_init()
 
 /**
  * @brief   Reads an I/O port.
@@ -497,7 +500,8 @@ typedef uint32_t iopadid_t;
  *
  * @notapi
  */
-#define pal_lld_enablepadevent(port, pad, mode)
+#define pal_lld_enablepadevent(port, pad, mode)                             \
+  _pal_lld_enablepadevent(port, pad, mode)
 
 /**
  * @brief   Pad event disable.
@@ -508,17 +512,8 @@ typedef uint32_t iopadid_t;
  *
  * @notapi
  */
-#define pal_lld_disablepadevent(port, pad)
-
-/**
- * @brief   Returns a PAL event structure associated to a pad.
- *
- * @param[in] port      port identifier
- * @param[in] pad       pad number within the port
- *
- * @notapi
- */
-#define pal_lld_get_pad_event(port, pad)
+#define pal_lld_disablepadevent(port, pad)                                  \
+  _pal_lld_disablepadevent(port, pad)
 
 /**
  * @brief   Returns a PAL event structure associated to a line.
@@ -527,14 +522,32 @@ typedef uint32_t iopadid_t;
  *
  * @notapi
  */
-#define pal_lld_get_line_event(line)
+#define pal_lld_get_line_event(line)                                        \
+  &_pal_events[PAL_PAD(line)]
+
+#if !defined(__DOXYGEN__)
+extern palevent_t _pal_events[4 * 32];
+#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+   void _pal_lld_init(void);
    void _pal_lld_setgroupmode(ioportid_t port,
                               ioportmask_t mask,
                               iomode_t mode);
+   void _pal_lld_enablepadevent(ioportid_t port,
+                                iopadid_t pad,
+                                ioeventmode_t mode);
+   void _pal_lld_disablepadevent(ioportid_t port, iopadid_t pad);
+   palevent_t* pal_lld_get_pad_event(ioportid_t port, iopadid_t pad);
+   /* LLD only functions */
+#if SAMA_HAL_IS_SECURE
+   void pal_lld_cfg_debouncing_time(uint32_t db_time);
+#endif
+   uint32_t pal_lld_read_status(ioportid_t port);
+   uint32_t pal_lld_read_int_mask(ioportid_t port);
+   uint32_t pal_lld_read_cfgr(ioportid_t port);
 #ifdef __cplusplus
 }
 #endif

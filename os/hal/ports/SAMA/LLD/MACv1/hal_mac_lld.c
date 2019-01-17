@@ -33,7 +33,17 @@
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
+/*
+ * @brief    Buffer size.
+ */
 #define BUFFER_SIZE ((((SAMA_MAC_BUFFERS_SIZE - 1) | 3) + 1) / 4)
+
+/*
+ * @brief    NO CACHE attribute
+ */
+#if !defined(NO_CACHE)
+#define NO_CACHE                        __attribute__((section (".nocache")))
+#endif
 
 /* MII divider optimal value.*/
 #if (SAMA_GMAC0CLK <= 20000000)
@@ -73,17 +83,28 @@ MACDriver ETHD0;
 
 static const uint8_t default_mac_address[] = {0x54, 0x54, 0x08, 0x34, 0x1f, 0x3a};
 
+/*
+ * In terms of AMBA AHB operation, the descriptors are read from memory using
+ * a single 32-bit AHB access. The descriptors should be aligned at 32-bit
+ * boundaries and the descriptors are written to using two individual non
+ * sequential accesses.
+ */
+
 /* Rx descriptor list */
-ALIGNED_VAR(8)
+NO_CACHE ALIGNED_VAR(4)
 static sama_eth_rx_descriptor_t __eth_rd[SAMA_MAC_RECEIVE_BUFFERS];
 
 /* Tx descriptor list */
-ALIGNED_VAR(8)
+NO_CACHE ALIGNED_VAR(4)
 static sama_eth_tx_descriptor_t __eth_td[SAMA_MAC_TRANSMIT_BUFFERS];
+NO_CACHE ALIGNED_VAR(4)
 static sama_eth_tx_descriptor_t __eth_td1[1];
+NO_CACHE ALIGNED_VAR(4)
 static sama_eth_tx_descriptor_t __eth_td2[1];
 
+NO_CACHE
 static uint32_t __eth_rb[SAMA_MAC_RECEIVE_BUFFERS][BUFFER_SIZE];
+NO_CACHE
 static uint32_t __eth_tb[SAMA_MAC_TRANSMIT_BUFFERS][BUFFER_SIZE];
 
 /*===========================================================================*/

@@ -66,7 +66,7 @@
                 .set    MON_S_SCR,      (SCR_IRQ)           // (SCR_EA|SCR_IRQ)
                 .set    MON_NS_SCR,     (SCR_FIQ|SCR_NS)
 
-                .set    SMC_SVC_INTR,   -1
+                .set    SMC_SVC_INTR,   -4
 
                 .comm   sm_secctx, 20*4, 4
                 .comm   sm_nsecctx, 20*4, 4
@@ -126,6 +126,7 @@
  * Monitor vectors
  */
 				.global _monitor_vectors
+				.balign 32
 _monitor_vectors:
                 b   .           // Reset vector, not used
                 b   .           // Undefined instruction, not used
@@ -281,7 +282,7 @@ _ns_trampoline:
                 cps     #MODE_SYS
 
                 ldr     r0, =#0
-                mov     r2, r0
+/*              mov     r2, r0  */              // r2 could contain the address of the fdt
                 mov     r3, r0
                 mov     r4, r0
                 mov     r5, r0

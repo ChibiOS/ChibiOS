@@ -15,24 +15,17 @@
 */
 
 /**
- * @file    SAMA5D2x/sama_trng.h
- * @brief   SAMA TRNG support macros and structures.
+ * @file    WDGv1/hal_wdg_lld.h
+ * @brief   WDG Driver subsystem low level driver header.
  *
- * @addtogroup SAMA5D2x_TRNG
+ * @addtogroup WDG
  * @{
  */
 
-#ifndef SAMA_TRNG_LLD_H
-#define SAMA_TRNG_LLD_H
+#ifndef HAL_WDG_LLD_H
+#define HAL_WDG_LLD_H
 
-/**
- * @brief   Using the TRNG driver.
- */
-#if !defined(HAL_USE_TRNG) || defined(__DOXYGEN__)
-#define HAL_USE_TRNG                           FALSE
-#endif
-
-#if (HAL_USE_TRNG) || defined(__DOXYGEN__)
+#if (HAL_USE_WDG == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -41,6 +34,15 @@
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
+/**
+ * @name    Configuration options
+ * @{
+ */
+/*
+ * WDG driver system settings.
+ */
+#define SAMA_WDG_IRQ_PRIORITY       4
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -49,33 +51,64 @@
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
-
 /**
- * @brief   Driver state machine possible states.
- */
+  * @brief   Type of an WDG event.
+  */
 typedef enum {
-  TRNG_UNINIT = 0,                  /**< Not initialized.                   */
-  TRNG_STOP = 1,                    /**< Stopped.                           */
-  TRNG_READY = 2                    /**< Ready.                             */
-} trngstate_t;
+  WDG_ERROR = 0,                          /** Watchdog fault error.          */
+  WDG_UNDERFLOW = 1                       /** Watchdog underflow error.      */
+} wdgevent_t;
 
 /**
- * @brief   Type of a structure representing an CLASSD driver.
+ * @brief   Type of a structure representing an WDG driver.
  */
-typedef struct TRNGDriver TRNGDriver;
+typedef struct WDGDriver WDGDriver;
 
 /**
- * @brief   Structure representing an TRNG driver.
+  * @brief   Type of a generic WDG callback.
+  */
+typedef void (*wdgcb_t)(WDGDriver *wdgp, wdgevent_t event);
+
+/**
+ * @brief   Driver configuration structure.
+ * @note    It could be empty on some architectures.
  */
-struct TRNGDriver {
+typedef struct {
+  /**
+   * @brief   Callback pointer.
+   */
+  wdgcb_t                   callback;
+  /**
+   * @brief   Configuration of the WDT modes.
+   */
+  uint32_t                  mode;
+  /**
+   * @brief   Configuration of the WDT counter.
+   */
+  uint32_t                  counter;
+  /**
+   * @brief   Configuration of the WDT delta.
+   */
+  uint32_t                  delta;
+} WDGConfig;
+
+/**
+ * @brief   Structure representing an WDG driver.
+ */
+struct WDGDriver {
   /**
    * @brief   Driver state.
    */
-  trngstate_t               state;
+  wdgstate_t                state;
+  /**
+   * @brief   Current configuration data.
+   */
+  const WDGConfig           *config;
+  /* End of the mandatory fields.*/
   /**
    * @brief   Pointer to the WDT registers block.
    */
-  Trng                      *trng;
+  Wdt                       *wdg;
 };
 
 /*===========================================================================*/
@@ -86,21 +119,23 @@ struct TRNGDriver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-extern TRNGDriver TRNGD0;
+#if !defined(__DOXYGEN__)
+extern WDGDriver WDGD0;
+#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void trngInit(void);
-  void trngStart(TRNGDriver *trngp);
-  void trngStop(TRNGDriver *trngp);
-  uint32_t trngGetRandomNumber(TRNGDriver *trngp);
+  void wdg_lld_init(void);
+  void wdg_lld_start(WDGDriver *wdgp);
+  void wdg_lld_stop(WDGDriver *wdgp);
+  void wdg_lld_reset(WDGDriver *wdgp);
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* HAL_USE_TRNG */
+#endif /* HAL_USE_WDG == TRUE */
 
-#endif /* SAMA_TRNG_LLD_H */
+#endif /* HAL_WDG_LLD_H */
 
 /** @} */

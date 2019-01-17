@@ -95,9 +95,9 @@ OSAL_IRQ_HANDLER(dmaHandler) {
   OSAL_IRQ_PROLOGUE();
 
 #if SAMA_HAL_IS_SECURE
-  Xdmac *xdmac = XDMAC0;
-#else
   Xdmac *xdmac = XDMAC1;
+#else
+  Xdmac *xdmac = XDMAC0;
 #endif /* SAMA_HAL_IS_SECURE */
 
   uint32_t chan, gis;
@@ -137,10 +137,10 @@ OSAL_IRQ_HANDLER(dmaHandler) {
 void dmaInit(void) {
 
 #if SAMA_HAL_IS_SECURE
-  Xdmac *xdmac = XDMAC0;
-  mtxConfigPeriphSecurity(MATRIX0, ID_XDMAC0, SECURE_PER);
-#else
   Xdmac *xdmac = XDMAC1;
+  mtxConfigPeriphSecurity(MATRIX0, ID_XDMAC1, SECURE_PER);
+#else
+  Xdmac *xdmac = XDMAC0;
 #endif /* SAMA_HAL_IS_SECURE */
 
   uint8_t chan;
@@ -160,9 +160,9 @@ void dmaInit(void) {
 
   /* Setting aic source handler */
 #if SAMA_HAL_IS_SECURE
-  aicSetSourceHandler(ID_XDMAC0, dmaHandler);
-#else
   aicSetSourceHandler(ID_XDMAC1, dmaHandler);
+#else
+  aicSetSourceHandler(ID_XDMAC0, dmaHandler);
 #endif /* SAMA_HAL_IS_SECURE */
 }
 
@@ -248,13 +248,13 @@ sama_dma_channel_t* dmaChannelAllocate(uint32_t priority,
 
   /* Setting AIC and enabling DMA clocks required by the current channel set.*/
 #if SAMA_HAL_IS_SECURE
-    aicSetSourcePriority(ID_XDMAC0, priority);
-    aicEnableInt(ID_XDMAC0);
-    pmcEnableXDMAC0();
-#else
     aicSetSourcePriority(ID_XDMAC1, priority);
     aicEnableInt(ID_XDMAC1);
     pmcEnableXDMAC1();
+#else
+    aicSetSourcePriority(ID_XDMAC0, priority);
+    aicEnableInt(ID_XDMAC0);
+    pmcEnableXDMAC0();
 #endif /* SAMA_HAL_IS_SECURE */
 
   /* Enabling channel's interrupt */
@@ -289,6 +289,10 @@ void dmaChannelRelease(sama_dma_channel_t *dmachp) {
 
   /* Disables interrupt */
   (dmachp)->xdmac->XDMAC_GID = XDMAC_GID_ID0 << ((dmachp)->chid);
+
+  /* Clear dma descriptor */
+  (dmachp)->xdmac->XDMAC_CHID[((dmachp)->chid)].XDMAC_CNDA = 0;
+  (dmachp)->xdmac->XDMAC_CHID[((dmachp)->chid)].XDMAC_CNDC = 0;
 
   /* Marks the stream as not allocated.*/
   (dmachp)->state = SAMA_DMA_FREE;

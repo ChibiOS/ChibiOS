@@ -165,8 +165,28 @@ cryerror_t sama_aes_lld_process_dma(CRYDriver *cryp,  aesparams *params,
 	cryerror_t ret;
 
 	osalDbgAssert(cryp->thread == NULL, "already waiting");
+  osalDbgAssert(!((uint32_t) in & (L1_CACHE_BYTES - 1)), "in address not cache aligned");
+  osalDbgAssert(!((uint32_t) out & (L1_CACHE_BYTES - 1)), "out address not cache aligned");
+
+#if 0
+  osalDbgAssert(!(indata_len & (L1_CACHE_BYTES - 1)), "size not multiple of cache line");
+#endif
+
+  /*
+   * If size is not multiple of cache line, clean cache region is required.
+   * TODO: remove when size assert works
+   */
+  if (indata_len & (L1_CACHE_BYTES - 1)) {
+    cacheCleanRegion((uint8_t *) out, indata_len);
+  }
 
 	osalMutexLock(&cryp->mutex);
+
+  cacheCleanRegion((uint8_t *) in, indata_len);
+
+  cryp->out = out;
+  cryp->in = in;
+  cryp->len = indata_len;
 
 	//set chunk size
 	cryp->dmachunksize = DMA_CHUNK_SIZE_4;

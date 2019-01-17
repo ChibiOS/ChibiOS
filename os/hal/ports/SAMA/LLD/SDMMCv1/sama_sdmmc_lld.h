@@ -25,7 +25,7 @@
 #ifndef SAMA_SDMMC_LLD_H
 #define SAMA_SDMMC_LLD_H
 
-#if (HAL_USE_SDMMC == TRUE) || defined(__DOXYGEN__)
+#if (SAMA_USE_SDMMC == TRUE) || defined(__DOXYGEN__)
 
 #include "ch_sdmmc.h"
 
@@ -76,8 +76,6 @@ typedef struct {
 	sdmmcslots_t slot_id;
 
 	uint8_t * bp;
-	uint8_t * data_buf;
-	uint32_t 	data_buf_size;
 
 	uint32_t * dma_table;
 	uint32_t   dma_table_size;
@@ -87,7 +85,7 @@ typedef struct {
 
 struct SamaSDMMCDriver
 {
-	sdmmcstate_t                 		state;
+	volatile sdmmcstate_t        		state;
 	const SamaSDMMCConfig            *config;
 
 	Sdmmc * regs;                 /* set of SDMMC hardware registers */
@@ -160,7 +158,7 @@ bool sdmmcGetInstance(uint8_t index, SdmmcDriver **sdmmcp)  ;
 }
 #endif
 
-#endif /* HAL_USE_SDMMC == TRUE */
+#endif /* SAMA_USE_SDMMC == TRUE */
 
 #endif /* SAMA_SDMMC_LLD_H */
 

@@ -15,33 +15,37 @@
 */
 
 /**
- * @file    SAMA5D2x/sama_trng.c
- * @brief   SAMA TRNG support code.
+ * @file    hal_trng_lld.c
+ * @brief   STM32 TRNG subsystem low level driver source.
  *
- * @addtogroup SAMA5D2x_TRNG
+ * @addtogroup TRNG
  * @{
  */
 
 #include "hal.h"
 
-#if (HAL_USE_TRNG) || defined(__DOXYGEN__)
+#if (HAL_USE_TRNG == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Driver local macros.                                                      */
-/*===========================================================================*/
-
-/*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
+
+/**
+ * @brief   TRNGD0 driver identifier.
+ */
+#if (SAMA_TRNG_USE_TRNG0 == TRUE) || defined(__DOXYGEN__)
 TRNGDriver TRNGD0;
+#endif
 
 /*===========================================================================*/
-/* Driver local variables.                                                   */
+/* Driver local variables and types.                                         */
 /*===========================================================================*/
+
+static const TRNGConfig default_cfg = {0};
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
@@ -61,128 +65,109 @@ TRNGDriver TRNGD0;
  * @notapi
  */
 void trng_lld_init(void) {
+
+#if SAMA_TRNG_USE_TRNG0 == TRUE
+
 #if SAMA_HAL_IS_SECURE
   mtxConfigPeriphSecurity(MATRIX1, ID_TRNG, SECURE_PER);
 #endif /* SAMA_HAL_IS_SECURE */
+
   /* Driver initialization.*/
-  TRNGD0.state    = TRNG_STOP;
-  TRNGD0.trng     = TRNG;
+  trngObjectInit(&TRNGD0);
+  TRNGD0.trng = TRNG;
+#endif
 }
 
 /**
  * @brief   Configures and activates the TRNG peripheral.
  *
- * @param[in] trngp     pointer to the @p TRNGDriver object
+ * @param[in] trngp      pointer to the @p TRNGDriver object
  *
  * @notapi
  */
 void trng_lld_start(TRNGDriver *trngp) {
 
-  /* Configures the peripheral. */
-  if (trngp->state == TRNG_STOP) {
-
-    /* Enable the TRNG peripheral clock. */
-    pmcEnableTRNG0();
-
-    /* Enable the TRNG. */
-    trngp->trng->TRNG_CR = TRNG_CR_ENABLE | TRNG_CR_KEY_PASSWD;
+  /* There is no real configuration but setting up a valid pointer anyway.*/
+  if (trngp->config == NULL) {
+    trngp->config = &default_cfg;
   }
+
+  if (trngp->state == TRNG_STOP) {
+    /* Enables the peripheral.*/
+#if SAMA_TRNG_USE_TRNG0 == TRUE
+    if (&TRNGD0 == trngp) {
+      pmcEnableTRNG0();
+    }
+#endif
+  }
+  /* Configures the peripheral.*/
+  trngp->trng->TRNG_CR = TRNG_CR_ENABLE | TRNG_CR_KEY_PASSWD;
 }
 
 /**
  * @brief   Deactivates the TRNG peripheral.
  *
- * @param[in] trngp     pointer to the @p TRNGDriver object
+ * @param[in] trngp      pointer to the @p TRNGDriver object
  *
  * @notapi
  */
 void trng_lld_stop(TRNGDriver *trngp) {
 
   if (trngp->state == TRNG_READY) {
-    /* Disable the TRNG. */
+    /* Resets the peripheral.*/
     trngp->trng->TRNG_CR = TRNG_CR_KEY_PASSWD;
-    /* Disable the TRNG clock. */
-    pmcDisableTRNG0();
+
+    /* Disables the peripheral.*/
+#if SAMA_TRNG_USE_TRNG0 == TRUE
+    if (&TRNGD0 == trngp) {
+      pmcDisableTRNG0();
+    }
+#endif
   }
 }
 
 /**
- * @brief   Get random number from TRNG.
+ * @brief   True random numbers generator.
+ * @note    The function is blocking and likely performs polled waiting
+ *          inside the low level implementation.
  *
- * @param[in] trngp     pointer to the @p TRNGDriver object
- * @return    TRNG_ODATA  content of the TRNG_ODATA register
- *
- * @notapi
- */
-uint32_t trng_lld_get_random_number(TRNGDriver *trngp) {
-
-  while (!(trngp->trng->TRNG_ISR & TRNG_ISR_DATRDY));
-  return trngp->trng->TRNG_ODATA;
-}
-
-/**
- * @brief   TRNG driver initialization.
- *
- * @notapi
- */
-void trngInit(void) {
-
-  trng_lld_init();
-}
-
-/**
- * @brief   Configures and activates the TRNG peripheral.
- *
- * @param[in] trngp     pointer to the @p TRNGDriver object
+ * @param[in] trngp             pointer to the @p TRNGDriver object
+ * @param[in] size              size of output buffer
+ * @param[out] out              output buffer
+ * @return                      The operation status.
+ * @retval false                if a random number has been generated.
+ * @retval true                 if an HW error occurred.
  *
  * @api
  */
-void trngStart(TRNGDriver *trngp) {
+bool trng_lld_generate(TRNGDriver *trngp, size_t size, uint8_t *out) {
 
-  osalDbgCheck(trngp != NULL);
+  while (true) {
+    uint32_t r, tmo;
+    size_t i;
 
-  osalSysLock();
-  osalDbgAssert((trngp->state == TRNG_STOP) ||
-                (trngp->state == TRNG_READY), "invalid state");
-  trng_lld_start(trngp);
-  trngp->state = TRNG_READY;
-  osalSysUnlock();
-}
+    /* Waiting for a random number in data register.*/
+    tmo = SAMA_DATA_FETCH_ATTEMPTS;
+    while ((tmo > 0) && ((trngp->trng->TRNG_ISR & TRNG_ISR_DATRDY) == 0)) {
+      tmo--;
+      if (tmo == 0) {
+        return true;
+      }
+    }
 
-/**
- * @brief   Deactivates the TRNG peripheral.
- *
- * @param[in] trngp    pointer to the @p TRNGDriver object
- *
- * @api
- */
-void trngStop(TRNGDriver *trngp) {
+    /* Getting the generated random number.*/
+    r = trngp->trng->TRNG_ODATA;
 
-  osalDbgCheck(trngp != NULL);
-
-  osalSysLock();
-  osalDbgAssert((trngp->state == TRNG_STOP) ||
-                (trngp->state == TRNG_READY), "invalid state");
-
-  trng_lld_stop(trngp);
-  trngp->state = TRNG_STOP;
-  osalSysUnlock();
-}
-
-/**
- * @brief   Get random number from TRNG.
- *
- * @param[in] trngp     pointer to the @p CLASSDDriver object
- * @return    num       random number generated
- *
- * @api
- */
-uint32_t trngGetRandomNumber(TRNGDriver *trngp) {
-
-  osalDbgCheck(trngp != NULL);
-
-  uint32_t num = trng_lld_get_random_number(trngp);
-  return num;
+    /* Writing in the output buffer.*/
+    for (i = 0; i < sizeof (uint32_t) / sizeof (uint8_t); i++) {
+      *out++ = (uint8_t)r;
+      r = r >> 8;
+      size--;
+      if (size == 0) {
+        return false;
+      }
+    }
+  }
 }
 
 #endif /* HAL_USE_TRNG == TRUE */

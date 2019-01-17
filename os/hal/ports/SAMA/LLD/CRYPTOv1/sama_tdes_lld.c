@@ -142,10 +142,31 @@ cryerror_t sama_tdes_lld_dma(CRYDriver *cryp, tdes_config_t *params,
 		bool encrypt, const uint8_t *data, size_t data_len, uint8_t * out,
 		const uint8_t *iv) {
 
+  osalDbgAssert(!((uint32_t) data & (L1_CACHE_BYTES - 1)), "data address not cache aligned");
+  osalDbgAssert(!((uint32_t) out & (L1_CACHE_BYTES - 1)), "out address not cache aligned");
+
+#if 0
+  osalDbgAssert(!(data_len & (L1_CACHE_BYTES - 1)), "size not multiple of cache line");
+#endif
+
+  /*
+   * If size is not multiple of cache line, clean cache region is required.
+   * TODO: remove when size assert works
+   */
+  if (data_len & (L1_CACHE_BYTES - 1)) {
+    cacheCleanRegion((uint8_t *) out, data_len);
+  }
+
 	uint32_t mode = 0;
 	uint32_t *vectors = (uint32_t *) iv;
 
 	osalMutexLock(&cryp->mutex);
+
+  cacheCleanRegion((uint8_t *) data, data_len);
+
+  cryp->out = out;
+  cryp->in = data;
+  cryp->len = data_len;
 
 	cryp->dmachunksize = DMA_CHUNK_SIZE_1;
 

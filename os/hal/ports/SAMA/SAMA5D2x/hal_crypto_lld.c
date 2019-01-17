@@ -1528,7 +1528,7 @@ cryerror_t cry_lld_HMACSHA256_update(CRYDriver *cryp,
                                      const uint8_t *in) {
   uint8_t i;
   cryerror_t res;
-  uint32_t buffer[16];
+  CACHE_ALIGNED uint32_t buffer[16];
 
   if (hmacsha256ctxp->kipad == 0)
   {
@@ -1576,8 +1576,8 @@ cryerror_t cry_lld_HMACSHA256_final(CRYDriver *cryp,
 
   uint8_t i;
   cryerror_t res;
-  uint32_t buffer[16]; //max block size for sha256
-  uint8_t digest[32];
+  CACHE_ALIGNED uint32_t buffer[16]; //max block size for sha256
+  CACHE_ALIGNED uint8_t digest[32];
 
   //H( k1pad || m )
 
@@ -1668,7 +1668,7 @@ cryerror_t cry_lld_HMACSHA512_update(CRYDriver *cryp,
 
   cryerror_t res;
   uint8_t i;
-  uint32_t buffer[32];
+CACHE_ALIGNED uint32_t buffer[32];
 
   if (hmacsha512ctxp->kipad == 0)
   {
@@ -1714,8 +1714,8 @@ cryerror_t cry_lld_HMACSHA512_final(CRYDriver *cryp,
 
   uint8_t i;
   cryerror_t res;
-  uint32_t buffer[32]; //max block size for sha256
-  uint8_t digest[64];
+  CACHE_ALIGNED uint32_t buffer[32]; //max block size for sha256
+  CACHE_ALIGNED uint8_t digest[64];
 
   //H( k1pad || m )
 

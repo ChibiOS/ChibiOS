@@ -80,17 +80,6 @@
 /*===========================================================================*/
 
 /**
- * @brief   FileStream specific methods.
- */
-#define _rtc_driver_methods                                                 \
-  _file_stream_methods
-
-/**
- * @brief   Type of an RTC alarm number.
- */
-typedef uint32_t rtcalarm_t;
-
-/**
   * @brief   Type of an RTC event.
   */
 typedef enum {
@@ -106,7 +95,7 @@ typedef void (*rtccb_t)(RTCDriver *rtcp, rtcevent_t event);
 /**
  * @brief   Type of a structure representing an RTC alarm time stamp.
  */
-typedef struct {
+typedef struct hal_rtc_alarm {
   /**
    * @brief   Type of an alarm as encoded in RTC registers.
    */
@@ -114,37 +103,14 @@ typedef struct {
   uint32_t                  calralrm;
 } RTCAlarm;
 
-#if RTC_HAS_STORAGE || defined(__DOXYGEN__)
 /**
- * @extends FileStream
- *
- * @brief   @p RTCDriver virtual methods table.
+ * @brief   Implementation-specific @p RTCDriver fields.
  */
-struct RTCDriverVMT {
-  _rtc_driver_methods
-};
-#endif
-
-/**
- * @brief   Structure representing an RTC driver.
- */
-struct RTCDriver {
-#if RTC_HAS_STORAGE || defined(__DOXYGEN__)
-  /**
-   * @brief Virtual Methods Table.
-   */
-  const struct RTCDriverVMT *vmt;
-#endif
-  /* End of the mandatory fields.*/
-  /**
-   * @brief   Pointer to the RTC registers block.
-   */
-  Rtc               *rtc;
-  /**
-   * @brief   Callback pointer.
-   */
-  rtccb_t           callback;
-};
+#define rtc_lld_driver_fields                                               \
+  /* Pointer to the RTC registers block.*/                                  \
+  Rtc               *rtc;                                                   \
+  /* Callback pointer.*/                                                    \
+  rtccb_t           callback
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -181,13 +147,6 @@ struct RTCDriver {
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
-
-#if !defined(__DOXYGEN__)
-extern RTCDriver RTCD0;
-#if RTC_HAS_STORAGE
-extern struct RTCDriverVMT _rtc_lld_vmt;
-#endif
-#endif
 
 #ifdef __cplusplus
 extern "C" {

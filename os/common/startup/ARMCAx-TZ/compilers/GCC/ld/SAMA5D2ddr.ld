@@ -20,9 +20,9 @@
 MEMORY
 {
     flash : org = 0x27000000, len = 1M
-    ram0  : org = 0x27100000, len = 15M
-    ram1  : org = 0x00000000, len = 0
-    ram2  : org = 0x00000000, len = 0
+    ram0  : org = 0x27100000, len = 13M
+    ram1  : org = 0x27E00000, len = 1M
+    ram2  : org = 0x27F00000, len = 1M
     ram3  : org = 0x00000000, len = 0
     ram4  : org = 0x00000000, len = 0
     ram5  : org = 0x00000000, len = 0
@@ -39,6 +39,37 @@ REGION_ALIAS("DATA_RAM", ram0);
 
 /* RAM region to be used for BSS segment.*/
 REGION_ALIAS("BSS_RAM", ram0);
+
+/* RAM region to be used for lcd frame buffer. */
+REGION_ALIAS("FB_RAM", ram1);
+
+/* RAM region to be used for no cache area. */
+REGION_ALIAS("NO_CACHE", ram2);
+
+SECTIONS
+{
+    /* Special section for frame buffer area.*/
+    .fbram (NOLOAD) : ALIGN(4)
+    {
+        __fbram_base__ = .;
+        *(.fbram)
+        *(.fbram.*)
+        *(.bss.__fbram_*)
+        . = ALIGN(4);
+        __fbram_end__ = .;
+    } > FB_RAM
+    
+    /* Special section for no cache area.*/
+    .nocache (NOLOAD) : ALIGN(4)
+    {
+        __nocache_base__ = .;
+        *(.nocache)
+        *(.nocache.*)
+        *(.bss.__nocache_*)
+        . = ALIGN(4);
+        __nocache_end__ = .;
+    } > NO_CACHE
+}
 
 INCLUDE rules.ld
 

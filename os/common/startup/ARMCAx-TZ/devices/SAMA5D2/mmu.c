@@ -48,9 +48,17 @@
 #define SAMA_L2CC_ENABLE 0
 #endif
 
+#if (SAMA_L2CC_ASSUME_ENABLED && SAMA_L2CC_ENABLE)
+#error "These macros are mutually exclusive"
+#endif
+
 /*===========================================================================*/
 /* Module local definitions.                                                 */
 /*===========================================================================*/
+/*
+ * @brief    No cacheable memory start address.
+ */
+#define NO_CACHE_MEMORY_START_ADDR      ((uint8_t *) 0x27F00000)
 
 /*===========================================================================*/
 /* Module exported variables.                                                */
@@ -77,7 +85,7 @@
  * +---------+--+-+--+-+-----+--------+-------+-+------+--+-+-+-+---+
  * | section |NS|0|nG|S|AP[2]|TEX[2:0]|AP[1:0]| |domain|XN|C|B|1|PXN|
  * +---------+--+-+--+-+-----+--------+-------+-+------+--+-+-+-+---+
- * |         |0 |0|0 |1|0    |111     |11     |0|0000  |0 |1|1|1|0  | == normal, cacheable
+ * |         |0 |0|0 |0|0    |111     |11     |0|0000  |0 |1|1|1|0  | == normal, cacheable, write back, no write allocate
  * |         |0 |0|0 |1|0    |100     |11     |0|0000  |0 |0|0|1|0  | == normal, no-cacheable
  * |         |0 |0|0 |1|0    |000     |11     |0|0000  |0 |0|1|1|0  | == device
  * |         |0 |0|0 |1|0    |000     |11     |0|0000  |0 |0|0|1|0  | == strongly-ordered
@@ -164,7 +172,7 @@ void __core_init(void) {
                   TTE_SECT_MEM_CACHEABLE |
                   TTE_SECT_RW_ACCESS |
                   TTE_SECT_DOM(0x00) |
-                  TTE_SECT_S | TTE_TYPE_SECT;
+                  TTE_TYPE_SECT;
   /*
    * UDPHS RAM region
    *
@@ -264,7 +272,7 @@ void __core_init(void) {
                     TTE_SECT_MEM_CACHEABLE |
                     TTE_SECT_RW_ACCESS |
                     TTE_SECT_DOM(0x00) |
-                    TTE_SECT_S | TTE_TYPE_SECT;
+                    TTE_TYPE_SECT;
   /*
    * DDR AESB regions
    *
@@ -275,7 +283,7 @@ void __core_init(void) {
                     TTE_SECT_MEM_CACHEABLE |
                     TTE_SECT_RW_ACCESS |
                     TTE_SECT_DOM(0x00) |
-                    TTE_SECT_S | TTE_TYPE_SECT;
+                    TTE_TYPE_SECT;
   /*
    * EBI 1, 2 and 3 regions
    *
@@ -360,6 +368,9 @@ void __core_init(void) {
                   TTE_SECT_EXE_NEVER |
                   TTE_SECT_S | TTE_TYPE_SECT;
 
+  /* Make a NO CACHE AREA */
+  MMU_MemorySection((mmuTable + ((uint32_t)NO_CACHE_MEMORY_START_ADDR >> 20)), NORMAL, NON_CACHEABLE, NON_CACHEABLE);
+
   /* Invalidate TLB and L1 I cache
      Enable caches and MMU.*/
   MMU_InvalidateTLB();
@@ -395,11 +406,17 @@ void __core_init(void) {
 
     /* Invalidate and enable L2 cache.*/
     L2C_InvAllByWay();
+    L2C_310->AUX_CNT = L2CC_ACR_DPEN | L2CC_ACR_IPEN;
+
+    /* Prefetch control register. Double linefeed, instr and data enabled.*/
+    *((uint32_t *)((char *)L2C_310+0x0F60)) = 0x75800001;
     L2C_Enable();
     __DSB();
     __ISB();
   }
 #endif
+
+
 #endif
 }
 

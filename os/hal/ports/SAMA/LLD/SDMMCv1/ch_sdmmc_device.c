@@ -1,7 +1,7 @@
 #include <string.h>
 #include "hal.h"
 
-#if (HAL_USE_SDMMC == TRUE)
+#if (SAMA_USE_SDMMC == TRUE)
 
 #include "sama_sdmmc_lld.h"
 #include "ch_sdmmc_device.h"
@@ -148,29 +148,7 @@ uint8_t  sdmmc_device_lowlevelcfg(SdmmcDriver *driver)
 		break;
 	}
 
-
-	if (res) {
-		//check res
-		res = IS_CACHE_ALIGNED(driver->config->data_buf);
-		TRACE_DEBUG_2("check data buf %d %08x\r\n", res, driver->config->data_buf);
-		res &= IS_CACHE_ALIGNED(driver->config->data_buf_size);
-		TRACE_DEBUG_2("check data_buf_size %d %08x\r\n", res,
-				driver->config->data_buf_size);
-		res &= IS_CACHE_ALIGNED(driver->card.EXT);
-		TRACE_DEBUG_2("check libExt %d %08x\r\n", res, driver->card.EXT);
-
-
-		if (!res) {
-			TRACE_WARNING("WARNING: buffers are not aligned on data cache lines. Please fix this before enabling DMA.\n\r");
-			driver->use_polling = true;
-		} else {
-			driver->use_polling = false;
-		}
-
-	}
-
 	return res;
-
 }
 
 bool sdmmc_device_initialize(SdmmcDriver *driver)
@@ -890,8 +868,12 @@ void sdmmc_device_deInit(SdmmcDriver *drv)
  			 * anticipated reading had to be supported, the data
  			 * cache lines would need to be invalidated twice: both
  			 * now and upon Transfer Complete. */
- 			cacheInvalidateRegion(driver->cmd.pData, len);
-
+      if(((uint32_t) driver->cmd.pData & (L1_CACHE_BYTES - 1)) || (len & (L1_CACHE_BYTES - 1))) {
+        cacheCleanInvalidateRegion(driver->cmd.pData, len);
+      }
+      else {
+        cacheInvalidateRegion(driver->cmd.pData, len);
+      }
  		}
  	}
 
@@ -1310,7 +1292,7 @@ void sdmmc_device_deInit(SdmmcDriver *drv)
 
  	do {
 
- 		now = chVTTimeElapsedSinceX(time);
+ 		now =  chVTGetSystemTimeX(); /* chVTTimeElapsedSinceX(time) */
 
  		if (now >= end) {
  			f = 1;
@@ -1328,18 +1310,18 @@ void sdmmc_device_deInit(SdmmcDriver *drv)
  	}
  }
 
- void sdmmc_device_checkTimeCount(SdmmcDriver *driver)
- {
- 	if (driver->timeout_elapsed != -1) {
+void sdmmc_device_checkTimeCount(SdmmcDriver *driver)
+{
+  if (driver->timeout_elapsed != -1) {
 
- 		driver->timeout_elapsed = 0;
- 				 driver->now = chVTTimeElapsedSinceX( driver->time);
- 					 if (driver->now >= driver->timeout_ticks ) {
- 						 driver->timeout_elapsed = 1;
- 					 }
+    driver->timeout_elapsed = 0;
+    driver->now = chVTTimeElapsedSinceX(driver->time);
+    if (driver->now >= driver->timeout_ticks ) {
+      driver->timeout_elapsed = 1;
+    }
 
- 	}
- }
+  }
+}
 
  static void calibrate_zout(Sdmmc * regs)
  {
@@ -1575,12 +1557,6 @@ static uint8_t sdmmc_build_dma_table( SdmmcDriver *driver )
 		    line[1], line[0] & SDMMC_DMA0DL_ATTR_END ? '.' : ' ');
 #endif
 	}
-	/* Clean the underlying cache lines, to ensure the DMA gets our table
-	 * when it reads from RAM.
-	 * CPU access to the table is write-only, peripheral/DMA access is read-
-	 * only, hence there is no need to invalidate. */
-	cacheCleanRegion(driver->config->dma_table, (uint32_t)line - (uint32_t)driver->config->dma_table);
-
 	return rc;
 }
 

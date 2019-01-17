@@ -30,11 +30,16 @@
 #define L1_CACHE_BYTES  32u
 #define L2_CACHE_BYTES  32u
 
+#define CACHE_ALIGNED   ALIGNED_VAR(L1_CACHE_BYTES)
+#define NO_CACHE        __attribute__((section (".nocache")))
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
   extern void cacheInvalidateRegion(void *start, uint32_t length);
   extern void cacheCleanRegion(void *start, uint32_t length);
+  extern void cacheCleanInvalidateRegion(void *start, uint32_t length);
 #ifdef __cplusplus
 }
 #endif

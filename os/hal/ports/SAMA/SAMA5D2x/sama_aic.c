@@ -161,7 +161,7 @@ void aicSetSourcePriority(uint32_t source, uint8_t priority) {
   /* Disable the interrupt first */
   aic->AIC_IDCR = AIC_IDCR_INTD;
   /* Configure priority */
-  aic->AIC_SMR = AIC_SMR_PRIOR(priority);
+  aic->AIC_SMR |= AIC_SMR_PRIOR(priority);
   /* Clear interrupt */
   aic->AIC_ICCR = AIC_ICCR_INTCLR;
   /* Enable write protection */
@@ -188,7 +188,7 @@ void aicSetIntSourceType(uint32_t source, uint8_t type) {
   /* Disable the interrupt first */
   aic->AIC_IDCR = AIC_IDCR_INTD;
   /* Configure priority */
-  aic->AIC_SMR = AIC_SMR_SRCTYPE(type);
+  aic->AIC_SMR |= AIC_SMR_SRCTYPE(type);
   /* Clear interrupt */
   aic->AIC_ICCR = AIC_ICCR_INTCLR;
   /* Enable write protection */

@@ -22,6 +22,20 @@
  * @{
  */
 
+/**
+ * @brief   Constructors invocation switch.
+ */
+#if !defined(CRT0_CALL_CONSTRUCTORS) || defined(__DOXYGEN__)
+#define CRT0_CALL_CONSTRUCTORS              TRUE
+#endif
+
+/**
+ * @brief   Destructors invocation switch.
+ */
+#if !defined(CRT0_CALL_DESTRUCTORS) || defined(__DOXYGEN__)
+#define CRT0_CALL_DESTRUCTORS               TRUE
+#endif
+
 #if !defined(__DOXYGEN__)
 
                 .set    MODE_USR, 0x10
@@ -117,10 +131,38 @@ bssloop:
                  */
                 bl      __core_init
                 bl      __late_init
+#if 0 /* Constructors initialized after halInit() */
+#if CRT0_CALL_CONSTRUCTORS == TRUE
+                /* Constructors invocation.*/
+                ldr     r4, =__init_array_start
+                ldr     r5, =__init_array_end
+initloop:
+                cmp     r4, r5
+                bge     endinitloop
+                ldr     r1, [r4], #4
+                blx     r1
+                b       initloop
+endinitloop:
+#endif /* CRT0_CALL_CONSTRUCTORS */
+#endif /* if 0 */
                 /*
                  * Main program invocation.
                  */
                 bl      main
+
+#if CRT0_CALL_DESTRUCTORS == TRUE
+                /* Destructors invocation.*/
+                ldr     r4, =__fini_array_start
+                ldr     r5, =__fini_array_end
+finiloop:
+                cmp     r4, r5
+                bge     endfiniloop
+                ldr     r1, [r4], #4
+                blx     r1
+                b       finiloop
+endfiniloop:
+#endif
+
                 b       __default_exit
 
 #endif /* !defined(__DOXYGEN__) */

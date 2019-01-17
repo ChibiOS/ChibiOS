@@ -64,8 +64,10 @@
 
 /**@} */
 
+#ifndef GBC_DISABLE_AES_REFERENCE
 /* TODO: to delete */
 #define Aes wc_Aes
+#endif
 
 /**
   * @brief SAMA5D2 Family

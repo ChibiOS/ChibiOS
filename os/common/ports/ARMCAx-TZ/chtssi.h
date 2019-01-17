@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006..2018 Isidoro Orabona.
 
     This file is part of ChibiOS.
 
@@ -40,15 +40,16 @@
 #define TSSI_VERSION          0x01000000    /* 00 major, 000 minor, 000 build.*/
 
 /* Service registry errors as returned by smc.*/
-#define SMC_SVC_OK            MSG_OK        /* No error.*/
-#define SMC_SVC_INTR          (msg_t)-1     /* Service interrupted ( == MSG_TIMEOUT).*/
-#define SMC_SVC_NOENT         (msg_t)-2     /* No existent service.*/
-#define SMC_SVC_INVALID       (msg_t)-3     /* Invalid service parameter(s).*/
-#define SMC_SVC_BADH          (msg_t)-4     /* Invalid service handle.*/
-#define SMC_SVC_EXIST         (msg_t)-5     /* Service already exists.*/
-#define SMC_SVC_NHND          (msg_t)-6     /* No more services or
-                                               service resources.*/
-#define SMC_SVC_BUSY          (msg_t)-7     /* Service busy.*/
+#define SMC_SVC_OK            (int32_t)0      /* No error.*/
+#define SMC_SVC_INTR          (int32_t)-4     /* Service interrupted.*/
+#define SMC_SVC_NOENT         (int32_t)-2     /* No existent service.*/
+#define SMC_SVC_INVALID       (int32_t)-22    /* Invalid service
+                                                 parameter(s).*/
+#define SMC_SVC_BADH          (int32_t)-9     /* Invalid service handle.*/
+#define SMC_SVC_EXIST         (int32_t)-17    /* Service already exists.*/
+#define SMC_SVC_NHND          (int32_t)-23    /* No more services or
+                                                 service resources.*/
+#define SMC_SVC_BUSY          (int32_t)-16    /* Service busy.*/
 
 /* Special trusted service handles.*/
 #define TS_HND_TRAMP          ((ts_state_t *)0)  /* Trampoline service handle.*/
@@ -56,6 +57,11 @@
 #define TS_HND_STQRY          ((ts_state_t *)2)  /* Query status service handle.*/
 #define TS_HND_IDLE           ((ts_state_t *)3)  /* Idle service handle.*/
 #define TS_HND_VERSION        ((ts_state_t *)4)  /* Get version service handle.*/
+
+/* Fast call service bitmask.
+   Service handles that contain this mask access to
+   the fast call table.*/
+#define TS_FASTCALL_MASK      0xFFFF0000
 
 /* Services events event mask.*/
 #define EVT_DAEMON_REQ_ATN    EVENT_MASK(0)
@@ -115,6 +121,30 @@ typedef struct tssi_service_state {
   ts_params_area_t    ts_datap;
   uint32_t            ts_datalen;
 } ts_state_t;
+
+/**
+ * @brief   Fast call function.
+ */
+typedef msg_t (*fcfunc_t)(ts_params_area_t ts_datap, uint32_t ts_datalen);
+
+/**
+ * @brief   Type of a fast call descriptor.
+ */
+typedef struct {
+  /**
+   * @brief   Fast call service name.
+   */
+  const char  *name;
+
+  /* The code identifying the service.
+     Used for checking purpose, it must correspond to the
+     order that the service lists in the descriptor table.*/
+  uint32_t    code;
+  /**
+   * @brief   Fast call function pointer.
+   */
+  fcfunc_t    funcp;
+} fc_descriptor_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -187,6 +217,48 @@ typedef struct tssi_service_state {
  *          of a shared memory allocated from the non secure memory space.
  */
 #define TS_GET_DATALEN(svcp)  (((ts_state_t *)svcp)->ts_datalen)
+
+/** @} */
+
+/**
+ * @name    Fast call table definition macros.
+ * @note    Fast call services run at max priority level, so it is
+ *          mandatory that they last less time as possible.
+ * @note    Fast call services should be invoked using
+ *          the tsInvoke0 function in order to optimize the
+ *          performances.
+ * @note    Fast call services don't have a runtime state, so
+ *          the response management is in charge to the higher levels.
+ * @{
+ */
+
+/**
+ * @brief   Start of user fast call service table.
+ */
+#define TS_FC_CONF_TABLE_BEGIN                                 \
+  const fc_descriptor_t ts_fc_configs[] = {
+
+/**
+ * @brief   Entry of user fast call services table.
+ */
+#define TS_FC_CONF_TABLE_ENTRY(name, code, funcp)               \
+  {name, code, funcp},
+
+/**
+ * @brief   End of user fast call services table.
+ */
+#define TS_FC_CONF_TABLE_END                                    \
+};
+
+/**
+ * @brief   Accessor to the fast call service table entry i.
+ */
+#define TS_FC_CONF_TABLE(i) (&ts_fc_configs[i])
+
+/**
+ * @brief   Number of entries in the fast call service table.
+ */
+#define TS_FC_CONF_TABLE_N (sizeof ts_fc_configs / sizeof ts_fc_configs[0])
 
 /** @} */
 

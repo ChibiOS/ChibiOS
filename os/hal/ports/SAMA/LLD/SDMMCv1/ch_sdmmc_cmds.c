@@ -1,7 +1,7 @@
 #include <string.h>
 #include "hal.h"
 
-#if (HAL_USE_SDMMC == TRUE)
+#if (SAMA_USE_SDMMC == TRUE)
 
 #include "sama_sdmmc_lld.h"
 #include "ch_sdmmc_device.h"
@@ -145,7 +145,7 @@ uint8_t Cmd1(SdmmcDriver *drv, bool * hc)
 	/* Tell the MMC device which voltage the host supplies to the VDD line
 	 * (MMC card) or VCC line (e.MMC device).
 	 * TODO get this board-specific value from platform code. On the
-	 * SAMA5D2-XULT board, VDD is 3.3V ± 1%. */
+	 * SAMA5D2-XULT board, VDD is 3.3V ï¿½ 1%. */
 	arg |= SD_OCR_VDD_32_33 | SD_OCR_VDD_33_34;
 
 	/* Fill command */

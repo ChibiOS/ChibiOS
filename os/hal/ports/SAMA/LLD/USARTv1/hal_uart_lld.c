@@ -29,7 +29,12 @@
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
-
+/*
+ * @brief    NO CACHE attribute
+ */
+#if !defined(NO_CACHE)
+#define NO_CACHE                        __attribute__((section (".nocache")))
+#endif
 /*===========================================================================*/
 /* Driver local macros.                                                      */
 /*===========================================================================*/
@@ -140,9 +145,11 @@ UARTDriver FUARTD4;
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 /**
- * @brief Linked List view0 word aligned
+ * @brief    Linked List view0 word aligned
+ * @note The descriptor is word-aligned and the two least significant
+ *       register bits 1:0 are ignored.
  */
-  ALIGNED_VAR(4) static lld_view0 descriptor0;
+NO_CACHE ALIGNED_VAR(4) static lld_view0 descriptor0;
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
@@ -173,7 +180,10 @@ static uartflags_t translate_errors(uint32_t isr) {
  * @param[in] uartp     pointer to the @p UARTDriver object
  */
 static void uart_enter_rx_idle_loop(UARTDriver *uartp) {
-  
+
+  /* In this zone driver always cleans cache */
+  cacheCleanRegion((uint32_t *) &uartp->rxbuf, sizeof(uartp->rxbuf));
+
   /* Disabling BIE interrupt if rx callback is null */
   if (uartp->config->rxchar_cb == NULL)
     uartp->dmarx->xdmac->XDMAC_CHID[uartp->dmarx->chid].XDMAC_CID =  XDMAC_CID_BID;
@@ -365,11 +375,17 @@ static void uart_lld_serve_rx_end_irq(UARTDriver *uartp, uint32_t flags) {
 #endif
 
   if (uartp->rxstate == UART_RX_IDLE) {
+#if (SAMA_UART_CACHE_USER_MANAGED == FALSE)
+    cacheInvalidateRegion((uint32_t *)&uartp->rxbuf, sizeof(uartp->rxbuf));
+#endif
     /* Receiver in idle state, a callback is generated, if enabled, for each
        received character and then the driver stays in the same state.*/
     _uart_rx_idle_code(uartp);
   }
   else {
+#if (SAMA_UART_CACHE_USER_MANAGED == FALSE)
+    cacheInvalidateRegion(uartp->rxbufp, uartp->rxbytes);
+#endif
     /* Receiver in active state, a callback is generated, if enabled, after
        a completed transfer.*/
     dmaChannelDisable(uartp->dmarx);
@@ -1328,6 +1344,9 @@ void uart_lld_stop(UARTDriver *uartp) {
     }
 #endif
   }
+  uartp->txbufp = NULL;
+  uartp->rxbufp = NULL;
+  uartp->rxbytes = 0;
 }
 
 /**
@@ -1342,6 +1361,19 @@ void uart_lld_stop(UARTDriver *uartp) {
  * @notapi
  */
 void uart_lld_start_send(UARTDriver *uartp, size_t n, const void *txbuf) {
+
+  uartp->txbufp = txbuf;
+
+#if (SAMA_UART_CACHE_USER_MANAGED == FALSE)
+
+  osalDbgAssert(!((uint32_t) txbuf & (L1_CACHE_BYTES - 1)), "address not cache aligned");
+
+#if 0
+  osalDbgAssert(!(n & (L1_CACHE_BYTES - 1)), "size not multiple of cache line");
+#endif
+  /* Cache is enabled */
+  cacheCleanRegion((uint8_t *) txbuf, n);
+#endif /* SAMA_UART_CACHE_USER_MANAGED */
 
   /* TX DMA channel preparation.*/
   dmaChannelSetSource(uartp->dmatx, txbuf);
@@ -1377,6 +1409,8 @@ void uart_lld_start_send(UARTDriver *uartp, size_t n, const void *txbuf) {
  */
 size_t uart_lld_stop_send(UARTDriver *uartp) {
 
+  uartp->txbufp = NULL;
+
   dmaChannelDisable(uartp->dmatx);
 
   return dmaChannelGetTransactionSize(uartp->dmatx);
@@ -1394,6 +1428,26 @@ size_t uart_lld_stop_send(UARTDriver *uartp) {
  * @notapi
  */
 void uart_lld_start_receive(UARTDriver *uartp, size_t n, void *rxbuf) {
+
+  uartp->rxbufp = rxbuf;
+  uartp->rxbytes = n;
+
+#if (SAMA_UART_CACHE_USER_MANAGED == FALSE)
+
+  osalDbgAssert(!((uint32_t) rxbuf & (L1_CACHE_BYTES - 1)), "address not cache aligned");
+
+#if 0
+  osalDbgAssert(!(n & (L1_CACHE_BYTES - 1)), "size not multiple of cache line");
+#endif
+
+  /*
+   * If size is not multiple of cache line, clean cache region is required.
+   * TODO: remove when size assert works
+   */
+  if (n & (L1_CACHE_BYTES - 1)) {
+    cacheCleanRegion((uint8_t *) rxbuf, n);
+  }
+#endif /* SAMA_UART_CACHE_USER_MANAGED */
 
   /* Stopping previous activity (idle state).*/
   dmaChannelDisable(uartp->dmarx);
@@ -1437,7 +1491,11 @@ void uart_lld_start_receive(UARTDriver *uartp, size_t n, void *rxbuf) {
  * @notapi
  */
 size_t uart_lld_stop_receive(UARTDriver *uartp) {
+
   size_t n;
+
+  uartp->rxbufp = NULL;
+  uartp->rxbytes = 0;
 
   dmaChannelDisable(uartp->dmarx);
   n = dmaChannelGetTransactionSize(uartp->dmarx);

@@ -25,7 +25,7 @@
 #ifndef HAL_SPI_LLD_H
 #define HAL_SPI_LLD_H
 
-#if HAL_USE_SPI || defined(__DOXYGEN__)
+#if (HAL_USE_SPI == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -53,12 +53,55 @@
 #endif
 
 /**
+ * @brief   SPI0 Generic clock enable.
+ * @details If set to @p TRUE the support for GCLK SPI0 is included.
+ */
+#if !defined(SAMA_SPI0_USE_GCLK) || defined(__DOXYGEN__)
+#define SAMA_SPI0_USE_GCLK                  FALSE
+#endif
+
+/**
+ * @brief   SPI0 Generic clock source.
+ */
+#if !defined(SAMA_SPI0_GCLK_SOURCE) || defined(__DOXYGEN__)
+#define SAMA_SPI0_GCLK_SOURCE               SAMA_GCLK_MCK_CLK
+#endif
+
+/**
+ * @brief   SPI0 Generic clock div.
+ */
+#if !defined(SAMA_SPI0_GCLK_DIV) || defined(__DOXYGEN__)
+#define SAMA_SPI0_GCLK_DIV                  21
+#endif
+
+/**
  * @brief   SPI1 driver enable switch.
  * @details If set to @p TRUE the support for SPI1 is included.
- * @note    The default is @p FALSE.
  */
 #if !defined(SAMA_SPI_USE_SPI1) || defined(__DOXYGEN__)
 #define SAMA_SPI_USE_SPI1                   FALSE
+#endif
+
+/**
+ * @brief   SPI1 Generic clock enable.
+ * @details If set to @p TRUE the support for GCLK SPI1 is included.
+ */
+#if !defined(SAMA_SPI1_USE_GCLK) || defined(__DOXYGEN__)
+#define SAMA_SPI1_USE_GCLK                  FALSE
+#endif
+
+/**
+ * @brief   SPI1 Generic clock source.
+ */
+#if !defined(SAMA_SPI1_GCLK_SOURCE) || defined(__DOXYGEN__)
+#define SAMA_SPI1_GCLK_SOURCE               SAMA_GCLK_MCK_CLK
+#endif
+
+/**
+ * @brief   SPI1 Generic clock div.
+ */
+#if !defined(SAMA_SPI1_GCLK_DIV) || defined(__DOXYGEN__)
+#define SAMA_SPI1_GCLK_DIV                  21
 #endif
 
 /**
@@ -70,11 +113,55 @@
 #endif
 
 /**
+ * @brief   FSPI0 Generic clock enable.
+ * @details If set to @p TRUE the support for GCLK FSPI0 is included.
+ */
+#if !defined(SAMA_FSPI0_USE_GCLK) || defined(__DOXYGEN__)
+#define SAMA_FSPI0_USE_GCLK                 FALSE
+#endif
+
+/**
+ * @brief   FSPI0 Generic clock source.
+ */
+#if !defined(SAMA_FSPI0_GCLK_SOURCE) || defined(__DOXYGEN__)
+#define SAMA_FSPI0_GCLK_SOURCE              SAMA_GCLK_MCK_CLK
+#endif
+
+/**
+ * @brief   FSPI0 Generic clock div.
+ */
+#if !defined(SAMA_FSPI0_GCLK_DIV) || defined(__DOXYGEN__)
+#define SAMA_FSPI0_GCLK_DIV                 21
+#endif
+
+/**
  * @brief   SPI FLEXCOM1 driver enable switch.
  * @details If set to @p TRUE the support for FLEXCOM1 is included.
  */
 #if !defined(SAMA_SPI_USE_FLEXCOM1) || defined(__DOXYGEN__)
 #define SAMA_SPI_USE_FLEXCOM1               FALSE
+#endif
+
+/**
+ * @brief   FSPI1 Generic clock enable.
+ * @details If set to @p TRUE the support for GCLK FSPI1 is included.
+ */
+#if !defined(SAMA_FSPI1_USE_GCLK) || defined(__DOXYGEN__)
+#define SAMA_FSPI1_USE_GCLK                 FALSE
+#endif
+
+/**
+ * @brief   FSPI1 Generic clock source.
+ */
+#if !defined(SAMA_FSPI1_GCLK_SOURCE) || defined(__DOXYGEN__)
+#define SAMA_FSPI1_GCLK_SOURCE              SAMA_GCLK_MCK_CLK
+#endif
+
+/**
+ * @brief   FSPI1 Generic clock div.
+ */
+#if !defined(SAMA_FSPI1_GCLK_DIV) || defined(__DOXYGEN__)
+#define SAMA_FSPI1_GCLK_DIV                 21
 #endif
 
 /**
@@ -86,6 +173,28 @@
 #endif
 
 /**
+ * @brief   FSPI2 Generic clock enable.
+ * @details If set to @p TRUE the support for GCLK FSPI2 is included.
+ */
+#if !defined(SAMA_FSPI2_USE_GCLK) || defined(__DOXYGEN__)
+#define SAMA_FSPI2_USE_GCLK                 FALSE
+#endif
+
+/**
+ * @brief   FSPI2 Generic clock source.
+ */
+#if !defined(SAMA_FSPI2_GCLK_SOURCE) || defined(__DOXYGEN__)
+#define SAMA_FSPI2_GCLK_SOURCE              SAMA_GCLK_MCK_CLK
+#endif
+
+/**
+ * @brief   FSPI2 Generic clock div.
+ */
+#if !defined(SAMA_FSPI2_GCLK_DIV) || defined(__DOXYGEN__)
+#define SAMA_FSPI2_GCLK_DIV                 21
+#endif
+
+/**
  * @brief   SPI FLEXCOM3 driver enable switch.
  * @details If set to @p TRUE the support for FLEXCOM3 is included.
  */
@@ -94,11 +203,55 @@
 #endif
 
 /**
+ * @brief   FSPI3 Generic clock enable.
+ * @details If set to @p TRUE the support for GCLK FSPI3 is included.
+ */
+#if !defined(SAMA_FSPI3_USE_GCLK) || defined(__DOXYGEN__)
+#define SAMA_FSPI3_USE_GCLK                 FALSE
+#endif
+
+/**
+ * @brief   FSPI3 Generic clock source.
+ */
+#if !defined(SAMA_FSPI3_GCLK_SOURCE) || defined(__DOXYGEN__)
+#define SAMA_FSPI3_GCLK_SOURCE              SAMA_GCLK_MCK_CLK
+#endif
+
+/**
+ * @brief   FSPI3 Generic clock div.
+ */
+#if !defined(SAMA_FSPI3_GCLK_DIV) || defined(__DOXYGEN__)
+#define SAMA_FSPI3_GCLK_DIV                 21
+#endif
+
+/**
  * @brief   SPI FLEXCOM4 driver enable switch.
  * @details If set to @p TRUE the support for FLEXCOM4 is included.
  */
 #if !defined(SAMA_SPI_USE_FLEXCOM4) || defined(__DOXYGEN__)
 #define SAMA_SPI_USE_FLEXCOM4               FALSE
+#endif
+
+/**
+ * @brief   FSPI4 Generic clock enable.
+ * @details If set to @p TRUE the support for GCLK FSPI4 is included.
+ */
+#if !defined(SAMA_FSPI4_USE_GCLK) || defined(__DOXYGEN__)
+#define SAMA_FSPI4_USE_GCLK                 FALSE
+#endif
+
+/**
+ * @brief   FSPI4 Generic clock source.
+ */
+#if !defined(SAMA_FSPI4_GCLK_SOURCE) || defined(__DOXYGEN__)
+#define SAMA_FSPI4_GCLK_SOURCE              SAMA_GCLK_MCK_CLK
+#endif
+
+/**
+ * @brief   FSPI4 Generic clock div.
+ */
+#if !defined(SAMA_FSPI4_GCLK_DIV) || defined(__DOXYGEN__)
+#define SAMA_FSPI4_GCLK_DIV                 21
 #endif
 
 /**
@@ -150,6 +303,22 @@
 #define SAMA_SPI_FLEXCOM4_DMA_IRQ_PRIORITY  4
 #endif
 /** @} */
+
+/**
+ * @brief   SPI DMA error hook.
+ * @note    The default action for DMA errors is a system halt because DMA
+ *          error can only happen because programming errors.
+ */
+#if !defined(SAMA_SPI_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
+#define SAMA_SPI_DMA_ERROR_HOOK(spip)      osalSysHalt("DMA failure")
+#endif
+
+/**
+ * @brief   SPI cache managing.
+ */
+#if !defined(SAMA_SPI_CACHE_USER_MANAGED) || defined(__DOXYGEN__)
+#define SAMA_SPI_CACHE_USER_MANAGED        FALSE
+#endif
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -230,106 +399,36 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
-/**
- * @brief   Type of a structure representing an SPI driver.
- */
-typedef struct SPIDriver SPIDriver;
+#define spi_lld_driver_fields                                               \
+  /* Pointer to the SPIx registers block.*/                                 \
+  Spi                      *spi;                                            \
+  /* Pointer to the FLEXCOMx registers block.*/                             \
+  Flexcom                  *flexcom;                                        \
+  /* Receive DMA stream.*/                                                  \
+  sama_dma_channel_t       *dmarx;                                          \
+  /* Transmit DMA stream.*/                                                 \
+  sama_dma_channel_t       *dmatx;                                          \
+  /* RX DMA mode bit mask.*/                                                \
+  uint32_t                 rxdmamode;                                       \
+  /* TX DMA mode bit mask.*/                                                \
+  uint32_t                 txdmamode;                                       \
+  /* Pointer to the TX buffer location.*/                                   \
+  const uint8_t            *txbuf;                                          \
+  /* Pointer to the RX buffer location.*/                                   \
+  uint8_t                  *rxbuf;                                          \
+  /* Number of bytes in RX phase.*/                                         \
+  size_t                   rxbytes;
 
 /**
- * @brief   SPI notification callback type.
- *
- * @param[in] spip      pointer to the @p SPIDriver object triggering the
- *                      callback
+ * @brief   Low level fields of the SPI configuration structure.
  */
-typedef void (*spicallback_t)(SPIDriver *spip);
-
-/**
- * @brief   Driver configuration structure.
- */
-typedef struct {
-#if (SPI_SUPPORTS_CIRCULAR == TRUE) || defined(__DOXYGEN__)
-  /**
-   * @brief   Enables the circular buffer mode.
-   */
-  bool                      circular;
-#endif
-  /**
-   * @brief Operation complete callback or @p NULL.
-   */
-  spicallback_t             end_cb;
-  /* End of the mandatory fields.*/
-  /**
-   * @brief The chip select line number.
-   */
-  uint16_t                  npcs;
-  /**
-   * @brief SPI MR register initialization data.
-   */
-  uint32_t                  mr;
-  /**
-   * @brief SPI CSR register initialization data.
-   */
+#define spi_lld_config_fields                                               \
+  /* The chip select line number.*/                                         \
+  uint8_t                  npcs;                                            \
+  /* SPI MR register initialization data.*/                                 \
+  uint32_t                  mr;                                             \
+  /* SPI CSR register initialization data.*/                                \
   uint32_t                  csr;
-} SPIConfig;
-
-/**
- * @brief   Structure representing an SPI driver.
- * @note    Implementations may extend this structure to contain more,
- *          architecture dependent, fields.
- */
-struct SPIDriver {
-  /**
-   * @brief Driver state.
-   */
-  spistate_t                state;
-  /**
-   * @brief Current configuration data.
-   */
-  const SPIConfig           *config;
-#if SPI_USE_WAIT || defined(__DOXYGEN__)
-  /**
-   * @brief Waiting thread.
-   */
-  thread_reference_t        thread;
-#endif /* SPI_USE_WAIT */
-#if SPI_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
-  /**
-   * @brief Mutex protecting the bus.
-   */
-  mutex_t                   mutex;
-#endif /* SPI_USE_MUTUAL_EXCLUSION */
-#if defined(SPI_DRIVER_EXT_FIELDS)
-  SPI_DRIVER_EXT_FIELDS
-#endif
-  /* End of the mandatory fields.*/
-  /**
-   * @brief Pointer to the SPIx registers block.
-   */
-  Spi                      *spi;
-#if SAMA_SPI_USE_FLEXCOM
-  /**
-   * @brief Pointer to the FLEXCOMx registers block.
-   */
-  Flexcom                  *flexcom;
-#endif
-  /**
-   * @brief   Receive DMA stream.
-   */
-  sama_dma_channel_t       *dmarx;
-   /**
-    * @brief   Transmit DMA stream.
-    */
-  sama_dma_channel_t       *dmatx;
-  /**
-    * @brief   RX DMA mode bit mask.
-    */
-  uint32_t                 rxdmamode;
-  /**
-    * @brief   TX DMA mode bit mask.
-    */
-  uint32_t                 txdmamode;
-};
-
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -371,7 +470,7 @@ extern SPIDriver FSPID4;
 #ifdef __cplusplus
 extern "C" {
 #endif
-void spi_lld_init(void);
+  void spi_lld_init(void);
   void spi_lld_start(SPIDriver *spip);
   void spi_lld_stop(SPIDriver *spip);
   void spi_lld_select(SPIDriver *spip);
@@ -381,6 +480,7 @@ void spi_lld_init(void);
                         const void *txbuf, void *rxbuf);
   void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf);
   void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf);
+  uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame);
 
 #ifdef __cplusplus
 }

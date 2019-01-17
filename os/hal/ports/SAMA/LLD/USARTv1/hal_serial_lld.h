@@ -25,7 +25,7 @@
 #ifndef HAL_SERIAL_LLD_H
 #define HAL_SERIAL_LLD_H
 
-#if HAL_USE_SERIAL || defined(__DOXYGEN__)
+#if (HAL_USE_SERIAL == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */

@@ -106,8 +106,6 @@ static void rtc_enter_init(void) {
   /* Stop RTC_TIMR and RTC_CALR */
   RTCD0.rtc->RTC_CR |= RTC_CR_UPDCAL;
   RTCD0.rtc->RTC_CR |= RTC_CR_UPDTIM;
-  while ((RTCD0.rtc->RTC_SR & RTC_SR_ACKUPD) == 0)
-    ;
 }
 
 /**
@@ -364,8 +362,7 @@ void rtc_lld_init(void) {
 
 /**
  * @brief   Set current time.
- * @note    Fractional part will be silently ignored. There is no possibility
- *          to set it on STM32 platform.
+ * @note    Fractional part will be silently ignored.
  * @note    The function can be called from any context.
  *
  * @param[in] rtcp      pointer to RTC driver structure
@@ -384,14 +381,34 @@ void rtc_lld_set_time(RTCDriver *rtcp, const RTCDateTime *timespec) {
   /* Disable write protection */
 //  syscDisableWP();
 
+  /* Synchronization on a second periodic event polling the RTC_SR.SEC status bit */
+  wait: while ((rtcp->rtc->RTC_SR & RTC_SR_SEC) == 0);
+
   /* Entering a reentrant critical zone.*/
   sts = osalSysGetStatusAndLockX();
 
-  /* Synchronization on a second periodic event polling the RTC_SR.SEC status bit */
-  while ((rtcp->rtc->RTC_SR & RTC_SR_SEC) == 0)
-    ;
+  if (!(rtcp->rtc->RTC_SR & RTC_SR_SEC)) {
+    /* Leaving a reentrant critical zone.*/
+    osalSysRestoreStatusX(sts);
+    goto wait;
+  }
+
   /* Writing the registers.*/
   rtc_enter_init();
+
+  /* Leaving a reentrant critical zone.*/
+  osalSysRestoreStatusX(sts);
+
+  while ((RTCD0.rtc->RTC_SR & RTC_SR_ACKUPD) == 0);
+
+  /* Entering a reentrant critical zone.*/
+  sts = osalSysGetStatusAndLockX();
+
+  if (!(rtcp->rtc->RTC_SR & RTC_SR_SEC)) {
+    /* Leaving a reentrant critical zone.*/
+    osalSysRestoreStatusX(sts);
+    goto wait;
+  }
 
   /* Clear ACKUPD status flag */
   rtcp->rtc->RTC_SCCR = RTC_SCCR_ACKCLR;

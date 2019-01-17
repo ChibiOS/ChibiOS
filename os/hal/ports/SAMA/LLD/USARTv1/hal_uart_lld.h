@@ -277,6 +277,13 @@
 #if !defined(SAMA_UART_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
 #define SAMA_UART_DMA_ERROR_HOOK(uartp)    osalSysHalt("DMA failure")
 #endif
+
+/**
+ * @brief   UART cache managing.
+ */
+#if !defined(SAMA_UART_CACHE_USER_MANAGED) || defined(__DOXYGEN__)
+#define SAMA_UART_CACHE_USER_MANAGED       FALSE
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -564,7 +571,20 @@ struct UARTDriver {
   /**
    * @brief   Default receive buffer while into @p UART_RX_IDLE state.
    */
+  CACHE_ALIGNED
   volatile uint16_t         rxbuf;
+  /**
+   * @brief     Pointer to the TX buffer location.
+   */
+  const uint8_t            *txbufp;
+  /**
+   * @brief     Pointer to the RX buffer location.
+   */
+  uint8_t                  *rxbufp;
+  /**
+   * @brief     Number of bytes in RX phase.
+   */
+  size_t                   rxbytes;
 };
 
 /*===========================================================================*/

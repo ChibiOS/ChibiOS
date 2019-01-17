@@ -56,7 +56,6 @@
   spip->SPI_WPMR = SPI_WPMR_WPKEY_PASSWD;                                    \
 }
 
-
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -114,8 +113,8 @@ SPIDriver FSPID4;
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
-static const uint8_t dummytx = 0xFFU;
-static uint8_t dummyrx;
+static const CACHE_ALIGNED uint8_t dummytx = 0xFFU;
+CACHE_ALIGNED static uint8_t dummyrx;
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
@@ -142,6 +141,13 @@ static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t flags) {
   dmaChannelDisable(spip->dmatx);
   dmaChannelDisable(spip->dmarx);
 
+#if (SAMA_SPI_CACHE_USER_MANAGED == FALSE)
+  /* D-Cache is enabled */
+  /* No operation for dummyrx */
+  if ((uint32_t) spip->rxbuf != (uint32_t) &dummyrx)
+    cacheInvalidateRegion(spip->rxbuf, spip->rxbytes);
+#endif
+
   /* Portable SPI ISR code defined in the high level driver, note, it is
      a macro.*/
   _spi_isr_code(spip);
@@ -156,7 +162,6 @@ static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t flags) {
 static void spi_lld_serve_tx_interrupt(SPIDriver *spip, uint32_t flags) {
 
   /* DMA errors handling.*/
-
 #if defined(SAMA_SPI_DMA_ERROR_HOOK)
   (void)spip;
   if ((flags & (XDMAC_CIS_WBEIS | XDMAC_CIS_ROIS)) != 0) {
@@ -189,6 +194,7 @@ void spi_lld_init(void) {
   /* Driver initialization.*/
   spiObjectInit(&SPID0);
   SPID0.spi       = SPI0;
+  SPID0.flexcom   = NULL;
   SPID0.dmarx     = NULL;
   SPID0.dmatx     = NULL;
   SPID0.rxdmamode = XDMAC_CC_TYPE_PER_TRAN |
@@ -222,6 +228,7 @@ void spi_lld_init(void) {
   /* Driver initialization.*/
   spiObjectInit(&SPID1);
   SPID1.spi       = SPI1;
+  SPID1.flexcom   = NULL;
   SPID1.dmarx     = NULL;
   SPID1.dmatx     = NULL;
   SPID1.rxdmamode = XDMAC_CC_TYPE_PER_TRAN |
@@ -443,6 +450,15 @@ void spi_lld_start(SPIDriver *spip) {
                                        (sama_dmaisr_t)spi_lld_serve_tx_interrupt,
                                        (void *)spip);
       osalDbgAssert(spip->dmatx != NULL, "no channel allocated");
+
+#if SAMA_SPI0_USE_GCLK
+#if SAMA_SPI0_GCLK_DIV > 256
+    #error "SPI0 GCLK divider out of range"
+#endif
+      pmcConfigGclk(ID_SPI0, SAMA_SPI0_GCLK_SOURCE, SAMA_SPI0_GCLK_DIV);
+      pmcEnableGclk(ID_SPI0);
+#endif /* SAMA_SPI0_USE_GCLK */
+
     /* Enable SPI0 clock */
       pmcEnableSPI0();
     }
@@ -458,6 +474,15 @@ void spi_lld_start(SPIDriver *spip) {
                                        (sama_dmaisr_t)spi_lld_serve_tx_interrupt,
                                        (void *)spip);
       osalDbgAssert(spip->dmatx != NULL, "no channel allocated");
+
+#if SAMA_SPI1_USE_GCLK
+#if SAMA_SPI1_GCLK_DIV > 256
+    #error "SPI1 GCLK divider out of range"
+#endif
+      pmcConfigGclk(ID_SPI1, SAMA_SPI1_GCLK_SOURCE, SAMA_SPI1_GCLK_DIV);
+      pmcEnableGclk(ID_SPI1);
+#endif /* SAMA_SPI1_USE_GCLK */
+
     /* Enable SPI1 clock */
       pmcEnableSPI1();
     }
@@ -475,6 +500,15 @@ void spi_lld_start(SPIDriver *spip) {
       osalDbgAssert(spip->dmatx != NULL, "no channel allocated");
     /* Enabling SPI on FLEXCOM */
       spip->flexcom->FLEX_MR = FLEX_MR_OPMODE_SPI;
+
+#if SAMA_FSPI0_USE_GCLK
+#if SAMA_FSPI0_GCLK_DIV > 256
+    #error "FSPI0 GCLK divider out of range"
+#endif
+      pmcConfigGclk(ID_FLEXCOM0, SAMA_FSPI0_GCLK_SOURCE, SAMA_FSPI0_GCLK_DIV);
+      pmcEnableGclk(ID_FLEXCOM0);
+#endif /* SAMA_FSPI0_USE_GCLK */
+
     /* Enable FLEXCOM0 clock */
       pmcEnableFLEXCOM0();
     }
@@ -492,6 +526,15 @@ void spi_lld_start(SPIDriver *spip) {
       osalDbgAssert(spip->dmatx != NULL, "no channel allocated");
     /* Enabling SPI on FLEXCOM */
       spip->flexcom->FLEX_MR = FLEX_MR_OPMODE_SPI;
+
+#if SAMA_FSPI1_USE_GCLK
+#if SAMA_FSPI1_GCLK_DIV > 256
+    #error "FSPI1 GCLK divider out of range"
+#endif
+      pmcConfigGclk(ID_FLEXCOM1, SAMA_FSPI1_GCLK_SOURCE, SAMA_FSPI1_GCLK_DIV);
+      pmcEnableGclk(ID_FLEXCOM1);
+#endif /* SAMA_FSPI1_USE_GCLK */
+
     /* Enable FLEXCOM1 clock */
       pmcEnableFLEXCOM1();
     }
@@ -509,6 +552,15 @@ void spi_lld_start(SPIDriver *spip) {
       osalDbgAssert(spip->dmatx != NULL, "no channel allocated");
     /* Enabling SPI on FLEXCOM */
       spip->flexcom->FLEX_MR = FLEX_MR_OPMODE_SPI;
+
+#if SAMA_FSPI2_USE_GCLK
+#if SAMA_FSPI2_GCLK_DIV > 256
+    #error "FSPI2 GCLK divider out of range"
+#endif
+      pmcConfigGclk(ID_FLEXCOM2, SAMA_FSPI2_GCLK_SOURCE, SAMA_FSPI2_GCLK_DIV);
+      pmcEnableGclk(ID_FLEXCOM2);
+#endif /* SAMA_FSPI2_USE_GCLK */
+
     /* Enable FLEXCOM2 clock */
       pmcEnableFLEXCOM2();
     }
@@ -526,6 +578,15 @@ void spi_lld_start(SPIDriver *spip) {
       osalDbgAssert(spip->dmatx != NULL, "no channel allocated");
     /* Enabling SPI on FLEXCOM */
       spip->flexcom->FLEX_MR = FLEX_MR_OPMODE_SPI;
+
+#if SAMA_FSPI3_USE_GCLK
+#if SAMA_FSPI3_GCLK_DIV > 256
+    #error "FSPI3 GCLK divider out of range"
+#endif
+      pmcConfigGclk(ID_FLEXCOM3, SAMA_FSPI3_GCLK_SOURCE, SAMA_FSPI3_GCLK_DIV);
+      pmcEnableGclk(ID_FLEXCOM3);
+#endif /* SAMA_FSPI3_USE_GCLK */
+
     /* Enable FLEXCOM3 clock */
       pmcEnableFLEXCOM3();
     }
@@ -543,7 +604,16 @@ void spi_lld_start(SPIDriver *spip) {
       osalDbgAssert(spip->dmatx != NULL, "no channel allocated");
     /* Enabling SPI on FLEXCOM */
       spip->flexcom->FLEX_MR = FLEX_MR_OPMODE_SPI;
-    /* Enable FLEXCOM4 clock */
+
+#if SAMA_FSPI4_USE_GCLK
+#if SAMA_FSPI4_GCLK_DIV > 256
+    #error "FSPI4 GCLK divider out of range"
+#endif
+      pmcConfigGclk(ID_FLEXCOM4, SAMA_FSPI4_GCLK_SOURCE, SAMA_FSPI4_GCLK_DIV);
+      pmcEnableGclk(ID_FLEXCOM4);
+#endif /* SAMA_FSPI4_USE_GCLK */
+
+      /* Enable FLEXCOM4 clock */
       pmcEnableFLEXCOM4();
     }
 #endif /* SAMA_SPI_USE_FLEXCOM4 */
@@ -605,19 +675,31 @@ void spi_lld_stop(SPIDriver *spip) {
     if (&SPID0 == spip)
     /* Disable SPI0 clock */
       pmcDisableSPI0();
+#if SAMA_SPI0_USE_GCLK
+      pmcDisableGclk(ID_SPI0);
+#endif /* SAMA_SPI0_USE_GCLK */
 
-#endif /* SAMA_SPI_USE_SPI1 */
+#endif /* SAMA_SPI_USE_SPI0 */
+
 #if SAMA_SPI_USE_SPI1
     if (&SPID1 == spip)
     /* Disable SPI1 clock */
       pmcDisableSPI1();
 
-#endif /* SAMA_SPI_USE_FLEXCOM0 */
+#if SAMA_SPI1_USE_GCLK
+      pmcDisableGclk(ID_SPI1);
+#endif /* SAMA_SPI1_USE_GCLK */
+
+#endif /* SAMA_SPI_USE_SPI1 */
 
 #if SAMA_SPI_USE_FLEXCOM0
     if (&FSPID0 == spip)
     /* Disable FLEXCOM0 clock */
       pmcDisableFLEXCOM0();
+
+#if SAMA_FSPI0_USE_GCLK
+      pmcDisableGclk(ID_FLEXCOM0);
+#endif /* SAMA_FSPI0_USE_GCLK */
 
 #endif /* SAMA_SPI_USE_FLEXCOM0 */
 
@@ -626,12 +708,20 @@ void spi_lld_stop(SPIDriver *spip) {
     /* Disable FLEXCOM1 clock */
       pmcDisableFLEXCOM1();
 
+#if SAMA_FSPI1_USE_GCLK
+      pmcDisableGclk(ID_FLEXCOM1);
+#endif /* SAMA_FSPI1_USE_GCLK */
+
 #endif /* SAMA_SPI_USE_FLEXCOM1 */
 
 #if SAMA_SPI_USE_FLEXCOM2
     if (&FSPID2 == spip)
     /* Disable FLEXCOM2 clock */
       pmcDisableFLEXCOM2();
+
+#if SAMA_FSPI2_USE_GCLK
+      pmcDisableGclk(ID_FLEXCOM2);
+#endif /* SAMA_FSPI2_USE_GCLK */
 
 #endif /* SAMA_SPI_USE_FLEXCOM2 */
 
@@ -640,6 +730,10 @@ void spi_lld_stop(SPIDriver *spip) {
     /* Disable FLEXCOM3 clock */
       pmcDisableFLEXCOM3();
 
+#if SAMA_FSPI3_USE_GCLK
+      pmcDisableGclk(ID_FLEXCOM3);
+#endif /* SAMA_FSPI3_USE_GCLK */
+
 #endif /* SAMA_SPI_USE_FLEXCOM3 */
 
 #if SAMA_SPI_USE_FLEXCOM4
@@ -647,8 +741,16 @@ void spi_lld_stop(SPIDriver *spip) {
     /* Disable FLEXCOM4 clock */
       pmcDisableFLEXCOM4();
 
+#if SAMA_FSPI4_USE_GCLK
+      pmcDisableGclk(ID_FLEXCOM4);
+#endif /* SAMA_FSPI4_USE_GCLK */
+
 #endif /* SAMA_SPI_USE_FLEXCOM4 */
   }
+
+  spip->txbuf = NULL;
+  spip->rxbuf = NULL;
+  spip->rxbytes = 0;
 }
 
 #if (SPI_SELECT_MODE == (SPI_SELECT_MODE_LLD || SPI_SELECT_MODE_PAD ||        \
@@ -695,12 +797,35 @@ void spi_lld_unselect(SPIDriver *spip) {
 void spi_lld_exchange(SPIDriver *spip, size_t n,
                       const void *txbuf, void *rxbuf) {
 
+  spip->txbuf = txbuf;
+  spip->rxbuf = rxbuf;
+  spip->rxbytes = n;
+
+#if (SAMA_SPI_CACHE_USER_MANAGED == FALSE)
+
+  osalDbgAssert(!((uint32_t) txbuf & (L1_CACHE_BYTES - 1)), "txbuf address not cache aligned");
+  osalDbgAssert(!((uint32_t) rxbuf & (L1_CACHE_BYTES - 1)), "rxbuf address not cache aligned");
+
+  /*
+   * If size is not multiple of cache line, clean cache region is required.
+   */
+  if (n & (L1_CACHE_BYTES - 1)) {
+    cacheCleanRegion((uint8_t *) rxbuf, n);
+  }
+  /* Cache is enabled */
+  cacheCleanRegion((uint8_t *) txbuf, n);
+#endif /* SAMA_SPI_CACHE_USER_MANAGED */
+
   /* Writing channel */
+  /* Change mode to incremented address for dummytx */
+  dmaChannelSetMode(spip->dmatx, spip->txdmamode | XDMAC_CC_SAM_INCREMENTED_AM);
   dmaChannelSetSource(spip->dmatx, txbuf);
   dmaChannelSetDestination(spip->dmatx, &spip->spi->SPI_TDR);
   dmaChannelSetTransactionSize(spip->dmatx, n);
 
   /* Reading channel */
+  /* Change mode to incremented address */
+  dmaChannelSetMode(spip->dmarx, spip->rxdmamode | XDMAC_CC_DAM_INCREMENTED_AM);
   dmaChannelSetSource(spip->dmarx, &spip->spi->SPI_RDR);
   dmaChannelSetDestination(spip->dmarx, rxbuf);
   dmaChannelSetTransactionSize(spip->dmarx, n);
@@ -724,17 +849,37 @@ void spi_lld_exchange(SPIDriver *spip, size_t n,
  */
 void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
 
+  spip->txbuf = txbuf;
+  spip->rxbuf = &dummyrx;
+  spip->rxbytes = n;
+
+#if (SAMA_SPI_CACHE_USER_MANAGED == FALSE)
+
+  osalDbgAssert(!((uint32_t) txbuf & (L1_CACHE_BYTES - 1)), "address not cache aligned");
+
+  /* Cache is enabled */
+  cacheCleanRegion((uint8_t *) txbuf, n);
+#endif /* SAMA_SPI_CACHE_USER_MANAGED */
+
   /* Writing channel */
+
+  /* Change mode to incremented address for dummytx */
+  dmaChannelSetMode(spip->dmatx, spip->txdmamode | XDMAC_CC_SAM_INCREMENTED_AM);
+
   dmaChannelSetSource(spip->dmatx, txbuf);
   dmaChannelSetDestination(spip->dmatx, &spip->spi->SPI_TDR);
   dmaChannelSetTransactionSize(spip->dmatx, n);
 
   /* Reading channel */
+
+  /* Change mode from incremented to fixed address for dummyrx */
+  dmaChannelSetMode(spip->dmarx, spip->rxdmamode & ~XDMAC_CC_DAM_INCREMENTED_AM);
+
   dmaChannelSetSource(spip->dmarx, &spip->spi->SPI_RDR);
   dmaChannelSetDestination(spip->dmarx, &dummyrx);
   dmaChannelSetTransactionSize(spip->dmarx, n);
-  /* Enable write protection.  */
 
+  /* Enable channel.  */
   dmaChannelEnable(spip->dmarx);
   dmaChannelEnable(spip->dmatx);
 
@@ -759,18 +904,62 @@ void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
  */
 void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
 
+  spip->rxbuf = rxbuf;
+  spip->rxbytes = n;
+
+#if (SAMA_SPI_CACHE_USER_MANAGED == FALSE)
+
+  osalDbgAssert(!((uint32_t) rxbuf & (L1_CACHE_BYTES - 1)), "address not cache aligned");
+
+  /*
+   * If size is not multiple of cache line, clean cache region is required.
+   */
+  if (n & (L1_CACHE_BYTES - 1)) {
+    cacheCleanRegion((uint8_t *) rxbuf, n);
+  }
+#endif /* SAMA_SPI_CACHE_USER_MANAGED */
+
   /* Writing channel */
+  /* Change mode from incremented to fixed address for dummytx */
+  dmaChannelSetMode(spip->dmatx, spip->txdmamode & ~XDMAC_CC_SAM_INCREMENTED_AM);
+
   dmaChannelSetSource(spip->dmatx, &dummytx);
   dmaChannelSetDestination(spip->dmatx, &spip->spi->SPI_TDR);
   dmaChannelSetTransactionSize(spip->dmatx, n);
 
   /* Reading channel */
+  /* Change mode to incremented address */
+  dmaChannelSetMode(spip->dmarx, spip->rxdmamode | XDMAC_CC_DAM_INCREMENTED_AM);
+
   dmaChannelSetSource(spip->dmarx, &spip->spi->SPI_RDR);
   dmaChannelSetDestination(spip->dmarx, rxbuf);
   dmaChannelSetTransactionSize(spip->dmarx, n);
 
   dmaChannelEnable(spip->dmarx);
   dmaChannelEnable(spip->dmatx);
+}
+
+/**
+ * @brief   Exchanges one frame using a polled wait.
+ * @details This synchronous function exchanges one frame using a polled
+ *          synchronization method. This function is useful when exchanging
+ *          small amount of data on high speed channels, usually in this
+ *          situation is much more efficient just wait for completion using
+ *          polling than suspending the thread waiting for an interrupt.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] frame     the data frame to send over the SPI bus
+ * @return              The received data frame from the SPI bus.
+ */
+uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame) {
+
+  while((spip->spi->SPI_SR & SPI_SR_TXEMPTY) == 1);
+
+  spip->spi->SPI_TDR = (uint8_t) frame;
+
+  while((spip->spi->SPI_SR & SPI_SR_RDRF) == 0);
+
+  return (uint16_t) spip->spi->SPI_RDR;
 }
 
 #endif /* HAL_USE_SPI */

@@ -99,7 +99,7 @@ typedef struct _SdmmcCommand {
 	/** Command index */
 	uint8_t bCmd;
 	/** Command return status */
-	uint8_t bStatus;
+	volatile uint8_t bStatus;
 } sSdmmcCommand;
 
 

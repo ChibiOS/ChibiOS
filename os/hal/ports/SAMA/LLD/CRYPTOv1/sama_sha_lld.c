@@ -357,9 +357,21 @@ static uint32_t processBlockPolling(const uint8_t *data,uint32_t len, uint32_t b
 	return processed;
 }
 
-static uint32_t processBlockDMA(CRYDriver *cryp, const uint8_t *data,uint32_t len, uint32_t block_size)
-{
+static uint32_t processBlockDMA(CRYDriver *cryp, const uint8_t *data,uint32_t len, uint32_t block_size) {
+
+  osalDbgAssert(!((uint32_t) data & (L1_CACHE_BYTES - 1)), "data address not cache aligned");
+
+#if 0
+  osalDbgAssert(!(block_size & (L1_CACHE_BYTES - 1)), "size not multiple of cache line");
+#endif
+
 	uint32_t processed = 0;
+
+  cryp->out = 0;
+  cryp->in = data;
+  cryp->len = len;
+
+  cacheCleanRegion((uint8_t *) data, len);
 
 	while ((len - processed) >= block_size) {
 

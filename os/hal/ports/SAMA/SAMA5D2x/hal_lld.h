@@ -175,6 +175,17 @@
 
 #define SAMA_MCK_PLLADIV2       (1 << 12)   /**< PLLA is divided by 2.     */
 
+/**
+ * @name    PCM_PCR register bits definitions
+ * @{
+ */
+#define   SAMA_GCLK_SLOW_CLK    (0x0u << 8) /**< GCLK Slow clock is selected      */
+#define   SAMA_GCLK_MAIN_CLK    (0x1u << 8) /**< GCLK GMain clock is selected     */
+#define   SAMA_GCLK_PLLA_CLK    (0x2u << 8) /**< GCLK  PLLACK is selected         */
+#define   SAMA_GCLKUPLL_CLK     (0x3u << 8) /**< GCLK UPLL Clock is selected      */
+#define   SAMA_GCLK_MCK_CLK     (0x4u << 8) /**< GCLK Master Clock is selected    */
+#define   SAMA_GCLK_AUDIO_CLK   (0x5u << 8) /**< GCLK Audio PLL clock is selected */
+
 /** @} */
 
 /*===========================================================================*/
@@ -458,6 +469,7 @@
 
 /**
  * @brief   UARTx clock.
+ * TODO: Work only with PERIPH CLOCK
  */
 #define SAMA_UART0CLK                       (SAMA_MCK / SAMA_H64MX_H32MX_RATIO)
 #define SAMA_UART1CLK                       (SAMA_MCK / SAMA_H64MX_H32MX_RATIO)
@@ -467,6 +479,7 @@
 
 /**
  * @brief   FLEXCOMx clock.
+ * TODO: Work only with PERIPH CLOCK
  */
 #define SAMA_FLEXCOM0CLK                    (SAMA_MCK / SAMA_H64MX_H32MX_RATIO)
 #define SAMA_FLEXCOM1CLK                    (SAMA_MCK / SAMA_H64MX_H32MX_RATIO)
@@ -476,14 +489,22 @@
 
 /**
  * @brief   TCx clock.
+ * TODO: Work only with PERIPH CLOCK
  */
 #define SAMA_TC0CLK                         (SAMA_MCK / SAMA_H64MX_H32MX_RATIO)
 #define SAMA_TC1CLK                         (SAMA_MCK / SAMA_H64MX_H32MX_RATIO)
 
 /**
  * @brief   GMAC0 clock.
+ * TODO: Work only with PERIPH CLOCK
  */
 #define SAMA_GMAC0CLK                       (SAMA_MCK / SAMA_H64MX_H32MX_RATIO)
+
+/**
+ * @brief   TWIHSx clock.
+ * TODO: Work only with PERIPH CLOCK
+ */
+#define SAMA_TWIHSxCLK                      (SAMA_MCK / SAMA_H64MX_H32MX_RATIO)
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -499,13 +520,16 @@
 
 /* Various helpers.*/
 #include "sama_pmc.h"
-#include "aic.h"
+#include "sama_aic.h"
 #include "sama_matrix.h"
 #include "sama_xdmac.h" 
 #include "sama_cache.h"
-#include "hal_tc_lld.h"
+#include "sama_tc_lld.h"
+#include "sama_lcdc.h"
 #include "sama_secumod.h"
-#include "sama_trng.h"
+#include "sama_onewire.h"
+#include "sama_classd.h"
+#include "sama_rstc.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -24,7 +24,7 @@
 
 #include "hal.h"
 
-#if HAL_USE_SECUMOD || defined(__DOXYGEN__)
+#if SAMA_USE_SECUMOD || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -274,9 +274,11 @@ void sec_lld_start(SECDriver *secp) {
     /*
      * Configure interrupts
      */
+    aicSetIntSourceType(ID_SECUMOD, INT_LEVEL_SENSITIVE);
     aicSetSourcePriority(ID_SECUMOD, SAMA_SECUMOD_IRQ_PRIORITY);
     aicSetSourceHandler(ID_SECUMOD, SAMA_SECUMOD_HANDLER);
 
+    aicSetIntSourceType(ID_SECURAM, INT_LEVEL_SENSITIVE);
     aicSetSourcePriority(ID_SECURAM, SAMA_SECURAM_IRQ_PRIORITY);
     aicSetSourceHandler(ID_SECURAM, SAMA_SECURAM_HANDLER);
 
@@ -592,6 +594,6 @@ uint32_t secumodWriteInternalMemory(uint8_t *data, uint32_t addr, uint32_t size)
   return i;
 }
 
-#endif /* HAL_USE_SECUMOD */
+#endif /* SAMA_USE_SECUMOD */
 
 /** @} */

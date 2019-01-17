@@ -19,8 +19,6 @@
 
 #include "sama_crypto_lld.h"
 
-
-
 #if defined(SAMA_DMA_REQUIRED)
 static void crypto_lld_serve_read_interrupt(CRYDriver *cryp, uint32_t flags);
 static void crypto_lld_serve_write_interrupt(CRYDriver *cryp, uint32_t flags);
@@ -50,7 +48,7 @@ static void crypto_lld_serve_write_interrupt(CRYDriver *cryp, uint32_t flags);
  * @note    This macro is meant to be used in the low level drivers
  *          implementation only.
  *
- * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] cryp      pointer to the @p CRYDriver object
  *
  * @notapi
  */
@@ -131,6 +129,9 @@ static void crypto_lld_serve_read_interrupt(CRYDriver *cryp, uint32_t flags) {
 #else
   (void)flags;
 #endif
+
+  /* D-Cache L1 is enabled */
+  cacheInvalidateRegion(cryp->out, cryp->len);
 
   /* Stop everything.*/
   dmaChannelDisable(cryp->dmarx);

@@ -20,7 +20,16 @@ typedef enum
 #define CAPS0_MASK (SDMMC_CA0R_V33VSUP | SDMMC_CA0R_V30VSUP | \
                     SDMMC_CA0R_V18VSUP | SDMMC_CA0R_SLTYPE_Msk | \
                     SDMMC_CA0R_ED8SUP)
+/* SOM1 */
+#if defined(BOARD_ATSAM5D27_SOM1)
+#define BOARD_SDMMC0_CAPS0 (SDMMC_CA0R_V33VSUP | \
+                            SDMMC_CA0R_V18VSUP | \
+                            SDMMC_CA0R_SLTYPE_REMOVABLECARD | \
+                            SDMMC_CA0R_ED8SUP)
 
+#define BOARD_SDMMC1_CAPS0 (SDMMC_CA0R_V33VSUP | \
+                            SDMMC_CA0R_SLTYPE_REMOVABLECARD)
+#elif defined(BOARD_ATSAM5D2_XULT)
 #define BOARD_SDMMC0_CAPS0 (SDMMC_CA0R_V33VSUP | \
                             SDMMC_CA0R_V18VSUP | \
                             SDMMC_CA0R_SLTYPE_EMBEDDED | \
@@ -28,5 +37,14 @@ typedef enum
 
 #define BOARD_SDMMC1_CAPS0 (SDMMC_CA0R_V33VSUP | \
                             SDMMC_CA0R_SLTYPE_REMOVABLECARD)
+#else
+#define BOARD_SDMMC0_CAPS0 (SDMMC_CA0R_V33VSUP | \
+                            SDMMC_CA0R_V18VSUP | \
+                            SDMMC_CA0R_SLTYPE_EMBEDDED | \
+                            SDMMC_CA0R_ED8SUP)
+
+#define BOARD_SDMMC1_CAPS0 (SDMMC_CA0R_V33VSUP | \
+                            SDMMC_CA0R_SLTYPE_REMOVABLECARD)
+#endif
 
 #endif /* CH_SDMMC_SAMA5D2_H_ */

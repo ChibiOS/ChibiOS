@@ -123,10 +123,10 @@ typedef enum  {
 	CRY_SHA_512,
 
 	CRY_HMACSHA_1,
-    CRY_HMACSHA_224,
-    CRY_HMACSHA_256,
-    CRY_HMACSHA_384,
-    CRY_HMACSHA_512,
+  CRY_HMACSHA_224,
+  CRY_HMACSHA_256,
+  CRY_HMACSHA_384,
+  CRY_HMACSHA_512,
 
 }shadalgo_t;
 
@@ -211,6 +211,18 @@ struct CRYDriver {
    * @brief   Size of transient key.
    */
   size_t                    key0_size;
+  /**
+   * @brief     Pointer to the in buffer location.
+   */
+  const uint8_t             *in;
+  /**
+   * @brief     Pointer to the out buffer location.
+   */
+  uint8_t                   *out;
+  /**
+   * @brief     Number of bytes.
+   */
+  size_t                    len;
 #if (HAL_CRY_USE_FALLBACK == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Key buffer for the fall-back implementation.

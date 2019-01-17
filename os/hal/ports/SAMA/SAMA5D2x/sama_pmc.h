@@ -49,6 +49,7 @@
  * @name    Generic PMC operations
  * @{
  */
+#if SAMA_HAL_IS_SECURE
 /**
  * @brief   Enable write protection on PMC registers block.
  *
@@ -122,6 +123,387 @@
   PMC->PMC_PCDR1 = (mask);                                                  \
   pmcEnableWP();                                                            \
 }
+
+/**
+ * @brief   Enables the generic clock of a peripheral.
+ *
+ * @param[in] mask      ID peripherals
+ *
+ * @api
+ */
+#define pmcEnableGclk(id) {                                                 \
+  osalDbgCheck(id < ID_PERIPH_COUNT);                                       \
+  pmcDisableWP();                                                           \
+  PMC->PMC_PCR = PMC_PCR_PID(id);                                           \
+  uint32_t pcr = PMC->PMC_PCR;                                              \
+  PMC->PMC_PCR = pcr | PMC_PCR_CMD | PMC_PCR_GCKEN;                         \
+  while (!(PMC->PMC_SR & PMC_SR_GCKRDY));                                   \
+  pmcEnableWP();                                                            \
+}
+
+/**
+ * @brief   Disable the generic clock of a peripheral.
+ *
+ * @param[in] mask      ID peripherals
+ *
+ * @api
+ */
+#define pmcDisableGclk(id) {                                                \
+  osalDbgCheck(id < ID_PERIPH_COUNT);                                       \
+  pmcDisableWP();                                                           \
+  PMC->PMC_PCR = PMC_PCR_PID(id);                                           \
+  uint32_t pcr = PMC->PMC_PCR;                                              \
+  PMC->PMC_PCR = PMC_PCR_CMD | (pcr & ~(PMC_PCR_GCKEN));                    \
+  pmcEnableWP();                                                            \
+}
+
+/**
+ * @brief   Configure the generic clock of a peripheral.
+ *
+ * @param[in] id           ID peripherals mask
+ * @param[in] clock_source Clock source
+ * @param[in] div          Divider
+ *
+ * @api
+ */
+
+#define pmcConfigGclk(id, clock_source, div) {                              \
+  osalDbgCheck(id < ID_PERIPH_COUNT);                                       \
+  osalDbgCheck(!(clock_source & ~PMC_PCR_GCKCSS_Msk));                      \
+  osalDbgCheck((div > 0));                                                  \
+  osalDbgCheck(!(div << PMC_PCR_GCKDIV_Pos & ~PMC_PCR_GCKDIV_Msk));         \
+  pmcDisableGclk(id); 					                                            \
+  pmcDisableWP();                                                           \
+  PMC->PMC_PCR = PMC_PCR_PID(id);                                           \
+  uint32_t pcr = PMC->PMC_PCR & ~(PMC_PCR_GCKCSS_Msk | PMC_PCR_GCKDIV_Msk); \
+  PMC->PMC_PCR = pcr | clock_source | PMC_PCR_CMD | PMC_PCR_GCKDIV(div - 1);\
+  pmcEnableWP();                                                            \
+}
+
+/**
+ * @brief   Enable the peripheral clock of a peripheral.
+ *
+ * @param[in] id        ID peripherals mask
+ *
+ * @api
+ */
+#define pmcEnablePeripheral(id) {                                           \
+  osalDbgCheck(id < ID_PERIPH_COUNT);                                       \
+  pmcDisableWP();                                                           \
+  PMC->PMC_PCR = PMC_PCR_PID(id);                                           \
+  uint32_t pcr = PMC->PMC_PCR;                                              \
+  PMC->PMC_PCR = pcr | PMC_PCR_CMD | PMC_PCR_EN;                            \
+  pmcEnableWP();                                                            \
+}
+
+/**
+ * @brief   Disable the peripheral clock of a peripheral.
+ *
+ * @param[in] id        ID peripherals mask
+ *
+ * @api
+ */
+#define pmcDisablePeripheral(id) {                                          \
+  osalDbgCheck(id < ID_PERIPH_COUNT);                                       \
+  pmcDisableWP();                                                           \
+  PMC->PMC_PCR = PMC_PCR_PID(id);                                           \
+  PMC->PMC_PCR = (PMC->PMC_PCR & ~PMC_PCR_EN) | PMC_PCR_CMD;                \
+  pmcEnableWP();                                                            \
+}
+
+
+/**
+ * @brief   Configure the Audio clock.
+ *
+ * @param[in] nd        Loop Divider Ratio
+ * @param[in] qdpmc     Output Divider Ratio for PMC Clock
+ * @param[in] fracr     Fractional Loop Divider Setting
+ * @param[in] div       Divider Value
+ * @param[in] qaudio    Output Divider Ratio for Pad Clock
+ *
+ * @api
+ */
+#define pmcConfigAudio(nd,qdpmc,fracr,div,qdaudio) {                        \
+ /* Reset audio clock */                                                    \
+ pmcDisableWP();                                                            \
+ PMC->PMC_AUDIO_PLL0 &= ~PMC_AUDIO_PLL0_RESETN;                             \
+ PMC->PMC_AUDIO_PLL0 |= PMC_AUDIO_PLL0_RESETN;                              \
+ /* Configure values */                                                     \
+ PMC->PMC_AUDIO_PLL0 = (PMC->PMC_AUDIO_PLL0 &                               \
+                       ~PMC_AUDIO_PLL0_PLLFLT_Msk &                         \
+                       ~PMC_AUDIO_PLL0_ND_Msk &                             \
+                       ~PMC_AUDIO_PLL0_QDPMC_Msk) |                         \
+                       PMC_AUDIO_PLL0_PLLFLT_STD |                          \
+                       PMC_AUDIO_PLL0_ND(nd) |                              \
+                       PMC_AUDIO_PLL0_QDPMC(qdpmc);                         \
+ PMC->PMC_AUDIO_PLL1 = (PMC->PMC_AUDIO_PLL1 &                               \
+                       ~PMC_AUDIO_PLL1_FRACR_Msk &                          \
+                       ~PMC_AUDIO_PLL1_DIV_Msk &                            \
+                       ~PMC_AUDIO_PLL1_QDAUDIO_Msk) |                       \
+                       PMC_AUDIO_PLL1_FRACR(fracr) |                        \
+                       PMC_AUDIO_PLL1_DIV(div)|                             \
+                       PMC_AUDIO_PLL1_QDAUDIO(qdaudio);                     \
+ pmcEnableWP();                                                             \
+}
+
+/**
+ * @brief   Enable the audio clock of a audio peripheral.
+ *
+ * @param[in] pmcClock  If set TRUE enable the PMC clock
+ * @param[in] padClock  If set TRUE enable the PAD clock
+ *
+ * @api
+ */
+#define pmcEnableAudio(pmcClock, padClock) {                                \
+ pmcDisableWP();                                                            \
+ uint32_t bits = PMC_AUDIO_PLL0_PLLEN | PMC_AUDIO_PLL0_RESETN;              \
+ uint32_t nbits = 0;                                                        \
+ if(padClock)                                                               \
+   bits |= PMC_AUDIO_PLL0_PADEN;                                            \
+ else                                                                       \
+   nbits |= PMC_AUDIO_PLL0_PADEN;                                           \
+ if(pmcClock)                                                               \
+   bits |= PMC_AUDIO_PLL0_PMCEN;                                            \
+ else                                                                       \
+   nbits |= PMC_AUDIO_PLL0_PMCEN;                                           \
+ PMC->PMC_AUDIO_PLL0 = (PMC->PMC_AUDIO_PLL0 & ~nbits) | bits;               \
+ /* Wait for the Audio PLL Startup Time (tSTART = 100 usec) */              \
+ chSysPolledDelayX(US2RTC(SAMA_PCK, 100));                                  \
+ pmcEnableWP();                                                             \
+}
+
+/**
+ * @brief   Disable the audio clock of a audio peripheral.
+ *
+ * @api
+ */
+#define pmcDisableAudio(){                                                  \
+ pmcDisableWP();                                                            \
+ PMC->PMC_AUDIO_PLL0 &= ~(PMC_AUDIO_PLL0_PLLEN | PMC_AUDIO_PLL0_RESETN |    \
+                          PMC_AUDIO_PLL0_PADEN | PMC_AUDIO_PLL0_PMCEN);     \
+ pmcEnableWP();                                                             \
+}
+#else
+#include "tsclient.h"
+
+static inline uint32_t readPMCr(uint32_t regOffset)
+{
+  sec_reg_val_t secr;
+
+  secr.reg = regOffset;
+  secr.value = 0;
+  (void) tsInvoke0((ts_service_t)TS_FC_PMC_RD,
+      (ts_params_area_t)&secr, sizeof secr, TS_TIMEINT_1000_US);
+  return secr.value;
+}
+
+static inline void writePMCr(uint32_t regOffset, uint32_t v)
+{
+  sec_reg_val_t secr;
+
+  secr.reg = regOffset;
+  secr.value = v;
+  (void) tsInvoke0((ts_service_t)TS_FC_PMC_WR,
+      (ts_params_area_t)&secr, sizeof secr, TS_TIMEINT_1000_US);
+  return;
+}
+
+/**
+ * @brief   Enables the clock of one or more peripheral having ID from 2 to
+ *          31.
+ *
+ * @param[in] mask      PCER0 peripherals mask
+ *
+ * @api
+ */
+#define pmcEnablePidLow(mask) {                                             \
+  writePMCr(offsetof(Pmc, PMC_PCER0), (mask));                              \
+}
+
+/**
+ * @brief   Disables the clock of one or more peripheral having ID from 2 to
+ *          31.
+ *
+ * @param[in] mask      PCDR0 peripherals mask
+ *
+ * @api
+ */
+#define pmcDisablePidLow(mask) {                                            \
+  writePMCr(offsetof(Pmc, PMC_PCDR0), (mask));                              \
+}
+
+/**
+ * @brief   Enables the clock of one or more peripheral having ID from 32 to
+ *          63.
+ *
+ * @param[in] mask      PCER1 peripherals mask
+ *
+ * @api
+ */
+#define pmcEnablePidHigh(mask) {                                            \
+  writePMCr(offsetof(Pmc, PMC_PCER1), (mask));                              \
+}
+
+/**
+ * @brief   Disables the clock of one or more peripheral having ID from 32 to
+ *          63.
+ *
+ * @param[in] mask      PCDR1 peripherals mask
+ *
+ * @api
+ */
+#define pmcDisablePidHigh(mask) {                                           \
+  writePMCr(offsetof(Pmc, PMC_PCDR1), (mask));                              \
+}
+
+/**
+ * @brief   Enables the generic clock of a peripheral.
+ *
+ * @param[in] mask      ID peripherals
+ *
+ * @api
+ */
+#define pmcEnableGclk(id) {                                                 \
+  osalDbgCheck(id < ID_PERIPH_COUNT);                                       \
+  writePMCr(offsetof(Pmc, PMC_PCR), PMC_PCR_PID(id));                       \
+  uint32_t pcr = readPMCr(offsetof(Pmc, PMC_PCR));                          \
+  writePMCr(offsetof(Pmc, PMC_PCR), pcr | PMC_PCR_CMD | PMC_PCR_GCKEN);     \
+  while (!(readPMCr(offsetof(Pmc, PMC_SR)) & PMC_SR_GCKRDY));               \
+}
+
+/**
+ * @brief   Disable the generic clock of a peripheral.
+ *
+ * @param[in] mask      ID peripherals
+ *
+ * @api
+ */
+#define pmcDisableGclk(id) {                                                \
+  osalDbgCheck(id < ID_PERIPH_COUNT);                                       \
+  writePMCr(offsetof(Pmc, PMC_PCR), PMC_PCR_PID(id));                       \
+  uint32_t pcr = readPMCr(offsetof(Pmc, PMC_PCR));                          \
+  writePMCr(offsetof(Pmc, PMC_PCR), PMC_PCR_CMD | (pcr & ~(PMC_PCR_GCKEN)));\
+}
+
+/**
+ * @brief   Configure the generic clock of a peripheral.
+ *
+ * @param[in] id           ID peripherals mask
+ * @param[in] clock_source Clock source
+ * @param[in] div          Divider
+ *
+ * @api
+ */
+
+#define pmcConfigGclk(id, clock_source, div) {                              \
+  osalDbgCheck(id < ID_PERIPH_COUNT);                                       \
+  osalDbgCheck(!(clock_source & ~PMC_PCR_GCKCSS_Msk));                      \
+  osalDbgCheck((div > 0));                                                  \
+  osalDbgCheck(!(div << PMC_PCR_GCKDIV_Pos & ~PMC_PCR_GCKDIV_Msk));         \
+  pmcDisableGclk(id);                                                       \
+  writePMCr(offsetof(Pmc, PMC_PCR), PMC_PCR_PID(id));                       \
+  uint32_t pcr = readPMCr(offsetof(Pmc, PMC_PCR) & ~(PMC_PCR_GCKCSS_Msk | PMC_PCR_GCKDIV_Msk); \
+  writePMCr(offsetof(Pmc, PMC_PCR), pcr | clock_source | PMC_PCR_CMD | PMC_PCR_GCKDIV(div - 1));\
+}
+
+/**
+ * @brief   Enable the peripheral clock of a peripheral.
+ *
+ * @param[in] id        ID peripherals mask
+ *
+ * @api
+ */
+#define pmcEnablePeripheral(id) {                                           \
+  osalDbgCheck(id < ID_PERIPH_COUNT);                                       \
+  writePMCr(offsetof(Pmc, PMC_PCR), PMC_PCR_PID(id));                       \
+  uint32_t pcr = readPMCr(offsetof(Pmc, PMC_PCR));                          \
+  writePMCr(offsetof(Pmc, PMC_PCR), pcr | PMC_PCR_CMD | PMC_PCR_EN);        \
+}
+
+/**
+ * @brief   Disable the peripheral clock of a peripheral.
+ *
+ * @param[in] id        ID peripherals mask
+ *
+ * @api
+ */
+#define pmcDisablePeripheral(id) {                                          \
+  osalDbgCheck(id < ID_PERIPH_COUNT);                                       \
+  writePMCr(offsetof(Pmc, PMC_PCR), PMC_PCR_PID(id));                       \
+  uint32_t pcr = readPMCr(offsetof(Pmc, PMC_PCR));                          \
+  writePMCr(offsetof(Pmc, PMC_PCR), (pcr & ~PMC_PCR_EN) | PMC_PCR_CMD);     \
+}
+
+
+/**
+ * @brief   Configure the Audio clock.
+ *
+ * @param[in] nd        Loop Divider Ratio
+ * @param[in] qdpmc     Output Divider Ratio for PMC Clock
+ * @param[in] fracr     Fractional Loop Divider Setting
+ * @param[in] div       Divider Value
+ * @param[in] qaudio    Output Divider Ratio for Pad Clock
+ *
+ * @api
+ */
+#define pmcConfigAudio(nd,qdpmc,fracr,div,qdaudio) {                        \
+ /* Reset audio clock */                                                    \
+ writePMCr(offsetof(Pmc, PMC_AUDIO_PLL0), readPMCr(offsetof(Pmc, PMC_AUDIO_PLL0)) & ~PMC_AUDIO_PLL0_RESETN);\
+ writePMCr(offsetof(Pmc, PMC_AUDIO_PLL0), readPMCr(offsetof(Pmc, PMC_AUDIO_PLL0)) |  PMC_AUDIO_PLL0_RESETN);\
+ /* Configure values */                                                     \
+ writePMCr(offsetof(Pmc, PMC_AUDIO_PLL0), (readPMCr(offsetof(Pmc, PMC_AUDIO_PLL0)) &\
+                       ~PMC_AUDIO_PLL0_PLLFLT_Msk &                         \
+                       ~PMC_AUDIO_PLL0_ND_Msk &                             \
+                       ~PMC_AUDIO_PLL0_QDPMC_Msk) |                         \
+                       PMC_AUDIO_PLL0_PLLFLT_STD |                          \
+                       PMC_AUDIO_PLL0_ND(nd) |                              \
+                       PMC_AUDIO_PLL0_QDPMC(qdpmc));                        \
+ writePMCr(offsetof(Pmc, PMC_AUDIO_PLL1), (readPMCr(offsetof(Pmc, PMC_AUDIO_PLL1)) &\
+                       ~PMC_AUDIO_PLL1_FRACR_Msk &                          \
+                       ~PMC_AUDIO_PLL1_DIV_Msk &                            \
+                       ~PMC_AUDIO_PLL1_QDAUDIO_Msk) |                       \
+                       PMC_AUDIO_PLL1_FRACR(fracr) |                        \
+                       PMC_AUDIO_PLL1_DIV(div)|                             \
+                       PMC_AUDIO_PLL1_QDAUDIO(qdaudio));                    \
+}
+
+/**
+ * @brief   Enable the audio clock of a audio peripheral.
+ *
+ * @param[in] pmcClock  If set TRUE enable the PMC clock
+ * @param[in] padClock  If set TRUE enable the PAD clock
+ *
+ * @api
+ */
+#define pmcEnableAudio(pmcClock, padClock) {                                \
+ uint32_t bits = PMC_AUDIO_PLL0_PLLEN | PMC_AUDIO_PLL0_RESETN;              \
+ uint32_t nbits = 0;                                                        \
+ if(padClock)                                                               \
+   bits |= PMC_AUDIO_PLL0_PADEN;                                            \
+ else                                                                       \
+   nbits |= PMC_AUDIO_PLL0_PADEN;                                           \
+ if(pmcClock)                                                               \
+   bits |= PMC_AUDIO_PLL0_PMCEN;                                            \
+ else                                                                       \
+   nbits |= PMC_AUDIO_PLL0_PMCEN;                                           \
+ writePMCr(offsetof(Pmc, PMC_AUDIO_PLL0), (readPMCr(offsetof(Pmc, PMC_AUDIO_PLL0)) & ~nbits) | bits);\
+ /* Wait for the Audio PLL Startup Time (tSTART = 100 usec) */              \
+ chSysPolledDelayX(US2RTC(SAMA_PCK, 100));                                  \
+}
+
+/**
+ * @brief   Disable the audio clock of a audio peripheral.
+ *
+ * @api
+ */
+#define pmcDisableAudio(){                                                  \
+ writePMCr(offsetof(Pmc, PMC_AUDIO_PLL0), readPMCr(offsetof(Pmc, PMC_AUDIO_PLL0)) & \
+                        ~(PMC_AUDIO_PLL0_PLLEN | PMC_AUDIO_PLL0_RESETN |    \
+                          PMC_AUDIO_PLL0_PADEN | PMC_AUDIO_PLL0_PMCEN));     \
+}
+
+#endif
+
 /** @} */
 
 /**
@@ -519,6 +901,34 @@
 #define pmcDisableSDMMC1() pmcDisablePidHigh(ID_SDMMC1_MSK)
 
 /**
+ * @brief   Enables the CLASSD peripheral clock.
+ *
+ * @api
+ */
+#define pmcEnableCLASSD0()   pmcEnablePidHigh(ID_CLASSD_MSK)
+
+/**
+ * @brief   Disables the CLASSD peripheral clock.
+ *
+ * @api
+ */
+#define pmcDisableCLASSD0() pmcDisablePidHigh(ID_CLASSD_MSK)
+
+/**
+ * @brief   Enables the CLASSD generic clock.
+ *
+ * @api
+ */
+#define pmcEnableGclkCLASSD0()   pmcEnableGclk(ID_CLASSD)
+
+/**
+ * @brief   Disables the CLASSD generic clock.
+ *
+ * @api
+ */
+#define pmcDisableGclkCLASSD0() pmcDisableGclk(ID_CLASSD)
+
+/**
  * @brief   Enables the TRNG peripheral clock.
  *
  * @api
@@ -531,6 +941,76 @@
  * @api
  */
 #define pmcDisableTRNG0() pmcDisablePidHigh(ID_TRNG_MSK)
+
+/**
+ * @brief   Enables the QSPI0 peripheral clock.
+ *
+ * @api
+ */
+#define pmcEnableQSPI0() pmcEnablePidHigh(ID_QSPI0_MSK)
+
+/**
+ * @brief   Disables the QSPI0 peripheral clock.
+ *
+ * @api
+ */
+#define pmcDisableQSPI0() pmcDisablePidHigh(ID_QSPI0_MSK)
+
+/**
+ * @brief   Enables the QSPI1 peripheral clock.
+ *
+ * @api
+ */
+#define pmcEnableQSPI1() pmcEnablePidHigh(ID_QSPI1_MSK)
+
+/**
+ * @brief   Disables the QSPI1 peripheral clock.
+ *
+ * @api
+ */
+#define pmcDisableQSPI1() pmcDisablePidHigh(ID_QSPI1_MSK)
+
+/**
+ * @brief   Enables the LCDC peripheral clock.
+ *
+ * @api
+ */
+#define pmcEnableLCDC() pmcEnablePidHigh(ID_LCDC_MSK)
+
+/**
+ * @brief   Disables the LCDC peripheral clock.
+ *
+ * @api
+ */
+#define pmcDisableLCDC() pmcDisablePidHigh(ID_LCDC_MSK)
+
+/**
+ * @brief   Enables the TWIHS0 peripheral clock.
+ *
+ * @api
+ */
+#define pmcEnableTWIHS0() pmcEnablePidLow(ID_TWIHS0_MSK)
+
+/**
+ * @brief   Disables the TWIHS0 peripheral clock.
+ *
+ * @api
+ */
+#define pmcDisableTWIHS0() pmcDisablePidLow(ID_TWIHS0_MSK)
+
+/**
+ * @brief   Enables the TWIHS1 peripheral clock.
+ *
+ * @api
+ */
+#define pmcEnableTWIHS1() pmcEnablePidLow(ID_TWIHS1_MSK)
+
+/**
+ * @brief   Disables the TWIHS1 peripheral clock.
+ *
+ * @api
+ */
+#define pmcDisableTWIHS1() pmcDisablePidLow(ID_TWIHS1_MSK)
 
 /** @} */
 

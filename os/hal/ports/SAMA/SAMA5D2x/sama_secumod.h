@@ -25,7 +25,14 @@
 #ifndef SAMA_SECUMOD_LLD_H
 #define SAMA_SECUMOD_LLD_H
 
-#if HAL_USE_SECUMOD || defined(__DOXYGEN__)
+/**
+ * @brief   Using the SECUMOD driver.
+ */
+#if !defined(SAMA_USE_SECUMOD) || defined(__DOXYGEN__)
+#define SAMA_USE_SECUMOD                         FALSE
+#endif
+
+#if SAMA_USE_SECUMOD || defined(__DOXYGEN__)
 
 #include <string.h>
 /*===========================================================================*/
@@ -558,7 +565,7 @@ extern "C" {
 }
 #endif
 
-#endif /* HAL_USE_SECUMOD */
+#endif /* SAMA_USE_SECUMOD */
 
 #endif /* SAMA_SECUMOD_LLD_H */
 

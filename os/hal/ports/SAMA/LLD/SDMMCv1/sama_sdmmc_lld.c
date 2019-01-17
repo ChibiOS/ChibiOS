@@ -25,7 +25,7 @@
 #include "hal.h"
 #include "ccportab.h"
 
-#if (HAL_USE_SDMMC == TRUE) || defined(__DOXYGEN__)
+#if (SAMA_USE_SDMMC == TRUE) || defined(__DOXYGEN__)
 #include <string.h>
 #include "sama_sdmmc_lld.h"
 #include "ch_sdmmc_device.h"
@@ -314,6 +314,6 @@ bool CC_WEAK sdmmcGetInstance(uint8_t index, SdmmcDriver **sdmmcp)
 	return false;
 }
 
-#endif /* HAL_USE_SDMMC == TRUE */
+#endif /* SAMA_USE_SDMMC == TRUE */
 
 /** @} */

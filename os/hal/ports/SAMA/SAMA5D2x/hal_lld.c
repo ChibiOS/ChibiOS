@@ -76,12 +76,16 @@ void hal_lld_init(void) {
 
   /* Configures PMC and RTC as secure */
   //mtxConfigPeriphSecurity(MATRIX1, ID_SYSC, SECURE_PER);
-  //mtxConfigPeriphSecurity(MATRIX0, ID_PMC, SECURE_PER);
+  mtxConfigPeriphSecurity(MATRIX0, ID_PMC, SECURE_PER);
   mtxConfigPeriphSecurity(MATRIX1, ID_SFC, SECURE_PER);
   mtxConfigPeriphSecurity(MATRIX1, ID_SFR, SECURE_PER);
-  mtxConfigPeriphSecurity(MATRIX0, ID_L2CC, SECURE_PER);
+
+  /* It isn't necessary to make L2CC secure. L2C-310 cache
+   * controller is secure mode aware.*/
+  /*mtxConfigPeriphSecurity(MATRIX0, ID_L2CC, SECURE_PER);*/
+
   mtxConfigPeriphSecurity(MATRIX1, ID_SFRBU, SECURE_PER);
-  mtxConfigPeriphSecurity(MATRIX1, ID_CHIPID, SECURE_PER);
+  /*mtxConfigPeriphSecurity(MATRIX1, ID_CHIPID, SECURE_PER);*/
 
   /* Enabling matrix clock */
   pmcEnableH32MX();

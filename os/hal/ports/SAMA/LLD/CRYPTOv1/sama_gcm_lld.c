@@ -36,8 +36,27 @@ static cryerror_t sama_gcm_lld_process_dma(CRYDriver *cryp,cgmcontext * cxt)
 {
 #if defined(SAMA_DMA_REQUIRED)
 
+  osalDbgAssert(!((uint32_t) cxt->in & (L1_CACHE_BYTES - 1)), "in address not cache aligned");
+  osalDbgAssert(!((uint32_t) cxt->out & (L1_CACHE_BYTES - 1)), "out address not cache aligned");
 	osalDbgAssert(cryp->thread == NULL, "already waiting");
 
+#if 0
+  osalDbgAssert(!(cxt->c_size & (L1_CACHE_BYTES - 1)), "size not multiple of cache line");
+#endif
+
+  cacheCleanRegion((uint8_t *) cxt->in, cxt->c_size);
+
+  /*
+   * If size is not multiple of cache line, clean cache region is required.
+   * TODO: remove when size assert works
+   */
+  if (cxt->c_size & (L1_CACHE_BYTES - 1)) {
+    cacheCleanRegion((uint8_t *) cxt->out, cxt->c_size);
+  }
+
+  cryp->out = cxt->out;
+  cryp->in = cxt->in;
+  cryp->len = cxt->c_size;
 
 	//set chunk size
 	cryp->dmachunksize = DMA_CHUNK_SIZE_4;
