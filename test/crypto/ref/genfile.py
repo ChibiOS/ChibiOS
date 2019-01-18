@@ -1,3 +1,4 @@
+from __future__ import print_function
 import sys,getopt,string
 
 filenames = None
@@ -43,7 +44,7 @@ fh.write("#ifndef TEST_"+fileOut.upper()+"_H_\n")
 fh.write("#define TEST_"+fileOut.upper()+"_H_\n\n")
 	
 for fn in filenames:
-	print "opening ",fn
+	print("opening ",fn)
 	i = 0
 	f = open(fn+".enc","rb")
 	block = f.read(blocksize)
