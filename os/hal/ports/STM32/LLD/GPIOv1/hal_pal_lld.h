@@ -414,7 +414,9 @@ typedef uint32_t iopadid_t;
 
 #if !defined(__DOXYGEN__)
 extern const PALConfig pal_default_config;
+#if (PAL_USE_WAIT == TRUE) || (PAL_USE_CALLBACKS == TRUE)
 extern palevent_t _pal_events[16];
+#endif
 #endif
 
 #ifdef __cplusplus
