@@ -369,7 +369,7 @@
               <MiscControls>--c99 -USTM32F303xC</MiscControls>
               <Define>__heap_base__=Image$$$$RW_IRAM1$$$$ZI$$$$Limit __heap_end__=Image$$$$RW_IRAM2$$$$Base</Define>
               <Undefine></Undefine>
-              <IncludePath>..\;..\..\..\..\os\license;..\..\..\..\os\common\startup\ARMCMx\devices\STM32F3xx;..\..\..\..\os\common\ext\CMSIS\include;..\..\..\..\os\common\ext\CMSIS\ST\STM32F3xx;..\..\..\..\os\common\ports\ARMCMx;..\..\..\..\os\common\ports\ARMCMx\compilers\RVCT;..\..\..\..\os\common\oslib\include;..\..\..\..\os\rt\include;..\..\..\..\os\hal\osal\rt;..\..\..\..\os\hal\include;..\..\..\..\os\hal\boards\ST_STM32F3_DISCOVERY;..\..\..\..\os\hal\ports\common\ARMCMx;..\..\..\..\os\hal\ports\STM32\STM32F3xx;..\..\..\..\os\hal\ports\STM32\LLD\ADCv3;..\..\..\..\os\hal\ports\STM32\LLD\CANv1;..\..\..\..\os\hal\ports\STM32\LLD\DACv1;..\..\..\..\os\hal\ports\STM32\LLD\DMAv1;..\..\..\..\os\hal\ports\STM32\LLD\EXTIv1;..\..\..\..\os\hal\ports\STM32\LLD\GPIOv2;..\..\..\..\os\hal\ports\STM32\LLD\I2Cv2;..\..\..\..\os\hal\ports\STM32\LLD\RTCv2;..\..\..\..\os\hal\ports\STM32\LLD\SPIv2;..\..\..\..\os\hal\ports\STM32\LLD\TIMv1;..\..\..\..\os\hal\ports\STM32\LLD\USARTv2;..\..\..\..\os\hal\ports\STM32\LLD\USBv1;..\..\..\..\os\hal\ports\STM32\LLD\xWDGv1;..\..\..\..\test\lib;..\..\..\..\test\rt\source\test</IncludePath>
+              <IncludePath>..\;..\..\..\..\os\license;..\..\..\..\os\common\startup\ARMCMx\devices\STM32F3xx;..\..\..\..\os\common\ext\ARM\CMSIS\Core\Include;..\..\..\..\os\common\ext\CMSIS\ST\STM32F3xx;..\..\..\..\os\common\ports\ARMCMx;..\..\..\..\os\common\ports\ARMCMx\compilers\RVCT;..\..\..\..\os\common\oslib\include;..\..\..\..\os\rt\include;..\..\..\..\os\hal\osal\rt;..\..\..\..\os\hal\include;..\..\..\..\os\hal\boards\ST_STM32F3_DISCOVERY;..\..\..\..\os\hal\ports\common\ARMCMx;..\..\..\..\os\hal\ports\STM32\STM32F3xx;..\..\..\..\os\hal\ports\STM32\LLD\ADCv3;..\..\..\..\os\hal\ports\STM32\LLD\CANv1;..\..\..\..\os\hal\ports\STM32\LLD\DACv1;..\..\..\..\os\hal\ports\STM32\LLD\DMAv1;..\..\..\..\os\hal\ports\STM32\LLD\EXTIv1;..\..\..\..\os\hal\ports\STM32\LLD\GPIOv2;..\..\..\..\os\hal\ports\STM32\LLD\I2Cv2;..\..\..\..\os\hal\ports\STM32\LLD\RTCv2;..\..\..\..\os\hal\ports\STM32\LLD\SPIv2;..\..\..\..\os\hal\ports\STM32\LLD\TIMv1;..\..\..\..\os\hal\ports\STM32\LLD\USARTv2;..\..\..\..\os\hal\ports\STM32\LLD\USBv1;..\..\..\..\os\hal\ports\STM32\LLD\xWDGv1;..\..\..\..\test\lib;..\..\..\..\test\rt\source\test;..\..\..\..\test\oslib\source\test</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -386,7 +386,7 @@
               <MiscControls>--cpreproc</MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\;..\..\..\..\os\license;..\..\..\..\os\common\startup\ARMCMx\devices\STM32F3xx;..\..\..\..\os\common\ports\ARMCMx</IncludePath>
+              <IncludePath>..\;..\..\..\..\os\license;..\..\..\..\os\common\startup\ARMCMx\devices\STM32F3xx;..\..\..\..\os\common\ports\ARMCMx;..\..\..\..\os\hal\boards\ST_STM32F3_DISCOVERY</IncludePath>
             </VariousControls>
           </Aads>
           <LDads>
@@ -426,26 +426,6 @@
               <FileName>cmparams.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\..\os\common\startup\ARMCMx\devices\STM32F3xx\cmparams.h</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>cmsis</GroupName>
-          <Files>
-            <File>
-              <FileName>core_cm4.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\..\os\common\ext\CMSIS\include\core_cm4.h</FilePath>
-            </File>
-            <File>
-              <FileName>core_cmFunc.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\..\os\common\ext\CMSIS\include\core_cmFunc.h</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f3xx.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\..\os\common\ext\CMSIS\ST\STM32F3xx\stm32f3xx.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -653,11 +633,6 @@
               <FilePath>..\..\..\..\os\rt\include\chchecks.h</FilePath>
             </File>
             <File>
-              <FileName>chcustomer.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\..\os\rt\include\chcustomer.h</FilePath>
-            </File>
-            <File>
               <FileName>chsystypes.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\..\os\rt\include\chsystypes.h</FilePath>
@@ -717,6 +692,21 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\os\common\oslib\src\chmempools.c</FilePath>
             </File>
+            <File>
+              <FileName>chfactory.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\os\common\oslib\include\chfactory.h</FilePath>
+            </File>
+            <File>
+              <FileName>chfifo.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\os\common\oslib\include\chfifo.h</FilePath>
+            </File>
+            <File>
+              <FileName>chfactory.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\os\common\oslib\src\chfactory.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -738,16 +728,6 @@
           <GroupName>hal_port</GroupName>
           <Files>
             <File>
-              <FileName>hal_ext_lld_isr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F3xx\hal_ext_lld_isr.c</FilePath>
-            </File>
-            <File>
-              <FileName>hal_ext_lld_isr.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F3xx\hal_ext_lld_isr.h</FilePath>
-            </File>
-            <File>
               <FileName>hal_lld.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F3xx\hal_lld.c</FilePath>
@@ -756,6 +736,11 @@
               <FileName>hal_lld.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F3xx\hal_lld.h</FilePath>
+            </File>
+            <File>
+              <FileName>stm32_isr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F3xx\stm32_isr.c</FilePath>
             </File>
             <File>
               <FileName>stm32_isr.h</FileName>
@@ -983,11 +968,6 @@
               <FilePath>..\..\..\..\os\hal\include\hal_dac.h</FilePath>
             </File>
             <File>
-              <FileName>hal_ext.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\..\os\hal\include\hal_ext.h</FilePath>
-            </File>
-            <File>
               <FileName>hal_files.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\..\os\hal\include\hal_files.h</FilePath>
@@ -1138,11 +1118,6 @@
               <FilePath>..\..\..\..\os\hal\src\hal_dac.c</FilePath>
             </File>
             <File>
-              <FileName>hal_ext.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\os\hal\src\hal_ext.c</FilePath>
-            </File>
-            <File>
               <FileName>hal_gpt.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\os\hal\src\hal_gpt.c</FilePath>
@@ -1273,144 +1248,84 @@
               <FilePath>..\..\..\..\test\lib\ch_test.h</FilePath>
             </File>
             <File>
-              <FileName>test_root.c</FileName>
+              <FileName>rt_test_root.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\test\rt\source\test\test_root.c</FilePath>
+              <FilePath>..\..\..\..\test\rt\source\test\rt_test_root.c</FilePath>
             </File>
             <File>
-              <FileName>test_root.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\..\test\rt\source\test\test_root.h</FilePath>
-            </File>
-            <File>
-              <FileName>test_sequence_001.c</FileName>
+              <FileName>rt_test_sequence_001.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\test\rt\source\test\test_sequence_001.c</FilePath>
+              <FilePath>..\..\..\..\test\rt\source\test\rt_test_sequence_001.c</FilePath>
             </File>
             <File>
-              <FileName>test_sequence_001.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\..\test\rt\source\test\test_sequence_001.h</FilePath>
-            </File>
-            <File>
-              <FileName>test_sequence_002.c</FileName>
+              <FileName>rt_test_sequence_002.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\test\rt\source\test\test_sequence_002.c</FilePath>
+              <FilePath>..\..\..\..\test\rt\source\test\rt_test_sequence_002.c</FilePath>
             </File>
             <File>
-              <FileName>test_sequence_002.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\..\test\rt\source\test\test_sequence_002.h</FilePath>
-            </File>
-            <File>
-              <FileName>test_sequence_003.c</FileName>
+              <FileName>rt_test_sequence_003.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\test\rt\source\test\test_sequence_003.c</FilePath>
+              <FilePath>..\..\..\..\test\rt\source\test\rt_test_sequence_003.c</FilePath>
             </File>
             <File>
-              <FileName>test_sequence_003.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\..\test\rt\source\test\test_sequence_003.h</FilePath>
-            </File>
-            <File>
-              <FileName>test_sequence_004.c</FileName>
+              <FileName>rt_test_sequence_004.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\test\rt\source\test\test_sequence_004.c</FilePath>
+              <FilePath>..\..\..\..\test\rt\source\test\rt_test_sequence_004.c</FilePath>
             </File>
             <File>
-              <FileName>test_sequence_004.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\..\test\rt\source\test\test_sequence_004.h</FilePath>
-            </File>
-            <File>
-              <FileName>test_sequence_005.c</FileName>
+              <FileName>rt_test_sequence_005.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\test\rt\source\test\test_sequence_005.c</FilePath>
+              <FilePath>..\..\..\..\test\rt\source\test\rt_test_sequence_005.c</FilePath>
             </File>
             <File>
-              <FileName>test_sequence_005.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\..\test\rt\source\test\test_sequence_005.h</FilePath>
-            </File>
-            <File>
-              <FileName>test_sequence_006.c</FileName>
+              <FileName>rt_test_sequence_006.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\test\rt\source\test\test_sequence_006.c</FilePath>
+              <FilePath>..\..\..\..\test\rt\source\test\rt_test_sequence_006.c</FilePath>
             </File>
             <File>
-              <FileName>test_sequence_006.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\..\test\rt\source\test\test_sequence_006.h</FilePath>
-            </File>
-            <File>
-              <FileName>test_sequence_007.c</FileName>
+              <FileName>rt_test_sequence_007.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\test\rt\source\test\test_sequence_007.c</FilePath>
+              <FilePath>..\..\..\..\test\rt\source\test\rt_test_sequence_007.c</FilePath>
             </File>
             <File>
-              <FileName>test_sequence_007.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\..\test\rt\source\test\test_sequence_007.h</FilePath>
-            </File>
-            <File>
-              <FileName>test_sequence_008.c</FileName>
+              <FileName>rt_test_sequence_008.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\test\rt\source\test\test_sequence_008.c</FilePath>
+              <FilePath>..\..\..\..\test\rt\source\test\rt_test_sequence_008.c</FilePath>
             </File>
             <File>
-              <FileName>test_sequence_008.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\..\test\rt\source\test\test_sequence_008.h</FilePath>
-            </File>
-            <File>
-              <FileName>test_sequence_009.c</FileName>
+              <FileName>rt_test_sequence_009.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\test\rt\source\test\test_sequence_009.c</FilePath>
+              <FilePath>..\..\..\..\test\rt\source\test\rt_test_sequence_009.c</FilePath>
             </File>
             <File>
-              <FileName>test_sequence_009.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\..\test\rt\source\test\test_sequence_009.h</FilePath>
-            </File>
-            <File>
-              <FileName>test_sequence_010.c</FileName>
+              <FileName>rt_test_sequence_010.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\test\rt\source\test\test_sequence_010.c</FilePath>
+              <FilePath>..\..\..\..\test\rt\source\test\rt_test_sequence_010.c</FilePath>
             </File>
             <File>
-              <FileName>test_sequence_010.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\..\test\rt\source\test\test_sequence_010.h</FilePath>
-            </File>
-            <File>
-              <FileName>test_sequence_011.c</FileName>
+              <FileName>oslib_test_root.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\test\rt\source\test\test_sequence_011.c</FilePath>
+              <FilePath>..\..\..\..\test\oslib\source\test\oslib_test_root.c</FilePath>
             </File>
             <File>
-              <FileName>test_sequence_011.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\..\test\rt\source\test\test_sequence_011.h</FilePath>
-            </File>
-            <File>
-              <FileName>test_sequence_012.c</FileName>
+              <FileName>oslib_test_sequence_001.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\test\rt\source\test\test_sequence_012.c</FilePath>
+              <FilePath>..\..\..\..\test\oslib\source\test\oslib_test_sequence_001.c</FilePath>
             </File>
             <File>
-              <FileName>test_sequence_012.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\..\test\rt\source\test\test_sequence_012.h</FilePath>
-            </File>
-            <File>
-              <FileName>test_sequence_013.c</FileName>
+              <FileName>oslib_test_sequence_002.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\test\rt\source\test\test_sequence_013.c</FilePath>
+              <FilePath>..\..\..\..\test\oslib\source\test\oslib_test_sequence_002.c</FilePath>
             </File>
             <File>
-              <FileName>test_sequence_013.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\..\test\rt\source\test\test_sequence_013.h</FilePath>
+              <FileName>oslib_test_sequence_003.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\test\oslib\source\test\oslib_test_sequence_003.c</FilePath>
+            </File>
+            <File>
+              <FileName>oslib_test_sequence_004.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\test\oslib\source\test\oslib_test_sequence_004.c</FilePath>
             </File>
           </Files>
         </Group>
