@@ -196,8 +196,6 @@
 - EX:  Updated LIS302DL to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LPS25H to 1.1.0 (backported to 18.2.1).
 - EX:  Updated LSM303DLHC to 1.1.0 (backported to 18.2.1).
-- HAL: Fixed invalid timer frequency calculation for STM32F446 (bug #1002)
-       (backported to 18.2.2 and 17.6.5).
 - HAL: Fixed invalid checks in STM32H7 HAL (bug #1000)
        (backported to 18.2.2).
 - OTH: Fixed problem in STM32H743 GCC linker file (bug #998)

@@ -288,12 +288,10 @@ void stm32_clock_init(void) {
 #endif
 #if !defined(STM32F413xx)
     RCC->DCKCFGR = dckcfgr |
-                   STM32_TIMPRE | STM32_PLLSAIDIVR |
-                   STM32_PLLSAIDIVQ | STM32_PLLI2SDIVQ;
+                   STM32_TIMPRE | STM32_PLLSAIDIVQ | STM32_PLLI2SDIVQ;
 #else
     RCC->DCKCFGR = dckcfgr |
-                   STM32_TIMPRE |
-                   STM32_PLLDIVR | STM32_PLLI2SDIVR;
+                   STM32_TIMPRE | STM32_PLLDIVR | STM32_PLLI2SDIVR;
 #endif
   }
 #endif
