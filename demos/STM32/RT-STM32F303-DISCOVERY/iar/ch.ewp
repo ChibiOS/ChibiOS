@@ -128,7 +128,7 @@
         <option>
           <name>GBECoreSlave</name>
           <version>22</version>
-          <state>40</state>
+          <state>39</state>
         </option>
         <option>
           <name>OGUseCmsis</name>
@@ -317,8 +317,8 @@
           <state>$PROJ_DIR$\..\</state>
           <state>$PROJ_DIR$\..\..\..\..\os\license</state>
           <state>$PROJ_DIR$\..\..\..\..\os\common\startup\ARMCMx\devices\STM32F3xx</state>
-          <state>$PROJ_DIR$\..\..\..\..\os\common\ext\CMSIS\include</state>
-          <state>$PROJ_DIR$\..\..\..\..\os\common\ext\CMSIS\ST\STM32F3xx</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\common\ext\ARM\CMSIS\Core\include</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\common\ext\ST\STM32F3xx</state>
           <state>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx</state>
           <state>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx\compilers\IAR</state>
           <state>$PROJ_DIR$\..\..\..\..\os\common\oslib\include</state>
@@ -342,6 +342,7 @@
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\xWDGv1</state>
           <state>$PROJ_DIR$\..\..\..\..\test\lib</state>
           <state>$PROJ_DIR$\..\..\..\..\test\rt\source\test</state>
+          <state>$PROJ_DIR$\..\..\..\..\test\oslib\source\test</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -603,6 +604,7 @@
           <state>$PROJ_DIR$\..\..\..\..\os\license</state>
           <state>$PROJ_DIR$\..\..\..\..\os\common\startup\ARMCMx\devices\STM32F3xx</state>
           <state>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\hal\boards\ST_STM32F3_DISCOVERY</state>
         </option>
         <option>
           <name>AExtraOptionsCheckV2</name>
@@ -1302,8 +1304,8 @@
           <state>$PROJ_DIR$\..\</state>
           <state>$PROJ_DIR$\..\..\..\..\os\license</state>
           <state>$PROJ_DIR$\..\..\..\..\os\common\startup\ARMCMx\devices\STM32F3xx</state>
-          <state>$PROJ_DIR$\..\..\..\..\os\common\ext\CMSIS\include</state>
-          <state>$PROJ_DIR$\..\..\..\..\os\common\ext\CMSIS\ST\STM32F3xx</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\common\ext\ARM\CMSIS\Core\include</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\common\ext\ST\STM32F3xx</state>
           <state>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx</state>
           <state>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx\compilers\IAR</state>
           <state>$PROJ_DIR$\..\..\..\..\os\common\oslib\include</state>
@@ -1327,6 +1329,7 @@
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\xWDGv1</state>
           <state>$PROJ_DIR$\..\..\..\..\test\lib</state>
           <state>$PROJ_DIR$\..\..\..\..\test\rt\source\test</state>
+          <state>$PROJ_DIR$\..\..\..\..\test\oslib\source\test</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1588,6 +1591,7 @@
           <state>$PROJ_DIR$\..\..\..\..\os\license</state>
           <state>$PROJ_DIR$\..\..\..\..\os\common\startup\ARMCMx\devices\STM32F3xx</state>
           <state>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\hal\boards\ST_STM32F3_DISCOVERY</state>
         </option>
         <option>
           <name>AExtraOptionsCheckV2</name>
@@ -1987,6 +1991,12 @@
             <name>$PROJ_DIR$\..\..\..\..\os\common\oslib\include\chbsem.h</name>
           </file>
           <file>
+            <name>$PROJ_DIR$\..\..\..\..\os\common\oslib\include\chfactory.h</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\..\..\os\common\oslib\include\chfifo.h</name>
+          </file>
+          <file>
             <name>$PROJ_DIR$\..\..\..\..\os\common\oslib\include\chheap.h</name>
           </file>
           <file>
@@ -2001,6 +2011,9 @@
         </group>
         <group>
           <name>src</name>
+          <file>
+            <name>$PROJ_DIR$\..\..\..\..\os\common\oslib\src\chfactory.c</name>
+          </file>
           <file>
             <name>$PROJ_DIR$\..\..\..\..\os\common\oslib\src\chheap.c</name>
           </file>
@@ -2053,30 +2066,6 @@
       </group>
     </group>
     <group>
-      <name>ext</name>
-      <group>
-        <name>CMSIS</name>
-        <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\common\ext\CMSIS\include\core_cm4.h</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\common\ext\CMSIS\include\core_cm4_simd.h</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\common\ext\CMSIS\include\core_cmFunc.h</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\common\ext\CMSIS\include\core_cmInstr.h</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\common\ext\CMSIS\ST\stm32f3xx.h</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\common\ext\CMSIS\ST\system_stm32f3xx.h</name>
-        </file>
-      </group>
-    </group>
-    <group>
       <name>hal</name>
       <group>
         <name>board</name>
@@ -2106,9 +2095,6 @@
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\include\hal_dac.h</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\hal\include\hal_ext.h</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\include\hal_files.h</name>
@@ -2222,18 +2208,6 @@
           <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\DACv1\hal_dac_lld.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\EXTIv1\hal_ext_lld.c</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\EXTIv1\hal_ext_lld.h</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F3xx\hal_ext_lld_isr.c</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F3xx\hal_ext_lld_isr.h</name>
-        </file>
-        <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\TIMv1\hal_gpt_lld.c</name>
         </file>
         <file>
@@ -2336,6 +2310,9 @@
           <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\DMAv1\stm32_dma.h</name>
         </file>
         <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F3xx\stm32_isr.c</name>
+        </file>
+        <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F3xx\stm32_isr.h</name>
         </file>
         <file>
@@ -2367,9 +2344,6 @@
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\src\hal_dac.c</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\hal\src\hal_ext.c</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\src\hal_gpt.c</name>
@@ -2562,88 +2536,100 @@
     <group>
       <name>source</name>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\test_root.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\test\oslib\source\test\oslib_test_root.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\test_root.h</name>
+        <name>$PROJ_DIR$\..\..\..\..\test\oslib\source\test\oslib_test_root.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\test_sequence_001.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\test\oslib\source\test\oslib_test_sequence_001.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\test_sequence_001.h</name>
+        <name>$PROJ_DIR$\..\..\..\..\test\oslib\source\test\oslib_test_sequence_001.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\test_sequence_002.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\test\oslib\source\test\oslib_test_sequence_002.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\test_sequence_002.h</name>
+        <name>$PROJ_DIR$\..\..\..\..\test\oslib\source\test\oslib_test_sequence_002.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\test_sequence_003.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\test\oslib\source\test\oslib_test_sequence_003.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\test_sequence_003.h</name>
+        <name>$PROJ_DIR$\..\..\..\..\test\oslib\source\test\oslib_test_sequence_003.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\test_sequence_004.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\test\oslib\source\test\oslib_test_sequence_004.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\test_sequence_004.h</name>
+        <name>$PROJ_DIR$\..\..\..\..\test\oslib\source\test\oslib_test_sequence_004.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\test_sequence_005.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\rt_test_root.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\test_sequence_005.h</name>
+        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\rt_test_root.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\test_sequence_006.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\rt_test_sequence_001.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\test_sequence_006.h</name>
+        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\rt_test_sequence_001.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\test_sequence_007.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\rt_test_sequence_002.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\test_sequence_007.h</name>
+        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\rt_test_sequence_002.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\test_sequence_008.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\rt_test_sequence_003.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\test_sequence_008.h</name>
+        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\rt_test_sequence_003.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\test_sequence_009.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\rt_test_sequence_004.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\test_sequence_009.h</name>
+        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\rt_test_sequence_004.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\test_sequence_010.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\rt_test_sequence_005.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\test_sequence_010.h</name>
+        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\rt_test_sequence_005.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\test_sequence_011.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\rt_test_sequence_006.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\test_sequence_011.h</name>
+        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\rt_test_sequence_006.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\test_sequence_012.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\rt_test_sequence_007.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\test_sequence_012.h</name>
+        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\rt_test_sequence_007.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\test_sequence_013.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\rt_test_sequence_008.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\test_sequence_013.h</name>
+        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\rt_test_sequence_008.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\rt_test_sequence_009.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\rt_test_sequence_009.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\rt_test_sequence_010.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\rt_test_sequence_010.h</name>
       </file>
     </group>
   </group>
