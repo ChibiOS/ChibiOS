@@ -110,20 +110,6 @@
 #endif
 
 /**
- * @brief   Dedicated data pump threads priority.
- */
-#if !defined(STM32_USB_OTG_THREAD_PRIO) || defined(__DOXYGEN__)
-#define STM32_USB_OTG_THREAD_PRIO           LOWPRIO
-#endif
-
-/**
- * @brief   Dedicated data pump threads stack size.
- */
-#if !defined(STM32_USB_OTG_THREAD_STACK_SIZE) || defined(__DOXYGEN__)
-#define STM32_USB_OTG_THREAD_STACK_SIZE     128
-#endif
-
-/**
  * @brief   Exception priority level during TXFIFOs operations.
  * @note    Because an undocumented silicon behavior the operation of
  *          copying a packet into a TXFIFO must not be interrupted by
@@ -145,8 +131,8 @@
 /**
  * @brief   Host wake-up procedure duration.
  */
-#if !defined(USB_HOST_WAKEUP_DURATION) || defined(__DOXYGEN__)
-#define USB_HOST_WAKEUP_DURATION            2
+#if !defined(STM32_USB_HOST_WAKEUP_DURATION) || defined(__DOXYGEN__)
+#define STM32_USB_HOST_WAKEUP_DURATION      2
 #endif
 
 /*===========================================================================*/
@@ -249,8 +235,8 @@
 #error "the USB OTG driver requires a 48MHz clock"
 #endif
 
-#if (USB_HOST_WAKEUP_DURATION < 2) || (USB_HOST_WAKEUP_DURATION > 15)
-#error "invalid USB_HOST_WAKEUP_DURATION setting, it must be between 2 and 15"
+#if (STM32_USB_HOST_WAKEUP_DURATION < 2) || (STM32_USB_HOST_WAKEUP_DURATION > 15)
+#error "invalid STM32_USB_HOST_WAKEUP_DURATION setting, it must be between 2 and 15"
 #endif
 
 /*===========================================================================*/
@@ -508,26 +494,6 @@ struct USBDriver {
    * @brief   Pointer to the next address in the packet memory.
    */
   uint32_t                      pmnext;
-#if 0
-  /**
-   * @brief   Mask of TXFIFOs to be filled by the pump thread.
-   */
-  uint32_t                      txpending;
-  /**
-   * @brief   Pointer to the thread when it is sleeping or @p NULL.
-   */
-  thread_reference_t            wait;
-#if defined(_CHIBIOS_RT_)
-  /**
-   * @brief   Pointer to the thread.
-   */
-  thread_reference_t            tr;
-  /**
-   * @brief   Working area for the dedicated data pump thread;
-   */
-  THD_WORKING_AREA(wa_pump, STM32_USB_OTG_THREAD_STACK_SIZE);
-#endif
-#endif
 };
 
 /*===========================================================================*/
@@ -581,7 +547,7 @@ struct USBDriver {
 #define usb_lld_wakeup_host(usbp)                                           \
   do{                                                                       \
     (usbp)->otg->DCTL |= DCTL_RWUSIG;                                       \
-    osalThreadSleepMilliseconds(USB_HOST_WAKEUP_DURATION);                  \
+    osalThreadSleepMilliseconds(STM32_USB_HOST_WAKEUP_DURATION);            \
     (usbp)->otg->DCTL &= ~DCTL_RWUSIG;                                      \
   } while (false)
 
@@ -616,7 +582,6 @@ extern "C" {
   void usb_lld_stall_in(USBDriver *usbp, usbep_t ep);
   void usb_lld_clear_out(USBDriver *usbp, usbep_t ep);
   void usb_lld_clear_in(USBDriver *usbp, usbep_t ep);
-  void usb_lld_pump(void *p);
 #ifdef __cplusplus
 }
 #endif
