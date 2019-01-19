@@ -31,6 +31,10 @@
 /* Unsupported modes and specific modes                                      */
 /*===========================================================================*/
 
+/* Specifies palInit() without parameter, required until all platforms will
+   be updated to the new style.*/
+#define PAL_NEW_INIT
+
 /*===========================================================================*/
 /* I/O Ports Types and constants.                                            */
 /*===========================================================================*/
@@ -141,11 +145,9 @@ typedef uint32_t iopadid_t;
 /**
  * @brief   Low level PAL subsystem initialization.
  *
- * @param[in] config    architecture-dependent ports configuration
- *
  * @notapi
  */
-#define pal_lld_init(config) _pal_lld_init(config)
+#define pal_lld_init() _pal_lld_init()
 
 /**
  * @brief   Reads the physical I/O port states.
@@ -426,14 +428,15 @@ typedef uint32_t iopadid_t;
   &_pal_events[0]; (void)line
 
 #if !defined(__DOXYGEN__)
-extern const PALConfig pal_default_config;
+#if (PAL_USE_WAIT == TRUE) || (PAL_USE_CALLBACKS == TRUE)
 extern palevent_t _pal_events[1];
+#endif
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void _pal_lld_init(const PALConfig *config);
+  void _pal_lld_init(void);
   void _pal_lld_setgroupmode(ioportid_t port,
                              ioportmask_t mask,
                              iomode_t mode);

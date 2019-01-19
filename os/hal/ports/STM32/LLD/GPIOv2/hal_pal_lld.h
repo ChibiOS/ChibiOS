@@ -487,7 +487,9 @@ typedef uint32_t iopadid_t;
   (bool)((EXTI->IMR & (1U << (uint32_t)pad)) != 0U)
 
 #if !defined(__DOXYGEN__)
+#if (PAL_USE_WAIT == TRUE) || (PAL_USE_CALLBACKS == TRUE)
 extern palevent_t _pal_events[16];
+#endif
 #endif
 
 #ifdef __cplusplus

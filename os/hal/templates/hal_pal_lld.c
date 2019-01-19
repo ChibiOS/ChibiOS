@@ -52,15 +52,10 @@
 
 /**
  * @brief   STM32 I/O ports configuration.
- * @details Ports A-D(E, F, G, H) clocks enabled.
- *
- * @param[in] config    the STM32 ports configuration
  *
  * @notapi
  */
-void _pal_lld_init(const PALConfig *config) {
-
-  (void)config;
+void _pal_lld_init(void) {
 
 }
 

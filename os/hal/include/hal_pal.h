@@ -147,6 +147,7 @@
  */
 typedef void (*palcallback_t)(void *arg);
 
+#if (PAL_USE_WAIT == TRUE) || (PAL_USE_CALLBACKS == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Type of a PAL event record.
  */
@@ -168,6 +169,7 @@ typedef struct {
   void                  *arg;
 #endif
 } palevent_t;
+#endif
 
 #include "hal_pal_lld.h"
 
