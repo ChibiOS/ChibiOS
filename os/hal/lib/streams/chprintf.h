@@ -18,7 +18,7 @@
  * @file    chprintf.h
  * @brief   Mini printf-like functionality.
  *
- * @addtogroup chprintf
+ * @addtogroup HAL_CHPRINTF
  * @{
  */
 

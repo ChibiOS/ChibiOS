@@ -15,9 +15,10 @@
 */
 
 /**
- * @defgroup NOR_FLASH Abstract NOR Flash Class
- * @brief   Generic NOR Flash interface.
- * @details This module implements a generic class for NOR Flash devices.
+ * @defgroup HAL_SERIAL_NOR Serial NOR Flash Driver
+ * @brief   Serial NOR Flash driver.
+ * @details This module implements a generic driver for serial NOR Flash
+ *          devices.
  *
  * @section flash_1 Driver State Machine
  * The flash driver implements a state machine internally, not all the driver
@@ -53,23 +54,5 @@
   }
  * @enddot
  *
- * @section flash_2 Flash Operations.
- * This driver abstracts a generic PWM timer composed of:
- * - A clock prescaler.
- * - A main up counter.
- * - A comparator register that resets the main counter to zero when the limit
- *   is reached. An optional callback can be generated when this happens.
- * - An array of @p PWM_CHANNELS PWM channels, each channel has an output,
- *   a comparator and is able to invoke an optional callback when a comparator
- *   match with the main counter happens.
- * .
- * A PWM channel output can be in two different states:
- * - <b>IDLE</b>, when the channel is disabled or after a match occurred.
- * - <b>ACTIVE</b>, when the channel is enabled and a match didn't occur yet
- *   in the current PWM cycle.
- * .
- * Note that the two states can be associated to both logical zero or one in
- * the @p PWMChannelConfig structure.
- *
- * @ingroup HAL_INTERFACES
+ * @ingroup HAL_COMPLEX_DRIVERS
  */

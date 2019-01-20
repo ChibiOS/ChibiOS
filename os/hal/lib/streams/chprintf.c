@@ -23,7 +23,7 @@
  * @file    chprintf.c
  * @brief   Mini printf-like functionality.
  *
- * @addtogroup chprintf
+ * @addtogroup HAL_CHPRINTF
  * @{
  */
 

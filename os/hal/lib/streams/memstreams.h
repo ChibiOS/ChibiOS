@@ -18,7 +18,7 @@
  * @file    memstreams.h
  * @brief   Memory streams structures and macros.
  
- * @addtogroup memory_streams
+ * @addtogroup HAL_MEMORY_STREAMS
  * @{
  */
 

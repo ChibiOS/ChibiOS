@@ -18,7 +18,7 @@
  * @file    nullstreams.c
  * @brief   Null streams code.
  *
- * @addtogroup null_streams
+ * @addtogroup HAL_NULL_STREAMS
  * @{
  */
 

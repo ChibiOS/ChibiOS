@@ -792,7 +792,9 @@ INPUT                  = ./src \
                          ../../os/hal/include \
                          ../../os/hal/lib/peripherals/flash \
                          ../../os/hal/lib/peripherals/sensors \
+                         ../../os/hal/lib/streams \
                          ../../os/hal/lib/complex/mfs \
+                         ../../os/hal/lib/complex/serial_nor \
                          ../../os/hal/templates \
                          ../../os/hal/templates/osal
 

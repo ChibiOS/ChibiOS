@@ -18,7 +18,7 @@
  * @file    memstreams.c
  * @brief   Memory streams code.
  *
- * @addtogroup memory_streams
+ * @addtogroup HAL_MEMORY_STREAMS
  * @{
  */
 

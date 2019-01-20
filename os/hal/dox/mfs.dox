@@ -15,7 +15,7 @@
 */
 
 /**
- * @defgroup MFS Managed Flash Storage Driver
+ * @defgroup HAL_MFS Managed Flash Storage Driver
  * @brief   Managed Flash Storage Driver.
  * @details This module implements a managed flash storage able to store
  *          a finite number of variable-size records. Records are retrieved
