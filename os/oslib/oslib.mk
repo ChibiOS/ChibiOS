@@ -15,34 +15,34 @@ CHLIBCONF := $(strip $(shell cat $(CHCONFDIR)/chconf.h | egrep -e "\#define"))
 
 LIBSRC :=
 ifneq ($(findstring CH_CFG_USE_MAILBOXES TRUE,$(CHLIBCONF)),)
-LIBSRC += $(CHIBIOS)/os/lib/src/chmboxes.c
+LIBSRC += $(CHIBIOS)/os/oslib/src/chmboxes.c
 endif
 ifneq ($(findstring CH_CFG_USE_MEMCORE TRUE,$(CHLIBCONF)),)
-LIBSRC += $(CHIBIOS)/os/lib/src/chmemcore.c
+LIBSRC += $(CHIBIOS)/os/oslib/src/chmemcore.c
 endif
 ifneq ($(findstring CH_CFG_USE_HEAP TRUE,$(CHLIBCONF)),)
-LIBSRC += $(CHIBIOS)/os/lib/src/chmemheaps.c
+LIBSRC += $(CHIBIOS)/os/oslib/src/chmemheaps.c
 endif
 ifneq ($(findstring CH_CFG_USE_MEMPOOLS TRUE,$(CHLIBCONF)),)
-LIBSRC += $(CHIBIOS)/os/lib/src/chmempools.c
+LIBSRC += $(CHIBIOS)/os/oslib/src/chmempools.c
 endif
 ifneq ($(findstring CH_CFG_USE_PIPES TRUE,$(CHLIBCONF)),)
-LIBSRC += $(CHIBIOS)/os/lib/src/chpipes.c
+LIBSRC += $(CHIBIOS)/os/oslib/src/chpipes.c
 endif
 ifneq ($(findstring CH_CFG_USE_FACTORY TRUE,$(CHLIBCONF)),)
-LIBSRC += $(CHIBIOS)/os/lib/src/chfactory.c
+LIBSRC += $(CHIBIOS)/os/oslib/src/chfactory.c
 endif
 else
-LIBSRC := $(CHIBIOS)/os/lib/src/chmboxes.c \
-          $(CHIBIOS)/os/lib/src/chmemcore.c \
-          $(CHIBIOS)/os/lib/src/chmemheaps.c \
-          $(CHIBIOS)/os/lib/src/chmempools.c \
-          $(CHIBIOS)/os/lib/src/chpipes.c \
-          $(CHIBIOS)/os/lib/src/chfactory.c
+LIBSRC := $(CHIBIOS)/os/oslib/src/chmboxes.c \
+          $(CHIBIOS)/os/oslib/src/chmemcore.c \
+          $(CHIBIOS)/os/oslib/src/chmemheaps.c \
+          $(CHIBIOS)/os/oslib/src/chmempools.c \
+          $(CHIBIOS)/os/oslib/src/chpipes.c \
+          $(CHIBIOS)/os/oslib/src/chfactory.c
 endif
 
 # Required include directories
-LIBINC := $(CHIBIOS)/os/lib/include
+LIBINC := $(CHIBIOS)/os/oslib/include
 
 # Shared variables
 ALLCSRC += $(LIBSRC)

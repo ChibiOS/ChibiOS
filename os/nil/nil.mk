@@ -26,4 +26,4 @@ ALLCSRC += $(KERNSRC)
 ALLINC  += $(KERNINC)
 
 # OS Library
-include $(CHIBIOS)/os/lib/lib.mk
+include $(CHIBIOS)/os/oslib/oslib.mk

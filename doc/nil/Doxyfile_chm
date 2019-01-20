@@ -791,9 +791,9 @@ INPUT                  = ./src \
                          ../../os/nil/src \
                          ../../os/nil/include \
                          ../../os/nil/templates \
-                         ../../os/lib/dox \
-                         ../../os/lib/src \
-                         ../../os/lib/include
+                         ../../os/oslib/dox \
+                         ../../os/oslib/src \
+                         ../../os/oslib/include
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
