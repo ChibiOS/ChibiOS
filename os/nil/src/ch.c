@@ -55,6 +55,8 @@ nil_system_t nil;
  *
  * @param[in] state     thread state
  * @param[in] p         object pointer
+ *
+ * @return              Pointer to the thread.
  */
 static thread_t *nil_find_thread(tstate_t state, void * p) {
   thread_t *tp = nil.threads;
@@ -79,6 +81,7 @@ static thread_t *nil_find_thread(tstate_t state, void * p) {
  * @param[in] cnt       number of threads to be readied as a negative number,
  *                      non negative numbers are ignored
  * @param[in] msg       the wakeup message
+ * @return              Always zero.
  *
  * @iclass
  */
