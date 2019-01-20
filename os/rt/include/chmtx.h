@@ -133,6 +133,22 @@ static inline bool chMtxQueueNotEmptyS(mutex_t *mp) {
 }
 
 /**
+ * @brief   Returns the mutex owner thread.
+ *
+ * @param[out] mp       pointer to a @p mutex_t structure
+ * @return              The owner thread.
+ * @retval NULL         if the mutex is not owned.
+ *
+ * @iclass
+ */
+static inline thread_t *chMtxGetOwnerI(mutex_t *mp) {
+
+  chDbgCheckClassI();
+
+  return mp->owner;
+}
+
+/**
  * @brief   Returns the next mutex in the mutexes stack of the current thread.
  *
  * @return              A pointer to the next mutex in the stack.
