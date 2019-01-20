@@ -764,7 +764,7 @@ dyn_pipe_t *chFactoryCreatePipe(const char *name, size_t size) {
  * @post    A reference to the dynamic pipe object is returned with
  *          the reference counter increased by one.
  *
- * @param[in] dpp       dynamic pipe object reference
+ * @param[in] name      name of the pipe object
  *
  * @return              The reference to the found dynamic pipe
  *                      object.
