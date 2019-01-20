@@ -1,0 +1,11 @@
+sourceRoot: ../ftl/processors/conf/halconf
+outputRoot: .
+dataRoot: .
+
+freemarkerLinks: {
+    lib: ../ftl/libs
+}
+
+data : {
+  doc:properties (./values.txt)
+}
