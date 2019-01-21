@@ -114,7 +114,7 @@
  */
 
 /**
- * @defgroup HAL_INTERFACES Interfaces and Classes
+ * @defgroup HAL_INTERFACES_CLASSES Interfaces and Classes
  * @brief   HAL Interfaces and Classes.
  *
  * @ingroup IO

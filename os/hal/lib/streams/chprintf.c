@@ -24,6 +24,7 @@
  * @brief   Mini printf-like functionality.
  *
  * @addtogroup HAL_CHPRINTF
+ * @details Mini printf-like functionality.
  * @{
  */
 

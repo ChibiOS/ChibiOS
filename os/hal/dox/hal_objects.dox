@@ -16,5 +16,5 @@
 
 /**
  * @defgroup HAL_BASE_OBJECT Base Object
- * @ingroup HAL_INTERFACES
+ * @ingroup HAL_INTERFACES_CLASSES
  */
