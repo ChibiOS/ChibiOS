@@ -19,6 +19,9 @@
  * @brief   Generic persistent storage class header.
  *
  * @addtogroup HAL_PERSISTENT
+ * @details This module define an abstract interface for generic persistent
+ *          storage. Such storage has a fixed size and can be read and
+ *          written.
  * @{
  */
 

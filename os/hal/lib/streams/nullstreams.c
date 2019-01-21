@@ -19,6 +19,7 @@
  * @brief   Null streams code.
  *
  * @addtogroup HAL_NULL_STREAMS
+ * @details A null streams.
  * @{
  */
 

@@ -19,6 +19,7 @@
  * @brief   Memory streams code.
  *
  * @addtogroup HAL_MEMORY_STREAMS
+ * @details Memory buffers handled as streams.
  * @{
  */
 
