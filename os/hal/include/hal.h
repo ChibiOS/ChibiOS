@@ -50,10 +50,6 @@
 #define HAL_USE_DAC                         FALSE
 #endif
 
-#if !defined(HAL_USE_EXT)
-#define HAL_USE_ETX                         FALSE
-#endif
-
 #if !defined(HAL_USE_GPT)
 #define HAL_USE_GPT                         FALSE
 #endif
@@ -230,6 +226,15 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+/* Configuration file checks.*/
+#if !defined(_CHIBIOS_HAL_CONF_)
+#error "invalid configuration file"
+#endif
+
+#if !defined(_CHIBIOS_HAL_CONF_VER_7_0_)
+#error "obsolete or unknown configuration file"
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
