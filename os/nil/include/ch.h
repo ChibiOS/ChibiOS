@@ -479,7 +479,7 @@
 #error "missing or wrong configuration file"
 #endif
 
-#if !defined(_CHIBIOS_NIL_CONF_VER_3_0_)
+#if !defined(_CHIBIOS_NIL_CONF_VER_3_2_)
 #error "obsolete or unknown configuration file"
 #endif
 
