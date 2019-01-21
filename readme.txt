@@ -75,6 +75,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Removed deprecated EXT driver.
 - NEW: Added a new function chMtxGetOwnerI() to RT mutexes subsystem.
 - NEW: STM32L433 added to STM32L4xx HAL.
 - CHG: chFifoObjectInit() renamed to chFifoObjectInitAligned(). Added a new

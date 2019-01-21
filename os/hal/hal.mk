@@ -30,9 +30,6 @@ endif
 ifneq ($(findstring HAL_USE_DAC TRUE,$(HALCONF)),)
 HALSRC += $(CHIBIOS)/os/hal/src/hal_dac.c
 endif
-ifneq ($(findstring HAL_USE_EXT TRUE,$(HALCONF)),)
-HALSRC += $(CHIBIOS)/os/hal/src/hal_ext.c
-endif
 ifneq ($(findstring HAL_USE_GPT TRUE,$(HALCONF)),)
 HALSRC += $(CHIBIOS)/os/hal/src/hal_gpt.c
 endif
@@ -99,7 +96,6 @@ HALSRC = $(CHIBIOS)/os/hal/src/hal.c \
          $(CHIBIOS)/os/hal/src/hal_can.c \
          $(CHIBIOS)/os/hal/src/hal_crypto.c \
          $(CHIBIOS)/os/hal/src/hal_dac.c \
-         $(CHIBIOS)/os/hal/src/hal_ext.c \
          $(CHIBIOS)/os/hal/src/hal_gpt.c \
          $(CHIBIOS)/os/hal/src/hal_i2c.c \
          $(CHIBIOS)/os/hal/src/hal_i2s.c \

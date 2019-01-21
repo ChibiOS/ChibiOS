@@ -140,7 +140,6 @@
 #include "hal_can.h"
 #include "hal_crypto.h"
 #include "hal_dac.h"
-#include "hal_ext.h"
 #include "hal_gpt.h"
 #include "hal_i2c.h"
 #include "hal_i2s.h"

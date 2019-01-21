@@ -20,7 +20,7 @@
  * @details This module implements a generic driver for serial NOR Flash
  *          devices.
  *
- * @section flash_1 Driver State Machine
+ * @section snorflash_1 Driver State Machine
  * The flash driver implements a state machine internally, not all the driver
  * functionalities can be used in any moment, any transition not explicitly
  * shown in the following diagram has to be considered an error and shall
@@ -34,23 +34,19 @@
     uninit [label="FLS_UNINIT", style="bold"];
     ready [label="FLS_READY\nClock Enabled"];
     read [label="FLS_READ\nReading"];
-    program [label="FLS_PGM\nProgramming"];
-    erasea [label="FLS_ERASEA\nErasing All"];
-    erases [label="FLS_ERASES\nErasing Sector"];
-    uninit -> stop [label=" flashInit()", constraint=false];
-    stop -> stop [label=" flashStop()"];
-    stop -> ready [label=" flashStart()"];
-    ready -> stop [label=" flashStop()"];
+    pgm [label="FLS_PGM\nProgramming"];
+    erase [label="FLS_ERASE\nErasing"];
+    uninit -> stop [label=" snorInit()", constraint=false];
+    stop -> stop [label=" snorStop()"];
+    stop -> ready [label=" snorStart()"];
+    ready -> stop [label=" snorStop()"];
     ready -> read [label=" flashRead()\nflashVerifyErase()"];
     read -> ready [label=" return"];
-    ready -> program [label=" flashProgram()"];
-    program -> ready [label=" return"];
-    ready -> erasea [label=" flashEraseAll)"];
-    erasea -> ready [label=" flashQueryErase()\nFLASH_NO_ERROR\nFLASH_ERROR_*"];
-    erasea -> erasea [label=" flashQueryErase()\nflashProgram()\nflashRead()\nFLASH_BUSY_ERASE"];
-    ready -> erases [label=" flashEraseSector()"];
-    erases -> ready [label=" flashQueryErase()\nFLASH_NO_ERROR\nFLASH_ERROR_*"];
-    erases -> erases [label=" flashQueryErase()\nflashProgram()\nflashRead()\nFLASH_BUSY_ERASE"];
+    ready -> pgm [label=" flashProgram()"];
+    pgm -> ready [label=" return"];
+    ready -> erase [label=" \n\nflashEraseAll()\nflashEraseSector()"];
+    erase -> ready [label=" flashQueryErase()\nFLASH_NO_ERROR\nFLASH_ERROR_*"];
+    erase -> erase [label=" flashQueryErase()\nflashProgram()\nflashRead()\nFLASH_BUSY_ERASING"];
   }
  * @enddot
  *
