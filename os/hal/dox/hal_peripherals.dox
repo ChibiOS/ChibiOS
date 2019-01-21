@@ -14,7 +14,7 @@
     limitations under the License.
 */
 
- /**
+/**
  * @defgroup HAL_ABSTRACT_PERIPHERALS Peripheral Interfaces
  * @brief   HAL Abstract Peripheral Interfaces.
  *
