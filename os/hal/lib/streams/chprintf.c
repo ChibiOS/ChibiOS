@@ -296,6 +296,8 @@ unsigned_common:
  *
  * @param[in] chp       pointer to a @p BaseSequentialStream implementing object
  * @param[in] fmt       formatting string
+ * @return              The number of bytes that would have been
+ *                      written to @p chp if no stream error occurs
  *
  * @api
  */
@@ -370,6 +372,7 @@ int chsnprintf(char *str, size_t size, const char *fmt, ...) {
  *
  * @param[in] str       pointer to a buffer
  * @param[in] size      maximum size of the buffer
+ * @param[in] fmt       formatting string
  * @param[in] ap        list of parameters
  * @return              The number of characters (excluding the
  *                      terminating NUL byte) that would have been

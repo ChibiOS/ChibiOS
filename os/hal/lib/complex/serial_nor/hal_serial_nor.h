@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    serial_nor.h
+ * @file    hal_serial_nor.h
  * @brief   Serial NOR driver header.
  *
  * @addtogroup HAL_SERIAL_NOR

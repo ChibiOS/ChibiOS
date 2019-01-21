@@ -123,6 +123,7 @@ void bus_release(BUSDriver *busp) {
  * @brief   Returns a pointer to the device descriptor.
  *
  * @param[in] instance  instance pointer
+ * @return              Pointer to a static descriptor structure.
  */
 static const flash_descriptor_t *snor_get_descriptor(void *instance) {
   SNORDriver *devp = (SNORDriver *)instance;

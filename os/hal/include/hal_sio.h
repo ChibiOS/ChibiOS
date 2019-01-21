@@ -132,6 +132,7 @@ typedef enum {
  * @note    If the FIFO is full then the behavior is unpredictable.
  *
  * @param[in] siop      pointer to the @p SIODriver object
+ * @param[in] data      frame to be written
  *
  * @xclass
  */
