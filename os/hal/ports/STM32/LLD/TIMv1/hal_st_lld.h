@@ -89,6 +89,7 @@
 #define STM32_HAS_TIM22                     FALSE
 #endif
 
+#if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
 #if STM32_ST_USE_TIMER == 2
 #if !STM32_HAS_TIM2
 #error "TIM2 not present in the selected device"
@@ -158,6 +159,7 @@
 #else
 #error "STM32_ST_USE_TIMER specifies an unsupported timer"
 #endif
+#endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -183,6 +185,7 @@ extern "C" {
 /* Driver inline functions.                                                  */
 /*===========================================================================*/
 
+#if (OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING) || defined(__DOXYGEN__)
 /**
  * @brief   Returns the time counter value.
  *
@@ -258,6 +261,7 @@ static inline bool st_lld_is_alarm_active(void) {
 
   return (bool)((STM32_ST_TIM->DIER & STM32_TIM_DIER_CC1IE) != 0);
 }
+#endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
 
 #endif /* HAL_ST_LLD_H */
 

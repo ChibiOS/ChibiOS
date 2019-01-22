@@ -62,6 +62,7 @@ void stInit(void) {
   st_lld_init();
 }
 
+#if (OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING) || defined(__DOXYGEN__)
 /**
  * @brief   Starts the alarm.
  * @note    Makes sure that no spurious alarms are triggered after
@@ -123,6 +124,7 @@ systime_t stGetAlarm(void) {
 
   return st_lld_get_alarm();
 }
+#endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
 
 #endif /* OSAL_ST_MODE != OSAL_ST_MODE_NONE */
 
