@@ -1835,7 +1835,7 @@ int32 OS_TaskCreate(uint32 *task_id,
     (stkalign_t *)stack_pointer,
     (stkalign_t *)((uint8_t *)stack_pointer + stack_size),
     rt_prio,
-    (tfunc_t)function_pointer,
+    (tfunc_t)(void *)function_pointer,
     NULL
   };
 
