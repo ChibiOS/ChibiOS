@@ -110,7 +110,7 @@ typedef struct {
  * @brief   BasePersistentStorage specific methods.
  */
 #define _rtc_driver_methods                                                 \
-  _base_persistent_storage_methods
+  _base_pers_storage_methods
 
 #include "hal_rtc_lld.h"
 
