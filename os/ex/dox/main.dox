@@ -64,14 +64,7 @@
  *
  * @ingroup EX
  */
- 
-/**
- * @defgroup EX_MICRON Micron Technology Devices
- * @brief   Micron Technology Devices.
- *
- * @ingroup EX
- */
- 
+
 /**
  * @defgroup EX_ST STMicroelectronics Devices
  * @brief   STMicroelectronics Devices.
