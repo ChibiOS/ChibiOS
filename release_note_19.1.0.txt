@@ -1,17 +1,17 @@
 ******************************************************************************
-*** ChibiOS next Release Notes.                                            ***
+*** ChibiOS 19.1.0 Release Notes.                                          ***
 ******************************************************************************
 
-ChibiOS next is composed of several independent but inter-operable
+ChibiOS 19.1.0 is composed of several independent but inter-operable
 sub-projects: RT, NIL, HAL, EX. Plus several external libraries
 integrated in our structure: WolfSSL, FatFS and lwIP.
 
-*** ChibiOS next highlights ****
+*** ChibiOS 19.1.0 highlights ****
 
 This release is focused on features and  general improvements, HAL, RT and NIL
 received a series of important improvements, new features have been added.
 
-*** ChibiOS next general improvements ***
+*** ChibiOS 19.1.0 general improvements ***
 
 - CMSIS 5.4.0 has been integrated.
 - Improved build system based on make.
