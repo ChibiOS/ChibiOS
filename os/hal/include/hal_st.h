@@ -84,12 +84,10 @@
 extern "C" {
 #endif
   void stInit(void);
-#if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
   void stStartAlarm(systime_t abstime);
   void stStopAlarm(void);
   void stSetAlarm(systime_t abstime);
   systime_t stGetAlarm(void);
-#endif
 #ifdef __cplusplus
 }
 #endif

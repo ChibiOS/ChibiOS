@@ -89,77 +89,27 @@
 #define STM32_HAS_TIM22                     FALSE
 #endif
 
-#if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
 #if STM32_ST_USE_TIMER == 2
-#if !STM32_HAS_TIM2
-#error "TIM2 not present in the selected device"
-#endif
-#if defined(STM32_TIM2_IS_USED)
-#error "ST requires TIM2 but the timer is already used"
-#else
-#define STM32_TIM2_IS_USED
-#endif
-#define STM32_ST_TIM                              STM32_TIM2
+#define STM32_ST_TIM                        STM32_TIM2
 
 #elif STM32_ST_USE_TIMER == 3
-#if !STM32_HAS_TIM3
-#error "TIM3 not present in the selected device"
-#endif
-#if defined(STM32_TIM3_IS_USED)
-#error "ST requires TIM3 but the timer is already used"
-#else
-#define STM32_TIM3_IS_USED
-#endif
-#define STM32_ST_TIM                              STM32_TIM3
+#define STM32_ST_TIM                        STM32_TIM3
 
 #elif STM32_ST_USE_TIMER == 4
-#if !STM32_HAS_TIM4
-#error "TIM4 not present in the selected device"
-#endif
-#if defined(STM32_TIM4_IS_USED)
-#error "ST requires TIM4 but the timer is already used"
-#else
-#define STM32_TIM4_IS_USED
-#endif
-#define STM32_ST_TIM                              STM32_TIM4
+#define STM32_ST_TIM                        STM32_TIM4
 
 #elif STM32_ST_USE_TIMER == 5
-#if !STM32_HAS_TIM5
-#error "TIM5 not present in the selected device"
-#endif
-#if defined(STM32_TIM5_IS_USED)
-#error "ST requires TIM5 but the timer is already used"
-#else
-#define STM32_TIM5_IS_USED
-#endif
-#define STM32_ST_TIM                              STM32_TIM5
+#define STM32_ST_TIM                        STM32_TIM5
 
 #elif STM32_ST_USE_TIMER == 21
-#if !STM32_HAS_TIM21
-#error "TIM21 not present in the selected device"
-#endif
-#if defined(STM32_TIM21_IS_USED)
-#error "ST requires TIM21 but the timer is already used"
-#else
-#define STM32_TIM21_IS_USED
-#endif
-#define STM32_ST_TIM                              STM32_TIM21
+#define STM32_ST_TIM                        STM32_TIM21
 
 #elif STM32_ST_USE_TIMER == 22
-#if !STM32_HAS_TIM22
-#error "TIM22 not present in the selected device"
-#endif
-#if defined(STM32_TIM22_IS_USED)
-#error "ST requires TIM22 but the timer is already used"
-#else
-#define STM32_TIM22_IS_USED
-#endif
-#define STM32_ST_TIM                              STM32_TIM22
+#define STM32_ST_TIM                        STM32_TIM22
 
 #else
 #error "STM32_ST_USE_TIMER specifies an unsupported timer"
 #endif
-#endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -185,7 +135,6 @@ extern "C" {
 /* Driver inline functions.                                                  */
 /*===========================================================================*/
 
-#if (OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING) || defined(__DOXYGEN__)
 /**
  * @brief   Returns the time counter value.
  *
@@ -261,7 +210,6 @@ static inline bool st_lld_is_alarm_active(void) {
 
   return (bool)((STM32_ST_TIM->DIER & STM32_TIM_DIER_CC1IE) != 0);
 }
-#endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
 
 #endif /* HAL_ST_LLD_H */
 
