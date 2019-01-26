@@ -1304,7 +1304,7 @@ struct nil_system {
  *
  * @init
  */
-#define chSemObjectInit(sp, n) ((sp)->cnt = n)
+#define chSemObjectInit(sp, n) ((sp)->cnt = (n))
 
 /**
  * @brief   Performs a wait operation on a semaphore.
