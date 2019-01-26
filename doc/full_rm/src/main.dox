@@ -36,7 +36,7 @@
  * - RT, a full features RTOS.
  * - NIL, another RTOS with a very reduced footprint.
  * - OSLIB, a library of RTOS enhancements, it can be used on top of both RT
- *   NIL.
+ *   and NIL.
  * - HAL, an abstraction layer for common MCU peripherals.
  * - EX, abstraction for board-level devices, it sits on top of HAL.
  * .
