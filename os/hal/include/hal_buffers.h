@@ -47,7 +47,9 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+/*lint -save -e9027 [10.1] It is meant to be this way, not an error.*/
 #if (BUFFERS_CHUNKS_SIZE & (BUFFERS_CHUNKS_SIZE - 1)) != 0
+/*lint -restore*/
 #error "BUFFERS_CHUNKS_SIZE must be a power of two"
 #endif
 

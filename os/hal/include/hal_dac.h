@@ -158,18 +158,18 @@ struct hal_dac_driver {
   /**
    * @brief   Samples buffer size.
    */
-  uint16_t                  depth;
+  size_t                    depth;
   /**
    * @brief   Current configuration data.
    */
   const DACConfig           *config;
-#if DAC_USE_WAIT || defined(__DOXYGEN__)
+#if (DAC_USE_WAIT == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Waiting thread.
    */
   thread_reference_t        thread;
 #endif /* DAC_USE_WAIT */
-#if DAC_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
+#if (DAC_USE_MUTUAL_EXCLUSION == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Mutex protecting the bus.
    */

@@ -198,18 +198,18 @@ struct hal_spi_driver {
    * @brief Current configuration data.
    */
   const SPIConfig           *config;
-#if SPI_USE_WAIT || defined(__DOXYGEN__)
+#if (SPI_USE_WAIT == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Waiting thread.
    */
   thread_reference_t        thread;
-#endif /* SPI_USE_WAIT */
-#if SPI_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
+#endif /* SPI_USE_WAIT == TRUE */
+#if (SPI_USE_MUTUAL_EXCLUSION == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Mutex protecting the peripheral.
    */
   mutex_t                   mutex;
-#endif /* SPI_USE_MUTUAL_EXCLUSION */
+#endif /* SPI_USE_MUTUAL_EXCLUSION == TRUE */
 #if defined(SPI_DRIVER_EXT_FIELDS)
   SPI_DRIVER_EXT_FIELDS
 #endif

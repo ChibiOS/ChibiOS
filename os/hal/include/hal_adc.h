@@ -177,18 +177,18 @@ struct hal_adc_driver {
    * @brief Current conversion group pointer or @p NULL.
    */
   const ADCConversionGroup  *grpp;
-#if ADC_USE_WAIT || defined(__DOXYGEN__)
+#if (ADC_USE_WAIT == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief Waiting thread.
    */
   thread_reference_t        thread;
-#endif
-#if ADC_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
+#endif /* ADC_USE_WAIT == TRUE */
+#if (ADC_USE_MUTUAL_EXCLUSION == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief Mutex protecting the peripheral.
    */
   mutex_t                   mutex;
-#endif /* ADC_USE_MUTUAL_EXCLUSION */
+#endif /* ADC_USE_MUTUAL_EXCLUSION == TRUE */
 #if defined(ADC_DRIVER_EXT_FIELDS)
   ADC_DRIVER_EXT_FIELDS
 #endif

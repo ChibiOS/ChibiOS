@@ -142,7 +142,7 @@ void dacStop(DACDriver *dacp) {
  */
 void dacPutChannelX(DACDriver *dacp, dacchannel_t channel, dacsample_t sample) {
 
-  osalDbgCheck(channel < DAC_MAX_CHANNELS);
+  osalDbgCheck(channel < (dacchannel_t)DAC_MAX_CHANNELS);
   osalDbgAssert(dacp->state == DAC_READY, "invalid state");
 
   dac_lld_put_channel(dacp, channel, sample);
@@ -199,7 +199,7 @@ void dacStartConversionI(DACDriver *dacp,
 
   osalDbgCheckClassI();
   osalDbgCheck((dacp != NULL) && (grpp != NULL) && (samples != NULL) &&
-               ((depth == 1) || ((depth & 1) == 0)));
+               ((depth == 1U) || ((depth & 1U) == 0U)));
   osalDbgAssert((dacp->state == DAC_READY) ||
                 (dacp->state == DAC_COMPLETE) ||
                 (dacp->state == DAC_ERROR),

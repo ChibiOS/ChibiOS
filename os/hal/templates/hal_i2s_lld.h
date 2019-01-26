@@ -64,12 +64,16 @@
 /**
  * @brief   Low level fields of the I2S driver structure.
  */
-#define i2s_lld_driver_fields
+#define i2s_lld_driver_fields                                               \
+  /* Dummy field, it is not needed.*/                                       \
+  uint32_t                  dummy
 
 /**
  * @brief   Low level fields of the I2S configuration structure.
  */
-#define i2s_lld_config_fields
+#define i2s_lld_config_fields                                               \
+  /* Dummy configuration, it is not needed.*/                               \
+  uint32_t                  dummy
 
 /*===========================================================================*/
 /* External declarations.                                                    */

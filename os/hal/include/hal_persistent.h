@@ -65,7 +65,7 @@ typedef uint32_t ps_offset_t;
 /**
  * @brief   @p BasePersistentStorage specific methods.
  */
-#define _base_persistent_storage_methods_alone                              \
+#define _base_pers_storage_methods_alone                                    \
   /* Storage size.*/                                                        \
   size_t (*getsize)(void *instance);                                        \
   /* Read operation.*/                                                      \
@@ -78,15 +78,15 @@ typedef uint32_t ps_offset_t;
 /**
  * @brief   @p BasePersistentStorage specific methods with inherited ones.
  */
-#define _base_persistent_storage_methods                                    \
+#define _base_pers_storage_methods                                          \
   _base_object_methods                                                      \
-  _base_persistent_storage_methods_alone
+  _base_pers_storage_methods_alone
 
 /**
  * @brief   @p BasePersistentStorage virtual methods table.
  */
 struct BasePersistentStorageVMT {
-  _base_persistent_storage_methods
+  _base_pers_storage_methods
 };
 
 /**

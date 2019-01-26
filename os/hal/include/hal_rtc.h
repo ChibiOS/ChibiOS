@@ -128,7 +128,7 @@ typedef struct {
 #error "RTC LLD does not define the required RTC_HAS_STORAGE macro"
 #endif
 
-#if RTC_HAS_STORAGE || defined(__DOXYGEN__)
+#if (RTC_HAS_STORAGE == TRUE) || defined(__DOXYGEN__)
 /**
  * @extends FileStream
  *
@@ -143,7 +143,7 @@ struct RTCDriverVMT {
  * @brief   Structure representing an RTC driver.
  */
 struct RTCDriver {
-#if RTC_HAS_STORAGE || defined(__DOXYGEN__)
+#if (RTC_HAS_STORAGE == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief Virtual Methods Table.
    */

@@ -85,7 +85,9 @@ typedef enum {
 /**
  * @brief   Low level fields of the ADC driver structure.
  */
-#define adc_lld_driver_fields
+#define adc_lld_driver_fields                                               \
+  /* Dummy field, it is not needed.*/                                       \
+  uint32_t                  dummy
 
 /**
  * @brief   Low level fields of the ADC configuration structure.
@@ -97,7 +99,9 @@ typedef enum {
 /**
  * @brief   Low level fields of the ADC configuration structure.
  */
-#define adc_lld_configuration_group_fields
+#define adc_lld_configuration_group_fields                                  \
+  /* Dummy configuration, it is not needed.*/                               \
+  uint32_t                  dummy
 
 /*===========================================================================*/
 /* External declarations.                                                    */

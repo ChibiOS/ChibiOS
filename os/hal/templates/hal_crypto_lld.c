@@ -113,20 +113,11 @@ cryerror_t cry_lld_aes_loadkey(CRYDriver *cryp,
                                size_t size,
                                const uint8_t *keyp) {
 
-  osalDbgCheck((cryp != NULL) &&  (keyp != NULL));
-
-
-#if CRY_LLD_SUPPORTS_AES == TRUE
-  return cry_lld_aes_loadkey(cryp, size, keyp);
-#elif HAL_CRY_USE_FALLBACK == TRUE
-  return cry_fallback_aes_loadkey(cryp, size, keyp);
-#else
   (void)cryp;
   (void)size;
   (void)keyp;
 
   return CRY_ERR_INV_ALGO;
-#endif
 }
 
 /**
@@ -693,20 +684,11 @@ cryerror_t cry_lld_des_loadkey(CRYDriver *cryp,
                                size_t size,
                                const uint8_t *keyp) {
 
-  osalDbgCheck((cryp != NULL) &&  (keyp != NULL));
-
-
-#if CRY_LLD_SUPPORTS_DES == TRUE
-  return cry_lld_des_loadkey(cryp, size, keyp);
-#elif HAL_CRY_USE_FALLBACK == TRUE
-  return cry_fallback_des_loadkey(cryp, size, keyp);
-#else
   (void)cryp;
   (void)size;
   (void)keyp;
 
   return CRY_ERR_INV_ALGO;
-#endif
 }
 
 /**
@@ -1206,20 +1188,11 @@ cryerror_t cry_lld_hmac_loadkey(CRYDriver *cryp,
                                 size_t size,
                                 const uint8_t *keyp) {
 
-  osalDbgCheck((cryp != NULL) &&  (keyp != NULL));
-
-#if (CRY_LLD_SUPPORTS_HMAC_SHA256 == TRUE) ||                               \
-    (CRY_LLD_SUPPORTS_HMAC_SHA512 == TRUE)
-  return cry_lld_hmac_loadkey(cryp, size, keyp);
-#elif HAL_CRY_USE_FALLBACK == TRUE
-  return cry_fallback_hmac_loadkey(cryp, size, keyp);
-#else
   (void)cryp;
   (void)size;
   (void)keyp;
 
   return CRY_ERR_INV_ALGO;
-#endif
 }
 
 /**

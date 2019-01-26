@@ -25,7 +25,7 @@
 #ifndef HAL_DAC_LLD_H
 #define HAL_DAC_LLD_H
 
-#if HAL_USE_DAC || defined(__DOXYGEN__)
+#if (HAL_USE_DAC == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -89,7 +89,9 @@ typedef enum {
 /**
  * @brief   Low level fields of the DAC driver structure.
  */
-#define dac_lld_driver_fields
+#define dac_lld_driver_fields                                               \
+  /* Dummy field, it is not needed.*/                                       \
+  uint32_t                  dummy
 
 /**
  * @brief   Low level fields of the DAC configuration structure.
@@ -101,13 +103,16 @@ typedef enum {
 /**
  * @brief   Low level fields of the DAC group configuration structure.
  */
-#define dac_lld_conversion_group_fields
+#define dac_lld_conversion_group_fields                                     \
+  /* Dummy configuration, it is not needed.*/                               \
+  uint32_t                  dummy
+
 
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if PLATFORM_DAC_USE_DAC1 && !defined(__DOXYGEN__)
+#if (PLATFORM_DAC_USE_DAC1 == TRUE) && !defined(__DOXYGEN__)
 extern DACDriver DACD1;
 #endif
 
@@ -126,7 +131,7 @@ extern "C" {
 }
 #endif
 
-#endif /* HAL_USE_DAC */
+#endif /* HAL_USE_DAC == TRUE */
 
 #endif /* HAL_DAC_LLD_H */
 
