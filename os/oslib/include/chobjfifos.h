@@ -129,7 +129,7 @@ static inline void chFifoObjectInitAligned(objects_fifo_t *ofp, size_t objsize,
                                            size_t objn, unsigned objalign,
                                            void *objbuf, msg_t *msgbuf) {
 
-  chDbgCheck((objsize >= objalign) && (objsize % objalign == 0U));
+  chDbgCheck((objsize >= objalign) && ((objsize % objalign) == 0U));
 
   chGuardedPoolObjectInitAligned(&ofp->free, objsize, objalign);
   chGuardedPoolLoadArray(&ofp->free, objbuf, objn);
