@@ -75,6 +75,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added a sanity check on GCC version for ARMv6-M, a version below 6
+       must be used.
 - NEW: Removed deprecated EXT driver.
 - NEW: Added a new function chMtxGetOwnerI() to RT mutexes subsystem.
 - NEW: STM32L433 added to STM32L4xx HAL.
