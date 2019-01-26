@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2016..2018 Rocco Marco Guglielmi
 
     This file is part of ChibiOS.
 
@@ -18,60 +18,54 @@
 */
 
 /**
- * @file    chversion.h
- * @brief   Version Module macros and structures.
+ * @file    ex.h
+ * @brief   EX main include file.
  *
- * @addtogroup chibios_version
- * @details This module contains information about the ChibiOS release, it
- *          is common to all subsystems.
+ * @addtogroup ex_info
+ * @details EX related info.
  * @{
  */
 
-#ifndef CHVERSION_H
-#define CHVERSION_H
+#ifndef EX_H
+#define EX_H
 
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
 
 /**
- * @brief   ChibiOS product identification macro.
+ * @brief   ChibiOS/EX identification macro.
  */
-#define _CHIBIOS_
+#define _CHIBIOS_EX_
 
 /**
  * @brief   Stable release flag.
  */
-#define CH_VERSION_STABLE       1
+#define CH_EX_STABLE            1
 
 /**
- * @name    ChibiOS version identification
+ * @name    ChibiOS/EX version identification
  * @{
  */
 /**
- * @brief   ChibiOS version string.
+ * @brief   EX version string.
  */
-#define CH_VERSION              "19.1.0"
+#define CH_EX_VERSION           "1.1.0"
 
 /**
- * @brief   ChibiOS version release year.
+ * @brief   EX version major number.
  */
-#define CH_VERSION_YEAR         19
+#define CH_EX_MAJOR             1
 
 /**
- * @brief   ChibiOS version release month.
+ * @brief   EX version minor number.
  */
-#define CH_VERSION_MONTH        1
+#define CH_EX_MINOR             1
 
 /**
- * @brief   ChibiOS version patch number.
+ * @brief   EX version patch number.
  */
-#define CH_VERSION_PATCH        0
-
-/**
- * @brief   ChibiOS version nickname.
- */
-#define CH_VERSION_NICKNAME     "Vietri"
+#define CH_EX_PATCH             0
 /** @} */
 
 /*===========================================================================*/
@@ -95,9 +89,9 @@
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Module inline functions.                                                  */
+/* Late inclusions.                                                          */
 /*===========================================================================*/
 
-#endif /* CHVERSION_H */
+#endif /* EX_H */
 
 /** @} */

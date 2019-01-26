@@ -43,7 +43,7 @@
 /**
  * @brief   Stable release flag.
  */
-#define CH_OSLIB_STABLE         0
+#define CH_OSLIB_STABLE         1
 
 /**
  * @name    ChibiOS/LIB version identification
@@ -52,20 +52,20 @@
 /**
  * @brief   OS Library version string.
  */
-#define CH_OSLIB_VERSION        "1.0.0"
+#define CH_OSLIB_VERSION        "1.1.0"
 
 /**
- * @brief   Kernel version major number.
+ * @brief   OS Library version major number.
  */
 #define CH_OSLIB_MAJOR          1
 
 /**
- * @brief   Kernel version minor number.
+ * @brief   OS Library version minor number.
  */
-#define CH_OSLIB_MINOR          0
+#define CH_OSLIB_MINOR          1
 
 /**
- * @brief   Kernel version patch number.
+ * @brief   OS Library version patch number.
  */
 #define CH_OSLIB_PATCH          0
 /** @} */

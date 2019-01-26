@@ -26,7 +26,7 @@ received a series of important improvements, new features have been added.
 - Added a sanity check on GCC version for ARMv6-M, a version below 6
   must be used.
 
-*** What's new in OS Library 1.0.0 ***
+*** What's new in OS Library 1.1.0 ***
 
 - Separated OSLIB from RT and NIL, now it is a separate "product" with
   its own version, configuration file and licensing. The library will
