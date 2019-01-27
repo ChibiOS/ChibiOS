@@ -24,7 +24,6 @@
   |  +--ex/                     - EX component.
   |  |  +--dox/                 - EX documentation resources.
   |  |  +--Bosch /              - EX complex drivers for Bosch devices.
-  |  |  +--Micron/              - EX complex drivers for Micron devices.
   |  |  +--ST/                  - EX complex drivers for ST devices.
   |  +--hal/                    - HAL component.
   |  |  +--boards/              - HAL board support files.
