@@ -42,7 +42,7 @@
 /**
  * @brief   LIS3MDL driver version string.
  */
-#define EX_LIS3MDL_VERSION                  "1.1.1"
+#define EX_LIS3MDL_VERSION                  "1.1.2"
 
 /**
  * @brief   LIS3MDL driver version major number.
@@ -57,7 +57,7 @@
 /**
  * @brief   LIS3MDL driver version patch number.
  */
-#define EX_LIS3MDL_PATCH                    1
+#define EX_LIS3MDL_PATCH                    2
 /** @} */
 
 /**
@@ -229,8 +229,8 @@
  * @details If set to @p TRUE more configurations are available.
  * @note    The default is @p FALSE.
  */
-#if !defined(LIS3MDL_COMP_USE_ADVANCED) || defined(__DOXYGEN__)
-#define LIS3MDL_COMP_USE_ADVANCED           FALSE
+#if !defined(LIS3MDL_USE_ADVANCED) || defined(__DOXYGEN__)
+#define LIS3MDL_USE_ADVANCED                FALSE
 #endif
 /** @} */
 
@@ -428,7 +428,7 @@ typedef struct {
    * @brief LIS3MDL compass subsystem output data rate.
    */
   lis3mdl_comp_odr_t        compoutputdatarate;
-#if LIS3MDL_COMP_USE_ADVANCED || defined(__DOXYGEN__)
+#if LIS3MDL_USE_ADVANCED || defined(__DOXYGEN__)
   /**
    * @brief LIS3MDL compass subsystem low power mode configuration.
    */

@@ -43,7 +43,7 @@
 /**
  * @brief   LPS25H driver version string.
  */
-#define EX_LPS25H_VERSION                   "1.1.1"
+#define EX_LPS25H_VERSION                   "1.1.2"
 
 /**
  * @brief   LPS25H driver version major number.
@@ -58,7 +58,7 @@
 /**
  * @brief   LPS25H driver version patch number.
  */
-#define EX_LPS25H_PATCH                     1
+#define EX_LPS25H_PATCH                     2
 /** @} */
 
 /**
@@ -249,8 +249,7 @@
 #endif
 
 /**
- * @brief   LPS25H accelerometer subsystem advanced configurations
- *          switch.
+ * @brief   LPS25H advanced configurations switch.
  * @details If set to @p TRUE more configurations are available.
  * @note    The default is @p FALSE.
  */

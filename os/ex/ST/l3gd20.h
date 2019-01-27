@@ -42,7 +42,7 @@
 /**
  * @brief   L3GD20 driver version string.
  */
-#define EX_L3GD20_VERSION                   "1.1.1"
+#define EX_L3GD20_VERSION                   "1.1.2"
 
 /**
  * @brief   L3GD20 driver version major number.
@@ -57,7 +57,7 @@
 /**
  * @brief   L3GD20 driver version patch number.
  */
-#define EX_L3GD20_PATCH                     1
+#define EX_L3GD20_PATCH                     2
 /** @} */
 
 /**
@@ -271,13 +271,12 @@
 #endif
 
 /**
- * @brief   L3GD20 accelerometer subsystem advanced configurations
- *          switch.
+ * @brief   L3GD20 advanced configurations switch.
  * @details If set to @p TRUE more configurations are available.
  * @note    The default is @p FALSE.
  */
-#if !defined(L3GD20_GYRO_USE_ADVANCED) || defined(__DOXYGEN__)
-#define L3GD20_GYRO_USE_ADVANCED            FALSE
+#if !defined(L3GD20_USE_ADVANCED) || defined(__DOXYGEN__)
+#define L3GD20_USE_ADVANCED                 FALSE
 #endif
 
 /**
@@ -472,7 +471,7 @@ typedef struct {
    * @brief   L3GD20 gyroscope system output data rate selection.
    */
   l3gd20_odr_t              gyrooutputdatarate;
-#if L3GD20_GYRO_USE_ADVANCED || defined(__DOXYGEN__)
+#if L3GD20_USE_ADVANCED || defined(__DOXYGEN__)
   /**
    * @brief   L3GD20 gyroscope system block data update.
    */

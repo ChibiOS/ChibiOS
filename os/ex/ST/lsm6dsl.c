@@ -903,7 +903,7 @@ void lsm6dslStart(LSM6DSLDriver *devp, const LSM6DSLConfig *config) {
   /* Control register 4 configuration block.*/
   {
       cr[4] = 0;
-#if LSM6DSL_GYRO_USE_ADVANCED || defined(__DOXYGEN__)
+#if LSM6DSL_USE_ADVANCED || defined(__DOXYGEN__)
       if(devp->config->gyrolowpassfilter != LSM6DSL_GYRO_LPF_DISABLED) {
         cr[4] |= LSMDSL_CTRL4_C_LPF1_SEL_G;
       }
@@ -919,11 +919,11 @@ void lsm6dslStart(LSM6DSLDriver *devp, const LSM6DSLConfig *config) {
   /* Control register 6 configuration block.*/
   {
       cr[6] = 0;
-#if LSM6DSL_ACC_USE_ADVANCED || defined(__DOXYGEN__)
+#if LSM6DSL_USE_ADVANCED || defined(__DOXYGEN__)
       cr[6] |= devp->config->acclpmode;
 
 #endif
-#if LSM6DSL_GYRO_USE_ADVANCED || defined(__DOXYGEN__)
+#if LSM6DSL_USE_ADVANCED || defined(__DOXYGEN__)
       if(devp->config->gyrolowpassfilter != LSM6DSL_GYRO_LPF_DISABLED) {
         cr[6] |= devp->config->gyrolowpassfilter;
       }
@@ -935,7 +935,7 @@ void lsm6dslStart(LSM6DSLDriver *devp, const LSM6DSLConfig *config) {
   /* Control register 7 configuration block.*/
   {
       cr[7] = 0;
-#if LSM6DSL_GYRO_USE_ADVANCED || defined(__DOXYGEN__)
+#if LSM6DSL_USE_ADVANCED || defined(__DOXYGEN__)
       cr[7] |= devp->config->gyrolpmode;
 
 #endif
