@@ -18,7 +18,7 @@
  * @file    STM32L4xx/hal_lld.c
  * @brief   STM32L4xx HAL subsystem low level driver source.
  *
- * @addtogroup HAL
+ * @addtogroup STM32L4xx_ISR
  * @{
  */
 

@@ -31,7 +31,7 @@
  *          - STM32L485xx, STM32L486xx, STM32L4A6xx.
  *          .
  *
- * @addtogroup HAL
+ * @addtogroup STM32L4xx_ISR
  * @{
  */
 
