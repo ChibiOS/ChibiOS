@@ -502,14 +502,14 @@ void l3gd20Start(L3GD20Driver *devp, const L3GD20Config *config) {
     cr[0] = L3GD20_CTRL_REG1_XEN | L3GD20_CTRL_REG1_YEN | 
           L3GD20_CTRL_REG1_ZEN | L3GD20_CTRL_REG1_PD |
           devp->config->gyrooutputdatarate;
-#if L3GD20_GYRO_USE_ADVANCED || defined(__DOXYGEN__)
+#if L3GD20_USE_ADVANCED || defined(__DOXYGEN__)
     cr[0] |= devp->config->gyrobandwidth;
 #endif
   }
   
   /* Control register 2 configuration block.*/
   {
-#if L3GD20_GYRO_USE_ADVANCED || defined(__DOXYGEN__)
+#if L3GD20_USE_ADVANCED || defined(__DOXYGEN__)
   if(devp->config->gyrohpmode != L3GD20_HPM_BYPASSED)
     cr[1] = devp->config->gyrohpmode | devp->config->gyrohpconfiguration;
 #endif
@@ -518,7 +518,7 @@ void l3gd20Start(L3GD20Driver *devp, const L3GD20Config *config) {
   /* Control register 4 configuration block.*/
   {
     cr[3] = devp->config->gyrofullscale;
-#if L3GD20_GYRO_USE_ADVANCED || defined(__DOXYGEN__)
+#if L3GD20_USE_ADVANCED || defined(__DOXYGEN__)
     cr[3] |= devp->config->gyroblockdataupdate |
              devp->config->gyroendianness;
 #endif
@@ -526,7 +526,7 @@ void l3gd20Start(L3GD20Driver *devp, const L3GD20Config *config) {
   
   /* Control register 5 configuration block.*/
   {    
-#if L3GD20_GYRO_USE_ADVANCED || defined(__DOXYGEN__)
+#if L3GD20_USE_ADVANCED || defined(__DOXYGEN__)
   if((devp->config->gyrohpmode != L3GD20_HPM_BYPASSED)) {
     cr[4] = L3GD20_CTRL_REG5_HPEN;
     if(devp->config->gyrolp2mode != L3GD20_LP2M_BYPASSED) {

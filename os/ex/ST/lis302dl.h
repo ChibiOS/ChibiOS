@@ -43,7 +43,7 @@
 /**
  * @brief   LIS302DL driver version string.
  */
-#define EX_LIS302DL_VERSION                 "1.1.0"
+#define EX_LIS302DL_VERSION                 "1.1.1"
 
 /**
  * @brief   LIS302DL driver version major number.
@@ -58,7 +58,7 @@
 /**
  * @brief   LIS302DL driver version patch number.
  */
-#define EX_LIS302DL_PATCH                   0
+#define EX_LIS302DL_PATCH                   1
 /** @} */
 
 /**
@@ -214,13 +214,12 @@
 #endif
 
 /**
- * @brief   LIS302DL accelerometer subsystem advanced configurations
- *          switch.
+ * @brief   LIS302DL advanced configurations switch.
  * @details If set to @p TRUE more configurations are available.
  * @note    The default is @p FALSE.
  */
-#if !defined(LIS302DL_ACC_USE_ADVANCED) || defined(__DOXYGEN__)
-#define LIS302DL_ACC_USE_ADVANCED           FALSE
+#if !defined(LIS302DL_USE_ADVANCED) || defined(__DOXYGEN__)
+#define LIS302DL_USE_ADVANCED                FALSE
 #endif
 /** @} */
 

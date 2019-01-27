@@ -43,7 +43,7 @@
 /**
  * @brief   LSM303DLHC driver version string.
  */
-#define EX_LSM303DLHC_VERSION               "1.1.1"
+#define EX_LSM303DLHC_VERSION               "1.1.2"
 
 /**
  * @brief   LSM303DLHC driver version major number.
@@ -58,7 +58,7 @@
 /**
  * @brief   LSM303DLHC driver version patch number.
  */
-#define EX_LSM303DLHC_PATCH                 1
+#define EX_LSM303DLHC_PATCH                 2
 /** @} */
 
 /**
@@ -343,23 +343,12 @@
 #endif
 
 /**
- * @brief   LSM303DLHC accelerometer subsystem advanced configurations
- *          switch.
+ * @brief   LSM303DLHC advanced configurations switch.
  * @details If set to @p TRUE more configurations are available.
  * @note    The default is @p FALSE.
  */
-#if !defined(LSM303DLHC_ACC_USE_ADVANCED) || defined(__DOXYGEN__)
-#define LSM303DLHC_ACC_USE_ADVANCED         FALSE
-#endif
-
-/**
- * @brief   LSM303DLHC compass subsystem advanced configurations
- *          switch.
- * @details If set to @p TRUE more configurations are available.
- * @note    The default is @p FALSE.
- */
-#if !defined(LSM303DLHC_COMP_USE_ADVANCED) || defined(__DOXYGEN__)
-#define LSM303DLHC_COMP_USE_ADVANCED        FALSE
+#if !defined(LSM303DLHC_USE_ADVANCED) || defined(__DOXYGEN__)
+#define LSM303DLHC_USE_ADVANCED             FALSE
 #endif
 /** @} */
 
@@ -560,7 +549,7 @@ typedef struct {
    * @brief LSM303DLHC accelerometer subsystem output data rate.
    */
   lsm303dlhc_acc_odr_t      accoutdatarate;
-#if LSM303DLHC_ACC_USE_ADVANCED || defined(__DOXYGEN__)
+#if LSM303DLHC_USE_ADVANCED || defined(__DOXYGEN__)
   /**
    * @brief LSM303DLHC accelerometer subsystem low power mode.
    */
@@ -594,7 +583,7 @@ typedef struct {
    * @brief LSM303DLHC compass subsystem output data rate.
    */
   lsm303dlhc_comp_odr_t     compoutputdatarate;
-#if LSM303DLHC_COMP_USE_ADVANCED || defined(__DOXYGEN__)
+#if LSM303DLHC_USE_ADVANCED || defined(__DOXYGEN__)
   /**
    * @brief LSM303DLHC compass subsystem working mode.
    */

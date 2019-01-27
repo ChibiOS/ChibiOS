@@ -43,7 +43,7 @@
 /**
  * @brief   LIS3DSH driver version string.
  */
-#define EX_LIS3DSH_VERSION                  "1.1.1"
+#define EX_LIS3DSH_VERSION                  "1.1.2"
 
 /**
  * @brief   LIS3DSH driver version major number.
@@ -58,7 +58,7 @@
 /**
  * @brief   LIS3DSH driver version patch number.
  */
-#define EX_LIS3DSH_PATCH                    1
+#define EX_LIS3DSH_PATCH                    2
 /** @} */
 
 /**
@@ -333,13 +333,12 @@
 #endif
 
 /**
- * @brief   LIS3DSH accelerometer subsystem advanced configurations
- *          switch.
+ * @brief   LIS3DSH advanced configurations switch.
  * @details If set to @p TRUE more configurations are available.
  * @note    The default is @p FALSE.
  */
-#if !defined(LIS3DSH_ACC_USE_ADVANCED) || defined(__DOXYGEN__)
-#define LIS3DSH_ACC_USE_ADVANCED            FALSE
+#if !defined(LIS3DSH_USE_ADVANCED) || defined(__DOXYGEN__)
+#define LIS3DSH_USE_ADVANCED                FALSE
 #endif
 /** @} */
 
@@ -482,7 +481,7 @@ typedef struct {
    * @brief LIS3DSH output data rate selection.
    */
   lis3dsh_acc_odr_t         accoutputdatarate;
-#if LIS3DSH_ACC_USE_ADVANCED || defined(__DOXYGEN__)
+#if LIS3DSH_USE_ADVANCED || defined(__DOXYGEN__)
   /**
    * @brief   LIS3DSH anti-aliasing bandwidth.
    */

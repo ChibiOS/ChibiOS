@@ -43,7 +43,7 @@
 /**
  * @brief   LPS22HB driver version string.
  */
-#define EX_LPS22HB_VERSION                  "1.0.0"
+#define EX_LPS22HB_VERSION                  "1.0.1"
 
 /**
  * @brief   LPS22HB driver version major number.
@@ -58,7 +58,7 @@
 /**
  * @brief   LPS22HB driver version patch number.
  */
-#define EX_LPS22HB_PATCH                    0
+#define EX_LPS22HB_PATCH                    1
 /** @} */
 
 /**
@@ -247,8 +247,7 @@
 #endif
 
 /**
- * @brief   LPS22HB accelerometer subsystem advanced configurations
- *          switch.
+ * @brief   LPS22HB advanced configurations switch.
  * @details If set to @p TRUE more configurations are available.
  * @note    The default is @p FALSE.
  */
@@ -402,7 +401,7 @@ typedef struct {
    */
   lps22hb_bdu_t              blockdataupdate;
   /**
-   * @brief LPS22HB barometer subsystem  resolution.
+   * @brief LPS22HB barometer subsystem resolution.
    */
   lps22hb_lp_t               lowpass_filter;
 #endif

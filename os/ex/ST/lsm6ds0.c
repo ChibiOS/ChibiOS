@@ -881,7 +881,7 @@ void lsm6ds0Start(LSM6DS0Driver *devp, const LSM6DS0Config *config) {
   {
       cr[1] = LSM6DS0_CTRL_REG5_XL_XEN_XL | LSM6DS0_CTRL_REG5_XL_YEN_XL |
               LSM6DS0_CTRL_REG5_XL_ZEN_XL;
-#if LSM6DS0_ACC_USE_ADVANCED || defined(__DOXYGEN__)
+#if LSM6DS0_USE_ADVANCED || defined(__DOXYGEN__)
       cr[1] |= devp->config->accdecmode;
 #endif
   }
@@ -967,7 +967,7 @@ void lsm6ds0Start(LSM6DS0Driver *devp, const LSM6DS0Config *config) {
   /* Control register 2 configuration block.*/
   {
     cr[2] = 0;
-#if LSM6DS0_GYRO_USE_ADVANCED || defined(__DOXYGEN__)
+#if LSM6DS0_USE_ADVANCED || defined(__DOXYGEN__)
     cr[2] |= devp->config->gyrooutsel;
 #endif
   }
@@ -975,7 +975,7 @@ void lsm6ds0Start(LSM6DS0Driver *devp, const LSM6DS0Config *config) {
   /* Control register 3 configuration block.*/
   {
     cr[3] = 0;
-#if LSM6DS0_GYRO_USE_ADVANCED || defined(__DOXYGEN__)
+#if LSM6DS0_USE_ADVANCED || defined(__DOXYGEN__)
     cr[3] |= devp->config->gyrohpfenable |
              devp->config->gyrolowmodecfg |
              devp->config->gyrohpcfg;

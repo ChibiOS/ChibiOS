@@ -43,7 +43,7 @@
 /**
  * @brief   LSM6DS0 driver version string.
  */
-#define EX_LSM6DS0_VERSION                  "1.1.1"
+#define EX_LSM6DS0_VERSION                  "1.1.2"
 
 /**
  * @brief   LSM6DS0 driver version major number.
@@ -58,7 +58,7 @@
 /**
  * @brief   LSM6DS0 driver version patch number.
  */
-#define EX_LSM6DS0_PATCH                    1
+#define EX_LSM6DS0_PATCH                    2
 /** @} */
 
 /**
@@ -355,26 +355,6 @@
 #endif
 
 /**
- * @brief   LSM6DS0 accelerometer subsystem advanced configurations
- *          switch.
- * @details If set to @p TRUE more configurations are available.
- * @note    The default is @p FALSE.
- */
-#if !defined(LSM6DS0_ACC_USE_ADVANCED) || defined(__DOXYGEN__)
-#define LSM6DS0_ACC_USE_ADVANCED            FALSE
-#endif
-
-/**
- * @brief   LSM6DS0 gyroscope subsystem advanced configurations
- *          switch.
- * @details If set to @p TRUE more configurations are available.
- * @note    The default is @p FALSE.
- */
-#if !defined(LSM6DS0_GYRO_USE_ADVANCED) || defined(__DOXYGEN__)
-#define LSM6DS0_GYRO_USE_ADVANCED           FALSE
-#endif
-
-/**
  * @brief   Number of acquisitions for gyroscope bias removal.
  * @details This is the number of acquisitions performed to compute the
  *          bias. A repetition is required in order to remove noise.
@@ -622,12 +602,12 @@ typedef struct {
    * @brief LSM6DS0 accelerometer subsystem output data rate.
    */
   lsm6ds0_acc_odr_t         accoutdatarate;
-#if LSM6DS0_ACC_USE_ADVANCED || defined(__DOXYGEN__)
+#if LSM6DS0_USE_ADVANCED || defined(__DOXYGEN__)
   /**
    * @brief LSM6DS0 accelerometer subsystem decimation mode.
    */
   lsm6ds0_acc_dec_t         accdecmode;
-#endif /* LSM6DS0_ACC_USE_ADVANCED */
+#endif /* LSM6DS0_USE_ADVANCED */
   /**
    * @brief LSM6DS0 gyroscope subsystem initial sensitivity.
    */
@@ -644,7 +624,7 @@ typedef struct {
    * @brief LSM6DS0 gyroscope subsystem output data rate.
    */
   lsm6ds0_gyro_odr_t        gyrooutdatarate;
-#if LSM6DS0_GYRO_USE_ADVANCED || defined(__DOXYGEN__)
+#if LSM6DS0_USE_ADVANCED || defined(__DOXYGEN__)
   /**
    * @brief LSM6DS0 gyroscope subsystem low mode configuration.
    */
@@ -661,8 +641,6 @@ typedef struct {
    * @brief LSM6DS0 gyroscope subsystem high pass filter configuration.
    */
   lsm6ds0_gyro_hpcf_t       gyrohpcfg;
-  #endif /* LSM6DS0_GYRO_USE_ADVANCED */
-#if (LSM6DS0_USE_ADVANCED) || defined(__DOXYGEN__)
   /**
    * @brief LSM6DS0 block data update
    */

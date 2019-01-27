@@ -476,7 +476,7 @@ void lis3mdlStart(LIS3MDLDriver *devp, const LIS3MDLConfig *config) {
   {
     cr[0] = LIS3MDL_AD_CTRL_REG1;
     cr[1] = devp->config->compoutputdatarate;
-#if LIS3MDL_COMP_USE_ADVANCED || defined(__DOXYGEN__)
+#if LIS3MDL_USE_ADVANCED || defined(__DOXYGEN__)
     cr[1] |= devp->config->compoperationmodexy;
 #else
     cr[1] |= LIS3MDL_CTRL_REG1_OM0 | LIS3MDL_CTRL_REG1_OM1;
@@ -491,7 +491,7 @@ void lis3mdlStart(LIS3MDLDriver *devp, const LIS3MDLConfig *config) {
   /* Control register 3 configuration block.*/
   {
     cr[3] = 0;
-#if LIS3MDL_COMP_USE_ADVANCED || defined(__DOXYGEN__)
+#if LIS3MDL_USE_ADVANCED || defined(__DOXYGEN__)
     cr[3] = devp->config->compconversionmode;
 #endif
   }
@@ -499,7 +499,7 @@ void lis3mdlStart(LIS3MDLDriver *devp, const LIS3MDLConfig *config) {
   /* Control register 4 configuration block.*/
   {
     cr[4] = 0;
-#if LIS3MDL_COMP_USE_ADVANCED || defined(__DOXYGEN__)
+#if LIS3MDL_USE_ADVANCED || defined(__DOXYGEN__)
     cr[4] = devp->config->compoperationmodez | devp->config->endianness;
 #endif
   }
@@ -507,7 +507,7 @@ void lis3mdlStart(LIS3MDLDriver *devp, const LIS3MDLConfig *config) {
   /* Control register 5 configuration block.*/
   {
     cr[5] = 0;
-#if LIS3MDL_COMP_USE_ADVANCED || defined(__DOXYGEN__)
+#if LIS3MDL_USE_ADVANCED || defined(__DOXYGEN__)
     cr[5] = devp->config->blockdataupdate;
 #endif
   }
