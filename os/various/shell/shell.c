@@ -38,10 +38,12 @@
 /* Module exported variables.                                                */
 /*===========================================================================*/
 
+#if !defined(_CHIBIOS_NIL_) || defined(__DOXYGEN__)
 /**
  * @brief   Shell termination event source.
  */
 event_source_t shell_terminated;
+#endif
 
 /*===========================================================================*/
 /* Module local types.                                                       */
@@ -354,7 +356,11 @@ THD_FUNCTION(shellThread, p) {
 
   chprintf(chp, SHELL_NEWLINE_STR);
   chprintf(chp, "ChibiOS/RT Shell" SHELL_NEWLINE_STR);
+#if !defined(_CHIBIOS_NIL_)
   while (!chThdShouldTerminateX()) {
+#else
+  while (true) {
+#endif
     chprintf(chp, SHELL_PROMPT_STR);
     if (shellGetLine(scfg, line, sizeof(line), shp)) {
 #if (SHELL_CMD_EXIT_ENABLED == TRUE) && !defined(_CHIBIOS_NIL_)
@@ -398,7 +404,9 @@ THD_FUNCTION(shellThread, p) {
       }
     }
   }
+#if !defined(_CHIBIOS_NIL_)
   shellExit(MSG_OK);
+#endif
 }
 
 /**
@@ -408,7 +416,9 @@ THD_FUNCTION(shellThread, p) {
  */
 void shellInit(void) {
 
+#if !defined(_CHIBIOS_NIL_)
   chEvtObjectInit(&shell_terminated);
+#endif
 }
 
 #if !defined(_CHIBIOS_NIL_) || defined(__DOXYGEN__)
