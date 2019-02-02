@@ -74,4 +74,5 @@
 *****************************************************************************
 
 *** Next ***
+- HAL: Added mcuconf.h updater tool for STM32F407.
 - NIL: Integrated NIL 4.0.
