@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    STM32F4xx/stm32_isr.c
+ * @file    STM32F4xx/stm32_isr.h
  * @brief   STM32F4xx ISR handler code.
  *
  * @addtogroup STM32F4xx_ISR
@@ -212,236 +212,6 @@ OSAL_IRQ_HANDLER(VectorE0) {
 
 #endif /* HAL_USE_PAL && (PAL_USE_WAIT || PAL_USE_CALLBACKS) */
 
-#if HAL_USE_GPT || HAL_USE_ICU || HAL_USE_PWM || defined(__DOXYGEN__)
-/**
- * @brief   TIM1-BRK, TIM9 interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(VectorA0) {
-
-  OSAL_IRQ_PROLOGUE();
-
-#if HAL_USE_GPT
-#if STM32_GPT_USE_TIM9
-  gpt_lld_serve_interrupt(&GPTD9);
-#endif
-#endif
-#if HAL_USE_ICU
-#if STM32_ICU_USE_TIM9
-  icu_lld_serve_interrupt(&ICUD9);
-#endif
-#endif
-#if HAL_USE_PWM
-#if STM32_PWM_USE_TIM9
-  pwm_lld_serve_interrupt(&PWMD9);
-#endif
-#endif
-
-  OSAL_IRQ_EPILOGUE();
-}
-
-/**
- * @brief   TIM1-UP, TIM10 interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(VectorA4) {
-
-  OSAL_IRQ_PROLOGUE();
-
-#if HAL_USE_GPT
-#if STM32_GPT_USE_TIM1
-  gpt_lld_serve_interrupt(&GPTD1);
-#endif
-#if STM32_GPT_USE_TIM10
-  gpt_lld_serve_interrupt(&GPTD10);
-#endif
-#endif
-#if HAL_USE_ICU
-#if STM32_ICU_USE_TIM1
-  icu_lld_serve_interrupt(&ICUD1);
-#endif
-#endif
-#if HAL_USE_PWM
-#if STM32_PWM_USE_TIM1
-  pwm_lld_serve_interrupt(&PWMD1);
-#endif
-#if STM32_PWM_USE_TIM10
-  pwm_lld_serve_interrupt(&PWMD10);
-#endif
-#endif
-
-  OSAL_IRQ_EPILOGUE();
-}
-
-/**
- * @brief   TIM1-TRG-COM, TIM11 interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(VectorA8) {
-
-  OSAL_IRQ_PROLOGUE();
-
-#if HAL_USE_GPT
-#if STM32_GPT_USE_TIM11
-  gpt_lld_serve_interrupt(&GPTD11);
-#endif
-#endif
-#if HAL_USE_ICU
-  /* Not used by ICU.*/
-#endif
-#if HAL_USE_PWM
-#if STM32_PWM_USE_TIM11
-  pwm_lld_serve_interrupt(&PWMD11);
-#endif
-#endif
-
-  OSAL_IRQ_EPILOGUE();
-}
-
-/**
- * @brief   TIM1-CC interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(VectorAC) {
-
-  OSAL_IRQ_PROLOGUE();
-
-#if HAL_USE_GPT
-  /* Not used by GPT.*/
-#endif
-#if HAL_USE_ICU
-#if STM32_ICU_USE_TIM1
-  icu_lld_serve_interrupt(&ICUD1);
-#endif
-#endif
-#if HAL_USE_PWM
-#if STM32_PWM_USE_TIM1
-  pwm_lld_serve_interrupt(&PWMD1);
-#endif
-#endif
-
-  OSAL_IRQ_EPILOGUE();
-}
-
-/**
- * @brief   TIM8-BRK, TIM12 interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(VectorEC) {
-
-  OSAL_IRQ_PROLOGUE();
-
-#if HAL_USE_GPT
-#if STM32_GPT_USE_TIM12
-  gpt_lld_serve_interrupt(&GPTD12);
-#endif
-#endif
-#if HAL_USE_ICU
-#if STM32_ICU_USE_TIM12
-  icu_lld_serve_interrupt(&ICUD12);
-#endif
-#endif
-#if HAL_USE_PWM
-#if STM32_PWM_USE_TIM12
-  pwm_lld_serve_interrupt(&PWMD12);
-#endif
-#endif
-
-  OSAL_IRQ_EPILOGUE();
-}
-
-/**
- * @brief   TIM8-UP, TIM13 interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(VectorF0) {
-
-  OSAL_IRQ_PROLOGUE();
-
-#if HAL_USE_GPT
-#if STM32_GPT_USE_TIM8
-  gpt_lld_serve_interrupt(&GPTD8);
-#endif
-#if STM32_GPT_USE_TIM13
-  gpt_lld_serve_interrupt(&GPTD13);
-#endif
-#endif
-#if HAL_USE_ICU
-#if STM32_ICU_USE_TIM8
-  icu_lld_serve_interrupt(&ICUD8);
-#endif
-#endif
-#if HAL_USE_PWM
-#if STM32_PWM_USE_TIM8
-  pwm_lld_serve_interrupt(&PWMD8);
-#endif
-#if STM32_PWM_USE_TIM13
-  pwm_lld_serve_interrupt(&PWMD13);
-#endif
-#endif
-
-  OSAL_IRQ_EPILOGUE();
-}
-
-/**
- * @brief   TIM8-TRG-COM, TIM14 interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(VectorF4) {
-
-  OSAL_IRQ_PROLOGUE();
-
-#if HAL_USE_GPT
-#if STM32_GPT_USE_TIM14
-  gpt_lld_serve_interrupt(&GPTD14);
-#endif
-#endif
-#if HAL_USE_ICU
-  /* Not used by ICU.*/
-#endif
-#if HAL_USE_PWM
-#if STM32_PWM_USE_TIM14
-  pwm_lld_serve_interrupt(&PWMD14);
-#endif
-#endif
-
-  OSAL_IRQ_EPILOGUE();
-}
-
-/**
- * @brief   TIM8-CC interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(VectorF8) {
-
-  OSAL_IRQ_PROLOGUE();
-
-#if HAL_USE_GPT
-  /* Not used by GPT.*/
-#endif
-#if HAL_USE_ICU
-#if STM32_ICU_USE_TIM8
-  icu_lld_serve_interrupt(&ICUD8);
-#endif
-#endif
-#if HAL_USE_PWM
-#if STM32_PWM_USE_TIM8
-  pwm_lld_serve_interrupt(&PWMD8);
-#endif
-#endif
-
-  OSAL_IRQ_EPILOGUE();
-}
-#endif /* HAL_USE_GPT || HAL_USE_ICU || HAL_USE_PWM */
-
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -454,23 +224,13 @@ OSAL_IRQ_HANDLER(VectorF8) {
 void irqInit(void) {
 
 #if HAL_USE_PAL
-  nvicEnableVector(EXTI0_IRQn,              STM32_IRQ_EXTI0_PRIORITY);
-  nvicEnableVector(EXTI1_IRQn,              STM32_IRQ_EXTI1_PRIORITY);
-  nvicEnableVector(EXTI2_IRQn,              STM32_IRQ_EXTI2_PRIORITY);
-  nvicEnableVector(EXTI3_IRQn,              STM32_IRQ_EXTI3_PRIORITY);
-  nvicEnableVector(EXTI4_IRQn,              STM32_IRQ_EXTI4_PRIORITY);
-  nvicEnableVector(EXTI9_5_IRQn,            STM32_IRQ_EXTI5_9_PRIORITY);
-  nvicEnableVector(EXTI15_10_IRQn,          STM32_IRQ_EXTI10_15_PRIORITY);
-#endif
-#if HAL_USE_GPT || HAL_USE_ICU || HAL_USE_PWM || defined(__DOXYGEN__)
-  nvicEnableVector(TIM1_BRK_TIM9_IRQn,      STM32_IRQ_TIM1_BRK_TIM9_PRIORITY);
-  nvicEnableVector(TIM1_UP_TIM10_IRQn,      STM32_IRQ_TIM1_UP_TIM10_PRIORITY);
-  nvicEnableVector(TIM1_TRG_COM_TIM11_IRQn, STM32_IRQ_TIM1_TRGCO_TIM11_PRIORITY);
-  nvicEnableVector(TIM1_CC_IRQn,            STM32_IRQ_TIM1_CC_PRIORITY);
-  nvicEnableVector(TIM8_BRK_TIM12_IRQn,     STM32_IRQ_TIM8_BRK_TIM12_PRIORITY);
-  nvicEnableVector(TIM8_UP_TIM13_IRQn,      STM32_IRQ_TIM8_UP_TIM13_PRIORITY);
-  nvicEnableVector(TIM8_TRG_COM_TIM14_IRQn, STM32_IRQ_TIM8_TRGCO_TIM14_PRIORITY);
-  nvicEnableVector(TIM8_CC_IRQn,            STM32_IRQ_TIM8_CC_PRIORITY);
+  nvicEnableVector(EXTI0_IRQn, STM32_IRQ_EXTI0_PRIORITY);
+  nvicEnableVector(EXTI1_IRQn, STM32_IRQ_EXTI1_PRIORITY);
+  nvicEnableVector(EXTI2_IRQn, STM32_IRQ_EXTI2_PRIORITY);
+  nvicEnableVector(EXTI3_IRQn, STM32_IRQ_EXTI3_PRIORITY);
+  nvicEnableVector(EXTI4_IRQn, STM32_IRQ_EXTI4_PRIORITY);
+  nvicEnableVector(EXTI9_5_IRQn, STM32_IRQ_EXTI5_9_PRIORITY);
+  nvicEnableVector(EXTI15_10_IRQn, STM32_IRQ_EXTI10_15_PRIORITY);
 #endif
 }
 
@@ -489,16 +249,6 @@ void irqDeinit(void) {
   nvicDisableVector(EXTI4_IRQn);
   nvicDisableVector(EXTI9_5_IRQn);
   nvicDisableVector(EXTI15_10_IRQn);
-#endif
-#if HAL_USE_GPT || HAL_USE_ICU || HAL_USE_PWM || defined(__DOXYGEN__)
-  nvicDisableVector(TIM1_BRK_TIM9_IRQn);
-  nvicDisableVector(TIM1_UP_TIM10_IRQn);
-  nvicDisableVector(TIM1_TRG_COM_TIM11_IRQn);
-  nvicDisableVector(TIM1_CC_IRQn);
-  nvicDisableVector(TIM8_BRK_TIM12_IRQn);
-  nvicDisableVector(TIM8_UP_TIM13_IRQn);
-  nvicDisableVector(TIM8_TRG_COM_TIM14_IRQn);
-  nvicDisableVector(TIM8_CC_IRQn);
 #endif
 }
 
