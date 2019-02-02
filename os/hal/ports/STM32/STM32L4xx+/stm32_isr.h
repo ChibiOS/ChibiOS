@@ -90,7 +90,7 @@
 #endif
 
 /**
- * @brief   EXTI15..10 interrupt priority level setting.
+ * @brief   EXTI10..15 interrupt priority level setting.
  */
 #if !defined(STM32_IRQ_EXTI10_15_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_IRQ_EXTI10_15_PRIORITY        6

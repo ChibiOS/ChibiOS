@@ -398,6 +398,9 @@
 
 /* FSMC attributes.*/
 #define STM32_HAS_FSMC                      TRUE
+#define STM32_FSMC_IS_FMC                   FALSE
+#define STM32_FSMC_HANDLER                  Vector100
+#define STM32_FSMC_NUMBER                   48
 
 /* CRC attributes.*/
 #define STM32_HAS_CRC                       TRUE
