@@ -105,14 +105,8 @@ _port_thread_start:
         mr          r3, r31
         mtctr       r30
         se_bctrl
-#if defined(_CHIBIOS_RT_CONF_)
         e_li        r0, 0
         e_bl        chThdExit
-#endif
-#if defined(_CHIBIOS_NIL_CONF_)
-        se_li       r0, 0
-        e_bl        chSysHalt
-#endif
 
 #endif /* !defined(__DOXYGEN__) */
 

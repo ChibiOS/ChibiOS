@@ -158,15 +158,9 @@ _port_thread_start:
                 mov     r0, r5
                 mov     lr, pc
                 bx      r4
-#if defined(_CHIBIOS_RT_CONF_)
                 mov     r0, #0              /* MSG_OK */
                 bl      chThdExit
 _zombies:       b       _zombies
-#endif
-#if defined(_CHIBIOS_NIL_CONF_)
-                mov     r0, #0
-                bl      chSysHalt
-#endif
 
 #endif /* !defined(__DOXYGEN__) */
 

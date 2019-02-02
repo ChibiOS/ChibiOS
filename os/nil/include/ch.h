@@ -55,17 +55,17 @@
 /**
  * @brief   Kernel version string.
  */
-#define CH_KERNEL_VERSION       "3.2.0"
+#define CH_KERNEL_VERSION       "4.0.0"
 
 /**
  * @brief   Kernel version major number.
  */
-#define CH_KERNEL_MAJOR         3
+#define CH_KERNEL_MAJOR         4
 
 /**
  * @brief   Kernel version minor number.
  */
-#define CH_KERNEL_MINOR         2
+#define CH_KERNEL_MINOR         0
 
 /**
  * @brief   Kernel version patch number.
@@ -81,7 +81,7 @@
  * @note    It is meant to be used in configuration files as switch.
  */
 #if !defined(FALSE) || defined(__DOXYGEN__)
-#define FALSE                   0
+#define FALSE               0
 #endif
 
 /**
@@ -89,7 +89,7 @@
  * @note    It is meant to be used in configuration files as switch.
  */
 #if !defined(TRUE) || defined(__DOXYGEN__)
-#define TRUE                    1
+#define TRUE                1
 #endif
 /** @} */
 
@@ -137,17 +137,31 @@
  * @name    Thread state related macros
  * @{
  */
-#define NIL_STATE_READY         (tstate_t)0 /**< @brief Thread ready or
+#define NIL_STATE_WTSTART       (tstate_t)0 /**< @brief Thread not yet
+                                                 started or terminated.     */
+#define NIL_STATE_READY         (tstate_t)1 /**< @brief Thread ready or
                                                  executing.                 */
-#define NIL_STATE_SLEEPING      (tstate_t)1 /**< @brief Thread sleeping.    */
-#define NIL_STATE_SUSP          (tstate_t)2 /**< @brief Thread suspended.   */
-#define NIL_STATE_WTQUEUE       (tstate_t)3 /**< @brief On queue or semaph. */
-#define NIL_STATE_WTOREVT       (tstate_t)4 /**< @brief Waiting for events. */
-#define NIL_THD_IS_READY(tp)    ((tp)->state == NIL_STATE_READY)
-#define NIL_THD_IS_SLEEPING(tp) ((tp)->state == NIL_STATE_SLEEPING)
-#define NIL_THD_IS_SUSP(tp)     ((tp)->state == NIL_STATE_SUSP)
-#define NIL_THD_IS_WTQUEUE(tp)  ((tp)->state == NIL_STATE_WTQUEUE)
-#define NIL_THD_IS_WTOREVT(tp)  ((tp)->state == NIL_STATE_WTOREVT)
+#define NIL_STATE_SLEEPING      (tstate_t)2 /**< @brief Thread sleeping.    */
+#define NIL_STATE_SUSPENDED     (tstate_t)3 /**< @brief Thread suspended.   */
+#define NIL_STATE_WTEXIT        (tstate_t)4 /**< @brief Waiting a thread.   */
+#define NIL_STATE_WTQUEUE       (tstate_t)5 /**< @brief On queue or semaph. */
+#define NIL_STATE_WTOREVT       (tstate_t)6 /**< @brief Waiting for events. */
+#define NIL_STATE_WTANDEVT      (tstate_t)7 /**< @brief Waiting for events. */
+#define NIL_STATE_FINAL         (tstate_t)8 /**< @brief Thread terminated.  */
+
+#define NIL_THD_IS_WTSTART(tp)      ((tp)->state == NIL_STATE_WTSTART)
+#define NIL_THD_IS_READY(tp)        ((tp)->state == NIL_STATE_READY)
+#define NIL_THD_IS_SLEEPING(tp)     ((tp)->state == NIL_STATE_SLEEPING)
+#define NIL_THD_IS_SUSPENDED(tp)    ((tp)->state == NIL_STATE_SUSPENDED)
+#define NIL_THD_IS_WTEXIT(tp)       ((tp)->state == NIL_STATE_WTEXIT)
+#define NIL_THD_IS_WTQUEUE(tp)      ((tp)->state == NIL_STATE_WTQUEUE)
+#define NIL_THD_IS_WTOREVT(tp)      ((tp)->state == NIL_STATE_WTOREVT)
+#define NIL_THD_IS_WTANDEVT(tp)     ((tp)->state == NIL_STATE_WTANDEVT)
+#define NIL_THD_IS_FINAL(tp)        ((tp)->state == NIL_STATE_FINAL)
+
+#define CH_STATE_NAMES                                                      \
+  "WTSTART", "READY", "SLEEPING", "SUSPENDED", "WTEXIT", "WTQUEUE",         \
+  "WTOREVT", "WTANDEVT", "FINAL"
 /** @} */
 
 /**
@@ -170,12 +184,23 @@
 /*===========================================================================*/
 
 /*-*
- * @brief   Number of user threads in the application.
+ * @brief   Maximum number of user threads in the application.
  * @note    This number is not inclusive of the idle thread which is
  *          implicitly handled.
+ * @note    Set this value to be exactly equal to the number of threads you
+ *          will use or you would be wasting RAM and cycles.
+ * @note    This values also defines the number of available priorities
+ *          (0..CH_CFG_MAX_THREADS-1).
  */
-#if !defined(CH_CFG_NUM_THREADS) || defined(__DOXYGEN__)
-#define CH_CFG_NUM_THREADS                  2
+#if !defined(CH_CFG_MAX_THREADS) || defined(__DOXYGEN__)
+#define CH_CFG_MAX_THREADS                  2
+#endif
+
+/*-*
+ * @brief   Auto starts threads when @p chSysInit() is invoked.
+ */
+#if !defined(CH_CFG_AUTOSTART_THREADS) || defined(__DOXYGEN__)
+#define CH_CFG_AUTOSTART_THREADS            TRUE
 #endif
 
 /*-*
@@ -206,6 +231,17 @@
  */
 #if !defined(CH_CFG_ST_TIMEDELTA) || defined(__DOXYGEN__)
 #define CH_CFG_ST_TIMEDELTA                 0
+#endif
+
+/*-*
+ * @brief   Threads synchronization APIs.
+ * @details If enabled then the @p chThdWait() function is included in
+ *          the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#if !defined(CH_CFG_USE_WAITEXIT)
+#define CH_CFG_USE_WAITEXIT                 TRUE
 #endif
 
 /*-*
@@ -283,7 +319,8 @@
 #if !defined(CH_CFG_USE_MEMPOOLS) || defined(__DOXYGEN__)
 #define CH_CFG_USE_MEMPOOLS                 TRUE
 #endif
-/**
+
+/*-*
  * @brief   Objects Factory APIs.
  * @details If enabled then the objects factory APIs are included in the
  *          kernel.
@@ -294,7 +331,7 @@
 #define CH_CFG_USE_FACTORY                  TRUE
 #endif
 
-/**
+/*-*
  * @brief   Maximum length for object names.
  * @details If the specified length is zero then the name is stored by
  *          pointer but this could have unintended side effects.
@@ -303,39 +340,50 @@
 #define CH_CFG_FACTORY_MAX_NAMES_LENGTH     8
 #endif
 
-/**
+/*-*
  * @brief   Enables the registry of generic objects.
  */
 #if !defined(CH_CFG_FACTORY_OBJECTS_REGISTRY) || defined(__DOXYGEN__)
 #define CH_CFG_FACTORY_OBJECTS_REGISTRY     TRUE
 #endif
 
-/**
+/*-*
  * @brief   Enables factory for generic buffers.
  */
 #if !defined(CH_CFG_FACTORY_GENERIC_BUFFERS) || defined(__DOXYGEN__)
 #define CH_CFG_FACTORY_GENERIC_BUFFERS      TRUE
 #endif
 
-/**
+/*-*
  * @brief   Enables factory for semaphores.
  */
 #if !defined(CH_CFG_FACTORY_SEMAPHORES) || defined(__DOXYGEN__)
 #define CH_CFG_FACTORY_SEMAPHORES           TRUE
 #endif
 
-/**
+/*-*
  * @brief   Enables factory for mailboxes.
  */
 #if !defined(CH_CFG_FACTORY_MAILBOXES) || defined(__DOXYGEN__)
 #define CH_CFG_FACTORY_MAILBOXES            TRUE
 #endif
 
-/**
+/*-*
  * @brief   Enables factory for objects FIFOs.
  */
 #if !defined(CH_CFG_FACTORY_OBJ_FIFOS) || defined(__DOXYGEN__)
 #define CH_CFG_FACTORY_OBJ_FIFOS            TRUE
+#endif
+
+/*-*
+ * @brief   Pipes APIs.
+ * @details If enabled then the pipes APIs are included
+ *          in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#if !defined(CH_CFG_USE_PIPES) || defined(__DOXYGEN__)
+#define CH_CFG_USE_PIPES                    TRUE
 #endif
 
 /*-*
@@ -405,6 +453,14 @@
  */
 #if !defined(CH_CFG_THREAD_EXT_INIT_HOOK) || defined(__DOXYGEN__)
 #define CH_CFG_THREAD_EXT_INIT_HOOK(tp) {}
+#endif
+
+/*-*
+ * @brief   Threads finalization hook.
+ * @details User finalization code added to the @p chThdExit() API.
+ */
+#if !defined(CH_CFG_THREAD_EXIT_HOOK) || defined(__DOXYGEN__)
+#define CH_CFG_THREAD_EXIT_HOOK(tp) {}
 #endif
 
 /*-*
@@ -479,15 +535,15 @@
 #error "missing or wrong configuration file"
 #endif
 
-#if !defined(_CHIBIOS_NIL_CONF_VER_3_2_)
+#if !defined(_CHIBIOS_NIL_CONF_VER_4_0_)
 #error "obsolete or unknown configuration file"
 #endif
 
-#if CH_CFG_NUM_THREADS < 1
+#if CH_CFG_MAX_THREADS < 1
 #error "at least one thread must be defined"
 #endif
 
-#if CH_CFG_NUM_THREADS > 16
+#if CH_CFG_MAX_THREADS > 16
 #error "ChibiOS/NIL is not recommended for thread-intensive applications,"  \
        "consider ChibiOS/RT instead"
 #endif
@@ -563,19 +619,30 @@ typedef uint32_t time_conv_t;
 #endif
 
 /**
+ * @brief   Type of a structure representing the system.
+ */
+typedef struct nil_system nil_system_t;
+
+/**
+ * @brief Thread function.
+ */
+typedef void (*tfunc_t)(void *p);
+
+/**
+ * @brief   Type of a structure representing a thread static configuration.
+ */
+typedef struct nil_thread_cfg thread_config_t;
+
+/**
  * @brief   Type of a structure representing a thread.
  * @note    It is required as an early definition.
  */
 typedef struct nil_thread thread_t;
 
-#include "chcore.h"
-
 /**
- * @brief   Structure representing a queue of threads.
+ * @brief   Type of a thread reference.
  */
-struct nil_threads_queue {
-  volatile cnt_t    cnt;        /**< @brief Threads Queue counter.          */
-};
+typedef thread_t * thread_reference_t;
 
 /**
  * @brief   Type of a queue of threads.
@@ -591,31 +658,27 @@ typedef struct nil_threads_queue threads_queue_t;
 typedef threads_queue_t semaphore_t;
 #endif /* CH_CFG_USE_SEMAPHORES == TRUE */
 
-/**
- * @brief Thread function.
- */
-typedef void (*tfunc_t)(void *p);
+/* Late inclusion of port core layer.*/
+#include "chcore.h"
 
 /**
- * @brief   Type of a structure representing a thread static configuration.
+ * @brief   Structure representing a queue of threads.
  */
-typedef struct nil_thread_cfg thread_config_t;
+struct nil_threads_queue {
+  volatile cnt_t    cnt;        /**< @brief Threads Queue counter.          */
+};
 
 /**
  * @brief   Structure representing a thread static configuration.
  */
 struct nil_thread_cfg {
+  tprio_t           prio;       /**< @brief Thread priority slot.           */
+  const char        *namep;     /**< @brief Thread name, for debugging.     */
   stkalign_t        *wbase;     /**< @brief Thread working area base.       */
   stkalign_t        *wend;      /**< @brief Thread working area end.        */
-  const char        *namep;     /**< @brief Thread name, for debugging.     */
   tfunc_t           funcp;      /**< @brief Thread function.                */
   void              *arg;       /**< @brief Thread function argument.       */
 };
-
-/**
- * @brief   Type of a thread reference.
- */
-typedef thread_t * thread_reference_t;
 
 /**
  * @brief   Structure representing a thread.
@@ -623,13 +686,15 @@ typedef thread_t * thread_reference_t;
 struct nil_thread {
   struct port_context   ctx;        /**< @brief Processor context.          */
   tstate_t              state;      /**< @brief Thread state.               */
-  /* Note, the following union contains a pointer while the thread is in a
-     sleeping state (!NIL_THD_IS_READY()) else contains the wake-up message.*/
+  /* Note, the following union contains a pointer/value while the thread is
+     in a sleeping state or a wake-up message when the thread is made ready.*/
   union {
     msg_t               msg;        /**< @brief Wake-up message.            */
     void                *p;         /**< @brief Generic pointer.            */
+    nil_system_t        *nsp;       /**< @brief Pointer to nil base struct. */
     thread_reference_t  *trp;       /**< @brief Pointer to thread reference.*/
     threads_queue_t     *tqp;       /**< @brief Pointer to thread queue.    */
+    thread_t            *tp;        /**< @brief Pointer to thread.          */
 #if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
     semaphore_t         *semp;      /**< @brief Pointer to semaphore.       */
 #endif
@@ -648,11 +713,6 @@ struct nil_thread {
   /* Optional extra fields.*/
   CH_CFG_THREAD_EXT_FIELDS
 };
-
-/**
- * @brief   Type of a structure representing the system.
- */
-typedef struct nil_system nil_system_t;
 
 /**
  * @brief   System data structure.
@@ -709,7 +769,7 @@ struct nil_system {
   /**
    * @brief   Thread structures for all the defined threads.
    */
-  thread_t              threads[CH_CFG_NUM_THREADS + 1];
+  thread_t              threads[CH_CFG_MAX_THREADS + 1];
 };
 
 /*===========================================================================*/
@@ -734,20 +794,21 @@ struct nil_system {
  * @brief   Start of user threads table.
  */
 #define THD_TABLE_BEGIN                                                     \
-  const thread_config_t nil_thd_configs[CH_CFG_NUM_THREADS + 1] = {
+  const thread_config_t nil_thd_configs[] = {
 
 /**
  * @brief   Entry of user threads table
  */
-#define THD_TABLE_ENTRY(wap, name, funcp, arg)                              \
-  {wap, ((stkalign_t *)(wap)) + (sizeof (wap) / sizeof(stkalign_t)),        \
-   name, funcp, arg},
+#define THD_TABLE_THREAD(prio, name, wap, funcp, arg)                       \
+  {prio, name,                                                              \
+   wap, ((stkalign_t *)(wap)) + (sizeof (wap) / sizeof(stkalign_t)),        \
+   funcp, arg},
 
 /**
  * @brief   End of user threads table.
  */
 #define THD_TABLE_END                                                       \
-  {THD_IDLE_BASE, THD_IDLE_END, "idle", NULL, NULL}                         \
+  {CH_CFG_MAX_THREADS, "idle", THD_IDLE_BASE, THD_IDLE_END, NULL, NULL}                   \
 };
 /** @} */
 
@@ -1304,7 +1365,7 @@ struct nil_system {
  *
  * @init
  */
-#define chSemObjectInit(sp, n) ((sp)->cnt = (n))
+#define chSemObjectInit(sp, n) ((sp)->cnt = n)
 
 /**
  * @brief   Performs a wait operation on a semaphore.
@@ -1509,7 +1570,7 @@ struct nil_system {
 extern stkalign_t __main_thread_stack_base__, __main_thread_stack_end__;
 #endif
 extern nil_system_t nil;
-extern const thread_config_t nil_thd_configs[CH_CFG_NUM_THREADS + 1];
+extern const thread_config_t nil_thd_configs[];
 #endif
 
 #ifdef __cplusplus
@@ -1529,6 +1590,12 @@ extern "C" {
   void chSchDoReschedule(void);
   void chSchRescheduleS(void);
   msg_t chSchGoSleepTimeoutS(tstate_t newstate, sysinterval_t timeout);
+  thread_t *chThdCreateI(const thread_config_t *tcp);
+  thread_t *chThdCreate(const thread_config_t *tcp);
+  void chThdExit(msg_t msg);
+#if CH_CFG_USE_WAITEXIT == TRUE
+  msg_t chThdWait(thread_t *tp);
+#endif
   msg_t chThdSuspendTimeoutS(thread_reference_t *trp, sysinterval_t timeout);
   void chThdResumeI(thread_reference_t *trp, msg_t msg);
   void chThdResume(thread_reference_t *trp, msg_t msg);
@@ -1550,6 +1617,7 @@ extern "C" {
   void chEvtSignal(thread_t *tp, eventmask_t mask);
   void chEvtSignalI(thread_t *tp, eventmask_t mask);
   eventmask_t chEvtWaitAnyTimeout(eventmask_t mask, sysinterval_t timeout);
+  eventmask_t chEvtWaitAllTimeout(eventmask_t mask, sysinterval_t timeout);
 #endif
 #if CH_DBG_SYSTEM_STATE_CHECK == TRUE
   void _dbg_check_disable(void);

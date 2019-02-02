@@ -55,7 +55,6 @@ nil_system_t nil;
  *
  * @param[in] state     thread state
  * @param[in] p         object pointer
- * @return              Pointer to the thread.
  */
 static thread_t *nil_find_thread(tstate_t state, void * p) {
   thread_t *tp = nil.threads;
@@ -67,7 +66,7 @@ static thread_t *nil_find_thread(tstate_t state, void * p) {
     }
     tp++;
 
-    chDbgAssert(tp < &nil.threads[CH_CFG_NUM_THREADS],
+    chDbgAssert(tp < &nil.threads[CH_CFG_MAX_THREADS],
                 "pointer out of range");
   }
 }
@@ -80,14 +79,15 @@ static thread_t *nil_find_thread(tstate_t state, void * p) {
  * @param[in] cnt       number of threads to be readied as a negative number,
  *                      non negative numbers are ignored
  * @param[in] msg       the wakeup message
- * @return              Always zero.
+ *
+ * @iclass
  */
 static cnt_t nil_ready_all(void * p, cnt_t cnt, msg_t msg) {
   thread_t *tp = nil.threads;;
 
   while (cnt < (cnt_t)0) {
 
-    chDbgAssert(tp < &nil.threads[CH_CFG_NUM_THREADS],
+    chDbgAssert(tp < &nil.threads[CH_CFG_MAX_THREADS],
                 "pointer out of range");
 
     /* Is this thread waiting on this queue?*/
@@ -271,47 +271,10 @@ void chDbgCheckClassS(void) {
  * @special
  */
 void chSysInit(void) {
-  thread_t *tp;
   const thread_config_t *tcp;
 
-#if CH_DBG_SYSTEM_STATE_CHECK == TRUE
-  nil.isr_cnt  = (cnt_t)0;
-  nil.lock_cnt = (cnt_t)0;
-#endif
-
-  /* System initialization hook.*/
-  CH_CFG_SYSTEM_INIT_HOOK();
-
-  /* Iterates through the list of defined threads.*/
-  tp = &nil.threads[0];
-  tcp = nil_thd_configs;
-  while (tp < &nil.threads[CH_CFG_NUM_THREADS]) {
-#if CH_DBG_ENABLE_STACK_CHECK
-    tp->wabase  = (stkalign_t *)tcp->wbase;
-#endif
-
-    /* Port dependent thread initialization.*/
-    PORT_SETUP_CONTEXT(tp, tcp->wbase, tcp->wend, tcp->funcp, tcp->arg);
-
-    /* Initialization hook.*/
-    CH_CFG_THREAD_EXT_INIT_HOOK(tp);
-
-    tp++;
-    tcp++;
-  }
-
-#if CH_DBG_ENABLE_STACK_CHECK
-  /* The idle thread is a special case because its stack is set up by the
-     runtime environment.*/
-  tp->wabase  = THD_IDLE_BASE;
-#endif
-
-  /* Interrupts partially enabled. It is equivalent to entering the
-     kernel critical zone.*/
-  chSysSuspend();
-#if CH_DBG_SYSTEM_STATE_CHECK == TRUE
-  nil.lock_cnt = (cnt_t)1;
-#endif
+  /* Architecture layer initialization.*/
+  port_init();
 
   /* Memory core initialization, if enabled.*/
 #if CH_CFG_USE_MEMCORE == TRUE
@@ -328,14 +291,37 @@ void chSysInit(void) {
   _factory_init();
 #endif
 
-  /* Port layer initialization last because it depend on some of the
-     initializations performed before.*/
-  port_init();
+  /* System initialization hook.*/
+  CH_CFG_SYSTEM_INIT_HOOK();
 
-  /* Runs the highest priority thread, the current one becomes the idle
-     thread.*/
-  nil.current = nil.next = nil.threads;
-  port_switch(nil.current, tp);
+  /* Making idle the current thread, this may change after rescheduling.*/
+  nil.next = nil.current = &nil.threads[CH_CFG_MAX_THREADS];
+  nil.current->state = NIL_STATE_READY;
+
+#if CH_DBG_ENABLE_STACK_CHECK == TRUE
+  /* The idle thread is a special case because its stack is set up by the
+     runtime environment.*/
+  nil.threads[CH_CFG_MAX_THREADS].wabase = THD_IDLE_BASE;
+#endif
+
+  /* Interrupts partially enabled. It is equivalent to entering the
+     kernel critical zone.*/
+  chSysSuspend();
+#if CH_DBG_SYSTEM_STATE_CHECK == TRUE
+  nil.lock_cnt = (cnt_t)1;
+#endif
+
+#if CH_CFG_AUTOSTART_THREADS == TRUE
+  /* Iterates through the list of threads to be auto-started.*/
+  tcp = nil_thd_configs;
+  do {
+    chThdCreateI(tcp);
+    tcp++;
+  } while (tcp->funcp != NULL);
+#endif
+
+  /* Starting the dance.*/
+  chSchRescheduleS();
   chSysUnlock();
 }
 
@@ -397,7 +383,7 @@ void chSysTimerHandlerI(void) {
         if (NIL_THD_IS_WTQUEUE(tp)) {
           tp->u1.semp->cnt++;
         }
-        else if (NIL_THD_IS_SUSP(tp)) {
+        else if (NIL_THD_IS_SUSPENDED(tp)) {
           *tp->u1.trp = NULL;
         }
         /*lint -restore*/
@@ -409,7 +395,7 @@ void chSysTimerHandlerI(void) {
     chSysUnlockFromISR();
     tp++;
     chSysLockFromISR();
-  } while (tp < &nil.threads[CH_CFG_NUM_THREADS]);
+  } while (tp < &nil.threads[CH_CFG_MAX_THREADS]);
 #else
   thread_t *tp = &nil.threads[0];
   sysinterval_t next = (sysinterval_t)0;
@@ -437,7 +423,7 @@ void chSysTimerHandlerI(void) {
           tp->u1.tqp->cnt++;
         }
         else {
-          if (NIL_THD_IS_SUSP(tp)) {
+          if (NIL_THD_IS_SUSPENDED(tp)) {
             *tp->u1.trp = NULL;
           }
         }
@@ -455,7 +441,7 @@ void chSysTimerHandlerI(void) {
     chSysUnlockFromISR();
     tp++;
     chSysLockFromISR();
-  } while (tp < &nil.threads[CH_CFG_NUM_THREADS]);
+  } while (tp < &nil.threads[CH_CFG_MAX_THREADS]);
 
   nil.lasttime = nil.nexttime;
   if (next > (sysinterval_t)0) {
@@ -601,7 +587,7 @@ void chSysPolledDelayX(rtcnt_t cycles) {
 thread_t *chSchReadyI(thread_t *tp, msg_t msg) {
 
   chDbgCheckClassI();
-  chDbgCheck((tp >= nil.threads) && (tp < &nil.threads[CH_CFG_NUM_THREADS]));
+  chDbgCheck((tp >= nil.threads) && (tp < &nil.threads[CH_CFG_MAX_THREADS]));
   chDbgAssert(!NIL_THD_IS_READY(tp), "already ready");
   chDbgAssert(nil.next <= nil.current, "priority ordering");
 
@@ -643,7 +629,7 @@ void chSchDoReschedule(void) {
   thread_t *otp = nil.current;
 
   nil.current = nil.next;
-  if (otp == &nil.threads[CH_CFG_NUM_THREADS]) {
+  if (otp == &nil.threads[CH_CFG_MAX_THREADS]) {
     CH_CFG_IDLE_LEAVE_HOOK();
   }
   port_switch(nil.next, otp);
@@ -685,7 +671,7 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, sysinterval_t timeout) {
 
   chDbgCheckClassS();
 
-  chDbgAssert(otp != &nil.threads[CH_CFG_NUM_THREADS],
+  chDbgAssert(otp != &nil.threads[CH_CFG_MAX_THREADS],
                "idle cannot sleep");
 
   /* Storing the wait object for the current thread.*/
@@ -733,7 +719,7 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, sysinterval_t timeout) {
     /* Is this thread ready to execute?*/
     if (NIL_THD_IS_READY(ntp)) {
       nil.current = nil.next = ntp;
-      if (ntp == &nil.threads[CH_CFG_NUM_THREADS]) {
+      if (ntp == &nil.threads[CH_CFG_MAX_THREADS]) {
         CH_CFG_IDLE_ENTER_HOOK();
       }
       port_switch(ntp, otp);
@@ -742,9 +728,140 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, sysinterval_t timeout) {
 
     /* Points to the next thread in lowering priority order.*/
     ntp++;
-    chDbgAssert(ntp <= &nil.threads[CH_CFG_NUM_THREADS],
+    chDbgAssert(ntp <= &nil.threads[CH_CFG_MAX_THREADS],
                 "pointer out of range");
   }
+}
+
+/**
+ * @brief   Creates a new thread into a static memory area.
+ * @details The new thread is initialized and make ready to execute.
+ * @note    A thread can terminate by calling @p chThdExit() or by simply
+ *          returning from its main function.
+ *
+ * @param[out] tcp      pointer to the thread configuration structure
+ * @return              The pointer to the @p thread_t structure allocated for
+ *                      the thread.
+ *
+ * @iclass
+ */
+thread_t *chThdCreateI(const thread_config_t *tcp) {
+  thread_t *tp;
+
+  chDbgCheck(tcp->prio < CH_CFG_MAX_THREADS);
+  chDbgCheckClassI();
+
+  /* Pointer to the thread slot to be used.*/
+  tp = &nil.threads[tcp->prio];
+  chDbgAssert(NIL_THD_IS_WTSTART(tp) || NIL_THD_IS_FINAL(tp),
+              "priority slot taken");
+
+#if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || defined(__DOXYGEN__)
+  tp->wabase = (stkalign_t *)tcp->wbase;
+#endif
+
+  /* Port dependent thread initialization.*/
+  PORT_SETUP_CONTEXT(tp, tcp->wbase, tcp->wend, tcp->funcp, tcp->arg);
+
+  /* Initialization hook.*/
+  CH_CFG_THREAD_EXT_INIT_HOOK(tp);
+
+  /* Readying up thread.*/
+  return chSchReadyI(tp, MSG_OK);
+}
+
+
+/**
+ * @brief   Creates a new thread into a static memory area.
+ * @details The new thread is initialized and make ready to execute.
+ * @note    A thread can terminate by calling @p chThdExit() or by simply
+ *          returning from its main function.
+ *
+ * @param[out] tcp      pointer to the thread configuration structure
+ * @return              The pointer to the @p thread_t structure allocated for
+ *                      the thread.
+ *
+ * @api
+ */
+thread_t *chThdCreate(const thread_config_t *tcp) {
+  thread_t *tp;
+
+  chSysLock();
+  tp = chThdCreateI(tcp);
+  chSchRescheduleS();
+  chSysUnlock();
+
+  return tp;
+}
+
+/**
+ * @brief   Terminates the current thread.
+ * @details The thread goes in the @p CH_STATE_FINAL state holding the
+ *          specified exit status code, other threads can retrieve the
+ *          exit status code by invoking the function @p chThdWait().
+ * @post    Exiting a non-static thread that does not have references
+ *          (detached) causes the thread to remain in the registry.
+ *          It can only be removed by performing a registry scan operation.
+ * @post    Eventual code after this function will never be executed,
+ *          this function never returns. The compiler has no way to
+ *          know this so do not assume that the compiler would remove
+ *          the dead code.
+ *
+ * @param[in] msg       thread exit code
+ *
+ * @api
+ */
+void chThdExit(msg_t msg) {
+
+  chSysLock();
+
+  /* Exit handler hook.*/
+  CH_CFG_THREAD_EXIT_HOOK(tp);
+
+#if CH_CFG_USE_WAITEXIT == TRUE
+  {
+    /* Waking up any waiting thread.*/
+    thread_t *tp = nil.threads;
+    while (tp < &nil.threads[CH_CFG_MAX_THREADS]) {
+      /* Is this thread waiting for current thread termination?*/
+      if ((tp->state == NIL_STATE_WTEXIT) && (tp->u1.tp == nil.current)) {
+        (void) chSchReadyI(tp, msg);
+      }
+      tp++;
+    }
+  }
+#endif
+
+  /* Going into final state with exit message stored.*/
+  chSchGoSleepTimeoutS(NIL_STATE_FINAL, msg);
+
+  /* The thread never returns here.*/
+  chDbgAssert(false, "zombies apocalypse");
+}
+
+/**
+ * @brief   Blocks the execution of the invoking thread until the specified
+ *          thread terminates then the exit code is returned.
+ *
+ * @param[in] tp        pointer to the thread
+ * @return              The exit code from the terminated thread.
+ *
+ * @api
+ */
+msg_t chThdWait(thread_t *tp) {
+  msg_t msg;
+
+  chSysLock();
+  if (NIL_THD_IS_FINAL(tp)) {
+    msg = tp->u1.msg;
+  }
+  else {
+    nil.current->u1.tp = tp;
+    msg = chSchGoSleepTimeoutS(NIL_STATE_WTEXIT, TIME_INFINITE);
+  }
+  chSysUnlock();
+
+  return msg;
 }
 
 /**
@@ -755,8 +872,8 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, sysinterval_t timeout) {
  * @param[in] trp       a pointer to a thread reference object
  * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
- *                      - @a TIME_INFINITE no timeout.
  *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
  *                      .
  * @return              The wake up message.
  *
@@ -772,7 +889,7 @@ msg_t chThdSuspendTimeoutS(thread_reference_t *trp, sysinterval_t timeout) {
 
   *trp = nil.current;
   nil.current->u1.trp = trp;
-  return chSchGoSleepTimeoutS(NIL_STATE_SUSP, timeout);
+  return chSchGoSleepTimeoutS(NIL_STATE_SUSPENDED, timeout);
 }
 
 /**
@@ -790,7 +907,7 @@ void chThdResumeI(thread_reference_t *trp, msg_t msg) {
   if (*trp != NULL) {
     thread_reference_t tr = *trp;
 
-    chDbgAssert(NIL_THD_IS_SUSP(tr), "not suspended");
+    chDbgAssert(NIL_THD_IS_SUSPENDED(tr), "not suspended");
 
     *trp = NULL;
     (void) chSchReadyI(tr, msg);
@@ -852,8 +969,8 @@ void chThdSleepUntil(systime_t abstime) {
  * @param[in] tqp       pointer to the threads queue object
  * @param[in] timeout   the timeout in system ticks, the special values are
  *                      handled as follow:
- *                      - @a TIME_INFINITE no timeout.
  *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
  *                      .
  * @return              The message from @p osalQueueWakeupOneI() or
  *                      @p osalQueueWakeupAllI() functions.
@@ -943,8 +1060,8 @@ void chThdDequeueAllI(threads_queue_t *tqp, msg_t msg) {
  * @param[in] sp        pointer to a @p semaphore_t structure
  * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
- *                      - @a TIME_INFINITE no timeout.
  *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
  *                      .
  * @return              A message specifying how the invoking thread has been
  *                      released from the semaphore.
@@ -972,8 +1089,8 @@ msg_t chSemWaitTimeout(semaphore_t *sp, sysinterval_t timeout) {
  * @param[in] sp        pointer to a @p semaphore_t structure
  * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
- *                      - @a TIME_INFINITE no timeout.
  *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
  *                      .
  * @return              A message specifying how the invoking thread has been
  *                      released from the semaphore.
@@ -1130,8 +1247,10 @@ void chEvtSignalI(thread_t *tp, eventmask_t mask) {
   chDbgCheck(tp != NULL);
 
   tp->epmask |= mask;
-  if (NIL_THD_IS_WTOREVT(tp) &&
-      ((tp->epmask & tp->u1.ewmask) != (eventmask_t)0)) {
+  if ((NIL_THD_IS_WTOREVT(tp) &&
+       ((tp->epmask & tp->u1.ewmask) != (eventmask_t)0)) ||
+      (NIL_THD_IS_WTANDEVT(tp) &&
+       ((tp->epmask & tp->u1.ewmask) == tp->u1.ewmask))) {
     (void) chSchReadyI(tp, MSG_OK);
   }
 }
@@ -1146,8 +1265,8 @@ void chEvtSignalI(thread_t *tp, eventmask_t mask) {
  *                      for, @p ALL_EVENTS enables all the events
  * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
- *                      - @a TIME_INFINITE no timeout.
  *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
  *                      .
  * @return              The mask of the served and cleared events.
  * @retval 0            if the operation has timed out.
@@ -1177,6 +1296,46 @@ eventmask_t chEvtWaitAnyTimeout(eventmask_t mask, sysinterval_t timeout) {
   chSysUnlock();
 
   return m;
+}
+
+/**
+ * @brief   Waits for all the specified events.
+ * @details The function waits for all the events specified in @p mask to
+ *          become pending then the events are cleared and returned.
+ *
+ * @param[in] mask      mask of the event flags that the function should wait
+ *                      for, @p ALL_EVENTS enables all the events
+ * @param[in] timeout   the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              The mask of the served and cleared events.
+ * @retval 0            if the operation has timed out.
+ *
+ * @api
+ */
+eventmask_t chEvtWaitAllTimeout(eventmask_t mask, sysinterval_t timeout) {
+  thread_t *ctp = nil.current;
+
+  chSysLock();
+  if ((ctp->epmask & mask) != mask) {
+    if (TIME_IMMEDIATE == timeout) {
+      chSysUnlock();
+
+      return (eventmask_t)0;
+    }
+    ctp->u1.ewmask = mask;
+    if (chSchGoSleepTimeoutS(NIL_STATE_WTANDEVT, timeout) < MSG_OK) {
+      chSysUnlock();
+
+      return (eventmask_t)0;
+    }
+  }
+  ctp->epmask &= ~mask;
+  chSysUnlock();
+
+  return mask;
 }
 #endif /* CH_CFG_USE_EVENTS == TRUE */
 

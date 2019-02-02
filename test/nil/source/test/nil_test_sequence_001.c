@@ -160,8 +160,11 @@ static void nil_test_001_003_execute(void) {
   /* [1.3.1] Prints the configuration options settings.*/
   test_set_step(1);
   {
-    test_print("--- CH_CFG_NUM_THREADS:                 ");
-    test_printn(CH_CFG_NUM_THREADS);
+    test_print("--- CH_CFG_MAX_THREADS:                 ");
+    test_printn(CH_CFG_MAX_THREADS);
+    test_println("");
+    test_print("--- CH_CFG_AUTOSTART_THREADS:           ");
+    test_printn(CH_CFG_AUTOSTART_THREADS);
     test_println("");
     test_print("--- CH_CFG_ST_RESOLUTION:               ");
     test_printn(CH_CFG_ST_RESOLUTION);
@@ -171,6 +174,9 @@ static void nil_test_001_003_execute(void) {
     test_println("");
     test_print("--- CH_CFG_ST_TIMEDELTA:                ");
     test_printn(CH_CFG_ST_TIMEDELTA);
+    test_println("");
+    test_print("--- CH_CFG_USE_WAITEXIT:                ");
+    test_printn(CH_CFG_USE_WAITEXIT);
     test_println("");
     test_print("--- CH_CFG_USE_SEMAPHORES:              ");
     test_printn(CH_CFG_USE_SEMAPHORES);
@@ -219,6 +225,9 @@ static void nil_test_001_003_execute(void) {
     test_println("");
     test_print("--- CH_CFG_FACTORY_OBJ_FIFOS:           ");
     test_printn(CH_CFG_FACTORY_OBJ_FIFOS);
+    test_println("");
+    test_print("--- CH_CFG_USE_PIPES:                   ");
+    test_printn(CH_CFG_USE_PIPES);
     test_println("");
     test_print("--- CH_DBG_STATISTICS:                  ");
     test_printn(CH_DBG_STATISTICS);
