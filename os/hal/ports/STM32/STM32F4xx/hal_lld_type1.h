@@ -1014,6 +1014,22 @@
 #error "Using a wrong mcuconf.h file, STM32F4xx_MCUCONF not defined"
 #endif
 
+#if defined(STM32F405xx) && !defined(STM32F405_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32F405_MCUCONF not defined"
+#endif
+
+#if defined(STM32F415xx) && !defined(STM32F415_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32F415_MCUCONF not defined"
+#endif
+
+#if defined(STM32F407xx) && !defined(STM32F407_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32F407_MCUCONF not defined"
+#endif
+
+#if defined(STM32F417xx) && !defined(STM32F417_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32F417_MCUCONF not defined"
+#endif
+
 #else /* !defined(STM32F4XX) */
 /*
  * Configuration-related checks.
