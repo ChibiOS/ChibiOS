@@ -390,9 +390,15 @@
 
 /* LTDC attributes.*/
 #define STM32_HAS_LTDC                      TRUE
+#define STM32_LTDC_EV_HANDLER               Vector1A0
+#define STM32_LTDC_ER_HANDLER               Vector1A4
+#define STM32_LTDC_EV_NUMBER                88
+#define STM32_LTDC_ER_NUMBER                89
 
 /* DMA2D attributes.*/
 #define STM32_HAS_DMA2D                     TRUE
+#define STM32_DMA2D_HANDLER                 Vector1A8
+#define STM32_DMA2D_NUMBER                  90
 
 /* FSMC attributes.*/
 #define STM32_HAS_FSMC                      TRUE
@@ -400,19 +406,14 @@
 #define STM32_FSMC_HANDLER                  Vector100
 #define STM32_FSMC_NUMBER                   48
 
-/* LTDC attributes.*/
-#define STM32_LTDC_EV_HANDLER               Vector1A0
-#define STM32_LTDC_ER_HANDLER               Vector1A4
-#define STM32_LTDC_EV_NUMBER                88
-#define STM32_LTDC_ER_NUMBER                89
-
-/* DMA2D attributes.*/
-#define STM32_DMA2D_HANDLER                 Vector1A8
-#define STM32_DMA2D_NUMBER                  90
-
 /* CRC attributes.*/
 #define STM32_HAS_CRC                       TRUE
 #define STM32_CRC_PROGRAMMABLE              TRUE
+
+/* DCMI attributes.*/
+#define STM32_HAS_DCMI                      TRUE
+#define STM32_DCMI_HANDLER                  Vector178
+#define STM32_DCMI_NUMBER                   78
 
 #endif /* defined(STM32H743xx) || defined(STM32H753xx) */
 /** @} */
