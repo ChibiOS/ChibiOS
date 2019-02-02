@@ -74,5 +74,7 @@
 *****************************************************************************
 
 *** Next ***
-- HAL: Added mcuconf.h updater tool for STM32F407.
+- HAL: Added mcuconf.h updater tool for STM32F407 (backported to 19.1.0).
 - NIL: Integrated NIL 4.0.
+- FIX: Fixed problem in STM32 mcuconf.h template files (bug #1007)
+  (backported to 19.1.0)(backported to 18.2.3).
