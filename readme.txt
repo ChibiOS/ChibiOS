@@ -78,5 +78,7 @@
 - NIL: Integrated NIL 4.0.
 - FIX: Fixed problem in STM32 mcuconf.h template files (bug #1007)
   (backported to 19.1.1)(backported to 18.2.3).
-- EX: Fixed missing I2C release bus in LPS22HB initialization (bug #1005)
+- EX:  Fixed I2C Acquire bus called twice in the HTS221 initialization 
+  (bug #1006) (backported to 19.1.1)(backported to 18.2.3).
+- EX:  Fixed missing I2C release bus in LPS22HB initialization (bug #1005)
   (backported to 19.1.1).
