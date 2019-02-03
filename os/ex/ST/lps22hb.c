@@ -585,6 +585,10 @@ void lps22hbStart(LPS22HBDriver *devp, const LPS22HBConfig *config) {
   lps22hbI2CWriteRegister(devp->config->i2cp, devp->config->slaveaddress,
                           cr, 1);
 
+#if  LPS22HB_SHARED_I2C
+  i2cReleaseBus((devp)->config->i2cp);
+#endif /* LPS22HB_SHARED_I2C */
+
   /* Control register 1 configuration block.*/
   {
     cr[0] = LPS22HB_AD_CTRL_REG1;
@@ -597,9 +601,9 @@ void lps22hbStart(LPS22HBDriver *devp, const LPS22HBConfig *config) {
 
 #if  LPS22HB_SHARED_I2C
   i2cAcquireBus((devp)->config->i2cp);
-#endif /* LPS22HB_SHARED_I2C */
   i2cStart((devp)->config->i2cp,
-           (devp)->config->i2ccfg);
+           (devp)->config->i2ccfg); 
+#endif /* LPS22HB_SHARED_I2C */
 
   lps22hbI2CWriteRegister(devp->config->i2cp, devp->config->slaveaddress, cr, 1);
 
