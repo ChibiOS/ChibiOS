@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 19.1.1 ***
+- FIX: Fixed wrong mcuconf.h in some testex demos related to STM32F407 
+  (bug #1008).
 - FIX: Fixed problem in STM32 mcuconf.h template files (bug #1007).
 - EX:  Fixed I2C Acquire bus called twice in the HTS221 initialization 
   (bug #1006).
