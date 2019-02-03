@@ -95,6 +95,8 @@
 - NEW: Added new functions to objects fifos: chFifoReturnObjectS(),
        chFifoSendObjectAheadI(), chFifoSendObjectAheadS() and
        chFifoSendObjectAhead().
+- FIX: Fixed wrong mcuconf.h in some testex demos related to STM32F407 
+  (bug #1008).
 - EX:  Fixed I2C Acquire bus called twice in the HTS221 initialization 
   (bug #1006)
 - HAL: Fixed invalid checks in STM32H7 HAL (bug #1000).
