@@ -42,7 +42,7 @@
   |  |  +--ports/               - HAL ports.
   |  |  +--templates/           - HAL driver template files.
   |  |     +--osal/             - HAL OSAL templates.
-  |  +--lib/                    - RTOS modules usable by both RT and NIL.
+  |  +--oslib/                  - RTOS modules usable by both RT and NIL.
   |  |  +--include/             - OSLIB high level headers.
   |  |  +--src/                 - OSLIB high level source.
   |  |  +--templates/           - OSLIB configuration template files.
