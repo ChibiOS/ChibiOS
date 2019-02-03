@@ -42,7 +42,7 @@
   |  |  +--ports/               - HAL ports.
   |  |  +--templates/           - HAL driver template files.
   |  |     +--osal/             - HAL OSAL templates.
-  |  +--lib/                    - RTOS modules usable by both RT and NIL.
+  |  +--oslib/                  - RTOS modules usable by both RT and NIL.
   |  |  +--include/             - OSLIB high level headers.
   |  |  +--src/                 - OSLIB high level source.
   |  |  +--templates/           - OSLIB configuration template files.
@@ -74,7 +74,7 @@
 *****************************************************************************
 
 *** Next ***
-- HAL: Added mcuconf.h updater tool for STM32F407 (backported to 19.1.0).
+- HAL: Added mcuconf.h updater tool for STM32F407 (backported to 19.1.1).
 - NIL: Integrated NIL 4.0.
 - FIX: Fixed problem in STM32 mcuconf.h template files (bug #1007)
-  (backported to 19.1.0)(backported to 18.2.3).
+  (backported to 19.1.1)(backported to 18.2.3).
