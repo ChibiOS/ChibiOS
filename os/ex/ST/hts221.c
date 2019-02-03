@@ -114,18 +114,9 @@ static msg_t hts221Calibrate(HTS221Driver *devp) {
   uint8_t calib[16], H0_rH_x2, H1_rH_x2, msb;
   int16_t H0_T0_OUT, H1_T0_OUT, T0_degC_x8, T1_degC_x8, T0_OUT, T1_OUT;
 
-#if HTS221_SHARED_I2C
-  i2cAcquireBus(devp->config->i2cp);
-  i2cStart(devp->config->i2cp, devp->config->i2ccfg);
-#endif /* HTS221_SHARED_I2C */
-
   /* Retrieving rH values from Calibration registers */
   msg = hts221I2CReadRegister(devp->config->i2cp,
                                HTS221_AD_CALIB_0, calib, 16);
-
-#if HTS221_SHARED_I2C
-    i2cReleaseBus(devp->config->i2cp);
-#endif /* HTS221_SHARED_I2C */
 
   H0_rH_x2 = calib[0];
   H1_rH_x2 = calib[1];
@@ -666,12 +657,15 @@ void hts221Start(HTS221Driver *devp, const HTS221Config *config) {
   i2cAcquireBus(devp->config->i2cp);
 #endif /* HTS221_SHARED_I2C */
 
+  /* Intializing the I2C. */
   i2cStart(devp->config->i2cp, devp->config->i2ccfg);
+
   hts221Calibrate(devp);
 
 #if HTS221_SHARED_I2C
-  i2cReleaseBus(devp->config->i2cp);
+    i2cReleaseBus(devp->config->i2cp);
 #endif /* HTS221_SHARED_I2C */
+
 
   if(devp->config->hygrosensitivity == NULL) {
     devp->hygrosensitivity = devp->hygrofactorysensitivity;

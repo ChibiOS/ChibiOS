@@ -95,6 +95,8 @@
 - NEW: Added new functions to objects fifos: chFifoReturnObjectS(),
        chFifoSendObjectAheadI(), chFifoSendObjectAheadS() and
        chFifoSendObjectAhead().
+- EX:  Fixed I2C Acquire bus called twice in the HTS221 initialization 
+  (bug #1006)
 - HAL: Fixed invalid checks in STM32H7 HAL (bug #1000).
 - OTH: Fixed problem in STM32H743 GCC linker file (bug #998).
 - HAL: Fixed extra parenthesis in STM32F4 registry (bug #997).
