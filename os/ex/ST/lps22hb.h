@@ -43,7 +43,7 @@
 /**
  * @brief   LPS22HB driver version string.
  */
-#define EX_LPS22HB_VERSION                  "1.0.1"
+#define EX_LPS22HB_VERSION                  "1.0.2"
 
 /**
  * @brief   LPS22HB driver version major number.
@@ -58,7 +58,7 @@
 /**
  * @brief   LPS22HB driver version patch number.
  */
-#define EX_LPS22HB_PATCH                    1
+#define EX_LPS22HB_PATCH                    2
 /** @} */
 
 /**

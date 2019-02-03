@@ -75,6 +75,7 @@
 
 *** 19.1.1 ***
 - FIX: Fixed problem in STM32 mcuconf.h template files (bug #1007).
+- EX: Missing I2C release bus in LPS22HB initialization (bug #1005).
 
 *** 19.1.0 ***
 - First 19.1.x release, see release note 19.1.0.
