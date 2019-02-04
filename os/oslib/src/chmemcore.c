@@ -84,19 +84,19 @@ void _core_init(void) {
   extern uint8_t __heap_end__[];
 
   /*lint -save -e9033 [10.8] Required cast operations.*/
-  ch_memcore.nextmem = __heap_base__;
-  ch_memcore.endmem  = __heap_end__;
+  ch_memcore.basemem = __heap_base__;
+  ch_memcore.topmem  = __heap_end__;
   /*lint restore*/
 #else
   static uint8_t static_heap[CH_CFG_MEMCORE_SIZE];
 
-  ch_memcore.nextmem = &static_heap[0];
-  ch_memcore.endmem  = &static_heap[CH_CFG_MEMCORE_SIZE];
+  ch_memcore.basemem = &static_heap[0];
+  ch_memcore.topmem  = &static_heap[CH_CFG_MEMCORE_SIZE];
 #endif
 }
 
 /**
- * @brief   Allocates a memory block.
+ * @brief   Allocates a memory block starting from the lowest address upward.
  * @details This function allocates a block of @p offset + @p size bytes. The
  *          returned pointer has @p offset bytes before its address and
  *          @p size bytes after.
@@ -109,30 +109,60 @@ void _core_init(void) {
  *
  * @iclass
  */
-void *chCoreAllocAlignedWithOffsetI(size_t size,
-                                    unsigned align,
-                                    size_t offset) {
+void *chCoreAllocFromBaseI(size_t size, unsigned align, size_t offset) {
   uint8_t *p, *next;
 
   chDbgCheckClassI();
   chDbgCheck(MEM_IS_VALID_ALIGNMENT(align));
 
-  size = MEM_ALIGN_NEXT(size, align);
-  p = (uint8_t *)MEM_ALIGN_NEXT(ch_memcore.nextmem + offset, align);
+  p = (uint8_t *)MEM_ALIGN_NEXT(ch_memcore.basemem + offset, align);
   next = p + size;
 
   /* Considering also the case where there is numeric overflow.*/
-  if ((next > ch_memcore.endmem) || (next < ch_memcore.nextmem)) {
+  if ((next > ch_memcore.topmem) || (next < ch_memcore.basemem)) {
     return NULL;
   }
 
-  ch_memcore.nextmem = next;
+  ch_memcore.basemem = next;
 
   return p;
 }
 
 /**
- * @brief   Allocates a memory block.
+ * @brief   Allocates a memory block starting from the top address downward.
+ * @details This function allocates a block of @p offset + @p size bytes. The
+ *          returned pointer has @p offset bytes before its address and
+ *          @p size bytes after.
+ *
+ * @param[in] size      the size of the block to be allocated.
+ * @param[in] align     desired memory alignment
+ * @param[in] offset    aligned pointer offset
+ * @return              A pointer to the allocated memory block.
+ * @retval NULL         allocation failed, core memory exhausted.
+ *
+ * @iclass
+ */
+void *chCoreAllocFromTopI(size_t size, unsigned align, size_t offset) {
+  uint8_t *p, *prev;
+
+  chDbgCheckClassI();
+  chDbgCheck(MEM_IS_VALID_ALIGNMENT(align));
+
+  p = (uint8_t *)MEM_ALIGN_PREV(ch_memcore.topmem - size, align);
+  prev = p - offset;
+
+  /* Considering also the case where there is numeric overflow.*/
+  if ((prev < ch_memcore.basemem) || (prev > ch_memcore.topmem)) {
+    return NULL;
+  }
+
+  ch_memcore.topmem = prev;
+
+  return p;
+}
+
+/**
+ * @brief   Allocates a memory block starting from the lowest address upward.
  * @details This function allocates a block of @p offset + @p size bytes. The
  *          returned pointer has @p offset bytes before its address and
  *          @p size bytes after.
@@ -145,13 +175,35 @@ void *chCoreAllocAlignedWithOffsetI(size_t size,
  *
  * @api
  */
-void *chCoreAllocAlignedWithOffset(size_t size,
-                                   unsigned align,
-                                   size_t offset) {
+void *chCoreAllocFromBase(size_t size, unsigned align, size_t offset) {
   void *p;
 
   chSysLock();
-  p = chCoreAllocAlignedWithOffsetI(size, align, offset);
+  p = chCoreAllocFromBaseI(size, align, offset);
+  chSysUnlock();
+
+  return p;
+}
+
+/**
+ * @brief   Allocates a memory block starting from the top address downward.
+ * @details This function allocates a block of @p offset + @p size bytes. The
+ *          returned pointer has @p offset bytes before its address and
+ *          @p size bytes after.
+ *
+ * @param[in] size      the size of the block to be allocated.
+ * @param[in] align     desired memory alignment
+ * @param[in] offset    aligned pointer offset
+ * @return              A pointer to the allocated memory block.
+ * @retval NULL         allocation failed, core memory exhausted.
+ *
+ * @api
+ */
+void *chCoreAllocFromTop(size_t size, unsigned align, size_t offset) {
+  void *p;
+
+  chSysLock();
+  p = chCoreAllocFromTopI(size, align, offset);
   chSysUnlock();
 
   return p;
@@ -167,7 +219,7 @@ void *chCoreAllocAlignedWithOffset(size_t size,
 size_t chCoreGetStatusX(void) {
 
   /*lint -save -e9033 [10.8] The cast is safe.*/
-  return (size_t)(ch_memcore.endmem - ch_memcore.nextmem);
+  return (size_t)(ch_memcore.topmem - ch_memcore.basemem);
   /*lint -restore*/
 }
 #endif /* CH_CFG_USE_MEMCORE == TRUE */

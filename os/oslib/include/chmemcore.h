@@ -82,16 +82,32 @@ typedef struct {
   /**
    * @brief   Next free address.
    */
-  uint8_t *nextmem;
+  uint8_t *basemem;
   /**
    * @brief   Final address.
    */
-  uint8_t *endmem;
+  uint8_t *topmem;
 } memcore_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Allocates a memory block.
+ * @note    This is a generic form with unspecified allocation position.
+ *
+ * @iclass
+ */
+#define chCoreAllocAlignedWithOffsetI chCoreAllocFromTopI
+
+/**
+ * @brief   Allocates a memory block.
+ * @note    This is a generic form with unspecified allocation position.
+ *
+ * @api
+ */
+#define chCoreAllocAlignedWithOffset chCoreAllocFromTop
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -105,12 +121,10 @@ extern memcore_t ch_memcore;
 extern "C" {
 #endif
   void _core_init(void);
-  void *chCoreAllocAlignedWithOffsetI(size_t size,
-                                      unsigned align,
-                                      size_t offset);
-  void *chCoreAllocAlignedWithOffset(size_t size,
-                                     unsigned align,
-                                     size_t offset);
+  void *chCoreAllocFromBaseI(size_t size, unsigned align, size_t offset);
+  void *chCoreAllocFromTopI(size_t size, unsigned align, size_t offset);
+  void *chCoreAllocFromBase(size_t size, unsigned align, size_t offset);
+  void *chCoreAllocFromTop(size_t size, unsigned align, size_t offset);
   size_t chCoreGetStatusX(void);
 #ifdef __cplusplus
 }
@@ -124,6 +138,7 @@ extern "C" {
  * @brief   Allocates a memory block.
  * @details The allocated block is guaranteed to be properly aligned to the
  *          specified alignment.
+ * @note    This is a generic form with unspecified allocation position.
  *
  * @param[in] size      the size of the block to be allocated.
  * @param[in] align     desired memory alignment
@@ -141,6 +156,7 @@ static inline void *chCoreAllocAlignedI(size_t size, unsigned align) {
  * @brief   Allocates a memory block.
  * @details The allocated block is guaranteed to be properly aligned to the
  *          specified alignment.
+ * @note    This is a generic form with unspecified allocation position.
  *
  * @param[in] size      the size of the block to be allocated
  * @param[in] align     desired memory alignment
@@ -150,19 +166,15 @@ static inline void *chCoreAllocAlignedI(size_t size, unsigned align) {
  * @api
  */
 static inline void *chCoreAllocAligned(size_t size, unsigned align) {
-  void *p;
 
-  chSysLock();
-  p = chCoreAllocAlignedWithOffsetI(size, align, 0U);
-  chSysUnlock();
-
-  return p;
+  return chCoreAllocAlignedWithOffset(size, align, 0U);
 }
 
 /**
  * @brief   Allocates a memory block.
  * @details The allocated block is guaranteed to be properly aligned for a
  *          pointer data type.
+ * @note    This is a generic form with unspecified allocation position.
  *
  * @param[in] size      the size of the block to be allocated.
  * @return              A pointer to the allocated memory block.
@@ -179,6 +191,7 @@ static inline void *chCoreAllocI(size_t size) {
  * @brief   Allocates a memory block.
  * @details The allocated block is guaranteed to be properly aligned for a
  *          pointer data type.
+ * @note    This is a generic form with unspecified allocation position.
  *
  * @param[in] size      the size of the block to be allocated.
  * @return              A pointer to the allocated memory block.

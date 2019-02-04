@@ -74,6 +74,14 @@
 *****************************************************************************
 
 *** Next ***
+- VAR: Modified syscalls.c to allocate memory from bottom upward, ChibiOS
+       allocators take memory from top downward. This way the memory taken
+       using _sbrk_r() does not contain "holes" caused by other allocators.
+- LIB: Modified core allocator to be able to get blocks starting from bottom
+       or top of the available memory range.
+       Removed alignment enforcements for requested block size. Alignment is
+       only ensured on the returned pointer, this should reduce memory usage
+       is some cases.
 - HAL: Added mcuconf.h updater tool for STM32F407 (backported to 19.1.1).
 - NIL: Integrated NIL 4.0.
 - FIX: Fixed wrong mcuconf.h in some testex demos related to STM32F407 
