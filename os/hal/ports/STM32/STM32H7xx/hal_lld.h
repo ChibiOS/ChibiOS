@@ -1178,7 +1178,7 @@
  * @brief   LPTIM1 clock source.
  */
 #if !defined(STM32_LPTIM1SEL) || defined(__DOXYGEN__)
-#define STM32_LPTIM1SEL                     STM32_LPTIM1_PCLK1
+#define STM32_LPTIM1SEL                     STM32_LPTIM1SEL_PCLK1
 #endif
 
 /**
