@@ -14,8 +14,21 @@ endif
 CHCONF := $(strip $(shell cat $(CHCONFDIR)/chconf.h | egrep -e "\#define"))
 
 KERNSRC := ${CHIBIOS}/os/nil/src/ch.c
+ifneq ($(findstring CH_CFG_USE_EVENTS TRUE,$(CHCONF)),)
+KERNSRC += $(CHIBIOS)/os/rt/src/chevt.c
+endif
+ifneq ($(findstring CH_CFG_USE_MESSAGES TRUE,$(CHCONF)),)
+KERNSRC += $(CHIBIOS)/os/rt/src/chmsg.c
+endif
+ifneq ($(findstring CH_CFG_USE_SEMAPHORES TRUE,$(CHCONF)),)
+KERNSRC += $(CHIBIOS)/os/rt/src/chsem.c
+endif
+
 else
-KERNSRC := ${CHIBIOS}/os/nil/src/ch.c
+KERNSRC := ${CHIBIOS}/os/nil/src/ch.c \
+           ${CHIBIOS}/os/nil/src/chevt.c
+           ${CHIBIOS}/os/nil/src/chmsg.c \
+           ${CHIBIOS}/os/nil/src/chsem.c
 endif
 
 # Required include directories

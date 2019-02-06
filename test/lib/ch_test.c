@@ -255,6 +255,23 @@ msg_t test_execute(BaseSequentialStream *stream, const testsuite_t *tsp) {
   test_print("*** Test Board:   ");
   test_println(BOARD_NAME);
 #endif
+#if defined(__GNUC__) && !defined(TEST_SUPPRESS_SIZE_REPORT)
+  {
+    extern uint8_t __text_base, __text_end,
+                   _data_start, _data_end,
+                   _bss_start, _bss_end;
+    test_println("***");
+    test_print("*** Text size:    ");
+    test_printn((uint32_t)(&__text_end - &__text_base));
+    test_println(" bytes");
+    test_print("*** Data size:    ");
+    test_printn((uint32_t)(&_data_end - &_data_start));
+    test_println(" bytes");
+    test_print("*** BSS size:     ");
+    test_printn((uint32_t)(&_bss_end - &_bss_start));
+    test_println(" bytes");
+  }
+#endif
 #if defined(TEST_REPORT_HOOK_HEADER)
   TEST_REPORT_HOOK_HEADER
 #endif

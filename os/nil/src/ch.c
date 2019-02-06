@@ -48,27 +48,36 @@ nil_system_t nil;
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
+/*===========================================================================*/
+/* Module interrupt handlers.                                                */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module exported functions.                                                */
+/*===========================================================================*/
+
 /**
  * @brief   Retrieves the highest priority thread in the specified state and
  *          associated to the specified object.
- * @note    The search is unbounded, the thread is assumed to exist.
  *
  * @param[in] state     thread state
  * @param[in] p         object pointer
+ * @return              The pointer to the found thread.
+ * @retval NULL         if the thread is not found.
+ *
+ * @notapi
  */
-static thread_t *nil_find_thread(tstate_t state, void * p) {
+thread_t *nil_find_thread(tstate_t state, void *p) {
   thread_t *tp = nil.threads;
 
-  while (true) {
+  while (tp < &nil.threads[CH_CFG_MAX_THREADS]) {
     /* Is this thread matching?*/
     if ((tp->state == state) && (tp->u1.p == p)) {
       return tp;
     }
     tp++;
-
-    chDbgAssert(tp < &nil.threads[CH_CFG_MAX_THREADS],
-                "pointer out of range");
   }
+  return NULL;
 }
 
 /**
@@ -80,9 +89,9 @@ static thread_t *nil_find_thread(tstate_t state, void * p) {
  *                      non negative numbers are ignored
  * @param[in] msg       the wakeup message
  *
- * @iclass
+ * @notapi
  */
-static cnt_t nil_ready_all(void * p, cnt_t cnt, msg_t msg) {
+cnt_t nil_ready_all(void *p, cnt_t cnt, msg_t msg) {
   thread_t *tp = nil.threads;;
 
   while (cnt < (cnt_t)0) {
@@ -100,14 +109,6 @@ static cnt_t nil_ready_all(void * p, cnt_t cnt, msg_t msg) {
 
   return cnt;
 }
-
-/*===========================================================================*/
-/* Module interrupt handlers.                                                */
-/*===========================================================================*/
-
-/*===========================================================================*/
-/* Module exported functions.                                                */
-/*===========================================================================*/
 
 #if (CH_DBG_SYSTEM_STATE_CHECK == TRUE) || defined(__DOXYGEN__)
 /**
@@ -1015,6 +1016,9 @@ void chThdDoDequeueNextI(threads_queue_t *tqp, msg_t msg) {
 
   tqp->cnt++;
   tp = nil_find_thread(NIL_STATE_WTQUEUE, (void *)tqp);
+
+  chDbgAssert(tp != NULL, "thread not found");
+
   (void) chSchReadyI(tp, msg);
 }
 
@@ -1052,291 +1056,5 @@ void chThdDequeueAllI(threads_queue_t *tqp, msg_t msg) {
 
   tqp->cnt = nil_ready_all((void *)tqp, tqp->cnt, msg);
 }
-
-#if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
-/**
- * @brief   Performs a wait operation on a semaphore with timeout specification.
- *
- * @param[in] sp        pointer to a @p semaphore_t structure
- * @param[in] timeout   the number of ticks before the operation timeouts,
- *                      the following special values are allowed:
- *                      - @a TIME_IMMEDIATE immediate timeout.
- *                      - @a TIME_INFINITE no timeout.
- *                      .
- * @return              A message specifying how the invoking thread has been
- *                      released from the semaphore.
- * @retval NIL_MSG_OK   if the thread has not stopped on the semaphore or the
- *                      semaphore has been signaled.
- * @retval NIL_MSG_RST  if the semaphore has been reset using @p chSemReset().
- * @retval NIL_MSG_TMO  if the semaphore has not been signaled or reset within
- *                      the specified timeout.
- *
- * @api
- */
-msg_t chSemWaitTimeout(semaphore_t *sp, sysinterval_t timeout) {
-  msg_t msg;
-
-  chSysLock();
-  msg = chSemWaitTimeoutS(sp, timeout);
-  chSysUnlock();
-
-  return msg;
-}
-
-/**
- * @brief   Performs a wait operation on a semaphore with timeout specification.
- *
- * @param[in] sp        pointer to a @p semaphore_t structure
- * @param[in] timeout   the number of ticks before the operation timeouts,
- *                      the following special values are allowed:
- *                      - @a TIME_IMMEDIATE immediate timeout.
- *                      - @a TIME_INFINITE no timeout.
- *                      .
- * @return              A message specifying how the invoking thread has been
- *                      released from the semaphore.
- * @retval NIL_MSG_OK   if the thread has not stopped on the semaphore or the
- *                      semaphore has been signaled.
- * @retval NIL_MSG_RST  if the semaphore has been reset using @p chSemReset().
- * @retval NIL_MSG_TMO  if the semaphore has not been signaled or reset within
- *                      the specified timeout.
- *
- * @sclass
- */
-msg_t chSemWaitTimeoutS(semaphore_t *sp, sysinterval_t timeout) {
-
-  chDbgCheckClassS();
-  chDbgCheck(sp != NULL);
-
-  /* Note, the semaphore counter is a volatile variable so accesses are
-     manually optimized.*/
-  cnt_t cnt = sp->cnt;
-  if (cnt <= (cnt_t)0) {
-    if (TIME_IMMEDIATE == timeout) {
-
-      return MSG_TIMEOUT;
-    }
-    sp->cnt = cnt - (cnt_t)1;
-    nil.current->u1.semp = sp;
-
-    return chSchGoSleepTimeoutS(NIL_STATE_WTQUEUE, timeout);
-  }
-  sp->cnt = cnt - (cnt_t)1;
-
-  return MSG_OK;
-}
-
-/**
- * @brief   Performs a signal operation on a semaphore.
- *
- * @param[in] sp    pointer to a @p semaphore_t structure
- *
- * @api
- */
-void chSemSignal(semaphore_t *sp) {
-
-  chSysLock();
-  chSemSignalI(sp);
-  chSchRescheduleS();
-  chSysUnlock();
-}
-
-/**
- * @brief   Performs a signal operation on a semaphore.
- * @post    This function does not reschedule so a call to a rescheduling
- *          function must be performed before unlocking the kernel. Note that
- *          interrupt handlers always reschedule on exit so an explicit
- *          reschedule must not be performed in ISRs.
- *
- * @param[in] sp    pointer to a @p semaphore_t structure
- *
- * @iclass
- */
-void chSemSignalI(semaphore_t *sp) {
-
-  chDbgCheckClassI();
-  chDbgCheck(sp != NULL);
-
-  if (++sp->cnt <= (cnt_t)0) {
-    thread_t *tp = nil_find_thread(NIL_STATE_WTQUEUE, (void *)sp);
-    (void) chSchReadyI(tp, MSG_OK);
-  }
-}
-
-/**
- * @brief   Performs a reset operation on the semaphore.
- * @post    After invoking this function all the threads waiting on the
- *          semaphore, if any, are released and the semaphore counter is set
- *          to the specified, non negative, value.
- *
- * @param[in] sp        pointer to a @p semaphore_t structure
- * @param[in] n         the new value of the semaphore counter. The value must
- *                      be non-negative.
- *
- * @api
- */
-void chSemReset(semaphore_t *sp, cnt_t n) {
-
-  chSysLock();
-  chSemResetI(sp, n);
-  chSchRescheduleS();
-  chSysUnlock();
-}
-
-/**
- * @brief   Performs a reset operation on the semaphore.
- * @post    After invoking this function all the threads waiting on the
- *          semaphore, if any, are released and the semaphore counter is set
- *          to the specified, non negative, value.
- * @post    This function does not reschedule so a call to a rescheduling
- *          function must be performed before unlocking the kernel. Note that
- *          interrupt handlers always reschedule on exit so an explicit
- *          reschedule must not be performed in ISRs.
- *
- * @param[in] sp        pointer to a @p semaphore_t structure
- * @param[in] n         the new value of the semaphore counter. The value must
- *                      be non-negative.
- *
- * @iclass
- */
-void chSemResetI(semaphore_t *sp, cnt_t n) {
-  cnt_t cnt;
-
-  chDbgCheckClassI();
-  chDbgCheck((sp != NULL) && (n >= (cnt_t)0));
-
-  cnt = sp->cnt;
-  sp->cnt = n;
-
-  /* Does nothing for cnt >= 0, calling anyway.*/
-  (void) nil_ready_all((void *)sp, cnt, MSG_RESET);
-}
-#endif /* CH_CFG_USE_SEMAPHORES == TRUE */
-
-#if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
-/**
- * @brief   Adds a set of event flags directly to the specified @p thread_t.
- *
- * @param[in] tp        the thread to be signaled
- * @param[in] mask      the event flags set to be ORed
- *
- * @api
- */
-void chEvtSignal(thread_t *tp, eventmask_t mask) {
-
-  chSysLock();
-  chEvtSignalI(tp, mask);
-  chSchRescheduleS();
-  chSysUnlock();
-}
-
-/**
- * @brief   Adds a set of event flags directly to the specified @p thread_t.
- * @post    This function does not reschedule so a call to a rescheduling
- *          function must be performed before unlocking the kernel. Note that
- *          interrupt handlers always reschedule on exit so an explicit
- *          reschedule must not be performed in ISRs.
- *
- * @param[in] tp        the thread to be signaled
- * @param[in] mask      the event flags set to be ORed
- *
- * @iclass
- */
-void chEvtSignalI(thread_t *tp, eventmask_t mask) {
-
-  chDbgCheckClassI();
-  chDbgCheck(tp != NULL);
-
-  tp->epmask |= mask;
-  if ((NIL_THD_IS_WTOREVT(tp) &&
-       ((tp->epmask & tp->u1.ewmask) != (eventmask_t)0)) ||
-      (NIL_THD_IS_WTANDEVT(tp) &&
-       ((tp->epmask & tp->u1.ewmask) == tp->u1.ewmask))) {
-    (void) chSchReadyI(tp, MSG_OK);
-  }
-}
-
-/**
- * @brief   Waits for any of the specified events.
- * @details The function waits for any event among those specified in
- *          @p mask to become pending then the events are cleared and
- *          returned.
- *
- * @param[in] mask      mask of the event flags that the function should wait
- *                      for, @p ALL_EVENTS enables all the events
- * @param[in] timeout   the number of ticks before the operation timeouts,
- *                      the following special values are allowed:
- *                      - @a TIME_IMMEDIATE immediate timeout.
- *                      - @a TIME_INFINITE no timeout.
- *                      .
- * @return              The mask of the served and cleared events.
- * @retval 0            if the operation has timed out.
- *
- * @api
- */
-eventmask_t chEvtWaitAnyTimeout(eventmask_t mask, sysinterval_t timeout) {
-  thread_t *ctp = nil.current;
-  eventmask_t m;
-
-  chSysLock();
-  if ((m = (ctp->epmask & mask)) == (eventmask_t)0) {
-    if (TIME_IMMEDIATE == timeout) {
-      chSysUnlock();
-
-      return (eventmask_t)0;
-    }
-    ctp->u1.ewmask = mask;
-    if (chSchGoSleepTimeoutS(NIL_STATE_WTOREVT, timeout) < MSG_OK) {
-      chSysUnlock();
-
-      return (eventmask_t)0;
-    }
-    m = ctp->epmask & mask;
-  }
-  ctp->epmask &= ~m;
-  chSysUnlock();
-
-  return m;
-}
-
-/**
- * @brief   Waits for all the specified events.
- * @details The function waits for all the events specified in @p mask to
- *          become pending then the events are cleared and returned.
- *
- * @param[in] mask      mask of the event flags that the function should wait
- *                      for, @p ALL_EVENTS enables all the events
- * @param[in] timeout   the number of ticks before the operation timeouts,
- *                      the following special values are allowed:
- *                      - @a TIME_IMMEDIATE immediate timeout.
- *                      - @a TIME_INFINITE no timeout.
- *                      .
- * @return              The mask of the served and cleared events.
- * @retval 0            if the operation has timed out.
- *
- * @api
- */
-eventmask_t chEvtWaitAllTimeout(eventmask_t mask, sysinterval_t timeout) {
-  thread_t *ctp = nil.current;
-
-  chSysLock();
-  if ((ctp->epmask & mask) != mask) {
-    if (TIME_IMMEDIATE == timeout) {
-      chSysUnlock();
-
-      return (eventmask_t)0;
-    }
-    ctp->u1.ewmask = mask;
-    if (chSchGoSleepTimeoutS(NIL_STATE_WTANDEVT, timeout) < MSG_OK) {
-      chSysUnlock();
-
-      return (eventmask_t)0;
-    }
-  }
-  ctp->epmask &= ~mask;
-  chSysUnlock();
-
-  return mask;
-}
-#endif /* CH_CFG_USE_EVENTS == TRUE */
 
 /** @} */
