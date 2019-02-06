@@ -142,6 +142,15 @@
 #define CH_CFG_USE_EVENTS                   ${doc.CH_CFG_USE_EVENTS!"TRUE"}
 
 /**
+ * @brief   Synchronous Messages APIs.
+ * @details If enabled then the synchronous messages APIs are included
+ *          in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#define CH_CFG_USE_MESSAGES                 ${doc.CH_CFG_USE_MESSAGES!"TRUE"}
+
+/**
  * @brief   Mailboxes APIs.
  * @details If enabled then the asynchronous messages (mailboxes) APIs are
  *          included in the kernel.
