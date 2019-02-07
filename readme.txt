@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 19.1.1 ***
+- FIX: Fixed uninitialized variables in STM32 DMA drivers (bug #1010).
 - FIX: Fixed wrong mcuconf.h in some testex demos related to STM32F407 
   (bug #1008).
 - FIX: Fixed problem in STM32 mcuconf.h template files (bug #1007).
