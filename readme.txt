@@ -82,6 +82,7 @@
        Removed alignment enforcements for requested block size. Alignment is
        only ensured on the returned pointer, this should reduce memory usage
        is some cases.
+- HAL: Added a new interface for rangefinder devices (used by EX).
 - HAL: Added mcuconf.h updater tool for STM32F407 (backported to 19.1.1).
 - NIL: Integrated NIL 4.0.
 - FIX: Fixed wrong mcuconf.h in some testex demos related to STM32F407 
