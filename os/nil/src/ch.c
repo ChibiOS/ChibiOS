@@ -928,8 +928,7 @@ void chThdResumeI(thread_reference_t *trp, msg_t msg) {
 void chThdResume(thread_reference_t *trp, msg_t msg) {
 
   chSysLock();
-  chThdResumeI(trp, msg);
-  chSchRescheduleS();
+  chThdResumeS(trp, msg);
   chSysUnlock();
 }
 

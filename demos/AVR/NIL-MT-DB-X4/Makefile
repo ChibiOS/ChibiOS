@@ -92,7 +92,7 @@ include $(CHIBIOS)/os/license/license.mk
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/boards/MT-DB-X4/board.mk
 include $(CHIBIOS)/os/hal/ports/AVR/XMEGA/ATXMEGAxxxA4U/platform.mk
-include $(CHIBIOS)/os/hal/osal/nil/osal.mk
+include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 
 # RTOS files (optional).
 include $(CHIBIOS)/os/nil/nil.mk

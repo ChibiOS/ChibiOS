@@ -90,7 +90,7 @@
 extern "C" {
 #endif
   msg_t chMsgSend(thread_t *tp, msg_t msg);
-  thread_t * chMsgWait(void);
+  thread_t *chMsgWait(void);
   void chMsgRelease(thread_t *tp, msg_t msg);
 #ifdef __cplusplus
 }

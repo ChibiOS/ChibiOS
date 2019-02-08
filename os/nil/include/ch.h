@@ -1052,6 +1052,21 @@ struct nil_system {
 #define chThdGetSelfX() nil.current
 
 /**
+ * @brief   Wakes up a thread waiting on a thread reference object.
+ * @note    This function must reschedule, it can only be called from thread
+ *          context.
+ *
+ * @param[in] trp       a pointer to a thread reference object
+ * @param[in] msg       the message code
+ *
+ * @sclass
+ */
+#define chThdResumeS(trp, msg) do {                                         \
+  chThdResumeI(trp, msg);                                                   \
+  chSchRescheduleS();                                                       \
+} while (0)
+
+/**
  * @brief   Delays the invoking thread for the specified number of seconds.
  * @note    The specified time is rounded up to a value allowed by the real
  *          system clock.

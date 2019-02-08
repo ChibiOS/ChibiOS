@@ -123,7 +123,7 @@ include $(CHIBIOS)/os/common/startup/ARMCAx-TZ/compilers/GCC/mk/startup_sama5d2.
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/ports/SAMA/SAMA5D2x/platform.mk
 include $(CHIBIOS)/os/hal/boards/ATSAMA5D2_XULT/board.mk
-include $(CHIBIOS)/os/hal/osal/rt/osal.mk
+include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/ARMCAx-TZ/compilers/GCC/mk/port_generic.mk

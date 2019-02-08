@@ -88,7 +88,7 @@ include $(CHIBIOS)/os/common/startup/e200/compilers/GCC/mk/startup_spc56elxx.mk
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/boards/ST_EVB_SPC56EL/board.mk
 include $(CHIBIOS)/os/hal/ports/SPC5/SPC56ELxx/platform.mk
-include $(CHIBIOS)/os/hal/osal/rt/osal.mk
+include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/e200/compilers/GCC/mk/port.mk

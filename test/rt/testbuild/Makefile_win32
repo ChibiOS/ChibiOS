@@ -76,7 +76,7 @@ include $(CHIBIOS)/os/license/license.mk
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/boards/simulator/board.mk
 include $(CHIBIOS)/os/hal/ports/simulator/win32/platform.mk
-include $(CHIBIOS)/os/hal/osal/rt/osal.mk
+include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/SIMIA32/compilers/GCC/port.mk
