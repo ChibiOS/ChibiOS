@@ -771,7 +771,6 @@ thread_t *chThdCreateI(const thread_config_t *tcp) {
   return chSchReadyI(tp, MSG_OK);
 }
 
-
 /**
  * @brief   Creates a new thread into a static memory area.
  * @details The new thread is initialized and make ready to execute.

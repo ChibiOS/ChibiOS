@@ -1056,6 +1056,16 @@ struct nil_system {
 #define chThdGetSelfX() nil.current
 
 /**
+ * @brief   Returns the current thread priority.
+ * @note    Can be invoked in any context.
+ *
+ * @return              The current thread priority.
+ *
+ * @xclass
+ */
+#define chThdGetPriorityX(void) (tprio_t)(nil.current - &nil.threads[0])
+
+/**
  * @brief   Wakes up a thread waiting on a thread reference object.
  * @note    This function must reschedule, it can only be called from thread
  *          context.
