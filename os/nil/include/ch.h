@@ -279,7 +279,7 @@
 
 #if (CH_LICENSE_FEATURES != CH_FEATURES_FULL) &&                            \
     (CH_LICENSE_FEATURES != CH_FEATURES_INTERMEDIATE) &&                    \
-    (CH_LICENSE_FEATURES == CH_FEATURES_BASIC)
+    (CH_LICENSE_FEATURES != CH_FEATURES_BASIC)
 #error "invalid CH_LICENSE_FEATURES setting"
 #endif
 
@@ -302,6 +302,10 @@
 /* Tick-Less mode restricted.*/
 #undef CH_CFG_ST_TIMEDELTA
 #define CH_CFG_ST_TIMEDELTA                 0
+
+/* Messages restricted.*/
+#undef CH_CFG_USE_MESSAGES
+#define CH_CFG_USE_MESSAGES                 FALSE
 
 #endif /* CH_LICENSE_FEATURES == CH_FEATURES_BASIC */
 
