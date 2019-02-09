@@ -85,6 +85,9 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+*** 18.2.3 ***
+- FIX: Fixed wrong license restriction check in Nil (bug #1011).
+
 *** 18.2.2 ***
 - NEW: Added analog watchdog functionality to STM32 ADCv2 driver.
 - NEW: Added a termination check to the shell.
