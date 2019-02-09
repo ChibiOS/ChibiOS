@@ -1,0 +1,97 @@
+*****************************************************************************
+*** Files Organization                                                    ***
+*****************************************************************************
+
+--{root}                        - ChibiOS directory.
+  +--readme.txt                 - This file.
+  +--documentation.html         - Shortcut to the web documentation page.
+  +--license.txt                - GPL license text.
+  +--demos/                     - Demo projects, one directory per platform.
+  +--docs/                      - Documentation.
+  |  +--common/                 - Documentation common build resources.
+  |  +--hal/                    - Builders for HAL.
+  |  +--nil/                    - Builders for NIL.
+  |  +--rt/                     - Builders for RT.
+  +--ext/                       - External libraries, not part of ChibiOS/RT.
+  +--os/                        - ChibiOS components.
+  |  +--common/                 - Shared OS modules.
+  |  |  +--abstractions/        - API emulator wrappers.
+  |  |  |  +--cmsis_os/         - CMSIS OS emulation layer for RT.
+  |  |  |  +--nasa_osal/        - NASA Operating System Abstraction Layer.
+  |  |  +--ext/                 - Vendor files used by the OS.
+  |  |  +--ports/               - RTOS ports usable by both RT and NIL.
+  |  |  +--startup/             - Startup support.
+  |  +--ex/                     - EX component.
+  |  |  +--dox/                 - EX documentation resources.
+  |  |  +--Bosch /              - EX complex drivers for Bosch devices.
+  |  |  +--ST/                  - EX complex drivers for ST devices.
+  |  +--hal/                    - HAL component.
+  |  |  +--boards/              - HAL board support files.
+  |  |  +--dox/                 - HAL documentation resources.
+  |  |  +--include/             - HAL high level headers.
+  |  |  +--lib/                 - HAL libraries.
+  |  |  |  +--complex/          - HAL collection of complex drivers.
+  |  |  |  |  +--mfs/           - HAL managed flash storage driver.
+  |  |  |  |  +--serial_nor/    - HAL managed flash storage driver.
+  |  |  |  +--fallback/         - HAL fall back software drivers.
+  |  |  |  +--peripherals/      - HAL peripherals interfaces.
+  |  |  |  +--streams/          - HAL streams.
+  |  |  +--osal/                - HAL OSAL implementations.
+  |  |  |  +--lib/              - HAL OSAL common modules.
+  |  |  +--src/                 - HAL high level source.
+  |  |  +--ports/               - HAL ports.
+  |  |  +--templates/           - HAL driver template files.
+  |  |     +--osal/             - HAL OSAL templates.
+  |  +--oslib/                  - RTOS modules usable by both RT and NIL.
+  |  |  +--include/             - OSLIB high level headers.
+  |  |  +--src/                 - OSLIB high level source.
+  |  |  +--templates/           - OSLIB configuration template files.
+  |  +--nil/                    - NIL RTOS component.
+  |  |  +--dox/                 - NIL documentation resources.
+  |  |  +--include/             - NIL high level headers.
+  |  |  +--src/                 - NIL high level source.
+  |  |  +--templates/           - NIL configuration template files.
+  |  +--rt/                     - RT RTOS component.
+  |  |  +--dox/                 - RT documentation resources.
+  |  |  +--include/             - RT high level headers.
+  |  |  +--src/                 - RT high level source.
+  |  |  +--templates/           - RT configuration template files.
+  |  +--various/                - Various portable support files.
+  +--test/                      - Kernel test suite source code.
+  |  +--lib/                    - Portable test engine.
+  |  +--hal/                    - HAL test suites.
+  |  |  +--testbuild/           - HAL build test and MISRA check.
+  |  +--nil/                    - NIL test suites.
+  |  |  +--testbuild/           - NIL build test and MISRA check.
+  |  +--rt/                     - RT test suites.
+  |  |  +--testbuild/           - RT build test and MISRA check.
+  |  |  +--coverage/            - RT code coverage project.
+  +--testex/                    - EX integration test demos.
+  +--testhal/                   - HAL integration test demos.
+
+*****************************************************************************
+*** Releases and Change Log                                               ***
+*****************************************************************************
+
+*** Next ***
+- VAR: Modified syscalls.c to allocate memory from bottom upward, ChibiOS
+       allocators take memory from top downward. This way the memory taken
+       using _sbrk_r() does not contain "holes" caused by other allocators.
+- LIB: Modified core allocator to be able to get blocks starting from bottom
+       or top of the available memory range.
+       Removed alignment enforcements for requested block size. Alignment is
+       only ensured on the returned pointer, this should reduce memory usage
+       is some cases.
+- HAL: Added a new interface for rangefinder devices (used by EX).
+- HAL: Added mcuconf.h updater tool for STM32F407 (backported to 19.1.1).
+- NIL: Integrated NIL 4.0.
+- FIX: Fixed uninitialized variables in STM32 DMA drivers (bug #1010)
+       (backported to 19.1.1).
+- FIX: Fixed wrong mcuconf.h in some testex demos related to STM32F407 
+  (bug #1008)(backported to 19.1.1)(backported to 18.2.3).
+- FIX: Fixed problem in STM32 mcuconf.h template files (bug #1007)
+  (backported to 19.1.1)(backported to 18.2.3).
+- EX:  Fixed I2C Acquire bus called twice in the HTS221 initialization 
+  (bug #1006)(backported to 19.1.1)(backported to 18.2.3).
+- EX:  Fixed missing I2C release bus in LPS22HB initialization (bug #1005)
+  (backported to 19.1.1).
