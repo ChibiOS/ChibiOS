@@ -21,19 +21,13 @@
  * @file    oslib_test_sequence_001.c
  * @brief   Test Sequence 001 code.
  *
- * @page oslib_test_sequence_001 [1] Mailboxes
+ * @page oslib_test_sequence_001 [1] Information
  *
  * File: @ref oslib_test_sequence_001.c
  *
  * <h2>Description</h2>
- * This sequence tests the ChibiOS library functionalities related to
- * mailboxes.
- *
- * <h2>Conditions</h2>
- * This sequence is only executed if the following preprocessor condition
- * evaluates to true:
- * - CH_CFG_USE_MAILBOXES
- * .
+ * This sequence reports configuration and version information about
+ * the OS library.
  *
  * <h2>Test Cases</h2>
  * - @subpage oslib_test_001_001
@@ -42,352 +36,176 @@
  * .
  */
 
-#if (CH_CFG_USE_MAILBOXES) || defined(__DOXYGEN__)
-
 /****************************************************************************
  * Shared code.
  ****************************************************************************/
 
-#define MB_SIZE 4
-
-static msg_t mb_buffer[MB_SIZE];
-static MAILBOX_DECL(mb1, mb_buffer, MB_SIZE);
+#include "ch.h"
 
 /****************************************************************************
  * Test cases.
  ****************************************************************************/
 
 /**
- * @page oslib_test_001_001 [1.1] Mailbox normal API, non-blocking tests
+ * @page oslib_test_001_001 [1.1] Port Info
  *
  * <h2>Description</h2>
- * The mailbox normal API is tested without triggering blocking
- * conditions.
+ * Port-related info are reported.
  *
  * <h2>Test Steps</h2>
- * - [1.1.1] Testing the mailbox size.
- * - [1.1.2] Resetting the mailbox, conditions are checked, no errors
- *   expected.
- * - [1.1.3] Testing the behavior of API when the mailbox is in reset
- *   state then return in active state.
- * - [1.1.4] Filling the mailbox using chMBPostTimeout() and
- *   chMBPostAheadTimeout() once, no errors expected.
- * - [1.1.5] Testing intermediate conditions. Data pointers must be
- *   aligned, semaphore counters are checked.
- * - [1.1.6] Emptying the mailbox using chMBFetchTimeout(), no errors
- *   expected.
- * - [1.1.7] Posting and then fetching one more message, no errors
- *   expected.
- * - [1.1.8] Testing final conditions. Data pointers must be aligned to
- *   buffer start, semaphore counters are checked.
+ * - [1.1.1] Prints the version string.
  * .
  */
 
-static void oslib_test_001_001_setup(void) {
-  chMBObjectInit(&mb1, mb_buffer, MB_SIZE);
-}
-
-static void oslib_test_001_001_teardown(void) {
-  chMBReset(&mb1);
-}
-
 static void oslib_test_001_001_execute(void) {
-  msg_t msg1, msg2;
-  unsigned i;
 
-  /* [1.1.1] Testing the mailbox size.*/
+  /* [1.1.1] Prints the version string.*/
   test_set_step(1);
   {
-    test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "wrong size");
-  }
-
-  /* [1.1.2] Resetting the mailbox, conditions are checked, no errors
-     expected.*/
-  test_set_step(2);
-  {
-    chMBReset(&mb1);
-    test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "not empty");
-    test_assert_lock(chMBGetUsedCountI(&mb1) == 0, "still full");
-    test_assert_lock(mb1.buffer == mb1.wrptr, "write pointer not aligned to base");
-    test_assert_lock(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");
-  }
-
-  /* [1.1.3] Testing the behavior of API when the mailbox is in reset
-     state then return in active state.*/
-  test_set_step(3);
-  {
-    msg1 = chMBPostTimeout(&mb1, (msg_t)0, TIME_INFINITE);
-    test_assert(msg1 == MSG_RESET, "not in reset state");
-    msg1 = chMBPostAheadTimeout(&mb1, (msg_t)0, TIME_INFINITE);
-    test_assert(msg1 == MSG_RESET, "not in reset state");
-    msg1 = chMBFetchTimeout(&mb1, &msg2, TIME_INFINITE);
-    test_assert(msg1 == MSG_RESET, "not in reset state");
-    chMBResumeX(&mb1);
-  }
-
-  /* [1.1.4] Filling the mailbox using chMBPostTimeout() and
-     chMBPostAheadTimeout() once, no errors expected.*/
-  test_set_step(4);
-  {
-    for (i = 0; i < MB_SIZE - 1; i++) {
-      msg1 = chMBPostTimeout(&mb1, 'B' + i, TIME_INFINITE);
-      test_assert(msg1 == MSG_OK, "wrong wake-up message");
-    }
-    msg1 = chMBPostAheadTimeout(&mb1, 'A', TIME_INFINITE);
-    test_assert(msg1 == MSG_OK, "wrong wake-up message");
-  }
-
-  /* [1.1.5] Testing intermediate conditions. Data pointers must be
-     aligned, semaphore counters are checked.*/
-  test_set_step(5);
-  {
-    test_assert_lock(chMBGetFreeCountI(&mb1) == 0, "still empty");
-    test_assert_lock(chMBGetUsedCountI(&mb1) == MB_SIZE, "not full");
-    test_assert_lock(mb1.rdptr == mb1.wrptr, "pointers not aligned");
-  }
-
-  /* [1.1.6] Emptying the mailbox using chMBFetchTimeout(), no errors
-     expected.*/
-  test_set_step(6);
-  {
-    for (i = 0; i < MB_SIZE; i++) {
-      msg1 = chMBFetchTimeout(&mb1, &msg2, TIME_INFINITE);
-      test_assert(msg1 == MSG_OK, "wrong wake-up message");
-      test_emit_token(msg2);
-    }
-    test_assert_sequence("ABCD", "wrong get sequence");
-  }
-
-  /* [1.1.7] Posting and then fetching one more message, no errors
-     expected.*/
-  test_set_step(7);
-  {
-    msg1 = chMBPostTimeout(&mb1, 'B' + i, TIME_INFINITE);
-    test_assert(msg1 == MSG_OK, "wrong wake-up message");
-    msg1 = chMBFetchTimeout(&mb1, &msg2, TIME_INFINITE);
-    test_assert(msg1 == MSG_OK, "wrong wake-up message");
-  }
-
-  /* [1.1.8] Testing final conditions. Data pointers must be aligned to
-     buffer start, semaphore counters are checked.*/
-  test_set_step(8);
-  {
-    test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "not empty");
-    test_assert_lock(chMBGetUsedCountI(&mb1) == 0, "still full");
-    test_assert(mb1.buffer == mb1.wrptr, "write pointer not aligned to base");
-    test_assert(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");
+#if defined(PORT_ARCHITECTURE_NAME)
+    test_print("--- Architecture:                       ");
+    test_println(PORT_ARCHITECTURE_NAME);
+#endif
+#if defined(PORT_CORE_VARIANT_NAME)
+    test_print("--- Core Variant:                       ");
+    test_println(PORT_CORE_VARIANT_NAME);
+#endif
+#if defined(PORT_COMPILER_NAME)
+    test_print("--- Compiler:                           ");
+    test_println(PORT_COMPILER_NAME);
+#endif
+#if defined(PORT_INFO)
+    test_print("--- Port Info:                          ");
+    test_println(PORT_INFO);
+#endif
+#if defined(PORT_NATURAL_ALIGN)
+    test_print("--- Natural alignment:                  ");
+    test_printn(PORT_NATURAL_ALIGN);
+    test_println("");
+#endif
+#if defined(PORT_STACK_ALIGN)
+    test_print("--- Stack alignment:                    ");
+    test_printn(PORT_STACK_ALIGN);
+    test_println("");
+#endif
+#if defined(PORT_WORKING_AREA_ALIGN)
+    test_print("--- Working area alignment:             ");
+    test_printn(PORT_WORKING_AREA_ALIGN);
+    test_println("");
+#endif
   }
 }
 
 static const testcase_t oslib_test_001_001 = {
-  "Mailbox normal API, non-blocking tests",
-  oslib_test_001_001_setup,
-  oslib_test_001_001_teardown,
+  "Port Info",
+  NULL,
+  NULL,
   oslib_test_001_001_execute
 };
 
 /**
- * @page oslib_test_001_002 [1.2] Mailbox I-Class API, non-blocking tests
+ * @page oslib_test_001_002 [1.2] OS Library Info
  *
  * <h2>Description</h2>
- * The mailbox I-Class API is tested without triggering blocking
- * conditions.
+ * The version numbers are reported.
  *
  * <h2>Test Steps</h2>
- * - [1.2.1] Testing the mailbox size.
- * - [1.2.2] Resetting the mailbox, conditions are checked, no errors
- *   expected. The mailbox is then returned in active state.
- * - [1.2.3] Filling the mailbox using chMBPostI() and chMBPostAheadI()
- *   once, no errors expected.
- * - [1.2.4] Testing intermediate conditions. Data pointers must be
- *   aligned, semaphore counters are checked.
- * - [1.2.5] Emptying the mailbox using chMBFetchI(), no errors
- *   expected.
- * - [1.2.6] Posting and then fetching one more message, no errors
- *   expected.
- * - [1.2.7] Testing final conditions. Data pointers must be aligned to
- *   buffer start, semaphore counters are checked.
+ * - [1.2.1] Prints the version string.
  * .
  */
 
-static void oslib_test_001_002_setup(void) {
-  chMBObjectInit(&mb1, mb_buffer, MB_SIZE);
-}
-
-static void oslib_test_001_002_teardown(void) {
-  chMBReset(&mb1);
-}
-
 static void oslib_test_001_002_execute(void) {
-  msg_t msg1, msg2;
-  unsigned i;
 
-  /* [1.2.1] Testing the mailbox size.*/
+  /* [1.2.1] Prints the version string.*/
   test_set_step(1);
   {
-    test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "wrong size");
-  }
-
-  /* [1.2.2] Resetting the mailbox, conditions are checked, no errors
-     expected. The mailbox is then returned in active state.*/
-  test_set_step(2);
-  {
-    chSysLock();
-    chMBResetI(&mb1);
-    chSysUnlock();
-    test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "not empty");
-    test_assert_lock(chMBGetUsedCountI(&mb1) == 0, "still full");
-    test_assert_lock(mb1.buffer == mb1.wrptr, "write pointer not aligned to base");
-    test_assert_lock(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");
-    chMBResumeX(&mb1);
-  }
-
-  /* [1.2.3] Filling the mailbox using chMBPostI() and chMBPostAheadI()
-     once, no errors expected.*/
-  test_set_step(3);
-  {
-    for (i = 0; i < MB_SIZE - 1; i++) {
-      chSysLock();
-      msg1 = chMBPostI(&mb1, 'B' + i);
-      chSysUnlock();
-      test_assert(msg1 == MSG_OK, "wrong wake-up message");
-    }
-    chSysLock();
-    msg1 = chMBPostAheadI(&mb1, 'A');
-    chSysUnlock();
-    test_assert(msg1 == MSG_OK, "wrong wake-up message");
-  }
-
-  /* [1.2.4] Testing intermediate conditions. Data pointers must be
-     aligned, semaphore counters are checked.*/
-  test_set_step(4);
-  {
-    test_assert_lock(chMBGetFreeCountI(&mb1) == 0, "still empty");
-    test_assert_lock(chMBGetUsedCountI(&mb1) == MB_SIZE, "not full");
-    test_assert_lock(mb1.rdptr == mb1.wrptr, "pointers not aligned");
-  }
-
-  /* [1.2.5] Emptying the mailbox using chMBFetchI(), no errors
-     expected.*/
-  test_set_step(5);
-  {
-    for (i = 0; i < MB_SIZE; i++) {
-      chSysLock();
-      msg1 = chMBFetchI(&mb1, &msg2);
-      chSysUnlock();
-      test_assert(msg1 == MSG_OK, "wrong wake-up message");
-      test_emit_token(msg2);
-    }
-    test_assert_sequence("ABCD", "wrong get sequence");
-  }
-
-  /* [1.2.6] Posting and then fetching one more message, no errors
-     expected.*/
-  test_set_step(6);
-  {
-    msg1 = chMBPostTimeout(&mb1, 'B' + i, TIME_INFINITE);
-    test_assert(msg1 == MSG_OK, "wrong wake-up message");
-    msg1 = chMBFetchTimeout(&mb1, &msg2, TIME_INFINITE);
-    test_assert(msg1 == MSG_OK, "wrong wake-up message");
-  }
-
-  /* [1.2.7] Testing final conditions. Data pointers must be aligned to
-     buffer start, semaphore counters are checked.*/
-  test_set_step(7);
-  {
-    test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "not empty");
-    test_assert_lock(chMBGetUsedCountI(&mb1) == 0, "still full");
-    test_assert(mb1.buffer == mb1.wrptr, "write pointer not aligned to base");
-    test_assert(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");
+    test_println("--- Product:                            ChibiOS/LIB");
+    test_print("--- Stable Flag:                        ");
+    test_printn(CH_OSLIB_STABLE);
+    test_println("");
+    test_print("--- Version String:                     ");
+    test_println(CH_OSLIB_VERSION);
+    test_print("--- Major Number:                       ");
+    test_printn(CH_OSLIB_MAJOR);
+    test_println("");
+    test_print("--- Minor Number:                       ");
+    test_printn(CH_OSLIB_MINOR);
+    test_println("");
+    test_print("--- Patch Number:                       ");
+    test_printn(CH_OSLIB_PATCH);
+    test_println("");
   }
 }
 
 static const testcase_t oslib_test_001_002 = {
-  "Mailbox I-Class API, non-blocking tests",
-  oslib_test_001_002_setup,
-  oslib_test_001_002_teardown,
+  "OS Library Info",
+  NULL,
+  NULL,
   oslib_test_001_002_execute
 };
 
 /**
- * @page oslib_test_001_003 [1.3] Mailbox timeouts
+ * @page oslib_test_001_003 [1.3] OS Library Settings
  *
  * <h2>Description</h2>
- * The mailbox API is tested for timeouts.
+ * The static OS Library settings are reported.
  *
  * <h2>Test Steps</h2>
- * - [1.3.1] Filling the mailbox.
- * - [1.3.2] Testing chMBPostTimeout(), chMBPostI(),
- *   chMBPostAheadTimeout() and chMBPostAheadI() timeout.
- * - [1.3.3] Resetting the mailbox. The mailbox is then returned in
- *   active state.
- * - [1.3.4] Testing chMBFetchTimeout() and chMBFetchI() timeout.
+ * - [1.3.1] Prints the configuration options settings.
  * .
  */
 
-static void oslib_test_001_003_setup(void) {
-  chMBObjectInit(&mb1, mb_buffer, MB_SIZE);
-}
-
-static void oslib_test_001_003_teardown(void) {
-  chMBReset(&mb1);
-}
-
 static void oslib_test_001_003_execute(void) {
-  msg_t msg1, msg2;
-  unsigned i;
 
-  /* [1.3.1] Filling the mailbox.*/
+  /* [1.3.1] Prints the configuration options settings.*/
   test_set_step(1);
   {
-    for (i = 0; i < MB_SIZE; i++) {
-      msg1 = chMBPostTimeout(&mb1, 'B' + i, TIME_INFINITE);
-      test_assert(msg1 == MSG_OK, "wrong wake-up message");
-    }
-  }
-
-  /* [1.3.2] Testing chMBPostTimeout(), chMBPostI(),
-     chMBPostAheadTimeout() and chMBPostAheadI() timeout.*/
-  test_set_step(2);
-  {
-    msg1 = chMBPostTimeout(&mb1, 'X', 1);
-    test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
-    chSysLock();
-    msg1 = chMBPostI(&mb1, 'X');
-    chSysUnlock();
-    test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
-    msg1 = chMBPostAheadTimeout(&mb1, 'X', 1);
-    test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
-    chSysLock();
-    msg1 = chMBPostAheadI(&mb1, 'X');
-    chSysUnlock();
-    test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
-  }
-
-  /* [1.3.3] Resetting the mailbox. The mailbox is then returned in
-     active state.*/
-  test_set_step(3);
-  {
-    chMBReset(&mb1);
-    chMBResumeX(&mb1);
-  }
-
-  /* [1.3.4] Testing chMBFetchTimeout() and chMBFetchI() timeout.*/
-  test_set_step(4);
-  {
-    msg1 = chMBFetchTimeout(&mb1, &msg2, 1);
-    test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
-    chSysLock();
-    msg1 = chMBFetchI(&mb1, &msg2);
-    chSysUnlock();
-    test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
+    test_print("--- CH_CFG_USE_MEMCORE:                 ");
+    test_printn(CH_CFG_USE_MEMCORE);
+    test_println("");
+    test_print("--- CH_CFG_USE_HEAP:                    ");
+    test_printn(CH_CFG_USE_HEAP);
+    test_println("");
+    test_print("--- CH_CFG_USE_MEMPOOLS:                ");
+    test_printn(CH_CFG_USE_MEMPOOLS);
+    test_println("");
+    test_print("--- CH_CFG_USE_OBJ_FIFOS:               ");
+    test_printn(CH_CFG_USE_OBJ_FIFOS);
+    test_println("");
+    test_print("--- CH_CFG_USE_PIPES:                   ");
+    test_printn(CH_CFG_USE_PIPES);
+    test_println("");
+    test_print("--- CH_CFG_USE_FACTORY:                 ");
+    test_printn(CH_CFG_USE_FACTORY);
+    test_println("");
+    test_print("--- CH_CFG_FACTORY_MAX_NAMES_LENGTH:    ");
+    test_printn(CH_CFG_FACTORY_MAX_NAMES_LENGTH);
+    test_println("");
+    test_print("--- CH_CFG_FACTORY_OBJECTS_REGISTRY:    ");
+    test_printn(CH_CFG_FACTORY_OBJECTS_REGISTRY);
+    test_println("");
+    test_print("--- CH_CFG_FACTORY_GENERIC_BUFFERS:     ");
+    test_printn(CH_CFG_FACTORY_GENERIC_BUFFERS);
+    test_println("");
+    test_print("--- CH_CFG_FACTORY_SEMAPHORES:          ");
+    test_printn(CH_CFG_FACTORY_SEMAPHORES);
+    test_println("");
+    test_print("--- CH_CFG_FACTORY_MAILBOXES:           ");
+    test_printn(CH_CFG_FACTORY_MAILBOXES);
+    test_println("");
+    test_print("--- CH_CFG_FACTORY_OBJ_FIFOS:           ");
+    test_printn(CH_CFG_FACTORY_OBJ_FIFOS);
+    test_println("");
+    test_print("--- CH_CFG_FACTORY_PIPES:               ");
+    test_printn(CH_CFG_FACTORY_PIPES);
+    test_println("");
   }
 }
 
 static const testcase_t oslib_test_001_003 = {
-  "Mailbox timeouts",
-  oslib_test_001_003_setup,
-  oslib_test_001_003_teardown,
+  "OS Library Settings",
+  NULL,
+  NULL,
   oslib_test_001_003_execute
 };
 
@@ -406,11 +224,9 @@ const testcase_t * const oslib_test_sequence_001_array[] = {
 };
 
 /**
- * @brief   Mailboxes.
+ * @brief   Information.
  */
 const testsequence_t oslib_test_sequence_001 = {
-  "Mailboxes",
+  "Information",
   oslib_test_sequence_001_array
 };
-
-#endif /* CH_CFG_USE_MAILBOXES */

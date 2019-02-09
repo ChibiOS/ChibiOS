@@ -79,10 +79,10 @@
        using _sbrk_r() does not contain "holes" caused by other allocators.
 - LIB: Modified core allocator to be able to get blocks starting from bottom
        or top of the available memory range.
-       Removed alignment enforcements for requested block size. Alignment is
+       Removed alignment enforcement for requested block size. Alignment is
        only ensured on the returned pointer, this should reduce memory usage
        is some cases.
-- HAL: Added a new interface for rangefinder devices (used by EX).
+- HAL: Added a new interface for range-finder devices (used by EX).
 - HAL: Added mcuconf.h updater tool for STM32F407 (backported to 19.1.1).
 - NIL: Integrated NIL 4.0.
 - FIX: Fixed uninitialized variables in STM32 DMA drivers (bug #1010)

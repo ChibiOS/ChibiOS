@@ -50,6 +50,213 @@
               <value>Internal Tests</value>
             </type>
             <brief>
+              <value>Information.</value>
+            </brief>
+            <description>
+              <value>This sequence reports configuration and version information about the OS library.</value>
+            </description>
+            <condition>
+              <value />
+            </condition>
+            <shared_code>
+              <value><![CDATA[#include "ch.h"]]></value>
+            </shared_code>
+            <cases>
+              <case>
+                <brief>
+                  <value>Port Info.</value>
+                </brief>
+                <description>
+                  <value>Port-related info are reported.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Prints the version string.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[#if defined(PORT_ARCHITECTURE_NAME)
+test_print("--- Architecture:                       ");
+test_println(PORT_ARCHITECTURE_NAME);
+#endif
+#if defined(PORT_CORE_VARIANT_NAME)
+test_print("--- Core Variant:                       ");
+test_println(PORT_CORE_VARIANT_NAME);
+#endif
+#if defined(PORT_COMPILER_NAME)
+test_print("--- Compiler:                           ");
+test_println(PORT_COMPILER_NAME);
+#endif
+#if defined(PORT_INFO)
+test_print("--- Port Info:                          ");
+test_println(PORT_INFO);
+#endif
+#if defined(PORT_NATURAL_ALIGN)
+test_print("--- Natural alignment:                  ");
+test_printn(PORT_NATURAL_ALIGN);
+test_println("");
+#endif
+#if defined(PORT_STACK_ALIGN)
+test_print("--- Stack alignment:                    ");
+test_printn(PORT_STACK_ALIGN);
+test_println("");
+#endif
+#if defined(PORT_WORKING_AREA_ALIGN)
+test_print("--- Working area alignment:             ");
+test_printn(PORT_WORKING_AREA_ALIGN);
+test_println("");
+#endif]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>OS Library Info.</value>
+                </brief>
+                <description>
+                  <value>The version numbers are reported.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Prints the version string.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[
+test_println("--- Product:                            ChibiOS/LIB");
+test_print("--- Stable Flag:                        ");
+test_printn(CH_OSLIB_STABLE);
+test_println("");
+test_print("--- Version String:                     ");
+test_println(CH_OSLIB_VERSION);
+test_print("--- Major Number:                       ");
+test_printn(CH_OSLIB_MAJOR);
+test_println("");
+test_print("--- Minor Number:                       ");
+test_printn(CH_OSLIB_MINOR);
+test_println("");
+test_print("--- Patch Number:                       ");
+test_printn(CH_OSLIB_PATCH);
+test_println("");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>OS Library Settings.</value>
+                </brief>
+                <description>
+                  <value>The static OS Library settings are reported.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Prints the configuration options settings.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_print("--- CH_CFG_USE_MEMCORE:                 ");
+test_printn(CH_CFG_USE_MEMCORE);
+test_println("");
+test_print("--- CH_CFG_USE_HEAP:                    ");
+test_printn(CH_CFG_USE_HEAP);
+test_println("");
+test_print("--- CH_CFG_USE_MEMPOOLS:                ");
+test_printn(CH_CFG_USE_MEMPOOLS);
+test_println("");
+test_print("--- CH_CFG_USE_OBJ_FIFOS:               ");
+test_printn(CH_CFG_USE_OBJ_FIFOS);
+test_println("");
+test_print("--- CH_CFG_USE_PIPES:                   ");
+test_printn(CH_CFG_USE_PIPES);
+test_println("");
+test_print("--- CH_CFG_USE_FACTORY:                 ");
+test_printn(CH_CFG_USE_FACTORY);
+test_println("");
+test_print("--- CH_CFG_FACTORY_MAX_NAMES_LENGTH:    ");
+test_printn(CH_CFG_FACTORY_MAX_NAMES_LENGTH);
+test_println("");
+test_print("--- CH_CFG_FACTORY_OBJECTS_REGISTRY:    ");
+test_printn(CH_CFG_FACTORY_OBJECTS_REGISTRY);
+test_println("");
+test_print("--- CH_CFG_FACTORY_GENERIC_BUFFERS:     ");
+test_printn(CH_CFG_FACTORY_GENERIC_BUFFERS);
+test_println("");
+test_print("--- CH_CFG_FACTORY_SEMAPHORES:          ");
+test_printn(CH_CFG_FACTORY_SEMAPHORES);
+test_println("");
+test_print("--- CH_CFG_FACTORY_MAILBOXES:           ");
+test_printn(CH_CFG_FACTORY_MAILBOXES);
+test_println("");
+test_print("--- CH_CFG_FACTORY_OBJ_FIFOS:           ");
+test_printn(CH_CFG_FACTORY_OBJ_FIFOS);
+test_println("");
+test_print("--- CH_CFG_FACTORY_PIPES:               ");
+test_printn(CH_CFG_FACTORY_PIPES);
+test_println("");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+            </cases>
+          </sequence>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
               <value>Mailboxes.</value>
             </brief>
             <description>
