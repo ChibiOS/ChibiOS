@@ -81,6 +81,8 @@ int main(void) {
    * Activates the serial driver 1 using the driver default configuration.
    */
   sdStart(&SD1, NULL);
+  palSetPadMode(GPIOA, 9, PAL_MODE_ALTERNATE(7));       /* USART1 TX.       */
+  palSetPadMode(GPIOA, 10, PAL_MODE_ALTERNATE(7));      /* USART1 RX.       */
 
   /*
    * Creates the example threads.
