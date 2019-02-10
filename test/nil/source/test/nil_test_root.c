@@ -26,6 +26,7 @@
  * - @subpage nil_test_sequence_003
  * - @subpage nil_test_sequence_004
  * - @subpage nil_test_sequence_005
+ * - @subpage nil_test_sequence_006
  * .
  */
 
@@ -55,6 +56,9 @@ const testsequence_t * const nil_test_suite_array[] = {
   &nil_test_sequence_004,
 #if (CH_CFG_USE_EVENTS) || defined(__DOXYGEN__)
   &nil_test_sequence_005,
+#endif
+#if (CH_CFG_USE_MESSAGES) || defined(__DOXYGEN__)
+  &nil_test_sequence_006,
 #endif
   NULL
 };

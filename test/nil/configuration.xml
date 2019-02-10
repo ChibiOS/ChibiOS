@@ -1354,6 +1354,100 @@ test_assert(!chEvtIsListeningI(&es2), "stuck listener");]]></value>
               </case>
             </cases>
           </sequence>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
+              <value>Synchronous Messages.</value>
+            </brief>
+            <description>
+              <value>This module implements the test sequence for the Synchronous Messages subsystem.</value>
+            </description>
+            <condition>
+              <value>CH_CFG_USE_MESSAGES</value>
+            </condition>
+            <shared_code>
+              <value><![CDATA[/*
+ * Messager thread.
+ */
+static THD_WORKING_AREA(wa_messager, 128);
+static THD_FUNCTION(messager, p) {
+
+  chMsgSend(p, 'A');
+  chMsgSend(p, 'B');
+  chMsgSend(p, 'C');
+  chMsgSend(p, 'D');
+}]]></value>
+            </shared_code>
+            <cases>
+              <case>
+                <brief>
+                  <value>Messages Server loop.</value>
+                </brief>
+                <description>
+                  <value>A messenger thread is spawned that sends four messages back to the tester thread.&lt;br&gt;&#xD;
+The test expect to receive the messages in the correct sequence and to not find a fifth message waiting.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[thread_t *tp, *tp1;
+msg_t msg;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Starting the messenger thread.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[thread_config_t tc = {
+  chThdGetPriorityX() - 1,
+  "messager",
+  wa_messager,
+  THD_WORKING_AREA_END(wa_messager),
+  messager,
+  chThdGetSelfX()
+};
+tp1 = chThdCreate(&tc);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Waiting for four messages then testing the receive order.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[unsigned i;
+
+for (i = 0; i < 4; i++) {
+  tp = chMsgWait();
+  msg = chMsgGet(tp);
+  chMsgRelease(tp, msg);
+  test_emit_token(msg);
+}
+chThdWait(tp1);
+test_assert_sequence("ABCD", "invalid sequence");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+            </cases>
+          </sequence>
         </sequences>
       </instance>
     </instances>
