@@ -28,6 +28,7 @@
 #include "nil_test_sequence_002.h"
 #include "nil_test_sequence_003.h"
 #include "nil_test_sequence_004.h"
+#include "nil_test_sequence_005.h"
 
 #if !defined(__DOXYGEN__)
 
@@ -50,12 +51,12 @@ extern "C" {
 
 #define TEST_SUITE_NAME                     "ChibiOS/NIL Test Suite"
 
-extern semaphore_t gsem1, gsem2;
-extern thread_reference_t gtr1;
-extern THD_WORKING_AREA(wa_test_support, 128);
+/*
+ * Allowed delay in timeout checks.
+ */
+#define ALLOWED_DELAY TIME_MS2I(2)
 
-void test_print_port_info(void);
-THD_FUNCTION(test_support, arg);
+systime_t test_wait_tick(void);
 
 #endif /* !defined(__DOXYGEN__) */
 

@@ -749,7 +749,13 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, sysinterval_t timeout) {
 thread_t *chThdCreateI(const thread_config_t *tcp) {
   thread_t *tp;
 
-  chDbgCheck(tcp->prio < CH_CFG_MAX_THREADS);
+  chDbgCheck((tcp->prio < CH_CFG_MAX_THREADS) &&
+             (tcp->wbase != NULL) &&
+             MEM_IS_ALIGNED(tcp->wbase, PORT_WORKING_AREA_ALIGN) &&
+             (tcp->wend > tcp->wbase) &&
+             MEM_IS_ALIGNED(tcp->wbase, PORT_STACK_ALIGN) &&
+             (tcp->funcp != NULL));
+
   chDbgCheckClassI();
 
   /* Pointer to the thread slot to be used.*/
@@ -757,7 +763,10 @@ thread_t *chThdCreateI(const thread_config_t *tcp) {
   chDbgAssert(NIL_THD_IS_WTSTART(tp) || NIL_THD_IS_FINAL(tp),
               "priority slot taken");
 
-#if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || defined(__DOXYGEN__)
+#if CH_CFG_USE_EVENTS == TRUE
+  tp->epmask = (eventmask_t)0;
+#endif
+#if CH_DBG_ENABLE_STACK_CHECK == TRUE
   tp->wabase = (stkalign_t *)tcp->wbase;
 #endif
 

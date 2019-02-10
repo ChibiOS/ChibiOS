@@ -214,6 +214,70 @@ typedef void (*evhandler_t)(eventid_t id);
  * @api
  */
 #define chEvtGetEventsX(void) (nil.current->epmask)
+
+/**
+ * @brief   Waits for exactly one of the specified events.
+ * @details The function waits for one event among those specified in
+ *          @p events to become pending then the event is cleared and returned.
+ * @note    One and only one event is served in the function, the one with the
+ *          lowest event id. The function is meant to be invoked into a loop
+ *          in order to serve all the pending events.<br>
+ *          This means that Event Listeners with a lower event identifier have
+ *          an higher priority.
+ *
+ * @param[in] events    events that the function should wait
+ *                      for, @p ALL_EVENTS enables all the events
+ * @param[in] timeout   the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              The mask of the lowest event id served and cleared.
+ * @retval 0            if the operation has timed out.
+ *
+ * @api
+ */
+#define chEvtWaitOne(events) chEvtWaitOneTimeout(events, TIME_INFINITE)
+
+/**
+ * @brief   Waits for any of the specified events.
+ * @details The function waits for any event among those specified in
+ *          @p mask to become pending then the events are cleared and
+ *          returned.
+ *
+ * @param[in] mask      mask of the event flags that the function should wait
+ *                      for, @p ALL_EVENTS enables all the events
+ * @param[in] timeout   the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              The mask of the served and cleared events.
+ * @retval 0            if the operation has timed out.
+ *
+ * @api
+ */
+#define chEvtWaitAny(events) chEvtWaitAnyTimeout(events, TIME_INFINITE)
+
+/**
+ * @brief   Waits for all the specified events.
+ * @details The function waits for all the events specified in @p mask to
+ *          become pending then the events are cleared and returned.
+ *
+ * @param[in] mask      mask of the event flags that the function should wait
+ *                      for, @p ALL_EVENTS enables all the events
+ * @param[in] timeout   the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              The mask of the served and cleared events.
+ * @retval 0            if the operation has timed out.
+ *
+ * @api
+ */
+#define chEvtWaitAll(events) chEvtWaitAllTimeout(events, TIME_INFINITE)
+
 /** @} */
 
 /*===========================================================================*/

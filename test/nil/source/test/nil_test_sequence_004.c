@@ -21,17 +21,16 @@
  * @file    nil_test_sequence_004.c
  * @brief   Test Sequence 004 code.
  *
- * @page nil_test_sequence_004 [4] Suspend/Resume and Event Flags
+ * @page nil_test_sequence_004 [4] Suspend/Resume
  *
  * File: @ref nil_test_sequence_004.c
  *
  * <h2>Description</h2>
  * This sequence tests the ChibiOS/NIL functionalities related to
- * threads suspend/resume and event flags.
+ * threads suspend/resume.
  *
  * <h2>Test Cases</h2>
  * - @subpage nil_test_004_001
- * - @subpage nil_test_004_002
  * .
  */
 
@@ -39,7 +38,27 @@
  * Shared code.
  ****************************************************************************/
 
+static thread_t *tp1;
+static bool terminate;
 static thread_reference_t tr1;
+
+/*
+ * Resumer thread.
+ */
+static THD_WORKING_AREA(wa_resumer, 128);
+static THD_FUNCTION(resumer, arg) {
+
+  (void)arg;
+
+  /* Initializing global resources.*/
+  terminate = false;
+  tr1 = NULL;
+
+  while (!terminate) {
+    chThdResume(&tr1, MSG_OK);
+    chThdSleepMilliseconds(250);
+  }
+}
 
 /****************************************************************************
  * Test cases.
@@ -63,7 +82,20 @@ static thread_reference_t tr1;
  */
 
 static void nil_test_004_001_setup(void) {
-  tr1 = NULL;
+  thread_config_t tc = {
+    chThdGetPriorityX() - 1,
+    "resumer",
+    wa_resumer,
+    THD_WORKING_AREA_END(wa_resumer),
+    resumer,
+    NULL
+  };
+  tp1 = chThdCreate(&tc);
+}
+
+static void nil_test_004_001_teardown(void) {
+  terminate = true;
+  chThdWait(tp1);
 }
 
 static void nil_test_004_001_execute(void) {
@@ -76,9 +108,9 @@ static void nil_test_004_001_execute(void) {
   test_set_step(1);
   {
     chSysLock();
-    msg = chThdSuspendTimeoutS(&gtr1, TIME_INFINITE);
+    msg = chThdSuspendTimeoutS(&tr1, TIME_INFINITE);
     chSysUnlock();
-    test_assert(NULL == gtr1, "not NULL");
+    test_assert(NULL == tr1, "not NULL");
     test_assert(MSG_OK == msg,"wrong returned message");
   }
 
@@ -87,14 +119,16 @@ static void nil_test_004_001_execute(void) {
      the state of the reference are tested.*/
   test_set_step(2);
   {
+    thread_reference_t tr = NULL;
+
     chSysLock();
     time = chVTGetSystemTimeX();
-    msg = chThdSuspendTimeoutS(&tr1, TIME_MS2I(1000));
+    msg = chThdSuspendTimeoutS(&tr, TIME_MS2I(1000));
     chSysUnlock();
     test_assert_time_window(chTimeAddX(time, TIME_MS2I(1000)),
                             chTimeAddX(time, TIME_MS2I(1000) + 1),
                             "out of time window");
-    test_assert(NULL == tr1, "not NULL");
+    test_assert(NULL == tr, "not NULL");
     test_assert(MSG_TIMEOUT == msg, "wrong returned message");
   }
 }
@@ -102,85 +136,9 @@ static void nil_test_004_001_execute(void) {
 static const testcase_t nil_test_004_001 = {
   "Suspend and Resume functionality",
   nil_test_004_001_setup,
-  NULL,
+  nil_test_004_001_teardown,
   nil_test_004_001_execute
 };
-
-#if (CH_CFG_USE_EVENTS) || defined(__DOXYGEN__)
-/**
- * @page nil_test_004_002 [4.2] Events Flags functionality
- *
- * <h2>Description</h2>
- * Event flags functionality is tested.
- *
- * <h2>Conditions</h2>
- * This test is only executed if the following preprocessor condition
- * evaluates to true:
- * - CH_CFG_USE_EVENTS
- * .
- *
- * <h2>Test Steps</h2>
- * - [4.2.1] A set of event flags are set on the current thread then
- *   the function chEvtWaitAnyTimeout() is invoked, the function is
- *   supposed to return immediately because the event flags are already
- *   pending, after return the events mask is tested.
- * - [4.2.2] The pending event flags mask is cleared then the function
- *   chEvtWaitAnyTimeout() is invoked, after return the events mask is
- *   tested. The thread is signaled by another thread.
- * - [4.2.3] The function chEvtWaitAnyTimeout() is invoked, no event
- *   can wakeup the thread, the function must return because timeout.
- * .
- */
-
-static void nil_test_004_002_execute(void) {
-  systime_t time;
-  eventmask_t events;
-
-  /* [4.2.1] A set of event flags are set on the current thread then
-     the function chEvtWaitAnyTimeout() is invoked, the function is
-     supposed to return immediately because the event flags are already
-     pending, after return the events mask is tested.*/
-  test_set_step(1);
-  {
-    time = chVTGetSystemTimeX();
-    chEvtSignal(chThdGetSelfX(), 0x55);
-    events = chEvtWaitAnyTimeout(ALL_EVENTS, TIME_MS2I(1000));
-    test_assert((eventmask_t)0 != events, "timed out");
-    test_assert((eventmask_t)0x55 == events, "wrong events mask");
-  }
-
-  /* [4.2.2] The pending event flags mask is cleared then the function
-     chEvtWaitAnyTimeout() is invoked, after return the events mask is
-     tested. The thread is signaled by another thread.*/
-  test_set_step(2);
-  {
-    time = chVTGetSystemTimeX();
-    chThdGetSelfX()->epmask = 0;
-    events = chEvtWaitAnyTimeout(ALL_EVENTS, TIME_MS2I(1000));
-    test_assert((eventmask_t)0 != events, "timed out");
-    test_assert((eventmask_t)0x55 == events, "wrong events mask");
-  }
-
-  /* [4.2.3] The function chEvtWaitAnyTimeout() is invoked, no event
-     can wakeup the thread, the function must return because timeout.*/
-  test_set_step(3);
-  {
-    time = chVTGetSystemTimeX();
-    events = chEvtWaitAnyTimeout(0, TIME_MS2I(1000));
-    test_assert_time_window(chTimeAddX(time, TIME_MS2I(1000)),
-                            chTimeAddX(time, TIME_MS2I(1000) + 1),
-                            "out of time window");
-    test_assert((eventmask_t)0 == events, "wrong events mask");
-  }
-}
-
-static const testcase_t nil_test_004_002 = {
-  "Events Flags functionality",
-  NULL,
-  NULL,
-  nil_test_004_002_execute
-};
-#endif /* CH_CFG_USE_EVENTS */
 
 /****************************************************************************
  * Exported data.
@@ -191,16 +149,13 @@ static const testcase_t nil_test_004_002 = {
  */
 const testcase_t * const nil_test_sequence_004_array[] = {
   &nil_test_004_001,
-#if (CH_CFG_USE_EVENTS) || defined(__DOXYGEN__)
-  &nil_test_004_002,
-#endif
   NULL
 };
 
 /**
- * @brief   Suspend/Resume and Event Flags.
+ * @brief   Suspend/Resume.
  */
 const testsequence_t nil_test_sequence_004 = {
-  "Suspend/Resume and Event Flags",
+  "Suspend/Resume",
   nil_test_sequence_004_array
 };

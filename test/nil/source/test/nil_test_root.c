@@ -25,6 +25,7 @@
  * - @subpage nil_test_sequence_002
  * - @subpage nil_test_sequence_003
  * - @subpage nil_test_sequence_004
+ * - @subpage nil_test_sequence_005
  * .
  */
 
@@ -52,6 +53,9 @@ const testsequence_t * const nil_test_suite_array[] = {
   &nil_test_sequence_003,
 #endif
   &nil_test_sequence_004,
+#if (CH_CFG_USE_EVENTS) || defined(__DOXYGEN__)
+  &nil_test_sequence_005,
+#endif
   NULL
 };
 
@@ -67,38 +71,13 @@ const testsuite_t nil_test_suite = {
 /* Shared code.                                                              */
 /*===========================================================================*/
 
-semaphore_t gsem1, gsem2;
-thread_reference_t gtr1;
-
 /*
- * Support thread.
+ * Delays execution until next system time tick.
  */
-THD_WORKING_AREA(wa_test_support, 128);
-THD_FUNCTION(test_support, arg) {
-#if CH_CFG_USE_EVENTS == TRUE
-  thread_t *tp = (thread_t *)arg;
-#else
-  (void)arg;
-#endif
+systime_t test_wait_tick(void) {
 
-  /* Initializing global resources.*/
-  chSemObjectInit(&gsem1, 0);
-  chSemObjectInit(&gsem2, 0);
-
-  while (true) {
-    chSysLock();
-    if (chSemGetCounterI(&gsem1) < 0)
-      chSemSignalI(&gsem1);
-    chSemResetI(&gsem2, 0);
-    chThdResumeI(&gtr1, MSG_OK);
-#if CH_CFG_USE_EVENTS == TRUE
-    chEvtSignalI(tp, 0x55);
-#endif
-    chSchRescheduleS();
-    chSysUnlock();
-
-    chThdSleepMilliseconds(250);
-  }
+  chThdSleep(1);
+  return chVTGetSystemTimeX();
 }
 
 #endif /* !defined(__DOXYGEN__) */

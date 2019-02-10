@@ -340,6 +340,7 @@ void chEvtDispatch(const evhandler_t *handlers, eventmask_t events) {
     eid++;
   }
 }
+
 /**
  * @brief   Waits for exactly one of the specified events.
  * @details The function waits for one event among those specified in

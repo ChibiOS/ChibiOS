@@ -582,7 +582,7 @@ struct nil_system {
  */
 #define THD_TABLE_THREAD(prio, name, wap, funcp, arg)                       \
   {prio, name,                                                              \
-   wap, ((stkalign_t *)(wap)) + (sizeof (wap) / sizeof(stkalign_t)),        \
+   wap, THD_WORKING_AREA_END(wap),                                          \
    funcp, arg},
 
 /**
@@ -664,6 +664,18 @@ struct nil_system {
  */
 #define THD_WORKING_AREA(s, n) PORT_WORKING_AREA(s, n)
 /** @} */
+
+/**
+ * @brief   Returns the top address of a working area.
+ * @note    The parameter is assumed to be an array of @p stkalign_t. The
+ *          macros is invalid for anything else.
+ *
+ * @param[in] wa        working area array
+ *
+ * @api
+ */
+#define THD_WORKING_AREA_END(wa)                                            \
+  ((wa) + ((sizeof wa) / sizeof (stkalign_t)))
 
 /**
  * @name    Threads abstraction macros
