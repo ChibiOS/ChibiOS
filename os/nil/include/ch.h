@@ -1050,6 +1050,29 @@ struct nil_system {
 }
 
 /**
+ * @brief   Puts the current thread to sleep into the specified state.
+ *
+ * @param[in] newstate  the new thread state or a semaphore pointer
+ * @return              The wakeup message.
+ *
+ * @sclass
+ */
+#define chSchGoSleepS(newstate) chSchGoSleepTimeoutS(newstate, TIME_INFINITE)
+
+/**
+ * @brief   Wakes up a thread.
+ *
+ * @param[in] ntp       the thread to be made ready
+ * @param[in] msg       the wakeup message
+ *
+ * @sclass
+ */
+#define chSchWakeupS(ntp, msg) do {                                         \
+  chSchReadyI(ntp, msg);                                                    \
+  chSchRescheduleS();                                                       \
+} while (0)
+
+/**
  * @brief   Evaluates if a reschedule is required.
  *
  * @retval true         if there is a thread that must go in running state
@@ -1202,6 +1225,22 @@ struct nil_system {
  */
 #define chVTTimeElapsedSinceX(start)                                        \
   chTimeDiffX((start), chVTGetSystemTimeX())
+
+/**
+ * @brief   Checks if the current system time is within the specified time
+ *          window.
+ * @note    When start==end then the function returns always true because the
+ *          whole time range is specified.
+ *
+ * @param[in] start     the start of the time window (inclusive)
+ * @param[in] end       the end of the time window (non inclusive)
+ * @retval true         current time within the specified time window.
+ * @retval false        current time not within the specified time window.
+ *
+ * @xclass
+ */
+#define chVTIsSystemTimeWithinX(start, end)                                 \
+  chTimeIsInRangeX(chVTGetSystemTimeX(), start, end)
 
 /**
  * @brief   Adds an interval to a system time returning a system time.

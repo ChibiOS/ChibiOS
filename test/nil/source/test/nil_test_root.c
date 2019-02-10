@@ -27,6 +27,7 @@
  * - @subpage nil_test_sequence_004
  * - @subpage nil_test_sequence_005
  * - @subpage nil_test_sequence_006
+ * - @subpage nil_test_sequence_007
  * .
  */
 
@@ -60,6 +61,7 @@ const testsequence_t * const nil_test_suite_array[] = {
 #if (CH_CFG_USE_MESSAGES) || defined(__DOXYGEN__)
   &nil_test_sequence_006,
 #endif
+  &nil_test_sequence_007,
   NULL
 };
 
@@ -74,6 +76,8 @@ const testsuite_t nil_test_suite = {
 /*===========================================================================*/
 /* Shared code.                                                              */
 /*===========================================================================*/
+
+THD_WORKING_AREA(wa_common, 128);
 
 /*
  * Delays execution until next system time tick.

@@ -62,7 +62,6 @@ static ROMCONST evhandler_t evhndl[] = {h1, h2, h3};
 /*
  * Direct events thread.
  */
-static THD_WORKING_AREA(wa_evtthd1, 128);
 static THD_FUNCTION(evtthd1, p) {
 
   chThdSleepMilliseconds(50);
@@ -72,7 +71,6 @@ static THD_FUNCTION(evtthd1, p) {
 /*
  * Broadcaster thread.
  */
-static THD_WORKING_AREA(wa_evtthd2, 128);
 static THD_FUNCTION(evtthd2, p) {
 
   (void)p;
@@ -238,8 +236,8 @@ static void nil_test_005_003_execute(void) {
     thread_config_t tc = {
       chThdGetPriorityX() + 1,
       "event1",
-      wa_evtthd1,
-      THD_WORKING_AREA_END(wa_evtthd1),
+      wa_common,
+      THD_WORKING_AREA_END(wa_common),
       evtthd1,
       chThdGetSelfX()
     };
@@ -320,8 +318,8 @@ static void nil_test_005_004_execute(void) {
     thread_config_t tc = {
       chThdGetPriorityX() + 1,
       "event1",
-      wa_evtthd1,
-      THD_WORKING_AREA_END(wa_evtthd1),
+      wa_common,
+      THD_WORKING_AREA_END(wa_common),
       evtthd1,
       chThdGetSelfX()
     };
@@ -409,8 +407,8 @@ static void nil_test_005_005_execute(void) {
     thread_config_t tc = {
       chThdGetPriorityX() + 1,
       "event1",
-      wa_evtthd1,
-      THD_WORKING_AREA_END(wa_evtthd1),
+      wa_common,
+      THD_WORKING_AREA_END(wa_common),
       evtthd1,
       chThdGetSelfX()
     };
@@ -542,8 +540,8 @@ static void nil_test_005_007_execute(void) {
     thread_config_t tc = {
       chThdGetPriorityX() + 1,
       "event2",
-      wa_evtthd2,
-      THD_WORKING_AREA_END(wa_evtthd2),
+      wa_common,
+      THD_WORKING_AREA_END(wa_common),
       evtthd2,
       NULL
     };

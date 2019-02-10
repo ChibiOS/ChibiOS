@@ -49,7 +49,6 @@
 /*
  * Messager thread.
  */
-static THD_WORKING_AREA(wa_messager, 128);
 static THD_FUNCTION(messager, p) {
 
   chMsgSend(p, 'A');
@@ -86,8 +85,8 @@ static void nil_test_006_001_execute(void) {
     thread_config_t tc = {
       chThdGetPriorityX() - 1,
       "messager",
-      wa_messager,
-      THD_WORKING_AREA_END(wa_messager),
+      wa_common,
+      THD_WORKING_AREA_END(wa_common),
       messager,
       chThdGetSelfX()
     };

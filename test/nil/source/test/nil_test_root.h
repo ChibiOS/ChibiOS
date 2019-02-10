@@ -30,6 +30,7 @@
 #include "nil_test_sequence_004.h"
 #include "nil_test_sequence_005.h"
 #include "nil_test_sequence_006.h"
+#include "nil_test_sequence_007.h"
 
 #if !defined(__DOXYGEN__)
 
@@ -57,6 +58,7 @@ extern "C" {
  */
 #define ALLOWED_DELAY TIME_MS2I(2)
 
+extern THD_WORKING_AREA(wa_common, 128);
 systime_t test_wait_tick(void);
 
 #endif /* !defined(__DOXYGEN__) */

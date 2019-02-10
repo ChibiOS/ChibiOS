@@ -655,7 +655,7 @@ void chSchRescheduleS(void) {
  *          timeout specification.
  * @details The thread goes into a sleeping state, if it is not awakened
  *          explicitly within the specified system time then it is forcibly
- *          awakened with a @p NIL_MSG_TMO low level message.
+ *          awakened with a @p MSG_TIMEOUT low level message.
  *
  * @param[in] newstate  the new thread state or a semaphore pointer
  * @param[in] timeout   the number of ticks before the operation timeouts.
@@ -663,7 +663,7 @@ void chSchRescheduleS(void) {
  *                      - @a TIME_INFINITE no timeout.
  *                      .
  * @return              The wakeup message.
- * @retval NIL_MSG_TMO  if a timeout occurred.
+ * @retval MSG_TIMEOUT  if a timeout occurred.
  *
  * @sclass
  */

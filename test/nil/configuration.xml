@@ -45,10 +45,13 @@
  */
 #define ALLOWED_DELAY TIME_MS2I(2)
 
+extern THD_WORKING_AREA(wa_common, 128);
 systime_t test_wait_tick(void);]]></value>
           </global_definitions>
           <global_code>
-            <value><![CDATA[/*
+            <value><![CDATA[THD_WORKING_AREA(wa_common, 128);
+
+/*
  * Delays execution until next system time tick.
  */
 systime_t test_wait_tick(void) {
@@ -449,7 +452,6 @@ static semaphore_t sem1, sem2;
 /*
  * Signaler thread.
  */
-static THD_WORKING_AREA(wa_signaler, 128);
 static THD_FUNCTION(signaler, arg) {
 
   (void)arg;
@@ -550,8 +552,8 @@ test_assert_lock(chSemGetCounterI(&sem1) == 2, "wrong counter value");]]></value
                     <value><![CDATA[thread_config_t tc = {
   chThdGetPriorityX() - 1,
   "signaler",
-  wa_signaler,
-  THD_WORKING_AREA_END(wa_signaler),
+  wa_common,
+  THD_WORKING_AREA_END(wa_common),
   signaler,
   NULL
 };
@@ -680,7 +682,6 @@ static thread_reference_t tr1;
 /*
  * Resumer thread.
  */
-static THD_WORKING_AREA(wa_resumer, 128);
 static THD_FUNCTION(resumer, arg) {
 
   (void)arg;
@@ -711,8 +712,8 @@ static THD_FUNCTION(resumer, arg) {
                     <value><![CDATA[thread_config_t tc = {
   chThdGetPriorityX() - 1,
   "resumer",
-  wa_resumer,
-  THD_WORKING_AREA_END(wa_resumer),
+  wa_common,
+  THD_WORKING_AREA_END(wa_common),
   resumer,
   NULL
 };
@@ -793,7 +794,6 @@ static ROMCONST evhandler_t evhndl[] = {h1, h2, h3};
 /*
  * Direct events thread.
  */
-static THD_WORKING_AREA(wa_evtthd1, 128);
 static THD_FUNCTION(evtthd1, p) {
 
   chThdSleepMilliseconds(50);
@@ -803,7 +803,6 @@ static THD_FUNCTION(evtthd1, p) {
 /*
  * Broadcaster thread.
  */
-static THD_WORKING_AREA(wa_evtthd2, 128);
 static THD_FUNCTION(evtthd2, p) {
 
   (void)p;
@@ -987,8 +986,8 @@ test_assert(m == 0, "stuck event");]]></value>
 thread_config_t tc = {
   chThdGetPriorityX() + 1,
   "event1",
-  wa_evtthd1,
-  THD_WORKING_AREA_END(wa_evtthd1),
+  wa_common,
+  THD_WORKING_AREA_END(wa_common),
   evtthd1,
   chThdGetSelfX()
 };
@@ -1076,8 +1075,8 @@ test_assert(m == 0, "stuck event");]]></value>
 thread_config_t tc = {
   chThdGetPriorityX() + 1,
   "event1",
-  wa_evtthd1,
-  THD_WORKING_AREA_END(wa_evtthd1),
+  wa_common,
+  THD_WORKING_AREA_END(wa_common),
   evtthd1,
   chThdGetSelfX()
 };
@@ -1176,8 +1175,8 @@ test_assert(m == 0, "stuck event");]]></value>
 thread_config_t tc = {
   chThdGetPriorityX() + 1,
   "event1",
-  wa_evtthd1,
-  THD_WORKING_AREA_END(wa_evtthd1),
+  wa_common,
+  THD_WORKING_AREA_END(wa_common),
   evtthd1,
   chThdGetSelfX()
 };
@@ -1311,8 +1310,8 @@ chEvtRegisterMask(&es2, &el2, 4);]]></value>
 thread_config_t tc = {
   chThdGetPriorityX() + 1,
   "event2",
-  wa_evtthd2,
-  THD_WORKING_AREA_END(wa_evtthd2),
+  wa_common,
+  THD_WORKING_AREA_END(wa_common),
   evtthd2,
   NULL
 };
@@ -1371,7 +1370,6 @@ test_assert(!chEvtIsListeningI(&es2), "stuck listener");]]></value>
               <value><![CDATA[/*
  * Messager thread.
  */
-static THD_WORKING_AREA(wa_messager, 128);
 static THD_FUNCTION(messager, p) {
 
   chMsgSend(p, 'A');
@@ -1416,8 +1414,8 @@ msg_t msg;]]></value>
                       <value><![CDATA[thread_config_t tc = {
   chThdGetPriorityX() - 1,
   "messager",
-  wa_messager,
-  THD_WORKING_AREA_END(wa_messager),
+  wa_common,
+  THD_WORKING_AREA_END(wa_common),
   messager,
   chThdGetSelfX()
 };
@@ -1442,6 +1440,624 @@ for (i = 0; i < 4; i++) {
 }
 chThdWait(tp1);
 test_assert_sequence("ABCD", "invalid sequence");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+            </cases>
+          </sequence>
+          <sequence>
+            <type index="2">
+              <value>Benchmarks</value>
+            </type>
+            <brief>
+              <value>Benchmarks.</value>
+            </brief>
+            <description>
+              <value>This module implements a series of system benchmarks. The benchmarks are useful as a stress test and as a reference when comparing ChibiOS/RT with similar systems.&lt;br&gt;&#xD;
+Objective of the test sequence is to provide a performance index for the most critical system subsystems. The performance numbers allow to discover performance regressions between successive ChibiOS/RT releases.</value>
+            </description>
+            <condition>
+              <value />
+            </condition>
+            <shared_code>
+              <value><![CDATA[#if CH_CFG_USE_SEMAPHORES || defined(__DOXYGEN__)
+static semaphore_t sem1;
+#endif
+#if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
+static mutex_t mtx1;
+#endif
+
+#if CH_CFG_USE_MESSAGES
+static THD_FUNCTION(bmk_thread1, p) {
+  thread_t *tp;
+  msg_t msg;
+
+  (void)p;
+  do {
+    tp = chMsgWait();
+    msg = chMsgGet(tp);
+    chMsgRelease(tp, msg);
+  } while (msg);
+}
+
+NOINLINE static unsigned int msg_loop_test(thread_t *tp) {
+  systime_t start, end;
+  
+  uint32_t n = 0;
+  start = test_wait_tick();
+  end = chTimeAddX(start, TIME_MS2I(1000));
+  do {
+    (void)chMsgSend(tp, 1);
+    n++;
+#if defined(SIMULATOR)
+    _sim_check_for_interrupts();
+#endif
+  } while (chVTIsSystemTimeWithinX(start, end));
+  (void)chMsgSend(tp, 0);
+  return n;
+}
+#endif
+
+static THD_FUNCTION(bmk_thread3, p) {
+
+  chThdExit((msg_t)p);
+}
+
+static THD_FUNCTION(bmk_thread4, p) {
+  msg_t msg;
+  thread_t *self = chThdGetSelfX();
+
+  (void)p;
+  chSysLock();
+  do {
+    chSchGoSleepS(NIL_STATE_SUSPENDED);
+    msg = self->u1.msg;
+  } while (msg == MSG_OK);
+  chSysUnlock();
+}]]></value>
+            </shared_code>
+            <cases>
+              <case>
+                <brief>
+                  <value>Messages performance #1.</value>
+                </brief>
+                <description>
+                  <value>A message server thread is created with a lower priority than the client thread, the messages throughput per second is measured and the result printed on the output log.</value>
+                </description>
+                <condition>
+                  <value>CH_CFG_USE_MESSAGES</value>
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[uint32_t n;
+thread_t *tp;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>The messenger thread is started at a lower priority than the current thread.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[thread_config_t tc = {
+  chThdGetPriorityX() + 1,
+  "messenger",
+  wa_common,
+  THD_WORKING_AREA_END(wa_common),
+  bmk_thread1,
+  NULL
+};
+tp = chThdCreate(&tc);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The number of messages exchanged is counted in a one second time window.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[n = msg_loop_test(tp);
+chThdWait(tp);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Score is printed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_print("--- Score : ");
+test_printn(n);
+test_print(" msgs/S, ");
+test_printn(n << 1);
+test_println(" ctxswc/S");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Messages performance #2.</value>
+                </brief>
+                <description>
+                  <value>A message server thread is created with an higher priority than the client thread, the messages throughput per second is measured and the result printed on the output log.</value>
+                </description>
+                <condition>
+                  <value>CH_CFG_USE_MESSAGES</value>
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[uint32_t n;
+thread_t *tp;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>The messenger thread is started at an higher priority than the current thread.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[thread_config_t tc = {
+  chThdGetPriorityX() - 1,
+  "messenger",
+  wa_common,
+  THD_WORKING_AREA_END(wa_common),
+  bmk_thread1,
+  NULL
+};
+tp = chThdCreate(&tc);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The number of messages exchanged is counted in a one second time window.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[n = msg_loop_test(tp);
+chThdWait(tp);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Score is printed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_print("--- Score : ");
+test_printn(n);
+test_print(" msgs/S, ");
+test_printn(n << 1);
+test_println(" ctxswc/S");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Context Switch performance.</value>
+                </brief>
+                <description>
+                  <value>A thread is created that just performs a @p chSchGoSleepS() into a loop, the thread is awakened as fast is possible by the tester thread.&lt;br&gt;&#xD;
+The Context Switch performance is calculated by measuring the number of iterations after a second of continuous operations.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[thread_t *tp;
+uint32_t n;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Starting the target thread at an higher priority level.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[thread_config_t tc = {
+  chThdGetPriorityX() - 1,
+  "messenger",
+  wa_common,
+  THD_WORKING_AREA_END(wa_common),
+  bmk_thread4,
+  NULL
+};
+tp = chThdCreate(&tc);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Waking up the thread as fast as possible in a one second time window.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[systime_t start, end;
+
+n = 0;
+start = test_wait_tick();
+end = chTimeAddX(start, TIME_MS2I(1000));
+do {
+  chSysLock();
+  chSchWakeupS(tp, MSG_OK);
+  chSchWakeupS(tp, MSG_OK);
+  chSchWakeupS(tp, MSG_OK);
+  chSchWakeupS(tp, MSG_OK);
+  chSysUnlock();
+  n += 4;
+} while (chVTIsSystemTimeWithinX(start, end));]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Stopping the target thread.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[chSysLock();
+chSchWakeupS(tp, MSG_TIMEOUT);
+chSysUnlock();
+chThdWait(tp);]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Score is printed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_print("--- Score : ");
+test_printn(n * 2);
+test_println(" ctxswc/S");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Threads performance, full cycle.</value>
+                </brief>
+                <description>
+                  <value>Threads are continuously created and terminated into a loop. A full chThdCreateStatic() / @p chThdExit() / @p chThdWait() cycle is performed in each iteration.&lt;br&gt;&#xD;
+The performance is calculated by measuring the number of iterations after a second of continuous operations.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[uint32_t n;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>A thread is created at a lower priority level and its termination detected using @p chThdWait(). The operation is repeated continuously in a one-second time window.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[systime_t start, end;
+thread_config_t tc = {
+  chThdGetPriorityX() + 1,
+  "messenger",
+  wa_common,
+  THD_WORKING_AREA_END(wa_common),
+  bmk_thread3,
+  NULL
+};
+
+n = 0;
+start = test_wait_tick();
+end = chTimeAddX(start, TIME_MS2I(1000));
+do {
+  chThdWait(chThdCreate(&tc));
+  n++;
+} while (chVTIsSystemTimeWithinX(start, end));]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Score is printed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_print("--- Score : ");
+test_printn(n);
+test_println(" threads/S");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Threads performance, create/exit only.</value>
+                </brief>
+                <description>
+                  <value>Threads are continuously created and terminated into a loop. A partial @p chThdCreateStatic() / @p chThdExit() cycle is performed in each iteration, the @p chThdWait() is not necessary because the thread is created at an higher priority so there is no need to wait for it to terminate.&lt;br&gt; The performance is calculated by measuring the number of iterations after a second of continuous operations.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[uint32_t n;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>A thread is created at an higher priority level and let terminate immediately. The operation is repeated continuously in a one-second time window.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[systime_t start, end;
+thread_config_t tc = {
+  chThdGetPriorityX() - 1,
+  "messenger",
+  wa_common,
+  THD_WORKING_AREA_END(wa_common),
+  bmk_thread3,
+  NULL
+};
+
+n = 0;
+start = test_wait_tick();
+end = chTimeAddX(start, TIME_MS2I(1000));
+do {
+  chThdWait(chThdCreate(&tc));
+  n++;
+} while (chVTIsSystemTimeWithinX(start, end));]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Score is printed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_print("--- Score : ");
+test_printn(n);
+test_println(" threads/S");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Semaphores wait/signal performance</value>
+                </brief>
+                <description>
+                  <value>A counting semaphore is taken/released into a continuous loop, no Context Switch happens because the counter is always non negative.&lt;br&gt;&#xD;
+The performance is calculated by measuring the number of iterations after a second of continuous operations.</value>
+                </description>
+                <condition>
+                  <value>CH_CFG_USE_SEMAPHORES</value>
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value><![CDATA[chSemObjectInit(&sem1, 1);]]></value>
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[uint32_t n;]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>A semaphore is teken and released. The operation is repeated continuously in a one-second time window.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[systime_t start, end;
+  
+n = 0;
+start = test_wait_tick();
+end = chTimeAddX(start, TIME_MS2I(1000));
+do {
+  chSemWait(&sem1);
+  chSemSignal(&sem1);
+  chSemWait(&sem1);
+  chSemSignal(&sem1);
+  chSemWait(&sem1);
+  chSemSignal(&sem1);
+  chSemWait(&sem1);
+  chSemSignal(&sem1);
+  n++;
+#if defined(SIMULATOR)
+  _sim_check_for_interrupts();
+#endif
+} while (chVTIsSystemTimeWithinX(start, end));]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The score is printed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_print("--- Score : ");
+test_printn(n * 4);
+test_println(" wait+signal/S");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>RAM Footprint.</value>
+                </brief>
+                <description>
+                  <value>The memory size of the various kernel objects is printed.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>The size of the system area is printed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_print("--- System: ");
+test_printn(sizeof(nil_system_t));
+test_println(" bytes");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The size of a thread structure is printed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[test_print("--- Thread: ");
+test_printn(sizeof(thread_t));
+test_println(" bytes");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The size of a semaphore structure is printed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[#if CH_CFG_USE_SEMAPHORES || defined(__DOXYGEN__)
+test_print("--- Semaph: ");
+test_printn(sizeof(semaphore_t));
+test_println(" bytes");
+#endif]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The size of an event source is printed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[#if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
+test_print("--- EventS: ");
+test_printn(sizeof(event_source_t));
+test_println(" bytes");
+#endif]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The size of an event listener is printed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[#if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
+test_print("--- EventL: ");
+test_printn(sizeof(event_listener_t));
+test_println(" bytes");
+#endif]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>The size of a mailbox is printed.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[#if CH_CFG_USE_MAILBOXES || defined(__DOXYGEN__)
+test_print("--- MailB.: ");
+test_printn(sizeof(mailbox_t));
+test_println(" bytes");
+#endif]]></value>
                     </code>
                   </step>
                 </steps>

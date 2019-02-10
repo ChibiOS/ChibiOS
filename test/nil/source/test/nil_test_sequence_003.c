@@ -57,7 +57,6 @@ static semaphore_t sem1, sem2;
 /*
  * Signaler thread.
  */
-static THD_WORKING_AREA(wa_signaler, 128);
 static THD_FUNCTION(signaler, arg) {
 
   (void)arg;
@@ -166,8 +165,8 @@ static void nil_test_003_002_setup(void) {
   thread_config_t tc = {
     chThdGetPriorityX() - 1,
     "signaler",
-    wa_signaler,
-    THD_WORKING_AREA_END(wa_signaler),
+    wa_common,
+    THD_WORKING_AREA_END(wa_common),
     signaler,
     NULL
   };

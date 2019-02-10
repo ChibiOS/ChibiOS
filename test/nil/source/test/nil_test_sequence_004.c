@@ -45,7 +45,6 @@ static thread_reference_t tr1;
 /*
  * Resumer thread.
  */
-static THD_WORKING_AREA(wa_resumer, 128);
 static THD_FUNCTION(resumer, arg) {
 
   (void)arg;
@@ -85,8 +84,8 @@ static void nil_test_004_001_setup(void) {
   thread_config_t tc = {
     chThdGetPriorityX() - 1,
     "resumer",
-    wa_resumer,
-    THD_WORKING_AREA_END(wa_resumer),
+    wa_common,
+    THD_WORKING_AREA_END(wa_common),
     resumer,
     NULL
   };
