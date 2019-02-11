@@ -47,7 +47,7 @@
  * @note    This values also defines the number of available priorities
  *          (0..CH_CFG_MAX_THREADS-1).
  */
-#define CH_CFG_MAX_THREADS                  4
+#define CH_CFG_MAX_THREADS                  5
 
 /**
  * @brief   Auto starts threads when @p chSysInit() is invoked.
@@ -284,21 +284,21 @@
  *
  * @note    The default is @p FALSE.
  */
-#define CH_DBG_SYSTEM_STATE_CHECK           TRUE
+#define CH_DBG_SYSTEM_STATE_CHECK           FALSE
 
 /**
  * @brief   Debug option, parameters checks.
  *
  * @note    The default is @p FALSE.
  */
-#define CH_DBG_ENABLE_CHECKS                TRUE
+#define CH_DBG_ENABLE_CHECKS                FALSE
 
 /**
  * @brief   System assertions.
  *
  * @note    The default is @p FALSE.
  */
-#define CH_DBG_ENABLE_ASSERTS               TRUE
+#define CH_DBG_ENABLE_ASSERTS               FALSE
 
 /**
  * @brief   Stack check.

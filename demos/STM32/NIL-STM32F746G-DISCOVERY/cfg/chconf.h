@@ -47,7 +47,7 @@
  * @note    This values also defines the number of available priorities
  *          (0..CH_CFG_MAX_THREADS-1).
  */
-#define CH_CFG_MAX_THREADS                  3
+#define CH_CFG_MAX_THREADS                  4
 
 /**
  * @brief   Auto starts threads when @p chSysInit() is invoked.

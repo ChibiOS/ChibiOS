@@ -103,6 +103,7 @@ LDSCRIPT= $(STARTUPLD)/SPC560D40.ld
 # C sources here.
 CSRC = $(STARTUPSRC) \
        $(KERNSRC) \
+       $(LIBSRC) \
        $(PORTSRC) \
        $(OSALSRC) \
        $(HALSRC) \
@@ -119,7 +120,7 @@ ASMSRC =
 ASMXSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
 
 INCDIR = $(CHIBIOS)/os/license \
-         $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
+         $(STARTUPINC) $(KERNINC) $(LIBINC) $(PORTINC) $(OSALINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) $(TESTINC) \
          $(CHIBIOS)/os/various
 

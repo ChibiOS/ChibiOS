@@ -153,7 +153,7 @@ ULIBS =
 # Compiler settings
 #
 
-MCU  = e200zx -meabi -msdata=none -mnew-mnemonics -mregnames # HighTec
+MCU  = e200zx -meabi -msdata=none -mregnames # HighTec
 #MCU  = e200z4 -meabi -msdata=none -mregnames # Free GCC
 
 TRGT = ppc-vle-

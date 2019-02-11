@@ -34,10 +34,13 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
+#if (PAL_USE_WAIT == TRUE) || (PAL_USE_CALLBACKS == TRUE) ||                \
+    defined(__DOXYGEN__)
 /**
  * @brief   Event records (to be implemented).
  */
 palevent_t _pal_events[1];
+#endif
 
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
