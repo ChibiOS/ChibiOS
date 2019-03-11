@@ -496,7 +496,7 @@ void adc_lld_init(void) {
 #if defined(ADC3_4_COMMON)
   ADCD3.adcc = ADC3_4_COMMON;
 #elif defined(ADC123_COMMON)
-  ADCD1.adcc = ADC123_COMMON;
+  ADCD3.adcc = ADC123_COMMON;
 #else
   ADCD3.adcc = ADC3_COMMON;
 #endif

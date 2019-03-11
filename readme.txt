@@ -74,6 +74,15 @@
 *****************************************************************************
 
 *** 19.1.1 ***
+- LIB: Re-introduced missing chGuardedPoolGetCounterI() function to guarded
+       pools allocator.
+- NEW: Extra timer checks in STM32 ST driver.
+- FIX: Fixed wrong ADCSEL definitions in STM32H7 HAL (bug #1016).
+- FIX: Fixed chTimeIsInRangeX() failing under some configurations (bug #1015).
+- FIX: Fixed invalid AXI errata fix for STM32H7xx (bug #1014).
+- FIX: Fixed invalid ADCD3 initialization in STM32 ADCv3 driver (bug #1013).
+- FIX: Fixed invalid call to dmaStreamRelease() in STM32 SDIOv1 driver
+       (bug #1012).
 - FIX: Fixed wrong license restriction check in Nil (bug #1011).
 - FIX: Fixed uninitialized variables in STM32 DMA drivers (bug #1010).
 - FIX: Fixed wrong mcuconf.h in some testex demos related to STM32F407 

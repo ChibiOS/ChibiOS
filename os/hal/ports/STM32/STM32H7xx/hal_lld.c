@@ -206,7 +206,7 @@ void stm32_clock_init(void) {
   /* Fix for errata 2.2.15: Reading from AXI SRAM might lead to data
      read corruption.
      AXI->TARG7_FN_MOD.*/
-  *((volatile uint32_t *)0x51000000 + 0x1108 + 0x7000) = 0x00000001U;
+  *((volatile uint32_t *)(0x51000000 + 0x1108 + 0x7000)) = 0x00000001U;
 #endif
 
   /* PWR initialization.*/
