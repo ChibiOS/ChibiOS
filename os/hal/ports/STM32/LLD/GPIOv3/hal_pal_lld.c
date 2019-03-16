@@ -31,7 +31,7 @@
 /*===========================================================================*/
 
 /* Handling a difference in ST headers.*/
-#if defined(STM32L4XX)
+#if defined(STM32L4XX) || defined(STM32L4XXP)
 #define EMR     EMR1
 #define IMR     IMR1
 #define PR      PR1
