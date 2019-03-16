@@ -2432,58 +2432,58 @@
 /**
  * @brief   USART4 clock.
  */
-#define STM32_USART4CLK             STM32_PCLK1
+#define STM32_UART4CLK              STM32_PCLK1
 
 /**
  * @brief   USART5 clock.
  */
-#define STM32_USART5CLK             STM32_PCLK1
+#define STM32_UART5CLK              STM32_PCLK1
 
 /**
  * @brief   USART7 clock.
  */
-#define STM32_USART7CLK             STM32_PCLK1
+#define STM32_UART7CLK              STM32_PCLK1
 
 /**
  * @brief   USART8 clock.
  */
-#define STM32_USART8CLK             STM32_PCLK2
+#define STM32_UART8CLK              STM32_PCLK1
 
 #elif STM32_USART234578SEL == STM32_USART234578SEL_PLL2_Q_CK
 #define STM32_USART2CLK             STM32_PLL2_Q_CK
 #define STM32_USART3CLK             STM32_PLL2_Q_CK
-#define STM32_USART4CLK             STM32_PLL2_Q_CK
-#define STM32_USART5CLK             STM32_PLL2_Q_CK
-#define STM32_USART7CLK             STM32_PLL2_Q_CK
-#define STM32_USART8CLK             STM32_PLL2_Q_CK
+#define STM32_UART4CLK              STM32_PLL2_Q_CK
+#define STM32_UART5CLK              STM32_PLL2_Q_CK
+#define STM32_UART7CLK              STM32_PLL2_Q_CK
+#define STM32_UART8CLK              STM32_PLL2_Q_CK
 #elif STM32_USART234578SEL == STM32_USART234578SEL_PLL3_Q_CK
 #define STM32_USART2CLK             STM32_PLL3_Q_CK
 #define STM32_USART3CLK             STM32_PLL3_Q_CK
-#define STM32_USART4CLK             STM32_PLL3_Q_CK
-#define STM32_USART5CLK             STM32_PLL3_Q_CK
-#define STM32_USART7CLK             STM32_PLL3_Q_CK
-#define STM32_USART8CLK             STM32_PLL3_Q_CK
+#define STM32_UART4CLK              STM32_PLL3_Q_CK
+#define STM32_UART5CLK              STM32_PLL3_Q_CK
+#define STM32_UART7CLK              STM32_PLL3_Q_CK
+#define STM32_UART8CLK              STM32_PLL3_Q_CK
 #elif STM32_USART234578SEL == STM32_USART234578SEL_HSI_KER_CK
 #define STM32_USART2CLK             STM32_HSI_CK
 #define STM32_USART3CLK             STM32_HSI_CK
-#define STM32_USART4CLK             STM32_HSI_CK
-#define STM32_USART5CLK             STM32_HSI_CK
-#define STM32_USART7CLK             STM32_HSI_CK
-#define STM32_USART8CLK             STM32_HSI_CK
+#define STM32_UART4CLK              STM32_HSI_CK
+#define STM32_UART5CLK              STM32_HSI_CK
+#define STM32_UART7CLK              STM32_HSI_CK
+#define STM32_UART8CLK              STM32_HSI_CK
 #elif STM32_USART234578SEL == STM32_USART234578SEL_CSI_KER_CK
 #define STM32_USART2CLK             STM32_CSI_CK
 #define STM32_USART3CLK             STM32_CSI_CK
-#define STM32_USART4CLK             STM32_CSI_CK
-#define STM32_USART5CLK             STM32_CSI_CK
-#define STM32_USART7CLK             STM32_CSI_CK
-#define STM32_USART8CLK             STM32_CSI_CK
+#define STM32_UART4CLK              STM32_CSI_CK
+#define STM32_UART5CLK              STM32_CSI_CK
+#define STM32_UART7CLK              STM32_CSI_CK
+#define STM32_UART8CLK              STM32_CSI_CK
 #elif STM32_USART234578SEL == STM32_USART234578SEL_LSE_CK
 #define STM32_USART2CLK             STM32_LSE_CK
 #define STM32_USART3CLK             STM32_LSE_CK
-#define STM32_USART4CLK             STM32_LSE_CK
-#define STM32_USART6CLK             STM32_LSE_CK
-#define STM32_USART7CLK             STM32_LSE_CK
-#define STM32_USART8CLK             STM32_LSE_CK
+#define STM32_UART4CLK              STM32_LSE_CK
+#define STM32_UART6CLK              STM32_LSE_CK
+#define STM32_UART7CLK              STM32_LSE_CK
+#define STM32_UART8CLK              STM32_LSE_CK
 #else
 #error "invalid source selected for STM32_USART234578SEL clock"
 #endif

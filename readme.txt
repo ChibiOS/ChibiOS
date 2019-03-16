@@ -77,6 +77,7 @@
 - LIB: Re-introduced missing chGuardedPoolGetCounterI() function to guarded
        pools allocator.
 - NEW: Extra timer checks in STM32 ST driver.
+- FIX: Fixed various UART clock naming errors in STM32H7 HAL (bug #1021).
 - FIX: Fixed missing STM32L4+ check in GPIOv3 driver (bug #1020).
 - FIX: Fixed call to obsolete dmaStreamRelease() in STM32 I2Cv3 driver
        (bug #1019).
