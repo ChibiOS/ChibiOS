@@ -133,6 +133,7 @@
 #define STM32_ETH_NUMBER                    61
 
 /* EXTI attributes.*/
+#define STM32_EXTI_ENHANCED
 #define STM32_EXTI_NUM_LINES                34
 #define STM32_EXTI_IMR1_MASK                0x1F800000U
 #define STM32_EXTI_IMR2_MASK                0xFFFFFFFCU

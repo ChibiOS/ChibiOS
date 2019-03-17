@@ -45,7 +45,7 @@
 /** @} */
 
 /* Handling differences in ST headers.*/
-#if !defined(STM32L4XX) && !defined(STM32L4XXP)
+#if !defined(STM32H7XX) && !defined(STM32L4XX) && !defined(STM32L4XXP)
 #define EMR1    EMR
 #define IMR1    IMR
 #define PR1     PR

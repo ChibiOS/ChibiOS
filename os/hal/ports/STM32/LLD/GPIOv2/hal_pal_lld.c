@@ -160,13 +160,8 @@ void _pal_lld_enablepadevent(ioportid_t port,
   /* Multiple channel setting of the same channel not allowed, first disable
      it. This is done because on STM32 the same channel cannot be mapped on
      multiple ports.*/
-#if defined(STM32_EXTI_ENHANCED)
   osalDbgAssert(((EXTI->RTSR1 & padmask) == 0U) &&
                 ((EXTI->FTSR1 & padmask) == 0U), "channel already in use");
-#else
-  osalDbgAssert(((EXTI->RTSR & padmask) == 0U) &&
-                ((EXTI->FTSR & padmask) == 0U), "channel already in use");
-#endif
 
   /* Index and mask of the SYSCFG CR register to be used.*/
   cridx  = (uint32_t)pad >> 2U;
@@ -181,7 +176,6 @@ void _pal_lld_enablepadevent(ioportid_t port,
   SYSCFG->EXTICR[cridx] = (SYSCFG->EXTICR[cridx] & crmask) | (portidx << croff);
 
   /* Programming edge registers.*/
-#if defined(STM32_EXTI_ENHANCED)
   if (mode & PAL_EVENT_MODE_RISING_EDGE)
     EXTI->RTSR1 |= padmask;
   else
@@ -192,21 +186,12 @@ void _pal_lld_enablepadevent(ioportid_t port,
     EXTI->FTSR1 &= ~padmask;
 
   /* Programming interrupt and event registers.*/
+#if defined(STM32_EXTI_ENHANCED)
   EXTI_D1->IMR1 |= padmask;
   EXTI_D1->EMR1 &= ~padmask;
 #else
-  if (mode & PAL_EVENT_MODE_RISING_EDGE)
-    EXTI->RTSR |= padmask;
-  else
-    EXTI->RTSR &= ~padmask;
-  if (mode & PAL_EVENT_MODE_FALLING_EDGE)
-    EXTI->FTSR |= padmask;
-  else
-    EXTI->FTSR &= ~padmask;
-
-  /* Programming interrupt and event registers.*/
-  EXTI->IMR |= padmask;
-  EXTI->EMR &= ~padmask;
+  EXTI->IMR1 |= padmask;
+  EXTI->EMR1 &= ~padmask;
 #endif
 }
 
@@ -222,13 +207,8 @@ void _pal_lld_enablepadevent(ioportid_t port,
 void _pal_lld_disablepadevent(ioportid_t port, iopadid_t pad) {
   uint32_t padmask, rtsr1, ftsr1;
 
-#if defined(STM32_EXTI_ENHANCED)
   rtsr1 = EXTI->RTSR1;
   ftsr1 = EXTI->FTSR1;
-#else
-  rtsr1 = EXTI->RTSR;
-  ftsr1 = EXTI->FTSR;
-#endif
 
   /* Mask of the pad.*/
   padmask = 1U << (uint32_t)pad;
@@ -258,11 +238,11 @@ void _pal_lld_disablepadevent(ioportid_t port, iopadid_t pad) {
     EXTI_D1->PR1    = padmask;
 #else
     /* Disabling channel.*/
-    EXTI->IMR  &= ~padmask;
-    EXTI->EMR  &= ~padmask;
-    EXTI->RTSR  = rtsr1 & ~padmask;
-    EXTI->FTSR  = ftsr1 & ~padmask;
-    EXTI->PR    = padmask;
+    EXTI->IMR1  &= ~padmask;
+    EXTI->EMR1  &= ~padmask;
+    EXTI->RTSR1  = rtsr1 & ~padmask;
+    EXTI->FTSR1  = ftsr1 & ~padmask;
+    EXTI->PR1    = padmask;
 #endif
 
 #if PAL_USE_CALLBACKS || PAL_USE_WAIT

@@ -130,7 +130,7 @@
 #else
 #define STM32_EXTI_NUM_LINES                24
 #endif
-#define STM32_EXTI_IMR_MASK                 0x00000000U
+#define STM32_EXTI_IMR1_MASK                0x00000000U
 
 #if (STM32L1XX_PROD_CAT == 1) || (STM32L1XX_PROD_CAT == 2) ||               \
     (STM32L1XX_PROD_CAT == 3) || defined(__DOXYGEN__)
