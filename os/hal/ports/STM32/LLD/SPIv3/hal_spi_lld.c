@@ -1081,6 +1081,10 @@ uint32_t spi_lld_polled_exchange(SPIDriver *spip, uint32_t frame) {
 
   spip->spi->CR1 |= SPI_CR1_CSTART;
 
+  /* wait for room in TX FIFO.*/
+  while ((spip->spi->SR & SPI_SR_TXP) == 0U)
+    ;
+
   /* Data register must be accessed with the appropriate data size.
      Byte size access (uint8_t *) for transactions that are <= 8-bit etc.*/
   if (dsize <= 8U) {

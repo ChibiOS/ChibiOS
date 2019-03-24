@@ -845,6 +845,7 @@
 #include "mpu_v7m.h"
 #include "stm32_isr.h"
 #include "stm32_dma.h"
+#include "stm32_exti.h"
 #include "stm32_rcc.h"
 
 #ifdef __cplusplus

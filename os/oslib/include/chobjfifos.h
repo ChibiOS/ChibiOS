@@ -119,7 +119,7 @@ extern "C" {
  * @param[in] objalign  required objects alignment
  * @param[in] objbuf    pointer to the buffer of objects, it must be able
  *                      to hold @p objn objects of @p objsize size with
- *                      @p objealign alignment
+ *                      @p objalign alignment
  * @param[in] msgbuf    pointer to the buffer of messages, it must be able
  *                      to hold @p objn messages
  *
@@ -145,8 +145,7 @@ static inline void chFifoObjectInitAligned(objects_fifo_t *ofp, size_t objsize,
  * @param[in] objsize   size of objects
  * @param[in] objn      number of objects available
  * @param[in] objbuf    pointer to the buffer of objects, it must be able
- *                      to hold @p objn objects of @p objsize size with
- *                      @p objealign alignment
+ *                      to hold @p objn objects of @p objsize size
  * @param[in] msgbuf    pointer to the buffer of messages, it must be able
  *                      to hold @p objn messages
  *

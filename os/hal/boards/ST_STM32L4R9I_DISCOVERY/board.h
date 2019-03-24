@@ -611,7 +611,7 @@
  * PC10 - SDMMC_1_D2                (alternate 12).
  * PC11 - SDMMC_1_D3                (alternate 12).
  * PC12 - SDMMC_1_CK                (alternate 12).
- * PC13 - JOY_SEL BUTTON            (input floating).
+ * PC13 - JOY_SEL BUTTON            (input pulldown).
  * PC14 - PIN14                     (analog).
  * PC15 - PIN15                     (analog).
  */
@@ -676,7 +676,7 @@
                                      PIN_PUPDR_FLOATING(GPIOC_SDMMC_1_D2) | \
                                      PIN_PUPDR_FLOATING(GPIOC_SDMMC_1_D3) | \
                                      PIN_PUPDR_FLOATING(GPIOC_SDMMC_1_CK) | \
-                                     PIN_PUPDR_FLOATING(GPIOC_JOY_SEL) |    \
+                                     PIN_PUPDR_PULLDOWN(GPIOC_JOY_SEL) |    \
                                      PIN_PUPDR_FLOATING(GPIOC_PIN14) |      \
                                      PIN_PUPDR_FLOATING(GPIOC_PIN15))
 #define VAL_GPIOC_ODR               (PIN_ODR_LOW(GPIOC_PIN0) |              \

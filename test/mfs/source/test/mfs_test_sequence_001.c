@@ -47,54 +47,6 @@
 #include <string.h>
 #include "hal_mfs.h"
 
-static const uint8_t pattern1[] = {
-  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
-};
-
-static const uint8_t pattern2[] = {
-  16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-  32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47
-};
-
-static const uint8_t pattern3[] = {
-  48, 49, 50, 51, 52, 53, 54, 55, 56, 57
-};
-
-static const uint8_t pattern512[] = {
-  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-  16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-  32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
-  48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
-  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-  16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-  32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
-  48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
-  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-  16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-  32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
-  48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
-  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-  16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-  32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
-  48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
-  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-  16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-  32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
-  48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
-  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-  16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-  32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
-  48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
-  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-  16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-  32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
-  48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
-  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-  16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-  32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
-  48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63
-};
-
 /****************************************************************************
  * Test cases.
  ****************************************************************************/
@@ -136,6 +88,7 @@ static void mfs_test_001_001_execute(void) {
     ferr = bank_erase(MFS_BANK_1);
     test_assert(ferr == FLASH_NO_ERROR, "Bank 1 erase failure");
   }
+  test_end_step(1);
 
   /* [1.1.2] Calling mfsStart() on an uninitialized flash array,
      MFS_NO_ERROR is expected.*/
@@ -146,6 +99,7 @@ static void mfs_test_001_001_execute(void) {
     err = mfsStart(&mfs1, &mfscfg1);
     test_assert(err == MFS_NO_ERROR, "initialization error with erased flash");
   }
+  test_end_step(2);
 
   /* [1.1.3] Calling mfsStart() on a newly initialized flash array,
      MFS_NO_ERROR is expected.*/
@@ -156,6 +110,7 @@ static void mfs_test_001_001_execute(void) {
     err = mfsStart(&mfs1, &mfscfg1);
     test_assert(err == MFS_NO_ERROR, "initialization error with initialized flash");
   }
+  test_end_step(3);
 }
 
 static const testcase_t mfs_test_001_001 = {
@@ -203,6 +158,7 @@ static void mfs_test_001_002_execute(void) {
                   "found a record that should not exists");
     }
   }
+  test_end_step(1);
 }
 
 static const testcase_t mfs_test_001_002 = {
@@ -253,6 +209,7 @@ static void mfs_test_001_003_execute(void) {
     mfs_error_t err = mfsReadRecord(&mfs1, 1, &size, mfs_buffer);
     test_assert(err == MFS_ERR_NOT_FOUND , "record was already present");
   }
+  test_end_step(1);
 
   /* [1.3.2] Creating the record then retrieving it again, MFS_NO_ERROR
      is expected, record content and size are compared with the
@@ -261,14 +218,15 @@ static void mfs_test_001_003_execute(void) {
   {
     mfs_error_t err;
 
-    err = mfsWriteRecord(&mfs1, 1, sizeof pattern1, pattern1);
+    err = mfsWriteRecord(&mfs1, 1, sizeof mfs_pattern16, mfs_pattern16);
     test_assert(err == MFS_NO_ERROR, "error creating the record");
     size = sizeof mfs_buffer;
     err = mfsReadRecord(&mfs1, 1, &size, mfs_buffer);
     test_assert(err == MFS_NO_ERROR, "record not found");
-    test_assert(size == sizeof pattern1, "unexpected record length");
-    test_assert(memcmp(pattern1, mfs_buffer, size) == 0, "wrong record content");
+    test_assert(size == sizeof mfs_pattern16, "unexpected record length");
+    test_assert(memcmp(mfs_pattern16, mfs_buffer, size) == 0, "wrong record content");
   }
+  test_end_step(2);
 
   /* [1.3.3] Updating the record then retrieving it again, MFS_NO_ERROR
      is expected, record content and size are compared with the
@@ -277,14 +235,15 @@ static void mfs_test_001_003_execute(void) {
   {
     mfs_error_t err;
 
-    err = mfsWriteRecord(&mfs1, 1, sizeof pattern2, pattern2);
+    err = mfsWriteRecord(&mfs1, 1, sizeof mfs_pattern32, mfs_pattern32);
     test_assert(err == MFS_NO_ERROR, "error updating the record");
     size = sizeof mfs_buffer;
     err = mfsReadRecord(&mfs1, 1, &size, mfs_buffer);
     test_assert(err == MFS_NO_ERROR, "record not found");
-    test_assert(size == sizeof pattern2, "unexpected record length");
-    test_assert(memcmp(pattern2, mfs_buffer, size) == 0, "wrong record content");
+    test_assert(size == sizeof mfs_pattern32, "unexpected record length");
+    test_assert(memcmp(mfs_pattern32, mfs_buffer, size) == 0, "wrong record content");
   }
+  test_end_step(3);
 
   /* [1.3.4] Erasing the record then trying to retrieve it again,
      MFS_NO_ERROR is expected on erase, MFS_ERR_NOT_FOUND is expected
@@ -299,6 +258,7 @@ static void mfs_test_001_003_execute(void) {
     err = mfsReadRecord(&mfs1, 1, &size, mfs_buffer);
     test_assert(err == MFS_ERR_NOT_FOUND, "record not erased");
   }
+  test_end_step(4);
 }
 
 static const testcase_t mfs_test_001_003 = {
@@ -341,13 +301,14 @@ static void mfs_test_001_004_execute(void) {
   {
     mfs_error_t err;
 
-    err = mfsWriteRecord(&mfs1, 1, sizeof pattern1, pattern1);
+    err = mfsWriteRecord(&mfs1, 1, sizeof mfs_pattern16, mfs_pattern16);
     test_assert(err == MFS_NO_ERROR, "error creating record 1");
-    err = mfsWriteRecord(&mfs1, 2, sizeof pattern2, pattern2);
+    err = mfsWriteRecord(&mfs1, 2, sizeof mfs_pattern32, mfs_pattern32);
     test_assert(err == MFS_NO_ERROR, "error creating record 2");
-    err = mfsWriteRecord(&mfs1, 3, sizeof pattern3, pattern3);
+    err = mfsWriteRecord(&mfs1, 3, sizeof mfs_pattern10, mfs_pattern10);
     test_assert(err == MFS_NO_ERROR, "error creating record 3");
   }
+  test_end_step(1);
 
   /* [1.4.2] Records must exist.*/
   test_set_step(2);
@@ -365,6 +326,7 @@ static void mfs_test_001_004_execute(void) {
     err = mfsReadRecord(&mfs1, 3, &size, mfs_buffer);
     test_assert(err == MFS_NO_ERROR, "record 2 not present");
   }
+  test_end_step(2);
 
   /* [1.4.3] Re-mounting, records must still exist.*/
   test_set_step(3);
@@ -384,6 +346,7 @@ static void mfs_test_001_004_execute(void) {
     err = mfsReadRecord(&mfs1, 3, &size, mfs_buffer);
     test_assert(err == MFS_NO_ERROR, "record 2 not present");
   }
+  test_end_step(3);
 
   /* [1.4.4] Erasing storage and verify that the records have been
      removed, MFS_NO_ERROR is expected on erase, MFS_ERR_NOT_FOUND is
@@ -405,6 +368,7 @@ static void mfs_test_001_004_execute(void) {
     err = mfsReadRecord(&mfs1, 3, &size, mfs_buffer);
     test_assert(err == MFS_ERR_NOT_FOUND, "record 2 still present");
   }
+  test_end_step(4);
 }
 
 static const testcase_t mfs_test_001_004 = {
@@ -448,24 +412,25 @@ static void mfs_test_001_005_execute(void) {
   {
     mfs_id_t id;
     mfs_id_t id_max = (mfscfg1.bank_size - sizeof (mfs_bank_header_t)) /
-                      (sizeof (mfs_data_header_t) + sizeof pattern512);
+                      (sizeof (mfs_data_header_t) + sizeof mfs_pattern512);
 
     for (id = 1; id <= id_max; id++) {
       mfs_error_t err;
       size_t size;
 
-      err = mfsWriteRecord(&mfs1, id, sizeof pattern512, pattern512);
+      err = mfsWriteRecord(&mfs1, id, sizeof mfs_pattern512, mfs_pattern512);
       test_assert(err == MFS_NO_ERROR, "error creating the record");
       size = sizeof mfs_buffer;
       err = mfsReadRecord(&mfs1, id, &size, mfs_buffer);
       test_assert(err == MFS_NO_ERROR,
                   "record not found");
-      test_assert(size == sizeof pattern512,
+      test_assert(size == sizeof mfs_pattern512,
                   "unexpected record length");
-      test_assert(memcmp(pattern512, mfs_buffer, size) == 0,
+      test_assert(memcmp(mfs_pattern512, mfs_buffer, size) == 0,
                   "wrong record content");
     }
   }
+  test_end_step(1);
 
   /* [1.5.2] Creating one more record, should fail, MFS_ERR_OUT_OF_MEM
      is expected.*/
@@ -473,11 +438,12 @@ static void mfs_test_001_005_execute(void) {
   {
     mfs_error_t err;
     mfs_id_t id_max = (mfscfg1.bank_size - sizeof (mfs_bank_header_t)) /
-                      (sizeof (mfs_data_header_t) + sizeof pattern512);
+                      (sizeof (mfs_data_header_t) + sizeof mfs_pattern512);
 
-    err = mfsWriteRecord(&mfs1, id_max, sizeof pattern512 , pattern512);
+    err = mfsWriteRecord(&mfs1, id_max, sizeof mfs_pattern512 , mfs_pattern512);
     test_assert(err == MFS_ERR_OUT_OF_MEM, "creation didn't fail");
   }
+  test_end_step(2);
 
   /* [1.5.3] Adding a smaller record to fill the final gap. A
      reinitialization is performed and MFS_NO_ERROR is expected.*/
@@ -493,7 +459,7 @@ static void mfs_test_001_005_execute(void) {
     if (remaining > sizeof (mfs_data_header_t) * 2) {
       err = mfsWriteRecord(&mfs1, MFS_CFG_MAX_RECORDS,
                            remaining - (sizeof (mfs_data_header_t) * 2),
-                           pattern512);
+                           mfs_pattern512);
       test_assert(err == MFS_NO_ERROR, "error filling remaining space");
       err = mfsEraseRecord(&mfs1, MFS_CFG_MAX_RECORDS);
       test_assert(err == MFS_NO_ERROR, "error filling remaining space");
@@ -515,6 +481,7 @@ static void mfs_test_001_005_execute(void) {
     err = mfsStart(&mfs1, &mfscfg1);
     test_assert(err == MFS_NO_ERROR, "initialization error");
   }
+  test_end_step(3);
 }
 
 static const testcase_t mfs_test_001_005 = {
@@ -566,24 +533,25 @@ static void mfs_test_001_006_execute(void) {
   {
     mfs_id_t id;
     mfs_id_t id_max = (mfscfg1.bank_size - sizeof (mfs_bank_header_t)) /
-                      (sizeof (mfs_data_header_t) + sizeof pattern512);
+                      (sizeof (mfs_data_header_t) + sizeof mfs_pattern512);
 
     for (id = 1; id <= id_max; id++) {
       mfs_error_t err;
       size_t size;
 
-      err = mfsWriteRecord(&mfs1, id, sizeof pattern512, pattern512);
+      err = mfsWriteRecord(&mfs1, id, sizeof mfs_pattern512, mfs_pattern512);
       test_assert(err == MFS_NO_ERROR, "error creating the record");
       size = sizeof mfs_buffer;
       err = mfsReadRecord(&mfs1, id, &size, mfs_buffer);
       test_assert(err == MFS_NO_ERROR,
                   "record not found");
-      test_assert(size == sizeof pattern512,
+      test_assert(size == sizeof mfs_pattern512,
                   "unexpected record length");
-      test_assert(memcmp(pattern512, mfs_buffer, size) == 0,
+      test_assert(memcmp(mfs_pattern512, mfs_buffer, size) == 0,
                   "wrong record content");
     }
   }
+  test_end_step(1);
 
   /* [1.6.2] Erasing one record, MFS_NO_ERROR is expected.*/
   test_set_step(2);
@@ -597,6 +565,7 @@ static void mfs_test_001_006_execute(void) {
     err = mfsReadRecord(&mfs1, 1, &size, mfs_buffer);
     test_assert(err == MFS_ERR_NOT_FOUND, "record not erased");
   }
+  test_end_step(2);
 
   /* [1.6.3] Writing one more record triggers garbage collection,
      MFS_WARN_GC is expected, KS state is checked for correctness after
@@ -607,17 +576,19 @@ static void mfs_test_001_006_execute(void) {
     size_t size;
 
     test_assert(mfs1.current_counter == 1, "not first instance");
-    err = mfsWriteRecord(&mfs1, 1, sizeof pattern512, pattern512);
+    err = mfsWriteRecord(&mfs1, 1, sizeof mfs_pattern512, mfs_pattern512);
     test_assert(err == MFS_WARN_GC, "error creating the record");
     test_assert(mfs1.current_counter == 2, "not second instance");
     size = sizeof mfs_buffer;
     err = mfsReadRecord(&mfs1, 1, &size, mfs_buffer);
     test_assert(err == MFS_NO_ERROR, "record not found");
-    test_assert(size == sizeof pattern512, "unexpected record length");
-    test_assert(memcmp(pattern512, mfs_buffer, size) == 0, "wrong record content");
+    test_assert(size == sizeof mfs_pattern512, "unexpected record length");
+    test_assert(memcmp(mfs_pattern512, mfs_buffer, size) == 0,
+                "wrong record content");
     test_assert(mfs1.current_bank == MFS_BANK_1, "unexpected bank");
     test_assert(bank_verify_erased(MFS_BANK_0) == FLASH_NO_ERROR, "bank 0 not erased");
   }
+  test_end_step(3);
 
   /* [1.6.4] Checking for all records in the new bank, MFS_NOERROR is
      expected for each record.*/
@@ -625,7 +596,7 @@ static void mfs_test_001_006_execute(void) {
   {
     mfs_id_t id;
     mfs_id_t id_max = (mfscfg1.bank_size - sizeof (mfs_bank_header_t)) /
-                      (sizeof (mfs_data_header_t) + sizeof pattern512);
+                      (sizeof (mfs_data_header_t) + sizeof mfs_pattern512);
 
     for (id = 1; id <= MFS_CFG_MAX_RECORDS; id++) {
       mfs_error_t err;
@@ -635,8 +606,9 @@ static void mfs_test_001_006_execute(void) {
         size = sizeof mfs_buffer;
         err = mfsReadRecord(&mfs1, id, &size, mfs_buffer);
         test_assert(err == MFS_NO_ERROR, "record not found");
-        test_assert(size == sizeof pattern512, "unexpected record length");
-        test_assert(memcmp(pattern512, mfs_buffer, size) == 0, "wrong record content");
+        test_assert(size == sizeof mfs_pattern512, "unexpected record length");
+        test_assert(memcmp(mfs_pattern512, mfs_buffer, size) == 0,
+                    "wrong record content");
       }
       else {
         size = sizeof mfs_buffer;
@@ -645,6 +617,7 @@ static void mfs_test_001_006_execute(void) {
       }
     }
   }
+  test_end_step(4);
 
   /* [1.6.5] Erasing one record, MFS_NO_ERROR is expected.*/
   test_set_step(5);
@@ -658,6 +631,7 @@ static void mfs_test_001_006_execute(void) {
     err = mfsReadRecord(&mfs1, 1, &size, mfs_buffer);
     test_assert(err == MFS_ERR_NOT_FOUND, "record not erased");
   }
+  test_end_step(5);
 
   /* [1.6.6] Writing one more record triggers garbage collection,
      MFS_WARN_GC is expected, MFS object state is checked for
@@ -668,17 +642,19 @@ static void mfs_test_001_006_execute(void) {
     size_t size;
 
     test_assert(mfs1.current_counter == 2, "not second instance");
-    err = mfsWriteRecord(&mfs1, 1, sizeof pattern512, pattern512);
+    err = mfsWriteRecord(&mfs1, 1, sizeof mfs_pattern512, mfs_pattern512);
     test_assert(err == MFS_WARN_GC, "error creating the record");
     test_assert(mfs1.current_counter == 3, "not third instance");
     size = sizeof mfs_buffer;
     err = mfsReadRecord(&mfs1, 1, &size, mfs_buffer);
     test_assert(err == MFS_NO_ERROR, "record not found");
-    test_assert(size == sizeof pattern512, "unexpected record length");
-    test_assert(memcmp(pattern512, mfs_buffer, size) == 0, "wrong record content");
+    test_assert(size == sizeof mfs_pattern512, "unexpected record length");
+    test_assert(memcmp(mfs_pattern512, mfs_buffer, size) == 0,
+                "wrong record content");
     test_assert(mfs1.current_bank == MFS_BANK_0, "unexpected bank");
     test_assert(bank_verify_erased(MFS_BANK_1) == FLASH_NO_ERROR, "bank 1 not erased");
   }
+  test_end_step(6);
 
   /* [1.6.7] Checking for all records in the new bank, MFS_NO_ERROR is
      expected for each record.*/
@@ -686,7 +662,7 @@ static void mfs_test_001_006_execute(void) {
   {
     mfs_id_t id;
     mfs_id_t id_max = (mfscfg1.bank_size - sizeof (mfs_bank_header_t)) /
-                      (sizeof (mfs_data_header_t) + sizeof pattern512);
+                      (sizeof (mfs_data_header_t) + sizeof mfs_pattern512);
 
     for (id = 1; id <= MFS_CFG_MAX_RECORDS; id++) {
       mfs_error_t err;
@@ -696,8 +672,9 @@ static void mfs_test_001_006_execute(void) {
         size = sizeof mfs_buffer;
         err = mfsReadRecord(&mfs1, id, &size, mfs_buffer);
         test_assert(err == MFS_NO_ERROR, "record not found");
-        test_assert(size == sizeof pattern512, "unexpected record length");
-        test_assert(memcmp(pattern512, mfs_buffer, size) == 0, "wrong record content");
+        test_assert(size == sizeof mfs_pattern512, "unexpected record length");
+        test_assert(memcmp(mfs_pattern512, mfs_buffer, size) == 0,
+                    "wrong record content");
       }
       else {
         size = sizeof mfs_buffer;
@@ -706,6 +683,7 @@ static void mfs_test_001_006_execute(void) {
       }
     }
   }
+  test_end_step(7);
 }
 
 static const testcase_t mfs_test_001_006 = {
@@ -749,21 +727,23 @@ static void mfs_test_001_007_execute(void) {
   {
     mfs_id_t id;
     mfs_id_t id_max = (mfscfg1.bank_size - sizeof (mfs_bank_header_t)) /
-                      (sizeof (mfs_data_header_t) + (sizeof pattern512 / 2));
+                      (sizeof (mfs_data_header_t) + (sizeof mfs_pattern512 / 2));
 
     for (id = 1; id <= id_max; id++) {
       mfs_error_t err;
       size_t size;
 
-      err = mfsWriteRecord(&mfs1, id, (sizeof pattern512 / 2), pattern512);
+      err = mfsWriteRecord(&mfs1, id, (sizeof mfs_pattern512 / 2), mfs_pattern512);
       test_assert(err == MFS_NO_ERROR, "error creating the record");
       size = sizeof mfs_buffer;
       err = mfsReadRecord(&mfs1, id, &size, mfs_buffer);
       test_assert(err == MFS_NO_ERROR, "record not found");
-      test_assert(size == (sizeof pattern512 / 2), "unexpected record length");
-      test_assert(memcmp(pattern512, mfs_buffer, size) == 0, "wrong record content");
+      test_assert(size == (sizeof mfs_pattern512 / 2), "unexpected record length");
+      test_assert(memcmp(mfs_pattern512, mfs_buffer, size) == 0,
+                  "wrong record content");
     }
   }
+  test_end_step(1);
 
   /* [1.7.2] Erase records until the flash bank is filled entirely.*/
   test_set_step(2);
@@ -772,9 +752,9 @@ static void mfs_test_001_007_execute(void) {
     size_t size;
     mfs_id_t id;
     mfs_id_t id_max = (mfscfg1.bank_size - sizeof (mfs_bank_header_t)) /
-                      (sizeof (mfs_data_header_t) + (sizeof pattern512 / 2));
+                      (sizeof (mfs_data_header_t) + (sizeof mfs_pattern512 / 2));
     mfs_id_t n = ((mfscfg1.bank_size - sizeof (mfs_bank_header_t)) -
-                  (id_max * (sizeof (mfs_data_header_t) + (sizeof pattern512 / 2)))) /
+                  (id_max * (sizeof (mfs_data_header_t) + (sizeof mfs_pattern512 / 2)))) /
                  sizeof (mfs_data_header_t);
 
     for (id = 1; id <= n; id++) {
@@ -785,6 +765,7 @@ static void mfs_test_001_007_execute(void) {
       test_assert(err == MFS_ERR_NOT_FOUND, "record not erased");
     }
   }
+  test_end_step(2);
 
   /* [1.7.3] Erasing one more record triggers garbage collection,
      MFS_WARN_GC is expected, KS state is checked for correctness after
@@ -794,7 +775,7 @@ static void mfs_test_001_007_execute(void) {
     mfs_error_t err;
     size_t size;
     mfs_id_t id_max = (mfscfg1.bank_size - sizeof (mfs_bank_header_t)) /
-                      (sizeof (mfs_data_header_t) + (sizeof pattern512 / 2));
+                      (sizeof (mfs_data_header_t) + (sizeof mfs_pattern512 / 2));
 
     test_assert(mfs1.current_counter == 1, "not first instance");
     err = mfsEraseRecord(&mfs1, id_max);
@@ -806,6 +787,7 @@ static void mfs_test_001_007_execute(void) {
     test_assert(mfs1.current_bank == MFS_BANK_1, "unexpected bank");
     test_assert(bank_verify_erased(MFS_BANK_0) == FLASH_NO_ERROR, "bank 0 not erased");
   }
+  test_end_step(3);
 }
 
 static const testcase_t mfs_test_001_007 = {

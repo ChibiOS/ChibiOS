@@ -981,8 +981,8 @@ void i2c_lld_stop(I2CDriver *i2cp) {
 #endif
 #if defined(STM32_I2C_BDMA_REQUIRED)
     {
-      bdmaStreamRelease(i2cp->rx.bdma);
-      bdmaStreamRelease(i2cp->tx.bdma);
+      bdmaStreamFreeI(i2cp->rx.bdma);
+      bdmaStreamFreeI(i2cp->tx.bdma);
     }
 #endif
 #if defined(STM32_I2C_DMA_REQUIRED) && defined(STM32_I2C_BDMA_REQUIRED)
@@ -990,8 +990,8 @@ void i2c_lld_stop(I2CDriver *i2cp) {
 #endif
 #if defined(STM32_I2C_DMA_REQUIRED)
     {
-      dmaStreamRelease(i2cp->rx.dma);
-      dmaStreamRelease(i2cp->tx.dma);
+      dmaStreamFreeI(i2cp->rx.dma);
+      dmaStreamFreeI(i2cp->tx.dma);
     }
 #endif
 

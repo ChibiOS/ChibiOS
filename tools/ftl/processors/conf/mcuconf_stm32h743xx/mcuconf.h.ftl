@@ -44,6 +44,7 @@
 
 #define STM32H7xx_MCUCONF
 #define STM32H743_MCUCONF
+#define STM32H753_MCUCONF
 
 /*
  * General settings.
