@@ -86,6 +86,7 @@
 *****************************************************************************
 
 *** 18.2.3 ***
+- NEW: Added a check on defective GCC versions, Cortex-M0 only.
 - NEW: Extra timer checks in STM32 ST driver.
 - FIX: Fixed various UART clock naming errors in STM32H7 HAL (bug #1021).
 - FIX: Fixed wrong ADCSEL definitions in STM32H7 HAL (bug #1016).
