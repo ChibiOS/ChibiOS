@@ -53,6 +53,12 @@
 #error "STM32L1xx device not specified"
 #endif
 
+#if defined(STM32L100xB) || defined(STM32L100xBA) ||  defined(STM32L100xC)
+#define STM32L1XX_VALUE_LINE                TRUE
+#else
+#define STM32L1XX_VALUE_LINE                FALSE
+#endif
+
 /*===========================================================================*/
 /* Platform capabilities.                                                    */
 /*===========================================================================*/
@@ -197,7 +203,27 @@
 #endif
 #define STM32_RTC_HAS_PERIODIC_WAKEUPS      TRUE
 #define STM32_RTC_NUM_ALARMS                2
-#define STM32_RTC_HAS_INTERRUPTS            FALSE
+#if STM32L1XX_VALUE_LINE || defined(__DOXYGEN__)
+#define STM32_RTC_STORAGE_SIZE              20
+#elif (STM32L1XX_PROD_CAT == 1) || (STM32L1XX_PROD_CAT == 2)
+#define STM32_RTC_STORAGE_SIZE              80
+#else
+#define STM32_RTC_STORAGE_SIZE              128
+#endif
+#define STM32_RTC_TAMP_STAMP_HANDLER        Vector48
+#define STM32_RTC_WKUP_HANDLER              Vector4C
+#define STM32_RTC_ALARM_HANDLER             VectorE4
+#define STM32_RTC_TAMP_STAMP_NUMBER         3
+#define STM32_RTC_WKUP_NUMBER               1
+#define STM32_RTC_ALARM_NUMBER              2
+#define STM32_RTC_ALARM_EXTI                17
+#define STM32_RTC_TAMP_STAMP_EXTI           19
+#define STM32_RTC_WKUP_EXTI                 20
+#define STM32_RTC_IRQ_ENABLE() do {                                         \
+  nvicEnableVector(STM32_RTC_TAMP_STAMP_NUMBER, STM32_IRQ_EXTI19_PRIORITY); \
+  nvicEnableVector(STM32_RTC_WKUP_NUMBER, STM32_IRQ_EXTI20_PRIORITY);       \
+  nvicEnableVector(STM32_RTC_ALARM_NUMBER, STM32_IRQ_EXTI18_PRIORITY);      \
+} while (false)
 
 /* SDIO attributes.*/
 #define STM32_HAS_SDIO                      TRUE

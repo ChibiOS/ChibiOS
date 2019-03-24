@@ -75,6 +75,7 @@
 
 *** 19.1.2 ***
 - HAL: Added H753 to all H7 mcuconf.h files.
+- FIX: Fixed missing RTC definitions in STM32L1xx registry (bug #1023).
 - FIX: Fixed missing EXTI driver integration on some platforms (bug #1022).
 
 *** 19.1.1 ***
