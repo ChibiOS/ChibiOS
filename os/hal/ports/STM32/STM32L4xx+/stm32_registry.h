@@ -152,7 +152,7 @@
 /* EXTI attributes.*/
 #define STM32_EXTI_NUM_LINES                41
 #define STM32_EXTI_IMR1_MASK                0xFF820000U
-#define STM32_EXTI_IMR2_MASK                0xFFFFFE87U
+#define STM32_EXTI_IMR2_MASK                0xFFFFFF87U
 
 #define STM32_EXTI_LINE0_HANDLER            Vector58
 #define STM32_EXTI_LINE1_HANDLER            Vector5C
