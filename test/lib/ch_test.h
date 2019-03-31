@@ -105,6 +105,13 @@ typedef struct {
 #define test_set_step(step) test_step = (step)
 
 /**
+ * @brief   End step marker.
+ *
+ * @param[in] step      the step number
+ */
+#define test_end_step(step) (void)(step);
+
+/**
  * @brief   Test failure enforcement.
  * @note    This function can only be called from test_case execute context.
  *

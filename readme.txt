@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 19.1.2 ***
+- NEW: updates to MFS from trunk code.
+- NEW: updates to test library from trunk code.
 - HAL: Added H753 to all H7 mcuconf.h files.
 - FIX: Fixed invalid EXTI registry constant for STM32L4+ (bug #1024).
 - FIX: Fixed missing RTC definitions in STM32L1xx registry (bug #1023).
