@@ -25,14 +25,14 @@
  */
 MEMORY
 {
-    flash0  : org = 0x08000000, len = 1M        /* Flash as AXIM (writable) */
-    flash1  : org = 0x00200000, len = 1M        /* Flash as ITCM */
-    flash2  : org = 0x00000000, len = 0
-    flash3  : org = 0x00000000, len = 0
-    flash4  : org = 0x00000000, len = 0
-    flash5  : org = 0x00000000, len = 0
-    flash6  : org = 0x00000000, len = 0
-    flash7  : org = 0x00000000, len = 0
+    flash0 (RX) : org = 0x08000000, len = 1M        /* Flash as AXIM (writable) */
+    flash1 (RX) : org = 0x00200000, len = 1M        /* Flash as ITCM */
+    flash2 (RX) : org = 0x00000000, len = 0
+    flash3 (RX) : org = 0x00000000, len = 0
+    flash4 (RX) : org = 0x00000000, len = 0
+    flash5 (RX) : org = 0x00000000, len = 0
+    flash6 (RX) : org = 0x00000000, len = 0
+    flash7 (RX) : org = 0x00000000, len = 0
     ram0    : org = 0x20010000, len = 256k      /* SRAM1 + SRAM2 */
     ram1    : org = 0x20010000, len = 240k      /* SRAM1 */
     ram2    : org = 0x2004C000, len = 16k       /* SRAM2 */

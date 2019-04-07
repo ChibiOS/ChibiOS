@@ -138,7 +138,7 @@ void sdInit(void) {
 }
 
 /**
- * @brief   Initializes a generic full duplex driver object.
+ * @brief   Initializes a generic serial driver object.
  * @details The HW dependent part of the initialization has to be performed
  *          outside, usually in the hardware initialization code.
  *

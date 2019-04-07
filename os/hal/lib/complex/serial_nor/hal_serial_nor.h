@@ -118,7 +118,7 @@ typedef struct {
 struct SNORDriverVMT {
   _snor_flash_methods
 };
-  
+
 /**
  * @extends BaseFlash
  *
