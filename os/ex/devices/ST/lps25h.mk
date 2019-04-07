@@ -1,9 +1,9 @@
 # List of all the LPS25H device files.
-LPS25HSRC := $(CHIBIOS)/os/ex/ST/lps25h.c
+LPS25HSRC := $(CHIBIOS)/os/ex/devices/ST/lps25h.c
 
 # Required include directories
 LPS25HINC := $(CHIBIOS)/os/ex/include \
-             $(CHIBIOS)/os/ex/ST
+             $(CHIBIOS)/os/ex/devices/ST
 
 # Shared variables
 ALLCSRC += $(LPS25HSRC)

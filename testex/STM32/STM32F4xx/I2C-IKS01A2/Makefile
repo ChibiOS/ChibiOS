@@ -107,10 +107,10 @@ include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
 # EX files (optional).
-include $(CHIBIOS)/os/ex/ST/hts221.mk
-include $(CHIBIOS)/os/ex/ST/lps22hb.mk
-include $(CHIBIOS)/os/ex/ST/lsm303agr.mk
-include $(CHIBIOS)/os/ex/ST/lsm6dsl.mk
+include $(CHIBIOS)/os/ex/devices/ST/hts221.mk
+include $(CHIBIOS)/os/ex/devices/ST/lps22hb.mk
+include $(CHIBIOS)/os/ex/devices/ST/lsm303agr.mk
+include $(CHIBIOS)/os/ex/devices/ST/lsm6dsl.mk
 # Auto-build files in ./source recursively.
 include $(CHIBIOS)/tools/mk/autobuild.mk
 # Other files (optional).

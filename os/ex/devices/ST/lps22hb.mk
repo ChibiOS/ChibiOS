@@ -1,9 +1,9 @@
 # List of all the LPS22HB device files.
-LPS22HBSRC := $(CHIBIOS)/os/ex/ST/lps22hb.c
+LPS22HBSRC := $(CHIBIOS)/os/ex/devices/ST/lps22hb.c
 
 # Required include directories
 LPS22HBINC := $(CHIBIOS)/os/ex/include \
-             $(CHIBIOS)/os/ex/ST
+             $(CHIBIOS)/os/ex/devices/ST
 
 # Shared variables
 ALLCSRC += $(LPS22HBSRC)
