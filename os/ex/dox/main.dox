@@ -19,16 +19,15 @@
  * @brief   EXternal peripherals.
  * @details Under ChibiOS the set of the complex device driver interfaces 
  * dedicated to external peripherals is called the EX subsystem. The EX resides 
- * on top of HAL and is actually a set of libraries for external devices like
+ * on top of EX and is actually a set of libraries for external devices like
  * MEMS, Displays, Flash memories and so on. These libraries are the 
- * implementation of one or more Abstract Interfaces brought by HAL subsystem.
- * EX also relies on HAL normal drivers to interface the peripherals.
+ * implementation of one or more Abstract Interfaces brought by EX subsystem.
+ * EX also relies on EX normal drivers to interface the peripherals.
  *
  * @section ex_complex_drivers_architecture EX Complex Drivers Architecture
  * Each EX driver can be considered as a standalone Complex Device Driver. For 
  * ease of use these drivers are grouped by vendor:
  * - Bosch Devices
- * - Micron Technology Devices
  * - STMicroelectronics Devices
  * .
  *
@@ -36,12 +35,6 @@
  * This section contains all the drivers of devices produced by Bosch. 
  * Devices currently supported are MEMS and are:
  *   - @b BMP085: Digital pressure sensor;
- * .
- *
- * @section micron_devices Micron Technology Devices
- * This section contains all the drivers of devices produced by
- * Micron Technology. Devices currently supported are FLASH and are:
- *   - @b M25Q: Serial NOR flash;
  * .
  *
  * @section stmicroelectronics_devices STMicroelectronics Devices
@@ -57,17 +50,36 @@
  *   - @b LSM303DLHC: Ultra compact high performance e-compass;
  * .
  */
+ *
+ * @section hal_peripheral interfaces EX Peripheral Interfaces
+ * These are a particular case of EX Interfaces since they are an abstraction
+ * of a hardware.
+ */
 
- /**
+/**
+ * @defgroup EX_ABSTRACT_PERIPHERALS Peripheral Interfaces
+ * @brief   EX Abstract Peripheral Interfaces.
+ *
+ * @ingroup EX
+ */
+
+/**
+ * @defgroup EX_DEVICES Devices
+ * @brief   EX devices organized per vendor.
+ *
+ * @ingroup EX
+ */
+ 
+/**
  * @defgroup EX_BOSCH Bosch Devices
  * @brief   Bosch Devices.
  *
- * @ingroup EX
+ * @ingroup EX_DEVICES
  */
 
 /**
  * @defgroup EX_ST STMicroelectronics Devices
  * @brief   STMicroelectronics Devices.
  *
- * @ingroup EX
+ * @ingroup EX_DEVICES
  */

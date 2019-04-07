@@ -15,8 +15,8 @@
 */
 
 /**
- * @defgroup HAL_HYGROMETER Generic Hygrometer Interface
- * @brief   HAL Generic Hygrometer Interface.
+ * @defgroup EX_BAROMETER Generic Barometer Interface
+ * @brief   EX Generic Barometer Interface.
  *
- * @ingroup HAL_ABSTRACT_PERIPHERALS
+ * @ingroup EX_ABSTRACT_PERIPHERALS
  */

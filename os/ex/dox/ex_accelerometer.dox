@@ -15,8 +15,8 @@
 */
 
 /**
- * @defgroup HAL_COMPASS Generic Compass Interface
- * @brief   HAL Generic Compass Interface.
+ * @defgroup EX_ACCELEROMETER Generic Accelerometer Interface
+ * @brief   EX Generic Accelerometer Interface.
  *
- * @ingroup HAL_ABSTRACT_PERIPHERALS
+ * @ingroup EX_ABSTRACT_PERIPHERALS
  */

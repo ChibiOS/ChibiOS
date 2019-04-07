@@ -15,8 +15,8 @@
 */
 
 /**
- * @defgroup HAL_SENSORS Generic Sensor Interface
- * @brief   HAL Generic Sensor Interface.
+ * @defgroup EX_GYROSCOPE Generic Gyroscope Interface
+ * @brief   EX Generic Gyroscope Interface.
  *
- * @ingroup HAL_ABSTRACT_PERIPHERALS
+ * @ingroup EX_ABSTRACT_PERIPHERALS
  */

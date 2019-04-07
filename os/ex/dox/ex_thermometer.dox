@@ -15,8 +15,8 @@
 */
 
 /**
- * @defgroup HAL_BAROMETER Generic Barometer Interface
- * @brief   HAL Generic Barometer Interface.
+ * @defgroup EX_THERMOMETER Generic Thermometer Interface
+ * @brief   EX Generic Thermometer Interface.
  *
- * @ingroup HAL_ABSTRACT_PERIPHERALS
+ * @ingroup EX_ABSTRACT_PERIPHERALS
  */

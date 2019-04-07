@@ -815,9 +815,9 @@ WARN_LOGFILE           =
 
 INPUT                  = ./src \
                          ../../os/ex/dox \
-                         ../../os/ex/Bosch \
-                         ../../os/ex/ST \
-                         ../../os/hal/lib/peripherals/sensors
+                         ../../os/ex/devices/Bosch \
+                         ../../os/ex/devices/ST \
+                         ../../os/ex/include
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -1344,7 +1344,7 @@ GENERATE_HTMLHELP      = YES
 # written to the html output directory.
 # This tag requires that the tag GENERATE_HTMLHELP is set to YES.
 
-CHM_FILE               = ../../ChibiOS_HAL.chm
+CHM_FILE               = ../../ChibiOS_EX.chm
 
 # The HHC_LOCATION tag can be used to specify the location (absolute path
 # including file name) of the HTML help compiler (hhc.exe). If non-empty,

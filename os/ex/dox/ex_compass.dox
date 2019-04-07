@@ -15,20 +15,8 @@
 */
 
 /**
- * @defgroup HAL HAL
- * @brief   Hardware Abstraction Layer.
- * @details Under ChibiOS the set of the various device driver interfaces
- * is called the HAL subsystem: Hardware Abstraction Layer. The HAL is the
- * abstract interface between ChibiOS applications and hardware.
+ * @defgroup EX_COMPASS Generic Compass Interface
+ * @brief   EX Generic Compass Interface.
  *
- * @section hal_peripheral interfaces HAL Peripheral Interfaces
- * These are a particular case of HAL Interfaces since they are an abstraction
- * of a hardware.
- */
-
-/**
- * @defgroup HAL_ABSTRACT_PERIPHERALS Peripheral Interfaces
- * @brief   HAL Abstract Peripheral Interfaces.
- *
- * @ingroup HAL
+ * @ingroup EX_ABSTRACT_PERIPHERALS
  */

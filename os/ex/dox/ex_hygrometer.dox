@@ -15,8 +15,8 @@
 */
 
 /**
- * @defgroup HAL_THERMOMETER Generic Thermometer Interface
- * @brief   HAL Generic Thermometer Interface.
+ * @defgroup EX_HYGROMETER Generic Hygrometer Interface
+ * @brief   EX Generic Hygrometer Interface.
  *
- * @ingroup HAL_ABSTRACT_PERIPHERALS
+ * @ingroup EX_ABSTRACT_PERIPHERALS
  */
