@@ -208,8 +208,8 @@ typedef struct {
 /**
  * @brief   Gets the flash descriptor structure.
  *
- * @param[in] ip        pointer to a @p BaseFlash or derived class
- * @return              A flash device descriptor.
+ * @param[in] ip                    pointer to a @p BaseFlash or derived class
+ * @return                          A flash device descriptor.
  *
  * @api
  */
@@ -219,15 +219,15 @@ typedef struct {
 /**
  * @brief   Read operation.
  *
- * @param[in] ip        pointer to a @p BaseFlash or derived class
- * @param[in] offset    flash offset
- * @param[in] n         number of bytes to be read
- * @param[out] rp       pointer to the data buffer
- * @return              An error code.
- * @retval FLASH_NO_ERROR if there is no erase operation in progress.
- * @retval FLASH_BUSY_ERASING if there is an erase operation in progress.
- * @retval FLASH_ERROR_READ if the read operation failed.
- * @retval FLASH_ERROR_HW_FAILURE if access to the memory failed.
+ * @param[in] ip                    pointer to a @p BaseFlash or derived class
+ * @param[in] offset                flash offset
+ * @param[in] n                     number of bytes to be read
+ * @param[out] rp                   pointer to the data buffer
+ * @return                          An error code.
+ * @retval FLASH_NO_ERROR           if there is no erase operation in progress.
+ * @retval FLASH_BUSY_ERASING       if there is an erase operation in progress.
+ * @retval FLASH_ERROR_READ         if the read operation failed.
+ * @retval FLASH_ERROR_HW_FAILURE   if access to the memory failed.
  *
  * @api
  */
@@ -237,15 +237,15 @@ typedef struct {
 /**
  * @brief   Program operation.
  *
- * @param[in] ip        pointer to a @p BaseFlash or derived class
- * @param[in] offset    flash offset
- * @param[in] n         number of bytes to be programmed
- * @param[in] pp        pointer to the data buffer
- * @return              An error code.
- * @retval FLASH_NO_ERROR if there is no erase operation in progress.
- * @retval FLASH_BUSY_ERASING if there is an erase operation in progress.
- * @retval FLASH_ERROR_PROGRAM if the program operation failed.
- * @retval FLASH_ERROR_HW_FAILURE if access to the memory failed.
+ * @param[in] ip                    pointer to a @p BaseFlash or derived class
+ * @param[in] offset                flash offset
+ * @param[in] n                     number of bytes to be programmed
+ * @param[in] pp                    pointer to the data buffer
+ * @return                          An error code.
+ * @retval FLASH_NO_ERROR           if there is no erase operation in progress.
+ * @retval FLASH_BUSY_ERASING       if there is an erase operation in progress.
+ * @retval FLASH_ERROR_PROGRAM      if the program operation failed.
+ * @retval FLASH_ERROR_HW_FAILURE   if access to the memory failed.
  *
  * @api
  */
@@ -255,11 +255,11 @@ typedef struct {
 /**
  * @brief   Starts a whole-device erase operation.
  *
- * @param[in] ip        pointer to a @p BaseFlash or derived class
- * @return              An error code.
- * @retval FLASH_NO_ERROR if there is no erase operation in progress.
- * @retval FLASH_BUSY_ERASING if there is an erase operation in progress.
- * @retval FLASH_ERROR_HW_FAILURE if access to the memory failed.
+ * @param[in] ip                    pointer to a @p BaseFlash or derived class
+ * @return                          An error code.
+ * @retval FLASH_NO_ERROR           if there is no erase operation in progress.
+ * @retval FLASH_BUSY_ERASING       if there is an erase operation in progress.
+ * @retval FLASH_ERROR_HW_FAILURE   if access to the memory failed.
  *
  * @api
  */
@@ -269,12 +269,12 @@ typedef struct {
 /**
  * @brief   Starts an sector erase operation.
  *
- * @param[in] ip        pointer to a @p BaseFlash or derived class
- * @param[in] sector    sector to be erased
- * @return              An error code.
- * @retval FLASH_NO_ERROR if there is no erase operation in progress.
- * @retval FLASH_BUSY_ERASING if there is an erase operation in progress.
- * @retval FLASH_ERROR_HW_FAILURE if access to the memory failed.
+ * @param[in] ip                    pointer to a @p BaseFlash or derived class
+ * @param[in] sector                sector to be erased
+ * @return                          An error code.
+ * @retval FLASH_NO_ERROR           if there is no erase operation in progress.
+ * @retval FLASH_BUSY_ERASING       if there is an erase operation in progress.
+ * @retval FLASH_ERROR_HW_FAILURE   if access to the memory failed.
  *
  * @api
  */
@@ -284,14 +284,15 @@ typedef struct {
 /**
  * @brief   Queries the driver for erase operation progress.
  *
- * @param[in] ip        pointer to a @p BaseFlash or derived class
- * @param[out] msec     recommended time, in milliseconds, that what should be
- *                      spent before calling this function again, can be @p NULL
- * @return              An error code.
- * @retval FLASH_NO_ERROR if there is no erase operation in progress.
- * @retval FLASH_BUSY_ERASING if there is an erase operation in progress.
- * @retval FLASH_ERROR_ERASE if the erase operation failed.
- * @retval FLASH_ERROR_HW_FAILURE if access to the memory failed.
+ * @param[in] ip                    pointer to a @p BaseFlash or derived class
+ * @param[out] msec                 recommended time, in milliseconds, that
+ *                                  should be spent before calling this
+ *                                  function again, can be @p NULL
+ * @return                          An error code.
+ * @retval FLASH_NO_ERROR           if there is no erase operation in progress.
+ * @retval FLASH_BUSY_ERASING       if there is an erase operation in progress.
+ * @retval FLASH_ERROR_ERASE        if the erase operation failed.
+ * @retval FLASH_ERROR_HW_FAILURE   if access to the memory failed.
  *
  * @api
  */
@@ -301,13 +302,13 @@ typedef struct {
 /**
  * @brief   Returns the erase state of a sector.
  *
- * @param[in] ip        pointer to a @p BaseFlash or derived class
- * @param[in] sector    sector to be verified
- * @return              An error code.
- * @retval FLASH_NO_ERROR if the sector is erased.
- * @retval FLASH_BUSY_ERASING if there is an erase operation in progress.
- * @retval FLASH_ERROR_VERIFY if the verify operation failed.
- * @retval FLASH_ERROR_HW_FAILURE if access to the memory failed.
+ * @param[in] ip                    pointer to a @p BaseFlash or derived class
+ * @param[in] sector                sector to be verified
+ * @return                          An error code.
+ * @retval FLASH_NO_ERROR           if the sector is erased.
+ * @retval FLASH_BUSY_ERASING       if there is an erase operation in progress.
+ * @retval FLASH_ERROR_VERIFY       if the verify operation failed.
+ * @retval FLASH_ERROR_HW_FAILURE   if access to the memory failed.
  *
  * @api
  */

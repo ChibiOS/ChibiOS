@@ -44,6 +44,13 @@
 
 static const struct EFlashDriverVMT vmt = {
   (size_t)0,
+  efl_lld_get_descriptor,
+  efl_lld_read,
+  efl_lld_program,
+  efl_lld_start_erase_all,
+  efl_lld_start_erase_sector,
+  efl_lld_query_erase,
+  efl_lld_verify_erase
 };
 
 /*===========================================================================*/
@@ -59,18 +66,19 @@ static const struct EFlashDriverVMT vmt = {
  */
 void eflInit(void) {
 
-  elf_lld_init();
+  efl_lld_init();
 }
 
 /**
- * @brief   Initializes a generic Embedded Flash driver object.
+ * @brief   Initializes a generic @p EFlashDriver object.
  *
  * @param[out] eflp     pointer to a @p EFlashDriver structure
  *
  * @init
  */
-void sdObjectInit(EFlashDriver *eflp) {
+void eflObjectInit(EFlashDriver *eflp) {
 
+  eflp->vmt = &vmt;
 }
 
 /**
@@ -89,10 +97,11 @@ void eflStart(EFlashDriver *eflp, const EFlashConfig *config) {
 
   osalSysLock();
 
-  osalDbgAssert((eflp->state == ELF_STOP) || (eflp->state == ELF_READY),
+  osalDbgAssert((eflp->state == FLASH_STOP) || (eflp->state == FLASH_READY),
                 "invalid state");
-  efl_lld_start(eflp, config);
-  eflp->state = ELF_READY;
+  eflp->config = config;
+  efl_lld_start(eflp);
+  eflp->state = FLASH_READY;
 
   osalSysUnlock();
 }
@@ -110,11 +119,11 @@ void eflStop(EFlashDriver *eflp) {
 
   osalSysLock();
 
-  osalDbgAssert((eflp->state == EFL_STOP) || (eflp->state == EFL_READY),
+  osalDbgAssert((eflp->state == FLASH_STOP) || (eflp->state == FLASH_READY),
                 "invalid state");
 
   efl_lld_stop(eflp);
-  eflp->state = EFL_STOP;
+  eflp->state = FLASH_STOP;
 
   osalSysUnlock();
 }

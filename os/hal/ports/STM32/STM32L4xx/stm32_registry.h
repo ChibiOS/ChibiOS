@@ -192,6 +192,12 @@
 #define STM32_EXTI_LINE20_NUMBER            3
 #define STM32_EXTI_LINE2122_NUMBER          64
 
+/* Flash attributes.*/
+#define STM32_FLASH_NUMBER_OF_BANKS         1
+#if !defined(STM32_FLASH_PAGES_PER_BANK) || defined(__DOXYGEN__)
+#define STM32_FLASH_PAGES_PER_BANK          256 /* Maximum, can be redefined.*/
+#endif
+
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
 #define STM32_HAS_GPIOB                     TRUE
@@ -522,6 +528,12 @@
 #define STM32_EXTI_LINE19_NUMBER            2
 #define STM32_EXTI_LINE20_NUMBER            3
 #define STM32_EXTI_LINE2122_NUMBER          64
+
+/* Flash attributes.*/
+#define STM32_FLASH_NUMBER_OF_BANKS         1
+#if !defined(STM32_FLASH_PAGES_PER_BANK) || defined(__DOXYGEN__)
+#define STM32_FLASH_PAGES_PER_BANK          256 /* Maximum, can be redefined.*/
+#endif
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
@@ -874,6 +886,12 @@
 #define STM32_EXTI_LINE19_NUMBER            2
 #define STM32_EXTI_LINE20_NUMBER            3
 #define STM32_EXTI_LINE2122_NUMBER          64
+
+/* Flash attributes.*/
+#define STM32_FLASH_NUMBER_OF_BANKS         2
+#if !defined(STM32_FLASH_PAGES_PER_BANK) || defined(__DOXYGEN__)
+#define STM32_FLASH_PAGES_PER_BANK          256 /* Maximum, can be redefined.*/
+#endif
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
@@ -1285,6 +1303,12 @@
 #define STM32_EXTI_LINE19_NUMBER            2
 #define STM32_EXTI_LINE20_NUMBER            3
 #define STM32_EXTI_LINE2122_NUMBER          64
+
+/* Flash attributes.*/
+#define STM32_FLASH_NUMBER_OF_BANKS         2
+#if !defined(STM32_FLASH_PAGES_PER_BANK) || defined(__DOXYGEN__)
+#define STM32_FLASH_PAGES_PER_BANK          256 /* Maximum, can be redefined.*/
+#endif
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE

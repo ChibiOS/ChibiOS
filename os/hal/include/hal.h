@@ -129,6 +129,7 @@
 #include "hal_ioblock.h"
 #include "hal_mmcsd.h"
 #include "hal_persistent.h"
+#include "hal_flash.h"
 
 /* Shared headers.*/
 #include "hal_buffers.h"

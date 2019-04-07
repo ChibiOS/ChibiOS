@@ -44,13 +44,11 @@
 /*===========================================================================*/
 
 /**
- * @brief Driver state machine possible states.
+ * @extends BaseFlash
+ *
+ * @brief   Type of external flash driver class.
  */
-typedef enum {
-  EFL_UNINIT = 0,                   /**< Not initialized.                   */
-  EFL_STOP = 1,                     /**< Stopped.                           */
-  EFL_READY = 2                     /**< Ready.                             */
-} sdstate_t;
+typedef struct hal_efl_driver EFlashDriver;
 
 #include "hal_efl_lld.h"
 
@@ -67,6 +65,14 @@ typedef enum {
   _efl_flash_methods_alone
 
 /**
+ * @brief   @p EFlashDriver specific data.
+ */
+#define _efl_driver_data                                                    \
+  _base_flash_data                                                          \
+  /* Current configuration data.*/                                          \
+  const EFlashConfig            *config;
+
+/**
  * @extends BaseFlashVMT
  *
  * @brief   @p EFlash virtual methods table.
@@ -79,25 +85,24 @@ struct EFlashDriverVMT {
  * @brief   Type of a structure representing a flash driver configuration.
  */
 typedef struct hal_efl_config {
-
+  /* End of the mandatory fields.*/
+  efl_lld_config_fields;
 } EFlashConfig;
 
 /**
  * @extends BaseFlash
  *
- * @brief   Type of external flash driver class.
+ * @brief   Structure representing an embedded flash driver.
  */
-typedef struct hal_efl_driver {
+struct hal_efl_driver {
   /**
    * @brief   SNORDriver Virtual Methods Table.
    */
   const struct EFlashDriverVMT  *vmt;
-  _base_flash_data
-  /**
-   * @brief   Current configuration data.
-   */
-  const EFlashConfig            *config;
-} EFlashDriver;
+  _efl_driver_data
+  /* End of the mandatory fields.*/
+  efl_lld_driver_fields;
+};
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -111,7 +116,7 @@ typedef struct hal_efl_driver {
 extern "C" {
 #endif
   void eflInit(void);
-  void eflObjectInit(SerialDriver *sdp);
+  void eflObjectInit(EFlashDriver *eflp);
 #ifdef __cplusplus
 }
 #endif

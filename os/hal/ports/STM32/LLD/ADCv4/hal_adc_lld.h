@@ -247,7 +247,7 @@
 /* Registry checks.*/
 #if !defined(STM32_HAS_ADC1) || !defined(STM32_HAS_ADC2) ||                 \
     !defined(STM32_HAS_ADC3)
-#error "STM32_ADC_USE_ADCx not defined in registry"
+#error "STM32_HAS_ADCx not defined in registry"
 #endif
 
 /* Units checks.*/
