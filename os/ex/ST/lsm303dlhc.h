@@ -29,8 +29,8 @@
 #ifndef _LSM303DLHC_H_
 #define _LSM303DLHC_H_
 
-#include "hal_accelerometer.h"
-#include "hal_compass.h"
+#include "ex_accelerometer.h"
+#include "ex_compass.h"
 
 /*===========================================================================*/
 /* Driver constants.                                                         */

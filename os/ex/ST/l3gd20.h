@@ -29,7 +29,7 @@
 #ifndef _L3GD20_H_
 #define _L3GD20_H_
 
-#include "hal_gyroscope.h"
+#include "ex_gyroscope.h"
 
 /*===========================================================================*/
 /* Driver constants.                                                         */

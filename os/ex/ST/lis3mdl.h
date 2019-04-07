@@ -29,7 +29,7 @@
 #ifndef _LIS3MDL_H_
 #define _LIS3MDL_H_
 
-#include "hal_compass.h"
+#include "ex_compass.h"
 
 /*===========================================================================*/
 /* Driver constants.                                                         */

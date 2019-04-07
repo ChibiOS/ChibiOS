@@ -2,7 +2,7 @@
 LIS3MDLSRC := $(CHIBIOS)/os/ex/ST/lis3mdl.c
 
 # Required include directories
-LIS3MDLINC := $(CHIBIOS)/os/hal/lib/peripherals/sensors \
+LIS3MDLINC := $(CHIBIOS)/os/ex/include \
               $(CHIBIOS)/os/ex/ST
 
 # Shared variables

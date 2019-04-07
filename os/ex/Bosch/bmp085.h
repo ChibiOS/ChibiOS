@@ -30,8 +30,8 @@
 #ifndef BMP085_H
 #define BMP085_H
 
-#include "hal_barometer.h"
-#include "hal_thermometer.h"
+#include "ex_barometer.h"
+#include "ex_thermometer.h"
 
 /*==========================================================================*/
 /* Driver constants.                                                        */

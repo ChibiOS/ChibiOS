@@ -2,7 +2,7 @@
 HTS221SRC := $(CHIBIOS)/os/ex/ST/hts221.c
 
 # Required include directories
-HTS221INC := $(CHIBIOS)/os/hal/lib/peripherals/sensors \
+HTS221INC := $(CHIBIOS)/os/ex/include \
              $(CHIBIOS)/os/ex/ST
 
 # Shared variables

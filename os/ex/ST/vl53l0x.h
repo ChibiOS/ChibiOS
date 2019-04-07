@@ -29,7 +29,7 @@
 #ifndef _VL53L0X_H_
 #define _VL53L0X_H_
 
-#include "hal_rangefinder.h"
+#include "ex_rangefinder.h"
 
 /*===========================================================================*/
 /* Driver constants.                                                         */

@@ -29,8 +29,8 @@
 #ifndef _LPS25H_H_
 #define _LPS25H_H_
 
-#include "hal_barometer.h"
-#include "hal_thermometer.h"
+#include "ex_barometer.h"
+#include "ex_thermometer.h"
 
 /*===========================================================================*/
 /* Driver constants.                                                         */

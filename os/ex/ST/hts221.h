@@ -30,8 +30,8 @@
 #ifndef _HTS221_H_
 #define _HTS221_H_
 
-#include "hal_hygrometer.h"
-#include "hal_thermometer.h"
+#include "ex_hygrometer.h"
+#include "ex_thermometer.h"
 
 /*===========================================================================*/
 /* Driver constants.                                                         */

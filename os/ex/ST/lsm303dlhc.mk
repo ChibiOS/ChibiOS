@@ -2,7 +2,7 @@
 LSM303DLHCSRC := $(CHIBIOS)/os/ex/ST/lsm303dlhc.c
 
 # Required include directories
-LSM303DLHCINC := $(CHIBIOS)/os/hal/lib/peripherals/sensors \
+LSM303DLHCINC := $(CHIBIOS)/os/ex/include \
                  $(CHIBIOS)/os/ex/ST
 
 # Shared variables

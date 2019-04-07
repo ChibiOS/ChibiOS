@@ -29,8 +29,8 @@
 #ifndef _LSM6DS0_H_
 #define _LSM6DS0_H_
 
-#include "hal_accelerometer.h"
-#include "hal_gyroscope.h"
+#include "ex_accelerometer.h"
+#include "ex_gyroscope.h"
 
 /*===========================================================================*/
 /* Driver constants.                                                         */

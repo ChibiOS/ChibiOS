@@ -2,7 +2,7 @@
 LSM303AGRSRC := $(CHIBIOS)/os/ex/ST/lsm303agr.c
 
 # Required include directories
-LSM303AGRINC := $(CHIBIOS)/os/hal/lib/peripherals/sensors \
+LSM303AGRINC := $(CHIBIOS)/os/ex/include \
                  $(CHIBIOS)/os/ex/ST
 
 # Shared variables

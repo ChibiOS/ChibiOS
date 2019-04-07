@@ -30,7 +30,7 @@
 #ifndef _LIS302DL_H_
 #define _LIS302DL_H_
 
-#include "hal_accelerometer.h"
+#include "ex_accelerometer.h"
 
 /*===========================================================================*/
 /* Driver constants.                                                         */

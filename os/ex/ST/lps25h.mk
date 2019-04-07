@@ -2,7 +2,7 @@
 LPS25HSRC := $(CHIBIOS)/os/ex/ST/lps25h.c
 
 # Required include directories
-LPS25HINC := $(CHIBIOS)/os/hal/lib/peripherals/sensors \
+LPS25HINC := $(CHIBIOS)/os/ex/include \
              $(CHIBIOS)/os/ex/ST
 
 # Shared variables

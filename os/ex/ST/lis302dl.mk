@@ -2,7 +2,7 @@
 LIS302DLSRC := $(CHIBIOS)/os/ex/ST/lis302dl.c
 
 # Required include directories
-LIS302DLINC := $(CHIBIOS)/os/hal/lib/peripherals/sensors \
+LIS302DLINC := $(CHIBIOS)/os/ex/include \
              $(CHIBIOS)/os/ex/ST
 
 # Shared variables
