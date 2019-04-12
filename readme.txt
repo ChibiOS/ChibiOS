@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 19.1.2 ***
+- NEW: Modified AES GCM function signatures.
 - NEW: updates to MFS from trunk code.
 - NEW: updates to test library from trunk code.
 - HAL: Added H753 to all H7 mcuconf.h files.

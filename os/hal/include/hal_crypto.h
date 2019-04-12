@@ -92,7 +92,8 @@ typedef enum {
   CRY_ERR_INV_KEY_SIZE = 2,                 /**< Invalid key size.          */
   CRY_ERR_INV_KEY_TYPE = 3,                 /**< Invalid key type.          */
   CRY_ERR_INV_KEY_ID = 4,                   /**< Invalid key identifier.    */
-  CRY_ERR_OP_FAILURE = 5                    /**< Requested operation failed.*/
+  CRY_ERR_AUTH_FAILED = 5,                  /**< Failed authentication.     */
+  CRY_ERR_OP_FAILURE = 6                    /**< Failed operation.          */
 } cryerror_t;
 
 /**
@@ -284,22 +285,24 @@ extern "C" {
                                const uint8_t *iv);
   cryerror_t cryEncryptAES_GCM(CRYDriver *cryp,
                                crykey_t key_id,
-                               size_t size,
-                               const uint8_t *in,
-                               uint8_t *out,
+                               size_t auth_size,
+                               const uint8_t *auth_in,
+                               size_t text_size,
+                               const uint8_t *text_in,
+                               uint8_t *text_out,
                                const uint8_t *iv,
-                               size_t aadsize,
-                               const uint8_t *aad,
-                               uint8_t *authtag);
+                               size_t tag_size,
+                               uint8_t *tag_out);
   cryerror_t cryDecryptAES_GCM(CRYDriver *cryp,
                                crykey_t key_id,
-                               size_t size,
-                               const uint8_t *in,
-                               uint8_t *out,
+                               size_t auth_size,
+                               const uint8_t *auth_in,
+                               size_t text_size,
+                               const uint8_t *text_in,
+                               uint8_t *text_out,
                                const uint8_t *iv,
-                               size_t aadsize,
-                               const uint8_t *aad,
-                               uint8_t *authtag);
+                               size_t tag_size,
+                               const uint8_t *tag_in);
   cryerror_t cryLoadDESTransientKey(CRYDriver *cryp,
                                     size_t size,
                                     const uint8_t *keyp);
