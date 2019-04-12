@@ -723,17 +723,16 @@ cryerror_t cry_lld_decrypt_AES_CTR(CRYDriver *cryp,
  * @param[in] key_id            the key to be used for the operation, zero is
  *                              the transient key, other values are keys stored
  *                              in an unspecified way
- * @param[in] size              size of the text buffers, this number must be a
+ * @param[in] auth_size         size of the data buffer to be authenticated
+ * @param[in] auth_in           buffer containing the data to be authenticated
+ * @param[in] text_size         size of the text buffer, this number must be a
  *                              multiple of 16
- * @param[in] in                buffer containing the input plaintext
- * @param[out] out              buffer for the output cyphertext
- * @param[in] iv                128 bits initial vector + counter, it contains
- *                              a 96 bits IV and a 32 bits counter
- * @param[in] aadsize           size of the authentication data, this number
- *                              must be a multiple of 16
- * @param[in] aad               buffer containing the authentication data
- * @param[in] authtag           128 bits buffer for the generated authentication
- *                              tag
+ * @param[in] text_in           buffer containing the input plaintext
+ * @param[out] text_out         buffer for the output cyphertext
+ * @param[in] iv                128 bits input vector
+ * @param[in] tag_size          size of the authentication tag, this number
+ *                              must be between 1 and 16
+ * @param[out] tag_out          buffer for the generated authentication tag
  * @return                      The operation status.
  * @retval CRY_NOERROR          if the operation succeeded.
  * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
@@ -748,23 +747,25 @@ cryerror_t cry_lld_decrypt_AES_CTR(CRYDriver *cryp,
  */
 cryerror_t cry_lld_encrypt_AES_GCM(CRYDriver *cryp,
                                    crykey_t key_id,
-                                   size_t size,
-                                   const uint8_t *in,
-                                   uint8_t *out,
+                                   size_t auth_size,
+                                   const uint8_t *auth_in,
+                                   size_t text_size,
+                                   const uint8_t *text_in,
+                                   uint8_t *text_out,
                                    const uint8_t *iv,
-                                   size_t aadsize,
-                                   const uint8_t *aad,
-                                   uint8_t *authtag) {
+                                   size_t tag_size,
+                                   uint8_t *tag_out) {
 
   (void)cryp;
   (void)key_id;
-  (void)size;
-  (void)in;
-  (void)out;
+  (void)auth_size;
+  (void)auth_in;
+  (void)text_size;
+  (void)text_in;
+  (void)text_out;
   (void)iv;
-  (void)aadsize;
-  (void)aad;
-  (void)authtag;
+  (void)tag_size;
+  (void)tag_out;
 
   return CRY_ERR_INV_ALGO;
 }
@@ -779,17 +780,16 @@ cryerror_t cry_lld_encrypt_AES_GCM(CRYDriver *cryp,
  * @param[in] key_id            the key to be used for the operation, zero is
  *                              the transient key, other values are keys stored
  *                              in an unspecified way
- * @param[in] size              size of the text buffers, this number must be a
+ * @param[in] auth_size         size of the data buffer to be authenticated
+ * @param[in] auth_in           buffer containing the data to be authenticated
+ * @param[in] text_size         size of the text buffer, this number must be a
  *                              multiple of 16
- * @param[in] in                buffer for the output cyphertext
- * @param[out] out              buffer containing the input plaintext
- * @param[in] iv                128 bits initial vector + counter, it contains
- *                              a 96 bits IV and a 32 bits counter
- * @param[in] aadsize           size of the authentication data, this number
- *                              must be a multiple of 16
- * @param[in] aad               buffer containing the authentication data
- * @param[in] authtag           128 bits buffer for the generated authentication
- *                              tag
+ * @param[in] text_in           buffer containing the input plaintext
+ * @param[out] text_out         buffer for the output cyphertext
+ * @param[in] iv                128 bits input vector
+ * @param[in] tag_size          size of the authentication tag, this number
+ *                              must be between 1 and 16
+ * @param[in] tag_in            buffer for the generated authentication tag
  * @return                      The operation status.
  * @retval CRY_NOERROR          if the operation succeeded.
  * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
@@ -797,6 +797,7 @@ cryerror_t cry_lld_encrypt_AES_GCM(CRYDriver *cryp,
  * @retval CRY_ERR_INV_KEY_TYPE the selected key is invalid for this operation.
  * @retval CRY_ERR_INV_KEY_ID   if the specified key identifier is invalid
  *                              or refers to an empty key slot.
+ * @retval CRY_ERR_AUTH_FAILED  authentication failed
  * @retval CRY_ERR_OP_FAILURE   if the operation failed, implementation
  *                              dependent.
  *
@@ -804,23 +805,25 @@ cryerror_t cry_lld_encrypt_AES_GCM(CRYDriver *cryp,
  */
 cryerror_t cry_lld_decrypt_AES_GCM(CRYDriver *cryp,
                                    crykey_t key_id,
-                                   size_t size,
-                                   const uint8_t *in,
-                                   uint8_t *out,
+                                   size_t auth_size,
+                                   const uint8_t *auth_in,
+                                   size_t text_size,
+                                   const uint8_t *text_in,
+                                   uint8_t *text_out,
                                    const uint8_t *iv,
-                                   size_t aadsize,
-                                   const uint8_t *aad,
-                                   uint8_t *authtag) {
+                                   size_t tag_size,
+                                   const uint8_t *tag_in) {
 
   (void)cryp;
   (void)key_id;
-  (void)size;
-  (void)in;
-  (void)out;
+  (void)auth_size;
+  (void)auth_in;
+  (void)text_size;
+  (void)text_in;
+  (void)text_out;
   (void)iv;
-  (void)aadsize;
-  (void)aad;
-  (void)authtag;
+  (void)tag_size;
+  (void)tag_in;
 
   return CRY_ERR_INV_ALGO;
 }

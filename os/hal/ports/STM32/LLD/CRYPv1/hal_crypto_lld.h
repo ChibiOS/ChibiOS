@@ -412,22 +412,24 @@ extern "C" {
 #if (CRY_LLD_SUPPORTS_AES_GCM == TRUE) || defined(__DOXYGEN__)
   cryerror_t cry_lld_encrypt_AES_GCM(CRYDriver *cryp,
                                      crykey_t key_id,
-                                     size_t size,
-                                     const uint8_t *in,
-                                     uint8_t *out,
+                                     size_t auth_size,
+                                     const uint8_t *auth_in,
+                                     size_t text_size,
+                                     const uint8_t *text_in,
+                                     uint8_t *text_out,
                                      const uint8_t *iv,
-                                     size_t aadsize,
-                                     const uint8_t *aad,
-                                     uint8_t *authtag);
+                                     size_t tag_size,
+                                     uint8_t *tag_out);
   cryerror_t cry_lld_decrypt_AES_GCM(CRYDriver *cryp,
                                      crykey_t key_id,
-                                     size_t size,
-                                     const uint8_t *in,
-                                     uint8_t *out,
+                                     size_t auth_size,
+                                     const uint8_t *auth_in,
+                                     size_t text_size,
+                                     const uint8_t *text_in,
+                                     uint8_t *text_out,
                                      const uint8_t *iv,
-                                     size_t aadsize,
-                                     const uint8_t *aad,
-                                     uint8_t *authtag);
+                                     size_t tag_size,
+                                     const uint8_t *tag_in);
 #endif
 #if (CRY_LLD_SUPPORTS_DES == TRUE) ||                                       \
     (CRY_LLD_SUPPORTS_DES_ECB == TRUE) ||                                   \
