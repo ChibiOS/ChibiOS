@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added and embedded flash driver model in HAL. Added an implementation
+       for STM32L4xx. 
 - NEW: Modified AES GCM function signatures.
 - HAL: Added H753 to all H7 mcuconf.h files.
 - NEW: Added transactional updates to MFS.
