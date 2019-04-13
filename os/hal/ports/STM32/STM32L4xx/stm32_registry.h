@@ -194,8 +194,8 @@
 
 /* Flash attributes.*/
 #define STM32_FLASH_NUMBER_OF_BANKS         1
-#if !defined(STM32_FLASH_PAGES_PER_BANK) || defined(__DOXYGEN__)
-#define STM32_FLASH_PAGES_PER_BANK          256 /* Maximum, can be redefined.*/
+#if !defined(STM32_FLASH_SECTORS_PER_BANK) || defined(__DOXYGEN__)
+#define STM32_FLASH_SECTORS_PER_BANK        256 /* Maximum, can be redefined.*/
 #endif
 
 /* GPIO attributes.*/
@@ -531,8 +531,8 @@
 
 /* Flash attributes.*/
 #define STM32_FLASH_NUMBER_OF_BANKS         1
-#if !defined(STM32_FLASH_PAGES_PER_BANK) || defined(__DOXYGEN__)
-#define STM32_FLASH_PAGES_PER_BANK          256 /* Maximum, can be redefined.*/
+#if !defined(STM32_FLASH_SECTORS_PER_BANK) || defined(__DOXYGEN__)
+#define STM32_FLASH_SECTORS_PER_BANK        256 /* Maximum, can be redefined.*/
 #endif
 
 /* GPIO attributes.*/
@@ -889,8 +889,8 @@
 
 /* Flash attributes.*/
 #define STM32_FLASH_NUMBER_OF_BANKS         2
-#if !defined(STM32_FLASH_PAGES_PER_BANK) || defined(__DOXYGEN__)
-#define STM32_FLASH_PAGES_PER_BANK          256 /* Maximum, can be redefined.*/
+#if !defined(STM32_FLASH_SECTORS_PER_BANK) || defined(__DOXYGEN__)
+#define STM32_FLASH_SECTORS_PER_BANK        256 /* Maximum, can be redefined.*/
 #endif
 
 /* GPIO attributes.*/
@@ -1306,8 +1306,8 @@
 
 /* Flash attributes.*/
 #define STM32_FLASH_NUMBER_OF_BANKS         2
-#if !defined(STM32_FLASH_PAGES_PER_BANK) || defined(__DOXYGEN__)
-#define STM32_FLASH_PAGES_PER_BANK          256 /* Maximum, can be redefined.*/
+#if !defined(STM32_FLASH_SECTORS_PER_BANK) || defined(__DOXYGEN__)
+#define STM32_FLASH_SECTORS_PER_BANK        256 /* Maximum, can be redefined.*/
 #endif
 
 /* GPIO attributes.*/
