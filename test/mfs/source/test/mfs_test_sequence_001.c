@@ -411,7 +411,8 @@ static void mfs_test_001_005_execute(void) {
   test_set_step(1);
   {
     mfs_id_t id;
-    mfs_id_t id_max = (mfscfg1.bank_size - sizeof (mfs_bank_header_t)) /
+    mfs_id_t id_max = (mfscfg1.bank_size - (sizeof (mfs_bank_header_t) +
+                                            sizeof (mfs_data_header_t))) /
                       (sizeof (mfs_data_header_t) + sizeof mfs_pattern512);
 
     for (id = 1; id <= id_max; id++) {
@@ -437,7 +438,8 @@ static void mfs_test_001_005_execute(void) {
   test_set_step(2);
   {
     mfs_error_t err;
-    mfs_id_t id_max = (mfscfg1.bank_size - sizeof (mfs_bank_header_t)) /
+    mfs_id_t id_max = (mfscfg1.bank_size - (sizeof (mfs_bank_header_t) +
+                                            sizeof (mfs_data_header_t))) /
                       (sizeof (mfs_data_header_t) + sizeof mfs_pattern512);
 
     err = mfsWriteRecord(&mfs1, id_max, sizeof mfs_pattern512 , mfs_pattern512);
@@ -532,7 +534,8 @@ static void mfs_test_001_006_execute(void) {
   test_set_step(1);
   {
     mfs_id_t id;
-    mfs_id_t id_max = (mfscfg1.bank_size - sizeof (mfs_bank_header_t)) /
+    mfs_id_t id_max = (mfscfg1.bank_size - (sizeof (mfs_bank_header_t) +
+                                            sizeof (mfs_data_header_t))) /
                       (sizeof (mfs_data_header_t) + sizeof mfs_pattern512);
 
     for (id = 1; id <= id_max; id++) {
@@ -595,7 +598,8 @@ static void mfs_test_001_006_execute(void) {
   test_set_step(4);
   {
     mfs_id_t id;
-    mfs_id_t id_max = (mfscfg1.bank_size - sizeof (mfs_bank_header_t)) /
+    mfs_id_t id_max = (mfscfg1.bank_size - (sizeof (mfs_bank_header_t) +
+                                            sizeof (mfs_data_header_t))) /
                       (sizeof (mfs_data_header_t) + sizeof mfs_pattern512);
 
     for (id = 1; id <= MFS_CFG_MAX_RECORDS; id++) {
@@ -661,7 +665,8 @@ static void mfs_test_001_006_execute(void) {
   test_set_step(7);
   {
     mfs_id_t id;
-    mfs_id_t id_max = (mfscfg1.bank_size - sizeof (mfs_bank_header_t)) /
+    mfs_id_t id_max = (mfscfg1.bank_size - (sizeof (mfs_bank_header_t) +
+                                            sizeof (mfs_data_header_t))) /
                       (sizeof (mfs_data_header_t) + sizeof mfs_pattern512);
 
     for (id = 1; id <= MFS_CFG_MAX_RECORDS; id++) {
@@ -726,19 +731,20 @@ static void mfs_test_001_007_execute(void) {
   test_set_step(1);
   {
     mfs_id_t id;
-    mfs_id_t id_max = (mfscfg1.bank_size - sizeof (mfs_bank_header_t)) /
-                      (sizeof (mfs_data_header_t) + (sizeof mfs_pattern512 / 2));
+    mfs_id_t id_max = (mfscfg1.bank_size - (sizeof (mfs_bank_header_t) +
+                                            sizeof (mfs_data_header_t))) /
+                      (sizeof (mfs_data_header_t) + (sizeof mfs_pattern512 / 4));
 
     for (id = 1; id <= id_max; id++) {
       mfs_error_t err;
       size_t size;
 
-      err = mfsWriteRecord(&mfs1, id, (sizeof mfs_pattern512 / 2), mfs_pattern512);
+      err = mfsWriteRecord(&mfs1, id, (sizeof mfs_pattern512 / 4), mfs_pattern512);
       test_assert(err == MFS_NO_ERROR, "error creating the record");
       size = sizeof mfs_buffer;
       err = mfsReadRecord(&mfs1, id, &size, mfs_buffer);
       test_assert(err == MFS_NO_ERROR, "record not found");
-      test_assert(size == (sizeof mfs_pattern512 / 2), "unexpected record length");
+      test_assert(size == (sizeof mfs_pattern512 / 4), "unexpected record length");
       test_assert(memcmp(mfs_pattern512, mfs_buffer, size) == 0,
                   "wrong record content");
     }
@@ -751,10 +757,11 @@ static void mfs_test_001_007_execute(void) {
     mfs_error_t err;
     size_t size;
     mfs_id_t id;
-    mfs_id_t id_max = (mfscfg1.bank_size - sizeof (mfs_bank_header_t)) /
-                      (sizeof (mfs_data_header_t) + (sizeof mfs_pattern512 / 2));
+    mfs_id_t id_max = (mfscfg1.bank_size - (sizeof (mfs_bank_header_t) +
+                                            sizeof (mfs_data_header_t))) /
+                      (sizeof (mfs_data_header_t) + (sizeof mfs_pattern512 / 4));
     mfs_id_t n = ((mfscfg1.bank_size - sizeof (mfs_bank_header_t)) -
-                  (id_max * (sizeof (mfs_data_header_t) + (sizeof mfs_pattern512 / 2)))) /
+                  (id_max * (sizeof (mfs_data_header_t) + (sizeof mfs_pattern512 / 4)))) /
                  sizeof (mfs_data_header_t);
 
     for (id = 1; id <= n; id++) {
@@ -774,8 +781,9 @@ static void mfs_test_001_007_execute(void) {
   {
     mfs_error_t err;
     size_t size;
-    mfs_id_t id_max = (mfscfg1.bank_size - sizeof (mfs_bank_header_t)) /
-                      (sizeof (mfs_data_header_t) + (sizeof mfs_pattern512 / 2));
+    mfs_id_t id_max = (mfscfg1.bank_size - (sizeof (mfs_bank_header_t) +
+                                            sizeof (mfs_data_header_t))) /
+                      (sizeof (mfs_data_header_t) + (sizeof mfs_pattern512 / 4));
 
     test_assert(mfs1.current_counter == 1, "not first instance");
     err = mfsEraseRecord(&mfs1, id_max);

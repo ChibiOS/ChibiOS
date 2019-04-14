@@ -36,7 +36,8 @@
 
 #define MFS_BANK_MAGIC_1                    0xEC705ADEU
 #define MFS_BANK_MAGIC_2                    0xF0339CC5U
-#define MFS_HEADER_MAGIC                    0x5FAE45F0U
+#define MFS_HEADER_MAGIC_1                  0x5FAE45F0U
+#define MFS_HEADER_MAGIC_2                  0xF045AE5FU
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -240,9 +241,13 @@ typedef union {
 typedef union {
   struct {
     /**
-     * @brief   Data header magic.
+     * @brief   Data header magic 1.
      */
-    uint32_t                magic;
+    uint32_t                magic1;
+    /**
+     * @brief   Data header magic 2.
+     */
+    uint32_t                magic2;
     /**
      * @brief   Record identifier.
      */
@@ -257,8 +262,8 @@ typedef union {
      */
     uint32_t                size;
   } fields;
-  uint8_t                   hdr8[12];
-  uint32_t                  hdr32[3];
+  uint8_t                   hdr8[16];
+  uint32_t                  hdr32[4];
 } mfs_data_header_t;
 
 typedef struct {

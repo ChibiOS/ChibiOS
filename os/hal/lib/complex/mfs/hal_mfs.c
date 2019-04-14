@@ -472,7 +472,8 @@ static mfs_error_t mfs_bank_scan_records(MFSDriver *mfsp,
     }
 
     /* It is not erased so checking for integrity.*/
-    if ((u.dhdr.fields.magic != MFS_HEADER_MAGIC) ||
+    if ((u.dhdr.fields.magic1 != MFS_HEADER_MAGIC_1) ||
+        (u.dhdr.fields.magic2 != MFS_HEADER_MAGIC_2) ||
         (u.dhdr.fields.id < 1U) ||
         (u.dhdr.fields.id > (uint32_t)MFS_CFG_MAX_RECORDS) ||
         (u.dhdr.fields.size > end_offset - hdr_offset)) {
@@ -1037,14 +1038,13 @@ mfs_error_t mfsWriteRecord(MFSDriver *mfsp, mfs_id_t id,
     }
 
     /* Writing the data header without the magic, it will be written last.*/
-    mfsp->buffer.dhdr.fields.magic = (uint32_t)mfsp->config->erased;
-    mfsp->buffer.dhdr.fields.id    = (uint16_t)id;
-    mfsp->buffer.dhdr.fields.size  = (uint32_t)n;
-    mfsp->buffer.dhdr.fields.crc   = crc16(0xFFFFU, buffer, n);
+    mfsp->buffer.dhdr.fields.id     = (uint16_t)id;
+    mfsp->buffer.dhdr.fields.size   = (uint32_t)n;
+    mfsp->buffer.dhdr.fields.crc    = crc16(0xFFFFU, buffer, n);
     RET_ON_ERROR(mfs_flash_write(mfsp,
-                                 mfsp->next_offset,
-                                 sizeof (mfs_data_header_t),
-                                 mfsp->buffer.data8));
+                                 mfsp->next_offset + (sizeof (uint32_t) * 2U),
+                                 sizeof (mfs_data_header_t) - (sizeof (uint32_t) * 2U),
+                                 mfsp->buffer.data8 + (sizeof (uint32_t) * 2U)));
 
     /* Writing the data part.*/
     RET_ON_ERROR(mfs_flash_write(mfsp,
@@ -1053,10 +1053,11 @@ mfs_error_t mfsWriteRecord(MFSDriver *mfsp, mfs_id_t id,
                                  buffer));
 
     /* Finally writing the magic number, it seals the operation.*/
-    mfsp->buffer.dhdr.fields.magic = (uint32_t)MFS_HEADER_MAGIC;
+    mfsp->buffer.dhdr.fields.magic1 = (uint32_t)MFS_HEADER_MAGIC_1;
+    mfsp->buffer.dhdr.fields.magic2 = (uint32_t)MFS_HEADER_MAGIC_2;
     RET_ON_ERROR(mfs_flash_write(mfsp,
                                  mfsp->next_offset,
-                                 sizeof (uint32_t),
+                                 sizeof (uint32_t) * 2U,
                                  mfsp->buffer.data8));
 
     /* The size of the old record instance, if present, must be subtracted
@@ -1093,14 +1094,13 @@ mfs_error_t mfsWriteRecord(MFSDriver *mfsp, mfs_id_t id,
     }
 
     /* Writing the data header without the magic, it will be written last.*/
-    mfsp->buffer.dhdr.fields.magic = (uint32_t)mfsp->config->erased;
-    mfsp->buffer.dhdr.fields.id    = (uint16_t)id;
-    mfsp->buffer.dhdr.fields.size  = (uint32_t)n;
-    mfsp->buffer.dhdr.fields.crc   = crc16(0xFFFFU, buffer, n);
+    mfsp->buffer.dhdr.fields.id     = (uint16_t)id;
+    mfsp->buffer.dhdr.fields.size   = (uint32_t)n;
+    mfsp->buffer.dhdr.fields.crc    = crc16(0xFFFFU, buffer, n);
     RET_ON_ERROR(mfs_flash_write(mfsp,
-                                 mfsp->tr_next_offset,
-                                 sizeof (mfs_data_header_t),
-                                 mfsp->buffer.data8));
+                                 mfsp->tr_next_offset + (sizeof (uint32_t) * 2U),
+                                 sizeof (mfs_data_header_t) - (sizeof (uint32_t) * 2U),
+                                 mfsp->buffer.data8 + (sizeof (uint32_t) * 2U)));
 
     /* Writing the data part.*/
     RET_ON_ERROR(mfs_flash_write(mfsp,
@@ -1189,10 +1189,11 @@ mfs_error_t mfsEraseRecord(MFSDriver *mfsp, mfs_id_t id) {
 
     /* Writing the data header with size set to zero, it means that the
        record is logically erased.*/
-    mfsp->buffer.dhdr.fields.magic = (uint32_t)MFS_HEADER_MAGIC;
-    mfsp->buffer.dhdr.fields.id    = (uint16_t)id;
-    mfsp->buffer.dhdr.fields.size  = (uint32_t)0;
-    mfsp->buffer.dhdr.fields.crc   = (uint16_t)0xFFFF;
+    mfsp->buffer.dhdr.fields.magic1 = (uint32_t)MFS_HEADER_MAGIC_1;
+    mfsp->buffer.dhdr.fields.magic2 = (uint32_t)MFS_HEADER_MAGIC_2;
+    mfsp->buffer.dhdr.fields.id     = (uint16_t)id;
+    mfsp->buffer.dhdr.fields.size   = (uint32_t)0;
+    mfsp->buffer.dhdr.fields.crc    = (uint16_t)0xFFFF;
     RET_ON_ERROR(mfs_flash_write(mfsp,
                                  mfsp->next_offset,
                                  sizeof (mfs_data_header_t),
@@ -1232,14 +1233,13 @@ mfs_error_t mfsEraseRecord(MFSDriver *mfsp, mfs_id_t id) {
 
     /* Writing the data header with size set to zero, it means that the
        record is logically erased. Note, the magic number is not set.*/
-    mfsp->buffer.dhdr.fields.magic = mfsp->config->erased;
-    mfsp->buffer.dhdr.fields.id    = (uint16_t)id;
-    mfsp->buffer.dhdr.fields.size  = (uint32_t)0;
-    mfsp->buffer.dhdr.fields.crc   = (uint16_t)0xFFFF;
+    mfsp->buffer.dhdr.fields.id     = (uint16_t)id;
+    mfsp->buffer.dhdr.fields.size   = (uint32_t)0;
+    mfsp->buffer.dhdr.fields.crc    = (uint16_t)0xFFFF;
     RET_ON_ERROR(mfs_flash_write(mfsp,
-                                 mfsp->next_offset,
-                                 sizeof (mfs_data_header_t),
-                                 mfsp->buffer.data8));
+                                 mfsp->tr_next_offset + (sizeof (uint32_t) * 2U),
+                                 sizeof (mfs_data_header_t) - (sizeof (uint32_t) * 2U),
+                                 mfsp->buffer.data8 + (sizeof (uint32_t) * 2U)));
 
     /* Adding a transaction operation record.*/
     top = &mfsp->tr_ops[mfsp->tr_nops];
@@ -1385,7 +1385,8 @@ mfs_error_t mfsCommitTransaction(MFSDriver *mfsp) {
   }
 
   /* Scanning all buffered operations in reverse order.*/
-  mfsp->buffer.dhdr.fields.magic = (uint32_t)MFS_HEADER_MAGIC;
+  mfsp->buffer.dhdr.fields.magic1 = (uint32_t)MFS_HEADER_MAGIC_1;
+  mfsp->buffer.dhdr.fields.magic2 = (uint32_t)MFS_HEADER_MAGIC_2;
   top = &mfsp->tr_ops[mfsp->tr_nops];
   while (top > &mfsp->tr_ops[0]) {
     /* On the previous element.*/
@@ -1394,7 +1395,7 @@ mfs_error_t mfsCommitTransaction(MFSDriver *mfsp) {
     /* Finalizing the operation by writing the magic number.*/
     RET_ON_ERROR(mfs_flash_write(mfsp,
                                  top->offset,
-                                 sizeof (uint32_t),
+                                 sizeof (uint32_t) * 2U,
                                  mfsp->buffer.data8));
   }
 
