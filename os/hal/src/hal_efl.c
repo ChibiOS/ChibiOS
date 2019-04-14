@@ -79,6 +79,7 @@ void eflInit(void) {
 void eflObjectInit(EFlashDriver *eflp) {
 
   eflp->vmt = &vmt;
+  eflp->state = FLASH_STOP;
 }
 
 /**

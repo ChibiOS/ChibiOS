@@ -117,6 +117,8 @@ extern "C" {
 #endif
   void eflInit(void);
   void eflObjectInit(EFlashDriver *eflp);
+  void eflStart(EFlashDriver *eflp, const EFlashConfig *config);
+  void eflStop(EFlashDriver *eflp);
 #ifdef __cplusplus
 }
 #endif
