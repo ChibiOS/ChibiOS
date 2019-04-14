@@ -120,15 +120,14 @@ static inline flash_error_t stm32_flash_check_errors(EFlashDriver *eflp) {
   /* Some errors are only caught by assertion.*/
   osalDbgAssert((sr & (FLASH_SR_FASTERR |
                        FLASH_SR_MISERR |
-                       FLASH_SR_PGSERR |
-                       FLASH_SR_SIZERR)) != 0U, "unexpected flash error");
+                       FLASH_SR_SIZERR)) == 0U, "unexpected flash error");
 
   /* Decoding relevant errors.*/
   if ((sr & FLASH_SR_WRPERR) != 0U) {
     return FLASH_ERROR_HW_FAILURE;
   }
 
-  if ((sr & (FLASH_SR_PROGERR | FLASH_SR_OPERR)) != 0U) {
+  if ((sr & (FLASH_SR_PGAERR | FLASH_SR_PROGERR | FLASH_SR_OPERR)) != 0U) {
     return eflp->state == FLASH_PGM ? FLASH_ERROR_PROGRAM : FLASH_ERROR_ERASE;
   }
 
@@ -301,6 +300,10 @@ flash_error_t efl_lld_program(void *instance, flash_offset_t offset,
     line.w[0] = 0xFFFFFFFFU;
     line.w[1] = 0xFFFFFFFFU;
 
+    /* Programming address aligned to flash lines.*/
+    address = (volatile uint32_t *)(efl_lld_descriptor.address +
+                                    (offset & ~STM32_FLASH_LINE_MASK));
+
     /* Copying data inside the prepared line.*/
     do {
       line.b[offset & STM32_FLASH_LINE_MASK] = *pp;
@@ -311,7 +314,6 @@ flash_error_t efl_lld_program(void *instance, flash_offset_t offset,
     while ((n > 0U) & ((offset & STM32_FLASH_LINE_MASK) != 0U));
 
     /* Programming line.*/
-    address = (volatile uint32_t *)(efl_lld_descriptor.address + offset);
     address[0] = line.w[0];
     address[1] = line.w[1];
     stm32_flash_wait_busy(devp);
