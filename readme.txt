@@ -78,7 +78,9 @@
        for STM32L4xx. 
 - NEW: Modified AES GCM function signatures.
 - HAL: Added H753 to all H7 mcuconf.h files.
-- NEW: Added transactional updates to MFS.
+- NEW: Added transactional updates to MFS. Doubled data headers magic numbers
+       for improved safety and to keep the final write aligned to 64 bits, it
+       is required for STM32 ECC flash.
 - VAR: Modified syscalls.c to allocate memory from bottom upward, ChibiOS
        allocators take memory from top downward. This way the memory taken
        using _sbrk_r() does not contain "holes" caused by other allocators.
