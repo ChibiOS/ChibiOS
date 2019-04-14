@@ -480,7 +480,8 @@ static void mfs_test_002_003_execute(void) {
   test_set_step(1);
   {
     mfs_id_t id;
-    mfs_id_t id_max = (mfscfg1.bank_size - sizeof (mfs_bank_header_t)) /
+    mfs_id_t id_max = (mfscfg1.bank_size - (sizeof (mfs_bank_header_t) +
+                                            sizeof (mfs_data_header_t))) /
                       (sizeof (mfs_data_header_t) + sizeof mfs_pattern512);
 
     for (id = 1; id <= id_max; id++) {
