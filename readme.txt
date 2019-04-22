@@ -88,6 +88,7 @@
 *** 18.2.3 ***
 - NEW: Added a check on defective GCC versions, Cortex-M0 only.
 - NEW: Extra timer checks in STM32 ST driver.
+- FIX: Fixed invalid STM32_UART7_RX_DMA_CHN for STM32F469 (bug #1025).
 - FIX: Fixed various UART clock naming errors in STM32H7 HAL (bug #1021).
 - FIX: Fixed wrong ADCSEL definitions in STM32H7 HAL (bug #1016).
 - FIX: Fixed chTimeIsInRangeX() failing under some configurations (bug #1015).
