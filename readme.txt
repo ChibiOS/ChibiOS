@@ -94,6 +94,8 @@
 - HAL: Added a new interface for range-finder devices (used by EX).
 - HAL: Added mcuconf.h updater tool for STM32F407 (backported to 19.1.1).
 - NIL: Integrated NIL 4.0.
+- FIX: Fixed invalid I2C4 DMAs for STM32F76x (bug #1026)
+       (backported to 19.1.2)(backported to 18.2.3).
 - FIX: Fixed invalid STM32_UART7_RX_DMA_CHN for STM32F469 (bug #1025)
        (backported to 19.1.2)(backported to 18.2.3).
 - FIX: Fixed invalid EXTI registry constant for STM32L4+ (bug #1024)
