@@ -452,7 +452,7 @@
 
 #define STM32_HAS_UART7                     TRUE
 #define STM32_UART7_RX_DMA_MSK              STM32_DMA_STREAM_ID_MSK(1, 3)
-#define STM32_UART7_RX_DMA_CHN              0x00004000
+#define STM32_UART7_RX_DMA_CHN              0x00005000
 #define STM32_UART7_TX_DMA_MSK              STM32_DMA_STREAM_ID_MSK(1, 1)
 #define STM32_UART7_TX_DMA_CHN              0x00000050
 
