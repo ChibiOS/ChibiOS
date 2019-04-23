@@ -196,6 +196,20 @@
   MPU->RASR = ((uint32_t)attribs);                                          \
 }
 
+/**
+ * @brief   Changes an MPU region base address.
+ *
+ * @param[in] region    the region number
+ * @param[in] address   start address of the region, note, there are alignment
+ *                      constraints
+ *
+ * @api
+ */
+#define mpuSetRegionAddress(region, addr) {                                 \
+  MPU->RNR  = ((uint32_t)region);                                           \
+  MPU->RBAR = ((uint32_t)addr);                                             \
+}
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/

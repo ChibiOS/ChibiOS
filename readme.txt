@@ -78,6 +78,7 @@
 - NEW: updates to MFS from trunk code.
 - NEW: updates to test library from trunk code.
 - HAL: Added H753 to all H7 mcuconf.h files.
+- FIX: Fixed MPU setup missing on thread start (bug #1027).
 - FIX: Fixed invalid I2C4 DMAs for STM32F76x (bug #1026).
 - FIX: Fixed invalid STM32_UART7_RX_DMA_CHN for STM32F469 (bug #1025).
 - FIX: Fixed invalid EXTI registry constant for STM32L4+ (bug #1024).

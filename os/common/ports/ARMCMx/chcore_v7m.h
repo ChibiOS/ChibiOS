@@ -82,6 +82,13 @@
 #endif
 
 /**
+ * @brief   MPU region to be used to stack guards.
+ */
+#if !defined(PORT_USE_MPU_REGION) || defined(__DOXYGEN__)
+#define PORT_USE_MPU_REGION             MPU_REGION_7
+#endif
+
+/**
  * @brief   Stack size for the system idle thread.
  * @details This size depends on the idle thread implementation, usually
  *          the idle thread should take no more space than those reserved
@@ -478,12 +485,8 @@ struct port_intctx {
   _port_switch(ntp, otp);                                                   \
                                                                             \
   /* Setting up the guard page for the switched-in thread.*/                \
-  mpuConfigureRegion(MPU_REGION_0,                                          \
-                     chThdGetSelfX()->wabase,                               \
-                     MPU_RASR_ATTR_AP_NA_NA |                               \
-                     MPU_RASR_ATTR_NON_CACHEABLE |                          \
-                     MPU_RASR_SIZE_32 |                                     \
-                     MPU_RASR_ENABLE);                                      \
+    mpuSetRegionAddress(PORT_USE_MPU_REGION,                                \
+                        chThdGetSelfX()->wabase);                           \
 }
 #endif
 #endif
@@ -535,7 +538,7 @@ static inline void port_init(void) {
 
     /* Setting up the guard page on the main() function stack base
        initially.*/
-    mpuConfigureRegion(MPU_REGION_0,
+    mpuConfigureRegion(PORT_USE_MPU_REGION,
                        &__main_thread_stack_base__,
                        MPU_RASR_ATTR_AP_NA_NA |
                        MPU_RASR_ATTR_NON_CACHEABLE |
