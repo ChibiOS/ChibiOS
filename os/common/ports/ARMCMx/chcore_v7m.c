@@ -116,6 +116,19 @@ void PendSV_Handler(void) {
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
+#if (CH_DBG_ENABLE_STACK_CHECK == TRUE) ||                                  \
+    (PORT_ENABLE_GUARD_PAGES == TRUE) ||                                    \
+    defined(__DOXYGEN__)
+/**
+ * @brief   Setting up MPU region for the current thread.
+ */
+void _port_set_region(void) {
+
+  mpuSetRegionAddress(PORT_USE_MPU_REGION,
+                      chThdGetSelfX()->wabase);
+}
+#endif
+
 /**
  * @brief   Exception exit redirection to _port_switch_from_isr().
  */
