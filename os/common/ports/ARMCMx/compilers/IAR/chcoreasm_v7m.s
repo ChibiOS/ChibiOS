@@ -62,8 +62,10 @@ ICSR_PENDSVSET  SET 0x10000000
                 SECTION .text:CODE:NOROOT(2)
 
                 EXTERN  chThdExit
-                EXTERN  chSysHalt
                 EXTERN  chSchDoReschedule
+#if CH_DBG_ENABLE_STACK_CHECK || PORT_ENABLE_GUARD_PAGES
+                EXTERN  _port_set_region
+#endif
 #if CH_DBG_STATISTICS
                 EXTERN   _stats_start_measure_crit_thd
                 EXTERN   _stats_stop_measure_crit_thd
@@ -107,6 +109,9 @@ _port_switch:
  */
                 PUBLIC  _port_thread_start
 _port_thread_start:
+#if CH_DBG_ENABLE_STACK_CHECK || PORT_ENABLE_GUARD_PAGES
+                bl      _port_set_region
+#endif
 #if CH_DBG_SYSTEM_STATE_CHECK
                 bl      _dbg_check_unlock
 #endif
