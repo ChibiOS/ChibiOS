@@ -51,7 +51,7 @@
 /**
  * @brief   ChibiOS version string.
  */
-#define CH_VERSION              "19.1.1"
+#define CH_VERSION              "19.1.2"
 
 /**
  * @brief   ChibiOS version release year.
@@ -66,12 +66,12 @@
 /**
  * @brief   ChibiOS version patch number.
  */
-#define CH_VERSION_PATCH        1
+#define CH_VERSION_PATCH        2
 
 /**
  * @brief   ChibiOS version nickname.
  */
-#define CH_VERSION_NICKNAME     "Tramonti"
+#define CH_VERSION_NICKNAME     "Minori"
 /** @} */
 
 /*===========================================================================*/
