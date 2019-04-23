@@ -392,7 +392,6 @@ static mfs_error_t mfs_bank_write_header(MFSDriver *mfsp,
  * @brief   Checks integrity of the header in the shared buffer.
  *
  * @param[in] mfsp      pointer to the @p MFSDriver object
- * @param[in] bank      bank identifier
  * @return              The header state.
  *
  * @notapi
