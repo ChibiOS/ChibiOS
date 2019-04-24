@@ -1293,7 +1293,7 @@
 /**
  * @brief   STM32_PLLM field.
  */
-#if ((STM32_PLLM_VALUE >= 1) && (STM32_PLLM_VALUE <= 16)) ||                 \
+#if ((STM32_PLLM_VALUE >= 1) && (STM32_PLLM_VALUE <= 16)) ||                \
     defined(__DOXYGEN__)
 #define STM32_PLLM                  ((STM32_PLLM_VALUE - 1) << 4)
 #else
@@ -1352,7 +1352,7 @@
 /**
  * @brief   STM32_PLLN field.
  */
-#if ((STM32_PLLN_VALUE >= 8) && (STM32_PLLN_VALUE <= 127)) ||                \
+#if ((STM32_PLLN_VALUE >= 8) && (STM32_PLLN_VALUE <= 127)) ||               \
     defined(__DOXYGEN__)
 #define STM32_PLLN                  (STM32_PLLN_VALUE << 8)
 #else
@@ -1696,7 +1696,7 @@
 /**
  * @brief   STM32_PLLSAI1N field.
  */
-#if ((STM32_PLLSAI1N_VALUE >= 8) && (STM32_PLLSAI1N_VALUE <= 127)) ||        \
+#if ((STM32_PLLSAI1N_VALUE >= 8) && (STM32_PLLSAI1N_VALUE <= 127)) ||       \
     defined(__DOXYGEN__)
 #define STM32_PLLSAI1N               (STM32_PLLSAI1N_VALUE << 8)
 #else
@@ -1910,7 +1910,7 @@
 /**
  * @brief   STM32_PLLSAI2N field.
  */
-#if ((STM32_PLLSAI2N_VALUE >= 8) && (STM32_PLLSAI2N_VALUE <= 127)) ||        \
+#if ((STM32_PLLSAI2N_VALUE >= 8) && (STM32_PLLSAI2N_VALUE <= 127)) ||       \
     defined(__DOXYGEN__)
 #define STM32_PLLSAI2N               (STM32_PLLSAI2N_VALUE << 8)
 #else
