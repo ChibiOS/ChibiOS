@@ -241,7 +241,7 @@
 
 #define STM32_HAS_TIM1                      TRUE
 #define STM32_TIM1_IS_32BITS                FALSE
-#define STM32_TIM1_CHANNELS                 4
+#define STM32_TIM1_CHANNELS                 6
 #define STM32_TIM1_UP_HANDLER               VectorA4
 #define STM32_TIM1_CC_HANDLER               VectorAC
 #define STM32_TIM1_UP_NUMBER                25
@@ -593,7 +593,7 @@
 
 #define STM32_HAS_TIM1                      TRUE
 #define STM32_TIM1_IS_32BITS                FALSE
-#define STM32_TIM1_CHANNELS                 4
+#define STM32_TIM1_CHANNELS                 6
 #define STM32_TIM1_UP_HANDLER               VectorA4
 #define STM32_TIM1_CC_HANDLER               VectorAC
 #define STM32_TIM1_UP_NUMBER                25
@@ -960,7 +960,7 @@
 
 #define STM32_HAS_TIM1                      TRUE
 #define STM32_TIM1_IS_32BITS                FALSE
-#define STM32_TIM1_CHANNELS                 4
+#define STM32_TIM1_CHANNELS                 6
 #define STM32_TIM1_UP_HANDLER               VectorA4
 #define STM32_TIM1_CC_HANDLER               VectorAC
 #define STM32_TIM1_UP_NUMBER                25
@@ -1384,7 +1384,7 @@
 
 #define STM32_HAS_TIM1                      TRUE
 #define STM32_TIM1_IS_32BITS                FALSE
-#define STM32_TIM1_CHANNELS                 4
+#define STM32_TIM1_CHANNELS                 6
 #define STM32_TIM1_UP_HANDLER               VectorA4
 #define STM32_TIM1_CC_HANDLER               VectorAC
 #define STM32_TIM1_UP_NUMBER                25
