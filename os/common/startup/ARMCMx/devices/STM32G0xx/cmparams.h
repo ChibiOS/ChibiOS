@@ -47,7 +47,7 @@
    then a file named board.h is included. This file must contain a device
    definition compatible with the vendor include file.*/
 #if !defined (STM32G071xx) && !defined (STM32G081xx) &&                     \
-    !defined (STM32G070xx)                                                  \
+    !defined (STM32G070xx)
 #include "board.h"
 #endif
 
