@@ -650,7 +650,7 @@
  *
  * @api
  */
-#define rccResetRNG() rccResetAHB3(RCC_AHB2RSTR_RNGRST)
+#define rccResetRNG() rccResetAHB2(RCC_AHB2RSTR_RNGRST)
 /** @} */
 
 /**
