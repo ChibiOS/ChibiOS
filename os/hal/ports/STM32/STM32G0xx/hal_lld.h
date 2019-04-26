@@ -335,13 +335,6 @@
 #endif
 
 /**
- * @brief   Enables or disables the HSI48 clock source.
- */
-#if !defined(STM32_HSI48_ENABLED) || defined(__DOXYGEN__)
-#define STM32_HSI48_ENABLED                 FALSE
-#endif
-
-/**
  * @brief   Enables or disables the HSE clock source.
  */
 #if !defined(STM32_HSE_ENABLED) || defined(__DOXYGEN__)

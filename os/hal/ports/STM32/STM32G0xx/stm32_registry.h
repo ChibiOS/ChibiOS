@@ -144,13 +144,7 @@
 
 /* I2C attributes.*/
 #define STM32_HAS_I2C1                      TRUE
-#define STM32_I2C1_GLOBAL_HANDLER           Vector9C
-#define STM32_I2C1_GLOBAL_NUMBER            23
-
 #define STM32_HAS_I2C2                      TRUE
-#define STM32_I2C1_GLOBAL_HANDLER           VectorA0
-#define STM32_I2C1_GLOBAL_NUMBER            24
-
 #define STM32_HAS_I2C3                      FALSE
 #define STM32_HAS_I2C4                      FALSE
 
@@ -183,52 +177,34 @@
 #define STM32_HAS_TIM1                      TRUE
 #define STM32_TIM1_IS_32BITS                FALSE
 #define STM32_TIM1_CHANNELS                 6
-#define STM32_TIM1_UP_HANDLER               Vector74
-#define STM32_TIM1_CC_HANDLER               Vector78
-#define STM32_TIM1_UP_NUMBER                13
-#define STM32_TIM1_CC_NUMBER                14
 
 #define STM32_HAS_TIM3                      TRUE
 #define STM32_TIM3_IS_32BITS                FALSE
 #define STM32_TIM3_CHANNELS                 4
-#define STM32_TIM3_HANDLER                  VectorB4
-#define STM32_TIM3_NUMBER                   29
 
 #define STM32_HAS_TIM6                      TRUE
 #define STM32_TIM6_IS_32BITS                FALSE
 #define STM32_TIM6_CHANNELS                 0
-#define STM32_TIM6_HANDLER                  Vector84
-#define STM32_TIM6_NUMBER                   17
 
 #define STM32_HAS_TIM7                      TRUE
 #define STM32_TIM7_IS_32BITS                FALSE
 #define STM32_TIM7_CHANNELS                 0
-#define STM32_TIM7_HANDLER                  Vector88
-#define STM32_TIM7_NUMBER                   18
 
 #define STM32_HAS_TIM14                     TRUE
 #define STM32_TIM14_IS_32BITS               FALSE
 #define STM32_TIM14_CHANNELS                1
-#define STM32_TIM14_HANDLER                 Vector8C
-#define STM32_TIM14_NUMBER                  19
 
 #define STM32_HAS_TIM15                     TRUE
 #define STM32_TIM15_IS_32BITS               FALSE
 #define STM32_TIM15_CHANNELS                2
-#define STM32_TIM15_HANDLER                 Vector90
-#define STM32_TIM15_NUMBER                  20
 
 #define STM32_HAS_TIM16                     TRUE
 #define STM32_TIM16_IS_32BITS               FALSE
-#define STM32_TIM16_CHANNELS                2
-#define STM32_TIM16_HANDLER                 Vector94
-#define STM32_TIM16_NUMBER                  21
+#define STM32_TIM16_CHANNELS                1
 
 #define STM32_HAS_TIM17                     TRUE
 #define STM32_TIM17_IS_32BITS               FALSE
-#define STM32_TIM17_CHANNELS                2
-#define STM32_TIM17_HANDLER                 Vector98
-#define STM32_TIM17_NUMBER                  22
+#define STM32_TIM17_CHANNELS                1
 
 #define STM32_HAS_TIM2                      FALSE
 #define STM32_HAS_TIM4                      FALSE
