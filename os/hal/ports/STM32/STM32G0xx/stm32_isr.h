@@ -34,8 +34,6 @@
  * @{
  */
 /*
-
-/*
  * I2C units.
  */
 #define STM32_I2C1_GLOBAL_HANDLER   Vector9C
