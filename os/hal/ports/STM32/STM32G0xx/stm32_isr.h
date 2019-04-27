@@ -30,6 +30,15 @@
 /*===========================================================================*/
 
 /**
+ * @name    ISRs suppressed in standard drivers
+ * @{
+ */
+#define STM32_USART3_SUPPRESS_ISR
+#define STM32_UART4_SUPPRESS_ISR
+#define STM32_LPUART1_SUPPRESS_ISR
+/** @} */
+
+/**
  * @name    ISR names and numbers remapping
  * @{
  */
@@ -72,11 +81,11 @@
  */
 #define STM32_USART1_HANDLER        VectorAC
 #define STM32_USART2_HANDLER        VectorB0
-#define STM32_USART3_8_LP1_HANDLER  VectorB4
+#define STM32_USART3_4_LP1_HANDLER  VectorB4
 
 #define STM32_USART1_NUMBER         27
 #define STM32_USART2_NUMBER         28
-#define STM32_USART3_8_LP1_NUMBER   29
+#define STM32_USART3_4_LP1_NUMBER   29
 
 /*
  * USB units.
@@ -122,11 +131,50 @@
 #if !defined(STM32_IRQ_EXTI16_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_IRQ_EXTI16_PRIORITY           3
 #endif
+
+/**
+ * @brief   EXTI17..18 interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_EXTI17_18_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_EXTI17_18_PRIORITY        3
+#endif
+
+/**
+ * @brief   EXTI17..18 interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_USART3_4_LP1_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_USART3_4_LP1_PRIORITY     3
+#endif
 /** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+/* IRQ priority checks.*/
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI0_1_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI0_1_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI2_3_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI2_3_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI4_15_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI4_15_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI16_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI16_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI17_18_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI17_18_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_USART3_4_LP1_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_USART3_4_LP1_PRIORITY"
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */

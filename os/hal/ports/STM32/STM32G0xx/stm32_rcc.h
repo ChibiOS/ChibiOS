@@ -785,21 +785,21 @@
  *
  * @api
  */
-#define rccEnableUART4(lp) rccEnableAPBR1(RCC_APBENR1_UART4EN, lp)
+#define rccEnableUART4(lp) rccEnableAPBR1(RCC_APBENR1_USART4EN, lp)
 
 /**
  * @brief   Disables the UART4 peripheral clock.
  *
  * @api
  */
-#define rccDisableUART4() rccDisableAPBR1(RCC_APBENR1_UART4EN)
+#define rccDisableUART4() rccDisableAPBR1(RCC_APBENR1_USART4EN)
 
 /**
  * @brief   Resets the UART4 peripheral.
  *
  * @api
  */
-#define rccResetUART4() rccResetAPBR1(RCC_APBRSTR1_UART4RST)
+#define rccResetUART4() rccResetAPBR1(RCC_APBRSTR1_USART4RST)
 
 /**
  * @brief   Enables the LPUART1 peripheral clock.
@@ -808,21 +808,21 @@
  *
  * @api
  */
-#define rccEnableLPUART1(lp) rccEnableAPBR2(RCC_APBENR2_LPUART1EN, lp)
+#define rccEnableLPUART1(lp) rccEnableAPBR1(RCC_APBENR1_LPTIM2EN, lp)
 
 /**
  * @brief   Disables the LPUART1 peripheral clock.
  *
  * @api
  */
-#define rccDisableLPUART1() rccDisableAPBR2(RCC_APBENR2_LPUART1EN)
+#define rccDisableLPUART1() rccDisableAPBR1(RCC_APBENR1_LPTIM2EN)
 
 /**
  * @brief   Resets the USART1 peripheral.
  *
  * @api
  */
-#define rccResetLPUART1() rccResetAPBR2(RCC_APBRSTR2_LPUART1RST)
+#define rccResetLPUART1() rccResetAPBR1(RCC_APBRSTR1_LPUART1RST)
 /** @} */
 
 /**

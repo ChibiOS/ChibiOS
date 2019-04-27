@@ -63,8 +63,8 @@
 /**
  * @brief   Sub-family identifier.
  */
-#if !defined(STM32G0xx) || defined(__DOXYGEN__)
-#define STM32G0xx
+#if !defined(STM32G0XX) || defined(__DOXYGEN__)
+#define STM32G0XX
 #endif
 /** @} */
 
@@ -1326,6 +1326,21 @@
 #endif
 
 /**
+ * @brief   USART3 frequency.
+ */
+#define STM32_USART3CLK            STM32_PCLK
+
+/**
+ * @brief   UART4 frequency.
+ */
+#define STM32_UART4CLK             STM32_PCLK
+
+/**
+ * @brief   UART5 frequency.
+ */
+#define STM32_UART5CLK             STM32_PCLK
+
+/**
  * @brief   LPUART1 clock frequency.
  */
 #if (STM32_LPUART1SEL == STM32_LPUART1SEL_PCLK) || defined(__DOXYGEN__)
@@ -1497,16 +1512,16 @@
  * @brief   Flash settings.
  */
 #if (STM32_HCLK <= STM32_0WS_THRESHOLD) || defined(__DOXYGEN__)
-#define STM32_FLASHBITS             FLASH_ACR_LATENCY_0WS
+#define STM32_FLASHBITS             0
 
 #elif STM32_HCLK <= STM32_1WS_THRESHOLD
-#define STM32_FLASHBITS             FLASH_ACR_LATENCY_1WS
+#define STM32_FLASHBITS             FLASH_ACR_LATENCY_0
 
 #elif STM32_HCLK <= STM32_2WS_THRESHOLD
-#define STM32_FLASHBITS             FLASH_ACR_LATENCY_2WS
+#define STM32_FLASHBITS             FLASH_ACR_LATENCY_1
 
 #else
-#define STM32_FLASHBITS             FLASH_ACR_LATENCY_3WS
+#define STM32_FLASHBITS             (FLASH_ACR_LATENCY_1 | FLASH_ACR_LATENCY_0)
 #endif
 
 /*===========================================================================*/

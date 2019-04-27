@@ -129,8 +129,32 @@ OSAL_IRQ_HANDLER(Vector5C) {
   OSAL_IRQ_EPILOGUE();
 }
 #endif
-
 #endif /* HAL_USE_PAL && (PAL_USE_WAIT || PAL_USE_CALLBACKS) */
+
+#if STM32_SERIAL_USE_USART3  || STM32_SERIAL_USE_UART4 ||                   \
+    STM32_SERIAL_USE_LPUART1 || defined(__DOXYGEN__)
+/**
+ * @brief   USART3, USART4 and LPUART1 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_USART3_4_LP1_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+#if STM32_SERIAL_USE_USART3
+  sd_lld_serve_interrupt(&SD3);
+#endif
+#if STM32_SERIAL_USE_UART4
+  sd_lld_serve_interrupt(&SD4);
+#endif
+#if STM32_SERIAL_USE_LPUART1
+  sd_lld_serve_interrupt(&LPSD1);
+#endif
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -148,6 +172,9 @@ void irqInit(void) {
   nvicEnableVector(EXTI2_3_IRQn, STM32_IRQ_EXTI2_3_PRIORITY);
   nvicEnableVector(EXTI4_15_IRQn, STM32_IRQ_EXTI4_15_PRIORITY);
 #endif
+#if HAL_USE_SERIAL
+  nvicEnableVector(USART3_4_LPUART1_IRQn, STM32_IRQ_USART3_4_LP1_PRIORITY);
+#endif
 }
 
 /**
@@ -161,6 +188,9 @@ void irqDeinit(void) {
   nvicDisableVector(EXTI0_1_IRQn);
   nvicDisableVector(EXTI2_3_IRQn);
   nvicDisableVector(EXTI4_15_IRQn);
+#endif
+#if HAL_USE_SERIAL
+  nvicDisableVector(USART3_4_LPUART1_IRQn);
 #endif
 }
 
