@@ -58,9 +58,15 @@
  */
 #define FLASH_ATTR_ECC_CAPABLE              0x00000008U
 /**
+ * @brief   The device is able to overwrite zero to a line.
+ * @note    This attribute is only meaningful for those devices that support
+ *          ECC, so also @p FLASH_ATTR_ECC_CAPABLE must be specified.
+ */
+#define FLASH_ATTR_ECC_ZERO_LINE_CAPABLE    0x00000010U
+/**
  * @brief   The device is able to suspend erase operations.
  */
-#define FLASH_ATTR_SUSPEND_ERASE_CAPABLE    0x00000010U
+#define FLASH_ATTR_SUSPEND_ERASE_CAPABLE    0x00000020U
 /** @} */
 
 /*===========================================================================*/
