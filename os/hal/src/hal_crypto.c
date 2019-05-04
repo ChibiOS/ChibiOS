@@ -170,7 +170,7 @@ cryerror_t cryLoadAESTransientKey(CRYDriver *cryp,
  *                              the transient key, other values are keys stored
  *                              in an unspecified way
  * @param[in] in                buffer containing the input plaintext
- * @param[out] out              buffer for the output cyphertext
+ * @param[out] out              buffer for the output ciphertext
  * @return                      The operation status.
  * @retval CRY_NOERROR          if the operation succeeded.
  * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
@@ -215,7 +215,7 @@ cryerror_t cryEncryptAES(CRYDriver *cryp,
  * @param[in] key_id            the key to be used for the operation, zero is
  *                              the transient key, other values are keys stored
  *                              in an unspecified way
- * @param[in] in                buffer containing the input cyphertext
+ * @param[in] in                buffer containing the input ciphertext
  * @param[out] out              buffer for the output plaintext
  * @return                      The operation status.
  * @retval CRY_NOERROR          if the operation succeeded.
@@ -265,7 +265,7 @@ cryerror_t cryDecryptAES(CRYDriver *cryp,
  * @param[in] size              size of both buffers, this number must be a
  *                              multiple of 16
  * @param[in] in                buffer containing the input plaintext
- * @param[out] out              buffer for the output cyphertext
+ * @param[out] out              buffer for the output ciphertext
  * @return                      The operation status.
  * @retval CRY_NOERROR          if the operation succeeded.
  * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
@@ -316,7 +316,7 @@ cryerror_t cryEncryptAES_ECB(CRYDriver *cryp,
  *                              in an unspecified way
  * @param[in] size              size of both buffers, this number must be a
  *                              multiple of 16
- * @param[in] in                buffer containing the input cyphertext
+ * @param[in] in                buffer containing the input ciphertext
  * @param[out] out              buffer for the output plaintext
  * @return                      The operation status.
  * @retval CRY_NOERROR          if the operation succeeded.
@@ -369,7 +369,7 @@ cryerror_t cryDecryptAES_ECB(CRYDriver *cryp,
  * @param[in] size              size of both buffers, this number must be a
  *                              multiple of 16
  * @param[in] in                buffer containing the input plaintext
- * @param[out] out              buffer for the output cyphertext
+ * @param[out] out              buffer for the output ciphertext
  * @param[in] iv                128 bits input vector
  * @return                      The operation status.
  * @retval CRY_NOERROR          if the operation succeeded.
@@ -423,7 +423,7 @@ cryerror_t cryEncryptAES_CBC(CRYDriver *cryp,
  *                              in an unspecified way
  * @param[in] size              size of both buffers, this number must be a
  *                              multiple of 16
- * @param[in] in                buffer containing the input cyphertext
+ * @param[in] in                buffer containing the input ciphertext
  * @param[out] out              buffer for the output plaintext
  * @param[in] iv                128 bits input vector
  * @return                      The operation status.
@@ -476,7 +476,7 @@ cryerror_t cryDecryptAES_CBC(CRYDriver *cryp,
  *                              in an unspecified way
  * @param[in] size              size of both buffers
  * @param[in] in                buffer containing the input plaintext
- * @param[out] out              buffer for the output cyphertext
+ * @param[out] out              buffer for the output ciphertext
  * @param[in] iv                128 bits input vector
  * @return                      The operation status.
  * @retval CRY_NOERROR          if the operation succeeded.
@@ -527,7 +527,7 @@ cryerror_t cryEncryptAES_CFB(CRYDriver *cryp,
  *                              the transient key, other values are keys stored
  *                              in an unspecified way
  * @param[in] size              size of both buffers
- * @param[in] in                buffer containing the input cyphertext
+ * @param[in] in                buffer containing the input ciphertext
  * @param[out] out              buffer for the output plaintext
  * @param[in] iv                128 bits input vector
  * @return                      The operation status.
@@ -580,7 +580,7 @@ cryerror_t cryDecryptAES_CFB(CRYDriver *cryp,
  *                              in an unspecified way
  * @param[in] size              size of both buffers
  * @param[in] in                buffer containing the input plaintext
- * @param[out] out              buffer for the output cyphertext
+ * @param[out] out              buffer for the output ciphertext
  * @param[in] iv                128 bits input vector + counter, it contains
  *                              a 96 bits IV and a 32 bits counter
  * @return                      The operation status.
@@ -632,7 +632,7 @@ cryerror_t cryEncryptAES_CTR(CRYDriver *cryp,
  *                              the transient key, other values are keys stored
  *                              in an unspecified way
  * @param[in] size              size of both buffers
- * @param[in] in                buffer containing the input cyphertext
+ * @param[in] in                buffer containing the input ciphertext
  * @param[out] out              buffer for the output plaintext
  * @param[in] iv                128 bits input vector + counter, it contains
  *                              a 96 bits IV and a 32 bits counter
@@ -688,7 +688,7 @@ cryerror_t cryDecryptAES_CTR(CRYDriver *cryp,
  * @param[in] auth_in           buffer containing the data to be authenticated
  * @param[in] text_size         size of the text buffer
  * @param[in] text_in           buffer containing the input plaintext
- * @param[out] text_out         buffer for the output cyphertext
+ * @param[out] text_out         buffer for the output ciphertext
  * @param[in] iv                128 bits input vector
  * @param[in] tag_size          size of the authentication tag, this number
  *                              must be between 1 and 16
@@ -760,7 +760,7 @@ cryerror_t cryEncryptAES_GCM(CRYDriver *cryp,
  * @param[in] auth_in           buffer containing the data to be authenticated
  * @param[in] text_size         size of the text buffer
  * @param[in] text_in           buffer containing the input plaintext
- * @param[out] text_out         buffer for the output cyphertext
+ * @param[out] text_out         buffer for the output ciphertext
  * @param[in] iv                128 bits input vector
  * @param[in] tag_size          size of the authentication tag, this number
  *                              must be between 1 and 16
@@ -866,7 +866,7 @@ cryerror_t cryLoadDESTransientKey(CRYDriver *cryp,
  *                              the transient key, other values are keys stored
  *                              in an unspecified way
  * @param[in] in                buffer containing the input plaintext
- * @param[out] out              buffer for the output cyphertext
+ * @param[out] out              buffer for the output ciphertext
  * @return                      The operation status.
  * @retval CRY_NOERROR          if the operation succeeded.
  * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
@@ -912,7 +912,7 @@ cryerror_t cryEncryptDES(CRYDriver *cryp,
  * @param[in] key_id            the key to be used for the operation, zero is
  *                              the transient key, other values are keys stored
  *                              in an unspecified way
- * @param[in] in                buffer containing the input cyphertext
+ * @param[in] in                buffer containing the input ciphertext
  * @param[out] out              buffer for the output plaintext
  * @return                      The operation status.
  * @retval CRY_NOERROR          if the operation succeeded.
@@ -962,7 +962,7 @@ cryerror_t cryDecryptDES(CRYDriver *cryp,
  * @param[in] size              size of both buffers, this number must be a
  *                              multiple of 8
  * @param[in] in                buffer containing the input plaintext
- * @param[out] out              buffer for the output cyphertext
+ * @param[out] out              buffer for the output ciphertext
  * @return                      The operation status.
  * @retval CRY_NOERROR          if the operation succeeded.
  * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
@@ -1013,7 +1013,7 @@ cryerror_t cryEncryptDES_ECB(CRYDriver *cryp,
  *                              in an unspecified way
  * @param[in] size              size of both buffers, this number must be a
  *                              multiple of 8
- * @param[in] in                buffer containing the input cyphertext
+ * @param[in] in                buffer containing the input ciphertext
  * @param[out] out              buffer for the output plaintext
  * @return                      The operation status.
  * @retval CRY_NOERROR          if the operation succeeded.
@@ -1066,7 +1066,7 @@ cryerror_t cryDecryptDES_ECB(CRYDriver *cryp,
  * @param[in] size              size of both buffers, this number must be a
  *                              multiple of 8
  * @param[in] in                buffer containing the input plaintext
- * @param[out] out              buffer for the output cyphertext
+ * @param[out] out              buffer for the output ciphertext
  * @param[in] iv                64 bits input vector
  * @return                      The operation status.
  * @retval CRY_NOERROR          if the operation succeeded.
@@ -1120,7 +1120,7 @@ cryerror_t cryEncryptDES_CBC(CRYDriver *cryp,
  *                              in an unspecified way
  * @param[in] size              size of both buffers, this number must be a
  *                              multiple of 8
- * @param[in] in                buffer containing the input cyphertext
+ * @param[in] in                buffer containing the input ciphertext
  * @param[out] out              buffer for the output plaintext
  * @param[in] iv                64 bits input vector
  * @return                      The operation status.
