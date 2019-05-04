@@ -73,6 +73,10 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+*** 19.1.3 ***
+- FIX: Fixed MPU fix #1027 broke stack checking on Cortex-M devices without
+       MPU (bug #1028).
+
 *** 19.1.2 ***
 - NEW: Modified AES GCM function signatures.
 - NEW: updates to MFS from trunk code.
