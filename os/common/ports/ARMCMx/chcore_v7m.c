@@ -116,8 +116,8 @@ void PendSV_Handler(void) {
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
-#if (CH_DBG_ENABLE_STACK_CHECK == TRUE) ||                                  \
-    (PORT_ENABLE_GUARD_PAGES == TRUE) ||                                    \
+#if ((CH_DBG_ENABLE_STACK_CHECK == TRUE) &&                                 \
+     (PORT_ENABLE_GUARD_PAGES == TRUE)) ||                                  \
     defined(__DOXYGEN__)
 /**
  * @brief   Setting up MPU region for the current thread.

@@ -103,7 +103,7 @@ _port_switch:
                 .thumb_func
                 .globl  _port_thread_start
 _port_thread_start:
-#if CH_DBG_ENABLE_STACK_CHECK || PORT_ENABLE_GUARD_PAGES
+#if CH_DBG_ENABLE_STACK_CHECK && PORT_ENABLE_GUARD_PAGES
                 bl      _port_set_region
 #endif
 #if CH_DBG_SYSTEM_STATE_CHECK
