@@ -61,7 +61,7 @@ ICSR_PENDSVSET  EQU     0x10000000
                 IMPORT  chThdExit
                 IMPORT  chSysHalt
                 IMPORT  chSchDoReschedule
-#if CH_DBG_ENABLE_STACK_CHECK || PORT_ENABLE_GUARD_PAGES
+#if CH_DBG_ENABLE_STACK_CHECK && PORT_ENABLE_GUARD_PAGES
                 IMPORT  _port_set_region
 #endif
 #if CH_DBG_STATISTICS
@@ -106,7 +106,7 @@ _port_switch    PROC
  */
                 EXPORT  _port_thread_start
 _port_thread_start PROC
-#if CH_DBG_ENABLE_STACK_CHECK || PORT_ENABLE_GUARD_PAGES
+#if CH_DBG_ENABLE_STACK_CHECK && PORT_ENABLE_GUARD_PAGES
                 bl      _port_set_region
 #endif
 #if CH_DBG_SYSTEM_STATE_CHECK

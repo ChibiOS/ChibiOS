@@ -88,6 +88,8 @@
 *** 18.2.3 ***
 - NEW: Added a check on defective GCC versions, Cortex-M0 only.
 - NEW: Extra timer checks in STM32 ST driver.
+- FIX: Fixed MPU fix #1027 broke stack checking on Cortex-M devices without
+       MPU (bug #1028).
 - FIX: Fixed MPU setup missing on thread start (bug #1027).
 - FIX: Fixed invalid I2C4 DMAs for STM32F76x (bug #1026).
 - FIX: Fixed invalid STM32_UART7_RX_DMA_CHN for STM32F469 (bug #1025).
