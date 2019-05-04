@@ -359,7 +359,7 @@ cryerror_t cry_lld_decrypt_AES(CRYDriver *cryp,
 #if (CRY_LLD_SUPPORTS_AES_ECB == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Encryption operation using AES-ECB.
- * @note    The function operates on data buffers whose lenght is a multiple
+ * @note    The function operates on data buffers whose length is a multiple
  *          of an AES block, this means that padding must be done by the
  *          caller.
  *
@@ -367,8 +367,8 @@ cryerror_t cry_lld_decrypt_AES(CRYDriver *cryp,
  * @param[in] key_id            the key to be used for the operation, zero is
  *                              the transient key, other values are keys stored
  *                              in an unspecified way
- * @param[in] size              size of the plaintext buffer, this number must
- *                              be a multiple of the selected key size
+ * @param[in] size              size of both buffers, this number must be a
+ *                              multiple of 16
  * @param[in] in                buffer containing the input plaintext
  * @param[out] out              buffer for the output cyphertext
  * @return                      The operation status.
@@ -400,7 +400,7 @@ cryerror_t cry_lld_encrypt_AES_ECB(CRYDriver *cryp,
 
 /**
  * @brief   Decryption operation using AES-ECB.
- * @note    The function operates on data buffers whose lenght is a multiple
+ * @note    The function operates on data buffers whose length is a multiple
  *          of an AES block, this means that padding must be done by the
  *          caller.
  *
@@ -408,8 +408,8 @@ cryerror_t cry_lld_encrypt_AES_ECB(CRYDriver *cryp,
  * @param[in] key_id            the key to be used for the operation, zero is
  *                              the transient key, other values are keys stored
  *                              in an unspecified way
- * @param[in] size              size of the plaintext buffer, this number must
- *                              be a multiple of the selected key size
+ * @param[in] size              size of both buffers, this number must be a
+ *                              multiple of 16
  * @param[in] in                buffer containing the input plaintext
  * @param[out] out              buffer for the output cyphertext
  * @return                      The operation status.
@@ -443,7 +443,7 @@ cryerror_t cry_lld_decrypt_AES_ECB(CRYDriver *cryp,
 #if (CRY_LLD_SUPPORTS_AES_CBC == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Encryption operation using AES-CBC.
- * @note    The function operates on data buffers whose lenght is a multiple
+ * @note    The function operates on data buffers whose length is a multiple
  *          of an AES block, this means that padding must be done by the
  *          caller.
  *
@@ -451,8 +451,8 @@ cryerror_t cry_lld_decrypt_AES_ECB(CRYDriver *cryp,
  * @param[in] key_id            the key to be used for the operation, zero is
  *                              the transient key, other values are keys stored
  *                              in an unspecified way
- * @param[in] size              size of the plaintext buffer, this number must
- *                              be a multiple of the selected key size
+ * @param[in] size              size of both buffers, this number must be a
+ *                              multiple of 16
  * @param[in] in                buffer containing the input plaintext
  * @param[out] out              buffer for the output cyphertext
  * @param[in] iv                128 bits initial vector
@@ -487,7 +487,7 @@ cryerror_t cry_lld_encrypt_AES_CBC(CRYDriver *cryp,
 
 /**
  * @brief   Decryption operation using AES-CBC.
- * @note    The function operates on data buffers whose lenght is a multiple
+ * @note    The function operates on data buffers whose length is a multiple
  *          of an AES block, this means that padding must be done by the
  *          caller.
  *
@@ -495,8 +495,8 @@ cryerror_t cry_lld_encrypt_AES_CBC(CRYDriver *cryp,
  * @param[in] key_id            the key to be used for the operation, zero is
  *                              the transient key, other values are keys stored
  *                              in an unspecified way
- * @param[in] size              size of the plaintext buffer, this number must
- *                              be a multiple of the selected key size
+ * @param[in] size              size of both buffers, this number must be a
+ *                              multiple of 16
  * @param[in] in                buffer containing the input plaintext
  * @param[out] out              buffer for the output cyphertext
  * @param[in] iv                128 bits initial vector
@@ -533,16 +533,13 @@ cryerror_t cry_lld_decrypt_AES_CBC(CRYDriver *cryp,
 #if (CRY_LLD_SUPPORTS_AES_CFB == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Encryption operation using AES-CFB.
- * @note    The function operates on data buffers whose lenght is a multiple
- *          of an AES block, this means that padding must be done by the
- *          caller.
+ * @note    This is a stream cipher, there are no size restrictions.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] key_id            the key to be used for the operation, zero is
  *                              the transient key, other values are keys stored
  *                              in an unspecified way
- * @param[in] size              size of the plaintext buffer, this number must
- *                              be a multiple of the selected key size
+ * @param[in] size              size of both buffers
  * @param[in] in                buffer containing the input plaintext
  * @param[out] out              buffer for the output cyphertext
  * @param[in] iv                128 bits initial vector
@@ -577,16 +574,13 @@ cryerror_t cry_lld_encrypt_AES_CFB(CRYDriver *cryp,
 
 /**
  * @brief   Decryption operation using AES-CFB.
- * @note    The function operates on data buffers whose lenght is a multiple
- *          of an AES block, this means that padding must be done by the
- *          caller.
+ * @note    This is a stream cipher, there are no size restrictions.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] key_id            the key to be used for the operation, zero is
  *                              the transient key, other values are keys stored
  *                              in an unspecified way
- * @param[in] size              size of the plaintext buffer, this number must
- *                              be a multiple of the selected key size
+ * @param[in] size              size of both buffers
  * @param[in] in                buffer containing the input plaintext
  * @param[out] out              buffer for the output cyphertext
  * @param[in] iv                128 bits initial vector
@@ -623,16 +617,13 @@ cryerror_t cry_lld_decrypt_AES_CFB(CRYDriver *cryp,
 #if (CRY_LLD_SUPPORTS_AES_CTR == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Encryption operation using AES-CTR.
- * @note    The function operates on data buffers whose lenght is a multiple
- *          of an AES block, this means that padding must be done by the
- *          caller.
+ * @note    This is a stream cipher, there are no size restrictions.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] key_id            the key to be used for the operation, zero is
  *                              the transient key, other values are keys stored
  *                              in an unspecified way
- * @param[in] size              size of the plaintext buffer, this number must
- *                              be a multiple of 16
+ * @param[in] size              size of both buffers
  * @param[in] in                buffer containing the input plaintext
  * @param[out] out              buffer for the output cyphertext
  * @param[in] iv                128 bits initial vector + counter, it contains
@@ -668,16 +659,13 @@ cryerror_t cry_lld_encrypt_AES_CTR(CRYDriver *cryp,
 
 /**
  * @brief   Decryption operation using AES-CTR.
- * @note    The function operates on data buffers whose lenght is a multiple
- *          of an AES block, this means that padding must be done by the
- *          caller.
+ * @note    This is a stream cipher, there are no size restrictions.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] key_id            the key to be used for the operation, zero is
  *                              the transient key, other values are keys stored
  *                              in an unspecified way
- * @param[in] size              size of the plaintext buffer, this number must
- *                              be a multiple of 16
+ * @param[in] size              size of both buffers
  * @param[in] in                buffer containing the input cyphertext
  * @param[out] out              buffer for the output plaintext
  * @param[in] iv                128 bits initial vector + counter, it contains
@@ -715,9 +703,7 @@ cryerror_t cry_lld_decrypt_AES_CTR(CRYDriver *cryp,
 #if (CRY_LLD_SUPPORTS_AES_GCM == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Encryption operation using AES-GCM.
- * @note    The function operates on data buffers whose lenght is a multiple
- *          of an AES block, this means that padding must be done by the
- *          caller.
+ * @note    This is a stream cipher, there are no size restrictions.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] key_id            the key to be used for the operation, zero is
@@ -725,8 +711,7 @@ cryerror_t cry_lld_decrypt_AES_CTR(CRYDriver *cryp,
  *                              in an unspecified way
  * @param[in] auth_size         size of the data buffer to be authenticated
  * @param[in] auth_in           buffer containing the data to be authenticated
- * @param[in] text_size         size of the text buffer, this number must be a
- *                              multiple of 16
+ * @param[in] text_size         size of the text buffer
  * @param[in] text_in           buffer containing the input plaintext
  * @param[out] text_out         buffer for the output cyphertext
  * @param[in] iv                128 bits input vector
@@ -772,9 +757,7 @@ cryerror_t cry_lld_encrypt_AES_GCM(CRYDriver *cryp,
 
 /**
  * @brief   Decryption operation using AES-GCM.
- * @note    The function operates on data buffers whose lenght is a multiple
- *          of an AES block, this means that padding must be done by the
- *          caller.
+ * @note    This is a stream cipher, there are no size restrictions.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] key_id            the key to be used for the operation, zero is
@@ -782,8 +765,7 @@ cryerror_t cry_lld_encrypt_AES_GCM(CRYDriver *cryp,
  *                              in an unspecified way
  * @param[in] auth_size         size of the data buffer to be authenticated
  * @param[in] auth_in           buffer containing the data to be authenticated
- * @param[in] text_size         size of the text buffer, this number must be a
- *                              multiple of 16
+ * @param[in] text_size         size of the text buffer
  * @param[in] text_in           buffer containing the input plaintext
  * @param[out] text_out         buffer for the output cyphertext
  * @param[in] iv                128 bits input vector

@@ -469,16 +469,13 @@ cryerror_t cryDecryptAES_CBC(CRYDriver *cryp,
 
 /**
  * @brief   Encryption operation using AES-CFB.
- * @note    The function operates on data buffers whose length is a multiple
- *          of an AES block, this means that padding must be done by the
- *          caller.
+ * @note    This is a stream cipher, there are no size restrictions.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] key_id            the key to be used for the operation, zero is
  *                              the transient key, other values are keys stored
  *                              in an unspecified way
- * @param[in] size              size of both buffers, this number must be a
- *                              multiple of 16
+ * @param[in] size              size of both buffers
  * @param[in] in                buffer containing the input plaintext
  * @param[out] out              buffer for the output cyphertext
  * @param[in] iv                128 bits input vector
@@ -502,7 +499,7 @@ cryerror_t cryEncryptAES_CFB(CRYDriver *cryp,
                              const uint8_t *iv) {
 
   osalDbgCheck((cryp != NULL) && (in != NULL) && (out != NULL) &&
-               (iv != NULL) && ((size & (size_t)15) == (size_t)0));
+               (iv != NULL) && (size > (size_t)0));
 
   osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
@@ -524,16 +521,13 @@ cryerror_t cryEncryptAES_CFB(CRYDriver *cryp,
 
 /**
  * @brief   Decryption operation using AES-CFB.
- * @note    The function operates on data buffers whose length is a multiple
- *          of an AES block, this means that padding must be done by the
- *          caller.
+ * @note    This is a stream cipher, there are no size restrictions.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] key_id            the key to be used for the operation, zero is
  *                              the transient key, other values are keys stored
  *                              in an unspecified way
- * @param[in] size              size of both buffers, this number must be a
- *                              multiple of 16
+ * @param[in] size              size of both buffers
  * @param[in] in                buffer containing the input cyphertext
  * @param[out] out              buffer for the output plaintext
  * @param[in] iv                128 bits input vector
@@ -557,7 +551,7 @@ cryerror_t cryDecryptAES_CFB(CRYDriver *cryp,
                              const uint8_t *iv) {
 
   osalDbgCheck((cryp != NULL) && (in != NULL) && (out != NULL) &&
-               (iv != NULL) && ((size & (size_t)15) == (size_t)0));
+               (iv != NULL) && (size > (size_t)0));
 
   osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
@@ -579,16 +573,13 @@ cryerror_t cryDecryptAES_CFB(CRYDriver *cryp,
 
 /**
  * @brief   Encryption operation using AES-CTR.
- * @note    The function operates on data buffers whose length is a multiple
- *          of an AES block, this means that padding must be done by the
- *          caller.
+ * @note    This is a stream cipher, there are no size restrictions.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] key_id            the key to be used for the operation, zero is
  *                              the transient key, other values are keys stored
  *                              in an unspecified way
- * @param[in] size              size of both buffers, this number must be a
- *                              multiple of 16
+ * @param[in] size              size of both buffers
  * @param[in] in                buffer containing the input plaintext
  * @param[out] out              buffer for the output cyphertext
  * @param[in] iv                128 bits input vector + counter, it contains
@@ -613,7 +604,7 @@ cryerror_t cryEncryptAES_CTR(CRYDriver *cryp,
                              const uint8_t *iv) {
 
   osalDbgCheck((cryp != NULL) && (in != NULL) && (out != NULL) &&
-               (iv != NULL) && ((size & (size_t)15) == (size_t)0));
+               (iv != NULL) && (size > (size_t)0));
 
   osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
@@ -635,16 +626,13 @@ cryerror_t cryEncryptAES_CTR(CRYDriver *cryp,
 
 /**
  * @brief   Decryption operation using AES-CTR.
- * @note    The function operates on data buffers whose length is a multiple
- *          of an AES block, this means that padding must be done by the
- *          caller.
+ * @note    This is a stream cipher, there are no size restrictions.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] key_id            the key to be used for the operation, zero is
  *                              the transient key, other values are keys stored
  *                              in an unspecified way
- * @param[in] size              size of both buffers, this number must be a
- *                              multiple of 16
+ * @param[in] size              size of both buffers
  * @param[in] in                buffer containing the input cyphertext
  * @param[out] out              buffer for the output plaintext
  * @param[in] iv                128 bits input vector + counter, it contains
@@ -669,7 +657,7 @@ cryerror_t cryDecryptAES_CTR(CRYDriver *cryp,
                              const uint8_t *iv) {
 
   osalDbgCheck((cryp != NULL) && (in != NULL) && (out != NULL) &&
-               (iv != NULL) && ((size & (size_t)15) == (size_t)0));
+               (iv != NULL) && (size > (size_t)0));
 
   osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
@@ -691,9 +679,7 @@ cryerror_t cryDecryptAES_CTR(CRYDriver *cryp,
 
 /**
  * @brief   Encryption operation using AES-GCM.
- * @note    The function operates on data buffers whose length is a multiple
- *          of an AES block, this means that padding must be done by the
- *          caller.
+ * @note    This is a stream cipher, there are no size restrictions.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] key_id            the key to be used for the operation, zero is
@@ -701,8 +687,7 @@ cryerror_t cryDecryptAES_CTR(CRYDriver *cryp,
  *                              in an unspecified way
  * @param[in] auth_size         size of the data buffer to be authenticated
  * @param[in] auth_in           buffer containing the data to be authenticated
- * @param[in] text_size         size of the text buffer, this number must be a
- *                              multiple of 16
+ * @param[in] text_size         size of the text buffer
  * @param[in] text_in           buffer containing the input plaintext
  * @param[out] text_out         buffer for the output cyphertext
  * @param[in] iv                128 bits input vector
@@ -734,7 +719,6 @@ cryerror_t cryEncryptAES_GCM(CRYDriver *cryp,
 
   osalDbgCheck((cryp != NULL) && (auth_in != NULL) &&
                (text_size > (size_t)0) &&
-               ((text_size & (size_t)15) == (size_t)0) &&
                (text_in != NULL) && (text_out != NULL) && (iv != NULL) &&
                (tag_size >= (size_t)1) && (tag_size <= (size_t)16) &&
                (tag_out != NULL));
@@ -767,9 +751,7 @@ cryerror_t cryEncryptAES_GCM(CRYDriver *cryp,
 
 /**
  * @brief   Decryption operation using AES-GCM.
- * @note    The function operates on data buffers whose length is a multiple
- *          of an AES block, this means that padding must be done by the
- *          caller.
+ * @note    This is a stream cipher, there are no size restrictions.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] key_id            the key to be used for the operation, zero is
@@ -777,8 +759,7 @@ cryerror_t cryEncryptAES_GCM(CRYDriver *cryp,
  *                              in an unspecified way
  * @param[in] auth_size         size of the data buffer to be authenticated
  * @param[in] auth_in           buffer containing the data to be authenticated
- * @param[in] text_size         size of the text buffer, this number must be a
- *                              multiple of 16
+ * @param[in] text_size         size of the text buffer
  * @param[in] text_in           buffer containing the input plaintext
  * @param[out] text_out         buffer for the output cyphertext
  * @param[in] iv                128 bits input vector
@@ -811,7 +792,6 @@ cryerror_t cryDecryptAES_GCM(CRYDriver *cryp,
 
   osalDbgCheck((cryp != NULL) && (auth_in != NULL) &&
                (text_size > (size_t)0) &&
-               ((text_size & (size_t)15) == (size_t)0) &&
                (text_in != NULL) && (text_out != NULL) && (iv != NULL) &&
                (tag_size >= (size_t)1) && (tag_size <= (size_t)16) &&
                (tag_in != NULL));
