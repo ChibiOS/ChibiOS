@@ -32,6 +32,14 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
+#define CRYP1_IN_DMA_CHANNEL                                                \
+  STM32_DMA_GETCHANNEL(STM32_CRY_CRYP1_IN_DMA_STREAM,                       \
+                       STM32_CRYP1_IN_DMA_CHN)
+
+#define CRYP1_OUT_DMA_CHANNEL                                               \
+  STM32_DMA_GETCHANNEL(STM32_CRY_CRYP1_OUT_DMA_STREAM,                      \
+                       STM32_CRYP1_OUT_DMA_CHN)
+
 #define HASH1_DMA_CHANNEL                                                   \
   STM32_DMA_GETCHANNEL(STM32_CRY_HASH1_DMA_STREAM,                          \
                        STM32_HASH1_DMA_CHN)
@@ -53,9 +61,55 @@ CRYDriver CRYD1;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+#if (STM32_CRY_USE_CRYP1 == TRUE) || defined (__DOXYGEN__)
+/**
+ * @brief   CRYP-IN DMA ISR.
+ *
+ * @param[in] cryp      pointer to the @p CRYDriver object
+ * @param[in] flags     pre-shifted content of the ISR register
+ */
+static void cry_lld_serve_cryp_in_interrupt(CRYDriver *cryp, uint32_t flags) {
+
+  (void)cryp;
+
+  /* DMA errors handling.*/
+#if defined(STM32_CRY_CRYP_IN_DMA_ERROR_HOOK)
+  if ((flags & (STM32_DMA_ISR_TEIF | STM32_DMA_ISR_DMEIF)) != 0U) {
+    STM32_CRY_CRYP_IN_DMA_ERROR_HOOK(cryp);
+  }
+#endif
+}
+
+/**
+ * @brief   CRYP-OUT DMA ISR.
+ *
+ * @param[in] cryp      pointer to the @p CRYDriver object
+ * @param[in] flags     pre-shifted content of the ISR register
+ */
+static void cry_lld_serve_cryp_out_interrupt(CRYDriver *cryp, uint32_t flags) {
+
+  /* DMA errors handling.*/
+#if defined(STM32_CRY_CRYP_OUT_DMA_ERROR_HOOK)
+  if ((flags & (STM32_DMA_ISR_TEIF | STM32_DMA_ISR_DMEIF)) != 0U) {
+    STM32_CRY_CRYP_OUT_DMA_ERROR_HOOK(cryp);
+  }
+#endif
+
+  if ((flags & STM32_DMA_ISR_TCIF) != 0U) {
+    /* End buffer interrupt.*/
+
+    /* Resuming waiting thread.*/
+    osalSysLockFromISR();
+    osalThreadResumeI(&cryp->cryp_tr, MSG_OK);
+    osalSysUnlockFromISR();
+  }
+}
+#endif
+
+#if (STM32_CRY_USE_HASH1 == TRUE) || defined (__DOXYGEN__)
 #if (STM32_CRY_HASH_SIZE_THRESHOLD != 0) || defined (__DOXYGEN__)
 /**
- * @brief   Shared end-of-rx service routine.
+ * @brief   HASH DMA ISR.
  *
  * @param[in] cryp      pointer to the @p CRYDriver object
  * @param[in] flags     pre-shifted content of the ISR register
@@ -78,6 +132,7 @@ static void cry_lld_serve_hash_interrupt(CRYDriver *cryp, uint32_t flags) {
     osalSysUnlockFromISR();
   }
 }
+#endif
 #endif
 
 /**
@@ -178,6 +233,40 @@ void cry_lld_start(CRYDriver *cryp) {
 #if STM32_CRY_ENABLED1
     if (&CRYD1 == cryp) {
 #if STM32_CRY_USE_CRYP1
+      /* Allocating DMA channels.*/
+      cryp->dma_cryp_in  = dmaStreamAllocI(STM32_CRY_CRYP1_IN_DMA_STREAM,
+                                           STM32_CRY_CRYP1_IRQ_PRIORITY,
+                                           (stm32_dmaisr_t)cry_lld_serve_cryp_in_interrupt,
+                                           (void *)cryp);
+      osalDbgAssert(cryp->dma_cryp_in != NULL, "unable to allocate stream");
+      cryp->dma_cryp_out = dmaStreamAllocI(STM32_CRY_CRYP1_OUT_DMA_STREAM,
+                                           STM32_CRY_CRYP1_IRQ_PRIORITY,
+                                           (stm32_dmaisr_t)cry_lld_serve_cryp_out_interrupt,
+                                           (void *)cryp);
+      osalDbgAssert(cryp->dma_cryp_out != NULL, "unable to allocate stream");
+
+      /* Preparing the DMA channels.*/
+      dmaStreamSetMode(cryp->dma_cryp_in,
+                       STM32_DMA_CR_CHSEL(CRYP1_IN_DMA_CHANNEL) |
+                       STM32_DMA_CR_PL(STM32_CRY_CRYP1_IN_DMA_PRIORITY) |
+                       STM32_DMA_CR_MINC | STM32_DMA_CR_DIR_M2P |
+                       STM32_DMA_CR_MSIZE_WORD | STM32_DMA_CR_PSIZE_WORD |
+                       STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE);
+      dmaStreamSetMode(cryp->dma_cryp_out,
+                       STM32_DMA_CR_CHSEL(CRYP1_OUT_DMA_CHANNEL) |
+                       STM32_DMA_CR_PL(STM32_CRY_CRYP1_OUT_DMA_PRIORITY) |
+                       STM32_DMA_CR_MINC | STM32_DMA_CR_DIR_P2M |
+                       STM32_DMA_CR_MSIZE_WORD | STM32_DMA_CR_PSIZE_WORD |
+                       STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE |
+                       STM32_DMA_CR_TCIE);
+      dmaStreamSetPeripheral(cryp->dma_cryp_in,  &CRYP->DR);
+      dmaStreamSetPeripheral(cryp->dma_cryp_out, &CRYP->DOUT);
+      dmaStreamSetFIFO(cryp->dma_cryp_in,  STM32_DMA_FCR_DMDIS);
+      dmaStreamSetFIFO(cryp->dma_cryp_out, STM32_DMA_FCR_DMDIS);
+#if STM32_DMA_SUPPORTS_DMAMUX
+      dmaSetRequestSource(cryp->dma_cryp_in, STM32_DMAMUX1_CRYP_IN);
+      dmaSetRequestSource(cryp->dma_cryp_out, STM32_DMAMUX1_CRYP_OUT);
+#endif
       rccEnableCRYP(true);
 #endif
 
@@ -210,10 +299,12 @@ void cry_lld_start(CRYDriver *cryp) {
   }
 
 #if STM32_CRY_USE_CRYP1
-    /* CRYP setup and enable.*/
+  /* CRYP setup and enable.*/
+  CRYP->CR = 0U;
 #endif
+
 #if STM32_CRY_USE_HASH1
-    /* HASH setup and enable.*/
+  /* HASH setup and enable.*/
 #endif
 }
 
@@ -231,6 +322,10 @@ void cry_lld_stop(CRYDriver *cryp) {
 #if STM32_CRY_ENABLED1
     if (&CRYD1 == cryp) {
 #if STM32_CRY_USE_CRYP1
+      dmaStreamFreeI(cryp->dma_cryp_in);
+      dmaStreamFreeI(cryp->dma_cryp_out);
+      cryp->dma_cryp_in = NULL;
+      cryp->dma_cryp_out = NULL;
       rccDisableCRYP();
 #endif
 
@@ -266,21 +361,66 @@ void cry_lld_stop(CRYDriver *cryp) {
 cryerror_t cry_lld_aes_loadkey(CRYDriver *cryp,
                                size_t size,
                                const uint8_t *keyp) {
+  uint32_t k[8], cr;
 
-  osalDbgCheck((cryp != NULL) &&  (keyp != NULL));
-
-
-#if CRY_LLD_SUPPORTS_AES == TRUE
-  return cry_lld_aes_loadkey(cryp, size, keyp);
-#elif HAL_CRY_USE_FALLBACK == TRUE
-  return cry_fallback_aes_loadkey(cryp, size, keyp);
-#else
   (void)cryp;
-  (void)size;
-  (void)keyp;
 
-  return CRY_ERR_INV_ALGO;
-#endif
+  /* Fetching key data.*/
+  if (size == (size_t)32) {
+    cr   = CRYP_CR_ALGOMODE_AES_KEY | CRYP_CR_KEYSIZE_1;
+    k[0] = __REV(__UNALIGNED_UINT32_READ(&keyp[0]));
+    k[1] = __REV(__UNALIGNED_UINT32_READ(&keyp[4]));
+    k[2] = __REV(__UNALIGNED_UINT32_READ(&keyp[8]));
+    k[3] = __REV(__UNALIGNED_UINT32_READ(&keyp[12]));
+    k[4] = __REV(__UNALIGNED_UINT32_READ(&keyp[16]));
+    k[5] = __REV(__UNALIGNED_UINT32_READ(&keyp[20]));
+    k[6] = __REV(__UNALIGNED_UINT32_READ(&keyp[24]));
+    k[7] = __REV(__UNALIGNED_UINT32_READ(&keyp[28]));
+  }
+  else if (size == (size_t)24) {
+    cr   = CRYP_CR_ALGOMODE_AES_KEY | CRYP_CR_KEYSIZE_0;
+    k[0] = 0U;
+    k[1] = 0U;
+    k[2] = __REV(__UNALIGNED_UINT32_READ(&keyp[8]));
+    k[3] = __REV(__UNALIGNED_UINT32_READ(&keyp[12]));
+    k[4] = __REV(__UNALIGNED_UINT32_READ(&keyp[16]));
+    k[5] = __REV(__UNALIGNED_UINT32_READ(&keyp[20]));
+    k[6] = __REV(__UNALIGNED_UINT32_READ(&keyp[24]));
+    k[7] = __REV(__UNALIGNED_UINT32_READ(&keyp[28]));
+  }
+  else if (size == (size_t)16) {
+    cr   = CRYP_CR_ALGOMODE_AES_KEY;
+    k[0] = 0U;
+    k[1] = 0U;
+    k[2] = 0U;
+    k[3] = 0U;
+    k[4] = __REV(__UNALIGNED_UINT32_READ(&keyp[16]));
+    k[5] = __REV(__UNALIGNED_UINT32_READ(&keyp[20]));
+    k[6] = __REV(__UNALIGNED_UINT32_READ(&keyp[24]));
+    k[7] = __REV(__UNALIGNED_UINT32_READ(&keyp[28]));
+  }
+  else {
+    return CRY_ERR_INV_KEY_SIZE;
+  }
+
+  /* Loading key data.*/
+  CRYP->K0LR = k[0];
+  CRYP->K0RR = k[1];
+  CRYP->K1LR = k[2];
+  CRYP->K1RR = k[3];
+  CRYP->K2LR = k[4];
+  CRYP->K2RR = k[5];
+  CRYP->K3LR = k[6];
+  CRYP->K3RR = k[7];
+
+  /* Preparing for decryption even if we don't know a decryption will
+     follow.*/
+  CRYP->CR   = cr;
+  CRYP->CR   = cr | CRYP_CR_CRYPEN;
+  while ((CRYP->CR & CRYP_CR_CRYPEN) != 0U) {
+  }
+
+  return CRY_NOERROR;
 }
 
 /**
@@ -832,20 +972,11 @@ cryerror_t cry_lld_des_loadkey(CRYDriver *cryp,
                                size_t size,
                                const uint8_t *keyp) {
 
-  osalDbgCheck((cryp != NULL) &&  (keyp != NULL));
-
-
-#if CRY_LLD_SUPPORTS_DES == TRUE
-  return cry_lld_des_loadkey(cryp, size, keyp);
-#elif HAL_CRY_USE_FALLBACK == TRUE
-  return cry_fallback_des_loadkey(cryp, size, keyp);
-#else
   (void)cryp;
   (void)size;
   (void)keyp;
 
-  return CRY_ERR_INV_ALGO;
-#endif
+  return CRY_NOERROR;
 }
 
 /**
@@ -1385,20 +1516,11 @@ cryerror_t cry_lld_hmac_loadkey(CRYDriver *cryp,
                                 size_t size,
                                 const uint8_t *keyp) {
 
-  osalDbgCheck((cryp != NULL) &&  (keyp != NULL));
-
-#if (CRY_LLD_SUPPORTS_HMAC_SHA256 == TRUE) ||                               \
-    (CRY_LLD_SUPPORTS_HMAC_SHA512 == TRUE)
-  return cry_lld_hmac_loadkey(cryp, size, keyp);
-#elif HAL_CRY_USE_FALLBACK == TRUE
-  return cry_fallback_hmac_loadkey(cryp, size, keyp);
-#else
   (void)cryp;
   (void)size;
   (void)keyp;
 
-  return CRY_ERR_INV_ALGO;
-#endif
+  return CRY_NOERROR;
 }
 
 /**

@@ -57,11 +57,11 @@
 #if defined(STM32G081xx) || defined(__DOXYGEN__)
 #define STM32_HAS_RNG1                      TRUE
 #define STM32_HAS_HASH1                     FALSE
-#define STM32_HAS_AES1                      TRUE
+#define STM32_HAS_CRYP1                     TRUE
 #else
 #define STM32_HAS_RNG1                      FALSE
 #define STM32_HAS_HASH1                     FALSE
-#define STM32_HAS_AES1                      FALSE
+#define STM32_HAS_CRYP1                     FALSE
 #endif
 
 /*===========================================================================*/

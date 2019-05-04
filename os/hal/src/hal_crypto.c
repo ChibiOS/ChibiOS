@@ -147,7 +147,6 @@ cryerror_t cryLoadAESTransientKey(CRYDriver *cryp,
 
   osalDbgCheck((cryp != NULL) &&  (keyp != NULL));
 
-
 #if CRY_LLD_SUPPORTS_AES == TRUE
   return cry_lld_aes_loadkey(cryp, size, keyp);
 #elif HAL_CRY_USE_FALLBACK == TRUE
@@ -843,7 +842,6 @@ cryerror_t cryLoadDESTransientKey(CRYDriver *cryp,
                                   const uint8_t *keyp) {
 
   osalDbgCheck((cryp != NULL) &&  (keyp != NULL));
-
 
 #if CRY_LLD_SUPPORTS_DES == TRUE
   return cry_lld_des_loadkey(cryp, size, keyp);

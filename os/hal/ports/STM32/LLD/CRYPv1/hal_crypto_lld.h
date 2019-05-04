@@ -50,7 +50,7 @@
 
 /**
  * @brief   HASH1 driver enable switch.
- * @details If set to @p TRUE the support for CRYP1 is included.
+ * @details If set to @p TRUE the support for HASH1 is included.
  * @note    The default is @p FALSE.
  */
 #if !defined(STM32_CRY_USE_HASH1) || defined(__DOXYGEN__)
@@ -69,6 +69,13 @@
  */
 #if !defined(STM32_CRY_HASH1_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_CRY_HASH1_IRQ_PRIORITY        9
+#endif
+
+/**
+ * @brief   HASH1 DMA priority (0..3|lowest..highest).
+ */
+#if !defined(STM32_CRY_CRYP1_OUT_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_CRY_CRYP1_OUT_DMA_PRIORITY    0
 #endif
 
 /**
@@ -94,6 +101,24 @@
  */
 #if !defined(STM32_CRY_HASH_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
 #define STM32_CRY_HASH_DMA_ERROR_HOOK(cryp) osalSysHalt("DMA failure")
+#endif
+
+/**
+ * @brief   CRYP-IN DMA error hook.
+ * @note    The default action for DMA errors is a system halt because DMA
+ *          error can only happen because programming errors.
+ */
+#if !defined(STM32_CRY_CRYP_IN_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
+#define STM32_CRY_CRYP_IN_DMA_ERROR_HOOK(cryp) osalSysHalt("DMA failure")
+#endif
+
+/**
+ * @brief   CRYP-OUT DMA error hook.
+ * @note    The default action for DMA errors is a system halt because DMA
+ *          error can only happen because programming errors.
+ */
+#if !defined(STM32_CRY_CRYP_OUT_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
+#define STM32_CRY_CRYP_OUT_DMA_ERROR_HOOK(cryp) osalSysHalt("DMA failure")
 #endif
 /** @} */
 
@@ -151,11 +176,33 @@
 
 /* Devices without DMAMUX require an additional check.*/
 #if !STM32_DMA_SUPPORTS_DMAMUX
+#if STM32_CRY_USE_CRYP1 &&                                                  \
+    !STM32_DMA_IS_VALID_ID(STM32_CRY_CRYP1_IN_DMA_STREAM,                   \
+                           STM32_CRYP1_IN_DMA_MSK)
+#error "invalid DMA stream associated to CRYP1_IN"
+#endif
+
+#if STM32_CRY_USE_CRYP1 &&                                                  \
+    !STM32_DMA_IS_VALID_ID(STM32_CRY_CRYP1_OUT_DMA_STREAM,                  \
+                           STM32_CRYP1_OUT_DMA_MSK)
+#error "invalid DMA stream associated to CRYP1_OUT"
+#endif
+
 #if STM32_CRY_USE_HASH1 &&                                                  \
     !STM32_DMA_IS_VALID_ID(STM32_CRY_HASH1_DMA_STREAM, STM32_HASH1_DMA_MSK)
 #error "invalid DMA stream associated to HASH1"
 #endif
 #endif /* !STM32_DMA_SUPPORTS_DMAMUX */
+
+/* DMA priority check.*/
+#if !STM32_DMA_IS_VALID_PRIORITY(STM32_CRY_CRYP1_IN_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to CRYP1_IN"
+#endif
+
+/* DMA priority check.*/
+#if !STM32_DMA_IS_VALID_PRIORITY(STM32_CRY_CRYP1_OUT_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to CRYP1_OUT"
+#endif
 
 /* DMA priority check.*/
 #if !STM32_DMA_IS_VALID_PRIORITY(STM32_CRY_HASH1_DMA_PRIORITY)
@@ -249,6 +296,18 @@ struct CRYDriver {
 #endif
   /* End of the mandatory fields.*/
 #if STM32_CRY_USE_CRYP1 || defined (__DOXYGEN__)
+  /**
+   * @brief   Thread reference for CRYP operations.
+   */
+  thread_reference_t        cryp_tr;
+  /**
+   * @brief   CRYP IN DMA stream.
+   */
+  const stm32_dma_stream_t  *dma_cryp_in;
+  /**
+   * @brief   CRYP OUT DMA stream.
+   */
+  const stm32_dma_stream_t  *dma_cryp_out;
 #endif
 #if STM32_CRY_USE_HASH1 || defined (__DOXYGEN__)
 #if (STM32_CRY_HASH_SIZE_THRESHOLD != 0) || defined (__DOXYGEN__)
