@@ -303,11 +303,15 @@ struct CRYDriver {
   /**
    * @brief   CRYP IN DMA stream.
    */
-  const stm32_dma_stream_t  *dma_cryp_in;
+  const stm32_dma_stream_t  *cryp_dma_in;
   /**
    * @brief   CRYP OUT DMA stream.
    */
-  const stm32_dma_stream_t  *dma_cryp_out;
+  const stm32_dma_stream_t  *cryp_dma_out;
+  /**
+   * @brief   Transient key data.
+   */
+  uint32_t                  cryp_key_data[8];
 #endif
 #if STM32_CRY_USE_HASH1 || defined (__DOXYGEN__)
 #if (STM32_CRY_HASH_SIZE_THRESHOLD != 0) || defined (__DOXYGEN__)
@@ -318,7 +322,7 @@ struct CRYDriver {
   /**
    * @brief   Hash DMA stream.
    */
-  const stm32_dma_stream_t  *dma_hash;
+  const stm32_dma_stream_t  *hash_dma;
 #endif
 #endif
 };
