@@ -95,6 +95,15 @@
 #endif
 
 /**
+ * @brief   Minimum text size (in bytes) for DMA use.
+ * @note    If set to zero then DMA is never used.
+ * @note    If set to one then DMA is always used.
+ */
+#if !defined(STM32_CRY_CRYP_SIZE_THRESHOLD) || defined(__DOXYGEN__)
+#define STM32_CRY_CRYP_SIZE_THRESHOLD       1024
+#endif
+
+/**
  * @brief   Hash DMA error hook.
  * @note    The default action for DMA errors is a system halt because DMA
  *          error can only happen because programming errors.
@@ -286,7 +295,8 @@ struct CRYDriver {
   CRY_DRIVER_EXT_FIELDS
 #endif
   /* End of the mandatory fields.*/
-#if STM32_CRY_USE_CRYP1 || defined (__DOXYGEN__)
+#if (STM32_CRY_USE_CRYP1 == TRUE) || defined (__DOXYGEN__)
+#if (STM32_CRY_CRYP_SIZE_THRESHOLD != 0) || defined (__DOXYGEN__)
   /**
    * @brief   Thread reference for CRYP operations.
    */
@@ -299,6 +309,7 @@ struct CRYDriver {
    * @brief   CRYP OUT DMA stream.
    */
   const stm32_dma_stream_t  *cryp_dma_out;
+#endif /* STM32_CRY_CRYP_SIZE_THRESHOLD != 0 */
   /**
    * @brief   Key size setup value for CR register.
    */
@@ -307,8 +318,8 @@ struct CRYDriver {
    * @brief   Transient key data.
    */
   uint32_t                  cryp_k[8];
-#endif
-#if STM32_CRY_USE_HASH1 || defined (__DOXYGEN__)
+#endif /* STM32_CRY_USE_CRYP1 == TRUE */
+#if (STM32_CRY_USE_HASH1 == TRUE) || defined (__DOXYGEN__)
 #if (STM32_CRY_HASH_SIZE_THRESHOLD != 0) || defined (__DOXYGEN__)
   /**
    * @brief   Thread reference for hash operations.
@@ -318,8 +329,8 @@ struct CRYDriver {
    * @brief   Hash DMA stream.
    */
   const stm32_dma_stream_t  *hash_dma;
-#endif
-#endif
+#endif /* STM32_CRY_HASH_SIZE_THRESHOLD != 0 */
+#endif /* STM32_CRY_USE_HASH1 == TRUE */
 };
 
 #if (CRY_LLD_SUPPORTS_SHA1 == TRUE) || defined(__DOXYGEN__)
