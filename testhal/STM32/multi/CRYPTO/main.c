@@ -66,6 +66,11 @@ int main(void) {
   /* Normal main() thread activity, in this demo it does nothing.*/
   while (true) {
     uint8_t digest[32];
+    static uint8_t key[16]  = {00, 00, 00, 00, 00, 00, 00, 00,
+                               00, 00, 00, 00, 00, 00, 00, 00};
+    static uint8_t data[16] = {00, 00, 00, 00, 00, 00, 00, 00,
+                               00, 00, 00, 00, 00, 00, 00, 00};
+    uint8_t out[16];
 
     if (palReadLine(PORTAB_LINE_BUTTON) == PORTAB_BUTTON_PRESSED) {
       SHA256Context ctx256;
@@ -81,6 +86,12 @@ int main(void) {
       crySHA256Init(&CRYD1, &ctx256);
       crySHA256Update(&CRYD1, &ctx256, 56U, (const uint8_t *)"abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq");
       crySHA256Final(&CRYD1, &ctx256, digest);
+
+      cryLoadAESTransientKey(&CRYD1, sizeof (key), key);
+      cryEncryptAES(&CRYD1, (crykey_t)0, data, out);
+      cryDecryptAES(&CRYD1, (crykey_t)0, data, out);
+      cryEncryptAES_ECB(&CRYD1, (crykey_t)0, 16U, data, out);
+      cryDecryptAES_ECB(&CRYD1, (crykey_t)0, 16U, data, out);
     }
     chThdSleepMilliseconds(500);
   }

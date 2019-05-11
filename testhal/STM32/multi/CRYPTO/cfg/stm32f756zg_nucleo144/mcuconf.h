@@ -144,13 +144,18 @@
 /*
  * CRY driver system settings.
  */
-#define STM32_CRY_USE_CRYP1                 FALSE
+#define STM32_CRY_USE_CRYP1                 TRUE
 #define STM32_CRY_USE_HASH1                 TRUE
 #define STM32_CRY_CRYP1_IRQ_PRIORITY        9
 #define STM32_CRY_HASH1_IRQ_PRIORITY        9
+#define STM32_CRY_CRYP1_IN_DMA_STREAM       STM32_DMA_STREAM_ID(2, 6)
+#define STM32_CRY_CRYP1_OUT_DMA_STREAM      STM32_DMA_STREAM_ID(2, 5)
 #define STM32_CRY_HASH1_DMA_STREAM          STM32_DMA_STREAM_ID(2, 7)
+#define STM32_CRY_CRYP1_IN_DMA_PRIORITY     0
+#define STM32_CRY_CRYP1_OUT_DMA_PRIORITY    1
 #define STM32_CRY_HASH1_DMA_PRIORITY        0
 #define STM32_CRY_HASH_SIZE_THRESHOLD       1024
+#define STM32_CRY_CRYP_DMA_ERROR_HOOK(cryp) osalSysHalt("DMA failure")
 #define STM32_CRY_HASH_DMA_ERROR_HOOK(cryp) osalSysHalt("DMA failure")
 
 /*

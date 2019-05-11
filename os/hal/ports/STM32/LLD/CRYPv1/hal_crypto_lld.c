@@ -174,9 +174,9 @@ static void cry_lld_serve_cryp_in_interrupt(CRYDriver *cryp, uint32_t flags) {
   (void)cryp;
 
   /* DMA errors handling.*/
-#if defined(STM32_CRY_CRYP_IN_DMA_ERROR_HOOK)
+#if defined(STM32_CRY_CRYP_DMA_ERROR_HOOK)
   if ((flags & (STM32_DMA_ISR_TEIF | STM32_DMA_ISR_DMEIF)) != 0U) {
-    STM32_CRY_CRYP_IN_DMA_ERROR_HOOK(cryp);
+    STM32_CRY_CRYP_DMA_ERROR_HOOK(cryp);
   }
 #endif
 }
@@ -190,9 +190,9 @@ static void cry_lld_serve_cryp_in_interrupt(CRYDriver *cryp, uint32_t flags) {
 static void cry_lld_serve_cryp_out_interrupt(CRYDriver *cryp, uint32_t flags) {
 
   /* DMA errors handling.*/
-#if defined(STM32_CRY_CRYP_OUT_DMA_ERROR_HOOK)
+#if defined(STM32_CRY_CRYP_DMA_ERROR_HOOK)
   if ((flags & (STM32_DMA_ISR_TEIF | STM32_DMA_ISR_DMEIF)) != 0U) {
-    STM32_CRY_CRYP_OUT_DMA_ERROR_HOOK(cryp);
+    STM32_CRY_CRYP_DMA_ERROR_HOOK(cryp);
   }
 #endif
 

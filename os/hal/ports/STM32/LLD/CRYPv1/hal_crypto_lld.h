@@ -104,21 +104,12 @@
 #endif
 
 /**
- * @brief   CRYP-IN DMA error hook.
+ * @brief   CRYP DMA error hook.
  * @note    The default action for DMA errors is a system halt because DMA
  *          error can only happen because programming errors.
  */
-#if !defined(STM32_CRY_CRYP_IN_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
-#define STM32_CRY_CRYP_IN_DMA_ERROR_HOOK(cryp) osalSysHalt("DMA failure")
-#endif
-
-/**
- * @brief   CRYP-OUT DMA error hook.
- * @note    The default action for DMA errors is a system halt because DMA
- *          error can only happen because programming errors.
- */
-#if !defined(STM32_CRY_CRYP_OUT_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
-#define STM32_CRY_CRYP_OUT_DMA_ERROR_HOOK(cryp) osalSysHalt("DMA failure")
+#if !defined(STM32_CRY_CRYP_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
+#define STM32_CRY_CRYP_DMA_ERROR_HOOK(cryp) osalSysHalt("DMA failure")
 #endif
 /** @} */
 
