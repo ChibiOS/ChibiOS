@@ -65,52 +65,57 @@ CRYDriver CRYD1;
 /**
  * @brief   Setting AES key for encryption.
  *
- * @param[in] cryp      pointer to the @p CRYDriver object
+ * @param[in] cryp              pointer to the @p CRYDriver object
+ * @param[in] algomode          algorithm mode field of CR register
  */
-static void cryp_set_key_encrypt(CRYDriver *cryp) {
+static inline void cryp_set_key_encrypt(CRYDriver *cryp, uint32_t algomode) {
+  uint32_t cr;
 
   /* Loading key data.*/
-  CRYP->K0LR = cryp->cryp_key_data[0];
-  CRYP->K0RR = cryp->cryp_key_data[1];
-  CRYP->K1LR = cryp->cryp_key_data[2];
-  CRYP->K1RR = cryp->cryp_key_data[3];
-  CRYP->K2LR = cryp->cryp_key_data[4];
-  CRYP->K2RR = cryp->cryp_key_data[5];
-  CRYP->K3LR = cryp->cryp_key_data[6];
-  CRYP->K3RR = cryp->cryp_key_data[7];
+  CRYP->K0LR = cryp->cryp_k[0];
+  CRYP->K0RR = cryp->cryp_k[1];
+  CRYP->K1LR = cryp->cryp_k[2];
+  CRYP->K1RR = cryp->cryp_k[3];
+  CRYP->K2LR = cryp->cryp_k[4];
+  CRYP->K2RR = cryp->cryp_k[5];
+  CRYP->K3LR = cryp->cryp_k[6];
+  CRYP->K3RR = cryp->cryp_k[7];
+
+  /* Setting up then starting operation.*/
+  cr  = CRYP->CR;
+  cr &= ~(CRYP_CR_KEYSIZE_Msk | CRYP_CR_ALGOMODE_Msk | CRYP_CR_ALGODIR_Msk);
+  cr |= cryp->cryp_ksize | algomode | CRYP_CR_CRYPEN;
+  CRYP->CR = cr;
 }
 
 /**
  * @brief   Setting AES key for decryption.
  *
- * @param[in] cryp      pointer to the @p CRYDriver object
+ * @param[in] cryp              pointer to the @p CRYDriver object
+ * @param[in] algomode          algorithm field of CR register
  */
-static void cryp_set_key_decrypt(CRYDriver *cryp) {
+static inline void cryp_set_key_decrypt(CRYDriver *cryp, uint32_t algomode) {
+  uint32_t cr;
 
-  /* Loading key data.*/
-  CRYP->K0LR = cryp->cryp_key_data[0];
-  CRYP->K0RR = cryp->cryp_key_data[1];
-  CRYP->K1LR = cryp->cryp_key_data[2];
-  CRYP->K1RR = cryp->cryp_key_data[3];
-  CRYP->K2LR = cryp->cryp_key_data[4];
-  CRYP->K2RR = cryp->cryp_key_data[5];
-  CRYP->K3LR = cryp->cryp_key_data[6];
-  CRYP->K3RR = cryp->cryp_key_data[7];
-
-  /* Preparing for decryption.*/
-  CRYP->CR = (CRYP->CR & ~CRYP_CR_ALGOMODE_Msk) | CRYP_CR_ALGOMODE_AES_KEY |
-                                                  CRYP_CR_CRYPEN;
+  /* Loading key data then doing transformation for decrypt.*/
+  cryp_set_key_encrypt(cryp, CRYP_CR_ALGOMODE_AES_KEY);
   while ((CRYP->CR & CRYP_CR_CRYPEN) != 0U) {
   }
+
+  /* Setting up then starting operation.*/
+  cr  = CRYP->CR;
+  cr &= ~(CRYP_CR_KEYSIZE_Msk | CRYP_CR_ALGOMODE_Msk | CRYP_CR_ALGODIR_Msk);
+  cr |= cryp->cryp_ksize | algomode | CRYP_CR_ALGODIR | CRYP_CR_CRYPEN;
+  CRYP->CR = cr;
 }
 
 /**
  * @brief   Setting IV.
  *
- * @param[in] cryp      pointer to the @p CRYDriver object
+ * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] iv                128 bits initial vector
  */
-static void cryp_set_iv(CRYDriver *cryp, const uint8_t *iv) {
+static inline void cryp_set_iv(CRYDriver *cryp, const uint8_t *iv) {
 
   (void)cryp;
 
@@ -124,7 +129,6 @@ static void cryp_set_iv(CRYDriver *cryp, const uint8_t *iv) {
  * @brief   Performs a CRYP operation using DMA.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
- * @param[in] flags             flags for the CR register
  * @param[in] size              size of both buffers, this number must be a
  *                              multiple of 16
  * @param[in] in                input buffer
@@ -134,12 +138,10 @@ static void cryp_set_iv(CRYDriver *cryp, const uint8_t *iv) {
  * @retval CRY_ERR_OP_FAILURE   if the operation failed, implementation
  *                              dependent.
  */
-static cryerror_t cryp_execute(CRYDriver *cryp,
-                               uint32_t flags,
-                               size_t size,
-                               const uint8_t *in,
-                               uint8_t *out) {
-  uint32_t cr;
+static cryerror_t cryp_start_dma(CRYDriver *cryp,
+                                 size_t size,
+                                 const uint8_t *in,
+                                 uint8_t *out) {
 
   /* DMA limitation.*/
   osalDbgCheck(size < 0x10000U * 4U);
@@ -154,12 +156,6 @@ static cryerror_t cryp_execute(CRYDriver *cryp,
   dmaStreamEnable(cryp->cryp_dma_in);
   dmaStreamEnable(cryp->cryp_dma_out);
 
-  /* Enabling AES mode, caching accesses to the volatile field.*/
-  cr  = CRYP->CR;
-  cr &= ~(CRYP_CR_ALGOMODE_Msk | CRYP_CR_ALGODIR_Msk);
-  cr |= flags | CRYP_CR_CRYPEN;
-  CRYP->CR = cr;
-
   (void) osalThreadSuspendS(&cryp->cryp_tr);
 
   osalSysUnlock();
@@ -170,8 +166,8 @@ static cryerror_t cryp_execute(CRYDriver *cryp,
 /**
  * @brief   CRYP-IN DMA ISR.
  *
- * @param[in] cryp      pointer to the @p CRYDriver object
- * @param[in] flags     pre-shifted content of the ISR register
+ * @param[in] cryp              pointer to the @p CRYDriver object
+ * @param[in] flags             pre-shifted content of the ISR register
  */
 static void cry_lld_serve_cryp_in_interrupt(CRYDriver *cryp, uint32_t flags) {
 
@@ -188,8 +184,8 @@ static void cry_lld_serve_cryp_in_interrupt(CRYDriver *cryp, uint32_t flags) {
 /**
  * @brief   CRYP-OUT DMA ISR.
  *
- * @param[in] cryp      pointer to the @p CRYDriver object
- * @param[in] flags     pre-shifted content of the ISR register
+ * @param[in] cryp              pointer to the @p CRYDriver object
+ * @param[in] flags             pre-shifted content of the ISR register
  */
 static void cry_lld_serve_cryp_out_interrupt(CRYDriver *cryp, uint32_t flags) {
 
@@ -206,6 +202,9 @@ static void cry_lld_serve_cryp_out_interrupt(CRYDriver *cryp, uint32_t flags) {
     /* Clearing flags of the other stream too.*/
     dmaStreamClearInterrupt(cryp->cryp_dma_in);
 
+    /* Disabling unit.*/
+    CRYP->CR &= ~CRYP_CR_CRYPEN;
+
     /* Resuming waiting thread.*/
     osalSysLockFromISR();
     osalThreadResumeI(&cryp->cryp_tr, MSG_OK);
@@ -219,8 +218,8 @@ static void cry_lld_serve_cryp_out_interrupt(CRYDriver *cryp, uint32_t flags) {
 /**
  * @brief   HASH DMA ISR.
  *
- * @param[in] cryp      pointer to the @p CRYDriver object
- * @param[in] flags     pre-shifted content of the ISR register
+ * @param[in] cryp              pointer to the @p CRYDriver object
+ * @param[in] flags             pre-shifted content of the ISR register
  */
 static void cry_lld_serve_hash_interrupt(CRYDriver *cryp, uint32_t flags) {
 
@@ -246,9 +245,9 @@ static void cry_lld_serve_hash_interrupt(CRYDriver *cryp, uint32_t flags) {
 /**
  * @brief   Pushes a series of words into the hash engine.
  *
- * @param[in] cryp      pointer to the @p CRYDriver object
- * @param[in] n         the number of words to be pushed
- * @param[in] p         pointer to the words buffer
+ * @param[in] cryp              pointer to the @p CRYDriver object
+ * @param[in] n                 the number of words to be pushed
+ * @param[in] p                 pointer to the words buffer
  */
 static void cry_lld_hash_push(CRYDriver *cryp, uint32_t n, const uint32_t *p) {
 
@@ -479,50 +478,44 @@ void cry_lld_stop(CRYDriver *cryp) {
 cryerror_t cry_lld_aes_loadkey(CRYDriver *cryp,
                                size_t size,
                                const uint8_t *keyp) {
-  uint32_t cr;
-
-  (void)cryp;
 
   /* Fetching key data.*/
   if (size == (size_t)32) {
-    cr = CRYP_CR_KEYSIZE_1;
-    cryp->cryp_key_data[0] = __REV(__UNALIGNED_UINT32_READ(&keyp[0]));
-    cryp->cryp_key_data[1] = __REV(__UNALIGNED_UINT32_READ(&keyp[4]));
-    cryp->cryp_key_data[2] = __REV(__UNALIGNED_UINT32_READ(&keyp[8]));
-    cryp->cryp_key_data[3] = __REV(__UNALIGNED_UINT32_READ(&keyp[12]));
-    cryp->cryp_key_data[4] = __REV(__UNALIGNED_UINT32_READ(&keyp[16]));
-    cryp->cryp_key_data[5] = __REV(__UNALIGNED_UINT32_READ(&keyp[20]));
-    cryp->cryp_key_data[6] = __REV(__UNALIGNED_UINT32_READ(&keyp[24]));
-    cryp->cryp_key_data[7] = __REV(__UNALIGNED_UINT32_READ(&keyp[28]));
+    cryp->cryp_ksize = CRYP_CR_KEYSIZE_1;
+    cryp->cryp_k[0] = __REV(__UNALIGNED_UINT32_READ(&keyp[0]));
+    cryp->cryp_k[1] = __REV(__UNALIGNED_UINT32_READ(&keyp[4]));
+    cryp->cryp_k[2] = __REV(__UNALIGNED_UINT32_READ(&keyp[8]));
+    cryp->cryp_k[3] = __REV(__UNALIGNED_UINT32_READ(&keyp[12]));
+    cryp->cryp_k[4] = __REV(__UNALIGNED_UINT32_READ(&keyp[16]));
+    cryp->cryp_k[5] = __REV(__UNALIGNED_UINT32_READ(&keyp[20]));
+    cryp->cryp_k[6] = __REV(__UNALIGNED_UINT32_READ(&keyp[24]));
+    cryp->cryp_k[7] = __REV(__UNALIGNED_UINT32_READ(&keyp[28]));
   }
   else if (size == (size_t)24) {
-    cr = CRYP_CR_KEYSIZE_0;
-    cryp->cryp_key_data[0] = 0U;
-    cryp->cryp_key_data[1] = 0U;
-    cryp->cryp_key_data[2] = __REV(__UNALIGNED_UINT32_READ(&keyp[8]));
-    cryp->cryp_key_data[3] = __REV(__UNALIGNED_UINT32_READ(&keyp[12]));
-    cryp->cryp_key_data[4] = __REV(__UNALIGNED_UINT32_READ(&keyp[16]));
-    cryp->cryp_key_data[5] = __REV(__UNALIGNED_UINT32_READ(&keyp[20]));
-    cryp->cryp_key_data[6] = __REV(__UNALIGNED_UINT32_READ(&keyp[24]));
-    cryp->cryp_key_data[7] = __REV(__UNALIGNED_UINT32_READ(&keyp[28]));
+    cryp->cryp_ksize = CRYP_CR_KEYSIZE_0;
+    cryp->cryp_k[0] = 0U;
+    cryp->cryp_k[1] = 0U;
+    cryp->cryp_k[2] = __REV(__UNALIGNED_UINT32_READ(&keyp[8]));
+    cryp->cryp_k[3] = __REV(__UNALIGNED_UINT32_READ(&keyp[12]));
+    cryp->cryp_k[4] = __REV(__UNALIGNED_UINT32_READ(&keyp[16]));
+    cryp->cryp_k[5] = __REV(__UNALIGNED_UINT32_READ(&keyp[20]));
+    cryp->cryp_k[6] = __REV(__UNALIGNED_UINT32_READ(&keyp[24]));
+    cryp->cryp_k[7] = __REV(__UNALIGNED_UINT32_READ(&keyp[28]));
   }
   else if (size == (size_t)16) {
-    cr = 0U;
-    cryp->cryp_key_data[0] = 0U;
-    cryp->cryp_key_data[1] = 0U;
-    cryp->cryp_key_data[2] = 0U;
-    cryp->cryp_key_data[3] = 0U;
-    cryp->cryp_key_data[4] = __REV(__UNALIGNED_UINT32_READ(&keyp[16]));
-    cryp->cryp_key_data[5] = __REV(__UNALIGNED_UINT32_READ(&keyp[20]));
-    cryp->cryp_key_data[6] = __REV(__UNALIGNED_UINT32_READ(&keyp[24]));
-    cryp->cryp_key_data[7] = __REV(__UNALIGNED_UINT32_READ(&keyp[28]));
+    cryp->cryp_ksize = 0U;
+    cryp->cryp_k[0] = 0U;
+    cryp->cryp_k[1] = 0U;
+    cryp->cryp_k[2] = 0U;
+    cryp->cryp_k[3] = 0U;
+    cryp->cryp_k[4] = __REV(__UNALIGNED_UINT32_READ(&keyp[16]));
+    cryp->cryp_k[5] = __REV(__UNALIGNED_UINT32_READ(&keyp[20]));
+    cryp->cryp_k[6] = __REV(__UNALIGNED_UINT32_READ(&keyp[24]));
+    cryp->cryp_k[7] = __REV(__UNALIGNED_UINT32_READ(&keyp[28]));
   }
   else {
     return CRY_ERR_INV_KEY_SIZE;
   }
-
-  /* Setting the key size in CR.*/
-  CRYP->CR = (CRYP->CR & ~CRYP_CR_KEYSIZE_Msk) | cr;
 
   return CRY_NOERROR;
 }
@@ -554,7 +547,6 @@ cryerror_t cry_lld_encrypt_AES(CRYDriver *cryp,
                                crykey_t key_id,
                                const uint8_t *in,
                                uint8_t *out) {
-  uint32_t cr;
   unsigned i;
 
   /* Only key zero is supported.*/
@@ -563,13 +555,7 @@ cryerror_t cry_lld_encrypt_AES(CRYDriver *cryp,
   }
 
   /* Setting the stored key.*/
-  cryp_set_key_encrypt(cryp);
-
-  /* Enabling AES mode, caching accesses to the volatile field.*/
-  cr  = CRYP->CR;
-  cr &= ~(CRYP_CR_ALGOMODE_Msk | CRYP_CR_ALGODIR_Msk);
-  cr |= CRYP_CR_ALGOMODE_AES_ECB | CRYP_CR_CRYPEN;
-  CRYP->CR = cr;
+  cryp_set_key_encrypt(cryp, CRYP_CR_ALGOMODE_AES_ECB);
 
   /* Pushing the AES block in the FIFO, it is assumed to be empty.*/
   CRYP->DR = __UNALIGNED_UINT32_READ(&in[0]);
@@ -585,8 +571,7 @@ cryerror_t cry_lld_encrypt_AES(CRYDriver *cryp,
   }
 
   /* Disabling unit.*/
-  cr &= ~CRYP_CR_CRYPEN;
-  CRYP->CR = cr;
+  CRYP->CR &= ~CRYP_CR_CRYPEN;
 
   return CRY_NOERROR;
 }
@@ -618,7 +603,6 @@ cryerror_t cry_lld_decrypt_AES(CRYDriver *cryp,
                                crykey_t key_id,
                                const uint8_t *in,
                                uint8_t *out) {
-  uint32_t cr;
   unsigned i;
 
   /* Only key zero is supported.*/
@@ -627,13 +611,7 @@ cryerror_t cry_lld_decrypt_AES(CRYDriver *cryp,
   }
 
   /* Setting the stored key.*/
-  cryp_set_key_decrypt(cryp);
-
-  /* Enabling AES mode, caching accesses to the volatile field.*/
-  cr  = CRYP->CR;
-  cr &= ~(CRYP_CR_ALGOMODE_Msk | CRYP_CR_ALGODIR_Msk);
-  cr |= CRYP_CR_ALGOMODE_AES_ECB | CRYP_CR_ALGODIR | CRYP_CR_CRYPEN;
-  CRYP->CR = cr;
+  cryp_set_key_decrypt(cryp, CRYP_CR_ALGOMODE_AES_ECB);
 
   /* Pushing the AES block in the FIFO, it is assumed to be empty.*/
   CRYP->DR = __UNALIGNED_UINT32_READ(&in[0]);
@@ -649,8 +627,7 @@ cryerror_t cry_lld_decrypt_AES(CRYDriver *cryp,
   }
 
   /* Disabling unit.*/
-  cr &= ~CRYP_CR_CRYPEN;
-  CRYP->CR = cr;
+  CRYP->CR &= ~CRYP_CR_CRYPEN;
 
   return CRY_NOERROR;
 }
@@ -695,10 +672,9 @@ cryerror_t cry_lld_encrypt_AES_ECB(CRYDriver *cryp,
   }
 
   /* Setting the stored key.*/
-  cryp_set_key_encrypt(cryp);
+  cryp_set_key_encrypt(cryp, CRYP_CR_ALGOMODE_AES_ECB);
 
-  return cryp_execute(cryp, CRYP_CR_ALGOMODE_AES_ECB,
-                      size, in, out);
+  return cryp_start_dma(cryp, size, in, out);
 }
 
 /**
@@ -739,10 +715,9 @@ cryerror_t cry_lld_decrypt_AES_ECB(CRYDriver *cryp,
   }
 
   /* Setting the stored key.*/
-  cryp_set_key_decrypt(cryp);
+  cryp_set_key_decrypt(cryp, CRYP_CR_ALGOMODE_AES_ECB);
 
-  return cryp_execute(cryp, CRYP_CR_ALGOMODE_AES_ECB | CRYP_CR_ALGODIR,
-                      size, in, out);
+  return cryp_start_dma(cryp, size, in, out);
 }
 #endif
 
@@ -787,11 +762,10 @@ cryerror_t cry_lld_encrypt_AES_CBC(CRYDriver *cryp,
   }
 
   /* Setting the stored key and IV.*/
-  cryp_set_key_encrypt(cryp);
+  cryp_set_key_encrypt(cryp, CRYP_CR_ALGOMODE_AES_CBC);
   cryp_set_iv(cryp, iv);
 
-  return cryp_execute(cryp, CRYP_CR_ALGOMODE_AES_CBC,
-                      size, in, out);
+  return cryp_start_dma(cryp, size, in, out);
 }
 
 /**
@@ -834,11 +808,10 @@ cryerror_t cry_lld_decrypt_AES_CBC(CRYDriver *cryp,
   }
 
   /* Setting the stored key and IV.*/
-  cryp_set_key_decrypt(cryp);
+  cryp_set_key_decrypt(cryp, CRYP_CR_ALGOMODE_AES_CBC);
   cryp_set_iv(cryp, iv);
 
-  return cryp_execute(cryp, CRYP_CR_ALGOMODE_AES_CBC | CRYP_CR_ALGODIR,
-                      size, in, out);
+  return cryp_start_dma(cryp, size, in, out);
 }
 #endif
 
