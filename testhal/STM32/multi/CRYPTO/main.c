@@ -66,6 +66,8 @@ int main(void) {
   /* Normal main() thread activity, in this demo it does nothing.*/
   while (true) {
     uint8_t digest[32];
+    static uint8_t iv[16]   = {00, 00, 00, 00, 00, 00, 00, 00,
+                               00, 00, 00, 00, 00, 00, 00, 00};
     static uint8_t key[16]  = {00, 00, 00, 00, 00, 00, 00, 00,
                                00, 00, 00, 00, 00, 00, 00, 00};
     static uint8_t data[16] = {00, 00, 00, 00, 00, 00, 00, 00,
@@ -92,6 +94,8 @@ int main(void) {
       cryDecryptAES(&CRYD1, (crykey_t)0, data, out);
       cryEncryptAES_ECB(&CRYD1, (crykey_t)0, 16U, data, out);
       cryDecryptAES_ECB(&CRYD1, (crykey_t)0, 16U, data, out);
+      cryEncryptAES_CBC(&CRYD1, (crykey_t)0, 16U, data, out, iv);
+      cryDecryptAES_CBC(&CRYD1, (crykey_t)0, 16U, data, out, iv);
     }
     chThdSleepMilliseconds(500);
   }

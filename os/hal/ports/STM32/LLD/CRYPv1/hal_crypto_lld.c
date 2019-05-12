@@ -86,6 +86,8 @@ static inline void cryp_set_key_encrypt(CRYDriver *cryp, uint32_t algomode) {
   cr &= ~(CRYP_CR_KEYSIZE_Msk | CRYP_CR_ALGOMODE_Msk | CRYP_CR_ALGODIR_Msk);
   cr |= cryp->cryp_ksize | algomode | CRYP_CR_CRYPEN;
   CRYP->CR = cr;
+
+  cryp->cryp_ktype = cryp_key_aes_encrypt;
 }
 
 /**
@@ -107,6 +109,8 @@ static inline void cryp_set_key_decrypt(CRYDriver *cryp, uint32_t algomode) {
   cr &= ~(CRYP_CR_KEYSIZE_Msk | CRYP_CR_ALGOMODE_Msk | CRYP_CR_ALGODIR_Msk);
   cr |= cryp->cryp_ksize | algomode | CRYP_CR_ALGODIR | CRYP_CR_CRYPEN;
   CRYP->CR = cr;
+
+  cryp->cryp_ktype = cryp_key_aes_decrypt;
 }
 
 /**
@@ -447,6 +451,18 @@ void cry_lld_start(CRYDriver *cryp) {
 #endif
   }
 
+  /* Resetting trasient key data.*/
+  cryp->cryp_ktype = cryp_key_none;
+  cryp->cryp_ksize = 0U;
+  cryp->cryp_k[0]  = 0U;
+  cryp->cryp_k[1]  = 0U;
+  cryp->cryp_k[2]  = 0U;
+  cryp->cryp_k[3]  = 0U;
+  cryp->cryp_k[4]  = 0U;
+  cryp->cryp_k[5]  = 0U;
+  cryp->cryp_k[6]  = 0U;
+  cryp->cryp_k[7]  = 0U;
+
 #if STM32_CRY_USE_CRYP1
   /* CRYP setup.*/
   CRYP->CR    = CRYP_CR_DATATYPE_1;
@@ -594,7 +610,9 @@ cryerror_t cry_lld_encrypt_AES(CRYDriver *cryp,
   }
 
   /* Setting the stored key.*/
-  cryp_set_key_encrypt(cryp, CRYP_CR_ALGOMODE_AES_ECB);
+  if (cryp->cryp_ktype != cryp_key_aes_encrypt) {
+    cryp_set_key_encrypt(cryp, CRYP_CR_ALGOMODE_AES_ECB);
+  }
 
   /* Pushing the AES block in the FIFO, it is assumed to be empty.*/
   CRYP->DR = __UNALIGNED_UINT32_READ(&in[0]);
@@ -650,7 +668,9 @@ cryerror_t cry_lld_decrypt_AES(CRYDriver *cryp,
   }
 
   /* Setting the stored key.*/
-  cryp_set_key_decrypt(cryp, CRYP_CR_ALGOMODE_AES_ECB);
+  if (cryp->cryp_ktype != cryp_key_aes_decrypt) {
+    cryp_set_key_decrypt(cryp, CRYP_CR_ALGOMODE_AES_ECB);
+  }
 
   /* Pushing the AES block in the FIFO, it is assumed to be empty.*/
   CRYP->DR = __UNALIGNED_UINT32_READ(&in[0]);
@@ -711,7 +731,9 @@ cryerror_t cry_lld_encrypt_AES_ECB(CRYDriver *cryp,
   }
 
   /* Setting the stored key.*/
-  cryp_set_key_encrypt(cryp, CRYP_CR_ALGOMODE_AES_ECB);
+  if (cryp->cryp_ktype != cryp_key_aes_encrypt) {
+    cryp_set_key_encrypt(cryp, CRYP_CR_ALGOMODE_AES_ECB);
+  }
 
   return cryp_do_transfer(cryp, size, in, out);
 }
@@ -754,7 +776,9 @@ cryerror_t cry_lld_decrypt_AES_ECB(CRYDriver *cryp,
   }
 
   /* Setting the stored key.*/
-  cryp_set_key_decrypt(cryp, CRYP_CR_ALGOMODE_AES_ECB);
+  if (cryp->cryp_ktype != cryp_key_aes_decrypt) {
+    cryp_set_key_decrypt(cryp, CRYP_CR_ALGOMODE_AES_ECB);
+  }
 
   return cryp_do_transfer(cryp, size, in, out);
 }
@@ -802,7 +826,9 @@ cryerror_t cry_lld_encrypt_AES_CBC(CRYDriver *cryp,
 
   /* Setting the stored key and IV.*/
   cryp_set_iv(cryp, iv);
-  cryp_set_key_encrypt(cryp, CRYP_CR_ALGOMODE_AES_CBC);
+  if (cryp->cryp_ktype != cryp_key_aes_encrypt) {
+    cryp_set_key_encrypt(cryp, CRYP_CR_ALGOMODE_AES_CBC);
+  }
 
   return cryp_do_transfer(cryp, size, in, out);
 }
@@ -848,7 +874,9 @@ cryerror_t cry_lld_decrypt_AES_CBC(CRYDriver *cryp,
 
   /* Setting the stored key and IV.*/
   cryp_set_iv(cryp, iv);
-  cryp_set_key_decrypt(cryp, CRYP_CR_ALGOMODE_AES_CBC);
+  if (cryp->cryp_ktype != cryp_key_aes_decrypt) {
+    cryp_set_key_decrypt(cryp, CRYP_CR_ALGOMODE_AES_CBC);
+  }
 
   return cryp_do_transfer(cryp, size, in, out);
 }

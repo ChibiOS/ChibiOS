@@ -225,7 +225,7 @@
 #define CRY_LLD_SUPPORTS_AES                TRUE
 #define CRY_LLD_SUPPORTS_AES_ECB            TRUE
 #define CRY_LLD_SUPPORTS_AES_CBC            TRUE
-#define CRY_LLD_SUPPORTS_AES_CFB            TRUE
+#define CRY_LLD_SUPPORTS_AES_CFB            FALSE
 #define CRY_LLD_SUPPORTS_AES_CTR            TRUE
 #define CRY_LLD_SUPPORTS_AES_GCM            TRUE
 #define CRY_LLD_SUPPORTS_DES                TRUE
@@ -272,6 +272,17 @@ typedef uint32_t crykey_t;
 typedef struct CRYDriver CRYDriver;
 
 /**
+ * @brief   Type of key stored in CRYP.
+ */
+typedef enum {
+  cryp_key_none = 0,
+  cryp_key_des = 1,
+  cryp_key_tdes = 2,
+  cryp_key_aes_encrypt = 3,
+  cryp_key_aes_decrypt = 4
+} cryp_ktype_t;
+
+/**
  * @brief   Driver configuration structure.
  * @note    It could be empty on some architectures.
  */
@@ -296,6 +307,18 @@ struct CRYDriver {
 #endif
   /* End of the mandatory fields.*/
 #if (STM32_CRY_USE_CRYP1 == TRUE) || defined (__DOXYGEN__)
+  /**
+   * @brief   Type of the key currently stored in CRYP.
+   */
+  cryp_ktype_t              cryp_ktype;
+  /**
+   * @brief   Key size setup value for CR register.
+   */
+  uint32_t                  cryp_ksize;
+  /**
+   * @brief   Transient key data.
+   */
+  uint32_t                  cryp_k[8];
 #if (STM32_CRY_CRYP_SIZE_THRESHOLD != 0) || defined (__DOXYGEN__)
   /**
    * @brief   Thread reference for CRYP operations.
@@ -310,14 +333,6 @@ struct CRYDriver {
    */
   const stm32_dma_stream_t  *cryp_dma_out;
 #endif /* STM32_CRY_CRYP_SIZE_THRESHOLD != 0 */
-  /**
-   * @brief   Key size setup value for CR register.
-   */
-  uint32_t                  cryp_ksize;
-  /**
-   * @brief   Transient key data.
-   */
-  uint32_t                  cryp_k[8];
 #endif /* STM32_CRY_USE_CRYP1 == TRUE */
 #if (STM32_CRY_USE_HASH1 == TRUE) || defined (__DOXYGEN__)
 #if (STM32_CRY_HASH_SIZE_THRESHOLD != 0) || defined (__DOXYGEN__)
