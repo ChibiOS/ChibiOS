@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 19.1.3 ***
+- FIX: Fixed RCC_AHB1ENR_BKPSRAMEN not present in all STMF4xx devices
+       (bug #1029).
 - FIX: Fixed MPU fix #1027 broke stack checking on Cortex-M devices without
        MPU (bug #1028).
 

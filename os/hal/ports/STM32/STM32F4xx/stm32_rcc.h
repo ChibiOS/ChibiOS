@@ -429,14 +429,22 @@
  *
  * @api
  */
+#ifdef RCC_AHB1ENR_BKPSRAMEN
 #define rccEnableBKPSRAM(lp) rccEnableAHB1(RCC_AHB1ENR_BKPSRAMEN, lp)
+#else
+#define rccEnableBKPSRAM(lp)
+#endif
 
 /**
  * @brief   Disables the BKPSRAM peripheral clock.
  *
  * @api
  */
+#ifdef RCC_AHB1ENR_BKPSRAMEN
 #define rccDisableBKPSRAM() rccDisableAHB1(RCC_AHB1ENR_BKPSRAMEN)
+#else
+#define rccDisableBKPSRAM()
+#endif
 /** @} */
 
 /**
