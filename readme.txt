@@ -88,6 +88,8 @@
 *** 18.2.3 ***
 - NEW: Added a check on defective GCC versions, Cortex-M0 only.
 - NEW: Extra timer checks in STM32 ST driver.
+- FIX: Fixed RCC_AHB1ENR_BKPSRAMEN not present in all STMF4xx devices
+       (bug #1029).
 - FIX: Fixed MPU fix #1027 broke stack checking on Cortex-M devices without
        MPU (bug #1028).
 - FIX: Fixed MPU setup missing on thread start (bug #1027).
