@@ -114,6 +114,12 @@ foreach my $line (@c_source) {
       }
 
       #****************************************************************************
+      # Check on commas.
+      if ($line =~ /,\S/) {
+        style "detected comma not followed by space";
+      }
+
+      #****************************************************************************
       # Check on loose semicolons.
       if ($line =~ /\S\s;/) {
         style "detected loose semicolon";
