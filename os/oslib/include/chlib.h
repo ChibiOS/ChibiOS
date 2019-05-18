@@ -142,7 +142,7 @@
 #error "malformed chlicense.h"
 #endif
 
-#if CH_CUSTOMER_LIC_OSLIB== FALSE
+#if CH_CUSTOMER_LIC_OSLIB == FALSE
 #error "ChibiOS/LIB not licensed"
 #endif
 

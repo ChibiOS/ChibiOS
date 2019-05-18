@@ -168,6 +168,21 @@ foreach my $line (@c_source) {
       }
 
       #****************************************************************************
+      # Check on (some) operators.
+      if ($line =~ /\S!=/) {
+        style "detected glued != operator";
+      }
+      if ($line =~ /!=\S/) {
+        style "detected glued != operator";
+      }
+      if ($line =~ /\S==/) {
+        style "detected glued == operator";
+      }
+      if ($line =~ /!==S/) {
+        style "detected glued == operator";
+      }
+
+      #****************************************************************************
       # Check function-call-like returns (not perfect so disabled).
       if ($line =~ /return\s*\(/) {
         if ($line =~ /return\s*\([\w\d\s\*]*\)\s*[^;]/) {

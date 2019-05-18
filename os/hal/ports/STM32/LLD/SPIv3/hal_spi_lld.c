@@ -512,7 +512,7 @@ void spi_lld_start(SPIDriver *spip) {
                                      STM32_SPI_SPI1_IRQ_PRIORITY,
                                      (stm32_dmaisr_t)spi_lld_serve_dma_tx_interrupt,
                                      (void *)spip);
-      osalDbgAssert(spip->tx.dma!= NULL, "unable to allocate stream");
+      osalDbgAssert(spip->tx.dma != NULL, "unable to allocate stream");
       rccEnableSPI1(true);
       dmaSetRequestSource(spip->rx.dma, STM32_DMAMUX1_SPI1_RX);
       dmaSetRequestSource(spip->tx.dma, STM32_DMAMUX1_SPI1_TX);
@@ -529,7 +529,7 @@ void spi_lld_start(SPIDriver *spip) {
                                      STM32_SPI_SPI2_IRQ_PRIORITY,
                                      (stm32_dmaisr_t)spi_lld_serve_dma_tx_interrupt,
                                      (void *)spip);
-      osalDbgAssert(spip->tx.dma!= NULL, "unable to allocate stream");
+      osalDbgAssert(spip->tx.dma != NULL, "unable to allocate stream");
       rccEnableSPI2(true);
       dmaSetRequestSource(spip->rx.dma, STM32_DMAMUX1_SPI2_RX);
       dmaSetRequestSource(spip->tx.dma, STM32_DMAMUX1_SPI2_TX);
@@ -546,7 +546,7 @@ void spi_lld_start(SPIDriver *spip) {
                                      STM32_SPI_SPI3_IRQ_PRIORITY,
                                      (stm32_dmaisr_t)spi_lld_serve_dma_tx_interrupt,
                                      (void *)spip);
-      osalDbgAssert(spip->tx.dma!= NULL, "unable to allocate stream");
+      osalDbgAssert(spip->tx.dma != NULL, "unable to allocate stream");
       rccEnableSPI3(true);
       dmaSetRequestSource(spip->rx.dma, STM32_DMAMUX1_SPI3_RX);
       dmaSetRequestSource(spip->tx.dma, STM32_DMAMUX1_SPI3_TX);
@@ -563,7 +563,7 @@ void spi_lld_start(SPIDriver *spip) {
                                      STM32_SPI_SPI4_IRQ_PRIORITY,
                                      (stm32_dmaisr_t)spi_lld_serve_dma_tx_interrupt,
                                      (void *)spip);
-      osalDbgAssert(spip->tx.dma!= NULL, "unable to allocate stream");
+      osalDbgAssert(spip->tx.dma != NULL, "unable to allocate stream");
       rccEnableSPI4(true);
       dmaSetRequestSource(spip->rx.dma, STM32_DMAMUX1_SPI4_RX);
       dmaSetRequestSource(spip->tx.dma, STM32_DMAMUX1_SPI4_TX);
@@ -580,7 +580,7 @@ void spi_lld_start(SPIDriver *spip) {
                                      STM32_SPI_SPI5_IRQ_PRIORITY,
                                      (stm32_dmaisr_t)spi_lld_serve_dma_tx_interrupt,
                                      (void *)spip);
-      osalDbgAssert(spip->tx.dma!= NULL, "unable to allocate stream");
+      osalDbgAssert(spip->tx.dma != NULL, "unable to allocate stream");
       rccEnableSPI5(true);
       dmaSetRequestSource(spip->rx.dma, STM32_DMAMUX1_SPI5_RX);
       dmaSetRequestSource(spip->tx.dma, STM32_DMAMUX1_SPI5_TX);
@@ -597,7 +597,7 @@ void spi_lld_start(SPIDriver *spip) {
                                       STM32_SPI_SPI6_IRQ_PRIORITY,
                                       (stm32_dmaisr_t)spi_lld_serve_bdma_tx_interrupt,
                                       (void *)spip);
-      osalDbgAssert(spip->tx.dma!= NULL, "unable to allocate stream");
+      osalDbgAssert(spip->tx.dma != NULL, "unable to allocate stream");
       rccEnableSPI6(true);
       bdmaSetRequestSource(spip->rx.bdma, STM32_DMAMUX2_SPI6_RX);
       bdmaSetRequestSource(spip->tx.bdma, STM32_DMAMUX2_SPI6_TX);

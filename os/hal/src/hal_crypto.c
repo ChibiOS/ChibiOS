@@ -724,7 +724,7 @@ cryerror_t cryEncryptAES_GCM(CRYDriver *cryp,
 
   osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
-#if CRY_LLD_SUPPORTS_AES_GCM== TRUE
+#if CRY_LLD_SUPPORTS_AES_GCM == TRUE
   return cry_lld_encrypt_AES_GCM(cryp, key_id, auth_size, auth_in,
                                  text_size, text_in, text_out, iv,
                                  tag_size, tag_out);
@@ -797,7 +797,7 @@ cryerror_t cryDecryptAES_GCM(CRYDriver *cryp,
 
   osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
-#if CRY_LLD_SUPPORTS_AES_GCM== TRUE
+#if CRY_LLD_SUPPORTS_AES_GCM == TRUE
   return cry_lld_decrypt_AES_GCM(cryp, key_id, auth_size, auth_in,
                                  text_size, text_in, text_out, iv,
                                  tag_size, tag_in);
