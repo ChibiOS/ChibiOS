@@ -121,22 +121,22 @@ foreach my $line (@c_source) {
 
       #****************************************************************************
       # Check on glued keywords.
-      if ($line =~ /if\(/) {
+      if ($line =~ /\sif\(/) {
         style "detected glued \"if\"";
       }
-      if ($line =~ /for\(/) {
+      if ($line =~ /\sfor\(/) {
         style "detected glued \"for\"";
       }
-      if ($line =~ /while\(/) {
+      if ($line =~ /\swhile\(/) {
         style "detected glued \"while\"";
       }
       if ($line =~ /\)while/) {
         style "detected glued \"while\"";
       }
-      if ($line =~ /switch\(/) {
+      if ($line =~ /\sswitch\(/) {
         style "detected glued \"switch\"";
       }
-      if ($line =~ /do\{/) {
+      if ($line =~ /\sdo\{/) {
         style "detected glued \"do\"";
       }
 
@@ -162,9 +162,13 @@ foreach my $line (@c_source) {
       }
 
       #****************************************************************************
-      # Check function-call-like returns.
+      # Check function-call-like returns (not perfect so disabled).
       if ($line =~ /return\s*\(/) {
-        style "detected function-call-like return";
+        if ($line =~ /return\s*\([\w\d\s\*]*\)\s*[^;]/) {
+        }
+        else {
+#          style "detected function-call-like return";
+        }
       }
     }
   }
