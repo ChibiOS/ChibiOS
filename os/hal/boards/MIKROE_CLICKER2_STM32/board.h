@@ -33,7 +33,7 @@
 /*
  * Board identifier.
  */
-#define BOARD_MIKROE_CLICKER_2_FOR_STM32
+#define BOARD_MIKROE_CLICKER2_STM32
 #define BOARD_NAME                  "Mikroe Clicker 2 for STM32"
 
 /*
