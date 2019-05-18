@@ -1314,7 +1314,7 @@
 
 #elif STM32_PLLSRC == STM32_PLLSRC_NOCLOCK
 #define STM32_PLLCLKIN              0
-      
+
 #else
 #error "invalid STM32_PLLSRC value specified"
 #endif

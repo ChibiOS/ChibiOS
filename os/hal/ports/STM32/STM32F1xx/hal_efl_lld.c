@@ -67,7 +67,6 @@ static const flash_descriptor_t efl_lld_descriptor = {
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-
 static inline void stm32_flash_lock(EFlashDriver *eflp) {
 
   eflp->flash->CR |= FLASH_CR_LOCK;
@@ -305,8 +304,7 @@ flash_error_t efl_lld_program(void *instance, flash_offset_t offset,
       break;
     }
     /* Check for flash error.*/
-    if(address[0] != line.hw[0])
-    {
+    if (address[0] != line.hw[0]) {
       err = FLASH_ERROR_PROGRAM;
       break;
     }
@@ -400,7 +398,7 @@ flash_error_t efl_lld_start_erase_sector(void *instance,
  *
  * @api
  */
-flash_error_t efl_lld_query_erase(void *instance, uint32_t *wait_time){
+flash_error_t efl_lld_query_erase(void *instance, uint32_t *wait_time) {
   EFlashDriver *devp = (EFlashDriver *)instance;
   flash_error_t err;
 

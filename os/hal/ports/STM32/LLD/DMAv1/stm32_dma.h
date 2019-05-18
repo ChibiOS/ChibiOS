@@ -286,7 +286,7 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
  * @brief   STM32 DMA stream descriptor structure.
  */
 typedef struct {
-  DMA_TypeDef           *dma ;          /**< @brief Associated DMA.         */
+  DMA_TypeDef           *dma;           /**< @brief Associated DMA.         */
   DMA_Channel_TypeDef   *channel;       /**< @brief Associated DMA channel. */
   uint32_t              cmask;          /**< @brief Mask of streams sharing
                                              the same ISR.                  */

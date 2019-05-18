@@ -508,7 +508,7 @@
 /**
  * @brief   PLLI2SM divider value.
  * @note    The allowed values are 2..63.
- * @note    The default value is calculated for a 96MHz I2S clock 
+ * @note    The default value is calculated for a 96MHz I2S clock
  *          output from an external 8MHz HSE clock.
  */
 #if !defined(STM32_PLLI2SM_VALUE) || defined(__DOXYGEN__)
@@ -519,7 +519,7 @@
  * @brief   PLLI2SN multiplier value.
  * @note    The allowed values are 192..432, except for
  *          STM32F446 where values are 50...432.
- * @note    The default value is calculated for a 96MHz I2S clock 
+ * @note    The default value is calculated for a 96MHz I2S clock
  *          output from an external 8MHz HSE clock.
  */
 #if !defined(STM32_PLLI2SN_VALUE) || defined(__DOXYGEN__)
@@ -529,7 +529,7 @@
 /**
  * @brief   PLLI2SR divider value.
  * @note    The allowed values are 2..7.
- * @note    The default value is calculated for a 96MHz I2S clock 
+ * @note    The default value is calculated for a 96MHz I2S clock
  *          output from an external 8MHz HSE clock.
  */
 #if !defined(STM32_PLLI2SR_VALUE) || defined(__DOXYGEN__)

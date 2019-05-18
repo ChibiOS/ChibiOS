@@ -556,7 +556,7 @@ struct USBDriver {
  * @notapi
  */
 #define usb_lld_wakeup_host(usbp)                                           \
-  do{                                                                       \
+  do {                                                                      \
     (usbp)->otg->DCTL |= DCTL_RWUSIG;                                       \
     osalThreadSleepMilliseconds(STM32_USB_HOST_WAKEUP_DURATION);            \
     (usbp)->otg->DCTL &= ~DCTL_RWUSIG;                                      \

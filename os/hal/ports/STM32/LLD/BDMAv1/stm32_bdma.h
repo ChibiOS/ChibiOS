@@ -225,7 +225,7 @@ typedef void (*stm32_bdmaisr_t)(void *p, uint32_t flags);
  * @brief   STM32 BDMA stream descriptor structure.
  */
 typedef struct {
-  BDMA_TypeDef              *bdma ;     /**< @brief Associated BDMA.        */
+  BDMA_TypeDef              *bdma;      /**< @brief Associated BDMA.        */
   BDMA_Channel_TypeDef      *channel;   /**< @brief Associated BDMA channel.*/
   uint8_t                   shift;      /**< @brief Bit offset in ISR and
                                              IFCR registers.                */

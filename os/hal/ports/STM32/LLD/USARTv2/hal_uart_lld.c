@@ -214,7 +214,7 @@ static uartflags_t translate_errors(uint32_t isr) {
  */
 static void uart_enter_rx_idle_loop(UARTDriver *uartp) {
   uint32_t mode;
-  
+
   /* RX DMA channel preparation, if the char callback is defined then the
      TCIE interrupt is enabled too.*/
   if (uartp->config->rxchar_cb == NULL)
@@ -238,7 +238,7 @@ static void usart_stop(UARTDriver *uartp) {
   /* Stops RX and TX DMA channels.*/
   dmaStreamDisable(uartp->dmarx);
   dmaStreamDisable(uartp->dmatx);
-  
+
   /* Stops USART operations.*/
   uartp->usart->CR1 = 0;
   uartp->usart->CR2 = 0;
@@ -357,7 +357,7 @@ static void serve_usart_irq(UARTDriver *uartp) {
   uint32_t isr;
   USART_TypeDef *u = uartp->usart;
   uint32_t cr1 = u->CR1;
-  
+
   /* Reading and clearing status.*/
   isr = u->ISR;
   u->ICR = isr;

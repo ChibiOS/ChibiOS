@@ -114,7 +114,6 @@ static const EFlashConfig efl_lld_config = {
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-
 static inline void stm32_flash_lock(EFlashDriver *eflp) {
 
   eflp->flash->CR |= FLASH_CR_LOCK;
@@ -511,7 +510,7 @@ flash_error_t efl_lld_start_erase_sector(void *instance,
  *
  * @api
  */
-flash_error_t efl_lld_query_erase(void *instance, uint32_t *msec){
+flash_error_t efl_lld_query_erase(void *instance, uint32_t *msec) {
   EFlashDriver *devp = (EFlashDriver *)instance;
   flash_error_t err;
 

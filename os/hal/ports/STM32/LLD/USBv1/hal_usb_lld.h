@@ -465,7 +465,7 @@ struct USBDriver {
  * @notapi
  */
 #define usb_lld_wakeup_host(usbp)                                           \
-  do{                                                                       \
+  do {                                                                      \
     STM32_USB->CNTR |= USB_CNTR_RESUME;                                     \
     osalThreadSleepMilliseconds(USB_HOST_WAKEUP_DURATION);                  \
     STM32_USB->CNTR &= ~USB_CNTR_RESUME;                                    \

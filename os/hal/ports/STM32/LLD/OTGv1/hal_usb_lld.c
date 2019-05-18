@@ -260,7 +260,7 @@ static void otg_fifo_read_to_buffer(volatile uint32_t *fifop,
   size_t i = 0;
 
   while (i < n) {
-    if ((i & 3) == 0){
+    if ((i & 3) == 0) {
       w = *fifop;
     }
     if (i < max) {

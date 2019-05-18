@@ -26,7 +26,7 @@
  *          - STM32_HSE_BYPASS (optionally).
  *          .
  *          One of the following macros must also be defined:
- *          - STM32L011xx, STM32L031xx, 
+ *          - STM32L011xx, STM32L031xx,
  *            STM32L051xx, STM32L052xx, STM32L053xx,
  *            STM32L061xx, STM32L062xx, STM32L063xx,
  *            STM32L071xx, STM32L072xx, STM32L073xx for ultra-low-power MCUs.

@@ -184,7 +184,7 @@ void stm32_clock_init(void) {
   /* Registers finally cleared to reset values.*/
   RCC->CR &= RCC_CR_HSITRIM | RCC_CR_HSION; /* CR Reset value.              */
   RCC->CFGR = 0;                            /* CFGR reset value.            */
-  
+
 #if STM32_HSE_ENABLED
   /* HSE activation.*/
 #if defined(STM32_HSE_BYPASS)

@@ -320,7 +320,7 @@ void mac_lld_start(MACDriver *macp) {
   rccEnableETH(true);
 #if defined(STM32_MAC_DMABMR_SR)
   ETH->DMABMR |= ETH_DMABMR_SR;
-  while(ETH->DMABMR & ETH_DMABMR_SR)
+  while (ETH->DMABMR & ETH_DMABMR_SR)
     ;
 #endif
 

@@ -606,7 +606,7 @@ void spi_lld_start(SPIDriver *spip) {
 
     /* DMA setup.*/
 #if defined(STM32_SPI_DMA_REQUIRED) && defined(STM32_SPI_BDMA_REQUIRED)
-    if(spip->is_bdma)
+    if (spip->is_bdma)
 #endif
 #if defined(STM32_SPI_BDMA_REQUIRED)
     {
@@ -628,7 +628,7 @@ void spi_lld_start(SPIDriver *spip) {
   /* Configuration-specific DMA setup.*/
   dsize = (spip->config->cfg1 & SPI_CFG1_DSIZE_Msk) + 1U;
 #if defined(STM32_SPI_DMA_REQUIRED) && defined(STM32_SPI_BDMA_REQUIRED)
-  if(spip->is_bdma)
+  if (spip->is_bdma)
 #endif
 #if defined(STM32_SPI_BDMA_REQUIRED)
   {
@@ -733,7 +733,7 @@ void spi_lld_stop(SPIDriver *spip) {
     spip->spi->CFG2 = 0U;
     spip->spi->IER  = 0U;
 #if defined(STM32_SPI_DMA_REQUIRED) && defined(STM32_SPI_BDMA_REQUIRED)
-    if(spip->is_bdma)
+    if (spip->is_bdma)
 #endif
 #if defined(STM32_SPI_BDMA_REQUIRED)
     {
@@ -821,7 +821,7 @@ void spi_lld_ignore(SPIDriver *spip, size_t n) {
   osalDbgAssert(n < 65536, "unsupported DMA transfer size");
 
 #if defined(STM32_SPI_DMA_REQUIRED) && defined(STM32_SPI_BDMA_REQUIRED)
-  if(spip->is_bdma)
+  if (spip->is_bdma)
 #endif
 #if defined(STM32_SPI_BDMA_REQUIRED)
   {
@@ -879,7 +879,7 @@ void spi_lld_exchange(SPIDriver *spip, size_t n,
   osalDbgAssert(n < 65536, "unsupported DMA transfer size");
 
 #if defined(STM32_SPI_DMA_REQUIRED) && defined(STM32_SPI_BDMA_REQUIRED)
-  if(spip->is_bdma)
+  if (spip->is_bdma)
 #endif
 #if defined(STM32_SPI_BDMA_REQUIRED)
   {
@@ -934,7 +934,7 @@ void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
   osalDbgAssert(n < 65536, "unsupported DMA transfer size");
 
 #if defined(STM32_SPI_DMA_REQUIRED) && defined(STM32_SPI_BDMA_REQUIRED)
-  if(spip->is_bdma)
+  if (spip->is_bdma)
 #endif
 #if defined(STM32_SPI_BDMA_REQUIRED)
   {
@@ -989,7 +989,7 @@ void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
   osalDbgAssert(n < 65536, "unsupported DMA transfer size");
 
 #if defined(STM32_SPI_DMA_REQUIRED) && defined(STM32_SPI_BDMA_REQUIRED)
-  if(spip->is_bdma)
+  if (spip->is_bdma)
 #endif
 #if defined(STM32_SPI_BDMA_REQUIRED)
   {
@@ -1041,7 +1041,7 @@ void spi_lld_abort(SPIDriver *spip) {
 
   /* Stopping DMAs.*/
 #if defined(STM32_SPI_DMA_REQUIRED) && defined(STM32_SPI_BDMA_REQUIRED)
-  if(spip->is_bdma)
+  if (spip->is_bdma)
 #endif
 #if defined(STM32_SPI_BDMA_REQUIRED)
   {

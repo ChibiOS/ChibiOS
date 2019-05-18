@@ -115,7 +115,7 @@ foreach my $line (@c_source) {
 
       #****************************************************************************
       # Check on loose semicolons.
-      if ($line =~ /\s;/) {
+      if ($line =~ /\S\s;/) {
         style "detected loose semicolon";
       }
 
@@ -145,7 +145,7 @@ foreach my $line (@c_source) {
       if ($line =~ /\(\s+/) {
         style "detected loose \"(\"";
       }
-      if ($line =~ /\s+\)/) {
+      if ($line =~ /\S\s+\)/) {
         style "detected loose \")\"";
       }
 

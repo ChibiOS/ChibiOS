@@ -404,10 +404,10 @@
 
 #if (STM32_MCOSEL == STM32_MCOSEL_HSE) ||                                   \
     (((STM32_MCOSEL == STM32_MCOSEL_PLLDIV2) ||                             \
-		  (STM32_MCOSEL == STM32_MCOSEL_PLL2) ||                                \
-			(STM32_MCOSEL == STM32_MCOSEL_PLL3) ||                                \
-			(STM32_MCOSEL == STM32_MCOSEL_PLL3DIV2)) &&                           \
-		 (STM32_PLLSRC == STM32_PLLSRC_HSE)) ||                                 \
+      (STM32_MCOSEL == STM32_MCOSEL_PLL2) ||                                \
+      (STM32_MCOSEL == STM32_MCOSEL_PLL3) ||                                \
+      (STM32_MCOSEL == STM32_MCOSEL_PLL3DIV2)) &&                           \
+     (STM32_PLLSRC == STM32_PLLSRC_HSE)) ||                                 \
     (STM32_MCOSEL == STM32_MCOSEL_XT1)
 #error "HSE not enabled, required by STM32_MCOSEL"
 #endif

@@ -147,7 +147,7 @@
 #define STM32_DAC_DAC2_CH2_DMA_PRIORITY     2
 #endif
 /** @} */
- 
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -347,7 +347,7 @@ typedef enum {
 /**
  * @brief   Samples alignment and size mode.
  */
-typedef enum { 
+typedef enum {
   DAC_DHRM_12BIT_RIGHT = 0,
   DAC_DHRM_12BIT_LEFT = 1,
   DAC_DHRM_8BIT_RIGHT = 2,
@@ -370,7 +370,6 @@ typedef enum {
   const dacparams_t         *params;                                        \
   /* Associated DMA.*/                                                      \
   const stm32_dma_stream_t  *dma
-
 
 /**
  * @brief   Low level fields of the DAC configuration structure.

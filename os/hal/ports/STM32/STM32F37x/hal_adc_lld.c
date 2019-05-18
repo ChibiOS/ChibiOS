@@ -535,7 +535,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   }
   dmaStreamSetMemory0(adcp->dmastp, adcp->samples);
   dmaStreamSetTransactionSize(adcp->dmastp,
-                              (uint32_t)grpp->num_channels * 
+                              (uint32_t)grpp->num_channels *
                               (uint32_t)adcp->depth);
   dmaStreamSetMode(adcp->dmastp, mode);
   dmaStreamEnable(adcp->dmastp);

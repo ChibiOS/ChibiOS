@@ -64,7 +64,6 @@
 #define MSG_WAIT                            (msg_t)-10
 /** @} */
 
-
 /**
  * @name    Special time constants
  * @{
@@ -587,7 +586,7 @@ static inline syssts_t osalSysGetStatusAndLockX(void) {
 
   sts = SREG;
   asm volatile ("cli" : : : "memory");
-  
+
   return sts;
 }
 

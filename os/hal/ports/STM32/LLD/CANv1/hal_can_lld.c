@@ -83,7 +83,7 @@ static void can_lld_set_filters(CANDriver* canp,
                                 const CANFilter *cfp) {
 
 #if STM32_CAN_USE_CAN2
-  if(canp == &CAND2) {
+  if (canp == &CAND2) {
     /* Set handle to CAN1, because CAN1 manages the filters of CAN2.*/
     canp = &CAND1;
   }
@@ -91,7 +91,7 @@ static void can_lld_set_filters(CANDriver* canp,
 
   /* Temporarily enabling CAN clock.*/
 #if STM32_CAN_USE_CAN1
-  if(canp == &CAND1) {
+  if (canp == &CAND1) {
     rccEnableCAN1(true);
     /* Filters initialization.*/
     canp->can->FMR = (canp->can->FMR & 0xFFFF0000) | CAN_FMR_FINIT;
@@ -100,7 +100,7 @@ static void can_lld_set_filters(CANDriver* canp,
 #endif
 
 #if STM32_CAN_USE_CAN3
-  if(canp == &CAND3) {
+  if (canp == &CAND3) {
     rccEnableCAN3(true);
     /* Filters initialization.*/
     canp->can->FMR = (canp->can->FMR & 0xFFFF0000) | CAN_FMR_FINIT;
@@ -117,7 +117,7 @@ static void can_lld_set_filters(CANDriver* canp,
     canp->can->FFA1R = 0;
 
 #if STM32_CAN_USE_CAN1
-    if(canp == &CAND1) {
+    if (canp == &CAND1) {
       for (i = 0; i < STM32_CAN_MAX_FILTERS; i++) {
         canp->can->sFilterRegister[i].FR1 = 0;
         canp->can->sFilterRegister[i].FR2 = 0;
@@ -126,7 +126,7 @@ static void can_lld_set_filters(CANDriver* canp,
 #endif
 
 #if STM32_CAN_USE_CAN3
-    if(canp == &CAND3) {
+    if (canp == &CAND3) {
       for (i = 0; i < STM32_CAN3_MAX_FILTERS; i++) {
         canp->can->sFilterRegister[i].FR1 = 0;
         canp->can->sFilterRegister[i].FR2 = 0;
@@ -155,7 +155,7 @@ static void can_lld_set_filters(CANDriver* canp,
     canp->can->sFilterRegister[0].FR1 = 0;
     canp->can->sFilterRegister[0].FR2 = 0;
 #if STM32_CAN_USE_CAN2
-    if(canp == &CAND1) {
+    if (canp == &CAND1) {
       canp->can->sFilterRegister[can2sb].FR1 = 0;
       canp->can->sFilterRegister[can2sb].FR2 = 0;
     }
@@ -165,7 +165,7 @@ static void can_lld_set_filters(CANDriver* canp,
     canp->can->FS1R = 1;
     canp->can->FA1R = 1;
 #if STM32_CAN_USE_CAN2
-    if(canp == &CAND1) {
+    if (canp == &CAND1) {
       canp->can->FS1R |= 1 << can2sb;
       canp->can->FA1R |= 1 << can2sb;
     }
@@ -176,12 +176,12 @@ static void can_lld_set_filters(CANDriver* canp,
   /* Clock disabled, it will be enabled again in can_lld_start().*/
   /* Temporarily enabling CAN clock.*/
 #if STM32_CAN_USE_CAN1
-  if(canp == &CAND1) {
+  if (canp == &CAND1) {
     rccDisableCAN1();
   }
 #endif
 #if STM32_CAN_USE_CAN3
-  if(canp == &CAND3) {
+  if (canp == &CAND3) {
     rccDisableCAN3();
   }
 #endif
@@ -1000,12 +1000,12 @@ void canSTM32SetFilters(CANDriver *canp, uint32_t can2sb,
 #endif
 
 #if STM32_CAN_USE_CAN1
-  if(canp == &CAND1) {
+  if (canp == &CAND1) {
     can_lld_set_filters(canp, can2sb, num, cfp);
   }
 #endif
 #if STM32_CAN_USE_CAN3
-  if(canp == &CAND3) {
+  if (canp == &CAND3) {
     can_lld_set_filters(canp, can2sb, num, cfp);
   }
 #endif
