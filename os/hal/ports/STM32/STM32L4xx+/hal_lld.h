@@ -1973,7 +1973,7 @@
 /**
  * @brief   STM32_PLLSAI2REN field.
  * @note    Always enabled.
- * @todo    It should depend on some condition.
+ * @note    It should depend on some condition.
  */
 #define STM32_PLLSAI2REN            (1 << 24)
 

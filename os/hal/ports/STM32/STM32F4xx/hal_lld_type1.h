@@ -906,7 +906,6 @@
 
 /**
  * @brief   SAI1SEL value (SAI1 clock source).
- * @todo    Add check.
  */
 #if !defined(STM32_SAI1SEL) || defined(__DOXYGEN__)
 #define STM32_SAI1SEL               STM32_SAI1SEL_OFF
@@ -914,7 +913,6 @@
 
 /**
  * @brief   SAI2SEL value (SAI2 clock source).
- * @todo    Add check.
  */
 #if !defined(STM32_SAI2SEL) || defined(__DOXYGEN__)
 #define STM32_SAI2SEL               STM32_SAI2SEL_OFF

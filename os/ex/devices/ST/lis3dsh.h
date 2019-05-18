@@ -366,8 +366,8 @@
 #error "LIS3DSH_SHARED_I2C requires I2C_USE_MUTUAL_EXCLUSION"
 #endif
 
-/**
- * @todo    Add support for LIS3DSH over I2C.
+/*
+ * CHTODO: Add support for LIS3DSH over I2C.
  */
 #if LIS3DSH_USE_I2C
 #error "LIS3DSH over I2C still not supported"
@@ -390,11 +390,11 @@ typedef struct LIS3DSHDriver LIS3DSHDriver;
  * @brief   LIS3DSH full scale.
  */
 typedef enum {
-  LIS3DSH_ACC_FS_2G = 0x00,         /**< Full scale ±2g.                    */
-  LIS3DSH_ACC_FS_4G = 0x08,         /**< Full scale ±4g.                    */
-  LIS3DSH_ACC_FS_6G = 0x10,         /**< Full scale ±6g.                    */
-  LIS3DSH_ACC_FS_8G = 0x18,         /**< Full scale ±8g.                    */
-  LIS3DSH_ACC_FS_16G = 0x20         /**< Full scale ±16g.                   */
+  LIS3DSH_ACC_FS_2G = 0x00,         /**< Full scale ï¿½2g.                    */
+  LIS3DSH_ACC_FS_4G = 0x08,         /**< Full scale ï¿½4g.                    */
+  LIS3DSH_ACC_FS_6G = 0x10,         /**< Full scale ï¿½6g.                    */
+  LIS3DSH_ACC_FS_8G = 0x18,         /**< Full scale ï¿½8g.                    */
+  LIS3DSH_ACC_FS_16G = 0x20         /**< Full scale ï¿½16g.                   */
 }lis3dsh_acc_fs_t;
 
 /**

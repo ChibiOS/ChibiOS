@@ -70,7 +70,7 @@
  */
 #define VL53L0X_RANGE_NUMBER_OF_AXES        1U
 
-/** @todo   Check this. */
+/* CHTODO: Check this. */
 #define VL53L0X_RANGE_SENS                  0.00024414f
 #define VL53L0X_RANGE_BIAS                  0.0f
 /** @} */

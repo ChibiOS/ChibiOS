@@ -102,7 +102,7 @@ OSAL_IRQ_HANDLER(Vector88) {
     if (ADCD1.grpp != NULL)
       _adc_isr_error_code(&ADCD1, ADC_ERR_OVERFLOW);
   }
-  /* TODO: Add here analog watchdog handling.*/
+  /* CHTODO: Add here analog watchdog handling.*/
 
   OSAL_IRQ_EPILOGUE();
 }

@@ -77,8 +77,8 @@
 
 /**
  * @brief   HTS221 thermometer subsystem characteristics.
- * @note    Sensitivity is expressed as °C/LSB.
- * @note    Bias is expressed as °C.
+ * @note    Sensitivity is expressed as ï¿½C/LSB.
+ * @note    Bias is expressed as ï¿½C.
  *
  * @{
  */
@@ -247,8 +247,8 @@
 #error "HTS221_SHARED_I2C requires I2C_USE_MUTUAL_EXCLUSION"
 #endif
 
-/**
- * @todo    Add support for HTS221 over SPI.
+/*
+ * CHTODO: Add support for HTS221 over SPI.
  */
 #if HTS221_USE_SPI
 #error "HTS221 over SPI still not supported."
@@ -607,7 +607,7 @@ struct HTS221Driver {
  * @brief   Retrieves cooked data from the BaseThermometer.
  * @note    This data is manipulated according to the formula
  *          cooked = (raw * sensitivity) - bias.
- * @note    Final data is expressed as °C.
+ * @note    Final data is expressed as ï¿½C.
  * @note    The axes array must be at least the same size of the
  *          BaseThermometer axes number.
  *
@@ -627,7 +627,7 @@ struct HTS221Driver {
 
 /**
  * @brief   Set bias values for the BaseThermometer.
- * @note    Bias must be expressed as °C.
+ * @note    Bias must be expressed as ï¿½C.
  * @note    The bias buffer must be at least the same size of the
  *          BaseThermometer axes number.
  *
@@ -659,7 +659,7 @@ struct HTS221Driver {
 
 /**
  * @brief   Set sensitivity values for the BaseThermometer.
- * @note    Sensitivity must be expressed as °C/LSB.
+ * @note    Sensitivity must be expressed as ï¿½C/LSB.
  * @note    The sensitivity buffer must be at least the same size of the
  *          BaseThermometer axes number.
  *

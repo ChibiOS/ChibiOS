@@ -247,8 +247,8 @@
 #error "LIS302DL_SHARED_I2C requires I2C_USE_MUTUAL_EXCLUSION"
 #endif
 
-/**
- * @todo    Add support for LIS302DL over I2C.
+/*
+ * CHTODO: Add support for LIS302DL over I2C.
  */
 #if LIS302DL_USE_I2C
 #error "LIS302DL over I2C still not supported"
@@ -271,8 +271,8 @@ typedef struct LIS302DLDriver LIS302DLDriver;
  * @brief   LIS302DL full scale.
  */
 typedef enum {
-  LIS302DL_ACC_FS_2G = 0x00,        /**< Full scale ±2g.                    */
-  LIS302DL_ACC_FS_8G = 0x20         /**< Full scale ±8g.                    */
+  LIS302DL_ACC_FS_2G = 0x00,        /**< Full scale ï¿½2g.                    */
+  LIS302DL_ACC_FS_8G = 0x20         /**< Full scale ï¿½8g.                    */
 }lis302dl_acc_fs_t;
 
 /**

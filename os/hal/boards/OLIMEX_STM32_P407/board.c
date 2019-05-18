@@ -65,7 +65,7 @@ bool mmc_lld_is_card_inserted(MMCDriver *mmcp) {
 bool mmc_lld_is_write_protected(MMCDriver *mmcp) {
 
   (void)mmcp;
-  /* TODO: Fill the implementation.*/
+  /* CHTODO: Fill the implementation.*/
   return FALSE;
 }
 #endif

@@ -18,7 +18,7 @@
 
 /**
  * @brief   Board-specific initialization code.
- * @todo    Add your board-specific code, if any.
+ * @note    You can add your board-specific code here.
  */
 void boardInit(void) {
 }

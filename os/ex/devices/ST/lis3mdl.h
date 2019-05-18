@@ -258,8 +258,8 @@
 #error "LIS3MDL_SHARED_I2C requires I2C_USE_MUTUAL_EXCLUSION"
 #endif
 
-/**
- * @todo    Add support for LIS3MDL over SPI.
+/*
+ * CHTODO: Add support for LIS3MDL over SPI.
  */
 #if LIS3MDL_USE_SPI
 #error "LIS3MDL over SPI still not supported"
@@ -294,10 +294,10 @@ typedef enum {
  * @brief   LIS3MDL full scale
  */
 typedef enum {
-  LIS3MDL_COMP_FS_4GA = 0x00,       /**< ±4 Gauss                           */
-  LIS3MDL_COMP_FS_8GA = 0x20,       /**< ±8 Gauss                           */
-  LIS3MDL_COMP_FS_12GA = 0x40,      /**< ±12 Gauss                          */
-  LIS3MDL_COMP_FS_16GA = 0x60       /**< ±16 Gauss                          */
+  LIS3MDL_COMP_FS_4GA = 0x00,       /**< ï¿½4 Gauss                           */
+  LIS3MDL_COMP_FS_8GA = 0x20,       /**< ï¿½8 Gauss                           */
+  LIS3MDL_COMP_FS_12GA = 0x40,      /**< ï¿½12 Gauss                          */
+  LIS3MDL_COMP_FS_16GA = 0x60       /**< ï¿½16 Gauss                          */
 }lis3mdl_comp_fs_t;
 
 /**

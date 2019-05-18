@@ -77,8 +77,8 @@
 
 /**
  * @brief   LPS25H thermometer subsystem characteristics.
- * @note    Sensitivity is expressed as °C/LSB.
- * @note    Bias is expressed as °C.
+ * @note    Sensitivity is expressed as ï¿½C/LSB.
+ * @note    Bias is expressed as ï¿½C.
  *
  * @{
  */
@@ -282,8 +282,8 @@
 #error "LPS25H_SHARED_I2C requires I2C_USE_MUTUAL_EXCLUSION"
 #endif
 
-/**
- * @todo    Add support for LPS25H over SPI.
+/*
+ * CHTODO: Add support for LPS25H over SPI.
  */
 #if LPS25H_USE_SPI
 #error "LPS25H over SPI still not supported"

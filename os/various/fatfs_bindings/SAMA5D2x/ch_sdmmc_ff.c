@@ -91,7 +91,7 @@ DSTATUS disk_initialize(BYTE slot)
 	if (sdmmcp->state != MCID_IDLE )
 		sdmmc_device_deInit(sdmmcp);
 
-	/* FIXME a delay with the bus held off may be required by the device */
+	/* CHTODO: a delay with the bus held off may be required by the device */
 	rc = sdmmc_device_start(sdmmcp);
 
 	if (rc == SDMMC_OK) {

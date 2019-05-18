@@ -213,7 +213,7 @@ static void spi_lld_serve_interrupt(SPIDriver *spip) {
   spip->spi->IFCR = sr;
 
   if ((sr & SPI_SR_OVR) != 0U) {
-    /* TODO: fault notification.*/
+    /* CHTODO: fault notification.*/
   }
 }
 

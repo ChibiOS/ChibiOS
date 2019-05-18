@@ -776,7 +776,7 @@ void _usb_ep0setup(USBDriver *usbp, usbep_t ep) {
      packets?*/
   if (usbp->ep0state != USB_EP0_STP_WAITING) {
     /* This is unexpected could require handling with a warning event.*/
-    /* TODO: handling here.*/
+    /* CHTODO: handling here.*/
 
     /* Resetting the EP0 state machine and going ahead.*/
     usbp->ep0state = USB_EP0_STP_WAITING;

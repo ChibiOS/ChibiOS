@@ -376,8 +376,8 @@
 #error "LSM303DLHC_SHARED_I2C requires I2C_USE_MUTUAL_EXCLUSION"
 #endif
 
-/**
- * @todo    Add support for LSM303DLHC over SPI.
+/*
+ * CHTODO: Add support for LSM303DLHC over SPI.
  */
 #if LSM303DLHC_USE_SPI
 #error "LSM303DLHC over SPI still not supported"
@@ -400,10 +400,10 @@ typedef struct LSM303DLHCDriver LSM303DLHCDriver;
  * @brief LSM303DLHC accelerometer subsystem full scale.
  */
 typedef enum {
-  LSM303DLHC_ACC_FS_2G = 0x00,      /**< Full scale ±2g.                    */
-  LSM303DLHC_ACC_FS_4G = 0x10,      /**< Full scale ±4g.                    */
-  LSM303DLHC_ACC_FS_8G = 0x20,      /**< Full scale ±8g.                    */
-  LSM303DLHC_ACC_FS_16G  = 0x30     /**< Full scale ±16g.                   */
+  LSM303DLHC_ACC_FS_2G = 0x00,      /**< Full scale ï¿½2g.                    */
+  LSM303DLHC_ACC_FS_4G = 0x10,      /**< Full scale ï¿½4g.                    */
+  LSM303DLHC_ACC_FS_8G = 0x20,      /**< Full scale ï¿½8g.                    */
+  LSM303DLHC_ACC_FS_16G  = 0x30     /**< Full scale ï¿½16g.                   */
 } lsm303dlhc_acc_fs_t;
 
 /**
@@ -476,13 +476,13 @@ typedef enum {
  * @brief LSM303DLHC compass subsystem full scale.
  */
 typedef enum {
-  LSM303DLHC_COMP_FS_1P3GA = 0x20,  /**< Full scale ±1.3 Gauss              */
-  LSM303DLHC_COMP_FS_1P9GA = 0x40,  /**< Full scale ±1.9 Gauss              */
-  LSM303DLHC_COMP_FS_2P5GA = 0x60,  /**< Full scale ±2.5 Gauss              */
-  LSM303DLHC_COMP_FS_4P0GA = 0x80,  /**< Full scale ±4.0 Gauss              */
-  LSM303DLHC_COMP_FS_4P7GA = 0xA0,  /**< Full scale ±4.7 Gauss              */
-  LSM303DLHC_COMP_FS_5P6GA = 0xC0,  /**< Full scale ±5.6 Gauss              */
-  LSM303DLHC_COMP_FS_8P1GA = 0xE0   /**< Full scale ±8.1 Gauss              */
+  LSM303DLHC_COMP_FS_1P3GA = 0x20,  /**< Full scale ï¿½1.3 Gauss              */
+  LSM303DLHC_COMP_FS_1P9GA = 0x40,  /**< Full scale ï¿½1.9 Gauss              */
+  LSM303DLHC_COMP_FS_2P5GA = 0x60,  /**< Full scale ï¿½2.5 Gauss              */
+  LSM303DLHC_COMP_FS_4P0GA = 0x80,  /**< Full scale ï¿½4.0 Gauss              */
+  LSM303DLHC_COMP_FS_4P7GA = 0xA0,  /**< Full scale ï¿½4.7 Gauss              */
+  LSM303DLHC_COMP_FS_5P6GA = 0xC0,  /**< Full scale ï¿½5.6 Gauss              */
+  LSM303DLHC_COMP_FS_8P1GA = 0xE0   /**< Full scale ï¿½8.1 Gauss              */
 } lsm303dlhc_comp_fs_t;
 
 /**

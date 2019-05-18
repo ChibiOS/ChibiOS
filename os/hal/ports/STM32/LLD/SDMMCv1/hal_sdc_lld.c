@@ -982,7 +982,7 @@ bool sdc_lld_write(SDCDriver *sdcp, uint32_t startblk,
  */
 bool sdc_lld_sync(SDCDriver *sdcp) {
 
-  /* TODO: Implement.*/
+  /* CHTODO: Implement.*/
   (void)sdcp;
   return HAL_SUCCESS;
 }

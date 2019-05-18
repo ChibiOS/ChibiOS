@@ -359,7 +359,7 @@ uint8_t SdEnableHighSpeed(SdmmcDriver *drv)
 
 	/* Select device output Driver Type B, i.e. 50 ohm nominal output
 	 * impedance.
-	 * FIXME select the optimal device output Driver Type, which depends on
+	 * CHTODO: select the optimal device output Driver Type, which depends on
 	 * board design. An oscilloscope should be used to observe signal
 	 * integrity, then among the driver types that meet rise and fall time
 	 * requirements, the weakest should be selected.
@@ -385,7 +385,7 @@ Switch:
 		return SDMMC_ERR;
 	val = SD_SWITCH_ST_FUN_GRP1_RC(drv->card.sandbox1);
 	while (val != mode_func && val != SD_SWITCH_ST_FUN_GRP_RC_ERROR) {
-		/* FIXME break upon timeout condition */
+		/* CHTODO: break upon timeout condition */
 		request.acc_mode = 0xf;
 		request.cmd_sys = 0xf;
 		request.pwr_limit = 0xf;
@@ -1069,7 +1069,7 @@ static uint8_t MoveToTransferState(SdmmcDriver *driver,uint32_t address,uint16_t
 			 * operation is for the last block of memory area. */
 			error = SDMMC_ERR;
 		}
-		/* FIXME when not using the STOP_TRANSMISSION command (using the
+		/* CHTODO: when not using the STOP_TRANSMISSION command (using the
 		 * SET_BLOCK_COUNT command instead), we should issue the
 		 * SEND_STATUS command, eat and handle any Execution Mode
 		 * exception. */
@@ -1181,7 +1181,7 @@ static uint8_t _WaitUntilReady(SdmmcDriver *driver, uint32_t last_dev_status)
 			return SDMMC_OK;
 		/* Sending-data and Receive-data states may be encountered
 		 * temporarily further to single-block data transfers. */
-		/* FIXME state 15 "reserved for I/O mode" may be allowed */
+		/* CHTODO: state 15 "reserved for I/O mode" may be allowed */
 		if (state != STATUS_TRAN && state != STATUS_PRG
 		    && state != STATUS_DATA && state != STATUS_RCV)
 			return SDMMC_NOT_INITIALIZED;

@@ -508,7 +508,7 @@ static void otg_isoc_out_failed_handler(USBDriver *usbp) {
         ((otgp->oe[ep].DOEPCTL & DOEPCTL_EPENA) != 0)) {
       /* Endpoint enabled -> ISOC OUT transfer failed */
       /* Disable endpoint */
-      /* FIXME: Core stucks here */
+      /* CHTODO:: Core stucks here */
       /*otgp->oe[ep].DOEPCTL |= (DOEPCTL_EPDIS | DOEPCTL_SNAK);
       while (otgp->oe[ep].DOEPCTL & DOEPCTL_EPENA)
         ;*/
@@ -1182,7 +1182,7 @@ void usb_lld_start_in(USBDriver *usbp, usbep_t ep) {
     /* Normal case.*/
     uint32_t pcnt = (isp->txsize + usbp->epc[ep]->in_maxsize - 1) /
                     usbp->epc[ep]->in_maxsize;
-    /* TODO: Support more than one packet per frame for isochronous transfers.*/
+    /* CHTODO: Support more than one packet per frame for isochronous transfers.*/
     usbp->otg->ie[ep].DIEPTSIZ = DIEPTSIZ_MCNT(1) | DIEPTSIZ_PKTCNT(pcnt) |
                                  DIEPTSIZ_XFRSIZ(isp->txsize);
   }

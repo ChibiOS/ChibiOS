@@ -87,7 +87,7 @@
 /**
  * @brief   L3GD20 gyroscope system characteristics.
  * @note    Sensitivity is expressed as DPS/LSB whereas DPS stand for Degree
- *          per second [°/s].
+ *          per second [ï¿½/s].
  * @note    Bias is expressed as DPS.
  *
  * @{
@@ -396,8 +396,8 @@
 #error "LSM6DS0_SHARED_I2C requires I2C_USE_MUTUAL_EXCLUSION"
 #endif
 
-/**
- * @todo    Add support for LSM6DS0 over SPI.
+/*
+ * CHTODO: Add support for LSM6DS0 over SPI.
  */
 #if LSM6DS0_USE_SPI
 #error "LSM6DS0 over SPI still not supported"
@@ -428,10 +428,10 @@ typedef enum {
  * @brief   LSM6DS0 accelerometer subsystem full scale.
  */
 typedef enum {
-  LSM6DS0_ACC_FS_2G = 0x00,         /**< Full scale ±2g.                    */
-  LSM6DS0_ACC_FS_4G = 0x10,         /**< Full scale ±4g.                    */
-  LSM6DS0_ACC_FS_8G = 0x18,         /**< Full scale ±8g.                    */
-  LSM6DS0_ACC_FS_16G = 0x08         /**< Full scale ±16g.                   */
+  LSM6DS0_ACC_FS_2G = 0x00,         /**< Full scale ï¿½2g.                    */
+  LSM6DS0_ACC_FS_4G = 0x10,         /**< Full scale ï¿½4g.                    */
+  LSM6DS0_ACC_FS_8G = 0x18,         /**< Full scale ï¿½8g.                    */
+  LSM6DS0_ACC_FS_16G = 0x08         /**< Full scale ï¿½16g.                   */
 } lsm6ds0_acc_fs_t;
 
 /**
@@ -461,9 +461,9 @@ typedef enum {
  * @brief LSM6DS0 gyroscope subsystem full scale.
  */
 typedef enum {
-  LSM6DS0_GYRO_FS_245DPS  = 0x00,   /**< Full scale ±245 degree per second  */
-  LSM6DS0_GYRO_FS_500DPS  = 0x08,   /**< Full scale ±500 degree per second  */
-  LSM6DS0_GYRO_FS_2000DPS = 0x18    /**< Full scale ±2000 degree per second */
+  LSM6DS0_GYRO_FS_245DPS  = 0x00,   /**< Full scale ï¿½245 degree per second  */
+  LSM6DS0_GYRO_FS_500DPS  = 0x08,   /**< Full scale ï¿½500 degree per second  */
+  LSM6DS0_GYRO_FS_2000DPS = 0x18    /**< Full scale ï¿½2000 degree per second */
 } lsm6ds0_gyro_fs_t;
 
 /**
