@@ -41,7 +41,7 @@
 /*===========================================================================*/
 
 static const uint8_t zero_status[] = {0x00, 0x00};
-static const uint8_t active_status[] ={0x00, 0x00};
+static const uint8_t active_status[] = {0x00, 0x00};
 static const uint8_t halted_status[] = {0x01, 0x00};
 
 /*===========================================================================*/

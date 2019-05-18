@@ -169,6 +169,12 @@ foreach my $line (@c_source) {
 
       #****************************************************************************
       # Check on (some) operators.
+      if ($line =~ /[^\s\!\=\+\-\*\/\%\&\|\^\<\>]=/) {
+        style "detected glued assignment operator";
+      }
+      if ($line =~ /=[^\s\=]/) {
+        style "detected glued assignment operator";
+      }
       if ($line =~ /\S!=/) {
         style "detected glued != operator";
       }
@@ -178,8 +184,20 @@ foreach my $line (@c_source) {
       if ($line =~ /\S==/) {
         style "detected glued == operator";
       }
-      if ($line =~ /!==S/) {
+      if ($line =~ /==\S/) {
         style "detected glued == operator";
+      }
+      if ($line =~ /\S&=/) {
+        style "detected glued &= operator";
+      }
+      if ($line =~ /&=\S/) {
+        style "detected glued &= operator";
+      }
+      if ($line =~ /\S\|=/) {
+        style "detected glued |= operator";
+      }
+      if ($line =~ /\|=\S/) {
+        style "detected glued |= operator";
       }
 
       #****************************************************************************

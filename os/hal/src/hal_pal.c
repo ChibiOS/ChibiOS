@@ -246,7 +246,7 @@ msg_t palWaitLineTimeout(ioline_t line, sysinterval_t timeout) {
   msg_t msg;
 
   osalSysLock();
-  msg= palWaitLineTimeoutS(line, timeout);
+  msg = palWaitLineTimeoutS(line, timeout);
   osalSysUnlock();
   return msg;
 }

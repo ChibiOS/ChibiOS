@@ -52,7 +52,7 @@
 typedef enum {
   PS_NO_ERROR = 0,              /* No error.                                */
   PS_ERROR_READ = 2,            /* ECC or other error during read operation.*/
-  PS_ERROR_WRITE= 3,            /* Program operation failed.                */
+  PS_ERROR_WRITE = 3,           /* Program operation failed.                */
   PS_ERROR_VERIFY = 5,          /* Verify operation failed.                 */
   PS_ERROR_HW_FAILURE = 6       /* Controller or communication error.       */
 } ps_error_t;
