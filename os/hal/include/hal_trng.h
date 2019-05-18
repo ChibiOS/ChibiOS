@@ -64,7 +64,6 @@ typedef struct hal_trng_driver TRNGDriver;
  */
 typedef struct hal_trng_config TRNGConfig;
 
-
 /* Including the low level driver header, it exports information required
    for completing types.*/
 #include "hal_trng_lld.h"

@@ -7,7 +7,7 @@ use File::Basename;
 my $indentation = 2;
 
 if ($#ARGV != 0) {
-  print "\nUsage: simplecheck.pl source\n";
+  print "\nUsage: stylecheck.pl source\n";
   exit;
 }
 
@@ -30,13 +30,13 @@ my $state     = "start";
 sub style {
   my $desc = shift;
 
-  print("style: $desc at line $lineno in \"$filename\"\n");
+  print("style: $desc at line $lineno in \"$source\"\n");
 }
 
 sub error {
   my $desc = shift;
 
-  print("error: $desc at line $lineno in \"$filename\"\n");
+  print("error: $desc at line $lineno in \"$source\"\n");
 }
 
 my $emptycnt = 0;
@@ -80,6 +80,13 @@ foreach my $line (@c_source) {
     $emptycnt = 0;
   }
 
+  #****************************************************************************
+  # Stripping strings content for ease of parsing, all strings become _string_.
+  $line =~ s/\\\"//;
+  if ($line =~ s/(\"[^"]*\")/_string_/) {
+#    print "string: $1 replaced by _string_\n";
+  }
+
   #******************************************************************************
   # State machine handling.
   if ($state eq "start") {
@@ -99,6 +106,13 @@ foreach my $line (@c_source) {
       }
     }
     else {
+
+      #****************************************************************************
+      # Check on C++ comments.
+      if ($line =~ /\/\//) {
+        style "detected // comment";
+      }
+
       #****************************************************************************
       # Check on loose semicolons.
       if ($line =~ /\s;/) {
@@ -107,19 +121,22 @@ foreach my $line (@c_source) {
 
       #****************************************************************************
       # Check on glued keywords.
-      if ($line =~ /if\(/) {
+      if ($line =~ /\sif\(/) {
         style "detected glued \"if\"";
       }
-      if ($line =~ /for\(/) {
+      if ($line =~ /\sfor\(/) {
         style "detected glued \"for\"";
       }
-      if ($line =~ /while\(/) {
+      if ($line =~ /\swhile\(/) {
         style "detected glued \"while\"";
       }
-      if ($line =~ /switch\(/) {
+      if ($line =~ /\)while/) {
+        style "detected glued \"while\"";
+      }
+      if ($line =~ /\sswitch\(/) {
         style "detected glued \"switch\"";
       }
-      if ($line =~ /do\{/) {
+      if ($line =~ /\sdo\{/) {
         style "detected glued \"do\"";
       }
 
@@ -145,9 +162,13 @@ foreach my $line (@c_source) {
       }
 
       #****************************************************************************
-      # Check function-call-like returns.
+      # Check function-call-like returns (not perfect so disabled).
       if ($line =~ /return\s*\(/) {
-        style "detected function-call-like return";
+        if ($line =~ /return\s*\([\w\d\s\*]*\)\s*[^;]/) {
+        }
+        else {
+#          style "detected function-call-like return";
+        }
       }
     }
   }
@@ -159,12 +180,13 @@ foreach my $line (@c_source) {
       # End of mult-line comment.
       $line =~ /(.*\*\/)/;
       $c_comment .= $1;
-
+#      print("$c_comment");
       $state = "start";
     }
     else {
       # Add the whole line.
       $c_comment .= $line . " ";
+#      print("$c_comment");
     }
   }
 }

@@ -90,7 +90,6 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
     config = &default_config;
   }
 
-
   if (sdp->state == SD_STOP) {
 #if PLATFORM_SERIAL_USE_USART1 == TRUE
     if (&SD1 == sdp) {

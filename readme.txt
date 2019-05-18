@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Lots of style fixes thanks to the new tool.
+- NEW: Code style checker tool added.
 - NEW: Added and embedded flash driver model in HAL. Added an implementation
        for STM32F1xx, STM32L4xx, STM32L4xx+. 
 - NEW: Modified AES GCM function signatures.

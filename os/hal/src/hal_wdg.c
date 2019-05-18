@@ -54,7 +54,7 @@
  * @init
  */
 void wdgInit(void) {
-    
+
   wdg_lld_init();
 }
 

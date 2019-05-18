@@ -147,7 +147,7 @@ void uartStop(UARTDriver *uartp) {
 void uartStartSend(UARTDriver *uartp, size_t n, const void *txbuf) {
 
   osalDbgCheck((uartp != NULL) && (n > 0U) && (txbuf != NULL));
-             
+
   osalSysLock();
   osalDbgAssert(uartp->state == UART_READY, "is active");
   osalDbgAssert(uartp->txstate != UART_TX_ACTIVE, "tx active");

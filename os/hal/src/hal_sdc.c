@@ -695,7 +695,7 @@ bool sdcConnect(SDCDriver *sdcp) {
         goto failed;
       }
 
-      if(sdc_lld_read_special(sdcp, ext_csd, 512, MMCSD_CMD_SEND_EXT_CSD, 0)) {
+      if (sdc_lld_read_special(sdcp, ext_csd, 512, MMCSD_CMD_SEND_EXT_CSD, 0)) {
         goto failed;
       }
 

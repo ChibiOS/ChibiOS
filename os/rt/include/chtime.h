@@ -160,7 +160,6 @@ typedef uint32_t time_conv_t;
 /* Module macros.                                                            */
 /*===========================================================================*/
 
-
 /**
  * @name    Fast time conversion utilities
  * @{

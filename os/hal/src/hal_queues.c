@@ -600,7 +600,6 @@ msg_t oqGetI(output_queue_t *oqp) {
   return MSG_TIMEOUT;
 }
 
-
 /**
  * @brief   Output queue non-blocking write.
  * @details The function writes data from a buffer to an output queue. The

@@ -324,7 +324,7 @@ msg_t dacConvert(DACDriver *dacp,
 void dacAcquireBus(DACDriver *dacp) {
 
   osalDbgCheck(dacp != NULL);
-	
+
   osalMutexLock(&dacp->mutex);
 }
 
@@ -340,7 +340,7 @@ void dacAcquireBus(DACDriver *dacp) {
 void dacReleaseBus(DACDriver *dacp) {
 
   osalDbgCheck(dacp != NULL);
-	
+
   osalMutexUnlock(&dacp->mutex);
 }
 #endif /* DAC_USE_MUTUAL_EXCLUSION == TRUE */

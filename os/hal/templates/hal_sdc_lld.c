@@ -152,7 +152,7 @@ void sdc_lld_set_bus_mode(SDCDriver *sdcp, sdcbusmode_t mode) {
 
     break;
   case SDC_MODE_4BIT:
- 
+
     break;
   case SDC_MODE_8BIT:
 

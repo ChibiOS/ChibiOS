@@ -141,7 +141,7 @@ static msg_t _ctl(void *ip, unsigned int operation, void *arg) {
   default:
 #if defined(SDU_LLD_IMPLEMENTS_CTL)
     /* The SDU driver does not have a LLD but the application can use this
-       hook to implement extra controls by supplying this function.*/ 
+       hook to implement extra controls by supplying this function.*/
     extern msg_t sdu_lld_control(SerialUSBDriver *sdup,
                                  unsigned int operation,
                                  void *arg);
@@ -310,7 +310,7 @@ void sduStop(SerialUSBDriver *sdup) {
 void sduSuspendHookI(SerialUSBDriver *sdup) {
 
   /* Avoiding events spam.*/
-  if(bqIsSuspendedX(&sdup->ibqueue) && bqIsSuspendedX(&sdup->obqueue)) {
+  if (bqIsSuspendedX(&sdup->ibqueue) && bqIsSuspendedX(&sdup->obqueue)) {
     return;
   }
   chnAddFlagsI(sdup, CHN_DISCONNECTED);

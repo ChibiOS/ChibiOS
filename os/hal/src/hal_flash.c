@@ -50,7 +50,7 @@
  * @brief   Waits until the current erase operation is finished.
  *
  * @param[in] devp      pointer to a @p BaseFlash object
- * 
+ *
  * @return              An error code.
  * @retval FLASH_NO_ERROR if there is no erase operation in progress.
  * @retval FLASH_ERROR_ERASE if the erase operation failed.

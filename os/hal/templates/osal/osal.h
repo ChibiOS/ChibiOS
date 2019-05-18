@@ -58,7 +58,6 @@
 #define MSG_RESET                           (msg_t)-2
 /** @} */
 
-
 /**
  * @name    Special time constants
  * @{
