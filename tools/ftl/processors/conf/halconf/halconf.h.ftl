@@ -469,7 +469,6 @@
 #define SPI_USE_CIRCULAR                    ${doc.SPI_USE_CIRCULAR!"FALSE"}
 #endif
 
-
 /**
  * @brief   Enables the @p spiAcquireBus() and @p spiReleaseBus() APIs.
  * @note    Disabling this option saves both code and data space.
