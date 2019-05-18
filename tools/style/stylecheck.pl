@@ -169,35 +169,29 @@ foreach my $line (@c_source) {
 
       #****************************************************************************
       # Check on (some) operators.
-      if ($line =~ /[^\s\!\=\+\-\*\/\%\&\|\^\<\>]=/) {
-        style "detected glued assignment operator";
+      # Before: <<= << >>= >> <= >= == != += -= *= /= %= &= |= ^=
+      if ($line =~ /(\(\S<<=?|\S>>=?|[^\s<]<=|[^\s>]>=|\S[=!+\-*\/%&|^]=)/) {
+        style "detected glued assignment/comparison operator (1)";
       }
-      if ($line =~ /=[^\s\=]/) {
-        style "detected glued assignment operator";
+      # After: =
+      elsif ($line =~ /=[^\s=]/) {
+        style "detected glued assignment/comparison operator (2)";
       }
-      if ($line =~ /\S!=/) {
-        style "detected glued != operator";
+      # Before: =
+      elsif ($line =~ /[^\s\=\!\+\-\*\/\%\&\|\^\<\>]=/) {
+        style "detected glued assignment/comparison operator (3)";
       }
-      if ($line =~ /!=\S/) {
-        style "detected glued != operator";
+      # After: << >>
+      elsif ($line =~ /(<<|>>)[^\s=]/) {
+        style "detected glued assignment/comparison operator (4)";
       }
-      if ($line =~ /\S==/) {
-        style "detected glued == operator";
+      # Before: && || ^^
+      elsif ($line =~ /\S(&&|\|\||\^\^)/) {
+        style "detected glued logical operator (1)";
       }
-      if ($line =~ /==\S/) {
-        style "detected glued == operator";
-      }
-      if ($line =~ /\S&=/) {
-        style "detected glued &= operator";
-      }
-      if ($line =~ /&=\S/) {
-        style "detected glued &= operator";
-      }
-      if ($line =~ /\S\|=/) {
-        style "detected glued |= operator";
-      }
-      if ($line =~ /\|=\S/) {
-        style "detected glued |= operator";
+      # After: && || ^^
+      elsif ($line =~ /(&&|\|\||\^\^)\S/) {
+        style "detected glued logical operator (2)";
       }
 
       #****************************************************************************
