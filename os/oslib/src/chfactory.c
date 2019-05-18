@@ -160,7 +160,6 @@ static void dyn_release_object_heap(dyn_element_t *dep,
   chDbgCheck(dep != NULL);
   chDbgAssert(dep->refs > (ucnt_t)0, "invalid references number");
 
-
   dep->refs--;
   if (dep->refs == (ucnt_t)0) {
     dep = dyn_list_unlink(dep, dlp);
@@ -381,7 +380,7 @@ registered_object_t *chFactoryFindObjectByPointer(void *objp) {
  *
  * @api
  */
-void chFactoryReleaseObject(registered_object_t *rop){
+void chFactoryReleaseObject(registered_object_t *rop) {
 
   F_LOCK();
 
