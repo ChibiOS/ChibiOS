@@ -32,7 +32,6 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-#define STM32_FLASH_SECTOR_SIZE             1024U
 #define STM32_FLASH_LINE_SIZE               2U
 #define STM32_FLASH_LINE_MASK               (STM32_FLASH_LINE_SIZE - 1U)
 
@@ -321,8 +320,8 @@ flash_error_t efl_lld_program(void *instance, flash_offset_t offset,
 
 /**
  * @brief   Starts a whole-device erase operation.
- * @note    This function does nothing, as STM32F1 has only one bank
- *          and it is where the program is running on.
+ * @note    This function does nothing, the flash memory is where the program
+ *          is running on.
  *
  * @param[in] ip                    pointer to a @p EFlashDriver instance
  * @return                          An error code.

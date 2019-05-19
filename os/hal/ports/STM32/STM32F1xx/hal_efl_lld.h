@@ -51,6 +51,10 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if !defined(STM32_FLASH_SECTOR_SIZE)
+#error "STM32_FLASH_SECTOR_SIZE not defined in registry"
+#endif
+
 #if !defined(STM32_FLASH_NUMBER_OF_BANKS)
 #error "STM32_FLASH_NUMBER_OF_BANKS not defined in registry"
 #endif
