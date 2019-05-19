@@ -334,7 +334,7 @@ flash_error_t efl_lld_program(void *instance, flash_offset_t offset,
 flash_error_t efl_lld_start_erase_all(void *instance) {
   (void) instance;
 
-  return FLASH_ERROR_HW_FAILURE;
+  return FLASH_ERROR_UNIMPLEMENTED;
 }
 
 /**

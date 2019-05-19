@@ -103,7 +103,8 @@ typedef enum {
   FLASH_ERROR_PROGRAM = 3,      /* Program operation failed.                */
   FLASH_ERROR_ERASE = 4,        /* Erase operation failed.                  */
   FLASH_ERROR_VERIFY = 5,       /* Verify operation failed.                 */
-  FLASH_ERROR_HW_FAILURE = 6    /* Controller or communication error.       */
+  FLASH_ERROR_HW_FAILURE = 6,   /* Controller or communication error.       */
+  FLASH_ERROR_UNIMPLEMENTED = 7 /* Unimplemented functionality.             */
 } flash_error_t;
 
 /**
