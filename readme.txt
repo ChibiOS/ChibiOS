@@ -88,6 +88,8 @@
 *** 18.2.3 ***
 - NEW: Added a check on defective GCC versions, Cortex-M0 only.
 - NEW: Extra timer checks in STM32 ST driver.
+- FIX: Fixed long intervals fail when interval type is larger than time type
+       (bug #1031).
 - FIX: Fixed Round Robin check missing when in tick-less mode (bug #1030).
 - FIX: Fixed RCC_AHB1ENR_BKPSRAMEN not present in all STMF4xx devices
        (bug #1029).
