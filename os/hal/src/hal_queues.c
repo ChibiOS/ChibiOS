@@ -82,7 +82,7 @@ static size_t iq_read(input_queue_t *iqp, uint8_t *bp, size_t n) {
     memcpy((void *)bp, (void *)iqp->q_buffer, s2);
     iqp->q_rdptr = iqp->q_buffer + s2;
   }
-  else { /* n == s1 */
+  else {
     memcpy((void *)bp, (void *)iqp->q_rdptr, n);
     iqp->q_rdptr = iqp->q_buffer;
   }
@@ -130,7 +130,7 @@ static size_t oq_write(output_queue_t *oqp, const uint8_t *bp, size_t n) {
     memcpy((void *)oqp->q_buffer, (const void *)bp, s2);
     oqp->q_wrptr = oqp->q_buffer + s2;
   }
-  else { /* n == s1 */
+  else {
     memcpy((void *)oqp->q_wrptr, (const void *)bp, n);
     oqp->q_wrptr = oqp->q_buffer;
   }

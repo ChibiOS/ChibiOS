@@ -150,7 +150,7 @@ static bool sdc_lld_prepare_read_bytes(SDCDriver *sdcp,
 
   /* Transaction starts just after DTEN bit setting.*/
   sdcp->sdmmc->DCTRL = SDMMC_DCTRL_DTDIR |
-                       SDMMC_DCTRL_DTMODE |   /* multibyte data transfer */
+                       SDMMC_DCTRL_DTMODE |   /* Multibyte data transfer.*/
                        SDMMC_DCTRL_DMAEN |
                        SDMMC_DCTRL_DTEN;
 

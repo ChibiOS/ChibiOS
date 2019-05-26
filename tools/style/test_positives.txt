@@ -58,4 +58,8 @@ a ||b
 a^^b
 a^^ b
 a ^^b
-
+/** Comment.*/
+/**Comment.*/
+/*Comment*/
+/* comment*/
+/* Comment. */

@@ -117,7 +117,7 @@ typedef struct {
    * @brief Current configuration data.
    */
   const MMCConfig       *config;
-  /***
+  /**
    * @brief Addresses use blocks instead of bytes.
    */
   bool                  block_addresses;

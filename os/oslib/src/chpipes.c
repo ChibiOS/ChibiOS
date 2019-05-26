@@ -129,7 +129,7 @@ static size_t pipe_write(pipe_t *pp, const uint8_t *bp, size_t n) {
     memcpy((void *)pp->buffer, (const void *)bp, s2);
     pp->wrptr = pp->buffer + s2;
   }
-  else { /* n == s1 */
+  else {
     memcpy((void *)pp->wrptr, (const void *)bp, n);
     pp->wrptr = pp->buffer;
   }
@@ -180,7 +180,7 @@ static size_t pipe_read(pipe_t *pp, uint8_t *bp, size_t n) {
     memcpy((void *)bp, (void *)pp->buffer, s2);
     pp->rdptr = pp->buffer + s2;
   }
-  else { /* n == s1 */
+  else {
     memcpy((void *)bp, (void *)pp->rdptr, n);
     pp->rdptr = pp->buffer;
   }

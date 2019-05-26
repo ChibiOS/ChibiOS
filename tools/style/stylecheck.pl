@@ -24,8 +24,6 @@ $filename = basename($filename);
 my $cr        = "\r";
 my $lf        = "\n";
 my $tab       = "\t";
-my $c_comment = "";
-my $state     = "start";
 
 sub style {
   my $desc = shift;
@@ -40,9 +38,56 @@ sub error {
 }
 
 my $emptycnt = 0;
+my $c_comment_complete = 0;
+my $c_comment = "";
+my $state     = "start";
 foreach my $line (@c_source) {
 
   $lineno += 1;
+
+  #****************************************************************************
+  # Processing comments after decoding.
+  if ($c_comment_complete != 0) {
+#    print($c_comment . "\n");
+    
+    #******************************************************************************
+    # Special case of lint comment.
+    if ("$c_comment" =~ /^\s*\/\*lint/) {
+    }
+    else {
+      #******************************************************************************
+      # Check on glued doxygen back-comment start.
+      if ("$c_comment" =~ /^\s*\/\*\*<[^\s]/) {
+        style "detected glued doxygen back-comment start";
+      }
+
+      #******************************************************************************
+      # Check on glued doxygen comment start.
+      if ("$c_comment" =~ /^\s*\/\*\*[^\s<]/) {
+        style "detected glued doxygen comment start";
+      }
+
+      #******************************************************************************
+      # Check on glued comment start.
+      if ("$c_comment" =~ /^\s*\/\*[^\s\*=]/) {
+        style "detected glued comment start";
+      }
+
+      #******************************************************************************
+      # Check on lower case letter at comment beginning.
+      if ("$c_comment" =~ /^\s*\/\*\s*[a-z]/) {
+        style "detected lower case comment start";
+      }
+
+      #******************************************************************************
+      # Check on loose comment stop.
+#      if ("$line" =~ /\s\*\//) {
+#        style "detected loose comment stop";
+#      }
+    }
+
+    $c_comment_complete = 0;
+  }
 
   #****************************************************************************
   # Check on EOL.
@@ -92,16 +137,24 @@ foreach my $line (@c_source) {
   if ($state eq "start") {
 
     #******************************************************************************
+    # Standard separator.
+
+    #******************************************************************************
     # Comment start matching.
-    if ("$line" =~ /^\s*\/\*/) {
+    if ("$line" =~ /\/\*/) {
+    
+      #******************************************************************************
+      # Single or multi line comments.
       if ("$line" =~ /\*\//) {
         # Special case of single line comments.
-        $line =~ /^\s*(\/\*.*\*\/)/;
+        $line =~ /(\/\*.*\*\/)/;
+        $c_comment = $1;
+        $c_comment_complete = 1;
       }
       else {
         # Start of multi-line comment.
         $line =~ /(\/\*.*)/;
-        $c_comment = $1 . " ";
+        $c_comment = $1;
         $state = "incomment";
       }
     }
@@ -171,7 +224,7 @@ foreach my $line (@c_source) {
       # Check on (some) operators.
       # Before: <<= << >>= >> <= >= == != += -= *= /= %= &= |= ^=
       if ($line =~ /(\(\S<<=?|\S>>=?|[^\s<]<=|[^\s>]>=|\S[=!+\-*\/%&|^]=)/) {
-        style "detected glued assignment/comparison operator (1)";
+        style "detected glued operator (1)";
       }
       # After: =
       elsif ($line =~ /=[^\s=]/) {
@@ -209,16 +262,27 @@ foreach my $line (@c_source) {
   #******************************************************************************
   # Scanning for comment end.
   elsif ($state eq "incomment") {
-    if ("$line" =~ /\*\/\s*$/) {
-      # End of mult-line comment.
+    # Left trimming.
+    $line =~ s/^\s+//;
+    if ("$line" =~ /^\s*\*\/\s*$/) {
+      # Just end of comment line.
+      $c_comment .= "*/";
+      $c_comment_complete = 1;
+#      print("$c_comment");
+      $state = "start";
+    }
+    elsif ("$line" =~ /\*\/\s*$/) {
+      # Text followed by end of comment.
       $line =~ /(.*\*\/)/;
-      $c_comment .= $1;
+      $c_comment .= " " . $1;
+      $c_comment_complete = 1;
 #      print("$c_comment");
       $state = "start";
     }
     else {
-      # Add the whole line.
-      $c_comment .= $line . " ";
+      # Add the whole line, remove first * and following spaces if any.
+      $line =~ s/^\*?\s*//;
+      $c_comment .= " " . $line;
 #      print("$c_comment");
     }
   }

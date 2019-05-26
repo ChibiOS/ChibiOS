@@ -258,7 +258,7 @@ void rtcConvertStructTmToDateTime(const struct tm *timp,
   timespec->day       = (uint32_t)timp->tm_mday;
   timespec->dayofweek = (uint32_t)timp->tm_wday + 1U;
   if (-1 == timp->tm_isdst) {
-    timespec->dstflag = 0U;  /* set zero if dst is unknown */
+    timespec->dstflag = 0U;  /* Set zero if dst is unknown.*/
   }
   else {
     timespec->dstflag = (uint32_t)timp->tm_isdst;
@@ -293,7 +293,7 @@ uint32_t rtcConvertDateTimeToFAT(const RTCDateTime *timespec) {
   day   = timespec->day;
   month = timespec->month;
 
-  /* handle DST flag */
+  /* Handle DST flag.*/
   if (1U == timespec->dstflag) {
     hour += 1U;
     if (hour == 24U) {

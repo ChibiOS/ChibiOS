@@ -74,12 +74,12 @@
  * @brief   Driver state machine possible states.
  */
 typedef enum {
-  I2C_UNINIT = 0,                           /**< Not initialized.           */
-  I2C_STOP = 1,                             /**< Stopped.                   */
-  I2C_READY = 2,                            /**< Ready.                     */
-  I2C_ACTIVE_TX = 3,                        /**< Transmitting.              */
-  I2C_ACTIVE_RX = 4,                        /**< Receiving.                 */
-  I2C_LOCKED = 5                            /**> Bus or driver locked.      */
+  I2C_UNINIT = 0,                           /**< @brief Not initialized.    */
+  I2C_STOP = 1,                             /**< @brief Stopped.            */
+  I2C_READY = 2,                            /**< @brief Ready.              */
+  I2C_ACTIVE_TX = 3,                        /**< @brief Transmitting.       */
+  I2C_ACTIVE_RX = 4,                        /**< @brief Receiving.          */
+  I2C_LOCKED = 5                            /**< @brief Bus locked.         */
 } i2cstate_t;
 
 #include "hal_i2c_lld.h"

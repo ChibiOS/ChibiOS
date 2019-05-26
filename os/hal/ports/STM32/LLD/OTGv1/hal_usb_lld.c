@@ -512,7 +512,7 @@ static void otg_isoc_out_failed_handler(USBDriver *usbp) {
       /*otgp->oe[ep].DOEPCTL |= (DOEPCTL_EPDIS | DOEPCTL_SNAK);
       while (otgp->oe[ep].DOEPCTL & DOEPCTL_EPENA)
         ;*/
-      /* Prepare transfer for next frame */
+      /* Prepare transfer for next frame.*/
       _usb_isr_invoke_out_cb(usbp, ep);
     }
   }

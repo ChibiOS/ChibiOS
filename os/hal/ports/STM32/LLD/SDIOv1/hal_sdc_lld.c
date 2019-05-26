@@ -110,7 +110,7 @@ static bool sdc_lld_prepare_read_bytes(SDCDriver *sdcp,
 
   /* Transaction starts just after DTEN bit setting.*/
   sdcp->sdio->DCTRL = SDIO_DCTRL_DTDIR |
-                      SDIO_DCTRL_DTMODE |   /* multibyte data transfer */
+                      SDIO_DCTRL_DTMODE |   /* Multibyte data transfer.*/
                       SDIO_DCTRL_DMAEN |
                       SDIO_DCTRL_DTEN;
 
@@ -228,10 +228,6 @@ static bool sdc_lld_wait_transaction_end(SDCDriver *sdcp, uint32_t n,
   sdcp->sdio->ICR = STM32_SDIO_ICR_ALL_FLAGS;
   sdcp->sdio->DCTRL = 0;
   osalSysUnlock();
-
-  /* Wait until interrupt flags to be cleared.*/
-  /*while (((DMA2->LISR) >> (sdcp->dma->ishift)) & STM32_DMA_ISR_TCIF)
-    dmaStreamClearInterrupt(sdcp->dma);*/
 #else
   /* Waits for transfer completion at DMA level, then the stream is
      disabled and cleared.*/

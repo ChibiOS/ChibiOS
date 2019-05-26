@@ -605,6 +605,6 @@ void chSchDoReschedule(void) {
   /* Swap operation as tail call.*/
   chSysSwitch(currp, otp);
 }
-#endif /*!defined(CH_SCH_DO_RESCHEDULE_HOOKED) */
+#endif /* !defined(CH_SCH_DO_RESCHEDULE_HOOKED) */
 
 /** @} */

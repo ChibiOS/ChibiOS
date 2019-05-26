@@ -743,7 +743,7 @@ void i2c_lld_start(I2CDriver *i2cp) {
         i2cp->txdmamode |= STM32_DMA_CR_CHSEL(I2C2_TX_DMA_CHANNEL) |
                            STM32_DMA_CR_PL(STM32_I2C_I2C2_DMA_PRIORITY);
       }
-#endif /*STM32_I2C_USE_DMA == TRUE */
+#endif /* STM32_I2C_USE_DMA == TRUE */
 
 #if defined(STM32_I2C2_GLOBAL_NUMBER) || defined(__DOXYGEN__)
       nvicEnableVector(STM32_I2C2_GLOBAL_NUMBER, STM32_I2C_I2C2_IRQ_PRIORITY);
@@ -779,7 +779,7 @@ void i2c_lld_start(I2CDriver *i2cp) {
         i2cp->txdmamode |= STM32_DMA_CR_CHSEL(I2C3_TX_DMA_CHANNEL) |
                            STM32_DMA_CR_PL(STM32_I2C_I2C3_DMA_PRIORITY);
       }
-#endif /*STM32_I2C_USE_DMA == TRUE */
+#endif /* STM32_I2C_USE_DMA == TRUE */
 
 #if defined(STM32_I2C3_GLOBAL_NUMBER) || defined(__DOXYGEN__)
       nvicEnableVector(STM32_I2C3_GLOBAL_NUMBER, STM32_I2C_I2C3_IRQ_PRIORITY);
@@ -815,7 +815,7 @@ void i2c_lld_start(I2CDriver *i2cp) {
         i2cp->txdmamode |= STM32_DMA_CR_CHSEL(I2C4_TX_DMA_CHANNEL) |
                            STM32_DMA_CR_PL(STM32_I2C_I2C4_DMA_PRIORITY);
       }
-#endif /*STM32_I2C_USE_DMA == TRUE */
+#endif /* STM32_I2C_USE_DMA == TRUE */
 
 #if defined(STM32_I2C4_GLOBAL_NUMBER) || defined(__DOXYGEN__)
       nvicEnableVector(STM32_I2C4_GLOBAL_NUMBER, STM32_I2C_I2C4_IRQ_PRIORITY);
