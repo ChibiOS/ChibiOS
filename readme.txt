@@ -96,6 +96,8 @@
 - HAL: Added a new interface for range-finder devices (used by EX).
 - HAL: Added mcuconf.h updater tool for STM32F407 (backported to 19.1.1).
 - NIL: Integrated NIL 4.0.
+- FIX: Fixed Round Robin check missing when in tick-less mode (bug #1030)
+       (backported to 19.1.3)(backported to 18.2.3).
 - FIX: Fixed RCC_AHB1ENR_BKPSRAMEN not present in all STMF4xx devices
        (bug #1029)(backported to 19.1.3)(backported to 18.2.3).
 - FIX: Fixed MPU fix #1027 broke stack checking on Cortex-M devices without
