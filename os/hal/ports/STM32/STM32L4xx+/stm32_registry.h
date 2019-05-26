@@ -180,6 +180,9 @@
 #define STM32_EXTI_LINE20_NUMBER            3
 #define STM32_EXTI_LINE2122_NUMBER          64
 
+/* Flash attributes.*/
+#define STM32_FLASH_NUMBER_OF_BANKS         2
+
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
 #define STM32_HAS_GPIOB                     TRUE

@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2019 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 /**
  * @file    hal_efl_lld.h
- * @brief   STM32L4xx Embedded Flash subsystem low level driver header.
+ * @brief   STM32L4R/Snxx Embedded Flash subsystem low level driver header.
  *
  * @addtogroup HAL_EFL
  * @{
@@ -51,17 +51,47 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !defined(STM32_FLASH_NUMBER_OF_BANKS)
-#error "STM32_FLASH_NUMBER_OF_BANKS not defined in registry"
-#endif
+#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || \
+    defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx) || \
+    defined(__DOXYGEN__)
 
-#if !defined(STM32_FLASH_SECTORS_PER_BANK)
-#error "STM32_FLASH_SECTORS_PER_BANK not defined in registry"
+/*
+ * Flash size is:
+ *  1M for STM32L4+ suffix G devices
+ *  2M for STM32L4+ suffix I devices.
+ *
+ * For 1M devices SBM is organised as 128 x 8K pages.
+ * For 1M devices DBM is organised as 128 x 4K pages per bank.
+ *
+ * For 2M devices SBM is organised as 256 x 8K pages.
+ * For 2M devices DBM is organised as 256 x 4K pages per bank.
+ */
+
+#define STM32_FLASH_SIZE_1M                 1024U
+#define STM32_FLASH_SIZE_2M                 2048U
+
+/* Single bank mode bank 1.*/
+#define STM32_FLASH_SECTOR_SIZE             8192U
+#define STM32_FLASH_SECTORS_PER_BANK        256
+
+/* Dual bank mode banks 1 & 2.*/
+#define STM32_FLASH_DUAL_SECTOR_SIZE        4096U
+#define STM32_FLASH_DUAL_SECTORS_PER_BANK   128
+
+#define STM32_FLASH_SIZE_REGISTER           0x1FFF75E0
+#else
+#error "This EFL driver does not support the selected device"
 #endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
+
+/* A flash size declaration. */
+typedef struct {
+  uint16_t                  kb_size;
+  const flash_descriptor_t* desc;
+} efl_lld_size_t;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -72,13 +102,15 @@
  */
 #define efl_lld_driver_fields                                               \
   /* Flash registers.*/                                                     \
-  FLASH_TypeDef             *flash;
+  FLASH_TypeDef             *flash;                                         \
+  const flash_descriptor_t  *descriptor;
 
 /**
  * @brief   Low level fields of the embedded flash configuration structure.
  */
 #define efl_lld_config_fields                                               \
-  flash_descriptor_t        descriptors[STM32_FLASH_NUMBER_OF_BANKS];
+  /* Dummy configuration, it is not needed.*/                               \
+  uint32_t                  dummy
 
 /*===========================================================================*/
 /* External declarations.                                                    */

@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2019 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 /**
  * @file    hal_efl_lld.c
- * @brief   STM32L4xx Embedded Flash subsystem low level driver source.
+ * @brief   STM32L4R/Snxx Embedded Flash subsystem low level driver source.
  *
  * @addtogroup HAL_EFL
  * @{
@@ -34,27 +34,6 @@
 
 #define STM32_FLASH_LINE_SIZE               8U
 #define STM32_FLASH_LINE_MASK               (STM32_FLASH_LINE_SIZE - 1U)
-
-/*
- * Flash size is 1M for STM32L4xxxG devices and 2M for STM32L4xxxI devices.
- *
- * For 1M devices SBM is organised as 128 x 8K pages.
- * For 1M devices DBM is organised as 128 x 4K pages per bank.
- *
- * For 2M devices SBM is organised as 256 x 8K pages.
- * For 2M devices DBM is organised as 256 x 4K pages per bank.
- */
-
-/* Single bank mode bank 0. */
-#define STM32_FLASH_SECTOR_SIZE             8192U
-#define STM32_FLASH_SECTORS_PER_BANK        256
-
-/* Dual bank mode bank 1 & 2. */
-#define STM32_FLASH_DUAL_SECTOR_SIZE        4096U
-#define STM32_FLASH_DUAL_SECTORS_PER_BANK   128
-
-#define STM32_FLASH_DESCRIPTOR_SINGLE       0
-#define STM32_FLASH_DESCRIPTOR_DUAL         1
 
 #define FLASH_PDKEY1                        0x04152637U
 #define FLASH_PDKEY2                        0xFAFBFCFDU
@@ -78,36 +57,76 @@ EFlashDriver EFLD1;
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
-/* Default configuration */
-static const EFlashConfig efl_lld_config = {
-  .descriptors = {
-    { /* Bank 0 organisation. */
-     .attributes        = FLASH_ATTR_ERASED_IS_ONE |
-                          FLASH_ATTR_MEMORY_MAPPED |
-                          FLASH_ATTR_ECC_CAPABLE   |
-                          FLASH_ATTR_ECC_ZERO_LINE_CAPABLE,
-     .page_size         = STM32_FLASH_LINE_SIZE,
-     .sectors_count     = STM32_FLASH_SECTORS_PER_BANK,
-     .sectors           = NULL,
-     .sectors_size      = STM32_FLASH_SECTOR_SIZE,
-     .address           = (uint8_t *)0x08000000U,
-     .size              = STM32_FLASH_SECTORS_PER_BANK *
-                          STM32_FLASH_SECTOR_SIZE
-    },
-    { /* Bank 1 & 2 (DBM) organisation. */
-    .attributes        = FLASH_ATTR_ERASED_IS_ONE |
-                         FLASH_ATTR_MEMORY_MAPPED |
-                         FLASH_ATTR_ECC_CAPABLE   |
-                         FLASH_ATTR_ECC_ZERO_LINE_CAPABLE,
-    .page_size         = STM32_FLASH_LINE_SIZE,
-    .sectors_count     = STM32_FLASH_DUAL_SECTORS_PER_BANK * 2,
-    .sectors           = NULL,
-    .sectors_size      = STM32_FLASH_DUAL_SECTOR_SIZE,
-    .address           = (uint8_t *)0x08000000U,
-    .size              = STM32_FLASH_DUAL_SECTORS_PER_BANK * 2 *
-                         STM32_FLASH_DUAL_SECTOR_SIZE
-    }
-  }
+/* The descriptors for 1M device. */
+static const flash_descriptor_t efl_lld_size1[STM32_FLASH_NUMBER_OF_BANKS] = {
+      { /* Bank 1 (SBM) organisation. */
+       .attributes        = FLASH_ATTR_ERASED_IS_ONE |
+                            FLASH_ATTR_MEMORY_MAPPED |
+                            FLASH_ATTR_ECC_CAPABLE   |
+                            FLASH_ATTR_ECC_ZERO_LINE_CAPABLE,
+       .page_size         = STM32_FLASH_LINE_SIZE,
+       .sectors_count     = STM32_FLASH_SECTORS_PER_BANK,
+       .sectors           = NULL,
+       .sectors_size      = STM32_FLASH_SECTOR_SIZE,
+       .address           = (uint8_t *)FLASH_BASE,
+       .size              = STM32_FLASH_SECTORS_PER_BANK *
+                            STM32_FLASH_SECTOR_SIZE
+      },
+      { /* Bank 1 & 2 (DBM) organisation. */
+      .attributes        = FLASH_ATTR_ERASED_IS_ONE |
+                           FLASH_ATTR_MEMORY_MAPPED |
+                           FLASH_ATTR_ECC_CAPABLE   |
+                           FLASH_ATTR_ECC_ZERO_LINE_CAPABLE,
+      .page_size         = STM32_FLASH_LINE_SIZE,
+      .sectors_count     = 2 * STM32_FLASH_DUAL_SECTORS_PER_BANK,
+      .sectors           = NULL,
+      .sectors_size      = STM32_FLASH_DUAL_SECTOR_SIZE,
+      .address           = (uint8_t *)FLASH_BASE,
+      .size              = 2 * STM32_FLASH_DUAL_SECTORS_PER_BANK *
+                           STM32_FLASH_DUAL_SECTOR_SIZE
+      }
+};
+
+/* The descriptors for 2M device. */
+static const flash_descriptor_t efl_lld_size2[STM32_FLASH_NUMBER_OF_BANKS] = {
+      { /* Bank 1 (SBM) organisation. */
+       .attributes        = FLASH_ATTR_ERASED_IS_ONE |
+                            FLASH_ATTR_MEMORY_MAPPED |
+                            FLASH_ATTR_ECC_CAPABLE   |
+                            FLASH_ATTR_ECC_ZERO_LINE_CAPABLE,
+       .page_size         = STM32_FLASH_LINE_SIZE,
+       .sectors_count     = STM32_FLASH_SECTORS_PER_BANK,
+       .sectors           = NULL,
+       .sectors_size      = STM32_FLASH_SECTOR_SIZE,
+       .address           = (uint8_t *)FLASH_BASE,
+       .size              = STM32_FLASH_SECTORS_PER_BANK *
+                            STM32_FLASH_SECTOR_SIZE
+      },
+      { /* Bank 1 & 2 (DBM) organisation. */
+      .attributes        = FLASH_ATTR_ERASED_IS_ONE |
+                           FLASH_ATTR_MEMORY_MAPPED |
+                           FLASH_ATTR_ECC_CAPABLE   |
+                           FLASH_ATTR_ECC_ZERO_LINE_CAPABLE,
+      .page_size         = STM32_FLASH_LINE_SIZE,
+      .sectors_count     = 2 * STM32_FLASH_DUAL_SECTORS_PER_BANK,
+      .sectors           = NULL,
+      .sectors_size      = STM32_FLASH_DUAL_SECTOR_SIZE,
+      .address           = (uint8_t *)FLASH_BASE,
+      .size              = 2 * STM32_FLASH_DUAL_SECTORS_PER_BANK *
+                           STM32_FLASH_DUAL_SECTOR_SIZE
+      }
+};
+
+/* Table describing possible flash sizes and descriptors for this device. */
+static const efl_lld_size_t efl_lld_flash_sizes[] = {
+      {
+       .kb_size = STM32_FLASH_SIZE_1M,
+       .desc = efl_lld_size1
+      },
+      {
+       .kb_size = STM32_FLASH_SIZE_2M,
+       .desc = efl_lld_size2
+      }
 };
 
 /*===========================================================================*/
@@ -145,6 +164,10 @@ static inline void stm32_flash_wait_busy(EFlashDriver *eflp) {
   /* Wait for busy bit clear.*/
   while ((eflp->flash->SR & FLASH_SR_BSY) != 0U) {
   }
+}
+
+static inline uint16_t stm32_flash_get_size(void) {
+  return *(uint16_t*)((uint32_t) STM32_FLASH_SIZE_REGISTER);
 }
 
 static inline bool stm32_flash_dual_bank(EFlashDriver *eflp) {
@@ -196,6 +219,19 @@ void efl_lld_init(void) {
   /* Driver initialization.*/
   eflObjectInit(&EFLD1);
   EFLD1.flash = FLASH;
+  /* Find the size of the flash and set descriptor reference. */
+  uint8_t i;
+  for (i = 0; i < (sizeof(efl_lld_flash_sizes) / sizeof(efl_lld_size_t)); i++) {
+    if (efl_lld_flash_sizes[i].kb_size == stm32_flash_get_size()) {
+      EFLD1.descriptor = efl_lld_flash_sizes[i].desc;
+      if (stm32_flash_dual_bank(&EFLD1)) {
+        /* Point to the dual bank descriptor. */
+        EFLD1.descriptor++;
+      }
+      return;
+    }
+  }
+  osalDbgAssert(false, "invalid flash configuration");
 }
 
 /**
@@ -206,12 +242,8 @@ void efl_lld_init(void) {
  * @notapi
  */
 void efl_lld_start(EFlashDriver *eflp) {
-
   stm32_flash_unlock(eflp);
   FLASH->CR = 0x00000000U;
-  if (eflp->config == NULL) {
-    eflp->config = &efl_lld_config;
-  }
 }
 
 /**
@@ -238,11 +270,7 @@ void efl_lld_stop(EFlashDriver *eflp) {
  */
 const flash_descriptor_t *efl_lld_get_descriptor(void *instance) {
   EFlashDriver *devp = (EFlashDriver *)instance;
-  /* Handle single or dual bank mode. */
-  if (stm32_flash_dual_bank(devp)) {
-    return &devp->config->descriptors[STM32_FLASH_DESCRIPTOR_DUAL];
-  }
-  return &devp->config->descriptors[STM32_FLASH_DESCRIPTOR_SINGLE];
+  return devp->descriptor;
 }
 
 /**
@@ -277,7 +305,7 @@ flash_error_t efl_lld_read(void *instance, flash_offset_t offset,
     return FLASH_BUSY_ERASING;
   }
 
-  /* FLASH_READY state while the operation is performed.*/
+  /* FLASH_READ state while the operation is performed.*/
   devp->state = FLASH_READ;
 
   /* Clearing error status bits.*/
@@ -389,7 +417,7 @@ flash_error_t efl_lld_program(void *instance, flash_offset_t offset,
 /**
  * @brief   Starts a whole-device erase operation.
  * @note    This function only erases bank 2 if it is present. Bank 1 is not
- *          touched because it is where the program is running on.
+ *          allowed since it is normally where the primary program is located.
  *          Pages on bank 1 can be individually erased.
  *
  * @param[in] ip                    pointer to a @p EFlashDriver instance
@@ -412,15 +440,16 @@ flash_error_t efl_lld_start_erase_all(void *instance) {
     return FLASH_BUSY_ERASING;
   }
 
-  /* FLASH_PGM state while the operation is performed.*/
-  devp->state = FLASH_ERASE;
-
-  /* Clearing error status bits.*/
-  stm32_flash_clear_status(devp);
-
 #if defined(FLASH_CR_MER2)
   /* If dual bank is active then mass erase bank2. */
   if (stm32_flash_dual_bank(devp)) {
+
+    /* FLASH_ERASE state while the operation is performed.*/
+    devp->state = FLASH_ERASE;
+
+    /* Clearing error status bits.*/
+    stm32_flash_clear_status(devp);
+
     devp->flash->CR |= FLASH_CR_MER2;
     devp->flash->CR |= FLASH_CR_STRT;
     return FLASH_NO_ERROR;
@@ -428,8 +457,7 @@ flash_error_t efl_lld_start_erase_all(void *instance) {
 #endif
 
   /* Mass erase not allowed. */
-  devp->state = FLASH_READY;
-  return FLASH_ERROR_ERASE;
+  return FLASH_ERROR_UNIMPLEMENTED;
 }
 
 /**
@@ -437,7 +465,8 @@ flash_error_t efl_lld_start_erase_all(void *instance) {
  *
  * @param[in] ip                    pointer to a @p EFlashDriver instance
  * @param[in] sector                sector to be erased
- *                                  sector is the index within the total flash
+ *                                  this is an index within the total sectors
+ *                                  in a flash bank
  * @return                          An error code.
  * @retval FLASH_NO_ERROR           if there is no erase operation in progress.
  * @retval FLASH_BUSY_ERASING       if there is an erase operation in progress.
@@ -534,7 +563,7 @@ flash_error_t efl_lld_query_erase(void *instance, uint32_t *msec) {
       devp->state = FLASH_READY;
     }
     else {
-      /* Recommended time before polling again, this is a simplified
+      /* Recommended time before polling again. This is a simplified
          implementation.*/
       if (msec != NULL) {
         *msec = (uint32_t)STM32_FLASH_WAIT_TIME_MS;
@@ -584,7 +613,7 @@ flash_error_t efl_lld_verify_erase(void *instance, flash_sector_t sector) {
   address = (uint32_t *)(bank->address +
                         flashGetSectorOffset(getBaseFlash(devp), sector));
 
-  /* FLASH_READY state while the operation is performed.*/
+  /* FLASH_READ state while the operation is performed.*/
   devp->state = FLASH_READ;
 
   /* Scanning the sector space.*/
