@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 19.1.3 ***
+- FIX: Fixed long intervals fail when interval type is larger than time type
+       (bug #1031).
 - FIX: Fixed Round Robin check missing when in tick-less mode (bug #1030).
 - FIX: Fixed RCC_AHB1ENR_BKPSRAMEN not present in all STMF4xx devices
        (bug #1029).
