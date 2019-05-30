@@ -218,10 +218,8 @@ static inline bool chVTGetTimersStateI(sysinterval_t *timep) {
 #if CH_CFG_ST_TIMEDELTA == 0
     *timep = ch.vtlist.next->delta;
 #else
-    *timep = chTimeDiffX(chVTGetSystemTimeX(),
-                         chTimeAddX(ch.vtlist.lasttime,
-                                    ch.vtlist.next->delta +
-                                    (sysinterval_t)CH_CFG_ST_TIMEDELTA));
+    *timep = (ch.vtlist.next->delta + (sysinterval_t)CH_CFG_ST_TIMEDELTA) -
+             chTimeDiffX(ch.vtlist.lasttime, chVTGetSystemTimeX());
 #endif
   }
 
