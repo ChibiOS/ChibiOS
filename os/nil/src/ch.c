@@ -274,23 +274,11 @@ void chDbgCheckClassS(void) {
 void chSysInit(void) {
   const thread_config_t *tcp;
 
+  /* Optional library modules.*/
+  _oslib_init();
+
   /* Architecture layer initialization.*/
   port_init();
-
-  /* Memory core initialization, if enabled.*/
-#if CH_CFG_USE_MEMCORE == TRUE
-  _core_init();
-#endif
-
-  /* Heap initialization, if enabled.*/
-#if CH_CFG_USE_HEAP == TRUE
-  _heap_init();
-#endif
-
-  /* Factory initialization, if enabled.*/
-#if CH_CFG_USE_FACTORY == TRUE
-  _factory_init();
-#endif
 
   /* System initialization hook.*/
   CH_CFG_SYSTEM_INIT_HOOK();

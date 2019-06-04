@@ -102,6 +102,7 @@ void chSysInit(void) {
   _scheduler_init();
   _vt_init();
   _trace_init();
+  _oslib_init();
 
 #if CH_DBG_SYSTEM_STATE_CHECK == TRUE
   ch.dbg.isr_cnt  = (cnt_t)0;
@@ -109,15 +110,6 @@ void chSysInit(void) {
 #endif
 #if CH_CFG_USE_TM == TRUE
   _tm_init();
-#endif
-#if CH_CFG_USE_MEMCORE == TRUE
-  _core_init();
-#endif
-#if CH_CFG_USE_HEAP == TRUE
-  _heap_init();
-#endif
-#if CH_CFG_USE_FACTORY == TRUE
-  _factory_init();
 #endif
 #if CH_DBG_STATISTICS == TRUE
   _stats_init();

@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- LIB: Improved OSLIB initialization.
 - NEW: Lots of style fixes thanks to the new tool.
 - NEW: Code style checker tool added.
 - NEW: Added and embedded flash driver model in HAL. Added an implementation

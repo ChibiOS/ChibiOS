@@ -212,6 +212,28 @@
 #include "chpipes.h"
 #include "chfactory.h"
 
+/*===========================================================================*/
+/* Module inline functions.                                                  */
+/*===========================================================================*/
+
+/**
+ * @brief   Initialization of all library modules.
+ *
+ * @notapi
+ */
+static inline void _oslib_init(void) {
+
+#if CH_CFG_USE_MEMCORE == TRUE
+  _core_init();
+#endif
+#if CH_CFG_USE_HEAP == TRUE
+  _heap_init();
+#endif
+#if CH_CFG_USE_FACTORY == TRUE
+  _factory_init();
+#endif
+}
+
 #endif /* CHLIB_H */
 
 /** @} */
