@@ -4,7 +4,7 @@
 
 ** TARGET **
 
-The demo targets a generic ARM Cortex-M4 device without HAL support.
+The demo builds a library containing a pre-configured RT kernel.
 
 ** The Demo **
 
@@ -12,6 +12,4 @@ The demo targets a generic ARM Cortex-M4 device without HAL support.
 
 ** Notes **
 
-The files ch.ld and cmparams.h must be customized for your device. You also
-need to provide the CMSIS compliant device header from your vendor, it this
-demo an ST header is used.
+You need to customize Makefile for your target device, instructions are inside.

@@ -5,7 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16
+  USE_OPT = -O2 -fomit-frame-pointer -falign-functions=16
 endif
 
 # C specific options here (added to USE_OPT).
@@ -191,7 +191,7 @@ include $(RULESPATH)/rules.mk
 
 header:
 	@echo Merging headers
-	@$(CC) -I./dummy $(IINCDIR) -D$(DEVICE) -nostdinc -include cmparams.h -include _delimiter.h -fdirectives-only -dD -E -P ../../../os/rt/include/ch.h -o tmpch1.h
+	@$(CC) -I./dummy $(IINCDIR) -D$(DEVICE) $(DEFS) -nostdinc -include cmparams.h -include _delimiter.h -fdirectives-only -dD -E -P ../../../os/rt/include/ch.h -o tmpch1.h
 	@$(CC) -fpreprocessed -dD -E -P tmpch1.h -o tmpch2.h
 	@sed -e '1,/___HEADER_BEGIN___/d' tmpch2.h > tmpch3.h
 	@cat ./dummy/_header.h > unified_ch.h
