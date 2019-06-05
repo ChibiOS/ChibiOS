@@ -74,6 +74,10 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added a "library generator" project for RT, it allows to
+       generate a library with a pre-configured RT. It also includes
+       an "header generator" able to generate an unified "ch.h" with
+       all options resolved.
 - LIB: Improved OSLIB initialization.
 - NEW: Lots of style fixes thanks to the new tool.
 - NEW: Code style checker tool added.
