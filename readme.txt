@@ -74,6 +74,10 @@
 *****************************************************************************
 
 *** 19.1.3 ***
+- NEW: Added a "library generator" project for RT, it allows to
+       generate a library with a pre-configured RT. It also includes
+       an "header generator" able to generate an unified "ch.h" with
+       all options resolved.
 - FIX: Fixed long intervals fail when interval type is larger than time type
        (bug #1031).
 - FIX: Fixed Round Robin check missing when in tick-less mode (bug #1030).
