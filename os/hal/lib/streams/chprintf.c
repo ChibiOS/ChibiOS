@@ -203,17 +203,12 @@ int chvprintf(BaseSequentialStream *chp, const char *fmt, va_list ap) {
         precision = va_arg(ap, int);
       }
       else {
-        while (true) {
+        while (c >= '0' && c <= '9') {
+          c -= '0';
+          precision = precision * 10 + c;
           c = *fmt++;
           if (c == 0) {
             return n;
-          }
-          if (c >= '0' && c <= '9') {
-            c -= '0';
-            precision = precision * 10 + c;
-          }
-          else {
-            break;
           }
         }
       }
