@@ -54,14 +54,14 @@ SECTIONS
         PROVIDE(__fini_array_end = .);
     } > flash
 
-    .text_vle : ALIGN(16)
+    .text_vle : ALIGN_WITH_INPUT
     {
         *(.text_vle)
         *(.text_vle.*)
         *(.gnu.linkonce.t_vle.*)
     } > flash
 
-    .text : ALIGN(16)
+    .text : ALIGN_WITH_INPUT
     {
         *(.text)
         *(.text.*)

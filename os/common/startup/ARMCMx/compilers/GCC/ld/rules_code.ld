@@ -35,7 +35,7 @@ SECTIONS
         __fini_array_end = .;
     } > XTORS_FLASH AT > XTORS_FLASH_LMA
 
-    .text : ALIGN(4)
+    .text : ALIGN_WITH_INPUT
     {
         __text_base = .;
         *(.text)
