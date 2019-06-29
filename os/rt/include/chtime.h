@@ -160,7 +160,6 @@ typedef uint32_t time_conv_t;
 /* Module macros.                                                            */
 /*===========================================================================*/
 
-
 /**
  * @name    Fast time conversion utilities
  * @{
@@ -442,7 +441,7 @@ static inline systime_t chTimeAddX(systime_t systime,
                                    sysinterval_t interval) {
 
 #if CH_CFG_ST_RESOLUTION != CH_CFG_INTERVALS_SIZE
-  chDbgCheck(interval <= (sysinterval_t)((systime_t)-1));
+  chDbgCheck(interval <= (sysinterval_t)TIME_MAX_SYSTIME);
 #endif
 
   return systime + (systime_t)interval;
@@ -482,7 +481,8 @@ static inline bool chTimeIsInRangeX(systime_t time,
                                     systime_t start,
                                     systime_t end) {
 
-  return (bool)((time - start) < (end - start));
+  return (bool)((systime_t)((systime_t)time - (systime_t)start) <
+                (systime_t)((systime_t)end - (systime_t)start));
 }
 
 /** @} */
