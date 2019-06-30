@@ -567,6 +567,29 @@
  * @api
  */
 #define rccResetI2C3() rccResetAPB1R1(RCC_APB1RSTR1_I2C3RST)
+
+/**
+ * @brief Enables the I2C4 peripheral clock.
+ *
+ * @param[in] lp low power enable flag
+ *
+ * @api
+ */
+#define rccEnableI2C4(lp) rccEnableAPB1R2(RCC_APB1ENR2_I2C4EN, lp)
+
+/**
+ * @brief Disables the I2C4 peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableI2C4() rccDisableAPB1R1(RCC_APB1ENR2_I2C4EN)
+
+/**
+ * @brief Resets the I2C4 peripheral.
+ *
+ * @api
+ */
+#define rccResetI2C4() rccResetAPB1R1(RCC_APB1RSTR2_I2C4RST)
 /** @} */
 
 /**
