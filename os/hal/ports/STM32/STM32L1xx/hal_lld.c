@@ -210,9 +210,15 @@ void stm32_clock_init(void) {
   /* Flash setup and final clock selection.*/
 #if defined(STM32_FLASHBITS1)
   FLASH->ACR = STM32_FLASHBITS1;
+  while ((FLASH->ACR & FLASH_ACR_LATENCY_Msk) !=
+         (STM32_FLASHBITS1 & FLASH_ACR_LATENCY_Msk)) {
+  }
 #endif
 #if defined(STM32_FLASHBITS2)
   FLASH->ACR = STM32_FLASHBITS2;
+  while ((FLASH->ACR & FLASH_ACR_LATENCY_Msk) !=
+         (STM32_FLASHBITS2 & FLASH_ACR_LATENCY_Msk)) {
+  }
 #endif
 
   /* Switching to the configured clock source if it is different from MSI.*/

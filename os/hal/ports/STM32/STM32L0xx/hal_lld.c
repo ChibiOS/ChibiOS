@@ -64,7 +64,7 @@ static void hal_lld_backup_domain_init(void) {
   /* If enabled then the LSE is started.*/
 #if STM32_LSE_ENABLED
   RCC->CSR |= RCC_CSR_LSEON;
-  while ((RCC->CSR & RCC_CSR_LSERDY) == 0) {
+  while ((RCC->CSR & RCC_CSR_LSERDY) == 0)
     ;                                       /* Waits until LSE is stable.   */
 #endif
 
@@ -290,6 +290,9 @@ void stm32_clock_init(void) {
   /* Flash setup and final clock selection.*/
 #if defined(STM32_FLASHBITS)
   FLASH->ACR = STM32_FLASHBITS;
+  while ((FLASH->ACR & FLASH_ACR_LATENCY_Msk) !=
+         (STM32_FLASHBITS & FLASH_ACR_LATENCY_Msk)) {
+  }
 #endif
 
   /* Switching to the configured clock source if it is different from MSI.  */
