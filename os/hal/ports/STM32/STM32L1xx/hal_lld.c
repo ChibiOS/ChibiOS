@@ -57,7 +57,7 @@ static void hal_lld_backup_domain_init(void) {
   PWR->CR |= PWR_CR_DBP;
 
   /* Reset BKP domain if different clock source selected.*/
-  if ((RCC->CSR & STM32_RTCSEL_MASK) != STM32_RTCSEL){
+  if ((RCC->CSR & STM32_RTCSEL_MASK) != STM32_RTCSEL) {
     /* Backup domain reset.*/
     RCC->CSR |= RCC_CSR_RTCRST;
     RCC->CSR &= ~RCC_CSR_RTCRST;
@@ -210,9 +210,15 @@ void stm32_clock_init(void) {
   /* Flash setup and final clock selection.*/
 #if defined(STM32_FLASHBITS1)
   FLASH->ACR = STM32_FLASHBITS1;
+  while ((FLASH->ACR & FLASH_ACR_LATENCY_Msk) !=
+         (STM32_FLASHBITS1 & FLASH_ACR_LATENCY_Msk)) {
+  }
 #endif
 #if defined(STM32_FLASHBITS2)
   FLASH->ACR = STM32_FLASHBITS2;
+  while ((FLASH->ACR & FLASH_ACR_LATENCY_Msk) !=
+         (STM32_FLASHBITS2 & FLASH_ACR_LATENCY_Msk)) {
+  }
 #endif
 
   /* Switching to the configured clock source if it is different from MSI.*/

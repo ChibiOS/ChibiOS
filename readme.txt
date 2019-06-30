@@ -78,6 +78,7 @@
        generate a library with a pre-configured RT. It also includes
        an "header generator" able to generate an unified "ch.h" with
        all options resolved.
+- FIX: Fixed missing delay after STM32 wait states setup (bug #1035).
 - FIX: Fixed reduced time slices in RT (bug #1034).
 - FIX: Fixed long intervals fail when interval type is larger than time type
        (bug #1031).

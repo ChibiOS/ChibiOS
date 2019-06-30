@@ -184,7 +184,7 @@ void stm32_clock_init(void) {
   /* Registers finally cleared to reset values.*/
   RCC->CR &= RCC_CR_HSITRIM | RCC_CR_HSION; /* CR Reset value.              */
   RCC->CFGR = 0;                            /* CFGR reset value.            */
-  
+
 #if STM32_HSE_ENABLED
   /* HSE activation.*/
 #if defined(STM32_HSE_BYPASS)
@@ -314,6 +314,9 @@ void stm32_clock_init(void) {
   FLASH->ACR = FLASH_ACR_PRFTEN | FLASH_ACR_ICEN |
                FLASH_ACR_DCEN | STM32_FLASHBITS;
 #endif
+  while ((FLASH->ACR & FLASH_ACR_LATENCY_Msk) !=
+         (STM32_FLASHBITS & FLASH_ACR_LATENCY_Msk)) {
+  }
 
   /* Switching to the configured clock source if it is different from HSI.*/
 #if (STM32_SW != STM32_SW_HSI)

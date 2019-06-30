@@ -368,6 +368,9 @@ void stm32_clock_init(void) {
 
   /* Flash setup.*/
   FLASH->ACR = FLASH_ACR_WRHIGHFREQ_2 | STM32_FLASHBITS;
+  while ((FLASH->ACR & FLASH_ACR_LATENCY) !=
+         (STM32_FLASHBITS & FLASH_ACR_LATENCY)) {
+  }
 
   /* Switching to the configured clock source if it is different
      from HSI.*/
