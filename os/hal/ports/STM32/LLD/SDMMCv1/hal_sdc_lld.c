@@ -503,7 +503,7 @@ void sdc_lld_stop(SDCDriver *sdcp) {
     sdcp->sdmmc->DTIMER = 0;
 
     /* DMA stream released.*/
-    dmaStreamRelease(sdcp->dma);
+    dmaStreamFreeI(sdcp->dma);
     sdcp->dma = NULL;
 
     /* Clock deactivation.*/
