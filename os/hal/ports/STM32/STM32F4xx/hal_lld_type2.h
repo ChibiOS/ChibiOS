@@ -317,7 +317,7 @@
  * @name    RCC_DCKCFGR2 register bits definitions
  * @{
  */
-#define STM32_I2CFMP1SEL_MASK   (3 << 22)   /**< I2CFMP1SEL mask.              */
+#define STM32_I2CFMP1SEL_MASK   (3 << 22)   /**< I2CFMP1SEL mask.           */
 #define STM32_I2CFMP1SEL_PCLK1  (0 << 22)   /**< I2C1 source is APB/PCLK1.  */
 #define STM32_I2CFMP1SEL_SYSCLK (1 << 22)   /**< I2C1 source is SYSCLK.     */
 #define STM32_I2CFMP1SEL_HSI    (2 << 22)   /**< I2C1 source is HSI.        */
@@ -325,6 +325,7 @@
 #define STM32_CK48MSEL_MASK     (1 << 27)   /**< CK48MSEL mask.             */
 #define STM32_CK48MSEL_PLL      (0 << 27)   /**< PLL48CLK source is PLL.    */
 #define STM32_CK48MSEL_PLLI2S   (1 << 27)   /**< PLL48CLK source is PLLI2S. */
+#define STM32_CK48MSEL_PLLALT   (1 << 27)   /**< Alias.                     */
 
 #define STM32_SDIOSEL_MASK      (1 << 28)   /**< SDIOSEL mask.              */
 #define STM32_SDIOSEL_PLL48CLK  (0 << 28)   /**< SDIO source is PLL48CLK.   */
@@ -508,7 +509,7 @@
 /**
  * @brief   PLLI2SM divider value.
  * @note    The allowed values are 2..63.
- * @note    The default value is calculated for a 96MHz I2S clock 
+ * @note    The default value is calculated for a 96MHz I2S clock
  *          output from an external 8MHz HSE clock.
  */
 #if !defined(STM32_PLLI2SM_VALUE) || defined(__DOXYGEN__)
@@ -519,7 +520,7 @@
  * @brief   PLLI2SN multiplier value.
  * @note    The allowed values are 192..432, except for
  *          STM32F446 where values are 50...432.
- * @note    The default value is calculated for a 96MHz I2S clock 
+ * @note    The default value is calculated for a 96MHz I2S clock
  *          output from an external 8MHz HSE clock.
  */
 #if !defined(STM32_PLLI2SN_VALUE) || defined(__DOXYGEN__)
@@ -529,7 +530,7 @@
 /**
  * @brief   PLLI2SR divider value.
  * @note    The allowed values are 2..7.
- * @note    The default value is calculated for a 96MHz I2S clock 
+ * @note    The default value is calculated for a 96MHz I2S clock
  *          output from an external 8MHz HSE clock.
  */
 #if !defined(STM32_PLLI2SR_VALUE) || defined(__DOXYGEN__)

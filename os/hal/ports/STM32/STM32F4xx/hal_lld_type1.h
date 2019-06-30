@@ -32,7 +32,7 @@
  *            Foundation line.
  *          - STM32F401xx, STM32F410xx, STM32F411xx, STM32F412xx
  *            for High-performance STM32F4 devices of Access line.
- *          - STM32F427xx, STM32F437xx, STM32F429xx, STM32F439xx, STM32F469xx, 
+ *          - STM32F427xx, STM32F437xx, STM32F429xx, STM32F439xx, STM32F469xx,
  *            STM32F479xx for High-performance STM32F4 devices of Advanced line.
  *          .
  *
@@ -538,9 +538,8 @@
 
 #define STM32_CK48MSEL_MASK     (1 << 27)   /**< CK48MSEL mask.             */
 #define STM32_CK48MSEL_PLL      (0 << 27)   /**< PLL48CLK source is PLL.    */
-#define STM32_CK48MSEL_PLLALT   (1 << 27)   /**< PLL48CLK source is PLLSAI
-                                                 or PLLI2S depending on
-                                                 device.                    */
+#define STM32_CK48MSEL_PLLSAI   (1 << 27)   /**< PLL48CLK source is PLLSAI. */
+#define STM32_CK48MSEL_PLLALT   (1 << 27)   /**< Alias.                     */
 
 #define STM32_SDMMCSEL_MASK     (1 << 28)   /**< SDMMCSEL mask.             */
 #define STM32_SDMMCSEL_PLL48CLK (0 << 28)   /**< SDMMC source is PLL48CLK.  */
@@ -784,7 +783,7 @@
  * @brief   PLLI2SN multiplier value.
  * @note    The allowed values are 192..432, except for
  *          STM32F446 where values are 50...432.
- * @note    The default value is calculated for a 96MHz I2S clock 
+ * @note    The default value is calculated for a 96MHz I2S clock
  *          output from an external 8MHz HSE clock.
  */
 #if !defined(STM32_PLLI2SN_VALUE) || defined(__DOXYGEN__)
@@ -794,7 +793,7 @@
 /**
  * @brief   PLLI2SM divider value.
  * @note    The allowed values are 2..63.
- * @note    The default value is calculated for a 96MHz I2S clock 
+ * @note    The default value is calculated for a 96MHz I2S clock
  *          output from an external 8MHz HSE clock.
  */
 #if !defined(STM32_PLLI2SM_VALUE) || defined(__DOXYGEN__)
@@ -804,7 +803,7 @@
 /**
  * @brief   PLLI2SR divider value.
  * @note    The allowed values are 2..7.
- * @note    The default value is calculated for a 96MHz I2S clock 
+ * @note    The default value is calculated for a 96MHz I2S clock
  *          output from an external 8MHz HSE clock.
  */
 #if !defined(STM32_PLLI2SR_VALUE) || defined(__DOXYGEN__)
@@ -1163,7 +1162,6 @@
 #else
 #error "invalid VDD voltage specified"
 #endif
-
 
 #elif defined(STM32F401xx)
 #if (STM32_VDD >= 270) && (STM32_VDD <= 360)
