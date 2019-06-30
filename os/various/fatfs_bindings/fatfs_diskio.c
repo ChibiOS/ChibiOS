@@ -7,6 +7,7 @@
 
 #include "hal.h"
 #include "ffconf.h"
+#include "ff.h"
 #include "diskio.h"
 
 #if HAL_USE_MMC_SPI && HAL_USE_SDC

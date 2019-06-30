@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Merged FatFS 0.13c.
 - NEW: Added a "library generator" project for RT, it allows to
        generate a library with a pre-configured RT. It also includes
        an "header generator" able to generate an unified "ch.h" with
