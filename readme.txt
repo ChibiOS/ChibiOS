@@ -88,6 +88,7 @@
 *** 18.2.3 ***
 - NEW: Added a check on defective GCC versions, Cortex-M0 only.
 - NEW: Extra timer checks in STM32 ST driver.
+- FIX: Fixed missing delay after STM32 wait states setup (bug #1035).
 - FIX: Fixed reduced time slices in RT (bug #1034).
 - FIX: Fixed long intervals fail when interval type is larger than time type
        (bug #1031).
