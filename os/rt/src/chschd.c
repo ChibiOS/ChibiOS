@@ -430,7 +430,7 @@ void chSchWakeupS(thread_t *ntp, msg_t msg) {
     (void) chSchReadyI(ntp);
   }
   else {
-    otp = chSchReadyI(otp);
+    otp = chSchReadyAheadI(otp);
 
     /* Handling idle-leave hook.*/
     if (otp->prio == IDLEPRIO) {
@@ -605,6 +605,6 @@ void chSchDoReschedule(void) {
   /* Swap operation as tail call.*/
   chSysSwitch(currp, otp);
 }
-#endif /*!defined(CH_SCH_DO_RESCHEDULE_HOOKED) */
+#endif /* !defined(CH_SCH_DO_RESCHEDULE_HOOKED) */
 
 /** @} */
