@@ -4,6 +4,7 @@
 
 #define WOLFSSL_GENERAL_ALIGNMENT 4
 #define HAVE_TM_TYPE
+#define WORD64_AVAILABLE
 
 
 /* ChibiOS + Lwip */
@@ -56,7 +57,8 @@ int custom_rand_generate_block(unsigned char* output, unsigned int sz);
 
 
 /* Size/speed config */
-//#define USE_SLOW_SHA2
+#define USE_SLOW_SHA2
+#define USE_SLOW_SHA512
 
 /* Robustness */
 #define TFM_TIMING_RESISTANT
