@@ -430,7 +430,7 @@ void chSchWakeupS(thread_t *ntp, msg_t msg) {
     (void) chSchReadyI(ntp);
   }
   else {
-    otp = chSchReadyI(otp);
+    otp = chSchReadyAheadI(otp);
 
     /* Handling idle-leave hook.*/
     if (otp->prio == IDLEPRIO) {
