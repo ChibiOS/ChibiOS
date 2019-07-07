@@ -86,7 +86,7 @@ endif
 PROJECT = ch
 
 # Target settings.
-MCU  = cortex-m4
+MCU  = cortex-m7
 
 # Imported source files and paths.
 CHIBIOS  := ../../../..
