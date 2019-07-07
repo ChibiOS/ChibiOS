@@ -82,6 +82,7 @@
 - FIX: Fixed missing I2C4 RCC definitions for L4/L4+ (bug #1036).
 - FIX: Fixed missing delay after STM32 wait states setup (bug #1035).
 - FIX: Fixed reduced time slices in RT (bug #1034).
+- FIX: Fixed GCC scatter files alignment problem (bug #1033).
 - FIX: Fixed long intervals fail when interval type is larger than time type
        (bug #1031).
 - FIX: Fixed Round Robin check missing when in tick-less mode (bug #1030).
