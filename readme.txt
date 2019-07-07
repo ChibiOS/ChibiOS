@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Initial STM32G0xx support in HAL.
 - NEW: Implemented TIMPRE setting for STM32F7xx HAL.
 - NEW: Merged FatFS 0.13c.
 - NEW: Added a "library generator" project for RT, it allows to
