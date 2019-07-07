@@ -651,6 +651,13 @@
 #endif
 
 /**
+ * @brief   TIM clock prescaler selection.
+ */
+#if !defined(STM32_TIMPRE_ENABLE) || defined(__DOXYGEN__)
+#define STM32_TIMPRE_ENABLE                 FALSE
+#endif
+
+/**
  * @brief   I2S clock source.
  */
 #if !defined(STM32_I2SSRC) || defined(__DOXYGEN__)
@@ -2061,19 +2068,39 @@
 /**
  * @brief   Clock of timers connected to APB1
  */
+#if (STM32_TIMPRE_ENABLE == FALSE) || defined(__DOXYGEN__)
 #if (STM32_PPRE1 == STM32_PPRE1_DIV1) || defined(__DOXYGEN__)
 #define STM32_TIMCLK1               (STM32_PCLK1 * 1)
 #else
 #define STM32_TIMCLK1               (STM32_PCLK1 * 2)
 #endif
+#else
+#if (STM32_PPRE1 == STM32_PPRE1_DIV1) ||                                    \
+    (STM32_PPRE1 == STM32_PPRE1_DIV2) ||                                    \
+    (STM32_PPRE1 == STM32_PPRE1_DIV4)
+#define STM32_TIMCLK1               (STM32_HCLK * 1)
+#else
+#define STM32_TIMCLK1               (STM32_PCLK1 * 4)
+#endif
+#endif
 
 /**
  * @brief   Clock of timers connected to APB2.
  */
+#if (STM32_TIMPRE_ENABLE == FALSE) || defined(__DOXYGEN__)
 #if (STM32_PPRE2 == STM32_PPRE2_DIV1) || defined(__DOXYGEN__)
 #define STM32_TIMCLK2               (STM32_PCLK2 * 1)
 #else
 #define STM32_TIMCLK2               (STM32_PCLK2 * 2)
+#endif
+#else
+#if (STM32_PPRE2 == STM32_PPRE2_DIV1) ||                                    \
+    (STM32_PPRE2 == STM32_PPRE2_DIV2) ||                                    \
+    (STM32_PPRE2 == STM32_PPRE2_DIV4)
+#define STM32_TIMCLK2               (STM32_HCLK * 1)
+#else
+#define STM32_TIMCLK2               (STM32_PCLK2 * 4)
+#endif
 #endif
 
 /**

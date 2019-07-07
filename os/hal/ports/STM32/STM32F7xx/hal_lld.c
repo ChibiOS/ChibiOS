@@ -275,6 +275,9 @@ void stm32_clock_init(void) {
 #if STM32_SAI1SEL != STM32_SAI1SEL_OFF
     dckcfgr1 |= STM32_SAI1SEL;
 #endif
+#if STM32_TIMPRE_ENABLE == TRUE
+    dckcfgr1 |= RCC_DCKCFGR1_TIMPRE;
+#endif
     RCC->DCKCFGR1 = dckcfgr1;
   }
 

@@ -73,6 +73,7 @@
 #define STM32_MCO1PRE                       ${doc.STM32_MCO1PRE!"STM32_MCO1PRE_DIV1"}
 #define STM32_MCO2SEL                       ${doc.STM32_MCO2SEL!"STM32_MCO2SEL_SYSCLK"}
 #define STM32_MCO2PRE                       ${doc.STM32_MCO2PRE!"STM32_MCO2PRE_DIV4"}
+#define STM32_TIMPRE_ENABLE                 ${doc.STM32_TIMPRE_ENABLE!"FALSE"}
 #define STM32_I2SSRC                        ${doc.STM32_I2SSRC!"STM32_I2SSRC_OFF"}
 #define STM32_PLLI2SN_VALUE                 ${doc.STM32_PLLI2SN_VALUE!"192"}
 #define STM32_PLLI2SP_VALUE                 ${doc.STM32_PLLI2SP_VALUE!"4"}
