@@ -220,7 +220,8 @@ void stm32_clock_init(void) {
                STM32_LPUART1SEL;
 
   /* Set flash WS's for SYSCLK source */
-  FLASH->ACR = FLASH_ACR_ICEN | FLASH_ACR_PRFTEN | STM32_FLASHBITS;
+  FLASH->ACR = FLASH_ACR_DBG_SWEN | FLASH_ACR_ICEN | FLASH_ACR_PRFTEN |
+               STM32_FLASHBITS;
   while ((FLASH->ACR & FLASH_ACR_LATENCY_Msk) !=
          (STM32_FLASHBITS & FLASH_ACR_LATENCY_Msk)) {
   }
@@ -229,7 +230,7 @@ void stm32_clock_init(void) {
 #if STM32_SW != STM32_SW_HSISYS
   RCC->CFGR |= STM32_SW;        /* Switches on the selected clock source.   */
   /* Wait until SYSCLK is stable.*/
-  while ((RCC->CFGR & RCC_CFGR_SWS) != (STM32_SW << 2))
+  while ((RCC->CFGR & RCC_CFGR_SWS) != (STM32_SW << 3))
     ;
 #endif
 
