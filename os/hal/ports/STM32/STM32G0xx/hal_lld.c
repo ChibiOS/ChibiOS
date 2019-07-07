@@ -104,9 +104,7 @@ static void hal_lld_backup_domain_init(void) {
  */
 void hal_lld_init(void) {
 
-  /* Reset of all peripherals.
-     Note, GPIOs are not reset because initialized before this point in
-     board files.*/
+  /* Reset of all peripherals.*/
   rccResetAHB(~0);
   rccResetAPBR1(~RCC_APBRSTR1_PWRRST);
   rccResetAPBR2(~0);
@@ -219,7 +217,7 @@ void stm32_clock_init(void) {
                STM32_TIM15SEL  | STM32_TIM1SEL   | STM32_LPTIM2SEL |
                STM32_LPTIM1SEL | STM32_I2S1SEL   | STM32_I2C1SEL   |
                STM32_CECSEL    | STM32_USART2SEL | STM32_USART1SEL |
-               STM32_LPUART1SEL;;
+               STM32_LPUART1SEL;
 
   /* Set flash WS's for SYSCLK source */
   FLASH->ACR = FLASH_ACR_ICEN | FLASH_ACR_PRFTEN | STM32_FLASHBITS;
