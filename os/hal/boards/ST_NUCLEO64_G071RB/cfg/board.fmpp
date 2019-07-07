@@ -1,4 +1,4 @@
-sourceRoot: ../../../../../tools/ftl/processors/boards/stm32l0xx/templates
+sourceRoot: ../../../../../tools/ftl/processors/boards/stm32g0xx/templates
 outputRoot: ..
 dataRoot: .
 

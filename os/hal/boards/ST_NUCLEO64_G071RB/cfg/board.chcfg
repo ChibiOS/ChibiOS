@@ -12,7 +12,7 @@
   <board_id>ST_NUCLEO64_G071RB</board_id>
   <board_functions></board_functions>
   <subtype>STM32G071xB</subtype>
-  <clocks HSEFrequency="8000000" HSEBypass="true" LSEFrequency="32768"
+  <clocks HSEFrequency="8000000" HSEBypass="false" LSEFrequency="32768"
   	LSEBypass="false" LSEDrive="3 High Drive (default)" />
   <ports>
     <GPIOA>
@@ -171,12 +171,12 @@
         Mode="Input"
         Alternate="0" />
       <pin3
-        ID="SWO"
+        ID=""
         Type="PushPull"
         Level="High"
         Speed="Maximum"
         Resistor="PullUp"
-        Mode="Alternate"
+        Mode="Input"
         Alternate="0" />
       <pin4
         ID=""

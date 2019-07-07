@@ -53,7 +53,7 @@ int main(void) {
   /*
    * Activates the serial driver 2 using the driver default configuration.
    */
-  sdStart(&LPSD1, NULL);
+  sdStart(&SD2, NULL);
 
   /*
    * Creates the blinker thread.
@@ -66,8 +66,8 @@ int main(void) {
    */
   while (true) {
    if (!palReadLine(LINE_BUTTON)) {
-      test_execute((BaseSequentialStream *)&LPSD1, &rt_test_suite);
-      test_execute((BaseSequentialStream *)&LPSD1, &oslib_test_suite);
+      test_execute((BaseSequentialStream *)&SD2, &rt_test_suite);
+      test_execute((BaseSequentialStream *)&SD2, &oslib_test_suite);
     }
     chThdSleepMilliseconds(500);
  }

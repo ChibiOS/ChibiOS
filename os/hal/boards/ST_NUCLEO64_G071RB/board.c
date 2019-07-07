@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2019 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -259,7 +259,7 @@ bool mmc_lld_is_write_protected(MMCDriver *mmcp) {
 
 /**
  * @brief   Board-specific initialization code.
- * @note    You can add your board-specific code here.
+ * @note    Add your board-specific code, if any.
  */
 void boardInit(void) {
 

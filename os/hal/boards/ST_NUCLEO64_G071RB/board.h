@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2019 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -49,8 +49,6 @@
 #define STM32_HSECLK                8000000U
 #endif
 
-#define STM32_HSE_BYPASS
-
 /*
  * MCU type as defined in the ST header.
  */
@@ -79,7 +77,7 @@
 #define GPIOB_PIN0                  0U
 #define GPIOB_PIN1                  1U
 #define GPIOB_PIN2                  2U
-#define GPIOB_SWO                   3U
+#define GPIOB_PIN3                  3U
 #define GPIOB_PIN4                  4U
 #define GPIOB_PIN5                  5U
 #define GPIOB_PIN6                  6U
@@ -152,7 +150,6 @@
 #define LINE_LED_GREEN              PAL_LINE(GPIOA, 5U)
 #define LINE_SWDIO                  PAL_LINE(GPIOA, 13U)
 #define LINE_SWCLK                  PAL_LINE(GPIOA, 14U)
-#define LINE_SWO                    PAL_LINE(GPIOB, 3U)
 #define LINE_BUTTON                 PAL_LINE(GPIOC, 13U)
 #define LINE_OSC32_IN               PAL_LINE(GPIOC, 14U)
 #define LINE_OSC32_OUT              PAL_LINE(GPIOC, 15U)
@@ -320,7 +317,7 @@
  * PB0  - PIN0                      (input pullup).
  * PB1  - PIN1                      (input pullup).
  * PB2  - PIN2                      (input pullup).
- * PB3  - SWO                       (alternate 0).
+ * PB3  - PIN3                      (input pullup).
  * PB4  - PIN4                      (input pullup).
  * PB5  - PIN5                      (input pullup).
  * PB6  - PIN6                      (input pullup).
@@ -337,7 +334,7 @@
 #define VAL_GPIOB_MODER             (PIN_MODE_INPUT(GPIOB_PIN0) |           \
                                      PIN_MODE_INPUT(GPIOB_PIN1) |           \
                                      PIN_MODE_INPUT(GPIOB_PIN2) |           \
-                                     PIN_MODE_ALTERNATE(GPIOB_SWO) |        \
+                                     PIN_MODE_INPUT(GPIOB_PIN3) |           \
                                      PIN_MODE_INPUT(GPIOB_PIN4) |           \
                                      PIN_MODE_INPUT(GPIOB_PIN5) |           \
                                      PIN_MODE_INPUT(GPIOB_PIN6) |           \
@@ -353,7 +350,7 @@
 #define VAL_GPIOB_OTYPER            (PIN_OTYPE_PUSHPULL(GPIOB_PIN0) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOB_PIN1) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOB_PIN2) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOB_SWO) |        \
+                                     PIN_OTYPE_PUSHPULL(GPIOB_PIN3) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOB_PIN4) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOB_PIN5) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOB_PIN6) |       \
@@ -369,7 +366,7 @@
 #define VAL_GPIOB_OSPEEDR           (PIN_OSPEED_HIGH(GPIOB_PIN0) |          \
                                      PIN_OSPEED_HIGH(GPIOB_PIN1) |          \
                                      PIN_OSPEED_HIGH(GPIOB_PIN2) |          \
-                                     PIN_OSPEED_HIGH(GPIOB_SWO) |           \
+                                     PIN_OSPEED_HIGH(GPIOB_PIN3) |          \
                                      PIN_OSPEED_HIGH(GPIOB_PIN4) |          \
                                      PIN_OSPEED_HIGH(GPIOB_PIN5) |          \
                                      PIN_OSPEED_HIGH(GPIOB_PIN6) |          \
@@ -385,7 +382,7 @@
 #define VAL_GPIOB_PUPDR             (PIN_PUPDR_PULLUP(GPIOB_PIN0) |         \
                                      PIN_PUPDR_PULLUP(GPIOB_PIN1) |         \
                                      PIN_PUPDR_PULLUP(GPIOB_PIN2) |         \
-                                     PIN_PUPDR_PULLUP(GPIOB_SWO) |          \
+                                     PIN_PUPDR_PULLUP(GPIOB_PIN3) |         \
                                      PIN_PUPDR_PULLUP(GPIOB_PIN4) |         \
                                      PIN_PUPDR_PULLUP(GPIOB_PIN5) |         \
                                      PIN_PUPDR_PULLUP(GPIOB_PIN6) |         \
@@ -401,7 +398,7 @@
 #define VAL_GPIOB_ODR               (PIN_ODR_HIGH(GPIOB_PIN0) |             \
                                      PIN_ODR_HIGH(GPIOB_PIN1) |             \
                                      PIN_ODR_HIGH(GPIOB_PIN2) |             \
-                                     PIN_ODR_HIGH(GPIOB_SWO) |              \
+                                     PIN_ODR_HIGH(GPIOB_PIN3) |             \
                                      PIN_ODR_HIGH(GPIOB_PIN4) |             \
                                      PIN_ODR_HIGH(GPIOB_PIN5) |             \
                                      PIN_ODR_HIGH(GPIOB_PIN6) |             \
@@ -417,7 +414,7 @@
 #define VAL_GPIOB_AFRL              (PIN_AFIO_AF(GPIOB_PIN0, 0U) |          \
                                      PIN_AFIO_AF(GPIOB_PIN1, 0U) |          \
                                      PIN_AFIO_AF(GPIOB_PIN2, 0U) |          \
-                                     PIN_AFIO_AF(GPIOB_SWO, 0U) |           \
+                                     PIN_AFIO_AF(GPIOB_PIN3, 0U) |          \
                                      PIN_AFIO_AF(GPIOB_PIN4, 0U) |          \
                                      PIN_AFIO_AF(GPIOB_PIN5, 0U) |          \
                                      PIN_AFIO_AF(GPIOB_PIN6, 0U) |          \
