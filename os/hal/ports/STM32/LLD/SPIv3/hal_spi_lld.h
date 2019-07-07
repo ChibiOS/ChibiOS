@@ -456,7 +456,7 @@
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
-#if (defined(STM32_SPI_DMA_REQUIRED) &&
+#if (defined(STM32_SPI_DMA_REQUIRED) &&                                     \
      defined(STM32_SPI_BDMA_REQUIRED)) || defined(__DOXYGEN__)
 #define spi_lld_driver_fields                                               \
   /* Pointer to the SPIx registers block.*/                                 \
