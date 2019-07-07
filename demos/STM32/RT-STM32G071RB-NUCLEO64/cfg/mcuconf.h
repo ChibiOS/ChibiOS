@@ -40,9 +40,7 @@
  */
 #define STM32_NO_INIT                       FALSE
 #define STM32_VOS                           STM32_VOS_RANGE1
-#define STM32_PWR_CR2                       (STM32_PVDRT_LEV0 |              \
-                                             STM32_PVDFT_LEV0 |              \
-                                             STM32_PVDE_DISABLED)
+#define STM32_PWR_CR2                       (STM32_PVDRT_LEV0 | STM32_PVDFT_LEV0 | STM32_PVDE_DISABLED)
 #define STM32_HSIDIV_VALUE                  1
 #define STM32_HSI16_ENABLED                 TRUE
 #define STM32_HSE_ENABLED                   FALSE
@@ -105,7 +103,6 @@
 #define STM32_GPT_USE_TIM3                  FALSE
 #define STM32_GPT_USE_TIM6                  FALSE
 #define STM32_GPT_USE_TIM7                  FALSE
-#define STM32_GPT_USE_TIM8                  FALSE
 #define STM32_GPT_TIM1_IRQ_PRIORITY         1
 #define STM32_GPT_TIM2_IRQ_PRIORITY         1
 #define STM32_GPT_TIM3_IRQ_PRIORITY         1
