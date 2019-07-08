@@ -173,7 +173,11 @@ void _pal_lld_enablepadevent(ioportid_t port,
   portidx = (((uint32_t)port - (uint32_t)GPIOA) >> 10U) & 0xFU;
 
   /* Port selection in SYSCFG.*/
+#if STM32_EXTI_TYPE == EXTI_TYPE_CLASSIC
   SYSCFG->EXTICR[cridx] = (SYSCFG->EXTICR[cridx] & crmask) | (portidx << croff);
+#else
+  EXTI->EXTICR[cridx] = (EXTI->EXTICR[cridx] & crmask) | (portidx << croff);
+#endif
 
   /* Programming edge registers.*/
   if (mode & PAL_EVENT_MODE_RISING_EDGE)
@@ -225,7 +229,11 @@ void _pal_lld_disablepadevent(ioportid_t port, iopadid_t pad) {
        0x400 intervals in memory space. So far this is true for all devices.*/
     portidx = (((uint32_t)port - (uint32_t)GPIOA) >> 10U) & 0xFU;
 
+#if STM32_EXTI_TYPE == EXTI_TYPE_CLASSIC
     crport = (SYSCFG->EXTICR[cridx] >> croff) & 0xFU;
+#else
+    crport = (EXTI->EXTICR[cridx] >> croff) & 0xFU;
+#endif
 
     osalDbgAssert(crport == portidx, "channel mapped on different port");
 
@@ -242,7 +250,12 @@ void _pal_lld_disablepadevent(ioportid_t port, iopadid_t pad) {
     EXTI->EMR1  &= ~padmask;
     EXTI->RTSR1  = rtsr1 & ~padmask;
     EXTI->FTSR1  = ftsr1 & ~padmask;
+#if STM32_EXTI_TYPE == EXTI_TYPE_CLASSIC
     EXTI->PR1    = padmask;
+#else
+    EXTI->RPR1   = padmask;
+    EXTI->FPR1   = padmask;
+#endif
 #endif
 
 #if PAL_USE_CALLBACKS || PAL_USE_WAIT

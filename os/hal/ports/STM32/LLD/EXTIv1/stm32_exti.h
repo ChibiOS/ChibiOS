@@ -44,8 +44,17 @@
 #define EXTI_MODE_ACTION_EVENT      4U  /**< @brief Event mode.             */
 /** @} */
 
+/**
+ * @name    EXTI types
+ * @{
+ */
+#define EXTI_TYPE_CLASSIC           0   /**< @brief Classic EXTI.           */
+#define EXTI_TYPE_NEWG0             1   /**< @brief EXTI introduced in G0.  */
+/** @} */
+
 /* Handling differences in ST headers.*/
-#if !defined(STM32H7XX) && !defined(STM32L4XX) && !defined(STM32L4XXP)
+#if !defined(STM32H7XX) && !defined(STM32L4XX) && !defined(STM32L4XXP) &&   \
+    !defined(STM32G0XX)
 #define EMR1    EMR
 #define IMR1    IMR
 #define PR1     PR
@@ -56,6 +65,17 @@
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
+
+/* If not defined then it is a classic EXTI (without EXTICR and separate PR
+   registers for raising and falling edges.*/
+#if !defined(STM32_EXTI_TYPE)
+#define STM32_EXTI_TYPE             EXTI_TYPE_CLASSIC
+#endif
+
+#if (STM32_EXTI_TYPE != EXTI_TYPE_CLASSIC) &&                               \
+    (STM32_EXTI_TYPE != EXTI_TYPE_NEWG0)
+#error "invalid STM32_EXTI_TYPE"
+#endif
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */

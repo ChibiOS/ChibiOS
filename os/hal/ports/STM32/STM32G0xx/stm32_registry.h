@@ -109,6 +109,7 @@
 #define STM32_HAS_ETH                       FALSE
 
 /* EXTI attributes.*/
+#define STM32_EXTI_TYPE                     EXTI_TYPE_NEWG0
 #define STM32_EXTI_NUM_LINES                16
 #define STM32_EXTI_IMR1_MASK                0xFFF80000U
 
@@ -303,6 +304,7 @@
 #define STM32_HAS_ETH                       FALSE
 
 /* EXTI attributes.*/
+#define STM32_EXTI_TYPE                     EXTI_TYPE_NEWG0
 #define STM32_EXTI_NUM_LINES                33
 #define STM32_EXTI_IMR1_MASK                0xFFF80000U
 #define STM32_EXTI_IMR2_MASK                0xFFFFFFFFU

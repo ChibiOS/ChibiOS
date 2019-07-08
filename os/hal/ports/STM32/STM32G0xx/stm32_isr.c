@@ -63,9 +63,9 @@ OSAL_IRQ_HANDLER(Vector54) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR;
+  pr = EXTI->RPR1 | EXTI->FPR1;
   pr &= ((1U << 0) | (1U << 1));
-  EXTI->PR = pr;
+  EXTI->RPR1 = EXTI->FPR1 = pr;
 
   exti_serve_irq(pr, 0);
   exti_serve_irq(pr, 1);
@@ -85,9 +85,9 @@ OSAL_IRQ_HANDLER(Vector58) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR;
+  pr = EXTI->RPR1 | EXTI->FPR1;
   pr &= ((1U << 2) | (1U << 3));
-  EXTI->PR = pr;
+  EXTI->RPR1 = EXTI->FPR1 = pr;
 
   exti_serve_irq(pr, 2);
   exti_serve_irq(pr, 3);
@@ -107,11 +107,11 @@ OSAL_IRQ_HANDLER(Vector5C) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR;
+  pr = EXTI->RPR1 | EXTI->FPR1;
   pr &= ((1U << 4)  | (1U << 5)  | (1U << 6)  | (1U << 7)  | (1U << 8)  |
          (1U << 9)  | (1U << 10) | (1U << 11) | (1U << 12) | (1U << 13) |
          (1U << 14) | (1U << 15));
-  EXTI->PR = pr;
+  EXTI->RPR1 = EXTI->FPR1 = pr;
 
   exti_serve_irq(pr, 4);
   exti_serve_irq(pr, 5);
