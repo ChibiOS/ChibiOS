@@ -572,7 +572,7 @@ void uart_lld_init(void) {
   UARTD1.dmamode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
   UARTD1.dmarx   = NULL;
   UARTD1.dmatx   = NULL;
-#if defined(STM32_USART1_NUMBER)
+#if !defined(STM32_USART1_SUPPRESS_ISR) && defined(STM32_USART1_NUMBER)
   nvicEnableVector(STM32_USART1_NUMBER, STM32_UART_USART1_IRQ_PRIORITY);
 #endif
 #endif
@@ -584,7 +584,7 @@ void uart_lld_init(void) {
   UARTD2.dmamode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
   UARTD2.dmarx   = NULL;
   UARTD2.dmatx   = NULL;
-#if defined(STM32_USART2_NUMBER)
+#if !defined(STM32_USART2_SUPPRESS_ISR) && defined(STM32_USART2_NUMBER)
   nvicEnableVector(STM32_USART2_NUMBER, STM32_UART_USART2_IRQ_PRIORITY);
 #endif
 #endif
@@ -596,7 +596,7 @@ void uart_lld_init(void) {
   UARTD3.dmamode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
   UARTD3.dmarx   = NULL;
   UARTD3.dmatx   = NULL;
-#if defined(STM32_USART3_NUMBER)
+#if !defined(STM32_USART3_SUPPRESS_ISR) && defined(STM32_USART3_NUMBER)
   nvicEnableVector(STM32_USART3_NUMBER, STM32_UART_USART3_IRQ_PRIORITY);
 #endif
 #endif
@@ -608,7 +608,7 @@ void uart_lld_init(void) {
   UARTD4.dmamode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
   UARTD4.dmarx   = NULL;
   UARTD4.dmatx   = NULL;
-#if defined(STM32_UART4_NUMBER)
+#if !defined(STM32_UART4_SUPPRESS_ISR) && defined(STM32_UART4_NUMBER)
   nvicEnableVector(STM32_UART4_NUMBER, STM32_UART_UART4_IRQ_PRIORITY);
 #endif
 #endif
@@ -620,7 +620,7 @@ void uart_lld_init(void) {
   UARTD5.dmamode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
   UARTD5.dmarx   = NULL;
   UARTD5.dmatx   = NULL;
-#if defined(STM32_UART5_NUMBER)
+#if !defined(STM32_UART5_SUPPRESS_ISR) && defined(STM32_UART5_NUMBER)
   nvicEnableVector(STM32_UART5_NUMBER, STM32_UART_UART5_IRQ_PRIORITY);
 #endif
 #endif
@@ -632,7 +632,7 @@ void uart_lld_init(void) {
   UARTD6.dmamode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
   UARTD6.dmarx   = NULL;
   UARTD6.dmatx   = NULL;
-#if defined(STM32_USART6_NUMBER)
+#if !defined(STM32_USART6_SUPPRESS_ISR) && defined(STM32_USART6_NUMBER)
   nvicEnableVector(STM32_USART6_NUMBER, STM32_UART_USART6_IRQ_PRIORITY);
 #endif
 #endif
@@ -644,7 +644,7 @@ void uart_lld_init(void) {
   UARTD7.dmamode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
   UARTD7.dmarx   = NULL;
   UARTD7.dmatx   = NULL;
-#if defined(STM32_UART7_NUMBER)
+#if !defined(STM32_UART7_SUPPRESS_ISR) && defined(STM32_UART7_NUMBER)
   nvicEnableVector(STM32_UART7_NUMBER, STM32_UART_UART7_IRQ_PRIORITY);
 #endif
 #endif
@@ -656,7 +656,7 @@ void uart_lld_init(void) {
   UARTD8.dmamode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
   UARTD8.dmarx   = NULL;
   UARTD8.dmatx   = NULL;
-#if defined(STM32_UART8_NUMBER)
+#if !defined(STM32_UART8_SUPPRESS_ISR) && defined(STM32_UART8_NUMBER)
   nvicEnableVector(STM32_UART8_NUMBER, STM32_UART_UART8_IRQ_PRIORITY);
 #endif
 #endif

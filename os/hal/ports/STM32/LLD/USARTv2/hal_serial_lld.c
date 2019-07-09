@@ -595,7 +595,7 @@ void sd_lld_init(void) {
   oqObjectInit(&SD1.oqueue, sd_out_buf1, sizeof sd_out_buf1, notify1, &SD1);
   SD1.usart = USART1;
   SD1.clock = STM32_USART1CLK;
-#if defined(STM32_USART1_NUMBER)
+#if !defined(STM32_USART1_SUPPRESS_ISR) && defined(STM32_USART1_NUMBER)
   nvicEnableVector(STM32_USART1_NUMBER, STM32_SERIAL_USART1_PRIORITY);
 #endif
 #endif
@@ -606,7 +606,7 @@ void sd_lld_init(void) {
   oqObjectInit(&SD2.oqueue, sd_out_buf2, sizeof sd_out_buf2, notify2, &SD2);
   SD2.usart = USART2;
   SD2.clock = STM32_USART2CLK;
-#if defined(STM32_USART2_NUMBER)
+#if !defined(STM32_USART2_SUPPRESS_ISR) && defined(STM32_USART2_NUMBER)
   nvicEnableVector(STM32_USART2_NUMBER, STM32_SERIAL_USART2_PRIORITY);
 #endif
 #endif
@@ -617,7 +617,7 @@ void sd_lld_init(void) {
   oqObjectInit(&SD3.oqueue, sd_out_buf3, sizeof sd_out_buf3, notify3, &SD3);
   SD3.usart = USART3;
   SD3.clock = STM32_USART3CLK;
-#if defined(STM32_USART3_NUMBER)
+#if !defined(STM32_USART3_SUPPRESS_ISR) && defined(STM32_USART3_NUMBER)
   nvicEnableVector(STM32_USART3_NUMBER, STM32_SERIAL_USART3_PRIORITY);
 #endif
 #endif
@@ -628,7 +628,7 @@ void sd_lld_init(void) {
   oqObjectInit(&SD4.oqueue, sd_out_buf4, sizeof sd_out_buf4, notify4, &SD4);
   SD4.usart = UART4;
   SD4.clock = STM32_UART4CLK;
-#if defined(STM32_UART4_NUMBER)
+#if !defined(STM32_UART4_SUPPRESS_ISR) && defined(STM32_UART4_NUMBER)
   nvicEnableVector(STM32_UART4_NUMBER, STM32_SERIAL_UART4_PRIORITY);
 #endif
 #endif
@@ -639,7 +639,7 @@ void sd_lld_init(void) {
   oqObjectInit(&SD5.oqueue, sd_out_buf5, sizeof sd_out_buf5, notify5, &SD5);
   SD5.usart = UART5;
   SD5.clock = STM32_UART5CLK;
-#if defined(STM32_UART5_NUMBER)
+#if !defined(STM32_UART5_SUPPRESS_ISR) && defined(STM32_UART5_NUMBER)
   nvicEnableVector(STM32_UART5_NUMBER, STM32_SERIAL_UART5_PRIORITY);
 #endif
 #endif
@@ -650,7 +650,7 @@ void sd_lld_init(void) {
   oqObjectInit(&SD6.oqueue, sd_out_buf6, sizeof sd_out_buf6, notify6, &SD6);
   SD6.usart = USART6;
   SD6.clock = STM32_USART6CLK;
-#if defined(STM32_USART6_NUMBER)
+#if !defined(STM32_USART6_SUPPRESS_ISR) && defined(STM32_USART6_NUMBER)
   nvicEnableVector(STM32_USART6_NUMBER, STM32_SERIAL_USART6_PRIORITY);
 #endif
 #endif
@@ -661,7 +661,7 @@ void sd_lld_init(void) {
   oqObjectInit(&SD7.oqueue, sd_out_buf7, sizeof sd_out_buf7, notify7, &SD7);
   SD7.usart = UART7;
   SD7.clock = STM32_UART7CLK;
-#if defined(STM32_UART7_NUMBER)
+#if !defined(STM32_UART7_SUPPRESS_ISR) && defined(STM32_UART7_NUMBER)
   nvicEnableVector(STM32_UART7_NUMBER, STM32_SERIAL_UART7_PRIORITY);
 #endif
 #endif
@@ -672,7 +672,7 @@ void sd_lld_init(void) {
   oqObjectInit(&SD8.oqueue, sd_out_buf8, sizeof sd_out_buf8, notify8, &SD8);
   SD8.usart = UART8;
   SD8.clock = STM32_UART8CLK;
-#if defined(STM32_UART8_NUMBER)
+#if !defined(STM32_UART8_SUPPRESS_ISR) && defined(STM32_UART8_NUMBER)
   nvicEnableVector(STM32_UART8_NUMBER, STM32_SERIAL_UART8_PRIORITY);
 #endif
 #endif
@@ -683,7 +683,7 @@ void sd_lld_init(void) {
   oqObjectInit(&LPSD1.oqueue, sd_out_buflp1, sizeof sd_out_buflp1, notifylp1, &LPSD1);
   LPSD1.usart = LPUART1;
   LPSD1.clock = STM32_LPUART1CLK;
-#if defined(STM32_LPUART1_NUMBER)
+#if !defined(STM32_LPUART1_SUPPRESS_ISR) && defined(STM32_LPUART1_NUMBER)
   nvicEnableVector(STM32_LPUART1_NUMBER, STM32_SERIAL_LPUART1_PRIORITY);
 #endif
 #endif
