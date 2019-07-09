@@ -133,14 +133,6 @@
 #endif
 
 /**
- * @brief   USART3..8 interrupt priority level setting.
- * @note    Only valid on those devices with a shared IRQ.
- */
-#if !defined(STM32_UART_USART3_8_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_UART_USART3_8_IRQ_PRIORITY    12
-#endif
-
-/**
  * @brief   UART4 interrupt priority level setting.
  */
 #if !defined(STM32_UART_UART4_IRQ_PRIORITY) || defined(__DOXYGEN__)
@@ -304,58 +296,53 @@
 #error "UART driver activated but no USART/UART peripheral assigned"
 #endif
 
-#if STM32_UART_USE_USART1 &&                                                \
+#if !defined(STM32_USART1_SUPPRESS_ISR) &&                                  \
+    STM32_UART_USE_USART1 &&                                                \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_UART_USART1_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to USART1"
 #endif
 
-#if STM32_UART_USE_USART2 &&                                                \
+#if !defined(STM32_USART2_SUPPRESS_ISR) &&                                  \
+    STM32_UART_USE_USART2 &&                                                \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_UART_USART2_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to USART2"
 #endif
 
-#if defined(STM32_USART3_8_HANDLER)
-
-#if (STM32_UART_USE_USART3 || STM32_UART_USE_UART4  ||                      \
-     STM32_UART_USE_UART5  || STM32_UART_USE_USART6 ||                      \
-     STM32_UART_USE_UART7  || STM32_UART_USE_UART8) &&                      \
-     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SERIAL_USART3_8_PRIORITY)
-#error "Invalid IRQ priority assigned to USART3..8"
-#endif
-
-#else /* !defined(STM32_USART3_8_HANDLER) */
-
-#if STM32_UART_USE_USART3 &&                                                \
+#if !defined(STM32_USART3_SUPPRESS_ISR) &&                                  \
+    STM32_UART_USE_USART3 &&                                                \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_UART_USART3_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to USART3"
 #endif
 
-#if STM32_UART_USE_UART4 &&                                                 \
+#if !defined(STM32_UART4_SUPPRESS_ISR) &&                                   \
+    STM32_UART_USE_UART4 &&                                                 \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_UART_UART4_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to UART4"
 #endif
 
-#if STM32_UART_USE_UART5 &&                                                 \
+#if !defined(STM32_UART5_SUPPRESS_ISR) &&                                   \
+    STM32_UART_USE_UART5 &&                                                 \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_UART_UART5_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to UART5"
 #endif
 
-#if STM32_UART_USE_USART6 &&                                                \
+#if !defined(STM32_USART6_SUPPRESS_ISR) &&                                  \
+    STM32_UART_USE_USART6 &&                                                \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_UART_USART6_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to USART6"
 #endif
 
-#if STM32_UART_USE_UART7 &&                                                 \
+#if !defined(STM32_UART7_SUPPRESS_ISR) &&                                   \
+    STM32_UART_USE_UART7 &&                                                 \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_UART_UART7_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to UART7"
 #endif
 
-#if STM32_UART_USE_UART8 &&                                                \
+#if !defined(STM32_UART8_SUPPRESS_ISR) &&                                   \
+    STM32_UART_USE_UART8 &&                                                 \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_UART_UART8_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to UART8"
 #endif
-
-#endif /* !defined(STM32_USART3_8_HANDLER) */
 
 /* Check on DMA priorities.*/
 #if STM32_UART_USE_USART1 &&                                                \

@@ -687,14 +687,6 @@ void sd_lld_init(void) {
   nvicEnableVector(STM32_LPUART1_NUMBER, STM32_SERIAL_LPUART1_PRIORITY);
 #endif
 #endif
-
-#if STM32_SERIAL_USE_USART3 || STM32_SERIAL_USE_UART4  ||                   \
-    STM32_SERIAL_USE_UART5  || STM32_SERIAL_USE_USART6 ||                   \
-    STM32_SERIAL_USE_UART7  || STM32_SERIAL_USE_UART8
-#if defined(STM32_USART3_8_HANDLER)
-  nvicEnableVector(STM32_USART3_8_NUMBER, STM32_SERIAL_USART3_8_PRIORITY);
-#endif
-#endif
 }
 
 /**

@@ -387,6 +387,7 @@ static void serve_usart_irq(UARTDriver *uartp) {
 /*===========================================================================*/
 
 #if STM32_UART_USE_USART1 || defined(__DOXYGEN__)
+#if !defined(STM32_USART1_SUPPRESS_ISR)
 #if !defined(STM32_USART1_HANDLER)
 #error "STM32_USART1_HANDLER not defined"
 #endif
@@ -403,9 +404,11 @@ OSAL_IRQ_HANDLER(STM32_USART1_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif /* STM32_UART_USE_USART1 */
+#endif
+#endif
 
 #if STM32_UART_USE_USART2 || defined(__DOXYGEN__)
+#if !defined(STM32_USART2_SUPPRESS_ISR)
 #if !defined(STM32_USART2_HANDLER)
 #error "STM32_USART2_HANDLER not defined"
 #endif
@@ -422,47 +425,11 @@ OSAL_IRQ_HANDLER(STM32_USART2_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif /* STM32_UART_USE_USART2 */
-
-#if defined(STM32_USART3_8_HANDLER)
-#if STM32_UART_USE_USART3 || STM32_UART_USE_UART4  ||                   \
-    STM32_UART_USE_UART5  || STM32_UART_USE_USART6 ||                   \
-    STM32_UART_USE_UART7  || STM32_UART_USE_UART8  || defined(__DOXYGEN__)
-/**
- * @brief   USART3-8 shared interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_USART3_8_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-#if STM32_UART_USE_USART3
-  serve_usart_irq(&UARTD3);
 #endif
-#if STM32_UART_USE_UART4
-  serve_usart_irq(&UARTD4);
 #endif
-#if STM32_UART_USE_UART5
-  serve_usart_irq(&UARTD5);
-#endif
-#if STM32_UART_USE_USART6
-  serve_usart_irq(&UARTD6);
-#endif
-#if STM32_UART_USE_UART7
-  serve_usart_irq(&UARTD7);
-#endif
-#if STM32_UART_USE_UART8
-  serve_usart_irq(&UARTD8);
-#endif
-
-  OSAL_IRQ_EPILOGUE();
-}
-#endif
-
-#else /* !defined(STM32_USART3_8_HANDLER) */
 
 #if STM32_UART_USE_USART3 || defined(__DOXYGEN__)
+#if !defined(STM32_USART3_SUPPRESS_ISR)
 #if !defined(STM32_USART3_HANDLER)
 #error "STM32_USART3_HANDLER not defined"
 #endif
@@ -479,9 +446,11 @@ OSAL_IRQ_HANDLER(STM32_USART3_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif /* STM32_UART_USE_USART3 */
+#endif
+#endif
 
 #if STM32_UART_USE_UART4 || defined(__DOXYGEN__)
+#if !defined(STM32_UART4_SUPPRESS_ISR)
 #if !defined(STM32_UART4_HANDLER)
 #error "STM32_UART4_HANDLER not defined"
 #endif
@@ -498,9 +467,11 @@ OSAL_IRQ_HANDLER(STM32_UART4_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif /* STM32_UART_USE_UART4 */
+#endif
+#endif
 
 #if STM32_UART_USE_UART5 || defined(__DOXYGEN__)
+#if !defined(STM32_UART5_SUPPRESS_ISR)
 #if !defined(STM32_UART5_HANDLER)
 #error "STM32_UART5_HANDLER not defined"
 #endif
@@ -517,9 +488,11 @@ OSAL_IRQ_HANDLER(STM32_UART5_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif /* STM32_UART_USE_UART5 */
+#endif
+#endif
 
 #if STM32_UART_USE_USART6 || defined(__DOXYGEN__)
+#if !defined(STM32_USART6_SUPPRESS_ISR)
 #if !defined(STM32_USART6_HANDLER)
 #error "STM32_USART6_HANDLER not defined"
 #endif
@@ -536,9 +509,11 @@ OSAL_IRQ_HANDLER(STM32_USART6_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif /* STM32_UART_USE_USART6 */
+#endif
+#endif
 
 #if STM32_UART_USE_UART7 || defined(__DOXYGEN__)
+#if !defined(STM32_UART7_SUPPRESS_ISR)
 #if !defined(STM32_UART7_HANDLER)
 #error "STM32_UART7_HANDLER not defined"
 #endif
@@ -555,9 +530,11 @@ OSAL_IRQ_HANDLER(STM32_UART7_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif /* STM32_UART_USE_UART7 */
+#endif
+#endif
 
 #if STM32_UART_USE_UART8 || defined(__DOXYGEN__)
+#if !defined(STM32_UART8_SUPPRESS_ISR)
 #if !defined(STM32_UART8_HANDLER)
 #error "STM32_UART8_HANDLER not defined"
 #endif
@@ -574,9 +551,8 @@ OSAL_IRQ_HANDLER(STM32_UART8_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif /* STM32_UART_USE_UART8 */
-
-#endif /* !defined(STM32_USART3_8_HANDLER) */
+#endif
+#endif
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -682,14 +658,6 @@ void uart_lld_init(void) {
   UARTD8.dmatx   = NULL;
 #if defined(STM32_UART8_NUMBER)
   nvicEnableVector(STM32_UART8_NUMBER, STM32_UART_UART8_IRQ_PRIORITY);
-#endif
-#endif
-
-#if STM32_UART_USE_USART3 || STM32_UART_USE_UART4  ||                       \
-    STM32_UART_USE_UART5  || STM32_UART_USE_USART6 ||                       \
-    STM32_UART_USE_UART7  || STM32_UART_USE_UART8
-#if defined(STM32_USART3_8_HANDLER)
-  nvicEnableVector(STM32_USART3_8_NUMBER, STM32_UART_USART3_8_IRQ_PRIORITY);
 #endif
 #endif
 }
