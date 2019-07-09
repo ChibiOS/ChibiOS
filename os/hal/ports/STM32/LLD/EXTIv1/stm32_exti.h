@@ -66,6 +66,25 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
+#if !defined(STM32_EXTI_NUM_LINES)
+#error "STM32_EXTI_NUM_LINES not defined in registry"
+#endif
+
+/* Checking for presence of bank 2 registers. If the definition is not
+   present in registry then it is iferred by the number of channels (which
+   is not an always-good method, see G0.*/
+#if !defined(STM32_EXTI_HAS_GROUP2)
+#if STM32_EXTI_NUM_LINES <= 32
+#define STM32_EXTI_HAS_GROUP2       FALSE
+#else
+#define STM32_EXTI_HAS_GROUP2       TRUE
+#endif
+#endif /* !defined(STM32_EXTI_TYPE) */
+
 /* If not defined then it is a classic EXTI (without EXTICR and separate PR
    registers for raising and falling edges.*/
 #if !defined(STM32_EXTI_TYPE)
@@ -75,14 +94,6 @@
 #if (STM32_EXTI_TYPE != EXTI_TYPE_CLASSIC) &&                               \
     (STM32_EXTI_TYPE != EXTI_TYPE_NEWG0)
 #error "invalid STM32_EXTI_TYPE"
-#endif
-
-/*===========================================================================*/
-/* Derived constants and error checks.                                       */
-/*===========================================================================*/
-
-#if !defined(STM32_EXTI_NUM_LINES)
-#error "STM32_EXTI_NUM_LINES not defined in registry"
 #endif
 
 #if (STM32_EXTI_NUM_LINES < 0) || (STM32_EXTI_NUM_LINES > 63)
@@ -138,12 +149,20 @@ typedef uint32_t extimode_t;
  *
  * @api
  */
+#if (STM32_EXTI_TYPE == EXTI_TYPE_CLASSIC) || defined(__DOXYGEN__)
 #define extiClearGroup1(mask) do {                                          \
   osalDbgAssert(((mask) & STM32_EXTI_IMR1_MASK) == 0U, "fixed lines");      \
   EXTI->PR1 = (uint32_t)(mask);                                             \
 } while (false)
+#else
+#define extiClearGroup1(mask) do {                                          \
+  osalDbgAssert(((mask) & STM32_EXTI_IMR1_MASK) == 0U, "fixed lines");      \
+  EXTI->RPR1 = (uint32_t)(mask);                                            \
+  EXTI->FPR1 = (uint32_t)(mask);                                            \
+} while (false)
+#endif
 
-#if (STM32_EXTI_NUM_LINES > 32) || defined(__DOXYGEN__)
+#if (STM32_EXTI_HAS_GROUP2 == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   STM32 EXTI group 2 IRQ status clearing.
  *
@@ -151,11 +170,19 @@ typedef uint32_t extimode_t;
  *
  * @api
  */
+#if (STM32_EXTI_TYPE == EXTI_TYPE_CLASSIC) || defined(__DOXYGEN__)
 #define extiClearGroup2(mask) do {                                          \
   osalDbgAssert(((mask) & STM32_EXTI_IMR2_MASK) == 0U, "fixed lines");      \
   EXTI->PR2 = (uint32_t)(mask);                                             \
 } while (false)
-#endif /* STM32_EXTI_NUM_LINES > 32 */
+#else
+#define extiClearGroup2(mask) do {                                          \
+  osalDbgAssert(((mask) & STM32_EXTI_IMR2_MASK) == 0U, "fixed lines");      \
+  EXTI->RPR2 = (uint32_t)(mask);                                            \
+  EXTI->FPR2 = (uint32_t)(mask);                                            \
+} while (false)
+#endif
+#endif /* STM32_EXTI_HAS_GROUP2 == TRUE */
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -165,9 +192,9 @@ typedef uint32_t extimode_t;
 extern "C" {
 #endif
   void extiEnableGroup1(uint32_t mask, extimode_t mode);
-#if (STM32_EXTI_NUM_LINES > 32) || defined(__DOXYGEN__)
+#if (STM32_EXTI_HAS_GROUP2 == TRUE) || defined(__DOXYGEN__)
   void extiEnableGroup2(uint32_t mask, extimode_t mode);
-#endif /* STM32_EXTI_NUM_LINES > 32 */
+#endif /* STM32_EXTI_HAS_GROUP2 == TRUE */
   void extiEnableLine(extiline_t line, extimode_t mode);
   void extiClearLine(extiline_t line);
   #ifdef __cplusplus

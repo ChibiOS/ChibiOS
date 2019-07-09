@@ -44,7 +44,7 @@
 #define STM32_HSIDIV_VALUE                  1
 #define STM32_HSI16_ENABLED                 TRUE
 #define STM32_HSE_ENABLED                   FALSE
-#define STM32_LSI_ENABLED                   FALSE
+#define STM32_LSI_ENABLED                   TRUE
 #define STM32_LSE_ENABLED                   FALSE
 #define STM32_SW                            STM32_SW_PLLRCLK
 #define STM32_PLLSRC                        STM32_PLLSRC_HSI16
@@ -208,6 +208,6 @@
 /*
  * WDG driver system settings.
  */
-#define STM32_WDG_USE_IWDG                  FALSE
+#define STM32_WDG_USE_IWDG                  TRUE
 
 #endif /* MCUCONF_H */

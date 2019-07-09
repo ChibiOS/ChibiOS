@@ -1211,6 +1211,12 @@
 #endif
 
 /*
+ * Compatibility definitions.
+ */
+#define STM32_PCLK1                 STM32_PCLK
+#define STM32_PCLK2                 STM32_PCLK
+
+/*
  * APB frequency check.
  */
 #if STM32_PCLK > STM32_PCLK_MAX

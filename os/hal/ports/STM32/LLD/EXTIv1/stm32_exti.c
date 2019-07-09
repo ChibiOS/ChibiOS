@@ -72,7 +72,12 @@ void extiEnableGroup1(uint32_t mask, extimode_t mode) {
     EXTI->EMR1  &= ~mask;
     EXTI->RTSR1 &= ~mask;
     EXTI->FTSR1 &= ~mask;
+#if STM32_EXTI_TYPE == EXTI_TYPE_CLASSIC
     EXTI->PR1    =  mask;
+#else
+    EXTI->RPR1   =  mask;
+    EXTI->FPR1   =  mask;
+#endif
   }
   else {
     /* Programming edge registers.*/
@@ -101,7 +106,7 @@ void extiEnableGroup1(uint32_t mask, extimode_t mode) {
   }
 }
 
-#if (STM32_EXTI_NUM_LINES > 32) || defined(__DOXYGEN__)
+#if (STM32_EXTI_HAS_GROUP2 == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   STM32 EXTI group 2 lines initialization.
  *
@@ -121,7 +126,12 @@ void extiEnableGroup2(uint32_t mask, extimode_t mode) {
     EXTI->EMR2  &= ~mask;
     EXTI->RTSR2 &= ~mask;
     EXTI->FTSR2 &= ~mask;
+#if STM32_EXTI_TYPE == EXTI_TYPE_CLASSIC
     EXTI->PR2    =  mask;
+#else
+    EXTI->RPR2   =  mask;
+    EXTI->FPR2   =  mask;
+#endif
   }
   else {
     /* Programming edge registers.*/
@@ -149,7 +159,7 @@ void extiEnableGroup2(uint32_t mask, extimode_t mode) {
     }
   }
 }
-#endif /* STM32_EXTI_NUM_LINES > 32 */
+#endif /* STM32_EXTI_HAS_GROUP2 == TRUE */
 
 /**
  * @brief   STM32 EXTI line initialization.
@@ -165,11 +175,11 @@ void extiEnableLine(extiline_t line, extimode_t mode) {
   osalDbgCheck(line < STM32_EXTI_NUM_LINES);
   osalDbgCheck((mode & ~EXTI_MODE_MASK) == 0U);
 
-#if STM32_EXTI_NUM_LINES > 32
+#if STM32_EXTI_HAS_GROUP2 == TRUE
   if (line < 32) {
 #endif
     extiEnableGroup1(mask, mode);
-#if STM32_EXTI_NUM_LINES > 32
+#if STM32_EXTI_HAS_GROUP2 == TRUE
   }
   else {
     extiEnableGroup2(mask, mode);
@@ -189,11 +199,11 @@ void extiClearLine(extiline_t line) {
 
   osalDbgCheck(line < STM32_EXTI_NUM_LINES);
 
-#if STM32_EXTI_NUM_LINES > 32
+#if STM32_EXTI_HAS_GROUP2 == TRUE
   if (line < 32) {
 #endif
     extiClearGroup1(mask);
-#if STM32_EXTI_NUM_LINES > 32
+#if STM32_EXTI_HAS_GROUP2 == TRUE
   }
   else {
     extiClearGroup2(mask);
