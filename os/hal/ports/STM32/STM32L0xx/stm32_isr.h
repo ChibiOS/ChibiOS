@@ -84,6 +84,31 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+/* IRQ priority checks.*/
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI0_1_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI0_1_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI2_3_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI2_3_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI4_15_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI4_15_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI16_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI16_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI17_20_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI17_20_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI21_22_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI21_22_PRIORITY"
+#endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/

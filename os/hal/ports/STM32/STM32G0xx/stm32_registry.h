@@ -127,18 +127,6 @@
 #define STM32_EXTI_NUM_LINES                16
 #define STM32_EXTI_IMR1_MASK                0xFFF80000U
 
-#define STM32_EXTI_LINE01_HANDLER           Vector54
-#define STM32_EXTI_LINE23_HANDLER           Vector58
-#define STM32_EXTI_LINE4_15_HANDLER         Vector5C
-#define STM32_EXTI_LINE16_HANDLER           Vector44
-#define STM32_EXTI_LINE1921_HANDLER         Vector48
-
-#define STM32_EXTI_LINE01_NUMBER            5
-#define STM32_EXTI_LINE23_NUMBER            6
-#define STM32_EXTI_LINE4_15_NUMBER          7
-#define STM32_EXTI_LINE16_NUMBER            1
-#define STM32_EXTI_LINE1921_NUMBER          2
-
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
 #define STM32_HAS_GPIOB                     TRUE
@@ -336,18 +324,6 @@
 #define STM32_EXTI_NUM_LINES                33
 #define STM32_EXTI_IMR1_MASK                0xFFF80000U
 #define STM32_EXTI_IMR2_MASK                0xFFFFFFFFU
-
-#define STM32_EXTI_LINE01_HANDLER           Vector54
-#define STM32_EXTI_LINE23_HANDLER           Vector58
-#define STM32_EXTI_LINE4_15_HANDLER         Vector5C
-#define STM32_EXTI_LINE16_HANDLER           Vector44
-#define STM32_EXTI_LINE1921_HANDLER         Vector48
-
-#define STM32_EXTI_LINE01_NUMBER            5
-#define STM32_EXTI_LINE23_NUMBER            6
-#define STM32_EXTI_LINE4_15_NUMBER          7
-#define STM32_EXTI_LINE16_NUMBER            1
-#define STM32_EXTI_LINE1921_NUMBER          2
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE

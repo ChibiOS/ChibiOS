@@ -431,44 +431,6 @@ OSAL_IRQ_HANDLER(STM32_USART2_HANDLER) {
 #endif
 #endif
 
-#if defined(STM32_USART3_8_HANDLER)
-#if STM32_SERIAL_USE_USART3 || STM32_SERIAL_USE_UART4  ||                   \
-    STM32_SERIAL_USE_UART5  || STM32_SERIAL_USE_USART6 ||                   \
-    STM32_SERIAL_USE_UART7  || STM32_SERIAL_USE_UART8  || defined(__DOXYGEN__)
-/**
- * @brief   USART3..8 interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_USART3_8_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-#if STM32_SERIAL_USE_USART3
-  sd_lld_serve_interrupt(&SD3);
-#endif
-#if STM32_SERIAL_USE_UART4
-  sd_lld_serve_interrupt(&SD4);
-#endif
-#if STM32_SERIAL_USE_UART5
-  sd_lld_serve_interrupt(&SD5);
-#endif
-#if STM32_SERIAL_USE_USART6
-  sd_lld_serve_interrupt(&SD6);
-#endif
-#if STM32_SERIAL_USE_UART7
-  sd_lld_serve_interrupt(&SD7);
-#endif
-#if STM32_SERIAL_USE_UART8
-  sd_lld_serve_interrupt(&SD8);
-#endif
-
-  OSAL_IRQ_EPILOGUE();
-}
-#endif
-
-#else /* !defined(STM32_USART3_8_HANDLER) */
-
 #if STM32_SERIAL_USE_USART3 || defined(__DOXYGEN__)
 #if !defined(STM32_USART3_SUPPRESS_ISR)
 #if !defined(STM32_USART3_HANDLER)
@@ -594,8 +556,6 @@ OSAL_IRQ_HANDLER(STM32_UART8_HANDLER) {
 }
 #endif
 #endif
-
-#endif /* !defined(STM32_USART3_8_HANDLER) */
 
 #if STM32_SERIAL_USE_LPUART1 || defined(__DOXYGEN__)
 #if !defined(STM32_LPUART1_SUPPRESS_ISR)
