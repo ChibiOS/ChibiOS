@@ -533,6 +533,14 @@
 #error "Using a wrong mcuconf.h file, STM32L0xx_MCUCONF not defined"
 #endif
 
+#if defined(STM32L072xx) && !defined(STM32G0702_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32G072_MCUCONF not defined"
+
+#elif defined(STM32L073xx) && !defined(STM32L073_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32L073_MCUCONF not defined"
+
+#endif
+
 /*
  * Board files sanity checks.
  */

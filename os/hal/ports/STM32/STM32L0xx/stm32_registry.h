@@ -1372,14 +1372,6 @@
 
 /* USB attributes.*/
 #define STM32_HAS_USB                       FALSE
-#define STM32_USB_ACCESS_SCHEME_2x16        TRUE
-#define STM32_USB_PMA_SIZE                  1024
-#define STM32_USB_HAS_BCDR                  TRUE
-#define STM32_USB1_LP_HANDLER               VectorBC
-#define STM32_USB1_LP_NUMBER                31
-#define STM32_USB1_HP_HANDLER               VectorBC
-#define STM32_USB1_HP_NUMBER                31
-
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
 

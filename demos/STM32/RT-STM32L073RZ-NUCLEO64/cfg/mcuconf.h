@@ -59,8 +59,10 @@
 #define STM32_PPRE2                         STM32_PPRE2_DIV1
 #define STM32_MCOSEL                        STM32_MCOSEL_NOCLOCK
 #define STM32_MCOPRE                        STM32_MCOPRE_DIV1
-#define STM32_RTCSEL                        STM32_RTCSEL_LSE
-#define STM32_RTCPRE                        STM32_RTCPRE_DIV2
+
+/*
+ * Peripherals clock sources.
+ */
 #define STM32_USART1SEL                     STM32_USART1SEL_APB
 #define STM32_USART2SEL                     STM32_USART2SEL_APB
 #define STM32_LPUART1SEL                    STM32_LPUART1SEL_APB
@@ -68,6 +70,8 @@
 #define STM32_I2C3SEL                       STM32_I2C3SEL_APB
 #define STM32_LPTIM1SEL                     STM32_LPTIM1SEL_APB
 #define STM32_HSI48SEL                      STM32_HSI48SEL_HSI48
+#define STM32_RTCSEL                        STM32_RTCSEL_LSE
+#define STM32_RTCPRE                        STM32_RTCPRE_DIV2
 
 /*
  * IRQ system settings.
@@ -100,8 +104,8 @@
 #define STM32_DAC_DUAL_MODE                 FALSE
 #define STM32_DAC_USE_DAC1_CH1              FALSE
 #define STM32_DAC_USE_DAC1_CH2              FALSE
-#define STM32_DAC_DAC1_CH1_IRQ_PRIORITY     10
-#define STM32_DAC_DAC1_CH2_IRQ_PRIORITY     10
+#define STM32_DAC_DAC1_CH1_IRQ_PRIORITY     3
+#define STM32_DAC_DAC1_CH2_IRQ_PRIORITY     3
 #define STM32_DAC_DAC1_CH1_DMA_PRIORITY     2
 #define STM32_DAC_DAC1_CH2_DMA_PRIORITY     2
 #define STM32_DAC_DAC1_CH1_DMA_STREAM       STM32_DMA_STREAM_ID(1, 2)
@@ -111,16 +115,16 @@
  * GPT driver system settings.
  */
 #define STM32_GPT_USE_TIM2                  FALSE
-#define STM32_GPT_TIM2_IRQ_PRIORITY         2
 #define STM32_GPT_USE_TIM3                  FALSE
-#define STM32_GPT_TIM3_IRQ_PRIORITY         2
 #define STM32_GPT_USE_TIM6                  FALSE
-#define STM32_GPT_TIM6_IRQ_PRIORITY         2
 #define STM32_GPT_USE_TIM7                  FALSE
-#define STM32_GPT_TIM7_IRQ_PRIORITY         2
 #define STM32_GPT_USE_TIM21                 FALSE
-#define STM32_GPT_TIM21_IRQ_PRIORITY        2
 #define STM32_GPT_USE_TIM22                 FALSE
+#define STM32_GPT_TIM2_IRQ_PRIORITY         2
+#define STM32_GPT_TIM3_IRQ_PRIORITY         2
+#define STM32_GPT_TIM6_IRQ_PRIORITY         2
+#define STM32_GPT_TIM7_IRQ_PRIORITY         2
+#define STM32_GPT_TIM21_IRQ_PRIORITY        2
 #define STM32_GPT_TIM22_IRQ_PRIORITY        2
 
 /*
@@ -149,12 +153,12 @@
  * ICU driver system settings.
  */
 #define STM32_ICU_USE_TIM2                  FALSE
-#define STM32_ICU_TIM2_IRQ_PRIORITY         3
 #define STM32_ICU_USE_TIM3                  FALSE
-#define STM32_ICU_TIM3_IRQ_PRIORITY         3
 #define STM32_ICU_USE_TIM21                 FALSE
-#define STM32_ICU_TIM21_IRQ_PRIORITY        3
 #define STM32_ICU_USE_TIM22                 FALSE
+#define STM32_ICU_TIM2_IRQ_PRIORITY         3
+#define STM32_ICU_TIM3_IRQ_PRIORITY         3
+#define STM32_ICU_TIM21_IRQ_PRIORITY        3
 #define STM32_ICU_TIM22_IRQ_PRIORITY        3
 
 /*
@@ -162,12 +166,12 @@
  */
 #define STM32_PWM_USE_ADVANCED              FALSE
 #define STM32_PWM_USE_TIM2                  FALSE
-#define STM32_PWM_TIM2_IRQ_PRIORITY         3
 #define STM32_PWM_USE_TIM3                  FALSE
-#define STM32_PWM_TIM3_IRQ_PRIORITY         3
 #define STM32_PWM_USE_TIM21                 FALSE
-#define STM32_PWM_TIM21_IRQ_PRIORITY        3
 #define STM32_PWM_USE_TIM22                 FALSE
+#define STM32_PWM_TIM2_IRQ_PRIORITY         3
+#define STM32_PWM_TIM3_IRQ_PRIORITY         3
+#define STM32_PWM_TIM21_IRQ_PRIORITY        3
 #define STM32_PWM_TIM22_IRQ_PRIORITY        3
 
 /*
