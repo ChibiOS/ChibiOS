@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added mcuconf.h generator for STM32L052/L053/L062/L063.
 - NEW: Added mcuconf.h generator for STM32L072/L073.
 - NEW: Initial STM32G0xx support in HAL.
 - NEW: Implemented TIMPRE setting for STM32F7xx HAL.

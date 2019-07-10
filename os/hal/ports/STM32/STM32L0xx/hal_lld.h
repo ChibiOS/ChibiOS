@@ -533,7 +533,13 @@
 #error "Using a wrong mcuconf.h file, STM32L0xx_MCUCONF not defined"
 #endif
 
-#if defined(STM32L072xx) && !defined(STM32G0702_MCUCONF)
+#if defined(STM32L052xx) && !defined(STM32L052_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32G052_MCUCONF not defined"
+
+#elif defined(STM32L053xx) && !defined(STM32L053_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32L053_MCUCONF not defined"
+
+#elif defined(STM32L072xx) && !defined(STM32L072_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32G072_MCUCONF not defined"
 
 #elif defined(STM32L073xx) && !defined(STM32L073_MCUCONF)

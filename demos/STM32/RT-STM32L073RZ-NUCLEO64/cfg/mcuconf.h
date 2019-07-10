@@ -25,7 +25,7 @@
  * driver is enabled in halconf.h.
  *
  * IRQ priorities:
- * 3...0       Lowest...Highest.
+ * 3...0        Lowest...Highest.
  *
  * DMA priorities:
  * 0...3        Lowest...Highest.
@@ -164,7 +164,6 @@
 /*
  * PWM driver system settings.
  */
-#define STM32_PWM_USE_ADVANCED              FALSE
 #define STM32_PWM_USE_TIM2                  FALSE
 #define STM32_PWM_USE_TIM3                  FALSE
 #define STM32_PWM_USE_TIM21                 FALSE
