@@ -29,6 +29,51 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @name    ISRs suppressed in standard drivers
+ * @{
+ */
+#define STM32_USART1_SUPPRESS_ISR
+#define STM32_USART2_SUPPRESS_ISR
+#define STM32_UART4_SUPPRESS_ISR
+#define STM32_UART5_SUPPRESS_ISR
+#define STM32_LPUART1_SUPPRESS_ISR
+/** @} */
+
+/**
+ * @name    ISR names and numbers remapping
+ * @{
+ */
+/*
+ * EXTI unit.
+ */
+#define STM32_EXTI_LINE01_HANDLER           Vector54
+#define STM32_EXTI_LINE23_HANDLER           Vector58
+#define STM32_EXTI_LINE4_15_HANDLER         Vector5C
+#define STM32_EXTI_LINE16_HANDLER           Vector44
+#define STM32_EXTI_LINE171920_HANDLER       Vector48
+#define STM32_EXTI_LINE2122_HANDLER         Vector70
+
+#define STM32_EXTI_LINE01_NUMBER            5
+#define STM32_EXTI_LINE23_NUMBER            6
+#define STM32_EXTI_LINE4_15_NUMBER          7
+#define STM32_EXTI_LINE16_NUMBER            1
+#define STM32_EXTI_LINE171920_NUMBER        2
+#define STM32_EXTI_LINE2122_NUMBER          12
+
+/*
+ * USART/UART units.
+ */
+#define STM32_USART1_HANDLER                VectorAC
+#define STM32_USART2_HANDLER                VectorB0
+#define STM32_UART4_5_HANDLER               Vector78
+#define STM32_LPUART1_HANDLER               VectorB4
+#define STM32_USART1_NUMBER                 27
+#define STM32_USART2_NUMBER                 28
+#define STM32_UART4_5_NUMBER                14
+#define STM32_LPUART1_NUMBER                29
+/** @} */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -78,6 +123,34 @@
 #if !defined(STM32_IRQ_EXTI21_22_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_IRQ_EXTI21_22_PRIORITY        3
 #endif
+
+/**
+ * @brief   USART1 interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_USART1_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_USART1_PRIORITY           3
+#endif
+
+/**
+ * @brief   USART2 interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_USART2_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_USART2_PRIORITY           3
+#endif
+
+/**
+ * @brief   UART4 and 5 interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_UART4_5_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_UART4_5_PRIORITY          3
+#endif
+
+/**
+ * @brief   LPUART1 interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_LPUART1_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_LPUART1_PRIORITY          3
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -107,6 +180,22 @@
 
 #if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI21_22_PRIORITY)
 #error "Invalid IRQ priority assigned to STM32_IRQ_EXTI21_22_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_USART1_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_USART1_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_USART2_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_USART2_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_UART4_5_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_UART4_5_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_LPUART1_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_LPUART1_PRIORITY"
 #endif
 
 /*===========================================================================*/

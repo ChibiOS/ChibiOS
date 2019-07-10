@@ -120,20 +120,6 @@
 #define STM32_EXTI_NUM_LINES                23
 #define STM32_EXTI_IMR1_MASK                0xFF840000U
 
-#define STM32_EXTI_LINE01_HANDLER           Vector54
-#define STM32_EXTI_LINE23_HANDLER           Vector58
-#define STM32_EXTI_LINE4_15_HANDLER         Vector5C
-#define STM32_EXTI_LINE16_HANDLER           Vector44
-#define STM32_EXTI_LINE171920_HANDLER       Vector48
-#define STM32_EXTI_LINE2122_HANDLER         Vector70
-
-#define STM32_EXTI_LINE01_NUMBER            5
-#define STM32_EXTI_LINE23_NUMBER            6
-#define STM32_EXTI_LINE4_15_NUMBER          7
-#define STM32_EXTI_LINE16_NUMBER            1
-#define STM32_EXTI_LINE171920_NUMBER        2
-#define STM32_EXTI_LINE2122_NUMBER          12
-
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
 #define STM32_HAS_GPIOB                     TRUE
@@ -223,8 +209,6 @@
 
 /* USART attributes.*/
 #define STM32_HAS_USART2                    TRUE
-#define STM32_USART2_HANDLER                VectorB0
-#define STM32_USART2_NUMBER                 28
 #define STM32_USART2_RX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 5) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 6))
 #define STM32_USART2_RX_DMA_CHN             0x00440000
@@ -233,8 +217,6 @@
 #define STM32_USART2_TX_DMA_CHN             0x04004000
 
 #define STM32_HAS_LPUART1                   TRUE
-#define STM32_LPUART1_HANDLER               VectorB4
-#define STM32_LPUART1_NUMBER                29
 
 #define STM32_HAS_USART1                    FALSE
 #define STM32_HAS_USART3                    FALSE
@@ -331,20 +313,6 @@
 #define STM32_EXTI_NUM_LINES                23
 #define STM32_EXTI_IMR1_MASK                0xFF840000U
 
-#define STM32_EXTI_LINE01_HANDLER           Vector54
-#define STM32_EXTI_LINE23_HANDLER           Vector58
-#define STM32_EXTI_LINE4_15_HANDLER         Vector5C
-#define STM32_EXTI_LINE16_HANDLER           Vector44
-#define STM32_EXTI_LINE171920_HANDLER       Vector48
-#define STM32_EXTI_LINE2122_HANDLER         Vector70
-
-#define STM32_EXTI_LINE01_NUMBER            5
-#define STM32_EXTI_LINE23_NUMBER            6
-#define STM32_EXTI_LINE4_15_NUMBER          7
-#define STM32_EXTI_LINE16_NUMBER            1
-#define STM32_EXTI_LINE171920_NUMBER        2
-#define STM32_EXTI_LINE2122_NUMBER          12
-
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
 #define STM32_HAS_GPIOB                     TRUE
@@ -437,8 +405,6 @@
 
 /* USART attributes.*/
 #define STM32_HAS_USART2                    TRUE
-#define STM32_USART2_HANDLER                VectorB0
-#define STM32_USART2_NUMBER                 28
 #define STM32_USART2_RX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 5) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 6))
 #define STM32_USART2_RX_DMA_CHN             0x00440000
@@ -447,8 +413,6 @@
 #define STM32_USART2_TX_DMA_CHN             0x04004000
 
 #define STM32_HAS_LPUART1                   TRUE
-#define STM32_LPUART1_HANDLER               VectorB4
-#define STM32_LPUART1_NUMBER                29
 
 #define STM32_HAS_USART1                    FALSE
 #define STM32_HAS_USART3                    FALSE
@@ -544,20 +508,6 @@
 /* EXTI attributes.*/
 #define STM32_EXTI_NUM_LINES                23
 #define STM32_EXTI_IMR1_MASK                0xFF840000U
-
-#define STM32_EXTI_LINE01_HANDLER           Vector54
-#define STM32_EXTI_LINE23_HANDLER           Vector58
-#define STM32_EXTI_LINE4_15_HANDLER         Vector5C
-#define STM32_EXTI_LINE16_HANDLER           Vector44
-#define STM32_EXTI_LINE171920_HANDLER       Vector48
-#define STM32_EXTI_LINE2122_HANDLER         Vector70
-
-#define STM32_EXTI_LINE01_NUMBER            5
-#define STM32_EXTI_LINE23_NUMBER            6
-#define STM32_EXTI_LINE4_15_NUMBER          7
-#define STM32_EXTI_LINE16_NUMBER            1
-#define STM32_EXTI_LINE171920_NUMBER        2
-#define STM32_EXTI_LINE2122_NUMBER          12
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
@@ -673,8 +623,6 @@
 
 /* USART attributes.*/
 #define STM32_HAS_USART1                    TRUE
-#define STM32_USART1_HANDLER                VectorAC
-#define STM32_USART1_NUMBER                 27
 #define STM32_USART1_RX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 3) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 5))
 #define STM32_USART1_RX_DMA_CHN             0x00030300
@@ -683,8 +631,6 @@
 #define STM32_USART1_TX_DMA_CHN             0x00003030
 
 #define STM32_HAS_USART2                    TRUE
-#define STM32_USART2_HANDLER                VectorB0
-#define STM32_USART2_NUMBER                 28
 #define STM32_USART2_RX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 5) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 6))
 #define STM32_USART2_RX_DMA_CHN             0x00440000
@@ -693,8 +639,6 @@
 #define STM32_USART2_TX_DMA_CHN             0x04004000
 
 #define STM32_HAS_LPUART1                   TRUE
-#define STM32_LPUART1_HANDLER               VectorB4
-#define STM32_LPUART1_NUMBER                29
 
 #define STM32_HAS_USART3                    FALSE
 #define STM32_HAS_UART4                     FALSE
@@ -792,20 +736,6 @@
 /* EXTI attributes.*/
 #define STM32_EXTI_NUM_LINES                23
 #define STM32_EXTI_IMR1_MASK                0xFF840000U
-
-#define STM32_EXTI_LINE01_HANDLER           Vector54
-#define STM32_EXTI_LINE23_HANDLER           Vector58
-#define STM32_EXTI_LINE4_15_HANDLER         Vector5C
-#define STM32_EXTI_LINE16_HANDLER           Vector44
-#define STM32_EXTI_LINE171920_HANDLER       Vector48
-#define STM32_EXTI_LINE2122_HANDLER         Vector70
-
-#define STM32_EXTI_LINE01_NUMBER            5
-#define STM32_EXTI_LINE23_NUMBER            6
-#define STM32_EXTI_LINE4_15_NUMBER          7
-#define STM32_EXTI_LINE16_NUMBER            1
-#define STM32_EXTI_LINE171920_NUMBER        2
-#define STM32_EXTI_LINE2122_NUMBER          12
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
@@ -917,8 +847,6 @@
 
 /* USART attributes.*/
 #define STM32_HAS_USART1                    TRUE
-#define STM32_USART1_HANDLER                VectorAC
-#define STM32_USART1_NUMBER                 27
 #define STM32_USART1_RX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 3) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 5))
 #define STM32_USART1_RX_DMA_CHN             0x00030300
@@ -927,8 +855,6 @@
 #define STM32_USART1_TX_DMA_CHN             0x00003030
 
 #define STM32_HAS_USART2                    TRUE
-#define STM32_USART2_HANDLER                VectorB0
-#define STM32_USART2_NUMBER                 28
 #define STM32_USART2_RX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 5) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 6))
 #define STM32_USART2_RX_DMA_CHN             0x00440000
@@ -937,8 +863,6 @@
 #define STM32_USART2_TX_DMA_CHN             0x04004000
 
 #define STM32_HAS_LPUART1                   TRUE
-#define STM32_LPUART1_HANDLER               VectorB4
-#define STM32_LPUART1_NUMBER                29
 
 #define STM32_HAS_USART3                    FALSE
 #define STM32_HAS_UART4                     FALSE
@@ -1045,20 +969,6 @@
 #define STM32_EXTI_NUM_LINES                23
 #define STM32_EXTI_IMR1_MASK                0xFF840000U
 
-#define STM32_EXTI_LINE01_HANDLER           Vector54
-#define STM32_EXTI_LINE23_HANDLER           Vector58
-#define STM32_EXTI_LINE4_15_HANDLER         Vector5C
-#define STM32_EXTI_LINE16_HANDLER           Vector44
-#define STM32_EXTI_LINE171920_HANDLER       Vector48
-#define STM32_EXTI_LINE2122_HANDLER         Vector70
-
-#define STM32_EXTI_LINE01_NUMBER            5
-#define STM32_EXTI_LINE23_NUMBER            6
-#define STM32_EXTI_LINE4_15_NUMBER          7
-#define STM32_EXTI_LINE16_NUMBER            1
-#define STM32_EXTI_LINE171920_NUMBER        2
-#define STM32_EXTI_LINE2122_NUMBER          12
-
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
 #define STM32_HAS_GPIOB                     TRUE
@@ -1169,8 +1079,6 @@
 
 /* USART attributes.*/
 #define STM32_HAS_USART1                    TRUE
-#define STM32_USART1_HANDLER                VectorAC
-#define STM32_USART1_NUMBER                 27
 #define STM32_USART1_RX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 3) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 5))
 #define STM32_USART1_RX_DMA_CHN             0x00030300
@@ -1179,8 +1087,6 @@
 #define STM32_USART1_TX_DMA_CHN             0x00003030
 
 #define STM32_HAS_USART2                    TRUE
-#define STM32_USART2_HANDLER                VectorB0
-#define STM32_USART2_NUMBER                 28
 #define STM32_USART2_RX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 5) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 6))
 #define STM32_USART2_RX_DMA_CHN             0x00440000
@@ -1189,8 +1095,6 @@
 #define STM32_USART2_TX_DMA_CHN             0x04004000
 
 #define STM32_HAS_LPUART1                   TRUE
-#define STM32_LPUART1_HANDLER               VectorB4
-#define STM32_LPUART1_NUMBER                29
 
 #define STM32_HAS_USART3                    FALSE
 #define STM32_HAS_UART4                     FALSE
@@ -1299,20 +1203,6 @@
 #define STM32_EXTI_NUM_LINES                23
 #define STM32_EXTI_IMR1_MASK                0xFF840000U
 
-#define STM32_EXTI_LINE01_HANDLER           Vector54
-#define STM32_EXTI_LINE23_HANDLER           Vector58
-#define STM32_EXTI_LINE4_15_HANDLER         Vector5C
-#define STM32_EXTI_LINE16_HANDLER           Vector44
-#define STM32_EXTI_LINE171920_HANDLER       Vector48
-#define STM32_EXTI_LINE2122_HANDLER         Vector70
-
-#define STM32_EXTI_LINE01_NUMBER            5
-#define STM32_EXTI_LINE23_NUMBER            6
-#define STM32_EXTI_LINE4_15_NUMBER          7
-#define STM32_EXTI_LINE16_NUMBER            1
-#define STM32_EXTI_LINE171920_NUMBER        2
-#define STM32_EXTI_LINE2122_NUMBER          12
-
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
 #define STM32_HAS_GPIOB                     TRUE
@@ -1442,8 +1332,6 @@
 
 /* USART attributes.*/
 #define STM32_HAS_USART1                    TRUE
-#define STM32_USART1_HANDLER                VectorAC
-#define STM32_USART1_NUMBER                 27
 #define STM32_USART1_RX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 3) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 5))
 #define STM32_USART1_RX_DMA_CHN             0x00030300
@@ -1452,17 +1340,12 @@
 #define STM32_USART1_TX_DMA_CHN             0x00003030
 
 #define STM32_HAS_USART2                    TRUE
-#define STM32_USART2_HANDLER                VectorB0
-#define STM32_USART2_NUMBER                 28
 #define STM32_USART2_RX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 5) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 6))
 #define STM32_USART2_RX_DMA_CHN             0x00440000
 #define STM32_USART2_TX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 4) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 7))
 #define STM32_USART2_TX_DMA_CHN             0x04004000
-
-#define STM32_USART3_8_HANDLER              Vector78
-#define STM32_USART3_8_NUMBER               14
 
 #define STM32_HAS_UART4                     TRUE
 #define STM32_UART4_RX_DMA_MSK              (STM32_DMA_STREAM_ID_MSK(1, 2) |\
@@ -1481,8 +1364,6 @@
 #define STM32_UART5_TX_DMA_CHN              0x0D000D00
 
 #define STM32_HAS_LPUART1                   TRUE
-#define STM32_LPUART1_HANDLER               VectorB4
-#define STM32_LPUART1_NUMBER                29
 
 #define STM32_HAS_USART3                    FALSE
 #define STM32_HAS_USART6                    FALSE
@@ -1589,20 +1470,6 @@
 #define STM32_EXTI_NUM_LINES                23
 #define STM32_EXTI_IMR1_MASK                0xFF840000U
 
-#define STM32_EXTI_LINE01_HANDLER           Vector54
-#define STM32_EXTI_LINE23_HANDLER           Vector58
-#define STM32_EXTI_LINE4_15_HANDLER         Vector5C
-#define STM32_EXTI_LINE16_HANDLER           Vector44
-#define STM32_EXTI_LINE171920_HANDLER       Vector48
-#define STM32_EXTI_LINE2122_HANDLER         Vector70
-
-#define STM32_EXTI_LINE01_NUMBER            5
-#define STM32_EXTI_LINE23_NUMBER            6
-#define STM32_EXTI_LINE4_15_NUMBER          7
-#define STM32_EXTI_LINE16_NUMBER            1
-#define STM32_EXTI_LINE171920_NUMBER        2
-#define STM32_EXTI_LINE2122_NUMBER          12
-
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
 #define STM32_HAS_GPIOB                     TRUE
@@ -1732,8 +1599,6 @@
 
 /* USART attributes.*/
 #define STM32_HAS_USART1                    TRUE
-#define STM32_USART1_HANDLER                VectorAC
-#define STM32_USART1_NUMBER                 27
 #define STM32_USART1_RX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 3) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 5))
 #define STM32_USART1_RX_DMA_CHN             0x00030300
@@ -1742,17 +1607,12 @@
 #define STM32_USART1_TX_DMA_CHN             0x00003030
 
 #define STM32_HAS_USART2                    TRUE
-#define STM32_USART2_HANDLER                VectorB0
-#define STM32_USART2_NUMBER                 28
 #define STM32_USART2_RX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 5) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 6))
 #define STM32_USART2_RX_DMA_CHN             0x00440000
 #define STM32_USART2_TX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 4) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 7))
 #define STM32_USART2_TX_DMA_CHN             0x04004000
-
-#define STM32_USART3_8_HANDLER              Vector78
-#define STM32_USART3_8_NUMBER               14
 
 #define STM32_HAS_UART4                     TRUE
 #define STM32_UART4_RX_DMA_MSK              (STM32_DMA_STREAM_ID_MSK(1, 2) |\
@@ -1771,8 +1631,6 @@
 #define STM32_UART5_TX_DMA_CHN              0x0D000D00
 
 #define STM32_HAS_LPUART1                   TRUE
-#define STM32_LPUART1_HANDLER               VectorB4
-#define STM32_LPUART1_NUMBER                29
 
 #define STM32_HAS_USART3                    FALSE
 #define STM32_HAS_USART6                    FALSE

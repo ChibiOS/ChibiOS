@@ -32,6 +32,8 @@
  */
 
 #define STM32L0xx_MCUCONF
+#define STM32L072_MCUCONF
+#define STM32L073_MCUCONF
 
 /*
  * HAL driver system settings.
@@ -76,6 +78,10 @@
 #define STM32_IRQ_EXTI16_PRIORITY           3
 #define STM32_IRQ_EXTI17_20_PRIORITY        3
 #define STM32_IRQ_EXTI21_22_PRIORITY        3
+#define STM32_IRQ_USART1_PRIORITY           3
+#define STM32_IRQ_USART2_PRIORITY           3
+#define STM32_IRQ_UART4_5_PRIORITY          3
+#define STM32_IRQ_LPUART1_PRIORITY          3
 
 /*
  * ADC driver system settings.
@@ -163,6 +169,7 @@
 #define STM32_PWM_TIM21_IRQ_PRIORITY        3
 #define STM32_PWM_USE_TIM22                 FALSE
 #define STM32_PWM_TIM22_IRQ_PRIORITY        3
+
 /*
  * SERIAL driver system settings.
  */
@@ -171,10 +178,6 @@
 #define STM32_SERIAL_USE_UART4              FALSE
 #define STM32_SERIAL_USE_UART5              FALSE
 #define STM32_SERIAL_USE_LPUART1            FALSE
-#define STM32_SERIAL_USART1_PRIORITY        3
-#define STM32_SERIAL_USART2_PRIORITY        3
-#define STM32_SERIAL_USART3_8_PRIORITY      3
-#define STM32_SERIAL_LPUART1_PRIORITY       3
 
 /*
  * SPI driver system settings.
@@ -203,17 +206,19 @@
 #define STM32_UART_USE_USART1               FALSE
 #define STM32_UART_USE_USART2               FALSE
 #define STM32_UART_USE_UART4                FALSE
-#define STM32_UART_USART1_IRQ_PRIORITY      3
-#define STM32_UART_USART2_IRQ_PRIORITY      3
-#define STM32_UART_USART3_8_IRQ_PRIORITY    3
+#define STM32_UART_USE_UART5                FALSE
 #define STM32_UART_USART1_DMA_PRIORITY      0
 #define STM32_UART_USART2_DMA_PRIORITY      0
+#define STM32_UART_UART4_DMA_PRIORITY       0
+#define STM32_UART_UART5_DMA_PRIORITY       0
 #define STM32_UART_USART1_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 5)
 #define STM32_UART_USART1_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 4)
 #define STM32_UART_USART2_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 6)
 #define STM32_UART_USART2_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 7)
 #define STM32_UART_UART4_RX_DMA_STREAM      STM32_DMA_STREAM_ID(1, 2)
 #define STM32_UART_UART4_TX_DMA_STREAM      STM32_DMA_STREAM_ID(1, 3)
+#define STM32_UART_UART5_RX_DMA_STREAM      STM32_DMA_STREAM_ID(1, 6)
+#define STM32_UART_UART5_TX_DMA_STREAM      STM32_DMA_STREAM_ID(1, 7)
 #define STM32_UART_DMA_ERROR_HOOK(uartp)    osalSysHalt("DMA failure")
 
 /*
