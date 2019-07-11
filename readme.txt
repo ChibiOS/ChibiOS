@@ -78,6 +78,7 @@
        generate a library with a pre-configured RT. It also includes
        an "header generator" able to generate an unified "ch.h" with
        all options resolved.
+- FIX: Fixed missing bracket in MX25 flash driver (bug #1038).
 - FIX: Fixed some M7 demos compile as M4 bug #1037).
 - FIX: Fixed missing I2C4 RCC definitions for L4/L4+ (bug #1036).
 - FIX: Fixed missing delay after STM32 wait states setup (bug #1035).

@@ -198,7 +198,7 @@
                                          WSPI_CFG_ADDR_MODE_ONE_LINE    |   \
                                          WSPI_CFG_ADDR_SIZE_32          |   \
                                          WSPI_CFG_ALT_MODE_NONE         |   \
-                                         WSPI_CFG_DATA_MODE_NONE
+                                         WSPI_CFG_DATA_MODE_NONE)
 
 #define MX25_CFG_C16_A32_8STR           (WSPI_CFG_CMD_SIZE_16           |   \
                                          WSPI_CFG_CMD_MODE_EIGHT_LINES  |   \
