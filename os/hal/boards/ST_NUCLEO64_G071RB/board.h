@@ -59,8 +59,8 @@
  */
 #define GPIOA_PIN0                  0U
 #define GPIOA_PIN1                  1U
-#define GPIOA_LPUART1_TX            2U
-#define GPIOA_LPUART1_RX            3U
+#define GPIOA_STLK_RX               2U
+#define GPIOA_STLK_TX               3U
 #define GPIOA_PIN4                  4U
 #define GPIOA_LED_GREEN             5U
 #define GPIOA_PIN6                  6U
@@ -145,8 +145,8 @@
 /*
  * IO lines assignments.
  */
-#define LINE_LPUART1_TX             PAL_LINE(GPIOA, 2U)
-#define LINE_LPUART1_RX             PAL_LINE(GPIOA, 3U)
+#define LINE_STLK_RX                PAL_LINE(GPIOA, 2U)
+#define LINE_STLK_TX                PAL_LINE(GPIOA, 3U)
 #define LINE_LED_GREEN              PAL_LINE(GPIOA, 5U)
 #define LINE_SWDIO                  PAL_LINE(GPIOA, 13U)
 #define LINE_SWCLK                  PAL_LINE(GPIOA, 14U)
@@ -199,8 +199,8 @@
  *
  * PA0  - PIN0                      (input pullup).
  * PA1  - PIN1                      (input pullup).
- * PA2  - LPUART1_TX                (alternate 6).
- * PA3  - LPUART1_RX                (alternate 6).
+ * PA2  - STLK_RX                   (alternate 1).
+ * PA3  - STLK_TX                   (alternate 1).
  * PA4  - PIN4                      (input pullup).
  * PA5  - LED_GREEN                 (output pushpull maximum).
  * PA6  - PIN6                      (input pullup).
@@ -216,8 +216,8 @@
  */
 #define VAL_GPIOA_MODER             (PIN_MODE_INPUT(GPIOA_PIN0) |           \
                                      PIN_MODE_INPUT(GPIOA_PIN1) |           \
-                                     PIN_MODE_ALTERNATE(GPIOA_LPUART1_TX) | \
-                                     PIN_MODE_ALTERNATE(GPIOA_LPUART1_RX) | \
+                                     PIN_MODE_ALTERNATE(GPIOA_STLK_RX) |    \
+                                     PIN_MODE_ALTERNATE(GPIOA_STLK_TX) |    \
                                      PIN_MODE_INPUT(GPIOA_PIN4) |           \
                                      PIN_MODE_OUTPUT(GPIOA_LED_GREEN) |     \
                                      PIN_MODE_INPUT(GPIOA_PIN6) |           \
@@ -232,8 +232,8 @@
                                      PIN_MODE_INPUT(GPIOA_PIN15))
 #define VAL_GPIOA_OTYPER            (PIN_OTYPE_PUSHPULL(GPIOA_PIN0) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOA_PIN1) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOA_LPUART1_TX) | \
-                                     PIN_OTYPE_PUSHPULL(GPIOA_LPUART1_RX) | \
+                                     PIN_OTYPE_PUSHPULL(GPIOA_STLK_RX) |    \
+                                     PIN_OTYPE_PUSHPULL(GPIOA_STLK_TX) |    \
                                      PIN_OTYPE_PUSHPULL(GPIOA_PIN4) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOA_LED_GREEN) |  \
                                      PIN_OTYPE_PUSHPULL(GPIOA_PIN6) |       \
@@ -248,8 +248,8 @@
                                      PIN_OTYPE_PUSHPULL(GPIOA_PIN15))
 #define VAL_GPIOA_OSPEEDR           (PIN_OSPEED_HIGH(GPIOA_PIN0) |          \
                                      PIN_OSPEED_HIGH(GPIOA_PIN1) |          \
-                                     PIN_OSPEED_MEDIUM(GPIOA_LPUART1_TX) |  \
-                                     PIN_OSPEED_MEDIUM(GPIOA_LPUART1_RX) |  \
+                                     PIN_OSPEED_MEDIUM(GPIOA_STLK_RX) |     \
+                                     PIN_OSPEED_MEDIUM(GPIOA_STLK_TX) |     \
                                      PIN_OSPEED_HIGH(GPIOA_PIN4) |          \
                                      PIN_OSPEED_HIGH(GPIOA_LED_GREEN) |     \
                                      PIN_OSPEED_HIGH(GPIOA_PIN6) |          \
@@ -264,8 +264,8 @@
                                      PIN_OSPEED_HIGH(GPIOA_PIN15))
 #define VAL_GPIOA_PUPDR             (PIN_PUPDR_PULLUP(GPIOA_PIN0) |         \
                                      PIN_PUPDR_PULLUP(GPIOA_PIN1) |         \
-                                     PIN_PUPDR_FLOATING(GPIOA_LPUART1_TX) | \
-                                     PIN_PUPDR_FLOATING(GPIOA_LPUART1_RX) | \
+                                     PIN_PUPDR_FLOATING(GPIOA_STLK_RX) |    \
+                                     PIN_PUPDR_FLOATING(GPIOA_STLK_TX) |    \
                                      PIN_PUPDR_PULLUP(GPIOA_PIN4) |         \
                                      PIN_PUPDR_FLOATING(GPIOA_LED_GREEN) |  \
                                      PIN_PUPDR_PULLUP(GPIOA_PIN6) |         \
@@ -280,8 +280,8 @@
                                      PIN_PUPDR_PULLUP(GPIOA_PIN15))
 #define VAL_GPIOA_ODR               (PIN_ODR_HIGH(GPIOA_PIN0) |             \
                                      PIN_ODR_HIGH(GPIOA_PIN1) |             \
-                                     PIN_ODR_HIGH(GPIOA_LPUART1_TX) |       \
-                                     PIN_ODR_HIGH(GPIOA_LPUART1_RX) |       \
+                                     PIN_ODR_HIGH(GPIOA_STLK_RX) |          \
+                                     PIN_ODR_HIGH(GPIOA_STLK_TX) |          \
                                      PIN_ODR_HIGH(GPIOA_PIN4) |             \
                                      PIN_ODR_LOW(GPIOA_LED_GREEN) |         \
                                      PIN_ODR_HIGH(GPIOA_PIN6) |             \
@@ -296,8 +296,8 @@
                                      PIN_ODR_HIGH(GPIOA_PIN15))
 #define VAL_GPIOA_AFRL              (PIN_AFIO_AF(GPIOA_PIN0, 0U) |          \
                                      PIN_AFIO_AF(GPIOA_PIN1, 0U) |          \
-                                     PIN_AFIO_AF(GPIOA_LPUART1_TX, 6U) |    \
-                                     PIN_AFIO_AF(GPIOA_LPUART1_RX, 6U) |    \
+                                     PIN_AFIO_AF(GPIOA_STLK_RX, 1U) |       \
+                                     PIN_AFIO_AF(GPIOA_STLK_TX, 1U) |       \
                                      PIN_AFIO_AF(GPIOA_PIN4, 0U) |          \
                                      PIN_AFIO_AF(GPIOA_LED_GREEN, 0U) |     \
                                      PIN_AFIO_AF(GPIOA_PIN6, 0U) |          \

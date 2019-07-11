@@ -17,7 +17,7 @@
   <ports>
     <GPIOA>
       <pin0
-        ID=""
+        ID="ARD_A0_IN0"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -25,7 +25,7 @@
         Mode="Input"
         Alternate="0" />
       <pin1
-        ID=""
+        ID="ARD_A1_IN1"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -33,23 +33,23 @@
         Mode="Input"
         Alternate="0" />
       <pin2
-        ID="LPUART1_TX"
+        ID="STLK_RX"
         Type="PushPull"
         Level="High"
         Speed="High"
         Resistor="Floating"
         Mode="Alternate"
-        Alternate="6" />
+        Alternate="1" />
       <pin3
-        ID="LPUART1_RX"
+        ID="STLK_TX"
         Type="PushPull"
         Level="High"
         Speed="High"
         Resistor="Floating"
         Mode="Alternate"
-        Alternate="6"/>
+        Alternate="1"/>
       <pin4
-        ID=""
+        ID="ARD_A2_IN4"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
