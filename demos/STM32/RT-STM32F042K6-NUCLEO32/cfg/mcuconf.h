@@ -69,6 +69,8 @@
 #define STM32_IRQ_EXTI16_IRQ_PRIORITY       3
 #define STM32_IRQ_EXTI17_20_IRQ_PRIORITY    3
 #define STM32_IRQ_EXTI21_22_IRQ_PRIORITY    3
+#define STM32_IRQ_USART1_PRIORITY           3
+#define STM32_IRQ_USART2_PRIORITY           3
 
 /*
  * ADC driver system settings.
@@ -141,8 +143,6 @@
  */
 #define STM32_SERIAL_USE_USART1             FALSE
 #define STM32_SERIAL_USE_USART2             TRUE
-#define STM32_SERIAL_USART1_PRIORITY        3
-#define STM32_SERIAL_USART2_PRIORITY        3
 
 /*
  * SPI driver system settings.
@@ -165,8 +165,6 @@
  */
 #define STM32_UART_USE_USART1               FALSE
 #define STM32_UART_USE_USART2               FALSE
-#define STM32_UART_USART1_IRQ_PRIORITY      3
-#define STM32_UART_USART2_IRQ_PRIORITY      3
 #define STM32_UART_USART1_DMA_PRIORITY      0
 #define STM32_UART_USART2_DMA_PRIORITY      0
 #define STM32_UART_USART1_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 3)

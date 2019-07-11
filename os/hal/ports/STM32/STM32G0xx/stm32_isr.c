@@ -133,7 +133,6 @@ OSAL_IRQ_HANDLER(Vector5C) {
 
 #if HAL_USE_SERIAL || HAL_USE_UART || defined(__DOXYGEN__)
 #if !defined(STM32_DISABLE_USART1_HANDLER)
-#if STM32_SERIAL_USE_USART1 || STM32_UART_USE_USART1
 /**
  * @brief   USART1 interrupt handler.
  *
@@ -157,10 +156,8 @@ OSAL_IRQ_HANDLER(STM32_USART1_HANDLER) {
   OSAL_IRQ_EPILOGUE();
 }
 #endif
-#endif
 
 #if !defined(STM32_DISABLE_USART2_HANDLER)
-#if STM32_SERIAL_USE_USART2 || STM32_UART_USE_USART2
 /**
  * @brief   USART2 interrupt handler.
  *
@@ -184,12 +181,8 @@ OSAL_IRQ_HANDLER(STM32_USART2_HANDLER) {
   OSAL_IRQ_EPILOGUE();
 }
 #endif
-#endif
 
 #if !defined(STM32_DISABLE_USART34LP1_HANDLER)
-#if STM32_SERIAL_USE_USART3  || STM32_SERIAL_USE_UART4 ||                    \
-    STM32_SERIAL_USE_LPUART1 || STM32_UART_USE_USART3  ||                    \
-    STM32_UART_USE_UART4
 /**
  * @brief   USART 3, 4 and LP1 interrupt handler.
  *
@@ -221,7 +214,6 @@ OSAL_IRQ_HANDLER(STM32_USART34LP1_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif
 #endif
 #endif /* HAL_USE_SERIAL || HAL_USE_UART */
 
