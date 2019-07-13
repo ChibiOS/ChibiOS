@@ -77,6 +77,7 @@
 - NEW: Added mcuconf.h generator for STM32L052/L053/L062/L063.
 - NEW: Added mcuconf.h generator for STM32L072/L073.
 - NEW: Initial STM32G0xx support in HAL.
+- NEW: Added STM32L452 support in HAL.
 - NEW: Implemented TIMPRE setting for STM32F7xx HAL.
 - NEW: Merged FatFS 0.13c.
 - NEW: Added a "library generator" project for RT, it allows to
