@@ -130,7 +130,7 @@ static void rtc_decode(uint32_t tv_sec,
                        RTCDateTime *timespec) {
   struct tm tim;
   struct tm *t;
-  const time_t time = tv_sec; /* Copy with implicit type conversion.*/
+  const time_t time = (const time_t)tv_sec;   /* Could be 64 bits.*/
 
   /* If the conversion is successful the function returns a pointer
      to the object the result was written into.*/
