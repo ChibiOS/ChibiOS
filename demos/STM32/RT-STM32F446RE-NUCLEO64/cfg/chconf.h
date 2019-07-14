@@ -709,8 +709,6 @@
 /* Port-specific settings (override port settings defaulted in chcore.h).    */
 /*===========================================================================*/
 
-#define PORT_ENABLE_GUARD_PAGES TRUE
-
 #endif  /* CHCONF_H */
 
 /** @} */
