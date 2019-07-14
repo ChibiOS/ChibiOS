@@ -206,7 +206,7 @@ struct hal_adc_driver {
  */
 /**
  * @brief   Buffer state.
- * @note    This function is meant to be called from the SPI callback only.
+ * @note    This function is meant to be called from the ADC callback only.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
  * @return              The buffer state.
