@@ -72,6 +72,9 @@
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
+#define STM32_ADC_SUPPORTS_PRESCALER        TRUE
+#define STM32_ADC_SUPPORTS_OVERSAMPLING     TRUE
+#define STM32_ADC1_IRQ_SHARED_WITH_EXTI     TRUE
 #define STM32_ADC1_HANDLER                  Vector70
 #define STM32_ADC1_NUMBER                   12
 
@@ -126,6 +129,9 @@
 #define STM32_EXTI_HAS_GROUP2               FALSE
 #define STM32_EXTI_NUM_LINES                16
 #define STM32_EXTI_IMR1_MASK                0xFFF80000U
+
+/* Flash attributes.*/
+#define STM32_FLASH_NUMBER_OF_BANKS         1
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
@@ -262,13 +268,16 @@
 #endif /* defined(STM32G070xx) */
 
 /*===========================================================================*/
-/* STM32G070xx.                                                              */
+/* STM32G071xx STM32G081xx.                                                  */
 /*===========================================================================*/
 
 #if defined(STM32G071xx) || defined(STM32G081xx)
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
+#define STM32_ADC_SUPPORTS_PRESCALER        TRUE
+#define STM32_ADC_SUPPORTS_OVERSAMPLING     TRUE
+#define STM32_ADC1_IRQ_SHARED_WITH_EXTI     TRUE
 #define STM32_ADC1_HANDLER                  Vector70
 #define STM32_ADC1_NUMBER                   12
 
@@ -324,6 +333,9 @@
 #define STM32_EXTI_NUM_LINES                33
 #define STM32_EXTI_IMR1_MASK                0xFFF80000U
 #define STM32_EXTI_IMR2_MASK                0xFFFFFFFFU
+
+/* Flash attributes.*/
+#define STM32_FLASH_NUMBER_OF_BANKS         1
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
