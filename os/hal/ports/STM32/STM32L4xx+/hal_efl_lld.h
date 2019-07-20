@@ -55,8 +55,12 @@
     defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx) || \
     defined(__DOXYGEN__)
 
+/* Flash size register. */
+#define STM32_FLASH_SIZE_REGISTER           0x1FFF75E0
+#define STM32_FLASH_SIZE_SCALE              1024U
+
 /*
- * Flash size is:
+ * Device flash size is:
  *  1M for STM32L4+ suffix G devices
  *  2M for STM32L4+ suffix I devices.
  *
@@ -69,16 +73,25 @@
 
 #define STM32_FLASH_SIZE_1M                 1024U
 #define STM32_FLASH_SIZE_2M                 2048U
+#define STM32_FLASH_SECTORS_TOTAL_1M        128
+#define STM32_FLASH_SECTORS_TOTAL_2M        256
 
-/* Single bank mode bank 1.*/
-#define STM32_FLASH_SECTOR_SIZE             8192U
-#define STM32_FLASH_SECTORS_PER_BANK        256
+/* Single bank mode bank 1 for 1M device.*/
+#define STM32_FLASH_SECTOR_SIZE_1M          ((STM32_FLASH_SIZE_1M           \
+                                              * STM32_FLASH_SIZE_SCALE)     \
+                                             / STM32_FLASH_SECTORS_TOTAL_1M)
 
-/* Dual bank mode banks 1 & 2.*/
-#define STM32_FLASH_DUAL_SECTOR_SIZE        4096U
-#define STM32_FLASH_DUAL_SECTORS_PER_BANK   128
+/* Dual bank mode banks 1 & 2 for 1M device.*/
+#define STM32_FLASH_DUAL_SECTOR_SIZE_1M     (STM32_FLASH_SECTOR_SIZE_1M / 2)
 
-#define STM32_FLASH_SIZE_REGISTER           0x1FFF75E0
+/* Single bank mode bank 1 for 2M device.*/
+#define STM32_FLASH_SECTOR_SIZE_2M          ((STM32_FLASH_SIZE_2M           \
+                                              * STM32_FLASH_SIZE_SCALE)     \
+                                             / STM32_FLASH_SECTORS_TOTAL_2M)
+
+/* Dual bank mode banks 1 & 2 for 2M device.*/
+#define STM32_FLASH_DUAL_SECTOR_SIZE_2M     (STM32_FLASH_SECTOR_SIZE_2M / 2)
+
 #else
 #error "This EFL driver does not support the selected device"
 #endif
@@ -89,7 +102,6 @@
 
 /* A flash size declaration. */
 typedef struct {
-  uint16_t                  kb_size;
   const flash_descriptor_t* desc;
 } efl_lld_size_t;
 

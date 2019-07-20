@@ -65,12 +65,11 @@ static const flash_descriptor_t efl_lld_size1[STM32_FLASH_NUMBER_OF_BANKS] = {
                             FLASH_ATTR_ECC_CAPABLE   |
                             FLASH_ATTR_ECC_ZERO_LINE_CAPABLE,
        .page_size         = STM32_FLASH_LINE_SIZE,
-       .sectors_count     = STM32_FLASH_SECTORS_PER_BANK,
+       .sectors_count     = STM32_FLASH_SECTORS_TOTAL_1M,
        .sectors           = NULL,
-       .sectors_size      = STM32_FLASH_SECTOR_SIZE,
+       .sectors_size      = STM32_FLASH_SECTOR_SIZE_1M,
        .address           = (uint8_t *)FLASH_BASE,
-       .size              = STM32_FLASH_SECTORS_PER_BANK *
-                            STM32_FLASH_SECTOR_SIZE
+       .size              = STM32_FLASH_SIZE_1M * STM32_FLASH_SIZE_SCALE
       },
       { /* Bank 1 & 2 (DBM) organisation. */
       .attributes        = FLASH_ATTR_ERASED_IS_ONE |
@@ -78,12 +77,11 @@ static const flash_descriptor_t efl_lld_size1[STM32_FLASH_NUMBER_OF_BANKS] = {
                            FLASH_ATTR_ECC_CAPABLE   |
                            FLASH_ATTR_ECC_ZERO_LINE_CAPABLE,
       .page_size         = STM32_FLASH_LINE_SIZE,
-      .sectors_count     = 2 * STM32_FLASH_DUAL_SECTORS_PER_BANK,
+      .sectors_count     = STM32_FLASH_SECTORS_TOTAL_1M,
       .sectors           = NULL,
-      .sectors_size      = STM32_FLASH_DUAL_SECTOR_SIZE,
+      .sectors_size      = STM32_FLASH_DUAL_SECTOR_SIZE_1M,
       .address           = (uint8_t *)FLASH_BASE,
-      .size              = 2 * STM32_FLASH_DUAL_SECTORS_PER_BANK *
-                           STM32_FLASH_DUAL_SECTOR_SIZE
+      .size              = STM32_FLASH_SIZE_1M * STM32_FLASH_SIZE_SCALE
       }
 };
 
@@ -95,12 +93,11 @@ static const flash_descriptor_t efl_lld_size2[STM32_FLASH_NUMBER_OF_BANKS] = {
                             FLASH_ATTR_ECC_CAPABLE   |
                             FLASH_ATTR_ECC_ZERO_LINE_CAPABLE,
        .page_size         = STM32_FLASH_LINE_SIZE,
-       .sectors_count     = STM32_FLASH_SECTORS_PER_BANK,
+       .sectors_count     = STM32_FLASH_SECTORS_TOTAL_2M,
        .sectors           = NULL,
-       .sectors_size      = STM32_FLASH_SECTOR_SIZE,
+       .sectors_size      = STM32_FLASH_SECTOR_SIZE_2M,
        .address           = (uint8_t *)FLASH_BASE,
-       .size              = STM32_FLASH_SECTORS_PER_BANK *
-                            STM32_FLASH_SECTOR_SIZE
+       .size              = STM32_FLASH_SIZE_2M * STM32_FLASH_SIZE_SCALE
       },
       { /* Bank 1 & 2 (DBM) organisation. */
       .attributes        = FLASH_ATTR_ERASED_IS_ONE |
@@ -108,23 +105,20 @@ static const flash_descriptor_t efl_lld_size2[STM32_FLASH_NUMBER_OF_BANKS] = {
                            FLASH_ATTR_ECC_CAPABLE   |
                            FLASH_ATTR_ECC_ZERO_LINE_CAPABLE,
       .page_size         = STM32_FLASH_LINE_SIZE,
-      .sectors_count     = 2 * STM32_FLASH_DUAL_SECTORS_PER_BANK,
+      .sectors_count     = STM32_FLASH_SECTORS_TOTAL_2M,
       .sectors           = NULL,
-      .sectors_size      = STM32_FLASH_DUAL_SECTOR_SIZE,
+      .sectors_size      = STM32_FLASH_DUAL_SECTOR_SIZE_2M,
       .address           = (uint8_t *)FLASH_BASE,
-      .size              = 2 * STM32_FLASH_DUAL_SECTORS_PER_BANK *
-                           STM32_FLASH_DUAL_SECTOR_SIZE
+      .size              = STM32_FLASH_SIZE_2M * STM32_FLASH_SIZE_SCALE
       }
 };
 
 /* Table describing possible flash sizes and descriptors for this device. */
 static const efl_lld_size_t efl_lld_flash_sizes[] = {
       {
-       .kb_size = STM32_FLASH_SIZE_1M,
        .desc = efl_lld_size1
       },
       {
-       .kb_size = STM32_FLASH_SIZE_2M,
        .desc = efl_lld_size2
       }
 };
@@ -166,13 +160,13 @@ static inline void stm32_flash_wait_busy(EFlashDriver *eflp) {
   }
 }
 
-static inline uint16_t stm32_flash_get_size(void) {
-  return *(uint16_t*)((uint32_t) STM32_FLASH_SIZE_REGISTER);
+static inline size_t stm32_flash_get_size(void) {
+  return *(uint16_t*)((uint32_t) STM32_FLASH_SIZE_REGISTER) * STM32_FLASH_SIZE_SCALE;
 }
 
 static inline bool stm32_flash_dual_bank(EFlashDriver *eflp) {
 
-#if STM32_FLASH_SECTORS_PER_BANK > 1
+#if STM32_FLASH_NUMBER_OF_BANKS > 1
   return ((eflp->flash->SR & (FLASH_OPTR_DBANK | FLASH_OPTR_DB1M)) != 0U);
 #endif
   return false;
@@ -222,7 +216,7 @@ void efl_lld_init(void) {
   /* Find the size of the flash and set descriptor reference. */
   uint8_t i;
   for (i = 0; i < (sizeof(efl_lld_flash_sizes) / sizeof(efl_lld_size_t)); i++) {
-    if (efl_lld_flash_sizes[i].kb_size == stm32_flash_get_size()) {
+    if (efl_lld_flash_sizes[i].desc->size == stm32_flash_get_size()) {
       EFLD1.descriptor = efl_lld_flash_sizes[i].desc;
       if (stm32_flash_dual_bank(&EFLD1)) {
         /* Point to the dual bank descriptor. */
@@ -329,8 +323,8 @@ flash_error_t efl_lld_read(void *instance, flash_offset_t offset,
 
 /**
  * @brief   Program operation.
- * @note    The device supports ECC, it is only possible to write erased
- *          pages once except when writing all zeroes.
+ * @note    The device supports ECC. It is only possible to write erased
+ *          pages once except when writing all zeroes to a location.
  *
  * @param[in] ip                    pointer to a @p EFlashDriver instance
  * @param[in] offset                offset within full flash address space
