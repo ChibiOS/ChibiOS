@@ -88,6 +88,7 @@
 *** 18.2.3 ***
 - NEW: Added a check on defective GCC versions, Cortex-M0 only.
 - NEW: Extra timer checks in STM32 ST driver.
+- FIX: Fixed missing DMA definitions for STM32F412 I2C3 (bug #1041).
 - FIX: Fixed missing I2C4 RCC definitions for L4/L4+ (bug #1036).
 - FIX: Fixed missing delay after STM32 wait states setup (bug #1035).
 - FIX: Fixed reduced time slices in RT (bug #1034).
