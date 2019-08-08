@@ -70,7 +70,7 @@ SECTIONS
         PROVIDE(__fini_array_end = .);
     } > flash
 
-    .text : ALIGN(16) 
+    .text : ALIGN_WITH_INPUT
     {
         *(.text)
         *(.text.*)
