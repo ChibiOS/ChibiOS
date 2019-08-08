@@ -515,6 +515,7 @@ const stm32_dma_stream_t *dmaStreamAllocI(uint32_t id,
 #endif
   else {
     osalDbgCheck(false);
+    return NULL;
   }
 
   for (i = startid; i <= endid; i++) {
