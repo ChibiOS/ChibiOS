@@ -35,18 +35,19 @@ SECTIONS
         __fini_array_end = .;
     } > XTORS_FLASH AT > XTORS_FLASH_LMA
 
-    .text ALIGN(16) : ALIGN(16)
+    .text : ALIGN_WITH_INPUT
     {
+        __text_base = .;
         *(.text)
         *(.text.*)
         *(.glue_7t)
         *(.glue_7)
         *(.gcc*)
+        __text_end = .;
     } > TEXT_FLASH AT > TEXT_FLASH_LMA
 
     .rodata : ALIGN(4)
     {
-        . = ALIGN(4);
         __rodata_base__ = .;
         *(.rodata)
         *(.rodata.*)

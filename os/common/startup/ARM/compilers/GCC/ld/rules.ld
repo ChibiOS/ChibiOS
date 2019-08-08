@@ -48,13 +48,13 @@ SECTIONS
     . = 0;
     _text = .;
 
-    startup : ALIGN(16) SUBALIGN(16)
+    startup : ALIGN(16) 
     {
         KEEP(*(.vectors))
         KEEP(*(.boot))
     } > flash
 
-    constructors : ALIGN(4) SUBALIGN(4)
+    constructors : ALIGN(4) 
     {
         PROVIDE(__init_array_start = .);
         KEEP(*(SORT(.init_array.*)))
@@ -62,7 +62,7 @@ SECTIONS
         PROVIDE(__init_array_end = .);
     } > flash
 
-    destructors : ALIGN(4) SUBALIGN(4)
+    destructors : ALIGN(4) 
     {
         PROVIDE(__fini_array_start = .);
         KEEP(*(.fini_array))
@@ -70,7 +70,7 @@ SECTIONS
         PROVIDE(__fini_array_end = .);
     } > flash
 
-    .text : ALIGN(16) SUBALIGN(16)
+    .text : ALIGN_WITH_INPUT
     {
         *(.text)
         *(.text.*)
@@ -111,7 +111,7 @@ SECTIONS
     _etext = .;
     _textdata = _etext;
 
-    .stacks :
+    .stacks (NOLOAD) :
     {
         . = ALIGN(8);
         __stacks_base__ = .;
@@ -132,7 +132,7 @@ SECTIONS
         PROVIDE(_edata = .);
     } > DATA_RAM AT > flash
 
-    .bss : ALIGN(4)
+    .bss (NOLOAD) : ALIGN(4)
     {
         . = ALIGN(4);
         PROVIDE(_bss_start = .);
