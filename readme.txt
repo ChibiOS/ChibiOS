@@ -73,6 +73,9 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+*** 19.1.4 ***
+- FIX: Fixed misplaced parenthesis in hal_files.h (bug #1040).
+
 *** 19.1.3 ***
 - NEW: Added a "library generator" project for RT, it allows to
        generate a library with a pre-configured RT. It also includes
