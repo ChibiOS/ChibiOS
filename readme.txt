@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 19.1.4 ***
+- FIX: Fixed missing DMA definitions for STM32F412 I2C3 (bug #1041).
 - FIX: Fixed misplaced parenthesis in hal_files.h (bug #1040).
 
 *** 19.1.3 ***
