@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added an option to change the shell thread name.
 - NEW: Made bus acquire/release functions in SNOR driver public.
 - NEW: Added mcuconf.h generator for STM32L052/L053/L062/L063.
 - NEW: Added mcuconf.h generator for STM32L072/L073.
