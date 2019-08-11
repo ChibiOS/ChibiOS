@@ -330,6 +330,7 @@ void wspi_lld_map_flash(WSPIDriver *wspip,
   wspip->qspi->ABR = 0;
   wspip->qspi->AR  = 0;
   wspip->qspi->CCR = cmdp->cmd | cmdp->cfg |
+                     QUADSPI_CCR_DUMMY_CYCLES(cmdp->dummy) |
                      QUADSPI_CCR_FMODE_1 | QUADSPI_CCR_FMODE_0;
 
   /* Mapped flash absolute base address.*/
