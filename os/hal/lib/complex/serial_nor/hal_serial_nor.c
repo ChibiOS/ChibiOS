@@ -66,59 +66,6 @@ static const struct SNORDriverVMT snor_vmt = {
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-#if ((SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI) &&                           \
-     (SNOR_SHARED_BUS == TRUE)) || defined(__DOXYGEN__)
-/**
- * @brief   Bus acquisition and lock.
- *
- * @param[in] busp      pointer to the bus driver
- * @param[in] config    bus configuration
- *
- * @notapi
- */
-static void bus_acquire(BUSDriver *busp, const BUSConfig *config) {
-
-  (void)config;
-
-  wspiAcquireBus(busp);
-  if (busp->config != config) {
-    wspiStart(busp, config);
-  }
-}
-
-/**
- * @brief   Bus release.
- *
- * @param[in] busp      pointer to the bus driver
- *
- * @notapi
- */
-static void bus_release(BUSDriver *busp) {
-
-  wspiReleaseBus(busp);
-}
-
-#elif (SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_SPI) &&                           \
-      (SNOR_SHARED_BUS == TRUE)
-void bus_acquire(BUSDriver *busp, const BUSConfig *config) {
-
-  spiAcquireBus(busp);
-  if (busp->config != config) {
-    spiStart(busp, config);
-  }
-}
-
-void bus_release(BUSDriver *busp) {
-
-  spiReleaseBus(busp);
-}
-
-#else
-/* No bus sharing, empty macros.*/
-#define bus_acquire(busp)
-#define bus_release(busp)
-#endif
-
 /**
  * @brief   Returns a pointer to the device descriptor.
  *
@@ -357,6 +304,55 @@ static flash_error_t snor_read_sfdp(void *instance, flash_offset_t offset,
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
+
+#if ((SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI) &&                           \
+     (SNOR_SHARED_BUS == TRUE)) || defined(__DOXYGEN__)
+/**
+ * @brief   Bus acquisition and lock.
+ *
+ * @param[in] busp      pointer to the bus driver
+ * @param[in] config    bus configuration
+ *
+ * @notapi
+ */
+void bus_acquire(BUSDriver *busp, const BUSConfig *config) {
+
+  (void)config;
+
+  wspiAcquireBus(busp);
+  if (busp->config != config) {
+    wspiStart(busp, config);
+  }
+}
+
+/**
+ * @brief   Bus release.
+ *
+ * @param[in] busp      pointer to the bus driver
+ *
+ * @notapi
+ */
+void bus_release(BUSDriver *busp) {
+
+  wspiReleaseBus(busp);
+}
+#endif
+
+#if (SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_SPI) &&                             \
+      (SNOR_SHARED_BUS == TRUE)
+void bus_acquire(BUSDriver *busp, const BUSConfig *config) {
+
+  spiAcquireBus(busp);
+  if (busp->config != config) {
+    spiStart(busp, config);
+  }
+}
+
+void bus_release(BUSDriver *busp) {
+
+  spiReleaseBus(busp);
+}
+#endif
 
 /**
  * @brief   Stops the underlying bus driver.
