@@ -144,6 +144,11 @@ typedef struct {
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
+#if SNOR_SHARED_BUS == FALSE
+#define bus_acquire(busp)
+#define bus_release(busp)
+#endif
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -151,6 +156,8 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
+  void bus_acquire(BUSDriver *busp, const BUSConfig *config);
+  void bus_release(BUSDriver *busp);
   void bus_cmd(BUSDriver *busp, uint32_t cmd);
   void bus_cmd_send(BUSDriver *busp, uint32_t cmd, size_t n, const uint8_t *p);
   void bus_cmd_receive(BUSDriver *busp,
