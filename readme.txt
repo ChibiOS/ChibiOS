@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 19.1.4 ***
+- FIX: Fixed missing dummy cycles in memory map mode on STM32 QSPI driver
+       (bug #1042).
 - FIX: Fixed missing DMA definitions for STM32F412 I2C3 (bug #1041).
 - FIX: Fixed misplaced parenthesis in hal_files.h (bug #1040).
 - FIX: Fixed GCC scatter files alignment problem (bug #1033).
