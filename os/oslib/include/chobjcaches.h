@@ -38,10 +38,11 @@
  * @name    Cached objects flags
  * @{
  */
-#define OC_FLAG_INVALID                     0x00000001U
-#define OC_FLAG_INLRU                       0x00000002U
+#define OC_FLAG_INLRU                       0x00000001U
+#define OC_FLAG_INHASH                      0x00000002U
 #define OC_FLAG_CACHEHIT                    0x00000004U
 #define OC_FLAG_ERROR                       0x00000008U
+#define OC_FLAG_MODIFIED                    0x00000010U
 /** @} */
 
 /**

@@ -75,12 +75,32 @@
   (hhp)->hash_next = (objp);                                                \
 }
 
-/* Insertion on LRU head (newer objects).*/
+/* Removal of an object from the hash.*/
+#define HASH_REMOVE(objp) {                                                 \
+  (objp)->hash_prev->hash_next = (objp)->hash_next;                         \
+  (objp)->hash_next->hash_prev = (objp)->hash_prev;                         \
+}
+
+/* Insertion on LRU list head (newer objects).*/
 #define LRU_INSERT_HEAD(ocp, objp) {                                        \
   (objp)->lru_next = (ocp)->lru.lru_next;                                   \
   (objp)->lru_prev = (oc_object_t *)&(ocp)->lru;                            \
   (ocp)->lru.lru_next->lru_prev = (objp);                                   \
   (ocp)->lru.lru_next = (objp);                                             \
+}
+
+/* Insertion on LRU list head (newer objects).*/
+#define LRU_INSERT_TAIL(ocp, objp) {                                        \
+  (objp)->lru_prev = (ocp)->lru.lru_prev;                                   \
+  (objp)->lru_next = (oc_object_t *)&(ocp)->lru;                            \
+  (ocp)->lru.lru_prev->lru_next = (objp);                                   \
+  (ocp)->lru.lru_prev = (objp);                                             \
+}
+
+/* Removal of an object from the LRU list.*/
+#define LRU_REMOVE(objp) {                                                  \
+  (objp)->lru_prev->lru_next = (objp)->lru_next;                            \
+  (objp)->lru_next->lru_prev = (objp)->lru_prev;                            \
 }
 
 /*===========================================================================*/
@@ -99,10 +119,37 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-static oc_object_t *oc_hash_get(objects_cache_t *ocp,
-                                uint32_t group,
-                                uint32_t key) {
+/**
+ * @brief   Returns an object pointer from the cache, if present.
+ *
+ * @param[out] ocp      pointer to the @p objects_cache_t structure to be
+ * @param[in] group     object group identifier
+ * @param[in] key       object identifier within the group
+ *                      initialized
+ * @return              The pointer to the retrieved object.
+ * @retval NULL         if the object is not in cache.
+ */
+static oc_object_t *hash_get(objects_cache_t *ocp,
+                             uint32_t group,
+                             uint32_t key) {
+  oc_hash_header_t *hhp;
+  oc_object_t *objp;
 
+  /* Hash slot where to search for an hit.*/
+  hhp  = &ocp->hashp[OC_HASH_FUNCTION(ocp, group, key)];
+  objp = hhp->hash_next;
+
+  /* Scanning the siblings collision list.*/
+  while (objp != (oc_object_t *)hhp) {
+    if ((objp->obj_key == key) && (objp->obj_group == group)) {
+
+      /* Cache hit.*/
+      return objp;
+    }
+    objp = objp->hash_next;
+  }
+
+  return NULL;
 }
 
 /*===========================================================================*/
@@ -124,6 +171,16 @@ static oc_object_t *oc_hash_get(objects_cache_t *ocp,
  * @param[in] readf     pointer to an object reader function
  * @param[in] writef    pointer to an object writer function
  *
+ * Object records states:
+ * - Invalid not owned:
+ *    (OC_FLAG_INLRU, cnt==1).
+ * - Caching an object not owned:
+ *    (OC_FLAG_INLRU, OC_FLAG_INHASH, OC_FLAG_CACHEHIT, cnt==1).
+ * - Representing an object owned:
+ *    (OC_FLAG_INHASH, cnt<=0).
+ * - Caching an object owned:
+ *    (OC_FLAG_INHASH, OC_FLAG_CACHEHIT, cnt<=0).
+ *
  * @init
  */
 void chCacheObjectInit(objects_cache_t *ocp,
@@ -133,10 +190,9 @@ void chCacheObjectInit(objects_cache_t *ocp,
                        oc_object_t *objp,
                        oc_readf_t readf,
                        oc_writef_t writef) {
-  unsigned i;
 
   chDbgCheck((ocp != NULL) && (hashp != NULL) && (objp != NULL) &&
-             (hashn & (hashn - 1U) == 0U) &&
+             ((hashn & (hashn - 1U)) == 0U) &&
              (objn > (size_t)0) && (hashn >= objn));
 
   chSemObjectInit(&ocp->cache_sem, (cnt_t)1);
@@ -161,42 +217,154 @@ void chCacheObjectInit(objects_cache_t *ocp,
   /* Object headers initialization.*/
   while (objp < &ocp->objp[ocp->objn]) {
     chSemObjectInit(&objp->obj_sem, (cnt_t)1);
-    HASH_INSERT(ocp, objp, OC_NO_GROUP, (uint32_t)i);
     LRU_INSERT_HEAD(ocp, objp);
-    objp->obj_group = OC_NO_GROUP;
+    objp->obj_group = 0U;
     objp->obj_key   = 0U;
-    objp->obj_flags = OC_FLAG_INLRU | OC_FLAG_INVALID;
+    objp->obj_flags = OC_FLAG_INLRU;
     objp->data      = NULL;
   }
 }
 
 /**
  * @brief   Retrieves an object from the cache.
- * @note    If the object is not in cache then the returned object does
- *          not specify the flag @p OC_FLAG_CACHEHIT meaning its data contains
- *          garbage and must be initialized.
+ * @note    If the object is not in cache then the returned object is marked
+ *          as @p OC_FLAG_INVALID meaning its data contains garbage and must
+ *          be initialized.
  *
  * @param[in] ocp       pointer to the @p objects_cache_t structure
  * @param[in] group     object group identifier
  * @param[in] key       object identifier within the group
  * @return              The pointer to the retrieved object.
  * @retval NULL         is a reserved value.
+ *
+ * @api
  */
 oc_object_t *chCacheGetObject(objects_cache_t *ocp,
                               uint32_t group,
                               uint32_t key) {
 
+  /* If the requested object is not a generic one.*/
+  if (group == OC_NO_GROUP) {
+    /* Any buffer will do.*/
+  }
+  else {
+    while (true) {
+      oc_object_t *objp;
+
+      /* Critical section enter, the hash check operation is fast.*/
+      chSysLock();
+
+      /* Checking the cache for a hit.*/
+      objp = hash_get(ocp, group, key);
+
+      chDbgAssert((objp->obj_flags & OC_FLAG_INHASH) != 0U, "not in hash");
+
+      if (objp != NULL) {
+        /* Cache hit, checking if the buffer is owned by some
+           other thread.*/
+        if (chSemGetCounterI(&objp->obj_sem) > (cnt_t)0) {
+          /* Not owned case.*/
+
+          chDbgAssert((objp->obj_flags & OC_FLAG_INLRU) != 0U, "not in LRU");
+
+          /* Removing the object from LRU, now it is "owned".*/
+          LRU_REMOVE(objp);
+          objp->obj_flags &= ~OC_FLAG_INLRU;
+
+          /* Getting the object semaphore, we know there is no wait so
+             using the "fast" variant.*/
+          chSemFastWaitI(&objp->obj_sem);
+        }
+        else {
+          /* Owned case.*/
+          msg_t msg;
+
+          chDbgAssert((objp->obj_flags & OC_FLAG_INLRU) == 0U, "in LRU");
+
+          /* Getting the buffer semaphore, note it could have been
+             invalidated by the previous owner, in this case the
+             semaphore has been reset.*/
+          msg = chSemWaitS(&objp->obj_sem);
+
+          /* Out of critical section and retry.*/
+          chSysUnlock();
+
+          /* The semaphore has been signaled, the object is OK.*/
+          if (msg == MSG_OK) {
+
+            return objp;
+          }
+        }
+      }
+      else {
+        /* Cache miss, waiting for an object to become available
+           in the LRU.*/
+        chSemWaitS(&ocp->lru_sem);
+
+        /* Now a buffer is in the LRU for sure, taking it from the
+           LRU tail.*/
+        objp = ocp->lru.lru_prev;
+
+        chDbgAssert((objp->obj_flags & OC_FLAG_INLRU) != 0U, "not in LRU");
+        chDbgAssert(chSemGetCounterI(&objp->obj_sem) == (cnt_t)1,
+                    "semaphore counter not 1");
+
+        LRU_REMOVE(objp);
+        objp->obj_flags &= ~OC_FLAG_INLRU;
+
+        /* Getting the object semaphore, we know there is no wait so
+           using the "fast" variant.*/
+        chSemFastWaitI(&objp->obj_sem);
+
+        /* Naming this object and publishing it in the hash table.*/
+        objp->obj_group  = group;
+        objp->obj_key    = key;
+        objp->obj_flags |= OC_FLAG_INHASH;
+        HASH_INSERT(ocp, objp, group, key);
+      }
+    }
+  }
 }
 
 /**
  * @brief   Releases an object into the cache.
+ * @note    This function gives a meaning to the following flags:
+ *          - @p OC_FLAG_INLRU should not happen, it is caught by an
+ *            assertion.
+ *          - @p OC_FLAG_ERROR the object is invalidated and queued on
+ *            the LRU tail.
+ *          - @p OC_FLAG_MODIFIED is ignored and kept.
+ *          .
  *
  * @param[in] ocp       pointer to the @p objects_cache_t structure
  * @param[in] objp      pointer to the @p oc_object_t structure
+ *
+ * @iclass
  */
-void chCacheReleaseObject(objects_cache_t *ocp,
-                          oc_object_t *objp) {
+void chCacheReleaseObjectI(objects_cache_t *ocp,
+                           oc_object_t *objp) {
 
+  chDbgAssert((objp->obj_flags & OC_FLAG_INLRU) == 0U, "in LRU");
+  chDbgAssert((objp->obj_flags & OC_FLAG_INHASH) != 0U, "not in hash");
+  chDbgAssert(chSemGetCounterI(&objp->obj_sem) <= (cnt_t)0,
+              "semaphore counter greater than 0");
+
+  /* Cases where the object should be invalidated and discarded.*/
+  if ((objp->obj_flags & OC_FLAG_ERROR) != 0U) {
+    HASH_REMOVE(objp);
+    LRU_INSERT_TAIL(ocp, objp);
+    objp->obj_flags = OC_FLAG_INLRU;
+    objp->obj_group = 0U;
+    objp->obj_key   = 0U;
+    return;
+  }
+
+  /* If some thread is waiting for this specific buffer then it is
+     released directly without going in the LRU.*/
+  if (chSemGetCounterI(&objp->obj_sem) < (cnt_t)0) {
+    chSemSignalI(&objp->obj_sem);
+    return;
+  }
 }
 
 #endif /* CH_CFG_USE_OBJ_CACHES == TRUE */
