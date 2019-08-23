@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006..2019 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    chcaches.h
- * @brief   Caches macros and structures.
+ * @file    chobjcaches.h
+ * @brief   Objects Caches macros and structures.
  *
- * @addtogroup oslib_chaches
+ * @addtogroup oslib_objchaches
  * @{
  */
 
@@ -33,6 +33,20 @@
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
+
+/**
+ * @name    Cached objects flags
+ * @{
+ */
+#define OC_FLAG_INVALID                     0x00000001U
+#define OC_FLAG_CACHEHIT                    0x00000002U
+#define OC_FLAG_ERROR                       0x00000004U
+/** @} */
+
+/**
+ * @brief   Identifier for an invalid group.
+ */
+#define OC_NO_GROUP                         0xFFFFFFFFU
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -149,9 +163,11 @@ struct ch_oc_object {
    */
   oc_flags_t            obj_flags;
   /**
-   * @brief   Data part of the object.
+   * @brief   Pointer to the data part of the object.
+   * @note    This pointer must be initialized outside this module after
+   *          calling @p chCacheObjectInit() which sets it to @p NULL.
    */
-  uint8_t               data[];
+  void                  *data;
 };
 
 /**
@@ -159,17 +175,33 @@ struct ch_oc_object {
  */
 typedef struct {
   /**
+   * @brief   Number of elements in the hash table.
+   */
+  size_t                hashn;
+  /**
+   * @brief   Pointer to the hash table.
+   */
+  oc_hash_header_t      *hashp;
+  /**
+   * @brief   Number of elements in the objects table.
+   */
+  size_t                objn;
+  /**
+   * @brief   Pointer to the objects table.
+   */
+  oc_object_t           *objp;
+  /**
    * @brief   LRU list header.
    */
   oc_lru_header_t       lru;
   /**
+   * @brief   Semaphore for cache access.
+   */
+  semaphore_t           cache_sem;
+  /**
    * @brief   Semaphore for LRU access.
    */
   semaphore_t           lru_sem;
-  /**
-   * @brief   Size of the cached objects.
-   */
-  size_t                obj_size;
   /**
    * @brief   Reader functions for cached objects.
    */
@@ -192,16 +224,15 @@ typedef struct {
 extern "C" {
 #endif
   void chCacheObjectInit(objects_cache_t *ocp,
-                         size_t hashn,
+                         ucnt_t hashn,
                          oc_hash_header_t *hashp,
-                         size_t objn,
+                         ucnt_t objn,
                          oc_object_t *objp,
                          oc_readf_t readf,
                          oc_writef_t writef);
-  msg_t chCacheGetObject(objects_cache_t *ocp,
-                         uint32_t group,
-                         uint32_t key,
-                         oc_object_t **objpp);
+  oc_object_t *chCacheGetObject(objects_cache_t *ocp,
+                                uint32_t group,
+                                uint32_t key);
   void chCacheReleaseObject(objects_cache_t *ocp,
                             oc_object_t *objp);
 #ifdef __cplusplus

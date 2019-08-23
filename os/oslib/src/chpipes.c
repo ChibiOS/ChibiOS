@@ -383,6 +383,6 @@ size_t chPipeReadTimeout(pipe_t *pp, uint8_t *bp,
   return max - n;
 }
 
-#endif /* CH_CFG_USE_MAILBOXES == TRUE */
+#endif /* CH_CFG_USE_PIPES == TRUE */
 
 /** @} */
