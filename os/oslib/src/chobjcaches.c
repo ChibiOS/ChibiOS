@@ -20,16 +20,30 @@
 /**
  * @file    chobjcaches.c
  * @brief   Objects Caches code.
- * @details Byte pipes.
+ * @details Objects caches.
  *          <h2>Operation mode</h2>
- *          A pipe is an asynchronous communication mechanism.<br>
- *          Operations defined for mailboxes:
- *          - <b>Write</b>: Writes a buffer of data in the pipe in FIFO order.
- *          - <b>Read</b>: A buffer of data is read from the read and removed.
- *          - <b>Reset</b>: The pipe is emptied and all the stored data
- *            is lost.
+ *          An object cache allows to retrieve and release objects from a
+ *          slow media, for example a disk or flash.<br>
+ *          The most recently used objects are kept in a series of RAM
+ *          buffers making access faster. Objects are identified by a
+ *          pair <group, key> which could be mapped, for example, to a
+ *          disk drive identifier and sector identifier.<br>
+ *          Read and write operations are performed using externally-supplied
+ *          functions, the cache is device-agnostic.<br>
+ *          The cache uses internally an hash table, the size of the table
+ *          should be dimensioned to minimize the risk of hash collisions,
+ *          a factor of two is usually acceptable, it depends on the specific
+ *          application requirements.<br>
+ *          Operations defined for caches:
+ *          - <b>Get Object</b>: Retrieves an object from cache, if not
+ *            present then an empty buffer is returned.
+ *          - <b>Read Object</b>: Retrieves an object from cache, if not
+ *            present a buffer is allocated and the object is read from the
+ *            media.
+ *          - <b>Release Object</b>: Releases an object to the cache handling
+ *            the media update, if required.
  *          .
- * @pre     In order to use the pipes APIs the @p CH_CFG_USE_PIPES
+ * @pre     In order to use the pipes APIs the @p CH_CFG_USE_OBJ_CACHES
  *          option must be enabled in @p chconf.h.
  * @note    Compatible with RT and NIL.
  *
@@ -151,7 +165,7 @@ void chCacheObjectInit(objects_cache_t *ocp,
     LRU_INSERT_HEAD(ocp, objp);
     objp->obj_group = OC_NO_GROUP;
     objp->obj_key   = 0U;
-    objp->obj_flags = OC_FLAG_INVALID;
+    objp->obj_flags = OC_FLAG_INLRU | OC_FLAG_INVALID;
     objp->data      = NULL;
   }
 }
