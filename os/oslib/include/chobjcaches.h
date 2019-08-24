@@ -40,9 +40,11 @@
  */
 #define OC_FLAG_INLRU                       0x00000001U
 #define OC_FLAG_INHASH                      0x00000002U
-#define OC_FLAG_CACHEHIT                    0x00000004U
+#define OC_FLAG_NOTREAD                     0x00000004U
 #define OC_FLAG_ERROR                       0x00000008U
 #define OC_FLAG_MODIFIED                    0x00000010U
+#define OC_FLAG_SHARED                      0x00000020U
+#define OC_FLAG_FORGET                      0x00000040U
 /** @} */
 
 /**
@@ -84,13 +86,23 @@ typedef struct ch_oc_object oc_object_t;
 
 /**
  * @brief   Object read function.
+ *
+ * @param[in] ocp       pointer to the @p objects_cache_t structure
+ * @param[in] async     requests an asynchronous operation if supported, the
+ *                      function is then responsible for releasing the
+ *                      object
  */
-typedef msg_t (*oc_readf_t)(oc_object_t *cop);
+typedef msg_t (*oc_readf_t)(oc_object_t *objp, bool async);
 
 /**
  * @brief   Object write function.
+ *
+ * @param[in] ocp       pointer to the @p objects_cache_t structure
+ * @param[in] async     requests an asynchronous operation if supported, the
+ *                      function is then responsible for releasing the
+ *                      object
  */
-typedef msg_t (*oc_writef_t)(oc_object_t *cop);
+typedef msg_t (*oc_writef_t)(oc_object_t *objp, bool async);
 
 /**
  * @brief   Structure representing an hash table element.
@@ -235,8 +247,14 @@ extern "C" {
   oc_object_t *chCacheGetObject(objects_cache_t *ocp,
                                 uint32_t group,
                                 uint32_t key);
-  void chCacheReleaseObject(objects_cache_t *ocp,
-                            oc_object_t *objp);
+  void chCacheReleaseObjectI(objects_cache_t *ocp,
+                             oc_object_t *objp);
+  void chCacheReadObject(objects_cache_t *ocp,
+                         oc_object_t *objp,
+                         bool async);
+  void chCacheWriteObject(objects_cache_t *ocp,
+                          oc_object_t *objp,
+                          bool async);
 #ifdef __cplusplus
 }
 #endif

@@ -128,10 +128,12 @@
  *                      initialized
  * @return              The pointer to the retrieved object.
  * @retval NULL         if the object is not in cache.
+ *
+ * @notapi
  */
-static oc_object_t *hash_get(objects_cache_t *ocp,
-                             uint32_t group,
-                             uint32_t key) {
+static oc_object_t *hash_get_s(objects_cache_t *ocp,
+                               uint32_t group,
+                               uint32_t key) {
   oc_hash_header_t *hhp;
   oc_object_t *objp;
 
@@ -150,6 +152,58 @@ static oc_object_t *hash_get(objects_cache_t *ocp,
   }
 
   return NULL;
+}
+
+/**
+ * @brief   Gets the least recently used object buffer from the LRU list.
+ *
+ * @param[out] ocp      pointer to the @p objects_cache_t structure to be
+ * @return              The pointer to the retrieved object.
+ *
+ * @notapi
+ */
+static oc_object_t *lru_get_last_s(objects_cache_t *ocp) {
+  oc_object_t *objp;
+
+  while (true) {
+    /* Waiting for an object buffer to become available in the LRU.*/
+    chSemWaitS(&ocp->lru_sem);
+
+    /* Now an object buffer is in the LRU for sure, taking it from the
+       LRU tail.*/
+    objp = ocp->lru.lru_prev;
+
+    chDbgAssert((objp->obj_flags & OC_FLAG_INLRU) == OC_FLAG_INLRU,
+                "not in LRU");
+    chDbgAssert(chSemGetCounterI(&objp->obj_sem) == (cnt_t)1,
+                "semaphore counter not 1");
+
+    LRU_REMOVE(objp);
+    objp->obj_flags &= ~OC_FLAG_INLRU;
+
+    /* Getting the object semaphore, we know there is no wait so
+       using the "fast" variant.*/
+    chSemFastWaitI(&objp->obj_sem);
+
+    /* If it is a buffer not needing write then it can be used right away.*/
+    if ((objp->obj_flags & OC_FLAG_MODIFIED) != 0U) {
+
+      return objp;
+    }
+
+
+    /* Out of critical section.*/
+    chSysUnlock();
+
+   /* Invoking the writer asynchronously, it will release the buffer once it
+      is written, the operation could be asynchronous. It is responsibility
+      of the write function to release the buffer (synchronously or
+      asynchronously).*/
+    ocp->writef(objp, true);
+
+    /* Critical section enter again.*/
+    chSysLock();
+  }
 }
 
 /*===========================================================================*/
@@ -228,11 +282,14 @@ void chCacheObjectInit(objects_cache_t *ocp,
 /**
  * @brief   Retrieves an object from the cache.
  * @note    If the object is not in cache then the returned object is marked
- *          as @p OC_FLAG_INVALID meaning its data contains garbage and must
- *          be initialized.
+ *          as @p OC_FLAG_NOTREAD meaning that its data contains garbage and
+ *          must be initialized.
+ * @note    If the object has been modified by another thread while in cache
+ *          (and not written) then it is marked as @p OC_FLAG_MODIFIED.
  *
  * @param[in] ocp       pointer to the @p objects_cache_t structure
- * @param[in] group     object group identifier
+ * @param[in] group     object group identifier or @p OC_NO_GROUP if
+ *                      requesting a generic object buffer
  * @param[in] key       object identifier within the group
  * @return              The pointer to the retrieved object.
  * @retval NULL         is a reserved value.
@@ -242,98 +299,79 @@ void chCacheObjectInit(objects_cache_t *ocp,
 oc_object_t *chCacheGetObject(objects_cache_t *ocp,
                               uint32_t group,
                               uint32_t key) {
+  oc_object_t *objp;
+
+  /* Critical section enter, the hash check operation is fast.*/
+  chSysLock();
 
   /* If the requested object is not a generic one.*/
   if (group == OC_NO_GROUP) {
     /* Any buffer will do.*/
+    objp = NULL; /* TODO */
   }
   else {
-    while (true) {
-      oc_object_t *objp;
+    /* Checking the cache for a hit.*/
+    objp = hash_get_s(ocp, group, key);
 
-      /* Critical section enter, the hash check operation is fast.*/
-      chSysLock();
+    chDbgAssert((objp->obj_flags & OC_FLAG_INHASH) == OC_FLAG_INHASH,
+                "not in hash");
 
-      /* Checking the cache for a hit.*/
-      objp = hash_get(ocp, group, key);
+    if (objp != NULL) {
+      /* Cache hit, checking if the buffer is owned by some
+         other thread.*/
+      if (chSemGetCounterI(&objp->obj_sem) > (cnt_t)0) {
+        /* Not owned case, it is in the LRU list.*/
 
-      chDbgAssert((objp->obj_flags & OC_FLAG_INHASH) != 0U, "not in hash");
+        chDbgAssert((objp->obj_flags & OC_FLAG_INLRU) == OC_FLAG_INLRU,
+                    "not in LRU");
 
-      if (objp != NULL) {
-        /* Cache hit, checking if the buffer is owned by some
-           other thread.*/
-        if (chSemGetCounterI(&objp->obj_sem) > (cnt_t)0) {
-          /* Not owned case.*/
-
-          chDbgAssert((objp->obj_flags & OC_FLAG_INLRU) != 0U, "not in LRU");
-
-          /* Removing the object from LRU, now it is "owned".*/
-          LRU_REMOVE(objp);
-          objp->obj_flags &= ~OC_FLAG_INLRU;
-
-          /* Getting the object semaphore, we know there is no wait so
-             using the "fast" variant.*/
-          chSemFastWaitI(&objp->obj_sem);
-        }
-        else {
-          /* Owned case.*/
-          msg_t msg;
-
-          chDbgAssert((objp->obj_flags & OC_FLAG_INLRU) == 0U, "in LRU");
-
-          /* Getting the buffer semaphore, note it could have been
-             invalidated by the previous owner, in this case the
-             semaphore has been reset.*/
-          msg = chSemWaitS(&objp->obj_sem);
-
-          /* Out of critical section and retry.*/
-          chSysUnlock();
-
-          /* The semaphore has been signaled, the object is OK.*/
-          if (msg == MSG_OK) {
-
-            return objp;
-          }
-        }
-      }
-      else {
-        /* Cache miss, waiting for an object to become available
-           in the LRU.*/
-        chSemWaitS(&ocp->lru_sem);
-
-        /* Now a buffer is in the LRU for sure, taking it from the
-           LRU tail.*/
-        objp = ocp->lru.lru_prev;
-
-        chDbgAssert((objp->obj_flags & OC_FLAG_INLRU) != 0U, "not in LRU");
-        chDbgAssert(chSemGetCounterI(&objp->obj_sem) == (cnt_t)1,
-                    "semaphore counter not 1");
-
+        /* Removing the object from LRU, now it is "owned".*/
         LRU_REMOVE(objp);
         objp->obj_flags &= ~OC_FLAG_INLRU;
 
         /* Getting the object semaphore, we know there is no wait so
            using the "fast" variant.*/
         chSemFastWaitI(&objp->obj_sem);
+      }
+      else {
+        /* Owned case, some other thread is playing with this object, we
+           need to wait.*/
 
-        /* Naming this object and publishing it in the hash table.*/
-        objp->obj_group  = group;
-        objp->obj_key    = key;
-        objp->obj_flags |= OC_FLAG_INHASH;
-        HASH_INSERT(ocp, objp, group, key);
+        chDbgAssert((objp->obj_flags & OC_FLAG_INLRU) == 0U, "in LRU");
+
+        /* Waiting on the buffer semaphore.*/
+        chSemWaitS(&objp->obj_sem);
       }
     }
+    else {
+      /* Cache miss, getting an object buffer from the LRU list.*/
+      objp = lru_get_last_s(ocp);
+
+      /* Naming this object and publishing it in the hash table.*/
+      objp->obj_group  = group;
+      objp->obj_key    = key;
+      objp->obj_flags |= OC_FLAG_INHASH | OC_FLAG_NOTREAD;
+      HASH_INSERT(ocp, objp, group, key);
+    }
   }
+
+  /* Out of critical section and returning the object.*/
+  chSysUnlock();
+
+  return objp;
 }
 
 /**
  * @brief   Releases an object into the cache.
  * @note    This function gives a meaning to the following flags:
- *          - @p OC_FLAG_INLRU should not happen, it is caught by an
- *            assertion.
- *          - @p OC_FLAG_ERROR the object is invalidated and queued on
+ *          - @p OC_FLAG_INLRU must be cleared.
+ *          - @p OC_FLAG_INHASH must be set.
+ *          - @p OC_FLAG_SHARED must be cleared.
+ *          - @p OC_FLAG_ERROR is ignored.
+ *          - @p OC_FLAG_NOTREAD invalidates the object and queues it on
  *            the LRU tail.
- *          - @p OC_FLAG_MODIFIED is ignored and kept.
+ *          - @p OC_FLAG_MODIFIED is ignored and kept, a write will occur
+ *            when the object is removed from the LRU list (lazy write).
  *          .
  *
  * @param[in] ocp       pointer to the @p objects_cache_t structure
@@ -344,28 +382,83 @@ oc_object_t *chCacheGetObject(objects_cache_t *ocp,
 void chCacheReleaseObjectI(objects_cache_t *ocp,
                            oc_object_t *objp) {
 
-  chDbgAssert((objp->obj_flags & OC_FLAG_INLRU) == 0U, "in LRU");
-  chDbgAssert((objp->obj_flags & OC_FLAG_INHASH) != 0U, "not in hash");
+  /* Checking initial conditions of the object to be released.*/
+  chDbgAssert((objp->obj_flags & (OC_FLAG_INLRU |
+                                  OC_FLAG_INHASH |
+                                  OC_FLAG_SHARED)) == OC_FLAG_INHASH,
+              "invalid object state");
   chDbgAssert(chSemGetCounterI(&objp->obj_sem) <= (cnt_t)0,
               "semaphore counter greater than 0");
 
-  /* Cases where the object should be invalidated and discarded.*/
-  if ((objp->obj_flags & OC_FLAG_ERROR) != 0U) {
-    HASH_REMOVE(objp);
-    LRU_INSERT_TAIL(ocp, objp);
-    objp->obj_flags = OC_FLAG_INLRU;
-    objp->obj_group = 0U;
-    objp->obj_key   = 0U;
-    return;
-  }
-
   /* If some thread is waiting for this specific buffer then it is
-     released directly without going in the LRU.*/
+     handed directly without going through the LRU.*/
   if (chSemGetCounterI(&objp->obj_sem) < (cnt_t)0) {
+    /* Clearing all flags except those that are still meaningful, note,
+       OC_FLAG_NOTREAD and OC_FLAG_MODIFIED are passed, the other thread
+       will handle them.*/
+    objp->obj_flags &= OC_FLAG_INHASH | OC_FLAG_NOTREAD | OC_FLAG_MODIFIED;
     chSemSignalI(&objp->obj_sem);
     return;
   }
+
+  /* If the object specifies OC_FLAG_NOTREAD then it must be invalidated
+     and removed from the hash table.*/
+  if ((objp->obj_flags & OC_FLAG_NOTREAD) != 0U) {
+    HASH_REMOVE(objp);
+    LRU_INSERT_TAIL(ocp, objp);
+    objp->obj_group = OC_NO_GROUP;
+    objp->obj_key   = 0U;
+    objp->obj_flags = OC_FLAG_INLRU;
+  }
+  else {
+    /* LRU insertion point depends on the OC_FLAG_FORGET flag.*/
+    if ((objp->obj_flags & OC_FLAG_FORGET) == 0U) {
+      /* Placing it on head.*/
+      LRU_INSERT_HEAD(ocp, objp);
+    }
+    else {
+      /* Low priority data, placing it on tail.*/
+      LRU_INSERT_TAIL(ocp, objp);
+    }
+    objp->obj_flags &= OC_FLAG_INHASH | OC_FLAG_MODIFIED;
+    objp->obj_flags |= OC_FLAG_INLRU;
+  }
+
+  /* Increasing the LRU counter semaphore.*/
+  chSemSignalI(&ocp->lru_sem);
+
+  /* Releasing the object, we know there are no threads waiting so
+     using the "fast" signal variant.*/
+  chSemFastSignalI(&objp->obj_sem);
 }
+
+/**
+ * @brief   Reads object data into the object buffer.
+ * @note    In case of read error the behavior is the following:
+ *          - Synchronous operation: The @p OC_FLAG_ERROR and
+ *            @p OC_FLAG_NOTREAD flags are enforced in the object
+ *            buffer.
+ *          - Asynchronous operation: The object buffer is discarded, there
+ *            is no error notification unless implemented in the physical
+ *            read function.
+ *          .
+ *
+ * @param[in] ocp       pointer to the @p objects_cache_t structure
+ * @param[in] async     requests an asynchronous operation if supported, the
+ *                      function is then responsible for releasing the
+ *                      object
+ *
+ * @api
+ */
+void chCacheReadObject(objects_cache_t *ocp,
+                       oc_object_t *objp,
+                       bool async) {
+
+}
+
+void chCacheWriteObject(objects_cache_t *ocp,
+                        oc_object_t *objp,
+                        bool async);
 
 #endif /* CH_CFG_USE_OBJ_CACHES == TRUE */
 
