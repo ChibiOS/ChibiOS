@@ -186,7 +186,7 @@ static oc_object_t *lru_get_last_s(objects_cache_t *ocp) {
     chSemFastWaitI(&objp->obj_sem);
 
     /* If it is a buffer not needing write then it can be used right away.*/
-    if ((objp->obj_flags & OC_FLAG_MODIFIED) != 0U) {
+    if ((objp->obj_flags & OC_FLAG_LAZYWRITE) != 0U) {
 
       return objp;
     }
@@ -199,7 +199,8 @@ static oc_object_t *lru_get_last_s(objects_cache_t *ocp) {
       is written, the operation could be asynchronous. It is responsibility
       of the write function to release the buffer (synchronously or
       asynchronously).*/
-    ocp->writef(objp, true);
+    objp->obj_flags &= ~OC_FLAG_LAZYWRITE;
+    ocp->writef(ocp, objp, true);
 
     /* Critical section enter again.*/
     chSysLock();
@@ -284,8 +285,6 @@ void chCacheObjectInit(objects_cache_t *ocp,
  * @note    If the object is not in cache then the returned object is marked
  *          as @p OC_FLAG_NOTREAD meaning that its data contains garbage and
  *          must be initialized.
- * @note    If the object has been modified by another thread while in cache
- *          (and not written) then it is marked as @p OC_FLAG_MODIFIED.
  *
  * @param[in] ocp       pointer to the @p objects_cache_t structure
  * @param[in] group     object group identifier or @p OC_NO_GROUP if
@@ -367,10 +366,9 @@ oc_object_t *chCacheGetObject(objects_cache_t *ocp,
  *          - @p OC_FLAG_INLRU must be cleared.
  *          - @p OC_FLAG_INHASH must be set.
  *          - @p OC_FLAG_SHARED must be cleared.
- *          - @p OC_FLAG_ERROR is ignored.
  *          - @p OC_FLAG_NOTREAD invalidates the object and queues it on
  *            the LRU tail.
- *          - @p OC_FLAG_MODIFIED is ignored and kept, a write will occur
+ *          - @p OC_FLAG_LAZYWRITE is ignored and kept, a write will occur
  *            when the object is removed from the LRU list (lazy write).
  *          .
  *
@@ -394,9 +392,9 @@ void chCacheReleaseObjectI(objects_cache_t *ocp,
      handed directly without going through the LRU.*/
   if (chSemGetCounterI(&objp->obj_sem) < (cnt_t)0) {
     /* Clearing all flags except those that are still meaningful, note,
-       OC_FLAG_NOTREAD and OC_FLAG_MODIFIED are passed, the other thread
+       OC_FLAG_NOTREAD and OC_FLAG_LAZYWRITE are passed, the other thread
        will handle them.*/
-    objp->obj_flags &= OC_FLAG_INHASH | OC_FLAG_NOTREAD | OC_FLAG_MODIFIED;
+    objp->obj_flags &= OC_FLAG_INHASH | OC_FLAG_NOTREAD | OC_FLAG_LAZYWRITE;
     chSemSignalI(&objp->obj_sem);
     return;
   }
@@ -420,7 +418,7 @@ void chCacheReleaseObjectI(objects_cache_t *ocp,
       /* Low priority data, placing it on tail.*/
       LRU_INSERT_TAIL(ocp, objp);
     }
-    objp->obj_flags &= OC_FLAG_INHASH | OC_FLAG_MODIFIED;
+    objp->obj_flags &= OC_FLAG_INHASH | OC_FLAG_LAZYWRITE;
     objp->obj_flags |= OC_FLAG_INLRU;
   }
 
@@ -433,32 +431,59 @@ void chCacheReleaseObjectI(objects_cache_t *ocp,
 }
 
 /**
- * @brief   Reads object data into the object buffer.
- * @note    In case of read error the behavior is the following:
- *          - Synchronous operation: The @p OC_FLAG_ERROR and
- *            @p OC_FLAG_NOTREAD flags are enforced in the object
- *            buffer.
- *          - Asynchronous operation: The object buffer is discarded, there
- *            is no error notification unless implemented in the physical
- *            read function.
- *          .
+ * @brief   Reads object data from the storage.
+ * @note    In case of asynchronous operation an error condition is not
+ *          reported by this function.
  *
  * @param[in] ocp       pointer to the @p objects_cache_t structure
  * @param[in] async     requests an asynchronous operation if supported, the
  *                      function is then responsible for releasing the
  *                      object
+ * @return              The operation status. In case of asynchronous
+ *                      operation @p false is always returned.
+ * @retval false        if the operation succeeded.
+ * @retval true         if the synchronous read operation failed.
  *
  * @api
  */
-void chCacheReadObject(objects_cache_t *ocp,
+bool chCacheReadObject(objects_cache_t *ocp,
                        oc_object_t *objp,
                        bool async) {
 
+  /* Marking it as OC_FLAG_NOTREAD because the read operation is going
+     to corrupt it in case of failure. It is responsibility of the read
+     implementation to clear it if the operation succeeds.*/
+  objp->obj_flags |= OC_FLAG_NOTREAD;
+
+  return ocp->readf(ocp, objp, async);
 }
 
-void chCacheWriteObject(objects_cache_t *ocp,
+/**
+ * @brief   writes the object data back to storage.
+ * @note    In case of asynchronous operation an error condition is not
+ *          reported by this function.
+ *
+ * @param[in] ocp       pointer to the @p objects_cache_t structure
+ * @param[in] async     requests an asynchronous operation if supported, the
+ *                      function is then responsible for releasing the
+ *                      object
+ * @return              The operation status. In case of asynchronous
+ *                      operation @p false is always returned.
+ * @retval false        if the operation succeeded.
+ * @retval true         if the synchronous write operation failed.
+ *
+ * @api
+ */
+bool chCacheWriteObject(objects_cache_t *ocp,
                         oc_object_t *objp,
-                        bool async);
+                        bool async) {
+
+  /* Resetting the OC_FLAG_LAZYWRITE flag in order to prevent multiple
+     writes.*/
+  objp->obj_flags &= ~OC_FLAG_LAZYWRITE;
+
+  return ocp->writef(ocp, objp, async);
+}
 
 #endif /* CH_CFG_USE_OBJ_CACHES == TRUE */
 

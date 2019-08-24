@@ -40,11 +40,10 @@
  */
 #define OC_FLAG_INLRU                       0x00000001U
 #define OC_FLAG_INHASH                      0x00000002U
-#define OC_FLAG_NOTREAD                     0x00000004U
-#define OC_FLAG_ERROR                       0x00000008U
-#define OC_FLAG_MODIFIED                    0x00000010U
-#define OC_FLAG_SHARED                      0x00000020U
-#define OC_FLAG_FORGET                      0x00000040U
+#define OC_FLAG_SHARED                      0x00000004U
+#define OC_FLAG_NOTREAD                     0x00000008U
+#define OC_FLAG_LAZYWRITE                   0x00000010U
+#define OC_FLAG_FORGET                      0x00000020U
 /** @} */
 
 /**
@@ -85,6 +84,11 @@ typedef struct ch_oc_lru_header oc_lru_header_t;
 typedef struct ch_oc_object oc_object_t;
 
 /**
+ * @brief   Type of a cache object.
+ */
+typedef struct ch_objects_cache objects_cache_t;
+
+/**
  * @brief   Object read function.
  *
  * @param[in] ocp       pointer to the @p objects_cache_t structure
@@ -92,7 +96,9 @@ typedef struct ch_oc_object oc_object_t;
  *                      function is then responsible for releasing the
  *                      object
  */
-typedef msg_t (*oc_readf_t)(oc_object_t *objp, bool async);
+typedef bool (*oc_readf_t)(objects_cache_t *ocp,
+                           oc_object_t *objp,
+                           bool async);
 
 /**
  * @brief   Object write function.
@@ -102,7 +108,9 @@ typedef msg_t (*oc_readf_t)(oc_object_t *objp, bool async);
  *                      function is then responsible for releasing the
  *                      object
  */
-typedef msg_t (*oc_writef_t)(oc_object_t *objp, bool async);
+typedef bool (*oc_writef_t)(objects_cache_t *ocp,
+                            oc_object_t *objp,
+                            bool async);
 
 /**
  * @brief   Structure representing an hash table element.
@@ -185,9 +193,9 @@ struct ch_oc_object {
 };
 
 /**
- * @brief   Type of a cache object.
+ * @brief   Structure representing a cache object.
  */
-typedef struct {
+struct ch_objects_cache {
   /**
    * @brief   Number of elements in the hash table.
    */
@@ -224,7 +232,7 @@ typedef struct {
    * @brief   Writer functions for cached objects.
    */
   oc_writef_t           writef;
-} objects_cache_t;
+};
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -249,10 +257,10 @@ extern "C" {
                                 uint32_t key);
   void chCacheReleaseObjectI(objects_cache_t *ocp,
                              oc_object_t *objp);
-  void chCacheReadObject(objects_cache_t *ocp,
+  bool chCacheReadObject(objects_cache_t *ocp,
                          oc_object_t *objp,
                          bool async);
-  void chCacheWriteObject(objects_cache_t *ocp,
+  bool chCacheWriteObject(objects_cache_t *ocp,
                           oc_object_t *objp,
                           bool async);
 #ifdef __cplusplus
