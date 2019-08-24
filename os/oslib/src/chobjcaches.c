@@ -185,8 +185,17 @@ static oc_object_t *lru_get_last_s(objects_cache_t *ocp) {
        using the "fast" variant.*/
     chSemFastWaitI(&objp->obj_sem);
 
-    /* If it is a buffer not needing write then it can be used right away.*/
-    if ((objp->obj_flags & OC_FLAG_LAZYWRITE) != 0U) {
+    /* If it is a buffer not needing (lazy) write then it can be used
+       right away.*/
+    if ((objp->obj_flags & OC_FLAG_LAZYWRITE) == 0U) {
+
+      /* Removing from hash table if required.*/
+      if ((objp->obj_flags & OC_FLAG_INHASH) != 0U) {
+        HASH_REMOVE(objp);
+      }
+
+      /* Removing all flags, it is "new" now.*/
+      objp->obj_flags = 0U;
 
       return objp;
     }
@@ -196,10 +205,9 @@ static oc_object_t *lru_get_last_s(objects_cache_t *ocp) {
     chSysUnlock();
 
    /* Invoking the writer asynchronously, it will release the buffer once it
-      is written, the operation could be asynchronous. It is responsibility
-      of the write function to release the buffer (synchronously or
-      asynchronously).*/
-    objp->obj_flags &= ~OC_FLAG_LAZYWRITE;
+      is written. It is responsibility of the write function to release
+      the buffer.*/
+    objp->obj_flags = OC_FLAG_INHASH | OC_FLAG_FORGET;
     ocp->writef(ocp, objp, true);
 
     /* Critical section enter again.*/
@@ -347,9 +355,9 @@ oc_object_t *chCacheGetObject(objects_cache_t *ocp,
       objp = lru_get_last_s(ocp);
 
       /* Naming this object and publishing it in the hash table.*/
-      objp->obj_group  = group;
-      objp->obj_key    = key;
-      objp->obj_flags |= OC_FLAG_INHASH | OC_FLAG_NOTREAD;
+      objp->obj_group = group;
+      objp->obj_key   = key;
+      objp->obj_flags = OC_FLAG_INHASH | OC_FLAG_NOTREAD;
       HASH_INSERT(ocp, objp, group, key);
     }
   }
