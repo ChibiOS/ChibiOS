@@ -52,7 +52,7 @@
 /**
  * @brief   OS Library version string.
  */
-#define CH_OSLIB_VERSION        "1.1.0"
+#define CH_OSLIB_VERSION        "1.2.0"
 
 /**
  * @brief   OS Library version major number.
@@ -62,7 +62,7 @@
 /**
  * @brief   OS Library version minor number.
  */
-#define CH_OSLIB_MINOR          1
+#define CH_OSLIB_MINOR          2
 
 /**
  * @brief   OS Library version patch number.
@@ -106,6 +106,11 @@
 
 #if !defined(CH_CFG_USE_PIPES)
 #error "CH_CFG_USE_PIPES not defined in chconf.h"
+#endif
+
+#if !defined(CH_CFG_USE_OBJ_CACHES)
+//#error "CH_CFG_USE_OBJ_CACHES not defined in chconf.h"
+#define CH_CFG_USE_OBJ_CACHES 0
 #endif
 
 /* Objects factory options checks.*/
@@ -210,6 +215,7 @@
 #include "chmempools.h"
 #include "chobjfifos.h"
 #include "chpipes.h"
+#include "chobjcaches.h"
 #include "chfactory.h"
 
 /*===========================================================================*/

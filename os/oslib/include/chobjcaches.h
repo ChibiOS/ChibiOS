@@ -41,15 +41,10 @@
 #define OC_FLAG_INLRU                       0x00000001U
 #define OC_FLAG_INHASH                      0x00000002U
 #define OC_FLAG_SHARED                      0x00000004U
-#define OC_FLAG_NOTREAD                     0x00000008U
+#define OC_FLAG_NOTSYNC                     0x00000008U
 #define OC_FLAG_LAZYWRITE                   0x00000010U
 #define OC_FLAG_FORGET                      0x00000020U
 /** @} */
-
-/**
- * @brief   Identifier for an invalid group.
- */
-#define OC_NO_GROUP                         0xFFFFFFFFU
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -185,11 +180,15 @@ struct ch_oc_object {
    */
   oc_flags_t            obj_flags;
   /**
-   * @brief   Pointer to the data part of the object.
-   * @note    This pointer must be initialized outside this module after
-   *          calling @p chCacheObjectInit() which sets it to @p NULL.
+   * @brief   User pointer.
+   * @note    This pointer can be used to refer to external buffers,
+   *          @p chCacheObjectInit() initializes it to @p NULL.
    */
-  void                  *data;
+  void                *dptr;
+  /**
+   * @brief   Embedded data as an open array.
+   */
+  uint8_t             dbuf[];
 };
 
 /**
@@ -199,7 +198,7 @@ struct ch_objects_cache {
   /**
    * @brief   Number of elements in the hash table.
    */
-  size_t                hashn;
+  ucnt_t                hashn;
   /**
    * @brief   Pointer to the hash table.
    */
@@ -207,11 +206,15 @@ struct ch_objects_cache {
   /**
    * @brief   Number of elements in the objects table.
    */
-  size_t                objn;
+  ucnt_t                objn;
+  /**
+   * @brief   Size of elements in the objects table.
+   */
+  size_t                objsz;
   /**
    * @brief   Pointer to the objects table.
    */
-  oc_object_t           *objp;
+  void                  *objvp;
   /**
    * @brief   LRU list header.
    */
@@ -249,7 +252,8 @@ extern "C" {
                          ucnt_t hashn,
                          oc_hash_header_t *hashp,
                          ucnt_t objn,
-                         oc_object_t *objp,
+                         size_t objsz,
+                         void *objvp,
                          oc_readf_t readf,
                          oc_writef_t writef);
   oc_object_t *chCacheGetObject(objects_cache_t *ocp,
