@@ -74,8 +74,9 @@
 *****************************************************************************
 
 *** Next ***
+- LIB: Added a cache class to OSLIB.
 - NEW: Added an option to change the shell thread name.
-- NEW: Made bus acquire/release functions in SNOR driver public.
+- HAL: Made bus acquire/release functions in SNOR driver public.
 - NEW: Added mcuconf.h generator for STM32L052/L053/L062/L063.
 - NEW: Added mcuconf.h generator for STM32L072/L073.
 - NEW: Initial STM32G0xx support in HAL.
