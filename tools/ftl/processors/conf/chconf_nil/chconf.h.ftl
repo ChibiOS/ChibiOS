@@ -273,6 +273,15 @@
  */
 #define CH_CFG_FACTORY_PIPES                ${doc.CH_CFG_FACTORY_PIPES!"TRUE"}
 
+/**
+ * @brief   Objects Caches APIs.
+ * @details If enabled then the objects caches APIs are included
+ *          in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#define CH_CFG_USE_OBJ_CACHES               ${doc.CH_CFG_USE_OBJ_CACHES!"TRUE"}
+
 /** @} */
 
 /*===========================================================================*/

@@ -458,7 +458,7 @@ bool chCacheReadObject(objects_cache_t *ocp,
 }
 
 /**
- * @brief   writes the object data back to storage.
+ * @brief   Writes the object data back to storage.
  * @note    In case of asynchronous operation an error condition is not
  *          reported by this function.
  *
