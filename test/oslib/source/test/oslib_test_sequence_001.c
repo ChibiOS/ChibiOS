@@ -94,6 +94,7 @@ static void oslib_test_001_001_execute(void) {
     test_println("");
 #endif
   }
+  test_end_step(1);
 }
 
 static const testcase_t oslib_test_001_001 = {
@@ -135,6 +136,7 @@ static void oslib_test_001_002_execute(void) {
     test_printn(CH_OSLIB_PATCH);
     test_println("");
   }
+  test_end_step(1);
 }
 
 static const testcase_t oslib_test_001_002 = {
@@ -200,6 +202,7 @@ static void oslib_test_001_003_execute(void) {
     test_printn(CH_CFG_FACTORY_PIPES);
     test_println("");
   }
+  test_end_step(1);
 }
 
 static const testcase_t oslib_test_001_003 = {

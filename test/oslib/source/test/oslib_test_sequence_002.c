@@ -100,6 +100,7 @@ static void oslib_test_002_001_execute(void) {
   {
     test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "wrong size");
   }
+  test_end_step(1);
 
   /* [2.1.2] Resetting the mailbox, conditions are checked, no errors
      expected.*/
@@ -111,6 +112,7 @@ static void oslib_test_002_001_execute(void) {
     test_assert_lock(mb1.buffer == mb1.wrptr, "write pointer not aligned to base");
     test_assert_lock(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");
   }
+  test_end_step(2);
 
   /* [2.1.3] Testing the behavior of API when the mailbox is in reset
      state then return in active state.*/
@@ -124,6 +126,7 @@ static void oslib_test_002_001_execute(void) {
     test_assert(msg1 == MSG_RESET, "not in reset state");
     chMBResumeX(&mb1);
   }
+  test_end_step(3);
 
   /* [2.1.4] Filling the mailbox using chMBPostTimeout() and
      chMBPostAheadTimeout() once, no errors expected.*/
@@ -136,6 +139,7 @@ static void oslib_test_002_001_execute(void) {
     msg1 = chMBPostAheadTimeout(&mb1, 'A', TIME_INFINITE);
     test_assert(msg1 == MSG_OK, "wrong wake-up message");
   }
+  test_end_step(4);
 
   /* [2.1.5] Testing intermediate conditions. Data pointers must be
      aligned, semaphore counters are checked.*/
@@ -145,6 +149,7 @@ static void oslib_test_002_001_execute(void) {
     test_assert_lock(chMBGetUsedCountI(&mb1) == MB_SIZE, "not full");
     test_assert_lock(mb1.rdptr == mb1.wrptr, "pointers not aligned");
   }
+  test_end_step(5);
 
   /* [2.1.6] Emptying the mailbox using chMBFetchTimeout(), no errors
      expected.*/
@@ -157,6 +162,7 @@ static void oslib_test_002_001_execute(void) {
     }
     test_assert_sequence("ABCD", "wrong get sequence");
   }
+  test_end_step(6);
 
   /* [2.1.7] Posting and then fetching one more message, no errors
      expected.*/
@@ -167,6 +173,7 @@ static void oslib_test_002_001_execute(void) {
     msg1 = chMBFetchTimeout(&mb1, &msg2, TIME_INFINITE);
     test_assert(msg1 == MSG_OK, "wrong wake-up message");
   }
+  test_end_step(7);
 
   /* [2.1.8] Testing final conditions. Data pointers must be aligned to
      buffer start, semaphore counters are checked.*/
@@ -177,6 +184,7 @@ static void oslib_test_002_001_execute(void) {
     test_assert(mb1.buffer == mb1.wrptr, "write pointer not aligned to base");
     test_assert(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");
   }
+  test_end_step(8);
 }
 
 static const testcase_t oslib_test_002_001 = {
@@ -227,6 +235,7 @@ static void oslib_test_002_002_execute(void) {
   {
     test_assert_lock(chMBGetFreeCountI(&mb1) == MB_SIZE, "wrong size");
   }
+  test_end_step(1);
 
   /* [2.2.2] Resetting the mailbox, conditions are checked, no errors
      expected. The mailbox is then returned in active state.*/
@@ -241,6 +250,7 @@ static void oslib_test_002_002_execute(void) {
     test_assert_lock(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");
     chMBResumeX(&mb1);
   }
+  test_end_step(2);
 
   /* [2.2.3] Filling the mailbox using chMBPostI() and chMBPostAheadI()
      once, no errors expected.*/
@@ -257,6 +267,7 @@ static void oslib_test_002_002_execute(void) {
     chSysUnlock();
     test_assert(msg1 == MSG_OK, "wrong wake-up message");
   }
+  test_end_step(3);
 
   /* [2.2.4] Testing intermediate conditions. Data pointers must be
      aligned, semaphore counters are checked.*/
@@ -266,6 +277,7 @@ static void oslib_test_002_002_execute(void) {
     test_assert_lock(chMBGetUsedCountI(&mb1) == MB_SIZE, "not full");
     test_assert_lock(mb1.rdptr == mb1.wrptr, "pointers not aligned");
   }
+  test_end_step(4);
 
   /* [2.2.5] Emptying the mailbox using chMBFetchI(), no errors
      expected.*/
@@ -280,6 +292,7 @@ static void oslib_test_002_002_execute(void) {
     }
     test_assert_sequence("ABCD", "wrong get sequence");
   }
+  test_end_step(5);
 
   /* [2.2.6] Posting and then fetching one more message, no errors
      expected.*/
@@ -290,6 +303,7 @@ static void oslib_test_002_002_execute(void) {
     msg1 = chMBFetchTimeout(&mb1, &msg2, TIME_INFINITE);
     test_assert(msg1 == MSG_OK, "wrong wake-up message");
   }
+  test_end_step(6);
 
   /* [2.2.7] Testing final conditions. Data pointers must be aligned to
      buffer start, semaphore counters are checked.*/
@@ -300,6 +314,7 @@ static void oslib_test_002_002_execute(void) {
     test_assert(mb1.buffer == mb1.wrptr, "write pointer not aligned to base");
     test_assert(mb1.buffer == mb1.rdptr, "read pointer not aligned to base");
   }
+  test_end_step(7);
 }
 
 static const testcase_t oslib_test_002_002 = {
@@ -345,6 +360,7 @@ static void oslib_test_002_003_execute(void) {
       test_assert(msg1 == MSG_OK, "wrong wake-up message");
     }
   }
+  test_end_step(1);
 
   /* [2.3.2] Testing chMBPostTimeout(), chMBPostI(),
      chMBPostAheadTimeout() and chMBPostAheadI() timeout.*/
@@ -363,6 +379,7 @@ static void oslib_test_002_003_execute(void) {
     chSysUnlock();
     test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
   }
+  test_end_step(2);
 
   /* [2.3.3] Resetting the mailbox. The mailbox is then returned in
      active state.*/
@@ -371,6 +388,7 @@ static void oslib_test_002_003_execute(void) {
     chMBReset(&mb1);
     chMBResumeX(&mb1);
   }
+  test_end_step(3);
 
   /* [2.3.4] Testing chMBFetchTimeout() and chMBFetchI() timeout.*/
   test_set_step(4);
@@ -382,6 +400,7 @@ static void oslib_test_002_003_execute(void) {
     chSysUnlock();
     test_assert(msg1 == MSG_TIMEOUT, "wrong wake-up message");
   }
+  test_end_step(4);
 }
 
 static const testcase_t oslib_test_002_003 = {

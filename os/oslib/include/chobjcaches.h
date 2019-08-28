@@ -184,11 +184,11 @@ struct ch_oc_object {
    * @note    This pointer can be used to refer to external buffers,
    *          @p chCacheObjectInit() initializes it to @p NULL.
    */
-  void                *dptr;
+  void                  *dptr;
   /**
    * @brief   Embedded data as an open array.
    */
-  uint8_t             dbuf[];
+  uint8_t               dbuf[];
 };
 
 /**
@@ -274,6 +274,32 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
+
+/**
+ * @brief   Releases an object into the cache.
+ * @note    This function gives a meaning to the following flags:
+ *          - @p OC_FLAG_INLRU must be cleared.
+ *          - @p OC_FLAG_INHASH must be set.
+ *          - @p OC_FLAG_SHARED must be cleared.
+ *          - @p OC_FLAG_NOTSYNC invalidates the object and queues it on
+ *            the LRU tail.
+ *          - @p OC_FLAG_LAZYWRITE is ignored and kept, a write will occur
+ *            when the object is removed from the LRU list (lazy write).
+ *          .
+ *
+ * @param[in] ocp       pointer to the @p objects_cache_t structure
+ * @param[in] objp      pointer to the @p oc_object_t structure
+ *
+ * @api
+ */
+static inline void chCacheReleaseObject(objects_cache_t *ocp,
+                                        oc_object_t *objp) {
+
+  chSysLock();
+  chCacheReleaseObjectI(ocp, objp);
+  chSchRescheduleS();
+  chSysUnlock();
+}
 
 #endif /* CH_CFG_USE_OBJ_CACHES == TRUE */
 

@@ -1013,6 +1013,247 @@ test_assert((pipe1.rdptr == pipe1.wrptr) &&
               <value>Internal Tests</value>
             </type>
             <brief>
+              <value>Objects Caches</value>
+            </brief>
+            <description>
+              <value>This sequence tests the ChibiOS library functionalities related to Objects Caches.</value>
+            </description>
+            <condition>
+              <value>CH_CFG_USE_OBJ_CACHES</value>
+            </condition>
+            <shared_code>
+              <value><![CDATA[#include <string.h>
+
+#define SIZE_OBJECTS        16
+#define NUM_OBJECTS         4
+#define NUM_HASH_ENTRIES    (NUM_OBJECTS * 2)
+
+/* Cached object type used for test.*/
+typedef struct {
+  oc_object_t       header;
+  uint8_t           data[SIZE_OBJECTS];
+} cached_object_t;
+
+static oc_hash_header_t hash_headers[NUM_HASH_ENTRIES];
+static cached_object_t objects[NUM_OBJECTS];
+static objects_cache_t cache1;
+
+static bool obj_read(objects_cache_t *ocp,
+                     oc_object_t *objp,
+                     bool async) {
+
+  test_emit_token('a' + objp->obj_key);
+
+  objp->obj_flags &= ~OC_FLAG_NOTSYNC;
+
+  if (async) {
+    chCacheReleaseObject(ocp, objp);
+  }
+
+  return false;
+}
+
+static bool obj_write(objects_cache_t *ocp,
+                      oc_object_t *objp,
+                      bool async) {
+  (void)ocp;
+  (void)async;
+
+  test_emit_token('A' + objp->obj_key);
+
+  return false;
+}]]></value>
+            </shared_code>
+            <cases>
+              <case>
+                <brief>
+                  <value>Cache initialization.</value>
+                </brief>
+                <description>
+                  <value>A cache object is initialized, some initial conditions are checked.</value>
+                </description>
+                <condition>
+                  <value>
+                  </value>
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value/>
+                  </teardown_code>
+                  <local_variables>
+                    <value></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Cache initialization.</value>
+                    </description>
+                    <tags>
+                      <value></value>
+                    </tags>
+                    <code>
+                      <value><![CDATA[
+chCacheObjectInit(&cache1,
+                  NUM_HASH_ENTRIES,
+                  hash_headers,
+                  NUM_OBJECTS,
+                  sizeof (cached_object_t),
+                  objects,
+                  obj_read,
+                  obj_write);
+]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Getting and releasing objects without initialization.</value>
+                    </description>
+                    <tags>
+                      <value></value>
+                    </tags>
+                    <code>
+                      <value><![CDATA[
+uint32_t i;
+
+for (i = 0; i < (NUM_OBJECTS * 2); i++) {
+  oc_object_t * objp = chCacheGetObject(&cache1, 0U, i);
+
+  test_assert((objp->obj_flags & OC_FLAG_INHASH) != 0U, "not in hash");
+  test_assert((objp->obj_flags & OC_FLAG_NOTSYNC) != 0U, "should not be in sync");
+
+  chCacheReleaseObject(&cache1, objp);
+}
+
+test_assert_sequence("", "unexpected tokens");
+]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Getting and releasing objects with synchronous initialization.</value>
+                    </description>
+                    <tags>
+                      <value></value>
+                    </tags>
+                    <code>
+                      <value><![CDATA[
+uint32_t i;
+bool error;
+
+for (i = 0; i < (NUM_OBJECTS * 2); i++) {
+  oc_object_t *objp = chCacheGetObject(&cache1, 0U, i);
+
+  test_assert((objp->obj_flags & OC_FLAG_INHASH) != 0U, "not in hash");
+  test_assert((objp->obj_flags & OC_FLAG_NOTSYNC) != 0U, "in sync");
+
+  error = chCacheReadObject(&cache1, objp, false);
+
+  test_assert(error == false, "returned error");
+  test_assert((objp->obj_flags & OC_FLAG_INHASH) != 0U, "not in hash");
+  test_assert((objp->obj_flags & OC_FLAG_NOTSYNC) == 0U, "not in sync");
+
+  chCacheReleaseObject(&cache1, objp);
+}
+
+test_assert_sequence("abcdefgh", "unexpected tokens");
+]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Getting and releasing objects with asynchronous initialization.</value>
+                    </description>
+                    <tags>
+                      <value></value>
+                    </tags>
+                    <code>
+                      <value><![CDATA[
+uint32_t i;
+bool error;
+
+for (i = 0; i < (NUM_OBJECTS * 2); i++) {
+  oc_object_t *objp = chCacheGetObject(&cache1, 0U, i);
+
+  test_assert((objp->obj_flags & OC_FLAG_INHASH) != 0U, "not in hash");
+  test_assert((objp->obj_flags & OC_FLAG_NOTSYNC) != 0U, "in sync");
+
+  error = chCacheReadObject(&cache1, objp, true);
+
+  test_assert(error == false, "returned error");
+
+  objp = chCacheGetObject(&cache1, 0U, i);
+
+  test_assert((objp->obj_flags & OC_FLAG_INHASH) != 0U, "not in hash");
+  test_assert((objp->obj_flags & OC_FLAG_NOTSYNC) == 0U, "not in sync");
+
+  chCacheReleaseObject(&cache1, objp);
+}
+
+test_assert_sequence("abcdefgh", "unexpected tokens");
+]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Checking cached objects.</value>
+                    </description>
+                    <tags>
+                      <value></value>
+                    </tags>
+                    <code>
+                      <value><![CDATA[
+uint32_t i;
+
+for (i = NUM_OBJECTS; i < (NUM_OBJECTS * 2); i++) {
+  oc_object_t *objp = chCacheGetObject(&cache1, 0U, i);
+
+  test_assert((objp->obj_flags & OC_FLAG_INHASH) != 0U, "not in hash");
+  test_assert((objp->obj_flags & OC_FLAG_NOTSYNC) == 0U, "not in sync");
+
+  chCacheReleaseObject(&cache1, objp);
+}
+
+test_assert_sequence("", "unexpected tokens");
+]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Checking non-cached objects.</value>
+                    </description>
+                    <tags>
+                      <value></value>
+                    </tags>
+                    <code>
+                      <value><![CDATA[
+uint32_t i;
+
+for (i = 0; i < NUM_OBJECTS; i++) {
+  oc_object_t *objp = chCacheGetObject(&cache1, 0U, i);
+
+  test_assert((objp->obj_flags & OC_FLAG_INHASH) != 0U, "not in hash");
+  test_assert((objp->obj_flags & OC_FLAG_NOTSYNC) != 0U, "in sync");
+
+  chCacheReleaseObject(&cache1, objp);
+}
+
+test_assert_sequence("", "unexpected tokens");
+]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+            </cases>
+          </sequence>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
               <value>Memory Pools.</value>
             </brief>
             <description>

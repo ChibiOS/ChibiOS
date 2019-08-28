@@ -101,6 +101,7 @@ static void oslib_test_003_001_execute(void) {
                 (pipe1.cnt == 0),
                 "invalid pipe state");
   }
+  test_end_step(1);
 
   /* [3.1.2] Writing data, must fail.*/
   test_set_step(2);
@@ -114,6 +115,7 @@ static void oslib_test_003_001_execute(void) {
                 (pipe1.cnt == 0),
                 "invalid pipe state");
   }
+  test_end_step(2);
 
   /* [3.1.3] Reading data, must fail.*/
   test_set_step(3);
@@ -128,6 +130,7 @@ static void oslib_test_003_001_execute(void) {
                 (pipe1.cnt == 0),
                 "invalid pipe state");
   }
+  test_end_step(3);
 
   /* [3.1.4] Reactivating pipe.*/
   test_set_step(4);
@@ -138,6 +141,7 @@ static void oslib_test_003_001_execute(void) {
                 (pipe1.cnt == 0),
                 "invalid pipe state");
   }
+  test_end_step(4);
 
   /* [3.1.5] Filling whole pipe.*/
   test_set_step(5);
@@ -151,6 +155,7 @@ static void oslib_test_003_001_execute(void) {
                 (pipe1.cnt == PIPE_SIZE),
                 "invalid pipe state");
   }
+  test_end_step(5);
 
   /* [3.1.6] Emptying pipe.*/
   test_set_step(6);
@@ -166,6 +171,7 @@ static void oslib_test_003_001_execute(void) {
                 "invalid pipe state");
     test_assert(memcmp(pipe_pattern, buf, PIPE_SIZE) == 0, "content mismatch");
   }
+  test_end_step(6);
 
   /* [3.1.7] Small write.*/
   test_set_step(7);
@@ -179,6 +185,7 @@ static void oslib_test_003_001_execute(void) {
                 (pipe1.cnt == 4),
                 "invalid pipe state");
   }
+  test_end_step(7);
 
   /* [3.1.8] Filling remaining space.*/
   test_set_step(8);
@@ -192,6 +199,7 @@ static void oslib_test_003_001_execute(void) {
                 (pipe1.cnt == PIPE_SIZE),
                 "invalid pipe state");
   }
+  test_end_step(8);
 
   /* [3.1.9] Small Read.*/
   test_set_step(9);
@@ -207,6 +215,7 @@ static void oslib_test_003_001_execute(void) {
                 "invalid pipe state");
     test_assert(memcmp(pipe_pattern, buf, 4) == 0, "content mismatch");
   }
+  test_end_step(9);
 
   /* [3.1.10] Reading remaining data.*/
   test_set_step(10);
@@ -222,6 +231,7 @@ static void oslib_test_003_001_execute(void) {
                 "invalid pipe state");
     test_assert(memcmp(pipe_pattern, buf, PIPE_SIZE - 4) == 0, "content mismatch");
   }
+  test_end_step(10);
 
   /* [3.1.11] Small Write.*/
   test_set_step(11);
@@ -235,6 +245,7 @@ static void oslib_test_003_001_execute(void) {
                 (pipe1.cnt == 5),
                 "invalid pipe state");
   }
+  test_end_step(11);
 
   /* [3.1.12] Small Read.*/
   test_set_step(12);
@@ -250,6 +261,7 @@ static void oslib_test_003_001_execute(void) {
                 "invalid pipe state");
     test_assert(memcmp(pipe_pattern, buf, 5) == 0, "content mismatch");
   }
+  test_end_step(12);
 
   /* [3.1.13] Write wrapping buffer boundary.*/
   test_set_step(13);
@@ -263,6 +275,7 @@ static void oslib_test_003_001_execute(void) {
                 (pipe1.cnt == PIPE_SIZE),
                 "invalid pipe state");
   }
+  test_end_step(13);
 
   /* [3.1.14] Read wrapping buffer boundary.*/
   test_set_step(14);
@@ -278,6 +291,7 @@ static void oslib_test_003_001_execute(void) {
                 "invalid pipe state");
     test_assert(memcmp(pipe_pattern, buf, PIPE_SIZE) == 0, "content mismatch");
   }
+  test_end_step(14);
 }
 
 static const testcase_t oslib_test_003_001 = {
@@ -318,6 +332,7 @@ static void oslib_test_003_002_execute(void) {
                 (pipe1.cnt == 0),
                 "invalid pipe state");
   }
+  test_end_step(1);
 
   /* [3.2.2] Writing a string larger than pipe buffer.*/
   test_set_step(2);
@@ -331,6 +346,7 @@ static void oslib_test_003_002_execute(void) {
                 (pipe1.cnt == PIPE_SIZE / 2),
                 "invalid pipe state");
   }
+  test_end_step(2);
 }
 
 static const testcase_t oslib_test_003_002 = {
