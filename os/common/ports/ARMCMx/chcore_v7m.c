@@ -122,13 +122,13 @@ void port_unprivileged_jump(regarm_t pc, regarm_t psp) {
 /*lint -save -e9075 [8.4] All symbols are invoked from asm context.*/
 void SVC_Handler(void) {
 /*lint -restore*/
-  uint32_t control;
   uint32_t psp = __get_PSP();
 
   chDbgAssert(((uint32_t)__builtin_return_address(0) & 4U) == 0U,
               "not process");
 
 #if PORT_USE_SYSCALL == TRUE
+  uint32_t control;
   /* Caller context.*/
   struct port_extctx *ectxp = (struct port_extctx *)psp;
 
