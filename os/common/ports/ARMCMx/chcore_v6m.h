@@ -323,6 +323,7 @@ struct port_intctx {
 #ifdef __cplusplus
 extern "C" {
 #endif
+  void port_init(void);
   void _port_irq_epilogue(regarm_t lr);
   void _port_switch(thread_t *ntp, thread_t *otp);
   void _port_thread_start(void);
@@ -335,14 +336,6 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
-
-/**
- * @brief   Port-related initialization code.
- */
-static inline void port_init(void) {
-
-  NVIC_SetPriority(PendSV_IRQn, CORTEX_PRIORITY_PENDSV);
-}
 
 /**
  * @brief   Returns a word encoding the current interrupts status.

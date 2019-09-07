@@ -71,6 +71,13 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Implements a syscall interface on SVC.
+ */
+#if !defined(PORT_USE_SYSCALL) || defined(__DOXYGEN__)
+#define PORT_USE_SYSCALL                TRUE
+#endif
+
+/**
  * @brief   Enables stack overflow guard pages using MPU.
  * @note    This option can only be enabled if also option
  *          @p CH_DBG_ENABLE_STACK_CHECK is enabled.
@@ -349,6 +356,19 @@ struct port_extctx {
 #endif /* CORTEX_USE_FPU */
 };
 
+#if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Link context structure.
+ * @details This structure is used when there is the need to save extra
+ *          context information that is not part of the registers stacked
+ *          in HW.
+ */
+struct port_linkctx {
+  regarm_t              control;
+  struct port_extctx    *ectxp;
+};
+#endif
+
 struct port_intctx {
 #if CORTEX_USE_FPU
   regarm_t      s16;
@@ -378,11 +398,29 @@ struct port_intctx {
   regarm_t      r11;
   regarm_t      lr;
 };
+
+struct port_context {
+  struct port_intctx    *sp;
+#if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
+  struct {
+    regarm_t            psp;
+    const void          *regions;
+  } syscall;
+#endif
+};
 #endif /* !defined(__DOXYGEN__) */
 
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
+
+#if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
+#define __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop)                              \
+  (tp)->ctx.syscall.psp = (regarm_t)(wtop);                                 \
+  (tp)->ctx.syscall.regions = NULL;
+#else
+#define __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop)
+#endif
 
 /**
  * @brief   Platform dependent part of the @p chThdCreateI() API.
@@ -395,6 +433,7 @@ struct port_intctx {
   (tp)->ctx.sp->r4 = (regarm_t)(pf);                                        \
   (tp)->ctx.sp->r5 = (regarm_t)(arg);                                       \
   (tp)->ctx.sp->lr = (regarm_t)_port_thread_start;                          \
+  __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop)                                    \
 }
 
 /**
@@ -498,11 +537,15 @@ struct port_intctx {
 #ifdef __cplusplus
 extern "C" {
 #endif
+  void port_init(void);
   void _port_irq_epilogue(void);
   void _port_switch(thread_t *ntp, thread_t *otp);
   void _port_thread_start(void);
   void _port_switch_from_isr(void);
   void _port_exit_from_isr(void);
+#if PORT_USE_SYSCALL == TRUE
+  void port_unprivileged_jump(regarm_t pc, regarm_t psp);
+#endif
 #ifdef __cplusplus
 }
 #endif
@@ -510,46 +553,6 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
-
-/**
- * @brief   Port-related initialization code.
- */
-static inline void port_init(void) {
-
-  /* Initializing priority grouping.*/
-  NVIC_SetPriorityGrouping(CORTEX_PRIGROUP_INIT);
-
-  /* DWT cycle counter enable, note, the M7 requires DWT unlocking.*/
-  CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
-#if CORTEX_MODEL == 7
-  DWT->LAR = 0xC5ACCE55U;
-#endif
-  DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
-
-  /* Initialization of the system vectors used by the port.*/
-#if CORTEX_SIMPLIFIED_PRIORITY == FALSE
-  NVIC_SetPriority(SVCall_IRQn, CORTEX_PRIORITY_SVCALL);
-#endif
-  NVIC_SetPriority(PendSV_IRQn, CORTEX_PRIORITY_PENDSV);
-
-#if PORT_ENABLE_GUARD_PAGES == TRUE
-  {
-    extern stkalign_t __main_thread_stack_base__;
-
-    /* Setting up the guard page on the main() function stack base
-       initially.*/
-    mpuConfigureRegion(PORT_USE_MPU_REGION,
-                       &__main_thread_stack_base__,
-                       MPU_RASR_ATTR_AP_NA_NA |
-                       MPU_RASR_ATTR_NON_CACHEABLE |
-                       MPU_RASR_SIZE_32 |
-                       MPU_RASR_ENABLE);
-
-    /* MPU is enabled.*/
-    mpuEnable(MPU_CTRL_PRIVDEFENA);
-  }
-#endif
-}
 
 /**
  * @brief   Returns a word encoding the current interrupts status.

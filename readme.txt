@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Cortex-M SandBox subsystem added.
 - LIB: Added a cache class to OSLIB.
 - NEW: Added an option to change the shell thread name.
 - HAL: Made bus acquire/release functions in SNOR driver public.
