@@ -132,7 +132,7 @@ static inline void stm32_flash_clear_status(EFlashDriver *eflp) {
 static inline void stm32_flash_wait_busy(EFlashDriver *eflp) {
 
   /* Wait for busy bit clear.*/
-  while ((eflp->flash->SR & FLASH_SR_BSY) != 0U) {
+  while ((eflp->flash->SR & FLASH_SR_BSY1) != 0U) {
   }
 }
 
@@ -145,6 +145,7 @@ static inline bool stm32_flash_dual_bank(EFlashDriver *eflp) {
 #if STM32_FLASH_NUMBER_OF_BANKS > 1
   return ((eflp->flash->SR & (FLASH_OPTR_DBANK | FLASH_OPTR_DB1M)) != 0U);
 #endif
+  (void)eflp;
   return false;
 }
 
@@ -517,7 +518,7 @@ flash_error_t efl_lld_query_erase(void *instance, uint32_t *msec) {
   if (devp->state == FLASH_ERASE) {
 
     /* Checking for operation in progress.*/
-    if ((devp->flash->SR & FLASH_SR_BSY) == 0U) {
+    if ((devp->flash->SR & FLASH_SR_BSY1) == 0U) {
 
       /* Disabling the various erase control bits.*/
       devp->flash->CR &= ~(FLASH_CR_MER1 |
