@@ -97,7 +97,21 @@ typedef struct {
    * @note    Zero if not used.
    */
   uint32_t                      r1_end;
-} sb_regions_t;
+} sb_config_t;
+
+/**
+ * @brief   Type of a sandbox object.
+ */
+typedef struct {
+  /**
+   * @brief   Pointer to the sandbox configuration data.
+   */
+  const sb_config_t             *config;
+  /**
+   * @brief   Thread running in the sandbox.
+   */
+  thread_t                      *tp;
+} sb_class_t;
 
 /**
  * @brief   Type of a sandbox applet headers.
@@ -925,8 +939,8 @@ typedef struct {
 extern "C" {
 #endif
   void port_syscall(struct port_extctx *ctxp, uint32_t n);
-  void sbStart(const sb_header_t *sbhp,
-               const sb_regions_t *rp);
+  void sbObjectInit(sb_class_t *sbcp);
+  void sbStart(sb_class_t *sbcp, const sb_config_t *config);
 #ifdef __cplusplus
 }
 #endif

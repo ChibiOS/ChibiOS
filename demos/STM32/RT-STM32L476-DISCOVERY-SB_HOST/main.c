@@ -49,33 +49,39 @@ static THD_WORKING_AREA(waUnprivileged1, 128);
 static THD_FUNCTION(Unprivileged1, arg) {
   extern uint32_t __flash7_start__, __flash7_end__,
                   __ram7_start__, __ram7_end__;
-  static const sb_regions_t regions = {
+  static const sb_config_t sb_config = {
     .r0_base = (uint32_t)&__flash7_start__,
     .r0_end  = (uint32_t)&__flash7_end__,
     .r1_base = (uint32_t)&__ram7_start__,
     .r1_end  = (uint32_t)&__ram7_end__
   };
+  sb_class_t sbx1;
 
   (void)arg;
   chRegSetThreadName("unprivileged");
 
-  /* MPU setup for the sandbox, both regions are used because it is
-     flash code.*/
+  /* Sandbox object initialization.*/
+  sbObjectInit(&sbx1);
+
+  /* Static MPU setup for the sandbox, both regions are used because in this
+     demo it requires both a flash and a RAM regions.*/
   mpuConfigureRegion(MPU_REGION_0,
-                     regions.r0_base,
+                     sb_config.r0_base,
                      MPU_RASR_ATTR_AP_RO_RO |
                      MPU_RASR_ATTR_CACHEABLE_WT_NWA |
                      MPU_RASR_SIZE_16K |
                      MPU_RASR_ENABLE);
   mpuConfigureRegion(MPU_REGION_1,
-                     regions.r1_base,
+                     sb_config.r1_base,
                      MPU_RASR_ATTR_AP_RW_RW |
                      MPU_RASR_ATTR_CACHEABLE_WB_WA |
                      MPU_RASR_SIZE_4K |
                      MPU_RASR_ENABLE);
 
-  sbStart((const sb_header_t *)&__flash7_start__, &regions);
-  chSysHalt("it returned");
+  /* This thread goes in the sandbox and is trapped there, it cannot
+     return, only invoke the sandbox API.*/
+  sbStart(&sbx1, &sb_config);
+  chSysHalt("zombies");
 }
 
 /*
@@ -104,8 +110,8 @@ int main(void) {
 
   /* Creating the unprivileged thread.*/
   chprintf((BaseSequentialStream *)&SD2, "Starting unprivileged thread\r\n");
-  tp = chThdCreateStatic(waUnprivileged1, sizeof(waUnprivileged1), NORMALPRIO - 10U,
-                         Unprivileged1, NULL);
+  tp = chThdCreateStatic(waUnprivileged1, sizeof(waUnprivileged1),
+                         NORMALPRIO - 10U, Unprivileged1, NULL);
 
   /* Waiting for the unprivileged thread to exit or fail.*/
   msg = chThdWait(tp);

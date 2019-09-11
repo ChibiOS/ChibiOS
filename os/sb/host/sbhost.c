@@ -130,15 +130,26 @@ uint32_t sb_undef_handler(struct port_extctx *ectxp) {
 }
 
 /**
+ * @brief   Sandbox object initialization.
+ */
+void sbObjectInit(sb_class_t *sbcp) {
+
+  sbcp->config = NULL;
+  sbcp->tp     = NULL;
+}
+
+/**
  * @brief   Starts a sandboxed thread.
  *
- * @param[in] sbhp      pointer to the sandbox binary header
- * @param[in] rp        pointer to the regions descriptor
+ * @param[in] sbcp      pointer to the sandbox configuration structure
  * @return              The function returns only if the operation failed.
  */
-void sbStart(const sb_header_t *sbhp,
-             const sb_regions_t *rp) {
+void sbStart(sb_class_t * sbcp, const sb_config_t *config) {
   uint32_t pc, psp;
+  const sb_header_t *sbhp;
+
+  /* The header is conventionally placed at base of region zero.*/
+  sbhp = (const sb_header_t *)config->r0_base;
 
   /* Checking header magic numbers.*/
   if ((sbhp->hdr_magic1 != SB_MAGIC1) || (sbhp->hdr_magic2 != SB_MAGIC2)) {
@@ -151,8 +162,8 @@ void sbStart(const sb_header_t *sbhp,
   }
 
   /* Checking regions, applet regions and sandbox regions must match.*/
-  if ((sbhp->r0_base != rp->r0_base) || (sbhp->r0_end != rp->r0_end) ||
-      (sbhp->r1_base != rp->r1_base) || (sbhp->r1_end != rp->r1_end)) {
+  if ((sbhp->r0_base != config->r0_base) || (sbhp->r0_end != config->r0_end) ||
+      (sbhp->r1_base != config->r1_base) || (sbhp->r1_end != config->r1_end)) {
     return;
   }
 
@@ -160,17 +171,18 @@ void sbStart(const sb_header_t *sbhp,
   pc = (sbhp->r0_base + sbhp->hdr_size) | 1U;
 
   /* PSP initial address, it is placed at end of the last region.*/
-  if (rp->r1_base == 0U) {
+  if (config->r1_base == 0U) {
     /* Must be in region 1.*/
-    psp = rp->r0_end;
+    psp = config->r0_end;
   }
   else {
     /* Must be in region 2.*/
-    psp = rp->r1_end;
+    psp = config->r1_end;
   }
 
   /* Additional context information.*/
-  chThdGetSelfX()->ctx.syscall.p    = (const void *)rp;
+  sbcp->config = config;
+  chThdGetSelfX()->ctx.syscall.p    = (const void *)sbcp;
   chThdGetSelfX()->ctx.syscall.psp  = (regarm_t)__get_PSP();
 
   /* Jumping to the unprivileged code.*/
