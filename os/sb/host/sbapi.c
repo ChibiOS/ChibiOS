@@ -75,7 +75,7 @@ uint32_t sb_api_get_frequency(struct port_extctx *ctxp) {
 
 uint32_t sb_api_sleep(struct port_extctx *ctxp) {
 
-  chThdSleepMilliseconds((sysinterval_t)ctxp->r0);
+  chThdSleep((sysinterval_t)ctxp->r0);
 
   return SB_ERR_NOERROR;
 }
@@ -85,6 +85,53 @@ uint32_t sb_api_sleep_until_windowed(struct port_extctx *ctxp) {
   chThdSleepUntilWindowed((systime_t)ctxp->r0, (systime_t)ctxp->r1);
 
   return SB_ERR_NOERROR;
+}
+
+uint32_t sb_api_wait_message(struct port_extctx *ctxp) {
+  sb_class_t *sbcp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+
+  (void)ctxp;
+
+  if (sbcp->msg_tp == NULL) {
+    sbcp->msg_tp = chMsgWait();
+    return (uint32_t)chMsgGet(sbcp->msg_tp);
+  }
+  else {
+    chMsgRelease(sbcp->msg_tp, MSG_RESET);
+    sbcp->msg_tp = NULL;
+    return SB_ERR_API_USAGE;
+  }
+}
+
+uint32_t sb_api_reply_message(struct port_extctx *ctxp) {
+  sb_class_t *sbcp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+
+  if (sbcp->msg_tp != NULL) {
+    chMsgRelease(sbcp->msg_tp, (msg_t)ctxp->r0);
+    sbcp->msg_tp = NULL;
+    return SB_ERR_API_USAGE;
+  }
+  else {
+    return SB_ERR_API_USAGE;
+  }
+}
+
+uint32_t sb_api_wait_one_timeout(struct port_extctx *ctxp) {
+
+  return (uint32_t)chEvtWaitOneTimeout((eventmask_t)ctxp->r0,
+                                       (sysinterval_t)ctxp->r1);
+}
+
+uint32_t sb_api_wait_any_timeout(struct port_extctx *ctxp) {
+
+  return (uint32_t)chEvtWaitAnyTimeout((eventmask_t)ctxp->r0,
+                                       (sysinterval_t)ctxp->r1);
+}
+
+uint32_t sb_api_wait_all_timeout(struct port_extctx *ctxp) {
+
+  return (uint32_t)chEvtWaitAllTimeout((eventmask_t)ctxp->r0,
+                                       (sysinterval_t)ctxp->r1);
 }
 
 /** @} */

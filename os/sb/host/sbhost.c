@@ -131,20 +131,29 @@ uint32_t sb_undef_handler(struct port_extctx *ectxp) {
 
 /**
  * @brief   Sandbox object initialization.
+ *
+ * @param[out] sbcp     pointer to the sandbox object
+ *
+ * @init
  */
 void sbObjectInit(sb_class_t *sbcp) {
 
   sbcp->config = NULL;
   sbcp->tp     = NULL;
+#if CH_CFG_USE_MESSAGES == TRUE
+  sbcp->msg_tp = NULL;
+#endif
 }
 
 /**
  * @brief   Starts a sandboxed thread.
  *
- * @param[in] sbcp      pointer to the sandbox configuration structure
+ * @param[in] sbcp      pointer to the sandbox object
  * @return              The function returns only if the operation failed.
+ *
+ * @api
  */
-void sbStart(sb_class_t * sbcp, const sb_config_t *config) {
+void sbStart(sb_class_t *sbcp, const sb_config_t *config) {
   uint32_t pc, psp;
   const sb_header_t *sbhp;
 

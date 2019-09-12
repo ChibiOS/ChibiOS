@@ -46,12 +46,13 @@
 /** @} */
 
 /**
- * @brief   Sandbox error codes
+ * @brief   Sandbox API error codes
  * @{
  */
 #define SB_ERR_NOERROR                      0U
 #define SB_ERR_NOT_IMPLEMENTED              0xFFFFFFFFU
 #define SB_ERR_MEMORY_FAULT                 0xFFFFFFFEU
+#define SB_ERR_API_USAGE                    0xFFFFFFFDU
 /** @} */
 
 /*===========================================================================*/
@@ -111,6 +112,12 @@ typedef struct {
    * @brief   Thread running in the sandbox.
    */
   thread_t                      *tp;
+#if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   Thread sending a message to the sandbox.
+   */
+  thread_t                      *msg_tp;
+#endif
 } sb_class_t;
 
 /**
@@ -948,6 +955,21 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
+
+/**
+ * @brief   Sends a message to a sandboxed thread.
+ *
+ * @param[in] sbcp      pointer to the sandbox object
+ * @param[in] msg       message to be sent
+ * @return              The returned message.
+ * @retval MSG_RESET    Sandboxed thread API usage error, exchange aborted.
+ *
+ * @api
+ */
+static inline msg_t sbSendMessage(sb_class_t *sbcp, msg_t msg) {
+
+  return chMsgSend(sbcp->tp, msg);
+}
 
 #endif /* SBHOST_H */
 

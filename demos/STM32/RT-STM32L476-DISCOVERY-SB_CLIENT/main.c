@@ -24,6 +24,9 @@
  */
 int main(void) {
 
+  /* API layer initialization.*/
+  sbApiInit();
+
   /*
    * Normal main() activity, in this demo it does nothing except
    * sleeping in a loop.

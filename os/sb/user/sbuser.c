@@ -38,6 +38,11 @@
 /* Module exported variables.                                                */
 /*===========================================================================*/
 
+/**
+ * @brief   Sandbox API internal state.
+ */
+sbapi_state_t sb;
+
 /*===========================================================================*/
 /* Module local types.                                                       */
 /*===========================================================================*/
@@ -53,5 +58,16 @@
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
+
+/**
+ * @brief   API layer initialization.
+ * @note    To be called before any other call to the "sb" functions.
+ *
+ * @init
+ */
+void sbApiInit(void) {
+
+  sb.frequency = sbGetFrequency();
+}
 
 /** @} */

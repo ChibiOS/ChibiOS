@@ -32,6 +32,16 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Sandbox API error codes
+ * @{
+ */
+#define SB_ERR_NOERROR                      0U
+#define SB_ERR_NOT_IMPLEMENTED              0xFFFFFFFFU
+#define SB_ERR_MEMORY_FAULT                 0xFFFFFFFEU
+#define SB_ERR_API_USAGE                    0xFFFFFFFDU
+/** @} */
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -47,20 +57,86 @@
 /**
  * @brief   Type of system time counter.
  */
-typedef uint32_t sb_systime_t;
+typedef uint32_t systime_t;
+
+/**
+ * @brief   Type of system time interval.
+ */
+typedef uint32_t sysinterval_t;
+
+/**
+ * @brief   Type of a wide time conversion variable.
+ */
+typedef uint64_t time_conv_t;
+
+/**
+ * @brief   Type of time in microseconds.
+ */
+typedef uint32_t time_usecs_t;
+
+/**
+ * @brief   Type of time in milliseconds.
+ */
+typedef uint32_t time_msecs_t;
+
+/**
+ * @brief   Type of time in seconds.
+ */
+typedef uint32_t time_secs_t;
 
 /**
  * @brief   Type of a message.
  */
-typedef uint32_t sb_msg_t;
+typedef uint32_t msg_t;
+
+/**
+ * @brief   Type of an event mask.
+ */
+typedef uint32_t eventmask_t;
+
+/**
+ * @brief   Type of a sandbox API internal state variables.
+ */
+typedef struct {
+  /**
+   * @brief   System tick frequency.
+   */
+  time_conv_t               frequency;
+} sbapi_state_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
 
 /**
+ * @name   Messages-related macros
+ * @{
+ */
+#define MSG_OK              (msg_t)0
+#define MSG_TIMEOUT         (msg_t)-1
+#define MSG_RESET           (msg_t)-2
+/** @} */
+
+/**
+ * @name   Events-related macros
+ * @{
+ */
+#define ALL_EVENTS          ((eventmask_t)-1)
+#define EVENT_MASK(eid)     ((eventmask_t)1 << (eventmask_t)(eid))
+/** @} */
+
+/**
+ * @name   Time and intervals related macros
+ * @{
+ */
+#define TIME_IMMEDIATE      ((sysinterval_t)0)
+#define TIME_INFINITE       ((sysinterval_t)-1)
+#define TIME_MAX_INTERVAL   ((sysinterval_t)-2)
+#define TIME_MAX_SYSTIME    ((systime_t)-1)
+/** @} */
+
+/**
  * @name   SVC instruction wrappers.
- *
  * @{
  */
 #define __syscall0(x)                                                       \
@@ -99,10 +175,12 @@ typedef uint32_t sb_msg_t;
 /* External declarations.                                                    */
 /*===========================================================================*/
 
+extern sbapi_state_t sb;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+  void sbApiInit(void);
 #ifdef __cplusplus
 }
 #endif
@@ -111,15 +189,15 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-static inline void sbExit(sb_msg_t msg) {
+static inline void sbExit(msg_t msg) {
 
   __syscall1r(1, msg);
 }
 
-static inline sb_systime_t sbGetSystemTime(void) {
+static inline systime_t sbGetSystemTime(void) {
 
   __syscall0r(2);
-  return (sb_systime_t)r0;
+  return (systime_t)r0;
 }
 
 static inline uint32_t sbGetFrequency(void) {
@@ -128,14 +206,242 @@ static inline uint32_t sbGetFrequency(void) {
   return (uint32_t)r0;
 }
 
-static inline void sbSleepMilliseconds(uint32_t milliseconds) {
+static inline void sbSleep(sysinterval_t interval) {
 
-  __syscall1r(4, milliseconds);
+  __syscall1r(4, interval);
 }
 
-static inline void sbSleepUntil(sb_systime_t start, sb_systime_t end) {
+static inline void sbSleepUntil(systime_t start, systime_t end) {
 
   __syscall2r(5, start, end);
+}
+
+static inline msg_t sbMsgWait(void) {
+
+  __syscall0r(6);
+  return (uint32_t)r0;
+}
+
+static inline uint32_t sbMsgReply(msg_t msg) {
+
+  __syscall1r(7, msg);
+  return (uint32_t)r0;
+}
+
+static inline eventmask_t sbEventWaitOneTimeout(eventmask_t events,
+                                                sysinterval_t timeout) {
+
+  __syscall2r(8, events, timeout);
+  return (uint32_t)r0;
+}
+
+static inline eventmask_t sbEventWaitAnyTimeout(eventmask_t events,
+                                                sysinterval_t timeout) {
+
+  __syscall2r(9, events, timeout);
+  return (uint32_t)r0;
+}
+
+static inline eventmask_t sbEventWaitAllTimeout(eventmask_t events,
+                                                sysinterval_t timeout) {
+
+  __syscall2r(10, events, timeout);
+  return (uint32_t)r0;
+}
+
+/**
+ * @brief   Seconds to time interval.
+ * @details Converts from seconds to system ticks number.
+ * @note    The result is rounded upward to the next tick boundary.
+ *
+ * @param[in] secs      number of seconds
+ * @return              The number of ticks.
+ *
+ * @special
+ */
+static inline sysinterval_t sbTimeS2I(time_secs_t secs) {
+  time_conv_t ticks;
+
+  ticks = (time_conv_t)secs * sb.frequency;
+
+/*  sbDbgAssert(ticks <= (time_conv_t)TIME_MAX_INTERVAL,
+              "conversion overflow");*/
+
+  return (sysinterval_t)ticks;
+}
+
+/**
+ * @brief   Milliseconds to time interval.
+ * @details Converts from milliseconds to system ticks number.
+ * @note    The result is rounded upward to the next tick boundary.
+ *
+ * @param[in] msec      number of milliseconds
+ * @return              The number of ticks.
+ *
+ * @special
+ */
+static inline sysinterval_t sbTimeMS2I(time_msecs_t msec) {
+  time_conv_t ticks;
+
+  ticks = (((time_conv_t)msec * sb.frequency) +
+           (time_conv_t)999) / (time_conv_t)1000;
+
+/*  chDbgAssert(ticks <= (time_conv_t)TIME_MAX_INTERVAL,
+              "conversion overflow");*/
+
+  return (sysinterval_t)ticks;
+}
+
+/**
+ * @brief   Microseconds to time interval.
+ * @details Converts from microseconds to system ticks number.
+ * @note    The result is rounded upward to the next tick boundary.
+ *
+ * @param[in] usec      number of microseconds
+ * @return              The number of ticks.
+ *
+ * @special
+ */
+static inline sysinterval_t sbTimeUS2I(time_usecs_t usec) {
+  time_conv_t ticks;
+
+  ticks = (((time_conv_t)usec * sb.frequency) +
+           (time_conv_t)999999) / (time_conv_t)1000000;
+
+/*  chDbgAssert(ticks <= (time_conv_t)TIME_MAX_INTERVAL,
+              "conversion overflow");*/
+
+  return (sysinterval_t)ticks;
+}
+
+/**
+ * @brief   Time interval to seconds.
+ * @details Converts from system interval to seconds.
+ * @note    The result is rounded up to the next second boundary.
+ *
+ * @param[in] interval  interval in ticks
+ * @return              The number of seconds.
+ *
+ * @special
+ */
+static inline time_secs_t sbTimeI2S(sysinterval_t interval) {
+  time_conv_t secs;
+
+  secs = ((time_conv_t)interval +
+          sb.frequency -
+          (time_conv_t)1) / sb.frequency;
+
+/*  sbDbgAssert(secs < (time_conv_t)((time_secs_t)-1),
+              "conversion overflow");*/
+
+  return (time_secs_t)secs;
+}
+
+/**
+ * @brief   Time interval to milliseconds.
+ * @details Converts from system interval to milliseconds.
+ * @note    The result is rounded up to the next millisecond boundary.
+ *
+ * @param[in] interval  interval in ticks
+ * @return              The number of milliseconds.
+ *
+ * @special
+ */
+static inline time_msecs_t sbTimeI2MS(sysinterval_t interval) {
+  time_conv_t msecs;
+
+  msecs = (((time_conv_t)interval * (time_conv_t)1000) +
+           sb.frequency - (time_conv_t)1) /
+          sb.frequency;
+
+/*  sbDbgAssert(msecs < (time_conv_t)((time_msecs_t)-1),
+              "conversion overflow");*/
+
+  return (time_msecs_t)msecs;
+}
+
+/**
+ * @brief   Time interval to microseconds.
+ * @details Converts from system interval to microseconds.
+ * @note    The result is rounded up to the next microsecond boundary.
+ *
+ * @param[in] interval  interval in ticks
+ * @return              The number of microseconds.
+ *
+ * @special
+ */
+static inline time_usecs_t sbTimeI2US(sysinterval_t interval) {
+  time_conv_t usecs;
+
+  usecs = (((time_conv_t)interval * (time_conv_t)1000000) +
+           sb.frequency - (time_conv_t)1) / sb.frequency;
+
+/*  sbDbgAssert(usecs <= (time_conv_t)((time_usecs_t)-1),
+              "conversion overflow");*/
+
+  return (time_usecs_t)usecs;
+}
+
+/**
+ * @brief   Adds an interval to a system time returning a system time.
+ *
+ * @param[in] systime   base system time
+ * @param[in] interval  interval to be added
+ * @return              The new system time.
+ *
+ * @xclass
+ */
+static inline systime_t sbTimeAddX(systime_t systime, sysinterval_t interval) {
+
+  return systime + (systime_t)interval;
+}
+
+/**
+ * @brief   Subtracts two system times returning an interval.
+ *
+ * @param[in] start     first system time
+ * @param[in] end       second system time
+ * @return              The interval representing the time difference.
+ *
+ * @xclass
+ */
+static inline sysinterval_t sbTimeDiffX(systime_t start, systime_t end) {
+
+  return (sysinterval_t)((systime_t)(end - start));
+}
+
+/**
+ * @brief   Checks if the specified time is within the specified time range.
+ * @note    When start==end then the function returns always true because the
+ *          whole time range is specified.
+ *
+ * @param[in] time      the time to be verified
+ * @param[in] start     the start of the time window (inclusive)
+ * @param[in] end       the end of the time window (non inclusive)
+ * @retval true         current time within the specified time window.
+ * @retval false        current time not within the specified time window.
+ *
+ * @xclass
+ */
+static inline bool sbTimeIsInRangeX(systime_t time, systime_t start, systime_t end) {
+
+  return (bool)((systime_t)((systime_t)time - (systime_t)start) <
+                (systime_t)((systime_t)end - (systime_t)start));
+}
+
+static inline void sbSleepSeconds(time_secs_t secs) {
+
+  sbSleep(sbTimeS2I(secs));
+}
+
+static inline void sbSleepMilliseconds(time_msecs_t msecs) {
+
+  sbSleep(sbTimeMS2I(msecs));
+}
+
+static inline void sbSleepMicroseconds(time_usecs_t usecs) {
+
+  sbSleep(sbTimeUS2I(usecs));
 }
 
 #endif /* SBUSER_H */
