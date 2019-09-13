@@ -42,6 +42,7 @@
 #define SB_SVC8_HANDLER         sb_api_wait_one_timeout
 #define SB_SVC9_HANDLER         sb_api_wait_any_timeout
 #define SB_SVC10_HANDLER        sb_api_wait_all_timeout
+#define SB_SVC11_HANDLER        sb_api_broadcast_flags
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -84,6 +85,7 @@ extern "C" {
   uint32_t sb_api_wait_one_timeout(struct port_extctx *ctxp);
   uint32_t sb_api_wait_any_timeout(struct port_extctx *ctxp);
   uint32_t sb_api_wait_all_timeout(struct port_extctx *ctxp);
+  uint32_t sb_api_broadcast_flags(struct port_extctx *ctxp);
 #ifdef __cplusplus
 }
 #endif

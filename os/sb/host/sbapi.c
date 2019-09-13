@@ -74,8 +74,11 @@ uint32_t sb_api_get_frequency(struct port_extctx *ctxp) {
 }
 
 uint32_t sb_api_sleep(struct port_extctx *ctxp) {
+  sysinterval_t interval = (sysinterval_t)ctxp->r0;
 
-  chThdSleep((sysinterval_t)ctxp->r0);
+  if (interval != TIME_IMMEDIATE) {
+    chThdSleep(interval);
+  }
 
   return SB_ERR_NOERROR;
 }
@@ -88,6 +91,7 @@ uint32_t sb_api_sleep_until_windowed(struct port_extctx *ctxp) {
 }
 
 uint32_t sb_api_wait_message(struct port_extctx *ctxp) {
+#if CH_CFG_USE_MESSAGES == TRUE
   sb_class_t *sbcp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
   (void)ctxp;
@@ -101,9 +105,13 @@ uint32_t sb_api_wait_message(struct port_extctx *ctxp) {
     sbcp->msg_tp = NULL;
     return SB_ERR_API_USAGE;
   }
+#else
+  return SB_ERR_NOT_IMPLEMENTED;
+#endif
 }
 
 uint32_t sb_api_reply_message(struct port_extctx *ctxp) {
+#if CH_CFG_USE_MESSAGES == TRUE
   sb_class_t *sbcp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
   if (sbcp->msg_tp != NULL) {
@@ -114,24 +122,50 @@ uint32_t sb_api_reply_message(struct port_extctx *ctxp) {
   else {
     return SB_ERR_API_USAGE;
   }
+#else
+  return SB_ERR_NOT_IMPLEMENTED;
+#endif
 }
 
 uint32_t sb_api_wait_one_timeout(struct port_extctx *ctxp) {
+#if CH_CFG_USE_EVENTS == TRUE
 
   return (uint32_t)chEvtWaitOneTimeout((eventmask_t)ctxp->r0,
                                        (sysinterval_t)ctxp->r1);
+#else
+  return SB_ERR_NOT_IMPLEMENTED;
+#endif
 }
 
 uint32_t sb_api_wait_any_timeout(struct port_extctx *ctxp) {
+#if CH_CFG_USE_EVENTS == TRUE
 
   return (uint32_t)chEvtWaitAnyTimeout((eventmask_t)ctxp->r0,
                                        (sysinterval_t)ctxp->r1);
+#else
+  return SB_ERR_NOT_IMPLEMENTED;
+#endif
 }
 
 uint32_t sb_api_wait_all_timeout(struct port_extctx *ctxp) {
+#if CH_CFG_USE_EVENTS == TRUE
 
   return (uint32_t)chEvtWaitAllTimeout((eventmask_t)ctxp->r0,
                                        (sysinterval_t)ctxp->r1);
+#else
+  return SB_ERR_NOT_IMPLEMENTED;
+#endif
+}
+
+uint32_t sb_api_broadcast_flags(struct port_extctx *ctxp) {
+#if CH_CFG_USE_EVENTS == TRUE
+
+  chEvtBroadcastFlags((event_source_t *)ctxp->r0,
+                      (eventflags_t)ctxp->r1);
+  return SB_ERR_NOERROR;
+#else
+  return SB_ERR_NOT_IMPLEMENTED;
+#endif
 }
 
 /** @} */

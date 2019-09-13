@@ -118,6 +118,9 @@ typedef struct {
    */
   thread_t                      *msg_tp;
 #endif
+#if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
+  event_source_t                *esp;
+#endif
 } sb_class_t;
 
 /**
@@ -956,6 +959,7 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
+#if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Sends a message to a sandboxed thread.
  *
@@ -970,6 +974,48 @@ static inline msg_t sbSendMessage(sb_class_t *sbcp, msg_t msg) {
 
   return chMsgSend(sbcp->tp, msg);
 }
+#endif /* CH_CFG_USE_MESSAGES == TRUE */
+
+#if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Adds a set of event flags directly to the specified sandbox.
+ *
+ * @param[in] sbcp      pointer to the sandbox object
+ * @param[in] events    the events set to be ORed
+ *
+ * @iclass
+ */
+static inline void sbEvtSignalI(sb_class_t *sbcp, eventmask_t events) {
+
+  chEvtSignalI(sbcp->tp, events);
+}
+
+/**
+ * @brief   Adds a set of event flags directly to the specified sandbox.
+ *
+ * @param[in] sbcp      pointer to the sandbox object
+ * @param[in] events    the events set to be ORed
+ *
+ * @api
+ */
+static inline void sbEvtSignal(sb_class_t *sbcp, eventmask_t events) {
+
+  chEvtSignal(sbcp->tp, events);
+}
+
+/**
+ * @brief   Returns the sandbox event source object.
+ *
+ * @param[in] sbcp      pointer to the sandbox object
+ * @return              The pointer to the event source object.
+ *
+ * @xclass
+ */
+static inline event_source_t *sbGetEventSourceX(sb_class_t *sbcp) {
+
+  return sbcp->esp;
+}
+#endif /* CH_CFG_USE_EVENTS == TRUE */
 
 #endif /* SBHOST_H */
 

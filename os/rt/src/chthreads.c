@@ -682,7 +682,7 @@ void chThdSleepUntil(systime_t time) {
 /**
  * @brief   Suspends the invoking thread until the system time arrives to the
  *          specified value.
- * @note    The system time is assumed to be between @p prev and @p time
+ * @note    The system time is assumed to be between @p prev and @p next
  *          else the call is assumed to have been called outside the
  *          allowed time interval, in this case no sleep is performed.
  * @see     chThdSleepUntil()

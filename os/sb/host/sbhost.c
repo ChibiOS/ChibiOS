@@ -143,6 +143,9 @@ void sbObjectInit(sb_class_t *sbcp) {
 #if CH_CFG_USE_MESSAGES == TRUE
   sbcp->msg_tp = NULL;
 #endif
+#if CH_CFG_USE_EVENTS == TRUE
+  chEvtObjectInit(sbcp->esp);
+#endif
 }
 
 /**
