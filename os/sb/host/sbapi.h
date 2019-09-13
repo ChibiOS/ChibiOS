@@ -32,18 +32,6 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
-#define SB_SVC1_HANDLER         sb_api_exit
-#define SB_SVC2_HANDLER         sb_api_get_systime
-#define SB_SVC3_HANDLER         sb_api_get_frequency
-#define SB_SVC4_HANDLER         sb_api_sleep
-#define SB_SVC5_HANDLER         sb_api_sleep_until_windowed
-#define SB_SVC6_HANDLER         sb_api_wait_message
-#define SB_SVC7_HANDLER         sb_api_reply_message
-#define SB_SVC8_HANDLER         sb_api_wait_one_timeout
-#define SB_SVC9_HANDLER         sb_api_wait_any_timeout
-#define SB_SVC10_HANDLER        sb_api_wait_all_timeout
-#define SB_SVC11_HANDLER        sb_api_broadcast_flags
-
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
