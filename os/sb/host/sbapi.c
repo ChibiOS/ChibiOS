@@ -831,7 +831,7 @@
 /* Module exported variables.                                                */
 /*===========================================================================*/
 
-static uint32_t sb_undef_handler(struct port_extctx *ectxp);
+static void sb_undef_handler(struct port_extctx *ectxp);
 
 const port_syscall_t sb_syscalls[256] = {
   SB_SVC0_HANDLER,   SB_SVC1_HANDLER,   SB_SVC2_HANDLER,   SB_SVC3_HANDLER,
@@ -912,131 +912,123 @@ const port_syscall_t sb_syscalls[256] = {
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-static uint32_t sb_undef_handler(struct port_extctx *ectxp) {
+static void sb_undef_handler(struct port_extctx *ectxp) {
 
-  (void)ectxp;
-
-  return SB_ERR_NOT_IMPLEMENTED;
+  ectxp->r0 = SB_ERR_NOT_IMPLEMENTED;
 }
 
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
-uint32_t sb_api_exit(struct port_extctx *ctxp) {
+void sb_api_exit(struct port_extctx * ectxp) {
 
-  chThdExit((msg_t)ctxp->r0);
+  chThdExit((msg_t )ectxp->r0);
 
   /* Cannot get here.*/
-  return SB_ERR_NOT_IMPLEMENTED;
+  ectxp->r0 = SB_ERR_NOT_IMPLEMENTED;
 }
 
-uint32_t sb_api_get_systime(struct port_extctx *ctxp) {
+void sb_api_get_systime(struct port_extctx * ectxp) {
 
-  (void)ctxp;
-
-  return (uint32_t)chVTGetSystemTimeX();
+  ectxp->r0 = (uint32_t)chVTGetSystemTimeX();
 }
 
-uint32_t sb_api_get_frequency(struct port_extctx *ctxp) {
+void sb_api_get_frequency(struct port_extctx * ectxp) {
 
-  (void)ctxp;
-
-  return (uint32_t)CH_CFG_ST_FREQUENCY;
+  ectxp->r0 = (uint32_t)CH_CFG_ST_FREQUENCY;
 }
 
-uint32_t sb_api_sleep(struct port_extctx *ctxp) {
-  sysinterval_t interval = (sysinterval_t)ctxp->r0;
+void sb_api_sleep(struct port_extctx * ectxp) {
+  sysinterval_t interval = (sysinterval_t )ectxp->r0;
 
   if (interval != TIME_IMMEDIATE) {
     chThdSleep(interval);
   }
 
-  return SB_ERR_NOERROR;
+  ectxp->r0 = SB_ERR_NOERROR;
 }
 
-uint32_t sb_api_sleep_until_windowed(struct port_extctx *ctxp) {
+void sb_api_sleep_until_windowed(struct port_extctx * ectxp) {
 
-  chThdSleepUntilWindowed((systime_t)ctxp->r0, (systime_t)ctxp->r1);
+  chThdSleepUntilWindowed((systime_t )ectxp->r0, (systime_t )ectxp->r1);
 
-  return SB_ERR_NOERROR;
+  ectxp->r0 = SB_ERR_NOERROR;
 }
 
-uint32_t sb_api_wait_message(struct port_extctx *ctxp) {
+void sb_api_wait_message(struct port_extctx * ectxp) {
 #if CH_CFG_USE_MESSAGES == TRUE
   sb_class_t *sbcp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
-  (void)ctxp;
-
   if (sbcp->msg_tp == NULL) {
     sbcp->msg_tp = chMsgWait();
-    return (uint32_t)chMsgGet(sbcp->msg_tp);
+    ectxp->r0 = (uint32_t)chMsgGet(sbcp->msg_tp);
   }
   else {
     chMsgRelease(sbcp->msg_tp, MSG_RESET);
     sbcp->msg_tp = NULL;
-    return SB_ERR_API_USAGE;
+    ectxp->r0 = SB_ERR_API_USAGE;
   }
 #else
-  return SB_ERR_NOT_IMPLEMENTED;
+  ectxp->r0 = SB_ERR_NOT_IMPLEMENTED;
 #endif
 }
 
-uint32_t sb_api_reply_message(struct port_extctx *ctxp) {
+void sb_api_reply_message(struct port_extctx * ectxp) {
 #if CH_CFG_USE_MESSAGES == TRUE
   sb_class_t *sbcp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
   if (sbcp->msg_tp != NULL) {
-    chMsgRelease(sbcp->msg_tp, (msg_t)ctxp->r0);
+    chMsgRelease(sbcp->msg_tp, (msg_t )ectxp->r0);
     sbcp->msg_tp = NULL;
-    return SB_ERR_API_USAGE;
+    ectxp->r0 = SB_ERR_API_USAGE;
   }
   else {
-    return SB_ERR_API_USAGE;
+    ectxp->r0 = SB_ERR_API_USAGE;
   }
 #else
-  return SB_ERR_NOT_IMPLEMENTED;
+  ectxp->r0 = SB_ERR_NOT_IMPLEMENTED;
 #endif
 }
 
-uint32_t sb_api_wait_one_timeout(struct port_extctx *ctxp) {
+void sb_api_wait_one_timeout(struct port_extctx * ectxp) {
 #if CH_CFG_USE_EVENTS == TRUE
 
-  return (uint32_t)chEvtWaitOneTimeout((eventmask_t)ctxp->r0,
-                                       (sysinterval_t)ctxp->r1);
+  ectxp->r0 = (uint32_t)chEvtWaitOneTimeout((eventmask_t )ectxp->r0,
+                                            (sysinterval_t )ectxp->r1);
 #else
-  return SB_ERR_NOT_IMPLEMENTED;
+  ectxp->r0 =  SB_ERR_NOT_IMPLEMENTED;
 #endif
 }
 
-uint32_t sb_api_wait_any_timeout(struct port_extctx *ctxp) {
+void sb_api_wait_any_timeout(struct port_extctx * ectxp) {
 #if CH_CFG_USE_EVENTS == TRUE
 
-  return (uint32_t)chEvtWaitAnyTimeout((eventmask_t)ctxp->r0,
-                                       (sysinterval_t)ctxp->r1);
+  ectxp->r0 = (uint32_t)chEvtWaitAnyTimeout((eventmask_t )ectxp->r0,
+                                            (sysinterval_t )ectxp->r1);
 #else
-  return SB_ERR_NOT_IMPLEMENTED;
+  ectxp->r0 =  SB_ERR_NOT_IMPLEMENTED;
 #endif
 }
 
-uint32_t sb_api_wait_all_timeout(struct port_extctx *ctxp) {
+void sb_api_wait_all_timeout(struct port_extctx * ectxp) {
 #if CH_CFG_USE_EVENTS == TRUE
 
-  return (uint32_t)chEvtWaitAllTimeout((eventmask_t)ctxp->r0,
-                                       (sysinterval_t)ctxp->r1);
+  ectxp->r0 = (uint32_t)chEvtWaitAllTimeout((eventmask_t )ectxp->r0,
+                                            (sysinterval_t )ectxp->r1);
 #else
-  return SB_ERR_NOT_IMPLEMENTED;
+  ectxp->r0 =  SB_ERR_NOT_IMPLEMENTED;
 #endif
 }
 
-uint32_t sb_api_broadcast_flags(struct port_extctx *ctxp) {
+void sb_api_broadcast_flags(struct port_extctx * ectxp) {
 #if CH_CFG_USE_EVENTS == TRUE
   sb_class_t *sbcp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
-  chEvtBroadcastFlags(&sbcp->es, (eventflags_t)ctxp->r0);
-  return SB_ERR_NOERROR;
+  chEvtBroadcastFlags(&sbcp->es, (eventflags_t )ectxp->r0);
+  ectxp->r0 = SB_ERR_NOERROR;
 #else
-  return SB_ERR_NOT_IMPLEMENTED;
+  ectxp->r0 = SB_ERR_NOT_IMPLEMENTED;
 #endif
 }
 

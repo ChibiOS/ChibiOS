@@ -115,36 +115,36 @@ void port_init(void) {
  *
  * @param[in] lr        value of the @p LR register on ISR entry
  */
-void _port_irq_epilogue(regarm_t lr) {
+void _port_irq_epilogue(uint32_t lr) {
 
-  if (lr != (regarm_t)0xFFFFFFF1U) {
-    struct port_extctx *ctxp;
+  if (lr != 0xFFFFFFF1U) {
+    struct port_extctx *ectxp;
 
     port_lock_from_isr();
 
     /* The extctx structure is pointed by the PSP register.*/
-    ctxp = (struct port_extctx *)__get_PSP();
+    ectxp = (struct port_extctx *)__get_PSP();
 
     /* Adding an artificial exception return context, there is no need to
        populate it fully.*/
-    ctxp--;
+    ectxp--;
 
     /* Writing back the modified PSP value.*/
-    __set_PSP((uint32_t)ctxp);
+    __set_PSP((uint32_t)ectxp);
 
     /* Setting up a fake XPSR register value.*/
-    ctxp->xpsr = (regarm_t)0x01000000;
+    ectxp->xpsr = 0x01000000U;
 
     /* The exit sequence is different depending on if a preemption is
        required or not.*/
     if (chSchIsPreemptionRequired()) {
       /* Preemption is required we need to enforce a context switch.*/
-      ctxp->pc = (regarm_t)_port_switch_from_isr;
+      ectxp->pc = (uint32_t)_port_switch_from_isr;
     }
     else {
       /* Preemption not required, we just need to exit the exception
          atomically.*/
-      ctxp->pc = (regarm_t)_port_exit_from_isr;
+      ectxp->pc = (uint32_t)_port_exit_from_isr;
     }
 
     /* Note, returning without unlocking is intentional, this is done in

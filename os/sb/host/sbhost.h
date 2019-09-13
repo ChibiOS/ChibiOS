@@ -60,11 +60,6 @@
 /*===========================================================================*/
 
 /**
- * @brief   Type of a syscall handler.
- */
-typedef uint32_t (*port_syscall_t)(struct port_extctx *ctx);
-
-/**
  * @brief   Type of a sandbox memory region.
  */
 typedef struct {

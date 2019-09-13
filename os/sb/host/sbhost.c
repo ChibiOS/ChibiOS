@@ -118,10 +118,10 @@ void sbStart(sb_class_t *sbcp, const sb_config_t *config) {
   /* Additional context information.*/
   sbcp->config = config;
   chThdGetSelfX()->ctx.syscall.p    = (const void *)sbcp;
-  chThdGetSelfX()->ctx.syscall.psp  = (regarm_t)__get_PSP();
+  chThdGetSelfX()->ctx.syscall.psp  = __get_PSP();
 
   /* Jumping to the unprivileged code.*/
-  port_unprivileged_jump((regarm_t)pc, (regarm_t)psp);
+  port_unprivileged_jump(pc, psp);
 
   /* Must never happen condition.*/
   chSysHalt("returned");

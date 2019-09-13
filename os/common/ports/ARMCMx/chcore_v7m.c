@@ -76,7 +76,7 @@ void port_syscall(struct port_extctx *ctxp, uint32_t n) {
   chSysHalt("svc");
 }
 
-void port_unprivileged_jump(regarm_t pc, regarm_t psp) {
+void port_unprivileged_jump(uint32_t pc, uint32_t psp) {
   struct port_extctx *ectxp;
   struct port_linkctx *lctxp;
   uint32_t s_psp   = __get_PSP();
@@ -89,7 +89,7 @@ void port_unprivileged_jump(regarm_t pc, regarm_t psp) {
   /* Initializing the user mode entry context.*/
   memset((void *)ectxp, 0, sizeof (struct port_extctx));
   ectxp->pc    = pc;
-  ectxp->xpsr  = (regarm_t)0x01000000;
+  ectxp->xpsr  = 0x01000000U;
 #if CORTEX_USE_FPU == TRUE
   ectxp->fpscr = __get_FPSCR();
 #endif
@@ -99,7 +99,7 @@ void port_unprivileged_jump(regarm_t pc, regarm_t psp) {
   lctxp  = (struct port_linkctx *)s_psp;
 
   /* CONTROL and PSP values for user mode.*/
-  lctxp->control = (regarm_t)(control | 1U);
+  lctxp->control = control | 1U;
   lctxp->ectxp   = ectxp;
 
   /* PSP now points to the port_linkctx structure, it will be removed
@@ -147,8 +147,8 @@ void SVC_Handler(void) {
     /* Pushing the port_linkctx into the supervisor stack.*/
     s_psp -= sizeof (struct port_linkctx);
     lctxp = (struct port_linkctx *)s_psp;
-    lctxp->control = (regarm_t)control;
-    lctxp->ectxp = (regarm_t)ectxp;
+    lctxp->control = control;
+    lctxp->ectxp   = ectxp;
 
     /* Enforcing privileged mode before returning.*/
     __set_CONTROL(control & ~1U);
@@ -161,10 +161,10 @@ void SVC_Handler(void) {
     s_psp -= sizeof (struct port_extctx);
     __set_PSP(s_psp);
     newctxp = (struct port_extctx *)s_psp;
-    newctxp->r0     = (regarm_t)ectxp;
-    newctxp->r1     = (regarm_t)n;
-    newctxp->pc     = (regarm_t)port_syscall;
-    newctxp->xpsr   = (regarm_t)0x01000000;
+    newctxp->r0     = (uint32_t)ectxp;
+    newctxp->r1     = n;
+    newctxp->pc     = (uint32_t)port_syscall;
+    newctxp->xpsr   = 0x01000000U;
 #if CORTEX_USE_FPU == TRUE
     newctxp->fpscr  = (regarm_t)FPU->FPDSCR;
 #endif
@@ -333,7 +333,7 @@ void _port_irq_epilogue(void) {
            and mode.*/
         s_psp = s_psp - sizeof (struct port_linkctx);
         lctxp = (struct port_linkctx *)s_psp;
-        lctxp->control = (regarm_t)control;
+        lctxp->control = control;
         lctxp->ectxp   = (struct port_extctx *)__get_PSP();
       }
       else {
@@ -344,7 +344,7 @@ void _port_irq_epilogue(void) {
            and mode.*/
         s_psp = psp - sizeof (struct port_linkctx);
         lctxp = (struct port_linkctx *)s_psp;
-        lctxp->control = (regarm_t)control;
+        lctxp->control = control;
         lctxp->ectxp   = (struct port_extctx *)psp;
       }
     }
@@ -360,7 +360,7 @@ void _port_irq_epilogue(void) {
     ectxp = (struct port_extctx *)s_psp;
 
     /* Setting up a fake XPSR register value.*/
-    ectxp->xpsr = (regarm_t)0x01000000;
+    ectxp->xpsr = 0x01000000U;
 #if CORTEX_USE_FPU == TRUE
     ectxp->fpscr = (regarm_t)FPU->FPDSCR;
 #endif
@@ -372,12 +372,12 @@ void _port_irq_epilogue(void) {
        required or not.*/
     if (chSchIsPreemptionRequired()) {
       /* Preemption is required we need to enforce a context switch.*/
-      ectxp->pc = (regarm_t)_port_switch_from_isr;
+      ectxp->pc = (uint32_t)_port_switch_from_isr;
     }
     else {
       /* Preemption not required, we just need to exit the exception
          atomically.*/
-      ectxp->pc = (regarm_t)_port_exit_from_isr;
+      ectxp->pc = (uint32_t)_port_exit_from_isr;
     }
 
     /* Note, returning without unlocking is intentional, this is done in

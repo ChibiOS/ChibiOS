@@ -343,33 +343,33 @@
    to not have duplicated structure names into the documentation.*/
 #if !defined(__DOXYGEN__)
 struct port_extctx {
-  regarm_t      r0;
-  regarm_t      r1;
-  regarm_t      r2;
-  regarm_t      r3;
-  regarm_t      r12;
-  regarm_t      lr_thd;
-  regarm_t      pc;
-  regarm_t      xpsr;
+  uint32_t      r0;
+  uint32_t      r1;
+  uint32_t      r2;
+  uint32_t      r3;
+  uint32_t      r12;
+  uint32_t      lr_thd;
+  uint32_t      pc;
+  uint32_t      xpsr;
 #if CORTEX_USE_FPU
-  regarm_t      s0;
-  regarm_t      s1;
-  regarm_t      s2;
-  regarm_t      s3;
-  regarm_t      s4;
-  regarm_t      s5;
-  regarm_t      s6;
-  regarm_t      s7;
-  regarm_t      s8;
-  regarm_t      s9;
-  regarm_t      s10;
-  regarm_t      s11;
-  regarm_t      s12;
-  regarm_t      s13;
-  regarm_t      s14;
-  regarm_t      s15;
-  regarm_t      fpscr;
-  regarm_t      reserved;
+  uint32_t      s0;
+  uint32_t      s1;
+  uint32_t      s2;
+  uint32_t      s3;
+  uint32_t      s4;
+  uint32_t      s5;
+  uint32_t      s6;
+  uint32_t      s7;
+  uint32_t      s8;
+  uint32_t      s9;
+  uint32_t      s10;
+  uint32_t      s11;
+  uint32_t      s12;
+  uint32_t      s13;
+  uint32_t      s14;
+  uint32_t      s15;
+  uint32_t      fpscr;
+  uint32_t      reserved;
 #endif /* CORTEX_USE_FPU */
 };
 
@@ -381,7 +381,7 @@ struct port_extctx {
  *          in HW.
  */
 struct port_linkctx {
-  regarm_t              control;
+  uint32_t              control;
   struct port_extctx    *ectxp;
 };
 #endif
@@ -394,39 +394,39 @@ struct port_intctx {
   } regions[PORT_SWITCHED_REGIONS_NUMBER];
 #endif
 #if CORTEX_USE_FPU
-  regarm_t      s16;
-  regarm_t      s17;
-  regarm_t      s18;
-  regarm_t      s19;
-  regarm_t      s20;
-  regarm_t      s21;
-  regarm_t      s22;
-  regarm_t      s23;
-  regarm_t      s24;
-  regarm_t      s25;
-  regarm_t      s26;
-  regarm_t      s27;
-  regarm_t      s28;
-  regarm_t      s29;
-  regarm_t      s30;
-  regarm_t      s31;
+  uint32_t      s16;
+  uint32_t      s17;
+  uint32_t      s18;
+  uint32_t      s19;
+  uint32_t      s20;
+  uint32_t      s21;
+  uint32_t      s22;
+  uint32_t      s23;
+  uint32_t      s24;
+  uint32_t      s25;
+  uint32_t      s26;
+  uint32_t      s27;
+  uint32_t      s28;
+  uint32_t      s29;
+  uint32_t      s30;
+  uint32_t      s31;
 #endif /* CORTEX_USE_FPU */
-  regarm_t      r4;
-  regarm_t      r5;
-  regarm_t      r6;
-  regarm_t      r7;
-  regarm_t      r8;
-  regarm_t      r9;
-  regarm_t      r10;
-  regarm_t      r11;
-  regarm_t      lr;
+  uint32_t      r4;
+  uint32_t      r5;
+  uint32_t      r6;
+  uint32_t      r7;
+  uint32_t      r8;
+  uint32_t      r9;
+  uint32_t      r10;
+  uint32_t      r11;
+  uint32_t      lr;
 };
 
 struct port_context {
   struct port_intctx    *sp;
 #if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
   struct {
-    regarm_t            psp;
+    uint32_t            psp;
     const void          *p;
   } syscall;
 #endif
@@ -440,7 +440,7 @@ struct port_context {
 /* By default threads have no syscall context information.*/
 #if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
 #define __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop)                              \
-  (tp)->ctx.syscall.psp = (regarm_t)(wtop);                                 \
+  (tp)->ctx.syscall.psp = (uint32_t)(wtop);                                 \
   (tp)->ctx.syscall.p   = NULL;
 #else
 #define __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop)
@@ -488,9 +488,9 @@ struct port_context {
 #define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) {                      \
   (tp)->ctx.sp = (struct port_intctx *)((uint8_t *)(wtop) -                 \
                                         sizeof (struct port_intctx));       \
-  (tp)->ctx.sp->r4 = (regarm_t)(pf);                                        \
-  (tp)->ctx.sp->r5 = (regarm_t)(arg);                                       \
-  (tp)->ctx.sp->lr = (regarm_t)_port_thread_start;                          \
+  (tp)->ctx.sp->r4 = (uint32_t)(pf);                                        \
+  (tp)->ctx.sp->r5 = (uint32_t)(arg);                                       \
+  (tp)->ctx.sp->lr = (uint32_t)_port_thread_start;                          \
   __PORT_SETUP_CONTEXT_MPU(tp);                                             \
   __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop);                                   \
 }
@@ -605,7 +605,7 @@ extern "C" {
   void _port_switch_from_isr(void);
   void _port_exit_from_isr(void);
 #if PORT_USE_SYSCALL == TRUE
-  void port_unprivileged_jump(regarm_t pc, regarm_t psp);
+  void port_unprivileged_jump(uint32_t pc, uint32_t psp);
 #endif
 #ifdef __cplusplus
 }

@@ -52,6 +52,11 @@
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Type of a syscall handler.
+ */
+typedef void (*port_syscall_t)(struct port_extctx *ctx);
+
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
@@ -63,17 +68,17 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  uint32_t sb_api_exit(struct port_extctx *ctxp);
-  uint32_t sb_api_get_systime(struct port_extctx *ctxp);
-  uint32_t sb_api_get_frequency(struct port_extctx *ctxp);
-  uint32_t sb_api_sleep(struct port_extctx *ctxp);
-  uint32_t sb_api_sleep_until_windowed(struct port_extctx *ctxp);
-  uint32_t sb_api_wait_message(struct port_extctx *ctxp);
-  uint32_t sb_api_reply_message(struct port_extctx *ctxp);
-  uint32_t sb_api_wait_one_timeout(struct port_extctx *ctxp);
-  uint32_t sb_api_wait_any_timeout(struct port_extctx *ctxp);
-  uint32_t sb_api_wait_all_timeout(struct port_extctx *ctxp);
-  uint32_t sb_api_broadcast_flags(struct port_extctx *ctxp);
+  void sb_api_exit(struct port_extctx *ctxp);
+  void sb_api_get_systime(struct port_extctx *ctxp);
+  void sb_api_get_frequency(struct port_extctx *ctxp);
+  void sb_api_sleep(struct port_extctx *ctxp);
+  void sb_api_sleep_until_windowed(struct port_extctx *ctxp);
+  void sb_api_wait_message(struct port_extctx *ctxp);
+  void sb_api_reply_message(struct port_extctx *ctxp);
+  void sb_api_wait_one_timeout(struct port_extctx *ctxp);
+  void sb_api_wait_any_timeout(struct port_extctx *ctxp);
+  void sb_api_wait_all_timeout(struct port_extctx *ctxp);
+  void sb_api_broadcast_flags(struct port_extctx *ctxp);
 #ifdef __cplusplus
 }
 #endif

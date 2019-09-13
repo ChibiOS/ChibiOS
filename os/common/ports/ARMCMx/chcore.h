@@ -96,11 +96,6 @@
 #if !defined(_FROM_ASM_)
 
 /**
- * @brief   Type of a generic ARM register.
- */
-typedef void *regarm_t;
-
-/**
  * @brief   Type of stack and memory alignment enforcement.
  * @note    In this architecture the stack alignment is enforced to 64 bits,
  *          32 bits alignment is supported by hardware but deprecated by ARM,
