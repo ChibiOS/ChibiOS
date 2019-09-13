@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    sb/sbhost.h
+ * @file    sb/host/sbhost.h
  * @brief   ARMv7-M sandbox macros and structures.
  *
  * @addtogroup ARMV7M_SANDBOX
@@ -28,6 +28,7 @@
 #ifndef SBHOST_H
 #define SBHOST_H
 
+#include "sberr.h"
 #include "sbapi.h"
 #if defined(SB_INCLUDE_USERAPI)
 #include "sbuserapi.h"
@@ -43,16 +44,6 @@
  */
 #define SB_MAGIC1                           0xFE9154C0U
 #define SB_MAGIC2                           0x0C4519EFU
-/** @} */
-
-/**
- * @brief   Sandbox API error codes
- * @{
- */
-#define SB_ERR_NOERROR                      0U
-#define SB_ERR_NOT_IMPLEMENTED              0xFFFFFFFFU
-#define SB_ERR_MEMORY_FAULT                 0xFFFFFFFEU
-#define SB_ERR_API_USAGE                    0xFFFFFFFDU
 /** @} */
 
 /*===========================================================================*/

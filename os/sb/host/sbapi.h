@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    sb/sbapi.h
+ * @file    sb/host/sbapi.h
  * @brief   ARMv7-M sandbox host API macros and structures.
  *
  * @addtogroup ARMV7M_SANDBOX_HOSTAPI

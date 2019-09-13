@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    sb/sbuser.c
+ * @file    sb/user/sbuser.c
  * @brief   ARMv7-M sandbox user API code.
  *
  * @addtogroup ARMV7M_SANDBOX_API

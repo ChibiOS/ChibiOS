@@ -3,7 +3,8 @@ SBUSERSRC = $(CHIBIOS)/os/sb/user/sbuser.c
           
 SBUSERASM =
 
-SBUSERINC = $(CHIBIOS)/os/sb/user
+SBUSERINC = $(CHIBIOS)/os/sb/common \
+            $(CHIBIOS)/os/sb/user
 
 # Shared variables
 ALLXASMSRC += $(SBUSERASM)

@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    sb/sbhost.c
+ * @file    sb/host/sbhost.c
  * @brief   ARMv7-M sandbox code.
  *
  * @addtogroup ARMV7M_SANDBOX

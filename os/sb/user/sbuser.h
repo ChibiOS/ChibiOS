@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    sb/sbapi.h
+ * @file    sb/user/sbapi.h
  * @brief   ARMv7-M sandbox user API macros and structures.
  *
  * @addtogroup ARMV7M_SANDBOX_USERAPI
@@ -28,19 +28,11 @@
 #ifndef SBUSER_H
 #define SBUSER_H
 
+#include "sberr.h"
+
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
-
-/**
- * @brief   Sandbox API error codes
- * @{
- */
-#define SB_ERR_NOERROR                      0U
-#define SB_ERR_NOT_IMPLEMENTED              0xFFFFFFFFU
-#define SB_ERR_MEMORY_FAULT                 0xFFFFFFFEU
-#define SB_ERR_API_USAGE                    0xFFFFFFFDU
-/** @} */
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
