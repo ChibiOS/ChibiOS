@@ -159,9 +159,9 @@ uint32_t sb_api_wait_all_timeout(struct port_extctx *ctxp) {
 
 uint32_t sb_api_broadcast_flags(struct port_extctx *ctxp) {
 #if CH_CFG_USE_EVENTS == TRUE
+  sb_class_t *sbcp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
-  chEvtBroadcastFlags((event_source_t *)ctxp->r0,
-                      (eventflags_t)ctxp->r1);
+  chEvtBroadcastFlags(&sbcp->es, (eventflags_t)ctxp->r0);
   return SB_ERR_NOERROR;
 #else
   return SB_ERR_NOT_IMPLEMENTED;
