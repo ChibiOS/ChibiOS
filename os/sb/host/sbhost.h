@@ -60,7 +60,7 @@
 /*===========================================================================*/
 
 /**
- * @brief   Type of a sandbox memory region.
+ * @brief   Type of a sandbox configuration structure.
  */
 typedef struct {
   /**
@@ -107,7 +107,7 @@ typedef struct {
 } sb_class_t;
 
 /**
- * @brief   Type of a sandbox applet headers.
+ * @brief   Type of a sandbox binary image header.
  */
 typedef struct {
   /**

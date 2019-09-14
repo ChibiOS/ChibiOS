@@ -51,9 +51,7 @@
 port_syscall:
                 ldr         r3, =sb_syscalls
                 ldr.w       r3, [r3, r1, lsl #2]
-                mov         r4, r0
                 blx         r3
-                str         r0, [r4, #0]
                 svc         0
 .zombies1:      b           .zombies1
 
@@ -136,14 +134,12 @@ UsageFault_Handler:
                 /* Making sure there are no chained exceptions or interrupts
                    in the way, we need to exit this one atomically.*/
                 bl          port_syslock_noinline
-#                cpsid       i
                 bx          r4
 
                 /* Exception exit point.*/
 .do_exit:
-#                cpsie       i
                 bl          chThdExitS
-.zombies2:       b          .zombies2
+.zombies2:      b           .zombies2
 
                 .align      2
                 .thumb_func

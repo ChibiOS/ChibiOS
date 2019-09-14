@@ -55,7 +55,7 @@
 /**
  * @brief   Type of a syscall handler.
  */
-typedef void (*port_syscall_t)(struct port_extctx *ctx);
+typedef void (*port_syscall_t)(struct port_extctx *ectx);
 
 /*===========================================================================*/
 /* Module macros.                                                            */
