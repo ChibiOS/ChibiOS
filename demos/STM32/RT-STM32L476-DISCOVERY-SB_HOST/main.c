@@ -50,10 +50,11 @@ static THD_FUNCTION(Unprivileged1, arg) {
   extern uint32_t __flash7_start__, __flash7_end__,
                   __ram7_start__, __ram7_end__;
   static const sb_config_t sb_config = {
-    .r0_base = (uint32_t)&__flash7_start__,
-    .r0_end  = (uint32_t)&__flash7_end__,
-    .r1_base = (uint32_t)&__ram7_start__,
-    .r1_end  = (uint32_t)&__ram7_end__
+    .r0_base        = (uint32_t)&__flash7_start__,
+    .r0_end         = (uint32_t)&__flash7_end__,
+    .r1_base        = (uint32_t)&__ram7_start__,
+    .r1_end         = (uint32_t)&__ram7_end__,
+    .stdio_stream   = (SandboxStream *)&SD2
   };
   sb_class_t sbx1;
 

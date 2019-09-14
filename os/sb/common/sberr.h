@@ -21,7 +21,7 @@
  * @file    sb/common/sberr.h
  * @brief   ARMv7-M sandbox common macros and structures.
  *
- * @addtogroup ARMV7M_SANDBOX_ERRORS
+ * @addtogroup ARM_SANDBOX_ERRORS
  * @{
  */
 
@@ -33,13 +33,14 @@
 /*===========================================================================*/
 
 /**
- * @brief   Sandbox API error codes
+ * @name    Sandbox API error codes
  * @{
  */
 #define SB_ERR_NOERROR          0U
-#define SB_ERR_NOT_IMPLEMENTED  0xFFFFFFFFU
-#define SB_ERR_MEMORY_FAULT     0xFFFFFFFEU
-#define SB_ERR_API_USAGE        0xFFFFFFFDU
+#define SB_ERR_NOT_IMPLEMENTED  ((uint32_t)(-88))   /* ENOSYS */
+#define SB_ERR_MEMORY_FAULT     ((uint32_t)(-14))   /* EFAULT */
+#define SB_ERR_API_USAGE        ((uint32_t)(-16))   /* EBUSY */
+#define SB_ERR_INV_ARGUMENT     ((uint32_t)(-22))   /* EINVAL */
 
 #define SB_ERR_ERRORMASK        0xFFFFFF00U
 #define SB_ERR_ISERROR(x)       (((x) & SB_ERR_ERRORMASK) == SB_ERR_ERRORMASK)

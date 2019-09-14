@@ -19,14 +19,14 @@
 
 /**
  * @file    sb/host/sbhost.c
- * @brief   ARMv7-M sandbox code.
+ * @brief   ARM sandbox host code.
  *
- * @addtogroup ARMV7M_SANDBOX
+ * @addtogroup ARM_SANDBOX
  * @{
  */
 
 #include "ch.h"
-#include "sbhost.h"
+#include "sb.h"
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */

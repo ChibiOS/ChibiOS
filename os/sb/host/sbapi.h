@@ -19,9 +19,9 @@
 
 /**
  * @file    sb/host/sbapi.h
- * @brief   ARMv7-M sandbox host API macros and structures.
+ * @brief   ARM sandbox host API macros and structures.
  *
- * @addtogroup ARMV7M_SANDBOX_HOSTAPI
+ * @addtogroup ARM_SANDBOX_HOSTAPI
  * @{
  */
 
@@ -40,14 +40,6 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if CH_CFG_ST_RESOLUTION != 32
-#error "SandBox requires CH_CFG_ST_RESOLUTION == 32"
-#endif
-
-#if CH_CFG_INTERVALS_SIZE != 32
-#error "SandBox requires CH_CFG_INTERVALS_SIZE == 32"
-#endif
-
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
@@ -56,6 +48,44 @@
  * @brief   Type of a syscall handler.
  */
 typedef void (*port_syscall_t)(struct port_extctx *ectx);
+
+/**
+ * @brief   Sandbox Stream interface methods.
+ * @note    Is intentionally compatible with HAL streams but we have to
+ *          duplicate is because we don't want dependencies with HAL in
+ *          this subsystem.
+ */
+struct SandboxStreamVMT {
+  /**
+   * @brief   Stream write buffer method.
+   */
+  size_t (*write)(void *instance, const uint8_t *bp, size_t n);
+  /**
+   * @brief   Stream read buffer method.
+   */
+  size_t (*read)(void *instance, uint8_t *bp, size_t n);
+  /**
+   * @brief   Channel put method, blocking.
+   */
+  msg_t (*put)(void *instance, uint8_t b);
+  /**
+   * @brief   Channel get method, blocking.
+   */
+  msg_t (*get)(void *instance);
+};
+
+/**
+ * @brief   Sandbox Stream class.
+ * @note    Is intentionally compatible with HAL streams but we have to
+ *          duplicate is because we don't want dependencies with HAL in
+ *          this subsystem.
+ */
+typedef struct {
+  /**
+   * @brief Virtual Methods Table.
+   */
+  const struct SandboxStreamVMT *vmt;
+} SandboxStream;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -68,6 +98,7 @@ typedef void (*port_syscall_t)(struct port_extctx *ectx);
 #ifdef __cplusplus
 extern "C" {
 #endif
+  void sb_api_stdio(struct port_extctx *ectxp);
   void sb_api_exit(struct port_extctx *ctxp);
   void sb_api_get_systime(struct port_extctx *ctxp);
   void sb_api_get_frequency(struct port_extctx *ctxp);

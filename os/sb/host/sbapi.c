@@ -19,14 +19,14 @@
 
 /**
  * @file    sb/host/sbhost.c
- * @brief   ARMv7-M sandbox host API code.
+ * @brief   ARM sandbox host API code.
  *
- * @addtogroup ARMV7M_SANDBOX_HOSTAPI
+ * @addtogroup ARM_SANDBOX_HOSTAPI
  * @{
  */
 
 #include "ch.h"
-#include "sbhost.h"
+#include "sb.h"
 
 #if defined(SB_INCLUDE_USERAPI)
 #include "sbuserapi.h"
@@ -40,6 +40,7 @@
  * @name    Standard API handlers
  * @{
  */
+#define SB_SVC0_HANDLER         sb_api_stdio
 #define SB_SVC1_HANDLER         sb_api_exit
 #define SB_SVC2_HANDLER         sb_api_get_systime
 #define SB_SVC3_HANDLER         sb_api_get_frequency
@@ -920,6 +921,37 @@ static void sb_undef_handler(struct port_extctx *ectxp) {
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
+
+void sb_api_stdio(struct port_extctx *ectxp) {
+
+  switch (ectxp->r0) {
+  case SB_POSIX_OPEN:
+    ectxp->r0 = sb_posix_open((const char *)ectxp->r1,
+                              (int)ectxp->r2);
+    break;
+  case SB_POSIX_CLOSE:
+    ectxp->r0 = sb_posix_close((int)ectxp->r1);
+    break;
+  case SB_POSIX_READ:
+    ectxp->r0 = sb_posix_read((int)ectxp->r1,
+                              (void *)ectxp->r2,
+                              (size_t)ectxp->r3);
+    break;
+  case SB_POSIX_WRITE:
+    ectxp->r0 = sb_posix_write((int)ectxp->r1,
+                               (const void *)ectxp->r2,
+                               (size_t)ectxp->r3);
+    break;
+  case SB_POSIX_LSEEK:
+    ectxp->r0 = sb_posix_lseek((int)ectxp->r1,
+                               (off_t)ectxp->r2,
+                               (int)ectxp->r3);
+    break;
+  default:
+    ectxp->r0 = SB_ERR_NOT_IMPLEMENTED;
+    break;
+  }
+}
 
 void sb_api_exit(struct port_extctx *ectxp) {
 

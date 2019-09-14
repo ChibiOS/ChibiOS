@@ -19,9 +19,9 @@
 
 /**
  * @file    sb/host/sbhost.h
- * @brief   ARMv7-M sandbox macros and structures.
+ * @brief   ARM sandbox host macros and structures.
  *
- * @addtogroup ARMV7M_SANDBOX
+ * @addtogroup ARM_SANDBOX
  * @{
  */
 
@@ -51,10 +51,6 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if PORT_USE_SYSCALL == FALSE
-#error "sandbox requires PORT_USE_SYSCALL"
-#endif
-
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
@@ -81,6 +77,13 @@ typedef struct {
    * @note    Zero if not used.
    */
   uint32_t                      r1_end;
+  /**
+   * @brief   Sandbox stream.
+   * @note    Set this to @p NULL if standard I/O is not needed.
+   * @note    By design you can use HAL streams here, you need to use
+   *          a cast however.
+   */
+  SandboxStream                 *stdio_stream;
 } sb_config_t;
 
 /**
