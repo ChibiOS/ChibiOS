@@ -78,7 +78,7 @@
        avoids a lot of casts in the code.
 - NIL: Removed regarm_t type from port layer and replaced with uint32_t, this
        avoids a lot of casts in the code.
-- NEW: Cortex-M SandBox subsystem added.
+- NEW: ARM SandBox subsystem added.
 - LIB: Added a cache class to OSLIB.
 - NEW: Added an option to change the shell thread name.
 - HAL: Made bus acquire/release functions in SNOR driver public.
