@@ -27,6 +27,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <stddef.h>
 
 #include "sbuser.h"
 
@@ -67,7 +68,7 @@ sbapi_state_t sb;
  */
 void sbApiInit(void) {
 
-  sb.frequency = sbGetFrequency();
+  sb.frequency = (time_conv_t)sbGetFrequency();
 }
 
 /** @} */

@@ -32,17 +32,6 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
-/**
- * @name    Posix-like function codes
- * @{
- */
-#define SB_POSIX_OPEN           1
-#define SB_POSIX_CLOSE          2
-#define SB_POSIX_READ           3
-#define SB_POSIX_WRITE          4
-#define SB_POSIX_LSEEK          5
-/** @} */
-
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/

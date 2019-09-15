@@ -46,7 +46,18 @@
 #define SB_ERR_ENOSYS           ((uint32_t)(-88))
 
 #define SB_ERR_ERRORMASK        0xFFFFFF00U
-#define SB_ERR_ISERROR(x)       (((x) & SB_ERR_ERRORMASK) == SB_ERR_ERRORMASK)
+#define SB_ERR_ISERROR(x)       (((uint32_t)(x) & SB_ERR_ERRORMASK) == SB_ERR_ERRORMASK)
+/** @} */
+
+/**
+ * @name    Posix-like function codes
+ * @{
+ */
+#define SB_POSIX_OPEN           1
+#define SB_POSIX_CLOSE          2
+#define SB_POSIX_READ           3
+#define SB_POSIX_WRITE          4
+#define SB_POSIX_LSEEK          5
 /** @} */
 
 /*===========================================================================*/

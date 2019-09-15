@@ -187,6 +187,80 @@ extern "C" {
 /*===========================================================================*/
 
 /**
+ * @brief   Posix-style file open.
+ *
+ * @param[in] pathname  file to be opened
+ * @param[in] flags     open mode
+ * @return              The file descriptor or an error.
+ */
+static inline uint32_t sbFileOpen(const char *pathname,
+                                  uint32_t flags) {
+
+  __syscall3r(0, SB_POSIX_OPEN, pathname, flags);
+  return r0;
+}
+
+/**
+ * @brief   Posix-style file close.
+ *
+ * @param[in] fd        file descriptor
+ * @return              Operation result.
+ */
+static inline uint32_t sbFileClose(uint32_t fd) {
+
+  __syscall2r(0, SB_POSIX_CLOSE, fd);
+  return r0;
+}
+
+/**
+ * @brief   Posix-style file read.
+ *
+ * @param[in] fd        file descriptor
+ * @param[out] buf      buffer pointer
+ * @param[in] count     number of bytes
+ * @return              The number of bytes really transferred or an error.
+ */
+static inline size_t sbFileRead(uint32_t fd,
+                                uint8_t *buf,
+                                size_t count) {
+
+  __syscall4r(0, SB_POSIX_READ, fd, buf, count);
+  return (size_t)r0;
+}
+
+/**
+ * @brief   Posix-style file write.
+ *
+ * @param[in] fd        file descriptor
+ * @param[in] buf       buffer pointer
+ * @param[in] count     number of bytes
+ * @return              The number of bytes really transferred or an error.
+ */
+static inline size_t sbFileWrite(uint32_t fd,
+                                 const uint8_t *buf,
+                                 size_t count) {
+
+  __syscall4r(0, SB_POSIX_WRITE, fd, buf, count);
+  return (size_t)r0;
+}
+
+/**
+ * @brief   Posix-style file seek.
+ *
+ * @param[in] fd        file descriptor
+ * @param[in] offset    file offset
+ * @param[in] whence    operation mode
+ * @return              Operation result.
+ */
+static inline uint32_t sbFileSeek(uint32_t fd,
+                                  uint32_t offset,
+                                  uint32_t whence) {
+
+  __syscall4r(0, SB_POSIX_LSEEK, fd, offset, whence);
+  return (size_t)r0;
+}
+
+/**
  * @brief   Terminates the sandbox.
  *
  * @param[in] msg       The exit message.
