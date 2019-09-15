@@ -915,7 +915,7 @@ const port_syscall_t sb_syscalls[256] = {
 
 static void sb_undef_handler(struct port_extctx *ectxp) {
 
-  ectxp->r0 = SB_ERR_NOT_IMPLEMENTED;
+  ectxp->r0 = SB_ERR_ENOSYS;
 }
 
 /*===========================================================================*/
@@ -927,28 +927,28 @@ void sb_api_stdio(struct port_extctx *ectxp) {
   switch (ectxp->r0) {
   case SB_POSIX_OPEN:
     ectxp->r0 = sb_posix_open((const char *)ectxp->r1,
-                              (int)ectxp->r2);
+                              ectxp->r2);
     break;
   case SB_POSIX_CLOSE:
-    ectxp->r0 = sb_posix_close((int)ectxp->r1);
+    ectxp->r0 = sb_posix_close(ectxp->r1);
     break;
   case SB_POSIX_READ:
-    ectxp->r0 = sb_posix_read((int)ectxp->r1,
+    ectxp->r0 = sb_posix_read(ectxp->r1,
                               (void *)ectxp->r2,
                               (size_t)ectxp->r3);
     break;
   case SB_POSIX_WRITE:
-    ectxp->r0 = sb_posix_write((int)ectxp->r1,
+    ectxp->r0 = sb_posix_write(ectxp->r1,
                                (const void *)ectxp->r2,
                                (size_t)ectxp->r3);
     break;
   case SB_POSIX_LSEEK:
-    ectxp->r0 = sb_posix_lseek((int)ectxp->r1,
-                               (off_t)ectxp->r2,
-                               (int)ectxp->r3);
+    ectxp->r0 = sb_posix_lseek(ectxp->r1,
+                               ectxp->r2,
+                               ectxp->r3);
     break;
   default:
-    ectxp->r0 = SB_ERR_NOT_IMPLEMENTED;
+    ectxp->r0 = SB_ERR_ENOSYS;
     break;
   }
 }
@@ -958,7 +958,7 @@ void sb_api_exit(struct port_extctx *ectxp) {
   chThdExit((msg_t )ectxp->r0);
 
   /* Cannot get here.*/
-  ectxp->r0 = SB_ERR_NOT_IMPLEMENTED;
+  ectxp->r0 = SB_ERR_ENOSYS;
 }
 
 void sb_api_get_systime(struct port_extctx *ectxp) {
@@ -999,7 +999,7 @@ void sb_api_wait_message(struct port_extctx *ectxp) {
   else {
     chMsgRelease(sbcp->msg_tp, MSG_RESET);
     sbcp->msg_tp = NULL;
-    ectxp->r0 = SB_ERR_API_USAGE;
+    ectxp->r0 = SB_ERR_EBUSY;
   }
 #else
   ectxp->r0 = SB_ERR_NOT_IMPLEMENTED;
@@ -1013,10 +1013,10 @@ void sb_api_reply_message(struct port_extctx *ectxp) {
   if (sbcp->msg_tp != NULL) {
     chMsgRelease(sbcp->msg_tp, (msg_t )ectxp->r0);
     sbcp->msg_tp = NULL;
-    ectxp->r0 = SB_ERR_API_USAGE;
+    ectxp->r0 = SB_ERR_NOERROR;
   }
   else {
-    ectxp->r0 = SB_ERR_API_USAGE;
+    ectxp->r0 = SB_ERR_EBUSY;
   }
 #else
   ectxp->r0 = SB_ERR_NOT_IMPLEMENTED;

@@ -78,12 +78,26 @@ typedef struct {
    */
   uint32_t                      r1_end;
   /**
-   * @brief   Sandbox stream.
+   * @brief   Sandbox STDIN stream.
    * @note    Set this to @p NULL if standard I/O is not needed.
    * @note    By design you can use HAL streams here, you need to use
    *          a cast however.
    */
-  SandboxStream                 *stdio_stream;
+  SandboxStream                 *stdin_stream;
+  /**
+   * @brief   Sandbox STDOUT stream.
+   * @note    Set this to @p NULL if standard I/O is not needed.
+   * @note    By design you can use HAL streams here, you need to use
+   *          a cast however.
+   */
+  SandboxStream                 *stdout_stream;
+  /**
+   * @brief   Sandbox STDERR stream.
+   * @note    Set this to @p NULL if standard I/O is not needed.
+   * @note    By design you can use HAL streams here, you need to use
+   *          a cast however.
+   */
+  SandboxStream                 *stderr_stream;
 } sb_config_t;
 
 /**

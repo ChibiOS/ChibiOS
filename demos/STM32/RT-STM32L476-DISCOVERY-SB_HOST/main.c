@@ -54,7 +54,9 @@ static THD_FUNCTION(Unprivileged1, arg) {
     .r0_end         = (uint32_t)&__flash7_end__,
     .r1_base        = (uint32_t)&__ram7_start__,
     .r1_end         = (uint32_t)&__ram7_end__,
-    .stdio_stream   = (SandboxStream *)&SD2
+    .stdin_stream   = (SandboxStream *)&SD2,
+    .stdout_stream  = (SandboxStream *)&SD2,
+    .stderr_stream  = (SandboxStream *)&SD2
   };
   sb_class_t sbx1;
 

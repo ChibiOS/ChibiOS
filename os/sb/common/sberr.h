@@ -37,10 +37,13 @@
  * @{
  */
 #define SB_ERR_NOERROR          0U
-#define SB_ERR_NOT_IMPLEMENTED  ((uint32_t)(-88))   /* ENOSYS */
-#define SB_ERR_MEMORY_FAULT     ((uint32_t)(-14))   /* EFAULT */
-#define SB_ERR_API_USAGE        ((uint32_t)(-16))   /* EBUSY */
-#define SB_ERR_INV_ARGUMENT     ((uint32_t)(-22))   /* EINVAL */
+#define SB_ERR_ENOENT           ((uint32_t)(-2))
+#define SB_ERR_EFAULT           ((uint32_t)(-14))
+#define SB_ERR_EBUSY            ((uint32_t)(-16))
+#define SB_ERR_EINVAL           ((uint32_t)(-22))
+#define SB_ERR_ESPIPE           ((uint32_t)(-29))
+#define SB_ERR_EBADFD           ((uint32_t)(-81))
+#define SB_ERR_ENOSYS           ((uint32_t)(-88))
 
 #define SB_ERR_ERRORMASK        0xFFFFFF00U
 #define SB_ERR_ISERROR(x)       (((x) & SB_ERR_ERRORMASK) == SB_ERR_ERRORMASK)
