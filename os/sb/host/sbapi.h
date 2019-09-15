@@ -57,6 +57,10 @@ typedef void (*port_syscall_t)(struct port_extctx *ectx);
  */
 struct SandboxStreamVMT {
   /**
+   * @brief   Object instance offset.
+   */
+  size_t instance_offset;
+  /**
    * @brief   Stream write buffer method.
    */
   size_t (*write)(void *instance, const uint8_t *bp, size_t n);

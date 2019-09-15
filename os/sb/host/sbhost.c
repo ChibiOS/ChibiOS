@@ -117,8 +117,9 @@ void sbStart(sb_class_t *sbcp, const sb_config_t *config) {
 
   /* Additional context information.*/
   sbcp->config = config;
-  chThdGetSelfX()->ctx.syscall.p    = (const void *)sbcp;
-  chThdGetSelfX()->ctx.syscall.psp  = __get_PSP();
+  sbcp->tp     = chThdGetSelfX();
+  sbcp->tp->ctx.syscall.p    = (const void *)sbcp;
+  sbcp->tp->ctx.syscall.psp  = __get_PSP();
 
   /* Jumping to the unprivileged code.*/
   port_unprivileged_jump(pc, psp);

@@ -22,6 +22,9 @@
 #include "chprintf.h"
 #include "sbhost.h"
 
+/* SandBox object.*/
+sb_class_t sbx1;
+
 /*
  * LEDs blinker thread, times are in milliseconds.
  */
@@ -39,6 +42,7 @@ static THD_FUNCTION(Thread1, arg) {
     chThdSleepMilliseconds(50);
     palSetLine(LINE_LED_RED);
     chThdSleepMilliseconds(200);
+    (void) sbSendMessage(&sbx1, 0xF00F55AAU);
   }
 }
 
@@ -58,7 +62,6 @@ static THD_FUNCTION(Unprivileged1, arg) {
     .stdout_stream  = (SandboxStream *)&SD2,
     .stderr_stream  = (SandboxStream *)&SD2
   };
-  sb_class_t sbx1;
 
   (void)arg;
   chRegSetThreadName("unprivileged");
@@ -108,7 +111,7 @@ int main(void) {
   sdStart(&SD2, NULL);
 
   /* Creating the blinker thread.*/
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO,
+  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO+10,
                     Thread1, NULL);
 
   /* Creating the unprivileged thread.*/
