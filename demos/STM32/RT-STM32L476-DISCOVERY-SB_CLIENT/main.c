@@ -17,6 +17,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdio.h>
 
 #include "sbuser.h"
 
@@ -41,7 +42,8 @@ int main(void) {
 #endif
   while (true) {
     msg_t msg = sbMsgWait();
-    sbFileWrite(1U, (const uint8_t *)"Hello World!!\r\n", 15U);
+    printf("Hello World (%u)!!\r\n", (unsigned)msg);
+//    sbFileWrite(1U, (const uint8_t *)"Hello World!!\r\n", 15U);
     sbMsgReply(msg);
 //    sbSleepMilliseconds(500);
   }

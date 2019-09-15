@@ -19,14 +19,14 @@
  */
 MEMORY
 {
-    flash0  : org = 0x08000000, len = 1M - 16k
+    flash0  : org = 0x08000000, len = 1M - 32k
     flash1  : org = 0x00000000, len = 0
     flash2  : org = 0x00000000, len = 0
     flash3  : org = 0x00000000, len = 0
     flash4  : org = 0x00000000, len = 0
     flash5  : org = 0x00000000, len = 0
     flash6  : org = 0x00000000, len = 0
-    flash7  : org = 0x08000000 + 1M - 16k, len = 16k
+    flash7  : org = 0x08000000 + 1M - 32k, len = 32k
     ram0    : org = 0x20000000, len = 96k - 4k
     ram1    : org = 0x00000000, len = 0
     ram2    : org = 0x00000000, len = 0

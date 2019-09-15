@@ -19,7 +19,7 @@
  */
 MEMORY
 {
-    flash0  : org = 0x080FC000, len = 16k
+    flash0  : org = 0x080F8000, len = 32k
     ram0    : org = 0x20017000, len = 4k
 }
 

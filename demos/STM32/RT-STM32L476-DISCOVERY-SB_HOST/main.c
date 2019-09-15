@@ -30,6 +30,7 @@ sb_class_t sbx1;
  */
 static THD_WORKING_AREA(waThread1, 128);
 static THD_FUNCTION(Thread1, arg) {
+  unsigned i = 1U;
 
   (void)arg;
   chRegSetThreadName("blinker");
@@ -42,7 +43,8 @@ static THD_FUNCTION(Thread1, arg) {
     chThdSleepMilliseconds(50);
     palSetLine(LINE_LED_RED);
     chThdSleepMilliseconds(200);
-    (void) sbSendMessage(&sbx1, 0xF00F55AAU);
+    (void) sbSendMessage(&sbx1, (msg_t)i);
+    i++;
   }
 }
 
@@ -75,7 +77,7 @@ static THD_FUNCTION(Unprivileged1, arg) {
                      sb_config.r0_base,
                      MPU_RASR_ATTR_AP_RO_RO |
                      MPU_RASR_ATTR_CACHEABLE_WT_NWA |
-                     MPU_RASR_SIZE_16K |
+                     MPU_RASR_SIZE_32K |
                      MPU_RASR_ENABLE);
   mpuConfigureRegion(MPU_REGION_1,
                      sb_config.r1_base,
