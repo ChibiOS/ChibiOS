@@ -55,28 +55,43 @@
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
+typedef struct {
+  /**
+   * @brief   Memory range base.
+   * @note    Zero if not used.
+   */
+  uint32_t                      base;
+  /**
+   * @brief   Memory range end (non inclusive).
+   * @note    Zero if not used.
+   */
+  uint32_t                      end;
+  /**
+   * @brief   Writable memory range.
+   */
+  bool                          writeable;
+} sb_memory_region_t;
+
 /**
  * @brief   Type of a sandbox configuration structure.
  */
 typedef struct {
   /**
-   * @brief   Region 0 start address.
+   * @brief   Memory region for code.
+   * @note    It is used to locate the startup header.
    */
-  uint32_t                      r0_base;
+  uint32_t                      code_region;
   /**
-   * @brief   Region 0 size.
+   * @brief   Memory region for data and stack.
+   * @note    It is used for initial PSP placement.
    */
-  uint32_t                      r0_end;
+  uint32_t                      data_region;
   /**
-   * @brief   Region 2 start address.
-   * @note    Zero if not used.
+   * @brief   SandBox regions.
+   * @note    The following memory regions are used only for pointers
+   *          validation, not for MPU setup.
    */
-  uint32_t                      r1_base;
-  /**
-   * @brief   Region 2 end address.
-   * @note    Zero if not used.
-   */
-  uint32_t                      r1_end;
+  sb_memory_region_t            regions[SB_NUM_REGIONS];
   /**
    * @brief   Sandbox STDIN stream.
    * @note    Set this to @p NULL if standard I/O is not needed.
@@ -143,24 +158,6 @@ typedef struct {
    * @brief   Used-defined parameters, defaulted to zero.
    */
   uint32_t                      user;
-  /**
-   * @brief   Region 0 start address.
-   */
-  uint32_t                      r0_base;
-  /**
-   * @brief   Region 0 size.
-   */
-  uint32_t                      r0_end;
-  /**
-   * @brief   Region 2 start address.
-   * @note    Zero if not used.
-   */
-  uint32_t                      r1_base;
-  /**
-   * @brief   Region 2 end address.
-   * @note    Zero if not used.
-   */
-  uint32_t                      r1_end;
 } sb_header_t;
 
 /*===========================================================================*/
@@ -175,6 +172,8 @@ typedef struct {
 extern "C" {
 #endif
   void port_syscall(struct port_extctx *ctxp, uint32_t n);
+  bool sb_is_valid_read_range(sb_class_t *sbcp, const void *start, size_t size);
+  bool sb_is_valid_write_range(sb_class_t *sbcp, void *start, size_t size);
   void sbObjectInit(sb_class_t *sbcp);
   void sbStart(sb_class_t *sbcp, const sb_config_t *config);
 #ifdef __cplusplus

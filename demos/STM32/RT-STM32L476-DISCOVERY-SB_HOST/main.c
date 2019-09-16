@@ -20,7 +20,7 @@
 #include "oslib_test_root.h"
 
 #include "chprintf.h"
-#include "sbhost.h"
+#include "sb.h"
 
 /* SandBox object.*/
 sb_class_t sbx1;
@@ -56,10 +56,12 @@ static THD_FUNCTION(Unprivileged1, arg) {
   extern uint32_t __flash7_start__, __flash7_end__,
                   __ram7_start__, __ram7_end__;
   static const sb_config_t sb_config = {
-    .r0_base        = (uint32_t)&__flash7_start__,
-    .r0_end         = (uint32_t)&__flash7_end__,
-    .r1_base        = (uint32_t)&__ram7_start__,
-    .r1_end         = (uint32_t)&__ram7_end__,
+    .code_region    = 0U,
+    .data_region    = 1U,
+    .regions        = {
+      {(uint32_t)&__flash7_start__,   (uint32_t)&__flash7_end__,  false},
+      {(uint32_t)&__ram7_start__,     (uint32_t)&__ram7_end__,    true}
+    },
     .stdin_stream   = (SandboxStream *)&SD2,
     .stdout_stream  = (SandboxStream *)&SD2,
     .stderr_stream  = (SandboxStream *)&SD2
@@ -74,13 +76,13 @@ static THD_FUNCTION(Unprivileged1, arg) {
   /* Static MPU setup for the sandbox, both regions are used because in this
      demo it requires both a flash and a RAM regions.*/
   mpuConfigureRegion(MPU_REGION_0,
-                     sb_config.r0_base,
+                     sb_config.regions[0].base,
                      MPU_RASR_ATTR_AP_RO_RO |
                      MPU_RASR_ATTR_CACHEABLE_WT_NWA |
                      MPU_RASR_SIZE_32K |
                      MPU_RASR_ENABLE);
   mpuConfigureRegion(MPU_REGION_1,
-                     sb_config.r1_base,
+                     sb_config.regions[1].base,
                      MPU_RASR_ATTR_AP_RW_RW |
                      MPU_RASR_ATTR_CACHEABLE_WB_WA |
                      MPU_RASR_SIZE_4K |
@@ -89,7 +91,9 @@ static THD_FUNCTION(Unprivileged1, arg) {
   /* This thread goes in the sandbox and is trapped there, it cannot
      return, only invoke the sandbox API.*/
   sbStart(&sbx1, &sb_config);
-  chSysHalt("zombies");
+
+  /* Function sbStart() only fails if the sandbox cannot be started
+     because code header problems.*/
 }
 
 /*

@@ -23,14 +23,6 @@ MEMORY
     ram0    : org = 0x20017000, len = 4k
 }
 
-/* Symbols required by the sandbox startup file.*/
-__r1_start__            = ORIGIN(flash0);
-__r1_size__             = LENGTH(flash0);
-__r1_end__              = __r1_start__ + __r1_size__;
-__r2_start__            = ORIGIN(ram0);
-__r2_size__             = LENGTH(ram0);
-__r2_end__              = __r2_start__ + __r2_size__;
-
 /* Flash region to be used for exception vectors.*/
 REGION_ALIAS("CODE_SPACE", flash0);
 

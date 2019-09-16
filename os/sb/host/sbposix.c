@@ -71,9 +71,13 @@ uint32_t sb_posix_close(uint32_t fd) {
 }
 
 uint32_t sb_posix_read(uint32_t fd, uint8_t *buf, size_t count) {
+  sb_class_t *sbcp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+
+  if (!sb_is_valid_write_range(sbcp, (void *)buf, count)) {
+    return SB_ERR_EFAULT;
+  }
 
   if (fd == 0U) {
-    sb_class_t *sbcp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
     SandboxStream *ssp = sbcp->config->stdin_stream;
 
     if ((count == 0U) || (ssp == NULL)) {
@@ -88,6 +92,10 @@ uint32_t sb_posix_read(uint32_t fd, uint8_t *buf, size_t count) {
 
 uint32_t sb_posix_write(uint32_t fd, const uint8_t *buf, size_t count) {
   sb_class_t *sbcp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+
+  if (!sb_is_valid_read_range(sbcp, (const void *)buf, count)) {
+    return SB_ERR_EFAULT;
+  }
 
   if (fd == 1U) {
     SandboxStream *ssp = sbcp->config->stdout_stream;

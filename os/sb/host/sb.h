@@ -28,11 +28,6 @@
 #ifndef SB_H
 #define SB_H
 
-#include "sberr.h"
-#include "sbhost.h"
-#include "sbapi.h"
-#include "sbposix.h"
-
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
@@ -76,6 +71,13 @@
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Number of memory regions for each sandbox.
+ */
+#if !defined(SB_NUM_REGIONS) || defined(__DOXYGEN__)
+#define SB_NUM_REGIONS                      2
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -101,6 +103,10 @@
 #error "SandBox requires PORT_USE_SYSCALL == TRUE"
 #endif
 
+#if (SB_NUM_REGIONS < 1) || (SB_NUM_REGIONS > 4)
+#error "invalid SB_NUM_REGIONS value"
+#endif
+
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
@@ -124,6 +130,11 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
+
+#include "sberr.h"
+#include "sbhost.h"
+#include "sbapi.h"
+#include "sbposix.h"
 
 #endif /* SBHOST_H */
 

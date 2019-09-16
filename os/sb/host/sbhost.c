@@ -52,6 +52,34 @@
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
+bool sb_is_valid_read_range(sb_class_t *sbcp, const void *start, size_t size) {
+  const sb_memory_region_t *rp = &sbcp->config->regions[0];
+
+  do {
+    if (((uint32_t)start >= rp->base) && ((uint32_t)start < rp->end) &&
+        (size <= ((size_t)rp->base - (size_t)start))) {
+      return true;
+    }
+    rp++;
+  } while (rp < &sbcp->config->regions[SB_NUM_REGIONS]);
+
+  return false;
+}
+
+bool sb_is_valid_write_range(sb_class_t *sbcp, void *start, size_t size) {
+  const sb_memory_region_t *rp = &sbcp->config->regions[0];
+
+  do {
+    if (((uint32_t)start >= rp->base) && ((uint32_t)start < rp->end) &&
+        (size <= ((size_t)rp->base - (size_t)start))) {
+      return rp->writeable;
+    }
+    rp++;
+  } while (rp < &sbcp->config->regions[SB_NUM_REGIONS]);
+
+  return false;
+}
+
 /**
  * @brief   Sandbox object initialization.
  *
@@ -83,8 +111,8 @@ void sbStart(sb_class_t *sbcp, const sb_config_t *config) {
   uint32_t pc, psp;
   const sb_header_t *sbhp;
 
-  /* The header is conventionally placed at base of region zero.*/
-  sbhp = (const sb_header_t *)config->r0_base;
+  /* Header location.*/
+  sbhp = (const sb_header_t *)config->regions[config->code_region].base;
 
   /* Checking header magic numbers.*/
   if ((sbhp->hdr_magic1 != SB_MAGIC1) || (sbhp->hdr_magic2 != SB_MAGIC2)) {
@@ -96,24 +124,11 @@ void sbStart(sb_class_t *sbcp, const sb_config_t *config) {
     return;
   }
 
-  /* Checking regions, applet regions and sandbox regions must match.*/
-  if ((sbhp->r0_base != config->r0_base) || (sbhp->r0_end != config->r0_end) ||
-      (sbhp->r1_base != config->r1_base) || (sbhp->r1_end != config->r1_end)) {
-    return;
-  }
-
   /* PC initial address, by convention it is immediately after the header.*/
-  pc = (sbhp->r0_base + sbhp->hdr_size) | 1U;
+  pc = (config->regions[config->code_region].base + sizeof (sb_header_t)) | 1U;
 
-  /* PSP initial address, it is placed at end of the last region.*/
-  if (config->r1_base == 0U) {
-    /* Must be in region 1.*/
-    psp = config->r0_end;
-  }
-  else {
-    /* Must be in region 2.*/
-    psp = config->r1_end;
-  }
+  /* PSP initial address.*/
+  psp = config->regions[config->data_region].end;
 
   /* Additional context information.*/
   sbcp->config = config;

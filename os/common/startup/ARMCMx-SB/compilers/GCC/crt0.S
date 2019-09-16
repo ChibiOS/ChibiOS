@@ -97,12 +97,8 @@
                 .globl      _sandbox
 _sandbox:       .long       0xFE9154C0U
                 .long       0x0C4519EFU
-                .long       32
+                .long       16
                 .long       0
-                .long       __r1_start__
-                .long       __r1_end__
-                .long       __r2_start__
-                .long       __r2_end__
 
 /*
  * CRT0 entry point.
