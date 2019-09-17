@@ -91,6 +91,16 @@
 #error "ChibiOS/SB not licensed"
 #endif
 
+#if (CH_LICENSE_FEATURES != CH_FEATURES_FULL) &&                            \
+    (CH_LICENSE_FEATURES != CH_FEATURES_INTERMEDIATE) &&                    \
+    (CH_LICENSE_FEATURES != CH_FEATURES_BASIC)
+#error "invalid CH_LICENSE_FEATURES setting"
+#endif
+
+#if CH_LICENSE_FEATURES != CH_FEATURES_FULL
+#error "ChibiOS/SB insufficient features level"
+#endif
+
 #if CH_CFG_ST_RESOLUTION != 32
 #error "SandBox requires CH_CFG_ST_RESOLUTION == 32"
 #endif
