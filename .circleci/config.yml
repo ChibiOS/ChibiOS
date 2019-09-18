@@ -17,3 +17,28 @@ jobs:
             make 
       - store_artifacts:
           path: ./demos/STM32/RT-STM32F103-STM3210E_EVAL-FATFS-USB/build/ch.elf
+
+  unit-test:
+    docker:
+      - image: circleci/python:3.6.9-stretch
+    steps:
+      - checkout
+      - run:
+          name: Intall apt packages
+          command: 'sudo apt install libc6-dev-i386'
+      - run:
+          name: Build Unit Tests
+          command: |
+              cd test/rt/testbuild
+              make
+      - run:
+          name: Run Unit Tests
+          command: |
+              ./test/rt/testbuild/build/ch
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - unit-test
