@@ -20,22 +20,22 @@
  */
 MEMORY
 {
-    flash0  : org = 0x08000000, len = 1536k     /* Program memory */
-    flash1  : org = 0x1FFF7800, len = 528       /* OTP memory */
-    flash2  : org = 0x00000000, len = 0
-    flash3  : org = 0x00000000, len = 0
-    flash4  : org = 0x00000000, len = 0
-    flash5  : org = 0x00000000, len = 0
-    flash6  : org = 0x00000000, len = 0
-    flash7  : org = 0x00000000, len = 0
-    ram0    : org = 0x20000000, len = 320k      /* SRAM1 + SRAM2 */
-    ram1    : org = 0x20000000, len = 256k      /* SRAM1 */
-    ram2    : org = 0x20040000, len = 64k       /* SRAM2 */
-    ram3    : org = 0x00000000, len = 0
-    ram4    : org = 0x10000000, len = 64k       /* CCM SRAM2 */
-    ram5    : org = 0x00000000, len = 0
-    ram6    : org = 0x00000000, len = 0
-    ram7    : org = 0x00000000, len = 0
+    flash0 (rx) : org = 0x08000000, len = 1536k     /* Program memory */
+    flash1 (rx) : org = 0x1FFF7800, len = 528       /* OTP memory */
+    flash2 (rx) : org = 0x00000000, len = 0
+    flash3 (rx) : org = 0x00000000, len = 0
+    flash4 (rx) : org = 0x00000000, len = 0
+    flash5 (rx) : org = 0x00000000, len = 0
+    flash6 (rx) : org = 0x00000000, len = 0
+    flash7 (rx) : org = 0x00000000, len = 0
+    ram0   (wx) : org = 0x20000000, len = 320k      /* SRAM1 + SRAM2 */
+    ram1   (wx) : org = 0x20000000, len = 256k      /* SRAM1 */
+    ram2   (wx) : org = 0x20040000, len = 64k       /* SRAM2 */
+    ram3   (wx) : org = 0x00000000, len = 0
+    ram4   (wx) : org = 0x10000000, len = 64k       /* CCM SRAM2 */
+    ram5   (wx) : org = 0x00000000, len = 0
+    ram6   (wx) : org = 0x00000000, len = 0
+    ram7   (wx) : org = 0x00000000, len = 0
 }
 
 /* For each data/text section two region are defined, a virtual region

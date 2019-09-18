@@ -19,8 +19,8 @@
  */
 MEMORY
 {
-    flash0  : org = 0x080F8000, len = 32k
-    ram0    : org = 0x20017000, len = 4k
+    flash0 (rx) : org = 0x080F8000, len = 32k
+    ram0   (wx) : org = 0x20017000, len = 4k
 }
 
 /* Flash region to be used for exception vectors.*/
