@@ -166,7 +166,7 @@ void SVC_Handler(void) {
     newctxp->pc     = (uint32_t)port_syscall;
     newctxp->xpsr   = 0x01000000U;
 #if CORTEX_USE_FPU == TRUE
-    newctxp->fpscr  = (regarm_t)FPU->FPDSCR;
+    newctxp->fpscr  = FPU->FPDSCR;
 #endif
   }
   else
@@ -362,7 +362,7 @@ void _port_irq_epilogue(void) {
     /* Setting up a fake XPSR register value.*/
     ectxp->xpsr = 0x01000000U;
 #if CORTEX_USE_FPU == TRUE
-    ectxp->fpscr = (regarm_t)FPU->FPDSCR;
+    ectxp->fpscr = FPU->FPDSCR;
 #endif
 
     /* Writing back the modified S-PSP value.*/

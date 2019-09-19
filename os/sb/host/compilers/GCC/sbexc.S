@@ -29,6 +29,8 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
+#define FPU     0xE000EF30
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -114,8 +116,12 @@ UsageFault_Handler:
                 /* This thread is going to die so going back on
                    S-PSP and working safely from there.*/
                 bl          port_get_s_psp
-                sub.w       r0, r0, #32 // TODO: FPU
+#if CORTEX_USE_FPU
+                sub.w       r0, r0, #104
+#else
+                sub.w       r0, r0, #32
                 msr         PSP, r0
+#endif
 
                 /* Forcing return on exit syscall code with PSR
                    value as exit message.*/
@@ -125,6 +131,11 @@ UsageFault_Handler:
                 str         r2, [r0, #24]
                 ldr         r2, =0x01000000
                 str         r2, [r0, #28]
+#if CORTEX_USE_FPU
+                ldr         r2, =FPU
+                ldr         r2, [r2, #12]   /* FPDSCR*/
+                str         r2, [r0, #96]   /* port_extctx.fpscr */
+#endif
 
                 /* Back to privileged mode.*/
                 mrs         r3, CONTROL
