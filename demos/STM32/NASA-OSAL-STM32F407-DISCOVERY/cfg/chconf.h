@@ -29,7 +29,7 @@
 #define CHCONF_H
 
 #define _CHIBIOS_RT_CONF_
-#define _CHIBIOS_RT_CONF_VER_6_0_
+#define _CHIBIOS_RT_CONF_VER_6_1_
 
 /*===========================================================================*/
 /**
@@ -382,6 +382,17 @@
 #endif
 
 /**
+ * @brief   Objects Caches APIs.
+ * @details If enabled then the objects caches APIs are included
+ *          in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#if !defined(CH_CFG_USE_OBJ_CACHES)
+#define CH_CFG_USE_OBJ_CACHES               TRUE
+#endif
+
+/**
  * @brief   Dynamic Threads APIs.
  * @details If enabled then the dynamic threads creation APIs are included
  *          in the kernel.
@@ -607,7 +618,6 @@
 #define CH_CFG_THREAD_EXTRA_FIELDS                                          \
   /* Add threads custom fields here.*/                                      \
   void *osal_delete_handler;
-
 
 /**
  * @brief   Threads initialization hook.

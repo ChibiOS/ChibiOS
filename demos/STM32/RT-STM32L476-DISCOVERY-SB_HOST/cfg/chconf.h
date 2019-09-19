@@ -29,38 +29,7 @@
 #define CHCONF_H
 
 #define _CHIBIOS_RT_CONF_
-#define _CHIBIOS_RT_CONF_VER_6_0_
-
-/*===========================================================================*/
-/**
- * @name System settings
- * @{
- */
-/*===========================================================================*/
-
-/**
- * @brief   Number of OS instances.
- * @note    For each core in use an instance is needed, the number needs to
- *          be between one and the number of available cores.
- */
-#if !defined(CH_CFG_INSTANCES_NUMBER)
-#define CH_CFG_INSTANCES_NUMBER             1
-#endif
-
-/**
- * @brief   Handling of instances.
- * @note    If disabled then threads assigned to various instances can
- *          interact each other using the same synchronization objects.
- *          If enabled then each OS instance is a separate world, no
- *          direct interactions is handled by the OS.
- *          This setting is only meaningful if @p CH_CFG_INSTANCES_NUMBER
- *          is greater than one.
- */
-#if !defined(CH_CFG_LOOSE_INSTANCES)
-#define CH_CFG_LOOSE_INSTANCES              FALSE
-#endif
-
-/** @} */
+#define _CHIBIOS_RT_CONF_VER_6_1_
 
 /*===========================================================================*/
 /**
@@ -413,6 +382,17 @@
 #endif
 
 /**
+ * @brief   Objects Caches APIs.
+ * @details If enabled then the objects caches APIs are included
+ *          in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#if !defined(CH_CFG_USE_OBJ_CACHES)
+#define CH_CFG_USE_OBJ_CACHES               TRUE
+#endif
+
+/**
  * @brief   Dynamic Threads APIs.
  * @details If enabled then the dynamic threads creation APIs are included
  *          in the kernel.
@@ -628,23 +608,7 @@
  *          just before interrupts are enabled globally.
  */
 #define CH_CFG_SYSTEM_INIT_HOOK() {                                         \
-  /* Add system initialization code here.*/                                 \
-}
-
-/**
- * @brief   System instance structure extension.
- * @details User fields added to the end of the @p ch_instance_t structure.
- */
-#define CH_CFG_INSTANCE_EXTRA_FIELDS                                        \
-  /* Add threads custom fields here.*/
-
-/**
- * @brief   System instance initialization hook.
- * @details User initialization code added to the @p chSchObjectInit()
- *          function.
- */
-#define CH_CFG_INSTANCE_INIT_HOOK(oip) {                                    \
-  /* Add OS instance initialization code here.*/                            \
+  /* Add threads initialization code here.*/                                \
 }
 
 /**
@@ -755,9 +719,6 @@
 /*===========================================================================*/
 /* Port-specific settings (override port settings defaulted in chcore.h).    */
 /*===========================================================================*/
-
-#define PORT_USE_SYSCALL                    TRUE
-#define PORT_SWITCHED_REGIONS_NUMBER        0
 
 #endif  /* CHCONF_H */
 
