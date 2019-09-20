@@ -52,7 +52,7 @@
 /*
  * MCU type as defined in the ST header.
  */
-#define STM32G071xB
+#define STM32G071xx
 
 /*
  * IO pins assignments.

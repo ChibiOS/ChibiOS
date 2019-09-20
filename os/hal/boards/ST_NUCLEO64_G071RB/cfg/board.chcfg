@@ -11,7 +11,7 @@
   <board_name>STMicroelectronics STM32 Nucleo64-G071RB</board_name>
   <board_id>ST_NUCLEO64_G071RB</board_id>
   <board_functions></board_functions>
-  <subtype>STM32G071xB</subtype>
+  <subtype>STM32G071xx</subtype>
   <clocks HSEFrequency="8000000" HSEBypass="false" LSEFrequency="32768"
   	LSEBypass="false" LSEDrive="3 High Drive (default)" />
   <ports>
