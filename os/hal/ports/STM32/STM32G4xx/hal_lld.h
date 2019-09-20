@@ -85,6 +85,7 @@
  * @{
  */
 #define STM32_HSI16CLK          16000000U   /**< 16MHz internal clock.      */
+#define STM32_HSI48CLK          48000000U   /**< 48MHz internal clock.      */
 #define STM32_LSICLK            32000U      /**< Low speed internal clock.  */
 /** @} */
 
@@ -149,8 +150,8 @@
 #define STM32_HPRE_DIV256       STM32_HPRE_FIELD(14U)
 #define STM32_HPRE_DIV512       STM32_HPRE_FIELD(15U)
 
-#define STM32_PPRE1_MASK        (7U << 7U)  /**< PPRE1 field mask.         */
-#define STM32_PPRE1_FIELD(n)    ((n) << 7U) /**< PPRE1 field value.        */
+#define STM32_PPRE1_MASK        (7U << 7U)   /**< PPRE1 field mask.         */
+#define STM32_PPRE1_FIELD(n)    ((n) << 7U)  /**< PPRE1 field value.        */
 #define STM32_PPRE1_DIV1        STM32_PPRE1_FIELD(0U)
 #define STM32_PPRE1_DIV2        STM32_PPRE1_FIELD(4U)
 #define STM32_PPRE1_DIV4        STM32_PPRE1_FIELD(5U)
@@ -210,9 +211,23 @@
 #define STM32_USART2SEL_HSI16   (2U << 2U)  /**< USART2 source is HSI16.    */
 #define STM32_USART2SEL_LSE     (3U << 2U)  /**< USART2 source is LSE.      */
 
-#define STM32_CECSEL_MASK       (1U << 6U)  /**< CEC mask.                  */
-#define STM32_CECSEL_HSI16DIV   (0U << 6U)  /**< CEC source is HSI16/448.   */
-#define STM32_CECSEL_LSE        (1U << 6U)  /**< CEC source is LSE.         */
+#define STM32_USART3SEL_MASK    (3U << 4U)  /**< USART3 mask.               */
+#define STM32_USART3SEL_PCLK    (0U << 4U)  /**< USART3 source is PCLK.     */
+#define STM32_USART3SEL_SYSCLK  (1U << 4U)  /**< USART3 source is SYSCLK.   */
+#define STM32_USART3SEL_HSI16   (2U << 4U)  /**< USART3 source is HSI16.    */
+#define STM32_USART3SEL_LSE     (3U << 4U)  /**< USART3 source is LSE.      */
+
+#define STM32_UART4SEL_MASK     (3U << 6U)  /**< UART4 mask.                */
+#define STM32_UART4SEL_PCLK     (0U << 6U)  /**< UART4 source is PCLK.      */
+#define STM32_UART4SEL_SYSCLK   (1U << 6U)  /**< UART4 source is SYSCLK.    */
+#define STM32_UART4SEL_HSI16    (2U << 6U)  /**< UART4 source is HSI16.     */
+#define STM32_UART4SEL_LSE      (3U << 6U)  /**< UART4 source is LSE.       */
+
+#define STM32_UART5SEL_MASK     (3U << 8U)  /**< UART5 mask.                */
+#define STM32_UART5SEL_PCLK     (0U << 8U)  /**< UART5 source is PCLK.      */
+#define STM32_UART5SEL_SYSCLK   (1U << 8U)  /**< UART5 source is SYSCLK.    */
+#define STM32_UART5SEL_HSI16    (2U << 8U)  /**< UART5 source is HSI16.     */
+#define STM32_UART5SEL_LSE      (3U << 8U)  /**< UART5 source is LSE.       */
 
 #define STM32_LPUART1SEL_MASK   (3U << 10U) /**< LPUART1 mask.              */
 #define STM32_LPUART1SEL_PCLK   (0U << 10U) /**< LPUART1 source is PCLK.    */
@@ -225,11 +240,15 @@
 #define STM32_I2C1SEL_SYSCLK    (1U << 12U) /**< I2C1 source is SYSCLK.     */
 #define STM32_I2C1SEL_HSI16     (2U << 12U) /**< I2C1 source is HSI16.      */
 
-#define STM32_I2S1SEL_MASK      (3U << 14U) /**< I2S1SEL mask.              */
-#define STM32_I2S1SEL_SYSCLK    (0U << 14U) /**< I2S1 source is SYSCLK.     */
-#define STM32_I2S1SEL_PLLPCLK   (1U << 14U) /**< I2S1 source is PLLPCLK.    */
-#define STM32_I2S1SEL_HSI16     (2U << 14U) /**< I2S1 source is HSI16.      */
-#define STM32_I2S1SEL_CKIN      (3U << 14U) /**< I2S1 source is CKIN.       */
+#define STM32_I2C2SEL_MASK      (3U << 14U) /**< I2C2SEL mask.              */
+#define STM32_I2C2SEL_PCLK      (0U << 14U) /**< I2C2 source is PCLK.       */
+#define STM32_I2C2SEL_SYSCLK    (1U << 14U) /**< I2C2 source is SYSCLK.     */
+#define STM32_I2C2SEL_HSI16     (2U << 14U) /**< I2C2 source is HSI16.      */
+
+#define STM32_I2C3SEL_MASK      (3U << 16U) /**< I2C3SEL mask.              */
+#define STM32_I2C3SEL_PCLK      (0U << 16U) /**< I2C3 source is PCLK.       */
+#define STM32_I2C3SEL_SYSCLK    (1U << 16U) /**< I2C3 source is SYSCLK.     */
+#define STM32_I2C3SEL_HSI16     (2U << 16U) /**< I2C3 source is HSI16.      */
 
 #define STM32_LPTIM1SEL_MASK    (3U << 18U) /**< LPTIM1SEL mask.            */
 #define STM32_LPTIM1SEL_PCLK    (0U << 18U) /**< LPTIM1 source is PCLK.     */
@@ -237,37 +256,50 @@
 #define STM32_LPTIM1SEL_HSI16   (2U << 18U) /**< LPTIM1 source is HSI16.    */
 #define STM32_LPTIM1SEL_LSE     (3U << 18U) /**< LPTIM1 source is LSE.      */
 
-#define STM32_LPTIM2SEL_MASK    (3U << 20U) /**< LPTIM2SEL mask.            */
-#define STM32_LPTIM2SEL_PCLK    (0U << 20U) /**< LPTIM2 source is PCLK.     */
-#define STM32_LPTIM2SEL_LSI     (1U << 20U) /**< LPTIM2 source is LSI.      */
-#define STM32_LPTIM2SEL_HSI16   (2U << 20U) /**< LPTIM2 source is HSI16.    */
-#define STM32_LPTIM2SEL_LSE     (3U << 20U) /**< LPTIM2 source is LSE.      */
+#define STM32_SAI1SEL_MASK      (3U << 20U) /**< SAI1SEL mask.              */
+#define STM32_SAI1SEL_SYSCLK    (0U << 20U) /**< SAI1 source is SYSCLK.     */
+#define STM32_SAI1SEL_PLLQCLK   (1U << 20U) /**< SAI1 source is PLLQCLK.    */
+#define STM32_SAI1SEL_CKIN      (2U << 20U) /**< SAI1 source is CKIN.       */
+#define STM32_SAI1SEL_HSI16     (3U << 20U) /**< SAI1 source is HSI16.      */
 
-#define STM32_TIM1SEL_MASK      (1U << 22U) /**< TIM1SEL mask.              */
-#define STM32_TIM1SEL_TIMPCLK   (0U << 22U) /**< TIM1SEL source is TIMPCLK. */
-#define STM32_TIM1SEL_PLLQCLK   (1U << 22U) /**< TIM1SEL source is PLLQCLK. */
+#define STM32_I2S23SEL_MASK     (3U << 22U) /**< I2S23SEL mask.             */
+#define STM32_I2S23SEL_SYSCLK   (0U << 22U) /**< I2S23 source is SYSCLK.    */
+#define STM32_I2S23SEL_PLLQCLK  (1U << 22U) /**< I2S23 source is PLLQCLK.   */
+#define STM32_I2S23SEL_CKIN     (2U << 22U) /**< I2S23 source is CKIN.      */
+#define STM32_I2S23SEL_HSI16    (3U << 22U) /**< I2S23 source is HSI16.     */
 
-#define STM32_TIM15SEL_MASK     (1U << 24U) /**< TIM15SEL mask.             */
-#define STM32_TIM15SEL_TIMPCLK  (0U << 24U) /**< TIM15SEL source is TIMPCLK.*/
-#define STM32_TIM15SEL_PLLQCLK  (1U << 24U) /**< TIM15SEL source is PLLQCLK.*/
+#define STM32_FDCANSEL_MASK     (3U << 24U) /**< FDCANSEL mask.             */
+#define STM32_FDCANSEL_HSE      (0U << 24U) /**< FDCAN source is HSE.       */
+#define STM32_FDCANSEL_PLLQCLK  (2U << 24U) /**< FDCAN source is PLLQCLK.   */
 
-#define STM32_RNGSEL_MASK       (3U << 26U) /**< RNGSEL mask.               */
-#define STM32_RNGSEL_NOCLOCK    (0U << 26U) /**< RNG source is disabled.    */
-#define STM32_RNGSEL_HSI16      (1U << 26U) /**< RNG source is HSI16.       */
-#define STM32_RNGSEL_SYSCLK     (2U << 26U) /**< RNG source is SYSCLK.      */
-#define STM32_RNGSEL_PLLQCLK    (3U << 26U) /**< RNG source is PLLQCLK.     */
+#define STM32_CLK48SEL_MASK     (3U << 26U) /**< CLK48SEL mask.             */
+#define STM32_CLK48SEL_HSI48    (0U << 26U) /**< CLK48 source is HSI48.     */
+#define STM32_CLK48SEL_PLLQCLK  (2U << 26U) /**< CLK48 source is PLLQCLK.   */
 
-#define STM32_RNGDIV_MASK       (3U << 28U) /**< RNGDIV field mask.         */
-#define STM32_RNGDIV_FIELD(n)   ((n) << 28U)/**< RNGDIV field value         */
-#define STM32_RNGDIV_1          STM32_RNGDIV_FIELD(0U)
-#define STM32_RNGDIV_2          STM32_RNGDIV_FIELD(1U)
-#define STM32_RNGDIV_4          STM32_RNGDIV_FIELD(2U)
-#define STM32_RNGDIV_8          STM32_RNGDIV_FIELD(3U)
+#define STM32_ADC12SEL_MASK     (3U << 30U) /**< ADCSEL mask.               */
+#define STM32_ADC12SEL_NOCLK    (0U << 30U) /**< ADC source is none.        */
+#define STM32_ADC12SEL_PLLPCLK  (1U << 30U) /**< ADC source is PLLPCLK.     */
+#define STM32_ADC12SEL_SYSCLK   (2U << 30U) /**< ADC source is SYSCLK.      */
 
-#define STM32_ADCSEL_MASK       (3U << 30U) /**< ADCSEL mask.               */
-#define STM32_ADCSEL_NOCLK      (0U << 30U) /**< ADC source is SYSCLK.      */
-#define STM32_ADCSEL_PLLPCLK    (1U << 30U) /**< ADC source is PLLPCLK.     */
-#define STM32_ADCSEL_HSI16      (2U << 30U) /**< ADC source is HSI16.       */
+#define STM32_ADC34SEL_MASK     (3U << 30U) /**< ADCSEL mask.               */
+#define STM32_ADC34SEL_NOCLK    (0U << 30U) /**< ADC source is none.        */
+#define STM32_ADC34SEL_PLLPCLK  (1U << 30U) /**< ADC source is PLLPCLK.     */
+#define STM32_ADC34SEL_SYSCLK   (2U << 30U) /**< ADC source is SYSCLK.      */
+/** @} */
+
+/**
+ * @name    RCC_CCIPR2 register bits definitions
+ * @{
+ */
+#define STM32_I2C4SEL_MASK      (3U << 0U)  /**< I2C4SEL mask.              */
+#define STM32_I2C4SEL_PCLK      (0U << 0U)  /**< I2C4 source is PCLK.       */
+#define STM32_I2C4SEL_SYSCLK    (1U << 0U)  /**< I2C4 source is SYSCLK.     */
+#define STM32_I2C4SEL_HSI16     (2U << 0U)  /**< I2C4 source is HSI16.      */
+
+#define STM32_QSPISEL_MASK      (3U << 20U) /**< QSPISEL mask.              */
+#define STM32_QSPISEL_SYSCLK    (0U << 20U) /**< QSPI source is SYSCLK.     */
+#define STM32_QSPISEL_HSI16     (1U << 20U) /**< QSPI source is HSI16.      */
+#define STM32_QSPISEL_PLLQCLK   (2U << 20U) /**< QSPI source is PLLQCLK.    */
 /** @} */
 
 /**
@@ -320,18 +352,17 @@
 #endif
 
 /**
- * @brief   HSI16 divider value.
- * @note    The allowed values are 1, 2, 4, 8, 16, 32, 64, 128.
- */
-#if !defined(STM32_HSIDIV_VALUE) || defined(__DOXYGEN__)
-#define STM32_HSIDIV_VALUE                  1
-#endif
-
-/**
  * @brief   Enables or disables the HSI16 clock source.
  */
 #if !defined(STM32_HSI16_ENABLED) || defined(__DOXYGEN__)
 #define STM32_HSI16_ENABLED                 FALSE
+#endif
+
+/**
+ * @brief   Enables or disables the HSI48 clock source.
+ */
+#if !defined(STM32_HSI48_ENABLED) || defined(__DOXYGEN__)
+#define STM32_HSI48_ENABLED                 FALSE
 #endif
 
 /**
@@ -359,7 +390,7 @@
  * @brief   Main clock source selection.
  * @note    If the selected clock source is not the PLL then the PLL is not
  *          initialized and started.
- * @note    The default value is calculated for a 64MHz system clock from
+ * @note    The default value is calculated for a 168MHz system clock from
  *          the internal 16MHz HSI clock.
  */
 #if !defined(STM32_SW) || defined(__DOXYGEN__)
@@ -370,7 +401,7 @@
  * @brief   Clock source for the PLL.
  * @note    This setting has only effect if the PLL is selected as the
  *          system clock source.
- * @note    The default value is calculated for a 64MHz system clock from
+ * @note    The default value is calculated for a 168MHz system clock from
  *          the internal 16MHz HSI clock.
  */
 #if !defined(STM32_PLLSRC) || defined(__DOXYGEN__)
@@ -379,8 +410,8 @@
 
 /**
  * @brief   PLLM divider value.
- * @note    The allowed values are 1..8.
- * @note    The default value is calculated for a 64MHz system clock from
+ * @note    The allowed values are 1..16.
+ * @note    The default value is calculated for a 168MHz system clock from
  *          the internal 16MHz HSI clock.
  */
 #if !defined(STM32_PLLM_VALUE) || defined(__DOXYGEN__)
@@ -389,8 +420,8 @@
 
 /**
  * @brief   PLLN multiplier value.
- * @note    The allowed values are 8..86.
- * @note    The default value is calculated for a 64MHz system clock from
+ * @note    The allowed values are 8..127.
+ * @note    The default value is calculated for a 168MHz system clock from
  *          the internal 16MHz HSI clock.
  */
 #if !defined(STM32_PLLN_VALUE) || defined(__DOXYGEN__)
@@ -399,7 +430,7 @@
 
 /**
  * @brief   PLLP divider value.
- * @note    The allowed values are 2..32.
+ * @note    The allowed values are 7, 17.
  */
 #if !defined(STM32_PLLP_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLLP_VALUE                    4
@@ -407,7 +438,7 @@
 
 /**
  * @brief   PLLQ divider value.
- * @note    The allowed values are 2..8.
+ * @note    The allowed values are 2, 4, 6, 8.
  */
 #if !defined(STM32_PLLQ_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLLQ_VALUE                    4
@@ -415,8 +446,8 @@
 
 /**
  * @brief   PLLR divider value.
- * @note    The allowed values are 2..8.
- * @note    The default value is calculated for a 64MHz system clock from
+ * @note    The allowed values are 2, 4, 6, 8.
+ * @note    The default value is calculated for a 168MHz system clock from
  *          the internal 16MHz HSI clock.
  */
 #if !defined(STM32_PLLR_VALUE) || defined(__DOXYGEN__)
@@ -425,7 +456,7 @@
 
 /**
  * @brief   AHB prescaler value.
- * @note    The default value is calculated for a 64MHz system clock from
+ * @note    The default value is calculated for a 168MHz system clock from
  *          the internal 16MHz HSI clock.
  */
 #if !defined(STM32_HPRE) || defined(__DOXYGEN__)
@@ -475,17 +506,31 @@
 #endif
 
 /**
+ * @brief   USART3 clock source.
+ */
+#if !defined(STM32_USART3SEL) || defined(__DOXYGEN__)
+#define STM32_USART3SEL                     STM32_USART3SEL_SYSCLK
+#endif
+
+/**
+ * @brief   UART4 clock source.
+ */
+#if !defined(STM32_UART4SEL) || defined(__DOXYGEN__)
+#define STM32_UART4SEL                      STM32_UART4SEL_SYSCLK
+#endif
+
+/**
+ * @brief   UART5 clock source.
+ */
+#if !defined(STM32_UART5SEL) || defined(__DOXYGEN__)
+#define STM32_UART5SEL                      STM32_UART5SEL_SYSCLK
+#endif
+
+/**
  * @brief   LPUART1 clock source.
  */
 #if !defined(STM32_LPUART1SEL) || defined(__DOXYGEN__)
 #define STM32_LPUART1SEL                    STM32_LPUART1SEL_SYSCLK
-#endif
-
-/**
- * @brief   CEC clock source.
- */
-#if !defined(STM32_CECSEL) || defined(__DOXYGEN__)
-#define STM32_CECSEL                        STM32_CECSEL_HSI16DIV
 #endif
 
 /**
@@ -496,10 +541,24 @@
 #endif
 
 /**
- * @brief   I2S1 clock source.
+ * @brief   I2C2 clock source.
  */
-#if !defined(STM32_I2S1SEL) || defined(__DOXYGEN__)
-#define STM32_I2S1SEL                       STM32_I2S1SEL_SYSCLK
+#if !defined(STM32_I2C2SEL) || defined(__DOXYGEN__)
+#define STM32_I2C2SEL                       STM32_I2C2SEL_PCLK
+#endif
+
+/**
+ * @brief   I2C3 clock source.
+ */
+#if !defined(STM32_I2C3SEL) || defined(__DOXYGEN__)
+#define STM32_I2C3SEL                       STM32_I2C3SEL_PCLK
+#endif
+
+/**
+ * @brief   I2C4 clock source.
+ */
+#if !defined(STM32_I2C4SEL) || defined(__DOXYGEN__)
+#define STM32_I2C4SEL                       STM32_I2C4SEL_PCLK
 #endif
 
 /**
@@ -510,45 +569,52 @@
 #endif
 
 /**
- * @brief   LPTIM2 clock source.
+ * @brief   SAI1 clock source.
  */
-#if !defined(STM32_LPTIM2SEL) || defined(__DOXYGEN__)
-#define STM32_LPTIM2SEL                     STM32_LPTIM2SEL_PCLK
+#if !defined(STM32_SAI1SEL) || defined(__DOXYGEN__)
+#define STM32_SAI1SEL                       STM32_SAI1SEL_SYSCLK
 #endif
 
 /**
- * @brief   TIM1 clock source.
+ * @brief   I2S23 clock source.
  */
-#if !defined(STM32_TIM1SEL) || defined(__DOXYGEN__)
-#define STM32_TIM1SEL                       STM32_TIM1SEL_TIMPCLK
+#if !defined(STM32_I2S23SEL) || defined(__DOXYGEN__)
+#define STM32_I2S23SEL                      STM32_I2S23SEL_SYSCLK
 #endif
 
 /**
- * @brief   TIM15 clock source.
+ * @brief   FDCAN clock source.
  */
-#if !defined(STM32_TIM15SEL) || defined(__DOXYGEN__)
-#define STM32_TIM15SEL                      STM32_TIM15SEL_TIMPCLK
+#if !defined(STM32_FDCANSEL) || defined(__DOXYGEN__)
+#define STM32_FDCANSEL                      STM32_FDCANSEL_HSE
 #endif
 
 /**
- * @brief   RNG clock source.
+ * @brief   CLK48 clock source.
  */
-#if !defined(STM32_RNGSEL) || defined(__DOXYGEN__)
-#define STM32_RNGSEL                        STM32_RNGSEL_HSI16
+#if !defined(STM32_CLK48SEL) || defined(__DOXYGEN__)
+#define STM32_CLK48SEL                      STM32_CLK48SEL_HSI48
 #endif
 
 /**
- * @brief   RNG divider value.
+ * @brief   ADC12 clock source.
  */
-#if !defined(STM32_RNGDIV_VALUE) || defined(__DOXYGEN__)
-#define STM32_RNGDIV_VALUE                  1
+#if !defined(STM32_ADC12SEL) || defined(__DOXYGEN__)
+#define STM32_ADC12SEL                      STM32_ADC12SEL_PLLPCLK
 #endif
 
 /**
- * @brief   ADC clock source.
+ * @brief   ADC34 clock source.
  */
-#if !defined(STM32_ADCSEL) || defined(__DOXYGEN__)
-#define STM32_ADCSEL                        STM32_ADCSEL_PLLPCLK
+#if !defined(STM32_ADC34SEL) || defined(__DOXYGEN__)
+#define STM32_ADC34SEL                      STM32_ADC34SEL_PLLPCLK
+#endif
+
+/**
+ * @brief   QSPI clock source.
+ */
+#if !defined(STM32_QSPISEL) || defined(__DOXYGEN__)
+#define STM32_QSPISEL                       STM32_QSPISEL_SYSCLK
 #endif
 
 /**
@@ -562,22 +628,41 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+ *          - STM32G431xx, STM32G441xx, STM32G471xx.
+ *          - STM32G473xx, STM32G483xx.
+ *          - STM32G474xx, STM32G484xx.
+ *          - STM32GBK1CB.
 
 /*
  * Configuration-related checks.
  */
-#if !defined(STM32G0xx_MCUCONF)
-#error "Using a wrong mcuconf.h file, STM32G0xx_MCUCONF not defined"
+#if !defined(STM32G4xx_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32G4xx_MCUCONF not defined"
 #endif
 
-#if defined(STM32G070xx) && !defined(STM32G070_MCUCONF)
-#error "Using a wrong mcuconf.h file, STM32G070_MCUCONF not defined"
+#if defined(STM32G431xx) && !defined(STM32G431_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32G431_MCUCONF not defined"
 
-#elif defined(STM32G071xx) && !defined(STM32G071_MCUCONF)
-#error "Using a wrong mcuconf.h file, STM32G071_MCUCONF not defined"
+#if defined(STM32G441xx) && !defined(STM32G441_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32G441_MCUCONF not defined"
 
-#elif defined(STM32G081xx) && !defined(STM32G081_MCUCONF)
-#error "Using a wrong mcuconf.h file, STM32G071_MCUCONF not defined"
+#if defined(STM32G471xx) && !defined(STM32G471_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32G471_MCUCONF not defined"
+
+#elif defined(STM32G473xx) && !defined(STM32G473_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32G473_MCUCONF not defined"
+
+#elif defined(STM32G483xx) && !defined(STM32G473_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32G483_MCUCONF not defined"
+
+#elif defined(STM32G474xx) && !defined(STM32G474_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32G474_MCUCONF not defined"
+
+#elif defined(STM32G484xx) && !defined(STM32G484_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32G484_MCUCONF not defined"
+
+#elif defined(STM32GBK1CB) && !defined(STM32GBK1CB_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32GBK1CB_MCUCONF not defined"
 
 #endif
 
