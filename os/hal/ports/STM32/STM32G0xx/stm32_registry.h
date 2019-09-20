@@ -472,7 +472,7 @@
 /* DCMI attributes.*/
 #define STM32_HAS_DCMI                      FALSE
 
-#endif /* defined(STM32G070xx) */
+#endif /* defined(STM32G071xx) || defined(STM32G081xx) */
 
 /** @} */
 
