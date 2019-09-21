@@ -35,6 +35,9 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/* Feature currently disabled.*/
+#define STM32_ST_ENFORCE_ALARMS 1
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -54,7 +57,7 @@
  * @brief   TIMx unit (by number) to be used for free running operations.
  * @note    You must select a 32 bits timer if a 32 bits @p systick_t type
  *          is required.
- * @note    Timers 2, 3, 4 and 5 are supported.
+ * @note    Timers 2, 3, 4, 5, 21 and 22 are supported.
  */
 #if !defined(STM32_ST_USE_TIMER) || defined(__DOXYGEN__)
 #define STM32_ST_USE_TIMER                  2
@@ -91,24 +94,40 @@
 
 #if STM32_ST_USE_TIMER == 2
 #define STM32_ST_TIM                        STM32_TIM2
+#define ST_LLD_NUM_ALARMS                   STM32_TIM2_CHANNELS
 
 #elif STM32_ST_USE_TIMER == 3
 #define STM32_ST_TIM                        STM32_TIM3
+#define ST_LLD_NUM_ALARMS                   STM32_TIM3_CHANNELS
 
 #elif STM32_ST_USE_TIMER == 4
 #define STM32_ST_TIM                        STM32_TIM4
+#define ST_LLD_NUM_ALARMS                   STM32_TIM4_CHANNELS
 
 #elif STM32_ST_USE_TIMER == 5
 #define STM32_ST_TIM                        STM32_TIM5
+#define ST_LLD_NUM_ALARMS                   STM32_TIM5_CHANNELS
 
 #elif STM32_ST_USE_TIMER == 21
 #define STM32_ST_TIM                        STM32_TIM21
+#define ST_LLD_NUM_ALARMS                   STM32_TIM21_CHANNELS
 
 #elif STM32_ST_USE_TIMER == 22
 #define STM32_ST_TIM                        STM32_TIM22
+#define ST_LLD_NUM_ALARMS                   STM32_TIM22_CHANNELS
 
 #else
 #error "STM32_ST_USE_TIMER specifies an unsupported timer"
+#endif
+
+#if defined(STM32_ST_ENFORCE_ALARMS)
+
+#if (STM32_ST_ENFORCE_ALARMS < 1) || (STM32_ST_ENFORCE_ALARMS > ST_LLD_NUM_ALARMS)
+#error "invalid STM32_ST_ENFORCE_ALARMS value"
+#endif
+
+#undef ST_LLD_NUM_ALARMS
+#define ST_LLD_NUM_ALARMS                   STM32_ST_ENFORCE_ALARMS
 #endif
 
 /*===========================================================================*/
@@ -152,15 +171,19 @@ static inline systime_t st_lld_get_counter(void) {
  * @note    Makes sure that no spurious alarms are triggered after
  *          this call.
  *
- * @param[in] time      the time to be set for the first alarm
+ * @param[in] abstime   the time to be set for the first alarm
  *
  * @notapi
  */
-static inline void st_lld_start_alarm(systime_t time) {
+static inline void st_lld_start_alarm(systime_t abstime) {
 
-  STM32_ST_TIM->CCR[0] = (uint32_t)time;
+  STM32_ST_TIM->CCR[0] = (uint32_t)abstime;
   STM32_ST_TIM->SR     = 0;
+#if ST_LLD_NUM_ALARMS == 1
   STM32_ST_TIM->DIER   = STM32_TIM_DIER_CC1IE;
+#else
+  STM32_ST_TIM->DIER  |= STM32_TIM_DIER_CC1IE;
+#endif
 }
 
 /**
@@ -170,19 +193,23 @@ static inline void st_lld_start_alarm(systime_t time) {
  */
 static inline void st_lld_stop_alarm(void) {
 
-  STM32_ST_TIM->DIER = 0;
+#if ST_LLD_NUM_ALARMS == 1
+  STM32_ST_TIM->DIER = 0U;
+#else
+ STM32_ST_TIM->DIER &= ~STM32_TIM_DIER_CC1IE;
+#endif
 }
 
 /**
  * @brief   Sets the alarm time.
  *
- * @param[in] time      the time to be set for the next alarm
+ * @param[in] abstime   the time to be set for the next alarm
  *
  * @notapi
  */
-static inline void st_lld_set_alarm(systime_t time) {
+static inline void st_lld_set_alarm(systime_t abstime) {
 
-  STM32_ST_TIM->CCR[0] = (uint32_t)time;
+  STM32_ST_TIM->CCR[0] = (uint32_t)abstime;
 }
 
 /**
@@ -210,6 +237,87 @@ static inline bool st_lld_is_alarm_active(void) {
 
   return (bool)((STM32_ST_TIM->DIER & STM32_TIM_DIER_CC1IE) != 0);
 }
+
+#if (ST_LLD_NUM_ALARMS > 1) || defined(__DOXYGEN__)
+/**
+ * @brief   Starts an alarm.
+ * @note    Makes sure that no spurious alarms are triggered after
+ *          this call.
+ * @note    This functionality is only available in free running mode, the
+ *          behavior in periodic mode is undefined.
+ *
+ * @param[in] abstime   the time to be set for the first alarm
+ * @param[in] alarm     alarm channel number
+ *
+ * @notapi
+ */
+static inline void st_lld_start_alarm_n(unsigned alarm, systime_t abstime) {
+
+
+  STM32_ST_TIM->CCR[alarm] = (uint32_t)abstime;
+  STM32_ST_TIM->SR         = 0;
+  STM32_ST_TIM->DIER      |= (STM32_TIM_DIER_CC1IE << alarm);
+}
+
+/**
+ * @brief   Stops an alarm interrupt.
+ * @note    This functionality is only available in free running mode, the
+ *          behavior in periodic mode is undefined.
+ *
+ * @param[in] alarm     alarm channel number
+ *
+ * @notapi
+ */
+static inline void st_lld_stop_alarm_n(unsigned alarm) {
+
+  STM32_ST_TIM->DIER &= ~(STM32_TIM_DIER_CC1IE << alarm);
+}
+
+/**
+ * @brief   Sets an alarm time.
+ * @note    This functionality is only available in free running mode, the
+ *          behavior in periodic mode is undefined.
+ *
+ * @param[in] alarm     alarm channel number
+ * @param[in] abstime   the time to be set for the next alarm
+ *
+ * @notapi
+ */
+static inline void st_lld_set_alarm_n(unsigned alarm, systime_t abstime) {
+
+  STM32_ST_TIM->CCR[alarm] = (uint32_t)abstime;
+}
+
+/**
+ * @brief   Returns an alarm current time.
+ * @note    This functionality is only available in free running mode, the
+ *          behavior in periodic mode is undefined.
+ *
+ * @param[in] alarm     alarm channel number
+ * @return              The currently set alarm time.
+ *
+ * @notapi
+ */
+static inline systime_t st_lld_get_alarm_n(unsigned alarm) {
+
+  return (systime_t)STM32_ST_TIM->CCR[alarm];
+}
+
+/**
+ * @brief   Determines if an alarm is active.
+ *
+ * @param[in] alarm     alarm channel number
+ * @return              The alarm status.
+ * @retval false        if the alarm is not active.
+ * @retval true         is the alarm is active
+ *
+ * @notapi
+ */
+static inline bool st_lld_is_alarm_active_n(unsigned alarm) {
+
+  return (bool)((STM32_ST_TIM->DIER & (STM32_TIM_DIER_CC1IE << alarm)) != 0);
+}
+#endif /* ST_LLD_NUM_ALARMS > 1 */
 
 #endif /* HAL_ST_LLD_H */
 

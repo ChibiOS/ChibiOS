@@ -42,6 +42,10 @@
 /* Driver local variables.                                                   */
 /*===========================================================================*/
 
+#if (ST_LLD_NUM_ALARMS > 1) || defined(__DOXYGEN__)
+st_callback_t st_callbacks[ST_LLD_NUM_ALARMS - 1];
+#endif
+
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
@@ -58,13 +62,19 @@
  * @init
  */
 void stInit(void) {
+#if ST_LLD_NUM_ALARMS > 1
+  unsigned i;
 
+  for (i = 0U; i < (unsigned)ST_LLD_NUM_ALARMS - 1U; i++) {
+    st_callbacks[i] = NULL;
+  }
+#endif
   st_lld_init();
 }
 
 #if (OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING) || defined(__DOXYGEN__)
 /**
- * @brief   Starts the alarm.
+ * @brief   Starts the alarm zero.
  * @note    Makes sure that no spurious alarms are triggered after
  *          this call.
  * @note    This functionality is only available in free running mode, the
@@ -82,7 +92,7 @@ void stStartAlarm(systime_t abstime) {
 }
 
 /**
- * @brief   Stops the alarm interrupt.
+ * @brief   Stops the alarm zero interrupt.
  * @note    This functionality is only available in free running mode, the
  *          behavior in periodic mode is undefined.
  *
@@ -94,7 +104,7 @@ void stStopAlarm(void) {
 }
 
 /**
- * @brief   Sets the alarm time.
+ * @brief   Sets the alarm zero time.
  * @note    This functionality is only available in free running mode, the
  *          behavior in periodic mode is undefined.
  *
@@ -110,7 +120,7 @@ void stSetAlarm(systime_t abstime) {
 }
 
 /**
- * @brief   Returns the current alarm time.
+ * @brief   Returns the alarm zero current time.
  * @note    This functionality is only available in free running mode, the
  *          behavior in periodic mode is undefined.
  *
@@ -124,6 +134,84 @@ systime_t stGetAlarm(void) {
 
   return st_lld_get_alarm();
 }
+
+#if (ST_LLD_NUM_ALARMS > 1) || defined(__DOXYGEN__)
+/**
+ * @brief   Starts an additional alarm.
+ * @note    Makes sure that no spurious alarms are triggered after
+ *          this call.
+ * @note    This functionality is only available in free running mode, the
+ *          behavior in periodic mode is undefined.
+ *
+ * @param[in] abstime   the time to be set for the first alarm
+ * @param[in] alarm     alarm channel number (1..ST_LLD_NUM_ALARMS)
+ * @param[in] cb        alarm callback
+ *
+ * @api
+ */
+void stStartAlarmN(unsigned alarm, systime_t abstime, st_callback_t cb) {
+
+  osalDbgCheck((alarm > 0U) && (alarm < (unsigned)ST_LLD_NUM_ALARMS));
+  osalDbgAssert(stIsAlarmActiveN(alarm) == false, "already active");
+
+  st_callbacks[alarm - 1U] = cb;
+  st_lld_start_alarm_n(alarm, abstime);
+}
+
+/**
+ * @brief   Stops an additional alarm.
+ * @note    This functionality is only available in free running mode, the
+ *          behavior in periodic mode is undefined.
+ *
+ * @param[in] alarm     alarm channel number (1..ST_LLD_NUM_ALARMS)
+ *
+ * @api
+ */
+void stStopAlarmN(unsigned alarm) {
+
+  osalDbgCheck((alarm > 0U) && (alarm < (unsigned)ST_LLD_NUM_ALARMS));
+
+  st_callbacks[alarm - 1U] = NULL;
+  st_lld_stop_alarm_n(alarm);
+}
+
+/**
+ * @brief   Sets an additional alarm time.
+ * @note    This functionality is only available in free running mode, the
+ *          behavior in periodic mode is undefined.
+ *
+ * @param[in] alarm     alarm channel number (1..ST_LLD_NUM_ALARMS)
+ * @param[in] abstime   the time to be set for the next alarm
+ *
+ * @api
+ */
+void stSetAlarmN(unsigned alarm, systime_t abstime) {
+
+  osalDbgCheck((alarm > 0U) && (alarm < (unsigned)ST_LLD_NUM_ALARMS));
+  osalDbgAssert(stIsAlarmActiveN(alarm) != false, "not active");
+
+  st_lld_set_alarm_n(alarm, abstime);
+}
+
+/**
+ * @brief   Returns an additional alarm current time.
+ * @note    This functionality is only available in free running mode, the
+ *          behavior in periodic mode is undefined.
+ *
+ * @param[in] alarm     alarm channel number (1..ST_LLD_NUM_ALARMS)
+ * @return              The currently set alarm time.
+ *
+ * @api
+ */
+systime_t stGetAlarmN(unsigned alarm) {
+
+  osalDbgCheck((alarm > 0U) && (alarm < (unsigned)ST_LLD_NUM_ALARMS));
+  osalDbgAssert(stIsAlarmActiveN(alarm) != false, "not active");
+
+  return st_lld_get_alarm_n(alarm);
+}
+#endif /* ST_LLD_NUM_ALARMS > 1 */
+
 #endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
 
 #endif /* OSAL_ST_MODE != OSAL_ST_MODE_NONE */

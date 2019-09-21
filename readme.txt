@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- HAL: Modified the ST driver to support, optionally, multiple additional
+       callback-capable channels.
 - RT:  Removed regarm_t type from port layer and replaced with uint32_t, this
        avoids a lot of casts in the code.
 - NIL: Removed regarm_t type from port layer and replaced with uint32_t, this
