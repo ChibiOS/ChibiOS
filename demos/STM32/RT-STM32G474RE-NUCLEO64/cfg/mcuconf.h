@@ -31,6 +31,7 @@
 #ifndef MCUCONF_H
 #define MCUCONF_H
 
+#define STM32G4xx_MCUCONF
 #define STM32G473_MCUCONF
 #define STM32G483_MCUCONF
 #define STM32G474_MCUCONF
@@ -43,11 +44,11 @@
 #define STM32_VOS                           STM32_VOS_RANGE1
 #define STM32_PWR_CR2                       (STM32_PLS_LEV0 |               \
                                              STM32_PVDE_DISABLED)
-#define STM32_HSI16_ENABLED                 FALSE
-#define STM32_HSI48_ENABLED                 FALSE
-#define STM32_HSE_ENABLED                   FALSE
-#define STM32_LSI_ENABLED                   FALSE
-#define STM32_LSE_ENABLED                   FALSE
+#define STM32_HSI16_ENABLED                 TRUE
+#define STM32_HSI48_ENABLED                 TRUE
+#define STM32_HSE_ENABLED                   TRUE
+#define STM32_LSI_ENABLED                   TRUE
+#define STM32_LSE_ENABLED                   TRUE
 #define STM32_SW                            STM32_SW_PLLRCLK
 #define STM32_PLLSRC                        STM32_PLLSRC_HSI16
 #define STM32_PLLM_VALUE                    4
@@ -56,7 +57,8 @@
 #define STM32_PLLQ_VALUE                    8
 #define STM32_PLLR_VALUE                    2
 #define STM32_HPRE                          STM32_HPRE_DIV1
-#define STM32_PPRE                          STM32_PPRE_DIV1
+#define STM32_PPRE1                         STM32_PPRE1_DIV1
+#define STM32_PPRE2                         STM32_PPRE2_DIV2
 #define STM32_MCOSEL                        STM32_MCOSEL_NOCLOCK
 #define STM32_MCOPRE                        STM32_MCOPRE_DIV1
 #define STM32_LSCOSEL                       STM32_LSCOSEL_NOCLOCK

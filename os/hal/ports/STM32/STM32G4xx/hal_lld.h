@@ -464,10 +464,17 @@
 #endif
 
 /**
- * @brief   APB prescaler value.
+ * @brief   APB1 prescaler value.
  */
-#if !defined(STM32_PPRE) || defined(__DOXYGEN__)
-#define STM32_PPRE                          STM32_PPRE_DIV1
+#if !defined(STM32_PPRE1) || defined(__DOXYGEN__)
+#define STM32_PPRE1                         STM32_PPRE1_DIV1
+#endif
+
+/**
+ * @brief   APB2 prescaler value.
+ */
+#if !defined(STM32_PPRE2) || defined(__DOXYGEN__)
+#define STM32_PPRE2                         STM32_PPRE2_DIV1
 #endif
 
 /**
@@ -639,10 +646,10 @@
 #if defined(STM32G431xx) && !defined(STM32G431_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32G431_MCUCONF not defined"
 
-#if defined(STM32G441xx) && !defined(STM32G441_MCUCONF)
+#elif defined(STM32G441xx) && !defined(STM32G441_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32G441_MCUCONF not defined"
 
-#if defined(STM32G471xx) && !defined(STM32G471_MCUCONF)
+#elif defined(STM32G471xx) && !defined(STM32G471_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32G471_MCUCONF not defined"
 
 #elif defined(STM32G473xx) && !defined(STM32G473_MCUCONF)
@@ -778,15 +785,15 @@
  */
 #define STM32_PLLR_MIN              8000000
 
- /**
-  * @brief   Maximum APB clock frequency.
-  */
- #define STM32_PCLK1_MAX            170000000
+/**
+ * @brief   Maximum APB clock frequency.
+ */
+#define STM32_PCLK1_MAX             170000000
 
- /**
-  * @brief   Maximum APB clock frequency.
-  */
- #define STM32_PCLK2_MAX            170000000
+/**
+ * @brief   Maximum APB clock frequency.
+ */
+#define STM32_PCLK2_MAX             170000000
 
 /**
  * @brief   Maximum ADC clock frequency.
@@ -1161,7 +1168,7 @@
     (STM32_FDCANSEL == STM32_FDCANSEL_PLLQCLK) ||                           \
     (STM32_CLK48SEL == STM32_CLK48SEL_PLLQCLK) ||                           \
     (STM32_SAI1SEL == STM32_SAI1SEL_PLLQCLK) ||                             \
-    (STM32_I2S23SELL == STM32_I2S23SEL__PLLQCLK) ||                         \
+    (STM32_I2S23SEL == STM32_I2S23SEL_PLLQCLK) ||                           \
     defined(__DOXYGEN__)
   #define STM32_PLLQEN              (1 << 20)
 #else

@@ -108,7 +108,7 @@
 #define STM32_DMA2_CH5_NUMBER               60
 #define STM32_DMA2_CH6_NUMBER               97
 #define STM32_DMA2_CH7_NUMBER               98
-#define STM32_DMA2_CH7_NUMBER               99
+#define STM32_DMA2_CH8_NUMBER               99
 
 /*
  * EXTI unit.
