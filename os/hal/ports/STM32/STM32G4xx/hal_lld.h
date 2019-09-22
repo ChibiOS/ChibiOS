@@ -281,10 +281,10 @@
 #define STM32_ADC12SEL_PLLPCLK  (1U << 30U) /**< ADC12 source is PLLPCLK.   */
 #define STM32_ADC12SEL_SYSCLK   (2U << 30U) /**< ADC12 source is SYSCLK.    */
 
-#define STM32_ADC34SEL_MASK     (3U << 30U) /**< ADC34SEL mask.             */
-#define STM32_ADC34SEL_NOCLK    (0U << 30U) /**< ADC34 source is none.      */
-#define STM32_ADC34SEL_PLLPCLK  (1U << 30U) /**< ADC34 source is PLLPCLK.   */
-#define STM32_ADC34SEL_SYSCLK   (2U << 30U) /**< ADC34 source is SYSCLK.    */
+#define STM32_ADC345SEL_MASK    (3U << 30U) /**< ADC345SEL mask.            */
+#define STM32_ADC345SEL_NOCLK   (0U << 30U) /**< ADC345 source is none.     */
+#define STM32_ADC345SEL_PLLPCLK (1U << 30U) /**< ADC345 source is PLLPCLK.  */
+#define STM32_ADC345SEL_SYSCLK  (2U << 30U) /**< ADC345 source is SYSCLK.   */
 /** @} */
 
 /**
@@ -415,7 +415,7 @@
  *          the internal 16MHz HSI clock.
  */
 #if !defined(STM32_PLLM_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLM_VALUE                    2
+#define STM32_PLLM_VALUE                    4
 #endif
 
 /**
@@ -425,7 +425,7 @@
  *          the internal 16MHz HSI clock.
  */
 #if !defined(STM32_PLLN_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLN_VALUE                    16
+#define STM32_PLLN_VALUE                    84
 #endif
 
 /**
@@ -433,7 +433,7 @@
  * @note    The allowed values are 7, 17.
  */
 #if !defined(STM32_PLLP_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLP_VALUE                    4
+#define STM32_PLLP_VALUE                    7
 #endif
 
 /**
@@ -441,7 +441,7 @@
  * @note    The allowed values are 2, 4, 6, 8.
  */
 #if !defined(STM32_PLLQ_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLQ_VALUE                    4
+#define STM32_PLLQ_VALUE                    8
 #endif
 
 /**
@@ -606,8 +606,8 @@
 /**
  * @brief   ADC34 clock source.
  */
-#if !defined(STM32_ADC34SEL) || defined(__DOXYGEN__)
-#define STM32_ADC34SEL                      STM32_ADC34SEL_PLLPCLK
+#if !defined(STM32_ADC345SEL) || defined(__DOXYGEN__)
+#define STM32_ADC345SEL                     STM32_ADC345SEL_PLLPCLK
 #endif
 
 /**
@@ -628,10 +628,6 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
- *          - STM32G431xx, STM32G441xx, STM32G471xx.
- *          - STM32G473xx, STM32G483xx.
- *          - STM32G474xx, STM32G484xx.
- *          - STM32GBK1CB.
 
 /*
  * Configuration-related checks.
@@ -1066,7 +1062,7 @@
 #if (STM32_SW == STM32_SW_PLLRCLK) ||                                       \
     (STM32_MCOSEL == STM32_MCOSEL_PLLRCLK) ||                               \
     (STM32_ADC12SEL == STM32_ADC12SEL_PLLPCLK) ||                           \
-    (STM32_ADC12SEL == STM32_ADC34SEL_PLLPCLK) ||                           \
+    (STM32_ADC345SEL == STM32_ADC345SEL_PLLPCLK) ||                         \
     (STM32_SAI1SEL == STM32_SAI1SEL_PLLQCLK) ||                             \
     (STM32_I2S23SEL == STM32_I2S23SEL_PLLQCLK) ||                           \
     (STM32_FDCANSEL == STM32_FDCANSEL_PLLQCLK) ||                           \
@@ -1151,7 +1147,7 @@
  * @brief   STM32_PLLPEN field.
  */
 #if (STM32_ADC12SEL == STM32_ADC12SEL_PLLPCLK) ||                           \
-    (STM32_ADC34SEL == STM32_ADC34SEL_PLLPCLK) ||                           \
+    (STM32_ADC345SEL == STM32_ADC345SEL_PLLPCLK) ||                         \
     defined(__DOXYGEN__)
   #define STM32_PLLPEN              (1 << 16)
 #else
@@ -1671,13 +1667,13 @@
  * @brief   ADC clock frequency.
  */
 #if (STM32_ADC12SEL == STM32_ADC12SEL_NOCLK) || defined(__DOXYGEN__)
-  #define STM32_ADCCLK              0
+  #define STM32_ADC12CLK            0
 
 #elif STM32_ADC12SEL == STM32_ADC12SEL_PLLPCLK
-  #define STM32_ADCCLK              STM32_PLL_P_CLKOUT
+  #define STM32_ADC12CLK            STM32_PLL_P_CLKOUT
 
 #elif STM32_ADC12SEL == STM32_ADC12SEL_HSI16
-  #define STM32_ADCCLK              STM32_HSI16CLK
+  #define STM32_ADC12CLK            STM32_HSI16CLK
 
 #else
   #error "invalid source selected for ADC clock"
@@ -1686,14 +1682,14 @@
 /**
  * @brief   ADC clock frequency.
  */
-#if (STM32_ADC34SEL == STM32_ADC34SEL_NOCLK) || defined(__DOXYGEN__)
-  #define STM32_ADCCLK              0
+#if (STM32_ADC345SEL == STM32_ADC345SEL_NOCLK) || defined(__DOXYGEN__)
+  #define STM32_ADC345CLK           0
 
-#elif STM32_ADC34SEL == STM32_ADC34SEL_PLLPCLK
-  #define STM32_ADCCLK              STM32_PLL_P_CLKOUT
+#elif STM32_ADC345SEL == STM32_ADC345SEL_PLLPCLK
+  #define STM32_ADC345CLK           STM32_PLL_P_CLKOUT
 
-#elif STM32_ADC34SEL == STM32_ADC34SEL_HSI16
-  #define STM32_ADCCLK              STM32_HSI16CLK
+#elif STM32_ADC345SEL == STM32_ADC345SEL_HSI16
+  #define STM32_ADC345CLK           STM32_HSI16CLK
 
 #else
   #error "invalid source selected for ADC clock"
