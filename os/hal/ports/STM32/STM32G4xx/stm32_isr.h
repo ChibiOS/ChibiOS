@@ -323,6 +323,104 @@
 #endif
 
 /**
+ * @brief   TIM2 interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_TIM2_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_TIM2_PRIORITY             7
+#endif
+
+/**
+ * @brief   TIM3 interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_TIM3_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_TIM3_PRIORITY             7
+#endif
+
+/**
+ * @brief   TIM4 interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_TIM4_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_TIM4_PRIORITY             7
+#endif
+
+/**
+ * @brief   TIM5 interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_TIM5_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_TIM5_PRIORITY             7
+#endif
+
+/**
+ * @brief   TIM6 interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_TIM6_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_TIM6_PRIORITY             7
+#endif
+
+/**
+ * @brief   TIM7 interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_TIM7_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_TIM7_PRIORITY             7
+#endif
+
+/**
+ * @brief   TIM8-BRK interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_TIM8_BRK_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_TIM8_BRK_PRIORITY         7
+#endif
+
+/**
+ * @brief   TIM8-UP interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_TIM8_UP_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_TIM8_UP_PRIORITY          7
+#endif
+
+/**
+ * @brief   TIM8-TRG-COM interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_TIM8_TRGCO_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_TIM8_TRGCO_PRIORITY       7
+#endif
+
+/**
+ * @brief   TIM8-CC interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_TIM8_CC_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_TIM8_CC_PRIORITY          7
+#endif
+
+/**
+ * @brief   TIM20-BRK interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_TIM20_BRK_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_TIM20_BRK_PRIORITY        7
+#endif
+
+/**
+ * @brief   TIM20-UP interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_TIM20_UP_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_TIM20_UP_PRIORITY         7
+#endif
+
+/**
+ * @brief   TIM20-TRG-COM interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_TIM20_TRGCO_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_TIM20_TRGCO_PRIORITY      7
+#endif
+
+/**
+ * @brief   TIM20-CC interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_TIM20_CC_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_TIM20_CC_PRIORITY         7
+#endif
+
+/**
  * @brief   USART1 interrupt priority level setting.
  */
 #if !defined(STM32_IRQ_USART1_PRIORITY) || defined(__DOXYGEN__)
