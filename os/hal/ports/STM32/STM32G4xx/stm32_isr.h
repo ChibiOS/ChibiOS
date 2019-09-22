@@ -232,66 +232,94 @@
  * @{
  */
 /**
- * @brief   EXTI0..1 interrupt priority level setting.
+ * @brief   EXTI0 interrupt priority level setting.
  */
-#if !defined(STM32_IRQ_EXTI0_1_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_EXTI0_1_PRIORITY          3
+#if !defined(STM32_IRQ_EXTI0_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_EXTI0_PRIORITY            6
 #endif
 
 /**
- * @brief   EXTI2..3 interrupt priority level setting.
+ * @brief   EXTI1 interrupt priority level setting.
  */
-#if !defined(STM32_IRQ_EXTI2_3_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_EXTI2_3_PRIORITY          3
+#if !defined(STM32_IRQ_EXTI1_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_EXTI1_PRIORITY            6
 #endif
 
 /**
- * @brief   EXTI4..15 interrupt priority level setting.
+ * @brief   EXTI2 interrupt priority level setting.
  */
-#if !defined(STM32_IRQ_EXTI4_15_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_EXTI4_15_PRIORITY         3
+#if !defined(STM32_IRQ_EXTI2_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_EXTI2_PRIORITY            6
+#endif
+
+/**
+ * @brief   EXTI3 interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_EXTI3_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_EXTI3_PRIORITY            6
+#endif
+
+/**
+ * @brief   EXTI4 interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_EXTI4_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_EXTI4_PRIORITY            6
+#endif
+
+/**
+ * @brief   EXTI9..5 interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_EXTI5_9_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_EXTI5_9_PRIORITY          6
+#endif
+
+/**
+ * @brief   EXTI15..10 interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_EXTI10_15_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_EXTI10_15_PRIORITY        6
 #endif
 
 /**
  * @brief   EXTI16 interrupt priority level setting.
  */
 #if !defined(STM32_IRQ_EXTI16_40_41_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_EXTI16_40_41_PRIORITY     3
+#define STM32_IRQ_EXTI16_40_41_PRIORITY     6
 #endif
 
 /**
  * @brief   EXTI17 interrupt priority level setting.
  */
 #if !defined(STM32_IRQ_EXTI17_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_EXTI17_PRIORITY           3
+#define STM32_IRQ_EXTI17_PRIORITY           6
 #endif
 
 /**
  * @brief   EXTI19 interrupt priority level setting.
  */
 #if !defined(STM32_IRQ_EXTI19_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_EXTI19_PRIORITY           3
+#define STM32_IRQ_EXTI19_PRIORITY           6
 #endif
 
 /**
  * @brief   EXTI20 interrupt priority level setting.
  */
 #if !defined(STM32_IRQ_EXTI20_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_EXTI20_PRIORITY           3
+#define STM32_IRQ_EXTI20_PRIORITY           6
 #endif
 
 /**
  * @brief   EXTI21, 22, 29 interrupt priority level setting.
  */
 #if !defined(STM32_IRQ_EXTI21_22_29_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_EXTI21_22_29_PRIORITY     3
+#define STM32_IRQ_EXTI21_22_29_PRIORITY     6
 #endif
 
 /**
  * @brief   EXTI30, 31, 32 interrupt priority level setting.
  */
 #if !defined(STM32_IRQ_EXTI30_31_32_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_EXTI30_31_32_PRIORITY     3
+#define STM32_IRQ_EXTI30_31_32_PRIORITY     6
 #endif
 
 /**
@@ -468,16 +496,32 @@
 /*===========================================================================*/
 
 /* IRQ priority checks.*/
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI0_1_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI0_1_PRIORITY"
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI0_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI0_PRIORITY"
 #endif
 
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI2_3_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI2_3_PRIORITY"
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI1_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI1_PRIORITY"
 #endif
 
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI4_15_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI4_15_PRIORITY"
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI2_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI2_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI3_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI3_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI4_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI4_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI5_9_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI5_9_PRIORITY"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI10_15_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI10_15_PRIORITY"
 #endif
 
 #if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI16_40_41_PRIORITY)
