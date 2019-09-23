@@ -204,7 +204,7 @@ void stm32_clock_init(void) {
 
 #if STM32_ACTIVATE_PLL
   /* PLLM and PLLSRC are common to all PLLs.*/
-  RCC->PLLCFGR = /* TODO STM32_PLLPDIV |*/
+  RCC->PLLCFGR = STM32_PLLPDIV |
                  STM32_PLLR    | STM32_PLLREN  |
                  STM32_PLLQ    | STM32_PLLQEN  |
                  STM32_PLLP    | STM32_PLLPEN  |
