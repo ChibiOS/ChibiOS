@@ -429,6 +429,14 @@
 #endif
 
 /**
+ * @brief   PLLPDIV divider value or zero if disabled.
+ * @note    The allowed values are 0, 2..31.
+ */
+#if !defined(STM32_PLLPDIV_VALUE) || defined(__DOXYGEN__)
+#define STM32_PLLPDIV_VALUE                 0
+#endif
+
+/**
  * @brief   PLLP divider value.
  * @note    The allowed values are 7, 17.
  */
@@ -1151,6 +1159,17 @@
 #endif
 
 /**
+ * @brief   STM32_PLLPDIV field. (Only for STM32L496xx/4A6xx)
+ */
+#if (STM32_PLLPDIV_VALUE == 0) ||                                           \
+    ((STM32_PLLPDIV_VALUE >= 2) && (STM32_PLLPDIV_VALUE <= 31)) ||          \
+    defined(__DOXYGEN__)
+#define STM32_PLLPDIV               (STM32_PLLPDIV_VALUE << 27)
+#else
+#error "invalid STM32_PLLPDIV_VALUE value specified"
+#endif
+
+/**
  * @brief   STM32_PLLPEN field.
  */
 #if (STM32_ADC12SEL == STM32_ADC12SEL_PLLPCLK) ||                           \
@@ -1202,7 +1221,11 @@
 /**
  * @brief   PLL P output clock frequency.
  */
-#define STM32_PLL_P_CLKOUT          (STM32_PLLVCO / STM32_PLLP_VALUE)
+#if (STM32_PLLPDIV_VALUE == 0) || defined(__DOXYGEN__)
+  #define STM32_PLL_P_CLKOUT        (STM32_PLLVCO / STM32_PLLP_VALUE)
+#else
+  #define STM32_PLL_P_CLKOUT        (STM32_PLLVCO / STM32_PLLPDIV_VALUE)
+#endif
 
 /**
  * @brief   PLL Q output clock frequency.
