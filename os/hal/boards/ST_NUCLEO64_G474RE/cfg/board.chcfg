@@ -12,7 +12,7 @@
   <board_id>ST_NUCLEO64_G474RE</board_id>
   <board_functions></board_functions>
   <subtype>STM32G474xx</subtype>
-  <clocks HSEFrequency="8000000" HSEBypass="false" LSEFrequency="32768"
+  <clocks HSEFrequency="24000000" HSEBypass="false" LSEFrequency="32768"
   	LSEBypass="false" VDD="300" LSEDrive="3 High Drive (default)" ></clocks>
   <ports>
     <GPIOA>
@@ -33,21 +33,21 @@
         Mode="Analog"
         Alternate="0" />
       <pin2
-        ID=""
+        ID="STLINK_TX"
         Type="PushPull"
         Speed="Minimum"
         Resistor="Floating"
         Level="Low"
-        Mode="Analog"
-        Alternate="0" />
+        Mode="Alternate"
+        Alternate="12" />
       <pin3
-        ID=""
+        ID="STLINK_RX"
         Type="PushPull"
         Speed="Minimum"
         Resistor="Floating"
         Level="Low"
-        Mode="Analog"
-        Alternate="0" />
+        Mode="Alternate"
+        Alternate="12" />
       <pin4
         ID=""
         Type="PushPull"
@@ -57,12 +57,12 @@
         Mode="Analog"
         Alternate="0" />
       <pin5
-        ID=""
+        ID="LED LED_GREEN"
         Type="PushPull"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Level="Low"
-        Mode="Analog"
+        Mode="Output"
         Alternate="0" />
       <pin6
         ID=""
@@ -121,7 +121,7 @@
         Mode="Analog"
         Alternate="0" />
       <pin13
-        ID="JTAG_TMS SWDIO"
+        ID="SWDIO"
         Type="PushPull"
         Speed="Maximum"
         Resistor="PullUp"
@@ -129,7 +129,7 @@
         Mode="Alternate"
         Alternate="0" />
       <pin14
-        ID="JTAG_TCK SWCLK"
+        ID="SWCLK"
         Type="PushPull"
         Speed="Maximum"
         Resistor="PullDown"
@@ -137,12 +137,12 @@
         Mode="Alternate"
         Alternate="0" />
       <pin15
-        ID="JTAG_TDI"
+        ID=""
         Type="PushPull"
-        Speed="Maximum"
-        Resistor="PullUp"
+        Speed="Minimum"
+        Resistor="Floating"
         Level="Low"
-        Mode="Alternate"
+        Mode="Analog"
         Alternate="0" />
     </GPIOA>
     <GPIOB>
@@ -171,7 +171,7 @@
         Mode="Analog"
         Alternate="0" />
       <pin3
-        ID="JTAG_TDO TRACESWO"
+        ID="TRACESWO"
         Type="PushPull"
         Speed="Maximum"
         Resistor="Floating"
@@ -179,12 +179,12 @@
         Mode="Alternate"
         Alternate="0" />
       <pin4
-        ID="JTAG_TRST"
+        ID=""
         Type="PushPull"
-        Speed="Maximum"
-        Resistor="PullUp"
+        Speed="Minimum"
+        Resistor="Floating"
         Level="Low"
-        Mode="Alternate"
+        Mode="Analog"
         Alternate="0" />
       <pin5
         ID=""
@@ -381,12 +381,12 @@
         Mode="Analog"
         Alternate="0" />
       <pin13
-        ID=""
+        ID="BUTTON USER_BUTTON"
         Type="PushPull"
         Speed="Minimum"
         Resistor="Floating"
         Level="Low"
-        Mode="Analog"
+        Mode="Input"
         Alternate="0" />
       <pin14
         ID="OSC32_IN"
