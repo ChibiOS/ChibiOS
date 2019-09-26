@@ -26,45 +26,48 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-#if defined(STM32_TIM1_IS_USED)  || defined(STM32_TIM15_IS_USED) ||         \
-    defined(STM32_TIM16_IS_USED) || defined(STM32_TIM17_IS_USED) ||         \
-    defined(__DOXYGEN__)
-/**
- * @brief   IRQ vectors initialization.
- */
-#define STM32_TIM1_TIM15_TIM16_TIM17_INIT() do {                            \
-  nvicEnableVector(STM32_TIM1_BRK_TIM15_NUMBER,                             \
-                   STM32_IRQ_TIM1_BRK_TIM15_PRIORITY);                      \
-  nvicEnableVector(STM32_TIM1_UP_TIM16_NUMBER,                              \
-                   STM32_IRQ_TIM1_UP_TIM16_PRIORITY);                       \
-  nvicEnableVector(STM32_TIM1_TRGCO_TIM17_NUMBER,                           \
-                   STM32_IRQ_TIM1_TRGCO_TIM17_PRIORITY);                    \
-  nvicEnableVector(STM32_TIM1_CC_NUMBER,                                    \
-                   STM32_IRQ_TIM1_CC_PRIORITY);                             \
-} while (0)
-
-/**
- * @brief   IRQ vectors de-initialization.
- */
-#define STM32_TIM1_TIM15_TIM16_TIM17_DEINIT() do {                          \
-  nvicDisableVector(STM32_TIM1_BRK_TIM15_NUMBER);                           \
-  nvicDisableVector(STM32_TIM1_UP_TIM16_NUMBER);                            \
-  nvicDisableVector(STM32_TIM1_TRGCO_TIM17_NUMBER);                         \
-  nvicDisableVector(STM32_TIM1_CC_NUMBER);                                  \
-} while (0)
-#else
-#define STM32_TIM1_TIM15_TIM16_TIM17_INIT()
-#define STM32_TIM1_TIM15_TIM16_TIM17_DEINIT()
-#endif
-
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+/* Registry checks for robustness.*/
+#if !defined(STM32_HAS_TIM1)
+#error "STM32_HAS_TIM1 not defined in registry"
+#endif
+
+#if !defined(STM32_HAS_TIM15)
+#error "STM32_HAS_TIM15 not defined in registry"
+#endif
+
+#if !defined(STM32_HAS_TIM16)
+#error "STM32_HAS_TIM16 not defined in registry"
+#endif
+
+#if !defined(STM32_HAS_TIM17)
+#error "STM32_HAS_TIM17 not defined in registry"
+#endif
 
 #if !defined(STM32_IRQ_TIM1_BRK_TIM15_PRIORITY)
 #error "STM32_IRQ_TIM1_BRK_TIM15_PRIORITY not defined in mcuconf.h"
 #endif
 
+#if STM32_HAS_TIM1 == FALSE
+#error "TIM1 not present"
+#endif
+
+#if STM32_HAS_TIM15 == FALSE
+#error "TIM15 not present"
+#endif
+
+#if STM32_HAS_TIM16 == FALSE
+#error "TIM16 not present"
+#endif
+
+#if STM32_HAS_TIM17 == FALSE
+#error "TIM17 not present"
+#endif
+
+/* Priority settings checks.*/
 #if !defined(STM32_IRQ_TIM1_UP_TIM16_PRIORITY)
 #error "STM32_IRQ_TIM1_UP_TIM16_PRIORITY not defined in mcuconf.h"
 #endif
@@ -105,11 +108,60 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+static inline void tim1_tim15_init(void) {
+#if (HAL_USE_GPT && (                      STM32_GPT_USE_TIM15)) ||         \
+    (HAL_USE_ICU && (                      STM32_ICU_USE_TIM15)) ||         \
+    (HAL_USE_PWM && (                      STM32_PWM_USE_TIM15))
+  nvicEnableVector(STM32_TIM1_BRK_TIM15_NUMBER,
+                   STM32_IRQ_TIM1_BRK_TIM15_PRIORITY);
+#endif
+#if (HAL_USE_GPT && (STM32_GPT_USE_TIM1 || STM32_GPT_USE_TIM16)) ||         \
+    (HAL_USE_ICU && (STM32_ICU_USE_TIM1                       )) ||         \
+    (HAL_USE_PWM && (STM32_PWM_USE_TIM1 || STM32_PWM_USE_TIM16))
+  nvicEnableVector(STM32_TIM1_UP_TIM16_NUMBER,
+                   STM32_IRQ_TIM1_UP_TIM16_PRIORITY);
+#endif
+#if (HAL_USE_GPT && (                      STM32_GPT_USE_TIM17)) ||         \
+    (HAL_USE_PWM && (                      STM32_PWM_USE_TIM17))
+  nvicEnableVector(STM32_TIM1_TRGCO_TIM17_NUMBER,
+                   STM32_IRQ_TIM1_TRGCO_TIM17_PRIORITY);
+#endif
+#if (HAL_USE_ICU && (STM32_ICU_USE_TIM1                       )) ||         \
+    (HAL_USE_PWM && (STM32_PWM_USE_TIM1                       ))
+  nvicEnableVector(STM32_TIM1_CC_NUMBER,
+                   STM32_IRQ_TIM1_CC_PRIORITY);
+#endif
+}
+
+static inline void tim1_tim15_deinit(void) {
+#if (HAL_USE_GPT && (                      STM32_GPT_USE_TIM15)) ||         \
+    (HAL_USE_ICU && (                      STM32_ICU_USE_TIM15)) ||         \
+    (HAL_USE_PWM && (                      STM32_PWM_USE_TIM15))
+  nvicDisableVector(STM32_TIM1_BRK_TIM15_NUMBER);
+#endif
+#if (HAL_USE_GPT && (STM32_GPT_USE_TIM1 || STM32_GPT_USE_TIM16)) ||         \
+    (HAL_USE_ICU && (STM32_ICU_USE_TIM1                       )) ||         \
+    (HAL_USE_PWM && (STM32_PWM_USE_TIM1 || STM32_PWM_USE_TIM16))
+  nvicDisableVector(STM32_TIM1_UP_TIM16_NUMBER);
+#endif
+#if (HAL_USE_GPT && (                      STM32_GPT_USE_TIM17)) ||         \
+    (HAL_USE_PWM && (                      STM32_PWM_USE_TIM17))
+  nvicDisableVector(STM32_TIM1_TRGCO_TIM17_NUMBER);
+#endif
+#if (HAL_USE_ICU && (STM32_ICU_USE_TIM1                       )) ||         \
+    (HAL_USE_PWM && (STM32_PWM_USE_TIM1                       ))
+  nvicDisableVector(STM32_TIM1_CC_NUMBER);
+#endif
+}
+
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if HAL_USE_GPT || HAL_USE_ICU || HAL_USE_PWM || defined(__DOXYGEN__)
+#if (HAL_USE_GPT && (                      STM32_GPT_USE_TIM15)) ||         \
+    (HAL_USE_ICU && (                      STM32_ICU_USE_TIM15)) ||         \
+    (HAL_USE_PWM && (                      STM32_PWM_USE_TIM15)) ||         \
+    defined(__DOXYGEN__)
 /**
  * @brief   TIM1-BRK, TIM15 interrupt handler.
  *
@@ -137,7 +189,12 @@ OSAL_IRQ_HANDLER(STM32_TIM1_BRK_TIM15_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 
+#if (HAL_USE_GPT && (STM32_GPT_USE_TIM1 || STM32_GPT_USE_TIM16)) ||         \
+    (HAL_USE_ICU && (STM32_ICU_USE_TIM1                       )) ||         \
+    (HAL_USE_PWM && (STM32_PWM_USE_TIM1 || STM32_PWM_USE_TIM16)) ||         \
+    defined(__DOXYGEN__)
 /**
  * @brief   TIM1-UP, TIM16 interrupt handler.
  *
@@ -171,7 +228,11 @@ OSAL_IRQ_HANDLER(STM32_TIM1_UP_TIM16_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 
+#if (HAL_USE_GPT && (                      STM32_GPT_USE_TIM17)) ||         \
+    (HAL_USE_PWM && (                      STM32_PWM_USE_TIM17)) ||         \
+    defined(__DOXYGEN__)
 /**
  * @brief   TIM1-TRG-COM, TIM17 interrupt handler.
  *
@@ -197,7 +258,11 @@ OSAL_IRQ_HANDLER(STM32_TIM1_TRGCO_TIM17_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 
+#if (HAL_USE_ICU && (STM32_ICU_USE_TIM1                       )) ||         \
+    (HAL_USE_PWM && (STM32_PWM_USE_TIM1                       )) ||         \
+    defined(__DOXYGEN__)
 /**
  * @brief   TIM1-CC interrupt handler.
  *
@@ -223,7 +288,7 @@ OSAL_IRQ_HANDLER(STM32_TIM1_CC_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif /* HAL_USE_GPT || HAL_USE_ICU || HAL_USE_PWM */
+#endif
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */

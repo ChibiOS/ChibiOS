@@ -26,30 +26,20 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-#if defined(STM32_TIM7_IS_USED) || defined(__DOXYGEN__)
-/**
- * @brief   IRQ vectors initialization.
- */
-#define STM32_TIM7_TIM7_INIT() do {                                         \
-  nvicEnableVector(STM32_TIM7_NUMBER,                                       \
-                   STM32_IRQ_TIM7_PRIORITY);                                \
-} while (0)
-
-/**
- * @brief   IRQ vectors de-initialization.
- */
-#define STM32_TIM7_TIM7_DEINIT() do {                                       \
-  nvicDisableVector(STM32_TIM7_NUMBER);                                     \
-} while (0)
-#else
-#define STM32_TIM7_TIM7_INIT()
-#define STM32_TIM7_TIM7_DEINIT()
-#endif
-
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+/* Registry checks for robustness.*/
+#if !defined(STM32_HAS_TIM7)
+#error "STM32_HAS_TIM7 not defined in registry"
+#endif
+
+#if STM32_HAS_TIM7 == FALSE
+#error "TIM7 not present"
+#endif
+
+/* Priority settings checks.*/
 #if !defined(STM32_IRQ_TIM7_PRIORITY)
 #error "STM32_IRQ_TIM7_PRIORITY not defined in mcuconf.h"
 #endif
@@ -70,11 +60,24 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+static inline void tim7_init(void) {
+#if defined(STM32_TIM7_IS_USED)
+  nvicEnableVector(STM32_TIM7_NUMBER, STM32_IRQ_TIM7_PRIORITY);
+#endif
+}
+
+static inline void tim7_deinit(void) {
+#if defined(STM32_TIM7_IS_USED)
+  nvicDisableVector(STM32_TIM7_NUMBER);
+#endif
+}
+
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if HAL_USE_GPT || HAL_USE_ICU || HAL_USE_PWM || defined(__DOXYGEN__)
+#if (HAL_USE_GPT && STM32_GPT_USE_TIM7) ||                                  \
+    defined(__DOXYGEN__)
 /**
  * @brief   TIM7 interrupt handler.
  *
@@ -98,7 +101,7 @@ OSAL_IRQ_HANDLER(STM32_TIM7_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif /* HAL_USE_GPT || HAL_USE_ICU || HAL_USE_PWM */
+#endif
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */

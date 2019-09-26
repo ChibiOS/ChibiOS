@@ -26,30 +26,20 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-#if defined(STM32_TIM5_IS_USED) || defined(__DOXYGEN__)
-/**
- * @brief   IRQ vectors initialization.
- */
-#define STM32_TIM5_TIM5_INIT() do {                                         \
-  nvicEnableVector(STM32_TIM5_NUMBER,                                       \
-                   STM32_IRQ_TIM5_PRIORITY);                                \
-} while (0)
-
-/**
- * @brief   IRQ vectors de-initialization.
- */
-#define STM32_TIM5_TIM5_DEINIT() do {                                       \
-  nvicDisableVector(STM32_TIM5_NUMBER);                                     \
-} while (0)
-#else
-#define STM32_TIM5_TIM5_INIT()
-#define STM32_TIM5_TIM5_DEINIT()
-#endif
-
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+/* Registry checks for robustness.*/
+#if !defined(STM32_HAS_TIM5)
+#error "STM32_HAS_TIM5 not defined in registry"
+#endif
+
+#if STM32_HAS_TIM5 == FALSE
+#error "TIM5 not present"
+#endif
+
+/* Priority settings checks.*/
 #if !defined(STM32_IRQ_TIM5_PRIORITY)
 #error "STM32_IRQ_TIM5_PRIORITY not defined in mcuconf.h"
 #endif
@@ -70,11 +60,26 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+static inline void tim5_init(void) {
+#if defined(STM32_TIM5_IS_USED)
+  nvicEnableVector(STM32_TIM5_NUMBER, STM32_IRQ_TIM5_PRIORITY);
+#endif
+}
+
+static inline void tim5_deinit(void) {
+#if defined(STM32_TIM5_IS_USED)
+  nvicDisableVector(STM32_TIM5_NUMBER);
+#endif
+}
+
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if HAL_USE_GPT || HAL_USE_ICU || HAL_USE_PWM || defined(__DOXYGEN__)
+#if (HAL_USE_GPT && STM32_GPT_USE_TIM5) ||                                  \
+    (HAL_USE_ICU && STM32_ICU_USE_TIM5) ||                                  \
+    (HAL_USE_PWM && STM32_PWM_USE_TIM5) ||                                  \
+    defined(__DOXYGEN__)
 /**
  * @brief   TIM5 interrupt handler.
  *
@@ -102,7 +107,7 @@ OSAL_IRQ_HANDLER(STM32_TIM5_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif /* HAL_USE_GPT || HAL_USE_ICU || HAL_USE_PWM */
+#endif
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */

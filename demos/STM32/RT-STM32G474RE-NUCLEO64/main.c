@@ -14,11 +14,10 @@
     limitations under the License.
 */
 
-#if 0
 #include "ch.h"
 #include "hal.h"
-#include "rt_test_root.h"
-#include "oslib_test_root.h"
+//#include "rt_test_root.h"
+//#include "oslib_test_root.h"
 
 /*
  * Green LED blinker thread, times are in milliseconds.
@@ -35,7 +34,6 @@ static THD_FUNCTION(Thread1, arg) {
     chThdSleepMilliseconds(500);
   }
 }
-#endif
 
 /*
  * Application entry point.
@@ -49,28 +47,28 @@ int main(void) {
    * - Kernel initialization, the main() function becomes a thread and the
    *   RTOS is active.
    */
-//  halInit();
-//  chSysInit();
+  halInit();
+  chSysInit();
 
   /*
    * Activates the serial driver 2 using the driver default configuration.
    */
-//  sdStart(&SD2, NULL);
+//  sdStart(&LPSD1, NULL);
 
   /*
    * Creates the blinker thread.
    */
-//  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
    * sleeping in a loop and check the button state.
    */
   while (1) {//true) {
-//   if (!palReadLine(LINE_BUTTON)) {
-//      test_execute((BaseSequentialStream *)&SD2, &rt_test_suite);
-//      test_execute((BaseSequentialStream *)&SD2, &oslib_test_suite);
-//    }
-//    chThdSleepMilliseconds(500);
+   if (!palReadLine(LINE_BUTTON)) {
+//      test_execute((BaseSequentialStream *)&LPSD1, &rt_test_suite);
+//      test_execute((BaseSequentialStream *)&LPSD1, &oslib_test_suite);
+    }
+    chThdSleepMilliseconds(500);
  }
 }

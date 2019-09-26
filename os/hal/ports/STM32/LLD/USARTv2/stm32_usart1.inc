@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    TIMv1/stm32_tim4.inc
- * @brief   Shared TIM4 handler.
+ * @file    USARTv2/stm32_usart1.inc
+ * @brief   Shared USART1 handler.
  *
- * @addtogroup STM32_TIM4_HANDLER
+ * @addtogroup STM32_USART1_HANDLER
  * @{
  */
 
@@ -31,21 +31,21 @@
 /*===========================================================================*/
 
 /* Registry checks for robustness.*/
-#if !defined(STM32_HAS_TIM4)
-#error "STM32_HAS_TIM4 not defined in registry"
+#if !defined(STM32_HAS_USART1)
+#error "STM32_HAS_USART1 not defined in registry"
 #endif
 
-#if STM32_HAS_TIM4 == FALSE
-#error "TIM4 not present"
+#if STM32_HAS_USART1 == FALSE
+#error "USART1 not present"
 #endif
 
 /* Priority settings checks.*/
-#if !defined(STM32_IRQ_TIM4_PRIORITY)
-#error "STM32_IRQ_TIM4_PRIORITY not defined in mcuconf.h"
+#if !defined(STM32_IRQ_USART1_PRIORITY)
+#error "STM32_IRQ_USART1_PRIORITY not defined in mcuconf.h"
 #endif
 
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_TIM4_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_TIM4_PRIORITY"
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_USART1_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_USART1_PRIORITY"
 #endif
 
 /*===========================================================================*/
@@ -60,15 +60,15 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static inline void tim4_init(void) {
-#if defined(STM32_TIM4_IS_USED)
-  nvicEnableVector(STM32_TIM4_NUMBER, STM32_IRQ_TIM4_PRIORITY);
+static inline void usart1_irq_init(void) {
+#if defined(STM32_USART1_IS_USED)
+  nvicEnableVector(STM32_USART1_NUMBER, STM32_IRQ_USART1_PRIORITY);
 #endif
 }
 
-static inline void tim4_deinit(void) {
-#if defined(STM32_TIM4_IS_USED)
-  nvicDisableVector(STM32_TIM4_NUMBER);
+static inline void usart1_irq_deinit(void) {
+#if defined(STM32_USART1_IS_USED)
+  nvicDisableVector(STM32_USART1_NUMBER);
 #endif
 }
 
@@ -76,32 +76,26 @@ static inline void tim4_deinit(void) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if (HAL_USE_GPT && STM32_GPT_USE_TIM4) ||                                  \
-    (HAL_USE_ICU && STM32_ICU_USE_TIM4) ||                                  \
-    (HAL_USE_PWM && STM32_PWM_USE_TIM4) ||                                  \
+#if (HAL_USE_SERIAL && STM32_SERIAL_USE_USART1) ||                          \
+    (HAL_USE_UART && STM32_UART_USE_USART1) ||                              \
     defined(__DOXYGEN__)
 /**
- * @brief   TIM4 interrupt handler.
+ * @brief   USART1 interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_TIM4_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_USART1_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-#if HAL_USE_GPT
-#if STM32_GPT_USE_TIM4
-  gpt_lld_serve_interrupt(&GPTD4);
+#if HAL_USE_SERIAL
+#if STM32_SERIAL_USE_USART1
+  sd_lld_serve_interrupt(&SD1);
 #endif
 #endif
-#if HAL_USE_ICU
-#if STM32_ICU_USE_TIM4
-  icu_lld_serve_interrupt(&ICUD4);
-#endif
-#endif
-#if HAL_USE_PWM
-#if STM32_PWM_USE_TIM4
-  pwm_lld_serve_interrupt(&PWMD4);
+#if HAL_USE_UART
+#if STM32_UART_USE_USART1
+  uart_lld_serve_interrupt(&UARTD1);
 #endif
 #endif
 

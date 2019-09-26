@@ -24,14 +24,21 @@
 
 #include "hal.h"
 
+#include "stm32_usart1.inc"
+#include "stm32_usart2.inc"
+#include "stm32_usart3.inc"
+#include "stm32_uart4.inc"
+#include "stm32_uart5.inc"
+#include "stm32_lpuart1.inc"
+
 #include "stm32_tim1_tim15_tim16_tim17.inc"
-#include "stm32_tim2.inc"
 #include "stm32_tim2.inc"
 #include "stm32_tim3.inc"
 #include "stm32_tim4.inc"
 #include "stm32_tim5.inc"
 #include "stm32_tim6.inc"
 #include "stm32_tim7.inc"
+#include "stm32_tim8.inc"
 #include "stm32_tim20.inc"
 
 /*===========================================================================*/
@@ -74,17 +81,22 @@ void irqInit(void) {
   nvicEnableVector(STM32_EXTI_LINE5_9_NUMBER,    STM32_IRQ_EXTI5_9_PRIORITY);
   nvicEnableVector(STM32_EXTI_LINE10_15_NUMBER,  STM32_IRQ_EXTI10_15_PRIORITY);
 #endif
-#if HAL_USE_GPT || HAL_USE_ICU || HAL_USE_PWM || defined(__DOXYGEN__)
-  STM32_TIM1_TIM15_TIM16_TIM17_INIT();
-  STM32_TIM2_INIT();
-  STM32_TIM3_INIT();
-  STM32_TIM4_INIT();
-  STM32_TIM5_INIT();
-  STM32_TIM6_INIT();
-  STM32_TIM7_INIT();
-  STM32_TIM8_INIT();
-  STM32_TIM20_INIT();
-#endif
+  usart1_irq_init();
+  usart2_irq_init();
+  usart3_irq_init();
+  uart4_irq_init();
+  uart5_irq_init();
+  lpuart1_irq_init();
+
+  tim1_tim15_init();
+  tim2_init();
+  tim3_init();
+  tim4_init();
+  tim5_init();
+  tim6_init();
+  tim7_init();
+  tim8_init();
+  tim20_init();
 }
 
 /**
@@ -103,17 +115,22 @@ void irqDeinit(void) {
   nvicDisableVector(STM32_EXTI_LINE5_9_NUMBER);
   nvicDisableVector(STM32_EXTI_LINE10_15_NUMBER);
 #endif
-#if HAL_USE_GPT || HAL_USE_ICU || HAL_USE_PWM || defined(__DOXYGEN__)
-  STM32_TIM1_TIM15_TIM16_TIM17_DEINIT();
-  STM32_TIM2_DEINIT();
-  STM32_TIM3_DEINIT();
-  STM32_TIM4_DEINIT();
-  STM32_TIM5_DEINIT();
-  STM32_TIM6_DEINIT();
-  STM32_TIM7_DEINIT();
-  STM32_TIM8_DEINIT();
-  STM32_TIM20_DEINIT();
-#endif
+  usart1_irq_deinit();
+  usart2_irq_deinit();
+  usart3_irq_deinit();
+  uart4_irq_deinit();
+  uart5_irq_deinit();
+  lpuart1_irq_deinit();
+
+  tim1_tim15_deinit();
+  tim2_deinit();
+  tim3_deinit();
+  tim4_deinit();
+  tim5_deinit();
+  tim6_deinit();
+  tim7_deinit();
+  tim8_deinit();
+  tim20_deinit();
 }
 
 /** @} */
