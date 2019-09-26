@@ -16,8 +16,8 @@
 
 #include "ch.h"
 #include "hal.h"
-//#include "rt_test_root.h"
-//#include "oslib_test_root.h"
+#include "rt_test_root.h"
+#include "oslib_test_root.h"
 
 /*
  * Green LED blinker thread, times are in milliseconds.
@@ -53,7 +53,7 @@ int main(void) {
   /*
    * Activates the serial driver 2 using the driver default configuration.
    */
-//  sdStart(&LPSD1, NULL);
+  sdStart(&LPSD1, NULL);
 
   /*
    * Creates the blinker thread.
@@ -64,10 +64,10 @@ int main(void) {
    * Normal main() thread activity, in this demo it does nothing except
    * sleeping in a loop and check the button state.
    */
-  while (1) {//true) {
+  while (true) {
    if (!palReadLine(LINE_BUTTON)) {
-//      test_execute((BaseSequentialStream *)&LPSD1, &rt_test_suite);
-//      test_execute((BaseSequentialStream *)&LPSD1, &oslib_test_suite);
+      test_execute((BaseSequentialStream *)&LPSD1, &rt_test_suite);
+      test_execute((BaseSequentialStream *)&LPSD1, &oslib_test_suite);
     }
     chThdSleepMilliseconds(500);
  }

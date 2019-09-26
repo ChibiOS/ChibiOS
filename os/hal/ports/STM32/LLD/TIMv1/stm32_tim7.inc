@@ -60,13 +60,13 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static inline void tim7_init(void) {
+static inline void tim7_irq_init(void) {
 #if defined(STM32_TIM7_IS_USED)
   nvicEnableVector(STM32_TIM7_NUMBER, STM32_IRQ_TIM7_PRIORITY);
 #endif
 }
 
-static inline void tim7_deinit(void) {
+static inline void tim7_irq_deinit(void) {
 #if defined(STM32_TIM7_IS_USED)
   nvicDisableVector(STM32_TIM7_NUMBER);
 #endif

@@ -108,7 +108,7 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static inline void tim1_tim15_init(void) {
+static inline void tim1_tim15_tim16_tim17_irq_init(void) {
 #if (HAL_USE_GPT && (                      STM32_GPT_USE_TIM15)) ||         \
     (HAL_USE_ICU && (                      STM32_ICU_USE_TIM15)) ||         \
     (HAL_USE_PWM && (                      STM32_PWM_USE_TIM15))
@@ -133,7 +133,7 @@ static inline void tim1_tim15_init(void) {
 #endif
 }
 
-static inline void tim1_tim15_deinit(void) {
+static inline void tim1_tim15_tim16_tim17_irq_deinit(void) {
 #if (HAL_USE_GPT && (                      STM32_GPT_USE_TIM15)) ||         \
     (HAL_USE_ICU && (                      STM32_ICU_USE_TIM15)) ||         \
     (HAL_USE_PWM && (                      STM32_PWM_USE_TIM15))

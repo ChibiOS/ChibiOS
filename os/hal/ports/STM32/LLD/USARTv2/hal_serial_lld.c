@@ -40,19 +40,19 @@
 #endif
 
 /* Differences in L4+ headers.*/
-#if defined(USART_CR1_TXEIE_TXFNFIE)
+#if !defined(USART_CR1_TXEIE)
 #define USART_CR1_TXEIE                     USART_CR1_TXEIE_TXFNFIE
 #endif
 
-#if defined(USART_CR1_RXNEIE_RXFNEIE)
+#if !defined(USART_CR1_RXNEIE)
 #define USART_CR1_RXNEIE                    USART_CR1_RXNEIE_RXFNEIE
 #endif
 
-#if defined(USART_ISR_TXE_TXFNF)
+#if !defined(USART_ISR_TXE)
 #define USART_ISR_TXE                       USART_ISR_TXE_TXFNF
 #endif
 
-#if defined(USART_ISR_RXNE_RXFNE)
+#if !defined(USART_ISR_RXNE)
 #define USART_ISR_RXNE                      USART_ISR_RXNE_RXFNE
 #endif
 

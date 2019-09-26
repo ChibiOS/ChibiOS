@@ -24,6 +24,41 @@
 
 #include "hal.h"
 
+/*===========================================================================*/
+/* Driver local definitions.                                                 */
+/*===========================================================================*/
+
+#define exti_serve_irq(pr, channel) {                                       \
+                                                                            \
+  if ((pr) & (1U << (channel))) {                                           \
+    _pal_isr_code(channel);                                                 \
+  }                                                                         \
+}
+
+/*===========================================================================*/
+/* Driver exported variables.                                                */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver local variables.                                                   */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver local functions.                                                   */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver interrupt handlers.                                                */
+/*===========================================================================*/
+
+#include "stm32_exti0.inc"
+#include "stm32_exti1.inc"
+#include "stm32_exti2.inc"
+#include "stm32_exti3.inc"
+#include "stm32_exti4.inc"
+#include "stm32_exti5_9.inc"
+#include "stm32_exti10_15.inc"
+
 #include "stm32_usart1.inc"
 #include "stm32_usart2.inc"
 #include "stm32_usart3.inc"
@@ -42,26 +77,6 @@
 #include "stm32_tim20.inc"
 
 /*===========================================================================*/
-/* Driver local definitions.                                                 */
-/*===========================================================================*/
-
-/*===========================================================================*/
-/* Driver exported variables.                                                */
-/*===========================================================================*/
-
-/*===========================================================================*/
-/* Driver local variables.                                                   */
-/*===========================================================================*/
-
-/*===========================================================================*/
-/* Driver local functions.                                                   */
-/*===========================================================================*/
-
-/*===========================================================================*/
-/* Driver interrupt handlers.                                                */
-/*===========================================================================*/
-
-/*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
 
@@ -72,31 +87,30 @@
  */
 void irqInit(void) {
 
-#if HAL_USE_PAL
-  nvicEnableVector(STM32_EXTI_LINE0_NUMBER,      STM32_IRQ_EXTI0_PRIORITY);
-  nvicEnableVector(STM32_EXTI_LINE1_NUMBER,      STM32_IRQ_EXTI1_PRIORITY);
-  nvicEnableVector(STM32_EXTI_LINE2_NUMBER,      STM32_IRQ_EXTI2_PRIORITY);
-  nvicEnableVector(STM32_EXTI_LINE3_NUMBER,      STM32_IRQ_EXTI3_PRIORITY);
-  nvicEnableVector(STM32_EXTI_LINE4_NUMBER,      STM32_IRQ_EXTI4_PRIORITY);
-  nvicEnableVector(STM32_EXTI_LINE5_9_NUMBER,    STM32_IRQ_EXTI5_9_PRIORITY);
-  nvicEnableVector(STM32_EXTI_LINE10_15_NUMBER,  STM32_IRQ_EXTI10_15_PRIORITY);
-#endif
+  exti0_irq_init();
+  exti1_irq_init();
+  exti2_irq_init();
+  exti3_irq_init();
+  exti4_irq_init();
+  exti5_9_irq_init();
+  exti10_15_irq_init();
+
+  tim1_tim15_tim16_tim17_irq_init();
+  tim2_irq_init();
+  tim3_irq_init();
+  tim4_irq_init();
+  tim5_irq_init();
+  tim6_irq_init();
+  tim7_irq_init();
+  tim8_irq_init();
+  tim20_irq_init();
+
   usart1_irq_init();
   usart2_irq_init();
   usart3_irq_init();
   uart4_irq_init();
   uart5_irq_init();
   lpuart1_irq_init();
-
-  tim1_tim15_init();
-  tim2_init();
-  tim3_init();
-  tim4_init();
-  tim5_init();
-  tim6_init();
-  tim7_init();
-  tim8_init();
-  tim20_init();
 }
 
 /**
@@ -106,31 +120,30 @@ void irqInit(void) {
  */
 void irqDeinit(void) {
 
-#if HAL_USE_PAL
-  nvicDisableVector(STM32_EXTI_LINE0_NUMBER);
-  nvicDisableVector(STM32_EXTI_LINE1_NUMBER);
-  nvicDisableVector(STM32_EXTI_LINE2_NUMBER);
-  nvicDisableVector(STM32_EXTI_LINE3_NUMBER);
-  nvicDisableVector(STM32_EXTI_LINE4_NUMBER);
-  nvicDisableVector(STM32_EXTI_LINE5_9_NUMBER);
-  nvicDisableVector(STM32_EXTI_LINE10_15_NUMBER);
-#endif
+  exti0_irq_deinit();
+  exti1_irq_deinit();
+  exti2_irq_deinit();
+  exti3_irq_deinit();
+  exti4_irq_deinit();
+  exti5_9_irq_deinit();
+  exti10_15_irq_deinit();
+
+  tim1_tim15_tim16_tim17_irq_deinit();
+  tim2_irq_deinit();
+  tim3_irq_deinit();
+  tim4_irq_deinit();
+  tim5_irq_deinit();
+  tim6_irq_deinit();
+  tim7_irq_deinit();
+  tim8_irq_deinit();
+  tim20_irq_deinit();
+
   usart1_irq_deinit();
   usart2_irq_deinit();
   usart3_irq_deinit();
   uart4_irq_deinit();
   uart5_irq_deinit();
   lpuart1_irq_deinit();
-
-  tim1_tim15_deinit();
-  tim2_deinit();
-  tim3_deinit();
-  tim4_deinit();
-  tim5_deinit();
-  tim6_deinit();
-  tim7_deinit();
-  tim8_deinit();
-  tim20_deinit();
 }
 
 /** @} */

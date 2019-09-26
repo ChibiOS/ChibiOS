@@ -113,35 +113,35 @@
 /*
  * EXTI unit.
  */
-#define STM32_EXTI_LINE0_HANDLER            Vector58
-#define STM32_EXTI_LINE1_HANDLER            Vector5C
-#define STM32_EXTI_LINE2_HANDLER            Vector60
-#define STM32_EXTI_LINE3_HANDLER            Vector64
-#define STM32_EXTI_LINE4_HANDLER            Vector68
-#define STM32_EXTI_LINE5_9_HANDLER          Vector9C
-#define STM32_EXTI_LINE10_15_HANDLER        VectorE0
-#define STM32_EXTI_LINE164041HANDLER        Vector44
-#define STM32_EXTI_LINE17_HANDLER           VectorE4
-#define STM32_EXTI_LINE19_HANDLER           Vector48
-#define STM32_EXTI_LINE20_HANDLER           Vector4C
-#define STM32_EXTI_LINE212229_HANDLER       Vector140
-#define STM32_EXTI_LINE303132_HANDLER       Vector144
-#define STM32_EXTI_LINE33_HANDLER           Vector148
+#define STM32_EXTI0_HANDLER                 Vector58
+#define STM32_EXTI1_HANDLER                 Vector5C
+#define STM32_EXTI2_HANDLER                 Vector60
+#define STM32_EXTI3_HANDLER                 Vector64
+#define STM32_EXTI4_HANDLER                 Vector68
+#define STM32_EXTI5_9_HANDLER               Vector9C
+#define STM32_EXTI10_15_HANDLER             VectorE0
+#define STM32_EXTI164041HANDLER             Vector44
+#define STM32_EXTI17_HANDLER                VectorE4
+#define STM32_EXTI19_HANDLER                Vector48
+#define STM32_EXTI20_HANDLER                Vector4C
+#define STM32_EXTI212229_HANDLER            Vector140
+#define STM32_EXTI303132_HANDLER            Vector144
+#define STM32_EXTI33_HANDLER                Vector148
 
-#define STM32_EXTI_LINE0_NUMBER             6
-#define STM32_EXTI_LINE1_NUMBER             7
-#define STM32_EXTI_LINE2_NUMBER             8
-#define STM32_EXTI_LINE3_NUMBER             9
-#define STM32_EXTI_LINE4_NUMBER             10
-#define STM32_EXTI_LINE5_9_NUMBER           23
-#define STM32_EXTI_LINE10_15_NUMBER         40
-#define STM32_EXTI_LINE164041_NUMBER        1
-#define STM32_EXTI_LINE17_NUMBER            41
-#define STM32_EXTI_LINE19_NUMBER            2
-#define STM32_EXTI_LINE20_NUMBER            3
-#define STM32_EXTI_LINE212229_NUMBER        64
-#define STM32_EXTI_LINE303132_NUMBER        65
-#define STM32_EXTI_LINE33_NUMBER            66
+#define STM32_EXTI0_NUMBER                  6
+#define STM32_EXTI1_NUMBER                  7
+#define STM32_EXTI2_NUMBER                  8
+#define STM32_EXTI3_NUMBER                  9
+#define STM32_EXTI4_NUMBER                  10
+#define STM32_EXTI5_9_NUMBER                23
+#define STM32_EXTI10_15_NUMBER              40
+#define STM32_EXTI164041_NUMBER             1
+#define STM32_EXTI17_NUMBER                 41
+#define STM32_EXTI19_NUMBER                 2
+#define STM32_EXTI20_NUMBER                 3
+#define STM32_EXTI212229_NUMBER             64
+#define STM32_EXTI303132_NUMBER             65
+#define STM32_EXTI33_NUMBER                 66
 
 /*
  * I2C units.
@@ -227,350 +227,9 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
-/**
- * @name    Configuration options
- * @{
- */
-/**
- * @brief   EXTI0 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_EXTI0_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_EXTI0_PRIORITY            6
-#endif
-
-/**
- * @brief   EXTI1 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_EXTI1_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_EXTI1_PRIORITY            6
-#endif
-
-/**
- * @brief   EXTI2 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_EXTI2_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_EXTI2_PRIORITY            6
-#endif
-
-/**
- * @brief   EXTI3 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_EXTI3_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_EXTI3_PRIORITY            6
-#endif
-
-/**
- * @brief   EXTI4 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_EXTI4_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_EXTI4_PRIORITY            6
-#endif
-
-/**
- * @brief   EXTI9..5 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_EXTI5_9_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_EXTI5_9_PRIORITY          6
-#endif
-
-/**
- * @brief   EXTI15..10 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_EXTI10_15_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_EXTI10_15_PRIORITY        6
-#endif
-
-/**
- * @brief   EXTI16 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_EXTI16_40_41_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_EXTI16_40_41_PRIORITY     6
-#endif
-
-/**
- * @brief   EXTI17 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_EXTI17_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_EXTI17_PRIORITY           6
-#endif
-
-/**
- * @brief   EXTI19 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_EXTI19_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_EXTI19_PRIORITY           6
-#endif
-
-/**
- * @brief   EXTI20 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_EXTI20_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_EXTI20_PRIORITY           6
-#endif
-
-/**
- * @brief   EXTI21, 22, 29 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_EXTI21_22_29_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_EXTI21_22_29_PRIORITY     6
-#endif
-
-/**
- * @brief   EXTI30, 31, 32 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_EXTI30_31_32_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_EXTI30_31_32_PRIORITY     6
-#endif
-
-/**
- * @brief   TIM1-BRK, TIM15 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_TIM1_BRK_TIM15_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_TIM1_BRK_TIM15_PRIORITY   7
-#endif
-
-/**
- * @brief   TIM1-UP, TIM16 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_TIM1_UP_TIM16_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_TIM1_UP_TIM16_PRIORITY    7
-#endif
-
-/**
- * @brief   TIM1-TRG-COM, TIM17 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_TIM1_TRGCO_TIM17_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_TIM1_TRGCO_TIM17_PRIORITY 7
-#endif
-
-/**
- * @brief   TIM1-CC interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_TIM1_CC_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_TIM1_CC_PRIORITY          7
-#endif
-
-/**
- * @brief   TIM2 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_TIM2_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_TIM2_PRIORITY             7
-#endif
-
-/**
- * @brief   TIM3 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_TIM3_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_TIM3_PRIORITY             7
-#endif
-
-/**
- * @brief   TIM4 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_TIM4_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_TIM4_PRIORITY             7
-#endif
-
-/**
- * @brief   TIM5 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_TIM5_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_TIM5_PRIORITY             7
-#endif
-
-/**
- * @brief   TIM6 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_TIM6_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_TIM6_PRIORITY             7
-#endif
-
-/**
- * @brief   TIM7 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_TIM7_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_TIM7_PRIORITY             7
-#endif
-
-/**
- * @brief   TIM8-BRK interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_TIM8_BRK_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_TIM8_BRK_PRIORITY         7
-#endif
-
-/**
- * @brief   TIM8-UP interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_TIM8_UP_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_TIM8_UP_PRIORITY          7
-#endif
-
-/**
- * @brief   TIM8-TRG-COM interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_TIM8_TRGCO_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_TIM8_TRGCO_PRIORITY       7
-#endif
-
-/**
- * @brief   TIM8-CC interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_TIM8_CC_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_TIM8_CC_PRIORITY          7
-#endif
-
-/**
- * @brief   TIM20-BRK interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_TIM20_BRK_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_TIM20_BRK_PRIORITY        7
-#endif
-
-/**
- * @brief   TIM20-UP interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_TIM20_UP_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_TIM20_UP_PRIORITY         7
-#endif
-
-/**
- * @brief   TIM20-TRG-COM interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_TIM20_TRGCO_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_TIM20_TRGCO_PRIORITY      7
-#endif
-
-/**
- * @brief   TIM20-CC interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_TIM20_CC_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_TIM20_CC_PRIORITY         7
-#endif
-
-/**
- * @brief   USART1 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_USART1_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_USART1_PRIORITY           3
-#endif
-
-/**
- * @brief   USART2 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_USART2_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_USART2_PRIORITY           3
-#endif
-
-/**
- * @brief   USART3 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_USART3_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_USART3_PRIORITY           3
-#endif
-
-/**
- * @brief   UART4 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_UART4_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_UART4_PRIORITY            3
-#endif
-
-/**
- * @brief   UART5 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_UART5_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_UART5_PRIORITY            3
-#endif
-
-/**
- * @brief   LPUART1 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_LPUART1_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_LPUART1_PRIORITY          3
-#endif
-/** @} */
-
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
-
-/* IRQ priority checks.*/
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI0_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI0_PRIORITY"
-#endif
-
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI1_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI1_PRIORITY"
-#endif
-
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI2_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI2_PRIORITY"
-#endif
-
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI3_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI3_PRIORITY"
-#endif
-
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI4_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI4_PRIORITY"
-#endif
-
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI5_9_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI5_9_PRIORITY"
-#endif
-
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI10_15_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI10_15_PRIORITY"
-#endif
-
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI16_40_41_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI16_40_41_PRIORITY"
-#endif
-
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI17_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI17_PRIORITY"
-#endif
-
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI19_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI19_PRIORITY"
-#endif
-
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI20_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI20_PRIORITY"
-#endif
-
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI21_22_29_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI21_22_29_PRIORITY"
-#endif
-
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI16_40_41_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI16_40_41_PRIORITY"
-#endif
-
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_USART1_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_USART1_PRIORITY"
-#endif
-
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_USART2_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_USART2_PRIORITY"
-#endif
-
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_USART3_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_USART3_PRIORITY"
-#endif
-
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_UART4_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_UART4_PRIORITY"
-#endif
-
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_UART5_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_UART5_PRIORITY"
-#endif
-
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_LPUART1_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_LPUART1_PRIORITY"
-#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */

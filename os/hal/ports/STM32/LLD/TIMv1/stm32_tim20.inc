@@ -68,14 +68,14 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static inline void tim20_init(void) {
+static inline void tim20_irq_init(void) {
 #if defined(STM32_TIM20_IS_USED)
   nvicEnableVector(STM32_TIM20_UP_NUMBER, STM32_IRQ_TIM20_UP_PRIORITY);
   nvicEnableVector(STM32_TIM20_CC_NUMBER, STM32_IRQ_TIM20_CC_PRIORITY);
 #endif
 }
 
-static inline void tim20_deinit(void) {
+static inline void tim20_irq_deinit(void) {
 #if defined(STM32_TIM20_IS_USED)
   nvicDisableVector(STM32_TIM20_UP_NUMBER);
   nvicDisableVector(STM32_TIM20_CC_NUMBER);

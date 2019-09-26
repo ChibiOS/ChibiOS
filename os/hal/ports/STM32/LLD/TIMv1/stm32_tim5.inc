@@ -60,13 +60,13 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static inline void tim5_init(void) {
+static inline void tim5_irq_init(void) {
 #if defined(STM32_TIM5_IS_USED)
   nvicEnableVector(STM32_TIM5_NUMBER, STM32_IRQ_TIM5_PRIORITY);
 #endif
 }
 
-static inline void tim5_deinit(void) {
+static inline void tim5_irq_deinit(void) {
 #if defined(STM32_TIM5_IS_USED)
   nvicDisableVector(STM32_TIM5_NUMBER);
 #endif
