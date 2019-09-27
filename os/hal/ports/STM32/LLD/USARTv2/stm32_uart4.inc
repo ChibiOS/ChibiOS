@@ -48,6 +48,19 @@
 #error "Invalid IRQ priority assigned to STM32_IRQ_UART4_PRIORITY"
 #endif
 
+/* Other checks.*/
+#if (HAL_USE_SERIAL && STM32_SERIAL_USE_UART4) &&                           \
+    (HAL_USE_UART && STM32_UART_USE_UART4)
+#error "UART4 used by multiple drivers"
+#endif
+
+#if (HAL_USE_SERIAL && STM32_SERIAL_USE_UART4) ||                           \
+    (HAL_USE_UART && STM32_UART_USE_UART4)
+#define STM32_UART4_IS_USED         TRUE
+#else
+#define STM32_UART4_IS_USED         FALSE
+#endif
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -61,13 +74,13 @@
 /*===========================================================================*/
 
 static inline void uart4_irq_init(void) {
-#if defined(STM32_UART4_IS_USED)
+#if STM32_UART4_IS_USED
   nvicEnableVector(STM32_UART4_NUMBER, STM32_IRQ_UART4_PRIORITY);
 #endif
 }
 
 static inline void uart4_irq_deinit(void) {
-#if defined(STM32_UART4_IS_USED)
+#if STM32_UART4_IS_USED
   nvicDisableVector(STM32_UART4_NUMBER);
 #endif
 }
@@ -76,9 +89,7 @@ static inline void uart4_irq_deinit(void) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if (HAL_USE_SERIAL && STM32_SERIAL_USE_UART4) ||                           \
-    (HAL_USE_UART && STM32_UART_USE_UART4) ||                               \
-    defined(__DOXYGEN__)
+#if STM32_UART4_IS_USED || defined(__DOXYGEN__)
 /**
  * @brief   UART4 interrupt handler.
  *

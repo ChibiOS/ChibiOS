@@ -80,10 +80,16 @@ OSAL_IRQ_HANDLER(STM32_EXTI10_15_HANDLER) {
   OSAL_IRQ_PROLOGUE();
 
   pr = EXTI->PR1;
-  pr &= EXTI->IMR1 & (1U << 0);
+  pr &= EXTI->IMR1 & ((1U << 10) | (1U << 11) | (1U << 12) | (1U << 13) |
+                      (1U << 14) | (1U << 15));
   EXTI->PR1 = pr;
 
-  exti_serve_irq(pr, 0);
+  exti_serve_irq(pr, 10);
+  exti_serve_irq(pr, 11);
+  exti_serve_irq(pr, 12);
+  exti_serve_irq(pr, 13);
+  exti_serve_irq(pr, 14);
+  exti_serve_irq(pr, 15);
 
   OSAL_IRQ_EPILOGUE();
 }
