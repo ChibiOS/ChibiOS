@@ -201,6 +201,7 @@ int chvprintf(BaseSequentialStream *chp, const char *fmt, va_list ap) {
       }
       if (c == '*') {
         precision = va_arg(ap, int);
+        c = *fmt++;
       }
       else {
         while (c >= '0' && c <= '9') {
