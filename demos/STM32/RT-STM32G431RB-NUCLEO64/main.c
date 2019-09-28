@@ -65,7 +65,7 @@ int main(void) {
    * sleeping in a loop and check the button state.
    */
   while (true) {
-   if (!palReadLine(LINE_BUTTON)) {
+   if (palReadLine(LINE_BUTTON)) {
       test_execute((BaseSequentialStream *)&LPSD1, &rt_test_suite);
       test_execute((BaseSequentialStream *)&LPSD1, &oslib_test_suite);
     }

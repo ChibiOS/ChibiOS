@@ -101,7 +101,7 @@ include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32g4xx.m
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/ports/STM32/STM32G4xx/platform.mk
-include $(CHIBIOS)/os/hal/boards/ST_NUCLEO64_G474RE/board.mk
+include $(CHIBIOS)/os/hal/boards/ST_NUCLEO64_G431RB/board.mk
 include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
@@ -114,7 +114,7 @@ include $(CHIBIOS)/test/rt/rt_test.mk
 include $(CHIBIOS)/test/oslib/oslib_test.mk
 
 # Define linker script file here
-LDSCRIPT= $(STARTUPLD)/STM32G474xE.ld
+LDSCRIPT= $(STARTUPLD)/STM32G431xB.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.

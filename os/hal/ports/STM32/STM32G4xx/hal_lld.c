@@ -222,17 +222,17 @@ void stm32_clock_init(void) {
 #endif
 
   /* Other clock-related settings (dividers, MCO etc).*/
-  RCC->CFGR = STM32_MCOPRE | STM32_MCOSEL | STM32_PPRE2 | STM32_PPRE1 |
-              STM32_HPRE;
+  RCC->CFGR   = STM32_MCOPRE | STM32_MCOSEL | STM32_PPRE2 | STM32_PPRE1 |
+                STM32_HPRE;
 
-  /* CCIPR register initialization, note, must take care of the _OFF
-     pseudo settings.*/
-  RCC->CCIPR = STM32_ADC345SEL  | STM32_ADC12SEL   | STM32_CLK48SEL   |
-               STM32_FDCANSEL   | STM32_I2S23SEL   | STM32_SAI1SEL    |
-               STM32_LPTIM1SEL  | STM32_I2C3SEL    | STM32_I2C2SEL    |
-               STM32_I2C1SEL    | STM32_LPUART1SEL | STM32_UART5SEL   |
-               STM32_UART4SEL   | STM32_USART3SEL  | STM32_USART2SEL  |
-               STM32_USART1SEL;
+  /* CCIPR registers initialization, note.*/
+  RCC->CCIPR  = STM32_ADC345SEL  | STM32_ADC12SEL   | STM32_CLK48SEL   |
+                STM32_FDCANSEL   | STM32_I2S23SEL   | STM32_SAI1SEL    |
+                STM32_LPTIM1SEL  | STM32_I2C3SEL    | STM32_I2C2SEL    |
+                STM32_I2C1SEL    | STM32_LPUART1SEL | STM32_UART5SEL   |
+                STM32_UART4SEL   | STM32_USART3SEL  | STM32_USART2SEL  |
+                STM32_USART1SEL;
+  RCC->CCIPR2 = STM32_QSPISEL    | STM32_I2C4SEL;
 
   /* Set flash WS's for SYSCLK source */
   FLASH->ACR = FLASH_ACR_DBG_SWEN | FLASH_ACR_DCEN | FLASH_ACR_ICEN   |
