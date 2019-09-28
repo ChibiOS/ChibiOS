@@ -124,7 +124,7 @@ void SVC_Handler(void) {
 /*lint -restore*/
   uint32_t psp = __get_PSP();
 
-  chDbgAssert(((uint32_t)__builtin_return_address(0) & 4U) == 0U,
+  chDbgAssert(((uint32_t)__builtin_return_address(0) & 4U) != 0U,
               "not process");
 
 #if PORT_USE_SYSCALL == TRUE
