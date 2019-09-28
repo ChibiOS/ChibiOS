@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Initial STM32G4xx support in HAL.
 - HAL: Added script to generate board files from command line, just run
        ./os/hal/boards/genboard.sh with the board directory name as
        parameter.

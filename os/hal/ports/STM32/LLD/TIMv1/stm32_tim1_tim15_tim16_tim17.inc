@@ -47,10 +47,6 @@
 #error "STM32_HAS_TIM17 not defined in registry"
 #endif
 
-#if !defined(STM32_IRQ_TIM1_BRK_TIM15_PRIORITY)
-#error "STM32_IRQ_TIM1_BRK_TIM15_PRIORITY not defined in mcuconf.h"
-#endif
-
 #if STM32_HAS_TIM1 == FALSE
 #error "TIM1 not present"
 #endif
@@ -68,6 +64,10 @@
 #endif
 
 /* Priority settings checks.*/
+#if !defined(STM32_IRQ_TIM1_BRK_TIM15_PRIORITY)
+#error "STM32_IRQ_TIM1_BRK_TIM15_PRIORITY not defined in mcuconf.h"
+#endif
+
 #if !defined(STM32_IRQ_TIM1_UP_TIM16_PRIORITY)
 #error "STM32_IRQ_TIM1_UP_TIM16_PRIORITY not defined in mcuconf.h"
 #endif
