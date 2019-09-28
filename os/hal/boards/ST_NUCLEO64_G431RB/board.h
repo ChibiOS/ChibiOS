@@ -27,14 +27,14 @@
 /*===========================================================================*/
 
 /*
- * Setup for STMicroelectronics STM32 Nucleo64-G474RE board.
+ * Setup for STMicroelectronics STM32 Nucleo64-G431RB board.
  */
 
 /*
  * Board identifier.
  */
-#define BOARD_ST_NUCLEO64_G474RE
-#define BOARD_NAME                  "STMicroelectronics STM32 Nucleo64-G474RE"
+#define BOARD_ST_NUCLEO64_G431RB
+#define BOARD_NAME                  "STMicroelectronics STM32 Nucleo64-G431RB"
 
 /*
  * Board oscillators-related settings.
