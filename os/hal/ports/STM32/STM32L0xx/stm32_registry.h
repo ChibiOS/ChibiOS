@@ -101,17 +101,17 @@
 
 #define STM32_DMA1_CH2_NUMBER               STM32_DMA1_CH23_NUMBER
 #define STM32_DMA1_CH3_NUMBER               STM32_DMA1_CH23_NUMBER
-#define DMA1_CH2_CMASK                      0x00000006U
-#define DMA1_CH3_CMASK                      0x00000006U
+#define STM32_DMA1_CH2_CMASK                0x00000006U
+#define STM32_DMA1_CH3_CMASK                0x00000006U
 
 #define STM32_DMA1_CH4_NUMBER               STM32_DMA1_CH4567_NUMBER
 #define STM32_DMA1_CH5_NUMBER               STM32_DMA1_CH4567_NUMBER
 #define STM32_DMA1_CH6_NUMBER               STM32_DMA1_CH4567_NUMBER
 #define STM32_DMA1_CH7_NUMBER               STM32_DMA1_CH4567_NUMBER
-#define DMA1_CH4_CMASK                      0x00000078U
-#define DMA1_CH5_CMASK                      0x00000078U
-#define DMA1_CH6_CMASK                      0x00000078U
-#define DMA1_CH7_CMASK                      0x00000078U
+#define STM32_DMA1_CH4_CMASK                0x00000078U
+#define STM32_DMA1_CH5_CMASK                0x00000078U
+#define STM32_DMA1_CH6_CMASK                0x00000078U
+#define STM32_DMA1_CH7_CMASK                0x00000078U
 
 /* ETH attributes.*/
 #define STM32_HAS_ETH                       FALSE
@@ -294,17 +294,17 @@
 
 #define STM32_DMA1_CH2_NUMBER               STM32_DMA1_CH23_NUMBER
 #define STM32_DMA1_CH3_NUMBER               STM32_DMA1_CH23_NUMBER
-#define DMA1_CH2_CMASK                      0x00000006U
-#define DMA1_CH3_CMASK                      0x00000006U
+#define STM32_DMA1_CH2_CMASK                0x00000006U
+#define STM32_DMA1_CH3_CMASK                0x00000006U
 
 #define STM32_DMA1_CH4_NUMBER               STM32_DMA1_CH4567_NUMBER
 #define STM32_DMA1_CH5_NUMBER               STM32_DMA1_CH4567_NUMBER
 #define STM32_DMA1_CH6_NUMBER               STM32_DMA1_CH4567_NUMBER
 #define STM32_DMA1_CH7_NUMBER               STM32_DMA1_CH4567_NUMBER
-#define DMA1_CH4_CMASK                      0x00000078U
-#define DMA1_CH5_CMASK                      0x00000078U
-#define DMA1_CH6_CMASK                      0x00000078U
-#define DMA1_CH7_CMASK                      0x00000078U
+#define STM32_DMA1_CH4_CMASK                0x00000078U
+#define STM32_DMA1_CH5_CMASK                0x00000078U
+#define STM32_DMA1_CH6_CMASK                0x00000078U
+#define STM32_DMA1_CH7_CMASK                0x00000078U
 
 /* ETH attributes.*/
 #define STM32_HAS_ETH                       FALSE
@@ -490,17 +490,17 @@
 
 #define STM32_DMA1_CH2_NUMBER               STM32_DMA1_CH23_NUMBER
 #define STM32_DMA1_CH3_NUMBER               STM32_DMA1_CH23_NUMBER
-#define DMA1_CH2_CMASK                      0x00000006U
-#define DMA1_CH3_CMASK                      0x00000006U
+#define STM32_DMA1_CH2_CMASK                0x00000006U
+#define STM32_DMA1_CH3_CMASK                0x00000006U
 
 #define STM32_DMA1_CH4_NUMBER               STM32_DMA1_CH4567_NUMBER
 #define STM32_DMA1_CH5_NUMBER               STM32_DMA1_CH4567_NUMBER
 #define STM32_DMA1_CH6_NUMBER               STM32_DMA1_CH4567_NUMBER
 #define STM32_DMA1_CH7_NUMBER               STM32_DMA1_CH4567_NUMBER
-#define DMA1_CH4_CMASK                      0x00000078U
-#define DMA1_CH5_CMASK                      0x00000078U
-#define DMA1_CH6_CMASK                      0x00000078U
-#define DMA1_CH7_CMASK                      0x00000078U
+#define STM32_DMA1_CH4_CMASK                0x00000078U
+#define STM32_DMA1_CH5_CMASK                0x00000078U
+#define STM32_DMA1_CH6_CMASK                0x00000078U
+#define STM32_DMA1_CH7_CMASK                0x00000078U
 
 /* ETH attributes.*/
 #define STM32_HAS_ETH                       FALSE
@@ -720,17 +720,17 @@
 
 #define STM32_DMA1_CH2_NUMBER               STM32_DMA1_CH23_NUMBER
 #define STM32_DMA1_CH3_NUMBER               STM32_DMA1_CH23_NUMBER
-#define DMA1_CH2_CMASK                      0x00000006U
-#define DMA1_CH3_CMASK                      0x00000006U
+#define STM32_DMA1_CH2_CMASK                0x00000006U
+#define STM32_DMA1_CH3_CMASK                0x00000006U
 
 #define STM32_DMA1_CH4_NUMBER               STM32_DMA1_CH4567_NUMBER
 #define STM32_DMA1_CH5_NUMBER               STM32_DMA1_CH4567_NUMBER
 #define STM32_DMA1_CH6_NUMBER               STM32_DMA1_CH4567_NUMBER
 #define STM32_DMA1_CH7_NUMBER               STM32_DMA1_CH4567_NUMBER
-#define DMA1_CH4_CMASK                      0x00000078U
-#define DMA1_CH5_CMASK                      0x00000078U
-#define DMA1_CH6_CMASK                      0x00000078U
-#define DMA1_CH7_CMASK                      0x00000078U
+#define STM32_DMA1_CH4_CMASK                0x00000078U
+#define STM32_DMA1_CH5_CMASK                0x00000078U
+#define STM32_DMA1_CH6_CMASK                0x00000078U
+#define STM32_DMA1_CH7_CMASK                0x00000078U
 
 /* ETH attributes.*/
 #define STM32_HAS_ETH                       FALSE
@@ -954,17 +954,17 @@
 
 #define STM32_DMA1_CH2_NUMBER               STM32_DMA1_CH23_NUMBER
 #define STM32_DMA1_CH3_NUMBER               STM32_DMA1_CH23_NUMBER
-#define DMA1_CH2_CMASK                      0x00000006U
-#define DMA1_CH3_CMASK                      0x00000006U
+#define STM32_DMA1_CH2_CMASK                0x00000006U
+#define STM32_DMA1_CH3_CMASK                0x00000006U
 
 #define STM32_DMA1_CH4_NUMBER               STM32_DMA1_CH4567_NUMBER
 #define STM32_DMA1_CH5_NUMBER               STM32_DMA1_CH4567_NUMBER
 #define STM32_DMA1_CH6_NUMBER               STM32_DMA1_CH4567_NUMBER
 #define STM32_DMA1_CH7_NUMBER               STM32_DMA1_CH4567_NUMBER
-#define DMA1_CH4_CMASK                      0x00000078U
-#define DMA1_CH5_CMASK                      0x00000078U
-#define DMA1_CH6_CMASK                      0x00000078U
-#define DMA1_CH7_CMASK                      0x00000078U
+#define STM32_DMA1_CH4_CMASK                0x00000078U
+#define STM32_DMA1_CH5_CMASK                0x00000078U
+#define STM32_DMA1_CH6_CMASK                0x00000078U
+#define STM32_DMA1_CH7_CMASK                0x00000078U
 
 /* ETH attributes.*/
 #define STM32_HAS_ETH                       FALSE
@@ -1213,17 +1213,17 @@
 
 #define STM32_DMA1_CH2_NUMBER               STM32_DMA1_CH23_NUMBER
 #define STM32_DMA1_CH3_NUMBER               STM32_DMA1_CH23_NUMBER
-#define DMA1_CH2_CMASK                      0x00000006U
-#define DMA1_CH3_CMASK                      0x00000006U
+#define STM32_DMA1_CH2_CMASK                0x00000006U
+#define STM32_DMA1_CH3_CMASK                0x00000006U
 
 #define STM32_DMA1_CH4_NUMBER               STM32_DMA1_CH4567_NUMBER
 #define STM32_DMA1_CH5_NUMBER               STM32_DMA1_CH4567_NUMBER
 #define STM32_DMA1_CH6_NUMBER               STM32_DMA1_CH4567_NUMBER
 #define STM32_DMA1_CH7_NUMBER               STM32_DMA1_CH4567_NUMBER
-#define DMA1_CH4_CMASK                      0x00000078U
-#define DMA1_CH5_CMASK                      0x00000078U
-#define DMA1_CH6_CMASK                      0x00000078U
-#define DMA1_CH7_CMASK                      0x00000078U
+#define STM32_DMA1_CH4_CMASK                0x00000078U
+#define STM32_DMA1_CH5_CMASK                0x00000078U
+#define STM32_DMA1_CH6_CMASK                0x00000078U
+#define STM32_DMA1_CH7_CMASK                0x00000078U
 
 /* ETH attributes.*/
 #define STM32_HAS_ETH                       FALSE
