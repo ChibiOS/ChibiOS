@@ -74,7 +74,9 @@
 *****************************************************************************
 
 *** Next ***
-- NEW: Initial STM32G4xx support in HAL.
+- HAL: STM32 DMAv1 driver improvements and generalization, added support
+       for 8 channels.
+- HAL: Initial STM32G4xx support in HAL.
 - HAL: Added script to generate board files from command line, just run
        ./os/hal/boards/genboard.sh with the board directory name as
        parameter.
@@ -90,9 +92,9 @@
 - HAL: Made bus acquire/release functions in SNOR driver public.
 - NEW: Added mcuconf.h generator for STM32L052/L053/L062/L063.
 - NEW: Added mcuconf.h generator for STM32L072/L073.
-- NEW: Initial STM32G0xx support in HAL.
-- NEW: Added STM32L452 support in HAL.
-- NEW: Implemented TIMPRE setting for STM32F7xx HAL.
+- HAL: Initial STM32G0xx support in HAL.
+- HAL: Added STM32L452 support in HAL.
+- HAL: Implemented TIMPRE setting for STM32F7xx HAL.
 - NEW: Merged FatFS 0.13c.
 - NEW: Added a "library generator" project for RT, it allows to
        generate a library with a pre-configured RT. It also includes
@@ -103,9 +105,9 @@
 - NEW: Code style checker tool added.
 - NEW: Added and embedded flash driver model in HAL. Added an implementation
        for STM32F1xx, STM32L4xx, STM32L4xx+. 
-- NEW: Modified AES GCM function signatures.
+- HAL: Modified AES GCM function signatures.
 - HAL: Added H753 to all H7 mcuconf.h files.
-- NEW: Added transactional updates to MFS. Doubled data headers magic numbers
+- HAL: Added transactional updates to MFS. Doubled data headers magic numbers
        for improved safety and to keep the final write aligned to 64 bits, it
        is required for STM32 ECC flash.
 - VAR: Modified syscalls.c to allocate memory from bottom upward, ChibiOS

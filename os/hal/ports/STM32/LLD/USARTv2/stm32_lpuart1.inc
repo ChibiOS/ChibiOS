@@ -49,13 +49,7 @@
 #endif
 
 /* Other checks.*/
-#if (HAL_USE_SERIAL && STM32_SERIAL_USE_LPUART1) &&                         \
-    (HAL_USE_UART && STM32_UART_USE_LPUART1)
-#error "LPUART1 used by multiple drivers"
-#endif
-
-#if (HAL_USE_SERIAL && STM32_SERIAL_USE_LPUART1) ||                         \
-    (HAL_USE_UART && STM32_UART_USE_LPUART1)
+#if (HAL_USE_SERIAL && STM32_SERIAL_USE_LPUART1)
 #define STM32_LPUART1_IS_USED       TRUE
 #else
 #define STM32_LPUART1_IS_USED       FALSE
