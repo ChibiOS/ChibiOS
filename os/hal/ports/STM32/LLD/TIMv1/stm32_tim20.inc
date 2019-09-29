@@ -86,8 +86,7 @@ static inline void tim20_irq_deinit(void) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if (HAL_USE_ICU && STM32_ICU_USE_TIM20) ||                                 \
-    (HAL_USE_PWM && STM32_PWM_USE_TIM20) ||                                 \
+#if (HAL_USE_PWM && STM32_PWM_USE_TIM20) ||                                 \
     defined(__DOXYGEN__)
 /**
  * @brief   TIM20-UP interrupt handler.
@@ -102,9 +101,7 @@ OSAL_IRQ_HANDLER(STM32_TIM20_UP_HANDLER) {
   /* Not used by GPT.*/
 #endif
 #if HAL_USE_ICU
-#if STM32_ICU_USE_TIM20
-  icu_lld_serve_interrupt(&ICUD20);
-#endif
+  /* Not used by ICU.*/
 #endif
 #if HAL_USE_PWM
 #if STM32_PWM_USE_TIM20
@@ -116,8 +113,7 @@ OSAL_IRQ_HANDLER(STM32_TIM20_UP_HANDLER) {
 }
 #endif
 
-#if (HAL_USE_ICU && STM32_ICU_USE_TIM20) ||                                 \
-    (HAL_USE_PWM && STM32_PWM_USE_TIM20) ||                                 \
+#if (HAL_USE_PWM && STM32_PWM_USE_TIM20) ||                                 \
     defined(__DOXYGEN__)
 /**
  * @brief   TIM20-CC interrupt handler.
@@ -132,9 +128,7 @@ OSAL_IRQ_HANDLER(STM32_TIM20_CC_HANDLER) {
   /* Not used by GPT.*/
 #endif
 #if HAL_USE_ICU
-#if STM32_ICU_USE_TIM20
-  icu_lld_serve_interrupt(&ICUD20);
-#endif
+  /* Not used by ICU.*/
 #endif
 #if HAL_USE_PWM
 #if STM32_PWM_USE_TIM20
