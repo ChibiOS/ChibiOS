@@ -51,6 +51,9 @@
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
+#include "stm32_dma1_ch23.inc"
+#include "stm32_dma1_ch4567.inc"
+
 #include "stm32_exti0_1.inc"
 #include "stm32_exti2_3.inc"
 #include "stm32_exti4_15.inc"
@@ -72,52 +75,6 @@
 #include "stm32_tim15.inc"
 #include "stm32_tim16.inc"
 #include "stm32_tim17.inc"
-
-#if defined(STM32_DMA_REQUIRED) || defined(__DOXYGEN__)
-/**
- * @brief   DMA1 streams 2 and 3 shared ISR.
- * @note    It is declared here because this device has a non-standard
- *          DMA shared IRQ handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_DMA1_CH23_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-  /* Check on channel 2.*/
-  dmaServeInterrupt(STM32_DMA1_STREAM2);
-
-  /* Check on channel 3.*/
-  dmaServeInterrupt(STM32_DMA1_STREAM3);
-
-  OSAL_IRQ_EPILOGUE();
-}
-
-/**
- * @brief   DMA1 streams 4, 5, 6 and 7 shared ISR.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_DMA1_CH4567_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-  /* Check on channel 4.*/
-  dmaServeInterrupt(STM32_DMA1_STREAM4);
-
-  /* Check on channel 5.*/
-  dmaServeInterrupt(STM32_DMA1_STREAM5);
-
-  /* Check on channel 6.*/
-  dmaServeInterrupt(STM32_DMA1_STREAM6);
-
-  /* Check on channel 7.*/
-  dmaServeInterrupt(STM32_DMA1_STREAM7);
-
-  OSAL_IRQ_EPILOGUE();
-}
-#endif
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
