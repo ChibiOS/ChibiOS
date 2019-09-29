@@ -227,6 +227,14 @@
 #define STM32_UART4_NUMBER                  52
 #define STM32_UART5_NUMBER                  53
 #define STM32_LPUART1_NUMBER                91
+
+/*
+ * USB units.
+ */
+#define STM32_USB1_HP_HANDLER               Vector8C
+#define STM32_USB1_LP_HANDLER               Vector90
+#define STM32_USB1_HP_NUMBER                19
+#define STM32_USB1_LP_NUMBER                20
 /** @} */
 
 /*===========================================================================*/

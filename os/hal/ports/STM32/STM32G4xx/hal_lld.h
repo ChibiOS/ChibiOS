@@ -270,7 +270,8 @@
 
 #define STM32_FDCANSEL_MASK     (3U << 24U) /**< FDCANSEL mask.             */
 #define STM32_FDCANSEL_HSE      (0U << 24U) /**< FDCAN source is HSE.       */
-#define STM32_FDCANSEL_PLLQCLK  (2U << 24U) /**< FDCAN source is PLLQCLK.   */
+#define STM32_FDCANSEL_PLLQCLK  (1U << 24U) /**< FDCAN source is PLLQCLK.   */
+#define STM32_FDCANSEL_PCLK1    (2U << 24U) /**< FDCAN source is PCLK1.    */
 
 #define STM32_CLK48SEL_MASK     (3U << 26U) /**< CLK48SEL mask.             */
 #define STM32_CLK48SEL_HSI48    (0U << 26U) /**< CLK48 source is HSI48.     */
@@ -1694,6 +1695,35 @@
 #endif
 
 /**
+ * @brief   FDCAN clock frequency.
+ */
+#if (STM32_FDCANSEL == STM32_FDCANSEL_HSE) || defined(__DOXYGEN__)
+  #define STM32_FDCANCLK            STM32_HSECLK
+
+#elif STM32_FDCANSEL == STM32_FDCANSEL_PLLQCLK
+  #define STM32_FDCANCLK            STM32_PLL_Q_CLKOUT
+
+#elif STM32_FDCANSEL == STM32_FDCANSEL_PCLK1
+  #define STM32_FDCANCLK            STM32_PCLK1
+
+#else
+  #error "invalid source selected for FDCAN clock"
+#endif
+
+/**
+ * @brief   48MHz clock frequency.
+ */
+#if (STM32_CLK48SEL == STM32_CLK48SEL_HSI48) || defined(__DOXYGEN__)
+  #define STM32_48CLK               STM32_HSI48CLK
+
+#elif STM32_CLK48SEL == STM32_CLK48SEL_PLLQCLK
+  #define STM32_48CLK               STM32_PLL_Q_CLKOUT
+
+#else
+  #error "invalid source selected for 48MHz clock"
+#endif
+
+/**
  * @brief   ADC clock frequency.
  */
 #if (STM32_ADC12SEL == STM32_ADC12SEL_NOCLK) || defined(__DOXYGEN__)
@@ -1752,6 +1782,11 @@
  * @brief   Clock of timers connected to APB2.
  */
 #define STM32_TIMCLK2               STM32_TIMP2CLK
+
+/**
+ * @brief   USB clock point.
+ */
+#define STM32_USBCLK                STM32_48CLK
 
 /**
  * @brief   Flash settings.
