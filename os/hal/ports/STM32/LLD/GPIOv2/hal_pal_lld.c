@@ -173,7 +173,7 @@ void _pal_lld_enablepadevent(ioportid_t port,
   portidx = (((uint32_t)port - (uint32_t)GPIOA) >> 10U) & 0xFU;
 
   /* Port selection in SYSCFG.*/
-#if STM32_EXTI_TYPE == EXTI_TYPE_CLASSIC
+#if STM32_EXTI_TYPE == 0
   SYSCFG->EXTICR[cridx] = (SYSCFG->EXTICR[cridx] & crmask) | (portidx << croff);
 #else
   EXTI->EXTICR[cridx] = (EXTI->EXTICR[cridx] & crmask) | (portidx << croff);
@@ -229,7 +229,7 @@ void _pal_lld_disablepadevent(ioportid_t port, iopadid_t pad) {
        0x400 intervals in memory space. So far this is true for all devices.*/
     portidx = (((uint32_t)port - (uint32_t)GPIOA) >> 10U) & 0xFU;
 
-#if STM32_EXTI_TYPE == EXTI_TYPE_CLASSIC
+#if STM32_EXTI_TYPE == 0
     crport = (SYSCFG->EXTICR[cridx] >> croff) & 0xFU;
 #else
     crport = (EXTI->EXTICR[cridx] >> croff) & 0xFU;
@@ -250,7 +250,7 @@ void _pal_lld_disablepadevent(ioportid_t port, iopadid_t pad) {
     EXTI->EMR1  &= ~padmask;
     EXTI->RTSR1  = rtsr1 & ~padmask;
     EXTI->FTSR1  = ftsr1 & ~padmask;
-#if STM32_EXTI_TYPE == EXTI_TYPE_CLASSIC
+#if STM32_EXTI_TYPE == 0
     EXTI->PR1    = padmask;
 #else
     EXTI->RPR1   = padmask;

@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    EXTIv1/stm32_exti10_15.inc
- * @brief   Shared EXTI10_15 handler.
+ * @file    TIMv1/stm32_tim16.inc
+ * @brief   Shared TIM16 handler.
  *
- * @addtogroup STM32_EXTI10_15_HANDLER
+ * @addtogroup STM32_TIM16_HANDLER
  * @{
  */
 
@@ -30,13 +30,22 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-/* Priority settings checks.*/
-#if !defined(STM32_IRQ_EXTI10_15_PRIORITY)
-#error "STM32_IRQ_EXTI10_15_PRIORITY not defined in mcuconf.h"
+/* Registry checks for robustness.*/
+#if !defined(STM32_HAS_TIM16)
+#error "STM32_HAS_TIM16 not defined in registry"
 #endif
 
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI10_15_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI10_15_PRIORITY"
+#if STM32_HAS_TIM16 == FALSE
+#error "TIM16 not present"
+#endif
+
+/* Priority settings checks.*/
+#if !defined(STM32_IRQ_TIM16_PRIORITY)
+#error "STM32_IRQ_TIM16_PRIORITY not defined in mcuconf.h"
+#endif
+
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_TIM16_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_TIM16_PRIORITY"
 #endif
 
 /*===========================================================================*/
@@ -51,15 +60,15 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static inline void exti10_15_irq_init(void) {
-#if (HAL_USE_PAL && (PAL_USE_WAIT || PAL_USE_CALLBACKS))
-  nvicEnableVector(STM32_EXTI10_15_NUMBER, STM32_IRQ_EXTI10_15_PRIORITY);
+static inline void tim16_irq_init(void) {
+#if defined(STM32_TIM16_IS_USED)
+  nvicEnableVector(STM32_TIM16_NUMBER, STM32_IRQ_TIM16_PRIORITY);
 #endif
 }
 
-static inline void exti10_15_irq_deinit(void) {
-#if (HAL_USE_PAL && (PAL_USE_WAIT || PAL_USE_CALLBACKS))
-  nvicDisableVector(STM32_EXTI10_15_NUMBER);
+static inline void tim16_irq_deinit(void) {
+#if defined(STM32_TIM16_IS_USED)
+  nvicDisableVector(STM32_TIM16_NUMBER);
 #endif
 }
 
@@ -67,31 +76,31 @@ static inline void exti10_15_irq_deinit(void) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if (HAL_USE_PAL && (PAL_USE_WAIT || PAL_USE_CALLBACKS)) || defined(__DOXYGEN__)
-#if !defined(STM32_DISABLE_EXTI10_15_HANDLER)
+#if (HAL_USE_GPT && STM32_GPT_USE_TIM16) ||                                  \
+    (HAL_USE_PWM && STM32_PWM_USE_TIM16) ||                                  \
+    defined(__DOXYGEN__)
 /**
- * @brief   EXTI[0] interrupt handler.
+ * @brief   TIM16 interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_EXTI10_15_HANDLER) {
-  uint32_t pr;
+OSAL_IRQ_HANDLER(STM32_TIM16_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  extiGetAndClearGroup1((1U << 10) | (1U << 11) | (1U << 12) | (1U << 13) |
-                        (1U << 14) | (1U << 15), pr);
-
-  exti_serve_irq(pr, 10);
-  exti_serve_irq(pr, 11);
-  exti_serve_irq(pr, 12);
-  exti_serve_irq(pr, 13);
-  exti_serve_irq(pr, 14);
-  exti_serve_irq(pr, 15);
+#if HAL_USE_GPT
+#if STM32_GPT_USE_TIM16
+  gpt_lld_serve_interrupt(&GPTD16);
+#endif
+#endif
+#if HAL_USE_PWM
+#if STM32_PWM_USE_TIM16
+  pwm_lld_serve_interrupt(&PWMD16);
+#endif
+#endif
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif
 #endif
 
 /*===========================================================================*/

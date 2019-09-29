@@ -79,9 +79,7 @@ OSAL_IRQ_HANDLER(STM32_EXTI1_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR1;
-  pr &= EXTI->IMR1 & (1U << 1);
-  EXTI->PR1 = pr;
+  extiGetAndClearGroup1(1U << 1, pr);
 
   exti_serve_irq(pr, 1);
 
