@@ -58,7 +58,7 @@
 /*
  * MCU type as defined in the ST header.
  */
-#define STM32G474xx
+#define STM32G431xx
 
 /*
  * IO pins assignments.

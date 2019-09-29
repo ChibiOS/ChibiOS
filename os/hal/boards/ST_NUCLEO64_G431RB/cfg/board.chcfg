@@ -11,7 +11,7 @@
   <board_name>STMicroelectronics STM32 Nucleo64-G431RB</board_name>
   <board_id>ST_NUCLEO64_G431RB</board_id>
   <board_functions></board_functions>
-  <subtype>STM32G474xx</subtype>
+  <subtype>STM32G431xx</subtype>
   <clocks HSEFrequency="24000000" HSEBypass="false" LSEFrequency="32768"
   	LSEBypass="false" VDD="300" LSEDrive="3 High Drive (default)" ></clocks>
   <ports>
