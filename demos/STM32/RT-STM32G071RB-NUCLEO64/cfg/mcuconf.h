@@ -80,14 +80,26 @@
 /*
  * IRQ settings.
  */
-#define STM32_IRQ_EXTI0_1_PRIORITY          3
-#define STM32_IRQ_EXTI2_3_PRIORITY          3
-#define STM32_IRQ_EXTI4_15_PRIORITY         3
-#define STM32_IRQ_EXTI16_PRIORITY           3
-#define STM32_IRQ_EXTI17_18_PRIORITY        3
-#define STM32_IRQ_USART1_PRIORITY           3
-#define STM32_IRQ_USART2_PRIORITY           3
-#define STM32_IRQ_USART3_4_LP1_PRIORITY     3
+#define STM32_IRQ_EXTI0_1_PRIORITY          2
+#define STM32_IRQ_EXTI2_3_PRIORITY          2
+#define STM32_IRQ_EXTI4_15_PRIORITY         2
+#define STM32_IRQ_EXTI16_PRIORITY           2
+#define STM32_IRQ_EXTI17_18_PRIORITY        2
+
+#define STM32_IRQ_TIM1_UP_PRIORITY          3
+#define STM32_IRQ_TIM1_CC_PRIORITY          3
+#define STM32_IRQ_TIM2_PRIORITY             3
+#define STM32_IRQ_TIM3_PRIORITY             3
+#define STM32_IRQ_TIM6_PRIORITY             3
+#define STM32_IRQ_TIM7_PRIORITY             3
+#define STM32_IRQ_TIM14_PRIORITY            3
+#define STM32_IRQ_TIM15_PRIORITY            3
+#define STM32_IRQ_TIM16_PRIORITY            3
+#define STM32_IRQ_TIM17_PRIORITY            3
+
+#define STM32_IRQ_USART1_PRIORITY           2
+#define STM32_IRQ_USART2_PRIORITY           2
+#define STM32_IRQ_USART3_USART4_LPUART1_PRIORITY 2
 
 /*
  * ADC driver system settings.
