@@ -42,8 +42,7 @@
  */
 #define STM32_NO_INIT                       FALSE
 #define STM32_VOS                           STM32_VOS_RANGE1
-#define STM32_PWR_CR2                       (STM32_PLS_LEV0 |               \
-                                             STM32_PVDE_DISABLED)
+#define STM32_PWR_CR2                       (STM32_PLS_LEV0 | STM32_PVDE_DISABLED)
 #define STM32_HSI16_ENABLED                 TRUE
 #define STM32_HSI48_ENABLED                 TRUE
 #define STM32_HSE_ENABLED                   TRUE
