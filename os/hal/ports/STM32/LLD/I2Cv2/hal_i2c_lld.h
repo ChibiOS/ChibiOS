@@ -279,6 +279,9 @@
 #error "I2C4 DMA streams not defined"
 #endif
 
+/* Devices without DMAMUX require an additional check.*/
+#if !STM32_DMA_SUPPORTS_DMAMUX
+
 /* Check on the validity of the assigned DMA channels.*/
 #if STM32_I2C_USE_I2C1 &&                                                   \
     !STM32_DMA_IS_VALID_ID(STM32_I2C_I2C1_RX_DMA_STREAM,                    \
@@ -327,6 +330,8 @@
                            STM32_I2C4_TX_DMA_MSK)
 #error "invalid DMA stream associated to I2C4 TX"
 #endif
+
+#endif /* !STM32_DMA_SUPPORTS_DMAMUX */
 
 #endif /* STM32_ADVANCED_DMA */
 
