@@ -102,8 +102,7 @@
  * @return              An unique numeric stream identifier.
  */
 #define STM32_DMA_STREAM_ID(dma, stream)                                    \
-  ((((uint32_t)(dma) - 1U) * (uint32_t)STM32_DMA1_NUM_CHANNELS) +           \
-   ((uint32_t)(stream) - 1U))
+  ((((dma) - 1) * STM32_DMA1_NUM_CHANNELS) + ((stream) - 1))
 
 /**
  * @brief   Returns a DMA stream identifier mask.
