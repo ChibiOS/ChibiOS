@@ -170,6 +170,9 @@ void wspi_lld_start(WSPIDriver *wspip) {
                                    (void *)wspip);
       osalDbgAssert(wspip->dma != NULL, "unable to allocate stream");
       rccEnableQUADSPI1(true);
+#if STM32_DMA_SUPPORTS_DMAMUX
+      dmaSetRequestSource(wspip->dma, STM32_DMAMUX1_QUADSPI);
+#endif
     }
 #endif
 
