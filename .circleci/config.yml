@@ -2,16 +2,19 @@ version: 2
 jobs:
   build:
     docker:
-      - image: debian:stretch
-
+      - image: circleci/python:3.6.9-stretch
     steps:
       - checkout
-
       - run:
-          name: Greeting
-          command: echo Hello, world.
-
+          name: Install apt packages
+          command: 'sudo apt install p7zip-full gcc-arm-none-eabi binutils-arm-none-eabi'
       - run:
-          name: Print the Current Time
-          command: date
+          name: Build Demo
+          command: |
+            cd ext
+            7za x fatfs-0.13c_patched.7z
+            cd ../demos/STM32/RT-STM32F103-STM3210E_EVAL-FATFS-USB
+            make
+      - store_artifacts:
+          path: ./demos/STM32/RT-STM32F103-STM3210E_EVAL-FATFS-USB/build/ch.elf
 
