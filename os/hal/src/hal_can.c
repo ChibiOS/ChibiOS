@@ -219,6 +219,24 @@ bool canTryReceiveI(CANDriver *canp,
 }
 
 /**
+ * @brief   Tries to abort an ongoing transmission.
+ *
+ * @param[in] canp      pointer to the @p CANDriver object
+ * @param[in] mailbox   mailbox number
+ *
+ * @xclass
+ */
+void canTryAbortX(CANDriver *canp,
+                  canmbx_t mailbox) {
+
+  osalDbgCheck((canp != NULL) &&
+               (mailbox != CAN_ANY_MAILBOX) &&
+               (mailbox <= (canmbx_t)CAN_TX_MAILBOXES));
+
+  can_lld_abort(canp, mailbox);
+}
+
+/**
  * @brief   Can frame transmission.
  * @details The specified frame is queued for transmission, if the hardware
  *          queue is full then the invoking thread is queued.

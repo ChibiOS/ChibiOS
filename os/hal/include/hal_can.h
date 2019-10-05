@@ -231,6 +231,8 @@ extern "C" {
   bool canTryReceiveI(CANDriver *canp,
                       canmbx_t mailbox,
                       CANRxFrame *crfp);
+  void canTryAbortX(CANDriver *canp,
+                    canmbx_t mailbox);
   msg_t canTransmitTimeout(CANDriver *canp,
                            canmbx_t mailbox,
                            const CANTxFrame *ctfp,

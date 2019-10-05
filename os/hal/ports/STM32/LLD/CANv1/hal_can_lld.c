@@ -942,6 +942,20 @@ void can_lld_receive(CANDriver *canp,
   crfp->TIME = (uint16_t)(rdtr >> 16);
 }
 
+/**
+ * @brief   Tries to abort an ongoing transmission.
+ *
+ * @param[in] canp      pointer to the @p CANDriver object
+ * @param[in] mailbox   mailbox number
+ *
+ * @notapi
+ */
+void can_lld_abort(CANDriver *canp,
+                   canmbx_t mailbox) {
+
+  canp->can->TSR = 128U << ((mailbox - 1U) * 8U);
+}
+
 #if CAN_USE_SLEEP_MODE || defined(__DOXYGEN__)
 /**
  * @brief   Enters the sleep mode.

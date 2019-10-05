@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added canTryAbortX() function to CAN driver, implemented
+       for STM32 CANv1.
 - NEW: Added error handling to WSPI driver, now LLDs can report error
        conditions to upper layers.
 - NEW: Added mcuconf.h generator for STM32G4x4.
