@@ -75,6 +75,7 @@
 
 *** 19.1.4 ***
 - NEW: Made bus acquire/release functions in SNOR driver public.
+- FIX: Fixed wrong debug check in STM32 I2Cv1 driver (bug #1048).
 - FIX: Fixed warning in simulator PAL driver (bug #1047).
 - FIX: Fixed board initialization failure on STM32F030x6 (bug #1046).
 - FIX: Fixed STM32 I2Cv1 BTF event not cleared (bug #1045).
