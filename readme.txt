@@ -124,6 +124,8 @@
 - HAL: Added a new interface for range-finder devices (used by EX).
 - HAL: Added mcuconf.h updater tool for STM32F407 (backported to 19.1.1).
 - NIL: Integrated NIL 4.0.
+- FIX: Fixed serial NOR driver wrong macro definition (bug #1044)
+       (backported to 19.1.4).
 - FIX: Fixed missing dummy cycles in memory map mode on STM32 QSPI driver
        (bug #1042)(backported to 19.1.4).
 - FIX: Fixed missing DMA definitions for STM32F412 I2C3 (bug #1041)
