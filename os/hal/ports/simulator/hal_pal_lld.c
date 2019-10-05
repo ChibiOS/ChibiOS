@@ -83,6 +83,7 @@ void _pal_lld_setgroupmode(ioportid_t port,
     break;
   case PAL_MODE_UNCONNECTED:
     port->latch |= mask;
+    /* FALLTHROUGH */
   case PAL_MODE_OUTPUT_PUSHPULL:
     port->dir |= mask;
     break;
