@@ -75,6 +75,7 @@
 
 *** 19.1.4 ***
 - NEW: Made bus acquire/release functions in SNOR driver public.
+- FIX: Fixed serial NOR driver wrong macro definition (bug #1044).
 - FIX: Fixed missing dummy cycles in memory map mode on STM32 QSPI driver
        (bug #1042).
 - FIX: Fixed missing DMA definitions for STM32F412 I2C3 (bug #1041).
