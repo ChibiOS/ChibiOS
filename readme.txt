@@ -75,6 +75,7 @@
 
 *** 19.1.4 ***
 - NEW: Made bus acquire/release functions in SNOR driver public.
+- FIX: Fixed STM32 I2Cv1 BTF event not cleared (bug #1045).
 - FIX: Fixed serial NOR driver wrong macro definition (bug #1044).
 - FIX: Fixed missing dummy cycles in memory map mode on STM32 QSPI driver
        (bug #1042).
