@@ -88,6 +88,7 @@
 *** 18.2.3 ***
 - NEW: Added a check on defective GCC versions, Cortex-M0 only.
 - NEW: Extra timer checks in STM32 ST driver.
+- FIX: Fixed board initialization failure on STM32F030x6 (bug #1046).
 - FIX: Fixed STM32 I2Cv1 BTF event not cleared (bug #1045).
 - FIX: Fixed missing DMA definitions for STM32F412 I2C3 (bug #1041).
 - FIX: Fixed missing I2C4 RCC definitions for L4/L4+ (bug #1036).
