@@ -127,7 +127,7 @@ static void rtc_decode_date(uint32_t dr, RTCDateTime *timespec) {
                      ((dr >> RTC_TR_MNU_OFFSET) & 15);
   timespec->day   = (((dr >> RTC_DR_DT_OFFSET) & 3) * 10) +
                      ((dr >> RTC_DR_DU_OFFSET) & 15);
-  timespec->dayofweek = ((dr >> RTC_DR_WDU_OFFSET) & 7) + 1;
+  timespec->dayofweek = (dr >> RTC_DR_WDU_OFFSET) & 7;
 }
 
 /**
@@ -194,7 +194,7 @@ static uint32_t rtc_encode_date(const RTCDateTime *timespec) {
   dr = dr | ((n % 10) << RTC_DR_DT_OFFSET);
 
   /* Days of week conversion.*/
-  dr = dr | ((timespec->dayofweek - 1) << RTC_DR_WDU_OFFSET);
+  dr = dr | (timespec->dayofweek << RTC_DR_WDU_OFFSET);
 
   return dr;
 }
