@@ -36,6 +36,7 @@
 
 const WSPIConfig WSPIcfg1 = {
   .end_cb           = NULL,
+  .error_cb         = NULL,
   .dcr1             = STM32_DCR1_MTYP(1U) |         /* Macronix mode.       */
                       STM32_DCR1_DEVSIZE(26U) |     /* 64MB device.         */
                       STM32_DCR1_CSHT(1U),          /* NCS 2 cycles delay.  */
