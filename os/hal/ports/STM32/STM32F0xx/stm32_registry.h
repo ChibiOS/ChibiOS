@@ -130,7 +130,7 @@
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
 #define STM32_HAS_GPIOB                     TRUE
-#if !defined(STM32F030x4)
+#if !defined(STM32F030x4) && !defined(STM32F030x6)
 #define STM32_HAS_GPIOC                     TRUE
 #define STM32_HAS_GPIOD                     TRUE
 #else
