@@ -74,9 +74,11 @@
 *****************************************************************************
 
 *** Next ***
-- NEW: Added canTryAbortX() function to CAN driver, implemented
+- NIL: New functions: chSemResetWithMessageI() and chSemResetWithMessage().
+- RT:  New functions: chSemResetWithMessageI() and chSemResetWithMessage().
+- HAL: Added canTryAbortX() function to CAN driver, implemented
        for STM32 CANv1.
-- NEW: Added error handling to WSPI driver, now LLDs can report error
+- HAL: Added error handling to WSPI driver, now LLDs can report error
        conditions to upper layers.
 - NEW: Added mcuconf.h generator for STM32G4x4.
 - HAL: STM32 DMAv1 driver improvements and generalization, added support
