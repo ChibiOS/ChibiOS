@@ -553,35 +553,35 @@
  * @brief   I2C1 clock source.
  */
 #if !defined(STM32_I2C1SEL) || defined(__DOXYGEN__)
-#define STM32_I2C1SEL                       STM32_I2C1SEL_PCLK
+#define STM32_I2C1SEL                       STM32_I2C1SEL_PCLK1
 #endif
 
 /**
  * @brief   I2C2 clock source.
  */
 #if !defined(STM32_I2C2SEL) || defined(__DOXYGEN__)
-#define STM32_I2C2SEL                       STM32_I2C2SEL_PCLK
+#define STM32_I2C2SEL                       STM32_I2C2SEL_PCLK1
 #endif
 
 /**
  * @brief   I2C3 clock source.
  */
 #if !defined(STM32_I2C3SEL) || defined(__DOXYGEN__)
-#define STM32_I2C3SEL                       STM32_I2C3SEL_PCLK
+#define STM32_I2C3SEL                       STM32_I2C3SEL_PCLK1
 #endif
 
 /**
  * @brief   I2C4 clock source.
  */
 #if !defined(STM32_I2C4SEL) || defined(__DOXYGEN__)
-#define STM32_I2C4SEL                       STM32_I2C4SEL_PCLK
+#define STM32_I2C4SEL                       STM32_I2C4SEL_PCLK1
 #endif
 
 /**
  * @brief   LPTIM1 clock source.
  */
 #if !defined(STM32_LPTIM1SEL) || defined(__DOXYGEN__)
-#define STM32_LPTIM1SEL                     STM32_LPTIM1SEL_PCLK
+#define STM32_LPTIM1SEL                     STM32_LPTIM1SEL_PCLK1
 #endif
 
 /**
