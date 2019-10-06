@@ -80,6 +80,7 @@
 - FIX: Fixed board initialization failure on STM32F030x6 (bug #1046).
 - FIX: Fixed STM32 I2Cv1 BTF event not cleared (bug #1045).
 - FIX: Fixed serial NOR driver wrong macro definition (bug #1044).
+- FIX: Fixed STM32F7 I2C registry dma channel (bug #1043).
 - FIX: Fixed missing dummy cycles in memory map mode on STM32 QSPI driver
        (bug #1042).
 - FIX: Fixed missing DMA definitions for STM32F412 I2C3 (bug #1041).
