@@ -139,7 +139,7 @@ static const dacparams_t dma2_ch1_params = {
 #endif
 
 #if STM32_DAC_USE_DAC2_CH2 == TRUE
-static const dacparams_t dma1_ch2_params = {
+static const dacparams_t dma2_ch2_params = {
   .dac          = DAC2,
   .dataoffset   = CHANNEL_DATA_OFFSET,
   .regshift     = 16U,
