@@ -81,7 +81,7 @@
        for STM32 CANv1.
 - HAL: Added error handling to WSPI driver, now LLDs can report error
        conditions to upper layers.
-- NEW: Added mcuconf.h generator for STM32G4x4.
+- NEW: Added mcuconf.h generator for STM32G4x1, STM32G4x3 and STM32G4x4.
 - HAL: STM32 DMAv1 driver improvements and generalization, added support
        for 8 channels.
 - HAL: Initial STM32G4xx support in HAL.
