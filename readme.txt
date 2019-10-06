@@ -75,6 +75,7 @@
 
 *** 19.1.4 ***
 - NEW: Made bus acquire/release functions in SNOR driver public.
+- FIX: Fixed wrong clock disable check in STM32 DACv1 driver (bug #1050).
 - FIX: Fixed clock tree differences in STM32F4 family (bug #1049).
 - FIX: Fixed wrong debug check in STM32 I2Cv1 driver (bug #1048).
 - FIX: Fixed warning in simulator PAL driver (bug #1047).
