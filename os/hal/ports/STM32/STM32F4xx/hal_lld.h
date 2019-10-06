@@ -183,11 +183,7 @@
 #if (STM32_CK48MSEL == STM32_CK48MSEL_PLL) || defined(__DOXYGEN__)
 #define STM32_PLL48CLK              (STM32_PLLVCO / STM32_PLLQ_VALUE)
 #elif STM32_CK48MSEL == STM32_CK48MSEL_PLLALT
-#if STM32_RCC_CK48MSEL_USES_I2S
-#define STM32_PLL48CLK              STM32_PLLI2S_Q_CLKOUT
-#else
-#define STM32_PLL48CLK              STM32_PLLSAI_Q_CLKOUT
-#endif
+#define STM32_PLL48CLK              STM32_PLL48CLK_ALTSRC
 #else
 #error "invalid source selected for PLL48CLK clock"
 #endif

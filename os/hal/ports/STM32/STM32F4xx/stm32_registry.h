@@ -131,6 +131,7 @@
 #define STM32_HAS_RCC_I2SPLLSRC             FALSE
 #define STM32_HAS_RCC_CK48MSEL              TRUE
 #define STM32_RCC_CK48MSEL_USES_I2S         FALSE
+#define STM32_PLL48CLK_ALTSRC               STM32_PLLSAI_Q_CLKOUT
 #define STM32_TIMPRE_PRESCALE4              TRUE
 
 /* ADC attributes.*/
@@ -509,6 +510,7 @@
 #define STM32_HAS_RCC_I2SPLLSRC             FALSE
 #define STM32_HAS_RCC_CK48MSEL              TRUE
 #define STM32_RCC_CK48MSEL_USES_I2S         FALSE
+#define STM32_PLL48CLK_ALTSRC               STM32_PLLSAI_P_CLKOUT
 #define STM32_TIMPRE_PRESCALE4              TRUE
 
 /* ADC attributes.*/
@@ -856,8 +858,6 @@
 #define STM32_HAS_RCC_PLLI2S                TRUE
 #define STM32_HAS_RCC_DCKCFGR               TRUE
 #define STM32_HAS_RCC_DCKCFGR2              FALSE
-#define STM32_HAS_RCC_CK48MSEL_I2S          FALSE
-#define STM32_HAS_RCC_CK48MSEL_SAI          FALSE
 #define STM32_HAS_RCC_I2SSRC                TRUE
 #define STM32_HAS_RCC_I2SPLLSRC             FALSE
 #define STM32_HAS_RCC_CK48MSEL              FALSE
@@ -1234,6 +1234,7 @@
 #define STM32_HAS_RCC_I2SPLLSRC             TRUE
 #define STM32_HAS_RCC_CK48MSEL              TRUE
 #define STM32_RCC_CK48MSEL_USES_I2S         TRUE
+#define STM32_PLL48CLK_ALTSRC               STM32_PLLI2S_Q_CLKOUT
 #define STM32_TIMPRE_PRESCALE4              FALSE
 
 /* ADC attributes.*/
@@ -1618,6 +1619,7 @@
 #define STM32_HAS_RCC_I2SPLLSRC             TRUE
 #define STM32_HAS_RCC_CK48MSEL              TRUE
 #define STM32_RCC_CK48MSEL_USES_I2S         TRUE
+#define STM32_PLL48CLK_ALTSRC               STM32_PLLI2S_Q_CLKOUT
 #define STM32_TIMPRE_PRESCALE4              FALSE
 
 /* ADC attributes.*/
@@ -1949,6 +1951,7 @@
 #define STM32_HAS_RCC_I2SPLLSRC             FALSE
 #define STM32_HAS_RCC_CK48MSEL              FALSE
 #define STM32_RCC_CK48MSEL_USES_I2S         FALSE
+#define STM32_PLL48CLK_ALTSRC               STM32_PLLSAI_Q_CLKOUT
 #define STM32_TIMPRE_PRESCALE4              FALSE
 
 /* ADC attributes.*/
@@ -2248,12 +2251,11 @@
 #define STM32_HAS_RCC_PLLI2S                FALSE
 #define STM32_HAS_RCC_DCKCFGR               TRUE
 #define STM32_HAS_RCC_DCKCFGR2              TRUE
-#define STM32_HAS_RCC_CK48MSEL_I2S          FALSE
-#define STM32_HAS_RCC_CK48MSEL_SAI          FALSE
 #define STM32_HAS_RCC_I2SSRC                FALSE
 #define STM32_HAS_RCC_I2SPLLSRC             FALSE
 #define STM32_HAS_RCC_CK48MSEL              FALSE
 #define STM32_RCC_CK48MSEL_USES_I2S         FALSE
+#define STM32_PLL48CLK_ALTSRC               STM32_PLLSAI_Q_CLKOUT
 #define STM32_TIMPRE_PRESCALE4              FALSE
 
 /* ADC attributes.*/
@@ -2523,8 +2525,6 @@
 #define STM32_HAS_RCC_PLLI2S                TRUE
 #define STM32_HAS_RCC_DCKCFGR               FALSE
 #define STM32_HAS_RCC_DCKCFGR2              FALSE
-#define STM32_HAS_RCC_CK48MSEL_I2S          FALSE
-#define STM32_HAS_RCC_CK48MSEL_SAI          FALSE
 #define STM32_HAS_RCC_I2SSRC                TRUE
 #define STM32_HAS_RCC_I2SPLLSRC             FALSE
 #define STM32_HAS_RCC_CK48MSEL              FALSE
