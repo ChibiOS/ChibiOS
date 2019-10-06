@@ -92,6 +92,7 @@
 - FIX: Fixed warning in simulator PAL driver (bug #1047).
 - FIX: Fixed board initialization failure on STM32F030x6 (bug #1046).
 - FIX: Fixed STM32 I2Cv1 BTF event not cleared (bug #1045).
+- FIX: Fixed STM32F7 I2C registry dma channel (bug #1043).
 - FIX: Fixed missing DMA definitions for STM32F412 I2C3 (bug #1041).
 - FIX: Fixed missing I2C4 RCC definitions for L4/L4+ (bug #1036).
 - FIX: Fixed missing delay after STM32 wait states setup (bug #1035).
