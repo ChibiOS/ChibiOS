@@ -592,8 +592,9 @@ typedef enum {
   dacsample_t               init;                                           \
   /* DAC data holding register mode.*/                                      \
   dacdhrmode_t              datamode;                                       \
-  /* DAC control register.*/                                                \
-  uint16_t                  cr
+  /* DAC control register lower 16 bits.*/                                  \
+  uint32_t                  cr
+
 /**
  * @brief   Low level fields of the DAC group configuration structure.
  */
