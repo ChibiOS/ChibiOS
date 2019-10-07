@@ -509,6 +509,34 @@
 /** @} */
 
 /**
+ * @name    DMAMUX peripheral specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the DMAMUX peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableDMAMUX(lp) rccEnableAHB1(RCC_AHB1ENR_DMAMUX1EN, lp)
+
+/**
+ * @brief   Disables the DMAMUX peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableDMAMUX() rccDisableAHB1(RCC_AHB1ENR_DMAMUX1EN)
+
+/**
+ * @brief   Resets the DMAMUX peripheral.
+ *
+ * @api
+ */
+#define rccResetDMAMUX() rccResetAHB1(RCC_AHB1RSTR_DMAMUX1RST)
+/** @} */
+
+/**
  * @name    PWR interface specific RCC operations
  * @{
  */
