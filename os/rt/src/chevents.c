@@ -31,12 +31,12 @@
  *          @p thread_t structure.
  *          Operations defined for events:
  *          - <b>Wait</b>, the invoking thread goes to sleep until a certain
- *            AND/OR combination of events become pending.
+ *            AND/OR combination of events are signaled.
  *          - <b>Clear</b>, a mask of events is cleared from the pending
  *            events, the cleared events mask is returned (only the
  *            events that were actually pending and then cleared).
- *          - <b>Signal</b>, an events mask is directly ORed to the mask of the
- *            signaled thread.
+ *          - <b>Signal</b>, an events mask is directly ORed to the mask of
+ *            the signaled thread.
  *          - <b>Broadcast</b>, each thread registered on an Event Source is
  *            signaled with the events specified in its Event Listener.
  *          - <b>Dispatch</b>, an events mask is scanned and for each bit set
@@ -50,8 +50,8 @@
  *          An unlimited number of Event Sources can exists in a system and
  *          each thread can be listening on an unlimited number of
  *          them.
- * @pre     In order to use the Events APIs the @p CH_CFG_USE_EVENTS option must be
- *          enabled in @p chconf.h.
+ * @pre     In order to use the Events APIs the @p CH_CFG_USE_EVENTS option
+ *          must be enabled in @p chconf.h.
  * @post    Enabling events requires 1-4 (depending on the architecture)
  *          extra bytes in the @p thread_t structure.
  * @{
