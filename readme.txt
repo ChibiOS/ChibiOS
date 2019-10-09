@@ -2,6 +2,8 @@
 *** Files Organization                                                    ***
 *****************************************************************************
 
+test text
+
 --{root}                        - ChibiOS directory.
   +--readme.txt                 - This file.
   +--documentation.html         - Shortcut to the web documentation page.
