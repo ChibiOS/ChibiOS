@@ -135,6 +135,7 @@
 #define STM32_LPTIM1_HANDLER        Vector1C4
 
 #define STM32_LPTIM1_NUMBER         97
+
 /*
  * USART units.
  */
