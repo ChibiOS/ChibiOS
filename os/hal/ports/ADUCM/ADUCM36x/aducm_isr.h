@@ -39,9 +39,20 @@
  */
 #define ADUCM_TIMER0_HANDLER        Vector6C
 #define ADUCM_TIMER1_HANDLER        Vector70
+#define ADUCM_TIMER2_HANDLER        Vector40
+#define ADUCM_TIMER3_HANDLER        Vector64
 
 #define ADUCM_TIMER0_NUMBER         11
 #define ADUCM_TIMER1_NUMBER         12
+#define ADUCM_TIMER2_NUMBER         0
+#define ADUCM_TIMER3_NUMBER         9
+
+/*
+ * UART units.
+ */
+#define ADUCM_UART0_HANDLER         Vector84
+
+#define ADUCM_UART0_NUMBER          17
 /** @} */
 
 /*===========================================================================*/
