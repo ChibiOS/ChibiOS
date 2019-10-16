@@ -44,8 +44,8 @@
 /**
  * @brief   SysTick timer IRQ priority.
  */
-#if !defined(STM32_ST_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ST_IRQ_PRIORITY               8
+#if !defined(ADUCM_ST_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define ADUCM_ST_IRQ_PRIORITY               7
 #endif
 
 /**
@@ -54,8 +54,8 @@
  *          is required.
  * @note    Timers 0, 1, 2 are supported.
  */
-#if !defined(STM32_ST_USE_TIMER) || defined(__DOXYGEN__)
-#define STM32_ST_USE_TIMER                  2
+#if !defined(ADUCM_ST_USE_TIMER) || defined(__DOXYGEN__)
+#define ADUCM_ST_USE_TIMER                  0
 #endif
 /** @} */
 
