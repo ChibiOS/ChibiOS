@@ -55,9 +55,7 @@
 #define GP0_1                       1U
 #define GP0_2                       2U
 #define GP0_3                       3U
-#define GP0_4                       4U
 #define GP0_LED_BLUE                4U
-#define GP0_5                       5U
 #define GP0_LED_GREEN               5U
 #define GP0_6                       6U
 #define GP0_7                       7U
@@ -74,7 +72,7 @@
 
 #define GP2_0                       0U
 #define GP2_1                       1U
-#define GP2_2                       2U
+#define GP2_BUTTON                  2U
 #define GP2_3                       3U
 #define GP2_SWCLK                   3U
 #define GP2_4                       4U
@@ -89,9 +87,10 @@
  */
 #define LINE_LED_BLUE               PAL_LINE(GP0, 4U)
 #define LINE_LED_GREEN              PAL_LINE(GP0, 5U)
-#define LINE_LED_NPOR               PAL_LINE(GP0, 7U)
-#define LINE_LED_SWCLK              PAL_LINE(GP2, 3U)
-#define LINE_LED_SWD                PAL_LINE(GP2, 4U)
+#define LINE_NPOR                   PAL_LINE(GP0, 7U)
+#define LINE_BUTTON                 PAL_LINE(GP2, 2U)
+#define LINE_SWCLK                  PAL_LINE(GP2, 3U)
+#define LINE_SWD                    PAL_LINE(GP2, 4U)
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -217,7 +216,7 @@
  *
  * P2.0  - PIN0                     (CON0, GPIO - input pullup).
  * P2.1  - PIN1                     (CON0, GPIO - input pullup).
- * P2.2  - PIN2                     (CON0, GPIO - input pullup).
+ * P2.2  - BUTTON                   (CON0, GPIO - input floating).
  * P2.3  - SWCLK                    (CON0, SWCLK).
  * P2.4  - SWD                      (CON0, SWD).
  * P2.5  - PIN5                     (CON0, GPIO - input pullup).
@@ -226,7 +225,7 @@
  */
 #define VAL_GP2CON                  (PIN_CON_CON(GP2_0, 0) |                \
                                      PIN_CON_CON(GP2_1, 0) |                \
-                                     PIN_CON_CON(GP2_2, 0) |                \
+                                     PIN_CON_CON(GP2_BUTTON, 0) |           \
                                      PIN_CON_CON(GP2_SWCLK, 0) |            \
                                      PIN_CON_CON(GP2_SWD, 0) |              \
                                      PIN_CON_CON(GP2_5, 0) |                \
@@ -234,7 +233,7 @@
                                      PIN_CON_CON(GP2_7, 0))
 #define VAL_GP2OEN                  (PIN_OEN_INPUT(GP2_0) |                 \
                                      PIN_OEN_INPUT(GP2_1) |                 \
-                                     PIN_OEN_INPUT(GP2_2) |                 \
+                                     PIN_OEN_INPUT(GP2_BUTTON) |            \
                                      PIN_OEN_INPUT(GP2_SWCLK) |             \
                                      PIN_OEN_INPUT(GP2_SWD) |               \
                                      PIN_OEN_INPUT(GP2_5) |                 \
@@ -242,7 +241,7 @@
                                      PIN_OEN_INPUT(GP2_7))
 #define VAL_GP2PUL                  (PIN_PUL_PULLUP(GP2_0) |                \
                                      PIN_PUL_PULLUP(GP2_1) |                \
-                                     PIN_PUL_PULLUP(GP2_2) |                \
+                                     PIN_PUL_FLOATING(GP2_BUTTON) |         \
                                      PIN_PUL_PULLUP(GP2_SWCLK) |            \
                                      PIN_PUL_PULLUP(GP2_SWD) |              \
                                      PIN_PUL_PULLUP(GP2_5) |                \
@@ -250,7 +249,7 @@
                                      PIN_PUL_PULLUP(GP2_7))
 #define VAL_GP2OCE                  (PIN_OCE_NORMAL(GP2_0) |                \
                                      PIN_OCE_NORMAL(GP2_1) |                \
-                                     PIN_OCE_NORMAL(GP2_2) |                \
+                                     PIN_OCE_NORMAL(GP2_BUTTON) |           \
                                      PIN_OCE_NORMAL(GP2_SWCLK) |            \
                                      PIN_OCE_NORMAL(GP2_SWD) |              \
                                      PIN_OCE_NORMAL(GP2_5) |                \
