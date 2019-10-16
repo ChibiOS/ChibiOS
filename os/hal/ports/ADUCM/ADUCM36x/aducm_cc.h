@@ -113,18 +113,18 @@
  * @{
  */
 /**
- * @brief   Enables the UART peripheral clock.
+ * @brief   Enables the UART0 peripheral clock.
  *
  * @api
  */
-#define ccEnableUART() ccEnableClk(CLKDIS_DISUARTCLK)
+#define ccEnableUART0() ccEnableClk(CLKDIS_DISUARTCLK)
 
 /**
- * @brief   Disables the UART peripheral clock.
+ * @brief   Disables the UART0 peripheral clock.
  *
  * @api
  */
-#define ccDisableUART() ccDisableClk(CLKDIS_DISUARTCLK)
+#define ccDisableUART0() ccDisableClk(CLKDIS_DISUARTCLK)
 /** @} */
 
 /**
@@ -132,18 +132,18 @@
  * @{
  */
 /**
- * @brief   Enables the PWM peripheral clock.
+ * @brief   Enables the PWM0 peripheral clock.
  *
  * @api
  */
-#define ccEnablePWM() ccEnableClk(CLKDIS_DISPWMCLK)
+#define ccEnablePWM0() ccEnableClk(CLKDIS_DISPWMCLK)
 
 /**
- * @brief   Disables the PWM peripheral clock.
+ * @brief   Disables the PWM0 peripheral clock.
  *
  * @api
  */
-#define ccDisablePWM() ccDisableClk(CLKDIS_DISPWMCLK)
+#define ccDisablePWM0() ccDisableClk(CLKDIS_DISPWMCLK)
 /** @} */
 
 /**
@@ -184,18 +184,18 @@
  * @{
  */
 /**
- * @brief   Enables the DAC peripheral clock.
+ * @brief   Enables the DAC0 peripheral clock.
  *
  * @api
  */
-#define ccEnableDAC() ccEnableClk(CLKDIS_DISDACCLK)
+#define ccEnableDAC0() ccEnableClk(CLKDIS_DISDACCLK)
 
 /**
- * @brief   Disables the DAC peripheral clock.
+ * @brief   Disables the DAC0 peripheral clock.
  *
  * @api
  */
-#define ccDisableDAC() ccDisableClk(CLKDIS_DISDACCLK)
+#define ccDisableDAC0() ccDisableClk(CLKDIS_DISDACCLK)
 /** @} */
 
 /**
@@ -203,18 +203,18 @@
  * @{
  */
 /**
- * @brief   Enables the DMA peripheral clock.
+ * @brief   Enables the DMA0 peripheral clock.
  *
  * @api
  */
-#define ccEnableDMA() ccEnableClk(CLKDIS_DISDMACLK)
+#define ccEnableDMA0() ccEnableClk(CLKDIS_DISDMACLK)
 
 /**
- * @brief   Disables the DMA peripheral clock.
+ * @brief   Disables the DMA0 peripheral clock.
  *
  * @api
  */
-#define ccDisableDMA() ccDisableClk(CLKDIS_DISDMACLK)
+#define ccDisableDMA0() ccDisableClk(CLKDIS_DISDMACLK)
 /** @} */
 
 /**
@@ -222,18 +222,18 @@
  * @{
  */
 /**
- * @brief   Enables the ADC peripheral clock.
+ * @brief   Enables the ADCs peripheral clock.
  *
  * @api
  */
-#define ccEnableADC() ccEnableClk(CLKDIS_DISADCCLK)
+#define ccEnableADCs() ccEnableClk(CLKDIS_DISADCCLK)
 
 /**
- * @brief   Disables the ADC peripheral clock.
+ * @brief   Disables the ADCs peripheral clock.
  *
  * @api
  */
-#define ccDisableADC() ccDisableClk(CLKDIS_DISADCCLK)
+#define ccDisableADCs() ccDisableClk(CLKDIS_DISADCCLK)
 /** @} */
 
 /*===========================================================================*/
