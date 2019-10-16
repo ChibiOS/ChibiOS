@@ -16,10 +16,11 @@
 
 #include "ch.h"
 #include "hal.h"
+#include "rt_test_root.h"
+#include "oslib_test_root.h"
 
 /*
- * This is a periodic thread that does absolutely nothing except flashing
- * a LED.
+ * Green and Blue LEDs blinker thread, times are in milliseconds.
  */
 static THD_WORKING_AREA(waThread1, 128);
 static THD_FUNCTION(Thread1, arg) {
@@ -57,12 +58,25 @@ int main(void) {
   /*
    * Creates the example thread.
    */
-  (void) chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO + 1, Thread1, NULL);
+  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO + 1, Thread1, NULL);
 
   /*
-   * Normal main() thread activity, in this demo it does nothing.
+   * Activates the serial driver 0 using the driver default configuration.
+   * P0.1(TX) and P0.2(RX) are routed to UART0.
+   */
+  sdStart(&SD0, NULL);
+  palSetPadMode(GP0, 1, PAL_MODE_MULTIPLEXER(3));
+  palSetPadMode(GP0, 2, PAL_MODE_MULTIPLEXER(3));
+
+  /*
+   * Normal main() thread activity, in this demo it does nothing except
+   * sleeping in a loop and check the button state.
    */
   while (true) {
+    if (!palReadLine(LINE_BUTTON)) {
+      test_execute((BaseSequentialStream *)&SD0, &rt_test_suite);
+      test_execute((BaseSequentialStream *)&SD0, &oslib_test_suite);
+    }
     chThdSleepMilliseconds(500);
   }
 }

@@ -8,8 +8,19 @@ The demo runs on an ADICUP360 board.
 
 ** The Demo **
 
-The demo flashes the two on-board LEDs using a thread.
+The demo flashes the two on-board LEDs using a thread, by pressing the button 
+located on the board (BOOT) the test procedure is activated with output on the 
+serial port SD0 (UART0, mapped on mBED debug COM port).
 
+** Board setup **
+
+To redirect P0.1 and P0.2 to the mBED debug COM port it is required to setup
+the switch matrix as:
+ - S1 -> 0
+ - S2 -> 1
+ - S3 -> 1
+ - S4 -> 0
+   
 ** Build Procedure **
 
 The demo has been tested by using the free Codesourcery GCC-based toolchain

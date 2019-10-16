@@ -56,7 +56,8 @@
 /*
  * SERIAL driver system settings.
  */
-#define STM32_SERIAL_USE_UART1              TRUE
+#define ADUCM_SERIAL_USE_UART0              TRUE
+#define ADUCM_SERIAL_UART0_PRIORITY         12
 
 /** @} */
 #endif /* MCUCONF_H */
