@@ -73,9 +73,7 @@
 #define GP2_0                       0U
 #define GP2_1                       1U
 #define GP2_BUTTON                  2U
-#define GP2_3                       3U
 #define GP2_SWCLK                   3U
-#define GP2_4                       4U
 #define GP2_SWD                     4U
 #define GP2_5                       5U
 #define GP2_6                       6U
