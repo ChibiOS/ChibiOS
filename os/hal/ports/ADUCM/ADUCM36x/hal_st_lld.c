@@ -30,6 +30,24 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
+#if OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC
+
+#if defined(ADUCM_FCLK)
+#define SYSTICK_CK                          ADUCM_FCLK
+#else
+#define SYSTICK_CK                          (ADUCM_HFOSC / 8)
+#endif
+
+#if SYSTICK_CK % OSAL_ST_FREQUENCY != 0
+#error "the selected ST frequency is not obtainable because integer rounding"
+#endif
+
+#if (SYSTICK_CK / OSAL_ST_FREQUENCY) - 1 > 0xFFFFFF
+#error "the selected ST frequency is not obtainable because SysTick timer counter limits"
+#endif
+
+#endif /* OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC */
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -83,9 +101,10 @@ void st_lld_init(void) {
 #if OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC
   /* Periodic systick mode, the Cortex-Mx internal systick timer is used
      in this mode.*/
-  SysTick->LOAD = ADUCM_FCLK / CH_CFG_ST_FREQUENCY - (systime_t)1;
-  SysTick->VAL = (uint32_t)0;
-  SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_ENABLE_Msk |
+  SysTick->LOAD = (SYSTICK_CK / OSAL_ST_FREQUENCY) - 1;
+  SysTick->VAL = 0;
+  SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk |
+                  SysTick_CTRL_ENABLE_Msk |
                   SysTick_CTRL_TICKINT_Msk;
 
   /* IRQ enabled.*/
