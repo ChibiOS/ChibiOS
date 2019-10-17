@@ -65,8 +65,8 @@ int main(void) {
    * P0.1(TX) and P0.2(RX) are routed to UART0.
    */
   sdStart(&SD0, NULL);
-  palSetPadMode(GP0, 1, PAL_MODE_MULTIPLEXER(3));
-  palSetPadMode(GP0, 2, PAL_MODE_MULTIPLEXER(3));
+  palSetPadMode(GP0, 1, PAL_MODE_MULTIPLEXER(3) | PAL_ADUCM_PUL_PULLUP);
+  palSetPadMode(GP0, 2, PAL_MODE_MULTIPLEXER(3) | PAL_ADUCM_PUL_PULLUP);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
