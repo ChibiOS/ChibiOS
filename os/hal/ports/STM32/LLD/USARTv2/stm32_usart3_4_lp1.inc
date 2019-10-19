@@ -77,16 +77,16 @@
 
 #if (HAL_USE_SERIAL && STM32_SERIAL_USE_USART3) ||                          \
     (HAL_USE_UART && STM32_UART_USE_USART3)
-#define STM32_USART3_IS_USED         TRUE
+#define STM32_USART3_IS_USED        TRUE
 #else
-#define STM32_USART3_IS_USED         FALSE
+#define STM32_USART3_IS_USED        FALSE
 #endif
 
 #if (HAL_USE_SERIAL && STM32_SERIAL_USE_UART4) ||                           \
     (HAL_USE_UART && STM32_UART_USE_UART4)
-#define STM32_USART4_IS_USED         TRUE
+#define STM32_USART4_IS_USED        TRUE
 #else
-#define STM32_USART4_IS_USED         FALSE
+#define STM32_USART4_IS_USED        FALSE
 #endif
 
 #if (HAL_USE_SERIAL && STM32_SERIAL_USE_LPUART1)
