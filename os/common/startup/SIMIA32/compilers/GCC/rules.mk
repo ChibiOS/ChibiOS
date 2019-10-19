@@ -55,10 +55,13 @@ LSTDIR    = $(BUILDDIR)/lst
 
 # Object files groups
 COBJS     = $(addprefix $(OBJDIR)/, $(notdir $(CSRC:.c=.o)))
-CPPOBJS   = $(addprefix $(OBJDIR)/, $(notdir $(CPPSRC:.cpp=.o)))
+#CPPOBJS   = $(addprefix $(OBJDIR)/, $(notdir $(CPPSRC:.cpp=.o)))
+CPPOBJS  := $(addprefix $(OBJDIR)/, $(notdir $(patsubst %.cpp, %.o, $(filter %.cpp, $(CPPSRC)))))
+CCOBJS   := $(addprefix $(OBJDIR)/, $(notdir $(patsubst %.cc, %.o, $(filter %.cc, $(CPPSRC)))))
 ASMOBJS   = $(addprefix $(OBJDIR)/, $(notdir $(ASMSRC:.s=.o)))
 ASMXOBJS  = $(addprefix $(OBJDIR)/, $(notdir $(ASMXSRC:.S=.o)))
-OBJS      = $(ASMXOBJS) $(ASMOBJS) $(COBJS) $(CPPOBJS)
+#OBJS      = $(ASMXOBJS) $(ASMOBJS) $(COBJS) $(CPPOBJS)
+OBJS      = $(ASMXOBJS) $(ASMOBJS) $(COBJS) $(CPPOBJS) $(CCOBJS)
 
 # Paths
 IINCDIR   = $(patsubst %,-I%,$(INCDIR) $(DINCDIR) $(UINCDIR))
@@ -119,6 +122,15 @@ $(DEPDIR):
 	@mkdir -p $(DEPDIR)
 
 $(CPPOBJS) : $(OBJDIR)/%.o : %.cpp $(MAKEFILE_LIST)
+ifeq ($(USE_VERBOSE_COMPILE),yes)
+	@echo
+	$(CPPC) -c $(CPPFLAGS) -I. $(IINCDIR) $< -o $@
+else
+	@echo Compiling $(<F)
+	@$(CPPC) -c $(CPPFLAGS) -I. $(IINCDIR) $< -o $@
+endif
+
+$(CCOBJS) : $(OBJDIR)/%.o : %.cc $(MAKEFILE_LIST)
 ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
 	$(CPPC) -c $(CPPFLAGS) -I. $(IINCDIR) $< -o $@
