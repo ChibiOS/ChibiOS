@@ -257,28 +257,22 @@ struct RTCDriverVMT _rtc_lld_vmt = {
 };
 #endif /* RTC_HAS_STORAGE == TRUE */
 
-/*===========================================================================*/
-/* Driver interrupt handlers.                                                */
-/*===========================================================================*/
-
-#if defined(STM32_RTC_COMMON_HANDLER)
-#if !defined(STM32_RTC_SUPPRESS_COMMON_ISR)
 /**
- * @brief   RTC common interrupt handler.
+ * @brief   RTC ISR service routine.
  *
- * @isr
  */
-OSAL_IRQ_HANDLER(STM32_RTC_COMMON_HANDLER) {
+static void rtc_lld_serve_interrupt(void) {
+
   uint32_t isr;
 
-  OSAL_IRQ_PROLOGUE();
-
-  /* Get the interrupt events. */
+  /* Get and clear the RTC interrupts. */
   isr = RTCD1.rtc->MISR;
   RTCD1.rtc->SCR = isr;
-  extiClearGroup1(EXTI_MASK1(STM32_RTC_EVENT_EXTI) |
-                  EXTI_MASK1(STM32_TAMP_EVENT_EXTI));
 
+  /* Clear EXTI events. */
+  STM32_RTC_CLEAR_ALL_EXTI();
+
+  /* Process call backs if enabled. */
   if (RTCD1.callback != NULL) {
 
 #if defined(RTC_MISR_WUTMF)
@@ -308,7 +302,7 @@ OSAL_IRQ_HANDLER(STM32_RTC_COMMON_HANDLER) {
     }
 #endif
 
-    /* Next handle the tamper interrupts. */
+    /* Get and clear the TAMP interrupts. */
      isr = RTCD1.tamp->MISR;
      RTCD1.tamp->SCR = isr;
 #if defined(TAMP_MISR_TAMP1MF)
@@ -321,34 +315,96 @@ OSAL_IRQ_HANDLER(STM32_RTC_COMMON_HANDLER) {
         RTCD1.callback(&RTCD1, RTC_EVENT_TAMP2);
       }
 #endif
-#if defined(TAMP_MISR_TAMP3MF)
-     if ((isr & TAMP_MISR_TAMP3MF) != 0U) {
+#if defined(TAMP_MISR_ITAMP3MF)
+     if ((isr & TAMP_MISR_ITAMP3MF) != 0U) {
         RTCD1.callback(&RTCD1, RTC_EVENT_TAMP3);
       }
 #endif
-#if defined(TAMP_MISR_TAMP4MF)
-     if ((isr & TAMP_MISR_TAMP4MF) != 0U) {
+#if defined(TAMP_MISR_ITAMP4MF)
+     if ((isr & TAMP_MISR_ITAMP4MF) != 0U) {
         RTCD1.callback(&RTCD1, RTC_EVENT_TAMP4);
       }
 #endif
-#if defined(TAMP_MISR_TAMP5MF)
-     if ((isr & TAMP_MISR_TAMP5MF) != 0U) {
+#if defined(TAMP_MISR_ITAMP5MF)
+     if ((isr & TAMP_MISR_ITAMP5MF) != 0U) {
         RTCD1.callback(&RTCD1, RTC_EVENT_TAMP5);
       }
 #endif
-#if defined(TAMP_MISR_TAMP6MF)
-     if ((isr & TAMP_MISR_TAMP6MF) != 0U) {
+#if defined(TAMP_MISR_ITAMP6MF)
+     if ((isr & TAMP_MISR_ITAMP6MF) != 0U) {
         RTCD1.callback(&RTCD1, RTC_EVENT_TAMP6);
       }
 #endif
     }
+}
+
+/*===========================================================================*/
+/* Driver interrupt handlers.                                                */
+/*===========================================================================*/
+
+#if defined(STM32_RTC_COMMON_HANDLER)
+#if !defined(STM32_RTC_SUPPRESS_COMMON_ISR)
+/**
+ * @brief   RTC common interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_RTC_COMMON_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  rtc_lld_serve_interrupt();
 
   OSAL_IRQ_EPILOGUE();
 }
 #endif /* !defined(STM32_RTC_SUPPRESS_COMMON_ISR) */
 
+#elif defined(STM32_RTC_TAMP_STAMP_HANDLER) &&                              \
+      defined(STM32_RTC_WKUP_HANDLER) &&                                    \
+      defined(STM32_RTC_ALARM_HANDLER)
+/**
+ * @brief   RTC TAMP/STAMP interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_RTC_TAMP_STAMP_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  rtc_lld_serve_interrupt();
+
+  OSAL_IRQ_EPILOGUE();
+}
+/**
+ * @brief   RTC wakeup interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_RTC_WKUP_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  rtc_lld_serve_interrupt();
+
+  OSAL_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   RTC alarm interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_RTC_ALARM_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  rtc_lld_serve_interrupt();
+
+  OSAL_IRQ_EPILOGUE();
+}
+
 #else
-#error "missing required RTC handlers definitions in registry"
+#error "missing required RTC handler definitions in registry"
 #endif
 
 /*===========================================================================*/
@@ -388,7 +444,6 @@ void rtc_lld_init(void) {
     RTCD1.rtc->ICSR &= ~RTC_ICSR_RSF;
   }
 
-
   /* TAMP pointer initialization. */
   RTCD1.tamp = TAMP;
 
@@ -402,15 +457,10 @@ void rtc_lld_init(void) {
   RTCD1.callback = NULL;
 
   /* Enabling RTC-related EXTI lines.*/
-
-  extiEnableGroup1(EXTI_MASK1(STM32_RTC_EVENT_EXTI) |
-                   EXTI_MASK1(STM32_TAMP_EVENT_EXTI),
-                   EXTI_MODE_RISING_EDGE | EXTI_MODE_ACTION_INTERRUPT);
-  /* The EXTI lines are direct. Events enabled by peripheral
-     and trigger on their rising edge only */
+  STM32_RTC_ENABLE_ALL_EXTI();
 
   /* IRQ vectors permanently assigned to this driver.*/
-  STM32_RTC_AND_TAMP_IRQ_ENABLE();
+  STM32_RTC_IRQ_ENABLE();
 }
 
 /**

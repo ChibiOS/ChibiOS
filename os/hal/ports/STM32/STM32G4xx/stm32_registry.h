@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2019 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    STM32L4xx+/stm32_registry.h
- * @brief   STM32L4xx+ capabilities registry.
+ * @file    STM32G4xx/stm32_registry.h
+ * @brief   STM32G4xx capabilities registry.
  *
  * @addtogroup HAL
  * @{
@@ -30,7 +30,7 @@
 /*===========================================================================*/
 
 /**
- * @name    STM32L4xx+ capabilities
+ * @name    STM32G4xx capabilities
  * @{
  */
 
@@ -61,6 +61,29 @@
   nvicEnableVector(STM32_RTC_WKUP_NUMBER, STM32_IRQ_EXTI20_PRIORITY);       \
   nvicEnableVector(STM32_RTC_ALARM_NUMBER, STM32_IRQ_EXTI18_PRIORITY);      \
 } while (false)
+
+ /* Enabling RTC-related EXTI lines.*/
+#define STM32_RTC_ENABLE_ALL_EXTI() do {                                    \
+  extiEnableGroup1(EXTI_MASK1(STM32_RTC_ALARM_EXTI) |                       \
+                   EXTI_MASK1(STM32_RTC_TAMP_STAMP_EXTI) |                  \
+                   EXTI_MASK1(STM32_RTC_WKUP_EXTI),                         \
+                   EXTI_MODE_RISING_EDGE | EXTI_MODE_ACTION_INTERRUPT);     \
+} while (false)
+
+/* Clearing EXTI interrupts. */
+#define STM32_RTC_CLEAR_ALL_EXTI() do {                                     \
+  extiClearGroup1(EXTI_MASK1(STM32_RTC_ALARM_EXTI) |                        \
+                  EXTI_MASK1(STM32_RTC_TAMP_STAMP_EXTI) |                   \
+                  EXTI_MASK1(STM32_RTC_WKUP_EXTI));                         \
+} while (false)
+
+/* Masks used to preserve state of RTC and TAMP register reserved bits. */
+#define STM32_RTC_CR_MASK                   0xE7FFFF7F
+#define STM32_RTC_PRER_MASK                 0x007F7FFF
+#define STM32_TAMP_CR1_MASK                 0x003C0007
+#define STM32_TAMP_CR2_MASK                 0x07070007
+#define STM32_TAMP_FLTCR_MASK               0x000000FF
+#define STM32_TAMP_IER_MASK                 0x003C0007
 
 #if defined(STM32G441xx) || defined(STM32G483xx) || defined(STM32G484xx) || \
     defined(__DOXYGEN__)
