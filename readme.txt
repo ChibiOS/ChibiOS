@@ -88,6 +88,7 @@
 *** 18.2.3 ***
 - NEW: Added a check on defective GCC versions, Cortex-M0 only.
 - NEW: Extra timer checks in STM32 ST driver.
+- FIX: Fixed STM32 CANv1 compile fails if CAN3 is used alone (bug #1052).
 - FIX: Fixed wrong clock disable check in STM32 DACv1 driver (bug #1050).
 - FIX: Fixed wrong debug check in STM32 I2Cv1 driver (bug #1048).
 - FIX: Fixed warning in simulator PAL driver (bug #1047).
