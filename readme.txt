@@ -132,6 +132,8 @@
 - HAL: Added a new interface for range-finder devices (used by EX).
 - HAL: Added mcuconf.h updater tool for STM32F407 (backported to 19.1.1).
 - NIL: Integrated NIL 4.0.
+- FIX: Fixed palIsLineEventEnabledX() compile fail on STM32L4 (bug #1051)
+       (backported to 19.1.4).
 - FIX: Fixed wrong clock disable check in STM32 DACv1 driver (bug #1050)
        (backported to 19.1.4)(backported to 18.2.3).
 - FIX: Fixed clock tree differences in STM32F4 family (bug #1049)
