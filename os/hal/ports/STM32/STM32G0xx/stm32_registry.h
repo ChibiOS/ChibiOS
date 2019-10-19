@@ -38,7 +38,7 @@
 /* Common.                                                                   */
 /*===========================================================================*/
 
-/* RTC attributes.*/
+/* RTC and TAMP attributes.*/
 #define STM32_HAS_RTC                       TRUE
 #define STM32_RTC_HAS_SUBSECONDS            TRUE
 #define STM32_RTC_HAS_PERIODIC_WAKEUPS      TRUE
@@ -46,13 +46,20 @@
 #define STM32_RTC_STORAGE_SIZE              20
 #define STM32_RTC_COMMON_HANDLER            Vector48
 #define STM32_RTC_COMMON_NUMBER             2
-#define STM32_RTC_ALARM_EXTI                18
-#define STM32_RTC_TAMP_STAMP_EXTI           19
-#define STM32_RTC_WKUP_EXTI                 20
-#define STM32_RTC_IRQ_ENABLE() do {                                         \
+#define STM32_RTC_EVENT_EXTI                19
+#define STM32_TAMP_EVENT_EXTI               21
+#define STM32_RTC_AND_TAMP_IRQ_ENABLE() do {                                \
   nvicEnableVector(STM32_RTC_COMMON_NUMBER,                                 \
-                   STM32_IRQ_EXTI19_21_IRQ_PRIORITY);                       \
+                   STM32_IRQ_EXTI1921_PRIORITY);                            \
 } while (false)
+
+/* Masks used to preserve state of reserved bits. */
+#define STM32_RTC_CR_MASK                   0xE7FFFF7F
+#define STM32_RTC_PRER_MASK                 0x007F7FFF
+#define STM32_TAMP_CR1_MASK                 0x003C0003
+#define STM32_TAMP_CR2_MASK                 0x030300FF
+#define STM32_TAMP_FLTCR_MASK               0x000000FF
+#define STM32_TAMP_IER_MASK                 0x003C0003
 
 #if defined(STM32G081xx) || defined(__DOXYGEN__)
 #define STM32_HAS_RNG1                      TRUE
