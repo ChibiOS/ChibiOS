@@ -68,7 +68,7 @@
 #endif
 #include "stm32_lpuart1.inc"
 
-#include "stm32_tim1_tim15_tim16_tim17.inc"
+#include "stm32_tim1_15_16_17.inc"
 #include "stm32_tim2.inc"
 #include "stm32_tim3.inc"
 #include "stm32_tim4.inc"

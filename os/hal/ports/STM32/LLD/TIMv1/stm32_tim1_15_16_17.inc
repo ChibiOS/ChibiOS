@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    TIMv1/stm32_tim1_tim15_tim16_tim17.inc
+ * @file    TIMv1/stm32_tim1_15_16_17.inc
  * @brief   Shared TIM1, TIM15, TIM16, TIM17 handler.
  *
  * @addtogroup STM32_TIM1_TIM15_TIM16_TIM17_HANDLER

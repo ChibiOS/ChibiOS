@@ -60,7 +60,7 @@
 
 #include "stm32_usart1.inc"
 #include "stm32_usart2.inc"
-#include "stm32_usart3_usart4_lpuart1.inc"
+#include "stm32_usart3_4_lp1.inc"
 
 #if STM32_HAS_TIM1
 #include "stm32_tim1.inc"
