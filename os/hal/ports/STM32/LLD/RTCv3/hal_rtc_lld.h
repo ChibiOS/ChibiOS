@@ -92,7 +92,7 @@
  * @{
  */
 /**
- * @brief   RTC PRES register initialization.
+ * @brief   RTC PRESA register initialization.
  * @note    The default is calculated for a 32768Hz clock.
  */
 #if !defined(STM32_RTC_PRESA_VALUE) || defined(__DOXYGEN__)
