@@ -32,6 +32,10 @@ all:
 	+@make --no-print-directory -f ./make/stm32l4r5_nucleo144.make all
 	@echo ====================================================================
 	@echo
+	@echo === Building for STM32G071-Nucleo64 ===============================
+	+@make --no-print-directory -f ./make/stm32g071_nucleo64.make all
+	@echo ====================================================================
+	@echo
 
 clean:
 	@echo
@@ -48,6 +52,8 @@ clean:
 	+@make --no-print-directory -f ./make/stm32l476_discovery.make clean
 	@echo
 	+@make --no-print-directory -f ./make/stm32l4r5_nucleo144.make clean
+	@echo
+	+@make --no-print-directory -f ./make/stm32g071_nucleo64.make clean
 	@echo
 
 #
