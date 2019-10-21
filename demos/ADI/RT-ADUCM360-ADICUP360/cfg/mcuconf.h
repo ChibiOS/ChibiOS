@@ -57,7 +57,14 @@
  * SERIAL driver system settings.
  */
 #define ADUCM_SERIAL_USE_UART0              TRUE
-#define ADUCM_SERIAL_UART0_PRIORITY         12
+#define ADUCM_SERIAL_UART0_PRIORITY         7
 
+/*
+ * SPI driver system settings.
+ */
+#define ADUCM_SPI_USE_SPI0                  FALSE
+#define ADUCM_SPI_USE_SPI1                  FALSE
+#define ADUCM_SPI_SPI0_IRQ_PRIORITY         5
+#define ADUCM_SPI_SPI1_IRQ_PRIORITY         5
 /** @} */
 #endif /* MCUCONF_H */
