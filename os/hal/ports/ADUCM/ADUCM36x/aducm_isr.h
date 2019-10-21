@@ -35,6 +35,15 @@
  */
 
 /*
+ * SPI units.
+ */
+#define ADUCM_SPI0_HANDLER          Vector88
+#define ADUCM_SPI1_HANDLER          Vector8C
+
+#define ADUCM_SPI0_NUMBER           18
+#define ADUCM_SPI1_NUMBER           19
+ 
+/*
  * TIM units.
  */
 #define ADUCM_TIMER0_HANDLER        Vector6C
