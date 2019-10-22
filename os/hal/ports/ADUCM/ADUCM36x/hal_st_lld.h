@@ -45,7 +45,7 @@
  * @brief   SysTick timer IRQ priority.
  */
 #if !defined(ADUCM_ST_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define ADUCM_ST_IRQ_PRIORITY               7
+#define ADUCM_ST_IRQ_PRIORITY               3
 #endif
 
 /**
@@ -55,7 +55,7 @@
  * @note    Timers 0, 1, 2 are supported.
  */
 #if !defined(ADUCM_ST_USE_TIMER) || defined(__DOXYGEN__)
-#define ADUCM_ST_USE_TIMER                  0
+#define ADUCM_ST_USE_TIMER                  2
 #endif
 /** @} */
 
