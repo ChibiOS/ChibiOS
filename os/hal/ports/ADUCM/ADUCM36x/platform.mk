@@ -4,6 +4,7 @@ PLATFORMSRC := $(CHIBIOS)/os/hal/ports/common/ARMCMx/nvic.c \
                $(CHIBIOS)/os/hal/ports/ADUCM/ADUCM36x/hal_lld.c \
                $(CHIBIOS)/os/hal/ports/ADUCM/ADUCM36x/hal_pal_lld.c \
                $(CHIBIOS)/os/hal/ports/ADUCM/ADUCM36x/hal_serial_lld.c \
+               $(CHIBIOS)/os/hal/ports/ADUCM/ADUCM36x/hal_spi_lld.c \
                $(CHIBIOS)/os/hal/ports/ADUCM/ADUCM36x/hal_st_lld.c
 
 # Required include directories.
