@@ -49,11 +49,6 @@
 #define ADUCM_PWMCD_DIV                     ADUCM_PWMCD_DIV1
 
 /*
- * IRQ system settings.
- */
-#define ADUCM_IRQ_UART1_PRIORITY            3
-
-/*
  * SERIAL driver system settings.
  */
 #define ADUCM_SERIAL_USE_UART0              TRUE
@@ -66,5 +61,12 @@
 #define ADUCM_SPI_USE_SPI1                  FALSE
 #define ADUCM_SPI_SPI0_IRQ_PRIORITY         5
 #define ADUCM_SPI_SPI1_IRQ_PRIORITY         5
+
+/*
+ * ST driver system settings.
+ */
+#define ADUCM_ST_IRQ_PRIORITY               3
+#define ADUCM_ST_USE_TIMER                  2
+
 /** @} */
 #endif /* MCUCONF_H */
