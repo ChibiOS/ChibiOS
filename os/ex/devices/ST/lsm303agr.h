@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2016..2018 Rocco Marco Guglielmi
+    ChibiOS - Copyright (C) 2016..2019 Rocco Marco Guglielmi
 
     This file is part of ChibiOS.
 
