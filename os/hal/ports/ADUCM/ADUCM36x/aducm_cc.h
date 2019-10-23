@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2019 Rocco Marco Guglielmi
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 /**
  * @file    ADUCM36x/aducm_cc.h
  * @brief   CC helper driver header.
- * @note    This file requires definitions from the ST header file
- *          @p stm32f0xx.h.
+ * @note    This file requires definitions from the ADI header file
+ *          @p ADuCM36x.h.
  *
  * @addtogroup ADUCM36x_CC
  * @{
