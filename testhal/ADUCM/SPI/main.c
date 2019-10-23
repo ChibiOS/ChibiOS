@@ -39,7 +39,7 @@ const SPIConfig hs_spicfg = {
 };
 
 /*
- * Low speed SPI configuration (62.500kHz, CPHA=0, CPOL=0, MSb first).
+ * Low speed SPI configuration (16MHz/256, CPHA=1, CPOL=1, MSb first).
  */
 const SPIConfig ls_spicfg = {
   NULL,
@@ -58,7 +58,7 @@ static THD_FUNCTION(spi_thread_1, p) {
   chRegSetThreadName("SPI thread 1");
   while (true) {
     spiAcquireBus(&SPID1);        /* Acquire ownership of the bus.    */
-    palClearLine(LINE_LED_GREEN);
+    palSetLine(LINE_LED_GREEN);
     spiStart(&SPID1, &hs_spicfg); /* Setup transfer parameters.       */
     spiSelect(&SPID1);            /* Slave Select assertion.          */
     spiExchange(&SPID1, 512,
@@ -78,7 +78,7 @@ static THD_FUNCTION(spi_thread_2, p) {
   chRegSetThreadName("SPI thread 2");
   while (true) {
     spiAcquireBus(&SPID1);        /* Acquire ownership of the bus.    */
-    palSetLine(LINE_LED_GREEN);
+    palClearLine(LINE_LED_GREEN);
     spiStart(&SPID1, &ls_spicfg); /* Setup transfer parameters.       */
     spiSelect(&SPID1);            /* Slave Select assertion.          */
     spiExchange(&SPID1, 512,
@@ -134,8 +134,6 @@ int main(void) {
    * Configuring SPI GPIOs.
    */
   palSetLineMode(LINE_SPI1_CS, PAL_MODE_OUTPUT_PUSHPULL);
-  palSetLineMode(LINE_SPI1_MISO, PAL_MODE_MULTIPLEXER(1) |
-                                 PAL_ADUCM_PUL_PULLUP);
   palSetLineMode(LINE_SPI1_MISO, PAL_MODE_MULTIPLEXER(1) |
                                  PAL_ADUCM_PUL_PULLUP);
   palSetLineMode(LINE_SPI1_MOSI, PAL_MODE_MULTIPLEXER(1) |
