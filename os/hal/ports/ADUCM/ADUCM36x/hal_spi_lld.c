@@ -81,23 +81,41 @@ static void spi_lld_serve_interrupt(SPIDriver *spip) {
       dummy_rx = spip->spi->SPIRX;
     }
     
-    /* Pushing the new TX: this will start a new transfert. */
-    if(spip->txbuf != NULL) {
-      spip->spi->SPITX = *(spip->txbuf);
+    /* Pushing the new TX: this will start a new transfer. */
+    if((spip->txbuf != NULL) && (spip->size > 0)) {
       (spip->txbuf)++;
+      spip->spi->SPITX = *(spip->txbuf);
     }
     else {
       spip->spi->SPITX = dummy_tx;
     }
 
+    if(spip->size == 0) {
+      /* Portable SPI ISR code defined in the high level driver, note, it is
+         a macro.*/
+      _spi_isr_code(spip);
+    }
+
     (void)dummy_rx;
   }
+}
 
-  if(spip->size == 0) {
-    /* Portable SPI ISR code defined in the high level driver, note, it is
-       a macro.*/
-    _spi_isr_code(spip);
-  }
+/**
+ * @brief   Utility function useful to clean-up the SPI cell.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ */
+static void spi_lld_reset_spi_cell(SPIDriver* spip) {
+
+  uint32_t sta;
+
+  /* Disabling the SPI. And flushing RX and TX buffers. */
+  spip->spi->SPICON = ADUCM_SPI_CON_RFLUSH | ADUCM_SPI_CON_TFLUSH;
+  spip->spi->SPICON = 0;
+
+  /* Cleaning IRQs. */
+  sta = spip->spi->SPISTA;
+  (void) sta;
 }
 
 /*===========================================================================*/
@@ -185,6 +203,9 @@ void spi_lld_start(SPIDriver *spip) {
     if (&SPID0 == spip) {
       /* Enabling peripheral clock branch. */
       ccEnableSPI0();
+
+      /* Resetting the SPI cell. */
+      spi_lld_reset_spi_cell(spip);
       
       /* Enabling peripheral interrupt. */
       nvicEnableVector(ADUCM_SPI0_NUMBER, ADUCM_SPI_SPI0_IRQ_PRIORITY);
@@ -195,6 +216,9 @@ void spi_lld_start(SPIDriver *spip) {
       /* Enabling peripheral clock branch. */
       ccEnableSPI1();
       
+      /* Resetting the SPI cell. */
+      spi_lld_reset_spi_cell(spip);
+
       /* Enabling peripheral interrupt. */
       nvicEnableVector(ADUCM_SPI1_NUMBER, ADUCM_SPI_SPI1_IRQ_PRIORITY);
     }
@@ -225,20 +249,32 @@ void spi_lld_stop(SPIDriver *spip) {
   if (spip->state == SPI_READY) {
 
     /* SPI disable.*/
-    spip->spi->SPICON &= ~ADUCM_SPI_CON_ENABLE;
     spip->spi->SPICON = 0;
     spip->spi->SPIDIV = 0;
     spip->rxbuf = NULL;
     spip->txbuf = NULL;
     spip->size = 0;
 
+    /* Resetting the SPI cell. */
+    spi_lld_reset_spi_cell(spip);
+
 #if ADUCM_SPI_USE_SPI0
-    if (&SPID0 == spip)
+    if (&SPID0 == spip) {
+      /* Disabling peripheral clock branch. */
       ccDisableSPI0();
+
+      /* Disabling peripheral interrupt. */
+      nvicDisableVector(ADUCM_SPI0_NUMBER);
+    }
 #endif
 #if ADUCM_SPI_USE_SPI1
-    if (&SPID1 == spip)
+    if (&SPID1 == spip) {
+      /* Disabling peripheral clock branch. */
       ccDisableSPI1();
+
+      /* Disabling peripheral interrupt. */
+      nvicDisableVector(ADUCM_SPI1_NUMBER);
+    }
 #endif
   }
 }
