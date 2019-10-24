@@ -173,8 +173,12 @@
 #error "RTC clock not exported by HAL layer"
 #endif
 
+#if STM32_RTCCLK == 0
+#error "RTC has no clock source selected"
+#endif
+
 #if STM32_PCLK1 < (STM32_RTCCLK * 7)
-#error "STM32_PCLK1 frequency is too low"
+#error "STM32_PCLK1 frequency is too low for RTC"
 #endif
 
 /**
