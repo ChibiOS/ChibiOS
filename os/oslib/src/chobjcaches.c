@@ -311,11 +311,11 @@ oc_object_t *chCacheGetObject(objects_cache_t *ocp,
 
   /* Checking the cache for a hit.*/
   objp = hash_get_s(ocp, group, key);
-
-  chDbgAssert((objp->obj_flags & OC_FLAG_INHASH) == OC_FLAG_INHASH,
-              "not in hash");
-
   if (objp != NULL) {
+
+    chDbgAssert((objp->obj_flags & OC_FLAG_INHASH) == OC_FLAG_INHASH,
+                "not in hash");
+
     /* Cache hit, checking if the buffer is owned by some
        other thread.*/
     if (chSemGetCounterI(&objp->obj_sem) > (cnt_t)0) {
