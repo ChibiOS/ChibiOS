@@ -133,6 +133,8 @@
 - HAL: Added a new interface for range-finder devices (used by EX).
 - HAL: Added mcuconf.h updater tool for STM32F407 (backported to 19.1.1).
 - NIL: Integrated NIL 4.0.
+- FIX: Fixed assertion triggered in STM32 OTGv1 driver (bug #1053)
+       (backported to 19.1.4)(backported to 18.2.3).
 - FIX: Fixed STM32 CANv1 compile fails if CAN3 is used alone (bug #1052)
        (backported to 19.1.4)(backported to 18.2.3).
 - FIX: Fixed palIsLineEventEnabledX() compile fail on STM32L4 (bug #1051)
