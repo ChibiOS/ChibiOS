@@ -63,7 +63,7 @@
  *
  * @init
  */
-#define chSemObjectInit(sp, n) ((sp)->cnt = n)
+#define chSemObjectInit(sp, n) ((sp)->cnt = (n))
 
 /**
  * @brief   Performs a reset operation on the semaphore.
