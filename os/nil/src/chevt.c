@@ -237,14 +237,14 @@ eventflags_t chEvtGetAndClearFlags(event_listener_t *elp) {
  * @brief   Adds a set of event flags directly to the specified @p thread_t.
  *
  * @param[in] tp        the thread to be signaled
- * @param[in] mask      the event flags set to be ORed
+ * @param[in] events    the event flags set to be ORed
  *
  * @api
  */
-void chEvtSignal(thread_t *tp, eventmask_t mask) {
+void chEvtSignal(thread_t *tp, eventmask_t events) {
 
   chSysLock();
-  chEvtSignalI(tp, mask);
+  chEvtSignalI(tp, events);
   chSchRescheduleS();
   chSysUnlock();
 }
@@ -257,16 +257,16 @@ void chEvtSignal(thread_t *tp, eventmask_t mask) {
  *          reschedule must not be performed in ISRs.
  *
  * @param[in] tp        the thread to be signaled
- * @param[in] mask      the event flags set to be ORed
+ * @param[in] events    the event flags set to be ORed
  *
  * @iclass
  */
-void chEvtSignalI(thread_t *tp, eventmask_t mask) {
+void chEvtSignalI(thread_t *tp, eventmask_t events) {
 
   chDbgCheckClassI();
   chDbgCheck(tp != NULL);
 
-  tp->epmask |= mask;
+  tp->epmask |= events;
   if ((NIL_THD_IS_WTOREVT(tp) &&
        ((tp->epmask & tp->u1.ewmask) != (eventmask_t)0)) ||
       (NIL_THD_IS_WTANDEVT(tp) &&

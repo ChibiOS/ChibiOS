@@ -467,7 +467,7 @@ struct nil_thread {
   /* Note, the following union contains a pointer/value while the thread is
      in a sleeping state or a wake-up message when the thread is made ready.*/
   union {
-    msg_t               msg;        /**< @brief Wake-up message.            */
+    msg_t               msg;        /**< @brief Wake-up/exit message.       */
     void                *p;         /**< @brief Generic pointer.            */
     nil_system_t        *nsp;       /**< @brief Pointer to nil base struct. */
     thread_reference_t  *trp;       /**< @brief Pointer to thread reference.*/
@@ -1070,7 +1070,7 @@ struct nil_system {
 #define chSchWakeupS(ntp, msg) do {                                         \
   chSchReadyI(ntp, msg);                                                    \
   chSchRescheduleS();                                                       \
-} while (0)
+} while (false)
 
 /**
  * @brief   Evaluates if a reschedule is required.
@@ -1113,7 +1113,7 @@ struct nil_system {
 #define chThdResumeS(trp, msg) do {                                         \
   chThdResumeI(trp, msg);                                                   \
   chSchRescheduleS();                                                       \
-} while (0)
+} while (false)
 
 /**
  * @brief   Delays the invoking thread for the specified number of seconds.

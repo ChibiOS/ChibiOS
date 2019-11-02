@@ -203,7 +203,7 @@ typedef void (*evhandler_t)(eventid_t id);
  *
  * @iclass
  */
-#define chEvtAddEventsI(events) (bool)(nil.current->epmask |= events)
+#define chEvtAddEventsI(events) (nil.current->epmask |= events)
 
 /**
  * @brief   Returns the events mask.

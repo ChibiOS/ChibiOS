@@ -57,7 +57,7 @@
  * @brief   Working Areas alignment constant.
  * @note    It is the alignment to be enforced for thread working areas.
  */
-#define PORT_WORKING_AREA_ALIGN         (PORT_ENABLE_GUARD_PAGES == TRUE ?  \
+#define PORT_WORKING_AREA_ALIGN         ((PORT_ENABLE_GUARD_PAGES == TRUE) ?\
                                          32U : PORT_STACK_ALIGN)
 /** @} */
 

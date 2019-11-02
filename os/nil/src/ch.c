@@ -304,7 +304,7 @@ void chSysInit(void) {
   /* Iterates through the list of threads to be auto-started.*/
   tcp = nil_thd_configs;
   do {
-    chThdCreateI(tcp);
+    (void) chThdCreateI(tcp);
     tcp++;
   } while (tcp->funcp != NULL);
 #endif
@@ -737,7 +737,7 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, sysinterval_t timeout) {
 thread_t *chThdCreateI(const thread_config_t *tcp) {
   thread_t *tp;
 
-  chDbgCheck((tcp->prio < CH_CFG_MAX_THREADS) &&
+  chDbgCheck((tcp->prio < (tprio_t)CH_CFG_MAX_THREADS) &&
              (tcp->wbase != NULL) &&
              MEM_IS_ALIGNED(tcp->wbase, PORT_WORKING_AREA_ALIGN) &&
              (tcp->wend > tcp->wbase) &&
@@ -830,7 +830,8 @@ void chThdExit(msg_t msg) {
 #endif
 
   /* Going into final state with exit message stored.*/
-  chSchGoSleepTimeoutS(NIL_STATE_FINAL, msg);
+  nil.current->u1.msg = msg;
+  (void) chSchGoSleepTimeoutS(NIL_STATE_FINAL, TIME_INFINITE);
 
   /* The thread never returns here.*/
   chDbgAssert(false, "zombies apocalypse");

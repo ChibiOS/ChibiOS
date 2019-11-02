@@ -167,7 +167,7 @@ static oc_object_t *lru_get_last_s(objects_cache_t *ocp) {
 
   while (true) {
     /* Waiting for an object buffer to become available in the LRU.*/
-    chSemWaitS(&ocp->lru_sem);
+    (void) chSemWaitS(&ocp->lru_sem);
 
     /* Now an object buffer is in the LRU for sure, taking it from the
        LRU tail.*/
@@ -208,7 +208,7 @@ static oc_object_t *lru_get_last_s(objects_cache_t *ocp) {
       is written. It is responsibility of the write function to release
       the buffer.*/
     objp->obj_flags = OC_FLAG_INHASH | OC_FLAG_FORGET;
-    ocp->writef(ocp, objp, true);
+    (void) ocp->writef(ocp, objp, true);
 
     /* Critical section enter again.*/
     chSysLock();
@@ -231,8 +231,8 @@ static oc_object_t *lru_get_last_s(objects_cache_t *ocp) {
  * @param[in] objn      number of elements in the objects table array
  * @param[in] objsz     size of elements in the objects table array, the
  *                      minimum value is <tt>sizeof (oc_object_t)</tt>.
- * @param[in] hashp     pointer to the hash objects as an array of
- *                      @p oc_object_t
+ * @param[in] objvp     pointer to the hash objects as an array of structures
+ *                      starting with an @p oc_object_t
  * @param[in] readf     pointer to an object reader function
  * @param[in] writef    pointer to an object writer function
  *
@@ -248,8 +248,8 @@ void chCacheObjectInit(objects_cache_t *ocp,
                        oc_writef_t writef) {
 
   chDbgCheck((ocp != NULL) && (hashp != NULL) && (objvp != NULL) &&
-             ((hashn & (hashn - 1U)) == 0U) &&
-             (objn > (size_t)0) && (hashn >= objn) &&
+             ((hashn & (hashn - (ucnt_t)1)) == (ucnt_t)0) &&
+             (objn > (ucnt_t)0) && (hashn >= objn) &&
              (objsz >= sizeof (oc_object_t)) &&
              ((objsz & (PORT_NATURAL_ALIGN - 1U)) == 0U));
 
@@ -283,9 +283,9 @@ void chCacheObjectInit(objects_cache_t *ocp,
     objp->obj_key   = 0U;
     objp->obj_flags = OC_FLAG_INLRU;
     objp->dptr      = NULL;
-    objvp += objsz;
+    objvp = (void *)((uint8_t *)objvp + objsz);
     objn--;
-  } while (objn > 0U);
+  } while (objn > (ucnt_t)0);
 }
 
 /**
@@ -339,7 +339,7 @@ oc_object_t *chCacheGetObject(objects_cache_t *ocp,
       chDbgAssert((objp->obj_flags & OC_FLAG_INLRU) == 0U, "in LRU");
 
       /* Waiting on the buffer semaphore.*/
-      chSemWaitS(&objp->obj_sem);
+      (void) chSemWaitS(&objp->obj_sem);
     }
   }
   else {

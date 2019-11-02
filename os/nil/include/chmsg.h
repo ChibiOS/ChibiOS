@@ -77,9 +77,9 @@
  * @sclass
  */
 #define chMsgReleaseS(tp, msg) do {                                         \
-  chSchReadyI(tp, msg);                                                     \
+  (void) chSchReadyI(tp, msg);                                              \
   chSchRescheduleS();                                                       \
-  } while (0)
+  } while (false)
 /** @} */
 
 /*===========================================================================*/
