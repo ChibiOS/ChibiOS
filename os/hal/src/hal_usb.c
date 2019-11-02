@@ -41,7 +41,7 @@
 /*===========================================================================*/
 
 static const uint8_t zero_status[] = {0x00, 0x00};
-static const uint8_t active_status[] ={0x00, 0x00};
+static const uint8_t active_status[] = {0x00, 0x00};
 static const uint8_t halted_status[] = {0x01, 0x00};
 
 /*===========================================================================*/
@@ -719,6 +719,10 @@ void _usb_suspend(USBDriver *usbp) {
 
   /* Notification of suspend event.*/
   _usb_isr_invoke_event_cb(usbp, USB_EVENT_SUSPEND);
+
+  /* Terminating all pending transactions.*/
+  usbp->transmitting  = 0;
+  usbp->receiving     = 0;
 
   /* Signaling the event to threads waiting on endpoints.*/
 #if USB_USE_WAIT == TRUE

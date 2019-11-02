@@ -231,7 +231,8 @@
 #error "unsupported STM32 platform for OTG functionality"
 #endif
 
-#if STM32_USBCLK != 48000000
+/* Allowing for a small tolerance.*/
+#if STM32_USBCLK < 47880000 || STM32_USBCLK > 48120000
 #error "the USB OTG driver requires a 48MHz clock"
 #endif
 
@@ -545,7 +546,7 @@ struct USBDriver {
  * @notapi
  */
 #define usb_lld_wakeup_host(usbp)                                           \
-  do{                                                                       \
+  do {                                                                      \
     (usbp)->otg->DCTL |= DCTL_RWUSIG;                                       \
     osalThreadSleepMilliseconds(STM32_USB_HOST_WAKEUP_DURATION);            \
     (usbp)->otg->DCTL &= ~DCTL_RWUSIG;                                      \
