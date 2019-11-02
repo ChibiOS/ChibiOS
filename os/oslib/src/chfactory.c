@@ -418,7 +418,7 @@ dyn_buffer_t *chFactoryCreateBuffer(const char *name, size_t size) {
                                                size);
   if (dbp != NULL) {
     /* Initializing buffer object data.*/
-    memset((void *)dbp->buffer, 0, size);
+    memset((void *)(dbp + 1), 0, size);
   }
 
   F_UNLOCK();
@@ -579,7 +579,7 @@ dyn_mailbox_t *chFactoryCreateMailbox(const char *name, size_t n) {
                                                 (n * sizeof (msg_t)));
   if (dmp != NULL) {
     /* Initializing mailbox object data.*/
-    chMBObjectInit(&dmp->mbx, dmp->msgbuf, n);
+    chMBObjectInit(&dmp->mbx, (msg_t *)(dmp + 1), n);
   }
 
   F_UNLOCK();
@@ -666,9 +666,11 @@ dyn_objects_fifo_t *chFactoryCreateObjectsFIFO(const char *name,
                                                       (objn * sizeof (msg_t)) +
                                                       (objn * objsize));
   if (dofp != NULL) {
+    msg_t *msgbuf = (msg_t *)(dofp + 1);
+
     /* Initializing mailbox object data.*/
     chFifoObjectInitAligned(&dofp->fifo, objsize, objn, objalign,
-                            (void *)&dofp->msgbuf[objn], dofp->msgbuf);
+                            (void *)&msgbuf[objn], msgbuf);
   }
 
   F_UNLOCK();
@@ -750,7 +752,7 @@ dyn_pipe_t *chFactoryCreatePipe(const char *name, size_t size) {
                                              sizeof (dyn_pipe_t) + size);
   if (dpp != NULL) {
     /* Initializing mailbox object data.*/
-    chPipeObjectInit(&dpp->pipe, dpp->buffer, size);
+    chPipeObjectInit(&dpp->pipe, (uint8_t *)(dpp + 1), size);
   }
 
   F_UNLOCK();
