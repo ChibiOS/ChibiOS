@@ -76,6 +76,7 @@
 *** 19.1.4 ***
 - NEW: Added support for .cc files extensions in makefiles.
 - NEW: Made bus acquire/release functions in SNOR driver public.
+- FIX: Fixed assertion triggered in STM32 OTGv1 driver (bug #1053).
 - FIX: Fixed STM32 CANv1 compile fails if CAN3 is used alone (bug #1052).
 - FIX: Fixed palIsLineEventEnabledX() compile fail on STM32L4 (bug #1051).
 - FIX: Fixed wrong clock disable check in STM32 DACv1 driver (bug #1050).
