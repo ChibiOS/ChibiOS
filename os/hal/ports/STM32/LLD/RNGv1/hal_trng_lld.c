@@ -45,7 +45,7 @@ TRNGDriver TRNGD1;
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
-static const TRNGConfig default_cfg = {0};
+static const TRNGConfig default_cfg = {.cr = 0};
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
