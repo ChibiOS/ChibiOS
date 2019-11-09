@@ -29,6 +29,9 @@
 /* Platform capabilities.                                                    */
 /*===========================================================================*/
 
+/* RNG attributes.*/
+#define STM32_HAS_RNG1                      TRUE
+
 /**
  * @name    STM32F7xx capabilities
  * @{

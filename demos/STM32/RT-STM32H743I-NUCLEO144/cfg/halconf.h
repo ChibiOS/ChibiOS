@@ -170,7 +170,7 @@
  * @brief   Enables the TRNG subsystem.
  */
 #if !defined(HAL_USE_TRNG) || defined(__DOXYGEN__)
-#define HAL_USE_TRNG                        FALSE
+#define HAL_USE_TRNG                        TRUE
 #endif
 
 /**
