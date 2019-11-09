@@ -112,6 +112,11 @@
 #else
 #define OSAL_IRQ_MAXIMUM_PRIORITY           1
 #endif
+
+/**
+ * @brief   Converts from numeric priority to BASEPRI register value.
+ */
+#define OSAL_BASEPRI(priority)              ((priority) << (8U - CORTEX_PRIORITY_BITS))
 /** @} */
 
 /*===========================================================================*/
@@ -556,7 +561,7 @@ static inline void osalSysLock(void) {
 #if CORTEX_MODEL == 0
   __disable_irq();
 #else
-  __set_BASEPRI(OSAL_IRQ_MAXIMUM_PRIORITY);
+  __set_BASEPRI(OSAL_BASEPRI(OSAL_IRQ_MAXIMUM_PRIORITY));
 #endif
 }
 
@@ -586,7 +591,7 @@ static inline void osalSysLockFromISR(void) {
 #if CORTEX_MODEL == 0
   __disable_irq();
 #else
-  __set_BASEPRI(OSAL_IRQ_MAXIMUM_PRIORITY);
+  __set_BASEPRI(OSAL_BASEPRI(OSAL_IRQ_MAXIMUM_PRIORITY));
 #endif
 }
 
@@ -626,7 +631,7 @@ static inline syssts_t osalSysGetStatusAndLockX(void) {
   __disable_irq();
 #else
   sts = (syssts_t)__get_BASEPRI();
-  __set_BASEPRI(OSAL_IRQ_MAXIMUM_PRIORITY);
+  __set_BASEPRI(OSAL_BASEPRI(OSAL_IRQ_MAXIMUM_PRIORITY));
 #endif
   return sts;
 }
@@ -647,9 +652,7 @@ static inline void osalSysRestoreStatusX(syssts_t sts) {
     __enable_irq();
   }
 #else
-  if (sts == (syssts_t)0) {
-    __set_BASEPRI(0);
-  }
+  __set_BASEPRI(sts);
 #endif
 }
 

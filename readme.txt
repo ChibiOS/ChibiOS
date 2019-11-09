@@ -76,6 +76,7 @@
 *** 19.1.4 ***
 - NEW: Added support for .cc files extensions in makefiles.
 - NEW: Made bus acquire/release functions in SNOR driver public.
+- FIX: Fixed OS-less Cortex-M OSAL problem with critical zones (bug #1056).
 - FIX: Fixed missing RTCv1 definitions in STM32F37x registry (bug #1054).
 - FIX: Fixed assertion triggered in STM32 OTGv1 driver (bug #1053).
 - FIX: Fixed STM32 CANv1 compile fails if CAN3 is used alone (bug #1052).
