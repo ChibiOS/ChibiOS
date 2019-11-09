@@ -197,7 +197,9 @@
 
 /*
  * TRNG driver system settings.
+ * NOTE: STM32G081 only.
  */
+#define STM32_TRNG_USE_RNG1                 FALSE
 
 /*
  * UART driver system settings.

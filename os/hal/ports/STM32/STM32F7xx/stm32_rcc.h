@@ -767,6 +767,34 @@
 /** @} */
 
 /**
+ * @name    RNG peripherals specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the RNG peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableRNG(lp) rccEnableAHB2(RCC_AHB2ENR_RNGEN, lp)
+
+/**
+ * @brief   Disables the RNG peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableRNG() rccDisableAHB2(RCC_AHB2ENR_RNGEN)
+
+/**
+ * @brief   Resets the RNG peripheral.
+ *
+ * @api
+ */
+#define rccResetRNG() rccResetAHB2(RCC_AHB2RSTR_RNGRST)
+/** @} */
+
+/**
  * @name    SDMMC peripheral specific RCC operations
  * @{
  */

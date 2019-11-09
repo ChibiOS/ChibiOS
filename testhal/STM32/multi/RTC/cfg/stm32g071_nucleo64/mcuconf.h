@@ -163,8 +163,7 @@
 #define STM32_RTC_PRESA_VALUE               32
 #define STM32_RTC_PRESS_VALUE               1024
 #define STM32_RTC_CR_INIT                   0
-#define STM32_RTC_TAMPCR1_INIT              0
-#define STM32_RTC_TAMPCR2_INIT              0
+#define STM32_RTC_TAMPCR_INIT               0
 
 /*
  * SERIAL driver system settings.
@@ -198,7 +197,9 @@
 
 /*
  * TRNG driver system settings.
+ * NOTE: STM32G081 only.
  */
+#define STM32_TRNG_USE_RNG1                 FALSE
 
 /*
  * UART driver system settings.

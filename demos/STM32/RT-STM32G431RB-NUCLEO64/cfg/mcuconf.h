@@ -242,6 +242,7 @@
 /*
  * TRNG driver system settings.
  */
+#define STM32_TRNG_USE_RNG1                 FALSE
 
 /*
  * UART driver system settings.

@@ -2104,6 +2104,11 @@
 #endif
 
 /**
+ * @brief   RNG clock point.
+ */
+#define STM32_RNGCLK                STM32_PLL48CLK
+
+/**
  * @brief   Flash settings.
  */
 #if (STM32_HCLK <= STM32_0WS_THRESHOLD) || defined(__DOXYGEN__)
