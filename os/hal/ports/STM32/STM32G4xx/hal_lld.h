@@ -1784,6 +1784,11 @@
 #define STM32_TIMCLK2               STM32_TIMP2CLK
 
 /**
+ * @brief   RNG clock point.
+ */
+#define STM32_RNGCLK                STM32_48CLK
+
+/**
  * @brief   USB clock point.
  */
 #define STM32_USBCLK                STM32_48CLK
