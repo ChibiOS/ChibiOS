@@ -88,6 +88,7 @@
 *** 18.2.3 ***
 - NEW: Added a check on defective GCC versions, Cortex-M0 only.
 - NEW: Extra timer checks in STM32 ST driver.
+- FIX: Fixed error in uartSendFullTimeout() HAL function (bug #1057).
 - FIX: Fixed OS-less Cortex-M OSAL problem with critical zones (bug #1056).
 - FIX: Fixed assertion triggered in STM32 OTGv1 driver (bug #1053).
 - FIX: Fixed STM32 CANv1 compile fails if CAN3 is used alone (bug #1052).
