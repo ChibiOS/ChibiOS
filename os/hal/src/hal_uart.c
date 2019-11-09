@@ -429,7 +429,7 @@ msg_t uartSendFullTimeout(UARTDriver *uartp, size_t *np,
   /* Waiting for result.*/
   msg = osalThreadSuspendTimeoutS(&uartp->threadtx, timeout);
   if (msg != MSG_OK) {
-    *np = uartStopSendI(uartp);
+    *np -= uartStopSendI(uartp);
   }
   osalSysUnlock();
 
