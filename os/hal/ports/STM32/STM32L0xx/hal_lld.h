@@ -1155,7 +1155,7 @@
 #endif
 
 /**
- * @brief   USB/RNG frequency.
+ * @brief   USB clock point.
  */
 #if (STM32_HSI48SEL == STM32_HSI48SEL_HSI48) || defined(__DOXYGEN__)
 #define STM32_USBCLK                STM32_HSI48CLK
@@ -1164,6 +1164,11 @@
 #else
 #error "invalid STM32_HSI48SEL value specified"
 #endif
+
+/**
+ * @brief   RNG clock point.
+ */
+#define STM32_RNGCLK                STM32_USBCLK
 
 /**
  * @brief   Timers LPTIM1, TIM2, TIM6 clock.
