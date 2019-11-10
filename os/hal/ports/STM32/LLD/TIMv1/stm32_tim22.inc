@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    TIMv1/stm32_tim20.inc
- * @brief   Shared TIM20 handler.
+ * @file    TIMv1/stm32_tim21.inc
+ * @brief   Shared TIM21 handler.
  *
- * @addtogroup STM32_TIM20_HANDLER
+ * @addtogroup STM32_TIM21_HANDLER
  * @{
  */
 
@@ -31,30 +31,22 @@
 /*===========================================================================*/
 
 /* Registry checks for robustness.*/
-#if !defined(STM32_HAS_TIM20)
-#error "STM32_HAS_TIM20 not defined in registry"
+#if !defined(STM32_HAS_TIM21)
+#error "STM32_HAS_TIM21 not defined in registry"
 #endif
 
-#if STM32_HAS_TIM20
+#if STM32_HAS_TIM21
 
 /* Priority settings checks.*/
-#if !defined(STM32_IRQ_TIM20_UP_PRIORITY)
-#error "STM32_IRQ_TIM20_UP_PRIORITY not defined in mcuconf.h"
+#if !defined(STM32_IRQ_TIM21_PRIORITY)
+#error "STM32_IRQ_TIM21_PRIORITY not defined in mcuconf.h"
 #endif
 
-#if !defined(STM32_IRQ_TIM20_CC_PRIORITY)
-#error "STM32_IRQ_TIM20_CC_PRIORITY not defined in mcuconf.h"
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_TIM21_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_TIM21_PRIORITY"
 #endif
 
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_TIM20_UP_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_TIM20_UP_PRIORITY"
-#endif
-
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_TIM20_CC_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_TIM20_CC_PRIORITY"
-#endif
-
-#endif /* STM32_HAS_TIM20 */
+#endif /* STM32_HAS_TIM21 */
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -68,17 +60,15 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static inline void tim20_irq_init(void) {
-#if defined(STM32_TIM20_IS_USED)
-  nvicEnableVector(STM32_TIM20_UP_NUMBER, STM32_IRQ_TIM20_UP_PRIORITY);
-  nvicEnableVector(STM32_TIM20_CC_NUMBER, STM32_IRQ_TIM20_CC_PRIORITY);
+static inline void tim21_irq_init(void) {
+#if defined(STM32_TIM21_IS_USED)
+  nvicEnableVector(STM32_TIM21_NUMBER, STM32_IRQ_TIM21_PRIORITY);
 #endif
 }
 
-static inline void tim20_irq_deinit(void) {
-#if defined(STM32_TIM20_IS_USED)
-  nvicDisableVector(STM32_TIM20_UP_NUMBER);
-  nvicDisableVector(STM32_TIM20_CC_NUMBER);
+static inline void tim21_irq_deinit(void) {
+#if defined(STM32_TIM21_IS_USED)
+  nvicDisableVector(STM32_TIM21_NUMBER);
 #endif
 }
 
@@ -86,59 +76,26 @@ static inline void tim20_irq_deinit(void) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if defined(__DOXYGEN__)
+#if (HAL_USE_GPT && STM32_GPT_USE_TIM21) ||                                  \
+     defined(__DOXYGEN__)
 /**
- * @brief   TIM20-UP interrupt handler.
+ * @brief   TIM21 interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_TIM20_UP_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_TIM21_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
 #if HAL_USE_GPT
-  pwm_lld_serve_interrupt(&GPTD20);
-#endif
-#if HAL_USE_ICU
-  pwm_lld_serve_interrupt(&ICUD20);
-#endif
-#if HAL_USE_PWM
-#if STM32_PWM_USE_TIM20
-  pwm_lld_serve_interrupt(&PWMD20);
+#if STM32_GPT_USE_TIM21
+  gpt_lld_serve_interrupt(&GPTD21);
 #endif
 #endif
 
   OSAL_IRQ_EPILOGUE();
 }
 #endif
-
-#if defined(__DOXYGEN__)
-/**
- * @brief   TIM20-CC interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_TIM20_CC_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-#if HAL_USE_GPT
-#if STM32_GPT_USE_TIM20
-  pwm_lld_serve_interrupt(&GPTD20);
-#endif
-#endif
-#if STM32_ICU_USE_TIM20
-  pwm_lld_serve_interrupt(&ICUD20);
-#endif
-#if HAL_USE_PWM
-#if STM32_PWM_USE_TIM20
-  pwm_lld_serve_interrupt(&PWMD20);
-#endif
-#endif
-
-  OSAL_IRQ_EPILOGUE();
-}
-#endif /* HAL_USE_GPT || HAL_USE_ICU || HAL_USE_PWM */
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */

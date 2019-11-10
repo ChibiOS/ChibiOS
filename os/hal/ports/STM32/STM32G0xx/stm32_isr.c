@@ -62,12 +62,8 @@
 #include "stm32_usart2.inc"
 #include "stm32_usart3_4_lp1.inc"
 
-#if STM32_HAS_TIM1
 #include "stm32_tim1.inc"
-#endif
-#if STM32_HAS_TIM2
 #include "stm32_tim2.inc"
-#endif
 #include "stm32_tim3.inc"
 #include "stm32_tim6.inc"
 #include "stm32_tim7.inc"
@@ -91,12 +87,8 @@ void irqInit(void) {
   exti2_3_irq_init();
   exti4_15_irq_init();
 
-#if STM32_HAS_TIM1
   tim1_irq_init();
-#endif
-#if STM32_HAS_TIM2
   tim2_irq_init();
-#endif
   tim3_irq_init();
   tim6_irq_init();
   tim7_irq_init();
@@ -121,12 +113,8 @@ void irqDeinit(void) {
   exti2_3_irq_deinit();
   exti4_15_irq_deinit();
 
-#if STM32_HAS_TIM1
   tim1_irq_deinit();
-#endif
-#if STM32_HAS_TIM2
   tim2_irq_deinit();
-#endif
   tim3_irq_deinit();
   tim6_irq_deinit();
   tim7_irq_deinit();

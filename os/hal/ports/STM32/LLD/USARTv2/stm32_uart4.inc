@@ -35,9 +35,7 @@
 #error "STM32_HAS_UART4 not defined in registry"
 #endif
 
-#if STM32_HAS_UART4 == FALSE
-#error "UART4 not present"
-#endif
+#if STM32_HAS_UART4
 
 /* Priority settings checks.*/
 #if !defined(STM32_IRQ_UART4_PRIORITY)
@@ -47,6 +45,8 @@
 #if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_UART4_PRIORITY)
 #error "Invalid IRQ priority assigned to STM32_IRQ_UART4_PRIORITY"
 #endif
+
+#endif /* STM32_HAS_UART4 */
 
 /* Other checks.*/
 #if (HAL_USE_SERIAL && STM32_SERIAL_USE_UART4) &&                           \

@@ -83,9 +83,15 @@
 #define STM32_IRQ_EXTI16_PRIORITY           3
 #define STM32_IRQ_EXTI17_20_PRIORITY        3
 #define STM32_IRQ_EXTI21_22_PRIORITY        3
+
 #define STM32_IRQ_USART1_PRIORITY           3
 #define STM32_IRQ_USART2_PRIORITY           3
 #define STM32_IRQ_LPUART1_PRIORITY          3
+
+#define STM32_IRQ_TIM2_PRIORITY             1
+#define STM32_IRQ_TIM6_PRIORITY             1
+#define STM32_IRQ_TIM21_PRIORITY            1
+#define STM32_IRQ_TIM22_PRIORITY            1
 
 /*
  * ADC driver system settings.
@@ -113,10 +119,6 @@
 #define STM32_GPT_USE_TIM6                  FALSE
 #define STM32_GPT_USE_TIM21                 FALSE
 #define STM32_GPT_USE_TIM22                 FALSE
-#define STM32_GPT_TIM2_IRQ_PRIORITY         2
-#define STM32_GPT_TIM6_IRQ_PRIORITY         2
-#define STM32_GPT_TIM21_IRQ_PRIORITY        2
-#define STM32_GPT_TIM22_IRQ_PRIORITY        2
 
 /*
  * I2C driver system settings.
@@ -141,9 +143,6 @@
 #define STM32_ICU_USE_TIM2                  FALSE
 #define STM32_ICU_USE_TIM21                 FALSE
 #define STM32_ICU_USE_TIM22                 FALSE
-#define STM32_ICU_TIM2_IRQ_PRIORITY         3
-#define STM32_ICU_TIM21_IRQ_PRIORITY        3
-#define STM32_ICU_TIM22_IRQ_PRIORITY        3
 
 /*
  * PWM driver system settings.
@@ -151,9 +150,6 @@
 #define STM32_PWM_USE_TIM2                  FALSE
 #define STM32_PWM_USE_TIM21                 FALSE
 #define STM32_PWM_USE_TIM22                 FALSE
-#define STM32_PWM_TIM2_IRQ_PRIORITY         3
-#define STM32_PWM_TIM21_IRQ_PRIORITY        3
-#define STM32_PWM_TIM22_IRQ_PRIORITY        3
 
 /*
  * SERIAL driver system settings.
@@ -195,6 +191,8 @@
 #define STM32_UART_USE_USART2               FALSE
 #define STM32_UART_USART1_DMA_PRIORITY      0
 #define STM32_UART_USART2_DMA_PRIORITY      0
+#define STM32_UART_USART1_IRQ_PRIORITY      3
+#define STM32_UART_USART2_IRQ_PRIORITY      3
 #define STM32_UART_USART1_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 5)
 #define STM32_UART_USART1_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 4)
 #define STM32_UART_USART2_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 6)

@@ -63,24 +63,18 @@
 #include "stm32_usart2.inc"
 #include "stm32_usart3.inc"
 #include "stm32_uart4.inc"
-#if STM32_HAS_UART5
 #include "stm32_uart5.inc"
-#endif
 #include "stm32_lpuart1.inc"
 
 #include "stm32_tim1_15_16_17.inc"
 #include "stm32_tim2.inc"
 #include "stm32_tim3.inc"
 #include "stm32_tim4.inc"
-#if STM32_HAS_TIM5
 #include "stm32_tim5.inc"
-#endif
 #include "stm32_tim6.inc"
 #include "stm32_tim7.inc"
 #include "stm32_tim8.inc"
-#if STM32_HAS_TIM20
 #include "stm32_tim20.inc"
-#endif
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -105,23 +99,17 @@ void irqInit(void) {
   tim2_irq_init();
   tim3_irq_init();
   tim4_irq_init();
-#if STM32_HAS_TIM5
   tim5_irq_init();
-#endif
   tim6_irq_init();
   tim7_irq_init();
   tim8_irq_init();
-#if STM32_HAS_TIM20
   tim20_irq_init();
-#endif
 
   usart1_irq_init();
   usart2_irq_init();
   usart3_irq_init();
   uart4_irq_init();
-#if STM32_HAS_UART5
   uart5_irq_init();
-#endif
   lpuart1_irq_init();
 }
 
@@ -144,23 +132,17 @@ void irqDeinit(void) {
   tim2_irq_deinit();
   tim3_irq_deinit();
   tim4_irq_deinit();
-#if STM32_HAS_TIM5
   tim5_irq_deinit();
-#endif
   tim6_irq_deinit();
   tim7_irq_deinit();
   tim8_irq_deinit();
-#if STM32_HAS_TIM20
   tim20_irq_deinit();
-#endif
 
   usart1_irq_deinit();
   usart2_irq_deinit();
   usart3_irq_deinit();
   uart4_irq_deinit();
-#if STM32_HAS_UART5
   uart5_irq_deinit();
-#endif
   lpuart1_irq_deinit();
 }
 

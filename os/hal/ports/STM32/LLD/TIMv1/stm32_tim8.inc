@@ -35,9 +35,7 @@
 #error "STM32_HAS_TIM8 not defined in registry"
 #endif
 
-#if STM32_HAS_TIM8 == FALSE
-#error "TIM8 not present"
-#endif
+#if STM32_HAS_TIM8
 
 /* Priority settings checks.*/
 #if !defined(STM32_IRQ_TIM8_UP_PRIORITY)
@@ -55,6 +53,8 @@
 #if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_TIM8_CC_PRIORITY)
 #error "Invalid IRQ priority assigned to STM32_IRQ_TIM8_CC_PRIORITY"
 #endif
+
+#endif /* STM32_HAS_TIM8 */
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */

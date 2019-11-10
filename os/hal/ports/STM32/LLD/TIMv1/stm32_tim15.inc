@@ -35,9 +35,7 @@
 #error "STM32_HAS_TIM15 not defined in registry"
 #endif
 
-#if STM32_HAS_TIM15 == FALSE
-#error "TIM15 not present"
-#endif
+#if STM32_HAS_TIM15
 
 /* Priority settings checks.*/
 #if !defined(STM32_IRQ_TIM15_PRIORITY)
@@ -47,6 +45,8 @@
 #if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_TIM15_PRIORITY)
 #error "Invalid IRQ priority assigned to STM32_IRQ_TIM15_PRIORITY"
 #endif
+
+#endif /* STM32_HAS_TIM15 */
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */

@@ -47,21 +47,7 @@
 #error "STM32_HAS_TIM17 not defined in registry"
 #endif
 
-#if STM32_HAS_TIM1 == FALSE
-#error "TIM1 not present"
-#endif
-
-#if STM32_HAS_TIM15 == FALSE
-#error "TIM15 not present"
-#endif
-
-#if STM32_HAS_TIM16 == FALSE
-#error "TIM16 not present"
-#endif
-
-#if STM32_HAS_TIM17 == FALSE
-#error "TIM17 not present"
-#endif
+#if STM32_HAS_TIM1 || STM32_HAS_TIM15 || STM32_HAS_TIM16 || STM32_HAS_TIM17
 
 /* Priority settings checks.*/
 #if !defined(STM32_IRQ_TIM1_BRK_TIM15_PRIORITY)
@@ -95,6 +81,8 @@
 #if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_TIM1_CC_PRIORITY)
 #error "Invalid IRQ priority assigned to STM32_IRQ_TIM1_CC_PRIORITY"
 #endif
+
+#endif /* STM32_HAS_TIM1 || STM32_HAS_TIM15 || STM32_HAS_TIM16 || STM32_HAS_TIM17 */
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */

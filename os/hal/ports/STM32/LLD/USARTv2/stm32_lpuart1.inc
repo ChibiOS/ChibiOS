@@ -35,9 +35,7 @@
 #error "STM32_HAS_LPUART1 not defined in registry"
 #endif
 
-#if STM32_HAS_LPUART1 == FALSE
-#error "LPUART1 not present"
-#endif
+#if STM32_HAS_LPUART1
 
 /* Priority settings checks.*/
 #if !defined(STM32_IRQ_LPUART1_PRIORITY)
@@ -47,6 +45,8 @@
 #if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_LPUART1_PRIORITY)
 #error "Invalid IRQ priority assigned to STM32_IRQ_LPUART1_PRIORITY"
 #endif
+
+#endif /* STM32_HAS_LPUART1 */
 
 /* Other checks.*/
 #if (HAL_USE_SERIAL && STM32_SERIAL_USE_LPUART1)

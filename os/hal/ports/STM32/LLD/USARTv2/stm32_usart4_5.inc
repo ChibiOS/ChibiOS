@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    TIMv1/stm32_tim20.inc
- * @brief   Shared TIM20 handler.
+ * @file    USARTv2/stm32_usart4_5.inc
+ * @brief   Shared USART4, USART5 handler.
  *
- * @addtogroup STM32_TIM20_HANDLER
+ * @addtogroup STM32_USART4_5_HANDLER
  * @{
  */
 
@@ -31,30 +31,51 @@
 /*===========================================================================*/
 
 /* Registry checks for robustness.*/
-#if !defined(STM32_HAS_TIM20)
-#error "STM32_HAS_TIM20 not defined in registry"
+#if !defined(STM32_HAS_UART4)
+#error "STM32_HAS_UART4 not defined in registry"
 #endif
 
-#if STM32_HAS_TIM20
+#if !defined(STM32_HAS_UART5)
+#error "STM32_HAS_UART5 not defined in registry"
+#endif
+
+#if STM32_HAS_UART4 || STM32_HAS_UART5
 
 /* Priority settings checks.*/
-#if !defined(STM32_IRQ_TIM20_UP_PRIORITY)
-#error "STM32_IRQ_TIM20_UP_PRIORITY not defined in mcuconf.h"
+#if !defined(STM32_IRQ_USART4_5_PRIORITY)
+#error "STM32_IRQ_USART4_5_PRIORITY not defined in mcuconf.h"
 #endif
 
-#if !defined(STM32_IRQ_TIM20_CC_PRIORITY)
-#error "STM32_IRQ_TIM20_CC_PRIORITY not defined in mcuconf.h"
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_USART4_5_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_USART4_5_PRIORITY"
 #endif
 
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_TIM20_UP_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_TIM20_UP_PRIORITY"
+#endif /* STM32_HAS_UART4 || STM32_HAS_UART5 */
+
+/* Other checks.*/
+#if (HAL_USE_SERIAL && STM32_SERIAL_USE_UART4) &&                           \
+    (HAL_USE_UART && STM32_UART_USE_UART4)
+#error "USART4 used by multiple drivers"
 #endif
 
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_TIM20_CC_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_TIM20_CC_PRIORITY"
+#if (HAL_USE_SERIAL && STM32_SERIAL_USE_UART5) &&                           \
+    (HAL_USE_UART && STM32_UART_USE_UART5)
+#error "USART5 used by multiple drivers"
 #endif
 
-#endif /* STM32_HAS_TIM20 */
+#if (HAL_USE_SERIAL && STM32_SERIAL_USE_UART4) ||                           \
+    (HAL_USE_UART && STM32_UART_USE_UART4)
+#define STM32_USART4_IS_USED        TRUE
+#else
+#define STM32_USART4_IS_USED        FALSE
+#endif
+
+#if (HAL_USE_SERIAL && STM32_SERIAL_USE_UART5) ||                           \
+    (HAL_USE_UART && STM32_UART_USE_UART45)
+#define STM32_USART5_IS_USED        TRUE
+#else
+#define STM32_USART5_IS_USED        FALSE
+#endif
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -68,17 +89,15 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static inline void tim20_irq_init(void) {
-#if defined(STM32_TIM20_IS_USED)
-  nvicEnableVector(STM32_TIM20_UP_NUMBER, STM32_IRQ_TIM20_UP_PRIORITY);
-  nvicEnableVector(STM32_TIM20_CC_NUMBER, STM32_IRQ_TIM20_CC_PRIORITY);
+static inline void usart4_usart5_irq_init(void) {
+#if STM32_USART4_IS_USED || STM32_USART5_IS_USED
+  nvicEnableVector(STM32_USART4_5_NUMBER, STM32_IRQ_USART4_5_PRIORITY);
 #endif
 }
 
-static inline void tim20_irq_deinit(void) {
-#if defined(STM32_TIM20_IS_USED)
-  nvicDisableVector(STM32_TIM20_UP_NUMBER);
-  nvicDisableVector(STM32_TIM20_CC_NUMBER);
+static inline void usart4_usart5_irq_deinit(void) {
+#if STM32_USART4_IS_USED || STM32_USART5_IS_USED
+  nvicDisableVector(STM32_USART4_5_NUMBER);
 #endif
 }
 
@@ -86,59 +105,37 @@ static inline void tim20_irq_deinit(void) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if defined(__DOXYGEN__)
+#if STM32_USART4_IS_USED  || STM32_USART5_IS_USED ||                        \
+    defined(__DOXYGEN__)
 /**
- * @brief   TIM20-UP interrupt handler.
+ * @brief   USART4, USART5, LPUART1 interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_TIM20_UP_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_USART4_5_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-#if HAL_USE_GPT
-  pwm_lld_serve_interrupt(&GPTD20);
+#if HAL_USE_SERIAL
+#if STM32_SERIAL_USE_UART4
+  sd_lld_serve_interrupt(&SD4);
 #endif
-#if HAL_USE_ICU
-  pwm_lld_serve_interrupt(&ICUD20);
+#if STM32_SERIAL_USE_UART5
+  sd_lld_serve_interrupt(&SD5);
 #endif
-#if HAL_USE_PWM
-#if STM32_PWM_USE_TIM20
-  pwm_lld_serve_interrupt(&PWMD20);
+#endif
+#if HAL_USE_UART
+#if STM32_UART_USE_UART4
+  uart_lld_serve_interrupt(&UARTD4);
+#endif
+#if STM32_UART_USE_UART5
+  uart_lld_serve_interrupt(&UARTD5);
 #endif
 #endif
 
   OSAL_IRQ_EPILOGUE();
 }
 #endif
-
-#if defined(__DOXYGEN__)
-/**
- * @brief   TIM20-CC interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_TIM20_CC_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-#if HAL_USE_GPT
-#if STM32_GPT_USE_TIM20
-  pwm_lld_serve_interrupt(&GPTD20);
-#endif
-#endif
-#if STM32_ICU_USE_TIM20
-  pwm_lld_serve_interrupt(&ICUD20);
-#endif
-#if HAL_USE_PWM
-#if STM32_PWM_USE_TIM20
-  pwm_lld_serve_interrupt(&PWMD20);
-#endif
-#endif
-
-  OSAL_IRQ_EPILOGUE();
-}
-#endif /* HAL_USE_GPT || HAL_USE_ICU || HAL_USE_PWM */
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */

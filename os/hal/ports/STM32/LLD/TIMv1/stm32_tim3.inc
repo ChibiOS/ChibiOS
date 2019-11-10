@@ -35,9 +35,7 @@
 #error "STM32_HAS_TIM3 not defined in registry"
 #endif
 
-#if STM32_HAS_TIM3 == FALSE
-#error "TIM3 not present"
-#endif
+#if STM32_HAS_TIM3
 
 /* Priority settings checks.*/
 #if !defined(STM32_IRQ_TIM3_PRIORITY)
@@ -47,6 +45,8 @@
 #if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_TIM3_PRIORITY)
 #error "Invalid IRQ priority assigned to STM32_IRQ_TIM3_PRIORITY"
 #endif
+
+#endif /* STM32_HAS_TIM3 */
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
