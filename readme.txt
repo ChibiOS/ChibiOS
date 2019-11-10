@@ -88,6 +88,7 @@
 *** 18.2.3 ***
 - NEW: Added a check on defective GCC versions, Cortex-M0 only.
 - NEW: Extra timer checks in STM32 ST driver.
+- FIX: Fixed STM32 ADC1 sample time macros (bug #1059).
 - FIX: Fixed STM32 ADCv1 error callback disabled on some devices (bug #1058).
 - FIX: Fixed error in uartSendFullTimeout() HAL function (bug #1057).
 - FIX: Fixed OS-less Cortex-M OSAL problem with critical zones (bug #1056).

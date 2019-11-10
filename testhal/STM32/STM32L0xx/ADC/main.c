@@ -77,7 +77,7 @@ static const ADCConversionGroup adcgrpcfg2 = {
   ADC_CFGR1_CONT | ADC_CFGR1_RES_12BIT,             /* CFGR1 */
   0,                                                /* CFGR2 */
   ADC_TR(0, 0),                                     /* TR */
-  ADC_SMPR_SMP_28P5,                                /* SMPR */
+  ADC_SMPR_SMP_39P5,                                /* SMPR */
   ADC_CHSELR_CHSEL10 | ADC_CHSELR_CHSEL11 |
   ADC_CHSELR_CHSEL17 | ADC_CHSELR_CHSEL18           /* CHSELR */
 };
