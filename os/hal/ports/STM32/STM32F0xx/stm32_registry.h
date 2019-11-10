@@ -59,7 +59,6 @@
 #define STM32_HAS_ADC1                      TRUE
 #define STM32_ADC_SUPPORTS_PRESCALER        FALSE
 #define STM32_ADC_SUPPORTS_OVERSAMPLING     FALSE
-#define STM32_ADC1_IRQ_SHARED_WITH_EXTI     FALSE
 #define STM32_ADC1_HANDLER                  Vector70
 #define STM32_ADC1_NUMBER                   12
 #define STM32_ADC1_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(1, 1) |\
@@ -373,7 +372,6 @@
 #define STM32_HAS_ADC1                      TRUE
 #define STM32_ADC_SUPPORTS_PRESCALER        FALSE
 #define STM32_ADC_SUPPORTS_OVERSAMPLING     FALSE
-#define STM32_ADC1_IRQ_SHARED_WITH_EXTI     TRUE
 #define STM32_ADC1_HANDLER                  Vector70
 #define STM32_ADC1_NUMBER                   12
 #define STM32_ADC1_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(1, 1) |\
@@ -582,7 +580,6 @@
 #define STM32_HAS_ADC1                      TRUE
 #define STM32_ADC_SUPPORTS_PRESCALER        FALSE
 #define STM32_ADC_SUPPORTS_OVERSAMPLING     FALSE
-#define STM32_ADC1_IRQ_SHARED_WITH_EXTI     TRUE
 #define STM32_ADC1_HANDLER                  Vector70
 #define STM32_ADC1_NUMBER                   12
 #define STM32_ADC1_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(1, 1) |\
@@ -801,7 +798,6 @@
 #define STM32_HAS_ADC1                      TRUE
 #define STM32_ADC_SUPPORTS_PRESCALER        FALSE
 #define STM32_ADC_SUPPORTS_OVERSAMPLING     FALSE
-#define STM32_ADC1_IRQ_SHARED_WITH_EXTI     TRUE
 #define STM32_ADC1_HANDLER                  Vector70
 #define STM32_ADC1_NUMBER                   12
 #define STM32_ADC1_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(1, 1) |\
@@ -1024,7 +1020,6 @@
 #define STM32_HAS_ADC1                      TRUE
 #define STM32_ADC_SUPPORTS_PRESCALER        FALSE
 #define STM32_ADC_SUPPORTS_OVERSAMPLING     FALSE
-#define STM32_ADC1_IRQ_SHARED_WITH_EXTI     TRUE
 #define STM32_ADC1_HANDLER                  Vector70
 #define STM32_ADC1_NUMBER                   12
 #define STM32_ADC1_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(1, 1) |\
@@ -1263,7 +1258,6 @@
 #define STM32_HAS_ADC1                      TRUE
 #define STM32_ADC_SUPPORTS_PRESCALER        FALSE
 #define STM32_ADC_SUPPORTS_OVERSAMPLING     FALSE
-#define STM32_ADC1_IRQ_SHARED_WITH_EXTI     TRUE
 #define STM32_ADC1_HANDLER                  Vector70
 #define STM32_ADC1_NUMBER                   12
 #define STM32_ADC1_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(1, 1) |\
@@ -1517,7 +1511,6 @@
 #define STM32_HAS_ADC1                      TRUE
 #define STM32_ADC_SUPPORTS_PRESCALER        FALSE
 #define STM32_ADC_SUPPORTS_OVERSAMPLING     FALSE
-#define STM32_ADC1_IRQ_SHARED_WITH_EXTI     TRUE
 #define STM32_ADC1_HANDLER                  Vector70
 #define STM32_ADC1_NUMBER                   12
 #define STM32_ADC1_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(1, 1) |\
@@ -1787,7 +1780,6 @@
 #define STM32_HAS_ADC1                      TRUE
 #define STM32_ADC_SUPPORTS_PRESCALER        FALSE
 #define STM32_ADC_SUPPORTS_OVERSAMPLING     FALSE
-#define STM32_ADC1_IRQ_SHARED_WITH_EXTI     TRUE
 #define STM32_ADC1_HANDLER                  Vector70
 #define STM32_ADC1_NUMBER                   12
 #define STM32_ADC1_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(1, 1) |\
