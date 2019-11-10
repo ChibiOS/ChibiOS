@@ -135,6 +135,8 @@
 - HAL: Added a new interface for range-finder devices (used by EX).
 - HAL: Added mcuconf.h updater tool for STM32F407 (backported to 19.1.1).
 - NIL: Integrated NIL 4.0.
+- FIX: Fixed STM32 ADCv1 error callback disabled on some devices (bug #1058)
+       (backported to 19.1.4)(backported to 18.2.3).
 - FIX: Fixed error in uartSendFullTimeout() HAL function (bug #1057)
        (backported to 19.1.4)(backported to 18.2.3).
 - FIX: Fixed OS-less Cortex-M OSAL problem with critical zones (bug #1056)

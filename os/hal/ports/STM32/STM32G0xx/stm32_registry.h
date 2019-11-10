@@ -94,7 +94,6 @@
 #define STM32_HAS_ADC1                      TRUE
 #define STM32_ADC_SUPPORTS_PRESCALER        TRUE
 #define STM32_ADC_SUPPORTS_OVERSAMPLING     TRUE
-#define STM32_ADC1_IRQ_SHARED_WITH_EXTI     TRUE
 
 #define STM32_HAS_ADC2                      FALSE
 #define STM32_HAS_ADC3                      FALSE
@@ -274,7 +273,6 @@
 #define STM32_HAS_ADC1                      TRUE
 #define STM32_ADC_SUPPORTS_PRESCALER        TRUE
 #define STM32_ADC_SUPPORTS_OVERSAMPLING     TRUE
-#define STM32_ADC1_IRQ_SHARED_WITH_EXTI     TRUE
 
 #define STM32_HAS_ADC2                      FALSE
 #define STM32_HAS_ADC3                      FALSE
