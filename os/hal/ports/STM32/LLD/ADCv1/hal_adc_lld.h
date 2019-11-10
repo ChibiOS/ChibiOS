@@ -35,6 +35,7 @@
  * @name    Sampling rates
  * @{
  */
+#if defined(STM32F0XX) || defined(__DOXYGEN__)
 #define ADC_SMPR_SMP_1P5        0U  /**< @brief 14 cycles conversion time   */
 #define ADC_SMPR_SMP_7P5        1U  /**< @brief 21 cycles conversion time.  */
 #define ADC_SMPR_SMP_13P5       2U  /**< @brief 28 cycles conversion time.  */
@@ -43,6 +44,16 @@
 #define ADC_SMPR_SMP_55P5       5U  /**< @brief 68 cycles conversion time.  */
 #define ADC_SMPR_SMP_71P5       6U  /**< @brief 84 cycles conversion time.  */
 #define ADC_SMPR_SMP_239P5      7U  /**< @brief 252 cycles conversion time. */
+#elif defined(STM32L0XX)
+#define ADC_SMPR_SMP_1P5        0U  /**< @brief 14 cycles conversion time   */
+#define ADC_SMPR_SMP_3P5        1U  /**< @brief 16 cycles conversion time.  */
+#define ADC_SMPR_SMP_7P5        2U  /**< @brief 20 cycles conversion time.  */
+#define ADC_SMPR_SMP_12P5       3U  /**< @brief 25 cycles conversion time.  */
+#define ADC_SMPR_SMP_19P5       4U  /**< @brief 31 cycles conversion time.  */
+#define ADC_SMPR_SMP_39P5       5U  /**< @brief 52 cycles conversion time.  */
+#define ADC_SMPR_SMP_79P5       6U  /**< @brief 92 cycles conversion time.  */
+#define ADC_SMPR_SMP_160P5      7U  /**< @brief 173 cycles conversion time. */
+#endif
 /** @} */
 
 /**
