@@ -168,11 +168,9 @@
 #error "ADC driver activated but no ADC peripheral assigned"
 #endif
 
-#if STM32_ADC1_IRQ_SHARED_WITH_EXTI == FALSE
 #if STM32_ADC_USE_ADC1 &&                                                   \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC1_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to ADC1"
-#endif
 #endif
 
 #if STM32_ADC_USE_ADC1 &&                                                   \
