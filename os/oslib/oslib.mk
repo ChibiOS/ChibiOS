@@ -32,6 +32,9 @@ endif
 ifneq ($(findstring CH_CFG_USE_OBJ_CACHES TRUE,$(CHLIBCONF)),)
 LIBSRC += $(CHIBIOS)/os/oslib/src/chobjcaches.c
 endif
+ifneq ($(findstring CH_CFG_USE_DELEGATES TRUE,$(CHLIBCONF)),)
+LIBSRC += $(CHIBIOS)/os/oslib/src/chdelegates.c
+endif
 ifneq ($(findstring CH_CFG_USE_FACTORY TRUE,$(CHLIBCONF)),)
 LIBSRC += $(CHIBIOS)/os/oslib/src/chfactory.c
 endif
@@ -42,6 +45,7 @@ LIBSRC := $(CHIBIOS)/os/oslib/src/chmboxes.c \
           $(CHIBIOS)/os/oslib/src/chmempools.c \
           $(CHIBIOS)/os/oslib/src/chpipes.c \
           $(CHIBIOS)/os/oslib/src/chobjcaches.c \
+          $(CHIBIOS)/os/oslib/src/chdelegates.c \
           $(CHIBIOS)/os/oslib/src/chfactory.c
 endif
 
