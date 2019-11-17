@@ -425,6 +425,17 @@
 #define CH_CFG_USE_OBJ_CACHES               ${doc.CH_CFG_USE_OBJ_CACHES!"TRUE"}
 #endif
 
+/**
+ * @brief   Delegate threads APIs.
+ * @details If enabled then the delegate threads APIs are included
+ *          in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#if !defined(CH_CFG_USE_DELEGATES)
+#define CH_CFG_USE_DELEGATES                ${doc.CH_CFG_USE_DELEGATES!"TRUE"}
+#endif
+
 /** @} */
 
 /*===========================================================================*/

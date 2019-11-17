@@ -147,10 +147,10 @@ static inline msg_t chDelegateCallDirect3(thread_t *tp, delegate_fn0_t func,
  * @brief   Direct call to a function with four parameters.
  */
 static inline msg_t chDelegateCallDirect4(thread_t *tp, delegate_fn0_t func,
-                                          msg_t p1, msg_t p2, msg_t p2,
+                                          msg_t p1, msg_t p2, msg_t p3,
                                           msg_t p4) {
 
-  return chDelegateCallVeneer(tp, __ch_delegate_fn4, func, p1, p2, p4);
+  return chDelegateCallVeneer(tp, __ch_delegate_fn4, func, p1, p2, p3, p4);
 }
 
 #endif /* CH_CFG_USE_DELEGATES == TRUE */
