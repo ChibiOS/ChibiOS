@@ -75,9 +75,10 @@
 
 *** Next ***
 - LIB: Added support for delegate threads to OSLIB.
+- NIL: Improvements to messages, new functions chMsgWaitS(),
+       chMsgWaitTimeoutS(), chMsgWaitTimeout().  
 - RT:  Improvements to messages, new functions chMsgWaitS(),
-       chMsgWaitTimeoutS(), chMsgWaitTimeout(), chMsgWaitPollS(),
-       chMsgWaitPoll().  
+       chMsgWaitTimeoutS(), chMsgWaitTimeout(), chMsgPollS(), chMsgPoll().  
 - HAL: TRNG support added to STM32F7xx, STM32G0xx, STM32G4xx, STM32H7xx
        and STM32L0xx.
 - NEW: Added support for .cc files extensions in makefiles.

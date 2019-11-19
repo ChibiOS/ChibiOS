@@ -101,11 +101,79 @@ thread_t *chMsgWait(void) {
   thread_t *tp;
 
   chSysLock();
+  tp = chMsgWaitS();
+  chSysUnlock();
+
+  return tp;
+}
+
+/**
+ * @brief   Suspends the thread and waits for an incoming message or a
+ *          timeout to occur.
+ * @post    After receiving a message the function @p chMsgGet() must be
+ *          called in order to retrieve the message and then @p chMsgRelease()
+ *          must be invoked in order to acknowledge the reception and send
+ *          the answer.
+ * @note    If the message is a pointer then you can assume that the data
+ *          pointed by the message is stable until you invoke @p chMsgRelease()
+ *          because the sending thread is suspended until then.
+ * @note    The reference counter of the sender thread is not increased, the
+ *          returned pointer is a temporary reference.
+ *
+ * @param[in] timeout   the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              A pointer to the thread carrying the message.
+ * @retval NULL         if a timeout occurred.
+ *
+ * @api
+ */
+thread_t *chMsgWaitTimeout(sysinterval_t timeout) {
+  thread_t *tp;
+
+  chSysLock();
+  tp = chMsgWaitTimeoutS(timeout);
+  chSysUnlock();
+
+  return tp;
+}
+
+/**
+ * @brief   Suspends the thread and waits for an incoming message or a
+ *          timeout to occur.
+ * @post    After receiving a message the function @p chMsgGet() must be
+ *          called in order to retrieve the message and then @p chMsgRelease()
+ *          must be invoked in order to acknowledge the reception and send
+ *          the answer.
+ * @note    If the message is a pointer then you can assume that the data
+ *          pointed by the message is stable until you invoke @p chMsgRelease()
+ *          because the sending thread is suspended until then.
+ * @note    The reference counter of the sender thread is not increased, the
+ *          returned pointer is a temporary reference.
+ *
+ * @param[in] timeout   the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              A pointer to the thread carrying the message.
+ * @retval NULL         if a timeout occurred.
+ *
+ * @sclass
+ */
+thread_t *chMsgWaitTimeoutS(sysinterval_t timeout) {
+  thread_t *tp;
+
+  chDbgCheckClassS();
+
   tp = nil_find_thread(NIL_STATE_SNDMSGQ, nil.current);
   if (tp == NULL) {
-    tp = (thread_t *)chSchGoSleepTimeoutS(NIL_STATE_WTMSG, TIME_INFINITE);
+    msg_t msg = chSchGoSleepTimeoutS(NIL_STATE_WTMSG, timeout);
+    if (msg != MSG_TIMEOUT) {
+      return (thread_t *)msg;
+    }
   }
-  chSysUnlock();
 
   return tp;
 }

@@ -121,6 +121,8 @@ msg_t chMsgSend(thread_t *tp, msg_t msg) {
 thread_t *chMsgWaitS(void) {
   thread_t *tp;
 
+  chDbgCheckClassS();
+
   if (!chMsgIsPendingI(currp)) {
     chSchGoSleepS(CH_STATE_WTMSG);
   }
