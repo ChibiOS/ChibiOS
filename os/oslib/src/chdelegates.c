@@ -181,18 +181,47 @@ msg_t chDelegateCallVeneer(thread_t *tp, delegate_veneer_t veneer, ...) {
  *          are sending messages then the requests are served in priority
  *          order.
  *
- * @param[in] timeout   function timeout in system ticks
- * @
+ * @api
+ */
+void chDelegateDispatch(void) {
+  thread_t *tp;
+  const call_message_t *cmp;
+  msg_t ret;
+
+  tp = chMsgWait();
+  cmp = (const call_message_t *)chMsgGet(tp);
+  ret = cmp->veneer(cmp->argsp);
+
+  chMsgRelease(tp, ret);
+}
+
+/**
+ * @brief   Call messages dispatching with timeout.
+ * @details The function awaits for an incoming call messages and calls the
+ *          specified functions, then it returns. In case multiple threads
+ *          are sending messages then the requests are served in priority
+ *          order.
  *
+ * @param[in] timeout   the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              The function outcome.
+ * @retval MSG_OK       if a function has been called.
+ * @retval MSG_TIMEOUT  if a timeout occurred.
+ *
+ * @api
  */
 msg_t chDelegateDispatchTimeout(sysinterval_t timeout) {
   thread_t *tp;
   const call_message_t *cmp;
   msg_t ret;
 
-  (void)timeout;
+  tp = chMsgWaitTimeout(timeout);
+  if (tp == NULL) {
+    return MSG_TIMEOUT;
+  }
 
-  tp = chMsgWait();
   cmp = (const call_message_t *)chMsgGet(tp);
   ret = cmp->veneer(cmp->argsp);
 

@@ -98,6 +98,7 @@ extern "C" {
   msg_t __ch_delegate_fn2(va_list *argsp);
   msg_t __ch_delegate_fn3(va_list *argsp);
   msg_t __ch_delegate_fn4(va_list *argsp);
+  void chDelegateDispatch(void);
   msg_t chDelegateDispatchTimeout(sysinterval_t timeout);
   msg_t chDelegateCallVeneer(thread_t *tp, delegate_veneer_t veneer, ...);
 #ifdef __cplusplus
