@@ -1013,6 +1013,185 @@ test_assert((pipe1.rdptr == pipe1.wrptr) &&
               <value>Internal Tests</value>
             </type>
             <brief>
+              <value>Thread Delegates</value>
+            </brief>
+            <description>
+              <value>This sequence tests the ChibiOS library functionalities related to Thread Delegates.</value>
+            </description>
+            <condition>
+              <value>CH_CFG_USE_DELEGATES</value>
+            </condition>
+            <shared_code>
+              <value><![CDATA[
+static bool exit_flag;
+
+static int dis_func0(void) {
+
+  test_emit_token('0');
+
+  return 0x55AA;
+}
+
+static char dis_func1(char a) {
+
+  test_emit_token((char)a);
+
+  return a;
+}
+
+static char dis_func2(char a, char b) {
+
+  test_emit_token((char)a);
+  test_emit_token((char)b);
+
+  return a;
+}
+
+static char dis_func3(char a, char b, char c) {
+
+  test_emit_token((char)a);
+  test_emit_token((char)b);
+  test_emit_token((char)c);
+
+  return a;
+}
+
+static char dis_func4(char a, char b, char c, char d) {
+
+  test_emit_token((char)a);
+  test_emit_token((char)b);
+  test_emit_token((char)c);
+  test_emit_token((char)d);
+
+  return a;
+}
+
+static int dis_func_end(void) {
+
+  test_emit_token('Z');
+  exit_flag = true;
+
+  return 0xAA55;
+}
+
+static THD_WORKING_AREA(waThread1, 256);
+static THD_FUNCTION(Thread1, arg) {
+
+  (void)arg;
+  
+  chRegSetThreadName("dispatcher");
+  
+  exit_flag = false;
+  
+  do {
+    chDelegateDispatch();
+  } while (!exit_flag);
+  
+  chThdExit(0x0FA5);
+}
+]]></value>
+            </shared_code>
+            <cases>
+              <case>
+                <brief>
+                  <value>Dispatcher test.</value>
+                </brief>
+                <description>
+                  <value>The dispatcher API is tested for functionality.</value>
+                </description>
+                <condition>
+                  <value>
+                  </value>
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value/>
+                  </setup_code>
+                  <teardown_code>
+                    <value/>
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[
+thread_t *tp;
+]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Starting the dispatcher thread.</value>
+                    </description>
+                    <tags>
+                      <value></value>
+                    </tags>
+                    <code>
+                      <value><![CDATA[
+#if defined(_CHIBIOS_RT_)
+tp = chThdCreateStatic(waThread1, sizeof(waThread1),
+                       chThdGetPriorityX() + 1, Thread1, NULL);
+#endif
+#if defined(_CHIBIOS_NIL_)
+#endif
+]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Calling the default veneers, checking the result
+and the emitted tokens.</value>
+                    </description>
+                    <tags>
+                      <value></value>
+                    </tags>
+                    <code>
+                      <value><![CDATA[
+int retval;
+
+retval = chDelegateCallDirect0(tp, (delegate_fn0_t)dis_func0);
+test_assert(retval == 0x55AA, "invalid return value");
+
+retval = chDelegateCallDirect1(tp, (delegate_fn1_t)dis_func1, 'A');
+test_assert(retval == (int)'A', "invalid return value");
+
+retval = chDelegateCallDirect2(tp, (delegate_fn2_t)dis_func2, 'B', 'C');
+test_assert(retval == (int)'B', "invalid return value");
+
+retval = chDelegateCallDirect3(tp, (delegate_fn3_t)dis_func3, 'D', 'E', 'F');
+test_assert(retval == (int)'D', "invalid return value");
+
+retval = chDelegateCallDirect4(tp, (delegate_fn4_t)dis_func4, 'G', 'H', 'I', 'J');
+test_assert(retval == (int)'G', "invalid return value");
+
+retval = chDelegateCallDirect0(tp, (delegate_fn0_t)dis_func_end);
+test_assert(retval == 0xAA55, "invalid return value");
+
+test_assert_sequence("0ABCDEFGHIJZ", "unexpected tokens");
+]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Waiting for the thread to terminate-</value>
+                    </description>
+                    <tags>
+                      <value></value>
+                    </tags>
+                    <code>
+                      <value><![CDATA[
+msg_t msg = chThdWait(tp);
+test_assert(msg == 0x0FA5, "invalid exit code");
+]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+            </cases>
+          </sequence>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
               <value>Objects Caches</value>
             </brief>
             <description>

@@ -20,7 +20,7 @@
 /**
  * @file    chdelegates.c
  * @brief   Delegate threads code.
- * @details Delegate threadss.
+ * @details Delegate threads.
  *          <h2>Operation mode</h2>
  *          A delegate thread is a thread performing function calls triggered
  *          by other threads. This functionality is especially useful when

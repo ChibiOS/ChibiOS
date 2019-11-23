@@ -21,18 +21,18 @@
  * @file    oslib_test_sequence_004.c
  * @brief   Test Sequence 004 code.
  *
- * @page oslib_test_sequence_004 [4] Objects Caches
+ * @page oslib_test_sequence_004 [4] Thread Delegates
  *
  * File: @ref oslib_test_sequence_004.c
  *
  * <h2>Description</h2>
  * This sequence tests the ChibiOS library functionalities related to
- * Objects Caches.
+ * Thread Delegates.
  *
  * <h2>Conditions</h2>
  * This sequence is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_USE_OBJ_CACHES
+ * - CH_CFG_USE_DELEGATES
  * .
  *
  * <h2>Test Cases</h2>
@@ -40,52 +40,77 @@
  * .
  */
 
-#if (CH_CFG_USE_OBJ_CACHES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_DELEGATES) || defined(__DOXYGEN__)
 
 /****************************************************************************
  * Shared code.
  ****************************************************************************/
 
-#include <string.h>
+static bool exit_flag;
 
-#define SIZE_OBJECTS        16
-#define NUM_OBJECTS         4
-#define NUM_HASH_ENTRIES    (NUM_OBJECTS * 2)
+static int dis_func0(void) {
 
-/* Cached object type used for test.*/
-typedef struct {
-  oc_object_t       header;
-  uint8_t           data[SIZE_OBJECTS];
-} cached_object_t;
+  test_emit_token('0');
 
-static oc_hash_header_t hash_headers[NUM_HASH_ENTRIES];
-static cached_object_t objects[NUM_OBJECTS];
-static objects_cache_t cache1;
-
-static bool obj_read(objects_cache_t *ocp,
-                     oc_object_t *objp,
-                     bool async) {
-
-  test_emit_token('a' + objp->obj_key);
-
-  objp->obj_flags &= ~OC_FLAG_NOTSYNC;
-
-  if (async) {
-    chCacheReleaseObject(ocp, objp);
-  }
-
-  return false;
+  return 0x55AA;
 }
 
-static bool obj_write(objects_cache_t *ocp,
-                      oc_object_t *objp,
-                      bool async) {
-  (void)ocp;
-  (void)async;
+static char dis_func1(char a) {
 
-  test_emit_token('A' + objp->obj_key);
+  test_emit_token((char)a);
 
-  return false;
+  return a;
+}
+
+static char dis_func2(char a, char b) {
+
+  test_emit_token((char)a);
+  test_emit_token((char)b);
+
+  return a;
+}
+
+static char dis_func3(char a, char b, char c) {
+
+  test_emit_token((char)a);
+  test_emit_token((char)b);
+  test_emit_token((char)c);
+
+  return a;
+}
+
+static char dis_func4(char a, char b, char c, char d) {
+
+  test_emit_token((char)a);
+  test_emit_token((char)b);
+  test_emit_token((char)c);
+  test_emit_token((char)d);
+
+  return a;
+}
+
+static int dis_func_end(void) {
+
+  test_emit_token('Z');
+  exit_flag = true;
+
+  return 0xAA55;
+}
+
+static THD_WORKING_AREA(waThread1, 256);
+static THD_FUNCTION(Thread1, arg) {
+
+  (void)arg;
+
+  chRegSetThreadName("dispatcher");
+
+  exit_flag = false;
+
+  do {
+    chDelegateDispatch();
+  } while (!exit_flag);
+
+  chThdExit(0x0FA5);
 }
 
 /****************************************************************************
@@ -93,151 +118,73 @@ static bool obj_write(objects_cache_t *ocp,
  ****************************************************************************/
 
 /**
- * @page oslib_test_004_001 [4.1] Cache initialization
+ * @page oslib_test_004_001 [4.1] Dispatcher test
  *
  * <h2>Description</h2>
- * A cache object is initialized, some initial conditions are checked.
+ * The dispatcher API is tested for functionality.
  *
  * <h2>Test Steps</h2>
- * - [4.1.1] Cache initialization.
- * - [4.1.2] Getting and releasing objects without initialization.
- * - [4.1.3] Getting and releasing objects with synchronous
- *   initialization.
- * - [4.1.4] Getting and releasing objects with asynchronous
- *   initialization.
- * - [4.1.5] Checking cached objects.
- * - [4.1.6] Checking non-cached objects.
+ * - [4.1.1] Starting the dispatcher thread.
+ * - [4.1.2] Calling the default veneers, checking the result and the
+ *   emitted tokens.
+ * - [4.1.3] Waiting for the thread to terminate-.
  * .
  */
 
 static void oslib_test_004_001_execute(void) {
+  thread_t *tp;
 
-  /* [4.1.1] Cache initialization.*/
+  /* [4.1.1] Starting the dispatcher thread.*/
   test_set_step(1);
   {
-    chCacheObjectInit(&cache1,
-                      NUM_HASH_ENTRIES,
-                      hash_headers,
-                      NUM_OBJECTS,
-                      sizeof (cached_object_t),
-                      objects,
-                      obj_read,
-                      obj_write);
+#if defined(_CHIBIOS_RT_)
+    tp = chThdCreateStatic(waThread1, sizeof(waThread1),
+                           chThdGetPriorityX() + 1, Thread1, NULL);
+#endif
+#if defined(_CHIBIOS_NIL_)
+#endif
   }
   test_end_step(1);
 
-  /* [4.1.2] Getting and releasing objects without initialization.*/
+  /* [4.1.2] Calling the default veneers, checking the result and the
+     emitted tokens.*/
   test_set_step(2);
   {
-    uint32_t i;
+    int retval;
 
-    for (i = 0; i < (NUM_OBJECTS * 2); i++) {
-      oc_object_t * objp = chCacheGetObject(&cache1, 0U, i);
+    retval = chDelegateCallDirect0(tp, (delegate_fn0_t)dis_func0);
+    test_assert(retval == 0x55AA, "invalid return value");
 
-      test_assert((objp->obj_flags & OC_FLAG_INHASH) != 0U, "not in hash");
-      test_assert((objp->obj_flags & OC_FLAG_NOTSYNC) != 0U, "should not be in sync");
+    retval = chDelegateCallDirect1(tp, (delegate_fn1_t)dis_func1, 'A');
+    test_assert(retval == (int)'A', "invalid return value");
 
-      chCacheReleaseObject(&cache1, objp);
-    }
+    retval = chDelegateCallDirect2(tp, (delegate_fn2_t)dis_func2, 'B', 'C');
+    test_assert(retval == (int)'B', "invalid return value");
 
-    test_assert_sequence("", "unexpected tokens");
+    retval = chDelegateCallDirect3(tp, (delegate_fn3_t)dis_func3, 'D', 'E', 'F');
+    test_assert(retval == (int)'D', "invalid return value");
+
+    retval = chDelegateCallDirect4(tp, (delegate_fn4_t)dis_func4, 'G', 'H', 'I', 'J');
+    test_assert(retval == (int)'G', "invalid return value");
+
+    retval = chDelegateCallDirect0(tp, (delegate_fn0_t)dis_func_end);
+    test_assert(retval == 0xAA55, "invalid return value");
+
+    test_assert_sequence("0ABCDEFGHIJZ", "unexpected tokens");
   }
   test_end_step(2);
 
-  /* [4.1.3] Getting and releasing objects with synchronous
-     initialization.*/
+  /* [4.1.3] Waiting for the thread to terminate-.*/
   test_set_step(3);
   {
-    uint32_t i;
-    bool error;
-
-    for (i = 0; i < (NUM_OBJECTS * 2); i++) {
-      oc_object_t *objp = chCacheGetObject(&cache1, 0U, i);
-
-      test_assert((objp->obj_flags & OC_FLAG_INHASH) != 0U, "not in hash");
-      test_assert((objp->obj_flags & OC_FLAG_NOTSYNC) != 0U, "in sync");
-
-      error = chCacheReadObject(&cache1, objp, false);
-
-      test_assert(error == false, "returned error");
-      test_assert((objp->obj_flags & OC_FLAG_INHASH) != 0U, "not in hash");
-      test_assert((objp->obj_flags & OC_FLAG_NOTSYNC) == 0U, "not in sync");
-
-      chCacheReleaseObject(&cache1, objp);
-    }
-
-    test_assert_sequence("abcdefgh", "unexpected tokens");
+    msg_t msg = chThdWait(tp);
+    test_assert(msg == 0x0FA5, "invalid exit code");
   }
   test_end_step(3);
-
-  /* [4.1.4] Getting and releasing objects with asynchronous
-     initialization.*/
-  test_set_step(4);
-  {
-    uint32_t i;
-    bool error;
-
-    for (i = 0; i < (NUM_OBJECTS * 2); i++) {
-      oc_object_t *objp = chCacheGetObject(&cache1, 0U, i);
-
-      test_assert((objp->obj_flags & OC_FLAG_INHASH) != 0U, "not in hash");
-      test_assert((objp->obj_flags & OC_FLAG_NOTSYNC) != 0U, "in sync");
-
-      error = chCacheReadObject(&cache1, objp, true);
-
-      test_assert(error == false, "returned error");
-
-      objp = chCacheGetObject(&cache1, 0U, i);
-
-      test_assert((objp->obj_flags & OC_FLAG_INHASH) != 0U, "not in hash");
-      test_assert((objp->obj_flags & OC_FLAG_NOTSYNC) == 0U, "not in sync");
-
-      chCacheReleaseObject(&cache1, objp);
-    }
-
-    test_assert_sequence("abcdefgh", "unexpected tokens");
-  }
-  test_end_step(4);
-
-  /* [4.1.5] Checking cached objects.*/
-  test_set_step(5);
-  {
-    uint32_t i;
-
-    for (i = NUM_OBJECTS; i < (NUM_OBJECTS * 2); i++) {
-      oc_object_t *objp = chCacheGetObject(&cache1, 0U, i);
-
-      test_assert((objp->obj_flags & OC_FLAG_INHASH) != 0U, "not in hash");
-      test_assert((objp->obj_flags & OC_FLAG_NOTSYNC) == 0U, "not in sync");
-
-      chCacheReleaseObject(&cache1, objp);
-    }
-
-    test_assert_sequence("", "unexpected tokens");
-  }
-  test_end_step(5);
-
-  /* [4.1.6] Checking non-cached objects.*/
-  test_set_step(6);
-  {
-    uint32_t i;
-
-    for (i = 0; i < NUM_OBJECTS; i++) {
-      oc_object_t *objp = chCacheGetObject(&cache1, 0U, i);
-
-      test_assert((objp->obj_flags & OC_FLAG_INHASH) != 0U, "not in hash");
-      test_assert((objp->obj_flags & OC_FLAG_NOTSYNC) != 0U, "in sync");
-
-      chCacheReleaseObject(&cache1, objp);
-    }
-
-    test_assert_sequence("", "unexpected tokens");
-  }
-  test_end_step(6);
 }
 
 static const testcase_t oslib_test_004_001 = {
-  "Cache initialization",
+  "Dispatcher test",
   NULL,
   NULL,
   oslib_test_004_001_execute
@@ -256,11 +203,11 @@ const testcase_t * const oslib_test_sequence_004_array[] = {
 };
 
 /**
- * @brief   Objects Caches.
+ * @brief   Thread Delegates.
  */
 const testsequence_t oslib_test_sequence_004 = {
-  "Objects Caches",
+  "Thread Delegates",
   oslib_test_sequence_004_array
 };
 
-#endif /* CH_CFG_USE_OBJ_CACHES */
+#endif /* CH_CFG_USE_DELEGATES */
