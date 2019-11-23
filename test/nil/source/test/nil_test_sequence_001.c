@@ -94,6 +94,7 @@ static void nil_test_001_001_execute(void) {
     test_println("");
 #endif
   }
+  test_end_step(1);
 }
 
 static const testcase_t nil_test_001_001 = {
@@ -135,6 +136,7 @@ static void nil_test_001_002_execute(void) {
     test_printn(CH_KERNEL_PATCH);
     test_println("");
   }
+  test_end_step(1);
 }
 
 static const testcase_t nil_test_001_002 = {
@@ -206,6 +208,7 @@ static void nil_test_001_003_execute(void) {
     test_printn(CH_DBG_ENABLE_STACK_CHECK);
     test_println("");
   }
+  test_end_step(1);
 }
 
 static const testcase_t nil_test_001_003 = {

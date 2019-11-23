@@ -150,6 +150,7 @@ static void nil_test_007_001_execute(void) {
     };
     tp = chThdCreate(&tc);
   }
+  test_end_step(1);
 
   /* [7.1.2] The number of messages exchanged is counted in a one
      second time window.*/
@@ -158,6 +159,7 @@ static void nil_test_007_001_execute(void) {
     n = msg_loop_test(tp);
     chThdWait(tp);
   }
+  test_end_step(2);
 
   /* [7.1.3] Score is printed.*/
   test_set_step(3);
@@ -168,6 +170,7 @@ static void nil_test_007_001_execute(void) {
     test_printn(n << 1);
     test_println(" ctxswc/S");
   }
+  test_end_step(3);
 }
 
 static const testcase_t nil_test_007_001 = {
@@ -220,6 +223,7 @@ static void nil_test_007_002_execute(void) {
     };
     tp = chThdCreate(&tc);
   }
+  test_end_step(1);
 
   /* [7.2.2] The number of messages exchanged is counted in a one
      second time window.*/
@@ -228,6 +232,7 @@ static void nil_test_007_002_execute(void) {
     n = msg_loop_test(tp);
     chThdWait(tp);
   }
+  test_end_step(2);
 
   /* [7.2.3] Score is printed.*/
   test_set_step(3);
@@ -238,6 +243,7 @@ static void nil_test_007_002_execute(void) {
     test_printn(n << 1);
     test_println(" ctxswc/S");
   }
+  test_end_step(3);
 }
 
 static const testcase_t nil_test_007_002 = {
@@ -284,6 +290,7 @@ static void nil_test_007_003_execute(void) {
     };
     tp = chThdCreate(&tc);
   }
+  test_end_step(1);
 
   /* [7.3.2] Waking up the thread as fast as possible in a one second
      time window.*/
@@ -304,6 +311,7 @@ static void nil_test_007_003_execute(void) {
       n += 4;
     } while (chVTIsSystemTimeWithinX(start, end));
   }
+  test_end_step(2);
 
   /* [7.3.3] Stopping the target thread.*/
   test_set_step(3);
@@ -313,6 +321,7 @@ static void nil_test_007_003_execute(void) {
     chSysUnlock();
     chThdWait(tp);
   }
+  test_end_step(3);
 
   /* [7.3.4] Score is printed.*/
   test_set_step(4);
@@ -321,6 +330,7 @@ static void nil_test_007_003_execute(void) {
     test_printn(n * 2);
     test_println(" ctxswc/S");
   }
+  test_end_step(4);
 }
 
 static const testcase_t nil_test_007_003 = {
@@ -374,6 +384,7 @@ static void nil_test_007_004_execute(void) {
       n++;
     } while (chVTIsSystemTimeWithinX(start, end));
   }
+  test_end_step(1);
 
   /* [7.4.2] Score is printed.*/
   test_set_step(2);
@@ -382,6 +393,7 @@ static void nil_test_007_004_execute(void) {
     test_printn(n);
     test_println(" threads/S");
   }
+  test_end_step(2);
 }
 
 static const testcase_t nil_test_007_004 = {
@@ -436,6 +448,7 @@ static void nil_test_007_005_execute(void) {
       n++;
     } while (chVTIsSystemTimeWithinX(start, end));
   }
+  test_end_step(1);
 
   /* [7.5.2] Score is printed.*/
   test_set_step(2);
@@ -444,6 +457,7 @@ static void nil_test_007_005_execute(void) {
     test_printn(n);
     test_println(" threads/S");
   }
+  test_end_step(2);
 }
 
 static const testcase_t nil_test_007_005 = {
@@ -507,6 +521,7 @@ static void nil_test_007_006_execute(void) {
 #endif
     } while (chVTIsSystemTimeWithinX(start, end));
   }
+  test_end_step(1);
 
   /* [7.6.2] The score is printed.*/
   test_set_step(2);
@@ -515,6 +530,7 @@ static void nil_test_007_006_execute(void) {
     test_printn(n * 4);
     test_println(" wait+signal/S");
   }
+  test_end_step(2);
 }
 
 static const testcase_t nil_test_007_006 = {
@@ -550,6 +566,7 @@ static void nil_test_007_007_execute(void) {
     test_printn(sizeof(nil_system_t));
     test_println(" bytes");
   }
+  test_end_step(1);
 
   /* [7.7.2] The size of a thread structure is printed.*/
   test_set_step(2);
@@ -558,6 +575,7 @@ static void nil_test_007_007_execute(void) {
     test_printn(sizeof(thread_t));
     test_println(" bytes");
   }
+  test_end_step(2);
 
   /* [7.7.3] The size of a semaphore structure is printed.*/
   test_set_step(3);
@@ -568,6 +586,7 @@ static void nil_test_007_007_execute(void) {
     test_println(" bytes");
 #endif
   }
+  test_end_step(3);
 
   /* [7.7.4] The size of an event source is printed.*/
   test_set_step(4);
@@ -578,6 +597,7 @@ static void nil_test_007_007_execute(void) {
     test_println(" bytes");
 #endif
   }
+  test_end_step(4);
 
   /* [7.7.5] The size of an event listener is printed.*/
   test_set_step(5);
@@ -588,6 +608,7 @@ static void nil_test_007_007_execute(void) {
     test_println(" bytes");
 #endif
   }
+  test_end_step(5);
 
   /* [7.7.6] The size of a mailbox is printed.*/
   test_set_step(6);
@@ -598,6 +619,7 @@ static void nil_test_007_007_execute(void) {
     test_println(" bytes");
 #endif
   }
+  test_end_step(6);
 }
 
 static const testcase_t nil_test_007_007 = {

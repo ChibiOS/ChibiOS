@@ -102,10 +102,7 @@ static THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
 
-  chRegSetThreadName("dispatcher");
-
   exit_flag = false;
-
   do {
     chDelegateDispatch();
   } while (!exit_flag);
@@ -142,6 +139,15 @@ static void oslib_test_004_001_execute(void) {
                            chThdGetPriorityX() + 1, Thread1, NULL);
 #endif
 #if defined(_CHIBIOS_NIL_)
+    thread_config_t tc = {
+      .prio  = chThdGetPriorityX() + 1,
+      .namep = "dispatcher",
+      .wbase = waThread1,
+      .wend  = THD_WORKING_AREA_END(waThread1),
+      .funcp = Thread1,
+      .arg   = NULL
+    };
+    tp = chThdCreate(&tc);
 #endif
   }
   test_end_step(1);

@@ -207,7 +207,11 @@ test_println("");]]></value>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[test_print("--- CH_CFG_USE_MEMCORE:                 ");
+                      <value><![CDATA[
+test_print("--- CH_CFG_USE_MAILBOXES:               ");
+test_printn(CH_CFG_USE_MAILBOXES);
+test_println("");
+test_print("--- CH_CFG_USE_MEMCORE:                 ");
 test_printn(CH_CFG_USE_MEMCORE);
 test_println("");
 test_print("--- CH_CFG_USE_HEAP:                    ");
@@ -221,6 +225,12 @@ test_printn(CH_CFG_USE_OBJ_FIFOS);
 test_println("");
 test_print("--- CH_CFG_USE_PIPES:                   ");
 test_printn(CH_CFG_USE_PIPES);
+test_println("");
+test_print("--- CH_CFG_USE_OBJ_CACHES:              ");
+test_printn(CH_CFG_USE_OBJ_CACHES);
+test_println("");
+test_print("--- CH_CFG_USE_DELEGATES:               ");
+test_printn(CH_CFG_USE_DELEGATES);
 test_println("");
 test_print("--- CH_CFG_USE_FACTORY:                 ");
 test_printn(CH_CFG_USE_FACTORY);
@@ -1078,15 +1088,12 @@ static THD_WORKING_AREA(waThread1, 256);
 static THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
-  
-  chRegSetThreadName("dispatcher");
-  
+
   exit_flag = false;
-  
   do {
     chDelegateDispatch();
   } while (!exit_flag);
-  
+
   chThdExit(0x0FA5);
 }
 ]]></value>
@@ -1127,10 +1134,26 @@ thread_t *tp;
                     <code>
                       <value><![CDATA[
 #if defined(_CHIBIOS_RT_)
-tp = chThdCreateStatic(waThread1, sizeof(waThread1),
-                       chThdGetPriorityX() + 1, Thread1, NULL);
+thread_descriptor_t &td = {
+  .name  = "dispatcher",
+  .wbase = waThread1,
+  .wend  = THD_WORKING_AREA_END(waThread1),
+  .prio  = chThdGetPriorityX() + 1,
+  .funcp = Thread1,
+  .arg   = NULL
+};
+tp = chThdCreate(&td);
 #endif
 #if defined(_CHIBIOS_NIL_)
+thread_config_t tc = {
+  .prio  = chThdGetPriorityX() + 1,
+  .namep = "dispatcher",
+  .wbase = waThread1,
+  .wend  = THD_WORKING_AREA_END(waThread1),
+  .funcp = Thread1,
+  .arg   = NULL
+};
+tp = chThdCreate(&tc);
 #endif
 ]]></value>
                     </code>

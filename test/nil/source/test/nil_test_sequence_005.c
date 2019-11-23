@@ -112,6 +112,7 @@ static void nil_test_005_001_execute(void) {
   {
     chEvtObjectInit(&es1);
   }
+  test_end_step(1);
 
   /* [5.1.2] Two Event Listeners are registered on the Event Source,
      the Event Source is tested to have listeners.*/
@@ -121,6 +122,7 @@ static void nil_test_005_001_execute(void) {
     chEvtRegisterMask(&es1, &el2, 2);
     test_assert_lock(chEvtIsListeningI(&es1), "no listener");
   }
+  test_end_step(2);
 
   /* [5.1.3] An Event Listener is unregistered, the Event Source must
      still have listeners.*/
@@ -129,6 +131,7 @@ static void nil_test_005_001_execute(void) {
     chEvtUnregister(&es1, &el1);
     test_assert_lock(chEvtIsListeningI(&es1), "no listener");
   }
+  test_end_step(3);
 
   /* [5.1.4] An Event Listener is unregistered, the Event Source must
      not have listeners.*/
@@ -137,6 +140,7 @@ static void nil_test_005_001_execute(void) {
     chEvtUnregister(&es1, &el2);
     test_assert_lock(!chEvtIsListeningI(&es1), "stuck listener");
   }
+  test_end_step(4);
 }
 
 static const testcase_t nil_test_005_001 = {
@@ -172,6 +176,7 @@ static void nil_test_005_002_execute(void) {
     chEvtDispatch(evhndl, 7);
     test_assert_sequence("ABC", "invalid sequence");
   }
+  test_end_step(1);
 }
 
 static const testcase_t nil_test_005_002 = {
@@ -213,6 +218,7 @@ static void nil_test_005_003_execute(void) {
   {
     chEvtAddEvents(7);
   }
+  test_end_step(1);
 
   /* [5.3.2] Calling chEvtWaitOne() three times, each time a single
      flag must be returned in order of priority.*/
@@ -227,6 +233,7 @@ static void nil_test_005_003_execute(void) {
     m = chEvtGetAndClearEvents(ALL_EVENTS);
     test_assert(m == 0, "stuck event");
   }
+  test_end_step(2);
 
   /* [5.3.3] Getting current time and starting a signaler thread, the
      thread will set an event flag after 50mS.*/
@@ -243,6 +250,7 @@ static void nil_test_005_003_execute(void) {
     };
     tp = chThdCreate(&tc);
   }
+  test_end_step(3);
 
   /* [5.3.4] Calling chEvtWaitOne() then verifying that the event has
      been received after 50mS and that the event flags mask has been
@@ -258,6 +266,7 @@ static void nil_test_005_003_execute(void) {
     test_assert(m == 0, "stuck event");
     chThdWait(tp);
   }
+  test_end_step(4);
 }
 
 static const testcase_t nil_test_005_003 = {
@@ -299,6 +308,7 @@ static void nil_test_005_004_execute(void) {
   {
     chEvtAddEvents(5);
   }
+  test_end_step(1);
 
   /* [5.4.2] Calling chEvtWaitAny() one time, the two flags must be
      returned.*/
@@ -309,6 +319,7 @@ static void nil_test_005_004_execute(void) {
     m = chEvtGetAndClearEvents(ALL_EVENTS);
     test_assert(m == 0, "stuck event");
   }
+  test_end_step(2);
 
   /* [5.4.3] Getting current time and starting a signaler thread, the
      thread will set an event flag after 50mS.*/
@@ -325,6 +336,7 @@ static void nil_test_005_004_execute(void) {
     };
     tp = chThdCreate(&tc);
   }
+  test_end_step(3);
 
   /* [5.4.4] Calling chEvtWaitAny() then verifying that the event has
      been received after 50mS and that the event flags mask has been
@@ -340,6 +352,7 @@ static void nil_test_005_004_execute(void) {
     test_assert(m == 0, "stuck event");
     chThdWait(tp);
   }
+  test_end_step(4);
 }
 
 static const testcase_t nil_test_005_004 = {
@@ -382,6 +395,7 @@ static void nil_test_005_005_execute(void) {
   {
     chEvtAddEvents(5);
   }
+  test_end_step(1);
 
   /* [5.5.2] Calling chEvtWaitAll() one time, the two flags must be
      returned.*/
@@ -392,12 +406,14 @@ static void nil_test_005_005_execute(void) {
     m = chEvtGetAndClearEvents(ALL_EVENTS);
     test_assert(m == 0, "stuck event");
   }
+  test_end_step(2);
 
   /* [5.5.3] Setting one event flag.*/
   test_set_step(3);
   {
     chEvtAddEvents(4);
   }
+  test_end_step(3);
 
   /* [5.5.4] Getting current time and starting a signaler thread, the
      thread will set another event flag after 50mS.*/
@@ -414,6 +430,7 @@ static void nil_test_005_005_execute(void) {
     };
     tp = chThdCreate(&tc);
   }
+  test_end_step(4);
 
   /* [5.5.5] Calling chEvtWaitAll() then verifying that both event
      flags have been received after 50mS and that the event flags mask
@@ -429,6 +446,7 @@ static void nil_test_005_005_execute(void) {
     test_assert(m == 0, "stuck event");
     chThdWait(tp);
   }
+  test_end_step(5);
 }
 
 static const testcase_t nil_test_005_005 = {
@@ -471,6 +489,7 @@ static void nil_test_005_006_execute(void) {
     m = chEvtWaitAllTimeout(ALL_EVENTS, TIME_IMMEDIATE);
     test_assert(m == 0, "spurious event");
   }
+  test_end_step(1);
 
   /* [5.6.2] The functions are invoked first with a 50mS timeout, the
      timeout condition is tested.*/
@@ -483,6 +502,7 @@ static void nil_test_005_006_execute(void) {
     m = chEvtWaitAllTimeout(ALL_EVENTS, TIME_MS2I(50));
     test_assert(m == 0, "spurious event");
   }
+  test_end_step(2);
 }
 
 static const testcase_t nil_test_005_006 = {
@@ -530,6 +550,7 @@ static void nil_test_005_007_execute(void) {
     chEvtRegisterMask(&es1, &el1, 1);
     chEvtRegisterMask(&es2, &el2, 4);
   }
+  test_end_step(1);
 
   /* [5.7.2] Getting current time and starting a broadcaster thread,
      the thread broadcast the first Event Source immediately and the
@@ -547,6 +568,7 @@ static void nil_test_005_007_execute(void) {
     };
     tp = chThdCreate(&tc);
   }
+  test_end_step(2);
 
   /* [5.7.3] Calling chEvtWaitAll() then verifying that both event
      flags have been received after 50mS and that the event flags mask
@@ -561,6 +583,7 @@ static void nil_test_005_007_execute(void) {
     test_assert(m == 0, "stuck event");
     chThdWait(tp);
   }
+  test_end_step(3);
 
   /* [5.7.4] Unregistering from the Event Sources.*/
   test_set_step(4);
@@ -570,6 +593,7 @@ static void nil_test_005_007_execute(void) {
     test_assert(!chEvtIsListeningI(&es1), "stuck listener");
     test_assert(!chEvtIsListeningI(&es2), "stuck listener");
   }
+  test_end_step(4);
 }
 
 static const testcase_t nil_test_005_007 = {

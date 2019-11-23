@@ -67,6 +67,7 @@ static void nil_test_002_001_execute(void) {
     while (time == chVTGetSystemTimeX()) {
     }
   }
+  test_end_step(1);
 }
 
 static const testcase_t nil_test_002_001 = {
@@ -113,6 +114,7 @@ static void nil_test_002_002_execute(void) {
                             chTimeAddX(time, 100 + 1),
                             "out of time window");
   }
+  test_end_step(1);
 
   /* [2.2.2] The current system time is read then a sleep is performed
      for 100000 microseconds and on exit the system time is verified
@@ -125,6 +127,7 @@ static void nil_test_002_002_execute(void) {
                             chTimeAddX(time, TIME_US2I(100000) + 1),
                             "out of time window");
   }
+  test_end_step(2);
 
   /* [2.2.3] The current system time is read then a sleep is performed
      for 100 milliseconds and on exit the system time is verified
@@ -137,6 +140,7 @@ static void nil_test_002_002_execute(void) {
                             chTimeAddX(time, TIME_MS2I(100) + 1),
                             "out of time window");
   }
+  test_end_step(3);
 
   /* [2.2.4] The current system time is read then a sleep is performed
      for 1 second and on exit the system time is verified again.*/
@@ -148,6 +152,7 @@ static void nil_test_002_002_execute(void) {
                             chTimeAddX(time, TIME_S2I(1) + 1),
                             "out of time window");
   }
+  test_end_step(4);
 
   /* [2.2.5] Function chThdSleepUntil() is tested with a timeline of
      "now" + 100 ticks.*/
@@ -159,6 +164,7 @@ static void nil_test_002_002_execute(void) {
                             chTimeAddX(time, 100 + 1),
                             "out of time window");
   }
+  test_end_step(5);
 }
 
 static const testcase_t nil_test_002_002 = {

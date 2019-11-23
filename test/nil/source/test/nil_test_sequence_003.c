@@ -119,6 +119,7 @@ static void nil_test_003_001_execute(void) {
     test_assert_lock(chSemGetCounterI(&sem1) == 0, "wrong counter value");
     test_assert(MSG_OK == msg, "wrong returned message");
   }
+  test_end_step(1);
 
   /* [3.1.2] The function chSemSignal() is invoked, after return the
      counter is tested.*/
@@ -127,6 +128,7 @@ static void nil_test_003_001_execute(void) {
     chSemSignal(&sem1);
     test_assert_lock(chSemGetCounterI(&sem1) == 1, "wrong counter value");
   }
+  test_end_step(2);
 
   /* [3.1.3] The function chSemReset() is invoked, after return the
      counter is tested.*/
@@ -135,6 +137,7 @@ static void nil_test_003_001_execute(void) {
     chSemReset(&sem1, 2);
     test_assert_lock(chSemGetCounterI(&sem1) == 2, "wrong counter value");
   }
+  test_end_step(3);
 }
 
 static const testcase_t nil_test_003_001 = {
@@ -191,6 +194,7 @@ static void nil_test_003_002_execute(void) {
     test_assert_lock(chSemGetCounterI(&sem1) == 0, "wrong counter value");
     test_assert(MSG_OK == msg, "wrong returned message");
   }
+  test_end_step(1);
 
   /* [3.2.2] The function chSemWait() is invoked, after return the
      counter and the returned message are tested. The semaphore is
@@ -203,6 +207,7 @@ static void nil_test_003_002_execute(void) {
     test_assert_lock(chSemGetCounterI(&sem2) == 0,"wrong counter value");
     test_assert(MSG_RESET == msg, "wrong returned message");
   }
+  test_end_step(2);
 }
 
 static const testcase_t nil_test_003_002 = {
@@ -253,6 +258,7 @@ static void nil_test_003_003_execute(void) {
     test_assert_lock(chSemGetCounterI(&sem1) == 0, "wrong counter value");
     test_assert(MSG_TIMEOUT == msg, "wrong timeout message");
   }
+  test_end_step(1);
 
   /* [3.3.2] The function chSemWaitTimeout() is invoked again, after
      return the system time, the counter and the returned message are
@@ -267,6 +273,7 @@ static void nil_test_003_003_execute(void) {
     test_assert_lock(chSemGetCounterI(&sem1) == 0, "wrong counter value");
     test_assert(MSG_TIMEOUT == msg, "wrong timeout message");
   }
+  test_end_step(2);
 }
 
 static const testcase_t nil_test_003_003 = {

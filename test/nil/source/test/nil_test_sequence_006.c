@@ -92,6 +92,7 @@ static void nil_test_006_001_execute(void) {
     };
     tp1 = chThdCreate(&tc);
   }
+  test_end_step(1);
 
   /* [6.1.2] Waiting for four messages then testing the receive
      order.*/
@@ -108,6 +109,7 @@ static void nil_test_006_001_execute(void) {
     chThdWait(tp1);
     test_assert_sequence("ABCD", "invalid sequence");
   }
+  test_end_step(2);
 }
 
 static const testcase_t nil_test_006_001 = {
