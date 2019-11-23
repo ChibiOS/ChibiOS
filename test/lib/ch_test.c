@@ -257,18 +257,22 @@ msg_t test_execute(BaseSequentialStream *stream, const testsuite_t *tsp) {
 #endif
 #if defined(TEST_CFG_SIZE_REPORT)
   {
-    extern uint8_t __text_base, __text_end,
-                   _data_start, _data_end,
-                   _bss_start, _bss_end;
+    extern uint8_t __text_base__,   __text_end__,
+                   __rodata_base__, __rodata_end__,
+                   __data_base__,   __data_end__,
+                   __bss_base__,    __bss_end__;
     test_println("***");
     test_print("*** Text size:    ");
-    test_printn((uint32_t)(&__text_end - &__text_base));
+    test_printn((uint32_t)(&__text_end__ - &__text_base__));
+    test_println(" bytes");
+    test_print("*** RO data size: ");
+    test_printn((uint32_t)(&__rodata_end__ - &__rodata_base__));
     test_println(" bytes");
     test_print("*** Data size:    ");
-    test_printn((uint32_t)(&_data_end - &_data_start));
+    test_printn((uint32_t)(&__data_end__ - &__data_base__));
     test_println(" bytes");
     test_print("*** BSS size:     ");
-    test_printn((uint32_t)(&_bss_end - &_bss_start));
+    test_printn((uint32_t)(&__bss_end__ - &__bss_base__));
     test_println(" bytes");
   }
 #endif

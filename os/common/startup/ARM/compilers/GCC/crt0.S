@@ -87,9 +87,9 @@ Reset_Handler:
                  * Data initialization.
                  * NOTE: It assumes that the DATA size is a multiple of 4.
                  */
-                ldr     r1, =_textdata
-                ldr     r2, =_data
-                ldr     r3, =_edata
+                ldr     r1, =__textdata_base__
+                ldr     r2, =__data_base__
+                ldr     r3, =__data_end__
 dataloop:
                 cmp     r2, r3
                 ldrlo   r0, [r1], #4
@@ -100,8 +100,8 @@ dataloop:
                  * NOTE: It assumes that the BSS size is a multiple of 4.
                  */
                 mov     r0, #0
-                ldr     r1, =_bss_start
-                ldr     r2, =_bss_end
+                ldr     r1, =__bss_base__
+                ldr     r2, =__bss_end__
 bssloop:
                 cmp     r1, r2
                 strlo   r0, [r1], #4
