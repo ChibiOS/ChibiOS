@@ -703,7 +703,8 @@ static inline bool osalTimeIsInRangeX(systime_t time,
                                       systime_t start,
                                       systime_t end) {
 
-  return (bool)((time - start) < (end - start));
+  return (bool)((systime_t)((systime_t)time - (systime_t)start) <=
+                (systime_t)((systime_t)end - (systime_t)start - (systime_t)1));
 }
 
 /**

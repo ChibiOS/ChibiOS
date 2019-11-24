@@ -723,6 +723,25 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, sysinterval_t timeout) {
 }
 
 /**
+ * @brief   Checks if the specified time is within the specified time range.
+ * @note    When start==end then the function returns always true because the
+ *          whole time range is specified.
+ *
+ * @param[in] time      the time to be verified
+ * @param[in] start     the start of the time window (inclusive)
+ * @param[in] end       the end of the time window (non inclusive)
+ * @retval true         current time within the specified time window.
+ * @retval false        current time not within the specified time window.
+ *
+ * @xclass
+ */
+bool chTimeIsInRangeX(systime_t time, systime_t start, systime_t end) {
+
+  return (bool)((systime_t)((systime_t)(time) - (systime_t)(start)) <=
+      (systime_t)((systime_t)(end) - (systime_t)(start) - (systime_t)1));
+}
+
+/**
  * @brief   Creates a new thread into a static memory area.
  * @details The new thread is initialized and make ready to execute.
  * @note    A thread can terminate by calling @p chThdExit() or by simply

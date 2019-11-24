@@ -28,6 +28,7 @@
  * - @subpage nil_test_sequence_005
  * - @subpage nil_test_sequence_006
  * - @subpage nil_test_sequence_007
+ * - @subpage nil_test_sequence_008
  * .
  */
 
@@ -51,17 +52,18 @@
 const testsequence_t * const nil_test_suite_array[] = {
   &nil_test_sequence_001,
   &nil_test_sequence_002,
-#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
   &nil_test_sequence_003,
-#endif
+#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
   &nil_test_sequence_004,
-#if (CH_CFG_USE_EVENTS) || defined(__DOXYGEN__)
-  &nil_test_sequence_005,
 #endif
-#if (CH_CFG_USE_MESSAGES) || defined(__DOXYGEN__)
+  &nil_test_sequence_005,
+#if (CH_CFG_USE_EVENTS) || defined(__DOXYGEN__)
   &nil_test_sequence_006,
 #endif
+#if (CH_CFG_USE_MESSAGES) || defined(__DOXYGEN__)
   &nil_test_sequence_007,
+#endif
+  &nil_test_sequence_008,
   NULL
 };
 

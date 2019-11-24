@@ -1279,23 +1279,6 @@ struct nil_system {
   ((sysinterval_t)((systime_t)((systime_t)(end) - (systime_t)(start))))
 
 /**
- * @brief   Checks if the specified time is within the specified time range.
- * @note    When start==end then the function returns always true because the
- *          whole time range is specified.
- *
- * @param[in] time      the time to be verified
- * @param[in] start     the start of the time window (inclusive)
- * @param[in] end       the end of the time window (non inclusive)
- * @retval true         current time within the specified time window.
- * @retval false        current time not within the specified time window.
- *
- * @xclass
- */
-#define chTimeIsInRangeX(time, start, end)                                  \
-  ((bool)((systime_t)((systime_t)(time) - (systime_t)(start)) <             \
-          (systime_t)((systime_t)(end) - (systime_t)(start))))
-
-/**
  * @brief   Function parameters check.
  * @details If the condition check fails then the kernel panics and halts.
  * @note    The condition is tested only if the @p CH_DBG_ENABLE_CHECKS switch
@@ -1392,6 +1375,7 @@ extern "C" {
   void chSchDoReschedule(void);
   void chSchRescheduleS(void);
   msg_t chSchGoSleepTimeoutS(tstate_t newstate, sysinterval_t timeout);
+  bool chTimeIsInRangeX(systime_t time, systime_t start, systime_t end);
   thread_t *chThdCreateI(const thread_descriptor_t *tdp);
   thread_t *chThdCreate(const thread_descriptor_t *tdp);
   void chThdExit(msg_t msg);

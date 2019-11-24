@@ -31,6 +31,7 @@
  * - @subpage rt_test_sequence_008
  * - @subpage rt_test_sequence_009
  * - @subpage rt_test_sequence_010
+ * - @subpage rt_test_sequence_011
  * .
  */
 
@@ -56,22 +57,23 @@ const testsequence_t * const rt_test_suite_array[] = {
   &rt_test_sequence_002,
   &rt_test_sequence_003,
   &rt_test_sequence_004,
-#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
   &rt_test_sequence_005,
-#endif
-#if (CH_CFG_USE_MUTEXES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
   &rt_test_sequence_006,
 #endif
-#if (CH_CFG_USE_MESSAGES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MUTEXES) || defined(__DOXYGEN__)
   &rt_test_sequence_007,
 #endif
-#if (CH_CFG_USE_EVENTS) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MESSAGES) || defined(__DOXYGEN__)
   &rt_test_sequence_008,
 #endif
-#if (CH_CFG_USE_DYNAMIC) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_EVENTS) || defined(__DOXYGEN__)
   &rt_test_sequence_009,
 #endif
+#if (CH_CFG_USE_DYNAMIC) || defined(__DOXYGEN__)
   &rt_test_sequence_010,
+#endif
+  &rt_test_sequence_011,
   NULL
 };
 

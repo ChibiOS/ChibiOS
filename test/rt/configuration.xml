@@ -637,6 +637,25 @@ chSysEnable();]]></value>
                   </step>
                 </steps>
               </case>
+            </cases>
+          </sequence>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
+              <value>Time and Intervals Functionality.</value>
+            </brief>
+            <description>
+              <value>This sequence tests the ChibiOS/NIL functionalities related to time and intervals management.</value>
+            </description>
+            <condition>
+              <value />
+            </condition>
+            <shared_code>
+              <value><![CDATA[#include "ch.h"]]></value>
+            </shared_code>
+            <cases>
               <case>
                 <brief>
                   <value>System Tick Counter functionality.</value>
@@ -669,10 +688,97 @@ chSysEnable();]]></value>
                     <code>
                       <value><![CDATA[systime_t time = chVTGetSystemTimeX();
 while (time == chVTGetSystemTimeX()) {
-#if defined(SIMULATOR)
-  _sim_check_for_interrupts();
-#endif
 }]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Time ranges functionality.</value>
+                </brief>
+                <description>
+                  <value>The functionality of the API @p chTimeIsInRangeX() is tested.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Checking case where start == end, it must always evaluate as in range.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[
+bool b;
+
+b = chTimeIsInRangeX((systime_t)0, (systime_t)0, (systime_t)0);
+test_assert(b == true, "not in range");
+b = chTimeIsInRangeX((systime_t)-1, (systime_t)0, (systime_t)0);
+test_assert(b == true, "not in range");
+b = chTimeIsInRangeX((systime_t)0, (systime_t)-1, (systime_t)-1);
+test_assert(b == true, "not in range");
+b = chTimeIsInRangeX((systime_t)-1, (systime_t)-1, (systime_t)-1);
+test_assert(b == true, "not in range");
+]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Checking boundaries for start &lt; end.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[
+bool b;
+
+b = chTimeIsInRangeX((systime_t)10, (systime_t)10, (systime_t)100);
+test_assert(b == true, "not in range");
+b = chTimeIsInRangeX((systime_t)9, (systime_t)10, (systime_t)100);
+test_assert(b == false, "in range");
+b = chTimeIsInRangeX((systime_t)99, (systime_t)10, (systime_t)100);
+test_assert(b == true, "not in range");
+b = chTimeIsInRangeX((systime_t)100, (systime_t)10, (systime_t)100);
+test_assert(b == false, "in range");
+]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Checking boundaries for start &gt; end.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[
+bool b;
+
+b = chTimeIsInRangeX((systime_t)100, (systime_t)100, (systime_t)10);
+test_assert(b == true, "not in range");
+b = chTimeIsInRangeX((systime_t)99, (systime_t)100, (systime_t)10);
+test_assert(b == false, "in range");
+b = chTimeIsInRangeX((systime_t)9, (systime_t)100, (systime_t)10);
+test_assert(b == true, "not in range");
+b = chTimeIsInRangeX((systime_t)10, (systime_t)100, (systime_t)10);
+test_assert(b == false, "in range");
+]]></value>
                     </code>
                   </step>
                 </steps>
