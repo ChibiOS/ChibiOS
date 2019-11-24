@@ -240,15 +240,15 @@ static void nil_test_005_003_execute(void) {
   test_set_step(3);
   {
     target_time = chTimeAddX(test_wait_tick(), TIME_MS2I(50));
-    thread_config_t tc = {
-      chThdGetPriorityX() + 1,
-      "event1",
-      wa_common,
-      THD_WORKING_AREA_END(wa_common),
-      evtthd1,
-      chThdGetSelfX()
+    thread_descriptor_t td = {
+      .name  = "event1",
+      .wbase = wa_common,
+      .wend  = THD_WORKING_AREA_END(wa_common),
+      .prio  = chThdGetPriorityX() + 1,
+      .funcp = evtthd1,
+      .arg   = chThdGetSelfX()
     };
-    tp = chThdCreate(&tc);
+    tp = chThdCreate(&td);
   }
   test_end_step(3);
 
@@ -326,15 +326,15 @@ static void nil_test_005_004_execute(void) {
   test_set_step(3);
   {
     target_time = chTimeAddX(test_wait_tick(), TIME_MS2I(50));
-    thread_config_t tc = {
-      chThdGetPriorityX() + 1,
-      "event1",
-      wa_common,
-      THD_WORKING_AREA_END(wa_common),
-      evtthd1,
-      chThdGetSelfX()
+    thread_descriptor_t td = {
+      .name  = "event1",
+      .wbase = wa_common,
+      .wend  = THD_WORKING_AREA_END(wa_common),
+      .prio  = chThdGetPriorityX() + 1,
+      .funcp = evtthd1,
+      .arg   = chThdGetSelfX()
     };
-    tp = chThdCreate(&tc);
+    tp = chThdCreate(&td);
   }
   test_end_step(3);
 
@@ -420,15 +420,15 @@ static void nil_test_005_005_execute(void) {
   test_set_step(4);
   {
     target_time = chTimeAddX(test_wait_tick(), TIME_MS2I(50));
-    thread_config_t tc = {
-      chThdGetPriorityX() + 1,
-      "event1",
-      wa_common,
-      THD_WORKING_AREA_END(wa_common),
-      evtthd1,
-      chThdGetSelfX()
+    thread_descriptor_t td = {
+      .name  = "event1",
+      .wbase = wa_common,
+      .wend  = THD_WORKING_AREA_END(wa_common),
+      .prio  = chThdGetPriorityX() + 1,
+      .funcp = evtthd1,
+      .arg   = chThdGetSelfX()
     };
-    tp = chThdCreate(&tc);
+    tp = chThdCreate(&td);
   }
   test_end_step(4);
 
@@ -558,15 +558,15 @@ static void nil_test_005_007_execute(void) {
   test_set_step(2);
   {
     target_time = chTimeAddX(test_wait_tick(), TIME_MS2I(50));
-    thread_config_t tc = {
-      chThdGetPriorityX() + 1,
-      "event2",
-      wa_common,
-      THD_WORKING_AREA_END(wa_common),
-      evtthd2,
-      NULL
+    thread_descriptor_t td = {
+      .name  = "event2",
+      .wbase = wa_common,
+      .wend  = THD_WORKING_AREA_END(wa_common),
+      .prio  = chThdGetPriorityX() + 1,
+      .funcp = evtthd2,
+      .arg   = NULL
     };
-    tp = chThdCreate(&tc);
+    tp = chThdCreate(&td);
   }
   test_end_step(2);
 

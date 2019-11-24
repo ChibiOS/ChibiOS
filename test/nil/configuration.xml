@@ -549,15 +549,15 @@ test_assert_lock(chSemGetCounterI(&sem1) == 2, "wrong counter value");]]></value
                 </condition>
                 <various_code>
                   <setup_code>
-                    <value><![CDATA[thread_config_t tc = {
-  chThdGetPriorityX() - 1,
-  "signaler",
-  wa_common,
-  THD_WORKING_AREA_END(wa_common),
-  signaler,
-  NULL
+                    <value><![CDATA[thread_descriptor_t td = {
+  .name  = "signaler",
+  .wbase = wa_common,
+  .wend  = THD_WORKING_AREA_END(wa_common),
+  .prio  = chThdGetPriorityX() - 1,
+  .funcp = signaler,
+  .arg   = NULL
 };
-tp1 = chThdCreate(&tc);]]></value>
+tp1 = chThdCreate(&td);]]></value>
                   </setup_code>
                   <teardown_code>
                     <value><![CDATA[terminate = true;
@@ -709,15 +709,15 @@ static THD_FUNCTION(resumer, arg) {
                 </condition>
                 <various_code>
                   <setup_code>
-                    <value><![CDATA[thread_config_t tc = {
-  chThdGetPriorityX() - 1,
-  "resumer",
-  wa_common,
-  THD_WORKING_AREA_END(wa_common),
-  resumer,
-  NULL
+                    <value><![CDATA[thread_descriptor_t td = {
+  .name  = "resumer",
+  .wbase = wa_common,
+  .wend  = THD_WORKING_AREA_END(wa_common),
+  .prio  = chThdGetPriorityX() - 1,
+  .funcp = resumer,
+  .arg   = NULL
 };
-tp1 = chThdCreate(&tc);]]></value>
+tp1 = chThdCreate(&td);]]></value>
                   </setup_code>
                   <teardown_code>
                     <value><![CDATA[terminate = true;
@@ -983,15 +983,15 @@ test_assert(m == 0, "stuck event");]]></value>
                     </tags>
                     <code>
                       <value><![CDATA[target_time = chTimeAddX(test_wait_tick(), TIME_MS2I(50));
-thread_config_t tc = {
-  chThdGetPriorityX() + 1,
-  "event1",
-  wa_common,
-  THD_WORKING_AREA_END(wa_common),
-  evtthd1,
-  chThdGetSelfX()
+thread_descriptor_t td = {
+  .name  = "event1",
+  .wbase = wa_common,
+  .wend  = THD_WORKING_AREA_END(wa_common),
+  .prio  = chThdGetPriorityX() + 1,
+  .funcp = evtthd1,
+  .arg   = chThdGetSelfX()
 };
-tp = chThdCreate(&tc);]]></value>
+tp = chThdCreate(&td);]]></value>
                     </code>
                   </step>
                   <step>
@@ -1072,15 +1072,15 @@ test_assert(m == 0, "stuck event");]]></value>
                     </tags>
                     <code>
                       <value><![CDATA[target_time = chTimeAddX(test_wait_tick(), TIME_MS2I(50));
-thread_config_t tc = {
-  chThdGetPriorityX() + 1,
-  "event1",
-  wa_common,
-  THD_WORKING_AREA_END(wa_common),
-  evtthd1,
-  chThdGetSelfX()
+thread_descriptor_t td = {
+  .name  = "event1",
+  .wbase = wa_common,
+  .wend  = THD_WORKING_AREA_END(wa_common),
+  .prio  = chThdGetPriorityX() + 1,
+  .funcp = evtthd1,
+  .arg   = chThdGetSelfX()
 };
-tp = chThdCreate(&tc);]]></value>
+tp = chThdCreate(&td);]]></value>
                     </code>
                   </step>
                   <step>
@@ -1172,15 +1172,15 @@ test_assert(m == 0, "stuck event");]]></value>
                     </tags>
                     <code>
                       <value><![CDATA[target_time = chTimeAddX(test_wait_tick(), TIME_MS2I(50));
-thread_config_t tc = {
-  chThdGetPriorityX() + 1,
-  "event1",
-  wa_common,
-  THD_WORKING_AREA_END(wa_common),
-  evtthd1,
-  chThdGetSelfX()
+thread_descriptor_t td = {
+  .name  = "event1",
+  .wbase = wa_common,
+  .wend  = THD_WORKING_AREA_END(wa_common),
+  .prio  = chThdGetPriorityX() + 1,
+  .funcp = evtthd1,
+  .arg   = chThdGetSelfX()
 };
-tp = chThdCreate(&tc);]]></value>
+tp = chThdCreate(&td);]]></value>
                     </code>
                   </step>
                   <step>
@@ -1307,15 +1307,15 @@ chEvtRegisterMask(&es2, &el2, 4);]]></value>
                     </tags>
                     <code>
                       <value><![CDATA[target_time = chTimeAddX(test_wait_tick(), TIME_MS2I(50));
-thread_config_t tc = {
-  chThdGetPriorityX() + 1,
-  "event2",
-  wa_common,
-  THD_WORKING_AREA_END(wa_common),
-  evtthd2,
-  NULL
+thread_descriptor_t td = {
+  .name  = "event2",
+  .wbase = wa_common,
+  .wend  = THD_WORKING_AREA_END(wa_common),
+  .prio  = chThdGetPriorityX() + 1,
+  .funcp = evtthd2,
+  .arg   = NULL
 };
-tp = chThdCreate(&tc);]]></value>
+tp = chThdCreate(&td);]]></value>
                     </code>
                   </step>
                   <step>
@@ -1370,7 +1370,7 @@ test_assert(!chEvtIsListeningI(&es2), "stuck listener");]]></value>
               <value><![CDATA[/*
  * Messager thread.
  */
-static THD_FUNCTION(messager, p) {
+static THD_FUNCTION(messenger, p) {
 
   chMsgSend(p, 'A');
   chMsgSend(p, 'B');
@@ -1411,15 +1411,16 @@ msg_t msg;]]></value>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[thread_config_t tc = {
-  chThdGetPriorityX() - 1,
-  "messager",
-  wa_common,
-  THD_WORKING_AREA_END(wa_common),
-  messager,
-  chThdGetSelfX()
+                      <value><![CDATA[
+thread_descriptor_t td = {
+  .name  = "messenger",
+  .wbase = wa_common,
+  .wend  = THD_WORKING_AREA_END(wa_common),
+  .prio  = chThdGetPriorityX() - 1,
+  .funcp = messenger,
+  .arg   = chThdGetSelfX()
 };
-tp1 = chThdCreate(&tc);]]></value>
+tp1 = chThdCreate(&td);]]></value>
                     </code>
                   </step>
                   <step>
@@ -1549,15 +1550,16 @@ thread_t *tp;]]></value>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[thread_config_t tc = {
-  chThdGetPriorityX() + 1,
-  "messenger",
-  wa_common,
-  THD_WORKING_AREA_END(wa_common),
-  bmk_thread1,
-  NULL
+                      <value><![CDATA[
+thread_descriptor_t td = {
+  .name  = "messenger",
+  .wbase = wa_common,
+  .wend  = THD_WORKING_AREA_END(wa_common),
+  .prio  = chThdGetPriorityX() + 1,
+  .funcp = bmk_thread1,
+  .arg   = NULL
 };
-tp = chThdCreate(&tc);]]></value>
+tp = chThdCreate(&td);]]></value>
                     </code>
                   </step>
                   <step>
@@ -1620,15 +1622,16 @@ thread_t *tp;]]></value>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[thread_config_t tc = {
-  chThdGetPriorityX() - 1,
-  "messenger",
-  wa_common,
-  THD_WORKING_AREA_END(wa_common),
-  bmk_thread1,
-  NULL
+                      <value><![CDATA[
+thread_descriptor_t td = {
+  .name  = "messenger",
+  .wbase = wa_common,
+  .wend  = THD_WORKING_AREA_END(wa_common),
+  .prio  = chThdGetPriorityX() - 1,
+  .funcp = bmk_thread1,
+  .arg   = NULL
 };
-tp = chThdCreate(&tc);]]></value>
+tp = chThdCreate(&td);]]></value>
                     </code>
                   </step>
                   <step>
@@ -1692,15 +1695,16 @@ uint32_t n;]]></value>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[thread_config_t tc = {
-  chThdGetPriorityX() - 1,
-  "messenger",
-  wa_common,
-  THD_WORKING_AREA_END(wa_common),
-  bmk_thread4,
-  NULL
+                      <value><![CDATA[
+thread_descriptor_t td = {
+  .name  = "messenger",
+  .wbase = wa_common,
+  .wend  = THD_WORKING_AREA_END(wa_common),
+  .prio  = chThdGetPriorityX() - 1,
+  .funcp = bmk_thread4,
+  .arg   = NULL
 };
-tp = chThdCreate(&tc);]]></value>
+tp = chThdCreate(&td);]]></value>
                     </code>
                   </step>
                   <step>
@@ -1788,20 +1792,20 @@ The performance is calculated by measuring the number of iterations after a seco
                     </tags>
                     <code>
                       <value><![CDATA[systime_t start, end;
-thread_config_t tc = {
-  chThdGetPriorityX() + 1,
-  "messenger",
-  wa_common,
-  THD_WORKING_AREA_END(wa_common),
-  bmk_thread3,
-  NULL
+thread_descriptor_t td = {
+  .name  = "messenger",
+  .wbase = wa_common,
+  .wend  = THD_WORKING_AREA_END(wa_common),
+  .prio  = chThdGetPriorityX() + 1,
+  .funcp = bmk_thread3,
+  .arg   = NULL
 };
 
 n = 0;
 start = test_wait_tick();
 end = chTimeAddX(start, TIME_MS2I(1000));
 do {
-  chThdWait(chThdCreate(&tc));
+  chThdWait(chThdCreate(&td));
   n++;
 } while (chVTIsSystemTimeWithinX(start, end));]]></value>
                     </code>
@@ -1852,20 +1856,20 @@ test_println(" threads/S");]]></value>
                     </tags>
                     <code>
                       <value><![CDATA[systime_t start, end;
-thread_config_t tc = {
-  chThdGetPriorityX() - 1,
-  "messenger",
-  wa_common,
-  THD_WORKING_AREA_END(wa_common),
-  bmk_thread3,
-  NULL
+thread_descriptor_t td = {
+  .name  = "messenger",
+  .wbase = wa_common,
+  .wend  = THD_WORKING_AREA_END(wa_common),
+  .prio  = chThdGetPriorityX() - 1,
+  .funcp = bmk_thread3,
+  .arg   = NULL
 };
 
 n = 0;
 start = test_wait_tick();
 end = chTimeAddX(start, TIME_MS2I(1000));
 do {
-  chThdWait(chThdCreate(&tc));
+  chThdWait(chThdCreate(&td));
   n++;
 } while (chVTIsSystemTimeWithinX(start, end));]]></value>
                     </code>

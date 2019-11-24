@@ -272,7 +272,7 @@ void chDbgCheckClassS(void) {
  * @special
  */
 void chSysInit(void) {
-  const thread_config_t *tcp;
+  const thread_descriptor_t *tdp;
 
   /* Optional library modules.*/
   _oslib_init();
@@ -302,11 +302,11 @@ void chSysInit(void) {
 
 #if CH_CFG_AUTOSTART_THREADS == TRUE
   /* Iterates through the list of threads to be auto-started.*/
-  tcp = nil_thd_configs;
+  tdp = nil_thd_configs;
   do {
-    (void) chThdCreateI(tcp);
-    tcp++;
-  } while (tcp->funcp != NULL);
+    (void) chThdCreateI(tdp);
+    tdp++;
+  } while (tdp->funcp != NULL);
 #endif
 
   /* Starting the dance.*/
@@ -728,26 +728,26 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, sysinterval_t timeout) {
  * @note    A thread can terminate by calling @p chThdExit() or by simply
  *          returning from its main function.
  *
- * @param[out] tcp      pointer to the thread configuration structure
+ * @param[out] tdp      pointer to the thread descriptor structure
  * @return              The pointer to the @p thread_t structure allocated for
  *                      the thread.
  *
  * @iclass
  */
-thread_t *chThdCreateI(const thread_config_t *tcp) {
+thread_t *chThdCreateI(const thread_descriptor_t *tdp) {
   thread_t *tp;
 
-  chDbgCheck((tcp->prio < (tprio_t)CH_CFG_MAX_THREADS) &&
-             (tcp->wbase != NULL) &&
-             MEM_IS_ALIGNED(tcp->wbase, PORT_WORKING_AREA_ALIGN) &&
-             (tcp->wend > tcp->wbase) &&
-             MEM_IS_ALIGNED(tcp->wbase, PORT_STACK_ALIGN) &&
-             (tcp->funcp != NULL));
+  chDbgCheck((tdp->prio < (tprio_t)CH_CFG_MAX_THREADS) &&
+             (tdp->wbase != NULL) &&
+             MEM_IS_ALIGNED(tdp->wbase, PORT_WORKING_AREA_ALIGN) &&
+             (tdp->wend > tdp->wbase) &&
+             MEM_IS_ALIGNED(tdp->wbase, PORT_STACK_ALIGN) &&
+             (tdp->funcp != NULL));
 
   chDbgCheckClassI();
 
   /* Pointer to the thread slot to be used.*/
-  tp = &nil.threads[tcp->prio];
+  tp = &nil.threads[tdp->prio];
   chDbgAssert(NIL_THD_IS_WTSTART(tp) || NIL_THD_IS_FINAL(tp),
               "priority slot taken");
 
@@ -759,7 +759,7 @@ thread_t *chThdCreateI(const thread_config_t *tcp) {
 #endif
 
   /* Port dependent thread initialization.*/
-  PORT_SETUP_CONTEXT(tp, tcp->wbase, tcp->wend, tcp->funcp, tcp->arg);
+  PORT_SETUP_CONTEXT(tp, tdp->wbase, tdp->wend, tdp->funcp, tdp->arg);
 
   /* Initialization hook.*/
   CH_CFG_THREAD_EXT_INIT_HOOK(tp);
@@ -774,17 +774,17 @@ thread_t *chThdCreateI(const thread_config_t *tcp) {
  * @note    A thread can terminate by calling @p chThdExit() or by simply
  *          returning from its main function.
  *
- * @param[out] tcp      pointer to the thread configuration structure
+ * @param[out] tdp      pointer to the thread descriptor structure
  * @return              The pointer to the @p thread_t structure allocated for
  *                      the thread.
  *
  * @api
  */
-thread_t *chThdCreate(const thread_config_t *tcp) {
+thread_t *chThdCreate(const thread_descriptor_t *tdp) {
   thread_t *tp;
 
   chSysLock();
-  tp = chThdCreateI(tcp);
+  tp = chThdCreateI(tdp);
   chSchRescheduleS();
   chSysUnlock();
 

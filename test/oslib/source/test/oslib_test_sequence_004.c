@@ -134,21 +134,15 @@ static void oslib_test_004_001_execute(void) {
   /* [4.1.1] Starting the dispatcher thread.*/
   test_set_step(1);
   {
-#if defined(_CHIBIOS_RT_)
-    tp = chThdCreateStatic(waThread1, sizeof(waThread1),
-                           chThdGetPriorityX() + 1, Thread1, NULL);
-#endif
-#if defined(_CHIBIOS_NIL_)
-    thread_config_t tc = {
-      .prio  = chThdGetPriorityX() + 1,
-      .namep = "dispatcher",
+    thread_descriptor_t td = {
+      .name  = "dispatcher",
       .wbase = waThread1,
       .wend  = THD_WORKING_AREA_END(waThread1),
+      .prio  = chThdGetPriorityX() + 1,
       .funcp = Thread1,
       .arg   = NULL
     };
-    tp = chThdCreate(&tc);
-#endif
+    tp = chThdCreate(&td);
   }
   test_end_step(1);
 

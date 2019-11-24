@@ -140,15 +140,15 @@ static void nil_test_007_001_execute(void) {
      the current thread.*/
   test_set_step(1);
   {
-    thread_config_t tc = {
-      chThdGetPriorityX() + 1,
-      "messenger",
-      wa_common,
-      THD_WORKING_AREA_END(wa_common),
-      bmk_thread1,
-      NULL
+    thread_descriptor_t td = {
+      .name  = "messenger",
+      .wbase = wa_common,
+      .wend  = THD_WORKING_AREA_END(wa_common),
+      .prio  = chThdGetPriorityX() + 1,
+      .funcp = bmk_thread1,
+      .arg   = NULL
     };
-    tp = chThdCreate(&tc);
+    tp = chThdCreate(&td);
   }
   test_end_step(1);
 
@@ -213,15 +213,15 @@ static void nil_test_007_002_execute(void) {
      the current thread.*/
   test_set_step(1);
   {
-    thread_config_t tc = {
-      chThdGetPriorityX() - 1,
-      "messenger",
-      wa_common,
-      THD_WORKING_AREA_END(wa_common),
-      bmk_thread1,
-      NULL
+    thread_descriptor_t td = {
+      .name  = "messenger",
+      .wbase = wa_common,
+      .wend  = THD_WORKING_AREA_END(wa_common),
+      .prio  = chThdGetPriorityX() - 1,
+      .funcp = bmk_thread1,
+      .arg   = NULL
     };
-    tp = chThdCreate(&tc);
+    tp = chThdCreate(&td);
   }
   test_end_step(1);
 
@@ -280,15 +280,15 @@ static void nil_test_007_003_execute(void) {
   /* [7.3.1] Starting the target thread at an higher priority level.*/
   test_set_step(1);
   {
-    thread_config_t tc = {
-      chThdGetPriorityX() - 1,
-      "messenger",
-      wa_common,
-      THD_WORKING_AREA_END(wa_common),
-      bmk_thread4,
-      NULL
+    thread_descriptor_t td = {
+      .name  = "messenger",
+      .wbase = wa_common,
+      .wend  = THD_WORKING_AREA_END(wa_common),
+      .prio  = chThdGetPriorityX() - 1,
+      .funcp = bmk_thread4,
+      .arg   = NULL
     };
-    tp = chThdCreate(&tc);
+    tp = chThdCreate(&td);
   }
   test_end_step(1);
 
@@ -367,20 +367,20 @@ static void nil_test_007_004_execute(void) {
   test_set_step(1);
   {
     systime_t start, end;
-    thread_config_t tc = {
-      chThdGetPriorityX() + 1,
-      "messenger",
-      wa_common,
-      THD_WORKING_AREA_END(wa_common),
-      bmk_thread3,
-      NULL
+    thread_descriptor_t td = {
+      .name  = "messenger",
+      .wbase = wa_common,
+      .wend  = THD_WORKING_AREA_END(wa_common),
+      .prio  = chThdGetPriorityX() + 1,
+      .funcp = bmk_thread3,
+      .arg   = NULL
     };
 
     n = 0;
     start = test_wait_tick();
     end = chTimeAddX(start, TIME_MS2I(1000));
     do {
-      chThdWait(chThdCreate(&tc));
+      chThdWait(chThdCreate(&td));
       n++;
     } while (chVTIsSystemTimeWithinX(start, end));
   }
@@ -431,20 +431,20 @@ static void nil_test_007_005_execute(void) {
   test_set_step(1);
   {
     systime_t start, end;
-    thread_config_t tc = {
-      chThdGetPriorityX() - 1,
-      "messenger",
-      wa_common,
-      THD_WORKING_AREA_END(wa_common),
-      bmk_thread3,
-      NULL
+    thread_descriptor_t td = {
+      .name  = "messenger",
+      .wbase = wa_common,
+      .wend  = THD_WORKING_AREA_END(wa_common),
+      .prio  = chThdGetPriorityX() - 1,
+      .funcp = bmk_thread3,
+      .arg   = NULL
     };
 
     n = 0;
     start = test_wait_tick();
     end = chTimeAddX(start, TIME_MS2I(1000));
     do {
-      chThdWait(chThdCreate(&tc));
+      chThdWait(chThdCreate(&td));
       n++;
     } while (chVTIsSystemTimeWithinX(start, end));
   }

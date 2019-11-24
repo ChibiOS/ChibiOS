@@ -1133,8 +1133,7 @@ thread_t *tp;
                     </tags>
                     <code>
                       <value><![CDATA[
-#if defined(_CHIBIOS_RT_)
-thread_descriptor_t &td = {
+thread_descriptor_t td = {
   .name  = "dispatcher",
   .wbase = waThread1,
   .wend  = THD_WORKING_AREA_END(waThread1),
@@ -1143,18 +1142,6 @@ thread_descriptor_t &td = {
   .arg   = NULL
 };
 tp = chThdCreate(&td);
-#endif
-#if defined(_CHIBIOS_NIL_)
-thread_config_t tc = {
-  .prio  = chThdGetPriorityX() + 1,
-  .namep = "dispatcher",
-  .wbase = waThread1,
-  .wend  = THD_WORKING_AREA_END(waThread1),
-  .funcp = Thread1,
-  .arg   = NULL
-};
-tp = chThdCreate(&tc);
-#endif
 ]]></value>
                     </code>
                   </step>

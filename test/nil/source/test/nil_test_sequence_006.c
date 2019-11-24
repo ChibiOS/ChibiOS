@@ -49,7 +49,7 @@
 /*
  * Messager thread.
  */
-static THD_FUNCTION(messager, p) {
+static THD_FUNCTION(messenger, p) {
 
   chMsgSend(p, 'A');
   chMsgSend(p, 'B');
@@ -82,15 +82,15 @@ static void nil_test_006_001_execute(void) {
   /* [6.1.1] Starting the messenger thread.*/
   test_set_step(1);
   {
-    thread_config_t tc = {
-      chThdGetPriorityX() - 1,
-      "messager",
-      wa_common,
-      THD_WORKING_AREA_END(wa_common),
-      messager,
-      chThdGetSelfX()
+    thread_descriptor_t td = {
+      .name  = "messenger",
+      .wbase = wa_common,
+      .wend  = THD_WORKING_AREA_END(wa_common),
+      .prio  = chThdGetPriorityX() - 1,
+      .funcp = messenger,
+      .arg   = chThdGetSelfX()
     };
-    tp1 = chThdCreate(&tc);
+    tp1 = chThdCreate(&td);
   }
   test_end_step(1);
 

@@ -81,15 +81,15 @@ static THD_FUNCTION(resumer, arg) {
  */
 
 static void nil_test_004_001_setup(void) {
-  thread_config_t tc = {
-    chThdGetPriorityX() - 1,
-    "resumer",
-    wa_common,
-    THD_WORKING_AREA_END(wa_common),
-    resumer,
-    NULL
+  thread_descriptor_t td = {
+    .name  = "resumer",
+    .wbase = wa_common,
+    .wend  = THD_WORKING_AREA_END(wa_common),
+    .prio  = chThdGetPriorityX() - 1,
+    .funcp = resumer,
+    .arg   = NULL
   };
-  tp1 = chThdCreate(&tc);
+  tp1 = chThdCreate(&td);
 }
 
 static void nil_test_004_001_teardown(void) {
