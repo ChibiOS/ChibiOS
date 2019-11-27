@@ -1431,8 +1431,8 @@ struct nil_system {
  * @xclass
  */
 #define chTimeIsInRangeX(time, start, end)                                  \
-  ((bool)((systime_t)((systime_t)(time) - (systime_t)(start)) <             \
-          (systime_t)((systime_t)(end) - (systime_t)(start))))
+  ((bool)((systime_t)((systime_t)(time) - (systime_t)(start)) <=            \
+          (systime_t)((systime_t)(end) - (systime_t)(start) - (systime_t)1)))
 
 /**
  * @brief   Function parameters check.
