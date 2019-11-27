@@ -12,7 +12,7 @@
   |  +--hal/                    - Builders for HAL.
   |  +--nil/                    - Builders for NIL.
   |  +--rt/                     - Builders for RT.
-  +--ext/                       - External libraries, not part of ChibiOS/RT.
+  +--ext/                       - External libraries, not part of ChibiOS.
   +--os/                        - ChibiOS components.
   |  +--common/                 - Shared OS modules.
   |  |  +--abstractions/        - API emulator wrappers.
