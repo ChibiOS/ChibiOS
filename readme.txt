@@ -141,7 +141,7 @@
 - HAL: Added mcuconf.h updater tool for STM32F407 (backported to 19.1.1).
 - NIL: Integrated NIL 4.0.
 - FIX: Fixed I2C fallback driver broken (bug #1061)
-       (not yet)(backported to 19.1.4)(backported to 18.2.3).
+       (backported to 19.1.4)(backported to 18.2.3).
 - FIX: Fixed bug in chVTGetSystemTimeX() (bug #1060)
        (backported to 19.1.4)(backported to 18.2.3).
 - FIX: Fixed STM32 ADC1 sample time macros (bug #1059)
