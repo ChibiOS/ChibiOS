@@ -94,9 +94,9 @@
 - HAL: STM32 DMAv1 driver improvements and generalization, added support
        for 8 channels.
 - HAL: Initial STM32G4xx support in HAL.
-- HAL: Added script to generate board files from command line, just run
-       ./os/hal/boards/genboard.sh with the board directory name as
-       parameter.
+- HAL: Added script to generate board files from command line, just
+       run ./os/hal/boards/genboard.sh with the board directory name
+       as parameter.
 - HAL: Modified the ST driver to support, optionally, multiple additional
        callback-capable channels.
 - RT:  Removed regarm_t type from port layer and replaced with uint32_t, this
