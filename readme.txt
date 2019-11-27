@@ -23,8 +23,8 @@
   |  |  +--startup/             - Startup support.
   |  +--ex/                     - EX component.
   |  |  +--dox/                 - EX documentation resources.
-  |  |  +--Bosch /              - EX complex drivers for Bosch devices.
-  |  |  +--ST/                  - EX complex drivers for ST devices.
+  |  |  +--include/             - EX header files.
+  |  |  +--devices /            - EX complex drivers.
   |  +--hal/                    - HAL component.
   |  |  +--boards/              - HAL board support files.
   |  |  +--dox/                 - HAL documentation resources.
