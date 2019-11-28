@@ -422,6 +422,7 @@ static inline msg_t chFifoReceiveObjectTimeout(objects_fifo_t *ofp,
 
   return chMBFetchTimeout(&ofp->mbx, (msg_t *)objpp, timeout);
 }
+
 #endif /* CH_CFG_USE_OBJ_FIFOS == TRUE */
 
 #endif /* CHOBJFIFOS_H */
