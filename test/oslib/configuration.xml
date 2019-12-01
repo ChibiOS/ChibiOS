@@ -1023,6 +1023,158 @@ test_assert((pipe1.rdptr == pipe1.wrptr) &&
               <value>Internal Tests</value>
             </type>
             <brief>
+              <value>Jobs Queues</value>
+            </brief>
+            <description>
+              <value>This sequence tests the ChibiOS library functionalities related to Jobs Queues.</value>
+            </description>
+            <condition>
+              <value>CH_CFG_USE_JOBS</value>
+            </condition>
+            <shared_code>
+              <value><![CDATA[
+#define JOBS_QUEUE_SIZE 4
+
+static jobs_queue_t jq;
+static job_descriptor_t jobs[JOBS_QUEUE_SIZE];
+static msg_t msg_queue[JOBS_QUEUE_SIZE];
+
+static void job_slow(void *arg) {
+
+  test_emit_token((int)arg);
+  chThdSleepMilliseconds(10);
+}
+
+static THD_WORKING_AREA(wa1Thread1, 256);
+static THD_WORKING_AREA(wa2Thread1, 256);
+static THD_FUNCTION(Thread1, arg) {
+  msg_t msg;
+  
+  (void)arg;
+
+  do {
+    msg = chJobDispatch(&jq);
+  } while (msg == MSG_OK);
+}
+]]></value>
+            </shared_code>
+            <cases>
+              <case>
+                <brief>
+                  <value>Dispatcher test.</value>
+                </brief>
+                <description>
+                  <value>The dispatcher API is tested for functionality.</value>
+                </description>
+                <condition>
+                  <value>
+                  </value>
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value/>
+                  </setup_code>
+                  <teardown_code>
+                    <value/>
+                  </teardown_code>
+                  <local_variables>
+                    <value><![CDATA[
+thread_t *tp1, *tp2;
+]]></value>
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Initializing the Jobs Queue object.</value>
+                    </description>
+                    <tags>
+                      <value></value>
+                    </tags>
+                    <code>
+                      <value><![CDATA[
+chJobObjectInit(&jq, JOBS_QUEUE_SIZE, jobs, msg_queue);
+]]></value>
+                    </code>
+                  </step>
+                 <step>
+                    <description>
+                      <value>Starting the dispatcher threads.</value>
+                    </description>
+                    <tags>
+                      <value></value>
+                    </tags>
+                    <code>
+                      <value><![CDATA[
+thread_descriptor_t td1 = {
+  .name  = "dispatcher1",
+  .wbase = wa1Thread1,
+  .wend  = THD_WORKING_AREA_END(wa1Thread1),
+  .prio  = chThdGetPriorityX() - 1,
+  .funcp = Thread1,
+  .arg   = NULL
+};
+tp1 = chThdCreate(&td1);
+
+thread_descriptor_t td2 = {
+  .name  = "dispatcher2",
+  .wbase = wa2Thread1,
+  .wend  = THD_WORKING_AREA_END(wa2Thread1),
+  .prio  = chThdGetPriorityX() - 1,
+  .funcp = Thread1,
+  .arg   = NULL
+};
+tp2 = chThdCreate(&td2);
+]]></value>
+                    </code>
+                  </step>
+                 <step>
+                    <description>
+                      <value>Sending jobs with various timings.</value>
+                    </description>
+                    <tags>
+                      <value></value>
+                    </tags>
+                    <code>
+                      <value><![CDATA[
+unsigned i;
+job_descriptor_t *jdp;
+
+for (i = 0; i < 8; i++) {
+  jdp = chJobGet(&jq);
+  jdp->jobfunc = job_slow;
+  jdp->jobarg  = (void *)('a' + i);
+  chJobPost(&jq, jdp);
+}
+]]></value>
+                    </code>
+                  </step>
+                 <step>
+                    <description>
+                      <value>Sending null jobs to make thread exit.</value>
+                    </description>
+                    <tags>
+                      <value></value>
+                    </tags>
+                    <code>
+                      <value><![CDATA[
+chJobPost(&jq, JOB_NULL);
+chJobPost(&jq, JOB_NULL);
+(void) chThdWait(tp1);
+(void) chThdWait(tp2);
+test_assert_sequence("abcdefgh", "unexpected tokens");
+]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+            </cases>
+          </sequence>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
               <value>Thread Delegates</value>
             </brief>
             <description>

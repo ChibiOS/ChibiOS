@@ -21,18 +21,18 @@
  * @file    oslib_test_sequence_004.c
  * @brief   Test Sequence 004 code.
  *
- * @page oslib_test_sequence_004 [4] Thread Delegates
+ * @page oslib_test_sequence_004 [4] Jobs Queues
  *
  * File: @ref oslib_test_sequence_004.c
  *
  * <h2>Description</h2>
  * This sequence tests the ChibiOS library functionalities related to
- * Thread Delegates.
+ * Jobs Queues.
  *
  * <h2>Conditions</h2>
  * This sequence is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_USE_DELEGATES
+ * - CH_CFG_USE_JOBS
  * .
  *
  * <h2>Test Cases</h2>
@@ -40,74 +40,34 @@
  * .
  */
 
-#if (CH_CFG_USE_DELEGATES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_JOBS) || defined(__DOXYGEN__)
 
 /****************************************************************************
  * Shared code.
  ****************************************************************************/
 
-static bool exit_flag;
+#define JOBS_QUEUE_SIZE 4
 
-static int dis_func0(void) {
+static jobs_queue_t jq;
+static job_descriptor_t jobs[JOBS_QUEUE_SIZE];
+static msg_t msg_queue[JOBS_QUEUE_SIZE];
 
-  test_emit_token('0');
+static void job_slow(void *arg) {
 
-  return 0x55AA;
+  test_emit_token((int)arg);
+  chThdSleepMilliseconds(10);
 }
 
-static char dis_func1(char a) {
-
-  test_emit_token((char)a);
-
-  return a;
-}
-
-static char dis_func2(char a, char b) {
-
-  test_emit_token((char)a);
-  test_emit_token((char)b);
-
-  return a;
-}
-
-static char dis_func3(char a, char b, char c) {
-
-  test_emit_token((char)a);
-  test_emit_token((char)b);
-  test_emit_token((char)c);
-
-  return a;
-}
-
-static char dis_func4(char a, char b, char c, char d) {
-
-  test_emit_token((char)a);
-  test_emit_token((char)b);
-  test_emit_token((char)c);
-  test_emit_token((char)d);
-
-  return a;
-}
-
-static int dis_func_end(void) {
-
-  test_emit_token('Z');
-  exit_flag = true;
-
-  return 0xAA55;
-}
-
-static THD_WORKING_AREA(waThread1, 256);
+static THD_WORKING_AREA(wa1Thread1, 256);
+static THD_WORKING_AREA(wa2Thread1, 256);
 static THD_FUNCTION(Thread1, arg) {
+  msg_t msg;
 
   (void)arg;
 
-  exit_flag = false;
   do {
-    chDelegateDispatch();
-  } while (!exit_flag);
-
-  chThdExit(0x0FA5);
+    msg = chJobDispatch(&jq);
+  } while (msg == MSG_OK);
 }
 
 /****************************************************************************
@@ -121,66 +81,73 @@ static THD_FUNCTION(Thread1, arg) {
  * The dispatcher API is tested for functionality.
  *
  * <h2>Test Steps</h2>
- * - [4.1.1] Starting the dispatcher thread.
- * - [4.1.2] Calling the default veneers, checking the result and the
- *   emitted tokens.
- * - [4.1.3] Waiting for the thread to terminate-.
+ * - [4.1.1] Initializing the Jobs Queue object.
+ * - [4.1.2] Starting the dispatcher threads.
+ * - [4.1.3] Sending jobs with various timings.
+ * - [4.1.4] Sending null jobs to make thread exit.
  * .
  */
 
 static void oslib_test_004_001_execute(void) {
-  thread_t *tp;
+  thread_t *tp1, *tp2;
 
-  /* [4.1.1] Starting the dispatcher thread.*/
+  /* [4.1.1] Initializing the Jobs Queue object.*/
   test_set_step(1);
   {
-    thread_descriptor_t td = {
-      .name  = "dispatcher",
-      .wbase = waThread1,
-      .wend  = THD_WORKING_AREA_END(waThread1),
-      .prio  = chThdGetPriorityX() + 1,
-      .funcp = Thread1,
-      .arg   = NULL
-    };
-    tp = chThdCreate(&td);
+    chJobObjectInit(&jq, JOBS_QUEUE_SIZE, jobs, msg_queue);
   }
   test_end_step(1);
 
-  /* [4.1.2] Calling the default veneers, checking the result and the
-     emitted tokens.*/
+  /* [4.1.2] Starting the dispatcher threads.*/
   test_set_step(2);
   {
-    int retval;
+    thread_descriptor_t td1 = {
+      .name  = "dispatcher1",
+      .wbase = wa1Thread1,
+      .wend  = THD_WORKING_AREA_END(wa1Thread1),
+      .prio  = chThdGetPriorityX() - 1,
+      .funcp = Thread1,
+      .arg   = NULL
+    };
+    tp1 = chThdCreate(&td1);
 
-    retval = chDelegateCallDirect0(tp, (delegate_fn0_t)dis_func0);
-    test_assert(retval == 0x55AA, "invalid return value");
-
-    retval = chDelegateCallDirect1(tp, (delegate_fn1_t)dis_func1, 'A');
-    test_assert(retval == (int)'A', "invalid return value");
-
-    retval = chDelegateCallDirect2(tp, (delegate_fn2_t)dis_func2, 'B', 'C');
-    test_assert(retval == (int)'B', "invalid return value");
-
-    retval = chDelegateCallDirect3(tp, (delegate_fn3_t)dis_func3, 'D', 'E', 'F');
-    test_assert(retval == (int)'D', "invalid return value");
-
-    retval = chDelegateCallDirect4(tp, (delegate_fn4_t)dis_func4, 'G', 'H', 'I', 'J');
-    test_assert(retval == (int)'G', "invalid return value");
-
-    retval = chDelegateCallDirect0(tp, (delegate_fn0_t)dis_func_end);
-    test_assert(retval == 0xAA55, "invalid return value");
-
-    test_assert_sequence("0ABCDEFGHIJZ", "unexpected tokens");
+    thread_descriptor_t td2 = {
+      .name  = "dispatcher2",
+      .wbase = wa2Thread1,
+      .wend  = THD_WORKING_AREA_END(wa2Thread1),
+      .prio  = chThdGetPriorityX() - 1,
+      .funcp = Thread1,
+      .arg   = NULL
+    };
+    tp2 = chThdCreate(&td2);
   }
   test_end_step(2);
 
-  /* [4.1.3] Waiting for the thread to terminate-.*/
+  /* [4.1.3] Sending jobs with various timings.*/
   test_set_step(3);
   {
-    msg_t msg = chThdWait(tp);
-    test_assert(msg == 0x0FA5, "invalid exit code");
+    unsigned i;
+    job_descriptor_t *jdp;
+
+    for (i = 0; i < 8; i++) {
+      jdp = chJobGet(&jq);
+      jdp->jobfunc = job_slow;
+      jdp->jobarg  = (void *)('a' + i);
+      chJobPost(&jq, jdp);
+    }
   }
   test_end_step(3);
+
+  /* [4.1.4] Sending null jobs to make thread exit.*/
+  test_set_step(4);
+  {
+    chJobPost(&jq, JOB_NULL);
+    chJobPost(&jq, JOB_NULL);
+    (void) chThdWait(tp1);
+    (void) chThdWait(tp2);
+    test_assert_sequence("abcdefgh", "unexpected tokens");
+  }
+  test_end_step(4);
 }
 
 static const testcase_t oslib_test_004_001 = {
@@ -203,11 +170,11 @@ const testcase_t * const oslib_test_sequence_004_array[] = {
 };
 
 /**
- * @brief   Thread Delegates.
+ * @brief   Jobs Queues.
  */
 const testsequence_t oslib_test_sequence_004 = {
-  "Thread Delegates",
+  "Jobs Queues",
   oslib_test_sequence_004_array
 };
 
-#endif /* CH_CFG_USE_DELEGATES */
+#endif /* CH_CFG_USE_JOBS */

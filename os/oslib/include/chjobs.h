@@ -42,6 +42,16 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Job identifier that does nothing except cycle the dispatcher.
+ */
+#define JOB_NULL        ((msg_t)0)
+
+/**
+ * @brief   Dispatcher return code in case of a @p JOB_NUL has been received.
+ */
+#define MSG_JOB_NULL    ((msg_t)-2)
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -131,10 +141,10 @@ extern "C" {
  *
  * @init
  */
-static inline void chJobsObjectInit(jobs_queue_t *jqp,
-                                    size_t jobsn,
-                                    job_descriptor_t *jobsbuf,
-                                    msg_t *msgbuf) {
+static inline void chJobObjectInit(jobs_queue_t *jqp,
+                                   size_t jobsn,
+                                   job_descriptor_t *jobsbuf,
+                                   msg_t *msgbuf) {
 
   chDbgCheck((jobsn > 0U) && (jobsbuf != NULL) && (msgbuf != NULL));
 
@@ -147,12 +157,32 @@ static inline void chJobsObjectInit(jobs_queue_t *jqp,
  * @brief   Allocates a free job object.
  *
  * @param[in] jqp       pointer to a @p jobs_queue_t structure
+ * @param[in] timeout   the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              The pointer to the allocated job object.
+ * @retval NULL         if a job object is not available within the specified
+ *                      timeout.
+ *
+ * @api
+ */
+static inline job_descriptor_t *chJobGet(jobs_queue_t *jqp) {
+
+  return chGuardedPoolAllocTimeout(&jqp->free, TIME_INFINITE);
+}
+
+/**
+ * @brief   Allocates a free job object.
+ *
+ * @param[in] jqp       pointer to a @p jobs_queue_t structure
  * @return              The pointer to the allocated job object.
  * @retval NULL         if a job object is not immediately available.
  *
  * @iclass
  */
-static inline job_descriptor_t *chGetTakeI(jobs_queue_t *jqp) {
+static inline job_descriptor_t *chJobGetI(jobs_queue_t *jqp) {
 
   return chGuardedPoolAllocI(&jqp->free);
 }
@@ -172,8 +202,8 @@ static inline job_descriptor_t *chGetTakeI(jobs_queue_t *jqp) {
  *
  * @sclass
  */
-static inline job_descriptor_t *chJobsGetTimeoutS(jobs_queue_t *jqp,
-                                                  sysinterval_t timeout) {
+static inline job_descriptor_t *chJobGetTimeoutS(jobs_queue_t *jqp,
+                                                 sysinterval_t timeout) {
 
   return chGuardedPoolAllocTimeoutS(&jqp->free, timeout);
 }
@@ -193,8 +223,8 @@ static inline job_descriptor_t *chJobsGetTimeoutS(jobs_queue_t *jqp,
  *
  * @api
  */
-static inline job_descriptor_t *chJobsGetTimeout(jobs_queue_t *jqp,
-                                                 sysinterval_t timeout) {
+static inline job_descriptor_t *chJobGetTimeout(jobs_queue_t *jqp,
+                                                sysinterval_t timeout) {
 
   return chGuardedPoolAllocTimeout(&jqp->free, timeout);
 }
@@ -208,7 +238,7 @@ static inline job_descriptor_t *chJobsGetTimeout(jobs_queue_t *jqp,
  *
  * @iclass
  */
-static inline void chJobsPostI(jobs_queue_t *jqp, job_descriptor_t *jp) {
+static inline void chJobPostI(jobs_queue_t *jqp, job_descriptor_t *jp) {
   msg_t msg;
 
   msg = chMBPostI(&jqp->mbx, (msg_t)jp);
@@ -224,7 +254,7 @@ static inline void chJobsPostI(jobs_queue_t *jqp, job_descriptor_t *jp) {
  *
  * @sclass
  */
-static inline void chJobsPostS(jobs_queue_t *jqp, job_descriptor_t *jp) {
+static inline void chJobPostS(jobs_queue_t *jqp, job_descriptor_t *jp) {
   msg_t msg;
 
   msg = chMBPostTimeoutS(&jqp->mbx, (msg_t)jp, TIME_IMMEDIATE);
@@ -240,7 +270,7 @@ static inline void chJobsPostS(jobs_queue_t *jqp, job_descriptor_t *jp) {
  *
  * @api
  */
-static inline void chJobsPost(jobs_queue_t *jqp, job_descriptor_t *jp) {
+static inline void chJobPost(jobs_queue_t *jqp, job_descriptor_t *jp) {
   msg_t msg;
 
   msg = chMBPostTimeout(&jqp->mbx, (msg_t)jp, TIME_IMMEDIATE);
@@ -256,7 +286,7 @@ static inline void chJobsPost(jobs_queue_t *jqp, job_descriptor_t *jp) {
  *
  * @iclass
  */
-static inline void chJobsPostAheadI(jobs_queue_t *jqp, job_descriptor_t *jp) {
+static inline void chJobPostAheadI(jobs_queue_t *jqp, job_descriptor_t *jp) {
   msg_t msg;
 
   msg = chMBPostAheadI(&jqp->mbx, (msg_t)jp);
@@ -272,7 +302,7 @@ static inline void chJobsPostAheadI(jobs_queue_t *jqp, job_descriptor_t *jp) {
  *
  * @sclass
  */
-static inline void chJobsPostAheadS(jobs_queue_t *jqp, job_descriptor_t *jp) {
+static inline void chJobPostAheadS(jobs_queue_t *jqp, job_descriptor_t *jp) {
   msg_t msg;
 
   msg = chMBPostAheadTimeoutS(&jqp->mbx, (msg_t)jp, TIME_IMMEDIATE);
@@ -288,7 +318,7 @@ static inline void chJobsPostAheadS(jobs_queue_t *jqp, job_descriptor_t *jp) {
  *
  * @api
  */
-static inline void chJobsPostAhead(jobs_queue_t *jqp, job_descriptor_t *jp) {
+static inline void chJobPostAhead(jobs_queue_t *jqp, job_descriptor_t *jp) {
   msg_t msg;
 
   msg = chMBPostAheadTimeout(&jqp->mbx, (msg_t)jp, TIME_IMMEDIATE);
@@ -302,19 +332,26 @@ static inline void chJobsPostAhead(jobs_queue_t *jqp, job_descriptor_t *jp) {
  * @return              The function outcome.
  * @retval MSG_OK       if a job has been executed.
  * @retval MSG_RESET    if the internal mailbox has been reset.
+ * @retval MSG_JOB_NULL if a @p JOB_NULL has been received.
  */
-static inline msg_t chJobsDispatch(jobs_queue_t *jqp) {
+static inline msg_t chJobDispatch(jobs_queue_t *jqp) {
   msg_t msg, jmsg;
 
+  /* Waiting for a job.*/
   msg = chMBFetchTimeout(&jqp->mbx, &jmsg, TIME_INFINITE);
   if (msg == MSG_OK) {
-    job_descriptor_t *jp = (job_descriptor_t *)jmsg;
+    if (jmsg != JOB_NULL) {
+      job_descriptor_t *jp = (job_descriptor_t *)jmsg;
 
-    /* Invoking the job function.*/
-    jp->jobfunc(jp->jobarg);
+      /* Invoking the job function.*/
+      jp->jobfunc(jp->jobarg);
 
-    /* Returning the job descriptor object.*/
-    chGuardedPoolFree(&jqp->free, (void *)jp);
+      /* Returning the job descriptor object.*/
+      chGuardedPoolFree(&jqp->free, (void *)jp);
+    }
+    else {
+      msg = MSG_JOB_NULL;
+    }
   }
 
   return msg;
@@ -328,20 +365,27 @@ static inline msg_t chJobsDispatch(jobs_queue_t *jqp) {
  * @retval MSG_OK       if a job has been executed.
  * @retval MSG_TIMEOUT  if a timeout occurred.
  * @retval MSG_RESET    if the internal mailbox has been reset.
+ * @retval MSG_JOB_NULL if a @p JOB_NULL has been received.
  */
-static inline msg_t chJobsDispatchTimeout(jobs_queue_t *jqp,
-                                          sysinterval_t timeout) {
+static inline msg_t chJobDispatchTimeout(jobs_queue_t *jqp,
+                                         sysinterval_t timeout) {
   msg_t msg, jmsg;
 
+  /* Waiting for a job or a timeout.*/
   msg = chMBFetchTimeout(&jqp->mbx, &jmsg, timeout);
   if (msg == MSG_OK) {
-    job_descriptor_t *jp = (job_descriptor_t *)jmsg;
+    if (jmsg != JOB_NULL) {
+      job_descriptor_t *jp = (job_descriptor_t *)jmsg;
 
-    /* Invoking the job function.*/
-    jp->jobfunc(jp->jobarg);
+      /* Invoking the job function.*/
+      jp->jobfunc(jp->jobarg);
 
-    /* Returning the job descriptor object.*/
-    chGuardedPoolFree(&jqp->free, (void *)jp);
+      /* Returning the job descriptor object.*/
+      chGuardedPoolFree(&jqp->free, (void *)jp);
+    }
+    else {
+      msg = MSG_JOB_NULL;
+    }
   }
 
   return msg;
