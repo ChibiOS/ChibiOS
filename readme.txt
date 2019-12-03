@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- LIB: Added support for asynchronous jobs queues to OSLIB.
 - LIB: Added support for delegate threads to OSLIB.
 - NIL: Improvements to messages, new functions chMsgWaitS(),
        chMsgWaitTimeoutS(), chMsgWaitTimeout().  

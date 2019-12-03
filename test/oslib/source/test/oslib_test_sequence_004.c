@@ -84,7 +84,7 @@ static THD_FUNCTION(Thread1, arg) {
  * - [4.1.1] Initializing the Jobs Queue object.
  * - [4.1.2] Starting the dispatcher threads.
  * - [4.1.3] Sending jobs with various timings.
- * - [4.1.4] Sending null jobs to make thread exit.
+ * - [4.1.4] Sending null jobs to make threads exit.
  * .
  */
 
@@ -138,11 +138,19 @@ static void oslib_test_004_001_execute(void) {
   }
   test_end_step(3);
 
-  /* [4.1.4] Sending null jobs to make thread exit.*/
+  /* [4.1.4] Sending null jobs to make threads exit.*/
   test_set_step(4);
   {
-    chJobPost(&jq, JOB_NULL);
-    chJobPost(&jq, JOB_NULL);
+    job_descriptor_t *jdp;
+
+    jdp = chJobGet(&jq);
+    jdp->jobfunc = NULL;
+    jdp->jobarg  = NULL;
+    chJobPost(&jq, jdp);
+    jdp = chJobGet(&jq);
+    jdp->jobfunc = NULL;
+    jdp->jobarg  = NULL;
+    chJobPost(&jq, jdp);
     (void) chThdWait(tp1);
     (void) chThdWait(tp2);
     test_assert_sequence("abcdefgh", "unexpected tokens");

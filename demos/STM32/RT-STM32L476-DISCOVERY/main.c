@@ -70,7 +70,7 @@ int main(void) {
    */
   while (true) {
     if (palReadLine(LINE_JOY_CENTER)) {
-//      test_execute((BaseSequentialStream *)&SD2, &rt_test_suite);
+      test_execute((BaseSequentialStream *)&SD2, &rt_test_suite);
       test_execute((BaseSequentialStream *)&SD2, &oslib_test_suite);
     }
     chThdSleepMilliseconds(500);

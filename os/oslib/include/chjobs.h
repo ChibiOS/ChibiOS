@@ -43,11 +43,6 @@
 /*===========================================================================*/
 
 /**
- * @brief   Job identifier that does nothing except cycle the dispatcher.
- */
-#define JOB_NULL        ((msg_t)0)
-
-/**
  * @brief   Dispatcher return code in case of a @p JOB_NUL has been received.
  */
 #define MSG_JOB_NULL    ((msg_t)-2)
@@ -340,8 +335,11 @@ static inline msg_t chJobDispatch(jobs_queue_t *jqp) {
   /* Waiting for a job.*/
   msg = chMBFetchTimeout(&jqp->mbx, &jmsg, TIME_INFINITE);
   if (msg == MSG_OK) {
-    if (jmsg != JOB_NULL) {
-      job_descriptor_t *jp = (job_descriptor_t *)jmsg;
+    job_descriptor_t *jp = (job_descriptor_t *)jmsg;
+
+    chDbgAssert(jp != NULL, "is NULL");
+
+    if (jp->jobfunc != NULL) {
 
       /* Invoking the job function.*/
       jp->jobfunc(jp->jobarg);
@@ -374,8 +372,11 @@ static inline msg_t chJobDispatchTimeout(jobs_queue_t *jqp,
   /* Waiting for a job or a timeout.*/
   msg = chMBFetchTimeout(&jqp->mbx, &jmsg, timeout);
   if (msg == MSG_OK) {
-    if (jmsg != JOB_NULL) {
-      job_descriptor_t *jp = (job_descriptor_t *)jmsg;
+    job_descriptor_t *jp = (job_descriptor_t *)jmsg;
+
+    chDbgAssert(jp != NULL, "is NULL");
+
+    if (jp->jobfunc != NULL) {
 
       /* Invoking the job function.*/
       jp->jobfunc(jp->jobarg);

@@ -1151,15 +1151,23 @@ for (i = 0; i < 8; i++) {
                   </step>
                  <step>
                     <description>
-                      <value>Sending null jobs to make thread exit.</value>
+                      <value>Sending two null jobs to make threads exit.</value>
                     </description>
                     <tags>
                       <value></value>
                     </tags>
                     <code>
                       <value><![CDATA[
-chJobPost(&jq, JOB_NULL);
-chJobPost(&jq, JOB_NULL);
+job_descriptor_t *jdp;
+
+jdp = chJobGet(&jq);
+jdp->jobfunc = NULL;
+jdp->jobarg  = NULL;
+chJobPost(&jq, jdp);
+jdp = chJobGet(&jq);
+jdp->jobfunc = NULL;
+jdp->jobarg  = NULL;
+chJobPost(&jq, jdp);
 (void) chThdWait(tp1);
 (void) chThdWait(tp2);
 test_assert_sequence("abcdefgh", "unexpected tokens");
