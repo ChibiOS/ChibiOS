@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- HAL: Idle callback support for STM32 USARTv1 UART driver.
 - LIB: Added support for asynchronous jobs queues to OSLIB.
 - LIB: Added support for delegate threads to OSLIB.
 - NIL: Improvements to messages, new functions chMsgWaitS(),

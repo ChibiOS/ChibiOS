@@ -604,6 +604,12 @@ typedef struct {
   uartecb_t                 rxerr_cb;
   /* End of the mandatory fields.*/
   /**
+   * @brief   Receiver timeout callback.
+   * @details Handles idle interrupts depending on configured
+   *          flags in CR registers and supported hardware features.
+   */
+  uartcb_t                  timeout_cb;
+  /**
    * @brief Bit rate.
    */
   uint32_t                  speed;
