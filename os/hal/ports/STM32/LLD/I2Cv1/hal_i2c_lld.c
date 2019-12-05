@@ -293,6 +293,11 @@ static void i2c_lld_serve_event_interrupt(I2CDriver *i2cp) {
   /* Clear ADDR flag. */
   if (event & (I2C_SR1_ADDR | I2C_SR1_ADD10))
     (void)dp->SR2;
+
+  /* Errata 2.4.6 for STM32F40x, Spurious Bus Error detection in Master mode.*/
+  if (event & I2C_SR1_BERR) {
+    dp->SR1 &= ~I2C_SR1_BERR;
+  }
 }
 
 /**
@@ -365,8 +370,12 @@ static void i2c_lld_serve_error_interrupt(I2CDriver *i2cp, uint16_t sr) {
 
   i2cp->errors = I2C_NO_ERROR;
 
-  if (sr & I2C_SR1_BERR)                            /* Bus error.           */
+  if (sr & I2C_SR1_BERR) {                          /* Bus error.           */
     i2cp->errors |= I2C_BUS_ERROR;
+    /* Errata 2.4.6 for STM32F40x, Spurious Bus Error detection in
+       Master mode.*/
+    i2cp->i2c->SR1 &= ~I2C_SR1_BERR;
+  }
 
   if (sr & I2C_SR1_ARLO)                            /* Arbitration lost.    */
     i2cp->errors |= I2C_ARBITRATION_LOST;
@@ -719,6 +728,7 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
                                      sysinterval_t timeout) {
   I2C_TypeDef *dp = i2cp->i2c;
   systime_t start, end;
+  msg_t msg;
 
 #if defined(STM32F1XX_I2C)
   osalDbgCheck(rxbytes > 1);
@@ -754,8 +764,10 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
 
     /* If the system time went outside the allowed window then a timeout
        condition is returned.*/
-    if (!osalTimeIsInRangeX(osalOsGetSystemTimeX(), start, end))
+    if (!osalTimeIsInRangeX(osalOsGetSystemTimeX(), start, end)) {
+      dmaStreamDisable(i2cp->dmarx);
       return MSG_TIMEOUT;
+    }
 
     osalSysUnlock();
   }
@@ -765,7 +777,12 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
   dp->CR1 |= I2C_CR1_START | I2C_CR1_ACK;
 
   /* Waits for the operation completion or a timeout.*/
-  return osalThreadSuspendTimeoutS(&i2cp->thread, timeout);
+  msg = osalThreadSuspendTimeoutS(&i2cp->thread, timeout);
+  if (msg != MSG_OK) {
+    dmaStreamDisable(i2cp->dmarx);
+  }
+
+  return msg;
 }
 
 /**
@@ -799,6 +816,7 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
                                       sysinterval_t timeout) {
   I2C_TypeDef *dp = i2cp->i2c;
   systime_t start, end;
+  msg_t msg;
 
 #if defined(STM32F1XX_I2C)
   osalDbgCheck((rxbytes == 0) || ((rxbytes > 1) && (rxbuf != NULL)));
@@ -839,8 +857,11 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
 
     /* If the system time went outside the allowed window then a timeout
        condition is returned.*/
-    if (!osalTimeIsInRangeX(osalOsGetSystemTimeX(), start, end))
+    if (!osalTimeIsInRangeX(osalOsGetSystemTimeX(), start, end)) {
+      dmaStreamDisable(i2cp->dmatx);
+      dmaStreamDisable(i2cp->dmarx);
       return MSG_TIMEOUT;
+    }
 
     osalSysUnlock();
   }
@@ -850,7 +871,13 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
   dp->CR1 |= I2C_CR1_START;
 
   /* Waits for the operation completion or a timeout.*/
-  return osalThreadSuspendTimeoutS(&i2cp->thread, timeout);
+  msg = osalThreadSuspendTimeoutS(&i2cp->thread, timeout);
+  if (msg != MSG_OK) {
+    dmaStreamDisable(i2cp->dmatx);
+    dmaStreamDisable(i2cp->dmarx);
+  }
+
+  return msg;
 }
 
 #endif /* HAL_USE_I2C */

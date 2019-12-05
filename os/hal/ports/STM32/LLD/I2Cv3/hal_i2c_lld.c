@@ -1133,9 +1133,12 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
   msg = osalThreadSuspendTimeoutS(&i2cp->thread, timeout);
 
   /* In case of a software timeout a STOP is sent as an extreme attempt
-     to release the bus.*/
+     to release the bus and DMA is forcibly disabled.*/
   if (msg == MSG_TIMEOUT) {
     dp->CR2 |= I2C_CR2_STOP;
+#if STM32_I2C_USE_DMA == TRUE
+    i2c_lld_stop_rx_dma(i2cp);
+#endif
   }
 
   return msg;
@@ -1264,9 +1267,13 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
   msg = osalThreadSuspendTimeoutS(&i2cp->thread, timeout);
 
   /* In case of a software timeout a STOP is sent as an extreme attempt
-     to release the bus.*/
+     to release the bus and DMA is forcibly disabled.*/
   if (msg == MSG_TIMEOUT) {
     dp->CR2 |= I2C_CR2_STOP;
+#if STM32_I2C_USE_DMA == TRUE
+    i2c_lld_stop_rx_dma(i2cp);
+    i2c_lld_stop_tx_dma(i2cp);
+#endif
   }
 
   return msg;
