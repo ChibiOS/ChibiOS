@@ -117,8 +117,7 @@
 #endif
 
 #if !defined(CH_CFG_USE_JOBS)
-//#error "CH_CFG_USE_JOBS not defined in chconf.h"
-#define CH_CFG_USE_JOBS 1
+#error "CH_CFG_USE_JOBS not defined in chconf.h"
 #endif
 
 /* Objects factory options checks.*/
