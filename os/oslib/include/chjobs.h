@@ -165,7 +165,7 @@ static inline void chJobObjectInit(jobs_queue_t *jqp,
  */
 static inline job_descriptor_t *chJobGet(jobs_queue_t *jqp) {
 
-  return chGuardedPoolAllocTimeout(&jqp->free, TIME_INFINITE);
+  return (job_descriptor_t *)chGuardedPoolAllocTimeout(&jqp->free, TIME_INFINITE);
 }
 
 /**
@@ -179,7 +179,7 @@ static inline job_descriptor_t *chJobGet(jobs_queue_t *jqp) {
  */
 static inline job_descriptor_t *chJobGetI(jobs_queue_t *jqp) {
 
-  return chGuardedPoolAllocI(&jqp->free);
+  return (job_descriptor_t *)chGuardedPoolAllocI(&jqp->free);
 }
 
 /**
@@ -200,7 +200,7 @@ static inline job_descriptor_t *chJobGetI(jobs_queue_t *jqp) {
 static inline job_descriptor_t *chJobGetTimeoutS(jobs_queue_t *jqp,
                                                  sysinterval_t timeout) {
 
-  return chGuardedPoolAllocTimeoutS(&jqp->free, timeout);
+  return (job_descriptor_t *)chGuardedPoolAllocTimeoutS(&jqp->free, timeout);
 }
 
 /**
@@ -221,7 +221,7 @@ static inline job_descriptor_t *chJobGetTimeoutS(jobs_queue_t *jqp,
 static inline job_descriptor_t *chJobGetTimeout(jobs_queue_t *jqp,
                                                 sysinterval_t timeout) {
 
-  return chGuardedPoolAllocTimeout(&jqp->free, timeout);
+  return (job_descriptor_t *)chGuardedPoolAllocTimeout(&jqp->free, timeout);
 }
 
 /**
