@@ -49,6 +49,7 @@ UARTConfig uart_cfg_1 = {
   NULL,
   NULL,
   NULL,
+  NULL,
   38400,
   0,
   USART_CR2_LINEN,
