@@ -77,7 +77,6 @@
 - NEW: Added support for .cc files extensions in makefiles.
 - NEW: Made bus acquire/release functions in SNOR driver public.
 - FIX: Fixed I2C fallback driver broken (bug #1061).
-- FIX: Fixed bug in chVTGetSystemTimeX() (bug #1060).
 - FIX: Fixed STM32 ADC1 sample time macros (bug #1059).
 - FIX: Fixed STM32 ADCv1 error callback disabled on some devices (bug #1058).
 - FIX: Fixed error in uartSendFullTimeout() HAL function (bug #1057).
