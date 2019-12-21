@@ -403,8 +403,8 @@ void chSysRestoreStatusX(syssts_t sts) {
  * @details This function verifies if the current realtime counter value
  *          lies within the specified range or not. The test takes care
  *          of the realtime counter wrapping to zero on overflow.
- * @note    When start==end then the function returns always true because the
- *          whole time range is specified.
+ * @note    When start==end then the function returns always false because a
+ *          null time range is specified.
  * @note    This function is only available if the port layer supports the
  *          option @p PORT_SUPPORTS_RT.
  *
@@ -418,8 +418,8 @@ void chSysRestoreStatusX(syssts_t sts) {
  */
 bool chSysIsCounterWithinX(rtcnt_t cnt, rtcnt_t start, rtcnt_t end) {
 
-  return (bool)(((rtcnt_t)cnt - (rtcnt_t)start) <=
-                ((rtcnt_t)end - (rtcnt_t)start - (rtcnt_t)1));
+  return (bool)(((rtcnt_t)cnt - (rtcnt_t)start) <
+                ((rtcnt_t)end - (rtcnt_t)start));
 }
 
 /**

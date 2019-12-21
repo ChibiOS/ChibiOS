@@ -527,8 +527,8 @@ void chSysRestoreStatusX(syssts_t sts) {
  * @details This function verifies if the current realtime counter value
  *          lies within the specified range or not. The test takes care
  *          of the realtime counter wrapping to zero on overflow.
- * @note    When start==end then the function returns always true because the
- *          whole time range is specified.
+ * @note    When start==end then the function returns always false because a
+ *          null time range is specified.
  * @note    This function is only available if the port layer supports the
  *          option @p PORT_SUPPORTS_RT.
  *
@@ -542,8 +542,8 @@ void chSysRestoreStatusX(syssts_t sts) {
  */
 bool chSysIsCounterWithinX(rtcnt_t cnt, rtcnt_t start, rtcnt_t end) {
 
-  return (bool)(((rtcnt_t)cnt - (rtcnt_t)start) <=
-                ((rtcnt_t)end - (rtcnt_t)start - (rtcnt_t)1));
+  return (bool)(((rtcnt_t)cnt - (rtcnt_t)start) <
+                ((rtcnt_t)end - (rtcnt_t)start));
 }
 
 /**
@@ -725,8 +725,8 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, sysinterval_t timeout) {
 
 /**
  * @brief   Checks if the specified time is within the specified time range.
- * @note    When start==end then the function returns always true because the
- *          whole time range is specified.
+ * @note    When start==end then the function returns always false because the
+ *          time window has zero size.
  *
  * @param[in] time      the time to be verified
  * @param[in] start     the start of the time window (inclusive)
@@ -738,8 +738,8 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, sysinterval_t timeout) {
  */
 bool chTimeIsInRangeX(systime_t time, systime_t start, systime_t end) {
 
-  return (bool)((systime_t)((systime_t)(time) - (systime_t)(start)) <=
-      (systime_t)((systime_t)(end) - (systime_t)(start) - (systime_t)1));
+  return (bool)((systime_t)((systime_t)(time) - (systime_t)(start)) <
+                (systime_t)((systime_t)(end) - (systime_t)(start)));
 }
 
 /**
