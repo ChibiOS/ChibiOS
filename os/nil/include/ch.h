@@ -1408,8 +1408,8 @@ struct nil_system {
 
 /**
  * @brief   Checks if the specified time is within the specified time range.
- * @note    When start==end then the function returns always true because the
- *          whole time range is specified.
+ * @note    When start==end then the function returns always false because the
+ *          time window has zero size.
  *
  * @param[in] time      the time to be verified
  * @param[in] start     the start of the time window (inclusive)
@@ -1420,8 +1420,8 @@ struct nil_system {
  * @xclass
  */
 #define chTimeIsInRangeX(time, start, end)                                  \
-  ((bool)((systime_t)((systime_t)(time) - (systime_t)(start)) <=            \
-          (systime_t)((systime_t)(end) - (systime_t)(start) - (systime_t)1)))
+  ((bool)((systime_t)((systime_t)(time) - (systime_t)(start)) <             \
+          (systime_t)((systime_t)(end) - (systime_t)(start))))
 
 /**
  * @brief   Function parameters check.
