@@ -74,6 +74,11 @@
 *****************************************************************************
 
 *** Next ***
+- HAL: Improved support for shared handlers. Now there are centralized
+       inclusion modules (.inc) containing shared handlers. The new modules
+       can be included by the various STM32 platforms. So far the new system
+       has been implemented for STM32G0, STM32G4, STM32L0, STM32F7. It shall
+       be gradually introduced for all the others.
 - HAL: Idle callback support for STM32 USARTv1 UART driver.
 - LIB: Added support for asynchronous jobs queues to OSLIB.
 - LIB: Added support for delegate threads to OSLIB.
