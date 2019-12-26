@@ -55,7 +55,7 @@
 /** @} */
 
 /**
- * @name    ISR names and numbers remapping
+ * @name    ISR names and numbers
  * @{
  */
 /*
