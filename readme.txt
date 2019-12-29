@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- HAL: Added support for timers 9...17,20 to STM32 PWM driver.
 - HAL: Added support for timers 9...17 to STM32 ICU driver.
 - HAL: Added support for timers 10 and 13 to STM32 GPT driver.
 - HAL: Added support for timers 9...14 to STM32 ST driver.
