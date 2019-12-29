@@ -70,7 +70,7 @@ static inline void exti16_irq_deinit(void) {
 #if defined(STM32_EXTI16_IS_USED) || defined(__DOXYGEN__)
 #if !defined(STM32_DISABLE_EXTI16_HANDLER)
 /**
- * @brief   EXTI[0] interrupt handler.
+ * @brief   EXTI[16] interrupt handler.
  *
  * @isr
  */

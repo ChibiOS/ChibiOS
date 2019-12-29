@@ -70,7 +70,7 @@ static inline void exti20_irq_deinit(void) {
 #if defined(STM32_EXTI20_IS_USED) || defined(__DOXYGEN__)
 #if !defined(STM32_DISABLE_EXTI20_HANDLER)
 /**
- * @brief   EXTI[0] interrupt handler.
+ * @brief   EXTI[20] interrupt handler.
  *
  * @isr
  */

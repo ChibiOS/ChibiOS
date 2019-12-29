@@ -70,7 +70,7 @@ static inline void exti4_15_irq_deinit(void) {
 #if (HAL_USE_PAL && (PAL_USE_WAIT || PAL_USE_CALLBACKS)) || defined(__DOXYGEN__)
 #if !defined(STM32_DISABLE_EXTI4_15_HANDLER)
 /**
- * @brief   EXTI[0] interrupt handler.
+ * @brief   EXTI[4]..EXTI[15] interrupt handler.
  *
  * @isr
  */

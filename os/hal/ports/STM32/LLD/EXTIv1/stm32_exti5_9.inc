@@ -70,7 +70,7 @@ static inline void exti5_9_irq_deinit(void) {
 #if (HAL_USE_PAL && (PAL_USE_WAIT || PAL_USE_CALLBACKS)) || defined(__DOXYGEN__)
 #if !defined(STM32_DISABLE_EXTI5_9_HANDLER)
 /**
- * @brief   EXTI[0] interrupt handler.
+ * @brief   EXTI[5]..EXTI[9] interrupt handler.
  *
  * @isr
  */

@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    EXTIv1/stm32_exti17.inc
- * @brief   Shared EXTI17 handler.
+ * @file    EXTIv1/stm32_exti33.inc
+ * @brief   Shared EXTI33 handler.
  *
- * @addtogroup STM32_EXTI17_HANDLER
+ * @addtogroup STM32_EXTI33_HANDLER
  * @{
  */
 
@@ -31,12 +31,12 @@
 /*===========================================================================*/
 
 /* Priority settings checks.*/
-#if !defined(STM32_IRQ_EXTI17_PRIORITY)
-#error "STM32_IRQ_EXTI17_PRIORITY not defined in mcuconf.h"
+#if !defined(STM32_IRQ_EXTI33_PRIORITY)
+#error "STM32_IRQ_EXTI33_PRIORITY not defined in mcuconf.h"
 #endif
 
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI17_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI17_PRIORITY"
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI33_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI33_PRIORITY"
 #endif
 
 /*===========================================================================*/
@@ -51,15 +51,15 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static inline void exti17_irq_init(void) {
-#if defined(STM32_EXTI17_IS_USED)
-  nvicEnableVector(STM32_EXTI17_NUMBER, STM32_IRQ_EXTI17_PRIORITY);
+static inline void exti33_irq_init(void) {
+#if defined(STM32_EXTI33_IS_USED)
+  nvicEnableVector(STM32_EXTI33_NUMBER, STM32_IRQ_EXTI33_PRIORITY);
 #endif
 }
 
-static inline void exti17_irq_deinit(void) {
-#if defined(STM32_EXTI17_IS_USED)
-  nvicDisableVector(STM32_EXTI17_NUMBER);
+static inline void exti33_irq_deinit(void) {
+#if defined(STM32_EXTI33_IS_USED)
+  nvicDisableVector(STM32_EXTI33_NUMBER);
 #endif
 }
 
@@ -67,22 +67,22 @@ static inline void exti17_irq_deinit(void) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if defined(STM32_EXTI17_IS_USED) || defined(__DOXYGEN__)
-#if !defined(STM32_DISABLE_EXTI17_HANDLER)
+#if defined(STM32_EXTI33_IS_USED) || defined(__DOXYGEN__)
+#if !defined(STM32_DISABLE_EXTI33_HANDLER)
 /**
- * @brief   EXTI[17] interrupt handler.
+ * @brief   EXTI[33] interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_EXTI17_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_EXTI33_HANDLER) {
   uint32_t pr;
 
   OSAL_IRQ_PROLOGUE();
 
-  extiGetAndClearGroup1(1U << 17, pr);
+  extiGetAndClearGroup2(1U << (33 - 32), pr);
 
-#if defined(STM32_EXTI17_ISR)
-  STM32_EXTI17_ISR(pr, 17);
+#if defined(STM32_EXTI33_ISR)
+  STM32_EXTI33_ISR(pr, (33 - 32));
 #endif
 
   OSAL_IRQ_EPILOGUE();
