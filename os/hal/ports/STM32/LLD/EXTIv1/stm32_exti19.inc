@@ -81,6 +81,9 @@ OSAL_IRQ_HANDLER(STM32_EXTI19_HANDLER) {
 
   extiGetAndClearGroup1(1U << 19, pr);
 
+  /* Could be unused.*/
+  (void)pr;
+
 #if defined(STM32_EXTI19_ISR)
   STM32_EXTI19_ISR(pr, 19);
 #endif

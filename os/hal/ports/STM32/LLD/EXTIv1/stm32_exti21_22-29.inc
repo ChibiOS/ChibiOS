@@ -84,6 +84,9 @@ OSAL_IRQ_HANDLER(STM32_EXTI212229_HANDLER) {
 
   extiGetAndClearGroup1((1U << 21) | (1U << 22) | (1U << 29), pr);
 
+  /* Could be unused.*/
+  (void)pr;
+
 #if defined(STM32_EXTI21_ISR)
   STM32_EXTI21_ISR(pr, 21);
 #endif

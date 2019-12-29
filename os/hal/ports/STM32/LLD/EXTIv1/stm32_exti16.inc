@@ -81,6 +81,9 @@ OSAL_IRQ_HANDLER(STM32_EXTI16_HANDLER) {
 
   extiGetAndClearGroup1(1U << 16, pr);
 
+  /* Could be unused.*/
+  (void)pr;
+
 #if defined(STM32_EXTI16_ISR)
   STM32_EXTI16_ISR(pr, 16);
 #endif

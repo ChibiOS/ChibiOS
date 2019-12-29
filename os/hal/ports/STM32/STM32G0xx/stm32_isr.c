@@ -35,6 +35,8 @@
   }                                                                         \
 }
 
+#define STM32_EXTI19_IS_USED
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -57,6 +59,7 @@
 #include "stm32_exti0_1.inc"
 #include "stm32_exti2_3.inc"
 #include "stm32_exti4_15.inc"
+#include "stm32_exti19-21.inc"
 
 #include "stm32_usart1.inc"
 #include "stm32_usart2.inc"
@@ -86,6 +89,7 @@ void irqInit(void) {
   exti0_1_irq_init();
   exti2_3_irq_init();
   exti4_15_irq_init();
+  exti19_exti21_irq_init();
 
   tim1_irq_init();
   tim2_irq_init();
@@ -112,6 +116,7 @@ void irqDeinit(void) {
   exti0_1_irq_deinit();
   exti2_3_irq_deinit();
   exti4_15_irq_deinit();
+  exti19_exti21_irq_deinit();
 
   tim1_irq_deinit();
   tim2_irq_deinit();
