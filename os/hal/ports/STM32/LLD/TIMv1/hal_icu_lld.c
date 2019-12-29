@@ -95,11 +95,67 @@ ICUDriver ICUD9;
 #endif
 
 /**
+ * @brief   ICUD10 driver identifier.
+ * @note    The driver ICUD10 allocates the timer TIM10 when enabled.
+ */
+#if STM32_ICU_USE_TIM10 || defined(__DOXYGEN__)
+ICUDriver ICUD10;
+#endif
+
+/**
+ * @brief   ICUD11 driver identifier.
+ * @note    The driver ICUD11 allocates the timer TIM11 when enabled.
+ */
+#if STM32_ICU_USE_TIM11 || defined(__DOXYGEN__)
+ICUDriver ICUD11;
+#endif
+
+/**
+ * @brief   ICUD12 driver identifier.
+ * @note    The driver ICUD12 allocates the timer TIM12 when enabled.
+ */
+#if STM32_ICU_USE_TIM12 || defined(__DOXYGEN__)
+ICUDriver ICUD12;
+#endif
+
+/**
+ * @brief   ICUD13 driver identifier.
+ * @note    The driver ICUD13 allocates the timer TIM13 when enabled.
+ */
+#if STM32_ICU_USE_TIM13 || defined(__DOXYGEN__)
+ICUDriver ICUD13;
+#endif
+
+/**
+ * @brief   ICUD14 driver identifier.
+ * @note    The driver ICUD14 allocates the timer TIM14 when enabled.
+ */
+#if STM32_ICU_USE_TIM14 || defined(__DOXYGEN__)
+ICUDriver ICUD14;
+#endif
+
+/**
  * @brief   ICUD15 driver identifier.
  * @note    The driver ICUD15 allocates the timer TIM15 when enabled.
  */
 #if STM32_ICU_USE_TIM15 || defined(__DOXYGEN__)
 ICUDriver ICUD15;
+#endif
+
+/**
+ * @brief   ICUD16 driver identifier.
+ * @note    The driver ICUD16 allocates the timer TIM16 when enabled.
+ */
+#if STM32_ICU_USE_TIM16 || defined(__DOXYGEN__)
+ICUDriver ICUD16;
+#endif
+
+/**
+ * @brief   ICUD17 driver identifier.
+ * @note    The driver ICUD17 allocates the timer TIM17 when enabled.
+ */
+#if STM32_ICU_USE_TIM17 || defined(__DOXYGEN__)
+ICUDriver ICUD17;
 #endif
 
 /*===========================================================================*/
@@ -312,30 +368,57 @@ OSAL_IRQ_HANDLER(STM32_TIM8_CC_HANDLER) {
 
 #if STM32_ICU_USE_TIM9 || defined(__DOXYGEN__)
 #if !defined(STM32_TIM9_SUPPRESS_ISR)
-#if !defined(STM32_TIM9_HANDLER)
-#error "STM32_TIM9_HANDLER not defined"
-#endif
-/**
- * @brief   TIM9 interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_TIM9_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-  icu_lld_serve_interrupt(&ICUD9);
-
-  OSAL_IRQ_EPILOGUE();
-}
+#error "TIM9 ISR not defined by platform"
 #endif /* !defined(STM32_TIM9_SUPPRESS_ISR) */
 #endif /* STM32_ICU_USE_TIM9 */
+
+#if STM32_ICU_USE_TIM10 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM10_SUPPRESS_ISR)
+#error "TIM10 ISR not defined by platform"
+#endif /* !defined(STM32_TIM10_SUPPRESS_ISR) */
+#endif /* STM32_ICU_USE_TIM10 */
+
+#if STM32_ICU_USE_TIM11 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM11_SUPPRESS_ISR)
+#error "TIM11 ISR not defined by platform"
+#endif /* !defined(STM32_TIM11_SUPPRESS_ISR) */
+#endif /* STM32_ICU_USE_TIM11 */
+
+#if STM32_ICU_USE_TIM12 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM12_SUPPRESS_ISR)
+#error "TIM12 ISR not defined by platform"
+#endif /* !defined(STM32_TIM12_SUPPRESS_ISR) */
+#endif /* STM32_ICU_USE_TIM12 */
+
+#if STM32_ICU_USE_TIM13 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM13_SUPPRESS_ISR)
+#error "TIM13 ISR not defined by platform"
+#endif /* !defined(STM32_TIM13_SUPPRESS_ISR) */
+#endif /* STM32_ICU_USE_TIM13 */
+
+#if STM32_ICU_USE_TIM14 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM14_SUPPRESS_ISR)
+#error "TIM14 ISR not defined by platform"
+#endif /* !defined(STM32_TIM14_SUPPRESS_ISR) */
+#endif /* STM32_ICU_USE_TIM14 */
 
 #if STM32_ICU_USE_TIM15 || defined(__DOXYGEN__)
 #if !defined(STM32_TIM15_SUPPRESS_ISR)
 #error "TIM15 ISR not defined by platform"
 #endif /* !defined(STM32_TIM15_SUPPRESS_ISR) */
 #endif /* STM32_ICU_USE_TIM15 */
+
+#if STM32_ICU_USE_TIM16 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM16_SUPPRESS_ISR)
+#error "TIM16 ISR not defined by platform"
+#endif /* !defined(STM32_TIM16_SUPPRESS_ISR) */
+#endif /* STM32_ICU_USE_TIM16 */
+
+#if STM32_ICU_USE_TIM17 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM17_SUPPRESS_ISR)
+#error "TIM17 ISR not defined by platform"
+#endif /* !defined(STM32_TIM17_SUPPRESS_ISR) */
+#endif /* STM32_ICU_USE_TIM17 */
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -390,10 +473,52 @@ void icu_lld_init(void) {
   ICUD9.tim = STM32_TIM9;
 #endif
 
+#if STM32_ICU_USE_TIM10
+  /* Driver initialization.*/
+  icuObjectInit(&ICUD10);
+  ICUD10.tim = STM32_TIM10;
+#endif
+
+#if STM32_ICU_USE_TIM11
+  /* Driver initialization.*/
+  icuObjectInit(&ICUD11);
+  ICUD11.tim = STM32_TIM11;
+#endif
+
+#if STM32_ICU_USE_TIM12
+  /* Driver initialization.*/
+  icuObjectInit(&ICUD12);
+  ICUD12.tim = STM32_TIM12;
+#endif
+
+#if STM32_ICU_USE_TIM13
+  /* Driver initialization.*/
+  icuObjectInit(&ICUD13);
+  ICUD13.tim = STM32_TIM13;
+#endif
+
+#if STM32_ICU_USE_TIM14
+  /* Driver initialization.*/
+  icuObjectInit(&ICUD14);
+  ICUD14.tim = STM32_TIM14;
+#endif
+
 #if STM32_ICU_USE_TIM15
   /* Driver initialization.*/
   icuObjectInit(&ICUD15);
   ICUD15.tim = STM32_TIM15;
+#endif
+
+#if STM32_ICU_USE_TIM16
+  /* Driver initialization.*/
+  icuObjectInit(&ICUD16);
+  ICUD16.tim = STM32_TIM16;
+#endif
+
+#if STM32_ICU_USE_TIM17
+  /* Driver initialization.*/
+  icuObjectInit(&ICUD17);
+  ICUD17.tim = STM32_TIM17;
 #endif
 }
 
@@ -509,13 +634,70 @@ void icu_lld_start(ICUDriver *icup) {
     if (&ICUD9 == icup) {
       rccEnableTIM9(true);
       rccResetTIM9();
-#if !defined(STM32_TIM9_SUPPRESS_ISR)
-      nvicEnableVector(STM32_TIM9_NUMBER, STM32_ICU_TIM9_IRQ_PRIORITY);
-#endif
 #if defined(STM32_TIM9CLK)
       icup->clock = STM32_TIM9CLK;
 #else
       icup->clock = STM32_TIMCLK2;
+#endif
+    }
+#endif
+
+#if STM32_ICU_USE_TIM10
+    if (&ICUD10 == icup) {
+      rccEnableTIM10(true);
+      rccResetTIM10();
+#if defined(STM32_TIM10CLK)
+      icup->clock = STM32_TIM10CLK;
+#else
+      icup->clock = STM32_TIMCLK2;
+#endif
+    }
+#endif
+
+#if STM32_ICU_USE_TIM11
+    if (&ICUD11 == icup) {
+      rccEnableTIM11(true);
+      rccResetTIM11();
+#if defined(STM32_TIM11CLK)
+      icup->clock = STM32_TIM11CLK;
+#else
+      icup->clock = STM32_TIMCLK2;
+#endif
+    }
+#endif
+
+#if STM32_ICU_USE_TIM12
+    if (&ICUD12 == icup) {
+      rccEnableTIM12(true);
+      rccResetTIM12();
+#if defined(STM32_TIM12CLK)
+      icup->clock = STM32_TIM12CLK;
+#else
+      icup->clock = STM32_TIMCLK1;
+#endif
+    }
+#endif
+
+#if STM32_ICU_USE_TIM13
+    if (&ICUD13 == icup) {
+      rccEnableTIM13(true);
+      rccResetTIM13();
+#if defined(STM32_TIM13CLK)
+      icup->clock = STM32_TIM13CLK;
+#else
+      icup->clock = STM32_TIMCLK1;
+#endif
+    }
+#endif
+
+#if STM32_ICU_USE_TIM14
+    if (&ICUD14 == icup) {
+      rccEnableTIM14(true);
+      rccResetTIM14();
+#if defined(STM32_TIM14CLK)
+      icup->clock = STM32_TIM14CLK;
+#else
+      icup->clock = STM32_TIMCLK1;
 #endif
     }
 #endif
@@ -526,6 +708,30 @@ void icu_lld_start(ICUDriver *icup) {
       rccResetTIM15();
 #if defined(STM32_TIM15CLK)
       icup->clock = STM32_TIM15CLK;
+#else
+      icup->clock = STM32_TIMCLK2;
+#endif
+    }
+#endif
+
+#if STM32_ICU_USE_TIM16
+    if (&ICUD16 == icup) {
+      rccEnableTIM16(true);
+      rccResetTIM16();
+#if defined(STM32_TIM16CLK)
+      icup->clock = STM32_TIM16CLK;
+#else
+      icup->clock = STM32_TIMCLK2;
+#endif
+    }
+#endif
+
+#if STM32_ICU_USE_TIM17
+    if (&ICUD17 == icup) {
+      rccEnableTIM17(true);
+      rccResetTIM17();
+#if defined(STM32_TIM15CLK)
+      icup->clock = STM32_TIM17CLK;
 #else
       icup->clock = STM32_TIMCLK2;
 #endif
@@ -676,16 +882,55 @@ void icu_lld_stop(ICUDriver *icup) {
 
 #if STM32_ICU_USE_TIM9
     if (&ICUD9 == icup) {
-#if !defined(STM32_TIM9_SUPPRESS_ISR)
-      nvicDisableVector(STM32_TIM9_NUMBER);
-#endif
       rccDisableTIM9();
+    }
+#endif
+
+#if STM32_ICU_USE_TIM10
+    if (&ICUD10 == icup) {
+      rccDisableTIM10();
+    }
+#endif
+
+#if STM32_ICU_USE_TIM11
+    if (&ICUD11 == icup) {
+      rccDisableTIM11();
+    }
+#endif
+
+#if STM32_ICU_USE_TIM12
+    if (&ICUD12 == icup) {
+      rccDisableTIM12();
+    }
+#endif
+
+#if STM32_ICU_USE_TIM13
+    if (&ICUD13 == icup) {
+      rccDisableTIM13();
+    }
+#endif
+
+#if STM32_ICU_USE_TIM14
+    if (&ICUD14 == icup) {
+      rccDisableTIM14();
     }
 #endif
 
 #if STM32_ICU_USE_TIM15
     if (&ICUD15 == icup) {
       rccDisableTIM15();
+    }
+#endif
+
+#if STM32_ICU_USE_TIM16
+    if (&ICUD16 == icup) {
+      rccDisableTIM16();
+    }
+#endif
+
+#if STM32_ICU_USE_TIM17
+    if (&ICUD17 == icup) {
+      rccDisableTIM17();
     }
 #endif
   }

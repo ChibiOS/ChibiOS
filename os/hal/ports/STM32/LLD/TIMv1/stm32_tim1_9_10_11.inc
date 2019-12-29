@@ -290,7 +290,7 @@ OSAL_IRQ_HANDLER(STM32_TIM1_TRGCO_TIM11_HANDLER) {
 #endif
 #if HAL_USE_ICU
 #if STM32_ICU_USE_TIM11
-  gpt_lld_serve_interrupt(&ICUD11);
+  icu_lld_serve_interrupt(&ICUD11);
 #endif
 #endif
 #if HAL_USE_PWM

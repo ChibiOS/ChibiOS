@@ -196,9 +196,14 @@
 #define STM32_GPT_USE_TIM7                  FALSE
 #define STM32_GPT_USE_TIM8                  FALSE
 #define STM32_GPT_USE_TIM9                  FALSE
+#define STM32_GPT_USE_TIM10                 FALSE
 #define STM32_GPT_USE_TIM11                 FALSE
 #define STM32_GPT_USE_TIM12                 FALSE
+#define STM32_GPT_USE_TIM13                 FALSE
 #define STM32_GPT_USE_TIM14                 FALSE
+#define STM32_GPT_USE_TIM15                 FALSE
+#define STM32_GPT_USE_TIM16                 FALSE
+#define STM32_GPT_USE_TIM17                 FALSE
 
 /*
  * I2C driver system settings.
@@ -236,6 +241,14 @@
 #define STM32_ICU_USE_TIM5                  FALSE
 #define STM32_ICU_USE_TIM8                  FALSE
 #define STM32_ICU_USE_TIM9                  FALSE
+#define STM32_ICU_USE_TIM10                 FALSE
+#define STM32_ICU_USE_TIM11                 FALSE
+#define STM32_ICU_USE_TIM12                 FALSE
+#define STM32_ICU_USE_TIM13                 FALSE
+#define STM32_ICU_USE_TIM14                 FALSE
+#define STM32_ICU_USE_TIM15                 FALSE
+#define STM32_ICU_USE_TIM16                 FALSE
+#define STM32_ICU_USE_TIM17                 FALSE
 
 /*
  * MAC driver system settings.
@@ -259,6 +272,14 @@
 #define STM32_PWM_USE_TIM5                  FALSE
 #define STM32_PWM_USE_TIM8                  FALSE
 #define STM32_PWM_USE_TIM9                  FALSE
+#define STM32_PWM_USE_TIM10                 FALSE
+#define STM32_PWM_USE_TIM11                 FALSE
+#define STM32_PWM_USE_TIM12                 FALSE
+#define STM32_PWM_USE_TIM13                 FALSE
+#define STM32_PWM_USE_TIM14                 FALSE
+#define STM32_PWM_USE_TIM15                 FALSE
+#define STM32_PWM_USE_TIM16                 FALSE
+#define STM32_PWM_USE_TIM17                 FALSE
 
 /*
  * RTC driver system settings.
