@@ -82,6 +82,30 @@
 #define STM32_HAS_TIM5                      FALSE
 #endif
 
+#if !defined(STM32_HAS_TIM9)
+#define STM32_HAS_TIM9                      FALSE
+#endif
+
+#if !defined(STM32_HAS_TIM10)
+#define STM32_HAS_TIM10                     FALSE
+#endif
+
+#if !defined(STM32_HAS_TIM11)
+#define STM32_HAS_TIM11                     FALSE
+#endif
+
+#if !defined(STM32_HAS_TIM12)
+#define STM32_HAS_TIM12                     FALSE
+#endif
+
+#if !defined(STM32_HAS_TIM13)
+#define STM32_HAS_TIM13                     FALSE
+#endif
+
+#if !defined(STM32_HAS_TIM14)
+#define STM32_HAS_TIM14                      FALSE
+#endif
+
 #if !defined(STM32_HAS_TIM21)
 #define STM32_HAS_TIM21                     FALSE
 #endif
@@ -109,6 +133,12 @@
 #define STM32_ST_USE_TIM3                   FALSE
 #define STM32_ST_USE_TIM4                   FALSE
 #define STM32_ST_USE_TIM5                   FALSE
+#define STM32_ST_USE_TIM9                   FALSE
+#define STM32_ST_USE_TIM10                  FALSE
+#define STM32_ST_USE_TIM11                  FALSE
+#define STM32_ST_USE_TIM12                  FALSE
+#define STM32_ST_USE_TIM13                  FALSE
+#define STM32_ST_USE_TIM14                  FALSE
 #define STM32_ST_USE_TIM21                  FALSE
 #define STM32_ST_USE_TIM22                  FALSE
 
@@ -130,6 +160,12 @@
 #define STM32_ST_USE_TIM3                   TRUE
 #define STM32_ST_USE_TIM4                   FALSE
 #define STM32_ST_USE_TIM5                   FALSE
+#define STM32_ST_USE_TIM9                   FALSE
+#define STM32_ST_USE_TIM10                  FALSE
+#define STM32_ST_USE_TIM11                  FALSE
+#define STM32_ST_USE_TIM12                  FALSE
+#define STM32_ST_USE_TIM13                  FALSE
+#define STM32_ST_USE_TIM14                  FALSE
 #define STM32_ST_USE_TIM21                  FALSE
 #define STM32_ST_USE_TIM22                  FALSE
 
@@ -151,6 +187,12 @@
 #define STM32_ST_USE_TIM3                   FALSE
 #define STM32_ST_USE_TIM4                   TRUE
 #define STM32_ST_USE_TIM5                   FALSE
+#define STM32_ST_USE_TIM9                   FALSE
+#define STM32_ST_USE_TIM10                  FALSE
+#define STM32_ST_USE_TIM11                  FALSE
+#define STM32_ST_USE_TIM12                  FALSE
+#define STM32_ST_USE_TIM13                  FALSE
+#define STM32_ST_USE_TIM14                  FALSE
 #define STM32_ST_USE_TIM21                  FALSE
 #define STM32_ST_USE_TIM22                  FALSE
 
@@ -172,6 +214,174 @@
 #define STM32_ST_USE_TIM3                   FALSE
 #define STM32_ST_USE_TIM4                   FALSE
 #define STM32_ST_USE_TIM5                   TRUE
+#define STM32_ST_USE_TIM9                   FALSE
+#define STM32_ST_USE_TIM10                  FALSE
+#define STM32_ST_USE_TIM11                  FALSE
+#define STM32_ST_USE_TIM12                  FALSE
+#define STM32_ST_USE_TIM13                  FALSE
+#define STM32_ST_USE_TIM14                  FALSE
+#define STM32_ST_USE_TIM21                  FALSE
+#define STM32_ST_USE_TIM22                  FALSE
+
+#elif STM32_ST_USE_TIMER == 9
+
+#if defined(STM32_TIM9_IS_USED)
+#error "ST requires TIM9 but the timer is already used"
+#else
+#define STM32_TIM9_IS_USED
+#endif
+
+#if defined(STM32_TIM9_SUPPRESS_ISR)
+#define STM32_SYSTICK_SUPPRESS_ISR
+#endif
+
+#define STM32_ST_TIM                        STM32_TIM9
+#define ST_LLD_NUM_ALARMS                   STM32_TIM9_CHANNELS
+#define STM32_ST_USE_TIM2                   FALSE
+#define STM32_ST_USE_TIM3                   FALSE
+#define STM32_ST_USE_TIM4                   FALSE
+#define STM32_ST_USE_TIM5                   FALSE
+#define STM32_ST_USE_TIM9                   TRUE
+#define STM32_ST_USE_TIM10                  FALSE
+#define STM32_ST_USE_TIM11                  FALSE
+#define STM32_ST_USE_TIM12                  FALSE
+#define STM32_ST_USE_TIM13                  FALSE
+#define STM32_ST_USE_TIM14                  FALSE
+#define STM32_ST_USE_TIM21                  FALSE
+#define STM32_ST_USE_TIM22                  FALSE
+
+#elif STM32_ST_USE_TIMER == 10
+
+#if defined(STM32_TIM10_IS_USED)
+#error "ST requires TIM10 but the timer is already used"
+#else
+#define STM32_TIM10_IS_USED
+#endif
+
+#if defined(STM32_TIM10_SUPPRESS_ISR)
+#define STM32_SYSTICK_SUPPRESS_ISR
+#endif
+
+#define STM32_ST_TIM                        STM32_TIM10
+#define ST_LLD_NUM_ALARMS                   STM32_TIM10_CHANNELS
+#define STM32_ST_USE_TIM2                   FALSE
+#define STM32_ST_USE_TIM3                   FALSE
+#define STM32_ST_USE_TIM4                   FALSE
+#define STM32_ST_USE_TIM5                   FALSE
+#define STM32_ST_USE_TIM9                   FALSE
+#define STM32_ST_USE_TIM10                  TRUE
+#define STM32_ST_USE_TIM11                  FALSE
+#define STM32_ST_USE_TIM12                  FALSE
+#define STM32_ST_USE_TIM13                  FALSE
+#define STM32_ST_USE_TIM14                  FALSE
+#define STM32_ST_USE_TIM21                  FALSE
+#define STM32_ST_USE_TIM22                  FALSE
+
+#elif STM32_ST_USE_TIMER == 11
+
+#if defined(STM32_TIM11_IS_USED)
+#error "ST requires TIM11 but the timer is already used"
+#else
+#define STM32_TIM11_IS_USED
+#endif
+
+#if defined(STM32_TIM11_SUPPRESS_ISR)
+#define STM32_SYSTICK_SUPPRESS_ISR
+#endif
+
+#define STM32_ST_TIM                        STM32_TIM11
+#define ST_LLD_NUM_ALARMS                   STM32_TIM11_CHANNELS
+#define STM32_ST_USE_TIM2                   FALSE
+#define STM32_ST_USE_TIM3                   FALSE
+#define STM32_ST_USE_TIM4                   FALSE
+#define STM32_ST_USE_TIM5                   FALSE
+#define STM32_ST_USE_TIM9                   FALSE
+#define STM32_ST_USE_TIM10                  FALSE
+#define STM32_ST_USE_TIM11                  TRUE
+#define STM32_ST_USE_TIM12                  FALSE
+#define STM32_ST_USE_TIM13                  FALSE
+#define STM32_ST_USE_TIM14                  FALSE
+#define STM32_ST_USE_TIM21                  FALSE
+#define STM32_ST_USE_TIM22                  FALSE
+
+#elif STM32_ST_USE_TIMER == 12
+
+#if defined(STM32_TIM12_IS_USED)
+#error "ST requires TIM12 but the timer is already used"
+#else
+#define STM32_TIM12_IS_USED
+#endif
+
+#if defined(STM32_TIM12_SUPPRESS_ISR)
+#define STM32_SYSTICK_SUPPRESS_ISR
+#endif
+
+#define STM32_ST_TIM                        STM32_TIM12
+#define ST_LLD_NUM_ALARMS                   STM32_TIM12_CHANNELS
+#define STM32_ST_USE_TIM2                   FALSE
+#define STM32_ST_USE_TIM3                   FALSE
+#define STM32_ST_USE_TIM4                   FALSE
+#define STM32_ST_USE_TIM5                   FALSE
+#define STM32_ST_USE_TIM9                   FALSE
+#define STM32_ST_USE_TIM10                  FALSE
+#define STM32_ST_USE_TIM11                  FALSE
+#define STM32_ST_USE_TIM12                  TRUE
+#define STM32_ST_USE_TIM13                  FALSE
+#define STM32_ST_USE_TIM14                  FALSE
+#define STM32_ST_USE_TIM21                  FALSE
+#define STM32_ST_USE_TIM22                  FALSE
+
+#elif STM32_ST_USE_TIMER == 13
+
+#if defined(STM32_TIM13_IS_USED)
+#error "ST requires TIM13 but the timer is already used"
+#else
+#define STM32_TIM13_IS_USED
+#endif
+
+#if defined(STM32_TIM13_SUPPRESS_ISR)
+#define STM32_SYSTICK_SUPPRESS_ISR
+#endif
+
+#define STM32_ST_TIM                        STM32_TIM13
+#define ST_LLD_NUM_ALARMS                   STM32_TIM13_CHANNELS
+#define STM32_ST_USE_TIM2                   FALSE
+#define STM32_ST_USE_TIM3                   FALSE
+#define STM32_ST_USE_TIM4                   FALSE
+#define STM32_ST_USE_TIM5                   FALSE
+#define STM32_ST_USE_TIM9                   FALSE
+#define STM32_ST_USE_TIM10                  FALSE
+#define STM32_ST_USE_TIM11                  FALSE
+#define STM32_ST_USE_TIM12                  FALSE
+#define STM32_ST_USE_TIM13                  TRUE
+#define STM32_ST_USE_TIM14                  FALSE
+#define STM32_ST_USE_TIM21                  FALSE
+#define STM32_ST_USE_TIM22                  FALSE
+
+#elif STM32_ST_USE_TIMER == 14
+
+#if defined(STM32_TIM14_IS_USED)
+#error "ST requires TIM14 but the timer is already used"
+#else
+#define STM32_TIM14_IS_USED
+#endif
+
+#if defined(STM32_TIM14_SUPPRESS_ISR)
+#define STM32_SYSTICK_SUPPRESS_ISR
+#endif
+
+#define STM32_ST_TIM                        STM32_TIM14
+#define ST_LLD_NUM_ALARMS                   STM32_TIM14_CHANNELS
+#define STM32_ST_USE_TIM2                   FALSE
+#define STM32_ST_USE_TIM3                   FALSE
+#define STM32_ST_USE_TIM4                   FALSE
+#define STM32_ST_USE_TIM5                   FALSE
+#define STM32_ST_USE_TIM9                   FALSE
+#define STM32_ST_USE_TIM10                  FALSE
+#define STM32_ST_USE_TIM11                  FALSE
+#define STM32_ST_USE_TIM12                  FALSE
+#define STM32_ST_USE_TIM13                  FALSE
+#define STM32_ST_USE_TIM14                  TRUE
 #define STM32_ST_USE_TIM21                  FALSE
 #define STM32_ST_USE_TIM22                  FALSE
 
@@ -193,6 +403,12 @@
 #define STM32_ST_USE_TIM3                   FALSE
 #define STM32_ST_USE_TIM4                   FALSE
 #define STM32_ST_USE_TIM5                   FALSE
+#define STM32_ST_USE_TIM9                   FALSE
+#define STM32_ST_USE_TIM10                  FALSE
+#define STM32_ST_USE_TIM11                  FALSE
+#define STM32_ST_USE_TIM12                  FALSE
+#define STM32_ST_USE_TIM13                  FALSE
+#define STM32_ST_USE_TIM14                  FALSE
 #define STM32_ST_USE_TIM21                  TRUE
 #define STM32_ST_USE_TIM22                  FALSE
 
@@ -214,6 +430,12 @@
 #define STM32_ST_USE_TIM3                   FALSE
 #define STM32_ST_USE_TIM4                   FALSE
 #define STM32_ST_USE_TIM5                   FALSE
+#define STM32_ST_USE_TIM9                   FALSE
+#define STM32_ST_USE_TIM10                  FALSE
+#define STM32_ST_USE_TIM11                  FALSE
+#define STM32_ST_USE_TIM12                  FALSE
+#define STM32_ST_USE_TIM13                  FALSE
+#define STM32_ST_USE_TIM14                  FALSE
 #define STM32_ST_USE_TIM21                  FALSE
 #define STM32_ST_USE_TIM22                  TRUE
 

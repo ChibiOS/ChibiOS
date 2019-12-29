@@ -74,6 +74,9 @@
 *****************************************************************************
 
 *** Next ***
+- HAL: Added support for timers 9...14 to STM32 ST driver.
+- HAL: STM32 ST driver is now integrated with new IRQ infrastructure and
+       performs cross-checks with GPT, ICU and PWM drivers on timers usage.
 - HAL: Improved support for shared handlers. Now there are centralized
        inclusion modules (.inc) containing shared handlers. The new modules
        can be included by the various STM32 platforms. So far the new system
