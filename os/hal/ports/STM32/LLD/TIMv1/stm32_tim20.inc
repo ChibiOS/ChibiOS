@@ -35,6 +35,21 @@
 #error "STM32_HAS_TIM20 not defined in registry"
 #endif
 
+/* Driver checks for robustness, undefined USE macros are defaulted to
+   FALSE. This makes this module independent from drivers implementation.*/
+#if !defined(STM32_GPT_USE_TIM20)
+#define STM32_GPT_USE_TIM20                 FALSE
+#endif
+#if !defined(STM32_ICU_USE_TIM20)
+#define STM32_ICU_USE_TIM20                 FALSE
+#endif
+#if !defined(STM32_PWM_USE_TIM20)
+#define STM32_PWM_USE_TIM20                 FALSE
+#endif
+#if !defined(STM32_ST_USE_TIM20)
+#define STM32_ST_USE_TIM20                  FALSE
+#endif
+
 #if STM32_HAS_TIM20
 
 /* Priority settings checks.*/
@@ -86,7 +101,7 @@ static inline void tim20_irq_deinit(void) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if defined(__DOXYGEN__)
+#if defined(STM32_TIM20_IS_USED) || defined(__DOXYGEN__)
 /**
  * @brief   TIM20-UP interrupt handler.
  *
@@ -97,22 +112,29 @@ OSAL_IRQ_HANDLER(STM32_TIM20_UP_HANDLER) {
   OSAL_IRQ_PROLOGUE();
 
 #if HAL_USE_GPT
+#if STM32_GPT_USE_TIM20
   pwm_lld_serve_interrupt(&GPTD20);
 #endif
+#endif
 #if HAL_USE_ICU
+#if STM32_ICU_USE_TIM20
   pwm_lld_serve_interrupt(&ICUD20);
+#endif
 #endif
 #if HAL_USE_PWM
 #if STM32_PWM_USE_TIM20
   pwm_lld_serve_interrupt(&PWMD20);
 #endif
 #endif
+#if 1
+#if STM32_ST_USE_TIM20
+  st_lld_serve_interrupt();
+#endif
+#endif
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif
 
-#if defined(__DOXYGEN__)
 /**
  * @brief   TIM20-CC interrupt handler.
  *
@@ -123,9 +145,7 @@ OSAL_IRQ_HANDLER(STM32_TIM20_CC_HANDLER) {
   OSAL_IRQ_PROLOGUE();
 
 #if HAL_USE_GPT
-#if STM32_GPT_USE_TIM20
-  pwm_lld_serve_interrupt(&GPTD20);
-#endif
+  /* Not used by GPT.*/
 #endif
 #if STM32_ICU_USE_TIM20
   pwm_lld_serve_interrupt(&ICUD20);
@@ -135,10 +155,13 @@ OSAL_IRQ_HANDLER(STM32_TIM20_CC_HANDLER) {
   pwm_lld_serve_interrupt(&PWMD20);
 #endif
 #endif
+#if 1
+  /* Not used by ST.*/
+#endif
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif /* HAL_USE_GPT || HAL_USE_ICU || HAL_USE_PWM */
+#endif
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */

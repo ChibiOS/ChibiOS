@@ -58,6 +58,9 @@
 #if !defined(STM32_PWM_USE_TIM1)
 #define STM32_PWM_USE_TIM1                  FALSE
 #endif
+#if !defined(STM32_ST_USE_TIM1)
+#define STM32_ST_USE_TIM1                   FALSE
+#endif
 
 #if !defined(STM32_GPT_USE_TIM9)
 #define STM32_GPT_USE_TIM9                  FALSE
@@ -67,6 +70,9 @@
 #endif
 #if !defined(STM32_PWM_USE_TIM9)
 #define STM32_PWM_USE_TIM9                  FALSE
+#endif
+#if !defined(STM32_ST_USE_TIM9)
+#define STM32_ST_USE_TIM9                   FALSE
 #endif
 
 #if !defined(STM32_GPT_USE_TIM10)
@@ -78,6 +84,9 @@
 #if !defined(STM32_PWM_USE_TIM10)
 #define STM32_PWM_USE_TIM10                 FALSE
 #endif
+#if !defined(STM32_ST_USE_TIM10)
+#define STM32_ST_USE_TIM10                  FALSE
+#endif
 
 #if !defined(STM32_GPT_USE_TIM11)
 #define STM32_GPT_USE_TIM11                 FALSE
@@ -87,6 +96,9 @@
 #endif
 #if !defined(STM32_PWM_USE_TIM11)
 #define STM32_PWM_USE_TIM11                 FALSE
+#endif
+#if !defined(STM32_ST_USE_TIM11)
+#define STM32_ST_USE_TIM11                  FALSE
 #endif
 
 #if STM32_HAS_TIM1 || STM32_HAS_TIM9 || STM32_HAS_TIM10 || STM32_HAS_TIM11
@@ -139,47 +151,35 @@
 /*===========================================================================*/
 
 static inline void tim1_tim9_tim10_tim11_irq_init(void) {
-#if (HAL_USE_GPT && (                      STM32_GPT_USE_TIM9)) ||          \
-    (HAL_USE_ICU && (                      STM32_ICU_USE_TIM9)) ||          \
-    (HAL_USE_PWM && (                      STM32_PWM_USE_TIM9))
+#if defined(STM32_TIM1_IS_USED) || defined(STM32_TIM9_IS_USED)
   nvicEnableVector(STM32_TIM1_BRK_TIM9_NUMBER,
                    STM32_IRQ_TIM1_BRK_TIM9_PRIORITY);
 #endif
-#if (HAL_USE_GPT && (STM32_GPT_USE_TIM1 || STM32_GPT_USE_TIM10)) ||         \
-    (HAL_USE_ICU && (STM32_ICU_USE_TIM1                       )) ||         \
-    (HAL_USE_PWM && (STM32_PWM_USE_TIM1 || STM32_PWM_USE_TIM10))
+#if defined(STM32_TIM1_IS_USED) || defined(STM32_TIM10_IS_USED)
   nvicEnableVector(STM32_TIM1_UP_TIM10_NUMBER,
                    STM32_IRQ_TIM1_UP_TIM10_PRIORITY);
 #endif
-#if (HAL_USE_GPT && (                      STM32_GPT_USE_TIM11)) ||         \
-    (HAL_USE_PWM && (                      STM32_PWM_USE_TIM11))
+#if defined(STM32_TIM1_IS_USED) || defined(STM32_TIM11_IS_USED)
   nvicEnableVector(STM32_TIM1_TRGCO_TIM11_NUMBER,
                    STM32_IRQ_TIM1_TRGCO_TIM11_PRIORITY);
 #endif
-#if (HAL_USE_ICU && (STM32_ICU_USE_TIM1                       )) ||         \
-    (HAL_USE_PWM && (STM32_PWM_USE_TIM1                       ))
+#if defined(STM32_TIM1_IS_USED)
   nvicEnableVector(STM32_TIM1_CC_NUMBER,
                    STM32_IRQ_TIM1_CC_PRIORITY);
 #endif
 }
 
 static inline void tim1_tim9_tim10_tim11_irq_deinit(void) {
-#if (HAL_USE_GPT && (                      STM32_GPT_USE_TIM9)) ||          \
-    (HAL_USE_ICU && (                      STM32_ICU_USE_TIM9)) ||          \
-    (HAL_USE_PWM && (                      STM32_PWM_USE_TIM9))
+#if defined(STM32_TIM1_IS_USED) || defined(STM32_TIM9_IS_USED)
   nvicDisableVector(STM32_TIM1_BRK_TIM9_NUMBER);
 #endif
-#if (HAL_USE_GPT && (STM32_GPT_USE_TIM1 || STM32_GPT_USE_TIM10)) ||         \
-    (HAL_USE_ICU && (STM32_ICU_USE_TIM1 || STM32_ICU_USE_TIM10)) ||         \
-    (HAL_USE_PWM && (STM32_PWM_USE_TIM1 || STM32_PWM_USE_TIM10))
+#if defined(STM32_TIM1_IS_USED) || defined(STM32_TIM10_IS_USED)
   nvicDisableVector(STM32_TIM1_UP_TIM10_NUMBER);
 #endif
-#if (HAL_USE_GPT && (                      STM32_GPT_USE_TIM11)) ||         \
-    (HAL_USE_PWM && (                      STM32_PWM_USE_TIM11))
+#if defined(STM32_TIM1_IS_USED) || defined(STM32_TIM11_IS_USED)
   nvicDisableVector(STM32_TIM1_TRGCO_TIM11_NUMBER);
 #endif
-#if (HAL_USE_ICU && (STM32_ICU_USE_TIM1                       )) ||         \
-    (HAL_USE_PWM && (STM32_PWM_USE_TIM1                       ))
+#if defined(STM32_TIM1_IS_USED)
   nvicDisableVector(STM32_TIM1_CC_NUMBER);
 #endif
 }
@@ -188,9 +188,7 @@ static inline void tim1_tim9_tim10_tim11_irq_deinit(void) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if (HAL_USE_GPT && (                      STM32_GPT_USE_TIM9)) ||          \
-    (HAL_USE_ICU && (                      STM32_ICU_USE_TIM9)) ||          \
-    (HAL_USE_PWM && (                      STM32_PWM_USE_TIM9)) ||          \
+#if defined(STM32_TIM1_IS_USED) || defined(STM32_TIM19_IS_USED)  ||         \
     defined(__DOXYGEN__)
 /**
  * @brief   TIM1-BRK, TIM9 interrupt handler.
@@ -216,14 +214,17 @@ OSAL_IRQ_HANDLER(STM32_TIM1_BRK_TIM9_HANDLER) {
   pwm_lld_serve_interrupt(&PWMD9);
 #endif
 #endif
+#if 1
+#if STM32_ST_USE_TIM9
+  st_lld_serve_interrupt();
+#endif
+#endif
 
   OSAL_IRQ_EPILOGUE();
 }
 #endif
 
-#if (HAL_USE_GPT && (STM32_GPT_USE_TIM1 || STM32_GPT_USE_TIM10)) ||         \
-    (HAL_USE_ICU && (STM32_ICU_USE_TIM1 || STM32_ICU_USE_TIM10)) ||         \
-    (HAL_USE_PWM && (STM32_PWM_USE_TIM1 || STM32_PWM_USE_TIM10)) ||         \
+#if defined(STM32_TIM1_IS_USED) || defined(STM32_TIM10_IS_USED)  ||         \
     defined(__DOXYGEN__)
 /**
  * @brief   TIM1-UP, TIM10 interrupt handler.
@@ -258,14 +259,20 @@ OSAL_IRQ_HANDLER(STM32_TIM1_UP_TIM10_HANDLER) {
   pwm_lld_serve_interrupt(&PWMD10);
 #endif
 #endif
+#if 1
+#if STM32_ST_USE_TIM1
+  st_lld_serve_interrupt();
+#endif
+#if STM32_ST_USE_TIM10
+  st_lld_serve_interrupt();
+#endif
+#endif
 
   OSAL_IRQ_EPILOGUE();
 }
 #endif
 
-#if (HAL_USE_GPT && (                      STM32_GPT_USE_TIM11)) ||         \
-    (HAL_USE_ICU && (                      STM32_ICU_USE_TIM11)) ||         \
-    (HAL_USE_PWM && (                      STM32_PWM_USE_TIM11)) ||         \
+#if defined(STM32_TIM1_IS_USED) || defined(STM32_TIM11_IS_USED)  ||         \
     defined(__DOXYGEN__)
 /**
  * @brief   TIM1-TRG-COM, TIM11 interrupt handler.
@@ -291,14 +298,17 @@ OSAL_IRQ_HANDLER(STM32_TIM1_TRGCO_TIM11_HANDLER) {
   pwm_lld_serve_interrupt(&PWMD11);
 #endif
 #endif
+#if 1
+#if STM32_ST_USE_TIM11
+  st_lld_serve_interrupt();
+#endif
+#endif
 
   OSAL_IRQ_EPILOGUE();
 }
 #endif
 
-#if (HAL_USE_ICU && (STM32_ICU_USE_TIM1                       )) ||         \
-    (HAL_USE_PWM && (STM32_PWM_USE_TIM1                       )) ||         \
-    defined(__DOXYGEN__)
+#if defined(STM32_TIM1_IS_USED)
 /**
  * @brief   TIM1-CC interrupt handler.
  *

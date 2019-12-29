@@ -56,46 +56,6 @@ typedef void (*st_callback_t)(unsigned alarm);
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
-/**
- * @name    Macro Functions
- * @{
- */
-/**
- * @brief   Returns the time counter value.
- * @note    This functionality is only available in free running mode, the
- *          behaviour in periodic mode is undefined.
- *
- * @return              The counter value.
- *
- * @api
- */
-#define stGetCounter() st_lld_get_counter()
-
-/**
- * @brief   Determines if the alarm zero is active.
- *
- * @return              The alarm status.
- * @retval false        if the alarm is not active.
- * @retval true         is the alarm is active
- *
- * @api
- */
-#define stIsAlarmActive() st_lld_is_alarm_active()
-
-#if (ST_LLD_NUM_ALARMS > 1) || defined(__DOXYGEN__)
-/**
- * @brief   Determines if the specified alarm is active.
- *
- * @return              The alarm status.
- * @retval false        if the alarm is not active.
- * @retval true         is the alarm is active
- *
- * @api
- */
-#define stIsAlarmActiveN(n) st_lld_is_alarm_active_n(n)
-#endif
-/** @} */
-
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -112,7 +72,10 @@ extern "C" {
   void stStopAlarm(void);
   void stSetAlarm(systime_t abstime);
   systime_t stGetAlarm(void);
+  systime_t stGetCounter(void);
+  bool stIsAlarmActive(void);
 #if ST_LLD_NUM_ALARMS > 1
+  bool stIsAlarmActiveN(unsigned alarm);
   void stStartAlarmN(unsigned alarm, systime_t abstime, st_callback_t cb);
   void stStopAlarmN(unsigned alarm);
   void stSetAlarmN(unsigned alarm, systime_t abstime);

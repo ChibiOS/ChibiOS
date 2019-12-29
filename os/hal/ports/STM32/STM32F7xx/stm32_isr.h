@@ -145,6 +145,14 @@
 #define STM32_EXTI4_HANDLER                 Vector68
 #define STM32_EXTI5_9_HANDLER               Vector9C
 #define STM32_EXTI10_15_HANDLER             VectorE0
+#define STM32_EXTI16_HANDLER                Vector44    /* PVD              */
+#define STM32_EXTI17_HANDLER                VectorE4    /* RTC ALARM        */
+#define STM32_EXTI18_HANDLER                VectorE8    /* USB FS WAKEUP    */
+#define STM32_EXTI19_HANDLER                Vector138   /* ETH WAKEUP       */
+#define STM32_EXTI20_HANDLER                Vector170   /* USB HS WAKEUP    */
+#define STM32_EXTI21_HANDLER                Vector48    /* RTC TAMPER       */
+#define STM32_EXTI22_HANDLER                Vector4C    /* RTC WAKEUP       */
+#define STM32_EXTI23_HANDLER                Vector1B4   /* LPTIM1           */
 
 #define STM32_EXTI0_NUMBER                  6
 #define STM32_EXTI1_NUMBER                  7
@@ -153,6 +161,14 @@
 #define STM32_EXTI4_NUMBER                  10
 #define STM32_EXTI5_9_NUMBER                23
 #define STM32_EXTI10_15_NUMBER              40
+#define STM32_EXTI16_NUMBER                 1
+#define STM32_EXTI17_NUMBER                 41
+#define STM32_EXTI18_NUMBER                 42
+#define STM32_EXTI19_NUMBER                 62
+#define STM32_EXTI20_NUMBER                 76
+#define STM32_EXTI21_NUMBER                 2
+#define STM32_EXTI22_NUMBER                 3
+#define STM32_EXTI23_NUMBER                 93
 
 /*
  * I2C units.

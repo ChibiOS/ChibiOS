@@ -35,6 +35,21 @@
 #error "STM32_HAS_TIM4 not defined in registry"
 #endif
 
+/* Driver checks for robustness, undefined USE macros are defaulted to
+   FALSE. This makes this module independent from drivers implementation.*/
+#if !defined(STM32_GPT_USE_TIM4)
+#define STM32_GPT_USE_TIM4                  FALSE
+#endif
+#if !defined(STM32_ICU_USE_TIM4)
+#define STM32_ICU_USE_TIM4                  FALSE
+#endif
+#if !defined(STM32_PWM_USE_TIM4)
+#define STM32_PWM_USE_TIM4                  FALSE
+#endif
+#if !defined(STM32_ST_USE_TIM4)
+#define STM32_ST_USE_TIM4                   FALSE
+#endif
+
 #if STM32_HAS_TIM4
 
 /* Priority settings checks.*/
@@ -76,10 +91,7 @@ static inline void tim4_irq_deinit(void) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if (HAL_USE_GPT && STM32_GPT_USE_TIM4) ||                                  \
-    (HAL_USE_ICU && STM32_ICU_USE_TIM4) ||                                  \
-    (HAL_USE_PWM && STM32_PWM_USE_TIM4) ||                                  \
-    defined(__DOXYGEN__)
+#if defined(STM32_TIM4_IS_USED) || defined(__DOXYGEN__)
 /**
  * @brief   TIM4 interrupt handler.
  *
@@ -102,6 +114,11 @@ OSAL_IRQ_HANDLER(STM32_TIM4_HANDLER) {
 #if HAL_USE_PWM
 #if STM32_PWM_USE_TIM4
   pwm_lld_serve_interrupt(&PWMD4);
+#endif
+#endif
+#if 1
+#if STM32_ST_USE_TIM4
+  st_lld_serve_interrupt();
 #endif
 #endif
 

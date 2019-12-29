@@ -39,12 +39,11 @@
 #endif
 
 #if STM32_ST_USE_TIMER == 2
+
 #if !STM32_HAS_TIM2
 #error "TIM2 not present in the selected device"
 #endif
-#if defined(STM32_TIM2_IS_USED)
-#error "ST requires TIM2 but the timer is already used"
-#endif
+
 #if (OSAL_ST_RESOLUTION == 32) && !STM32_TIM2_IS_32BITS
 #error "TIM2 is not a 32bits timer"
 #endif
@@ -66,12 +65,11 @@
 #endif
 
 #elif STM32_ST_USE_TIMER == 3
+
 #if !STM32_HAS_TIM3
 #error "TIM3 not present in the selected device"
 #endif
-#if defined(STM32_TIM3_IS_USED)
-#error "ST requires TIM3 but the timer is already used"
-#endif
+
 #if (OSAL_ST_RESOLUTION == 32) && !STM32_TIM3_IS_32BITS
 #error "TIM3 is not a 32bits timer"
 #endif
@@ -93,12 +91,11 @@
 #endif
 
 #elif STM32_ST_USE_TIMER == 4
+
 #if !STM32_HAS_TIM4
 #error "TIM4 not present in the selected device"
 #endif
-#if defined(STM32_TIM4_IS_USED)
-#error "ST requires TIM4 but the timer is already used"
-#endif
+
 #if (OSAL_ST_RESOLUTION == 32) && !STM32_TIM4_IS_32BITS
 #error "TIM4 is not a 32bits timer"
 #endif
@@ -118,12 +115,11 @@
 #endif
 
 #elif STM32_ST_USE_TIMER == 5
+
 #if !STM32_HAS_TIM5
 #error "TIM5 not present in the selected device"
 #endif
-#if defined(STM32_TIM5_IS_USED)
-#error "ST requires TIM5 but the timer is already used"
-#endif
+
 #if (OSAL_ST_RESOLUTION == 32) && !STM32_TIM5_IS_32BITS
 #error "TIM5 is not a 32bits timer"
 #endif
@@ -143,12 +139,11 @@
 #endif
 
 #elif STM32_ST_USE_TIMER == 21
+
 #if !STM32_HAS_TIM21
 #error "TIM21 not present in the selected device"
 #endif
-#if defined(STM32_TIM21_IS_USED)
-#error "ST requires TIM21 but the timer is already used"
-#endif
+
 #if (OSAL_ST_RESOLUTION == 32) && !STM32_TIM21_IS_32BITS
 #error "TIM21 is not a 32bits timer"
 #endif
@@ -160,12 +155,11 @@
 #define ST_ENABLE_STOP()                    DBGMCU->APB1FZ |= DBGMCU_APB2_FZ_DBG_TIM21_STOP
 
 #elif STM32_ST_USE_TIMER == 22
+
 #if !STM32_HAS_TIM22
 #error "TIM22 not present in the selected device"
 #endif
-#if defined(STM32_TIM22_IS_USED)
-#error "ST requires TIM22 but the timer is already used"
-#endif
+
 #if (OSAL_ST_RESOLUTION == 32) && !STM32_TIM22_IS_32BITS
 #error "TIM21 is not a 32bits timer"
 #endif
@@ -191,6 +185,8 @@
 #endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
 
 #if OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC
+
+#define ST_HANDLER                          SysTick_Handler
 
 #if defined(STM32_CORE_CK)
 #define SYSTICK_CK                          STM32_CORE_CK
@@ -228,72 +224,21 @@
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if (OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC) || defined(__DOXYGEN__)
+#if !defined(STM32_SYSTICK_SUPPRESS_ISR)
 /**
- * @brief   System Timer vector.
- * @details This interrupt is used for system tick in periodic mode.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(SysTick_Handler) {
-
-  OSAL_IRQ_PROLOGUE();
-
-  osalSysLockFromISR();
-  osalOsTimerHandlerI();
-  osalSysUnlockFromISR();
-
-  OSAL_IRQ_EPILOGUE();
-}
-#endif /* OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC */
-
-#if (OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING) || defined(__DOXYGEN__)
-/**
- * @brief   TIM2 interrupt handler.
- * @details This interrupt is used for system tick in free running mode.
+ * @brief   Interrupt handler.
  *
  * @isr
  */
 OSAL_IRQ_HANDLER(ST_HANDLER) {
-  uint32_t sr;
-  stm32_tim_t *timp = STM32_ST_TIM;
 
   OSAL_IRQ_PROLOGUE();
 
-  sr  = timp->SR;
-  sr &= timp->DIER & STM32_TIM_DIER_IRQ_MASK;
-  timp->SR = ~sr;
-
-  if ((sr & TIM_SR_CC1IF) != 0U) {
-    osalSysLockFromISR();
-    osalOsTimerHandlerI();
-    osalSysUnlockFromISR();
-  }
-#if ST_LLD_NUM_ALARMS > 1
-  if ((sr & TIM_SR_CC2IF) != 0U) {
-    if (st_callbacks[2] != NULL) {
-      st_callbacks[0](1U);
-    }
-  }
-#endif
-#if ST_LLD_NUM_ALARMS > 2
-  if ((sr & TIM_SR_CC3IF) != 0U) {
-    if (st_callbacks[2] != NULL) {
-      st_callbacks[1](2U);
-    }
-  }
-#endif
-#if ST_LLD_NUM_ALARMS > 3
-  if ((sr & TIM_SR_CC4IF) != 0U) {
-    if (st_callbacks[2] != NULL) {
-      st_callbacks[2](3U);
-    }
-  }
-#endif
+  st_lld_serve_interrupt();
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
+#endif
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -334,8 +279,10 @@ void st_lld_init(void) {
   STM32_ST_TIM->EGR    = TIM_EGR_UG;
   STM32_ST_TIM->CR1    = TIM_CR1_CEN;
 
+#if !defined(STM32_SYSTICK_SUPPRESS_ISR)
   /* IRQ enabled.*/
   nvicEnableVector(ST_NUMBER, STM32_ST_IRQ_PRIORITY);
+#endif
 #endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
 
 #if OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC
@@ -350,6 +297,50 @@ void st_lld_init(void) {
   /* IRQ enabled.*/
   nvicSetSystemHandlerPriority(HANDLER_SYSTICK, STM32_ST_IRQ_PRIORITY);
 #endif /* OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC */
+}
+
+/**
+ * @brief   IRQ handling code.
+ */
+void st_lld_serve_interrupt(void) {
+#if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
+  uint32_t sr;
+  stm32_tim_t *timp = STM32_ST_TIM;
+
+  sr  = timp->SR;
+  sr &= timp->DIER & STM32_TIM_DIER_IRQ_MASK;
+  timp->SR = ~sr;
+
+  if ((sr & TIM_SR_CC1IF) != 0U)
+#endif
+  {
+    osalSysLockFromISR();
+    osalOsTimerHandlerI();
+    osalSysUnlockFromISR();
+  }
+#if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
+#if ST_LLD_NUM_ALARMS > 1
+  if ((sr & TIM_SR_CC2IF) != 0U) {
+    if (st_callbacks[2] != NULL) {
+      st_callbacks[0](1U);
+    }
+  }
+#endif
+#if ST_LLD_NUM_ALARMS > 2
+  if ((sr & TIM_SR_CC3IF) != 0U) {
+    if (st_callbacks[2] != NULL) {
+      st_callbacks[1](2U);
+    }
+  }
+#endif
+#if ST_LLD_NUM_ALARMS > 3
+  if ((sr & TIM_SR_CC4IF) != 0U) {
+    if (st_callbacks[2] != NULL) {
+      st_callbacks[2](3U);
+    }
+  }
+#endif
+#endif
 }
 
 #endif /* OSAL_ST_MODE != OSAL_ST_MODE_NONE */

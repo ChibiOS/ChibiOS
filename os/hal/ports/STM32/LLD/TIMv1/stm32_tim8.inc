@@ -35,6 +35,21 @@
 #error "STM32_HAS_TIM8 not defined in registry"
 #endif
 
+/* Driver checks for robustness, undefined USE macros are defaulted to
+   FALSE. This makes this module independent from drivers implementation.*/
+#if !defined(STM32_GPT_USE_TIM8)
+#define STM32_GPT_USE_TIM8                  FALSE
+#endif
+#if !defined(STM32_ICU_USE_TIM8)
+#define STM32_ICU_USE_TIM8                  FALSE
+#endif
+#if !defined(STM32_PWM_USE_TIM8)
+#define STM32_PWM_USE_TIM8                  FALSE
+#endif
+#if !defined(STM32_ST_USE_TIM8)
+#define STM32_ST_USE_TIM8                   FALSE
+#endif
+
 #if STM32_HAS_TIM8
 
 /* Priority settings checks.*/
@@ -86,9 +101,7 @@ static inline void tim8_irq_deinit(void) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if (HAL_USE_ICU && STM32_ICU_USE_TIM8) ||                                  \
-    (HAL_USE_PWM && STM32_PWM_USE_TIM8) ||                                  \
-    defined(__DOXYGEN__)
+#if defined(STM32_TIM8_IS_USED) || defined(__DOXYGEN__)
 /**
  * @brief   TIM8-UP interrupt handler.
  *
@@ -113,14 +126,15 @@ OSAL_IRQ_HANDLER(STM32_TIM8_UP_HANDLER) {
   pwm_lld_serve_interrupt(&PWMD8);
 #endif
 #endif
+#if 1
+#if STM32_ST_USE_TIM8
+  st_lld_serve_interrupt();
+#endif
+#endif
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif
 
-#if (HAL_USE_ICU && STM32_ICU_USE_TIM8) ||                                  \
-    (HAL_USE_PWM && STM32_PWM_USE_TIM8) ||                                  \
-    defined(__DOXYGEN__)
 /**
  * @brief   TIM8-CC interrupt handler.
  *
@@ -142,6 +156,9 @@ OSAL_IRQ_HANDLER(STM32_TIM8_CC_HANDLER) {
 #if STM32_PWM_USE_TIM8
   pwm_lld_serve_interrupt(&PWMD8);
 #endif
+#endif
+#if 1
+  /* Not used by ST.*/
 #endif
 
   OSAL_IRQ_EPILOGUE();

@@ -1218,6 +1218,7 @@
 #include "stm32_dma.h"
 #include "stm32_exti.h"
 #include "stm32_rcc.h"
+#include "stm32_tim.h"
 
 #ifdef __cplusplus
 extern "C" {

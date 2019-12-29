@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    TIMv1/stm32_tim22.inc
- * @brief   Shared TIM22 handler.
+ * @file    TIMv1/stm32_tim21.inc
+ * @brief   Shared TIM21 handler.
  *
- * @addtogroup STM32_TIM22_HANDLER
+ * @addtogroup STM32_TIM21_HANDLER
  * @{
  */
 
@@ -31,22 +31,37 @@
 /*===========================================================================*/
 
 /* Registry checks for robustness.*/
-#if !defined(STM32_HAS_TIM22)
-#error "STM32_HAS_TIM22 not defined in registry"
+#if !defined(STM32_HAS_TIM21)
+#error "STM32_HAS_TIM21 not defined in registry"
 #endif
 
-#if STM32_HAS_TIM22
+/* Driver checks for robustness, undefined USE macros are defaulted to
+   FALSE. This makes this module independent from drivers implementation.*/
+#if !defined(STM32_GPT_USE_TIM21)
+#define STM32_GPT_USE_TIM21                 FALSE
+#endif
+#if !defined(STM32_ICU_USE_TIM21)
+#define STM32_ICU_USE_TIM21                 FALSE
+#endif
+#if !defined(STM32_PWM_USE_TIM21)
+#define STM32_PWM_USE_TIM21                 FALSE
+#endif
+#if !defined(STM32_ST_USE_TIM21)
+#define STM32_ST_USE_TIM21                  FALSE
+#endif
+
+#if STM32_HAS_TIM21
 
 /* Priority settings checks.*/
-#if !defined(STM32_IRQ_TIM22_PRIORITY)
-#error "STM32_IRQ_TIM22_PRIORITY not defined in mcuconf.h"
+#if !defined(STM32_IRQ_TIM21_PRIORITY)
+#error "STM32_IRQ_TIM21_PRIORITY not defined in mcuconf.h"
 #endif
 
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_TIM22_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_TIM22_PRIORITY"
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_TIM21_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_TIM21_PRIORITY"
 #endif
 
-#endif /* STM32_HAS_TIM22 */
+#endif /* STM32_HAS_TIM21 */
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -60,15 +75,15 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static inline void tim22_irq_init(void) {
-#if defined(STM32_TIM22_IS_USED)
-  nvicEnableVector(STM32_TIM22_NUMBER, STM32_IRQ_TIM22_PRIORITY);
+static inline void tim21_irq_init(void) {
+#if defined(STM32_TIM21_IS_USED)
+  nvicEnableVector(STM32_TIM21_NUMBER, STM32_IRQ_TIM21_PRIORITY);
 #endif
 }
 
-static inline void tim22_irq_deinit(void) {
-#if defined(STM32_TIM22_IS_USED)
-  nvicDisableVector(STM32_TIM22_NUMBER);
+static inline void tim21_irq_deinit(void) {
+#if defined(STM32_TIM21_IS_USED)
+  nvicDisableVector(STM32_TIM21_NUMBER);
 #endif
 }
 
@@ -76,20 +91,34 @@ static inline void tim22_irq_deinit(void) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if (HAL_USE_GPT && STM32_GPT_USE_TIM22) ||                                  \
-     defined(__DOXYGEN__)
+#if defined(STM32_TIM21_IS_USED) || defined(__DOXYGEN__)
 /**
- * @brief   TIM22 interrupt handler.
+ * @brief   TIM21 interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_TIM22_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_TIM21_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
 #if HAL_USE_GPT
-#if STM32_GPT_USE_TIM22
-  gpt_lld_serve_interrupt(&GPTD22);
+#if STM32_GPT_USE_TIM21
+  gpt_lld_serve_interrupt(&GPTD21);
+#endif
+#endif
+#if HAL_USE_ICU
+#if STM32_ICU_USE_TIM21
+  icu_lld_serve_interrupt(&ICUD21);
+#endif
+#endif
+#if HAL_USE_PWM
+#if STM32_PWM_USE_TIM21
+  pwm_lld_serve_interrupt(&PWMD21);
+#endif
+#endif
+#if 1
+#if STM32_ST_USE_TIM21
+  st_lld_serve_interrupt();
 #endif
 #endif
 

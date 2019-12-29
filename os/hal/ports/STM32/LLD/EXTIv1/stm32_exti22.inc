@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    TIMv1/stm32_tim22.inc
- * @brief   Shared TIM22 handler.
+ * @file    EXTIv1/stm32_exti22.inc
+ * @brief   Shared EXTI22 handler.
  *
- * @addtogroup STM32_TIM22_HANDLER
+ * @addtogroup STM32_EXTI22_HANDLER
  * @{
  */
 
@@ -30,38 +30,14 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-/* Registry checks for robustness.*/
-#if !defined(STM32_HAS_TIM22)
-#error "STM32_HAS_TIM22 not defined in registry"
-#endif
-
-/* Driver checks for robustness, undefined USE macros are defaulted to
-   FALSE. This makes this module independent from drivers implementation.*/
-#if !defined(STM32_GPT_USE_TIM22)
-#define STM32_GPT_USE_TIM22                 FALSE
-#endif
-#if !defined(STM32_ICU_USE_TIM22)
-#define STM32_ICU_USE_TIM22                 FALSE
-#endif
-#if !defined(STM32_PWM_USE_TIM22)
-#define STM32_PWM_USE_TIM22                 FALSE
-#endif
-#if !defined(STM32_ST_USE_TIM22)
-#define STM32_ST_USE_TIM22                  FALSE
-#endif
-
-#if STM32_HAS_TIM22
-
 /* Priority settings checks.*/
-#if !defined(STM32_IRQ_TIM22_PRIORITY)
-#error "STM32_IRQ_TIM22_PRIORITY not defined in mcuconf.h"
+#if !defined(STM32_IRQ_EXTI22_PRIORITY)
+#error "STM32_IRQ_EXTI22_PRIORITY not defined in mcuconf.h"
 #endif
 
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_TIM22_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_TIM22_PRIORITY"
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI22_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI22_PRIORITY"
 #endif
-
-#endif /* STM32_HAS_TIM22 */
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -75,15 +51,15 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static inline void tim22_irq_init(void) {
-#if defined(STM32_TIM22_IS_USED)
-  nvicEnableVector(STM32_TIM22_NUMBER, STM32_IRQ_TIM22_PRIORITY);
+static inline void exti22_irq_init(void) {
+#if defined(STM32_EXTI22_IS_USED)
+  nvicEnableVector(STM32_EXTI22_NUMBER, STM32_IRQ_EXTI22_PRIORITY);
 #endif
 }
 
-static inline void tim22_irq_deinit(void) {
-#if defined(STM32_TIM22_IS_USED)
-  nvicDisableVector(STM32_TIM22_NUMBER);
+static inline void exti22_irq_deinit(void) {
+#if defined(STM32_EXTI22_IS_USED)
+  nvicDisableVector(STM32_EXTI22_NUMBER);
 #endif
 }
 
@@ -91,39 +67,27 @@ static inline void tim22_irq_deinit(void) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if defined(STM32_TIM22_IS_USED) || defined(__DOXYGEN__)
+#if defined(STM32_EXTI22_IS_USED) || defined(__DOXYGEN__)
+#if !defined(STM32_DISABLE_EXTI22_HANDLER)
 /**
- * @brief   TIM22 interrupt handler.
+ * @brief   EXTI[0] interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_TIM22_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_EXTI22_HANDLER) {
+  uint32_t pr;
 
   OSAL_IRQ_PROLOGUE();
 
-#if HAL_USE_GPT
-#if STM32_GPT_USE_TIM22
-  gpt_lld_serve_interrupt(&GPTD22);
-#endif
-#endif
-#if HAL_USE_ICU
-#if STM32_ICU_USE_TIM22
-  icu_lld_serve_interrupt(&ICUD22);
-#endif
-#endif
-#if HAL_USE_PWM
-#if STM32_PWM_USE_TIM22
-  pwm_lld_serve_interrupt(&PWMD22);
-#endif
-#endif
-#if 1
-#if STM32_ST_USE_TIM22
-  st_lld_serve_interrupt();
-#endif
+  extiGetAndClearGroup1(1U << 22, pr);
+
+#if defined(STM32_EXTI22_ISR)
+  STM32_EXTI22_ISR(pr, 22);
 #endif
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 #endif
 
 /*===========================================================================*/
