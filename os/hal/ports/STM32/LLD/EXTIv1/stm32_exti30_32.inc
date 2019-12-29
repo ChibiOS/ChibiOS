@@ -84,13 +84,19 @@ OSAL_IRQ_HANDLER(STM32_EXTI164041_HANDLER) {
 
 #if defined(STM32_EXTI30_IS_USED) || defined(STM32_EXTI31_IS_USED)
   extiGetAndClearGroup1((1U << 30) | (1U << 31), pr);
-  exti_serve_irq(pr, 30);
-  exti_serve_irq(pr, 31);
+#if defined(STM32_EXTI30_ISR)
+  STM32_EXTI30_ISR(pr, 30);
+#endif
+#if defined(STM32_EXTI31_ISR)
+  STM32_EXTI31_ISR(pr, 31);
+#endif
 #endif
 
 #if defined(STM32_EXTI32_IS_USED)
   extiGetAndClearGroup2(1U << (32 - 32), pr);
-  exti_serve_irq(pr, (32 - 32));
+#if defined(STM32_EXTI32_ISR)
+  STM32_EXTI32_ISR(pr, 32);
+#endif
 #endif
 
   OSAL_IRQ_EPILOGUE();
