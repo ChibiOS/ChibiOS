@@ -120,13 +120,14 @@
 #define STM32_EXTI4_HANDLER                 Vector68
 #define STM32_EXTI5_9_HANDLER               Vector9C
 #define STM32_EXTI10_15_HANDLER             VectorE0
-#define STM32_EXTI164041HANDLER             Vector44
-#define STM32_EXTI17_HANDLER                VectorE4
-#define STM32_EXTI19_HANDLER                Vector48
-#define STM32_EXTI20_HANDLER                Vector4C
-#define STM32_EXTI212229_HANDLER            Vector140
-#define STM32_EXTI303132_HANDLER            Vector144
-#define STM32_EXTI33_HANDLER                Vector148
+#define STM32_EXTI164041_HANDLER            Vector44    /* PVD PVM          */
+#define STM32_EXTI17_HANDLER                VectorE4    /* RTC ALARM        */
+#define STM32_EXTI18_HANDLER                VectorE8    /* USB WAKEUP       */
+#define STM32_EXTI19_HANDLER                Vector48    /* RTC TAMP CSS     */
+#define STM32_EXTI20_HANDLER                Vector4C    /* RTC WAKEUP       */
+#define STM32_EXTI212229_HANDLER            Vector140   /* COMP1..3         */
+#define STM32_EXTI30_32_HANDLER             Vector144   /* COMP4..6         */
+#define STM32_EXTI33_HANDLER                Vector148   /* COMP7            */
 
 #define STM32_EXTI0_NUMBER                  6
 #define STM32_EXTI1_NUMBER                  7
@@ -137,10 +138,11 @@
 #define STM32_EXTI10_15_NUMBER              40
 #define STM32_EXTI164041_NUMBER             1
 #define STM32_EXTI17_NUMBER                 41
+#define STM32_EXTI18_NUMBER                 42
 #define STM32_EXTI19_NUMBER                 2
 #define STM32_EXTI20_NUMBER                 3
 #define STM32_EXTI212229_NUMBER             64
-#define STM32_EXTI303132_NUMBER             65
+#define STM32_EXTI30_32_NUMBER              65
 #define STM32_EXTI33_NUMBER                 66
 
 /*
