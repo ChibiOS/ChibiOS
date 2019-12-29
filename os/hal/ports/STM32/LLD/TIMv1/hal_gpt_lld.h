@@ -123,6 +123,15 @@
 #endif
 
 /**
+ * @brief   GPTD10 driver enable switch.
+ * @details If set to @p TRUE the support for GPTD10 is included.
+ * @note    The default is @p TRUE.
+ */
+#if !defined(STM32_GPT_USE_TIM10) || defined(__DOXYGEN__)
+#define STM32_GPT_USE_TIM10                 FALSE
+#endif
+
+/**
  * @brief   GPTD11 driver enable switch.
  * @details If set to @p TRUE the support for GPTD11 is included.
  * @note    The default is @p TRUE.
@@ -138,6 +147,15 @@
  */
 #if !defined(STM32_GPT_USE_TIM12) || defined(__DOXYGEN__)
 #define STM32_GPT_USE_TIM12                 FALSE
+#endif
+
+/**
+ * @brief   GPTD13 driver enable switch.
+ * @details If set to @p TRUE the support for GPTD13 is included.
+ * @note    The default is @p TRUE.
+ */
+#if !defined(STM32_GPT_USE_TIM13) || defined(__DOXYGEN__)
+#define STM32_GPT_USE_TIM13                 FALSE
 #endif
 
 /**
@@ -258,6 +276,13 @@
 #endif
 
 /**
+ * @brief   GPTD10 interrupt priority level setting.
+ */
+#if !defined(STM32_GPT_TIM10_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_GPT_TIM10_IRQ_PRIORITY         7
+#endif
+
+/**
  * @brief   GPTD11 interrupt priority level setting.
  */
 #if !defined(STM32_GPT_TIM11_IRQ_PRIORITY) || defined(__DOXYGEN__)
@@ -269,6 +294,13 @@
  */
 #if !defined(STM32_GPT_TIM12_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_GPT_TIM12_IRQ_PRIORITY        7
+#endif
+
+/**
+ * @brief   GPTD13 interrupt priority level setting.
+ */
+#if !defined(STM32_GPT_TIM13_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_GPT_TIM13_IRQ_PRIORITY        7
 #endif
 
 /**
@@ -350,12 +382,24 @@
 #define STM32_HAS_TIM8                      FALSE
 #endif
 
+#if !defined(STM32_HAS_TIM9)
+#define STM32_HAS_TIM9                      FALSE
+#endif
+
+#if !defined(STM32_HAS_TIM10)
+#define STM32_HAS_TIM10                     FALSE
+#endif
+
 #if !defined(STM32_HAS_TIM11)
 #define STM32_HAS_TIM11                     FALSE
 #endif
 
 #if !defined(STM32_HAS_TIM12)
 #define STM32_HAS_TIM12                     FALSE
+#endif
+
+#if !defined(STM32_HAS_TIM13)
+#define STM32_HAS_TIM13                     FALSE
 #endif
 
 #if !defined(STM32_HAS_TIM14)
@@ -418,12 +462,20 @@
 #error "TIM9 not present in the selected device"
 #endif
 
+#if STM32_GPT_USE_TIM10 && !STM32_HAS_TIM10
+#error "TIM10 not present in the selected device"
+#endif
+
 #if STM32_GPT_USE_TIM11 && !STM32_HAS_TIM11
 #error "TIM11 not present in the selected device"
 #endif
 
 #if STM32_GPT_USE_TIM12 && !STM32_HAS_TIM12
 #error "TIM12 not present in the selected device"
+#endif
+
+#if STM32_GPT_USE_TIM13 && !STM32_HAS_TIM13
+#error "TIM13 not present in the selected device"
 #endif
 
 #if STM32_GPT_USE_TIM14 && !STM32_HAS_TIM14
@@ -450,12 +502,13 @@
 #error "TIM22 not present in the selected device"
 #endif
 
-#if !STM32_GPT_USE_TIM1 && !STM32_GPT_USE_TIM2 &&                           \
-    !STM32_GPT_USE_TIM3 && !STM32_GPT_USE_TIM4 &&                           \
-    !STM32_GPT_USE_TIM5 && !STM32_GPT_USE_TIM6 &&                           \
-    !STM32_GPT_USE_TIM7 && !STM32_GPT_USE_TIM8 &&                           \
-    !STM32_GPT_USE_TIM9 && !STM32_GPT_USE_TIM11 &&                          \
-    !STM32_GPT_USE_TIM12 && !STM32_GPT_USE_TIM14 &&                         \
+#if !STM32_GPT_USE_TIM1  && !STM32_GPT_USE_TIM2 &&                          \
+    !STM32_GPT_USE_TIM3  && !STM32_GPT_USE_TIM4 &&                          \
+    !STM32_GPT_USE_TIM5  && !STM32_GPT_USE_TIM6 &&                          \
+    !STM32_GPT_USE_TIM7  && !STM32_GPT_USE_TIM8 &&                          \
+    !STM32_GPT_USE_TIM9  && !STM32_GPT_USE_TIM10 &&                         \
+    !STM32_GPT_USE_TIM11 && !STM32_GPT_USE_TIM12 &&                         \
+    !STM32_GPT_USE_TIM13 && !STM32_GPT_USE_TIM14 &&                         \
     !STM32_GPT_USE_TIM15 && !STM32_GPT_USE_TIM16 &&                         \
     !STM32_GPT_USE_TIM17 &&                                                 \
     !STM32_GPT_USE_TIM21 && !STM32_GPT_USE_TIM22
@@ -535,6 +588,14 @@
 #endif
 #endif
 
+#if STM32_GPT_USE_TIM10
+#if defined(STM32_TIM10_IS_USED)
+#error "GPTD10 requires TIM10 but the timer is already used"
+#else
+#define STM32_TIM10_IS_USED
+#endif
+#endif
+
 #if STM32_GPT_USE_TIM11
 #if defined(STM32_TIM11_IS_USED)
 #error "GPTD11 requires TIM11 but the timer is already used"
@@ -548,6 +609,14 @@
 #error "GPTD12 requires TIM12 but the timer is already used"
 #else
 #define STM32_TIM12_IS_USED
+#endif
+#endif
+
+#if STM32_GPT_USE_TIM13
+#if defined(STM32_TIM13_IS_USED)
+#error "GPTD13 requires TIM13 but the timer is already used"
+#else
+#define STM32_TIM13_IS_USED
 #endif
 #endif
 
@@ -645,6 +714,11 @@
 #error "Invalid IRQ priority assigned to TIM9"
 #endif
 
+#if STM32_GPT_USE_TIM10 && !defined(STM32_TIM10_SUPPRESS_ISR) &&            \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM10_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to TIM10"
+#endif
+
 #if STM32_GPT_USE_TIM11 && !defined(STM32_TIM11_SUPPRESS_ISR) &&            \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM11_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM11"
@@ -653,6 +727,11 @@
 #if STM32_GPT_USE_TIM12 && !defined(STM32_TIM12_SUPPRESS_ISR) &&            \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM12_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM12"
+#endif
+
+#if STM32_GPT_USE_TIM13 && !defined(STM32_TIM13_SUPPRESS_ISR) &&            \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM13_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to TIM13"
 #endif
 
 #if STM32_GPT_USE_TIM14 && !defined(STM32_TIM14_SUPPRESS_ISR) &&            \
@@ -840,12 +919,20 @@ extern GPTDriver GPTD8;
 extern GPTDriver GPTD9;
 #endif
 
+#if STM32_GPT_USE_TIM10 && !defined(__DOXYGEN__)
+extern GPTDriver GPTD10;
+#endif
+
 #if STM32_GPT_USE_TIM11 && !defined(__DOXYGEN__)
 extern GPTDriver GPTD11;
 #endif
 
 #if STM32_GPT_USE_TIM12 && !defined(__DOXYGEN__)
 extern GPTDriver GPTD12;
+#endif
+
+#if STM32_GPT_USE_TIM13 && !defined(__DOXYGEN__)
+extern GPTDriver GPTD13;
 #endif
 
 #if STM32_GPT_USE_TIM14 && !defined(__DOXYGEN__)
