@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    EXTIv1/stm32_exti16-40_41.inc
- * @brief   Shared EXTI16-40_41 handler.
+ * @file    EXTIv1/stm32_exti16-35_38.inc
+ * @brief   Shared EXTI16-35_38 handler.
  *
- * @addtogroup STM32_EXTI164041_HANDLER
+ * @addtogroup STM32_EXTI1635_38_HANDLER
  * @{
  */
 
@@ -31,12 +31,12 @@
 /*===========================================================================*/
 
 /* Priority settings checks.*/
-#if !defined(STM32_IRQ_EXTI164041_PRIORITY)
-#error "STM32_IRQ_EXTI164041_PRIORITY not defined in mcuconf.h"
+#if !defined(STM32_IRQ_EXTI1635_38_PRIORITY)
+#error "STM32_IRQ_EXTI1635_38_PRIORITY not defined in mcuconf.h"
 #endif
 
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI164041_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI164041_PRIORITY"
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI1635_38_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI1635_38_PRIORITY"
 #endif
 
 /*===========================================================================*/
@@ -51,17 +51,19 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static inline void exti16_exti40_exti41_irq_init(void) {
-#if defined(STM32_EXTI16_IS_USED) || defined(STM32_EXTI40_IS_USED) ||       \
-    defined(STM32_EXTI41_IS_USED)
-  nvicEnableVector(STM32_EXTI164041_NUMBER, STM32_IRQ_EXTI164041_PRIORITY);
+static inline void exti16_exti35_38_irq_init(void) {
+#if defined(STM32_EXTI16_IS_USED) || defined(STM32_EXTI35_IS_USED) ||       \
+    defined(STM32_EXTI36_IS_USED) || defined(STM32_EXTI37_IS_USED) ||       \
+    defined(STM32_EXTI38_IS_USED)
+  nvicEnableVector(STM32_EXTI1635_38_NUMBER, STM32_IRQ_EXTI1635_38_PRIORITY);
 #endif
 }
 
-static inline void exti16_exti40_exti41_irq_deinit(void) {
-#if defined(STM32_EXTI16_IS_USED) || defined(STM32_EXTI40_IS_USED) ||       \
-    defined(STM32_EXTI41_IS_USED)
-  nvicDisableVector(STM32_EXTI164041_NUMBER);
+static inline void exti16_exti35_38_irq_deinit(void) {
+#if defined(STM32_EXTI16_IS_USED) || defined(STM32_EXTI35_IS_USED) ||       \
+    defined(STM32_EXTI36_IS_USED) || defined(STM32_EXTI37_IS_USED) ||       \
+    defined(STM32_EXTI38_IS_USED)
+  nvicDisableVector(STM32_EXTI1635_38_NUMBER);
 #endif
 }
 
@@ -69,15 +71,16 @@ static inline void exti16_exti40_exti41_irq_deinit(void) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if defined(STM32_EXTI16_IS_USED) || defined(STM32_EXTI40_IS_USED) ||       \
-    defined(STM32_EXTI41_IS_USED) || defined(__DOXYGEN__)
-#if !defined(STM32_DISABLE_EXTI164041_HANDLER)
+#if defined(STM32_EXTI16_IS_USED) || defined(STM32_EXTI35_IS_USED) ||       \
+    defined(STM32_EXTI36_IS_USED) || defined(STM32_EXTI37_IS_USED) ||       \
+    defined(STM32_EXTI38_IS_USED) || defined(__DOXYGEN__)
+#if !defined(STM32_DISABLE_EXTI1635_38_HANDLER)
 /**
- * @brief   EXTI[16], EXTI[40], EXTI[41] interrupt handler.
+ * @brief   EXTI[16], EXTI[35], EXTI[38] interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_EXTI164041_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_EXTI163538_HANDLER) {
   uint32_t pr;
 
   OSAL_IRQ_PROLOGUE();
@@ -93,17 +96,25 @@ OSAL_IRQ_HANDLER(STM32_EXTI164041_HANDLER) {
 #endif
 #endif
 
-#if defined(STM32_EXTI40_IS_USED) || defined(STM32_EXTI41_IS_USED)
-  extiGetAndClearGroup2((1U << (40 - 32)) | (1U << (41 - 32)), pr);
+#if defined(STM32_EXTI35_IS_USED) || defined(STM32_EXTI36_IS_USED) ||       \
+    defined(STM32_EXTI37_IS_USED) || defined(STM32_EXTI38_IS_USED)
+  extiGetAndClearGroup2((1U << (35 - 32)) | (1U << (36 - 32)) |
+                        (1U << (37 - 32)) | (1U << (38 - 32)), pr);
 
   /* Could be unused.*/
   (void)pr;
 
-#if defined(STM32_EXTI40_ISR)
-  STM32_EXTI40_ISR(pr, 40);
+#if defined(STM32_EXTI35_ISR)
+  STM32_EXTI35_ISR(pr, 35);
 #endif
-#if defined(STM32_EXTI41_ISR)
-  STM32_EXTI41_ISR(pr, 41);
+#if defined(STM32_EXTI36_ISR)
+  STM32_EXTI35_ISR(pr, 36);
+#endif
+#if defined(STM32_EXTI37_ISR)
+  STM32_EXTI35_ISR(pr, 37);
+#endif
+#if defined(STM32_EXTI38_ISR)
+  STM32_EXTI38_ISR(pr, 38);
 #endif
 #endif
 

@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    EXTIv1/stm32_exti16-40_41.inc
- * @brief   Shared EXTI16-40_41 handler.
+ * @file    EXTIv1/stm32_exti21_22.inc
+ * @brief   Shared EXTI21_22 handler.
  *
- * @addtogroup STM32_EXTI164041_HANDLER
+ * @addtogroup STM32_EXTI21_22_HANDLER
  * @{
  */
 
@@ -31,12 +31,12 @@
 /*===========================================================================*/
 
 /* Priority settings checks.*/
-#if !defined(STM32_IRQ_EXTI164041_PRIORITY)
-#error "STM32_IRQ_EXTI164041_PRIORITY not defined in mcuconf.h"
+#if !defined(STM32_IRQ_EXTI21_22_PRIORITY)
+#error "STM32_IRQ_EXTI21_22_PRIORITY not defined in mcuconf.h"
 #endif
 
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI164041_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI164041_PRIORITY"
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI21_22_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI21_22_PRIORITY"
 #endif
 
 /*===========================================================================*/
@@ -51,17 +51,15 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static inline void exti16_exti40_exti41_irq_init(void) {
-#if defined(STM32_EXTI16_IS_USED) || defined(STM32_EXTI40_IS_USED) ||       \
-    defined(STM32_EXTI41_IS_USED)
-  nvicEnableVector(STM32_EXTI164041_NUMBER, STM32_IRQ_EXTI164041_PRIORITY);
+static inline void exti21_22_irq_init(void) {
+#if defined(STM32_EXTI21_IS_USED) || defined(STM32_EXTI22_IS_USED)
+  nvicEnableVector(STM32_EXTI21_22_NUMBER, STM32_IRQ_EXTI21_22_PRIORITY);
 #endif
 }
 
-static inline void exti16_exti40_exti41_irq_deinit(void) {
-#if defined(STM32_EXTI16_IS_USED) || defined(STM32_EXTI40_IS_USED) ||       \
-    defined(STM32_EXTI41_IS_USED)
-  nvicDisableVector(STM32_EXTI164041_NUMBER);
+static inline void exti21_22_irq_deinit(void) {
+#if defined(STM32_EXTI21_IS_USED) || defined(STM32_EXTI22_IS_USED)
+  nvicDisableVector(STM32_EXTI21_22_NUMBER);
 #endif
 }
 
@@ -69,42 +67,29 @@ static inline void exti16_exti40_exti41_irq_deinit(void) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if defined(STM32_EXTI16_IS_USED) || defined(STM32_EXTI40_IS_USED) ||       \
-    defined(STM32_EXTI41_IS_USED) || defined(__DOXYGEN__)
-#if !defined(STM32_DISABLE_EXTI164041_HANDLER)
+#if defined(STM32_EXTI21_IS_USED) || defined(STM32_EXTI22_IS_USED) ||       \
+    defined(__DOXYGEN__)
+#if !defined(STM32_DISABLE_EXTI21_22_HANDLER)
 /**
- * @brief   EXTI[16], EXTI[40], EXTI[41] interrupt handler.
+ * @brief   EXTI[21], EXTI[22] interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_EXTI164041_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_EXTI21_22_HANDLER) {
   uint32_t pr;
 
   OSAL_IRQ_PROLOGUE();
 
-#if defined(STM32_EXTI16_IS_USED)
-  extiGetAndClearGroup1(1U << 16, pr);
+  extiGetAndClearGroup1((1U << 21) | (1U << 22), pr);
 
   /* Could be unused.*/
   (void)pr;
 
-#if defined(STM32_EXTI16_ISR)
-  STM32_EXTI16_ISR(pr, 16);
+#if defined(STM32_EXTI21_ISR)
+  STM32_EXTI21_ISR(pr, 21);
 #endif
-#endif
-
-#if defined(STM32_EXTI40_IS_USED) || defined(STM32_EXTI41_IS_USED)
-  extiGetAndClearGroup2((1U << (40 - 32)) | (1U << (41 - 32)), pr);
-
-  /* Could be unused.*/
-  (void)pr;
-
-#if defined(STM32_EXTI40_ISR)
-  STM32_EXTI40_ISR(pr, 40);
-#endif
-#if defined(STM32_EXTI41_ISR)
-  STM32_EXTI41_ISR(pr, 41);
-#endif
+#if defined(STM32_EXTI22_ISR)
+  STM32_EXTI22_ISR(pr, 22);
 #endif
 
   OSAL_IRQ_EPILOGUE();
