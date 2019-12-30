@@ -79,7 +79,9 @@
 #define STM32_UART4SEL                      STM32_UART4SEL_SYSCLK
 #define STM32_LPUART1SEL                    STM32_LPUART1SEL_SYSCLK
 #define STM32_I2C1SEL                       STM32_I2C1SEL_SYSCLK
+#define STM32_I2C2SEL                       STM32_I2C2SEL_SYSCLK
 #define STM32_I2C3SEL                       STM32_I2C3SEL_SYSCLK
+#define STM32_I2C4SEL                       STM32_I2C4SEL_SYSCLK
 #define STM32_LPTIM1SEL                     STM32_LPTIM1SEL_PCLK1
 #define STM32_LPTIM2SEL                     STM32_LPTIM2SEL_PCLK1
 #define STM32_SAI1SEL                       STM32_SAI1SEL_OFF
@@ -103,10 +105,20 @@
 #define STM32_IRQ_EXTI19_PRIORITY           6
 #define STM32_IRQ_EXTI20_PRIORITY           6
 #define STM32_IRQ_EXTI21_22_PRIORITY        15
+
 #define STM32_IRQ_TIM1_BRK_TIM15_PRIORITY   7
 #define STM32_IRQ_TIM1_UP_TIM16_PRIORITY    7
 #define STM32_IRQ_TIM1_TRGCO_TIM17_PRIORITY 7
 #define STM32_IRQ_TIM1_CC_PRIORITY          7
+#define STM32_IRQ_TIM2_PRIORITY             7
+#define STM32_IRQ_TIM3_PRIORITY             7
+#define STM32_IRQ_TIM6_PRIORITY             7
+
+#define STM32_IRQ_USART1_PRIORITY           3
+#define STM32_IRQ_USART2_PRIORITY           3
+#define STM32_IRQ_USART3_PRIORITY           3
+#define STM32_IRQ_UART4_PRIORITY            3
+#define STM32_IRQ_LPUART1_PRIORITY          3
 
 /*
  * ADC driver system settings.
@@ -115,7 +127,9 @@
 #define STM32_ADC_USE_ADC1                  FALSE
 #define STM32_ADC_ADC1_DMA_STREAM           STM32_DMA_STREAM_ID(1, 1)
 #define STM32_ADC_ADC1_DMA_PRIORITY         2
+#define STM32_ADC_ADC12_IRQ_PRIORITY        5
 #define STM32_ADC_ADC1_DMA_IRQ_PRIORITY     5
+#define STM32_ADC_ADC123_CLOCK_MODE         ADC_CCR_CKMODE_AHB_DIV1
 
 /*
  * CAN driver system settings.
@@ -126,15 +140,10 @@
 /*
  * DAC driver system settings.
  */
-#define STM32_DAC_DUAL_MODE                 FALSE
 #define STM32_DAC_USE_DAC1_CH1              FALSE
-#define STM32_DAC_USE_DAC1_CH2              FALSE
 #define STM32_DAC_DAC1_CH1_IRQ_PRIORITY     10
-#define STM32_DAC_DAC1_CH2_IRQ_PRIORITY     10
 #define STM32_DAC_DAC1_CH1_DMA_PRIORITY     2
-#define STM32_DAC_DAC1_CH2_DMA_PRIORITY     2
 #define STM32_DAC_DAC1_CH1_DMA_STREAM       STM32_DMA_STREAM_ID(2, 4)
-#define STM32_DAC_DAC1_CH2_DMA_STREAM       STM32_DMA_STREAM_ID(1, 4)
 
 /*
  * GPT driver system settings.
@@ -145,11 +154,6 @@
 #define STM32_GPT_USE_TIM6                  FALSE
 #define STM32_GPT_USE_TIM15                 FALSE
 #define STM32_GPT_USE_TIM16                 FALSE
-#define STM32_GPT_TIM1_IRQ_PRIORITY         7
-#define STM32_GPT_TIM2_IRQ_PRIORITY         7
-#define STM32_GPT_TIM3_IRQ_PRIORITY         7
-#define STM32_GPT_TIM6_IRQ_PRIORITY         7
-#define STM32_GPT_TIM7_IRQ_PRIORITY         7
 
 /*
  * I2C driver system settings.
@@ -165,8 +169,8 @@
 #define STM32_I2C_I2C2_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 4)
 #define STM32_I2C_I2C3_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 3)
 #define STM32_I2C_I2C3_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 2)
-#define STM32_I2C_I2C4_RX_DMA_STREAM        STM32_DMA_STREAM_ID(2, 1)
-#define STM32_I2C_I2C4_TX_DMA_STREAM        STM32_DMA_STREAM_ID(2, 2)
+#define STM32_I2C_I2C4_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 3)
+#define STM32_I2C_I2C4_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 2)
 #define STM32_I2C_I2C1_IRQ_PRIORITY         5
 #define STM32_I2C_I2C2_IRQ_PRIORITY         5
 #define STM32_I2C_I2C3_IRQ_PRIORITY         5
@@ -184,8 +188,7 @@
 #define STM32_ICU_USE_TIM2                  FALSE
 #define STM32_ICU_USE_TIM3                  FALSE
 #define STM32_ICU_USE_TIM15                 FALSE
-#define STM32_ICU_TIM1_IRQ_PRIORITY         7
-#define STM32_ICU_TIM2_IRQ_PRIORITY         7
+#define STM32_ICU_USE_TIM16                 FALSE
 
 /*
  * PWM driver system settings.
@@ -196,8 +199,6 @@
 #define STM32_PWM_USE_TIM3                  FALSE
 #define STM32_PWM_USE_TIM15                 FALSE
 #define STM32_PWM_USE_TIM16                 FALSE
-#define STM32_PWM_TIM1_IRQ_PRIORITY         7
-#define STM32_PWM_TIM2_IRQ_PRIORITY         7
 
 /*
  * RTC driver system settings.
@@ -260,6 +261,11 @@
 #define STM32_ST_USE_TIMER                  2
 
 /*
+ * TRNG driver system settings.
+ */
+#define STM32_TRNG_USE_RNG1                 FALSE
+
+/*
  * UART driver system settings.
  */
 #define STM32_UART_USE_USART1               FALSE
@@ -287,10 +293,9 @@
 /*
  * USB driver system settings.
  */
-#define STM32_USB_USE_USB1                  FALSE
-#define STM32_USB_LOW_POWER_ON_SUSPEND      FALSE
-#define STM32_USB_USB1_HP_IRQ_PRIORITY      13
-#define STM32_USB_USB1_LP_IRQ_PRIORITY      14
+#define STM32_USB_USE_OTG1                  FALSE
+#define STM32_USB_OTG1_IRQ_PRIORITY         14
+#define STM32_USB_OTG1_RX_FIFO_SIZE         512
 
 /*
  * WDG driver system settings.

@@ -53,14 +53,14 @@ static THD_FUNCTION(Thread1, arg) {
  */
 static THD_WORKING_AREA(waUnprivileged1, 128);
 static THD_FUNCTION(Unprivileged1, arg) {
-  extern uint32_t __flash7_start__, __flash7_end__,
-                  __ram7_start__, __ram7_end__;
+  extern uint32_t __flash7_base__, __flash7_end__,
+                  __ram7_base__, __ram7_end__;
   static const sb_config_t sb_config = {
     .code_region    = 0U,
     .data_region    = 1U,
     .regions        = {
-      {(uint32_t)&__flash7_start__,   (uint32_t)&__flash7_end__,  false},
-      {(uint32_t)&__ram7_start__,     (uint32_t)&__ram7_end__,    true}
+      {(uint32_t)&__flash7_base__,   (uint32_t)&__flash7_end__,  false},
+      {(uint32_t)&__ram7_base__,     (uint32_t)&__ram7_end__,    true}
     },
     .stdin_stream   = (SandboxStream *)&SD2,
     .stdout_stream  = (SandboxStream *)&SD2,

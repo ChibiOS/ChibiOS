@@ -102,10 +102,18 @@
 #define STM32_IRQ_EXTI19_PRIORITY           6
 #define STM32_IRQ_EXTI20_PRIORITY           6
 #define STM32_IRQ_EXTI21_22_PRIORITY        15
+
 #define STM32_IRQ_TIM1_BRK_TIM15_PRIORITY   7
 #define STM32_IRQ_TIM1_UP_TIM16_PRIORITY    7
 #define STM32_IRQ_TIM1_TRGCO_TIM17_PRIORITY 7
 #define STM32_IRQ_TIM1_CC_PRIORITY          7
+#define STM32_IRQ_TIM2_PRIORITY             7
+#define STM32_IRQ_TIM6_PRIORITY             7
+#define STM32_IRQ_TIM7_PRIORITY             7
+
+#define STM32_IRQ_USART1_PRIORITY           3
+#define STM32_IRQ_USART2_PRIORITY           3
+#define STM32_IRQ_LPUART1_PRIORITY          3
 
 /*
  * ADC driver system settings.
@@ -146,10 +154,6 @@
 #define STM32_GPT_USE_TIM7                  FALSE
 #define STM32_GPT_USE_TIM15                 FALSE
 #define STM32_GPT_USE_TIM16                 FALSE
-#define STM32_GPT_TIM1_IRQ_PRIORITY         7
-#define STM32_GPT_TIM2_IRQ_PRIORITY         7
-#define STM32_GPT_TIM6_IRQ_PRIORITY         7
-#define STM32_GPT_TIM7_IRQ_PRIORITY         7
 
 /*
  * I2C driver system settings.
@@ -173,8 +177,7 @@
 #define STM32_ICU_USE_TIM1                  FALSE
 #define STM32_ICU_USE_TIM2                  FALSE
 #define STM32_ICU_USE_TIM15                 FALSE
-#define STM32_ICU_TIM1_IRQ_PRIORITY         7
-#define STM32_ICU_TIM2_IRQ_PRIORITY         7
+#define STM32_ICU_USE_TIM16                 FALSE
 
 /*
  * PWM driver system settings.
@@ -184,8 +187,6 @@
 #define STM32_PWM_USE_TIM2                  FALSE
 #define STM32_PWM_USE_TIM15                 FALSE
 #define STM32_PWM_USE_TIM16                 FALSE
-#define STM32_PWM_TIM1_IRQ_PRIORITY         7
-#define STM32_PWM_TIM2_IRQ_PRIORITY         7
 
 /*
  * RTC driver system settings.
@@ -240,10 +241,6 @@
 #define STM32_UART_USART1_TX_DMA_STREAM     STM32_DMA_STREAM_ID(2, 6)
 #define STM32_UART_USART2_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 6)
 #define STM32_UART_USART2_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 7)
-#define STM32_UART_USART1_IRQ_PRIORITY      12
-#define STM32_UART_USART2_IRQ_PRIORITY      12
-#define STM32_UART_USART1_DMA_PRIORITY      0
-#define STM32_UART_USART2_DMA_PRIORITY      0
 #define STM32_UART_DMA_ERROR_HOOK(uartp)    osalSysHalt("DMA failure")
 
 /*
