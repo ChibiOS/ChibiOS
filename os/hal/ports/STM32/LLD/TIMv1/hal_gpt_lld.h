@@ -44,7 +44,7 @@
 /**
  * @brief   GPTD1 driver enable switch.
  * @details If set to @p TRUE the support for GPTD1 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_GPT_USE_TIM1) || defined(__DOXYGEN__)
 #define STM32_GPT_USE_TIM1                  FALSE
@@ -53,7 +53,7 @@
 /**
  * @brief   GPTD2 driver enable switch.
  * @details If set to @p TRUE the support for GPTD2 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_GPT_USE_TIM2) || defined(__DOXYGEN__)
 #define STM32_GPT_USE_TIM2                  FALSE
@@ -62,7 +62,7 @@
 /**
  * @brief   GPTD3 driver enable switch.
  * @details If set to @p TRUE the support for GPTD3 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_GPT_USE_TIM3) || defined(__DOXYGEN__)
 #define STM32_GPT_USE_TIM3                  FALSE
@@ -71,7 +71,7 @@
 /**
  * @brief   GPTD4 driver enable switch.
  * @details If set to @p TRUE the support for GPTD4 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_GPT_USE_TIM4) || defined(__DOXYGEN__)
 #define STM32_GPT_USE_TIM4                  FALSE
@@ -80,7 +80,7 @@
 /**
  * @brief   GPTD5 driver enable switch.
  * @details If set to @p TRUE the support for GPTD5 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_GPT_USE_TIM5) || defined(__DOXYGEN__)
 #define STM32_GPT_USE_TIM5                  FALSE
@@ -89,7 +89,7 @@
 /**
  * @brief   GPTD6 driver enable switch.
  * @details If set to @p TRUE the support for GPTD6 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_GPT_USE_TIM6) || defined(__DOXYGEN__)
 #define STM32_GPT_USE_TIM6                  FALSE
@@ -98,7 +98,7 @@
 /**
  * @brief   GPTD7 driver enable switch.
  * @details If set to @p TRUE the support for GPTD7 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_GPT_USE_TIM7) || defined(__DOXYGEN__)
 #define STM32_GPT_USE_TIM7                  FALSE
@@ -107,7 +107,7 @@
 /**
  * @brief   GPTD8 driver enable switch.
  * @details If set to @p TRUE the support for GPTD8 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_GPT_USE_TIM8) || defined(__DOXYGEN__)
 #define STM32_GPT_USE_TIM8                  FALSE
@@ -116,7 +116,7 @@
 /**
  * @brief   GPTD9 driver enable switch.
  * @details If set to @p TRUE the support for GPTD9 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_GPT_USE_TIM9) || defined(__DOXYGEN__)
 #define STM32_GPT_USE_TIM9                  FALSE
@@ -125,7 +125,7 @@
 /**
  * @brief   GPTD10 driver enable switch.
  * @details If set to @p TRUE the support for GPTD10 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_GPT_USE_TIM10) || defined(__DOXYGEN__)
 #define STM32_GPT_USE_TIM10                 FALSE
@@ -134,7 +134,7 @@
 /**
  * @brief   GPTD11 driver enable switch.
  * @details If set to @p TRUE the support for GPTD11 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_GPT_USE_TIM11) || defined(__DOXYGEN__)
 #define STM32_GPT_USE_TIM11                 FALSE
@@ -143,7 +143,7 @@
 /**
  * @brief   GPTD12 driver enable switch.
  * @details If set to @p TRUE the support for GPTD12 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_GPT_USE_TIM12) || defined(__DOXYGEN__)
 #define STM32_GPT_USE_TIM12                 FALSE
@@ -152,7 +152,7 @@
 /**
  * @brief   GPTD13 driver enable switch.
  * @details If set to @p TRUE the support for GPTD13 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_GPT_USE_TIM13) || defined(__DOXYGEN__)
 #define STM32_GPT_USE_TIM13                 FALSE
@@ -161,7 +161,7 @@
 /**
  * @brief   GPTD14 driver enable switch.
  * @details If set to @p TRUE the support for GPTD14 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_GPT_USE_TIM14) || defined(__DOXYGEN__)
 #define STM32_GPT_USE_TIM14                 FALSE
@@ -170,7 +170,7 @@
 /**
  * @brief   GPTD14 driver enable switch.
  * @details If set to @p TRUE the support for GPTD15 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_GPT_USE_TIM15) || defined(__DOXYGEN__)
 #define STM32_GPT_USE_TIM15                 FALSE
@@ -179,7 +179,7 @@
 /**
  * @brief   GPTD14 driver enable switch.
  * @details If set to @p TRUE the support for GPTD16 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_GPT_USE_TIM16) || defined(__DOXYGEN__)
 #define STM32_GPT_USE_TIM16                 FALSE
@@ -188,7 +188,7 @@
 /**
  * @brief   GPTD14 driver enable switch.
  * @details If set to @p TRUE the support for GPTD17 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_GPT_USE_TIM17) || defined(__DOXYGEN__)
 #define STM32_GPT_USE_TIM17                 FALSE
@@ -197,7 +197,7 @@
 /**
  * @brief   GPTD21 driver enable switch.
  * @details If set to @p TRUE the support for GPTD21 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_GPT_USE_TIM21) || defined(__DOXYGEN__)
 #define STM32_GPT_USE_TIM21                 FALSE
@@ -206,7 +206,7 @@
 /**
  * @brief   GPTD22 driver enable switch.
  * @details If set to @p TRUE the support for GPTD22 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_GPT_USE_TIM22) || defined(__DOXYGEN__)
 #define STM32_GPT_USE_TIM22                 FALSE

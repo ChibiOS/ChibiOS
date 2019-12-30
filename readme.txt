@@ -74,10 +74,10 @@
 *****************************************************************************
 
 *** Next ***
-- HAL: Added support for timers 9...17,20 to STM32 PWM driver.
-- HAL: Added support for timers 9...17 to STM32 ICU driver.
+- HAL: Added support for timers 9..17, 20..22 to STM32 PWM driver.
+- HAL: Added support for timers 9..17, 20..22 to STM32 ICU driver.
 - HAL: Added support for timers 10 and 13 to STM32 GPT driver.
-- HAL: Added support for timers 9...14 to STM32 ST driver.
+- HAL: Added support for timers 9..14 to STM32 ST driver.
 - HAL: STM32 ST driver is now integrated with new IRQ infrastructure and
        performs cross-checks with GPT, ICU and PWM drivers on timers usage.
 - HAL: Improved support for shared handlers. Now there are centralized

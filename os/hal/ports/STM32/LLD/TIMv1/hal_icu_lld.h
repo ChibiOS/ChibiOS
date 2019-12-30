@@ -44,7 +44,7 @@
 /**
  * @brief   ICUD1 driver enable switch.
  * @details If set to @p TRUE the support for ICUD1 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_ICU_USE_TIM1) || defined(__DOXYGEN__)
 #define STM32_ICU_USE_TIM1                  FALSE
@@ -53,7 +53,7 @@
 /**
  * @brief   ICUD2 driver enable switch.
  * @details If set to @p TRUE the support for ICUD2 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_ICU_USE_TIM2) || defined(__DOXYGEN__)
 #define STM32_ICU_USE_TIM2                  FALSE
@@ -62,7 +62,7 @@
 /**
  * @brief   ICUD3 driver enable switch.
  * @details If set to @p TRUE the support for ICUD3 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_ICU_USE_TIM3) || defined(__DOXYGEN__)
 #define STM32_ICU_USE_TIM3                  FALSE
@@ -71,7 +71,7 @@
 /**
  * @brief   ICUD4 driver enable switch.
  * @details If set to @p TRUE the support for ICUD4 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_ICU_USE_TIM4) || defined(__DOXYGEN__)
 #define STM32_ICU_USE_TIM4                  FALSE
@@ -80,7 +80,7 @@
 /**
  * @brief   ICUD5 driver enable switch.
  * @details If set to @p TRUE the support for ICUD5 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_ICU_USE_TIM5) || defined(__DOXYGEN__)
 #define STM32_ICU_USE_TIM5                  FALSE
@@ -89,7 +89,7 @@
 /**
  * @brief   ICUD8 driver enable switch.
  * @details If set to @p TRUE the support for ICUD8 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_ICU_USE_TIM8) || defined(__DOXYGEN__)
 #define STM32_ICU_USE_TIM8                  FALSE
@@ -98,7 +98,7 @@
 /**
  * @brief   ICUD9 driver enable switch.
  * @details If set to @p TRUE the support for ICUD9 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_ICU_USE_TIM9) || defined(__DOXYGEN__)
 #define STM32_ICU_USE_TIM9                  FALSE
@@ -107,7 +107,7 @@
 /**
  * @brief   ICUD10 driver enable switch.
  * @details If set to @p TRUE the support for ICUD10 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_ICU_USE_TIM10) || defined(__DOXYGEN__)
 #define STM32_ICU_USE_TIM10                 FALSE
@@ -116,7 +116,7 @@
 /**
  * @brief   ICUD11 driver enable switch.
  * @details If set to @p TRUE the support for ICUD11 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_ICU_USE_TIM11) || defined(__DOXYGEN__)
 #define STM32_ICU_USE_TIM11                 FALSE
@@ -125,7 +125,7 @@
 /**
  * @brief   ICUD12 driver enable switch.
  * @details If set to @p TRUE the support for ICUD12 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_ICU_USE_TIM12) || defined(__DOXYGEN__)
 #define STM32_ICU_USE_TIM12                 FALSE
@@ -134,7 +134,7 @@
 /**
  * @brief   ICUD13 driver enable switch.
  * @details If set to @p TRUE the support for ICUD13 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_ICU_USE_TIM13) || defined(__DOXYGEN__)
 #define STM32_ICU_USE_TIM13                 FALSE
@@ -143,7 +143,7 @@
 /**
  * @brief   ICUD14 driver enable switch.
  * @details If set to @p TRUE the support for ICUD14 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_ICU_USE_TIM14) || defined(__DOXYGEN__)
 #define STM32_ICU_USE_TIM14                 FALSE
@@ -152,7 +152,7 @@
 /**
  * @brief   ICUD15 driver enable switch.
  * @details If set to @p TRUE the support for ICUD15 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_ICU_USE_TIM15) || defined(__DOXYGEN__)
 #define STM32_ICU_USE_TIM15                 FALSE
@@ -161,7 +161,7 @@
 /**
  * @brief   ICUD16 driver enable switch.
  * @details If set to @p TRUE the support for ICUD16 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_ICU_USE_TIM16) || defined(__DOXYGEN__)
 #define STM32_ICU_USE_TIM16                 FALSE
@@ -170,10 +170,37 @@
 /**
  * @brief   ICUD17 driver enable switch.
  * @details If set to @p TRUE the support for ICUD17 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_ICU_USE_TIM17) || defined(__DOXYGEN__)
 #define STM32_ICU_USE_TIM17                 FALSE
+#endif
+
+/**
+ * @brief   ICUD20 driver enable switch.
+ * @details If set to @p TRUE the support for ICUD20 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_ICU_USE_TIM20) || defined(__DOXYGEN__)
+#define STM32_ICU_USE_TIM20                 FALSE
+#endif
+
+/**
+ * @brief   ICUD21 driver enable switch.
+ * @details If set to @p TRUE the support for ICUD21 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_ICU_USE_TIM21) || defined(__DOXYGEN__)
+#define STM32_ICU_USE_TIM21                 FALSE
+#endif
+
+/**
+ * @brief   ICUD22 driver enable switch.
+ * @details If set to @p TRUE the support for ICUD22 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_ICU_USE_TIM22) || defined(__DOXYGEN__)
+#define STM32_ICU_USE_TIM22                 FALSE
 #endif
 
 /**
@@ -280,6 +307,27 @@
 #if !defined(STM32_ICU_TIM17_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_ICU_TIM17_IRQ_PRIORITY        7
 #endif
+
+/**
+ * @brief   ICUD20 interrupt priority level setting.
+ */
+#if !defined(STM32_ICU_TIM20_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ICU_TIM20_IRQ_PRIORITY        7
+#endif
+
+/**
+ * @brief   ICUD21 interrupt priority level setting.
+ */
+#if !defined(STM32_ICU_TIM21_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ICU_TIM21_IRQ_PRIORITY        7
+#endif
+
+/**
+ * @brief   ICUD22 interrupt priority level setting.
+ */
+#if !defined(STM32_ICU_TIM22_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ICU_TIM22_IRQ_PRIORITY        7
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -346,6 +394,18 @@
 #define STM32_HAS_TIM17                     FALSE
 #endif
 
+#if !defined(STM32_HAS_TIM20)
+#define STM32_HAS_TIM20                     FALSE
+#endif
+
+#if !defined(STM32_HAS_TIM21)
+#define STM32_HAS_TIM21                     FALSE
+#endif
+
+#if !defined(STM32_HAS_TIM22)
+#define STM32_HAS_TIM22                     FALSE
+#endif
+
 #if STM32_ICU_USE_TIM1 && !STM32_HAS_TIM1
 #error "TIM1 not present in the selected device"
 #endif
@@ -406,14 +466,27 @@
 #error "TIM17 not present in the selected device"
 #endif
 
-#if !STM32_ICU_USE_TIM1  && !STM32_ICU_USE_TIM2 &&                          \
-    !STM32_ICU_USE_TIM3  && !STM32_ICU_USE_TIM4 &&                          \
-    !STM32_ICU_USE_TIM5  && !STM32_ICU_USE_TIM8 &&                          \
+#if STM32_ICU_USE_TIM17 && !STM32_HAS_TIM20
+#error "TIM20 not present in the selected device"
+#endif
+
+#if STM32_ICU_USE_TIM17 && !STM32_HAS_TIM21
+#error "TIM21 not present in the selected device"
+#endif
+
+#if STM32_ICU_USE_TIM17 && !STM32_HAS_TIM22
+#error "TIM22 not present in the selected device"
+#endif
+
+#if !STM32_ICU_USE_TIM1  && !STM32_ICU_USE_TIM2  &&                         \
+    !STM32_ICU_USE_TIM3  && !STM32_ICU_USE_TIM4  &&                         \
+    !STM32_ICU_USE_TIM5  && !STM32_ICU_USE_TIM8  &&                         \
     !STM32_ICU_USE_TIM9  && !STM32_ICU_USE_TIM10 &&                         \
     !STM32_ICU_USE_TIM11 && !STM32_ICU_USE_TIM12 &&                         \
     !STM32_ICU_USE_TIM13 && !STM32_ICU_USE_TIM14 &&                         \
     !STM32_ICU_USE_TIM15 && !STM32_ICU_USE_TIM16 &&                         \
-    !STM32_ICU_USE_TIM17
+    !STM32_ICU_USE_TIM17 && !STM32_ICU_USE_TIM20 &&                         \
+    !STM32_ICU_USE_TIM21 && !STM32_ICU_USE_TIM22
 #error "ICU driver activated but no TIM peripheral assigned"
 #endif
 
@@ -538,6 +611,30 @@
 #endif
 #endif
 
+#if STM32_ICU_USE_TIM20
+#if defined(STM32_TIM20_IS_USED)
+#error "ICUD20 requires TIM20 but the timer is already used"
+#else
+#define STM32_TIM20_IS_USED
+#endif
+#endif
+
+#if STM32_ICU_USE_TIM21
+#if defined(STM32_TIM21_IS_USED)
+#error "ICUD21 requires TIM21 but the timer is already used"
+#else
+#define STM32_TIM21_IS_USED
+#endif
+#endif
+
+#if STM32_ICU_USE_TIM22
+#if defined(STM32_TIM22_IS_USED)
+#error "ICUD22 requires TIM22 but the timer is already used"
+#else
+#define STM32_TIM22_IS_USED
+#endif
+#endif
+
 /* IRQ priority checks.*/
 #if STM32_ICU_USE_TIM1 && !defined(STM32_TIM1_SUPPRESS_ISR) &&              \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ICU_TIM1_IRQ_PRIORITY)
@@ -612,6 +709,21 @@
 #if STM32_ICU_USE_TIM17 && !defined(STM32_TIM17_SUPPRESS_ISR) &&            \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ICU_TIM17_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM17"
+#endif
+
+#if STM32_ICU_USE_TIM20 && !defined(STM32_TIM20_SUPPRESS_ISR) &&            \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ICU_TIM20_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to TIM20"
+#endif
+
+#if STM32_ICU_USE_TIM21 && !defined(STM32_TIM21_SUPPRESS_ISR) &&            \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ICU_TIM21_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to TIM21"
+#endif
+
+#if STM32_ICU_USE_TIM22 && !defined(STM32_TIM22_SUPPRESS_ISR) &&            \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ICU_TIM22_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to TIM22"
 #endif
 
 /*===========================================================================*/
@@ -822,6 +934,18 @@ extern ICUDriver ICUD16;
 
 #if STM32_ICU_USE_TIM17 && !defined(__DOXYGEN__)
 extern ICUDriver ICUD17;
+#endif
+
+#if STM32_ICU_USE_TIM20 && !defined(__DOXYGEN__)
+extern ICUDriver ICUD20;
+#endif
+
+#if STM32_ICU_USE_TIM21 && !defined(__DOXYGEN__)
+extern ICUDriver ICUD21;
+#endif
+
+#if STM32_ICU_USE_TIM22 && !defined(__DOXYGEN__)
+extern ICUDriver ICUD22;
 #endif
 
 #ifdef __cplusplus
