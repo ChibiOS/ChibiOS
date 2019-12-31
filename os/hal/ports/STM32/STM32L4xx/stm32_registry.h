@@ -627,7 +627,7 @@
 #define STM32_I2C3_TX_DMA_CHN               0x00000030
 
 #define STM32_HAS_I2C4                      TRUE
-#define STM32_I2C4_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(2, 1))
+#define STM32_I2C4_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(2, 2))
 #define STM32_I2C4_RX_DMA_CHN               0x00000000
 #define STM32_I2C4_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(2, 1))
 #define STM32_I2C4_TX_DMA_CHN               0x00000000
@@ -1171,9 +1171,9 @@
 #define STM32_I2C3_TX_DMA_CHN               0x00000030
 
 #define STM32_HAS_I2C4                      TRUE
-#define STM32_I2C4_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(2, 1))
+#define STM32_I2C4_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(2, 2))
 #define STM32_I2C4_RX_DMA_CHN               0x00000000
-#define STM32_I2C4_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(2, 2))
+#define STM32_I2C4_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(2, 1))
 #define STM32_I2C4_TX_DMA_CHN               0x00000000
 
 /* QUADSPI attributes.*/

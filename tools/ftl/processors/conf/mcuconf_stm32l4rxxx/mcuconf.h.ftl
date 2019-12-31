@@ -92,6 +92,7 @@
 #define STM32_PLLSAI2P_VALUE                ${doc.STM32_PLLSAI2P_VALUE!"7"}
 #define STM32_PLLSAI2Q_VALUE                ${doc.STM32_PLLSAI2Q_VALUE!"6"}
 #define STM32_PLLSAI2R_VALUE                ${doc.STM32_PLLSAI2R_VALUE!"6"}
+#define STM32_PLLSAI2DIVR                   ${doc.STM32_PLLSAI2DIVR!"STM32_PLLSAI2DIVR_DIV16"}
 
 /*
  * Peripherals clock sources.
@@ -105,6 +106,7 @@
 #define STM32_I2C1SEL                       ${doc.STM32_I2C1SEL!"STM32_I2C1SEL_SYSCLK"}
 #define STM32_I2C2SEL                       ${doc.STM32_I2C2SEL!"STM32_I2C2SEL_SYSCLK"}
 #define STM32_I2C3SEL                       ${doc.STM32_I2C3SEL!"STM32_I2C3SEL_SYSCLK"}
+#define STM32_I2C4SEL                       ${doc.STM32_I2C4SEL!"STM32_I2C4SEL_SYSCLK"}
 #define STM32_LPTIM1SEL                     ${doc.STM32_LPTIM1SEL!"STM32_LPTIM1SEL_PCLK1"}
 #define STM32_LPTIM2SEL                     ${doc.STM32_LPTIM2SEL!"STM32_LPTIM2SEL_PCLK1"}
 #define STM32_CLK48SEL                      ${doc.STM32_CLK48SEL!"STM32_CLK48SEL_PLLSAI1"}
@@ -114,7 +116,7 @@
 #define STM32_SAI1SEL                       ${doc.STM32_SAI1SEL!"STM32_SAI1SEL_OFF"}
 #define STM32_SAI2SEL                       ${doc.STM32_SAI2SEL!"STM32_SAI2SEL_OFF"}
 #define STM32_DSISEL                        ${doc.STM32_DSISEL!"STM32_DSISEL_DSIPHY"}
-#define STM32_SDMMC                         ${doc.STM32_SDMMC!"STM32_SDMMCSEL_48CLK"}
+#define STM32_SDMMCSEL                      ${doc.STM32_SDMMC!"STM32_SDMMCSEL_48CLK"}
 #define STM32_OSPISEL                       ${doc.STM32_OSPISEL!"STM32_OSPISEL_SYSCLK"}
 #define STM32_RTCSEL                        ${doc.STM32_RTCSEL!"STM32_RTCSEL_LSI"}
 

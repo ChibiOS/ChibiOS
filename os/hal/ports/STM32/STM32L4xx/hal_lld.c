@@ -350,6 +350,14 @@ void stm32_clock_init(void) {
     RCC->CCIPR = ccipr;
   }
 
+#if STM32_HAS_I2C4
+  /* CCIPR2 register initialization.*/
+  {
+    uint32_t ccipr2 = STM32_I2C4SEL;
+    RCC->CCIPR2 = ccipr2;
+  }
+#endif
+
   /* Set flash WS's for SYSCLK source */
   if (STM32_FLASHBITS > STM32_MSI_FLASHBITS) {
     FLASH->ACR = (FLASH->ACR & ~FLASH_ACR_LATENCY_Msk) | STM32_FLASHBITS;
