@@ -717,7 +717,7 @@ while (time == chVTGetSystemTimeX()) {
                 <steps>
                   <step>
                     <description>
-                      <value>Checking case where start == end, it must always evaluate as in range.</value>
+                      <value>Checking case where start == end, it must always evaluate as not in range.</value>
                     </description>
                     <tags>
                       <value />
@@ -727,13 +727,13 @@ while (time == chVTGetSystemTimeX()) {
 bool b;
 
 b = chTimeIsInRangeX((systime_t)0, (systime_t)0, (systime_t)0);
-test_assert(b == true, "not in range");
+test_assert(b == false, "in range");
 b = chTimeIsInRangeX((systime_t)-1, (systime_t)0, (systime_t)0);
-test_assert(b == true, "not in range");
+test_assert(b == false, "in range");
 b = chTimeIsInRangeX((systime_t)0, (systime_t)-1, (systime_t)-1);
-test_assert(b == true, "not in range");
+test_assert(b == false, "in range");
 b = chTimeIsInRangeX((systime_t)-1, (systime_t)-1, (systime_t)-1);
-test_assert(b == true, "not in range");
+test_assert(b == false, "in range");
 ]]></value>
                     </code>
                   </step>

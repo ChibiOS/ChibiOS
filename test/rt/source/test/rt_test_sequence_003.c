@@ -85,7 +85,7 @@ static const testcase_t rt_test_003_001 = {
  *
  * <h2>Test Steps</h2>
  * - [3.2.1] Checking case where start == end, it must always evaluate
- *   as in range.
+ *   as not in range.
  * - [3.2.2] Checking boundaries for start < end.
  * - [3.2.3] Checking boundaries for start > end.
  * .
@@ -94,19 +94,19 @@ static const testcase_t rt_test_003_001 = {
 static void rt_test_003_002_execute(void) {
 
   /* [3.2.1] Checking case where start == end, it must always evaluate
-     as in range.*/
+     as not in range.*/
   test_set_step(1);
   {
     bool b;
 
     b = chTimeIsInRangeX((systime_t)0, (systime_t)0, (systime_t)0);
-    test_assert(b == true, "not in range");
+    test_assert(b == false, "in range");
     b = chTimeIsInRangeX((systime_t)-1, (systime_t)0, (systime_t)0);
-    test_assert(b == true, "not in range");
+    test_assert(b == false, "in range");
     b = chTimeIsInRangeX((systime_t)0, (systime_t)-1, (systime_t)-1);
-    test_assert(b == true, "not in range");
+    test_assert(b == false, "in range");
     b = chTimeIsInRangeX((systime_t)-1, (systime_t)-1, (systime_t)-1);
-    test_assert(b == true, "not in range");
+    test_assert(b == false, "in range");
   }
   test_end_step(1);
 
