@@ -48,7 +48,7 @@
  *          (0..CH_CFG_MAX_THREADS-1).
  */
 #if !defined(CH_CFG_MAX_THREADS)
-#define CH_CFG_MAX_THREADS                  5
+#define CH_CFG_MAX_THREADS                  8
 #endif
 
 /**

@@ -1120,7 +1120,7 @@ thread_descriptor_t td2 = {
   .name  = "dispatcher2",
   .wbase = wa2Thread1,
   .wend  = THD_WORKING_AREA_END(wa2Thread1),
-  .prio  = chThdGetPriorityX() - 1,
+  .prio  = chThdGetPriorityX() - 2,
   .funcp = Thread1,
   .arg   = NULL
 };

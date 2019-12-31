@@ -775,7 +775,7 @@ thread_t *chThdCreateI(const thread_descriptor_t *tdp) {
   tp->epmask = (eventmask_t)0;
 #endif
 #if CH_DBG_ENABLE_STACK_CHECK == TRUE
-  tp->wabase = (stkalign_t *)tcp->wbase;
+  tp->wabase = (stkalign_t *)tdp->wbase;
 #endif
 
   /* Port dependent thread initialization.*/

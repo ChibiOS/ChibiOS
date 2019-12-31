@@ -84,7 +84,7 @@ static THD_FUNCTION(Thread1, arg) {
  * - [4.1.1] Initializing the Jobs Queue object.
  * - [4.1.2] Starting the dispatcher threads.
  * - [4.1.3] Sending jobs with various timings.
- * - [4.1.4] Sending null jobs to make threads exit.
+ * - [4.1.4] Sending two null jobs to make threads exit.
  * .
  */
 
@@ -115,7 +115,7 @@ static void oslib_test_004_001_execute(void) {
       .name  = "dispatcher2",
       .wbase = wa2Thread1,
       .wend  = THD_WORKING_AREA_END(wa2Thread1),
-      .prio  = chThdGetPriorityX() - 1,
+      .prio  = chThdGetPriorityX() - 2,
       .funcp = Thread1,
       .arg   = NULL
     };
@@ -138,7 +138,7 @@ static void oslib_test_004_001_execute(void) {
   }
   test_end_step(3);
 
-  /* [4.1.4] Sending null jobs to make threads exit.*/
+  /* [4.1.4] Sending two null jobs to make threads exit.*/
   test_set_step(4);
   {
     job_descriptor_t *jdp;
