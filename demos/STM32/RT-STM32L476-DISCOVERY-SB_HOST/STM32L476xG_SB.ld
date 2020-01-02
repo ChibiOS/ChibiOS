@@ -19,22 +19,22 @@
  */
 MEMORY
 {
-    flash0 (rx) : org = 0x08000000, len = 1M - 32k
+    flash0 (rx) : org = 0x08000000, len = 1M - 64k
     flash1 (rx) : org = 0x00000000, len = 0
     flash2 (rx) : org = 0x00000000, len = 0
     flash3 (rx) : org = 0x00000000, len = 0
     flash4 (rx) : org = 0x00000000, len = 0
     flash5 (rx) : org = 0x00000000, len = 0
-    flash6 (rx) : org = 0x00000000, len = 0
-    flash7 (rx) : org = 0x08000000 + 1M - 32k, len = 32k
+    flash6 (rx) : org = 0x08000000 + 1M - 64k, len = 32k    /* Flash for SB1.*/
+    flash7 (rx) : org = 0x08000000 + 1M - 32k, len = 32k    /* Flash for SB2.*/
     ram0   (wx) : org = 0x20000000, len = 96k - 4k
     ram1   (wx) : org = 0x00000000, len = 0
     ram2   (wx) : org = 0x00000000, len = 0
     ram3   (wx) : org = 0x00000000, len = 0
     ram4   (wx) : org = 0x10000000, len = 32k
     ram5   (wx) : org = 0x00000000, len = 0
-    ram6   (wx) : org = 0x00000000, len = 0
-    ram7   (wx) : org = 0x20000000 + 96k - 4k, len = 4k
+    ram6   (wx) : org = 0x20000000 + 96k - 8k, len = 4k     /* RAM for SB1.*/
+    ram7   (wx) : org = 0x20000000 + 96k - 4k, len = 4k     /* RAM for SB2.*/
 }
 
 /* For each data/text section two region are defined, a virtual region

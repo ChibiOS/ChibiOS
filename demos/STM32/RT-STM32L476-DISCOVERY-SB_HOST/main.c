@@ -22,8 +22,39 @@
 #include "chprintf.h"
 #include "sb.h"
 
-/* SandBox object.*/
-sb_class_t sbx1;
+/* Static memory areas used by sandboxes.*/
+extern uint32_t __flash6_base__, __flash6_end__,
+                __flash7_base__, __flash7_end__,
+                __ram6_base__,   __ram6_end__,
+                __ram7_base__,   __ram7_end__;
+
+/* Sandbox objects.*/
+sb_class_t sbx1, sbx2;
+
+/* Sandbox configurations.*/
+static const sb_config_t sb_config1 = {
+  .code_region    = 0U,
+  .data_region    = 1U,
+  .regions        = {
+    {(uint32_t)&__flash6_base__,   (uint32_t)&__flash6_end__,  false},
+    {(uint32_t)&__ram6_base__,     (uint32_t)&__ram6_end__,    true}
+  },
+  .stdin_stream   = (SandboxStream *)&SD2,
+  .stdout_stream  = (SandboxStream *)&SD2,
+  .stderr_stream  = (SandboxStream *)&SD2
+};
+
+static const sb_config_t sb_config2 = {
+  .code_region    = 0U,
+  .data_region    = 1U,
+  .regions        = {
+    {(uint32_t)&__flash7_base__,   (uint32_t)&__flash7_end__,  false},
+    {(uint32_t)&__ram7_base__,     (uint32_t)&__ram7_end__,    true}
+  },
+  .stdin_stream   = (SandboxStream *)&SD2,
+  .stdout_stream  = (SandboxStream *)&SD2,
+  .stderr_stream  = (SandboxStream *)&SD2
+};
 
 /*
  * LEDs blinker thread, times are in milliseconds.
@@ -39,36 +70,24 @@ static THD_FUNCTION(Thread1, arg) {
     chThdSleepMilliseconds(50);
     palClearLine(LINE_LED_RED);
     chThdSleepMilliseconds(200);
+    (void) sbSendMessage(&sbx1, (msg_t)i);
     palSetLine(LINE_LED_GREEN);
     chThdSleepMilliseconds(50);
     palSetLine(LINE_LED_RED);
     chThdSleepMilliseconds(200);
-    (void) sbSendMessage(&sbx1, (msg_t)i);
+    (void) sbSendMessage(&sbx2, (msg_t)i);
     i++;
   }
 }
 
 /*
- * Unprivileged thread.
+ * Unprivileged thread1.
  */
 static THD_WORKING_AREA(waUnprivileged1, 128);
 static THD_FUNCTION(Unprivileged1, arg) {
-  extern uint32_t __flash7_base__, __flash7_end__,
-                  __ram7_base__, __ram7_end__;
-  static const sb_config_t sb_config = {
-    .code_region    = 0U,
-    .data_region    = 1U,
-    .regions        = {
-      {(uint32_t)&__flash7_base__,   (uint32_t)&__flash7_end__,  false},
-      {(uint32_t)&__ram7_base__,     (uint32_t)&__ram7_end__,    true}
-    },
-    .stdin_stream   = (SandboxStream *)&SD2,
-    .stdout_stream  = (SandboxStream *)&SD2,
-    .stderr_stream  = (SandboxStream *)&SD2
-  };
 
   (void)arg;
-  chRegSetThreadName("unprivileged");
+  chRegSetThreadName("unprivileged1");
 
   /* Sandbox object initialization.*/
   sbObjectInit(&sbx1);
@@ -76,13 +95,13 @@ static THD_FUNCTION(Unprivileged1, arg) {
   /* Static MPU setup for the sandbox, both regions are used because in this
      demo it requires both a flash and a RAM regions.*/
   mpuConfigureRegion(MPU_REGION_0,
-                     sb_config.regions[0].base,
+                     sb_config1.regions[0].base,
                      MPU_RASR_ATTR_AP_RO_RO |
                      MPU_RASR_ATTR_CACHEABLE_WT_NWA |
                      MPU_RASR_SIZE_32K |
                      MPU_RASR_ENABLE);
   mpuConfigureRegion(MPU_REGION_1,
-                     sb_config.regions[1].base,
+                     sb_config1.regions[1].base,
                      MPU_RASR_ATTR_AP_RW_RW |
                      MPU_RASR_ATTR_CACHEABLE_WB_WA |
                      MPU_RASR_SIZE_4K |
@@ -90,7 +109,42 @@ static THD_FUNCTION(Unprivileged1, arg) {
 
   /* This thread goes in the sandbox and is trapped there, it cannot
      return, only invoke the sandbox API.*/
-  sbStart(&sbx1, &sb_config);
+  sbStart(&sbx1, &sb_config1);
+
+  /* Function sbStart() only fails if the sandbox cannot be started
+     because code header problems.*/
+}
+
+/*
+ * Unprivileged thread2.
+ */
+static THD_WORKING_AREA(waUnprivileged2, 128);
+static THD_FUNCTION(Unprivileged2, arg) {
+
+  (void)arg;
+  chRegSetThreadName("unprivileged2");
+
+  /* Sandbox object initialization.*/
+  sbObjectInit(&sbx2);
+
+  /* Static MPU setup for the sandbox, both regions are used because in this
+     demo it requires both a flash and a RAM regions.*/
+  mpuConfigureRegion(MPU_REGION_2,
+                     sb_config2.regions[0].base,
+                     MPU_RASR_ATTR_AP_RO_RO |
+                     MPU_RASR_ATTR_CACHEABLE_WT_NWA |
+                     MPU_RASR_SIZE_32K |
+                     MPU_RASR_ENABLE);
+  mpuConfigureRegion(MPU_REGION_3,
+                     sb_config2.regions[1].base,
+                     MPU_RASR_ATTR_AP_RW_RW |
+                     MPU_RASR_ATTR_CACHEABLE_WB_WA |
+                     MPU_RASR_SIZE_4K |
+                     MPU_RASR_ENABLE);
+
+  /* This thread goes in the sandbox and is trapped there, it cannot
+     return, only invoke the sandbox API.*/
+  sbStart(&sbx2, &sb_config2);
 
   /* Function sbStart() only fails if the sandbox cannot be started
      because code header problems.*/
@@ -100,8 +154,8 @@ static THD_FUNCTION(Unprivileged1, arg) {
  * Application entry point.
  */
 int main(void) {
-  thread_t *tp;
-  msg_t msg;
+  thread_t *tp1, *tp2;
+//  msg_t msg;
 
   /*
    * System initializations.
@@ -120,14 +174,19 @@ int main(void) {
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO+10,
                     Thread1, NULL);
 
-  /* Creating the unprivileged thread.*/
-  chprintf((BaseSequentialStream *)&SD2, "Starting unprivileged thread\r\n");
-  tp = chThdCreateStatic(waUnprivileged1, sizeof(waUnprivileged1),
-                         NORMALPRIO - 10U, Unprivileged1, NULL);
+  /* Creating the unprivileged threads.*/
+  chprintf((BaseSequentialStream *)&SD2, "Starting unprivileged thread 1\r\n");
+  tp1 = chThdCreateStatic(waUnprivileged1, sizeof(waUnprivileged1),
+                          NORMALPRIO - 10U, Unprivileged1, NULL);
+  chprintf((BaseSequentialStream *)&SD2, "Starting unprivileged thread 2\r\n");
+  tp2 = chThdCreateStatic(waUnprivileged2, sizeof(waUnprivileged2),
+                          NORMALPRIO - 10U, Unprivileged2, NULL);
 
-  /* Waiting for the unprivileged thread to exit or fail.*/
-  msg = chThdWait(tp);
-  chprintf((BaseSequentialStream *)&SD2, "Exit code 0x%x\r\n", msg);
+  /* Waiting for the unprivileged threads to exit or fail.*/
+  (void)tp1;
+  (void)tp2;
+//  msg = chThdWait(tp1);
+//  chprintf((BaseSequentialStream *)&SD2, "Exit code 0x%x\r\n", msg);
 
   /* Normal main() thread activity, in this demo it does nothing except
      sleeping in a loop and check the button state.*/
