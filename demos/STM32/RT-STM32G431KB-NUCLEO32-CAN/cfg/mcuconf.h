@@ -84,6 +84,10 @@
 /*
  * IRQ system settings.
  */
+
+/* The default CAN1 priority is 28 in the reference manual */
+#define STM32_IRQ_CAN1_PRIORITY             28
+
 #define STM32_IRQ_EXTI0_PRIORITY            6
 #define STM32_IRQ_EXTI1_PRIORITY            6
 #define STM32_IRQ_EXTI2_PRIORITY            6
@@ -91,6 +95,15 @@
 #define STM32_IRQ_EXTI4_PRIORITY            6
 #define STM32_IRQ_EXTI5_9_PRIORITY          6
 #define STM32_IRQ_EXTI10_15_PRIORITY        6
+#define STM32_IRQ_EXTI164041_PRIORITY       6
+#define STM32_IRQ_EXTI17_PRIORITY           6
+#define STM32_IRQ_EXTI18_PRIORITY           6
+#define STM32_IRQ_EXTI19_PRIORITY           6
+#define STM32_IRQ_EXTI20_PRIORITY           6
+#define STM32_IRQ_EXTI212229_PRIORITY       6
+#define STM32_IRQ_EXTI30_32_PRIORITY        6
+#define STM32_IRQ_EXTI33_PRIORITY           6
+
 
 #define STM32_IRQ_TIM1_BRK_TIM15_PRIORITY   7
 #define STM32_IRQ_TIM1_UP_TIM16_PRIORITY    7

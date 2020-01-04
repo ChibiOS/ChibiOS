@@ -345,11 +345,10 @@ void can_lld_start(CANDriver *canp) {
     SET_BIT(canp->can->CCCR, FDCAN_CCCR_BRSE);
   }
 
-  /* The default priority is 28 in the reference manual */
-  nvicEnableVector(FDCAN1_IT0_IRQn, 28);
+  nvicEnableVector(FDCAN1_IT0_IRQn, STM32_IRQ_CAN1_PRIORITY);
   /* Enable interrupts */
   SET_BIT(canp->can->IE, FDCAN_IE_RF0NE | FDCAN_IE_RF0LE | FDCAN_IE_TCE | FDCAN_IE_TEFLE);
-  /* Use FDCAN1 interrupt line 0 and 1? */
+  /* Use FDCAN1 interrupt line 0 and 1 */
   SET_BIT(canp->can->ILE, FDCAN_ILE_EINT0 | FDCAN_ILE_EINT1);
 
   /* Start it up */
