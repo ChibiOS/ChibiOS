@@ -75,6 +75,13 @@ static uint32_t dummyrx;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+static void spi_lld_wait_complete(SPIDriver *spip) {
+
+  while ((spip->spi->CR1 & SPI_CR1_CSTART) != 0) {
+  }
+  spip->spi->IFCR = 0xFFFFFFFF;
+}
+
 #if defined(STM32_SPI_BDMA_REQUIRED)
 /**
  * @brief   Shared DMA end-of-rx service routine.
@@ -878,6 +885,8 @@ void spi_lld_exchange(SPIDriver *spip, size_t n,
 
   osalDbgAssert(n < 65536, "unsupported DMA transfer size");
 
+  spi_lld_wait_complete(spip);
+
 #if defined(STM32_SPI_DMA_REQUIRED) && defined(STM32_SPI_BDMA_REQUIRED)
   if (spip->is_bdma)
 #endif
@@ -932,6 +941,8 @@ void spi_lld_exchange(SPIDriver *spip, size_t n,
 void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
 
   osalDbgAssert(n < 65536, "unsupported DMA transfer size");
+
+  spi_lld_wait_complete(spip);
 
 #if defined(STM32_SPI_DMA_REQUIRED) && defined(STM32_SPI_BDMA_REQUIRED)
   if (spip->is_bdma)
@@ -988,6 +999,8 @@ void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
 
   osalDbgAssert(n < 65536, "unsupported DMA transfer size");
 
+  spi_lld_wait_complete(spip);
+
 #if defined(STM32_SPI_DMA_REQUIRED) && defined(STM32_SPI_BDMA_REQUIRED)
   if (spip->is_bdma)
 #endif
@@ -1039,6 +1052,8 @@ void spi_lld_abort(SPIDriver *spip) {
   /* Stopping SPI.*/
   spip->spi->CR1 |= SPI_CR1_CSUSP;
 
+  spi_lld_wait_complete(spip);
+
   /* Stopping DMAs.*/
 #if defined(STM32_SPI_DMA_REQUIRED) && defined(STM32_SPI_BDMA_REQUIRED)
   if (spip->is_bdma)
@@ -1078,6 +1093,8 @@ void spi_lld_abort(SPIDriver *spip) {
 uint32_t spi_lld_polled_exchange(SPIDriver *spip, uint32_t frame) {
   uint32_t dsize = (spip->spi->CFG1 & SPI_CFG1_DSIZE_Msk) + 1U;
   uint32_t rxframe;
+
+  spi_lld_wait_complete(spip);
 
   spip->spi->CR1 |= SPI_CR1_CSTART;
 
