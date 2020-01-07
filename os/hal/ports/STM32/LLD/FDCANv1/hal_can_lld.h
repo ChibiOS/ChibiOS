@@ -44,7 +44,7 @@
 /**
  * @brief   Number of receive mailboxes.
  */
-#define CAN_RX_MAILBOXES            1
+#define CAN_RX_MAILBOXES            2
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
