@@ -218,8 +218,8 @@ typedef struct {
  * @brief   Driver configuration structure.
  */
 typedef struct {
-  bool                      anfs;     /* Accept non-masked standard messages */
-  bool                      anfe;     /* Accept non-masked extended messages */
+  uint8_t                   anfs;     /* Accept non-masked standard messages */
+  uint8_t                   anfe;     /* Accept non-masked extended messages */
   bool                      dar;      /* Disable automatic reply */
   bool                      loopback;
   bool                      monitor;
