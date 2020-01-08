@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    STM32F0xx/stm32_isr.h
+ * @file    STM32F0xx/stm32_isr.c
  * @brief   STM32F0xx ISR handler code.
  *
  * @addtogroup STM32F0xx_ISR
