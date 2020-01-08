@@ -30,8 +30,8 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-#define READ_REG_MASK_VALUE(REG, MASK) ((READ_REG(REG) & (MASK ## _Msk)) >> (MASK ## _Pos))
-#define WRITE_REG_MASK_VALUE(REG, MASK, VAL) MODIFY_REG(REG, (MASK ## _Msk), (VAL) << MASK ## _Pos)
+#define READ_REG_MASK_VALUE(REG, NAME) ((READ_REG(REG) & (NAME ## _Msk)) >> (NAME ## _Pos))
+#define WRITE_REG_MASK_VALUE(REG, NAME, VAL) MODIFY_REG(REG, (NAME ## _Msk), (VAL) << NAME ## _Pos)
 
 #define SRAMCAN_FLS_NBR                  (28U)         /* Max. Filter List Standard Number      */
 #define SRAMCAN_FLE_NBR                  ( 8U)         /* Max. Filter List Extended Number      */
@@ -93,7 +93,7 @@ CANDriver CAND3;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-const static uint8_t dlc_to_bytes[] = {0, 1, 2, 3, 4, 5, 6, 7, 8,
+static const uint8_t dlc_to_bytes[] = {0, 1, 2, 3, 4, 5, 6, 7, 8,
   12, 16, 20, 24, 32, 48, 64};
 
 
@@ -181,18 +181,10 @@ static void can_lld_tx_handler(CANDriver *canp) {
     flags |= 1U;
   }
 
-  /* Transmission event element lost */
-  if (READ_BIT(canp->can->IR, FDCAN_IR_TEFL)) {
-    /* Clearing flag by setting to 1. */
-    canp->can->IR = FDCAN_IR_TEFL;
-    /* Upper 16 bits indicate errors */
-    flags |= 1U << 16;
-  }
-
   /* Checking TX buffer full status.*/
   if (READ_BIT(canp->can->TXFQS, FDCAN_TXFQS_TFQF) == 0) {
     /* Signaling flags and waking up threads waiting for a transmission slot.*/
-    /* It seams that error flags should always be broadcast regardless of TX
+    /* It seems that error flags should always be broadcast regardless of TX
      * buffer emptiness. _can_tx_empty_isr always sends MSG_OK, only OK to send
      * that if there is a slot in TX buffer. */
     _can_tx_empty_isr(canp, flags);
@@ -347,10 +339,12 @@ void can_lld_start(CANDriver *canp) {
   }
 
   nvicEnableVector(FDCAN1_IT0_IRQn, STM32_IRQ_CAN1_PRIORITY);
+  /* Clear interrupts */
+  WRITE_REG(canp->can->IR, 0xFFFF);
   /* Enable interrupts */
-  SET_BIT(canp->can->IE, FDCAN_IE_RF0NE | FDCAN_IE_RF0LE | FDCAN_IE_TCE | FDCAN_IE_TEFLE);
+  SET_BIT(canp->can->IE, FDCAN_IE_RF0NE | FDCAN_IE_RF0LE | FDCAN_IE_TCE);
   /* Use FDCAN1 interrupt line 0 and 1 */
-  SET_BIT(canp->can->ILE, FDCAN_ILE_EINT0 | FDCAN_ILE_EINT1);
+  SET_BIT(canp->can->ILE, FDCAN_ILE_EINT0);
 
   /* Start it up */
   CLEAR_BIT(canp->can->CCCR, FDCAN_CCCR_INIT);
@@ -432,12 +426,11 @@ void can_lld_transmit(CANDriver *canp,
    * restricted to word aligned accesses, so up to 3 extra bytes may be copied.
    * */
   for (uint8_t i=0; i < dlc_to_bytes[ctfp->DLC]; i+=4) {
-    WRITE_REG(*tx_address++, ctfp.data32[i / 4]);
+    WRITE_REG(*tx_address++, ctfp->data32[i / 4]);
   }
 
   /* Add TX request */
-  SET_BIT(canp->can->TXBAR, 1);
-
+  WRITE_REG_MASK_VALUE(canp->can->TXBAR, FDCAN_TXBAR_AR, 1);
 
 }
 
@@ -499,12 +492,12 @@ void can_lld_receive(CANDriver *canp,
 
   /* Copy message from FDCAN peripheral's SRAM to structure. RAM is restricted
    * to word aligned accesses, so up to 3 extra bytes may be copied. */
-  for (uint8_t i=0; i < dlc_to_bytes[ctfp->DLC]; i+=4) {
+  for (uint8_t i=0; i < dlc_to_bytes[crfp->DLC]; i+=4) {
     crfp->data32[i / 4] = READ_REG(*rx_address++); 
   }
 
   /* Acknowledge receipt by writing the get-index to the acknowledge register RXF0A */
-  WRITE_REG(canp->can->RXF0A, (get_index << FDCAN_RXF0A_F0AI_Pos) & FDCAN_RXF0A_F0AI_Msk);
+  WRITE_REG_MASK_VALUE(canp->can->RXF0A, FDCAN_RXF0A_F0AI, get_index);
 
   /* Re-enable RX FIFO message arrived interrupt once the FIFO is emptied, see
    * can_lld_rx0_handler. */
