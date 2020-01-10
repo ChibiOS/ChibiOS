@@ -1199,41 +1199,41 @@ static int dis_func0(void) {
 
   test_emit_token('0');
 
-  return 0x55AA;
+  return (msg_t)0x55AA;
 }
 
-static char dis_func1(char a) {
+static msg_t dis_func1(msg_t a) {
 
   test_emit_token((char)a);
 
-  return a;
+  return (msg_t)a;
 }
 
-static char dis_func2(char a, char b) {
+static msg_t dis_func2(msg_t a, msg_t b) {
 
   test_emit_token((char)a);
   test_emit_token((char)b);
 
-  return a;
+  return (msg_t)a;
 }
 
-static char dis_func3(char a, char b, char c) {
+static msg_t dis_func3(msg_t a, msg_t b, msg_t c) {
 
   test_emit_token((char)a);
   test_emit_token((char)b);
   test_emit_token((char)c);
 
-  return a;
+  return (msg_t)a;
 }
 
-static char dis_func4(char a, char b, char c, char d) {
+static msg_t dis_func4(msg_t a, msg_t b, msg_t c, msg_t d) {
 
   test_emit_token((char)a);
   test_emit_token((char)b);
   test_emit_token((char)c);
   test_emit_token((char)d);
 
-  return a;
+  return (msg_t)a;
 }
 
 static int dis_func_end(void) {
@@ -1241,7 +1241,7 @@ static int dis_func_end(void) {
   test_emit_token('Z');
   exit_flag = true;
 
-  return 0xAA55;
+  return (msg_t)0xAA55;
 }
 
 static THD_WORKING_AREA(waThread1, 256);
