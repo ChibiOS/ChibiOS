@@ -229,9 +229,9 @@
  * @brief   Max DAC channels.
  */
 #if STM32_DAC_DUAL_MODE == FALSE
-#define DAC_MAX_CHANNELS                    1
-#else
 #define DAC_MAX_CHANNELS                    2
+#else
+#define DAC_MAX_CHANNELS                    1
 #endif
 
 /*===========================================================================*/
