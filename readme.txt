@@ -76,6 +76,7 @@
 *** 19.1.4 ***
 - NEW: Added support for .cc files extensions in makefiles.
 - NEW: Made bus acquire/release functions in SNOR driver public.
+- FIX: Fixed I2Cv1 extra interrupts (bug #1064).
 - FIX: Fixed I2C4 broken on STM32H7xx (bug #1063).
 - FIX: Fixed I2C fallback driver broken (bug #1061).
 - FIX: Fixed STM32 ADC1 sample time macros (bug #1059).
