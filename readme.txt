@@ -88,6 +88,7 @@
 *** 18.2.3 ***
 - NEW: Added a check on defective GCC versions, Cortex-M0 only.
 - NEW: Extra timer checks in STM32 ST driver.
+- FIX: Fixed I2C4 broken on STM32H7xx (bug #1063).
 - FIX: Fixed I2C fallback driver broken (bug #1061).
 - FIX: Fixed STM32 ADC1 sample time macros (bug #1059).
 - FIX: Fixed STM32 ADCv1 error callback disabled on some devices (bug #1058).
