@@ -76,7 +76,6 @@ int custom_rand_generate_block(unsigned char* output, unsigned int sz);
 #define NO_DSA
 #define NO_PWDBASED
 #define NO_PSK
-#define NO_64BIT
 #define NO_DES3
 #define NO_RC4
 
