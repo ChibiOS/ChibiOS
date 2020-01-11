@@ -65,6 +65,9 @@
 #define I2C_EV5_MASTER_MODE_SELECT                                          \
   ((uint32_t)(((I2C_SR2_MSL | I2C_SR2_BUSY) << 16) | I2C_SR1_SB))
 
+#define I2C_EV5_MASTER_MODE_SELECT_NO_BUSY                                  \
+  ((uint32_t)((I2C_SR2_MSL << 16) | I2C_SR1_SB))
+
 #define I2C_EV6_MASTER_TRA_MODE_SELECTED                                    \
   ((uint32_t)(((I2C_SR2_MSL | I2C_SR2_BUSY | I2C_SR2_TRA) << 16) |          \
               I2C_SR1_ADDR | I2C_SR1_TXE))
@@ -252,6 +255,7 @@ static void i2c_lld_serve_event_interrupt(I2CDriver *i2cp) {
      done by the DMA.*/
   switch (I2C_EV_MASK & (event | (regSR2 << 16))) {
   case I2C_EV5_MASTER_MODE_SELECT:
+  case I2C_EV5_MASTER_MODE_SELECT_NO_BUSY:
     if ((i2cp->addr >> 8) > 0) {
       /* 10-bit address: 1 1 1 1 0 X X R/W */
       dp->DR = 0xF0 | (0x6 & (i2cp->addr >> 8)) | (0x1 & i2cp->addr);
