@@ -801,8 +801,8 @@ void i2c_lld_start(I2CDriver *i2cp) {
 #endif
 #if defined(STM32_I2C_BDMA_REQUIRED)
   {
-    i2cp->txdmamode = BDMAMODE_COMMON | STM32_DMA_CR_DIR_M2P;
-    i2cp->rxdmamode = BDMAMODE_COMMON | STM32_DMA_CR_DIR_P2M;
+    i2cp->txdmamode = BDMAMODE_COMMON | STM32_BDMA_CR_DIR_M2P;
+    i2cp->rxdmamode = BDMAMODE_COMMON | STM32_BDMA_CR_DIR_P2M;
   }
 #endif
 #if defined(STM32_I2C_DMA_REQUIRED) && defined(STM32_I2C_BDMA_REQUIRED)

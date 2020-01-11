@@ -154,6 +154,8 @@
 - HAL: Added a new interface for range-finder devices (used by EX).
 - HAL: Added mcuconf.h updater tool for STM32F407 (backported to 19.1.1).
 - NIL: Integrated NIL 4.0.
+- FIX: Fixed I2C4 broken on STM32H7xx (bug #1063)
+       (backported to 19.1.4)(backported to 18.2.3).
 - FIX: Fixed I2C fallback driver broken (bug #1061)
        (backported to 19.1.4)(backported to 18.2.3).
 - FIX: Fixed STM32 ADC1 sample time macros (bug #1059)
