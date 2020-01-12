@@ -193,7 +193,7 @@ static bool low_level_input(struct netif *netif, struct pbuf **pbuf) {
 
   if (*pbuf != NULL) {
 #if ETH_PAD_SIZE
-    pbuf_header(pbuf, -ETH_PAD_SIZE); /* drop the padding word */
+    pbuf_header(*pbuf, -ETH_PAD_SIZE); /* drop the padding word */
 #endif
 
     /* Iterates through the pbuf chain. */
@@ -201,7 +201,7 @@ static bool low_level_input(struct netif *netif, struct pbuf **pbuf) {
       macReadReceiveDescriptor(&rd, (uint8_t *)q->payload, (size_t)q->len);
     macReleaseReceiveDescriptor(&rd);
 
-    MIB2_STATS_NETIF_ADD(netif, ifinoctets, *pbuf->tot_len);
+    MIB2_STATS_NETIF_ADD(netif, ifinoctets, (*pbuf)->tot_len);
 
     if (*(uint8_t *)((*pbuf)->payload) & 1) {
       /* broadcast or multicast packet*/
@@ -213,7 +213,7 @@ static bool low_level_input(struct netif *netif, struct pbuf **pbuf) {
     }
 
 #if ETH_PAD_SIZE
-    pbuf_header(pbuf, ETH_PAD_SIZE); /* reclaim the padding word */
+    pbuf_header(*pbuf, ETH_PAD_SIZE); /* reclaim the padding word */
 #endif
 
     LINK_STATS_INC(link.recv);
@@ -266,6 +266,38 @@ static err_t ethernetif_init(struct netif *netif) {
   return ERR_OK;
 }
 
+static net_addr_mode_t addressMode;
+static ip4_addr_t ip, gateway, netmask;
+static struct netif thisif;
+
+static void linkup_cb(void *p)
+{
+  struct netif *ifc = (struct netif*) p;
+  (void) ifc;
+#if LWIP_AUTOIP
+  if (addressMode == NET_ADDRESS_AUTO)
+    autoip_start(ifc);
+#endif
+#if LWIP_DHCP
+  if (addressMode == NET_ADDRESS_DHCP)
+    dhcp_start(ifc);
+#endif
+}
+
+static void linkdown_cb(void *p)
+{
+  struct netif *ifc = (struct netif*) p;
+  (void) ifc;
+#if LWIP_AUTOIP
+  if (addressMode == NET_ADDRESS_AUTO)
+    autoip_stop(ifc);
+#endif
+#if LWIP_DHCP
+  if (addressMode == NET_ADDRESS_DHCP)
+    dhcp_stop(ifc);
+#endif
+}
+
 /**
  * @brief LWIP handling thread.
  *
@@ -275,10 +307,7 @@ static err_t ethernetif_init(struct netif *netif) {
 static THD_FUNCTION(lwip_thread, p) {
   event_timer_t evt;
   event_listener_t el0, el1;
-  ip_addr_t ip, gateway, netmask;
-  static struct netif thisif = { 0 };
   static const MACConfig mac_config = {thisif.hwaddr};
-  net_addr_mode_t addressMode;
   err_t result;
 
   chRegSetThreadName(LWIP_THREAD_NAME);
@@ -311,7 +340,13 @@ static THD_FUNCTION(lwip_thread, p) {
     LWIP_IPADDR(&ip);
     LWIP_GATEWAY(&gateway);
     LWIP_NETMASK(&netmask);
+#if LWIP_DHCP
+    addressMode = NET_ADDRESS_DHCP;
+#elif LWIP_AUTOIP
+    addressMode = NET_ADDRESS_AUTO;
+#else
     addressMode = NET_ADDRESS_STATIC;
+#endif
 #if LWIP_NETIF_HOSTNAME
     thisif.hostname = NULL;
 #endif
@@ -324,6 +359,8 @@ static THD_FUNCTION(lwip_thread, p) {
 
   macStart(&ETHD1, &mac_config);
 
+  MIB2_INIT_NETIF(&thisif, snmp_ifType_ethernet_csmacd, 0);
+
   /* Add interface. */
   result = netifapi_netif_add(&thisif, &ip, &netmask, &gateway, NULL, ethernetif_init, tcpip_input);
   if (result != ERR_OK)
@@ -332,20 +369,8 @@ static THD_FUNCTION(lwip_thread, p) {
     osalSysHalt("netif_add error");   // Not sure what else we can do if an error occurs here.
   };
 
-  netif_set_default(&thisif);
-
-  switch (addressMode)
-  {
-#if LWIP_AUTOIP
-    case NET_ADDRESS_AUTO:
-        autoip_start(&thisif);
-        break;
-#endif
-
-    default:
-      netif_set_up(&thisif);
-      break;
-  }
+  netifapi_netif_set_default(&thisif);
+  netifapi_netif_set_up(&thisif);
 
   /* Setup event sources.*/
   evtObjectInit(&evt, LWIP_LINK_POLL_INTERVAL);
@@ -366,22 +391,16 @@ static THD_FUNCTION(lwip_thread, p) {
         if (current_link_status) {
           tcpip_callback_with_block((tcpip_callback_fn) netif_set_link_up,
                                      &thisif, 0);
-#if LWIP_DHCP
-          if (addressMode == NET_ADDRESS_DHCP)
-            dhcp_start(&thisif);
-#endif
+          tcpip_callback_with_block(linkup_cb, &thisif, 0);
         }
         else {
           tcpip_callback_with_block((tcpip_callback_fn) netif_set_link_down,
                                      &thisif, 0);
-#if LWIP_DHCP
-          if (addressMode == NET_ADDRESS_DHCP)
-            dhcp_stop(&thisif);
-#endif
+          tcpip_callback_with_block(linkdown_cb, &thisif, 0);
         }
       }
     }
-    
+
     if (mask & FRAME_RECEIVED_ID) {
       struct pbuf *p;
       while (low_level_input(&thisif, &p)) {

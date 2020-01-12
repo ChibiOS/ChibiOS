@@ -102,6 +102,8 @@
 - FIX: Fixed missing DMA definitions for STM32F412 I2C3 (bug #1041).
 - FIX: Fixed misplaced parenthesis in hal_files.h (bug #1040).
 - FIX: Fixed GCC scatter files alignment problem (bug #1033).
+- FIX: Fixed incorrect pointer type in lwipthread.c low_level_input causes
+       panic on packet reception (bug #1009).
 
 *** 19.1.3 ***
 - NEW: Added a "library generator" project for RT, it allows to
