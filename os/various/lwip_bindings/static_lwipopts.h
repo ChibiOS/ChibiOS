@@ -31,9 +31,9 @@
 
 #define LWIP_TCPIP_CORE_LOCKING         1
 #define LWIP_TCPIP_CORE_LOCKING_INPUT   0
-#define LWIP_COMPAT_MUTEX_ALLOWED       1
+#define LWIP_COMPAT_MUTEX_ALLOWED
 
-#define SYS_LIGHTWEIGHT_PROT            0
+#define SYS_LIGHTWEIGHT_PROT            1
 
 #define MEM_ALIGNMENT                   4
 

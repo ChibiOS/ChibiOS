@@ -126,6 +126,8 @@
 - FIX: Fixed invalid AXI errata fix for STM32H7xx (bug #1014).
 - FIX: Fixed invalid ADCD3 initialization in STM32 ADCv3 driver (bug #1013).
 - FIX: Fixed wrong license restriction check in Nil (bug #1011).
+- FIX: Fixed incorrect pointer type in lwipthread.c low_level_input causes
+       panic on packet reception (bug #1009).
 
 *** 18.2.2 ***
 - NEW: Added analog watchdog functionality to STM32 ADCv2 driver.
