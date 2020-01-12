@@ -27,7 +27,7 @@ MEMORY
     flash5 (rx) : org = 0x00000000, len = 0
     flash6 (rx) : org = 0x08000000 + 1M - 64k, len = 32k    /* Flash for SB1.*/
     flash7 (rx) : org = 0x08000000 + 1M - 32k, len = 32k    /* Flash for SB2.*/
-    ram0   (wx) : org = 0x20000000, len = 96k - 4k
+    ram0   (wx) : org = 0x20000000, len = 96k - 8k
     ram1   (wx) : org = 0x00000000, len = 0
     ram2   (wx) : org = 0x00000000, len = 0
     ram3   (wx) : org = 0x00000000, len = 0
