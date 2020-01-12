@@ -154,6 +154,9 @@
 - HAL: Added a new interface for range-finder devices (used by EX).
 - HAL: Added mcuconf.h updater tool for STM32F407 (backported to 19.1.1).
 - NIL: Integrated NIL 4.0.
+- FIX: Fixed incorrect pointer type in lwipthread.c low_level_input causes
+       panic on packet reception (bug #1009)
+       (backported to 19.1.4)(backported to 18.2.3).
 - FIX: Fixed wrong check on STM32_DAC_DUAL_MODE in DACv1 STM32 driver
        (bug #1065)(backported to 19.1.4)(backported to 18.2.3).
 - FIX: Fixed I2Cv1 extra interrupts (bug #1064)
