@@ -91,17 +91,17 @@ _port_switch:
 #endif
 #if PORT_SWITCHED_REGIONS_NUMBER >= 2
                 add     r3, #1
-                str     r4, [r2, #-4]   /* RNR */
+                str     r3, [r2, #-4]   /* RNR */
                 ldm     r2, {r6, r7}    /* RBAR, RASR */
 #endif
 #if PORT_SWITCHED_REGIONS_NUMBER >= 3
                 add     r3, #1
-                str     r4, [r2, #-4]   /* RNR */
+                str     r3, [r2, #-4]   /* RNR */
                 ldm     r2, {r8, r9}    /* RBAR, RASR */
 #endif
 #if PORT_SWITCHED_REGIONS_NUMBER >= 4
                 add     r3, #1
-                str     r4, [r2, #-4]   /* RNR */
+                str     r3, [r2, #-4]   /* RNR */
                 ldm     r2, {r10, r11}  /* RBAR, RASR */
 #endif
 #if PORT_SWITCHED_REGIONS_NUMBER == 1
