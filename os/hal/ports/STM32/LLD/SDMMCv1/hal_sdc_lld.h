@@ -142,7 +142,7 @@
 
 #if (STM32_SDC_USE_SDMMC1 && !defined(STM32_SDMMC1_NUMBER)) ||              \
     (STM32_SDC_USE_SDMMC2 && !defined(STM32_SDMMC2_NUMBER))
-#error "STM32_ADCx_NUMBER not defined in registry"
+#error "STM32_SDMMCx_NUMBER not defined in registry"
 #endif
 
 #if (STM32_SDC_USE_SDMMC1 && !defined(STM32_SDC_SDMMC1_DMA_MSK)) ||         \
