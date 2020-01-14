@@ -201,8 +201,13 @@
 #define STM32_RTC_HAS_INTERRUPTS            FALSE
 
 /* SDMMC attributes.*/
-#define STM32_HAS_SDMMC1                    FALSE
-#define STM32_HAS_SDMMC2                    FALSE
+#define STM32_HAS_SDMMC1                    TRUE
+#define STM32_SDMMC1_HANDLER                Vector104
+#define STM32_SDMMC1_NUMBER                 49
+
+#define STM32_HAS_SDMMC2                    TRUE
+#define STM32_SDMMC2_HANDLER                Vector230
+#define STM32_SDMMC2_NUMBER                 131
 
 /* SPI attributes.*/
 #define STM32_HAS_SPI1                      TRUE

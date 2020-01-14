@@ -2742,14 +2742,20 @@
 
 #if (STM32_SDMMCSEL == STM32_SDMMCSEL_PLL1_Q_CK) || defined(__DOXYGEN__)
 /**
- * @brief   SDMMC frequency.
+ * @brief   SDMMC1 frequency.
  */
-#define STM32_SDMMCCLK              STM32_PLL1_Q_CK
+#define STM32_SDMMC1CLK             STM32_PLL1_Q_CK
+
+/**
+ * @brief   SDMMC2 frequency.
+ */
+#define STM32_SDMMC2CLK             STM32_PLL1_Q_CK
 
 #elif STM32_SDMMCSEL == STM32_SDMMCSEL_PLL2_R_CK
-#define STM32_SDMMCCLK              STM32_PLL2_R_CK
+#define STM32_SDMMC1CLK             STM32_PLL2_R_CK
+#define STM32_SDMMC2CLK             STM32_PLL2_R_CK
 #else
-#error "invalid source selected for STM32_SDMMCSEL clock"
+#error "invalid source selected for STM32_SDMMCxSEL clock"
 #endif
 
 #if (STM32_QSPISEL == STM32_QSPISEL_HCLK) || defined(__DOXYGEN__)
