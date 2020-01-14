@@ -70,7 +70,7 @@
 #define ADC_SMPR_SMP_181P5      6   /**< @brief 194 cycles conversion time. */
 #define ADC_SMPR_SMP_601P5      7   /**< @brief 614 cycles conversion time. */
 #endif
-#if defined(STM32L4XX) || defined(STM32L4XXP)
+#if defined(STM32L4XX) || defined(STM32L4XXP) || defined(STM32G4XX)
 #define ADC_SMPR_SMP_2P5        0   /**< @brief 15 cycles conversion time   */
 #define ADC_SMPR_SMP_6P5        1   /**< @brief 19 cycles conversion time.  */
 #define ADC_SMPR_SMP_12P5       2   /**< @brief 25 cycles conversion time.  */
@@ -80,16 +80,6 @@
 #define ADC_SMPR_SMP_247P5      6   /**< @brief 260 cycles conversion time. */
 #define ADC_SMPR_SMP_640P5      7   /**< @brief 653 cycles conversion time. */
 #endif
-/** @} */
-
-/**
- * @name    Resolution
- * @{
- */
-#define ADC_CFGR1_RES_12BIT     (0 << 3)
-#define ADC_CFGR1_RES_10BIT     (1 << 3)
-#define ADC_CFGR1_RES_8BIT      (2 << 3)
-#define ADC_CFGR1_RES_6BIT      (3 << 3)
 /** @} */
 
 /**
@@ -106,12 +96,23 @@
 #define ADC_CFGR_RES_8BITS              (2 << 3)
 #define ADC_CFGR_RES_6BITS              (3 << 3)
 
+#if defined(STM32F3XX) || defined(STM32L4XX) || defined(STM32L4XXP) ||      \
+    defined(__DOXYGEN__)
 #define ADC_CFGR_ALIGN_MASK             (1 << 5)
 #define ADC_CFGR_ALIGN_RIGHT            (0 << 5)
 #define ADC_CFGR_ALIGN_LEFT             (1 << 5)
 
 #define ADC_CFGR_EXTSEL_MASK            (15 << 6)
 #define ADC_CFGR_EXTSEL_SRC(n)          ((n) << 6)
+#endif
+#if defined(STM32G4XX)
+#define ADC_CFGR_ALIGN_MASK             (1 << 15)
+#define ADC_CFGR_ALIGN_RIGHT            (0 << 15)
+#define ADC_CFGR_ALIGN_LEFT             (1 << 15)
+
+#define ADC_CFGR_EXTSEL_MASK            (31 << 5)
+#define ADC_CFGR_EXTSEL_SRC(n)          ((n) << 5)
+#endif
 
 #define ADC_CFGR_EXTEN_MASK             (3 << 10)
 #define ADC_CFGR_EXTEN_DISABLED         (0 << 10)
@@ -137,15 +138,19 @@
  */
 #define ADC_CCR_DUAL_MASK               (31 << 0)
 #define ADC_CCR_DUAL_FIELD(n)           ((n) << 0)
+
 #define ADC_CCR_DELAY_MASK              (15 << 8)
 #define ADC_CCR_DELAY_FIELD(n)          ((n) << 8)
+
 #define ADC_CCR_DMACFG_MASK             (1 << 13)
 #define ADC_CCR_DMACFG_ONESHOT          (0 << 13)
 #define ADC_CCR_DMACFG_CIRCULAR         (1 << 13)
+
 #define ADC_CCR_MDMA_MASK               (3 << 14)
 #define ADC_CCR_MDMA_DISABLED           (0 << 14)
 #define ADC_CCR_MDMA_WORD               (2 << 14)
 #define ADC_CCR_MDMA_HWORD              (3 << 14)
+
 #define ADC_CCR_CKMODE_MASK             (3 << 16)
 #define ADC_CCR_CKMODE_ADCCK            (0 << 16)
 #define ADC_CCR_CKMODE_AHB_DIV1         (1 << 16)
@@ -328,6 +333,22 @@
 #endif
 #endif /* defined(STM32L4XX) || defined(STM32L4XXP)  */
 
+#if defined(STM32G4XX) || defined(__DOXYGEN__)
+/**
+ * @brief   ADC1/ADC2 clock source and mode.
+ */
+#if !defined(STM32_ADC_ADC12_CLOCK_MODE) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC12_CLOCK_MODE          ADC_CCR_CKMODE_AHB_DIV1
+#endif
+
+/**
+ * @brief   ADC3/ADC4/ADC5 clock source and mode.
+ */
+#if !defined(STM32_ADC_ADC345_CLOCK_MODE) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC345_CLOCK_MODE         ADC_CCR_CKMODE_AHB_DIV1
+#endif
+#endif /* defined(STM32G4XX) */
+
 /** @} */
 
 /*===========================================================================*/
@@ -335,11 +356,13 @@
 /*===========================================================================*/
 
 /* Supported devices checks.*/
-#if !defined(STM32F3XX) && !defined(STM32L4XX) && !defined(STM32L4XXP)
-#error "ADCv3 only supports F3, L4 and L4+ STM32 devices"
+#if !defined(STM32F3XX) && !defined(STM32L4XX) && !defined(STM32L4XXP) &&   \
+    !defined(STM32G4XX)
+#error "ADCv3 only supports F3, L4, L4+ and G4 STM32 devices"
 #endif
 
-#if defined(STM32L4XX) || defined(STM32L4XXP) || defined(__DOXYGEN__)
+#if defined(STM32L4XX) || defined(STM32L4XXP) || defined(STM32G4XX) ||      \
+    defined(__DOXYGEN__)
 #define STM32_ADCV3_OVERSAMPLING            TRUE
 #else
 #define STM32_ADCV3_OVERSAMPLING            FALSE
@@ -348,7 +371,7 @@
 /* Registry checks.*/
 #if !defined(STM32_HAS_ADC1) || !defined(STM32_HAS_ADC2) ||                 \
     !defined(STM32_HAS_ADC3) || !defined(STM32_HAS_ADC4)
-#error "STM32_ADC_USE_ADCx not defined in registry"
+#error "STM32_HAS_ADCx not defined in registry"
 #endif
 
 #if (STM32_ADC_USE_ADC1 && !defined(STM32_ADC1_HANDLER)) ||                 \

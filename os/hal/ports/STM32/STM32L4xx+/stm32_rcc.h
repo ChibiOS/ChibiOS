@@ -738,21 +738,21 @@
  *
  * @api
  */
-#define rccEnableSDMMC1(lp) rccEnableAPB2(RCC_APB2ENR_SDMMC1EN, lp)
+#define rccEnableSDMMC1(lp) rccEnableAHB2(RCC_AHB2ENR_SDMMC1EN, lp)
 
 /**
  * @brief   Disables the SDMMC1 peripheral clock.
  *
  * @api
  */
-#define rccDisableSDMMC1() rccDisableAPB2(RCC_APB2ENR_SDMMC1EN)
+#define rccDisableSDMMC1() rccDisableAHB2(RCC_AHB2ENR_SDMMC1EN)
 
 /**
  * @brief   Resets the SDMMC1 peripheral.
  *
  * @api
  */
-#define rccResetSDMMC1() rccResetAPB2(RCC_APB2RSTR_SDMMC1RST)
+#define rccResetSDMMC1() rccResetAHB2(RCC_AHB2RSTR_SDMMC1RST)
 /** @} */
 
 /**
