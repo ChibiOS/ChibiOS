@@ -130,14 +130,14 @@ static bool sdc_lld_prepare_read_bytes(SDCDriver *sdcp,
 
   /* Transfer modes.*/
   sdcp->sdmmc->DCTRL = SDMMC_DCTRL_DTDIR |
-                       SDMMC_DCTRL_DTMODE;      /* Multibyte data transfer.*/
+                       SDMMC_DCTRL_DTMODE_0;    /* Multibyte data transfer.*/
 
   /* Prepares IDMA.*/
   sdcp->sdmmc->IDMABASE0 = (uint32_t)buf;
   sdcp->sdmmc->IDMACTRL  = SDMMC_IDMA_IDMAEN;
 
   /* Transaction starts just after DTEN bit setting.*/
-  sdcp->sdmmc->DCTRL |= SDMMC_DCTRL_DTEN;
+//  sdcp->sdmmc->DCTRL |= SDMMC_DCTRL_DTEN;
 
   return HAL_SUCCESS;
 }
@@ -639,7 +639,8 @@ bool sdc_lld_send_cmd_short_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
   while (((sta = sdcp->sdmmc->STA) & (SDMMC_STA_CMDREND | SDMMC_STA_CTIMEOUT |
                                      SDMMC_STA_CCRCFAIL)) == 0)
     ;
-  sdcp->sdmmc->ICR = sta & (SDMMC_STA_CMDREND | SDMMC_STA_CTIMEOUT | SDMMC_STA_CCRCFAIL);
+  sdcp->sdmmc->ICR = sta & (SDMMC_STA_CMDREND | SDMMC_STA_CTIMEOUT |
+                            SDMMC_STA_CCRCFAIL);
   if ((sta & (SDMMC_STA_CTIMEOUT | SDMMC_STA_CCRCFAIL)) != 0) {
     sdc_lld_collect_errors(sdcp, sta);
     return HAL_FAILED;
@@ -711,8 +712,8 @@ bool sdc_lld_read_special(SDCDriver *sdcp, uint8_t *buf, size_t bytes,
   if (sdc_lld_prepare_read_bytes(sdcp, buf, bytes))
     goto error;
 
-  if (sdc_lld_send_cmd_short_crc(sdcp, cmd, arg, resp)
-                                 || MMCSD_R1_ERROR(resp[0]))
+  if (sdc_lld_send_cmd_short_crc(sdcp, SDMMC_CMD_CMDTRANS | cmd, arg, resp) ||
+      MMCSD_R1_ERROR(resp[0]))
     goto error;
 
   if (sdc_lld_wait_transaction_end(sdcp, 1, resp))
