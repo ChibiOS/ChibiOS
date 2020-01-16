@@ -66,25 +66,17 @@
 #endif
 
 /**
- * @brief   Enable clock bypass.
- * @note    Allow clock speed up to 50 Mhz.
- */
-#if !defined(STM32_SDC_SDMMC_50MHZ) || defined(__DOXYGEN__)
-#define STM32_SDC_SDMMC_50MHZ               FALSE
-#endif
-
-/**
- * @brief   Write timeout in milliseconds.
+ * @brief   Write timeout in card clock cycles.
  */
 #if !defined(STM32_SDC_SDMMC_WRITE_TIMEOUT) || defined(__DOXYGEN__)
-#define STM32_SDC_SDMMC_WRITE_TIMEOUT       1000
+#define STM32_SDC_SDMMC_WRITE_TIMEOUT       1000000
 #endif
 
 /**
- * @brief   Read timeout in milliseconds.
+ * @brief   Read timeout in card clock cycles.
  */
 #if !defined(STM32_SDC_SDMMC_READ_TIMEOUT) || defined(__DOXYGEN__)
-#define STM32_SDC_SDMMC_READ_TIMEOUT        1000
+#define STM32_SDC_SDMMC_READ_TIMEOUT        1000000
 #endif
 
 /**
@@ -247,44 +239,40 @@ struct SDCDriverVMT {
  */
 struct SDCDriver {
   /**
-   * @brief Virtual Methods Table.
+   * @brief   Virtual Methods Table.
    */
   const struct SDCDriverVMT *vmt;
   _mmcsd_block_device_data
   /**
-   * @brief Current configuration data.
+   * @brief   Current configuration data.
    */
   const SDCConfig           *config;
   /**
-   * @brief Various flags regarding the mounted card.
+   * @brief   Various flags regarding the mounted card.
    */
   sdcmode_t                 cardmode;
   /**
-   * @brief Errors flags.
+   * @brief   Errors flags.
    */
   sdcflags_t                errors;
   /**
-   * @brief Card RCA.
+   * @brief   Card RCA.
    */
   uint32_t                  rca;
   /* End of the mandatory fields.*/
   /**
-   * @brief Thread waiting for I/O completion IRQ.
+   * @brief   Thread waiting for I/O completion IRQ.
    */
   thread_reference_t        thread;
   /**
-   * @brief     DTIMER register value for read operations.
-   */
-  uint32_t                  rtmo;
-  /**
-   * @brief     DTIMER register value for write operations.
-   */
-  uint32_t                  wtmo;
-  /**
-   * @brief     Pointer to the SDMMC registers block.
-   * @note      Needed for debugging aid.
+   * @brief   Pointer to the SDMMC registers block.
+   * @note    Needed for debugging aid.
    */
   SDMMC_TypeDef             *sdmmc;
+  /**
+   * @brief   Input clock frequency.
+   */
+  uint32_t                  clkfreq;
 };
 
 /*===========================================================================*/
