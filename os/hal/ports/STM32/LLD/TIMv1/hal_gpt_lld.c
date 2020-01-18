@@ -1122,13 +1122,13 @@ void gpt_lld_polled_delay(GPTDriver *gptp, gptcnt_t interval) {
  * @notapi
  */
 void gpt_lld_serve_interrupt(GPTDriver *gptp) {
+  uint32_t sr;
 
-  gptp->tim->SR = 0;
-  if (gptp->state == GPT_ONESHOT) {
-    gptp->state = GPT_READY;                /* Back in GPT_READY state.     */
-    gpt_lld_stop_timer(gptp);               /* Timer automatically stopped. */
+  sr  = gptp->tim->SR;
+  sr &= gptp->tim->DIER & STM32_TIM_DIER_IRQ_MASK;
+  if ((sr & STM32_TIM_SR_UIF) != 0) {
+    _gpt_isr_invoke_cb(gptp);
   }
-  gptp->config->callback(gptp);
 }
 
 #endif /* HAL_USE_GPT */
