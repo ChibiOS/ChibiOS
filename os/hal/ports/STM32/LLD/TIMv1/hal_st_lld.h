@@ -115,6 +115,8 @@
 #endif
 /**/
 
+#if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
+
 #if STM32_ST_USE_TIMER == 2
 
 #if defined(STM32_TIM2_IS_USED)
@@ -129,6 +131,7 @@
 
 #define STM32_ST_TIM                        STM32_TIM2
 #define ST_LLD_NUM_ALARMS                   STM32_TIM2_CHANNELS
+#define STM32_ST_USE_SYSTICK                FALSE
 #define STM32_ST_USE_TIM2                   TRUE
 #define STM32_ST_USE_TIM3                   FALSE
 #define STM32_ST_USE_TIM4                   FALSE
@@ -156,6 +159,7 @@
 
 #define STM32_ST_TIM                        STM32_TIM3
 #define ST_LLD_NUM_ALARMS                   STM32_TIM3_CHANNELS
+#define STM32_ST_USE_SYSTICK                FALSE
 #define STM32_ST_USE_TIM2                   FALSE
 #define STM32_ST_USE_TIM3                   TRUE
 #define STM32_ST_USE_TIM4                   FALSE
@@ -183,6 +187,7 @@
 
 #define STM32_ST_TIM                        STM32_TIM4
 #define ST_LLD_NUM_ALARMS                   STM32_TIM4_CHANNELS
+#define STM32_ST_USE_SYSTICK                FALSE
 #define STM32_ST_USE_TIM2                   FALSE
 #define STM32_ST_USE_TIM3                   FALSE
 #define STM32_ST_USE_TIM4                   TRUE
@@ -210,6 +215,7 @@
 
 #define STM32_ST_TIM                        STM32_TIM5
 #define ST_LLD_NUM_ALARMS                   STM32_TIM5_CHANNELS
+#define STM32_ST_USE_SYSTICK                FALSE
 #define STM32_ST_USE_TIM2                   FALSE
 #define STM32_ST_USE_TIM3                   FALSE
 #define STM32_ST_USE_TIM4                   FALSE
@@ -237,6 +243,7 @@
 
 #define STM32_ST_TIM                        STM32_TIM9
 #define ST_LLD_NUM_ALARMS                   STM32_TIM9_CHANNELS
+#define STM32_ST_USE_SYSTICK                FALSE
 #define STM32_ST_USE_TIM2                   FALSE
 #define STM32_ST_USE_TIM3                   FALSE
 #define STM32_ST_USE_TIM4                   FALSE
@@ -264,6 +271,7 @@
 
 #define STM32_ST_TIM                        STM32_TIM10
 #define ST_LLD_NUM_ALARMS                   STM32_TIM10_CHANNELS
+#define STM32_ST_USE_SYSTICK                FALSE
 #define STM32_ST_USE_TIM2                   FALSE
 #define STM32_ST_USE_TIM3                   FALSE
 #define STM32_ST_USE_TIM4                   FALSE
@@ -291,6 +299,7 @@
 
 #define STM32_ST_TIM                        STM32_TIM11
 #define ST_LLD_NUM_ALARMS                   STM32_TIM11_CHANNELS
+#define STM32_ST_USE_SYSTICK                FALSE
 #define STM32_ST_USE_TIM2                   FALSE
 #define STM32_ST_USE_TIM3                   FALSE
 #define STM32_ST_USE_TIM4                   FALSE
@@ -318,6 +327,7 @@
 
 #define STM32_ST_TIM                        STM32_TIM12
 #define ST_LLD_NUM_ALARMS                   STM32_TIM12_CHANNELS
+#define STM32_ST_USE_SYSTICK                FALSE
 #define STM32_ST_USE_TIM2                   FALSE
 #define STM32_ST_USE_TIM3                   FALSE
 #define STM32_ST_USE_TIM4                   FALSE
@@ -345,6 +355,7 @@
 
 #define STM32_ST_TIM                        STM32_TIM13
 #define ST_LLD_NUM_ALARMS                   STM32_TIM13_CHANNELS
+#define STM32_ST_USE_SYSTICK                FALSE
 #define STM32_ST_USE_TIM2                   FALSE
 #define STM32_ST_USE_TIM3                   FALSE
 #define STM32_ST_USE_TIM4                   FALSE
@@ -372,6 +383,7 @@
 
 #define STM32_ST_TIM                        STM32_TIM14
 #define ST_LLD_NUM_ALARMS                   STM32_TIM14_CHANNELS
+#define STM32_ST_USE_SYSTICK                FALSE
 #define STM32_ST_USE_TIM2                   FALSE
 #define STM32_ST_USE_TIM3                   FALSE
 #define STM32_ST_USE_TIM4                   FALSE
@@ -399,6 +411,7 @@
 
 #define STM32_ST_TIM                        STM32_TIM21
 #define ST_LLD_NUM_ALARMS                   STM32_TIM21_CHANNELS
+#define STM32_ST_USE_SYSTICK                FALSE
 #define STM32_ST_USE_TIM2                   FALSE
 #define STM32_ST_USE_TIM3                   FALSE
 #define STM32_ST_USE_TIM4                   FALSE
@@ -426,6 +439,7 @@
 
 #define STM32_ST_TIM                        STM32_TIM22
 #define ST_LLD_NUM_ALARMS                   STM32_TIM22_CHANNELS
+#define STM32_ST_USE_SYSTICK                FALSE
 #define STM32_ST_USE_TIM2                   FALSE
 #define STM32_ST_USE_TIM3                   FALSE
 #define STM32_ST_USE_TIM4                   FALSE
@@ -453,6 +467,40 @@
 #define ST_LLD_NUM_ALARMS                   STM32_ST_ENFORCE_ALARMS
 #endif
 
+#elif OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
+
+#define STM32_ST_USE_SYSTICK                TRUE
+#define STM32_ST_USE_TIM2                   FALSE
+#define STM32_ST_USE_TIM3                   FALSE
+#define STM32_ST_USE_TIM4                   FALSE
+#define STM32_ST_USE_TIM5                   FALSE
+#define STM32_ST_USE_TIM9                   FALSE
+#define STM32_ST_USE_TIM10                  FALSE
+#define STM32_ST_USE_TIM11                  FALSE
+#define STM32_ST_USE_TIM12                  FALSE
+#define STM32_ST_USE_TIM13                  FALSE
+#define STM32_ST_USE_TIM14                  FALSE
+#define STM32_ST_USE_TIM21                  FALSE
+#define STM32_ST_USE_TIM22                  FALSE
+
+#else
+
+#define STM32_ST_USE_SYSTICK                FALSE
+#define STM32_ST_USE_TIM2                   FALSE
+#define STM32_ST_USE_TIM3                   FALSE
+#define STM32_ST_USE_TIM4                   FALSE
+#define STM32_ST_USE_TIM5                   FALSE
+#define STM32_ST_USE_TIM9                   FALSE
+#define STM32_ST_USE_TIM10                  FALSE
+#define STM32_ST_USE_TIM11                  FALSE
+#define STM32_ST_USE_TIM12                  FALSE
+#define STM32_ST_USE_TIM13                  FALSE
+#define STM32_ST_USE_TIM14                  FALSE
+#define STM32_ST_USE_TIM21                  FALSE
+#define STM32_ST_USE_TIM22                  FALSE
+
+#endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
@@ -477,6 +525,9 @@ extern "C" {
 /*===========================================================================*/
 /* Driver inline functions.                                                  */
 /*===========================================================================*/
+
+
+#if (OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING) || defined(__DOXYGEN__)
 
 /**
  * @brief   Returns the time counter value.
@@ -642,6 +693,8 @@ static inline bool st_lld_is_alarm_active_n(unsigned alarm) {
   return (bool)((STM32_ST_TIM->DIER & (STM32_TIM_DIER_CC1IE << alarm)) != 0);
 }
 #endif /* ST_LLD_NUM_ALARMS > 1 */
+
+#endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
 
 #endif /* HAL_ST_LLD_H */
 
