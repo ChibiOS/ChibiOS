@@ -105,7 +105,7 @@ ADCDriver ADCD4;
 /*===========================================================================*/
 
 static const ADCConfig default_config = {
-  difsel: 0
+  .difsel = 0
 };
 
 static uint32_t clkmask;
