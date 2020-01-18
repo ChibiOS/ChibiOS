@@ -88,6 +88,7 @@
 *** 18.2.3 ***
 - NEW: Added a check on defective GCC versions, Cortex-M0 only.
 - NEW: Extra timer checks in STM32 ST driver.
+- FIX: Fixed non-standard declaration in STM32 ADCv3 driver (bug #1070).
 - FIX: Fixed problem in the I2C fallback driver (bug #1069).
 - FIX: Fixed TIM8 missing on STM32H7xx (bug #1068).
 - FIX: Fixed Sharing issues with GPT TIMv1 driver (bug #1067).
