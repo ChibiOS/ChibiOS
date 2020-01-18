@@ -94,7 +94,8 @@ static inline msg_t i2c_check_arbitration(I2CDriver *i2cp) {
 
 static inline msg_t i2c_check_timeout(I2CDriver *i2cp) {
 
-  if (!osalTimeIsInRangeX(osalOsGetSystemTimeX(), i2cp->start, i2cp->end)) {
+  if ((i2cp->start != i2cp->end) &&
+      (!osalTimeIsInRangeX(osalOsGetSystemTimeX(), i2cp->start, i2cp->end))) {
     i2c_write_stop(i2cp);
     return MSG_TIMEOUT;
   }
@@ -105,7 +106,8 @@ static inline msg_t i2c_check_timeout(I2CDriver *i2cp) {
 static msg_t i2c_wait_clock(I2CDriver *i2cp) {
 
   while (palReadLine(i2cp->config->scl) == PAL_LOW) {
-    if (!osalTimeIsInRangeX(osalOsGetSystemTimeX(), i2cp->start, i2cp->end)) {
+    if ((i2cp->start != i2cp->end) &&
+        (!osalTimeIsInRangeX(osalOsGetSystemTimeX(), i2cp->start, i2cp->end))) {
       return MSG_TIMEOUT;
     }
     i2c_delay(i2cp);
