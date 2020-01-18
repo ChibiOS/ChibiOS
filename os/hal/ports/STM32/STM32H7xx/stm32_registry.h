@@ -278,6 +278,14 @@
 #define STM32_TIM7_HANDLER                  Vector11C
 #define STM32_TIM7_NUMBER                   55
 
+#define STM32_HAS_TIM8                      TRUE
+#define STM32_TIM8_IS_32BITS                FALSE
+#define STM32_TIM8_CHANNELS                 6
+#define STM32_TIM8_UP_HANDLER               VectorF0
+#define STM32_TIM8_CC_HANDLER               VectorF8
+#define STM32_TIM8_UP_NUMBER                44
+#define STM32_TIM8_CC_NUMBER                46
+
 #define STM32_HAS_TIM12                     TRUE
 #define STM32_TIM12_IS_32BITS               FALSE
 #define STM32_TIM12_CHANNELS                2
@@ -314,7 +322,6 @@
 #define STM32_TIM17_HANDLER                 Vector218
 #define STM32_TIM17_NUMBER                  118
 
-#define STM32_HAS_TIM8                      FALSE
 #define STM32_HAS_TIM9                      FALSE
 #define STM32_HAS_TIM10                     FALSE
 #define STM32_HAS_TIM11                     FALSE
