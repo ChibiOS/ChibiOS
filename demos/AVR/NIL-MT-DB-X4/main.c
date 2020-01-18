@@ -38,7 +38,7 @@ THD_FUNCTION(Thread1, arg) {
  * match NIL_CFG_NUM_THREADS.
  */
 THD_TABLE_BEGIN
-  THD_TABLE_ENTRY(waThread1, "blinker", Thread1, NULL)
+  THD_TABLE_THREAD(0, "blinker",  waThread1,  Thread1,  NULL)
 THD_TABLE_END
 
 /*
