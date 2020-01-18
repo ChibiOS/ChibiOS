@@ -76,6 +76,7 @@
 *** 19.1.4 ***
 - NEW: Added support for .cc files extensions in makefiles.
 - NEW: Made bus acquire/release functions in SNOR driver public.
+- FIX: Fixed TIM8 missing on STM32H7xx (bug #1068).
 - FIX: Fixed Sharing issues with GPT TIMv1 driver (bug #1067).
 - FIX: Fixed wrong check on STM32_DAC_DUAL_MODE in DACv1 STM32 driver
        (bug #1065).
