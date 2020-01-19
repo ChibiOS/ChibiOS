@@ -130,14 +130,14 @@
 #define STM32_IRQ_TIM8_TRGCO_TIM14_PRIORITY 7
 #define STM32_IRQ_TIM8_CC_PRIORITY          7
 
-#define STM32_IRQ_USART1_PRIORITY           7
-#define STM32_IRQ_USART2_PRIORITY           7
-#define STM32_IRQ_USART3_PRIORITY           7
-#define STM32_IRQ_UART4_PRIORITY            7
-#define STM32_IRQ_UART5_PRIORITY            7
-#define STM32_IRQ_USART6_PRIORITY           7
-#define STM32_IRQ_UART7_PRIORITY            7
-#define STM32_IRQ_UART8_PRIORITY            7
+#define STM32_IRQ_USART1_PRIORITY           12
+#define STM32_IRQ_USART2_PRIORITY           12
+#define STM32_IRQ_USART3_PRIORITY           12
+#define STM32_IRQ_UART4_PRIORITY            12
+#define STM32_IRQ_UART5_PRIORITY            12
+#define STM32_IRQ_USART6_PRIORITY           12
+#define STM32_IRQ_UART7_PRIORITY            12
+#define STM32_IRQ_UART8_PRIORITY            12
 
 /*
  * ADC driver system settings.
