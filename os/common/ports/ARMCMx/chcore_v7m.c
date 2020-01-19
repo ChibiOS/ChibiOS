@@ -124,13 +124,15 @@ void SVC_Handler(void) {
 /*lint -restore*/
   uint32_t psp = __get_PSP();
 
-  chDbgAssert(((uint32_t)__builtin_return_address(0) & 4U) != 0U,
-              "not process");
-
 #if PORT_USE_SYSCALL == TRUE
   uint32_t control;
   /* Caller context.*/
   struct port_extctx *ectxp = (struct port_extctx *)psp;
+
+#if defined(__GNUC__)
+  chDbgAssert(((uint32_t)__builtin_return_address(0) & 4U) != 0U,
+              "not process");
+#endif
 
   /* Checking if the SVC instruction has been used from privileged or
      non-privileged mode.*/
