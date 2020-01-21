@@ -2909,6 +2909,7 @@
 #include "cache.h"
 #include "mpu_v7m.h"
 #include "stm32_isr.h"
+#include "stm32_mdma.h"
 #include "stm32_dma.h"
 #include "stm32_bdma.h"
 #include "stm32_exti.h"

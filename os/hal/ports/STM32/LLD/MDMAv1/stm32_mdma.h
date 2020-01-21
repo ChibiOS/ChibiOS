@@ -50,40 +50,20 @@
 #define STM32_MDMA_IS_VALID_PRIORITY(prio) (((prio) >= 0U) && ((prio) <= 3U))
 
 /**
+ * @brief   Checks if a MDMA channel id is within the valid range.
+ *
+ * @param[in] id        MDMA channel id
+ * @retval              The check result.
+ * @retval false        invalid MDMA channel.
+ * @retval true         correct MDMA channel.
+ */
+#define STM32_MDMA_IS_VALID_CHANNEL(id) (((id) >= 0U) &&                    \
+                                         ((id) <= STM32_MDMA_CHANNELS))
+
+/**
  * @brief   Special stream identifier
  */
 #define STM32_MDMA_CHANNEL_ID_ANY   STM32_MDMA_CHANNELS
-
-/**
- * @name    MDMA streams identifiers
- * @{
- */
-/**
- * @brief   Returns a pointer to a stm32_mdma_channel_t structure.
- *
- * @param[in] id        the stream numeric identifier
- * @return              A pointer to the stm32_mdma_channel_t constant structure
- *                      associated to the MDMA stream.
- */
-#define STM32_MDMA_CHANNEL(id)       (&__stm32_mdma_channels[id])
-
-#define STM32_MDMA_CHANNEL0         STM32_MDMA_CHANNEL(0)
-#define STM32_MDMA_CHANNEL1         STM32_MDMA_CHANNEL(1)
-#define STM32_MDMA_CHANNEL2         STM32_MDMA_CHANNEL(2)
-#define STM32_MDMA_CHANNEL3         STM32_MDMA_CHANNEL(3)
-#define STM32_MDMA_CHANNEL4         STM32_MDMA_CHANNEL(4)
-#define STM32_MDMA_CHANNEL5         STM32_MDMA_CHANNEL(5)
-#define STM32_MDMA_CHANNEL6         STM32_MDMA_CHANNEL(6)
-#define STM32_MDMA_CHANNEL7         STM32_MDMA_CHANNEL(7)
-#define STM32_MDMA_CHANNEL8         STM32_MDMA_CHANNEL(8)
-#define STM32_MDMA_CHANNEL9         STM32_MDMA_CHANNEL(9)
-#define STM32_MDMA_CHANNEL10        STM32_MDMA_CHANNEL(10)
-#define STM32_MDMA_CHANNEL11        STM32_MDMA_CHANNEL(11)
-#define STM32_MDMA_CHANNEL12        STM32_MDMA_CHANNEL(12)
-#define STM32_MDMA_CHANNEL13        STM32_MDMA_CHANNEL(13)
-#define STM32_MDMA_CHANNEL14        STM32_MDMA_CHANNEL(14)
-#define STM32_MDMA_CHANNEL15        STM32_MDMA_CHANNEL(15)
-/** @} */
 
 /**
  * @name    CISR register constants
@@ -270,140 +250,21 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !defined(STM32_HAS_MDMA)
-#error "STM32_HAS_MDMA missing in registry"
+#if !defined(STM32_MDMA_HANDLER)
+#error "STM32_MDMA_HANDLER missing in registry"
 #endif
 
-#if !defined(STM32_HAS_DMA2)
-#error "STM32_HAS_DMA2 missing in registry"
+#if !defined(STM32_MDMA_NUMBER)
+#error "STM32_MDMA_NUMBER missing in registry"
 #endif
 
-#if !defined(STM32_MDMA_CH0_HANDLER)
-#error "STM32_MDMA_CH0_HANDLER missing in registry"
+/* Priority settings checks.*/
+#if !defined(STM32_IRQ_MDMA_PRIORITY)
+#error "STM32_IRQ_MDMA_PRIORITY not defined in mcuconf.h"
 #endif
 
-#if !defined(STM32_MDMA_CH1_HANDLER)
-#error "STM32_MDMA_CH1_HANDLER missing in registry"
-#endif
-
-#if !defined(STM32_MDMA_CH2_HANDLER)
-#error "STM32_MDMA_CH2_HANDLER missing in registry"
-#endif
-
-#if !defined(STM32_MDMA_CH3_HANDLER)
-#error "STM32_MDMA_CH3_HANDLER missing in registry"
-#endif
-
-#if !defined(STM32_MDMA_CH4_HANDLER)
-#error "STM32_MDMA_CH4_HANDLER missing in registry"
-#endif
-
-#if !defined(STM32_MDMA_CH5_HANDLER)
-#error "STM32_MDMA_CH5_HANDLER missing in registry"
-#endif
-
-#if !defined(STM32_MDMA_CH6_HANDLER)
-#error "STM32_MDMA_CH6_HANDLER missing in registry"
-#endif
-
-#if !defined(STM32_MDMA_CH7_HANDLER)
-#error "STM32_MDMA_CH7_HANDLER missing in registry"
-#endif
-
-#if !defined(STM32_MDMA_CH8_HANDLER)
-#error "STM32_MDMA_CH8_HANDLER missing in registry"
-#endif
-
-#if !defined(STM32_MDMA_CH9_HANDLER)
-#error "STM32_MDMA_CH9_HANDLER missing in registry"
-#endif
-
-#if !defined(STM32_MDMA_CH10_HANDLER)
-#error "STM32_MDMA_CH10_HANDLER missing in registry"
-#endif
-
-#if !defined(STM32_MDMA_CH11_HANDLER)
-#error "STM32_MDMA_CH11_HANDLER missing in registry"
-#endif
-
-#if !defined(STM32_MDMA_CH12_HANDLER)
-#error "STM32_MDMA_CH12_HANDLER missing in registry"
-#endif
-
-#if !defined(STM32_MDMA_CH13_HANDLER)
-#error "STM32_MDMA_CH13_HANDLER missing in registry"
-#endif
-
-#if !defined(STM32_MDMA_CH14_HANDLER)
-#error "STM32_MDMA_CH14_HANDLER missing in registry"
-#endif
-
-#if !defined(STM32_MDMA_CH15_HANDLER)
-#error "STM32_MDMA_CH15_HANDLER missing in registry"
-#endif
-
-#if !defined(STM32_MDMA_CH0_NUMBER)
-#error "STM32_MDMA_CH0_NUMBER missing in registry"
-#endif
-
-#if !defined(STM32_MDMA_CH1_NUMBER)
-#error "STM32_MDMA_CH1_NUMBER missing in registry"
-#endif
-
-#if !defined(STM32_MDMA_CH2_NUMBER)
-#error "STM32_MDMA_CH2_NUMBER missing in registry"
-#endif
-
-#if !defined(STM32_MDMA_CH3_NUMBER)
-#error "STM32_MDMA_CH3_NUMBER missing in registry"
-#endif
-
-#if !defined(STM32_MDMA_CH4_NUMBER)
-#error "STM32_MDMA_CH4_NUMBER missing in registry"
-#endif
-
-#if !defined(STM32_MDMA_CH5_NUMBER)
-#error "STM32_MDMA_CH5_NUMBER missing in registry"
-#endif
-
-#if !defined(STM32_MDMA_CH6_NUMBER)
-#error "STM32_MDMA_CH6_NUMBER missing in registry"
-#endif
-
-#if !defined(STM32_MDMA_CH7_NUMBER)
-#error "STM32_MDMA_CH7_NUMBER missing in registry"
-#endif
-
-#if !defined(STM32_MDMA_CH8_NUMBER)
-#error "STM32_MDMA_CH8_NUMBER missing in registry"
-#endif
-
-#if !defined(STM32_MDMA_CH9_NUMBER)
-#error "STM32_MDMA_CH9_NUMBER missing in registry"
-#endif
-
-#if !defined(STM32_MDMA_CH10_NUMBER)
-#error "STM32_MDMA_CH10_NUMBER missing in registry"
-#endif
-
-#if !defined(STM32_MDMA_CH11_NUMBER)
-#error "STM32_MDMA_CH11_NUMBER missing in registry"
-#endif
-
-#if !defined(STM32_MDMA_CH12_NUMBER)
-#error "STM32_MDMA_CH12_NUMBER missing in registry"
-#endif
-
-#if !defined(STM32_MDMA_CH13_NUMBER)
-#error "STM32_MDMA_CH13_NUMBER missing in registry"
-#endif
-
-#if !defined(STM32_MDMA_CH14_NUMBER)
-#error "STM32_MDMA_CH14_NUMBER missing in registry"
-#endif
-
-#if !defined(STM32_MDMA_CH15_NUMBER)
-#error "STM32_MDMA_CH15_NUMBER missing in registry"
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_MDMA_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_MDMA_PRIORITY"
 #endif
 
 /*===========================================================================*/
@@ -422,9 +283,18 @@ typedef void (*stm32_mdmaisr_t)(void *p, uint32_t flags);
  * @brief   STM32 MDMA stream descriptor structure.
  */
 typedef struct {
-  MDMA_Channel_TypeDef  *channel;       /**< @brief Associated MDMA channel. */
-  uint32_t              selfindex;      /**< @brief Index to self in array. */
-  uint32_t              vector;         /**< @brief Associated IRQ vector.  */
+  /**
+   * @brief Associated MDMA channel.
+   */
+  MDMA_Channel_TypeDef  *channel;
+  /**
+   * @brief   MDMA callback function.
+   */
+  stm32_mdmaisr_t       func;
+  /**
+   * @brief   MDMA callback parameter.
+   */
+  void                  *param;
 } stm32_mdma_channel_t;
 
 /*===========================================================================*/
@@ -493,8 +363,8 @@ typedef struct {
  * @xclass
  */
 #define mdmaChannelSetModeX(mdmachp, ctcr, ccr) do {                        \
-    (mdmachp)->channel->CTCR = (uint32_t)(ctcr);                            \
-    (mdmachp)->channel->CCR  = (uint32_t)(ccr);                             \
+  (mdmachp)->channel->CTCR = (uint32_t)(ctcr);                              \
+  (mdmachp)->channel->CCR  = (uint32_t)(ccr);                               \
 } while (0)
 
 /**
@@ -519,12 +389,12 @@ typedef struct {
  *
  * @xclass
  */
-#define mdmaStreamClearInterruptX(mdmachp) do {                             \
-  *(mdmachp)->CIFCR = (STM32_MDMA_CIFCR_CTEIF  |                            \
-                       STM32_MDMA_CIFCR_CBRTIF |                            \
-                       STM32_MDMA_CIFCR_CBRTIF |                            \
-                       STM32_MDMA_CIFCR_CCTCIF |                            \
-                       STM32_MDMA_CIFCR_CTEIF)                              \
+#define mdmaChannelClearInterruptX(mdmachp) do {                            \
+  (mdmachp)->channel->CIFCR = (STM32_MDMA_CIFCR_CTEIF  |                    \
+                               STM32_MDMA_CIFCR_CBRTIF |                    \
+                               STM32_MDMA_CIFCR_CBRTIF |                    \
+                               STM32_MDMA_CIFCR_CCTCIF |                    \
+                               STM32_MDMA_CIFCR_CTEIF);                     \
 } while (0)
 /** @} */
 
@@ -532,25 +402,19 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if !defined(__DOXYGEN__)
-extern const stm32_mdma_channel_t __stm32_mdma_channels[STM32_MDMA_CHANNELS];
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
   void mdmaInit(void);
   const stm32_mdma_channel_t *mdmaChannelAllocI(uint32_t id,
-                                                uint32_t priority,
                                                 stm32_mdmaisr_t func,
                                                 void *param);
   const stm32_mdma_channel_t *mdmaChannelAlloc(uint32_t id,
-                                               uint32_t priority,
                                                stm32_mdmaisr_t func,
                                                void *param);
   void mdmaChannelFreeI(const stm32_mdma_channel_t *mdmachp);
   void mdmaChannelFree(const stm32_mdma_channel_t *mdmachp);
-  void mdmaStreamDisableX(const stm32_mdma_channel_t *mdmachp);
+  void mdmaChannelDisableX(const stm32_mdma_channel_t *mdmachp);
 #ifdef __cplusplus
 }
 #endif

@@ -130,6 +130,13 @@
 #define STM32_DMA2_CH7_NUMBER               70
 
 /*
+ * MDMA units.
+ */
+#define STM32_MDMA_HANDLER                  Vector228
+
+#define STM32_MDMA_NUMBER                   122
+
+/*
  * ETH units.
  */
 #define STM32_ETH_HANDLER                   Vector134

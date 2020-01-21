@@ -164,6 +164,8 @@
 /*
  * IRQ system settings.
  */
+#define STM32_IRQ_MDMA_PRIORITY             9
+
 #define STM32_IRQ_EXTI0_PRIORITY            6
 #define STM32_IRQ_EXTI1_PRIORITY            6
 #define STM32_IRQ_EXTI2_PRIORITY            6
@@ -176,6 +178,8 @@
 #define STM32_IRQ_EXTI18_PRIORITY           6
 #define STM32_IRQ_EXTI19_PRIORITY           6
 #define STM32_IRQ_EXTI20_21_PRIORITY        6
+
+#define STM32_IRQ_QUADSPI1_PRIORITY         10
 
 #define STM32_IRQ_TIM1_UP_PRIORITY          7
 #define STM32_IRQ_TIM1_CC_PRIORITY          7
@@ -460,5 +464,15 @@
  * WDG driver system settings.
  */
 #define STM32_WDG_USE_IWDG                  FALSE
+
+/*
+ * WSPI driver system settings.
+ */
+#define STM32_WSPI_USE_QUADSPI1             TRUE
+#define STM32_WSPI_QUADSPI1_PRESCALER_VALUE 1
+#define STM32_WSPI_QUADSPI1_MDMA_CHANNEL    STM32_MDMA_CHANNEL_ID_ANY
+#define STM32_WSPI_QUADSPI1_MDMA_PRIORITY   1
+#define STM32_WSPI_MDMA_ERROR_HOOK(qspip)   osalSysHalt("MDMA failure")
+#define STM32_USE_STM32_D1_WORKAROUND       TRUE
 
 #endif /* MCUCONF_H */

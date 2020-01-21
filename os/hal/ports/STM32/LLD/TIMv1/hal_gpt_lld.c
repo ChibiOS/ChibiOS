@@ -1142,6 +1142,7 @@ void gpt_lld_serve_interrupt(GPTDriver *gptp) {
 
   sr  = gptp->tim->SR;
   sr &= gptp->tim->DIER & STM32_TIM_DIER_IRQ_MASK;
+  gptp->tim->SR = ~sr;
   if ((sr & STM32_TIM_SR_UIF) != 0) {
     _gpt_isr_invoke_cb(gptp);
   }

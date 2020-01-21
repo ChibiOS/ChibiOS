@@ -43,32 +43,6 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
-/**
- * @brief   MDMA channels descriptors.
- * @details This table keeps the association between an unique channel
- *          identifier and the involved physical registers.
- * @note    Don't use this array directly, use the appropriate wrapper macros
- *          instead: @p STM32_MDMA_CHANNEL0, @p STM32_MDMA_CHANNEL1 etc.
- */
-const stm32_mdma_channel_t __stm32_mdma_channels[STM32_MDMA_CHANNELS] = {
-  {MDMA_Channel0,  0,  STM32_MDMA_CH0_NUMBER},
-  {MDMA_Channel1,  1,  STM32_MDMA_CH1_NUMBER},
-  {MDMA_Channel2,  2,  STM32_MDMA_CH2_NUMBER},
-  {MDMA_Channel3,  3,  STM32_MDMA_CH3_NUMBER},
-  {MDMA_Channel4,  4,  STM32_MDMA_CH4_NUMBER},
-  {MDMA_Channel5,  5,  STM32_MDMA_CH5_NUMBER},
-  {MDMA_Channel6,  6,  STM32_MDMA_CH6_NUMBER},
-  {MDMA_Channel7,  7,  STM32_MDMA_CH7_NUMBER},
-  {MDMA_Channel8,  8,  STM32_MDMA_CH8_NUMBER},
-  {MDMA_Channel9,  9,  STM32_MDMA_CH9_NUMBER},
-  {MDMA_Channel10, 10, STM32_MDMA_CH10_NUMBER},
-  {MDMA_Channel11, 11, STM32_MDMA_CH11_NUMBER},
-  {MDMA_Channel12, 12, STM32_MDMA_CH12_NUMBER},
-  {MDMA_Channel13, 13, STM32_MDMA_CH13_NUMBER},
-  {MDMA_Channel14, 14, STM32_MDMA_CH14_NUMBER},
-  {MDMA_Channel15, 15, STM32_MDMA_CH15_NUMBER},
-};
-
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
@@ -80,20 +54,11 @@ static struct {
   /**
    * @brief   Mask of the allocated channels.
    */
-  uint32_t          allocated_mask;
+  uint32_t              allocated_mask;
   /**
    * @brief   MDMA IRQ redirectors.
    */
-  struct {
-    /**
-     * @brief   MDMA callback function.
-     */
-    stm32_mdmaisr_t func;
-    /**
-     * @brief   MDMA callback parameter.
-     */
-    void            *param;
-  } channels[STM32_MDMA_CHANNELS];
+  stm32_mdma_channel_t  channels[STM32_MDMA_CHANNELS];
 } mdma;
 
 /*===========================================================================*/
@@ -101,11 +66,12 @@ static struct {
 /*===========================================================================*/
 
 static void mdma_serve_interrupt(const stm32_mdma_channel_t *mdmachp) {
-  uint32_t idx = mdmachp->selfindex;
-  uint32_t flags = mdmachp->channel->CISR;
+  uint32_t flags;
+
+  flags = mdmachp->channel->CISR;
   mdmachp->channel->CIFCR = flags;
-  if (mdma.channels[idx].func != NULL) {
-    mdma.channels[idx].func(mdma.channels[idx].param, flags);
+  if (mdmachp->func != NULL) {
+    mdmachp->func(mdmachp->param, flags);
   }
 }
 
@@ -114,225 +80,77 @@ static void mdma_serve_interrupt(const stm32_mdma_channel_t *mdmachp) {
 /*===========================================================================*/
 
 /**
- * @brief   MDMA channel 0 shared interrupt handler.
+ * @brief   MDMA shared interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_MDMA_CH0_HANDLER) {
-
+OSAL_IRQ_HANDLER(STM32_MDMA_HANDLER) {
+  uint32_t gisr = MDMA->GISR0;
   OSAL_IRQ_PROLOGUE();
 
-  mdma_serve_interrupt(STM32_MDMA_CHANNEL0);
+  if ((gisr & (1U << 0)) != 0U) {
+    mdma_serve_interrupt(&mdma.channels[0]);
+  }
 
-  OSAL_IRQ_EPILOGUE();
-}
+  if ((gisr & (1U << 1)) != 0U) {
+    mdma_serve_interrupt(&mdma.channels[1]);
+  }
 
-/**
- * @brief   MDMA channel 1 shared interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_MDMA_CH1_HANDLER) {
+  if ((gisr & (1U << 2)) != 0U) {
+    mdma_serve_interrupt(&mdma.channels[2]);
+  }
 
-  OSAL_IRQ_PROLOGUE();
+  if ((gisr & (1U << 3)) != 0U) {
+    mdma_serve_interrupt(&mdma.channels[3]);
+  }
 
-  mdma_serve_interrupt(STM32_MDMA_CHANNEL1);
+  if ((gisr & (1U << 4)) != 0U) {
+    mdma_serve_interrupt(&mdma.channels[4]);
+  }
 
-  OSAL_IRQ_EPILOGUE();
-}
+  if ((gisr & (1U << 5)) != 0U) {
+    mdma_serve_interrupt(&mdma.channels[5]);
+  }
 
-/**
- * @brief   MDMA channel 2 shared interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_MDMA_CH2_HANDLER) {
+  if ((gisr & (1U << 6)) != 0U) {
+    mdma_serve_interrupt(&mdma.channels[6]);
+  }
 
-  OSAL_IRQ_PROLOGUE();
+  if ((gisr & (1U << 7)) != 0U) {
+    mdma_serve_interrupt(&mdma.channels[7]);
+  }
 
-  mdma_serve_interrupt(STM32_MDMA_CHANNEL2);
+  if ((gisr & (1U << 8)) != 0U) {
+    mdma_serve_interrupt(&mdma.channels[8]);
+  }
 
-  OSAL_IRQ_EPILOGUE();
-}
+  if ((gisr & (1U << 9)) != 0U) {
+    mdma_serve_interrupt(&mdma.channels[9]);
+  }
 
-/**
- * @brief   MDMA channel 3 shared interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_MDMA_CH3_HANDLER) {
+  if ((gisr & (1U << 10)) != 0U) {
+    mdma_serve_interrupt(&mdma.channels[10]);
+  }
 
-  OSAL_IRQ_PROLOGUE();
+  if ((gisr & (1U << 11)) != 0U) {
+    mdma_serve_interrupt(&mdma.channels[11]);
+  }
 
-  mdma_serve_interrupt(STM32_MDMA_CHANNEL3);
+  if ((gisr & (1U << 12)) != 0U) {
+    mdma_serve_interrupt(&mdma.channels[12]);
+  }
 
-  OSAL_IRQ_EPILOGUE();
-}
+  if ((gisr & (1U << 13)) != 0U) {
+    mdma_serve_interrupt(&mdma.channels[13]);
+  }
 
-/**
- * @brief   MDMA channel 4 shared interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_MDMA_CH4_HANDLER) {
+  if ((gisr & (1U << 14)) != 0U) {
+    mdma_serve_interrupt(&mdma.channels[14]);
+  }
 
-  OSAL_IRQ_PROLOGUE();
-
-  mdma_serve_interrupt(STM32_MDMA_CHANNEL4);
-
-  OSAL_IRQ_EPILOGUE();
-}
-
-/**
- * @brief   MDMA channel 5 shared interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_MDMA_CH5_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-  mdma_serve_interrupt(STM32_MDMA_CHANNEL5);
-
-  OSAL_IRQ_EPILOGUE();
-}
-
-/**
- * @brief   MDMA channel 6 shared interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_MDMA_CH6_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-  mdma_serve_interrupt(STM32_MDMA_CHANNEL6);
-
-  OSAL_IRQ_EPILOGUE();
-}
-
-/**
- * @brief   MDMA channel 7 shared interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_MDMA_CH7_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-  mdma_serve_interrupt(STM32_MDMA_CHANNEL7);
-
-  OSAL_IRQ_EPILOGUE();
-}
-
-/**
- * @brief   MDMA channel 8 shared interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_MDMA_CH8_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-  mdma_serve_interrupt(STM32_MDMA_CHANNEL8);
-
-  OSAL_IRQ_EPILOGUE();
-}
-
-/**
- * @brief   MDMA channel 9 shared interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_MDMA_CH9_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-  mdma_serve_interrupt(STM32_MDMA_CHANNEL9);
-
-  OSAL_IRQ_EPILOGUE();
-}
-
-/**
- * @brief   MDMA channel 10 shared interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_MDMA_CH10_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-  mdma_serve_interrupt(STM32_MDMA_CHANNEL10);
-
-  OSAL_IRQ_EPILOGUE();
-}
-
-/**
- * @brief   MDMA channel 11 shared interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_MDMA_CH11_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-  mdma_serve_interrupt(STM32_MDMA_CHANNEL11);
-
-  OSAL_IRQ_EPILOGUE();
-}
-
-/**
- * @brief   MDMA channel 12 shared interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_MDMA_CH12_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-  mdma_serve_interrupt(STM32_MDMA_CHANNEL12);
-
-  OSAL_IRQ_EPILOGUE();
-}
-
-/**
- * @brief   MDMA channel 13 shared interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_MDMA_CH13_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-  mdma_serve_interrupt(STM32_MDMA_CHANNEL13);
-
-  OSAL_IRQ_EPILOGUE();
-}
-
-/**
- * @brief   MDMA channel 14 shared interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_MDMA_CH14_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-  mdma_serve_interrupt(STM32_MDMA_CHANNEL14);
-
-  OSAL_IRQ_EPILOGUE();
-}
-
-/**
- * @brief   MDMA channel 15 shared interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_MDMA_CH15_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-  mdma_serve_interrupt(STM32_MDMA_CHANNEL15);
+  if ((gisr & (1U << 15)) != 0U) {
+    mdma_serve_interrupt(&mdma.channels[15]);
+  }
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -347,18 +165,26 @@ OSAL_IRQ_HANDLER(STM32_MDMA_CH15_HANDLER) {
  * @init
  */
 void mdmaInit(void) {
+  static MDMA_Channel_TypeDef * const ch[STM32_MDMA_CHANNELS] = {
+    MDMA_Channel0,  MDMA_Channel1,  MDMA_Channel2,  MDMA_Channel3,
+    MDMA_Channel4,  MDMA_Channel5,  MDMA_Channel6,  MDMA_Channel7,
+    MDMA_Channel8,  MDMA_Channel9,  MDMA_Channel10, MDMA_Channel11,
+    MDMA_Channel12, MDMA_Channel13, MDMA_Channel14, MDMA_Channel15
+  };
   unsigned i;
 
   mdma.allocated_mask = 0U;
   for (i = 0U; i < STM32_MDMA_CHANNELS; i++) {
-    mdma.channels[i].func = NULL;
-    __stm32_dma_channels[i].channel->CCR   = STM32_MDMA_CCR_RESET_VALUE;
-    __stm32_dma_channels[i].channel->CTCR  = STM32_MDMA_CTCR_RESET_VALUE;
-    __stm32_dma_channels[i].channel->CIFCR = STM32_MDMA_CIFCR_CTEIF  |
-                                             STM32_MDMA_CIFCR_CBRTIF |
-                                             STM32_MDMA_CIFCR_CBRTIF |
-                                             STM32_MDMA_CIFCR_CCTCIF |
-                                             STM32_MDMA_CIFCR_CTEIF;
+    MDMA_Channel_TypeDef *cp = ch[i];
+    mdma.channels[i].channel        = cp;
+    mdma.channels[i].func           = NULL;
+    mdma.channels[i].channel->CCR   = STM32_MDMA_CCR_RESET_VALUE;
+    mdma.channels[i].channel->CTCR  = STM32_MDMA_CTCR_RESET_VALUE;
+    mdma.channels[i].channel->CIFCR = STM32_MDMA_CIFCR_CTEIF  |
+                                      STM32_MDMA_CIFCR_CBRTIF |
+                                      STM32_MDMA_CIFCR_CBRTIF |
+                                      STM32_MDMA_CIFCR_CCTCIF |
+                                      STM32_MDMA_CIFCR_CTEIF;
   }
 }
 
@@ -371,7 +197,6 @@ void mdmaInit(void) {
  * @param[in] id        numeric identifiers of a specific channel or:
  *                      - @p STM32_MDMA_CHANNEL_ID_ANY for any channel.
  *                      .
- * @param[in] priority  IRQ priority for the MDMA channel
  * @param[in] func      handling function pointer, can be @p NULL
  * @param[in] param     a parameter to be passed to the handling function
  * @return              Pointer to the allocated @p stm32_mdma_channel_t
@@ -381,7 +206,6 @@ void mdmaInit(void) {
  * @iclass
  */
 const stm32_mdma_channel_t *dmaChannelAllocI(uint32_t id,
-                                             uint32_t priority,
                                              stm32_mdmaisr_t func,
                                              void *param) {
   uint32_t i, startid, endid;
@@ -404,12 +228,12 @@ const stm32_mdma_channel_t *dmaChannelAllocI(uint32_t id,
   for (i = startid; i <= endid; i++) {
     uint32_t mask = (1U << i);
     if ((mdma.allocated_mask & mask) == 0U) {
-      const stm32_mdma_channel_t *mdmachp = STM32_MDMA_CHANNEL(i);
+      stm32_mdma_channel_t *mdmachp = &mdma.channels[i];
 
       /* Installs the MDMA handler.*/
-      mdma.channels[i].func  = func;
-      mdma.channels[i].param = param;
-      mdma.allocated_mask   |= mask;
+      mdma.allocated_mask |= mask;
+      mdmachp->func  = func;
+      mdmachp->param = param;
 
       /* Enabling MDMA clocks required by the current channels set.*/
       if (mdma.allocated_mask != 0U) {
@@ -418,7 +242,7 @@ const stm32_mdma_channel_t *dmaChannelAllocI(uint32_t id,
 
       /* Enables the associated IRQ vector if a callback is defined.*/
       if (func != NULL) {
-        nvicEnableVector(mdmachp->vector, priority);
+        nvicEnableVector(STM32_MDMA_NUMBER, STM32_IRQ_MDMA_PRIORITY);
       }
 
       return mdmachp;
@@ -437,7 +261,6 @@ const stm32_mdma_channel_t *dmaChannelAllocI(uint32_t id,
  * @param[in] id        numeric identifiers of a specific channel or:
  *                      - @p STM32_MDMA_CHANNEL_ID_ANY for any channel.
  *                      .
- * @param[in] priority  IRQ priority for the MDMA channel
  * @param[in] func      handling function pointer, can be @p NULL
  * @param[in] param     a parameter to be passed to the handling function
  * @return              Pointer to the allocated @p stm32_mdma_channel_t
@@ -447,13 +270,12 @@ const stm32_mdma_channel_t *dmaChannelAllocI(uint32_t id,
  * @api
  */
 const stm32_mdma_channel_t *dmaChannelAlloc(uint32_t id,
-                                            uint32_t priority,
                                             stm32_mdmaisr_t func,
                                             void *param) {
   const stm32_mdma_channel_t *mdmachp;
 
   osalSysLock();
-  mdmachp = mdmaChannelAllocI(id, priority, func, param);
+  mdmachp = mdmaChannelAllocI(id, func, param);
   osalSysUnlock();
 
   return mdmachp;
@@ -470,21 +292,21 @@ const stm32_mdma_channel_t *dmaChannelAlloc(uint32_t id,
  * @iclass
  */
 void mdmaChannelFreeI(const stm32_mdma_channel_t *mdmachp) {
-
+  uint32_t channel = mdmachp - mdma.channels;
   osalDbgCheck(mdmachp != NULL);
 
   /* Check if the channels is not taken.*/
-  osalDbgAssert((dma.allocated_mask & (1U << mmdmachp->selfindex)) != 0U,
+  osalDbgAssert((mdma.allocated_mask & (1U << channel)) != 0U,
                 "not allocated");
 
   /* Disables the associated IRQ vector.*/
-  nvicDisableVector(mdmachp->vector);
+  nvicDisableVector(STM32_MDMA_NUMBER);
 
   /* Marks the channel as not allocated.*/
-  mdma.allocated_mask &= ~(1U << mmdmachp->selfindex);
+  mdma.allocated_mask &= ~(1U << channel);
 
   /* Shutting down clocks that are no more required, if any.*/
-  if (dma.allocated_mask == 0U) {
+  if (mdma.allocated_mask == 0U) {
     rccDisableMDMA();
   }
 }
@@ -517,7 +339,7 @@ void mdmaChannelFree(const stm32_mdma_channel_t *mdmachp) {
  *
  * @xclass
  */
-void mdmaStreamDisableX(const stm32_mdma_channel_t *mdmachp) {
+void mdmaChannelDisableX(const stm32_mdma_channel_t *mdmachp) {
   uint32_t ccr = mdmachp->channel->CCR;
 
   /* Clearing CCR regardless of previous state.*/
@@ -533,7 +355,7 @@ void mdmaStreamDisableX(const stm32_mdma_channel_t *mdmachp) {
   }
 
   /* Clearing IRQ sources.*/
-  mdmaStreamClearInterruptX(mdmachp);
+  mdmaChannelClearInterruptX(mdmachp);
 }
 
 #endif /* defined(STM32_MDMA_REQUIRED) */
