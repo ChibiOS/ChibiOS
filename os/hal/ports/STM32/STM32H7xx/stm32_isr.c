@@ -107,6 +107,10 @@ void irqInit(void) {
   exti19_irq_init();
   exti20_exti21_irq_init();
 
+  mdma_irq_init();
+
+  quadspi_irq_init();
+
   tim1_irq_init();
   tim2_irq_init();
   tim3_irq_init();
@@ -145,6 +149,10 @@ void irqDeinit(void) {
   exti18_irq_deinit();
   exti19_irq_deinit();
   exti20_exti21_irq_deinit();
+
+  mdma_irq_deinit();
+
+  quadspi_irq_deinit();
 
   tim1_irq_deinit();
   tim2_irq_deinit();

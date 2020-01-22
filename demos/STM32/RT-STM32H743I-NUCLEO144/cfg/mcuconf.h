@@ -164,8 +164,6 @@
 /*
  * IRQ system settings.
  */
-#define STM32_IRQ_MDMA_PRIORITY             9
-
 #define STM32_IRQ_EXTI0_PRIORITY            6
 #define STM32_IRQ_EXTI1_PRIORITY            6
 #define STM32_IRQ_EXTI2_PRIORITY            6
@@ -178,6 +176,8 @@
 #define STM32_IRQ_EXTI18_PRIORITY           6
 #define STM32_IRQ_EXTI19_PRIORITY           6
 #define STM32_IRQ_EXTI20_21_PRIORITY        6
+
+#define STM32_IRQ_MDMA_PRIORITY             9
 
 #define STM32_IRQ_QUADSPI1_PRIORITY         10
 

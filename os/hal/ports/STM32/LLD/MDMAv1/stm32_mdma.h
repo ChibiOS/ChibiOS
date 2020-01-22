@@ -207,7 +207,9 @@
 
 #define STM32_MDMA_CTCR_SWRM            (1U << 30)
 
-#define STM32_MDMA_CTCR_BWM             (1U << 31)
+#define STM32_MDMA_CTCR_BWM_MASK        (1U << 31)
+#define STM32_MDMA_CTCR_BWM_NON_BUFF    (0U << 31)
+#define STM32_MDMA_CTCR_BWM_BUFF        (1U << 31)
 /** @} */
 
 /**
@@ -381,6 +383,16 @@ typedef struct {
 } while (0)
 
 /**
+ * @brief   Channel enable check.
+ * @pre     The stream must have been allocated using @p mdmaChannelAlloc().
+ * @post    After use the stream can be released using @p mdmaChannelFree().
+ *
+ * @param[in] mdmachp   pointer to a stm32_mdma_channel_t structure
+ */
+#define mdmaChannelIsEnabled(mdmachp)                                       \
+  (((mdmachp)->channel->CCR & STM32_MDMA_CCR_EN) != 0U)
+
+/**
  * @brief   MDMA stream interrupt sources clear.
  * @pre     The stream must have been allocated using @p mdmaChannelAlloc().
  * @post    After use the stream can be released using @p mdmaChannelFree().
@@ -396,6 +408,18 @@ typedef struct {
                                STM32_MDMA_CIFCR_CCTCIF |                    \
                                STM32_MDMA_CIFCR_CTEIF);                     \
 } while (0)
+
+/**
+ * @brief   MDMA IRQ enable.
+ */
+#define mdma_irq_init()                                                     \
+  nvicEnableVector(STM32_MDMA_NUMBER, STM32_IRQ_MDMA_PRIORITY)
+
+/**
+ * @brief   MDMA IRQ disable.
+ */
+#define mdma_irq_deinit()                                                     \
+  nvicDisableVector(STM32_MDMA_NUMBER)
 /** @} */
 
 /*===========================================================================*/

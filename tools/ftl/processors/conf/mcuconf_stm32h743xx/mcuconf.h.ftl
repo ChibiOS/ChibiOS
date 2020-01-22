@@ -188,6 +188,10 @@
 #define STM32_IRQ_EXTI19_PRIORITY           ${doc.STM32_IRQ_EXTI19_PRIORITY!"6"}
 #define STM32_IRQ_EXTI20_21_PRIORITY        ${doc.STM32_IRQ_EXTI20_21_PRIORITY!"6"}
 
+#define STM32_IRQ_MDMA_PRIORITY             ${doc.STM32_IRQ_MDMA_PRIORITY!"9"}
+
+#define STM32_IRQ_QUADSPI1_PRIORITY         ${doc.STM32_IRQ_QUADSPI1_PRIORITY!"10"}
+
 #define STM32_IRQ_TIM1_UP_PRIORITY          ${doc.STM32_IRQ_TIM1_UP_PRIORITY!"7"}
 #define STM32_IRQ_TIM1_CC_PRIORITY          ${doc.STM32_IRQ_TIM1_CC_PRIORITY!"7"}
 #define STM32_IRQ_TIM2_PRIORITY             ${doc.STM32_IRQ_TIM2_PRIORITY!"7"}
@@ -232,12 +236,8 @@
 /*
  * CAN driver system settings.
  */
-#define STM32_CAN_USE_CAN1                  ${doc.STM32_CAN_USE_CAN1!"FALSE"}
-#define STM32_CAN_USE_CAN2                  ${doc.STM32_CAN_USE_CAN2!"FALSE"}
-#define STM32_CAN_USE_CAN3                  ${doc.STM32_CAN_USE_CAN3!"FALSE"}
-#define STM32_CAN_CAN1_IRQ_PRIORITY         ${doc.STM32_CAN_CAN1_IRQ_PRIORITY!"11"}
-#define STM32_CAN_CAN2_IRQ_PRIORITY         ${doc.STM32_CAN_CAN2_IRQ_PRIORITY!"11"}
-#define STM32_CAN_CAN3_IRQ_PRIORITY         ${doc.STM32_CAN_CAN3_IRQ_PRIORITY!"11"}
+#define STM32_CAN_USE_FDCAN1                ${doc.STM32_CAN_USE_FDCAN1!"FALSE"}
+#define STM32_CAN_USE_FDCAN2                ${doc.STM32_CAN_USE_FDCAN2!"FALSE"}
 
 /*
  * DAC driver system settings.

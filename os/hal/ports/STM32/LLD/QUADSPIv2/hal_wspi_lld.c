@@ -132,14 +132,6 @@ void wspi_lld_init(void) {
   wspiObjectInit(&WSPID1);
   WSPID1.qspi       = QUADSPI;
   WSPID1.mdma       = NULL;
-/*  TODO WSPID1.mdmamode   = STM32_DMA_CR_CHSEL(QUADSPI1_DMA_CHANNEL) |
-                      STM32_DMA_CR_PL(STM32_WSPI_QUADSPI1_DMA_PRIORITY) |
-                      STM32_DMA_CR_PSIZE_BYTE |
-                      STM32_DMA_CR_MSIZE_BYTE |
-                      STM32_DMA_CR_MINC |
-                      STM32_DMA_CR_DMEIE |
-                      STM32_DMA_CR_TEIE;*/
-  nvicEnableVector(STM32_QUADSPI1_NUMBER, STM32_IRQ_QUADSPI1_PRIORITY);
 #endif
 }
 
@@ -248,12 +240,26 @@ void wspi_lld_command(WSPIDriver *wspip, const wspi_command_t *cmdp) {
  */
 void wspi_lld_send(WSPIDriver *wspip, const wspi_command_t *cmdp,
                    size_t n, const uint8_t *txbuf) {
+  uint32_t ctcr = STM32_MDMA_CTCR_BWM_NON_BUFF  |   /* Dest. non-cacheable. */
+                  STM32_MDMA_CTCR_TRGM_BUFFER   |   /* Trigger on buffer.   */
+                  STM32_MDMA_CTCR_TLEN(0U)      |   /* One byte buffer.     */
+                  STM32_MDMA_CTCR_DBURST_16     |   /* Assuming AXI bus.    */
+                  STM32_MDMA_CTCR_SBURST_16     |   /* Assuming AXI bus.    */
+                  STM32_MDMA_CTCR_DINCOS_BYTE   |   /* Byte increment.      */
+                  STM32_MDMA_CTCR_SINCOS_BYTE   |   /* Byte increment.      */
+                  STM32_MDMA_CTCR_DSIZE_BYTE    |   /* Destination size.    */
+                  STM32_MDMA_CTCR_SSIZE_BYTE    |   /* Source size.         */
+                  STM32_MDMA_CTCR_DINC_FIXED    |   /* Destination fixed.   */
+                  STM32_MDMA_CTCR_SINC_INC;         /* Source incremented.  */
+  uint32_t ccr  = STM32_MDMA_CCR_PL(STM32_WSPI_QUADSPI1_MDMA_PRIORITY) |
+                  STM32_MDMA_CCR_CTCIE          |   /* On transfer complete.*/
+                  STM32_MDMA_CCR_TCIE;              /* On transfer error.   */
 
   /* MDMA initializations.*/
   mdmaChannelSetSourceX(wspip->mdma, &wspip->qspi->DR);
   mdmaChannelSetDestinationX(wspip->mdma, txbuf);
   mdmaChannelSetTransactionSizeX(wspip->mdma, n, 0, 0);
-  mdmaChannelSetModeX(wspip->mdma, wspip->mdmactcr, wspip->mdmaccr);
+  mdmaChannelSetModeX(wspip->mdma, ctcr, ccr);
 
   wspip->qspi->DLR = n - 1;
   wspip->qspi->ABR = cmdp->alt;
@@ -278,12 +284,26 @@ void wspi_lld_send(WSPIDriver *wspip, const wspi_command_t *cmdp,
  */
 void wspi_lld_receive(WSPIDriver *wspip, const wspi_command_t *cmdp,
                       size_t n, uint8_t *rxbuf) {
+  uint32_t ctcr = STM32_MDMA_CTCR_BWM_NON_BUFF  |   /* Dest. non-cacheable. */
+                  STM32_MDMA_CTCR_TRGM_BUFFER   |   /* Trigger on buffer.   */
+                  STM32_MDMA_CTCR_TLEN(0U)      |   /* One byte buffer.     */
+                  STM32_MDMA_CTCR_DBURST_16     |   /* Assuming AXI bus.    */
+                  STM32_MDMA_CTCR_SBURST_16     |   /* Assuming AXI bus.    */
+                  STM32_MDMA_CTCR_DINCOS_BYTE   |   /* Byte increment.      */
+                  STM32_MDMA_CTCR_SINCOS_BYTE   |   /* Byte increment.      */
+                  STM32_MDMA_CTCR_DSIZE_BYTE    |   /* Destination size.    */
+                  STM32_MDMA_CTCR_SSIZE_BYTE    |   /* Source size.         */
+                  STM32_MDMA_CTCR_DINC_INC      |   /* Destination incr.    */
+                  STM32_MDMA_CTCR_SINC_FIXED;       /* Source fixed.        */
+  uint32_t ccr  = STM32_MDMA_CCR_PL(STM32_WSPI_QUADSPI1_MDMA_PRIORITY) |
+                  STM32_MDMA_CCR_CTCIE          |   /* On transfer complete.*/
+                  STM32_MDMA_CCR_TCIE;              /* On transfer error.   */
 
   /* MDMA initializations.*/
   mdmaChannelSetSourceX(wspip->mdma, rxbuf);
   mdmaChannelSetDestinationX(wspip->mdma, &wspip->qspi->DR);
   mdmaChannelSetTransactionSizeX(wspip->mdma, n, 0, 0);
-  mdmaChannelSetModeX(wspip->mdma, wspip->mdmactcr, wspip->mdmaccr);
+  mdmaChannelSetModeX(wspip->mdma, ctcr, ccr);
 
   wspip->qspi->DLR = n - 1;
   wspip->qspi->ABR = cmdp->alt;

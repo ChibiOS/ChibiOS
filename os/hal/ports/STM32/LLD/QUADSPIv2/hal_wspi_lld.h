@@ -250,11 +250,19 @@
   /* Pointer to the QUADSPIx registers block.*/                             \
   QUADSPI_TypeDef               *qspi;                                      \
   /* QUADSPI MDMA channel.*/                                                \
-  const stm32_mdma_channel_t    *mdma;                                      \
-  /* QUADSPI MDMA CCR bit mask.*/                                           \
-  uint32_t                      mdmaccr;                                    \
-  /* QUADSPI MDMA CTCR bit mask.*/                                          \
-  uint32_t                      mdmactcr
+  const stm32_mdma_channel_t    *mdma
+
+/**
+ * @brief   QUADSPI IRQ enable.
+ */
+#define quadspi_irq_init()                                                     \
+  nvicEnableVector(STM32_QUADSPI1_NUMBER, STM32_IRQ_QUADSPI1_PRIORITY)
+
+/**
+ * @brief   QUADSPI IRQ disable.
+ */
+#define quadspi_irq_deinit()                                                     \
+  nvicDisableVector(STM32_QUADSPI1_NUMBER)
 
 /*===========================================================================*/
 /* External declarations.                                                    */

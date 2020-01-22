@@ -240,11 +240,6 @@ const stm32_mdma_channel_t *dmaChannelAllocI(uint32_t id,
         rccEnableMDMA(true);
       }
 
-      /* Enables the associated IRQ vector if a callback is defined.*/
-      if (func != NULL) {
-        nvicEnableVector(STM32_MDMA_NUMBER, STM32_IRQ_MDMA_PRIORITY);
-      }
-
       return mdmachp;
     }
   }
@@ -298,9 +293,6 @@ void mdmaChannelFreeI(const stm32_mdma_channel_t *mdmachp) {
   /* Check if the channels is not taken.*/
   osalDbgAssert((mdma.allocated_mask & (1U << channel)) != 0U,
                 "not allocated");
-
-  /* Disables the associated IRQ vector.*/
-  nvicDisableVector(STM32_MDMA_NUMBER);
 
   /* Marks the channel as not allocated.*/
   mdma.allocated_mask &= ~(1U << channel);
