@@ -132,7 +132,7 @@ void hal_lld_init(void) {
      board files.*/
   rccResetAHB1(~0);
   rccResetAHB2(~0);
-  rccResetAHB3(~(RCC_AHB3RSTR_CPURST | RCC_AHB3RSTR_FMCRST));
+  rccResetAHB3(~(RCC_AHB3RSTR_FMCRST));
   rccResetAHB4(~(STM32_GPIO_EN_MASK));
   rccResetAPB1L(~0);
   rccResetAPB1H(~0);
@@ -230,7 +230,10 @@ void stm32_clock_init(void) {
 
   /* Registers cleared to reset values.*/
   RCC->CR      = RCC_CR_HSION;             /* CR Reset value.              */
-  RCC->ICSCR   = 0x40000000U;              /* ICSCR Reset value.           */
+  RCC->HSICFGR   = 0x40000000U;            /* HSICFGR Reset value.         */
+#if !defined(STM32_ENFORCE_H7_REV_V)
+  RCC->CSICFGR   = 0x20000000U;            /* CSICFGR Reset value.         */
+#endif
   RCC->CSR     = 0x00000000U;              /* CSR reset value.             */
   RCC->PLLCFGR = 0x01FF0000U;              /* PLLCFGR reset value.         */
 
@@ -367,7 +370,8 @@ void stm32_clock_init(void) {
                   STM32_I2C4SEL   | STM32_LPUART1SEL;
 
   /* Flash setup.*/
-  FLASH->ACR = FLASH_ACR_WRHIGHFREQ_2 | STM32_FLASHBITS;
+  FLASH->ACR = FLASH_ACR_WRHIGHFREQ_1 | FLASH_ACR_WRHIGHFREQ_0 |
+               STM32_FLASHBITS;
   while ((FLASH->ACR & FLASH_ACR_LATENCY) !=
          (STM32_FLASHBITS & FLASH_ACR_LATENCY)) {
   }

@@ -201,6 +201,15 @@
 #define STM32_QUADSPI1_NUMBER               92
 
 /*
+ * SDMMC units.
+ */
+#define STM32_SDMMC1_HANDLER                Vector104
+#define STM32_SDMMC2_HANDLER                Vector230
+
+#define STM32_SDMMC1_NUMBER                 49
+#define STM32_SDMMC2_NUMBER                 131
+
+/*
  * SPI units.
  */
 #define STM32_SPI1_HANDLER                  VectorCC
