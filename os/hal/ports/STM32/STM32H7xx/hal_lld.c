@@ -102,6 +102,9 @@ static inline void init_pwr(void) {
   PWR->CR3   = STM32_PWR_CR3;
   PWR->CPUCR = STM32_PWR_CPUCR;
   PWR->D3CR  = STM32_VOS;
+#if !defined(STM32_ENFORCE_H7_REV_V)
+  SYSCFG->PWRCR = STM32_ODEN;
+#endif
   while ((PWR->D3CR & PWR_D3CR_VOSRDY) == 0)
     ;
 #if STM32_PWR_CR2 & PWR_CR2_BREN

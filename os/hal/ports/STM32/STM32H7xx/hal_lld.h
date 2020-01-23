@@ -646,17 +646,17 @@
 #endif
 
 /**
- * @brief   VOS setting.
- */
-#if !defined(STM32_VOS) || defined(__DOXYGEN__)
-#define STM32_VOS                           STM32_VOS_SCALE1
-#endif
-
-/**
  * @brief   ODEN setting.
  */
 #if !defined(STM32_ODEN) || defined(__DOXYGEN__)
 #define STM32_ODEN                          STM32_ODEN_DISABLED
+#endif
+
+/**
+ * @brief   VOS setting.
+ */
+#if !defined(STM32_VOS) || defined(__DOXYGEN__)
+#define STM32_VOS                           STM32_VOS_SCALE1
 #endif
 
 /**

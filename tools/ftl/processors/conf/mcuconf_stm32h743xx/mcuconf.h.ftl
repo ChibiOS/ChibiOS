@@ -64,6 +64,7 @@
  * Reading STM32 Reference Manual is required.
  * Register constants are taken from the ST header.
  */
+#define STM32_ODEN                          ${doc.STM32_ODEN!"STM32_ODEN_DISABLED"}
 #define STM32_VOS                           ${doc.STM32_VOS!"STM32_VOS_SCALE1"}
 #define STM32_PWR_CR1                       ${doc.STM32_PWR_CR1!"(PWR_CR1_SVOS_1 | PWR_CR1_SVOS_0)"}
 #define STM32_PWR_CR2                       ${doc.STM32_PWR_CR2!"(PWR_CR2_BREN)"}
@@ -472,5 +473,14 @@
  * WDG driver system settings.
  */
 #define STM32_WDG_USE_IWDG                  ${doc.STM32_WDG_USE_IWDG!"FALSE"}
+
+/*
+ * WSPI driver system settings.
+ */
+#define STM32_WSPI_USE_QUADSPI1             ${doc.STM32_WSPI_USE_QUADSPI1!"FALSE"}
+#define STM32_WSPI_QUADSPI1_PRESCALER_VALUE ${doc.STM32_WSPI_QUADSPI1_PRESCALER_VALUE!"1"}
+#define STM32_WSPI_QUADSPI1_MDMA_CHANNEL    ${doc.STM32_WSPI_QUADSPI1_MDMA_CHANNEL!"STM32_MDMA_CHANNEL_ID_ANY"}
+#define STM32_WSPI_QUADSPI1_MDMA_PRIORITY   ${doc.STM32_WSPI_QUADSPI1_MDMA_PRIORITY!"1"}
+#define STM32_WSPI_MDMA_ERROR_HOOK(qspip)   ${doc.STM32_WSPI_MDMA_ERROR_HOOK!"osalSysHalt(\"MDMA failure\")"}
 
 #endif /* MCUCONF_H */

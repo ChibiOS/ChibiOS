@@ -32,6 +32,7 @@
  */
 
 #define STM32H7xx_MCUCONF
+#define STM32H742_MCUCONF
 #define STM32H743_MCUCONF
 #define STM32H753_MCUCONF
 
@@ -52,6 +53,7 @@
  * Reading STM32 Reference Manual is required.
  * Register constants are taken from the ST header.
  */
+#define STM32_ODEN                          STM32_ODEN_DISABLED
 #define STM32_VOS                           STM32_VOS_SCALE1
 #define STM32_PWR_CR1                       (PWR_CR1_SVOS_1 | PWR_CR1_SVOS_0)
 #define STM32_PWR_CR2                       (PWR_CR2_BREN)
@@ -225,12 +227,8 @@
 /*
  * CAN driver system settings.
  */
-#define STM32_CAN_USE_CAN1                  FALSE
-#define STM32_CAN_USE_CAN2                  FALSE
-#define STM32_CAN_USE_CAN3                  FALSE
-#define STM32_CAN_CAN1_IRQ_PRIORITY         11
-#define STM32_CAN_CAN2_IRQ_PRIORITY         11
-#define STM32_CAN_CAN3_IRQ_PRIORITY         11
+#define STM32_CAN_USE_FDCAN1                FALSE
+#define STM32_CAN_USE_FDCAN2                FALSE
 
 /*
  * DAC driver system settings.
@@ -473,6 +471,5 @@
 #define STM32_WSPI_QUADSPI1_MDMA_CHANNEL    STM32_MDMA_CHANNEL_ID_ANY
 #define STM32_WSPI_QUADSPI1_MDMA_PRIORITY   1
 #define STM32_WSPI_MDMA_ERROR_HOOK(qspip)   osalSysHalt("MDMA failure")
-#define STM32_USE_STM32_D1_WORKAROUND       TRUE
 
 #endif /* MCUCONF_H */
