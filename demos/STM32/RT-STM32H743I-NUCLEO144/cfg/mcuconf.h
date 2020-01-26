@@ -86,7 +86,7 @@
 #define STM32_PLL1_DIVN_VALUE               400
 #define STM32_PLL1_FRACN_VALUE              0
 #define STM32_PLL1_DIVP_VALUE               2
-#define STM32_PLL1_DIVQ_VALUE               8
+#define STM32_PLL1_DIVQ_VALUE               16
 #define STM32_PLL1_DIVR_VALUE               8
 #define STM32_PLL2_ENABLED                  TRUE
 #define STM32_PLL2_P_ENABLED                TRUE
@@ -182,6 +182,9 @@
 #define STM32_IRQ_MDMA_PRIORITY             9
 
 #define STM32_IRQ_QUADSPI1_PRIORITY         10
+
+#define STM32_IRQ_SDMMC1_PRIORITY           8
+#define STM32_IRQ_SDMMC2_PRIORITY           8
 
 #define STM32_IRQ_TIM1_UP_PRIORITY          7
 #define STM32_IRQ_TIM1_CC_PRIORITY          7
@@ -342,15 +345,13 @@
 /*
  * SDC driver system settings.
  */
-#define STM32_SDC_USE_SDMMC1                FALSE
+#define STM32_SDC_USE_SDMMC1                TRUE
 #define STM32_SDC_USE_SDMMC2                FALSE
 #define STM32_SDC_SDMMC_UNALIGNED_SUPPORT   TRUE
 #define STM32_SDC_SDMMC_WRITE_TIMEOUT       1000000
 #define STM32_SDC_SDMMC_READ_TIMEOUT        1000000
 #define STM32_SDC_SDMMC_CLOCK_DELAY         10
 #define STM32_SDC_SDMMC_PWRSAV              TRUE
-#define STM32_SDC_SDMMC1_IRQ_PRIORITY       9
-#define STM32_SDC_SDMMC2_IRQ_PRIORITY       9
 
 /*
  * SERIAL driver system settings.
@@ -466,7 +467,7 @@
 /*
  * WSPI driver system settings.
  */
-#define STM32_WSPI_USE_QUADSPI1             TRUE
+#define STM32_WSPI_USE_QUADSPI1             FALSE
 #define STM32_WSPI_QUADSPI1_PRESCALER_VALUE 1
 #define STM32_WSPI_QUADSPI1_MDMA_CHANNEL    STM32_MDMA_CHANNEL_ID_ANY
 #define STM32_WSPI_QUADSPI1_MDMA_PRIORITY   1

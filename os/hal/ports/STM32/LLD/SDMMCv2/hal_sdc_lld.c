@@ -312,58 +312,6 @@ static void sdc_lld_error_cleanup(SDCDriver *sdcp,
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-/**
- * @brief   SDMMC1 IRQ handler.
- * @details It just wakes transaction thread, errors handling is performed in
- *          there.
- *
- * @isr
- */
-#if STM32_SDC_USE_SDMMC1 || defined(__DOXYGEN__)
-OSAL_IRQ_HANDLER(STM32_SDMMC1_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-  osalSysLockFromISR();
-
-  /* Disables the source but the status flags are not reset because the
-     read/write functions needs to check them.*/
-  SDMMC1->MASK = 0;
-
-  osalThreadResumeI(&SDCD1.thread, MSG_OK);
-
-  osalSysUnlockFromISR();
-
-  OSAL_IRQ_EPILOGUE();
-}
-#endif
-
-/**
- * @brief   SDMMC2 IRQ handler.
- * @details It just wakes transaction thread, errors handling is performed in
- *          there.
- *
- * @isr
- */
-#if STM32_SDC_USE_SDMMC2 || defined(__DOXYGEN__)
-OSAL_IRQ_HANDLER(STM32_SDMMC2_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-  osalSysLockFromISR();
-
-  /* Disables the source but the status flags are not reset because the
-     read/write functions needs to check them.*/
-  SDMMC2->MASK = 0;
-
-  osalThreadResumeI(&SDCD2.thread, MSG_OK);
-
-  osalSysUnlockFromISR();
-
-  OSAL_IRQ_EPILOGUE();
-}
-#endif
-
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -380,7 +328,6 @@ void sdc_lld_init(void) {
   SDCD1.thread  = NULL;
   SDCD1.sdmmc   = SDMMC1;
   SDCD1.clkfreq = STM32_SDMMC1CLK;
-  nvicEnableVector(STM32_SDMMC1_NUMBER, STM32_SDC_SDMMC1_IRQ_PRIORITY);
 #endif
 
 #if STM32_SDC_USE_SDMMC2
@@ -388,7 +335,6 @@ void sdc_lld_init(void) {
   SDCD2.thread  = NULL;
   SDCD2.sdmmc   = SDMMC2;
   SDCD2.clkfreq = STM32_SDMMC2CLK;
-  nvicEnableVector(STM32_SDMMC2_NUMBER, STM32_SDC_SDMMC2_IRQ_PRIORITY);
 #endif
 }
 
@@ -908,6 +854,20 @@ bool sdc_lld_sync(SDCDriver *sdcp) {
   /* CHTODO: Implement.*/
   (void)sdcp;
   return HAL_SUCCESS;
+}
+
+/**
+ * @brief   Shared service routine.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ */
+void sdc_lld_serve_interrupt(SDCDriver *sdcp) {
+
+  /* Disables the source but the status flags are not reset because the
+     read/write functions needs to check them.*/
+  sdcp->sdmmc->MASK = 0;
+
+  osalThreadResumeI(&sdcp->thread, MSG_OK);
 }
 
 #endif /* HAL_USE_SDC */

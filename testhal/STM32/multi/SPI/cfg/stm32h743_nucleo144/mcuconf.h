@@ -183,6 +183,9 @@
 
 #define STM32_IRQ_QUADSPI1_PRIORITY         10
 
+#define STM32_IRQ_SDMMC1_PRIORITY           8
+#define STM32_IRQ_SDMMC2_PRIORITY           8
+
 #define STM32_IRQ_TIM1_UP_PRIORITY          7
 #define STM32_IRQ_TIM1_CC_PRIORITY          7
 #define STM32_IRQ_TIM2_PRIORITY             7
@@ -349,8 +352,6 @@
 #define STM32_SDC_SDMMC_READ_TIMEOUT        1000
 #define STM32_SDC_SDMMC_CLOCK_DELAY         10
 #define STM32_SDC_SDMMC_PWRSAV              TRUE
-#define STM32_SDC_SDMMC1_IRQ_PRIORITY       9
-#define STM32_SDC_SDMMC2_IRQ_PRIORITY       9
 
 /*
  * SERIAL driver system settings.

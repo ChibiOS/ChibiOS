@@ -191,16 +191,6 @@
 #error "WSPI driver activated but no QUADSPI peripheral assigned"
 #endif
 
-/* Priority settings checks.*/
-#if !defined(STM32_IRQ_QUADSPI1_PRIORITY)
-#error "STM32_IRQ_QUADSPI1_PRIORITY not defined in mcuconf.h"
-#endif
-
-#if STM32_WSPI_USE_QUADSPI1 &&                                              \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_QUADSPI1_PRIORITY)
-#error "Invalid IRQ priority assigned to QUADSPI1"
-#endif
-
 /* MDMA-related checks.*/
 #if STM32_WSPI_USE_QUADSPI1 &&                                              \
     !STM32_MDMA_IS_VALID_PRIORITY(STM32_WSPI_QUADSPI1_MDMA_PRIORITY)
@@ -252,18 +242,6 @@
   /* QUADSPI MDMA channel.*/                                                \
   const stm32_mdma_channel_t    *mdma
 
-/**
- * @brief   QUADSPI IRQ enable.
- */
-#define quadspi_irq_init()                                                     \
-  nvicEnableVector(STM32_QUADSPI1_NUMBER, STM32_IRQ_QUADSPI1_PRIORITY)
-
-/**
- * @brief   QUADSPI IRQ disable.
- */
-#define quadspi_irq_deinit()                                                     \
-  nvicDisableVector(STM32_QUADSPI1_NUMBER)
-
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -289,6 +267,7 @@ extern "C" {
                           uint8_t **addrp);
   void wspi_lld_unmap_flash(WSPIDriver *wspip);
 #endif
+  void wspi_lld_serve_interrupt(WSPIDriver *wspip);
 #ifdef __cplusplus
 }
 #endif

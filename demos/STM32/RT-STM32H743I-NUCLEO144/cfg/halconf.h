@@ -135,7 +135,7 @@
  * @brief   Enables the SDC subsystem.
  */
 #if !defined(HAL_USE_SDC) || defined(__DOXYGEN__)
-#define HAL_USE_SDC                         FALSE
+#define HAL_USE_SDC                         TRUE
 #endif
 
 /**
@@ -198,7 +198,7 @@
  * @brief   Enables the WSPI subsystem.
  */
 #if !defined(HAL_USE_WSPI) || defined(__DOXYGEN__)
-#define HAL_USE_WSPI                        TRUE
+#define HAL_USE_WSPI                        FALSE
 #endif
 
 /*===========================================================================*/

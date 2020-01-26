@@ -75,47 +75,9 @@ static void wspi_lld_serve_mdma_interrupt(WSPIDriver *wspip, uint32_t flags) {
 #endif
 }
 
-/**
- * @brief   Shared service routine.
- *
- * @param[in] wspip     pointer to the @p WSPIDriver object
- */
-static void wspi_lld_serve_interrupt(WSPIDriver *wspip) {
-
-  /* Portable WSPI ISR code defined in the high level driver, note, it is
-     a macro.*/
-  _wspi_isr_code(wspip);
-
-  mdmaChannelDisableX(wspip->mdma);
-}
-
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
-
-#if STM32_WSPI_USE_QUADSPI1 || defined(__DOXYGEN__)
-#if !defined(STM32_QUADSPI1_SUPPRESS_ISR)
-#if !defined(STM32_QUADSPI1_HANDLER)
-#error "STM32_QUADSPI1_HANDLER not defined"
-#endif
-/**
- * @brief   STM32_QUADSPI1_HANDLER interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_QUADSPI1_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-  QUADSPI->FCR = QUADSPI_FCR_CTEF | QUADSPI_FCR_CTCF |
-                 QUADSPI_FCR_CSMF | QUADSPI_FCR_CTOF;
-
-  wspi_lld_serve_interrupt(&WSPID1);
-
-  OSAL_IRQ_EPILOGUE();
-}
-#endif /* !defined(STM32_QUADSPI1_SUPPRESS_ISR) */
-#endif /* STM32_WSPI_USE_QUADSPI1 */
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -371,6 +333,23 @@ void wspi_lld_unmap_flash(WSPIDriver *wspip) {
   wspip->qspi->CR |= QUADSPI_CR_DMAEN;
 }
 #endif /* WSPI_SUPPORTS_MEMMAP == TRUE */
+
+/**
+ * @brief   Shared service routine.
+ *
+ * @param[in] wspip     pointer to the @p WSPIDriver object
+ */
+void wspi_lld_serve_interrupt(WSPIDriver *wspip) {
+
+  wspip->qspi->FCR = QUADSPI_FCR_CTEF | QUADSPI_FCR_CTCF |
+                     QUADSPI_FCR_CSMF | QUADSPI_FCR_CTOF;
+
+  /* Portable WSPI ISR code defined in the high level driver, note, it is
+     a macro.*/
+  _wspi_isr_code(wspip);
+
+  mdmaChannelDisableX(wspip->mdma);
+}
 
 #endif /* HAL_USE_WSPI */
 

@@ -92,20 +92,6 @@
 #if !defined(STM32_SDC_SDMMC_PWRSAV) || defined(__DOXYGEN__)
 #define STM32_SDC_SDMMC_PWRSAV              TRUE
 #endif
-
-/**
- * @brief   SDMMC1 interrupt priority level setting.
- */
-#if !defined(STM32_SDC_SDMMC1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SDC_SDMMC1_IRQ_PRIORITY       9
-#endif
-
-/**
- * @brief   SDMMC2 interrupt priority level setting.
- */
-#if !defined(STM32_SDC_SDMMC2_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SDC_SDMMC2_IRQ_PRIORITY       9
-#endif
 /** @} */
 
 /*===========================================================================*/
@@ -159,7 +145,7 @@
 #endif
 
 #if !defined(STM32_SDMMC_MAXCLK)
-#define STM32_SDMMC_MAXCLK              48000000
+#define STM32_SDMMC_MAXCLK              50000000
 #endif
 
 #if STM32_HAS_SDMMC1 && (STM32_SDMMC1CLK > STM32_SDMMC_MAXCLK)
@@ -168,15 +154,6 @@
 
 #if STM32_HAS_SDMMC2 && (STM32_SDMMC2CLK > STM32_SDMMC_MAXCLK)
 #error "STM32_SDMMC2CLK must not exceed STM32_SDMMC_MAXCLK"
-#endif
-
-/* SDMMC IRQ priority tests.*/
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SDC_SDMMC1_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to SDMMC1"
-#endif
-
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SDC_SDMMC2_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to SDMMC2"
 #endif
 
 /*===========================================================================*/
@@ -317,6 +294,7 @@ extern "C" {
   bool sdc_lld_sync(SDCDriver *sdcp);
   bool sdc_lld_is_card_inserted(SDCDriver *sdcp);
   bool sdc_lld_is_write_protected(SDCDriver *sdcp);
+  void sdc_lld_serve_interrupt(SDCDriver *sdcp);
 #ifdef __cplusplus
 }
 #endif

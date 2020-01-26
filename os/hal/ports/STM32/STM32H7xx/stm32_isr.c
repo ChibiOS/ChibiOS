@@ -64,7 +64,12 @@
 #include "stm32_exti19.inc"
 #include "stm32_exti20_21.inc"
 
-#include "stm32_usart1.inc"
+#include <stm32_quadspi1.inc>
+
+#include <stm32_sdmmc1.inc>
+#include <stm32_sdmmc2.inc>
+
+#include <stm32_usart1.inc>
 #include "stm32_usart2.inc"
 #include "stm32_usart3.inc"
 #include "stm32_uart4.inc"
@@ -109,7 +114,10 @@ void irqInit(void) {
 
   mdma_irq_init();
 
-  quadspi_irq_init();
+  quadspi1_irq_init();
+
+  sdmmc1_irq_init();
+  sdmmc2_irq_init();
 
   tim1_irq_init();
   tim2_irq_init();
@@ -152,7 +160,10 @@ void irqDeinit(void) {
 
   mdma_irq_deinit();
 
-  quadspi_irq_deinit();
+  quadspi1_irq_deinit();
+
+  sdmmc1_irq_deinit();
+  sdmmc2_irq_deinit();
 
   tim1_irq_deinit();
   tim2_irq_deinit();
