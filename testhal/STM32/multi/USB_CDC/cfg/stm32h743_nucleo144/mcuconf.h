@@ -183,8 +183,8 @@
 
 #define STM32_IRQ_QUADSPI1_PRIORITY         10
 
-#define STM32_IRQ_SDMMC1_PRIORITY           8
-#define STM32_IRQ_SDMMC2_PRIORITY           8
+#define STM32_IRQ_SDMMC1_PRIORITY           9
+#define STM32_IRQ_SDMMC2_PRIORITY           9
 
 #define STM32_IRQ_TIM1_UP_PRIORITY          7
 #define STM32_IRQ_TIM1_CC_PRIORITY          7
