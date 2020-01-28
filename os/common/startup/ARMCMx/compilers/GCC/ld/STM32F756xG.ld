@@ -15,7 +15,7 @@
 */
 
 /*
- * ST32F756xG generic setup.
+ * STM32F756xG generic setup.
  * 
  * RAM0 - Data, Heap.
  * RAM3 - Main Stack, Process Stack, BSS, NOCACHE, ETH.

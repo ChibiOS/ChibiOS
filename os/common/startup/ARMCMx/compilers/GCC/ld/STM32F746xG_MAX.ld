@@ -15,7 +15,7 @@
 */
 
 /*
- * ST32F746xG maximum RAM setup.
+ * STM32F746xG maximum RAM setup.
  * 
  * RAM0 - Data, BSS, Heap.
  * RAM3 - Main Stack, Process Stack, NOCACHE, ETH.

@@ -15,7 +15,7 @@
 */
 
 /*
- * ST32F746xG generic setup.
+ * STM32H743xI generic setup.
  * 
  * AXI SRAM     - BSS, Data, Heap.
  * SRAM1+SRAM2  - None.

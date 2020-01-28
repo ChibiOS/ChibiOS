@@ -15,7 +15,7 @@
 */
 
 /*
- * ST32F746xG generic setup.
+ * STM32F746xG generic setup.
  * 
  * RAM0 - Data, Heap.
  * RAM3 - Main Stack, Process Stack, BSS, NOCACHE, ETH.
