@@ -150,7 +150,7 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS =
+UDEFS = -DSTM32_ENFORCE_H7_REV_V     # Must be removed for non-Rev-V devices.
 
 # Define ASM defines here
 UADEFS =

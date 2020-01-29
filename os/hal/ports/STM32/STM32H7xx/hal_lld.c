@@ -97,9 +97,9 @@ static inline void init_pwr(void) {
   (void)pwr;
 #endif
 
-  PWR->CR1   = STM32_PWR_CR1 | 0xF0000000;
+  PWR->CR1   = STM32_PWR_CR1 | 0xF0000000U;
   PWR->CR2   = STM32_PWR_CR2;
-  PWR->CR3   = STM32_PWR_CR3;
+  PWR->CR3   = STM32_PWR_CR3 | 0x00000004U;     /* SCUEN enforced.          */
   PWR->CPUCR = STM32_PWR_CPUCR;
   PWR->D3CR  = STM32_VOS;
 #if !defined(STM32_ENFORCE_H7_REV_V)
@@ -135,8 +135,9 @@ void hal_lld_init(void) {
      board files.*/
   rccResetAHB1(~0);
   rccResetAHB2(~0);
-  rccResetAHB3(~(RCC_AHB3RSTR_FMCRST));
-  rccResetAHB4(~(STM32_GPIO_EN_MASK));
+  rccResetAHB3(~(RCC_AHB3RSTR_FMCRST |
+                 0x80000000U));     /* Was RCC_AHB3RSTR_CPURST in Rev-V.*/
+  rccResetAHB4(~(RCC_APB4RSTR_SYSCFGRST | STM32_GPIO_EN_MASK));
   rccResetAPB1L(~0);
   rccResetAPB1H(~0);
   rccResetAPB2(~0);
@@ -205,12 +206,16 @@ void stm32_clock_init(void) {
 #endif
 
 #if STM32_NO_INIT == FALSE
-#if !defined(STM32_DISABLE_ERRATA_2_2_15)
+#if defined(STM32_ENFORCE_H7_REV_V)
   /* Fix for errata 2.2.15: Reading from AXI SRAM might lead to data
      read corruption.
      AXI->TARG7_FN_MOD.*/
   *((volatile uint32_t *)(0x51000000 + 0x1108 + 0x7000)) = 0x00000001U;
 #endif
+
+  /* SYSCFG clock enabled here because it is a multi-functional unit shared
+     among multiple drivers.*/
+  rccEnableAPB4(RCC_APB4ENR_SYSCFGEN, true);
 
   /* PWR initialization.*/
   init_pwr();
@@ -402,10 +407,6 @@ void stm32_clock_init(void) {
   rccEnableSRAM1(true);
   rccEnableSRAM2(true);
   rccEnableSRAM3(true);
-
-  /* SYSCFG clock enabled here because it is a multi-functional unit shared
-     among multiple drivers.*/
-  rccEnableAPB4(RCC_APB4ENR_SYSCFGEN, true);
 }
 
 /** @} */
