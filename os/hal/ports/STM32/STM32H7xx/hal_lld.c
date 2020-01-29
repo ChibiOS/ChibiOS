@@ -97,16 +97,22 @@ static inline void init_pwr(void) {
   (void)pwr;
 #endif
 
+  /* Lower C3 byte, it must be programmed at very first, then waiting for
+     power supply to stabilize.*/
+  PWR->CR3   = STM32_PWR_CR3 & 0x000000FFU;
+  while ((PWR->CSR1 & PWR_CSR1_ACTVOSRDY) == 0)
+    ; /* CHTODO timeout handling.*/
+
   PWR->CR1   = STM32_PWR_CR1 | 0xF0000000U;
   PWR->CR2   = STM32_PWR_CR2;
-  PWR->CR3   = STM32_PWR_CR3 | 0x00000004U;     /* SCUEN enforced.          */
+  PWR->CR3   = STM32_PWR_CR3;   /* Other bits, lower byte is not changed.   */
   PWR->CPUCR = STM32_PWR_CPUCR;
   PWR->D3CR  = STM32_VOS;
 #if !defined(STM32_ENFORCE_H7_REV_V)
   SYSCFG->PWRCR = STM32_ODEN;
 #endif
   while ((PWR->D3CR & PWR_D3CR_VOSRDY) == 0)
-    ;
+    ; /* CHTODO timeout handling.*/
 #if STM32_PWR_CR2 & PWR_CR2_BREN
 //  while ((PWR->CR2 & PWR_CR2_BRRDY) == 0)
 //    ;
