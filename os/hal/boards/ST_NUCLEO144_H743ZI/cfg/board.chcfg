@@ -213,12 +213,12 @@
         Mode="Input"
         Alternate="0" />
       <pin7
-        ID=""
+        ID="LED2 LED_BLUE"
         Type="PushPull"
-        Level="High"
-        Speed="Minimum"
-        Resistor="PullUp"
-        Mode="Input"
+        Level="Low"
+        Speed="Maximum"
+        Resistor="Floating"
+        Mode="Output"
         Alternate="0" />
       <pin8
         ID=""
@@ -497,12 +497,12 @@
         Mode="Alternate"
         Alternate="7" />
       <pin10
-        ID="USB_FS_PWR_EN"
-        Type="OpenDrain"
+        ID=""
+        Type="PushPull"
         Level="High"
         Speed="Minimum"
-        Resistor="Floating"
-        Mode="Output"
+        Resistor="PullUp"
+        Mode="Input"
         Alternate="0" />
       <pin11
         ID=""
@@ -555,12 +555,12 @@
         Mode="Input"
         Alternate="0" />
       <pin1
-        ID="LED2 LED_YELLOW"
+        ID=""
         Type="PushPull"
-        Level="Low"
-        Speed="Maximum"
-        Resistor="Floating"
-        Mode="Output"
+        Level="High"
+        Speed="Minimum"
+        Resistor="PullUp"
+        Mode="Input"
         Alternate="0" />
       <pin2
         ID=""
@@ -855,12 +855,12 @@
         Mode="Input"
         Alternate="0" />
       <pin6
-        ID=""
+        ID="USB_FS_PWR_EN"
         Type="PushPull"
-        Level="High"
+        Level="Low"
         Speed="Minimum"
-        Resistor="PullUp"
-        Mode="Input"
+        Resistor="Floating"
+        Mode="Output"
         Alternate="0" />
       <pin7
         ID="USB_FS_OVCR"
