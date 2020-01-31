@@ -44,7 +44,6 @@
  * General settings.
  */
 #define STM32_NO_INIT                       FALSE
-#define STM32_SYS_CK_ENFORCED_VALUE         STM32_HSICLK
 
 /*
  * Memory attributes settings.

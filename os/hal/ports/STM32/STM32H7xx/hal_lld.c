@@ -135,6 +135,7 @@ static inline void init_pwr(void) {
  */
 void hal_lld_init(void) {
 
+#if STM32_NO_INIT == FALSE
   /* Reset of all peripherals. AHB3 is not reset entirely because FMC could
      have been initialized in the board initialization file (board.c).
      Note, GPIOs are not reset because initialized before this point in
@@ -149,6 +150,7 @@ void hal_lld_init(void) {
   rccResetAPB2(~0);
   rccResetAPB3(~0);
   rccResetAPB4(~0);
+#endif /* STM32_NO_INIT == FALSE */
 
   /* DMA subsystems initialization.*/
 #if defined(STM32_BDMA_REQUIRED)
@@ -156,6 +158,9 @@ void hal_lld_init(void) {
 #endif
 #if defined(STM32_DMA_REQUIRED)
   dmaInit();
+#endif
+#if defined(STM32_MDMA_REQUIRED)
+  mdmaInit();
 #endif
 
   /* IRQ subsystem initialization.*/
@@ -204,6 +209,7 @@ void hal_lld_init(void) {
  * @special
  */
 void stm32_clock_init(void) {
+#if STM32_NO_INIT == FALSE
   uint32_t cfgr;
 
 #if 0
@@ -211,7 +217,6 @@ void stm32_clock_init(void) {
   (void)rcc;
 #endif
 
-#if STM32_NO_INIT == FALSE
 #if defined(STM32_ENFORCE_H7_REV_V)
   /* Fix for errata 2.2.15: Reading from AXI SRAM might lead to data
      read corruption.
@@ -407,12 +412,12 @@ void stm32_clock_init(void) {
                   STM32_UART4SEL  | STM32_USART3SEL | STM32_USART2SEL |
                   STM32_USART1SEL;
 #endif
-#endif /* STM32_NO_INIT */
 
   /* RAM1 2 and 3 clocks enabled.*/
   rccEnableSRAM1(true);
   rccEnableSRAM2(true);
   rccEnableSRAM3(true);
+#endif /* STM32_NO_INIT */
 }
 
 /** @} */

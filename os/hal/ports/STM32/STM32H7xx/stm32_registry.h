@@ -32,6 +32,16 @@
 /* RNG attributes.*/
 #define STM32_HAS_RNG1                      TRUE
 
+/* Cores.*/
+#if defined(STM32H750xx) || defined(STM32H742xx) ||                         \
+    defined(STM32H743xx) || defined(STM32H753xx)
+#define STM32_HAS_M7                        TRUE
+#define STM32_HAS_M4                        FALSE
+#else
+#define STM32_HAS_M7                        TRUE
+#define STM32_HAS_M4                        TRUE
+#endif
+
 /**
  * @name    STM32H7xx capabilities
  * @{

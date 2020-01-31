@@ -586,16 +586,19 @@
  */
 /**
  * @brief   Disables the PWR/RCC initialization in the HAL.
+ * @note    All the clock tree constants are calculated but the initialization
+ *          is not performed.
  */
 #if !defined(STM32_NO_INIT) || defined(__DOXYGEN__)
 #define STM32_NO_INIT                       FALSE
 #endif
 
 /**
- * @brief   SYS_CK value assumed if @p STM32_NO_INIT is enabled.
+ * @brief   Target code for this HAL configuration.
+ * @note    Core 1 is the Cortex-M7, core 2 is the Cortex-M4.
  */
-#if !defined(STM32_SYS_CK_ENFORCED_VALUE) || defined(__DOXYGEN__)
-#define STM32_SYS_CK_ENFORCED_VALUE         STM32_HSICLK
+#if !defined(STM32_TARGET_CORE) || defined(__DOXYGEN__)
+#define STM32_TARGET_CORE                   1
 #endif
 
 /**
@@ -2071,10 +2074,7 @@
 /**
  * @brief   System clock source.
  */
-#if STM32_NO_INIT || defined(__DOXYGEN__)
-#define STM32_SYS_CK                STM32_SYS_CK_ENFORCED_VALUE
-
-#elif (STM32_SW == STM32_SW_HSI_CK)
+#if (STM32_SW == STM32_SW_HSI_CK) || defined(__DOXYGEN__)
 #define STM32_SYS_CK                STM32_HSI_CK
 
 #elif (STM32_SW == STM32_SW_CSI_CK)
@@ -2233,11 +2233,6 @@
 #endif
 
 /**
- * @brief   Core clock.
- */
-#define STM32_CORE_CK               STM32_SYS_D1CPRE_CK
-
-/**
  * @brief   HCLK clock.
  */
 #if (STM32_D1HPRE == STM32_D1HPRE_DIV1) || defined(__DOXYGEN__)
@@ -2260,6 +2255,34 @@
 #define STM32_HCLK                  (STM32_SYS_D1CPRE_CK / 512U)
 #else
 #error "invalid STM32_D1HPRE value specified"
+#endif
+
+/**
+ * @brief   Core clock.
+ */
+#define STM32_CORE1_CK              STM32_SYS_D1CPRE_CK
+
+/**
+ * @brief   Core clock.
+ */
+#define STM32_CORE2_CK              STM32_HCLK
+
+#if (STM32_TARGET_CORE == 1) || defined(__DOXYGEN__)
+
+#if STM32_HAS_M7 != TRUE
+#error "Cortex-M7 not present in this device"
+#endif
+#define STM32_CORE_CK               STM32_CORE1_CK
+
+#elif STM32_TARGET_CORE == 2
+
+#if STM32_HAS_M4 != TRUE
+#error "Cortex-M4 not present in this device"
+#endif
+#define STM32_CORE_CK               STM32_CORE2_CK
+
+#else
+#error "invalid STM32_TARGET_CORE value specified"
 #endif
 
 /*

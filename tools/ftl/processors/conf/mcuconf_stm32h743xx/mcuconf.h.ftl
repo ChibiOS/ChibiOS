@@ -46,12 +46,16 @@
 #define STM32H742_MCUCONF
 #define STM32H743_MCUCONF
 #define STM32H753_MCUCONF
+#define STM32H745_MCUCONF
+#define STM32H755_MCUCONF
+#define STM32H747_MCUCONF
+#define STM32H757_MCUCONF
 
 /*
  * General settings.
  */
 #define STM32_NO_INIT                       ${doc.STM32_NO_INIT!"FALSE"}
-#define STM32_SYS_CK_ENFORCED_VALUE         ${doc.STM32_SYS_CK_ENFORCED_VALUE!"STM32_HSICLK"}
+#define STM32_TARGET_CORE                   ${doc.STM32_NO_INIT!"1"}
 
 /*
  * Memory attributes settings.
@@ -61,7 +65,8 @@
 
 /*
  * PWR system settings.
- * Reading STM32 Reference Manual is required.
+ * Reading STM32 Reference Manual is required, settings in PWR_CR3 are
+ * very critical.
  * Register constants are taken from the ST header.
  */
 #define STM32_ODEN                          ${doc.STM32_ODEN!"STM32_ODEN_DISABLED"}
