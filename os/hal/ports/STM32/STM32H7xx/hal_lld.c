@@ -186,7 +186,7 @@ void hal_lld_init(void) {
 
     /* The SRAM2 bank can optionally made a non cache-able area for use by
        DMA engines.*/
-    mpuConfigureRegion(MPU_REGION_7,
+    mpuConfigureRegion(STM32_NOCACHE_MPU_REGION,
                        base,
                        MPU_RASR_ATTR_AP_RW_RW |
                        MPU_RASR_ATTR_NON_CACHEABLE |

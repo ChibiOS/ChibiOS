@@ -602,6 +602,13 @@
 #endif
 
 /**
+ * @brief   MPU region to be used for no-cache RAM area.
+ */
+#if !defined(STM32_NOCACHE_MPU_REGION) || defined(__DOXYGEN__)
+#define STM32_NOCACHE_MPU_REGION            MPU_REGION_6
+#endif
+
+/**
  * @brief   Add no-cache attribute to SRAM1 and SRAM2.
  * @note    MPU region 7 is used if enabled.
  */

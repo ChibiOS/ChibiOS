@@ -55,11 +55,12 @@
  * General settings.
  */
 #define STM32_NO_INIT                       ${doc.STM32_NO_INIT!"FALSE"}
-#define STM32_TARGET_CORE                   ${doc.STM32_NO_INIT!"1"}
+#define STM32_TARGET_CORE                   ${doc.STM32_TARGET_CORE!"1"}
 
 /*
  * Memory attributes settings.
  */
+#define STM32_NOCACHE_MPU_REGION            ${doc.STM32_NOCACHE_MPU_REGION!"MPU_REGION_6"}
 #define STM32_NOCACHE_SRAM1_SRAM2           ${doc.STM32_NOCACHE_SRAM1_SRAM2!"FALSE"}
 #define STM32_NOCACHE_SRAM3                 ${doc.STM32_NOCACHE_SRAM3!"TRUE"}
 

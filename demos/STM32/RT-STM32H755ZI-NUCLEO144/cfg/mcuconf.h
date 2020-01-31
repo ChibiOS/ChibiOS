@@ -44,16 +44,19 @@
  * General settings.
  */
 #define STM32_NO_INIT                       FALSE
+#define STM32_TARGET_CORE                   1
 
 /*
  * Memory attributes settings.
  */
+#define STM32_NOCACHE_MPU_REGION            MPU_REGION_6
 #define STM32_NOCACHE_SRAM1_SRAM2           FALSE
 #define STM32_NOCACHE_SRAM3                 TRUE
 
 /*
  * PWR system settings.
- * Reading STM32 Reference Manual is required.
+ * Reading STM32 Reference Manual is required, settings in PWR_CR3 are
+ * very critical.
  * Register constants are taken from the ST header.
  */
 #define STM32_ODEN                          STM32_ODEN_DISABLED
