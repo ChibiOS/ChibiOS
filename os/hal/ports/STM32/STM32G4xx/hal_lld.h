@@ -160,11 +160,11 @@
 
 #define STM32_PPRE2_MASK        (7U << 11U)  /**< PPRE2 field mask.         */
 #define STM32_PPRE2_FIELD(n)    ((n) << 11U) /**< PPRE2 field value.        */
-#define STM32_PPRE2_DIV1        STM32_PPRE1_FIELD(0U)
-#define STM32_PPRE2_DIV2        STM32_PPRE1_FIELD(4U)
-#define STM32_PPRE2_DIV4        STM32_PPRE1_FIELD(5U)
-#define STM32_PPRE2_DIV8        STM32_PPRE1_FIELD(6U)
-#define STM32_PPRE2_DIV16       STM32_PPRE1_FIELD(7U)
+#define STM32_PPRE2_DIV1        STM32_PPRE2_FIELD(0U)
+#define STM32_PPRE2_DIV2        STM32_PPRE2_FIELD(4U)
+#define STM32_PPRE2_DIV4        STM32_PPRE2_FIELD(5U)
+#define STM32_PPRE2_DIV8        STM32_PPRE2_FIELD(6U)
+#define STM32_PPRE2_DIV16       STM32_PPRE2_FIELD(7U)
 
 #define STM32_MCOSEL_MASK       (15U << 24U)/**< MCOSEL field mask.         */
 #define STM32_MCOSEL_NOCLOCK    (0U << 24U) /**< No clock on MCO pin.       */
@@ -1160,7 +1160,7 @@
 #endif
 
 /**
- * @brief   STM32_PLLPDIV field. (Only for STM32L496xx/4A6xx)
+ * @brief   STM32_PLLPDIV field.
  */
 #if (STM32_PLLPDIV_VALUE == 0) ||                                           \
     ((STM32_PLLPDIV_VALUE >= 2) && (STM32_PLLPDIV_VALUE <= 31)) ||          \
@@ -1319,7 +1319,7 @@
   #define STM32_HCLK                (STM32_SYSCLK / 512)
 
 #else
- #error "invalid STM32_HPRE value specified"
+  #error "invalid STM32_HPRE value specified"
 #endif
 
 /*
@@ -1329,27 +1329,27 @@
   #error "STM32_HCLK exceeding maximum frequency (STM32_SYSCLK_MAX)"
 #endif
 
- /**
-  * @brief   APB1 frequency.
-  */
- #if (STM32_PPRE1 == STM32_PPRE1_DIV1) || defined(__DOXYGEN__)
-   #define STM32_PCLK1               (STM32_HCLK / 1)
+/**
+ * @brief   APB1 frequency.
+ */
+#if (STM32_PPRE1 == STM32_PPRE1_DIV1) || defined(__DOXYGEN__)
+  #define STM32_PCLK1               (STM32_HCLK / 1)
 
- #elif STM32_PPRE1 == STM32_PPRE1_DIV2
-   #define STM32_PCLK1               (STM32_HCLK / 2)
+#elif STM32_PPRE1 == STM32_PPRE1_DIV2
+  #define STM32_PCLK1               (STM32_HCLK / 2)
 
- #elif STM32_PPRE1 == STM32_PPRE1_DIV4
-   #define STM32_PCLK1               (STM32_HCLK / 4)
+#elif STM32_PPRE1 == STM32_PPRE1_DIV4
+  #define STM32_PCLK1               (STM32_HCLK / 4)
 
- #elif STM32_PPRE1 == STM32_PPRE1_DIV8
-   #define STM32_PCLK1               (STM32_HCLK / 8)
+#elif STM32_PPRE1 == STM32_PPRE1_DIV8
+  #define STM32_PCLK1               (STM32_HCLK / 8)
 
- #elif STM32_PPRE1 == STM32_PPRE1_DIV16
-   #define STM32_PCLK1               (STM32_HCLK / 16)
+#elif STM32_PPRE1 == STM32_PPRE1_DIV16
+  #define STM32_PCLK1               (STM32_HCLK / 16)
 
- #else
-   #error "invalid STM32_PPRE1 value specified"
- #endif
+#else
+  #error "invalid STM32_PPRE1 value specified"
+#endif
 
 /*
  * APB1 frequency check.
