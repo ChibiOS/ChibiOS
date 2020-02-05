@@ -877,8 +877,8 @@
     #error "HSI16 not enabled, required by STM32_SW and STM32_PLLSRC"
   #endif
 
-  #if (STM32_MCOSEL == STM32_MCOSEL_HSI16) ||                                 \
-      ((STM32_MCOSEL == STM32_MCOSEL_PLLRCLK) &&                              \
+  #if (STM32_MCOSEL == STM32_MCOSEL_HSI16) ||                               \
+      ((STM32_MCOSEL == STM32_MCOSEL_PLLRCLK) &&                            \
        (STM32_PLLSRC == STM32_PLLSRC_HSI16))
     #error "HSI16 not enabled, required by STM32_MCOSEL"
   #endif
@@ -977,8 +977,8 @@
     #error "HSE not enabled, required by STM32_SW and STM32_PLLSRC"
   #endif
 
-  #if (STM32_MCOSEL == STM32_MCOSEL_HSE) ||                               \
-      ((STM32_MCOSEL == STM32_MCOSEL_PLLRCLK) &&                          \
+  #if (STM32_MCOSEL == STM32_MCOSEL_HSE) ||                                 \
+      ((STM32_MCOSEL == STM32_MCOSEL_PLLRCLK) &&                            \
        (STM32_PLLSRC == STM32_PLLSRC_HSE))
     #error "HSE not enabled, required by STM32_MCOSEL"
   #endif
@@ -1041,7 +1041,7 @@
 /**
  * @brief   STM32_PLLM field.
  */
-#if ((STM32_PLLM_VALUE >= 1) && (STM32_PLLM_VALUE <= 16)) ||                 \
+#if ((STM32_PLLM_VALUE >= 1) && (STM32_PLLM_VALUE <= 16)) ||                \
     defined(__DOXYGEN__)
   #define STM32_PLLM                ((STM32_PLLM_VALUE - 1) << 4)
 #else
