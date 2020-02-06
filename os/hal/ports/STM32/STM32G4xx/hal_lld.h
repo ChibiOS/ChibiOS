@@ -90,43 +90,12 @@
 /** @} */
 
 /**
- * @name    PWR_CR1 register bits definitions
+ * @name    VOS field definitions
  * @{
  */
 #define STM32_VOS_MASK          (3U << 9U)  /**< Core voltage mask.         */
 #define STM32_VOS_RANGE1        (1U << 9U)  /**< Core voltage 1.2 Volts.    */
 #define STM32_VOS_RANGE2        (2U << 9U)  /**< Core voltage 1.0 Volts.    */
-/** @} */
-
-/**
- * @name    PWR_CR2 register bits definitions
- * @{
- */
-#define STM32_PVDE_DISABLED     (0U << 1U)      /**< PVD enable bit off.    */
-#define STM32_PVDE_ENABLED      (1U << 1U)      /**< PVD enable bit on.     */
-
-#define STM32_PLS_MASK          (7U << 1U)      /**< PLS bits mask.         */
-#define STM32_PLS(n)            ((n) << 1U)     /**< PLS level.             */
-#define STM32_PLS_LEV0          STM32_PLS(0U)   /**< PLS level 0.           */
-#define STM32_PLS_LEV1          STM32_PLS(1U)   /**< PLS level 1.           */
-#define STM32_PLS_LEV2          STM32_PLS(2U)   /**< PLS level 2.           */
-#define STM32_PLS_LEV3          STM32_PLS(3U)   /**< PLS level 3.           */
-#define STM32_PLS_LEV4          STM32_PLS(4U)   /**< PLS level 4.           */
-#define STM32_PLS_LEV5          STM32_PLS(5U)   /**< PLS level 5.           */
-#define STM32_PLS_LEV6          STM32_PLS(6U)   /**< PLS level 6.           */
-#define STM32_PLS_LEV7          STM32_PLS(7U)   /**< PLS level 7.           */
-
-#define STM32_PVMEN1_DISABLED   (0U << 6U)      /**< PVMEN1 enable bit off. */
-#define STM32_PVMEN1_ENABLED    (1U << 6U)      /**< PVMEN1 enable bit on.  */
-
-#define STM32_PVMEN2_DISABLED   (0U << 7U)      /**< PVMEN2 enable bit off. */
-#define STM32_PVMEN2_ENABLED    (1U << 7U)      /**< PVMEN2 enable bit on.  */
-/** @} */
-
-/**
- * @name    RCC_CR register bits definitions
- * @{
- */
 /** @} */
 
 /**
@@ -348,8 +317,21 @@
  * @brief   PWR CR2 register initialization value.
  */
 #if !defined(STM32_PWR_CR2) || defined(__DOXYGEN__)
-#define STM32_PWR_CR2                       (STM32_PLS_LEV0 |               \
-                                             STM32_PVDE_DISABLED)
+#define STM32_PWR_CR2                       (PWR_CR2_PLS_LEV0)
+#endif
+
+/**
+ * @brief   PWR CR3 register initialization value.
+ */
+#if !defined(STM32_PWR_CR3) || defined(__DOXYGEN__)
+#define STM32_PWR_CR3                       (PWR_CR3_EIWF)
+#endif
+
+/**
+ * @brief   PWR CR4 register initialization value.
+ */
+#if !defined(STM32_PWR_CR4) || defined(__DOXYGEN__)
+#define STM32_PWR_CR4                       (0U)
 #endif
 
 /**
@@ -705,6 +687,11 @@
 #define STM32_SYSCLK_MAX            170000000
 
 /**
+ * @brief   Maximum SYSCLK clock frequency without voltage boost.
+ */
+#define STM32_SYSCLK_MAX_NOBOOST    150000000
+
+/**
  * @brief   Maximum HSE clock frequency at current voltage setting.
  */
 #define STM32_HSECLK_MAX            48000000
@@ -827,6 +814,7 @@
 
 #elif STM32_VOS == STM32_VOS_RANGE2
 #define STM32_SYSCLK_MAX            26000000
+#define STM32_SYSCLK_MAX_NOBOOST    150000000
 #define STM32_HSECLK_MAX            26000000
 #define STM32_HSECLK_BYP_MAX        26000000
 #define STM32_HSECLK_MIN            8000000
@@ -1825,6 +1813,13 @@
 
 #else
   #define STM32_FLASHBITS           FLASH_ACR_LATENCY_8WS
+#endif
+
+/* Frequency-dependent settings for PWR_CR5.*/
+#if STM32_SYSCLK > STM32_SYSCLK_MAX_NOBOOST
+#define STM32_CR5BITS               0
+#else
+#define STM32_CR5BITS               PWR_CR5_R1MODE
 #endif
 
 /*===========================================================================*/

@@ -104,19 +104,6 @@ static void hal_lld_backup_domain_init(void) {
  */
 void hal_lld_init(void) {
 
-  /* Reset of all peripherals.
-     Note, GPIOs are not reset because initialized before this point in
-     board files.*/
-  rccResetAHB1(~0);
-  rccResetAHB2(~STM32_GPIO_EN_MASK);
-  rccResetAHB3(~0);
-  rccResetAPB1R1(~RCC_APB1RSTR1_PWRRST);
-  rccResetAPB1R2(~0);
-  rccResetAPB2(~0);
-
-  /* PWR clock enabled.*/
-  rccEnablePWRInterface(true);
-
   /* Initializes the backup domain.*/
   hal_lld_backup_domain_init();
 
@@ -142,17 +129,34 @@ void hal_lld_init(void) {
 void stm32_clock_init(void) {
 
 #if !STM32_NO_INIT
+
+  /* Reset of all peripherals.
+     Note, GPIOs are not reset because initialized before this point in
+     board files.*/
+  rccResetAHB1(~0);
+  rccResetAHB2(~STM32_GPIO_EN_MASK);
+  rccResetAHB3(~0);
+  rccResetAPB1R1(~0);
+  rccResetAPB1R2(~0);
+  rccResetAPB2(~0);
+
   /* PWR clock enable.*/
 #if defined(HAL_USE_RTC) && defined(RCC_APBENR1_RTCAPBEN)
-  RCC->APB1ENR1 = RCC_APB1ENR1_PWREN | RCC_APB1ENR1_RTCAPBEN;
+  rccEnableAPB1R1(RCC_APB1ENR1_PWREN | RCC_APB1ENR1_RTCAPBEN, false)
 #else
-  RCC->APB1ENR1 = RCC_APB1ENR1_PWREN;
+  rccEnableAPB1R1(RCC_APB1ENR1_PWREN, false)
 #endif
 
   /* Core voltage setup.*/
   PWR->CR1 = STM32_VOS;
   while ((PWR->SR2 & PWR_SR2_VOSF) != 0)    /* Wait until regulator is      */
     ;                                       /* stable.                      */
+
+  /* Additional PWR configurations.*/
+  PWR->CR2 = STM32_PWR_CR2;
+  PWR->CR3 = STM32_PWR_CR3;
+  PWR->CR4 = STM32_PWR_CR4;
+  PWR->CR5 = STM32_CR5BITS;
 
 #if STM32_HSI16_ENABLED
   /* HSI activation.*/
