@@ -33,6 +33,13 @@
 #define ADC1_DMA_CHANNEL                                                    \
   STM32_DMA_GETCHANNEL(STM32_ADC_ADC1_DMA_STREAM, STM32_ADC1_DMA_CHN)
 
+/* Headers differences patches.*/
+#if defined(ADC_IER_AWDIE)
+#define ADC_IER_AWD1IE      ADC_IER_AWDIE
+#define ADC_ISR_AWD1        ADC_ISR_AWD
+#define TR1                 TR
+#endif
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -185,8 +192,13 @@ void adc_lld_start(ADCDriver *adcp) {
                                      (stm32_dmaisr_t)adc_lld_serve_rx_interrupt,
                                      (void *)adcp);
       osalDbgAssert(adcp->dmastp != NULL, "unable to allocate stream");
-      dmaStreamSetPeripheral(adcp->dmastp, &ADC1->DR);
       rccEnableADC1(true);
+
+      /* DMA setup.*/
+      dmaStreamSetPeripheral(adcp->dmastp, &ADC1->DR);
+#if STM32_DMA_SUPPORTS_DMAMUX
+      dmaSetRequestSource(adcp->dmastp, STM32_DMAMUX1_ADC1);
+#endif
 
       /* Clock settings.*/
       adcp->adc->CFGR2 = STM32_ADC_ADC1_CKMODE;
@@ -270,8 +282,8 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   /* ADC setup, if it is defined a callback for the analog watch dog then it
      is enabled.*/
   adcp->adc->ISR    = adcp->adc->ISR;
-  adcp->adc->IER    = ADC_IER_OVRIE | ADC_IER_AWDIE;
-  adcp->adc->TR     = grpp->tr;
+  adcp->adc->IER    = ADC_IER_OVRIE | ADC_IER_AWD1IE;
+  adcp->adc->TR1    = grpp->tr;
   adcp->adc->SMPR   = grpp->smpr;
   adcp->adc->CHSELR = grpp->chselr;
 
@@ -325,7 +337,7 @@ void adc_lld_serve_interrupt(ADCDriver *adcp) {
          to read data fast enough.*/
       _adc_isr_error_code(adcp, ADC_ERR_OVERFLOW);
     }
-    if (isr & ADC_ISR_AWD) {
+    if (isr & ADC_ISR_AWD1) {
       /* Analog watchdog error.*/
       _adc_isr_error_code(adcp, ADC_ERR_AWD);
     }
