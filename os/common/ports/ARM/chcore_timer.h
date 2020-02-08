@@ -66,7 +66,7 @@
  * @notapi
  */
 static inline void port_timer_start_alarm(systime_t time) {
-  extern void stStartAlarm(systime_t time);
+  void stStartAlarm(systime_t time);
 
   stStartAlarm(time);
 }
@@ -77,7 +77,7 @@ static inline void port_timer_start_alarm(systime_t time) {
  * @notapi
  */
 static inline void port_timer_stop_alarm(void) {
-  extern void stStopAlarm(void);
+  void stStopAlarm(void);
 
   stStopAlarm();
 }
@@ -90,7 +90,7 @@ static inline void port_timer_stop_alarm(void) {
  * @notapi
  */
 static inline void port_timer_set_alarm(systime_t time) {
-  extern void stSetAlarm(systime_t time);
+  void stSetAlarm(systime_t time);
 
   stSetAlarm(time);
 }
@@ -103,7 +103,7 @@ static inline void port_timer_set_alarm(systime_t time) {
  * @notapi
  */
 static inline systime_t port_timer_get_time(void) {
-  extern systime_t stGetCounter(void);
+  systime_t stGetCounter(void);
 
   return stGetCounter();
 }
@@ -116,7 +116,7 @@ static inline systime_t port_timer_get_time(void) {
  * @notapi
  */
 static inline systime_t port_timer_get_alarm(void) {
-  extern systime_t stGetAlarm(void);
+  systime_t stGetAlarm(void);
 
   return stGetAlarm();
 }
