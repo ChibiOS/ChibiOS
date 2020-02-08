@@ -59,7 +59,6 @@
  * very critical.
  * Register constants are taken from the ST header.
  */
-#define STM32_ODEN                          STM32_ODEN_DISABLED
 #define STM32_VOS                           STM32_VOS_SCALE1
 #define STM32_PWR_CR1                       (PWR_CR1_SVOS_1 | PWR_CR1_SVOS_0)
 #define STM32_PWR_CR2                       (PWR_CR2_BREN)

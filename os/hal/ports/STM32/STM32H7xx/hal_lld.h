@@ -92,150 +92,155 @@
 /**
  * @brief   Absolute maximum system clock.
  */
-#define STM32_SYSCLK_MAX        480000000
+#define STM32_SYSCLK_MAX                480000000
+
+/**
+ * @brief   Maximum SYSCLK clock frequency without voltage boost.
+ */
+#define STM32_SYSCLK_MAX_NOBOOST        400000000
 
 /**
  * @brief   Absolute maximum HCLK clock.
  */
-#define STM32_HCLK_MAX          (STM32_SYSCLK_MAX / 2)
+#define STM32_HCLK_MAX                  (STM32_SYSCLK_MAX / 2)
 
 /**
  * @brief   Maximum HSE clock frequency.
  */
-#define STM32_HSECLK_MAX        48000000
+#define STM32_HSECLK_MAX                48000000
 
 /**
  * @brief   Maximum HSE clock frequency using an external source.
  */
-#define STM32_HSECLK_BYP_MAX    50000000
+#define STM32_HSECLK_BYP_MAX            50000000
 
 /**
  * @brief   Minimum HSE clock frequency.
  */
-#define STM32_HSECLK_MIN        4000000
+#define STM32_HSECLK_MIN                4000000
 
 /**
  * @brief   Minimum HSE clock frequency.
  */
-#define STM32_HSECLK_BYP_MIN    4000000
+#define STM32_HSECLK_BYP_MIN            4000000
 
 /**
  * @brief   Maximum LSE clock frequency.
  */
-#define STM32_LSE_CK_MAX        32768
+#define STM32_LSE_CK_MAX                32768
 
 /**
  * @brief   Maximum LSE clock frequency.
  */
-#define STM32_LSE_CK_BYP_MAX    1000000
+#define STM32_LSE_CK_BYP_MAX            1000000
 
 /**
  * @brief   Minimum LSE clock frequency.
  */
-#define STM32_LSE_CK_MIN        32768
+#define STM32_LSE_CK_MIN                32768
 
 /**
  * @brief   Minimum PLLs input clock frequency..
  */
-#define STM32_PLLIN_MIN         1000000
+#define STM32_PLLIN_MIN                 1000000
 
 /**
  * @brief   PLLs input threshold frequency 1.
  */
-#define STM32_PLLIN_THRESHOLD1  2000000
+#define STM32_PLLIN_THRESHOLD1          2000000
 
 /**
  * @brief   PLLs input threshold frequency 2.
  */
-#define STM32_PLLIN_THRESHOLD2  4000000
+#define STM32_PLLIN_THRESHOLD2          4000000
 
 /**
  * @brief   PLLs input threshold frequency 3.
  */
-#define STM32_PLLIN_THRESHOLD3  8000000
+#define STM32_PLLIN_THRESHOLD3          8000000
 
 /**
  * @brief   Maximum PLLs input clock frequency.
  */
-#define STM32_PLLIN_MAX         16000000
+#define STM32_PLLIN_MAX                 16000000
 
 /**
  * @brief   Minimum PLLs VCO clock frequency.
  */
-#define STM32_PLLVCO_MIN        150000000   /* DS says 192, RM says 150.    */
+#define STM32_PLLVCO_MIN                150000000   /* DS says 192, RM says 150.    */
 
 /**
  * @brief   Threshold PLLs clock frequency.
  */
-#define STM32_PLLVCO_THRESHOLD  420000000
+#define STM32_PLLVCO_THRESHOLD          420000000
 
 /**
  * @brief   Maximum PLLs VCOH clock frequency.
  */
-#define STM32_PLLVCO_MAX        960000000
+#define STM32_PLLVCO_MAX                960000000
 
 /**
  * @brief   Maximum APB1 clock frequency.
  */
-#define STM32_PCLK1_MAX         (STM32_HCLK_MAX / 2)
+#define STM32_PCLK1_MAX                 (STM32_HCLK_MAX / 2)
 
 /**
  * @brief   Maximum APB2 clock frequency.
  */
-#define STM32_PCLK2_MAX         (STM32_HCLK_MAX / 2)
+#define STM32_PCLK2_MAX                 (STM32_HCLK_MAX / 2)
 
 /**
  * @brief   Maximum APB3 clock frequency.
  */
-#define STM32_PCLK3_MAX         (STM32_HCLK_MAX / 2)
+#define STM32_PCLK3_MAX                 (STM32_HCLK_MAX / 2)
 
 /**
  * @brief   Maximum APB4 clock frequency.
  */
-#define STM32_PCLK4_MAX         (STM32_HCLK_MAX / 2)
+#define STM32_PCLK4_MAX                 (STM32_HCLK_MAX / 2)
 
 /**
  * @brief   Maximum SPI1, SPI2 and SPI3 clock frequency.
  */
-#define STM32_SPI123_MAX        200000000
+#define STM32_SPI123_MAX                200000000
 
 /**
  * @brief   Maximum SPI4, SPI5 and SPI6 clock frequency.
  */
-#define STM32_SPI456_MAX        125000000
+#define STM32_SPI456_MAX                125000000
 
 /**
  * @brief   Maximum ADC clock frequency.
  */
-#define STM32_ADCCLK_MAX        100000000
+#define STM32_ADCCLK_MAX                100000000
 /** @} */
 
 #else /* defined(STM32_ENFORCE_H7_REV_V) */
 
-#define STM32_SYSCLK_MAX        400000000
-#define STM32_HCLK_MAX          (STM32_SYSCLK_MAX / 2)
-#define STM32_HSECLK_MAX        48000000
-#define STM32_HSECLK_BYP_MAX    50000000
-#define STM32_HSECLK_MIN        4000000
-#define STM32_HSECLK_BYP_MIN    4000000
-#define STM32_LSE_CK_MAX        32768
-#define STM32_LSE_CK_BYP_MAX    1000000
-#define STM32_LSE_CK_MIN        32768
-#define STM32_PLLIN_MIN         1000000
-#define STM32_PLLIN_THRESHOLD1  2000000
-#define STM32_PLLIN_THRESHOLD2  4000000
-#define STM32_PLLIN_THRESHOLD3  8000000
-#define STM32_PLLIN_MAX         16000000
-#define STM32_PLLVCO_MIN        150000000
-#define STM32_PLLVCO_THRESHOLD  420000000
-#define STM32_PLLVCO_MAX        836000000
-#define STM32_PCLK1_MAX         (STM32_HCLK_MAX / 2)
-#define STM32_PCLK2_MAX         (STM32_HCLK_MAX / 2)
-#define STM32_PCLK3_MAX         (STM32_HCLK_MAX / 2)
-#define STM32_PCLK4_MAX         (STM32_HCLK_MAX / 2)
-#define STM32_SPI123_MAX        133000000
-#define STM32_SPI456_MAX        100000000
-#define STM32_ADCCLK_MAX        36000000
+#define STM32_SYSCLK_MAX                400000000
+#define STM32_HCLK_MAX                  (STM32_SYSCLK_MAX / 2)
+#define STM32_HSECLK_MAX                48000000
+#define STM32_HSECLK_BYP_MAX            50000000
+#define STM32_HSECLK_MIN                4000000
+#define STM32_HSECLK_BYP_MIN            4000000
+#define STM32_LSE_CK_MAX                32768
+#define STM32_LSE_CK_BYP_MAX            1000000
+#define STM32_LSE_CK_MIN                32768
+#define STM32_PLLIN_MIN                 1000000
+#define STM32_PLLIN_THRESHOLD1          2000000
+#define STM32_PLLIN_THRESHOLD2          4000000
+#define STM32_PLLIN_THRESHOLD3          8000000
+#define STM32_PLLIN_MAX                 16000000
+#define STM32_PLLVCO_MIN                150000000
+#define STM32_PLLVCO_THRESHOLD          420000000
+#define STM32_PLLVCO_MAX                836000000
+#define STM32_PCLK1_MAX                 (STM32_HCLK_MAX / 2)
+#define STM32_PCLK2_MAX                 (STM32_HCLK_MAX / 2)
+#define STM32_PCLK3_MAX                 (STM32_HCLK_MAX / 2)
+#define STM32_PCLK4_MAX                 (STM32_HCLK_MAX / 2)
+#define STM32_SPI123_MAX                133000000
+#define STM32_SPI456_MAX                100000000
+#define STM32_ADCCLK_MAX                36000000
 
 #endif /* defined(STM32_ENFORCE_H7_REV_V) */
 
@@ -243,10 +248,10 @@
  * @name    Internal clock sources frequencies
  * @{
  */
-#define STM32_HSI_OSC           64000000
-#define STM32_HSI48_OSC         48000000
-#define STM32_CSI_OSC           4000000
-#define STM32_LSI_OSC           32000
+#define STM32_HSI_OSC                   64000000
+#define STM32_HSI48_OSC                 48000000
+#define STM32_CSI_OSC                   4000000
+#define STM32_LSI_OSC                   32000
 /** @} */
 
 /**
@@ -653,13 +658,6 @@
  */
 #if !defined(STM32_PWR_CPUCR) || defined(__DOXYGEN__)
 #define STM32_PWR_CPUCR                     0
-#endif
-
-/**
- * @brief   ODEN setting.
- */
-#if !defined(STM32_ODEN) || defined(__DOXYGEN__)
-#define STM32_ODEN                          STM32_ODEN_DISABLED
 #endif
 
 /**
@@ -1341,29 +1339,13 @@
  * @name    Constants depending on VOS and ODEN setting
  * @{
  */
-#if (STM32_ODEN == STM32_ODEN_ENABLED) || defined(__DOXYGEN__)
-
-#if (STM32_VOS == STM32_VOS_SCALE1) || defined(__DOXYGEN__)
+#if STM32_VOS == STM32_VOS_SCALE1
 #define STM32_0WS_THRESHOLD         70000000U
 #define STM32_1WS_THRESHOLD         140000000U
 #define STM32_2WS_THRESHOLD         210000000U
 #define STM32_3WS_THRESHOLD         225000000U
 #define STM32_4WS_THRESHOLD         240000000U
 #define STM32_PLLOUT_MAX            480000000U
-#define STM32_PLLOUT_MIN            1500000U
-#else
-#error "invalid STM32_VOS setting specified with STM32_ODEN enabled"
-#endif
-
-#elif STM32_ODEN == STM32_ODEN_DISABLED
-
-#if STM32_VOS == STM32_VOS_SCALE1
-#define STM32_0WS_THRESHOLD         70000000U
-#define STM32_1WS_THRESHOLD         140000000U
-#define STM32_2WS_THRESHOLD         210000000U
-#define STM32_3WS_THRESHOLD         225000000U
-#define STM32_4WS_THRESHOLD         0U
-#define STM32_PLLOUT_MAX            400000000U
 #define STM32_PLLOUT_MIN            1500000U
 
 #elif STM32_VOS == STM32_VOS_SCALE2
@@ -1386,10 +1368,6 @@
 
 #else
 #error "invalid STM32_VOS setting specified"
-#endif
-
-#else
-#error "invalid STM32_ODEN setting specified"
 #endif
 /** @} */
 
@@ -2100,8 +2078,17 @@
 /*
  * Check on the system clock.
  */
-#if STM32_SW > STM32_SYSCLK_MAX
+#if STM32_SYS_CK > STM32_SYSCLK_MAX
 #error "STM32_SYS_CK above maximum rated frequency (STM32_SYSCLK_MAX)"
+#endif
+
+/*
+ * ODEN setting based on clock frequency.
+ */
+#if STM32_SYS_CK > STM32_SYSCLK_MAX_NOBOOST
+#define STM32_ODEN                  STM32_ODEN_ENABLED
+#else
+#define STM32_ODEN                  STM32_ODEN_DISABLED
 #endif
 
 /**
