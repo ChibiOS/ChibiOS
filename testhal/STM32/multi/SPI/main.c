@@ -66,11 +66,11 @@ static THD_FUNCTION(spi_thread_1, p) {
     spiSelect(&PORTAB_SPI1);            /* Slave Select assertion.          */
     spiExchange(&PORTAB_SPI1, 512,
                 txbuf, rxbuf);          /* Atomic transfer operations.      */
-    spiExchange(&PORTAB_SPI1, 512,
+    spiExchange(&PORTAB_SPI1, 127,
                 txbuf, rxbuf);          /* Atomic transfer operations.      */
-    spiExchange(&PORTAB_SPI1, 512,
+    spiExchange(&PORTAB_SPI1, 64,
                 txbuf, rxbuf);          /* Atomic transfer operations.      */
-    spiExchange(&PORTAB_SPI1, 512,
+    spiExchange(&PORTAB_SPI1, 1,
                 txbuf, rxbuf);          /* Atomic transfer operations.      */
     spiUnselect(&PORTAB_SPI1);          /* Slave Select de-assertion.       */
     cacheBufferInvalidate(&txbuf[0],    /* Cache invalidation over the      */
@@ -94,11 +94,11 @@ static THD_FUNCTION(spi_thread_2, p) {
     spiSelect(&PORTAB_SPI1);            /* Slave Select assertion.          */
     spiExchange(&PORTAB_SPI1, 512,
                 txbuf, rxbuf);          /* Atomic transfer operations.      */
-    spiExchange(&PORTAB_SPI1, 512,
+    spiExchange(&PORTAB_SPI1, 127,
                 txbuf, rxbuf);          /* Atomic transfer operations.      */
-    spiExchange(&PORTAB_SPI1, 512,
+    spiExchange(&PORTAB_SPI1, 64,
                 txbuf, rxbuf);          /* Atomic transfer operations.      */
-    spiExchange(&PORTAB_SPI1, 512,
+    spiExchange(&PORTAB_SPI1, 1,
                 txbuf, rxbuf);          /* Atomic transfer operations.      */
     spiUnselect(&PORTAB_SPI1);          /* Slave Select de-assertion.       */
     cacheBufferInvalidate(&txbuf[0],    /* Cache invalidation over the      */
