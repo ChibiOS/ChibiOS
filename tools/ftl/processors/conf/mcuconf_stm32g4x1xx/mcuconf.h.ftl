@@ -51,7 +51,9 @@
  */
 #define STM32_NO_INIT                       ${doc.STM32_NO_INIT!"FALSE"}
 #define STM32_VOS                           ${doc.STM32_VOS!"STM32_VOS_RANGE1"}
-#define STM32_PWR_CR2                       ${doc.STM32_PWR_CR2!"(STM32_PLS_LEV0 | STM32_PVDE_DISABLED)"}
+#define STM32_PWR_CR2                       ${doc.STM32_PWR_CR2!"(PWR_CR2_PLS_LEV0)"}
+#define STM32_PWR_CR3                       ${doc.STM32_PWR_CR3!"(PWR_CR3_EIWF)"}
+#define STM32_PWR_CR4                       ${doc.STM32_PWR_CR4!"(0U)"}
 #define STM32_HSI16_ENABLED                 ${doc.STM32_HSI16_ENABLED!"TRUE"}
 #define STM32_HSI48_ENABLED                 ${doc.STM32_HSI48_ENABLED!"TRUE"}
 #define STM32_HSE_ENABLED                   ${doc.STM32_HSE_ENABLED!"TRUE"}
