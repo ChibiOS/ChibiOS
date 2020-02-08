@@ -468,11 +468,7 @@ void adc_lld_init(void) {
 #if STM32_ADC_DUAL_MODE
   ADCD1.adcs    = ADC2;
 #endif
-#if STM32_DMA_SUPPORTS_DMAMUX
   ADCD1.dmastp  = NULL;
-#else
-  ADCD1.dmastp  = STM32_DMA_STREAM(STM32_ADC_ADC1_DMA_STREAM);
-#endif
   ADCD1.dmamode = ADC_DMA_SIZE |
                   STM32_DMA_CR_PL(STM32_ADC_ADC1_DMA_PRIORITY) |
                   STM32_DMA_CR_DIR_P2M |
@@ -491,11 +487,7 @@ void adc_lld_init(void) {
   ADCD2.adcc = ADC123_COMMON;
 #endif
   ADCD2.adcm    = ADC2;
-#if STM32_DMA_SUPPORTS_DMAMUX
   ADCD2.dmastp  = NULL;
-#else
-  ADCD2.dmastp  = STM32_DMA_STREAM(STM32_ADC_ADC2_DMA_STREAM);
-#endif
   ADCD2.dmamode = ADC_DMA_SIZE |
                   STM32_DMA_CR_PL(STM32_ADC_ADC2_DMA_PRIORITY) |
                   STM32_DMA_CR_DIR_P2M |
@@ -519,11 +511,7 @@ void adc_lld_init(void) {
 #if STM32_ADC_DUAL_MODE
   ADCD3.adcs    = ADC4;
 #endif
-#if STM32_DMA_SUPPORTS_DMAMUX
   ADCD3.dmastp  = NULL;
-#else
-  ADCD3.dmastp  = STM32_DMA_STREAM(STM32_ADC_ADC3_DMA_STREAM);
-#endif
   ADCD3.dmamode = ADC_DMA_SIZE |
                   STM32_DMA_CR_PL(STM32_ADC_ADC3_DMA_PRIORITY) |
                   STM32_DMA_CR_DIR_P2M |
@@ -540,11 +528,7 @@ void adc_lld_init(void) {
   ADCD4.adcc = ADC345_COMMON;
 #endif
   ADCD4.adcm    = ADC4;
-#if STM32_DMA_SUPPORTS_DMAMUX
   ADCD4.dmastp  = NULL;
-#else
-  ADCD4.dmastp  = STM32_DMA_STREAM(STM32_ADC_ADC4_DMA_STREAM);
-#endif
   ADCD4.dmamode = ADC_DMA_SIZE |
                   STM32_DMA_CR_PL(STM32_ADC_ADC4_DMA_PRIORITY) |
                   STM32_DMA_CR_DIR_P2M |

@@ -444,7 +444,7 @@
 #error "ADC driver activated but no ADC peripheral assigned"
 #endif
 
-/* ISR arrangments checks.*/
+/* ISR arrangements checks.*/
 #if STM32_HAS_ADC1 && STM32_HAS_ADC2
 #if STM32_ADC1_NUMBER != STM32_ADC2_NUMBER
 #error "ADCv3 driver expects STM32_ADC1_NUMBER == STM32_ADC2_NUMBER from registry"
@@ -557,26 +557,6 @@
 #endif
 
 #endif /* !STM32_DMA_SUPPORTS_DMAMUX */
-
-#if STM32_ADC_USE_ADC1 &&                                                   \
-    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC1_DMA_PRIORITY)
-#error "Invalid DMA priority assigned to ADC1"
-#endif
-
-#if STM32_ADC_USE_ADC2 &&                                                   \
-    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC2_DMA_PRIORITY)
-#error "Invalid DMA priority assigned to ADC2"
-#endif
-
-#if STM32_ADC_USE_ADC3 &&                                                   \
-    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC3_DMA_PRIORITY)
-#error "Invalid DMA priority assigned to ADC3"
-#endif
-
-#if STM32_ADC_USE_ADC4 &&                                                   \
-    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC4_DMA_PRIORITY)
-#error "Invalid DMA priority assigned to ADC4"
-#endif
 
 /* ADC clock source checks.*/
 #if defined(STM32F3XX)
