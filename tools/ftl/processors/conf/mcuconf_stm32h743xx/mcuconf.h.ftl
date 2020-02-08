@@ -132,11 +132,11 @@
 #define STM32_SW                            ${doc.STM32_SW!"STM32_SW_PLL1_P_CK"}
 #define STM32_RTCSEL                        ${doc.STM32_RTCSEL!"STM32_RTCSEL_LSE_CK"}
 #define STM32_D1CPRE                        ${doc.STM32_D1CPRE!"STM32_D1CPRE_DIV1"}
-#define STM32_D1HPRE                        ${doc.STM32_D1HPRE!"STM32_D1HPRE_DIV4"}
-#define STM32_D1PPRE3                       ${doc.STM32_D1PPRE3!"STM32_D1PPRE3_DIV1"}
-#define STM32_D2PPRE1                       ${doc.STM32_D2PPRE1!"STM32_D2PPRE1_DIV1"}
-#define STM32_D2PPRE2                       ${doc.STM32_D2PPRE2!"STM32_D2PPRE2_DIV1"}
-#define STM32_D3PPRE4                       ${doc.STM32_D3PPRE4!"STM32_D3PPRE4_DIV1"}
+#define STM32_D1HPRE                        ${doc.STM32_D1HPRE!"STM32_D1HPRE_DIV2"}
+#define STM32_D1PPRE3                       ${doc.STM32_D1PPRE3!"STM32_D1PPRE3_DIV2"}
+#define STM32_D2PPRE1                       ${doc.STM32_D2PPRE1!"STM32_D2PPRE1_DIV2"}
+#define STM32_D2PPRE2                       ${doc.STM32_D2PPRE2!"STM32_D2PPRE2_DIV2"}
+#define STM32_D3PPRE4                       ${doc.STM32_D3PPRE4!"STM32_D3PPRE4_DIV2"}
 
 /*
  * Peripherals clocks static settings.
