@@ -255,7 +255,7 @@ msg_t test_execute(BaseSequentialStream *stream, const testsuite_t *tsp) {
   test_print("*** Test Board:   ");
   test_println(BOARD_NAME);
 #endif
-#if defined(TEST_SIZE_REPORT)
+#if TEST_CFG_SIZE_REPORT == TRUE
   {
     extern uint8_t __text_base, __text_end,
                    _data_start, _data_end,
