@@ -395,13 +395,13 @@ extern "C" {
   void adc_lld_start_conversion(ADCDriver *adcp);
   void adc_lld_stop_conversion(ADCDriver *adcp);
   void adc_lld_serve_interrupt(ADCDriver *adcp);
-  void adcSTM32EnableVREF(void);
-  void adcSTM32DisableVREF(void);
-  void adcSTM32EnableTS(void);
-  void adcSTM32DisableTS(void);
+  void adcSTM32EnableVREF(ADCDriver *adcp);
+  void adcSTM32DisableVREF(ADCDriver *adcp);
+  void adcSTM32EnableTS(ADCDriver *adcp);
+  void adcSTM32DisableTS(ADCDriver *adcp);
 #if defined(ADC_CCR_VBATEN)
-  void adcSTM32EnableVBAT(void);
-  void adcSTM32DisableVBAT(void);
+  void adcSTM32EnableVBAT(ADCDriver *adcp);
+  void adcSTM32DisableVBAT(ADCDriver *adcp);
 #endif
 #ifdef __cplusplus
 }

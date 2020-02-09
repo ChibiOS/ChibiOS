@@ -354,7 +354,9 @@ void adc_lld_serve_interrupt(ADCDriver *adcp) {
  *
  * @notapi
  */
-void adcSTM32EnableVREF(void) {
+void adcSTM32EnableVREF(ADCDriver *adcp) {
+
+  (void)adcp;
 
   ADC->CCR |= ADC_CCR_VREFEN;
 }
@@ -369,7 +371,9 @@ void adcSTM32EnableVREF(void) {
  *
  * @notapi
  */
-void adcSTM32DisableVREF(void) {
+void adcSTM32DisableVREF(ADCDriver *adcp) {
+
+  (void)adcp;
 
   ADC->CCR &= ~ADC_CCR_VREFEN;
 }
@@ -384,7 +388,9 @@ void adcSTM32DisableVREF(void) {
  *
  * @notapi
  */
-void adcSTM32EnableTS(void) {
+void adcSTM32EnableTS(ADCDriver *adcp) {
+
+  (void)adcp;
 
   ADC->CCR |= ADC_CCR_TSEN;
 }
@@ -399,7 +405,9 @@ void adcSTM32EnableTS(void) {
  *
  * @notapi
  */
-void adcSTM32DisableTS(void) {
+void adcSTM32DisableTS(ADCDriver *adcp) {
+
+  (void)adcp;
 
   ADC->CCR &= ~ADC_CCR_TSEN;
 }
@@ -415,7 +423,9 @@ void adcSTM32DisableTS(void) {
  *
  * @notapi
  */
-void adcSTM32EnableVBAT(void) {
+void adcSTM32EnableVBAT(ADCDriver *adcp) {
+
+  (void)adcp;
 
   ADC->CCR |= ADC_CCR_VBATEN;
 }
@@ -430,7 +440,9 @@ void adcSTM32EnableVBAT(void) {
  *
  * @notapi
  */
-void adcSTM32DisableVBAT(void) {
+void adcSTM32DisableVBAT(ADCDriver *adcp) {
+
+  (void)adcp;
 
   ADC->CCR &= ~ADC_CCR_VBATEN;
 }
