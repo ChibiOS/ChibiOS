@@ -112,7 +112,7 @@ const ADCConversionGroup portab_adcgrpcfg2 = {
 void portab_setup(void) {
 
   /* ADC inputs.*/
-  palSetGroupMode(GPIOC, PAL_PORT_BIT(0) | PAL_PORT_BIT(1),
+  palSetGroupMode(GPIOB, PAL_PORT_BIT(2) | PAL_PORT_BIT(10),
                   0, PAL_MODE_INPUT_ANALOG);
 }
 
