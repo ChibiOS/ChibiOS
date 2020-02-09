@@ -218,6 +218,7 @@
 #else /* defined(STM32_ENFORCE_H7_REV_V) */
 
 #define STM32_SYSCLK_MAX                400000000
+#define STM32_SYSCLK_MAX_NOBOOST        400000000
 #define STM32_HCLK_MAX                  (STM32_SYSCLK_MAX / 2)
 #define STM32_HSECLK_MAX                48000000
 #define STM32_HSECLK_BYP_MAX            50000000
