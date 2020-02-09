@@ -60,8 +60,8 @@ void adcerrorcallback(ADCDriver *adcp, adcerror_t err);
  * Mode:        Linear buffer, 1 channel, SW triggered.
  * Channels:    IN10.
  */
-static const ADCConversionGroup adcgrpcfg1 = {
-  .circular     = true,
+const ADCConversionGroup portab_adcgrpcfg1 = {
+  .circular     = false,
   .num_channels = ADC_GRP1_NUM_CHANNELS,
   .end_cb       = NULL,
   .error_cb     = adcerrorcallback,
@@ -77,7 +77,7 @@ static const ADCConversionGroup adcgrpcfg1 = {
  * Mode:        Continuous, 4 channels, HW triggered by GPT6-TRGO.
  * Channels:    IN10, IN11, VRef, Sensor.
  */
-static const ADCConversionGroup adcgrpcfg2 = {
+const ADCConversionGroup portab_adcgrpcfg2 = {
   .circular     = true,
   .num_channels = ADC_GRP2_NUM_CHANNELS,
   .end_cb       = adccallback,
@@ -85,7 +85,7 @@ static const ADCConversionGroup adcgrpcfg2 = {
   .cfgr1        = ADC_CFGR1_CONT |
                   ADC_CFGR1_RES_12BIT |
                   ADC_CFGR1_EXTEN_RISING |
-                  ADC_CFGR1_EXTSEL_SRC(0)                   /* CFGR1 */
+                  ADC_CFGR1_EXTSEL_SRC(0),                  /* CFGR1 */
   .cfgr2        = 0,                                        /* CFGR2 */
   .tr           = ADC_TR(0, 0),                             /* TR */
   .smpr         = ADC_SMPR_SMP_39P5,                        /* SMPR */
@@ -112,8 +112,8 @@ static const ADCConversionGroup adcgrpcfg2 = {
 void portab_setup(void) {
 
   /* ADC inputs.*/
-  palSetPadMode(GPIOA, 0, PAL_MODE_INPUT_ANALOG);
-  palSetPadMode(GPIOB, 1, PAL_MODE_INPUT_ANALOG);
+  palSetGroupMode(GPIOC, PAL_PORT_BIT(0) | PAL_PORT_BIT(1),
+                  0, PAL_MODE_INPUT_ANALOG);
 }
 
 /** @} */

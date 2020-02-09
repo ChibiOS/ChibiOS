@@ -57,7 +57,9 @@ void adccallback(ADCDriver *adcp) {
   }
 
   if ((n % 200) == 0U) {
+#if defined(PORTAB_LINE_LED2)
     palToggleLine(PORTAB_LINE_LED2);
+#endif
   }
 }
 

@@ -29,7 +29,7 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
-#define PORTAB_LINE_LED1            GPIOA_LED_GREEN
+#define PORTAB_LINE_LED1            LINE_LED_GREEN
 //#define PORTAB_LINE_LED2            LINE_LED2
 #define PORTAB_LED_OFF              PAL_LOW
 #define PORTAB_LED_ON               PAL_HIGH
