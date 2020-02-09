@@ -114,6 +114,12 @@
 /*
  * ADC driver system settings.
  */
+#define STM32_ADC_USE_ADC1                  ${doc.STM32_ADC_USE_ADC1!"FALSE"}
+#define STM32_ADC_ADC1_CKMODE               ${doc.STM32_ADC_ADC1_CKMODE!"STM32_ADC_CKMODE_ADCCLK"}
+#define STM32_ADC_ADC1_DMA_PRIORITY         ${doc.STM32_ADC_ADC1_DMA_PRIORITY!"2"}
+#define STM32_ADC_ADC1_DMA_IRQ_PRIORITY     ${doc.STM32_ADC_ADC1_DMA_IRQ_PRIORITY!"2"}
+#define STM32_ADC_ADC1_DMA_STREAM           ${doc.STM32_ADC_ADC1_DMA_STREAM!"STM32_DMA_STREAM_ID_ANY"}
+#define STM32_ADC_PRESCALER_VALUE           ${doc.STM32_ADC_PRESCALER_VALUE!"1"}
 
 /*
  * DAC driver system settings.
