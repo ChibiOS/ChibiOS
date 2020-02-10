@@ -582,7 +582,7 @@ const stm32_dma_stream_t *dmaStreamAllocI(uint32_t id,
   }
 #if STM32_DMA2_NUM_CHANNELS > 0
   else if (id == STM32_DMA_STREAM_ID_ANY_DMA2) {
-    startid = 7U;
+    startid = STM32_DMA1_NUM_CHANNELS;
     endid   = STM32_DMA_STREAMS - 1U;
   }
 #endif

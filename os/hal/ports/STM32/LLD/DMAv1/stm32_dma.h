@@ -358,7 +358,7 @@ typedef struct {
  * @special
  */
 #define dmaStreamSetPeripheral(dmastp, addr) {                              \
-  (dmastp)->channel->CPAR  = (uint32_t)(addr);                              \
+  (dmastp)->channel->CPAR = (uint32_t)(addr);                               \
 }
 
 /**
@@ -373,7 +373,7 @@ typedef struct {
  * @special
  */
 #define dmaStreamSetMemory0(dmastp, addr) {                                 \
-  (dmastp)->channel->CMAR  = (uint32_t)(addr);                              \
+  (dmastp)->channel->CMAR = (uint32_t)(addr);                               \
 }
 
 /**
@@ -388,7 +388,7 @@ typedef struct {
  * @special
  */
 #define dmaStreamSetTransactionSize(dmastp, size) {                         \
-  (dmastp)->channel->CNDTR  = (uint32_t)(size);                             \
+  (dmastp)->channel->CNDTR = (uint32_t)(size);                              \
 }
 
 /**
