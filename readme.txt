@@ -76,6 +76,7 @@
 *** 19.1.4 ***
 - NEW: Added support for .cc files extensions in makefiles.
 - NEW: Made bus acquire/release functions in SNOR driver public.
+- FIX: Fixed missing IRQ disabling in ADCv1 and ADCv3 STM32 drivers (bug #1073).
 - FIX: Fixed missing parenthesis in ADC _adc_isr_error_code macro (bug #1072).
 - FIX: Fixed invalid macro check in test library (bug #1071).
 - FIX: Fixed non-standard declaration in STM32 ADCv3 driver (bug #1070).
