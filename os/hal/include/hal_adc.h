@@ -104,6 +104,7 @@ typedef struct hal_adc_configuration_group ADCConversionGroup;
  * @brief   Type of an ADC notification callback.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object triggering the
+ *                      callback
  */
 typedef void (*adccallback_t)(ADCDriver *adcp);
 
@@ -360,9 +361,10 @@ struct hal_adc_driver {
   if ((adcp)->grpp->error_cb != NULL) {                                     \
     (adcp)->state = ADC_ERROR;                                              \
     (adcp)->grpp->error_cb(adcp, err);                                      \
-    if ((adcp)->state == ADC_ERROR)                                         \
+    if ((adcp)->state == ADC_ERROR) {                                       \
       (adcp)->state = ADC_READY;                                            \
       (adcp)->grpp = NULL;                                                  \
+    }                                                                       \
   }                                                                         \
   else {                                                                    \
     (adcp)->state = ADC_READY;                                              \
