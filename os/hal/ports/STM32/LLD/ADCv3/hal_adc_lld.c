@@ -258,6 +258,7 @@ static void adc_lld_stop_adc(ADCDriver *adcp) {
     adcp->adcm->CR |= ADC_CR_ADSTP;
     while (adcp->adcm->CR & ADC_CR_ADSTP)
       ;
+    adcp->adcm->IER = 0;
   }
 }
 
