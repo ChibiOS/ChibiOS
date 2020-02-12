@@ -228,9 +228,10 @@ typedef enum {
   if ((adcp)->grpp->error_cb != NULL) {                                     \
     (adcp)->state = ADC_ERROR;                                              \
     (adcp)->grpp->error_cb(adcp, err);                                      \
-    if ((adcp)->state == ADC_ERROR)                                         \
+    if ((adcp)->state == ADC_ERROR) {                                       \
       (adcp)->state = ADC_READY;                                            \
       (adcp)->grpp = NULL;                                                  \
+    }                                                                       \
   }                                                                         \
   else {                                                                    \
     (adcp)->state = ADC_READY;                                              \
