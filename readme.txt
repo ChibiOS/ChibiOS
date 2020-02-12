@@ -88,6 +88,7 @@
 *** 18.2.3 ***
 - NEW: Added a check on defective GCC versions, Cortex-M0 only.
 - NEW: Extra timer checks in STM32 ST driver.
+- FIX: Fixed missing IRQ disabling in ADCv1 and ADCv3 STM32 drivers (bug #1073).
 - FIX: Fixed missing parenthesis in ADC _adc_isr_error_code macro (bug #1072).
 - FIX: Fixed non-standard declaration in STM32 ADCv3 driver (bug #1070).
 - FIX: Fixed problem in the I2C fallback driver (bug #1069).
