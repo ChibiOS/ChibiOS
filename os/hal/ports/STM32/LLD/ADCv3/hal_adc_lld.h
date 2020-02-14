@@ -743,7 +743,7 @@ typedef enum {
 #endif /* STM32_ADCV3_OVERSAMPLING == FALSE */
 
 /**
- * @name    Threashold register initializer
+ * @name    Threshold register initializer
  * @{
  */
 #define ADC_TR(low, high)       (((uint32_t)(high) << 16) | (uint32_t)(low))
