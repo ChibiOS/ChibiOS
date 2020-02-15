@@ -12,6 +12,10 @@ all:
 	+@make --no-print-directory -f ./make/stm32g071rb_nucleo64.make all
 	@echo ====================================================================
 	@echo
+	@echo === Building for STM32G474ZI-Nucleo64 ==============================
+	+@make --no-print-directory -f ./make/stm32g474zi_nucleo64.make all
+	@echo ====================================================================
+	@echo
 	@echo === Building for STM32L053R8-Nucleo64 ==============================
 	+@make --no-print-directory -f ./make/stm32l053r8_nucleo64.make all
 	@echo ====================================================================
@@ -30,6 +34,8 @@ clean:
 	-@make --no-print-directory -f ./make/stm32h743_nucleo144.make clean
 	@echo
 	+@make --no-print-directory -f ./make/stm32g071rb_nucleo64.make clean
+	@echo
+	+@make --no-print-directory -f ./make/stm32g474zi_nucleo64.make clean
 	@echo
 	+@make --no-print-directory -f ./make/stm32l053r8_nucleo64.make clean
 	@echo

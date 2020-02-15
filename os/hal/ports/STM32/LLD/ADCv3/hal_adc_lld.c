@@ -600,7 +600,7 @@ void adc_lld_init(void) {
 #if STM32_ADC_USE_ADC3 || STM32_ADC_USE_ADC4
   rccEnableADC345(true);
   rccResetADC345();
-  ADC345_COMMON->CCR = STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_MDMA;
+  ADC345_COMMON->CCR = STM32_ADC_ADC345_CLOCK_MODE | ADC_DMA_MDMA;
   rccDisableADC345();
 #endif
 #endif

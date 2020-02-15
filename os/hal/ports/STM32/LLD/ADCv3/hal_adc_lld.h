@@ -338,14 +338,14 @@
  * @brief   ADC1/ADC2 clock source and mode.
  */
 #if !defined(STM32_ADC_ADC12_CLOCK_MODE) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC12_CLOCK_MODE          ADC_CCR_CKMODE_AHB_DIV1
+#define STM32_ADC_ADC12_CLOCK_MODE          ADC_CCR_CKMODE_AHB_DIV4
 #endif
 
 /**
  * @brief   ADC3/ADC4/ADC5 clock source and mode.
  */
 #if !defined(STM32_ADC_ADC345_CLOCK_MODE) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC345_CLOCK_MODE         ADC_CCR_CKMODE_AHB_DIV1
+#define STM32_ADC_ADC345_CLOCK_MODE         ADC_CCR_CKMODE_AHB_DIV4
 #endif
 #endif /* defined(STM32G4XX) */
 
@@ -581,7 +581,7 @@
 #elif STM32_ADC_ADC34_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV4
 #define STM32_ADC34_CLOCK               (STM32_HCLK / 4)
 #else
-#error "invalid clock mode selected for STM32_ADC_ADC12_CLOCK_MODE"
+#error "invalid clock mode selected for STM32_ADC_ADC34_CLOCK_MODE"
 #endif
 
 #if STM32_ADC12_CLOCK > STM32_ADCCLK_MAX
@@ -610,6 +610,40 @@
 #error "STM32_ADC123_CLOCK exceeding maximum frequency (STM32_ADCCLK_MAX)"
 #endif
 #endif /* defined(STM32L4XX) || defined(STM32L4XXP) */
+
+#if defined(STM32G4XX)
+#if STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
+#define STM32_ADC12_CLOCK               STM32_ADC12CLK
+#elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
+#define STM32_ADC12_CLOCK               (STM32_HCLK / 1)
+#elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV2
+#define STM32_ADC12_CLOCK               (STM32_HCLK / 2)
+#elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV4
+#define STM32_ADC12_CLOCK               (STM32_HCLK / 4)
+#else
+#error "invalid clock mode selected for STM32_ADC_ADC12_CLOCK_MODE"
+#endif
+
+#if STM32_ADC_ADC345_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
+#define STM32_ADC345_CLOCK              STM32_ADC345CLK
+#elif STM32_ADC_ADC345_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
+#define STM32_ADC345_CLOCK              (STM32_HCLK / 1)
+#elif STM32_ADC_ADC345_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV2
+#define STM32_ADC345_CLOCK              (STM32_HCLK / 2)
+#elif STM32_ADC_ADC345_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV4
+#define STM32_ADC345_CLOCK              (STM32_HCLK / 4)
+#else
+#error "invalid clock mode selected for STM32_ADC_ADC345_CLOCK_MODE"
+#endif
+
+#if STM32_ADC12_CLOCK > STM32_ADCCLK_MAX
+#error "STM32_ADC12_CLOCK exceeding maximum frequency (STM32_ADCCLK_MAX)"
+#endif
+
+#if STM32_ADC345_CLOCK > STM32_ADCCLK_MAX
+#error "STM32_ADC345_CLOCK exceeding maximum frequency (STM32_ADCCLK_MAX)"
+#endif
+#endif /* defined(STM32G4XX) */
 
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED
