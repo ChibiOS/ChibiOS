@@ -69,11 +69,23 @@
 
 /* Addressing header differences.*/
 #if !defined(ADC_IER_OVRIE)
-#define ADC_IER_OVRIE ADC_IER_OVR
+#define ADC_IER_OVRIE           ADC_IER_OVR
 #endif
 
 #if !defined(ADC_IER_AWD1IE)
-#define ADC_IER_AWD1IE ADC_IER_AWD1
+#define ADC_IER_AWD1IE          ADC_IER_AWD1
+#endif
+
+#if !defined(ADC_CR_ADVREGEN)
+#define ADC_CR_ADVREGEN         ADC_CR_ADVREGEN_0
+#endif
+
+#if !defined(ADC_CR_DEEPPWD)
+#define ADC_CR_DEEPPWD          ADC_CR_ADVREGEN_1
+#endif
+
+#if !defined(ADC_ISR_ADRDY)
+#define ADC_ISR_ADRDY           ADC_ISR_ADRD
 #endif
 
 /*===========================================================================*/
@@ -121,23 +133,12 @@ static uint32_t clkmask;
  */
 static void adc_lld_vreg_on(ADCDriver *adcp) {
 
-#if defined(STM32F3XX)
-  adcp->adcm->CR = 0;   /* RM 12.4.3.*/
-  adcp->adcm->CR = ADC_CR_ADVREGEN_0;
-#if STM32_ADC_DUAL_MODE
-  adcp->adcs->CR = ADC_CR_ADVREGEN_0;
-#endif
-  osalSysPolledDelayX(OSAL_US2RTC(STM32_HCLK, 10));
-#endif
-
-#if defined(STM32L4XX) || defined(STM32L4XXP) || defined(STM32G4XX)
-  adcp->adcm->CR = 0;   /* RM 16.3.6.*/
+  adcp->adcm->CR = 0;   /* See RM.*/
   adcp->adcm->CR = ADC_CR_ADVREGEN;
 #if STM32_ADC_DUAL_MODE
   adcp->adcs->CR = ADC_CR_ADVREGEN;
 #endif
   osalSysPolledDelayX(OSAL_US2RTC(STM32_HCLK, 20));
-#endif
 }
 
 /**
@@ -147,22 +148,49 @@ static void adc_lld_vreg_on(ADCDriver *adcp) {
  */
 static void adc_lld_vreg_off(ADCDriver *adcp) {
 
-#if defined(STM32F3XX)
-  adcp->adcm->CR = 0;   /* RM 12.4.3.*/
-  adcp->adcm->CR = ADC_CR_ADVREGEN_1;
-#if STM32_ADC_DUAL_MODE
-  adcp->adcs->CR = 0;
-  adcp->adcs->CR = ADC_CR_ADVREGEN_1;
-#endif
-#endif
-
-#if defined(STM32L4XX) || defined(STM32L4XXP) || defined(STM32G4XX)
-  adcp->adcm->CR = 0;   /* RM 12.4.3.*/
+  adcp->adcm->CR = 0;   /* See RM.*/
   adcp->adcm->CR = ADC_CR_DEEPPWD;
 #if STM32_ADC_DUAL_MODE
   adcp->adcs->CR = 0;
   adcp->adcs->CR = ADC_CR_DEEPPWD;
 #endif
+}
+
+/**
+ * @brief   Calibrates and ADC unit.
+ *
+ * @param[in] adcp      pointer to the @p ADCDriver object
+ */
+static void adc_lld_calibrate(ADCDriver *adcp) {
+
+  osalDbgAssert(adcp->adcm->CR == ADC_CR_ADVREGEN, "invalid register state");
+
+  /* Differential calibration for master ADC-*/
+  adcp->adcm->CR = ADC_CR_ADVREGEN | ADC_CR_ADCALDIF;
+  adcp->adcm->CR = ADC_CR_ADVREGEN | ADC_CR_ADCALDIF | ADC_CR_ADCAL;
+  while ((adcp->adcm->CR & ADC_CR_ADCAL) != 0)
+    ;
+
+  /* Single-ended calibration for master ADC-*/
+  adcp->adcm->CR = ADC_CR_ADVREGEN;
+  adcp->adcm->CR = ADC_CR_ADVREGEN | ADC_CR_ADCAL;
+  while ((adcp->adcm->CR & ADC_CR_ADCAL) != 0)
+    ;
+
+#if STM32_ADC_DUAL_MODE
+  osalDbgAssert(adcp->adcs->CR == ADC_CR_ADVREGEN, "invalid register state");
+
+  /* Differential calibration for slave ADC-*/
+  adcp->adcs->CR = ADC_CR_ADVREGEN | ADC_CR_ADCALDIF;
+  adcp->adcs->CR = ADC_CR_ADVREGEN | ADC_CR_ADCALDIF | ADC_CR_ADCAL;
+  while ((adcp->adcs->CR & ADC_CR_ADCAL) != 0)
+    ;
+
+  /* Single-ended calibration for slave ADC-*/
+  adcp->adcs->CR = ADC_CR_ADVREGEN;
+  adcp->adcs->CR = ADC_CR_ADVREGEN | ADC_CR_ADCAL;
+  while ((adcp->adcs->CR & ADC_CR_ADCAL) != 0)
+    ;
 #endif
 }
 
@@ -173,18 +201,6 @@ static void adc_lld_vreg_off(ADCDriver *adcp) {
  */
 static void adc_lld_analog_on(ADCDriver *adcp) {
 
-#if defined(STM32F3XX)
-  adcp->adcm->CR |= ADC_CR_ADEN;
-  while ((adcp->adcm->ISR & ADC_ISR_ADRD) == 0)
-    ;
-#if STM32_ADC_DUAL_MODE
-  adcp->adcs->CR |= ADC_CR_ADEN;
-  while ((adcp->adcs->ISR & ADC_ISR_ADRD) == 0)
-    ;
-#endif
-#endif
-
-#if defined(STM32L4XX) || defined(STM32L4XXP) || defined(STM32G4XX)
   adcp->adcm->CR |= ADC_CR_ADEN;
   while ((adcp->adcm->ISR & ADC_ISR_ADRDY) == 0)
     ;
@@ -192,7 +208,6 @@ static void adc_lld_analog_on(ADCDriver *adcp) {
   adcp->adcs->CR |= ADC_CR_ADEN;
   while ((adcp->adcs->ISR & ADC_ISR_ADRDY) == 0)
     ;
-#endif
 #endif
 }
 
@@ -210,40 +225,6 @@ static void adc_lld_analog_off(ADCDriver *adcp) {
   adcp->adcs->CR |= ADC_CR_ADDIS;
   while ((adcp->adcs->CR & ADC_CR_ADDIS) != 0)
     ;
-#endif
-}
-
-/**
- * @brief   Calibrates and ADC unit.
- *
- * @param[in] adcp      pointer to the @p ADCDriver object
- */
-static void adc_lld_calibrate(ADCDriver *adcp) {
-
-#if defined(STM32F3XX)
-  osalDbgAssert(adcp->adcm->CR == ADC_CR_ADVREGEN_0, "invalid register state");
-  adcp->adcm->CR |= ADC_CR_ADCAL;
-  while ((adcp->adcm->CR & ADC_CR_ADCAL) != 0)
-    ;
-#if STM32_ADC_DUAL_MODE
-  osalDbgAssert(adcp->adcs->CR == ADC_CR_ADVREGEN_0, "invalid register state");
-  adcp->adcs->CR |= ADC_CR_ADCAL;
-  while ((adcp->adcs->CR & ADC_CR_ADCAL) != 0)
-    ;
-#endif
-#endif
-
-#if defined(STM32L4XX) || defined(STM32L4XXP) || defined(STM32G4XX)
-  osalDbgAssert(adcp->adcm->CR == ADC_CR_ADVREGEN, "invalid register state");
-  adcp->adcm->CR |= ADC_CR_ADCAL;
-  while ((adcp->adcm->CR & ADC_CR_ADCAL) != 0)
-    ;
-#if STM32_ADC_DUAL_MODE
-  osalDbgAssert(adcp->adcs->CR == ADC_CR_ADVREGEN, "invalid register state");
-  adcp->adcs->CR |= ADC_CR_ADCAL;
-  while ((adcp->adcs->CR & ADC_CR_ADCAL) != 0)
-    ;
-#endif
 #endif
 }
 
