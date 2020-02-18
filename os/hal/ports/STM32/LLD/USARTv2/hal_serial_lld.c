@@ -255,7 +255,7 @@ static void usart_init(SerialDriver *sdp, const SerialConfig *config) {
     if (config->cr1 & USART_CR1_OVER8)
       brr = ((brr & ~7) * 2) | (brr & 7);
 
-    osalDbgAssert(brr < 0x1000, "invalid BRR value");
+    osalDbgAssert(brr < 0x10000, "invalid BRR value");
   }
   u->BRR = brr;
 
