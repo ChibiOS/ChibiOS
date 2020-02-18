@@ -68,7 +68,7 @@ static void adc_lld_stop_adc(ADC_TypeDef *adc) {
     adc->CR |= ADC_CR_ADSTP;
     while (adc->CR & ADC_CR_ADSTP)
       ;
-    adcp->adc->IER = 0;
+    adc->IER = 0;
   }
 }
 
