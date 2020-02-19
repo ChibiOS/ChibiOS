@@ -246,10 +246,10 @@
 #define STM32_CLK48SEL_HSI48    (0U << 26U) /**< CLK48 source is HSI48.     */
 #define STM32_CLK48SEL_PLLQCLK  (2U << 26U) /**< CLK48 source is PLLQCLK.   */
 
-#define STM32_ADC12SEL_MASK     (3U << 30U) /**< ADC12SEL mask.             */
-#define STM32_ADC12SEL_NOCLK    (0U << 30U) /**< ADC12 source is none.      */
-#define STM32_ADC12SEL_PLLPCLK  (1U << 30U) /**< ADC12 source is PLLPCLK.   */
-#define STM32_ADC12SEL_SYSCLK   (2U << 30U) /**< ADC12 source is SYSCLK.    */
+#define STM32_ADC12SEL_MASK     (3U << 28U) /**< ADC12SEL mask.             */
+#define STM32_ADC12SEL_NOCLK    (0U << 28U) /**< ADC12 source is none.      */
+#define STM32_ADC12SEL_PLLPCLK  (1U << 28U) /**< ADC12 source is PLLPCLK.   */
+#define STM32_ADC12SEL_SYSCLK   (2U << 28U) /**< ADC12 source is SYSCLK.    */
 
 #define STM32_ADC345SEL_MASK    (3U << 30U) /**< ADC345SEL mask.            */
 #define STM32_ADC345SEL_NOCLK   (0U << 30U) /**< ADC345 source is none.     */
@@ -1720,8 +1720,8 @@
 #elif STM32_ADC12SEL == STM32_ADC12SEL_PLLPCLK
   #define STM32_ADC12CLK            STM32_PLL_P_CLKOUT
 
-#elif STM32_ADC12SEL == STM32_ADC12SEL_HSI16
-  #define STM32_ADC12CLK            STM32_HSI16CLK
+#elif STM32_ADC12SEL == STM32_ADC12SEL_SYSCLK
+  #define STM32_ADC12CLK            STM32_SYSCLK
 
 #else
   #error "invalid source selected for ADC clock"
@@ -1736,8 +1736,8 @@
 #elif STM32_ADC345SEL == STM32_ADC345SEL_PLLPCLK
   #define STM32_ADC345CLK           STM32_PLL_P_CLKOUT
 
-#elif STM32_ADC345SEL == STM32_ADC345SEL_HSI16
-  #define STM32_ADC345CLK           STM32_HSI16CLK
+#elif STM32_ADC345SEL == STM32_ADC345SEL_SYSCLK
+  #define STM32_ADC345CLK           STM32_SYSCLK
 
 #else
   #error "invalid source selected for ADC clock"
