@@ -34,6 +34,13 @@
 /* Module local definitions.                                                 */
 /*===========================================================================*/
 
+/**
+ * @brief   Number of iterations in the calibration loop.
+ * @note    This is required in order to assess the best result in
+ *          architectures with instruction cache.
+ */
+#define TM_CALIBRATION_LOOP             4U
+
 /*===========================================================================*/
 /* Module exported variables.                                                */
 /*===========================================================================*/
@@ -76,15 +83,20 @@ static inline void tm_stop(time_measurement_t *tmp,
  */
 void _tm_init(void) {
   time_measurement_t tm;
+  unsigned i;
 
   /* Time Measurement subsystem calibration, it does a null measurement
      and calculates the call overhead which is subtracted to real
      measurements.*/
   ch.tm.offset = (rtcnt_t)0;
   chTMObjectInit(&tm);
-  chTMStartMeasurementX(&tm);
-  chTMStopMeasurementX(&tm);
-  ch.tm.offset = tm.last;
+  i = TM_CALIBRATION_LOOP;
+  do {
+    chTMStartMeasurementX(&tm);
+    chTMStopMeasurementX(&tm);
+    i--;
+  } while (i > 0U);
+  ch.tm.offset = tm.best;
 }
 
 /**
