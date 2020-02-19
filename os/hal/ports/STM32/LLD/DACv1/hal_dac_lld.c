@@ -433,12 +433,12 @@ void dac_lld_start(DACDriver *dacp) {
        zero.*/
 #if STM32_DAC_DUAL_MODE == FALSE
     {
-      uint32_t cr = dacp->params->dac->CR;
+      uint32_t cr;
 
-      dacp->params->dac->CR = cr;
+      cr = dacp->params->dac->CR;;
       cr &= dacp->params->regmask;
       cr |= (DAC_CR_EN1 | dacp->config->cr) << dacp->params->regshift;
-      dacp->params->dac->CR &= dacp->params->regmask;
+      dacp->params->dac->CR = cr;
       dac_lld_put_channel(dacp, channel, dacp->config->init);
     }
 #else
