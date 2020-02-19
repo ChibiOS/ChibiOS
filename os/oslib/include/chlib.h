@@ -154,10 +154,6 @@
 #error "malformed chlicense.h"
 #endif
 
-#if CH_CUSTOMER_LIC_OSLIB == FALSE
-#error "ChibiOS/LIB not licensed"
-#endif
-
 #if (CH_LICENSE_FEATURES != CH_FEATURES_FULL) &&                            \
     (CH_LICENSE_FEATURES != CH_FEATURES_INTERMEDIATE) &&                    \
     (CH_LICENSE_FEATURES != CH_FEATURES_BASIC)
@@ -196,10 +192,21 @@
 #define CH_CFG_USE_OBJ_FIFOS                FALSE
 #define CH_CFG_USE_PIPES                    FALSE
 #define CH_CFG_USE_OBJ_CACHES               FALSE
+#define CH_CFG_USE_DELEGATES                FALSE
 #define CH_CFG_USE_JOBS                     FALSE
 
 #endif /* (CH_CUSTOMER_LIC_OSLIB == FALSE) ||
           (CH_LICENSE_FEATURES == CH_FEATURES_BASIC) */
+
+/* Restrictions in unlicensed mode.*/
+#if (CH_CUSTOMER_LIC_OSLIB == FALSE)
+
+/* Restricted subsystems.*/
+#undef CH_CFG_USE_MAILBOXES
+
+#define CH_CFG_USE_MAILBOXES                FALSE
+
+#endif /* CH_CUSTOMER_LIC_OSLIB == FALSE */
 
 /*===========================================================================*/
 /* Module data structures and types.                                         */
