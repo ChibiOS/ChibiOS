@@ -435,7 +435,7 @@ void dac_lld_start(DACDriver *dacp) {
     {
       uint32_t cr;
 
-      cr = dacp->params->dac->CR;;
+      cr = dacp->params->dac->CR;
       cr &= dacp->params->regmask;
       cr |= (DAC_CR_EN1 | dacp->config->cr) << dacp->params->regshift;
       dacp->params->dac->CR = cr;
