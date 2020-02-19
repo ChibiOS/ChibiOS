@@ -157,6 +157,22 @@
 #define ADC_CCR_CKMODE_AHB_DIV2         (2 << 16)
 #define ADC_CCR_CKMODE_AHB_DIV4         (3 << 16)
 
+#if !defined(STM32F3XX)
+#define ADC_CCR_PRESC_MASK              (15 << 18)
+#define ADC_CCR_PRESC_NOCLOCK           (0 << 18)
+#define ADC_CCR_PRESC_DIV_2             (1 << 18)
+#define ADC_CCR_PRESC_DIV_4             (2 << 18)
+#define ADC_CCR_PRESC_DIV_6             (3 << 18)
+#define ADC_CCR_PRESC_DIV_8             (4 << 18)
+#define ADC_CCR_PRESC_DIV_10            (5 << 18)
+#define ADC_CCR_PRESC_DIV_12            (6 << 18)
+#define ADC_CCR_PRESC_DIV_16            (7 << 18)
+#define ADC_CCR_PRESC_DIV_32            (8 << 18)
+#define ADC_CCR_PRESC_DIV_64            (9 << 18)
+#define ADC_CCR_PRESC_DIV_128           (10 << 18)
+#define ADC_CCR_PRESC_DIV_256           (11 << 18)
+#endif /* !defined(STM32F3XX) */
+
 /* F3 headers do not define the following macros, L4 headers do.*/
 #if !defined(ADC_CCR_VREFEN) || defined(__DOXYGEN__)
 #define ADC_CCR_VREFEN                  (1 << 22)
@@ -331,6 +347,13 @@
 #if !defined(STM32_ADC_ADC123_CLOCK_MODE) || defined(__DOXYGEN__)
 #define STM32_ADC_ADC123_CLOCK_MODE         ADC_CCR_CKMODE_AHB_DIV1
 #endif
+
+/**
+ * @brief   ADC1/ADC2/ADC3 clock prescaler.
+ */
+#if !defined(STM32_ADC_ADC123_PRESC) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC123_PRESC              ADC_CCR_PRESC_DIV2
+#endif
 #endif /* defined(STM32L4XX) || defined(STM32L4XXP)  */
 
 #if defined(STM32G4XX) || defined(__DOXYGEN__)
@@ -346,6 +369,20 @@
  */
 #if !defined(STM32_ADC_ADC345_CLOCK_MODE) || defined(__DOXYGEN__)
 #define STM32_ADC_ADC345_CLOCK_MODE         ADC_CCR_CKMODE_AHB_DIV4
+#endif
+
+/**
+ * @brief   ADC1/ADC2 clock prescaler.
+ */
+#if !defined(STM32_ADC_ADC12_PRESC) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC12_PRESC               ADC_CCR_PRESC_DIV2
+#endif
+
+/**
+ * @brief   ADC3/ADC4/ADC5 clock prescaler.
+ */
+#if !defined(STM32_ADC_ADC345_PRESC) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC345_PRESC              ADC_CCR_PRESC_DIV2
 #endif
 #endif /* defined(STM32G4XX) */
 

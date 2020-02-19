@@ -54,7 +54,7 @@
 #define STM32_PLLSRC                        STM32_PLLSRC_HSE
 #define STM32_PLLM_VALUE                    6
 #define STM32_PLLN_VALUE                    85
-#define STM32_PLLPDIV_VALUE                 0
+#define STM32_PLLPDIV_VALUE                 3
 #define STM32_PLLP_VALUE                    7
 #define STM32_PLLQ_VALUE                    8
 #define STM32_PLLR_VALUE                    2
@@ -155,6 +155,8 @@
 #define STM32_ADC_ADC4_DMA_IRQ_PRIORITY     5
 #define STM32_ADC_ADC12_CLOCK_MODE          ADC_CCR_CKMODE_AHB_DIV4
 #define STM32_ADC_ADC345_CLOCK_MODE         ADC_CCR_CKMODE_AHB_DIV4
+#define STM32_ADC_ADC12_PRESC               ADC_CCR_PRESC_DIV2
+#define STM32_ADC_ADC345_PRESC              ADC_CCR_PRESC_DIV2
 
 /*
  * CAN driver system settings.

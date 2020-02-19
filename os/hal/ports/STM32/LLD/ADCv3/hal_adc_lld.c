@@ -165,13 +165,13 @@ static void adc_lld_calibrate(ADCDriver *adcp) {
 
   osalDbgAssert(adcp->adcm->CR == ADC_CR_ADVREGEN, "invalid register state");
 
-  /* Differential calibration for master ADC-*/
+  /* Differential calibration for master ADC.*/
   adcp->adcm->CR = ADC_CR_ADVREGEN | ADC_CR_ADCALDIF;
   adcp->adcm->CR = ADC_CR_ADVREGEN | ADC_CR_ADCALDIF | ADC_CR_ADCAL;
   while ((adcp->adcm->CR & ADC_CR_ADCAL) != 0)
     ;
 
-  /* Single-ended calibration for master ADC-*/
+  /* Single-ended calibration for master ADC.*/
   adcp->adcm->CR = ADC_CR_ADVREGEN;
   adcp->adcm->CR = ADC_CR_ADVREGEN | ADC_CR_ADCAL;
   while ((adcp->adcm->CR & ADC_CR_ADCAL) != 0)
@@ -180,13 +180,13 @@ static void adc_lld_calibrate(ADCDriver *adcp) {
 #if STM32_ADC_DUAL_MODE
   osalDbgAssert(adcp->adcs->CR == ADC_CR_ADVREGEN, "invalid register state");
 
-  /* Differential calibration for slave ADC-*/
+  /* Differential calibration for slave ADC.*/
   adcp->adcs->CR = ADC_CR_ADVREGEN | ADC_CR_ADCALDIF;
   adcp->adcs->CR = ADC_CR_ADVREGEN | ADC_CR_ADCALDIF | ADC_CR_ADCAL;
   while ((adcp->adcs->CR & ADC_CR_ADCAL) != 0)
     ;
 
-  /* Single-ended calibration for slave ADC-*/
+  /* Single-ended calibration for slave ADC.*/
   adcp->adcs->CR = ADC_CR_ADVREGEN;
   adcp->adcs->CR = ADC_CR_ADVREGEN | ADC_CR_ADCAL;
   while ((adcp->adcs->CR & ADC_CR_ADCAL) != 0)
@@ -561,11 +561,11 @@ void adc_lld_init(void) {
   rccEnableADC123(true);
   rccResetADC123();
 #if defined(ADC1_2_COMMON)
-  ADC1_2_COMMON->CCR = STM32_ADC_ADC123_CLOCK_MODE | ADC_DMA_MDMA;
+  ADC1_2_COMMON->CCR = STM32_ADC_ADC123_PRESC | STM32_ADC_ADC123_CLOCK_MODE | ADC_DMA_MDMA;
 #elif defined(ADC123_COMMON)
-  ADC123_COMMON->CCR = STM32_ADC_ADC123_CLOCK_MODE | ADC_DMA_MDMA;
+  ADC123_COMMON->CCR = STM32_ADC_ADC123_PRESC | STM32_ADC_ADC123_CLOCK_MODE | ADC_DMA_MDMA;
 #else
-  ADC1_COMMON->CCR = STM32_ADC_ADC123_CLOCK_MODE | ADC_DMA_MDMA;
+  ADC1_COMMON->CCR   = STM32_ADC_ADC123_PRESC | STM32_ADC_ADC123_CLOCK_MODE | ADC_DMA_MDMA;
 #endif
 
   rccDisableADC123();
@@ -575,13 +575,13 @@ void adc_lld_init(void) {
 #if STM32_ADC_USE_ADC1 || STM32_ADC_USE_ADC2
   rccEnableADC12(true);
   rccResetADC12();
-  ADC12_COMMON->CCR = STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_MDMA;
+  ADC12_COMMON->CCR = STM32_ADC_ADC12_PRESC | STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_MDMA;
   rccDisableADC12();
 #endif
 #if STM32_ADC_USE_ADC3 || STM32_ADC_USE_ADC4
   rccEnableADC345(true);
   rccResetADC345();
-  ADC345_COMMON->CCR = STM32_ADC_ADC345_CLOCK_MODE | ADC_DMA_MDMA;
+  ADC345_COMMON->CCR = STM32_ADC_ADC345_PRESC | STM32_ADC_ADC345_CLOCK_MODE | ADC_DMA_MDMA;
   rccDisableADC345();
 #endif
 #endif
@@ -740,55 +740,27 @@ void adc_lld_stop(ADCDriver *adcp) {
     adc_lld_analog_off(adcp);
     adc_lld_vreg_off(adcp);
 
-#if defined(STM32L4XX) || defined(STM32L4XXP)
-    /* Resetting CCR options except default ones.*/
-    adcp->adcc->CCR = STM32_ADC_ADC123_CLOCK_MODE | ADC_DMA_MDMA;
-#endif
-
 #if STM32_ADC_USE_ADC1
     if (&ADCD1 == adcp) {
-#if defined(STM32F3XX) || defined(STM32G4XX)
       /* Resetting CCR options except default ones.*/
-      adcp->adcc->CCR = STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_MDMA;
-#endif
       clkmask &= ~(1 << 0);
     }
 #endif
 
 #if STM32_ADC_USE_ADC2
     if (&ADCD2 == adcp) {
-#if defined(STM32F3XX) || defined(STM32G4XX)
-      /* Resetting CCR options except default ones.*/
-      adcp->adcc->CCR = STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_MDMA;
-#endif
       clkmask &= ~(1 << 1);
     }
 #endif
 
 #if STM32_ADC_USE_ADC3
     if (&ADCD3 == adcp) {
-#if defined(STM32F3XX)
-      /* Resetting CCR options except default ones.*/
-      adcp->adcc->CCR = STM32_ADC_ADC34_CLOCK_MODE | ADC_DMA_MDMA;
-#endif
-#if defined(STM32G4XX)
-      /* Resetting CCR options except default ones.*/
-      adcp->adcc->CCR = STM32_ADC_ADC345_CLOCK_MODE | ADC_DMA_MDMA;
-#endif
       clkmask &= ~(1 << 2);
     }
 #endif
 
 #if STM32_ADC_USE_ADC4
     if (&ADCD4 == adcp) {
-#if defined(STM32F3XX)
-      /* Resetting CCR options except default ones.*/
-      adcp->adcc->CCR = STM32_ADC_ADC34_CLOCK_MODE | ADC_DMA_MDMA;
-#endif
-#if defined(STM32G4XX)
-      /* Resetting CCR options except default ones.*/
-      adcp->adcc->CCR = STM32_ADC_ADC345_CLOCK_MODE | ADC_DMA_MDMA;
-#endif
       clkmask &= ~(1 << 3);
     }
 #endif
