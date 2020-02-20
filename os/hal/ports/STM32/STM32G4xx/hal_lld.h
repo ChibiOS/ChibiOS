@@ -51,13 +51,13 @@
  */
 #if defined(STM32G431xx) || defined(STM32G441xx) || defined(STM32G471xx) || \
     defined(__DOXYGEN__)
-#define PLATFORM_NAME           "STM32G04 Access Line"
+#define PLATFORM_NAME           "STM32G4 Access Line"
 
 #elif defined(STM32G473xx)
-#define PLATFORM_NAME           "STM32G0 Performance Line"
+#define PLATFORM_NAME           "STM32G4 Performance Line"
 
 #elif defined(STM32G483xx)
-#define PLATFORM_NAME           "STM32G0 Performance Line with Crypto"
+#define PLATFORM_NAME           "STM32G4 Performance Line with Crypto"
 
 #elif defined(STM32G474xx)
 #define PLATFORM_NAME           "STM32G4 Hi-resolution Line"

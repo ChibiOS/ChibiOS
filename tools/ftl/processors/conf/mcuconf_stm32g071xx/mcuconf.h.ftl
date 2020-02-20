@@ -61,7 +61,7 @@
 #define STM32_PLLSRC                        ${doc.STM32_PLLSRC!"STM32_PLLSRC_HSI16"}
 #define STM32_PLLM_VALUE                    ${doc.STM32_PLLM_VALUE!"2"}
 #define STM32_PLLN_VALUE                    ${doc.STM32_PLLN_VALUE!"16"}
-#define STM32_PLLP_VALUE                    ${doc.STM32_PLLP_VALUE!"4"}
+#define STM32_PLLP_VALUE                    ${doc.STM32_PLLP_VALUE!"2"}
 #define STM32_PLLQ_VALUE                    ${doc.STM32_PLLQ_VALUE!"4"}
 #define STM32_PLLR_VALUE                    ${doc.STM32_PLLR_VALUE!"2"}
 #define STM32_HPRE                          ${doc.STM32_HPRE!"STM32_HPRE_DIV1"}
@@ -119,7 +119,7 @@
 #define STM32_ADC_ADC1_DMA_PRIORITY         ${doc.STM32_ADC_ADC1_DMA_PRIORITY!"2"}
 #define STM32_ADC_ADC1_DMA_IRQ_PRIORITY     ${doc.STM32_ADC_ADC1_DMA_IRQ_PRIORITY!"2"}
 #define STM32_ADC_ADC1_DMA_STREAM           ${doc.STM32_ADC_ADC1_DMA_STREAM!"STM32_DMA_STREAM_ID_ANY"}
-#define STM32_ADC_PRESCALER_VALUE           ${doc.STM32_ADC_PRESCALER_VALUE!"1"}
+#define STM32_ADC_PRESCALER_VALUE           ${doc.STM32_ADC_PRESCALER_VALUE!"2"}
 
 /*
  * DAC driver system settings.

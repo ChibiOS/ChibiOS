@@ -161,7 +161,7 @@
  *          default, @p STM32_ADC_CKMODE_ADCCLK).
  */
 #if !defined(STM32_ADC_PRESCALER_VALUE) || defined(__DOXYGEN__)
-#define STM32_ADC_PRESCALER_VALUE           1
+#define STM32_ADC_PRESCALER_VALUE           2
 #endif
 #endif
 
@@ -186,6 +186,10 @@
 /* Registry checks.*/
 #if !defined(STM32_HAS_ADC1)
 #error "STM32_HAS_ADC1 not defined in registry"
+#endif
+
+#if !defined(STM32_ADC_SUPPORTS_PRESCALER)
+#error "STM32_ADC_SUPPORTS_PRESCALER not defined in registry"
 #endif
 
 #if (STM32_ADC_USE_ADC1 && !defined(STM32_ADC1_HANDLER))
@@ -246,9 +250,7 @@
 
 /* ADC clock source checks.*/
 #if STM32_ADC_SUPPORTS_PRESCALER == TRUE
-#if STM32_ADC_PRESCALER_VALUE == 1
-#define STM32_ADC_PRESC                     0U
-#elif STM32_ADC_PRESCALER_VALUE == 2
+#if STM32_ADC_PRESCALER_VALUE == 2
 #define STM32_ADC_PRESC                     1U
 #elif STM32_ADC_PRESCALER_VALUE == 4
 #define STM32_ADC_PRESC                     2U

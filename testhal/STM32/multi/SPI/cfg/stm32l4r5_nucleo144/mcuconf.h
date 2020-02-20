@@ -157,6 +157,7 @@
 #define STM32_ADC_ADC12_IRQ_PRIORITY        5
 #define STM32_ADC_ADC1_DMA_IRQ_PRIORITY     5
 #define STM32_ADC_ADC123_CLOCK_MODE         ADC_CCR_CKMODE_AHB_DIV2
+#define STM32_ADC_ADC123_PRESC              ADC_CCR_PRESC_DIV2
 
 /*
  * CAN driver system settings.

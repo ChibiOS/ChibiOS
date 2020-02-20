@@ -58,6 +58,23 @@ ADCDriver ADCD1;
 /*===========================================================================*/
 
 /**
+ * @brief   ADC voltage regulator enable.
+ *
+ * @param[in] adc       pointer to the ADC registers block
+ */
+NOINLINE static void adc_lld_vreg_on(ADC_TypeDef *adc) {
+  volatile uint32_t loop;
+
+  osalDbgAssert(adc->CR == 0, "invalid register state");
+
+  adc->CR = ADC_CR_ADVREGEN;
+  loop = (STM32_HCLK >> 20) << 4;
+  do {
+    loop--;
+  } while (loop > 0);
+}
+
+/**
  * @brief   Stops an ongoing conversion, if any.
  *
  * @param[in] adc       pointer to the ADC registers block
@@ -167,11 +184,13 @@ void adc_lld_init(void) {
   ADC->CCR = 0;
 #endif
 
-  osalDbgAssert(ADC1->CR == 0, "invalid register state");
+  /* Regulator enabled and stabilized before calibration.*/
+  adc_lld_vreg_on(ADC1);
+
   ADC1->CR |= ADC_CR_ADCAL;
-  osalDbgAssert(ADC1->CR != 0, "invalid register state");
   while (ADC1->CR & ADC_CR_ADCAL)
     ;
+  ADC1->CR = 0;
   rccDisableADC1();
 }
 
@@ -205,6 +224,9 @@ void adc_lld_start(ADCDriver *adcp) {
       adcp->adc->CFGR2 = STM32_ADC_ADC1_CKMODE;
     }
 #endif /* STM32_ADC_USE_ADC1 */
+
+    /* Regulator enabled and stabilized before calibration.*/
+    adc_lld_vreg_on(ADC1);
 
     /* ADC initial setup, starting the analog part here in order to reduce
        the latency when starting a conversion.*/
@@ -243,6 +265,9 @@ void adc_lld_stop(ADCDriver *adcp) {
       while (adcp->adc->CR & ADC_CR_ADDIS)
         ;
     }
+
+    /* Regulator and anything else off.*/
+    adcp->adc->CR = 0;
 
 #if STM32_ADC_USE_ADC1
     if (&ADCD1 == adcp)
