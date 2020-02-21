@@ -88,10 +88,10 @@ osStatus osKernelInitialize(void) {
   chSysInit();
   chThdSetPriority(HIGHPRIO);
 
-  chPoolObjectInit(&sempool, sizeof(semaphore_t), chCoreAllocAligned);
+  chPoolObjectInit(&sempool, sizeof(semaphore_t), chCoreAllocAlignedI);
   chPoolLoadArray(&sempool, semaphores, CMSIS_CFG_NUM_SEMAPHORES);
 
-  chPoolObjectInit(&timpool, sizeof(struct os_timer_cb), chCoreAllocAligned);
+  chPoolObjectInit(&timpool, sizeof(struct os_timer_cb), chCoreAllocAlignedI);
   chPoolLoadArray(&timpool, timers, CMSIS_CFG_NUM_TIMERS);
 
   return osOK;

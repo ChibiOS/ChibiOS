@@ -76,6 +76,7 @@
 *** 19.1.4 ***
 - NEW: Added support for .cc files extensions in makefiles.
 - NEW: Made bus acquire/release functions in SNOR driver public.
+- FIX: Fixed state check in CMSIS osKernelInitialize() wrapper (bug #1075).
 - FIX: Fixed duplicated code in TIMv1/hal_gpt_lld.c (bug #1074).
 - FIX: Fixed missing IRQ disabling in ADCv1 and ADCv3 STM32 drivers (bug #1073).
 - FIX: Fixed missing parenthesis in ADC _adc_isr_error_code macro (bug #1072).
