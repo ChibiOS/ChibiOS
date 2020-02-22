@@ -95,10 +95,11 @@
 #endif
 
 /*===========================================================================*/
-/* STM32G474xx, STM32G484xx.                                                 */
+/* STM32G473xx, STM32G4843xx, STM32G474xx, STM32G484xx.                      */
 /*===========================================================================*/
 
-#if defined(STM32G474xx) || defined(STM32G484xx) ||                         \
+#if defined(STM32G473xx) || defined(STM32G483xx) ||                         \
+    defined(STM32G474xx) || defined(STM32G484xx) ||                         \
     defined(__DOXYGEN__)
 
 /* ADC attributes.*/
@@ -108,11 +109,10 @@
 #define STM32_HAS_ADC4                      TRUE
 #define STM32_HAS_ADC5                      TRUE
 
-
 /* CAN attributes.*/
-#define STM32_HAS_CAN1                      FALSE
-#define STM32_HAS_CAN2                      FALSE
-#define STM32_HAS_CAN3                      FALSE
+#define STM32_HAS_FDCAN1                    TRUE
+#define STM32_HAS_FDCAN2                    TRUE
+#define STM32_HAS_FDCAN3                    TRUE
 
 /* DAC attributes.*/
 #define STM32_HAS_DAC1_CH1                  TRUE
@@ -317,9 +317,9 @@
 
 
 /* CAN attributes.*/
-#define STM32_HAS_CAN1                      FALSE
-#define STM32_HAS_CAN2                      FALSE
-#define STM32_HAS_CAN3                      FALSE
+#define STM32_HAS_FDCAN1                    TRUE
+#define STM32_HAS_FDCAN2                    FALSE
+#define STM32_HAS_FDCAN3                    FALSE
 
 /* DAC attributes.*/
 #define STM32_HAS_DAC1_CH1                  TRUE
