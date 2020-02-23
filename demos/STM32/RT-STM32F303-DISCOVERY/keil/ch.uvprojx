@@ -14,7 +14,7 @@
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
-          <Device>STM32F303VC</Device>
+          <Device>STM32F303VCTx</Device>
           <Vendor>STMicroelectronics</Vendor>
           <PackID>Keil.STM32F3xx_DFP.2.1.0</PackID>
           <PackURL>http://www.keil.com/pack/</PackURL>
@@ -183,7 +183,7 @@
             <hadIRAM>1</hadIRAM>
             <hadXRAM>0</hadXRAM>
             <uocXRam>0</uocXRam>
-            <RvdsVP>2</RvdsVP>
+            <RvdsVP>1</RvdsVP>
             <RvdsMve>0</RvdsMve>
             <hadIRAM2>1</hadIRAM2>
             <hadIROM2>0</hadIROM2>
@@ -336,7 +336,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>-USTM32F303xC -DTEST_CFG_SIZE_REPORT=0</MiscControls>
-              <Define>__heap_base__=Image$$$$RW_IRAM1$$$$ZI$$$$Limit __heap_end__=Image$$$$RW_IRAM2$$$$Base</Define>
+              <Define>CORTEX_USE_FPU=0 __heap_base__=Image$$$$RW_IRAM1$$$$ZI$$$$Limit __heap_end__=Image$$$$RW_IRAM2$$$$Base</Define>
               <Undefine></Undefine>
               <IncludePath>..\;..\cfg;..\..\..\..\os\license;..\..\..\..\os\common\startup\ARMCMx\devices\STM32F3xx;..\..\..\..\os\common\ext\ARM\CMSIS\Core\Include;..\..\..\..\os\common\ext\ST\STM32F3xx;..\..\..\..\os\common\ports\ARMCMx;..\..\..\..\os\common\ports\ARMCMx\compilers\RVCT;..\..\..\..\os\rt\include;..\..\..\..\os\oslib\include;..\..\..\..\os\hal\osal\rt-nil;..\..\..\..\os\hal\include;..\..\..\..\os\hal\boards\ST_STM32F3_DISCOVERY;..\..\..\..\os\hal\ports\common\ARMCMx;..\..\..\..\os\hal\ports\STM32\STM32F3xx;..\..\..\..\os\hal\ports\STM32\LLD\ADCv3;..\..\..\..\os\hal\ports\STM32\LLD\CANv1;..\..\..\..\os\hal\ports\STM32\LLD\DACv1;..\..\..\..\os\hal\ports\STM32\LLD\DMAv1;..\..\..\..\os\hal\ports\STM32\LLD\EXTIv1;..\..\..\..\os\hal\ports\STM32\LLD\GPIOv2;..\..\..\..\os\hal\ports\STM32\LLD\I2Cv2;..\..\..\..\os\hal\ports\STM32\LLD\RTCv2;..\..\..\..\os\hal\ports\STM32\LLD\SPIv2;..\..\..\..\os\hal\ports\STM32\LLD\TIMv1;..\..\..\..\os\hal\ports\STM32\LLD\USARTv2;..\..\..\..\os\hal\ports\STM32\LLD\USBv1;..\..\..\..\os\hal\ports\STM32\LLD\xWDGv1;..\..\..\..\test\lib;..\..\..\..\test\rt\source\test;..\..\..\..\test\oslib\source\test</IncludePath>
             </VariousControls>
@@ -353,7 +353,7 @@
             <useXO>0</useXO>
             <uClangAs>0</uClangAs>
             <VariousControls>
-              <MiscControls>--cpreproc</MiscControls>
+              <MiscControls>--cpreproc --cpreproc_opts=-D,CORTEX_USE_FPU=0</MiscControls>
               <Define></Define>
               <Undefine></Undefine>
               <IncludePath>..\;..\cfg;..\..\..\..\os\license;..\..\..\..\os\common\startup\ARMCMx\devices\STM32F3xx;..\..\..\..\os\common\ports\ARMCMx;..\..\..\..\os\hal\boards\ST_STM32F3_DISCOVERY</IncludePath>
