@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_proj.xsd">
+<Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_projx.xsd">
 
-  <SchemaVersion>1.1</SchemaVersion>
+  <SchemaVersion>2.1</SchemaVersion>
 
   <Header>### uVision Project, (C) Keil Software</Header>
 
@@ -10,33 +10,36 @@
       <TargetName>Demo</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
+      <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32F407VG</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <Cpu>IRAM(0x20000000-0x2001FFFF) IRAM2(0x10000000-0x1000FFFF) IROM(0x8000000-0x80FFFFF) CLOCK(25000000) CPUTYPE("Cortex-M4") FPU2</Cpu>
+          <PackID>Keil.STM32F4xx_DFP.2.14.0</PackID>
+          <PackURL>http://www.keil.com/pack/</PackURL>
+          <Cpu>IRAM(0x20000000,0x00020000) IRAM2(0x10000000,0x00010000) IROM(0x08000000,0x00100000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
-          <StartupFile>"Startup\ST\STM32F4xx\startup_stm32f4xx.s" ("STM32F4xx Startup Code")</StartupFile>
-          <FlashDriverDll>UL2CM3(-O207 -S0 -C0 -FO7 -FD20000000 -FC800 -FN1 -FF0STM32F4xx_1024 -FS08000000 -FL0100000)</FlashDriverDll>
+          <StartupFile></StartupFile>
+          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0STM32F4xx_1024 -FS08000000 -FL0100000 -FP0($$Device:STM32F407VG$CMSIS\Flash\STM32F4xx_1024.FLM))</FlashDriverDll>
           <DeviceId>6103</DeviceId>
-          <RegisterFile>stm32f4xx.h</RegisterFile>
+          <RegisterFile>$$Device:STM32F407VG$Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
           <Linker></Linker>
           <OHString></OHString>
           <InfinionOptionDll></InfinionOptionDll>
-          <SLE66CMisc></SLE66CMisc>
+          <SLE66CMisc>-DSTM32F40_41xxx</SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>SFD\ST\STM32F4xx\STM32F4xx.sfr</SFDFile>
+          <SFDFile>$$Device:STM32F407VG$CMSIS\SVD\STM32F40x.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
           <IncludePath></IncludePath>
           <LibPath></LibPath>
-          <RegisterFilePath>ST\STM32F4xx\</RegisterFilePath>
-          <DBRegisterFilePath>ST\STM32F4xx\</DBRegisterFilePath>
+          <RegisterFilePath></RegisterFilePath>
+          <DBRegisterFilePath></DBRegisterFilePath>
           <TargetStatus>
             <Error>0</Error>
             <ExitCodeStop>0</ExitCodeStop>
@@ -82,6 +85,8 @@
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
+            <nStopA1X>0</nStopA1X>
+            <nStopA2X>0</nStopA2X>
           </AfterMake>
           <SelectedForBatchBuild>0</SelectedForBatchBuild>
           <SVCSIdString></SVCSIdString>
@@ -104,7 +109,7 @@
         </CommonProperty>
         <DllOption>
           <SimDllName>SARMCM3.DLL</SimDllName>
-          <SimDllArguments>-MPU</SimDllArguments>
+          <SimDllArguments>-MPU -REMAP</SimDllArguments>
           <SimDlgDll>DCM.DLL</SimDlgDll>
           <SimDlgDllArguments>-pCM4</SimDlgDllArguments>
           <TargetDllName>SARMCM3.DLL</TargetDllName>
@@ -120,48 +125,6 @@
             <HexOffset>0</HexOffset>
             <Oh166RecLen>16</Oh166RecLen>
           </OPTHX>
-          <Simulator>
-            <UseSimulator>0</UseSimulator>
-            <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
-            <RunToMain>1</RunToMain>
-            <RestoreBreakpoints>1</RestoreBreakpoints>
-            <RestoreWatchpoints>1</RestoreWatchpoints>
-            <RestoreMemoryDisplay>1</RestoreMemoryDisplay>
-            <RestoreFunctions>1</RestoreFunctions>
-            <RestoreToolbox>1</RestoreToolbox>
-            <LimitSpeedToRealTime>0</LimitSpeedToRealTime>
-            <RestoreSysVw>1</RestoreSysVw>
-          </Simulator>
-          <Target>
-            <UseTarget>1</UseTarget>
-            <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
-            <RunToMain>1</RunToMain>
-            <RestoreBreakpoints>1</RestoreBreakpoints>
-            <RestoreWatchpoints>1</RestoreWatchpoints>
-            <RestoreMemoryDisplay>1</RestoreMemoryDisplay>
-            <RestoreFunctions>0</RestoreFunctions>
-            <RestoreToolbox>1</RestoreToolbox>
-            <RestoreTracepoints>0</RestoreTracepoints>
-            <RestoreSysVw>1</RestoreSysVw>
-            <UsePdscDebugDescription>1</UsePdscDebugDescription>
-          </Target>
-          <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>8</TargetSelection>
-          <SimDlls>
-            <CpuDll></CpuDll>
-            <CpuDllArguments></CpuDllArguments>
-            <PeripheralDll></PeripheralDll>
-            <PeripheralDllArguments></PeripheralDllArguments>
-            <InitializationFile></InitializationFile>
-          </SimDlls>
-          <TargetDlls>
-            <CpuDll></CpuDll>
-            <CpuDllArguments></CpuDllArguments>
-            <PeripheralDll></PeripheralDll>
-            <PeripheralDllArguments></PeripheralDllArguments>
-            <InitializationFile></InitializationFile>
-            <Driver>STLink\ST-LINKIII-KEIL.dll</Driver>
-          </TargetDlls>
         </DebugOption>
         <Utilities>
           <Flash1>
@@ -169,12 +132,12 @@
             <UseExternalTool>0</UseExternalTool>
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
-            <Capability>1</Capability>
+            <Capability>0</Capability>
             <DriverSelection>4100</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>STLink\ST-LINKIII-KEIL.dll</Flash2>
-          <Flash3>"" ()</Flash3>
+          <Flash3></Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -220,14 +183,16 @@
             <hadXRAM>0</hadXRAM>
             <uocXRam>0</uocXRam>
             <RvdsVP>2</RvdsVP>
+            <RvdsMve>0</RvdsMve>
             <hadIRAM2>1</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
             <useUlib>0</useUlib>
             <EndSel>0</EndSel>
             <uLtcg>0</uLtcg>
+            <nSecure>0</nSecure>
             <RoSelD>3</RoSelD>
-            <RwSelD>3</RwSelD>
+            <RwSelD>4</RwSelD>
             <CodeSel>0</CodeSel>
             <OptFeed>0</OptFeed>
             <NoZi1>0</NoZi1>
@@ -244,7 +209,7 @@
             <Ra2Chk>0</Ra2Chk>
             <Ra3Chk>0</Ra3Chk>
             <Im1Chk>1</Im1Chk>
-            <Im2Chk>1</Im2Chk>
+            <Im2Chk>0</Im2Chk>
             <OnChipMemories>
               <Ocm1>
                 <Type>0</Type>
@@ -338,8 +303,8 @@
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
-                <StartAddress>0x20020000</StartAddress>
-                <Size>0x1</Size>
+                <StartAddress>0x10000000</StartAddress>
+                <Size>0x10000</Size>
               </OCR_RVCT10>
             </OnChipMemories>
             <RvctStartVector></RvctStartVector>
@@ -359,7 +324,15 @@
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
             <uC99>0</uC99>
+            <uGnu>0</uGnu>
             <useXO>0</useXO>
+            <v6Lang>1</v6Lang>
+            <v6LangP>1</v6LangP>
+            <vShortEn>1</vShortEn>
+            <vShortWch>1</vShortWch>
+            <v6Lto>0</v6Lto>
+            <v6WtE>0</v6WtE>
+            <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--c99 -USTM32F40_41xxx</MiscControls>
               <Define>__heap_base__=Image$$$$RW_IRAM1$$$$ZI$$$$Limit __heap_end__=Image$$$$RW_IRAM2$$$$Base</Define>
@@ -377,6 +350,7 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
+            <uClangAs>0</uClangAs>
             <VariousControls>
               <MiscControls>--cpreproc</MiscControls>
               <Define></Define>
@@ -405,42 +379,17 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>board</GroupName>
+          <GroupName>startup</GroupName>
           <Files>
-            <File>
-              <FileName>board.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\os\hal\boards\ST_STM32F4_DISCOVERY\board.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>port</GroupName>
-          <Files>
-            <File>
-              <FileName>vectors.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\..\..\..\os\common\ports\ARMCMx\compilers\RVCT\vectors.s</FilePath>
-            </File>
             <File>
               <FileName>cstartup.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\..\..\..\os\common\ports\ARMCMx\compilers\RVCT\cstartup.s</FilePath>
+              <FilePath>..\..\..\..\..\os\common\startup\ARMCMx\compilers\RVCT\cstartup.s</FilePath>
             </File>
             <File>
-              <FileName>chcore.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\os\rt\ports\ARMCMx\chcore.c</FilePath>
-            </File>
-            <File>
-              <FileName>chcore_v7m.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\os\rt\ports\ARMCMx\chcore_v7m.c</FilePath>
-            </File>
-            <File>
-              <FileName>chcoreasm_v7m.s</FileName>
+              <FileName>vectors.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\..\..\..\os\rt\ports\ARMCMx\compilers\RVCT\chcoreasm_v7m.s</FilePath>
+              <FilePath>..\..\..\..\..\os\common\startup\ARMCMx\compilers\RVCT\vectors.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -473,26 +422,6 @@
               <FilePath>..\..\..\..\..\os\rt\src\chevents.c</FilePath>
             </File>
             <File>
-              <FileName>chheap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\os\rt\src\chheap.c</FilePath>
-            </File>
-            <File>
-              <FileName>chmboxes.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\os\rt\src\chmboxes.c</FilePath>
-            </File>
-            <File>
-              <FileName>chmemcore.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\os\rt\src\chmemcore.c</FilePath>
-            </File>
-            <File>
-              <FileName>chmempools.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\os\rt\src\chmempools.c</FilePath>
-            </File>
-            <File>
               <FileName>chmsg.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\os\rt\src\chmsg.c</FilePath>
@@ -501,11 +430,6 @@
               <FileName>chmtx.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\os\rt\src\chmtx.c</FilePath>
-            </File>
-            <File>
-              <FileName>chqueues.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\os\rt\src\chqueues.c</FilePath>
             </File>
             <File>
               <FileName>chregistry.c</FileName>
@@ -542,65 +466,380 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\os\rt\src\chtm.c</FilePath>
             </File>
+            <File>
+              <FileName>chtrace.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\rt\src\chtrace.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>kernel_port</GroupName>
+          <Files>
+            <File>
+              <FileName>chcore.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\common\ports\ARMCMx\chcore.c</FilePath>
+            </File>
+            <File>
+              <FileName>chcore_v7m.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\common\ports\ARMCMx\chcore_v7m.c</FilePath>
+            </File>
+            <File>
+              <FileName>chcoreasm_v7m.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\..\..\..\os\common\ports\ARMCMx\compilers\RVCT\chcoreasm_v7m.s</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>oslib</GroupName>
+          <Files>
+            <File>
+              <FileName>chdelegates.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\oslib\src\chdelegates.c</FilePath>
+            </File>
+            <File>
+              <FileName>chfactory.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\oslib\src\chfactory.c</FilePath>
+            </File>
+            <File>
+              <FileName>chmboxes.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\oslib\src\chmboxes.c</FilePath>
+            </File>
+            <File>
+              <FileName>chmemcore.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\oslib\src\chmemcore.c</FilePath>
+            </File>
+            <File>
+              <FileName>chmemheaps.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\oslib\src\chmemheaps.c</FilePath>
+            </File>
+            <File>
+              <FileName>chmempools.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\oslib\src\chmempools.c</FilePath>
+            </File>
+            <File>
+              <FileName>chobjcaches.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\oslib\src\chobjcaches.c</FilePath>
+            </File>
+            <File>
+              <FileName>chpipes.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\oslib\src\chpipes.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>osal</GroupName>
+          <Files>
+            <File>
+              <FileName>osal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\osal\rt-nil\osal.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>hal</GroupName>
           <Files>
             <File>
-              <FileName>serial.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\os\hal\src\serial.c</FilePath>
-            </File>
-            <File>
-              <FileName>gpt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\os\hal\src\gpt.c</FilePath>
-            </File>
-            <File>
               <FileName>hal.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\os\hal\src\hal.c</FilePath>
             </File>
             <File>
-              <FileName>st.c</FileName>
+              <FileName>hal_adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\os\hal\src\st.c</FilePath>
+              <FilePath>..\..\..\..\..\os\hal\src\hal_adc.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_buffers.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\src\hal_buffers.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\src\hal_can.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_crypto.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\src\hal_crypto.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_dac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\src\hal_dac.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_efl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\src\hal_efl.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\src\hal_flash.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_gpt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\src\hal_gpt.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\src\hal_i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_i2s.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\src\hal_i2s.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_icu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\src\hal_icu.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_mac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\src\hal_mac.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_mmc_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\src\hal_mmc_spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_mmcsd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\src\hal_mmcsd.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_pal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\src\hal_pal.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_pwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\src\hal_pwm.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_queues.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\src\hal_queues.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\src\hal_rtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_sdc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\src\hal_sdc.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_serial.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\src\hal_serial.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_serial_usb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\src\hal_serial_usb.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_sio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\src\hal_sio.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\src\hal_spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_st.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\src\hal_st.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_trng.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\src\hal_trng.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\src\hal_uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_usb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\src\hal_usb.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_wdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\src\hal_wdg.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_wspi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\src\hal_wspi.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>platform</GroupName>
+          <GroupName>hal_port</GroupName>
           <Files>
+            <File>
+              <FileName>hal_efl_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\ports\STM32\STM32F4xx\hal_efl_lld.c</FilePath>
+            </File>
             <File>
               <FileName>hal_lld.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\os\hal\ports\STM32\STM32F4xx\hal_lld.c</FilePath>
             </File>
             <File>
-              <FileName>pal_lld.c</FileName>
+              <FileName>stm32_isr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\os\hal\ports\STM32\LLD\GPIOv2\pal_lld.c</FilePath>
+              <FilePath>..\..\..\..\..\os\hal\ports\STM32\STM32F4xx\stm32_isr.c</FilePath>
             </File>
             <File>
-              <FileName>gpt_lld.c</FileName>
+              <FileName>hal_adc_lld.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\os\hal\ports\STM32\LLD\TIMv1\gpt_lld.c</FilePath>
+              <FilePath>..\..\..\..\..\os\hal\ports\STM32\LLD\ADCv2\hal_adc_lld.c</FilePath>
             </File>
             <File>
-              <FileName>serial_lld.c</FileName>
+              <FileName>hal_can_lld.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\os\hal\ports\STM32\LLD\USARTv1\serial_lld.c</FilePath>
+              <FilePath>..\..\..\..\..\os\hal\ports\STM32\LLD\CANv1\hal_can_lld.c</FilePath>
             </File>
             <File>
-              <FileName>st_lld.c</FileName>
+              <FileName>hal_crypto_lld.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\os\hal\ports\STM32\LLD\TIMv1\st_lld.c</FilePath>
+              <FilePath>..\..\..\..\..\os\hal\ports\STM32\LLD\CRYPv1\hal_crypto_lld.c</FilePath>
             </File>
             <File>
-              <FileName>nvic.c</FileName>
+              <FileName>hal_dac_lld.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\os\hal\ports\common\ARMCMx\nvic.c</FilePath>
+              <FilePath>..\..\..\..\..\os\hal\ports\STM32\LLD\DACv1\hal_dac_lld.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\ports\STM32\LLD\DMAv2\stm32_dma.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32_exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\ports\STM32\LLD\EXTIv1\stm32_exti.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_pal_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\ports\STM32\LLD\GPIOv2\hal_pal_lld.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_i2c_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\ports\STM32\LLD\I2Cv1\hal_i2c_lld.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_mac_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\ports\STM32\LLD\MACv1\hal_mac_lld.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_usb_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\ports\STM32\LLD\OTGv1\hal_usb_lld.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_wspi_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\ports\STM32\LLD\QUADSPIv1\hal_wspi_lld.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_rtc_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\ports\STM32\LLD\RTCv2\hal_rtc_lld.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_i2s_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\ports\STM32\LLD\SPIv1\hal_i2s_lld.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_spi_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\ports\STM32\LLD\SPIv1\hal_spi_lld.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_sdc_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\ports\STM32\LLD\SDIOv1\hal_sdc_lld.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_gpt_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\ports\STM32\LLD\TIMv1\hal_gpt_lld.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_icu_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\ports\STM32\LLD\TIMv1\hal_icu_lld.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_pwm_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\ports\STM32\LLD\TIMv1\hal_pwm_lld.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_st_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\ports\STM32\LLD\TIMv1\hal_st_lld.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_serial_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\ports\STM32\LLD\USARTv1\hal_serial_lld.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_uart_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\ports\STM32\LLD\USARTv1\hal_uart_lld.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_wdg_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\ports\STM32\LLD\xWDGv1\hal_wdg_lld.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>board</GroupName>
+          <Files>
+            <File>
+              <FileName>board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\os\hal\boards\ST_STM32F4_DISCOVERY\board.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -647,5 +886,11 @@
       </Groups>
     </Target>
   </Targets>
+
+  <RTE>
+    <apis/>
+    <components/>
+    <files/>
+  </RTE>
 
 </Project>
