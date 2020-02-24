@@ -27,7 +27,7 @@
 /*===========================================================================*/
 
 /*
- * Setup for STMicroelectronics STM32 Nucleo64-F401RE board.
+ * Setup for Analog Devices ADICUP360 board.
  */
 
 /*
