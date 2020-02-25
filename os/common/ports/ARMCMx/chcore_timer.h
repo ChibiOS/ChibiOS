@@ -52,6 +52,18 @@
 /* External declarations.                                                    */
 /*===========================================================================*/
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void stStartAlarm(systime_t time);
+  void stStopAlarm(void);
+  void stSetAlarm(systime_t time);
+  systime_t stGetCounter(void);
+  systime_t stGetAlarm(void);
+#ifdef __cplusplus
+}
+#endif
+
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
@@ -66,7 +78,6 @@
  * @notapi
  */
 static inline void port_timer_start_alarm(systime_t time) {
-  void stStartAlarm(systime_t time);
 
   stStartAlarm(time);
 }
@@ -77,7 +88,6 @@ static inline void port_timer_start_alarm(systime_t time) {
  * @notapi
  */
 static inline void port_timer_stop_alarm(void) {
-  void stStopAlarm(void);
 
   stStopAlarm();
 }
@@ -90,7 +100,6 @@ static inline void port_timer_stop_alarm(void) {
  * @notapi
  */
 static inline void port_timer_set_alarm(systime_t time) {
-  void stSetAlarm(systime_t time);
 
   stSetAlarm(time);
 }
@@ -103,7 +112,6 @@ static inline void port_timer_set_alarm(systime_t time) {
  * @notapi
  */
 static inline systime_t port_timer_get_time(void) {
-  systime_t stGetCounter(void);
 
   return stGetCounter();
 }
@@ -116,7 +124,6 @@ static inline systime_t port_timer_get_time(void) {
  * @notapi
  */
 static inline systime_t port_timer_get_alarm(void) {
-  systime_t stGetAlarm(void);
 
   return stGetAlarm();
 }
