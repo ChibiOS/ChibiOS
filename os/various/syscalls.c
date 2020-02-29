@@ -176,4 +176,7 @@ int _isatty_r(struct _reent *r, int fd)
   return 1;
 }
 
+__attribute__((used))
+void _fini(void) { }
+
 /*** EOF ***/
