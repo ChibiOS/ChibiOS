@@ -90,7 +90,7 @@ static void adc_lld_stop_adc(ADC_TypeDef *adc) {
 }
 
 /**
- * @brief   ADC DMA ISR service routine.
+ * @brief   ADC DMA service routine.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
  * @param[in] flags     pre-shifted content of the ISR register

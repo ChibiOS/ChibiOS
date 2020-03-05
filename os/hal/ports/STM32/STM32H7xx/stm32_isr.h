@@ -173,6 +173,19 @@
 #define STM32_EXTI2021_NUMBER               137
 
 /*
+ * FDCAN units.
+ */
+#define STM32_FDCAN1_IT0_HANDLER            Vector8C
+#define STM32_FDCAN1_IT1_HANDLER            Vector94
+#define STM32_FDCAN2_IT0_HANDLER            Vector90
+#define STM32_FDCAN2_IT1_HANDLER            Vector98
+
+#define STM32_FDCAN1_IT0_NUMBER             19
+#define STM32_FDCAN1_IT1_NUMBER             21
+#define STM32_FDCAN2_IT0_NUMBER             20
+#define STM32_FDCAN2_IT1_NUMBER             22
+
+/*
  * I2C units.
  */
 #define STM32_I2C1_EVENT_HANDLER            VectorBC

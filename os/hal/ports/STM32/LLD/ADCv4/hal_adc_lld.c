@@ -187,7 +187,7 @@ static void adc_lld_stop_adc(ADCDriver *adcp) {
 }
 
 /**
- * @brief   ADC DMA ISR service routine.
+ * @brief   ADC DMA service routine.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
  * @param[in] flags     pre-shifted content of the ISR register
@@ -217,7 +217,7 @@ static void adc_lld_serve_dma_interrupt(ADCDriver *adcp, uint32_t flags) {
 }
 
 /**
- * @brief   ADC BDMA ISR service routine.
+ * @brief   ADC BDMA service routine.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
  * @param[in] flags     pre-shifted content of the ISR register
@@ -247,7 +247,7 @@ static void adc_lld_serve_bdma_interrupt(ADCDriver *adcp, uint32_t flags) {
 }
 
 /**
- * @brief   ADC ISR service routine.
+ * @brief   ADC IRQ service routine.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
  * @param[in] isr       content of the ISR register

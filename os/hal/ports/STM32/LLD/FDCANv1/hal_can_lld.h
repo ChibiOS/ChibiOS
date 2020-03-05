@@ -402,6 +402,8 @@ extern "C" {
   void can_lld_sleep(CANDriver *canp);
   void can_lld_wakeup(CANDriver *canp);
 #endif /* CAN_USE_SLEEP_MODE */
+  void can_lld_serve_interrupt0(CANDriver *canp);
+  void can_lld_serve_interrupt1(CANDriver *canp);
 #ifdef __cplusplus
 }
 #endif

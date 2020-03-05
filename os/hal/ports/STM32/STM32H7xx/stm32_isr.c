@@ -64,10 +64,12 @@
 #include "stm32_exti19.inc"
 #include "stm32_exti20_21.inc"
 
-#include <stm32_quadspi1.inc>
+#include "stm32_fdcan1.inc"
 
-#include <stm32_sdmmc1.inc>
-#include <stm32_sdmmc2.inc>
+#include "stm32_quadspi1.inc"
+
+#include "stm32_sdmmc1.inc"
+#include "stm32_sdmmc2.inc"
 
 #include <stm32_usart1.inc>
 #include "stm32_usart2.inc"
@@ -111,6 +113,8 @@ void irqInit(void) {
   exti18_irq_init();
   exti19_irq_init();
   exti20_exti21_irq_init();
+
+  fdcan1_irq_init();
 
   mdma_irq_init();
 
@@ -157,6 +161,8 @@ void irqDeinit(void) {
   exti18_irq_deinit();
   exti19_irq_deinit();
   exti20_exti21_irq_deinit();
+
+  fdcan1_irq_deinit();
 
   mdma_irq_deinit();
 

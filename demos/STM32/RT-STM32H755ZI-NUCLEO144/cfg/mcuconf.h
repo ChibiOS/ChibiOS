@@ -184,6 +184,11 @@
 #define STM32_IRQ_EXTI19_PRIORITY           6
 #define STM32_IRQ_EXTI20_21_PRIORITY        6
 
+#define STM32_IRQ_FDCAN1_IT0_PRIORITY       10
+#define STM32_IRQ_FDCAN1_IT1_PRIORITY       10
+#define STM32_IRQ_FDCAN2_IT0_PRIORITY       10
+#define STM32_IRQ_FDCAN2_IT1_PRIORITY       10
+
 #define STM32_IRQ_MDMA_PRIORITY             9
 
 #define STM32_IRQ_QUADSPI1_PRIORITY         10
@@ -235,7 +240,7 @@
 /*
  * CAN driver system settings.
  */
-#define STM32_CAN_USE_FDCAN1                FALSE
+#define STM32_CAN_USE_FDCAN1                TRUE
 #define STM32_CAN_USE_FDCAN2                FALSE
 
 /*
