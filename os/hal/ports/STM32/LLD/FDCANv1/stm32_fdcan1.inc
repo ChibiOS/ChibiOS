@@ -38,20 +38,12 @@
 #if STM32_HAS_FDCAN1
 
 /* Priority settings checks.*/
-#if !defined(STM32_IRQ_FDCAN1_IT0_PRIORITY)
-#error "STM32_IRQ_FDCAN1_IT0_PRIORITY not defined in mcuconf.h"
+#if !defined(STM32_IRQ_FDCAN1_PRIORITY)
+#error "STM32_IRQ_FDCAN1_PRIORITY not defined in mcuconf.h"
 #endif
 
-#if !defined(STM32_IRQ_FDCAN1_IT1_PRIORITY)
-#error "STM32_IRQ_FDCAN1_IT1_PRIORITY not defined in mcuconf.h"
-#endif
-
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_FDCAN1_IT0_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_FDCAN1_IT0_PRIORITY"
-#endif
-
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_FDCAN1_IT1_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_FDCAN1_IT1_PRIORITY"
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_FDCAN1_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_FDCAN1_PRIORITY"
 #endif
 
 #endif /* STM32_HAS_FDCAN1 */
@@ -77,15 +69,13 @@
 
 static inline void fdcan1_irq_init(void) {
 #if STM32_FDCAN1_IS_USED
-  nvicEnableVector(STM32_FDCAN1_IT0_NUMBER, STM32_IRQ_FDCAN1_IT0_PRIORITY);
-  nvicEnableVector(STM32_FDCAN1_IT1_NUMBER, STM32_IRQ_FDCAN1_IT1_PRIORITY);
+  nvicEnableVector(STM32_FDCAN1_IT0_NUMBER, STM32_IRQ_FDCAN1_PRIORITY);
 #endif
 }
 
 static inline void fdcan1_irq_deinit(void) {
 #if STM32_FDCAN1_IS_USED
   nvicDisableVector(STM32_FDCAN1_IT0_NUMBER);
-  nvicDisableVector(STM32_FDCAN1_IT1_NUMBER);
 #endif
 }
 
@@ -95,7 +85,7 @@ static inline void fdcan1_irq_deinit(void) {
 
 #if STM32_FDCAN1_IS_USED|| defined(__DOXYGEN__)
 /**
- * @brief   FDCAN1 interrupt 0 handler.
+ * @brief   FDCAN1 interrupt handler.
  *
  * @isr
  */
@@ -103,21 +93,7 @@ OSAL_IRQ_HANDLER(STM32_FDCAN1_IT0_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  can_lld_serve_interrupt0(&CAND1);
-
-  OSAL_IRQ_EPILOGUE();
-}
-/**
- *
- * @brief   FDCAN1 interrupt 1 handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_FDCAN1_IT1_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-  can_lld_serve_interrupt1(&CAND1);
+  can_lld_serve_interrupt(&CAND1);
 
   OSAL_IRQ_EPILOGUE();
 }

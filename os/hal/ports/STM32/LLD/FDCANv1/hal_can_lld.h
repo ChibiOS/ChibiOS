@@ -95,6 +95,38 @@
 #error "CAN driver activated but no FDCAN peripheral assigned"
 #endif
 
+#if !defined(STM32_FDCAN_FLS_NBR)
+#error "STM32_FDCAN_FLS_NBR not defined in registry"
+#endif
+
+#if !defined(STM32_FDCAN_FLE_NBR)
+#error "STM32_FDCAN_FLE_NBR not defined in registry"
+#endif
+
+#if !defined(STM32_FDCAN_RF0_NBR)
+#error "STM32_FDCAN_RF0_NBR not defined in registry"
+#endif
+
+#if !defined(STM32_FDCAN_RF1_NBR)
+#error "STM32_FDCAN_RF1_NBR not defined in registry"
+#endif
+
+#if !defined(STM32_FDCAN_RB_NBR)
+#error "STM32_FDCAN_RB_NBR not defined in registry"
+#endif
+
+#if !defined(STM32_FDCAN_TEF_NBR)
+#error "STM32_FDCAN_TEF_NBR not defined in registry"
+#endif
+
+#if !defined(STM32_FDCAN_TB_NBR)
+#error "STM32_FDCAN_TB_NBR not defined in registry"
+#endif
+
+#if !defined(STM32_FDCAN_TM_NBR)
+#error "STM32_FDCAN_TM_NBR not defined in registry"
+#endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
@@ -406,8 +438,7 @@ extern "C" {
   void can_lld_sleep(CANDriver *canp);
   void can_lld_wakeup(CANDriver *canp);
 #endif /* CAN_USE_SLEEP_MODE */
-  void can_lld_serve_interrupt0(CANDriver *canp);
-  void can_lld_serve_interrupt1(CANDriver *canp);
+  void can_lld_serve_interrupt(CANDriver *canp);
 #ifdef __cplusplus
 }
 #endif

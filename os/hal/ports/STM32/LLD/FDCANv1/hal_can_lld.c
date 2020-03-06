@@ -72,7 +72,7 @@
 
 /* TX Event FIFO Start Address.*/
 #define SRAMCAN_TEFSA ((uint32_t)(SRAMCAN_RBSA +                            \
-                                  (STM32_FDCAN_TEF_NBR * SRAMCAN_RB_SIZE)))
+                                  (STM32_FDCAN_RB_NBR * SRAMCAN_RB_SIZE)))
 
 /* TX Buffers Start Address.*/
 #define SRAMCAN_TBSA  ((uint32_t)(SRAMCAN_TEFSA +                           \
@@ -489,7 +489,36 @@ void can_lld_wakeup(CANDriver *canp) {
  * @notapi
  */
 void can_lld_serve_interrupt(CANDriver *canp) {
+  uint32_t ir;
 
+  /* Getting and clearing active IRQs.*/
+  ir = canp->fdcan->IR;
+  canp->fdcan->IR = ir;
+
+  /* RX events.*/
+  if ((ir & FDCAN_IR_RF0N) != 0U) {
+    /* Disabling this source until the queue is emptied.*/
+    canp->fdcan->IE &= ~FDCAN_IE_RF0NE;
+    _can_rx_full_isr(canp, CAN_MAILBOX_TO_MASK(1U));
+  }
+  if ((ir & FDCAN_IR_RF1N) != 0U) {
+    /* Disabling this source until the queue is emptied.*/
+    canp->fdcan->IE &= ~FDCAN_IE_RF1NE;
+    _can_rx_full_isr(canp, CAN_MAILBOX_TO_MASK(2U));
+  }
+
+  /* Overflow events.*/
+  if ((ir & FDCAN_IR_RF0N) != 0U) {
+    _can_error_isr(canp, CAN_OVERFLOW_ERROR);
+  }
+
+  /* TX events.*/
+  if ((ir & FDCAN_IR_TC) != 0U) {
+    eventflags_t flags = 0U;
+
+    flags |= 1U;
+    _can_tx_empty_isr(canp, flags);
+  }
 }
 
 /** @} */

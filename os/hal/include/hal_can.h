@@ -166,7 +166,7 @@ typedef enum {
 }
 
 /**
- * @brief   Error event.
+ * @brief   Wakeup event.
  */
 #define _can_wakeup_isr(canp) {                                             \
   osalSysLockFromISR();                                                     \
