@@ -86,6 +86,9 @@
                                   (STM32_FDCAN_TM_NBR * SRAMCAN_TM_SIZE)))
 
 
+#define TIMEOUT_INIT_MS                 250U
+#define TIMEOUT_CSA_MS                  250U
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -109,9 +112,62 @@ static const uint8_t dlc_to_bytes[] = {
   8U, 12U, 16U, 20U, 24U, 32U, 48U, 64U
 };
 
+static uint32_t canclk;
+
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
+
+static bool fdcan_clock_stop(CANDriver *canp) {
+  systime_t start, end;
+
+  /* Requesting clock stop then waiting for it to happen.*/
+  canp->fdcan->CCCR |= FDCAN_CCCR_CSR;
+  start = osalOsGetSystemTimeX();
+  end = osalTimeAddX(start, TIME_MS2I(TIMEOUT_INIT_MS));
+  while ((canp->fdcan->CCCR & FDCAN_CCCR_CSA) != 0U) {
+    if (!osalTimeIsInRangeX(osalOsGetSystemTimeX(), start, end)) {
+      return true;
+    }
+    osalThreadSleepS(1);
+  }
+
+  return false;
+}
+
+static bool fdcan_init_mode(CANDriver *canp) {
+  systime_t start, end;
+
+  /* Going in initialization mode then waiting for it to happen.*/
+  canp->fdcan->CCCR |= FDCAN_CCCR_INIT;
+  start = osalOsGetSystemTimeX();
+  end = osalTimeAddX(start, TIME_MS2I(TIMEOUT_INIT_MS));
+  while ((canp->fdcan->CCCR & FDCAN_CCCR_INIT) == 0U) {
+    if (!osalTimeIsInRangeX(osalOsGetSystemTimeX(), start, end)) {
+      return true;
+    }
+    osalThreadSleepS(1);
+  }
+
+  return false;
+}
+
+static bool fdcan_active_mode(CANDriver *canp) {
+  systime_t start, end;
+
+  /* Going in initialization mode then waiting for it to happen.*/
+  canp->fdcan->CCCR &= ~FDCAN_CCCR_INIT;
+  start = osalOsGetSystemTimeX();
+  end = osalTimeAddX(start, TIME_MS2I(TIMEOUT_INIT_MS));
+  while ((canp->fdcan->CCCR & FDCAN_CCCR_INIT) != 0U) {
+    if (!osalTimeIsInRangeX(osalOsGetSystemTimeX(), start, end)) {
+      return true;
+    }
+    osalThreadSleepS(1);
+  }
+
+  return false;
+}
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
@@ -127,6 +183,8 @@ static const uint8_t dlc_to_bytes[] = {
  * @notapi
  */
 void can_lld_init(void) {
+
+  canclk = 0U;
 
 #if STM32_CAN_USE_FDCAN1
   /* Driver initialization.*/
@@ -145,23 +203,67 @@ void can_lld_init(void) {
  * @brief   Configures and activates the CAN peripheral.
  *
  * @param[in] canp      pointer to the @p CANDriver object
+ * @return              The operation result.
+ * @retval false        if the operation succeeded.
+ * @retval true         if the operation failed.
  *
  * @notapi
  */
-void can_lld_start(CANDriver *canp) {
+bool can_lld_start(CANDriver *canp) {
 
   /* Clock activation.*/
+  rccEnableFDCAN(true);
+  if (canclk == 0U) {
+    /* First activation.*/
+  }
+
 #if STM32_CAN_USE_FDCAN1
   if (&CAND1 == canp) {
-    rccEnableFDCAN1(true);
+    canclk |= 1U;
   }
 #endif
 
 #if STM32_CAN_USE_FDCAN2
   if (&CAND2 == canp) {
-    rccEnableFDCAN2(true);
+    canclk |= 2U;
   }
 #endif
+
+  /* Requesting clock stop.*/
+  if (fdcan_clock_stop(canp)) {
+    osalDbgAssert(false, "CAN clock stop failed, check clocks and pin config");
+    return true;
+  }
+
+  /* Going in initialization mode.*/
+  if (fdcan_init_mode(canp)) {
+    osalDbgAssert(false, "CAN initialization failed, check clocks and pin config");
+    return true;
+  }
+
+  /* Configuration can be performed now.*/
+  canp->fdcan->CCCR |= FDCAN_CCCR_CCE;
+
+  /* Setting up operation mode except driver-controlled bits.*/
+  canp->fdcan->DBTP = canp->config->DBTP;
+  canp->fdcan->CCCR = canp->config->CCCR & ~(FDCAN_CCCR_CSR | FDCAN_CCCR_CSA |
+                                             FDCAN_CCCR_CCE | FDCAN_CCCR_INIT);
+  canp->fdcan->TEST = canp->config->TEST;
+
+  /* Enabling interrupts, only using interrupt zero.*/
+  canp->fdcan->IR  = (uint32_t)-1;
+  canp->fdcan->IE  = FDCAN_IE_RF1NE | FDCAN_IE_RF1LE |
+                     FDCAN_IE_RF0NE | FDCAN_IE_RF0LE |
+                     FDCAN_IE_TCE;
+  canp->fdcan->ILE = FDCAN_ILE_EINT0;
+
+  /* Going in active mode.*/
+  if (fdcan_active_mode(canp)) {
+    osalDbgAssert(false, "CAN initialization failed, check clocks and pin config");
+    return true;
+  }
+
+  return false;
 }
 
 /**
@@ -175,17 +277,29 @@ void can_lld_stop(CANDriver *canp) {
 
   /* If in ready state then disables the CAN peripheral.*/
   if (canp->state == CAN_READY) {
+    /* Disabling and clearing interrupts.*/
+    canp->fdcan->IE  = 0U;
+    canp->fdcan->IR  = (uint32_t)-1;
+    canp->fdcan->ILE = 0U;
+
+    /* Disables the peripheral.*/
+    (void) fdcan_clock_stop(canp);
+
 #if STM32_CAN_USE_FDCAN1
     if (&CAND1 == canp) {
-      rccDisableFDCAN1();
+      canclk &= ~1U;
     }
 #endif
 
 #if STM32_CAN_USE_FDCAN2
     if (&CAND2 == canp) {
-      rccDisableFDCAN2();
+      canclk &= ~2U;
     }
 #endif
+
+    if (canclk == 0U) {
+      rccDisableFDCAN();
+    }
   }
 }
 
@@ -374,18 +488,7 @@ void can_lld_wakeup(CANDriver *canp) {
  *
  * @notapi
  */
-void can_lld_serve_interrupt0(CANDriver *canp) {
-
-}
-
-/**
- * @brief   FDCAN IRQ1 service routine.
- *
- * @param[in] canp      pointer to the @p CANDriver object
- *
- * @notapi
- */
-void can_lld_serve_interrupt1(CANDriver *canp) {
+void can_lld_serve_interrupt(CANDriver *canp) {
 
 }
 

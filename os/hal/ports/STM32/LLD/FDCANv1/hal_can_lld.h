@@ -257,9 +257,13 @@ typedef struct {
  */
 typedef struct {
   /**
-   * @brief   Global filter configuration register.
+   * @brief   Data bit timing and prescaler register.
    */
-  uint32_t                  RXGFC;
+  uint32_t                  DBTP;
+  /**
+   * @brief   CC control register.
+   */
+  uint32_t                  CCCR;
   /**
    * @brief   Test configuration register.
    */
@@ -386,7 +390,7 @@ extern CANDriver CAND2;
 extern "C" {
 #endif
   void can_lld_init(void);
-  void can_lld_start(CANDriver *canp);
+  bool can_lld_start(CANDriver *canp);
   void can_lld_stop(CANDriver *canp);
   bool can_lld_is_tx_empty(CANDriver *canp, canmbx_t mailbox);
   void can_lld_transmit(CANDriver *canp,
