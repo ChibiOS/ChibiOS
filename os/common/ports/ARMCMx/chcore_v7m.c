@@ -275,7 +275,7 @@ void port_init(void) {
 
     /* Setting up the guard page on the main() function stack base
        initially.*/
-    mpuConfigureRegion(PORT_USE_MPU_REGION,
+    mpuConfigureRegion(PORT_USE_GUARD_MPU_REGION,
                        &__main_thread_stack_base__,
                        MPU_RASR_ATTR_AP_NA_NA |
                        MPU_RASR_ATTR_NON_CACHEABLE |
@@ -298,7 +298,7 @@ void port_init(void) {
  */
 void _port_set_region(void) {
 
-  mpuSetRegionAddress(PORT_USE_MPU_REGION,
+  mpuSetRegionAddress(PORT_USE_GUARD_MPU_REGION,
                       chThdGetSelfX()->wabase);
 }
 #endif
