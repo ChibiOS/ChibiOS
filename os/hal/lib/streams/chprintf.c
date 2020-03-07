@@ -172,8 +172,10 @@ int chvprintf(BaseSequentialStream *chp, const char *fmt, va_list ap) {
     }
     
     /* Width modifier.*/
-    if (c == '*') {
+    if ( *fmt == '*') {
       width = va_arg(ap, int);
+      ++fmt;
+      c = *fmt++;
     }
     else {
       width = 0;
