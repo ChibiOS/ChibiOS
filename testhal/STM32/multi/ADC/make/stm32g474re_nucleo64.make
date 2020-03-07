@@ -90,9 +90,9 @@ MCU  = cortex-m4
 
 # Imported source files and paths.
 CHIBIOS  := ../../../..
-CONFDIR  := ./cfg/stm32g474zi_nucleo144
-BUILDDIR := ./build/stm32g474zi_nucleo144
-DEPDIR   := ./.dep/stm32g474zi_nucleo144
+CONFDIR  := ./cfg/stm32g474re_nucleo64
+BUILDDIR := ./build/stm32g474re_nucleo64
+DEPDIR   := ./.dep/stm32g474re_nucleo64
 
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
