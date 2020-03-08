@@ -283,6 +283,8 @@ int chvprintf(BaseSequentialStream *chp, const char *fmt, va_list ap) {
 #endif
     case 'X':
     case 'x':
+    case 'P':
+    case 'p':
       c = 16;
       goto unsigned_common;
     case 'U':
