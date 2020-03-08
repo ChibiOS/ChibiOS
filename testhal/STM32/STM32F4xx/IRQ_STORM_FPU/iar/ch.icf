@@ -37,3 +37,11 @@ place at start of RAM_region                  {block IRQSTACK};
 place in RAM_region                           {block DATABSS, block HEAP};
 place in RAM_region                           {block SYSHEAP};
 place at end of RAM_region                    {block CSTACK};
+
+/* Define stack and memory addresses for kernel usage */ 
+
+define exported symbol __main_stack_base__        = __ICFEDIT_region_RAM_start__;
+define exported symbol __main_stack_end__         = __main_stack_base__ + __ICFEDIT_size_irqstack__; /* Note: End refers to empty stack */
+define exported symbol __process_stack_base__     = __main_stack_end__;
+define exported symbol __main_thread_stack_base__ = __process_stack_base__;                          /* Note: Main thread uses process stack */
+define exported symbol __process_stack_end__      = __process_stack_base__ + __ICFEDIT_size_cstack__;
