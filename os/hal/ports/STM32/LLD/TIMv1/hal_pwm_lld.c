@@ -953,6 +953,16 @@ void pwm_lld_start(PWMDriver *pwmp) {
     default:
       ;
     }
+    switch (pwmp->config->channels[3].mode & PWM_COMPLEMENTARY_OUTPUT_MASK) {
+    case PWM_COMPLEMENTARY_OUTPUT_ACTIVE_LOW:
+      ccer |= STM32_TIM_CCER_CC4NP;
+      /* Falls through.*/
+    case PWM_COMPLEMENTARY_OUTPUT_ACTIVE_HIGH:
+      ccer |= STM32_TIM_CCER_CC4NE;
+      /* Falls through.*/
+    default:
+      ;
+    }
   }
 #endif /* STM32_PWM_USE_ADVANCED*/
 

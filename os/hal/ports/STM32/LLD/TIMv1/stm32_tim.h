@@ -279,6 +279,7 @@
 #define STM32_TIM_CCER_CC3NP                (1U << 11)
 #define STM32_TIM_CCER_CC4E                 (1U << 12)
 #define STM32_TIM_CCER_CC4P                 (1U << 13)
+#define STM32_TIM_CCER_CC4NE                (1U << 14)
 #define STM32_TIM_CCER_CC4NP                (1U << 15)
 #define STM32_TIM_CCER_CC5E                 (1U << 16)
 #define STM32_TIM_CCER_CC5P                 (1U << 17)
