@@ -51,6 +51,9 @@
 /* TX FIFO/Queue Elements Size in bytes.*/
 #define SRAMCAN_TB_SIZE                 (18U * 4U)
 
+/* Trigger Memory Size in bytes.*/
+#define SRAMCAN_TM_SIZE                 (2U * 4U)
+
 /* Filter List Standard Start Address.*/
 #define SRAMCAN_FLSSA ((uint32_t)0)
 
@@ -78,6 +81,7 @@
 #define SRAMCAN_TBSA  ((uint32_t)(SRAMCAN_TEFSA +                           \
                                   (STM32_FDCAN_TEF_NBR * SRAMCAN_TEF_SIZE)))
 
+/* Trigger Memory Start Address.*/
 #define SRAMCAN_TMSA  ((uint32_t)(SRAMCAN_TBSA +                            \
                                   (STM32_FDCAN_TB_NBR * SRAMCAN_TB_SIZE)))
 
@@ -101,6 +105,11 @@ CANDriver CAND1;
 /** @brief CAN2 driver identifier.*/
 #if STM32_CAN_USE_FDCAN2 || defined(__DOXYGEN__)
 CANDriver CAND2;
+#endif
+
+/** @brief CAN3 driver identifier.*/
+#if STM32_CAN_USE_FDCAN3 || defined(__DOXYGEN__)
+CANDriver CAND3;
 #endif
 
 /*===========================================================================*/
@@ -186,16 +195,28 @@ void can_lld_init(void) {
 
   canclk = 0U;
 
+  /* Unit reset.*/
+  rccResetFDCAN();
+
 #if STM32_CAN_USE_FDCAN1
   /* Driver initialization.*/
   canObjectInit(&CAND1);
   CAND1.fdcan = FDCAN1;
+  CAND1.ram_base = (uint32_t *) (SRAMCAN_BASE + 0U * SRAMCAN_SIZE);
 #endif
 
 #if STM32_CAN_USE_FDCAN2
   /* Driver initialization.*/
   canObjectInit(&CAND2);
   CAND2.fdcan = FDCAN2;
+  CAND2.ram_base = (uint32_t *) (SRAMCAN_BASE + 1U * SRAMCAN_SIZE);
+#endif
+
+#if STM32_CAN_USE_FDCAN3
+  /* Driver initialization.*/
+  canObjectInit(&CAND3);
+  CAND3.fdcan = FDCAN3;
+  CAND3.ram_base = (uint32_t *) (SRAMCAN_BASE + 2U * SRAMCAN_SIZE);
 #endif
 }
 
@@ -213,8 +234,15 @@ bool can_lld_start(CANDriver *canp) {
 
   /* Clock activation.*/
   rccEnableFDCAN(true);
+
+  /* If it is the first activation then performing some extra
+     initializations.*/
   if (canclk == 0U) {
-    /* First activation.*/
+    for (uint32_t *wp = canp->ram_base;
+         wp < canp->ram_base + SRAMCAN_SIZE;
+         wp += 1U) {
+      *wp = (uint32_t)0U;
+    }
   }
 
 #if STM32_CAN_USE_FDCAN1
@@ -226,6 +254,12 @@ bool can_lld_start(CANDriver *canp) {
 #if STM32_CAN_USE_FDCAN2
   if (&CAND2 == canp) {
     canclk |= 2U;
+  }
+#endif
+
+#if STM32_CAN_USE_FDCAN3
+  if (&CAND3 == canp) {
+    canclk |= 4U;
   }
 #endif
 
@@ -294,6 +328,12 @@ void can_lld_stop(CANDriver *canp) {
 #if STM32_CAN_USE_FDCAN2
     if (&CAND2 == canp) {
       canclk &= ~2U;
+    }
+#endif
+
+#if STM32_CAN_USE_FDCAN3
+    if (&CAND3 == canp) {
+      canclk &= ~4U;
     }
 #endif
 
@@ -465,6 +505,7 @@ void can_lld_abort(CANDriver *canp, canmbx_t mailbox) {
  */
 void can_lld_sleep(CANDriver *canp) {
 
+  (void)canp;
 }
 
 /**
@@ -476,6 +517,7 @@ void can_lld_sleep(CANDriver *canp) {
  */
 void can_lld_wakeup(CANDriver *canp) {
 
+  (void)canp;
 }
 #endif /* CAN_USE_SLEEP_MODE */
 

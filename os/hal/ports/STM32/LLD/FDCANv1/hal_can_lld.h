@@ -69,6 +69,14 @@
 #if !defined(STM32_CAN_USE_FDCAN2) || defined(__DOXYGEN__)
 #define STM32_CAN_USE_FDCAN2                FALSE
 #endif
+
+/**
+ * @brief   CAN3 driver enable switch.
+ * @details If set to @p TRUE the support for FDCAN3 is included.
+ */
+#if !defined(STM32_CAN_USE_FDCAN3) || defined(__DOXYGEN__)
+#define STM32_CAN_USE_FDCAN3                FALSE
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -83,6 +91,10 @@
 #error "STM32_HAS_FDCAN2 not defined in registry"
 #endif
 
+#if !defined(STM32_HAS_FDCAN3)
+#error "STM32_HAS_FDCAN3 not defined in registry"
+#endif
+
 #if STM32_CAN_USE_FDCAN1 && !STM32_HAS_FDCAN1
 #error "FDCAN1 not present in the selected device"
 #endif
@@ -91,7 +103,11 @@
 #error "FDCAN2 not present in the selected device"
 #endif
 
-#if !STM32_CAN_USE_FDCAN1 && !STM32_CAN_USE_FDCAN2
+#if STM32_CAN_USE_FDCAN3 && !STM32_HAS_FDCAN3
+#error "FDCAN3 not present in the selected device"
+#endif
+
+#if !STM32_CAN_USE_FDCAN1 && !STM32_CAN_USE_FDCAN2 && !STM32_CAN_USE_FDCAN3
 #error "CAN driver activated but no FDCAN peripheral assigned"
 #endif
 
@@ -416,6 +432,10 @@ extern CANDriver CAND1;
 
 #if STM32_CAN_USE_FDCAN2 && !defined(__DOXYGEN__)
 extern CANDriver CAND2;
+#endif
+
+#if STM32_CAN_USE_FDCAN3 && !defined(__DOXYGEN__)
+extern CANDriver CAND3;
 #endif
 
 #ifdef __cplusplus

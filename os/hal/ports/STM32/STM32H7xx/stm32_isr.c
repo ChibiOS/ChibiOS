@@ -65,6 +65,7 @@
 #include "stm32_exti20_21.inc"
 
 #include "stm32_fdcan1.inc"
+#include "stm32_fdcan2.inc"
 
 #include "stm32_quadspi1.inc"
 
@@ -115,6 +116,7 @@ void irqInit(void) {
   exti20_exti21_irq_init();
 
   fdcan1_irq_init();
+  fdcan2_irq_init();
 
   mdma_irq_init();
 
@@ -163,6 +165,7 @@ void irqDeinit(void) {
   exti20_exti21_irq_deinit();
 
   fdcan1_irq_deinit();
+  fdcan2_irq_deinit();
 
   mdma_irq_deinit();
 

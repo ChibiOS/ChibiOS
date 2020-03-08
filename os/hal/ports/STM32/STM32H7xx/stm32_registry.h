@@ -68,6 +68,7 @@
 /* CAN attributes.*/
 #define STM32_HAS_FDCAN1                    TRUE
 #define STM32_HAS_FDCAN2                    TRUE
+#define STM32_HAS_FDCAN3                    FALSE
 #define STM32_FDCAN_FLS_NBR                 128U
 #define STM32_FDCAN_FLE_NBR                 128U
 #define STM32_FDCAN_RF0_NBR                 64U

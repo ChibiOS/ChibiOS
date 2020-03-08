@@ -146,6 +146,23 @@
 #define STM32_EXTI33_NUMBER                 66
 
 /*
+ * FDCAN units.
+ */
+#define STM32_FDCAN1_IT0_HANDLER            Vector94
+#define STM32_FDCAN1_IT1_HANDLER            Vector98
+#define STM32_FDCAN2_IT0_HANDLER            Vector198
+#define STM32_FDCAN2_IT1_HANDLER            Vector19C
+#define STM32_FDCAN3_IT0_HANDLER            Vector1A0
+#define STM32_FDCAN3_IT1_HANDLER            Vector1A4
+
+#define STM32_FDCAN1_IT0_NUMBER             21
+#define STM32_FDCAN1_IT1_NUMBER             22
+#define STM32_FDCAN2_IT0_NUMBER             86
+#define STM32_FDCAN2_IT1_NUMBER             87
+#define STM32_FDCAN3_IT0_NUMBER             88
+#define STM32_FDCAN3_IT1_NUMBER             89
+
+/*
  * I2C units.
  */
 #define STM32_I2C1_EVENT_HANDLER            VectorBC

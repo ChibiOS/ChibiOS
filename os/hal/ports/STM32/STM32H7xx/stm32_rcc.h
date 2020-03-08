@@ -716,7 +716,7 @@
 /** @} */
 
 /**
- * @name    I2C peripherals specific RCC operations
+ * @name    FDCAN peripherals specific RCC operations
  * @{
  */
 /**
