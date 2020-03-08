@@ -302,13 +302,16 @@
         <option>
           <name>CCIncludePath2</name>
           <state>$PROJ_DIR$\..\</state>
+          <state>$PROJ_DIR$\..\cfg</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\os\license</state>
           <state>$PROJ_DIR$\..\..\..\..\..\os\common\ports\ARMCMx\devices\STM32F4xx</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\os\ext\CMSIS\include</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\os\ext\CMSIS\ST</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\os\common\ext\ARM\CMSIS\Core\Include</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\os\common\ext\ST\STM32F4xx</state>
           <state>$PROJ_DIR$\..\..\..\..\..\os\rt\ports\ARMCMx</state>
           <state>$PROJ_DIR$\..\..\..\..\..\os\rt\ports\ARMCMx\compilers\IAR</state>
           <state>$PROJ_DIR$\..\..\..\..\..\os\rt\include</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\os\hal\osal\rt</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\os\oslib\include</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\os\hal\osal\rt-nil</state>
           <state>$PROJ_DIR$\..\..\..\..\..\os\hal\include</state>
           <state>$PROJ_DIR$\..\..\..\..\..\os\hal\boards\ST_STM32F4_DISCOVERY</state>
           <state>$PROJ_DIR$\..\..\..\..\..\os\hal\ports\common\ARMCMx</state>
@@ -321,7 +324,9 @@
           <state>$PROJ_DIR$\..\..\..\..\..\os\hal\ports\STM32\LLD\TIMv1</state>
           <state>$PROJ_DIR$\..\..\..\..\..\os\hal\ports\STM32\LLD\USARTv1</state>
           <state>$PROJ_DIR$\..\..\..\..\..\os\hal\ports\STM32\LLD\OTGv1</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\test\rt</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\test\lib</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\test\rt\source\test</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\test\oslib\source\test</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -571,6 +576,8 @@
         <option>
           <name>AUserIncludes</name>
           <state>$PROJ_DIR$\..</state>
+          <state>$PROJ_DIR$\..\cfg</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\os\license</state>
           <state>$PROJ_DIR$\..\..\..\..\..\os\common\ports\ARMCMx\devices\STM32F4xx</state>
           <state>$PROJ_DIR$\..\..\..\..\..\os\rt\ports\ARMCMx</state>
           <state>$PROJ_DIR$\..\..\..\..\..\os\hal\boards\ST_STM32f4_DISCOVERY</state>
@@ -1258,13 +1265,16 @@
         <option>
           <name>CCIncludePath2</name>
           <state>$PROJ_DIR$\..\</state>
+          <state>$PROJ_DIR$\..\cfg</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\os\license</state>
           <state>$PROJ_DIR$\..\..\..\..\..\os\common\ports\ARMCMx\devices\STM32F4xx</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\os\ext\CMSIS\include</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\os\ext\CMSIS\ST</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\os\common\ext\ARM\CMSIS\Core\Include</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\os\common\ext\ST\STM32F4xx</state>
           <state>$PROJ_DIR$\..\..\..\..\..\os\rt\ports\ARMCMx</state>
           <state>$PROJ_DIR$\..\..\..\..\..\os\rt\ports\ARMCMx\compilers\IAR</state>
           <state>$PROJ_DIR$\..\..\..\..\..\os\rt\include</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\os\hal\osal\rt</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\os\oslib\include</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\os\hal\osal\rt-nil</state>
           <state>$PROJ_DIR$\..\..\..\..\..\os\hal\include</state>
           <state>$PROJ_DIR$\..\..\..\..\..\os\hal\boards\ST_STM32F4_DISCOVERY</state>
           <state>$PROJ_DIR$\..\..\..\..\..\os\hal\ports\common\ARMCMx</state>
@@ -1277,7 +1287,9 @@
           <state>$PROJ_DIR$\..\..\..\..\..\os\hal\ports\STM32\LLD\TIMv1</state>
           <state>$PROJ_DIR$\..\..\..\..\..\os\hal\ports\STM32\LLD\USARTv1</state>
           <state>$PROJ_DIR$\..\..\..\..\..\os\hal\ports\STM32\LLD\OTGv1</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\test\rt</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\test\lib</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\test\rt\source\test</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\test\oslib\source\test</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1527,6 +1539,8 @@
         <option>
           <name>AUserIncludes</name>
           <state>$PROJ_DIR$\..</state>
+          <state>$PROJ_DIR$\..\cfg</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\os\license</state>
           <state>$PROJ_DIR$\..\..\..\..\..\os\common\ports\ARMCMx\devices\STM32F4xx</state>
           <state>$PROJ_DIR$\..\..\..\..\..\os\rt\ports\ARMCMx</state>
           <state>$PROJ_DIR$\..\..\..\..\..\os\hal\boards\ST_STM32f4_DISCOVERY</state>
