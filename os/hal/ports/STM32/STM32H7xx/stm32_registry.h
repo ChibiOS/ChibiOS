@@ -29,9 +29,6 @@
 /* Platform capabilities.                                                    */
 /*===========================================================================*/
 
-/* RNG attributes.*/
-#define STM32_HAS_RNG1                      TRUE
-
 /* Cores.*/
 #if defined(STM32H750xx) || defined(STM32H742xx) ||                         \
     defined(STM32H743xx) || defined(STM32H753xx)
@@ -46,6 +43,17 @@
  * @name    STM32H7xx capabilities
  * @{
  */
+
+/*===========================================================================*/
+/* Common.                                                                   */
+/*===========================================================================*/
+
+/* RNG attributes.*/
+#define STM32_HAS_RNG1                      TRUE
+
+/* I2C attributes.*/
+#define STM32_I2C4_USE_BDMA                 TRUE
+
 /*===========================================================================*/
 /* STM32H743xx, STM32H753xx, STM32H745xx, STM32H755xx, STM32H747xx,          */
 /* STM32H757xx.                                                              */
