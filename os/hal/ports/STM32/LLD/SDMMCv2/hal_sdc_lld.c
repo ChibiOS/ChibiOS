@@ -746,17 +746,16 @@ bool sdc_lld_write_aligned(SDCDriver *sdcp, uint32_t startblk,
                        SDMMC_MASK_DATAENDIE;
   sdcp->sdmmc->DLEN  = blocks * MMCSD_BLOCK_SIZE;
 
-  /* Talk to card what we want from it.*/
-  if (sdc_lld_prepare_write(sdcp, startblk, blocks, resp) == true)
-    goto error;
-
-  /* Transaction starts just after DTEN bit setting.*/
+  /* Transfer modes.*/
   sdcp->sdmmc->DCTRL = SDMMC_DCTRL_DBLOCKSIZE_3 |
                        SDMMC_DCTRL_DBLOCKSIZE_0;
 
   /* Prepares IDMA.*/
   sdcp->sdmmc->IDMABASE0 = (uint32_t)buf;
   sdcp->sdmmc->IDMACTRL  = SDMMC_IDMA_IDMAEN;
+
+  if (sdc_lld_prepare_write(sdcp, startblk, blocks, resp) == true)
+    goto error;
 
   if (sdc_lld_wait_transaction_end(sdcp, blocks, resp) == true)
     goto error;
