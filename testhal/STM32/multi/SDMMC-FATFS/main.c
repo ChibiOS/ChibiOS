@@ -160,10 +160,12 @@ static void cmd_tree(BaseSequentialStream *chp, int argc, char *argv[]) {
     chprintf(chp, "Usage: tree\r\n");
     return;
   }
+
   if (!fs_ready) {
     chprintf(chp, "File System not mounted\r\n");
     return;
   }
+
   err = f_getfree("/", &fre_clust, &fsp);
   if (err != FR_OK) {
     chprintf(chp, "FS: f_getfree() failed\r\n");
@@ -176,8 +178,44 @@ static void cmd_tree(BaseSequentialStream *chp, int argc, char *argv[]) {
   scan_files(chp, (char *)fbuff);
 }
 
+static void cmd_create(BaseSequentialStream *chp, int argc, char *argv[]) {
+  FRESULT err;
+  FIL f;
+  static const char data[] = "the quick brown fox jumps over the lazy dog";
+  UINT btw = sizeof data - 1;
+  UINT bw;
+
+  if (argc != 1) {
+    chprintf(chp, "Usage: create <filename>\r\n");
+    return;
+  }
+
+  if (!fs_ready) {
+    chprintf(chp, "File System not mounted\r\n");
+    return;
+  }
+
+  err = f_open(&f, (const TCHAR *)argv[0], FA_CREATE_ALWAYS | FA_WRITE);
+  if (err != FR_OK) {
+    chprintf(chp, "FS: f_open() failed\r\n");
+    return;
+  }
+
+  err = f_write(&f, (const void *)data, btw, &bw);
+  if (err != FR_OK) {
+    chprintf(chp, "FS: f_write() failed\r\n");
+  }
+
+  err = f_close(&f);
+  if (err != FR_OK) {
+    chprintf(chp, "FS: f_close() failed\r\n");
+    return;
+  }
+}
+
 static const ShellCommand commands[] = {
   {"tree", cmd_tree},
+  {"create", cmd_create},
   {NULL, NULL}
 };
 

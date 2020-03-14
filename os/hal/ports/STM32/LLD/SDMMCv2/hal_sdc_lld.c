@@ -867,7 +867,9 @@ void sdc_lld_serve_interrupt(SDCDriver *sdcp) {
      read/write functions needs to check them.*/
   sdcp->sdmmc->MASK = 0;
 
+  osalSysLockFromISR();
   osalThreadResumeI(&sdcp->thread, MSG_OK);
+  osalSysUnlockFromISR();
 }
 
 #endif /* HAL_USE_SDC */
