@@ -15,8 +15,8 @@
 */
 
 /**
- * @defgroup HAL_FLASH Generic NOR Flash Interface
- * @brief   HAL Generic NOR Flash Driver Interface.
+ * @defgroup HAL_FLASH Generic Flash Interface
+ * @brief   HAL Generic Flash Driver Interface.
  *
  * @section flash_1 Driver State Machine
  * The flash driver implements a state machine internally, not all the driver

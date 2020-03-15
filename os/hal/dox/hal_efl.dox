@@ -15,11 +15,10 @@
 */
 
 /**
- * @defgroup DAC DAC Driver
- * @brief Generic DAC Driver.
- * @details This module implements a generic DAC (Digital to Analog Converter)
- *          driver.
- * @pre     In order to use the DAC driver the @p HAL_USE_DAC option
+ * @defgroup HAL_EFL EFL Driver
+ * @brief Generic Embedded Flash Driver.
+ * @details This module implements a generic embedded flash driver.
+ * @pre     In order to use the EFL driver the @p HAL_USE_EFL option
  *          must be enabled in @p halconf.h.
  *
  * @ingroup HAL_NORMAL_DRIVERS
