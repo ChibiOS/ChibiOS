@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chregistry.h
+ * @file    rt/include/chregistry.h
  * @brief   Threads registry macros and structures.
  *
  * @addtogroup registry

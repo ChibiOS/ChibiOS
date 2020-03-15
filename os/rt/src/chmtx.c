@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chmtx.c
+ * @file    rt/src/chmtx.c
  * @brief   Mutexes code.
  *
  * @addtogroup mutexes

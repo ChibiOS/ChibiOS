@@ -21,7 +21,7 @@
  */
 
 /**
- * @file    chcond.c
+ * @file    rt/src/chcond.c
  * @brief   Condition Variables code.
  *
  * @addtogroup condvars

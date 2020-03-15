@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chtime.h
+ * @file    rt/include/chtime.h
  * @brief   Time and intervals macros and structures.
  *
  * @addtogroup time_intervals

@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chjobs.h
+ * @file    oslib/include/chjobs.h
  * @brief   Jobs Queues structures and macros.
  * @details This module implements queues of generic jobs to be delegated
  *          asynchronously to a pool of dedicated threads.

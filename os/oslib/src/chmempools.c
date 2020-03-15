@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chmempools.c
+ * @file    oslib/src/chmempools.c
  * @brief   Memory Pools code.
  *
  * @addtogroup oslib_mempools

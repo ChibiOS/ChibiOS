@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chpipes.h
+ * @file    oslib/include/chpipes.h
  * @brief   Pipes macros and structures.
  *
  * @addtogroup oslib_pipes

@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chregistry.c
+ * @file    rt/src/chregistry.c
  * @brief   Threads registry code.
  *
  * @addtogroup registry

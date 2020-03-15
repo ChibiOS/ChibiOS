@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chsys.c
+ * @file    rt/src/chsys.c
  * @brief   System related code.
  *
  * @addtogroup system

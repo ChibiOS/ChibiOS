@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chmsg.h
+ * @file    rt/include/chmsg.h
  * @brief   Messages macros and structures.
  *
  * @addtogroup messages

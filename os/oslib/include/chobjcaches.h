@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chobjcaches.h
+ * @file    oslib/include/chobjcaches.h
  * @brief   Objects Caches macros and structures.
  *
  * @addtogroup oslib_objchaches

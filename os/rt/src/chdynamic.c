@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chdynamic.c
+ * @file    rt/src/chdynamic.c
  * @brief   Dynamic threads code.
  *
  * @addtogroup dynamic_threads

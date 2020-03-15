@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chlib.h
+ * @file    oslib/include/chlib.h
  * @brief   ChibiOS/LIB main include file.
  * @details This header includes all the required library headers. This file
  *          is meant do be included by @p ch.h not directly by user.

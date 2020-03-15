@@ -803,16 +803,15 @@ INPUT                  = ./src \
                          ../../os/hal/dox \
                          ../../os/hal/src \
                          ../../os/hal/include \
-                         ../../os/hal/lib/peripherals/flash \
-                         ../../os/hal/lib/peripherals/sensors \
                          ../../os/hal/lib/streams \
                          ../../os/hal/lib/complex/mfs \
                          ../../os/hal/lib/complex/serial_nor \
                          ../../os/hal/templates \
                          ../../os/hal/templates/osal \
                          ../../os/ex/dox \
-                         ../../os/ex/Bosch \
-                         ../../os/ex/ST
+                         ../../os/ex/devices/Bosch \
+                         ../../os/ex/devices/ST \
+                         ../../os/ex/include
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses

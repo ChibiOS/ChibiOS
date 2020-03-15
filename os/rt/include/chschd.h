@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chschd.h
+ * @file    rt/include/chschd.h
  * @brief   Scheduler macros and structures.
  *
  * @addtogroup scheduler

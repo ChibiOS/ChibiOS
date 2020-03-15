@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chobjfifos.h
+ * @file    oslib/include/chobjfifos.h
  * @brief   Objects FIFO structures and macros.
  * @details This module implements a generic FIFO queue of objects by
  *          coupling a Guarded Memory Pool (for objects storage) and

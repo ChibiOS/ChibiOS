@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chdelegates.h
+ * @file    oslib/include/chdelegates.h
  * @brief   Delegate threads macros and structures.
  *
  * @addtogroup oslib_delegates

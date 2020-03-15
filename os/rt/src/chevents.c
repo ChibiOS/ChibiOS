@@ -21,7 +21,7 @@
  */
 
 /**
- * @file    chevents.c
+ * @file    rt/src/chevents.c
  * @brief   Events code.
  *
  * @addtogroup events

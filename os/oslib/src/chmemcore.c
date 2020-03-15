@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chmemcore.c
+ * @file    oslib/src/chmemcore.c
  * @brief   Core memory manager code.
  *
  * @addtogroup oslib_memcore

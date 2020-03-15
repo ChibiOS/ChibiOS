@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chobjcaches.c
+ * @file    oslib/src/chobjcaches.c
  * @brief   Objects Caches code.
  * @details Objects caches.
  *          <h2>Operation mode</h2>

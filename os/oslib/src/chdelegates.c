@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chdelegates.c
+ * @file    oslib/src/chdelegates.c
  * @brief   Delegate threads code.
  * @details Delegate threads.
  *          <h2>Operation mode</h2>

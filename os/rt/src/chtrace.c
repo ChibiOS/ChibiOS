@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chtrace.c
+ * @file    rt/src/chtrace.c
  * @brief   Tracer code.
  *
  * @addtogroup trace

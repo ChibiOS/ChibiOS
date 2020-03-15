@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chvt.c
+ * @file    rt/src/chvt.c
  * @brief   Time and Virtual Timers module code.
  *
  * @addtogroup time

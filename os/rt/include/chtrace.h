@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chtrace.h
+ * @file    rt/include/chtrace.h
  * @brief   Tracer macros and structures.
  *
  * @addtogroup trace

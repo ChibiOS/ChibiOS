@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chmsg.c
+ * @file    rt/src/chmsg.c
  * @brief   Messages code.
  *
  * @addtogroup messages

@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chbsem.h
+ * @file    oslib/include/chbsem.h
  * @brief   Binary semaphores structures and macros.
  * @details Binary semaphores related APIs and services.
  *          <h2>Operation mode</h2>

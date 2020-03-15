@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chmboxes.c
+ * @file    oslib/src/chmboxes.c
  * @brief   Mailboxes code.
  *
  * @addtogroup oslib_mailboxes

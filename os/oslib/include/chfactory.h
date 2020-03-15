@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chfactory.h
+ * @file    oslib/include/chfactory.h
  * @brief   ChibiOS objects factory structures and macros.
  *
  * @addtogroup oslib_objects_factory

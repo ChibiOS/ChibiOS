@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chsem.h
+ * @file    rt/include/chsem.h
  * @brief   Semaphores macros and structures.
  *
  * @addtogroup semaphores

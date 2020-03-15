@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chchecks.h
+ * @file    rt/include/chchecks.h
  * @brief   Configuration file checks header.
  *
  * @addtogroup conf_checks

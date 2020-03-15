@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chtm.c
+ * @file    rt/src/chtm.c
  * @brief   Time Measurement module code.
  *
  * @addtogroup time_measurement

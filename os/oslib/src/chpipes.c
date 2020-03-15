@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chpipes.c
+ * @file    oslib/src/chpipes.c
  * @brief   Pipes code.
  * @details Byte pipes.
  *          <h2>Operation mode</h2>

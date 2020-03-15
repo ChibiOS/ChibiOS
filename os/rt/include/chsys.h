@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chsys.h
+ * @file    rt/include/chsys.h
  * @brief   System related macros and structures.
  *
  * @addtogroup system

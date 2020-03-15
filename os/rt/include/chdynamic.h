@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chdynamic.h
+ * @file    rt/include/chdynamic.h
  * @brief   Dynamic threads macros and structures.
  *
  * @addtogroup dynamic_threads

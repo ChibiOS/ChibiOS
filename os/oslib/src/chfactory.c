@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chfactory.c
+ * @file    oslib/src/chfactory.c
  * @brief   ChibiOS objects factory and registry code.
  *
  * @addtogroup oslib_objects_factory

@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chthreads.c
+ * @file    rt/src/chthreads.c
  * @brief   Threads code.
  *
  * @addtogroup threads

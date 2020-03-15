@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chsystypes.h
+ * @file    rt/include/chsystypes.h
  * @brief   System types header.
  *
  * @addtogroup scheduler

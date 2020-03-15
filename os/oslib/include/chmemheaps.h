@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chmemheaps.h
+ * @file    oslib/include/chmemheaps.h
  * @brief   Memory heaps macros and structures.
  *
  * @addtogroup oslib_memheaps

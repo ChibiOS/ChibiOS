@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chthreads.h
+ * @file    rt/include/chthreads.h
  * @brief   Threads module macros and structures.
  *
  * @addtogroup threads

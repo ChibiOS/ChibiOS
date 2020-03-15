@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chsem.c
+ * @file    rt/src/chsem.c
  * @brief   Semaphores code.
  *
  * @addtogroup semaphores
