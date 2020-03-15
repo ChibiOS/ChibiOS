@@ -113,7 +113,7 @@ GCOVSRC = $(KERNSRC)
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = -DSIMULATOR
+UDEFS = -DSIMULATOR -DTEST_CFG_SIZE_REPORT=0
 
 # Define ASM defines here
 UADEFS =
