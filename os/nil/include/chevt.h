@@ -227,11 +227,6 @@ typedef void (*evhandler_t)(eventid_t id);
  *
  * @param[in] events    events that the function should wait
  *                      for, @p ALL_EVENTS enables all the events
- * @param[in] timeout   the number of ticks before the operation timeouts,
- *                      the following special values are allowed:
- *                      - @a TIME_IMMEDIATE immediate timeout.
- *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The mask of the lowest event id served and cleared.
  * @retval 0            if the operation has timed out.
  *
@@ -245,13 +240,8 @@ typedef void (*evhandler_t)(eventid_t id);
  *          @p mask to become pending then the events are cleared and
  *          returned.
  *
- * @param[in] mask      mask of the event flags that the function should wait
+ * @param[in] events    events that the function should wait
  *                      for, @p ALL_EVENTS enables all the events
- * @param[in] timeout   the number of ticks before the operation timeouts,
- *                      the following special values are allowed:
- *                      - @a TIME_IMMEDIATE immediate timeout.
- *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The mask of the served and cleared events.
  * @retval 0            if the operation has timed out.
  *
@@ -264,13 +254,8 @@ typedef void (*evhandler_t)(eventid_t id);
  * @details The function waits for all the events specified in @p mask to
  *          become pending then the events are cleared and returned.
  *
- * @param[in] mask      mask of the event flags that the function should wait
+ * @param[in] events    events that the function should wait
  *                      for, @p ALL_EVENTS enables all the events
- * @param[in] timeout   the number of ticks before the operation timeouts,
- *                      the following special values are allowed:
- *                      - @a TIME_IMMEDIATE immediate timeout.
- *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The mask of the served and cleared events.
  * @retval 0            if the operation has timed out.
  *
