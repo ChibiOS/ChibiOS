@@ -30,7 +30,9 @@
 
 #if (CH_CFG_USE_DELEGATES == TRUE) || defined(__DOXYGEN__)
 
+/*lint -save -e829 [17.1] Required by design.*/
 #include <stdarg.h>
+/*lint -restore*/
 
 /*===========================================================================*/
 /* Module constants.                                                         */
