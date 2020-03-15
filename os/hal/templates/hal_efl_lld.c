@@ -128,7 +128,7 @@ void efl_lld_stop(EFlashDriver *eflp) {
 /**
  * @brief   Gets the flash descriptor structure.
  *
- * @param[in] ip                    pointer to a @p EFlashDriver instance
+ * @param[in] instance              pointer to a @p EFlashDriver instance
  * @return                          A flash device descriptor.
  *
  * @notapi
@@ -143,7 +143,7 @@ const flash_descriptor_t *efl_lld_get_descriptor(void *instance) {
 /**
  * @brief   Read operation.
  *
- * @param[in] ip                    pointer to a @p EFlashDriver instance
+ * @param[in] instance              pointer to a @p EFlashDriver instance
  * @param[in] offset                flash offset
  * @param[in] n                     number of bytes to be read
  * @param[out] rp                   pointer to the data buffer
@@ -187,7 +187,7 @@ flash_error_t efl_lld_read(void *instance, flash_offset_t offset,
  * @note    The device supports ECC, it is only possible to write erased
  *          pages once except when writing all zeroes.
  *
- * @param[in] ip                    pointer to a @p EFlashDriver instance
+ * @param[in] instance              pointer to a @p EFlashDriver instance
  * @param[in] offset                flash offset
  * @param[in] n                     number of bytes to be programmed
  * @param[in] pp                    pointer to the data buffer
@@ -232,7 +232,7 @@ flash_error_t efl_lld_program(void *instance, flash_offset_t offset,
  *          touched because it is where the program is running on.
  *          Pages on bank 1 can be individually erased.
  *
- * @param[in] ip                    pointer to a @p EFlashDriver instance
+ * @param[in] instance              pointer to a @p EFlashDriver instance
  * @return                          An error code.
  * @retval FLASH_NO_ERROR           if there is no erase operation in progress.
  * @retval FLASH_BUSY_ERASING       if there is an erase operation in progress.
@@ -263,7 +263,7 @@ flash_error_t efl_lld_start_erase_all(void *instance) {
 /**
  * @brief   Starts an sector erase operation.
  *
- * @param[in] ip                    pointer to a @p EFlashDriver instance
+ * @param[in] instance              pointer to a @p EFlashDriver instance
  * @param[in] sector                sector to be erased
  * @return                          An error code.
  * @retval FLASH_NO_ERROR           if there is no erase operation in progress.
@@ -297,7 +297,7 @@ flash_error_t efl_lld_start_erase_sector(void *instance,
 /**
  * @brief   Queries the driver for erase operation progress.
  *
- * @param[in] ip                    pointer to a @p EFlashDriver instance
+ * @param[in] instance              pointer to a @p EFlashDriver instance
  * @param[out] msec                 recommended time, in milliseconds, that
  *                                  should be spent before calling this
  *                                  function again, can be @p NULL
@@ -328,7 +328,7 @@ flash_error_t efl_lld_query_erase(void *instance, uint32_t *msec) {
 /**
  * @brief   Returns the erase state of a sector.
  *
- * @param[in] ip                    pointer to a @p EFlashDriver instance
+ * @param[in] instance              pointer to a @p EFlashDriver instance
  * @param[in] sector                sector to be verified
  * @return                          An error code.
  * @retval FLASH_NO_ERROR           if the sector is erased.

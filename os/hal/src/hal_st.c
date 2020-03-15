@@ -136,10 +136,6 @@ systime_t stGetAlarm(void) {
 }
 
 /**
- * @name    Macro Functions
- * @{
- */
-/**
  * @brief   Returns the time counter value.
  * @note    This functionality is only available in free running mode, the
  *          behaviour in periodic mode is undefined.

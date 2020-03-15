@@ -790,8 +790,6 @@ INPUT                  = ./src \
                          ../../os/hal/dox \
                          ../../os/hal/src \
                          ../../os/hal/include \
-                         ../../os/hal/lib/peripherals/flash \
-                         ../../os/hal/lib/peripherals/sensors \
                          ../../os/hal/lib/streams \
                          ../../os/hal/lib/complex/mfs \
                          ../../os/hal/lib/complex/serial_nor \

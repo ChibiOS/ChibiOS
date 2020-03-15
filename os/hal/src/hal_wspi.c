@@ -213,6 +213,9 @@ void wspiStartReceive(WSPIDriver *wspip, const wspi_command_t *cmdp,
  *
  * @param[in] wspip     pointer to the @p WSPIDriver object
  * @param[in] cmdp      pointer to the command descriptor
+ * @return              The operation status.
+ * @retval false        if the operation succeeded.
+ * @retval true         if the operation failed because HW issues.
  *
  * @api
  */

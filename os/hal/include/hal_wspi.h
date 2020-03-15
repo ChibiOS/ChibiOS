@@ -357,6 +357,7 @@ struct hal_wspi_driver {
  * @brief   Wakes up the waiting thread.
  *
  * @param[in] wspip     pointer to the @p WSPIDriver object
+ * @param[in] msg       the wakeup message
  *
  * @notapi
  */
