@@ -684,11 +684,6 @@ bool sdcConnect(SDCDriver *sdcp) {
     if (_mmcsd_get_slice(sdcp->csd, MMCSD_CSD_MMC_CSD_STRUCTURE_SLICE) > 1U) {
       uint8_t *ext_csd = sdcp->buf;
 
-      /* Size detection requires the buffer.*/
-      if (NULL == ext_csd) {
-        goto failed;
-      }
-
       if (sdc_lld_read_special(sdcp, ext_csd, 512, MMCSD_CMD_SEND_EXT_CSD, 0)) {
         goto failed;
       }

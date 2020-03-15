@@ -222,7 +222,7 @@ void rtcConvertDateTimeToStructTm(const RTCDateTime *timespec,
                                   uint32_t *tv_msec) {
   int sec;
 
-  timp->tm_year  = (int)timespec->year + (RTC_BASE_YEAR - 1900);
+  timp->tm_year  = (int)timespec->year + (int)(RTC_BASE_YEAR - 1900U);
   timp->tm_mon   = (int)timespec->month - 1;
   timp->tm_mday  = (int)timespec->day;
   timp->tm_isdst = (int)timespec->dstflag;
