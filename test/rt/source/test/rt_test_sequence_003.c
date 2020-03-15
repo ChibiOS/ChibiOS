@@ -65,6 +65,9 @@ static void rt_test_003_001_execute(void) {
   {
     systime_t time = chVTGetSystemTimeX();
     while (time == chVTGetSystemTimeX()) {
+#if defined(SIMULATOR)
+        _sim_check_for_interrupts();
+#endif
     }
   }
   test_end_step(1);
