@@ -435,6 +435,7 @@ void chCacheReleaseObjectI(objects_cache_t *ocp,
  *          reported by this function.
  *
  * @param[in] ocp       pointer to the @p objects_cache_t structure
+ * @param[in] objp      pointer to the @p oc_object_t structure
  * @param[in] async     requests an asynchronous operation if supported, the
  *                      function is then responsible for releasing the
  *                      object
@@ -463,6 +464,7 @@ bool chCacheReadObject(objects_cache_t *ocp,
  *          reported by this function.
  *
  * @param[in] ocp       pointer to the @p objects_cache_t structure
+ * @param[in] objp      pointer to the @p oc_object_t structure
  * @param[in] async     requests an asynchronous operation if supported, the
  *                      function is then responsible for releasing the
  *                      object

@@ -116,6 +116,10 @@ extern "C" {
  * @note    The return value is assumed to be not larger than a data
  *          pointer type. If you need a portable function then use
  *          @p chDelegateCallVeneer() instead.
+ *
+ * @param[in] tp        pointer to the delegate thread
+ * @param[in] func      pointer to the function to be called
+ * @return              The function return value as a @p msg_t.
  */
 static inline msg_t chDelegateCallDirect0(thread_t *tp, delegate_fn0_t func) {
 
@@ -127,6 +131,11 @@ static inline msg_t chDelegateCallDirect0(thread_t *tp, delegate_fn0_t func) {
  * @note    The return value and parameters are assumed to be not larger
  *          than a data pointer type. If you need a portable function then use
  *          @p chDelegateCallVeneer() instead.
+ *
+ * @param[in] tp        pointer to the delegate thread
+ * @param[in] func      pointer to the function to be called
+ * @param[in] p1        parameter 1 passed as a @p msg_t
+ * @return              The function return value as a @p msg_t.
  */
 static inline msg_t chDelegateCallDirect1(thread_t *tp, delegate_fn1_t func,
                                           msg_t p1) {
@@ -139,6 +148,12 @@ static inline msg_t chDelegateCallDirect1(thread_t *tp, delegate_fn1_t func,
  * @note    The return value and parameters are assumed to be not larger
  *          than a data pointer type. If you need a portable function then use
  *          @p chDelegateCallVeneer() instead.
+ *
+ * @param[in] tp        pointer to the delegate thread
+ * @param[in] func      pointer to the function to be called
+ * @param[in] p1        parameter 1 passed as a @p msg_t
+ * @param[in] p2        parameter 2 passed as a @p msg_t
+ * @return              The function return value as a @p msg_t.
  */
 static inline msg_t chDelegateCallDirect2(thread_t *tp, delegate_fn2_t func,
                                           msg_t p1, msg_t p2) {
@@ -151,6 +166,13 @@ static inline msg_t chDelegateCallDirect2(thread_t *tp, delegate_fn2_t func,
  * @note    The return value and parameters are assumed to be not larger
  *          than a data pointer type. If you need a portable function then use
  *          @p chDelegateCallVeneer() instead.
+ *
+ * @param[in] tp        pointer to the delegate thread
+ * @param[in] func      pointer to the function to be called
+ * @param[in] p1        parameter 1 passed as a @p msg_t
+ * @param[in] p2        parameter 2 passed as a @p msg_t
+ * @param[in] p3        parameter 3 passed as a @p msg_t
+ * @return              The function return value as a @p msg_t.
  */
 static inline msg_t chDelegateCallDirect3(thread_t *tp, delegate_fn3_t func,
                                           msg_t p1, msg_t p2, msg_t p3) {
@@ -163,6 +185,14 @@ static inline msg_t chDelegateCallDirect3(thread_t *tp, delegate_fn3_t func,
  * @note    The return value and parameters are assumed to be not larger
  *          than a data pointer type. If you need a portable function then use
  *          @p chDelegateCallVeneer() instead.
+ *
+ * @param[in] tp        pointer to the delegate thread
+ * @param[in] func      pointer to the function to be called
+ * @param[in] p1        parameter 1 passed as a @p msg_t
+ * @param[in] p2        parameter 2 passed as a @p msg_t
+ * @param[in] p3        parameter 3 passed as a @p msg_t
+ * @param[in] p4        parameter 4 passed as a @p msg_t
+ * @return              The function return value as a @p msg_t.
  */
 static inline msg_t chDelegateCallDirect4(thread_t *tp, delegate_fn4_t func,
                                           msg_t p1, msg_t p2, msg_t p3,

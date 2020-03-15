@@ -152,14 +152,7 @@ static inline void chJobObjectInit(jobs_queue_t *jqp,
  * @brief   Allocates a free job object.
  *
  * @param[in] jqp       pointer to a @p jobs_queue_t structure
- * @param[in] timeout   the number of ticks before the operation timeouts,
- *                      the following special values are allowed:
- *                      - @a TIME_IMMEDIATE immediate timeout.
- *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The pointer to the allocated job object.
- * @retval NULL         if a job object is not available within the specified
- *                      timeout.
  *
  * @api
  */
@@ -359,6 +352,11 @@ static inline msg_t chJobDispatch(jobs_queue_t *jqp) {
  * @brief   Waits for a job then executes it.
  *
  * @param[in] jqp       pointer to a @p jobs_queue_t structure
+ * @param[in] timeout   the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
  * @return              The function outcome.
  * @retval MSG_OK       if a job has been executed.
  * @retval MSG_TIMEOUT  if a timeout occurred.

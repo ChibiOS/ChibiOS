@@ -150,8 +150,7 @@ msg_t __ch_delegate_fn4(va_list *argsp) {
  *          order to have the functions called.
  *
  * @param[in] tp        pointer to the delegate thread
- * @param[in] func      pointer to the function to be called
- * @param[in] argc      number of parameters
+ * @param[in] veneer    pointer to the veneer function to be called
  * @param[in] ...       variable number of parameters
  * @return              The function return value casted to msg_t. It is
  *                      garbage for functions returning @p void.
