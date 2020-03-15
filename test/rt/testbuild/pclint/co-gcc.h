@@ -30,15 +30,28 @@ void __lint_assert( int );
 //punished when the marco in 'assert.h' appears not to be used:
 //lint  -efile(766,*assert.h)
 
+#if 0 /* REMOVED */
 typedef char            *__builtin_va_list;
 
 /*lint -e{171} */
 __builtin_va_list       __lint_init_va(...);
 
 void                    __builtin_va_end( __builtin_va_list );
-    /*lint
+#endif /* REMOVED */
+
+#define __builtin_va_arg(a, b) (b *)(a)
+#define __builtin_va_start(a, b)
+#define __builtin_va_end(a)
+    /* REMOVED lint
 ++d"__builtin_va_start(ap,parmN)=((ap)=__lint_init_va(parmN))"
 ++d"__builtin_va_arg(a,b)=(*( ((b) *) ( (((a) += sizeof(b)) - sizeof(b) )))"
+    */
+    /*lint
+++d__builtin_va_list=void* // used by stdarg.h
+++d__builtin_stdarg_start()=_to_semi // ditto
+++d__builtin_va_end()=_to_semi // ditto
+++d__builtin_va_arg(a,b)=(*( (b *) ( ((a) += sizeof(b)) - sizeof(b) )));
++rw(_to_semi) // needed for the two macros above.
     */
 
 

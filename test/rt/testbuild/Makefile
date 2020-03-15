@@ -166,4 +166,4 @@ RULESPATH = $(CHIBIOS)/os/common/startup/SIMIA32/compilers/GCC
 include $(RULESPATH)/rules.mk
 
 misra:
-	@wine lint-nt -v -w3 $(DEFS) pclint/co-gcc.lnt pclint/au-misra3.lnt pclint/waivers.lnt $(IINCDIR) $(KERNSRC)
+	@wine lint-nt -w3 $(DEFS) pclint/co-gcc.lnt pclint/au-misra3.lnt pclint/waivers.lnt $(IINCDIR) $(KERNSRC) $(LIBSRC)

@@ -180,10 +180,10 @@ include $(RULESPATH)/rules.mk
 #
 
 misra:
-	@wine lint-nt -w3 $(DEFS) pclint/co-gcc.lnt pclint/au-misra3.lnt pclint/waivers.lnt $(IINCDIR) $(CSRC) > misra.txt
+	@wine lint-nt -w3 $(DEFS) pclint/co-gcc.lnt pclint/au-misra3.lnt pclint/waivers.lnt $(IINCDIR) $(KERNSRC) $(LIBSRC) > misra.txt
 
 winmisra:
-	@lint-nt -w3 $(DEFS) pclint/co-gcc.lnt pclint/au-misra3.lnt pclint/waivers.lnt $(IINCDIR) $(CSRC) > misra.txt
+	@lint-nt -w3 $(DEFS) pclint/co-gcc.lnt pclint/au-misra3.lnt pclint/waivers.lnt $(IINCDIR) $(KERNSRC) $(LIBSRC) > misra.txt
 
 #
 # Custom rules
