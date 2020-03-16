@@ -12,6 +12,7 @@ integrated in our structure: WolfSSL, FatFS and lwIP.
 - New ARM SandBox subsystem.
 - New modules in OSLIB.
 - Support for STM32G0xx and STM32G4xx.
+- Support for all STM32 timers in all drivers.
 - Improved support for all STM32s.
 - Improved MFS module.
 
@@ -26,8 +27,8 @@ integrated in our structure: WolfSSL, FatFS and lwIP.
 
 *** What's new in RT/NIL ports ***
 
-- Added a sanity check on GCC version for ARMv6-M, a version below 6
-  must be used.
+- Added support for a syscall entry point, it is used by the new ChibiOS/SB
+  subsystem.
 
 *** What's new in OS Library 1.2.0 ***
 
