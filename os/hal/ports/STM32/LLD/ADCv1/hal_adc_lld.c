@@ -34,11 +34,15 @@
   STM32_DMA_GETCHANNEL(STM32_ADC_ADC1_DMA_STREAM, STM32_ADC1_DMA_CHN)
 
 /* Headers differences patches.*/
-#if defined(ADC_IER_AWDIE)
+#if defined(ADC_IER_AWDIE) && !defined(ADC_IER_AWD1IE)
 #define ADC_IER_AWD1IE      ADC_IER_AWDIE
-#define ADC_ISR_AWD1        ADC_ISR_AWD
-#define TR1                 TR
 #endif
+
+#if defined(ADC_ISR_AWD) && !defined(ADC_ISR_AWD1)
+#define ADC_ISR_AWD1        ADC_ISR_AWD
+#endif
+
+#define TR1                 TR
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -63,15 +67,17 @@ ADCDriver ADCD1;
  * @param[in] adc       pointer to the ADC registers block
  */
 NOINLINE static void adc_lld_vreg_on(ADC_TypeDef *adc) {
-  volatile uint32_t loop;
 
   osalDbgAssert(adc->CR == 0, "invalid register state");
 
+#if defined(ADC_CR_ADVREGEN)
   adc->CR = ADC_CR_ADVREGEN;
-  loop = (STM32_HCLK >> 20) << 4;
+  volatile uint32_t loop = (STM32_HCLK >> 20) << 4;
   do {
     loop--;
   } while (loop > 0);
+#else
+#endif
 }
 
 /**
