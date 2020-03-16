@@ -57,6 +57,13 @@
  */
 
 /**
+ * @defgroup EX_INFO Info
+ * @brief   EX information.
+ *
+ * @ingroup EX
+ */
+
+/**
  * @defgroup EX_ABSTRACT_PERIPHERALS Peripheral Interfaces
  * @brief   EX Abstract Peripheral Interfaces.
  *

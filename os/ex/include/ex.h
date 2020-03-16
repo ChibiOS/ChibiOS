@@ -21,7 +21,7 @@
  * @file    ex.h
  * @brief   EX main include file.
  *
- * @addtogroup ex_info
+ * @addtogroup EX_INFO
  * @details EX related info.
  * @{
  */
