@@ -77,29 +77,6 @@
 
 #if defined(STM32L552xx) || defined(__DOXYGEN__)
 
-/* RCC attributes.*/
-#define STM32_HAS_HSI16                     TRUE
-#define STM32_HAS_HSI48                     TRUE
-#define STM32_HAS_MSI                       TRUE
-#define STM32_HAS_LSI                       TRUE
-#define STM32_HAS_LSE                       TRUE
-#define STM32_HAS_HSE                       TRUE
-
-#define STM32_HAS_PLL                       TRUE
-#define STM32_PLL_HAS_P                     TRUE
-#define STM32_PLL_HAS_Q                     TRUE
-#define STM32_PLL_HAS_R                     TRUE
-
-#define STM32_HAS_PLLSAI1                   TRUE
-#define STM32_PLLSAI1_HAS_P                 TRUE
-#define STM32_PLLSAI1_HAS_Q                 TRUE
-#define STM32_PLLSAI1_HAS_R                 TRUE
-
-#define STM32_HAS_PLLSAI2                   TRUE
-#define STM32_PLLSAI2_HAS_P                 TRUE
-#define STM32_PLLSAI2_HAS_Q                 FALSE
-#define STM32_PLLSAI2_HAS_R                 FALSE
-
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
 #define STM32_HAS_ADC2                      TRUE
@@ -107,9 +84,9 @@
 #define STM32_HAS_ADC4                      FALSE
 
 /* CAN attributes.*/
-#define STM32_HAS_FDCAN1                    TRUE
-#define STM32_HAS_FDCAN2                    FALSE
-#define STM32_HAS_FDCAN3                    FALSE
+#define STM32_HAS_CAN1                      FALSE
+#define STM32_HAS_CAN2                      FALSE
+#define STM32_HAS_CAN3                      FALSE
 
 /* DAC attributes.*/
 #define STM32_HAS_DAC1_CH1                  TRUE
