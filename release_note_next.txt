@@ -94,6 +94,7 @@ integrated in our structure: WolfSSL, FatFS and lwIP.
 
 - Added support for STM32G0xx.
 - Added support for STM32G4xx.
+- Added support for ADuCM36x.
 - Improved DMAv1 and DMAv2 drivers.
 - TRNG support added to STM32F7xx, STM32G0xx, STM32G4xx, STM32H7xx and
   STM32L0xx.
@@ -107,6 +108,7 @@ integrated in our structure: WolfSSL, FatFS and lwIP.
 - Added support for timers 9..17, 20..22 to STM32 ICU driver.
 - Added support for timers 10 and 13 to STM32 GPT driver.
 - Added support for timers 9..14 to STM32 ST driver.
+- PAL, SERIAL and SPI support added to ADuCM36x.
 
 *** What's new in tools ***
 
