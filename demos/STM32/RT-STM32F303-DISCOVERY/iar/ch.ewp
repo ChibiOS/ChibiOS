@@ -224,7 +224,8 @@
                 </option>
                 <option>
                     <name>CCDefines</name>
-                    <state></state>
+                    <state>TEST_CFG_SIZE_REPORT=0</state>
+                    <state>CORTEX_USE_FPU=1</state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
@@ -557,7 +558,8 @@
                 </option>
                 <option>
                     <name>ADefines</name>
-                    <state></state>
+                    <state>TEST_CFG_SIZE_REPORT=0</state>
+                    <state>CORTEX_USE_FPU=1</state>
                 </option>
                 <option>
                     <name>AList</name>
@@ -1314,7 +1316,8 @@
                 </option>
                 <option>
                     <name>CCDefines</name>
-                    <state></state>
+                    <state>TEST_CFG_SIZE_REPORT=0</state>
+                    <state>CORTEX_USE_FPU=1</state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
@@ -1647,7 +1650,8 @@
                 </option>
                 <option>
                     <name>ADefines</name>
-                    <state></state>
+                    <state>TEST_CFG_SIZE_REPORT=0</state>
+                    <state>CORTEX_USE_FPU=1</state>
                 </option>
                 <option>
                     <name>AList</name>
