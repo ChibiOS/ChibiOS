@@ -49,16 +49,16 @@ THD_FUNCTION(Thread3, arg) {
    * Activates the serial driver 1 using the driver default configuration.
    * PA9 and PA10 are routed to USART1.
    */
-  sdStart(&LPSD1, NULL);
+  sdStart(&SD2, NULL);
 
   /* Welcome message.*/
-  chnWrite(&LPSD1, (const uint8_t *)"Hello World!\r\n", 14);
+  chnWrite(&SD2, (const uint8_t *)"Hello World!\r\n", 14);
 
   /* Waiting for button push and activation of the test suite.*/
   while (true) {
-    if (palReadLine(LINE_BUTTON)) {
-      test_execute((BaseSequentialStream *)&LPSD1, &nil_test_suite);
-      test_execute((BaseSequentialStream *)&LPSD1, &oslib_test_suite);
+    if (palReadLine(LINE_BUTTON) == PAL_LOW) {
+      test_execute((BaseSequentialStream *)&SD2, &nil_test_suite);
+      test_execute((BaseSequentialStream *)&SD2, &oslib_test_suite);
     }
     chThdSleepMilliseconds(500);
   }
