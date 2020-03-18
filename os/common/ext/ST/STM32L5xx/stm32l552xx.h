@@ -207,7 +207,9 @@ typedef enum
 #define __SAUREGION_PRESENT       1U        /* SAU regions present */
 #define __MPU_PRESENT             1U        /* MPU present */
 #define __VTOR_PRESENT            1U        /* VTOR present */
-#define __NVIC_PRIO_BITS          3U        /* Number of Bits used for Priority Levels */
+/* CHIBIOS FIX */
+//#define __NVIC_PRIO_BITS          3U        /* Number of Bits used for Priority Levels */
+#define __NVIC_PRIO_BITS          4U        /* Number of Bits used for Priority Levels */
 #define __Vendor_SysTickConfig    0U        /* Set to 1 if different SysTick Config is used */
 #define __FPU_PRESENT             1U        /* FPU present */
 #define __DSP_PRESENT             1U        /* DSP extension present */
@@ -1298,7 +1300,9 @@ typedef struct
   #pragma pop
 #elif defined (__ICCARM__)
   /* leave anonymous unions enabled */
-#elif (__ARMCC_VERSION >= 6010050)
+/* CHIBIOS FIX */
+//#elif (__ARMCC_VERSION >= 6010050)
+#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
   #pragma clang diagnostic pop
 #elif defined (__GNUC__)
   /* anonymous unions are enabled by default */
