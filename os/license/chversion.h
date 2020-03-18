@@ -42,7 +42,7 @@
 /**
  * @brief   Stable release flag.
  */
-#define CH_VERSION_STABLE       0
+#define CH_VERSION_STABLE       1
 
 /**
  * @name    ChibiOS version identification
@@ -51,17 +51,17 @@
 /**
  * @brief   ChibiOS version string.
  */
-#define CH_VERSION              "0.0.0"
+#define CH_VERSION              "20.3.0"
 
 /**
  * @brief   ChibiOS version release year.
  */
-#define CH_VERSION_YEAR         0
+#define CH_VERSION_YEAR         20
 
 /**
  * @brief   ChibiOS version release month.
  */
-#define CH_VERSION_MONTH        0
+#define CH_VERSION_MONTH        3
 
 /**
  * @brief   ChibiOS version patch number.
@@ -71,7 +71,7 @@
 /**
  * @brief   ChibiOS version nickname.
  */
-#define CH_VERSION_NICKNAME     "Lasagna"
+#define CH_VERSION_NICKNAME     "Erchie"
 /** @} */
 
 /*===========================================================================*/
