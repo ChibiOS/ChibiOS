@@ -116,6 +116,7 @@ int main(void) {
     SCB->ICSR =SCB_ICSR_PENDSVSET_Msk;
     chTMStartMeasurementX(&tm1);
     chSysUnlock();
+    chThdSleepMilliseconds(1);
   }
 
   /* Printing results.*/
