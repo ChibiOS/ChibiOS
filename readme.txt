@@ -74,5 +74,6 @@
 *****************************************************************************
 
 *** 20.3.1 ***
+- FIX: Fixed error in EXTIv1 ISRs (bug #1077).
 - FIX: Fixed problem in chMtxUnlockAllS() (bug #1076).
 
