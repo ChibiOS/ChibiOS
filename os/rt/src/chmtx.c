@@ -487,27 +487,31 @@ void chMtxUnlockS(mutex_t *mp) {
 void chMtxUnlockAllS(void) {
   thread_t *ctp = currp;
 
-  while (ctp->mtxlist != NULL) {
-    mutex_t *mp = ctp->mtxlist;
-    ctp->mtxlist = mp->next;
-    if (chMtxQueueNotEmptyS(mp)) {
+  if (ctp->mtxlist != NULL) {
+    do {
+      mutex_t *mp = ctp->mtxlist;
+      ctp->mtxlist = mp->next;
+      if (chMtxQueueNotEmptyS(mp)) {
+        thread_t *tp;
 #if CH_CFG_USE_MUTEXES_RECURSIVE == TRUE
-      mp->cnt = (cnt_t)1;
+        mp->cnt = (cnt_t)1;
 #endif
-      thread_t *tp = queue_fifo_remove(&mp->queue);
-      mp->owner = tp;
-      mp->next = tp->mtxlist;
-      tp->mtxlist = mp;
-      (void) chSchReadyI(tp);
-    }
-    else {
+        tp = queue_fifo_remove(&mp->queue);
+        mp->owner   = tp;
+        mp->next    = tp->mtxlist;
+        tp->mtxlist = mp;
+        (void) chSchReadyI(tp);
+      }
+      else {
 #if CH_CFG_USE_MUTEXES_RECURSIVE == TRUE
-      mp->cnt = (cnt_t)0;
+        mp->cnt = (cnt_t)0;
 #endif
-      mp->owner = NULL;
-    }
+        mp->owner = NULL;
+      }
+    } while (ctp->mtxlist != NULL);
+    ctp->prio = ctp->realprio;
+    chSchRescheduleS();
   }
-  ctp->prio = ctp->realprio;
 }
 
 /**
@@ -522,33 +526,9 @@ void chMtxUnlockAllS(void) {
  * @api
  */
 void chMtxUnlockAll(void) {
-  thread_t *ctp = currp;
 
   chSysLock();
-  if (ctp->mtxlist != NULL) {
-    do {
-      mutex_t *mp = ctp->mtxlist;
-      ctp->mtxlist = mp->next;
-      if (chMtxQueueNotEmptyS(mp)) {
-#if CH_CFG_USE_MUTEXES_RECURSIVE == TRUE
-        mp->cnt = (cnt_t)1;
-#endif
-        thread_t *tp = queue_fifo_remove(&mp->queue);
-        mp->owner = tp;
-        mp->next = tp->mtxlist;
-        tp->mtxlist = mp;
-        (void) chSchReadyI(tp);
-      }
-      else {
-#if CH_CFG_USE_MUTEXES_RECURSIVE == TRUE
-        mp->cnt = (cnt_t)0;
-#endif
-        mp->owner = NULL;
-      }
-    } while (ctp->mtxlist != NULL);
-    ctp->prio = ctp->realprio;
-    chSchRescheduleS();
-  }
+  chMtxUnlockAllS();
   chSysUnlock();
 }
 
