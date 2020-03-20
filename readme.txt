@@ -75,5 +75,7 @@
 
 *** Next ***
 - NEW: Added latency measurement test application:
+- FIX: Fixed error in EXTIv1 ISRs (bug #1077)
+       (backported to 20.3.1)
 - FIX: Fixed problem in chMtxUnlockAllS() (bug #1076)
        (backported to 20.3.1)(backported to 19.1.4)(backported to 18.2.3).
