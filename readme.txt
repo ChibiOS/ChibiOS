@@ -88,6 +88,7 @@
 *** 18.2.3 ***
 - NEW: Added a check on defective GCC versions, Cortex-M0 only.
 - NEW: Extra timer checks in STM32 ST driver.
+- FIX: Fixed problem in chMtxUnlockAllS() (bug #1076).
 - FIX: Fixed state check in CMSIS osKernelInitialize() wrapper (bug #1075).
 - FIX: Fixed missing IRQ disabling in ADCv1 and ADCv3 STM32 drivers (bug #1073).
 - FIX: Fixed missing parenthesis in ADC _adc_isr_error_code macro (bug #1072).
