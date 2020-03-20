@@ -29,6 +29,12 @@
  * - EX resides on top of HAL which offers, among others, a set of abstract 
  *   interfaces like Generic Sensor, Gyroscope, Magnetometer, Accelerometer,
  *   Barometer, Thermometer: EX offers a phisical implementation of them.
+ * - Currently Analog Devices supported devices are:
+ *    - @b ADXL355: Low Noise, Low Drift, Low Power, 3-Axis Accelerometers;
+ * - Currently Bosch supported devices are:
+ *    - @b BMP085: Digital pressure sensor;
+ * - Currently Micron Technology supported devices are:
+ *    - @b M25Q: Serial NOR Flash;
  * - Currently STMicroelectronics supported devices are:
  *    - @b HTS221: Capacitive digital humidity sensor;
  *    - @b L3GD20: 3-axis digital gyroscope; 
@@ -38,8 +44,4 @@
  *    - @b LPS25H: Piezoresistive 260-1260 hPa pressure sensor; 
  *    - @b LSM6DS0: 6-axis iNEMO inertial module; 
  *    - @b LSM303DLHC: Ultra compact high performance e-compass;
- * - Currently Micron Technology supported devices are:
- *    - @b M25Q: Serial NOR Flash;
- * - Currently Bosch supported devices are:
- *    - @b BMP085: Digital pressure sensor;
  */

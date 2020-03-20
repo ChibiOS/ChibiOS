@@ -74,7 +74,9 @@
 *****************************************************************************
 
 *** Next ***
-- NEW: Added latency measurement test application:
+- EX:  Added support for ADXL355 Low Noise, Low Drift, Low Power, 3-Axis
+       MEMS Accelerometers.
+- NEW: Added latency measurement test application.
 - FIX: Fixed error in EXTIv1 ISRs (bug #1077)
        (backported to 20.3.1)
 - FIX: Fixed problem in chMtxUnlockAllS() (bug #1076)
