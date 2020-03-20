@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2019 Rocco Marco Guglielmi
+    ChibiOS - Copyright (C) 2006..2020 Rocco Marco Guglielmi
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@
  * @brief   SysTick timer IRQ priority.
  */
 #if !defined(ADUCM_ST_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define ADUCM_ST_IRQ_PRIORITY               3
+#define ADUCM_ST_IRQ_PRIORITY               0
 #endif
 
 /**
