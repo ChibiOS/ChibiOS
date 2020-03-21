@@ -143,4 +143,51 @@ void sbStart(sb_class_t *sbcp, const sb_config_t *config) {
   chSysHalt("returned");
 }
 
+#if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Sends a message to a sandboxed thread.
+ *
+ * @param[in] sbcp      pointer to the sandbox object
+ * @param[in] msg       message to be sent
+ * @param[in] timeout   the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              The returned message.
+ * @retval MSG_TIMEOUT  if a timeout occurred.
+ * @retval MSG_RESET    if the exchange aborted, sandboxed thread API usage
+ *                      error.
+ *
+ * @api
+ */
+msg_t sbSendMessageTimeout(sb_class_t *sbcp,
+                           msg_t msg,
+                           sysinterval_t timeout) {
+  thread_t *ctp = currp;
+
+  chDbgCheck(sbcp != NULL);
+
+  chSysLock();
+
+  /* Sending the message.*/
+  ctp->u.sentmsg = msg;
+  __msg_insert(ctp, &sbcp->tp->msgqueue);
+  if (sbcp->tp->state == CH_STATE_WTMSG) {
+    (void) chSchReadyI(sbcp->tp);
+  }
+  msg = chSchGoSleepTimeoutS(CH_STATE_SNDMSGQ, timeout);
+
+  /* If a timeout occurred while the boxed thread already received the message
+     then this thread needs to "unregister" as sender, the boxed error will
+     get SB_ERR_EBUSY when/if trying to reply.*/
+  if (sbcp->msg_tp == ctp) {
+    sbcp->msg_tp = NULL;
+  }
+
+  chSysUnlock();
+
+  return msg;
+}
+#endif /* CH_CFG_USE_MESSAGES == TRUE */
+
 /** @} */

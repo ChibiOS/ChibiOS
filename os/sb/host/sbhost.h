@@ -176,6 +176,9 @@ extern "C" {
   bool sb_is_valid_write_range(sb_class_t *sbcp, void *start, size_t size);
   void sbObjectInit(sb_class_t *sbcp);
   void sbStart(sb_class_t *sbcp, const sb_config_t *config);
+  msg_t sbSendMessageTimeout(sb_class_t *sbcp,
+                             msg_t msg,
+                             sysinterval_t timeout);
 #ifdef __cplusplus
 }
 #endif
@@ -209,13 +212,14 @@ static inline msg_t sbWait(sb_class_t *sbcp) {
  * @param[in] sbcp      pointer to the sandbox object
  * @param[in] msg       message to be sent
  * @return              The returned message.
- * @retval MSG_RESET    Sandboxed thread API usage error, exchange aborted.
+ * @retval MSG_RESET    if the exchange aborted, sandboxed thread API usage
+ *                      error.
  *
  * @api
  */
 static inline msg_t sbSendMessage(sb_class_t *sbcp, msg_t msg) {
 
-  return chMsgSend(sbcp->tp, msg);
+  return sbSendMessageTimeout(sbcp, msg, TIME_INFINITE);
 }
 #endif /* CH_CFG_USE_MESSAGES == TRUE */
 

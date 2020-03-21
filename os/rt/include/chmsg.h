@@ -50,6 +50,12 @@
 /* Module macros.                                                            */
 /*===========================================================================*/
 
+#if CH_CFG_USE_MESSAGES_PRIORITY == TRUE
+#define __msg_insert(tp, qp) queue_prio_insert(tp, qp)
+#else
+#define __msg_insert(tp, qp) queue_insert(tp, qp)
+#endif
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
