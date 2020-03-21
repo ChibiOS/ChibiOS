@@ -305,6 +305,10 @@ typedef struct {
  */
 typedef struct {
   /**
+   * @brief   Nominal bit timing and prescaler register.
+   */
+  uint32_t                  NBTP;
+  /**
    * @brief   Data bit timing and prescaler register.
    */
   uint32_t                  DBTP;

@@ -279,6 +279,7 @@ bool can_lld_start(CANDriver *canp) {
   canp->fdcan->CCCR |= FDCAN_CCCR_CCE;
 
   /* Setting up operation mode except driver-controlled bits.*/
+  canp->fdcan->NBTP = canp->config->NBTP;
   canp->fdcan->DBTP = canp->config->DBTP;
   canp->fdcan->CCCR = canp->config->CCCR & ~(FDCAN_CCCR_CSR | FDCAN_CCCR_CSA |
                                              FDCAN_CCCR_CCE | FDCAN_CCCR_INIT);
@@ -387,6 +388,9 @@ void can_lld_transmit(CANDriver *canp,
   for (unsigned i = 0U; i < dlc_to_bytes[ctfp->DLC]; i += 4U) {
     *tx_address++ = ctfp->data32[i / 4U];
   }
+
+  /* Starting transmission.*/
+  canp->fdcan->TXBAR = (uint32_t)1 << (uint32_t)mailbox;
 }
 
 /**
