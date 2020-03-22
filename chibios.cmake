@@ -95,9 +95,11 @@ set(CXX_WARN_FLAGS "-Wall -Wextra -Wundef")
 
 # Debug/Release flags. 
 # Careful before modifying any of these.
-set(CMAKE_C_FLAGS_DEBUG "-ggdb -fvar-tracking-assignments -O0" CACHE
+# -O0 seems to consume bit more main() stack size, so increase it when
+# you want to enable O0.
+set(CMAKE_C_FLAGS_DEBUG "-ggdb -fvar-tracking-assignments -O2" CACHE
     STRING "Flags used by the compiler during debug builds." FORCE)
-set(CMAKE_CXX_FLAGS_DEBUG "-gdwarf-4 -fvar-tracking-assignments -O0" CACHE
+set(CMAKE_CXX_FLAGS_DEBUG "-ggdb -fvar-tracking-assignments -O2" CACHE
     STRING "Flags used by the compiler during debug builds." FORCE)
 set(CMAKE_C_FLAGS_RELEASE "-Os -DNDEBUG" CACHE
     STRING "Flags used by the compiler during release builds." FORCE)
@@ -223,7 +225,6 @@ option(CHIBIOS_CREATE_HEX "Create executable Intel HEX file." FALSE)
 option(CHIBIOS_CREATE_LIST "Create executable list file." FALSE)
 option(CHIBIOS_CREATE_MAP "Create executable map file." FALSE)
 mark_as_advanced(CHIBIOS_CREATE_BIN CHIBIOS_CREATE_DUMP CHIBIOS_CREATE_HEX CHIBIOS_CREATE_LIST CHIBIOS_CREATE_MAP)
-
 ## Define macro for executable
 macro(add_chibios_executable target_name)
 
@@ -298,12 +299,12 @@ endmacro(add_chibios_executable target_name)
 
 ## Define macro for ChibiOS debug options
 macro(chibios_debug_option variable description)
-    option(CHIBIOS_DBG_${variable} ${description} FALSE)
-    if(CHIBIOS_DBG_${variable})
-        add_definitions("-DCH_DBG_${variable}=1")
-    else()
-        add_definitions("-DCH_DBG_${variable}=0")
-    endif()
+     option(CHIBIOS_DBG_${variable} ${description} FALSE)
+     if(CHIBIOS_DBG_${variable})
+         add_definitions("-DCH_DBG_${variable}=1")
+     else()
+         add_definitions("-DCH_DBG_${variable}=0")
+     endif()
 endmacro()
 chibios_debug_option(STATISTICS "Enable kernel statistics.")
 chibios_debug_option(SYSTEM_STATE_CHECK "Enable kernel system state check.")

@@ -2,7 +2,7 @@ include(CMakeForceCompiler)
 
 set(CMAKE_SYSTEM_NAME ChibiOS)
 
-set(TOOLCHAIN_DIR $ENV{HOME}/Softwares/gcc-arm-none-eabi-9-2019-q4-major-x86_64-linux/gcc-arm-none-eabi-9-2019-q4-major)
+set(TOOLCHAIN_DIR $ENV{HOME}/Softwares/gcc-arm-none-eabi-8-2019-q3-update)
 set(TOOLCHAIN_BIN_DIR ${TOOLCHAIN_DIR}/bin)
 set(TOOLCHAIN_COMMON_PREFIX arm-none-eabi)
 cmake_force_c_compiler(${TOOLCHAIN_BIN_DIR}/${TOOLCHAIN_COMMON_PREFIX}-gcc GNU)
