@@ -62,7 +62,7 @@ _vectors:
         .long       MemManage_Handler
         .long       BusFault_Handler
         .long       UsageFault_Handler
-        .long       Vector1C
+        .long       SecureFault_Handler
         .long       Vector20
         .long       Vector24
         .long       Vector28
@@ -264,7 +264,7 @@ Reset_Handler:
         .weak       MemManage_Handler
         .weak       BusFault_Handler
         .weak       UsageFault_Handler
-        .weak       Vector1C
+        .weak       SecureFault_Handler
         .weak       Vector20
         .weak       Vector24
         .weak       Vector28
@@ -463,7 +463,7 @@ BusFault_Handler:
         .thumb_func
 UsageFault_Handler:
         .thumb_func
-Vector1C:
+SecureFault_Handler:
         .thumb_func
 Vector20:
         .thumb_func
