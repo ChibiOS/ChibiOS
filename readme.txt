@@ -76,6 +76,7 @@
 *** Next ***
 - EX:  Added support for ADXL355 Low Noise, Low Drift, Low Power, 3-Axis
        MEMS Accelerometers.
+- NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
 - FIX: Fixed error in EXTIv1 ISRs (bug #1077)
        (backported to 20.3.1)

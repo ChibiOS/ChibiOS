@@ -187,6 +187,9 @@ struct port_context {};
 #elif (CORTEX_MODEL == 3) || (CORTEX_MODEL == 4) || (CORTEX_MODEL == 7)
 #include "mpu.h"
 #include "chcore_v7m.h"
+#elif (CORTEX_MODEL == 33) || (CORTEX_MODEL == 55)
+#include "mpu_v8m.h"
+#include "chcore_v8m-mainline.h"
 #else
 #error "unknown Cortex-M variant"
 #endif

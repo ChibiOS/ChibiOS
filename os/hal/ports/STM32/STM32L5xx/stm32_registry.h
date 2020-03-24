@@ -84,9 +84,9 @@
 #define STM32_HAS_ADC4                      FALSE
 
 /* CAN attributes.*/
-#define STM32_HAS_CAN1                      FALSE
-#define STM32_HAS_CAN2                      FALSE
-#define STM32_HAS_CAN3                      FALSE
+#define STM32_HAS_FDCAN1                    TRUE
+#define STM32_HAS_FDCAN2                    FALSE
+#define STM32_HAS_FDCAN3                    FALSE
 
 /* DAC attributes.*/
 #define STM32_HAS_DAC1_CH1                  TRUE

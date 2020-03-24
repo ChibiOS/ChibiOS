@@ -169,7 +169,7 @@
 #if !defined(__DOXYGEN__)
 
                 .syntax unified
-                .cpu    cortex-m33
+                .cpu    cortex-m3
 #if CRT0_INIT_FPU == TRUE
                 .fpu    fpv4-sp-d16
 #else

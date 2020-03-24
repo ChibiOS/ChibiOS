@@ -47,15 +47,14 @@
  * @name    Platform identification
  * @{
  */
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || \
-    defined(__DOXYGEN__)
-#define PLATFORM_NAME           "STM32L4+ Ultra Low Power"
+#if defined(STM32L552xx) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32L5 Ultra Low Power"
 
-#elif defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
-#define PLATFORM_NAME           "STM32L4+ Ultra Low Power with Crypto"
+#elif defined(STM32L562xx)
+#define PLATFORM_NAME           "STM32L5 Ultra Low Power with Crypto"
 
 #else
-#error "STM32L4+ device not specified"
+#error "STM32L5 device not specified"
 #endif
 
 /**
@@ -83,21 +82,6 @@
 #define STM32_VOS_RANGE0        (0 << 9)    /**< Core voltage 1.28 Volts.   */
 #define STM32_VOS_RANGE1        (1 << 9)    /**< Core voltage 1.2 Volts.    */
 #define STM32_VOS_RANGE2        (2 << 9)    /**< Core voltage 1.0 Volts.    */
-/** @} */
-
-/**
- * @name    PWR_CR2 register bits definitions
- * @{
- */
-#define STM32_PLS_MASK          (7 << 1)    /**< PLS bits mask.             */
-#define STM32_PLS_LEV0          (0 << 1)    /**< PVD level 0.               */
-#define STM32_PLS_LEV1          (1 << 1)    /**< PVD level 1.               */
-#define STM32_PLS_LEV2          (2 << 1)    /**< PVD level 2.               */
-#define STM32_PLS_LEV3          (3 << 1)    /**< PVD level 3.               */
-#define STM32_PLS_LEV4          (4 << 1)    /**< PVD level 4.               */
-#define STM32_PLS_LEV5          (5 << 1)    /**< PVD level 5.               */
-#define STM32_PLS_LEV6          (6 << 1)    /**< PVD level 6.               */
-#define STM32_PLS_EXT           (7 << 1)    /**< PVD level 7.               */
 /** @} */
 
 /**
@@ -210,7 +194,7 @@
 /** @} */
 
 /**
- * @name    RCC_CCIPR register bits definitions
+ * @name    RCC_CCIPR1 register bits definitions
  * @{
  */
 #define STM32_USART1SEL_MASK    (3 << 0)    /**< USART1SEL mask.            */
@@ -394,21 +378,28 @@
  *          the maximum voltage.
  */
 #if !defined(STM32_VOS) || defined(__DOXYGEN__)
-#define STM32_VOS                           STM32_VOS_RANGE1
+#define STM32_VOS                           STM32_VOS_RANGE0
 #endif
 
 /**
- * @brief   Enables or disables the programmable voltage detector.
+ * @brief   PWR CR2 register initialization value.
  */
-#if !defined(STM32_PVD_ENABLE) || defined(__DOXYGEN__)
-#define STM32_PVD_ENABLE                    FALSE
+#if !defined(STM32_PWR_CR2) || defined(__DOXYGEN__)
+#define STM32_PWR_CR2                       (PWR_CR2_PLS_LEV0)
 #endif
 
 /**
- * @brief   Sets voltage level for programmable voltage detector.
+ * @brief   PWR CR3 register initialization value.
  */
-#if !defined(STM32_PLS) || defined(__DOXYGEN__)
-#define STM32_PLS                           STM32_PLS_LEV0
+#if !defined(STM32_PWR_CR3) || defined(__DOXYGEN__)
+#define STM32_PWR_CR3                       (0U)
+#endif
+
+/**
+ * @brief   PWR CR4 register initialization value.
+ */
+#if !defined(STM32_PWR_CR4) || defined(__DOXYGEN__)
+#define STM32_PWR_CR4                       (0U)
 #endif
 
 /**
@@ -506,7 +497,7 @@
  *          the internal 4MHz MSI clock.
  */
 #if !defined(STM32_PLLN_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLN_VALUE                    60
+#define STM32_PLLN_VALUE                    55
 #endif
 
 /**
@@ -709,13 +700,6 @@
 #endif
 
 /**
- * @brief   PLLSAI2DIVR value.
- */
-#if !defined(STM32_PLLSAI2DIVR) || defined(__DOXYGEN__)
-#define STM32_PLLSAI2DIVR                   STM32_PLLSAI2DIVR_DIV16
-#endif
-
-/**
  * @brief   USART1 clock source.
  */
 #if !defined(STM32_USART1SEL) || defined(__DOXYGEN__)
@@ -888,8 +872,13 @@
 #error "Using a wrong mcuconf.h file, STM32L5xx_MCUCONF not defined"
 #endif
 
-#if defined(STM32L5YYxx) && !defined(STM32L5YY_MCUCONF)
-#error "Using a wrong mcuconf.h file, STM32L5YY_MCUCONF not defined"
+#if defined(STM32L552xx) && !defined(STM32L552_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32L552_MCUCONF not defined"
+
+#endif
+
+#if defined(STM32L562xx) && !defined(STM32L562_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32L562_MCUCONF not defined"
 
 #endif
 
@@ -1191,7 +1180,7 @@
   #endif
 
   /* SAI2-related checks.*/
-  #if STM32_SAI2SEL == STM32_SAI12SEL_HSI16
+  #if STM32_SAI2SEL == STM32_SAI2SEL_HSI16
     #error "HSI16 not enabled, required by STM32_SAI2SEL"
   #endif
 
@@ -2659,10 +2648,10 @@
 /* Various helpers.*/
 #include "nvic.h"
 #include "cache.h"
-#include "mpu_v7m.h"
+//#include "mpu_v7m.h"
 #include "stm32_isr.h"
-#include "stm32_dma.h"
-#include "stm32_exti.h"
+//#include "stm32_dma.h"
+//#include "stm32_exti.h"
 #include "stm32_rcc.h"
 #include "stm32_tim.h"
 
