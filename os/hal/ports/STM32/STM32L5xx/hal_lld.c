@@ -46,12 +46,7 @@ uint32_t SystemCoreClock = STM32_HCLK;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-/**
- * @brief   Initializes the backup domain.
- * @note    WARNING! Changing RTC clock source impossible without resetting
- *          of the whole BKP domain.
- */
-static void hal_lld_backup_domain_init(void) {
+static inline void bd_init(void) {
 
   /* Reset BKP domain if different clock source selected.*/
   if ((RCC->BDCR & STM32_RTCSEL_MASK) != STM32_RTCSEL) {
@@ -79,7 +74,7 @@ static void hal_lld_backup_domain_init(void) {
 static void flash_ws_init(uint32_t bits) {
 
   FLASH->ACR = (FLASH->ACR & ~FLASH_ACR_LATENCY_Msk) | bits;
-  while ((FLASH->ACR & FLASH_ACR_LATENCY_Msk) != (STM32_FLASHBITS & FLASH_ACR_LATENCY_Msk)) {
+  while ((FLASH->ACR & FLASH_ACR_LATENCY_Msk) != (bits & FLASH_ACR_LATENCY_Msk)) {
   }
 }
 
@@ -97,9 +92,6 @@ static void flash_ws_init(uint32_t bits) {
  * @notapi
  */
 void hal_lld_init(void) {
-
-  /* Initializes the backup domain.*/
-  hal_lld_backup_domain_init();
 
   /* DMA subsystems initialization.*/
 #if defined(STM32_DMA_REQUIRED)
@@ -191,7 +183,7 @@ void stm32_clock_init(void) {
     RCC->CCIPR2 = ccipr2;
   }
 
-  /* Set flash WS's for SYSCLK source */
+  /* Wait states if SYSCLK requires more wait states than MSICLK.*/
   if (STM32_FLASHBITS > STM32_MSI_FLASHBITS) {
     flash_ws_init(STM32_FLASHBITS);
   }
@@ -204,16 +196,19 @@ void stm32_clock_init(void) {
     ;
 #endif
 
-  /* Reduce the flash WS's for SYSCLK source if they are less than MSI WSs */
+  /* Wait states if SYSCLK requires less wait states than MSICLK.*/
   if (STM32_FLASHBITS < STM32_MSI_FLASHBITS) {
     flash_ws_init(STM32_FLASHBITS);
   }
 
-#endif /* STM32_NO_INIT */
+  /* Backup domain.*/
+  bd_init();
 
   /* SYSCFG clock enabled here because it is a multi-functional unit shared
      among multiple drivers.*/
   rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, true);
+
+#endif /* STM32_NO_INIT */
 }
 
 /** @} */
