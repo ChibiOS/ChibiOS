@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    RCCv1/stm32_hsi48.inc
- * @brief   Shared HSI48 clock handler.
+ * @file    RCCv1/stm32_apb1.inc
+ * @brief   Shared APB1 clock handler.
  *
- * @addtogroup STM32_HSI48_HANDLER
+ * @addtogroup STM32_APB1_HANDLER
  * @{
  */
 
@@ -27,22 +27,65 @@
 /*===========================================================================*/
 
 /**
- * @brief   HSI48 clock frequency.
+ * @name    PPRE1 field bits definitions
+ * @{
  */
-#define STM32_HSI48CLK          48000000
+#define STM32_PPRE1_MASK        (7 << 8)    /**< PPRE1 field mask.          */
+#define STM32_PPRE1_DIV1        (0 << 8)    /**< HCLK divided by 1.         */
+#define STM32_PPRE1_DIV2        (4 << 8)    /**< HCLK divided by 2.         */
+#define STM32_PPRE1_DIV4        (5 << 8)    /**< HCLK divided by 4.         */
+#define STM32_PPRE1_DIV8        (6 << 8)    /**< HCLK divided by 8.         */
+#define STM32_PPRE1_DIV16       (7 << 8)    /**< HCLK divided by 16.        */
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
 /* Registry checks for robustness.*/
-#if !defined(STM32_HAS_HSI48)
-#error "STM32_HAS_HSI48 not defined in stm32_registry.h"
-#endif
 
 /* Checks on configurations.*/
-#if !defined(STM32_HSI48_ENABLED)
-#error "STM32_HSI48_ENABLED not defined in mcuconf.h"
+#if !defined(STM32_PPRE1)
+#error "STM32_PPRE1 not defined in mcuconf.h"
+#endif
+
+/* Check on limits.*/
+#if !defined(STM32_PCLK1_MAX)
+#error "STM32_PCLK1_MAX not defined in hal_lld.h"
+#endif
+
+/* Input checks.*/
+#if !defined(STM32_HCLK)
+#error "STM32_HCLK not defined in hal_lld.h"
+#endif
+
+/**
+ * @brief   APB1 frequency.
+ */
+#if (STM32_PPRE1 == STM32_PPRE1_DIV1) || defined(__DOXYGEN__)
+#define STM32_PCLK1                 (STM32_HCLK / 1)
+
+#elif STM32_PPRE1 == STM32_PPRE1_DIV2
+#define STM32_PCLK1                 (STM32_HCLK / 2)
+
+#elif STM32_PPRE1 == STM32_PPRE1_DIV4
+#define STM32_PCLK1                 (STM32_HCLK / 4)
+
+#elif STM32_PPRE1 == STM32_PPRE1_DIV8
+#define STM32_PCLK1                 (STM32_HCLK / 8)
+
+#elif STM32_PPRE1 == STM32_PPRE1_DIV16
+#define STM32_PCLK1                 (STM32_HCLK / 16)
+
+#else
+#error "invalid STM32_PPRE1 value specified"
+#endif
+
+/*
+ * APB1 frequency check.
+ */
+#if STM32_PCLK1 > STM32_PCLK1_MAX
+#error "STM32_PCLK1 exceeding maximum frequency (STM32_PCLK1_MAX)"
 #endif
 
 /*===========================================================================*/
@@ -56,16 +99,6 @@
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
-
-static inline void hsi48_init(void) {
-
-#if STM32_HSI48_ENABLED
-  /* HSI activation.*/
-  RCC->CRRCR |= RCC_CRRCR_HSI48ON;
-  while ((RCC->CRRCR & RCC_CRRCR_HSI48RDY) == 0) {
-  }
-#endif
-}
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */

@@ -45,6 +45,17 @@
 #define STM32_MSIRANGE_48M      (11 << 4)   /**< 48MHz nominal.             */
 /** @} */
 
+/**
+ * @name    RCC_CSR register bits definitions
+ * @{
+ */
+#define STM32_MSISRANGE_MASK    (15 << 8)   /**< MSISRANGE field mask.      */
+#define STM32_MSISRANGE_1M      (4 << 8)    /**< 1MHz nominal.              */
+#define STM32_MSISRANGE_2M      (5 << 8)    /**< 2MHz nominal.              */
+#define STM32_MSISRANGE_4M      (6 << 8)    /**< 4MHz nominal.              */
+#define STM32_MSISRANGE_8M      (7 << 8)    /**< 8MHz nominal.              */
+/** @} */
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/

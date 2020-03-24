@@ -151,8 +151,7 @@ void stm32_clock_init(void) {
   flash_ws_init(STM32_MSI_FLASHBITS);
 
   /* Clocks setup.*/
-  lse_init();                               /* LSE before MSI because MSIPLL
-                                               uses LSE.*/
+  lse_init();                               /* LSE first because MSIPLL.    */
   msi_init();
   lsi_init();
   hsi16_init();

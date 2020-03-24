@@ -66,15 +66,6 @@
 /** @} */
 
 /**
- * @name    Internal clock sources
- * @{
- */
-#define STM32_HSI16CLK          16000000    /**< 16MHz internal clock.  */
-#define STM32_HSI48CLK          48000000    /**< 48MHz internal clock.      */
-#define STM32_LSICLK            32000       /**< Low speed internal clock.  */
-/** @} */
-
-/**
  * @name    PWR_CR1 register bits definitions
  * @{
  */
@@ -93,31 +84,6 @@
 #define STM32_SW_HSI16          (1 << 0)    /**< SYSCLK source is HSI.      */
 #define STM32_SW_HSE            (2 << 0)    /**< SYSCLK source is HSE.      */
 #define STM32_SW_PLL            (3 << 0)    /**< SYSCLK source is PLL.      */
-
-#define STM32_HPRE_MASK         (15 << 4)   /**< HPRE field mask.           */
-#define STM32_HPRE_DIV1         (0 << 4)    /**< SYSCLK divided by 1.       */
-#define STM32_HPRE_DIV2         (8 << 4)    /**< SYSCLK divided by 2.       */
-#define STM32_HPRE_DIV4         (9 << 4)    /**< SYSCLK divided by 4.       */
-#define STM32_HPRE_DIV8         (10 << 4)   /**< SYSCLK divided by 8.       */
-#define STM32_HPRE_DIV16        (11 << 4)   /**< SYSCLK divided by 16.      */
-#define STM32_HPRE_DIV64        (12 << 4)   /**< SYSCLK divided by 64.      */
-#define STM32_HPRE_DIV128       (13 << 4)   /**< SYSCLK divided by 128.     */
-#define STM32_HPRE_DIV256       (14 << 4)   /**< SYSCLK divided by 256.     */
-#define STM32_HPRE_DIV512       (15 << 4)   /**< SYSCLK divided by 512.     */
-
-#define STM32_PPRE1_MASK        (7 << 8)    /**< PPRE1 field mask.          */
-#define STM32_PPRE1_DIV1        (0 << 8)    /**< HCLK divided by 1.         */
-#define STM32_PPRE1_DIV2        (4 << 8)    /**< HCLK divided by 2.         */
-#define STM32_PPRE1_DIV4        (5 << 8)    /**< HCLK divided by 4.         */
-#define STM32_PPRE1_DIV8        (6 << 8)    /**< HCLK divided by 8.         */
-#define STM32_PPRE1_DIV16       (7 << 8)    /**< HCLK divided by 16.        */
-
-#define STM32_PPRE2_MASK        (7 << 11)   /**< PPRE2 field mask.          */
-#define STM32_PPRE2_DIV1        (0 << 11)   /**< HCLK divided by 1.         */
-#define STM32_PPRE2_DIV2        (4 << 11)   /**< HCLK divided by 2.         */
-#define STM32_PPRE2_DIV4        (5 << 11)   /**< HCLK divided by 4.         */
-#define STM32_PPRE2_DIV8        (6 << 11)   /**< HCLK divided by 8.         */
-#define STM32_PPRE2_DIV16       (7 << 11)   /**< HCLK divided by 16.        */
 
 #define STM32_STOPWUCK_MASK     (1 << 15)   /**< STOPWUCK field mask.       */
 #define STM32_STOPWUCK_MSI      (0 << 15)   /**< Wakeup clock is MSI.       */
@@ -326,17 +292,6 @@
 #define STM32_LSCOSEL_LSE       (3 << 24)   /**< LSE on LSCO pin.           */
 /** @} */
 
-/**
- * @name    RCC_CSR register bits definitions
- * @{
- */
-#define STM32_MSISRANGE_MASK    (15 << 8)   /**< MSISRANGE field mask.      */
-#define STM32_MSISRANGE_1M      (4 << 8)    /**< 1MHz nominal.              */
-#define STM32_MSISRANGE_2M      (5 << 8)    /**< 2MHz nominal.              */
-#define STM32_MSISRANGE_4M      (6 << 8)    /**< 4MHz nominal.              */
-#define STM32_MSISRANGE_8M      (7 << 8)    /**< 8MHz nominal.              */
-/** @} */
-
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -417,29 +372,6 @@
  */
 #if !defined(STM32_PLLSAI2SRC) || defined(__DOXYGEN__)
 #define STM32_PLLSAI2SRC                    STM32_PLLSAI2SRC_MSI
-#endif
-
-/**
- * @brief   AHB prescaler value.
- * @note    The default value is calculated for a 120MHz system clock from
- *          the internal 4MHz MSI clock.
- */
-#if !defined(STM32_HPRE) || defined(__DOXYGEN__)
-#define STM32_HPRE                          STM32_HPRE_DIV1
-#endif
-
-/**
- * @brief   APB1 prescaler value.
- */
-#if !defined(STM32_PPRE1) || defined(__DOXYGEN__)
-#define STM32_PPRE1                         STM32_PPRE1_DIV1
-#endif
-
-/**
- * @brief   APB2 prescaler value.
- */
-#if !defined(STM32_PPRE2) || defined(__DOXYGEN__)
-#define STM32_PPRE2                         STM32_PPRE2_DIV1
 #endif
 
 /**
@@ -872,10 +804,9 @@
 #include "stm32_hse.inc"
 
 /*
- * HSI16 related checks.
+ * Platform HSI16-related checks.
  */
-#if STM32_HSI16_ENABLED
-#else /* !STM32_HSI16_ENABLED */
+#if !STM32_HSI16_ENABLED
 
   #if STM32_SW == STM32_SW_HSI16
     #error "HSI16 not enabled, required by STM32_SW"
@@ -997,10 +928,9 @@
 #endif /* !STM32_HSI48_ENABLED */
 
 /*
- * HSE related checks.
+ * Platform HSE-related checks.
  */
-#if STM32_HSE_ENABLED
-#else /* !STM32_HSE_ENABLED */
+#if !STM32_HSE_ENABLED
 
   #if STM32_SW == STM32_SW_HSE
     #error "HSE not enabled, required by STM32_SW"
@@ -1057,10 +987,9 @@
 #endif /* !STM32_HSE_ENABLED */
 
 /*
- * LSI related checks.
+ * Platform LSI-related checks.
  */
-#if STM32_LSI_ENABLED
-#else /* !STM32_LSI_ENABLED */
+#if !STM32_LSI_ENABLED
 
   #if STM32_RTCSEL == STM32_RTCSEL_LSI
     #error "LSI not enabled, required by STM32_RTCSEL"
@@ -1077,7 +1006,7 @@
 #endif /* !STM32_LSI_ENABLED */
 
 /*
- * LSE related checks.
+ * Platform LSE-related checks.
  */
 #if !STM32_LSE_ENABLED
   #if STM32_RTCSEL == STM32_RTCSEL_LSE
@@ -1312,109 +1241,10 @@
 #error "invalid STM32_SW value specified"
 #endif
 
-/* Check on the system clock.*/
-#if STM32_SYSCLK > STM32_SYSCLK_MAX
-#error "STM32_SYSCLK above maximum rated frequency (STM32_SYSCLK_MAX)"
-#endif
-
-/**
- * @brief   AHB frequency.
- */
-#if (STM32_HPRE == STM32_HPRE_DIV1) || defined(__DOXYGEN__)
-#define STM32_HCLK                  (STM32_SYSCLK / 1)
-
-#elif STM32_HPRE == STM32_HPRE_DIV2
-#define STM32_HCLK                  (STM32_SYSCLK / 2)
-
-#elif STM32_HPRE == STM32_HPRE_DIV4
-#define STM32_HCLK                  (STM32_SYSCLK / 4)
-
-#elif STM32_HPRE == STM32_HPRE_DIV8
-#define STM32_HCLK                  (STM32_SYSCLK / 8)
-
-#elif STM32_HPRE == STM32_HPRE_DIV16
-#define STM32_HCLK                  (STM32_SYSCLK / 16)
-
-#elif STM32_HPRE == STM32_HPRE_DIV64
-#define STM32_HCLK                  (STM32_SYSCLK / 64)
-
-#elif STM32_HPRE == STM32_HPRE_DIV128
-#define STM32_HCLK                  (STM32_SYSCLK / 128)
-
-#elif STM32_HPRE == STM32_HPRE_DIV256
-#define STM32_HCLK                  (STM32_SYSCLK / 256)
-
-#elif STM32_HPRE == STM32_HPRE_DIV512
-#define STM32_HCLK                  (STM32_SYSCLK / 512)
-
-#else
-#error "invalid STM32_HPRE value specified"
-#endif
-
-/*
- * AHB frequency check.
- */
-#if STM32_HCLK > STM32_SYSCLK_MAX
-#error "STM32_HCLK exceeding maximum frequency (STM32_SYSCLK_MAX)"
-#endif
-
-/**
- * @brief   APB1 frequency.
- */
-#if (STM32_PPRE1 == STM32_PPRE1_DIV1) || defined(__DOXYGEN__)
-#define STM32_PCLK1                 (STM32_HCLK / 1)
-
-#elif STM32_PPRE1 == STM32_PPRE1_DIV2
-#define STM32_PCLK1                 (STM32_HCLK / 2)
-
-#elif STM32_PPRE1 == STM32_PPRE1_DIV4
-#define STM32_PCLK1                 (STM32_HCLK / 4)
-
-#elif STM32_PPRE1 == STM32_PPRE1_DIV8
-#define STM32_PCLK1                 (STM32_HCLK / 8)
-
-#elif STM32_PPRE1 == STM32_PPRE1_DIV16
-#define STM32_PCLK1                 (STM32_HCLK / 16)
-
-#else
-#error "invalid STM32_PPRE1 value specified"
-#endif
-
-/*
- * APB1 frequency check.
- */
-#if STM32_PCLK1 > STM32_PCLK1_MAX
-#error "STM32_PCLK1 exceeding maximum frequency (STM32_PCLK1_MAX)"
-#endif
-
-/**
- * @brief   APB2 frequency.
- */
-#if (STM32_PPRE2 == STM32_PPRE2_DIV1) || defined(__DOXYGEN__)
-#define STM32_PCLK2                 (STM32_HCLK / 1)
-
-#elif STM32_PPRE2 == STM32_PPRE2_DIV2
-#define STM32_PCLK2                 (STM32_HCLK / 2)
-
-#elif STM32_PPRE2 == STM32_PPRE2_DIV4
-#define STM32_PCLK2                 (STM32_HCLK / 4)
-
-#elif STM32_PPRE2 == STM32_PPRE2_DIV8
-#define STM32_PCLK2                 (STM32_HCLK / 8)
-
-#elif STM32_PPRE2 == STM32_PPRE2_DIV16
-#define STM32_PCLK2                 (STM32_HCLK / 16)
-
-#else
-#error "invalid STM32_PPRE2 value specified"
-#endif
-
-/*
- * APB2 frequency check.
- */
-#if STM32_PCLK2 > STM32_PCLK2_MAX
-#error "STM32_PCLK2 exceeding maximum frequency (STM32_PCLK2_MAX)"
-#endif
+/* Bus handlers.*/
+#include "stm32_ahb.inc"
+#include "stm32_apb1.inc"
+#include "stm32_apb2.inc"
 
 /**
  * @brief   MCO divider clock frequency.
