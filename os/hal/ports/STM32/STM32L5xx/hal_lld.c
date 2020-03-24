@@ -269,14 +269,8 @@ void stm32_clock_init(void) {
                  STM32_PLLM    | STM32_PLLSRC;
 #endif
 
-#if STM32_ACTIVATE_PLL
   /* PLL activation.*/
-  RCC->CR |= RCC_CR_PLLON;
-
-  /* Waiting for PLL lock.*/
-  while ((RCC->CR & RCC_CR_PLLRDY) == 0)
-    ;
-#endif
+  pll_init();
 
 #if STM32_ACTIVATE_PLLSAI1
   /* PLLSAI1 activation.*/

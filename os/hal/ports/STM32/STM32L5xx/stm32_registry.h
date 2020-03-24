@@ -77,6 +77,22 @@
 
 #if defined(STM32L552xx) || defined(__DOXYGEN__)
 
+/* RCC attributes.*/
+#define STM32_HAS_PLL                       TRUE
+#define STM32_PLL_HAS_P                     TRUE
+#define STM32_PLL_HAS_Q                     TRUE
+#define STM32_PLL_HAS_R                     TRUE
+
+#define STM32_HAS_PLLSAI1                   TRUE
+#define STM32_PLLSAI1_HAS_P                 TRUE
+#define STM32_PLLSAI1_HAS_Q                 TRUE
+#define STM32_PLLSAI1_HAS_R                 TRUE
+
+#define STM32_HAS_PLLSAI2                   TRUE
+#define STM32_PLLSAI2_HAS_P                 TRUE
+#define STM32_PLLSAI2_HAS_Q                 FALSE
+#define STM32_PLLSAI2_HAS_R                 FALSE
+
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
 #define STM32_HAS_ADC2                      TRUE
