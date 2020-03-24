@@ -34,7 +34,7 @@
 
 /**
  * @brief   CMSIS system core clock variable.
- * @note    It is declared in system_stm32l4xx.h.
+ * @note    It is declared in system_stm32l5xx.h.
  */
 uint32_t SystemCoreClock = STM32_HCLK;
 
