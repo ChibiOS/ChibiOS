@@ -938,51 +938,8 @@
   #error "invalid STM32_VOS value specified"
 #endif
 
-/**
- * @brief   MSI frequency.
- */
-#if STM32_MSIRANGE == STM32_MSIRANGE_100K
-  #define STM32_MSICLK              100000
-#elif STM32_MSIRANGE == STM32_MSIRANGE_200K
-  #define STM32_MSICLK              200000
-#elif STM32_MSIRANGE == STM32_MSIRANGE_400K
-  #define STM32_MSICLK              400000
-#elif STM32_MSIRANGE == STM32_MSIRANGE_800K
-  #define STM32_MSICLK              800000
-#elif STM32_MSIRANGE == STM32_MSIRANGE_1M
-  #define STM32_MSICLK              1000000
-#elif STM32_MSIRANGE == STM32_MSIRANGE_2M
-  #define STM32_MSICLK              2000000
-#elif STM32_MSIRANGE == STM32_MSIRANGE_4M
-  #define STM32_MSICLK              4000000
-#elif STM32_MSIRANGE == STM32_MSIRANGE_8M
-  #define STM32_MSICLK              8000000
-#elif STM32_MSIRANGE == STM32_MSIRANGE_16M
-  #define STM32_MSICLK              16000000
-#elif STM32_MSIRANGE == STM32_MSIRANGE_24M
-  #define STM32_MSICLK              24000000
-#elif STM32_MSIRANGE == STM32_MSIRANGE_32M
-  #define STM32_MSICLK              32000000
-#elif STM32_MSIRANGE == STM32_MSIRANGE_48M
-  #define STM32_MSICLK              48000000
-#else
-  #error "invalid STM32_MSIRANGE value specified"
-#endif
-
-/**
- * @brief   MSIS frequency.
- */
-#if STM32_MSISRANGE == STM32_MSISRANGE_1M
-  #define STM32_MSISCLK             1000000
-#elif STM32_MSISRANGE == STM32_MSISRANGE_2M
-  #define STM32_MSISCLK             2000000
-#elif STM32_MSISRANGE == STM32_MSISRANGE_4M
-  #define STM32_MSISCLK             4000000
-#elif STM32_MSISRANGE == STM32_MSISRANGE_8M
-  #define STM32_MSISCLK             8000000
-#else
-  #error "invalid STM32_MSISRANGE value specified"
-#endif
+/* MSI handling.*/
+#include "stm32_msi.inc"
 
 /*
  * HSI16 related checks.

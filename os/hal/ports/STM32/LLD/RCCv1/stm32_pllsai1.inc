@@ -302,11 +302,11 @@ static inline void pllsai1_init(void) {
 
 #if STM32_ACTIVATE_PLLSAI1
   /* PLLSAI1 activation.*/
-  RCC->PLLSAI1CFGR = STM32_PLLSAI1PDIV | STM32_PLLSAI1R |
-                     STM32_PLLSAI1REN  | STM32_PLLSAI1Q |
-                     STM32_PLLSAI1QEN  | STM32_PLLSAI1P |
-                     STM32_PLLSAI1PEN  | STM32_PLLSAI1N |
-                     STM32_PLLSAI1M;
+  RCC->PLLSAI1CFGR = STM32_PLLSAI1PDIV | STM32_PLLSAI1R   |
+                     STM32_PLLSAI1REN  | STM32_PLLSAI1Q   |
+                     STM32_PLLSAI1QEN  | STM32_PLLSAI1P   |
+                     STM32_PLLSAI1PEN  | STM32_PLLSAI1N   |
+                     STM32_PLLSAI1M    | STM32_PLLSAI1SRC;
   RCC->CR |= RCC_CR_PLLSAI1ON;
 
   /* Waiting for PLL lock.*/

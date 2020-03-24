@@ -78,6 +78,11 @@
 #if defined(STM32L552xx) || defined(__DOXYGEN__)
 
 /* RCC attributes.*/
+#define STM32_HAS_HSI16                     TRUE
+#define STM32_HAS_HSI48                     TRUE
+#define STM32_HAS_MSI                       TRUE
+#define STM32_HAS_LSI                       TRUE
+
 #define STM32_HAS_PLL                       TRUE
 #define STM32_PLL_HAS_P                     TRUE
 #define STM32_PLL_HAS_Q                     TRUE

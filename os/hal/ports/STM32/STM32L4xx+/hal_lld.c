@@ -267,7 +267,7 @@ void stm32_clock_init(void) {
   RCC->CSR |= STM32_MSISRANGE;
 
 #if STM32_ACTIVATE_PLL || STM32_ACTIVATE_PLLSAI1 || STM32_ACTIVATE_PLLSAI2
-  /* PLLM and PLLSRC are common to all PLLs.*/
+  /* PLLSRC is common to all PLLs.*/
   RCC->PLLCFGR = STM32_PLLPDIV | STM32_PLLR  |
                  STM32_PLLREN  | STM32_PLLQ  |
                  STM32_PLLQEN  | STM32_PLLP  |

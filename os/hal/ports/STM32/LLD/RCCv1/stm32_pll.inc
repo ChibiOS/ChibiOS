@@ -314,11 +314,11 @@ static inline void pll_init(void) {
 
 #if STM32_ACTIVATE_PLL
   /* PLL activation.*/
-  RCC->PLLCFGR = STM32_PLLPDIV | STM32_PLLR |
-                 STM32_PLLREN  | STM32_PLLQ |
-                 STM32_PLLQEN  | STM32_PLLP |
-                 STM32_PLLPEN  | STM32_PLLN |
-                 STM32_PLLM;
+  RCC->PLLCFGR = STM32_PLLPDIV | STM32_PLLR   |
+                 STM32_PLLREN  | STM32_PLLQ   |
+                 STM32_PLLQEN  | STM32_PLLP   |
+                 STM32_PLLPEN  | STM32_PLLN   |
+                 STM32_PLLM    | STM32_PLLSRC;
   RCC->CR |= RCC_CR_PLLON;
 
   /* Waiting for PLL lock.*/
