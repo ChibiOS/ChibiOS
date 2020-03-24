@@ -205,7 +205,7 @@ void stm32_clock_init(void) {
 #endif
 
   /* Reduce the flash WS's for SYSCLK source if they are less than MSI WSs */
-  if (STM32_FLASHBITS <= STM32_MSI_FLASHBITS) {
+  if (STM32_FLASHBITS < STM32_MSI_FLASHBITS) {
     flash_ws_init(STM32_FLASHBITS);
   }
 
