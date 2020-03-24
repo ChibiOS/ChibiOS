@@ -82,6 +82,8 @@
 #define STM32_HAS_HSI48                     TRUE
 #define STM32_HAS_MSI                       TRUE
 #define STM32_HAS_LSI                       TRUE
+#define STM32_HAS_LSE                       TRUE
+#define STM32_HAS_HSE                       TRUE
 
 #define STM32_HAS_PLL                       TRUE
 #define STM32_PLL_HAS_P                     TRUE

@@ -108,18 +108,6 @@ void hal_lld_init(void) {
 
   /* IRQ subsystem initialization.*/
   irqInit();
-
-  /* Enabling independent VDDUSB.*/
-  /* TODO REMOVE */
-#if HAL_USE_USB
-  PWR->CR2 |= PWR_CR2_USV;
-#endif /* HAL_USE_USB */
-
-  /* Enabling independent VDDIO2 required by GPIOG.*/
-  /* TODO REMOVE */
-#if STM32_HAS_GPIOG
-  PWR->CR2 |= PWR_CR2_IOSV;
-#endif /* STM32_HAS_GPIOG */
 }
 
 /**
@@ -152,8 +140,7 @@ void stm32_clock_init(void) {
 
   /* Core voltage setup, backup domain made accessible.*/
   PWR->CR1 = STM32_VOS | PWR_CR1_DBP;
-  while ((PWR->SR2 & PWR_SR2_VOSF) != 0)    /* Wait until regulator is      */
-    ;                                       /* stable.                      */
+  while ((PWR->SR2 & PWR_SR2_VOSF) != 0)    /* Wait until voltage is stable.*/
 
   /* Additional PWR configurations.*/
   PWR->CR2 = STM32_PWR_CR2;
@@ -163,54 +150,14 @@ void stm32_clock_init(void) {
   /* Setting the wait states required by MSI clock.*/
   flash_ws_init(STM32_MSI_FLASHBITS);
 
-  /* LSE must be initialized before MSI because MSIPLL uses LSE.*/
-#if STM32_LSE_ENABLED
-  /* LSE activation.*/
-#if defined(STM32_LSE_BYPASS)
-  /* LSE Bypass.*/
-  RCC->BDCR |= STM32_LSEDRV | RCC_BDCR_LSEON | RCC_BDCR_LSEBYP;
-#else
-  /* No LSE Bypass.*/
-  RCC->BDCR |= STM32_LSEDRV | RCC_BDCR_LSEON;
-#endif
-  while ((RCC->BDCR & RCC_BDCR_LSERDY) == 0)
-    ;                                       /* Wait until LSE is stable.    */
-#endif
-
   /* Clocks setup.*/
+  lse_init();                               /* LSE before MSI because MSIPLL
+                                               uses LSE.*/
   msi_init();
-
-#if STM32_HSI16_ENABLED
-  /* HSI activation.*/
-  RCC->CR |= RCC_CR_HSION;
-  while ((RCC->CR & RCC_CR_HSIRDY) == 0)
-    ;                                       /* Wait until HSI16 is stable.  */
-#endif
-
-#if STM32_HSI48_ENABLED
-  /* HSI activation.*/
-  RCC->CRRCR |= RCC_CRRCR_HSI48ON;
-  while ((RCC->CRRCR & RCC_CRRCR_HSI48RDY) == 0)
-    ;                                       /* Wait until HSI48 is stable.  */
-#endif
-
-#if STM32_HSE_ENABLED
-#if defined(STM32_HSE_BYPASS)
-  /* HSE Bypass.*/
-  RCC->CR |= RCC_CR_HSEON | RCC_CR_HSEBYP;
-#endif
-  /* HSE activation.*/
-  RCC->CR |= RCC_CR_HSEON;
-  while ((RCC->CR & RCC_CR_HSERDY) == 0)
-    ;                                       /* Wait until HSE is stable.    */
-#endif
-
-#if STM32_LSI_ENABLED
-  /* LSI activation.*/
-  RCC->CSR |= RCC_CSR_LSION;
-  while ((RCC->CSR & RCC_CSR_LSIRDY) == 0)
-    ;                                       /* Wait until LSI is stable.    */
-#endif
+  lsi_init();
+  hsi16_init();
+  hsi48_init();
+  hse_init();
 
   /* PLLs activation.*/
   pll_init();

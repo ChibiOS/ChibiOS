@@ -85,25 +85,6 @@
 /** @} */
 
 /**
- * @name    RCC_CR register bits definitions
- * @{
- */
-#define STM32_MSIRANGE_MASK     (15 << 4)   /**< MSIRANGE field mask.       */
-#define STM32_MSIRANGE_100K     (0 << 4)    /**< 100kHz nominal.            */
-#define STM32_MSIRANGE_200K     (1 << 4)    /**< 200kHz nominal.            */
-#define STM32_MSIRANGE_400K     (2 << 4)    /**< 400kHz nominal.            */
-#define STM32_MSIRANGE_800K     (3 << 4)    /**< 800kHz nominal.            */
-#define STM32_MSIRANGE_1M       (4 << 4)    /**< 1MHz nominal.              */
-#define STM32_MSIRANGE_2M       (5 << 4)    /**< 2MHz nominal.              */
-#define STM32_MSIRANGE_4M       (6 << 4)    /**< 4MHz nominal.              */
-#define STM32_MSIRANGE_8M       (7 << 4)    /**< 8MHz nominal.              */
-#define STM32_MSIRANGE_16M      (8 << 4)    /**< 16MHz nominal.             */
-#define STM32_MSIRANGE_24M      (9 << 4)    /**< 24MHz nominal.             */
-#define STM32_MSIRANGE_32M      (10 << 4)   /**< 32MHz nominal.             */
-#define STM32_MSIRANGE_48M      (11 << 4)   /**< 48MHz nominal.             */
-/** @} */
-
-/**
  * @name    RCC_CFGR register bits definitions
  * @{
  */
@@ -400,62 +381,6 @@
  */
 #if !defined(STM32_PWR_CR4) || defined(__DOXYGEN__)
 #define STM32_PWR_CR4                       (0U)
-#endif
-
-/**
- * @brief   Enables or disables the HSI16 clock source.
- */
-#if !defined(STM32_HSI16_ENABLED) || defined(__DOXYGEN__)
-#define STM32_HSI16_ENABLED                 FALSE
-#endif
-
-/**
- * @brief   Enables or disables the HSI48 clock source.
- */
-#if !defined(STM32_HSI48_ENABLED) || defined(__DOXYGEN__)
-#define STM32_HSI48_ENABLED                 FALSE
-#endif
-
-/**
- * @brief   Enables or disables the LSI clock source.
- */
-#if !defined(STM32_LSI_ENABLED) || defined(__DOXYGEN__)
-#define STM32_LSI_ENABLED                   TRUE
-#endif
-
-/**
- * @brief   Enables or disables the HSE clock source.
- */
-#if !defined(STM32_HSE_ENABLED) || defined(__DOXYGEN__)
-#define STM32_HSE_ENABLED                   FALSE
-#endif
-
-/**
- * @brief   Enables or disables the LSE clock source.
- */
-#if !defined(STM32_LSE_ENABLED) || defined(__DOXYGEN__)
-#define STM32_LSE_ENABLED                   FALSE
-#endif
-
-/**
- * @brief   Enables or disables the MSI PLL on LSE clock source.
- */
-#if !defined(STM32_MSIPLL_ENABLED) || defined(__DOXYGEN__)
-#define STM32_MSIPLL_ENABLED                FALSE
-#endif
-
-/**
- * @brief   MSI frequency setting.
- */
-#if !defined(STM32_MSIRANGE) || defined(__DOXYGEN__)
-#define STM32_MSIRANGE                      STM32_MSIRANGE_4M
-#endif
-
-/**
- * @brief   MSI frequency setting after standby.
- */
-#if !defined(STM32_MSISRANGE) || defined(__DOXYGEN__)
-#define STM32_MSISRANGE                     STM32_MSISRANGE_4M
 #endif
 
 /**
@@ -938,8 +863,13 @@
   #error "invalid STM32_VOS value specified"
 #endif
 
-/* MSI handling.*/
+/* Clock handlers.*/
+#include "stm32_lse.inc"
+#include "stm32_lsi.inc"
 #include "stm32_msi.inc"
+#include "stm32_hsi16.inc"
+#include "stm32_hsi48.inc"
+#include "stm32_hse.inc"
 
 /*
  * HSI16 related checks.
@@ -1043,6 +973,9 @@
   #if (STM32_LPTIM2SEL == STM32_LPTIM2SEL_HSI16)
     #error "HSI16 not enabled, required by LPTIM2SEL"
   #endif
+  #if (STM32_LPTIM3SEL == STM32_LPTIM3SEL_HSI16)
+    #error "HSI16 not enabled, required by LPTIM3SEL"
+  #endif
 
   #if (STM32_STOPWUCK == STM32_STOPWUCK_HSI16)
     #error "HSI16 not enabled, required by STM32_STOPWUCK"
@@ -1067,21 +1000,6 @@
  * HSE related checks.
  */
 #if STM32_HSE_ENABLED
-
-  #if STM32_HSECLK == 0
-    #error "HSE frequency not defined"
-  #else /* STM32_HSECLK != 0 */
-    #if defined(STM32_HSE_BYPASS)
-      #if (STM32_HSECLK < STM32_HSECLK_BYP_MIN) || (STM32_HSECLK > STM32_HSECLK_BYP_MAX)
-        #error "STM32_HSECLK outside acceptable range (STM32_HSECLK_BYP_MIN...STM32_HSECLK_BYP_MAX)"
-      #endif
-    #else /* !defined(STM32_HSE_BYPASS) */
-      #if (STM32_HSECLK < STM32_HSECLK_MIN) || (STM32_HSECLK > STM32_HSECLK_MAX)
-        #error "STM32_HSECLK outside acceptable range (STM32_HSECLK_MIN...STM32_HSECLK_MAX)"
-      #endif
-    #endif /* !defined(STM32_HSE_BYPASS) */
-  #endif /* STM32_HSECLK != 0 */
-
 #else /* !STM32_HSE_ENABLED */
 
   #if STM32_SW == STM32_SW_HSE
@@ -1161,18 +1079,7 @@
 /*
  * LSE related checks.
  */
-#if STM32_LSE_ENABLED
-
-  #if (STM32_LSECLK == 0)
-    #error "LSE frequency not defined"
-  #endif
-
-  #if (STM32_LSECLK < STM32_LSECLK_MIN) || (STM32_LSECLK > STM32_LSECLK_MAX)
-    #error "STM32_LSECLK outside acceptable range (STM32_LSECLK_MIN...STM32_LSECLK_MAX)"
-  #endif
-
-#else /* !STM32_LSE_ENABLED */
-
+#if !STM32_LSE_ENABLED
   #if STM32_RTCSEL == STM32_RTCSEL_LSE
     #error "LSE not enabled, required by STM32_RTCSEL"
   #endif
@@ -1188,15 +1095,7 @@
   #if STM32_MSIPLL_ENABLED == TRUE
     #error "LSE not enabled, required by STM32_MSIPLL_ENABLED"
   #endif
-
 #endif /* !STM32_LSE_ENABLED */
-
-/*
- * MSI related checks.
- */
-#if (STM32_MSIRANGE == STM32_MSIRANGE_48M) && !STM32_MSIPLL_ENABLED
-  #warning "STM32_MSIRANGE_48M should be used with STM32_MSIPLL_ENABLED"
-#endif
 
 /**
  * @brief   PLL input clock frequency.
@@ -1397,10 +1296,7 @@
 /**
  * @brief   System clock source.
  */
-#if STM32_NO_INIT || defined(__DOXYGEN__)
-#define STM32_SYSCLK                STM32_MSICLK
-
-#elif (STM32_SW == STM32_SW_MSI)
+#if (STM32_SW == STM32_SW_MSI)
 #define STM32_SYSCLK                STM32_MSICLK
 
 #elif (STM32_SW == STM32_SW_HSI16)
