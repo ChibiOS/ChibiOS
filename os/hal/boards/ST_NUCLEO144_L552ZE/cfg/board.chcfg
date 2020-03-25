@@ -2,21 +2,21 @@
 <!-- STM32F4xx board Template -->
 <board
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/boards/stm32l4xx_board.xsd">
+	xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/boards/stm32l5xx_board.xsd">
 	<configuration_settings>
-		<templates_path>resources/gencfg/processors/boards/stm32l4xx/templates</templates_path>
+		<templates_path>resources/gencfg/processors/boards/stm32l5xx/templates</templates_path>
 		<output_path>..</output_path>
 		<hal_version>5.0.x</hal_version>
 	</configuration_settings>
-	<board_name>STMicroelectronics STM32 Nucleo144-L4R5ZI</board_name>
-	<board_id>ST_NUCLEO144_L4R5ZI</board_id>
+	<board_name>STMicroelectronics STM32 Nucleo144-L552ZE</board_name>
+	<board_id>ST_NUCLEO144_L552ZE</board_id>
 	<board_functions></board_functions>
 	<headers></headers>
-	<subtype>STM32L4R5xx</subtype>
+	<subtype>STM32L552xx</subtype>
 	<clocks
 		HSEFrequency="0"
 		HSEBypass="false"
-		LSEFrequency="0"
+		LSEFrequency="32768"
 		LSEBypass="false"
 		LSEDrive="3 High Drive (default)"
 		VDD="300" />
@@ -25,7 +25,6 @@
 			<pin0
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -35,7 +34,6 @@
 			<pin1
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -45,7 +43,6 @@
 			<pin2
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -55,7 +52,6 @@
 			<pin3
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -65,7 +61,6 @@
 			<pin4
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -75,7 +70,6 @@
 			<pin5
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -85,7 +79,6 @@
 			<pin6
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -95,7 +88,6 @@
 			<pin7
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -104,38 +96,34 @@
 				Level="Low" />
 			<pin8
 				Type="PushPull"
-				Speed="Maximum"
-				AnalogSwitch="Disabled"
-				PinLock="Disabled"
-				Alternate="10"
-				ID="USB_SOF"
-				Resistor="Floating"
-				Mode="Alternate"
-				Level="Low" />
-			<pin9
-				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
-				ID="USB_VBUS"
+				ID=""
 				Resistor="Floating"
 				Mode="Analog"
 				Level="Low" />
-			<pin10
+			<pin9
 				Type="PushPull"
 				Speed="Maximum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
-				Alternate="10"
-				ID="USB_ID"
+				Alternate="0"
+				ID="LED3 LED_RED"
 				Resistor="Floating"
-				Mode="Alternate"
+				Mode="Output"
 				Level="Low" />
+			<pin10
+                Type="PushPull"
+                Speed="Minimum"
+                PinLock="Disabled"
+                Alternate="0"
+                ID=""
+                Resistor="Floating"
+                Mode="Analog"
+                Level="Low" />
 			<pin11
 				Type="PushPull"
 				Speed="Maximum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="10"
 				ID="USB_DM"
@@ -145,7 +133,6 @@
 			<pin12
 				Type="PushPull"
 				Speed="Maximum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="10"
 				ID="USB_DP"
@@ -155,7 +142,6 @@
 			<pin13
 				Type="PushPull"
 				Speed="Maximum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID="SWDIO"
@@ -165,7 +151,6 @@
 			<pin14
 				Type="PushPull"
 				Speed="Maximum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID="SWCLK"
@@ -175,7 +160,6 @@
 			<pin15
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -187,7 +171,6 @@
 			<pin0
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -197,7 +180,6 @@
 			<pin1
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -207,7 +189,6 @@
 			<pin2
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -217,7 +198,6 @@
 			<pin3
 				Type="PushPull"
 				Speed="Maximum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID="SWO"
@@ -227,7 +207,6 @@
 			<pin4
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -237,7 +216,6 @@
 			<pin5
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -247,7 +225,6 @@
 			<pin6
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -257,7 +234,6 @@
 			<pin7
 				Type="PushPull"
 				Speed="Maximum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID="LED2 LED_BLUE"
@@ -267,7 +243,6 @@
 			<pin8
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -277,7 +252,6 @@
 			<pin9
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -287,7 +261,6 @@
 			<pin10
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -297,7 +270,6 @@
 			<pin11
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -307,7 +279,6 @@
 			<pin12
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -317,7 +288,6 @@
 			<pin13
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -325,19 +295,17 @@
 				Mode="Analog"
 				Level="Low" />
 			<pin14
-				Type="PushPull"
-				Speed="Maximum"
-				AnalogSwitch="Disabled"
-				PinLock="Disabled"
-				Alternate="0"
-				ID="LED3 LED_RED"
-				Resistor="Floating"
-				Mode="Output"
-				Level="Low" />
+                Type="PushPull"
+                Speed="Minimum"
+                PinLock="Disabled"
+                Alternate="0"
+                ID=""
+                Resistor="Floating"
+                Mode="Analog"
+                Level="Low" />
 			<pin15
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -349,7 +317,6 @@
 			<pin0
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -359,7 +326,6 @@
 			<pin1
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -369,17 +335,15 @@
 			<pin2
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
-				ID=""
+				ID="VBUS_SENSE"
 				Resistor="Floating"
-				Mode="Analog"
+				Mode="Input"
 				Level="Low" />
 			<pin3
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -389,7 +353,6 @@
 			<pin4
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -399,7 +362,6 @@
 			<pin5
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -409,7 +371,6 @@
 			<pin6
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -419,7 +380,6 @@
 			<pin7
 				Type="PushPull"
 				Speed="Maximum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID="LED1 LED_GREEN"
@@ -429,7 +389,6 @@
 			<pin8
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -439,7 +398,6 @@
 			<pin9
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -449,7 +407,6 @@
 			<pin10
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -459,7 +416,6 @@
 			<pin11
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -469,7 +425,6 @@
 			<pin12
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -479,7 +434,6 @@
 			<pin13
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID="BUTTON"
@@ -489,20 +443,18 @@
 			<pin14
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
-				ID=""
+				ID="OSC32_IN"
 				Resistor="Floating"
 				Mode="Analog"
 				Level="Low" />
 			<pin15
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
-				ID=""
+				ID="OSC32_OUT"
 				Resistor="Floating"
 				Mode="Analog"
 				Level="Low" />
@@ -511,7 +463,6 @@
 			<pin0
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -521,7 +472,6 @@
 			<pin1
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -531,7 +481,6 @@
 			<pin2
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -541,7 +490,6 @@
 			<pin3
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -551,7 +499,6 @@
 			<pin4
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -561,7 +508,6 @@
 			<pin5
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -571,7 +517,6 @@
 			<pin6
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -581,7 +526,6 @@
 			<pin7
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -591,7 +535,6 @@
 			<pin8
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -601,7 +544,6 @@
 			<pin9
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -611,7 +553,6 @@
 			<pin10
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -621,7 +562,6 @@
 			<pin11
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -631,7 +571,6 @@
 			<pin12
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -641,7 +580,6 @@
 			<pin13
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -651,7 +589,6 @@
 			<pin14
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -661,7 +598,6 @@
 			<pin15
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -673,7 +609,6 @@
 			<pin0
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -683,7 +618,6 @@
 			<pin1
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -693,7 +627,6 @@
 			<pin2
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -703,7 +636,6 @@
 			<pin3
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -713,7 +645,6 @@
 			<pin4
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -723,7 +654,6 @@
 			<pin5
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -733,7 +663,6 @@
 			<pin6
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -743,7 +672,6 @@
 			<pin7
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -753,7 +681,6 @@
 			<pin8
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -763,7 +690,6 @@
 			<pin9
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -773,7 +699,6 @@
 			<pin10
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -783,7 +708,6 @@
 			<pin11
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -793,7 +717,6 @@
 			<pin12
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -803,7 +726,6 @@
 			<pin13
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -813,7 +735,6 @@
 			<pin14
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -823,7 +744,6 @@
 			<pin15
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -835,7 +755,6 @@
 			<pin0
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -845,7 +764,6 @@
 			<pin1
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -855,7 +773,6 @@
 			<pin2
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -865,7 +782,6 @@
 			<pin3
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -875,7 +791,6 @@
 			<pin4
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -885,7 +800,6 @@
 			<pin5
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -895,7 +809,6 @@
 			<pin6
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -905,7 +818,6 @@
 			<pin7
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -915,7 +827,6 @@
 			<pin8
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -925,7 +836,6 @@
 			<pin9
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -935,7 +845,6 @@
 			<pin10
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -945,7 +854,6 @@
 			<pin11
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -955,7 +863,6 @@
 			<pin12
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -965,7 +872,6 @@
 			<pin13
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -975,7 +881,6 @@
 			<pin14
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -985,7 +890,6 @@
 			<pin15
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -997,7 +901,6 @@
 			<pin0
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -1007,7 +910,6 @@
 			<pin1
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -1017,7 +919,6 @@
 			<pin2
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -1027,7 +928,6 @@
 			<pin3
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -1037,7 +937,6 @@
 			<pin4
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -1045,29 +944,26 @@
 				Mode="Analog"
 				Level="Low" />
 			<pin5
-				Type="PushPull"
-				Speed="Minimum"
-				AnalogSwitch="Disabled"
-				PinLock="Disabled"
-				Alternate="0"
-				ID="USB_OVER_CURRENT"
-				Resistor="Floating"
-				Mode="Input"
-				Level="Low" />
+                Type="PushPull"
+                Speed="Minimum"
+                PinLock="Disabled"
+                Alternate="0"
+                ID=""
+                Resistor="Floating"
+                Mode="Analog"
+                Level="Low" />
 			<pin6
-				Type="PushPull"
-				Speed="Maximum"
-				AnalogSwitch="Disabled"
-				PinLock="Disabled"
-				Alternate="0"
-				ID="USB_POWER_SWITCH_ON"
-				Resistor="Floating"
-				Mode="Output"
-				Level="Low" />
+                Type="PushPull"
+                Speed="Minimum"
+                PinLock="Disabled"
+                Alternate="0"
+                ID=""
+                Resistor="Floating"
+                Mode="Analog"
+                Level="Low" />
 			<pin7
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="8"
 				ID="LPUART1_TX"
@@ -1077,7 +973,6 @@
 			<pin8
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="8"
 				ID="LPUART1_RX"
@@ -1087,7 +982,6 @@
 			<pin9
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -1097,7 +991,6 @@
 			<pin10
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -1107,7 +1000,6 @@
 			<pin11
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -1117,7 +1009,6 @@
 			<pin12
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -1127,7 +1018,6 @@
 			<pin13
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -1137,7 +1027,6 @@
 			<pin14
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -1147,7 +1036,6 @@
 			<pin15
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -1159,7 +1047,6 @@
 			<pin0
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -1169,7 +1056,6 @@
 			<pin1
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -1179,7 +1065,6 @@
 			<pin2
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -1189,7 +1074,6 @@
 			<pin3
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -1199,7 +1083,6 @@
 			<pin4
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -1209,7 +1092,6 @@
 			<pin5
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -1219,7 +1101,6 @@
 			<pin6
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -1229,7 +1110,6 @@
 			<pin7
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -1239,7 +1119,6 @@
 			<pin8
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -1249,7 +1128,6 @@
 			<pin9
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -1259,7 +1137,6 @@
 			<pin10
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -1269,7 +1146,6 @@
 			<pin11
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -1279,7 +1155,6 @@
 			<pin12
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -1289,7 +1164,6 @@
 			<pin13
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -1299,7 +1173,6 @@
 			<pin14
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -1309,7 +1182,6 @@
 			<pin15
 				Type="PushPull"
 				Speed="Minimum"
-				AnalogSwitch="Disabled"
 				PinLock="Disabled"
 				Alternate="0"
 				ID=""
@@ -1317,167 +1189,5 @@
 				Mode="Analog"
 				Level="Low" />
 		</GPIOH>
-		<GPIOI>
-			<pin0
-				Type="PushPull"
-				Speed="Minimum"
-				AnalogSwitch="Disabled"
-				PinLock="Disabled"
-				Alternate="0"
-				ID=""
-				Resistor="Floating"
-				Mode="Analog"
-				Level="Low" />
-			<pin1
-				Type="PushPull"
-				Speed="Minimum"
-				AnalogSwitch="Disabled"
-				PinLock="Disabled"
-				Alternate="0"
-				ID=""
-				Resistor="Floating"
-				Mode="Analog"
-				Level="Low" />
-			<pin2
-				Type="PushPull"
-				Speed="Minimum"
-				AnalogSwitch="Disabled"
-				PinLock="Disabled"
-				Alternate="0"
-				ID=""
-				Resistor="Floating"
-				Mode="Analog"
-				Level="Low" />
-			<pin3
-				Type="PushPull"
-				Speed="Minimum"
-				AnalogSwitch="Disabled"
-				PinLock="Disabled"
-				Alternate="0"
-				ID=""
-				Resistor="Floating"
-				Mode="Analog"
-				Level="Low" />
-			<pin4
-				Type="PushPull"
-				Speed="Minimum"
-				AnalogSwitch="Disabled"
-				PinLock="Disabled"
-				Alternate="0"
-				ID=""
-				Resistor="Floating"
-				Mode="Analog"
-				Level="Low" />
-			<pin5
-				Type="PushPull"
-				Speed="Minimum"
-				AnalogSwitch="Disabled"
-				PinLock="Disabled"
-				Alternate="0"
-				ID=""
-				Resistor="Floating"
-				Mode="Analog"
-				Level="Low" />
-			<pin6
-				Type="PushPull"
-				Speed="Minimum"
-				AnalogSwitch="Disabled"
-				PinLock="Disabled"
-				Alternate="0"
-				ID=""
-				Resistor="Floating"
-				Mode="Analog"
-				Level="Low" />
-			<pin7
-				Type="PushPull"
-				Speed="Minimum"
-				AnalogSwitch="Disabled"
-				PinLock="Disabled"
-				Alternate="0"
-				ID=""
-				Resistor="Floating"
-				Mode="Analog"
-				Level="Low" />
-			<pin8
-				Type="PushPull"
-				Speed="Minimum"
-				AnalogSwitch="Disabled"
-				PinLock="Disabled"
-				Alternate="0"
-				ID=""
-				Resistor="Floating"
-				Mode="Analog"
-				Level="Low" />
-			<pin9
-				Type="PushPull"
-				Speed="Minimum"
-				AnalogSwitch="Disabled"
-				PinLock="Disabled"
-				Alternate="0"
-				ID=""
-				Resistor="Floating"
-				Mode="Analog"
-				Level="Low" />
-			<pin10
-				Type="PushPull"
-				Speed="Minimum"
-				AnalogSwitch="Disabled"
-				PinLock="Disabled"
-				Alternate="0"
-				ID=""
-				Resistor="Floating"
-				Mode="Analog"
-				Level="Low" />
-			<pin11
-				Type="PushPull"
-				Speed="Minimum"
-				AnalogSwitch="Disabled"
-				PinLock="Disabled"
-				Alternate="0"
-				ID=""
-				Resistor="Floating"
-				Mode="Analog"
-				Level="Low" />
-			<pin12
-				Type="PushPull"
-				Speed="Minimum"
-				AnalogSwitch="Disabled"
-				PinLock="Disabled"
-				Alternate="0"
-				ID=""
-				Resistor="Floating"
-				Mode="Analog"
-				Level="Low" />
-			<pin13
-				Type="PushPull"
-				Speed="Minimum"
-				AnalogSwitch="Disabled"
-				PinLock="Disabled"
-				Alternate="0"
-				ID=""
-				Resistor="Floating"
-				Mode="Analog"
-				Level="Low" />
-			<pin14
-				Type="PushPull"
-				Speed="Minimum"
-				AnalogSwitch="Disabled"
-				PinLock="Disabled"
-				Alternate="0"
-				ID=""
-				Resistor="Floating"
-				Mode="Analog"
-				Level="Low" />
-			<pin15
-				Type="PushPull"
-				Speed="Minimum"
-				AnalogSwitch="Disabled"
-				PinLock="Disabled"
-				Alternate="0"
-				ID=""
-				Resistor="Floating"
-				Mode="Analog"
-				Level="Low" />
-		</GPIOI>
 	</ports>
 </board>

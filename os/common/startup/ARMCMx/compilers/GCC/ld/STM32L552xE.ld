@@ -15,24 +15,24 @@
 */
 
 /*
- * STM32L4R9xI memory setup.
+ * STM32L552xE memory setup.
  */
 MEMORY
 {
-    flash0 (rx) : org = 0x08000000, len = 2M
-    flash1 (rx) : org = 0x00000000, len = 0
+    flash0 (rx) : org = 0x08000000, len = 512k  /* Flash NS */
+    flash1 (rx) : org = 0x0C000000, len = 512k  /* Flash NSC */
     flash2 (rx) : org = 0x00000000, len = 0
     flash3 (rx) : org = 0x00000000, len = 0
     flash4 (rx) : org = 0x00000000, len = 0
     flash5 (rx) : org = 0x00000000, len = 0
     flash6 (rx) : org = 0x00000000, len = 0
     flash7 (rx) : org = 0x00000000, len = 0
-    ram0   (wx) : org = 0x20000000, len = 640k  /* SRAM1+SRAM2+SRAM3 */
-    ram1   (wx) : org = 0x20000000, len = 192k  /* SRAM1 */
-    ram2   (wx) : org = 0x00000000, len = 64k   /* SRAM2 */
-    ram3   (wx) : org = 0x00000000, len = 384k  /* SRAM3 */
-    ram4   (wx) : org = 0x10000000, len = 64k   /* SRAM2 alias */
-    ram5   (wx) : org = 0x00000000, len = 0
+    ram0   (wx) : org = 0x20000000, len = 256k  /* SRAM1+SRAM2 NS */
+    ram1   (wx) : org = 0x20000000, len = 192k  /* SRAM1 NS */
+    ram2   (wx) : org = 0x00000000, len = 64k   /* SRAM2 NS */
+    ram3   (wx) : org = 0x0E000000, len = 256k  /* SRAM1+SRAM2 NSC */
+    ram4   (wx) : org = 0x0E000000, len = 192k  /* SRAM1 NSC */
+    ram5   (wx) : org = 0x0E030000, len = 64k   /* SRAM2 NSC */
     ram6   (wx) : org = 0x00000000, len = 0
     ram7   (wx) : org = 0x00000000, len = 0
 }

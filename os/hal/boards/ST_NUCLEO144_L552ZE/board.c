@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2019 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -123,18 +123,6 @@ static const gpio_config_t gpio_default_config = {
   {VAL_GPIOH_MODER, VAL_GPIOH_OTYPER, VAL_GPIOH_OSPEEDR, VAL_GPIOH_PUPDR,
    VAL_GPIOH_ODR,   VAL_GPIOH_AFRL,   VAL_GPIOH_AFRH,    VAL_GPIOH_LOCKR},
 #endif
-#if STM32_HAS_GPIOI
-  {VAL_GPIOI_MODER, VAL_GPIOI_OTYPER, VAL_GPIOI_OSPEEDR, VAL_GPIOI_PUPDR,
-   VAL_GPIOI_ODR,   VAL_GPIOI_AFRL,   VAL_GPIOI_AFRH,    VAL_GPIOI_LOCKR},
-#endif
-#if STM32_HAS_GPIOJ
-  {VAL_GPIOJ_MODER, VAL_GPIOJ_OTYPER, VAL_GPIOJ_OSPEEDR, VAL_GPIOJ_PUPDR,
-   VAL_GPIOJ_ODR,   VAL_GPIOJ_AFRL,   VAL_GPIOJ_AFRH,    VAL_GPIOJ_LOCKR},
-#endif
-#if STM32_HAS_GPIOK
-  {VAL_GPIOK_MODER, VAL_GPIOK_OTYPER, VAL_GPIOK_OSPEEDR, VAL_GPIOK_PUPDR,
-   VAL_GPIOK_ODR,   VAL_GPIOK_AFRL,   VAL_GPIOK_AFRH,    VAL_GPIOK_LOCKR}
-#endif
 };
 
 /*===========================================================================*/
@@ -184,15 +172,6 @@ static void stm32_gpio_init(void) {
 #endif
 #if STM32_HAS_GPIOH
   gpio_init(GPIOH, &gpio_default_config.PHData);
-#endif
-#if STM32_HAS_GPIOI
-  gpio_init(GPIOI, &gpio_default_config.PIData);
-#endif
-#if STM32_HAS_GPIOJ
-  gpio_init(GPIOJ, &gpio_default_config.PJData);
-#endif
-#if STM32_HAS_GPIOK
-  gpio_init(GPIOK, &gpio_default_config.PKData);
 #endif
 }
 

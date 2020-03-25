@@ -132,7 +132,8 @@ void stm32_clock_init(void) {
 
   /* Core voltage setup, backup domain made accessible.*/
   PWR->CR1 = STM32_VOS | PWR_CR1_DBP;
-  while ((PWR->SR2 & PWR_SR2_VOSF) != 0)    /* Wait until voltage is stable.*/
+  while ((PWR->SR2 & PWR_SR2_VOSF) != 0) {  /* Wait until voltage is stable.*/
+  }
 
   /* Additional PWR configurations.*/
   PWR->CR2 = STM32_PWR_CR2;
