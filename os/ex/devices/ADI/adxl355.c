@@ -178,7 +178,7 @@ static msg_t acc_read_cooked(void *ip, float axes[]) {
   ADXL355Driver* devp;
   uint32_t i;
   int32_t raw[ADXL355_ACC_NUMBER_OF_AXES];
-  msg_t msg;
+  msg_t msg = MSG_OK;
 
   osalDbgCheck((ip != NULL) && (axes != NULL));
 
@@ -341,7 +341,7 @@ static msg_t acc_reset_sensivity(void *ip) {
 static msg_t acc_set_full_scale(ADXL355Driver *devp, adxl355_acc_fs_t fs) {
   float newfs, scale;
   uint8_t i, reg_val;
-  msg_t msg;
+  msg_t msg = MSG_OK;
 
   osalDbgCheck(devp != NULL);
 
