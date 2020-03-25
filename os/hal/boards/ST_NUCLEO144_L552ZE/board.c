@@ -76,15 +76,6 @@ typedef struct {
 #if STM32_HAS_GPIOH || defined(__DOXYGEN__)
   gpio_setup_t          PHData;
 #endif
-#if STM32_HAS_GPIOI || defined(__DOXYGEN__)
-  gpio_setup_t          PIData;
-#endif
-#if STM32_HAS_GPIOJ || defined(__DOXYGEN__)
-  gpio_setup_t          PJData;
-#endif
-#if STM32_HAS_GPIOK || defined(__DOXYGEN__)
-  gpio_setup_t          PKData;
-#endif
 } gpio_config_t;
 
 /**

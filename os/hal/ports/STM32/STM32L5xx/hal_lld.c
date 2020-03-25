@@ -55,6 +55,8 @@ static inline void bd_init(void) {
     RCC->BDCR = 0;
   }
 
+  lse_init();
+
 #if HAL_USE_RTC
   /* If the backup domain hasn't been initialized yet then proceed with
      initialization.*/
@@ -144,7 +146,7 @@ void stm32_clock_init(void) {
   flash_ws_init(STM32_MSI_FLASHBITS);
 
   /* Clocks setup.*/
-  lse_init();                               /* LSE first because MSIPLL.    */
+  bd_init();                                /* BD first because MSIPLL.     */
   msi_init();
   lsi_init();
   hsi16_init();
@@ -201,9 +203,6 @@ void stm32_clock_init(void) {
   if (STM32_FLASHBITS < STM32_MSI_FLASHBITS) {
     flash_ws_init(STM32_FLASHBITS);
   }
-
-  /* Backup domain.*/
-  bd_init();
 
   /* SYSCFG clock enabled here because it is a multi-functional unit shared
      among multiple drivers.*/

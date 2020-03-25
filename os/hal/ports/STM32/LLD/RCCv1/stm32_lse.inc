@@ -85,12 +85,13 @@ static inline void lse_init(void) {
   /* LSE activation.*/
 #if defined(STM32_LSE_BYPASS)
   /* LSE Bypass.*/
-  RCC->BDCR |= STM32_LSEDRV | RCC_BDCR_LSEON | RCC_BDCR_LSEBYP;
+  RCC->BDCR |= STM32_LSEDRV | RCC_BDCR_LSEON | RCC_BDCR_LSESYSEN | RCC_BDCR_LSEBYP;
 #else
   /* No LSE Bypass.*/
-  RCC->BDCR |= STM32_LSEDRV | RCC_BDCR_LSEON;
+  RCC->BDCR |= STM32_LSEDRV | RCC_BDCR_LSEON | RCC_BDCR_LSESYSEN;
 #endif
-  while ((RCC->BDCR & RCC_BDCR_LSERDY) == 0) {
+  while ((RCC->BDCR & (RCC_BDCR_LSESYSRDY | RCC_BDCR_LSERDY)) !=
+         (RCC_BDCR_LSESYSRDY | RCC_BDCR_LSERDY)) {
   }
 #endif
 }

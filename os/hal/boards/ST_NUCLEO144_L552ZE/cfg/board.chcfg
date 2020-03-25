@@ -963,7 +963,7 @@
                 Level="Low" />
 			<pin7
 				Type="PushPull"
-				Speed="Minimum"
+				Speed="Maximum"
 				PinLock="Disabled"
 				Alternate="8"
 				ID="LPUART1_TX"
@@ -972,7 +972,7 @@
 				Level="Low" />
 			<pin8
 				Type="PushPull"
-				Speed="Minimum"
+				Speed="Maximum"
 				PinLock="Disabled"
 				Alternate="8"
 				ID="LPUART1_RX"

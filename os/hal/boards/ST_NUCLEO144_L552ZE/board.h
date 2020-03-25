@@ -1121,8 +1121,8 @@
                                      PIN_OSPEED_VERYLOW(GPIOG_PIN4) |       \
                                      PIN_OSPEED_VERYLOW(GPIOG_PIN5) |       \
                                      PIN_OSPEED_VERYLOW(GPIOG_PIN6) |       \
-                                     PIN_OSPEED_VERYLOW(GPIOG_LPUART1_TX) | \
-                                     PIN_OSPEED_VERYLOW(GPIOG_LPUART1_RX) | \
+                                     PIN_OSPEED_HIGH(GPIOG_LPUART1_TX) |    \
+                                     PIN_OSPEED_HIGH(GPIOG_LPUART1_RX) |    \
                                      PIN_OSPEED_VERYLOW(GPIOG_PIN9) |       \
                                      PIN_OSPEED_VERYLOW(GPIOG_PIN10) |      \
                                      PIN_OSPEED_VERYLOW(GPIOG_PIN11) |      \
