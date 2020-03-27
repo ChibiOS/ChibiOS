@@ -107,10 +107,14 @@ OSAL_IRQ_HANDLER(STM32_TIM7_HANDLER) {
 #endif
 #endif
 #if HAL_USE_ICU
+#if STM32_ICU_USE_TIM7
   icu_lld_serve_interrupt(&ICUD7);
 #endif
+#endif
 #if HAL_USE_PWM
+#if STM32_PWM_USE_TIM7
   pwm_lld_serve_interrupt(&PWMD7);
+#endif
 #endif
 #if 1
 #if STM32_ST_USE_TIM7

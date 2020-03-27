@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 20.3.1 ***
+- FIX: Fixed missing checks in TIM6 and TIM7 STM32 mini drivers (bug #1078).
 - FIX: Fixed error in EXTIv1 ISRs (bug #1077).
 - FIX: Fixed problem in chMtxUnlockAllS() (bug #1076).
 
