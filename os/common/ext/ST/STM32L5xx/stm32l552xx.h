@@ -207,9 +207,7 @@ typedef enum
 #define __SAUREGION_PRESENT       1U        /* SAU regions present */
 #define __MPU_PRESENT             1U        /* MPU present */
 #define __VTOR_PRESENT            1U        /* VTOR present */
-/* CHIBIOS FIX */
-//#define __NVIC_PRIO_BITS          3U        /* Number of Bits used for Priority Levels */
-#define __NVIC_PRIO_BITS          4U        /* Number of Bits used for Priority Levels */
+#define __NVIC_PRIO_BITS          3U        /* Number of Bits used for Priority Levels */
 #define __Vendor_SysTickConfig    0U        /* Set to 1 if different SysTick Config is used */
 #define __FPU_PRESENT             1U        /* FPU present */
 #define __DSP_PRESENT             1U        /* DSP extension present */

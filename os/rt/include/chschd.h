@@ -711,6 +711,37 @@ static inline void chSchPreemption(void) {
 #endif /* CH_CFG_TIME_QUANTUM == 0 */
 }
 
+/**
+ * @brief   Makes runnable the fist thread in the ready list, does not
+ *          reschedule internally.
+ * @details The current thread is positioned in the ready list ahead of all
+ *          threads having the same priority.
+ * @note    Not a user function, it is meant to be invoked by the scheduler
+ *          itself.
+ *
+ * @return              The pointer to the thread being switched in.
+ *
+ * @special
+ */
+static inline thread_t *chSchRunAhead(void) {
+  thread_t *otp = currp;
+  thread_t *ntp;
+
+  /* Picks the first thread from the ready queue and makes it current.*/
+  currp = ntp = queue_fifo_remove(&ch.rlist.queue);
+  ntp->state = CH_STATE_CURRENT;
+
+  /* Handling idle-leave hook.*/
+  if (otp->prio == IDLEPRIO) {
+    CH_CFG_IDLE_LEAVE_HOOK();
+  }
+
+  /* Placing in ready list ahead of peers.*/
+  chSchReadyAheadI(otp);
+
+  return ntp;
+}
+
 #endif /* CHSCHD_H */
 
 /** @} */

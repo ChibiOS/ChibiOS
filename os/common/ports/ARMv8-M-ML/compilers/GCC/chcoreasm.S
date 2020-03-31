@@ -1,0 +1,137 @@
+/*
+    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+
+    This file is part of ChibiOS.
+
+    ChibiOS is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * @file    compilers/GCC/chcoreasm_v7m.S
+ * @brief   ARMv7-M architecture port low level code.
+ *
+ * @addtogroup ARMCMx_GCC_CORE
+ * @{
+ */
+
+#if !defined(FALSE) || defined(__DOXYGEN__)
+#define FALSE   0
+#endif
+
+#if !defined(TRUE) || defined(__DOXYGEN__)
+#define TRUE    1
+#endif
+
+#define _FROM_ASM_
+#include "chlicense.h"
+#include "chconf.h"
+#include "chcore.h"
+
+#if !defined(__DOXYGEN__)
+
+/*
+ * RTOS-specific context offset.
+ */
+#if defined(_CHIBIOS_RT_CONF_)
+#define CONTEXT_OFFSET  12
+#elif defined(_CHIBIOS_NIL_CONF_)
+#define CONTEXT_OFFSET  0
+#else
+#error "invalid chconf.h"
+#endif
+
+/* MPU-related constants.*/
+#define MPU_RBAR        0xE000ED9C
+
+/* Other constants.*/
+#define SCB_ICSR        0xE000ED04
+#define ICSR_PENDSVSET  0x10000000
+
+                .syntax unified
+                .cpu    cortex-m4
+#if CORTEX_USE_FPU
+                .fpu    fpv4-sp-d16
+#else
+                .fpu    softvfp
+#endif
+
+                .thumb
+                .text
+
+/*--------------------------------------------------------------------------*
+ * Performs a context switch between two threads.
+ *--------------------------------------------------------------------------*/
+                .thumb_func
+                .globl  SVC_Handler
+SVC_Handler:
+                mrs     r2, PSP
+                mrs     r3, BASEPRI
+                stmdb   r2!, {r3-r11,lr}
+                str     r2, [r1, #CONTEXT_OFFSET]
+                ldr     r2, [r0, #CONTEXT_OFFSET]
+                ldmia   r2!, {r3-r11, lr}
+                msr     BASEPRI, r3
+                msr     PSP, r2
+                bx      lr
+
+/*--------------------------------------------------------------------------*
+ * Tail preemption check using PENDSV.
+ *--------------------------------------------------------------------------*/
+                .thumb_func
+                .globl  PendSV_Handler
+PendSV_Handler:
+                mrs     r0, PSP
+                mrs     r3, BASEPRI
+                stmdb   r0!, {r3-r11,lr}
+                bl      port_swap_stacks
+                ldmia   r0!, {r3-r11, lr}
+                msr     BASEPRI, r3
+                msr     PSP, r0
+                bx      lr
+
+/*--------------------------------------------------------------------------*
+ * Start a thread by invoking its work function.
+ *
+ * Threads execution starts here, the code leaves the system critical zone
+ * and then jumps into the thread function passed in register R4. The
+ * register R5 contains the thread parameter. The function chThdExit() is
+ * called on thread function return.
+ *--------------------------------------------------------------------------*/
+                .thumb_func
+                .globl  _port_thread_start
+_port_thread_start:
+#if CH_DBG_ENABLE_STACK_CHECK && PORT_ENABLE_GUARD_PAGES
+                bl      _port_set_region
+#endif
+#if CH_DBG_SYSTEM_STATE_CHECK
+                bl      _dbg_check_unlock
+#endif
+#if CH_DBG_STATISTICS
+                bl      _stats_stop_measure_crit_thd
+#endif
+#if CORTEX_SIMPLIFIED_PRIORITY
+                cpsie   i
+#else
+                movs    r3, #0              /* CORTEX_BASEPRI_DISABLED */
+                msr     BASEPRI, r3
+#endif
+                mov     r0, r5
+                blx     r4
+                movs    r0, #0              /* MSG_OK */
+                bl      chThdExit
+_zombies:       b       _zombies
+
+#endif /* !defined(__DOXYGEN__) */
+
+/** @} */
