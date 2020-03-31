@@ -82,7 +82,7 @@ static void uart_init(SerialDriver *sdp, const SerialConfig *config) {
   
   uint32_t comdiv, divn, divm;
   
-  /* Reseting the UART state machine. */
+  /* Resetting the UART state machine. */
   sdp->uart->COMCON = COMCON_DISABLE_EN;
 
   /* Baud rate setting.*/
