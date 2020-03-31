@@ -3,7 +3,6 @@ PLATFORMSRC := $(CHIBIOS)/os/hal/ports/common/ARMCMx/nvic.c \
                $(CHIBIOS)/os/hal/ports/ADUCM/ADUCM36x/aducm_isr.c \
                $(CHIBIOS)/os/hal/ports/ADUCM/ADUCM36x/hal_lld.c \
                $(CHIBIOS)/os/hal/ports/ADUCM/ADUCM36x/hal_pal_lld.c \
-               $(CHIBIOS)/os/hal/ports/ADUCM/ADUCM36x/hal_serial_lld.c \
                $(CHIBIOS)/os/hal/ports/ADUCM/ADUCM36x/hal_spi_lld.c \
                $(CHIBIOS)/os/hal/ports/ADUCM/ADUCM36x/hal_st_lld.c
 
@@ -29,7 +28,7 @@ else
 endif
 
 # Drivers compatible with the platform.
-# include $(CHIBIOS)/os/hal/ports/ADUCM/ADUCM36x/GPIOv1/driver.mk
+include $(CHIBIOS)/os/hal/ports/ADUCM/LLD/UARTv1/driver.mk
 
 # Shared variables
 ALLCSRC += $(PLATFORMSRC)

@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    ADUCM36x/hal_serial_lld.h
- * @brief   ADUCM serial subsystem low level driver header.
+ * @file    UARTv1/hal_serial_lld.c
+ * @brief   ADUCM low level serial driver header.
  *
  * @addtogroup SERIAL
  * @{
