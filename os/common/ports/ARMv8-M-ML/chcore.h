@@ -128,7 +128,7 @@
  *          reduce this value to zero when compiling with optimizations.
  */
 #if !defined(PORT_IDLE_THREAD_STACK_SIZE) || defined(__DOXYGEN__)
-#define PORT_IDLE_THREAD_STACK_SIZE     16
+#define PORT_IDLE_THREAD_STACK_SIZE     64
 #endif
 
 /**
@@ -359,14 +359,15 @@ struct port_context {
  * @details This code usually setup the context switching frame represented
  *          by an @p port_intctx structure.
  */
-#define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) {                      \
+#define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) do {                   \
   (tp)->ctx.sp = (struct port_intctx *)((uint8_t *)(wtop) -                 \
                                         sizeof (struct port_intctx));       \
-  (tp)->ctx.sp->r4     = (uint32_t)(pf);                                    \
-  (tp)->ctx.sp->r5     = (uint32_t)(arg);                                   \
-  (tp)->ctx.sp->lr_exc = (uint32_t)0xFFFFFFFD;                              \
-  (tp)->ctx.sp->xpsr   = (uint32_t)0x01000000;                              \
-  (tp)->ctx.sp->pc     = (uint32_t)_port_thread_start;                      \
+  (tp)->ctx.sp->basepri = CORTEX_BASEPRI_KERNEL;                            \
+  (tp)->ctx.sp->r5      = (uint32_t)(arg);                                  \
+  (tp)->ctx.sp->r4      = (uint32_t)(pf);                                   \
+  (tp)->ctx.sp->lr_exc  = (uint32_t)0xFFFFFFFD;                             \
+  (tp)->ctx.sp->xpsr    = (uint32_t)0x01000000;                             \
+  (tp)->ctx.sp->pc      = (uint32_t)__port_thread_start;                    \
 } while (false)
 
 /**
@@ -402,9 +403,11 @@ struct port_context {
  *          enabled to invoke system APIs.
  */
 #define PORT_IRQ_EPILOGUE() do {                                            \
+  port_lock_from_isr();                                                     \
   if (chSchIsPreemptionRequired()) {                                        \
     SCB->ICSR = SCB_ICSR_PENDSVSET_Msk;                                     \
   }                                                                         \
+  port_unlock_from_isr();                                                   \
 } while (false)
 
 /**
@@ -441,9 +444,11 @@ struct port_context {
  */
 #if (CH_DBG_ENABLE_STACK_CHECK == FALSE) || defined(__DOXYGEN__)
 #define port_switch(ntp, otp) do {                                          \
+  _dbg_leave_lock();                                                        \
   register thread_t *_ntp asm ("r0") = (ntp);                               \
   register thread_t *_otp asm ("r1") = (otp);                               \
   asm volatile ("svc     #0" : : "r" (_otp), "r" (_ntp) : "memory");        \
+  _dbg_enter_lock();                                                        \
 } while (false)
 #else
 #define port_switch(ntp, otp) do {                                          \
@@ -467,7 +472,7 @@ struct port_context {
 extern "C" {
 #endif
   void port_init(void);
-  void _port_thread_start(void);
+  void __port_thread_start(void);
 #ifdef __cplusplus
 }
 #endif
@@ -584,6 +589,7 @@ __STATIC_FORCEINLINE void port_suspend(void) {
 __STATIC_FORCEINLINE void port_enable(void) {
 
   __set_BASEPRI(CORTEX_BASEPRI_DISABLED);
+  __enable_irq();
 }
 
 /**

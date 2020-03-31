@@ -75,14 +75,14 @@
                 .thumb_func
                 .globl  SVC_Handler
 SVC_Handler:
-                mrs     r2, PSP
                 mrs     r3, BASEPRI
+                mrs     r2, PSP
                 stmdb   r2!, {r3-r11,lr}
                 str     r2, [r1, #CONTEXT_OFFSET]
                 ldr     r2, [r0, #CONTEXT_OFFSET]
                 ldmia   r2!, {r3-r11, lr}
-                msr     BASEPRI, r3
                 msr     PSP, r2
+                msr     BASEPRI, r3
                 bx      lr
 
 /*--------------------------------------------------------------------------*
@@ -91,13 +91,13 @@ SVC_Handler:
                 .thumb_func
                 .globl  PendSV_Handler
 PendSV_Handler:
-                mrs     r0, PSP
                 mrs     r3, BASEPRI
+                mrs     r0, PSP
                 stmdb   r0!, {r3-r11,lr}
                 bl      port_swap_stacks
                 ldmia   r0!, {r3-r11, lr}
-                msr     BASEPRI, r3
                 msr     PSP, r0
+                msr     BASEPRI, r3
                 bx      lr
 
 /*--------------------------------------------------------------------------*
@@ -109,23 +109,16 @@ PendSV_Handler:
  * called on thread function return.
  *--------------------------------------------------------------------------*/
                 .thumb_func
-                .globl  _port_thread_start
-_port_thread_start:
+                .globl  __port_thread_start
+__port_thread_start:
 #if CH_DBG_ENABLE_STACK_CHECK && PORT_ENABLE_GUARD_PAGES
                 bl      _port_set_region
-#endif
-#if CH_DBG_SYSTEM_STATE_CHECK
-                bl      _dbg_check_unlock
 #endif
 #if CH_DBG_STATISTICS
                 bl      _stats_stop_measure_crit_thd
 #endif
-#if CORTEX_SIMPLIFIED_PRIORITY
-                cpsie   i
-#else
                 movs    r3, #0              /* CORTEX_BASEPRI_DISABLED */
                 msr     BASEPRI, r3
-#endif
                 mov     r0, r5
                 blx     r4
                 movs    r0, #0              /* MSG_OK */

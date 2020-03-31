@@ -60,13 +60,13 @@
 void *port_swap_stacks(void *sp) {
   thread_t *ntp;
 
-  chSysLockFromISR();
+  chSysLock();
 
   /* TODO statistics, tracing etc */
   currp->ctx.sp = sp;
   ntp = chSchRunAhead();
 
-  chSysUnlockFromISR();
+  chSysUnlock();
 
   return ntp->ctx.sp;
 }
