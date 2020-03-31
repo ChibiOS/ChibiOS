@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    crt0_v7m.S
- * @brief   Generic ARMv7-M (Cortex-M3/M4/M7) startup file for ChibiOS.
+ * @file    crt0_v8m-ml.S
+ * @brief   Generic ARMv8-M mainline (Cortex-M33/M55) startup file for ChibiOS.
  *
- * @addtogroup ARMCMx_GCC_STARTUP_V7M
+ * @addtogroup ARMCMx_GCC_STARTUP_V8M_ML
  * @{
  */
 
@@ -169,7 +169,7 @@
 #if !defined(__DOXYGEN__)
 
                 .syntax unified
-                .cpu    cortex-m3
+                .cpu    cortex-m33
 #if CRT0_INIT_FPU == TRUE
                 .fpu    fpv4-sp-d16
 #else
@@ -194,10 +194,14 @@ _crt0_entry:
                 ldr     r0, =__main_stack_end__
                 msr     MSP, r0
 #endif
+                ldr     r0, =__main_stack_base__
+                msr     MSPLIM, r0
 
                 /* PSP stack pointers initialization.*/
                 ldr     r0, =__process_stack_end__
                 msr     PSP, r0
+                ldr     r0, =__process_stack_base__
+                msr     PSPLIM, r0
 
 #if CRT0_VTOR_INIT == TRUE
                 ldr     r0, =_vectors

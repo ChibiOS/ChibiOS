@@ -284,6 +284,9 @@ struct port_intctx {
  */
 struct port_context {
   struct port_intctx    *sp;
+#if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || defined(__DOXYGEN__)
+  uint32_t              splim;
+#endif
 };
 
 #endif /* !defined(_FROM_ASM_) */
@@ -359,9 +362,11 @@ struct port_context {
  * @details This code usually setup the context switching frame represented
  *          by an @p port_intctx structure.
  */
+#if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || defined(__DOXYGEN__)
 #define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) do {                   \
-  (tp)->ctx.sp = (struct port_intctx *)((uint8_t *)(wtop) -                 \
-                                        sizeof (struct port_intctx));       \
+  (tp)->ctx.splim       = (uint32_t)(wbase);                                \
+  (tp)->ctx.sp          = (struct port_intctx *)                            \
+                          ((uint8_t *)(wtop) - sizeof (struct port_intctx));\
   (tp)->ctx.sp->basepri = CORTEX_BASEPRI_KERNEL;                            \
   (tp)->ctx.sp->r5      = (uint32_t)(arg);                                  \
   (tp)->ctx.sp->r4      = (uint32_t)(pf);                                   \
@@ -369,6 +374,18 @@ struct port_context {
   (tp)->ctx.sp->xpsr    = (uint32_t)0x01000000;                             \
   (tp)->ctx.sp->pc      = (uint32_t)__port_thread_start;                    \
 } while (false)
+#else
+#define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) do {                   \
+  (tp)->ctx.sp          = (struct port_intctx *)                                     \
+                          ((uint8_t *)(wtop) - sizeof (struct port_intctx));\
+  (tp)->ctx.sp->basepri = CORTEX_BASEPRI_KERNEL;                            \
+  (tp)->ctx.sp->r5      = (uint32_t)(arg);                                  \
+  (tp)->ctx.sp->r4      = (uint32_t)(pf);                                   \
+  (tp)->ctx.sp->lr_exc  = (uint32_t)0xFFFFFFFD;                             \
+  (tp)->ctx.sp->xpsr    = (uint32_t)0x01000000;                             \
+  (tp)->ctx.sp->pc      = (uint32_t)__port_thread_start;                    \
+} while (false)
+#endif
 
 /**
  * @brief   Computes the thread working area global size.
@@ -452,6 +469,7 @@ struct port_context {
 } while (false)
 #else
 #define port_switch(ntp, otp) do {                                          \
+  _dbg_leave_lock();                                                        \
   register thread_t *_ntp asm ("r0") = (ntp);                               \
   register thread_t *_otp asm ("r1") = (otp);                               \
   struct port_intctx *r13 = (struct port_intctx *)__get_PSP();              \
@@ -459,6 +477,7 @@ struct port_context {
     chSysHalt("stack overflow");                                            \
   }                                                                         \
   asm volatile ("svc     #0" : : "r" (_otp), "r" (_ntp) : "memory");        \
+  _dbg_enter_lock();                                                        \
 } while (false)
 #endif
 

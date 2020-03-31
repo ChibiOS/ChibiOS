@@ -79,6 +79,12 @@ SVC_Handler:
                 mrs     r2, PSP
                 stmdb   r2!, {r3-r11,lr}
                 str     r2, [r1, #CONTEXT_OFFSET]
+#if CH_DBG_ENABLE_STACK_CHECK
+                mrs     r2, PSPLIM
+                str     r2, [r1, #CONTEXT_OFFSET + 4]
+                ldr     r2, [r0, #CONTEXT_OFFSET + 4]
+                msr     PSPLIM, r2
+#endif
                 ldr     r2, [r0, #CONTEXT_OFFSET]
                 ldmia   r2!, {r3-r11, lr}
                 msr     PSP, r2

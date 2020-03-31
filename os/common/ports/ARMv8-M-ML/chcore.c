@@ -60,6 +60,10 @@
 void *port_swap_stacks(void *sp) {
   thread_t *ntp;
 
+#if CH_DBG_ENABLE_STACK_CHECK == TRUE
+  currp->ctx.splim = __get_PSPLIM();
+#endif
+
   chSysLock();
 
   /* TODO statistics, tracing etc */
@@ -67,6 +71,10 @@ void *port_swap_stacks(void *sp) {
   ntp = chSchRunAhead();
 
   chSysUnlock();
+
+#if CH_DBG_ENABLE_STACK_CHECK == TRUE
+  __set_PSPLIM(ntp->ctx.splim);
+#endif
 
   return ntp->ctx.sp;
 }
