@@ -44,9 +44,18 @@
  * RTOS-specific context offset.
  */
 #if defined(_CHIBIOS_RT_CONF_)
+#if CH_CFG_USE_REGISTRY
+#define CURRENT_OFFSET  20          /* ch.rlist.current */
+#define CONTEXT_OFFSET  20
+#else
+#define CURRENT_OFFSET  12          /* nil.current */
 #define CONTEXT_OFFSET  12
+#endif
+
 #elif defined(_CHIBIOS_NIL_CONF_)
+#define CURRENT_OFFSET  0
 #define CONTEXT_OFFSET  0
+
 #else
 #error "invalid chconf.h"
 #endif
@@ -75,20 +84,28 @@
                 .thumb_func
                 .globl  SVC_Handler
 SVC_Handler:
-                mrs     r3, BASEPRI
+                /* Saving callee context of thread being swapped out.*/
+                adds    r1, #CONTEXT_OFFSET
                 mrs     r2, PSP
-                stmdb   r2!, {r3-r11,lr}
-                str     r2, [r1, #CONTEXT_OFFSET]
+                mrs     r3, BASEPRI
+//                movs    r3, #(2 << 5)
 #if CH_DBG_ENABLE_STACK_CHECK
-                mrs     r2, PSPLIM
-                str     r2, [r1, #CONTEXT_OFFSET + 4]
-                ldr     r2, [r0, #CONTEXT_OFFSET + 4]
-                msr     PSPLIM, r2
+                mrs     r12, PSPLIM
+                stmia   r1, {r2-r12,lr}
+#else
+                stmia   r1, {r2-r11,lr}
 #endif
-                ldr     r2, [r0, #CONTEXT_OFFSET]
-                ldmia   r2!, {r3-r11, lr}
-                msr     PSP, r2
+
+                /* Restoring calle context of thread being swapped in.*/
+                adds    r0, #CONTEXT_OFFSET
+#if CH_DBG_ENABLE_STACK_CHECK
+                ldmia   r0, {r2-r12, lr}
+                msr     PSPLIM, r12
+#else
+                ldmia   r0, {r2-r11, lr}
+#endif
                 msr     BASEPRI, r3
+                msr     PSP, r2
                 bx      lr
 
 /*--------------------------------------------------------------------------*
@@ -97,13 +114,34 @@ SVC_Handler:
                 .thumb_func
                 .globl  PendSV_Handler
 PendSV_Handler:
+                /* Pointer to the current thread.*/
+                ldr     r1, =ch
+                ldr     r1, [r1, #CURRENT_OFFSET]
+
+                /* Saving callee context of thread being swapped out.*/
+                adds    r1, #CONTEXT_OFFSET
+                mrs     r2, PSP
                 mrs     r3, BASEPRI
-                mrs     r0, PSP
-                stmdb   r0!, {r3-r11,lr}
-                bl      port_swap_stacks
-                ldmia   r0!, {r3-r11, lr}
-                msr     PSP, r0
+#if CH_DBG_ENABLE_STACK_CHECK
+                mrs     r12, PSPLIM
+                stmia   r1, {r2-r12,lr}
+#else
+                stmia   r1, {r2-r11,lr}
+#endif
+
+                /* Selecting the thread to be swapped in.*/
+                bl      port_schedule_next
+
+                /* Restoring calle context of thread being swapped in.*/
+                adds    r0, #CONTEXT_OFFSET
+#if CH_DBG_ENABLE_STACK_CHECK
+                ldmia   r0, {r2-r12, lr}
+                msr     PSPLIM, r12
+#else
+                ldmia   r0, {r2-r11, lr}
+#endif
                 msr     BASEPRI, r3
+                msr     PSP, r2
                 bx      lr
 
 /*--------------------------------------------------------------------------*

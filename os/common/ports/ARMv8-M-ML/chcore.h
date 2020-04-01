@@ -255,25 +255,14 @@ struct port_extctx {};
  *          switch.
  */
 struct port_intctx {
-  uint32_t      basepri;
-  uint32_t      r4;
-  uint32_t      r5;
-  uint32_t      r6;
-  uint32_t      r7;
-  uint32_t      r8;
-  uint32_t      r9;
-  uint32_t      r10;
-  uint32_t      r11;
-  uint32_t      lr_exc;
-  /* Start of the hardware saved frame.*/
-  uint32_t      r0;
-  uint32_t      r1;
-  uint32_t      r2;
-  uint32_t      r3;
-  uint32_t      r12;
-  uint32_t      lr_thd;
-  uint32_t      pc;
-  uint32_t      xpsr;
+  uint32_t              r0;
+  uint32_t              r1;
+  uint32_t              r2;
+  uint32_t              r3;
+  uint32_t              r12;
+  uint32_t              lr_thd;
+  uint32_t              pc;
+  uint32_t              xpsr;
 };
 
 /**
@@ -284,9 +273,19 @@ struct port_intctx {
  */
 struct port_context {
   struct port_intctx    *sp;
+  uint32_t              basepri;
+  uint32_t              r4;
+  uint32_t              r5;
+  uint32_t              r6;
+  uint32_t              r7;
+  uint32_t              r8;
+  uint32_t              r9;
+  uint32_t              r10;
+  uint32_t              r11;
 #if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || defined(__DOXYGEN__)
   uint32_t              splim;
 #endif
+  uint32_t              lr_exc;
 };
 
 #endif /* !defined(_FROM_ASM_) */
@@ -364,24 +363,24 @@ struct port_context {
  */
 #if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || defined(__DOXYGEN__)
 #define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) do {                   \
+  (tp)->ctx.sp = (struct port_intctx *)((uint8_t *)(wtop) -                 \
+                                        sizeof (struct port_intctx));       \
+  (tp)->ctx.basepri     = CORTEX_BASEPRI_KERNEL;                            \
+  (tp)->ctx.r5          = (uint32_t)(arg);                                  \
+  (tp)->ctx.r4          = (uint32_t)(pf);                                   \
   (tp)->ctx.splim       = (uint32_t)(wbase);                                \
-  (tp)->ctx.sp          = (struct port_intctx *)                            \
-                          ((uint8_t *)(wtop) - sizeof (struct port_intctx));\
-  (tp)->ctx.sp->basepri = CORTEX_BASEPRI_KERNEL;                            \
-  (tp)->ctx.sp->r5      = (uint32_t)(arg);                                  \
-  (tp)->ctx.sp->r4      = (uint32_t)(pf);                                   \
-  (tp)->ctx.sp->lr_exc  = (uint32_t)0xFFFFFFFD;                             \
+  (tp)->ctx.lr_exc      = (uint32_t)0xFFFFFFFD;                             \
   (tp)->ctx.sp->xpsr    = (uint32_t)0x01000000;                             \
   (tp)->ctx.sp->pc      = (uint32_t)__port_thread_start;                    \
 } while (false)
 #else
 #define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) do {                   \
-  (tp)->ctx.sp          = (struct port_intctx *)                                     \
-                          ((uint8_t *)(wtop) - sizeof (struct port_intctx));\
-  (tp)->ctx.sp->basepri = CORTEX_BASEPRI_KERNEL;                            \
-  (tp)->ctx.sp->r5      = (uint32_t)(arg);                                  \
-  (tp)->ctx.sp->r4      = (uint32_t)(pf);                                   \
-  (tp)->ctx.sp->lr_exc  = (uint32_t)0xFFFFFFFD;                             \
+  (tp)->ctx.sp = (struct port_intctx *)((uint8_t *)(wtop) -                 \
+                                        sizeof (struct port_intctx));       \
+  (tp)->ctx.basepri     = CORTEX_BASEPRI_KERNEL;                            \
+  (tp)->ctx.r5          = (uint32_t)(arg);                                  \
+  (tp)->ctx.r4          = (uint32_t)(pf);                                   \
+  (tp)->ctx.lr_exc      = (uint32_t)0xFFFFFFFD;                             \
   (tp)->ctx.sp->xpsr    = (uint32_t)0x01000000;                             \
   (tp)->ctx.sp->pc      = (uint32_t)__port_thread_start;                    \
 } while (false)
@@ -459,7 +458,6 @@ struct port_context {
  * @param[in] ntp       the thread to be switched in
  * @param[in] otp       the thread to be switched out
  */
-#if (CH_DBG_ENABLE_STACK_CHECK == FALSE) || defined(__DOXYGEN__)
 #define port_switch(ntp, otp) do {                                          \
   _dbg_leave_lock();                                                        \
   register thread_t *_ntp asm ("r0") = (ntp);                               \
@@ -467,19 +465,6 @@ struct port_context {
   asm volatile ("svc     #0" : : "r" (_otp), "r" (_ntp) : "memory");        \
   _dbg_enter_lock();                                                        \
 } while (false)
-#else
-#define port_switch(ntp, otp) do {                                          \
-  _dbg_leave_lock();                                                        \
-  register thread_t *_ntp asm ("r0") = (ntp);                               \
-  register thread_t *_otp asm ("r1") = (otp);                               \
-  struct port_intctx *r13 = (struct port_intctx *)__get_PSP();              \
-  if ((stkalign_t *)(r13 - 1) < (otp)->wabase) {                            \
-    chSysHalt("stack overflow");                                            \
-  }                                                                         \
-  asm volatile ("svc     #0" : : "r" (_otp), "r" (_ntp) : "memory");        \
-  _dbg_enter_lock();                                                        \
-} while (false)
-#endif
 
 /*===========================================================================*/
 /* External declarations.                                                    */

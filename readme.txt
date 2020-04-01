@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- RT:  Relocated the "ctx" field in the thread structure in order to save
+       some RAM, it caused unused space in the "ch" variable.
 - EX:  Added support for ADXL355 Low Noise, Low Drift, Low Power, 3-Axis
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
