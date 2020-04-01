@@ -32,6 +32,8 @@
 #ifndef HAL_LLD_H
 #define HAL_LLD_H
 
+#include "aducm_registry.h"
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -394,21 +396,21 @@
  * @brief   I2C frequency.
  */
 #if (ADUCM_I2CCD_DIV == ADUCM_I2CCD_DIV1) || defined(__DOXYGEN__)
-#define ADUCM_I2CCLK                (ADUCM_UCLK / 1)
+#define ADUCM_I2C0CLK               (ADUCM_UCLK / 1)
 #elif ADUCM_I2CCD_DIV == ADUCM_I2CCD_DIV2
-#define ADUCM_I2CCLK                (ADUCM_UCLK / 2)
+#define ADUCM_I2C0CLK               (ADUCM_UCLK / 2)
 #elif ADUCM_I2CCD_DIV == ADUCM_I2CCD_DIV4
-#define ADUCM_I2CCLK                (ADUCM_UCLK / 4)
+#define ADUCM_I2C0CLK               (ADUCM_UCLK / 4)
 #elif ADUCM_I2CCD_DIV == ADUCM_I2CCD_DIV8
-#define ADUCM_I2CCLK                (ADUCM_UCLK / 8)
+#define ADUCM_I2C0CLK               (ADUCM_UCLK / 8)
 #elif ADUCM_I2CCD_DIV == ADUCM_I2CCD_DIV16
-#define ADUCM_I2CCLK                (ADUCM_UCLK / 16)
+#define ADUCM_I2C0CLK               (ADUCM_UCLK / 16)
 #elif ADUCM_I2CCD_DIV == ADUCM_I2CCD_DIV32
-#define ADUCM_I2CCLK                (ADUCM_UCLK / 32)
+#define ADUCM_I2C0CLK               (ADUCM_UCLK / 32)
 #elif ADUCM_I2CCD_DIV == ADUCM_I2CCD_DIV64
-#define ADUCM_I2CCLK                (ADUCM_UCLK / 64)
+#define ADUCM_I2C0CLK               (ADUCM_UCLK / 64)
 #elif ADUCM_I2CCD_DIV == ADUCM_I2CCD_DIV128
-#define ADUCM_I2CCLK                (ADUCM_UCLK / 128)
+#define ADUCM_I2C0CLK               (ADUCM_UCLK / 128)
 #else
 #error "invalid ADUCM_I2CCD_DIV value specified"
 #endif
@@ -417,21 +419,21 @@
  * @brief   UART frequency.
  */
 #if (ADUCM_UARTCD_DIV == ADUCM_UARTCD_DIV1) || defined(__DOXYGEN__)
-#define ADUCM_UARTCLK               (ADUCM_UCLK / 1)
+#define ADUCM_UART0CLK              (ADUCM_UCLK / 1)
 #elif ADUCM_UARTCD_DIV == ADUCM_UARTCD_DIV2
-#define ADUCM_UARTCLK               (ADUCM_UCLK / 2)
+#define ADUCM_UART0CLK              (ADUCM_UCLK / 2)
 #elif ADUCM_UARTCD_DIV == ADUCM_UARTCD_DIV4
-#define ADUCM_UARTCLK               (ADUCM_UCLK / 4)
+#define ADUCM_UART0CLK              (ADUCM_UCLK / 4)
 #elif ADUCM_UARTCD_DIV == ADUCM_UARTCD_DIV8
-#define ADUCM_UARTCLK               (ADUCM_UCLK / 8)
+#define ADUCM_UART0CLK              (ADUCM_UCLK / 8)
 #elif ADUCM_UARTCD_DIV == ADUCM_UARTCD_DIV16
-#define ADUCM_UARTCLK               (ADUCM_UCLK / 16)
+#define ADUCM_UART0CLK              (ADUCM_UCLK / 16)
 #elif ADUCM_UARTCD_DIV == ADUCM_UARTCD_DIV32
-#define ADUCM_UARTCLK               (ADUCM_UCLK / 32)
+#define ADUCM_UART0CLK              (ADUCM_UCLK / 32)
 #elif ADUCM_UARTCD_DIV == ADUCM_UARTCD_DIV64
-#define ADUCM_UARTCLK               (ADUCM_UCLK / 64)
+#define ADUCM_UART0CLK              (ADUCM_UCLK / 64)
 #elif ADUCM_UARTCD_DIV == ADUCM_UARTCD_DIV128
-#define ADUCM_UARTCLK               (ADUCM_UCLK / 128)
+#define ADUCM_UART0CLK              (ADUCM_UCLK / 128)
 #else
 #error "invalid ADUCM_UARTCD_DIV value specified"
 #endif
@@ -440,21 +442,21 @@
  * @brief   PWM frequency.
  */
 #if (ADUCM_PWMCD_DIV == ADUCM_PWMCD_DIV1) || defined(__DOXYGEN__)
-#define ADUCM_PWMCLK                (ADUCM_UCLK / 1)
+#define ADUCM_PWM0CLK               (ADUCM_UCLK / 1)
 #elif ADUCM_PWMCD_DIV == ADUCM_PWMCD_DIV2
-#define ADUCM_PWMCLK                (ADUCM_UCLK / 2)
+#define ADUCM_PWM0CLK               (ADUCM_UCLK / 2)
 #elif ADUCM_PWMCD_DIV == ADUCM_PWMCD_DIV4
-#define ADUCM_PWMCLK                (ADUCM_UCLK / 4)
+#define ADUCM_PWM0CLK               (ADUCM_UCLK / 4)
 #elif ADUCM_PWMCD_DIV == ADUCM_PWMCD_DIV8
-#define ADUCM_PWMCLK                (ADUCM_UCLK / 8)
+#define ADUCM_PWM0CLK               (ADUCM_UCLK / 8)
 #elif ADUCM_PWMCD_DIV == ADUCM_PWMCD_DIV16
-#define ADUCM_PWMCLK                (ADUCM_UCLK / 16)
+#define ADUCM_PWM0CLK               (ADUCM_UCLK / 16)
 #elif ADUCM_PWMCD_DIV == ADUCM_PWMCD_DIV32
-#define ADUCM_PWMCLK                (ADUCM_UCLK / 32)
+#define ADUCM_PWM0CLK               (ADUCM_UCLK / 32)
 #elif ADUCM_PWMCD_DIV == ADUCM_PWMCD_DIV64
-#define ADUCM_PWMCLK                (ADUCM_UCLK / 64)
+#define ADUCM_PWM0CLK               (ADUCM_UCLK / 64)
 #elif ADUCM_PWMCD_DIV == ADUCM_PWMCD_DIV128
-#define ADUCM_PWMCLK                (ADUCM_UCLK / 128)
+#define ADUCM_PWM0CLK               (ADUCM_UCLK / 128)
 #else
 #error "invalid ADUCM_PWMCD_DIV value specified"
 #endif

@@ -25,7 +25,6 @@
 #ifndef HAL_PAL_LLD_H
 #define HAL_PAL_LLD_H
 
-
 #include "aducm_gp.h"
 
 #if HAL_USE_PAL || defined(__DOXYGEN__)
