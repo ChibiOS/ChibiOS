@@ -30,21 +30,18 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-/**
- * @name    ADUCM UART Fractional BR Divider register's bitfields.
- * @{
- */
-#define ADUCM_COMFBR_ENABLE                 COMFBR_ENABLE_EN
-#define ADUCM_COMFBR_DIVM(m)                ((m) << 11U)
-#define ADUCM_COMFBR_DIVN(n)                ((n) << 0U)
-
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
-/** @brief USART1 serial driver identifier.*/
-#if (ADUCM_SERIAL_USE_UART0 == TRUE) || defined(__DOXYGEN__)
+/** @brief UART0 serial driver identifier.*/
+#if ADUCM_SERIAL_USE_UART0 || defined(__DOXYGEN__)
 SerialDriver SD0;
+#endif
+
+/** @brief UART0 serial driver identifier.*/
+#if ADUCM_SERIAL_USE_UART1 || defined(__DOXYGEN__)
+SerialDriver SD1;
 #endif
 
 /*===========================================================================*/
@@ -56,7 +53,7 @@ SerialDriver SD0;
  */
 static const SerialConfig default_config = {
   SERIAL_DEFAULT_BITRATE,
-  COMLCR_WLS_8BITS
+  ADUCM_UART_LCR_WLS_8_BITS
 };
 
 #if ADUCM_SERIAL_USE_UART0 || defined(__DOXYGEN__)
@@ -65,6 +62,14 @@ static uint8_t sd_in_buf0[ADUCM_SERIAL_UART0_IN_BUF_SIZE];
 
 /** @brief Output buffer for SD0.*/
 static uint8_t sd_out_buf0[ADUCM_SERIAL_UART0_OUT_BUF_SIZE];
+#endif
+
+#if ADUCM_SERIAL_USE_UART1 || defined(__DOXYGEN__)
+/** @brief Input buffer for SD1.*/
+static uint8_t sd_in_buf1[ADUCM_SERIAL_UART1_IN_BUF_SIZE];
+
+/** @brief Output buffer for SD1.*/
+static uint8_t sd_out_buf1[ADUCM_SERIAL_UART1_OUT_BUF_SIZE];
 #endif
 
 /*===========================================================================*/
@@ -83,7 +88,7 @@ static void uart_init(SerialDriver *sdp, const SerialConfig *config) {
   uint32_t comdiv, divn, divm;
   
   /* Resetting the UART state machine. */
-  sdp->uart->COMCON = COMCON_DISABLE_EN;
+  sdp->uart->CTL = ADUCM_UART_CTL_DISABLE;
 
   /* Baud rate setting.*/
   osalDbgAssert(((sdp->clock / 32U) > config->speed),
@@ -120,17 +125,17 @@ static void uart_init(SerialDriver *sdp, const SerialConfig *config) {
                       
   osalDbgAssert((divn <= 2047), "invalid divn value");
   
-  sdp->uart->COMFBR = ADUCM_COMFBR_ENABLE | ADUCM_COMFBR_DIVM(divm) | 
-                      ADUCM_COMFBR_DIVN(divn);
+  sdp->uart->FBR = ADUCM_UART_FBR_ENABLE | ADUCM_UART_FBR_DIVM(divm) |
+                   ADUCM_UART_FBR_DIVN(divn);
                       
-  sdp->uart->COMDIV = comdiv;
+  sdp->uart->DIV = comdiv;
   
   /* Line and modem configurations*/
-  sdp->uart->COMLCR = config->lcr;
+  sdp->uart->LCR = config->lcr;
   
-  sdp->uart->COMIEN = COMIEN_EDMAR_DIS | COMIEN_EDMAT_DIS | COMIEN_EDSSI_EN |
-                      COMIEN_ELSI_EN | COMIEN_ETBEI_EN | COMIEN_ERBFI_EN;
-  sdp->uart->COMCON = COMCON_DISABLE_DIS;
+  sdp->uart->IEN = ADUCM_UART_IEN_EDSSI | ADUCM_UART_IEN_ELSI |
+                   ADUCM_UART_IEN_ETBEI | ADUCM_UART_IEN_ERBFI;
+  sdp->uart->CTL = ADUCM_UART_CTL_ENABLE;
 }
 
 /**
@@ -141,8 +146,8 @@ static void uart_init(SerialDriver *sdp, const SerialConfig *config) {
  */
 static void uart_deinit(SerialDriver *sdp) {
 
-  sdp->uart->COMIEN = 0;
-  sdp->uart->COMCON = COMCON_DISABLE_EN;
+  sdp->uart->IEN = 0;
+  sdp->uart->CTL = ADUCM_UART_CTL_DISABLE;
 }
 
 /**
@@ -154,11 +159,11 @@ static void uart_deinit(SerialDriver *sdp) {
 static void set_error(SerialDriver *sdp, uint32_t lsr) {
   eventflags_t sts = 0;
 
-  if (lsr & COMLSR_OE)
+  if (lsr & ADUCM_UART_LSR_OE)
     sts |= SD_OVERRUN_ERROR;
-  if (lsr & COMLSR_PE)
+  if (lsr & ADUCM_UART_LSR_PE)
     sts |= SD_PARITY_ERROR;
-  if (lsr & COMLSR_FE)
+  if (lsr & ADUCM_UART_LSR_FE)
     sts |= SD_FRAMING_ERROR;
   osalSysLockFromISR();
   chnAddFlagsI(sdp, sts);
@@ -169,7 +174,15 @@ static void set_error(SerialDriver *sdp, uint32_t lsr) {
 static void notify0(io_queue_t *qp) {
 
   (void)qp;
-  pADI_UART->COMIEN |= COMIEN_ETBEI_EN;
+  UART0->IEN |= ADUCM_UART_IEN_ETBEI;
+}
+#endif
+
+#if ADUCM_SERIAL_USE_UART1 || defined(__DOXYGEN__)
+static void notify1(io_queue_t *qp) {
+
+  (void)qp;
+  UART1->IEN |= ADUCM_UART_IEN_ETBEI;
 }
 #endif
 
@@ -196,6 +209,24 @@ OSAL_IRQ_HANDLER(ADUCM_UART0_HANDLER) {
 }
 #endif
 
+#if ADUCM_SERIAL_USE_UART1 || defined(__DOXYGEN__)
+#if !defined(ADUCM_UART1_HANDLER)
+#error "ADUCM_UART1_HANDLER not defined"
+#endif
+/**
+ * @brief   UART1 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(ADUCM_UART1_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  sd_lld_serve_interrupt(&SD1);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -207,14 +238,26 @@ OSAL_IRQ_HANDLER(ADUCM_UART0_HANDLER) {
  */
 void sd_lld_init(void) {
 
-#if ADUCM_SERIAL_USE_UART0 == TRUE
+#if ADUCM_SERIAL_USE_UART0
   sdObjectInit(&SD0);
   iqObjectInit(&SD0.iqueue, sd_in_buf0, sizeof sd_in_buf0, NULL, &SD0);
   oqObjectInit(&SD0.oqueue, sd_out_buf0, sizeof sd_out_buf0, notify0, &SD0);
-  SD0.uart = pADI_UART;
-  SD0.clock = ADUCM_UARTCLK;
-
+  SD0.uart = UART0;
+  SD0.clock = ADUCM_UART0CLK;
+#if defined(ADUCM_SERIAL_UART0_PRIORITY)
   nvicEnableVector(ADUCM_UART0_NUMBER, ADUCM_SERIAL_UART0_PRIORITY); 
+#endif
+#endif
+
+#if ADUCM_SERIAL_USE_UART1
+  sdObjectInit(&SD1);
+  iqObjectInit(&SD1.iqueue, sd_in_buf1, sizeof sd_in_buf1, NULL, &SD1);
+  oqObjectInit(&SD1.oqueue, sd_out_buf1, sizeof sd_out_buf1, notify1, &SD1);
+  SD1.uart = UART1;
+  SD1.clock = ADUCM_UART1CLK;
+#if defined(ADUCM_SERIAL_UART1_PRIORITY)
+  nvicEnableVector(ADUCM_UART1_NUMBER, ADUCM_SERIAL_UART1_PRIORITY); 
+#endif
 #endif
 }
 
@@ -235,9 +278,15 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
   }
 
   if (sdp->state == SD_STOP) {
-#if ADUCM_SERIAL_USE_UART0 == TRUE
+#if ADUCM_SERIAL_USE_UART0 && !ADUCM_HAS_CLK_AUTOGATE
     if (&SD0 == sdp) {
       ccEnableUART0();
+    }
+#endif
+
+#if ADUCM_SERIAL_USE_UART1 && !ADUCM_HAS_CLK_AUTOGATE
+    if (&SD1 == sdp) {
+      ccEnableUART1();
     }
 #endif
   }
@@ -259,9 +308,16 @@ void sd_lld_stop(SerialDriver *sdp) {
     /* UART is de-initialized then clocks are disabled.*/
     uart_deinit(sdp);
 
-#if ADUCM_SERIAL_USE_UART0 == TRUE
+#if ADUCM_SERIAL_USE_UART0 && !ADUCM_HAS_CLK_AUTOGATE
     if (&SD0 == sdp) {
       ccDisableUART0();
+      return;
+    }
+#endif
+
+#if ADUCM_SERIAL_USE_UART1 && !ADUCM_HAS_CLK_AUTOGATE
+    if (&SD1 == sdp) {
+      ccDisableUART1();
       return;
     }
 #endif
@@ -274,15 +330,15 @@ void sd_lld_stop(SerialDriver *sdp) {
  * @param[in] sdp       communication channel associated to the USART
  */
 void sd_lld_serve_interrupt(SerialDriver *sdp) {
-  uint32_t irr = sdp->uart->COMIIR;
-  uint32_t ien = sdp->uart->COMIEN;
+  uint32_t irr = sdp->uart->IIR;
+  uint32_t ien = sdp->uart->IEN;
   
-  if(!(irr & COMIIR_NINT_MSK)) {
-    if(irr == COMIIR_STA_MODEMSTATUS) {
+  if(!(irr & ADUCM_UART_IIR_NINT)) {
+    if(irr == ADUCM_UART_IIR_STA_MODEM) {
       volatile uint32_t msr;
 
       /* Clearing the interrupt. */
-      msr = sdp->uart->COMMSR;
+      msr = sdp->uart->MSR;
 
      (void) msr;
     }
@@ -292,12 +348,12 @@ void sd_lld_serve_interrupt(SerialDriver *sdp) {
           an extra interrupt to serve.
        2) FIFO mode is enabled on devices that support it, we need to empty
           the FIFO.*/
-    while (irr & COMIIR_STA_RXBUFFULL) {
+    while (irr & ADUCM_UART_IIR_STA_RX_FULL) {
       osalSysLockFromISR();
-      sdIncomingDataI(sdp, (uint8_t)sdp->uart->COMRX);
+      sdIncomingDataI(sdp, (uint8_t)sdp->uart->DATA);
       osalSysUnlockFromISR();
 
-      irr = sdp->uart->COMIIR;
+      irr = sdp->uart->IIR;
     }
 
     /* Transmission buffer empty, note it is a while in order to handle two
@@ -306,43 +362,38 @@ void sd_lld_serve_interrupt(SerialDriver *sdp) {
           would cause an extra interrupt to serve.
        2) FIFO mode is enabled on devices that support it, we need to fill
           the FIFO.*/
-    if (ien & COMIEN_ETBEI) {
-      while (irr & COMIIR_STA_TXBUFEMPTY) {
+    if (ien & ADUCM_UART_IEN_ETBEI) {
+      while (irr & ADUCM_UART_IIR_STA_TX_EMPTY) {
         msg_t b;
 
         osalSysLockFromISR();
         b = oqGetI(&sdp->oqueue);
         if (b < MSG_OK) {
           chnAddFlagsI(sdp, CHN_OUTPUT_EMPTY);
-          sdp->uart->COMIEN = ien & ~COMIEN_ETBEI;
+          sdp->uart->IEN = ien & ~ADUCM_UART_IEN_ETBEI;
           osalSysUnlockFromISR();
           break;
         }
-        sdp->uart->COMTX = b;
+        sdp->uart->DATA = b;
         osalSysUnlockFromISR();
   
-        irr = sdp->uart->COMIIR;
+        irr = sdp->uart->IIR;
       }
     }
     
-    if(irr == COMIIR_STA_RXLINESTATUS) {
+    if(irr == ADUCM_UART_IIR_STA_LINE) {
       uint32_t lsr;
 
       /* Clearing the interrupt. */
-      lsr = sdp->uart->COMLSR;
+      lsr = sdp->uart->LSR;
 
       /* Error handling. */
-      if(lsr & 0x0EU) {
-        set_error(sdp, lsr);
-      }
-
-      /* Error handling. */
-      if(lsr & COMLSR_TEMT) {
+      if(lsr & (ADUCM_UART_LSR_FE | ADUCM_UART_LSR_PE | ADUCM_UART_LSR_OE)) {
         set_error(sdp, lsr);
       }
 
       /* Physical transmission end.*/
-      if (lsr & COMLSR_TEMT) {
+      if (lsr & ADUCM_UART_LSR_TEMT) {
         osalSysLockFromISR();
         if (oqIsEmptyI(&sdp->oqueue)) {
           chnAddFlagsI(sdp, CHN_TRANSMISSION_END);

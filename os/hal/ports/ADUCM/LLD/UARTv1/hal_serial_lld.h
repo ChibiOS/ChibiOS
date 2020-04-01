@@ -25,6 +25,8 @@
 #ifndef HAL_SERIAL_LLD_H
 #define HAL_SERIAL_LLD_H
 
+#include "aducm_uart.h"
+
 #if HAL_USE_SERIAL || defined(__DOXYGEN__)
 
 /*===========================================================================*/
@@ -58,10 +60,26 @@
 #endif
 
 /**
+ * @brief   UART1 driver enable switch.
+ * @details If set to @p TRUE the support for UART1 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(ADUCM_SERIAL_USE_UART1) || defined(__DOXYGEN__)
+#define ADUCM_SERIAL_USE_UART1              FALSE
+#endif
+
+/**
  * @brief   UART0 interrupt priority level setting.
  */
 #if !defined(ADUCM_SERIAL_UART0_PRIORITY) || defined(__DOXYGEN__)
 #define ADUCM_SERIAL_UART0_PRIORITY         12
+#endif
+
+/**
+ * @brief   UART1 interrupt priority level setting.
+ */
+#if !defined(ADUCM_SERIAL_UART1_PRIORITY) || defined(__DOXYGEN__)
+#define ADUCM_SERIAL_UART1_PRIORITY         12
 #endif
 
 /**
@@ -79,12 +97,45 @@
 #endif
 /** @} */
 
+/**
+ * @brief   Input buffer size for UART1.
+ */
+#if !defined(ADUCM_SERIAL_UART1_IN_BUF_SIZE) || defined(__DOXYGEN__)
+#define ADUCM_SERIAL_UART1_IN_BUF_SIZE      SERIAL_BUFFERS_SIZE
+#endif
+
+/**
+ * @brief   Output buffer size for UART1.
+ */
+#if !defined(ADUCM_SERIAL_UART1_OUT_BUF_SIZE) || defined(__DOXYGEN__)
+#define ADUCM_SERIAL_UART1_OUT_BUF_SIZE     SERIAL_BUFFERS_SIZE
+#endif
+/** @} */
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !ADUCM_SERIAL_USE_UART0
+#if ADUCM_SERIAL_USE_UART0 && !ADUCM_HAS_UART0
+#error "UART0 not present in the selected device"
+#endif
+
+#if ADUCM_SERIAL_USE_UART1 && !ADUCM_HAS_UART1
+#error "UART1 not present in the selected device"
+#endif
+
+#if !ADUCM_SERIAL_USE_UART0 && !ADUCM_SERIAL_USE_UART1
 #error "SERIAL driver activated but no UART peripheral assigned"
+#endif
+
+#if  ADUCM_SERIAL_USE_UART0 &&                                              \
+    !OSAL_IRQ_IS_VALID_PRIORITY(ADUCM_SERIAL_UART0_PRIORITY)
+#error "Invalid IRQ priority assigned to UART0"
+#endif
+
+#if  ADUCM_SERIAL_USE_UART1 &&                                              \
+    !OSAL_IRQ_IS_VALID_PRIORITY(ADUCM_SERIAL_UART1_PRIORITY)
+#error "Invalid IRQ priority assigned to UART1"
 #endif
 
 /*===========================================================================*/
@@ -124,7 +175,7 @@ typedef struct {
   output_queue_t            oqueue;                                         \
   /* End of the mandatory fields.*/                                         \
   /* Pointer to the UART registers block.*/                                 \
-  ADI_UART_TypeDef          *uart;                                          \
+  aducm_uart_t              *uart;                                          \
   /* Clock frequency for the associated UART.*/                             \
   uint32_t                  clock;
 
@@ -136,8 +187,11 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if (ADUCM_SERIAL_USE_UART0 == TRUE) && !defined(__DOXYGEN__)
+#if ADUCM_SERIAL_USE_UART0 && !defined(__DOXYGEN__)
 extern SerialDriver SD0;
+#endif
+#if ADUCM_SERIAL_USE_UART1 && !defined(__DOXYGEN__)
+extern SerialDriver SD1;
 #endif
 
 #ifdef __cplusplus
