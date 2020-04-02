@@ -91,21 +91,27 @@ SVC_Handler:
 //                movs    r3, #(2 << 5)
 #if CH_DBG_ENABLE_STACK_CHECK
                 mrs     r12, PSPLIM
-                stmia   r1, {r2-r12,lr}
+                stmia   r1!, {r2-r12,lr}
 #else
-                stmia   r1, {r2-r11,lr}
+                stmia   r1!, {r2-r11,lr}
+#endif
+#if CORTEX_USE_FPU
+                vstmia  r1, {s16-s31}
 #endif
 
                 /* Restoring calle context of thread being swapped in.*/
                 adds    r0, #CONTEXT_OFFSET
 #if CH_DBG_ENABLE_STACK_CHECK
-                ldmia   r0, {r2-r12, lr}
+                ldmia   r0!, {r2-r12, lr}
                 msr     PSPLIM, r12
 #else
-                ldmia   r0, {r2-r11, lr}
+                ldmia   r0!, {r2-r11, lr}
 #endif
                 msr     BASEPRI, r3
                 msr     PSP, r2
+#if CORTEX_USE_FPU
+                vldmia  r0, {s16-s31}
+#endif
                 bx      lr
 
 /*--------------------------------------------------------------------------*
@@ -124,9 +130,12 @@ PendSV_Handler:
                 mrs     r3, BASEPRI
 #if CH_DBG_ENABLE_STACK_CHECK
                 mrs     r12, PSPLIM
-                stmia   r1, {r2-r12,lr}
+                stmia   r1!, {r2-r12,lr}
 #else
-                stmia   r1, {r2-r11,lr}
+                stmia   r1!, {r2-r11,lr}
+#endif
+#if CORTEX_USE_FPU
+                vstmia  r1, {s16-s31}
 #endif
 
                 /* Selecting the thread to be swapped in.*/
@@ -135,13 +144,16 @@ PendSV_Handler:
                 /* Restoring calle context of thread being swapped in.*/
                 adds    r0, #CONTEXT_OFFSET
 #if CH_DBG_ENABLE_STACK_CHECK
-                ldmia   r0, {r2-r12, lr}
+                ldmia   r0!, {r2-r12, lr}
                 msr     PSPLIM, r12
 #else
-                ldmia   r0, {r2-r11, lr}
+                ldmia   r0!, {r2-r11, lr}
 #endif
                 msr     BASEPRI, r3
                 msr     PSP, r2
+#if CORTEX_USE_FPU
+                vldmia  r0, {s16-s31}
+#endif
                 bx      lr
 
 /*--------------------------------------------------------------------------*

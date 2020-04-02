@@ -263,6 +263,26 @@ struct port_intctx {
   uint32_t              lr_thd;
   uint32_t              pc;
   uint32_t              xpsr;
+#if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
+  uint32_t              s0;
+  uint32_t              s1;
+  uint32_t              s2;
+  uint32_t              s3;
+  uint32_t              s4;
+  uint32_t              s5;
+  uint32_t              s6;
+  uint32_t              s7;
+  uint32_t              s8;
+  uint32_t              s9;
+  uint32_t              s10;
+  uint32_t              s11;
+  uint32_t              s12;
+  uint32_t              s13;
+  uint32_t              s14;
+  uint32_t              s15;
+  uint32_t              fpscr;
+  uint32_t              reserved;
+#endif /* CORTEX_USE_FPU == TRUE */
 };
 
 /**
@@ -286,6 +306,24 @@ struct port_context {
   uint32_t              splim;
 #endif
   uint32_t              lr_exc;
+#if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
+  uint32_t              s16;
+  uint32_t              s17;
+  uint32_t              s18;
+  uint32_t              s19;
+  uint32_t              s20;
+  uint32_t              s21;
+  uint32_t              s22;
+  uint32_t              s23;
+  uint32_t              s24;
+  uint32_t              s25;
+  uint32_t              s26;
+  uint32_t              s27;
+  uint32_t              s28;
+  uint32_t              s29;
+  uint32_t              s30;
+  uint32_t              s31;
+#endif /* CORTEX_USE_FPU == TRUE */
 };
 
 #endif /* !defined(_FROM_ASM_) */
