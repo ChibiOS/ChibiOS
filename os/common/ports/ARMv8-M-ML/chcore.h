@@ -109,6 +109,17 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Number of MPU regions to be saved/restored during context switch.
+ * @note    The first region is always region zero.
+ * @note    The use of this option has an overhead of 8 bytes for each
+ *          region for each thread.
+ * @note    Allowed values are 0..4, zero means none.
+ */
+#if !defined(PORT_SWITCHED_REGIONS_NUMBER) || defined(__DOXYGEN__)
+#define PORT_SWITCHED_REGIONS_NUMBER    0
+#endif
+
+/**
  * @brief   Enables an alternative timer implementation.
  * @details Usually the port uses a timer interface defined in the file
  *          @p chcore_timer.h, if this option is enabled then the file
@@ -172,6 +183,10 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+#if (PORT_SWITCHED_REGIONS_NUMBER < 0) || (PORT_SWITCHED_REGIONS_NUMBER > 4)
+#error "invalid PORT_SWITCHED_REGIONS_NUMBER value"
+#endif
 
 /**
  * @name    Port information
@@ -415,6 +430,15 @@ struct port_context {
 #endif
 
 /**
+ * @brief   Initialization of MPU part of thread context.
+ */
+#if (PORT_SWITCHED_REGIONS_NUMBER == 0) || defined(__DOXYGEN__)
+#define PORT_SETUP_CONTEXT_MPU(tp)
+#else
+#define PORT_SETUP_CONTEXT_MPU(tp)
+#endif
+
+/**
  * @brief   Platform dependent part of the @p chThdCreateI() API.
  * @details This code usually setup the context switching frame represented
  *          by an @p port_intctx structure.
@@ -430,6 +454,7 @@ struct port_context {
   (tp)->ctx.sp->pc      = (uint32_t)__port_thread_start;                    \
   (tp)->ctx.sp->xpsr    = (uint32_t)0x01000000;                             \
   PORT_SETUP_CONTEXT_FPU(tp);                                               \
+  PORT_SETUP_CONTEXT_MPU(tp);                                               \
 } while (false)
 
 /**
