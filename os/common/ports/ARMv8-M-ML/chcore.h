@@ -395,34 +395,42 @@ struct port_context {
   (((n) >= CORTEX_PRIORITY_SVCALL) && ((n) < CORTEX_PRIORITY_PENDSV))
 
 /**
+ * @brief   Initialization of stack check part of thread context.
+ */
+#if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || defined(__DOXYGEN__)
+#define PORT_SETUP_CONTEXT_SPLIM(tp, wbase)                                 \
+  (tp)->ctx.splim = (uint32_t)(wbase)
+#else
+#define PORT_SETUP_CONTEXT_SPLIM(tp, wbase)
+#endif
+
+/**
+ * @brief   Initialization of FPU part of thread context.
+ */
+#if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
+#define PORT_SETUP_CONTEXT_FPU(tp)                                          \
+  (tp)->ctx.sp->fpscr = (uint32_t)0
+#else
+#define PORT_SETUP_CONTEXT_FPU(tp)
+#endif
+
+/**
  * @brief   Platform dependent part of the @p chThdCreateI() API.
  * @details This code usually setup the context switching frame represented
  *          by an @p port_intctx structure.
  */
-#if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || defined(__DOXYGEN__)
 #define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) do {                   \
   (tp)->ctx.sp = (struct port_intctx *)((uint8_t *)(wtop) -                 \
                                         sizeof (struct port_intctx));       \
   (tp)->ctx.basepri     = CORTEX_BASEPRI_KERNEL;                            \
   (tp)->ctx.r5          = (uint32_t)(arg);                                  \
   (tp)->ctx.r4          = (uint32_t)(pf);                                   \
-  (tp)->ctx.splim       = (uint32_t)(wbase);                                \
+  PORT_SETUP_CONTEXT_SPLIM(tp, wbase);                                      \
   (tp)->ctx.lr_exc      = (uint32_t)0xFFFFFFFD;                             \
-  (tp)->ctx.sp->xpsr    = (uint32_t)0x01000000;                             \
   (tp)->ctx.sp->pc      = (uint32_t)__port_thread_start;                    \
-} while (false)
-#else
-#define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) do {                   \
-  (tp)->ctx.sp = (struct port_intctx *)((uint8_t *)(wtop) -                 \
-                                        sizeof (struct port_intctx));       \
-  (tp)->ctx.basepri     = CORTEX_BASEPRI_KERNEL;                            \
-  (tp)->ctx.r5          = (uint32_t)(arg);                                  \
-  (tp)->ctx.r4          = (uint32_t)(pf);                                   \
-  (tp)->ctx.lr_exc      = (uint32_t)0xFFFFFFFD;                             \
   (tp)->ctx.sp->xpsr    = (uint32_t)0x01000000;                             \
-  (tp)->ctx.sp->pc      = (uint32_t)__port_thread_start;                    \
+  PORT_SETUP_CONTEXT_FPU(tp);                                               \
 } while (false)
-#endif
 
 /**
  * @brief   Computes the thread working area global size.
