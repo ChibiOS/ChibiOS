@@ -48,12 +48,12 @@
 #define CURRENT_OFFSET  20          /* ch.rlist.current */
 #define CONTEXT_OFFSET  20
 #else
-#define CURRENT_OFFSET  12          /* nil.current */
+#define CURRENT_OFFSET  12
 #define CONTEXT_OFFSET  12
 #endif
 
 #elif defined(_CHIBIOS_NIL_CONF_)
-#define CURRENT_OFFSET  0
+#define CURRENT_OFFSET  0           /* nil.current */
 #define CONTEXT_OFFSET  0
 
 #else
