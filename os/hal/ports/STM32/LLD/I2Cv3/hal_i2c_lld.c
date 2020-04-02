@@ -461,7 +461,7 @@ static void i2c_lld_serve_error_interrupt(I2CDriver *i2cp, uint32_t isr) {
   if (isr & I2C_ISR_TIMEOUT)
     i2cp->errors |= I2C_TIMEOUT;
 
-  /* If some error has been identified then sends wakes the waiting thread.*/
+  /* If some error has been identified then wake the waiting thread.*/
   if (i2cp->errors != I2C_NO_ERROR)
     _i2c_wakeup_error_isr(i2cp);
 }
@@ -770,16 +770,17 @@ void i2c_lld_init(void) {
   I2CD4.i2c     = I2C4;
 #if STM32_I2C_USE_DMA == TRUE
 #if defined(STM32_I2C_DMA_REQUIRED) && defined(STM32_I2C_BDMA_REQUIRED)
-  I2CD4.is_bdma = true;
-#endif
 #if STM32_I2C4_USE_BDMA == TRUE
+  I2CD4.is_bdma = true;
   I2CD4.rx.bdma = NULL;
   I2CD4.tx.bdma = NULL;
 #else
+  I2CD4.is_bdma = false;
   I2CD4.rx.dma = NULL;
   I2CD4.tx.dma = NULL;
-#endif
-#endif
+#endif /* STM32_I2C4_USE_BDMA == TRUE */
+#endif /* defined(STM32_I2C_DMA_REQUIRED) && defined(STM32_I2C_BDMA_REQUIRED) */
+#endif /* STM32_I2C_USE_DMA == TRUE */
 #if defined(STM32_I2C4_GLOBAL_NUMBER) || defined(__DOXYGEN__)
       nvicEnableVector(STM32_I2C4_GLOBAL_NUMBER, STM32_I2C_I2C4_IRQ_PRIORITY);
 #elif defined(STM32_I2C4_EVENT_NUMBER) && defined(STM32_I2C4_ERROR_NUMBER)

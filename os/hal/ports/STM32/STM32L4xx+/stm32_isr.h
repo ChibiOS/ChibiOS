@@ -148,8 +148,8 @@
 #define STM32_I2C2_ERROR_HANDLER            VectorC8
 #define STM32_I2C3_EVENT_HANDLER            Vector160
 #define STM32_I2C3_ERROR_HANDLER            Vector164
-#define STM32_I2C4_EVENT_HANDLER            Vector18C
-#define STM32_I2C4_ERROR_HANDLER            Vector190
+#define STM32_I2C4_ERROR_HANDLER            Vector18C
+#define STM32_I2C4_EVENT_HANDLER            Vector190
 
 #define STM32_I2C1_EVENT_NUMBER             31
 #define STM32_I2C1_ERROR_NUMBER             32
@@ -157,8 +157,9 @@
 #define STM32_I2C2_ERROR_NUMBER             34
 #define STM32_I2C3_EVENT_NUMBER             72
 #define STM32_I2C3_ERROR_NUMBER             73
-#define STM32_I2C4_EVENT_NUMBER             83
-#define STM32_I2C4_ERROR_NUMBER             84
+#define STM32_I2C4_ERROR_NUMBER             83
+#define STM32_I2C4_EVENT_NUMBER             84
+
 
 /*
  * OCTOSPI unit.
