@@ -74,7 +74,9 @@
 *****************************************************************************
 
 *** Next ***
-- FIX: Fixed incorrect clock check when using PLLSAI1R in ADCv3 (bug #1078)
+- FIX: Fixed I2CD4 interrupt vectors are swapped versus I2CD1-I2CD3 (bug #1080)
+       (backported to 20.3.1).
+- FIX: Fixed incorrect clock check when using PLLSAI1R in ADCv3 (bug #1079)
        (backported to 20.3.1).
 - RT:  Relocated the "ctx" field in the thread structure in order to save
        some RAM, it caused unused space in the "ch" variable.
