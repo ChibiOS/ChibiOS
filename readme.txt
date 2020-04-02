@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- FIX: Fixed incorrect clock check when using PLLSAI1R in ADCv3 (bug #1078)
+       (backported to 20.3.1).
 - RT:  Relocated the "ctx" field in the thread structure in order to save
        some RAM, it caused unused space in the "ch" variable.
 - EX:  Added support for ADXL355 Low Noise, Low Drift, Low Power, 3-Axis
@@ -86,3 +88,4 @@
        (backported to 20.3.1).
 - FIX: Fixed problem in chMtxUnlockAllS() (bug #1076).
        (backported to 20.3.1)(backported to 19.1.4)(backported to 18.2.3).
+    
