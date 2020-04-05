@@ -49,6 +49,7 @@
 
 #define __ICER          ICER
 #define __ICPR          ICPR
+#define __ISPR          ISPR
 #define __ISER          ISER
 
 /*===========================================================================*/
@@ -132,6 +133,16 @@ void nvicSetSystemHandlerPriority(uint32_t handler, uint32_t prio) {
 void nvicClearPending(uint32_t n) {
 
   NVIC->__ICPR[n >> 5] = 1 << (n & 0x1F);
+}
+
+/**
+ * @brief   Sets as pending an interrupt source.
+ *
+ * @param[in] n         the interrupt number
+ */
+void nvicSetPending(uint32_t n) {
+
+  NVIC->__ISPR[n >> 5] = 1 << (n & 0x1F);
 }
 
 /** @} */

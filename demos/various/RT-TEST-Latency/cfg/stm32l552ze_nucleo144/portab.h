@@ -15,40 +15,31 @@
 */
 
 /**
- * @file    common/ARMCMx/nvic.h
- * @brief   Cortex-Mx NVIC support macros and structures.
+ * @file    portab.h
+ * @brief   Application portability macros and structures.
  *
- * @addtogroup COMMON_ARMCMx_NVIC
+ * @addtogroup application_portability
  * @{
  */
 
-#ifndef NVIC_H
-#define NVIC_H
+#ifndef PORTAB_H
+#define PORTAB_H
 
 /*===========================================================================*/
-/* Driver constants.                                                         */
+/* Module constants.                                                         */
 /*===========================================================================*/
 
-/**
- * @name System vectors numbers
- * @{
- */
-#define HANDLER_MEM_MANAGE      0       /**< MEM MANAGE vector id.          */
-#define HANDLER_BUS_FAULT       1       /**< BUS FAULT vector id.           */
-#define HANDLER_USAGE_FAULT     2       /**< USAGE FAULT vector id.         */
-#define HANDLER_RESERVED_3      3
-#define HANDLER_RESERVED_4      4
-#define HANDLER_RESERVED_5      5
-#define HANDLER_RESERVED_6      6
-#define HANDLER_SVCALL          7       /**< SVCALL vector id.              */
-#define HANDLER_DEBUG_MONITOR   8       /**< DEBUG MONITOR vector id.       */
-#define HANDLER_RESERVED_9      9
-#define HANDLER_PENDSV          10      /**< PENDSV vector id.              */
-#define HANDLER_SYSTICK         11      /**< SYS TCK vector id.             */
-/** @} */
+#define PORTAB_LINE_LED1            LINE_LED
+#define PORTAB_LED_OFF              PAL_LOW
+#define PORTAB_LED_ON               PAL_HIGH
+
+#define PORTAB_LINE_BUTTON          LINE_BUTTON
+#define PORTAB_BUTTON_PRESSED       PAL_HIGH
+
+#define PORTAB_SD1                  LPSD1
 
 /*===========================================================================*/
-/* Driver pre-compile time settings.                                         */
+/* Module pre-compile time settings.                                         */
 /*===========================================================================*/
 
 /*===========================================================================*/
@@ -56,17 +47,12 @@
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Driver data structures and types.                                         */
+/* Module data structures and types.                                         */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Driver macros.                                                            */
+/* Module macros.                                                            */
 /*===========================================================================*/
-
-/**
- * @brief   Priority level to priority mask conversion macro.
- */
-#define NVIC_PRIORITY_MASK(prio) ((prio) << (8U - (unsigned)__NVIC_PRIO_BITS))
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -75,15 +61,15 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void nvicEnableVector(uint32_t n, uint32_t prio);
-  void nvicDisableVector(uint32_t n);
-  void nvicSetSystemHandlerPriority(uint32_t handler, uint32_t prio);
-  void nvicClearPending(uint32_t n);
-  void nvicSetPending(uint32_t n);
+  void portab_setup(void);
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* NVIC_H */
+/*===========================================================================*/
+/* Module inline functions.                                                  */
+/*===========================================================================*/
+
+#endif /* PORTAB_H */
 
 /** @} */

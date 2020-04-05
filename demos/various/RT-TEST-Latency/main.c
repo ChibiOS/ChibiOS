@@ -45,9 +45,9 @@ static THD_FUNCTION(Thread1, arg) {
 }
 
 /*
- * PENDSV ISR.
+ * IRQ 0 handler.
  */
-CH_IRQ_HANDLER(PendSV_Handler) {
+CH_IRQ_HANDLER(Vector40) {
 
   CH_IRQ_PROLOGUE();
 
@@ -86,9 +86,9 @@ int main(void) {
   chTMObjectInit(&tm1);
   chTMObjectInit(&tm2);
 
-  /* Setting up PENDSV for the latency test. Highest available priority
+  /* Setting up an IRQ for the latency test. Highest available priority
      is used.*/
-  nvicSetSystemHandlerPriority(HANDLER_PENDSV, CORTEX_MAX_KERNEL_PRIORITY);
+  nvicEnableVector(0, CORTEX_MAX_KERNEL_PRIORITY);
 
   /* Printing banner.*/
   chprintf((BaseSequentialStream *)&PORTAB_SD1, "*** Compiled:      %s\r\n", __DATE__ " - " __TIME__);
@@ -113,7 +113,8 @@ int main(void) {
   for (unsigned i = 0U; i < TEST_CYCLES; i++) {
     /* Triggering PENDSV, it will happen on the unlock.*/
     chSysLock();
-    SCB->ICSR =SCB_ICSR_PENDSVSET_Msk;
+//    SCB->ICSR =SCB_ICSR_PENDSVSET_Msk;
+    nvicSetPending(0);
     chTMStartMeasurementX(&tm1);
     chSysUnlock();
     chThdSleepMilliseconds(1);
