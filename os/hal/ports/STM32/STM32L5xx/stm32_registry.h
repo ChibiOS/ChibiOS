@@ -77,6 +77,9 @@
 
 #if defined(STM32L552xx) || defined(__DOXYGEN__)
 
+/* ICACHE attributes.*/
+#define STM32_HAS_ICACHE                    TRUE
+
 /* RCC attributes.*/
 #define STM32_HAS_HSI16                     TRUE
 #define STM32_HAS_HSI48                     TRUE

@@ -795,6 +795,9 @@
   #error "invalid STM32_VOS value specified"
 #endif
 
+/* ICache handler.*/
+#include "stm32_icache.inc"
+
 /* Clock handlers.*/
 #include "stm32_lse.inc"
 #include "stm32_lsi.inc"

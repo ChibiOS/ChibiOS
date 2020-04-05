@@ -36,9 +36,22 @@
 #define STM32L562_MCUCONF
 
 /*
- * HAL driver system settings.
+ * HAL driver global settings.
  */
 #define STM32_NO_INIT                       FALSE
+
+/*
+ * ICache settings.
+ */
+#define STM32_ICACHE_CR                     (ICACHE_CR_EN)
+#define STM32_ICACHE_CRR0                   0
+#define STM32_ICACHE_CRR1                   0
+#define STM32_ICACHE_CRR2                   0
+#define STM32_ICACHE_CRR3                   0
+
+/*
+ * Power settings.
+ */
 #define STM32_VOS                           STM32_VOS_RANGE0
 #define STM32_PWR_CR2                       (PWR_CR2_IOSV | PWR_CR2_PLS_LEV0)
 #define STM32_PWR_CR3                       (0U)
