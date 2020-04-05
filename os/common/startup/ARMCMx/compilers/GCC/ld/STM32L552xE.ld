@@ -29,10 +29,10 @@ MEMORY
     flash7 (rx) : org = 0x00000000, len = 0
     ram0   (wx) : org = 0x20000000, len = 256k  /* SRAM1+SRAM2 NS */
     ram1   (wx) : org = 0x20000000, len = 192k  /* SRAM1 NS */
-    ram2   (wx) : org = 0x00000000, len = 64k   /* SRAM2 NS */
-    ram3   (wx) : org = 0x0E000000, len = 256k  /* SRAM1+SRAM2 NSC */
-    ram4   (wx) : org = 0x0E000000, len = 192k  /* SRAM1 NSC */
-    ram5   (wx) : org = 0x0E030000, len = 64k   /* SRAM2 NSC */
+    ram2   (wx) : org = 0x20030000, len = 64k   /* SRAM2 NS */
+    ram3   (wx) : org = 0x30000000, len = 256k  /* SRAM1+SRAM2 NSC */
+    ram4   (wx) : org = 0x30000000, len = 192k  /* SRAM1 NSC */
+    ram5   (wx) : org = 0x30030000, len = 64k   /* SRAM2 NSC */
     ram6   (wx) : org = 0x00000000, len = 0
     ram7   (wx) : org = 0x00000000, len = 0
 }
