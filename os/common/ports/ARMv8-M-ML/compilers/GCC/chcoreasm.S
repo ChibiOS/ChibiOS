@@ -122,6 +122,8 @@ SVC_Handler:
 PendSV_Handler:
                 /* Pointer to the current thread.*/
                 ldr     r1, =ch
+//                movw    r1, #:lower16:ch
+//                movt    r1, #:upper16:ch
                 ldr     r1, [r1, #CURRENT_OFFSET]
 
                 /* Saving callee context of thread being swapped out.*/

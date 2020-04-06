@@ -54,8 +54,7 @@
 /**
  * @brief   Tail ISR context switch code.
  *
- * @param[in] sp        the stack pointer being switched-out
- * @return              The stack pointer being switched-in.
+ * @return              The thread being switched-in.
  */
 thread_t *port_schedule_next(void) {
   thread_t *ntp;
@@ -63,7 +62,7 @@ thread_t *port_schedule_next(void) {
   chSysLock();
 
   /* TODO statistics, tracing etc */
-  ntp = chSchRunAhead();
+  ntp = chSchSelectFirstI();
 
   chSysUnlock();
 

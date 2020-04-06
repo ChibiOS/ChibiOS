@@ -724,7 +724,7 @@ static inline void chSchPreemption(void) {
  *
  * @special
  */
-static inline thread_t *chSchRunAhead(void) {
+static inline thread_t *chSchSelectFirstI(void) {
   thread_t *otp = currp;
   thread_t *ntp;
 
