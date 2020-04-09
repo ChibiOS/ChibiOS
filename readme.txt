@@ -74,8 +74,9 @@
 *****************************************************************************
 
 *** 20.3.1 ***
-- FIX: Fixed I2CD4 interrupt vectors are swapped versus I2CD1-I2CD3 (bug #1080)
-- FIX: Fixed incorrect clock check when using PLLSAI1R in ADCv3 (bug #1079)
+- FIX: Fixed early interrupts enable in ARMv7-M port (bug #1081).
+- FIX: Fixed I2CD4 interrupt vectors are swapped versus I2CD1-I2CD3 (bug #1080).
+- FIX: Fixed incorrect clock check when using PLLSAI1R in ADCv3 (bug #1079).
 - FIX: Fixed missing checks in TIM6 and TIM7 STM32 mini drivers (bug #1078).
 - FIX: Fixed error in EXTIv1 ISRs (bug #1077).
 - FIX: Fixed problem in chMtxUnlockAllS() (bug #1076).

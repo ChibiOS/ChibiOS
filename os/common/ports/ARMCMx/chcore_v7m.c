@@ -250,8 +250,7 @@ void PendSV_Handler(void) {
 void port_init(void) {
 
   /* Starting in a known IRQ configuration.*/
-  __set_BASEPRI(CORTEX_BASEPRI_DISABLED);
-  __enable_irq();
+  port_suspend();
 
   /* Initializing priority grouping.*/
   NVIC_SetPriorityGrouping(CORTEX_PRIGROUP_INIT);
