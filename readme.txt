@@ -74,16 +74,18 @@
 *****************************************************************************
 
 *** Next ***
-- FIX: Fixed I2CD4 interrupt vectors are swapped versus I2CD1-I2CD3 (bug #1080)
-       (backported to 20.3.1).
-- FIX: Fixed incorrect clock check when using PLLSAI1R in ADCv3 (bug #1079)
-       (backported to 20.3.1).
 - RT:  Relocated the "ctx" field in the thread structure in order to save
        some RAM, it caused unused space in the "ch" variable.
 - EX:  Added support for ADXL355 Low Noise, Low Drift, Low Power, 3-Axis
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Fixed early interrupts enable in ARMv7-M port (bug #1081)
+       (backported to 20.3.1).
+- FIX: Fixed I2CD4 interrupt vectors are swapped versus I2CD1-I2CD3 (bug #1080)
+       (backported to 20.3.1).
+- FIX: Fixed incorrect clock check when using PLLSAI1R in ADCv3 (bug #1079)
+       (backported to 20.3.1).
 - FIX: Fixed missing checks in TIM6 and TIM7 STM32 mini drivers (bug #1078)
        (backported to 20.3.1).
 - FIX: Fixed error in EXTIv1 ISRs (bug #1077)
