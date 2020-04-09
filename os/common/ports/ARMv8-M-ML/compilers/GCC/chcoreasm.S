@@ -68,7 +68,7 @@
 #define ICSR_PENDSVSET  0x10000000
 
                 .syntax unified
-                .cpu    cortex-m4
+                .cpu    cortex-m33
 #if CORTEX_USE_FPU
                 .fpu    fpv4-sp-d16
 #else
@@ -79,39 +79,135 @@
                 .text
 
 /*--------------------------------------------------------------------------*
- * Performs a context switch between two threads.
+ * Context switch macros depending on various options.
+ *--------------------------------------------------------------------------*/
+
+#if !PORT_STORE_BASEPRI_NS
+
+#if !CH_DBG_ENABLE_STACK_CHECK
+                .macro  PORT_STORE_INTEGER_CONTEXT_R1
+                mrs     r2, PSP
+                mrs     r3, BASEPRI
+                stmia   r1!, {r2-r11,lr}
+                .endm
+
+                .macro  PORT_RESTORE_INTEGER_CONTEXT_R0
+                ldmia   r0!, {r2-r11, lr}
+                msr     PSP, r2
+                msr     BASEPRI, r3
+                .endm
+#else /* CH_DBG_ENABLE_STACK_CHECK */
+                .macro  PORT_STORE_INTEGER_CONTEXT_R1
+                mrs     r2, PSP
+                mrs     r3, BASEPRI
+                mrs     r12, PSPLIM
+                stmia   r1!, {r2-r12,lr}
+                .endm
+
+                .macro  PORT_RESTORE_INTEGER_CONTEXT_R0
+                ldmia   r0!, {r2-r12, lr}
+                /* Note the following is not required because this sentence
+                   in the ARMv8-M architecture manual:
+                       Updates to the stack pointer by the MSR instruction
+                       targeting SP_NS are subject to stack limit checking.
+                       Updates to the stack pointer and stack pointer limit
+                       by any other MSR instruction are not subject to
+                       stack limit checking.*/
+//                movs    r1, #0
+//                msr     PSPLIM, r1      /* Temporarily disabling stack check.*/
+                msr     PSP, r2
+                msr     BASEPRI, r3
+                msr     PSPLIM, r12
+                .endm
+#endif
+
+#else /* PORT_STORE_BASEPRI_NS */
+
+#if !CH_DBG_ENABLE_STACK_CHECK
+                .macro  PORT_STORE_INTEGER_CONTEXT_R1
+                mrs     r2, BASEPRI_NS
+                stmia   r1!, {r2}
+                mrs     r2, PSP
+                mrs     r3, BASEPRI
+                stmia   r1!, {r2-r11,lr}
+                .endm
+
+                .macro  PORT_RESTORE_INTEGER_CONTEXT_R0
+                ldmia   r0!, {r1-r11, lr}
+                msr     BASEPRI_NS, r1
+                msr     PSP, r2
+                msr     BASEPRI, r3
+                .endm
+#else /* CH_DBG_ENABLE_STACK_CHECK */
+                .macro  PORT_STORE_INTEGER_CONTEXT_R1
+                mrs     r2, BASEPRI_NS
+                stmia   r1!, {r2}
+                mrs     r2, PSP
+                mrs     r3, BASEPRI
+                mrs     r12, PSPLIM
+                stmia   r1!, {r2-r12,lr}
+                .endm
+
+                .macro  PORT_RESTORE_INTEGER_CONTEXT_R0
+                ldmia   r0!, {r1-r12, lr}
+                msr     BASEPRI_NS, r1
+                /* Note the following is not required because this sentence
+                   in the ARMv8-M architecture manual:
+                       Updates to the stack pointer by the MSR instruction
+                       targeting SP_NS are subject to stack limit checking.
+                       Updates to the stack pointer and stack pointer limit
+                       by any other MSR instruction are not subject to
+                       stack limit checking.*/
+//                movs    r1, #0
+//                msr     PSPLIM, r1      /* Temporarily disabling stack check.*/
+                msr     PSP, r2
+                msr     BASEPRI, r3
+                msr     PSPLIM, r12
+                .endm
+#endif
+
+#endif /* PORT_STORE_BASEPRI_NS */
+
+#if CORTEX_USE_FPU
+                .macro  PORT_STORE_FLOAT_CONTEXT_R1
+                vstmia  r1!, {s16-s31}
+                .endm
+
+                .macro  PORT_RESTORE_FLOAT_CONTEXT_R0
+                vldmia  r0!, {s16-s31}
+                .endm
+#else
+                .macro  PORT_STORE_FLOAT_CONTEXT_R1
+                .endm
+
+                .macro  PORT_RESTORE_FLOAT_CONTEXT_R0
+                .endm
+#endif
+
+/*--------------------------------------------------------------------------*
+ * Performs a context switch between two threads using SVC.
  *--------------------------------------------------------------------------*/
                 .thumb_func
                 .globl  SVC_Handler
 SVC_Handler:
                 /* Saving callee context of thread being swapped out.*/
                 adds    r1, #CONTEXT_OFFSET
-                mrs     r2, PSP
-                mrs     r3, BASEPRI
-//                movs    r3, #(2 << 5)
-#if CH_DBG_ENABLE_STACK_CHECK
-                mrs     r12, PSPLIM
-                stmia   r1!, {r2-r12,lr}
-#else
-                stmia   r1!, {r2-r11,lr}
-#endif
-#if CORTEX_USE_FPU
-                vstmia  r1, {s16-s31}
-#endif
+
+                /* Storing integer and control context through R1.*/
+                PORT_STORE_INTEGER_CONTEXT_R1
+
+                /* Storing float context through R1.*/
+                PORT_STORE_FLOAT_CONTEXT_R1
 
                 /* Restoring calle context of thread being swapped in.*/
                 adds    r0, #CONTEXT_OFFSET
-#if CH_DBG_ENABLE_STACK_CHECK
-                ldmia   r0!, {r2-r12, lr}
-                msr     PSPLIM, r12
-#else
-                ldmia   r0!, {r2-r11, lr}
-#endif
-                msr     BASEPRI, r3
-                msr     PSP, r2
-#if CORTEX_USE_FPU
-                vldmia  r0, {s16-s31}
-#endif
+
+                /* Restoring integer and control context through R0.*/
+                PORT_RESTORE_INTEGER_CONTEXT_R0
+
+                /* Restoring float context through R0.*/
+                PORT_RESTORE_FLOAT_CONTEXT_R0
+
                 bx      lr
 
 /*--------------------------------------------------------------------------*
@@ -128,34 +224,25 @@ PendSV_Handler:
 
                 /* Saving callee context of thread being swapped out.*/
                 adds    r1, #CONTEXT_OFFSET
-                mrs     r2, PSP
-                mrs     r3, BASEPRI
-#if CH_DBG_ENABLE_STACK_CHECK
-                mrs     r12, PSPLIM
-                stmia   r1!, {r2-r12,lr}
-#else
-                stmia   r1!, {r2-r11,lr}
-#endif
-#if CORTEX_USE_FPU
-                vstmia  r1, {s16-s31}
-#endif
 
-                /* Selecting the thread to be swapped in.*/
+                /* Storing integer and control context through R1.*/
+                PORT_STORE_INTEGER_CONTEXT_R1
+
+                /* Storing float context through R1.*/
+                PORT_STORE_FLOAT_CONTEXT_R1
+
+                /* Selecting the thread to be swapped in, R0 points to it.*/
                 bl      port_schedule_next
 
                 /* Restoring calle context of thread being swapped in.*/
                 adds    r0, #CONTEXT_OFFSET
-#if CH_DBG_ENABLE_STACK_CHECK
-                ldmia   r0!, {r2-r12, lr}
-                msr     PSPLIM, r12
-#else
-                ldmia   r0!, {r2-r11, lr}
-#endif
-                msr     BASEPRI, r3
-                msr     PSP, r2
-#if CORTEX_USE_FPU
-                vldmia  r0, {s16-s31}
-#endif
+
+                /* Restoring integer and control context through R0.*/
+                PORT_RESTORE_INTEGER_CONTEXT_R0
+
+                /* Restoring float context through R0.*/
+                PORT_RESTORE_FLOAT_CONTEXT_R0
+
                 bx      lr
 
 /*--------------------------------------------------------------------------*
@@ -169,9 +256,6 @@ PendSV_Handler:
                 .thumb_func
                 .globl  __port_thread_start
 __port_thread_start:
-#if CH_DBG_ENABLE_STACK_CHECK && PORT_ENABLE_GUARD_PAGES
-                bl      _port_set_region
-#endif
 #if CH_DBG_STATISTICS
                 bl      _stats_stop_measure_crit_thd
 #endif

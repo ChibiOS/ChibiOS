@@ -72,7 +72,6 @@
 #endif /* !defined(_FROM_ASM_) */
 /** @} */
 
-
 /**
  * @name    Port Capabilities and Constants
  * @{
@@ -104,9 +103,42 @@
 /* Inclusion of the Cortex-Mx implementation specific parameters.*/
 #include "cmparams.h"
 
+
+/**
+ * @name    Kernel modes
+ * @{
+ */
+/**
+ * @brief   Standard mode.
+ * @details The RTOS is running in secure state with no switch in non-secure
+ *          state ever performed. This is also used on devices with no
+ *          TrustZone support at all.
+ */
+#define PORT_KERNEL_MODE_NORMAL         0U
+/**
+ * @brief   Kernel running in secure state.
+ * @details The RTOS is running in secure state with support for one thread
+ *          running in non-secure state.
+ */
+#define PORT_KERNEL_MODE_HOST           1U
+/**
+ * @brief   Kernel running in non-secure state.
+ * @details The RTOS is running in non-secure state with no access to secure
+ *          resources.
+ */
+#define PORT_KERNEL_MODE_GUEST          2U
+/** @} */
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   Kernel mode selection.
+ */
+#if !defined(PORT_KERNEL_MODE) || defined(__DOXYGEN__)
+#define PORT_KERNEL_MODE                PORT_KERNEL_MODE_NORMAL
+#endif
 
 /**
  * @brief   Number of MPU regions to be saved/restored during context switch.
@@ -184,8 +216,20 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if (PORT_SWITCHED_REGIONS_NUMBER < 0) || (PORT_SWITCHED_REGIONS_NUMBER > 4)
-#error "invalid PORT_SWITCHED_REGIONS_NUMBER value"
+#if PORT_KERNEL_MODE == PORT_KERNEL_MODE_NORMAL
+#define PORT_EXC_RETURN                 0xFFFFFFFD
+#define PORT_STORE_BASEPRI_NS           FALSE
+
+#elif PORT_KERNEL_MODE == PORT_KERNEL_MODE_HOST
+#define PORT_EXC_RETURN                 0xFFFFFFFD
+#define PORT_STORE_BASEPRI_NS           TRUE
+
+#elif PORT_KERNEL_MODE == PORT_KERNEL_MODE_GUEST
+#define PORT_EXC_RETURN                 0xFFFFFFBC
+#define PORT_STORE_BASEPRI_NS           FALSE
+
+#else
+#error "invalid kernel security mode"
 #endif
 
 /**
@@ -308,6 +352,9 @@ struct port_intctx {
  */
 struct port_context {
   struct port_intctx    *sp;
+#if (PORT_STORE_BASEPRI_NS == TRUE)  || defined(__DOXYGEN__)
+  uint32_t              basepri_ns;
+#endif
   uint32_t              basepri;
   uint32_t              r4;
   uint32_t              r5;
@@ -439,6 +486,20 @@ struct port_context {
 #endif
 
 /**
+ * @brief   Initialization of BASEPRI_NS part of thread context.
+ * @note    All secure threads have BASEPRI_NS set to mask PendSV, this
+ *          way a guest RTOS cannot reschedule while a secure thread
+ *          is running, reschedule is delayed to when the non-secure
+ *          thread running the guest is activated again.
+ */
+#if (PORT_STORE_BASEPRI_NS == TRUE)  || defined(__DOXYGEN__)
+#define PORT_SETUP_CONTEXT_BASEPRI_NS(tp)                                   \
+    (tp)->ctx.basepri_ns = (uint32_t)CORTEX_PRIO_MASK(CORTEX_PRIORITY_PENDSV)
+#else
+#define PORT_SETUP_CONTEXT_BASEPRI_NS(tp)
+#endif
+
+/**
  * @brief   Platform dependent part of the @p chThdCreateI() API.
  * @details This code usually setup the context switching frame represented
  *          by an @p port_intctx structure.
@@ -446,11 +507,12 @@ struct port_context {
 #define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) do {                   \
   (tp)->ctx.sp = (struct port_intctx *)((uint8_t *)(wtop) -                 \
                                         sizeof (struct port_intctx));       \
+  PORT_SETUP_CONTEXT_BASEPRI_NS(tp);                                        \
   (tp)->ctx.basepri     = CORTEX_BASEPRI_KERNEL;                            \
   (tp)->ctx.r5          = (uint32_t)(arg);                                  \
   (tp)->ctx.r4          = (uint32_t)(pf);                                   \
   PORT_SETUP_CONTEXT_SPLIM(tp, wbase);                                      \
-  (tp)->ctx.lr_exc      = (uint32_t)0xFFFFFFFD;                             \
+  (tp)->ctx.lr_exc      = (uint32_t)PORT_EXC_RETURN;                        \
   (tp)->ctx.sp->pc      = (uint32_t)__port_thread_start;                    \
   (tp)->ctx.sp->xpsr    = (uint32_t)0x01000000;                             \
   PORT_SETUP_CONTEXT_FPU(tp);                                               \

@@ -74,6 +74,7 @@ thread_t *port_schedule_next(void) {
  */
 void port_init(void) {
 
+  /* Starting in a known IRQ configuration.*/
   port_suspend();
 
   /* Initializing priority grouping.*/
