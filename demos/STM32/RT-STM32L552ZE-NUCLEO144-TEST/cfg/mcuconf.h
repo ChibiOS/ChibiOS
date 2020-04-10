@@ -23,6 +23,7 @@
  *
  * IRQ priorities:
  * 7...0        Lowest...Highest.
+ * 3...0        Lowest...Highest (trusted mode).
  *
  * DMA priorities:
  * 0...3        Lowest...Highest.
@@ -126,55 +127,55 @@
 /*
  * IRQ system settings.
  */
-#define STM32_IRQ_EXTI0_PRIORITY            3
-#define STM32_IRQ_EXTI1_PRIORITY            3
-#define STM32_IRQ_EXTI2_PRIORITY            3
-#define STM32_IRQ_EXTI3_PRIORITY            3
-#define STM32_IRQ_EXTI4_PRIORITY            3
-#define STM32_IRQ_EXTI5_PRIORITY            3
-#define STM32_IRQ_EXTI6_PRIORITY            3
-#define STM32_IRQ_EXTI7_PRIORITY            3
-#define STM32_IRQ_EXTI8_PRIORITY            3
-#define STM32_IRQ_EXTI9_PRIORITY            3
-#define STM32_IRQ_EXTI10_PRIORITY           3
-#define STM32_IRQ_EXTI11_PRIORITY           3
-#define STM32_IRQ_EXTI12_PRIORITY           3
-#define STM32_IRQ_EXTI13_PRIORITY           3
-#define STM32_IRQ_EXTI14_PRIORITY           3
-#define STM32_IRQ_EXTI15_PRIORITY           3
-#define STM32_IRQ_EXTI1635_38_PRIORITY      3
-#define STM32_IRQ_EXTI17_PRIORITY           3
-#define STM32_IRQ_EXTI18_PRIORITY           3
-#define STM32_IRQ_EXTI19_PRIORITY           3
-#define STM32_IRQ_EXTI20_PRIORITY           3
-#define STM32_IRQ_EXTI21_22_PRIORITY        3
+#define STM32_IRQ_EXTI0_PRIORITY            2
+#define STM32_IRQ_EXTI1_PRIORITY            2
+#define STM32_IRQ_EXTI2_PRIORITY            2
+#define STM32_IRQ_EXTI3_PRIORITY            2
+#define STM32_IRQ_EXTI4_PRIORITY            2
+#define STM32_IRQ_EXTI5_PRIORITY            2
+#define STM32_IRQ_EXTI6_PRIORITY            2
+#define STM32_IRQ_EXTI7_PRIORITY            2
+#define STM32_IRQ_EXTI8_PRIORITY            2
+#define STM32_IRQ_EXTI9_PRIORITY            2
+#define STM32_IRQ_EXTI10_PRIORITY           2
+#define STM32_IRQ_EXTI11_PRIORITY           2
+#define STM32_IRQ_EXTI12_PRIORITY           2
+#define STM32_IRQ_EXTI13_PRIORITY           2
+#define STM32_IRQ_EXTI14_PRIORITY           2
+#define STM32_IRQ_EXTI15_PRIORITY           2
+#define STM32_IRQ_EXTI1635_38_PRIORITY      2
+#define STM32_IRQ_EXTI17_PRIORITY           2
+#define STM32_IRQ_EXTI18_PRIORITY           2
+#define STM32_IRQ_EXTI19_PRIORITY           2
+#define STM32_IRQ_EXTI20_PRIORITY           2
+#define STM32_IRQ_EXTI21_22_PRIORITY        2
 
-#define STM32_IRQ_FDCAN1_PRIORITY           5
+#define STM32_IRQ_FDCAN1_PRIORITY           1
 
-#define STM32_IRQ_TIM1_BRK_PRIORITY         4
-#define STM32_IRQ_TIM1_UP_PRIORITY          4
-#define STM32_IRQ_TIM1_TRGCO_PRIORITY       4
-#define STM32_IRQ_TIM1_CC_PRIORITY          4
-#define STM32_IRQ_TIM2_PRIORITY             4
-#define STM32_IRQ_TIM3_PRIORITY             4
-#define STM32_IRQ_TIM4_PRIORITY             4
-#define STM32_IRQ_TIM5_PRIORITY             4
-#define STM32_IRQ_TIM6_PRIORITY             4
-#define STM32_IRQ_TIM7_PRIORITY             4
-#define STM32_IRQ_TIM8_UP_PRIORITY          4
-#define STM32_IRQ_TIM8_CC_PRIORITY          4
-#define STM32_IRQ_TIM15_PRIORITY            4
-#define STM32_IRQ_TIM16_PRIORITY            4
-#define STM32_IRQ_TIM17_PRIORITY            4
-#define STM32_IRQ_TIM20_UP_PRIORITY         4
-#define STM32_IRQ_TIM20_CC_PRIORITY         4
+#define STM32_IRQ_TIM1_BRK_PRIORITY         1
+#define STM32_IRQ_TIM1_UP_PRIORITY          1
+#define STM32_IRQ_TIM1_TRGCO_PRIORITY       1
+#define STM32_IRQ_TIM1_CC_PRIORITY          1
+#define STM32_IRQ_TIM2_PRIORITY             1
+#define STM32_IRQ_TIM3_PRIORITY             1
+#define STM32_IRQ_TIM4_PRIORITY             1
+#define STM32_IRQ_TIM5_PRIORITY             1
+#define STM32_IRQ_TIM6_PRIORITY             1
+#define STM32_IRQ_TIM7_PRIORITY             1
+#define STM32_IRQ_TIM8_UP_PRIORITY          1
+#define STM32_IRQ_TIM8_CC_PRIORITY          1
+#define STM32_IRQ_TIM15_PRIORITY            1
+#define STM32_IRQ_TIM16_PRIORITY            1
+#define STM32_IRQ_TIM17_PRIORITY            1
+#define STM32_IRQ_TIM20_UP_PRIORITY         1
+#define STM32_IRQ_TIM20_CC_PRIORITY         1
 
-#define STM32_IRQ_USART1_PRIORITY           5
-#define STM32_IRQ_USART2_PRIORITY           5
-#define STM32_IRQ_USART3_PRIORITY           5
-#define STM32_IRQ_UART4_PRIORITY            5
-#define STM32_IRQ_UART5_PRIORITY            5
-#define STM32_IRQ_LPUART1_PRIORITY          5
+#define STM32_IRQ_USART1_PRIORITY           1
+#define STM32_IRQ_USART2_PRIORITY           1
+#define STM32_IRQ_USART3_PRIORITY           1
+#define STM32_IRQ_UART4_PRIORITY            1
+#define STM32_IRQ_UART5_PRIORITY            1
+#define STM32_IRQ_LPUART1_PRIORITY          1
 
 /*
  * ADC driver system settings.
@@ -276,7 +277,7 @@
 /*
  * ST driver system settings.
  */
-#define STM32_ST_IRQ_PRIORITY               4
+#define STM32_ST_IRQ_PRIORITY               1
 #define STM32_ST_USE_TIMER                  2
 
 /*

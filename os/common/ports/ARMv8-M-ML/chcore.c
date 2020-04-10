@@ -74,6 +74,17 @@ thread_t *port_schedule_next(void) {
  */
 void port_init(void) {
 
+#if PORT_KERNEL_MODE == PORT_KERNEL_MODE_HOST
+  {
+    /* Enabling PRIS in order to have two separate priority ranges for
+       secure and non-secure states.*/
+    uint32_t aircr  = SCB->AIRCR;
+    aircr &= ~(uint32_t)SCB_AIRCR_VECTKEY_Msk;
+    aircr |= (uint32_t)((0x5FAUL << SCB_AIRCR_VECTKEY_Pos) | SCB_AIRCR_PRIS_Msk);
+    SCB->AIRCR =  aircr;
+  }
+#endif
+
   /* Starting in a known IRQ configuration.*/
   port_suspend();
 

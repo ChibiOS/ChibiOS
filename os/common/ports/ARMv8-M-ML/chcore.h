@@ -129,6 +129,29 @@
 #define PORT_KERNEL_MODE_GUEST          2U
 /** @} */
 
+/**
+ * @name    Priority boundaries
+ * @{
+ */
+/**
+ * @brief   Total priority levels.
+ */
+#define CORTEX_PRIORITY_LEVELS          (1 << CORTEX_PRIORITY_BITS)
+
+/**
+ * @brief   Maximum priority level.
+ * @details The maximum allowed priority level is always zero.
+ */
+#define CORTEX_MAXIMUM_PRIORITY         0
+
+/**
+ * @brief   Minimum priority level.
+ * @details This minimum priority level is calculated from the number of
+ *          priority bits supported by the specific Cortex-Mx implementation.
+ */
+#define CORTEX_MINIMUM_PRIORITY         (CORTEX_PRIORITY_LEVELS - 1)
+/** @} */
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -137,7 +160,7 @@
  * @brief   Kernel mode selection.
  */
 #if !defined(PORT_KERNEL_MODE) || defined(__DOXYGEN__)
-#define PORT_KERNEL_MODE                PORT_KERNEL_MODE_NORMAL
+#define PORT_KERNEL_MODE                PORT_KERNEL_MODE_HOST
 #endif
 
 /**
@@ -192,6 +215,14 @@
 #endif
 
 /**
+ * @brief   Number of upper priority levels reserved as fast interrupts.
+ * @note    The default reserves no priority levels for fast interrupts.
+ */
+#if !defined(CORTEX_FAST_PRIORITIES)
+#define CORTEX_FAST_PRIORITIES          0
+#endif
+
+/**
  * @brief   FPU support in context switch.
  * @details Activating this option activates the FPU support in the kernel.
  */
@@ -207,6 +238,7 @@
  * @brief   NVIC PRIGROUP initialization expression.
  * @details The default assigns all available priority bits as preemption
  *          priority with no sub-priority.
+ * @note    Changing this value is not recommended.
  */
 #if !defined(CORTEX_PRIGROUP_INIT) || defined(__DOXYGEN__)
 #define CORTEX_PRIGROUP_INIT            (7 - CORTEX_PRIORITY_BITS)
@@ -216,17 +248,71 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if (CORTEX_FAST_PRIORITIES < 0) ||                                         \
+    (CORTEX_FAST_PRIORITIES > (CORTEX_PRIORITY_LEVELS / 8))
+#error "invalid CORTEX_FAST_PRIORITIES value specified"
+#endif
+
+/**
+ * @brief   SVCALL handler priority.
+ */
+#define CORTEX_PRIORITY_SVCALL          (CORTEX_MAXIMUM_PRIORITY +          \
+                                         CORTEX_FAST_PRIORITIES)
+
+/**
+ * @brief   Maximum usable priority for normal ISRs.
+ * @note    Must be lower than @p CORTEX_PRIORITY_SVCALL.
+ */
+#define CORTEX_MAX_KERNEL_PRIORITY      (CORTEX_PRIORITY_SVCALL + 1)
+
+/**
+ * @brief   BASEPRI level within kernel lock.
+ */
+#define CORTEX_BASEPRI_KERNEL           CORTEX_PRIO_MASK(CORTEX_MAX_KERNEL_PRIORITY)
+
 #if PORT_KERNEL_MODE == PORT_KERNEL_MODE_NORMAL
+/**
+ * @brief   EXC_RETURN to be used when starting a thread.
+ */
 #define PORT_EXC_RETURN                 0xFFFFFFFD
-#define PORT_STORE_BASEPRI_NS           FALSE
+
+/**
+ * @brief   Context save area for each thread.
+ */
+#define PORT_CONTEXT_RESERVED_SIZE      (sizeof (struct port_intctx))
+
+/**
+ * @brief   Port-specific information string.
+ */
+#define PORT_INFO                       "Normal mode"
+
+/**
+ * @brief   Disabled value for BASEPRI register.
+ */
+#define CORTEX_BASEPRI_DISABLED         CORTEX_PRIO_MASK(0)
+
+/**
+ * @brief   PENDSV handler priority.
+ */
+#define CORTEX_PRIORITY_PENDSV          (CORTEX_MINIMUM_PRIORITY)
 
 #elif PORT_KERNEL_MODE == PORT_KERNEL_MODE_HOST
 #define PORT_EXC_RETURN                 0xFFFFFFFD
-#define PORT_STORE_BASEPRI_NS           TRUE
+#if CORTEX_USE_FPU == TRUE
+/* Extended secure context size with FPU.*/
+#define PORT_CONTEXT_RESERVED_SIZE      0xD0
+#else
+/* Extended secure context size without FPU.*/
+#define PORT_CONTEXT_RESERVED_SIZE      0x48
+#endif
+#define PORT_INFO                       "Secure host mode"
+#define CORTEX_BASEPRI_DISABLED         CORTEX_PRIO_MASK(CORTEX_MINIMUM_PRIORITY)
+#define CORTEX_PRIORITY_PENDSV          (CORTEX_MINIMUM_PRIORITY / 2)
 
 #elif PORT_KERNEL_MODE == PORT_KERNEL_MODE_GUEST
 #define PORT_EXC_RETURN                 0xFFFFFFBC
-#define PORT_STORE_BASEPRI_NS           FALSE
+#define PORT_CONTEXT_RESERVED_SIZE      (sizeof (struct port_intctx))
+#define PORT_INFO                       "Non-secure guest mode"
 
 #else
 #error "invalid kernel security mode"
@@ -277,12 +363,6 @@
 #else
 #error "unknown ARMv8-M core variant"
 #endif
-
-/**
- * @brief   Port-specific information string.
- */
-#define PORT_INFO                       "In-ISR switch mode"
-/** @} */
 
 /*===========================================================================*/
 /* Module data structures and types.                                         */
@@ -352,9 +432,6 @@ struct port_intctx {
  */
 struct port_context {
   struct port_intctx    *sp;
-#if (PORT_STORE_BASEPRI_NS == TRUE)  || defined(__DOXYGEN__)
-  uint32_t              basepri_ns;
-#endif
   uint32_t              basepri;
   uint32_t              r4;
   uint32_t              r5;
@@ -395,66 +472,21 @@ struct port_context {
 /*===========================================================================*/
 
 /**
- * @brief   Disabled value for BASEPRI register.
- */
-#define CORTEX_BASEPRI_DISABLED         0U
-
-/**
- * @brief   Total priority levels.
- */
-#define CORTEX_PRIORITY_LEVELS          (1U << CORTEX_PRIORITY_BITS)
-
-/**
- * @brief   Minimum priority level.
- * @details This minimum priority level is calculated from the number of
- *          priority bits supported by the specific Cortex-Mx implementation.
- */
-#define CORTEX_MINIMUM_PRIORITY         (CORTEX_PRIORITY_LEVELS - 1U)
-
-/**
- * @brief   Maximum priority level.
- * @details The maximum allowed priority level is always zero.
- */
-#define CORTEX_MAXIMUM_PRIORITY         0U
-
-/**
- * @brief   SVCALL handler priority.
- * @note    The default reserves priority level 0 for fast interrupts.
- */
-#define CORTEX_PRIORITY_SVCALL          (CORTEX_MAXIMUM_PRIORITY + 1U)
-
-/**
- * @brief   PENDSV handler priority.
- */
-#define CORTEX_PRIORITY_PENDSV          (CORTEX_MINIMUM_PRIORITY)
-
-/**
- * @brief   Maximum usable priority for normal ISRs.
- * @note    Must be lower than @p CORTEX_PRIORITY_SVCALL.
- */
-#define CORTEX_MAX_KERNEL_PRIORITY      (CORTEX_PRIORITY_SVCALL + 1U)
-
-/**
- * @brief   BASEPRI level within kernel lock.
- */
-#define CORTEX_BASEPRI_KERNEL           CORTEX_PRIO_MASK(CORTEX_MAX_KERNEL_PRIORITY)
-
-/**
  * @brief   Priority level to priority mask conversion macro.
  */
-#define CORTEX_PRIO_MASK(n)             ((n) << (8U - (unsigned)CORTEX_PRIORITY_BITS))
+#define CORTEX_PRIO_MASK(n)             ((n) << (8 - CORTEX_PRIORITY_BITS))
 
 /**
  * @brief   Priority level verification macro.
  */
 #define PORT_IRQ_IS_VALID_PRIORITY(n)                                       \
-  (((n) >= 0U) && ((n) < CORTEX_PRIORITY_LEVELS))
+  (((n) >= 0) && ((n) < CORTEX_PRIORITY_LEVELS))
 
 /**
  * @brief   Priority level verification macro.
  */
 #define PORT_IRQ_IS_VALID_KERNEL_PRIORITY(n)                                \
-  (((n) >= CORTEX_PRIORITY_SVCALL) && ((n) < CORTEX_PRIORITY_PENDSV))
+  (((n) > CORTEX_PRIORITY_SVCALL) && ((n) <= CORTEX_PRIORITY_PENDSV))
 
 /**
  * @brief   Initialization of stack check part of thread context.
@@ -486,20 +518,6 @@ struct port_context {
 #endif
 
 /**
- * @brief   Initialization of BASEPRI_NS part of thread context.
- * @note    All secure threads have BASEPRI_NS set to mask PendSV, this
- *          way a guest RTOS cannot reschedule while a secure thread
- *          is running, reschedule is delayed to when the non-secure
- *          thread running the guest is activated again.
- */
-#if (PORT_STORE_BASEPRI_NS == TRUE)  || defined(__DOXYGEN__)
-#define PORT_SETUP_CONTEXT_BASEPRI_NS(tp)                                   \
-    (tp)->ctx.basepri_ns = (uint32_t)CORTEX_PRIO_MASK(CORTEX_PRIORITY_PENDSV)
-#else
-#define PORT_SETUP_CONTEXT_BASEPRI_NS(tp)
-#endif
-
-/**
  * @brief   Platform dependent part of the @p chThdCreateI() API.
  * @details This code usually setup the context switching frame represented
  *          by an @p port_intctx structure.
@@ -507,7 +525,6 @@ struct port_context {
 #define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) do {                   \
   (tp)->ctx.sp = (struct port_intctx *)((uint8_t *)(wtop) -                 \
                                         sizeof (struct port_intctx));       \
-  PORT_SETUP_CONTEXT_BASEPRI_NS(tp);                                        \
   (tp)->ctx.basepri     = CORTEX_BASEPRI_KERNEL;                            \
   (tp)->ctx.r5          = (uint32_t)(arg);                                  \
   (tp)->ctx.r4          = (uint32_t)(pf);                                   \
@@ -523,8 +540,7 @@ struct port_context {
  * @brief   Computes the thread working area global size.
  * @note    There is no need to perform alignments in this macro.
  */
-#define PORT_WA_SIZE(n) (sizeof (struct port_intctx) +                      \
-                         sizeof (struct port_extctx) +                      \
+#define PORT_WA_SIZE(n) (PORT_CONTEXT_RESERVED_SIZE +                       \
                          (size_t)(n) +                                      \
                          (size_t)PORT_INT_REQUIRED_STACK)
 

@@ -82,8 +82,6 @@
  * Context switch macros depending on various options.
  *--------------------------------------------------------------------------*/
 
-#if !PORT_STORE_BASEPRI_NS
-
 #if !CH_DBG_ENABLE_STACK_CHECK
                 .macro  PORT_STORE_INTEGER_CONTEXT_R1
                 mrs     r2, PSP
@@ -120,53 +118,6 @@
                 msr     PSPLIM, r12
                 .endm
 #endif
-
-#else /* PORT_STORE_BASEPRI_NS */
-
-#if !CH_DBG_ENABLE_STACK_CHECK
-                .macro  PORT_STORE_INTEGER_CONTEXT_R1
-                mrs     r2, BASEPRI_NS
-                stmia   r1!, {r2}
-                mrs     r2, PSP
-                mrs     r3, BASEPRI
-                stmia   r1!, {r2-r11,lr}
-                .endm
-
-                .macro  PORT_RESTORE_INTEGER_CONTEXT_R0
-                ldmia   r0!, {r1-r11, lr}
-                msr     BASEPRI_NS, r1
-                msr     PSP, r2
-                msr     BASEPRI, r3
-                .endm
-#else /* CH_DBG_ENABLE_STACK_CHECK */
-                .macro  PORT_STORE_INTEGER_CONTEXT_R1
-                mrs     r2, BASEPRI_NS
-                stmia   r1!, {r2}
-                mrs     r2, PSP
-                mrs     r3, BASEPRI
-                mrs     r12, PSPLIM
-                stmia   r1!, {r2-r12,lr}
-                .endm
-
-                .macro  PORT_RESTORE_INTEGER_CONTEXT_R0
-                ldmia   r0!, {r1-r12, lr}
-                msr     BASEPRI_NS, r1
-                /* Note the following is not required because this sentence
-                   in the ARMv8-M architecture manual:
-                       Updates to the stack pointer by the MSR instruction
-                       targeting SP_NS are subject to stack limit checking.
-                       Updates to the stack pointer and stack pointer limit
-                       by any other MSR instruction are not subject to
-                       stack limit checking.*/
-//                movs    r1, #0
-//                msr     PSPLIM, r1      /* Temporarily disabling stack check.*/
-                msr     PSP, r2
-                msr     BASEPRI, r3
-                msr     PSPLIM, r12
-                .endm
-#endif
-
-#endif /* PORT_STORE_BASEPRI_NS */
 
 #if CORTEX_USE_FPU
                 .macro  PORT_STORE_FLOAT_CONTEXT_R1
@@ -259,7 +210,7 @@ __port_thread_start:
 #if CH_DBG_STATISTICS
                 bl      _stats_stop_measure_crit_thd
 #endif
-                movs    r3, #0              /* CORTEX_BASEPRI_DISABLED */
+                movs    r3, #CORTEX_BASEPRI_DISABLED
                 msr     BASEPRI, r3
                 mov     r0, r5
                 blx     r4
