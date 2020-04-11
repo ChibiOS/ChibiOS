@@ -37,6 +37,11 @@
 #define STM32L562_MCUCONF
 
 /*
+ * Secure mode HAL settings.
+ */
+#define STM32_SECURE_MODE                   TRUE
+
+/*
  * HAL driver global settings.
  */
 #define STM32_NO_INIT                       FALSE

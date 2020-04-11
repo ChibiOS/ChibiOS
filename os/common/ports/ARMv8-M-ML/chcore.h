@@ -253,23 +253,6 @@
 #error "invalid CORTEX_FAST_PRIORITIES value specified"
 #endif
 
-/**
- * @brief   SVCALL handler priority.
- */
-#define CORTEX_PRIORITY_SVCALL          (CORTEX_MAXIMUM_PRIORITY +          \
-                                         CORTEX_FAST_PRIORITIES)
-
-/**
- * @brief   Maximum usable priority for normal ISRs.
- * @note    Must be lower than @p CORTEX_PRIORITY_SVCALL.
- */
-#define CORTEX_MAX_KERNEL_PRIORITY      (CORTEX_PRIORITY_SVCALL + 1)
-
-/**
- * @brief   BASEPRI level within kernel lock.
- */
-#define CORTEX_BASEPRI_KERNEL           CORTEX_PRIO_MASK(CORTEX_MAX_KERNEL_PRIORITY)
-
 #if PORT_KERNEL_MODE == PORT_KERNEL_MODE_NORMAL
 /**
  * @brief   EXC_RETURN to be used when starting a thread.
@@ -292,6 +275,12 @@
 #define CORTEX_BASEPRI_DISABLED         CORTEX_PRIO_MASK(0)
 
 /**
+ * @brief   SVCALL handler priority.
+ */
+#define CORTEX_PRIORITY_SVCALL          (CORTEX_MAXIMUM_PRIORITY +          \
+                                         CORTEX_FAST_PRIORITIES)
+
+/**
  * @brief   PENDSV handler priority.
  */
 #define CORTEX_PRIORITY_PENDSV          (CORTEX_MINIMUM_PRIORITY)
@@ -307,16 +296,32 @@
 #endif
 #define PORT_INFO                       "Secure host mode"
 #define CORTEX_BASEPRI_DISABLED         CORTEX_PRIO_MASK(CORTEX_MINIMUM_PRIORITY)
+#define CORTEX_PRIORITY_SVCALL          (CORTEX_MAXIMUM_PRIORITY +          \
+                                         CORTEX_FAST_PRIORITIES)
 #define CORTEX_PRIORITY_PENDSV          (CORTEX_MINIMUM_PRIORITY / 2)
 
 #elif PORT_KERNEL_MODE == PORT_KERNEL_MODE_GUEST
 #define PORT_EXC_RETURN                 0xFFFFFFBC
 #define PORT_CONTEXT_RESERVED_SIZE      (sizeof (struct port_intctx))
 #define PORT_INFO                       "Non-secure guest mode"
+#define CORTEX_BASEPRI_DISABLED         CORTEX_PRIO_MASK(0)
+#define CORTEX_PRIORITY_SVCALL          ((CORTEX_MAXIMUM_PRIORITY +         \
+#define CORTEX_PRIORITY_PENDSV          (CORTEX_MINIMUM_PRIORITY & 0xFFFFFFFE)
 
 #else
 #error "invalid kernel security mode"
 #endif
+
+/**
+ * @brief   Maximum usable priority for normal ISRs.
+ * @note    Must be lower than @p CORTEX_PRIORITY_SVCALL.
+ */
+#define CORTEX_MAX_KERNEL_PRIORITY      (CORTEX_PRIORITY_SVCALL + 1)
+
+/**
+ * @brief   BASEPRI level within kernel lock.
+ */
+#define CORTEX_BASEPRI_KERNEL           CORTEX_PRIO_MASK(CORTEX_MAX_KERNEL_PRIORITY)
 
 /**
  * @name    Port information

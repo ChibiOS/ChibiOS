@@ -35,7 +35,7 @@
 #define STM32_HAS_ICACHE        FALSE
 #endif
 
-#if STM32_HAS_PLL
+#if STM32_HAS_ICACHE
 
 /* Checks on configurations.*/
 #if !defined(STM32_ICACHE_CR)
@@ -108,6 +108,6 @@ static inline void icache_deinit(void) {
 /* Driver exported functions.                                                */
 /*===========================================================================*/
 
-#endif /* STM32_HAS_PLL */
+#endif /* STM32_HAS_ICACHE */
 
 /** @} */

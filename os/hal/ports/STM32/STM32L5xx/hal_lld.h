@@ -806,6 +806,9 @@
 #include "stm32_hsi48.inc"
 #include "stm32_hse.inc"
 
+/* Secure mode handler.*/
+#include "stm32_secure.inc"
+
 /*
  * Platform HSI16-related checks.
  */
