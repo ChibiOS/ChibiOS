@@ -66,12 +66,17 @@ void sauDisable(void) {
 
 /**
  * @brief   Enables a SAU region.
+ * @note    When SAU is enabled then the whole memory is marked as secure,
+ *          using this function you can scale it down to "non-Secure Callable"
+ *          or "non-Secure" but you have to consider also the IDAU security
+ *          level, you cannot set a level less secure than the one specified
+ *          in IDAU.
  *
  * @param[in] region    the region number
  * @param[in] start     the region start address
  * @param[in] end       the region end address
  * @param[in] flags     regions mode, note, this is tricky, read carefully
- *                      the ARM documentation
+ *                      the ARM documentation and the note above
  */
 void sauEnableRegion(uint32_t region, uint32_t start,
                      uint32_t end, uint32_t flags) {

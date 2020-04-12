@@ -65,6 +65,7 @@
 
 /* Other constants.*/
 #define SCB_ICSR        0xE000ED04
+#define SCB_VTOR_NS     0xE002ED08
 #define ICSR_PENDSVSET  0x10000000
 
                 .syntax unified
@@ -217,6 +218,51 @@ __port_thread_start:
                 movs    r0, #0              /* MSG_OK */
                 bl      chThdExit
 _zombies:       b       _zombies
+
+#if PORT_KERNEL_MODE == PORT_KERNEL_MODE_HOST
+/*--------------------------------------------------------------------------*
+ * Safe jump in non-secure code zone. All registers are cleared.
+ *--------------------------------------------------------------------------*/
+                .thumb_func
+                .globl  __port_ns_boot
+__port_ns_boot:
+                movs    r3, #0
+                movs    r4, #0
+                movs    r5, #0
+                movs    r6, #0
+                movs    r7, #0
+                movs    r8, #0
+                movs    r9, #0
+                movs    r10, #0
+                movs    r11, #0
+                movs    r12, #0
+                movs    lr, #0
+#if CORTEX_USE_FPU
+                vldr.64 d0, =0
+                vldr.64 d1, =0
+                vldr.64 d2, =0
+                vldr.64 d3, =0
+                vldr.64 d4, =0
+                vldr.64 d5, =0
+                vldr.64 d6, =0
+                vldr.64 d7, =0
+                vldr.64 d8, =0
+                vldr.64 d9, =0
+                vldr.64 d10, =0
+                vldr.64 d11, =0
+                vldr.64 d12, =0
+                vldr.64 d13, =0
+                vldr.64 d14, =0
+                vldr.64 d15, =0
+#endif
+                msr     BASEPRI, r3
+                ldr     r1, =SCB_VTOR_NS
+                str     r0, [r1, #0]
+                ldr     r1, [r0, #0]    /* MSP from vectors table.*/
+                msr     MSP_NS, r1
+                ldr     r2, [r0, #4]    /* PC from vectors table.*/
+                bxns    r2
+#endif
 
 #endif /* !defined(__DOXYGEN__) */
 
