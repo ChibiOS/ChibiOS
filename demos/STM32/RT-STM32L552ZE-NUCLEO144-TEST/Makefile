@@ -5,7 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -O0 -ggdb -fomit-frame-pointer -falign-functions=16
+  USE_OPT = -O0 -ggdb -fomit-frame-pointer -falign-functions=16 -mcmse
 endif
 
 # C specific options here (added to USE_OPT).
@@ -114,7 +114,7 @@ include $(CHIBIOS)/test/rt/rt_test.mk
 include $(CHIBIOS)/test/oslib/oslib_test.mk
 
 # Define linker script file here.
-LDSCRIPT= $(STARTUPLD)/STM32L552xE_TZ.ld
+LDSCRIPT= ./secure.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -151,6 +151,8 @@ CPPWARN = -Wall -Wextra -Wundef
 
 # List all user C define here, like -D_DEBUG=1
 UDEFS =
+UDEFS += -D__ARM_FEATURE_CMSE=3 # It is already intrinsic because -mcmse, added
+                            	# again to make it discoverable by Eclipse.
 
 # Define ASM defines here
 UADEFS =

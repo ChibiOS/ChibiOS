@@ -1774,6 +1774,7 @@
 
 /* Various helpers.*/
 #include "nvic.h"
+#include "sau.h"
 #include "cache.h"
 //#include "mpu_v7m.h"
 #include "stm32_isr.h"

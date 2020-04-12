@@ -102,6 +102,9 @@ void hal_lld_init(void) {
 
   /* IRQ subsystem initialization.*/
   irqInit();
+
+  /* Security initialization.*/
+  secure_init();
 }
 
 /**
