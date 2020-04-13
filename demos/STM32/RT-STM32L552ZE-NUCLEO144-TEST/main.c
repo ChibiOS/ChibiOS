@@ -51,6 +51,7 @@ static THD_FUNCTION(Thread1, arg) {
  * Application entry point.
  */
 int main(void) {
+  thread_t *ns_tp = NULL;
 
   /*
    * System initializations.
@@ -78,8 +79,18 @@ int main(void) {
    */
   while (true) {
     if (palReadLine(LINE_BUTTON)) {
-      test_execute((BaseSequentialStream *)&LPSD1, &rt_test_suite);
-      test_execute((BaseSequentialStream *)&LPSD1, &oslib_test_suite);
+      static THD_WORKING_AREA(ns_thd_wa, 256);
+      extern uint32_t __flash2_base__;
+
+//      test_execute((BaseSequentialStream *)&LPSD1, &rt_test_suite);
+//      test_execute((BaseSequentialStream *)&LPSD1, &oslib_test_suite);
+      if (ns_tp == NULL) {
+        ns_tp = chThdCreateStatic(ns_thd_wa, sizeof ns_thd_wa, LOWPRIO,
+                                  __port_ns_boot,
+                                  (void *)&__flash2_base__);
+        chThdWait(ns_tp);
+        ns_tp = NULL;
+      }
     }
     chThdSleepMilliseconds(500);
   }

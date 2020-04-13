@@ -44,9 +44,22 @@
         .align      4
         .globl      __nsc_entries
 __nsc_entries:
+        .thumb_func
+__nsc_entry1:
         sg
 .here:
         b           .here
+
+        .section    .ns_flash, "ax"
+        .align      4
+        .globl      __ns_vectors
+__ns_vectors:
+        .word       0
+        .word       .loop
+        .thumb_func
+.loop:
+        b           .loop
+
 
 #endif /* !defined(__DOXYGEN__) */
 

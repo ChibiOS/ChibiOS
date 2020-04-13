@@ -255,12 +255,18 @@ __port_ns_boot:
                 vldr.64 d14, =0
                 vldr.64 d15, =0
 #endif
+                msr     PSPLIM_NS, r3
+                msr     MSPLIM_NS, r3
                 msr     BASEPRI, r3
                 ldr     r1, =SCB_VTOR_NS
                 str     r0, [r1, #0]
                 ldr     r1, [r0, #0]    /* MSP from vectors table.*/
                 msr     MSP_NS, r1
                 ldr     r2, [r0, #4]    /* PC from vectors table.*/
+                ldr     r3, =0x30000000
+                str     r0, [r3, #0]
+                str     r1, [r3, #4]
+                str     r2, [r3, #8]
                 bxns    r2
 #endif
 

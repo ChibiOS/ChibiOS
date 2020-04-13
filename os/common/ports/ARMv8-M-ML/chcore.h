@@ -632,7 +632,7 @@ extern "C" {
   void port_init(void);
   void __port_thread_start(void);
 #if PORT_KERNEL_MODE == PORT_KERNEL_MODE_HOST
-  __NO_RETURN void __port_ns_boot(uint32_t vtor);
+  void __port_ns_boot(void *vtor);
 #endif
 #ifdef __cplusplus
 }

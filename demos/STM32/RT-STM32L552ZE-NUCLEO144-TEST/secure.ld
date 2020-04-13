@@ -22,7 +22,7 @@ MEMORY
     flash0 (rx) : org = 0x0C000000, len = 120k - 256    /* Flash S   */
     flash1 (rx) : org = 0x0C01FF00, len = 256           /* Flash NSC */
     flash2 (rx) : org = 0x08020000, len = 384k          /* Flash NS  */
-    flash3 (rx) : org = 0x00000000, len = 0
+    flash3 (rx) : org = 0x0C020000, len = 384k          /* Flash NS mirror */
     flash4 (rx) : org = 0x00000000, len = 0
     flash5 (rx) : org = 0x00000000, len = 0
     flash6 (rx) : org = 0x00000000, len = 0
@@ -46,6 +46,13 @@ SECTIONS
         KEEP(*(.nsc_flash))
         __nsc_flash_end__ = .;
     } > flash1
+    
+    .ns_flash : ALIGN(4)
+    {
+        __ns_flash_base__ = .;
+        KEEP(*(.ns_flash))
+        __ns_flash_end__ = .;
+    } > flash2 AT > flash3
 }
 
 /* For each data/text section two region are defined, a virtual region
