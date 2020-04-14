@@ -50,6 +50,8 @@
 #define ADUCM_HAS_UART0                     TRUE
 #define ADUCM_HAS_UART1                     FALSE
 
+#define ADUCM_UART_STEPPING                 0
+
 #else
 #error "ADUCM36x device not specified"
 #endif

@@ -90,6 +90,7 @@ static void uart_init(SerialDriver *sdp, const SerialConfig *config) {
   /* Resetting the UART state machine. */
   sdp->uart->CTL = ADUCM_UART_CTL_DISABLE;
 
+#if (ADUCM_UART_STEPPING == 0)
   /* Baud rate setting.*/
   osalDbgAssert(((sdp->clock / 32U) > config->speed),
                 "invalid baud rate vs input clock");
@@ -124,7 +125,43 @@ static void uart_init(SerialDriver *sdp, const SerialConfig *config) {
                       comdiv) - (divm * 2048U));
                       
   osalDbgAssert((divn <= 2047), "invalid divn value");
+#elif (ADUCM_UART_STEPPING == 1)
+  sdp->uart->LCR2 = 3;
+  /* Baud rate setting.*/
+  osalDbgAssert(((sdp->clock / 32U) > config->speed),
+                "invalid baud rate vs input clock");
   
+  /* The Baudrate comes from the formula:
+     BR = (UDIV/DIV) / (32 * comdiv) / (M + N/2048)
+     Whereas:
+      - 0 < comdiv < 65536
+      - 0 <= M < 4
+      - 0 <= N < 2048
+     The following computation is deduced from the fact the the maximum value
+     of M is 3 and that N/2048 is always smaller than 1.
+
+     Thus, is it possible to find M and comdiv in an interative way increasing
+     comdiv until M does not reaches an allowed value.
+
+     Once founded comdiv and M it is possible to find N inverting the equation.
+     Note that N only refines the value introducing a decimal part to the last
+     dividend.
+  */
+  comdiv = 1U;
+  divm = sdp->clock / config->speed / 32U / comdiv;
+  while(divm > 3U) {
+    comdiv++;
+    divm = sdp->clock / config->speed / 32U / comdiv;
+  }
+
+  osalDbgAssert((divm <= 3), "invalid divm value");
+  osalDbgAssert((comdiv <= 65535U) && (comdiv >= 1), "invalid comdiv value");
+
+  divn = (uint32_t)((((uint64_t)sdp->clock * 2048U) / config->speed / 32U /
+                      comdiv) - (divm * 2048U));
+
+  osalDbgAssert((divn <= 2047), "invalid divn value");
+#endif
   sdp->uart->FBR = ADUCM_UART_FBR_ENABLE | ADUCM_UART_FBR_DIVM(divm) |
                    ADUCM_UART_FBR_DIVN(divn);
                       
