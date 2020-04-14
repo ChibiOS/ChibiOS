@@ -19,6 +19,9 @@
 
 #include "ch.h"
 #include "hal.h"
+
+#include "chprintf.h"
+
 #include "rt_test_root.h"
 #include "oslib_test_root.h"
 
@@ -47,6 +50,10 @@ static THD_FUNCTION(Thread1, arg) {
   }
 }
 
+#include "arm_cmse.h"
+#include "startup_defs.h"
+cmse_address_info_t info;
+
 /*
  * Application entry point.
  */
@@ -73,6 +80,22 @@ int main(void) {
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO + 1, Thread1, NULL);
 
+  /* Fixed regions.*/
+  sauEnableRegion(0, 0x40000000, 0x50000000, SAU_REGION_NOT_NSC);   /* Non secure peripherals.*/
+  sauEnableRegion(1, 0x60000000, 0xA0000000, SAU_REGION_NOT_NSC);   /* Non secure external.*/
+  sauEnableRegion(2, 0x0BF90000, 0x0BFA9000, SAU_REGION_NOT_NSC);   /* Non secure system memory.*/
+
+  /* Regions depending on scatter file configuration.*/
+  sauEnableRegion(3, STARTUP_FLASH1_BASE, STARTUP_FLASH1_END, SAU_REGION_NSC);
+  sauEnableRegion(4, STARTUP_FLASH2_BASE, STARTUP_FLASH2_END, SAU_REGION_NOT_NSC);
+  sauEnableRegion(5, STARTUP_RAM1_BASE, STARTUP_RAM1_END, SAU_REGION_NOT_NSC);
+  sauEnable();
+
+  info = cmse_TT((void *)&__flash0_base__);
+  chprintf((BaseSequentialStream *)&LPSD1, "%08x: %08x\r\n", &__flash0_base__, info);
+  info = cmse_TT((void *)&__flash2_base__);
+  chprintf((BaseSequentialStream *)&LPSD1, "%08x: %08x\r\n", &__flash2_base__, info);
+
   /*
    * Normal main() thread activity, in this demo it does nothing except
    * sleeping in a loop and check the button state.
@@ -81,13 +104,13 @@ int main(void) {
     if (palReadLine(LINE_BUTTON)) {
       static THD_WORKING_AREA(ns_thd_wa, 256);
       extern uint32_t __flash2_base__;
+      void *ns_entry = (void *)((uint32_t)&__flash2_base__);
 
 //      test_execute((BaseSequentialStream *)&LPSD1, &rt_test_suite);
 //      test_execute((BaseSequentialStream *)&LPSD1, &oslib_test_suite);
       if (ns_tp == NULL) {
         ns_tp = chThdCreateStatic(ns_thd_wa, sizeof ns_thd_wa, LOWPRIO,
-                                  __port_ns_boot,
-                                  (void *)&__flash2_base__);
+                                  __port_ns_boot, ns_entry);
         chThdWait(ns_tp);
         ns_tp = NULL;
       }

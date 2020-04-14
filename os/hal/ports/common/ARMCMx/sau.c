@@ -73,8 +73,10 @@ void sauDisable(void) {
  *          in IDAU.
  *
  * @param[in] region    the region number
- * @param[in] start     the region start address
- * @param[in] end       the region end address
+ * @param[in] start     the region start address (inclusive), must be a
+ *                      multiple of 32
+ * @param[in] end       the region end address (not inclusive), must be a
+ *                      multiple of 32
  * @param[in] flags     regions mode, note, this is tricky, read carefully
  *                      the ARM documentation and the note above
  */
@@ -83,11 +85,11 @@ void sauEnableRegion(uint32_t region, uint32_t start,
 
   osalDbgCheck(region < SAU->TYPE);
   osalDbgCheck((start & 0x1FU) == 0U);
-  osalDbgCheck((end & 0x1FU) == 0x1FU);
+  osalDbgCheck((end & 0x1FU) == 0U);
 
   SAU->RNR  = region;
   SAU->RBAR = start;
-  SAU->RLAR = (end & 0xFFFFFFE0U) | (flags & SAU_REGION_NSC) | 1U;
+  SAU->RLAR = ((end - 1U) & 0xFFFFFFE0U) | (flags & SAU_REGION_NSC) | 1U;
 }
 
 /**

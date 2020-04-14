@@ -79,7 +79,7 @@ REGION_ALIAS("VARIOUS_FLASH", flash0);
 REGION_ALIAS("VARIOUS_FLASH_LMA", flash0);
 
 /* Flash region to be used for RAM(n) initialization data.*/
-REGION_ALIAS("RAM_INIT_FLASH_LMA", flash1);
+REGION_ALIAS("RAM_INIT_FLASH_LMA", flash0);
 
 /* RAM region to be used for Main stack. This stack accommodates the processing
    of all exceptions and interrupts.*/

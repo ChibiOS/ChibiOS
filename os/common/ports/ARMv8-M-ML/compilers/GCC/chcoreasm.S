@@ -226,6 +226,8 @@ _zombies:       b       _zombies
                 .thumb_func
                 .globl  __port_ns_boot
 __port_ns_boot:
+                movs    r1, #0
+                movs    r2, #0
                 movs    r3, #0
                 movs    r4, #0
                 movs    r5, #0
@@ -255,6 +257,7 @@ __port_ns_boot:
                 vldr.64 d14, =0
                 vldr.64 d15, =0
 #endif
+#if 0
                 msr     PSPLIM_NS, r3
                 msr     MSPLIM_NS, r3
                 msr     BASEPRI, r3
@@ -268,6 +271,17 @@ __port_ns_boot:
                 str     r1, [r3, #4]
                 str     r2, [r3, #8]
                 bxns    r2
+#else
+                msr     BASEPRI, r1     /* Allowing NS-PendSV.*/
+                msr     PSPLIM_NS, r1
+                msr     MSPLIM_NS, r1
+                ldr     r1, =0x20009000
+                msr     MSP_NS, r1
+                ldr     r1, =0x20009400
+                msr     PSP_NS, r1
+                blxns   r0
+                b       chThdExit
+#endif
 #endif
 
 #endif /* !defined(__DOXYGEN__) */
