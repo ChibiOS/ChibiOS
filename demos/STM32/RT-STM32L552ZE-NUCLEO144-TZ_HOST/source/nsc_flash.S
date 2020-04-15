@@ -54,8 +54,8 @@ __nsc_entry1:
         .align      4
         .globl      __ns_vectors
 __ns_vectors:
-//        .word       0
-//        .word       .loop
+        .word       0x20009000
+        .word       .loop
         .thumb_func
 .loop:
         cpsid       i
