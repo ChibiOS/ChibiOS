@@ -226,8 +226,6 @@ _zombies:       b       _zombies
                 .thumb_func
                 .globl  __port_ns_boot
 __port_ns_boot:
-                movs    r1, #0
-                movs    r2, #0
                 movs    r3, #0
                 movs    r4, #0
                 movs    r5, #0
@@ -257,31 +255,17 @@ __port_ns_boot:
                 vldr.64 d14, =0
                 vldr.64 d15, =0
 #endif
-#if 0
+                msr     BASEPRI, r3     /* Allowing NS-PendSV in NS state.*/
                 msr     PSPLIM_NS, r3
                 msr     MSPLIM_NS, r3
-                msr     BASEPRI, r3
-                ldr     r1, =SCB_VTOR_NS
+                ldr     r1, = SCB_VTOR_NS
                 str     r0, [r1, #0]
-                ldr     r1, [r0, #0]    /* MSP from vectors table.*/
+                ldr     r1, [r0, #0]
                 msr     MSP_NS, r1
-                ldr     r2, [r0, #4]    /* PC from vectors table.*/
-                ldr     r3, =0x30000000
-                str     r0, [r3, #0]
-                str     r1, [r3, #4]
-                str     r2, [r3, #8]
-                bxns    r2
-#else
-                msr     BASEPRI, r1     /* Allowing NS-PendSV.*/
-                msr     PSPLIM_NS, r1
-                msr     MSPLIM_NS, r1
-                ldr     r1, =0x20009000
-                msr     MSP_NS, r1
-                ldr     r1, =0x20009400
-                msr     PSP_NS, r1
-                blxns   r0
+                ldr     r2, [r0, #4]
+                bic     r2, #1
+                blxns   r2
                 b       chThdExit
-#endif
 #endif
 
 #endif /* !defined(__DOXYGEN__) */

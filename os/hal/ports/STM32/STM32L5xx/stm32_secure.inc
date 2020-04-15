@@ -49,18 +49,6 @@
 #include "secconf.h"
 
 /* Checks on configurations.*/
-#if !defined(STM32_FLASH_OVERRIDE_SETTINGS)
-#error "STM32_FLASH_OVERRIDE_SETTINGS not defined in secconf.h"
-#endif
-
-#if !defined(STM32_FLASH_SECWM1R1)
-#error "STM32_FLASH_SECWM1R1 not defined in secconf.h"
-#endif
-
-#if !defined(STM32_FLASH_SECWM2R1)
-#error "STM32_FLASH_SECWM2R1 not defined in secconf.h"
-#endif
-
 #if !defined(STM32_FLASH_SECBB1R1)
 #error "STM32_FLASH_SECBB1R1 not defined in secconf.h"
 #endif
@@ -256,9 +244,6 @@
 static inline void secure_init(void) {
 
 #if STM32_SECURE_MODE
-#if STM32_FLASH_OVERRIDE_SETTINGS
-//  FLASH->SECWM1R1 = STM32_FLASH_SECWM1R1;
-//  FLASH->SECWM2R1 = STM32_FLASH_SECWM2R1;
   FLASH->SECBB1R1 = STM32_FLASH_SECBB1R1;
   FLASH->SECBB1R2 = STM32_FLASH_SECBB1R2;
   FLASH->SECBB1R3 = STM32_FLASH_SECBB1R3;
@@ -267,7 +252,6 @@ static inline void secure_init(void) {
   FLASH->SECBB2R2 = STM32_FLASH_SECBB2R2;
   FLASH->SECBB2R3 = STM32_FLASH_SECBB2R3;
   FLASH->SECBB2R4 = STM32_FLASH_SECBB2R4;
-#endif
 
   GTZC_MPCBB1->VCTR[0] = STM32_MPCBB1_VCTR0;
   GTZC_MPCBB1->VCTR[1] = STM32_MPCBB1_VCTR1;
