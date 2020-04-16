@@ -83,10 +83,53 @@
  * Context switch macros depending on various options.
  *--------------------------------------------------------------------------*/
 
+#if PORT_KERNEL_MODE == PORT_KERNEL_MODE_HOST
+
+#if !CH_DBG_ENABLE_STACK_CHECK
+                .macro  PORT_STORE_INTEGER_CONTEXT
+                mrs     r1, BASEPRI_NS
+                mrs     r3, BASEPRI
+                stmia   r0!, {r1-r11,lr}
+                .endm
+
+                .macro  PORT_RESTORE_INTEGER_CONTEXT
+                msr     BASEPRI_NS, r1
+                ldmia   r0!, {r1-r11, lr}
+                msr     PSP, r2
+                msr     BASEPRI, r3
+                .endm
+#else /* CH_DBG_ENABLE_STACK_CHECK */
+                .macro  PORT_STORE_INTEGER_CONTEXT
+                mrs     r1, BASEPRI_NS
+                mrs     r3, BASEPRI
+                mrs     r12, PSPLIM
+                stmia   r0!, {r1-r12,lr}
+                .endm
+
+                .macro  PORT_RESTORE_INTEGER_CONTEXT
+                ldmia   r0!, {r1-r12, lr}
+                /* Note the following is not required because this sentence
+                   in the ARMv8-M architecture manual:
+                       Updates to the stack pointer by the MSR instruction
+                       targeting SP_NS are subject to stack limit checking.
+                       Updates to the stack pointer and stack pointer limit
+                       by any other MSR instruction are not subject to
+                       stack limit checking.*/
+//                movs    r1, #0
+//                msr     PSPLIM, r1      /* Temporarily disabling stack check.*/
+                msr     PSP, r2
+                msr     BASEPRI_NS, r1
+                msr     BASEPRI, r3
+                msr     PSPLIM, r12
+                .endm
+#endif /* CH_DBG_ENABLE_STACK_CHECK */
+
+#else /* PORT_KERNEL_MODE != PORT_KERNEL_MODE_HOST */
+
 #if !CH_DBG_ENABLE_STACK_CHECK
                 .macro  PORT_STORE_INTEGER_CONTEXT
                 mrs     r3, BASEPRI
-                stmia   r1!, {r2-r11,lr}
+                stmia   r0!, {r2-r11,lr}
                 .endm
 
                 .macro  PORT_RESTORE_INTEGER_CONTEXT
@@ -98,7 +141,7 @@
                 .macro  PORT_STORE_INTEGER_CONTEXT
                 mrs     r3, BASEPRI
                 mrs     r12, PSPLIM
-                stmia   r1!, {r2-r12,lr}
+                stmia   r0!, {r2-r12,lr}
                 .endm
 
                 .macro  PORT_RESTORE_INTEGER_CONTEXT
@@ -116,11 +159,13 @@
                 msr     BASEPRI, r3
                 msr     PSPLIM, r12
                 .endm
-#endif
+#endif /* CH_DBG_ENABLE_STACK_CHECK */
+
+#endif /* PORT_KERNEL_MODE != PORT_KERNEL_MODE_HOST */
 
 #if CORTEX_USE_FPU
                 .macro  PORT_STORE_FLOAT_CONTEXT
-                vstmia  r1!, {s16-s31}
+                vstmia  r0!, {s16-s31}
                 .endm
 
                 .macro  PORT_RESTORE_FLOAT_CONTEXT
@@ -142,8 +187,8 @@
 SVC_Handler:
                 /* Saving callee context of thread being swapped out.*/
                 mrs     r2, PSP
-                ldr     r1, [r2, #4]        /* R1 on SVC entry (otp).   */
-                adds    r1, #CONTEXT_OFFSET
+                ldr     r0, [r2, #4]        /* R1 on SVC entry (otp).   */
+                adds    r0, #CONTEXT_OFFSET
 
                 /* Storing integer and control context.*/
                 PORT_STORE_INTEGER_CONTEXT
@@ -170,13 +215,13 @@ SVC_Handler:
                 .globl  PendSV_Handler
 PendSV_Handler:
                 /* Pointer to the current thread.*/
-                ldr     r1, =ch
-//                movw    r1, #:lower16:ch
-//                movt    r1, #:upper16:ch
-                ldr     r1, [r1, #CURRENT_OFFSET]
+                ldr     r0, =ch
+//                movw    r0, #:lower16:ch
+//                movt    r0, #:upper16:ch
+                ldr     r0, [r0, #CURRENT_OFFSET]
 
                 /* Saving callee context of thread being swapped out.*/
-                adds    r1, #CONTEXT_OFFSET
+                adds    r0, #CONTEXT_OFFSET
 
                 /* Storing integer and control context.*/
                 mrs     r2, PSP
@@ -258,7 +303,7 @@ __port_ns_boot:
                 vmov    s30, s31, r3, r3
 #endif
                 msr     APSR_nzcvqg, r3
-                msr     BASEPRI, r3     /* Allowing NS-PendSV in NS state.*/
+                msr     BASEPRI_NS, r3  /* Allowing NS-PendSV in NS state.*/
                 msr     PSPLIM_NS, r3
                 msr     MSPLIM_NS, r3
                 ldr     r1, = SCB_VTOR_NS

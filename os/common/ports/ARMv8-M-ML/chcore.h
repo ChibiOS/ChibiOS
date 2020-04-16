@@ -270,11 +270,6 @@
 #define PORT_INFO                       "Normal mode"
 
 /**
- * @brief   Disabled value for BASEPRI register.
- */
-#define CORTEX_BASEPRI_DISABLED         CORTEX_PRIO_MASK(0)
-
-/**
  * @brief   SVCALL handler priority.
  */
 #define CORTEX_PRIORITY_SVCALL          (CORTEX_MAXIMUM_PRIORITY +          \
@@ -301,7 +296,6 @@
 #define PORT_CONTEXT_RESERVED_SIZE      0x48
 #endif
 #define PORT_INFO                       "Secure host mode"
-#define CORTEX_BASEPRI_DISABLED         CORTEX_PRIO_MASK(CORTEX_MINIMUM_PRIORITY)
 #define CORTEX_PRIORITY_SVCALL          (CORTEX_MAXIMUM_PRIORITY +          \
                                          CORTEX_FAST_PRIORITIES)
 #define CORTEX_PRIORITY_PENDSV          (CORTEX_MINIMUM_PRIORITY / 2)
@@ -311,7 +305,6 @@
 #define PORT_EXC_RETURN                 0xFFFFFFBC
 #define PORT_CONTEXT_RESERVED_SIZE      (sizeof (struct port_intctx))
 #define PORT_INFO                       "Non-secure guest mode"
-#define CORTEX_BASEPRI_DISABLED         CORTEX_PRIO_MASK(0)
 #define CORTEX_PRIORITY_SVCALL          (CORTEX_MAXIMUM_PRIORITY +          \
                                          CORTEX_FAST_PRIORITIES)
 #define CORTEX_PRIORITY_PENDSV          (CORTEX_MINIMUM_PRIORITY & 0xFFFFFFFE)
@@ -320,6 +313,11 @@
 #else
 #error "invalid kernel security mode"
 #endif
+
+/**
+ * @brief   Disabled value for BASEPRI register.
+ */
+#define CORTEX_BASEPRI_DISABLED         CORTEX_PRIO_MASK(0)
 
 /**
  * @brief   BASEPRI level within kernel lock.
@@ -439,6 +437,9 @@ struct port_intctx {
  *          at context switch time.
  */
 struct port_context {
+#if (PORT_KERNEL_MODE == PORT_KERNEL_MODE_HOST)  || defined(__DOXYGEN__)
+  uint32_t              basepri_ns;
+#endif
   struct port_intctx    *sp;
   uint32_t              basepri;
   uint32_t              r4;
@@ -526,11 +527,26 @@ struct port_context {
 #endif
 
 /**
+ * @brief   Initialization of BASEPRI_NS part of thread context.
+ * @note    All secure threads have BASEPRI_NS set to mask PendSV, this
+ *          way a guest RTOS cannot reschedule while a secure thread
+ *          is running, reschedule is delayed to when the non-secure
+ *          thread running the guest is activated again.
+ */
+#if (PORT_KERNEL_MODE == PORT_KERNEL_MODE_HOST)  || defined(__DOXYGEN__)
+#define PORT_SETUP_CONTEXT_BASEPRI_NS(tp)                                   \
+  (tp)->ctx.basepri_ns = (uint32_t)CORTEX_PRIO_MASK(CORTEX_MINIMUM_PRIORITY)
+#else
+#define PORT_SETUP_CONTEXT_BASEPRI_NS(tp)
+#endif
+
+/**
  * @brief   Platform dependent part of the @p chThdCreateI() API.
  * @details This code usually setup the context switching frame represented
  *          by an @p port_intctx structure.
  */
 #define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) do {                   \
+  PORT_SETUP_CONTEXT_BASEPRI_NS(tp);                                        \
   (tp)->ctx.sp = (struct port_intctx *)((uint8_t *)(wtop) -                 \
                                         sizeof (struct port_intctx));       \
   (tp)->ctx.basepri     = CORTEX_BASEPRI_KERNEL;                            \

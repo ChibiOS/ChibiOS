@@ -82,6 +82,9 @@ void port_init(void) {
     aircr &= ~(uint32_t)SCB_AIRCR_VECTKEY_Msk;
     aircr |= (uint32_t)((0x5FAUL << SCB_AIRCR_VECTKEY_Pos) | SCB_AIRCR_PRIS_Msk);
     SCB->AIRCR =  aircr;
+
+    /* Secure threads keep PendSV-NS masked, this is a secure thread.*/
+    __TZ_set_BASEPRI_NS((uint32_t)CORTEX_PRIO_MASK(CORTEX_MINIMUM_PRIORITY));
   }
 #endif
 
