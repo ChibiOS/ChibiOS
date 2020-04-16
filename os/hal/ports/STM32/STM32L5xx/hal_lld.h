@@ -806,9 +806,6 @@
 #include "stm32_hsi48.inc"
 #include "stm32_hse.inc"
 
-/* Secure mode handler.*/
-#include "stm32_secure.inc"
-
 /*
  * Platform HSI16-related checks.
  */
@@ -1782,6 +1779,9 @@
 //#include "stm32_exti.h"
 #include "stm32_rcc.h"
 #include "stm32_tim.h"
+
+/* Secure mode handler.*/
+#include "stm32_secure.inc"
 
 #ifdef __cplusplus
 extern "C" {

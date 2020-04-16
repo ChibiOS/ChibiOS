@@ -46,7 +46,7 @@ uint32_t SystemCoreClock = STM32_HCLK;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static inline void bd_init(void) {
+__STATIC_INLINE void bd_init(void) {
 
   /* Reset BKP domain if different clock source selected.*/
   if ((RCC->BDCR & STM32_RTCSEL_MASK) != STM32_RTCSEL) {
@@ -73,7 +73,7 @@ static inline void bd_init(void) {
   RCC->BDCR |= STM32_LSCOSEL;
 }
 
-static void flash_ws_init(uint32_t bits) {
+__STATIC_INLINE void flash_ws_init(uint32_t bits) {
 
   FLASH->ACR = (FLASH->ACR & ~FLASH_ACR_LATENCY_Msk) | bits;
   while ((FLASH->ACR & FLASH_ACR_LATENCY_Msk) != (bits & FLASH_ACR_LATENCY_Msk)) {

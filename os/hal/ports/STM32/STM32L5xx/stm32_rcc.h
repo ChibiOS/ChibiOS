@@ -498,6 +498,35 @@
  * @api
  */
 #define rccResetFDCAN1() rccResetAPB1R2(RCC_APB1RSTR2_FDCAN1RST)
+/** @} */
+
+/**
+ * @name    GTZC specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the GTZC peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableGTZC(lp) rccEnableAHB1(RCC_AHB1ENR_GTZCEN, lp)
+
+/**
+ * @brief   Disables the GTZC peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableGTZC() rccDisableAHB1(RCC_AHB1ENR_GTZCEN)
+
+/**
+ * @brief   Resets the GTZC peripheral.
+ *
+ * @api
+ */
+#define rccResetGTZC() /*rccResetAHB1(RCC_AHB1RST_GTZCRST)*/
+/** @} */
 
 /**
  * @name    I2C peripherals specific RCC operations

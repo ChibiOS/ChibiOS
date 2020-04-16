@@ -71,7 +71,7 @@
                 .syntax unified
                 .cpu    cortex-m33
 #if CORTEX_USE_FPU
-                .fpu    fpv4-sp-d16
+                .fpu    fpv5-sp-d16
 #else
                 .fpu    softvfp
 #endif
@@ -84,26 +84,24 @@
  *--------------------------------------------------------------------------*/
 
 #if !CH_DBG_ENABLE_STACK_CHECK
-                .macro  PORT_STORE_INTEGER_CONTEXT_R1
-                mrs     r2, PSP
+                .macro  PORT_STORE_INTEGER_CONTEXT
                 mrs     r3, BASEPRI
                 stmia   r1!, {r2-r11,lr}
                 .endm
 
-                .macro  PORT_RESTORE_INTEGER_CONTEXT_R0
+                .macro  PORT_RESTORE_INTEGER_CONTEXT
                 ldmia   r0!, {r2-r11, lr}
                 msr     PSP, r2
                 msr     BASEPRI, r3
                 .endm
 #else /* CH_DBG_ENABLE_STACK_CHECK */
-                .macro  PORT_STORE_INTEGER_CONTEXT_R1
-                mrs     r2, PSP
+                .macro  PORT_STORE_INTEGER_CONTEXT
                 mrs     r3, BASEPRI
                 mrs     r12, PSPLIM
                 stmia   r1!, {r2-r12,lr}
                 .endm
 
-                .macro  PORT_RESTORE_INTEGER_CONTEXT_R0
+                .macro  PORT_RESTORE_INTEGER_CONTEXT
                 ldmia   r0!, {r2-r12, lr}
                 /* Note the following is not required because this sentence
                    in the ARMv8-M architecture manual:
@@ -121,18 +119,18 @@
 #endif
 
 #if CORTEX_USE_FPU
-                .macro  PORT_STORE_FLOAT_CONTEXT_R1
+                .macro  PORT_STORE_FLOAT_CONTEXT
                 vstmia  r1!, {s16-s31}
                 .endm
 
-                .macro  PORT_RESTORE_FLOAT_CONTEXT_R0
+                .macro  PORT_RESTORE_FLOAT_CONTEXT
                 vldmia  r0!, {s16-s31}
                 .endm
 #else
-                .macro  PORT_STORE_FLOAT_CONTEXT_R1
+                .macro  PORT_STORE_FLOAT_CONTEXT
                 .endm
 
-                .macro  PORT_RESTORE_FLOAT_CONTEXT_R0
+                .macro  PORT_RESTORE_FLOAT_CONTEXT
                 .endm
 #endif
 
@@ -143,22 +141,25 @@
                 .globl  SVC_Handler
 SVC_Handler:
                 /* Saving callee context of thread being swapped out.*/
+                mrs     r2, PSP
+                ldr     r1, [r2, #4]        /* R1 on SVC entry (otp).   */
                 adds    r1, #CONTEXT_OFFSET
 
-                /* Storing integer and control context through R1.*/
-                PORT_STORE_INTEGER_CONTEXT_R1
+                /* Storing integer and control context.*/
+                PORT_STORE_INTEGER_CONTEXT
 
-                /* Storing float context through R1.*/
-                PORT_STORE_FLOAT_CONTEXT_R1
+                /* Storing float context.*/
+                PORT_STORE_FLOAT_CONTEXT
 
                 /* Restoring calle context of thread being swapped in.*/
+                ldr     r0, [r2, #0]        /* R0 on SVC entry (ntp).   */
                 adds    r0, #CONTEXT_OFFSET
 
                 /* Restoring integer and control context through R0.*/
-                PORT_RESTORE_INTEGER_CONTEXT_R0
+                PORT_RESTORE_INTEGER_CONTEXT
 
-                /* Restoring float context through R0.*/
-                PORT_RESTORE_FLOAT_CONTEXT_R0
+                /* Restoring float context.*/
+                PORT_RESTORE_FLOAT_CONTEXT
 
                 bx      lr
 
@@ -177,11 +178,12 @@ PendSV_Handler:
                 /* Saving callee context of thread being swapped out.*/
                 adds    r1, #CONTEXT_OFFSET
 
-                /* Storing integer and control context through R1.*/
-                PORT_STORE_INTEGER_CONTEXT_R1
+                /* Storing integer and control context.*/
+                mrs     r2, PSP
+                PORT_STORE_INTEGER_CONTEXT
 
-                /* Storing float context through R1.*/
-                PORT_STORE_FLOAT_CONTEXT_R1
+                /* Storing float context.*/
+                PORT_STORE_FLOAT_CONTEXT
 
                 /* Selecting the thread to be swapped in, R0 points to it.*/
                 bl      port_schedule_next
@@ -189,11 +191,11 @@ PendSV_Handler:
                 /* Restoring calle context of thread being swapped in.*/
                 adds    r0, #CONTEXT_OFFSET
 
-                /* Restoring integer and control context through R0.*/
-                PORT_RESTORE_INTEGER_CONTEXT_R0
+                /* Restoring integer and control context.*/
+                PORT_RESTORE_INTEGER_CONTEXT
 
-                /* Restoring float context through R0.*/
-                PORT_RESTORE_FLOAT_CONTEXT_R0
+                /* Restoring float context.*/
+                PORT_RESTORE_FLOAT_CONTEXT
 
                 bx      lr
 
@@ -238,23 +240,24 @@ __port_ns_boot:
                 movs    r12, #0
                 movs    lr, #0
 #if CORTEX_USE_FPU
-                vldr.64 d0, =0
-                vldr.64 d1, =0
-                vldr.64 d2, =0
-                vldr.64 d3, =0
-                vldr.64 d4, =0
-                vldr.64 d5, =0
-                vldr.64 d6, =0
-                vldr.64 d7, =0
-                vldr.64 d8, =0
-                vldr.64 d9, =0
-                vldr.64 d10, =0
-                vldr.64 d11, =0
-                vldr.64 d12, =0
-                vldr.64 d13, =0
-                vldr.64 d14, =0
-                vldr.64 d15, =0
+                vmov    s0, s1, r3, r3
+                vmov    s2, s3, r3, r3
+                vmov    s4, s5, r3, r3
+                vmov    s6, s7, r3, r3
+                vmov    s8, s9, r3, r3
+                vmov    s10, s11, r3, r3
+                vmov    s12, s13, r3, r3
+                vmov    s14, s15, r3, r3
+                vmov    s16, s17, r3, r3
+                vmov    s18, s19, r3, r3
+                vmov    s20, s21, r3, r3
+                vmov    s22, s23, r3, r3
+                vmov    s24, s25, r3, r3
+                vmov    s26, s27, r3, r3
+                vmov    s28, s29, r3, r3
+                vmov    s30, s31, r3, r3
 #endif
+                msr     APSR_nzcvqg, r3
                 msr     BASEPRI, r3     /* Allowing NS-PendSV in NS state.*/
                 msr     PSPLIM_NS, r3
                 msr     MSPLIM_NS, r3

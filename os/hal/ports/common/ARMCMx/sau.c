@@ -24,6 +24,9 @@
 
 #include "hal.h"
 
+#if (defined(__ARM_FEATURE_CMSE) && (__ARM_FEATURE_CMSE == 3)) ||           \
+    defined(__DOXYGEN__)
+
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
@@ -105,5 +108,7 @@ void sauDisableRegion(uint32_t region) {
   SAU->RLAR = 0U;
   SAU->RBAR = 0U;
 }
+
+#endif /* defined(__ARM_FEATURE_CMSE) && (__ARM_FEATURE_CMSE == 3) */
 
 /** @} */

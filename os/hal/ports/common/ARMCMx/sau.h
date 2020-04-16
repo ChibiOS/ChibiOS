@@ -25,6 +25,9 @@
 #ifndef SAU_H
 #define SAU_H
 
+#if (defined(__ARM_FEATURE_CMSE) && (__ARM_FEATURE_CMSE == 3)) ||           \
+    defined(__DOXYGEN__)
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -68,6 +71,8 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* defined(__ARM_FEATURE_CMSE) && (__ARM_FEATURE_CMSE == 3) */
 
 #endif /* SAU_H */
 

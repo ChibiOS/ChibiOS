@@ -160,7 +160,7 @@
  * @brief   Kernel mode selection.
  */
 #if !defined(PORT_KERNEL_MODE) || defined(__DOXYGEN__)
-#define PORT_KERNEL_MODE                PORT_KERNEL_MODE_HOST
+#define PORT_KERNEL_MODE                PORT_KERNEL_MODE_NORMAL
 #endif
 
 /**
@@ -285,6 +285,12 @@
  */
 #define CORTEX_PRIORITY_PENDSV          (CORTEX_MINIMUM_PRIORITY)
 
+/**
+ * @brief   Maximum usable priority for normal ISRs.
+ * @note    Must be lower than @p CORTEX_PRIORITY_SVCALL.
+ */
+#define CORTEX_MAX_KERNEL_PRIORITY      (CORTEX_PRIORITY_SVCALL + 1)
+
 #elif PORT_KERNEL_MODE == PORT_KERNEL_MODE_HOST
 #define PORT_EXC_RETURN                 0xFFFFFFFD
 #if CORTEX_USE_FPU == TRUE
@@ -299,24 +305,21 @@
 #define CORTEX_PRIORITY_SVCALL          (CORTEX_MAXIMUM_PRIORITY +          \
                                          CORTEX_FAST_PRIORITIES)
 #define CORTEX_PRIORITY_PENDSV          (CORTEX_MINIMUM_PRIORITY / 2)
+#define CORTEX_MAX_KERNEL_PRIORITY      (CORTEX_PRIORITY_SVCALL + 1)
 
 #elif PORT_KERNEL_MODE == PORT_KERNEL_MODE_GUEST
 #define PORT_EXC_RETURN                 0xFFFFFFBC
 #define PORT_CONTEXT_RESERVED_SIZE      (sizeof (struct port_intctx))
 #define PORT_INFO                       "Non-secure guest mode"
 #define CORTEX_BASEPRI_DISABLED         CORTEX_PRIO_MASK(0)
-#define CORTEX_PRIORITY_SVCALL          ((CORTEX_MAXIMUM_PRIORITY +         \
+#define CORTEX_PRIORITY_SVCALL          (CORTEX_MAXIMUM_PRIORITY +          \
+                                         CORTEX_FAST_PRIORITIES)
 #define CORTEX_PRIORITY_PENDSV          (CORTEX_MINIMUM_PRIORITY & 0xFFFFFFFE)
+#define CORTEX_MAX_KERNEL_PRIORITY      ((CORTEX_PRIORITY_SVCALL | 1) + 1)
 
 #else
 #error "invalid kernel security mode"
 #endif
-
-/**
- * @brief   Maximum usable priority for normal ISRs.
- * @note    Must be lower than @p CORTEX_PRIORITY_SVCALL.
- */
-#define CORTEX_MAX_KERNEL_PRIORITY      (CORTEX_PRIORITY_SVCALL + 1)
 
 /**
  * @brief   BASEPRI level within kernel lock.
@@ -491,7 +494,7 @@ struct port_context {
  * @brief   Priority level verification macro.
  */
 #define PORT_IRQ_IS_VALID_KERNEL_PRIORITY(n)                                \
-  (((n) > CORTEX_PRIORITY_SVCALL) && ((n) <= CORTEX_PRIORITY_PENDSV))
+  (((n) >= CORTEX_MAX_KERNEL_PRIORITY) && ((n) <= CORTEX_PRIORITY_PENDSV))
 
 /**
  * @brief   Initialization of stack check part of thread context.

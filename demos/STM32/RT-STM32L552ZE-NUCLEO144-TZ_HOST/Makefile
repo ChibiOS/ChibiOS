@@ -154,9 +154,11 @@ CPPWARN = -Wall -Wextra -Wundef
 UDEFS =
 UDEFS += -D__ARM_FEATURE_CMSE=3 # It is already intrinsic because -mcmse, added
                             	# again to make it discoverable by Eclipse.
+UDEFS += -DPORT_KERNEL_MODE=PORT_KERNEL_MODE_HOST
 
 # Define ASM defines here
 UADEFS =
+UADEFS += -DPORT_KERNEL_MODE=PORT_KERNEL_MODE_HOST
 
 # List all user directories here
 UINCDIR =
