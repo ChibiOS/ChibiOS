@@ -51,6 +51,19 @@
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
+#if (PORT_KERNEL_MODE == PORT_KERNEL_MODE_HOST)  || defined(__DOXYGEN__)
+/**
+ * @brief   Delayed reschedule workaround function.
+ * @note    This function is called when the PendSV handler cannot reschedule
+ *          immediately, this can happen if it preempted a non-secure
+ *          exception with lower priority. The strategy is to re-trigger
+ *          PendSV-S after a small delay so it can reschedule.
+ */
+void port_delay_reschedule(void) {
+
+}
+#endif
+
 /**
  * @brief   Tail ISR context switch code.
  *

@@ -31,9 +31,6 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
-/* Feature currently disabled.*/
-#define STM32_ST_ENFORCE_ALARMS 1
-
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -57,6 +54,20 @@
  */
 #if !defined(STM32_ST_USE_TIMER) || defined(__DOXYGEN__)
 #define STM32_ST_USE_TIMER                  2
+#endif
+
+/**
+ * @brief   Overrides the number of supported alarms.
+ * @note    The default number of alarms is equal to the number of
+ *          comparators in the timer, overriding it to one makes
+ *          the driver a little faster and smaller. The kernel itself
+ *          only needs one alarm, additional features could need more.
+ * @note    Zero means do not override.
+ * @note    This setting is only meaningful in free running mode, in
+ *          tick mode there are no alarms.
+ */
+#if !defined(STM32_ST_OVERRIDE_ALARMS) || defined(__DOXYGEN__)
+#define STM32_ST_OVERRIDE_ALARMS            1
 #endif
 /** @} */
 
@@ -457,14 +468,14 @@
 #error "STM32_ST_USE_TIMER specifies an unsupported timer"
 #endif
 
-#if defined(STM32_ST_ENFORCE_ALARMS)
-
-#if (STM32_ST_ENFORCE_ALARMS < 1) || (STM32_ST_ENFORCE_ALARMS > ST_LLD_NUM_ALARMS)
-#error "invalid STM32_ST_ENFORCE_ALARMS value"
+#if (STM32_ST_OVERRIDE_ALARMS < 0) ||                                       \
+    (STM32_ST_OVERRIDE_ALARMS > ST_LLD_NUM_ALARMS)
+#error "invalid STM32_ST_OVERRIDE_ALARMS value"
 #endif
 
+#if STM32_ST_OVERRIDE_ALARMS > 0
 #undef ST_LLD_NUM_ALARMS
-#define ST_LLD_NUM_ALARMS                   STM32_ST_ENFORCE_ALARMS
+#define ST_LLD_NUM_ALARMS                   STM32_ST_OVERRIDE_ALARMS
 #endif
 
 #elif OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING

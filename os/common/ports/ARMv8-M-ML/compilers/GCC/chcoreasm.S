@@ -214,6 +214,14 @@ SVC_Handler:
                 .thumb_func
                 .globl  PendSV_Handler
 PendSV_Handler:
+#if PORT_KERNEL_MODE == PORT_KERNEL_MODE_HOST
+                /* The following check is required in case PendSV-S preempted
+                   a NS exception, in that case a reschedule cannot be
+                   performed immediately.*/
+                ldr     r0, =SCB_ICSR
+                tst     r0, #(1 << 11)
+                beq.w   port_delay_reschedule   /* Tail call on far address.*/
+#endif
                 /* Pointer to the current thread.*/
                 ldr     r0, =ch
 //                movw    r0, #:lower16:ch
