@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added dynamic reconfiguration API to lwIP bindings.
 - FIX: Corrected I2C4 BDMA #define conditional in I2Cv3 (bug #1082)
 - RT:  Relocated the "ctx" field in the thread structure in order to save
        some RAM, it caused unused space in the "ch" variable.

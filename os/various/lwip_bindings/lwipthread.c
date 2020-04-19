@@ -270,7 +270,7 @@ static net_addr_mode_t addressMode;
 static ip4_addr_t ip, gateway, netmask;
 static struct netif thisif;
 
-static void linkup_cb(void *p)
+void lwipDefaultLinkUpCB(void *p)
 {
   struct netif *ifc = (struct netif*) p;
   (void) ifc;
@@ -284,7 +284,7 @@ static void linkup_cb(void *p)
 #endif
 }
 
-static void linkdown_cb(void *p)
+void lwipDefaultLinkDownCB(void *p)
 {
   struct netif *ifc = (struct netif*) p;
   (void) ifc;
@@ -309,6 +309,8 @@ static THD_FUNCTION(lwip_thread, p) {
   event_listener_t el0, el1;
   static const MACConfig mac_config = {thisif.hwaddr};
   err_t result;
+  tcpip_callback_fn link_up_cb = NULL;
+  tcpip_callback_fn link_down_cb = NULL;
 
   chRegSetThreadName(LWIP_THREAD_NAME);
 
@@ -317,7 +319,7 @@ static THD_FUNCTION(lwip_thread, p) {
 
   /* TCP/IP parameters, runtime or compile time.*/
   if (p) {
-    struct lwipthread_opts *opts = p;
+    lwipthread_opts_t *opts = p;
     unsigned i;
 
     for (i = 0; i < 6; i++)
@@ -329,6 +331,8 @@ static THD_FUNCTION(lwip_thread, p) {
 #if LWIP_NETIF_HOSTNAME
     thisif.hostname = opts->ourHostName;
 #endif
+    link_up_cb = opts->link_up_cb;
+    link_down_cb = opts->link_down_cb;
   }
   else {
     thisif.hwaddr[0] = LWIP_ETHADDR_0;
@@ -351,6 +355,11 @@ static THD_FUNCTION(lwip_thread, p) {
     thisif.hostname = NULL;
 #endif
   }
+
+  if (!link_up_cb)
+    link_up_cb = lwipDefaultLinkUpCB;
+  if (!link_down_cb)
+    link_down_cb = lwipDefaultLinkDownCB;
 
 #if LWIP_NETIF_HOSTNAME
   if (thisif.hostname == NULL)
@@ -391,12 +400,12 @@ static THD_FUNCTION(lwip_thread, p) {
         if (current_link_status) {
           tcpip_callback_with_block((tcpip_callback_fn) netif_set_link_up,
                                      &thisif, 0);
-          tcpip_callback_with_block(linkup_cb, &thisif, 0);
+          tcpip_callback_with_block(link_up_cb, &thisif, 0);
         }
         else {
           tcpip_callback_with_block((tcpip_callback_fn) netif_set_link_down,
                                      &thisif, 0);
-          tcpip_callback_with_block(linkdown_cb, &thisif, 0);
+          tcpip_callback_with_block(link_down_cb, &thisif, 0);
         }
       }
     }
@@ -432,6 +441,7 @@ static THD_FUNCTION(lwip_thread, p) {
  *                      then the static configuration is used.
  */
 void lwipInit(const lwipthread_opts_t *opts) {
+
   /* Creating the lwIP thread (it changes priority internally).*/
   chThdCreateStatic(wa_lwip_thread, sizeof (wa_lwip_thread),
                     chThdGetPriorityX() - 1, lwip_thread, (void *)opts);
@@ -442,6 +452,79 @@ void lwipInit(const lwipthread_opts_t *opts) {
   chSysLock();
   chThdSuspendS(&lwip_trp);
   chSysUnlock();
+}
+
+typedef struct lwip_reconf_params {
+  const lwipreconf_opts_t *opts;
+  semaphore_t completion;
+} lwip_reconf_params_t;
+
+static void do_reconfigure(void *p)
+{
+  lwip_reconf_params_t *reconf = (lwip_reconf_params_t*) p;
+
+  switch (addressMode) {
+#if LWIP_DHCP
+  case NET_ADDRESS_DHCP: {
+    if (netif_is_up(&thisif))
+      dhcp_stop(&thisif);
+    break;
+  }
+#endif
+  case NET_ADDRESS_STATIC: {
+    ip4_addr_t zero = { 0 };
+    netif_set_ipaddr(&thisif, &zero);
+    netif_set_netmask(&thisif, &zero);
+    netif_set_gw(&thisif, &zero);
+    break;
+  }
+#if LWIP_AUTOIP
+  case NET_ADDRESS_AUTO: {
+    if (netif_is_up(&thisif))
+      autoip_stop(&thisif);
+    break;
+  }
+#endif
+  }
+
+  ip.addr = reconf->opts->address;
+  gateway.addr = reconf->opts->gateway;
+  netmask.addr = reconf->opts->netmask;
+  addressMode = reconf->opts->addrMode;
+
+  switch (addressMode) {
+#if LWIP_DHCP
+  case NET_ADDRESS_DHCP: {
+    if (netif_is_up(&thisif))
+      dhcp_start(&thisif);
+    break;
+  }
+#endif
+  case NET_ADDRESS_STATIC: {
+    netif_set_ipaddr(&thisif, &ip);
+    netif_set_netmask(&thisif, &netmask);
+    netif_set_gw(&thisif, &gateway);
+    break;
+  }
+#if LWIP_AUTOIP
+  case NET_ADDRESS_AUTO: {
+    if (netif_is_up(&thisif))
+      autoip_start(&thisif);
+    break;
+  }
+#endif
+  }
+
+  chSemSignal(&reconf->completion);
+}
+
+void lwipReconfigure(const lwipreconf_opts_t *opts)
+{
+  lwip_reconf_params_t params;
+  params.opts = opts;
+  chSemObjectInit(&params.completion, 0);
+  tcpip_callback_with_block(do_reconfigure, &params, 0);
+  chSemWait(&params.completion);
 }
 
 /** @} */
