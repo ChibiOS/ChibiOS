@@ -76,6 +76,7 @@
 *** 19.1.4 ***
 - NEW: Added support for .cc files extensions in makefiles.
 - NEW: Made bus acquire/release functions in SNOR driver public.
+- FIX: Fixed race condition in HAL MAC driver (bug #1083).
 - FIX: Fixed problem in chMtxUnlockAllS() (bug #1076).
 - FIX: Fixed state check in CMSIS osKernelInitialize() wrapper (bug #1075).
 - FIX: Fixed duplicated code in TIMv1/hal_gpt_lld.c (bug #1074).
