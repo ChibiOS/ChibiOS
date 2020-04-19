@@ -232,12 +232,40 @@ typedef struct lwipthread_opts {
 #if LWIP_NETIF_HOSTNAME || defined(__DOXYGEN__)
   const char              *ourHostName;
 #endif
+  /**
+   * @brief   Link up callback.
+   *
+   * @note    Called from the tcpip thread when the link goes up.
+   *          Can be NULL to default to lwipDefaultLinkUpCB.
+   */
+  void (*link_up_cb)(void*);
+  /**
+   * @brief   Link down callback.
+   *
+   * @note    Called from the tcpip thread when the link goes down.
+   *          Can be NULL to default to lwipDefaultLinkDownCB.
+   */
+  void (*link_down_cb)(void*);
 } lwipthread_opts_t;
+
+/**
+ * @brief   Parameters for lwipReconfigure.
+ * @note    Same meaning as in lwipthread_opts_t.
+ */
+typedef struct lwipreconf_opts {
+  uint32_t        address;
+  uint32_t        netmask;
+  uint32_t        gateway;
+  net_addr_mode_t addrMode;
+} lwipreconf_opts_t;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+  void lwipDefaultLinkUpCB(void *p);
+  void lwipDefaultLinkDownCB(void *p);
   void lwipInit(const lwipthread_opts_t *opts);
+  void lwipReconfigure(const lwipreconf_opts_t *opts);
 #ifdef __cplusplus
 }
 #endif

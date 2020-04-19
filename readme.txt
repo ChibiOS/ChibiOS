@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 20.3.1 ***
+- NEW: Added dynamic reconfiguration API to lwIP bindings.
 - FIX: Fixed early interrupts enable in ARMv7-M port (bug #1081).
 - FIX: Fixed I2CD4 interrupt vectors are swapped versus I2CD1-I2CD3 (bug #1080).
 - FIX: Fixed incorrect clock check when using PLLSAI1R in ADCv3 (bug #1079).
