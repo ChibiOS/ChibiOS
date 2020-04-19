@@ -83,6 +83,8 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Fixed race condition in HAL MAC driver (bug #1083)
+       (backported to 20.3.1)(backported to 19.1.4).
 - FIX: Fixed early interrupts enable in ARMv7-M port (bug #1081)
        (backported to 20.3.1).
 - FIX: Fixed I2CD4 interrupt vectors are swapped versus I2CD1-I2CD3 (bug #1080)

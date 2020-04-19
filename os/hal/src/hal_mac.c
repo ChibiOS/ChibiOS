@@ -155,16 +155,18 @@ msg_t macWaitTransmitDescriptor(MACDriver *macp,
   osalDbgCheck((macp != NULL) && (tdp != NULL));
   osalDbgAssert(macp->state == MAC_ACTIVE, "not active");
 
+  osalSysLock();
+
   while (((msg = mac_lld_get_transmit_descriptor(macp, tdp)) != MSG_OK) &&
          (timeout > (sysinterval_t)0)) {
-    osalSysLock();
     msg = osalThreadEnqueueTimeoutS(&macp->tdqueue, timeout);
     if (msg == MSG_TIMEOUT) {
-      osalSysUnlock();
       break;
     }
-    osalSysUnlock();
   }
+
+  osalSysUnlock();
+
   return msg;
 }
 
@@ -210,15 +212,17 @@ msg_t macWaitReceiveDescriptor(MACDriver *macp,
   osalDbgCheck((macp != NULL) && (rdp != NULL));
   osalDbgAssert(macp->state == MAC_ACTIVE, "not active");
 
+  osalSysLock();
+
   while (((msg = mac_lld_get_receive_descriptor(macp, rdp)) != MSG_OK)) {
-    osalSysLock();
     msg = osalThreadEnqueueTimeoutS(&macp->rdqueue, timeout);
     if (msg == MSG_TIMEOUT) {
-      osalSysUnlock();
       break;
     }
-    osalSysUnlock();
   }
+
+  osalSysUnlock();
+
   return msg;
 }
 
