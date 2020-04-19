@@ -427,15 +427,12 @@ msg_t mac_lld_get_transmit_descriptor(MACDriver *macp,
   if (!macp->link_up)
     return MSG_TIMEOUT;
 
-  osalSysLock();
-
   /* Get Current TX descriptor.*/
   tdes = macp->txptr;
 
   /* Ensure that descriptor isn't owned by the Ethernet DMA or locked by
      another thread.*/
   if (tdes->tdes0 & (STM32_TDES0_OWN | STM32_TDES0_LOCKED)) {
-    osalSysUnlock();
     return MSG_TIMEOUT;
   }
 
@@ -444,8 +441,6 @@ msg_t mac_lld_get_transmit_descriptor(MACDriver *macp,
 
   /* Next TX descriptor to use.*/
   macp->txptr = (stm32_eth_tx_descriptor_t *)tdes->tdes3;
-
-  osalSysUnlock();
 
   /* Set the buffer size and configuration.*/
   tdp->offset   = 0;
@@ -503,8 +498,6 @@ msg_t mac_lld_get_receive_descriptor(MACDriver *macp,
                                      MACReceiveDescriptor *rdp) {
   stm32_eth_rx_descriptor_t *rdes;
 
-  osalSysLock();
-
   /* Get Current RX descriptor.*/
   rdes = macp->rxptr;
 
@@ -523,7 +516,6 @@ msg_t mac_lld_get_receive_descriptor(MACDriver *macp,
       rdp->physdesc = rdes;
       macp->rxptr   = (stm32_eth_rx_descriptor_t *)rdes->rdes3;
 
-      osalSysUnlock();
       return MSG_OK;
     }
     /* Invalid frame found, purging.*/
@@ -534,7 +526,6 @@ msg_t mac_lld_get_receive_descriptor(MACDriver *macp,
   /* Next descriptor to check.*/
   macp->rxptr = rdes;
 
-  osalSysUnlock();
   return MSG_TIMEOUT;
 }
 
