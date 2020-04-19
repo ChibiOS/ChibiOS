@@ -59,6 +59,13 @@ static struct os_timer_cb timers[CMSIS_CFG_NUM_TIMERS];
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
+__STATIC_INLINE sysinterval_t tmo(uint32_t millisec) {
+
+  return millisec == osWaitForever ? TIME_INFINITE :
+                                     (millisec == 0 ? TIME_IMMEDIATE :
+                                                      TIME_MS2I(millisec));
+}
+
 /**
  * @brief   Virtual timers common callback.
  */
@@ -287,15 +294,13 @@ int32_t osSignalClear(osThreadId thread_id, int32_t signals) {
  */
 osEvent osSignalWait(int32_t signals, uint32_t millisec) {
   osEvent event;
-  sysinterval_t timeout = (millisec == osWaitForever ?
-                          TIME_INFINITE : (millisec == 0 ? TIME_IMMEDIATE :
-                                                           TIME_MS2I(millisec)));
 
   if (signals == 0)
-    event.value.signals = (uint32_t)chEvtWaitAnyTimeout(ALL_EVENTS, timeout);
+    event.value.signals = (uint32_t)chEvtWaitAnyTimeout(ALL_EVENTS,
+                                                        tmo(millisec));
   else
     event.value.signals = (uint32_t)chEvtWaitAllTimeout((eventmask_t)signals,
-                                                        timeout);
+                                                        tmo(millisec));
 
   /* Type of event.*/
   if (event.value.signals == 0)
@@ -325,11 +330,8 @@ osSemaphoreId osSemaphoreCreate(const osSemaphoreDef_t *semaphore_def,
  * @brief   Wait on a semaphore.
  */
 int32_t osSemaphoreWait(osSemaphoreId semaphore_id, uint32_t millisec) {
-  sysinterval_t timeout = (millisec == osWaitForever ?
-                          TIME_INFINITE : (millisec == 0 ? TIME_IMMEDIATE :
-                                                           TIME_MS2I(millisec)));
 
-  msg_t msg = chSemWaitTimeout((semaphore_t *)semaphore_id, timeout);
+  msg_t msg = chSemWaitTimeout((semaphore_t *)semaphore_id, tmo(millisec));
   switch (msg) {
   case MSG_OK:
     return osOK;
@@ -382,11 +384,8 @@ osMutexId osMutexCreate(const osMutexDef_t *mutex_def) {
  * @brief   Wait on a mutex.
  */
 osStatus osMutexWait(osMutexId mutex_id, uint32_t millisec) {
-  sysinterval_t timeout = (millisec == osWaitForever ?
-                          TIME_INFINITE : (millisec == 0 ? TIME_IMMEDIATE :
-                                                           TIME_MS2I(millisec)));
 
-  msg_t msg = chBSemWaitTimeout((binary_semaphore_t *)mutex_id, timeout);
+  msg_t msg = chBSemWaitTimeout((binary_semaphore_t *)mutex_id, tmo(millisec));
   switch (msg) {
   case MSG_OK:
     return osOK;
@@ -498,9 +497,6 @@ osStatus osMessagePut(osMessageQId queue_id,
                       uint32_t info,
                       uint32_t millisec) {
   msg_t msg;
-  sysinterval_t timeout = (millisec == osWaitForever ?
-                          TIME_INFINITE : (millisec == 0 ? TIME_IMMEDIATE :
-                                                           TIME_MS2I(millisec)));
 
   if (port_is_isr_context()) {
 
@@ -514,7 +510,7 @@ osStatus osMessagePut(osMessageQId queue_id,
     chSysUnlockFromISR();
   }
   else
-    msg = chMBPostTimeout((mailbox_t *)queue_id, (msg_t)info, timeout);
+    msg = chMBPostTimeout((mailbox_t *)queue_id, (msg_t)info, tmo(millisec));
 
   return msg == MSG_OK ? osOK : osEventTimeout;
 }
@@ -522,13 +518,17 @@ osStatus osMessagePut(osMessageQId queue_id,
 /**
  * @brief   Get a message from the queue.
  */
-osEvent osMessageGet(osMessageQId queue_id,
-                     uint32_t millisec) {
+osEvent osMessageGet(osMessageQId queue_id, uint32_t millisec) {
   msg_t msg;
-  osEvent event;
-  sysinterval_t timeout = (millisec == osWaitForever ?
-                          TIME_INFINITE : (millisec == 0 ? TIME_IMMEDIATE :
-                                                           TIME_MS2I(millisec)));
+  osEvent event = {
+    .status = osErrorOS,
+    .value = {
+      .v = 0U
+    },
+    .def = {
+      .mail_id = NULL
+    }
+  };
 
   event.def.message_id = queue_id;
 
@@ -546,7 +546,7 @@ osEvent osMessageGet(osMessageQId queue_id,
     chSysUnlockFromISR();
   }
   else {
-    msg = chMBFetchTimeout((mailbox_t *)queue_id, (msg_t*)&event.value.v, timeout);
+    msg = chMBFetchTimeout((mailbox_t *)queue_id, (msg_t*)&event.value.v, tmo(millisec));
   }
 
   /* Returned event type.*/
@@ -554,4 +554,101 @@ osEvent osMessageGet(osMessageQId queue_id,
   return event;
 }
 
+osMailQId osMailCreate(const osMailQDef_t *queue_def, osThreadId thread_id) {
+
+  /* Ignoring this parameter for now.*/
+  (void)thread_id;
+
+  chDbgCheck(queue_def != NULL);
+
+  /* Init messages queue.*/
+  chFifoObjectInit(queue_def->fifo,
+                   (size_t)queue_def->item_sz,
+                   (size_t)queue_def->queue_sz,
+                   queue_def->objbuf,
+                   queue_def->msgbuf);
+
+  return queue_def->fifo;
+}
+
+void *osMailAlloc(osMailQId queue_id, uint32_t millisec) {
+  void *mail;
+
+  if (port_is_isr_context()) {
+    chSysLockFromISR();
+    mail = chFifoTakeObjectI(queue_id);
+    chSysUnlockFromISR();
+  }
+  else {
+    mail = chFifoTakeObjectTimeout(queue_id, tmo(millisec));
+  }
+
+  return mail;
+}
+
+osStatus osMailPut(osMailQId queue_id, void *mail) {
+
+  chDbgCheck((queue_id != NULL) && (mail != NULL));
+
+  if (port_is_isr_context()) {
+    /* Waiting makes no sense in ISRs so any value except "immediate"
+       makes no sense.*/
+    chSysLockFromISR();
+    chFifoSendObjectI(queue_id, mail);
+    chSysUnlockFromISR();
+  }
+  else {
+    chFifoSendObject(queue_id, mail);
+  }
+
+  return MSG_OK;
+}
+
+osEvent osMailGet(osMailQId queue_id, uint32_t millisec) {
+  msg_t msg;
+  osEvent event = {
+    .status = osErrorOS,
+    .value = {
+      .p = NULL
+    },
+    .def = {
+      .mail_id = NULL
+    }
+  };
+
+  chDbgCheck(queue_id != NULL);
+
+  event.def.mail_id = queue_id;
+
+  if (port_is_isr_context()) {
+    /* Waiting makes no sense in ISRs so any value except "immediate"
+       makes no sense.*/
+    if (millisec != 0) {
+      event.status = osErrorValue;
+      return event;
+    }
+
+    chSysLockFromISR();
+    msg = chFifoReceiveObjectI(queue_id, &event.value.p);
+    chSysUnlockFromISR();
+  }
+  else {
+    msg = chFifoReceiveObjectTimeout(queue_id, &event.value.p, tmo(millisec));
+  }
+
+  /* Returned event type.*/
+  event.status = msg == MSG_OK ? osEventMail : osEventTimeout;
+  return event;
+}
+
+osStatus osMailFree(osMailQId queue_id, void *mail) {
+
+  chDbgCheck((queue_id != NULL) && (mail != NULL));	
+
+  syssts_t sts = chSysGetStatusAndLockX();
+  chFifoReturnObjectI(queue_id, mail);
+  chSysRestoreStatusX(sts);
+
+  return osOK;
+}
 /** @} */
