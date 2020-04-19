@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Mail Queues test implementation in CMSIS RTOS wrapper.
 - NEW: Added dynamic reconfiguration API to lwIP bindings.
 - FIX: Corrected I2C4 BDMA #define conditional in I2Cv3 (bug #1082)
 - RT:  Relocated the "ctx" field in the thread structure in order to save
