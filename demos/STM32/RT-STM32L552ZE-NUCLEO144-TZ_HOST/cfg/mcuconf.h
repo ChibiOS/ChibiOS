@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2020 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@
  *
  * IRQ priorities:
  * 7...0        Lowest...Highest.
- * 3...0        Lowest...Highest (trusted mode).
  *
  * DMA priorities:
  * 0...3        Lowest...Highest.
@@ -263,22 +262,6 @@
 /*
  * SPI driver system settings.
  */
-#define STM32_SPI_USE_SPI1                  FALSE
-#define STM32_SPI_USE_SPI2                  FALSE
-#define STM32_SPI_USE_SPI3                  FALSE
-#define STM32_SPI_SPI1_RX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
-#define STM32_SPI_SPI1_TX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
-#define STM32_SPI_SPI2_RX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
-#define STM32_SPI_SPI2_TX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
-#define STM32_SPI_SPI3_RX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
-#define STM32_SPI_SPI3_TX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
-#define STM32_SPI_SPI1_DMA_PRIORITY         1
-#define STM32_SPI_SPI2_DMA_PRIORITY         1
-#define STM32_SPI_SPI3_DMA_PRIORITY         1
-#define STM32_SPI_SPI1_IRQ_PRIORITY         5
-#define STM32_SPI_SPI2_IRQ_PRIORITY         5
-#define STM32_SPI_SPI3_IRQ_PRIORITY         5
-#define STM32_SPI_DMA_ERROR_HOOK(spip)      osalSysHalt("DMA failure")
 
 /*
  * ST driver system settings.
@@ -289,32 +272,10 @@
 /*
  * TRNG driver system settings.
  */
-#define STM32_TRNG_USE_RNG1                 FALSE
 
 /*
  * UART driver system settings.
  */
-#define STM32_UART_USE_USART1               FALSE
-#define STM32_UART_USE_USART2               FALSE
-#define STM32_UART_USE_USART3               FALSE
-#define STM32_UART_USE_UART4                FALSE
-#define STM32_UART_USE_UART5                FALSE
-#define STM32_UART_USART1_RX_DMA_STREAM     STM32_DMA_STREAM_ID_ANY
-#define STM32_UART_USART1_TX_DMA_STREAM     STM32_DMA_STREAM_ID_ANY
-#define STM32_UART_USART2_RX_DMA_STREAM     STM32_DMA_STREAM_ID_ANY
-#define STM32_UART_USART2_TX_DMA_STREAM     STM32_DMA_STREAM_ID_ANY
-#define STM32_UART_USART3_RX_DMA_STREAM     STM32_DMA_STREAM_ID_ANY
-#define STM32_UART_USART3_TX_DMA_STREAM     STM32_DMA_STREAM_ID_ANY
-#define STM32_UART_UART4_RX_DMA_STREAM      STM32_DMA_STREAM_ID_ANY
-#define STM32_UART_UART4_TX_DMA_STREAM      STM32_DMA_STREAM_ID_ANY
-#define STM32_UART_UART5_RX_DMA_STREAM      STM32_DMA_STREAM_ID_ANY
-#define STM32_UART_UART5_TX_DMA_STREAM      STM32_DMA_STREAM_ID_ANY
-#define STM32_UART_USART1_DMA_PRIORITY      0
-#define STM32_UART_USART2_DMA_PRIORITY      0
-#define STM32_UART_USART3_DMA_PRIORITY      0
-#define STM32_UART_UART4_DMA_PRIORITY       0
-#define STM32_UART_UART5_DMA_PRIORITY       0
-#define STM32_UART_DMA_ERROR_HOOK(uartp)    osalSysHalt("DMA failure")
 
 /*
  * USB driver system settings.
@@ -330,3 +291,4 @@
  */
 
 #endif /* MCUCONF_H */
+
