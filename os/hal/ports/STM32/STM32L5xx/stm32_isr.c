@@ -56,7 +56,6 @@
 #include "stm32_exti2.inc"
 #include "stm32_exti3.inc"
 #include "stm32_exti4.inc"
-#if 0
 #include "stm32_exti5.inc"
 #include "stm32_exti6.inc"
 #include "stm32_exti7.inc"
@@ -68,7 +67,6 @@
 #include "stm32_exti13.inc"
 #include "stm32_exti14.inc"
 #include "stm32_exti15.inc"
-#endif
 #include "stm32_exti16-35_38.inc"
 #include "stm32_exti17.inc"
 #include "stm32_exti18.inc"
@@ -111,7 +109,6 @@ void irqInit(void) {
   exti2_irq_init();
   exti3_irq_init();
   exti4_irq_init();
-#if 0
   exti5_irq_init();
   exti6_irq_init();
   exti7_irq_init();
@@ -123,7 +120,6 @@ void irqInit(void) {
   exti13_irq_init();
   exti14_irq_init();
   exti15_irq_init();
-#endif
   exti16_exti35_38_irq_init();
   exti17_irq_init();
   exti18_irq_init();
@@ -159,7 +155,6 @@ void irqDeinit(void) {
   exti2_irq_deinit();
   exti3_irq_deinit();
   exti4_irq_deinit();
-#if 0
   exti5_irq_deinit();
   exti6_irq_deinit();
   exti7_irq_deinit();
@@ -171,7 +166,6 @@ void irqDeinit(void) {
   exti13_irq_deinit();
   exti14_irq_deinit();
   exti15_irq_deinit();
-#endif
   exti16_exti35_38_irq_deinit();
   exti17_irq_deinit();
   exti18_irq_deinit();
