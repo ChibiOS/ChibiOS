@@ -33,9 +33,7 @@
  * driver is enabled in halconf.h.
  *
  * IRQ priorities:
- * 7...0        Lowest...Highest (standalone mode).
- * 7...0        Lowest...Highest (non-secure mode).
- * 3...0        Lowest...Highest (trust zone mode).
+ * 7...0        Lowest...Highest.
  *
  * DMA priorities:
  * 0...3        Lowest...Highest.
