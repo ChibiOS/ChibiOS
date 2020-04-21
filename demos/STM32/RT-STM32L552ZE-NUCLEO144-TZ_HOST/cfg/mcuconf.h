@@ -66,6 +66,7 @@
 /*
  * Clock settings.
  */
+#define STM32_RCC_SECCFGR                   (RCC_SECCFGR_MSISEC | RCC_SECCFGR_PLLSEC | RCC_SECCFGR_SYSCLKSEC | RCC_SECCFGR_PRESCSEC)
 #define STM32_HSI16_ENABLED                 TRUE
 #define STM32_HSI48_ENABLED                 TRUE
 #define STM32_LSI_ENABLED                   TRUE

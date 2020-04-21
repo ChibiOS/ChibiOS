@@ -308,6 +308,13 @@
 #endif
 
 /**
+ * @brief   RCC-related security settings.
+ */
+#if !defined(STM32_RCC_SECCFGR) || defined(__DOXYGEN__)
+#define STM32_RCC_SECCFGR                   0
+#endif
+
+/**
  * @brief   Core voltage selection.
  * @note    This setting affects all the performance and clock related
  *          settings, the maximum performance is only obtainable selecting

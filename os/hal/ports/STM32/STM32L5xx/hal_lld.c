@@ -28,6 +28,12 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
+#if STM32_SECURE_MODE
+#define IS_PERMITTED(r, m) (((r) & (m)) != 0U)
+#else
+#define IS_PERMITTED(r, m) (((r) & (m)) == 0U)
+#endif
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -47,30 +53,32 @@ uint32_t SystemCoreClock = STM32_HCLK;
 /*===========================================================================*/
 
 __STATIC_INLINE void bd_init(void) {
+  uint32_t bdcr;
+
+  /* Current settings.*/
+  bdcr = RCC->BDCR;
 
   /* Reset BKP domain if different clock source selected.*/
-  if ((RCC->BDCR & STM32_RTCSEL_MASK) != STM32_RTCSEL) {
+  if ((bdcr & STM32_RTCSEL_MASK) != STM32_RTCSEL) {
     /* Backup domain reset.*/
     RCC->BDCR = RCC_BDCR_BDRST;
-    RCC->BDCR = 0;
+    RCC->BDCR = 0U;
+    bdcr = 0U;
   }
-
-  lse_init();
 
 #if HAL_USE_RTC
-  /* If the backup domain hasn't been initialized yet then proceed with
-     initialization.*/
-  if ((RCC->BDCR & RCC_BDCR_RTCEN) == 0) {
-    /* Selects clock source.*/
-    RCC->BDCR |= STM32_RTCSEL;
-
-    /* RTC clock enabled.*/
-    RCC->BDCR |= RCC_BDCR_RTCEN;
+  /* RTC enable.*/
+  if ((bdcr & RCC_BDCR_RTCEN) == 0U) {
+    bdcr |= RCC_BDCR_RTCEN;
   }
-#endif /* HAL_USE_RTC */
+#endif
 
-  /* Low speed output mode.*/
-  RCC->BDCR |= STM32_LSCOSEL;
+  /* Selectors.*/
+  bdcr &= ~(STM32_RTCSEL_MASK | STM32_LSCOSEL_MASK);
+  bdcr |= STM32_RTCSEL | STM32_LSCOSEL;
+
+  /* Final settings.*/
+  RCC->BDCR = bdcr;
 }
 
 __STATIC_INLINE void flash_ws_init(uint32_t bits) {
@@ -117,6 +125,7 @@ void hal_lld_init(void) {
 void stm32_clock_init(void) {
 
 #if !STM32_NO_INIT
+  uint32_t secflags;
 
   /* Reset of all peripherals.
      Note, GPIOs are not reset because initialized before this point in
@@ -127,6 +136,14 @@ void stm32_clock_init(void) {
   rccResetAPB1R1(~RCC_APB1RSTR1_PWRRST);
   rccResetAPB1R2(~0);
   rccResetAPB2(~0);
+
+  /* RCC-related security settings.*/
+#if STM32_SECURE_MODE
+  RCC->SECCFGR = STM32_RCC_SECCFGR;
+  secflags = STM32_RCC_SECCFGR;
+#else
+  secflags = RCC->SECSR;
+#endif
 
   /* PWR clock enable.*/
 #if defined(HAL_USE_RTC) && defined(RCC_APB1ENR1_RTCAPBEN)
@@ -148,20 +165,42 @@ void stm32_clock_init(void) {
   /* Setting the wait states required by MSI clock.*/
   flash_ws_init(STM32_MSI_FLASHBITS);
 
-  /* Clocks setup.*/
-  bd_init();                                /* BD first because MSIPLL.     */
-  msi_init();
-  lsi_init();
-  hsi16_init();
-  hsi48_init();
-  hse_init();
+  /* Clocks setup, if permitted in current context.*/
+  if (IS_PERMITTED(secflags, RCC_SECSR_LSESECF)) {
+    lse_init();                             /* LSE first because MSIPLL.    */
+  }
+  if (IS_PERMITTED(secflags, RCC_SECSR_MSISECF)) {
+    msi_init();
+  }
+  if (IS_PERMITTED(secflags, RCC_SECSR_LSISECF)) {
+    lsi_init();
+  }
+  if (IS_PERMITTED(secflags, RCC_SECSR_HSISECF)) {
+    hsi16_init();
+  }
+  if (IS_PERMITTED(secflags, RCC_SECSR_HSI48SECF)) {
+    hsi48_init();
+  }
+  if (IS_PERMITTED(secflags, RCC_SECSR_HSESECF)) {
+    hse_init();
+  }
 
-  /* PLLs activation.*/
-  pll_init();
-  pllsai1_init();
-  pllsai2_init();
+  /* Backup domain initializations.*/
+  bd_init();
 
-  /* Other clock-related settings (dividers, MCO etc).*/
+  /* PLLs activation, if permitted in current context.*/
+  if (IS_PERMITTED(secflags, RCC_SECSR_PLLSECF)) {
+    pll_init();
+  }
+  if (IS_PERMITTED(secflags, RCC_SECSR_PLLSAI1SECF)) {
+    pllsai1_init();
+  }
+  if (IS_PERMITTED(secflags, RCC_SECSR_PLLSAI2SECF)) {
+    pllsai2_init();
+  }
+
+  /* Other clock-related settings (dividers, MCO etc). No security check
+     because some fields could be permitted, others not.*/
   RCC->CFGR = STM32_MCOPRE | STM32_MCOSEL | STM32_STOPWUCK |
               STM32_PPRE2  | STM32_PPRE1  | STM32_HPRE;
 
@@ -189,22 +228,25 @@ void stm32_clock_init(void) {
     RCC->CCIPR2 = ccipr2;
   }
 
-  /* Wait states if SYSCLK requires more wait states than MSICLK.*/
-  if (STM32_FLASHBITS > STM32_MSI_FLASHBITS) {
-    flash_ws_init(STM32_FLASHBITS);
-  }
+  /* Clock switching, if permitted in current context.*/
+  if (IS_PERMITTED(secflags, RCC_SECSR_SYSCLKSECF)) {
+    /* Wait states if SYSCLK requires more wait states than MSICLK.*/
+    if (STM32_FLASHBITS > STM32_MSI_FLASHBITS) {
+      flash_ws_init(STM32_FLASHBITS);
+    }
 
-  /* Switching to the configured SYSCLK source if it is different from MSI.*/
-#if (STM32_SW != STM32_SW_MSI)
-  RCC->CFGR |= STM32_SW;        /* Switches on the selected clock source.   */
-  /* Wait until SYSCLK is stable.*/
-  while ((RCC->CFGR & RCC_CFGR_SWS) != (STM32_SW << 2))
-    ;
+    /* Switching to the configured SYSCLK source if it is different from MSI.*/
+#if STM32_SW != STM32_SW_MSI
+    RCC->CFGR |= STM32_SW;        /* Switches on the selected clock source.   */
+    /* Wait until SYSCLK is stable.*/
+    while ((RCC->CFGR & RCC_CFGR_SWS) != (STM32_SW << 2))
+      ;
 #endif
 
-  /* Wait states if SYSCLK requires less wait states than MSICLK.*/
-  if (STM32_FLASHBITS < STM32_MSI_FLASHBITS) {
-    flash_ws_init(STM32_FLASHBITS);
+    /* Wait states if SYSCLK requires less wait states than MSICLK.*/
+    if (STM32_FLASHBITS < STM32_MSI_FLASHBITS) {
+      flash_ws_init(STM32_FLASHBITS);
+    }
   }
 
   /* Cache enable.*/
