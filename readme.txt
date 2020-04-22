@@ -76,6 +76,8 @@
 *** 19.1.4 ***
 - NEW: Added support for .cc files extensions in makefiles.
 - NEW: Made bus acquire/release functions in SNOR driver public.
+- FIX: Fixed wrong arguments for the cacheBufferInvalidate in the STM32 SPI 
+       demo (bug #1086).
 - FIX: Fixed race condition in HAL MAC driver (bug #1083).
 - FIX: Fixed problem in chMtxUnlockAllS() (bug #1076).
 - FIX: Fixed state check in CMSIS osKernelInitialize() wrapper (bug #1075).

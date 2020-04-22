@@ -59,8 +59,8 @@ static THD_FUNCTION(spi_thread_1, p) {
     spiExchange(&PORTAB_SPI1, 512,
                 txbuf, rxbuf);          /* Atomic transfer operations.      */
     spiUnselect(&PORTAB_SPI1);          /* Slave Select de-assertion.       */
-    cacheBufferInvalidate(&txbuf[0],    /* Cache invalidation over the      */
-                          sizeof txbuf);/* buffer.                          */
+    cacheBufferInvalidate(&rxbuf[0],    /* Cache invalidation over the      */
+                          sizeof rxbuf);/* buffer.                          */
     spiReleaseBus(&PORTAB_SPI1);        /* Ownership release.               */
   }
 }
@@ -81,8 +81,8 @@ static THD_FUNCTION(spi_thread_2, p) {
     spiExchange(&PORTAB_SPI1, 512,
                 txbuf, rxbuf);          /* Atomic transfer operations.      */
     spiUnselect(&PORTAB_SPI1);          /* Slave Select de-assertion.       */
-    cacheBufferInvalidate(&txbuf[0],    /* Cache invalidation over the      */
-                          sizeof txbuf);/* buffer.                          */
+    cacheBufferInvalidate(&rxbuf[0],    /* Cache invalidation over the      */
+                          sizeof rxbuf);/* buffer.                          */
     spiReleaseBus(&PORTAB_SPI1);        /* Ownership release.               */
   }
 }
@@ -151,8 +151,8 @@ int main(void) {
   spiExchange(&PORTAB_SPI1, 512,
               txbuf, rxbuf);          /* Atomic transfer operations.      */
   spiUnselect(&PORTAB_SPI1);          /* Slave Select de-assertion.       */
-  cacheBufferInvalidate(&txbuf[0],    /* Cache invalidation over the      */
-                        sizeof txbuf);/* buffer.                          */
+  cacheBufferInvalidate(&rxbuf[0],    /* Cache invalidation over the      */
+                        sizeof rxbuf);/* buffer.                          */
 #endif
 
   /*
