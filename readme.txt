@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 20.3.1 ***
+- FIX: Sector size incorrect in STM32F413 EFL driver (bug #1084).
 - NEW: Added dynamic reconfiguration API to lwIP bindings.
 - FIX: Fixed race condition in HAL MAC driver (bug #1083).
 - FIX: Fixed early interrupts enable in ARMv7-M port (bug #1081).
