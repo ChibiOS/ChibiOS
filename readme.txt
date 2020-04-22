@@ -77,6 +77,8 @@
 - FIX: Sector count incorrect in STM32G07/8 EFL driver (bug #1085).
 - FIX: Sector size incorrect in STM32F413 EFL driver (bug #1084).
 - NEW: Added dynamic reconfiguration API to lwIP bindings.
+- FIX: Fixed wrong arguments for the cacheBufferInvalidate in the STM32 SPI 
+       demo (bug #1086).
 - FIX: Fixed race condition in HAL MAC driver (bug #1083).
 - FIX: Fixed early interrupts enable in ARMv7-M port (bug #1081).
 - FIX: Fixed I2CD4 interrupt vectors are swapped versus I2CD1-I2CD3 (bug #1080).
