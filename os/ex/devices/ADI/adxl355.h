@@ -287,7 +287,7 @@
  * @brief   ADXL355 internal communication buffer sizes.
  */
 #if !defined(ADXL355_COMM_BUFF_SIZE) || defined(__DOXYGEN__)
-#define ADXL355_COMM_BUFF_SIZE              16
+#define ADXL355_COMM_BUFF_SIZE              32
 #endif
 /** @} */
 
@@ -474,9 +474,9 @@ struct ADXL355VMT {
   /* Accelerometer subsystem current full scale value.*/                    \
   float                     accfullscale;                                   \
   /* Accelerometer communication tx buffer.*/                               \
-  uint8_t                   commtx[ADXL355_COMM_BUFF_SIZE];                 \
+  __attribute__((aligned(32))) uint8_t      commtx[ADXL355_COMM_BUFF_SIZE]; \
   /* Accelerometer communication rx buffer.*/                               \
-  uint8_t                   commrx[ADXL355_COMM_BUFF_SIZE];
+  __attribute__((aligned(32))) uint8_t      commrx[ADXL355_COMM_BUFF_SIZE];
 
 /**
  * @brief   ADXL355 3-axis accelerometer class.

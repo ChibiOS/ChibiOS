@@ -60,11 +60,12 @@ static void adxl355SPIReadRegister(ADXL355Driver *devp, uint8_t reg, size_t n,
                                    uint8_t* b) {
   unsigned i;
   devp->commtx[0] = (reg << 1) | ADXL355_RW;
+  cacheBufferFlush(&devp->commtx[0], sizeof devp->commtx);
   spiSelect(devp->config->spip);
   spiSend(devp->config->spip, 1, devp->commtx);
   spiReceive(devp->config->spip, n, devp->commrx);
   spiUnselect(devp->config->spip);
-
+  cacheBufferInvalidate(&devp->commrx[0], sizeof devp->commrx);
   for(i = 0; i < n; i++, b++) {
     *b = devp->commrx[i];
   }
@@ -86,6 +87,7 @@ static void adxl355SPIWriteRegister(ADXL355Driver *devp, uint8_t reg, size_t n,
   for(i = 0; i < n; i++, b++) {
     devp->commtx[i + 1] = *b;
   }
+  cacheBufferFlush(&devp->commtx[0], sizeof devp->commtx);
   spiSelect(devp->config->spip);
   spiSend(devp->config->spip, n + 1, devp->commtx);
   spiUnselect(devp->config->spip);
@@ -131,7 +133,6 @@ static msg_t acc_read_raw(void *ip, int32_t axes[]) {
 
   /* Getting parent instance pointer.*/
   devp = objGetInstance(ADXL355Driver*, (BaseAccelerometer*)ip);
-
   osalDbgAssert((devp->state == ADXL355_READY),
                 "acc_read_raw(), invalid state");
 

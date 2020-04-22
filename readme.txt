@@ -81,6 +81,7 @@
 - FIX: Corrected I2C4 BDMA #define conditional in I2Cv3 (bug #1082)
 - RT:  Relocated the "ctx" field in the thread structure in order to save
        some RAM, it caused unused space in the "ch" variable.
+- EX:  Implemented cache handling in the ADXL355 device driver.
 - EX:  Added support for ADXL355 Low Noise, Low Drift, Low Power, 3-Axis
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
