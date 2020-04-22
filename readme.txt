@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- FIX: Sector size incorrect in STM32F413 EFL driver (bug #1084).
 - NEW: Mail Queues test implementation in CMSIS RTOS wrapper.
 - NEW: Added dynamic reconfiguration API to lwIP bindings.
 - FIX: Corrected I2C4 BDMA #define conditional in I2Cv3 (bug #1082)
