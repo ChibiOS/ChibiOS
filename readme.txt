@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- FIX: Sector count incorrect in STM32G07/8 EFL driver (bug #1085).
 - FIX: Sector size incorrect in STM32F413 EFL driver (bug #1084).
 - NEW: Mail Queues test implementation in CMSIS RTOS wrapper.
 - NEW: Added dynamic reconfiguration API to lwIP bindings.

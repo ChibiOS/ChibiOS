@@ -65,8 +65,8 @@
  */
 #define STM32_FLASH_SIZE_64K                64U
 #define STM32_FLASH_SIZE_128K               128U
-#define STM32_FLASH_SECTORS_TOTAL_64K       128
-#define STM32_FLASH_SECTORS_TOTAL_128K      256
+#define STM32_FLASH_SECTORS_TOTAL_64K       32
+#define STM32_FLASH_SECTORS_TOTAL_128K      64
 
 /* 64K flash.*/
 #define STM32_FLASH_SECTOR_SIZE_64K         ((STM32_FLASH_SIZE_64K         \
