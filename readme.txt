@@ -85,6 +85,8 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Fixed wrong arguments for the cacheBufferInvalidate in the STM32 SPI 
+       demo (bug #1086)(backported to 20.3.1)(backported to 19.1.4).
 - FIX: Fixed race condition in HAL MAC driver (bug #1083)
        (backported to 20.3.1)(backported to 19.1.4).
 - FIX: Fixed early interrupts enable in ARMv7-M port (bug #1081)
