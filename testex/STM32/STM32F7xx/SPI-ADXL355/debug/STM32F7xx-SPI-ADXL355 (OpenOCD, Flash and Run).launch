@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.cdt.debug.gdbjtag.launchConfigurationType">
-<stringAttribute key="bad_container_name" value="\STM32F4xx-SPI-ADXL355\debug"/>
+<stringAttribute key="bad_container_name" value="\STM32F7xx-SPI-ADXL355\debug"/>
 <intAttribute key="org.eclipse.cdt.debug.gdbjtag.core.delay" value="1"/>
 <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.doHalt" value="true"/>
 <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.doReset" value="true"/>
@@ -33,15 +33,15 @@
 <intAttribute key="org.eclipse.cdt.launch.ATTR_BUILD_BEFORE_LAUNCH_ATTR" value="2"/>
 <stringAttribute key="org.eclipse.cdt.launch.COREFILE_PATH" value=""/>
 <stringAttribute key="org.eclipse.cdt.launch.DEBUGGER_REGISTER_GROUPS" value=""/>
-<stringAttribute key="org.eclipse.cdt.launch.FORMAT" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&lt;contentList&gt;&lt;content id=&quot;buff[8]-null-acc_read_raw-(format)&quot; val=&quot;2&quot;/&gt;&lt;content id=&quot;buff[7]-null-acc_read_raw-(format)&quot; val=&quot;2&quot;/&gt;&lt;content id=&quot;buff[6]-null-acc_read_raw-(format)&quot; val=&quot;2&quot;/&gt;&lt;content id=&quot;buff[5]-null-acc_read_raw-(format)&quot; val=&quot;2&quot;/&gt;&lt;content id=&quot;buff[4]-null-acc_read_raw-(format)&quot; val=&quot;2&quot;/&gt;&lt;content id=&quot;buff[3]-null-acc_read_raw-(format)&quot; val=&quot;2&quot;/&gt;&lt;content id=&quot;buff[2]-null-acc_read_raw-(format)&quot; val=&quot;2&quot;/&gt;&lt;content id=&quot;buff[1]-null-acc_read_raw-(format)&quot; val=&quot;2&quot;/&gt;&lt;content id=&quot;buff[0]-null-acc_read_raw-(format)&quot; val=&quot;2&quot;/&gt;&lt;content id=&quot;null-acc_read_raw-(format)&quot; val=&quot;1&quot;/&gt;&lt;content id=&quot;null-lis3dshStart-(format)&quot; val=&quot;2&quot;/&gt;&lt;content id=&quot;CR2-adc-adcp-adc_lld_start_conversion-(format)&quot; val=&quot;4&quot;/&gt;&lt;content id=&quot;CR2-adc-null-port_wait_for_interrupt-(format)&quot; val=&quot;4&quot;/&gt;&lt;content id=&quot;cr2-adc_lld_start_conversion-(format)&quot; val=&quot;4&quot;/&gt;&lt;/contentList&gt;"/>
+<stringAttribute key="org.eclipse.cdt.launch.FORMAT" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&lt;contentList&gt;&lt;content id=&quot;null-adxl355Start-(format)&quot; val=&quot;4&quot;/&gt;&lt;/contentList&gt;"/>
 <stringAttribute key="org.eclipse.cdt.launch.GLOBAL_VARIABLES" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#13;&#10;&lt;globalVariableList/&gt;&#13;&#10;"/>
 <stringAttribute key="org.eclipse.cdt.launch.MEMORY_BLOCKS" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#13;&#10;&lt;memoryBlockExpressionList/&gt;&#13;&#10;"/>
 <stringAttribute key="org.eclipse.cdt.launch.PROGRAM_NAME" value="./build/ch.elf"/>
-<stringAttribute key="org.eclipse.cdt.launch.PROJECT_ATTR" value="STM32F4xx-SPI-ADXL355"/>
+<stringAttribute key="org.eclipse.cdt.launch.PROJECT_ATTR" value="STM32F7xx-SPI-ADXL355"/>
 <booleanAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_AUTO_ATTR" value="true"/>
-<stringAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_ID_ATTR" value="0.691815652"/>
+<stringAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_ID_ATTR" value="0.114656749"/>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-<listEntry value="/STM32F4xx-SPI-ADXL355"/>
+<listEntry value="/STM32F7xx-SPI-ADXL355"/>
 </listAttribute>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
 <listEntry value="4"/>

@@ -59,15 +59,15 @@
 static void adxl355SPIReadRegister(ADXL355Driver *devp, uint8_t reg, size_t n,
                                    uint8_t* b) {
   unsigned i;
-  devp->commtx[0] = (reg << 1) | ADXL355_RW;
-  cacheBufferFlush(&devp->commtx[0], sizeof devp->commtx);
+  devp->commtxp[0] = (reg << 1) | ADXL355_RW;
+  cacheBufferFlush(&devp->commtxp[0], sizeof devp->commtxp);
   spiSelect(devp->config->spip);
-  spiSend(devp->config->spip, 1, devp->commtx);
-  spiReceive(devp->config->spip, n, devp->commrx);
+  spiSend(devp->config->spip, 1, devp->commtxp);
+  spiReceive(devp->config->spip, n, devp->commrxp);
   spiUnselect(devp->config->spip);
-  cacheBufferInvalidate(&devp->commrx[0], sizeof devp->commrx);
+  cacheBufferInvalidate(&devp->commrxp[0], sizeof devp->commrxp);
   for(i = 0; i < n; i++, b++) {
-    *b = devp->commrx[i];
+    *b = devp->commrxp[i];
   }
 }
 
@@ -83,13 +83,13 @@ static void adxl355SPIReadRegister(ADXL355Driver *devp, uint8_t reg, size_t n,
 static void adxl355SPIWriteRegister(ADXL355Driver *devp, uint8_t reg, size_t n,
                                     uint8_t* b) {
   unsigned i;
-  devp->commtx[0] = (reg << 1);
+  devp->commtxp[0] = (reg << 1);
   for(i = 0; i < n; i++, b++) {
-    devp->commtx[i + 1] = *b;
+    devp->commtxp[i + 1] = *b;
   }
-  cacheBufferFlush(&devp->commtx[0], sizeof devp->commtx);
+  cacheBufferFlush(&devp->commtxp[0], sizeof devp->commtxp);
   spiSelect(devp->config->spip);
-  spiSend(devp->config->spip, n + 1, devp->commtx);
+  spiSend(devp->config->spip, n + 1, devp->commtxp);
   spiUnselect(devp->config->spip);
 }
 #endif /* ADXL355_USE_SPI */
@@ -436,16 +436,22 @@ static const struct BaseAccelerometerVMT vmt_accelerometer = {
 
 /**
  * @brief   Initializes an instance.
+ * @details The buffer should be at least large @p ADXL355_COMM_BUFF_SIZE.
+ * @note    The communication buffer could be used by DMAs.
  *
  * @param[out] devp     pointer to the @p ADXL355Driver object
+ * @param[in] txbp      pointer to a buffer used as communication tx buffer
+ * @param[in] rxbp      pointer to a buffer used as communication rx buffer
  *
  * @init
  */
-void adxl355ObjectInit(ADXL355Driver *devp) {
+void adxl355ObjectInit(ADXL355Driver *devp, uint8_t* txbp, uint8_t* rxbp) {
   devp->vmt = &vmt_device;
   devp->acc_if.vmt = &vmt_accelerometer;
 
   devp->config = NULL;
+  devp->commtxp = txbp;
+  devp->commrxp = rxbp;
 
   devp->accaxes = ADXL355_ACC_NUMBER_OF_AXES;
 
@@ -474,13 +480,13 @@ void adxl355Start(ADXL355Driver *devp, const ADXL355Config *config) {
   /* Checking the device ID.*/
   {
 #if ADXL355_SHARED_SPI
-  spiAcquireBus(devp->config->spip);
+    spiAcquireBus(devp->config->spip);
 #endif /* ADXL355_SHARED_SPI */
-  spiStart(devp->config->spip, devp->config->spicfg);
+    spiStart(devp->config->spip, devp->config->spicfg);
     adxl355SPIReadRegister(devp, ADXL355_AD_DEVID_MST, 1, &reg_val);
     osalDbgAssert((reg_val == ADXL355_DEVID_MST), "Invalid MEMS ID");
 #if ADXL355_SHARED_SPI
-  spiReleaseBus(devp->config->spip);
+    spiReleaseBus(devp->config->spip);
 #endif /* ADXL355_SHARED_SPI */
   }
 

@@ -473,10 +473,10 @@ struct ADXL355VMT {
   float                     accbias[ADXL355_ACC_NUMBER_OF_AXES];            \
   /* Accelerometer subsystem current full scale value.*/                    \
   float                     accfullscale;                                   \
-  /* Accelerometer communication tx buffer.*/                               \
-  __attribute__((aligned(32))) uint8_t      commtx[ADXL355_COMM_BUFF_SIZE]; \
-  /* Accelerometer communication rx buffer.*/                               \
-  __attribute__((aligned(32))) uint8_t      commrx[ADXL355_COMM_BUFF_SIZE];
+  /* Accelerometer communication tx buffer pointer.*/                       \
+  uint8_t*                  commtxp;                                        \
+  /* Accelerometer communication rx buffer pointer.*/                       \
+  uint8_t*                  commrxp;
 
 /**
  * @brief   ADXL355 3-axis accelerometer class.
@@ -638,7 +638,7 @@ struct ADXL355Driver {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void adxl355ObjectInit(ADXL355Driver *devp);
+  void adxl355ObjectInit(ADXL355Driver *devp, uint8_t* txbp, uint8_t* rxbp);
   void adxl355Start(ADXL355Driver *devp, const ADXL355Config *config);
   void adxl355Stop(ADXL355Driver *devp);
 #ifdef __cplusplus
