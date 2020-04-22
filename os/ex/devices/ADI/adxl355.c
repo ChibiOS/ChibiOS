@@ -51,38 +51,44 @@
  * @brief   Reads a generic register value using SPI.
  * @pre     The SPI interface must be initialized and the driver started.
  *
- * @param[in] spip      pointer to the SPI interface
+ * @param[in] devp      pointer to @p ADXL355Driver interface.
  * @param[in] reg       starting register address
  * @param[in] n         number of consecutive registers to read
  * @param[in] b         pointer to an output buffer.
  */
-static void adxl355SPIReadRegister(SPIDriver *spip, uint8_t reg, size_t n,
+static void adxl355SPIReadRegister(ADXL355Driver *devp, uint8_t reg, size_t n,
                                    uint8_t* b) {
-  uint8_t cmd;
-  cmd = (reg << 1) | ADXL355_RW;
-  spiSelect(spip);
-  spiSend(spip, 1, &cmd);
-  spiReceive(spip, n, b);
-  spiUnselect(spip);
+  unsigned i;
+  devp->commtx[0] = (reg << 1) | ADXL355_RW;
+  spiSelect(devp->config->spip);
+  spiSend(devp->config->spip, 1, devp->commtx);
+  spiReceive(devp->config->spip, n, devp->commrx);
+  spiUnselect(devp->config->spip);
+
+  for(i = 0; i < n; i++, b++) {
+    *b = devp->commrx[i];
+  }
 }
 
 /**
  * @brief   Writes a value into a generic register using SPI.
  * @pre     The SPI interface must be initialized and the driver started.
  *
- * @param[in] spip      pointer to the SPI interface
+ * @param[in] devp      pointer to @p ADXL355Driver interface.
  * @param[in] reg       starting register address
  * @param[in] n         number of adjacent registers to write
  * @param[in] b         pointer to a buffer of values.
  */
-static void adxl355SPIWriteRegister(SPIDriver *spip, uint8_t reg, size_t n,
+static void adxl355SPIWriteRegister(ADXL355Driver *devp, uint8_t reg, size_t n,
                                     uint8_t* b) {
-  uint8_t cmd;
-  cmd = (reg << 1);
-  spiSelect(spip);
-  spiSend(spip, 1, &cmd);
-  spiSend(spip, n, b);
-  spiUnselect(spip);
+  unsigned i;
+  devp->commtx[0] = (reg << 1);
+  for(i = 0; i < n; i++, b++) {
+    devp->commtx[i + 1] = *b;
+  }
+  spiSelect(devp->config->spip);
+  spiSend(devp->config->spip, n + 1, devp->commtx);
+  spiUnselect(devp->config->spip);
 }
 #endif /* ADXL355_USE_SPI */
 
@@ -139,7 +145,7 @@ static msg_t acc_read_raw(void *ip, int32_t axes[]) {
            devp->config->spicfg);
 #endif /* ADXL355_SHARED_SPI */
 
-  adxl355SPIReadRegister(devp->config->spip, ADXL355_AD_XDATA3,
+  adxl355SPIReadRegister(devp, ADXL355_AD_XDATA3,
                          ADXL355_ACC_NUMBER_OF_AXES * 3, buff);
 
 #if	ADXL355_SHARED_SPI
@@ -378,7 +384,7 @@ static msg_t acc_set_full_scale(ADXL355Driver *devp, adxl355_acc_fs_t fs) {
 #endif /* ADXL355_SHARED_SPI */
 
     /* Getting data from register.*/
-    adxl355SPIReadRegister(devp->config->spip, ADXL355_AD_RANGE, 1, &reg_val);
+    adxl355SPIReadRegister(devp, ADXL355_AD_RANGE, 1, &reg_val);
 
 #if ADXL355_SHARED_SPI
     spiReleaseBus(devp->config->spip);
@@ -396,7 +402,7 @@ static msg_t acc_set_full_scale(ADXL355Driver *devp, adxl355_acc_fs_t fs) {
 #endif /* ADXL355_SHARED_SPI */
 
     /* Getting data from register.*/
-    adxl355SPIWriteRegister(devp->config->spip, ADXL355_AD_RANGE, 1, &reg_val);
+    adxl355SPIWriteRegister(devp, ADXL355_AD_RANGE, 1, &reg_val);
 
 #if ADXL355_SHARED_SPI
     spiReleaseBus(devp->config->spip);
@@ -464,6 +470,19 @@ void adxl355Start(ADXL355Driver *devp, const ADXL355Config *config) {
 
   devp->config = config;
 
+  /* Checking the device ID.*/
+  {
+#if ADXL355_SHARED_SPI
+  spiAcquireBus(devp->config->spip);
+#endif /* ADXL355_SHARED_SPI */
+  spiStart(devp->config->spip, devp->config->spicfg);
+    adxl355SPIReadRegister(devp, ADXL355_AD_DEVID_MST, 1, &reg_val);
+    osalDbgAssert((reg_val == ADXL355_DEVID_MST), "Invalid MEMS ID");
+#if ADXL355_SHARED_SPI
+  spiReleaseBus(devp->config->spip);
+#endif /* ADXL355_SHARED_SPI */
+  }
+
   /* Range register configuration block.*/
   {
     reg_val = ADXL355_RANGE_I2C_HS | devp->config->accfullscale;
@@ -471,10 +490,10 @@ void adxl355Start(ADXL355Driver *devp, const ADXL355Config *config) {
 #if ADXL355_USE_SPI
 #if ADXL355_SHARED_SPI
   spiAcquireBus(devp->config->spip);
-#endif /* ADXL355_SHARED_SPI */
   spiStart(devp->config->spip, devp->config->spicfg);
+#endif /* ADXL355_SHARED_SPI */
 
-  adxl355SPIWriteRegister(devp->config->spip, ADXL355_AD_RANGE, 1, &reg_val);
+  adxl355SPIWriteRegister(devp, ADXL355_AD_RANGE, 1, &reg_val);
 
 #if ADXL355_SHARED_SPI
   spiReleaseBus(devp->config->spip);
@@ -495,7 +514,7 @@ void adxl355Start(ADXL355Driver *devp, const ADXL355Config *config) {
   spiStart(devp->config->spip, devp->config->spicfg);
 #endif /* ADXL355_SHARED_SPI */
 
-  adxl355SPIWriteRegister(devp->config->spip, ADXL355_AD_FILTER, 1, &reg_val);
+  adxl355SPIWriteRegister(devp, ADXL355_AD_FILTER, 1, &reg_val);
 
 #if ADXL355_SHARED_SPI
   spiReleaseBus(devp->config->spip);
@@ -513,7 +532,7 @@ void adxl355Start(ADXL355Driver *devp, const ADXL355Config *config) {
   spiStart(devp->config->spip, devp->config->spicfg);
 #endif /* ADXL355_SHARED_SPI */
 
-  adxl355SPIWriteRegister(devp->config->spip, ADXL355_AD_POWER_CTL, 1, &reg_val);
+  adxl355SPIWriteRegister(devp, ADXL355_AD_POWER_CTL, 1, &reg_val);
 
 #if	ADXL355_SHARED_SPI
   spiReleaseBus(devp->config->spip);
@@ -591,8 +610,7 @@ void adxl355Stop(ADXL355Driver *devp) {
 #endif /* ADXL355_SHARED_SPI */
     /* Disabling all axes and enabling power down mode.*/
     reg_val = 1;
-    adxl355SPIWriteRegister(devp->config->spip, ADXL355_AD_POWER_CTL,
-                            1, &reg_val);
+    adxl355SPIWriteRegister(devp, ADXL355_AD_POWER_CTL, 1, &reg_val);
 
     spiStop(devp->config->spip);
 #if	ADXL355_SHARED_SPI

@@ -137,6 +137,13 @@
 /** @} */
 
 /**
+ * @name    ADXL355 Device Identifier
+ * @{
+ */
+#define ADXL355_DEVID_MST                   0x1D
+/** @} */
+
+/**
  * @name    ADXL355_FILTER register bits definitions
  * @{
  */
@@ -274,6 +281,13 @@
  */
 #if !defined(ADXL355_USE_ADVANCED) || defined(__DOXYGEN__)
 #define ADXL355_USE_ADVANCED                FALSE
+#endif
+
+/**
+ * @brief   ADXL355 internal communication buffer sizes.
+ */
+#if !defined(ADXL355_COMM_BUFF_SIZE) || defined(__DOXYGEN__)
+#define ADXL355_COMM_BUFF_SIZE              16
 #endif
 /** @} */
 
@@ -458,7 +472,11 @@ struct ADXL355VMT {
   /* Accelerometer subsystem current bias .*/                               \
   float                     accbias[ADXL355_ACC_NUMBER_OF_AXES];            \
   /* Accelerometer subsystem current full scale value.*/                    \
-  float                     accfullscale;
+  float                     accfullscale;                                   \
+  /* Accelerometer communication tx buffer.*/                               \
+  uint8_t                   commtx[ADXL355_COMM_BUFF_SIZE];                 \
+  /* Accelerometer communication rx buffer.*/                               \
+  uint8_t                   commrx[ADXL355_COMM_BUFF_SIZE];
 
 /**
  * @brief   ADXL355 3-axis accelerometer class.
