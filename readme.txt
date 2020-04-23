@@ -76,6 +76,7 @@
 *** 19.1.4 ***
 - NEW: Added support for .cc files extensions in makefiles.
 - NEW: Made bus acquire/release functions in SNOR driver public.
+- FIX: Fixed undefined TEST_CFG_SIZE_REPORT warning (bug #1087).
 - FIX: Fixed wrong arguments for the cacheBufferInvalidate in the STM32 SPI 
        demo (bug #1086).
 - FIX: Fixed race condition in HAL MAC driver (bug #1083).

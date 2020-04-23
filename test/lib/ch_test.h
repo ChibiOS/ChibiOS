@@ -54,6 +54,14 @@
 #define TEST_SHOW_SEQUENCES                 TRUE
 #endif
 
+/**
+ * @brief   Print executable sizes.
+ * @note    Requires specific linker scatter files.
+ */
+#if !defined(TEST_CFG_SIZE_REPORT) || defined(__DOXYGEN__)
+#define TEST_CFG_SIZE_REPORT                TRUE
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
