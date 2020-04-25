@@ -38,7 +38,7 @@
 /*
  * Secure mode HAL settings.
  */
-#define STM32_SECURE_MODE                   TRUE
+#define STM32_SECURE_MODE                   FALSE
 
 /*
  * HAL driver global settings.
