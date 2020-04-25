@@ -3,7 +3,7 @@
 	xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
 	<xs:include schemaLocation="../common/doc.xsd" />
-	<xs:include schemaLocation="../common/stm32/stm32_gpiov2_port.xsd" />
+	<xs:include schemaLocation="../common/stm32/stm32_gpiov2a_port.xsd" />
 	<xs:include schemaLocation="abstract_board.xsd" />
 
 	<xs:complexType name="STM32L5xxBoardType">
