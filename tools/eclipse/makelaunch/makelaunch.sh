@@ -11,8 +11,8 @@ else
   LAUNCHNAME1="$3 ($ELFNAME)(OpenOCD, Flash and Run)"
   LAUNCHNAME2="$3 ($ELFNAME)(OpenOCD, Just Run)"
   mkdir -p $1/$DEBUGDIR
-  cat ./arm_flash-and-run.launch | sed -r "s|EEEEEEEE|$2|g" | sed -r "s|PPPPPPPP|$3|g" > "$1/$DEBUGDIR/$LAUNCHNAME1.launch"
-  cat ./arm_just-run.launch | sed -r "s|EEEEEEEE|$2|g" | sed -r "s|PPPPPPPP|$3|g" > "$1/$DEBUGDIR/$LAUNCHNAME2.launch"
+  cat ./arm_flash-and-run.launch.template | sed -r "s|EEEEEEEE|$2|g" | sed -r "s|PPPPPPPP|$3|g" > "$1/$DEBUGDIR/$LAUNCHNAME1.launch"
+  cat ./arm_just-run.launch.template | sed -r "s|EEEEEEEE|$2|g" | sed -r "s|PPPPPPPP|$3|g" > "$1/$DEBUGDIR/$LAUNCHNAME2.launch"
   echo
   echo "Done"
 fi
