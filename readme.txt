@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 20.3.1 ***
+- NEW: Updated debug tools to be independent from the toolchain position:
+       they now rely on the environment variable CHIBISTUDIO.
 - FIX: Sector count incorrect in STM32G07/8 EFL driver (bug #1085).
 - FIX: Sector size incorrect in STM32F413 EFL driver (bug #1084).
 - NEW: Added dynamic reconfiguration API to lwIP bindings.

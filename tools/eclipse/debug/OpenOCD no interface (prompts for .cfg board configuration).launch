@@ -5,5 +5,5 @@
 </listAttribute>
 <stringAttribute key="org.eclipse.ui.externaltools.ATTR_LAUNCH_CONFIGURATION_BUILD_SCOPE" value="${none}"/>
 <stringAttribute key="org.eclipse.ui.externaltools.ATTR_LOCATION" value="${env_var:OPENOCD}"/>
-<stringAttribute key="org.eclipse.ui.externaltools.ATTR_TOOL_ARGUMENTS" value="-c &quot;telnet_port 4444&quot; -s &quot;/ChibiStudio/tools/openocd/scripts&quot; -f &quot;${file_prompt}&quot;"/>
+<stringAttribute key="org.eclipse.ui.externaltools.ATTR_TOOL_ARGUMENTS" value="-c &quot;telnet_port 4444&quot; -s &quot;${env_var:CHIBISTUDIO}/tools/openocd/scripts&quot; -f &quot;${file_prompt}&quot;"/>
 </launchConfiguration>
