@@ -108,6 +108,9 @@ void hal_lld_init(void) {
   dmaInit();
 #endif
 
+  /* NVIC initialization.*/
+  nvicInit();
+
   /* IRQ subsystem initialization.*/
   irqInit();
 
