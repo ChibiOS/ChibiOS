@@ -76,6 +76,8 @@
 *** Next ***
 - FIX: Sector count incorrect in STM32G07/8 EFL driver (bug #1085).
 - FIX: Sector size incorrect in STM32F413 EFL driver (bug #1084).
+- NEW: Updated debug tools to be independent from the toolchain position:
+       they now rely on the environment variable CHIBISTUDIO.
 - NEW: Mail Queues test implementation in CMSIS RTOS wrapper.
 - NEW: Added dynamic reconfiguration API to lwIP bindings.
 - FIX: Corrected I2C4 BDMA #define conditional in I2Cv3 (bug #1082)
