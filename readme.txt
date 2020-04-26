@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 19.1.4 ***
+- NEW: Updated debug tools to be independent from the toolchain position:
+       they now rely on the environment variable CHIBISTUDIO.
 - NEW: Added support for .cc files extensions in makefiles.
 - NEW: Made bus acquire/release functions in SNOR driver public.
 - FIX: Fixed undefined TEST_CFG_SIZE_REPORT warning (bug #1087).
