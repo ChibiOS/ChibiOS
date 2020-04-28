@@ -247,7 +247,7 @@
 /* Registry checks.*/
 #if !defined(STM32_HAS_ADC1) || !defined(STM32_HAS_ADC2) ||                 \
     !defined(STM32_HAS_ADC3)
-#error "STM32_ADC_USE_ADCx not defined in registry"
+#error "STM32_HAS_ADCx not defined in registry"
 #endif
 
 /* Units checks.*/
@@ -287,11 +287,6 @@
 
 #if STM32_HAS_ADC3 && !defined(STM32_ADC3_NUMBER)
 #error "STM32_ADC3_NUMBER not defined in registry"
-#endif
-
-/* Units checks related to dual mode.*/
-#if STM32_ADC_DUAL_MODE && STM32_ADC_USE_ADC1 && !STM32_HAS_ADC2
-#error "ADC2 not present in the selected device, required for dual mode"
 #endif
 
 /* At least one ADC must be assigned.*/
@@ -525,7 +520,6 @@ typedef union {
   uint32_t                  cfgr2;                                          \
   uint32_t                  ccr;                                            \
   uint32_t                  pcsel;                                          \
-  uint32_t                  difsel;                                         \
   uint32_t                  ltr1;                                           \
   uint32_t                  htr1;                                           \
   uint32_t                  ltr2;                                           \

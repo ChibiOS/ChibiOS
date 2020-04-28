@@ -78,6 +78,7 @@
        they now rely on the environment variable CHIBISTUDIO.
 - NEW: Added support for .cc files extensions in makefiles.
 - NEW: Made bus acquire/release functions in SNOR driver public.
+- FIX: Fixed STM32H7xx ADC problem in dual mode (bug #1089).
 - FIX: Fixed invalid CHSEL DMA setting in STM32 UART drivers (bug #1088).
 - FIX: Fixed undefined TEST_CFG_SIZE_REPORT warning (bug #1087).
 - FIX: Fixed wrong arguments for the cacheBufferInvalidate in the STM32 SPI 
