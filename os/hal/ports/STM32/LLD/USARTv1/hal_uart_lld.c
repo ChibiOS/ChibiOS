@@ -184,7 +184,7 @@ static uartflags_t translate_errors(uint16_t sr) {
  */
 static void uart_enter_rx_idle_loop(UARTDriver *uartp) {
   uint32_t mode;
-  
+
   /* RX DMA channel preparation, if the char callback is defined then the
      TCIE interrupt is enabled too.*/
   if (uartp->config->rxchar_cb == NULL)
@@ -193,7 +193,7 @@ static void uart_enter_rx_idle_loop(UARTDriver *uartp) {
     mode = STM32_DMA_CR_DIR_P2M | STM32_DMA_CR_CIRC | STM32_DMA_CR_TCIE;
   dmaStreamSetMemory0(uartp->dmarx, &uartp->rxbuf);
   dmaStreamSetTransactionSize(uartp->dmarx, 1);
-  dmaStreamSetMode(uartp->dmarx, uartp->dmamode | mode);
+  dmaStreamSetMode(uartp->dmarx, uartp->dmarxmode | mode);
   dmaStreamEnable(uartp->dmarx);
 }
 
@@ -208,7 +208,7 @@ static void usart_stop(UARTDriver *uartp) {
   /* Stops RX and TX DMA channels.*/
   dmaStreamDisable(uartp->dmarx);
   dmaStreamDisable(uartp->dmatx);
-  
+
   /* Stops USART operations.*/
   uartp->usart->CR1 = 0;
   uartp->usart->CR2 = 0;
@@ -520,7 +520,8 @@ void uart_lld_init(void) {
 #if STM32_UART_USE_USART1
   uartObjectInit(&UARTD1);
   UARTD1.usart   = USART1;
-  UARTD1.dmamode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
+  UARTD1.dmarxmode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
+  UARTD1.dmatxmode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
   UARTD1.dmarx   = NULL;
   UARTD1.dmatx   = NULL;
 #endif
@@ -528,7 +529,8 @@ void uart_lld_init(void) {
 #if STM32_UART_USE_USART2
   uartObjectInit(&UARTD2);
   UARTD2.usart   = USART2;
-  UARTD2.dmamode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
+  UARTD2.dmarxmode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
+  UARTD2.dmatxmode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
   UARTD2.dmarx   = NULL;
   UARTD2.dmatx   = NULL;
 #endif
@@ -536,7 +538,8 @@ void uart_lld_init(void) {
 #if STM32_UART_USE_USART3
   uartObjectInit(&UARTD3);
   UARTD3.usart   = USART3;
-  UARTD3.dmamode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
+  UARTD3.dmarxmode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
+  UARTD3.dmatxmode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
   UARTD3.dmarx   = NULL;
   UARTD3.dmatx   = NULL;
 #endif
@@ -544,7 +547,8 @@ void uart_lld_init(void) {
 #if STM32_UART_USE_UART4
   uartObjectInit(&UARTD4);
   UARTD4.usart   = UART4;
-  UARTD4.dmamode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
+  UARTD4.dmarxmode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
+  UARTD4.dmatxmode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
   UARTD4.dmarx   = NULL;
   UARTD4.dmatx   = NULL;
 #endif
@@ -552,7 +556,8 @@ void uart_lld_init(void) {
 #if STM32_UART_USE_UART5
   uartObjectInit(&UARTD5);
   UARTD5.usart   = UART5;
-  UARTD5.dmamode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
+  UARTD5.dmarxmode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
+  UARTD5.dmatxmode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
   UARTD5.dmarx   = NULL;
   UARTD5.dmatx   = NULL;
 #endif
@@ -560,6 +565,8 @@ void uart_lld_init(void) {
 #if STM32_UART_USE_USART6
   uartObjectInit(&UARTD6);
   UARTD6.usart   = USART6;
+  UARTD6.dmarxmode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
+  UARTD6.dmatxmode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
   UARTD6.dmarx   = NULL;
   UARTD6.dmatx   = NULL;
 #endif
@@ -567,7 +574,8 @@ void uart_lld_init(void) {
 #if STM32_UART_USE_UART7
   uartObjectInit(&UARTD7);
   UARTD7.usart   = UART7;
-  UARTD7.dmamode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
+  UARTD7.dmarxmode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
+  UARTD7.dmatxmode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
   UARTD7.dmarx   = NULL;
   UARTD7.dmatx   = NULL;
 #endif
@@ -575,7 +583,8 @@ void uart_lld_init(void) {
 #if STM32_UART_USE_UART8
   uartObjectInit(&UARTD8);
   UARTD8.usart   = UART8;
-  UARTD8.dmamode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
+  UARTD8.dmarxmode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
+  UARTD8.dmatxmode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
   UARTD8.dmarx   = NULL;
   UARTD8.dmatx   = NULL;
 #endif
@@ -606,8 +615,10 @@ void uart_lld_start(UARTDriver *uartp) {
 
       rccEnableUSART1(true);
       nvicEnableVector(STM32_USART1_NUMBER, STM32_UART_USART1_IRQ_PRIORITY);
-      uartp->dmamode |= STM32_DMA_CR_CHSEL(USART1_RX_DMA_CHANNEL) |
-                        STM32_DMA_CR_PL(STM32_UART_USART1_DMA_PRIORITY);
+      uartp->dmarxmode |= STM32_DMA_CR_CHSEL(USART1_RX_DMA_CHANNEL) |
+                          STM32_DMA_CR_PL(STM32_UART_USART1_DMA_PRIORITY);
+      uartp->dmatxmode |= STM32_DMA_CR_CHSEL(USART1_TX_DMA_CHANNEL) |
+                          STM32_DMA_CR_PL(STM32_UART_USART1_DMA_PRIORITY);
     }
 #endif
 
@@ -626,8 +637,10 @@ void uart_lld_start(UARTDriver *uartp) {
 
       rccEnableUSART2(true);
       nvicEnableVector(STM32_USART2_NUMBER, STM32_UART_USART2_IRQ_PRIORITY);
-      uartp->dmamode |= STM32_DMA_CR_CHSEL(USART2_RX_DMA_CHANNEL) |
-                        STM32_DMA_CR_PL(STM32_UART_USART2_DMA_PRIORITY);
+      uartp->dmarxmode |= STM32_DMA_CR_CHSEL(USART2_RX_DMA_CHANNEL) |
+                          STM32_DMA_CR_PL(STM32_UART_USART2_DMA_PRIORITY);
+      uartp->dmatxmode |= STM32_DMA_CR_CHSEL(USART2_TX_DMA_CHANNEL) |
+                          STM32_DMA_CR_PL(STM32_UART_USART2_DMA_PRIORITY);
     }
 #endif
 
@@ -646,8 +659,10 @@ void uart_lld_start(UARTDriver *uartp) {
 
       rccEnableUSART3(true);
       nvicEnableVector(STM32_USART3_NUMBER, STM32_UART_USART3_IRQ_PRIORITY);
-      uartp->dmamode |= STM32_DMA_CR_CHSEL(USART3_RX_DMA_CHANNEL) |
-                        STM32_DMA_CR_PL(STM32_UART_USART3_DMA_PRIORITY);
+      uartp->dmarxmode |= STM32_DMA_CR_CHSEL(USART3_RX_DMA_CHANNEL) |
+                          STM32_DMA_CR_PL(STM32_UART_USART3_DMA_PRIORITY);
+      uartp->dmatxmode |= STM32_DMA_CR_CHSEL(USART3_TX_DMA_CHANNEL) |
+                          STM32_DMA_CR_PL(STM32_UART_USART3_DMA_PRIORITY);
     }
 #endif
 
@@ -672,8 +687,10 @@ void uart_lld_start(UARTDriver *uartp) {
 
       rccEnableUART4(true);
       nvicEnableVector(STM32_UART4_NUMBER, STM32_UART_UART4_IRQ_PRIORITY);
-      uartp->dmamode |= STM32_DMA_CR_CHSEL(UART4_RX_DMA_CHANNEL) |
-                        STM32_DMA_CR_PL(STM32_UART_UART4_DMA_PRIORITY);
+      uartp->dmarxmode |= STM32_DMA_CR_CHSEL(UART4_RX_DMA_CHANNEL) |
+                          STM32_DMA_CR_PL(STM32_UART_UART4_DMA_PRIORITY);
+      uartp->dmatxmode |= STM32_DMA_CR_CHSEL(UART4_TX_DMA_CHANNEL) |
+                          STM32_DMA_CR_PL(STM32_UART_UART4_DMA_PRIORITY);
     }
 #endif
 
@@ -698,8 +715,10 @@ void uart_lld_start(UARTDriver *uartp) {
 
       rccEnableUART5(true);
       nvicEnableVector(STM32_UART5_NUMBER, STM32_UART_UART5_IRQ_PRIORITY);
-      uartp->dmamode |= STM32_DMA_CR_CHSEL(UART5_RX_DMA_CHANNEL) |
-                        STM32_DMA_CR_PL(STM32_UART_UART5_DMA_PRIORITY);
+      uartp->dmarxmode |= STM32_DMA_CR_CHSEL(UART5_RX_DMA_CHANNEL) |
+                          STM32_DMA_CR_PL(STM32_UART_UART5_DMA_PRIORITY);
+      uartp->dmatxmode |= STM32_DMA_CR_CHSEL(UART5_TX_DMA_CHANNEL) |
+                          STM32_DMA_CR_PL(STM32_UART_UART5_DMA_PRIORITY);
     }
 #endif
 
@@ -718,8 +737,10 @@ void uart_lld_start(UARTDriver *uartp) {
 
       rccEnableUSART6(true);
       nvicEnableVector(STM32_USART6_NUMBER, STM32_UART_USART6_IRQ_PRIORITY);
-      uartp->dmamode |= STM32_DMA_CR_CHSEL(USART6_RX_DMA_CHANNEL) |
-                        STM32_DMA_CR_PL(STM32_UART_USART6_DMA_PRIORITY);
+      uartp->dmarxmode |= STM32_DMA_CR_CHSEL(USART6_RX_DMA_CHANNEL) |
+                          STM32_DMA_CR_PL(STM32_UART_USART6_DMA_PRIORITY);
+      uartp->dmatxmode |= STM32_DMA_CR_CHSEL(USART6_TX_DMA_CHANNEL) |
+                          STM32_DMA_CR_PL(STM32_UART_USART6_DMA_PRIORITY);
     }
 #endif
 
@@ -744,8 +765,10 @@ void uart_lld_start(UARTDriver *uartp) {
 
       rccEnableUART7(true);
       nvicEnableVector(STM32_UART7_NUMBER, STM32_UART_UART7_IRQ_PRIORITY);
-      uartp->dmamode |= STM32_DMA_CR_CHSEL(UART7_RX_DMA_CHANNEL) |
-                        STM32_DMA_CR_PL(STM32_UART_UART7_DMA_PRIORITY);
+      uartp->dmarxmode |= STM32_DMA_CR_CHSEL(UART7_RX_DMA_CHANNEL) |
+                          STM32_DMA_CR_PL(STM32_UART_UART7_DMA_PRIORITY);
+      uartp->dmatxmode |= STM32_DMA_CR_CHSEL(UART7_TX_DMA_CHANNEL) |
+                          STM32_DMA_CR_PL(STM32_UART_UART7_DMA_PRIORITY);
     }
 #endif
 
@@ -770,15 +793,19 @@ void uart_lld_start(UARTDriver *uartp) {
 
       rccEnableUART8(true);
       nvicEnableVector(STM32_UART8_NUMBER, STM32_UART_UART8_IRQ_PRIORITY);
-      uartp->dmamode |= STM32_DMA_CR_CHSEL(UART8_RX_DMA_CHANNEL) |
-                        STM32_DMA_CR_PL(STM32_UART_UART8_DMA_PRIORITY);
+      uartp->dmarxmode |= STM32_DMA_CR_CHSEL(UART8_RX_DMA_CHANNEL) |
+                          STM32_DMA_CR_PL(STM32_UART_UART8_DMA_PRIORITY);
+      uartp->dmatxmode |= STM32_DMA_CR_CHSEL(UART8_TX_DMA_CHANNEL) |
+                          STM32_DMA_CR_PL(STM32_UART_UART8_DMA_PRIORITY);
     }
 #endif
 
     /* Static DMA setup, the transfer size depends on the USART settings,
        it is 16 bits if M=1 and PCE=0 else it is 8 bits.*/
-    if ((uartp->config->cr1 & (USART_CR1_M | USART_CR1_PCE)) == USART_CR1_M)
-      uartp->dmamode |= STM32_DMA_CR_PSIZE_HWORD | STM32_DMA_CR_MSIZE_HWORD;
+    if ((uartp->config->cr1 & (USART_CR1_M | USART_CR1_PCE)) == USART_CR1_M) {
+      uartp->dmarxmode |= STM32_DMA_CR_PSIZE_HWORD | STM32_DMA_CR_MSIZE_HWORD;
+      uartp->dmatxmode |= STM32_DMA_CR_PSIZE_HWORD | STM32_DMA_CR_MSIZE_HWORD;
+    }
     dmaStreamSetPeripheral(uartp->dmarx, &uartp->usart->DR);
     dmaStreamSetPeripheral(uartp->dmatx, &uartp->usart->DR);
     uartp->rxbuf = 0;
@@ -887,7 +914,7 @@ void uart_lld_start_send(UARTDriver *uartp, size_t n, const void *txbuf) {
   /* TX DMA channel preparation.*/
   dmaStreamSetMemory0(uartp->dmatx, txbuf);
   dmaStreamSetTransactionSize(uartp->dmatx, n);
-  dmaStreamSetMode(uartp->dmatx, uartp->dmamode    | STM32_DMA_CR_DIR_M2P |
+  dmaStreamSetMode(uartp->dmatx, uartp->dmatxmode  | STM32_DMA_CR_DIR_M2P |
                                  STM32_DMA_CR_MINC | STM32_DMA_CR_TCIE);
 
   /* Only enable TC interrupt if there's a callback attached to it or
@@ -943,7 +970,7 @@ void uart_lld_start_receive(UARTDriver *uartp, size_t n, void *rxbuf) {
   /* RX DMA channel preparation.*/
   dmaStreamSetMemory0(uartp->dmarx, rxbuf);
   dmaStreamSetTransactionSize(uartp->dmarx, n);
-  dmaStreamSetMode(uartp->dmarx, uartp->dmamode    | STM32_DMA_CR_DIR_P2M |
+  dmaStreamSetMode(uartp->dmarx, uartp->dmarxmode  | STM32_DMA_CR_DIR_P2M |
                                  STM32_DMA_CR_MINC | STM32_DMA_CR_TCIE);
 
   /* Starting transfer.*/

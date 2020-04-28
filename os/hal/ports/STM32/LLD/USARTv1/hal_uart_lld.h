@@ -273,7 +273,7 @@
 #error "USART3 not present in the selected device"
 #endif
 
-#if STM32_UART_USE_UART4 
+#if STM32_UART_USE_UART4
 #if !STM32_HAS_UART4
 #error "UART4 not present in the selected device"
 #endif
@@ -670,9 +670,13 @@ struct UARTDriver {
    */
   USART_TypeDef             *usart;
   /**
-   * @brief DMA mode bit mask.
+   * @brief Receive DMA mode bit mask.
    */
-  uint32_t                  dmamode;
+  uint32_t                  dmarxmode;
+  /**
+   * @brief Send DMA mode bit mask.
+   */
+  uint32_t                  dmatxmode;
   /**
    * @brief Receive DMA channel.
    */
