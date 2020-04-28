@@ -83,6 +83,7 @@
 - FIX: Fixed wrong arguments for the cacheBufferInvalidate in the STM32 SPI 
        demo (bug #1086).
 - FIX: Fixed race condition in HAL MAC driver (bug #1083).
+- FIX: Fixed STM32H7 compile fails for I2C4 (bug #1082).
 - FIX: Fixed early interrupts enable in ARMv7-M port (bug #1081).
 - FIX: Fixed I2CD4 interrupt vectors are swapped versus I2CD1-I2CD3 (bug #1080).
 - FIX: Fixed incorrect clock check when using PLLSAI1R in ADCv3 (bug #1079).
