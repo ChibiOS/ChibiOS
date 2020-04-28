@@ -86,6 +86,8 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Fixed missing symbols in GCC scatter files (bug #1091)
+       (backported to 20.3.1).
 - FIX: Fixed wrong SAI1 clock selection for STM32G4xx (bug #1090)
        (backported to 20.3.1).
 - FIX: Fixed STM32H7xx ADC problem in dual mode (bug #1089)
