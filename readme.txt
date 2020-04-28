@@ -77,6 +77,7 @@
 - NEW: Updated debug tools to be independent from the toolchain position:
        they now rely on the environment variable CHIBISTUDIO.
 - NEW: Added dynamic reconfiguration API to lwIP bindings.
+- FIX: Fixed STM32H7xx ADC problem in dual mode (bug #1089).
 - FIX: Fixed invalid CHSEL DMA setting in STM32 UART drivers (bug #1088).
 - FIX: Fixed sector count incorrect in STM32G07/8 EFL driver (bug #1085).
 - FIX: Fixed sector size incorrect in STM32F413 EFL driver (bug #1084).
