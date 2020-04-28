@@ -514,7 +514,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   uint32_t dmamode, cfgr;
   const ADCConversionGroup *grpp = adcp->grpp;
 #if STM32_ADC_DUAL_MODE
-  uint32_t ccr = grpp->ccr & ~(ADC_CCR_CKMODE_MASK | ADC_CCR_MDMA_MASK);
+  uint32_t ccr = grpp->ccr & ~(ADC_CCR_CKMODE_MASK | ADC_CCR_DUAL_MASK);
 #endif
 
   osalDbgAssert(!STM32_ADC_DUAL_MODE || ((grpp->num_channels & 1) == 0),
@@ -557,7 +557,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
      in the conversion group configuration structure, static settings are
      preserved.*/
   adcp->adcc->CCR   = (adcp->adcc->CCR &
-                       (ADC_CCR_CKMODE_MASK | ADC_CCR_MDMA_MASK)) | ccr;
+                       (ADC_CCR_CKMODE_MASK | ADC_CCR_DUAL_MASK)) | ccr;
 
   adcp->adcm->CFGR2 = grpp->cfgr2;
   adcp->adcm->PCSEL = grpp->pcsel;
@@ -574,13 +574,13 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   adcp->adcm->SQR3  = grpp->sqr[2];
   adcp->adcm->SQR4  = grpp->sqr[3];
   adcp->adcs->CFGR2 = grpp->cfgr2;
-  adcp->adcs->PCSEL = grpp->spcsel;
-  adcp->adcs->LTR1  = grpp->sltr1;
-  adcp->adcs->HTR1  = grpp->shtr1;
-  adcp->adcs->LTR1  = grpp->sltr2;
-  adcp->adcs->HTR1  = grpp->shtr2;
-  adcp->adcs->LTR1  = grpp->sltr3;
-  adcp->adcs->HTR1  = grpp->shtr3;
+  adcp->adcs->PCSEL = grpp->pcsel;
+  adcp->adcs->LTR1  = grpp->ltr1;
+  adcp->adcs->HTR1  = grpp->htr1;
+  adcp->adcs->LTR1  = grpp->ltr2;
+  adcp->adcs->HTR1  = grpp->htr2;
+  adcp->adcs->LTR1  = grpp->ltr3;
+  adcp->adcs->HTR1  = grpp->htr3;
   adcp->adcs->SMPR1 = grpp->ssmpr[0];
   adcp->adcs->SMPR2 = grpp->ssmpr[1];
   adcp->adcs->SQR1  = grpp->ssqr[0] | ADC_SQR1_NUM_CH(grpp->num_channels / 2);

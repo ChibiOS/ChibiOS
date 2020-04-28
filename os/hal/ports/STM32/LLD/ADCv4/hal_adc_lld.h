@@ -289,11 +289,6 @@
 #error "STM32_ADC3_NUMBER not defined in registry"
 #endif
 
-/* Units checks related to dual mode.*/
-#if STM32_ADC_DUAL_MODE && STM32_ADC_USE_ADC1 && !STM32_HAS_ADC2
-#error "ADC2 not present in the selected device, required for dual mode"
-#endif
-
 /* At least one ADC must be assigned.*/
 #if !STM32_ADC_USE_ADC12 && !STM32_ADC_USE_ADC3
 #error "ADC driver activated but no ADC peripheral assigned"
@@ -525,7 +520,6 @@ typedef union {
   uint32_t                  cfgr2;                                          \
   uint32_t                  ccr;                                            \
   uint32_t                  pcsel;                                          \
-  uint32_t                  difsel;                                         \
   uint32_t                  ltr1;                                           \
   uint32_t                  htr1;                                           \
   uint32_t                  ltr2;                                           \

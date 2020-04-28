@@ -86,6 +86,8 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Fixed STM32H7xx ADC problem in dual mode (bug #1089)
+       (backported to 20.3.1)(backported to 19.1.4).
 - FIX: Fixed invalid CHSEL DMA setting in STM32 UART drivers (bug #1088)
        (backported to 20.3.1)(backported to 19.1.4).
 - FIX: Fixed wrong arguments for the cacheBufferInvalidate in the STM32 SPI 
