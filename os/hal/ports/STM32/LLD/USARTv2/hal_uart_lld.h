@@ -759,9 +759,13 @@ struct UARTDriver {
    */
   uint32_t                  clock;
   /**
-   * @brief   DMA mode bit mask.
+   * @brief   Receive DMA mode bit mask.
    */
-  uint32_t                  dmamode;
+  uint32_t                  dmarxmode;
+  /**
+   * @brief   Send DMA mode bit mask.
+   */
+  uint32_t                  dmatxmode;
   /**
    * @brief   Receive DMA channel.
    */
