@@ -62,8 +62,10 @@ SECTIONS
 
     .ARM.exidx : {
         __exidx_base__ = .;
+        __exidx_start = .;
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
         __exidx_end__ = .;
+        __exidx_end = .;
      } > VARIOUS_FLASH AT > VARIOUS_FLASH_LMA
 
     .eh_frame_hdr :

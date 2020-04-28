@@ -77,6 +77,7 @@
 - NEW: Updated debug tools to be independent from the toolchain position:
        they now rely on the environment variable CHIBISTUDIO.
 - NEW: Added dynamic reconfiguration API to lwIP bindings.
+- FIX: Fixed missing symbols in GCC scatter files (bug #1091).
 - FIX: Fixed wrong SAI1 clock selection for STM32G4xx (bug #1090).
 - FIX: Fixed STM32H7xx ADC problem in dual mode (bug #1089).
 - FIX: Fixed invalid CHSEL DMA setting in STM32 UART drivers (bug #1088).
