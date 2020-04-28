@@ -76,9 +76,10 @@
 *** 20.3.1 ***
 - NEW: Updated debug tools to be independent from the toolchain position:
        they now rely on the environment variable CHIBISTUDIO.
-- FIX: Sector count incorrect in STM32G07/8 EFL driver (bug #1085).
-- FIX: Sector size incorrect in STM32F413 EFL driver (bug #1084).
 - NEW: Added dynamic reconfiguration API to lwIP bindings.
+- FIX: Fixed invalid CHSEL DMA setting in STM32 UART drivers (bug #1088).
+- FIX: Fixed sector count incorrect in STM32G07/8 EFL driver (bug #1085).
+- FIX: Fixed sector size incorrect in STM32F413 EFL driver (bug #1084).
 - FIX: Fixed wrong arguments for the cacheBufferInvalidate in the STM32 SPI 
        demo (bug #1086).
 - FIX: Fixed race condition in HAL MAC driver (bug #1083).
