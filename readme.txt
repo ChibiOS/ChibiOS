@@ -86,14 +86,18 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Fixed wrong SAI1 clock selection for STM32G4xx (bug #1090)
+       (backported to 20.3.1).
 - FIX: Fixed STM32H7xx ADC problem in dual mode (bug #1089)
        (backported to 20.3.1)(backported to 19.1.4).
 - FIX: Fixed invalid CHSEL DMA setting in STM32 UART drivers (bug #1088)
        (backported to 20.3.1)(backported to 19.1.4).
 - FIX: Fixed wrong arguments for the cacheBufferInvalidate in the STM32 SPI 
        demo (bug #1086)(backported to 20.3.1)(backported to 19.1.4).
-- FIX: Fixed sector count incorrect in STM32G07/8 EFL driver (bug #1085).
-- FIX: Fixed sector size incorrect in STM32F413 EFL driver (bug #1084).
+- FIX: Fixed sector count incorrect in STM32G07/8 EFL driver (bug #1085)
+       (backported to 20.3.1).
+- FIX: Fixed sector size incorrect in STM32F413 EFL driver (bug #1084)
+       (backported to 20.3.1).
 - FIX: Fixed race condition in HAL MAC driver (bug #1083)
        (backported to 20.3.1)(backported to 19.1.4).
 - FIX: Fixed STM32H7 compile fails for I2C4 (bug #1082)
