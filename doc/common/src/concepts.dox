@@ -44,8 +44,15 @@
  *   @ref system_states.
  * - @anchor I-Class <b>"I"</b>, I-Class APIs are invokable only from the
  *   <b>I-Locked</b> or <b>S-Locked</b> states. See @ref system_states.
+ *   This kind of functions never reschedule internally and are meant to be
+ *   used from interrupt handlers. If used from thread level then
+ *   an explicit reschedule operation could be necessary before leaving the
+ *   containing critical zone.
  * - @anchor S-Class <b>"S"</b>, S-Class APIs are invokable only from the
  *   <b>S-Locked</b> state. See @ref system_states.
+ *   This kind of functions can reschedule internally but are not guaranteed
+ *   to do so necessarily. For example a wait function on a semaphore can
+ *   reschedule or not reschedule depending on the semaphore state.
  * - @anchor X-Class <b>"X"</b>, X-Class APIs are invokable from any context.
  * .
  * Examples: @p chThdCreateStatic(), @p chSemSignalI(), @p chIQGetTimeout().
