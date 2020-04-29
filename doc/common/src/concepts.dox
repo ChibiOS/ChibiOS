@@ -55,7 +55,7 @@
  *   reschedule or not reschedule depending on the semaphore state.
  * - @anchor X-Class <b>"X"</b>, X-Class APIs are invokable from any context.
  * .
- * Examples: @p chThdCreateStatic(), @p chSemSignalI(), @p chIQGetTimeout().
+ * Examples: @p chThdCreateStatic(), @p chSemSignalI(), @p chThdCreateStatic().
  *
  * @section interrupt_classes Interrupt Classes
  * In ChibiOS/RT there are three logical interrupt classes:
