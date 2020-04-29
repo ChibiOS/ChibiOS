@@ -795,6 +795,11 @@ typedef struct {
    * @note  Only the DMA-related bits can be specified in this field.
    */
   uint32_t                  dier;
+  /**
+   * @brief TIM ARR register initialization data.
+   * @note  The value of this field should normally be equal to 0xFFFFFFFFU.
+   */
+  uint32_t                  arr;
 } ICUConfig;
 
 /**
