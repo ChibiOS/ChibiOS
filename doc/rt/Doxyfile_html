@@ -787,6 +787,7 @@ WARN_LOGFILE           =
 # Note: If this tag is empty the current directory is searched.
 
 INPUT                  = ./src \
+                         ../common/src \
                          ../../os/license \
                          ../../os/rt/dox \
                          ../../os/rt/src \
