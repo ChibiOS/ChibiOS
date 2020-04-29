@@ -157,6 +157,15 @@ typedef uint32_t sysinterval_t;
 
 #if 0
 /**
+ * @brief   Type of time conversion variable.
+ * @note    This type must have double width than other time types, it is
+ *          only used internally for conversions.
+ */
+typedef uint64_t time_conv_t;
+#endif
+
+#if 0
+/**
  * @brief   Type of realtime counter.
  */
 typedef uint32_t rtcnt_t;
@@ -318,9 +327,12 @@ typedef struct {
  * @{
  */
 /**
- * @brief   Seconds to system ticks.
+ * @brief   Seconds to time interval.
  * @details Converts from seconds to system ticks number.
  * @note    The result is rounded upward to the next tick boundary.
+ * @note    Use of this macro for large values is not secure because
+ *          integer overflows, make sure your value can be correctly
+ *          converted.
  *
  * @param[in] secs      number of seconds
  * @return              The number of ticks.
@@ -330,9 +342,12 @@ typedef struct {
 #define OSAL_S2I(secs) TIME_S2I(secs)
 
 /**
- * @brief   Milliseconds to system ticks.
+ * @brief   Milliseconds to time interval.
  * @details Converts from milliseconds to system ticks number.
  * @note    The result is rounded upward to the next tick boundary.
+ * @note    Use of this macro for large values is not secure because
+ *          integer overflows, make sure your value can be correctly
+ *          converted.
  *
  * @param[in] msecs     number of milliseconds
  * @return              The number of ticks.
@@ -342,9 +357,12 @@ typedef struct {
 #define OSAL_MS2I(msecs) TIME_MS2I(msecs)
 
 /**
- * @brief   Microseconds to system ticks.
+ * @brief   Microseconds to time interval.
  * @details Converts from microseconds to system ticks number.
  * @note    The result is rounded upward to the next tick boundary.
+ * @note    Use of this macro for large values is not secure because
+ *          integer overflows, make sure your value can be correctly
+ *          converted.
  *
  * @param[in] usecs     number of microseconds
  * @return              The number of ticks.
@@ -352,6 +370,51 @@ typedef struct {
  * @api
  */
 #define OSAL_US2I(usecs) TIME_US2I(usecs)
+
+/**
+ * @brief   Time interval to seconds.
+ * @details Converts from system ticks number to seconds.
+ * @note    The result is rounded up to the next second boundary.
+ * @note    Use of this macro for large values is not secure because
+ *          integer overflows, make sure your value can be correctly
+ *          converted.
+ *
+ * @param[in] interval  interval in ticks
+ * @return              The number of seconds.
+ *
+ * @api
+ */
+#define OSAL_I2S(interval) TIME_I2S(interval)
+
+/**
+ * @brief   Time interval to milliseconds.
+ * @details Converts from system ticks number to milliseconds.
+ * @note    The result is rounded up to the next millisecond boundary.
+ * @note    Use of this macro for large values is not secure because
+ *          integer overflows, make sure your value can be correctly
+ *          converted.
+ *
+ * @param[in] interval  interval in ticks
+ * @return              The number of milliseconds.
+ *
+ * @api
+ */
+#define OSAL_I2MS(interval) TIME_I2MS(interval)
+
+/**
+ * @brief   Time interval to microseconds.
+ * @details Converts from system ticks number to microseconds.
+ * @note    The result is rounded up to the next microsecond boundary.
+ * @note    Use of this macro for large values is not secure because
+ *          integer overflows, make sure your value can be correctly
+ *          converted.
+ *
+ * @param[in] interval  interval in ticks
+ * @return              The number of microseconds.
+ *
+ * @api
+ */
+#define OSAL_I2US(interval) TIME_I2US(interval)
 /** @} */
 
 /**

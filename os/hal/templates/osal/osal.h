@@ -169,6 +169,13 @@ typedef uint32_t systime_t;
 typedef uint32_t sysinterval_t;
 
 /**
+ * @brief   Type of time conversion variable.
+ * @note    This type must have double width than other time types, it is
+ *          only used internally for conversions.
+ */
+typedef uint64_t time_conv_t;
+
+/**
  * @brief   Type of realtime counter.
  */
 typedef uint32_t rtcnt_t;
@@ -333,9 +340,12 @@ typedef struct {
  * @{
  */
 /**
- * @brief   Seconds to system ticks.
+ * @brief   Seconds to time interval.
  * @details Converts from seconds to system ticks number.
  * @note    The result is rounded upward to the next tick boundary.
+ * @note    Use of this macro for large values is not secure because
+ *          integer overflows, make sure your value can be correctly
+ *          converted.
  *
  * @param[in] secs      number of seconds
  * @return              The number of ticks.
@@ -343,12 +353,15 @@ typedef struct {
  * @api
  */
 #define OSAL_S2I(secs)                                                      \
-  ((sysinterval_t)((uint32_t)(secs) * (uint32_t)OSAL_ST_FREQUENCY))
+  ((sysinterval_t)((time_conv_t)(secs) * (time_conv_t)OSAL_ST_FREQUENCY))
 
 /**
- * @brief   Milliseconds to system ticks.
+ * @brief   Milliseconds to time interval.
  * @details Converts from milliseconds to system ticks number.
  * @note    The result is rounded upward to the next tick boundary.
+ * @note    Use of this macro for large values is not secure because
+ *          integer overflows, make sure your value can be correctly
+ *          converted.
  *
  * @param[in] msecs     number of milliseconds
  * @return              The number of ticks.
@@ -356,13 +369,17 @@ typedef struct {
  * @api
  */
 #define OSAL_MS2I(msecs)                                                    \
-  ((sysinterval_t)((((((uint32_t)(msecs)) *                                 \
-                  ((uint32_t)OSAL_ST_FREQUENCY)) - 1UL) / 1000UL) + 1UL))
+  ((sysinterval_t)((((time_conv_t)(msecs) *                                 \
+                     (time_conv_t)OSAL_ST_FREQUENCY) +                      \
+                    (time_conv_t)999) / (time_conv_t)1000))
 
 /**
- * @brief   Microseconds to system ticks.
+ * @brief   Microseconds to time interval.
  * @details Converts from microseconds to system ticks number.
  * @note    The result is rounded upward to the next tick boundary.
+ * @note    Use of this macro for large values is not secure because
+ *          integer overflows, make sure your value can be correctly
+ *          converted.
  *
  * @param[in] usecs     number of microseconds
  * @return              The number of ticks.
@@ -370,8 +387,63 @@ typedef struct {
  * @api
  */
 #define OSAL_US2I(usecs)                                                    \
-  ((sysinterval_t)((((((uint32_t)(usecs)) *                                 \
-                  ((uint32_t)OSAL_ST_FREQUENCY)) - 1UL) / 1000000UL) + 1UL))
+  ((sysinterval_t)((((time_conv_t)(usecs) *                                 \
+                     (time_conv_t)OSAL_ST_FREQUENCY) +                      \
+                    (time_conv_t)999999) / (time_conv_t)1000000))
+
+/**
+ * @brief   Time interval to seconds.
+ * @details Converts from system ticks number to seconds.
+ * @note    The result is rounded up to the next second boundary.
+ * @note    Use of this macro for large values is not secure because
+ *          integer overflows, make sure your value can be correctly
+ *          converted.
+ *
+ * @param[in] interval  interval in ticks
+ * @return              The number of seconds.
+ *
+ * @api
+ */
+#define OSAL_I2S(interval)                                                  \
+  (time_secs_t)(((time_conv_t)(interval) +                                  \
+                 (time_conv_t)OSAL_ST_FREQUENCY -                           \
+                 (time_conv_t)1) / (time_conv_t)OSAL_ST_FREQUENCY)
+
+/**
+ * @brief   Time interval to milliseconds.
+ * @details Converts from system ticks number to milliseconds.
+ * @note    The result is rounded up to the next millisecond boundary.
+ * @note    Use of this macro for large values is not secure because
+ *          integer overflows, make sure your value can be correctly
+ *          converted.
+ *
+ * @param[in] interval  interval in ticks
+ * @return              The number of milliseconds.
+ *
+ * @api
+ */
+#define OSAL_I2MS(interval)                                                 \
+  (time_msecs_t)((((time_conv_t)(interval) * (time_conv_t)1000) +           \
+                  (time_conv_t)OSAL_ST_FREQUENCY - (time_conv_t)1) /        \
+                 (time_conv_t)OSAL_ST_FREQUENCY)
+
+/**
+ * @brief   Time interval to microseconds.
+ * @details Converts from system ticks number to microseconds.
+ * @note    The result is rounded up to the next microsecond boundary.
+ * @note    Use of this macro for large values is not secure because
+ *          integer overflows, make sure your value can be correctly
+ *          converted.
+ *
+ * @param[in] interval  interval in ticks
+ * @return              The number of microseconds.
+ *
+ * @api
+ */
+#define OSAL_I2US(interval)                                                 \
+  (time_msecs_t)((((time_conv_t)(interval) * (time_conv_t)1000000) +        \
+                  (time_conv_t)OSAL_ST_FREQUENCY - (time_conv_t)1) /        \
+                 (time_conv_t)OSAL_ST_FREQUENCY)
 /** @} */
 
 /**

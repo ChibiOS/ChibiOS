@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: More time conversion macros added to HAL OSAL.
 - NEW: Updated debug tools to be independent from the toolchain position:
        they now rely on the environment variable CHIBISTUDIO.
 - NEW: Mail Queues test implementation in CMSIS RTOS wrapper.
