@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: STM32 ICU driver now allows to setup the ARR register in the
+       configuration structure, the default value should be 0xFFFFFFFFU.
 - NEW: More time conversion macros added to HAL OSAL.
 - NEW: Updated debug tools to be independent from the toolchain position:
        they now rely on the environment variable CHIBISTUDIO.
