@@ -51,7 +51,7 @@
 /**
  * @brief   ChibiOS version string.
  */
-#define CH_VERSION              "20.3.0"
+#define CH_VERSION              "20.3.1"
 
 /**
  * @brief   ChibiOS version release year.
@@ -66,12 +66,12 @@
 /**
  * @brief   ChibiOS version patch number.
  */
-#define CH_VERSION_PATCH        0
+#define CH_VERSION_PATCH        1
 
 /**
  * @brief   ChibiOS version nickname.
  */
-#define CH_VERSION_NICKNAME     "Erchie"
+#define CH_VERSION_NICKNAME     "Cetara"
 /** @} */
 
 /*===========================================================================*/
