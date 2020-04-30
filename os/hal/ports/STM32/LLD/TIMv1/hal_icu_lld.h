@@ -556,7 +556,7 @@
 #endif
 
 #if STM32_ICU_USE_TIM11
-#if defined(STM32_TIM151_IS_USED)
+#if defined(STM32_TIM11_IS_USED)
 #error "ICUD11 requires TIM11 but the timer is already used"
 #else
 #define STM32_TIM11_IS_USED
