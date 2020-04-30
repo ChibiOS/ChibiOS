@@ -89,6 +89,8 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Fixed swapped definition in ST_STM32F746G_DISCOVERY board files
+       (bug #1092) (backported to 20.3.1)(backported to 19.1.5).
 - FIX: Fixed missing symbols in GCC scatter files (bug #1091)
        (backported to 20.3.1).
 - FIX: Fixed wrong SAI1 clock selection for STM32G4xx (bug #1090)
