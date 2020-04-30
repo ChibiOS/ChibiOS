@@ -549,7 +549,7 @@ void icu_lld_start(ICUDriver *icup) {
                 ((psc + 1) * icup->config->frequency) == icup->clock,
                 "invalid frequency");
   icup->tim->PSC  = psc;
-  icup->tim->ARR  = 0xFFFF;
+  icup->tim->ARR  = 0xFFFFFFFF;
 
   if (icup->config->channel == ICU_CHANNEL_1) {
     /* Selected input 1.
