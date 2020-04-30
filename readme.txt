@@ -79,6 +79,8 @@
 - NEW: Updated debug tools to be independent from the toolchain position:
        they now rely on the environment variable CHIBISTUDIO.
 - NEW: Added dynamic reconfiguration API to lwIP bindings.
+- FIX: Fixed swapped definition in ST_STM32F746G_DISCOVERY board files
+       (bug #1092).
 - FIX: Fixed missing symbols in GCC scatter files (bug #1091).
 - FIX: Fixed wrong SAI1 clock selection for STM32G4xx (bug #1090).
 - FIX: Fixed STM32H7xx ADC problem in dual mode (bug #1089).
