@@ -73,6 +73,10 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+*** 19.1.5 ***
+- FIX: Fixed swapped definition in ST_STM32F746G_DISCOVERY board files
+       (bug #1092).
+       
 *** 19.1.4 ***
 - NEW: Updated debug tools to be independent from the toolchain position:
        they now rely on the environment variable CHIBISTUDIO.
