@@ -73,6 +73,10 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+*** 20.3.2 ***
+- FIX: Fixed failure in chSemReset() function when counter is equal to MAXINT
+       (bug #1093).
+
 *** 20.3.1 ***
 - NEW: STM32 ICU driver now allows to setup the ARR register in the
        configuration structure, the default value should be 0xFFFFFFFFU.
