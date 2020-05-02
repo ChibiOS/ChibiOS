@@ -89,6 +89,8 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Fixed STM32G4 demos compile fails if smart mode is disabled (bug #1094)
+       (backported to 20.3.2).
 - FIX: Fixed failure in chSemReset() function when counter is equal to MAXINT
        (bug #1093)(backported to 20.3.2)(backported to 19.1.5).
 - FIX: Fixed swapped definition in ST_STM32F746G_DISCOVERY board files
