@@ -442,18 +442,14 @@ const osMessageQDef_t os_messageQ_def_##name = {                            \
 #else
 #define osMailQDef(name, queue_sz, type)                \
   static msg_t os_mailQ_mb_buf_##name[queue_sz];        \
-  static mailbox_t os_mailQ_mb_obj_##name;              \
-  static memory_pool_t os_mailQ_pool_obj_##name;        \
   static type os_mailQ_pool_buf_##name[queue_sz];       \
+  static objects_fifo_t os_mailQ_fifo_##name;           \
   const osMailQDef_t os_mailQ_def_##name = {            \
     (queue_sz),                                         \
     sizeof (type),                                      \
+    &os_mailQ_fifo_##name,                              \
     (msg_t*)&os_mailQ_mb_buf_##name[0],                 \
-    (void *)&os_mailQ_pool_buf_##name[0],               \
-    {                                                   \
-      (mailbox_t*)&os_mailQ_mb_obj_##name,              \
-      &os_mailQ_pool_obj_##name                         \
-    }                                                   \
+    (void *)&os_mailQ_pool_buf_##name[0]                \
   }
 #endif
 
@@ -506,9 +502,10 @@ extern "C" {
                         uint32_t millisec);
   osEvent osMessageGet(osMessageQId queue_id,
                        uint32_t millisec);
-  osMailQId osMailCreate(const osMailQDef_t *queue_def,
-                          osThreadId thread_id);
+  osMailQId osMailCreate(const osMailQDef_t *mail_def,
+                         osThreadId thread_id);
   void *osMailAlloc(osMailQId queue_id, uint32_t millisec);
+  void *osMailCAlloc(osMailQId queue_id, uint32_t millisec);
   osStatus osMailPut(osMailQId queue_id, void *mail);
   osEvent osMailGet(osMailQId queue_id, uint32_t millisec);
   osStatus osMailFree(osMailQId queue_id, void *mail);

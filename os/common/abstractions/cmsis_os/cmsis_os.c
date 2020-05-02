@@ -87,6 +87,9 @@ static void timer_cb(void const *arg) {
 
 /**
  * @brief   Kernel initialization.
+ *
+ * @return                          The function execution status.
+ * @retval osOK                     if the function succeeded.
  */
 osStatus osKernelInitialize(void) {
 
@@ -106,6 +109,9 @@ osStatus osKernelInitialize(void) {
 
 /**
  * @brief   Kernel start.
+ *
+ * @return                          The function execution status.
+ * @retval osOK                     if the function succeeded.
  */
 osStatus osKernelStart(void) {
 
@@ -118,6 +124,10 @@ osStatus osKernelStart(void) {
 
 /**
  * @brief   Creates a thread.
+ *
+ * @param[in] thread_def            the thread object declared with @p osThread
+ * @return                          The thread identifier.
+ * @retval NULL                     if the function failed.
  */
 osThreadId osThreadCreate(const osThreadDef_t *thread_def, void *argument) {
   size_t size;
@@ -136,6 +146,10 @@ osThreadId osThreadCreate(const osThreadDef_t *thread_def, void *argument) {
  * @brief   Thread termination.
  * @note    The thread is not really terminated but asked to terminate which
  *          is not compliant.
+ *
+ * @param[in] thread_id             a thread identifier
+ * @return                          The function execution status.
+ * @retval osOK                     if the function succeeded.
  */
 osStatus osThreadTerminate(osThreadId thread_id) {
 
@@ -153,6 +167,10 @@ osStatus osThreadTerminate(osThreadId thread_id) {
 /**
  * @brief   Change thread priority.
  * @note    This can interfere with the priority inheritance mechanism.
+ *
+ * @param[in] thread_id             a thread identifier
+ * @return                          The function execution status.
+ * @retval osOK                     if the function succeeded.
  */
 osStatus osThreadSetPriority(osThreadId thread_id, osPriority newprio) {
   thread_t * tp = (thread_t *)thread_id;
@@ -210,27 +228,58 @@ osStatus osThreadSetPriority(osThreadId thread_id, osPriority newprio) {
 }
 
 /**
- * @brief   Create a timer.
+ * @brief   Create a one-shot or periodic timer.
+ * @details The timer is in stopped state until it is started with
+ *          @p osTimerStart.
+ *
+ * @param[in] timer_def             the timer object declared with @p osTimer
+ * @param[in] type                  @p osTimerOnce or @p osTimerPeriodic
+ * @param[in] argument              argument to the timer callback function
+ * @return                          The timer identifier.
+ * @retval NULL                     if the function failed.
  */
 osTimerId osTimerCreate(const osTimerDef_t *timer_def,
                         os_timer_type type,
                         void *argument) {
+
+  if ((timer_def == NULL) || port_is_isr_context()) {
+    return NULL;
+  }
 
   osTimerId timer = chPoolAlloc(&timpool);
   chVTObjectInit(&timer->vt);
   timer->ptimer = timer_def->ptimer;
   timer->type = type;
   timer->argument = argument;
+
   return timer;
 }
 
 /**
- * @brief   Start a timer.
+ * @brief   Start or restart the timer.
+ *
+ * @param[in] timer_id              the timer ID returned by @p osTimerCreate()
+ * @param[in] millisec              time delay value of the timer
+ * @return                          The function execution status.
+ * @retval osOK                     if the function succeeded.
+ * @retval osErrorParameter         if some parameter is @p NULL.
+ * @retval osErrorISR               if the function has been called from ISR
+ *                                  context.
+ * @retval osErrorValue             if a parameter has an invalid value.
  */
 osStatus osTimerStart(osTimerId timer_id, uint32_t millisec) {
 
-  if ((millisec == 0) || (millisec == osWaitForever))
+  if (timer_id == NULL) {
+    return osErrorParameter;
+  }
+
+  if (port_is_isr_context()) {
+    return osErrorISR;
+  }
+
+  if ((millisec == 0) || (millisec == osWaitForever)) {
     return osErrorValue;
+  }
 
   timer_id->millisec = millisec;
   chVTSet(&timer_id->vt, TIME_MS2I(millisec), (vtfunc_t)timer_cb, timer_id);
@@ -240,8 +289,28 @@ osStatus osTimerStart(osTimerId timer_id, uint32_t millisec) {
 
 /**
  * @brief   Stop a timer.
+ *
+ * @param[in] timer_id  the timer ID returned by @p osTimerCreate()
+ * @return                          The function execution status.
+ * @retval osOK                     if the function succeeded.
+ * @retval osErrorParameter         if some parameter is @p NULL.
+ * @retval osErrorISR               if the function has been called from ISR
+ *                                  context.
+ * @retval osErrorResource          if the object is in an invalid state.
  */
 osStatus osTimerStop(osTimerId timer_id) {
+
+  if (timer_id == NULL) {
+    return osErrorParameter;
+  }
+
+  if (port_is_isr_context()) {
+    return osErrorISR;
+  }
+
+  if (chVTIsArmed(&timer_id->vt) == false) {
+    return osErrorResource;
+  }
 
   chVTReset(&timer_id->vt);
 
@@ -249,9 +318,24 @@ osStatus osTimerStop(osTimerId timer_id) {
 }
 
 /**
- * @brief   Delete a timer.
+ * @brief   Delete the timer object.
+ *
+ * @param[in] timer_id  timer ID obtained by osTimerCreate
+ * @return                          The function execution status.
+ * @retval osOK                     if the function succeeded.
+ * @retval osErrorParameter         if some parameter is @p NULL.
+ * @retval osErrorISR               if the function has been called from ISR
+ *                                  context.
  */
 osStatus osTimerDelete(osTimerId timer_id) {
+
+  if (timer_id == NULL) {
+    return osErrorParameter;
+  };
+
+  if (port_is_isr_context()) {
+    return osErrorISR;
+  }
 
   chVTReset(&timer_id->vt);
   chPoolFree(&timpool, (void *)timer_id);
@@ -261,6 +345,9 @@ osStatus osTimerDelete(osTimerId timer_id) {
 
 /**
  * @brief   Send signals.
+ *
+ * @param[in] thread_id             a thread identifier
+ * @return                          The previous signals mask.
  */
 int32_t osSignalSet(osThreadId thread_id, int32_t signals) {
   int32_t oldsignals;
@@ -275,6 +362,9 @@ int32_t osSignalSet(osThreadId thread_id, int32_t signals) {
 
 /**
  * @brief   Clear signals.
+ *
+ * @param[in] thread_id             a thread identifier
+ * @return                          The signals mask.
  */
 int32_t osSignalClear(osThreadId thread_id, int32_t signals) {
   eventmask_t m;
@@ -291,6 +381,8 @@ int32_t osSignalClear(osThreadId thread_id, int32_t signals) {
 
 /**
  * @brief   Wait for signals.
+ *
+ * @return                          An @p osEvent structure.
  */
 osEvent osSignalWait(int32_t signals, uint32_t millisec) {
   osEvent event;
@@ -313,8 +405,12 @@ osEvent osSignalWait(int32_t signals, uint32_t millisec) {
 
 /**
  * @brief   Create a semaphore.
- * @note    @p semaphore_def is not used.
+ * @note    @p semaphore_def is not used in this implementation.
  * @note    Can involve memory allocation.
+ *
+ * @param[in] semaphore_def         the semaphore object declared with @p osSemaphore
+ * @return                          The semaphore identifier.
+ * @retval NULL                     if the function failed.
  */
 osSemaphoreId osSemaphoreCreate(const osSemaphoreDef_t *semaphore_def,
                                 int32_t count) {
@@ -328,9 +424,18 @@ osSemaphoreId osSemaphoreCreate(const osSemaphoreDef_t *semaphore_def,
 
 /**
  * @brief   Wait on a semaphore.
+ *
+ * @return                          The function execution status.
+ * @retval osOK                     if the function succeeded.
+ * @retval osErrorParameter         if some parameter is @p NULL.
+ * @retval osErrorISR               if the function has been called from ISR
+ *                                  context.
+ * @retval osErrorResource          if the object is in an invalid state.
+ * @retval osErrorValue             if a parameter has an invalid value.
+ * @retval osErrorTimeoutResource   if the function timed out.
  */
 int32_t osSemaphoreWait(osSemaphoreId semaphore_id, uint32_t millisec) {
-
+/* TODO it is not consistent with specification.*/
   msg_t msg = chSemWaitTimeout((semaphore_t *)semaphore_id, tmo(millisec));
   switch (msg) {
   case MSG_OK:
@@ -343,6 +448,9 @@ int32_t osSemaphoreWait(osSemaphoreId semaphore_id, uint32_t millisec) {
 
 /**
  * @brief   Release a semaphore.
+ *
+ * @return                          The function execution status.
+ * @retval osOK                     if the function succeeded.
  */
 osStatus osSemaphoreRelease(osSemaphoreId semaphore_id) {
 
@@ -357,6 +465,9 @@ osStatus osSemaphoreRelease(osSemaphoreId semaphore_id) {
  * @brief   Deletes a semaphore.
  * @note    After deletion there could be references in the system to a
  *          non-existent semaphore.
+ *
+ * @return                          The function execution status.
+ * @retval osOK                     if the function succeeded.
  */
 osStatus osSemaphoreDelete(osSemaphoreId semaphore_id) {
 
@@ -370,6 +481,10 @@ osStatus osSemaphoreDelete(osSemaphoreId semaphore_id) {
  * @brief   Create a mutex.
  * @note    @p mutex_def is not used.
  * @note    Can involve memory allocation.
+ *
+ * @param[in] mutex_def             the mutex object declared with @p osMutex
+ * @return                          The mutex identifier.
+ * @retval NULL                     if the function failed.
  */
 osMutexId osMutexCreate(const osMutexDef_t *mutex_def) {
 
@@ -382,6 +497,11 @@ osMutexId osMutexCreate(const osMutexDef_t *mutex_def) {
 
 /**
  * @brief   Wait on a mutex.
+ *
+ * @return                          The function execution status.
+ * @retval osOK                     if the function succeeded.
+ * @retval osErrorResource          if the object is in an invalid state.
+ * @retval osErrorTimeoutResource   if the function timed out.
  */
 osStatus osMutexWait(osMutexId mutex_id, uint32_t millisec) {
 
@@ -397,6 +517,9 @@ osStatus osMutexWait(osMutexId mutex_id, uint32_t millisec) {
 
 /**
  * @brief   Release a mutex.
+ *
+ * @return                          The function execution status.
+ * @retval osOK                     if the function succeeded.
  */
 osStatus osMutexRelease(osMutexId mutex_id) {
 
@@ -411,6 +534,9 @@ osStatus osMutexRelease(osMutexId mutex_id) {
  * @brief   Deletes a mutex.
  * @note    After deletion there could be references in the system to a
  *          non-existent semaphore.
+ *
+ * @return                          The function execution status.
+ * @retval osOK                     if the function succeeded.
  */
 osStatus osMutexDelete(osMutexId mutex_id) {
 
@@ -424,8 +550,16 @@ osStatus osMutexDelete(osMutexId mutex_id) {
  * @brief   Create a memory pool.
  * @note    The pool is not really created because it is allocated statically,
  *          this function just re-initializes it.
+ *
+ * @param[in] pool_def              the pool object declared with @p osPool
+ * @return                          The pool identifier.
+ * @retval NULL                     if the function failed.
  */
 osPoolId osPoolCreate(const osPoolDef_t *pool_def) {
+
+  if ((pool_def == NULL) || port_is_isr_context()) {
+    return NULL;
+  }
 
   chPoolObjectInit(pool_def->pool, (size_t)pool_def->item_sz, NULL);
   chPoolLoadArray(pool_def->pool, pool_def->items, (size_t)pool_def->pool_sz);
@@ -434,10 +568,19 @@ osPoolId osPoolCreate(const osPoolDef_t *pool_def) {
 }
 
 /**
- * @brief   Allocate an object.
+ * @brief   Allocate a memory block from the memory pool.
+ *
+ * @param[in] pool_id memory pool ID obtain referenced with osPoolCreate.
+ *
+ * @return                          The pointer to the allocated memory block.
+ * @retval NULL                     if the function failed.
  */
 void *osPoolAlloc(osPoolId pool_id) {
   void *object;
+
+  if (pool_id == NULL) {
+    return NULL;
+  }
 
   syssts_t sts = chSysGetStatusAndLockX();
   object = chPoolAllocI((memory_pool_t *)pool_id);
@@ -447,20 +590,45 @@ void *osPoolAlloc(osPoolId pool_id) {
 }
 
 /**
- * @brief   Allocate an object clearing it.
+ * @brief Allocate a memory block from the memory pool. The block is initialized to zero.
+ *
+ * @param[in] pool_id memory pool ID obtain referenced with osPoolCreate.
+ * @return                          The pointer to the allocated memory block.
+ * @retval NULL                     if the function failed.
  */
 void *osPoolCAlloc(osPoolId pool_id) {
   void *object;
 
+  if (pool_id == NULL) {
+    return NULL;
+  }
+
+  syssts_t sts = chSysGetStatusAndLockX();
   object = chPoolAllocI((memory_pool_t *)pool_id);
-  memset(object, 0, pool_id->object_size);
+  chSysRestoreStatusX(sts);
+
+  if (object != NULL) {
+    memset(object, 0, pool_id->object_size);
+  }
+
   return object;
 }
 
 /**
- * @brief   Free an object.
+ * @brief Return a memory block to a memory pool.
+ *
+ * @param[in] pool_id memory pool ID obtain referenced with osPoolCreate.
+ * @param[in] block address of the allocated memory block that is returned to the memory pool.
+ *
+ * @return                          The function execution status.
+ * @retval osOK                     if the function succeeded.
+ * @retval osErrorParameter         if some parameter is @p NULL.
  */
 osStatus osPoolFree(osPoolId pool_id, void *block) {
+
+  if (pool_id == NULL) {
+    return osErrorParameter;
+  }
 
   syssts_t sts = chSysGetStatusAndLockX();
   chPoolFreeI((memory_pool_t *)pool_id, block);
@@ -473,6 +641,12 @@ osStatus osPoolFree(osPoolId pool_id, void *block) {
  * @brief   Create a message queue.
  * @note    The queue is not really created because it is allocated statically,
  *          this function just re-initializes it.
+ *
+ * @param[in] queue_def             the message queue object declared with
+ *                                  @p osMessageQDef
+ * @param[in] thread_id             a thread identifier
+ * @return                          The message queue identifier.
+ * @retval NULL                     if the function failed.
  */
 osMessageQId osMessageCreate(const osMessageQDef_t *queue_def,
                              osThreadId thread_id) {
@@ -480,8 +654,9 @@ osMessageQId osMessageCreate(const osMessageQDef_t *queue_def,
   /* Ignoring this parameter for now.*/
   (void)thread_id;
 
-  if (queue_def->item_sz > sizeof (msg_t))
+  if (queue_def->item_sz > sizeof (msg_t)) {
     return NULL;
+  }
 
   chMBObjectInit(queue_def->mailbox,
                  queue_def->items,
@@ -492,6 +667,16 @@ osMessageQId osMessageCreate(const osMessageQDef_t *queue_def,
 
 /**
  * @brief   Put a message in the queue.
+ *
+ * @param[in] millisec              the timeout value, zero for no timeout
+ * @return                          The function execution status.
+ * @retval osOK                     if the function succeeded.
+ * @retval osErrorParameter         if some parameter is @p NULL.
+ * @retval osErrorISR               if the function has been called from ISR
+ *                                  context.
+ * @retval osErrorResource          if the object is in an invalid state.
+ * @retval osErrorValue             if a parameter has an invalid value.
+ * @retval osErrorTimeoutResource   if the function timed out.
  */
 osStatus osMessagePut(osMessageQId queue_id,
                       uint32_t info,
@@ -512,11 +697,14 @@ osStatus osMessagePut(osMessageQId queue_id,
   else
     msg = chMBPostTimeout((mailbox_t *)queue_id, (msg_t)info, tmo(millisec));
 
-  return msg == MSG_OK ? osOK : osEventTimeout;
+  return msg == MSG_OK ? osOK : osErrorTimeoutResource;
 }
 
 /**
  * @brief   Get a message from the queue.
+ *
+ * @param[in] millisec              the timeout value, zero for no timeout
+ * @return                          An @p osEvent structure.
  */
 osEvent osMessageGet(osMessageQId queue_id, uint32_t millisec) {
   msg_t msg;
@@ -554,25 +742,50 @@ osEvent osMessageGet(osMessageQId queue_id, uint32_t millisec) {
   return event;
 }
 
-osMailQId osMailCreate(const osMailQDef_t *queue_def, osThreadId thread_id) {
+/**
+ * @brief Initialize and create a mail queue.
+ *
+ * @param[in] queue_def             the mail object declared with @p osMailQDef
+ * @param[in] thread_id             a thread identifier
+ * @return                          The thread identifier.
+ * @retval NULL                     if the function failed.
+ */
+osMailQId osMailCreate(const osMailQDef_t *mail_def, osThreadId thread_id) {
 
   /* Ignoring this parameter for now.*/
   (void)thread_id;
 
-  chDbgCheck(queue_def != NULL);
+  if ((mail_def == NULL) || port_is_isr_context()) {
+    return NULL;
+  }
 
-  /* Init messages queue.*/
-  chFifoObjectInit(queue_def->fifo,
-                   (size_t)queue_def->item_sz,
-                   (size_t)queue_def->queue_sz,
-                   queue_def->objbuf,
-                   queue_def->msgbuf);
+  chDbgCheck(mail_def != NULL);
 
-  return queue_def->fifo;
+  /* Messages queue initialization.*/
+  chFifoObjectInit(mail_def->fifo,
+                   (size_t)mail_def->item_sz,
+                   (size_t)mail_def->queue_sz,
+                   mail_def->objbuf,
+                   mail_def->msgbuf);
+
+  return mail_def->fifo;
 }
 
+/**
+ * @brief Allocate a memory block from the mail queue that is filled with the mail information.
+ *
+ * @param[in] queue_id              the mail queue identifier
+ * @param[in] millisec              the timeout value, zero for no timeout
+ * @return                          The pointer to the allocated memory block.
+ * @retval NULL                     if the function failed.
+ */
 void *osMailAlloc(osMailQId queue_id, uint32_t millisec) {
   void *mail;
+
+  if ((queue_id == NULL) ||
+    (port_is_isr_context() && (millisec > 0))) {
+    return NULL;
+  }
 
   if (port_is_isr_context()) {
     chSysLockFromISR();
@@ -586,7 +799,57 @@ void *osMailAlloc(osMailQId queue_id, uint32_t millisec) {
   return mail;
 }
 
+/**
+ * @brief Allocate a memory block from the mail queue that is filled with the mail information.
+ * The memory block returned is cleared.
+ *
+ * @param[in] queue_id              the mail queue identifier
+ * @param[in] millisec              the timeout value, zero for no timeout
+ * @return                          The pointer to the allocated memory block.
+ * @retval NULL                     if the function failed.
+ */
+void *osMailCAlloc(osMailQId queue_id, uint32_t millisec) {
+  void *mail;
+
+  if ((queue_id == NULL) || (port_is_isr_context() && (millisec > 0))) {
+    return NULL;
+  }
+
+  if (port_is_isr_context()) {
+    chSysLockFromISR();
+    mail = chFifoTakeObjectI(queue_id);
+    chSysUnlockFromISR();
+  }
+  else {
+    mail = chFifoTakeObjectTimeout(queue_id, tmo(millisec));
+  }
+
+  if (mail != NULL) {
+    memset(mail, 0, queue_id->free.pool.object_size);
+  }
+
+  return mail;
+}
+
+/**
+ * @brief Put the memory block specified with mail into the mail queue specified by queue.
+ *
+ * @param[in] queue_id              the mail queue identifier
+ * @param[in] mail                  memory block previously returned by
+ *                                  @p osMailAlloc() or @p osMailCAlloc()
+ * @return                          The function execution status.
+ * @retval osOK                     if the function succeeded.
+ * @retval osErrorParameter         if some parameter is @p NULL.
+ */
 osStatus osMailPut(osMailQId queue_id, void *mail) {
+
+  if (queue_id == NULL) {
+    return osErrorParameter;
+  }
+
+  if (mail == NULL) {
+    return osErrorParameter;
+  }
 
   chDbgCheck((queue_id != NULL) && (mail != NULL));
 
@@ -604,6 +867,14 @@ osStatus osMailPut(osMailQId queue_id, void *mail) {
   return MSG_OK;
 }
 
+/**
+ * @brief Suspend the execution of the current RUNNING thread until a mail arrives.
+ * When a mail is already in the queue, the function returns instantly with the mail information.
+ *
+ * @param[in] queue_id              the mail queue identifier
+ * @param[in] millisec              the timeout value, zero for no timeout
+ * @return                          An @p osEvent structure.
+ */
 osEvent osMailGet(osMailQId queue_id, uint32_t millisec) {
   msg_t msg;
   osEvent event = {
@@ -615,6 +886,11 @@ osEvent osMailGet(osMailQId queue_id, uint32_t millisec) {
       .mail_id = NULL
     }
   };
+  
+  if (queue_id == NULL) {
+    event.status = osErrorParameter;
+    return event;
+  }
 
   chDbgCheck(queue_id != NULL);
 
@@ -637,13 +913,36 @@ osEvent osMailGet(osMailQId queue_id, uint32_t millisec) {
   }
 
   /* Returned event type.*/
-  event.status = msg == MSG_OK ? osEventMail : osEventTimeout;
+  if ((millisec == 0) && (msg == MSG_TIMEOUT)) {
+    event.status = osOK;
+  } else {
+    event.status = msg == MSG_OK ? osEventMail : osEventTimeout;
+  }
+
   return event;
 }
 
-osStatus osMailFree(osMailQId queue_id, void *mail) {
+/**
+ * @brief Free the memory block specified by mail and return it to the mail queue.
+ *
+ * @param[in] queue_id              the mail queue identifier
+ * @param[in] mail                  pointer to the memory block returned
+ *                                  by @p osMailGet.
+ * @return                          The function execution status.
+ * @retval osOK                     if the function succeeded.
+ * @retval osErrorParameter         if some parameter is @p NULL.
+ */
+osStatus osMailFree(osMailQId queue_id, void *mail)
+{
+  if (queue_id == NULL) {
+    return osErrorParameter;
+  }
 
-  chDbgCheck((queue_id != NULL) && (mail != NULL));	
+  if (mail == NULL) {
+    return osErrorParameter;
+  }
+
+  chDbgCheck((queue_id != NULL) && (mail != NULL));    
 
   syssts_t sts = chSysGetStatusAndLockX();
   chFifoReturnObjectI(queue_id, mail);
