@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 20.3.2 ***
+- FIX: Fixed STM32G4 demos compile fails if smart mode is disabled (bug #1094).
 - FIX: Fixed failure in chSemReset() function when counter is equal to MAXINT
        (bug #1093).
 
