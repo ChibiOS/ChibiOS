@@ -853,6 +853,7 @@ void *osMailCAlloc(osMailQId queue_id, uint32_t millisec) {
  *                                  @p osMailAlloc() or @p osMailCAlloc()
  * @return                          The function execution status.
  * @retval osOK                     if the function succeeded.
+ * @retval osErrorValue             if mail is @p NULL.
  * @retval osErrorParameter         if some parameter is @p NULL.
  */
 osStatus osMailPut(osMailQId queue_id, void *mail) {
@@ -862,7 +863,7 @@ osStatus osMailPut(osMailQId queue_id, void *mail) {
   }
 
   if (mail == NULL) {
-    return osErrorParameter;
+    return osErrorValue;
   }
 
   chDbgCheck((queue_id != NULL) && (mail != NULL));
@@ -943,7 +944,8 @@ osEvent osMailGet(osMailQId queue_id, uint32_t millisec) {
  *                                  by @p osMailGet.
  * @return                          The function execution status.
  * @retval osOK                     if the function succeeded.
- * @retval osErrorParameter         if some parameter is @p NULL.
+ * @retval osErrorValue             if mail is @p NULL.
+ * @retval osErrorParameter         if the value to the parameter queue_id is @p NULL.
  */
 osStatus osMailFree(osMailQId queue_id, void *mail)
 {
@@ -952,7 +954,7 @@ osStatus osMailFree(osMailQId queue_id, void *mail)
   }
 
   if (mail == NULL) {
-    return osErrorParameter;
+    return osErrorValue;
   }
 
   chDbgCheck((queue_id != NULL) && (mail != NULL));    
