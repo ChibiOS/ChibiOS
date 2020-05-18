@@ -89,6 +89,8 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Fixed compilation error in file nvic.c (bug #1097)
+       (backported to 20.3.2).
 - FIX: Fixed STM32_DMAx_CH8_HANDLER not defined for DMAv1 (bug #1096)
        (backported to 20.3.2).
 - FIX: Fixed STM32G4 demos compile fails if smart mode is disabled (bug #1094)

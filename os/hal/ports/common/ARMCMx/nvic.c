@@ -77,7 +77,8 @@
  * @brief   NVIC clearing and initialization.
  */
 void nvicInit(void) {
-#if defined(__CORE_CM0_H_GENERIC) || defined(__CORE_CM23_H_GENERIC)
+#if defined(__CORE_CM0_H_GENERIC) || defined(__CORE_CM0PLUS_H_GENERIC) ||   \
+    defined(__CORE_CM23_H_GENERIC)
   uint32_t n = 0U;
 #else
   uint32_t n = SCnSCB->ICTR;
@@ -100,7 +101,8 @@ void nvicInit(void) {
  */
 void nvicEnableVector(uint32_t n, uint32_t prio) {
 
-#if defined(__CORE_CM0_H_GENERIC) || defined(__CORE_CM23_H_GENERIC)
+#if defined(__CORE_CM0_H_GENERIC) || defined(__CORE_CM0PLUS_H_GENERIC) ||   \
+    defined(__CORE_CM23_H_GENERIC)
   NVIC->__IPR[_IP_IDX(n)] = (NVIC->__IPR[_IP_IDX(n)] & ~(0xFFU << _BIT_SHIFT(n))) |
                             (NVIC_PRIORITY_MASK(prio) << _BIT_SHIFT(n));
 #else
