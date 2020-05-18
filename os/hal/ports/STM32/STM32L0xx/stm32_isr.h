@@ -83,19 +83,19 @@
 /*
  * EXTI unit.
  */
-#define STM32_EXTI_LINE01_HANDLER           Vector54
-#define STM32_EXTI_LINE23_HANDLER           Vector58
-#define STM32_EXTI_LINE4_15_HANDLER         Vector5C
-#define STM32_EXTI_LINE16_HANDLER           Vector44
-#define STM32_EXTI_LINE171920_HANDLER       Vector48
-#define STM32_EXTI_LINE2122_HANDLER         Vector70
+#define STM32_EXTI0_1_HANDLER               Vector54
+#define STM32_EXTI2_3_HANDLER               Vector58
+#define STM32_EXTI4_15_HANDLER              Vector5C
+#define STM32_EXTI16_HANDLER                Vector44
+#define STM32_EXTI171920_HANDLER            Vector48
+#define STM32_EXTI2122_HANDLER              Vector70
 
-#define STM32_EXTI_LINE01_NUMBER            5
-#define STM32_EXTI_LINE23_NUMBER            6
-#define STM32_EXTI_LINE4_15_NUMBER          7
-#define STM32_EXTI_LINE16_NUMBER            1
-#define STM32_EXTI_LINE171920_NUMBER        2
-#define STM32_EXTI_LINE2122_NUMBER          12
+#define STM32_EXTI0_1_NUMBER                5
+#define STM32_EXTI2_3_NUMBER                6
+#define STM32_EXTI4_15_NUMBER               7
+#define STM32_EXTI16_NUMBER                 1
+#define STM32_EXTI171920_NUMBER             2
+#define STM32_EXTI2122_NUMBER               12
 
 /*
  * I2C units.

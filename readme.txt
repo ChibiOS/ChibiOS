@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 20.3.2 ***
+- FIX: Fixed invalid EXTI definitions for STM32L0xx (bug #1098).
 - FIX: Fixed compilation error in file nvic.c (bug #1097).
 - FIX: Fixed STM32_DMAx_CH8_HANDLER not defined for DMAv1 (bug #1096).
 - FIX: Fixed STM32 EXTI2 and EXTI4 not triggering a callback (bug #1095).
