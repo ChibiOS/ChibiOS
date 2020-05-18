@@ -81,7 +81,7 @@ OSAL_IRQ_HANDLER(STM32_EXTI4_HANDLER) {
 
   extiGetAndClearGroup1(1U << 4, pr);
 
-  exti_serve_irq(pr, 0);
+  exti_serve_irq(pr, 4);
 
   OSAL_IRQ_EPILOGUE();
 }
