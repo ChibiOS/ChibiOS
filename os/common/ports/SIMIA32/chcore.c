@@ -37,6 +37,23 @@
 /* Module local definitions.                                                 */
 /*===========================================================================*/
 
+/*
+ * RTOS-specific context offset.
+ */
+#if defined(_CHIBIOS_RT_CONF_)
+#if CH_CFG_USE_REGISTRY
+#define CONTEXT_OFFSET  "20"
+#else
+#define CONTEXT_OFFSET  "12"
+#endif
+
+#elif defined(_CHIBIOS_NIL_CONF_)
+#define CONTEXT_OFFSET  "0"
+
+#else
+#error "invalid chconf.h"
+#endif
+
 /*===========================================================================*/
 /* Module exported variables.                                                */
 /*===========================================================================*/
@@ -84,8 +101,8 @@ static void __dummy(thread_t *ntp, thread_t *otp) {
                 "push    %esi                                   \n\t"
                 "push    %edi                                   \n\t"
                 "push    %ebx                                   \n\t"
-                "movl    %esp, 12(%edx)                         \n\t"
-                "movl    12(%ecx), %esp                         \n\t"
+                "movl    %esp, "CONTEXT_OFFSET"(%edx)           \n\t"
+                "movl    "CONTEXT_OFFSET"(%ecx), %esp           \n\t"
                 "pop     %ebx                                   \n\t"
                 "pop     %edi                                   \n\t"
                 "pop     %esi                                   \n\t"
