@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 20.3.2 ***
+- FIX: Fixed STM32_DMAx_CH8_HANDLER not defined for DMAv1 (bug #1096).
 - FIX: Fixed STM32 EXTI2 and EXTI4 not triggering a callback (bug #1095).
 - FIX: Fixed STM32G4 demos compile fails if smart mode is disabled (bug #1094).
 - FIX: Fixed failure in chSemReset() function when counter is equal to MAXINT

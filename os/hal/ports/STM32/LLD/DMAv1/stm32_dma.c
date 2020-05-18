@@ -401,6 +401,22 @@ OSAL_IRQ_HANDLER(STM32_DMA1_CH7_HANDLER) {
 }
 #endif
 
+#if defined(STM32_DMA1_CH8_HANDLER) || defined(__DOXYGEN__)
+/**
+ * @brief   DMA1 stream 8 shared ISR.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_DMA1_CH8_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  dmaServeInterrupt(STM32_DMA1_STREAM8);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+
 #if defined(STM32_DMA2_CH1_HANDLER) || defined(__DOXYGEN__)
 /**
  * @brief   DMA2 stream 1 shared ISR.
@@ -508,6 +524,22 @@ OSAL_IRQ_HANDLER(STM32_DMA2_CH7_HANDLER) {
   OSAL_IRQ_PROLOGUE();
 
   dmaServeInterrupt(STM32_DMA2_STREAM7);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+
+#if defined(STM32_DMA2_CH8_HANDLER) || defined(__DOXYGEN__)
+/**
+ * @brief   DMA2 stream 8 shared ISR.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_DMA2_CH8_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  dmaServeInterrupt(STM32_DMA2_STREAM8);
 
   OSAL_IRQ_EPILOGUE();
 }
