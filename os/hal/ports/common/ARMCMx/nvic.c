@@ -56,7 +56,7 @@
  */
 void nvicEnableVector(uint32_t n, uint32_t prio) {
 
-#if defined(__CORE_CM0_H_GENERIC)
+#if defined(__CORE_CM0_H_GENERIC) || defined(__CORE_CM0PLUS_H_GENERIC)
   NVIC->IP[_IP_IDX(n)] = (NVIC->IP[_IP_IDX(n)] & ~(0xFFU << _BIT_SHIFT(n))) |
                          (NVIC_PRIORITY_MASK(prio) << _BIT_SHIFT(n));
 #else
@@ -74,7 +74,7 @@ void nvicEnableVector(uint32_t n, uint32_t prio) {
 void nvicDisableVector(uint32_t n) {
 
   NVIC->ICER[n >> 5U] = 1U << (n & 0x1FU);
-#if defined(__CORE_CM0_H_GENERIC)
+#if defined(__CORE_CM0_H_GENERIC) || defined(__CORE_CM0PLUS_H_GENERIC)
   NVIC->IP[_IP_IDX(n)] = NVIC->IP[_IP_IDX(n)] & ~(0xFFU << _BIT_SHIFT(n));
 #else
   NVIC->IP[n] = 0U;
