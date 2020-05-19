@@ -64,6 +64,14 @@
 #define ADUCM_UART0_NUMBER          17
 /** @} */
 
+/*
+ * Wake Up timer.
+ */
+#define ADUCM_WUT_HANDLER           Vector40
+
+#define ADUCM_WUT_NUMBER            0
+/** @} */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/

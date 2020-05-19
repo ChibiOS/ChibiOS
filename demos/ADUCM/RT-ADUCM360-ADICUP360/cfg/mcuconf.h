@@ -66,7 +66,6 @@
  * ST driver system settings.
  */
 #define ADUCM_ST_IRQ_PRIORITY               3
-#define ADUCM_ST_USE_TIMER                  2
 
 /** @} */
 #endif /* MCUCONF_H */

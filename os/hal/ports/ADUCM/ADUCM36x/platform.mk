@@ -3,8 +3,7 @@ PLATFORMSRC := $(CHIBIOS)/os/hal/ports/common/ARMCMx/nvic.c \
                $(CHIBIOS)/os/hal/ports/ADUCM/ADUCM36x/aducm_isr.c \
                $(CHIBIOS)/os/hal/ports/ADUCM/ADUCM36x/hal_lld.c \
                $(CHIBIOS)/os/hal/ports/ADUCM/ADUCM36x/hal_pal_lld.c \
-               $(CHIBIOS)/os/hal/ports/ADUCM/ADUCM36x/hal_spi_lld.c \
-               $(CHIBIOS)/os/hal/ports/ADUCM/ADUCM36x/hal_st_lld.c
+               $(CHIBIOS)/os/hal/ports/ADUCM/ADUCM36x/hal_spi_lld.c
 
 # Required include directories.
 PLATFORMINC := $(CHIBIOS)/os/hal/ports/common/ARMCMx \
@@ -29,6 +28,7 @@ endif
 
 # Drivers compatible with the platform.
 include $(CHIBIOS)/os/hal/ports/ADUCM/LLD/UARTv1/driver.mk
+include $(CHIBIOS)/os/hal/ports/ADUCM/LLD/WUTv1/driver.mk
 
 # Shared variables
 ALLCSRC += $(PLATFORMSRC)
