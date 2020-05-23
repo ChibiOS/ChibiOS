@@ -90,6 +90,8 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Fixed STM32L0 missing LPUART IRQ initialization (bug #1099)
+       (backported to 20.3.2).
 - FIX: Fixed invalid EXTI definitions for STM32L0xx (bug #1098)
        (backported to 20.3.2).
 - FIX: Fixed compilation error in file nvic.c (bug #1097)
