@@ -95,6 +95,7 @@ void irqInit(void) {
   usart1_irq_init();
   usart2_irq_init();
   usart4_usart5_irq_init();
+  lpuart1_irq_init();
 }
 
 /**
@@ -118,6 +119,7 @@ void irqDeinit(void) {
   usart1_irq_deinit();
   usart2_irq_deinit();
   usart4_usart5_irq_deinit();
+  lpuart1_irq_deinit();
 }
 
 /** @} */
