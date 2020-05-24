@@ -72,7 +72,7 @@ void extiEnableGroup1(uint32_t mask, extimode_t mode) {
     EXTI->EMR1  &= ~mask;
     EXTI->RTSR1 &= ~mask;
     EXTI->FTSR1 &= ~mask;
-#if STM32_EXTI_TYPE == 0
+#if STM32_EXTI_SEPARATE_RF == FALSE
     EXTI->PR1    =  mask;
 #else
     EXTI->RPR1   =  mask;
@@ -126,7 +126,7 @@ void extiEnableGroup2(uint32_t mask, extimode_t mode) {
     EXTI->EMR2  &= ~mask;
     EXTI->RTSR2 &= ~mask;
     EXTI->FTSR2 &= ~mask;
-#if STM32_EXTI_TYPE == 0
+#if STM32_EXTI_SEPARATE_RF == FALSE
     EXTI->PR2    =  mask;
 #else
     EXTI->RPR2   =  mask;
