@@ -152,6 +152,10 @@ struct hal_spi_config {
    */
   bool                      circular;
 #endif
+    /**
+    * @brief SPI Slave mode flag.
+    */
+    bool                      slave_mode;
   /**
    * @brief Operation complete callback or @p NULL.
    */
