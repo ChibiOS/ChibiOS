@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -39,6 +39,10 @@
  *          queue size.
  */
 #define SERIAL_ADVANCED_BUFFERING_SUPPORT   TRUE
+
+/********* Additional definition to go global ************/
+#define UART_BREAK_DETECTED     64  /**< @brief Break detected.             */
+
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -425,6 +429,32 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
+
+/**
+ * @brief   Generic UART notification callback type.
+ *
+ * @param[in] uartp     pointer to the @p UARTDriver object
+ */
+typedef void (*sercb_t)(SerialDriver *sdp);
+
+/**
+ * @brief   Character received UART notification callback type.
+ *
+ * @param[in] uartp     pointer to the @p UARTDriver object
+ * @param[in] c         received character
+ */
+typedef void (*serccb_t)(SerialDriver *sdp, uint8_t c);
+
+/**
+ * @brief   Receive error UART notification callback type.
+ *
+ * @param[in] uartp     pointer to the @p UARTDriver object
+ * @param[in] e         receive error mask
+ */
+typedef void (*serecb_t)(SerialDriver *sdp, eventflags_t e);
+
+
+
 /**
  * @brief   STM32 Serial Driver configuration structure.
  * @details An instance of this structure must be passed to @p sdStart()
@@ -451,6 +481,25 @@ typedef struct {
    * @brief Initialization value for the CR3 register.
    */
   uint32_t                  cr3;
+
+/*************** Variables beyond here added for combined driver *****************/
+    /**
+   * @brief   End of transmission buffer callback. Interrupt context
+   */
+  sercb_t                  txend1_cb;
+  /**
+   * @brief   Physical end of transmission callback. From within a locked region
+   */
+  sercb_t                  txend2_cb;
+  /**
+   * @brief   Character received. Interrupt context
+   */
+  serccb_t                 rxchar_cb;
+  /**
+   * @brief   Receive error callback. Interrupt context
+   */
+  serecb_t                 rxerr_cb;
+  /* End of the mandatory fields.*/
 } SerialConfig;
 
 /**
@@ -464,6 +513,8 @@ typedef struct {
   input_queue_t             iqueue;                                         \
   /* Output queue.*/                                                        \
   output_queue_t            oqueue;                                         \
+  /*   Current configuration data.   */										\
+  const SerialConfig        *config;										\
   /* End of the mandatory fields.*/                                         \
   /* Pointer to the USART registers block.*/                                \
   USART_TypeDef             *usart;                                         \
