@@ -16,7 +16,7 @@
 
 /**
  * @file    hal_efl_lld.c
- * @brief   STM32F412/413 Embedded Flash subsystem low level driver source.
+ * @brief   STM32F4xx Embedded Flash subsystem low level driver source.
  *
  * @addtogroup HAL_EFL
  * @{
@@ -44,6 +44,10 @@
 #define FLASH_OPTKEY1                       0x08192A3BU
 #define FLASH_OPTKEY2                       0x4C5D6E7FU
 
+#if !defined(FLASH_SR_OPERR)
+#define FLASH_SR_OPERR                      FLASH_SR_SOP
+#endif
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -57,41 +61,43 @@ EFlashDriver EFLD1;
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
-#if defined(STM32F413xx) || defined(STM32F412xx) || defined(__DOXYGEN__)
+#if defined(STM32F413xx) || defined(STM32F412xx) || defined(STM32F40_41xxx)  \
+						 || defined(__DOXYGEN__)
+
 /* Sector table for 1.5M device. */
 static const flash_sector_descriptor_t efl_lld_sect1[STM32_FLASH1_SECTORS_TOTAL] = {
-  {         0,                        16834},   /* Sector  0. */
-  { 1 * 16834,                        16834},   /* Sector  1. */
-  { 2 * 16834,                        16834},   /* Sector  2. */
-  { 3 * 16834,                        16834},   /* Sector  3. */
-  { 4 * 16834,                        65536},   /* Sector  4. */
-  { 4 * 16834 + 65536,               131072},   /* Sector  5. */
-  { 4 * 16834 + 65536 +  1 * 131072, 131072},   /* Sector  6. */
-  { 4 * 16834 + 65536 +  2 * 131072, 131072},   /* Sector  7. */
-  { 4 * 16834 + 65536 +  3 * 131072, 131072},   /* Sector  8. */
-  { 4 * 16834 + 65536 +  4 * 131072, 131072},   /* Sector  9. */
-  { 4 * 16834 + 65536 +  5 * 131072, 131072},   /* Sector 10. */
-  { 4 * 16834 + 65536 +  6 * 131072, 131072},   /* Sector 11. */
-  { 4 * 16834 + 65536 +  7 * 131072, 131072},   /* Sector 12. */
-  { 4 * 16834 + 65536 +  8 * 131072, 131072},   /* Sector 13. */
-  { 4 * 16834 + 65536 +  9 * 131072, 131072},   /* Sector 14. */
-  { 4 * 16834 + 65536 + 10 * 131072, 131072}    /* Sector 15. */
+  {         0,                        16384},   /* Sector  0. */
+  { 1 * 16384,                        16384},   /* Sector  1. */
+  { 2 * 16384,                        16384},   /* Sector  2. */
+  { 3 * 16384,                        16384},   /* Sector  3. */
+  { 4 * 16384,                        65536},   /* Sector  4. */
+  { 4 * 16384 + 65536,               131072},   /* Sector  5. */
+  { 4 * 16384 + 65536 +  1 * 131072, 131072},   /* Sector  6. */
+  { 4 * 16384 + 65536 +  2 * 131072, 131072},   /* Sector  7. */
+  { 4 * 16384 + 65536 +  3 * 131072, 131072},   /* Sector  8. */
+  { 4 * 16384 + 65536 +  4 * 131072, 131072},   /* Sector  9. */
+  { 4 * 16384 + 65536 +  5 * 131072, 131072},   /* Sector 10. */
+  { 4 * 16384 + 65536 +  6 * 131072, 131072},   /* Sector 11. */
+  { 4 * 16384 + 65536 +  7 * 131072, 131072},   /* Sector 12. */
+  { 4 * 16384 + 65536 +  8 * 131072, 131072},   /* Sector 13. */
+  { 4 * 16384 + 65536 +  9 * 131072, 131072},   /* Sector 14. */
+  { 4 * 16384 + 65536 + 10 * 131072, 131072}    /* Sector 15. */
 };
 
 /* Sector table for 1M device. */
 static const flash_sector_descriptor_t efl_lld_sect2[STM32_FLASH2_SECTORS_TOTAL] = {
-  {         0,                        16834},   /* Sector  0. */
-  { 1 * 16834,                        16834},   /* Sector  1. */
-  { 2 * 16834,                        16834},   /* Sector  2. */
-  { 3 * 16834,                        16834},   /* Sector  3. */
-  { 4 * 16834,                        65536},   /* Sector  4. */
-  { 4 * 16834 + 65536,               131072},   /* Sector  5. */
-  { 4 * 16834 + 65536 +  1 * 131072, 131072},   /* Sector  6. */
-  { 4 * 16834 + 65536 +  2 * 131072, 131072},   /* Sector  7. */
-  { 4 * 16834 + 65536 +  3 * 131072, 131072},   /* Sector  8. */
-  { 4 * 16834 + 65536 +  4 * 131072, 131072},   /* Sector  9. */
-  { 4 * 16834 + 65536 +  5 * 131072, 131072},   /* Sector 10. */
-  { 4 * 16834 + 65536 +  6 * 131072, 131072}    /* Sector 11. */
+  {         0,                        16384},   /* Sector  0. */
+  { 1 * 16384,                        16384},   /* Sector  1. */
+  { 2 * 16384,                        16384},   /* Sector  2. */
+  { 3 * 16384,                        16384},   /* Sector  3. */
+  { 4 * 16384,                        65536},   /* Sector  4. */
+  { 4 * 16384 + 65536,               131072},   /* Sector  5. */
+  { 4 * 16384 + 65536 +  1 * 131072, 131072},   /* Sector  6. */
+  { 4 * 16384 + 65536 +  2 * 131072, 131072},   /* Sector  7. */
+  { 4 * 16384 + 65536 +  3 * 131072, 131072},   /* Sector  8. */
+  { 4 * 16384 + 65536 +  4 * 131072, 131072},   /* Sector  9. */
+  { 4 * 16384 + 65536 +  5 * 131072, 131072},   /* Sector 10. */
+  { 4 * 16384 + 65536 +  6 * 131072, 131072}    /* Sector 11. */
 };
 
 /* The descriptors for 1.5M device. */
@@ -325,10 +331,12 @@ flash_error_t efl_lld_read(void *instance, flash_offset_t offset,
   memcpy((void *)rp, (const void *)efl_lld_get_descriptor(instance)->address
                                    + offset, n);
 
+#if defined(FLASH_CR_RDERR)
   /* Checking for errors after reading.*/
   if ((devp->flash->SR & FLASH_SR_RDERR) != 0U) {
     err = FLASH_ERROR_READ;
   }
+#endif
 
   /* Ready state again.*/
   devp->state = FLASH_READY;
