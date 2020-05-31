@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 20.3.2 ***
+- FIX: Fixed differences in STM32 EXTI (bug #1101).
 - FIX: Fixed STM32 DACv1 driver regressed because DMA changes (bug #1100).
 - FIX: Fixed STM32L0 missing LPUART IRQ initialization (bug #1099).
 - FIX: Fixed invalid EXTI definitions for STM32L0xx (bug #1098).
