@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added entry for STM32L475 in STM32L4 registry header.
 - NEW: Updated CMSIS headers for STM32F7, G0, G4, H7, L0, L4, L4+.
 - NEW: Implemented tickless mode on ADuCM36x family
 - NEW: STM32 ICU driver now allows to setup the ARR register in the

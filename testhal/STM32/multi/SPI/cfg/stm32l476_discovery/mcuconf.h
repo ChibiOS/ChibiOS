@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2020 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@
 #define MCUCONF_H
 
 #define STM32L4xx_MCUCONF
+#define STM32L475_MCUCONF
 #define STM32L476_MCUCONF
 #define STM32L486_MCUCONF
 

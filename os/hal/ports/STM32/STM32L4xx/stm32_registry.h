@@ -781,10 +781,10 @@
 #endif /* defined(STM32L452xx) */
 
 /*===========================================================================*/
-/* STM32L476xx, STM32L486xx.                                                 */
+/* STM32L475xx, STM32L476xx, STM32L486xx.                                    */
 /*===========================================================================*/
 
-#if defined(STM32L476xx) || defined(STM32L486xx)
+#if defined(STM32L475xx) || defined(STM32L476xx) || defined(STM32L486xx)
 
 /* Clock attributes.*/
 #define STM32_CLOCK_HAS_HSI48               FALSE
