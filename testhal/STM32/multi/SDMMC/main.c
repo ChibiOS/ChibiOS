@@ -51,7 +51,7 @@
 static uint8_t buf[MMCSD_BLOCK_SIZE * SDC_BURST_SIZE + 4];
 
 /* Additional buffer for sdcErase() test */
-static uint8_t buf2[MMCSD_BLOCK_SIZE * SDC_BURST_SIZE ];
+static uint8_t buf2[MMCSD_BLOCK_SIZE * SDC_BURST_SIZE];
 
 void cmd_sdc(BaseSequentialStream *chp, int argc, char *argv[]) {
   static const char *mode[] = {"SDV11", "SDV20", "MMC", NULL};
@@ -169,7 +169,7 @@ void cmd_sdc(BaseSequentialStream *chp, int argc, char *argv[]) {
     }
     chprintf(chp, "OK\r\n");
 
-    for (i = 0; i < MMCSD_BLOCK_SIZE; i++)
+    for (i = 0; i < MMCSD_BLOCK_SIZE * 2; i++)
       buf[i] = i + 8;
     chprintf(chp, "Writing...");
     if(sdcWrite(&PORTAB_SDCD1, startblk, buf, 2)) {
@@ -289,6 +289,7 @@ static THD_FUNCTION(Thread1, arg) {
   chRegSetThreadName("blinker");
   while (true) {
     palToggleLine(PORTAB_LINE_LED1);
+    chThdSleepMilliseconds(500);
   }
 }
 
