@@ -44,8 +44,7 @@ static uint32_t i;
 static const SPIConfig spicfg = {
   FALSE,
   NULL,
-  GPIOB,
-  6,
+  LINE_ARD_D10,
   SPI_CR1_BR_1 | SPI_CR1_BR_0,
   0
 };
