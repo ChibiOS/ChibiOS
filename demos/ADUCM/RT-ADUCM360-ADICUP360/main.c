@@ -62,11 +62,11 @@ int main(void) {
 
   /*
    * Activates the serial driver 0 using the driver default configuration.
-   * P0.1(TX) and P0.2(RX) are routed to UART0.
+   * P0.6(RX) and P0.7(TX) are routed to UART0.
    */
   sdStart(&SD0, NULL);
-  palSetPadMode(GP0, 1, PAL_MODE_MULTIPLEXER(3) | PAL_ADUCM_PUL_PULLUP);
-  palSetPadMode(GP0, 2, PAL_MODE_MULTIPLEXER(3) | PAL_ADUCM_PUL_PULLUP);
+  palSetPadMode(GP0, 6, PAL_MODE_MULTIPLEXER(1) | PAL_ADUCM_PUL_PULLUP);
+  palSetPadMode(GP0, 7, PAL_MODE_MULTIPLEXER(2) | PAL_ADUCM_PUL_PULLUP);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except

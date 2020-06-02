@@ -10,15 +10,15 @@ The demo runs on an ADICUP360 board.
 
 The demo flashes the two on-board LEDs using a thread, by pressing the button 
 located on the board (BOOT) the test procedure is activated with output on the 
-serial port SD0 (UART0, mapped on mBED debug COM port).
+serial port SD0 (UART0, mapped on the User COM port).
 
 ** Board setup **
 
-To redirect P0.1 and P0.2 to the mBED debug COM port it is required to setup
+To redirect P0.6 and P0.7 to the User COM port it is required to setup
 the switch matrix as:
- - S1 -> 0
- - S2 -> 1
- - S3 -> 1
+ - S1 -> Don't Care
+ - S2 -> 0
+ - S3 -> Don't Care
  - S4 -> 0
    
 ** Build Procedure **
