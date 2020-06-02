@@ -82,15 +82,16 @@ static void spi_lld_serve_interrupt(SPIDriver *spip) {
     }
     
     /* Pushing the new TX: this will start a new transfer. */
-    if((spip->txbuf != NULL) && (spip->size > 0)) {
-      (spip->txbuf)++;
-      spip->spi->SPITX = *(spip->txbuf);
+    if(spip->size > 0) {
+      if(spip->txbuf != NULL) {
+        (spip->txbuf)++;
+        spip->spi->SPITX = *(spip->txbuf);
+      }
+      else {
+        spip->spi->SPITX = dummy_tx;
+      }
     }
     else {
-      spip->spi->SPITX = dummy_tx;
-    }
-
-    if(spip->size == 0) {
       /* Portable SPI ISR code defined in the high level driver, note, it is
          a macro.*/
       _spi_isr_code(spip);

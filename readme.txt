@@ -93,6 +93,8 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Fixed a wrong management of the SPI TX buffer in the ADUCM port 
+       (bug #1103)(backported to 20.3.2).
 - FIX: Fixed STM32F4 EFL sector bug (bug #1102)
        (backported to 20.3.2).
 - FIX: Fixed differences in STM32 EXTI (bug #1101)
