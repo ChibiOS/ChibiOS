@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 20.3.2 ***
+- FIX: Fixed a wrong management of the SPI TX buffer in the ADUCM port 
+       (bug #1103).
 - FIX: Fixed STM32F4 EFL sector bug (bug #1102).
 - FIX: Fixed differences in STM32 EXTI (bug #1101).
 - FIX: Fixed STM32 DACv1 driver regressed because DMA changes (bug #1100).
