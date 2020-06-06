@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 20.3.2 ***
+- FIX: Fixed GCC6 problem breaks Cortex-M0 port (bug #985).
 - FIX: Fixed a wrong management of the SPI TX buffer in the ADUCM port 
        (bug #1103).
 - FIX: Fixed STM32F4 EFL sector bug (bug #1102).
