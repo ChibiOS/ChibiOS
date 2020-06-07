@@ -202,21 +202,21 @@ void can_lld_init(void) {
   /* Driver initialization.*/
   canObjectInit(&CAND1);
   CAND1.fdcan = FDCAN1;
-  CAND1.ram_base = (uint32_t *) (SRAMCAN_BASE + 0U * SRAMCAN_SIZE);
+  CAND1.ram_base = (uint32_t *)(SRAMCAN_BASE + 0U * SRAMCAN_SIZE);
 #endif
 
 #if STM32_CAN_USE_FDCAN2
   /* Driver initialization.*/
   canObjectInit(&CAND2);
   CAND2.fdcan = FDCAN2;
-  CAND2.ram_base = (uint32_t *) (SRAMCAN_BASE + 1U * SRAMCAN_SIZE);
+  CAND2.ram_base = (uint32_t *)(SRAMCAN_BASE + 1U * SRAMCAN_SIZE);
 #endif
 
 #if STM32_CAN_USE_FDCAN3
   /* Driver initialization.*/
   canObjectInit(&CAND3);
   CAND3.fdcan = FDCAN3;
-  CAND3.ram_base = (uint32_t *) (SRAMCAN_BASE + 2U * SRAMCAN_SIZE);
+  CAND3.ram_base = (uint32_t *)(SRAMCAN_BASE + 2U * SRAMCAN_SIZE);
 #endif
 }
 
@@ -276,22 +276,23 @@ bool can_lld_start(CANDriver *canp) {
   }
 
   /* Configuration can be performed now.*/
-  canp->fdcan->CCCR |= FDCAN_CCCR_CCE;
+  canp->fdcan->CCCR   = FDCAN_CCCR_CCE;
 
   /* Setting up operation mode except driver-controlled bits.*/
-  canp->fdcan->NBTP  = canp->config->NBTP;
-  canp->fdcan->DBTP  = canp->config->DBTP;
-  canp->fdcan->CCCR  = canp->config->CCCR & ~(FDCAN_CCCR_CSR | FDCAN_CCCR_CSA |
-                                              FDCAN_CCCR_CCE | FDCAN_CCCR_INIT);
-  canp->fdcan->TEST  = canp->config->TEST;
-  canp->fdcan->RXGFC = canp->config->RXGFC;
+  canp->fdcan->NBTP   = canp->config->NBTP;
+  canp->fdcan->DBTP   = canp->config->DBTP;
+  canp->fdcan->CCCR  |= canp->config->CCCR & ~(FDCAN_CCCR_CSR | FDCAN_CCCR_CSA |
+                                               FDCAN_CCCR_CCE | FDCAN_CCCR_INIT);
+  canp->fdcan->TEST   = canp->config->TEST;
+  canp->fdcan->RXGFC  = canp->config->RXGFC;
 
   /* Enabling interrupts, only using interrupt zero.*/
-  canp->fdcan->IR  = (uint32_t)-1;
-  canp->fdcan->IE  = FDCAN_IE_RF1NE | FDCAN_IE_RF1LE |
-                     FDCAN_IE_RF0NE | FDCAN_IE_RF0LE |
-                     FDCAN_IE_TCE;
-  canp->fdcan->ILE = FDCAN_ILE_EINT0;
+  canp->fdcan->IR     = (uint32_t)-1;
+  canp->fdcan->IE     = FDCAN_IE_RF1NE | FDCAN_IE_RF1LE |
+                        FDCAN_IE_RF0NE | FDCAN_IE_RF0LE |
+                        FDCAN_IE_TCE;
+  canp->fdcan->TXBTIE = FDCAN_TXBTIE_TIE;
+  canp->fdcan->ILE    = FDCAN_ILE_EINT0;
 
   /* Going in active mode.*/
   if (fdcan_active_mode(canp)) {
@@ -317,6 +318,7 @@ void can_lld_stop(CANDriver *canp) {
     canp->fdcan->IE  = 0U;
     canp->fdcan->IR  = (uint32_t)-1;
     canp->fdcan->ILE = 0U;
+    canp->fdcan->TXBTIE = 0U;
 
     /* Disables the peripheral.*/
     (void) fdcan_clock_stop(canp);
@@ -373,17 +375,21 @@ bool can_lld_is_tx_empty(CANDriver *canp, canmbx_t mailbox) {
  *
  * @notapi
  */
-void can_lld_transmit(CANDriver *canp,
-                      canmbx_t mailbox,
-                      const CANTxFrame *ctfp) {
+void can_lld_transmit(CANDriver *canp, canmbx_t mailbox, const CANTxFrame *ctfp) {
+  uint32_t put_index;
   uint32_t *tx_address;
 
   (void)mailbox;
 
   osalDbgCheck(dlc_to_bytes[ctfp->DLC] <= CAN_MAX_DLC_BYTES);
 
+  /* Retrieve the TX FIFO put index.*/
+  put_index = ((canp->fdcan->TXFQS & FDCAN_TXFQS_TFQPI) >> FDCAN_TXFQS_TFQPI_Pos);
+
   /* Writing frame.*/
-  tx_address = canp->ram_base + (SRAMCAN_TBSA / sizeof (uint32_t));
+  tx_address = canp->ram_base +
+               ((SRAMCAN_TBSA + (put_index * SRAMCAN_TB_SIZE)) / sizeof (uint32_t));
+  
   *tx_address++ = ctfp->header32[0];
   *tx_address++ = ctfp->header32[1];
   for (unsigned i = 0U; i < dlc_to_bytes[ctfp->DLC]; i += 4U) {
@@ -391,7 +397,7 @@ void can_lld_transmit(CANDriver *canp,
   }
 
   /* Starting transmission.*/
-  canp->fdcan->TXBAR = (uint32_t)1 << ((uint32_t)mailbox - 1U);
+  canp->fdcan->TXBAR = ((uint32_t)1 << put_index);
 }
 
 /**
@@ -445,11 +451,19 @@ void can_lld_receive(CANDriver *canp, canmbx_t mailbox, CANRxFrame *crfp) {
       return;
     }
   }
-
-  /* GET index, add it and the length to the rx_address.*/
-  get_index = (canp->fdcan->RXF0S & FDCAN_RXF0S_F0GI_Msk) >> FDCAN_RXF0S_F0GI_Pos;
-  rx_address = canp->ram_base + (SRAMCAN_RF0SA +
-                                 (get_index * SRAMCAN_RF0_SIZE)) / sizeof (uint32_t);
+  
+  if (mailbox == 1U) {
+     /* GET index RXF0, add it and the length to the rx_address.*/
+     get_index = (canp->fdcan->RXF0S & FDCAN_RXF0S_F0GI_Msk) >> FDCAN_RXF0S_F0GI_Pos;
+     rx_address = canp->ram_base + (SRAMCAN_RF0SA +
+                                    (get_index * SRAMCAN_RF0_SIZE)) / sizeof (uint32_t);
+  }
+  else {
+     /* GET index RXF1, add it and the length to the rx_address.*/
+     get_index = (canp->fdcan->RXF1S & FDCAN_RXF1S_F1GI_Msk) >> FDCAN_RXF1S_F1GI_Pos;
+     rx_address = canp->ram_base + (SRAMCAN_RF1SA +
+                                    (get_index * SRAMCAN_RF1_SIZE)) / sizeof (uint32_t);
+  }
   crfp->header32[0] = *rx_address++;
   crfp->header32[1] = *rx_address++;
 
@@ -553,7 +567,7 @@ void can_lld_serve_interrupt(CANDriver *canp) {
   }
 
   /* Overflow events.*/
-  if ((ir & FDCAN_IR_RF0N) != 0U) {
+  if (((ir & FDCAN_IR_RF0L) != 0U) || ((ir & FDCAN_IR_RF1L) != 0U) ) {
     _can_error_isr(canp, CAN_OVERFLOW_ERROR);
   }
 
