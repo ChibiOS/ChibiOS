@@ -93,9 +93,9 @@ typedef struct {
  */
 #define REG_INSERT(tp) {                                                    \
   (tp)->newer = (thread_t *)&ch.rlist;                                      \
-  (tp)->older = ch.rlist.older;                                           \
+  (tp)->older = ch.rlist.older;                                             \
   (tp)->older->newer = (tp);                                                \
-  ch.rlist.older = (tp);                                                  \
+  ch.rlist.older = (tp);                                                    \
 }
 
 /*===========================================================================*/
