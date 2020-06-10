@@ -120,7 +120,7 @@ extern memcore_t ch_memcore;
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void _core_init(void);
+  void __core_init(void);
   void *chCoreAllocFromBaseI(size_t size, unsigned align, size_t offset);
   void *chCoreAllocFromTopI(size_t size, unsigned align, size_t offset);
   void *chCoreAllocFromBase(size_t size, unsigned align, size_t offset);

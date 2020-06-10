@@ -122,7 +122,7 @@ struct memory_heap {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void _heap_init(void);
+  void __heap_init(void);
   void chHeapObjectInit(memory_heap_t *heapp, void *buf, size_t size);
   void *chHeapAllocAligned(memory_heap_t *heapp, size_t size, unsigned align);
   void chHeapFree(void *p);

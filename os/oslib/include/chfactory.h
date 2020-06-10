@@ -353,7 +353,7 @@ extern objects_factory_t ch_factory;
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void _factory_init(void);
+  void __factory_init(void);
 #if (CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE) || defined(__DOXYGEN__)
   registered_object_t *chFactoryRegisterObject(const char *name,
                                                void *objp);
