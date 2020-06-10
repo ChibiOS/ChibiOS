@@ -102,7 +102,7 @@ void chSysInit(void) {
   _scheduler_init();
   _vt_init();
   _trace_init();
-  _oslib_init();
+  __oslib_init();
 
 #if CH_DBG_SYSTEM_STATE_CHECK == TRUE
   ch.dbg.isr_cnt  = (cnt_t)0;
