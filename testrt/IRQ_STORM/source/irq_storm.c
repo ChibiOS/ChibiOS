@@ -82,11 +82,9 @@ static thread_t *threads[IRQ_STORM_CFG_NUM_THREADS];
  * Test worker threads.
  */
 static THD_FUNCTION(irq_storm_thread, arg) {
-  static volatile unsigned x = 0;
   static unsigned cnt = 0;
   unsigned me = (unsigned)arg;
   unsigned target;
-  unsigned r;
   msg_t msg;
 
   chRegSetThreadName("irq_storm");
@@ -100,6 +98,9 @@ static THD_FUNCTION(irq_storm_thread, arg) {
 #if IRQ_STORM_CFG_RANDOMIZE != FALSE
    /* Pseudo-random delay.*/
    {
+     static volatile unsigned x = 0;
+     unsigned r;
+
      chSysLock();
      r = rand() & 15;
      chSysUnlock();
@@ -107,12 +108,7 @@ static THD_FUNCTION(irq_storm_thread, arg) {
        x++;
    }
 #else /* IRQ_STORM_CFG_RANDOMIZE == FALSE */
-   /* Fixed delay.*/
-   {
-     r = me >> 4;
-     while (r--)
-       x++;
-   }
+   /* No delay.*/
 #endif /* IRQ_STORM_CFG_RANDOMIZE == FALSE */
 
     /* Deciding in which direction to re-send the message.*/

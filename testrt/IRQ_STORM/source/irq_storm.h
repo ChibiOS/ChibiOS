@@ -33,22 +33,6 @@
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
 
-#ifndef RANDOMIZE
-#define RANDOMIZE       FALSE
-#endif
-
-#ifndef ITERATIONS
-#define ITERATIONS      100
-#endif
-
-#ifndef NUM_THREADS
-#define NUM_THREADS     4
-#endif
-
-#ifndef MAILBOX_SIZE
-#define MAILBOX_SIZE    4
-#endif
-
 /**
  * @name    Configuration options
  * @{
@@ -71,7 +55,7 @@
  * @brief   Number of storm threads.
  */
 #if !defined(IRQ_STORM_CFG_NUM_THREADS) || defined(__DOXYGEN__)
-#define IRQ_STORM_CFG_NUM_THREADS           4
+#define IRQ_STORM_CFG_NUM_THREADS           8
 #endif
 
 /**
