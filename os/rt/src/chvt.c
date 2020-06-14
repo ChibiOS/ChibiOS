@@ -48,6 +48,36 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
+#if (CH_CFG_ST_TIMEDELTA > 0) || defined(__DOXYGEN__)
+/**
+ * @brief   Delta list compression.
+ *
+ * @param[in] vtpl      pointer to the delta list to be compressed
+ * @param[in] deltanow  interval to be compacted starting from "lasttime"
+ *
+ * @notapi
+ */
+static void __vt_compress(virtual_timers_list_t *vtlp,
+                          sysinterval_t deltanow) {
+  virtual_timer_t *vtp = vtlp->next;
+
+  /* The loop is bounded because the delta list header has the delta field
+     set to (sysinterval_t)-1 which is larger than all deltas.*/
+  while (vtp->delta < deltanow) {
+    deltanow  -= vtp->delta;
+    vtp->delta = (sysinterval_t)0;
+    vtp        = vtp->next;
+  }
+
+  vtlp->lasttime = vtlp->lasttime + deltanow;
+
+  /* Adjusting next timer in the list, if any.*/
+  if (vtlp != (virtual_timers_list_t *)vtp) {
+    vtp->delta -= deltanow;
+  }
+}
+#endif
+
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
@@ -94,6 +124,7 @@ void _vt_init(void) {
  */
 void chVTDoSetI(virtual_timer_t *vtp, sysinterval_t delay,
                 vtfunc_t vtfunc, void *par) {
+  virtual_timers_list_t *vtlp = &ch.vtlist;
   virtual_timer_t *p;
   sysinterval_t delta;
 
@@ -106,6 +137,7 @@ void chVTDoSetI(virtual_timer_t *vtp, sysinterval_t delay,
 #if CH_CFG_ST_TIMEDELTA > 0
   {
     systime_t now = chVTGetSystemTimeX();
+    sysinterval_t deltanow;
 
     /* If the requested delay is lower than the minimum safe delta then it
        is raised to the minimum safe value.*/
@@ -114,13 +146,13 @@ void chVTDoSetI(virtual_timer_t *vtp, sysinterval_t delay,
     }
 
     /* Special case where the timers list is empty.*/
-    if (&ch.vtlist == (virtual_timers_list_t *)ch.vtlist.next) {
+    if (vtlp == (virtual_timers_list_t *)vtlp->next) {
 
       /* The delta list is empty, the current time becomes the new
          delta list base time, the timer is inserted.*/
-      ch.vtlist.lasttime = now;
-      ch.vtlist.next = vtp;
-      ch.vtlist.prev = vtp;
+      vtlp->lasttime = now;
+      vtlp->next = vtp;
+      vtlp->prev = vtp;
       vtp->next = (virtual_timer_t *)&ch.vtlist;
       vtp->prev = (virtual_timer_t *)&ch.vtlist;
       vtp->delta = delay;
@@ -133,26 +165,23 @@ void chVTDoSetI(virtual_timer_t *vtp, sysinterval_t delay,
 #endif
 
       /* Being the first element in the list the alarm timer is started.*/
-      port_timer_start_alarm(chTimeAddX(ch.vtlist.lasttime, delay));
+      port_timer_start_alarm(chTimeAddX(vtlp->lasttime, delay));
 
       return;
     }
 
-    /* Pointer to the first element in the delta list, which is non-empty.*/
-    p = ch.vtlist.next;
-
     /* Delay as delta from 'lasttime'. Note, it can overflow and the value
-       becomes lower than 'now'.*/
-    delta = chTimeDiffX(ch.vtlist.lasttime, now) + delay;
+       becomes lower than 'deltanow'.*/
+    deltanow = chTimeDiffX(vtlp->lasttime, now);
+    delta    = deltanow + delay;
 
-    if (delta < chTimeDiffX(ch.vtlist.lasttime, now)) {
-      /* Scenario where a very large delay excedeed the numeric range, it
-         requires a special handling. We need to skip the first element and
-         adjust the delta to wrap back in the previous numeric range.*/
-      delta -= p->delta;
-      p = p->next;
+    /* Scenario where a very large delay exceeded the numeric range, it
+       requires a special handling, the compression procedure.*/
+    if (delta < deltanow) {
+      __vt_compress(vtlp, deltanow);
+      delta -= deltanow;
     }
-    else if (delta < p->delta) {
+    else if (delta < vtlp->next->delta) {
       sysinterval_t deadline_delta;
 
       /* A small delay that will become the first element in the delta list
@@ -164,19 +193,17 @@ void chVTDoSetI(virtual_timer_t *vtp, sysinterval_t delay,
         deadline_delta = (sysinterval_t)TIME_MAX_SYSTIME;
       }
 #endif
-      port_timer_set_alarm(chTimeAddX(ch.vtlist.lasttime, deadline_delta));
+      port_timer_set_alarm(chTimeAddX(vtlp->lasttime, deadline_delta));
     }
   }
 #else /* CH_CFG_ST_TIMEDELTA == 0 */
   /* Delta is initially equal to the specified delay.*/
   delta = delay;
-
-  /* Pointer to the first element in the delta list.*/
-  p = ch.vtlist.next;
 #endif /* CH_CFG_ST_TIMEDELTA == 0 */
 
   /* The delta list is scanned in order to find the correct position for
      this timer. */
+  p = vtlp->next;
   while (p->delta < delta) {
     /* Debug assert if the timer is already in the list.*/
     chDbgAssert(p != vtp, "timer already armed");
@@ -197,7 +224,7 @@ void chVTDoSetI(virtual_timer_t *vtp, sysinterval_t delay,
 
   /* Special case when the timer is in last position in the list, the
      value in the header must be restored.*/
-  ch.vtlist.delta = (sysinterval_t)-1;
+  vtlp->delta = (sysinterval_t)-1;
 }
 
 /**
@@ -293,6 +320,116 @@ void chVTDoResetI(virtual_timer_t *vtp) {
 #endif
   }
   port_timer_set_alarm(chTimeAddX(ch.vtlist.lasttime, delta));
+#endif /* CH_CFG_ST_TIMEDELTA > 0 */
+}
+
+/**
+ * @brief   Virtual timers ticker.
+ * @note    The system lock is released before entering the callback and
+ *          re-acquired immediately after. It is callback's responsibility
+ *          to acquire the lock if needed. This is done in order to reduce
+ *          interrupts jitter when many timers are in use.
+ *
+ * @iclass
+ */
+void chVTDoTickI(void) {
+
+  chDbgCheckClassI();
+
+#if CH_CFG_ST_TIMEDELTA == 0
+  ch.vtlist.systime++;
+  if (&ch.vtlist != (virtual_timers_list_t *)ch.vtlist.next) {
+    /* The list is not empty, processing elements on top.*/
+    --ch.vtlist.next->delta;
+    while (ch.vtlist.next->delta == (sysinterval_t)0) {
+      virtual_timer_t *vtp;
+      vtfunc_t fn;
+
+      vtp = ch.vtlist.next;
+      fn = vtp->func;
+      vtp->func = NULL;
+      vtp->next->prev = (virtual_timer_t *)&ch.vtlist;
+      ch.vtlist.next = vtp->next;
+      chSysUnlockFromISR();
+      fn(vtp->par);
+      chSysLockFromISR();
+    }
+  }
+#else /* CH_CFG_ST_TIMEDELTA > 0 */
+  virtual_timer_t *vtp;
+  systime_t now;
+  sysinterval_t delta, nowdelta;
+
+  /* Looping through timers.*/
+  vtp = ch.vtlist.next;
+  while (true) {
+
+    /* Getting the system time as reference.*/
+    now = chVTGetSystemTimeX();
+    nowdelta = chTimeDiffX(ch.vtlist.lasttime, now);
+
+    /* The list scan is limited by the timers header having
+       "ch.vtlist.vt_delta == (sysinterval_t)-1" which is
+       greater than all deltas.*/
+    if (nowdelta < vtp->delta) {
+      break;
+    }
+
+    /* Consuming all timers between "vtp->lasttime" and now.*/
+    do {
+      vtfunc_t fn;
+
+      /* The "last time" becomes this timer's expiration time.*/
+      ch.vtlist.lasttime += vtp->delta;
+      nowdelta -= vtp->delta;
+
+      vtp->next->prev = (virtual_timer_t *)&ch.vtlist;
+      ch.vtlist.next = vtp->next;
+      fn = vtp->func;
+      vtp->func = NULL;
+
+      /* If the list becomes empty then the timer is stopped.*/
+      if (ch.vtlist.next == (virtual_timer_t *)&ch.vtlist) {
+        port_timer_stop_alarm();
+      }
+
+      /* The callback is invoked outside the kernel critical zone.*/
+      chSysUnlockFromISR();
+      fn(vtp->par);
+      chSysLockFromISR();
+
+      /* Next element in the list.*/
+      vtp = ch.vtlist.next;
+    }
+    while (vtp->delta <= nowdelta);
+  }
+
+  /* If the list is empty, nothing else to do.*/
+  if (ch.vtlist.next == (virtual_timer_t *)&ch.vtlist) {
+    return;
+  }
+
+  /* The "unprocessed nowdelta" time slice is added to "last time"
+     and subtracted to next timer's delta.*/
+  ch.vtlist.lasttime += nowdelta;
+  ch.vtlist.next->delta -= nowdelta;
+
+  /* Recalculating the next alarm time.*/
+  delta = vtp->delta - chTimeDiffX(ch.vtlist.lasttime, now);
+  if (delta < (sysinterval_t)CH_CFG_ST_TIMEDELTA) {
+    delta = (sysinterval_t)CH_CFG_ST_TIMEDELTA;
+  }
+#if CH_CFG_INTERVALS_SIZE > CH_CFG_ST_RESOLUTION
+  /* The delta could be too large for the physical timer to handle.*/
+  else if (delta > (sysinterval_t)TIME_MAX_SYSTIME) {
+    delta = (sysinterval_t)TIME_MAX_SYSTIME;
+  }
+#endif
+  port_timer_set_alarm(chTimeAddX(now, delta));
+
+  chDbgAssert(chTimeDiffX(ch.vtlist.lasttime, chVTGetSystemTimeX()) <=
+              chTimeDiffX(ch.vtlist.lasttime, chTimeAddX(now, delta)),
+              "exceeding delta");
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 }
 
