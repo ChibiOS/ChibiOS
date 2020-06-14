@@ -11,7 +11,7 @@ all:
 
 clean:
 	@echo
-	-@make --no-print-directory -f ./make/stm32g474re_nucleo64.make clean
+	+@make --no-print-directory -f ./make/stm32g474re_nucleo64.make clean
 	@echo
 
 #
