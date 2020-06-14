@@ -5,7 +5,7 @@
 all:
 	@echo
 	@echo === Building for STM32H743ZI-Nucleo144 ===============================
-	@make --no-print-directory -f ./make/stm32h743zi_nucleo144.make all
+	+@make --no-print-directory -f ./make/stm32h743zi_nucleo144.make all
 	@echo ====================================================================
 	@echo
 	@echo === Building for STM32G071RB-Nucleo64 ==============================
@@ -31,7 +31,7 @@ all:
 
 clean:
 	@echo
-	-@make --no-print-directory -f ./make/stm32h743zi_nucleo144.make clean
+	+@make --no-print-directory -f ./make/stm32h743zi_nucleo144.make clean
 	@echo
 	+@make --no-print-directory -f ./make/stm32g071rb_nucleo64.make clean
 	@echo
