@@ -276,7 +276,7 @@ void chSysInit(void) {
   const thread_descriptor_t *tdp;
 
   /* Optional library modules.*/
-  _oslib_init();
+  __oslib_init();
 
   /* Architecture layer initialization.*/
   port_init();
