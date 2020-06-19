@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 19.1.5 ***
+- FIX: Schedule anomaly when CH_CFG_TIME_QUANTUM is greater than zero
+       (bug #1105).
 - FIX: Fixed Virtual Timers corner case (bug #1104).
 - FIX: Fixed GCC6 problem breaks Cortex-M0 port (bug #985).
 - FIX: Fixed failure in chSemReset() function when counter is equal to MAXINT
