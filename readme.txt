@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 19.1.5 ***
+- FIX: Fixed Virtual Timers corner case (bug #1104).
 - FIX: Fixed GCC6 problem breaks Cortex-M0 port (bug #985).
 - FIX: Fixed failure in chSemReset() function when counter is equal to MAXINT
        (bug #1093).

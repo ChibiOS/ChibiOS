@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chtime.h
+ * @file    rt/include/chtime.h
  * @brief   Time and intervals macros and structures.
  *
  * @addtogroup time_intervals
@@ -266,9 +266,9 @@ typedef uint32_t time_conv_t;
  * @api
  */
 #define TIME_I2US(interval)                                                 \
-    (time_msecs_t)((((time_conv_t)(interval) * (time_conv_t)1000000) +      \
-                    (time_conv_t)CH_CFG_ST_FREQUENCY - (time_conv_t)1) /    \
-                   (time_conv_t)CH_CFG_ST_FREQUENCY)
+  (time_msecs_t)((((time_conv_t)(interval) * (time_conv_t)1000000) +        \
+                  (time_conv_t)CH_CFG_ST_FREQUENCY - (time_conv_t)1) /      \
+                 (time_conv_t)CH_CFG_ST_FREQUENCY)
 /** @} */
 
 /*===========================================================================*/
