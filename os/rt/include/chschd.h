@@ -738,7 +738,7 @@ static inline thread_t *chSchSelectFirstI(void) {
   }
 
   /* Placing in ready list ahead of peers.*/
-  chSchReadyAheadI(otp);
+  (void) chSchReadyAheadI(otp);
 
   return ntp;
 }
