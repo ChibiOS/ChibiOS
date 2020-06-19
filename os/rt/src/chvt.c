@@ -96,8 +96,8 @@
  *
  * @notapi
  */
-static void __vt_compress(virtual_timers_list_t *vtlp,
-                          sysinterval_t deltanow) {
+static void vt_list_compress(virtual_timers_list_t *vtlp,
+                             sysinterval_t deltanow) {
   virtual_timer_t *vtp = vtlp->next;
 
   /* The loop is bounded because the delta list header has the delta field
@@ -217,7 +217,7 @@ void chVTDoSetI(virtual_timer_t *vtp, sysinterval_t delay,
     /* Scenario where a very large delay exceeded the numeric range, it
        requires a special handling, the compression procedure.*/
     if (delta < deltanow) {
-      __vt_compress(vtlp, deltanow);
+      vt_list_compress(vtlp, deltanow);
       delta -= deltanow;
     }
     else if (delta < vtlp->next->delta) {
