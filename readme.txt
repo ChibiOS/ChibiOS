@@ -74,7 +74,9 @@
 *****************************************************************************
 
 *** 20.3.2 ***
-- FIX: Schedule anomaly when CH_CFG_TIME_QUANTUM is greater than zero
+- FIX: Fixed extra condition in MAC driver macWaitTransmitDescriptor() function
+       (bug #1106).
+- FIX: Fixed schedule anomaly when CH_CFG_TIME_QUANTUM is greater than zero
        (bug #1105).
 - FIX: Fixed Virtual Timers corner case (bug #1104).
 - FIX: Fixed GCC6 problem breaks Cortex-M0 port (bug #985).
