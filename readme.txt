@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 20.3.2 ***
+- FIX: Schedule anomaly when CH_CFG_TIME_QUANTUM is greater than zero
+       (bug #1105).
 - FIX: Fixed Virtual Timers corner case (bug #1104).
 - FIX: Fixed GCC6 problem breaks Cortex-M0 port (bug #985).
 - FIX: Fixed a wrong management of the SPI TX buffer in the ADUCM port 
