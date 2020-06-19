@@ -93,6 +93,8 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Schedule anomaly when CH_CFG_TIME_QUANTUM is greater than zero
+       (bug #1105)(backported to 20.3.2)(backported to 19.1.5).
 - FIX: Fixed Virtual Timers corner case (bug #1104)
        (backported to 20.3.2)(backported to 19.1.5).
 - FIX: Fixed GCC6 problem breaks Cortex-M0 port (bug #985)
