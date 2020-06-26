@@ -74,6 +74,9 @@
 *****************************************************************************
 
 *** 20.3.2 ***
+- NEW: Added a new setting to STM32 USBv1 allowing for some clock deviation
+       from 48MHz. Renamed setting USB_HOST_WAKEUP_DURATION to
+       STM32_USB_HOST_WAKEUP_DURATION for consistency.
 - FIX: Fixed extra condition in MAC driver macWaitTransmitDescriptor() function
        (bug #1106).
 - FIX: Fixed schedule anomaly when CH_CFG_TIME_QUANTUM is greater than zero
@@ -93,6 +96,7 @@
 - FIX: Fixed STM32G4 demos compile fails if smart mode is disabled (bug #1094).
 - FIX: Fixed failure in chSemReset() function when counter is equal to MAXINT
        (bug #1093).
+- FIX: Fixed error in EXTIv1 ISRs (bug #1077).
 
 *** 20.3.1 ***
 - NEW: STM32 ICU driver now allows to setup the ARR register in the
@@ -116,6 +120,5 @@
 - FIX: Fixed I2CD4 interrupt vectors are swapped versus I2CD1-I2CD3 (bug #1080).
 - FIX: Fixed incorrect clock check when using PLLSAI1R in ADCv3 (bug #1079).
 - FIX: Fixed missing checks in TIM6 and TIM7 STM32 mini drivers (bug #1078).
-- FIX: Fixed error in EXTIv1 ISRs (bug #1077).
 - FIX: Fixed problem in chMtxUnlockAllS() (bug #1076).
 
