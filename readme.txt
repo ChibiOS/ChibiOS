@@ -74,6 +74,9 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added a new setting to STM32 USBv1 allowing for some clock deviation
+       from 48MHz. Renamed setting USB_HOST_WAKEUP_DURATION to
+       STM32_USB_HOST_WAKEUP_DURATION for consistency.
 - NEW: Added entry for STM32L475 in STM32L4 registry header, updated all
        configuration files.
 - NEW: Updated CMSIS headers for STM32F7, G0, G4, H7, L0, L4, L4+.
