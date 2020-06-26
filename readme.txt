@@ -88,7 +88,6 @@
        they now rely on the environment variable CHIBISTUDIO.
 - NEW: Mail Queues test implementation in CMSIS RTOS wrapper.
 - NEW: Added dynamic reconfiguration API to lwIP bindings.
-- FIX: Corrected I2C4 BDMA #define conditional in I2Cv3 (bug #1082)
 - RT:  Relocated the "ctx" field in the thread structure in order to save
        some RAM, it caused unused space in the "ch" variable.
 - EX:  Implemented cache handling in the ADXL355 device driver.
@@ -96,6 +95,8 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Fixed cortex-M vectors table alignment problem (bug #1107)
+       (backported to 20.3.2)(backported to 19.1.5).
 - FIX: Fixed extra condition in MAC driver macWaitTransmitDescriptor() function
        (bug #1106)(backported to 20.3.2)(backported to 19.1.5).
 - FIX: Fixed schedule anomaly when CH_CFG_TIME_QUANTUM is greater than zero
