@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 19.1.5 ***
+- FIX: Fixed cortex-M vectors table alignment problem (bug #1107).
 - FIX: Fixed extra condition in MAC driver macWaitTransmitDescriptor() function
        (bug #1106).
 - FIX: Fixed schedule anomaly when CH_CFG_TIME_QUANTUM is greater than zero
