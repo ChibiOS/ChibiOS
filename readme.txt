@@ -77,6 +77,7 @@
 - NEW: Added a new setting to STM32 USBv1 allowing for some clock deviation
        from 48MHz. Renamed setting USB_HOST_WAKEUP_DURATION to
        STM32_USB_HOST_WAKEUP_DURATION for consistency.
+- FIX: Fixed cortex-M vectors table alignment problem (bug #1107).
 - FIX: Fixed extra condition in MAC driver macWaitTransmitDescriptor() function
        (bug #1106).
 - FIX: Fixed schedule anomaly when CH_CFG_TIME_QUANTUM is greater than zero
