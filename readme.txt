@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Updated FatFS to version 0.14.
 - NEW: Added a new setting to STM32 USBv1 allowing for some clock deviation
        from 48MHz. Renamed setting USB_HOST_WAKEUP_DURATION to
        STM32_USB_HOST_WAKEUP_DURATION for consistency.
@@ -159,4 +160,3 @@
        (backported to 20.3.1).
 - FIX: Fixed problem in chMtxUnlockAllS() (bug #1076).
        (backported to 20.3.1)(backported to 19.1.4)(backported to 18.2.3).
-    
