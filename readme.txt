@@ -95,6 +95,8 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Fixed wrong definitions in SPC563M board files (bug #1108)
+       (backported to 20.3.2)(backported to 19.1.5).
 - FIX: Fixed cortex-M vectors table alignment problem (bug #1107)
        (backported to 20.3.2)(backported to 19.1.5).
 - FIX: Fixed extra condition in MAC driver macWaitTransmitDescriptor() function
