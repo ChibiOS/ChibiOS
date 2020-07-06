@@ -84,7 +84,7 @@
 #endif
 /** @} */
 
-#if !defined(STM32_ENFORCE_H7_REV_V)
+#if !defined(STM32_ENFORCE_H7_REV_XY)
 /**
  * @name    Absolute Maximum Ratings
  * @{
@@ -215,7 +215,7 @@
 #define STM32_ADCCLK_MAX                100000000
 /** @} */
 
-#else /* defined(STM32_ENFORCE_H7_REV_V) */
+#else /* defined(STM32_ENFORCE_H7_REV_XY) */
 
 #define STM32_SYSCLK_MAX                400000000
 #define STM32_SYSCLK_MAX_NOBOOST        400000000
@@ -243,7 +243,7 @@
 #define STM32_SPI456_MAX                100000000
 #define STM32_ADCCLK_MAX                36000000
 
-#endif /* defined(STM32_ENFORCE_H7_REV_V) */
+#endif /* defined(STM32_ENFORCE_H7_REV_XY) */
 
 /**
  * @name    Internal clock sources frequencies

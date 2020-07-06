@@ -108,7 +108,7 @@ static inline void init_pwr(void) {
   PWR->CR3   = STM32_PWR_CR3;   /* Other bits, lower byte is not changed.   */
   PWR->CPUCR = STM32_PWR_CPUCR;
   PWR->D3CR  = STM32_VOS;
-#if !defined(STM32_ENFORCE_H7_REV_V)
+#if !defined(STM32_ENFORCE_H7_REV_XY)
   SYSCFG->PWRCR = STM32_ODEN;
 #endif
   while ((PWR->D3CR & PWR_D3CR_VOSRDY) == 0)
@@ -217,7 +217,7 @@ void stm32_clock_init(void) {
   (void)rcc;
 #endif
 
-#if defined(STM32_ENFORCE_H7_REV_V)
+#if defined(STM32_ENFORCE_H7_REV_XY)
   /* Fix for errata 2.2.15: Reading from AXI SRAM might lead to data
      read corruption.
      AXI->TARG7_FN_MOD.*/
@@ -250,7 +250,7 @@ void stm32_clock_init(void) {
   /* Registers cleared to reset values.*/
   RCC->CR      = RCC_CR_HSION;             /* CR Reset value.              */
   RCC->HSICFGR   = 0x40000000U;            /* HSICFGR Reset value.         */
-#if !defined(STM32_ENFORCE_H7_REV_V)
+#if !defined(STM32_ENFORCE_H7_REV_XY)
   RCC->CSICFGR   = 0x20000000U;            /* CSICFGR Reset value.         */
 #endif
   RCC->CSR     = 0x00000000U;              /* CSR reset value.             */
