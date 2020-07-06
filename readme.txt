@@ -77,6 +77,8 @@
 - NEW: Added a new setting to STM32 USBv1 allowing for some clock deviation
        from 48MHz. Renamed setting USB_HOST_WAKEUP_DURATION to
        STM32_USB_HOST_WAKEUP_DURATION for consistency.
+- FIX: Fixed missing STM32_I2C_BDMA_REQUIRED definition in I2Cv3 driver
+       (bug #1109).
 - FIX: Fixed wrong definitions in SPC563M board files (bug #1108).
 - FIX: Fixed cortex-M vectors table alignment problem (bug #1107).
 - FIX: Fixed extra condition in MAC driver macWaitTransmitDescriptor() function
