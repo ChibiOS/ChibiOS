@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 19.1.5 ***
+- FIX: Fixed wrong definitions in SPC563M board files (bug #1108).
 - FIX: Fixed cortex-M vectors table alignment problem (bug #1107).
 - FIX: Fixed extra condition in MAC driver macWaitTransmitDescriptor() function
        (bug #1106).

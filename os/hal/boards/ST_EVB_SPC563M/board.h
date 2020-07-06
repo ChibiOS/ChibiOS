@@ -37,12 +37,12 @@
 /*
  * I/O definitions.
  */
-#define P5_ESCI_A_TX                9
-#define P5_ESCI_A_RX                10
+#define P5_ESCI_A_TX                3	/* SCI_A_TX==GPIO[83] */
+#define P5_ESCI_A_RX                4	/* SCI_A_RX==GPIO[84] */
 #define P11_BUTTON1                 3
 #define P11_BUTTON2                 5
 #define P11_BUTTON3                 7
-#define P11_BUTTON4                 9
+#define P11_BUTTON4                 11  /* GPIO[187] */
 #define P11_LED1                    12
 #define P11_LED2                    13
 #define P11_LED3                    14
