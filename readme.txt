@@ -96,6 +96,8 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Fixed wrong preprocessor checks in STM32 TIMv1 ICU driver (bug #1111)
+       (backported to 20.3.2)(backported to 19.1.5).
 - FIX: Fixed wrong revisions handling in STM32H743 HAL (bug #1110)
        (backported to 20.3.2)(backported to 19.1.5).
 - FIX: Fixed missing STM32_I2C_BDMA_REQUIRED definition in I2Cv3 driver
