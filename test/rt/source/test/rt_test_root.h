@@ -35,6 +35,7 @@
 #include "rt_test_sequence_009.h"
 #include "rt_test_sequence_010.h"
 #include "rt_test_sequence_011.h"
+#include "rt_test_sequence_012.h"
 
 #if !defined(__DOXYGEN__)
 

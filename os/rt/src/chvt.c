@@ -495,8 +495,12 @@ void chVTDoTickI(void) {
  */
 systimestamp_t chVTGetTimeStampI(void) {
   systimestamp_t last, stamp;
+  systime_t now;
 
   chDbgCheckClassI();
+
+  /* Current system time.*/
+  now = chVTGetSystemTimeX();
 
   /* Last time stamp generated.*/
   last = ch.vtlist.laststamp;
@@ -504,8 +508,11 @@ systimestamp_t chVTGetTimeStampI(void) {
   /* Interval between the last time stamp and current time used for a new
      time stamp. Note that this fails if the interval is larger than a
      systime_t type.*/
-  stamp = last + (systimestamp_t)chTimeDiffX((sysinterval_t)last,
-                                             chVTGetSystemTimeX());
+  stamp = last + (systimestamp_t)chTimeDiffX((sysinterval_t)last, now);
+
+  chDbgAssert(ch.vtlist.laststamp <= stamp, "wrapped");
+
+  /* Storing the new stamp.*/
   ch.vtlist.laststamp = stamp;
 
   return stamp;

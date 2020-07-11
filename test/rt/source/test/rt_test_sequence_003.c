@@ -26,7 +26,7 @@
  * File: @ref rt_test_sequence_003.c
  *
  * <h2>Description</h2>
- * This sequence tests the ChibiOS/NIL functionalities related to time
+ * This sequence tests the ChibiOS/RT functionalities related to time
  * and intervals management.
  *
  * <h2>Test Cases</h2>

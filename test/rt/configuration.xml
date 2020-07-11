@@ -647,7 +647,7 @@ chSysEnable();]]></value>
               <value>Time and Intervals Functionality.</value>
             </brief>
             <description>
-              <value>This sequence tests the ChibiOS/NIL functionalities related to time and intervals management.</value>
+              <value>This sequence tests the ChibiOS/RT functionalities related to time and intervals management.</value>
             </description>
             <condition>
               <value />
@@ -782,6 +782,74 @@ test_assert(b == true, "not in range");
 b = chTimeIsInRangeX((systime_t)10, (systime_t)100, (systime_t)10);
 test_assert(b == false, "in range");
 ]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+            </cases>
+          </sequence>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
+              <value>Time Stamps Functionality.</value>
+            </brief>
+            <description>
+              <value>This sequence tests the ChibiOS/RT functionalities related to time stamps.</value>
+            </description>
+            <condition>
+              <value />
+            </condition>
+            <shared_code>
+              <value><![CDATA[#include "ch.h"]]></value>
+            </shared_code>
+            <cases>
+              <case>
+                <brief>
+                  <value>Time Stamps functionality.</value>
+                </brief>
+                <description>
+                  <value>The functionality of the API @p chVTGetTimeStamp() is tested.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Time stamps are generated and checked for monotonicity.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[
+systime_t start, end;
+systimestamp_t last, now;
+  
+last = chVTGetTimeStamp();
+start = test_wait_tick();
+end = chTimeAddX(start, TIME_MS2I(1000));
+do {
+  now = chVTGetTimeStamp();
+  test_assert(last <= now, "not monotonic");
+  last = now;
+#if defined(SIMULATOR)
+  _sim_check_for_interrupts();
+#endif
+} while (chVTIsSystemTimeWithinX(start, end));]]></value>
                     </code>
                   </step>
                 </steps>
