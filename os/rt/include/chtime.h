@@ -123,6 +123,11 @@ typedef uint32_t sysinterval_t;
 typedef uint16_t sysinterval_t;
 #endif
 
+/**
+ * @brief   Type of a time stamp.
+ */
+typedef uint64_t systimestamp_t;
+
 #if (CH_CFG_TIME_TYPES_SIZE == 32) || defined(__DOXYGEN__)
 /**
  * @brief   Type of seconds.

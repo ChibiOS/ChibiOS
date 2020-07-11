@@ -345,6 +345,9 @@ struct ch_virtual_timers_list {
   systime_t             lasttime;   /**< @brief System time of the last
                                                 tick event.                 */
 #endif
+#if (CH_CFG_USE_TIMESTAMP == TRUE) || defined(__DOXYGEN__)
+  volatile uint64_t     laststamp;  /**< @brief Last generated time stamp.  */
+#endif
 };
 
 /**

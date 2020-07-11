@@ -172,6 +172,17 @@
 #endif
 
 /**
+ * @brief   Time Stamps APIs.
+ * @details If enabled then the time time stamps APIs are included in
+ *          the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#if !defined(CH_CFG_USE_TIMESTAMP)
+#define CH_CFG_USE_TIMESTAMP                ${doc.CH_CFG_USE_TIMESTAMP!"TRUE"}
+#endif
+
+/**
  * @brief   Threads registry APIs.
  * @details If enabled then the registry APIs are included in the kernel.
  *

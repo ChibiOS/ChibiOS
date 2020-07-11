@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- RT:  New API for high resolution monotonic time stamps.
 - NEW: Updated FatFS to version 0.14.
 - NEW: Added a new setting to STM32 USBv1 allowing for some clock deviation
        from 48MHz. Renamed setting USB_HOST_WAKEUP_DURATION to

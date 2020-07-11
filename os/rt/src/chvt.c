@@ -137,6 +137,9 @@ void _vt_init(void) {
 #else /* CH_CFG_ST_TIMEDELTA > 0 */
   ch.vtlist.lasttime = (systime_t)0;
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
+#if CH_CFG_USE_TIMESTAMP == TRUE
+  ch.vtlist.laststamp = (systimestamp_t)chVTGetSystemTimeX();
+#endif
 }
 
 /**
@@ -473,5 +476,53 @@ void chVTDoTickI(void) {
               "exceeding delta");
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 }
+
+#if (CH_CFG_USE_TIMESTAMP == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Generates a monotonic time stamp.
+ * @details This function generates a monotonic time stamp synchronized with
+ *          the system time. The time stamp has the same resolution of
+ *          system time.
+ * @note    There is an assumption, this function must be called at
+ *          least once before the system time wraps back to zero or
+ *          synchronization is lost. You may use a periodic virtual timer with
+ *          a very large interval in order to keep time stamps synchronized
+ *          by calling this function.
+ *
+ * @return              The time stamp.
+ *
+ * @iclass
+ */
+systimestamp_t chVTGetTimeStampI(void) {
+  systimestamp_t last, stamp;
+
+  chDbgCheckClassI();
+
+  /* Last time stamp generated.*/
+  last = ch.vtlist.laststamp;
+
+  /* Interval between the last time stamp and current time used for a new
+     time stamp. Note that this fails if the interval is larger than a
+     systime_t type.*/
+  stamp = last + (systimestamp_t)chTimeDiffX((sysinterval_t)last,
+                                             chVTGetSystemTimeX());
+  ch.vtlist.laststamp = stamp;
+
+  return stamp;
+}
+
+/**
+ * @brief   Resets and re-synchronizes the time stamps monotonic counter.
+ *
+ * @iclass
+ */
+void chVTResetTimeStampI(void) {
+
+  chDbgCheckClassI();
+
+  ch.vtlist.laststamp = (systimestamp_t)chVTGetSystemTimeX();
+}
+
+#endif /* CH_CFG_USE_TIMESTAMP == TRUE */
 
 /** @} */

@@ -76,6 +76,10 @@ extern "C" {
                   vtfunc_t vtfunc, void *par);
   void chVTDoResetI(virtual_timer_t *vtp);
   void chVTDoTickI(void);
+#if CH_CFG_USE_TIMESTAMP == TRUE
+  systimestamp_t chVTGetTimeStampI(void);
+  void chVTResetTimeStampI(void);
+#endif
 #ifdef __cplusplus
 }
 #endif
@@ -356,6 +360,51 @@ static inline void chVTSet(virtual_timer_t *vtp, sysinterval_t delay,
   chVTSetI(vtp, delay, vtfunc, par);
   chSysUnlock();
 }
+
+#if (CH_CFG_USE_TIMESTAMP == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Generates a monotonic time stamp.
+ * @details This function generates a monotonic time stamp synchronized with
+ *          the system time. The time stamp has the same resolution of
+ *          system time.
+ * @note    There is an assumption, this function must be called at
+ *          least once before the system time wraps back to zero or
+ *          synchronization is lost. You may use a periodic virtual timer with
+ *          a very large interval in order to keep time stamps synchronized
+ *          by calling this function.
+ *
+ * @return              The time stamp.
+ *
+ * @api
+ */
+static inline systimestamp_t chVTGetTimeStamp(void) {
+  systimestamp_t stamp;
+
+  chSysLock();
+
+  stamp = chVTGetTimeStampI();
+
+  chSysUnlock();
+
+  return stamp;
+}
+
+/**
+ * @brief   Resets and re-synchronizes the time stamps monotonic counter.
+ *
+ * @api
+ */
+static inline void chVTResetTimeStamp(void) {
+
+  chDbgCheckClassI();
+
+  chSysLock();
+
+  chVTResetTimeStampI();
+
+  chSysUnlock();
+}
+#endif /* CH_CFG_USE_TIMESTAMP == TRUE */
 
 #endif /* CHVT_H */
 

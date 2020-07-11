@@ -92,6 +92,10 @@
 #error "CH_CFG_USE_TM not defined in chconf.h"
 #endif
 
+#if !defined(CH_CFG_USE_TIMESTAMP)
+#error "CH_CFG_USE_TIMESTAMP not defined in chconf.h"
+#endif
+
 #if !defined(CH_CFG_USE_REGISTRY)
 #error "CH_CFG_USE_REGISTRY not defined in chconf.h"
 #endif
