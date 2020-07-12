@@ -56,29 +56,46 @@
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   System debug data structure.
+ */
+typedef struct ch_system_debug {
+  /**
+   * @brief   Pointer to the panic message.
+   * @details This pointer is meant to be accessed through the debugger, it is
+   *          written once and then the system is halted.
+   * @note    Accesses to this pointer must never be optimized out so the
+   *          field itself is declared volatile.
+   */
+  const char            * volatile panic_msg;
+#if (CH_DBG_SYSTEM_STATE_CHECK == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   ISR nesting level.
+   */
+  cnt_t                 isr_cnt;
+  /**
+   * @brief   Lock nesting level.
+   */
+  cnt_t                 lock_cnt;
+#endif
+} system_debug_t;
+
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
 
-#if CH_DBG_SYSTEM_STATE_CHECK == TRUE
-#define _dbg_enter_lock() (ch.dbg.lock_cnt = (cnt_t)1)
-#define _dbg_leave_lock() (ch.dbg.lock_cnt = (cnt_t)0)
-#endif
-
 /* When the state checker feature is disabled then the following functions
    are replaced by an empty macro.*/
 #if CH_DBG_SYSTEM_STATE_CHECK == FALSE
-#define _dbg_enter_lock()
-#define _dbg_leave_lock()
-#define _dbg_check_disable()
-#define _dbg_check_suspend()
-#define _dbg_check_enable()
-#define _dbg_check_lock()
-#define _dbg_check_unlock()
-#define _dbg_check_lock_from_isr()
-#define _dbg_check_unlock_from_isr()
-#define _dbg_check_enter_isr()
-#define _dbg_check_leave_isr()
+#define __dbg_check_disable()
+#define __dbg_check_suspend()
+#define __dbg_check_enable()
+#define __dbg_check_lock()
+#define __dbg_check_unlock()
+#define __dbg_check_lock_from_isr()
+#define __dbg_check_unlock_from_isr()
+#define __dbg_check_enter_isr()
+#define __dbg_check_leave_isr()
 #define chDbgCheckClassI()
 #define chDbgCheckClassS()
 #endif
@@ -144,15 +161,15 @@
 extern "C" {
 #endif
 #if CH_DBG_SYSTEM_STATE_CHECK == TRUE
-  void _dbg_check_disable(void);
-  void _dbg_check_suspend(void);
-  void _dbg_check_enable(void);
-  void _dbg_check_lock(void);
-  void _dbg_check_unlock(void);
-  void _dbg_check_lock_from_isr(void);
-  void _dbg_check_unlock_from_isr(void);
-  void _dbg_check_enter_isr(void);
-  void _dbg_check_leave_isr(void);
+  void __dbg_check_disable(void);
+  void __dbg_check_suspend(void);
+  void __dbg_check_enable(void);
+  void __dbg_check_lock(void);
+  void __dbg_check_unlock(void);
+  void __dbg_check_lock_from_isr(void);
+  void __dbg_check_unlock_from_isr(void);
+  void __dbg_check_enter_isr(void);
+  void __dbg_check_leave_isr(void);
   void chDbgCheckClassI(void);
   void chDbgCheckClassS(void);
 #endif
@@ -163,6 +180,25 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
+
+/**
+ * @brief   Debug support initialization.
+ * @note    Internal use only.
+ *
+ * @param[out] sdp      pointer to the @p system_debug_t structure
+ *
+ * @notapi
+ */
+static inline void __dbg_object_init(system_debug_t *sdp) {
+
+  sdp->panic_msg = NULL;
+
+#if CH_DBG_SYSTEM_STATE_CHECK == TRUE
+  /* The initial state is assumed to be within a critical zone.*/
+  sdp->isr_cnt  = (cnt_t)0;
+  sdp->lock_cnt = (cnt_t)1;
+#endif
+}
 
 #endif /* CHDEBUG_H */
 

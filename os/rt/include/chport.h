@@ -18,17 +18,20 @@
 */
 
 /**
- * @file    rt/include/chtm.h
- * @brief   Time Measurement module macros and structures.
+ * @file    rt/include/chport.h
+ * @brief   Port wrapper header.
  *
- * @addtogroup time_measurement
+ * @addtogroup port_wrapper
+ * @details This module performs checks on the information exported by
+ *          the port layer.
  * @{
  */
 
-#ifndef CHTM_H
-#define CHTM_H
+#ifndef CHPORT_H
+#define CHPORT_H
 
-#if (CH_CFG_USE_TM == TRUE) || defined(__DOXYGEN__)
+/* Inclusion of the port layer.*/
+#include "chcore.h"
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -42,40 +45,28 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if PORT_SUPPORTS_RT == FALSE
-#error "CH_CFG_USE_TM requires PORT_SUPPORTS_RT"
+/* Just in case the port layer does not export the following definitions.*/
+#if !defined(PORT_CORES_NUMBER)
+#define PORT_CORES_NUMBER                   1
+#endif
+
+#if (PORT_CORES_NUMBER < 1) || (PORT_CORES_NUMBER > 64)
+#error "invalid PORT_CORES_NUMBER value"
+#endif
+
+#if PORT_CORES_NUMBER == 1
+//#if CH_CFG_SMP_MODE != FALSE
+//#error "this port does not support SMP"
+//#endif
+#endif
+
+#if !defined(PORT_INSTANCE_ACCESS)
+#define PORT_INSTANCE_ACCESS                (&ch)
 #endif
 
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
-
-/**
- * @brief   Type of a time measurement calibration data.
- */
-typedef struct {
-  /**
-   * @brief   Measurement calibration value.
-   */
-  rtcnt_t               offset;
-} tm_calibration_t;
-
-/**
- * @brief   Type of a Time Measurement object.
- * @note    The maximum measurable time period depends on the implementation
- *          of the realtime counter and its clock frequency.
- * @note    The measurement is not 100% cycle-accurate, it can be in excess
- *          of few cycles depending on the compiler and target architecture.
- * @note    Interrupts can affect measurement if the measurement is performed
- *          with interrupts enabled.
- */
-typedef struct {
-  rtcnt_t               best;           /**< @brief Best measurement.       */
-  rtcnt_t               worst;          /**< @brief Worst measurement.      */
-  rtcnt_t               last;           /**< @brief Last measurement.       */
-  ucnt_t                n;              /**< @brief Number of measurements. */
-  rttime_t              cumulative;     /**< @brief Cumulative measurement. */
-} time_measurement_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -85,25 +76,10 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-  void __tm_calibration_init(tm_calibration_t *tcp);
-  void chTMObjectInit(time_measurement_t *tmp);
-  NOINLINE void chTMStartMeasurementX(time_measurement_t *tmp);
-  NOINLINE void chTMStopMeasurementX(time_measurement_t *tmp);
-  NOINLINE void chTMChainMeasurementToX(time_measurement_t *tmp1,
-                                        time_measurement_t *tmp2);
-#ifdef __cplusplus
-}
-#endif
-
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* CH_CFG_USE_TM == TRUE */
-
-#endif /* CHTM_H */
+#endif /* CHPORT_H */
 
 /** @} */

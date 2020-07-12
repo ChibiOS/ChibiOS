@@ -936,8 +936,8 @@ static void rt_test_012_012_execute(void) {
   /* [12.12.1] The size of the system area is printed.*/
   test_set_step(1);
   {
-    test_print("--- System: ");
-    test_printn(sizeof(ch_system_t));
+    test_print("--- OS:     ");
+    test_printn(sizeof(os_instance_t));
     test_println(" bytes");
   }
   test_end_step(1);

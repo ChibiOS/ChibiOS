@@ -490,7 +490,7 @@ struct port_context {
                                         sizeof (struct port_intctx));       \
   (tp)->ctx.sp->r4 = (uint32_t)(pf);                                        \
   (tp)->ctx.sp->r5 = (uint32_t)(arg);                                       \
-  (tp)->ctx.sp->lr = (uint32_t)_port_thread_start;                          \
+  (tp)->ctx.sp->lr = (uint32_t)__port_thread_start;                         \
   __PORT_SETUP_CONTEXT_MPU(tp);                                             \
   __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop);                                   \
 }
@@ -535,7 +535,7 @@ struct port_context {
  * @details This macro must be inserted at the end of all IRQ handlers
  *          enabled to invoke system APIs.
  */
-#define PORT_IRQ_EPILOGUE() _port_irq_epilogue()
+#define PORT_IRQ_EPILOGUE() __port_irq_epilogue()
 
 /**
  * @brief   IRQ handler function declaration.
@@ -570,7 +570,7 @@ struct port_context {
  * @param[in] otp       the thread to be switched out
  */
 #if (CH_DBG_ENABLE_STACK_CHECK == FALSE) || defined(__DOXYGEN__)
-#define port_switch(ntp, otp) _port_switch(ntp, otp)
+#define port_switch(ntp, otp) __port_switch(ntp, otp)
 #else
 #if PORT_ENABLE_GUARD_PAGES == FALSE
 #define port_switch(ntp, otp) {                                             \
@@ -578,7 +578,7 @@ struct port_context {
   if ((stkalign_t *)(r13 - 1) < (otp)->wabase) {                            \
     chSysHalt("stack overflow");                                            \
   }                                                                         \
-  _port_switch(ntp, otp);                                                   \
+  __port_switch(ntp, otp);                                                   \
 }
 #else
 #define port_switch(ntp, otp) {                                             \
@@ -598,12 +598,12 @@ struct port_context {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void port_init(void);
-  void _port_irq_epilogue(void);
-  void _port_switch(thread_t *ntp, thread_t *otp);
-  void _port_thread_start(void);
-  void _port_switch_from_isr(void);
-  void _port_exit_from_isr(void);
+  void port_init(os_instance_t *oip);
+  void __port_irq_epilogue(void);
+  void __port_switch(thread_t *ntp, thread_t *otp);
+  void __port_thread_start(void);
+  void __port_switch_from_isr(void);
+  void __port_exit_from_isr(void);
 #if PORT_USE_SYSCALL == TRUE
   void port_unprivileged_jump(uint32_t pc, uint32_t psp);
 #endif

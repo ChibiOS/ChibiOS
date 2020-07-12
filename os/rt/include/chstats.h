@@ -73,13 +73,13 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void _stats_init(void);
-  void _stats_increase_irq(void);
-  void _stats_ctxswc(thread_t *ntp, thread_t *otp);
-  void _stats_start_measure_crit_thd(void);
-  void _stats_stop_measure_crit_thd(void);
-  void _stats_start_measure_crit_isr(void);
-  void _stats_stop_measure_crit_isr(void);
+  void __stats_init(void);
+  void __stats_increase_irq(void);
+  void __stats_ctxswc(thread_t *ntp, thread_t *otp);
+  void __stats_start_measure_crit_thd(void);
+  void __stats_stop_measure_crit_thd(void);
+  void __stats_start_measure_crit_isr(void);
+  void __stats_stop_measure_crit_isr(void);
 #ifdef __cplusplus
 }
 #endif
@@ -88,15 +88,31 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
+/**
+ * @brief   Statistics initialization.
+ * @note    Internal use only.
+ *
+ * @param[out] ksp      pointer to the @p kernel__stats_t structure
+ *
+ * @notapi
+ */
+static inline void __stats_object_init(kernel_stats_t *ksp) {
+
+  ksp->n_irq    = (ucnt_t)0;
+  ksp->n_ctxswc = (ucnt_t)0;
+  chTMObjectInit(&ksp->m_crit_thd);
+  chTMObjectInit(&ksp->m_crit_isr);
+}
+
 #else /* CH_DBG_STATISTICS == FALSE */
 
 /* Stub functions for when the statistics module is disabled. */
-#define _stats_increase_irq()
-#define _stats_ctxswc(old, new)
-#define _stats_start_measure_crit_thd()
-#define _stats_stop_measure_crit_thd()
-#define _stats_start_measure_crit_isr()
-#define _stats_stop_measure_crit_isr()
+#define __stats_increase_irq()
+#define __stats_ctxswc(old, new)
+#define __stats_start_measure_crit_thd()
+#define __stats_stop_measure_crit_thd()
+#define __stats_start_measure_crit_isr()
+#define __stats_stop_measure_crit_isr()
 
 #endif /* CH_DBG_STATISTICS == FALSE */
 

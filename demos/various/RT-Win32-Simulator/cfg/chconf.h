@@ -29,7 +29,7 @@
 #define CHCONF_H
 
 #define _CHIBIOS_RT_CONF_
-#define _CHIBIOS_RT_CONF_VER_6_1_
+#define _CHIBIOS_RT_CONF_VER_7_0_
 
 /*===========================================================================*/
 /**
@@ -638,19 +638,21 @@
 /*===========================================================================*/
 
 /**
- * @brief   System structure extension.
+ * @brief   OS instance structure extension.
  * @details User fields added to the end of the @p ch_system_t structure.
  */
-#define CH_CFG_SYSTEM_EXTRA_FIELDS                                          \
-  /* Add threads custom fields here.*/
+#define CH_CFG_OS_INSTANCE_EXTRA_FIELDS                                     \
+  /* Add OS instance custom fields here.*/
 
 /**
- * @brief   System initialization hook.
+ * @brief   OS instance initialization hook.
  * @details User initialization code added to the @p chSysInit() function
  *          just before interrupts are enabled globally.
+ *
+ * @param[in] oip       pointer to the @p os_instance_t structure
  */
-#define CH_CFG_SYSTEM_INIT_HOOK() {                                         \
-  /* Add threads initialization code here.*/                                \
+#define CH_CFG_OS_INSTANCE_INIT_HOOK(oip) {                                 \
+  /* Add system instance initialization code here.*/                        \
 }
 
 /**
@@ -666,6 +668,8 @@
  *
  * @note    It is invoked from within @p _thread_init() and implicitly from all
  *          the threads creation APIs.
+ *
+ * @param[in] tp        pointer to the @p thread_t structure
  */
 #define CH_CFG_THREAD_INIT_HOOK(tp) {                                       \
   /* Add threads initialization code here.*/                                \
@@ -674,6 +678,8 @@
 /**
  * @brief   Threads finalization hook.
  * @details User finalization code added to the @p chThdExit() API.
+ *
+ * @param[in] tp        pointer to the @p thread_t structure
  */
 #define CH_CFG_THREAD_EXIT_HOOK(tp) {                                       \
   /* Add threads finalization code here.*/                                  \
@@ -682,6 +688,9 @@
 /**
  * @brief   Context switch hook.
  * @details This hook is invoked just before switching between threads.
+ *
+ * @param[in] ntp       thread being switched in
+ * @param[in] otp       thread being switched out
  */
 #define CH_CFG_CONTEXT_SWITCH_HOOK(ntp, otp) {                              \
   /* Context switch code here.*/                                            \

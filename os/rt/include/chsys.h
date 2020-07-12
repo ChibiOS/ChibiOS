@@ -56,6 +56,11 @@
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Access to current core's instance structure.
+ */
+#define currcore                            PORT_INSTANCE_ACCESS
+
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
@@ -109,9 +114,9 @@
 #define CH_IRQ_PROLOGUE()                                                   \
   PORT_IRQ_PROLOGUE();                                                      \
   CH_CFG_IRQ_PROLOGUE_HOOK();                                               \
-  _stats_increase_irq();                                                    \
-  _trace_isr_enter(__func__);                                               \
-  _dbg_check_enter_isr()
+  __stats_increase_irq();                                                   \
+  __trace_isr_enter(__func__);                                              \
+  __dbg_check_enter_isr()
 
 /**
  * @brief   IRQ handler exit code.
@@ -122,8 +127,8 @@
  * @special
  */
 #define CH_IRQ_EPILOGUE()                                                   \
-  _dbg_check_leave_isr();                                                   \
-  _trace_isr_leave(__func__);                                               \
+  __dbg_check_leave_isr();                                                  \
+  __trace_isr_leave(__func__);                                              \
   CH_CFG_IRQ_EPILOGUE_HOOK();                                               \
   PORT_IRQ_EPILOGUE()
 
@@ -265,8 +270,8 @@
  */
 #define chSysSwitch(ntp, otp) {                                             \
                                                                             \
-  _trace_switch(ntp, otp);                                                  \
-  _stats_ctxswc(ntp, otp);                                                  \
+  __trace_switch(ntp, otp);                                                 \
+  __stats_ctxswc(ntp, otp);                                                 \
   CH_CFG_CONTEXT_SWITCH_HOOK(ntp, otp);                                     \
   port_switch(ntp, otp);                                                    \
 }
@@ -276,6 +281,8 @@
 /*===========================================================================*/
 
 #if !defined(__DOXYGEN__)
+extern os_instance_t ch;
+extern os_instance_t * volatile chp;
 extern stkalign_t ch_idle_thread_wa[];
 #endif
 
@@ -304,13 +311,15 @@ extern "C" {
  * @details All the maskable interrupt sources are disabled regardless their
  *          hardware priority.
  * @note    Do not invoke this API from within a kernel lock.
+ * @note    This API is no replacement for @p chSysLock()and @p chSysUnock()
+ *          which could do more than just disable interrupts.
  *
  * @special
  */
 static inline void chSysDisable(void) {
 
   port_disable();
-  _dbg_check_disable();
+  __dbg_check_disable();
 }
 
 /**
@@ -319,60 +328,64 @@ static inline void chSysDisable(void) {
  *          are disabled, interrupt sources with higher priority are still
  *          enabled.
  * @note    Do not invoke this API from within a kernel lock.
- * @note    This API is no replacement for @p chSysLock(), the @p chSysLock()
- *          could do more than just disable the interrupts.
+ * @note    This API is no replacement for @p chSysLock() which
+ *          could do more than just disable interrupts.
  *
  * @special
  */
 static inline void chSysSuspend(void) {
 
   port_suspend();
-  _dbg_check_suspend();
+  __dbg_check_suspend();
 }
 
 /**
  * @brief   Lowers the system interrupt priority mask to user level.
  * @details All the interrupt sources are enabled.
  * @note    Do not invoke this API from within a kernel lock.
- * @note    This API is no replacement for @p chSysUnlock(), the
- *          @p chSysUnlock() could do more than just enable the interrupts.
+ * @note    This API is no replacement for @p chSysUnlock() which
+ *          could do more than just enable interrupts.
  *
  * @special
  */
 static inline void chSysEnable(void) {
 
-  _dbg_check_enable();
+  __dbg_check_enable();
   port_enable();
 }
 
 /**
  * @brief   Enters the kernel lock state.
+ * @note    The exact behavior of this function is port-dependent and could
+ *          not be limited to disabling interrupts.
  *
  * @special
  */
 static inline void chSysLock(void) {
 
   port_lock();
-  _stats_start_measure_crit_thd();
-  _dbg_check_lock();
+  __stats_start_measure_crit_thd();
+  __dbg_check_lock();
 }
 
 /**
  * @brief   Leaves the kernel lock state.
+ * @note    The exact behavior of this function is port-dependent and could
+ *          not be limited to enabling interrupts.
  *
  * @special
  */
 static inline void chSysUnlock(void) {
 
-  _dbg_check_unlock();
-  _stats_stop_measure_crit_thd();
+  __dbg_check_unlock();
+  __stats_stop_measure_crit_thd();
 
   /* The following condition can be triggered by the use of i-class functions
      in a critical section not followed by a chSchRescheduleS(), this means
      that the current thread has a lower priority than the next thread in
      the ready list.*/
-  chDbgAssert((ch.rlist.queue.next == (thread_t *)&ch.rlist.queue) ||
-              (ch.rlist.current->prio >= ch.rlist.queue.next->prio),
+  chDbgAssert((currcore->rlist.queue.next == (thread_t *)&currcore->rlist.queue) ||
+              (currcore->rlist.current->prio >= currcore->rlist.queue.next->prio),
               "priority order violation");
 
   port_unlock();
@@ -386,6 +399,8 @@ static inline void chSysUnlock(void) {
  *          the system mutual exclusion zone.<br>
  *          It is good practice to invoke this API before invoking any I-class
  *          syscall from an interrupt handler.
+ * @note    The exact behavior of this function is port-dependent and could
+ *          not be limited to disabling interrupts.
  * @note    This API must be invoked exclusively from interrupt handlers.
  *
  * @special
@@ -393,8 +408,8 @@ static inline void chSysUnlock(void) {
 static inline void chSysLockFromISR(void) {
 
   port_lock_from_isr();
-  _stats_start_measure_crit_isr();
-  _dbg_check_lock_from_isr();
+  __stats_start_measure_crit_isr();
+  __dbg_check_lock_from_isr();
 }
 
 /**
@@ -406,14 +421,16 @@ static inline void chSysLockFromISR(void) {
  *          the system mutual exclusion zone.<br>
  *          It is good practice to invoke this API after invoking any I-class
  *          syscall from an interrupt handler.
+ * @note    The exact behavior of this function is port-dependent and could
+ *          not be limited to enabling interrupts.
  * @note    This API must be invoked exclusively from interrupt handlers.
  *
  * @special
  */
 static inline void chSysUnlockFromISR(void) {
 
-  _dbg_check_unlock_from_isr();
-  _stats_stop_measure_crit_isr();
+  __dbg_check_unlock_from_isr();
+  __stats_stop_measure_crit_isr();
   port_unlock_from_isr();
 }
 
@@ -460,7 +477,7 @@ static inline void chSysUnconditionalUnlock(void) {
  */
 static inline thread_t *chSysGetIdleThreadX(void) {
 
-  return ch.rlist.queue.prev;
+  return currcore->rlist.queue.prev;
 }
 #endif /* CH_CFG_NO_IDLE_THREAD == FALSE */
 

@@ -55,25 +55,12 @@
 /*===========================================================================*/
 
 /**
- * @brief   Initializes the statistics module.
- *
- * @init
- */
-void _stats_init(void) {
-
-  ch.kernel_stats.n_irq = (ucnt_t)0;
-  ch.kernel_stats.n_ctxswc = (ucnt_t)0;
-  chTMObjectInit(&ch.kernel_stats.m_crit_thd);
-  chTMObjectInit(&ch.kernel_stats.m_crit_isr);
-}
-
-/**
  * @brief   Increases the IRQ counter.
  */
-void _stats_increase_irq(void) {
+void __stats_increase_irq(void) {
 
   port_lock_from_isr();
-  ch.kernel_stats.n_irq++;
+  currcore->kernel_stats.n_irq++;
   port_unlock_from_isr();
 }
 
@@ -83,42 +70,42 @@ void _stats_increase_irq(void) {
  * @param[in] ntp       the thread to be switched in
  * @param[in] otp       the thread to be switched out
  */
-void _stats_ctxswc(thread_t *ntp, thread_t *otp) {
+void __stats_ctxswc(thread_t *ntp, thread_t *otp) {
 
-  ch.kernel_stats.n_ctxswc++;
+  currcore->kernel_stats.n_ctxswc++;
   chTMChainMeasurementToX(&otp->stats, &ntp->stats);
 }
 
 /**
  * @brief   Starts the measurement of a thread critical zone.
  */
-void _stats_start_measure_crit_thd(void) {
+void __stats_start_measure_crit_thd(void) {
 
-  chTMStartMeasurementX(&ch.kernel_stats.m_crit_thd);
+  chTMStartMeasurementX(&currcore->kernel_stats.m_crit_thd);
 }
 
 /**
  * @brief   Stops the measurement of a thread critical zone.
  */
-void _stats_stop_measure_crit_thd(void) {
+void __stats_stop_measure_crit_thd(void) {
 
-  chTMStopMeasurementX(&ch.kernel_stats.m_crit_thd);
+  chTMStopMeasurementX(&currcore->kernel_stats.m_crit_thd);
 }
 
 /**
  * @brief   Starts the measurement of an ISR critical zone.
  */
-void _stats_start_measure_crit_isr(void) {
+void __stats_start_measure_crit_isr(void) {
 
-  chTMStartMeasurementX(&ch.kernel_stats.m_crit_isr);
+  chTMStartMeasurementX(&currcore->kernel_stats.m_crit_isr);
 }
 
 /**
  * @brief   Stops the measurement of an ISR critical zone.
  */
-void _stats_stop_measure_crit_isr(void) {
+void __stats_stop_measure_crit_isr(void) {
 
-  chTMStopMeasurementX(&ch.kernel_stats.m_crit_isr);
+  chTMStopMeasurementX(&currcore->kernel_stats.m_crit_isr);
 }
 
 #endif /* CH_DBG_STATISTICS == TRUE */

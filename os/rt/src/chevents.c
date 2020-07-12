@@ -104,13 +104,14 @@ void chEvtRegisterMaskWithFlags(event_source_t *esp,
                                 event_listener_t *elp,
                                 eventmask_t events,
                                 eventflags_t wflags) {
+  thread_t *currtp = chThdGetSelfX();
 
   chDbgCheck((esp != NULL) && (elp != NULL));
 
   chSysLock();
   elp->next     = esp->next;
   esp->next     = elp;
-  elp->listener = currp;
+  elp->listener = currtp;
   elp->events   = events;
   elp->flags    = (eventflags_t)0;
   elp->wflags   = wflags;
@@ -160,10 +161,11 @@ void chEvtUnregister(event_source_t *esp, event_listener_t *elp) {
  * @iclass
  */
 eventmask_t chEvtGetAndClearEventsI(eventmask_t events) {
+  thread_t *currtp = chThdGetSelfX();
   eventmask_t m;
 
-  m = currp->epending & events;
-  currp->epending &= ~events;
+  m = currtp->epending & events;
+  currtp->epending &= ~events;
 
   return m;
 }
@@ -397,18 +399,18 @@ void chEvtDispatch(const evhandler_t *handlers, eventmask_t events) {
  * @api
  */
 eventmask_t chEvtWaitOne(eventmask_t events) {
-  thread_t *ctp = currp;
+  thread_t *currtp = chThdGetSelfX();
   eventmask_t m;
 
   chSysLock();
-  m = ctp->epending & events;
+  m = currtp->epending & events;
   if (m == (eventmask_t)0) {
-    ctp->u.ewmask = events;
+    currtp->u.ewmask = events;
     chSchGoSleepS(CH_STATE_WTOREVT);
-    m = ctp->epending & events;
+    m = currtp->epending & events;
   }
   m ^= m & (m - (eventmask_t)1);
-  ctp->epending &= ~m;
+  currtp->epending &= ~m;
   chSysUnlock();
 
   return m;
@@ -427,17 +429,17 @@ eventmask_t chEvtWaitOne(eventmask_t events) {
  * @api
  */
 eventmask_t chEvtWaitAny(eventmask_t events) {
-  thread_t *ctp = currp;
+  thread_t *currtp = chThdGetSelfX();
   eventmask_t m;
 
   chSysLock();
-  m = ctp->epending & events;
+  m = currtp->epending & events;
   if (m == (eventmask_t)0) {
-    ctp->u.ewmask = events;
+    currtp->u.ewmask = events;
     chSchGoSleepS(CH_STATE_WTOREVT);
-    m = ctp->epending & events;
+    m = currtp->epending & events;
   }
-  ctp->epending &= ~m;
+  currtp->epending &= ~m;
   chSysUnlock();
 
   return m;
@@ -455,14 +457,14 @@ eventmask_t chEvtWaitAny(eventmask_t events) {
  * @api
  */
 eventmask_t chEvtWaitAll(eventmask_t events) {
-  thread_t *ctp = currp;
+  thread_t *currtp = chThdGetSelfX();
 
   chSysLock();
-  if ((ctp->epending & events) != events) {
-    ctp->u.ewmask = events;
+  if ((currtp->epending & events) != events) {
+    currtp->u.ewmask = events;
     chSchGoSleepS(CH_STATE_WTANDEVT);
   }
-  ctp->epending &= ~events;
+  currtp->epending &= ~events;
   chSysUnlock();
 
   return events;
@@ -493,25 +495,25 @@ eventmask_t chEvtWaitAll(eventmask_t events) {
  * @api
  */
 eventmask_t chEvtWaitOneTimeout(eventmask_t events, sysinterval_t timeout) {
-  thread_t *ctp = currp;
+  thread_t *currtp = chThdGetSelfX();
   eventmask_t m;
 
   chSysLock();
-  m = ctp->epending & events;
+  m = currtp->epending & events;
   if (m == (eventmask_t)0) {
     if (TIME_IMMEDIATE == timeout) {
       chSysUnlock();
       return (eventmask_t)0;
     }
-    ctp->u.ewmask = events;
+    currtp->u.ewmask = events;
     if (chSchGoSleepTimeoutS(CH_STATE_WTOREVT, timeout) < MSG_OK) {
       chSysUnlock();
       return (eventmask_t)0;
     }
-    m = ctp->epending & events;
+    m = currtp->epending & events;
   }
   m ^= m & (m - (eventmask_t)1);
-  ctp->epending &= ~m;
+  currtp->epending &= ~m;
   chSysUnlock();
 
   return m;
@@ -536,24 +538,24 @@ eventmask_t chEvtWaitOneTimeout(eventmask_t events, sysinterval_t timeout) {
  * @api
  */
 eventmask_t chEvtWaitAnyTimeout(eventmask_t events, sysinterval_t timeout) {
-  thread_t *ctp = currp;
+  thread_t *currtp = chThdGetSelfX();
   eventmask_t m;
 
   chSysLock();
-  m = ctp->epending & events;
+  m = currtp->epending & events;
   if (m == (eventmask_t)0) {
     if (TIME_IMMEDIATE == timeout) {
       chSysUnlock();
       return (eventmask_t)0;
     }
-    ctp->u.ewmask = events;
+    currtp->u.ewmask = events;
     if (chSchGoSleepTimeoutS(CH_STATE_WTOREVT, timeout) < MSG_OK) {
       chSysUnlock();
       return (eventmask_t)0;
     }
-    m = ctp->epending & events;
+    m = currtp->epending & events;
   }
-  ctp->epending &= ~m;
+  currtp->epending &= ~m;
   chSysUnlock();
 
   return m;
@@ -577,21 +579,21 @@ eventmask_t chEvtWaitAnyTimeout(eventmask_t events, sysinterval_t timeout) {
  * @api
  */
 eventmask_t chEvtWaitAllTimeout(eventmask_t events, sysinterval_t timeout) {
-  thread_t *ctp = currp;
+  thread_t *currtp = chThdGetSelfX();
 
   chSysLock();
-  if ((ctp->epending & events) != events) {
+  if ((currtp->epending & events) != events) {
     if (TIME_IMMEDIATE == timeout) {
       chSysUnlock();
       return (eventmask_t)0;
     }
-    ctp->u.ewmask = events;
+    currtp->u.ewmask = events;
     if (chSchGoSleepTimeoutS(CH_STATE_WTANDEVT, timeout) < MSG_OK) {
       chSysUnlock();
       return (eventmask_t)0;
     }
   }
-  ctp->epending &= ~events;
+  currtp->epending &= ~events;
   chSysUnlock();
 
   return events;

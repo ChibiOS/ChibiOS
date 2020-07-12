@@ -203,7 +203,7 @@ msg_t chCondWait(condition_variable_t *cp) {
  * @sclass
  */
 msg_t chCondWaitS(condition_variable_t *cp) {
-  thread_t *ctp = currp;
+  thread_t *currtp = chThdGetSelfX();
   mutex_t *mp = chMtxGetNextMutexX();
   msg_t msg;
 
@@ -216,10 +216,10 @@ msg_t chCondWaitS(condition_variable_t *cp) {
 
   /* Start waiting on the condition variable, on exit the mutex is taken
      again.*/
-  ctp->u.wtobjp = cp;
-  queue_prio_insert(ctp, &cp->queue);
+  currtp->u.wtobjp = cp;
+  queue_prio_insert(currtp, &cp->queue);
   chSchGoSleepS(CH_STATE_WTCOND);
-  msg = ctp->u.rdymsg;
+  msg = currtp->u.rdymsg;
   chMtxLockS(mp);
 
   return msg;
@@ -293,6 +293,7 @@ msg_t chCondWaitTimeout(condition_variable_t *cp, sysinterval_t timeout) {
  * @sclass
  */
 msg_t chCondWaitTimeoutS(condition_variable_t *cp, sysinterval_t timeout) {
+  thread_t *currtp = chThdGetSelfX();
   mutex_t *mp = chMtxGetNextMutexX();
   msg_t msg;
 
@@ -305,8 +306,8 @@ msg_t chCondWaitTimeoutS(condition_variable_t *cp, sysinterval_t timeout) {
 
   /* Start waiting on the condition variable, on exit the mutex is taken
      again.*/
-  currp->u.wtobjp = cp;
-  queue_prio_insert(currp, &cp->queue);
+  currtp->u.wtobjp = cp;
+  queue_prio_insert(currtp, &cp->queue);
   msg = chSchGoSleepTimeoutS(CH_STATE_WTCOND, timeout);
   if (msg != MSG_TIMEOUT) {
     chMtxLockS(mp);

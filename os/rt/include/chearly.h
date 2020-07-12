@@ -18,17 +18,15 @@
 */
 
 /**
- * @file    rt/include/chtm.h
- * @brief   Time Measurement module macros and structures.
+ * @file    chearly.h
+ * @brief   Early forward types declarations header.
  *
- * @addtogroup time_measurement
+ * @addtogroup os_structures
  * @{
  */
 
-#ifndef CHTM_H
-#define CHTM_H
-
-#if (CH_CFG_USE_TM == TRUE) || defined(__DOXYGEN__)
+#ifndef CHEARLY_H
+#define CHEARLY_H
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -42,58 +40,40 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if PORT_SUPPORTS_RT == FALSE
-#error "CH_CFG_USE_TM requires PORT_SUPPORTS_RT"
-#endif
-
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
 /**
- * @brief   Type of a time measurement calibration data.
+ * @extends threads_queue_t
+ *
+ * @brief   Type of a thread structure.
  */
-typedef struct {
-  /**
-   * @brief   Measurement calibration value.
-   */
-  rtcnt_t               offset;
-} tm_calibration_t;
+typedef struct ch_thread thread_t;
 
 /**
- * @brief   Type of a Time Measurement object.
- * @note    The maximum measurable time period depends on the implementation
- *          of the realtime counter and its clock frequency.
- * @note    The measurement is not 100% cycle-accurate, it can be in excess
- *          of few cycles depending on the compiler and target architecture.
- * @note    Interrupts can affect measurement if the measurement is performed
- *          with interrupts enabled.
+ * @brief   Type of an OS instance structure.
  */
-typedef struct {
-  rtcnt_t               best;           /**< @brief Best measurement.       */
-  rtcnt_t               worst;          /**< @brief Worst measurement.      */
-  rtcnt_t               last;           /**< @brief Last measurement.       */
-  ucnt_t                n;              /**< @brief Number of measurements. */
-  rttime_t              cumulative;     /**< @brief Cumulative measurement. */
-} time_measurement_t;
+typedef struct ch_os_instance os_instance_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
 
+/**
+ * @brief   Utility to make the parameter a quoted string.
+ */
+#define __CH_STRINGIFY(a) #a
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
 
+/* Early function prototypes required by the following headers.*/
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void __tm_calibration_init(tm_calibration_t *tcp);
-  void chTMObjectInit(time_measurement_t *tmp);
-  NOINLINE void chTMStartMeasurementX(time_measurement_t *tmp);
-  NOINLINE void chTMStopMeasurementX(time_measurement_t *tmp);
-  NOINLINE void chTMChainMeasurementToX(time_measurement_t *tmp1,
-                                        time_measurement_t *tmp2);
+  void chSysHalt(const char *reason);
 #ifdef __cplusplus
 }
 #endif
@@ -102,8 +82,6 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* CH_CFG_USE_TM == TRUE */
-
-#endif /* CHTM_H */
+#endif /* CHEARLY_H */
 
 /** @} */

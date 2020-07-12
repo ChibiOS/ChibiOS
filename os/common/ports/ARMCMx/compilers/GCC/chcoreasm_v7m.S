@@ -82,8 +82,8 @@
  * Performs a context switch between two threads.
  *--------------------------------------------------------------------------*/
                 .thumb_func
-                .globl  _port_switch
-_port_switch:
+                .globl  __port_switch
+__port_switch:
                 push    {r4, r5, r6, r7, r8, r9, r10, r11, lr}
 #if CORTEX_USE_FPU
                 /* Saving FPU context.*/
@@ -189,16 +189,16 @@ _port_switch:
  * called on thread function return.
  *--------------------------------------------------------------------------*/
                 .thumb_func
-                .globl  _port_thread_start
-_port_thread_start:
+                .globl  __port_thread_start
+__port_thread_start:
 #if CH_DBG_ENABLE_STACK_CHECK && PORT_ENABLE_GUARD_PAGES
-                bl      _port_set_region
+                bl      __port_set_region
 #endif
 #if CH_DBG_SYSTEM_STATE_CHECK
-                bl      _dbg_check_unlock
+                bl      __dbg_check_unlock
 #endif
 #if CH_DBG_STATISTICS
-                bl      _stats_stop_measure_crit_thd
+                bl      __stats_stop_measure_crit_thd
 #endif
 #if CORTEX_SIMPLIFIED_PRIORITY
                 cpsie   i
@@ -210,7 +210,7 @@ _port_thread_start:
                 blx     r4
                 movs    r0, #0              /* MSG_OK */
                 bl      chThdExit
-_zombies:       b       _zombies
+__zombies:       b       __zombies
 
 /*--------------------------------------------------------------------------*
  * Post-IRQ switch code.
@@ -218,23 +218,23 @@ _zombies:       b       _zombies
  * Exception handlers return here for context switching.
  *--------------------------------------------------------------------------*/
                 .thumb_func
-                .globl  _port_switch_from_isr
-_port_switch_from_isr:
+                .globl  __port_switch_from_isr
+__port_switch_from_isr:
 #if CH_DBG_STATISTICS
-                bl      _stats_start_measure_crit_thd
+                bl      __stats_start_measure_crit_thd
 #endif
 #if CH_DBG_SYSTEM_STATE_CHECK
-                bl      _dbg_check_lock
+                bl      __dbg_check_lock
 #endif
-                bl      chSchDoReschedule
+                bl      chSchDoPreemption
 #if CH_DBG_SYSTEM_STATE_CHECK
-                bl      _dbg_check_unlock
+                bl      __dbg_check_unlock
 #endif
 #if CH_DBG_STATISTICS
-                bl      _stats_stop_measure_crit_thd
+                bl      __stats_stop_measure_crit_thd
 #endif
-                .globl  _port_exit_from_isr
-_port_exit_from_isr:
+                .globl  __port_exit_from_isr
+__port_exit_from_isr:
 #if CORTEX_SIMPLIFIED_PRIORITY
                 movw    r3, #:lower16:SCB_ICSR
                 movt    r3, #:upper16:SCB_ICSR
