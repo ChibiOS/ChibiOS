@@ -632,11 +632,11 @@ struct port_context {
  * @param[in] otp       the thread to be switched out
  */
 #define port_switch(ntp, otp) do {                                          \
-  _dbg_leave_lock();                                                        \
+  __dbg_check_lock();                                                       \
   register thread_t *_ntp asm ("r0") = (ntp);                               \
   register thread_t *_otp asm ("r1") = (otp);                               \
   asm volatile ("svc     #0" : : "r" (_otp), "r" (_ntp) : "memory");        \
-  _dbg_enter_lock();                                                        \
+  __dbg_check_unlock();                                                     \
 } while (false)
 
 /*===========================================================================*/
@@ -648,7 +648,7 @@ struct port_context {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void port_init(void);
+  void port_init(os_instance_t *oip);
   void __port_thread_start(void);
 #if PORT_KERNEL_MODE == PORT_KERNEL_MODE_HOST
   void __port_ns_boot(void *vtor);

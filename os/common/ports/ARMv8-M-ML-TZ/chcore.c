@@ -84,8 +84,14 @@ thread_t *port_schedule_next(void) {
 
 /**
  * @brief   Port-related initialization code.
+ *
+ * @param[in, out] oip  pointer to the @p os_instance_t structure
+ *
+ * @notapi
  */
-void port_init(void) {
+void port_init(os_instance_t *oip) {
+
+  (void)oip;
 
 #if PORT_KERNEL_MODE == PORT_KERNEL_MODE_HOST
   {

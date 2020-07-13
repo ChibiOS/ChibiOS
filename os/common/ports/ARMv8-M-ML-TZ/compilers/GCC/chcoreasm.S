@@ -272,7 +272,7 @@ __port_thread_start:
                 blx     r4
                 movs    r0, #0              /* MSG_OK */
                 bl      chThdExit
-_zombies:       b       _zombies
+.zombies:       b       .zombies
 
 #if PORT_KERNEL_MODE == PORT_KERNEL_MODE_HOST
 /*--------------------------------------------------------------------------*
