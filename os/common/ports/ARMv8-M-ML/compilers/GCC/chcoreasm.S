@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    compilers/GCC/chcoreasm_v7m.S
- * @brief   ARMv7-M architecture port low level code.
+ * @file    ARMv8-M-ML/compilers/GCC/chcoreasm.S
+ * @brief   ARMv8-M MainLine port low level code.
  *
- * @addtogroup ARMCMx_GCC_CORE
+ * @addtogroup ARMv8_M_ML_GCC_CORE
  * @{
  */
 

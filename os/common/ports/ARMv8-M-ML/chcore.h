@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    ARMCMx/chcore.h
- * @brief   ARM Cortex-Mx port macros and structures.
+ * @file    ARMv8-M-ML/chcore.h
+ * @brief   ARMv8-M MainLine port macros and structures.
  *
- * @addtogroup ARMCMx_CORE
+ * @addtogroup ARMv8_M_ML_CORE
  * @{
  */
 

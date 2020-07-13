@@ -291,7 +291,7 @@
   /**
    * @brief   Macro defining the specific ARM architecture.
    */
-  #define PORT_ARCHITECTURE_ARM_v7M
+  #define PORT_ARCHITECTURE_ARM_V7M
 
   /**
    * @brief   Name of the implemented architecture.
