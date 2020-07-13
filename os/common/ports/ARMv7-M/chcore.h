@@ -399,8 +399,8 @@
    */
   #define CORTEX_BASEPRI_KERNEL                                             \
     CORTEX_PRIO_MASK(CORTEX_MAX_KERNEL_PRIORITY)
-  #else
 
+#else
   #define CORTEX_MAX_KERNEL_PRIORITY    0U
 #endif
 
