@@ -74,6 +74,9 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Stand-alone ARMv6-M port.
+- NEW: Stand-alone ARMv7-M port.
+- NEW: Merged RT7.
 - RT:  New API for high resolution monotonic time stamps.
 - NEW: Updated FatFS to version 0.14.
 - NEW: Added a new setting to STM32 USBv1 allowing for some clock deviation

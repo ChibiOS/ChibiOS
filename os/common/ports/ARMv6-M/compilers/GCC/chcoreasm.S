@@ -74,8 +74,8 @@
  * Performs a context switch between two threads.
  *--------------------------------------------------------------------------*/
                 .thumb_func
-                .globl  _port_switch
-_port_switch:
+                .globl  __port_switch
+__port_switch:
                 push    {r4, r5, r6, r7, lr}
                 mov     r4, r8
                 mov     r5, r9
@@ -104,20 +104,20 @@ _port_switch:
  * called on thread function return.
  *--------------------------------------------------------------------------*/
                 .thumb_func
-                .globl  _port_thread_start
-_port_thread_start:
+                .globl  __port_thread_start
+__port_thread_start:
 #if CH_DBG_SYSTEM_STATE_CHECK
-                bl      _dbg_check_unlock
+                bl      __dbg_check_unlock
 #endif
 #if CH_DBG_STATISTICS
-                bl      _stats_stop_measure_crit_thd
+                bl      __stats_stop_measure_crit_thd
 #endif
                 cpsie   i
                 mov     r0, r5
                 blx     r4
                 movs    r0, #0              /* MSG_OK */
                 bl      chThdExit
-_zombies:       b       _zombies
+.zombies:       b       .zombies
 
 /*--------------------------------------------------------------------------*
  * Post-IRQ switch code.
@@ -125,23 +125,23 @@ _zombies:       b       _zombies
  * Exception handlers return here for context switching.
  *--------------------------------------------------------------------------*/
                 .thumb_func
-                .globl  _port_switch_from_isr
-_port_switch_from_isr:
+                .globl  __port_switch_from_isr
+__port_switch_from_isr:
 #if CH_DBG_STATISTICS
-                bl      _stats_start_measure_crit_thd
+                bl      __stats_start_measure_crit_thd
 #endif
 #if CH_DBG_SYSTEM_STATE_CHECK
-                bl      _dbg_check_lock
+                bl      __dbg_check_lock
 #endif
-                bl      chSchDoReschedule
+                bl      chSchDoPreemption
 #if CH_DBG_SYSTEM_STATE_CHECK
-                bl      _dbg_check_unlock
+                bl      __dbg_check_unlock
 #endif
 #if CH_DBG_STATISTICS
-                bl      _stats_stop_measure_crit_thd
+                bl      __stats_stop_measure_crit_thd
 #endif
-                .globl  _port_exit_from_isr
-_port_exit_from_isr:
+                .globl  __port_exit_from_isr
+__port_exit_from_isr:
                 ldr     r2, .L2
                 ldr     r3, .L3
                 str     r3, [r2, #0]
