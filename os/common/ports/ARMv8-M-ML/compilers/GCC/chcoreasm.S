@@ -89,8 +89,24 @@ __port_switch:
                 /* Saving FPU context.*/
                 vpush   {s16-s31}
 #endif
+
+#if CH_DBG_ENABLE_STACK_CHECK
+                /* Saving stack limit register.*/
+                mrs     r3, PSPLIM
+                push    {r3}
+                movs    r3, #0
+                msr     PSPLIM, r3      /* Temporarily disabling stack check.*/
+#endif
+
+                /* Switching stacks.*/
                 str     sp, [r1, #CONTEXT_OFFSET]
                 ldr     sp, [r0, #CONTEXT_OFFSET]
+
+#if CH_DBG_ENABLE_STACK_CHECK
+                pop     {r3}
+                msr     PSPLIM, r3
+#endif
+
 #if CORTEX_USE_FPU
                 /* Restoring FPU context.*/
                 vpop    {s16-s31}
@@ -142,7 +158,7 @@ __port_switch_from_isr:
 #endif
                 bl      chSchDoPreemption
 #if CH_DBG_SYSTEM_STATE_CHECK
-                bl      _dbg_check_unlock
+                bl      __dbg_check_unlock
 #endif
 #if CH_DBG_STATISTICS
                 bl      __stats_stop_measure_crit_thd

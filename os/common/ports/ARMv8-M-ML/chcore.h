@@ -314,34 +314,34 @@ typedef uint64_t stkalign_t;
  * @note    It is implemented to match the Cortex-Mx exception context.
  */
 struct port_extctx {
-  uint32_t      r0;
-  uint32_t      r1;
-  uint32_t      r2;
-  uint32_t      r3;
-  uint32_t      r12;
-  uint32_t      lr_thd;
-  uint32_t      pc;
-  uint32_t      xpsr;
-#if CORTEX_USE_FPU
-  uint32_t      s0;
-  uint32_t      s1;
-  uint32_t      s2;
-  uint32_t      s3;
-  uint32_t      s4;
-  uint32_t      s5;
-  uint32_t      s6;
-  uint32_t      s7;
-  uint32_t      s8;
-  uint32_t      s9;
-  uint32_t      s10;
-  uint32_t      s11;
-  uint32_t      s12;
-  uint32_t      s13;
-  uint32_t      s14;
-  uint32_t      s15;
-  uint32_t      fpscr;
-  uint32_t      reserved;
-#endif /* CORTEX_USE_FPU */
+  uint32_t              r0;
+  uint32_t              r1;
+  uint32_t              r2;
+  uint32_t              r3;
+  uint32_t              r12;
+  uint32_t              lr_thd;
+  uint32_t              pc;
+  uint32_t              xpsr;
+#if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
+  uint32_t              s0;
+  uint32_t              s1;
+  uint32_t              s2;
+  uint32_t              s3;
+  uint32_t              s4;
+  uint32_t              s5;
+  uint32_t              s6;
+  uint32_t              s7;
+  uint32_t              s8;
+  uint32_t              s9;
+  uint32_t              s10;
+  uint32_t              s11;
+  uint32_t              s12;
+  uint32_t              s13;
+  uint32_t              s14;
+  uint32_t              s15;
+  uint32_t              fpscr;
+  uint32_t              reserved;
+#endif /* CORTEX_USE_FPU == TRUE */
 };
 
 /**
@@ -350,33 +350,36 @@ struct port_extctx {
  *          switch.
  */
 struct port_intctx {
-#if CORTEX_USE_FPU
-  uint32_t      s16;
-  uint32_t      s17;
-  uint32_t      s18;
-  uint32_t      s19;
-  uint32_t      s20;
-  uint32_t      s21;
-  uint32_t      s22;
-  uint32_t      s23;
-  uint32_t      s24;
-  uint32_t      s25;
-  uint32_t      s26;
-  uint32_t      s27;
-  uint32_t      s28;
-  uint32_t      s29;
-  uint32_t      s30;
-  uint32_t      s31;
-#endif /* CORTEX_USE_FPU */
-  uint32_t      r4;
-  uint32_t      r5;
-  uint32_t      r6;
-  uint32_t      r7;
-  uint32_t      r8;
-  uint32_t      r9;
-  uint32_t      r10;
-  uint32_t      r11;
-  uint32_t      lr;
+#if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || defined(__DOXYGEN__)
+  uint32_t              splim;
+#endif
+#if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
+  uint32_t              s16;
+  uint32_t              s17;
+  uint32_t              s18;
+  uint32_t              s19;
+  uint32_t              s20;
+  uint32_t              s21;
+  uint32_t              s22;
+  uint32_t              s23;
+  uint32_t              s24;
+  uint32_t              s25;
+  uint32_t              s26;
+  uint32_t              s27;
+  uint32_t              s28;
+  uint32_t              s29;
+  uint32_t              s30;
+  uint32_t              s31;
+#endif /* CORTEX_USE_FPU == TRUE */
+  uint32_t              r4;
+  uint32_t              r5;
+  uint32_t              r6;
+  uint32_t              r7;
+  uint32_t              r8;
+  uint32_t              r9;
+  uint32_t              r10;
+  uint32_t              r11;
+  uint32_t              lr;
 };
 
 /**
@@ -408,6 +411,31 @@ struct port_context {
   (((n) >= CORTEX_MAX_KERNEL_PRIORITY) && ((n) < CORTEX_PRIORITY_LEVELS))
 
 /**
+ * @brief   Initialization of stack check part of thread context.
+ */
+#if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || defined(__DOXYGEN__)
+  #define PORT_SETUP_CONTEXT_SPLIM(tp, wbase)                               \
+    (tp)->ctx.sp->splim = (uint32_t)(wbase)
+#else
+  #define PORT_SETUP_CONTEXT_SPLIM(tp, wbase)
+#endif
+
+/**
+ * @brief   Initialization of FPU part of thread context.
+ */
+#if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
+  #define PORT_SETUP_CONTEXT_FPU(tp)                                        \
+    (tp)->ctx.sp->fpscr = (uint32_t)0
+#else
+  #define PORT_SETUP_CONTEXT_FPU(tp)
+#endif
+
+/**
+ * @brief   Initialization of MPU part of thread context.
+ */
+#define PORT_SETUP_CONTEXT_MPU(tp)
+
+/**
  * @brief   Platform dependent part of the @p chThdCreateI() API.
  * @details This code usually setup the context switching frame represented
  *          by an @p port_intctx structure.
@@ -418,6 +446,9 @@ struct port_context {
   (tp)->ctx.sp->r4 = (uint32_t)(pf);                                        \
   (tp)->ctx.sp->r5 = (uint32_t)(arg);                                       \
   (tp)->ctx.sp->lr = (uint32_t)__port_thread_start;                         \
+  PORT_SETUP_CONTEXT_SPLIM(tp, wbase);                                      \
+  PORT_SETUP_CONTEXT_FPU(tp);                                               \
+  PORT_SETUP_CONTEXT_MPU(tp);                                               \
 } while (0)
 
 /**
