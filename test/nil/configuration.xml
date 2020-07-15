@@ -2095,8 +2095,8 @@ test_println(" wait+signal/S");]]></value>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[test_print("--- System: ");
-test_printn(sizeof(nil_system_t));
+                      <value><![CDATA[test_print("--- OS    : ");
+test_printn(sizeof(os_instance_t));
 test_println(" bytes");]]></value>
                     </code>
                   </step>

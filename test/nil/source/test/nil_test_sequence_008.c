@@ -562,8 +562,8 @@ static void nil_test_008_007_execute(void) {
   /* [8.7.1] The size of the system area is printed.*/
   test_set_step(1);
   {
-    test_print("--- System: ");
-    test_printn(sizeof(nil_system_t));
+    test_print("--- OS    : ");
+    test_printn(sizeof(os_instance_t));
     test_println(" bytes");
   }
   test_end_step(1);
