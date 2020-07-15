@@ -68,24 +68,24 @@ ICSR_PENDSVSET  EQU     0x10000000
                 AREA    |.text|, CODE, READONLY
 
                 IMPORT  chThdExit
-                IMPORT  chSchDoReschedule
+                IMPORT  chSchDoPreemption
 #if CH_DBG_ENABLE_STACK_CHECK && PORT_ENABLE_GUARD_PAGES
                 IMPORT  _port_set_region
 #endif
 #if CH_DBG_STATISTICS
-                IMPORT   _stats_start_measure_crit_thd
-                IMPORT   _stats_stop_measure_crit_thd
+                IMPORT  __stats_start_measure_crit_thd
+                IMPORT  __stats_stop_measure_crit_thd
 #endif
 #if CH_DBG_SYSTEM_STATE_CHECK
-                IMPORT  _dbg_check_unlock
-                IMPORT  _dbg_check_lock
+                IMPORT  __dbg_check_unlock
+                IMPORT  __dbg_check_lock
 #endif
 
 /*
  * Performs a context switch between two threads.
  */
-                EXPORT _port_switch
-_port_switch    PROC
+                EXPORT  __port_switch
+__port_switch   PROC
                 push    {r4, r5, r6, r7, r8, r9, r10, r11, lr}
 #if CORTEX_USE_FPU
                 vpush   {s16-s31}
@@ -112,16 +112,16 @@ _port_switch    PROC
  * Start a thread by invoking its work function.
  * If the work function returns @p chThdExit() is automatically invoked.
  */
-                EXPORT  _port_thread_start
-_port_thread_start PROC
+                EXPORT  __port_thread_start
+__port_thread_start PROC
 #if CH_DBG_ENABLE_STACK_CHECK && PORT_ENABLE_GUARD_PAGES
-                bl      _port_set_region
+                bl      __port_set_region
 #endif
 #if CH_DBG_SYSTEM_STATE_CHECK
-                bl      _dbg_check_unlock
+                bl      __dbg_check_unlock
 #endif
 #if CH_DBG_STATISTICS
-                bl      _stats_stop_measure_crit_thd
+                bl      __stats_stop_measure_crit_thd
 #endif
 #if CORTEX_SIMPLIFIED_PRIORITY
                 cpsie   i
@@ -133,30 +133,30 @@ _port_thread_start PROC
                 blx     r4
                 movs    r0, #0              /* MSG_OK */
                 bl      chThdExit
-_zombies        b       _zombies
+.zombies        b       .zombies
                 ENDP
 
 /*
  * Post-IRQ switch code.
  * Exception handlers return here for context switching.
  */
-                EXPORT  _port_switch_from_isr
-                EXPORT  _port_exit_from_isr
-_port_switch_from_isr PROC
+                EXPORT  __port_switch_from_isr
+                EXPORT  __port_exit_from_isr
+__port_switch_from_isr PROC
 #if CH_DBG_STATISTICS
-                bl      _stats_start_measure_crit_thd
+                bl      __stats_start_measure_crit_thd
 #endif
 #if CH_DBG_SYSTEM_STATE_CHECK
-                bl      _dbg_check_lock
+                bl      __dbg_check_lock
 #endif
-                bl      chSchDoReschedule
+                bl      chSchDoPreemption
 #if CH_DBG_SYSTEM_STATE_CHECK
-                bl      _dbg_check_unlock
+                bl      __dbg_check_unlock
 #endif
 #if CH_DBG_STATISTICS
-                bl      _stats_stop_measure_crit_thd
+                bl      __stats_stop_measure_crit_thd
 #endif
-_port_exit_from_isr
+__port_exit_from_isr
 #if CORTEX_SIMPLIFIED_PRIORITY
                 mov     r3, #SCB_ICSR :AND: 0xFFFF
                 movt    r3, #SCB_ICSR :SHR: 16
@@ -166,7 +166,7 @@ _port_exit_from_isr
 #else
                 svc     #0
 #endif
-waithere        b       waithere
+.waithere       b       .waithere
                 ENDP
 
                 END

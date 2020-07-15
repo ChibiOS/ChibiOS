@@ -71,14 +71,14 @@ SCB_ICSR        SET     0xE000ED04
 
                 EXTERN  chThdExit
                 EXTERN  chSysHalt
-                EXTERN  chSchDoReschedule
+                EXTERN  chSchDoPreemption
 #if CH_DBG_STATISTICS
-                EXTERN   _stats_start_measure_crit_thd
-                EXTERN   _stats_stop_measure_crit_thd
+                EXTERN  __stats_start_measure_crit_thd
+                EXTERN  __stats_stop_measure_crit_thd
 #endif
 #if CH_DBG_SYSTEM_STATE_CHECK
-                EXTERN  _dbg_check_unlock
-                EXTERN  _dbg_check_lock
+                EXTERN  __dbg_check_unlock
+                EXTERN  __dbg_check_lock
 #endif
 
                 THUMB
@@ -86,8 +86,8 @@ SCB_ICSR        SET     0xE000ED04
 /*
  * Performs a context switch between two threads.
  */
-                PUBLIC _port_switch
-_port_switch:
+                PUBLIC  __port_switch
+__port_switch:
                 push    {r4, r5, r6, r7, lr}
                 mov     r4, r8
                 mov     r5, r9
@@ -109,42 +109,42 @@ _port_switch:
  * Start a thread by invoking its work function.
  * If the work function returns @p chThdExit() is automatically invoked.
  */
-                PUBLIC  _port_thread_start
-_port_thread_start:
+                PUBLIC  __port_thread_start
+__port_thread_start:
 #if CH_DBG_SYSTEM_STATE_CHECK
-                bl      _dbg_check_unlock
+                bl      __dbg_check_unlock
 #endif
 #if CH_DBG_STATISTICS
-                bl      _stats_stop_measure_crit_thd
+                bl      __stats_stop_measure_crit_thd
 #endif
                 cpsie   i
                 mov     r0, r5
                 blx     r4
                 movs    r0, #0              /* MSG_OK */
                 bl      chThdExit
-_zombies:       b       _zombies
+.zombies:       b       .zombies
 
 /*
  * Post-IRQ switch code.
  * Exception handlers return here for context switching.
  */
-                PUBLIC  _port_switch_from_isr
-                PUBLIC  _port_exit_from_isr
-_port_switch_from_isr:
+                PUBLIC  __port_switch_from_isr
+                PUBLIC  __port_exit_from_isr
+__port_switch_from_isr:
 #if CH_DBG_STATISTICS
-                bl      _stats_start_measure_crit_thd
+                bl      __stats_start_measure_crit_thd
 #endif
 #if CH_DBG_SYSTEM_STATE_CHECK
-                bl      _dbg_check_lock
+                bl      __dbg_check_lock
 #endif
-                bl      chSchDoReschedule
+                bl      chSchDoPreemption
 #if CH_DBG_SYSTEM_STATE_CHECK
-                bl      _dbg_check_unlock
+                bl      __dbg_check_unlock
 #endif
 #if CH_DBG_STATISTICS
-                bl      _stats_stop_measure_crit_thd
+                bl      __stats_stop_measure_crit_thd
 #endif
-_port_exit_from_isr:
+__port_exit_from_isr:
                 ldr     r2, =SCB_ICSR
                 movs    r3, #128
 #if CORTEX_ALTERNATE_SWITCH
@@ -155,8 +155,8 @@ _port_exit_from_isr:
                 lsls    r3, r3, #24
                 str     r3, [r2, #0]
 #endif
-waithere:
-                b       waithere
+.waithere:
+                b       .waithere
 
                 END
 
