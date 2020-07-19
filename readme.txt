@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- FIX: Fixed wrong sector count in EFL driver for L4+ dual bank configuration 
+        (bug #1112)
 - NEW: Stand-alone ARMv6-M port.
 - NEW: Stand-alone ARMv7-M port.
 - NEW: Merged RT7.
