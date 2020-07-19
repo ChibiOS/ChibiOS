@@ -77,7 +77,7 @@ static const flash_descriptor_t efl_lld_size1[STM32_FLASH_NUMBER_OF_BANKS] = {
                            FLASH_ATTR_ECC_CAPABLE   |
                            FLASH_ATTR_ECC_ZERO_LINE_CAPABLE,
       .page_size         = STM32_FLASH_LINE_SIZE,
-      .sectors_count     = STM32_FLASH_SECTORS_TOTAL_1M,
+      .sectors_count     = (STM32_FLASH_SECTORS_TOTAL_1M * 2),
       .sectors           = NULL,
       .sectors_size      = STM32_FLASH_DUAL_SECTOR_SIZE_1M,
       .address           = (uint8_t *)FLASH_BASE,
@@ -105,7 +105,7 @@ static const flash_descriptor_t efl_lld_size2[STM32_FLASH_NUMBER_OF_BANKS] = {
                            FLASH_ATTR_ECC_CAPABLE   |
                            FLASH_ATTR_ECC_ZERO_LINE_CAPABLE,
       .page_size         = STM32_FLASH_LINE_SIZE,
-      .sectors_count     = STM32_FLASH_SECTORS_TOTAL_2M,
+      .sectors_count     = (STM32_FLASH_SECTORS_TOTAL_2M * 2),
       .sectors           = NULL,
       .sectors_size      = STM32_FLASH_DUAL_SECTOR_SIZE_2M,
       .address           = (uint8_t *)FLASH_BASE,

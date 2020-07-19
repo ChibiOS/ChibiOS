@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 20.3.2 ***
+- FIX: Fixed wrong sector count in EFL driver for L4+ dual bank configuration 
+        (bug #1112)
 - NEW: Added a new setting to STM32 USBv1 allowing for some clock deviation
        from 48MHz. Renamed setting USB_HOST_WAKEUP_DURATION to
        STM32_USB_HOST_WAKEUP_DURATION for consistency.
