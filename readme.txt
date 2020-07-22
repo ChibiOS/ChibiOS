@@ -74,8 +74,6 @@
 *****************************************************************************
 
 *** Next ***
-- FIX: Fixed wrong sector count in EFL driver for L4+ dual bank configuration 
-        (bug #1112)
 - NEW: Stand-alone ARMv6-M port.
 - NEW: Stand-alone ARMv7-M port.
 - NEW: Merged RT7.
@@ -102,6 +100,8 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Fixed wrong sector count in EFL driver for L4+ dual bank configuration 
+       (bug #1112)(backported to 20.3.2).
 - FIX: Fixed wrong preprocessor checks in STM32 TIMv1 ICU driver (bug #1111)
        (backported to 20.3.2)(backported to 19.1.5).
 - FIX: Fixed wrong revisions handling in STM32H743 HAL (bug #1110)
