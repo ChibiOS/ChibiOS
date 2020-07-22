@@ -74,11 +74,12 @@
 *****************************************************************************
 
 *** 20.3.2 ***
-- FIX: Fixed wrong sector count in EFL driver for L4+ dual bank configuration 
-        (bug #1112)
+- NEW: Updated FatFS to version 0.14.
 - NEW: Added a new setting to STM32 USBv1 allowing for some clock deviation
        from 48MHz. Renamed setting USB_HOST_WAKEUP_DURATION to
        STM32_USB_HOST_WAKEUP_DURATION for consistency.
+- FIX: Fixed wrong sector count in EFL driver for L4+ dual bank configuration 
+       (bug #1112).
 - FIX: Fixed wrong preprocessor checks in STM32 TIMv1 ICU driver (bug #1111).
 - FIX: Fixed wrong revisions handling in STM32H743 HAL (bug #1110).
 - FIX: Fixed missing STM32_I2C_BDMA_REQUIRED definition in I2Cv3 driver
