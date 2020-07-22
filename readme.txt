@@ -100,6 +100,8 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Fixed wrong condition in STM32 BDMAv1 driver (bug #1115)
+       (backported to 20.3.2).
 - FIX: Fixed HSI48 not getting enabled on STM32H7 (bug #1114)
        (backported to 20.3.2).
 - FIX: Fixed LPUART1 support for STM32H7xx (bug #1113)

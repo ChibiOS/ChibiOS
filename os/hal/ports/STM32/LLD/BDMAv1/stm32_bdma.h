@@ -272,7 +272,7 @@ typedef struct {
  *
  * @special
  */
-#if defined(STM32_ENFORCE_H7_REV_XY) || defined(__DOXYGEN__)
+#if !defined(STM32_ENFORCE_H7_REV_XY) || defined(__DOXYGEN__)
 #define bdmaStreamSetMemory(stp, addr) {                                    \
   (stp)->channel->CM0AR  = (uint32_t)(addr);                                \
 }
