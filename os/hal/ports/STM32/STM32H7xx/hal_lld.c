@@ -276,14 +276,22 @@ void stm32_clock_init(void) {
 #endif
   while ((RCC->CR & RCC_CR_HSERDY) == 0)
     ;                           /* Waits until HSE is stable.               */
-#endif
+#endif /* STM32_HSE_ENABLED == TRUE */
+
+  /* HSI48 activation.*/
+#if STM32_HSI48_ENABLED == TRUE
+  RCC->CR |= RCC_CR_HSI48ON;
+  while ((RCC->CR & RCC_CR_HSI48RDY) == 0)
+    ;                           /* Waits until HSI48 is stable.             */
+
+#endif /* STM32_HSI48_ENABLED == TRUE */
 
   /* CSI activation.*/
 #if STM32_CSI_ENABLED == TRUE
   RCC->CR |= RCC_CR_CSION;
   while ((RCC->CR & RCC_CR_CSIRDY) == 0)
     ;                           /* Waits until CSI is stable.               */
-#endif /* STM32_HSE_ENABLED == TRUE */
+#endif /* STM32_CSI_ENABLED == TRUE */
 
   /* LSI activation.*/
 #if STM32_LSI_ENABLED == TRUE
