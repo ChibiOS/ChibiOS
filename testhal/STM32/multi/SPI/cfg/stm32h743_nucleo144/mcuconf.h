@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2020 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -218,6 +218,7 @@
 #define STM32_IRQ_USART6_PRIORITY           12
 #define STM32_IRQ_UART7_PRIORITY            12
 #define STM32_IRQ_UART8_PRIORITY            12
+#define STM32_IRQ_LPUART1_PRIORITY          12
 
 /*
  * ADC driver system settings.
@@ -372,6 +373,7 @@
 #define STM32_SERIAL_USE_USART6             FALSE
 #define STM32_SERIAL_USE_UART7              FALSE
 #define STM32_SERIAL_USE_UART8              FALSE
+#define STM32_SERIAL_USE_LPUART1            FALSE
 
 /*
  * SPI driver system settings.
