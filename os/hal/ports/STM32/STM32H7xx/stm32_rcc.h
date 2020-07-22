@@ -1690,6 +1690,30 @@
 /** @} */
 
 /**
+ * @brief   Enables the LPUART1 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableLPUART1(lp) rccEnableAPB4(RCC_APB4ENR_LPUART1EN, lp)
+
+/**
+ * @brief   Disables the LPUART1 peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableLPUART1() rccDisableAPB4(RCC_APB4ENR_LPUART1EN)
+
+/**
+ * @brief   Resets the LPUART1 peripheral.
+ *
+ * @api
+ */
+#define rccResetLPUART1() rccResetAPB4(RCC_APB4RSTR_LPUART1RST)
+/** @} */
+
+/**
  * @name    LTDC peripheral specific RCC operations
  * @{
  */

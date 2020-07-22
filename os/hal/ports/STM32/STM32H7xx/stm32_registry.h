@@ -258,7 +258,7 @@
 #define STM32_HAS_USART6                    TRUE
 #define STM32_HAS_UART7                     TRUE
 #define STM32_HAS_UART8                     TRUE
-#define STM32_HAS_LPUART1                   FALSE
+#define STM32_HAS_LPUART1                   TRUE
 
 /* USB attributes.*/
 #define STM32_OTG_STEPPING                  2
@@ -486,7 +486,7 @@
 #define STM32_HAS_USART6                    TRUE
 #define STM32_HAS_UART7                     TRUE
 #define STM32_HAS_UART8                     TRUE
-#define STM32_HAS_LPUART1                   FALSE
+#define STM32_HAS_LPUART1                   TRUE
 
 /* USB attributes.*/
 #define STM32_OTG_STEPPING                  2

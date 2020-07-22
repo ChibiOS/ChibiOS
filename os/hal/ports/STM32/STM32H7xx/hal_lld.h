@@ -2615,7 +2615,7 @@
 /**
  * @brief   LPUART1 clock.
  */
-#define STM32_LPUART1CLK            STM32_PCLK1
+#define STM32_LPUART1CLK            STM32_PCLK4
 
 #elif STM32_LPUART1SEL == STM32_LPUART1SEL_PLL2_Q_CK
 #define STM32_LPUART1CLK            STM32_PLL2_Q_CK
