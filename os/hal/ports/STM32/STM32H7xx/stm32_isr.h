@@ -56,6 +56,7 @@
 #define STM32_USART6_SUPPRESS_ISR
 #define STM32_UART7_SUPPRESS_ISR
 #define STM32_UART8_SUPPRESS_ISR
+#define STM32_LPUART1_SUPPRESS_ISR
 /** @} */
 
 /**
@@ -289,6 +290,7 @@
 #define STM32_USART6_HANDLER                Vector15C
 #define STM32_UART7_HANDLER                 Vector188
 #define STM32_UART8_HANDLER                 Vector18C
+#define STM32_LPUART1_HANDLER               Vector278
 
 #define STM32_USART1_NUMBER                 37
 #define STM32_USART2_NUMBER                 38
@@ -298,6 +300,7 @@
 #define STM32_USART6_NUMBER                 71
 #define STM32_UART7_NUMBER                  82
 #define STM32_UART8_NUMBER                  83
+#define STM32_LPUART1_NUMBER                142
 
 /*
  * USB/OTG units.

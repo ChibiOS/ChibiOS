@@ -141,7 +141,8 @@ void irqInit(void) {
   uart5_irq_init();
   usart6_irq_init();
   uart7_irq_init();
-  uart5_irq_init();
+  uart8_irq_init();
+  lpuart1_irq_init();
 }
 
 /**
@@ -190,7 +191,8 @@ void irqDeinit(void) {
   uart5_irq_deinit();
   usart6_irq_deinit();
   uart7_irq_deinit();
-  uart5_irq_deinit();
+  uart8_irq_deinit();
+  lpuart1_irq_deinit();
 }
 
 /** @} */

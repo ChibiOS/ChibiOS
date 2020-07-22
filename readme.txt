@@ -80,6 +80,7 @@
        STM32_USB_HOST_WAKEUP_DURATION for consistency.
 - FIX: Fixed wrong condition in STM32 BDMAv1 driver (bug #1115).
 - FIX: Fixed HSI48 not getting enabled on STM32H7 (bug #1114).
+- FIX: Fixed LPUART1 support for STM32H7xx (bug #1113).
 - FIX: Fixed wrong sector count in EFL driver for L4+ dual bank configuration 
        (bug #1112).
 - FIX: Fixed wrong preprocessor checks in STM32 TIMv1 ICU driver (bug #1111).
