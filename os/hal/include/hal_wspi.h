@@ -71,9 +71,10 @@ typedef enum {
   WSPI_UNINIT = 0,                  /**< Not initialized.                   */
   WSPI_STOP = 1,                    /**< Stopped.                           */
   WSPI_READY = 2,                   /**< Ready.                             */
-  WSPI_ACTIVE = 3,                  /**< Exchanging data.                   */
-  WSPI_COMPLETE = 4,                /**< Asynchronous operation complete.   */
-  WSPI_MEMMAP = 5                   /**< In memory mapped mode.             */
+  WSPI_SEND = 3,                    /**< Sending data.                      */
+  WSPI_RECEIVE = 4,                 /**< Receiving data.                    */
+  WSPI_COMPLETE = 5,                /**< Asynchronous operation complete.   */
+  WSPI_MEMMAP = 6                   /**< In memory mapped mode.             */
 } wspistate_t;
 
 /**
@@ -274,7 +275,7 @@ struct hal_wspi_driver {
   osalDbgAssert(((cmdp)->cfg & WSPI_CFG_DATA_MODE_MASK) ==                  \
                 WSPI_CFG_DATA_MODE_NONE,                                    \
                 "data mode specified");                                     \
-  (wspip)->state = WSPI_ACTIVE;                                             \
+  (wspip)->state = WSPI_SEND;                                               \
   wspi_lld_command(wspip, cmdp);                                            \
 }
 
@@ -294,7 +295,7 @@ struct hal_wspi_driver {
   osalDbgAssert(((cmdp)->cfg & WSPI_CFG_DATA_MODE_MASK) !=                  \
                 WSPI_CFG_DATA_MODE_NONE,                                    \
                 "data mode required");                                      \
-  (wspip)->state = WSPI_ACTIVE;                                             \
+  (wspip)->state = WSPI_SEND;                                               \
   wspi_lld_send(wspip, cmdp, n, txbuf);                                     \
 }
 
@@ -314,7 +315,7 @@ struct hal_wspi_driver {
   osalDbgAssert(((cmdp)->cfg & WSPI_CFG_DATA_MODE_MASK) !=                  \
                 WSPI_CFG_DATA_MODE_NONE,                                    \
                 "data mode required");                                      \
-  (wspip)->state = WSPI_ACTIVE;                                             \
+  (wspip)->state = WSPI_RECEIVE;                                            \
   wspi_lld_receive(wspip, cmdp, n, rxbuf);                                  \
 }
 

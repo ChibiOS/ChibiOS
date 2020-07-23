@@ -78,6 +78,7 @@
 - NEW: Added a new setting to STM32 USBv1 allowing for some clock deviation
        from 48MHz. Renamed setting USB_HOST_WAKEUP_DURATION to
        STM32_USB_HOST_WAKEUP_DURATION for consistency.
+- FIX: Fixed STM32 QSPI errata workaround (bug #1116).
 - FIX: Fixed wrong condition in STM32 BDMAv1 driver (bug #1115).
 - FIX: Fixed HSI48 not getting enabled on STM32H7 (bug #1114).
 - FIX: Fixed LPUART1 support for STM32H7xx (bug #1113).
