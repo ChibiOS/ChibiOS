@@ -308,6 +308,11 @@
 #error "ADC driver activated but no ADC peripheral assigned"
 #endif
 
+/* Dual mode is only supported with ADC12.*/
+#if !STM32_ADC_USE_ADC12 && STM32_ADC_DUAL_MODE
+#error "STM32_ADC_DUAL_MODE only supported with ADC12"
+#endif
+
 /* Check on the presence of the DMA streams settings in mcuconf.h.*/
 #if STM32_ADC_USE_ADC12 && !defined(STM32_ADC_ADC12_DMA_STREAM)
 #error "STM32_ADC_ADC12_DMA_STREAM not defined"
