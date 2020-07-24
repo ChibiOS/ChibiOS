@@ -100,7 +100,9 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
-- FIX: Fixed STM32 QSPI errata workaround (bug #1116)
+- FIX: Fixed several problems in STM32 ADCv4 (bug #1116)
+       (backported to 20.3.2).
+- FIX: Fixed STM32 QSPI errata workaround (bug #1117)
        (backported to 20.3.2).
 - FIX: Fixed wrong condition in STM32 BDMAv1 driver (bug #1115)
        (backported to 20.3.2).

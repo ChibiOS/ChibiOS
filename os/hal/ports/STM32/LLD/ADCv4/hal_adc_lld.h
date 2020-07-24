@@ -54,6 +54,7 @@
 #define ADC_CHANNEL_IN16        16U /**< @brief External analog input 16.   */
 #define ADC_CHANNEL_IN17        17U /**< @brief External analog input 17.   */
 #define ADC_CHANNEL_IN18        18U /**< @brief External analog input 18.   */
+#define ADC_CHANNEL_IN19        19U /**< @brief External analog input 19.   */
 /** @} */
 
 /**
@@ -79,6 +80,7 @@
 #define ADC_SELMASK_IN16        (1U << ADC_CHANNEL_IN16)
 #define ADC_SELMASK_IN17        (1U << ADC_CHANNEL_IN17)
 #define ADC_SELMASK_IN18        (1U << ADC_CHANNEL_IN18)
+#define ADC_SELMASK_IN19        (1U << ADC_CHANNEL_IN19)
 /** @} */
 
 /**
