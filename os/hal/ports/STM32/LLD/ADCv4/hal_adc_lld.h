@@ -360,9 +360,9 @@
 #if !defined(STM32_ENFORCE_H7_REV_XY)
 /* ADC clock source checks.*/
 #if (STM32_D1HPRE == STM32_D1HPRE_DIV1)
-#define STM32_ADC_SCLK                  STM32_SYSCLK
+#define STM32_ADC_SCLK                  STM32_HCLK
 #else
-#define STM32_ADC_SCLK                  (STM32_SYSCLK / 2)
+#define STM32_ADC_SCLK                  (STM32_HCLK / 2)
 #endif
 
 #if STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK

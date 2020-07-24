@@ -272,15 +272,9 @@ typedef struct {
  *
  * @special
  */
-#if defined(STM32_ENFORCE_H7_REV_XY) || defined(__DOXYGEN__)
 #define bdmaStreamSetMemory(stp, addr) {                                    \
   (stp)->channel->CM0AR  = (uint32_t)(addr);                                \
 }
-#else
-#define bdmaStreamSetMemory(stp, addr) {                                    \
-  (stp)->channel->CMAR  = (uint32_t)(addr);                                 \
-}
-#endif
 
 /**
  * @brief   Sets the number of transfers to be performed.
