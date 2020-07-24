@@ -131,9 +131,9 @@
  * @name    Status flags passed to the ISR callbacks
  * @{
  */
-#define STM32_BDMA_ISR_TEIF                 BDMA_ISR_TEIF1
-#define STM32_BDMA_ISR_HTIF                 BDMA_ISR_HTIF1
-#define STM32_BDMA_ISR_TCIF                 BDMA_ISR_TCIF1
+#define STM32_BDMA_ISR_TEIF                 BDMA_ISR_TEIF0
+#define STM32_BDMA_ISR_HTIF                 BDMA_ISR_HTIF0
+#define STM32_BDMA_ISR_TCIF                 BDMA_ISR_TCIF0
 /** @} */
 
 /*===========================================================================*/
@@ -272,15 +272,9 @@ typedef struct {
  *
  * @special
  */
-#if !defined(STM32_ENFORCE_H7_REV_XY) || defined(__DOXYGEN__)
 #define bdmaStreamSetMemory(stp, addr) {                                    \
   (stp)->channel->CM0AR  = (uint32_t)(addr);                                \
 }
-#else
-#define bdmaStreamSetMemory(stp, addr) {                                    \
-  (stp)->channel->CMAR  = (uint32_t)(addr);                                 \
-}
-#endif
 
 /**
  * @brief   Sets the number of transfers to be performed.
