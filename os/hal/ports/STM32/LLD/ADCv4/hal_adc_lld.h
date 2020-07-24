@@ -142,7 +142,7 @@
 #define ADC_CCR_DAMDF_MASK              (3U << 14U)
 #define ADC_CCR_DAMDF_DISABLED          (0U << 14U)
 #define ADC_CCR_DAMDF_HWORD             (2U << 14U)
-#define ADC_CCR_DAMDF_WORD              (3U << 14U)
+#define ADC_CCR_DAMDF_BYTE              (3U << 14U)
 #define ADC_CCR_CKMODE_MASK             (3U << 16U)
 #define ADC_CCR_CKMODE_ADCCK            (0U << 16U)
 #define ADC_CCR_CKMODE_AHB_DIV1         (1U << 16U)

@@ -32,24 +32,24 @@
 
 #if STM32_ADC_DUAL_MODE == TRUE
 #if STM32_ADC_COMPACT_SAMPLES == TRUE
-/* Compact type dual mode.*/
-#define ADC_DMA_SIZE    (STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD)
-#define ADC_DMA_DAMDF   ADC_CCR_DAMDF_HWORD
+/* Compact type dual mode, 2x8-bit.*/
+#define ADC12_DMA_SIZE  (STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD)
+#define ADC_DMA_DAMDF   ADC_CCR_DAMDF_BYTE
 
 #else /* STM32_ADC_COMPACT_SAMPLES == FALSE */
-/* Large type dual mode.*/
+/* Large type dual mode, 2x16bit.*/
 #define ADC_DMA_SIZE    (STM32_DMA_CR_MSIZE_WORD | STM32_DMA_CR_PSIZE_WORD)
-#define ADC_DMA_DAMDF   ADC_CCR_DAMDF_WORD
+#define ADC_DMA_DAMDF   ADC_CCR_DAMDF_HWORD
 #endif /* !STM32_ADC_COMPACT_SAMPLES */
 
 #else /* STM32_ADC_DUAL_MODE == FALSE */
 #if STM32_ADC_COMPACT_SAMPLES
-/* Compact type single mode.*/
+/* Compact type single mode, 8-bit.*/
 #define ADC_DMA_SIZE    (STM32_DMA_CR_MSIZE_BYTE | STM32_DMA_CR_PSIZE_BYTE)
 #define ADC_DMA_DAMDF   ADC_CCR_DAMDF_DISABLED
 
 #else /* STM32_ADC_COMPACT_SAMPLES == FALSE */
-/* Large type single mode.*/
+/* Large type single mode, 16-bit.*/
 #define ADC_DMA_SIZE    (STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD)
 #define ADC_DMA_DAMDF   ADC_CCR_DAMDF_DISABLED
 #endif /* STM32_ADC_COMPACT_SAMPLES == FALSE */
