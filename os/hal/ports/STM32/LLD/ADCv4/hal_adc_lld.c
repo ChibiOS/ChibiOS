@@ -451,6 +451,22 @@ void adc_lld_start(ADCDriver *adcp) {
     adc_lld_vreg_on(adcp);
     adc_lld_calibrate(adcp);
 
+    /* Configure the ADC boost. */
+#if STM32_ADC_USE_ADC12 == TRUE
+    if (&ADCD1 == adcp) {
+      adcp->adcm->CR |= STM32_ADC12_BOOST;
+#if STM32_ADC_DUAL_MODE
+      adcp->adcs->CR |= STM32_ADC12_BOOST;
+#endif
+    }
+#endif
+
+#if STM32_ADC_USE_ADC3 == TRUE
+    if (&ADCD3 == adcp) {
+      adcp->adcm->CR |= STM32_ADC3_BOOST;
+    }
+#endif
+
     /* Master ADC enabled here in order to reduce conversions latencies.*/
     adc_lld_analog_on(adcp);
   }
