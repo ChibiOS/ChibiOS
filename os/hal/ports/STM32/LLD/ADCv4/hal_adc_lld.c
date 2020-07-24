@@ -572,12 +572,12 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
       cfgr = grpp->cfgr | ADC_CFGR_DMNGT_CIRCULAR;
       if (adcp->depth > 1) {
         /* If circular buffer depth > 1, then the half transfer interrupt
-          is enabled in order to allow streaming processing.*/
+           is enabled in order to allow streaming processing.*/
         dmamode |= STM32_DMA_CR_HTIE;
       }
-      else {
-        cfgr = grpp->cfgr | ADC_CFGR_DMNGT_ONESHOT;
-      }
+    }
+    else {
+      cfgr = grpp->cfgr | ADC_CFGR_DMNGT_ONESHOT;
     }
 
     /* DMA setup.*/
@@ -603,12 +603,12 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
       cfgr = grpp->cfgr | ADC_CFGR_DMNGT_CIRCULAR;
       if (adcp->depth > 1) {
         /* If circular buffer depth > 1, then the half transfer interrupt
-          is enabled in order to allow streaming processing.*/
+           is enabled in order to allow streaming processing.*/
         dmamode |= STM32_BDMA_CR_HTIE;
       }
-      else {
-        cfgr = grpp->cfgr | ADC_CFGR_DMNGT_ONESHOT;
-      }
+    }
+    else {
+      cfgr = grpp->cfgr | ADC_CFGR_DMNGT_ONESHOT;
     }
 
     /* DMA setup.*/
