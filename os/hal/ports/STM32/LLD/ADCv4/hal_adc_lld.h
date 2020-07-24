@@ -350,7 +350,42 @@
 #error "Invalid IRQ priority assigned to ADC3"
 #endif
 
+#if !defined(STM32_ENFORCE_H7_REV_XY)
 /* ADC clock source checks.*/
+#if (STM32_D1HPRE == STM32_D1HPRE_DIV1)
+#define STM32_ADC_SCLK                  STM32_SYSCLK
+#else
+#define STM32_ADC_SCLK                  (STM32_SYSCLK / 2)
+#endif
+
+#if STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
+/* CHTODO: also check ADC_CCR_PRESC.*/
+#define STM32_ADC12_CLOCK               (STM32_ADCCLK / 2)
+#elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
+#define STM32_ADC12_CLOCK               (STM32_ADC_SCLK / 1 / 2)
+#elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV2
+#define STM32_ADC12_CLOCK               (STM32_ADC_SCLK / 2 / 2)
+#elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV4
+#define STM32_ADC12_CLOCK               (STM32_ADC_SCLK / 4 / 2)
+#else
+#error "invalid clock mode selected for STM32_ADC_ADC12_CLOCK_MODE"
+#endif
+
+#if STM32_ADC_ADC3_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
+/* CHTODO: also check ADC_CCR_PRESC.*/
+#define STM32_ADC3_CLOCK               (STM32_ADCCLK / 2)
+#elif STM32_ADC_ADC3_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
+#define STM32_ADC3_CLOCK               (STM32_ADC_SCLK / 1 / 2)
+#elif STM32_ADC_ADC3_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV2
+#define STM32_ADC3_CLOCK               (STM32_ADC_SCLK / 2 / 2)
+#elif STM32_ADC_ADC3_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV4
+#define STM32_ADC3_CLOCK               (STM32_ADC_SCLK / 4 / 2)
+#else
+#error "invalid clock mode selected for STM32_ADC_ADC3_CLOCK_MODE"
+#endif
+
+#else /* defined(STM32_ENFORCE_H7_REV_XY) */
+
 #if STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
 #define STM32_ADC12_CLOCK               STM32_ADCCLK
 #elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
@@ -374,6 +409,8 @@
 #else
 #error "invalid clock mode selected for STM32_ADC_ADC3_CLOCK_MODE"
 #endif
+
+#endif /* defined(STM32_ENFORCE_H7_REV_XY) */
 
 #if STM32_ADC12_CLOCK > STM32_ADCCLK_MAX
 #error "STM32_ADC12_CLOCK exceeding maximum frequency (STM32_ADCCLK_MAX)"
