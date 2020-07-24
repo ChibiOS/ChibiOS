@@ -131,9 +131,9 @@
  * @name    Status flags passed to the ISR callbacks
  * @{
  */
-#define STM32_BDMA_ISR_TEIF                 BDMA_ISR_TEIF1
-#define STM32_BDMA_ISR_HTIF                 BDMA_ISR_HTIF1
-#define STM32_BDMA_ISR_TCIF                 BDMA_ISR_TCIF1
+#define STM32_BDMA_ISR_TEIF                 BDMA_ISR_TEIF0
+#define STM32_BDMA_ISR_HTIF                 BDMA_ISR_HTIF0
+#define STM32_BDMA_ISR_TCIF                 BDMA_ISR_TCIF0
 /** @} */
 
 /*===========================================================================*/
