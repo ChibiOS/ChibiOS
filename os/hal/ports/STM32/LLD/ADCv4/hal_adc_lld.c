@@ -530,7 +530,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   uint32_t dmamode, cfgr;
   const ADCConversionGroup *grpp = adcp->grpp;
 #if STM32_ADC_DUAL_MODE
-  uint32_t ccr = grpp->ccr & ~(ADC_CCR_CKMODE_MASK | ADC_CCR_DUAL_MASK);
+  uint32_t ccr = grpp->ccr & ~(ADC_CCR_CKMODE_MASK | ADC_CCR_DAMDF_MASK);
 #endif
 
   osalDbgAssert(!STM32_ADC_DUAL_MODE || ((grpp->num_channels & 1) == 0),
@@ -573,7 +573,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
      in the conversion group configuration structure, static settings are
      preserved.*/
   adcp->adcc->CCR   = (adcp->adcc->CCR &
-                       (ADC_CCR_CKMODE_MASK | ADC_CCR_DUAL_MASK)) | ccr;
+                       (ADC_CCR_CKMODE_MASK | ADC_CCR_DAMDF_MASK)) | ccr;
 
   adcp->adcm->CFGR2 = grpp->cfgr2;
   adcp->adcm->PCSEL = grpp->pcsel;
