@@ -109,10 +109,16 @@
 
 #define ADC_CFGR_RES_MASK               (7U << 2U)
 #define ADC_CFGR_RES_16BITS             (0U << 2U)
+#define ADC_CFGR_RES_10BITS             (3U << 2U)
+#if !defined(STM32_ENFORCE_H7_REV_XY)
+#define ADC_CFGR_RES_14BITS             (5U << 2U)
+#define ADC_CFGR_RES_12BITS             (6U << 2U)
+#define ADC_CFGR_RES_8BITS              (7U << 2U)
+#else
 #define ADC_CFGR_RES_14BITS             (1U << 2U)
 #define ADC_CFGR_RES_12BITS             (2U << 2U)
-#define ADC_CFGR_RES_10BITS             (3U << 2U)
 #define ADC_CFGR_RES_8BITS              (4U << 2U)
+#endif
 
 #define ADC_CFGR_EXTSEL_MASK            (15U << 5U)
 #define ADC_CFGR_EXTSEL_SRC(n)          ((n) << 5U)
