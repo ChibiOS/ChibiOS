@@ -114,4 +114,29 @@ caddr_t _sbrk_r(struct _reent *r, int incr) {
   return (caddr_t)prevp;
 }
 
+__attribute__((used))
+int _getpid_r(struct _reent *r) {
+
+  (void)r;
+
+  return 1;
+}
+
+__attribute__((used))
+int _kill_r(struct _reent *r, int pid, int sig) {
+
+  (void)pid;
+  (void)sig;
+
+  __errno_r(r) = EINVAL;
+  return -1;
+}
+
+__attribute__((used))
+void _exit(int code) {
+
+  sbExit((msg_t)code);
+  while (true);
+}
+
 /*** EOF ***/
