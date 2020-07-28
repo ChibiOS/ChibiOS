@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Support for 3 analog watchdogs in STM32G0 ADC.
 - NEW: Stand-alone ARMv6-M port.
 - NEW: Stand-alone ARMv7-M port.
 - NEW: Merged RT7.

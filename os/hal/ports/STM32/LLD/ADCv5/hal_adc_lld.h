@@ -35,16 +35,6 @@
  * @name    Sampling rates
  * @{
  */
-#if defined(STM32F0XX) || defined(__DOXYGEN__)
-#define ADC_SMPR_SMP_1P5        0U  /**< @brief 14 cycles conversion time   */
-#define ADC_SMPR_SMP_7P5        1U  /**< @brief 21 cycles conversion time.  */
-#define ADC_SMPR_SMP_13P5       2U  /**< @brief 28 cycles conversion time.  */
-#define ADC_SMPR_SMP_28P5       3U  /**< @brief 41 cycles conversion time.  */
-#define ADC_SMPR_SMP_41P5       4U  /**< @brief 54 cycles conversion time.  */
-#define ADC_SMPR_SMP_55P5       5U  /**< @brief 68 cycles conversion time.  */
-#define ADC_SMPR_SMP_71P5       6U  /**< @brief 84 cycles conversion time.  */
-#define ADC_SMPR_SMP_239P5      7U  /**< @brief 252 cycles conversion time. */
-#elif defined(STM32L0XX)
 #define ADC_SMPR_SMP_1P5        0U  /**< @brief 14 cycles conversion time   */
 #define ADC_SMPR_SMP_3P5        1U  /**< @brief 16 cycles conversion time.  */
 #define ADC_SMPR_SMP_7P5        2U  /**< @brief 20 cycles conversion time.  */
@@ -53,7 +43,6 @@
 #define ADC_SMPR_SMP_39P5       5U  /**< @brief 52 cycles conversion time.  */
 #define ADC_SMPR_SMP_79P5       6U  /**< @brief 92 cycles conversion time.  */
 #define ADC_SMPR_SMP_160P5      7U  /**< @brief 173 cycles conversion time. */
-#endif
 /** @} */
 
 /**
@@ -85,7 +74,6 @@
 #define STM32_ADC_CKMODE_PCLK_DIV4      (2U << 30U)
 #define STM32_ADC_CKMODE_PCLK           (3U << 30U)
 
-#if (STM32_ADC_SUPPORTS_OVERSAMPLING == TRUE) || defined(__DOXYGEN__)
 #define ADC_CFGR2_OVSR_MASK             (7U << 2U)
 #define ADC_CFGR2_OVSR_2X               (0U << 2U)
 #define ADC_CFGR2_OVSR_4X               (1U << 2U)
@@ -98,11 +86,10 @@
 
 #define ADC_CFGR2_OVSS_MASK             (15 << 5U)
 #define ADC_CFGR2_OVSS_SHIFT(n)         ((n) << 5U)
-#endif
 /** @} */
 
 /**
- * @name    Threashold register initializer
+ * @name    Threashold registers initializer
  * @{
  */
 #define ADC_TR(low, high)               (((uint32_t)(high) << 16U) |        \
@@ -154,7 +141,6 @@
 #define STM32_ADC_ADC1_DMA_IRQ_PRIORITY     2
 #endif
 
-#if (STM32_ADC_SUPPORTS_PRESCALER == TRUE) || defined(__DOXYGEN__)
 /*
  * @brief   ADC prescaler setting.
  * @note    This setting has effect only in asynchronous clock mode (the
@@ -162,7 +148,6 @@
  */
 #if !defined(STM32_ADC_PRESCALER_VALUE) || defined(__DOXYGEN__)
 #define STM32_ADC_PRESCALER_VALUE           2
-#endif
 #endif
 
 /** @} */
@@ -172,23 +157,13 @@
 /*===========================================================================*/
 
 /* Supported devices checks.*/
-#if !defined(STM32F0XX) && !defined(STM32L0XX)
-#error "ADCv1 only supports F0 and L0 STM32 devices"
-#endif
-
-#if defined(STM32L0XX) || defined(__DOXYGEN__)
-#define STM32_ADCV1_OVERSAMPLING            TRUE
-#else
-#define STM32_ADCV1_OVERSAMPLING            FALSE
+#if !defined(STM32G0XX)
+#error "ADCv5 only supports G0 STM32 devices"
 #endif
 
 /* Registry checks.*/
 #if !defined(STM32_HAS_ADC1)
 #error "STM32_HAS_ADC1 not defined in registry"
-#endif
-
-#if !defined(STM32_ADC_SUPPORTS_PRESCALER)
-#error "STM32_ADC_SUPPORTS_PRESCALER not defined in registry"
 #endif
 
 #if (STM32_ADC_USE_ADC1 && !defined(STM32_ADC1_HANDLER))
@@ -235,20 +210,9 @@
 #if STM32_ADC_USE_ADC1 && !defined(STM32_ADC_ADC1_DMA_STREAM)
 #error "ADC DMA stream not defined"
 #endif
-#if STM32_DMA_SUPPORTS_DMAMUX
 
-#else /* !STM32_DMA_SUPPORTS_DMAMUX */
-
-/* Check on the validity of the assigned DMA channels.*/
-#if STM32_ADC_USE_ADC1 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_ADC_ADC1_DMA_STREAM, STM32_ADC1_DMA_MSK)
-#error "invalid DMA stream associated to ADC1"
-#endif
-
-#endif /* !STM32_DMA_SUPPORTS_DMAMUX */
 
 /* ADC clock source checks.*/
-#if STM32_ADC_SUPPORTS_PRESCALER == TRUE
 #if STM32_ADC_PRESCALER_VALUE == 2
 #define STM32_ADC_PRESC                     1U
 #elif STM32_ADC_PRESCALER_VALUE == 4
@@ -273,7 +237,6 @@
 #define STM32_ADC_PRESC                     11U
 #else
 #error "Invalid value assigned to STM32_ADC_PRESCALER_VALUE"
-#endif
 #endif
 
 #if !defined(STM32_DMA_REQUIRED)
@@ -302,7 +265,9 @@ typedef uint16_t adc_channels_num_t;
 typedef enum {
   ADC_ERR_DMAFAILURE = 0,                   /**< DMA operations failure.    */
   ADC_ERR_OVERFLOW = 1,                     /**< ADC overflow condition.    */
-  ADC_ERR_AWD = 2                           /**< Analog watchdog triggered. */
+  ADC_ERR_AWD1 = 2,                         /**< Analog watchdog 1.         */
+  ADC_ERR_AWD2 = 3,                         /**< Analog watchdog 2.         */
+  ADC_ERR_AWD3 = 4                          /**< Analog watchdog 3.         */
 } adcerror_t;
 
 /*===========================================================================*/
@@ -330,7 +295,6 @@ typedef enum {
 /**
  * @brief   Low level fields of the ADC configuration structure.
  */
-#if (STM32_ADC_SUPPORTS_OVERSAMPLING == TRUE) || defined(__DOXYGEN__)
 #define adc_lld_configuration_group_fields                                  \
   /* ADC CFGR1 register initialization data.                                \
      NOTE: The bits DMAEN and DMACFG are enforced internally                \
@@ -343,32 +307,18 @@ typedef enum {
      NOTE: CKMODE bits must not be specified in this field and left to      \
            zero.*/                                                          \
   uint32_t                  cfgr2;                                          \
-  /* ADC TR register initialization data.*/                                 \
-  uint32_t                  tr;                                             \
+  /* ADC TR1 register initialization data.*/                                \
+  uint32_t                  tr1;                                            \
+  /* ADC TR2 register initialization data.*/                                \
+  uint32_t                  tr2;                                            \
+  /* ADC TR3 register initialization data.*/                                \
+  uint32_t                  tr3;                                            \
   /* ADC SMPR register initialization data.*/                               \
   uint32_t                  smpr;                                           \
   /* ADC CHSELR register initialization data.                               \
      NOTE: The number of bits at logic level one in this register must      \
            be equal to the number in the @p num_channels field.*/           \
   uint32_t                  chselr
-#else
-#define adc_lld_configuration_group_fields                                  \
-  /* ADC CFGR1 register initialization data.                                \
-     NOTE: The bits DMAEN and DMACFG are enforced internally                \
-           to the driver, keep them to zero.                                \
-     NOTE: The bits @p ADC_CFGR1_CONT or @p ADC_CFGR1_DISCEN must be        \
-           specified in continuous more or if the buffer depth is           \
-           greater than one.*/                                              \
-  uint32_t                  cfgr1;                                          \
-  /* ADC TR register initialization data.*/                                 \
-  uint32_t                  tr;                                             \
-  /* ADC SMPR register initialization data.*/                               \
-  uint32_t                  smpr;                                           \
-  /* ADC CHSELR register initialization data.                               \
-     NOTE: The number of bits at logic level one in this register must      \
-           be equal to the number in the @p num_channels field.*/           \
-  uint32_t                  chselr
-#endif
 
 /**
  * @brief   Changes the value of the ADC CCR register.
