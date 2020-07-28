@@ -92,9 +92,6 @@
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
-#define STM32_ADC_SUPPORTS_PRESCALER        TRUE
-#define STM32_ADC_SUPPORTS_OVERSAMPLING     TRUE
-
 #define STM32_HAS_ADC2                      FALSE
 #define STM32_HAS_ADC3                      FALSE
 #define STM32_HAS_ADC4                      FALSE
@@ -272,9 +269,6 @@
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
-#define STM32_ADC_SUPPORTS_PRESCALER        TRUE
-#define STM32_ADC_SUPPORTS_OVERSAMPLING     TRUE
-
 #define STM32_HAS_ADC2                      FALSE
 #define STM32_HAS_ADC3                      FALSE
 #define STM32_HAS_ADC4                      FALSE
