@@ -91,7 +91,7 @@
 /**
  * @brief   Delta list compression.
  *
- * @param[in] vtpl      pointer to the delta list to be compressed
+ * @param[in] vtlp      pointer to the delta list to be compressed
  * @param[in] deltanow  interval to be compacted starting from "lasttime"
  *
  * @notapi
