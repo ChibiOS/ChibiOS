@@ -89,11 +89,43 @@
 /** @} */
 
 /**
- * @name    Threashold registers initializer
+ * @name    CHSELR register initializers for CHSELRMOD=0
+ * @{
+ */
+#define ADC_CHSELR_CHSEL_N(n)           (1U << (n))
+/** @} */
+
+/**
+ * @name    CHSELR register initializers for CHSELRMOD=1
+ * @{
+ */
+#define ADC_CHSELR_SQ1_N(n)             ((uint32_t)(n) << 0U)
+#define ADC_CHSELR_SQ2_N(n)             ((uint32_t)(n) << 4U)
+#define ADC_CHSELR_SQ3_N(n)             ((uint32_t)(n) << 8U)
+#define ADC_CHSELR_SQ4_N(n)             ((uint32_t)(n) << 12U)
+#define ADC_CHSELR_SQ5_N(n)             ((uint32_t)(n) << 16U)
+#define ADC_CHSELR_SQ6_N(n)             ((uint32_t)(n) << 20U)
+#define ADC_CHSELR_SQ7_N(n)             ((uint32_t)(n) << 24U)
+#define ADC_CHSELR_SQ8_N(n)             ((uint32_t)(n) << 28U)
+
+#define ADC_CHSELR_SQ1_END              (15U << 0U)
+#define ADC_CHSELR_SQ2_END              (15U << 4U)
+#define ADC_CHSELR_SQ3_END              (15U << 8U)
+#define ADC_CHSELR_SQ4_END              (15U << 12U)
+#define ADC_CHSELR_SQ5_END              (15U << 16U)
+#define ADC_CHSELR_SQ6_END              (15U << 20U)
+#define ADC_CHSELR_SQ7_END              (15U << 24U)
+#define ADC_CHSELR_SQ8_END              (15U << 28U)
+/** @} */
+
+/**
+ * @name    Threshold registers initializers
  * @{
  */
 #define ADC_TR(low, high)               (((uint32_t)(high) << 16U) |        \
                                          (uint32_t)(low))
+#define ADC_TR_DISABLED                 ADC_TR(0U, 0x0FFFU)
+#define ADC_AWDCR_ENABLE(n)             (1U << (n))
 /** @} */
 
 /*===========================================================================*/
@@ -313,6 +345,10 @@ typedef enum {
   uint32_t                  tr2;                                            \
   /* ADC TR3 register initialization data.*/                                \
   uint32_t                  tr3;                                            \
+  /* ADC AWD2CR register initialization data.*/                             \
+  uint32_t                  awd2cr;                                         \
+  /* ADC AWD3CR register initialization data.*/                             \
+  uint32_t                  awd3cr;                                         \
   /* ADC SMPR register initialization data.*/                               \
   uint32_t                  smpr;                                           \
   /* ADC CHSELR register initialization data.                               \

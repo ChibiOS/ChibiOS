@@ -52,17 +52,21 @@ static void adcerrorcallback(ADCDriver *adcp, adcerror_t err) {
  * Channels:    IN7, IN8.
  */
 static const ADCConversionGroup adcgrpcfg1 = {
-  FALSE,
-  ADC_GRP1_NUM_CHANNELS,
-  NULL,
-  adcerrorcallback,
-  ADC_CFGR_CONT,            /* CFGR    */
-  ADC_TR(0, 4095),          /* TR1     */
-  {                         /* SMPR[2] */
+  .circular     = false,
+  .num_channels = ADC_GRP1_NUM_CHANNELS,
+  .end_cb       = NULL,
+  .error_cb     = adcerrorcallback,
+  .cfgr         = ADC_CFGR_CONT,
+  .tr1          = ADC_TR_DISABLED,
+  .tr2          = ADC_TR_DISABLED,
+  .tr3          = ADC_TR_DISABLED,
+  .awd2cr       = 0U,
+  .awd3cr       = 0U,
+  .smpr         = {
     0,
     0
   },
-  {                         /* SQR[4]  */
+  .sqr          = {
     ADC_SQR1_SQ1_N(ADC_CHANNEL_IN7) | ADC_SQR1_SQ2_N(ADC_CHANNEL_IN8),
     0,
     0,
@@ -76,19 +80,21 @@ static const ADCConversionGroup adcgrpcfg1 = {
  * Channels:    IN7, IN8, IN7, IN8, IN7, IN8, Sensor, VBat/2.
  */
 static const ADCConversionGroup adcgrpcfg2 = {
-  TRUE,
-  ADC_GRP2_NUM_CHANNELS,
-  adccallback,
-  adcerrorcallback,
-  ADC_CFGR_CONT,                    /* CFGR    */
-  ADC_TR(0, 4095),                  /* TR1     */
-  {                                 /* SMPR[2] */
-    ADC_SMPR1_SMP_AN7(ADC_SMPR_SMP_19P5)
-    | ADC_SMPR1_SMP_AN8(ADC_SMPR_SMP_19P5),
-    ADC_SMPR2_SMP_AN16(ADC_SMPR_SMP_61P5)
-    | ADC_SMPR2_SMP_AN17(ADC_SMPR_SMP_61P5),
+  .circular     = true,
+  .num_channels = ADC_GRP2_NUM_CHANNELS,
+  .end_cb       = adccallback,
+  .error_cb     = adcerrorcallback,
+  .cfgr         = ADC_CFGR_CONT,
+  .tr1          = ADC_TR_DISABLED,
+  .tr2          = ADC_TR_DISABLED,
+  .tr3          = ADC_TR_DISABLED,
+  .awd2cr       = 0U,
+  .awd3cr       = 0U,
+  .smpr         = {
+    ADC_SMPR1_SMP_AN7(ADC_SMPR_SMP_19P5) | ADC_SMPR1_SMP_AN8(ADC_SMPR_SMP_19P5),
+    ADC_SMPR2_SMP_AN16(ADC_SMPR_SMP_61P5) | ADC_SMPR2_SMP_AN17(ADC_SMPR_SMP_61P5),
   },
-  {                                 /* SQR[4]  */
+  .sqr          = {
     ADC_SQR1_SQ1_N(ADC_CHANNEL_IN7)  | ADC_SQR1_SQ2_N(ADC_CHANNEL_IN8) |
     ADC_SQR1_SQ3_N(ADC_CHANNEL_IN7)  | ADC_SQR1_SQ4_N(ADC_CHANNEL_IN8),
     ADC_SQR2_SQ5_N(ADC_CHANNEL_IN7)  | ADC_SQR2_SQ6_N(ADC_CHANNEL_IN8) |

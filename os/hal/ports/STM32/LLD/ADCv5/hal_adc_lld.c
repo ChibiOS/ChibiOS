@@ -293,12 +293,17 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 
   /* ADC setup, if it is defined a callback for the analog watch dog then it
      is enabled.*/
-  adcp->adc->ISR    = adcp->adc->ISR;
-  adcp->adc->IER    = ADC_IER_OVRIE  |
-                      ADC_IER_AWD1IE | ADC_IER_AWD2IE | ADC_IER_AWD3IE;
-  adcp->adc->TR1    = grpp->tr1;
-  adcp->adc->TR2    = grpp->tr2;
-  adcp->adc->TR3    = grpp->tr3;
+  adcp->adc->ISR      = adcp->adc->ISR;
+  if (grpp->error_cb != NULL) {
+    adcp->adc->IER    = ADC_IER_OVRIE | ADC_IER_AWD1IE
+                                      | ADC_IER_AWD2IE
+                                      | ADC_IER_AWD3IE;
+    adcp->adc->TR1    = grpp->tr1;
+    adcp->adc->TR2    = grpp->tr2;
+    adcp->adc->TR3    = grpp->tr3;
+    adcp->adc->AWD2CR = grpp->awd2cr;
+    adcp->adc->AWD3CR = grpp->awd3cr;
+  }
   adcp->adc->SMPR   = grpp->smpr;
   adcp->adc->CHSELR = grpp->chselr;
 
@@ -333,7 +338,7 @@ void adc_lld_stop_conversion(ADCDriver *adcp) {
 void adc_lld_serve_interrupt(ADCDriver *adcp) {
   uint32_t isr;
 
-  isr = adcp->adc->ISR & adcp->adc->IER;
+  isr = adcp->adc->ISR;
   adcp->adc->ISR = isr;
 
   /* It could be a spurious interrupt caused by overflows after DMA disabling,

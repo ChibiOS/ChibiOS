@@ -74,7 +74,8 @@
 *****************************************************************************
 
 *** 20.3.2 ***
-- NEW: Support for 3 analog watchdogs in STM32G0 ADC.
+- NEW: Support for 3 analog watchdogs in ADCv3 (STM32F3, L4, L4+, G4).
+- NEW: Support for 3 analog watchdogs in ADCv5 (STM32G0).
 - NEW: Updated FatFS to version 0.14.
 - NEW: Added a new setting to STM32 USBv1 allowing for some clock deviation
        from 48MHz. Renamed setting USB_HOST_WAKEUP_DURATION to
