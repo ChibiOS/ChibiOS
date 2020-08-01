@@ -45,6 +45,79 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+/* Required macros checks.*/
+#if !defined(PORT_COMPILER_NAME)
+#error "PORT_COMPILER_NAME not defined in chconf.h"
+#endif
+
+#if !defined(PORT_IDLE_THREAD_STACK_SIZE)
+#error "PORT_IDLE_THREAD_STACK_SIZE not defined in chconf.h"
+#endif
+
+#if !defined(PORT_INT_REQUIRED_STACK)
+#error "PORT_INT_REQUIRED_STACK not defined in chconf.h"
+#endif
+
+#if !defined(PORT_SUPPORTS_RT)
+#error "PORT_SUPPORTS_RT not defined in chconf.h"
+#endif
+
+#if !defined(PORT_NATURAL_ALIGN)
+#error "PORT_NATURAL_ALIGN not defined in chconf.h"
+#endif
+
+#if !defined(PORT_STACK_ALIGN)
+#error "PORT_STACK_ALIGN not defined in chconf.h"
+#endif
+
+#if !defined(PORT_WORKING_AREA_ALIGN)
+#error "PORT_WORKING_AREA_ALIGN not defined in chconf.h"
+#endif
+
+#if !defined(PORT_ARCHITECTURE_NAME)
+#error "PORT_ARCHITECTURE_NAME not defined in chconf.h"
+#endif
+
+#if !defined(PORT_CORE_VARIANT_NAME)
+#error "PORT_CORE_VARIANT_NAME not defined in chconf.h"
+#endif
+
+#if !defined(PORT_INFO)
+#error "PORT_INFO not defined in chconf.h"
+#endif
+
+#if !defined(PORT_IRQ_IS_VALID_PRIORITY)
+#error "PORT_IRQ_IS_VALID_PRIORITY not defined in chconf.h"
+#endif
+
+#if !defined(PORT_IRQ_IS_VALID_KERNEL_PRIORITY)
+#error "PORT_IRQ_IS_VALID_KERNEL_PRIORITY not defined in chconf.h"
+#endif
+
+#if !defined(PORT_SETUP_CONTEXT)
+#error "PORT_SETUP_CONTEXT not defined in chconf.h"
+#endif
+
+#if !defined(PORT_WA_SIZE)
+#error "PORT_WA_SIZE not defined in chconf.h"
+#endif
+
+#if !defined(PORT_IRQ_PROLOGUE)
+#error "PORT_IRQ_PROLOGUE not defined in chconf.h"
+#endif
+
+#if !defined(PORT_IRQ_EPILOGUE)
+#error "PORT_IRQ_EPILOGUE not defined in chconf.h"
+#endif
+
+#if !defined(PORT_IRQ_HANDLER)
+#error "PORT_IRQ_HANDLER not defined in chconf.h"
+#endif
+
+#if !defined(PORT_FAST_IRQ_HANDLER)
+#error "PORT_FAST_IRQ_HANDLER not defined in chconf.h"
+#endif
+
 /* Just in case the port layer does not export the following definitions.*/
 #if !defined(PORT_CORES_NUMBER)
 #define PORT_CORES_NUMBER                   1
