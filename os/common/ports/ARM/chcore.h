@@ -28,9 +28,30 @@
 #ifndef CHCORE_H
 #define CHCORE_H
 
+/* Inclusion of the ARM implementation specific parameters.*/
+#include "armparams.h"
+
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
+
+/* The following code is not processed when the file is included from an
+   asm module because those intrinsic macros are not necessarily defined
+   by the assembler too.*/
+#if !defined(_FROM_ASM_)
+
+/**
+ * @brief   Compiler name and version.
+ */
+#if defined(__GNUC__) || defined(__DOXYGEN__)
+#define PORT_COMPILER_NAME              "GCC " __VERSION__
+
+#else
+#error "unsupported compiler"
+#endif
+
+#endif /* !defined(_FROM_ASM_) */
+/** @} */
 
 /**
  * @name    Port Capabilities and Constants
@@ -61,33 +82,6 @@
 /** @} */
 
 /**
- * @name    Architecture and Compiler
- * @{
- */
-/**
- * @brief   Macro defining a generic ARM architecture.
- */
-#define PORT_ARCHITECTURE_ARM
-
-/* The following code is not processed when the file is included from an
-   asm module because those intrinsic macros are not necessarily defined
-   by the assembler too.*/
-#if !defined(_FROM_ASM_)
-
-/**
- * @brief   Compiler name and version.
- */
-#if defined(__GNUC__) || defined(__DOXYGEN__)
-#define PORT_COMPILER_NAME              "GCC " __VERSION__
-
-#else
-#error "unsupported compiler"
-#endif
-
-#endif /* !defined(_FROM_ASM_) */
-/** @} */
-
-/**
  * @name    ARM variants
  * @{
  */
@@ -99,8 +93,70 @@
 #define ARM_CORE_CORTEX_A9              109
 /** @} */
 
-/* Inclusion of the ARM implementation specific parameters.*/
-#include "armparams.h"
+/**
+ * @name    Architecture
+ * @{
+ */
+/**
+ * @brief   Macro defining a generic ARM architecture.
+ */
+#define PORT_ARCHITECTURE_ARM
+
+/* ARM core check.*/
+#if (ARM_CORE == ARM_CORE_ARM7TDMI) || defined(__DOXYGEN__)
+  #define PORT_ARCHITECTURE_ARM_ARM7
+  #define PORT_ARCHITECTURE_NAME        "ARMv4T"
+  #define PORT_CORE_VARIANT_NAME        "ARM7"
+
+#elif ARM_CORE == ARM_CORE_ARM9
+  #define PORT_ARCHITECTURE_ARM_ARM9
+  #define PORT_ARCHITECTURE_NAME        "ARMv5T"
+  #define PORT_CORE_VARIANT_NAME        "ARM9"
+
+#elif ARM_CORE == ARM_CORE_CORTEX_A5
+  #define PORT_ARCHITECTURE_ARM_CORTEXA5
+  #define PORT_ARCHITECTURE_NAME        "ARMv7"
+  #define PORT_CORE_VARIANT_NAME        "ARM Cortex-A5"
+
+#elif ARM_CORE == ARM_CORE_CORTEX_A7
+  #define PORT_ARCHITECTURE_ARM_CORTEXA5
+  #define PORT_ARCHITECTURE_NAME        "ARMv7"
+  #define PORT_CORE_VARIANT_NAME        "ARM Cortex-A7"
+
+#elif ARM_CORE == ARM_CORE_CORTEX_A8
+  #define PORT_ARCHITECTURE_ARM_CORTEXA8
+  #define PORT_ARCHITECTURE_NAME        "ARMv7"
+  #define PORT_CORE_VARIANT_NAME        "ARM Cortex-A8"
+
+#elif ARM_CORE == ARM_CORE_CORTEX_A9
+  #define PORT_ARCHITECTURE_ARM_CORTEXA9
+  #define PORT_ARCHITECTURE_NAME        "ARMv7"
+  #define PORT_CORE_VARIANT_NAME        "ARM Cortex-A9"
+
+#else
+  #error "unknown or unsupported ARM core"
+#endif
+
+#if defined(THUMB_PRESENT)
+  #if defined(THUMB_NO_INTERWORKING)
+    #define PORT_INFO                   "Pure THUMB mode"
+  #else
+    #define PORT_INFO                   "Interworking mode"
+  #endif
+#else
+  #define PORT_INFO                     "Pure ARM mode"
+#endif
+
+#if ARM_CORE < 100
+  #define ARM_CORE_CLASSIC              1
+  #define ARM_CORE_CORTEX_A             0
+#elif ARM_CORE < 200
+  #define ARM_CORE_CLASSIC              0
+  #define ARM_CORE_CORTEX_A             1
+#else
+  #error "unknown or unsupported ARM core"
+#endif
+/** @} */
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -148,66 +204,6 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
-
-#if ARM_CORE < 100
-#define ARM_CORE_CLASSIC                1
-#define ARM_CORE_CORTEX_A               0
-#elif ARM_CORE < 200
-#define ARM_CORE_CLASSIC                0
-#define ARM_CORE_CORTEX_A               1
-#else
-#endif
-
-/* The following code is not processed when the file is included from an
-   asm module.*/
-#if !defined(_FROM_ASM_)
-
-/* ARM core check.*/
-#if (ARM_CORE == ARM_CORE_ARM7TDMI) || defined(__DOXYGEN__)
-#define PORT_ARCHITECTURE_ARM_ARM7
-#define PORT_ARCHITECTURE_NAME          "ARMv4T"
-#define PORT_CORE_VARIANT_NAME          "ARM7"
-
-#elif ARM_CORE == ARM_CORE_ARM9
-#define PORT_ARCHITECTURE_ARM_ARM9
-#define PORT_ARCHITECTURE_NAME          "ARMv5T"
-#define PORT_CORE_VARIANT_NAME          "ARM9"
-
-#elif ARM_CORE == ARM_CORE_CORTEX_A5
-#define PORT_ARCHITECTURE_ARM_CORTEXA5
-#define PORT_ARCHITECTURE_NAME          "ARMv7"
-#define PORT_CORE_VARIANT_NAME          "ARM Cortex-A5"
-
-#elif ARM_CORE == ARM_CORE_CORTEX_A7
-#define PORT_ARCHITECTURE_ARM_CORTEXA5
-#define PORT_ARCHITECTURE_NAME          "ARMv7"
-#define PORT_CORE_VARIANT_NAME          "ARM Cortex-A7"
-
-#elif ARM_CORE == ARM_CORE_CORTEX_A8
-#define PORT_ARCHITECTURE_ARM_CORTEXA8
-#define PORT_ARCHITECTURE_NAME          "ARMv7"
-#define PORT_CORE_VARIANT_NAME          "ARM Cortex-A8"
-
-#elif ARM_CORE == ARM_CORE_CORTEX_A9
-#define PORT_ARCHITECTURE_ARM_CORTEXA9
-#define PORT_ARCHITECTURE_NAME          "ARMv7"
-#define PORT_CORE_VARIANT_NAME          "ARM Cortex-A9"
-
-#else
-#error "unknown or unsupported ARM core"
-#endif
-
-#if defined(THUMB_PRESENT)
-#if defined(THUMB_NO_INTERWORKING)
-#define PORT_INFO                       "Pure THUMB mode"
-#else
-#define PORT_INFO                       "Interworking mode"
-#endif
-#else
-#define PORT_INFO                       "Pure ARM mode"
-#endif
-
-#endif /* !defined(_FROM_ASM_) */
 
 /*===========================================================================*/
 /* Module data structures and types.                                         */
@@ -276,6 +272,18 @@ struct port_context {
 /*===========================================================================*/
 
 /**
+ * @brief   Priority level verification macro.
+ * @note    Not applicable in this architecture.
+ */
+#define PORT_IRQ_IS_VALID_PRIORITY(n) false
+
+/**
+ * @brief   Priority level verification macro.
+ * @note    Not applicable in this architecture.
+ */
+#define PORT_IRQ_IS_VALID_KERNEL_PRIORITY(n) false
+
+/**
  * @brief   Platform dependent part of the @p chThdCreateI() API.
  * @details This code usually setup the context switching frame represented
  *          by an @p port_intctx structure.
@@ -285,7 +293,7 @@ struct port_context {
                                         sizeof (struct port_intctx));       \
   (tp)->ctx.sp->r4 = (regarm_t)(pf);                                        \
   (tp)->ctx.sp->r5 = (regarm_t)(arg);                                       \
-  (tp)->ctx.sp->lr = (regarm_t)(_port_thread_start);                        \
+  (tp)->ctx.sp->lr = (regarm_t)(__port_thread_start);                       \
 }
 
 /**
@@ -364,10 +372,10 @@ struct port_context {
   register struct port_intctx *r13 asm ("r13");                             \
   if ((stkalign_t *)(r13 - 1) < otp->wabase)                                \
     chSysHalt("stack overflow");                                            \
-  _port_switch_thumb(ntp, otp);                                             \
+  __port_switch_thumb(ntp, otp);                                             \
 }
 #else
-#define port_switch(ntp, otp) _port_switch_thumb(ntp, otp)
+#define port_switch(ntp, otp) __port_switch_thumb(ntp, otp)
 #endif
 
 #else /* !defined(THUMB) */
@@ -377,10 +385,10 @@ struct port_context {
   register struct port_intctx *r13 asm ("r13");                             \
   if ((stkalign_t *)(r13 - 1) < otp->wabase)                                \
   chSysHalt("stack overflow");                                              \
-  _port_switch_arm(ntp, otp);                                               \
+  __port_switch_arm(ntp, otp);                                               \
 }
 #else
-#define port_switch(ntp, otp) _port_switch_arm(ntp, otp)
+#define port_switch(ntp, otp) __port_switch_arm(ntp, otp)
 #endif
 
 #endif /* !defined(THUMB) */
@@ -393,14 +401,14 @@ struct port_context {
 extern "C" {
 #endif
 #if defined(THUMB_PRESENT)
-  syssts_t _port_get_cpsr(void);
+  syssts_t __port_get_cpsr(void);
 #endif
 #if defined(THUMB)
-  void _port_switch_thumb(thread_t *ntp, thread_t *otp);
+  void __port_switch_thumb(thread_t *ntp, thread_t *otp);
 #else
-  void _port_switch_arm(thread_t *ntp, thread_t *otp);
+  void __port_switch_arm(thread_t *ntp, thread_t *otp);
 #endif
-  void _port_thread_start(void);
+  void __port_thread_start(void);
 #ifdef __cplusplus
 }
 #endif
@@ -412,8 +420,9 @@ extern "C" {
 /**
  * @brief   Port-related initialization code.
  */
-static inline void port_init(void) {
+static inline void port_init(os_instance_t *oip) {
 
+  (void)oip;
 }
 
 /**
@@ -425,7 +434,7 @@ static inline syssts_t port_get_irq_status(void) {
   syssts_t sts;
 
 #if defined(THUMB)
-  sts = _port_get_cpsr();
+  sts = __port_get_cpsr();
 #else
   __asm volatile ("mrs     %[p0], CPSR" : [p0] "=r" (sts) :);
 #endif
@@ -459,7 +468,7 @@ static inline bool port_is_isr_context(void) {
   syssts_t sts;
 
 #if defined(THUMB)
-  sts = _port_get_cpsr();
+  sts = __port_get_cpsr();
 #else
   __asm volatile ("mrs     %[p0], CPSR" : [p0] "=r" (sts) :);
 #endif
@@ -477,7 +486,7 @@ static inline bool port_is_isr_context(void) {
 static inline void port_lock(void) {
 
 #if defined(THUMB)
-  __asm volatile ("bl     _port_lock_thumb" : : : "r3", "lr", "memory");
+  __asm volatile ("bl      __port_lock_thumb" : : : "r3", "lr", "memory");
 #else
   __asm volatile ("msr     CPSR_c, #0x9F" : : : "memory");
 #endif
@@ -490,7 +499,7 @@ static inline void port_lock(void) {
 static inline void port_unlock(void) {
 
 #if defined(THUMB)
-  __asm volatile ("bl     _port_unlock_thumb" : : : "r3", "lr", "memory");
+  __asm volatile ("bl      __port_unlock_thumb" : : : "r3", "lr", "memory");
 #else
   __asm volatile ("msr     CPSR_c, #0x1F" : : : "memory");
 #endif
@@ -521,7 +530,7 @@ static inline void port_unlock_from_isr(void) {
 static inline void port_disable(void) {
 
 #if defined(THUMB)
-  __asm volatile ("bl     _port_disable_thumb" : : : "r3", "lr", "memory");
+  __asm volatile ("bl      __port_disable_thumb" : : : "r3", "lr", "memory");
 #else
   __asm volatile ("mrs     r3, CPSR                       \n\t"
                   "orr     r3, #0x80                      \n\t"
@@ -540,7 +549,7 @@ static inline void port_disable(void) {
 static inline void port_suspend(void) {
 
 #if defined(THUMB)
-  __asm volatile ("bl     _port_suspend_thumb" : : : "r3", "lr", "memory");
+  __asm volatile ("bl      __port_suspend_thumb" : : : "r3", "lr", "memory");
 #else
   __asm volatile ("msr     CPSR_c, #0x9F" : : : "memory");
 #endif
@@ -553,7 +562,7 @@ static inline void port_suspend(void) {
 static inline void port_enable(void) {
 
 #if defined(THUMB)
-  __asm volatile ("bl     _port_enable_thumb" : : : "r3", "lr", "memory");
+  __asm volatile ("bl      __port_enable_thumb" : : : "r3", "lr", "memory");
 #else
   __asm volatile ("msr     CPSR_c, #0x1F" : : : "memory");
 #endif
