@@ -169,4 +169,29 @@ int _isatty_r(struct _reent *r, int fd) {
   return 1;
 }
 
+/***************************************************************************/
+
+__attribute__((used))
+void _exit(int status) {
+  (void) status;
+  chSysHalt("exit");
+  abort();
+}
+
+/***************************************************************************/
+
+__attribute__((used))
+int _kill(int pid, int sig) {
+  (void) pid;
+  (void) sig;
+  return -1;
+}
+
+/***************************************************************************/
+
+__attribute__((used))
+int _getpid(void) {
+
+  return 1;
+}
 /*** EOF ***/
