@@ -301,7 +301,7 @@ void port_init(os_instance_t *oip) {
 /**
  * @brief   Setting up MPU region for the current thread.
  */
-void _port_set_region(void) {
+void __port_set_region(void) {
 
   mpuSetRegionAddress(PORT_USE_GUARD_MPU_REGION,
                       chThdGetSelfX()->wabase);

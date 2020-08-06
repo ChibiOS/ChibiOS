@@ -578,11 +578,11 @@ struct port_context {
   if ((stkalign_t *)(r13 - 1) < (otp)->wabase) {                            \
     chSysHalt("stack overflow");                                            \
   }                                                                         \
-  __port_switch(ntp, otp);                                                   \
+  __port_switch(ntp, otp);                                                  \
 }
 #else
 #define port_switch(ntp, otp) {                                             \
-  _port_switch(ntp, otp);                                                   \
+  __port_switch(ntp, otp);                                                  \
                                                                             \
   /* Setting up the guard page for the switched-in thread.*/                \
   mpuSetRegionAddress(PORT_USE_GUARD_MPU_REGION,                            \
