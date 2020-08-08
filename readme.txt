@@ -76,8 +76,10 @@
 *** Next ***
 - NEW: Support for 3 analog watchdogs in ADCv3 (STM32F3, L4, L4+, G4).
 - NEW: Support for 3 analog watchdogs in ADCv5 (STM32G0).
-- NEW: Stand-alone ARMv6-M port.
+- NEW: Stand-alone ARMv8-M-ML-TZ port.
+- NEW: Stand-alone ARMv8-M-ML port.
 - NEW: Stand-alone ARMv7-M port.
+- NEW: Stand-alone ARMv6-M port.
 - NEW: Merged RT7.
 - RT:  New API for high resolution monotonic time stamps.
 - NEW: Updated FatFS to version 0.14.
