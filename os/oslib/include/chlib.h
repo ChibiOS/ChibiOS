@@ -38,7 +38,7 @@
 /**
  * @brief   ChibiOS/LIB identification macro.
  */
-#define _CHIBIOS_OSLIB_
+#define __CHIBIOS_OSLIB__
 
 /**
  * @brief   Stable release flag.
@@ -79,7 +79,7 @@
 /*===========================================================================*/
 
 /* Host OS checks.*/
-#if !defined(_CHIBIOS_RT_) && !defined(_CHIBIOS_NIL_)
+#if !defined(__CHIBIOS_RT__) && !defined(__CHIBIOS_NIL__)
 #error "OS check failed, must be included after ch.h"
 #endif
 

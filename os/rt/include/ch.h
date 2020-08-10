@@ -34,7 +34,7 @@
 /**
  * @brief   ChibiOS/RT identification macro.
  */
-#define _CHIBIOS_RT_
+#define __CHIBIOS_RT__
 
 /**
  * @brief   Stable release flag.

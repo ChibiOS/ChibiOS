@@ -185,7 +185,7 @@
 /**
  * @brief   ChibiOS/HAL identification macro.
  */
-#define _CHIBIOS_HAL_
+#define __CHIBIOS_HAL__
 
 /**
  * @brief   Stable release flag.

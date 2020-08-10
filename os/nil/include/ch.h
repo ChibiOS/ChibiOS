@@ -39,7 +39,7 @@
 /**
  * @brief   ChibiOS/NIL identification macro.
  */
-#define _CHIBIOS_NIL_
+#define __CHIBIOS_NIL__
 
 /**
  * @brief   Stable release flag.

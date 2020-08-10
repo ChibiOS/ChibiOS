@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Identification macros such as__CHIBIOS_RT__ are now prefixed by
+       two underscores.
 - NEW: Support for 3 analog watchdogs in ADCv3 (STM32F3, L4, L4+, G4).
 - NEW: Support for 3 analog watchdogs in ADCv5 (STM32G0).
 - NEW: Stand-alone ARMv8-M-ML-TZ port.
