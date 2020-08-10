@@ -86,10 +86,12 @@
 #endif
 /** @} */
 
+/* License.*/
+#include "chlicense.h"
+
 /* Configuration headers, checks and licensing restrictions.*/
 #include "chconf.h"
 #include "chchecks.h"
-#include "chlicense.h"
 #include "chrestrictions.h"
 
 /* Base kernel headers.*/
