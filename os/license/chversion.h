@@ -86,7 +86,7 @@
  * @brief   Current version date in numeric form (yyyymm).
  */
 #define CH_VERSION_DATE                                                     \
-  (((CH_VERSION_YEAR + 2000) * 100) + CH_CUSTOMER_LICENSE_VERSION_MONTH)
+  (((CH_VERSION_YEAR + 2000) * 100) + CH_VERSION_MONTH)
 
 /*===========================================================================*/
 /* Module data structures and types.                                         */

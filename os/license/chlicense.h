@@ -135,8 +135,8 @@
 #error "CH_CUSTOMER_ID_CODE not defined in chcustomer.h"
 #endif
 
-#if !defined(CH_CUSTOMER_LICENSE_EOS)
-#error "CH_CUSTOMER_LICENSE_EOS not defined in chcustomer.h"
+#if !defined(CH_CUSTOMER_LICENSE_EOS_DATE)
+#error "CH_CUSTOMER_LICENSE_EOS_DATE not defined in chcustomer.h"
 #endif
 
 #if !defined(CH_CUSTOMER_LICENSE_VERSION_YEAR)
@@ -147,13 +147,17 @@
 #error "CH_CUSTOMER_LICENSE_VERSION_MONTH not defined in chcustomer.h"
 #endif
 
+#if !defined(CH_CUSTOMER_LICENSE_VERSION_DATE)
+#error "CH_CUSTOMER_LICENSE_VERSION_DATE not defined in chcustomer.h"
+#endif
+
 #if !defined(CH_LICENSE)
 #error "CH_LICENSE not defined in chcustomer.h"
 #endif
 
-#if (CH_CUSTOMER_LICENSE_EOS < 201201) ||                                   \
-    (CH_CUSTOMER_LICENSE_EOS > 209912)
-#error "invalid CH_CUSTOMER_LICENSE_EOS value in chcustomer.h"
+#if (CH_CUSTOMER_LICENSE_EOS_DATE < 201201) ||                              \
+    (CH_CUSTOMER_LICENSE_EOS_DATE > 209912)
+#error "invalid CH_CUSTOMER_LICENSE_EOS_DATE value in chcustomer.h"
 #endif
 
 #if (CH_CUSTOMER_LICENSE_VERSION_YEAR < 12) ||                              \
@@ -166,17 +170,18 @@
 #error "invalid CH_CUSTOMER_LICENSE_VERSION_MONTH value in chcustomer.h"
 #endif
 
+#if (CH_CUSTOMER_LICENSE_VERSION_DATE < 201201) ||                          \
+    (CH_CUSTOMER_LICENSE_VERSION_DATE > 209912)
+  #error "invalid CH_CUSTOMER_LICENSE_VERSION_DATE value in chversion.h"
+#endif
+
 /* Checks on licensed versions.*/
-#if (CH_VERSION_YEAR > CH_CUSTOMER_LICENSE_VERSION_YEAR )
-  #error "ChibiOS version unsupported by this license"
-#elif (CH_VERSION_YEAR == CH_CUSTOMER_LICENSE_VERSION_YEAR)
-  #if (CH_VERSION_MONTH > CH_CUSTOMER_LICENSE_VERSION_MONTH)
-    #error "ChibiOS version unsupported by this license"
-  #endif
+#if CH_VERSION_DATE > CH_CUSTOMER_LICENSE_VERSION_DATE
+#error "this ChibiOS version is newer than your license, see chcustomer.h"
 #endif
 
 /* Checks on end-of-support date.*/
-#if CH_VERSION_DATE > CH_CUSTOMER_LICENSE_EOS
+#if CH_VERSION_DATE > CH_CUSTOMER_LICENSE_EOS_DATE
 #error "this ChibiOS version is beyond your End-Of-Support date, see chcustomer.h"
 #endif
 
