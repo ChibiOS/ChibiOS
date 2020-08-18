@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 19.1.5 ***
+- FIX: Fixed ADCv1 compile problem (bug #1118).
 - FIX: Fixed missing STM32_I2C_BDMA_REQUIRED definition in I2Cv3 driver
        (bug #1109).
 - FIX: Fixed wrong definitions in SPC563M board files (bug #1108).
