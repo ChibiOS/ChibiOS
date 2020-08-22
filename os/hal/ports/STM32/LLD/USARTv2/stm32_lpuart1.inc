@@ -48,13 +48,6 @@
 
 #endif /* STM32_HAS_LPUART1 */
 
-/* Other checks.*/
-#if (HAL_USE_SERIAL && STM32_SERIAL_USE_LPUART1)
-#define STM32_LPUART1_IS_USED       TRUE
-#else
-#define STM32_LPUART1_IS_USED       FALSE
-#endif
-
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -68,13 +61,13 @@
 /*===========================================================================*/
 
 static inline void lpuart1_irq_init(void) {
-#if STM32_LPUART1_IS_USED
+#if defined(STM32_LPUART1_IS_USED)
   nvicEnableVector(STM32_LPUART1_NUMBER, STM32_IRQ_LPUART1_PRIORITY);
 #endif
 }
 
 static inline void lpuart1_irq_deinit(void) {
-#if STM32_LPUART1_IS_USED
+#if defined(STM32_LPUART1_IS_USED)
   nvicDisableVector(STM32_LPUART1_NUMBER);
 #endif
 }
@@ -83,7 +76,7 @@ static inline void lpuart1_irq_deinit(void) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if STM32_LPUART1_IS_USED || defined(__DOXYGEN__)
+#if defined(STM32_LPUART1_IS_USED) || defined(__DOXYGEN__)
 /**
  * @brief   LPUART1 interrupt handler.
  *

@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Simplified USART units use collision detection in STM32 HAL, now it is
+       done like for TIM units for consistency.
 - NEW: Identification macros such as__CHIBIOS_RT__ are now prefixed by
        two underscores.
 - NEW: Support for 3 analog watchdogs in ADCv3 (STM32F3, L4, L4+, G4).

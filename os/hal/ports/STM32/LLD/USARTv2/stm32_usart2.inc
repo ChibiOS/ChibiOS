@@ -48,19 +48,6 @@
 
 #endif /* STM32_HAS_USART2 */
 
-/* Other checks.*/
-#if (HAL_USE_SERIAL && STM32_SERIAL_USE_USART2) &&                          \
-    (HAL_USE_UART && STM32_UART_USE_USART2)
-#error "USART2 used by multiple drivers"
-#endif
-
-#if (HAL_USE_SERIAL && STM32_SERIAL_USE_USART2) ||                          \
-    (HAL_USE_UART && STM32_UART_USE_USART2)
-#define STM32_USART2_IS_USED        TRUE
-#else
-#define STM32_USART2_IS_USED        FALSE
-#endif
-
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -74,13 +61,13 @@
 /*===========================================================================*/
 
 static inline void usart2_irq_init(void) {
-#if STM32_USART2_IS_USED
+#if defined(STM32_USART2_IS_USED)
   nvicEnableVector(STM32_USART2_NUMBER, STM32_IRQ_USART2_PRIORITY);
 #endif
 }
 
 static inline void usart2_irq_deinit(void) {
-#if STM32_USART2_IS_USED
+#if defined(STM32_USART2_IS_USED)
   nvicDisableVector(STM32_USART2_NUMBER);
 #endif
 }
@@ -89,7 +76,7 @@ static inline void usart2_irq_deinit(void) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if STM32_USART2_IS_USED || defined(__DOXYGEN__)
+#if defined(STM32_USART2_IS_USED) || defined(__DOXYGEN__)
 /**
  * @brief   USART2 interrupt handler.
  *

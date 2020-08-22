@@ -56,37 +56,6 @@
 
 #endif /* STM32_HAS_USART3 || STM32_HAS_UART4 || STM32_HAS_LPUART1 */
 
-/* Other checks.*/
-#if (HAL_USE_SERIAL && STM32_SERIAL_USE_USART3) &&                          \
-    (HAL_USE_UART && STM32_UART_USE_USART3)
-#error "USART3 used by multiple drivers"
-#endif
-
-#if (HAL_USE_SERIAL && STM32_SERIAL_USE_UART4) &&                           \
-    (HAL_USE_UART && STM32_UART_USE_UART4)
-#error "USART4 used by multiple drivers"
-#endif
-
-#if (HAL_USE_SERIAL && STM32_SERIAL_USE_USART3) ||                          \
-    (HAL_USE_UART && STM32_UART_USE_USART3)
-#define STM32_USART3_IS_USED        TRUE
-#else
-#define STM32_USART3_IS_USED        FALSE
-#endif
-
-#if (HAL_USE_SERIAL && STM32_SERIAL_USE_UART4) ||                           \
-    (HAL_USE_UART && STM32_UART_USE_UART4)
-#define STM32_USART4_IS_USED        TRUE
-#else
-#define STM32_USART4_IS_USED        FALSE
-#endif
-
-#if (HAL_USE_SERIAL && STM32_SERIAL_USE_LPUART1)
-#define STM32_LPUART1_IS_USED       TRUE
-#else
-#define STM32_LPUART1_IS_USED       FALSE
-#endif
-
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -100,13 +69,15 @@
 /*===========================================================================*/
 
 static inline void usart3_usart4_lpuart1_irq_init(void) {
-#if STM32_USART3_IS_USED || STM32_USART4_IS_USED || STM32_LPUART1_IS_USED
+#if defined(STM32_USART3_IS_USED) || defined(STM32_UART4_IS_USED) ||        \
+    defined(STM32_LPUART1_IS_USED)
   nvicEnableVector(STM32_USART3_4_LP1_NUMBER, STM32_IRQ_USART3_4_LP1_PRIORITY);
 #endif
 }
 
 static inline void usart3_usart4_lpuart1_irq_deinit(void) {
-#if STM32_USART3_IS_USED || STM32_USART4_IS_USED || STM32_LPUART1_IS_USED
+#if defined(STM32_USART3_IS_USED) || defined(STM32_UART4_IS_USED) ||        \
+    defined(STM32_LPUART1_IS_USED)
   nvicDisableVector(STM32_USART3_4_LP1_NUMBER);
 #endif
 }
@@ -115,8 +86,8 @@ static inline void usart3_usart4_lpuart1_irq_deinit(void) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if STM32_USART3_IS_USED  || STM32_USART4_IS_USED ||                         \
-    STM32_LPUART1_IS_USED || defined(__DOXYGEN__)
+#if defined(STM32_USART3_IS_USED)  || defined(STM32_UART4_IS_USED) ||       \
+    defined(STM32_LPUART1_IS_USED) || defined(__DOXYGEN__)
 /**
  * @brief   USART4, USART5, LPUART1 interrupt handler.
  *

@@ -48,19 +48,6 @@
 
 #endif /* STM32_HAS_UART7 */
 
-/* Other checks.*/
-#if (HAL_USE_SERIAL && STM32_SERIAL_USE_UART7) &&                           \
-    (HAL_USE_UART && STM32_UART_USE_UART7)
-#error "UART7 used by multiple drivers"
-#endif
-
-#if (HAL_USE_SERIAL && STM32_SERIAL_USE_UART7) ||                           \
-    (HAL_USE_UART && STM32_UART_USE_UART7)
-#define STM32_UART7_IS_USED         TRUE
-#else
-#define STM32_UART7_IS_USED         FALSE
-#endif
-
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -74,13 +61,13 @@
 /*===========================================================================*/
 
 static inline void uart7_irq_init(void) {
-#if STM32_UART7_IS_USED
+#if defined(STM32_UART7_IS_USED)
   nvicEnableVector(STM32_UART7_NUMBER, STM32_IRQ_UART7_PRIORITY);
 #endif
 }
 
 static inline void uart7_irq_deinit(void) {
-#if STM32_UART7_IS_USED
+#if defined(STM32_UART7_IS_USED)
   nvicDisableVector(STM32_UART7_NUMBER);
 #endif
 }
@@ -89,7 +76,7 @@ static inline void uart7_irq_deinit(void) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if STM32_UART7_IS_USED || defined(__DOXYGEN__)
+#if defined(STM32_UART7_IS_USED) || defined(__DOXYGEN__)
 /**
  * @brief   UART7 interrupt handler.
  *
