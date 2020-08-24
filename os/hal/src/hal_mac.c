@@ -157,8 +157,7 @@ msg_t macWaitTransmitDescriptor(MACDriver *macp,
 
   osalSysLock();
 
-  while (((msg = mac_lld_get_transmit_descriptor(macp, tdp)) != MSG_OK) &&
-         (timeout > (sysinterval_t)0)) {
+  while ((msg = mac_lld_get_transmit_descriptor(macp, tdp)) != MSG_OK) {
     msg = osalThreadEnqueueTimeoutS(&macp->tdqueue, timeout);
     if (msg == MSG_TIMEOUT) {
       break;

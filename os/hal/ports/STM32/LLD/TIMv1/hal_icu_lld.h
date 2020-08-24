@@ -159,24 +159,6 @@
 #endif
 
 /**
- * @brief   ICUD16 driver enable switch.
- * @details If set to @p TRUE the support for ICUD16 is included.
- * @note    The default is @p FALSE.
- */
-#if !defined(STM32_ICU_USE_TIM16) || defined(__DOXYGEN__)
-#define STM32_ICU_USE_TIM16                 FALSE
-#endif
-
-/**
- * @brief   ICUD17 driver enable switch.
- * @details If set to @p TRUE the support for ICUD17 is included.
- * @note    The default is @p FALSE.
- */
-#if !defined(STM32_ICU_USE_TIM17) || defined(__DOXYGEN__)
-#define STM32_ICU_USE_TIM17                 FALSE
-#endif
-
-/**
  * @brief   ICUD20 driver enable switch.
  * @details If set to @p TRUE the support for ICUD20 is included.
  * @note    The default is @p FALSE.
@@ -295,20 +277,6 @@
 #endif
 
 /**
- * @brief   ICUD16 interrupt priority level setting.
- */
-#if !defined(STM32_ICU_TIM16_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ICU_TIM16_IRQ_PRIORITY        7
-#endif
-
-/**
- * @brief   ICUD17 interrupt priority level setting.
- */
-#if !defined(STM32_ICU_TIM17_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ICU_TIM17_IRQ_PRIORITY        7
-#endif
-
-/**
  * @brief   ICUD20 interrupt priority level setting.
  */
 #if !defined(STM32_ICU_TIM20_IRQ_PRIORITY) || defined(__DOXYGEN__)
@@ -386,14 +354,6 @@
 #define STM32_HAS_TIM15                     FALSE
 #endif
 
-#if !defined(STM32_HAS_TIM16)
-#define STM32_HAS_TIM16                     FALSE
-#endif
-
-#if !defined(STM32_HAS_TIM17)
-#define STM32_HAS_TIM17                     FALSE
-#endif
-
 #if !defined(STM32_HAS_TIM20)
 #define STM32_HAS_TIM20                     FALSE
 #endif
@@ -458,23 +418,15 @@
 #error "TIM15 not present in the selected device"
 #endif
 
-#if STM32_ICU_USE_TIM16 && !STM32_HAS_TIM16
-#error "TIM16 not present in the selected device"
-#endif
-
-#if STM32_ICU_USE_TIM17 && !STM32_HAS_TIM17
-#error "TIM17 not present in the selected device"
-#endif
-
-#if STM32_ICU_USE_TIM17 && !STM32_HAS_TIM20
+#if STM32_ICU_USE_TIM20 && !STM32_HAS_TIM20
 #error "TIM20 not present in the selected device"
 #endif
 
-#if STM32_ICU_USE_TIM17 && !STM32_HAS_TIM21
+#if STM32_ICU_USE_TIM21 && !STM32_HAS_TIM21
 #error "TIM21 not present in the selected device"
 #endif
 
-#if STM32_ICU_USE_TIM17 && !STM32_HAS_TIM22
+#if STM32_ICU_USE_TIM22 && !STM32_HAS_TIM22
 #error "TIM22 not present in the selected device"
 #endif
 
@@ -484,8 +436,7 @@
     !STM32_ICU_USE_TIM9  && !STM32_ICU_USE_TIM10 &&                         \
     !STM32_ICU_USE_TIM11 && !STM32_ICU_USE_TIM12 &&                         \
     !STM32_ICU_USE_TIM13 && !STM32_ICU_USE_TIM14 &&                         \
-    !STM32_ICU_USE_TIM15 && !STM32_ICU_USE_TIM16 &&                         \
-    !STM32_ICU_USE_TIM17 && !STM32_ICU_USE_TIM20 &&                         \
+    !STM32_ICU_USE_TIM15 && !STM32_ICU_USE_TIM20 &&                         \
     !STM32_ICU_USE_TIM21 && !STM32_ICU_USE_TIM22
 #error "ICU driver activated but no TIM peripheral assigned"
 #endif
@@ -595,22 +546,6 @@
 #endif
 #endif
 
-#if STM32_ICU_USE_TIM16
-#if defined(STM32_TIM16_IS_USED)
-#error "ICUD16 requires TIM16 but the timer is already used"
-#else
-#define STM32_TIM16_IS_USED
-#endif
-#endif
-
-#if STM32_ICU_USE_TIM17
-#if defined(STM32_TIM17_IS_USED)
-#error "ICUD17 requires TIM17 but the timer is already used"
-#else
-#define STM32_TIM17_IS_USED
-#endif
-#endif
-
 #if STM32_ICU_USE_TIM20
 #if defined(STM32_TIM20_IS_USED)
 #error "ICUD20 requires TIM20 but the timer is already used"
@@ -699,16 +634,6 @@
 #if STM32_ICU_USE_TIM15 && !defined(STM32_TIM15_SUPPRESS_ISR) &&            \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ICU_TIM15_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM15"
-#endif
-
-#if STM32_ICU_USE_TIM16 && !defined(STM32_TIM16_SUPPRESS_ISR) &&            \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ICU_TIM16_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM16"
-#endif
-
-#if STM32_ICU_USE_TIM17 && !defined(STM32_TIM17_SUPPRESS_ISR) &&            \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ICU_TIM17_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM17"
 #endif
 
 #if STM32_ICU_USE_TIM20 && !defined(STM32_TIM20_SUPPRESS_ISR) &&            \
@@ -931,14 +856,6 @@ extern ICUDriver ICUD14;
 
 #if STM32_ICU_USE_TIM15 && !defined(__DOXYGEN__)
 extern ICUDriver ICUD15;
-#endif
-
-#if STM32_ICU_USE_TIM16 && !defined(__DOXYGEN__)
-extern ICUDriver ICUD16;
-#endif
-
-#if STM32_ICU_USE_TIM17 && !defined(__DOXYGEN__)
-extern ICUDriver ICUD17;
 #endif
 
 #if STM32_ICU_USE_TIM20 && !defined(__DOXYGEN__)

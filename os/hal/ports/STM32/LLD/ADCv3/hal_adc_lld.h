@@ -851,10 +851,18 @@ typedef enum {
            specified in continuous mode or if the buffer depth is           \
            greater than one.*/                                              \
   uint32_t                  cfgr;                                           \
-  /* ADC CFGR2 register initialization data.*/                                              \
+  /* ADC CFGR2 register initialization data.*/                              \
   uint32_t                  cfgr2;                                          \
   /* ADC TR1 register initialization data.*/                                \
   uint32_t                  tr1;                                            \
+  /* ADC TR2 register initialization data.*/                                \
+  uint32_t                  tr2;                                            \
+  /* ADC TR3 register initialization data.*/                                \
+  uint32_t                  tr3;                                            \
+  /* ADC AWD2CR register initialization data.*/                             \
+  uint32_t                  awd2cr;                                         \
+  /* ADC AWD3CR register initialization data.*/                             \
+  uint32_t                  awd3cr;                                         \
   /* ADC CCR register initialization data.                                  \
      NOTE: Put this field to zero if not using oversampling.*/              \
   uint32_t                  ccr;                                            \
@@ -873,6 +881,10 @@ typedef enum {
   uint32_t                  cfgr;                                           \
   uint32_t                  cfgr2;                                          \
   uint32_t                  tr1;                                            \
+  uint32_t                  tr2;                                            \
+  uint32_t                  tr3;                                            \
+  uint32_t                  awd2cr;                                         \
+  uint32_t                  awd3cr;                                         \
   uint32_t                  smpr[2];                                        \
   uint32_t                  sqr[4]
 #endif /* STM32_ADC_DUAL_MODE == FALSE */
@@ -882,6 +894,10 @@ typedef enum {
 #define adc_lld_configuration_group_fields                                  \
   uint32_t                  cfgr;                                           \
   uint32_t                  tr1;                                            \
+  uint32_t                  tr2;                                            \
+  uint32_t                  tr3;                                            \
+  uint32_t                  awd2cr;                                         \
+  uint32_t                  awd3cr;                                         \
   uint32_t                  ccr;                                            \
   uint32_t                  smpr[2];                                        \
   uint32_t                  sqr[4];                                         \
@@ -891,16 +907,22 @@ typedef enum {
 #define adc_lld_configuration_group_fields                                  \
   uint32_t                  cfgr;                                           \
   uint32_t                  tr1;                                            \
+  uint32_t                  tr2;                                            \
+  uint32_t                  tr3;                                            \
+  uint32_t                  awd2cr;                                         \
+  uint32_t                  awd3cr;                                         \
   uint32_t                  smpr[2];                                        \
   uint32_t                  sqr[4]
 #endif /* STM32_ADC_DUAL_MODE == FALSE */
 #endif /* STM32_ADCV3_OVERSAMPLING == FALSE */
 
 /**
- * @name    Threshold register initializer
+ * @name    Threshold registers initializers
  * @{
  */
 #define ADC_TR(low, high)       (((uint32_t)(high) << 16) | (uint32_t)(low))
+#define ADC_TR_DISABLED         ADC_TR(0U, 0x0FFFU)
+#define ADC_AWDCR_ENABLE(n)     (1U << (n))
 /** @} */
 
 /**

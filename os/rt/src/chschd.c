@@ -582,7 +582,7 @@ void chSchDoReschedule(void) {
 #if CH_CFG_TIME_QUANTUM > 0
   /* If CH_CFG_TIME_QUANTUM is enabled then there are two different scenarios
      to handle on preemption: time quantum elapsed or not.*/
-  if (currp->ticks == (tslices_t)0) {
+  if (otp->ticks == (tslices_t)0) {
 
     /* The thread consumed its time quantum so it is enqueued behind threads
        with same priority level, however, it acquires a new time quantum.*/

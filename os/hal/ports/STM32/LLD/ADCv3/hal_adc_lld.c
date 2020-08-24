@@ -850,8 +850,17 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   /* ADC setup, if it is defined a callback for the analog watch dog then it
      is enabled.*/
   adcp->adcm->ISR   = adcp->adcm->ISR;
-  adcp->adcm->IER   = ADC_IER_OVRIE | ADC_IER_AWD1IE;
-  adcp->adcm->TR1   = grpp->tr1;
+  if (grpp->error_cb != NULL) {
+    adcp->adcm->IER    = ADC_IER_OVRIE | ADC_IER_AWD1IE
+                                       | ADC_IER_AWD2IE
+                                       | ADC_IER_AWD3IE;
+    adcp->adcm->TR1    = grpp->tr1;
+    adcp->adcm->TR2    = grpp->tr2;
+    adcp->adcm->TR3    = grpp->tr3;
+    adcp->adcm->AWD2CR = grpp->awd2cr;
+    adcp->adcm->AWD3CR = grpp->awd3cr;
+  }
+
 #if STM32_ADC_DUAL_MODE
 
   /* Configuring the CCR register with the user-specified settings

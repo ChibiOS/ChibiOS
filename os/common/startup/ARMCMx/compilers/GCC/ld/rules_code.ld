@@ -18,7 +18,7 @@ ENTRY(Reset_Handler)
 
 SECTIONS
 {
-    .vectors : ALIGN(16)
+    .vectors : ALIGN(1024)
     {
         KEEP(*(.vectors))
     } > VECTORS_FLASH AT > VECTORS_FLASH_LMA

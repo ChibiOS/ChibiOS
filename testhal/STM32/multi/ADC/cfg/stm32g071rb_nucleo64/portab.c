@@ -65,11 +65,15 @@ const ADCConversionGroup portab_adcgrpcfg1 = {
   .num_channels = ADC_GRP1_NUM_CHANNELS,
   .end_cb       = NULL,
   .error_cb     = adcerrorcallback,
-  .cfgr1        = ADC_CFGR1_CONT | ADC_CFGR1_RES_12BIT,     /* CFGR1 */
-  .cfgr2        = 0,                                        /* CFGR2 */
-  .tr           = ADC_TR(0, 0),                             /* TR */
-  .smpr         = ADC_SMPR_SMP_1P5,                         /* SMPR */
-  .chselr       = ADC_CHSELR_CHSEL10                        /* CHSELR */
+  .cfgr1        = ADC_CFGR1_CONT | ADC_CFGR1_RES_12BIT,
+  .cfgr2        = 0,
+  .tr1          = ADC_TR_DISABLED,
+  .tr2          = ADC_TR_DISABLED,
+  .tr3          = ADC_TR_DISABLED,
+  .awd2cr       = 0U,
+  .awd3cr       = 0U,
+  .smpr         = ADC_SMPR_SMP_1P5,
+  .chselr       = ADC_CHSELR_CHSEL10
 };
 
 /*
@@ -85,12 +89,16 @@ const ADCConversionGroup portab_adcgrpcfg2 = {
   .cfgr1        = ADC_CFGR1_CONT |
                   ADC_CFGR1_RES_12BIT |
                   ADC_CFGR1_EXTEN_RISING |
-                  ADC_CFGR1_EXTSEL_SRC(0),                  /* CFGR1 */
-  .cfgr2        = 0,                                        /* CFGR2 */
-  .tr           = ADC_TR(0, 0),                             /* TR */
-  .smpr         = ADC_SMPR_SMP_39P5,                        /* SMPR */
+                  ADC_CFGR1_EXTSEL_SRC(0),
+  .cfgr2        = 0,
+  .tr1          = ADC_TR_DISABLED,
+  .tr2          = ADC_TR_DISABLED,
+  .tr3          = ADC_TR_DISABLED,
+  .awd2cr       = 0U,
+  .awd3cr       = 0U,
+  .smpr         = ADC_SMPR_SMP_39P5,
   .chselr       = ADC_CHSELR_CHSEL10 | ADC_CHSELR_CHSEL11 |
-                  ADC_CHSELR_CHSEL17 | ADC_CHSELR_CHSEL18   /* CHSELR */
+                  ADC_CHSELR_CHSEL17 | ADC_CHSELR_CHSEL18
 };
 
 /*===========================================================================*/

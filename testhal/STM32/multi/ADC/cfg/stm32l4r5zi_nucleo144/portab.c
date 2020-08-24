@@ -67,7 +67,11 @@ const ADCConversionGroup portab_adcgrpcfg1 = {
   .error_cb     = adcerrorcallback,
   .cfgr         = 0U,
   .cfgr2        = 0U,
-  .tr1          = ADC_TR(0, 4095),
+  .tr1          = ADC_TR_DISABLED,
+  .tr2          = ADC_TR_DISABLED,
+  .tr3          = ADC_TR_DISABLED,
+  .awd2cr       = 0U,
+  .awd3cr       = 0U,
   .smpr         = {
     ADC_SMPR1_SMP_AN0(ADC_SMPR_SMP_247P5) |
     ADC_SMPR1_SMP_AN5(ADC_SMPR_SMP_247P5),
@@ -94,7 +98,11 @@ const ADCConversionGroup portab_adcgrpcfg2 = {
   .cfgr         = ADC_CFGR_EXTEN_RISING |
                   ADC_CFGR_EXTSEL_SRC(12),  /* TIM4_TRGO */
   .cfgr2        = 0U,
-  .tr1          = ADC_TR(0, 4095),
+  .tr1          = ADC_TR_DISABLED,
+  .tr2          = ADC_TR_DISABLED,
+  .tr3          = ADC_TR_DISABLED,
+  .awd2cr       = 0U,
+  .awd3cr       = 0U,
   .smpr         = {
     ADC_SMPR1_SMP_AN0(ADC_SMPR_SMP_247P5) |
     ADC_SMPR1_SMP_AN5(ADC_SMPR_SMP_247P5),

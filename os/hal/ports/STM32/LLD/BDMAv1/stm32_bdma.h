@@ -121,7 +121,7 @@
                                              STM32_BDMA_CR_MSIZE_MASK)
 #define STM32_BDMA_CR_PL_MASK               BDMA_CCR_PL_Msk
 #define STM32_BDMA_CR_PL(n)                 ((n) << 12U)
-#if !defined(STM32_ENFORCE_H7_REV_V)
+#if !defined(STM32_ENFORCE_H7_REV_XY)
 #define STM32_BDMA_CR_DBM                   BDMA_CCR_DBM
 #define STM32_BDMA_CR_CM                    BDMA_CCR_CT
 #endif
@@ -131,9 +131,9 @@
  * @name    Status flags passed to the ISR callbacks
  * @{
  */
-#define STM32_BDMA_ISR_TEIF                 BDMA_ISR_TEIF1
-#define STM32_BDMA_ISR_HTIF                 BDMA_ISR_HTIF1
-#define STM32_BDMA_ISR_TCIF                 BDMA_ISR_TCIF1
+#define STM32_BDMA_ISR_TEIF                 BDMA_ISR_TEIF0
+#define STM32_BDMA_ISR_HTIF                 BDMA_ISR_HTIF0
+#define STM32_BDMA_ISR_TCIF                 BDMA_ISR_TCIF0
 /** @} */
 
 /*===========================================================================*/
@@ -272,15 +272,9 @@ typedef struct {
  *
  * @special
  */
-#if !defined(STM32_ENFORCE_H7_REV_V) || defined(__DOXYGEN__)
 #define bdmaStreamSetMemory(stp, addr) {                                    \
   (stp)->channel->CM0AR  = (uint32_t)(addr);                                \
 }
-#else
-#define bdmaStreamSetMemory(stp, addr) {                                    \
-  (stp)->channel->CMAR  = (uint32_t)(addr);                                 \
-}
-#endif
 
 /**
  * @brief   Sets the number of transfers to be performed.

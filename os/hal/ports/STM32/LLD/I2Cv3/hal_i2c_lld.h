@@ -380,6 +380,7 @@
 #endif
 
 #if STM32_I2C_USE_I2C4
+#define STM32_I2C_BDMA_REQUIRED
 #if !defined(STM32_BDMA_REQUIRED)
 #define STM32_BDMA_REQUIRED
 #endif

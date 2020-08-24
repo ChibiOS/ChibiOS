@@ -74,6 +74,34 @@
 *****************************************************************************
 
 *** 20.3.2 ***
+- NEW: Support for 3 analog watchdogs in ADCv3 (STM32F3, L4, L4+, G4).
+- NEW: Support for 3 analog watchdogs in ADCv5 (STM32G0).
+- NEW: Updated FatFS to version 0.14.
+- NEW: Added a new setting to STM32 USBv1 allowing for some clock deviation
+       from 48MHz. Renamed setting USB_HOST_WAKEUP_DURATION to
+       STM32_USB_HOST_WAKEUP_DURATION for consistency.
+- FIX: Fixed STM32 QSPI errata workaround (bug #1116).
+- FIX: Fixed wrong condition in STM32 BDMAv1 driver (bug #1115).
+- FIX: Fixed HSI48 not getting enabled on STM32H7 (bug #1114).
+- FIX: Fixed LPUART1 support for STM32H7xx (bug #1113).
+- FIX: Fixed wrong sector count in EFL driver for L4+ dual bank configuration 
+       (bug #1112).
+- FIX: Fixed wrong preprocessor checks in STM32 TIMv1 ICU driver (bug #1111).
+- FIX: Fixed wrong revisions handling in STM32H743 HAL (bug #1110).
+- FIX: Fixed missing STM32_I2C_BDMA_REQUIRED definition in I2Cv3 driver
+       (bug #1109).
+- FIX: Fixed wrong definitions in SPC563M board files (bug #1108).
+- FIX: Fixed cortex-M vectors table alignment problem (bug #1107).
+- FIX: Fixed extra condition in MAC driver macWaitTransmitDescriptor() function
+       (bug #1106).
+- FIX: Fixed schedule anomaly when CH_CFG_TIME_QUANTUM is greater than zero
+       (bug #1105).
+- FIX: Fixed Virtual Timers corner case (bug #1104).
+- FIX: Fixed GCC6 problem breaks Cortex-M0 port (bug #985).
+- FIX: Fixed a wrong management of the SPI TX buffer in the ADUCM port 
+       (bug #1103).
+- FIX: Fixed STM32F4 EFL sector bug (bug #1102).
+- FIX: Fixed differences in STM32 EXTI (bug #1101).
 - FIX: Fixed STM32 DACv1 driver regressed because DMA changes (bug #1100).
 - FIX: Fixed STM32L0 missing LPUART IRQ initialization (bug #1099).
 - FIX: Fixed invalid EXTI definitions for STM32L0xx (bug #1098).
@@ -83,6 +111,7 @@
 - FIX: Fixed STM32G4 demos compile fails if smart mode is disabled (bug #1094).
 - FIX: Fixed failure in chSemReset() function when counter is equal to MAXINT
        (bug #1093).
+- FIX: Fixed error in EXTIv1 ISRs (bug #1077).
 
 *** 20.3.1 ***
 - NEW: STM32 ICU driver now allows to setup the ARR register in the
@@ -106,6 +135,5 @@
 - FIX: Fixed I2CD4 interrupt vectors are swapped versus I2CD1-I2CD3 (bug #1080).
 - FIX: Fixed incorrect clock check when using PLLSAI1R in ADCv3 (bug #1079).
 - FIX: Fixed missing checks in TIM6 and TIM7 STM32 mini drivers (bug #1078).
-- FIX: Fixed error in EXTIv1 ISRs (bug #1077).
 - FIX: Fixed problem in chMtxUnlockAllS() (bug #1076).
 

@@ -143,10 +143,11 @@
 #define STM32_HAS_ETH                       FALSE
 
 /* EXTI attributes.*/
-#define STM32_EXTI_TYPE                     0
-#define STM32_EXTI_NUM_LINES                41
+#define STM32_EXTI_HAS_CR                   FALSE
+#define STM32_EXTI_SEPARATE_RF              FALSE
+#define STM32_EXTI_NUM_LINES                44
 #define STM32_EXTI_IMR1_MASK                0x1F840000U
-#define STM32_EXTI_IMR2_MASK                0xFFFFFCF3U
+#define STM32_EXTI_IMR2_MASK                0xFFFFFF3CU
 
 
 /* Flash attributes.*/
@@ -357,10 +358,11 @@
 #define STM32_HAS_ETH                       FALSE
 
 /* EXTI attributes.*/
-#define STM32_EXTI_TYPE                     0
-#define STM32_EXTI_NUM_LINES                41
+#define STM32_EXTI_HAS_CR                   FALSE
+#define STM32_EXTI_SEPARATE_RF              FALSE
+#define STM32_EXTI_NUM_LINES                44
 #define STM32_EXTI_IMR1_MASK                0x1F840000U
-#define STM32_EXTI_IMR2_MASK                0xFFFFFCF3U
+#define STM32_EXTI_IMR2_MASK                0xFFFFFF3CU
 
 
 /* Flash attributes.*/
