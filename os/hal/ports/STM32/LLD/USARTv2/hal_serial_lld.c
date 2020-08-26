@@ -339,93 +339,93 @@ static void set_error(SerialDriver *sdp, uint32_t isr) {
  *
  * @param[in] sdp       communication channel associated to the USART
  */
-static void serve_interrupt(SerialDriver *sdp) {
-  USART_TypeDef *u = sdp->usart;
-  uint32_t cr1 = u->CR1;
-  uint32_t isr;
-
-  /* Reading and clearing status.*/
-  isr = u->ISR;
-  u->ICR = isr;
-
-  /* Error condition detection.*/
-  /* Added break detection */
-  if (isr & (USART_ISR_ORE | USART_ISR_NE | USART_ISR_FE  | USART_ISR_PE))
-    set_error(sdp, isr);
-
-  /* Special case, LIN break detection.*/
-  if (isr & USART_ISR_LBDF) {
-    osalSysLockFromISR();
-    chnAddFlagsI(sdp, SD_BREAK_DETECTED);
-    osalSysUnlockFromISR();
-  }
-
-  /* Data available, note it is a while in order to handle two situations:
-     1) Another byte arrived after removing the previous one, this would cause
-        an extra interrupt to serve.
-     2) FIFO mode is enabled on devices that support it, we need to empty
-        the FIFO.*/
-  while (isr & USART_ISR_RXNE) {
-    if (sdp->config->rxchar_cb != NULL)
-	{
-        sdp->config->rxchar_cb(sdp, (uint8_t)u->RDR & sdp->rxmask);				// Receive character callback
-	}
-	else
-	{
-    osalSysLockFromISR();
-    sdIncomingDataI(sdp, (uint8_t)u->RDR & sdp->rxmask);
-    osalSysUnlockFromISR();
-	}
-    isr = u->ISR;
-  }
-
-  /* Transmission buffer empty, note it is a while in order to handle two
-     situations:
-     1) The data registers has been emptied immediately after writing it, this
-        would cause an extra interrupt to serve.
-     2) FIFO mode is enabled on devices that support it, we need to fill
-        the FIFO.*/
-  if (cr1 & USART_CR1_TXEIE) {
-    while (isr & USART_ISR_TXE) {
-      msg_t b;
-
-      osalSysLockFromISR();
-      b = oqGetI(&sdp->oqueue);
-      if (b < MSG_OK) {
-// TODO: Do we need TCIE here?
-        u->CR1 = (cr1 & ~USART_CR1_TXEIE) | USART_CR1_TCIE;
-	    if (sdp->config->txend1_cb != NULL)
-		  sdp->config->txend1_cb(sdp);            // Signal that Tx buffer finished with
-		else
-          chnAddFlagsI(sdp, CHN_OUTPUT_EMPTY);
-        osalSysUnlockFromISR();
-        break;
-      }
-      u->TDR = b;
-      osalSysUnlockFromISR();
-
-      isr = u->ISR;
-    }
-  }
-
-
-  /* Physical transmission end.*/
-  if ((cr1 & USART_CR1_TCIE) && (isr & USART_ISR_TC)) {
-
-    u->CR1 = cr1 & ~USART_CR1_TCIE;
-    if (sdp->config->txend2_cb != NULL)
-	{
-      sdp->config->txend2_cb(sdp);      // Signal that whole transmit message gone
-	}
-	else
-	{
-    osalSysLockFromISR();
-		if (oqIsEmptyI(&sdp->oqueue))
-      chnAddFlagsI(sdp, CHN_TRANSMISSION_END);
-	    osalSysUnlockFromISR();
-    }
-  }
-}
+//static void serve_interrupt(SerialDriver *sdp) {
+//  USART_TypeDef *u = sdp->usart;
+//  uint32_t cr1 = u->CR1;
+//  uint32_t isr;
+//
+//  /* Reading and clearing status.*/
+//  isr = u->ISR;
+//  u->ICR = isr;
+//
+//  /* Error condition detection.*/
+//  /* Added break detection */
+//  if (isr & (USART_ISR_ORE | USART_ISR_NE | USART_ISR_FE  | USART_ISR_PE))
+//    set_error(sdp, isr);
+//
+//  /* Special case, LIN break detection.*/
+//  if (isr & USART_ISR_LBDF) {
+//    osalSysLockFromISR();
+//    chnAddFlagsI(sdp, SD_BREAK_DETECTED);
+//    osalSysUnlockFromISR();
+//  }
+//
+//  /* Data available, note it is a while in order to handle two situations:
+//     1) Another byte arrived after removing the previous one, this would cause
+//        an extra interrupt to serve.
+//     2) FIFO mode is enabled on devices that support it, we need to empty
+//        the FIFO.*/
+//  while (isr & USART_ISR_RXNE) {
+//    if (sdp->config->rxchar_cb != NULL)
+//	{
+//        sdp->config->rxchar_cb(sdp, (uint8_t)u->RDR & sdp->rxmask);				// Receive character callback
+//	}
+//	else
+//	{
+//    osalSysLockFromISR();
+//    sdIncomingDataI(sdp, (uint8_t)u->RDR & sdp->rxmask);
+//    osalSysUnlockFromISR();
+//	}
+//    isr = u->ISR;
+//  }
+//
+//  /* Transmission buffer empty, note it is a while in order to handle two
+//     situations:
+//     1) The data registers has been emptied immediately after writing it, this
+//        would cause an extra interrupt to serve.
+//     2) FIFO mode is enabled on devices that support it, we need to fill
+//        the FIFO.*/
+//  if (cr1 & USART_CR1_TXEIE) {
+//    while (isr & USART_ISR_TXE) {
+//      msg_t b;
+//
+//      osalSysLockFromISR();
+//      b = oqGetI(&sdp->oqueue);
+//      if (b < MSG_OK) {
+//// TODO: Do we need TCIE here?
+//        u->CR1 = (cr1 & ~USART_CR1_TXEIE) | USART_CR1_TCIE;
+//	    if (sdp->config->txend1_cb != NULL)
+//		  sdp->config->txend1_cb(sdp);            // Signal that Tx buffer finished with
+//		else
+//          chnAddFlagsI(sdp, CHN_OUTPUT_EMPTY);
+//        osalSysUnlockFromISR();
+//        break;
+//      }
+//      u->TDR = b;
+//      osalSysUnlockFromISR();
+//
+//      isr = u->ISR;
+//    }
+//  }
+//
+//
+//  /* Physical transmission end.*/
+//  if ((cr1 & USART_CR1_TCIE) && (isr & USART_ISR_TC)) {
+//
+//    u->CR1 = cr1 & ~USART_CR1_TCIE;
+//    if (sdp->config->txend2_cb != NULL)
+//	{
+//      sdp->config->txend2_cb(sdp);      // Signal that whole transmit message gone
+//	}
+//	else
+//	{
+//    osalSysLockFromISR();
+//		if (oqIsEmptyI(&sdp->oqueue))
+//      chnAddFlagsI(sdp, CHN_TRANSMISSION_END);
+//	    osalSysUnlockFromISR();
+//    }
+//  }
+//}
 
 #if STM32_SERIAL_USE_USART1 || defined(__DOXYGEN__)
 static void notify1(io_queue_t *qp) {
@@ -973,9 +973,16 @@ void sd_lld_serve_interrupt(SerialDriver *sdp) {
      2) FIFO mode is enabled on devices that support it, we need to empty
         the FIFO.*/
   while (isr & USART_ISR_RXNE) {
-    osalSysLockFromISR();
-    sdIncomingDataI(sdp, (uint8_t)u->RDR & sdp->rxmask);
-    osalSysUnlockFromISR();
+    if (sdp->config->rxchar_cb != NULL)
+	{
+        sdp->config->rxchar_cb(sdp, (uint8_t)u->RDR & sdp->rxmask);				// Receive character callback
+	}
+	else
+	{
+	    osalSysLockFromISR();
+	    sdIncomingDataI(sdp, (uint8_t)u->RDR & sdp->rxmask);
+	    osalSysUnlockFromISR();
+	}
 
     isr = u->ISR;
   }
@@ -995,6 +1002,9 @@ void sd_lld_serve_interrupt(SerialDriver *sdp) {
       if (b < MSG_OK) {
         chnAddFlagsI(sdp, CHN_OUTPUT_EMPTY);
         u->CR1 = cr1 & ~USART_CR1_TXEIE;
+	    if (sdp->config->txend1_cb != NULL)
+		  sdp->config->txend1_cb(sdp);            // Signal that Tx buffer finished with
+		else chnAddFlagsI(sdp, CHN_OUTPUT_EMPTY);
         osalSysUnlockFromISR();
         break;
       }
@@ -1007,12 +1017,19 @@ void sd_lld_serve_interrupt(SerialDriver *sdp) {
 
   /* Physical transmission end.*/
   if ((cr1 & USART_CR1_TCIE) && (isr & USART_ISR_TC)) {
-    osalSysLockFromISR();
-    if (oqIsEmptyI(&sdp->oqueue)) {
-      chnAddFlagsI(sdp, CHN_TRANSMISSION_END);
-      u->CR1 = cr1 & ~USART_CR1_TCIE;
-    }
-    osalSysUnlockFromISR();
+    if (sdp->config->txend2_cb != NULL)
+	{
+      sdp->config->txend2_cb(sdp);      // Signal that whole transmit message gone
+	}
+	else
+	{
+	    osalSysLockFromISR();
+	    if (oqIsEmptyI(&sdp->oqueue)) {
+	      chnAddFlagsI(sdp, CHN_TRANSMISSION_END);
+	      u->CR1 = cr1 & ~USART_CR1_TCIE;
+	    }
+	    osalSysUnlockFromISR();
+	}
   }
 }
 
