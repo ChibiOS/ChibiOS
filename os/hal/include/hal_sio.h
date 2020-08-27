@@ -51,7 +51,9 @@
  * @name    SIO configuration options
  * @{
  */
-
+#if !defined(HAL_SIO_USE_SYNCHRONIZATION) || defined(__DOXYGEN__)
+#define HAL_SIO_USE_SYNCHRONIZATION         TRUE
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -61,6 +63,11 @@
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   SIO driver condition flags type.
+ */
+typedef uint_fast8_t sioflags_t;
 
 /**
  * @brief   Type of structure representing a SIO driver.
@@ -73,15 +80,103 @@ typedef struct hal_sio_driver SIODriver;
 typedef struct hal_sio_config SIOConfig;
 
 /**
+ * @brief   Type of structure representing a SIO operation.
+ */
+typedef struct hal_sio_operation SIOOperation;
+
+/**
+ * @brief   Generic SIO notification callback type.
+ *
+ * @param[in] siop     pointer to the @p SIODriver object
+ */
+typedef void (*siocb_t)(SIODriver *siop);
+
+/**
  * @brief   Driver state machine possible states.
  */
 typedef enum {
   SIO_UNINIT = 0,                   /**< Not initialized.                   */
   SIO_STOP = 1,                     /**< Stopped.                           */
-  SIO_READY = 2                     /**< Ready.                             */
+  SIO_READY = 2,                    /**< Ready.                             */
+  SIO_ACTIVE = 3                    /**< Operation ongoing.                 */
 } siostate_t;
 
 #include "hal_sio_lld.h"
+
+/**
+ * @brief   Driver configuration structure.
+ * @note    Implementations may extend this structure to contain more,
+ *          architecture dependent, fields.
+ */
+struct hal_sio_config {
+  /* End of the mandatory fields.*/
+  sio_lld_config_fields;
+};
+
+/**
+ * @brief   Structure representing a SIO driver.
+ * @note    Implementations may extend this structure to contain more,
+ *          architecture dependent, fields.
+ */
+struct hal_sio_driver {
+  /**
+   * @brief   Driver state.
+   */
+  siostate_t               state;
+  /**
+   * @brief   Current configuration data.
+   */
+  const SIOConfig          *config;
+  /**
+   * @brief   Current configuration data.
+   */
+  const SIOOperation       *operation;
+#if (HAL_SIO_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   Synchronization point for RX.
+   */
+  thread_reference_t        sync_rx;
+  /**
+   * @brief   Synchronization point for TX.
+   */
+  thread_reference_t        sync_tx;
+  /**
+   * @brief   Synchronization point for TX-end.
+   */
+  thread_reference_t        sync_txend;
+#endif /* HAL_SIO_USE_SYNCHRONIZATION == TRUE */
+#if defined(SIO_DRIVER_EXT_FIELDS)
+  SIO_DRIVER_EXT_FIELDS
+#endif
+  /* End of the mandatory fields.*/
+  sio_lld_driver_fields;
+};
+
+/**
+ * @brief   Structure representing a SIO operation.
+ */
+struct hal_sio_operation {
+  /**
+   * @brief   Receive buffer filled callback.
+   * @note    Can be @p NULL.
+   */
+  siocb_t                   rxne_cb;
+  /**
+   * @brief   End of transmission buffer callback.
+   * @note    Can be @p NULL.
+   */
+  siocb_t                   txnf_cb;
+  /**
+   * @brief   Physical end of transmission callback.
+   * @note    Can be @p NULL.
+   */
+  siocb_t                   txend_cb;
+  /**
+   * @brief   Receive event callback.
+   * @note    Can be @p NULL.
+   */
+  siocb_t                   rxevt_cb;
+};
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -195,8 +290,13 @@ extern "C" {
 #endif
   void sioInit(void);
   void sioObjectInit(SIODriver *siop);
-  void sioStart(SIODriver *siop, const SIOConfig *config);
+  bool sioStart(SIODriver *siop, const SIOConfig *config);
   void sioStop(SIODriver *siop);
+  void sioStartOperation(SIODriver *siop, const SIOOperation *operation);
+  void sioStopOperation(SIODriver *siop);
+  msg_t sioSynchronizeRX(SIODriver *siop);
+  msg_t sioSynchronizeTX(SIODriver *siop);
+  msg_t sioSynchronizeTXEnd(SIODriver *siop);
 #ifdef __cplusplus
 }
 #endif

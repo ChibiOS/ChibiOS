@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    hal_sio.c
- * @brief   SIO Driver code.
+ * @file    hal_sio_lld.c
+ * @brief   PLATFORM SIO subsystem low level driver source.
  *
  * @addtogroup SIO
  * @{
@@ -34,6 +34,13 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
+/**
+ * @brief   SIO1 driver identifier.
+ */
+#if (PLATFORM_SIO_USE_SIO1 == TRUE) || defined(__DOXYGEN__)
+SIODriver SIOD1;
+#endif
+
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
@@ -43,36 +50,23 @@
 /*===========================================================================*/
 
 /*===========================================================================*/
+/* Driver interrupt handlers.                                                */
+/*===========================================================================*/
+
+/*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
 
 /**
- * @brief   SIO Driver initialization.
- * @note    This function is implicitly invoked by @p halInit(), there is
- *          no need to explicitly initialize the driver.
+ * @brief   Low level SIO driver initialization.
  *
- * @init
+ * @notapi
  */
-void sioInit(void) {
+void sio_lld_init(void) {
 
-  sio_lld_init();
-}
-
-/**
- * @brief   Initializes the standard part of a @p SIODriver structure.
- *
- * @param[out] siop     pointer to the @p SIODriver object
- *
- * @init
- */
-void sioObjectInit(SIODriver *siop) {
-
-  siop->state      = SIO_STOP;
-  siop->config     = NULL;
-
-  /* Optional, user-defined initializer.*/
-#if defined(SIO_DRIVER_EXT_INIT_HOOK)
-  SIO_DRIVER_EXT_INIT_HOOK(siop);
+#if PLATFORM_SIO_USE_SIO1 == TRUE
+  /* Driver initialization.*/
+  sioObjectInit(&SIOD1);
 #endif
 }
 
@@ -80,30 +74,25 @@ void sioObjectInit(SIODriver *siop) {
  * @brief   Configures and activates the SIO peripheral.
  *
  * @param[in] siop      pointer to the @p SIODriver object
- * @param[in] config    pointer to the @p SIOConfig object
  * @return              The operation status.
  * @retval false        if the driver has been correctly started.
  * @retval true         if an error occurred.
  *
- * @api
+ * @notapi
  */
-bool sioStart(SIODriver *siop, const SIOConfig *config) {
-  bool result;
+bool sio_lld_start(SIODriver *siop) {
 
-  osalDbgCheck((siop != NULL) && (config != NULL));
+  if (siop->state == SIO_STOP) {
+    /* Enables the peripheral.*/
+#if PLATFORM_SIO_USE_SIO1 == TRUE
+    if (&SIOD1 == siop) {
 
-  osalSysLock();
+    }
+#endif
+  }
+  /* Configures the peripheral.*/
 
-  osalDbgAssert((siop->state == SIO_STOP) || (siop->state == SIO_READY),
-                "invalid state");
-
-  siop->config = config;
-  result = sio_lld_start(siop);
-  siop->state = SIO_READY;
-
-  osalSysUnlock();
-
-  return result;
+  return false;
 }
 
 /**
@@ -111,22 +100,43 @@ bool sioStart(SIODriver *siop, const SIOConfig *config) {
  *
  * @param[in] siop      pointer to the @p SIODriver object
  *
- * @api
+ * @notapi
  */
-void sioStop(SIODriver *siop) {
+void sio_lld_stop(SIODriver *siop) {
 
-  osalDbgCheck(siop != NULL);
+  if (siop->state == SIO_READY) {
+    /* Resets the peripheral.*/
 
-  osalSysLock();
+    /* Disables the peripheral.*/
+#if PLATFORM_SIO_USE_SIO1 == TRUE
+    if (&SIOD1 == siop) {
 
-  osalDbgAssert((siop->state == SIO_STOP) || (siop->state == SIO_READY),
-                "invalid state");
+    }
+#endif
+  }
+}
 
-  sio_lld_stop(siop);
-  siop->config  = NULL;
-  siop->state   = SIO_STOP;
+/**
+ * @brief   Control operation on a serial port.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @param[in] operation control operation code
+ * @param[in,out] arg   operation argument
+ *
+ * @return              The control operation status.
+ * @retval MSG_OK       in case of success.
+ * @retval MSG_TIMEOUT  in case of operation timeout.
+ * @retval MSG_RESET    in case of operation reset.
+ *
+ * @notapi
+ */
+msg_t sio_lld_control(SIODriver *siop, unsigned int operation, void *arg) {
 
-  osalSysUnlock();
+  (void)siop;
+  (void)operation;
+  (void)arg;
+
+  return MSG_OK;
 }
 
 #endif /* HAL_USE_SIO == TRUE */
