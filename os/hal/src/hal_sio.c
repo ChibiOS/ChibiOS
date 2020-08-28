@@ -129,6 +129,188 @@ void sioStop(SIODriver *siop) {
   osalSysUnlock();
 }
 
+/**
+ * @brief   Starts n SIO operation.
+ *
+ * @param[in] siop          pointer to an @p SIODriver structure
+ * @param[in] operation     pointer to an @p SIOOperation structure
+ *                          encoding the operation to be performed
+ */
+void sioStartOperation(SIODriver *siop, const SIOOperation *operation) {
+
+  osalDbgCheck((siop != NULL) && (operation != NULL));
+
+  osalSysLock();
+
+  osalDbgAssert(siop->state == SIO_READY, "invalid state");
+
+  siop->operation = operation;
+  siop->state     = SIO_ACTIVE;
+
+  sio_lld_start_operation(siop);
+
+  osalSysUnlock();
+}
+
+/**
+ * @brief   Stops an ongoing SIO operation, if any.
+ *
+ * @param[in] siop      pointer to an @p SIODriver structure
+ */
+void sioStopOperation(SIODriver *siop) {
+
+  osalDbgCheck(siop != NULL);
+
+  osalSysLock();
+
+  osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
+
+  sio_lld_stop_operation(siop);
+
+  siop->operation = NULL;
+  siop->state     = SIO_READY;
+
+  osalSysUnlock();
+}
+
+/**
+ * @brief   Reads data from the RX FIFO.
+ * @details This function is non-blocking, data is read if present and the
+ *          effective amount is returned.
+ * @note    This function can be called from any context but it is meant to
+ *          be called from the @p rxne_cb callback handler.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @param[in] buffer    buffer for the received data
+ * @param[in] size      maximum number of frames to read
+ * @return              The number of received frames.
+ *
+ * @api
+ */
+size_t sioAsyncReadI(SIODriver *siop, size_t n, uint8_t *buffer) {
+
+  osalDbgCheck((siop != NULL) && (buf != NULL));
+
+  osalSysLock();
+
+  n = sioAsyncReadI(siop, n, buffer);
+
+  osalSysUnlock();
+
+  return n;
+}
+
+/**
+ * @brief   Writes data into the TX FIFO.
+ * @details This function is non-blocking, data is written if there is space
+ *          in the FIFO and the effective amount is returned.
+ * @note    This function can be called from any context but it is meant to
+ *          be called from the @p txnf_cb callback handler.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @param[out] buffer   buffer containing the data to be transmitted
+ * @param[in] size      maximum number of frames to read
+ * @return              The number of transmitted frames.
+ *
+ * @api
+ */
+size_t sioAsyncWrite(SIODriver *siop, size_t n, const uint8_t *buffer) {
+
+  osalDbgCheck((siop != NULL) && (buf != NULL));
+
+  osalSysLock();
+
+  n = sioAsyncWriteI(siop, n, buffer);
+
+  osalSysUnlock();
+
+  return n;
+}
+
+#if (HAL_SIO_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Synchronizes with RX FIFO data availability.
+ * @note    The exact behavior depends on low level FIFO settings such
+ *          as thresholds, etc.
+ * @note    This function can only be called by a single thread at time.
+ *
+ * @param[in] siop          pointer to an @p SIODriver structure
+ * @param[in] timeout       synchronization timeout
+ * @return                  The synchronization result.
+ * @retval MSG_OK           if there is space in the TX FIFO.
+ * @retval MSG_TIMEOUT      if synchronization timed out.
+ */
+msg_t sioSynchronizeRX(SIODriver *siop) {
+
+  osalDbgCheck(siop != NULL);
+
+  osalSysLock();
+
+  osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
+
+  if (sio_lld_is_rx_empty(siop)) {
+    msg = osalThdSuspendTimeoutS(&siop->sync_rx, timeout);
+  }
+  else {
+    msg = MSG_OK;
+  }
+
+  osalSysUnlock();
+}
+
+/**
+ * @brief   Synchronizes with TX FIFO space availability.
+ * @note    The exact behavior depends on low level FIFO settings such
+ *          as thresholds, etc.
+ * @note    This function can only be called by a single thread at time.
+ *
+ * @param[in] siop          pointer to an @p SIODriver structure
+ * @param[in] timeout       synchronization timeout
+ * @return                  The synchronization result.
+ * @retval MSG_OK           if there is space in the TX FIFO.
+ * @retval MSG_TIMEOUT      if synchronization timed out.
+ */
+msg_t sioSynchronizeTX(SIODriver *siop) {
+
+  osalDbgCheck(siop != NULL);
+
+  osalSysLock();
+
+  osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
+
+
+  osalSysUnlock();
+}
+
+/**
+ * @brief   Synchronizes with TX completion.
+ * @note    This function can only be called by a single thread at time.
+ *
+ * @param[in] siop          pointer to an @p SIODriver structure
+ * @param[in] timeout       synchronization timeout
+ * @return                  The synchronization result.
+ * @retval MSG_OK           if TX operation finished.
+ * @retval MSG_TIMEOUT      if synchronization timed out.
+ */
+msg_t sioSynchronizeTXEnd(SIODriver *siop) {
+
+  osalDbgCheck(siop != NULL);
+
+  osalSysLock();
+
+  osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
+
+  if (sio_lld_is_tx_ongoing(siop)) {
+    msg = osalThdSuspendTimeoutS(&siop->sync_txend, timeout);
+  }
+  else {
+    msg = MSG_OK;
+  }
+
+  osalSysUnlock();
+}
+#endif /* HAL_SIO_USE_SYNCHRONIZATION == TRUE */
+
 #endif /* HAL_USE_SIO == TRUE */
 
 /** @} */

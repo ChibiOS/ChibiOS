@@ -160,12 +160,12 @@ struct hal_sio_operation {
    * @brief   Receive buffer filled callback.
    * @note    Can be @p NULL.
    */
-  siocb_t                   rxne_cb;
+  siocb_t                   rx_cb;
   /**
    * @brief   End of transmission buffer callback.
    * @note    Can be @p NULL.
    */
-  siocb_t                   txnf_cb;
+  siocb_t                   tx_cb;
   /**
    * @brief   Physical end of transmission callback.
    * @note    Can be @p NULL.
@@ -197,7 +197,7 @@ struct hal_sio_operation {
  *
  * @xclass
  */
-#define sioRXIsEmptyX(siop) sio_lld_rx_is_empty(siop)
+#define sioIsRXEmptyX(siop) sio_lld_is_rx_empty(siop)
 
 /**
  * @brief   Determines the state of the TX FIFO.
@@ -209,7 +209,7 @@ struct hal_sio_operation {
  *
  * @xclass
  */
-#define sioTXIsFullX(siop) sio_lld_tx_is_full(siop)
+#define sioIsTXFullX(siop) sio_lld_is_tx_full(siop)
 
 /**
  * @brief   Returns one frame from the RX FIFO.
@@ -218,9 +218,9 @@ struct hal_sio_operation {
  * @param[in] siop      pointer to the @p SIODriver object
  * @return              The frame from RX FIFO.
  *
- * @xclass
+ * @iclass
  */
-#define sioRXGetX(siop) sio_lld_rx_get(siop)
+#define sioGetI(siop) sio_lld_get(siop)
 
 /**
  * @brief   Pushes one frame into the TX FIFO.
@@ -229,9 +229,9 @@ struct hal_sio_operation {
  * @param[in] siop      pointer to the @p SIODriver object
  * @param[in] data      frame to be written
  *
- * @xclass
+ * @iclass
  */
-#define sioTXPutX(siop, data) sio_lld_tx_put(siop, data)
+#define sioPutI(siop, data) sio_lld_put(siop, data)
 
 /**
  * @brief   Reads data from the RX FIFO.
@@ -245,9 +245,9 @@ struct hal_sio_operation {
  * @param[in] size      maximum number of frames to read
  * @return              The number of received frames.
  *
- * @xclass
+ * @iclass
  */
-#define sioReadX(siop, buffer, size) sio_lld_read(siop, buffer, size)
+#define sioAsyncReadI(siop, buffer, size) sio_lld_read(siop, buffer, size)
 
 /**
  * @brief   Writes data into the TX FIFO.
@@ -261,9 +261,9 @@ struct hal_sio_operation {
  * @param[in] size      maximum number of frames to read
  * @return              The number of transmitted frames.
  *
- * @xclass
+ * @iclass
  */
-#define sioWriteX(siop, buffer, size) sio_lld_write(siop, buffer, size)
+#define sioAsyncWriteI(siop, buffer, size) sio_lld_write(siop, buffer, size)
 
 /**
  * @brief   Control operation on a serial port.
@@ -294,9 +294,13 @@ extern "C" {
   void sioStop(SIODriver *siop);
   void sioStartOperation(SIODriver *siop, const SIOOperation *operation);
   void sioStopOperation(SIODriver *siop);
+  size_t sioAsyncRead(SIODriver *siop, size_t n, uint8_t *buffer);
+  size_t sioAsyncWrite(SIODriver *siop, size_t n, const uint8_t *buffer);
+#if (HAL_SIO_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)
   msg_t sioSynchronizeRX(SIODriver *siop);
   msg_t sioSynchronizeTX(SIODriver *siop);
   msg_t sioSynchronizeTXEnd(SIODriver *siop);
+#endif
 #ifdef __cplusplus
 }
 #endif

@@ -37,7 +37,7 @@
 /**
  * @brief   SIO1 driver identifier.
  */
-#if (PLATFORM_SIO_USE_SIO1 == TRUE) || defined(__DOXYGEN__)
+#if (STM32_SIO_USE_USART1 == TRUE) || defined(__DOXYGEN__)
 SIODriver SIOD1;
 #endif
 
@@ -64,7 +64,7 @@ SIODriver SIOD1;
  */
 void sio_lld_init(void) {
 
-#if PLATFORM_SIO_USE_SIO1 == TRUE
+#if STM32_SIO_USE_USART1 == TRUE
   /* Driver initialization.*/
   sioObjectInit(&SIOD1);
 #endif
@@ -84,7 +84,7 @@ bool sio_lld_start(SIODriver *siop) {
 
   if (siop->state == SIO_STOP) {
     /* Enables the peripheral.*/
-#if PLATFORM_SIO_USE_SIO1 == TRUE
+#if STM32_SIO_USE_USART1 == TRUE
     if (&SIOD1 == siop) {
 
     }
@@ -108,12 +108,90 @@ void sio_lld_stop(SIODriver *siop) {
     /* Resets the peripheral.*/
 
     /* Disables the peripheral.*/
-#if PLATFORM_SIO_USE_SIO1 == TRUE
+#if STM32_SIO_USE_USART1 == TRUE
     if (&SIOD1 == siop) {
 
     }
 #endif
   }
+}
+/**
+ * @brief   Reads data from the RX FIFO.
+ * @details The function is not blocking, it writes frames until there
+ *          is space available without waiting.
+ *
+ * @param[in] siop          pointer to an @p SIODriver structure
+ * @param[in] n             maximum number of frames to be read
+ * @param[in] buf           pointer to the buffer for read frames
+ * @return                  The number of frames copied from the buffer.
+ * @retval 0                if the TX FIFO is full.
+ */
+size_t sio_lld_read(SIODriver *siop, size_t n, uint8_t *buf) {
+  size_t rd;
+
+  rd = 0U;
+  while (true) {
+
+#if USART_ENABLE_INTERRUPTS == TRUE
+  /* If the RX FIFO has been emptied then the interrupt is enabled again.*/
+  if (sio_lld_is_rx_empty(siop)) {
+    siop->usart->CR3 |= USART_CR3_RXFTIE;
+    break;
+  }
+#endif
+
+    /* Buffer filled condition.*/
+    if (rd > n) {
+      break;
+    }
+
+    *buf++ = (uint8_t)siop->usart->RDR;
+    rd++;
+  }
+
+  return n - rd;
+}
+
+/**
+ * @brief   Writes data into the TX FIFO.
+ * @details The function is not blocking, it writes frames until there
+ *          is space available without waiting.
+ *
+ * @param[in] siop          pointer to an @p SIODriver structure
+ * @param[in] n             maximum number of frames to be written
+ * @param[in] buf           pointer to the buffer for read frames
+ * @return                  The number of frames copied from the buffer.
+ * @retval 0                if the TX FIFO is full.
+ */
+size_t sio_lld_write(SIODriver *siop, size_t n, const uint8_t *buf) {
+  size_t wr;
+
+  wr = 0U;
+  while (true) {
+
+#if USART_ENABLE_INTERRUPTS == TRUE
+    /* If the TX FIFO has been filled then the interrupt is enabled again.*/
+    if (sio_lld_is_tx_full(siop)) {
+      siop->usart->CR3 |= USART_CR3_TXFTIE;
+      break;
+    }
+#endif
+
+    /* Buffer emptied condition.*/
+    if (wr >= n) {
+      break;
+    }
+
+    siop->usart->TDR = (uint32_t)*buf++;
+    wr++;
+  }
+
+#if USART_ENABLE_INTERRUPTS == TRUE
+  /* The transmit complete interrupt is always re-enabled on write.*/
+  siop->usart->CR1 |= USART_CR1_TCIE;
+#endif
+
+  return n - wr;
 }
 
 /**

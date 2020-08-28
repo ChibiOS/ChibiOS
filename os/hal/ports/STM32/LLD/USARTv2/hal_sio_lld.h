@@ -44,8 +44,8 @@
  * @details If set to @p TRUE the support for SIO1 is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(PLATFORM_SIO_USE_SIO1) || defined(__DOXYGEN__)
-#define PLATFORM_SIO_USE_SIO1             FALSE
+#if !defined(STM32_SIO_USE_USART1) || defined(__DOXYGEN__)
+#define STM32_SIO_USE_USART1                FALSE
 #endif
 /** @} */
 
@@ -133,7 +133,7 @@
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if (PLATFORM_SIO_USE_SIO1 == TRUE) && !defined(__DOXYGEN__)
+#if (STM32_SIO_USE_USART1 == TRUE) && !defined(__DOXYGEN__)
 extern SIODriver SIOD1;
 #endif
 
