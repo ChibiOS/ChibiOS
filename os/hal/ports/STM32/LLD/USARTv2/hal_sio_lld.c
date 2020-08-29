@@ -135,7 +135,7 @@ SIODriver LPSIOD1;
  */
 static void usart_init(SIODriver *siop) {
   USART_TypeDef *u = siop->usart;
-  uint32_t cr1, presc, brr;
+  uint32_t presc, brr;
 
   /* Prescaler calculation.*/
   static const uint32_t prescvals[] = {1, 2, 4, 6, 8, 10, 12, 16, 32, 64, 128, 256};
@@ -173,7 +173,6 @@ static void usart_init(SIODriver *siop) {
   u->CR1   = (siop->config->cr1 & ~USART_CR1_CFG_FORBIDDEN) | USART_CR1_FIFOEN;
   u->CR2   = siop->config->cr2 & ~USART_CR2_CFG_FORBIDDEN;
   u->CR3   = siop->config->cr3 & ~USART_CR3_CFG_FORBIDDEN;
-  u->ICR   = u->ISR;
 }
 
 /*===========================================================================*/
@@ -414,6 +413,42 @@ void sio_lld_stop(SIODriver *siop) {
  * @api
  */
 void sio_lld_start_operation(SIODriver *siop) {
+  uint32_t cr1irq = 0U, cr2irq = 0U, cr3irq = 0U;
+
+#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
+  /* With synchronization all interrupts are required.*/
+  cr1irq = USART_CR1_PEIE | USART_CR1_TCIE | USART_CR1_IDLEIE;
+  cr2irq = USART_CR2_LBDIE;
+  cr3irq = USART_CR3_RXFTIE | USART_CR3_TXFTIE | USART_CR3_CTSIE | USART_CR3_EIE;
+#else
+  /* When using just callbacks we can select only those really required.*/
+  cr1irq = 0U;
+  cr2irq = 0U;
+  cr3irq = 0U;
+  if (siop->operation->rx_cb != NULL) {
+    cr3irq |= USART_CR3_RXFTIE;
+  }
+  if (siop->operation->rx_idle_cb != NULL) {
+    cr1irq |= USART_CR1_IDLEIE;
+  }
+  if (siop->operation->tx_cb != NULL) {
+    cr3irq |= USART_CR3_TXFTIE;
+  }
+  if (siop->operation->txend_cb != NULL) {
+    cr1irq |= USART_CR1_TCIE;
+  }
+  if (siop->operation->rxevt_cb != NULL) {
+    cr1irq |= USART_CR1_PEIE;
+    cr2irq |= USART_CR2_LBDIE;
+    cr3irq |= USART_CR3_CTSIE | USART_CR3_EIE;;
+  }
+#endif
+
+  /* Setting up the operation.*/
+  siop->usart->ICR  = siop->usart->ISR;
+  siop->usart->CR2 |= cr2irq;
+  siop->usart->CR3 |= cr3irq;
+  siop->usart->CR1 |= cr1irq | USART_CR1_UE | USART_CR1_TE | USART_CR1_RE;
 }
 
 /**
@@ -424,6 +459,11 @@ void sio_lld_start_operation(SIODriver *siop) {
  * @api
  */
 void sio_lld_stop_operation(SIODriver *siop) {
+
+  /* Stop operation.*/
+  siop->usart->CR1 &= USART_CR1_CFG_FORBIDDEN;
+  siop->usart->CR2 &= USART_CR2_CFG_FORBIDDEN;
+  siop->usart->CR3 &= USART_CR3_CFG_FORBIDDEN;
 }
 
 /**
@@ -443,13 +483,13 @@ size_t sio_lld_read(SIODriver *siop, size_t n, uint8_t *buffer) {
   rd = 0U;
   while (true) {
 
-#if USART_ENABLE_INTERRUPTS == TRUE
     /* If the RX FIFO has been emptied then the interrupt is enabled again.*/
     if (sio_lld_is_rx_empty(siop)) {
-      siop->usart->CR3 |= USART_CR3_RXFTIE;
+      if (siop->operation->rx_cb != NULL) {
+        siop->usart->CR3 |= USART_CR3_RXFTIE;
+      }
       break;
     }
-#endif
 
     /* Buffer filled condition.*/
     if (rd > n) {
@@ -480,13 +520,13 @@ size_t sio_lld_write(SIODriver *siop, size_t n, const uint8_t *buffer) {
   wr = 0U;
   while (true) {
 
-#if USART_ENABLE_INTERRUPTS == TRUE
     /* If the TX FIFO has been filled then the interrupt is enabled again.*/
     if (sio_lld_is_tx_full(siop)) {
-      siop->usart->CR3 |= USART_CR3_TXFTIE;
+      if (siop->operation->tx_cb != NULL) {
+        siop->usart->CR3 |= USART_CR3_TXFTIE;
+      }
       break;
     }
-#endif
 
     /* Buffer emptied condition.*/
     if (wr >= n) {
@@ -497,10 +537,10 @@ size_t sio_lld_write(SIODriver *siop, size_t n, const uint8_t *buffer) {
     wr++;
   }
 
-#if USART_ENABLE_INTERRUPTS == TRUE
   /* The transmit complete interrupt is always re-enabled on write.*/
-  siop->usart->CR1 |= USART_CR1_TCIE;
-#endif
+  if (siop->operation->txend_cb != NULL) {
+    siop->usart->CR1 |= USART_CR1_TCIE;
+  }
 
   return n - wr;
 }
