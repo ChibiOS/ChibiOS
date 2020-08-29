@@ -157,12 +157,17 @@ struct hal_sio_driver {
  */
 struct hal_sio_operation {
   /**
-   * @brief   Receive buffer filled callback.
+   * @brief   Receive non-empty callback.
    * @note    Can be @p NULL.
    */
   siocb_t                   rx_cb;
   /**
-   * @brief   End of transmission buffer callback.
+   * @brief   Receive idle callback.
+   * @note    Can be @p NULL.
+   */
+  siocb_t                   rx_idle_cb;
+  /**
+   * @brief   Transmission buffer non-full callback.
    * @note    Can be @p NULL.
    */
   siocb_t                   tx_cb;

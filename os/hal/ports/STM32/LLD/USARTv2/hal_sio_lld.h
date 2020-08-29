@@ -40,18 +40,175 @@
  * @{
  */
 /**
- * @brief   SIO driver enable switch.
- * @details If set to @p TRUE the support for SIO1 is included.
+ * @brief   SIO driver 1 enable switch.
+ * @details If set to @p TRUE the support for USART1 is included.
  * @note    The default is @p FALSE.
  */
 #if !defined(STM32_SIO_USE_USART1) || defined(__DOXYGEN__)
 #define STM32_SIO_USE_USART1                FALSE
+#endif
+
+/**
+ * @brief   SIO driver 2 enable switch.
+ * @details If set to @p TRUE the support for USART2 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_SIO_USE_USART2) || defined(__DOXYGEN__)
+#define STM32_SIO_USE_USART2                FALSE
+#endif
+
+/**
+ * @brief   SIO driver 3 enable switch.
+ * @details If set to @p TRUE the support for USART3 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_SIO_USE_USART3) || defined(__DOXYGEN__)
+#define STM32_SIO_USE_USART3                FALSE
+#endif
+
+/**
+ * @brief   SIO driver 4 enable switch.
+ * @details If set to @p TRUE the support for UART4 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_SIO_USE_UART4) || defined(__DOXYGEN__)
+#define STM32_SIO_USE_UART4                 FALSE
+#endif
+
+/**
+ * @brief   SIO driver 5 enable switch.
+ * @details If set to @p TRUE the support for UART5 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_SIO_USE_UART5) || defined(__DOXYGEN__)
+#define STM32_SIO_USE_UART5                 FALSE
+#endif
+
+/**
+ * @brief   SIO driver 6 enable switch.
+ * @details If set to @p TRUE the support for USART6 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_SIO_USE_USART6) || defined(__DOXYGEN__)
+#define STM32_SIO_USE_USART6                FALSE
+#endif
+
+/**
+ * @brief   SIO driver 7 enable switch.
+ * @details If set to @p TRUE the support for UART7 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_SIO_USE_UART7) || defined(__DOXYGEN__)
+#define STM32_SIO_USE_UART7                 FALSE
+#endif
+
+/**
+ * @brief   SIO driver 8 enable switch.
+ * @details If set to @p TRUE the support for UART8 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_SIO_USE_UART8) || defined(__DOXYGEN__)
+#define STM32_SIO_USE_UART8                 FALSE
+#endif
+
+/**
+ * @brief   SIO driver 8 enable switch.
+ * @details If set to @p TRUE the support for LPUART1 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_SIO_USE_ULPUART1) || defined(__DOXYGEN__)
+#define STM32_SIO_USE_LPUART1               FALSE
 #endif
 /** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+#if STM32_SIO_USE_USART1 && !STM32_HAS_USART1
+#error "USART1 not present in the selected device"
+#endif
+
+#if !STM32_SIO_USE_USART1 && !STM32_SIO_USE_USART2 &&                       \
+    !STM32_SIO_USE_USART3 && !STM32_SIO_USE_UART4  &&                       \
+    !STM32_SIO_USE_UART5  && !STM32_SIO_USE_USART6 &&                       \
+    !STM32_SIO_USE_UART7  && !STM32_SIO_USE_UART8  &&                       \
+    !STM32_SIO_USE_LPUART1
+#error "SIO driver activated but no USART/UART peripheral assigned"
+#endif
+
+/* Checks on allocation of USARTx units.*/
+#if STM32_SIO_USE_USART1
+#if defined(STM32_USART1_IS_USED)
+#error "SIOD1 requires USART1 but it is already used"
+#else
+#define STM32_USART1_IS_USED
+#endif
+#endif
+
+#if STM32_SIO_USE_USART2
+#if defined(STM32_USART2_IS_USED)
+#error "SIOD2 requires USART2 but it is already used"
+#else
+#define STM32_USART2_IS_USED
+#endif
+#endif
+
+#if STM32_SIO_USE_USART3
+#if defined(STM32_USART3_IS_USED)
+#error "SIOD3 requires USART3 but it is already used"
+#else
+#define STM32_USART3_IS_USED
+#endif
+#endif
+
+#if STM32_SIO_USE_UART4
+#if defined(STM32_UART4_IS_USED)
+#error "SIOD4 requires UART4 but it is already used"
+#else
+#define STM32_UART4_IS_USED
+#endif
+#endif
+
+#if STM32_SIO_USE_UART5
+#if defined(STM32_UART5_IS_USED)
+#error "SIOD5 requires UART5 but it is already used"
+#else
+#define STM32_UART5_IS_USED
+#endif
+#endif
+
+#if STM32_SIO_USE_USART6
+#if defined(STM32_USART6_IS_USED)
+#error "SIOD6 requires USART6 but it is already used"
+#else
+#define STM32_USART6_IS_USED
+#endif
+#endif
+
+#if STM32_SIO_USE_UART7
+#if defined(STM32_UART7_IS_USED)
+#error "SIOD7 requires UART7 but it is already used"
+#else
+#define STM32_UART7_IS_USED
+#endif
+#endif
+
+#if STM32_SIO_USE_UART8
+#if defined(STM32_UART8_IS_USED)
+#error "SIOD8 requires UART8 but it is already used"
+#else
+#define STM32_UART8_IS_USED
+#endif
+#endif
+
+#if STM32_SIO_USE_LPUART1
+#if defined(STM32_LPUART1_IS_USED)
+#error "LPSIOD1 requires LPUART1 but it is already used"
+#else
+#define STM32_LPUART1_IS_USED
+#endif
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -66,7 +223,11 @@
  */
 #define sio_lld_driver_fields                                               \
   /* Pointer to the USARTx registers block.*/                               \
-  USART_TypeDef             *usart
+  USART_TypeDef             *usart;                                         \
+  /* USART clock frequency.*/                                               \
+  uint32_t                  clock;                                          \
+  /* Pending USART events.*/                                                \
+  uint32_t                  events
 
 /**
  * @brief   Low level fields of the SIO configuration structure.
@@ -78,9 +239,9 @@
   uint32_t                  presc;                                          \
   /* USART CR1 register initialization data.*/                              \
   uint32_t                  cr1;                                            \
-  /* USART CR1 register initialization data.*/                              \
+  /* USART CR2 register initialization data.*/                              \
   uint32_t                  cr2;                                            \
-  /* USART CR1 register initialization data.*/                              \
+  /* USART CR3 register initialization data.*/                              \
   uint32_t                  cr3
 
 /**
@@ -150,6 +311,38 @@
 
 #if (STM32_SIO_USE_USART1 == TRUE) && !defined(__DOXYGEN__)
 extern SIODriver SIOD1;
+#endif
+
+#if (STM32_SIO_USE_USART2 == TRUE) && !defined(__DOXYGEN__)
+extern SIODriver SIOD2;
+#endif
+
+#if (STM32_SIO_USE_USART3 == TRUE) && !defined(__DOXYGEN__)
+extern SIODriver SIOD3;
+#endif
+
+#if (STM32_SIO_USE_UART4 == TRUE) && !defined(__DOXYGEN__)
+extern SIODriver SIOD4;
+#endif
+
+#if (STM32_SIO_USE_UART5 == TRUE) && !defined(__DOXYGEN__)
+extern SIODriver SIOD5;
+#endif
+
+#if (STM32_SIO_USE_USART6 == TRUE) && !defined(__DOXYGEN__)
+extern SIODriver SIOD6;
+#endif
+
+#if (STM32_SIO_USE_UART7 == TRUE) && !defined(__DOXYGEN__)
+extern SIODriver SIOD7;
+#endif
+
+#if (STM32_SIO_USE_UART8 == TRUE) && !defined(__DOXYGEN__)
+extern SIODriver SIOD8;
+#endif
+
+#if (STM32_SIO_USE_LPUART1 == TRUE) && !defined(__DOXYGEN__)
+extern SIODriver LPSIOD1;
 #endif
 
 #ifdef __cplusplus

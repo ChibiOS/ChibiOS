@@ -191,7 +191,7 @@ void sioStopOperation(SIODriver *siop) {
  *
  * @api
  */
-size_t sioAsyncReadI(SIODriver *siop, size_t n, uint8_t *buffer) {
+size_t sioAsyncRead(SIODriver *siop, size_t n, uint8_t *buffer) {
 
   osalDbgCheck((siop != NULL) && (buffer));
 
