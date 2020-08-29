@@ -130,11 +130,13 @@ void sioStop(SIODriver *siop) {
 }
 
 /**
- * @brief   Starts n SIO operation.
+ * @brief   Starts a SIO operation.
  *
  * @param[in] siop          pointer to an @p SIODriver structure
  * @param[in] operation     pointer to an @p SIOOperation structure
  *                          encoding the operation to be performed
+ *
+ * @api
  */
 void sioStartOperation(SIODriver *siop, const SIOOperation *operation) {
 
@@ -156,6 +158,8 @@ void sioStartOperation(SIODriver *siop, const SIOOperation *operation) {
  * @brief   Stops an ongoing SIO operation, if any.
  *
  * @param[in] siop      pointer to an @p SIODriver structure
+ *
+ * @api
  */
 void sioStopOperation(SIODriver *siop) {
 
@@ -189,7 +193,7 @@ void sioStopOperation(SIODriver *siop) {
  */
 size_t sioAsyncReadI(SIODriver *siop, size_t n, uint8_t *buffer) {
 
-  osalDbgCheck((siop != NULL) && (buf != NULL));
+  osalDbgCheck((siop != NULL) && (buffer));
 
   osalSysLock();
 
@@ -216,7 +220,7 @@ size_t sioAsyncReadI(SIODriver *siop, size_t n, uint8_t *buffer) {
  */
 size_t sioAsyncWrite(SIODriver *siop, size_t n, const uint8_t *buffer) {
 
-  osalDbgCheck((siop != NULL) && (buf != NULL));
+  osalDbgCheck((siop != NULL) && (buffer != NULL));
 
   osalSysLock();
 
@@ -240,7 +244,8 @@ size_t sioAsyncWrite(SIODriver *siop, size_t n, const uint8_t *buffer) {
  * @retval MSG_OK           if there is space in the TX FIFO.
  * @retval MSG_TIMEOUT      if synchronization timed out.
  */
-msg_t sioSynchronizeRX(SIODriver *siop) {
+msg_t sioSynchronizeRX(SIODriver *siop, sysinterval_t timeout) {
+  msg_t msg;
 
   osalDbgCheck(siop != NULL);
 
@@ -249,13 +254,15 @@ msg_t sioSynchronizeRX(SIODriver *siop) {
   osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
 
   if (sio_lld_is_rx_empty(siop)) {
-    msg = osalThdSuspendTimeoutS(&siop->sync_rx, timeout);
+    msg = osalThreadSuspendTimeoutS(&siop->sync_rx, timeout);
   }
   else {
     msg = MSG_OK;
   }
 
   osalSysUnlock();
+
+  return msg;
 }
 
 /**
@@ -270,7 +277,8 @@ msg_t sioSynchronizeRX(SIODriver *siop) {
  * @retval MSG_OK           if there is space in the TX FIFO.
  * @retval MSG_TIMEOUT      if synchronization timed out.
  */
-msg_t sioSynchronizeTX(SIODriver *siop) {
+msg_t sioSynchronizeTX(SIODriver *siop, sysinterval_t timeout) {
+  msg_t msg;
 
   osalDbgCheck(siop != NULL);
 
@@ -278,8 +286,16 @@ msg_t sioSynchronizeTX(SIODriver *siop) {
 
   osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
 
+  if (sio_lld_is_tx_full(siop)) {
+    msg = osalThreadSuspendTimeoutS(&siop->sync_tx, timeout);
+  }
+  else {
+    msg = MSG_OK;
+  }
 
   osalSysUnlock();
+
+  return msg;
 }
 
 /**
@@ -292,7 +308,8 @@ msg_t sioSynchronizeTX(SIODriver *siop) {
  * @retval MSG_OK           if TX operation finished.
  * @retval MSG_TIMEOUT      if synchronization timed out.
  */
-msg_t sioSynchronizeTXEnd(SIODriver *siop) {
+msg_t sioSynchronizeTXEnd(SIODriver *siop, sysinterval_t timeout) {
+  msg_t msg;
 
   osalDbgCheck(siop != NULL);
 
@@ -301,13 +318,15 @@ msg_t sioSynchronizeTXEnd(SIODriver *siop) {
   osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
 
   if (sio_lld_is_tx_ongoing(siop)) {
-    msg = osalThdSuspendTimeoutS(&siop->sync_txend, timeout);
+    msg = osalThreadSuspendTimeoutS(&siop->sync_txend, timeout);
   }
   else {
     msg = MSG_OK;
   }
 
   osalSysUnlock();
+
+  return msg;
 }
 #endif /* HAL_SIO_USE_SYNCHRONIZATION == TRUE */
 

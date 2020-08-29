@@ -241,13 +241,13 @@ struct hal_sio_operation {
  *          be called from the @p rxne_cb callback handler.
  *
  * @param[in] siop      pointer to the @p SIODriver object
- * @param[in] buffer    buffer for the received data
  * @param[in] size      maximum number of frames to read
+ * @param[in] buffer    buffer for the received data
  * @return              The number of received frames.
  *
  * @iclass
  */
-#define sioAsyncReadI(siop, buffer, size) sio_lld_read(siop, buffer, size)
+#define sioAsyncReadI(siop, size, buffer) sio_lld_read(siop, size, buffer)
 
 /**
  * @brief   Writes data into the TX FIFO.
@@ -257,13 +257,13 @@ struct hal_sio_operation {
  *          be called from the @p txnf_cb callback handler.
  *
  * @param[in] siop      pointer to the @p SIODriver object
- * @param[out] buffer   buffer containing the data to be transmitted
  * @param[in] size      maximum number of frames to read
+ * @param[out] buffer   buffer containing the data to be transmitted
  * @return              The number of transmitted frames.
  *
  * @iclass
  */
-#define sioAsyncWriteI(siop, buffer, size) sio_lld_write(siop, buffer, size)
+#define sioAsyncWriteI(siop, size, buffer) sio_lld_write(siop, size, buffer)
 
 /**
  * @brief   Control operation on a serial port.
@@ -297,9 +297,9 @@ extern "C" {
   size_t sioAsyncRead(SIODriver *siop, size_t n, uint8_t *buffer);
   size_t sioAsyncWrite(SIODriver *siop, size_t n, const uint8_t *buffer);
 #if (HAL_SIO_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)
-  msg_t sioSynchronizeRX(SIODriver *siop);
-  msg_t sioSynchronizeTX(SIODriver *siop);
-  msg_t sioSynchronizeTXEnd(SIODriver *siop);
+  msg_t sioSynchronizeRX(SIODriver *siop, sysinterval_t timeout);
+  msg_t sioSynchronizeTX(SIODriver *siop, sysinterval_t timeout);
+  msg_t sioSynchronizeTXEnd(SIODriver *siop, sysinterval_t timeout);
 #endif
 #ifdef __cplusplus
 }

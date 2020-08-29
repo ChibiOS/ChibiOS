@@ -94,6 +94,25 @@ bool sio_lld_start(SIODriver *siop) {
 
   return false;
 }
+/**
+ * @brief   Starts a SIO operation.
+ *
+ * @param[in] siop          pointer to an @p SIODriver structure
+ *
+ * @api
+ */
+void sio_lld_start_operation(SIODriver *siop) {
+}
+
+/**
+ * @brief   Stops an ongoing SIO operation, if any.
+ *
+ * @param[in] siop      pointer to an @p SIODriver structure
+ *
+ * @api
+ */
+void sio_lld_stop_operation(SIODriver *siop) {
+}
 
 /**
  * @brief   Deactivates the SIO peripheral.
@@ -122,11 +141,11 @@ void sio_lld_stop(SIODriver *siop) {
  *
  * @param[in] siop          pointer to an @p SIODriver structure
  * @param[in] n             maximum number of frames to be read
- * @param[in] buf           pointer to the buffer for read frames
+ * @param[in] buffer        pointer to the buffer for read frames
  * @return                  The number of frames copied from the buffer.
  * @retval 0                if the TX FIFO is full.
  */
-size_t sio_lld_read(SIODriver *siop, size_t n, uint8_t *buf) {
+size_t sio_lld_read(SIODriver *siop, size_t n, uint8_t *buffer) {
   size_t rd;
 
   rd = 0U;
@@ -145,7 +164,7 @@ size_t sio_lld_read(SIODriver *siop, size_t n, uint8_t *buf) {
       break;
     }
 
-    *buf++ = (uint8_t)siop->usart->RDR;
+    *buffer++ = (uint8_t)siop->usart->RDR;
     rd++;
   }
 
@@ -159,11 +178,11 @@ size_t sio_lld_read(SIODriver *siop, size_t n, uint8_t *buf) {
  *
  * @param[in] siop          pointer to an @p SIODriver structure
  * @param[in] n             maximum number of frames to be written
- * @param[in] buf           pointer to the buffer for read frames
+ * @param[in] buffer        pointer to the buffer for read frames
  * @return                  The number of frames copied from the buffer.
  * @retval 0                if the TX FIFO is full.
  */
-size_t sio_lld_write(SIODriver *siop, size_t n, const uint8_t *buf) {
+size_t sio_lld_write(SIODriver *siop, size_t n, const uint8_t *buffer) {
   size_t wr;
 
   wr = 0U;
@@ -182,7 +201,7 @@ size_t sio_lld_write(SIODriver *siop, size_t n, const uint8_t *buf) {
       break;
     }
 
-    siop->usart->TDR = (uint32_t)*buf++;
+    siop->usart->TDR = (uint32_t)*buffer++;
     wr++;
   }
 

@@ -93,7 +93,8 @@
  *
  * @notapi
  */
-#define sio_lld_rx_is_empty(siop) true
+#define sio_lld_is_rx_empty(siop)                                           \
+  (bool)(((siop)->usart->ISR & USART_ISR_RXNE_RXFNE) == 0U)
 
 /**
  * @brief   Determines the state of the TX FIFO.
@@ -105,7 +106,21 @@
  *
  * @notapi
  */
-#define sio_lld_tx_is_full(siop) true
+#define sio_lld_is_tx_full(siop)                                            \
+  (bool)(((siop)->usart->ISR & USART_ISR_TXE_TXFNF) == 0U)
+
+/**
+ * @brief   Determines the transmission state.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @return              The TX FIFO state.
+ * @retval false        if transmission is idle
+ * @retval true         if transmission is ongoing
+ *
+ * @notapi
+ */
+#define sio_lld_is_tx_ongoing(siop)                                         \
+  (bool)(((siop)->usart->ISR & USART_ISR_TC) == 0U)
 
 /**
  * @brief   Returns one frame from the RX FIFO.
@@ -143,8 +158,10 @@ extern "C" {
   void sio_lld_init(void);
   bool  sio_lld_start(SIODriver *siop);
   void sio_lld_stop(SIODriver *siop);
-  size_t sio_lld_read(SIODriver *siop, void *buffer, size_t size);
-  size_t sio_lld_write(SIODriver *siop, const void *buffer, size_t size);
+  void sio_lld_start_operation(SIODriver *siop);
+  void sio_lld_stop_operation(SIODriver *siop);
+  size_t sio_lld_read(SIODriver *siop, size_t size, uint8_t *buffer);
+  size_t sio_lld_write(SIODriver *siop, size_t size, const uint8_t *buffer);
   msg_t sio_lld_control(SIODriver *siop, unsigned int operation, void *arg);
 #ifdef __cplusplus
 }
