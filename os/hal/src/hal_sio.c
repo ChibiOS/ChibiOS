@@ -42,6 +42,98 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+#if (HAL_SIO_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)
+/*
+ * Interface implementation, the following functions just invoke the equivalent
+ * queue-level function or macro.
+ */
+
+static size_t __write(void *ip, const uint8_t *bp, size_t n) {
+  SIODriver *siop = (SIODriver *)ip;
+
+  sioSynchronizeTX(siop, TIME_INFINITE);
+  return sioAsyncWrite(siop, n, bp);
+}
+
+static size_t __read(void *ip, uint8_t *bp, size_t n) {
+  SIODriver *siop = (SIODriver *)ip;
+
+  sioSynchronizeRX(siop, TIME_INFINITE);
+  return sioAsyncRead(siop, n, bp);
+}
+
+static msg_t __put(void *ip, uint8_t b) {
+  SIODriver *siop = (SIODriver *)ip;
+
+  sioSynchronizeTX(siop, TIME_INFINITE);
+  sioPut(b);
+  return MSG_OK;
+}
+
+static msg_t __get(void *ip) {
+  SIODriver *siop = (SIODriver *)ip;
+
+  sioSynchronizeRX(siop, TIME_INFINITE);
+  return sioGet();
+}
+
+static msg_t __putt(void *ip, uint8_t b, sysinterval_t timeout) {
+  SIODriver *siop = (SIODriver *)ip;
+
+  sioSynchronizeTX(siop, timeout);
+  sioPut(b);
+  return MSG_OK;
+}
+
+static msg_t __gett(void *ip, sysinterval_t timeout) {
+  SIODriver *siop = (SIODriver *)ip;
+
+  sioSynchronizeRX(siop, timeout);
+  return sioGet();
+}
+
+static size_t __writet(void *ip, const uint8_t *bp, size_t n,
+                       sysinterval_t timeout) {
+  SIODriver *siop = (SIODriver *)ip;
+
+  sioSynchronizeTX(siop, timeout);
+  return sioAsyncWrite(siop, n, bp);
+}
+
+static size_t __readt(void *ip, uint8_t *bp, size_t n,
+                      sysinterval_t timeout) {
+  SIODriver *siop = (SIODriver *)ip;
+
+  sioSynchronizeRX(siop, timeout);
+  return sioAsyncRead(siop, n, bp);
+}
+
+static msg_t __ctl(void *ip, unsigned int operation, void *arg) {
+  SIODriver *siop = (SIODriver *)ip;
+
+  osalDbgCheck(siop != NULL);
+
+  switch (operation) {
+  case CHN_CTL_NOP:
+    osalDbgCheck(arg == NULL);
+    break;
+  case CHN_CTL_INVALID:
+    osalDbgAssert(false, "invalid CTL operation");
+    break;
+  default:
+    break;
+  }
+  return MSG_OK;
+}
+
+static const struct sio_driver_vmt vmt = {
+  (size_t)0,
+  __write, __read, __put,    __get,
+  __putt,  __gett, __writet, __readt,
+  __ctl
+};
+#endif
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -67,8 +159,11 @@ void sioInit(void) {
  */
 void sioObjectInit(SIODriver *siop) {
 
-  siop->state      = SIO_STOP;
-  siop->config     = NULL;
+#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
+  siop->vmt     = &vmt;
+#endif
+  siop->state   = SIO_STOP;
+  siop->config  = NULL;
 
   /* Optional, user-defined initializer.*/
 #if defined(SIO_DRIVER_EXT_INIT_HOOK)

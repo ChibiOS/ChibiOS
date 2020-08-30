@@ -601,16 +601,10 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
     siop->events |= evtmask;
 
     /* The callback is invoked if defined.*/
-    if (siop->operation->rx_evt_cb != NULL) {
-      siop->operation->rx_evt_cb(siop);
-    }
+    __sio_callback_rx_evt(siop);
 
-#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
     /* Waiting thread woken, if any.*/
-    osalSysLockFromISR();
-    osalThreadResumeI(&siop->sync_rx, SIO_MSG_ERRORS);
-    osalSysUnlockFromISR();
-#endif
+    __sio_wakeup_rx(siop, SIO_MSG_ERRORS);
   }
 
   /* RX FIFO is non-empty.*/
@@ -618,16 +612,10 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
       (isr & USART_ISR_RXFT) != 0U) {
 
     /* The callback is invoked if defined.*/
-    if (siop->operation->rx_cb != NULL) {
-      siop->operation->rx_cb(siop);
-    }
+    __sio_callback_rx(siop);
 
-#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
     /* Waiting thread woken, if any.*/
-    osalSysLockFromISR();
-    osalThreadResumeI(&siop->sync_rx, MSG_OK);
-    osalSysUnlockFromISR();
-#endif
+    __sio_wakeup_rx(siop, MSG_OK);
 
     /* Called once then the interrupt source is disabled.*/
     cr3 &= ~USART_CR3_RXFTIE;
@@ -638,16 +626,10 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
       (isr & USART_ISR_IDLE) != 0U) {
 
     /* The callback is invoked if defined.*/
-    if (siop->operation->rx_idle_cb != NULL) {
-      siop->operation->rx_idle_cb(siop);
-    }
+    __sio_callback_rx_idle(siop);
 
-#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
     /* Waiting thread woken, if any.*/
-    osalSysLockFromISR();
-    osalThreadResumeI(&siop->sync_rx, SIO_MSG_IDLE);
-    osalSysUnlockFromISR();
-#endif
+    __sio_wakeup_rx(siop, SIO_MSG_IDLE);
   }
 
   /* TX FIFO is non-full.*/
@@ -655,16 +637,10 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
       (isr & USART_ISR_TXFT) != 0U) {
 
     /* The callback is invoked if defined.*/
-    if (siop->operation->tx_cb != NULL) {
-      siop->operation->tx_cb(siop);
-    }
+    __sio_callback_tx(siop);
 
-#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
     /* Waiting thread woken, if any.*/
-    osalSysLockFromISR();
-    osalThreadResumeI(&siop->sync_tx, MSG_OK);
-    osalSysUnlockFromISR();
-#endif
+    __sio_wakeup_tx(siop, MSG_OK);
 
     /* Called once then the interrupt is disabled.*/
     cr3 &= ~USART_CR3_TXFTIE;
@@ -675,16 +651,10 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
       (isr & USART_ISR_TC) != 0U) {
 
     /* The callback is invoked if defined.*/
-    if (siop->operation->tx_end_cb != NULL) {
-      siop->operation->tx_end_cb(siop);
-    }
+    __sio_callback_tx_end(siop);
 
-#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
     /* Waiting thread woken, if any.*/
-    osalSysLockFromISR();
-    osalThreadResumeI(&siop->sync_txend, MSG_OK);
-    osalSysUnlockFromISR();
-#endif
+    __sio_wakeup_txend(siop, MSG_OK);
 
     /* Called once then the interrupt is disabled.*/
     cr1 &= ~USART_CR1_TCIE;

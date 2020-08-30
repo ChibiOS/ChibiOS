@@ -122,11 +122,32 @@ struct hal_sio_config {
 };
 
 /**
+ * @brief   @p SIODriver specific methods.
+ */
+#define _sio_driver_methods                                                 \
+  _base_channel_methods
+
+/**
+ * @extends BaseChannelVMT
+ *
+ * @brief   @p SIODriver virtual methods table.
+ */
+struct sio_driver_vmt {
+  _sio_driver_methods
+};
+
+/**
  * @brief   Structure representing a SIO driver.
  * @note    Implementations may extend this structure to contain more,
  *          architecture dependent, fields.
  */
 struct hal_sio_driver {
+#if (HAL_SIO_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   Virtual Methods Table.
+   */
+  const struct sio_driver_vmt *vmt;
+#endif
   /**
    * @brief   Driver state.
    */
@@ -293,6 +314,120 @@ struct hal_sio_operation {
  * @xclass
  */
 #define sioControlX(siop, operation, arg) sio_lld_control(siop, operation, arg)
+
+/**
+ * @name    Low level driver helper macros
+ * @{
+ */
+/**
+ * @brief   RX callback.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ *
+ * @notapi
+ */
+#define __sio_callback_rx(siop) {                                           \
+  if ((siop)->operation->rx_cb != NULL) {                                   \
+    (siop)->operation->rx_cb(siop);                                         \
+  }                                                                         \
+}
+
+/**
+ * @brief   RX idle callback.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ *
+ * @notapi
+ */
+#define __sio_callback_rx_idle(siop) {                                      \
+  if ((siop)->operation->rx_idle_cb != NULL) {                              \
+    (siop)->operation->rx_idle_cb(siop);                                    \
+  }                                                                         \
+}
+
+/**
+ * @brief   TX callback.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ *
+ * @notapi
+ */
+#define __sio_callback_tx(siop) {                                           \
+  if ((siop)->operation->tx_cb != NULL) {                                   \
+    (siop)->operation->tx_cb(siop);                                         \
+  }                                                                         \
+}
+
+/**
+ * @brief   TX end callback.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ *
+ * @notapi
+ */
+#define __sio_callback_tx_end(siop) {                                       \
+  if ((siop)->operation->tx_end_cb != NULL) {                               \
+    (siop)->operation->tx_end_cb(siop);                                     \
+  }                                                                         \
+}
+
+/**
+ * @brief   RX event callback.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ *
+ * @notapi
+ */
+#define __sio_callback_rx_evt(siop) {                                       \
+  if ((siop)->operation->rx_evt_cb != NULL) {                               \
+    (siop)->operation->rx_evt_cb(siop);                                     \
+  }                                                                         \
+}
+
+#if (HAL_SIO_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Wakes up the RX-waiting thread.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ *
+ * @notapi
+ */
+#define __sio_wakeup_rx(siop, msg) {                                        \
+  osalSysLockFromISR();                                                     \
+  osalThreadResumeI(&(siop)->sync_rx, msg);                                 \
+  osalSysUnlockFromISR();                                                   \
+}
+
+/**
+ * @brief   Wakes up the TX-waiting thread.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ *
+ * @notapi
+ */
+#define __sio_wakeup_tx(siop, msg) {                                        \
+  osalSysLockFromISR();                                                     \
+  osalThreadResumeI(&(siop)->sync_tx, msg);                                 \
+  osalSysUnlockFromISR();                                                   \
+}
+
+/**
+ * @brief   Wakes up the TXend-waiting thread.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ *
+ * @notapi
+ */
+#define __sio_wakeup_txend(siop, msg) {                                     \
+  osalSysLockFromISR();                                                     \
+  osalThreadResumeI(&(siop)->sync_txend, msg);                              \
+  osalSysUnlockFromISR();                                                   \
+}
+#else /* !HAL_SIO_USE_SYNCHRONIZATION */
+#define __sio_wakeup_rx(siop, msg)
+#define __sio_wakeup_tx(siop, msg)
+#define __sio_wakeup_txend(siop, msg)
+#endif /* !HAL_SIO_USE_SYNCHRONIZATION */
 
 /*===========================================================================*/
 /* External declarations.                                                    */
