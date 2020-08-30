@@ -125,6 +125,10 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if !defined(USART_CR1_FIFOEN)
+#error "FIFO mode not supported in this device"
+#endif
+
 #if STM32_SIO_USE_USART1 && !STM32_HAS_USART1
 #error "USART1 not present in the selected device"
 #endif
@@ -356,6 +360,7 @@ extern "C" {
   size_t sio_lld_read(SIODriver *siop, size_t size, uint8_t *buffer);
   size_t sio_lld_write(SIODriver *siop, size_t size, const uint8_t *buffer);
   msg_t sio_lld_control(SIODriver *siop, unsigned int operation, void *arg);
+  void sio_lld_serve_interrupt(SIODriver *siop);
 #ifdef __cplusplus
 }
 #endif

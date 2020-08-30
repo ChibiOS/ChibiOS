@@ -91,6 +91,13 @@ OSAL_IRQ_HANDLER(STM32_USART3_HANDLER) {
   sd_lld_serve_interrupt(&SD3);
 #endif
 #endif
+
+#if HAL_USE_SIO
+#if STM32_SIO_USE_USART3
+  sio_lld_serve_interrupt(&SIOD3);
+#endif
+#endif
+
 #if HAL_USE_UART
 #if STM32_UART_USE_USART3
   uart_lld_serve_interrupt(&UARTD3);

@@ -91,6 +91,13 @@ OSAL_IRQ_HANDLER(STM32_UART8_HANDLER) {
   sd_lld_serve_interrupt(&SD8);
 #endif
 #endif
+
+#if HAL_USE_SIO
+#if STM32_SIO_USE_UART8
+  sio_lld_serve_interrupt(&SIOD8);
+#endif
+#endif
+
 #if HAL_USE_UART
 #if STM32_UART_USE_UART8
   uart_lld_serve_interrupt(&UARTD8);

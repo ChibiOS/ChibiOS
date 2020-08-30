@@ -91,6 +91,13 @@ OSAL_IRQ_HANDLER(STM32_USART6_HANDLER) {
   sd_lld_serve_interrupt(&SD6);
 #endif
 #endif
+
+#if HAL_USE_SIO
+#if STM32_SIO_USE_USART6
+  sio_lld_serve_interrupt(&SIOD6);
+#endif
+#endif
+
 #if HAL_USE_UART
 #if STM32_UART_USE_USART6
   uart_lld_serve_interrupt(&UARTD6);

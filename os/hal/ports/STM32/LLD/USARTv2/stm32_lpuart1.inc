@@ -92,6 +92,12 @@ OSAL_IRQ_HANDLER(STM32_LPUART1_HANDLER) {
 #endif
 #endif
 
+#if HAL_USE_SIO
+#if STM32_SIO_USE_LPUART1
+  sio_lld_serve_interrupt(&LPSIOD1);
+#endif
+#endif
+
   OSAL_IRQ_EPILOGUE();
 }
 #endif

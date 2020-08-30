@@ -413,18 +413,20 @@ void sio_lld_stop(SIODriver *siop) {
  * @api
  */
 void sio_lld_start_operation(SIODriver *siop) {
-  uint32_t cr1irq = 0U, cr2irq = 0U, cr3irq = 0U;
+  uint32_t cr1irq, cr2irq, cr3irq;
 
 #if HAL_SIO_USE_SYNCHRONIZATION == TRUE
   /* With synchronization all interrupts are required.*/
-  cr1irq = USART_CR1_PEIE | USART_CR1_TCIE | USART_CR1_IDLEIE;
-  cr2irq = USART_CR2_LBDIE;
-  cr3irq = USART_CR3_RXFTIE | USART_CR3_TXFTIE | USART_CR3_CTSIE | USART_CR3_EIE;
+  cr1irq  = USART_CR1_PEIE   | USART_CR1_TCIE   | USART_CR1_IDLEIE;
+  cr2irq  = USART_CR2_LBDIE;
+  cr3irq  = USART_CR3_RXFTIE | USART_CR3_TXFTIE | USART_CR3_CTSIE |
+            USART_CR3_EIE;
 #else
   /* When using just callbacks we can select only those really required.*/
-  cr1irq = 0U;
-  cr2irq = 0U;
-  cr3irq = 0U;
+  cr1irq  = 0U;
+  cr2irq  = 0U;
+  cr3irq  = 0U;
+  evtmask = 0U;
   if (siop->operation->rx_cb != NULL) {
     cr3irq |= USART_CR3_RXFTIE;
   }
@@ -434,13 +436,13 @@ void sio_lld_start_operation(SIODriver *siop) {
   if (siop->operation->tx_cb != NULL) {
     cr3irq |= USART_CR3_TXFTIE;
   }
-  if (siop->operation->txend_cb != NULL) {
+  if (siop->operation->tx_end_cb != NULL) {
     cr1irq |= USART_CR1_TCIE;
   }
-  if (siop->operation->rxevt_cb != NULL) {
+  if (siop->operation->rx_evt_cb != NULL) {
     cr1irq |= USART_CR1_PEIE;
     cr2irq |= USART_CR2_LBDIE;
-    cr3irq |= USART_CR3_CTSIE | USART_CR3_EIE;;
+    cr3irq |= USART_CR3_WUFIE | USART_CR3_CTSIE | USART_CR3_EIE;
   }
 #endif
 
@@ -538,7 +540,7 @@ size_t sio_lld_write(SIODriver *siop, size_t n, const uint8_t *buffer) {
   }
 
   /* The transmit complete interrupt is always re-enabled on write.*/
-  if (siop->operation->txend_cb != NULL) {
+  if (siop->operation->tx_end_cb != NULL) {
     siop->usart->CR1 |= USART_CR1_TCIE;
   }
 
@@ -566,6 +568,131 @@ msg_t sio_lld_control(SIODriver *siop, unsigned int operation, void *arg) {
   (void)arg;
 
   return MSG_OK;
+}
+
+/**
+ * @brief   Serves an USART interrupt.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ *
+ * @notapi
+ */
+void sio_lld_serve_interrupt(SIODriver *siop) {
+  USART_TypeDef *u = siop->usart;
+  uint32_t isr, cr1, cr3, evtmask;
+
+  osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
+
+  /* Reading and clearing status.*/
+  isr = u->ISR;
+  u->ICR = isr;
+
+  /* One read on control registers.*/
+  cr1 = u->CR1;
+  cr3 = u->CR3;
+
+  /* Enabled errors/events handling.*/
+  evtmask = isr & (USART_ISR_PE    | USART_ISR_LBDF | USART_ISR_FE  |
+                   USART_ISR_ORE   | USART_ISR_NE   | USART_ISR_UDR |
+                   USART_ISR_CTSIF | USART_ISR_WUF);
+  if (evtmask != 0U) {
+
+    /* Storing events in the accumulation field.*/
+    siop->events |= evtmask;
+
+    /* The callback is invoked if defined.*/
+    if (siop->operation->rx_evt_cb != NULL) {
+      siop->operation->rx_evt_cb(siop);
+    }
+
+#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
+    /* Waiting thread woken, if any.*/
+    osalSysLockFromISR();
+    osalThreadResumeI(&siop->sync_rx, SIO_MSG_ERRORS);
+    osalSysUnlockFromISR();
+#endif
+  }
+
+  /* RX FIFO is non-empty.*/
+  if (((cr3 & USART_CR3_RXFTIE) != 0U) &&
+      (isr & USART_ISR_RXFT) != 0U) {
+
+    /* The callback is invoked if defined.*/
+    if (siop->operation->rx_cb != NULL) {
+      siop->operation->rx_cb(siop);
+    }
+
+#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
+    /* Waiting thread woken, if any.*/
+    osalSysLockFromISR();
+    osalThreadResumeI(&siop->sync_rx, MSG_OK);
+    osalSysUnlockFromISR();
+#endif
+
+    /* Called once then the interrupt source is disabled.*/
+    cr3 &= ~USART_CR3_RXFTIE;
+  }
+
+  /* RX idle condition.*/
+  if (((cr1 & USART_CR1_IDLEIE) != 0U) &&
+      (isr & USART_ISR_IDLE) != 0U) {
+
+    /* The callback is invoked if defined.*/
+    if (siop->operation->rx_idle_cb != NULL) {
+      siop->operation->rx_idle_cb(siop);
+    }
+
+#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
+    /* Waiting thread woken, if any.*/
+    osalSysLockFromISR();
+    osalThreadResumeI(&siop->sync_rx, SIO_MSG_IDLE);
+    osalSysUnlockFromISR();
+#endif
+  }
+
+  /* TX FIFO is non-full.*/
+  if (((cr3 & USART_CR3_TXFTIE) != 0U) &&
+      (isr & USART_ISR_TXFT) != 0U) {
+
+    /* The callback is invoked if defined.*/
+    if (siop->operation->tx_cb != NULL) {
+      siop->operation->tx_cb(siop);
+    }
+
+#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
+    /* Waiting thread woken, if any.*/
+    osalSysLockFromISR();
+    osalThreadResumeI(&siop->sync_tx, MSG_OK);
+    osalSysUnlockFromISR();
+#endif
+
+    /* Called once then the interrupt is disabled.*/
+    cr3 &= ~USART_CR3_TXFTIE;
+  }
+
+  /* Physical transmission end.*/
+  if (((cr1 & USART_CR1_TCIE) != 0U) &&
+      (isr & USART_ISR_TC) != 0U) {
+
+    /* The callback is invoked if defined.*/
+    if (siop->operation->tx_end_cb != NULL) {
+      siop->operation->tx_end_cb(siop);
+    }
+
+#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
+    /* Waiting thread woken, if any.*/
+    osalSysLockFromISR();
+    osalThreadResumeI(&siop->sync_txend, MSG_OK);
+    osalSysUnlockFromISR();
+#endif
+
+    /* Called once then the interrupt is disabled.*/
+    cr1 &= ~USART_CR1_TCIE;
+  }
+
+  /* One write on control registers.*/
+  u->CR1 = cr1;
+  u->CR3 = cr3;
 }
 
 #endif /* HAL_USE_SIO == TRUE */

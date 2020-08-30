@@ -91,6 +91,13 @@ OSAL_IRQ_HANDLER(STM32_UART7_HANDLER) {
   sd_lld_serve_interrupt(&SD7);
 #endif
 #endif
+
+#if HAL_USE_SIO
+#if STM32_SIO_USE_UART7
+  sio_lld_serve_interrupt(&SIOD7);
+#endif
+#endif
+
 #if HAL_USE_UART
 #if STM32_UART_USE_UART7
   uart_lld_serve_interrupt(&UARTD7);

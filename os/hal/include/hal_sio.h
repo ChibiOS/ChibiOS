@@ -43,6 +43,14 @@
 #define SIO_BREAK_DETECTED     64   /**< @brief Break detected.             */
 /** @} */
 
+/**
+ * @name    SIO additional messages
+ * @{
+ */
+#define SIO_MSG_IDLE                        1
+#define SIO_MSG_ERRORS                      2
+/** @} */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -175,12 +183,12 @@ struct hal_sio_operation {
    * @brief   Physical end of transmission callback.
    * @note    Can be @p NULL.
    */
-  siocb_t                   txend_cb;
+  siocb_t                   tx_end_cb;
   /**
    * @brief   Receive event callback.
    * @note    Can be @p NULL.
    */
-  siocb_t                   rxevt_cb;
+  siocb_t                   rx_evt_cb;
 };
 
 /*===========================================================================*/
