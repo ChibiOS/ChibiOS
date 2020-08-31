@@ -365,7 +365,13 @@ flash_error_t efl_lld_start_erase_all(void *instance) {
   stm32_flash_clear_status(devp);
 
 #if defined(FLASH_CR_MER2)
-  devp->flash->CR |= FLASH_CR_MER2;
+  /* Erase bank, depending on mode selection bit. If not set, bank 1 is mapped
+   * at FLASH_BASE address (erase bank 2). If set, bank 2 is mapped at
+   * FLASH_BASE address (erase bank 1). */
+  if(SYSCFG->MEMRMP & SYSCFG_MEMRMP_FB_MODE)
+    devp->flash->CR |= FLASH_CR_MER1;
+  else
+    devp->flash->CR |= FLASH_CR_MER2;
   devp->flash->CR |= FLASH_CR_STRT;
 #endif
 
