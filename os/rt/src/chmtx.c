@@ -150,7 +150,7 @@ void chMtxLockS(mutex_t *mp) {
 
     /* If the mutex is already owned by this thread, the counter is increased
        and there is no need of more actions.*/
-    if (mp->owner == ctp) {
+    if (mp->owner == currtp) {
       mp->cnt++;
     }
     else {

@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- FIX: Fix incorrect variable name in recursive mutex handling (bug #1119)
 - NEW: Simplified USART units use collision detection in STM32 HAL, now it is
        done like for TIM units for consistency.
 - NEW: Identification macros such as__CHIBIOS_RT__ are now prefixed by
