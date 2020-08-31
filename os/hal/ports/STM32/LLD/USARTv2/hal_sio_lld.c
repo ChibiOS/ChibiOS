@@ -487,9 +487,13 @@ size_t sio_lld_read(SIODriver *siop, uint8_t *buffer, size_t n) {
 
     /* If the RX FIFO has been emptied then the interrupt is enabled again.*/
     if (sio_lld_is_rx_empty(siop)) {
+#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
+      siop->usart->CR3 |= USART_CR3_RXFTIE;
+#else
       if (siop->operation->rx_cb != NULL) {
         siop->usart->CR3 |= USART_CR3_RXFTIE;
       }
+#endif
       break;
     }
 
@@ -502,7 +506,7 @@ size_t sio_lld_read(SIODriver *siop, uint8_t *buffer, size_t n) {
     rd++;
   }
 
-  return n - rd;
+  return rd;
 }
 
 /**
@@ -524,9 +528,13 @@ size_t sio_lld_write(SIODriver *siop, const uint8_t *buffer, size_t n) {
 
     /* If the TX FIFO has been filled then the interrupt is enabled again.*/
     if (sio_lld_is_tx_full(siop)) {
+#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
+      siop->usart->CR3 |= USART_CR3_TXFTIE;
+#else
       if (siop->operation->tx_cb != NULL) {
         siop->usart->CR3 |= USART_CR3_TXFTIE;
       }
+#endif
       break;
     }
 
@@ -544,7 +552,7 @@ size_t sio_lld_write(SIODriver *siop, const uint8_t *buffer, size_t n) {
     siop->usart->CR1 |= USART_CR1_TCIE;
   }
 
-  return n - wr;
+  return wr;
 }
 
 /**
