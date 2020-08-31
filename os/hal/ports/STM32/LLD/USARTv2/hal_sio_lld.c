@@ -148,7 +148,7 @@ static void usart_init(SIODriver *siop) {
                   (siop->clock <= siop->config->baud * 4096U),
                   "invalid baud rate vs input clock");
 
-    brr = (uint32_t)(((uint64_t)(siop->clock / presc) * (uint64_t)256) / siop->config->speed);
+    brr = (uint32_t)(((uint64_t)(siop->clock / presc) * (uint64_t)256) / siop->config->baud);
 
     osalDbgAssert((brr >= 0x300) && (brr < 0x100000), "invalid BRR value");
   }
@@ -474,12 +474,12 @@ void sio_lld_stop_operation(SIODriver *siop) {
  *          is space available without waiting.
  *
  * @param[in] siop          pointer to an @p SIODriver structure
- * @param[in] n             maximum number of frames to be read
  * @param[in] buffer        pointer to the buffer for read frames
+ * @param[in] n             maximum number of frames to be read
  * @return                  The number of frames copied from the buffer.
  * @retval 0                if the TX FIFO is full.
  */
-size_t sio_lld_read(SIODriver *siop, size_t n, uint8_t *buffer) {
+size_t sio_lld_read(SIODriver *siop, uint8_t *buffer, size_t n) {
   size_t rd;
 
   rd = 0U;
@@ -511,12 +511,12 @@ size_t sio_lld_read(SIODriver *siop, size_t n, uint8_t *buffer) {
  *          is space available without waiting.
  *
  * @param[in] siop          pointer to an @p SIODriver structure
- * @param[in] n             maximum number of frames to be written
  * @param[in] buffer        pointer to the buffer for read frames
+ * @param[in] n             maximum number of frames to be written
  * @return                  The number of frames copied from the buffer.
  * @retval 0                if the TX FIFO is full.
  */
-size_t sio_lld_write(SIODriver *siop, size_t n, const uint8_t *buffer) {
+size_t sio_lld_write(SIODriver *siop, const uint8_t *buffer, size_t n) {
   size_t wr;
 
   wr = 0U;
@@ -583,9 +583,11 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
 
   osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
 
-  /* Reading and clearing status.*/
+  /* Reading and clearing status, note that TC is not cleared because
+     it is for checking if a transmission is ongoing, it is set/reset
+     in HW.*/
   isr = u->ISR;
-  u->ICR = isr;
+  u->ICR = isr & ~USART_ISR_TC;
 
   /* One read on control registers.*/
   cr1 = u->CR1;

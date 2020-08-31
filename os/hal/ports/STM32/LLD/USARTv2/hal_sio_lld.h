@@ -27,6 +27,8 @@
 
 #if (HAL_USE_SIO == TRUE) || defined(__DOXYGEN__)
 
+#include "stm32_usart.h"
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -116,7 +118,7 @@
  * @details If set to @p TRUE the support for LPUART1 is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(STM32_SIO_USE_ULPUART1) || defined(__DOXYGEN__)
+#if !defined(STM32_SIO_USE_LPUART1) || defined(__DOXYGEN__)
 #define STM32_SIO_USE_LPUART1               FALSE
 #endif
 /** @} */
@@ -296,7 +298,7 @@
  *
  * @notapi
  */
-#define sio_lld_rx_get(siop)
+#define sio_lld_get(siop) (siop)->usart->RDR
 
 /**
  * @brief   Pushes one frame into the TX FIFO.
@@ -307,7 +309,7 @@
  *
  * @notapi
  */
-#define sio_lld_tx_put(siop, data)
+#define sio_lld_put(siop, data) (siop)->usart->TDR = (data)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -357,8 +359,8 @@ extern "C" {
   void sio_lld_stop(SIODriver *siop);
   void sio_lld_start_operation(SIODriver *siop);
   void sio_lld_stop_operation(SIODriver *siop);
-  size_t sio_lld_read(SIODriver *siop, size_t size, uint8_t *buffer);
-  size_t sio_lld_write(SIODriver *siop, size_t size, const uint8_t *buffer);
+  size_t sio_lld_read(SIODriver *siop, uint8_t *buffer, size_t n);
+  size_t sio_lld_write(SIODriver *siop, const uint8_t *buffer, size_t n);
   msg_t sio_lld_control(SIODriver *siop, unsigned int operation, void *arg);
   void sio_lld_serve_interrupt(SIODriver *siop);
 #ifdef __cplusplus

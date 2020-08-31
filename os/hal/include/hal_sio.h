@@ -252,9 +252,9 @@ struct hal_sio_operation {
  * @param[in] siop      pointer to the @p SIODriver object
  * @return              The frame from RX FIFO.
  *
- * @iclass
+ * @xclass
  */
-#define sioGetI(siop) sio_lld_get(siop)
+#define sioGetX(siop) sio_lld_get(siop)
 
 /**
  * @brief   Pushes one frame into the TX FIFO.
@@ -263,9 +263,9 @@ struct hal_sio_operation {
  * @param[in] siop      pointer to the @p SIODriver object
  * @param[in] data      frame to be written
  *
- * @iclass
+ * @xclass
  */
-#define sioPutI(siop, data) sio_lld_put(siop, data)
+#define sioPutX(siop, data) sio_lld_put(siop, data)
 
 /**
  * @brief   Reads data from the RX FIFO.
@@ -442,8 +442,8 @@ extern "C" {
   void sioStop(SIODriver *siop);
   void sioStartOperation(SIODriver *siop, const SIOOperation *operation);
   void sioStopOperation(SIODriver *siop);
-  size_t sioAsyncRead(SIODriver *siop, size_t n, uint8_t *buffer);
-  size_t sioAsyncWrite(SIODriver *siop, size_t n, const uint8_t *buffer);
+  size_t sioAsyncRead(SIODriver *siop, uint8_t *buffer, size_t n);
+  size_t sioAsyncWrite(SIODriver *siop, const uint8_t *buffer, size_t n);
 #if (HAL_SIO_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)
   msg_t sioSynchronizeRX(SIODriver *siop, sysinterval_t timeout);
   msg_t sioSynchronizeTX(SIODriver *siop, sysinterval_t timeout);

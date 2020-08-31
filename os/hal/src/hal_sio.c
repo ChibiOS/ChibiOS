@@ -43,69 +43,125 @@
 /*===========================================================================*/
 
 #if (HAL_SIO_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)
+static size_t sync_write(void *ip, const uint8_t *bp, size_t n,
+                         sysinterval_t timeout) {
+  SIODriver *siop = (SIODriver *)ip;
+  size_t i;
+
+  i = 0U;
+  while (i < n) {
+    size_t written;
+    msg_t msg;
+
+    msg = sioSynchronizeTX(siop, timeout);
+    if (msg != MSG_OK) {
+      break;
+    }
+
+    written = sioAsyncWrite(siop, bp, n - i);
+    i += written;
+    bp += written;
+  }
+  return n;
+}
+
+static size_t sync_read(void *ip, uint8_t *bp, size_t n,
+                        sysinterval_t timeout) {
+  SIODriver *siop = (SIODriver *)ip;
+  size_t i;
+
+  i = 0U;
+  while (i < n) {
+    size_t read;
+    msg_t msg;
+
+    msg = sioSynchronizeTX(siop, timeout);
+    if (msg != MSG_OK) {
+      break;
+    }
+
+    read = sioAsyncRead(siop, bp, n - i);
+    i += read;
+    bp += read;
+  }
+  return n;
+}
+
 /*
  * Interface implementation, the following functions just invoke the equivalent
  * queue-level function or macro.
  */
 
 static size_t __write(void *ip, const uint8_t *bp, size_t n) {
-  SIODriver *siop = (SIODriver *)ip;
 
-  sioSynchronizeTX(siop, TIME_INFINITE);
-  return sioAsyncWrite(siop, n, bp);
+  return sync_write(ip, bp, n, TIME_INFINITE);
 }
 
 static size_t __read(void *ip, uint8_t *bp, size_t n) {
-  SIODriver *siop = (SIODriver *)ip;
 
-  sioSynchronizeRX(siop, TIME_INFINITE);
-  return sioAsyncRead(siop, n, bp);
+  return sync_read(ip, bp, n, TIME_INFINITE);
 }
 
 static msg_t __put(void *ip, uint8_t b) {
   SIODriver *siop = (SIODriver *)ip;
+  msg_t msg;
 
-  sioSynchronizeTX(siop, TIME_INFINITE);
-  sioPut(b);
+  msg = sioSynchronizeTX(siop, TIME_INFINITE);
+  if (msg != MSG_OK) {
+    return MSG_RESET;
+  }
+
+  sioPutX(siop, b);
   return MSG_OK;
 }
 
 static msg_t __get(void *ip) {
   SIODriver *siop = (SIODriver *)ip;
+  msg_t msg;
 
-  sioSynchronizeRX(siop, TIME_INFINITE);
-  return sioGet();
+  msg = sioSynchronizeRX(siop, TIME_INFINITE);
+  if (msg != MSG_OK) {
+    return MSG_RESET;
+  }
+
+  return sioGetX(siop);
 }
 
 static msg_t __putt(void *ip, uint8_t b, sysinterval_t timeout) {
   SIODriver *siop = (SIODriver *)ip;
+  msg_t msg;
 
-  sioSynchronizeTX(siop, timeout);
-  sioPut(b);
+  msg = sioSynchronizeTX(siop, timeout);
+  if (msg != MSG_OK) {
+    return MSG_RESET;
+  }
+
+  sioPutX(siop, b);
   return MSG_OK;
 }
 
 static msg_t __gett(void *ip, sysinterval_t timeout) {
   SIODriver *siop = (SIODriver *)ip;
+  msg_t msg;
 
-  sioSynchronizeRX(siop, timeout);
-  return sioGet();
+  msg = sioSynchronizeRX(siop, timeout);
+  if (msg != MSG_OK) {
+    return MSG_RESET;
+  }
+
+  return sioGetX(siop);
 }
 
 static size_t __writet(void *ip, const uint8_t *bp, size_t n,
                        sysinterval_t timeout) {
-  SIODriver *siop = (SIODriver *)ip;
 
-  sioSynchronizeTX(siop, timeout);
-  return sioAsyncWrite(siop, n, bp);
+  return sync_write(ip, bp, n, timeout);
 }
 
 static size_t __readt(void *ip, uint8_t *bp, size_t n,
                       sysinterval_t timeout) {
-  SIODriver *siop = (SIODriver *)ip;
 
-  sioSynchronizeRX(siop, timeout);
-  return sioAsyncRead(siop, n, bp);
+  return sync_read(ip, bp, n, timeout);
 }
 
 static msg_t __ctl(void *ip, unsigned int operation, void *arg) {
@@ -264,6 +320,13 @@ void sioStopOperation(SIODriver *siop) {
 
   osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
 
+#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
+  /* Informing waiting threads, if any.*/
+  osalThreadResumeI(&siop->sync_rx, MSG_RESET);
+  osalThreadResumeI(&siop->sync_tx, MSG_RESET);
+  osalThreadResumeI(&siop->sync_txend, MSG_RESET);
+#endif
+
   sio_lld_stop_operation(siop);
 
   siop->operation = NULL;
@@ -281,18 +344,18 @@ void sioStopOperation(SIODriver *siop) {
  *
  * @param[in] siop      pointer to the @p SIODriver object
  * @param[in] buffer    buffer for the received data
- * @param[in] size      maximum number of frames to read
+ * @param[in] n         maximum number of frames to read
  * @return              The number of received frames.
  *
  * @api
  */
-size_t sioAsyncRead(SIODriver *siop, size_t n, uint8_t *buffer) {
+size_t sioAsyncRead(SIODriver *siop, uint8_t *buffer, size_t n) {
 
   osalDbgCheck((siop != NULL) && (buffer));
 
   osalSysLock();
 
-  n = sioAsyncReadI(siop, n, buffer);
+  n = sioAsyncReadI(siop, buffer, n);
 
   osalSysUnlock();
 
@@ -308,18 +371,18 @@ size_t sioAsyncRead(SIODriver *siop, size_t n, uint8_t *buffer) {
  *
  * @param[in] siop      pointer to the @p SIODriver object
  * @param[out] buffer   buffer containing the data to be transmitted
- * @param[in] size      maximum number of frames to read
+ * @param[in] n         maximum number of frames to read
  * @return              The number of transmitted frames.
  *
  * @api
  */
-size_t sioAsyncWrite(SIODriver *siop, size_t n, const uint8_t *buffer) {
+size_t sioAsyncWrite(SIODriver *siop, const uint8_t *buffer, size_t n) {
 
   osalDbgCheck((siop != NULL) && (buffer != NULL));
 
   osalSysLock();
 
-  n = sioAsyncWriteI(siop, n, buffer);
+  n = sioAsyncWriteI(siop, buffer, n);
 
   osalSysUnlock();
 
@@ -338,6 +401,7 @@ size_t sioAsyncWrite(SIODriver *siop, size_t n, const uint8_t *buffer) {
  * @return                  The synchronization result.
  * @retval MSG_OK           if there is data in the RX FIFO.
  * @retval MSG_TIMEOUT      if synchronization timed out.
+ * @retval MSG_RESET        operation has been stopped while waiting.
  * @retval SIO_MSG_IDLE     if RX line went idle.
  * @retval SIO_MSG_ERRORS   if RX errors occurred during wait.
  */
@@ -373,6 +437,7 @@ msg_t sioSynchronizeRX(SIODriver *siop, sysinterval_t timeout) {
  * @return                  The synchronization result.
  * @retval MSG_OK           if there is space in the TX FIFO.
  * @retval MSG_TIMEOUT      if synchronization timed out.
+ * @retval MSG_RESET        operation has been stopped while waiting.
  */
 msg_t sioSynchronizeTX(SIODriver *siop, sysinterval_t timeout) {
   msg_t msg;
