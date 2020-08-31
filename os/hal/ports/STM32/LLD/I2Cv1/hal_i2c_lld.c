@@ -81,8 +81,12 @@
 
 #define I2C_EV9_MASTER_ADD10                                                \
   ((uint32_t)(((I2C_SR2_MSL | I2C_SR2_BUSY) << 16) | I2C_SR1_ADD10))
+  
+#define I2C_EV5_MASTER_MODE_INVALID                                         \
+  ((uint32_t)(((I2C_SR2_MSL | I2C_SR2_BUSY) << 16) | (I2C_SR1_SB |          \
+              I2C_SR1_STOPF)))
 
-#define I2C_EV_MASK 0x00FFFFFF
+#define I2C_EV_MASK 0x00FF00FF
 
 #define I2C_ERROR_MASK                                                      \
   ((uint16_t)(I2C_SR1_BERR | I2C_SR1_ARLO | I2C_SR1_AF | I2C_SR1_OVR |      \
@@ -291,6 +295,10 @@ static void i2c_lld_serve_event_interrupt(I2CDriver *i2cp) {
     dp->CR1 |= I2C_CR1_STOP;
     _i2c_wakeup_isr(i2cp);
     break;
+  case I2C_EV5_MASTER_MODE_INVALID:
+    i2c_lld_abort_operation(i2cp);
+    dp->CR2 &= ~I2C_CR2_ITEVTEN;
+    break;
   default:
     break;
   }
@@ -298,10 +306,13 @@ static void i2c_lld_serve_event_interrupt(I2CDriver *i2cp) {
   if (event & (I2C_SR1_ADDR | I2C_SR1_ADD10))
     (void)dp->SR2;
 
+  /* BERR flag doesn’t happen anymore in event handling */
+#if 0
   /* Errata 2.4.6 for STM32F40x, Spurious Bus Error detection in Master mode.*/
   if (event & I2C_SR1_BERR) {
     dp->SR1 &= ~I2C_SR1_BERR;
   }
+#endif
 }
 
 /**
@@ -376,9 +387,12 @@ static void i2c_lld_serve_error_interrupt(I2CDriver *i2cp, uint16_t sr) {
 
   if (sr & I2C_SR1_BERR) {                          /* Bus error.           */
     i2cp->errors |= I2C_BUS_ERROR;
+    /* No more needed */
+#if 0
     /* Errata 2.4.6 for STM32F40x, Spurious Bus Error detection in
        Master mode.*/
     i2cp->i2c->SR1 &= ~I2C_SR1_BERR;
+#endif
   }
 
   if (sr & I2C_SR1_ARLO)                            /* Arbitration lost.    */
