@@ -416,6 +416,8 @@ flash_error_t efl_lld_start_erase_sector(void *instance,
   else {
     /* Second bank.*/
     devp->flash->CR |= FLASH_CR_BKER;
+    /* Sector numbers start at 0 again on second bank. */
+    sector -= STM32_FLASH_SECTORS_PER_BANK;
   }
 #endif
 
