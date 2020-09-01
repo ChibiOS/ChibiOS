@@ -127,13 +127,46 @@ SIODriver LPSIOD1;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+__STATIC_INLINE void usart_enable_rx_irq(SIODriver *siop) {
+
+#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
+  siop->usart->CR3 |= USART_CR3_RXFTIE;
+#else
+  if (siop->operation->rx_cb != NULL) {
+    siop->usart->CR3 |= USART_CR3_RXFTIE;
+  }
+#endif
+}
+
+__STATIC_INLINE void usart_enable_tx_irq(SIODriver *siop) {
+
+#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
+  siop->usart->CR3 |= USART_CR3_TXFTIE;
+#else
+  if (siop->operation->tx_cb != NULL) {
+    siop->usart->CR3 |= USART_CR3_TXFTIE;
+  }
+#endif
+}
+
+__STATIC_INLINE void usart_enable_tx_end_irq(SIODriver *siop) {
+
+#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
+  siop->usart->CR1 |= USART_CR1_TCIE;
+#else
+  if (siop->operation->tx_end_cb != NULL) {
+    siop->usart->CR1 |= USART_CR1_TCIE;
+  }
+#endif
+}
+
 /**
  * @brief   USART initialization.
  * @details This function must be invoked with interrupts disabled.
  *
  * @param[in] siop       pointer to a @p SIODriver object
  */
-static void usart_init(SIODriver *siop) {
+__STATIC_INLINE void usart_init(SIODriver *siop) {
   USART_TypeDef *u = siop->usart;
   uint32_t presc, brr;
 
@@ -319,7 +352,7 @@ bool sio_lld_start(SIODriver *siop) {
     siop->sync_rx      = NULL;
     siop->sync_tx      = NULL;
     siop->sync_txend   = NULL;
-    siop->events       = 0U;
+//    siop->events       = 0U;
 #endif
   }
 
@@ -487,13 +520,7 @@ size_t sio_lld_read(SIODriver *siop, uint8_t *buffer, size_t n) {
 
     /* If the RX FIFO has been emptied then the interrupt is enabled again.*/
     if (sio_lld_is_rx_empty(siop)) {
-#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
-      siop->usart->CR3 |= USART_CR3_RXFTIE;
-#else
-      if (siop->operation->rx_cb != NULL) {
-        siop->usart->CR3 |= USART_CR3_RXFTIE;
-      }
-#endif
+      usart_enable_rx_irq(siop);
       break;
     }
 
@@ -528,13 +555,7 @@ size_t sio_lld_write(SIODriver *siop, const uint8_t *buffer, size_t n) {
 
     /* If the TX FIFO has been filled then the interrupt is enabled again.*/
     if (sio_lld_is_tx_full(siop)) {
-#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
-      siop->usart->CR3 |= USART_CR3_TXFTIE;
-#else
-      if (siop->operation->tx_cb != NULL) {
-        siop->usart->CR3 |= USART_CR3_TXFTIE;
-      }
-#endif
+      usart_enable_tx_irq(siop);
       break;
     }
 
@@ -548,13 +569,7 @@ size_t sio_lld_write(SIODriver *siop, const uint8_t *buffer, size_t n) {
   }
 
   /* The transmit complete interrupt is always re-enabled on write.*/
-#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
-  siop->usart->CR1 |= USART_CR1_TCIE;
-#else
-  if (siop->operation->tx_end_cb != NULL) {
-    siop->usart->CR1 |= USART_CR1_TCIE;
-  }
-#endif
+  usart_enable_tx_end_irq(siop);
 
   return wr;
 }
@@ -575,13 +590,7 @@ msg_t sio_lld_get(SIODriver *siop) {
 
   /* If the RX FIFO has been emptied then the interrupt is enabled again.*/
   if (sio_lld_is_rx_empty(siop)) {
-#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
-    siop->usart->CR3 |= USART_CR3_RXFTIE;
-#else
-    if (siop->operation->rx_cb != NULL) {
-      siop->usart->CR3 |= USART_CR3_RXFTIE;
-    }
-#endif
+    usart_enable_rx_irq(siop);
   }
 
   return msg;
@@ -602,23 +611,11 @@ void sio_lld_put(SIODriver *siop, uint_fast16_t data) {
 
   /* If the TX FIFO has been filled then the interrupt is enabled again.*/
   if (sio_lld_is_tx_full(siop)) {
-#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
-    siop->usart->CR3 |= USART_CR3_TXFTIE;
-#else
-    if (siop->operation->tx_cb != NULL) {
-      siop->usart->CR3 |= USART_CR3_TXFTIE;
-    }
-#endif
+    usart_enable_tx_irq(siop);
   }
 
   /* The transmit complete interrupt is always re-enabled on write.*/
-#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
-  siop->usart->CR1 |= USART_CR1_TCIE;
-#else
-  if (siop->operation->tx_end_cb != NULL) {
-    siop->usart->CR1 |= USART_CR1_TCIE;
-  }
-#endif
+  usart_enable_tx_end_irq(siop);
 }
 
 /**
@@ -657,30 +654,42 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
 
   osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
 
-  /* Reading and clearing status, note that TC is not cleared because
-     it is for checking if a transmission is ongoing, it is set/reset
-     in HW.*/
+  /* Note, ISR flags are just read but not cleared, ISR sources are
+     disabled instead.*/
   isr = u->ISR;
-  u->ICR = isr & ~USART_ISR_TC;
+//  u->ICR = isr & ~USART_ISR_TC;
 
   /* One read on control registers.*/
   cr1 = u->CR1;
   cr3 = u->CR3;
 
   /* Enabled errors/events handling.*/
-  evtmask = isr & (USART_ISR_PE    | USART_ISR_LBDF | USART_ISR_FE  |
-                   USART_ISR_ORE   | USART_ISR_NE   | USART_ISR_UDR |
-                   USART_ISR_CTSIF | USART_ISR_WUF);
+  evtmask = isr & (USART_ISR_PE    | USART_ISR_LBDF | USART_ISR_FE    |
+                   USART_ISR_ORE   | USART_ISR_NE   | USART_ISR_CTSIF |
+                   USART_ISR_WUF);
   if (evtmask != 0U) {
+    uint32_t cr2;
+
+    /* One read on control registers.*/
+    cr2 = u->CR2;
 
     /* Storing events in the accumulation field.*/
-    siop->events |= evtmask;
+//    siop->events |= evtmask;
 
     /* The callback is invoked if defined.*/
     __sio_callback_rx_evt(siop);
 
     /* Waiting thread woken, if any.*/
     __sio_wakeup_rx(siop, SIO_MSG_ERRORS);
+
+    /* Disabling event sources until errors are recognized by the
+       application.*/
+    cr1 &= ~USART_CR1_PEIE;
+    cr2 &= ~USART_CR2_LBDIE;
+    cr3 &= ~(USART_CR3_WUFIE | USART_CR3_CTSIE | USART_CR3_EIE);
+
+    /* One write on control registers.*/
+    u->CR2 = cr2;
   }
 
   /* RX FIFO is non-empty.*/
@@ -706,6 +715,9 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
 
     /* Waiting thread woken, if any.*/
     __sio_wakeup_rx(siop, SIO_MSG_IDLE);
+
+    /* The idle flag requires clearing, it stays enabled.*/
+    u->ICR = USART_ISR_IDLE;
   }
 
   /* TX FIFO is non-full.*/

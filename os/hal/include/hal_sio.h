@@ -59,8 +59,18 @@
  * @name    SIO configuration options
  * @{
  */
+/**
+ * @brief   Support for thread synchronization API.
+ */
 #if !defined(HAL_SIO_USE_SYNCHRONIZATION) || defined(__DOXYGEN__)
 #define HAL_SIO_USE_SYNCHRONIZATION         TRUE
+#endif
+
+/**
+ * @brief   Support for callbacks.
+ */
+#if !defined(HAL_SIO_USE_CALLBACKS) || defined(__DOXYGEN__)
+#define HAL_SIO_USE_CALLBACKS               TRUE
 #endif
 /** @} */
 

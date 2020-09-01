@@ -231,9 +231,7 @@
   /* Pointer to the USARTx registers block.*/                               \
   USART_TypeDef             *usart;                                         \
   /* USART clock frequency.*/                                               \
-  uint32_t                  clock;                                          \
-  /* Pending USART events.*/                                                \
-  uint32_t                  events
+  uint32_t                  clock
 
 /**
  * @brief   Low level fields of the SIO configuration structure.
