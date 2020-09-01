@@ -289,28 +289,6 @@
 #define sio_lld_is_tx_ongoing(siop)                                         \
   (bool)(((siop)->usart->ISR & USART_ISR_TC) == 0U)
 
-/**
- * @brief   Returns one frame from the RX FIFO.
- * @note    If the FIFO is empty then the returned value is unpredictable.
- *
- * @param[in] siop      pointer to the @p SIODriver object
- * @return              The frame from RX FIFO.
- *
- * @notapi
- */
-#define sio_lld_get(siop) (siop)->usart->RDR
-
-/**
- * @brief   Pushes one frame into the TX FIFO.
- * @note    If the FIFO is full then the behavior is unpredictable.
- *
- * @param[in] siop      pointer to the @p SIODriver object
- * @param[in] data      frame to be written
- *
- * @notapi
- */
-#define sio_lld_put(siop, data) (siop)->usart->TDR = (data)
-
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -361,6 +339,8 @@ extern "C" {
   void sio_lld_stop_operation(SIODriver *siop);
   size_t sio_lld_read(SIODriver *siop, uint8_t *buffer, size_t n);
   size_t sio_lld_write(SIODriver *siop, const uint8_t *buffer, size_t n);
+  msg_t sio_lld_get(SIODriver *siop);
+  void sio_lld_put(SIODriver *siop, uint_fast16_t data);
   msg_t sio_lld_control(SIODriver *siop, unsigned int operation, void *arg);
   void sio_lld_serve_interrupt(SIODriver *siop);
 #ifdef __cplusplus

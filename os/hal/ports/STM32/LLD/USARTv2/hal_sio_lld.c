@@ -548,11 +548,77 @@ size_t sio_lld_write(SIODriver *siop, const uint8_t *buffer, size_t n) {
   }
 
   /* The transmit complete interrupt is always re-enabled on write.*/
+#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
+  siop->usart->CR1 |= USART_CR1_TCIE;
+#else
   if (siop->operation->tx_end_cb != NULL) {
     siop->usart->CR1 |= USART_CR1_TCIE;
   }
+#endif
 
   return wr;
+}
+
+/**
+ * @brief   Returns one frame from the RX FIFO.
+ * @note    If the FIFO is empty then the returned value is unpredictable.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @return              The frame from RX FIFO.
+ *
+ * @notapi
+ */
+msg_t sio_lld_get(SIODriver *siop) {
+  msg_t msg;
+
+  msg = (msg_t)siop->usart->RDR;
+
+  /* If the RX FIFO has been emptied then the interrupt is enabled again.*/
+  if (sio_lld_is_rx_empty(siop)) {
+#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
+    siop->usart->CR3 |= USART_CR3_RXFTIE;
+#else
+    if (siop->operation->rx_cb != NULL) {
+      siop->usart->CR3 |= USART_CR3_RXFTIE;
+    }
+#endif
+  }
+
+  return msg;
+}
+
+/**
+ * @brief   Pushes one frame into the TX FIFO.
+ * @note    If the FIFO is full then the behavior is unpredictable.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @param[in] data      frame to be written
+ *
+ * @notapi
+ */
+void sio_lld_put(SIODriver *siop, uint_fast16_t data) {
+
+  siop->usart->TDR = data;
+
+  /* If the TX FIFO has been filled then the interrupt is enabled again.*/
+  if (sio_lld_is_tx_full(siop)) {
+#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
+    siop->usart->CR3 |= USART_CR3_TXFTIE;
+#else
+    if (siop->operation->tx_cb != NULL) {
+      siop->usart->CR3 |= USART_CR3_TXFTIE;
+    }
+#endif
+  }
+
+  /* The transmit complete interrupt is always re-enabled on write.*/
+#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
+  siop->usart->CR1 |= USART_CR1_TCIE;
+#else
+  if (siop->operation->tx_end_cb != NULL) {
+    siop->usart->CR1 |= USART_CR1_TCIE;
+  }
+#endif
 }
 
 /**
