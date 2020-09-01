@@ -138,6 +138,21 @@ __STATIC_INLINE void usart_enable_rx_irq(SIODriver *siop) {
 #endif
 }
 
+__STATIC_INLINE void usart_enable_rx_evt_irq(SIODriver *siop) {
+
+#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
+  siop->usart->CR1 |= USART_CR1_PEIE;
+  siop->usart->CR2 |= USART_CR2_LBDIE;
+  siop->usart->CR3 |= USART_CR3_EIE;
+#else
+  if (siop->operation->rx_evt_cb != NULL) {
+    siop->usart->CR1 |= USART_CR1_PEIE;
+    siop->usart->CR2 |= USART_CR2_LBDIE;
+    siop->usart->CR3 |= USART_CR3_EIE;
+  }
+#endif
+}
+
 __STATIC_INLINE void usart_enable_tx_irq(SIODriver *siop) {
 
 #if HAL_SIO_USE_SYNCHRONIZATION == TRUE
@@ -452,8 +467,7 @@ void sio_lld_start_operation(SIODriver *siop) {
   /* With synchronization all interrupts are required.*/
   cr1irq  = USART_CR1_PEIE   | USART_CR1_TCIE   | USART_CR1_IDLEIE;
   cr2irq  = USART_CR2_LBDIE;
-  cr3irq  = USART_CR3_RXFTIE | USART_CR3_TXFTIE | USART_CR3_CTSIE |
-            USART_CR3_EIE;
+  cr3irq  = USART_CR3_RXFTIE | USART_CR3_TXFTIE | USART_CR3_EIE;
 #else
   /* When using just callbacks we can select only those really required.*/
   cr1irq  = 0U;
@@ -475,7 +489,7 @@ void sio_lld_start_operation(SIODriver *siop) {
   if (siop->operation->rx_evt_cb != NULL) {
     cr1irq |= USART_CR1_PEIE;
     cr2irq |= USART_CR2_LBDIE;
-    cr3irq |= USART_CR3_WUFIE | USART_CR3_CTSIE | USART_CR3_EIE;
+    cr3irq |= USART_CR3_EIE;
   }
 #endif
 
@@ -510,7 +524,34 @@ void sio_lld_stop_operation(SIODriver *siop) {
  * @notapi
  */
 sio_events_mask_t sio_lld_get_and_clear_events(SIODriver *siop) {
-  sio_events_mask_t evtmask = 0U;
+  sio_events_mask_t evtmask;
+  uint32_t isr;
+
+  /* Getting and clearing all relevant ISR flags (and only those).*/
+  isr = siop->usart->ISR & (USART_ISR_PE  | USART_ISR_LBDF | USART_ISR_FE    |
+                            USART_ISR_ORE | USART_ISR_NE);
+  siop->usart->ICR = isr;
+
+  /* Status flags cleared, now the related interrupts can be enabled again.*/
+  usart_enable_rx_evt_irq(siop);
+
+  /* Translating the status flags in SIO events.*/
+  evtmask = 0U;
+  if ((isr & USART_ISR_LBDF) != 0U) {
+    evtmask |= SIO_BREAK_DETECTED;
+  }
+  if ((isr & USART_ISR_ORE) != 0U) {
+    evtmask |= SIO_OVERRUN_ERROR;
+  }
+  if ((isr & USART_ISR_NE) != 0U) {
+    evtmask |= SIO_NOISE_ERROR;
+  }
+  if ((isr & USART_ISR_FE) != 0U) {
+    evtmask |= SIO_FRAMING_ERROR;
+  }
+  if ((isr & USART_ISR_PE) != 0U) {
+    evtmask |= SIO_PARITY_ERROR;
+  }
 
   return evtmask;
 }
@@ -678,9 +719,8 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
   cr3 = u->CR3;
 
   /* Enabled errors/events handling.*/
-  evtmask = isr & (USART_ISR_PE    | USART_ISR_LBDF | USART_ISR_FE    |
-                   USART_ISR_ORE   | USART_ISR_NE   | USART_ISR_CTSIF |
-                   USART_ISR_WUF);
+  evtmask = isr & (USART_ISR_PE  | USART_ISR_LBDF | USART_ISR_FE    |
+                   USART_ISR_ORE | USART_ISR_NE);
   if (evtmask != 0U) {
     uint32_t cr2;
 
@@ -700,7 +740,7 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
        application.*/
     cr1 &= ~USART_CR1_PEIE;
     cr2 &= ~USART_CR2_LBDIE;
-    cr3 &= ~(USART_CR3_WUFIE | USART_CR3_CTSIE | USART_CR3_EIE);
+    cr3 &= ~USART_CR3_EIE;
 
     /* One write on control registers.*/
     u->CR2 = cr2;
