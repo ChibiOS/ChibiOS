@@ -336,6 +336,28 @@ void sioStopOperation(SIODriver *siop) {
 }
 
 /**
+ * @brief   Return the pending SIO events flags.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @return              The pending event flags.
+ *
+ * @api
+ */
+sio_events_mask_t sioGetAndClearEvents(SIODriver *siop) {
+  sio_events_mask_t evtmask;
+
+  osalDbgCheck(siop != NULL);
+
+  osalSysLock();
+
+  evtmask = sioGetAndClearEventsI(siop);
+
+  osalSysUnlock();
+
+  return evtmask;
+}
+
+/**
  * @brief   Reads data from the RX FIFO.
  * @details This function is non-blocking, data is read if present and the
  *          effective amount is returned.
@@ -351,7 +373,7 @@ void sioStopOperation(SIODriver *siop) {
  */
 size_t sioAsyncRead(SIODriver *siop, uint8_t *buffer, size_t n) {
 
-  osalDbgCheck((siop != NULL) && (buffer));
+  osalDbgCheck((siop != NULL) && (buffer != NULL));
 
   osalSysLock();
 

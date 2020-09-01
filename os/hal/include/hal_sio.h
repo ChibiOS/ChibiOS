@@ -256,6 +256,16 @@ struct hal_sio_operation {
 #define sioIsTXFullX(siop) sio_lld_is_tx_full(siop)
 
 /**
+ * @brief   Return the pending SIO events flags.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @return              The pending event flags.
+ *
+ * @iclass
+ */
+#define sioGetAndClearEventsI(siop) sio_lld_get_and_clear_events(siop)
+
+/**
  * @brief   Returns one frame from the RX FIFO.
  * @note    If the FIFO is empty then the returned value is unpredictable.
  *
