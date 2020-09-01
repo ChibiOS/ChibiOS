@@ -473,7 +473,6 @@ void sio_lld_start_operation(SIODriver *siop) {
   cr1irq  = 0U;
   cr2irq  = 0U;
   cr3irq  = 0U;
-  evtmask = 0U;
   if (siop->operation->rx_cb != NULL) {
     cr3irq |= USART_CR3_RXFTIE;
   }
@@ -712,7 +711,6 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
   /* Note, ISR flags are just read but not cleared, ISR sources are
      disabled instead.*/
   isr = u->ISR;
-//  u->ICR = isr & ~USART_ISR_TC;
 
   /* One read on control registers.*/
   cr1 = u->CR1;
@@ -726,9 +724,6 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
 
     /* One read on control registers.*/
     cr2 = u->CR2;
-
-    /* Storing events in the accumulation field.*/
-//    siop->events |= evtmask;
 
     /* The callback is invoked if defined.*/
     __sio_callback_rx_evt(siop);
