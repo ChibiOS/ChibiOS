@@ -74,7 +74,9 @@
 *****************************************************************************
 
 *** Next ***
-- FIX: Fix incorrect variable name in recursive mutex handling (bug #1119)
+- NEW: SIO STM32 implementation for USARTs without FIFO in STM32/LLD/USARTv2,
+       implementation with FIFO in STM32/LLD/USARTv3.
+- NEW: Updated SIO driver model to support more use cases.
 - NEW: Simplified USART units use collision detection in STM32 HAL, now it is
        done like for TIM units for consistency.
 - NEW: Identification macros such as__CHIBIOS_RT__ are now prefixed by
@@ -86,7 +88,7 @@
 - NEW: Stand-alone ARMv7-M port.
 - NEW: Stand-alone ARMv6-M port.
 - NEW: Merged RT7.
-- RT:  New API for high resolution monotonic time stamps.
+- NEW: New API in RT for high resolution monotonic time stamps.
 - NEW: Updated FatFS to version 0.14.
 - NEW: Added a new setting to STM32 USBv1 allowing for some clock deviation
        from 48MHz. Renamed setting USB_HOST_WAKEUP_DURATION to
@@ -109,6 +111,7 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Fix incorrect variable name in recursive mutex handling (bug #1119).
 - FIX: Fixed several problems in STM32 ADCv4 (bug #1116)
        (backported to 20.3.2).
 - FIX: Fixed STM32 QSPI errata workaround (bug #1117)
