@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    USARTv2/stm32_lpuart1.inc
- * @brief   Shared LPUART1 handler.
+ * @file    USART/stm32_usart6.inc
+ * @brief   Shared USART6 handler.
  *
- * @addtogroup STM32_LPUART1_HANDLER
+ * @addtogroup STM32_USART6_HANDLER
  * @{
  */
 
@@ -31,22 +31,22 @@
 /*===========================================================================*/
 
 /* Registry checks for robustness.*/
-#if !defined(STM32_HAS_LPUART1)
-#error "STM32_HAS_LPUART1 not defined in registry"
+#if !defined(STM32_HAS_USART6)
+#error "STM32_HAS_USART6 not defined in registry"
 #endif
 
-#if STM32_HAS_LPUART1
+#if STM32_HAS_USART6
 
 /* Priority settings checks.*/
-#if !defined(STM32_IRQ_LPUART1_PRIORITY)
-#error "STM32_IRQ_LPUART1_PRIORITY not defined in mcuconf.h"
+#if !defined(STM32_IRQ_USART6_PRIORITY)
+#error "STM32_IRQ_USART6_PRIORITY not defined in mcuconf.h"
 #endif
 
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_LPUART1_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_LPUART1_PRIORITY"
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_USART6_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_USART6_PRIORITY"
 #endif
 
-#endif /* STM32_HAS_LPUART1 */
+#endif /* STM32_HAS_USART6 */
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -60,15 +60,15 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static inline void lpuart1_irq_init(void) {
-#if defined(STM32_LPUART1_IS_USED)
-  nvicEnableVector(STM32_LPUART1_NUMBER, STM32_IRQ_LPUART1_PRIORITY);
+static inline void usart6_irq_init(void) {
+#if defined(STM32_USART6_IS_USED)
+  nvicEnableVector(STM32_USART6_NUMBER, STM32_IRQ_USART6_PRIORITY);
 #endif
 }
 
-static inline void lpuart1_irq_deinit(void) {
-#if defined(STM32_LPUART1_IS_USED)
-  nvicDisableVector(STM32_LPUART1_NUMBER);
+static inline void usart6_irq_deinit(void) {
+#if defined(STM32_USART6_IS_USED)
+  nvicDisableVector(STM32_USART6_NUMBER);
 #endif
 }
 
@@ -76,25 +76,31 @@ static inline void lpuart1_irq_deinit(void) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if defined(STM32_LPUART1_IS_USED) || defined(__DOXYGEN__)
+#if defined(STM32_USART6_IS_USED) || defined(__DOXYGEN__)
 /**
- * @brief   LPUART1 interrupt handler.
+ * @brief   USART6 interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_LPUART1_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_USART6_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
 #if HAL_USE_SERIAL
-#if STM32_SERIAL_USE_LPUART1
-  sd_lld_serve_interrupt(&LPSD1);
+#if STM32_SERIAL_USE_USART6
+  sd_lld_serve_interrupt(&SD6);
 #endif
 #endif
 
 #if HAL_USE_SIO
-#if STM32_SIO_USE_LPUART1
-  sio_lld_serve_interrupt(&LPSIOD1);
+#if STM32_SIO_USE_USART6
+  sio_lld_serve_interrupt(&SIOD6);
+#endif
+#endif
+
+#if HAL_USE_UART
+#if STM32_UART_USE_USART6
+  uart_lld_serve_interrupt(&UARTD6);
 #endif
 #endif
 

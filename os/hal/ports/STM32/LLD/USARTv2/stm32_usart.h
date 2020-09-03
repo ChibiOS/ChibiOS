@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    USARTv2/stm32_usart.h
+ * @file    /stm32_usart.h
  * @brief   STM32 USART helpers header.
  *
- * @addtogroup STM32_USARTv2
+ * @addtogroup STM32_
  * @{
  */
 

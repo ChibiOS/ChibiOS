@@ -38,7 +38,7 @@
 /*===========================================================================*/
 
 /**
- * @name    STM32 configuration options
+ * @name    PLATFORM configuration options
  * @{
  */
 /**
@@ -126,6 +126,10 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+#if !defined(USART_CR1_FIFOEN)
+#error "FIFO mode not supported in this device"
+#endif
 
 #if STM32_SIO_USE_USART1 && !STM32_HAS_USART1
 #error "USART1 not present in the selected device"
@@ -260,7 +264,7 @@ typedef uint32_t sio_events_mask_t;
  * @notapi
  */
 #define sio_lld_is_rx_empty(siop)                                           \
-  (bool)(((siop)->usart->ISR & USART_ISR_RXNE) == 0U)
+  (bool)(((siop)->usart->ISR & USART_ISR_RXNE_RXFNE) == 0U)
 
 /**
  * @brief   Determines the state of the TX FIFO.
@@ -273,7 +277,7 @@ typedef uint32_t sio_events_mask_t;
  * @notapi
  */
 #define sio_lld_is_tx_full(siop)                                            \
-  (bool)(((siop)->usart->ISR & USART_ISR_TXE) == 0U)
+  (bool)(((siop)->usart->ISR & USART_ISR_TXE_TXFNF) == 0U)
 
 /**
  * @brief   Determines the transmission state.

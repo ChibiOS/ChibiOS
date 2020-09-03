@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    USARTv2/stm32_uart4.inc
- * @brief   Shared UART4 handler.
+ * @file    USART/stm32_lpuart1.inc
+ * @brief   Shared LPUART1 handler.
  *
- * @addtogroup STM32_UART4_HANDLER
+ * @addtogroup STM32_LPUART1_HANDLER
  * @{
  */
 
@@ -31,22 +31,22 @@
 /*===========================================================================*/
 
 /* Registry checks for robustness.*/
-#if !defined(STM32_HAS_UART4)
-#error "STM32_HAS_UART4 not defined in registry"
+#if !defined(STM32_HAS_LPUART1)
+#error "STM32_HAS_LPUART1 not defined in registry"
 #endif
 
-#if STM32_HAS_UART4
+#if STM32_HAS_LPUART1
 
 /* Priority settings checks.*/
-#if !defined(STM32_IRQ_UART4_PRIORITY)
-#error "STM32_IRQ_UART4_PRIORITY not defined in mcuconf.h"
+#if !defined(STM32_IRQ_LPUART1_PRIORITY)
+#error "STM32_IRQ_LPUART1_PRIORITY not defined in mcuconf.h"
 #endif
 
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_UART4_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_UART4_PRIORITY"
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_LPUART1_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_LPUART1_PRIORITY"
 #endif
 
-#endif /* STM32_HAS_UART4 */
+#endif /* STM32_HAS_LPUART1 */
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -60,15 +60,15 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static inline void uart4_irq_init(void) {
-#if defined(STM32_UART4_IS_USED)
-  nvicEnableVector(STM32_UART4_NUMBER, STM32_IRQ_UART4_PRIORITY);
+static inline void lpuart1_irq_init(void) {
+#if defined(STM32_LPUART1_IS_USED)
+  nvicEnableVector(STM32_LPUART1_NUMBER, STM32_IRQ_LPUART1_PRIORITY);
 #endif
 }
 
-static inline void uart4_irq_deinit(void) {
-#if defined(STM32_UART4_IS_USED)
-  nvicDisableVector(STM32_UART4_NUMBER);
+static inline void lpuart1_irq_deinit(void) {
+#if defined(STM32_LPUART1_IS_USED)
+  nvicDisableVector(STM32_LPUART1_NUMBER);
 #endif
 }
 
@@ -76,31 +76,25 @@ static inline void uart4_irq_deinit(void) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if defined(STM32_UART4_IS_USED) || defined(__DOXYGEN__)
+#if defined(STM32_LPUART1_IS_USED) || defined(__DOXYGEN__)
 /**
- * @brief   UART4 interrupt handler.
+ * @brief   LPUART1 interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_UART4_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_LPUART1_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
 #if HAL_USE_SERIAL
-#if STM32_SERIAL_USE_UART4
-  sd_lld_serve_interrupt(&SD4);
+#if STM32_SERIAL_USE_LPUART1
+  sd_lld_serve_interrupt(&LPSD1);
 #endif
 #endif
 
 #if HAL_USE_SIO
-#if STM32_SIO_USE_UART4
-  sio_lld_serve_interrupt(&SIOD4);
-#endif
-#endif
-
-#if HAL_USE_UART
-#if STM32_UART_USE_UART4
-  uart_lld_serve_interrupt(&UARTD4);
+#if STM32_SIO_USE_LPUART1
+  sio_lld_serve_interrupt(&LPSIOD1);
 #endif
 #endif
 

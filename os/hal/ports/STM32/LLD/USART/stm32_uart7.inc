@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    USARTv2/stm32_uart8.inc
- * @brief   Shared UART8 handler.
+ * @file    USART/stm32_uart7.inc
+ * @brief   Shared UART7 handler.
  *
- * @addtogroup STM32_UART8_HANDLER
+ * @addtogroup STM32_UART7_HANDLER
  * @{
  */
 
@@ -31,22 +31,22 @@
 /*===========================================================================*/
 
 /* Registry checks for robustness.*/
-#if !defined(STM32_HAS_UART8)
-#error "STM32_HAS_UART8 not defined in registry"
+#if !defined(STM32_HAS_UART7)
+#error "STM32_HAS_UART7 not defined in registry"
 #endif
 
-#if STM32_HAS_UART8
+#if STM32_HAS_UART7
 
 /* Priority settings checks.*/
-#if !defined(STM32_IRQ_UART8_PRIORITY)
-#error "STM32_IRQ_UART8_PRIORITY not defined in mcuconf.h"
+#if !defined(STM32_IRQ_UART7_PRIORITY)
+#error "STM32_IRQ_UART7_PRIORITY not defined in mcuconf.h"
 #endif
 
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_UART8_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_UART8_PRIORITY"
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_UART7_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_UART7_PRIORITY"
 #endif
 
-#endif /* STM32_HAS_UART8 */
+#endif /* STM32_HAS_UART7 */
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -60,15 +60,15 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static inline void uart8_irq_init(void) {
-#if defined(STM32_UART8_IS_USED)
-  nvicEnableVector(STM32_UART8_NUMBER, STM32_IRQ_UART8_PRIORITY);
+static inline void uart7_irq_init(void) {
+#if defined(STM32_UART7_IS_USED)
+  nvicEnableVector(STM32_UART7_NUMBER, STM32_IRQ_UART7_PRIORITY);
 #endif
 }
 
-static inline void uart8_irq_deinit(void) {
-#if defined(STM32_UART8_IS_USED)
-  nvicDisableVector(STM32_UART8_NUMBER);
+static inline void uart7_irq_deinit(void) {
+#if defined(STM32_UART7_IS_USED)
+  nvicDisableVector(STM32_UART7_NUMBER);
 #endif
 }
 
@@ -76,31 +76,31 @@ static inline void uart8_irq_deinit(void) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if defined(STM32_UART8_IS_USED) || defined(__DOXYGEN__)
+#if defined(STM32_UART7_IS_USED) || defined(__DOXYGEN__)
 /**
- * @brief   UART8 interrupt handler.
+ * @brief   UART7 interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_UART8_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_UART7_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
 #if HAL_USE_SERIAL
-#if STM32_SERIAL_USE_UART8
-  sd_lld_serve_interrupt(&SD8);
+#if STM32_SERIAL_USE_UART7
+  sd_lld_serve_interrupt(&SD7);
 #endif
 #endif
 
 #if HAL_USE_SIO
-#if STM32_SIO_USE_UART8
-  sio_lld_serve_interrupt(&SIOD8);
+#if STM32_SIO_USE_UART7
+  sio_lld_serve_interrupt(&SIOD7);
 #endif
 #endif
 
 #if HAL_USE_UART
-#if STM32_UART_USE_UART8
-  uart_lld_serve_interrupt(&UARTD8);
+#if STM32_UART_USE_UART7
+  uart_lld_serve_interrupt(&UARTD7);
 #endif
 #endif
 

@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    USARTv2/stm32_uart5.inc
- * @brief   Shared UART5 handler.
+ * @file    USART/stm32_usart1.inc
+ * @brief   Shared USART1 handler.
  *
- * @addtogroup STM32_UART5_HANDLER
+ * @addtogroup STM32_USART1_HANDLER
  * @{
  */
 
@@ -31,22 +31,22 @@
 /*===========================================================================*/
 
 /* Registry checks for robustness.*/
-#if !defined(STM32_HAS_UART5)
-#error "STM32_HAS_UART5 not defined in registry"
+#if !defined(STM32_HAS_USART1)
+#error "STM32_HAS_USART1 not defined in registry"
 #endif
 
-#if STM32_HAS_UART5
+#if STM32_HAS_USART1
 
 /* Priority settings checks.*/
-#if !defined(STM32_IRQ_UART5_PRIORITY)
-#error "STM32_IRQ_UART5_PRIORITY not defined in mcuconf.h"
+#if !defined(STM32_IRQ_USART1_PRIORITY)
+#error "STM32_IRQ_USART1_PRIORITY not defined in mcuconf.h"
 #endif
 
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_UART5_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_UART5_PRIORITY"
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_USART1_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_USART1_PRIORITY"
 #endif
 
-#endif /* STM32_HAS_UART5 */
+#endif /* STM32_HAS_USART1 */
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -60,15 +60,15 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static inline void uart5_irq_init(void) {
-#if defined(STM32_UART5_IS_USED)
-  nvicEnableVector(STM32_UART5_NUMBER, STM32_IRQ_UART5_PRIORITY);
+static inline void usart1_irq_init(void) {
+#if defined(STM32_USART1_IS_USED)
+  nvicEnableVector(STM32_USART1_NUMBER, STM32_IRQ_USART1_PRIORITY);
 #endif
 }
 
-static inline void uart5_irq_deinit(void) {
-#if defined(STM32_UART5_IS_USED)
-  nvicDisableVector(STM32_UART5_NUMBER);
+static inline void usart1_irq_deinit(void) {
+#if defined(STM32_USART1_IS_USED)
+  nvicDisableVector(STM32_USART1_NUMBER);
 #endif
 }
 
@@ -76,31 +76,31 @@ static inline void uart5_irq_deinit(void) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if defined(STM32_UART5_IS_USED) || defined(__DOXYGEN__)
+#if defined(STM32_USART1_IS_USED) || defined(__DOXYGEN__)
 /**
- * @brief   UART5 interrupt handler.
+ * @brief   USART1 interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_UART5_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_USART1_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
 #if HAL_USE_SERIAL
-#if STM32_SERIAL_USE_UART5
-  sd_lld_serve_interrupt(&SD5);
+#if STM32_SERIAL_USE_USART1
+  sd_lld_serve_interrupt(&SD1);
 #endif
 #endif
 
 #if HAL_USE_SIO
-#if STM32_SIO_USE_UART5
-  sio_lld_serve_interrupt(&SIOD5);
+#if STM32_SIO_USE_USART1
+  sio_lld_serve_interrupt(&SIOD1);
 #endif
 #endif
 
 #if HAL_USE_UART
-#if STM32_UART_USE_UART5
-  uart_lld_serve_interrupt(&UARTD5);
+#if STM32_UART_USE_USART1
+  uart_lld_serve_interrupt(&UARTD1);
 #endif
 #endif
 

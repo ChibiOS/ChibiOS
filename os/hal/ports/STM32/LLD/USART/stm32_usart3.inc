@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    USARTv2/stm32_usart1.inc
- * @brief   Shared USART1 handler.
+ * @file    USART/stm32_usart3.inc
+ * @brief   Shared USART3 handler.
  *
- * @addtogroup STM32_USART1_HANDLER
+ * @addtogroup STM32_USART3_HANDLER
  * @{
  */
 
@@ -31,22 +31,22 @@
 /*===========================================================================*/
 
 /* Registry checks for robustness.*/
-#if !defined(STM32_HAS_USART1)
-#error "STM32_HAS_USART1 not defined in registry"
+#if !defined(STM32_HAS_USART3)
+#error "STM32_HAS_USART3 not defined in registry"
 #endif
 
-#if STM32_HAS_USART1
+#if STM32_HAS_USART3
 
 /* Priority settings checks.*/
-#if !defined(STM32_IRQ_USART1_PRIORITY)
-#error "STM32_IRQ_USART1_PRIORITY not defined in mcuconf.h"
+#if !defined(STM32_IRQ_USART3_PRIORITY)
+#error "STM32_IRQ_USART3_PRIORITY not defined in mcuconf.h"
 #endif
 
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_USART1_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_USART1_PRIORITY"
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_USART3_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_USART3_PRIORITY"
 #endif
 
-#endif /* STM32_HAS_USART1 */
+#endif /* STM32_HAS_USART3 */
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -60,15 +60,15 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static inline void usart1_irq_init(void) {
-#if defined(STM32_USART1_IS_USED)
-  nvicEnableVector(STM32_USART1_NUMBER, STM32_IRQ_USART1_PRIORITY);
+static inline void usart3_irq_init(void) {
+#if defined(STM32_USART3_IS_USED)
+  nvicEnableVector(STM32_USART3_NUMBER, STM32_IRQ_USART3_PRIORITY);
 #endif
 }
 
-static inline void usart1_irq_deinit(void) {
-#if defined(STM32_USART1_IS_USED)
-  nvicDisableVector(STM32_USART1_NUMBER);
+static inline void usart3_irq_deinit(void) {
+#if defined(STM32_USART3_IS_USED)
+  nvicDisableVector(STM32_USART3_NUMBER);
 #endif
 }
 
@@ -76,31 +76,31 @@ static inline void usart1_irq_deinit(void) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if defined(STM32_USART1_IS_USED) || defined(__DOXYGEN__)
+#if defined(STM32_USART3_IS_USED) || defined(__DOXYGEN__)
 /**
- * @brief   USART1 interrupt handler.
+ * @brief   USART3 interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_USART1_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_USART3_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
 #if HAL_USE_SERIAL
-#if STM32_SERIAL_USE_USART1
-  sd_lld_serve_interrupt(&SD1);
+#if STM32_SERIAL_USE_USART3
+  sd_lld_serve_interrupt(&SD3);
 #endif
 #endif
 
 #if HAL_USE_SIO
-#if STM32_SIO_USE_USART1
-  sio_lld_serve_interrupt(&SIOD1);
+#if STM32_SIO_USE_USART3
+  sio_lld_serve_interrupt(&SIOD3);
 #endif
 #endif
 
 #if HAL_USE_UART
-#if STM32_UART_USE_USART1
-  uart_lld_serve_interrupt(&UARTD1);
+#if STM32_UART_USE_USART3
+  uart_lld_serve_interrupt(&UARTD3);
 #endif
 #endif
 

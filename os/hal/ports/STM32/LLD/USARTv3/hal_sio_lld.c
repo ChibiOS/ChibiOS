@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    USARTv2/hal_sio_lld.c
+ * @file    USARTv3/hal_sio_lld.c
  * @brief   STM32 SIO subsystem low level driver source.
  *
  * @addtogroup SIO
@@ -30,19 +30,25 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-#define USART_CR1_CFG_FORBIDDEN             (USART_CR1_EOBIE            |   \
+#define USART_CR1_CFG_FORBIDDEN             (USART_CR1_RXFFIE           |   \
+                                             USART_CR1_TXFEIE           |   \
+                                             USART_CR1_FIFOEN           |   \
+                                             USART_CR1_EOBIE            |   \
                                              USART_CR1_RTOIE            |   \
                                              USART_CR1_CMIE             |   \
                                              USART_CR1_PEIE             |   \
-                                             USART_CR1_TXEIE            |   \
+                                             USART_CR1_TXEIE_TXFNFIE    |   \
                                              USART_CR1_TCIE             |   \
-                                             USART_CR1_RXNEIE           |   \
+                                             USART_CR1_RXNEIE_RXFNEIE   |   \
                                              USART_CR1_IDLEIE           |   \
                                              USART_CR1_TE               |   \
                                              USART_CR1_RE               |   \
                                              USART_CR1_UE)
 #define USART_CR2_CFG_FORBIDDEN             (USART_CR2_LBDIE)
-#define USART_CR3_CFG_FORBIDDEN             (USART_CR3_WUFIE            |   \
+#define USART_CR3_CFG_FORBIDDEN             (USART_CR3_RXFTIE           |   \
+                                             USART_CR3_TCBGTIE          |   \
+                                             USART_CR3_TXFTIE           |   \
+                                             USART_CR3_WUFIE            |   \
                                              USART_CR3_CTSIE            |   \
                                              USART_CR3_EIE)
 
@@ -119,13 +125,15 @@ SIODriver LPSIOD1;
 
 /**
  * @brief   Driver default configuration.
- * @note    In this implementation it is: 38400-8-N-1.
+ * @note    In this implementation it is: 38400-8-N-1, RX and TX FIFO
+ *          thresholds set to 50%.
  */
 static const SIOConfig default_config = {
   .baud  = SIO_DEFAULT_BITRATE,
+  .presc = USART_PRESC1,
   .cr1   = USART_CR1_DATA8 | USART_CR1_OVER16,
   .cr2   = USART_CR2_STOP1_BITS,
-  .cr3   = 0U
+  .cr3   = USART_CR3_TXFTCFG_1H | USART_CR3_RXFTCFG_1H
 };
 
 /*===========================================================================*/
@@ -135,10 +143,10 @@ static const SIOConfig default_config = {
 __STATIC_INLINE void usart_enable_rx_irq(SIODriver *siop) {
 
 #if HAL_SIO_USE_SYNCHRONIZATION == TRUE
-  siop->usart->CR1 |= USART_CR1_RXNEIE;
+  siop->usart->CR3 |= USART_CR3_RXFTIE;
 #else
   if (siop->operation->rx_cb != NULL) {
-    siop->usart->CR1 |= USART_CR1_RXNEIE;
+    siop->usart->CR3 |= USART_CR3_RXFTIE;
   }
 #endif
 }
@@ -161,10 +169,10 @@ __STATIC_INLINE void usart_enable_rx_evt_irq(SIODriver *siop) {
 __STATIC_INLINE void usart_enable_tx_irq(SIODriver *siop) {
 
 #if HAL_SIO_USE_SYNCHRONIZATION == TRUE
-  siop->usart->CR1 |= USART_CR1_TXEIE;
+  siop->usart->CR3 |= USART_CR3_TXFTIE;
 #else
   if (siop->operation->tx_cb != NULL) {
-    siop->usart->CR1 |= USART_CR1_TXEIE;
+    siop->usart->CR3 |= USART_CR3_TXFTIE;
   }
 #endif
 }
@@ -221,8 +229,9 @@ __STATIC_INLINE void usart_init(SIODriver *siop) {
   }
 
   /* Setting up USART.*/
+  u->PRESC = siop->config->presc;
   u->BRR   = brr;
-  u->CR1   = siop->config->cr1 & ~USART_CR1_CFG_FORBIDDEN;
+  u->CR1   = (siop->config->cr1 & ~USART_CR1_CFG_FORBIDDEN) | USART_CR1_FIFOEN;
   u->CR2   = siop->config->cr2 & ~USART_CR2_CFG_FORBIDDEN;
   u->CR3   = siop->config->cr3 & ~USART_CR3_CFG_FORBIDDEN;
 }
@@ -475,23 +484,22 @@ void sio_lld_start_operation(SIODriver *siop) {
 
 #if HAL_SIO_USE_SYNCHRONIZATION == TRUE
   /* With synchronization all interrupts are required.*/
-  cr1irq  = USART_CR1_RXNEIE | USART_CR1_TXEIE | USART_CR1_PEIE   |
-            USART_CR1_TCIE   | USART_CR1_IDLEIE;
+  cr1irq  = USART_CR1_PEIE   | USART_CR1_TCIE   | USART_CR1_IDLEIE;
   cr2irq  = USART_CR2_LBDIE;
-  cr3irq  = USART_CR3_EIE;
+  cr3irq  = USART_CR3_RXFTIE | USART_CR3_TXFTIE | USART_CR3_EIE;
 #else
   /* When using just callbacks we can select only those really required.*/
   cr1irq  = 0U;
   cr2irq  = 0U;
   cr3irq  = 0U;
   if (siop->operation->rx_cb != NULL) {
-    cr1irq |= USART_CR1_RXNEIE;
+    cr3irq |= USART_CR3_RXFTIE;
   }
   if (siop->operation->rx_idle_cb != NULL) {
     cr1irq |= USART_CR1_IDLEIE;
   }
   if (siop->operation->tx_cb != NULL) {
-    cr1irq |= USART_CR1_TXEIE;
+    cr3irq |= USART_CR3_TXFTIE;
   }
   if (siop->operation->tx_end_cb != NULL) {
     cr1irq |= USART_CR1_TCIE;
@@ -753,8 +761,8 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
   }
 
   /* RX FIFO is non-empty.*/
-  if (((cr1 & USART_CR1_RXNEIE) != 0U) &&
-      (isr & USART_ISR_RXNE) != 0U) {
+  if (((cr3 & USART_CR3_RXFTIE) != 0U) &&
+      (isr & USART_ISR_RXFT) != 0U) {
 
     /* The callback is invoked if defined.*/
     __sio_callback_rx(siop);
@@ -763,7 +771,7 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
     __sio_wakeup_rx(siop, MSG_OK);
 
     /* Called once then the interrupt source is disabled.*/
-    cr1 &= ~USART_CR1_RXNEIE;
+    cr3 &= ~USART_CR3_RXFTIE;
   }
 
   /* RX idle condition.*/
@@ -781,8 +789,8 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
   }
 
   /* TX FIFO is non-full.*/
-  if (((cr1 & USART_CR1_TXEIE) != 0U) &&
-      (isr & USART_ISR_TXE) != 0U) {
+  if (((cr3 & USART_CR3_TXFTIE) != 0U) &&
+      (isr & USART_ISR_TXFT) != 0U) {
 
     /* The callback is invoked if defined.*/
     __sio_callback_tx(siop);
@@ -791,7 +799,7 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
     __sio_wakeup_tx(siop, MSG_OK);
 
     /* Called once then the interrupt is disabled.*/
-    cr1 &= ~USART_CR1_TXEIE;
+    cr3 &= ~USART_CR3_TXFTIE;
   }
 
   /* Physical transmission end.*/
