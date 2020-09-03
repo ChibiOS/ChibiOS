@@ -38,6 +38,14 @@
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
+static const SIOOperation default_operation = {
+  .rx_cb      = NULL,
+  .rx_idle_cb = NULL,
+  .tx_cb      = NULL,
+  .tx_end_cb  = NULL,
+  .rx_evt_cb  = NULL
+};
+
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
@@ -108,7 +116,7 @@ static msg_t __put(void *ip, uint8_t b) {
 
   msg = sioSynchronizeTX(siop, TIME_INFINITE);
   if (msg != MSG_OK) {
-    return MSG_RESET;
+    return msg;
   }
 
   sioPutX(siop, b);
@@ -121,7 +129,7 @@ static msg_t __get(void *ip) {
 
   msg = sioSynchronizeRX(siop, TIME_INFINITE);
   if (msg != MSG_OK) {
-    return MSG_RESET;
+    return msg;
   }
 
   return sioGetX(siop);
@@ -231,7 +239,8 @@ void sioObjectInit(SIODriver *siop) {
  * @brief   Configures and activates the SIO peripheral.
  *
  * @param[in] siop      pointer to the @p SIODriver object
- * @param[in] config    pointer to the @p SIOConfig object
+ * @param[in] config    pointer to the @p SIOConfig object, can be @p NULL
+ *                      if the default configuration is desired
  * @return              The operation status.
  * @retval false        if the driver has been correctly started.
  * @retval true         if an error occurred.
@@ -241,7 +250,7 @@ void sioObjectInit(SIODriver *siop) {
 bool sioStart(SIODriver *siop, const SIOConfig *config) {
   bool result;
 
-  osalDbgCheck((siop != NULL) && (config != NULL));
+  osalDbgCheck(siop != NULL);
 
   osalSysLock();
 
@@ -284,20 +293,28 @@ void sioStop(SIODriver *siop) {
  * @brief   Starts a SIO operation.
  *
  * @param[in] siop          pointer to an @p SIODriver structure
- * @param[in] operation     pointer to an @p SIOOperation structure
+ * @param[in] operation     pointer to an @p SIOOperation structure, can
+ *                          be @p NULL if callbacks are not required
  *                          encoding the operation to be performed
  *
  * @api
  */
 void sioStartOperation(SIODriver *siop, const SIOOperation *operation) {
 
-  osalDbgCheck((siop != NULL) && (operation != NULL));
+  osalDbgCheck(siop != NULL);
 
   osalSysLock();
 
   osalDbgAssert(siop->state == SIO_READY, "invalid state");
 
-  siop->operation = operation;
+  /* The application can pass NULL if it is not interested in callbacks,
+     attaching a default operation structure.*/
+  if (operation != NULL) {
+    siop->operation = operation;
+  }
+  else {
+    siop->operation = &default_operation;
+  }
   siop->state     = SIO_ACTIVE;
 
   sio_lld_start_operation(siop);

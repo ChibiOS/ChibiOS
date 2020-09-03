@@ -123,6 +123,19 @@ SIODriver LPSIOD1;
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Driver default configuration.
+ * @note    In this implementation it is: 38400-8-N-1, RX and TX FIFO
+ *          thresholds set to 50%.
+ */
+static const SIOConfig default_config = {
+  .baud  = SIO_DEFAULT_BITRATE,
+  .presc = USART_PRESC1,
+  .cr1   = USART_CR1_DATA8 | USART_CR1_OVER16,
+  .cr2   = USART_CR2_STOP1_BITS,
+  .cr3   = USART_CR3_TXFTCFG_1H | USART_CR3_RXFTCFG_1H
+};
+
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
@@ -298,6 +311,12 @@ void sio_lld_init(void) {
  * @notapi
  */
 bool sio_lld_start(SIODriver *siop) {
+
+  /* Using the default configuration if the application passed a
+     NULL pointer.*/
+  if (siop->config == NULL) {
+    siop->config = &default_config;
+  }
 
   if (siop->state == SIO_STOP) {
 
