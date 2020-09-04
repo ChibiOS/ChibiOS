@@ -134,7 +134,7 @@ static const ram_init_area_t ram_areas[CRT1_AREAS_NUMBER] = {
 __attribute__((weak))
 #endif
 /*lint -save -e9075 [8.4] All symbols are invoked from asm context.*/
-void __core_init(void) {
+void __cpu_init(void) {
 
 #if CORTEX_MODEL == 7
   SCB_EnableICache();
