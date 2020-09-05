@@ -134,7 +134,7 @@ static const SIOConfig default_config = {
 
 __STATIC_INLINE void usart_enable_rx_irq(SIODriver *siop) {
 
-#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
+#if SIO_USE_SYNCHRONIZATION == TRUE
   siop->usart->CR1 |= USART_CR1_RXNEIE;
 #else
   if (siop->operation->rx_cb != NULL) {
@@ -145,7 +145,7 @@ __STATIC_INLINE void usart_enable_rx_irq(SIODriver *siop) {
 
 __STATIC_INLINE void usart_enable_rx_evt_irq(SIODriver *siop) {
 
-#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
+#if SIO_USE_SYNCHRONIZATION == TRUE
   siop->usart->CR1 |= USART_CR1_PEIE;
   siop->usart->CR2 |= USART_CR2_LBDIE;
   siop->usart->CR3 |= USART_CR3_EIE;
@@ -160,7 +160,7 @@ __STATIC_INLINE void usart_enable_rx_evt_irq(SIODriver *siop) {
 
 __STATIC_INLINE void usart_enable_tx_irq(SIODriver *siop) {
 
-#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
+#if SIO_USE_SYNCHRONIZATION == TRUE
   siop->usart->CR1 |= USART_CR1_TXEIE;
 #else
   if (siop->operation->tx_cb != NULL) {
@@ -171,7 +171,7 @@ __STATIC_INLINE void usart_enable_tx_irq(SIODriver *siop) {
 
 __STATIC_INLINE void usart_enable_tx_end_irq(SIODriver *siop) {
 
-#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
+#if SIO_USE_SYNCHRONIZATION == TRUE
   siop->usart->CR1 |= USART_CR1_TCIE;
 #else
   if (siop->operation->tx_end_cb != NULL) {
@@ -373,7 +373,7 @@ bool sio_lld_start(SIODriver *siop) {
     }
 
     /* Driver object low level initializations.*/
-#if HAL_SIO_USE_SYNCHRONIZATION
+#if SIO_USE_SYNCHRONIZATION
     siop->sync_rx      = NULL;
     siop->sync_tx      = NULL;
     siop->sync_txend   = NULL;
@@ -473,7 +473,7 @@ void sio_lld_stop(SIODriver *siop) {
 void sio_lld_start_operation(SIODriver *siop) {
   uint32_t cr1irq, cr2irq, cr3irq;
 
-#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
+#if SIO_USE_SYNCHRONIZATION == TRUE
   /* With synchronization all interrupts are required.*/
   cr1irq  = USART_CR1_RXNEIE | USART_CR1_TXEIE | USART_CR1_PEIE   |
             USART_CR1_TCIE   | USART_CR1_IDLEIE;

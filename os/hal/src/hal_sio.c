@@ -50,7 +50,7 @@ static const SIOOperation default_operation = {
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-#if (HAL_SIO_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)
+#if (SIO_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)
 static size_t sync_write(void *ip, const uint8_t *bp, size_t n,
                          sysinterval_t timeout) {
   SIODriver *siop = (SIODriver *)ip;
@@ -223,7 +223,7 @@ void sioInit(void) {
  */
 void sioObjectInit(SIODriver *siop) {
 
-#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
+#if SIO_USE_SYNCHRONIZATION == TRUE
   siop->vmt     = &vmt;
 #endif
   siop->state   = SIO_STOP;
@@ -337,7 +337,7 @@ void sioStopOperation(SIODriver *siop) {
 
   osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
 
-#if HAL_SIO_USE_SYNCHRONIZATION == TRUE
+#if SIO_USE_SYNCHRONIZATION == TRUE
   /* Informing waiting threads, if any.*/
   osalThreadResumeI(&siop->sync_rx, MSG_RESET);
   osalThreadResumeI(&siop->sync_tx, MSG_RESET);
@@ -428,7 +428,7 @@ size_t sioAsyncWrite(SIODriver *siop, const uint8_t *buffer, size_t n) {
   return n;
 }
 
-#if (HAL_SIO_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)
+#if (SIO_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Synchronizes with RX FIFO data availability.
  * @note    The exact behavior depends on low level FIFO settings such
@@ -529,7 +529,7 @@ msg_t sioSynchronizeTXEnd(SIODriver *siop, sysinterval_t timeout) {
 
   return msg;
 }
-#endif /* HAL_SIO_USE_SYNCHRONIZATION == TRUE */
+#endif /* SIO_USE_SYNCHRONIZATION == TRUE */
 
 #endif /* HAL_USE_SIO == TRUE */
 

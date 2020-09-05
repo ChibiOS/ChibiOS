@@ -71,8 +71,8 @@
 /**
  * @brief   Support for thread synchronization API.
  */
-#if !defined(HAL_SIO_USE_SYNCHRONIZATION) || defined(__DOXYGEN__)
-#define HAL_SIO_USE_SYNCHRONIZATION         TRUE
+#if !defined(SIO_USE_SYNCHRONIZATION) || defined(__DOXYGEN__)
+#define SIO_USE_SYNCHRONIZATION             TRUE
 #endif
 /** @} */
 
@@ -154,7 +154,7 @@ struct sio_driver_vmt {
  *          architecture dependent, fields.
  */
 struct hal_sio_driver {
-#if (HAL_SIO_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)
+#if (SIO_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Virtual Methods Table.
    */
@@ -172,7 +172,7 @@ struct hal_sio_driver {
    * @brief   Current configuration data.
    */
   const SIOOperation       *operation;
-#if (HAL_SIO_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)
+#if (SIO_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Synchronization point for RX.
    */
@@ -185,7 +185,7 @@ struct hal_sio_driver {
    * @brief   Synchronization point for TX-end.
    */
   thread_reference_t        sync_txend;
-#endif /* HAL_SIO_USE_SYNCHRONIZATION == TRUE */
+#endif /* SIO_USE_SYNCHRONIZATION == TRUE */
 #if defined(SIO_DRIVER_EXT_FIELDS)
   SIO_DRIVER_EXT_FIELDS
 #endif
@@ -406,7 +406,7 @@ struct hal_sio_operation {
   }                                                                         \
 }
 
-#if (HAL_SIO_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)
+#if (SIO_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Wakes up the RX-waiting thread.
  *
@@ -445,11 +445,11 @@ struct hal_sio_operation {
   osalThreadResumeI(&(siop)->sync_txend, msg);                              \
   osalSysUnlockFromISR();                                                   \
 }
-#else /* !HAL_SIO_USE_SYNCHRONIZATION */
+#else /* !SIO_USE_SYNCHRONIZATION */
 #define __sio_wakeup_rx(siop, msg)
 #define __sio_wakeup_tx(siop, msg)
 #define __sio_wakeup_txend(siop, msg)
-#endif /* !HAL_SIO_USE_SYNCHRONIZATION */
+#endif /* !SIO_USE_SYNCHRONIZATION */
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -466,7 +466,7 @@ extern "C" {
   void sioStopOperation(SIODriver *siop);
   size_t sioAsyncRead(SIODriver *siop, uint8_t *buffer, size_t n);
   size_t sioAsyncWrite(SIODriver *siop, const uint8_t *buffer, size_t n);
-#if (HAL_SIO_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)
+#if (SIO_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)
   msg_t sioSynchronizeRX(SIODriver *siop, sysinterval_t timeout);
   msg_t sioSynchronizeTX(SIODriver *siop, sysinterval_t timeout);
   msg_t sioSynchronizeTXEnd(SIODriver *siop, sysinterval_t timeout);
