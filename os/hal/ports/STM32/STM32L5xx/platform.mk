@@ -31,7 +31,7 @@ include $(CHIBIOS)/os/hal/ports/STM32/LLD/GPIOv2/driver.mk
 include $(CHIBIOS)/os/hal/ports/STM32/LLD/ICACHEv1/driver.mk
 include $(CHIBIOS)/os/hal/ports/STM32/LLD/RCCv1/driver.mk
 include $(CHIBIOS)/os/hal/ports/STM32/LLD/TIMv1/driver.mk
-include $(CHIBIOS)/os/hal/ports/STM32/LLD/USARTv2/driver.mk
+include $(CHIBIOS)/os/hal/ports/STM32/LLD/USARTv3/driver.mk
 include $(CHIBIOS)/os/hal/ports/STM32/LLD/xWDGv1/driver.mk
 
 # Shared variables
