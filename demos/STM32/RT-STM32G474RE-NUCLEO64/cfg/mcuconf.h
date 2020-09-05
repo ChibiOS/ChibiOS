@@ -287,17 +287,17 @@
 #define STM32_SERIAL_USE_USART3             FALSE
 #define STM32_SERIAL_USE_UART4              FALSE
 #define STM32_SERIAL_USE_UART5              FALSE
-#define STM32_SERIAL_USE_LPUART1            TRUE
+#define STM32_SERIAL_USE_LPUART1            FALSE
 
 /*
  * SIO driver system settings.
  */
-#define STM32_SIO_USE_USART1                FALSE
-#define STM32_SIO_USE_USART2                FALSE
-#define STM32_SIO_USE_USART3                FALSE
-#define STM32_SIO_USE_UART4                 FALSE
-#define STM32_SIO_USE_UART5                 FALSE
-#define STM32_SIO_USE_LPUART1               FALSE
+#define STM32_SIO_USE_USART1                TRUE
+#define STM32_SIO_USE_USART2                TRUE
+#define STM32_SIO_USE_USART3                TRUE
+#define STM32_SIO_USE_UART4                 TRUE
+#define STM32_SIO_USE_UART5                 TRUE
+#define STM32_SIO_USE_LPUART1               TRUE
 
 /*
  * SPI driver system settings.
