@@ -55,9 +55,11 @@ int main(void) {
   chSysInit();
 
   /*
-   * Activates the serial driver 2 using the driver default configuration.
+   * Activates the Serial or SIO driver using the default configuration.
    */
-  sdStart(&SD2, NULL);
+//  sdStart(&SD2, NULL);
+  sioStart(&SIOD2, NULL);
+  sioStartOperation(&SIOD2, NULL);
 
   /*
    * Creates the blinker thread.
@@ -70,8 +72,8 @@ int main(void) {
    */
   while (true) {
     if (palReadLine(LINE_JOY_CENTER)) {
-      test_execute((BaseSequentialStream *)&SD2, &rt_test_suite);
-      test_execute((BaseSequentialStream *)&SD2, &oslib_test_suite);
+      test_execute((BaseSequentialStream *)&SIOD2, &rt_test_suite);
+      test_execute((BaseSequentialStream *)&SIOD2, &oslib_test_suite);
     }
     chThdSleepMilliseconds(500);
   }

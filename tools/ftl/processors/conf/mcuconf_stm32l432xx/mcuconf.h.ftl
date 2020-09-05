@@ -214,9 +214,13 @@
 #define STM32_SERIAL_USE_USART1             ${doc.STM32_SERIAL_USE_USART1!"FALSE"}
 #define STM32_SERIAL_USE_USART2             ${doc.STM32_SERIAL_USE_USART2!"FALSE"}
 #define STM32_SERIAL_USE_LPUART1            ${doc.STM32_SERIAL_USE_LPUART1!"FALSE"}
-#define STM32_SERIAL_USART1_PRIORITY        ${doc.STM32_SERIAL_USART1_PRIORITY!"12"}
-#define STM32_SERIAL_USART2_PRIORITY        ${doc.STM32_SERIAL_USART2_PRIORITY!"12"}
-#define STM32_SERIAL_LPUART1_PRIORITY       ${doc.STM32_SERIAL_LPUART1_PRIORITY!"12"}
+
+/*
+ * SIO driver system settings.
+ */
+#define STM32_SIO_USE_USART1                ${doc.STM32_SIO_USE_USART1!"FALSE"}
+#define STM32_SIO_USE_USART2                ${doc.STM32_SIO_USE_USART2!"FALSE"}
+#define STM32_SIO_USE_LPUART1               ${doc.STM32_SIO_USE_LPUART1!"FALSE"}
 
 /*
  * SPI driver system settings.
