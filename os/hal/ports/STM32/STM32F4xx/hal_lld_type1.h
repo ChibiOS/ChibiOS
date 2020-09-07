@@ -1011,6 +1011,10 @@
 #error "Using a wrong mcuconf.h file, STM32F4xx_MCUCONF not defined"
 #endif
 
+#if defined(STM32F401xx) && !defined(STM32F401_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32F401_MCUCONF not defined"
+#endif
+
 #if defined(STM32F405xx) && !defined(STM32F405_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32F405_MCUCONF not defined"
 #endif
@@ -1025,6 +1029,34 @@
 
 #if defined(STM32F417xx) && !defined(STM32F417_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32F417_MCUCONF not defined"
+#endif
+
+#if defined(STM32F427xx) && !defined(STM32F427_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32F427_MCUCONF not defined"
+#endif
+
+#if defined(STM32F429xx) && !defined(STM32F429_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32F429_MCUCONF not defined"
+#endif
+
+#if defined(STM32F437xx) && !defined(STM32F437_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32F437_MCUCONF not defined"
+#endif
+
+#if defined(STM32F439xx) && !defined(STM32F439_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32F439_MCUCONF not defined"
+#endif
+
+#if defined(STM32F446xx) && !defined(STM32F446_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32F446_MCUCONF not defined"
+#endif
+
+#if defined(STM32F469xx) && !defined(STM32F469_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32F469_MCUCONF not defined"
+#endif
+
+#if defined(STM32F479xx) && !defined(STM32F479_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32F479_MCUCONF not defined"
 #endif
 
 #else /* !defined(STM32F4XX) */
