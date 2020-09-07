@@ -174,65 +174,6 @@ static void set_error(SerialDriver *sdp, uint16_t sr) {
   chnAddFlagsI(sdp, sts);
 }
 
-/**
- * @brief   Common IRQ handler.
- *
- * @param[in] sdp       communication channel associated to the USART
- */
-static void serve_interrupt(SerialDriver *sdp) {
-  USART_TypeDef *u = sdp->usart;
-  uint16_t cr1 = u->CR1;
-  uint16_t sr = u->SR;
-
-  /* Special case, LIN break detection.*/
-  if (sr & USART_SR_LBD) {
-    osalSysLockFromISR();
-    chnAddFlagsI(sdp, SD_BREAK_DETECTED);
-    u->SR = ~USART_SR_LBD;
-    osalSysUnlockFromISR();
-  }
-
-  /* Data available.*/
-  osalSysLockFromISR();
-  while (sr & (USART_SR_RXNE | USART_SR_ORE | USART_SR_NE | USART_SR_FE |
-               USART_SR_PE)) {
-    uint8_t b;
-
-    /* Error condition detection.*/
-    if (sr & (USART_SR_ORE | USART_SR_NE | USART_SR_FE  | USART_SR_PE))
-      set_error(sdp, sr);
-    b = (uint8_t)u->DR & sdp->rxmask;
-    if (sr & USART_SR_RXNE)
-      sdIncomingDataI(sdp, b);
-    sr = u->SR;
-  }
-  osalSysUnlockFromISR();
-
-  /* Transmission buffer empty.*/
-  if ((cr1 & USART_CR1_TXEIE) && (sr & USART_SR_TXE)) {
-    msg_t b;
-    osalSysLockFromISR();
-    b = oqGetI(&sdp->oqueue);
-    if (b < MSG_OK) {
-      chnAddFlagsI(sdp, CHN_OUTPUT_EMPTY);
-      u->CR1 = cr1 & ~USART_CR1_TXEIE;
-    }
-    else
-      u->DR = b;
-    osalSysUnlockFromISR();
-  }
-
-  /* Physical transmission end.*/
-  if ((cr1 & USART_CR1_TCIE) && (sr & USART_SR_TC)) {
-    osalSysLockFromISR();
-    if (oqIsEmptyI(&sdp->oqueue)) {
-      chnAddFlagsI(sdp, CHN_TRANSMISSION_END);
-      u->CR1 = cr1 & ~USART_CR1_TCIE;
-    }
-    osalSysUnlockFromISR();
-  }
-}
-
 #if STM32_SERIAL_USE_USART1 || defined(__DOXYGEN__)
 static void notify1(io_queue_t *qp) {
 
@@ -302,6 +243,7 @@ static void notify8(io_queue_t *qp) {
 /*===========================================================================*/
 
 #if STM32_SERIAL_USE_USART1 || defined(__DOXYGEN__)
+#if !defined(STM32_USART1_SUPPRESS_ISR)
 #if !defined(STM32_USART1_HANDLER)
 #error "STM32_USART1_HANDLER not defined"
 #endif
@@ -314,13 +256,15 @@ OSAL_IRQ_HANDLER(STM32_USART1_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  serve_interrupt(&SD1);
+  sd_lld_serve_interrupt(&SD1);
 
   OSAL_IRQ_EPILOGUE();
 }
 #endif
+#endif
 
 #if STM32_SERIAL_USE_USART2 || defined(__DOXYGEN__)
+#if !defined(STM32_USART2_SUPPRESS_ISR)
 #if !defined(STM32_USART2_HANDLER)
 #error "STM32_USART2_HANDLER not defined"
 #endif
@@ -333,13 +277,15 @@ OSAL_IRQ_HANDLER(STM32_USART2_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  serve_interrupt(&SD2);
+  sd_lld_serve_interrupt(&SD2);
 
   OSAL_IRQ_EPILOGUE();
 }
 #endif
+#endif
 
 #if STM32_SERIAL_USE_USART3 || defined(__DOXYGEN__)
+#if !defined(STM32_USART3_SUPPRESS_ISR)
 #if !defined(STM32_USART3_HANDLER)
 #error "STM32_USART3_HANDLER not defined"
 #endif
@@ -352,13 +298,15 @@ OSAL_IRQ_HANDLER(STM32_USART3_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  serve_interrupt(&SD3);
+  sd_lld_serve_interrupt(&SD3);
 
   OSAL_IRQ_EPILOGUE();
 }
 #endif
+#endif
 
 #if STM32_SERIAL_USE_UART4 || defined(__DOXYGEN__)
+#if !defined(STM32_UART4_SUPPRESS_ISR)
 #if !defined(STM32_UART4_HANDLER)
 #error "STM32_UART4_HANDLER not defined"
 #endif
@@ -371,13 +319,15 @@ OSAL_IRQ_HANDLER(STM32_UART4_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  serve_interrupt(&SD4);
+  sd_lld_serve_interrupt(&SD4);
 
   OSAL_IRQ_EPILOGUE();
 }
 #endif
+#endif
 
 #if STM32_SERIAL_USE_UART5 || defined(__DOXYGEN__)
+#if !defined(STM32_UART5_SUPPRESS_ISR)
 #if !defined(STM32_UART5_HANDLER)
 #error "STM32_UART5_HANDLER not defined"
 #endif
@@ -390,13 +340,15 @@ OSAL_IRQ_HANDLER(STM32_UART5_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  serve_interrupt(&SD5);
+  sd_lld_serve_interrupt(&SD5);
 
   OSAL_IRQ_EPILOGUE();
 }
 #endif
+#endif
 
 #if STM32_SERIAL_USE_USART6 || defined(__DOXYGEN__)
+#if !defined(STM32_USART6_SUPPRESS_ISR)
 #if !defined(STM32_USART6_HANDLER)
 #error "STM32_USART6_HANDLER not defined"
 #endif
@@ -409,13 +361,15 @@ OSAL_IRQ_HANDLER(STM32_USART6_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  serve_interrupt(&SD6);
+  sd_lld_serve_interrupt(&SD6);
 
   OSAL_IRQ_EPILOGUE();
 }
 #endif
+#endif
 
 #if STM32_SERIAL_USE_UART7 || defined(__DOXYGEN__)
+#if !defined(STM32_UART8_SUPPRESS_ISR)
 #if !defined(STM32_UART7_HANDLER)
 #error "STM32_UART7_HANDLER not defined"
 #endif
@@ -428,13 +382,15 @@ OSAL_IRQ_HANDLER(STM32_UART7_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  serve_interrupt(&SD7);
+  sd_lld_serve_interrupt(&SD7);
 
   OSAL_IRQ_EPILOGUE();
 }
 #endif
+#endif
 
 #if STM32_SERIAL_USE_UART8 || defined(__DOXYGEN__)
+#if !defined(STM32_UART8_SUPPRESS_ISR)
 #if !defined(STM32_UART8_HANDLER)
 #error "STM32_UART8_HANDLER not defined"
 #endif
@@ -447,10 +403,11 @@ OSAL_IRQ_HANDLER(STM32_UART8_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  serve_interrupt(&SD8);
+  sd_lld_serve_interrupt(&SD8);
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 #endif
 
 /*===========================================================================*/
@@ -642,6 +599,65 @@ void sd_lld_stop(SerialDriver *sdp) {
       return;
     }
 #endif
+  }
+}
+
+/**
+ * @brief   Common IRQ handler.
+ *
+ * @param[in] sdp       communication channel associated to the USART
+ */
+void sd_lld_serve_interrupt(SerialDriver *sdp) {
+  USART_TypeDef *u = sdp->usart;
+  uint16_t cr1 = u->CR1;
+  uint16_t sr = u->SR;
+
+  /* Special case, LIN break detection.*/
+  if (sr & USART_SR_LBD) {
+    osalSysLockFromISR();
+    chnAddFlagsI(sdp, SD_BREAK_DETECTED);
+    u->SR = ~USART_SR_LBD;
+    osalSysUnlockFromISR();
+  }
+
+  /* Data available.*/
+  osalSysLockFromISR();
+  while (sr & (USART_SR_RXNE | USART_SR_ORE | USART_SR_NE | USART_SR_FE |
+               USART_SR_PE)) {
+    uint8_t b;
+
+    /* Error condition detection.*/
+    if (sr & (USART_SR_ORE | USART_SR_NE | USART_SR_FE  | USART_SR_PE))
+      set_error(sdp, sr);
+    b = (uint8_t)u->DR & sdp->rxmask;
+    if (sr & USART_SR_RXNE)
+      sdIncomingDataI(sdp, b);
+    sr = u->SR;
+  }
+  osalSysUnlockFromISR();
+
+  /* Transmission buffer empty.*/
+  if ((cr1 & USART_CR1_TXEIE) && (sr & USART_SR_TXE)) {
+    msg_t b;
+    osalSysLockFromISR();
+    b = oqGetI(&sdp->oqueue);
+    if (b < MSG_OK) {
+      chnAddFlagsI(sdp, CHN_OUTPUT_EMPTY);
+      u->CR1 = cr1 & ~USART_CR1_TXEIE;
+    }
+    else
+      u->DR = b;
+    osalSysUnlockFromISR();
+  }
+
+  /* Physical transmission end.*/
+  if ((cr1 & USART_CR1_TCIE) && (sr & USART_SR_TC)) {
+    osalSysLockFromISR();
+    if (oqIsEmptyI(&sdp->oqueue)) {
+      chnAddFlagsI(sdp, CHN_TRANSMISSION_END);
+      u->CR1 = cr1 & ~USART_CR1_TCIE;
+    }
+    osalSysUnlockFromISR();
   }
 }
 

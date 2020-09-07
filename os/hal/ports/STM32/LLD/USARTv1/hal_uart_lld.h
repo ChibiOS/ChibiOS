@@ -747,6 +747,7 @@ extern "C" {
   size_t uart_lld_stop_send(UARTDriver *uartp);
   void uart_lld_start_receive(UARTDriver *uartp, size_t n, void *rxbuf);
   size_t uart_lld_stop_receive(UARTDriver *uartp);
+  void uart_lld_serve_interrupt(UARTDriver *uartp);
 #ifdef __cplusplus
 }
 #endif

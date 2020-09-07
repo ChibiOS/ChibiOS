@@ -321,45 +321,12 @@ static void uart_lld_serve_tx_end_irq(UARTDriver *uartp, uint32_t flags) {
   _uart_tx1_isr_code(uartp);
 }
 
-/**
- * @brief   USART common service routine.
- *
- * @param[in] uartp     pointer to the @p UARTDriver object
- */
-static void serve_usart_irq(UARTDriver *uartp) {
-  uint16_t sr;
-  USART_TypeDef *u = uartp->usart;
-  uint32_t cr1 = u->CR1;
-
-  sr = u->SR;   /* SR reset step 1.*/
-  (void)u->DR;  /* SR reset step 2.*/
-
-  if (sr & (USART_SR_LBD | USART_SR_ORE | USART_SR_NE |
-            USART_SR_FE  | USART_SR_PE)) {
-    u->SR = ~USART_SR_LBD;
-    _uart_rx_error_isr_code(uartp, translate_errors(sr));
-  }
-
-  if ((sr & USART_SR_TC) && (cr1 & USART_CR1_TCIE)) {
-    /* TC interrupt cleared and disabled.*/
-    u->SR = ~USART_SR_TC;
-    u->CR1 = cr1 & ~USART_CR1_TCIE;
-
-    /* End of transmission, a callback is generated.*/
-    _uart_tx2_isr_code(uartp);
-  }
-
-  /* Timeout interrupt sources are only checked if enabled in CR1.*/
-  if ((cr1 & USART_CR1_IDLEIE) && (sr & USART_SR_IDLE)) {
-    _uart_timeout_isr_code(uartp);
-  }
-}
-
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
 #if STM32_UART_USE_USART1 || defined(__DOXYGEN__)
+#if !defined(STM32_USART1_SUPPRESS_ISR)
 #if !defined(STM32_USART1_HANDLER)
 #error "STM32_USART1_HANDLER not defined"
 #endif
@@ -372,13 +339,15 @@ OSAL_IRQ_HANDLER(STM32_USART1_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  serve_usart_irq(&UARTD1);
+  uart_lld_serve_interrupt(&UARTD1);
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 #endif /* STM32_UART_USE_USART1 */
 
 #if STM32_UART_USE_USART2 || defined(__DOXYGEN__)
+#if !defined(STM32_USART2_SUPPRESS_ISR)
 #if !defined(STM32_USART2_HANDLER)
 #error "STM32_USART2_HANDLER not defined"
 #endif
@@ -391,13 +360,15 @@ OSAL_IRQ_HANDLER(STM32_USART2_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  serve_usart_irq(&UARTD2);
+  uart_lld_serve_interrupt(&UARTD2);
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 #endif /* STM32_UART_USE_USART2 */
 
 #if STM32_UART_USE_USART3 || defined(__DOXYGEN__)
+#if !defined(STM32_USART3_SUPPRESS_ISR)
 #if !defined(STM32_USART3_HANDLER)
 #error "STM32_USART3_HANDLER not defined"
 #endif
@@ -410,13 +381,15 @@ OSAL_IRQ_HANDLER(STM32_USART3_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  serve_usart_irq(&UARTD3);
+  uart_lld_serve_interrupt(&UARTD3);
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 #endif /* STM32_UART_USE_USART3 */
 
 #if STM32_UART_USE_UART4 || defined(__DOXYGEN__)
+#if !defined(STM32_UART4_SUPPRESS_ISR)
 #if !defined(STM32_UART4_HANDLER)
 #error "STM32_UART4_HANDLER not defined"
 #endif
@@ -429,13 +402,15 @@ OSAL_IRQ_HANDLER(STM32_UART4_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  serve_usart_irq(&UARTD4);
+  uart_lld_serve_interrupt(&UARTD4);
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 #endif /* STM32_UART_USE_UART4 */
 
 #if STM32_UART_USE_UART5 || defined(__DOXYGEN__)
+#if !defined(STM32_UART5_SUPPRESS_ISR)
 #if !defined(STM32_UART5_HANDLER)
 #error "STM32_UART5_HANDLER not defined"
 #endif
@@ -448,13 +423,15 @@ OSAL_IRQ_HANDLER(STM32_UART5_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  serve_usart_irq(&UARTD5);
+  uart_lld_serve_interrupt(&UARTD5);
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 #endif /* STM32_UART_USE_UART5 */
 
 #if STM32_UART_USE_USART6 || defined(__DOXYGEN__)
+#if !defined(STM32_USART6_SUPPRESS_ISR)
 #if !defined(STM32_USART6_HANDLER)
 #error "STM32_USART6_HANDLER not defined"
 #endif
@@ -467,13 +444,15 @@ OSAL_IRQ_HANDLER(STM32_USART6_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  serve_usart_irq(&UARTD6);
+  uart_lld_serve_interrupt(&UARTD6);
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 #endif /* STM32_UART_USE_USART6 */
 
 #if STM32_UART_USE_UART7 || defined(__DOXYGEN__)
+#if !defined(STM32_UART7_SUPPRESS_ISR)
 #if !defined(STM32_UART7_HANDLER)
 #error "STM32_UART7_HANDLER not defined"
 #endif
@@ -486,13 +465,15 @@ OSAL_IRQ_HANDLER(STM32_UART7_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  serve_usart_irq(&UARTD7);
+  uart_lld_serve_interrupt(&UARTD7);
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 #endif /* STM32_UART_USE_UART7 */
 
 #if STM32_UART_USE_UART8 || defined(__DOXYGEN__)
+#if !defined(STM32_UART8_SUPPRESS_ISR)
 #if !defined(STM32_UART8_HANDLER)
 #error "STM32_UART8_HANDLER not defined"
 #endif
@@ -505,10 +486,11 @@ OSAL_IRQ_HANDLER(STM32_UART8_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  serve_usart_irq(&UARTD8);
+  uart_lld_serve_interrupt(&UARTD8);
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 #endif /* STM32_UART_USE_UART8 */
 
 /*===========================================================================*/
@@ -1001,6 +983,40 @@ size_t uart_lld_stop_receive(UARTDriver *uartp) {
   uart_enter_rx_idle_loop(uartp);
 
   return n;
+}
+
+/**
+ * @brief   USART common service routine.
+ *
+ * @param[in] uartp     pointer to the @p UARTDriver object
+ */
+void uart_lld_serve_interrupt(UARTDriver *uartp) {
+  uint16_t sr;
+  USART_TypeDef *u = uartp->usart;
+  uint32_t cr1 = u->CR1;
+
+  sr = u->SR;   /* SR reset step 1.*/
+  (void)u->DR;  /* SR reset step 2.*/
+
+  if (sr & (USART_SR_LBD | USART_SR_ORE | USART_SR_NE |
+            USART_SR_FE  | USART_SR_PE)) {
+    u->SR = ~USART_SR_LBD;
+    _uart_rx_error_isr_code(uartp, translate_errors(sr));
+  }
+
+  if ((sr & USART_SR_TC) && (cr1 & USART_CR1_TCIE)) {
+    /* TC interrupt cleared and disabled.*/
+    u->SR = ~USART_SR_TC;
+    u->CR1 = cr1 & ~USART_CR1_TCIE;
+
+    /* End of transmission, a callback is generated.*/
+    _uart_tx2_isr_code(uartp);
+  }
+
+  /* Timeout interrupt sources are only checked if enabled in CR1.*/
+  if ((cr1 & USART_CR1_IDLEIE) && (sr & USART_SR_IDLE)) {
+    _uart_timeout_isr_code(uartp);
+  }
 }
 
 #endif /* HAL_USE_UART */
