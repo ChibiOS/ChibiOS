@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added mcuconf.h updater for STM32F401.
 - NEW: SIO STM32 implementation for USARTs without FIFO in STM32/LLD/USARTv2,
        implementation with FIFO in STM32/LLD/USARTv3.
 - NEW: Updated SIO driver model to support more use cases.
