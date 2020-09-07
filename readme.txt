@@ -76,7 +76,7 @@
 *** Next ***
 - NEW: Updated STM32F4xx platform with new IRQ handling, enabled the missing
        timers.
-- NEW: Added mcuconf.h updater for STM32F401, F427, F429, F437, F439.
+- NEW: Added mcuconf.h updater for STM32F401, F427, F429, F437, F439, F446.
 - NEW: SIO STM32 implementation for USARTs without FIFO in STM32/LLD/USARTv2,
        implementation with FIFO in STM32/LLD/USARTv3.
 - NEW: Updated SIO driver model to support more use cases.
