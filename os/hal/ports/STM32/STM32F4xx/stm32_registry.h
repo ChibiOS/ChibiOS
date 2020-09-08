@@ -2372,7 +2372,7 @@
 
 #define STM32_HAS_I2C3                      FALSE
 
-#define STM32_HAS_I2C4                      FALSE
+#define STM32_HAS_I2C4                      TRUE
 #define STM32_I2C4_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 0)) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 3))
 #define STM32_I2C4_RX_DMA_CHN               0x00002007
