@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Improved the STM32G4xx clock initialization to use the shared
+       mini-drivers in STM32/LLD/RCCv1, code is greatly simplified.
 - NEW: Updated STM32F4xx platform with new IRQ handling, enabled the missing
        timers.
 - NEW: Added mcuconf.h updater for STM32F401, STM32F410, STM32F411, STM32F412,
