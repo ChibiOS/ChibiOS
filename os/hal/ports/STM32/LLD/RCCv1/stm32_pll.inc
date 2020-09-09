@@ -112,7 +112,6 @@
 #error "STM32_ACTIVATE_PLL not defined in hal_lld.h"
 #endif
 
-
 #if STM32_PLL_HAS_P && !defined(STM32_PLLPEN)
 #error "STM32_PLLPEN not defined in hal_lld.h"
 #endif

@@ -30,16 +30,17 @@
  * @name    HPRE field bits definitions
  * @{
  */
-#define STM32_HPRE_MASK         (15 << 4)   /**< HPRE field mask.           */
-#define STM32_HPRE_DIV1         (0 << 4)    /**< SYSCLK divided by 1.       */
-#define STM32_HPRE_DIV2         (8 << 4)    /**< SYSCLK divided by 2.       */
-#define STM32_HPRE_DIV4         (9 << 4)    /**< SYSCLK divided by 4.       */
-#define STM32_HPRE_DIV8         (10 << 4)   /**< SYSCLK divided by 8.       */
-#define STM32_HPRE_DIV16        (11 << 4)   /**< SYSCLK divided by 16.      */
-#define STM32_HPRE_DIV64        (12 << 4)   /**< SYSCLK divided by 64.      */
-#define STM32_HPRE_DIV128       (13 << 4)   /**< SYSCLK divided by 128.     */
-#define STM32_HPRE_DIV256       (14 << 4)   /**< SYSCLK divided by 256.     */
-#define STM32_HPRE_DIV512       (15 << 4)   /**< SYSCLK divided by 512.     */
+#define STM32_HPRE_MASK         (15U << 4U) /**< HPRE field mask.           */
+#define STM32_HPRE_FIELD(n)     ((n) << 4U) /**< HPRE field value.          */
+#define STM32_HPRE_DIV1         STM32_HPRE_FIELD(0U)
+#define STM32_HPRE_DIV2         STM32_HPRE_FIELD(8U)
+#define STM32_HPRE_DIV4         STM32_HPRE_FIELD(9U)
+#define STM32_HPRE_DIV8         STM32_HPRE_FIELD(10U)
+#define STM32_HPRE_DIV16        STM32_HPRE_FIELD(11U)
+#define STM32_HPRE_DIV64        STM32_HPRE_FIELD(12U)
+#define STM32_HPRE_DIV128       STM32_HPRE_FIELD(13U)
+#define STM32_HPRE_DIV256       STM32_HPRE_FIELD(14U)
+#define STM32_HPRE_DIV512       STM32_HPRE_FIELD(15U)
 /** @} */
 
 /*===========================================================================*/
@@ -53,12 +54,11 @@
 #error "STM32_HPRE not defined in mcuconf.h"
 #endif
 
-/* Check on limits.*/
+/* Input checks.*/
 #if !defined(STM32_SYSCLK_MAX)
 #error "STM32_SYSCLK_MAX not defined in hal_lld.h"
 #endif
 
-/* Input checks.*/
 #if !defined(STM32_SYSCLK)
 #error "STM32_SYSCLK not defined in hal_lld.h"
 #endif

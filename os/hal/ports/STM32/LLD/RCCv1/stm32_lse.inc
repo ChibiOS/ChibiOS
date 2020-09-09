@@ -67,6 +67,14 @@
   #endif
 #endif
 
+#if !defined(RCC_BDCR_LSESYSEN)
+#define RCC_BDCR_LSESYSEN               0U
+#endif
+
+#if !defined(RCC_BDCR_LSESYSRDY)
+#define RCC_BDCR_LSESYSRDY              0U
+#endif
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/

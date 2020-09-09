@@ -30,12 +30,13 @@
  * @name    PPRE1 field bits definitions
  * @{
  */
-#define STM32_PPRE1_MASK        (7 << 8)    /**< PPRE1 field mask.          */
-#define STM32_PPRE1_DIV1        (0 << 8)    /**< HCLK divided by 1.         */
-#define STM32_PPRE1_DIV2        (4 << 8)    /**< HCLK divided by 2.         */
-#define STM32_PPRE1_DIV4        (5 << 8)    /**< HCLK divided by 4.         */
-#define STM32_PPRE1_DIV8        (6 << 8)    /**< HCLK divided by 8.         */
-#define STM32_PPRE1_DIV16       (7 << 8)    /**< HCLK divided by 16.        */
+#define STM32_PPRE1_MASK        (7U << 8U)   /**< PPRE1 field mask.         */
+#define STM32_PPRE1_FIELD(n)    ((n) << 8U)  /**< PPRE1 field value.        */
+#define STM32_PPRE1_DIV1        STM32_PPRE1_FIELD(0U)
+#define STM32_PPRE1_DIV2        STM32_PPRE1_FIELD(4U)
+#define STM32_PPRE1_DIV4        STM32_PPRE1_FIELD(5U)
+#define STM32_PPRE1_DIV8        STM32_PPRE1_FIELD(6U)
+#define STM32_PPRE1_DIV16       STM32_PPRE1_FIELD(7U)
 /** @} */
 
 /*===========================================================================*/
@@ -49,12 +50,11 @@
 #error "STM32_PPRE1 not defined in mcuconf.h"
 #endif
 
-/* Check on limits.*/
+/* Input checks.*/
 #if !defined(STM32_PCLK1_MAX)
 #error "STM32_PCLK1_MAX not defined in hal_lld.h"
 #endif
 
-/* Input checks.*/
 #if !defined(STM32_HCLK)
 #error "STM32_HCLK not defined in hal_lld.h"
 #endif
