@@ -117,9 +117,11 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
-- FIX: Ignored HSIDIV setting on STM32G0xx (bug #1121)
+- FIX: Fixed incorrect STM32 iWDG initialization in windowed mode (bug #1122)
+       (backported to 20.3.3)(backported to 19.1.5).
+- FIX: Fixed ignored HSIDIV setting on STM32G0xx (bug #1121)
        (backported to 20.3.3).
-- FIX: Fix incorrect variable name in recursive mutex handling (bug #1119).
+- FIX: Fixed incorrect variable name in recursive mutex handling (bug #1119).
 - FIX: Fixed several problems in STM32 ADCv4 (bug #1116)
        (backported to 20.3.2).
 - FIX: Fixed STM32 QSPI errata workaround (bug #1117)

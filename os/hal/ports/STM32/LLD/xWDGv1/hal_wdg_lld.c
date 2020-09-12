@@ -85,7 +85,6 @@ void wdg_lld_init(void) {
  */
 void wdg_lld_start(WDGDriver *wdgp) {
 
-#if STM32_IWDG_IS_WINDOWED
   /* Enable IWDG and unlock for write.*/
   wdgp->wdg->KR   = KR_KEY_ENABLE;
   wdgp->wdg->KR   = KR_KEY_WRITE;
@@ -93,24 +92,16 @@ void wdg_lld_start(WDGDriver *wdgp) {
   /* Write configuration.*/
   wdgp->wdg->PR   = wdgp->config->pr;
   wdgp->wdg->RLR  = wdgp->config->rlr;
+
+  /* Wait the registers to be updated.*/
   while (wdgp->wdg->SR != 0)
     ;
 
+#if STM32_IWDG_IS_WINDOWED
   /* This also triggers a refresh.*/
   wdgp->wdg->WINR = wdgp->config->winr;
 #else
-  /* Unlock IWDG.*/
-  wdgp->wdg->KR   = KR_KEY_WRITE;
-
-  /* Write configuration.*/
-  while (wdgp->wdg->SR != 0)
-    ;
-  wdgp->wdg->PR   = wdgp->config->pr;
-  wdgp->wdg->RLR  = wdgp->config->rlr;
-
-  /* Start operations.*/
   wdgp->wdg->KR   = KR_KEY_RELOAD;
-  wdgp->wdg->KR   = KR_KEY_ENABLE;
 #endif
 }
 
