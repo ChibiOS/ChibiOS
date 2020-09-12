@@ -151,7 +151,7 @@ void stm32_clock_init(void) {
 
 #if STM32_HSI16_ENABLED
   /* HSI activation.*/
-  RCC->CR |= RCC_CR_HSION;
+  RCC->CR |= RCC_CR_HSION | STM32_HSIDIV;
   while ((RCC->CR & RCC_CR_HSIRDY) == 0)
     ;                                       /* Wait until HSI16 is stable.  */
 #endif
