@@ -282,7 +282,7 @@
 
 #if !defined(__DOXYGEN__)
 extern os_instance_t ch;
-extern os_instance_t * volatile chp;
+/*extern os_instance_t * volatile chp;*/
 extern stkalign_t ch_idle_thread_wa[];
 #endif
 
