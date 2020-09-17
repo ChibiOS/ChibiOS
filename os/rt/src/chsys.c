@@ -44,7 +44,7 @@
  */
 os_instance_t ch;
 
-os_instance_t * volatile chp = &ch;
+/*os_instance_t * volatile chp = &ch;*/
 
 #if (CH_CFG_NO_IDLE_THREAD == FALSE) || defined(__DOXYGEN__)
 /**
