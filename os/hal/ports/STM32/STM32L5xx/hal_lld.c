@@ -52,19 +52,29 @@ uint32_t SystemCoreClock = STM32_HCLK;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+/**
+ * @brief   Resets the backup domain.
+ */
+__STATIC_INLINE void bd_reset(void) {
+
+  /* Reset BKP domain if different clock source selected.*/
+  if ((RCC->BDCR & STM32_RTCSEL_MASK) != STM32_RTCSEL) {
+    /* Backup domain reset.*/
+    RCC->BDCR = RCC_BDCR_BDRST;
+    RCC->BDCR = 0U;
+  }
+}
+
+/**
+ * @brief   Initializes the backup domain.
+ * @note    WARNING! Changing RTC clock source impossible without reset
+ *          of the whole BKP domain.
+ */
 __STATIC_INLINE void bd_init(void) {
   uint32_t bdcr;
 
   /* Current settings.*/
   bdcr = RCC->BDCR;
-
-  /* Reset BKP domain if different clock source selected.*/
-  if ((bdcr & STM32_RTCSEL_MASK) != STM32_RTCSEL) {
-    /* Backup domain reset.*/
-    RCC->BDCR = RCC_BDCR_BDRST;
-    RCC->BDCR = 0U;
-    bdcr = 0U;
-  }
 
 #if HAL_USE_RTC
   /* RTC enable.*/
@@ -164,6 +174,9 @@ void stm32_clock_init(void) {
   PWR->CR2 = STM32_PWR_CR2;
   PWR->CR3 = STM32_PWR_CR3;
   PWR->CR4 = STM32_PWR_CR4;
+
+  /* Backup domain reset.*/
+  bd_reset();
 
   /* Setting the wait states required by MSI clock.*/
   flash_ws_init(STM32_MSI_FLASHBITS);
