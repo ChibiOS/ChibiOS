@@ -117,6 +117,8 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Fixed I2S-related problems in STM32F4xx registry (bug #1124)
+       (backported to 20.3.3)(backported to 19.1.5).
 - FIX: Fixed STM32 EXTIv1 driver unable to enable/disable fixed lines
        (bug #1123)(backported to 20.3.3)(backported to 19.1.5).
 - FIX: Fixed incorrect STM32 iWDG initialization in windowed mode (bug #1122)
