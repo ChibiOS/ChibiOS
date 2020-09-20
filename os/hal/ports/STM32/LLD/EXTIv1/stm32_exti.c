@@ -62,36 +62,37 @@
  * @api
  */
 void extiEnableGroup1(uint32_t mask, extimode_t mode) {
+  uint32_t cmask;
 
-  /* Masked out lines must not be touched by this driver.*/
-  osalDbgAssert((mask & STM32_EXTI_IMR1_MASK) == 0U, "fixed lines");
+  /* Mask including only configurable lines.*/
+  cmask = mask & ~STM32_EXTI_IMR1_MASK;
 
   if ((mode & EXTI_MODE_EDGES_MASK) == 0U) {
     /* Disabling channels.*/
     EXTI->IMR1  &= ~mask;
     EXTI->EMR1  &= ~mask;
-    EXTI->RTSR1 &= ~mask;
-    EXTI->FTSR1 &= ~mask;
+    EXTI->RTSR1 &= ~cmask;
+    EXTI->FTSR1 &= ~cmask;
 #if STM32_EXTI_SEPARATE_RF == FALSE
-    EXTI->PR1    =  mask;
+    EXTI->PR1    =  cmask;
 #else
-    EXTI->RPR1   =  mask;
-    EXTI->FPR1   =  mask;
+    EXTI->RPR1   =  cmask;
+    EXTI->FPR1   =  cmask;
 #endif
   }
   else {
     /* Programming edge registers.*/
     if (mode & EXTI_MODE_RISING_EDGE) {
-      EXTI->RTSR1 |= mask;
+      EXTI->RTSR1 |= cmask;
     }
     else {
-      EXTI->RTSR1 &= ~mask;
+      EXTI->RTSR1 &= ~cmask;
     }
     if (mode & EXTI_MODE_FALLING_EDGE) {
-      EXTI->FTSR1 |= mask;
+      EXTI->FTSR1 |= cmask;
     }
     else {
-      EXTI->FTSR1 &= ~mask;
+      EXTI->FTSR1 &= ~cmask;
     }
 
     /* Programming interrupt and event registers.*/
@@ -116,36 +117,37 @@ void extiEnableGroup1(uint32_t mask, extimode_t mode) {
  * @api
  */
 void extiEnableGroup2(uint32_t mask, extimode_t mode) {
+  uint32_t cmask;
 
-  /* Masked out lines must not be touched by this driver.*/
-  osalDbgAssert((mask & STM32_EXTI_IMR2_MASK) == 0U, "fixed lines");
+  /* Mask including only configurable lines.*/
+  cmask = mask & ~STM32_EXTI_IMR1_MASK;
 
   if ((mode & EXTI_MODE_EDGES_MASK) == 0U) {
     /* Disabling channels.*/
     EXTI->IMR2  &= ~mask;
     EXTI->EMR2  &= ~mask;
-    EXTI->RTSR2 &= ~mask;
-    EXTI->FTSR2 &= ~mask;
+    EXTI->RTSR2 &= ~cmask;
+    EXTI->FTSR2 &= ~cmask;
 #if STM32_EXTI_SEPARATE_RF == FALSE
-    EXTI->PR2    =  mask;
+    EXTI->PR2    =  cmask;
 #else
-    EXTI->RPR2   =  mask;
-    EXTI->FPR2   =  mask;
+    EXTI->RPR2   =  cmask;
+    EXTI->FPR2   =  cmask;
 #endif
   }
   else {
     /* Programming edge registers.*/
     if (mode & EXTI_MODE_RISING_EDGE) {
-      EXTI->RTSR2 |= mask;
+      EXTI->RTSR2 |= cmask;
     }
     else {
-      EXTI->RTSR2 &= ~mask;
+      EXTI->RTSR2 &= ~cmask;
     }
     if (mode & EXTI_MODE_FALLING_EDGE) {
-      EXTI->FTSR2 |= mask;
+      EXTI->FTSR2 |= cmask;
     }
     else {
-      EXTI->FTSR2 &= ~mask;
+      EXTI->FTSR2 &= ~cmask;
     }
 
     /* Programming interrupt and event registers.*/
