@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 19.1.5 ***
+- FIX: Fixed I2S-related problems in STM32F4xx registry (bug #1124).
 - FIX: Fixed incorrect STM32 iWDG initialization in windowed mode (bug #1122).
 - FIX: Fixed ADCv1 compile problem (bug #1118).
 - FIX: Fixed missing STM32_I2C_BDMA_REQUIRED definition in I2Cv3 driver
