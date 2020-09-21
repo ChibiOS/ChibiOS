@@ -120,7 +120,7 @@ void extiEnableGroup2(uint32_t mask, extimode_t mode) {
   uint32_t cmask;
 
   /* Mask including only configurable lines.*/
-  cmask = mask & ~STM32_EXTI_IMR1_MASK;
+  cmask = mask & ~STM32_EXTI_IMR2_MASK;
 
   if ((mode & EXTI_MODE_EDGES_MASK) == 0U) {
     /* Disabling channels.*/
