@@ -75,7 +75,7 @@ int main(void) {
    * sleeping in a loop and check the button state.
    */
   while (true) {
-   if (palReadLine(LINE_JOY_SELECT)) {
+   if (palReadLine(LINE_JOY_SELECT) == PAL_LOW) {
       test_execute((BaseSequentialStream *)&SIOD3, &rt_test_suite);
       test_execute((BaseSequentialStream *)&SIOD3, &oslib_test_suite);
     }
