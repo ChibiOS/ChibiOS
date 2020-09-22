@@ -57,12 +57,12 @@
         Mode="Analog"
         Alternate="0" />
       <pin5
-        ID="LED LED_GREEN"
+        ID=""
         Type="PushPull"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="Floating"
         Level="Low"
-        Mode="Output"
+        Mode="Analog"
         Alternate="0" />
       <pin6
         ID=""
@@ -71,7 +71,7 @@
         Resistor="Floating"
         Level="Low"
         Mode="Analog"
-        Alternate="0" />
+        Alternate="0" ></pin6>
       <pin7
         ID="BUCK_RED_SENSE"
         Type="PushPull"
@@ -86,8 +86,8 @@
         Speed="Maximum"
         Resistor="Floating"
         Level="Low"
-        Mode="Output"
-        Alternate="0" />
+        Mode="Alternate"
+        Alternate="12" />
       <pin9
         ID="USBPD_DBCC1"
         Type="PushPull"
@@ -317,7 +317,7 @@
         Mode="Input"
         Alternate="0" ></pin4>
       <pin5
-        ID="JOY_DOWN"
+        ID="JOY_RIGHT"
         Type="PushPull"
         Speed="Minimum"
         Resistor="PullUp"
@@ -330,8 +330,8 @@
         Speed="Maximum"
         Resistor="Floating"
         Level="Low"
-        Mode="Output"
-        Alternate="0" />
+        Mode="Alternate"
+        Alternate="12" />
       <pin7
         ID="RC_SINUS"
         Type="PushPull"
@@ -339,15 +339,15 @@
         Resistor="Floating"
         Level="Low"
         Mode="Alternate"
-        Alternate="12" />
+        Alternate="12" ></pin7>
       <pin8
         ID="BUCK_GREEN_DRIVE"
         Type="PushPull"
         Speed="Maximum"
         Resistor="Floating"
         Level="Low"
-        Mode="Output"
-        Alternate="0" ></pin8>
+        Mode="Alternate"
+        Alternate="3" ></pin8>
       <pin9
         ID=""
         Type="PushPull"

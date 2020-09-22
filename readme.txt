@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added board support for ST_STM32G474RE_DISCOVERY_DPOW1, added demo.
 - NEW: Improved the STM32G4xx clock initialization to use the shared
        mini-drivers in STM32/LLD/RCCv1, code is greatly simplified.
 - NEW: Updated STM32F4xx platform with new IRQ handling, enabled the missing

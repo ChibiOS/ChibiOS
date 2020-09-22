@@ -70,8 +70,7 @@
 #define GPIOA_BUBKBOOST_I_IN_AVG    2U
 #define GPIOA_BUCKBOOST_VOUT        3U
 #define GPIOA_PIN4                  4U
-#define GPIOA_LED                   5U
-#define GPIOA_LED_GREEN             5U
+#define GPIOA_PIN5                  5U
 #define GPIOA_PIN6                  6U
 #define GPIOA_BUCK_RED_SENSE        7U
 #define GPIOA_BUCK_BLUE_DRIVE       8U
@@ -105,7 +104,7 @@
 #define GPIOC_USBPD_VIN             2U
 #define GPIOC_BUCKBOOST_USBPD_EN    3U
 #define GPIOC_JOY_LEFT              4U
-#define GPIOC_JOY_DOWN              5U
+#define GPIOC_JOY_RIGHT             5U
 #define GPIOC_BUCK_RED_DRIVE        6U
 #define GPIOC_RC_SINUS              7U
 #define GPIOC_BUCK_GREEN_DRIVE      8U
@@ -192,8 +191,6 @@
 #define LINE_BUCKBOOST_VIN          PAL_LINE(GPIOA, 1U)
 #define LINE_BUBKBOOST_I_IN_AVG     PAL_LINE(GPIOA, 2U)
 #define LINE_BUCKBOOST_VOUT         PAL_LINE(GPIOA, 3U)
-#define LINE_LED                    PAL_LINE(GPIOA, 5U)
-#define LINE_LED_GREEN              PAL_LINE(GPIOA, 5U)
 #define LINE_BUCK_RED_SENSE         PAL_LINE(GPIOA, 7U)
 #define LINE_BUCK_BLUE_DRIVE        PAL_LINE(GPIOA, 8U)
 #define LINE_USBPD_DBCC1            PAL_LINE(GPIOA, 9U)
@@ -221,7 +218,7 @@
 #define LINE_USBPD_VIN              PAL_LINE(GPIOC, 2U)
 #define LINE_BUCKBOOST_USBPD_EN     PAL_LINE(GPIOC, 3U)
 #define LINE_JOY_LEFT               PAL_LINE(GPIOC, 4U)
-#define LINE_JOY_DOWN               PAL_LINE(GPIOC, 5U)
+#define LINE_JOY_RIGHT              PAL_LINE(GPIOC, 5U)
 #define LINE_BUCK_RED_DRIVE         PAL_LINE(GPIOC, 6U)
 #define LINE_RC_SINUS               PAL_LINE(GPIOC, 7U)
 #define LINE_BUCK_GREEN_DRIVE       PAL_LINE(GPIOC, 8U)
@@ -283,10 +280,10 @@
  * PA2  - BUBKBOOST_I_IN_AVG        (analog).
  * PA3  - BUCKBOOST_VOUT            (analog).
  * PA4  - PIN4                      (analog).
- * PA5  - LED LED_GREEN             (output pushpull maximum).
+ * PA5  - PIN5                      (analog).
  * PA6  - PIN6                      (analog).
  * PA7  - BUCK_RED_SENSE            (analog).
- * PA8  - BUCK_BLUE_DRIVE           (output pushpull maximum).
+ * PA8  - BUCK_BLUE_DRIVE           (alternate 12).
  * PA9  - USBPD_DBCC1               (input pullup).
  * PA10 - USBPD_DBCC2               (input pullup).
  * PA11 - USBPD_FS_DM               (analog).
@@ -300,10 +297,10 @@
                                      PIN_MODE_ANALOG(GPIOA_BUBKBOOST_I_IN_AVG) |\
                                      PIN_MODE_ANALOG(GPIOA_BUCKBOOST_VOUT) |\
                                      PIN_MODE_ANALOG(GPIOA_PIN4) |          \
-                                     PIN_MODE_OUTPUT(GPIOA_LED) |           \
+                                     PIN_MODE_ANALOG(GPIOA_PIN5) |          \
                                      PIN_MODE_ANALOG(GPIOA_PIN6) |          \
                                      PIN_MODE_ANALOG(GPIOA_BUCK_RED_SENSE) |\
-                                     PIN_MODE_OUTPUT(GPIOA_BUCK_BLUE_DRIVE) |\
+                                     PIN_MODE_ALTERNATE(GPIOA_BUCK_BLUE_DRIVE) |\
                                      PIN_MODE_INPUT(GPIOA_USBPD_DBCC1) |    \
                                      PIN_MODE_INPUT(GPIOA_USBPD_DBCC2) |    \
                                      PIN_MODE_ANALOG(GPIOA_USBPD_FS_DM) |   \
@@ -316,7 +313,7 @@
                                      PIN_OTYPE_PUSHPULL(GPIOA_BUBKBOOST_I_IN_AVG) |\
                                      PIN_OTYPE_PUSHPULL(GPIOA_BUCKBOOST_VOUT) |\
                                      PIN_OTYPE_PUSHPULL(GPIOA_PIN4) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOA_LED) |        \
+                                     PIN_OTYPE_PUSHPULL(GPIOA_PIN5) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOA_PIN6) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOA_BUCK_RED_SENSE) |\
                                      PIN_OTYPE_PUSHPULL(GPIOA_BUCK_BLUE_DRIVE) |\
@@ -332,7 +329,7 @@
                                      PIN_OSPEED_VERYLOW(GPIOA_BUBKBOOST_I_IN_AVG) |\
                                      PIN_OSPEED_VERYLOW(GPIOA_BUCKBOOST_VOUT) |\
                                      PIN_OSPEED_VERYLOW(GPIOA_PIN4) |       \
-                                     PIN_OSPEED_HIGH(GPIOA_LED) |           \
+                                     PIN_OSPEED_VERYLOW(GPIOA_PIN5) |       \
                                      PIN_OSPEED_VERYLOW(GPIOA_PIN6) |       \
                                      PIN_OSPEED_VERYLOW(GPIOA_BUCK_RED_SENSE) |\
                                      PIN_OSPEED_HIGH(GPIOA_BUCK_BLUE_DRIVE) |\
@@ -348,7 +345,7 @@
                                      PIN_PUPDR_FLOATING(GPIOA_BUBKBOOST_I_IN_AVG) |\
                                      PIN_PUPDR_FLOATING(GPIOA_BUCKBOOST_VOUT) |\
                                      PIN_PUPDR_FLOATING(GPIOA_PIN4) |       \
-                                     PIN_PUPDR_FLOATING(GPIOA_LED) |        \
+                                     PIN_PUPDR_FLOATING(GPIOA_PIN5) |       \
                                      PIN_PUPDR_FLOATING(GPIOA_PIN6) |       \
                                      PIN_PUPDR_FLOATING(GPIOA_BUCK_RED_SENSE) |\
                                      PIN_PUPDR_FLOATING(GPIOA_BUCK_BLUE_DRIVE) |\
@@ -364,7 +361,7 @@
                                      PIN_ODR_LOW(GPIOA_BUBKBOOST_I_IN_AVG) |\
                                      PIN_ODR_LOW(GPIOA_BUCKBOOST_VOUT) |    \
                                      PIN_ODR_LOW(GPIOA_PIN4) |              \
-                                     PIN_ODR_LOW(GPIOA_LED) |               \
+                                     PIN_ODR_LOW(GPIOA_PIN5) |              \
                                      PIN_ODR_LOW(GPIOA_PIN6) |              \
                                      PIN_ODR_LOW(GPIOA_BUCK_RED_SENSE) |    \
                                      PIN_ODR_LOW(GPIOA_BUCK_BLUE_DRIVE) |   \
@@ -380,10 +377,10 @@
                                      PIN_AFIO_AF(GPIOA_BUBKBOOST_I_IN_AVG, 0U) |\
                                      PIN_AFIO_AF(GPIOA_BUCKBOOST_VOUT, 0U) |\
                                      PIN_AFIO_AF(GPIOA_PIN4, 0U) |          \
-                                     PIN_AFIO_AF(GPIOA_LED, 0U) |           \
+                                     PIN_AFIO_AF(GPIOA_PIN5, 0U) |          \
                                      PIN_AFIO_AF(GPIOA_PIN6, 0U) |          \
                                      PIN_AFIO_AF(GPIOA_BUCK_RED_SENSE, 0U))
-#define VAL_GPIOA_AFRH              (PIN_AFIO_AF(GPIOA_BUCK_BLUE_DRIVE, 0U) |\
+#define VAL_GPIOA_AFRH              (PIN_AFIO_AF(GPIOA_BUCK_BLUE_DRIVE, 12U) |\
                                      PIN_AFIO_AF(GPIOA_USBPD_DBCC1, 0U) |   \
                                      PIN_AFIO_AF(GPIOA_USBPD_DBCC2, 0U) |   \
                                      PIN_AFIO_AF(GPIOA_USBPD_FS_DM, 0U) |   \
@@ -517,10 +514,10 @@
  * PC2  - USBPD_VIN                 (analog).
  * PC3  - BUCKBOOST_USBPD_EN        (output pushpull maximum).
  * PC4  - JOY_LEFT                  (input pullup).
- * PC5  - JOY_DOWN                  (input pullup).
- * PC6  - BUCK_RED_DRIVE            (output pushpull maximum).
+ * PC5  - JOY_RIGHT                 (input pullup).
+ * PC6  - BUCK_RED_DRIVE            (alternate 12).
  * PC7  - RC_SINUS                  (alternate 12).
- * PC8  - BUCK_GREEN_DRIVE          (output pushpull maximum).
+ * PC8  - BUCK_GREEN_DRIVE          (alternate 3).
  * PC9  - PIN9                      (analog).
  * PC10 - USART3_TX                 (alternate 7).
  * PC11 - USART3_RX                 (alternate 7).
@@ -534,10 +531,10 @@
                                      PIN_MODE_ANALOG(GPIOC_USBPD_VIN) |     \
                                      PIN_MODE_OUTPUT(GPIOC_BUCKBOOST_USBPD_EN) |\
                                      PIN_MODE_INPUT(GPIOC_JOY_LEFT) |       \
-                                     PIN_MODE_INPUT(GPIOC_JOY_DOWN) |       \
-                                     PIN_MODE_OUTPUT(GPIOC_BUCK_RED_DRIVE) |\
+                                     PIN_MODE_INPUT(GPIOC_JOY_RIGHT) |      \
+                                     PIN_MODE_ALTERNATE(GPIOC_BUCK_RED_DRIVE) |\
                                      PIN_MODE_ALTERNATE(GPIOC_RC_SINUS) |   \
-                                     PIN_MODE_OUTPUT(GPIOC_BUCK_GREEN_DRIVE) |\
+                                     PIN_MODE_ALTERNATE(GPIOC_BUCK_GREEN_DRIVE) |\
                                      PIN_MODE_ANALOG(GPIOC_PIN9) |          \
                                      PIN_MODE_ALTERNATE(GPIOC_USART3_TX) |  \
                                      PIN_MODE_ALTERNATE(GPIOC_USART3_RX) |  \
@@ -550,7 +547,7 @@
                                      PIN_OTYPE_PUSHPULL(GPIOC_USBPD_VIN) |  \
                                      PIN_OTYPE_PUSHPULL(GPIOC_BUCKBOOST_USBPD_EN) |\
                                      PIN_OTYPE_PUSHPULL(GPIOC_JOY_LEFT) |   \
-                                     PIN_OTYPE_PUSHPULL(GPIOC_JOY_DOWN) |   \
+                                     PIN_OTYPE_PUSHPULL(GPIOC_JOY_RIGHT) |  \
                                      PIN_OTYPE_PUSHPULL(GPIOC_BUCK_RED_DRIVE) |\
                                      PIN_OTYPE_PUSHPULL(GPIOC_RC_SINUS) |   \
                                      PIN_OTYPE_PUSHPULL(GPIOC_BUCK_GREEN_DRIVE) |\
@@ -566,7 +563,7 @@
                                      PIN_OSPEED_VERYLOW(GPIOC_USBPD_VIN) |  \
                                      PIN_OSPEED_HIGH(GPIOC_BUCKBOOST_USBPD_EN) |\
                                      PIN_OSPEED_VERYLOW(GPIOC_JOY_LEFT) |   \
-                                     PIN_OSPEED_VERYLOW(GPIOC_JOY_DOWN) |   \
+                                     PIN_OSPEED_VERYLOW(GPIOC_JOY_RIGHT) |  \
                                      PIN_OSPEED_HIGH(GPIOC_BUCK_RED_DRIVE) |\
                                      PIN_OSPEED_HIGH(GPIOC_RC_SINUS) |      \
                                      PIN_OSPEED_HIGH(GPIOC_BUCK_GREEN_DRIVE) |\
@@ -582,7 +579,7 @@
                                      PIN_PUPDR_FLOATING(GPIOC_USBPD_VIN) |  \
                                      PIN_PUPDR_FLOATING(GPIOC_BUCKBOOST_USBPD_EN) |\
                                      PIN_PUPDR_PULLUP(GPIOC_JOY_LEFT) |     \
-                                     PIN_PUPDR_PULLUP(GPIOC_JOY_DOWN) |     \
+                                     PIN_PUPDR_PULLUP(GPIOC_JOY_RIGHT) |    \
                                      PIN_PUPDR_FLOATING(GPIOC_BUCK_RED_DRIVE) |\
                                      PIN_PUPDR_FLOATING(GPIOC_RC_SINUS) |   \
                                      PIN_PUPDR_FLOATING(GPIOC_BUCK_GREEN_DRIVE) |\
@@ -598,7 +595,7 @@
                                      PIN_ODR_LOW(GPIOC_USBPD_VIN) |         \
                                      PIN_ODR_LOW(GPIOC_BUCKBOOST_USBPD_EN) |\
                                      PIN_ODR_LOW(GPIOC_JOY_LEFT) |          \
-                                     PIN_ODR_LOW(GPIOC_JOY_DOWN) |          \
+                                     PIN_ODR_LOW(GPIOC_JOY_RIGHT) |         \
                                      PIN_ODR_LOW(GPIOC_BUCK_RED_DRIVE) |    \
                                      PIN_ODR_LOW(GPIOC_RC_SINUS) |          \
                                      PIN_ODR_LOW(GPIOC_BUCK_GREEN_DRIVE) |  \
@@ -614,10 +611,10 @@
                                      PIN_AFIO_AF(GPIOC_USBPD_VIN, 0U) |     \
                                      PIN_AFIO_AF(GPIOC_BUCKBOOST_USBPD_EN, 0U) |\
                                      PIN_AFIO_AF(GPIOC_JOY_LEFT, 0U) |      \
-                                     PIN_AFIO_AF(GPIOC_JOY_DOWN, 0U) |      \
-                                     PIN_AFIO_AF(GPIOC_BUCK_RED_DRIVE, 0U) |\
+                                     PIN_AFIO_AF(GPIOC_JOY_RIGHT, 0U) |     \
+                                     PIN_AFIO_AF(GPIOC_BUCK_RED_DRIVE, 12U) |\
                                      PIN_AFIO_AF(GPIOC_RC_SINUS, 12U))
-#define VAL_GPIOC_AFRH              (PIN_AFIO_AF(GPIOC_BUCK_GREEN_DRIVE, 0U) |\
+#define VAL_GPIOC_AFRH              (PIN_AFIO_AF(GPIOC_BUCK_GREEN_DRIVE, 3U) |\
                                      PIN_AFIO_AF(GPIOC_PIN9, 0U) |          \
                                      PIN_AFIO_AF(GPIOC_USART3_TX, 7U) |     \
                                      PIN_AFIO_AF(GPIOC_USART3_RX, 7U) |     \
