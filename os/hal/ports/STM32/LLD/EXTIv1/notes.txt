@@ -6,9 +6,11 @@ Driver capability:
 
 The file registry must export:
 
-STM32_EXTI_NUM_LINES        - Number of EXTI lines, it can be between 0 and 63.
+STM32_EXTI_HAS_GROUP2       - True if lines from 32 to 63 are present.
+STM32_EXTI_SEPARATE_RF      - True if EXTI has separate status registers
+                              for falling and raising edges.
 STM32_EXTI_IMR1_MASK        - Mask of the fixed lines that must not be
-                              handled by the driver (0..31).
+                              configured by the driver (0..31).
 STM32_EXTI_IMR2_MASK        - Mask of the fixed lines that must not be
-                              handled by the driver (32..63). Only required
+                              configured by the driver (32..63). Only required
                               if STM32_EXTI_NUM_LINES is greater than 32.
