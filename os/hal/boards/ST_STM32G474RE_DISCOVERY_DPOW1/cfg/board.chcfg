@@ -87,7 +87,7 @@
         Resistor="Floating"
         Level="Low"
         Mode="Alternate"
-        Alternate="12" />
+        Alternate="13" />
       <pin9
         ID="USBPD_DBCC1"
         Type="PushPull"
@@ -249,7 +249,7 @@
         Resistor="Floating"
         Level="Low"
         Mode="Alternate"
-        Alternate="12" />
+        Alternate="13" />
       <pin13
         ID="BUCKBOOST_N1_DRIVE"
         Type="PushPull"
@@ -257,7 +257,7 @@
         Resistor="Floating"
         Level="Low"
         Mode="Alternate"
-        Alternate="12" />
+        Alternate="13" />
       <pin14
         ID="BUCKBOOST_N2_DRIVE"
         Type="PushPull"
@@ -265,7 +265,7 @@
         Resistor="Floating"
         Level="Low"
         Mode="Alternate"
-        Alternate="12" />
+        Alternate="13" />
       <pin15
         ID="BUCKBOOST_P2_DRIVE"
         Type="PushPull"
@@ -273,7 +273,7 @@
         Resistor="Floating"
         Level="Low"
         Mode="Alternate"
-        Alternate="12" />
+        Alternate="13" />
     </GPIOB>
     <GPIOC>
       <pin0
@@ -331,7 +331,7 @@
         Resistor="Floating"
         Level="Low"
         Mode="Alternate"
-        Alternate="12" />
+        Alternate="13" />
       <pin7
         ID="RC_SINUS"
         Type="PushPull"
@@ -339,7 +339,7 @@
         Resistor="Floating"
         Level="Low"
         Mode="Alternate"
-        Alternate="12" ></pin7>
+        Alternate="13" ></pin7>
       <pin8
         ID="BUCK_GREEN_DRIVE"
         Type="PushPull"
@@ -373,7 +373,7 @@
         Mode="Alternate"
         Alternate="7" />
       <pin12
-        ID="5V_USBPD_1A_PROTECT"
+        ID="P5V_USBPD_1A_PROTECT"
         Type="PushPull"
         Speed="Maximum"
         Resistor="Floating"
