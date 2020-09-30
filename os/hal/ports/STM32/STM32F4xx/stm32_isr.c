@@ -74,6 +74,8 @@
 #include "stm32_usart6.inc"
 #include "stm32_uart7.inc"
 #include "stm32_uart8.inc"
+#include "stm32_uart9.inc"
+#include "stm32_uart10.inc"
 
 #include "stm32_tim1_9_10_11.inc"
 #include "stm32_tim2.inc"
@@ -127,6 +129,8 @@ void irqInit(void) {
   usart6_irq_init();
   uart7_irq_init();
   uart8_irq_init();
+  uart9_irq_init();
+  uart10_irq_init();
 }
 
 /**
@@ -168,6 +172,8 @@ void irqDeinit(void) {
   usart6_irq_deinit();
   uart7_irq_deinit();
   uart8_irq_deinit();
+  uart9_irq_deinit();
+  uart10_irq_deinit();
 }
 
 /** @} */

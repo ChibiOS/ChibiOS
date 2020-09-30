@@ -94,11 +94,27 @@
   STM32_DMA_GETCHANNEL(STM32_UART_UART8_TX_DMA_STREAM,                      \
                        STM32_UART8_TX_DMA_CHN)
 
-#define STM32_UART45_CR2_CHECK_MASK                                         \
+#define UART9_RX_DMA_CHANNEL                                                \
+  STM32_DMA_GETCHANNEL(STM32_UART_UART9_RX_DMA_STREAM,                      \
+                       STM32_UART9_RX_DMA_CHN)
+
+#define UART9_TX_DMA_CHANNEL                                                \
+  STM32_DMA_GETCHANNEL(STM32_UART_UART9_TX_DMA_STREAM,                      \
+                       STM32_UART9_TX_DMA_CHN)
+
+#define UART10_RX_DMA_CHANNEL                                               \
+  STM32_DMA_GETCHANNEL(STM32_UART_UART10_RX_DMA_STREAM,                     \
+                       STM32_UART10_RX_DMA_CHN)
+
+#define UART10_TX_DMA_CHANNEL                                               \
+  STM32_DMA_GETCHANNEL(STM32_UART_UART10_TX_DMA_STREAM,                     \
+                       STM32_UART10_TX_DMA_CHN)
+
+#define STM32_UART_CR2_CHECK_MASK                                           \
   (USART_CR2_STOP_0 | USART_CR2_CLKEN | USART_CR2_CPOL | USART_CR2_CPHA |   \
    USART_CR2_LBCL)
 
-#define STM32_UART45_CR3_CHECK_MASK                                         \
+#define STM32_UART_CR3_CHECK_MASK                                           \
   (USART_CR3_CTSIE | USART_CR3_CTSE | USART_CR3_RTSE | USART_CR3_SCEN |     \
    USART_CR3_NACK)
 
@@ -144,6 +160,16 @@ UARTDriver UARTD7;
 /** @brief UART8 UART driver identifier.*/
 #if STM32_UART_USE_UART8 || defined(__DOXYGEN__)
 UARTDriver UARTD8;
+#endif
+
+/** @brief UART9 UART driver identifier.*/
+#if STM32_UART_USE_UART9 || defined(__DOXYGEN__)
+UARTDriver UARTD9;
+#endif
+
+/** @brief UART10 UART driver identifier.*/
+#if STM32_UART_USE_UART10 || defined(__DOXYGEN__)
+UARTDriver UARTD10;
 #endif
 
 /*===========================================================================*/
@@ -493,6 +519,48 @@ OSAL_IRQ_HANDLER(STM32_UART8_HANDLER) {
 #endif
 #endif /* STM32_UART_USE_UART8 */
 
+#if STM32_UART_USE_UART9 || defined(__DOXYGEN__)
+#if !defined(STM32_UART9_SUPPRESS_ISR)
+#if !defined(STM32_UART9_HANDLER)
+#error "STM32_UART9_HANDLER not defined"
+#endif
+/**
+ * @brief   UART9 IRQ handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_UART9_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  uart_lld_serve_interrupt(&UARTD9);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+#endif /* STM32_UART_USE_UART9 */
+
+#if STM32_UART_USE_UART10 || defined(__DOXYGEN__)
+#if !defined(STM32_UART10_SUPPRESS_ISR)
+#if !defined(STM32_UART10_HANDLER)
+#error "STM32_UART10_HANDLER not defined"
+#endif
+/**
+ * @brief   UART10 IRQ handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_UART10_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  uart_lld_serve_interrupt(&UARTD10);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+#endif /* STM32_UART_USE_UART10 */
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -575,6 +643,24 @@ void uart_lld_init(void) {
   UARTD8.dmarx   = NULL;
   UARTD8.dmatx   = NULL;
 #endif
+
+#if STM32_UART_USE_UART9
+  uartObjectInit(&UARTD9);
+  UARTD9.usart   = UART9;
+  UARTD9.dmarxmode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
+  UARTD9.dmatxmode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
+  UARTD9.dmarx   = NULL;
+  UARTD9.dmatx   = NULL;
+#endif
+
+#if STM32_UART_USE_UART10
+  uartObjectInit(&UARTD10);
+  UARTD10.usart   = UART10;
+  UARTD10.dmarxmode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
+  UARTD10.dmatxmode = STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE;
+  UARTD10.dmarx   = NULL;
+  UARTD10.dmatx   = NULL;
+#endif
 }
 
 /**
@@ -656,9 +742,9 @@ void uart_lld_start(UARTDriver *uartp) {
 #if STM32_UART_USE_UART4
     if (&UARTD4 == uartp) {
 
-      osalDbgAssert((uartp->config->cr2 & STM32_UART45_CR2_CHECK_MASK) == 0,
+      osalDbgAssert((uartp->config->cr2 & STM32_UART_CR2_CHECK_MASK) == 0,
                     "specified invalid bits in UART4 CR2 register settings");
-      osalDbgAssert((uartp->config->cr3 & STM32_UART45_CR3_CHECK_MASK) == 0,
+      osalDbgAssert((uartp->config->cr3 & STM32_UART_CR3_CHECK_MASK) == 0,
                     "specified invalid bits in UART4 CR3 register settings");
 
       uartp->dmarx = dmaStreamAllocI(STM32_UART_UART4_RX_DMA_STREAM,
@@ -684,9 +770,9 @@ void uart_lld_start(UARTDriver *uartp) {
 #if STM32_UART_USE_UART5
     if (&UARTD5 == uartp) {
 
-      osalDbgAssert((uartp->config->cr2 & STM32_UART45_CR2_CHECK_MASK) == 0,
+      osalDbgAssert((uartp->config->cr2 & STM32_UART_CR2_CHECK_MASK) == 0,
                     "specified invalid bits in UART5 CR2 register settings");
-      osalDbgAssert((uartp->config->cr3 & STM32_UART45_CR3_CHECK_MASK) == 0,
+      osalDbgAssert((uartp->config->cr3 & STM32_UART_CR3_CHECK_MASK) == 0,
                     "specified invalid bits in UART5 CR3 register settings");
 
       uartp->dmarx = dmaStreamAllocI(STM32_UART_UART5_RX_DMA_STREAM,
@@ -734,9 +820,9 @@ void uart_lld_start(UARTDriver *uartp) {
 #if STM32_UART_USE_UART7
     if (&UARTD7 == uartp) {
 
-      osalDbgAssert((uartp->config->cr2 & STM32_UART45_CR2_CHECK_MASK) == 0,
+      osalDbgAssert((uartp->config->cr2 & STM32_UART_CR2_CHECK_MASK) == 0,
                     "specified invalid bits in UART7 CR2 register settings");
-      osalDbgAssert((uartp->config->cr3 & STM32_UART45_CR3_CHECK_MASK) == 0,
+      osalDbgAssert((uartp->config->cr3 & STM32_UART_CR3_CHECK_MASK) == 0,
                     "specified invalid bits in UART7 CR3 register settings");
 
       uartp->dmarx = dmaStreamAllocI(STM32_UART_UART7_RX_DMA_STREAM,
@@ -762,9 +848,9 @@ void uart_lld_start(UARTDriver *uartp) {
 #if STM32_UART_USE_UART8
     if (&UARTD8 == uartp) {
 
-      osalDbgAssert((uartp->config->cr2 & STM32_UART45_CR2_CHECK_MASK) == 0,
+      osalDbgAssert((uartp->config->cr2 & STM32_UART_CR2_CHECK_MASK) == 0,
                     "specified invalid bits in UART8 CR2 register settings");
-      osalDbgAssert((uartp->config->cr3 & STM32_UART45_CR3_CHECK_MASK) == 0,
+      osalDbgAssert((uartp->config->cr3 & STM32_UART_CR3_CHECK_MASK) == 0,
                     "specified invalid bits in UART8 CR3 register settings");
 
       uartp->dmarx = dmaStreamAllocI(STM32_UART_UART8_RX_DMA_STREAM,
@@ -784,6 +870,62 @@ void uart_lld_start(UARTDriver *uartp) {
                           STM32_DMA_CR_PL(STM32_UART_UART8_DMA_PRIORITY);
       uartp->dmatxmode |= STM32_DMA_CR_CHSEL(UART8_TX_DMA_CHANNEL) |
                           STM32_DMA_CR_PL(STM32_UART_UART8_DMA_PRIORITY);
+    }
+#endif
+
+#if STM32_UART_USE_UART9
+    if (&UARTD9 == uartp) {
+
+      osalDbgAssert((uartp->config->cr2 & STM32_UART_CR2_CHECK_MASK) == 0,
+                    "specified invalid bits in UART9 CR2 register settings");
+      osalDbgAssert((uartp->config->cr3 & STM32_UART_CR3_CHECK_MASK) == 0,
+                    "specified invalid bits in UART9 CR3 register settings");
+
+      uartp->dmarx = dmaStreamAllocI(STM32_UART_UART9_RX_DMA_STREAM,
+                                     STM32_UART_UART9_IRQ_PRIORITY,
+                                     (stm32_dmaisr_t)uart_lld_serve_rx_end_irq,
+                                     (void *)uartp);
+      osalDbgAssert(uartp->dmarx != NULL, "unable to allocate stream");
+      uartp->dmatx = dmaStreamAllocI(STM32_UART_UART9_TX_DMA_STREAM,
+                                     STM32_UART_UART9_IRQ_PRIORITY,
+                                     (stm32_dmaisr_t)uart_lld_serve_tx_end_irq,
+                                     (void *)uartp);
+      osalDbgAssert(uartp->dmatx != NULL, "unable to allocate stream");
+
+      rccEnableUART9(true);
+      nvicEnableVector(STM32_UART9_NUMBER, STM32_UART_UART9_IRQ_PRIORITY);
+      uartp->dmarxmode |= STM32_DMA_CR_CHSEL(UART9_RX_DMA_CHANNEL) |
+                          STM32_DMA_CR_PL(STM32_UART_UART9_DMA_PRIORITY);
+      uartp->dmatxmode |= STM32_DMA_CR_CHSEL(UART9_TX_DMA_CHANNEL) |
+                          STM32_DMA_CR_PL(STM32_UART_UART9_DMA_PRIORITY);
+    }
+#endif
+
+#if STM32_UART_USE_UART10
+    if (&UARTD10 == uartp) {
+
+      osalDbgAssert((uartp->config->cr2 & STM32_UART_CR2_CHECK_MASK) == 0,
+                    "specified invalid bits in UART10 CR2 register settings");
+      osalDbgAssert((uartp->config->cr3 & STM32_UART_CR3_CHECK_MASK) == 0,
+                    "specified invalid bits in UART10 CR3 register settings");
+
+      uartp->dmarx = dmaStreamAllocI(STM32_UART_UART10_RX_DMA_STREAM,
+                                     STM32_UART_UART10_IRQ_PRIORITY,
+                                     (stm32_dmaisr_t)uart_lld_serve_rx_end_irq,
+                                     (void *)uartp);
+      osalDbgAssert(uartp->dmarx != NULL, "unable to allocate stream");
+      uartp->dmatx = dmaStreamAllocI(STM32_UART_UART10_TX_DMA_STREAM,
+                                     STM32_UART_UART10_IRQ_PRIORITY,
+                                     (stm32_dmaisr_t)uart_lld_serve_tx_end_irq,
+                                     (void *)uartp);
+      osalDbgAssert(uartp->dmatx != NULL, "unable to allocate stream");
+
+      rccEnableUART9(true);
+      nvicEnableVector(STM32_UART9_NUMBER, STM32_UART_UART10_IRQ_PRIORITY);
+      uartp->dmarxmode |= STM32_DMA_CR_CHSEL(UART10_RX_DMA_CHANNEL) |
+                          STM32_DMA_CR_PL(STM32_UART_UART10_DMA_PRIORITY);
+      uartp->dmatxmode |= STM32_DMA_CR_CHSEL(UART10_TX_DMA_CHANNEL) |
+                          STM32_DMA_CR_PL(STM32_UART_UART10_DMA_PRIORITY);
     }
 #endif
 
@@ -879,6 +1021,22 @@ void uart_lld_stop(UARTDriver *uartp) {
     if (&UARTD8 == uartp) {
       nvicDisableVector(STM32_UART8_NUMBER);
       rccDisableUART8();
+      return;
+    }
+#endif
+
+#if STM32_UART_USE_UART9
+    if (&UARTD9 == uartp) {
+      nvicDisableVector(STM32_UART9_NUMBER);
+      rccDisableUART9();
+      return;
+    }
+#endif
+
+#if STM32_UART_USE_UART10
+    if (&UARTD10 == uartp) {
+      nvicDisableVector(STM32_UART10_NUMBER);
+      rccDisableUART10();
       return;
     }
 #endif

@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added support for UART9 and UART10 in STM32 USARTv1 drivers.
 - NEW: Added board support for ST_STM32G474RE_DISCOVERY_DPOW1, added demo.
 - NEW: Improved the STM32G4xx clock initialization to use the shared
        mini-drivers in STM32/LLD/RCCv1, code is greatly simplified.
