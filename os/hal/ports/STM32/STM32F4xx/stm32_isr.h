@@ -56,6 +56,8 @@
 #define STM32_USART6_SUPPRESS_ISR
 #define STM32_UART7_SUPPRESS_ISR
 #define STM32_UART8_SUPPRESS_ISR
+#define STM32_UART9_SUPPRESS_ISR
+#define STM32_UART10_SUPPRESS_ISR
 /** @} */
 
 /**
@@ -204,6 +206,8 @@
 #define STM32_USART6_HANDLER                Vector15C
 #define STM32_UART7_HANDLER                 Vector188
 #define STM32_UART8_HANDLER                 Vector18C
+#define STM32_UART9_HANDLER                 Vector1A0
+#define STM32_UART10_HANDLER                Vector1A4
 
 #define STM32_USART1_NUMBER                 37
 #define STM32_USART2_NUMBER                 38
@@ -213,6 +217,8 @@
 #define STM32_USART6_NUMBER                 71
 #define STM32_UART7_NUMBER                  82
 #define STM32_UART8_NUMBER                  83
+#define STM32_UART9_NUMBER                  88
+#define STM32_UART10_NUMBER                 89
 
 /*
  * Ethernet
