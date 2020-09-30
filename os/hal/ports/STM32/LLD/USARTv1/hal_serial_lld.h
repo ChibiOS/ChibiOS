@@ -251,6 +251,71 @@
 #error "Invalid IRQ priority assigned to UART8"
 #endif
 
+/* Checks on allocation of USARTx units.*/
+#if STM32_SERIAL_USE_USART1
+#if defined(STM32_USART1_IS_USED)
+#error "SD1 requires USART1 but it is already used"
+#else
+#define STM32_USART1_IS_USED
+#endif
+#endif
+
+#if STM32_SERIAL_USE_USART2
+#if defined(STM32_USART2_IS_USED)
+#error "SD2 requires USART2 but it is already used"
+#else
+#define STM32_USART2_IS_USED
+#endif
+#endif
+
+#if STM32_SERIAL_USE_USART3
+#if defined(STM32_USART3_IS_USED)
+#error "SD3 requires USART3 but it is already used"
+#else
+#define STM32_USART3_IS_USED
+#endif
+#endif
+
+#if STM32_SERIAL_USE_UART4
+#if defined(STM32_UART4_IS_USED)
+#error "SD4 requires UART4 but it is already used"
+#else
+#define STM32_UART4_IS_USED
+#endif
+#endif
+
+#if STM32_SERIAL_USE_UART5
+#if defined(STM32_UART5_IS_USED)
+#error "SD5 requires UART5 but it is already used"
+#else
+#define STM32_UART5_IS_USED
+#endif
+#endif
+
+#if STM32_SERIAL_USE_USART6
+#if defined(STM32_USART6_IS_USED)
+#error "SD6 requires USART6 but it is already used"
+#else
+#define STM32_USART6_IS_USED
+#endif
+#endif
+
+#if STM32_SERIAL_USE_UART7
+#if defined(STM32_UART7_IS_USED)
+#error "SD7 requires UART7 but it is already used"
+#else
+#define STM32_UART7_IS_USED
+#endif
+#endif
+
+#if STM32_SERIAL_USE_UART8
+#if defined(STM32_UART8_IS_USED)
+#error "SD8 requires UART8 but it is already used"
+#else
+#define STM32_UART8_IS_USED
+#endif
+#endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
