@@ -369,7 +369,7 @@
 
 #if STM32_SERIAL_USE_UART9
 #if defined(STM32_UART9_IS_USED)
-#error "SD8 requires UART9 but it is already used"
+#error "SD9 requires UART9 but it is already used"
 #else
 #define STM32_UART9_IS_USED
 #endif
@@ -377,7 +377,7 @@
 
 #if STM32_SERIAL_USE_UART10
 #if defined(STM32_UART10_IS_USED)
-#error "SD8 requires UART10 but it is already used"
+#error "SD10 requires UART10 but it is already used"
 #else
 #define STM32_UART10_IS_USED
 #endif
