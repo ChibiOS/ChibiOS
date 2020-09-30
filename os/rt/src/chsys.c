@@ -86,12 +86,17 @@ void chSysInit(void) {
 
   /* Initializing default OS instance.*/
   {
+#if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || (CH_CFG_USE_DYNAMIC == TRUE)
     extern stkalign_t __main_thread_stack_base__,
                       __main_thread_stack_end__;
+#endif
+
     static const os_instance_config_t default_cfg = {
       .name             = "c0",
+#if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || (CH_CFG_USE_DYNAMIC == TRUE)
       .mainthread_base  = &__main_thread_stack_base__,
       .mainthread_end   = &__main_thread_stack_end__,
+#endif
 #if CH_CFG_NO_IDLE_THREAD == FALSE
       .idlethread_base  = THD_WORKING_AREA_BASE(ch_idle_thread_wa),
       .idlethread_end   = THD_WORKING_AREA_END(ch_idle_thread_wa)
