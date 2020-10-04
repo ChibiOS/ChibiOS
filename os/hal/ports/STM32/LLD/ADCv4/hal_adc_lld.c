@@ -115,9 +115,9 @@ static void adc_lld_vreg_off(ADCDriver *adcp) {
  */
 static void adc_lld_analog_on(ADCDriver *adcp) {
 
-  adcp->adcm->ISR = ADC_ISR_ADRDY;
+  adcp->adcm->ISR = ADC_ISR_ADRD;
   adcp->adcm->CR |= ADC_CR_ADEN;
-  while ((adcp->adcm->ISR & ADC_ISR_ADRDY) == 0U)
+  while ((adcp->adcm->ISR & ADC_ISR_ADRD) == 0U)
     ;
 #if STM32_ADC_DUAL_MODE
   adcp->adcs->ISR = ADC_ISR_ADRDY;
@@ -550,7 +550,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   /* ADC setup, if it is defined a callback for the analog watch dog then it
      is enabled.*/
   adcp->adcm->ISR   = adcp->adcm->ISR;
-  adcp->adcm->IER   = ADC_IER_OVRIE | ADC_IER_AWD1IE;
+  adcp->adcm->IER   = ADC_IER_OVR | ADC_IER_AWD1;
 #if STM32_ADC_DUAL_MODE
 
   /* Configuring the CCR register with the user-specified settings
