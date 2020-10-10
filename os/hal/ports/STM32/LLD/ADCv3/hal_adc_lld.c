@@ -171,11 +171,15 @@ static void adc_lld_calibrate(ADCDriver *adcp) {
   while ((adcp->adcm->CR & ADC_CR_ADCAL) != 0)
     ;
 
+  osalSysPolledDelayX(OSAL_US2RTC(STM32_HCLK, 20));
+
   /* Single-ended calibration for master ADC.*/
   adcp->adcm->CR = ADC_CR_ADVREGEN;
   adcp->adcm->CR = ADC_CR_ADVREGEN | ADC_CR_ADCAL;
   while ((adcp->adcm->CR & ADC_CR_ADCAL) != 0)
     ;
+
+  osalSysPolledDelayX(OSAL_US2RTC(STM32_HCLK, 20));
 
 #if STM32_ADC_DUAL_MODE
   osalDbgAssert(adcp->adcs->CR == ADC_CR_ADVREGEN, "invalid register state");
@@ -186,11 +190,15 @@ static void adc_lld_calibrate(ADCDriver *adcp) {
   while ((adcp->adcs->CR & ADC_CR_ADCAL) != 0)
     ;
 
+  osalSysPolledDelayX(OSAL_US2RTC(STM32_HCLK, 20));
+
   /* Single-ended calibration for slave ADC.*/
   adcp->adcs->CR = ADC_CR_ADVREGEN;
   adcp->adcs->CR = ADC_CR_ADVREGEN | ADC_CR_ADCAL;
   while ((adcp->adcs->CR & ADC_CR_ADCAL) != 0)
     ;
+
+  osalSysPolledDelayX(OSAL_US2RTC(STM32_HCLK, 20));
 #endif
 }
 
