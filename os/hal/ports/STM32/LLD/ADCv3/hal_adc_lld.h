@@ -70,7 +70,7 @@
 #define ADC_SMPR_SMP_181P5      6   /**< @brief 194 cycles conversion time. */
 #define ADC_SMPR_SMP_601P5      7   /**< @brief 614 cycles conversion time. */
 #endif
-#if defined(STM32L4XX) || defined(STM32L4XXP)
+#if defined(STM32L4XX) || defined(STM32L4XXP) || defined(STM32G4XX)
 #define ADC_SMPR_SMP_2P5        0   /**< @brief 15 cycles conversion time   */
 #define ADC_SMPR_SMP_6P5        1   /**< @brief 19 cycles conversion time.  */
 #define ADC_SMPR_SMP_12P5       2   /**< @brief 25 cycles conversion time.  */
@@ -80,16 +80,6 @@
 #define ADC_SMPR_SMP_247P5      6   /**< @brief 260 cycles conversion time. */
 #define ADC_SMPR_SMP_640P5      7   /**< @brief 653 cycles conversion time. */
 #endif
-/** @} */
-
-/**
- * @name    Resolution
- * @{
- */
-#define ADC_CFGR1_RES_12BIT     (0 << 3)
-#define ADC_CFGR1_RES_10BIT     (1 << 3)
-#define ADC_CFGR1_RES_8BIT      (2 << 3)
-#define ADC_CFGR1_RES_6BIT      (3 << 3)
 /** @} */
 
 /**
@@ -106,12 +96,23 @@
 #define ADC_CFGR_RES_8BITS              (2 << 3)
 #define ADC_CFGR_RES_6BITS              (3 << 3)
 
+#if defined(STM32F3XX) || defined(STM32L4XX) || defined(STM32L4XXP) ||      \
+    defined(__DOXYGEN__)
 #define ADC_CFGR_ALIGN_MASK             (1 << 5)
 #define ADC_CFGR_ALIGN_RIGHT            (0 << 5)
 #define ADC_CFGR_ALIGN_LEFT             (1 << 5)
 
 #define ADC_CFGR_EXTSEL_MASK            (15 << 6)
 #define ADC_CFGR_EXTSEL_SRC(n)          ((n) << 6)
+#endif
+#if defined(STM32G4XX)
+#define ADC_CFGR_ALIGN_MASK             (1 << 15)
+#define ADC_CFGR_ALIGN_RIGHT            (0 << 15)
+#define ADC_CFGR_ALIGN_LEFT             (1 << 15)
+
+#define ADC_CFGR_EXTSEL_MASK            (31 << 5)
+#define ADC_CFGR_EXTSEL_SRC(n)          ((n) << 5)
+#endif
 
 #define ADC_CFGR_EXTEN_MASK             (3 << 10)
 #define ADC_CFGR_EXTEN_DISABLED         (0 << 10)
@@ -137,20 +138,40 @@
  */
 #define ADC_CCR_DUAL_MASK               (31 << 0)
 #define ADC_CCR_DUAL_FIELD(n)           ((n) << 0)
+
 #define ADC_CCR_DELAY_MASK              (15 << 8)
 #define ADC_CCR_DELAY_FIELD(n)          ((n) << 8)
+
 #define ADC_CCR_DMACFG_MASK             (1 << 13)
 #define ADC_CCR_DMACFG_ONESHOT          (0 << 13)
 #define ADC_CCR_DMACFG_CIRCULAR         (1 << 13)
+
 #define ADC_CCR_MDMA_MASK               (3 << 14)
 #define ADC_CCR_MDMA_DISABLED           (0 << 14)
 #define ADC_CCR_MDMA_WORD               (2 << 14)
 #define ADC_CCR_MDMA_HWORD              (3 << 14)
+
 #define ADC_CCR_CKMODE_MASK             (3 << 16)
 #define ADC_CCR_CKMODE_ADCCK            (0 << 16)
 #define ADC_CCR_CKMODE_AHB_DIV1         (1 << 16)
 #define ADC_CCR_CKMODE_AHB_DIV2         (2 << 16)
 #define ADC_CCR_CKMODE_AHB_DIV4         (3 << 16)
+
+#if !defined(STM32F3XX)
+#define ADC_CCR_PRESC_MASK              (15 << 18)
+#define ADC_CCR_PRESC_NOCLOCK           (0 << 18)
+#define ADC_CCR_PRESC_DIV2              (1 << 18)
+#define ADC_CCR_PRESC_DIV4              (2 << 18)
+#define ADC_CCR_PRESC_DIV6              (3 << 18)
+#define ADC_CCR_PRESC_DIV8              (4 << 18)
+#define ADC_CCR_PRESC_DIV10             (5 << 18)
+#define ADC_CCR_PRESC_DIV12             (6 << 18)
+#define ADC_CCR_PRESC_DIV16             (7 << 18)
+#define ADC_CCR_PRESC_DIV32             (8 << 18)
+#define ADC_CCR_PRESC_DIV64             (9 << 18)
+#define ADC_CCR_PRESC_DIV128            (10 << 18)
+#define ADC_CCR_PRESC_DIV256            (11 << 18)
+#endif /* !defined(STM32F3XX) */
 
 /* F3 headers do not define the following macros, L4 headers do.*/
 #if !defined(ADC_CCR_VREFEN) || defined(__DOXYGEN__)
@@ -326,7 +347,44 @@
 #if !defined(STM32_ADC_ADC123_CLOCK_MODE) || defined(__DOXYGEN__)
 #define STM32_ADC_ADC123_CLOCK_MODE         ADC_CCR_CKMODE_AHB_DIV1
 #endif
+
+/**
+ * @brief   ADC1/ADC2/ADC3 clock prescaler.
+ */
+#if !defined(STM32_ADC_ADC123_PRESC) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC123_PRESC              ADC_CCR_PRESC_DIV2
+#endif
 #endif /* defined(STM32L4XX) || defined(STM32L4XXP)  */
+
+#if defined(STM32G4XX) || defined(__DOXYGEN__)
+/**
+ * @brief   ADC1/ADC2 clock source and mode.
+ */
+#if !defined(STM32_ADC_ADC12_CLOCK_MODE) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC12_CLOCK_MODE          ADC_CCR_CKMODE_AHB_DIV4
+#endif
+
+/**
+ * @brief   ADC3/ADC4/ADC5 clock source and mode.
+ */
+#if !defined(STM32_ADC_ADC345_CLOCK_MODE) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC345_CLOCK_MODE         ADC_CCR_CKMODE_AHB_DIV4
+#endif
+
+/**
+ * @brief   ADC1/ADC2 clock prescaler.
+ */
+#if !defined(STM32_ADC_ADC12_PRESC) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC12_PRESC               ADC_CCR_PRESC_DIV2
+#endif
+
+/**
+ * @brief   ADC3/ADC4/ADC5 clock prescaler.
+ */
+#if !defined(STM32_ADC_ADC345_PRESC) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC345_PRESC              ADC_CCR_PRESC_DIV2
+#endif
+#endif /* defined(STM32G4XX) */
 
 /** @} */
 
@@ -335,11 +393,13 @@
 /*===========================================================================*/
 
 /* Supported devices checks.*/
-#if !defined(STM32F3XX) && !defined(STM32L4XX) && !defined(STM32L4XXP)
-#error "ADCv3 only supports F3, L4 and L4+ STM32 devices"
+#if !defined(STM32F3XX) && !defined(STM32L4XX) && !defined(STM32L4XXP) &&   \
+    !defined(STM32G4XX)
+#error "ADCv3 only supports F3, L4, L4+ and G4 STM32 devices"
 #endif
 
-#if defined(STM32L4XX) || defined(STM32L4XXP) || defined(__DOXYGEN__)
+#if defined(STM32L4XX) || defined(STM32L4XXP) || defined(STM32G4XX) ||      \
+    defined(__DOXYGEN__)
 #define STM32_ADCV3_OVERSAMPLING            TRUE
 #else
 #define STM32_ADCV3_OVERSAMPLING            FALSE
@@ -348,7 +408,7 @@
 /* Registry checks.*/
 #if !defined(STM32_HAS_ADC1) || !defined(STM32_HAS_ADC2) ||                 \
     !defined(STM32_HAS_ADC3) || !defined(STM32_HAS_ADC4)
-#error "STM32_ADC_USE_ADCx not defined in registry"
+#error "STM32_HAS_ADCx not defined in registry"
 #endif
 
 #if (STM32_ADC_USE_ADC1 && !defined(STM32_ADC1_HANDLER)) ||                 \
@@ -421,7 +481,7 @@
 #error "ADC driver activated but no ADC peripheral assigned"
 #endif
 
-/* ISR arrangments checks.*/
+/* ISR arrangements checks.*/
 #if STM32_HAS_ADC1 && STM32_HAS_ADC2
 #if STM32_ADC1_NUMBER != STM32_ADC2_NUMBER
 #error "ADCv3 driver expects STM32_ADC1_NUMBER == STM32_ADC2_NUMBER from registry"
@@ -535,25 +595,88 @@
 
 #endif /* !STM32_DMA_SUPPORTS_DMAMUX */
 
-#if STM32_ADC_USE_ADC1 &&                                                   \
-    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC1_DMA_PRIORITY)
-#error "Invalid DMA priority assigned to ADC1"
+/* ADC clock prescaler checks.*/
+#if defined(STM32F3XX)
+#endif /* defined(STM32F3XX) */
+
+#if defined(STM32L4XX) || defined(STM32L4XXP)
+#if STM32_ADC_ADC123_PRESC == ADC_CCR_PRESC_DIV2
+#define ADC123_PRESC_VALUE              2
+#elif STM32_ADC_ADC123_PRESC == ADC_CCR_PRESC_DIV4
+#define ADC123_PRESC_VALUE              4
+#elif STM32_ADC_ADC123_PRESC == ADC_CCR_PRESC_DIV6
+#define ADC123_PRESC_VALUE              6
+#elif STM32_ADC_ADC123_PRESC == ADC_CCR_PRESC_DIV8
+#define ADC123_PRESC_VALUE              8
+#elif STM32_ADC_ADC123_PRESC == ADC_CCR_PRESC_DIV10
+#define ADC123_PRESC_VALUE              10
+#elif STM32_ADC_ADC123_PRESC == ADC_CCR_PRESC_DIV12
+#define ADC123_PRESC_VALUE              12
+#elif STM32_ADC_ADC123_PRESC == ADC_CCR_PRESC_DIV16
+#define ADC123_PRESC_VALUE              16
+#elif STM32_ADC_ADC123_PRESC == ADC_CCR_PRESC_DIV32
+#define ADC123_PRESC_VALUE              32
+#elif STM32_ADC_ADC123_PRESC == ADC_CCR_PRESC_DIV64
+#define ADC123_PRESC_VALUE              64
+#elif STM32_ADC_ADC123_PRESC == ADC_CCR_PRESC_DIV128
+#define ADC123_PRESC_VALUE              128
+#elif STM32_ADC_ADC123_PRESC == ADC_CCR_PRESC_DIV256
+#define ADC123_PRESC_VALUE              256
+#error "invalid clock divider selected for STM32_ADC_ADC12_PRESC"
+#endif
+#endif /* defined(STM32L4XX) || defined(STM32L4XXP) */
+
+#if defined(STM32G4XX)
+#if STM32_ADC_ADC12_PRESC == ADC_CCR_PRESC_DIV2
+#define ADC12_PRESC_VALUE               2
+#elif STM32_ADC_ADC12_PRESC == ADC_CCR_PRESC_DIV4
+#define ADC12_PRESC_VALUE               4
+#elif STM32_ADC_ADC12_PRESC == ADC_CCR_PRESC_DIV6
+#define ADC12_PRESC_VALUE               6
+#elif STM32_ADC_ADC12_PRESC == ADC_CCR_PRESC_DIV8
+#define ADC12_PRESC_VALUE               8
+#elif STM32_ADC_ADC12_PRESC == ADC_CCR_PRESC_DIV10
+#define ADC12_PRESC_VALUE               10
+#elif STM32_ADC_ADC12_PRESC == ADC_CCR_PRESC_DIV12
+#define ADC12_PRESC_VALUE               12
+#elif STM32_ADC_ADC12_PRESC == ADC_CCR_PRESC_DIV16
+#define ADC12_PRESC_VALUE               16
+#elif STM32_ADC_ADC12_PRESC == ADC_CCR_PRESC_DIV32
+#define ADC12_PRESC_VALUE               32
+#elif STM32_ADC_ADC12_PRESC == ADC_CCR_PRESC_DIV64
+#define ADC12_PRESC_VALUE               64
+#elif STM32_ADC_ADC12_PRESC == ADC_CCR_PRESC_DIV128
+#define ADC12_PRESC_VALUE               128
+#elif STM32_ADC_ADC12_PRESC == ADC_CCR_PRESC_DIV256
+#define ADC12_PRESC_VALUE               256
+#error "invalid clock divider selected for STM32_ADC_ADC12_PRESC"
 #endif
 
-#if STM32_ADC_USE_ADC2 &&                                                   \
-    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC2_DMA_PRIORITY)
-#error "Invalid DMA priority assigned to ADC2"
+#if STM32_ADC_ADC345_PRESC == ADC_CCR_PRESC_DIV2
+#define ADC345_PRESC_VALUE              2
+#elif STM32_ADC_ADC345_PRESC == ADC_CCR_PRESC_DIV4
+#define ADC345_PRESC_VALUE              4
+#elif STM32_ADC_ADC345_PRESC == ADC_CCR_PRESC_DIV6
+#define ADC345_PRESC_VALUE              6
+#elif STM32_ADC_ADC345_PRESC == ADC_CCR_PRESC_DIV8
+#define ADC345_PRESC_VALUE              8
+#elif STM32_ADC_ADC345_PRESC == ADC_CCR_PRESC_DIV10
+#define ADC345_PRESC_VALUE              10
+#elif STM32_ADC_ADC345_PRESC == ADC_CCR_PRESC_DIV12
+#define ADC345_PRESC_VALUE              12
+#elif STM32_ADC_ADC345_PRESC == ADC_CCR_PRESC_DIV16
+#define ADC345_PRESC_VALUE              16
+#elif STM32_ADC_ADC345_PRESC == ADC_CCR_PRESC_DIV32
+#define ADC345_PRESC_VALUE              32
+#elif STM32_ADC_ADC345_PRESC == ADC_CCR_PRESC_DIV64
+#define ADC345_PRESC_VALUE              64
+#elif STM32_ADC_ADC345_PRESC == ADC_CCR_PRESC_DIV128
+#define ADC345_PRESC_VALUE              128
+#elif STM32_ADC_ADC345_PRESC == ADC_CCR_PRESC_DIV256
+#define ADC345_PRESC_VALUE              256
+#error "invalid clock divider selected for STM32_ADC_ADC345_PRESC"
 #endif
-
-#if STM32_ADC_USE_ADC3 &&                                                   \
-    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC3_DMA_PRIORITY)
-#error "Invalid DMA priority assigned to ADC3"
-#endif
-
-#if STM32_ADC_USE_ADC4 &&                                                   \
-    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC4_DMA_PRIORITY)
-#error "Invalid DMA priority assigned to ADC4"
-#endif
+#endif /* defined(STM32G4XX) */
 
 /* ADC clock source checks.*/
 #if defined(STM32F3XX)
@@ -578,7 +701,7 @@
 #elif STM32_ADC_ADC34_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV4
 #define STM32_ADC34_CLOCK               (STM32_HCLK / 4)
 #else
-#error "invalid clock mode selected for STM32_ADC_ADC12_CLOCK_MODE"
+#error "invalid clock mode selected for STM32_ADC_ADC34_CLOCK_MODE"
 #endif
 
 #if STM32_ADC12_CLOCK > STM32_ADCCLK_MAX
@@ -592,13 +715,13 @@
 
 #if defined(STM32L4XX) || defined(STM32L4XXP)
 #if STM32_ADC_ADC123_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
-#define STM32_ADC123_CLOCK              STM32_ADCCLK
+#define STM32_ADC123_CLOCK              (STM32_ADCCLK / ADC123_PRESC_VALUE)
 #elif STM32_ADC_ADC123_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
-#define STM32_ADC123_CLOCK              (STM32_HCLK / 1)
+#define STM32_ADC123_CLOCK              (STM32_ADCCLK / 1)
 #elif STM32_ADC_ADC123_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV2
-#define STM32_ADC123_CLOCK              (STM32_HCLK / 2)
+#define STM32_ADC123_CLOCK              (STM32_ADCCLK / 2)
 #elif STM32_ADC_ADC123_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV4
-#define STM32_ADC123_CLOCK              (STM32_HCLK / 4)
+#define STM32_ADC123_CLOCK              (STM32_ADCCLK / 4)
 #else
 #error "invalid clock mode selected for STM32_ADC_ADC123_CLOCK_MODE"
 #endif
@@ -607,6 +730,40 @@
 #error "STM32_ADC123_CLOCK exceeding maximum frequency (STM32_ADCCLK_MAX)"
 #endif
 #endif /* defined(STM32L4XX) || defined(STM32L4XXP) */
+
+#if defined(STM32G4XX)
+#if STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
+#define STM32_ADC12_CLOCK               (STM32_ADC12CLK / ADC12_PRESC_VALUE)
+#elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
+#define STM32_ADC12_CLOCK               (STM32_HCLK / 1)
+#elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV2
+#define STM32_ADC12_CLOCK               (STM32_HCLK / 2)
+#elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV4
+#define STM32_ADC12_CLOCK               (STM32_HCLK / 4)
+#else
+#error "invalid clock mode selected for STM32_ADC_ADC12_CLOCK_MODE"
+#endif
+
+#if STM32_ADC_ADC345_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
+#define STM32_ADC345_CLOCK              (STM32_ADC345CLK / ADC345_PRESC_VALUE)
+#elif STM32_ADC_ADC345_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
+#define STM32_ADC345_CLOCK              (STM32_HCLK / 1)
+#elif STM32_ADC_ADC345_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV2
+#define STM32_ADC345_CLOCK              (STM32_HCLK / 2)
+#elif STM32_ADC_ADC345_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV4
+#define STM32_ADC345_CLOCK              (STM32_HCLK / 4)
+#else
+#error "invalid clock mode selected for STM32_ADC_ADC345_CLOCK_MODE"
+#endif
+
+#if STM32_ADC12_CLOCK > STM32_ADCCLK_MAX
+#error "STM32_ADC12_CLOCK exceeding maximum frequency (STM32_ADCCLK_MAX)"
+#endif
+
+#if STM32_ADC345_CLOCK > STM32_ADCCLK_MAX
+#error "STM32_ADC345_CLOCK exceeding maximum frequency (STM32_ADCCLK_MAX)"
+#endif
+#endif /* defined(STM32G4XX) */
 
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED
@@ -694,10 +851,18 @@ typedef enum {
            specified in continuous mode or if the buffer depth is           \
            greater than one.*/                                              \
   uint32_t                  cfgr;                                           \
-  /* ADC CFGR2 register initialization data.*/                                              \
+  /* ADC CFGR2 register initialization data.*/                              \
   uint32_t                  cfgr2;                                          \
   /* ADC TR1 register initialization data.*/                                \
   uint32_t                  tr1;                                            \
+  /* ADC TR2 register initialization data.*/                                \
+  uint32_t                  tr2;                                            \
+  /* ADC TR3 register initialization data.*/                                \
+  uint32_t                  tr3;                                            \
+  /* ADC AWD2CR register initialization data.*/                             \
+  uint32_t                  awd2cr;                                         \
+  /* ADC AWD3CR register initialization data.*/                             \
+  uint32_t                  awd3cr;                                         \
   /* ADC CCR register initialization data.                                  \
      NOTE: Put this field to zero if not using oversampling.*/              \
   uint32_t                  ccr;                                            \
@@ -716,6 +881,10 @@ typedef enum {
   uint32_t                  cfgr;                                           \
   uint32_t                  cfgr2;                                          \
   uint32_t                  tr1;                                            \
+  uint32_t                  tr2;                                            \
+  uint32_t                  tr3;                                            \
+  uint32_t                  awd2cr;                                         \
+  uint32_t                  awd3cr;                                         \
   uint32_t                  smpr[2];                                        \
   uint32_t                  sqr[4]
 #endif /* STM32_ADC_DUAL_MODE == FALSE */
@@ -725,6 +894,10 @@ typedef enum {
 #define adc_lld_configuration_group_fields                                  \
   uint32_t                  cfgr;                                           \
   uint32_t                  tr1;                                            \
+  uint32_t                  tr2;                                            \
+  uint32_t                  tr3;                                            \
+  uint32_t                  awd2cr;                                         \
+  uint32_t                  awd3cr;                                         \
   uint32_t                  ccr;                                            \
   uint32_t                  smpr[2];                                        \
   uint32_t                  sqr[4];                                         \
@@ -734,16 +907,22 @@ typedef enum {
 #define adc_lld_configuration_group_fields                                  \
   uint32_t                  cfgr;                                           \
   uint32_t                  tr1;                                            \
+  uint32_t                  tr2;                                            \
+  uint32_t                  tr3;                                            \
+  uint32_t                  awd2cr;                                         \
+  uint32_t                  awd3cr;                                         \
   uint32_t                  smpr[2];                                        \
   uint32_t                  sqr[4]
 #endif /* STM32_ADC_DUAL_MODE == FALSE */
 #endif /* STM32_ADCV3_OVERSAMPLING == FALSE */
 
 /**
- * @name    Threashold register initializer
+ * @name    Threshold registers initializers
  * @{
  */
 #define ADC_TR(low, high)       (((uint32_t)(high) << 16) | (uint32_t)(low))
+#define ADC_TR_DISABLED         ADC_TR(0U, 0x0FFFU)
+#define ADC_AWDCR_ENABLE(n)     (1U << (n))
 /** @} */
 
 /**
