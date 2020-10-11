@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2020 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -694,25 +694,25 @@
  *
  * @api
  */
-#define rccEnableETH(lp) rccEnableAHB1(RCC_AHB1ENR_ETHMACEN |               \
-                                       RCC_AHB1ENR_ETHMACTXEN |             \
-                                       RCC_AHB1ENR_ETHMACRXEN, lp)
+#define rccEnableETH(lp) rccEnableAHB1(RCC_AHB1ENR_ETH1MACEN |               \
+                                       RCC_AHB1ENR_ETH1TXEN |             \
+                                       RCC_AHB1ENR_ETH1RXEN, lp)
 
 /**
  * @brief   Disables the ETH peripheral clock.
  *
  * @api
  */
-#define rccDisableETH() rccDisableAHB1(RCC_AHB1ENR_ETHMACEN |            \
-                                          RCC_AHB1ENR_ETHMACTXEN |          \
-                                          RCC_AHB1ENR_ETHMACRXEN)
+#define rccDisableETH() rccDisableAHB1(RCC_AHB1ENR_ETH1MACEN |            \
+                                          RCC_AHB1ENR_ETH1TXEN |          \
+                                          RCC_AHB1ENR_ETH1RXEN)
 
 /**
  * @brief   Resets the ETH peripheral.
  *
  * @api
  */
-#define rccResetETH() rccResetAHB1(RCC_AHB1RSTR_ETHMACRST)
+#define rccResetETH() rccResetAHB1(RCC_AHB1RSTR_ETH1MACRST)
 /** @} */
 
 /**
@@ -1687,30 +1687,6 @@
  * @api
  */
 #define rccResetUART8() rccResetAPB1L(RCC_APB1LRSTR_UART8RST)
-/** @} */
-
-/**
- * @brief   Enables the LPUART1 peripheral clock.
- *
- * @param[in] lp        low power enable flag
- *
- * @api
- */
-#define rccEnableLPUART1(lp) rccEnableAPB4(RCC_APB4ENR_LPUART1EN, lp)
-
-/**
- * @brief   Disables the LPUART1 peripheral clock.
- *
- * @api
- */
-#define rccDisableLPUART1() rccDisableAPB4(RCC_APB4ENR_LPUART1EN)
-
-/**
- * @brief   Resets the LPUART1 peripheral.
- *
- * @api
- */
-#define rccResetLPUART1() rccResetAPB4(RCC_APB4RSTR_LPUART1RST)
 /** @} */
 
 /**
