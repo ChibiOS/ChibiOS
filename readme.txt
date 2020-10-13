@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 20.3.3 ***
+- FIX: Fixed wrong SDMMC RCC macros for STM32H7xx (bug #1127).
 - FIX: Fixed STM32 ADCv3 hangin on initialization (bug #1126).
 - FIX: Fixed I2S-related problems in STM32F4xx registry (bug #1124).
 - FIX: Fixed STM32 EXTIv1 driver unable to enable/disable fixed lines
