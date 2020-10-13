@@ -120,6 +120,8 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Fixed wrong SDMMC RCC macros for STM32H7xx (bug #1127)
+       (backported to 20.3.3)(backported to 19.1.5).
 - FIX: Fixed STM32 ADCv3 hangin on initialization (bug #1126)
        (backported to 20.3.3)(backported to 19.1.5).
 - FIX: Fixed I2S-related problems in STM32F4xx registry (bug #1124)
