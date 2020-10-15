@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added option to LWIP bindings to use memory pools instead of heap
+       allocator.
 - NEW: Added MACv2 driver for STM32H7xx.
 - NEW: Added support for UART9 and UART10 in STM32 USARTv1 drivers.
 - NEW: Added board support for ST_STM32G474RE_DISCOVERY_DPOW1, added demo.

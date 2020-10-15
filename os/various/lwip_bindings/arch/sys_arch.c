@@ -61,6 +61,17 @@
 
 #include "arch/cc.h"
 #include "arch/sys_arch.h"
+#include "lwipopts.h"
+
+#ifndef CH_LWIP_USE_MEM_POOLS 
+#define CH_LWIP_USE_MEM_POOLS FALSE
+#endif
+
+#if CH_LWIP_USE_MEM_POOLS 
+static MEMORYPOOL_DECL(lwip_sys_arch_sem_pool, sizeof(semaphore_t), 4, chCoreAllocAlignedI);
+static MEMORYPOOL_DECL(lwip_sys_arch_mbox_pool, sizeof(mailbox_t) + sizeof(msg_t) * TCPIP_MBOX_SIZE, 4, chCoreAllocAlignedI);
+static MEMORYPOOL_DECL(lwip_sys_arch_thread_pool, THD_WORKING_AREA_SIZE(TCPIP_THREAD_STACKSIZE), PORT_WORKING_AREA_ALIGN, chCoreAllocAlignedI);
+#endif
 
 void sys_init(void) {
 
@@ -68,7 +79,12 @@ void sys_init(void) {
 
 err_t sys_sem_new(sys_sem_t *sem, u8_t count) {
 
+#if !CH_LWIP_USE_MEM_POOLS
   *sem = chHeapAlloc(NULL, sizeof(semaphore_t));
+#else
+  *sem = chPoolAlloc(&lwip_sys_arch_sem_pool);
+#endif
+
   if (*sem == 0) {
     SYS_STATS_INC(sem.err);
     return ERR_MEM;
@@ -82,7 +98,11 @@ err_t sys_sem_new(sys_sem_t *sem, u8_t count) {
 
 void sys_sem_free(sys_sem_t *sem) {
 
+#if !CH_LWIP_USE_MEM_POOLS
   chHeapFree(*sem);
+#else
+  chPoolFree(&lwip_sys_arch_sem_pool, *sem);
+#endif
   *sem = SYS_SEM_NULL;
   SYS_STATS_DEC(sem.used);
 }
@@ -128,7 +148,11 @@ void sys_sem_set_invalid(sys_sem_t *sem) {
 
 err_t sys_mbox_new(sys_mbox_t *mbox, int size) {
 
+#if !CH_LWIP_USE_MEM_POOLS
   *mbox = chHeapAlloc(NULL, sizeof(mailbox_t) + sizeof(msg_t) * size);
+#else
+  *mbox = chPoolAlloc(&lwip_sys_arch_mbox_pool);
+#endif
   if (*mbox == 0) {
     SYS_STATS_INC(mbox.err);
     return ERR_MEM;
@@ -154,7 +178,11 @@ void sys_mbox_free(sys_mbox_t *mbox) {
     SYS_STATS_INC(mbox.err);
     chMBReset(*mbox);
   }
+#if !CH_LWIP_USE_MEM_POOLS
   chHeapFree(*mbox);
+#else
+  chPoolFree(&lwip_sys_arch_mbox_pool, *mbox);
+#endif
   *mbox = SYS_MBOX_NULL;
   SYS_STATS_DEC(mbox.used);
 }
@@ -210,8 +238,14 @@ sys_thread_t sys_thread_new(const char *name, lwip_thread_fn thread,
                             void *arg, int stacksize, int prio) {
   thread_t *tp;
 
+#if !CH_LWIP_USE_MEM_POOLS
   tp = chThdCreateFromHeap(NULL, THD_WORKING_AREA_SIZE(stacksize),
                            name, prio, (tfunc_t)thread, arg);
+#else
+  (void) stacksize;
+  tp = chThdCreateFromMemoryPool(&lwip_sys_arch_thread_pool, name,
+                            prio, (tfunc_t)thread, arg);
+#endif
   return (sys_thread_t)tp;
 }
 

@@ -30,6 +30,39 @@
 
 #include "hal_mii.h"
 
+/* Fixes for errors in ST headers.*/
+#if ETH_DMADSR_RPS_FETCHING_Pos == 12
+#undef ETH_DMADSR_RPS_FETCHING_Pos
+#define ETH_DMADSR_RPS_FETCHING_Pos         (8U)
+#endif
+
+#if ETH_DMADSR_RPS_WAITING_Pos == 12
+#undef ETH_DMADSR_RPS_WAITING_Pos
+#define ETH_DMADSR_RPS_WAITING_Pos          (9U)
+#endif
+
+#if ETH_DMADSR_RPS_SUSPENDED_Pos == 14
+#undef ETH_DMADSR_RPS_SUSPENDED_Pos
+#define ETH_DMADSR_RPS_SUSPENDED_Pos        (10U)
+#endif
+
+#if ETH_DMADSR_RPS_CLOSING_Pos == 12
+#undef ETH_DMADSR_RPS_CLOSING_Pos
+#define ETH_DMADSR_RPS_CLOSING_Pos          (10U)
+#endif
+
+#if ETH_DMADSR_RPS_TIMESTAMP_WR_Pos == 13
+#undef ETH_DMADSR_RPS_TIMESTAMP_WR_Pos
+#undef ETH_DMADSR_RPS_TIMESTAMP_WR_Msk
+#define ETH_DMADSR_RPS_TIMESTAMP_WR_Pos     (10U)
+#define ETH_DMADSR_RPS_TIMESTAMP_WR_Msk     (0x6UL << ETH_DMADSR_RPS_TIMESTAMP_WR_Pos)
+#endif
+
+#if ETH_DMADSR_RPS_TRANSFERRING_Pos == 12
+#undef ETH_DMADSR_RPS_TRANSFERRING_Pos
+#define ETH_DMADSR_RPS_TRANSFERRING_Pos     (10U)
+#endif
+
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
@@ -519,7 +552,7 @@ void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp) {
   __DSB();
 
   /* If the DMA engine is stalled then a restart request is issued.*/
-  if ((ETH->DMACSR & ETH_DMACSR_TPS) == ETH_DMADSR_TPS_SUSPENDED) {
+  if ((ETH->DMADSR & ETH_DMADSR_TPS) == ETH_DMADSR_TPS_SUSPENDED) {
     ETH->DMACSR   = ETH_DMACSR_TBU;
   }
   ETH->DMACTDTPR = 0;
@@ -596,7 +629,7 @@ void mac_lld_release_receive_descriptor(MACReceiveDescriptor *rdp) {
   __DSB();
 
   /* If the DMA engine is stalled then a restart request is issued.*/
-  if ((ETH->DMACSR & ETH_DMACSR_RPS) == ETH_DMADSR_RPS_SUSPENDED) {
+  if ((ETH->DMADSR & ETH_DMADSR_RPS) == ETH_DMADSR_RPS_SUSPENDED) {
     ETH->DMACSR   = ETH_DMACSR_RBU;
   }
   ETH->DMACRDTPR = 0;
