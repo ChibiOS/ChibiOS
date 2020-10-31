@@ -119,8 +119,9 @@
 #error "invalid OSAL_ST_MODE setting in osal.h"
 #endif
 
-#if (OSAL_ST_RESOLUTION != 16) && (OSAL_ST_RESOLUTION != 32)
-#error "invalid OSAL_ST_RESOLUTION, must be 16 or 32"
+#if (OSAL_ST_RESOLUTION != 16) && (OSAL_ST_RESOLUTION != 32) &&             \
+    (OSAL_ST_RESOLUTION != 64)
+#error "invalid OSAL_ST_RESOLUTION, must be 16, 32 or 64"
 #endif
 
 /*===========================================================================*/
