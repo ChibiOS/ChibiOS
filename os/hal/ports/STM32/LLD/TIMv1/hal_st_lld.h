@@ -467,7 +467,7 @@
 #define ST_LLD_NUM_ALARMS                   STM32_ST_ENFORCE_ALARMS
 #endif
 
-#elif OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
+#elif OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC
 
 #define STM32_ST_USE_SYSTICK                TRUE
 #define STM32_ST_USE_TIM2                   FALSE
