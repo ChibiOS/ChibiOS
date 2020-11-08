@@ -114,11 +114,13 @@ static void usart_init(SerialDriver *sdp, const SerialConfig *config) {
 
   brr = (uint32_t)(sdp->clock / config->speed);
 
+#if defined(USART_CR1_OVER8)
   /* Correcting BRR value when oversampling by 8 instead of 16.
      Fraction is still 4 bits wide, but only lower 3 bits used.
      Mantissa is doubled, but Fraction is left the same.*/
   if (config->cr1 & USART_CR1_OVER8)
     brr = ((brr & ~7) * 2) | (brr & 7);
+#endif
 
   osalDbgAssert(brr < 0x10000, "invalid BRR value");
 
