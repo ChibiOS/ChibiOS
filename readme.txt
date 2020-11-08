@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 19.1.5 ***
+- FIX: Fixed wrong check on LSI on all STM32 platforms (bug #1131).
 - FIX: Fixed OSAL does not allow 64 bits resolution values (bug #1128).
 - FIX: Fixed wrong SDMMC RCC macros for STM32H7xx (bug #1127).
 - FIX: Fixed STM32 ADCv3 hangin on initialization (bug #1126).
