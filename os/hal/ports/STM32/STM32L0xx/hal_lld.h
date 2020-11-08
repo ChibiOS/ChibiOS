@@ -758,7 +758,7 @@
 #error "LSI not enabled, required by STM32_MCOSEL"
 #endif
 
-#if STM32_RTCSEL == STM32_RTCSEL_LSI
+#if HAL_USE_RTC && (STM32_RTCSEL == STM32_RTCSEL_LSI)
 #error "LSI not enabled, required by STM32_RTCSEL"
 #endif
 

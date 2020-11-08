@@ -1501,7 +1501,7 @@
 #else /* !STM32_LSI_ENABLED */
 #define STM32_LSI_CK            0U
 
-#if STM32_RTCSEL == STM32_RTCSEL_LSI_CK
+#if HAL_USE_RTC && (STM32_RTCSEL == STM32_RTCSEL_LSI_CK)
 #error "LSI not enabled, required by STM32_RTCSEL"
 #endif
 

@@ -122,6 +122,8 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Fixed wrong check on LSI on all STM32 platforms (bug #1131)
+       (backported to 20.3.3)(backported to 19.1.5).
 - FIX: Fixed OSAL does not allow 64 bits resolution values (bug #1128)
        (backported to 20.3.3)(backported to 19.1.5).
 - FIX: Fixed wrong SDMMC RCC macros for STM32H7xx (bug #1127)
