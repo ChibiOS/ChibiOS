@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 20.3.3 ***
+- FIX: Fixed missing EFL driver in platform_l432.mk (bug #1130).
 - FIX: Fixed wrong check in STM32 ST driver (bug #1129).
 - FIX: Fixed OSAL does not allow 64 bits resolution values (bug #1128).
 - FIX: Fixed wrong SDMMC RCC macros for STM32H7xx (bug #1127).
