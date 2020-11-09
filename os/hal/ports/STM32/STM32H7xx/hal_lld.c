@@ -249,9 +249,9 @@ void stm32_clock_init(void) {
 
   /* Registers cleared to reset values.*/
   RCC->CR      = RCC_CR_HSION;             /* CR Reset value.              */
-  RCC->HSICFGR   = 0x40000000U;            /* HSICFGR Reset value.         */
+  RCC->HSICFGR = 0x40000000U;              /* HSICFGR Reset value.         */
 #if !defined(STM32_ENFORCE_H7_REV_XY)
-  RCC->CSICFGR   = 0x20000000U;            /* CSICFGR Reset value.         */
+  RCC->CSICFGR = 0x20000000U;              /* CSICFGR Reset value.         */
 #endif
   RCC->CSR     = 0x00000000U;              /* CSR reset value.             */
   RCC->PLLCFGR = 0x01FF0000U;              /* PLLCFGR reset value.         */
