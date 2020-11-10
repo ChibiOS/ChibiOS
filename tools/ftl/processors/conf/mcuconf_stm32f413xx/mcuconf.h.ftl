@@ -126,6 +126,8 @@
 #define STM32_IRQ_USART6_PRIORITY           ${doc.STM32_IRQ_USART6_PRIORITY!"12"}
 #define STM32_IRQ_UART7_PRIORITY            ${doc.STM32_IRQ_UART7_PRIORITY!"12"}
 #define STM32_IRQ_UART8_PRIORITY            ${doc.STM32_IRQ_UART8_PRIORITY!"12"}
+#define STM32_IRQ_UART9_PRIORITY            ${doc.STM32_IRQ_UART9_PRIORITY!"12"}
+#define STM32_IRQ_UART10_PRIORITY           ${doc.STM32_IRQ_UART10_PRIORITY!"12"}
 
 /*
  * ADC driver system settings.
