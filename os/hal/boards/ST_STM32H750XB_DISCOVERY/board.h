@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2017 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2020 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -172,7 +172,7 @@
 #define GPIOG_PIN3                  3U
 #define GPIOG_SDRAM_BA0             4U
 #define GPIOG_SDRAM_BA1             5U
-#define GPIOG_RCC_OSC_OUT           6U
+#define GPIOG_QSPI_BK1_NCS          6U
 #define GPIOG_PIN7                  7U
 #define GPIOG_SDRAM_SDCLK           8U
 #define GPIOG_QSPI_BK2_IO2          9U
@@ -336,7 +336,7 @@
 #define LINE_LCD_INT                PAL_LINE(GPIOG, 2U)
 #define LINE_SDRAM_BA0              PAL_LINE(GPIOG, 4U)
 #define LINE_SDRAM_BA1              PAL_LINE(GPIOG, 5U)
-#define LINE_RCC_OSC_OUT            PAL_LINE(GPIOG, 6U)
+#define LINE_QSPI_BK1_NCS           PAL_LINE(GPIOG, 6U)
 #define LINE_SDRAM_SDCLK            PAL_LINE(GPIOG, 8U)
 #define LINE_QSPI_BK2_IO2           PAL_LINE(GPIOG, 9U)
 #define LINE_SAI2_SDB               PAL_LINE(GPIOG, 10U)
@@ -681,7 +681,7 @@
  * PC12 - SDIO1_CK                  (alternate 12).
  * PC13 - BUTTON                    (input floating).
  * PC14 - OSC32_IN                  (input floating).
- * PC15 - OSC32_OUT                 (input floating).
+ * PC15 - OSC32_OUT                 (output pushpull minimum).
  */
 #define VAL_GPIOC_MODER             (PIN_MODE_INPUT(GPIOC_PIN0) |           \
                                      PIN_MODE_ALTERNATE(GPIOC_MII_MDC) |    \
@@ -698,7 +698,7 @@
                                      PIN_MODE_ALTERNATE(GPIOC_SDIO1_CK) |   \
                                      PIN_MODE_INPUT(GPIOC_BUTTON) |         \
                                      PIN_MODE_INPUT(GPIOC_OSC32_IN) |       \
-                                     PIN_MODE_INPUT(GPIOC_OSC32_OUT))
+                                     PIN_MODE_OUTPUT(GPIOC_OSC32_OUT))
 #define VAL_GPIOC_OTYPER            (PIN_OTYPE_PUSHPULL(GPIOC_PIN0) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOC_MII_MDC) |    \
                                      PIN_OTYPE_PUSHPULL(GPIOC_MII_TXD2) |   \
@@ -1140,7 +1140,7 @@
  * PG3  - PIN3                      (input floating).
  * PG4  - SDRAM_BA0                 (alternate 12).
  * PG5  - SDRAM_BA1                 (alternate 12).
- * PG6  - RCC_OSC_OUT               (output pushpull maximum).
+ * PG6  - QSPI_BK1_NCS              (alternate 10).
  * PG7  - PIN7                      (input floating).
  * PG8  - SDRAM_SDCLK               (alternate 12).
  * PG9  - QSPI_BK2_IO2              (alternate 9).
@@ -1157,7 +1157,7 @@
                                      PIN_MODE_INPUT(GPIOG_PIN3) |           \
                                      PIN_MODE_ALTERNATE(GPIOG_SDRAM_BA0) |  \
                                      PIN_MODE_ALTERNATE(GPIOG_SDRAM_BA1) |  \
-                                     PIN_MODE_OUTPUT(GPIOG_RCC_OSC_OUT) |   \
+                                     PIN_MODE_ALTERNATE(GPIOG_QSPI_BK1_NCS) |\
                                      PIN_MODE_INPUT(GPIOG_PIN7) |           \
                                      PIN_MODE_ALTERNATE(GPIOG_SDRAM_SDCLK) |\
                                      PIN_MODE_ALTERNATE(GPIOG_QSPI_BK2_IO2) |\
@@ -1173,7 +1173,7 @@
                                      PIN_OTYPE_PUSHPULL(GPIOG_PIN3) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOG_SDRAM_BA0) |  \
                                      PIN_OTYPE_PUSHPULL(GPIOG_SDRAM_BA1) |  \
-                                     PIN_OTYPE_PUSHPULL(GPIOG_RCC_OSC_OUT) |\
+                                     PIN_OTYPE_PUSHPULL(GPIOG_QSPI_BK1_NCS) |\
                                      PIN_OTYPE_PUSHPULL(GPIOG_PIN7) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOG_SDRAM_SDCLK) |\
                                      PIN_OTYPE_PUSHPULL(GPIOG_QSPI_BK2_IO2) |\
@@ -1189,7 +1189,7 @@
                                      PIN_OSPEED_VERYLOW(GPIOG_PIN3) |       \
                                      PIN_OSPEED_HIGH(GPIOG_SDRAM_BA0) |     \
                                      PIN_OSPEED_HIGH(GPIOG_SDRAM_BA1) |     \
-                                     PIN_OSPEED_HIGH(GPIOG_RCC_OSC_OUT) |   \
+                                     PIN_OSPEED_HIGH(GPIOG_QSPI_BK1_NCS) |  \
                                      PIN_OSPEED_VERYLOW(GPIOG_PIN7) |       \
                                      PIN_OSPEED_HIGH(GPIOG_SDRAM_SDCLK) |   \
                                      PIN_OSPEED_HIGH(GPIOG_QSPI_BK2_IO2) |  \
@@ -1205,7 +1205,7 @@
                                      PIN_PUPDR_FLOATING(GPIOG_PIN3) |       \
                                      PIN_PUPDR_FLOATING(GPIOG_SDRAM_BA0) |  \
                                      PIN_PUPDR_FLOATING(GPIOG_SDRAM_BA1) |  \
-                                     PIN_PUPDR_FLOATING(GPIOG_RCC_OSC_OUT) |\
+                                     PIN_PUPDR_FLOATING(GPIOG_QSPI_BK1_NCS) |\
                                      PIN_PUPDR_FLOATING(GPIOG_PIN7) |       \
                                      PIN_PUPDR_FLOATING(GPIOG_SDRAM_SDCLK) |\
                                      PIN_PUPDR_FLOATING(GPIOG_QSPI_BK2_IO2) |\
@@ -1221,7 +1221,7 @@
                                      PIN_ODR_HIGH(GPIOG_PIN3) |             \
                                      PIN_ODR_HIGH(GPIOG_SDRAM_BA0) |        \
                                      PIN_ODR_HIGH(GPIOG_SDRAM_BA1) |        \
-                                     PIN_ODR_LOW(GPIOG_RCC_OSC_OUT) |       \
+                                     PIN_ODR_HIGH(GPIOG_QSPI_BK1_NCS) |     \
                                      PIN_ODR_HIGH(GPIOG_PIN7) |             \
                                      PIN_ODR_HIGH(GPIOG_SDRAM_SDCLK) |      \
                                      PIN_ODR_HIGH(GPIOG_QSPI_BK2_IO2) |     \
@@ -1237,7 +1237,7 @@
                                      PIN_AFIO_AF(GPIOG_PIN3, 0U) |          \
                                      PIN_AFIO_AF(GPIOG_SDRAM_BA0, 12U) |    \
                                      PIN_AFIO_AF(GPIOG_SDRAM_BA1, 12U) |    \
-                                     PIN_AFIO_AF(GPIOG_RCC_OSC_OUT, 0U) |   \
+                                     PIN_AFIO_AF(GPIOG_QSPI_BK1_NCS, 10U) | \
                                      PIN_AFIO_AF(GPIOG_PIN7, 0U))
 #define VAL_GPIOG_AFRH              (PIN_AFIO_AF(GPIOG_SDRAM_SDCLK, 12U) |  \
                                      PIN_AFIO_AF(GPIOG_QSPI_BK2_IO2, 9U) |  \

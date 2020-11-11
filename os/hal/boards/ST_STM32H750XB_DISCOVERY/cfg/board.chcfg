@@ -855,13 +855,13 @@
         Mode="Alternate"
         Alternate="12" />
       <pin6
-        ID="RCC_OSC_OUT"
+        ID="QSPI_BK1_NCS"
         Type="PushPull"
-        Level="Low"
+        Level="High"
         Speed="Maximum"
         Resistor="Floating"
-        Mode="Output"
-        Alternate="0" />
+        Mode="Alternate"
+        Alternate="10" />
       <pin7
         ID=""
         Type="PushPull"

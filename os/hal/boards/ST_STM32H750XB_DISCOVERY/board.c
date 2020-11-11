@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2017 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2020 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -220,7 +220,7 @@ void __early_init(void) {
 bool sdc_lld_is_card_inserted(SDCDriver *sdcp) {
 
   (void)sdcp;
-  /* TODO: Fill the implementation.*/
+  /* CHTODO: Fill the implementation.*/
   return true;
 }
 
@@ -230,7 +230,7 @@ bool sdc_lld_is_card_inserted(SDCDriver *sdcp) {
 bool sdc_lld_is_write_protected(SDCDriver *sdcp) {
 
   (void)sdcp;
-  /* TODO: Fill the implementation.*/
+  /* CHTODO: Fill the implementation.*/
   return false;
 }
 #endif /* HAL_USE_SDC */
@@ -242,7 +242,7 @@ bool sdc_lld_is_write_protected(SDCDriver *sdcp) {
 bool mmc_lld_is_card_inserted(MMCDriver *mmcp) {
 
   (void)mmcp;
-  /* TODO: Fill the implementation.*/
+  /* CHTODO: Fill the implementation.*/
   return true;
 }
 
@@ -252,14 +252,14 @@ bool mmc_lld_is_card_inserted(MMCDriver *mmcp) {
 bool mmc_lld_is_write_protected(MMCDriver *mmcp) {
 
   (void)mmcp;
-  /* TODO: Fill the implementation.*/
+  /* CHTODO: Fill the implementation.*/
   return false;
 }
 #endif
 
 /**
  * @brief   Board-specific initialization code.
- * @todo    Add your board-specific code, if any.
+ * @note    You can add your board-specific code here.
  */
 void boardInit(void) {
 
