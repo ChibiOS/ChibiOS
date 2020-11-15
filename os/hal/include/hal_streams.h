@@ -151,6 +151,68 @@ typedef struct {
 #define streamGet(ip) ((ip)->vmt->get(ip))
 /** @} */
 
+/**
+ * @brief   @p BaseBufferedStream specific methods.
+ */
+#define _base_buffered_stream_methods                                       \
+  _base_sequential_stream_methods                                           \
+  /* Channel unget method */                                                \
+  msg_t (*unget)(void *instance, uint8_t b);
+
+/**
+ * @brief   @p BaseBufferedStream specific data.
+ * @note    It is empty because @p BaseBufferedStream is only an interface
+ *          without implementation.
+ */
+#define _base_buffered_stream_data                                          \
+  _base_sequential_stream_data
+
+/**
+ * @extends BaseSequentialStreamVMT
+ *
+ * @brief   @p BaseBufferedStream virtual methods table.
+ */
+struct BaseBufferedStreamVMT {
+  _base_buffered_stream_methods
+};
+
+/**
+ * @extends BaseSequentialStream
+ *
+ * @brief   Buffered stream class.
+ * @details This class @p extends BaseSequentialStream to represent a generic
+ *          blocking buffered sequential data stream.
+ */
+typedef struct {
+  /** @brief Virtual Methods Table. */
+  const struct BaseBufferedStreamVMT *vmt;
+  _base_buffered_stream_data
+} BaseBufferedStream;
+
+/**
+ * @name    Macro Functions (BaseBufferedStream)
+ * @{
+ */
+/**
+ * @brief   Buffered Stream unget.
+ * @details This function replaces a byte value to a stream. streamUnget
+ *          only guarantees a single byte can be replaced, and multiple
+ *          calls without intervening calls to streamGet or streamRead may fail
+ *
+ * @param[in] ip        pointer to a @p BaseBufferedStream or derived class
+ * @param[in] b         the byte value to be written to the channel
+ *
+ * @post
+ *
+ * @return              The operation status.
+ * @retval STM_OK       if the operation succeeded.
+ * @retval STM_RESET    if the operation failed
+ *
+ * @api
+ */
+#define streamUnget(ip, b) ((ip)->vmt->unget(ip, b))
+/** @} */
+
 #endif /* HAL_STREAMS_H */
 
 /** @} */

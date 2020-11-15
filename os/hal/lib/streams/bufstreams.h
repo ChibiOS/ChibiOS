@@ -14,20 +14,31 @@
     limitations under the License.
 */
 
+/*
+    This file was contributed by Alex Lewontin.
+ */
+
 /**
- * @file    nullstreams.h
- * @brief   Null streams structures and macros.
- 
- * @addtogroup HAL_NULL_STREAMS
+ * @file    bufstreams.h
+ * @brief   Buffered streams structures and macros.
+
+ * @addtogroup HAL_BUFFERED_STREAMS
  * @{
  */
 
-#ifndef NULLSTREAMS_H
-#define NULLSTREAMS_H
+#ifndef BUFSTREAMS_H
+#define BUFSTREAMS_H
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   Buffer size for unget.
+ */
+#if !defined(BUFSTREAM_BUFFER_SIZE) || defined(__DOXYGEN__)
+#define BUFSTREAM_BUFFER_SIZE           1
+#endif
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -42,28 +53,34 @@
 /*===========================================================================*/
 
 /**
- * @brief   @p NullStream specific data.
+ * @brief   @p BufferedStreamAdapter specific data.
  */
-#define _null_stream_data                                                   \
-  _base_buffered_stream_data
+#define _buffered_stream_adapter_data                                       \
+  _base_buffered_stream_data                                                \
+  /* Pointer to a wrapped BaseSequentialStream object */                    \
+  BaseSequentialStream* bssp;                                               \
+  /* Stream buffer */                                                       \
+  uint8_t               buffer[BUFSTREAM_BUFFER_SIZE];                      \
+  /* Index in the stream buffer */                                          \
+  size_t                ndx;
 
 /**
- * @brief   @p NullStream virtual methods table.
+ * @brief   @p BufferedStreamAdapter virtual methods table.
  */
-struct NullStreamVMT {
+struct BufferedStreamAdapterVMT {
   _base_buffered_stream_methods
 };
 
 /**
- * @extends BaseBufferedStream
+ * @extends BufferedStream
  *
- * @brief   Null stream object.
+ * @brief Buffered stream adapter object.
  */
 typedef struct {
   /** @brief Virtual Methods Table.*/
-  const struct NullStreamVMT *vmt;
-  _null_stream_data
-} NullStream;
+  const struct BufferedStreamAdapterVMT *vmt;
+  _buffered_stream_adapter_data
+} BufferedStreamAdapter;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -76,11 +93,11 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void nullObjectInit(NullStream *nsp);
+  void bsaObjectInit(BufferedStreamAdapter *bsap, BaseSequentialStream* bssp);
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* NULLSTREAMS_H */
+#endif /* MEMSTREAMS_H */
 
 /** @} */

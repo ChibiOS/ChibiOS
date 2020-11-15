@@ -14,19 +14,23 @@
     limitations under the License.
 */
 
+/*
+    This file was contributed by Alex Lewontin.
+ */
+
 /**
- * @file    memstreams.c
- * @brief   Memory streams code.
+ * @file    bufstreams.c
+ * @brief   Buffered streams code.
  *
- * @addtogroup HAL_MEMORY_STREAMS
- * @details Memory buffers handled as streams.
+ * @addtogroup HAL_BUFFERED_STREAMS
+ * @details Wrapper for BaseSequentialStreams that allows some ungetting.
  * @{
  */
 
 #include <string.h>
 
 #include "hal.h"
-#include "memstreams.h"
+#include "bufstreams.h"
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -45,82 +49,75 @@
 /*===========================================================================*/
 
 static size_t _writes(void *ip, const uint8_t *bp, size_t n) {
-  MemoryStream *msp = ip;
-
-  if (msp->size - msp->eos < n)
-    n = msp->size - msp->eos;
-  memcpy(msp->buffer + msp->eos, bp, n);
-  msp->eos += n;
-  return n;
+  BufferedStreamAdapter *bsap = ip;
+  return bsap->bssp->vmt->write(bsap->bssp, bp, n);
 }
 
 static size_t _reads(void *ip, uint8_t *bp, size_t n) {
-  MemoryStream *msp = ip;
+  BufferedStreamAdapter* bsap = ip;
+  size_t          buffered;
 
-  if (msp->eos - msp->offset < n)
-    n = msp->eos - msp->offset;
-  memcpy(bp, msp->buffer + msp->offset, n);
-  msp->offset += n;
-  return n;
+  if (n < (BUFSTREAM_BUFFER_SIZE - bsap->ndx)) {
+    buffered = n;
+  } else {
+    buffered = BUFSTREAM_BUFFER_SIZE - bsap->ndx;
+  }
+
+  memcpy(bp, bsap->buffer + (BUFSTREAM_BUFFER_SIZE - buffered), buffered);
+  bsap->ndx += buffered;
+
+  return buffered + bsap->bssp->vmt->read(bsap->bssp, bp + buffered, n - buffered);
 }
 
 static msg_t _put(void *ip, uint8_t b) {
-  MemoryStream *msp = ip;
-
-  if (msp->size - msp->eos <= 0)
-    return MSG_RESET;
-  *(msp->buffer + msp->eos) = b;
-  msp->eos += 1;
-  return MSG_OK;
+  BufferedStreamAdapter* bsap = ip;
+  return bsap->bssp->vmt->put(bsap->bssp, b);
 }
 
 static msg_t _get(void *ip) {
-  uint8_t b;
-  MemoryStream *msp = ip;
+  BufferedStreamAdapter* bsap = ip;
 
-  if (msp->eos - msp->offset <= 0)
-    return MSG_RESET;
-  b = *(msp->buffer + msp->offset);
-  msp->offset += 1;
+  if (bsap->ndx == BUFSTREAM_BUFFER_SIZE) {
+    return bsap->bssp->vmt->get(bsap->bssp);
+  }
+
+  return bsap->buffer[bsap->ndx++];
+}
+
+static msg_t _unget(void* ip, uint8_t b) {
+  BufferedStreamAdapter* bsap = ip;
+
+  if (((int8_t)b == STM_RESET) || (bsap->ndx == 0)) {
+    return STM_RESET;
+  }
+
+  bsap->buffer[--(bsap->ndx)] = b;
+
   return b;
 }
 
-static msg_t _unget(void* ip, uint8_t b)
-{
-  MemoryStream* msp = ip;
-
-  if (msp->offset <= 0)
-    return MSG_RESET;
-  msp->offset -= 1;
-  *(msp->buffer + msp->offset) = b;
-
-  return MSG_OK;
-}
-
-static const struct MemStreamVMT vmt = {(size_t)0, _writes, _reads, _put, _get, _unget};
+static const struct BufferedStreamAdapterVMT vmt = {
+  (size_t)0, _writes, _reads, _put, _get, _unget
+};
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
 
 /**
- * @brief   Memory stream object initialization.
+ * @brief   Buffered stream adapter object initialization.
  *
- * @param[out] msp      pointer to the @p MemoryStream object to be initialized
- * @param[in] buffer    pointer to the memory buffer for the memory stream
- * @param[in] size      total size of the memory stream buffer
- * @param[in] eos       initial End Of Stream offset. Normally you need to
- *                      put this to zero for RAM buffers or equal to @p size
- *                      for ROM streams.
+ * @param[out] bsap      pointer to the @p BufferedStream object to be
+ *                       initialized
+ * @param[in] bssp       pointer to a @p BaseSequentialStream fulfilling
+ *                       object to be wrapped
  */
-void msObjectInit(MemoryStream *msp, uint8_t *buffer,
-                  size_t size, size_t eos) {
+void bsaObjectInit(BufferedStreamAdapter *bsap, BaseSequentialStream* bssp) {
 
-  msp->vmt    = &vmt;
-  msp->buffer = buffer;
-  msp->size   = size;
-  msp->eos    = eos;
-  msp->offset = 0;
+  bsap->vmt    = &vmt;
+  bsap->bssp   = bssp;
+  memset(bsap->buffer, STM_RESET, BUFSTREAM_BUFFER_SIZE);
+  bsap->ndx    = BUFSTREAM_BUFFER_SIZE;
 }
 
 /** @} */
