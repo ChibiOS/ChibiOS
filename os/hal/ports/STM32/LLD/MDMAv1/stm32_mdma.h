@@ -128,13 +128,13 @@
 #define STM32_MDMA_CTCR_SINC_MASK       (3U << 0)
 #define STM32_MDMA_CTCR_SINC(n)         ((n) << 0)
 #define STM32_MDMA_CTCR_SINC_FIXED      STM32_MDMA_CTCR_SINC(0U)
-#define STM32_MDMA_CTCR_SINC_INC        STM32_MDMA_CTCR_SINC(1U)
+#define STM32_MDMA_CTCR_SINC_INC        STM32_MDMA_CTCR_SINC(2U)
 #define STM32_MDMA_CTCR_SINC_DEC        STM32_MDMA_CTCR_SINC(3U)
 
 #define STM32_MDMA_CTCR_DINC_MASK       (3U << 2)
 #define STM32_MDMA_CTCR_DINC(n)         ((n) << 2)
 #define STM32_MDMA_CTCR_DINC_FIXED      STM32_MDMA_CTCR_DINC(0U)
-#define STM32_MDMA_CTCR_DINC_INC        STM32_MDMA_CTCR_DINC(1U)
+#define STM32_MDMA_CTCR_DINC_INC        STM32_MDMA_CTCR_DINC(2U)
 #define STM32_MDMA_CTCR_DINC_DEC        STM32_MDMA_CTCR_DINC(3U)
 
 #define STM32_MDMA_CTCR_SSIZE_MASK      (3U << 4)
@@ -367,6 +367,20 @@ typedef struct {
 #define mdmaChannelSetModeX(mdmachp, ctcr, ccr) do {                        \
   (mdmachp)->channel->CTCR = (uint32_t)(ctcr);                              \
   (mdmachp)->channel->CCR  = (uint32_t)(ccr);                               \
+} while (0)
+
+/**
+ * @brief   Programs the trigger mode settings.
+ * @pre     The stream must have been allocated using @p mdmaChannelAlloc().
+ * @post    After use the stream can be released using @p mdmaChannelFree().
+ *
+ * @param[in] mdmachp   pointer to a stm32_mdma_channel_t structure
+ * @param[in] tsel      value to be written in the CTBR register
+ *
+ * @xclass
+ */
+#define mdmaChannelSetTrigModeX(mdmachp, tsel) do {                         \
+  (mdmachp)->channel->CTBR = STM32_MDMA_CTBR_TSEL(tsel);                    \
 } while (0)
 
 /**

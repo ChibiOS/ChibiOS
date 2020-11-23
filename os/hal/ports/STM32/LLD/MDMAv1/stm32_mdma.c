@@ -205,7 +205,7 @@ void mdmaInit(void) {
  *
  * @iclass
  */
-const stm32_mdma_channel_t *dmaChannelAllocI(uint32_t id,
+const stm32_mdma_channel_t *mdmaChannelAllocI(uint32_t id,
                                              stm32_mdmaisr_t func,
                                              void *param) {
   uint32_t i, startid, endid;
@@ -264,7 +264,7 @@ const stm32_mdma_channel_t *dmaChannelAllocI(uint32_t id,
  *
  * @api
  */
-const stm32_mdma_channel_t *dmaChannelAlloc(uint32_t id,
+const stm32_mdma_channel_t *mdmaChannelAlloc(uint32_t id,
                                             stm32_mdmaisr_t func,
                                             void *param) {
   const stm32_mdma_channel_t *mdmachp;

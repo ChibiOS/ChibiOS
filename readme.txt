@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 20.3.3 ***
+- FIX: Fixed moved define into hal_wspi_lld.c (bug #1133).
+- FIX: Fixed various bugs in MDMAv1 driver (bug #1132).
 - FIX: Fixed wrong check on LSI on all STM32 platforms (bug #1131).
 - FIX: Fixed missing EFL driver in platform_l432.mk (bug #1130).
 - FIX: Fixed wrong check in STM32 ST driver (bug #1129).
