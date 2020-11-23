@@ -35,6 +35,7 @@
 
 /* @brief MDMA HW request is QSPI Transfer complete Flag */
 #define MDMA_REQUEST_QUADSPI_TC           ((uint32_t)0x00000017U)
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
