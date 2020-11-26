@@ -442,7 +442,7 @@ void cry_lld_start(CRYDriver *cryp) {
       dmaStreamSetMemory0(cryp->hash_dma, &HASH->DIN);
       dmaStreamSetFIFO(cryp->hash_dma, STM32_DMA_FCR_DMDIS);
 #if STM32_DMA_SUPPORTS_DMAMUX
-      dmaSetRequestSource(cryp->dma_hash, STM32_DMAMUX1_HASH);
+      dmaSetRequestSource(cryp->hash_dma, STM32_DMAMUX1_HASH);
 #endif
 #endif /* STM32_CRY_HASH_SIZE_THRESHOLD != 0 */
       rccEnableHASH(true);
