@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 20.3.3 ***
+- FIX: Fixed compile error of STM32 CRYPv1 driver when DMAMU is present
+       (bug #1134).
 - FIX: Fixed moved define into hal_wspi_lld.c (bug #1133).
 - FIX: Fixed various bugs in MDMAv1 driver (bug #1132).
 - FIX: Fixed wrong check on LSI on all STM32 platforms (bug #1131).
