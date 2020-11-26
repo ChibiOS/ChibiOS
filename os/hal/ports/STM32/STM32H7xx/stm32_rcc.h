@@ -490,6 +490,62 @@
 /** @} */
 
 /**
+ * @name    CRYP peripheral specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the CRYP peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableCRYP(lp) rccEnableAHB2(RCC_AHB2ENR_CRYPEN, lp)
+
+/**
+ * @brief   Disables the CRYP peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableCRYP() rccDisableAHB2(RCC_AHB2ENR_CRYPEN)
+
+/**
+ * @brief   Resets the CRYP peripheral.
+ *
+ * @api
+ */
+#define rccResetCRYP() rccResetAHB2(RCC_AHB2RSTR_CRYPRST)
+/** @} */
+
+/**
+ * @name    HASH peripheral specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the HASH peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableHASH(lp) rccEnableAHB2(RCC_AHB2ENR_HASHEN, lp)
+
+/**
+ * @brief   Disables the HASH peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableHASH() rccDisableAHB2(RCC_AHB2ENR_HASHEN)
+
+/**
+ * @brief   Resets the HASH peripheral.
+ *
+ * @api
+ */
+#define rccResetHASH() rccResetAHB2(RCC_AHB2RSTR_HASHRST)
+/** @} */
+
+/**
  * @name    DAC peripheral specific RCC operations
  * @{
  */
