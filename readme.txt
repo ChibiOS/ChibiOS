@@ -123,6 +123,8 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Fixed compile error of STM32 CRYPv1 driver when DMAMU is present
+       (bug #1134)(backported to 20.3.3).
 - FIX: Fixed moved define into hal_wspi_lld.c (bug #1133)
        (backported to 20.3.3).
 - FIX: Fixed various bugs in MDMAv1 driver (bug #1132)

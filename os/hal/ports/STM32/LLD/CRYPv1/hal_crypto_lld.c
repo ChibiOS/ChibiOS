@@ -416,8 +416,8 @@ void cry_lld_start(CRYDriver *cryp) {
       dmaStreamSetFIFO(cryp->cryp_dma_in,  STM32_DMA_FCR_DMDIS);
       dmaStreamSetFIFO(cryp->cryp_dma_out, STM32_DMA_FCR_DMDIS);
 #if STM32_DMA_SUPPORTS_DMAMUX
-      dmaSetRequestSource(cryp->dma_cryp_in, STM32_DMAMUX1_CRYP_IN);
-      dmaSetRequestSource(cryp->dma_cryp_out, STM32_DMAMUX1_CRYP_OUT);
+      dmaSetRequestSource(cryp->cryp_dma_in, STM32_DMAMUX1_CRYP_IN);
+      dmaSetRequestSource(cryp->cryp_dma_out, STM32_DMAMUX1_CRYP_OUT);
 #endif
 #endif /* STM32_CRY_CRYP_SIZE_THRESHOLD != 0 */
       rccEnableCRYP(true);
