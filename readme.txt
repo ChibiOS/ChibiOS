@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 20.3.3 ***
+- FIX: Fixed OTG_FS error on STM32H7 (bug #1135).
 - FIX: Fixed compile error of STM32 CRYPv1 driver when DMAMU is present
        (bug #1134).
 - FIX: Fixed moved define into hal_wspi_lld.c (bug #1133).
