@@ -54,6 +54,52 @@
 /* I2C attributes.*/
 #define STM32_I2C4_USE_BDMA                 TRUE
 
+/* RTC attributes.*/
+#define STM32_HAS_RTC                       TRUE
+#define STM32_RTC_HAS_SUBSECONDS            TRUE
+#define STM32_RTC_HAS_PERIODIC_WAKEUPS      TRUE
+#define STM32_RTC_NUM_ALARMS                2
+#define STM32_RTC_STORAGE_SIZE              128
+#define STM32_RTC_TAMP_STAMP_HANDLER        Vector48
+#define STM32_RTC_WKUP_HANDLER              Vector4C
+#define STM32_RTC_ALARM_HANDLER             VectorE4
+#define STM32_RTC_TAMP_STAMP_NUMBER         2
+#define STM32_RTC_WKUP_NUMBER               3
+#define STM32_RTC_ALARM_NUMBER              41
+#define STM32_RTC_ALARM_EXTI                17
+#define STM32_RTC_TAMP_STAMP_EXTI           18
+#define STM32_RTC_WKUP_EXTI                 19
+#define STM32_RTC_IRQ_ENABLE() do {                                         \
+  nvicEnableVector(STM32_RTC_ALARM_NUMBER, STM32_IRQ_EXTI17_PRIORITY);      \
+  nvicEnableVector(STM32_RTC_TAMP_STAMP_NUMBER, STM32_IRQ_EXTI18_PRIORITY); \
+  nvicEnableVector(STM32_RTC_WKUP_NUMBER, STM32_IRQ_EXTI19_PRIORITY);       \
+} while (false)
+
+/*===========================================================================*/
+/* STM32H730xx, STM32H750xx, STM32H7B0xx, STM32H733xx, STM32H735xx,          */
+/* STM32H753xx, STM32H7B3xx, STM32H755xx, STM32H757xx                        */
+/*===========================================================================*/
+
+#if defined(STM32H730xx) || defined(STM32H750xx) || \
+    defined(STM32H7B0xx) || defined(STM32H733xx) || \
+    defined(STM32H735xx) || defined(STM32H753xx) || \
+    defined(STM32H7B3xx) || defined(STM32H755xx) || \
+    defined(STM32H757xx) || \
+    defined(__DOXYGEN__)
+
+/* HASH attributes.*/
+#define STM32_HAS_HASH1                     TRUE
+
+/* CRYP attributes.*/
+#define STM32_HAS_CRYP1                     TRUE
+
+#else
+
+#define STM32_HAS_HASH1                     FALSE
+#define STM32_HAS_CRYP1                     FALSE
+
+#endif
+
 /*===========================================================================*/
 /* STM32H743xx, STM32H753xx, STM32H745xx, STM32H755xx, STM32H747xx,          */
 /* STM32H757xx.                                                              */
@@ -147,13 +193,6 @@
 /* QUADSPI attributes.*/
 #define STM32_HAS_QUADSPI1                  TRUE
 #define STM32_HAS_QUADSPI2                  FALSE
-
-/* RTC attributes.*/
-#define STM32_HAS_RTC                       TRUE
-#define STM32_RTC_HAS_SUBSECONDS            TRUE
-#define STM32_RTC_HAS_PERIODIC_WAKEUPS      TRUE
-#define STM32_RTC_NUM_ALARMS                2
-#define STM32_RTC_HAS_INTERRUPTS            FALSE
 
 /* SDMMC attributes.*/
 #define STM32_HAS_SDMMC1                    TRUE
@@ -375,13 +414,6 @@
 /* QUADSPI attributes.*/
 #define STM32_HAS_QUADSPI1                  TRUE
 #define STM32_HAS_QUADSPI2                  FALSE
-
-/* RTC attributes.*/
-#define STM32_HAS_RTC                       TRUE
-#define STM32_RTC_HAS_SUBSECONDS            TRUE
-#define STM32_RTC_HAS_PERIODIC_WAKEUPS      TRUE
-#define STM32_RTC_NUM_ALARMS                2
-#define STM32_RTC_HAS_INTERRUPTS            FALSE
 
 /* SDMMC attributes.*/
 #define STM32_HAS_SDMMC1                    TRUE
