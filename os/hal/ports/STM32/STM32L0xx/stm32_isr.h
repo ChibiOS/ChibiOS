@@ -130,12 +130,12 @@
  */
 #define STM32_USART1_HANDLER                VectorAC
 #define STM32_USART2_HANDLER                VectorB0
-#define STM32_UART4_5_HANDLER               Vector78
+#define STM32_USART4_5_HANDLER              Vector78
 #define STM32_LPUART1_HANDLER               VectorB4
 
 #define STM32_USART1_NUMBER                 27
 #define STM32_USART2_NUMBER                 28
-#define STM32_UART4_5_NUMBER                14
+#define STM32_USART4_5_NUMBER               14
 #define STM32_LPUART1_NUMBER                29
 
 /*
