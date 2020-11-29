@@ -33,8 +33,8 @@
 /*
  * Board identifier.
  */
-#define BOARD_ST_NUCLEO_WB55
-#define BOARD_NAME                  "STMicroelectronics STM32 Nucleo-WB55"
+#define BOARD_ST_NUCLEO_WB55RG
+#define BOARD_NAME                  "STMicroelectronics STM32 Nucleo-WB55RG"
 
 /*
  * Board oscillators-related settings.
