@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 20.3.3 ***
+- FIX: Fixed STM32H7xx Missing CRC RCC macros (bug #1137).
 - FIX: Fixed STM32L0x wrong ISR names for USART 4 and 5 (bug #1136).
 - FIX: Fixed OTG_FS error on STM32H7 (bug #1135).
 - FIX: Fixed compile error of STM32 CRYPv1 driver when DMAMU is present
