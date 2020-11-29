@@ -123,6 +123,8 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Fixed STM32H7xx Missing CRC RCC macros (bug #1137)
+       (backported to 20.3.3).
 - FIX: Fixed STM32L0x wrong ISR names for USART 4 and 5 (bug #1136)
        (backported to 20.3.3).
 - FIX: Fixed OTG_FS error on STM32H7 (bug #1135)
