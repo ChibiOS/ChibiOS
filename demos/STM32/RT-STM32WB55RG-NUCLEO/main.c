@@ -30,19 +30,19 @@ static THD_FUNCTION(Thread1, arg) {
 
   chRegSetThreadName("blinker");
 
-  palClearLine(LINE_LD1);
-  palClearLine(LINE_LD2);
-  palClearLine(LINE_LD3);
+  palClearLine(LINE_LED_BLUE);
+  palClearLine(LINE_LED_GREEN);
+  palClearLine(LINE_LED_RED);
 
   while (true) {
-    palToggleLine(LINE_LD1);
+    palToggleLine(LINE_LED_BLUE);
 
-    if (PAL_LOW == palReadLine(LINE_B2)) {
-      palToggleLine(LINE_LD2);
+    if (PAL_LOW == palReadLine(LINE_BUTTON_2)) {
+      palToggleLine(LINE_LED_GREEN);
     }
 
-    if (PAL_LOW == palReadLine(LINE_B3)) {
-      palToggleLine(LINE_LD3);
+    if (PAL_LOW == palReadLine(LINE_BUTTON_3)) {
+      palToggleLine(LINE_LED_RED);
     }
 
     chThdSleepMilliseconds(500);
@@ -80,7 +80,7 @@ int main(void) {
    * sleeping in a loop and check the SW1 button state.
    */
   while (true) {
-    if (PAL_LOW == palReadLine(LINE_B1)) {
+    if (PAL_LOW == palReadLine(LINE_BUTTON_1)) {
       test_execute((BaseSequentialStream *)&SD1, &rt_test_suite);
       test_execute((BaseSequentialStream *)&SD1, &oslib_test_suite);
     }

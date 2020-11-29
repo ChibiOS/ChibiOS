@@ -108,14 +108,17 @@
 
 #define GPIOB_PIN0                  0U
 #define GPIOB_LD2                   0U
+#define GPIOB_LED_GREEN             0U
 #define GPIOB_PIN1                  1U
 #define GPIOB_LD3                   1U
+#define GPIOB_LED_RED               1U
 #define GPIOB_PIN2                  2U
 #define GPIOB_PIN3                  3U
 #define GPIOB_JTDO_SWO              3U
 #define GPIOB_PIN4                  4U
 #define GPIOB_PIN5                  5U
 #define GPIOB_LD1                   5U
+#define GPIOB_LED_BLUE              5U
 #define GPIOB_PIN6                  6U
 #define GPIOB_USART1_TX             6U
 #define GPIOB_PIN7                  7U
@@ -142,6 +145,7 @@
 #define GPIOC_ARD_A4                3U
 #define GPIOC_PIN4                  4U
 #define GPIOC_B1                    4U
+#define GPIOC_BUTTON_1              4U
 #define GPIOC_PIN5                  5U
 #define GPIOC_PIN6                  6U
 #define GPIOC_ARD_D2                6U
@@ -161,8 +165,10 @@
 
 #define GPIOD_PIN0                  0U
 #define GPIOD_B2                    0U
+#define GPIOD_BUTTON_2              0U
 #define GPIOD_PIN1                  1U
 #define GPIOD_B3                    1U
+#define GPIOD_BUTTON_3              1U
 #define GPIOD_PIN2                  2U
 #define GPIOD_PIN3                  3U
 #define GPIOD_PIN4                  4U
@@ -255,18 +261,24 @@
 #define LINE_JTCK_SWCLK             PAL_LINE(GPIOA, GPIOA_PIN14)
 
 #define LINE_LD2                    PAL_LINE(GPIOB, GPIOB_PIN0)
+#define LINE_LED_GREEN              PAL_LINE(GPIOB, GPIOB_PIN0)
 #define LINE_LD3                    PAL_LINE(GPIOB, GPIOB_PIN1)
+#define LINE_LED_RED                PAL_LINE(GPIOB, GPIOB_PIN1)
 #define LINE_JTDO_SWO               PAL_LINE(GPIOB, GPIOB_PIN3)
 #define LINE_LD1                    PAL_LINE(GPIOB, GPIOB_PIN5)
+#define LINE_LED_BLUE               PAL_LINE(GPIOB, GPIOB_PIN5)
 #define LINE_STLINK_RX              PAL_LINE(GPIOB, GPIOB_PIN6)
 #define LINE_STLINK_TX              PAL_LINE(GPIOB, GPIOB_PIN7)
 
 #define LINE_B1                     PAL_LINE(GPIOC, GPIOC_PIN4)
+#define LINE_BUTTON_1               PAL_LINE(GPIOC, GPIOC_PIN4)
 #define LINE_OSC32_IN               PAL_LINE(GPIOC, GPIOC_PIN14)
 #define LINE_OSC32_OUT              PAL_LINE(GPIOC, GPIOC_PIN15)
 
 #define LINE_B2                     PAL_LINE(GPIOD, GPIOD_PIN0)
+#define LINE_BUTTON_2               PAL_LINE(GPIOD, GPIOD_PIN0)
 #define LINE_B3                     PAL_LINE(GPIOD, GPIOD_PIN1)
+#define LINE_BUTTON_3               PAL_LINE(GPIOD, GPIOD_PIN1)
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
