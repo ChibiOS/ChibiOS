@@ -27,11 +27,11 @@ MEMORY
     flash5 (rx) : org = 0x00000000, len = 0
     flash6 (rx) : org = 0x00000000, len = 0
     flash7 (rx) : org = 0x00000000, len = 0
-    ram0   (wx) : org = 0x20000000, len = 192k
-    ram1   (wx) : org = 0x00000000, len = 0
+    ram0   (wx) : org = 0x20000000, len = 192k /* SRAM1 */
+    ram1   (wx) : org = 0x20030000, len = 10k /* Shared part of SRAM2a */
     ram2   (wx) : org = 0x00000000, len = 0
     ram3   (wx) : org = 0x00000000, len = 0
-    ram4   (wx) : org = 0x10000000, len = 64k /* This memory also mapped at address 0x20030000 */
+    ram4   (wx) : org = 0x00000000, len = 0
     ram5   (wx) : org = 0x00000000, len = 0
     ram6   (wx) : org = 0x00000000, len = 0
     ram7   (wx) : org = 0x00000000, len = 0

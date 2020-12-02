@@ -505,21 +505,21 @@
  *
  * @api
  */
-#define rccEnableRNG(lp) rccEnableAHB2(RCC_AHB2ENR_RNGEN, lp)
+#define rccEnableRNG(lp) rccEnableAHB3(RCC_AHB3ENR_RNGEN, lp)
 
 /**
  * @brief   Disables the RNG peripheral clock.
  *
  * @api
  */
-#define rccDisableRNG() rccDisableAHB2(RCC_AHB2ENR_RNGEN)
+#define rccDisableRNG() rccDisableAHB3(RCC_AHB3ENR_RNGEN)
 
 /**
  * @brief   Resets the RNG peripheral.
  *
  * @api
  */
-#define rccResetRNG() rccResetAHB2(RCC_AHB2RSTR_RNGRST)
+#define rccResetRNG() rccResetAHB3(RCC_AHB3RSTR_RNGRST)
 /** @} */
 
 /**
