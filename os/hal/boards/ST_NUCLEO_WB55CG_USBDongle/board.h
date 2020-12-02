@@ -378,7 +378,7 @@
                                      PIN_ODR_HIGH(GPIOA_PIN1) |             \
                                      PIN_ODR_HIGH(GPIOA_PIN2) |             \
                                      PIN_ODR_HIGH(GPIOA_PIN3) |             \
-                                     PIN_ODR_HIGH(GPIOA_PIN4) |             \
+                                     PIN_ODR_LOW(GPIOA_PIN4) |              \
                                      PIN_ODR_HIGH(GPIOA_PIN5) |             \
                                      PIN_ODR_HIGH(GPIOA_PIN6) |             \
                                      PIN_ODR_HIGH(GPIOA_PIN7) |             \
@@ -496,7 +496,7 @@
                                      PIN_OSPEED_HIGH(GPIOB_PIN2) |          \
                                      PIN_OSPEED_LOW(GPIOB_PIN3) |           \
                                      PIN_OSPEED_HIGH(GPIOB_PIN4) |          \
-                                     PIN_OSPEED_LOW(GPIOB_PIN5) |           \
+                                     PIN_OSPEED_HIGH(GPIOB_PIN5) |          \
                                      PIN_OSPEED_HIGH(GPIOB_PIN6) |          \
                                      PIN_OSPEED_HIGH(GPIOB_PIN7) |          \
                                      PIN_OSPEED_HIGH(GPIOB_PIN8) |          \
@@ -528,7 +528,7 @@
                                      PIN_ODR_HIGH(GPIOB_PIN2) |             \
                                      PIN_ODR_HIGH(GPIOB_PIN3) |             \
                                      PIN_ODR_HIGH(GPIOB_PIN4) |             \
-                                     PIN_ODR_LOW(GPIOB_PIN5) |              \
+                                     PIN_ODR_HIGH(GPIOB_PIN5) |             \
                                      PIN_ODR_HIGH(GPIOB_PIN6) |             \
                                      PIN_ODR_HIGH(GPIOB_PIN7) |             \
                                      PIN_ODR_HIGH(GPIOB_PIN8) |             \

@@ -67,7 +67,7 @@
 #include "stm32_usart1.inc"
 #include "stm32_lpuart1.inc"
 
-#include "stm32_tim1_15_16_17.inc"
+#include "stm32_tim1_16_17.inc"
 #include "stm32_tim2.inc"
 
 /*===========================================================================*/
@@ -94,7 +94,7 @@ void irqInit(void) {
   exti19_irq_init();
   exti20_exti21_irq_init();
 
-  tim1_tim15_tim16_tim17_irq_init();
+  tim1_tim16_tim17_irq_init();
   tim2_irq_init();
 
   usart1_irq_init();
@@ -121,7 +121,7 @@ void irqDeinit(void) {
   exti19_irq_deinit();
   exti20_exti21_irq_deinit();
 
-  tim1_tim15_tim16_tim17_irq_deinit();
+  tim1_tim16_tim17_irq_deinit();
   tim2_irq_deinit();
 
   usart1_irq_deinit();

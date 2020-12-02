@@ -528,7 +528,11 @@ void adc_lld_init(void) {
 
   /* IRQs setup.*/
 #if STM32_ADC_USE_ADC1 || STM32_ADC_USE_ADC2
+#if defined(STM32_ADC_ADC1_IRQ_PRIORITY)
+  nvicEnableVector(STM32_ADC1_NUMBER, STM32_ADC_ADC1_IRQ_PRIORITY);
+#elif defined(STM32_ADC_ADC12_IRQ_PRIORITY)
   nvicEnableVector(STM32_ADC1_NUMBER, STM32_ADC_ADC12_IRQ_PRIORITY);
+#endif
 #endif
 #if STM32_ADC_USE_ADC3
   nvicEnableVector(STM32_ADC3_NUMBER, STM32_ADC_ADC3_IRQ_PRIORITY);
@@ -593,6 +597,15 @@ void adc_lld_init(void) {
   rccDisableADC345();
 #endif
 #endif
+
+#if defined(STM32WBXX)
+#if STM32_ADC_USE_ADC1
+  rccEnableADC1(true);
+  rccResetADC1();
+  ADC1_COMMON->CCR = STM32_ADC_ADC1_CLOCK_MODE | ADC_DMA_MDMA;
+  rccDisableADC1();
+#endif
+#endif
 }
 
 /**
@@ -626,6 +639,9 @@ void adc_lld_start(ADCDriver *adcp) {
 #if defined(STM32L4XX) || defined(STM32L4XXP)
       rccEnableADC123(true);
 #endif
+#if defined(STM32WBXX)
+      rccEnableADC1(true);
+#endif
 #if STM32_DMA_SUPPORTS_DMAMUX
       dmaSetRequestSource(adcp->dmastp, STM32_DMAMUX1_ADC1);
 #endif
@@ -641,6 +657,9 @@ void adc_lld_start(ADCDriver *adcp) {
       osalDbgAssert(adcp->dmastp != NULL, "unable to allocate stream");
 
       clkmask |= (1 << 1);
+#if defined(STM32WBXX)
+      rccEnableADC1(true);
+#endif
 #if defined(STM32F3XX) || defined(STM32G4XX)
       rccEnableADC12(true);
 #endif
@@ -662,6 +681,9 @@ void adc_lld_start(ADCDriver *adcp) {
       osalDbgAssert(adcp->dmastp != NULL, "unable to allocate stream");
 
       clkmask |= (1 << 2);
+#if defined(STM32WBXX)
+      rccEnableADC1(true);
+#endif
 #if defined(STM32F3XX)
       rccEnableADC34(true);
 #endif
@@ -686,6 +708,9 @@ void adc_lld_start(ADCDriver *adcp) {
       osalDbgAssert(adcp->dmastp != NULL, "unable to allocate stream");
 
       clkmask |= (1 << 3);
+#if defined(STM32WBXX)
+      rccEnableADC1(true);
+#endif
 #if defined(STM32F3XX)
       rccEnableADC34(true);
 #endif
@@ -790,6 +815,12 @@ void adc_lld_stop(ADCDriver *adcp) {
 #if defined(STM32L4XX) || defined(STM32L4XXP)
     if ((clkmask & 0x7) == 0) {
       rccDisableADC123();
+    }
+#endif
+
+#if defined(STM32WBXX)
+    if ((clkmask & 0x1) == 0) {
+      rccDisableADC1();
     }
 #endif
 

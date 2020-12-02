@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Ilya Kharin
+    ChibiOS - Copyright (C) 2006..2020 Ilya Kharin
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -97,7 +97,7 @@
 #define STM32_IRQ_EXTI19_PRIORITY           6
 #define STM32_IRQ_EXTI20_21_PRIORITY        6
 
-#define STM32_IRQ_TIM1_BRK_PRIORITY         7
+#define STM32_IRQ_TIM1_BRK_TIM15_PRIORITY   7
 #define STM32_IRQ_TIM1_UP_TIM16_PRIORITY    7
 #define STM32_IRQ_TIM1_TRGCO_TIM17_PRIORITY 7
 #define STM32_IRQ_TIM1_CC_PRIORITY          7
@@ -172,8 +172,8 @@
 /*
  * SERIAL driver system settings.
  */
-#define STM32_SERIAL_USE_USART1             TRUE
-#define STM32_SERIAL_USE_LPUART1            FALSE
+#define STM32_SERIAL_USE_USART1             FALSE
+#define STM32_SERIAL_USE_LPUART1            TRUE
 #define STM32_SERIAL_USART1_PRIORITY        12
 #define STM32_SERIAL_LPUART1_PRIORITY       12
 
