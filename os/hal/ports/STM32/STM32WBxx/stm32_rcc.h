@@ -731,21 +731,21 @@
  *
  * @api
  */
-#define rccEnableUSB(lp) rccEnableAPB1R1(RCC_APB1ENR1_USBFSEN, lp)
+#define rccEnableUSB(lp) rccEnableAPB1R1(RCC_APB1ENR1_USBEN, lp)
 
 /**
  * @brief   Disables the USB peripheral clock.
  *
  * @api
  */
-#define rccDisableUSB() rccDisableAPB1R1(RCC_APB1ENR1_USBFSEN)
+#define rccDisableUSB() rccDisableAPB1R1(RCC_APB1ENR1_USBEN)
 
 /**
  * @brief   Resets the USB peripheral.
  *
  * @api
  */
-#define rccResetUSB() rccResetAPB1R1(RCC_APB1RSTR1_USBFSRST)
+#define rccResetUSB() rccResetAPB1R1(RCC_APB1RSTR1_USBRST)
 /** @} */
 
 /**
