@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2020 Ilya Kharin
+    ChibiOS - Copyright (C) 2006..2020 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@
 
 /**
  * @brief   System time counter resolution.
- * @note    Allowed values are 16 or 32 bits.
+ * @note    Allowed values are 16, 32 or 64 bits.
  */
 #if !defined(CH_CFG_ST_RESOLUTION)
 #define CH_CFG_ST_RESOLUTION                32
@@ -161,16 +161,6 @@
 #endif
 
 /**
- * @brief   Threads registry APIs.
- * @details If enabled then the registry APIs are included in the kernel.
- *
- * @note    The default is @p TRUE.
- */
-#if !defined(CH_CFG_USE_REGISTRY)
-#define CH_CFG_USE_REGISTRY                 TRUE
-#endif
-
-/**
  * @brief   Time Stamps APIs.
  * @details If enabled then the time time stamps APIs are included in
  *          the kernel.
@@ -179,6 +169,16 @@
  */
 #if !defined(CH_CFG_USE_TIMESTAMP)
 #define CH_CFG_USE_TIMESTAMP                TRUE
+#endif
+
+/**
+ * @brief   Threads registry APIs.
+ * @details If enabled then the registry APIs are included in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#if !defined(CH_CFG_USE_REGISTRY)
+#define CH_CFG_USE_REGISTRY                 TRUE
 #endif
 
 /**
@@ -638,11 +638,11 @@
 /*===========================================================================*/
 
 /**
- * @brief   System structure extension.
+ * @brief   OS instance structure extension.
  * @details User fields added to the end of the @p ch_system_t structure.
  */
 #define CH_CFG_OS_INSTANCE_EXTRA_FIELDS                                     \
-  /* Add threads custom fields here.*/
+  /* Add OS instance custom fields here.*/
 
 /**
  * @brief   OS instance initialization hook.
