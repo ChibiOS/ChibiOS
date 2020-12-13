@@ -334,8 +334,10 @@
 #if defined(STM32F1XX)
 #define ST_ENABLE_STOP()                    DBGMCU->CR |= DBGMCU_CR_DBG_TIM16_STOP
 #elif defined(STM32L4XX) || defined(STM32L4XXP) || defined(STM32G4XX) ||    \
-      defined(STM32L5XX) || defined(STM32WBXX)
+      defined(STM32L5XX)
 #define ST_ENABLE_STOP()                    DBGMCU->APB2FZ |= DBGMCU_APB2FZ_DBG_TIM16_STOP
+#elif defined(STM32WBXX)
+#define ST_ENABLE_STOP()                    DBGMCU->APB2FZR |= DBGMCU_APB2FZR_DBG_TIM16_STOP
 #elif defined(STM32H7XX)
 #define ST_ENABLE_STOP()                    DBGMCU->APB2FZ1 |= DBGMCU_APB2FZ1_DBG_TIM16
 #else
@@ -359,8 +361,10 @@
 #if defined(STM32F1XX)
 #define ST_ENABLE_STOP()                    DBGMCU->CR |= DBGMCU_CR_DBG_TIM17_STOP
 #elif defined(STM32L4XX) || defined(STM32L4XXP) || defined(STM32G4XX) ||    \
-      defined(STM32L5XX) || defined(STM32WBXX)
+      defined(STM32L5XX)
 #define ST_ENABLE_STOP()                    DBGMCU->APB2FZ |= DBGMCU_APB2FZ_DBG_TIM17_STOP
+#elif defined(STM32WBXX)
+#define ST_ENABLE_STOP()                    DBGMCU->APB2FZR |= DBGMCU_APB2FZR_DBG_TIM17_STOP
 #elif defined(STM32H7XX)
 #define ST_ENABLE_STOP()                    DBGMCU->APB2FZ1 |= DBGMCU_APB2FZ1_DBG_TIM17
 #else
