@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2019 Ilya Kharin
+    ChibiOS - Copyright (C) 2006..2020 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -235,7 +235,9 @@
 #define GPIOG_PIN14                 14U
 #define GPIOG_PIN15                 15U
 
+#define GPIOH_PIN0                  0U
 #define GPIOH_OSC_IN                0U
+#define GPIOH_PIN1                  1U
 #define GPIOH_OSC_OUT               1U
 #define GPIOH_PIN2                  2U
 #define GPIOH_PIN3                  3U
@@ -279,6 +281,9 @@
 #define LINE_BUTTON_2               PAL_LINE(GPIOD, GPIOD_PIN0)
 #define LINE_B3                     PAL_LINE(GPIOD, GPIOD_PIN1)
 #define LINE_BUTTON_3               PAL_LINE(GPIOD, GPIOD_PIN1)
+
+#define LINE_OSC_IN                 PAL_LINE(GPIOH, GPIOH_PIN0)
+#define LINE_OSC_OUT                PAL_LINE(GPIOH, GPIOH_PIN1)
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */

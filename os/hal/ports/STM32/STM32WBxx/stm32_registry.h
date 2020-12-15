@@ -105,9 +105,9 @@
 #define STM32_HAS_ETH                       FALSE
 
 /* EXTI attributes.*/
-#define STM32_EXTI_NUM_LINES                40
+#define STM32_EXTI_NUM_LINES                49
 #define STM32_EXTI_IMR1_MASK                0x7FC00000U
-#define STM32_EXTI_IMR2_MASK                0xFFFFFF87U
+#define STM32_EXTI_IMR2_MASK                0xFFFFFCFDU
 
 /* Flash attributes.*/
 #define STM32_FLASH_NUMBER_OF_BANKS         1
@@ -118,22 +118,26 @@
 #define STM32_HAS_GPIOB                     TRUE
 #define STM32_HAS_GPIOC                     TRUE
 #define STM32_HAS_GPIOD                     TRUE
-#define STM32_HAS_GPIOE                     FALSE
+#define STM32_HAS_GPIOE                     TRUE
 #define STM32_HAS_GPIOF                     FALSE
 #define STM32_HAS_GPIOG                     FALSE
-#define STM32_HAS_GPIOH                     FALSE
+#define STM32_HAS_GPIOH                     TRUE
 #define STM32_HAS_GPIOI                     FALSE
 #define STM32_HAS_GPIOJ                     FALSE
 #define STM32_HAS_GPIOK                     FALSE
 #define STM32_GPIO_EN_MASK                  (RCC_AHB2ENR_GPIOAEN |          \
                                              RCC_AHB2ENR_GPIOBEN |          \
                                              RCC_AHB2ENR_GPIOCEN |          \
-                                             RCC_AHB2ENR_GPIODEN)
+                                             RCC_AHB2ENR_GPIODEN |          \
+                                             RCC_AHB2ENR_GPIOEEN |          \
+                                             RCC_AHB2ENR_GPIOHEN)
 
 /* I2C attributes.*/
 #define STM32_HAS_I2C1                      TRUE
 #define STM32_HAS_I2C3                      TRUE
-#define STM32_I2C_USE_I2C2                  FALSE
+
+#define STM32_HAS_I2C2                      FALSE
+#define STM32_HAS_I2C4                      FALSE
 
 /* QUADSPI attributes.*/
 #define STM32_HAS_QUADSPI1                  TRUE
@@ -227,7 +231,7 @@
 /* CRC attributes.*/
 #define STM32_HAS_CRC                       TRUE
 #define STM32_CRC_PROGRAMMABLE              TRUE
-#endif /* defined(STM32WB50xx) */
+#endif /* defined(STM32WB55xx) */
 
 /*===========================================================================*/
 /* STM32WB50xx.                                                              */
@@ -236,6 +240,22 @@
 #if defined(STM32WB50xx) || defined(__DOXYGEN__)
 #error "STM32WB50xx is not supported"
 #endif /* defined(STM32WB50xx) */
+
+/*===========================================================================*/
+/* STM32WB35xx.                                                              */
+/*===========================================================================*/
+
+#if defined(STM32WB35xx) || defined(__DOXYGEN__)
+#error "STM32WB35xx is not supported"
+#endif /* defined(STM32WB35xx) */
+
+/*===========================================================================*/
+/* STM32WB30xx.                                                              */
+/*===========================================================================*/
+
+#if defined(STM32WB30xx) || defined(__DOXYGEN__)
+#error "STM32WB30xx is not supported"
+#endif /* defined(STM32WB30xx) */
 
 /** @} */
 
