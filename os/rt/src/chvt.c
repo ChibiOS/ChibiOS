@@ -278,16 +278,16 @@ void chVTDoResetI(virtual_timer_t *vtp) {
 #if CH_CFG_ST_TIMEDELTA == 0
 
   /* The delta of the timer is added to the next timer.*/
-  vtp->next->delta += vtp->delta;
+  vtp->dlist.next->delta += vtp->dlist.delta;
 
  /* Removing the element from the delta list.*/
-  vtp->prev->next = vtp->next;
-  vtp->next->prev = vtp->prev;
+  vtp->dlist.prev->next = vtp->dlist.next;
+  vtp->dlist.next->prev = vtp->dlist.prev;
   vtp->func = NULL;
 
   /* The above code changes the value in the header when the removed element
      is the last of the list, restoring it.*/
-  vtlp->delta = (sysinterval_t)-1;
+  vtlp->dlist.delta = (sysinterval_t)-1;
 #else /* CH_CFG_ST_TIMEDELTA > 0 */
   sysinterval_t nowdelta, delta;
 
@@ -373,18 +373,18 @@ void chVTDoTickI(void) {
 
 #if CH_CFG_ST_TIMEDELTA == 0
   vtlp->systime++;
-  if (!is_vtlist_empty(vtlp)) {
+  if (!is_vtlist_empty(&vtlp->dlist)) {
     /* The list is not empty, processing elements on top.*/
-    --vtlp->next->delta;
-    while (vtlp->next->delta == (sysinterval_t)0) {
+    --vtlp->dlist.next->delta;
+    while (vtlp->dlist.next->delta == (sysinterval_t)0) {
       virtual_timer_t *vtp;
       vtfunc_t fn;
 
-      vtp = vtlp->next;
+      vtp = vtlp->dlist.next;
       fn = vtp->func;
       vtp->func = NULL;
-      vtp->next->prev = (virtual_timer_t *)vtlp;
-      vtlp->next = vtp->next;
+      vtp->dlist.next->prev = (virtual_timer_t *)vtlp;
+      vtlp->dlist.next = vtp->dlist.next;
       chSysUnlockFromISR();
       fn(vtp->par);
       chSysLockFromISR();

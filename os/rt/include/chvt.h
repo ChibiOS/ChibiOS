@@ -222,7 +222,7 @@ static inline bool chVTGetTimersStateI(sysinterval_t *timep) {
 
   if (timep != NULL) {
 #if CH_CFG_ST_TIMEDELTA == 0
-    *timep = vtlp->next->delta;
+    *timep = dlp->next->delta;
 #else
     *timep = (dlp->next->delta + (sysinterval_t)CH_CFG_ST_TIMEDELTA) -
              chTimeDiffX(vtlp->lasttime, chVTGetSystemTimeX());
