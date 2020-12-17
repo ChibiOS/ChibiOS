@@ -95,7 +95,7 @@ typedef struct {
  *
  * @param[in] name      the name of the threads queue variable
  */
-#define _THREADS_QUEUE_DATA(name) {(thread_t *)&name, (thread_t *)&name}
+#define __THREADS_QUEUE_DATA(name) {__CH_QUEUE_DATA(name)}
 
 /**
  * @brief   Static threads queue object initializer.
@@ -104,8 +104,8 @@ typedef struct {
  *
  * @param[in] name      the name of the threads queue variable
  */
-#define _THREADS_QUEUE_DECL(name)                                           \
-  threads_queue_t name = _THREADS_QUEUE_DATA(name)
+#define THREADS_QUEUE_DECL(name)                                            \
+  threads_queue_t name = __THREADS_QUEUE_DATA(name)
 /** @} */
 
 /**
@@ -394,7 +394,7 @@ static inline void chThdSleepS(sysinterval_t ticks) {
  */
 static inline void chThdQueueObjectInit(threads_queue_t *tqp) {
 
-  queue_init(tqp);
+  ch_queue_init(&tqp->queue);
 }
 
 /**
@@ -411,7 +411,7 @@ static inline bool chThdQueueIsEmptyI(threads_queue_t *tqp) {
 
   chDbgCheckClassI();
 
-  return queue_isempty(tqp);
+  return ch_queue_isempty(&tqp->queue);
 }
 
 /**
@@ -428,9 +428,9 @@ static inline bool chThdQueueIsEmptyI(threads_queue_t *tqp) {
 static inline void chThdDoDequeueNextI(threads_queue_t *tqp, msg_t msg) {
   thread_t *tp;
 
-  chDbgAssert(queue_notempty(tqp), "empty queue");
+  chDbgAssert(ch_queue_notempty(&tqp->queue), "empty queue");
 
-  tp = queue_fifo_remove(tqp);
+  tp = (thread_t *)ch_queue_fifo_remove(&tqp->queue);
 
   chDbgAssert(tp->state == CH_STATE_QUEUED, "invalid state");
 

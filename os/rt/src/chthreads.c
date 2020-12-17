@@ -118,10 +118,10 @@ thread_t *__thd_object_init(os_instance_t *oip,
   (void)name;
 #endif
 #if CH_CFG_USE_WAITEXIT == TRUE
-  list_init(&tp->waiting);
+  ch_list_init(&tp->waiting);
 #endif
 #if CH_CFG_USE_MESSAGES == TRUE
-  queue_init(&tp->msgqueue);
+  ch_queue_init(&tp->msgqueue);
 #endif
 #if CH_DBG_STATISTICS == TRUE
   chTMObjectInit(&tp->stats);
@@ -515,8 +515,8 @@ void chThdExitS(msg_t msg) {
 
 #if CH_CFG_USE_WAITEXIT == TRUE
   /* Waking up any waiting thread.*/
-  while (list_notempty(&currtp->waiting)) {
-    (void) chSchReadyI(list_remove(&currtp->waiting));
+  while (ch_list_notempty(&currtp->waiting)) {
+    (void) chSchReadyI((thread_t *)ch_list_pop(&currtp->waiting));
   }
 #endif
 
@@ -575,7 +575,7 @@ msg_t chThdWait(thread_t *tp) {
 #endif
 
   if (tp->state != CH_STATE_FINAL) {
-    list_insert(currtp, &tp->waiting);
+    ch_list_push(&currtp->hdr.list, &tp->waiting);
     chSchGoSleepS(CH_STATE_WTEXIT);
   }
   msg = tp->u.exitcode;
@@ -876,7 +876,7 @@ msg_t chThdEnqueueTimeoutS(threads_queue_t *tqp, sysinterval_t timeout) {
     return MSG_TIMEOUT;
   }
 
-  queue_insert(currtp, tqp);
+  ch_queue_insert((ch_queue_t *)currtp, &tqp->queue);
 
   return chSchGoSleepTimeoutS(CH_STATE_QUEUED, timeout);
 }
@@ -892,7 +892,7 @@ msg_t chThdEnqueueTimeoutS(threads_queue_t *tqp, sysinterval_t timeout) {
  */
 void chThdDequeueNextI(threads_queue_t *tqp, msg_t msg) {
 
-  if (queue_notempty(tqp)) {
+  if (ch_queue_notempty(&tqp->queue)) {
     chThdDoDequeueNextI(tqp, msg);
   }
 }
@@ -907,7 +907,7 @@ void chThdDequeueNextI(threads_queue_t *tqp, msg_t msg) {
  */
 void chThdDequeueAllI(threads_queue_t *tqp, msg_t msg) {
 
-  while (queue_notempty(tqp)) {
+  while (ch_queue_notempty(&tqp->queue)) {
     chThdDoDequeueNextI(tqp, msg);
   }
 }

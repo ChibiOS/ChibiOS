@@ -212,10 +212,11 @@ static inline bool chVTIsSystemTimeWithin(systime_t start, systime_t end) {
  */
 static inline bool chVTGetTimersStateI(sysinterval_t *timep) {
   virtual_timers_list_t *vtlp = &currcore->vtlist;
+  delta_list_t *dlp = &vtlp->dlist;
 
   chDbgCheckClassI();
 
-  if (vtlp == (virtual_timers_list_t *)vtlp->next) {
+  if (dlp == dlp->next) {
     return false;
   }
 
@@ -223,7 +224,7 @@ static inline bool chVTGetTimersStateI(sysinterval_t *timep) {
 #if CH_CFG_ST_TIMEDELTA == 0
     *timep = vtlp->next->delta;
 #else
-    *timep = (vtlp->next->delta + (sysinterval_t)CH_CFG_ST_TIMEDELTA) -
+    *timep = (dlp->next->delta + (sysinterval_t)CH_CFG_ST_TIMEDELTA) -
              chTimeDiffX(vtlp->lasttime, chVTGetSystemTimeX());
 #endif
   }
@@ -416,9 +417,9 @@ static inline void chVTResetTimeStamp(void) {
  */
 static inline void __vt_object_init(virtual_timers_list_t *vtlp) {
 
-  vtlp->next  = (virtual_timer_t *)vtlp;
-  vtlp->prev  = (virtual_timer_t *)vtlp;
-  vtlp->delta = (sysinterval_t)-1;
+  vtlp->dlist.next  = &vtlp->dlist;
+  vtlp->dlist.prev  = &vtlp->dlist;
+  vtlp->dlist.delta = (sysinterval_t)-1;
 #if CH_CFG_ST_TIMEDELTA == 0
   vtlp->systime = (systime_t)0;
 #else /* CH_CFG_ST_TIMEDELTA > 0 */

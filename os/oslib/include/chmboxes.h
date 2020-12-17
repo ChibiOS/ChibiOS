@@ -82,8 +82,8 @@ typedef struct {
   (msg_t *)(buffer),                                                        \
   (size_t)0,                                                                \
   false,                                                                    \
-  _THREADS_QUEUE_DATA(name.qw),                                             \
-  _THREADS_QUEUE_DATA(name.qr),                                             \
+  __THREADS_QUEUE_DATA(name.qw),                                            \
+  __THREADS_QUEUE_DATA(name.qr),                                            \
 }
 
 /**

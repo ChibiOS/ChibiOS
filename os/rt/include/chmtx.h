@@ -55,7 +55,7 @@ typedef struct ch_mutex mutex_t;
  * @brief   Mutex structure.
  */
 struct ch_mutex {
-  threads_queue_t       queue;      /**< @brief Queue of the threads sleeping
+  ch_queue_t            queue;      /**< @brief Queue of the threads sleeping
                                                 on this mutex.              */
   thread_t              *owner;     /**< @brief Owner @p thread_t pointer or
                                                 @p NULL.                    */
@@ -78,9 +78,9 @@ struct ch_mutex {
  * @param[in] name      the name of the mutex variable
  */
 #if (CH_CFG_USE_MUTEXES_RECURSIVE == TRUE) || defined(__DOXYGEN__)
-#define _MUTEX_DATA(name) {_THREADS_QUEUE_DATA(name.queue), NULL, NULL, 0}
+#define __MUTEX_DATA(name) {__CH_QUEUE_DATA(name.queue), NULL, NULL, 0}
 #else
-#define _MUTEX_DATA(name) {_THREADS_QUEUE_DATA(name.queue), NULL, NULL}
+#define __MUTEX_DATA(name) {__CH_QUEUE_DATA(name.queue), NULL, NULL}
 #endif
 
 /**
@@ -90,7 +90,7 @@ struct ch_mutex {
  *
  * @param[in] name      the name of the mutex variable
  */
-#define MUTEX_DECL(name) mutex_t name = _MUTEX_DATA(name)
+#define MUTEX_DECL(name) mutex_t name = __MUTEX_DATA(name)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -129,7 +129,7 @@ static inline bool chMtxQueueNotEmptyS(mutex_t *mp) {
 
   chDbgCheckClassS();
 
-  return queue_notempty(&mp->queue);
+  return ch_queue_notempty(&mp->queue);
 }
 
 /**

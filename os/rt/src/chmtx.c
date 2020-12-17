@@ -104,7 +104,7 @@ void chMtxObjectInit(mutex_t *mp) {
 
   chDbgCheck(mp != NULL);
 
-  queue_init(&mp->queue);
+  ch_queue_init(&mp->queue);
   mp->owner = NULL;
 #if CH_CFG_USE_MUTEXES_RECURSIVE == TRUE
   mp->cnt = (cnt_t)0;
@@ -170,7 +170,8 @@ void chMtxLockS(mutex_t *mp) {
         switch (tp->state) {
         case CH_STATE_WTMTX:
           /* Re-enqueues the mutex owner with its new priority.*/
-          queue_prio_insert(queue_dequeue(tp), &tp->u.wtmtxp->queue);
+          queue_prio_insert((thread_t *)ch_queue_dequeue(&tp->hdr.queue),
+                            &tp->u.wtmtxp->queue);
           tp = tp->u.wtmtxp->owner;
           /*lint -e{9042} [16.1] Continues the while.*/
           continue;
@@ -190,7 +191,8 @@ void chMtxLockS(mutex_t *mp) {
         case CH_STATE_SNDMSGQ:
 #endif
           /* Re-enqueues tp with its new priority on the queue.*/
-          queue_prio_insert(queue_dequeue(tp), &tp->u.wtmtxp->queue);
+          queue_prio_insert((thread_t *)ch_queue_dequeue(&tp->hdr.queue),
+                            &tp->u.wtmtxp->queue);
           break;
 #endif
         case CH_STATE_READY:
@@ -199,7 +201,7 @@ void chMtxLockS(mutex_t *mp) {
           tp->state = CH_STATE_CURRENT;
 #endif
           /* Re-enqueues tp with its new priority on the ready list.*/
-          (void) chSchReadyI(queue_dequeue(tp));
+          (void) chSchReadyI((thread_t *)ch_queue_dequeue(&tp->hdr.queue));
           break;
         default:
           /* Nothing to do for other states.*/
@@ -357,8 +359,8 @@ void chMtxUnlock(mutex_t *mp) {
            greater priority than the current thread base priority then the
            final priority will have at least that priority.*/
         if (chMtxQueueNotEmptyS(lmp) &&
-            (lmp->queue.next->prio > newprio)) {
-          newprio = lmp->queue.next->prio;
+            (((thread_t *)lmp->queue.next)->prio > newprio)) {
+          newprio = ((thread_t *)lmp->queue.next)->prio;
         }
         lmp = lmp->next;
       }
@@ -372,7 +374,7 @@ void chMtxUnlock(mutex_t *mp) {
 #if CH_CFG_USE_MUTEXES_RECURSIVE == TRUE
       mp->cnt = (cnt_t)1;
 #endif
-      tp = queue_fifo_remove(&mp->queue);
+      tp = (thread_t *)ch_queue_fifo_remove(&mp->queue);
       mp->owner = tp;
       mp->next = tp->mtxlist;
       tp->mtxlist = mp;
@@ -443,8 +445,8 @@ void chMtxUnlockS(mutex_t *mp) {
            greater priority than the current thread base priority then the
            final priority will have at least that priority.*/
         if (chMtxQueueNotEmptyS(lmp) &&
-            (lmp->queue.next->prio > newprio)) {
-          newprio = lmp->queue.next->prio;
+            (((thread_t *)lmp->queue.next)->prio > newprio)) {
+          newprio = ((thread_t *)lmp->queue.next)->prio;
         }
         lmp = lmp->next;
       }
@@ -458,7 +460,7 @@ void chMtxUnlockS(mutex_t *mp) {
 #if CH_CFG_USE_MUTEXES_RECURSIVE == TRUE
       mp->cnt = (cnt_t)1;
 #endif
-      tp = queue_fifo_remove(&mp->queue);
+      tp = (thread_t *)ch_queue_fifo_remove(&mp->queue);
       mp->owner = tp;
       mp->next = tp->mtxlist;
       tp->mtxlist = mp;
@@ -497,7 +499,7 @@ void chMtxUnlockAllS(void) {
 #if CH_CFG_USE_MUTEXES_RECURSIVE == TRUE
         mp->cnt = (cnt_t)1;
 #endif
-        tp = queue_fifo_remove(&mp->queue);
+        tp = (thread_t *)ch_queue_fifo_remove(&mp->queue);
         mp->owner   = tp;
         mp->next    = tp->mtxlist;
         tp->mtxlist = mp;

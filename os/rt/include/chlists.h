@@ -72,16 +72,12 @@ struct ch_queue {
 };
 
 /**
- * @extends ch_queue_t
- *
  * @brief   Type of a generic priority-ordered bidirectional linked list
  *          header and element.
  */
 typedef struct ch_priority_queue ch_priority_queue_t;
 
 /**
- * @extends ch_queue_t
- *
  * @brief   Structure representing a generic priority-ordered bidirectional
  *          linked list header and element.
  * @note    Link fields are void pointers in order to avoid aliasing issues.

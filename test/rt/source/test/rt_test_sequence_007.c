@@ -246,7 +246,7 @@ static void rt_test_007_003_execute(void) {
   {
     msg = chSemWaitTimeout(&sem1, TIME_IMMEDIATE);
     test_assert(msg == MSG_TIMEOUT, "wrong wake-up message");
-    test_assert(queue_isempty(&sem1.queue), "queue not empty");
+    test_assert(ch_queue_isempty(&sem1.queue), "queue not empty");
     test_assert(sem1.cnt == 0, "counter not zero");
   }
   test_end_step(1);
@@ -259,7 +259,7 @@ static void rt_test_007_003_execute(void) {
     msg = chSemWaitTimeout(&sem1, TIME_MS2I(500));
     test_wait_threads();
     test_assert(msg == MSG_OK, "wrong wake-up message");
-    test_assert(queue_isempty(&sem1.queue), "queue not empty");
+    test_assert(ch_queue_isempty(&sem1.queue), "queue not empty");
     test_assert(sem1.cnt == 0, "counter not zero");
   }
   test_end_step(2);
@@ -272,7 +272,7 @@ static void rt_test_007_003_execute(void) {
       test_emit_token('A' + i);
       msg = chSemWaitTimeout(&sem1, TIME_MS2I(50));
       test_assert(msg == MSG_TIMEOUT, "wrong wake-up message");
-      test_assert(queue_isempty(&sem1.queue), "queue not empty");
+      test_assert(ch_queue_isempty(&sem1.queue), "queue not empty");
       test_assert(sem1.cnt == 0, "counter not zero");
     }
     test_assert_sequence("ABCDE", "invalid sequence");
@@ -386,7 +386,7 @@ static void rt_test_007_005_execute(void) {
   test_set_step(2);
   {
     chSemSignalWait(&sem1, &sem1);
-    test_assert(queue_isempty(&sem1.queue), "queue not empty");
+    test_assert(ch_queue_isempty(&sem1.queue), "queue not empty");
     test_assert(sem1.cnt == 0, "counter not zero");
   }
   test_end_step(2);
@@ -397,7 +397,7 @@ static void rt_test_007_005_execute(void) {
   test_set_step(3);
   {
     chSemSignalWait(&sem1, &sem1);
-    test_assert(queue_isempty(&sem1.queue), "queue not empty");
+    test_assert(ch_queue_isempty(&sem1.queue), "queue not empty");
     test_assert(sem1.cnt == 0, "counter not zero");
   }
   test_end_step(3);

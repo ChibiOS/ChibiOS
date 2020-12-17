@@ -127,7 +127,7 @@
  *
  * @notapi
  */
-#define firstprio(rlp)                  ((rlp)->next->prio)
+#define firstprio(rlp)                  (((thread_t *)(rlp)->next)->prio)
 
 /**
  * @brief   Current thread pointer get macro.
@@ -180,144 +180,19 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-/**
- * @brief   Threads list initialization.
- *
- * @param[in] tlp       pointer to the threads list object
- *
- * @notapi
- */
-static inline void list_init(threads_list_t *tlp) {
-
-  tlp->next = (thread_t *)tlp;
-}
-
-/**
- * @brief   Evaluates to @p true if the specified threads list is empty.
- *
- * @param[in] tlp       pointer to the threads list object
- * @return              The status of the list.
- *
- * @notapi
- */
-static inline bool list_isempty(threads_list_t *tlp) {
-
-  return (bool)(tlp->next == (thread_t *)tlp);
-}
-
-/**
- * @brief   Evaluates to @p true if the specified threads list is not empty.
- *
- * @param[in] tlp       pointer to the threads list object
- * @return              The status of the list.
- *
- * @notapi
- */
-static inline bool list_notempty(threads_list_t *tlp) {
-
-  return (bool)(tlp->next != (thread_t *)tlp);
-}
-
-/**
- * @brief   Threads queue initialization.
- *
- * @param[in] tqp       pointer to the threads queue object
- *
- * @notapi
- */
-static inline void queue_init(threads_queue_t *tqp) {
-
-  tqp->next = (thread_t *)tqp;
-  tqp->prev = (thread_t *)tqp;
-}
-
-/**
- * @brief   Evaluates to @p true if the specified threads queue is empty.
- *
- * @param[in] tqp       pointer to the threads queue object
- * @return              The status of the queue.
- *
- * @notapi
- */
-static inline bool queue_isempty(const threads_queue_t *tqp) {
-
-  return (bool)(tqp->next == (const thread_t *)tqp);
-}
-
-/**
- * @brief   Evaluates to @p true if the specified threads queue is not empty.
- *
- * @param[in] tqp       pointer to the threads queue object
- * @return              The status of the queue.
- *
- * @notapi
- */
-static inline bool queue_notempty(const threads_queue_t *tqp) {
-
-  return (bool)(tqp->next != (const thread_t *)tqp);
-}
-
 /* If the performance code path has been chosen then all the following
    functions are inlined into the various kernel modules.*/
 #if CH_CFG_OPTIMIZE_SPEED == TRUE
-static inline void list_insert(thread_t *tp, threads_list_t *tlp) {
-
-  tp->queue.next = tlp->next;
-  tlp->next = tp;
-}
-
-static inline thread_t *list_remove(threads_list_t *tlp) {
-
-  thread_t *tp = tlp->next;
-  tlp->next = tp->queue.next;
-
-  return tp;
-}
-
-static inline void queue_prio_insert(thread_t *tp, threads_queue_t *tqp) {
+static inline void queue_prio_insert(thread_t *tp, ch_queue_t *tqp) {
 
   thread_t *cp = (thread_t *)tqp;
   do {
-    cp = cp->queue.next;
+    cp = (thread_t *)cp->hdr.queue.next;
   } while ((cp != (thread_t *)tqp) && (cp->prio >= tp->prio));
-  tp->queue.next             = cp;
-  tp->queue.prev             = cp->queue.prev;
-  tp->queue.prev->queue.next = tp;
-  cp->queue.prev             = tp;
-}
-
-static inline void queue_insert(thread_t *tp, threads_queue_t *tqp) {
-
-  tp->queue.next             = (thread_t *)tqp;
-  tp->queue.prev             = tqp->prev;
-  tp->queue.prev->queue.next = tp;
-  tqp->prev                  = tp;
-}
-
-static inline thread_t *queue_fifo_remove(threads_queue_t *tqp) {
-  thread_t *tp = tqp->next;
-
-  tqp->next             = tp->queue.next;
-  tqp->next->queue.prev = (thread_t *)tqp;
-
-  return tp;
-}
-
-static inline thread_t *queue_lifo_remove(threads_queue_t *tqp) {
-  thread_t *tp = tqp->prev;
-
-  tqp->prev             = tp->queue.prev;
-  tqp->prev->queue.next = (thread_t *)tqp;
-
-  return tp;
-}
-
-static inline thread_t *queue_dequeue(thread_t *tp) {
-
-  tp->queue.prev->queue.next = tp->queue.next;
-  tp->queue.next->queue.prev = tp->queue.prev;
-
-  return tp;
+  tp->hdr.queue.next                 = (ch_queue_t *)cp;
+  tp->hdr.queue.prev                 = cp->hdr.queue.prev;
+  tp->hdr.queue.prev->next           = (ch_queue_t *)tp;
+  cp->hdr.queue.prev                 = (ch_queue_t *)tp;
 }
 #endif /* CH_CFG_OPTIMIZE_SPEED == TRUE */
 

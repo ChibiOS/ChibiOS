@@ -85,7 +85,7 @@ typedef struct {
  * @param[in] size      number of @p uint8_t elements in the buffer array
  */
 #if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
-#define _PIPE_DATA(name, buffer, size) {                                    \
+#define __PIPE_DATA(name, buffer, size) {                                   \
   (uint8_t *)(buffer),                                                      \
   (uint8_t *)(buffer) + size,                                               \
   (uint8_t *)(buffer),                                                      \
@@ -94,9 +94,9 @@ typedef struct {
   false,                                                                    \
   NULL,                                                                     \
   NULL,                                                                     \
-  _MUTEX_DATA(name.cmtx),                                                   \
-  _MUTEX_DATA(name.wmtx),                                                   \
-  _MUTEX_DATA(name.rmtx),                                                   \
+  __MUTEX_DATA(name.cmtx),                                                  \
+  __MUTEX_DATA(name.wmtx),                                                  \
+  __MUTEX_DATA(name.rmtx),                                                  \
 }
 #else /* CH_CFG_USE_MUTEXES == FALSE */
 #define _PIPE_DATA(name, buffer, size) {                                    \
@@ -108,9 +108,9 @@ typedef struct {
   false,                                                                    \
   NULL,                                                                     \
   NULL,                                                                     \
-  _SEMAPHORE_DATA(name.csem, (cnt_t)1),                                     \
-  _SEMAPHORE_DATA(name.wsem, (cnt_t)1),                                     \
-  _SEMAPHORE_DATA(name.rsem, (cnt_t)1),                                     \
+  __SEMAPHORE_DATA(name.csem, (cnt_t)1),                                    \
+  __SEMAPHORE_DATA(name.wsem, (cnt_t)1),                                    \
+  __SEMAPHORE_DATA(name.rsem, (cnt_t)1),                                    \
 }
 #endif /* CH_CFG_USE_MUTEXES == FALSE */
 
@@ -124,7 +124,7 @@ typedef struct {
  * @param[in] size      number of @p uint8_t elements in the buffer array
  */
 #define PIPE_DECL(name, buffer, size)                                       \
-  pipe_t name = _PIPE_DATA(name, buffer, size)
+  pipe_t name = __PIPE_DATA(name, buffer, size)
 
 /*===========================================================================*/
 /* External declarations.                                                    */

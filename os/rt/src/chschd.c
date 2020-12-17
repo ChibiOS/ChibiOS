@@ -91,7 +91,7 @@ static void __idle_thread(void *p) {
  * @notapi
  */
 static thread_t *__sch_ready_behind(os_instance_t *oip, thread_t *tp) {
-  thread_t *cp;
+  ch_queue_t *cqp, *tqp;
 
   chDbgAssert((tp->state != CH_STATE_READY) &&
               (tp->state != CH_STATE_FINAL),
@@ -102,16 +102,17 @@ static thread_t *__sch_ready_behind(os_instance_t *oip, thread_t *tp) {
 
   /* Scanning ready list.*/
   tp->state = CH_STATE_READY;
-  cp = (thread_t *)&oip->rlist.queue;
+  tqp = &tp->hdr.queue;
+  cqp = &oip->rlist.queue;
   do {
-    cp = cp->queue.next;
-  } while (cp->prio >= tp->prio);
+    cqp = cqp->next;
+  } while (((thread_t *)cqp)->prio >= tp->prio);
 
   /* Insertion on prev.*/
-  tp->queue.next             = cp;
-  tp->queue.prev             = cp->queue.prev;
-  tp->queue.prev->queue.next = tp;
-  cp->queue.prev             = tp;
+  tqp->next       = cqp;
+  tqp->prev       = cqp->prev;
+  tqp->prev->next = &tp->hdr.queue;
+  cqp->prev       = tqp;
 
   return tp;
 }
@@ -134,7 +135,7 @@ static thread_t *__sch_ready_behind(os_instance_t *oip, thread_t *tp) {
  * @notapi
  */
 static thread_t *__sch_ready_ahead(os_instance_t *oip, thread_t *tp) {
-  thread_t *cp;
+  ch_queue_t *cqp, *tqp;
 
   chDbgAssert((tp->state != CH_STATE_READY) &&
               (tp->state != CH_STATE_FINAL),
@@ -145,16 +146,17 @@ static thread_t *__sch_ready_ahead(os_instance_t *oip, thread_t *tp) {
 
   /* Scanning ready list.*/
   tp->state = CH_STATE_READY;
-  cp = (thread_t *)&oip->rlist.queue;
+  tqp = &tp->hdr.queue;
+  cqp = &oip->rlist.queue;
   do {
-    cp = cp->queue.next;
-  } while (cp->prio > tp->prio);
+    cqp = cqp->next;
+  } while (((thread_t *)cqp)->prio > tp->prio);
 
   /* Insertion on prev.*/
-  tp->queue.next             = cp;
-  tp->queue.prev             = cp->queue.prev;
-  tp->queue.prev->queue.next = tp;
-  cp->queue.prev             = tp;
+  tqp->next       = cqp;
+  tqp->prev       = cqp->prev;
+  tqp->prev->next = tqp;
+  cqp->prev       = tqp;
 
   return tp;
 }
@@ -176,7 +178,7 @@ static void __sch_reschedule_behind(os_instance_t *oip) {
   thread_t *ntp;
 
   /* Picks the first thread from the ready queue and makes it current.*/
-  ntp = queue_fifo_remove(&oip->rlist.queue);
+  ntp = (thread_t *)ch_queue_fifo_remove(&oip->rlist.queue);
   ntp->state = CH_STATE_CURRENT;
   __sch_set_currthread(oip, ntp);
 
@@ -213,7 +215,7 @@ static void __sch_reschedule_ahead(os_instance_t *oip) {
   thread_t *ntp;
 
   /* Picks the first thread from the ready queue and makes it current.*/
-  ntp = queue_fifo_remove(&oip->rlist.queue);
+  ntp = (thread_t *)ch_queue_fifo_remove(&oip->rlist.queue);
   ntp->state = CH_STATE_CURRENT;
   __sch_set_currthread(oip, ntp);
 
@@ -256,7 +258,7 @@ static void __sch_wakeup(void *p) {
   case CH_STATE_WTCOND:
 #endif
     /* States requiring dequeuing.*/
-    (void) queue_dequeue(tp);
+    (void) ch_queue_dequeue(&tp->hdr.queue);
     break;
   default:
     /* Any other state, nothing to do.*/
@@ -297,109 +299,6 @@ void queue_prio_insert(thread_t *tp, threads_queue_t *tqp) {
   tp->queue.prev->queue.next = tp;
   cp->queue.prev             = tp;
 }
-
-/**
- * @brief   Inserts a thread into a queue.
- *
- * @param[in] tp        the pointer to the thread to be inserted in the list
- * @param[in] tqp       the pointer to the threads list header
- *
- * @notapi
- */
-void queue_insert(thread_t *tp, threads_queue_t *tqp) {
-
-  tp->queue.next             = (thread_t *)tqp;
-  tp->queue.prev             = tqp->prev;
-  tp->queue.prev->queue.next = tp;
-  tqp->prev                  = tp;
-}
-
-/**
- * @brief   Removes the first-out thread from a queue and returns it.
- * @note    If the queue is priority ordered then this function returns the
- *          thread with the highest priority.
- *
- * @param[in] tqp       the pointer to the threads list header
- * @return              The removed thread pointer.
- *
- * @notapi
- */
-thread_t *queue_fifo_remove(threads_queue_t *tqp) {
-  thread_t *tp = tqp->next;
-
-  tqp->next             = tp->queue.next;
-  tqp->next->queue.prev = (thread_t *)tqp;
-
-  return tp;
-}
-
-/**
- * @brief   Removes the last-out thread from a queue and returns it.
- * @note    If the queue is priority ordered then this function returns the
- *          thread with the lowest priority.
- *
- * @param[in] tqp   the pointer to the threads list header
- * @return          The removed thread pointer.
- *
- * @notapi
- */
-thread_t *queue_lifo_remove(threads_queue_t *tqp) {
-  thread_t *tp = tqp->prev;
-
-  tqp->prev             = tp->queue.prev;
-  tqp->prev->queue.next = (thread_t *)tqp;
-
-  return tp;
-}
-
-/**
- * @brief   Removes a thread from a queue and returns it.
- * @details The thread is removed from the queue regardless of its relative
- *          position and regardless the used insertion method.
- *
- * @param[in] tp        the pointer to the thread to be removed from the queue
- * @return              The removed thread pointer.
- *
- * @notapi
- */
-thread_t *queue_dequeue(thread_t *tp) {
-
-  tp->queue.prev->queue.next = tp->queue.next;
-  tp->queue.next->queue.prev = tp->queue.prev;
-
-  return tp;
-}
-
-/**
- * @brief   Pushes a thread_t on top of a stack list.
- *
- * @param[in] tp    the pointer to the thread to be inserted in the list
- * @param[in] tlp   the pointer to the threads list header
- *
- * @notapi
- */
-void list_insert(thread_t *tp, threads_list_t *tlp) {
-
-  tp->queue.next = tlp->next;
-  tlp->next      = tp;
-}
-
-/**
- * @brief   Pops a thread from the top of a stack list and returns it.
- * @pre     The list must be non-empty before calling this function.
- *
- * @param[in] tlp       the pointer to the threads list header
- * @return              The removed thread pointer.
- *
- * @notapi
- */
-thread_t *list_remove(threads_list_t *tlp) {
-
-  thread_t *tp = tlp->next;
-  tlp->next = tp->queue.next;
-
-  return tp;
-}
 #endif /* CH_CFG_OPTIMIZE_SPEED */
 
 /**
@@ -418,7 +317,7 @@ void chSchObjectInit(os_instance_t *oip,
   port_init(oip);
 
   /* Ready list initialization.*/
-  queue_init(&oip->rlist.queue);
+  ch_queue_init(&oip->rlist.queue);
   oip->rlist.prio = NOPRIO;
 
   /* Registry initialization.*/
@@ -544,7 +443,7 @@ void chSchGoSleepS(tstate_t newstate) {
 #endif
 
   /* Next thread in ready list becomes current.*/
-  ntp = queue_fifo_remove(&oip->rlist.queue);
+  ntp = (thread_t *)ch_queue_fifo_remove(&oip->rlist.queue);
   ntp->state = CH_STATE_CURRENT;
   __sch_set_currthread(oip, ntp);
 
@@ -622,8 +521,8 @@ void chSchWakeupS(thread_t *ntp, msg_t msg) {
 
   chDbgCheckClassS();
 
-  chDbgAssert((oip->rlist.queue.next == (thread_t *)&oip->rlist.queue) ||
-              (oip->rlist.current->prio >= oip->rlist.queue.next->prio),
+  chDbgAssert((oip->rlist.queue.next == &oip->rlist.queue) ||
+              (oip->rlist.current->prio >= ((thread_t *)oip->rlist.queue.next)->prio),
               "priority order violation");
 
   /* Storing the message to be retrieved by the target thread when it will
@@ -728,7 +627,7 @@ void chSchDoPreemption(void) {
   thread_t *ntp;
 
   /* Picks the first thread from the ready queue and makes it current.*/
-  ntp = queue_fifo_remove(&oip->rlist.queue);
+  ntp = (thread_t *)ch_queue_fifo_remove(&oip->rlist.queue);
   ntp->state = CH_STATE_CURRENT;
   __sch_set_currthread(oip, ntp);
 
@@ -834,7 +733,7 @@ thread_t *chSchSelectFirstI(void) {
   thread_t *ntp;
 
   /* Picks the first thread from the ready queue and makes it current.*/
-  ntp = queue_fifo_remove(&oip->rlist.queue);
+  ntp = (thread_t *)ch_queue_fifo_remove(&oip->rlist.queue);
   ntp->state = CH_STATE_CURRENT;
   __sch_set_currthread(oip, ntp);
 

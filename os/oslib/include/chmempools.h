@@ -95,7 +95,7 @@ typedef struct {
  * @param[in] align     required memory alignment
  * @param[in] provider  memory provider function for the memory pool
  */
-#define _MEMORYPOOL_DATA(name, size, align, provider)                       \
+#define __MEMORYPOOL_DATA(name, size, align, provider)                      \
   {NULL, size, align, provider}
 
 /**
@@ -110,7 +110,7 @@ typedef struct {
  *                      if the pool is not allowed to grow automatically
  */
 #define MEMORYPOOL_DECL(name, size, align, provider)                        \
-  memory_pool_t name = _MEMORYPOOL_DATA(name, size, align, provider)
+  memory_pool_t name = __MEMORYPOOL_DATA(name, size, align, provider)
 
 #if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
 /**
@@ -122,9 +122,9 @@ typedef struct {
  * @param[in] size      size of the memory pool contained objects
  * @param[in] align     required memory alignment
  */
-#define _GUARDEDMEMORYPOOL_DATA(name, size, align) {                        \
-  _SEMAPHORE_DATA(name.sem, (cnt_t)0),                                      \
-  _MEMORYPOOL_DATA(NULL, size, align, NULL)                                 \
+#define __GUARDEDMEMORYPOOL_DATA(name, size, align) {                       \
+  __SEMAPHORE_DATA(name.sem, (cnt_t)0),                                     \
+  __MEMORYPOOL_DATA(NULL, size, align, NULL)                                \
 }
 
 /**
@@ -137,7 +137,7 @@ typedef struct {
  * @param[in] align     required memory alignment
  */
 #define GUARDEDMEMORYPOOL_DECL(name, size, align)                           \
-  guarded_memory_pool_t name = _GUARDEDMEMORYPOOL_DATA(name, size, align)
+  guarded_memory_pool_t name = __GUARDEDMEMORYPOOL_DATA(name, size, align)
 #endif /* CH_CFG_USE_SEMAPHORES == TRUE */
 
 /*===========================================================================*/

@@ -648,7 +648,7 @@ static void rt_test_008_005_execute(void) {
   {
     chMtxUnlock(&m1);
     test_assert(m1.owner == NULL, "still owned");
-    test_assert(queue_isempty(&m1.queue), "queue not empty");
+    test_assert(ch_queue_isempty(&m1.queue), "queue not empty");
   }
   test_end_step(4);
 
@@ -669,7 +669,7 @@ static void rt_test_008_005_execute(void) {
 
     chMtxUnlockAll();
     test_assert(m1.owner == NULL, "still owned");
-    test_assert(queue_isempty(&m1.queue), "queue not empty");
+    test_assert(ch_queue_isempty(&m1.queue), "queue not empty");
   }
   test_end_step(6);
 

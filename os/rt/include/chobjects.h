@@ -50,24 +50,29 @@
 typedef void (*vtfunc_t)(void *p);
 
 /**
- * @extends virtual_timers_list_t
- *
  * @brief   Type of a Virtual Timer structure.
  */
-typedef struct ch_virtual_timer virtual_timer_t;
+typedef struct ch_delta_list delta_list_t;
 
 /**
- * @brief   Virtual Timer descriptor structure.
+ * @brief   Virtual Timer delta list element and header structure.
  */
-struct ch_virtual_timer {
-  virtual_timer_t       *next;      /**< @brief Next timer in the list.     */
-  virtual_timer_t       *prev;      /**< @brief Previous timer in the list. */
+struct ch_delta_list {
+  delta_list_t          *next;      /**< @brief Next timer in the list.     */
+  delta_list_t          *prev;      /**< @brief Previous timer in the list. */
   sysinterval_t         delta;      /**< @brief Time delta before timeout.  */
+};
+
+/**
+ * @brief   Type of a Virtual Timer.
+ */
+typedef struct ch_virtual_timer {
+  delta_list_t          dlist;      /**< @brief Delta list element.         */
   vtfunc_t              func;       /**< @brief Timer callback function
                                                 pointer.                    */
   void                  *par;       /**< @brief Timer callback function
                                                 parameter.                  */
-};
+} virtual_timer_t;
 
 /**
  * @brief   Type of virtual timers list header.
@@ -76,11 +81,7 @@ struct ch_virtual_timer {
  *          timer is often used in the code.
  */
 typedef struct ch_virtual_timers_list {
-  virtual_timer_t       *next;      /**< @brief Next timer in the delta
-                                                list.                       */
-  virtual_timer_t       *prev;      /**< @brief Last timer in the delta
-                                                list.                       */
-  sysinterval_t         delta;      /**< @brief Must be initialized to -1.  */
+  delta_list_t          dlist;      /**< @brief Delta list header.          */
 #if (CH_CFG_ST_TIMEDELTA == 0) || defined(__DOXYGEN__)
   volatile systime_t    systime;    /**< @brief System Time counter.        */
 #endif
@@ -102,21 +103,10 @@ typedef struct ch_virtual_timers_list {
 typedef thread_t * thread_reference_t;
 
 /**
- * @brief   Type of a generic threads single link list, it works like a stack.
- */
-typedef struct ch_threads_list {
-  thread_t              *next;      /**< @brief Next in the list/queue.     */
-} threads_list_t;
-
-/**
- * @extends threads_list_t
- *
- * @brief   Type of a generic threads bidirectional linked list header and
- *          element.
+ * @brief   Type of a threads queue.
  */
 typedef struct ch_threads_queue {
-  thread_t              *next;      /**< @brief Next in the list/queue.     */
-  thread_t              *prev;      /**< @brief Previous in the queue.      */
+  ch_queue_t            queue;      /**< @brief Threads queue header.       */
 } threads_queue_t;
 
 /**
@@ -126,7 +116,10 @@ typedef struct ch_threads_queue {
  *          by shrinking this structure.
  */
 struct ch_thread {
-  threads_queue_t       queue;      /**< @brief Threads queue header.       */
+  union {
+    ch_list_t           list;       /**< @brief Threads list header.        */
+    ch_queue_t          queue;      /**< @brief Threads queue header.       */
+  } hdr;
   tprio_t               prio;       /**< @brief Thread priority.            */
 #if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
   thread_t              *newer;     /**< @brief Newer registry element.     */
@@ -250,13 +243,13 @@ struct ch_thread {
   /**
    * @brief   Termination waiting list.
    */
-  threads_list_t        waiting;
+  ch_list_t             waiting;
 #endif
 #if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Messages queue.
    */
-  threads_queue_t       msgqueue;
+  ch_queue_t            msgqueue;
 #endif
 #if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
   /**
@@ -300,7 +293,7 @@ struct ch_thread {
  * @brief   Type of a ready list header.
  */
 typedef struct ch_ready_list {
-  threads_queue_t       queue;      /**< @brief Threads queue.              */
+  ch_queue_t            queue;      /**< @brief Threads queue.              */
   tprio_t               prio;       /**< @brief This field must be
                                                 initialized to zero.        */
 #if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
