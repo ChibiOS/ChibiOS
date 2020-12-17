@@ -75,7 +75,7 @@ typedef struct {
  * @param[in] buffer    pointer to the mailbox buffer array of @p msg_t
  * @param[in] size      number of @p msg_t elements in the buffer array
  */
-#define _MAILBOX_DATA(name, buffer, size) {                                 \
+#define __MAILBOX_DATA(name, buffer, size) {                                \
   (msg_t *)(buffer),                                                        \
   (msg_t *)(buffer) + size,                                                 \
   (msg_t *)(buffer),                                                        \
@@ -96,7 +96,7 @@ typedef struct {
  * @param[in] size      number of @p msg_t elements in the buffer array
  */
 #define MAILBOX_DECL(name, buffer, size)                                    \
-  mailbox_t name = _MAILBOX_DATA(name, buffer, size)
+  mailbox_t name = __MAILBOX_DATA(name, buffer, size)
 
 /*===========================================================================*/
 /* External declarations.                                                    */

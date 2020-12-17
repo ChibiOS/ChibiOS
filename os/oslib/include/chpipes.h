@@ -99,7 +99,7 @@ typedef struct {
   __MUTEX_DATA(name.rmtx),                                                  \
 }
 #else /* CH_CFG_USE_MUTEXES == FALSE */
-#define _PIPE_DATA(name, buffer, size) {                                    \
+#define __PIPE_DATA(name, buffer, size) {                                   \
   (uint8_t *)(buffer),                                                      \
   (uint8_t *)(buffer) + size,                                               \
   (uint8_t *)(buffer),                                                      \

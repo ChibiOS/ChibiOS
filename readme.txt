@@ -116,6 +116,9 @@
        they now rely on the environment variable CHIBISTUDIO.
 - NEW: Mail Queues test implementation in CMSIS RTOS wrapper.
 - NEW: Added dynamic reconfiguration API to lwIP bindings.
+- LIB: Reorganized static initializer macros.
+- NIL: Reorganized static initializer macros.
+- RT:  Reorganized static initializer macros.
 - RT:  Relocated the "ctx" field in the thread structure in order to save
        some RAM, it caused unused space in the "ch" variable.
 - EX:  Implemented cache handling in the ADXL355 device driver.
