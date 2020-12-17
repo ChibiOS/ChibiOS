@@ -66,23 +66,31 @@ typedef struct ch_queue ch_queue_t;
  * @brief   Structure representing a generic bidirectional linked list header
  *          and element.
  */
-typedef struct ch_queue {
+struct ch_queue {
   ch_queue_t            *next;      /**< @brief Next in the list/queue.     */
   ch_queue_t            *prev;      /**< @brief Previous in the queue.      */
-} ch_queue_t;
+};
 
 /**
- * @extends rt_queue_t
+ * @extends ch_queue_t
  *
- * @brief   Type of a generic bidirectional linked list header and
- *          element.
+ * @brief   Type of a generic priority-ordered bidirectional linked list
+ *          header and element.
+ */
+typedef struct ch_priority_queue ch_priority_queue_t;
+
+/**
+ * @extends ch_queue_t
+ *
+ * @brief   Structure representing a generic priority-ordered bidirectional
+ *          linked list header and element.
  * @note    Link fields are void pointers in order to avoid aliasing issues.
  */
-typedef struct ch_priority_queue {
-  void                  *next;      /**< @brief Next in the list/queue.     */
-  void                  *prev;      /**< @brief Previous in the queue.      */
+struct ch_priority_queue {
+  ch_priority_queue_t   *next;      /**< @brief Next in the list/queue.     */
+  ch_priority_queue_t   *prev;      /**< @brief Previous in the queue.      */
   tprio_t               prio;
-} rt_priority_queue_t;
+};
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -95,7 +103,7 @@ typedef struct ch_priority_queue {
  *
  * @param[in] name      the name of the queue variable
  */
-#define _RT_QUEUE_DATA(name) {(thread_t *)&name, (thread_t *)&name}
+#define __CH_QUEUE_DATA(name) {(ch_queue_t *)&name, (ch_queue_t *)&name}
 
 /**
  * @brief   Static queue object initializer.
@@ -104,8 +112,8 @@ typedef struct ch_priority_queue {
  *
  * @param[in] name      the name of the queue variable
  */
-#define _RT_QUEUE_DECL(name)                                           \
-    rt_queue_t name = _RT_QUEUE_DATA(name)
+#define CH_QUEUE_DECL(name)                                                 \
+    ch_queue_t name = __CH_QUEUE_DATA(name)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -127,7 +135,7 @@ extern "C" {
 /**
  * @brief   List initialization.
  *
- * @param[in] lp        pointer to the list object
+ * @param[in] lp        pointer to the list header
  *
  * @notapi
  */
@@ -163,7 +171,7 @@ static inline bool ch_list_notempty(ch_list_t *lp) {
 }
 
 /**
- * @brief   Pushes an object on top of a stack list.
+ * @brief   Pushes an element on top of a stack list.
  *
  * @param[in] p     the pointer to the element to be inserted in the list
  * @param[in] lp    the pointer to the list header
@@ -222,7 +230,7 @@ static inline bool ch_queue_isempty(const ch_queue_t *qp) {
 /**
  * @brief   Evaluates to @p true if the specified queue is not empty.
  *
- * @param[in] qp        pointer to the queue object
+ * @param[in] qp        pointer to the queue header
  * @return              The status of the queue.
  *
  * @notapi
@@ -233,7 +241,7 @@ static inline bool ch_queue_notempty(const ch_queue_t *qp) {
 }
 
 /**
- * @brief   Inserts an object into a queue.
+ * @brief   Inserts an element into a queue.
  *
  * @param[in] p         the pointer to the element to be inserted in the list
  * @param[in] qp        the pointer to the queue header
@@ -296,7 +304,7 @@ static inline ch_queue_t *ch_queue_lifo_remove(ch_queue_t *qp) {
  *
  * @notapi
  */
-static inline void *ch_queue_dequeue(ch_queue_t *p) {
+static inline ch_queue_t *ch_queue_dequeue(ch_queue_t *p) {
 
   p->prev->next = p->next;
   p->next->prev = p->prev;
